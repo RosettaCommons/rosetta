@@ -52,6 +52,8 @@ public:
 
 	bool pose_coords_are_same( core::pose::Pose const & pose1, core::pose::Pose const & pose2 );
 	void filter_seqpos_pareto_opt_ptmuts();
+	void clear_cached_data();
+	void calc_pfront_poses_filter_ranks();
 	void apply( Pose & pose );
 	protocols::moves::MoverOP clone() const;
 	virtual std::string get_name() const;
@@ -92,7 +94,9 @@ private:
 			std::pair< core::chemical::AA, utility::vector1< core::Real > > > > > seqpos_aa_vals_vec_;
 	core::pose::Pose ref_pose_;
 	utility::vector1< core::pose::Pose > pfront_poses_;
-	core::Size pfront_pose_iter_;
+	utility::vector1< utility::vector1< core::Real > > pfront_poses_filter_vals_;
+	utility::vector1< utility::vector1< core::Size > > pfront_poses_filter_ranks_;
+	core::Size nstruct_iter_;
 };
 
 

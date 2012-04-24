@@ -248,7 +248,7 @@ PointMutationCalculator::mutate_and_relax(
 	PackerTaskOP mutate_residue = mut_res->create_task_and_apply_taskoperations( pose );
 	mutate_residue->initialize_from_command_line().or_include_current( true );
 	mutate_residue->nonconst_residue_task( resi ).restrict_absent_canonical_aas( allowed_aas );
-	TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to ";
+//	TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to ";
 	//run PackRotamers with mutate_residue task
 	protocols::simple_moves::PackRotamersMoverOP pack;
 	if( core::pose::symmetry::is_symmetric( pose ) )
@@ -256,7 +256,7 @@ PointMutationCalculator::mutate_and_relax(
 	else
 		pack = new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue );
 	pack->apply( pose );
-	TR<<pose.residue( resi ).name3()<<". Now relaxing..."<<std::endl;
+//	TR<<pose.residue( resi ).name3()<<". Now relaxing..."<<std::endl;
 	//then run input relax mover
 	relax_mover()->apply( pose );
 }
@@ -277,8 +277,7 @@ PointMutationCalculator::eval_filters(
 		Real const flip_sign( sample_types_[ ifilt ] == "high" ? -1 : 1 );
 		Real const val( flip_sign * ( filters_[ ifilt ] )->report_sm( pose ) );
 		//TODO: option to bail at first fail??
-		if( !filter_pass ) TR<<"Filter fails with value "<< val << std::endl;
-		else TR<<"Filter succeeds with value "<< val << std::endl;
+		if( !filter_pass ) TR<< "Filter " << ifilt << " with value "<< val << std::endl;
 		vals.push_back( val );
 	}
 }

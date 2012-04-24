@@ -152,6 +152,7 @@ GreedyOptMutationMover::get_name() const {
 void
 GreedyOptMutationMover::relax_mover( protocols::moves::MoverOP mover ){
 	relax_mover_ = mover;
+	clear_cached_data();
 }
 
 protocols::moves::MoverOP
@@ -162,6 +163,7 @@ GreedyOptMutationMover::relax_mover() const{
 void
 GreedyOptMutationMover::filter( protocols::filters::FilterOP filter ){
 	filter_ = filter;
+	clear_cached_data();
 }
 
 protocols::filters::FilterOP GreedyOptMutationMover::filter() const{
@@ -172,6 +174,7 @@ void
 GreedyOptMutationMover::task_factory( core::pack::task::TaskFactoryOP task_factory )
 {
 	task_factory_ = task_factory;
+	clear_cached_data();
 }
 
 core::pack::task::TaskFactoryOP
@@ -183,6 +186,7 @@ GreedyOptMutationMover::task_factory() const
 void
 GreedyOptMutationMover::dump_pdb( bool const dump_pdb ){
   dump_pdb_ = dump_pdb;
+	clear_cached_data();
 }
 
 bool
@@ -193,6 +197,7 @@ GreedyOptMutationMover::dump_pdb() const{
 void
 GreedyOptMutationMover::sample_type( std::string const sample_type ){
   sample_type_ = sample_type;
+	clear_cached_data();
 }
 
 std::string
@@ -213,6 +218,7 @@ GreedyOptMutationMover::diversify_lvl() const{
 void
 GreedyOptMutationMover::scorefxn( core::scoring::ScoreFunctionOP scorefxn ){
 	scorefxn_ = scorefxn;
+	clear_cached_data();
 }
 
 core::scoring::ScoreFunctionOP
@@ -235,6 +241,12 @@ cmp_pair_vec_by_first_vec_val(
   pair< Size, vector1< pair< AA, Real > > > const pair2 )
 {
   return pair1.second[ 1 ].second < pair2.second[ 1 ].second;
+}
+
+void
+GreedyOptMutationMover::clear_cached_data(){
+  seqpos_aa_val_vec_.clear();
+  ref_pose_.clear();
 }
 
 //TODO: this should also compare fold trees
@@ -277,11 +289,12 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 	//the best answer is to store the pose passed to apply in a private variable (ref_pose_)
 	//and only calc and sort if ref_pose_ is still undef or doesnt match apply pose
 	if( ref_pose_.empty() || !pose_coords_are_same( start_pose, ref_pose_ ) ){
-		seqpos_aa_val_vec_.clear();
-		//get the point mut values
-		ptmut_calc->calc_point_mut_filters( start_pose, seqpos_aa_val_vec_ );
+		//clear cached data
+		clear_cached_data();
 		//and (re)set ref_pose_ to this pose
 		ref_pose_ = start_pose;
+		//get the point mut values
+		ptmut_calc->calc_point_mut_filters( start_pose, seqpos_aa_val_vec_ );
 
 		//this part sorts the seqpos/aa/val data
 		//first over each seqpos by aa val, then over all seqpos by best aa val
@@ -329,11 +342,7 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 		ptmut_calc->eval_filters( pose, filter_pass, vals );
 		Real const val( vals[ 1 ] );
 
-		if( !filter_pass ){
-			TR<<"Filter fails with value "<< val << std::endl;
-			continue;
-		}
-		TR<<"Filter succeeds with value "<< val << std::endl;
+		if( !filter_pass ) continue;
 		//score mutation, reset best_pose, best val if is lower
 		if( val > best_val ){
 			TR<<"Mutation rejected. Current best value is "<< best_val << std::endl;

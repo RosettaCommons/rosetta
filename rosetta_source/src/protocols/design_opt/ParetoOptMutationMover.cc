@@ -67,11 +67,12 @@ ParetoOptMutationMover::ParetoOptMutationMover() :
 	task_factory_( NULL ),
 //	filters_( NULL ), /* how set default vecgtor of NULLs? */
 //	sample_type_( "low" ),
-	relax_mover_( NULL ),
 	scorefxn_( NULL ),
+	relax_mover_( NULL ),
 	diversify_lvl_( 1 ),
 	dump_pdb_( false ),
-	stopping_condition_( NULL )
+	stopping_condition_( NULL ),
+	nstruct_iter_( 1 )
 {}
 
 //full ctor
@@ -95,6 +96,7 @@ ParetoOptMutationMover::ParetoOptMutationMover(
 	diversify_lvl_ = diversify_lvl;
 	dump_pdb_ = dump_pdb;
 	stopping_condition_ = stopping_condition;
+	nstruct_iter_ = 1;
 }
 
 //destruction!
@@ -133,6 +135,7 @@ ParetoOptMutationMover::get_name() const {
 void
 ParetoOptMutationMover::relax_mover( protocols::moves::MoverOP mover ){
 	relax_mover_ = mover;
+	clear_cached_data();
 }
 
 protocols::moves::MoverOP
@@ -143,6 +146,7 @@ ParetoOptMutationMover::relax_mover() const{
 void
 ParetoOptMutationMover::filters( vector1< protocols::filters::FilterOP > filters ){
 	filters_ = filters;
+	clear_cached_data();
 }
 
 vector1< protocols::filters::FilterOP > ParetoOptMutationMover::filters() const{
@@ -153,6 +157,7 @@ void
 ParetoOptMutationMover::task_factory( core::pack::task::TaskFactoryOP task_factory )
 {
 	task_factory_ = task_factory;
+	clear_cached_data();
 }
 
 core::pack::task::TaskFactoryOP
@@ -164,6 +169,7 @@ ParetoOptMutationMover::task_factory() const
 void
 ParetoOptMutationMover::dump_pdb( bool const dump_pdb ){
   dump_pdb_ = dump_pdb;
+	clear_cached_data();
 }
 
 bool
@@ -174,6 +180,7 @@ ParetoOptMutationMover::dump_pdb() const{
 void
 ParetoOptMutationMover::sample_types( vector1< std::string > const sample_types ){
   sample_types_ = sample_types;
+	clear_cached_data();
 }
 
 vector1< std::string >
@@ -194,6 +201,7 @@ ParetoOptMutationMover::diversify_lvl() const{
 void
 ParetoOptMutationMover::scorefxn( core::scoring::ScoreFunctionOP scorefxn ){
 	scorefxn_ = scorefxn;
+	clear_cached_data();
 }
 
 core::scoring::ScoreFunctionOP
@@ -202,6 +210,14 @@ ParetoOptMutationMover::scorefxn() const{
 }
 
 //utility funxns for comparing values in sort
+bool
+cmp_pair_by_second(
+  pair< Size, Real > const pair1,
+  pair< Size, Real > const pair2 )
+{
+  return pair1.second < pair2.second;
+}
+
 bool
 cmp_pair_by_first_vec_val(
 	pair< AA, vector1< Real > > const pair1,
@@ -218,10 +234,21 @@ cmp_pair_vec_by_first_vec_val(
   return pair1.second[ 1 ].second[ 1 ] < pair2.second[ 1 ].second[ 1 ];
 }
 
+void
+ParetoOptMutationMover::clear_cached_data(){
+	seqpos_aa_vals_vec_.clear();
+	pfront_poses_.clear();
+	pfront_poses_filter_vals_.clear();
+	pfront_poses_filter_ranks_.clear();
+	ref_pose_.clear();
+}
+
 //TODO: this should also compare fold trees
 bool
-ParetoOptMutationMover::pose_coords_are_same( core::pose::Pose const & pose1, core::pose::Pose const & pose2 )
-{
+ParetoOptMutationMover::pose_coords_are_same(
+	core::pose::Pose const & pose1,
+	core::pose::Pose const & pose2
+){
 	//first check for all restype match, also checks same number res
 	if( !pose1.conformation().sequence_matches( pose2.conformation() ) ) return false;
 	//then check for all coords identical
@@ -240,9 +267,31 @@ ParetoOptMutationMover::pose_coords_are_same( core::pose::Pose const & pose1, co
 	return true;
 }
 
+void
+ParetoOptMutationMover::calc_pfront_poses_filter_ranks(){
+	//(re)init ranks w/ bogus zero data
+	pfront_poses_filter_ranks_ = vector1< vector1< Size > >( pfront_poses_filter_vals_.size(),
+			vector1< Size >( pfront_poses_filter_vals_[ 1 ].size(), Size( 0 ) ) );
+	//for each filter type
+	for( Size ifilt = 1; ifilt <= pfront_poses_filter_vals_[ 1 ].size(); ++ifilt ){
+		//copy all this filter vals into a vector of pair< index, val >
+		vector1< pair< Size, Real > > filter_index_vals;
+		for( Size ipose = 1; ipose <= pfront_poses_filter_vals_.size(); ++ipose ){
+			filter_index_vals.push_back( pair< Size, Real >( ipose, pfront_poses_filter_vals_[ ipose ][ ifilt ] ) );
+		}
+		//and sort by value
+		std::sort( filter_index_vals.begin(), filter_index_vals.end(), cmp_pair_by_second );
+		//now can get rank and index
+		for( Size rank = 1; rank <= filter_index_vals.size(); ++rank ){
+			Size ipose( filter_index_vals[ rank ].first );
+			pfront_poses_filter_ranks_[ ipose ][ ifilt ] = rank;	
+		}
+	}
+}
+
 //Yes, I'm aware this is the slowest and simplest implementation of pareto front
 // identification, but this needs to be finished 2 days ago
-// I can make it all fancy later
+// and this calc is hardly the rate limiting step with a bunch of repacking and filter evals
 //calc_single_pos_pareto_front
 //takes a set (vec1) of coords
 //populates boolean vector w/ is_pareto?
@@ -328,6 +377,8 @@ ParetoOptMutationMover::apply( core::pose::Pose & pose )
 
 	//store input pose
 	core::pose::Pose start_pose( pose );
+	design_opt::PointMutationCalculatorOP ptmut_calc( new design_opt::PointMutationCalculator(
+				task_factory(), scorefxn(), relax_mover(), filters(), sample_types(), dump_pdb() ) );
 
 	//create vec of pairs of seqpos, vector of AA/val pairs that pass input filter
 	//then combine them into a pareto opt pose set
@@ -338,15 +389,11 @@ ParetoOptMutationMover::apply( core::pose::Pose & pose )
 	//also recalc if pareto pose set is empty
 	if( pfront_poses_.empty() || ref_pose_.empty() || !pose_coords_are_same( start_pose, ref_pose_ ) ){
 		//reset our private data
-		seqpos_aa_vals_vec_.clear();
-		pfront_poses_.clear();
-		pfront_pose_iter_ = 1;
+		clear_cached_data();
 		//and (re)set ref_pose_ to this pose
 		ref_pose_ = start_pose;
 
 		//get the point mut values
-		design_opt::PointMutationCalculatorOP ptmut_calc( new design_opt::PointMutationCalculator(
-					task_factory(), scorefxn(), relax_mover(), filters(), sample_types(), dump_pdb() ) );
 		ptmut_calc->calc_point_mut_filters( start_pose, seqpos_aa_vals_vec_ );
 
 		//this part sorts the seqpos/aa/val data so that we init with something good (1st)
@@ -388,7 +435,7 @@ ParetoOptMutationMover::apply( core::pose::Pose & pose )
 			vector1< vector1< Real > > new_poses_filter_vals;
 			//the resi index is the first part of the pair
 			Size resi( seqpos_aa_vals_vec_[ iseq ].first );
-			TR << "Combining " << pfront_poses_.size() << " pareto opt poses with mutations at residue " << resi << std::endl;
+			TR << "Combining " << pfront_poses_.size() << " pareto opt structures with mutations at residue " << resi << std::endl;
 			//over each current pfront pose
 			for( Size ipose = 1; ipose <= pfront_poses_.size(); ++ipose ){
 				//over all aa's at seqpos
@@ -406,22 +453,40 @@ ParetoOptMutationMover::apply( core::pose::Pose & pose )
 					new_poses_filter_vals.push_back( vals );
 				}
 			}
-			TR << "Filtering " << new_poses.size() << " new poses from mutations at residue " << resi << std::endl;
+//			TR << "Generated " << new_poses.size() << " new poses from mutations at residue "
+//					<< resi << ". Filtering... " << std::endl;
 			//filter new_poses for the pareto opt set
 			filter_pareto_opt_poses( new_poses, new_poses_filter_vals );
 			//and reset poses
 			pfront_poses_ = new_poses;
+			pfront_poses_filter_vals_ = new_poses_filter_vals;
 
 			//TODO: how eval stopping cond w/ multiple poses?
 			// stop optimizing a given pose if it meets condition, but let others keep going?
 		}
+		TR << "Generated  " << pfront_poses_.size() << " final pareto opt structures" << std::endl;
+		calc_pfront_poses_filter_ranks();
 	}
 	//assign the apply pose to the next pfront_pose 
-	pose = pfront_poses_[ pfront_pose_iter_ ];
+	Size pfront_pose_iter( ( nstruct_iter_ - 1 ) % pfront_poses_.size() + 1 );
+	pose = pfront_poses_[ pfront_pose_iter ];
+	//print out filter vals for this pose
+	TR << "Structure " << nstruct_iter_ << " filter values: ";
+	for( Size ival = 1; ival <= pfront_poses_filter_vals_[ pfront_pose_iter ].size(); ++ival ){
+		TR << " " << filters()[ ival ]->get_user_defined_name() << ": "
+				<< pfront_poses_filter_vals_[ pfront_pose_iter ][ ival ];
+	}
+	TR << std::endl;
+	TR << "Structure " << nstruct_iter_ << " filter ranks: ";
+	for( Size ival = 1; ival <= pfront_poses_filter_ranks_[ pfront_pose_iter ].size(); ++ival ){
+		TR << " " << filters()[ ival ]->get_user_defined_name() << ": "
+				<< pfront_poses_filter_ranks_[ pfront_pose_iter ][ ival ];
+	}
+	TR << std::endl;
+	TR.flush();
+
 	//increment pose iterator to get new pfront_pose at nstruct+1
-	pfront_pose_iter_ += 1;
-	//loop back if we go through them all
-	if( pfront_pose_iter_ > pfront_poses_.size() ) pfront_pose_iter_ = 1;
+	nstruct_iter_ += 1;
 }
 
 

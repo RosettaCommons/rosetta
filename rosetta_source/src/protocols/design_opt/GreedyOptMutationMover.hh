@@ -51,6 +51,7 @@ public:
 	);
 
 	bool pose_coords_are_same( core::pose::Pose const & pose1, core::pose::Pose const & pose2 );
+	void clear_cached_data();
 	void apply( Pose & pose );
 	protocols::moves::MoverOP clone() const;
 	virtual std::string get_name() const;
