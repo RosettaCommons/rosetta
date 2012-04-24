@@ -41,9 +41,10 @@ public:
 	utility::vector1< Size >
 	get_equiv( Size const index ) const
 	{
+		utility::vector1< Size > dumb_return;
 		if (index <= links_.size())
 		return links_[index];
-		return 0;	
+		return dumb_return;
 	}
 
 	void
