@@ -101,6 +101,7 @@ RRProtocolRTMin::run(
 	for( Size ii = 1; ii <= pose.total_residue(); ++ii ){
 		if ( !packer_task.pack_residue(ii) ) continue;
 
+		one_res_task->temporarily_set_pack_residue( ii, true );
     if ( ! packer_task.include_current( ii ) ) {
       // if we're not asking for the input sidechains, then don't use them -- replace the input sidechain with a rotamer that will be sampled inside
       // rotamer trials anyways
@@ -112,7 +113,7 @@ RRProtocolRTMin::run(
         working_pose.replace_residue( ii, *rotset->rotamer(1), false );
       }
     }
-		one_res_task->temporarily_set_pack_residue( ii, true );
+
 		rtmin.rtmin( working_pose, score_function, one_res_task );
 		measure_rotamer_recovery(
 			comparer, reporter,
