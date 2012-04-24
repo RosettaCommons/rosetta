@@ -175,7 +175,7 @@ RotamerSets::build_rotamers(
 
 		int expected_rot_count = 0;
 
-		for (int ii = 1; ii <= nmoltenres_; ++ii){
+		for ( uint ii = 1; ii <= nmoltenres_; ++ii){
 
 			utility::vector1<int> copies = task_->rotamer_links()->get_equiv(moltenres_2_resid_[ii]);
 
@@ -225,12 +225,12 @@ RotamerSets::build_rotamers(
 					else if ((*itr)->seqpos() == 1 && copies[jj] == 1  ){
 						cloneRes->copy_residue_connections( pose.residue(copies[jj]));
 					}
-					else if ( (*itr)->seqpos() == pose.total_residue() && copies[jj] != pose.total_residue() ){
+					else if ( (*itr)->seqpos() == (int) pose.total_residue() && copies[jj] != (int) pose.total_residue() ){
 						if (cloneRes->has_variant_type("UPPER_TERMINUS")) cloneRes = core::pose::remove_variant_type_from_residue( *cloneRes, chemical::UPPER_TERMINUS, pose);
 						cloneRes->residue_connection_partner(1, copies[jj]-1, 2);
 						cloneRes->residue_connection_partner(2, copies[jj]+1, 1);
 					}
-					else if ( (*itr)->seqpos() == pose.total_residue() && copies[jj] == pose.total_residue() ){
+					else if ( (*itr)->seqpos() == (int) pose.total_residue() && copies[jj] == (int) pose.total_residue() ){
 						cloneRes->copy_residue_connections( pose.residue(copies[jj]));
 					}
 					else {
@@ -252,7 +252,7 @@ RotamerSets::build_rotamers(
 						cloneRes = core::pose::add_variant_type_to_residue( *cloneRes, chemical::LOWER_TERMINUS, pose);
 						//std::cout << cloneRes->name()  << " of variant type lower? " << cloneRes->has_variant_type("LOWER_TERMINUS") << std::endl;
 					}
-					if (copies[jj]==pose.total_residue() && !pose.residue(copies[jj]).has_variant_type(CUTPOINT_LOWER)){
+					if (copies[jj]== (int) pose.total_residue() && !pose.residue(copies[jj]).has_variant_type(CUTPOINT_LOWER)){
 						cloneRes = core::pose::add_variant_type_to_residue( *cloneRes, chemical::UPPER_TERMINUS, pose);
 						//std::cout << cloneRes->name() << " of variant type upper? " << cloneRes->has_variant_type("UPPER_TERMINUS") <<  std::endl;
 					}

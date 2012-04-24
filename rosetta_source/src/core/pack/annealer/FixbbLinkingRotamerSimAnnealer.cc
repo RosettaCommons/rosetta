@@ -137,7 +137,7 @@ FixbbLinkingRotamerSimAnnealer::setup_rotamer_links(
 	//std::cout << "nmoltenres " << rotamer_sets()->nmoltenres()<< std::endl;
 
 	for ( Size moltenres_id=1; moltenres_id<= rotamer_sets()->nmoltenres(); ++moltenres_id ) {
-		uint const       resid( rotamer_sets()->moltenres_2_resid( moltenres_id ) );
+		uint const resid( rotamer_sets()->moltenres_2_resid( moltenres_id ) );
 		//std::cout << "RESID: " << resid << std::endl;
 		//init anything linking to it locally
 		//iterate over the associated set to check the positions, if molten
@@ -145,7 +145,7 @@ FixbbLinkingRotamerSimAnnealer::setup_rotamer_links(
 		if (rotamer_links->has(resid)){ // not a null
 		//std::cout << " linked IN " << std::endl;
 			utility::vector1<int> copies = rotamer_links->get_equiv(resid);
-			for (int i=1;i<=copies.size(); ++i ){
+			for (Size i = 1; i <= copies.size(); ++i ){
 				if ( rotamer_sets()->resid_2_moltenres( copies[i] )) {
 	//				rotamer_links_->set_equiv(resid, copies[i]);
 					rotamer_links_->set_equiv(moltenres_id, rotamer_sets()->resid_2_moltenres(copies[i]));
@@ -198,7 +198,7 @@ void FixbbLinkingRotamerSimAnnealer::run()
 	utility::vector1<int> segmentTest = rotamer_links_->get_equiv(nmoltenres);
 	// get the first element of the last repeat.  it should be segment length
 	//std::cout<< "SEGMENTLENGTH from ROTAMER LINK" << segmentTest[1] << std::endl;
-	Size repeat_number = segmentTest.back()/segmentTest[1];
+	//Size repeat_number = segmentTest.back()/segmentTest[1];
 	//std::cout<< "number of repeats" << repeat_number << std::endl;
 
 
@@ -399,7 +399,7 @@ void FixbbLinkingRotamerSimAnnealer::run()
 				currentenergy = ig_->commit_considered_substitution();
 
 				{ // debugging
-						Real const dev( std::abs( currentenergy - tmp_currentenergy - delta_energy_temp ) );
+						//Real const dev( std::abs( currentenergy - tmp_currentenergy - delta_energy_temp ) );
 			//std::cout << (*it).first << "(" << (*it).second << ")"  ;
 				//if ( dev > 0.01 ) {
 				//	std::cout  << "equal2? " << dev << ' ' << currentenergy << " " <<  tmp_currentenergy << ' ' << delta_energy_temp <<
