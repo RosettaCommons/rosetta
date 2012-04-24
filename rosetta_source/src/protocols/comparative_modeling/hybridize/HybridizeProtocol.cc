@@ -850,7 +850,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 			// apply fa constraints
 			std::string cst_fn = template_cst_fn_[initial_template_index];
-			setup_fullatom_constraints( pose, templates_, template_weights_, fa_cst_fn_, cst_fn );
+			setup_fullatom_constraints( pose, templates_, template_weights_, cst_fn, fa_cst_fn_ );
 
 			if (batch_relax_ == 1) {
 				// add additional _CALPHA_ constraints
