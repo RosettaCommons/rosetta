@@ -1290,7 +1290,7 @@ bool RemodelMover::design_refine(
 
 			//modify task to accept NATRO definition
 			utility::vector1<core::Size> natroPositions;
-			for (int i = 1; i<= pose.total_residue(); i++){
+			for (Size i = 1; i<= pose.total_residue(); i++){
 				if (remodel_data_.natro_movemap_.get_chi(i) == 0){
 					natroPositions.push_back(i);
 				}

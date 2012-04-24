@@ -279,7 +279,6 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 
     while ( repeatFactor !=1){ // the argument should be total number of copies
       for (Size rsd = 1; rsd <= non_terminal_pose.total_residue(); rsd++){
-        Size current_term = repeat_pose.total_residue();
 				//intentially insert behind the last residue, this way blueprint definition will cover the junction with fragments
 				if (rsd == non_terminal_pose.total_residue()){
 					repeat_pose.conformation().safely_append_polymer_residue_after_seqpos( non_terminal_pose.residue(rsd),repeat_pose.total_residue(), false);
@@ -467,12 +466,11 @@ void RemodelLoopMover::repeat_generation(Pose &pose, Pose & repeat_pose)
     Size count = 1;
     while ( repeatFactor !=1){ // the argument should be total number of copies
       for (Size rsd = 1; rsd <= non_terminal_pose.total_residue(); rsd++){
-        Size current_term = repeat_pose.total_residue();
 				//intentially insert behind the last residue, this way blueprint definition will cover the junction with fragments
 				if (rsd == non_terminal_pose.total_residue()){
-        repeat_pose.conformation().safely_append_polymer_residue_after_seqpos( non_terminal_pose.residue(rsd),repeat_pose.total_residue(),true);
+					repeat_pose.conformation().safely_append_polymer_residue_after_seqpos( non_terminal_pose.residue(rsd),repeat_pose.total_residue(),true);
 				}else {
-        repeat_pose.conformation().safely_append_polymer_residue_after_seqpos( non_terminal_pose.residue(rsd),repeat_pose.total_residue(),false);
+					repeat_pose.conformation().safely_append_polymer_residue_after_seqpos( non_terminal_pose.residue(rsd),repeat_pose.total_residue(),false);
 				}
       }
       Size junction = (non_terminal_pose.total_residue())* count;
@@ -1268,7 +1266,7 @@ void RemodelLoopMover::loophash_stage(
 	LoopHashLibraryOP loop_hash_library = new LoopHashLibrary ( loopsizes, 1, 0 );
 
 	// parameters
-	Size const n_standard_cycles = total_standard_cycles();
+	//Size const n_standard_cycles = total_standard_cycles();
 	//	Size const n_standard_cycles = 3;
 	Size const max_outer_cycles = independent_cycles();
 	//	Size const max_outer_cycles = 1;
@@ -1313,7 +1311,8 @@ void RemodelLoopMover::loophash_stage(
 
 		// parameters
 		Size const n_moveable = count_moveable_residues( movemap, loop.start(), loop.stop() );
-		Size const max_inner_cycles = std::max( static_cast< Size >( 50 ), 10 * n_moveable );
+		//currently looping over all the hashed loops
+		//Size const max_inner_cycles = std::max( static_cast< Size >( 50 ), 10 * n_moveable );
 
 		// set appropriate topology
 		if (basic::options::option[basic::options::OptionKeys::remodel::no_jumps]){

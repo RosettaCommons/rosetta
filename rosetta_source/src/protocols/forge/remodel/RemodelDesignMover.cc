@@ -96,7 +96,7 @@ RemodelDesignMover::RemodelDesignMover(RemodelData const & remodel_data, Remodel
 
 	if (option[ OptionKeys::remodel::repeat_structure].user()){
 		Size repeatCount = option[ OptionKeys::remodel::repeat_structure];
-		for (int rep = 0; rep < repeatCount ; rep++){
+		for (Size rep = 0; rep < repeatCount ; rep++){
 			for (std::set< core::Size >::iterator it = uup.begin(); it != uup.end(); ++it){
 			//DEBUG
 			//	std::cout << *it + remodel_data.blueprint.size()*rep << std::endl;
@@ -544,7 +544,7 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 //manual overwrite of the disulfide mobile range
 	if (remodel_data_.disulfMobileRange.size() != 0){
 
-		int i = 1;
+		Size i = 1;
 
 		for (utility::vector1_bool::iterator itr=modeled_clusters.begin(), end=modeled_clusters.end();  itr !=end; itr++){
 
