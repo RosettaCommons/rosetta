@@ -276,7 +276,6 @@ P_AA::P_AA_pp_energy( conformation::Residue const & res ) const
 {
 	using namespace core::chemical;
 	using numeric::conversions::degrees;
-	using numeric::interpolation::periodic_range::half::bilinearly_interpolated;
 
 	AA const aa( res.aa()); //! Need to decide if/how/where to exclude NCAAs
 	if ( aa > chemical::num_canonical_aas ) return 0.0;
@@ -285,13 +284,14 @@ P_AA::P_AA_pp_energy( conformation::Residue const & res ) const
 	{ // Probabilities for this amino acid are present in files and it is not a terminus
 		Angle const phi( res.mainchain_torsion( 1 ) );
 		Angle const psi( res.mainchain_torsion( 2 ) );
-		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::p_aa_pp_nogridshift ] ) { // the format of p_aa_pp changed from using i*10+5 to i*10 as grid
-			return -std::log( numeric::interpolation::periodic_range::full::bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ] ) / P_AA_[ aa ] );
-		}
-		else {
-			if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
-				return P_AA_pp_energy_splines_[ aa ].F( phi, psi );
+		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
+			return P_AA_pp_energy_splines_[ aa ].F( phi, psi );
+		} else {
+			if ( basic::options::option[ basic::options::OptionKeys::corrections::score::p_aa_pp_nogridshift ] ) { // the format of p_aa_pp changed from using i*10+5 to i*10 as grid
+				using numeric::interpolation::periodic_range::full::bilinearly_interpolated;
+				return -std::log( bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ] ) / P_AA_[ aa ] );
 			} else {
+				using numeric::interpolation::periodic_range::half::bilinearly_interpolated;
 				return -std::log( bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ] ) / P_AA_[ aa ] );
 			}
 		}
