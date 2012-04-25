@@ -118,7 +118,7 @@ static basic::Tracer TR("core.scoring.CartesianBondedEnergy");
 static const Real K_LENGTH=300.0;
 static const Real K_ANGLE=150.0;
 static const Real K_TORSION=100.0;
-static const Real K_TORSION_PROTON=30.0;  // proton chi
+static const Real K_TORSION_PROTON=20.0;  // proton chi
 
 //////////////////////
 /// EnergyMethod Creator
@@ -233,107 +233,110 @@ TorsionDatabase::lookup(
 		if ( s_it != torsions_.end() )
 			phi_step = s_it->second;
 
-	}
+	} else {
+		// Create mini-conformation for idealized residue
+		core::conformation::ResidueOP newres = conformation::ResidueFactory::create_residue( restype );
+		core::pose::Pose newpose;
+		newpose.append_residue_by_bond(*newres);
 
-	else {
-				// Create mini-conformation for idealized residue
-					core::conformation::ResidueOP newres = conformation::ResidueFactory::create_residue( restype );
-					core::pose::Pose newpose;
-					newpose.append_residue_by_bond(*newres);
+		// figure out if we need to constrain this torsion
+		bool need_to_constrain=true, proton_chi=false;
 
+		// backbone
+		if ( atm2 <= newres->last_backbone_atom() && atm3 <= newres->last_backbone_atom() )
+				need_to_constrain = false;
 
-					// figure out if we need to constrain this torsion
-					id::DOF_ID dof = newpose.atom_tree().torsion_angle_dof_id(
-								 id::AtomID(atm1,1),id::AtomID(atm2,1),id::AtomID(atm3,1),id::AtomID(atm4,1)
-							 );
-					bool need_to_constrain = (dof == id::BOGUS_DOF_ID);
+		// chi
+		for ( Size j=1, j_end = restype.nchi(); j<= j_end; ++j ) {
+			id::AtomID n1,n2,n3,n4;
+			newpose.conformation().get_torsion_angle_atom_ids( id::TorsionID(1,id::CHI,j) ,n1,n2,n3,n4);
+			if ( (n2.atomno() == atm2 && n3.atomno() == atm3) || (n2.atomno() == atm3 && n3.atomno() == atm2) ) {
+				if (restype.is_proton_chi( j ) ) {
+					proton_chi = true;
+				} else {
+					need_to_constrain = false;
+				}
+			}
+		}
 
-					if (!need_to_constrain) {
-						// check if this torsion does not correspond to a torsionID
-						id::AtomID n1,n2,n3,n4;
+		// check if this corresponds to a DOF_ID
+		if ( !need_to_constrain ) {
+			Kphi=0.0;
+			phi0=0.0;
+		} else {
+			// get angle
+			numeric::xyzVector<core::Real> x,y,z, w; // atom coords
+			x = newres->atom( atm1 ).xyz();
+			y = newres->atom( atm2 ).xyz();
+			z = newres->atom( atm3 ).xyz();
+			w = newres->atom( atm4 ).xyz();
+		
+			phi0 = numeric::dihedral_radians ( x,y,z,w );
 
-						// mainchain
-						for ( Size j=1, j_end = newres->mainchain_torsions().size(); j<= j_end; ++j ) {
-							newpose.conformation().get_torsion_angle_atom_ids( id::TorsionID(1,id::BB,j) ,n1,n2,n3,n4);
-							if ( (n2.atomno() == atm2 && n3.atomno() == atm3) || (n2.atomno() == atm3 && n3.atomno() == atm2) )
-								need_to_constrain = false;
-						}
-					
-						// chi
-						for ( Size j=1, j_end = newres->nchi(); j<= j_end; ++j ) {
-							newpose.conformation().get_torsion_angle_atom_ids( id::TorsionID(1,id::CHI,j) ,n1,n2,n3,n4);
-							if ( (n2.atomno() == atm2 && n3.atomno() == atm3) || (n2.atomno() == atm3 && n3.atomno() == atm2) )
-								need_to_constrain = false;
-						}
-					}
+			//////// exceptions!
+			// fpd ignore proline C-ND which is handled by pro_close
+			if (restype.aa() == core::chemical::aa_pro) {
+				bool hasCD = (restype.atom_name(atm1)==" CD ") || (restype.atom_name(atm2)==" CD ")
+									|| (restype.atom_name(atm3)==" CD ") || (restype.atom_name(atm4)==" CD ");
+				bool hasN = (restype.atom_name(atm1)==" N  ") || (restype.atom_name(atm2)==" N  ")
+								 || (restype.atom_name(atm3)==" N  ") || (restype.atom_name(atm4)==" N  ");
+				if (hasCD && hasN)
+				Kphi=0.0;
+				phi0=0.0;
+			}
 
-					// check if this corresponds to a DOF_ID
-					if ( !need_to_constrain ) {
-						Kphi=0.0;
-						phi0=0.0;
-					} else {
-						// get angle
-						numeric::xyzVector<core::Real> x,y,z, w; // atom coords
-						x = newres->atom( atm1 ).xyz();
-						y = newres->atom( atm2 ).xyz();
-						z = newres->atom( atm3 ).xyz();
-						w = newres->atom( atm4 ).xyz();
-					
-						phi0 = numeric::dihedral_radians ( x,y,z,w );
+			//fpd  cutpoint variants
+			if ( restype.has_variant_type(chemical::CUTPOINT_UPPER) &&
+					 ( ( restype.atom_name(atm2) == " N  " && restype.atom_name(atm3) == " CA ") ||
+						 ( restype.atom_name(atm3) == " N  " && restype.atom_name(atm2) == " CA ")  ) ) {
+				Kphi=0.0;
+				phi0=0.0;
+			}
+		
+			//fpd ignore centroid torsion
+			if ( restype.atom_name(atm1) == " CEN" || restype.atom_name(atm4) == " CEN") {
+				Kphi=0.0;
+				phi0=0.0;
+			}
 
-						//////// exceptions!
-						// fpd ignore proline C-ND which is handled by pro_close
-						if (restype.aa() == core::chemical::aa_pro) {
-							bool hasCD = (restype.atom_name(atm1)==" CD ") || (restype.atom_name(atm2)==" CD ")
-												|| (restype.atom_name(atm3)==" CD ") || (restype.atom_name(atm4)==" CD ");
-							bool hasN = (restype.atom_name(atm1)==" N  ") || (restype.atom_name(atm2)==" N  ")
-											 || (restype.atom_name(atm3)==" N  ") || (restype.atom_name(atm4)==" N  ");
-							if (hasCD && hasN)
-							Kphi=0.0;
-							phi0=0.0;
-						}
+			//fpd cyd
+			if ( restype.aa() == aa_cys && restype.has_variant_type( chemical::DISULFIDE )  &&
+					(restype.atom_name(atm2) == " SG " || restype.atom_name(atm3) == " SG ") ) {
+				Kphi=0.0;
+				phi0=0.0;
+			}
 
-						//fpd  cutpoint variants
-						if ( restype.has_variant_type(chemical::CUTPOINT_UPPER) &&
-								 ( ( restype.atom_name(atm2) == " N  " && restype.atom_name(atm3) == " CA ") ||
-									 ( restype.atom_name(atm3) == " N  " && restype.atom_name(atm2) == " CA ")  ) ) {
-							Kphi=0.0;
-							phi0=0.0;
-						}
-					
-						// fpd ignore centroid torsion
-						if ( restype.atom_name(atm1) == " CEN" || restype.atom_name(atm4) == " CEN") {
-							Kphi=0.0;
-							phi0=0.0;
-						}
+			//fpd arg NH1-NH2 flip
+			if ( restype.aa() == aa_arg  &&
+					(   restype.atom_name(atm1) == " NH1" || restype.atom_name(atm4) == " NH1" 
+			     || restype.atom_name(atm1) == " NH2" || restype.atom_name(atm4) == " NH2") ) {
+				Kphi=0.0;
+				torsion_steps_[ tuple ] = phi_step = numeric::constants::f::pi;
+			}
 
-						// ignore N terminal hydrogens
-						if ( restype.has_variant_type(chemical::LOWER_TERMINUS) && 
-								 ( ( restype.atom_name(atm2) == " N  " && restype.atom_name(atm3) == " CA ") ||
-									 ( restype.atom_name(atm3) == " N  " && restype.atom_name(atm2) == " CA ")  ) ) {
-							Kphi=0.0;
-							phi0=0.0;
-						}
+			// N terminal hydrogens
+			if ( restype.has_variant_type(chemical::LOWER_TERMINUS) && 
+					 ( ( restype.atom_name(atm2) == " N  " && restype.atom_name(atm3) == " CA ") ||
+						 ( restype.atom_name(atm3) == " N  " && restype.atom_name(atm2) == " CA ")  ) ) {
+				Kphi=k_torsion_proton;
+				torsion_steps_[ tuple ] = phi_step = 2.0*numeric::constants::f::pi/3.0;
+			}
 
-						if ( restype.aa()==core::chemical::aa_trp || restype.aa()==core::chemical::aa_phe
-							|| restype.aa()==core::chemical::aa_tyr || restype.aa()==core::chemical::aa_his ) {
-						if ( ( restype.atom_name(atm2) == " CB " && restype.atom_name(atm3) == " CG ") ||
-								 ( restype.atom_name(atm3) == " CB " && restype.atom_name(atm2) == " CG ") ) {
-								Kphi=0.0;
-								phi0=0.0;
-							}
-						}
+			if (proton_chi) {
+				Kphi=k_torsion_proton;
+				if (restype.aa()==core::chemical::aa_tyr) {
+					torsion_steps_[ tuple ] = phi_step = numeric::constants::f::pi;
+				} else {
+					torsion_steps_[ tuple ] = phi_step = 2.0*numeric::constants::f::pi/3.0;
+				}
+			}
+		}
+		Kphis_[ tuple ] = Kphi;
+		torsions_[ tuple ] = phi0;
 
-						//fpd  proton CHIs
-						if (restype.aa()==core::chemical::aa_tyr &&
-								 ( ( restype.atom_name(atm2) == " CZ " && restype.atom_name(atm3) == " OH ") ||
-									 ( restype.atom_name(atm3) == " OH " && restype.atom_name(atm2) == " CZ ")  ) ) {
-							torsion_steps_[ tuple ] = phi_step = numeric::constants::f::pi;
-							Kphi=k_torsion_proton;
-						}
-					}
-					torsions_[ tuple ] = phi0;
-					Kphis_[ tuple ] = Kphi;
+		//TR << "torsion " << restype.name() << "  " 
+		//   << restype.atom_name(atm1) << " " <<  restype.atom_name(atm2) << " "
+		//   << restype.atom_name(atm3) << " " <<  restype.atom_name(atm4) << " --- " << phi0 << " , " << Kphi << std::endl;
 	}
 }
 
