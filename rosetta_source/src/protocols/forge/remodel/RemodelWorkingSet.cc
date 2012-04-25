@@ -253,7 +253,7 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 				if (LO.original_index != 0){ //in de novo case, the extension uses 0, don't increment.
 					LO.original_index = LO.original_index + (int)data.blueprint.size();
 				}
-				TR << "LO object second time " << LO.index << " " << LO.original_index << std::endl;
+				//TR << "LO object second time " << LO.index << " " << LO.original_index << std::endl;
 				temp.push_back(LO);
 			}
 			else if (data.blueprint[i].sstype == "."){ // parts to be copied
@@ -400,7 +400,7 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 		core::Size rep_number = option[ OptionKeys::remodel::repeat_structure];
 		std::string DSSP = data.dssp_updated_ss;
 
-		core::Size head, tail, headNew, tailNew;
+		core::Size head = -1, tail = -1, headNew = -1, tailNew = -1; //safety, init to negative values
 
 		if (option[ OptionKeys::remodel::repeat_structure].user() && input_pose.total_residue() == seg_size * rep_number){ //repeat and the blueprint do not match input pdb
 			//duplicate length of dssp and aastring
