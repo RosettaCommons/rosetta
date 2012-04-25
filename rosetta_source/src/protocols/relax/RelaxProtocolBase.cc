@@ -27,13 +27,17 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/rms_util.hh>
+//#include <core/scoring/rms_util.hh>
+//#include <core/sequence/Sequence.hh>
+#include <core/sequence/util.hh>
+#include <core/pose/util.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/kinematics/FoldTree.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
@@ -338,25 +342,42 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 	using namespace core::scoring;
 
 	core::pose::Pose constraint_target_pose = pose;
+	core::id::SequenceMapping seq_map; // A mapping of pose -> constraint_target_pose numbering
 
 	//fpd  Make ramping on by default if one of -constrain_relax_* is specified
 	//fpd  Let it be overridden if '-ramp_constraints false' is specified
-	if (constrain_coords_ && !option[ OptionKeys::relax::ramp_constraints ].user() )
+	if (constrain_coords_ && !option[ OptionKeys::relax::ramp_constraints ].user() ) {
 		ramp_down_constraints_ = true;
+	}
 
 	if( constrain_relax_to_native_coords_ ){
 		if ( get_native_pose() ) {
 			constraint_target_pose = *get_native_pose();
-			if ( pose.residue( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
-				/// Align the native pose to the input pose to avoid rotation/translation based
-				///  errors.
-				///fpd  (Only if not rooted on a VRT to avoid problems with density/symmetry)
-				core::scoring::calpha_superimpose_pose( constraint_target_pose, pose );
-			}
 		} else {
-			std::cerr << "Native pose needed for OptionKeys::relax::constrain_relax_to_native_coords" << std::endl;
-			utility_exit();
+			utility_exit_with_message("Native pose needed for OptionKeys::relax::constrain_relax_to_native_coords");
 		}
+		// TODO: Allow for input of an alignment on commandline
+		if (  pose.total_residue() == constraint_target_pose.total_residue() && 
+				( !coord_constrain_sidechains_ || pose.sequence() != constraint_target_pose.sequence() ) ) {
+			// We match in size and (for sidechains) sequence - we're looking at the traditional 1:1 mapping.
+			seq_map = core::id::SequenceMapping::identity( pose.total_residue() );
+		} else {
+			// Try to match on a PDB-identity basis, or a sequence alignment basis if that fails.
+			TR << "Length " << (coord_constrain_sidechains_?"and/or identities ":"") << 
+					"of input structure and native don't match - aligning on PDB identity or sequence." << std::endl;
+			seq_map = core::pose::sequence_map_from_pdbinfo( pose, constraint_target_pose );
+		}	
+		// Align the native pose to the input pose to avoid rotation/translation based
+		//  errors.
+		//fpd  (Only if not already rooted on a VRT to avoid problems with density/symmetry)
+		if ( pose.residue( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
+			core::id::SequenceMapping rev_seq_map( seq_map ); // constraint_target_pose -> pose mapping
+			rev_seq_map.reverse();
+			core::sequence::calpha_superimpose_with_mapping(constraint_target_pose, pose, rev_seq_map);
+		}
+	} else {
+		// Aligning to input - mapping is 1:1
+		seq_map = core::id::SequenceMapping::identity( pose.total_residue() );
 	}
 
 	protocols::loops::Loops coordconstraint_segments_;
@@ -367,61 +388,68 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 	}
 
 	if ( constrain_coords_ ) {
-		core::Size nnonvrt_cst_target = constraint_target_pose.total_residue();
-		core::Size nnonvrt_pose = pose.total_residue();
+		//if -relax::coord_cst_width is given, the code instead uses _bounded_ constraints on
+		//heavy atom positions, of the specified width
+		Real const coord_sdev( option[ OptionKeys::relax::coord_cst_stdev ] );
+    bool bounded( option[ OptionKeys::relax::coord_cst_width ].user() );
+		Real const cst_width( option[ OptionKeys::relax::coord_cst_width ]() );
 
-		while ( pose.residue( nnonvrt_pose ).aa() == core::chemical::aa_vrt ) { nnonvrt_pose--; }
-		while ( constraint_target_pose.residue( nnonvrt_cst_target ).aa() == core::chemical::aa_vrt ) { nnonvrt_cst_target--; }
-
-		//fpd This isn't strictly necessary, the cst target only needs to define all constrained residues
-		//fpd Probably still a good sanity check
-		if ( nnonvrt_pose != nnonvrt_cst_target ) {
-			std::cerr << "ERROR coord constraint pose length mismatch with input pose: " << nnonvrt_cst_target << " vs. " << nnonvrt_pose << std::endl;
-			utility_exit();
-		}
-
+		// Add virtual root
 		if ( pose.residue( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
 			pose.append_residue_by_jump
 				( *ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map( "VRT" ) ),
 					pose.total_residue()/2 );
 		}
 
-		//fpd if -relax::coord_cst_width is given, the code instead uses _bounded_ constraints on
-		//fpd    CA positions, of the specified width
-		if (!option[ OptionKeys::relax::coord_cst_width ].user() ) {
-			Size nres = pose.total_residue();
-			Real const coord_sdev( option[ OptionKeys::relax::coord_cst_stdev ] );
-				// default is 0.5 (from idealize) -- maybe too small
-			for ( Size i = 1; i<= nres; ++i ) {
-				if ( (Size)i==(Size)pose.fold_tree().root() ) continue;
-				if( coordconstraint_segments_.is_loop_residue( i ) ) {
-					Residue const & nat_i_rsd( constraint_target_pose.residue(i) );
-					core::Size last_atom( nat_i_rsd.last_backbone_atom() );
-					if ( coord_constrain_sidechains_ ) { last_atom = nat_i_rsd.nheavyatoms(); }
-					for ( Size ii = 1; ii<= last_atom; ++ii ) {
-						pose.add_constraint( new CoordinateConstraint(
-							AtomID(ii,i), AtomID(1,nres), nat_i_rsd.xyz( ii ),
-							new HarmonicFunc( 0.0, coord_sdev ) ) );
+		core::Size nres = pose.total_residue();
+		core::Size n_targ_res = constraint_target_pose.total_residue();
+
+		for ( Size i = 1; i<= nres; ++i ) {
+			if ( pose.fold_tree().is_root(i) ) continue; // Skip root virtual atom.
+
+			if ( coordconstraint_segments_.is_loop_residue( i ) ) {
+				Size j(seq_map[i]);
+				if( j == 0 ) continue; 
+				assert( j <= n_targ_res ); // Should be, if map was set up properly.
+
+				Residue const & pose_i_rsd( pose.residue(i) );
+				Residue const & targ_j_rsd( constraint_target_pose.residue(j) );
+				core::Size last_atom( pose_i_rsd.last_backbone_atom() );
+				core::Size last_targ_atom( targ_j_rsd.last_backbone_atom() );
+				bool use_atom_names(false);
+				if ( coord_constrain_sidechains_ ) { 
+					last_atom = pose_i_rsd.nheavyatoms();
+					last_targ_atom = targ_j_rsd.nheavyatoms();
+					use_atom_names = pose_i_rsd.name() != targ_j_rsd.name(); // Don't bother with lookup if they're the same residue type.
+				}	
+				if ( !use_atom_names && last_atom != last_targ_atom ) { 
+					TR.Warning << "Warning: Coordinate constraint reference residue has different number of " << (coord_constrain_sidechains_?"heavy":"backbone") << " atoms: ref. " 
+						<< targ_j_rsd.name() << " (res " << j << ") versus  " << pose_i_rsd.name() << " (res " << i << "). - skipping." << std::endl;
+					continue; 
+				} 
+				for ( Size ii = 1; ii<= last_atom; ++ii ) {
+					Size jj(ii);
+					if ( use_atom_names ) { 
+						std::string atomname( pose_i_rsd.atom_name(ii) );
+						if ( ! targ_j_rsd.has(atomname) ) {
+							TR.Debug << "Skip adding coordinate constraints for atom " << atomname << " of residue " << i << " (" << pose_i_rsd.name() << 
+								") - not found in residue " << j << " (" << targ_j_rsd.name() << ") of reference structure." << std::endl; 
+							continue;
+						}	
+						jj = targ_j_rsd.atom_index( atomname );
 					}
-				}
-			}
-		} else {
-			Size nres = pose.total_residue();
-			Real const cst_width( option[ OptionKeys::relax::coord_cst_width ]() );
-			Real const coord_sdev( option[ OptionKeys::relax::coord_cst_stdev ] );
-			for ( Size i = 1; i<= nres - 1; ++i ) {
-				if( coordconstraint_segments_.is_loop_residue( i ) ) {
-					Residue const & nat_i_rsd( constraint_target_pose.residue(i) );
-					core::Size last_atom( nat_i_rsd.last_backbone_atom() );
-					if ( coord_constrain_sidechains_ ) { last_atom = nat_i_rsd.nheavyatoms(); }
-					for ( Size ii = 1; ii<= last_atom; ++ii ) {
-						pose.add_constraint( new CoordinateConstraint(
-							AtomID(ii,i), AtomID(1,nres), nat_i_rsd.xyz( ii ),
-							new BoundFunc( 0, cst_width, coord_sdev, "xyz" )) );
+					core::scoring::constraints::FuncOP function;
+					if( bounded ) {
+						function = new BoundFunc( 0, cst_width, coord_sdev, "xyz" );
+					} else {
+						function = new HarmonicFunc( 0.0, coord_sdev );
 					}
-				}
-			}
-		}
+					pose.add_constraint( new CoordinateConstraint(
+						AtomID(ii,i), AtomID(1,nres), targ_j_rsd.xyz( jj ), function ) );
+				} // for atom
+			} // if(loop)
+		} // for residue
+
 		if ( get_scorefxn()->get_weight( coordinate_constraint ) == 0 ) {
 			get_scorefxn()->set_weight( coordinate_constraint, 0.5 );
 		}

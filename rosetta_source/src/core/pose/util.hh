@@ -39,6 +39,7 @@
 #include <core/kinematics/RT.fwd.hh>
 #include <core/kinematics/tree/Atom.fwd.hh>
 #include <core/scoring/ScoreType.hh>
+#include <core/id/SequenceMapping.fwd.hh>
 
 // Package headers
 #include <core/pose/util.tmpl.hh>
@@ -628,6 +629,10 @@ initialize_disulfide_bonds(
 
 ///@brief Returns a string giving the pose's tag if there is such a thing or "UnknownTag" otherwise.
 std::string extract_tag_from_pose( core::pose::Pose &pose );
+
+/// @brief Create a sequence map of first pose onto the second, matching the PDBInfo
+///    If the PDBInfo of either Pose is missing or invalid, do a simple sequence alignment matching.
+core::id::SequenceMapping sequence_map_from_pdbinfo( Pose const & first, Pose const & second );
 
 } // pose
 } // core

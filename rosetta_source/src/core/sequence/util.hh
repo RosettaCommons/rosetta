@@ -159,6 +159,13 @@ calpha_superimpose_via_alignment(
 	core::sequence::SequenceAlignment const & aln
 ); */
 
+core::Real
+calpha_superimpose_with_mapping(
+	core::pose::Pose & mod_pose,
+	core::pose::Pose const & ref_pose,
+	core::id::SequenceMapping const & mapping // mod_pose -> ref_pose
+);
+
 } // sequence
 } // core
 

@@ -781,7 +781,7 @@ calpha_superimpose_with_mapping(
 			if ( ! ref_pose.residue(ref_resi).has(atom_name) ) continue;
 
 			id::AtomID const id1( mod_pose.residue(mod_resi).atom_index(atom_name), mod_resi );
-			id::AtomID const id2( ref_pose.residue(mod_resi).atom_index(atom_name), mod_resi );
+			id::AtomID const id2( ref_pose.residue(ref_resi).atom_index(atom_name), ref_resi );
 			atom_map.set( id1, id2 );
 		}
 	}

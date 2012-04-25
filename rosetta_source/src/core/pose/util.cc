@@ -61,6 +61,9 @@
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 #include <core/conformation/Residue.hh>
+#include <core/id/SequenceMapping.hh>
+#include <core/sequence/Sequence.hh>
+#include <core/sequence/util.hh>
 
 #include <utility/vector1.hh>
 
@@ -2370,6 +2373,24 @@ std::string extract_tag_from_pose( core::pose::Pose &pose )
 	}
 
 	return std::string("UnknownTag");
+}
+
+core::id::SequenceMapping sequence_map_from_pdbinfo( Pose const & first, Pose const & second ) {
+	core::id::SequenceMapping retval(first.total_residue(), second.total_residue());
+	core::pose::PDBInfoCOP first_pdbinfo = first.pdb_info();
+	core::pose::PDBInfoCOP second_pdbinfo = second.pdb_info();
+
+	if ( first_pdbinfo && !first_pdbinfo->obsolete() && second_pdbinfo && !second_pdbinfo->obsolete() ) {
+		for ( core::Size ii(1); ii<= first.total_residue(); ++ii ) {
+			// pdb2pose returns 0 for "not found" - 0 is also used for "not found" for SequenceMapping.
+			retval[ii] = second_pdbinfo->pdb2pose( first_pdbinfo->chain(ii), first_pdbinfo->number(ii), first_pdbinfo->icode(ii) );
+		}
+	} else {
+		TR << "One or both poses do not have usable PDBInfo, using sequence alignment instead." << std::endl;
+		retval = core::sequence::map_seq1_seq2( new core::sequence::Sequence(first), new core::sequence::Sequence(second) );
+	}
+	
+	return retval;
 }
 
 } // pose
