@@ -55,6 +55,8 @@ int main(int argc, char* argv[]) {
   const string input_file = option[in::file::silent]()[1];
   const string output_file = option[out::file::silent]();
 
+	cout << "Reference: " << ref_sequence << endl;
+
   SilentFileData sfd_in, sfd_out;
   sfd_in.read_file(input_file);
 
@@ -65,7 +67,8 @@ int main(int argc, char* argv[]) {
     SilentStructOP decoy = sfd_in[*i];
     string sequence = decoy->sequence().one_letter_sequence();
 
-    if (sequence == ref_sequence) {
+    bool matches = ref_sequence.compare(0, ref_sequence.length(), sequence, 0, ref_sequence.length()) == 0;
+    if (matches) {
       sfd_out.write_silent_struct(*decoy, output_file, false);
       ++num_good;
     } else {
