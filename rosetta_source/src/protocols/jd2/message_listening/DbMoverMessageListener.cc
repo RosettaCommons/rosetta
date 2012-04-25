@@ -17,6 +17,9 @@
 #include <utility/string_util.hh>
 
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+
 
 namespace protocols {
 namespace jd2 {
@@ -26,7 +29,11 @@ static basic::Tracer TR("protocols.jd2.message_listening.DbMoverMessageListener"
 
 DbMoverMessageListener::DbMoverMessageListener():
 protocol_id_(0)
-{}
+{
+	if( basic::options::option[basic::options::OptionKeys::out::database_protocol_id].user() ){
+		protocol_id_ = basic::options::option[basic::options::OptionKeys::out::database_protocol_id];
+	}
+}
 
 bool DbMoverMessageListener::request(std::string identifier, std::string & return_data) {
 
@@ -37,7 +44,7 @@ bool DbMoverMessageListener::request(std::string identifier, std::string & retur
 	if(protocol_id_==0){need_slave_data=true;}
 
 	if(!batch_ids_.count( identifier )){
-		TR << "new batch id recieved" << std::endl;
+		TR << "new batch id received" << std::endl;
 		//haven't seen this mover before, initialize to 0
 		batch_ids_[identifier]=0;
 		need_slave_data=true;
@@ -48,7 +55,7 @@ bool DbMoverMessageListener::request(std::string identifier, std::string & retur
 
 void DbMoverMessageListener::recieve(std::string data) {
 
-	TR << "recieved this message from slave: " << data << std::endl;
+	TR << "Received this message from slave: " << data << std::endl;
 
 	deserialize_data(data);
 }

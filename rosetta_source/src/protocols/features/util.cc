@@ -29,6 +29,8 @@
 
 #include <basic/Tracer.hh>
 #include <basic/database/sql_utils.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 
 #include <utility/string_util.hh>
 #include <utility/exit.hh>
@@ -72,8 +74,6 @@ get_protocol_and_batch_id(
 	string identifier,
 	sessionOP db_session
 ) {
-
-    
 	int protocol_id = 0;
 	int batch_id = 0;
 	ProtocolFeaturesOP protocol_features = new ProtocolFeatures();

@@ -233,6 +233,9 @@ private:
 	/// @brief access into jobs_ vector indicating current job.  Contains more information than current_job_ in that it can be incremented...
 	core::Size current_job_id_;
 
+	/// @brief access into jobs_ bector indicating the previous job.  Used with the -jd2:delete_old_poses option for deleting unnecessary poses
+	core::Size last_completed_job_;
+
 	//this is if NOT defined - keep this static pointer for singleton management only in non-multithreaded case
 #ifndef MULTITHREADED
 	static JobDistributor * instance_;
