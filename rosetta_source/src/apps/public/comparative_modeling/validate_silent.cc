@@ -11,7 +11,6 @@
 /// @author Christopher Miles (cmiles@uw.edu)
 
 // C/C++ headers
-#include <fstream>
 #include <iostream>
 #include <string>
 
@@ -27,31 +26,21 @@
 // Project headers
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
+#include <core/sequence/util.hh>
+
+#define PCT_THRESHOLD 0.9
 
 using namespace std;
-
-void read_target_sequence(const string& filename, string* target_sequence) {
-  assert(target_sequence);
-
-  ifstream in(filename.c_str());
-  if (!in.is_open()) {
-    utility_exit_with_message("Failed to open input silent file");
-  }
-
-	// SEQUENCE: MNDDVDIQQSYPFSIETMPVPKKLKVGETAEIRCQLH
-	string line;
-  getline(in, line);
-  in.close();
-
-	// MNDDVDIQQSYPFSIETMPVPKKLKVGETAEIRCQLH
-	*target_sequence = line.substr(10);
-}
 
 int main(int argc, char* argv[]) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
-	using namespace core::io::silent;
+  using namespace core::io::silent;
   devel::init(argc, argv);
+
+  if (!option[in::file::fasta].user()) {
+    utility_exit_with_message("Failed to provide required argument -in:file:fasta");
+  }
 
   if (!option[in::file::silent].user()) {
     utility_exit_with_message("Failed to provide required argument -in:file:silent");
@@ -61,30 +50,36 @@ int main(int argc, char* argv[]) {
     utility_exit_with_message("Failed to provide required argument -out:file:silent");
   }
 
+  utility::vector1<string> sequences = core::sequence::read_fasta_file_str(option[in::file::fasta]()[1]);
+  const string ref_sequence = sequences[1];
   const string input_file = option[in::file::silent]()[1];
   const string output_file = option[out::file::silent]();
 
-  string target_sequence;
-  read_target_sequence(input_file, &target_sequence);
+  SilentFileData sfd_in, sfd_out;
+  sfd_in.read_file(input_file);
 
-	SilentFileData sfd_in, sfd_out;
-	sfd_in.read_file(input_file);
+  size_t num_good = 0, num_bad = 0;
 
-	size_t num_good = 0, num_bad = 0;
+  utility::vector1<string> tags = sfd_in.tags();
+  for (utility::vector1<string>::const_iterator i = tags.begin(); i != tags.end(); ++i) {
+    SilentStructOP decoy = sfd_in[*i];
+    string sequence = decoy->sequence().one_letter_sequence();
 
-	utility::vector1<string> tags = sfd_in.tags();
-	for (utility::vector1<string>::const_iterator i = tags.begin(); i != tags.end(); ++i) {
-		SilentStructOP decoy = sfd_in[*i];
-		string sequence = decoy->sequence().one_letter_sequence();
+    if (sequence == ref_sequence) {
+      sfd_out.write_silent_struct(*decoy, output_file, false);
+      ++num_good;
+    } else {
+      cerr << "Removed tag: " << *i << " seq: " << sequence << endl;
+      ++num_bad;
+    }
+  }
 
-		if (sequence == target_sequence) {
-			sfd_out.write_silent_struct(*decoy, output_file, false);
-			++num_good;
-		} else {
-			cerr << "Removed tag: " << *i << " seq: " << sequence << endl;
-			++num_bad;
-		}
-	}
+  // print summary statistics
+  double pct_good = num_good / (num_good + num_bad);
+  double pct_bad = num_bad / (num_good + num_bad);
+  cout << "pct_good: " << pct_good << " pct_bad: " << pct_bad << endl;
 
-	cout << "good: " << num_good << " bad: " << num_bad << endl;
+  // if the percentage of failures exceeds a threshold, flag the file as corrupt
+  // to external callers through return codes
+  return (pct_good >= PCT_THRESHOLD) ? 0 : 1;
 }
