@@ -1,3 +1,4 @@
+# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
 #
 # Project settings for rosetta sources
 # (c) Copyright Rosetta Commons Member Institutions.
@@ -123,6 +124,7 @@ sources = {
 	],
          "pilot/grant" : [
              #"RedesignXtal_Test", # /* Grant,Documentation Location,Demo Location */
+	     #"AbInitio_MPI",
          ],
  	"pilot/johnk" : [
                 #"chet_trp_to_gly",
