@@ -73,6 +73,7 @@ sources = {
 		"score_aln",
 		"score_aln2",
 		"super_aln",
+		"validate_silent",
 	],
 	"public/ddg": [
 		"ddg_monomer",
