@@ -117,8 +117,8 @@ static basic::Tracer TR("core.scoring.CartesianBondedEnergy");
 // default spring constants
 static const Real K_LENGTH=300.0;
 static const Real K_ANGLE=150.0;
-static const Real K_TORSION=100.0;
-static const Real K_TORSION_PROTON=20.0;  // proton chi
+static const Real K_TORSION=150.0;
+static const Real K_TORSION_PROTON=50.0;  // proton chi
 
 //////////////////////
 /// EnergyMethod Creator
@@ -310,7 +310,6 @@ TorsionDatabase::lookup(
 			if ( restype.aa() == aa_arg  &&
 					(   restype.atom_name(atm1) == " NH1" || restype.atom_name(atm4) == " NH1" 
 			     || restype.atom_name(atm1) == " NH2" || restype.atom_name(atm4) == " NH2") ) {
-				Kphi=0.0;
 				torsion_steps_[ tuple ] = phi_step = numeric::constants::f::pi;
 			}
 
