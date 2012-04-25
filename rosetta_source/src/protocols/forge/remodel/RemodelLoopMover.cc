@@ -362,6 +362,9 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 					Size tempCut = loop.cut()+(segment_length*rep);
 					if (tempStop > repeat_pose.total_residue()){
 							tempStop = repeat_pose.total_residue();
+						if ( tempCut > tempStop ){
+							tempCut = tempStop;
+						}
 					}
 					LoopOP newLoop = new Loop( tempStart, tempStop , tempCut);
 					//TR << "adding loop in repeat propagation: " << tempStart << " " << tempStop <<  " " << tempCut << std::endl;
@@ -526,6 +529,9 @@ void RemodelLoopMover::repeat_generation(Pose &pose, Pose & repeat_pose)
           Size tempCut = loop.cut()+(segment_length*rep);
           if (tempStop > repeat_pose.total_residue()){
               tempStop = repeat_pose.total_residue();
+						if ( tempCut > tempStop ){
+							tempCut = tempStop;
+						}
           }
           LoopOP newLoop = new Loop( tempStart, tempStop , tempCut);
           //TR << "adding loop in repeat propagation: " << tempStart << " " << tempStop <<  " " << tempCut << std::endl;
@@ -734,6 +740,9 @@ void RemodelLoopMover::repeat_propagation( //utility function
           Size tempCut = loop.cut()+(segment_length*rep);
           if (tempStop > repeat_pose.total_residue()){
               tempStop = repeat_pose.total_residue();
+						if ( tempCut > tempStop ){
+							tempCut = tempStop;
+						}
           }
           LoopOP newLoop = new Loop( tempStart, tempStop , tempCut);
           //TR << "adding loop in repeat propagation: " << tempStart << " " << tempStop <<  " " << tempCut << std::endl;
