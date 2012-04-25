@@ -250,7 +250,10 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 				LineObject LO = data.blueprint[i];
 				//update indeces
 				LO.index = LO.index + (int)data.blueprint.size();
-				LO.original_index = LO.original_index + (int)data.blueprint.size();
+				if (LO.original_index != 0){ //in de novo case, the extension uses 0, don't increment.
+					LO.original_index = LO.original_index + (int)data.blueprint.size();
+				}
+				TR << "LO object second time " << LO.index << " " << LO.original_index << std::endl;
 				temp.push_back(LO);
 			}
 			else if (data.blueprint[i].sstype == "."){ // parts to be copied
@@ -425,6 +428,17 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 				headNew = data.blueprint[ idFront-1 ].index;
 				tailNew = data.blueprint[ idBack-seg_size-1 ].index + seg_size;
 			} else { //normal build in the first segment
+				head = data.blueprint[ idFront-1 ].original_index;
+				tail = data.blueprint[ idBack-1 ].original_index;
+				headNew = data.blueprint[ idFront-1 ].index;
+				tailNew = data.blueprint[ idBack-1 ].index;
+			}
+		} else if ( option[ OptionKeys::remodel::repeat_structure].user() && temp_for_copy.empty()) { //de novo case
+			//std::cout << "idFront " << idFront << " idBack " << idBack << std::endl;
+			Size range_limit = data.blueprint.size();
+			if (idBack >= range_limit){ // can't assign beyond blueprint definition, as indices are missing as extensions
+				idFront = 1;
+				idBack = range_limit;
 				head = data.blueprint[ idFront-1 ].original_index;
 				tail = data.blueprint[ idBack-1 ].original_index;
 				headNew = data.blueprint[ idFront-1 ].index;
