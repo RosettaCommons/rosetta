@@ -351,28 +351,26 @@ P_AA::get_Paa_pp_deriv(
 		Angle const psi( res.mainchain_torsion( psi_id ));
 		Probability dp_dphi( 0.0 ), dp_dpsi( 0.0 );
 
-		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::p_aa_pp_nogridshift ] ) { // the format of p_aa_pp changed from using i*10+5 to i*10 as grid
-			Probability const interp_p = numeric::interpolation::periodic_range::full::bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ], dp_dphi, dp_dpsi );
-			//Energy Paa_ppE = -std::log( interp_p / P_AA_[ aa ] );
+		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
 			switch ( tor_id.torsion()  ) {
+			case phi_id :
+				return P_AA_pp_energy_splines_[ aa ].dFdx( phi, psi );
+			case psi_id :
+				return P_AA_pp_energy_splines_[ aa ].dFdy( phi, psi );
+			default :
+				return EnergyDerivative( 0.0 );
+			}
+		}else {
+			if ( basic::options::option[ basic::options::OptionKeys::corrections::score::p_aa_pp_nogridshift ] ) { // the format of p_aa_pp changed from using i*10+5 to i*10 as grid
+				Probability const interp_p = numeric::interpolation::periodic_range::full::bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ], dp_dphi, dp_dpsi );
+				//Energy Paa_ppE = -std::log( interp_p / P_AA_[ aa ] );
+				switch ( tor_id.torsion()  ) {
 				case phi_id :
 					return /*dlog_Paa_dphi = */ -( 1.0 / interp_p ) * dp_dphi; break;
 				case psi_id :
 					return /*dlog_Paa_dpsi = */ -( 1.0 / interp_p ) * dp_dpsi; break;
 				default :
 					return EnergyDerivative( 0.0 );
-			}
-		}
-		else {
-			Real interp_p( 0 );
-			if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
-				switch ( tor_id.torsion()  ) {
-					case phi_id :
-						return P_AA_pp_energy_splines_[ aa ].dFdx( phi, psi );
-					case psi_id :
-						return P_AA_pp_energy_splines_[ aa ].dFdy( phi, psi );
-					default :
-						return EnergyDerivative( 0.0 );
 				}
 			} else {
 				Real const interp_p = bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ], dp_dphi, dp_dpsi );
