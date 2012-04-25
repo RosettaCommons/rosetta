@@ -121,6 +121,7 @@ using utility::vector1;
 
 OPT_KEY ( String, out_pdb )
 OPT_KEY ( Boolean, vary_geometry )
+OPT_KEY ( Boolean, constrain_P )
 OPT_KEY ( Boolean, ready_set_only )
 OPT_KEY ( IntegerVector, fixed_res )
 OPT_KEY ( IntegerVector, cutpoint_open )
@@ -600,6 +601,7 @@ pdb_minimizer() {
 	rsd_set = core::chemical::ChemicalManager::get_instance()->
 	          residue_type_set ( "rna" );
 	bool vary_bond_geometry_ =  option[ vary_geometry ];
+	bool constrain_phosphate =  option[ constrain_P ];
 	bool ready_set_only_ =  option[ ready_set_only ];
 	utility::vector1< core::Size > const fixed_res_list = option[ fixed_res ]();
 	utility::vector1< core::Size > const cutpoint_list = option[cutpoint_open]();
@@ -758,7 +760,31 @@ pdb_minimizer() {
 
 	}
 
-	std::cout << std::endl;
+	//constrain phosphate mode
+	if (constrain_phosphate) {
+		for ( Size i = 1; i <= nres; ++i ) {
+			if ( pose.residue ( i ).aa() == core::chemical::aa_vrt ) continue;
+			
+			bool is_fixed_res = false;
+			for ( Size j = 1; j <= fixed_res_list.size(); ++j ) {
+				if (i == fixed_res_list[j]) {
+					is_fixed_res = true;
+					break;
+				}
+			}
+
+			if (is_fixed_res) continue;
+
+			Real const coord_sdev ( 0.3 );
+			Size const my_anchor ( virtual_res_pos ); //anchor on virtual residue
+			ConstraintSetOP cst_set = pose.constraint_set()->clone();
+			Residue const & rsd ( pose.residue ( i ) );
+			Size const atm_indexP = rsd.atom_index ( "P" );
+			cst_set -> add_constraint ( new CoordinateConstraint ( AtomID ( atm_indexP, i ), AtomID ( 1, my_anchor ), rsd.xyz ( atm_indexP ), new HarmonicFunc ( 0.0, coord_sdev ) ) );
+			pose.constraint_set ( cst_set );
+			scorefxn->set_weight ( coordinate_constraint, 10 );
+		}
+	}
 
 	//Vary Geometry
 	if ( vary_bond_geometry_ ) {
@@ -798,6 +824,7 @@ pdb_minimizer() {
 		MinimizerOptions min_options_dfpmin_no_nb ( "dfpmin", dummy_tol, false, false, false );
 		min_options_dfpmin_no_nb.max_iter ( std::min( 3000, std::max( 1000, int(nres_moving * 12) ) ) );
 		minimizer.run ( pose, mm, *scorefxn, min_options_dfpmin_no_nb );
+		scorefxn -> show ( std::cout, pose );
 		Real const score = ( (*scorefxn) (pose) );
 		Real const edens_score = ( (*edens_scorefxn) (pose) );
 		if (score > score_before || edens_score > edens_score_before * 0.9) {
@@ -824,6 +851,7 @@ main ( int argc, char * argv [] ) {
 	utility::vector1< std::string > blank_string_vector;
 	NEW_OPT ( out_pdb, "name of output pdb file", "" );
 	NEW_OPT ( vary_geometry, "vary geometry", false );
+	NEW_OPT ( constrain_P, "constrain phosphate", false );
 	NEW_OPT ( fixed_res, "optional: residues to be held fixed in minimizer", blank_size_vector );
 	NEW_OPT ( cutpoint_open, "optional: chainbreak in full sequence", blank_size_vector );
 	NEW_OPT ( ready_set_only, "output the pdb without minimization", false );

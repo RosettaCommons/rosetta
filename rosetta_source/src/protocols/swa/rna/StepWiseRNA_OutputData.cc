@@ -201,7 +201,7 @@ namespace rna {
 				utility_exit_with_message("debug_silent_file ("+debug_silent_file+") SHOULD exist!");
 			} 
 
-			//remove_file(debug_silent_file);
+			remove_file(debug_silent_file);
 
 			if(trail_num==1){
 				first_trail_pose_from_silent_file=pose_from_silent_file;
