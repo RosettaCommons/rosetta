@@ -69,6 +69,7 @@ GreedyOptMutationMover::GreedyOptMutationMover() :
 	scorefxn_( NULL ),
 	relax_mover_( NULL ),
 	filter_( NULL ),
+	filter_delta_( 0 ),
 	sample_type_( "low" ),
 	dump_pdb_( false ),
 	diversify_lvl_( 1 ),
@@ -82,6 +83,10 @@ GreedyOptMutationMover::GreedyOptMutationMover() :
 		TR << "WARNING: the sample type, " << sample_type_ << ", is not defined. Use \'high\' or \'low\'." << std::endl;
 		runtime_assert( false );
   }
+	//filter_delta should always be a scalar!
+	if( filter_delta_ < Real( 0 ) ) filter_delta_ = ( Real( -1 ) * filter_delta_ );
+	//default diversity to all 20 aa's if specified filter_delta but did not spec diversify_lvl
+	if( filter_delta_ != Real( 0 ) && diversify_lvl_ == Size( 1 ) ) diversify_lvl_ = 20;
 }
 
 //full ctor
@@ -90,6 +95,7 @@ GreedyOptMutationMover::GreedyOptMutationMover(
 	core::scoring::ScoreFunctionOP scorefxn,
 	protocols::moves::MoverOP relax_mover,
 	protocols::filters::FilterOP filter,
+	core::Real filter_delta,
 	std::string sample_type,
 	bool dump_pdb,
 	core::Size diversify_lvl,
@@ -114,6 +120,8 @@ GreedyOptMutationMover::GreedyOptMutationMover(
 		TR << "WARNING: the sample type, " << sample_type_ << ", is not defined. Use \'high\' or \'low\'." << std::endl;
 		runtime_assert( false );
   }
+	//filter_delta should always be a scalar!
+	if( filter_delta_ < Real( 0 ) ) filter_delta_ = ( Real( -1 ) * filter_delta_ );
 }
 
 //destruction!
@@ -168,6 +176,15 @@ GreedyOptMutationMover::filter( protocols::filters::FilterOP filter ){
 
 protocols::filters::FilterOP GreedyOptMutationMover::filter() const{
 	return filter_;
+}
+
+void
+GreedyOptMutationMover::filter_delta( Real filter_delta ){
+	filter_delta_ = filter_delta;
+}
+
+Real GreedyOptMutationMover::filter_delta() const{
+	return filter_delta_;
 }
 
 void
@@ -309,6 +326,7 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 		//uses cmp_pair_vec_by_first_vec_val to sort based on second val in
 		//first pair element of vector in pair( size, vec( pair ) )
 		std::sort( seqpos_aa_val_vec_.begin(), seqpos_aa_val_vec_.end(), cmp_pair_vec_by_first_vec_val );
+
 	}
 
 	TR<<"Combining sorted independently optimal mutations… " << std::endl;
@@ -325,13 +343,26 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 		Size resi( seqpos_aa_val_vec_[ iseq ].first );
 		//the best aa is the first part of the first element of the aa/val vector
 		AA target_aa( seqpos_aa_val_vec_[ iseq ].second[ 1 ].first );
+
 		//allow stochastic sampling of suboptimal restypes
-		if( diversify_lvl_ > 1 ){
-			//aa_rank may exceed size of aa/val vector at this seqpos
+		if( diversify_lvl() > 1 ){
+			//smaller of user-def lvl and actual size of vector
 			Size max_diversify_lvl( std::min( diversify_lvl_, seqpos_aa_val_vec_[ iseq ].second.size() ) );
+			//ifdef filter_delta, redef max div lvl for this seqpos
+			if( filter_delta() != Real( 0 ) ){
+				Real best_val( seqpos_aa_val_vec_[ iseq ].second[ 1 ].second );
+				for( Size iaa = 2; iaa <= max_diversify_lvl; ++iaa ){
+					Real val( seqpos_aa_val_vec_[ iseq ].second[ iaa ].second );
+					//if this aa is worse than filter_delta break out
+					if( val - best_val > filter_delta() ) break;
+					//else set max to this one
+					else max_diversify_lvl = iaa;
+				}
+			}
 			Size aa_rank( static_cast< Size >( RG.uniform() * max_diversify_lvl + 1 ) );
 			target_aa = seqpos_aa_val_vec_[ iseq ].second[ aa_rank ].first;
 		}
+
 		//dont need to make a "mutation" if target_aa is same as original aa
 		if( target_aa == pose.residue( resi ).type().aa() ) continue;
 
@@ -387,6 +418,12 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagPtr const tag,
 	sample_type( tag->getOption< std::string >( "sample_type", "low" ) );
 	//load diversify_lvl
 	diversify_lvl( tag->getOption< core::Size >( "diversify_lvl", core::Size( 1 ) ) );
+	//load filter_delta
+	filter_delta( tag->getOption< core::Size >( "filter_delta", core::Real( 0 ) ) );
+	//filter_delta should always be a scalar!
+	if( filter_delta() < Real( 0 ) ) filter_delta( -1 * filter_delta() );
+	//default diversity to all 20 aa's if specified filter_delta but did not spec diversify_lvl
+	if( filter_delta() != Real( 0 ) && diversify_lvl() == Size( 1 ) ) diversify_lvl( 20 );
 	//load scorefxn
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	//load dump_pdb

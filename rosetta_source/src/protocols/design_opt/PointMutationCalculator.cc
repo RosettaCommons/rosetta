@@ -60,9 +60,9 @@ using std::pair;
 ///@brief default ctor
 PointMutationCalculator::PointMutationCalculator() :
 	task_factory_( NULL ),
+	relax_mover_( NULL ),
 //	filters_( NULL ), /*TODO: this throws a warning!*/
 //	sample_type_( "low" )
-	relax_mover_( NULL ),
 	scorefxn_( NULL ),
 	dump_pdb_( false )
 {}

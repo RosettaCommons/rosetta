@@ -44,6 +44,7 @@ public:
 		core::scoring::ScoreFunctionOP scorefxn,
 		protocols::moves::MoverOP relax_mover,
 		protocols::filters::FilterOP filter,
+		core::Real filter_delta = 0,
 		std::string sample_type = "low",
 		bool dump_pdb = false,
 		core::Size diversify_lvl = core::Size( 1 ), 
@@ -57,7 +58,8 @@ public:
 	virtual std::string get_name() const;
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new GreedyOptMutationMover ); }
 
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &,
+			protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	virtual ~GreedyOptMutationMover();
 	core::pack::task::TaskFactoryOP task_factory() const;
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );
@@ -65,6 +67,8 @@ public:
 	void scorefxn( core::scoring::ScoreFunctionOP scorefxn );
 	protocols::moves::MoverOP relax_mover() const;
 	void relax_mover( protocols::moves::MoverOP relax_mover );
+	core::Real filter_delta() const;
+	void filter_delta( core::Real filter_delta );
 	protocols::filters::FilterOP filter() const;
 	void filter( protocols::filters::FilterOP filter );
 	bool dump_pdb() const;
@@ -79,6 +83,7 @@ private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 	protocols::moves::MoverOP relax_mover_;
+	core::Real filter_delta_;
 	protocols::filters::FilterOP filter_;
 	std::string sample_type_;
 	bool dump_pdb_;
