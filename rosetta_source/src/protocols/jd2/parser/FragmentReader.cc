@@ -114,6 +114,11 @@ FragmentReader::parse_tag( TagPtr const & tag )
 		if( blueprint != "" ){
 			blueprint_ = new protocols::jd2::parser::BluePrint( blueprint );
 			ss_ = blueprint_->secstruct();
+			// pick fragment using sequence information (default false)
+			bool use_sequence_bias( tag->getOption<bool>( "use_sequence_bias", 0 ) );
+			if( use_sequence_bias ) {
+				aa_ = blueprint_->sequence();
+			}
 		}
 
 		// using abego definition which is given by blueprint file
