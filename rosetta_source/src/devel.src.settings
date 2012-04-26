@@ -83,6 +83,7 @@ sources = {
                 "BuildingBlockInterfaceOperation",
                 "RestrictToNonzeroSASAOperation",
 		"RestrictIdentitiesToRepackingOperation",
+		"OligomericAverageDegreeFilter",
         ],
 	"devel/metal_interface": [
 		"AddMetalSiteConstraints",

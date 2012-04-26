@@ -25,6 +25,8 @@
 #include <utility/vector1.fwd.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/matdes.OptionKeys.gen.hh>
 
 // Parser headers
 #include <protocols/filters/Filter.hh>
@@ -152,6 +154,8 @@ core::Size ShapeComplementarityFilter::compute( Pose const & pose ) const
 
 	tr << "Shape complementarity: " << r.sc << std::endl;
 	tr << "Interface area: " << r.area << std::endl;
+	if ( basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block].user() )
+		tr << "Area per monomer: " << ( (core::Real) r.area / basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block]() ) << std::endl;
 	tr << "Interface seperation: " << r.distance << std::endl;
 
 	return 1;

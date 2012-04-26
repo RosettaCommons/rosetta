@@ -129,9 +129,9 @@ private:
 
 	Real filtered_sc_;
 	Real filtered_area_;
-	Size verbose_;
-	Size quick_;
 	Size jump_id_;
+	Size quick_;
+	Size verbose_;
 	utility::vector1<core::Size> residues1_;
 	utility::vector1<core::Size> residues2_;
 
