@@ -104,8 +104,9 @@ GreedyOptMutationMover::GreedyOptMutationMover(
 	Mover( GreedyOptMutationMoverCreator::mover_name() )
 {
 	task_factory_ = task_factory;
-	filter_ = filter;
 	relax_mover_ = relax_mover;
+	filter_ = filter;
+	filter_delta_ = filter_delta;
 	scorefxn_ = scorefxn;
 	sample_type_ = sample_type;
 	diversify_lvl_ = diversify_lvl;
@@ -339,8 +340,8 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 	//now try the best AA at each position, in order
 	for( Size iseq = 1; iseq <= seqpos_aa_val_vec_.size(); ++iseq ){
 		pose = best_pose;
-		//the resi index is the first part of the pair
-		Size resi( seqpos_aa_val_vec_[ iseq ].first );
+		//the seqpos index is the first part of the pair
+		Size seqpos( seqpos_aa_val_vec_[ iseq ].first );
 		//the best aa is the first part of the first element of the aa/val vector
 		AA target_aa( seqpos_aa_val_vec_[ iseq ].second[ 1 ].first );
 
@@ -359,27 +360,28 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 					else max_diversify_lvl = iaa;
 				}
 			}
+			TR << "Randomly choosing 1 of " << max_diversify_lvl << " allowed mutations at residue " << seqpos << std::endl;
 			Size aa_rank( static_cast< Size >( RG.uniform() * max_diversify_lvl + 1 ) );
 			target_aa = seqpos_aa_val_vec_[ iseq ].second[ aa_rank ].first;
 		}
 
 		//dont need to make a "mutation" if target_aa is same as original aa
-		if( target_aa == pose.residue( resi ).type().aa() ) continue;
+		if( target_aa == pose.residue( seqpos ).type().aa() ) continue;
 
 		//then check if passes input filter, bail out if it doesn't
 		bool filter_pass;
 		vector1< Real > vals;
-		ptmut_calc->mutate_and_relax( pose, resi, target_aa );
+		ptmut_calc->mutate_and_relax( pose, seqpos, target_aa );
 		ptmut_calc->eval_filters( pose, filter_pass, vals );
 		Real const val( vals[ 1 ] );
 
 		if( !filter_pass ) continue;
 		//score mutation, reset best_pose, best val if is lower
 		if( val > best_val ){
-			TR<<"Mutation rejected. Current best value is "<< best_val << std::endl;
+			TR << "Mutation " << start_pose.residue( seqpos ).name1() << seqpos << pose.residue( seqpos ).name1() << " rejected. Current best value is "<< best_val << std::endl;
 			continue;
 		}
-		TR<<"Mutation accepted. New best value is "<< val << std::endl;
+		TR << "Mutation " << start_pose.residue( seqpos ).name1() << seqpos << pose.residue( seqpos ).name1() << " accepted. New best value is "<< val << std::endl;
 		best_val = val;
 		best_pose = pose;
 		if( stopping_condition() && stopping_condition()->apply( pose ) ){

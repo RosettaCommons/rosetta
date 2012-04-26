@@ -83,8 +83,8 @@ private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 	protocols::moves::MoverOP relax_mover_;
-	core::Real filter_delta_;
 	protocols::filters::FilterOP filter_;
+	core::Real filter_delta_;
 	std::string sample_type_;
 	bool dump_pdb_;
 	core::Size diversify_lvl_;
