@@ -17,5 +17,5 @@ rna_bond_geometry          10.0
 angle_constraint 		   1.0
 atom_pair_constraint       1.0
 rna_bulge                  1.0
-linear_chainbreak		   80.00
+chainbreak      		   40.00
 
