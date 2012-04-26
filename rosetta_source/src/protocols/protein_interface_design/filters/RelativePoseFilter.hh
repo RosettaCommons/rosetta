@@ -19,6 +19,7 @@
 #include <protocols/filters/Filter.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <core/conformation/symmetry/SymmData.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/protein_interface_design/filters/RelativePoseFilter.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -75,6 +76,8 @@ public:
 	void unbound( bool const b ){ unbound_ = b; }
 	bool copy_stretch() const{ return copy_stretch_; }
 	void copy_stretch( bool const b ){ copy_stretch_ = b; }
+	void symmetry_definition( std::string const s );
+	std::string symmetry_definition() const;
 private:
 	protocols::filters::FilterOP filter_; //which filter to use
 	protocols::moves::MoverOP relax_mover_; // a mover to be called before evaluating the filter's value.
@@ -88,6 +91,8 @@ private:
 	core::Real baseline_val_;
 	bool unbound_; //dflt false; measure the filter for the unbound system?
 	bool copy_stretch_; //dflt false; rather than change residue identities, copy an entire stretch of residues (this means using replace_residue w/o orient backbone, and will normally lead to very poor behaviour. Use with care, and probably only on entire chains which are pre-aligned.)
+	std::string symmetry_definition_;
+	core::conformation::symmetry::SymmDataOP symmdata_;
 };
 
 } // filters

@@ -22,6 +22,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
@@ -32,6 +33,8 @@
 #include <utility/string_util.hh>
 #include <protocols/protein_interface_design/movers/DumpPdb.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/conformation/symmetry/SymmData.hh>
+#include <core/conformation/symmetry/SymmDataFactory.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 
@@ -58,7 +61,8 @@ RelativePoseFilter::RelativePoseFilter() :
 	baseline_( true ),
 	baseline_val_( -9999 ),
 	unbound_( false ),
-	copy_stretch_( false )
+	copy_stretch_( false ),
+	symmetry_definition_("")
 {
 	alignment_.clear();
 }
@@ -126,10 +130,16 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 	using namespace protocols::toolbox::task_operations;
 
 	core::pose::PoseOP copy_pose( new core::pose::Pose( *pose() ) ); // don't let the pose drift
+	// if(symmetry_definition()!=""){
+	// 	if(core::pose::symmetry::is_symmetric(*copy_pose)) {
+	// 		core::pose::symmetry::extract_asymmetric_unit(*copy_pose,*copy_pose);
+	// 	}
+	// 	core::pose::symmetry::make_symmetric_pose(*pose_,*symmdata_);
+	// }
 	if( unbound() ){
-  	protocols::rigid::RigidBodyTransMover rbtm( *copy_pose, 1 );
-  	rbtm.step_size( 10000.0 );
-  	rbtm.apply( *copy_pose );
+	  	protocols::rigid::RigidBodyTransMover rbtm( *copy_pose, 1 );
+	  	rbtm.step_size( 10000.0 );
+  		rbtm.apply( *copy_pose );
 	}
 	if( copy_stretch() ) // just copy the aligned stretch, and then go straight to relax. No repacking
 		copy_pose->copy_segment( alignment_.size()/*how many residues*/, p/*src*/, alignment_.begin()->first/*start on target*/, alignment_.begin()->second/*start on src*/ );
@@ -227,6 +237,15 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	TR << "RelativePoseFilter"<<std::endl;
 	std::string const pose_fname( tag->getOption< std::string >( "pdb_name" ) );
 	pose( core::import_pose::pose_from_pdb( pose_fname, false /*read foldtree*/ ) );
+	if( tag->hasOption( "symmetry_definition" ) ){
+		symmetry_definition_ = tag->getOption< std::string >( "symmetry_definition", "" );
+		if(core::pose::symmetry::is_symmetric(*pose_)) {
+			core::pose::symmetry::extract_asymmetric_unit(*pose_,*pose_);
+		}
+		symmdata_ = new core::conformation::symmetry::SymmData( pose_->n_residue(), pose_->num_jump() );
+		symmdata_->read_symmetry_data_from_file(symmetry_definition_);
+		core::pose::symmetry::make_symmetric_pose(*pose_,*symmdata_);
+	}
 	relax_mover( parse_mover( tag->getOption< std::string >( "relax_mover", "null" ), movers ) );
 	filter( parse_filter( tag->getOption< std::string >( "filter" ), filters ) );
 	baseline( tag->getOption< bool >( "baseline", 1 ));
@@ -277,7 +296,9 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	thread( tag->getOption< bool >( "thread", thread() ) );
 	unbound( tag->getOption< bool >( "unbound", false ) );
 	copy_stretch( tag->getOption< bool >( "copy_stretch", false ) );
-	TR<<"with pdb: "<<pose_fname<<" dumping fname "<<dump_pose_fname()<<" thread: "<<thread()<<" unbound "<<unbound()<<" copy_stretch: "<<copy_stretch()<<" and packing_shell: "<<packing_shell()<<std::endl;
+	TR<<"with pdb: "<<pose_fname<<" dumping fname "<<dump_pose_fname()<<" thread: "<<thread()<<" unbound "<<unbound()<<" copy_stretch: "<<copy_stretch()<<" and packing_shell: "<<packing_shell();
+	if(symmetry_definition_!="") TR<<" symmetry: "<<symmetry_definition_<<std::endl;
+	TR<<std::endl;
 }
 
 protocols::filters::FilterOP
@@ -338,6 +359,16 @@ void
 RelativePoseFilter::baseline_val( core::Real const b ){
 	runtime_assert( baseline() );
 	baseline_val_ = b;
+}
+
+void
+RelativePoseFilter::symmetry_definition( std::string const s ){
+	symmetry_definition_ = s;
+}
+
+std::string
+RelativePoseFilter::symmetry_definition() const{
+	return symmetry_definition_;
 }
 
 } // filters
