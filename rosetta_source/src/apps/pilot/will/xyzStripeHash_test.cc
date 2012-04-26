@@ -19,6 +19,7 @@
 #include <numeric/random/random.hh>
 #include <numeric/xyz.io.hh>
 #include <fstream>
+#include <protocols/scoring/ImplicitFastClashCheck.hh>
 
 #include <core/kinematics/Stub.hh>
 
@@ -86,7 +87,9 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	
-	protocols::sic_dock::xyzStripeHashPose xyzhash(DIST,p,protocols::sic_dock::ALL);
+	protocols::scoring::ImplicitFastClashCheck ifc(p,4.0);
+
+	protocols::sic_dock::xyzStripeHashPose xyzhash(DIST,p,protocols::sic_dock::HVY);
 	xyzhash.sanity_check();
 
 	if(basic::options::option[basic::options::OptionKeys::dump_hash]()) {
@@ -113,6 +116,7 @@ int main(int argc, char *argv[]) {
 	}
 	p.dump_pdb("input_trans.pdb");
 	
+
 	Vec mn(9e9),mx(-9e9);
 	int real_natom = 0.0;
 	for(Size ir = 1; ir <= p.n_residue(); ++ir) {
@@ -134,7 +138,7 @@ int main(int argc, char *argv[]) {
 	std::cout << "ncells: " << xyzhash.xdim()*xyzhash.ydim()*xyzhash.zdim() << std::endl;
 	std::cout << "Bounds: " << mn << " " << mx << std::endl;
 	std::cout << "Natom: " << real_natom << " " << xyzhash.natom() << std::endl;
-  {
+	{
 		utility::vector1<Vec> hashpts;
 		for(Size i = 0; i < xyzhash.natom(); ++i) {
 			hashpts.push_back( Vec( xyzhash.grid_atoms()[i].x, xyzhash.grid_atoms()[i].y, xyzhash.grid_atoms()[i].z ) );
@@ -143,45 +147,48 @@ int main(int argc, char *argv[]) {
 	}
 	
 	
-	double th=0.0,ts=0.0;
+	double tifc=0.0,th=0.0,ts=0.0,t=0.0;
+	int tot = 0;
 	for(Size i = 0; i < basic::options::option[basic::options::OptionKeys::out::nstruct](); ++i) {
 		Vec rv( numeric::random::uniform(),numeric::random::uniform(),numeric::random::uniform() );
 		rv.x() = (mx.x()-mn.x()) * rv.x() + mn.x();
 		rv.y() = (mx.y()-mn.y()) * rv.y() + mn.y();
 		rv.z() = (mx.z()-mn.z()) * rv.z() + mn.z();		
-		float const rx = rv.x();
-		float const ry = rv.y();
-		float const rz = rv.z();
-		
-		double t = time_highres();
+		// float const rx = rv.x();
+		// float const ry = rv.y();
+		// float const rz = rv.z();
+
+		t = time_highres();
+		int hash_nbcount = xyzhash.nbcount(rv);
+		th += time_highres()-t;
+
+	    Vec tmp = rv+xyzhash.translation();
+		t = time_highres();
 		int safe_nbcount = 0.0;
 		for(Size j = 0; j < xyzhash.natom(); ++j) {
 			float const & hx = xyzhash.grid_atoms()[j].x;
 			float const & hy = xyzhash.grid_atoms()[j].y;
 			float const & hz = xyzhash.grid_atoms()[j].z;
-			if( (hx-rx)*(hx-rx) + (hy-ry)*(hy-ry) + (hz-rz)*(hz-rz) <= (float)DIST2 ) safe_nbcount++;
+			if( (hx-tmp.x())*(hx-tmp.x()) + (hy-tmp.y())*(hy-tmp.y()) + (hz-tmp.z())*(hz-tmp.z()) <= (float)DIST2 ) safe_nbcount++;
 		}
 		ts += time_highres()-t;
-		// for(Size ir = 1; ir <= p.n_residue(); ++ir) {
-		// 	for(Size ia = 1; ia <= p.residue(ir).natoms(); ++ia) {
-		// 		if( p.xyz(AtomID(ia,ir)).distance_squared(rv) <= DIST2 ) safe_nbcount++;
-		// 	}
-		// }
 
 		t = time_highres();
-		int hash_nbcount = xyzhash.nbcount(rv.x(),rv.y(),rv.z());
-		th += time_highres()-t;
+		int ifc_nbcount = ifc.clash_count(rv);
+		tifc += time_highres()-t;
 
-		if( safe_nbcount != xyzhash.nbcount(rv.x(),rv.y(),rv.z()) ) {
+		tot += hash_nbcount;
+		if( safe_nbcount != hash_nbcount /*|| safe_nbcount != ifc_nbcount*/ ) {
 //			if(rv.x() > 36.0) continue; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! BUG!!!!!!!!!!!!!!!!!!!!!!!!!
 			std::cout << rv << std::endl;
-			std::cout << safe_nbcount << " " << hash_nbcount << std::endl;			
+			std::cout << safe_nbcount << " " << hash_nbcount << " " << ifc_nbcount << std::endl;			
 			utility_exit_with_message("FAIL after "+ObjexxFCL::fmt::I(10,i)+"!!!");
 		}
 		
 	}
-	std::cout << ObjexxFCL::fmt::I(10,basic::options::option[basic::options::OptionKeys::out::nstruct]())+" nb counts of random points match. Woot!" << std::endl;
-	std::cout << "hash speedup over N^2 count: " << ts/th << std::endl;
+	std::cout << ObjexxFCL::fmt::I(10,basic::options::option[basic::options::OptionKeys::out::nstruct]())+" nb counts of random points match. Woot! " << tot << std::endl;
+	std::cout << "hash speedup over N^2 count: " << ts  /th << std::endl;
+	std::cout << "hash speedup over IFC count: " << tifc/th << std::endl;
 
 	return 0;
 }

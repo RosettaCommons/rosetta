@@ -244,7 +244,7 @@ public:
 	inline int const xdim () const { return  xdim_; }
 	inline int const ydim () const { return  ydim_; }
 	inline int const zdim () const { return  zdim_; }
-	inline float const & grid_size() const { return  grid_size_; }
+	inline float const grid_size() const { return  grid_size_; }
 	inline const numeric::xyzVector<numeric::Real> translation() const { return translation_; }
 
 private:
