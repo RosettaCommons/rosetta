@@ -22,6 +22,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
@@ -330,6 +331,11 @@ PointMutationCalculator::calc_point_mut_filters(
 	vector1< core::Size > being_designed;
 	being_designed.clear();
 	for( core::Size resi = 1; resi <= start_pose.total_residue(); ++resi ){
+		if(core::pose::symmetry::is_symmetric(start_pose)) {
+			if( resi > core::pose::symmetry::symmetry_info(start_pose)->num_independent_residues() ) {
+				break;
+			}
+		}
 		if( task->residue_task( resi ).being_designed() && start_pose.residue(resi).is_protein() )
 			being_designed.push_back( resi );
 	}
