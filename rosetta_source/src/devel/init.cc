@@ -19,22 +19,30 @@
 // Factories
 #include <core/pack/task/operation/TaskOperationRegistrator.hh>
 #include <core/pack/task/operation/TaskOperationFactory.hh>
-#include <protocols/filters/FilterFactory.hh>
 #include <protocols/moves/MoverFactory.hh>
+#include <protocols/jd2/parser/DataLoaderFactory.hh>
+//#include <devel/constrained_sequence_design/SequenceConstraintFactory.hh>
 
 //mover creators
+#include <devel/enzdes/EnzdesRemodelMoverCreator.hh>
+//#include <devel/constrained_sequence_design/ConstrainedDesignMoverCreator.hh>
 #include <devel/matdes/SymmetrizerMoverCreator.hh>
 #include <devel/matdes/TaskAwareSymMinMoverCreator.hh>
+
+// dataloader creators
+//#include <devel/constrained_sequence_design/SequenceConstraintLoaderCreator.hh>
+
+// SequenceConstraint creators
+//#include <devel/constrained_sequence_design/constraints/MaximunNumberPerResidueTypeConstraintCreator.hh>
 
 // Utility Headers
 
 // Task Operation creators
+#include <devel/znhash/SymmZnMoversAndTaskOpsCreators.hh>
+#include <devel/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>
 #include <devel/matdes/BuildingBlockInterfaceOperationCreator.hh>
 #include <devel/matdes/RestrictToNonzeroSASAOperationCreator.hh>
 #include <devel/matdes/RestrictIdentitiesToRepackingOperationCreator.hh>
-
-// Filter creators
-#include <devel/matdes/OligomericAverageDegreeFilterCreator.hh>
 
 #include <utility/vector1.hh>
 
@@ -42,16 +50,18 @@
 namespace devel {
 
 // Mover creators
+protocols::moves::MoverRegistrator< enzdes::EnzdesRemodelMoverCreator > reg_EnzdesRemodelMoverCreator;
+protocols::moves::MoverRegistrator< vardist_solaccess::LoadVarSolDistSasaCalculatorMoverCreator > reg_LoadVarSolDistSasaCalculatorMoverCreator;
+protocols::moves::MoverRegistrator< devel::znhash::InsertZincCoordinationRemarkLinesCreator > reg_InsertZincCoordinationRemarkLinesCreator;
+protocols::moves::MoverRegistrator< znhash::LoadZnCoordNumHbondCalculatorMoverCreator > reg_LoadZnCoordNumHbondCalculatorMoverCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::SymmetrizerMoverCreator > reg_SymmetrizerMoverCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::TaskAwareSymMinMoverCreator > reg_TaskAwareSymMinMoverCreator;
 
 // Task creators
+core::pack::task::operation::TaskOperationRegistrator< devel::znhash::DisableZnCoordinationResiduesTaskOpCreator > reg_DisableZnCoordinationResiduesTaskOpCreator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::BuildingBlockInterfaceOperationCreator > BuildingBlockInterfaceOperationCreator_registrator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RestrictToNonzeroSASAOperationCreator > RestrictToNonzeroSASAOperationCreator_registrator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RestrictIdentitiesToRepackingOperationCreator > RestrictIdentitiesToRepackingOperationCreator_registrator;
-
-// Filter creators
-static protocols::filters::FilterRegistrator< devel::matdes::OligomericAverageDegreeFilterCreator > OligomericAverageDegreeFilterCreator_registrator;
 
 void init( int argc, char * argv [] )
 {
