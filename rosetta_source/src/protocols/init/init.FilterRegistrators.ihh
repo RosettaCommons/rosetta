@@ -89,6 +89,7 @@ static FilterRegistrator< protocols::simple_filters::RotamerBoltzmannWeightFilte
 static FilterRegistrator< protocols::simple_filters::ScoreCutoffFilterCreator > reg_ScoreCutoffFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ScoreTypeFilterCreator > reg_ScoreTypeFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ShapeComplementarityFilterCreator > reg_ScFilterCreator;
+static FilterRegistrator< protocols::simple_filters::SidechainRmsdFilterCreator > reg_SidechainRmsdFilterCreator;
 static FilterRegistrator< protocols::simple_filters::TerminusDistanceFilterCreator > reg_TerminusDistanceFilterCreator;
 
 } //namespace protocols

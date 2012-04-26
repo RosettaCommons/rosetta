@@ -210,6 +210,7 @@ static MoverRegistrator< simple_moves::TaskAwareMinMoverCreator > reg_TaskAwareM
 
 static MoverRegistrator< simple_moves::sidechain_moves::SidechainMCMoverCreator > reg_SidechainMCMoverCreator;
 static MoverRegistrator< simple_moves::sidechain_moves::SidechainMoverCreator > reg_SidechainMoverCreator;
+static MoverRegistrator< simple_moves::sidechain_moves::SetChiMoverCreator > reg_SetChiMoverCreator;
 static MoverRegistrator< simple_moves::sidechain_moves::JumpRotamerSidechainMoverCreator > reg_JumpRotamerSidechainMoverCreator;
 static MoverRegistrator< simple_moves::sidechain_moves::PerturbRotamerSidechainMoverCreator > reg_PerturbRotamerSidechainMoverCreator;
 static MoverRegistrator< simple_moves::sidechain_moves::PerturbChiSidechainMoverCreator > reg_PerturbChiSidechainMoverCreator;

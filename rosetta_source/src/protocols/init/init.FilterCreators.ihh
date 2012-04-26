@@ -76,4 +76,5 @@
 #include <protocols/simple_filters/ScoreCutoffFilterCreator.hh>
 #include <protocols/simple_filters/ScoreTypeFilterCreator.hh>
 #include <protocols/simple_filters/ShapeComplementarityFilterCreator.hh>
+#include <protocols/simple_filters/SidechainRmsdFilterCreator.hh>
 #include <protocols/simple_filters/TerminusDistanceFilterCreator.hh>

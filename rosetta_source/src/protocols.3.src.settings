@@ -240,6 +240,7 @@ sources = {
 		"ScoreTypeFilter",
 		"ShapeComplementarityFilter",
 		"SheetFilter",
+		"SidechainRmsdFilter",
 		"StructuralSimilarityEvaluator",
 		"StructureSimilarityEvaluatorCreator",
 		"TerminusDistanceFilter",
@@ -316,6 +317,7 @@ sources = {
 		"SidechainMCMover",
 		"SidechainMover",
 		"SidechainMoverBase",
+		"SetChiMover",
 	],
 	"protocols/simple_moves/symmetry": [
 		"SetupForSymmetryMover",

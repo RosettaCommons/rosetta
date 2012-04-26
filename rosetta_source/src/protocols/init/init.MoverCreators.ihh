@@ -206,6 +206,7 @@
 
 #include <protocols/simple_moves/sidechain_moves/SidechainMCMoverCreator.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMoverCreator.hh>
+#include <protocols/simple_moves/sidechain_moves/SetChiMoverCreator.hh>
 #include <protocols/simple_moves/sidechain_moves/PerturbRotamerSidechainMoverCreator.hh>
 #include <protocols/simple_moves/sidechain_moves/JumpRotamerSidechainMoverCreator.hh>
 #include <protocols/simple_moves/sidechain_moves/PerturbChiSidechainMoverCreator.hh>
