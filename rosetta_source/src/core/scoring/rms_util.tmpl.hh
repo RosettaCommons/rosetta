@@ -763,6 +763,7 @@ fill_rmsd_coordinates(
 	std::vector< core::Vector > p2_coords;
 
 	for ( core::Size i = 1; i <= std::min( nres1, nres2 ); ++i ) {
+		if( pose1.residue(i).is_virtual_residue() || pose2.residue(i).is_virtual_residue() ) continue;
 		//assert( pose1.residue(i).natoms() == pose2.residue(i).natoms() );
 		for ( core::Size j = 1; j <= pose1.residue(i).natoms(); ++j ) {
 			if ( (*predicate)( pose1, pose2, i, j ) ) {
