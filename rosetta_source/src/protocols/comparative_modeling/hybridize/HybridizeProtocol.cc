@@ -848,6 +848,13 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			protocols::moves::MoverOP tofa = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD );
 			tofa->apply(pose);
 
+			// disulfide
+			if (disulf_file_.length() > 0) {
+				basic::options::option[ basic::options::OptionKeys::in::fix_disulf ].value(disulf_file_);
+				core::pose::initialize_disulfide_bonds(pose);
+				basic::options::option[ basic::options::OptionKeys::in::fix_disulf ].value();
+			}
+
 			// apply fa constraints
 			std::string cst_fn = template_cst_fn_[initial_template_index];
 			setup_fullatom_constraints( pose, templates_, template_weights_, cst_fn, fa_cst_fn_ );
@@ -1083,8 +1090,8 @@ HybridizeProtocol::parse_my_tag(
 		linmin_only_ = tag->getOption< bool >( "linmin_only" );
 	if( tag->hasOption( "repeats" ) )
 		relax_repeats_ = tag->getOption< core::Size >( "repeats" );
-	if( tag->hasOption( "cartfrag_overlap" ) )
-		cartfrag_overlap_ = tag->getOption< core::Size >( "cartfrag_overlap" );
+	if( tag->hasOption( "disulf_file" ) )
+		disulf_file_ = tag->getOption< std::string >( "disulf_file" );
 
 	// scorfxns
 	if( tag->hasOption( "stage1_scorefxn" ) ) {
