@@ -103,6 +103,8 @@ public:
 	void reset_cycle_index();
 	void init_mc(core::pose::Pose & pose);
 
+    void set_scmin(bool setting){scmin_=setting;}
+    void set_rtmin(bool setting){rtmin_=setting;}
 
 private:
 	core::scoring::ScoreFunctionCOP scorefxn_;

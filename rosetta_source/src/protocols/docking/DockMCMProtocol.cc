@@ -44,7 +44,9 @@
 
 #include <protocols/moves/TrialMover.fwd.hh>  //JQX: add this
 #include <protocols/moves/TrialMover.hh>
-
+#include <protocols/moves/MoverContainer.hh>
+#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
+#include <protocols/docking/SidechainMinMover.hh>
 #include <ObjexxFCL/format.hh>
 
 // AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
@@ -250,7 +252,30 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 	initial_pack->task_factory( task_factory() );
 	if ( dock_mcm_->get_mc()->last_accepted_pose().empty() ) { dock_mcm_->init_mc(pose); } //JQX: use the dock_mcm_'s "mc_" object
 	moves::TrialMoverOP initial_pack_trial = new moves::TrialMover(initial_pack, dock_mcm_->get_mc() );
-	initial_pack_trial->apply( pose );
+
+    
+    
+    //JQX: rt_min and sc_min options were ignored in the extreme coding week, put them back now     
+    protocols::moves::SequenceMoverOP initial_repack_sequence = new protocols::moves::SequenceMover();
+    initial_repack_sequence->add_mover(initial_pack_trial);
+    
+    if ( rt_min() ){ 
+        simple_moves::RotamerTrialsMinMoverOP rtmin = new simple_moves::RotamerTrialsMinMover( scorefxn_pack(), task_factory() );
+        moves::TrialMoverOP rtmin_trial = new moves::TrialMover( rtmin, dock_mcm_->get_mc() );
+        initial_repack_sequence->add_mover(rtmin_trial); 
+        dock_mcm_->set_rtmin(true);
+    }
+    if ( sc_min() ){ 
+        docking::SidechainMinMoverOP scmin_mover = new docking::SidechainMinMover( scorefxn_pack(), task_factory() );
+        moves::TrialMoverOP scmin_trial = new moves::TrialMover( scmin_mover, dock_mcm_->get_mc() );
+        initial_repack_sequence->add_mover(scmin_trial); 
+        dock_mcm_->set_scmin(true);
+    }
+    
+    
+    initial_repack_sequence->apply( pose );
+    
+    
 
 	jd2::write_score_tracer( pose, "DockMCM_pack_trialed" );
 

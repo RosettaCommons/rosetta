@@ -57,6 +57,8 @@
 // AUTO-REMOVED #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
+#include <protocols/docking/SidechainMinMover.hh>
 
 //for resfile reading
 
@@ -168,6 +170,9 @@ void DockMCMCycle::set_default()
 	trans_magnitude_ = 0.1;
 	rot_magnitude_ = 5.0;
 
+    rtmin_ = false;
+    scmin_ = false;
+    
 	// setup scoring with defaults
 	if ( scorefxn_() == NULL ) {
 		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
@@ -398,12 +403,7 @@ void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
 
 
 
-	// @TODO these are not being used at all, need to be incorporated into the sequence
-	//	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn_pack_, tf_ );
-	//	TrialMoverOP rtmin_trial = new TrialMover( rtmin, mc_ );
-	//
-	//	SidechainMinMoverOP scmin_mover = new SidechainMinMover(scorefxn_pack_, tf_ );
-	//	TrialMoverOP scmin_trial = new TrialMover( scmin_mover, mc_ );
+
 
 
 
@@ -441,10 +441,30 @@ void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
 	//JQX: the TrialMover is actually    ...       (PackRotamersMover) pack_rotamers
 	SequenceMoverOP repack_step = new SequenceMover;
 	repack_step->add_mover(rb_mover_min_trail);
-	protocols::simple_moves::PackRotamersMoverOP pack_rotamers = new protocols::simple_moves::PackRotamersMover( scorefxn_pack_ ); pack_rotamers->task_factory(tf_);
+	protocols::simple_moves::PackRotamersMoverOP pack_rotamers = new protocols::simple_moves::PackRotamersMover( scorefxn_pack_ ); 
+    pack_rotamers->task_factory(tf_);
 	TrialMoverOP pack_interface_and_move_loops_trial = new TrialMover( pack_rotamers, mc_);
 	repack_step->add_mover(pack_interface_and_move_loops_trial);
 
+    
+    
+    
+    //  these are not being used at all in the extreme code week, JQX incorporated into the sequence
+	if(rtmin_){
+        protocols::simple_moves::RotamerTrialsMinMoverOP rtmin = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn_pack_, tf_ );
+        TrialMoverOP rtmin_trial = new TrialMover( rtmin, mc_ );
+        repack_step->add_mover(rtmin_trial);
+    }
+    if(scmin_){
+        core::pack::task::TaskFactoryCOP my_tf( tf_); 
+            //@TODO JQX: this is so weird, I cannot directly put tf_ to construct the SideChainMinMover
+        protocols::docking::SidechainMinMoverOP scmin_mover = new protocols::docking::SidechainMinMover(scorefxn_pack_,  my_tf  );
+        TrialMoverOP scmin_trial = new TrialMover( scmin_mover, mc_ );
+        repack_step->add_mover(scmin_trial);
+    }
+    
+    
+    
 
 	//JQX: define the cycle mover
 	//JQX: 1. rb_mover_min_trail (7 times)
