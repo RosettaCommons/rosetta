@@ -37,7 +37,6 @@
 // AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/pose/annotated_sequence.hh>
 
-#include <protocols/comparative_modeling/PartialThreadingMover.hh>
 
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
@@ -69,7 +68,7 @@ namespace aln_to_disulf {
   basic::options::FileVectorOptionKey coordCstFiles("minimalCstHomology:coordCstFiles");
 	basic::options::BooleanOptionKey only_res_out("minimalCstHomology:only_res_out");
 }
-utility::vector1< std::pair< Size, Size> > get_disulfides_from_aln( core::pose::Pose templatePose, core::sequence::SequenceAlignment aln, core::sequence::SequenceOP query_seq){
+utility::vector1< std::pair< Size, Size> > get_disulfides_from_aln( core::pose::Pose templatePose, core::sequence::SequenceAlignment aln){
 	using std::string;
 	using core::pose::Pose;
 	using utility::vector1;
@@ -77,11 +76,14 @@ utility::vector1< std::pair< Size, Size> > get_disulfides_from_aln( core::pose::
 	vector1<std::pair <Size,Size> > disulfides;
 	core::id::SequenceMapping aln_map( aln.sequence_mapping(1,2) );;
 	vector1<Size> potential_disulf;
-	for ( core::Size ii = 1; ii <= query_seq->sequence().size(); ++ii ) {
-		if(aln_map[ii] != 0)
-			if((query_seq->at(ii) == 'C') && (aln.sequence(2)->at(aln_map[ii]) == 'C')){
-				potential_disulf.push_back(ii);
-			}
+	Size seqPos = aln.sequence(1)->start()-1;
+	for ( core::Size ii = 1; ii <= aln.sequence(1)->length(); ++ii ) {
+		if(aln.sequence(1)->at(ii) != '-'){
+			seqPos++;
+		}
+		if((aln.sequence(1)->at(ii) == 'C') && (aln.sequence(2)->at(ii) == 'C')){
+			potential_disulf.push_back(seqPos);
+		}
 	}
 	typedef vector1< Size >::const_iterator iter;
 	bool fullatom(templatePose.is_fullatom());
@@ -142,7 +144,6 @@ main( int argc, char* argv [] ) {
 	using utility::vector1;
 	using core::import_pose::pose_from_pdb;
 	using core::pose::make_pose_from_sequence;
-	using protocols::comparative_modeling::PartialThreadingMover;
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -150,21 +151,13 @@ main( int argc, char* argv [] ) {
 	using namespace core::sequence;
 	basic::Tracer tr( "aln_to_disulf" );
 
-	SequenceOP fasta_seq = core::sequence::read_fasta_file(
-		option[ in::file::fasta ]()[1]
-	)[1];
-
 
 	vector1< string > align_fns = option[ in::file::alignment ]();
 
 	map< string, Pose > poses = poses_from_cmd_line(
 			option[ in::file::template_pdb ]()
 	);
-	string out_nametag = "disulf.txt";
-	if ( basic::options::option[ out::file::o ].user() ) {
-		out_nametag = option[out::file::o ]();
-	}
-	utility::io::ozstream output(out_nametag);
+
 	//-----Loop through alignments and get potential disulfides
 	typedef vector1< string >::const_iterator aln_iter;
 	vector1<std::pair <Size,Size> > disulfides;
@@ -188,12 +181,12 @@ main( int argc, char* argv [] ) {
 				string msg( "Error: can't find pose (id = "
 					+ template_id + ")"
 				);
-				//utility_exit_with_message(msg);
-				tr.Error << msg << std::endl;
+				utility_exit_with_message(msg);
+				//tr.Error << msg << std::endl;
 			} else {
 				Pose template_pose;
 				template_pose = pose_it->second;
-				vector1<std::pair <Size,Size> > tmp_disulfides = get_disulfides_from_aln(template_pose,*it,fasta_seq);
+				vector1<std::pair <Size,Size> > tmp_disulfides = get_disulfides_from_aln(template_pose,*it);
 				disulfides.insert(disulfides.begin(),tmp_disulfides.begin(),tmp_disulfides.end());
 			}
 		}
@@ -226,8 +219,15 @@ main( int argc, char* argv [] ) {
 		if(found == false)
 			final_disulf_pairs.push_back(ct_disulf_map_it->second);
 	}
+
+	string out_nametag = "disulf.txt";
+	if ( basic::options::option[ out::file::o ].user() ) {
+		out_nametag = option[out::file::o ]();
+	}
+	utility::io::ozstream output(out_nametag);
 	for ( disulf_iter disulf_it = final_disulf_pairs.begin(), disulf_end = final_disulf_pairs.end(); disulf_it != disulf_end; ++disulf_it){
 
 		output << disulf_it->first << "," <<  disulf_it->second << std::endl;
 	}
+	tr << "disulfide detection completed successfully" << std::endl;
 }
