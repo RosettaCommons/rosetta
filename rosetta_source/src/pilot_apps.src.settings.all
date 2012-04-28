@@ -319,7 +319,7 @@ sources = {
 	],
 	"pilot/jim" : [
 		#"optE_test", # /* Jim Havernek,Documentation Location,Demo Location */
-		"optE_parallel", # /* Jim Havernek,Documentation Location,Demo Location */
+		#"optE_parallel", # /* Jim Havernek,Documentation Location,Demo Location */
 		#"use_asn_motifs",
 	],
 	"pilot/kenjung" : [
