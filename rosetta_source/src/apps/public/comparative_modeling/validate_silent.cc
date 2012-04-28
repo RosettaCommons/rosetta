@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
   }
 
   // Prevent the silent file parser from aborting on malformed input
-  // TODO(cmiles) programmatically enable -in:file:silent_read_through_errors
+  option[in::file::silent_read_through_errors].value(true);
 
   utility::vector1<string> sequences = core::sequence::read_fasta_file_str(option[in::file::fasta]()[1]);
   const string ref_sequence = sequences[1];
