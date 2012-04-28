@@ -88,13 +88,14 @@ utility::vector1< std::pair< Size, Size> > get_disulfides_from_aln( core::pose::
 	typedef vector1< Size >::const_iterator iter;
 	bool fullatom(templatePose.is_fullatom());
 	Real const typical_disulfide_distance = fullatom? 2.02 : 3.72;
-	Real const tolerance = fullatom? 0.5 : 1.0;
+	Real const tolerance = fullatom? 0.25 : 1.0;
 	std::string const distance_atom = fullatom? "SG" : "CB";
 	for(iter it1 = potential_disulf.begin(), end = potential_disulf.end(); it1 != end; ++it1){
 		for(iter it2 = it1+1; it2 != end; ++it2){
 			Real dist = templatePose.residue(aln_map[*it1]).xyz(distance_atom).distance(templatePose.residue(aln_map[*it2]).xyz(distance_atom));
-			if(dist < typical_disulfide_distance+tolerance)
+			if(dist < typical_disulfide_distance+tolerance){
 				disulfides.push_back(std::pair<Size,Size>(*it1,*it2));
+			}
 		}
 	}
 	return(disulfides);
@@ -212,6 +213,8 @@ main( int argc, char* argv [] ) {
 
 	for (ct_disulf_map_iter ct_disulf_map_it = 	ct_disulf_map.rbegin(); ct_disulf_map_it  !=  ct_disulf_map.rend(); ++ct_disulf_map_it){
 		bool found = false;
+		if(ct_disulf_map_it->first <= 1)
+			found = true;
 		for ( disulf_iter disulf_it = final_disulf_pairs.begin(), disulf_end = final_disulf_pairs.end(); disulf_it != disulf_end; ++disulf_it){
 			if ( ct_disulf_map_it->second.first == disulf_it->first || ct_disulf_map_it->second.second == disulf_it->first || ct_disulf_map_it->second.first == disulf_it->second || ct_disulf_map_it->second.second == disulf_it->second)
 				found = true;
@@ -219,7 +222,6 @@ main( int argc, char* argv [] ) {
 		if(found == false)
 			final_disulf_pairs.push_back(ct_disulf_map_it->second);
 	}
-
 	string out_nametag = "disulf.txt";
 	if ( basic::options::option[ out::file::o ].user() ) {
 		out_nametag = option[out::file::o ]();
