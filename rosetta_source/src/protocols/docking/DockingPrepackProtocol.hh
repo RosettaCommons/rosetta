@@ -62,6 +62,7 @@ public:
 
 	/// @biref Scores and outputs the pose - jd2 compatible.
 	void score_and_output(std::string filename,core::pose::Pose &);
+	void set_dock_ppk(bool dock_ppk);
 
 private:
 	// add @brief for members
@@ -74,6 +75,7 @@ private:
 	protocols::simple_moves::PackRotamersMoverOP prepack_full_repack_;
 	SidechainMinMoverOP scmin_mover_;
 	SequenceMoverOP pack_operations_;
+	bool dock_ppk_;
 
 	/// @brief Performs setup that requires a pose
 	void finalize_setup( core::pose::Pose & );

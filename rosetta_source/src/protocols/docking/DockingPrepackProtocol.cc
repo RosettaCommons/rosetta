@@ -75,6 +75,7 @@ void DockingPrepackProtocol::setup_defaults()
 {
 	trans_magnitude_ = 1000.0;
 	pack_operations_= new SequenceMover();
+	dock_ppk_ = false;
 }
 
 DockingPrepackProtocol::~DockingPrepackProtocol(){
@@ -91,6 +92,14 @@ void DockingPrepackProtocol::init_from_options()
 
 	if( option[ OptionKeys::docking::partners ].user() )
 		set_partners(option[ OptionKeys::docking::partners ]());
+
+	if( option[ OptionKeys::docking::dock_ppk ].user() )
+		set_dock_ppk(option[ OptionKeys::docking::dock_ppk ]());
+}
+
+void DockingPrepackProtocol::set_dock_ppk(bool dock_ppk)
+{
+	dock_ppk_ = dock_ppk;
 }
 
 void DockingPrepackProtocol::register_options()
@@ -176,6 +185,10 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 		translate_back->step_size( trans_magnitude_ );
 		translate_back->trans_axis().negate();
 		translate_back->apply(pose);
+	}
+
+	if (dock_ppk_){
+		pack_operations_->apply( pose );
 	}
 	score_and_output("prepack",pose);
 }
