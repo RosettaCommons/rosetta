@@ -33,6 +33,7 @@ namespace protein_interface_design{
 namespace filters {
 
 class DesignableResiduesFilter : public protocols::filters::Filter
+
 {
 private:
 	typedef protocols::filters::Filter parent;
@@ -45,7 +46,7 @@ public:
 	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
 	virtual protocols::filters::FilterOP clone() const;
 	virtual protocols::filters::FilterOP fresh_instance() const;
-	core::Real compute( core::pose::Pose const & pose ) const;
+	core::Size compute( core::pose::Pose const & pose ) const;
 	virtual ~DesignableResiduesFilter();
 	core::pack::task::TaskFactoryOP task_factory() const;
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );
@@ -54,13 +55,18 @@ public:
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );
+	core::Size lower_threshold() const;
+	core::Size upper_threshold() const;
 	bool packable() const;
 	bool designable() const;
+	void lower_threshold( core::Size const l );
+	void upper_threshold( core::Size const u );
 	void packable( bool const p );
 	void designable( bool const d );
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
-	bool packable_, designable_; // whic sort of residues to report (packable or designable or both)
+	core::Size lower_threshold_, upper_threshold_; // how many design positions should be allowed for a passing design  
+	bool packable_, designable_; // which sort of residues to report (packable or designable or both)
 };
 
 } // filters

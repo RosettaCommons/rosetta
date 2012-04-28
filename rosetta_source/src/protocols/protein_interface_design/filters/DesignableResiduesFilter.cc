@@ -25,6 +25,12 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+// JBB 120425
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/symmetry/util.hh>
+#include <core/pose/symmetry/util.hh>
+#include <ObjexxFCL/format.hh>
+
 
 namespace protocols {
 namespace protein_interface_design{
@@ -36,9 +42,21 @@ static basic::Tracer TR( "protocols.protein_interface_design.filters.DesignableR
 DesignableResiduesFilter::DesignableResiduesFilter() :
 	parent( "DesignableResidues" ),
 	task_factory_( NULL ),
+	lower_threshold_( 0 ),
+	upper_threshold_( 1000 ),
 	packable_( false ),
 	designable_( true )
 {}
+
+core::Size
+DesignableResiduesFilter::lower_threshold() const{
+	return lower_threshold_;
+}
+
+core::Size
+DesignableResiduesFilter::upper_threshold() const{
+	return upper_threshold_;
+}
 
 bool
 DesignableResiduesFilter::packable() const{
@@ -48,6 +66,16 @@ DesignableResiduesFilter::packable() const{
 bool
 DesignableResiduesFilter::designable() const{
 	return designable_;
+}
+
+void
+DesignableResiduesFilter::lower_threshold( core::Size const l ){
+	lower_threshold_ = l;
+}
+
+void
+DesignableResiduesFilter::upper_threshold( core::Size const u ){
+	upper_threshold_ = u;
 }
 
 void
@@ -75,36 +103,65 @@ DesignableResiduesFilter::task_factory( core::pack::task::TaskFactoryOP task_fac
 bool
 DesignableResiduesFilter::apply(core::pose::Pose const & pose ) const
 {
-	compute( pose );
-	return( true );
+	core::Size design_pos(compute( pose ));
+	if( (design_pos >= lower_threshold_) && (design_pos <= upper_threshold_) ){
+		TR<<"passing."<<std::endl;
+		return true;
+	} 
+	else {
+		TR<<"failing."<<std::endl;
+		return false;
+	}
 }
 
-core::Real
+core::Size
 DesignableResiduesFilter::compute( core::pose::Pose const & pose ) const{
 	runtime_assert( task_factory() );
 	runtime_assert( packable() || designable() );
 	core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
+	core::Size total_residue;
+	if(core::pose::symmetry::is_symmetric( pose )) { 
+		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
+		total_residue = symm_info->num_independent_residues();
+	} else {
+		total_residue = pose.total_residue(); 
+	}
+	core::Size design_pos = 0;
 	if( designable() ){
+		std::string select_design_pos("select design_positions, resi ");
 		TR<<"Designable residues:"<<std::endl;
-		for( core::Size resi=1; resi<=pose.total_residue(); ++resi ){
-			if( packer_task->being_designed( resi ) )
+		for( core::Size resi=1; resi<=total_residue; ++resi ){
+			if( packer_task->being_designed( resi ) ) {
 				TR<<pose.residue( resi ).name3()<<" "<< pose.pdb_info()->number( resi )<<pose.pdb_info()->chain( resi )<<std::endl;
+				design_pos++;
+				select_design_pos.append(ObjexxFCL::string_of(resi) + "+");   
+			}
 		}
+		TR<<"Number of design positions: "<<design_pos<<std::endl;
+		TR<<select_design_pos<<std::endl;
 	}
+	core::Size packable_pos = 0;
 	if( packable() ){
+		std::string select_packable_pos("select repackable_positions, resi ");
 		TR<<"Repackable residues:"<<std::endl;
-		for( core::Size resi=1; resi<=pose.total_residue(); ++resi ){
-			if( packer_task->being_packed( resi ) )
+		for( core::Size resi=1; resi<=total_residue; ++resi ){
+			if( packer_task->being_packed( resi ) ) {
 				TR<<pose.residue( resi ).name3()<<" "<<pose.pdb_info()->number( resi )<<std::endl;
+				packable_pos++;
+				select_packable_pos.append(ObjexxFCL::string_of(resi) + "+");   
+			}
 		}
+		TR<<"Number of repackable positions: "<<packable_pos<<std::endl;
+		TR<<select_packable_pos<<std::endl;
 	}
-	return( 0.0 );
+	return( design_pos );
 }
 
 core::Real
-DesignableResiduesFilter::report_sm( core::pose::Pose const & ) const
+DesignableResiduesFilter::report_sm( core::pose::Pose const & pose ) const
 {
-	return( 0.0 );
+	core::Size design_pos(compute( pose ));
+	return( design_pos );
 }
 
 void
@@ -122,10 +179,12 @@ DesignableResiduesFilter::parse_my_tag( utility::tag::TagPtr const tag,
 {
 	TR << "DesignableResiduesFilter"<<std::endl;
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
+	lower_threshold( tag->getOption< core::Size >( "lower_cutoff", 0 ) );
+	upper_threshold( tag->getOption< core::Size >( "upper_cutoff", 1000 ) );
 	packable( tag->getOption< bool >( "packable", false ) );
 	designable( tag->getOption< bool >( "designable", true ) );
 	runtime_assert( designable() || packable() );
-	TR<<"with options designable: "<<designable()<<" and repackable "<<packable()<<std::endl;
+	TR<<"with options designable: "<<designable()<<", repackable: "<<packable()<<", lower_cutoff: "<<lower_threshold()<<", and upper_cutoff: "<<upper_threshold()<<std::endl;
 }
 
 protocols::filters::FilterOP
