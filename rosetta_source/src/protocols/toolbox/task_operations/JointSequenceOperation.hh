@@ -93,13 +93,18 @@ public:
 	/// @brief Should the rotamers for the native poses be used?
 	void use_natro( bool unr );
 
+	/// @brief Return which chain to operate on with 0 meaning all
+	void set_chain(core::Size chain);
+
+
 private:
 
 	bool use_current_pose_;
 	bool use_natro_; // set only with use_natro(), bookkeeping of ubr_
 	core::pack::rotamer_set::UnboundRotamersOperationOP ubr_;
 	std::vector<core::sequence::SequenceOP> sequences_;
-
+	/// @brief Which chain to operate on
+	core::Size chain_;
 };
 
 

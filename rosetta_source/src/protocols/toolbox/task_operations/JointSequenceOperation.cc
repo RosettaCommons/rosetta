@@ -30,7 +30,7 @@
 #include <core/sequence/Sequence.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
-
+#include <core/conformation/Conformation.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 
 // Utility Headers
@@ -58,7 +58,8 @@ JointSequenceOperation::JointSequenceOperation():
 	TaskOperation(),
 	use_current_pose_(true),
 	use_natro_(false),
-	ubr_(0)
+	ubr_(0),
+	chain_(0)
 {
 }
 
@@ -81,16 +82,26 @@ JointSequenceOperation::apply( Pose const & pose, PackerTask & task ) const
 	core::conformation::symmetry::SymmetryInfoCOP syminfo = NULL;
 	if( core::pose::symmetry::is_symmetric(pose) ) syminfo = core::pose::symmetry::symmetry_info(pose);
 
+	core::Size start = 1;
+	core::Size end = pose.total_residue();
+
+	if( chain_ > 0 ){ 
+		start = pose.conformation().chain_begin( chain_ );
+		end = 	pose.conformation().chain_end( chain_ );
+	}
+
+	core::Size seq_length = end - start + 1;
+
 	for( std::vector<core::sequence::SequenceOP>::const_iterator iter(sequences_.begin()); iter != sequences_.end(); iter++ ) {
-		if( (*iter)->length() != pose.total_residue() ) {
+		if( (*iter)->length() != seq_length ) {
 				std::string name("current pdb");
 				if( pose.pdb_info() ) {
 					name = pose.pdb_info()->name();
 				}
-				TR.Warning << "WARNING: Pose " << (*iter)->id() << " contains a different number of residues than " << name << std::endl;
+				TR.Warning << "WARNING: considered sequence " << (*iter)->id() << " contains a different number of residues than " << name << std::endl;
 		}
 	}
-	for( core::Size ii = 1; ii <= pose.total_residue(); ++ii){
+	for( core::Size ii = start; ii <= end; ++ii){
 		if( !pose.residue_type( ii ).is_protein() ) continue;
 		utility::vector1< bool > allowed(core::chemical::num_canonical_aas, false);
 
@@ -121,12 +132,16 @@ JointSequenceOperation::parse_tag( TagPtr tag )
 {
 	use_current_pose( tag->getOption< bool >( "use_current", true ) );
 	use_natro( tag->getOption< bool >( "use_natro", false ) );
+
+	// specifiy a chain, if 0 use all
+	chain_ = tag->getOption< core::Size >("chain", 0 );
+
 	if( tag->getOption< bool >( "use_native", false )) {
 		if( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
 			add_native_pdb( basic::options::option[ basic::options::OptionKeys::in::file::native ] );
 		}
 		else {
-			TR.Warning << "WARNING: Native PDB not specified on command line." << std::endl;
+			utility_exit_with_message("Native PDB not specified on command line.");
 		}
 	}
 	if( tag->hasOption("filename") ){
@@ -141,8 +156,18 @@ JointSequenceOperation::parse_tag( TagPtr tag )
 void
 JointSequenceOperation::add_pdb( std::string filename )
 {
+	
+	core::pose::Pose new_pose;
 	core::pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, filename );
+
+	core::import_pose::pose_from_pdb( new_pose, filename );
+	if( chain_ == 0 ){
+		TR << "taking only chain " << chain_ << std::endl;
+		pose = new_pose.split_by_chain( chain_ ) ;
+	}
+	else
+		pose = new_pose;
+	
 	add_pose( pose );
 }
 
@@ -193,6 +218,12 @@ JointSequenceOperation::use_natro( bool unr ) {
 		ubr_ = 0; // Allow owning pointer to garbage collect as necessary.
 	}
 	use_natro_ = unr;
+}
+
+/// @brief which chain should be considered
+void
+JointSequenceOperation::set_chain( core::Size chain){
+	chain_ = chain;
 }
 
 } // TaskOperations
