@@ -50,12 +50,15 @@ int main(int argc, char* argv[]) {
     utility_exit_with_message("Failed to provide required argument -out:file:silent");
   }
 
+  // Prevent the silent file parser from aborting on malformed input
+  // TODO(cmiles) programmatically enable -in:file:silent_read_through_errors
+
   utility::vector1<string> sequences = core::sequence::read_fasta_file_str(option[in::file::fasta]()[1]);
   const string ref_sequence = sequences[1];
   const string input_file = option[in::file::silent]()[1];
   const string output_file = option[out::file::silent]();
 
-	cout << "Reference: " << ref_sequence << endl;
+  cout << "Reference: " << ref_sequence << endl;
 
   SilentFileData sfd_in, sfd_out;
   sfd_in.read_file(input_file);
@@ -78,8 +81,9 @@ int main(int argc, char* argv[]) {
   }
 
   // print summary statistics
-  double pct_good = num_good / (num_good + num_bad);
-  double pct_bad = num_bad / (num_good + num_bad);
+  double total = num_good + num_bad;
+  double pct_good = num_good / total;
+  double pct_bad = num_bad / total;
   cout << "pct_good: " << pct_good << " pct_bad: " << pct_bad << endl;
 
   // if the percentage of failures exceeds a threshold, flag the file as corrupt
