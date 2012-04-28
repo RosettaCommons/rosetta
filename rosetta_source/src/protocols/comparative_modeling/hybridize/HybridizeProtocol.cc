@@ -1090,6 +1090,8 @@ HybridizeProtocol::parse_my_tag(
 		linmin_only_ = tag->getOption< bool >( "linmin_only" );
 	if( tag->hasOption( "repeats" ) )
 		relax_repeats_ = tag->getOption< core::Size >( "repeats" );
+	if( tag->hasOption( "cartfrag_overlap" ) ) 
+		cartfrag_overlap_ = tag->getOption< core::Size >( "cartfrag_overlap" ); 
 	if( tag->hasOption( "disulf_file" ) )
 		disulf_file_ = tag->getOption< std::string >( "disulf_file" );
 
