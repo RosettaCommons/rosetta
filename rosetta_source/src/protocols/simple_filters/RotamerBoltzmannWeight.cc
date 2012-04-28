@@ -48,6 +48,9 @@
 #include <core/pack/make_symmetric_task.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 
+// Jacob header 120423
+#include <core/pose/symmetry/util.hh>
+
 #include <utility/vector0.hh>
 
 //Auto Headers
@@ -241,7 +244,8 @@ RotamerBoltzmannWeight::compute( core::pose::Pose const & const_pose ) const{
 	} else {
 		if( unbound() ){
 			using namespace protocols::moves;
-			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( unbound_pose, rb_jump() ) );
+			int sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num(unbound_pose, rb_jump() ); // JB 120420
+			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( unbound_pose, sym_aware_jump_id ) ); // JB 120420
 			translate->step_size( 1000.0 );
 			translate->apply( unbound_pose );
 		}
@@ -275,17 +279,7 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 
 	TR<<"-----Computing Boltzmann weight for residue "<<resi<<std::endl;
 /// build a rotamer set for resi while pruning clashes against a poly-alanine background
-// NK 110621
 	core::pose::Pose pose( const_pose );
-//	core::pose::Pose ala_pose( pose );
-//	if( type_ == "monomer" ) {
-//		protocols::simple_moves::MakePolyXMover bap( "ALA", false, true, false );
-//		bap.apply( ala_pose );
-//	} else {
-//		protocols::protein_interface_design::movers::BuildAlaPose bap( true/*part1*/, true/*part2*/, 100000/*dist_cutoff*/);
-//		bap.apply( ala_pose );
-//	}
-// NK 110621
 
 	Residue const & res = pose.residue( resi );
 	RotamerSetFactory rsf;
@@ -410,7 +404,6 @@ RotamerBoltzmannWeight::interface_interaction_energy( core::pose::Pose const & p
 void
 RotamerBoltzmannWeight::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
-
 	if( type_ == "monomer" ) {
 		out<<"RotamerBoltzmannWeightFilter returns "<<compute( pose )<<std::endl;
 		out<<"RotamerBoltzmannWeightFilter final report\n";
@@ -541,10 +534,10 @@ RotamerBoltzmannWeight::type(std::string const & s)
 core::Real
 RotamerBoltzmannWeight::compute_modified_ddG( core::pose::Pose const & pose, std::ostream & out ) const
 {
-	protocols::simple_filters::DdgFilter ddg_filter( 100/*ddg_threshold*/, scorefxn(), rb_jump(), repack() ? 3 : 1 /*repeats*/ );
+	protocols::simple_filters::DdgFilter ddg_filter( 100/*ddg_threshold*/, scorefxn(), rb_jump(), repack() ? 3 : 1 /*repeats*/ ); //120423
 	ddg_filter.repack( repack() );
 
-	core::Real const ddG_in( ddg_filter.compute( pose ) );
+	core::Real const ddG_in( ddg_filter.compute( pose ) ); //problem
 	core::Real modified_ddG( ddG_in );
 	out<<"Residue"<<'\t'<<"ddG"<<'\t'<<"RotamerProbability"<<'\t'<<"EnergyReduction\n";
 	for( std::map< core::Size, core::Real >::const_iterator rot( rotamer_probabilities_.begin() ); rot != rotamer_probabilities_.end(); ++rot ){

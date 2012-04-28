@@ -312,7 +312,7 @@ ddG::calculate( pose::Pose const & pose_in )
 	using namespace pack;
 	using namespace protocols::moves;
 
-	if ( symmetry_ ) {
+	if ( core::pose::symmetry::is_symmetric( pose_in ) ) { //JBB 120423 changed from if (symmetry_)
 		symm_ddG( pose_in );
 		return;
 	}
