@@ -20,6 +20,7 @@
 #include <core/pack/task/operation/TaskOperationRegistrator.hh>
 #include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <protocols/moves/MoverFactory.hh>
+#include <protocols/filters/FilterFactory.hh> 
 #include <protocols/jd2/parser/DataLoaderFactory.hh>
 //#include <devel/constrained_sequence_design/SequenceConstraintFactory.hh>
 
@@ -28,6 +29,9 @@
 //#include <devel/constrained_sequence_design/ConstrainedDesignMoverCreator.hh>
 #include <devel/matdes/SymmetrizerMoverCreator.hh>
 #include <devel/matdes/TaskAwareSymMinMoverCreator.hh>
+
+// Filter creators
+#include <devel/matdes/SymUnsatHbondFilterCreator.hh>
 
 // dataloader creators
 //#include <devel/constrained_sequence_design/SequenceConstraintLoaderCreator.hh>
@@ -62,6 +66,9 @@ core::pack::task::operation::TaskOperationRegistrator< devel::znhash::DisableZnC
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::BuildingBlockInterfaceOperationCreator > BuildingBlockInterfaceOperationCreator_registrator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RestrictToNonzeroSASAOperationCreator > RestrictToNonzeroSASAOperationCreator_registrator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RestrictIdentitiesToRepackingOperationCreator > RestrictIdentitiesToRepackingOperationCreator_registrator;
+
+// Filter creators
+static protocols::filters::FilterRegistrator< devel::matdes::SymUnsatHbondFilterCreator > SymUnsatHbondFilterCreator_registrator;
 
 void init( int argc, char * argv [] )
 {

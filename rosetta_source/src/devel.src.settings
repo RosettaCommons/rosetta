@@ -84,6 +84,7 @@ sources = {
                 "RestrictToNonzeroSASAOperation",
 		"RestrictIdentitiesToRepackingOperation",
 		"OligomericAverageDegreeFilter",
+		"SymUnsatHbondFilter",
         ],
 	"devel/metal_interface": [
 		"AddMetalSiteConstraints",
