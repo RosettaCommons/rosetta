@@ -32,6 +32,7 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
+#include <protocols/jd2/util.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
@@ -144,6 +145,12 @@ JointSequenceOperation::parse_tag( TagPtr tag )
 			utility_exit_with_message("Native PDB not specified on command line.");
 		}
 	}
+
+ if( tag->getOption< bool >( "use_starting_as_native", false )) {
+    core::pose::PoseCOP pose (protocols::jd2::get_current_jobs_starting_pose());
+    add_native_pose( pose );
+  }
+
 	if( tag->hasOption("filename") ){
 		add_pdb( tag->getOption< String >( "filename" ) );
 	}
