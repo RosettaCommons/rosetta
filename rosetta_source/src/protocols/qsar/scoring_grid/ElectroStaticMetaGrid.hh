@@ -37,6 +37,10 @@ public:
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center,utility::vector1<core::Size> ligand_chain_ids_to_exclude);
 	/// @brief populate the grid with values based on a passed pose
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center);
+	/// @brief serialize the SingleGrid to a json_spirit object
+	virtual utility::json_spirit::Value serialize();
+	/// @brief deserialize a json_spirit object to a SingleGrid
+	virtual void deserialize(utility::json_spirit::mObject data);
 	/// @setup a grid based on RosettaScripts input
 	virtual void parse_my_tag(utility::tag::TagPtr const tag);
 	/// @brief return the current score of a residue using the current grid

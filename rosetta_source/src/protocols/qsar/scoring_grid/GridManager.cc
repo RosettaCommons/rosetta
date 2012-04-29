@@ -11,7 +11,6 @@
 /// @author Sam DeLuca
 
 #include <protocols/qsar/scoring_grid/GridManager.hh>
-
 #include <protocols/qsar/scoring_grid/SingleGrid.hh>
 #include <protocols/qsar/scoring_grid/GridFactory.hh>
 #include <protocols/jd2/Job.hh>
@@ -21,12 +20,19 @@
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/qsar.OptionKeys.gen.hh>
+
 // Utility headers
 #include <utility/io/izstream.hh>
+#include <utility/io/ozstream.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/exit.hh>
+#include <utility/tools/make_vector.hh>
+#include <utility/file/file_sys_util.hh>
 
 //STL headers
 #include <iostream>
@@ -250,7 +256,15 @@ void GridManager::update_grids(core::pose::Pose const & pose,  core::Vector cons
 {
 
 	core::Size chain_hash = core::pose::get_hash_excluding_chain(chain_,pose);
+	std::string hash_string(utility::to_string(chain_hash));
 	std::map<core::Size,GridMap>::const_iterator grid_cache_entry(grid_map_cache_.find(chain_hash));
+
+	bool grid_directory_active = basic::options::option[basic::options::OptionKeys::qsar::grid_dir].user();
+
+	if(!grid_directory_active)
+	{
+		GridManagerTracer << "WARNING: option -qsar:grid_dir is not set.  Use this flag to specify a directory to store scoring grids.  This will save you a huge amount of time" <<std::endl;
+	}
 
 	if(grid_cache_entry != grid_map_cache_.end()) //we've already seen this conformation, load the associated grid out of the map
 	{
@@ -258,13 +272,32 @@ void GridManager::update_grids(core::pose::Pose const & pose,  core::Vector cons
 		grid_map_ = grid_cache_entry->second;
 	}else // This is a new conformation
 	{
+
+		//Try to read it off the disk
+		if(grid_directory_active)
+		{
+			//files are in the format grid_directory/hash.json.gz
+			std::string directory_path(basic::options::option[basic::options::OptionKeys::qsar::grid_dir]());
+			utility::io::izstream grid_file(directory_path+"/"+hash_string+".json.gz");
+			if(grid_file)
+			{
+				utility::json_spirit::mValue gridmap_data;
+				utility::json_spirit::read(grid_file,gridmap_data);
+				deserialize(gridmap_data.get_array());
+				//Now grid_map_ is whatever was in that file.  We never want to do this again, put it in the cache
+				GridManagerTracer << "successfully read grids from the disk for conformation matching hash" << chain_hash <<std::endl;
+				grid_map_cache_.insert(std::make_pair(chain_hash,grid_map_));
+				return;
+
+			}
+		}
+
 		GridManagerTracer << "No conformation matching hash: " << chain_hash << " Updating grid and adding it to the cache" <<std::endl;
 
 		std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
 
 		for(;map_iterator != grid_map_.end();++map_iterator)
 		{
-
 
 			GridBaseOP current_grid(*map_iterator->second);
 			GridManagerTracer.Debug <<"updating grid " << map_iterator->first << std::endl;
@@ -274,6 +307,30 @@ void GridManager::update_grids(core::pose::Pose const & pose,  core::Vector cons
 			GridManagerTracer.Debug <<"done updating grid" <<std::endl;
 		}
 		grid_map_cache_.insert(std::make_pair(chain_hash,grid_map_));
+
+		if(grid_directory_active)
+		{
+			//if we just made a grid, we should write it to the disk for safekeeping.
+			std::string directory_path(basic::options::option[basic::options::OptionKeys::qsar::grid_dir]());
+			std::string temp_path(directory_path+"/"+hash_string+".inprogress");
+			if(!utility::file::file_exists(temp_path))  //If the inprogress file is there something else is busy writing
+			{
+				utility::io::ozstream progress_file(temp_path);
+				progress_file << "temp" <<std::endl;
+				progress_file.close();
+
+				utility::io::ozstream grid_file(directory_path+"/"+hash_string+".json.gz");
+
+				grid_file << utility::json_spirit::write(serialize()) << std::endl;
+				grid_file.close();
+				utility::file::file_delete(temp_path);
+
+				GridManagerTracer << "wrote grid matching hash: " << chain_hash << " to disk" <<std::endl;
+
+			}
+
+		}
+
 	}
 }
 
@@ -328,6 +385,31 @@ void GridManager::write_grids(std::string prefix)
 	{
 		GridBaseOP current_grid(map_iterator->second);
 		current_grid->dump_BRIX(prefix);
+	}
+}
+
+utility::json_spirit::Value GridManager::serialize()
+{
+	using utility::json_spirit::Value;
+	std::vector<Value> gridmap_data;
+	for(GridMap::iterator it = grid_map_.begin(); it != grid_map_.end();++it)
+	{
+		Value grid_name(it->first);
+		Value grid(it->second->serialize());
+		gridmap_data.push_back(Value(utility::tools::make_vector(grid_name,grid)));
+	}
+	return Value(gridmap_data);
+}
+
+void GridManager::deserialize(utility::json_spirit::mArray data)
+{
+	grid_map_.clear();
+	for(utility::json_spirit::mArray::iterator it = data.begin(); it != data.end();++it)
+	{
+		utility::json_spirit::mArray grid_data(it->get_array());
+		std::string grid_name = grid_data[0].get_str();
+		GridBaseOP grid(GridFactory::get_instance()->new_grid(grid_data[1].get_obj()));
+		grid_map_[grid_name] = grid;
 	}
 }
 

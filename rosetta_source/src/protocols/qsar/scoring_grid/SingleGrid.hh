@@ -57,8 +57,12 @@ public:
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center,utility::vector1<core::Size> ligand_chain_ids_to_exclude)=0;
 	/// @brief populate the grid with values based on a passed pose
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center)=0;
-	/// @setup a grid based on RosettaScripts input
+	/// @brief setup a grid based on RosettaScripts input
 	virtual void parse_my_tag(utility::tag::TagPtr const tag)=0;
+	/// @brief serialize the SingleGrid to a json_spirit object
+	virtual utility::json_spirit::Value serialize();
+	/// @brief deserialize a json_spirit object to a SingleGrid
+	virtual void deserialize(utility::json_spirit::mObject data);
 	/// @brief return a constant reference to the grid
 	core::grid::CartGrid<core::Real> const &  get_grid();
 	///@brief set the grid type

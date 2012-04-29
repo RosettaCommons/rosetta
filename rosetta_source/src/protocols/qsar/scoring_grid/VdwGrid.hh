@@ -38,6 +38,12 @@ public:
 	void parse_my_tag(utility::tag::TagPtr const tag);
 
 	core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map);
+
+	/// @brief serialize the Interpolator to a json_spirit object
+	virtual utility::json_spirit::Value serialize();
+	/// @brief deserialize a json_spirit object to a Interpolator
+	virtual void deserialize(utility::json_spirit::mObject data);
+
 private:
 
 

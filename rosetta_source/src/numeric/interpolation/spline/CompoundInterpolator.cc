@@ -15,6 +15,8 @@
 
 
 #include <numeric/interpolation/spline/CompoundInterpolator.hh>
+#include <numeric/interpolation/spline/SimpleInterpolator.hh>
+#include <utility/tools/make_vector.hh>
 
 #include <algorithm>
 
@@ -70,6 +72,42 @@ CompoundInterpolator::interpolate(
 	assert(false);
 }
 
+/// @brief serialize the Interpolator to a json_spirit object
+utility::json_spirit::Value CompoundInterpolator::serialize()
+{
+	using utility::json_spirit::Value;
+	using utility::json_spirit::Pair;
+	std::vector<Value> interpolator_data;
+	for(utility::vector1<interp_range>::iterator it = interpolators_.begin();it != interpolators_.end();++it)
+	{
+		Pair ub("ub",Value(it->ub));
+		Pair lb("lb",Value(it->lb));
+		Pair interpolator("interp",it->interp->serialize());
+		interpolator_data.push_back(Value(utility::tools::make_vector(ub,lb,interpolator)));
+	}
+
+	Pair inter_list("interp_list",Value(interpolator_data));
+	Pair base_data("base_data",Interpolator::serialize());
+
+	return Value(utility::tools::make_vector(inter_list,base_data));
+
+}
+
+/// @brief deserialize a json_spirit object to a Interpolator
+void CompoundInterpolator::deserialize(utility::json_spirit::mObject data)
+{
+	interpolators_.clear();
+	utility::json_spirit::mArray interpolator_data(data["interp_list"].get_array());
+	for(utility::json_spirit::mArray::iterator it = interpolator_data.begin(); it != interpolator_data.end();++it)
+	{
+		utility::json_spirit::mObject interpolator_record(it->get_obj());
+		InterpolatorOP current_interpolator = new SimpleInterpolator();
+		current_interpolator->deserialize(interpolator_record["interp"].get_obj());
+		add_range(current_interpolator,data["lb"].get_real(),data["ub"].get_real());
+	}
+
+	Interpolator::deserialize(data["base_data"].get_obj());
+}
 
 } // end namespace spline
 } // end namespace interpolation

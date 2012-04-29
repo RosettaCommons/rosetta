@@ -20,13 +20,37 @@
 #include <core/conformation/Residue.hh>
 
 #include <utility/tag/Tag.hh>
+#include <utility/tools/make_vector.hh>
+#include <utility/json_spirit/json_spirit_writer.h>
+#include <utility/json_spirit/json_spirit_reader.h>
+
 #include <boost/math/constants/constants.hpp>
+
 
 
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
+utility::json_spirit::Value ChargeAtom::serialize()
+{
+	using utility::json_spirit::Value;
+	using utility::json_spirit::Pair;
+
+	Pair xyz_record("xyz",xyz.serialize());
+	Pair nc_record("nc",Value(static_cast<boost::uint64_t>(neighbor_count)));
+	Pair charge_record("charge",Value(charge));
+
+	return Value(utility::tools::make_vector(xyz_record,nc_record,charge_record));
+
+}
+
+void ChargeAtom::deserialize(utility::json_spirit::mObject data)
+{
+	charge = data["charge"].get_real();
+	neighbor_count = data["nc"].get_int();
+	xyz.deserialize(data["xyz"].get_array());
+}
 std::string ChargeGridCreator::keyname() const
 {
 	return ChargeGridCreator::grid_name();
@@ -34,10 +58,17 @@ std::string ChargeGridCreator::keyname() const
 
 GridBaseOP ChargeGridCreator::create_grid(utility::tag::TagPtr const tag) const
 {
-	GridBaseOP classic_grid = new ChargeGrid();
-	classic_grid->parse_my_tag(tag);
-	return classic_grid;
+	GridBaseOP charge_grid = new ChargeGrid();
+	charge_grid->parse_my_tag(tag);
+	return charge_grid;
 }
+
+GridBaseOP ChargeGridCreator::create_grid() const
+{
+
+	return new ChargeGrid();
+}
+
 
 std::string ChargeGridCreator::grid_name()
 {
@@ -75,6 +106,42 @@ ChargeGrid::ChargeGrid(core::Real weight) :
 	charge_(0.0)
 {
 	//
+}
+
+utility::json_spirit::Value ChargeGrid::serialize()
+{
+	using utility::json_spirit::Value;
+	using utility::json_spirit::Pair;
+
+	Pair charge_record("charge",Value(charge_));
+	Pair base_data("base_data",SingleGrid::serialize());
+
+	std::vector<Value> charge_atom_data;
+	for(std::list<ChargeAtom>::iterator it = charge_atom_list_.begin(); it != charge_atom_list_.end();++it)
+	{
+		charge_atom_data.push_back(it->serialize());
+	}
+
+	Pair charge_atom_record("atoms",charge_atom_data);
+	return Value(utility::tools::make_vector(charge_record,charge_atom_record,base_data));
+
+}
+
+void ChargeGrid::deserialize(utility::json_spirit::mObject data)
+{
+	charge_ = data["charge"].get_real();
+
+	charge_atom_list_.clear();
+	utility::json_spirit::mArray charge_atom_data(data["atoms"].get_array());
+	for(utility::json_spirit::mArray::iterator it = charge_atom_data.begin(); it != charge_atom_data.end();++it)
+	{
+		ChargeAtom current_atom;
+		current_atom.deserialize(it->get_obj());
+		charge_atom_list_.push_back(current_atom);
+	}
+
+	SingleGrid::deserialize(data["base_data"].get_obj());
+
 }
 
 void ChargeGrid::refresh(core::pose::Pose const & pose, core::Vector const & )

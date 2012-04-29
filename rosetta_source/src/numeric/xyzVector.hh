@@ -32,6 +32,10 @@
 #include <numeric/trig.functions.hh>
 #include <platform/types.hh>
 
+#include <utility/tools/make_vector.hh>
+#include <utility/json_spirit/json_spirit_writer.h>
+#include <utility/json_spirit/json_spirit_reader.h>
+
 // C++ headers
 #include <cassert>
 #include <cmath>
@@ -161,6 +165,25 @@ public: // Creation
 	~xyzVector()
 	{}
 
+public: //JSON Seralization
+
+	/// @brief Convert vector to a json_spirit Value
+	/// @note Format is a list in the form [x,y,z]
+	utility::json_spirit::Value serialize()
+	{
+		utility::json_spirit::Value x(x_);
+		utility::json_spirit::Value y(y_);
+		utility::json_spirit::Value z(z_);
+
+		return utility::json_spirit::Value(utility::tools::make_vector(x,y,z));
+	}
+
+	void deserialize(utility::json_spirit::mArray data)
+	{
+		x_ = data[0].get_value<Value>();
+		y_ = data[1].get_value<Value>();
+		z_ = data[2].get_value<Value>();
+	}
 
 public: // Assignment
 

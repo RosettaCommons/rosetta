@@ -11,19 +11,21 @@
 /// @author Sam DeLuca
 
 #include <protocols/qsar/scoring_grid/SingleGrid.hh>
+
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <protocols/qsar/qsarMap.hh>
 #include <core/grid/CartGrid.hh>
-// AUTO-REMOVED #include <protocols/ligand_docking/grid_functions.hh>
 #include <core/pose/util.hh>
 #include <core/conformation/Conformation.hh>
+
 #include <basic/Tracer.hh>
-#include <algorithm>
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/tools/make_vector.hh>
+#include <utility/json_spirit/json_spirit_writer.h>
+#include <utility/json_spirit/json_spirit_reader.h>
 
-//#include <protocols/qsar/qsarTypeManager.hh>
+#include <algorithm>
 
 namespace protocols {
 namespace qsar {
@@ -58,6 +60,33 @@ void SingleGrid::initialize(core::Vector const & center, core::Real width,core::
 	grid_.setDimensions(num_pts,num_pts,num_pts,resolution,resolution,resolution);
 	grid_.setupZones();
 	grid_.zero();
+}
+
+utility::json_spirit::Value SingleGrid::serialize()
+{
+	using utility::json_spirit::Value;
+	using utility::json_spirit::Pair;
+
+	Pair type_record("type",Value(type_));
+	Pair weight_record("weight",Value(weight_));
+	Pair center_record("center",center_.serialize());
+	Pair chain_record("chain",Value(chain_));
+	Pair grid_record("grid_data",grid_.serialize());
+
+	return Value(utility::tools::make_vector(type_record,weight_record,center_record,chain_record,grid_record));
+
+}
+
+void SingleGrid::deserialize(utility::json_spirit::mObject data)
+{
+
+
+	type_ = data["type"].get_str();
+	weight_ = data["weight"].get_real();
+	center_.deserialize(data["center"].get_array());
+
+	grid_.deserialize(data["grid_data"].get_obj());
+
 }
 
 void SingleGrid::set_chain(char chain)

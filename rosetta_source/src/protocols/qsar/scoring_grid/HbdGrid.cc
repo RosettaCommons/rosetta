@@ -41,6 +41,12 @@ GridBaseOP HbdGridCreator::create_grid(utility::tag::TagPtr const tag) const
 
 	return hbd_grid;
 }
+GridBaseOP HbdGridCreator::create_grid() const
+{
+	return new HbdGrid();
+}
+
+
 
 std::string HbdGridCreator::grid_name()
 {
@@ -56,6 +62,30 @@ HbdGrid::HbdGrid(core::Real weight) : SingleGrid ("HbdGrid",weight), radius_(2.4
 {
 
 }
+
+utility::json_spirit::Value HbdGrid::serialize()
+{
+	using utility::json_spirit::Value;
+	using utility::json_spirit::Pair;
+
+	Pair radius_record("radius",Value(radius_));
+	Pair width_record("width",Value(width_));
+	Pair magnitude_record("mag",Value(magnitude_));
+	Pair base_data("base_data",SingleGrid::serialize());
+
+	return Value(utility::tools::make_vector(radius_record,width_record,magnitude_record,base_data));
+
+}
+
+void HbdGrid::deserialize(utility::json_spirit::mObject data)
+{
+	radius_ = data["radius"].get_real();
+	width_ = data["width"].get_real();
+	magnitude_ = data["mag"].get_real();
+
+	SingleGrid::deserialize(data["base_data"].get_obj());
+}
+
 
 void
 HbdGrid::parse_my_tag(utility::tag::TagPtr const tag){

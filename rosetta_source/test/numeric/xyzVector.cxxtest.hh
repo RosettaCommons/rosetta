@@ -23,6 +23,9 @@
 
 #include <boost/functional/hash.hpp>
 
+#include <sstream>
+#include <iostream>
+
 // --------------- Test Class --------------- //
 
 class XYZVectorTests : public CxxTest::TestSuite {
@@ -240,6 +243,21 @@ class XYZVectorTests : public CxxTest::TestSuite {
 
 		TS_ASSERT(xyz_hasher(v) == xyz_hasher(w));
 		TS_ASSERT(xyz_hasher(v) != xyz_hasher(x));
+
+	}
+
+	/// @brief serialization tests
+	void test_xyzVector_Serialization() {
+		numeric::xyzVector_float v( 1.0, 2.0, 3.0 );
+
+		std::ostringstream ss;
+		ss << utility::json_spirit::write(v.serialize());
+		utility::json_spirit::mValue v_data;
+		utility::json_spirit::read(ss.str(),v_data);
+		numeric::xyzVector_float w;
+		utility::json_spirit::mArray point_array(v_data.get_array());
+		w.deserialize(point_array);
+		TS_ASSERT(v == w);
 
 	}
 

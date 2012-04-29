@@ -42,6 +42,11 @@ GridBaseOP RepGridCreator::create_grid(utility::tag::TagPtr const tag) const
 	return rep_grid;
 }
 
+GridBaseOP RepGridCreator::create_grid() const
+{
+	return new RepGrid();
+}
+
 std::string RepGridCreator::grid_name()
 {
 	return "RepGrid";
@@ -54,6 +59,31 @@ RepGrid::RepGrid() : SingleGrid("RepGrid",0.0), radius_(2.25), bb_(1), sc_(0), l
 
 RepGrid::RepGrid(core::Real weight) : SingleGrid("RepGrid",weight), radius_(2.25)
 {
+}
+
+utility::json_spirit::Value RepGrid::serialize()
+{
+	using utility::json_spirit::Value;
+	using utility::json_spirit::Pair;
+
+	// [inner_radius, outer_radius]
+	Pair radius("radius",radius_);
+	Pair bb("bb",Value(bb_));
+	Pair sc("sc",Value(sc_));
+	Pair ligand("ligand",Value(ligand_));
+	Pair base_data("base_data",SingleGrid::serialize());
+
+	return Value(utility::tools::make_vector(radius,bb,sc,ligand,base_data));
+
+}
+
+void RepGrid::deserialize(utility::json_spirit::mObject data)
+{
+	radius_ = data["radius"].get_real();
+	bb_ = data["bb"].get_real();
+	sc_ = data["sc"].get_real();
+	ligand_ = data["ligand"].get_real();
+	SingleGrid::deserialize(data["base_data"].get_obj());
 }
 
 void

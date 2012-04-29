@@ -92,6 +92,48 @@ GridBaseOP GridFactory::new_grid(utility::tag::TagPtr const tag) const
 
 }
 
+GridBaseOP GridFactory::new_grid(utility::json_spirit::mObject data ) const
+{
+	//figure out what kind of grid to make.  There will be a "type" tag either in the top level of the
+	//heirarchy or in the base_data level.
+
+	std::string type;
+
+	utility::json_spirit::mObject::iterator type_it(data.find("type"));
+	if(type_it != data.end())
+	{
+		//If this is a metagrid then we can find a type tag in the top level
+		type = type_it->second.get_str();
+
+	}else
+	{
+		//OK, it's not a metagrid, Everything that inherits from SingleGrid has a "base_data" tag, and "type" is under that.
+		utility::json_spirit::mObject base_data(data["base_data"].get_obj());
+		type = base_data["type"].get_str();
+	}
+
+	//make a new grid
+	GridBaseOP new_grid;
+	GridMap::const_iterator iter(grid_creator_map_.find(type));
+	if( iter != grid_creator_map_.end())
+	{
+		if(!iter->second)
+		{
+			utility_exit_with_message("Error: GridCreatorOP prototype for "+type+ " is NULL!");
+		}
+		new_grid = iter->second->create_grid();
+	}
+	else
+	{
+		utility_exit_with_message(type + " is not known to the GridFactory.  Was it registered via a GridRegistrator in one of the init.cc files");
+	}
+
+	//deserialize object into new grid and return
+	assert(new_grid);
+	new_grid->deserialize(data);
+	return new_grid;
+}
+
 }
 }
 }
