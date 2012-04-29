@@ -105,6 +105,7 @@ public:
 
     void set_scmin(bool setting){scmin_=setting;}
     void set_rtmin(bool setting){rtmin_=setting;}
+    core::Real set_rot_magnitude(core::Real value){rot_magnitude_=value;}
 
 private:
 	core::scoring::ScoreFunctionCOP scorefxn_;
