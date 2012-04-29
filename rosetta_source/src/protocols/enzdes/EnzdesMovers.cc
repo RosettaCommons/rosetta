@@ -53,6 +53,7 @@
 
 #include <utility/string_util.hh>
 // AUTO-REMOVED #include <utility/io/izstream.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 // option key includes
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
@@ -298,8 +299,10 @@ PredesignPerturbMover::apply(
   //make a poly ala of the designable
  	protocols::enzdes::EnzdesBaseProtocolOP enzprot = new protocols::enzdes::EnzdesBaseProtocol();
   core::pose::Pose org_Pose(pose);
-  core::pack::task::PackerTaskCOP task
-		= enzprot -> create_enzdes_pack_task( pose, true );
+  core::pack::task::PackerTaskOP task;
+	if ( task_factory_ !=0 ) task = task_factory_->create_task_and_apply_taskoperations( pose );
+  else
+	task	= enzprot -> create_enzdes_pack_task( pose, true );
   set_docking_pose( pose, task );
 
   protocols::moves::MonteCarloOP MCpredock = new protocols::moves::MonteCarlo(
@@ -342,7 +345,7 @@ void PredesignPerturbMover::set_ligand(core::Size res_no)
 void
 PredesignPerturbMover::parse_my_tag(
 	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & ,
+	protocols::moves::DataMap & datamap,
 	protocols::filters::Filters_map const & ,
 	protocols::moves::Movers_map const & ,
 	core::pose::Pose const & pose)
@@ -351,6 +354,9 @@ PredesignPerturbMover::parse_my_tag(
 	rot_magnitude( tag -> getOption< core::Real >( "rot_magnitude", 2.0 ) );
 	dock_trials_ = tag -> getOption< core::Size >( "dock_trials", 100 );
 	constraint_reporter_.ligand_resno( (core::Size) pose.fold_tree().downstream_jump_residue( pose.num_jump() ));
+  if( tag->hasOption("task_operations") ) task_factory_ = ( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
+  else task_factory_ = NULL;
+
 }
 
 protocols::moves::MoverOP

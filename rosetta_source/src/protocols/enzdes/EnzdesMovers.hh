@@ -36,6 +36,7 @@
 #include <core/io/silent/SilentEnergy.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 
 // Utility Headers
@@ -179,7 +180,7 @@ public:
 	void
 	parse_my_tag(
 		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & ,
+		protocols::moves::DataMap & datamap ,
 		protocols::filters::Filters_map const & ,
 		protocols::moves::Movers_map const & ,
 		core::pose::Pose const & );
@@ -193,6 +194,7 @@ private:
 	utility::vector1< core::Size >positions_to_replace_;
 	//utility::vector1< core::Size >constrained_lig_atoms_;
 	core::Size dock_trials_;
+	core::pack::task::TaskFactoryOP task_factory_;
 	//core::Size ligand_seqpos_;//Ligand's sequence position
 };
 
