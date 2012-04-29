@@ -44,6 +44,7 @@ public:
 public :
 	ddG();
 	ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump=1, bool const symmetry=false );
+	ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump/*=1*/, utility::vector1<core::Size> const & chain_ids, bool const symmetry /*=false*/ );
 	virtual void apply (Pose & pose);
 	void calculate( Pose const & pose );
 	void symm_ddG( core::pose::Pose const & pose_in );

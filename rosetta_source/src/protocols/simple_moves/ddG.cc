@@ -134,6 +134,30 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump/*=1
 	unbound_per_residue_energies_.clear();
 }
 
+ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump/*=1*/, utility::vector1<core::Size> const & chain_ids, bool const symmetry /*=false*/ ) :
+		simple_moves::DesignRepackMover(ddGCreator::mover_name()),
+		bound_total_energy_(0.0),
+		unbound_total_energy_(0.0),
+		repeats_(0),
+		rb_jump_(0),
+		symmetry_(false),
+		per_residue_ddg_(false),
+		repack_(false),
+		relax_mover_( NULL )
+{
+	scorefxn_ = new core::scoring::ScoreFunction( *scorefxn_in );
+	rb_jump_ = jump;
+	chain_ids_ = chain_ids;
+	symmetry_ = symmetry;
+	per_residue_ddg_ = false;
+	repack_ = true;
+	repeats_ = 1;
+
+	bound_energies_.clear();
+	unbound_energies_.clear();
+	bound_per_residue_energies_.clear();
+	unbound_per_residue_energies_.clear();
+}
 void ddG::parse_my_tag(
 	utility::tag::TagPtr const tag,
 	protocols::moves::DataMap  & data,

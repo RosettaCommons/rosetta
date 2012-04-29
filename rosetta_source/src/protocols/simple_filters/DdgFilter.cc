@@ -15,23 +15,25 @@
 #include <protocols/simple_filters/DdgFilterCreator.hh>
 
 #include <protocols/filters/Filter.hh>
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/format.hh>
+#include <protocols/simple_moves/ddG.hh>
+#include <protocols/simple_filters/ScoreTypeFilter.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/scoring/Interface.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/Energies.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
-#include <protocols/simple_moves/ddG.hh>
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/string_util.hh>
+#include <ObjexxFCL/FArray1D.hh>
+#include <ObjexxFCL/format.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -92,6 +94,10 @@ DdgFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, 
 	if( tag->hasOption( "relax_mover" ) )
 		relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover" ), movers ) );
 
+	if(tag->hasOption("chain_num"))
+	{
+		chain_ids_ = utility::string_split(tag->getOption<std::string>("chain_num"),',',core::Size());
+	}
 
 	if( repeats() > 1 && !repack() )
 		utility_exit_with_message( "ERROR: it doesn't make sense to have repeats if repack is false, since the values converge very well." );
@@ -143,7 +149,7 @@ DdgFilter::repeats( core::Size const repeats )
 core::Real
 DdgFilter::compute( core::pose::Pose const & pose ) const {
 	if( repack() ){
-		protocols::simple_moves::ddG ddg( scorefxn_, rb_jump_, symmetry_ );
+		protocols::simple_moves::ddG ddg( scorefxn_, rb_jump_, chain_ids_, symmetry_ );
 		ddg.relax_mover( relax_mover() );
 		core::Real average( 0.0 );
 		for( core::Size i = 1; i<=repeats_; ++i ){
@@ -159,9 +165,26 @@ DdgFilter::compute( core::pose::Pose const & pose ) const {
 
 		simple_filters::ScoreTypeFilter const stf( scorefxn_, core::scoring::total_score, 10000/*threshold*/ );
 		core::pose::Pose split_pose( pose );
-		rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( split_pose, rb_jump_ ) );
-		translate->step_size( 1000.0 );
-		translate->apply( split_pose );
+		if(chain_ids_.size() > 0)
+		{
+			//We want to translate each chain the same direction, though it doesnt matter much which one
+			core::Vector translation_axis(1,0,0);
+			for(utility::vector1<core::Size>::const_iterator chain_it = chain_ids_.begin(); chain_it != chain_ids_.end();++chain_it)
+			{
+				core::Size current_chain_id = *chain_it;
+				core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,split_pose);
+				rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( split_pose, current_jump_id) );
+				translate->step_size( 1000.0 );
+				translate->trans_axis(translation_axis);
+				translate->apply( split_pose );
+			}
+		}else
+		{
+			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( split_pose, rb_jump_ ) );
+			translate->step_size( 1000.0 );
+			translate->apply( split_pose );
+		}
+
 		core::Real const bound_energy( stf.compute( pose ));
 		core::Real const unbound_energy( stf.compute( split_pose ));
 		core::Real const dG( bound_energy - unbound_energy );

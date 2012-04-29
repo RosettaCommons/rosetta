@@ -52,6 +52,7 @@ private:
 	core::Real ddg_threshold_; //dflt -15
 	core::scoring::ScoreFunctionOP scorefxn_; //dflt NULL/score12 in cstrctr/rosettascripts
 	core::Size rb_jump_; // dflt 1
+	utility::vector1<core::Size> chain_ids_;
 	core::Size repeats_;//average of how many repeats? defaults to 1
 	bool symmetry_; //dflt false
 	bool repack_; //dflt true; Do you want to repack in the bound and unbound states (ddG) or merely compute the dG
