@@ -84,9 +84,9 @@ GreedyOptMutationMover::GreedyOptMutationMover() :
 		runtime_assert( false );
   }
 	//filter_delta should always be a scalar!
-	if( filter_delta_ < Real( 0 ) ) filter_delta_ = ( Real( -1 ) * filter_delta_ );
+	if( filter_delta_ < Real( 0. ) ) filter_delta_ = ( Real( -1 ) * filter_delta_ );
 	//default diversity to all 20 aa's if specified filter_delta but did not spec diversify_lvl
-	if( filter_delta_ != Real( 0 ) && diversify_lvl_ == Size( 1 ) ) diversify_lvl_ = 20;
+	if( filter_delta_ != Real( 0. ) && diversify_lvl_ == Size( 1 ) ) diversify_lvl_ = 20;
 }
 
 //full ctor
@@ -122,7 +122,7 @@ GreedyOptMutationMover::GreedyOptMutationMover(
 		runtime_assert( false );
   }
 	//filter_delta should always be a scalar!
-	if( filter_delta_ < Real( 0 ) ) filter_delta_ = ( Real( -1 ) * filter_delta_ );
+	if( filter_delta_ < Real( 0. ) ) filter_delta_ = ( Real( -1 ) * filter_delta_ );
 }
 
 //destruction!
@@ -350,7 +350,7 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 			//smaller of user-def lvl and actual size of vector
 			Size max_diversify_lvl( std::min( diversify_lvl_, seqpos_aa_val_vec_[ iseq ].second.size() ) );
 			//ifdef filter_delta, redef max div lvl for this seqpos
-			if( filter_delta() != Real( 0 ) ){
+			if( filter_delta() != Real( 0. ) ){
 				Real best_val( seqpos_aa_val_vec_[ iseq ].second[ 1 ].second );
 				for( Size iaa = 2; iaa <= max_diversify_lvl; ++iaa ){
 					Real val( seqpos_aa_val_vec_[ iseq ].second[ iaa ].second );
@@ -421,11 +421,11 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagPtr const tag,
 	//load diversify_lvl
 	diversify_lvl( tag->getOption< core::Size >( "diversify_lvl", core::Size( 1 ) ) );
 	//load filter_delta
-	filter_delta( tag->getOption< core::Size >( "filter_delta", 0 ) );
+	filter_delta( tag->getOption< core::Real >( "filter_delta", core::Real( 0. ) ) );
 	//filter_delta should always be a scalar!
-	if( filter_delta() < Real( 0 ) ) filter_delta( -1 * filter_delta() );
+	if( filter_delta() < Real( 0. ) ) filter_delta( -1 * filter_delta() );
 	//default diversity to all 20 aa's if specified filter_delta but did not spec diversify_lvl
-	if( filter_delta() != Real( 0 ) && diversify_lvl() == Size( 1 ) ) diversify_lvl( 20 );
+	if( filter_delta() != Real( 0. ) && diversify_lvl() == Size( 1 ) ) diversify_lvl( 20 );
 	//load scorefxn
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	//load dump_pdb
