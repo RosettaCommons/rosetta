@@ -269,6 +269,7 @@ PoseConformationFeatures::report_features_implementation(
 	basic::database::safely_write_to_database(pose_conformation_statement);
 
 	//transact_guard.commit();
+	return 0;
 }
 
 void PoseConformationFeatures::delete_record(
