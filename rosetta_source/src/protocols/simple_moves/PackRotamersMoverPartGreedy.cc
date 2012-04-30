@@ -193,7 +193,7 @@ PackRotamersMoverPartGreedy::apply( Pose & pose )
 	TR<< *res << "+";
     }
   TR<< std::endl;
-
+  task->initialize_from_command_line().or_include_current( true );
   //Next hand over these to regular PackRotamers mover and we're done!
   protocols::simple_moves::PackRotamersMoverOP pack =  new protocols::simple_moves::PackRotamersMover( scorefxn_repack_ , task );
   pack->apply( pose );
