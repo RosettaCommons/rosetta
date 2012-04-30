@@ -25,6 +25,7 @@ sources = {
 	"EnzFilters",
 	"EnzRepackMinimize",
 	"ModifyStoredLigandRBConfsMovers",
+	"PackRotamersMoverPartGreedy",
 	"SecondaryMatchProtocol",
 ],
 "protocols/hotspot_hashing": [

@@ -54,6 +54,7 @@
 #include <protocols/enzdes/BackboneSamplerCreator.hh>
 #include <protocols/enzdes/EnzdesMoversCreator.hh>
 #include <protocols/enzdes/EnzRepackMinimizeCreator.hh>
+#include <protocols/enzdes/PackRotamersMoverPartGreedyCreator.hh>
 
 #include <protocols/features/ReportToDBCreator.hh> //this is a mover
 
@@ -195,7 +196,6 @@
 #include <protocols/simple_moves/MinPackMoverCreator.hh>
 #include <protocols/simple_moves/MutateResidueCreator.hh>
 #include <protocols/simple_moves/PackRotamersMoverCreator.hh>
-#include <protocols/simple_moves/PackRotamersMoverPartGreedyCreator.hh>
 #include <protocols/simple_moves/RotamerTrialsMinMoverCreator.hh>
 #include <protocols/simple_moves/RotamerTrialsMoverCreator.hh>
 #include <protocols/simple_moves/SaneMinMoverCreator.hh>

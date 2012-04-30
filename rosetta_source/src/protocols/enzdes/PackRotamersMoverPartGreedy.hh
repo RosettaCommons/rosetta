@@ -11,8 +11,8 @@
 /// @brief
 /// @author Sagar Khare (khares@uw.edu)
 
-#ifndef INCLUDED_protocols_simple_moves_PackRotamersMoverPartGreedy_hh
-#define INCLUDED_protocols_simple_moves_PackRotamersMoverPartGreedy_hh
+#ifndef INCLUDED_protocols_enzdes_PackRotamersMoverPartGreedy_hh
+#define INCLUDED_protocols_enzdes_PackRotamersMoverPartGreedy_hh
 
 // Unit headers
 //#include <protocols/simple_moves/PackRotamersMoverPartGreedy.fwd.hh>
@@ -32,7 +32,7 @@
 
 
 namespace protocols {
-namespace simple_moves {
+namespace enzdes {
 
 /// @brief a mover that packs the side-chains around a given set of target residues in a greedy fashion, and then packs the rest using the sim annealer.
 

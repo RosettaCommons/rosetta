@@ -4,9 +4,9 @@
 /// @author Sagar Khare (khares@uw.edu)
 
 // Unit headers
-#include <protocols/simple_moves/PackRotamersMoverPartGreedy.hh>
+#include <protocols/enzdes/PackRotamersMoverPartGreedy.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/PackRotamersMoverPartGreedyCreator.hh>
+#include <protocols/enzdes/PackRotamersMoverPartGreedyCreator.hh>
 
 #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -36,7 +36,7 @@
 
 
 namespace protocols {
-namespace simple_moves {
+namespace enzdes {
 
 using namespace core;
 using namespace pack;
@@ -46,7 +46,7 @@ using namespace scoring;
 
 using basic::Warning;
 using basic::t_warning;
-static basic::Tracer TR("protocols.simple_moves.PackRotamersMoverPartGreedy");
+static basic::Tracer TR("protocols.enzdes.PackRotamersMoverPartGreedy");
 
 std::string
 PackRotamersMoverPartGreedyCreator::keyname() const

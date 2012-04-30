@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/simple_moves/PackRotamersMoverPartGreedyPackRotamersMoverPartGreedyCreator.hh
+///@file protocols/enzdes/PackRotamersMoverPartGreedyPackRotamersMoverPartGreedyCreator.hh
 ///@brief This class will create instances of protocols::moves::Mover PackRotamersMoverPartGreedy for the protocols::moves::MoverFactory
 ///@author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_simple_moves_PackRotamersMoverPartGreedyCreator_hh
-#define INCLUDED_protocols_simple_moves_PackRotamersMoverPartGreedyCreator_hh
+#ifndef INCLUDED_protocols_enzdes_PackRotamersMoverPartGreedyCreator_hh
+#define INCLUDED_protocols_enzdes_PackRotamersMoverPartGreedyCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
-namespace simple_moves {
+namespace enzdes {
 
 class PackRotamersMoverPartGreedyCreator : public protocols::moves::MoverCreator {
 public:
