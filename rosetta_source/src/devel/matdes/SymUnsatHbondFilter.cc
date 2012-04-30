@@ -170,7 +170,7 @@ SymUnsatHbondFilter::report_sm( core::pose::Pose const & pose ) const
 }
 
 void
-SymUnsatHbondFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+SymUnsatHbondFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & /*datamap*/, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	jump_num_ = tag->getOption<core::Size>( "jump", 1 );
 	upper_threshold_ = tag->getOption<core::Size>( "cutoff", 20 );
