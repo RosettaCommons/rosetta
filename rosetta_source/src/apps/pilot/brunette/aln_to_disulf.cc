@@ -232,7 +232,7 @@ main( int argc, char* argv [] ) {
 
 		for ( disulf_iter disulf_it = final_disulf_pairs.begin(), disulf_end = final_disulf_pairs.end(); disulf_it != disulf_end; ++disulf_it){
 
-			output << disulf_it->first << "," <<  disulf_it->second << std::endl;
+			output << disulf_it->first << " " <<  disulf_it->second << std::endl;
 		}
 	}
 	tr << "disulfide detection completed successfully" << std::endl;
