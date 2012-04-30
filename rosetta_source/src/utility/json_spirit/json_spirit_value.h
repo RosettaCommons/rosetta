@@ -545,12 +545,6 @@ namespace json_spirit {
         }
 
         template< class Value >
-        float get_value( const Value& value, Type_to_type< float > )
-        {
-            return value.get_real();
-        }
-
-        template< class Value >
         double get_value( const Value& value, Type_to_type< double > )
         {
             return value.get_real();

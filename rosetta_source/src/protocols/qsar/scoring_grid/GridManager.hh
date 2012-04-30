@@ -26,8 +26,6 @@
 
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/json_spirit/json_spirit_writer.h>
-#include <utility/json_spirit/json_spirit_reader.h>
 
 #include <string>
 #include <map>
@@ -91,13 +89,6 @@ private:
 	GridManager(GridManager const &);
 	GridManager const & operator = (GridManager const & );
 	//GridManager(core::Real width,core::Real resolution);
-
-	/// @brief serialize the current map to a JSON object.  There is no public interface for this because the grid manager takes care of it on its own
-	utility::json_spirit::Value serialize();
-	/// @brief deserialize the JSON object to a map.  There is no public interface for this because the grid manager takes care of it on its own
-	void deserialize(utility::json_spirit::mArray data);
-
-private:
 	static GridManager * instance_;
 
 	std::map<core::Size,GridMap> grid_map_cache_;

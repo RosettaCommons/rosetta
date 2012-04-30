@@ -605,10 +605,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>select qsar weight set to use</dd><br>
 <dd>Default: "standard"</dd><br>
 </dl>
-<dl>
-<dt><b>-grid_dir</b> \<String\><dt>
-<dd>Directory to store grids in</dd><br>
-</dl>
  </li>
 <li><h2>residues</h2>
 <dl>

@@ -18,8 +18,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <utility/json_spirit/json_spirit_writer.h>
-#include <utility/json_spirit/json_spirit_reader.h>
+
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
 
@@ -48,12 +47,8 @@ public:
 	virtual std::string get_type() = 0;
 	/// @brief set the chain the grid applies to
 	virtual void set_chain(char chain) = 0;
-	/// @brief output a BRIX formatted grid.  This really does not work well but is being left for legacy purposes
+
 	virtual void dump_BRIX(std::string const & prefix) = 0;
-	/// @brief Serialize the GridBase object into a json_spirit Value
-	virtual utility::json_spirit::Value serialize() = 0;
-	/// @brief deserialize a json spirit Value into a GridBase object
-	virtual void deserialize(utility::json_spirit::mObject data) = 0;
 };
 
 }

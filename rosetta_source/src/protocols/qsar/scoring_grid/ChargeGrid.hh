@@ -32,16 +32,6 @@ struct ChargeAtom
 
 	}
 
-	ChargeAtom()
-	{
-		charge = 0.0;
-		neighbor_count = 0;
-	}
-
-	utility::json_spirit::Value serialize();
-
-	void deserialize(utility::json_spirit::mObject data);
-
 	core::Vector xyz;
 	core::Real charge;
 	core::Size neighbor_count;
@@ -57,10 +47,7 @@ public:
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & ligand_chain_id_to_exclude);
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center);
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, utility::vector1<core::Size> ligand_chain_ids_to_exclude);
-	/// @brief serialize the SingleGrid to a json_spirit object
-	virtual utility::json_spirit::Value serialize();
-	/// @brief deserialize a json_spirit object to a SingleGrid
-	virtual void deserialize(utility::json_spirit::mObject data);
+
 	void parse_my_tag(utility::tag::TagPtr const tag);
 
 	void set_charge(core::Real charge);
@@ -77,10 +64,10 @@ private:
 
 private:
 
-	core::Real zeta_;
-	core::Real epsilon_;
-	core::Real indirect_numerator_; // (zeta - epsilon) / (zeta + epsilon)
-	core::Real epsilon_0_;
+	core::Real const zeta_;
+	core::Real const epsilon_;
+	core::Real const indirect_numerator_; // (zeta - epsilon) / (zeta + epsilon)
+	core::Real const epsilon_0_;
 
 	core::Real charge_;
 	std::list<ChargeAtom> charge_atom_list_;

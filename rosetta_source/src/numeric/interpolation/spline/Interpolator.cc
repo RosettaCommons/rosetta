@@ -10,9 +10,8 @@
 /// @file   src/numeric/interpolation/spline/Interpolator.cc
 /// @author Sam DeLuca
 
-#include <numeric/interpolation/spline/Interpolator.hh>
 
-#include <utility/tools/make_vector.hh>
+#include <numeric/interpolation/spline/Interpolator.hh>
 
 namespace numeric {
 namespace interpolation {
@@ -76,43 +75,6 @@ void Interpolator::compute_lb_function_solution(Real x, Real & y) const
 void Interpolator::compute_ub_function_solution(Real x, Real & y) const
 {
 	y = ub_slope_*x+ub_intercept_;
-}
-
-
-utility::json_spirit::Value Interpolator::serialize()
-{
-	using utility::json_spirit::Value;
-	using utility::json_spirit::Pair;
-
-	Pair lb_fxn("lbfxn",Value(has_lb_function_));
-	Pair ub_fxn("ubfxn",Value(has_ub_function_));
-
-	Pair lb_cut("lbcut",Value(lb_cutoff_));
-	Pair ub_cut("ubcut",Value(ub_cutoff_));
-
-	Pair lb_slope("lbslope",Value(lb_slope_));
-	Pair ub_slope("ubslope",Value(ub_slope_));
-
-	Pair lb_int("lbint",Value(lb_intercept_));
-	Pair ub_int("ubint",Value(ub_intercept_));
-
-	return Value(utility::tools::make_vector(lb_fxn,ub_fxn,lb_cut,ub_cut,lb_slope,ub_slope,lb_int,ub_int));
-}
-
-void Interpolator::deserialize(utility::json_spirit::mObject data)
-{
-	has_lb_function_ = data["lbfxn"].get_bool();
-	has_ub_function_ = data["ubfxn"].get_bool();
-
-	lb_cutoff_ = data["lbcut"].get_real();
-	ub_cutoff_ = data["ubcut"].get_real();
-
-	lb_slope_ = data["lbslope"].get_real();
-	ub_slope_ = data["ubslope"].get_real();
-
-	lb_intercept_ = data["lbint"].get_real();
-	ub_intercept_ = data["ubint"].get_real();
-
 }
 
 }

@@ -16,9 +16,6 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 
-#include <utility/tools/make_vector.hh>
-#include <utility/json_spirit/json_spirit_writer.h>
-#include <utility/json_spirit/json_spirit_reader.h>
 #include <utility/tag/Tag.hh>
 
 namespace protocols {
@@ -37,11 +34,6 @@ GridBaseOP ClassicGridCreator::create_grid(utility::tag::TagPtr const tag) const
 	return classic_grid;
 }
 
-GridBaseOP ClassicGridCreator::create_grid() const
-{
-	return new ClassicGrid();
-}
-
 std::string ClassicGridCreator::grid_name()
 {
 	return "ClassicGrid";
@@ -55,26 +47,6 @@ ClassicGrid::ClassicGrid(): SingleGrid("ClassicGrid",1.0), atr_radius_(4.75), re
 ClassicGrid::ClassicGrid(core::Real weight) : SingleGrid("ClassicGrid",weight),  atr_radius_(4.75), rep_radius_(2.25)
 {
 	//
-}
-
-utility::json_spirit::Value ClassicGrid::serialize()
-{
-	using utility::json_spirit::Value;
-	using utility::json_spirit::Pair;
-
-	Pair atr("atr",Value(atr_radius_));
-	Pair rep("rep",Value(rep_radius_));
-	Pair base_data("base_data",SingleGrid::serialize());
-
-	return Value(utility::tools::make_vector(atr,rep,base_data));
-
-}
-
-void ClassicGrid::deserialize(utility::json_spirit::mObject data)
-{
-	atr_radius_ = data["atr"].get_real();
-	rep_radius_ = data["rep"].get_real();
-	SingleGrid::deserialize(data["base_data"].get_obj());
 }
 
 void ClassicGrid::parse_my_tag(utility::tag::TagPtr const tag)

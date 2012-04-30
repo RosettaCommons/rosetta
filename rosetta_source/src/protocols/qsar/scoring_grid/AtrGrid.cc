@@ -10,19 +10,15 @@
 /// @file   src/protocols/qsar/scoring_grid/AtrGrid.cc
 /// @author Sam DeLuca
 
-
+#include <utility/tag/Tag.hh>
 #include <protocols/qsar/scoring_grid/AtrGrid.hh>
 #include <protocols/qsar/scoring_grid/AtrGridCreator.hh>
-
 #include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
 
-#include <utility/tag/Tag.hh>
+#include <core/pose/Pose.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <utility/tools/make_vector.hh>
-#include <utility/json_spirit/json_spirit_writer.h>
-#include <utility/json_spirit/json_spirit_reader.h>
+
 
 namespace protocols {
 namespace qsar {
@@ -41,13 +37,6 @@ GridBaseOP AtrGridCreator::create_grid(utility::tag::TagPtr const tag) const
 
 	return atr_grid;
 }
-
-GridBaseOP AtrGridCreator::create_grid() const
-{
-
-	return new AtrGrid();
-}
-
 
 std::string AtrGridCreator::grid_name()
 {
@@ -103,33 +92,6 @@ AtrGrid::parse_my_tag(utility::tag::TagPtr const tag){
 		utility_exit_with_message("Could not make AtrGrid: you must specify a weight when making a new grid");
 	}
 	set_weight( tag->getOption<core::Real>("weight") );
-}
-
-utility::json_spirit::Value AtrGrid::serialize()
-{
-	using utility::json_spirit::Value;
-	using utility::json_spirit::Pair;
-
-	// [inner_radius, outer_radius]
-	Pair radius("radius",utility::tools::make_vector(Value(inner_radius_),Value(outer_radius_)));
-	Pair bb("bb",Value(bb_));
-	Pair sc("sc",Value(sc_));
-	Pair ligand("ligand",Value(ligand_));
-	Pair base_data("base_data",SingleGrid::serialize());
-
-	return Value(utility::tools::make_vector(radius,bb,sc,ligand,base_data));
-
-}
-
-void AtrGrid::deserialize(utility::json_spirit::mObject data)
-{
-	utility::json_spirit::mArray radius(data["radius"].get_array());
-	inner_radius_ = radius[0].get_real();
-	outer_radius_ = radius[1].get_real();
-	bb_ = data["bb"].get_real();
-	sc_ = data["sc"].get_real();
-	ligand_ = data["ligand"].get_real();
-	SingleGrid::deserialize(data["base_data"].get_obj());
 }
 
 void AtrGrid::refresh(core::pose::Pose const & pose, core::Vector const & center)

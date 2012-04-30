@@ -42,11 +42,6 @@ public:
 
 	void interpolate( Real x, Real & y, Real & dy );
 
-	/// @brief serialize the Interpolator to a json_spirit object
-	virtual utility::json_spirit::Value serialize();
-	/// @brief deserialize a json_spirit object to a Interpolator
-	virtual void deserialize(utility::json_spirit::mObject data);
-
 private:
 
 	utility::vector1< interp_range > interpolators_;

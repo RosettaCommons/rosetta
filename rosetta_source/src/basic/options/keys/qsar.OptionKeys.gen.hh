@@ -23,7 +23,6 @@ namespace OptionKeys {
 
 namespace qsar { extern BooleanOptionKey const qsar; }
 namespace qsar { extern StringOptionKey const weights; }
-namespace qsar { extern StringOptionKey const grid_dir; }
 
 } // namespace OptionKeys
 } // namespace options
