@@ -167,15 +167,23 @@ PoseConformationFeatures::report_features(
 	for(Size i = 1; i <= relevant_residues.size(); ++i){
 		if(relevant_residues[i]) residue_indices.push_back(i);
 	}
-	Pose* pose; // I had serious memory corruption when I tried to make this an owning pointer
-	if (residue_indices.size() == pose_orig.n_residue()){
-		pose = const_cast<Pose * >(&pose_orig);
-	}
-	else{
-		pose_from_pose( *pose, pose_orig, residue_indices);
-	}
 
-	FoldTree const & fold_tree(pose->conformation().fold_tree());
+	if (residue_indices.size() == pose_orig.n_residue()){
+		return report_features_implementation(pose_orig, struct_id, db_session);
+	}
+	// else...
+	Pose pose;
+	pose_from_pose( pose, pose_orig, residue_indices);
+	return report_features_implementation(pose, struct_id, db_session);
+}
+
+Size
+PoseConformationFeatures::report_features_implementation(
+	Pose const & pose,
+	boost::uuids::uuid struct_id,
+	sessionOP db_session
+){
+	FoldTree const & fold_tree(pose.conformation().fold_tree());
 	//assume non-trivial fold_tree only if more than one edge, i.e., EDGE 1 <nres> -1
 	//cppdb::transaction transact_guard(*db_session);
 
@@ -201,7 +209,7 @@ PoseConformationFeatures::report_features(
 	std::string jump_string = "INSERT INTO jumps (struct_id, jump_id, xx, xy, xz, yx, yy, yz, zx, zy, zz, x, y, z) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement jump_statement(basic::database::safely_prepare_statement(jump_string,db_session));
 	for (Size nr = 1; nr <= fold_tree.num_jump(); nr++)  {
-		Jump const & jump(pose->jump(nr));
+		Jump const & jump(pose.jump(nr));
 		xyzMatrix< Real > const & r(jump.get_rotation());
 		Real xx(r.xx()), xy(r.xy()), xz(r.xz());
 		Real yx(r.yx()), yy(r.yy()), yz(r.yz());
@@ -228,7 +236,7 @@ PoseConformationFeatures::report_features(
 
 	std::string chain_ending_string = "INSERT INTO chain_endings (struct_id, end_pos) VALUES (?,?);";
 	statement chain_ending_statement(basic::database::safely_prepare_statement(chain_ending_string,db_session));
-	foreach(Size end_pos, pose->conformation().chain_endings()){
+	foreach(Size end_pos, pose.conformation().chain_endings()){
 
 		chain_ending_statement.bind(1,struct_id);
 		chain_ending_statement.bind(2,end_pos);
@@ -248,20 +256,19 @@ PoseConformationFeatures::report_features(
 //		}
 //	}
 
-	string annotated_sequence(pose->annotated_sequence(true));
+	string annotated_sequence(pose.annotated_sequence(true));
 
 	std::string pose_conformation_string = "INSERT INTO pose_conformations (struct_id, annotated_sequence, total_residue, fullatom) VALUES (?,?,?,?);";
 	statement pose_conformation_statement(basic::database::safely_prepare_statement(pose_conformation_string,db_session));
 
 	pose_conformation_statement.bind(1,struct_id);
 	pose_conformation_statement.bind(2,annotated_sequence);
-	pose_conformation_statement.bind(3,pose->total_residue());
-	pose_conformation_statement.bind(4,pose->is_fullatom());
+	pose_conformation_statement.bind(3,pose.total_residue());
+	pose_conformation_statement.bind(4,pose.is_fullatom());
 
 	basic::database::safely_write_to_database(pose_conformation_statement);
 
 	//transact_guard.commit();
-	return 0;
 }
 
 void PoseConformationFeatures::delete_record(

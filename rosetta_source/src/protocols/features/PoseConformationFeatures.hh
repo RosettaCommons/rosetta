@@ -81,6 +81,8 @@ public:
 		boost::uuids::uuid struct_id,
 		core::pose::Pose & pose);
 
+private:
+
 	void
 	load_sequence(
 		utility::sql_database::sessionOP db_session,
@@ -105,6 +107,13 @@ public:
 		boost::uuids::uuid struct_id,
 		core::pose::Pose & pose);
 
+
+	Size
+	report_features_implementation(
+		core::pose::Pose const & pose_orig,
+		boost::uuids::uuid struct_id,
+		utility::sql_database::sessionOP db_session
+	);
 };
 
 } // features namespace
