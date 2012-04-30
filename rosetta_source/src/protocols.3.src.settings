@@ -274,6 +274,7 @@ sources = {
 		"MutateResidue",
 		"PackRotamersMover",
 		"PackRotamersMoverLazy",
+		"PackRotamersMoverPartGreedy",
 		"PeptideStapleMover",
 		"ProlineFixMover",
 		"RepackSidechainsMover",

@@ -195,6 +195,7 @@
 #include <protocols/simple_moves/MinPackMoverCreator.hh>
 #include <protocols/simple_moves/MutateResidueCreator.hh>
 #include <protocols/simple_moves/PackRotamersMoverCreator.hh>
+#include <protocols/simple_moves/PackRotamersMoverPartGreedyCreator.hh>
 #include <protocols/simple_moves/RotamerTrialsMinMoverCreator.hh>
 #include <protocols/simple_moves/RotamerTrialsMoverCreator.hh>
 #include <protocols/simple_moves/SaneMinMoverCreator.hh>
