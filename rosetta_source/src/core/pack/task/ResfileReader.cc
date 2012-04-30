@@ -445,7 +445,7 @@ ResfileContents::locate_resid(
 
 	Size resid(0);
 	if(pose.pdb_info() == 0){
-		if(1 <= PDBnum <= pose.total_residue()){
+		if(1 <= PDBnum && PDBnum <= pose.total_residue()){
 			resid = PDBnum;
 		}
 	} else {

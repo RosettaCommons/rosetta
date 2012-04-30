@@ -84,10 +84,10 @@ LK_CosThetaEnergy::LK_CosThetaEnergy( etable::Etable const & etable_in) :
 
 
 bool
-LK_CosThetaEnergy::defines_intrares_energy( EnergyMap const & weights ) const 
-{ 
+LK_CosThetaEnergy::defines_intrares_energy( EnergyMap const & weights ) const
+{
 	bool method_1= (weights[lk_polar_intra_RNA]>0.0 || weights[lk_nonpolar_intra_RNA]>0.0) ? true : false;
-	
+
 	return method_1;
 }
 
@@ -305,19 +305,19 @@ LK_CosThetaEnergy::get_residue_energy_RNA_intra(
 
 					if(diff_polar>0.001 || diff_polar<-0.001){
 						std::cout << "At least one of the atoms in the pair " << i << "," << j << " | res= " << rsd.seqpos() << " is virtual";
-						std::cout << " but diff_polar= " << diff_polar << " is non-zero!" <<std::endl; 
+						std::cout << " but diff_polar= " << diff_polar << " is non-zero!" <<std::endl;
 						utility_exit_with_message("diff_polar>0.001 || diff_polar<-0.001");
 					}
 
 					if(diff_costheta>0.001 || diff_costheta<-0.001){
 						std::cout << "At least one of the atoms in the pair " << i << "," << j << " | res= " << rsd.seqpos() << " is virtual";
-						std::cout << " but diff_costheta= " << diff_costheta << " is non-zero!" <<std::endl;  
+						std::cout << " but diff_costheta= " << diff_costheta << " is non-zero!" <<std::endl;
 						utility_exit_with_message("diff_costheta>0.001 || diff_costheta<-0.001");
 					}
 
 					if(diff_non_polar>0.001 || diff_non_polar<-0.001){
 						std::cout << "At least one of the atoms in the pair " << i << "," << j << " | res= " << rsd.seqpos() << " is virtual";
-						std::cout << " but diff_non_polar= " << diff_non_polar << " is non-zero!" <<std::endl;  
+						std::cout << " but diff_non_polar= " << diff_non_polar << " is non-zero!" <<std::endl;
 						utility_exit_with_message("diff_non_polar>0.001 || diff_non_polar<-0.001");
 					}
 				}
@@ -475,7 +475,7 @@ LK_CosThetaEnergy::eval_atom_derivative_intra_RNA(
 
 
 	bool do_eval_intra_RNA= (weights[lk_polar_intra_RNA]>0.0 || weights[lk_nonpolar_intra_RNA]>0.0) ? true : false;
-	
+
 	if(do_eval_intra_RNA==false) return; //early return.
 
 	Size const i( atom_id.rsd() );
@@ -495,10 +495,10 @@ LK_CosThetaEnergy::eval_atom_derivative_intra_RNA(
 		std::cout << "Start LK_CosThetaEnergy::eval_atom_derivative, intra_res case, res= " << i << " atomno= " << m << "[" << rsd1.atom_name(m) <<  "]" << std::endl;
 	}
 
-	bool const pos1_fixed( domain_map( i ) != 0 );
+	//bool const pos1_fixed( domain_map( i ) != 0 );
 
 	//if( pos1_fixed && domain_map(i) == domain_map(j) ){ //MOD OUT ON July 19th, 2011...THIS MIGHT BE BUGGY!
-		 //std::cout << "LK_CosThetaEnergy::eval_atom_derivative early return since pos1_fixed && domain_map(i=" << i << ") == domain_map(j=" << j << ")" << std::endl; 
+		 //std::cout << "LK_CosThetaEnergy::eval_atom_derivative early return since pos1_fixed && domain_map(i=" << i << ") == domain_map(j=" << j << ")" << std::endl;
 	//	 return; //Fixed w.r.t. one another.
 	//}
 
@@ -508,7 +508,7 @@ LK_CosThetaEnergy::eval_atom_derivative_intra_RNA(
 	Energies const & energies( pose.energies() );
 
 	// the neighbor/energy links
-	EnergyGraph const & energy_graph( energies.energy_graph() );
+	//EnergyGraph const & energy_graph( energies.energy_graph() );
 
 	Real deriv( 0.0 );
 	Vector const res1_base_vector_norm = get_base_vector( rsd1, m, pose );

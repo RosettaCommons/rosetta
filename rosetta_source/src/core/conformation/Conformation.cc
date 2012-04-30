@@ -102,11 +102,11 @@ Conformation::~Conformation()
 
 Conformation::Conformation() :
 	utility::pointer::ReferenceCount(),
+	fold_tree_( new FoldTree ),
+	atom_tree_( new AtomTree ),
 	residue_coordinates_need_updating_( false ),
 	residue_torsions_need_updating_( false ),
-	structure_moved_( true ),
-	atom_tree_( new AtomTree ),
-	fold_tree_( new FoldTree )
+	structure_moved_( true )
 {
 
 }

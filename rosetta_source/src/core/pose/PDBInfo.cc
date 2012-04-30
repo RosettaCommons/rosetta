@@ -468,7 +468,7 @@ PDBInfo::show(
 	Size current_atm_tot = 0;
 	Size atm_tot = 0;
 	Size current_start_pose = 0;
-	char icode_start_pdb;
+	char icode_start_pdb(' ');
 	// first line
 	out << "PDB file name: " << name() << std::endl;
 	out << " Pose Range  Chain    PDB Range  | #Resi        #Atoms\n" << std::endl;

@@ -67,8 +67,8 @@ public:
 
 	void set_default_settings();
 
-    
-    const core::Size get_max_kic_build_attempts()
+
+    core::Size get_max_kic_build_attempts() const
     {
         return max_kic_build_attempts_;
     }
@@ -77,12 +77,12 @@ public:
     {
         max_kic_build_attempts_ = max_kic_build_attempts;
     }
-    
+
 
 	/// @brief Clone this object
 	virtual protocols::moves::MoverOP clone() const;
 
-	
+
 private:
 
 	core::Size max_seglen_; // maximum KIC segment length

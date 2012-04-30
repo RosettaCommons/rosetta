@@ -121,9 +121,9 @@ protected: // movemap management
 	/// fly step
 	void set_loops_from_pose_observer_cache( core::pose::Pose const & pose );
 
-    bool const use_loops_from_observer_cache() const;
+    bool use_loops_from_observer_cache() const;
     void set_use_loops_from_observer_cache( bool const loops_from_observer_cache );
-    
+
     virtual basic::Tracer & tr() const = 0;
 
 private: // data

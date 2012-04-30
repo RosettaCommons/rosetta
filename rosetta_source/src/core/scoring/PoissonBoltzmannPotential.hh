@@ -44,9 +44,9 @@ class PoissonBoltzmannPotential : public utility::pointer::ReferenceCount
 {
 public:
 	PoissonBoltzmannPotential();
-	
+
 	~PoissonBoltzmannPotential(){}
-	
+
 	void read_APBS_potential(std::string const & apbs_potential_fn);
 	core::Real get_potential(ObjexxFCL::FArray3D< core::Real > const & potential, numeric::xyzVector<core::Real> const & cartX) const;
 	void
@@ -57,30 +57,30 @@ public:
 	   Real & PB_energy_sidechain,
 	   Real const & PB_burial_weight
 	   ) const;
-		
+
 	//////////////////////////////////
 	//////////////////////////////////
 	// functions to convert between indices and cartesian coords
 	inline void cart2idx( numeric::xyzVector<core::Real> const & cartX, numeric::xyzVector<core::Real> & idxX ) const {
 		idxX = c2i_*(cartX-lower_bound_) + numeric::xyzVector<core::Real> (1,1,1);
 	}
-	
+
 	template<class Q>
 	inline void idx2cart( numeric::xyzVector<Q> const & idxX , numeric::xyzVector<core::Real> &cartX ) const {
 		cartX = i2c_*numeric::xyzVector<core::Real>(idxX - numeric::xyzVector<Q> (1,1,1)) + lower_bound_;
 	}
-	
-	bool const isLoaded() {
+
+	bool isLoaded() {
 		return potential_is_loaded_;
 	}
-	
+
 	numeric::xyzVector< core::Real > lower_bound() const {
 		return lower_bound_;
 	}
 	numeric::xyzVector< core::Real > upper_bound() const {
 		return upper_bound_;
 	}
-	
+
 	bool out_of_bounds(numeric::xyzVector< core::Real > const cartX) const {
 		for (core::Size i=0;i<3;++i) {
 			if (cartX[i] < lower_bound()[i]) return true;
@@ -88,7 +88,7 @@ public:
 		}
 		return false;
 	}
-	
+
 private:
 	numeric::xyzMatrix< core::Real > i2c_, c2i_;
 	numeric::xyzVector< core::Real > lower_bound_;
@@ -99,7 +99,7 @@ private:
 	bool potential_is_loaded_;
 };
 
-void dump_pqr(core::pose::Pose const & pose, std::ostream & out, std::string const & tag,  utility::vector1 <Size> const & zero_charge_chains);		
+void dump_pqr(core::pose::Pose const & pose, std::ostream & out, std::string const & tag,  utility::vector1 <Size> const & zero_charge_chains);
 PoissonBoltzmannPotential & get_PB_potential();
 
 }

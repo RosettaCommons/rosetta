@@ -279,7 +279,7 @@ ResidualDipolarCouplingEnergy::eval_atom_derivative(
 		return;
 	}
 	Vector fij(0,0,0);
-	for (int ii=1; ii<=rdc_nrs.size(); ++ii) {
+	for (core::Size ii=1; ii<=rdc_nrs.size(); ++ii) {
 		core::Size rdc_nr = rdc_nrs[ ii ];
 		ResidualDipolarCoupling const& rdc_cache( *retrieve_RDC_from_pose( pose ) );
 		utility::vector1< core::scoring::RDC > All_RDC_lines( rdc_cache.get_RDC_data() );

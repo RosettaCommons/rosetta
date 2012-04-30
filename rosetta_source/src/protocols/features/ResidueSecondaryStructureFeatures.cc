@@ -208,7 +208,7 @@ ResidueSecondaryStructureFeatures::report_features(
 	Size segment_end;
 	Size helix_counter=1;
 	Size beta_counter=1;
-	Size loop_counter=1;
+	//Size loop_counter=1;
 
 	//Create the statement strings outside the loops so we don't need to rcreate them for every residue
 	std::string sec_structure_statement_string = "INSERT INTO residue_secondary_structure VALUES (?,?,?);";

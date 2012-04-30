@@ -37,7 +37,7 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-Size const
+Size
 rna_residue_name_to_num( char const c )
 {
 	if ( c == 'a') return 1;

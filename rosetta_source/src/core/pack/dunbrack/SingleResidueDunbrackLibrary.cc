@@ -595,7 +595,7 @@ SingleResidueDunbrackLibrary::hokey_template_workaround()
 	conformation::Residue rsd( blah, true );
 	RotamerLibraryScratchSpace scratch;
 	Size4 rotwell;
-	Size i;
+	Size i(0);
 
 	PackedDunbrackRotamer< ONE, Real > prot1;
 	PackedDunbrackRotamer< TWO, Real > prot2;

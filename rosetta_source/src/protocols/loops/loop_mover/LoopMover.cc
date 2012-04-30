@@ -77,14 +77,14 @@ using namespace ObjexxFCL::fmt;
 
 LoopMover::LoopMover() : Mover()
 {
-   init( new Loops() ); 
+   init( new Loops() );
 }
 
 LoopMover::LoopMover( protocols::loops::LoopsOP loops_in ) : Mover()
 {
     init( loops_in );
 }
-    
+
 void LoopMover::init( protocols::loops::LoopsOP loops_in )
 {
     Mover::type( "LoopMover" );
@@ -92,7 +92,7 @@ void LoopMover::init( protocols::loops::LoopsOP loops_in )
     checkpoints_ = new checkpoint::CheckPointer( "LoopMover" );
     false_movemap_ = new core::kinematics::MoveMap();
     loops_ = loops_in;
-    
+
 }
 
 // destructor
@@ -102,28 +102,28 @@ LoopMover::~LoopMover(){}
 
 // accessors //
 
-void LoopMover::set_scorefxn( const core::scoring::ScoreFunctionOP score_in ) 
+void LoopMover::set_scorefxn( const core::scoring::ScoreFunctionOP score_in )
 {
     scorefxn_ = score_in;
 }
 
-const core::scoring::ScoreFunctionOP & LoopMover::scorefxn() const 
+const core::scoring::ScoreFunctionOP & LoopMover::scorefxn() const
 {
     return scorefxn_;
 }
 
 void LoopMover::loops( protocols::loops::LoopsOP const l )
-{ 
-    loops_ = l; 
+{
+    loops_ = l;
 }
 
-const protocols::loops::LoopsOP LoopMover::loops() const 
+const protocols::loops::LoopsOP LoopMover::loops() const
 {
     return loops_;
 }
 
 
-const utility::vector1< core::fragment::FragSetOP > & LoopMover::frag_libs() const 
+const utility::vector1< core::fragment::FragSetOP > & LoopMover::frag_libs() const
 {
     return frag_libs_;
 }
@@ -133,22 +133,22 @@ void LoopMover::set_use_loops_from_observer_cache( bool const loops_from_observe
     loops_from_observer_cache_ = loops_from_observer_cache;
 }
 
-bool const LoopMover::use_loops_from_observer_cache() const
+bool LoopMover::use_loops_from_observer_cache() const
 {
     return loops_from_observer_cache_;
 }
- 
-checkpoint::CheckPointerOP & LoopMover::get_checkpoints() 
+
+checkpoint::CheckPointerOP & LoopMover::get_checkpoints()
 {
     return checkpoints_;
 }
 
-void LoopMover::false_movemap( MoveMapOP const & mm ) 
+void LoopMover::false_movemap( MoveMapOP const & mm )
 {
     false_movemap_ = mm;
 }
 
-LoopMover::MoveMapOP const & LoopMover::false_movemap() const 
+LoopMover::MoveMapOP const & LoopMover::false_movemap() const
 {
     return false_movemap_;
 }
@@ -156,7 +156,7 @@ LoopMover::MoveMapOP const & LoopMover::false_movemap() const
 // end of accessors
 
 // Additional MoveMap method
-Size LoopMover::enforce_false_movemap( MoveMapOP & mm ) const 
+Size LoopMover::enforce_false_movemap( MoveMapOP & mm ) const
 {
     return mm->import_false( *false_movemap() );
 }

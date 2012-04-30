@@ -98,7 +98,7 @@ lzs(
 
 
 
-		inline Real const sqr(Real const r) { return r*r; }
+		inline Real sqr(Real const r) { return r*r; }
 
 		inline Vec xyz(Pose const & p, Size const & ia, Size const & ir) {
     return p.xyz(AtomID(ia,ir));

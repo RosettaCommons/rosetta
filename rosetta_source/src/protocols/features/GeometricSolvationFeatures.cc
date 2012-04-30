@@ -64,8 +64,8 @@ GeometricSolvationFeatures::GeometricSolvationFeatures() :
 
 GeometricSolvationFeatures::GeometricSolvationFeatures(
 	GeometricSolvationFeatures const & src ) :
-	geo_sol_energy_(src.geo_sol_energy_),
-	FeaturesReporter()
+	FeaturesReporter(),
+	geo_sol_energy_(src.geo_sol_energy_)
 {}
 
 

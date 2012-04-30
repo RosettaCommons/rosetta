@@ -248,7 +248,7 @@ Splice::apply( core::pose::Pose & pose )
 			residue_dofs.psi( source_pose.psi( i ) );
 			residue_dofs.omega( source_pose.omega( i ) );
 
-			core::Size const nearest_on_target( find_nearest_res( pose, source_pose, i ) );
+			//core::Size const nearest_on_target( find_nearest_res( pose, source_pose, i ) );
 
 /// convert 3let residue code to 1let code
 			std::stringstream ss; std::string s;
@@ -543,7 +543,7 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 	runtime_assert( !(tag->hasOption( "torsion_database" ) && tag->hasOption( "rms_cutoff" )) ); // torsion database doesn't specify coordinates so no point in computing rms
 	res_move( tag->getOption< core::Size >( "res_move", 4 ) );
 	randomize_cut( tag->getOption< bool >( "randomize_cut", false ) );
-	runtime_assert( tag->hasOption( "randomize_cut" ) && tag->hasOption( "source_pose" ) || !tag->hasOption( "source_pose" ) );
+	runtime_assert( ( tag->hasOption( "randomize_cut" ) && tag->hasOption( "source_pose" ) ) || !tag->hasOption( "source_pose" ) );
 	template_file( tag->getOption< std::string >( "template_file", "" ) );
 	equal_length( tag->getOption< bool >( "equal_length", false ) );
 	poly_ala( tag->getOption< bool >( "thread_ala", true ) );
@@ -670,8 +670,8 @@ Splice::fold_tree( core::pose::Pose & pose, core::Size const start, core::Size c
 	}
 	core::kinematics::FoldTree ft;
 	ft.clear();
-	core::Size const first = std::min( s1, from_res );
-	core::Size const second = std::max( s1, from_res );
+	//core::Size const first = std::min( s1, from_res );
+	//core::Size const second = std::max( s1, from_res );
 //	ft.add_edge( 1, from_res, -1 );
 //	ft.add_edge( from_res, s1, -1 );
 	ft.add_edge( 1, s1, -1 );

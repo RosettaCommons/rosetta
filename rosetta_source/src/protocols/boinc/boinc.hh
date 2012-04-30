@@ -194,11 +194,11 @@ public:
 	// name based on the boinc client slot run directory
 	static void get_sema_name( char * name);
 
-	static const int create_semaphore( void );
-	static const int  get_semaphore( void );
-	static const int wait_semaphore( void );
-	static const int trywait_semaphore( void );
-	static const int unlock_semaphore( void );
+	static int create_semaphore( void );
+	static int get_semaphore( void );
+	static int wait_semaphore( void );
+	static int trywait_semaphore( void );
+	static int unlock_semaphore( void );
 
 	static int decoy_count()  { return decoy_count_; };
 

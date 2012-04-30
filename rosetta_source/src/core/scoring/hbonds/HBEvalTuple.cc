@@ -31,8 +31,8 @@ HBEvalTuple::HBEvalTuple(
 	HBAccChemType acc,
 	HBSeqSep sequence_sep
 ) :
-	acc_type_( acc ),
 	don_type_( don ),
+	acc_type_( acc ),
 	seq_sep_( sequence_sep )
 {
 	update_hbevaltype();

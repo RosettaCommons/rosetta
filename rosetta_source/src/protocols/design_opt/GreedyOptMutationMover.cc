@@ -112,7 +112,7 @@ GreedyOptMutationMover::GreedyOptMutationMover(
 	diversify_lvl_ = diversify_lvl;
 	dump_pdb_ = dump_pdb;
 	stopping_condition_ = stopping_condition;
-	
+
 	if( sample_type_ == "high" ){
 		flip_sign_ = Real( -1 );
 	}else if( sample_type_ == "low" ){
@@ -284,8 +284,8 @@ GreedyOptMutationMover::pose_coords_are_same( core::pose::Pose const & pose1, co
 			if( rsd1.xyz( ii ).x() != rsd2.xyz( ii ).x() ) return false;
 			if( rsd1.xyz( ii ).y() != rsd2.xyz( ii ).y() ) return false;
 			if( rsd1.xyz( ii ).z() != rsd2.xyz( ii ).z() ) return false;
-		}    
-	}    
+		}
+	}
 	return true;
 }
 
@@ -421,7 +421,7 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagPtr const tag,
 	//load diversify_lvl
 	diversify_lvl( tag->getOption< core::Size >( "diversify_lvl", core::Size( 1 ) ) );
 	//load filter_delta
-	filter_delta( tag->getOption< core::Size >( "filter_delta", core::Real( 0 ) ) );
+	filter_delta( tag->getOption< core::Size >( "filter_delta", 0 ) );
 	//filter_delta should always be a scalar!
 	if( filter_delta() < Real( 0 ) ) filter_delta( -1 * filter_delta() );
 	//default diversity to all 20 aa's if specified filter_delta but did not spec diversify_lvl

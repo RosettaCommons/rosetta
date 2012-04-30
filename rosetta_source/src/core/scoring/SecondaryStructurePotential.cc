@@ -549,8 +549,8 @@ SecondaryStructurePotential::sspair(
 
 //rhiju Extra rewards/bonuses for parallel and antiparallel terms. Only affects
 //         long-range pairings.
-					if (theta<90 & istrand_seqsep==3) phithetascore *= wts.get_parallel_weight();
-					if (theta>90 & istrand_seqsep==3) phithetascore *= wts.get_antiparallel_weight();
+					if (theta<90 && istrand_seqsep==3) phithetascore *= wts.get_parallel_weight();
+					if (theta>90 && istrand_seqsep==3) phithetascore *= wts.get_antiparallel_weight();
 
 //car save the total score for the pair and the signs
 //car dimer_pair_score is the total for the dimer pair
@@ -623,10 +623,10 @@ SecondaryStructurePotential::sspair(
 
 							// Modify sigma potential to no longer give an rsigma bonus
 							//  to strands in wrong register.
-						if (sign1 == 1 & sign2 == 1 & sig < 110. & sig > 70.) tempscore_rsigma = 0.0;
-						if (sign1 == 1 & sign2 == 2 & (sig < 75. | sig > 95.)) tempscore_rsigma = 0.0;;
-						if (sign1 == 2 & sign2 == 1 & (sig < 90. | sig > 110.)) tempscore_rsigma = 0.0;
-						if (sign1 == 2 & sign2 == 2 & sig < 120. & sig > 80.) tempscore_rsigma = 0.0;
+						if (sign1 == 1 && sign2 == 1 && sig < 110. && sig > 70.) tempscore_rsigma = 0.0;
+						if (sign1 == 1 && sign2 == 2 && (sig < 75. || sig > 95.)) tempscore_rsigma = 0.0;;
+						if (sign1 == 2 && sign2 == 1 && (sig < 90. || sig > 110.)) tempscore_rsigma = 0.0;
+						if (sign1 == 2 && sign2 == 2 && sig < 120. && sig > 80.) tempscore_rsigma = 0.0;
 
 						if ( tempscore_rsigma > 0.0 ) {
 //car add in all unfavorable rsigma scores (these pairs may not contribute

@@ -81,7 +81,7 @@ NVlookup::NVlookup(std::string filename) : lookup_table_(core::chemical::num_can
 	utility::vector1<core::Real> bin_centers;
 
 	//the rest of the code expects a vector of reals, so we convert the array to one
-	for(int i =0; i < bin_array_data.size();++i)
+	for(core::Size i =0; i < bin_array_data.size();++i)
 	{
 		bin_centers.push_back(bin_array_data[i].get_real());
 	}
@@ -100,7 +100,7 @@ NVlookup::NVlookup(std::string filename) : lookup_table_(core::chemical::num_can
 
 		utility::json_spirit::mArray const & spline_array_data = spline_object_iterator->second.get_array();
 		utility::vector1<core::Real> spline_values;
-		for(int i = 0; i < spline_array_data.size(); ++i)
+		for(core::Size i = 0; i < spline_array_data.size(); ++i)
 		{
 			spline_values.push_back(spline_array_data[i].get_real());
 		}

@@ -203,25 +203,25 @@ RandomMover::get_name() const {
 	return "RandomMover";
 }
 
-void 
+void
 RandomMover::parse_my_tag( utility::tag::TagPtr const tag,
                            protocols::moves::DataMap &,
                            protocols::filters::Filters_map const &,
                            protocols::moves::Movers_map const &movers,
                            core::pose::Pose const & ) {
 	using namespace protocols::filters;
-	
+
 	utility::vector1<std::string> mover_names( utility::string_split( tag->getOption< std::string >("movers"), ',') );
 	utility::vector1<std::string> mover_weights;
 	if (tag->hasOption ("weights"))
 		mover_weights = utility::string_split( tag->getOption< std::string >( "weights" ), ',');
-	
+
 	// make sure # movers matches # weights
 	runtime_assert( mover_weights.size() == 0 || mover_weights.size() == mover_names.size() );
-	
+
 	nmoves_ = tag->getOption< core::Size >( "repeats",1 );
 
-	for (int i=1; i<=mover_names.size(); ++i) {
+	for (core::Size i=1; i<=mover_names.size(); ++i) {
 		protocols::moves::MoverOP mover = find_mover_or_die(mover_names[i], tag, movers);
 		core::Real weight = (mover_weights.size() == 0)? 1.0 : std::atof( mover_weights[i].c_str() );
 		add_mover( mover, weight );
@@ -251,10 +251,10 @@ void CycleMover::apply( core::pose::Pose& pose )
 	movers_[ next_move_ ]->apply(pose);
 	++next_move_;
 }
-	
-	
+
+
 //JQX added this to reset the next_move_
-void CycleMover::reset_cycle_index()   
+void CycleMover::reset_cycle_index()
 {
 	next_move_ = 0;
 }

@@ -243,7 +243,7 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 			std::string const full_ss = pose.secstruct();
 			std::string const full_sequence = pose.sequence();
 			utility::vector1< core::fragment::FragSetOP > frag_libs;
-			protocols:loops:read_loop_fragments( frag_libs );
+			protocols::loops::read_loop_fragments( frag_libs );
 				if( perturb_ ) {
 					protocols::loops::loop_mover::perturb::LoopMover_Perturb_CCD perturb(single_loop, lores_score_ );
 					for ( core::Size i = 1; i <= frag_libs.size(); ++i ) {

@@ -215,7 +215,7 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 		string res2name;
 		Size orbNum1(0);
 		Size hpolNum2(0);
-		Size atm(0);
+		//Size atm(0);
 		Size haroNum2(0);
 		Real cosAOH(0);
 		Real cosDHO(0);
@@ -227,7 +227,7 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 		Real cosAHD(0);
 		Size OrbNum2(0);
 		string OrbName2;
-		Real OrbOrbdist(0);
+		//Real OrbOrbdist(0);
 		Real cosAOO(0);
 		Real cosDOO(0);
 		Real chiBAOO(0);
@@ -394,10 +394,10 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 ///@brief get statistics based upon aromatic hydrogen to orbital distance/angle
 void
 OrbitalsFeatures::report_haro_orbital_interactions(
-		Pose const & pose,
+		Pose const & /* pose */,
 		vector1< bool > const &,
-		boost::uuids::uuid const struct_id,
-		sessionOP db_session
+		boost::uuids::uuid const /* struct_id */,
+		sessionOP /* db_session */
 ){
 /*	std::string orbita_H_string = "INSERT INTO HARO_orbital VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement orbital_H_statement(basic::database::safely_prepare_statement(orbita_H_string,db_session));
@@ -578,8 +578,8 @@ OrbitalsFeatures::set_OrbOrb_features_data(
 		Real & OrbHdist,
 		Real & DOA_angle,
 		Real & AOD_angle,
-		Real & chiBAHD,
-		Real & cosAHD
+		Real & /* chiBAHD */,
+		Real & /* cosAHD */
 	){
 	Real const container(Orbxyz1.distance(Orbxyz2));
 	xyzVector<Real> const Axyz(res1.atom(Aindex).xyz());

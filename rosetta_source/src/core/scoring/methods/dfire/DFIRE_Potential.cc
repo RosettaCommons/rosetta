@@ -82,8 +82,8 @@ DFIRE_Potential::read_potential(std::string const & fn) {
 			string res1(""), atom1(""), res2(""), atom2("");
 			ss >> res1 >> atom1 >> res2 >> atom2;
 
-			Size const res_idx1(res_index(res1)), res_idx2(res_index(res2)),
-				atom_idx1(atom_index(atom1)), atom_idx2(atom_index(atom2));
+			//Size const res_idx1(res_index(res1)), res_idx2(res_index(res2));
+			//Size const atom_idx1(atom_index(atom1)), atom_idx2(atom_index(atom2));
 
 			//std::cout << "line = " << line << std::endl;
 			//if ( res_idx1 != INVALID && res_idx2 != INVALID && atom_idx1 != INVALID && atom_idx2 != INVALID ) {

@@ -625,7 +625,7 @@ std::istream& operator>> ( std::istream & s, SymmetryInfo & symminfo )
 		} else {
 			old_stream = true;
 		}
-		s >> symminfo.npseudo_ 
+		s >> symminfo.npseudo_
 			>> tag >> symminfo.interfaces_
 		  >> tag >> symminfo.type_
 		  >> tag >> num_bb_indep
@@ -647,10 +647,10 @@ std::istream& operator>> ( std::istream & s, SymmetryInfo & symminfo )
 		if (old_stream) {
 			TR << "Warning: Symmetric input stream is out of date! Trying to recover." << std::endl;
 			// set master jumps to 1; clones to 0
-			for (std::map<Size,SymmetryInfo::Clones>::const_iterator map_it=symminfo.jump_clones_.begin(), 
+			for (std::map<Size,SymmetryInfo::Clones>::const_iterator map_it=symminfo.jump_clones_.begin(),
 			     map_end=symminfo.jump_clones_.end();
 			     map_it != map_end; ++map_it) {
-				for (int i=1; i<=map_it->second.size(); ++i) {
+				for (Size i=1; i<=map_it->second.size(); ++i) {
 					symminfo.jump_clone_wts_[ map_it->second[i] ] = 0;
 				}
 			}
@@ -677,7 +677,7 @@ std::istream& operator>> ( std::istream & s, SymmetryInfo & symminfo )
 		comma_strings_to_vector( s, num_score_multiply,  symminfo.score_multiply_, "SCORE_MULTIPLY" );
 		symminfo.update_score_multiply_factor();
 
-		// 
+		//
 		symminfo.set_use_symmetry( true );
 
 		if ( fail ) {
@@ -736,18 +736,18 @@ std::string const & filename
 )
 {
 	bool success = false;
-	
+
 	utility::io::ozstream output;
 	if ( !utility::file::file_exists( filename ) ) {
 		output.open( filename );
 	} else {
 		output.open_append( filename );
 	}
-	
+
 	output << *this << '\n';
-	
+
 	output.close();
-	
+
 	success = true;
 	return success;
 }
@@ -759,7 +759,7 @@ std::string const & filename
 )
 {
 	bool success = false;
-	
+
 	utility::io::izstream input ( filename.c_str() );
 	std::istringstream line_stream;
 	std::string line("");
@@ -768,16 +768,16 @@ std::string const & filename
 					<< filename << std::endl;
 		return success;
 	}
-	
+
 	while( !input.eof() ) {
 		getline(input,line);
 		line_stream.clear();
 		line_stream.str(line);
 		line_stream >> *this;
 	}
-	
+
 	input.close();
-	
+
 	success = true;
 	return success;
 }

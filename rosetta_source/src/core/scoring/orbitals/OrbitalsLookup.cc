@@ -41,7 +41,7 @@ namespace orbitals{
 //this function reads in the potentials from database. The potentials are already in the form of Energy.
 OrbitalsLookup::OrbitalsLookup(
 		utility::vector1< std::string > const & DHO_energies,
-		utility::vector1< std::string > const & AOH_energies,
+		utility::vector1< std::string > const & /* AOH_energies */,
 		utility::vector1< std::string > const & AOD_orb_orb_energies,
 		utility::vector1< std::string > const & DOA_orb_orb_energies
 ) :

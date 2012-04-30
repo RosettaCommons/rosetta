@@ -481,7 +481,7 @@ ScoreFunction::show_pretty( std::ostream & out ) const {
 	out << "---------------------------------------------\n";
 	out << " Scores                       Weight   \n";
 	out << "---------------------------------------------\n";
-	float sum_weighted=0.0;
+	//float sum_weighted=0.0;
 	for ( int i=1; i<= n_score_types; ++i ) {
 		if ( weights_[ ScoreType(i) ] != 0.0 ) {
 			out << ' ' << LJ(24,ScoreType(i)) << ' '<< F(9,3,weights_[ ScoreType(i) ]) << "   "
@@ -2817,10 +2817,10 @@ find_weights_file(std::string name, std::string extension/*=".wts"*/) {
 	if ( data1.good() ) {
 		return name;
 	} else {
-	  utility::io::izstream data2( name + extension );
-	  if ( data2.good() ) {
+		utility::io::izstream data2( name + extension );
+		if ( data2.good() ) {
 			return name + extension;
-	  } else {
+		} else {
 			utility::io::izstream data3(  basic::database::full_name( "scoring/weights/"+name+extension, /*warn=*/false )  );
 			if ( data3.good() ) {
 				return basic::database::full_name( "scoring/weights/"+name+extension );
@@ -2833,6 +2833,7 @@ find_weights_file(std::string name, std::string extension/*=".wts"*/) {
 						"(./)" + name + extension + " or " +
 						basic::database::full_name( "scoring/weights/"+name, false )  + " or " +
 						basic::database::full_name( "scoring/weights/"+name+extension, false )  + " exist"  );
+					return "invalid"; // To make the compiler happy - should never reach here.
 				}
 			}
 		}

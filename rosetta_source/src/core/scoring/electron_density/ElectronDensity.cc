@@ -232,10 +232,10 @@ ElectronDensity::ElectronDensity( utility::vector1< core::pose::PoseOP > poses, 
 	numeric::xyzVector< core::Real > d_min(0,0,0), d_max(0,0,0);
 	bool is_set = false;
 	const core::Real FLUFF = 10.0; // add a bounding box
-	for (int n=1; n<=nposes; ++n) {
+	for (core::Size n=1; n<=nposes; ++n) {
 		core::pose::Pose &pose = *(poses[n]);
 		int nres = pose.total_residue();
-		core::Real nCoM=0;
+		//core::Real nCoM=0;
 
 		for (int i=1 ; i<=nres; ++i) {
 			conformation::Residue const &rsd_i (pose.residue(i));
@@ -297,7 +297,7 @@ ElectronDensity::ElectronDensity( utility::vector1< core::pose::PoseOP > poses, 
 		int nres = pose.total_residue();
 		for (int i=1 ; i<=nres; ++i) {
 			conformation::Residue const &rsd_i (pose.residue(i));
-	
+
 			// skip vrts & masked reses
 			if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
 			if ( scoring_mask_.find(i) != scoring_mask_.end() ) continue;
@@ -312,26 +312,26 @@ ElectronDensity::ElectronDensity( utility::vector1< core::pose::PoseOP > poses, 
 
 				if ( is_missing_density( atom_i.xyz() ) ) continue;
 				if ( C < 1e-6 ) continue;
-	
+
 				cartX = atom_i.xyz() - getTransform();
 				fracX = c2f*cartX;
 				atm_i[0] = pos_mod (fracX[0]*grid[0] - origin[0] + 1 , (double)grid[0]);
 				atm_i[1] = pos_mod (fracX[1]*grid[1] - origin[1] + 1 , (double)grid[1]);
 				atm_i[2] = pos_mod (fracX[2]*grid[2] - origin[2] + 1 , (double)grid[2]);
-	
+
 				for (int z=1; z<=density.u3(); ++z) {
 					atm_j[2] = z;
 					del_ij[2] = (atm_i[2] - atm_j[2]) / grid[2];
 					// wrap-around??
 					if (del_ij[2] > 0.5) del_ij[2]-=1.0;
 					if (del_ij[2] < -0.5) del_ij[2]+=1.0;
-	
+
 					del_ij[0] = del_ij[1] = 0.0;
 					if ((f2c*del_ij).length_squared() > (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING)) continue;
-	
+
 					for (int y=1; y<=density.u2(); ++y) {
 						atm_j[1] = y;
-	
+
 						// early exit?
 						del_ij[1] = (atm_i[1] - atm_j[1]) / grid[1] ;
 						// wrap-around??
@@ -339,19 +339,19 @@ ElectronDensity::ElectronDensity( utility::vector1< core::pose::PoseOP > poses, 
 						if (del_ij[1] < -0.5) del_ij[1]+=1.0;
 						del_ij[0] = 0.0;
 						if ((f2c*del_ij).length_squared() > (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING)) continue;
-	
+
 						for (int x=1; x<=density.u1(); ++x) {
 							atm_j[0] = x;
-	
+
 							// early exit?
 							del_ij[0] = (atm_i[0] - atm_j[0]) / grid[0];
 							// wrap-around??
 							if (del_ij[0] > 0.5) del_ij[0]-=1.0;
 							if (del_ij[0] < -0.5) del_ij[0]+=1.0;
-	
+
 							numeric::xyzVector< core::Real > cart_del_ij = (f2c*del_ij);  // cartesian offset from (x,y,z) to atom_i
 							core::Real d2 = (cart_del_ij).length_squared();
-	
+
 							if (d2 <= (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING)) {
 								core::Real atm = C*exp(-k*d2);
 								density(x,y,z) += atm;
@@ -1107,7 +1107,7 @@ core::Real ElectronDensity::matchPose(
 				chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
 				std::string elt_i = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
 				OneGaussianScattering sig_j = get_A( elt_i );
-				core::Real k = sig_j.k( PattersonB, max_del_grid );
+				//core::Real k = sig_j.k( PattersonB, max_del_grid );
 
 				utility::vector1< int > const &rho_dx_pt_ij   = rho_dx_pt[i][j];
 				utility::vector1< numeric::xyzVector<core::Real> > const &rho_dx_mask_ij = rho_dx_mask[i][j];
@@ -1308,14 +1308,14 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 	// convolute with calculated density
 	ObjexxFCL::FArray3D< double > rhoc, drhoc_dx, drhoc_dy, drhoc_dz;
 	OneGaussianScattering S = get_A( "C" );
-	int atmid = S.a();
+	//int atmid = S.a();
 
 	numeric::xyzVector< core::Real > del_ij;
 	core::Real k = S.k( PattersonB, max_del_grid );
 	//core::Real C = S.C( k );
 
 	core::Size natms=0,nres=0;
-	for (int i=1; i<=pose.total_residue(); ++i) {
+	for (core::Size i=1; i<=pose.total_residue(); ++i) {
 		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
 		nres++;
 		core::conformation::Residue const& rsd_i = pose.residue(i);
@@ -2918,7 +2918,7 @@ core::Real ElectronDensity::matchResFast(
 
 	core::Real score = 0;
 	numeric::xyzVector< core::Real > fracX, idxX;
-	for (int i=1; i<=rsd.nheavyatoms(); ++i) {
+	for (Size i=1; i<=rsd.nheavyatoms(); ++i) {
 		fracX = c2f*rsd.atom(i).xyz();
 		idxX = numeric::xyzVector<core::Real>( fracX[0]*fastgrid[0] - fastorigin[0] + 1,
 		                                       fracX[1]*fastgrid[1] - fastorigin[1] + 1,

@@ -143,7 +143,7 @@ p1_theta_deriv(
 
 /////////////////////////////////////////////////////////////////////////////
 // calculates x and dtheta_dx where
-// v1 = p1-p2, 
+// v1 = p1-p2,
 // v2 = p3-p2
 // n1 = norm( v1 )
 // n2 = norm( v2 )
@@ -177,7 +177,7 @@ x_and_dtheta_dx(
 
 /////////////////////////////////////////////////////////////////////////////
 // calculates f1,f2 contributions for dtheta_dphi where
-// v1 = p1-p2, 
+// v1 = p1-p2,
 // v2 = p3-p2
 // n1 = norm( v1 )
 // n2 = norm( v2 )
@@ -207,8 +207,8 @@ p1_theta_deriv(
 
 	// to avoid problems with dtheta/dx around 0 and 180 degrees
 	// truncate x a bit in the calculation of the derivative
-	static Real const small_angle( radians( Real(0.1) ) );
-	static Real const big_angle( radians( Real(179.9) ) );
+	//static Real const small_angle( radians( Real(0.1) ) );
+	//static Real const big_angle( radians( Real(179.9) ) );
 	// dtheta_dx has a value of ~ 572.96 for min_x and max_x
 	// this goes to infinity as x goes to -1 or 1
 
@@ -469,7 +469,7 @@ angle_p1_p2_p3_deriv(
 	}
 	theta = numeric::arccos( d );
 
-	/*{ // debug point 1 
+	/*{ // debug point 1
 	Vector test_p1_f1, test_p1_f2; Real test_theta;
 	angle_p1_deriv( p1, p2, p3, test_theta, test_p1_f1, test_p1_f2 );
 	if ( f1_p1.distance_squared( test_p1_f1 ) > 1e-4 ) {
@@ -483,7 +483,7 @@ angle_p1_p2_p3_deriv(
 	}
 	}
 
-	{ // debug point 2 
+	{ // debug point 2
 	Vector test_p2_f1, test_p2_f2; Real test_theta;
 	angle_p2_deriv( p1, p2, p3, test_theta, test_p2_f1, test_p2_f2 );
 	if ( f1_p2.distance_squared( test_p2_f1 ) > 1e-4 ) {

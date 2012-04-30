@@ -52,12 +52,12 @@ public:
 	void ensure_scofx_cstfication( core::pose::Pose const & pose);
 
 	void minimize_in_stages(
-  	core::pose::Pose & pose,
-  	core::pack::task::PackerTaskCOP task,
-  	bool const & cstopt,
-  	bool const & min_sc,
-  	bool const & min_rb,
-  	bool const & min_lig);
+		core::pose::Pose & pose,
+		core::pack::task::PackerTaskCOP task,
+		bool const & cstopt,
+		bool const & min_sc,
+		bool const & min_rb,
+		bool const & min_lig);
 
 	//parser stuff
 	void apply( core::pose::Pose &pose );
@@ -68,13 +68,13 @@ public:
 
 	//managing minimization options
 	void set_min_rb( bool const min_rb ) { min_rb_ = min_rb; }
-	bool const get_min_rb() { return min_rb_; }
+	bool get_min_rb() const { return min_rb_; }
 	void set_min_sc( bool const min_sc ) { min_sc_ = min_sc; }
-	bool const get_min_sc() {  return min_sc_; }
+	bool get_min_sc() const {  return min_sc_; }
 	void set_min_lig( bool const min_lig ) { min_lig_ = min_lig; }
-	bool const get_min_lig() {  return min_lig_; }
+	bool get_min_lig() const {  return min_lig_; }
 	void set_min_bb(  bool const min_bb ) { min_bb_ = min_bb; }
-	bool const get_min_bb() { return min_bb_; }
+	bool get_min_bb() const { return min_bb_; }
 
 	//design?
 	bool get_design() const { return design_; }
@@ -85,7 +85,7 @@ public:
 	void set_scorefxn_minimize( core::scoring::ScoreFunctionCOP scorefxn );
 	core::scoring::ScoreFunctionOP scorefxn_repack() const;
 	core::scoring::ScoreFunctionOP scorefxn_minimize() const;
-	
+
 	//task stuff
 	core::pack::task::PackerTaskOP create_ptask( core::pose::Pose & pose );
 	void task_factory( core::pack::task::TaskFactoryOP p );

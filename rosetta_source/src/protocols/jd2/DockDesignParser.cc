@@ -217,7 +217,7 @@ DockDesignParser::generate_mover_from_pose( JobCOP, Pose & pose, MoverOP & in_mo
 		if ( curr_tag->getName() == "APPLY_TO_POSE" ) { // section is not mandatory
 			/// apply to pose may affect all of the scorefxn definitions below, so it is called first.
 			TagPtrs const apply_tags( curr_tag->getTags() );
-			bool has_profile( false ); // This mutual-exclusion check has been disabled., has_fnr( false ); // to see that the user hasn't turned both on by mistake
+			//bool has_profile( false ); // This mutual-exclusion check has been disabled., has_fnr( false ); // to see that the user hasn't turned both on by mistake
 
 			foreach(TagPtr apply_tag_ptr, apply_tags){
 				std::string const mover_type( apply_tag_ptr->getName() );

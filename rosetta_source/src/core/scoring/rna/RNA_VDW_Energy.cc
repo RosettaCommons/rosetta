@@ -142,7 +142,7 @@ RNA_VDW_Energy::residue_pair_energy(
 	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
 
 	// MATT -this too.
-	utility::vector1< utility::vector1< Size > > const & 
+	utility::vector1< utility::vector1< Size > > const &
 			atom_numbers_for_vdw_calculation( rna_scoring_info.atom_numbers_for_vdw_calculation() );
 
 
@@ -249,14 +249,14 @@ RNA_VDW_Energy::eval_atom_derivative(
 	bool const pos1_fixed( pos1_map != 0 );
 
 	Vector const & i_xyz( rsd1.xyz(i) );
-	
+
 	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
 
 	utility::vector1< utility::vector1< Size > > const &
 			atom_numbers_for_vdw_calculation( rna_scoring_info.atom_numbers_for_vdw_calculation() );
 
 
-	utility::vector1< Size > const & atom_numbers1 ( atom_numbers_for_vdw_calculation[ pos1 ]  );
+	//utility::vector1< Size > const & atom_numbers1 ( atom_numbers_for_vdw_calculation[ pos1 ]  );
 
 	Size const num_vdw_atoms( rna_atom_vdw_.num_atoms() );
 
@@ -338,18 +338,18 @@ RNA_VDW_Energy::setup_atom_numbers_for_vdw_calculation( pose::Pose & pose ) cons
 	//  monitoring for VDW clashes.
 
 	rna::RNA_ScoringInfo & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
-	
-	utility::vector1< utility::vector1< Size > > & 
+
+	utility::vector1< utility::vector1< Size > > &
 			atom_numbers_for_vdw_calculation( rna_scoring_info.nonconst_atom_numbers_for_vdw_calculation() );
 
 	Size const total_residue( pose.total_residue() );
 	Size const num_vdw_atoms( rna_atom_vdw_.num_atoms() );
-	
+
 	atom_numbers_for_vdw_calculation.resize( total_residue );
 
 	for (Size i = 1; i <= total_residue; i++ ) {
 		conformation::Residue const & rsd( pose.residue( i ) );
-		
+
 		if ( rsd.is_RNA() ) {
 			//a,c,g, or u?
 			char const which_nucleotide = rsd.name1();
@@ -359,7 +359,7 @@ RNA_VDW_Energy::setup_atom_numbers_for_vdw_calculation( pose::Pose & pose ) cons
 				atom_numbers_for_vdw_calculation[ i ].push_back( rsd.atom_index( vdw_atom_list[ m ] ));
 			}
 		}
-		
+
 	}
 }
 core::Size

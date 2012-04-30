@@ -28,7 +28,7 @@ namespace constraints {
 class TopOutFunc : public Func {
 public:
 	TopOutFunc( Real weight_in, Real x0_in, Real limit_in ) :
-		weight_( weight_in), x0_( x0_in ), limit_( limit_in ) {}
+		x0_( x0_in ), weight_( weight_in), limit_( limit_in ) {}
 
 	FuncOP
 	clone() const { return new TopOutFunc( *this ); }

@@ -83,24 +83,24 @@ GenericMonteCarloMoverCreator::mover_name()
 
 /// @brief default constructor
 GenericMonteCarloMover::GenericMonteCarloMover():
-  Mover("GenericMonteCarlo"),
-  maxtrials_( 10 ),
+	Mover("GenericMonteCarlo"),
+	maxtrials_( 10 ),
 	task_scaling_( 5 ),
-  mover_( NULL ),
-  scorefxn_( NULL ),
-  temperature_( 0.0 ),
-  sample_type_( "low" ),
-  drift_( true ),
+	mover_( NULL ),
+	scorefxn_( NULL ),
+	temperature_( 0.0 ),
+	sample_type_( "low" ),
+	drift_( true ),
 	preapply_( true ),
-  recover_low_( true ),
+	recover_low_( true ),
 	rank_by_filter_( 1 ),
 	boltz_rank_( false ),
-  last_accepted_pose_( NULL ),
-  lowest_score_pose_( NULL ),
+	last_accepted_pose_( NULL ),
+	lowest_score_pose_( NULL ),
 	stopping_condition_( NULL ),
+	mover_stopping_condition_( NULL ),
 	adaptive_movers_( false ),
-	adaptation_period_( 0 ),
-  mover_stopping_condition_( NULL )
+	adaptation_period_( 0 )
 {
   initialize();
 }

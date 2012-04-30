@@ -154,7 +154,7 @@ BinaryProteinSilentStruct::fill_struct(
 	tr.Trace << "read coords..." << std::endl;
 	for ( unsigned int i = 1; i <= pose.total_residue(); ++i ) {
 		core::conformation::Residue const& resi = pose.residue(i);
-		int natoms = pose.residue(i).natoms();
+		//int natoms = pose.residue(i).natoms();
 		if( is_symmetric() && !symmetry_info()->bb_is_independent( i ) ) continue;
 		int i_asymm =  symmetry_info()->get_asymmetric_seqpos( i ); // remaps virtual ids
 

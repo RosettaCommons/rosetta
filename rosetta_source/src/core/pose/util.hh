@@ -65,7 +65,7 @@ void jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps);
 void remove_virtual_residues(core::pose::Pose* pose);
 
 /// @brief Updates the rigid-body transform of the specified jump in <pose>
-void swap_transform(int jump_num, const kinematics::RT& xform, Pose* pose);
+void swap_transform(Size jump_num, const kinematics::RT& xform, Pose* pose);
 
 /// @brief Returns true if <residue> is positionally conserved, false otherwise
 bool is_position_conserved_residue(const Pose& pose, core::Size residue);
@@ -340,7 +340,7 @@ setup_atom_id_map(
 
 ///////////////////////////////////////////////////////////////////
 void
-setup_atom_id_map_match_atom_names( //June 16, 2011 Parin Sripakdeevong 
+setup_atom_id_map_match_atom_names( //June 16, 2011 Parin Sripakdeevong
 									std::map < core::id::AtomID , core::id::AtomID > & atom_id_map,
 									ResMap const & res_map,
 									core::pose::Pose const & pose,

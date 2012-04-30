@@ -160,7 +160,7 @@ cartesian_collect_atompairE_deriv(
 			conformation::Residue const & rsd2( pose.residue( rsd2ind ));
 			ResSingleMinimizationData const & r1_min_data( dmingraph->get_minimization_node( rsd1ind )->res_min_data() );
 			ResSingleMinimizationData const & r2_min_data( dmingraph->get_minimization_node( rsd2ind )->res_min_data() );
-	
+
 			eval_atom_derivatives_for_minedge( minedge, rsd1, rsd2,
 				r1_min_data, r2_min_data, pose, scorefxn.weights(),
 				min_map.atom_derivatives( rsd1ind ), min_map.atom_derivatives( rsd2ind ));
@@ -170,7 +170,7 @@ cartesian_collect_atompairE_deriv(
 	Size natoms=min_map.natoms();
 	for ( int i=1; i<=natoms; ++i) {
 		id::AtomID const & atom_id( min_map.get_atom(i) );
-		core::Vector F1(0,0,0),F2(0,0,0);	
+		core::Vector F1(0,0,0),F2(0,0,0);
 		scorefxn.eval_npd_atom_derivative( atom_id, pose, min_map.domain_map(), F1, F2 );
 		//F1 += min_map.atom_derivatives( atom_id.rsd() )[ atom_id.atomno() ].f1();
 		F2 += min_map.atom_derivatives( atom_id.rsd() )[ atom_id.atomno() ].f2();
@@ -211,7 +211,7 @@ void cartesian_collect_torsional_deriv(
 		pose.conformation().get_torsion_angle_atom_ids( TorsionID, id1,id2,id3,id4 );
 
 		// convert to cartesian derivatives on those atoms using the usual MD code - lift from PD
-		core::Real epot_dihedral_this=0;
+		//core::Real epot_dihedral_this=0;
 		core::Real phi, sin_phi, cos_phi;
 		core::Vector vti_vta, vta_vtb, vtb_vtj;
 		core::Vector nrml1, nrml2, nrml3;
@@ -385,7 +385,7 @@ cart_numerical_derivative_check(
 
 	Multivec vars( start_vars );
 
-	Real const f00 = func( vars );
+	//Real const f00 = func( vars );
 
 	Size natoms=min_map.natoms();
 	for ( int i=1; i<=natoms; ++i) {
@@ -396,24 +396,24 @@ cart_numerical_derivative_check(
 			Real deriv_dev = 10000.0;
 			for ( Size j = 1,factor=1; j <= n_increment; ++j ) {
 				factor*=2;
-	
+
 				vars[ii] = start_vars[ii] + factor * increment;
 				Real const f11 = func( vars );
-	
+
 				vars[ii] = start_vars[ii] - factor * increment;
 				Real const f22 = func( vars );
-	
+
 				Real const deriv = ( f11 - f22 ) / ( factor * 2 * increment );
-	
+
 				dE_dvars_numeric[j][ii] = deriv;
-	
+
 				deriv_dev = std::min( deriv_dev, std::abs( deriv  - dE_dvars[ii] ) );
-	
+
 				vars[ii] = start_vars[ii];
-	
+
 				Real const ratio( std::abs( dE_dvars[ii] ) < 0.001 ? 0.0 :
 													 deriv / dE_dvars[ii] );
-	
+
 				if ( std::abs(dE_dvars[ii]) > 0.001 || std::abs(deriv) > 0.001 ) {
 					if ( verbose && write_to_stdout ) {
 						// if you change this output, please also change the comments
@@ -432,8 +432,8 @@ cart_numerical_derivative_check(
 								A( 10, "ratio" ) <<
 								A( 10, "vars[ii]" ) << std::endl;
 						}
-	
-	
+
+
 						TR << "ratio" <<
 							I( 4, j ) <<
 							I( 4, atm_id.rsd() ) <<
@@ -445,16 +445,16 @@ cart_numerical_derivative_check(
 							F( 10, 4, ratio ) <<
 							F( 10, 4, start_vars[ii] ) << std::endl;
 					}
-	
+
 				}
 			}
 			if ( true ) {
 				Real const ratio( std::abs( dE_dvars[ii] ) < 0.001 ? 0.0 :
 					deriv_dev / std::abs( dE_dvars[ii] ) );
-	
+
 				if ( min_debug ) min_debug->rel_deriv_dev( ii, ratio );
 				if ( min_debug ) min_debug->abs_deriv_dev( ii, deriv_dev );
-	
+
 				//if ( verbose && write_to_stdout ) {
 					// if you change this output, please also change the comments
 					// at the beginning of this section

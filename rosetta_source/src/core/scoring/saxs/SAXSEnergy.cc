@@ -97,7 +97,7 @@ SAXSEnergy::SAXSEnergy(std::string & config_file,core::chemical::ResidueTypeSetC
 
     score_bias_ = option[score::saxs::min_score]();
     score_bias_ = std::pow(10,score_bias_);
-    
+
     if(option[score::saxs::ref_spectrum].user()) {
 	std::string file = option[score::saxs::ref_spectrum]();
 	trSAXSEnergy << "Reading reference spectrum: " << file << std::endl;
@@ -298,15 +298,15 @@ void SAXSEnergy::rehash_form_factors(const core::pose::Pose & pose) const {
       for(Size j=1;j<=ff_ops_.size();j++) {
         dhist_[i].push_back( new DistanceHistogram() );
       }
-    }    
+    }
 
     // ---------- Prepare atoms, residues and assign atom types
     for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 	core::conformation::Residue resi = pose.residue(i);
         for ( Size m = 1; m <= resi.natoms(); ++m ) {
-    	    if((! if_hydrogens_)&&( resi.atom_type(m).is_hydrogen())) 
+    	    if((! if_hydrogens_)&&( resi.atom_type(m).is_hydrogen()))
 	    	continue;
-	    if( ! ff_manager_->is_known_atom( resi.atom_type(m).name() ) ) 
+	    if( ! ff_manager_->is_known_atom( resi.atom_type(m).name() ) )
 		continue;
 	    r_ids_.push_back( i );
 	    a_ids_.push_back( m );
@@ -326,7 +326,7 @@ void SAXSEnergy::compute_distance_histogram(const core::pose::Pose & pose) const
 	for(Size i=1;i<=ff_ops_.size();i++)
 	  for(Size j=1;j<=ff_ops_.size();j++)
 	    dhist_[i][j]->zeros();
-	    
+
 	/*********** Compute distance histogram ************/
     	for ( Size i = 2; i <= r_ids_.size(); ++i ) {
 		Size res_i = r_ids_[i];
@@ -340,7 +340,7 @@ void SAXSEnergy::compute_distance_histogram(const core::pose::Pose & pose) const
 		    Real d = ai.distance( pose.residue(res_j).xyz(atm_j) );
 		    if( tj <= ti )
 		      dhist_[ ti ][ tj  ]->insert(d);
-		    else 
+		    else
 		      dhist_[ tj ][ ti  ]->insert(d);
 		}
         }
@@ -356,9 +356,9 @@ void SAXSEnergy::compute_intensities(const core::pose::Pose & pose,utility::vect
 
 	compute_distance_histogram(pose);
 	zero_ = compute_zero_intensity();
-		
+
 	for(Size i_s=1;i_s<=q_.size();++i_s) {
-	
+
     	    Real sum(0);
 	    Real val_s = q_[i_s];
     	    for ( Size i = 1; i <= ff_ops_.size(); ++i ) {
@@ -373,7 +373,7 @@ void SAXSEnergy::compute_intensities(const core::pose::Pose & pose,utility::vect
 	    	    }
     	        }
 	    }
-	
+
 // 	    trSAXSEnergy.Trace <<std::setw(8)<<std::setprecision(4)<<val_s<<" "
 //		<< std::setw(8)<<std::setprecision(4)<<sum<<std::endl;
             result[i_s] = sum;
@@ -418,7 +418,7 @@ Real SAXSEnergy::compute_L1(utility::vector1<Real> const & saxs_scored, utility:
 Real SAXSEnergy::compute_chi(utility::vector1<Real> const & saxs_scored, utility::vector1<Real> const & saxs_reference) const {
 
 	Real chi = 0;
-        Real sum = 0;
+	//Real sum = 0;
         assert( saxs_scored.size() == saxs_reference.size() );
 
 	trSAXSEnergy.Trace << "\nComputing SAXS energy:\n";

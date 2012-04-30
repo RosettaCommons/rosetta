@@ -108,8 +108,8 @@ MinMover::MinMover(
 		movemap_( movemap_in ),
 		scorefxn_( scorefxn_in ),
 		min_options_(0),
-		cartesian_(false),
-		threshold_(1000000.0) // TODO: line can be deleted?
+		threshold_(1000000.0), // TODO: line can be deleted?
+		cartesian_(false)
 {
 	min_options_ = new MinimizerOptions(
 		min_type_in, tolerance_in, use_nb_list_in, deriv_check_in, deriv_check_verbose_in );

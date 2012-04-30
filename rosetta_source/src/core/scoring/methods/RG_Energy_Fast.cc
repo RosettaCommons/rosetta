@@ -234,8 +234,8 @@ RG_Energy_Fast::eval_atom_derivative(
 ) const {
 	RG_MinData const &mindata = mindata_from_pose( pose );
 
-	int resid = id.rsd();
-	int atmid = id.atomno();
+	Size resid = id.rsd();
+	Size atmid = id.atomno();
 	core::conformation::Residue const &rsd_i = pose.residue(resid);
 	numeric::xyzVector<core::Real> X = pose.xyz(id);
 
@@ -254,7 +254,7 @@ RG_Energy_Fast::eval_atom_derivative(
 }
 
 
-RG_MinData const & 
+RG_MinData const &
 RG_Energy_Fast::mindata_from_pose( pose::Pose const & pose) const {
 	using namespace core::pose::datacache;
 	return *( static_cast< RG_MinData const * >( pose.data().get_const_ptr( CacheableDataType::RG_MINDATA )() ));

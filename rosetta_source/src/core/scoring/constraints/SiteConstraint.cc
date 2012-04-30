@@ -112,7 +112,7 @@ SiteConstraint::setup_csts(
     FuncOP const & func
 ) {
     id::AtomID target_atom( pose.residue_type( res ).atom_index( name ), res );
-    Size target_chain = pose.chain( res );
+    //Size target_chain = pose.chain( res );
     Size constraint_chain = pose::get_chain_id_from_chain( chain, pose );
 
     Size start_res = pose.conformation().chain_begin( constraint_chain );

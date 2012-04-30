@@ -153,7 +153,7 @@ void RenderGridsToKinemage::parse_my_tag(utility::tag::TagPtr const tag,
 
 	grid_name_ = tag->getOption<std::string>("grid_name");
 	grid_ = utility::pointer::dynamic_pointer_cast<scoring_grid::SingleGrid,scoring_grid::GridBase>(scoring_grid::GridManager::get_instance()->get_grid(grid_name_) );
-	if(grid_ == NULL)
+	if( ! grid_ )
 	{
 		utility_exit_with_message("RenderGridsToKinemage is currently unable to output the contents of a metagrid.  Sorry.");
 	}

@@ -45,7 +45,7 @@ Real CenHBPotential::func( Size seqsep, Real d, Real xd, Real xh ) const {
 	utility::vector1< Vector > const & sigmas = (seqsep<=4) ? sr_sigmas_ : lr_sigmas_;
 
 	Real y = 0;
-	for (int i=1; i<=As.size(); ++i) {
+	for (Size i=1; i<=As.size(); ++i) {
 		y += As[i] * exp( -(d-mus[i][0])*(d-mus[i][0]) / (2*sigmas[i][0]*sigmas[i][0]) )
 		           * ( exp( sigmas[i][1]*cos( pi/180*(xd-mus[i][1]) ) ) + exp( sigmas[i][1]*cos( pi/180*(xd+mus[i][1]) ) ) )
 		           * ( exp( sigmas[i][2]*cos( pi/180*(xh-mus[i][2]) ) ) + exp( sigmas[i][2]*cos( pi/180*(xh+mus[i][2]) ) ) );
@@ -62,7 +62,7 @@ Vector CenHBPotential::dfunc( Size seqsep, Real d, Real xd, Real xh ) const {
 	utility::vector1< Vector > const & sigmas = (seqsep<=4) ? sr_sigmas_ : lr_sigmas_;
 
 	Vector dy = Vector(0,0,0);
-	for (int i=1; i<=As.size(); ++i) {
+	for (Size i=1; i<=As.size(); ++i) {
 			Real s1 = exp( -(d-mus[i][0])*(d-mus[i][0]) / (2*sigmas[i][0]*sigmas[i][0]) );
 			Real s2a = exp( sigmas[i][1]*cos( pi/180*(xd-mus[i][1]) ) );
 			Real s2b = exp( sigmas[i][1]*cos( pi/180*(xd+mus[i][1]) ) );
@@ -101,7 +101,7 @@ CenHBPotential::CenHBPotential() {
 				Size ngauss; l >> ngauss;
 				Real A;
 				numeric::xyzVector<Real> mu, sigma;
-				for (int i=1; i<=ngauss; ++i) {
+				for (Size i=1; i<=ngauss; ++i) {
 					l >> A >> mu[0] >> mu[1] >> mu[2] >> sigma[0] >> sigma[1] >> sigma[2];
 					add_lr_gaussian(A,mu,sigma);
 				}
@@ -114,7 +114,7 @@ CenHBPotential::CenHBPotential() {
 				Size ngauss; l >> ngauss;
 				Real A;
 				numeric::xyzVector<Real> mu, sigma;
-				for (int i=1; i<=ngauss; ++i) {
+				for (Size i=1; i<=ngauss; ++i) {
 					l >> A >> mu[0] >> mu[1] >> mu[2] >> sigma[0] >> sigma[1] >> sigma[2];
 					add_sr_gaussian(A,mu,sigma);
 				}

@@ -71,8 +71,8 @@ static basic::Tracer TR("core.scoring.orbitals_hpol");
 OrbitalsScore::OrbitalsScore(methods::EnergyMethodOptions const &) :
 					parent( new OrbitalsScoreCreator ),
 					lookup_table_(core::scoring::ScoringManager::get_instance()->get_OrbitalsLookupTable()),
-					max_dist_squared_(36),
-					max_orbital_dist_squared_(9)
+					max_orbital_dist_squared_(9),
+					max_dist_squared_(36)
 
 {
 	if(basic::options::option[ basic::options::OptionKeys::in::add_orbitals] != 1){
@@ -398,7 +398,7 @@ void OrbitalsScore::get_E_hpol_one_way(
 				continue;
 			}
 			numeric::xyzVector<core::Real> const & Hxyz = res2.atom(*hpol_index).xyz(); //hydrogen xyz
-			core::Size donor_id(res2.bonded_neighbor(*hpol_index)[1]);
+			//core::Size donor_id(res2.bonded_neighbor(*hpol_index)[1]);
 			core::Real temp_dist = Axyz.distance_squared(Hxyz);
 			if ( temp_dist < max_dist_squared ) {
 				core::Size Aindex(*atoms_with_orb_index);
@@ -604,7 +604,7 @@ OrbitalsScore::assign_orb_orb_derivs(
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
 )const {
-	core::Real add_orb_orb_E(0.0);
+	//core::Real add_orb_orb_E(0.0);
 	for (
 			chemical::AtomIndices::const_iterator
 			Aindex = res1.atoms_with_orb_index().begin(),

@@ -84,7 +84,7 @@ static basic::Tracer TR("core.pose.util");
 
 void jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) {
 	assert(jumps);
-	for (int i = 1; i <= pose.num_jump(); ++i) {
+	for (Size i = 1; i <= pose.num_jump(); ++i) {
 		jumps->insert(i);
 	}
 }
@@ -97,9 +97,8 @@ void remove_virtual_residues(core::pose::Pose* pose) {
   }
 }
 
-void swap_transform(int jump_num, const kinematics::RT& xform, Pose* pose) {
+void swap_transform(Size jump_num, const kinematics::RT& xform, Pose* pose) {
   assert(pose);
-  assert(jump_num > 0);
   assert(jump_num <= pose->num_jump());
 
   const kinematics::FoldTree& tree = pose->fold_tree();
@@ -1592,7 +1591,7 @@ setup_atom_id_map_match_atom_names(
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 void
-setup_atom_id_map_match_atom_names( //June 16, 2011 Parin Sripakdeevong 
+setup_atom_id_map_match_atom_names( //June 16, 2011 Parin Sripakdeevong
 									std::map < core::id::AtomID , core::id::AtomID > & atom_id_map,
 									ResMap const & res_map,
 									core::pose::Pose const & pose,
@@ -1605,7 +1604,7 @@ setup_atom_id_map_match_atom_names( //June 16, 2011 Parin Sripakdeevong
 		Size const chunk_seq_num = it->second; // Index in the little "chunk" or "scratch" pose
 
 		chemical::ResidueType const & rsd_type1( pose.residue_type( full_seq_num ) );
-		
+
 		utility::vector1< utility::vector1< std::string > > const & chunk_atom_names_list = chunk_pose.atom_names_list();
 
 		for(Size j1 = 1; j1 <= rsd_type1.natoms(); j1++ ) {
@@ -2389,7 +2388,7 @@ core::id::SequenceMapping sequence_map_from_pdbinfo( Pose const & first, Pose co
 		TR << "One or both poses do not have usable PDBInfo, using sequence alignment instead." << std::endl;
 		retval = core::sequence::map_seq1_seq2( new core::sequence::Sequence(first), new core::sequence::Sequence(second) );
 	}
-	
+
 	return retval;
 }
 

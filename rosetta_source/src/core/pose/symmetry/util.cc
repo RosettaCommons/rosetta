@@ -105,9 +105,9 @@ scorefxn_is_symmetric( pose::Pose const & pose )
   return conformation::symmetry::is_symmetric( pose.conformation() );
 }
 
-/// @details constructs a symmetric pose with a symmetric conformation and energies object 
+/// @details constructs a symmetric pose with a symmetric conformation and energies object
 ///    from a monomeric pose and symmetryinfo object.
-/// Unlike the version of make_symmetric_pose from symmdata, this does not expand the 
+/// Unlike the version of make_symmetric_pose from symmdata, this does not expand the
 ///    pose; it assumes the symmetric fold tree and residues are already present
 /// For example, this is used to reconstruct a symm pose from a silent file
 void
@@ -220,7 +220,7 @@ void extract_asymmetric_unit(core::pose::Pose const& pose_in, core::pose::Pose &
 
 	bool jump_to_next = false;
 	for( Size i=1; i<=symm_info->num_total_residues_without_pseudo(); i++ ) {
-		if (!symm_info->bb_is_independent(i)) 
+		if (!symm_info->bb_is_independent(i))
 			continue;
 
 		Residue residue( pose_in.residue( i ) );
@@ -335,11 +335,11 @@ make_symmetric_pdb_info(
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 	// for updating chain IDs we need to know how many chains are in the scoring subunit
-	int lastchnid=0;
+	Size lastchnid=0;
 	for ( Size res=1; res <= pdb_info_src->nres(); ++res ) {
 		char chn_id = pdb_info_src->chain( res );
-		int chn_idx = chr_chains.find(chn_id);
-	  if (chn_idx!=std::string::npos) {  // maybe chn is some other character ... the output chain IDs will be funky then ... 
+		Size chn_idx = chr_chains.find(chn_id);
+	  if (chn_idx!=std::string::npos) {  // maybe chn is some other character ... the output chain IDs will be funky then ...
 			lastchnid = std::max( lastchnid, chn_idx );
 		}
 	}
@@ -351,7 +351,7 @@ make_symmetric_pdb_info(
 
 		// chnids in scoring subunit
 		char chn_id = pdb_info_src->chain( res );
-		int chn_idx = chr_chains.find(chn_id);
+		Size chn_idx = chr_chains.find(chn_id);
 		if (chn_idx==std::string::npos)
 			chn_idx = 0; // treat all weird-character chains as 'A' in symm copies
 		pdb_info_target->chain( res, chn_id );
@@ -384,7 +384,7 @@ make_symmetric_pdb_info(
 	pdb_info_target->rebuild_pdb2pose();
 
 	// copy remark lines
-	pdb_info_target->remarks( pdb_info_src->remarks() );	
+	pdb_info_target->remarks( pdb_info_src->remarks() );
 }
 
 void
@@ -421,7 +421,7 @@ extract_asymmetric_unit_pdb_info(
 	pdb_info_target->rebuild_pdb2pose();
 
 	// copy remark lines
-	pdb_info_target->remarks( pdb_info_src->remarks() );	
+	pdb_info_target->remarks( pdb_info_src->remarks() );
 }
 
 

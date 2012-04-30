@@ -664,7 +664,7 @@ SymmetricConformation::recalculate_transforms( ) {
 }
 
 
-//fpd 
+//fpd
 void
 SymmetricConformation::append_residue_by_jump(
 	conformation::Residue const & new_rsd,
@@ -738,8 +738,8 @@ SymmetricConformation::insert_conformation_by_jump(
 		Conformation new_new_conf = new_conf;
 		if ( !symm_info_->bb_is_independent( anchor_i ) ) {
 			// transform coords
-			for (int j=1; j<=new_new_conf.size(); ++j) {
-				for (int k=1; k<=(int)new_new_conf.residue(j).natoms(); ++k) {
+			for (core::Size j=1; j<=new_new_conf.size(); ++j) {
+				for (core::Size k=1; k<=new_new_conf.residue(j).natoms(); ++k) {
 					new_new_conf.set_xyz(core::id::AtomID(k,j) , apply_transformation( new_conf.residue(j).xyz(k), nres_monomer, anchor_i ) );
 				}
 			}

@@ -592,7 +592,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 	Real Qnorm = 0;
 
 	Size irow(0);
-	Size excnt(0);
+	//Size excnt(0);
 	Size ex(0);
 	//Size exold(0);
 	for (utility::vector1<core::scoring::RDC>::iterator it =
@@ -628,7 +628,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 		//		pfac  = fc*ip[type].orires.c*invr2;
 		//for(i=0; i<power; i++)
 		//    pfac *= invr;
-		Size const power(3); //this will be 0 for CSA see above
+		//Size const power(3); //this will be 0 for CSA see above
 		RDC& rdc = *it;
 		numeric::xyzVector<Real> r(
 				pose.residue(rdc.res1()).atom(rdc.atom1()).xyz()
@@ -717,8 +717,8 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 
 		out.open_append( filename ) ;
 		using namespace core::pose::datacache;
-		Size const width( 8 );
-		Size const width_large(6);
+		//Size const width( 8 );
+		//Size const width_large(6);
 		// mjo comment out precision because it is not used and causes a warning.
 		//Size const precision( 2 );
 		std::string tag( core::pose::tag_from_pose(pose) );
@@ -1219,8 +1219,8 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
 
 		out.open_append( filename ) ;
 		using namespace core::pose::datacache;
-		Size const width( 8 );
-		Size const width_large(6);
+		//Size const width( 8 );
+		//Size const width_large(6);
 		std::string tag( core::pose::tag_from_pose(pose) );
 		for (Size ex = 0; ex < nex_; ex++) {
 			//show_tensor_stats_nls( out, ex, par);
@@ -1488,8 +1488,8 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
 
 		out.open_append( filename ) ;
 		using namespace core::pose::datacache;
-		Size const width( 8 );
-		Size const width_large(6);
+		//Size const width( 8 );
+		//Size const width_large(6);
 		std::string tag( core::pose::tag_from_pose(pose) );
 		for (Size ex = 0; ex < nex_; ex++) {
 			show_rdc_values( out, ex );
@@ -1754,8 +1754,8 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
 
 		out.open_append( filename ) ;
 		using namespace core::pose::datacache;
-		Size const width( 8 );
-		Size const width_large(6);
+		//Size const width( 8 );
+		//Size const width_large(6);
 		// mjo comment out precision because it is not used and causes a warning.
 		//Size const precision( 2 );
 		std::string tag( core::pose::tag_from_pose(pose) );
@@ -2024,8 +2024,8 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
 
 		out.open_append( filename ) ;
 		using namespace core::pose::datacache;
-		Size const width( 8 );
-		Size const width_large(6);
+		//Size const width( 8 );
+		//Size const width_large(6);
 		std::string tag( core::pose::tag_from_pose(pose) );
 		for (Size ex = 0; ex < nex_; ex++) {
 			show_rdc_values( out, ex );

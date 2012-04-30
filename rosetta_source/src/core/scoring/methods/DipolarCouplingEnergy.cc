@@ -193,7 +193,7 @@ DipolarCouplingEnergy::eval_atom_derivative(
 
 	Vector fij(0,0,0);
 
-	for (int ii=1; ii<=dc_nrs.size(); ++ii) {
+	for (core::Size ii=1; ii<=dc_nrs.size(); ++ii) {
 		core::Size dc_nr = dc_nrs[ ii ];
 		DipolarCoupling const& dc_cache( *retrieve_DC_from_pose( pose ) );
 		utility::vector1< core::scoring::DC > All_DC_lines( dc_cache.get_DC_data() );
@@ -208,7 +208,7 @@ DipolarCouplingEnergy::eval_atom_derivative(
 		} else if ( aid.rsd() == dc_data.res2() && utility::trimmed_compare( rsd2.atom_name( aid.atomno() ), dc_data.atom2() ) ){
 //	    tr.Trace << "aid.rsd(): " << aid.rsd() << " rsd2.atom_name( aid.atomno() ) "<< rsd2.atom_name( aid.atomno() ) << " dc_data.atom2() " << dc_data.atom2() << std::endl;
 			fij += dc_data.f2ij();
-		} else return; 
+		} else return;
 
 	}
 

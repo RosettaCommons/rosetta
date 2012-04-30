@@ -423,7 +423,7 @@ LigandMotifSearch::incorporate_motifs(
 
 					chemical::AtomType atom_i_type(ligres->atom_type(atom_i));
 					std::string atom_i_name = atom_i_type.atom_type_name();
-					Size atom_i_int = atset->atom_type_index(atom_i_name);
+					//Size atom_i_int = atset->atom_type_index(atom_i_name);
 				// std::cout << "ATOM j: " << atom_i << " Name: " << atom_i_name << " Int: " << atom_i_int << std::endl;
 					//
 
@@ -557,8 +557,8 @@ LigandMotifSearch::incorporate_motifs(
 	Size motif_library_size = pruned_motif_library.size();
 	Size motif_percent_chunk;
 	double double_chunk = std::floor( (double) motif_library_size / 10 ) ;  // REQUIRED FOR WINDOWS
-	 motif_percent_chunk = Size ( double_chunk );
-	Size next_motif_percent = motif_percent_chunk;
+	motif_percent_chunk = Size ( double_chunk );
+	//Size next_motif_percent = motif_percent_chunk;
 	ms_tr << "Pruned motifs: "  << motif_library_size << std::endl;
 
 ///////////////////////////////////////////////////////////////////////////

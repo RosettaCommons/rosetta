@@ -352,7 +352,7 @@ CombinedFilter::parse_my_tag(
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Apply a sub-mover prior to calculating a filter value
 MoveBeforeFilter::MoveBeforeFilter() : Filter( "MoveBeforeFilter" ) {}
-MoveBeforeFilter::MoveBeforeFilter(moves::MoverOP mover, FilterCOP filter) : Filter( "MoveBeforeFilter" ), submover_(mover), subfilter_(filter) {}
+MoveBeforeFilter::MoveBeforeFilter(moves::MoverOP mover, FilterCOP filter) : Filter( "MoveBeforeFilter" ), subfilter_(filter), submover_(mover) {}
 MoveBeforeFilter::~MoveBeforeFilter() {}
 
 bool

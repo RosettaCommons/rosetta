@@ -185,8 +185,8 @@ WaterWeightGridSet * WaterWeightGridSet::get_instance()
 
 // private constructor
 WaterWeightGridSet::WaterWeightGridSet() :
-  hb_database_(HBondDatabase::get_database()),
-  hbondoptions_( new HBondOptions )
+  hbondoptions_( new HBondOptions ),
+  hb_database_(HBondDatabase::get_database())
 {
 	using namespace hbonds;
 	hbondoptions_->use_sp2_chi_penalty(false); // override command line settings
@@ -353,8 +353,8 @@ ExactOccludedHbondSolEnergy::ExactOccludedHbondSolEnergy(
 	exact_occ_split_between_res_( exact_occ_split_between_res ),
 	exact_occ_self_res_occ_( exact_occ_self_res_occ ),
 	occ_radius_scaling_( occ_radius_scaling ),
-	hb_database_(HBondDatabase::get_database()),
 	hbondoptions_(new HBondOptions ),
+	hb_database_(HBondDatabase::get_database()),
 	verbose_( verbose )
 {
 	hbondoptions_->use_sp2_chi_penalty( false ); // apl preserve old behavior

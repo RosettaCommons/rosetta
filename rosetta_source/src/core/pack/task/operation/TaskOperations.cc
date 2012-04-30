@@ -865,8 +865,8 @@ AppendResidueRotamerSet::AppendResidueRotamerSet( core::Size resnum,
 
 AppendResidueRotamerSet::AppendResidueRotamerSet( AppendResidueRotamerSet const & src )
 	: parent(src),
-	  rotamer_set_operation_( src.rotamer_set_operation_ ),
-	  resnum_( src.resnum_ )
+		resnum_( src.resnum_ ),
+		rotamer_set_operation_( src.rotamer_set_operation_ )
 {}
 
 TaskOperationOP AppendResidueRotamerSetCreator::create_task_operation() const

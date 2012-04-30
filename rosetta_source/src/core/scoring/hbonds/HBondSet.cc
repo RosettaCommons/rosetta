@@ -477,7 +477,7 @@ HBondSet::HBondSet( HBondSet const & src, utility::vector1< bool > residue_mask 
 	options_( new HBondOptions( *src.options_ ))
 {
 
-	bool exclude=false;
+	//bool exclude=false;
 	for ( Size i=1; i<= src.nhbonds(); ++i ) {
 		HBond const & hbond(src.hbond(i));
 		if(residue_mask[hbond.don_res()] & residue_mask[hbond.acc_res()]){

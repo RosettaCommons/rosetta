@@ -104,11 +104,12 @@ public:
   }
 
   DC(Size res1, std::string const& atom1, Size res2, std::string const& atom2, Real DCval, Real DCerr, Real weight) :
-	type_(get_DC_data_type(atom1, atom2)),
-        res1_(res1), res2_(res2),
-        atom1_(atom1), atom2_(atom2),
-        weight_(weight),
-        DCval_(DCval), DCerr_(DCerr), DCval_computed_(-999),f1ij_(0.0),f2ij_(0.0)
+			type_(get_DC_data_type(atom1, atom2)),
+			DCval_computed_(-999),f1ij_(0.0),f2ij_(0.0),
+			res1_(res1), res2_(res2),
+			atom1_(atom1), atom2_(atom2),
+			DCval_(DCval), DCerr_(DCerr),
+			weight_(weight)
   {
   }
 

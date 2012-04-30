@@ -79,6 +79,7 @@ DatabaseFilterOP get_DB_filter_ptr(){
 	if(type == "TopCountOfAllInputs") return new TopCountOfAllInputs(arguments);
 
 	utility_exit_with_message(type+" is not a valid Database Filter name");
+	return NULL; // To keep the compiler happy
 }
 
 WriteDeletePair get_write_delete_pair(

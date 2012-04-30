@@ -127,7 +127,9 @@ void
 RNA_DataBackboneEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
 	// need to make sure scoring info is in there...
-	rna::RNA_ScoringInfo & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
+	rna::nonconst_rna_scoring_info_from_pose( pose );
+	// Commented out - unused variable warning
+	//rna::RNA_ScoringInfo & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
 
 	pose.update_residue_neighbors();
 }

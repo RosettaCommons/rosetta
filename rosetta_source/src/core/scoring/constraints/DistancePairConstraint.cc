@@ -45,13 +45,13 @@ ConstraintOP
 DistancePairConstraint::remap_resid(
 	core::id::SequenceMapping const & seqmap
 ) const {
-  if (   seqmap[atomA1_.rsd()] != 0 && seqmap[atomA2_.rsd()] != 0 
+  if (   seqmap[atomA1_.rsd()] != 0 && seqmap[atomA2_.rsd()] != 0
 	    && seqmap[atomB1_.rsd()] != 0 && seqmap[atomB2_.rsd()] != 0 ) {
     AtomID remap_a1( atomA1_.atomno(), seqmap[atomA1_.rsd()] ),
            remap_a2( atomA2_.atomno(), seqmap[atomA2_.rsd()] );
     AtomID remap_b1( atomB1_.atomno(), seqmap[atomB1_.rsd()] ),
            remap_b2( atomB2_.atomno(), seqmap[atomB2_.rsd()] );
-    return ConstraintOP( 
+    return ConstraintOP(
 			new DistancePairConstraint(
 				remap_a1, remap_a2,
 				remap_b1, remap_b2,
@@ -135,7 +135,7 @@ DistancePairConstraint::read_def(
 	TR.Debug 	<< "read: " << name1 << " " << name2 << " "
 						<< res1 << " " << res2 << " func: " << func_type
 						<< std::endl;
-	if (    res1 > pose.total_residue() || res2 > pose.total_residue() 
+	if (    res1 > pose.total_residue() || res2 > pose.total_residue()
 	     || res3 > pose.total_residue() || res4 > pose.total_residue()  ) {
 		TR.Warning 	<< "ignored constraint (no such atom in pose!)"
 								<< name1 << " " << name2 << " "
@@ -152,7 +152,7 @@ DistancePairConstraint::read_def(
 
 
 
-	if (    atomA1_.atomno() == 0 || atomA2_.atomno() == 0 
+	if (    atomA1_.atomno() == 0 || atomA2_.atomno() == 0
 	     || atomB1_.atomno() == 0 || atomB2_.atomno() == 0 ) {
 		TR.Warning << "Error reading atoms: read in atom names("
 			<< name1 << "," << name2 << "," << name3 << "," << name4 << "), "
@@ -179,8 +179,8 @@ Real
 DistancePairConstraint::score(
 	conformation::Conformation const & conformation
 ) const {
-	return score(  
-		conformation.xyz( atomA1_ ), conformation.xyz( atomA2_ ), 
+	return score(
+		conformation.xyz( atomA1_ ), conformation.xyz( atomA2_ ),
 		conformation.xyz( atomB1_ ), conformation.xyz( atomB2_ ));
 }
 
@@ -212,7 +212,7 @@ DistancePairConstraint::score(
 
 void
 DistancePairConstraint::fill_f1_f2(
-	AtomID const & atom,
+	AtomID const & /* atom */,
 	XYZ_Func const & xyz,
 	Vector & F1,
  	Vector & F2,

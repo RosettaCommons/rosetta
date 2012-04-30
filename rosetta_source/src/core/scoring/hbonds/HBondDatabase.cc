@@ -221,7 +221,7 @@ HBondDatabase::initialize_HBFadeInterval()
 	vector1<string> tokens;
 	Size id;
 	string fade_interval_name;
-	bool smoothed;
+	bool smoothed(false);
 	Real min0, fmin, fmax, max0;
 	while ( getline( s, line ) ) {
 		++line_no;

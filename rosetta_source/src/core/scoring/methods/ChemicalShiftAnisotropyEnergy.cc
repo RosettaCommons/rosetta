@@ -199,7 +199,7 @@ ChemicalShiftAnisotropyEnergy::eval_atom_derivative(
 
 	Vector fij(0,0,0);
 
-	for (int ii=1; ii<=csa_nrs.size(); ++ii) {
+	for (Size ii=1; ii<=csa_nrs.size(); ++ii) {
 		core::Size csa_nr = csa_nrs[ ii ];
 	  //tr.Trace << "csa_nr: " << csa_nr << std::endl;
 	  //tr.Trace << "aid.rsd(): " << aid.rsd() << std::endl;
