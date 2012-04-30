@@ -222,14 +222,18 @@ main( int argc, char* argv [] ) {
 		if(found == false)
 			final_disulf_pairs.push_back(ct_disulf_map_it->second);
 	}
-	string out_nametag = "disulf.txt";
-	if ( basic::options::option[ out::file::o ].user() ) {
-		out_nametag = option[out::file::o ]();
-	}
-	utility::io::ozstream output(out_nametag);
-	for ( disulf_iter disulf_it = final_disulf_pairs.begin(), disulf_end = final_disulf_pairs.end(); disulf_it != disulf_end; ++disulf_it){
+	if(final_disulf_pairs.size() > 0){
+		string out_nametag = "disulf.txt";
+		if ( basic::options::option[ out::file::o ].user() ) {
+			out_nametag = option[out::file::o ]();
+		}
 
-		output << disulf_it->first << "," <<  disulf_it->second << std::endl;
+		utility::io::ozstream output(out_nametag);
+
+		for ( disulf_iter disulf_it = final_disulf_pairs.begin(), disulf_end = final_disulf_pairs.end(); disulf_it != disulf_end; ++disulf_it){
+
+			output << disulf_it->first << "," <<  disulf_it->second << std::endl;
+		}
 	}
 	tr << "disulfide detection completed successfully" << std::endl;
 }
