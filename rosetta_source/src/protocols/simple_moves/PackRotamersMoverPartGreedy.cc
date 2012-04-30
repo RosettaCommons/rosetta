@@ -26,7 +26,7 @@
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 #include <protocols/enzdes/enzdes_util.hh>
-//#include <utility/exit.hh>
+#include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 
 //#include <core/pack/task/operation/TaskOperation.fwd.hh>
@@ -160,7 +160,11 @@ PackRotamersMoverPartGreedy::apply( Pose & pose )
   (*scorefxn_repack_)(greedy_pose);
   // make sure we have some target residues
   if (use_cstids_){ // enzdes csts if specified
-	protocols::enzdes::enzutil::get_resnum_from_cstid_list( cstid_list_, greedy_pose, target_residues_ );
+	utility::vector1< core::Size > trg_res;
+	protocols::enzdes::enzutil::get_resnum_from_cstid_list( cstid_list_, greedy_pose, trg_res );
+	target_residues_.insert( target_residues_.begin(), trg_res.begin(), trg_res.end() );
+        std::unique( target_residues_.begin(), target_residues_.end() );
+
    }
   runtime_assert(target_residues_.size()>0);
   //
