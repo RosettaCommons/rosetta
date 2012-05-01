@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
 
 	// load vall
 	protocols::frags::RMSVallData rms_vall( option[ OptionKeys::loops::vall_file ] );
-	ConstantLengthFragSet frags3(3),frags5(5),frags7(7),frags9(9);
+	ConstantLengthFragSet frags3(3),frags9(9);
 
 	// for each 3 mer get a frame
 	for (int i =  1; i <= nres - 2; ++i) {
@@ -100,30 +100,8 @@ int main(int argc, char **argv) {
 		for (int k=0; k<3; ++k)
 			cas[k+1] = native_pose.residue(i+k).atom("CA").xyz();
 		std::string frag_seq = input_seq.substr( i-1, 3 );
-		rms_vall.get_frags( 200, cas, frag_seq, '-', frame3_i, 0.0 );
+		rms_vall.get_frags( 200, cas, frag_seq, '-', frame3_i, 0.0, -1.0 );
 		frags3.add( frame3_i );
-	}
-
-	// for each 3 mer get a frame
-	for (int i =  1; i <= nres - 4; ++i) {
-		FrameOP frame5_i = new core::fragment::Frame( i, 5 );
-		utility::vector1< numeric::xyzVector< core::Real> > cas( 5 );
-		for (int k=0; k<5; ++k)
-			cas[k+1] = native_pose.residue(i+k).atom("CA").xyz();
-		std::string frag_seq = input_seq.substr( i-1, 5 );
-		rms_vall.get_frags( 200, cas, frag_seq, '-', frame5_i, 0.0 );
-		frags5.add( frame5_i );
-	}
-
-	// for each 3 mer get a frame
-	for (int i =  1; i <= nres - 6; ++i) {
-		FrameOP frame7_i = new core::fragment::Frame( i, 7 );
-		utility::vector1< numeric::xyzVector< core::Real> > cas( 7 );
-		for (int k=0; k<7; ++k)
-			cas[k+1] = native_pose.residue(i+k).atom("CA").xyz();
-		std::string frag_seq = input_seq.substr( i-1, 7 );
-		rms_vall.get_frags( 200, cas, frag_seq, '-', frame7_i, 0.0 );
-		frags7.add( frame7_i );
 	}
 
 	// for each 9 mer get a frame
@@ -133,14 +111,12 @@ int main(int argc, char **argv) {
 		for (int k=0; k<9; ++k)
 			cas[k+1] = native_pose.residue(i+k).atom("CA").xyz();
 		std::string frag_seq = input_seq.substr( i-1, 9 );
-		rms_vall.get_frags( 200, cas, frag_seq, '-', frame9_i, 0.0 );
+		rms_vall.get_frags( 200, cas, frag_seq, '-', frame9_i, 0.0, -1.0 );
 		frags9.add( frame9_i );
 	}
 
 	// dump frame sets
 	FragmentIO().write_data( option[ OptionKeys::out::file::frag_prefix ]()+"3", frags3 );
-	FragmentIO().write_data( option[ OptionKeys::out::file::frag_prefix ]()+"5", frags5 );
-	FragmentIO().write_data( option[ OptionKeys::out::file::frag_prefix ]()+"7", frags7 );
 	FragmentIO().write_data( option[ OptionKeys::out::file::frag_prefix ]()+"9", frags9 );
 
 	return 0;

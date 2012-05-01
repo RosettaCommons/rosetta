@@ -115,6 +115,8 @@ static basic::Tracer TR("cryst.design");
 
 OPT_1GRP_KEY(String, crystdes, prefix)
 OPT_1GRP_KEY(Real, crystdes, alpha)
+OPT_1GRP_KEY(Boolean, crystdes, cen_min)
+OPT_1GRP_KEY(Boolean, crystdes, smallres_only)
 OPT_1GRP_KEY(Real, crystdes, rot_step)
 OPT_1GRP_KEY(Real, crystdes, trans_step)
 OPT_1GRP_KEY(Real, crystdes, rot_max)
@@ -217,7 +219,7 @@ new_sc(Pose &pose, Real& sa1, Real& sc1, Real& sa2, Real& sc2, Real& sa3, Real& 
 
 
 void
-design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool hphobic_only) {
+design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool small_only) {
 	using namespace core;
 	using namespace pack;
 	using namespace task;
@@ -231,27 +233,26 @@ design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool 
 	allowed_aas[aa_cys] = false;
 	allowed_aas[aa_gly] = false;
 	allowed_aas[aa_pro] = false;
-	allowed_aas[aa_met] = false; //fpd -- only let met mutate to met
 
-	if(hphobic_only == true) {
+	if(small_only == true) {
 		allowed_aas[aa_ala] = true;
-		allowed_aas[aa_asp] = false;
+		allowed_aas[aa_asp] = true;
 		allowed_aas[aa_glu] = false;
-		allowed_aas[aa_phe] = true;
+		allowed_aas[aa_phe] = false;
 		allowed_aas[aa_his] = false;
 		allowed_aas[aa_ile] = true;
 		allowed_aas[aa_lys] = false;
 		allowed_aas[aa_leu] = true;
-		allowed_aas[aa_met] = true;
-		allowed_aas[aa_asn] = false;
+		allowed_aas[aa_met] = false;
+		allowed_aas[aa_asn] = true;
 		allowed_aas[aa_pro] = false;
 		allowed_aas[aa_gln] = false;
 		allowed_aas[aa_arg] = false;
-		allowed_aas[aa_ser] = false;
-		allowed_aas[aa_thr] = false;
+		allowed_aas[aa_ser] = true;
+		allowed_aas[aa_thr] = true;
 		allowed_aas[aa_val] = true;
-		allowed_aas[aa_trp] = true;
-		allowed_aas[aa_tyr] = true;
+		allowed_aas[aa_trp] = false;
+		allowed_aas[aa_tyr] = false;
 	}
 
 	// Get the symmetry info and make the packer task
@@ -355,11 +356,12 @@ private:
 	core::Real ddg_filter_;
 	core::Real air_filter_;
 
-	core::scoring::ScoreFunctionOP cen_scorefxn_, fa_scorefxn_;
+	bool cen_min_, smallres_only_;
+
+	core::scoring::ScoreFunctionOP cen_scorefxn_, cenmin_scorefxn_, fa_scorefxn_;
 
 public:
 	RBSymmSampler(){
-		//TODO --  make all of these flags
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 
@@ -369,6 +371,8 @@ public:
 		trans_max_  =  option[crystdes::trans_max]();
 		trans_min_  = -trans_max_;
 
+		cen_min_ =  option[crystdes::cen_min]();
+		smallres_only_ = option[crystdes::smallres_only]();
 		alpha_ = option[crystdes::alpha]();
 
 		// filters
@@ -383,6 +387,7 @@ public:
 		air_filter_     = option[crystdes::air]();
 		
 		cen_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("score0");
+		cenmin_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("cen_std");
 		fa_scorefxn_  = core::scoring::getScoreFunction();
 
 		// Get the favor_native_residue weight from the command line
@@ -428,6 +433,7 @@ public:
 		      dynamic_cast<SymmetricConformation const & > ( pose.conformation() ) );
 
 		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
+		Size nres_monomer = symm_info->num_independent_residues();
 
 		for (core::Size resid=1; resid<=symm_info->num_total_residues_without_pseudo(); ++resid) {
 			if (!symm_info->bb_is_independent(resid)) continue;
@@ -454,6 +460,7 @@ public:
 		com /= (core::Real)natoms;
 
 		protocols::moves::MoverOP tocentroid( new protocols::simple_moves::SwitchResidueTypeSetMover("centroid") );
+		protocols::moves::MoverOP tofa( new protocols::simple_moves::SwitchResidueTypeSetMover("fa_standard") );
 
 		core::io::silent::SilentFileData sfd;	
 
@@ -478,11 +485,29 @@ public:
 			// CENTROID FILTER
 			core::pose::Pose cenpose = pose;
 			tocentroid->apply( cenpose );
+
+			// opt centroid rigid-body min
+			if (cen_min_) {
+				core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+				movemap->set_jump(true);movemap->set_bb(false);movemap->set_chi(false);
+				core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
+				protocols::simple_moves::symmetry::SymMinMover m( movemap, cenmin_scorefxn_, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+				m.apply(cenpose);
+			}
+
 			core::Real cen_score = (*cen_scorefxn_)(cenpose);
 			if (cen_score > cen_vdw_filter_) {
 				TR << alpha<<"_"<<beta<<"_"<<x<<"_"<<y<<"_"<<z << "    fail centroid filter (" << cen_score << ")" << std::endl;
 				continue;
 			}
+
+			// steal sidechains
+			tofa->apply( cenpose );
+			for ( Size ii = 1; ii <= nres_monomer; ++ii ) {
+				core::conformation::ResidueOP new_residue( pose.residue( ii ).clone() );
+				cenpose.replace_residue ( ii, *new_residue, true );
+			}
+			pose = cenpose;
 
 			// DESIGN STEP
 			// 1 find interface reses
@@ -543,8 +568,10 @@ public:
 			}
 
 			// Design
-			design(pose_for_design, fa_scorefxn_, design_pos, true);
-	
+			design(pose_for_design, fa_scorefxn_, design_pos, smallres_only_);
+			minimize(pose_for_design, fa_scorefxn_, design_pos, false, true, true);
+			design(pose_for_design, fa_scorefxn_, design_pos, smallres_only_);
+
 			// Repack and minimize using score12
 			ScoreFunctionOP score12 = core::scoring::ScoreFunctionFactory::create_score_function("standard", "score12");
 			repack(pose_for_design, score12, design_pos);
@@ -660,6 +687,8 @@ my_main( void* ) {
 int
 main( int argc, char * argv [] ) {
 	NEW_OPT(crystdes::prefix, "out-prefix", "S");
+	NEW_OPT(crystdes::cen_min, "cen_min", true);
+	NEW_OPT(crystdes::smallres_only, "smallres_only", true);
 	NEW_OPT(crystdes::alpha, "alpha", 0.0);
 	NEW_OPT(crystdes::rot_step, "rot_step", 1.5);
 	NEW_OPT(crystdes::trans_step, "trans_step", 0.75);
