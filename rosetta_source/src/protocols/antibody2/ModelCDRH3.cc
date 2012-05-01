@@ -96,12 +96,14 @@
 
 
 static basic::Tracer TR("protocols.antibody2.ModelCDRH3");
+
 using namespace core;
 
 namespace protocols {
 namespace antibody2 {
 
 ModelCDRH3::ModelCDRH3() : Mover(){}
+
     
 ModelCDRH3::~ModelCDRH3() {}
     
@@ -112,6 +114,7 @@ ModelCDRH3::ModelCDRH3( AntibodyInfoOP antibody_info) : Mover(){
     init();
 }
     
+
     
 ModelCDRH3::ModelCDRH3( AntibodyInfoOP antibody_info,                 
                         core::scoring::ScoreFunctionCOP lowres_scorefxn,
@@ -124,6 +127,7 @@ ModelCDRH3::ModelCDRH3( AntibodyInfoOP antibody_info,
     
 	init();
 }
+
 
 
     
@@ -139,7 +143,8 @@ void ModelCDRH3::init( )
         c_ter_stem_ = 0;
     }
     
-	setup_objects();
+    h3_cter_insert_mover_ = new H3CterInsert(ab_info_, is_camelid_);
+    h3_perturb_ccd_build_ = new H3PerturbCCD(ab_info_, lowres_scorefxn_);   
 }
 
     
@@ -181,17 +186,18 @@ void ModelCDRH3::set_default()
 
     
 
-    
-
-
-    
-    
-    
-void ModelCDRH3::setup_objects(){
-    h3_cter_insert_mover_ = new H3CterInsert(ab_info_, is_camelid_);
-    h3_perturb_ccd_build_ = new H3PerturbCCD(ab_info_, lowres_scorefxn_);        
+void ModelCDRH3::set_lowres_score_func(scoring::ScoreFunctionCOP lowres_scorefxn ){
+    lowres_scorefxn_ = new core::scoring::ScoreFunction(*lowres_scorefxn);
 }
     
+void ModelCDRH3::set_highres_score_func(scoring::ScoreFunctionCOP highres_scorefxn){
+    highres_scorefxn_ = new core::scoring::ScoreFunction(*highres_scorefxn);
+}
+    
+void ModelCDRH3::set_task_factory(pack::task::TaskFactoryCOP tf){
+    tf_ = new pack::task::TaskFactory(*tf);
+}    
+
     
 
 void ModelCDRH3::turn_off_H3_filter(){
@@ -216,6 +222,8 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
     using namespace core::scoring;
     using namespace protocols::moves;
 
+    
+    set_highres_score_func(highres_scorefxn_);
     start_pose_ = pose_in;
 
     pose::Pose start_pose = pose_in;
@@ -251,13 +259,12 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
     
     // Building centroid mode loop
     to_centroid.apply( pose_in );
-//    pymol_->apply(pose_in);
 
     
     // some initialization before you do h3 loop modeling
-//    my_LoopMover my_loop_mover;
-//    my_loop_mover.set_extended_torsions( pose_in, cdr_h3 );
-        set_extended_torsions( pose_in, cdr_h3 );
+    my_LoopMover xxx ;
+    xxx.set_extended_torsions( pose_in, cdr_h3 );
+//        set_extended_torsions( pose_in, cdr_h3 );
        pose_in.dump_pdb("extend_centroid.pdb");
         //JQX:  this function is in loops_main.cc file
         //      firstly, idealize the loop (indealize bonds as well)
@@ -347,9 +354,8 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
     
 
     // Packer
-    protocols::simple_moves::PackRotamersMoverOP packer;
-    packer = new protocols::simple_moves::PackRotamersMover( highres_scorefxn_ );
-    packer->task_factory(tf_);
+    simple_moves::PackRotamersMoverOP packer = new simple_moves::PackRotamersMover( highres_scorefxn_ );
+    packer->task_factory(tf_);  //JQX: repack everything
     packer->apply( pose_in );
 
 
@@ -369,7 +375,9 @@ std::string ModelCDRH3::get_name() const {
 }
 
 
-    
+basic::Tracer & my_LoopMover::tr() const{
+    return TR;
+}
 
 
 

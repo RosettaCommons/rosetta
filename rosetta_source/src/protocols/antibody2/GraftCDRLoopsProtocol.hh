@@ -23,12 +23,14 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
 
 #include <protocols/antibody2/AntibodyInfo.fwd.hh>
 #include <protocols/antibody2/Ab_TemplateInfo.fwd.hh>
 #include <protocols/antibody2/GraftCDRLoopsProtocol.fwd.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/moves/PyMolMover.fwd.hh>
@@ -37,7 +39,7 @@
 #include <iostream>
 
 
-
+using namespace core;
 
 namespace protocols {
 namespace antibody2 {
@@ -73,7 +75,8 @@ public:
 	void set_camelid_constraints( bool camelid_constraints ) { camelid_constraints_ = camelid_constraints; }
 	void set_benchmark( bool benchmark ) { benchmark_ = benchmark; }
     void set_cst_weight(core::Real cst_weight){ cst_weight_ = cst_weight; }
-
+    void set_sc_min (bool scmin) {sc_min_ = scmin ;}
+    void set_rt_min (bool rtmin) {rt_min_ = rtmin ;}
 	virtual std::string get_name() const;
 
     
@@ -98,6 +101,8 @@ private:
 	bool graft_h3_;
 	bool camelid_;
 	bool camelid_constraints_;
+    bool sc_min_;
+	bool rt_min_;
 
     
     GraftMap grafts_ ;
@@ -117,22 +122,23 @@ private:
 	core::Real cst_weight_;
 
 	// score functions
-	core::scoring::ScoreFunctionOP scorefxn_;
+	core::scoring::ScoreFunctionOP scorefxn_pack_;
 
 	// external objects
 	AntibodyInfoOP ab_info_;
     Ab_TemplateInfoOP ab_t_info_ ;
 
+	//packer task
+    moves::MonteCarloOP mc_;
+	pack::task::TaskFactoryOP tf_;
 
 	/// @brief Assigns user specified values to primitive members using command line options
 	void init_from_options();
-    void set_packer_default( core::pose::Pose & pose, bool include_current ) ;
 
 
     
     // movers
     protocols::moves::SequenceMoverOP graft_sequence_ ;
-    protocols::simple_moves::PackRotamersMoverOP packer_ ;
     protocols::moves::PyMolMoverOP pymol_ ;
 
 

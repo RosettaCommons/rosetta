@@ -79,6 +79,8 @@ public:
 	void set_camelid_constraints(bool camelid_constraints ) { 
         camelid_constraints_ = camelid_constraints; 
     }
+    void set_sc_min (bool scmin) {sc_min_ = scmin ;}
+    void set_rt_min (bool rtmin) {rt_min_ = rtmin ;}
 
 	void relax_cdrs( pose::Pose & pose );
 
@@ -100,6 +102,8 @@ private:
     bool cter_insert_;
     bool LH_repulsive_ramp_;
     pose::Pose start_pose_;
+    bool sc_min_;
+	bool rt_min_;
     
     /// @brief refine H3 only
 	bool antibody_refine_;

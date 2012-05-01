@@ -16,18 +16,28 @@
 /// @author Jianqing Xu (xubest@gmail.com)
 
 
-
+#include <core/pose/PDBInfo.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <utility/tools/make_vector1.hh>
+#include <protocols/docking/DockMCMProtocol.hh>
+#include <protocols/moves/PyMolMover.hh>
 #include <protocols/antibody2/RefineBetaBarrel.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/AntibodyUtil.hh>
 #include <protocols/antibody2/LHRepulsiveRamp.hh>
 #include <protocols/antibody2/LHSnugFitLegacy.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <protocols/docking/DockMCMProtocol.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <utility/tools/make_vector1.hh>
+#include <protocols/loops/loops_main.hh>
+#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+
+#include <protocols/docking/DockingProtocol.hh> //JQX
+#include <protocols/docking/DockingHighRes.hh> //JQX
+#include <protocols/docking/util.hh> //JQX
+#include <basic/options/keys/docking.OptionKeys.gen.hh>  //JQX
+
+
+
 
 
 
@@ -78,12 +88,7 @@ void RefineBetaBarrel::init( ){
     }
 
     repulsive_ramp_ = true;
-
-    // set up objects
-    lh_repulsive_ramp_ = new LHRepulsiveRamp(ab_info_, dock_scorefxn_, pack_scorefxn_);
-    dock_mcm_protocol_ = new docking::DockMCMProtocol( ab_info_->LH_dock_jump(), dock_scorefxn_, pack_scorefxn_ );
-        //TODO: check move map, fold tree, task factory that you should pass into.
-        //lh_snugfit_ = new LHSnugFitLegacy(ab_info_);
+    use_pymol_diy_  = false;
 
 }
    
@@ -98,29 +103,98 @@ std::string RefineBetaBarrel::get_name() const {
     
     
     
+void RefineBetaBarrel::set_task_factory(core::pack::task::TaskFactoryCOP tf){
+    tf_ = new pack::task::TaskFactory(*tf);
+}
+    
+    
+    
+    
+    
+    
+void RefineBetaBarrel::finalize_setup(pose::Pose & pose ){
+    TR<<"   start finalize_setup function ..."<<std::endl;
+        
+    // add scores to map
+    ( *dock_scorefxn_ )( pose );
+        
+    //setting MoveMap
+    cdr_dock_map_ = new kinematics::MoveMap();
+    cdr_dock_map_->clear();
+    cdr_dock_map_->set_chi( false );
+    cdr_dock_map_->set_bb( false );
+    utility::vector1< bool> bb_is_flexible( pose.total_residue(), false );
+    utility::vector1< bool> sc_is_flexible( pose.total_residue(), false );
+        
+    select_loop_residues( pose, ab_info_->all_cdr_loops_, false/*include_neighbors*/, bb_is_flexible);
+    cdr_dock_map_->set_bb( bb_is_flexible );
+    select_loop_residues( pose, ab_info_->all_cdr_loops_, true/*include_neighbors*/, sc_is_flexible);
+    cdr_dock_map_->set_chi( sc_is_flexible );
+        // JQX: the question here is how to update this sc_is_flexible due to the -include_neighbors options
+        //      I think for the L-H docking, it is fine, because the restrict_to_interface for the pack_mover
+        //      will update the interface residues anyway. But for H3 refinement, one need to consider this
+    cdr_dock_map_->set_jump( 1, true );
+    for( Size ii = 2; ii <= ab_info_->all_cdr_loops_.num_loop() + 1; ii++ )
+        cdr_dock_map_->set_jump( ii, false );
+        
+        
+    // TaskFactory
+    //set up sidechain movers for rigid body jump and loop & neighbors
+    using namespace core::pack::task;
+    using namespace core::pack::task::operation;
+    // selecting movable c-terminal residues
+    ObjexxFCL::FArray1D_bool loop_residues( pose.total_residue(), false );
+    for( Size i = 1; i <= pose.total_residue(); i++ ) {
+        loop_residues(i) = sc_is_flexible[i]; 
+    } // check mapping
+        
+    using namespace protocols::toolbox::task_operations;
+    if(!tf_){
+        tf_= setup_packer_task(pose);
+        tf_->push_back( new RestrictToInterface( ab_info_->LH_dock_jump(), loop_residues ) );
+        //tf_->push_back( new RestrictToInterface( movable_jumps_ ) ); // TODO: maybe you don't need to repack the loops
+    }
+        
+    //core::pack::task::PackerTaskOP my_task2(tf_->create_task_and_apply_taskoperations(pose));
+    //TR<<*my_task2<<std::endl; exit(-1);
+        
+    TR<<"   finish finalize_setup function !!!"<<std::endl;
+        
+}
+
+    
     
     
     
 void RefineBetaBarrel::apply( pose::Pose & pose ) {
+    
+    finalize_setup(pose);
 
     all_cdr_VL_VH_fold_tree( pose, ab_info_->all_cdr_loops_ );
     
-
+    
     if(repulsive_ramp_) {
+        lh_repulsive_ramp_ = new LHRepulsiveRamp(ab_info_, dock_scorefxn_, pack_scorefxn_);
+            lh_repulsive_ramp_ -> set_move_map(cdr_dock_map_);
+            lh_repulsive_ramp_ -> set_task_factory(tf_);
+            if(use_pymol_diy_) lh_repulsive_ramp_ -> turn_on_and_pass_the_pymol (pymol_);
         lh_repulsive_ramp_->apply(pose);
+        TR<<"   finish repulsive ramping !"<<std::endl;
     }
     
-    TR<<"finish repulsive ramping !"<<std::endl;
-
     
-    //lh_snugfit_ ->set_task_factory(tf_);
-    //lh_snugfit_ -> apply(pose);
     
     // TODO: 
-    // JQX: check fold tree, move map, and task factory
-    dock_mcm_protocol_ -> apply(pose);
+    // JQX: pass the move map, 
+    dock_mcm_protocol_ = new docking::DockMCMProtocol( ab_info_->LH_dock_jump(), dock_scorefxn_, pack_scorefxn_ );
+        dock_mcm_protocol_ -> set_task_factory(tf_);
+        dock_mcm_protocol_ -> set_move_map(cdr_dock_map_);
 
-    TR<<"finish dock_mcm ramping !"<<std::endl;
+    dock_mcm_protocol_ -> apply(pose);
+    if(use_pymol_diy_) pymol_ -> apply(pose);
+
+    TR<<"   finish L_H Docking !"<<std::endl;
+    TR<<"FINISH BETA BARREL REFINEMENT STEP !! "<<std::endl;
 }
 
 

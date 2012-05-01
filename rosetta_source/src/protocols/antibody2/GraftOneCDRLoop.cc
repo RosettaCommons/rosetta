@@ -23,9 +23,6 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <protocols/idealize/IdealizeMover.hh>
@@ -50,7 +47,7 @@ GraftOneCDRLoop::GraftOneCDRLoop(){}
 GraftOneCDRLoop::GraftOneCDRLoop(std::string cdr_name, 
                                            Size query_start, 
                                            Size query_end, 
-                                           scoring::ScoreFunctionOP scorefxn ) : Mover( "GraftOneCDRLoop" )
+                                           scoring::ScoreFunctionCOP scorefxn ) : Mover( "GraftOneCDRLoop" )
 {
     scorefxn_ = scorefxn;
 	query_start_ = query_start;
@@ -68,7 +65,7 @@ GraftOneCDRLoop::GraftOneCDRLoop(std::string cdr_name,
 GraftOneCDRLoop::GraftOneCDRLoop( std::string cdr_name, 
                                            AntibodyInfoOP ab_info, 
                                            Ab_TemplateInfoOP ab_t_info, 
-                                           scoring::ScoreFunctionOP scorefxn ) : Mover( "GraftOneCDRLoop" )
+                                           scoring::ScoreFunctionCOP scorefxn ) : Mover( "GraftOneCDRLoop" )
 {
     scorefxn_ = scorefxn;
     query_start_ = ab_info->get_CDR_loop(cdr_name)->start();
@@ -181,7 +178,7 @@ void GraftOneCDRLoop::apply( pose::Pose & pose_in )
 
 
     scoring::superimpose_pose( template_pose_, truncated_pose, atom_map );
-    template_pose_.dump_pdb(template_name_);
+    
 
     // TODO:
     // JQX:
@@ -228,7 +225,7 @@ void GraftOneCDRLoop::apply( pose::Pose & pose_in )
         }
     }
 
-    pose_in.dump_pdb(template_name_+"_graft");
+//    pose_in.dump_pdb(template_name_+"_graft");
 
     
 } // GraftOneCDRLoop::apply

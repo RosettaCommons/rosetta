@@ -32,6 +32,8 @@
 #include <protocols/antibody2/H3PerturbCCD.fwd.hh>
 #include <protocols/antibody2/H3CterInsert.fwd.hh>
 #include <protocols/moves/PyMolMover.fwd.hh>
+#include <basic/Tracer.hh>
+
 
 
 
@@ -76,20 +78,13 @@ public:
 
 
 	/// @brief set scorefunction for low resolution of CDR H3 modeling
-	void set_lowres_score_func(scoring::ScoreFunctionCOP lowres_scorefxn ){
-        lowres_scorefxn_ = new core::scoring::ScoreFunction(*lowres_scorefxn);
-    }
+	void set_lowres_score_func(scoring::ScoreFunctionCOP lowres_scorefxn );
 
 	/// @brief set scorefunction for high resolution of CDR H3 modeling
-	void set_highres_score_func(scoring::ScoreFunctionCOP highres_scorefxn){
-        highres_scorefxn_ = new core::scoring::ScoreFunction(*highres_scorefxn);
-    }
+	void set_highres_score_func(scoring::ScoreFunctionCOP highres_scorefxn);
 
-
-
-    void set_task_factory(pack::task::TaskFactoryCOP tf){
-        tf_ = new pack::task::TaskFactory(*tf);
-    }
+	/// @brief set task factory 
+    void set_task_factory(pack::task::TaskFactoryCOP tf);
     
     void turn_off_H3_filter();
     
@@ -154,8 +149,6 @@ private:
 
 	void init();
 
-    void setup_objects();
-
     H3CterInsertOP h3_cter_insert_mover_;
     H3PerturbCCDOP h3_perturb_ccd_build_;
     
@@ -163,22 +156,13 @@ private:
 
 
     
-/*
-//TODO:
+
+
 // JQX: make a class, which inherits from abstract class "loop_mover"
 class my_LoopMover: public protocols::loops::loop_mover::LoopMover {
-public:
-    my_LoopMover();
-    ~my_LoopMover();
-    virtual void apply( core::pose::Pose & pose_in );
-	virtual std::string get_name() const;
-    virtual void set_extended_torsions( core::pose::Pose & pose, loops::Loop const & loop );
 protected:
     virtual basic::Tracer & tr() const;
-private:
-    
 };
-*/  
     
 
 

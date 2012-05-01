@@ -19,7 +19,6 @@
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreType.hh>
@@ -42,12 +41,20 @@
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/MonteCarlo.hh>
+#include <protocols/moves/TrialMover.hh>
+
 #include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
+#include <protocols/docking/SidechainMinMover.hh>
+
 #include <protocols/antibody2/GraftOneCDRLoop.hh>
 #include <protocols/antibody2/CloseOneCDRLoop.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/Ab_TemplateInfo.hh>
 #include <protocols/antibody2/GraftCDRLoopsProtocol.hh>
+#include <protocols/antibody2/AntibodyUtil.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -91,13 +98,7 @@ void GraftCDRLoopsProtocol::init() {
 	register_options();
 	init_from_options();
 
-//	if ( ab_model_score() == NULL ) { //<- use this if we want to pass in score functions
-		// score functions
-		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "standard", "score12" );
-		scorefxn_->set_weight( core::scoring::chainbreak, 1.0 );
-		scorefxn_->set_weight( core::scoring::overlap_chainbreak, 10./3. );
-		scorefxn_->set_weight( core::scoring::atom_pair_constraint, 1.00 );
-//	}
+
 
 	setup_objects();
 
@@ -117,7 +118,8 @@ void GraftCDRLoopsProtocol::set_default()
 	benchmark_ = false;
 	camelid_   = false;
 	camelid_constraints_ = false;
-
+    cst_weight_ = 0.0;
+    
 }
 
     
@@ -137,6 +139,8 @@ void GraftCDRLoopsProtocol::register_options()
 	option.add_relevant( OptionKeys::constraints::cst_weight );
 	option.add_relevant( OptionKeys::run::benchmark );
 	option.add_relevant( OptionKeys::in::file::native );
+    //option.add_relevant( OptionKeys::antibody::sc_min);
+    //option.add_relevant( OptionKeys::antibody::rt_min);
 }
 
     
@@ -168,6 +172,12 @@ void GraftCDRLoopsProtocol::init_from_options() {
                 set_benchmark( option[ OptionKeys::run::benchmark ]() );
     if ( option[ OptionKeys::constraints::cst_weight ].user() )
                 set_cst_weight( option[ OptionKeys::constraints::cst_weight ]() );
+    //if ( option[ OptionKeys::antibody::sc_min_ ].user() ) {
+	//	set_sc_min( option[ OptionKeys::antibody::sc_min_ ]() );
+	//}
+    //if ( option[ OptionKeys::antibody::rt_min_ ].user() ) {
+	//	set_rt_min( option[ OptionKeys::antibody::rt_min_ ]() );
+	//}
 
 
 	//set native pose if asked for
@@ -180,8 +190,7 @@ void GraftCDRLoopsProtocol::init_from_options() {
 		set_native_pose(NULL);
 	}
     
-    
-	cst_weight_ = option[ OptionKeys::constraints::cst_weight ]();
+
     
 	if( camelid_ ) {
 		graft_l1_ = false;
@@ -206,18 +215,25 @@ void GraftCDRLoopsProtocol::setup_objects() {
     ab_t_info_ = NULL;
     
     graft_sequence_ = NULL;
-    packer_ = NULL;
     pymol_=NULL;
     
-    scorefxn_ = NULL;
+    // score functions
+    scorefxn_pack_ = core::scoring::ScoreFunctionFactory::create_score_function( "standard","score12");
+    
+    scorefxn_pack_->set_weight( core::scoring::chainbreak, 1.0 );
+    scorefxn_pack_->set_weight( core::scoring::overlap_chainbreak, 10./3. );
+    scorefxn_pack_->set_weight( core::scoring::atom_pair_constraint, 1.00 );
 
+    mc_ = new moves::MonteCarlo( *scorefxn_pack_, 0.8 );
+	tf_ = new core::pack::task::TaskFactory;
+    
 	sync_objects_with_flags();
+    
 }
     
     
     
 void GraftCDRLoopsProtocol::sync_objects_with_flags() {
-
 	flags_and_objects_are_in_sync_ = true;
 	first_apply_with_current_setup_ = true;
 }
@@ -274,7 +290,7 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
             TR << "                  start (chothia): "<<ab_info_->get_CDR_loop(it->first)->start()<<std::endl;
             TR << "                   stop (chothia): "<<ab_info_->get_CDR_loop(it->first)->stop()<<std::endl;
             
-            GraftOneCDRLoopOP graft_one_cdr = new GraftOneCDRLoop( it->first, ab_info_, ab_t_info_, scorefxn_) ;
+            GraftOneCDRLoopOP graft_one_cdr = new GraftOneCDRLoop( it->first, ab_info_, ab_t_info_, scorefxn_pack_) ;
             graft_one_cdr->enable_benchmark_mode( benchmark_ );
             graft_sequence_->add_mover( graft_one_cdr);
             //              graft_sequence_->add_mover( pymol_ );
@@ -293,15 +309,34 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
     
     // Exact match Aroop's old code in Rosetta 2:
     // graft all CDRs by superimpose stems, then pack the whole new pose
+    // RotamerTrial <-> PackRotamers <-> RotamerTrialsMin/SideChainMin(optional)
+    
+    tf_ = setup_packer_task(frame_pose);
+	simple_moves::RotamerTrialsMoverOP rotamer_trial_mover = new simple_moves::RotamerTrialsMover( scorefxn_pack_, tf_ );
+    simple_moves::PackRotamersMoverOP  pack_rotamers_mover = new simple_moves::PackRotamersMover();
+        pack_rotamers_mover->score_function( scorefxn_pack_ );
+        pack_rotamers_mover->task_factory( tf_ );
+    
+    graft_sequence_->add_mover(rotamer_trial_mover);
+    graft_sequence_->add_mover(pack_rotamers_mover);
     
     
-    set_packer_default(frame_pose, true /* include_current */)  ;
-    graft_sequence_->add_mover(packer_);
+    if ( rt_min_ ){ 
+        simple_moves::RotamerTrialsMinMoverOP rtmin = new simple_moves::RotamerTrialsMinMover( scorefxn_pack_, tf_ );
+        moves::TrialMoverOP rtmin_trial = new moves::TrialMover( rtmin, mc_ );
+        graft_sequence_->add_mover(rtmin_trial); 
+    }
+    if ( sc_min_ ){ 
+        core::pack::task::TaskFactoryCOP my_tf( tf_); // input must be COP, weird
+        docking::SidechainMinMoverOP scmin_mover = new docking::SidechainMinMover( scorefxn_pack_, my_tf );
+        moves::TrialMoverOP scmin_trial = new moves::TrialMover( scmin_mover, mc_ );
+        graft_sequence_->add_mover(scmin_trial); 
+    }
 
 
 }
 
-
+ 
 
     
     
@@ -359,11 +394,6 @@ void GraftCDRLoopsProtocol::apply( pose::Pose & frame_pose ) {
     
     graft_sequence_->apply( frame_pose );
     
-    frame_pose.dump_pdb("finish_grafting_and_packing.pdb");
-
-    // Recover secondary structures
-    for( Size i = 1; i <= nres; i++ ) frame_pose.set_secstruct( i, secondary_struct_storage[ i ] );
-    
     // Recover secondary structures
     for( Size i = 1; i <= nres; i++ ) frame_pose.set_secstruct( i, secondary_struct_storage[ i ] );
     
@@ -387,22 +417,9 @@ void GraftCDRLoopsProtocol::apply( pose::Pose & frame_pose ) {
 
 
 
-
-
-
 std::string GraftCDRLoopsProtocol::get_name() const {
 	return "GraftCDRLoopsProtocol";
 }
-
-void GraftCDRLoopsProtocol::set_packer_default(pose::Pose & pose, bool include_current) {
-    //set up packer
-    pack::task::PackerTaskOP task;
-    task = pack::task::TaskFactory::create_packer_task( pose );
-    task->restrict_to_repacking();
-    task->or_include_current( include_current );
-    packer_ = new simple_moves::PackRotamersMover( scorefxn_, task );
-} // Ab_GraftCDRs_Mover set_packer_default
-
 
 
 
@@ -465,8 +482,6 @@ std::ostream & operator<<(std::ostream& out, const GraftCDRLoopsProtocol & ab_m_
     out << line_marker << A( 47, "Rosetta 3 Antibody Modeler" ) << space( 27 ) << line_marker << std::endl;
     out << line_marker << A( 47, "     CDR Assembling       " ) << space( 27 ) << line_marker << std::endl;
     out << line_marker << space( 74 ) << line_marker << std::endl;
-        
-    // Display the state of the low resolution docking protocol that will be used
     out << line_marker << " Graft_l1:  " << ab_m_2.graft_l1_<<std::endl;
     out << line_marker << " Graft_l2:  " << ab_m_2.graft_l2_<<std::endl;
     out << line_marker << " Graft_l3:  " << ab_m_2.graft_l3_<<std::endl;
@@ -474,12 +489,6 @@ std::ostream & operator<<(std::ostream& out, const GraftCDRLoopsProtocol & ab_m_
     out << line_marker << " Graft_h2:  " << ab_m_2.graft_h2_<<std::endl;
     out << line_marker << " Graft_h3:  " << ab_m_2.graft_h3_<<std::endl;
     out << line_marker << "  camelid:  " << ab_m_2.camelid_ <<std::endl;
-        
-        
-    // Display the state of the low resolution docking protocol that will be used
-        
-        
-    // Close the box I have drawn
     out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
     return out;
 }

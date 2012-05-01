@@ -15,6 +15,7 @@
 ///
 /// @author Jianqing Xu ( xubest@gmail.com )
 
+#include <protocols/jobdist/JobDistributors.hh> // SJF Keep first for mpi
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueSelector.hh>
@@ -147,8 +148,11 @@ void AntibodyModelerProtocol::set_default()
     high_cst_ = 100.0; // if changed here, please change at the end of AntibodyModeler as well
     H3_filter_ = true;
     cter_insert_ = true;
-    use_pymol_diy_ = true;
+    use_pymol_diy_ = false;
     LH_repulsive_ramp_ = true;
+    
+    sc_min_ = false;
+    rt_min_ = false;
 }
 
     
@@ -166,6 +170,8 @@ void AntibodyModelerProtocol::register_options()
 	option.add_relevant( OptionKeys::in::file::native );
     //option.add_relevant( OptionKeys::antibody::H3_filter );
     //option.add_relevant( OptionKeys::antibody::cter_insert );
+    //option.add_relevant( OptionKeys::antibody::sc_min_);
+    //option.add_relevant( OptionKeys::antibody::rt_min_);
 }
 
     
@@ -203,7 +209,13 @@ void AntibodyModelerProtocol::init_from_options()
     //if ( option[ OptionKeys::antibody::cter_insert ].user() ) {
 	//	set_CterInsert( option[ OptionKeys::antibody::cter_insert ]() );
 	//}
-
+    //if ( option[ OptionKeys::antibody::sc_min_ ].user() ) {
+	//	set_sc_min( option[ OptionKeys::antibody::sc_min_ ]() );
+	//}
+    //if ( option[ OptionKeys::antibody::rt_min_ ].user() ) {
+	//	set_rt_min( option[ OptionKeys::antibody::rt_min_ ]() );
+	//}
+    
 	//set native pose if asked for
 	if ( option[ OptionKeys::in::file::native ].user() ) {
 		core::pose::PoseOP native_pose = new core::pose::Pose();
@@ -249,6 +261,10 @@ AntibodyModelerProtocol::setup_objects() {
         loop_scorefxn_highres_->set_weight( scoring::chainbreak, 1.0 );
         loop_scorefxn_highres_->set_weight( scoring::overlap_chainbreak, 10./3. );
         loop_scorefxn_highres_->set_weight( scoring::atom_pair_constraint, high_cst_ );
+    
+    model_cdrh3_        = NULL;
+    refine_beta_barrel_ = NULL;
+    cdr_highres_refine_ = NULL;
     
     // miscellaneous
     pymol_ = new protocols::moves::PyMolMover;
@@ -302,32 +318,12 @@ void AntibodyModelerProtocol::finalize_setup( pose::Pose & frame_pose )
 
     ab_info_ = new AntibodyInfo(frame_pose,camelid_);
     TR<<*ab_info_<<std::endl;
-    
-    model_cdrh3_        = new ModelCDRH3( ab_info_, loop_scorefxn_centroid_, loop_scorefxn_highres_);
-    refine_beta_barrel_ = new RefineBetaBarrel(ab_info_, dock_scorefxn_highres_, pack_scorefxn_);
-
-
-    
-    
-    TR << "Utility: Setting Up Packer Task" << std::endl;
-    using namespace pack::task;
-    using namespace pack::task::operation;
-    tf_->push_back( new OperateOnCertainResidues( new PreventRepackingRLT, new ResidueLacksProperty("PROTEIN") ) );
-    tf_->push_back( new InitializeFromCommandline );
-    tf_->push_back( new IncludeCurrent );
-    tf_->push_back( new RestrictToRepacking );
-    tf_->push_back( new NoRepackDisulfides );
-    
-    // incorporating Ian's UnboundRotamer operation.
-    // note that nothing happens if unboundrot option is inactive!
-    pack::rotamer_set::UnboundRotamersOperationOP unboundrot = new pack::rotamer_set::UnboundRotamersOperation();
-    unboundrot->initialize_from_command_line();
-    operation::AppendRotamerSetOP unboundrot_operation = new operation::AppendRotamerSet( unboundrot );
-    tf_->push_back( unboundrot_operation );
-    // adds scoring bonuses for the "unbound" rotamers, if any
-    core::pack::dunbrack::load_unboundrot( frame_pose );
         
-    TR << "Utility: Done: Setting Up Packer Task" << std::endl;
+    tf_ = setup_packer_task(frame_pose);
+    
+    //core::pack::task::PackerTaskOP my_task2(tf_->create_task_and_apply_taskoperations(frame_pose));
+    //TR<<*my_task2<<std::endl; exit(-1);
+
 
 }
 
@@ -375,10 +371,11 @@ void AntibodyModelerProtocol::apply( pose::Pose & frame_pose ) {
 
 
 
-    // Step 1: model the cdr h3
+    // Step 1: model the cdr h3 in centroid mode
     // JQX notes: pay attention to the way it treats the stems when extending the loop
     if(use_pymol_diy_) pymol_->apply(frame_pose);
-    if(model_h3_){        
+    if(model_h3_){ 
+        model_cdrh3_  = new ModelCDRH3( ab_info_, loop_scorefxn_centroid_, loop_scorefxn_highres_);
         if(cter_insert_ ==false) { model_cdrh3_->turn_off_cter_insert(); }
         if(H3_filter_   ==false) { model_cdrh3_->turn_off_H3_filter();   }
         model_cdrh3_->set_task_factory(tf_);
@@ -388,14 +385,18 @@ void AntibodyModelerProtocol::apply( pose::Pose & frame_pose ) {
     
     
     // Step 2: packing the CDRs
-    if(extreme_repacking_) { relax_cdrs( frame_pose );    }
-    if(use_pymol_diy_) pymol_->apply(frame_pose);
+    if(extreme_repacking_) { 
+        relax_cdrs( frame_pose );    
+    }
+
     
     
     
 	// Step 3: SnugFit: relieve the clashes between L-H
 	if ( snugfit_ ) { 
-        if (LH_repulsive_ramp_) {refine_beta_barrel_-> turn_off_repulsive_ramp();};
+        refine_beta_barrel_ = new RefineBetaBarrel(ab_info_, dock_scorefxn_highres_, pack_scorefxn_);
+        if (!LH_repulsive_ramp_) {refine_beta_barrel_-> turn_off_repulsive_ramp();}
+        if (use_pymol_diy_) {refine_beta_barrel_ -> turn_on_and_pass_the_pymol(pymol_);}
         refine_beta_barrel_->apply(frame_pose);
 	}
 
@@ -404,6 +405,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & frame_pose ) {
 	// Step 4: Full Atom Relax 
     if(refine_h3_){
         //$$$$$$$$$$$$$$$$$$$$$$$$
+        
         cdr_highres_refine_ = new RefineCDRH3HighRes(ab_info_, "h3", loop_scorefxn_highres_); 
         cdr_highres_refine_ -> set_task_factory(tf_);
         cdr_highres_refine_ -> pass_start_pose(start_pose_);
@@ -442,6 +444,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & frame_pose ) {
     }
     
     
+    relax_cdrs( frame_pose );    
 
     
     
@@ -485,8 +488,8 @@ void AntibodyModelerProtocol::apply( pose::Pose & frame_pose ) {
 	job->add_string_real_pair("AA_H3", global_loop_rmsd( frame_pose, *get_native_pose(), ab_info_->get_CDR_loop("h3") ));
 	job->add_string_real_pair("AB_H2", global_loop_rmsd( frame_pose, *get_native_pose(), ab_info_->get_CDR_loop("h2") ));
 	job->add_string_real_pair("AC_H1", global_loop_rmsd( frame_pose, *get_native_pose(), ab_info_->get_CDR_loop("h1") ));
-	if( !camelid_ ) {
-		job->add_string_real_pair("AC_L3", global_loop_rmsd( frame_pose, *get_native_pose(), ab_info_->get_CDR_loop("l3")));
+	if( camelid_ == false ) {
+		job->add_string_real_pair("AC_L3", global_loop_rmsd( frame_pose, *get_native_pose(), ab_info_->get_CDR_loop("l3") ));
 		job->add_string_real_pair("AD_L2", global_loop_rmsd( frame_pose, *get_native_pose(), ab_info_->get_CDR_loop("l2") ));
 		job->add_string_real_pair("AE_L1", global_loop_rmsd( frame_pose, *get_native_pose(), ab_info_->get_CDR_loop("l1") ));
 	}
@@ -570,19 +573,24 @@ void AntibodyModelerProtocol::relax_cdrs( core::pose::Pose & pose )
 	if( benchmark_ ) min_tolerance = 1.0;
 	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
 	bool nb_list = true;
-    simple_moves::MinMoverOP all_cdr_min_moves = new simple_moves::MinMover( allcdr_map,
-                                                                    loop_scorefxn_highres_, min_type, min_tolerance, nb_list );
+    simple_moves::MinMoverOP  all_cdr_min_moves = new simple_moves::MinMover( allcdr_map,loop_scorefxn_highres_, min_type, min_tolerance, nb_list );
     all_cdr_min_moves->apply( pose );
+    if(use_pymol_diy_) pymol_->apply(pose);
 
     if( !benchmark_ ) {
         simple_moves::PackRotamersMoverOP repack=new simple_moves::PackRotamersMover( loop_scorefxn_highres_ );
+        tf_ = setup_packer_task(pose);
         ( *loop_scorefxn_highres_ )( pose );
         tf_->push_back( new RestrictToInterface( sc_is_flexible ) );
         repack->task_factory( tf_ );
         repack->apply( pose );
+        if(use_pymol_diy_) pymol_->apply(pose);
+
 
         simple_moves::RotamerTrialsMinMoverOP rtmin = new simple_moves::RotamerTrialsMinMover( loop_scorefxn_highres_, tf_ );
         rtmin->apply( pose );
+        if(use_pymol_diy_) pymol_->apply(pose);
+
     }
 
     // Restoring pose fold tree
@@ -676,6 +684,7 @@ std::ostream & operator<<(std::ostream& out, const AntibodyModelerProtocol & ab_
 
     // Display the state of the antibody modeler protocol that will be used
     out << line_marker << "  camelid                : " << ab_m_2.camelid_     << std::endl;
+    out << line_marker << std::endl;
     out << line_marker << "  model_h3               : " << ab_m_2.model_h3_    << std::endl;
     out << line_marker << "     cter_insert         : " << ab_m_2.cter_insert_ << std::endl;
     out << line_marker << "     H3_filter           : " << ab_m_2.H3_filter_   << std::endl;
@@ -683,8 +692,6 @@ std::ostream & operator<<(std::ostream& out, const AntibodyModelerProtocol & ab_
     out << line_marker << "  snugfit                : " << ab_m_2.snugfit_     << std::endl;
     out << line_marker << "     LH_repulsive_ramp   : " << ab_m_2.LH_repulsive_ramp_ << std::endl;
     out << line_marker << "  refine_h3              : " << ab_m_2.refine_h3_     << std::endl;
-
-    // Close the box I have drawn
     out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
     return out;
 }

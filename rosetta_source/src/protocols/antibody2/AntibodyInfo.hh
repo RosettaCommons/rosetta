@@ -83,7 +83,7 @@ public:
 	// End coordinates of active loop
 	core::Size current_end;
 
-    
+    //TODO: JQX, fix this, this is not supposed to be here
 	loops::Loops all_cdr_loops_;
     
     void detect_and_set_CDR_H3_stem_type( core::pose::Pose & pose );
@@ -98,7 +98,8 @@ public:
     //bool is_my_antibody_camelid(core::pose::Pose & pose);
 
     docking::DockJumps LH_dock_jump(){ return LH_dock_jumps_;}
-    docking::DockJumps Ab_Ag_dock_jumps(){ return Ab_Ag_dock_jumps_;}
+
+    std::string LH_dock_partner(){return LH_dock_partners_;}
 
     
 private:
@@ -123,7 +124,7 @@ private:
     utility::vector1< char > Fv_sequence_;
  
     docking::DockJumps LH_dock_jumps_;
-    docking::DockJumps Ab_Ag_dock_jumps_;    
+    std::string LH_dock_partners_;
     
 
 };

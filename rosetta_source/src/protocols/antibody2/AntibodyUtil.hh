@@ -64,10 +64,16 @@ bool CDR_H3_filter(
                        bool is_camelid);
     
     
-void setup_packer_task( core::pose::Pose & pose_in, core::pack::task::TaskFactoryOP & tf );
+core::pack::task::TaskFactoryOP setup_packer_task( core::pose::Pose & pose_in);
 
-    
-    
+/*    void dle_extreme_repack(pose::Pose & pose_in,
+                            int repack_cycles,
+                            ObjexxFCL::FArray1D_bool & allow_repack,
+                            bool rt_min,
+                            bool rotamer_trials,
+                            bool force_one_repack,
+                            bool use_unbounds);
+  */  
 
 /// @brief return false if any cdr cutpoint is broken
 bool cutpoints_separation( core::pose::Pose & pose, AntibodyInfoOP & antibody_info );

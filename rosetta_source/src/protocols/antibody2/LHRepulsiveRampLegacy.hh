@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer, email:license@u.washington.edu
 
-/// @file protocols/antibody2/LHRepulsiveRamp.hh
+/// @file protocols/antibody2/LHRepulsiveRampLegacy.hh
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -17,14 +17,14 @@
 
 
 
-#ifndef INCLUDED_protocols_antibody2_LHRepulsiveRamp_hh
-#define INCLUDED_protocols_antibody2_LHRepulsiveRamp_hh
+#ifndef INCLUDED_protocols_antibody2_LHRepulsiveRampLegacy_hh
+#define INCLUDED_protocols_antibody2_LHRepulsiveRampLegacy_hh
 
 
 
 
 
-#include <protocols/antibody2/LHRepulsiveRamp.fwd.hh>
+#include <protocols/antibody2/LHRepulsiveRampLegacy.fwd.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -35,7 +35,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/moves/RepeatMover.fwd.hh>
 #include <protocols/moves/PyMolMover.fwd.hh>
-#include <protocols/docking/DockTaskFactory.fwd.hh>
 
 #ifdef PYROSETTA
 #include <protocols/moves/PyMolMover.hh>
@@ -46,28 +45,33 @@ using namespace core;
 namespace protocols {
 namespace antibody2 {
         
-class LHRepulsiveRamp: public moves::Mover {
+class LHRepulsiveRampLegacy: public moves::Mover {
             
             
 public:
     
     /// @brief default constructor
-	LHRepulsiveRamp();
+	LHRepulsiveRampLegacy();
     
 	/// @brief constructor with arguments
+    LHRepulsiveRampLegacy(loops::Loops loops_in );
     
-    LHRepulsiveRamp(AntibodyInfoOP antibody_in );
+    LHRepulsiveRampLegacy(AntibodyInfoOP antibody_in );
     
-	LHRepulsiveRamp(AntibodyInfoOP antibody_in, bool camelid );
+	LHRepulsiveRampLegacy(AntibodyInfoOP antibody_in, bool camelid );
     
-    LHRepulsiveRamp(AntibodyInfoOP antibody_in,
+    LHRepulsiveRampLegacy(loops::Loops loops_in, 
+                    core::scoring::ScoreFunctionCOP dock_scorefxn,
+                    core::scoring::ScoreFunctionCOP pack_scorefxn );
+    
+    LHRepulsiveRampLegacy(AntibodyInfoOP antibody_in,
                     core::scoring::ScoreFunctionCOP dock_scorefxn,
                     core::scoring::ScoreFunctionCOP pack_scorefxn );
         
     virtual protocols::moves::MoverOP clone() const;
     
 	/// @brief default destructor
-	~LHRepulsiveRamp();
+	~LHRepulsiveRampLegacy();
     
     void set_default();
     
@@ -85,7 +89,6 @@ public:
     
     
     void set_task_factory(pack::task::TaskFactoryCOP tf);
-    void set_move_map(kinematics::MoveMapCOP cdr_dock_map);
     
     core::Real set_rot_mag  (core::Real rot_mag)  {return rot_mag_  =rot_mag;  }
     core::Real set_trans_mag(core::Real trans_mag){return trans_mag_=trans_mag;}
@@ -102,9 +105,15 @@ private:
     bool user_defined_;
     bool benchmark_;
     bool is_camelid_;
+    loops::Loops all_loops_; 
+    core::Size nres_;
+    kinematics::MoveMapOP cdr_dock_map_;
     core::Size rep_ramp_cycles_;
+    std::string min_type_;
     core::Real rot_mag_;
     core::Real trans_mag_;
+    core::Real temperature_;
+    core::Real min_threshold_;
     core::Size num_repeats_;
 
     moves::PyMolMoverOP pymol_;
@@ -113,8 +122,12 @@ private:
     scoring::ScoreFunctionOP dock_scorefxn_;
     scoring::ScoreFunctionOP pack_scorefxn_;
     
-    void init(AntibodyInfoOP ab_info, bool camelid);
-            
+    void init(loops::Loops loops_in, bool camelid);
+    
+    void setup_objects();
+    
+    void finalize_setup(pose::Pose & pose );
+    
     void snugfit_MC_min(pose::Pose & pose, core::scoring::ScoreFunctionOP  temp_scorefxn);
 
     
@@ -125,7 +138,7 @@ private:
     
 	//packer task
     pack::task::TaskFactoryOP tf_;
-    kinematics::MoveMapOP cdr_dock_map_;
+
 };
     
     

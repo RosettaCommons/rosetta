@@ -164,12 +164,13 @@ void RefineCDRH3HighRes::init( )
     
 void RefineCDRH3HighRes::set_default()
 { 
-    benchmark_         = false;
     include_neighbors_ = true;
-	refine_input_loop_ = false;
+    H3_filter_         = true;
     flank_relax_       = true;
+
+    benchmark_         = false;
+	refine_input_loop_ = false;
 	h3_random_cut_     = false;
-	H3_filter_         = true;
     use_pymol_diy_     = false;
     is_camelid_        = false;
 
@@ -233,7 +234,7 @@ void RefineCDRH3HighRes::pass_start_pose(core::pose::Pose & start_pose){
     
 void RefineCDRH3HighRes::finalize_setup( core::pose::Pose & pose ){
 
-    setup_packer_task( start_pose_, tf_ );
+    tf_=setup_packer_task( start_pose_);
     
     // set cutpoint variants for correct chainbreak scoring
     if( !pose.residue( cutpoint_ ).is_upper_terminus() ) {
@@ -310,7 +311,7 @@ void RefineCDRH3HighRes::finalize_setup( core::pose::Pose & pose ){
     
     // pack the loop and its neighboring residues
     loop_repack_ = new PackRotamersMover(highres_scorefxn_);
-    setup_packer_task( start_pose_, tf_ );
+    tf_ = setup_packer_task( start_pose_);
     ( *highres_scorefxn_ )( pose );
     tf_->push_back( new RestrictToInterface( allow_repack_ ) );
     loop_repack_->task_factory(tf_);
@@ -321,8 +322,13 @@ void RefineCDRH3HighRes::finalize_setup( core::pose::Pose & pose ){
     BackboneMoverOP small_mover = new SmallMover( cdrh3_map_, high_move_temp_, n_small_moves_ );
     BackboneMoverOP shear_mover = new ShearMover( cdrh3_map_, high_move_temp_, n_small_moves_ );
 
-    small_mover->angle_max( 'H', 2.0 ); small_mover->angle_max( 'E', 5.0 ); small_mover->angle_max( 'L', 6.0 );
-    shear_mover->angle_max( 'H', 2.0 ); shear_mover->angle_max( 'E', 5.0 ); shear_mover->angle_max( 'L', 6.0 );
+    small_mover->angle_max( 'H', 2.0 ); 
+    small_mover->angle_max( 'E', 5.0 ); 
+    small_mover->angle_max( 'L', 6.0 );
+    
+    shear_mover->angle_max( 'H', 2.0 ); 
+    shear_mover->angle_max( 'E', 5.0 ); 
+    shear_mover->angle_max( 'L', 6.0 );
 
     
     // ccd moves
@@ -385,7 +391,7 @@ void RefineCDRH3HighRes::apply( pose::Pose & pose ) {
         
             // rotamer trials
             select_loop_residues( pose, the_loop_, include_neighbors_, allow_repack_, neighbor_dist_);
-            setup_packer_task( start_pose_, tf_ );
+            tf_ = setup_packer_task( start_pose_ );
             ( *highres_scorefxn_ )( pose );
             tf_->push_back( new RestrictToInterface( allow_repack_ ) );
             RotamerTrialsMoverOP pack_rottrial = new RotamerTrialsMover( highres_scorefxn_, tf_ );
@@ -415,7 +421,7 @@ void RefineCDRH3HighRes::apply( pose::Pose & pose ) {
                 
                     // rotamer trials
                     select_loop_residues( pose, the_loop_, include_neighbors_, allow_repack_, neighbor_dist_);
-                    setup_packer_task( start_pose_, tf_ );
+                    tf_ = setup_packer_task( start_pose_);
                     ( *highres_scorefxn_ )( pose );
                     tf_->push_back( new RestrictToInterface( allow_repack_ ) );
                     pack_rottrial->task_factory(tf_);
@@ -468,7 +474,7 @@ void RefineCDRH3HighRes::apply( pose::Pose & pose ) {
                     if ( numeric::mod(j,Size(20))==0 || j==inner_cycles_ ) {
                         // repack trial
                         loop_repack_ = new PackRotamersMover( highres_scorefxn_ );
-                        setup_packer_task( start_pose_, tf_ );
+                        tf_ = setup_packer_task( start_pose_);
                         ( *highres_scorefxn_ )( pose );
                         tf_->push_back( new RestrictToInterface( allow_repack_ ) );
                         loop_repack_->task_factory( tf_ );

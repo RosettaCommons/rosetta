@@ -38,12 +38,12 @@ namespace antibody2 {
 		GraftOneCDRLoop(std::string cdr_name, 
                              core::Size query_start, 
                              core::Size query_end, 
-                             core::scoring::ScoreFunctionOP scorefxn );
+                             core::scoring::ScoreFunctionCOP scorefxn );
         
 		GraftOneCDRLoop(std::string cdr_name, 
                              AntibodyInfoOP ab_info,
                              Ab_TemplateInfoOP ab_t_info,
-                             core::scoring::ScoreFunctionOP scorefxn );
+                             core::scoring::ScoreFunctionCOP scorefxn );
 
         
 		~GraftOneCDRLoop();
@@ -80,7 +80,7 @@ namespace antibody2 {
 		/// @brief benchmark flag
 		bool benchmark_;
 
-		core::scoring::ScoreFunctionOP scorefxn_;
+		core::scoring::ScoreFunctionCOP scorefxn_;
         void initForEqualOperatorAndCopyConstructor(GraftOneCDRLoop & lhs, GraftOneCDRLoop const & rhs);
 
 	}; // class GraftOneCDRLoop

@@ -29,7 +29,11 @@
 #include <protocols/antibody2/LHSnugFitLegacy.fwd.hh>
 #include <protocols/docking/DockMCMProtocol.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <protocols/moves/PyMolMover.fwd.hh>
 
+#ifdef PYROSETTA
+#include <protocols/moves/PyMolMover.hh>
+#endif
 
 
 using namespace core;
@@ -41,56 +45,62 @@ namespace antibody2 {
 class RefineBetaBarrel: public moves::Mover {
             
             
-    public:
-        /// @brief default constructor
-        RefineBetaBarrel();
+public:
+    /// @brief default constructor
+    RefineBetaBarrel();
         
-        /// @brief default destructor
-        ~RefineBetaBarrel();
+    /// @brief default destructor
+    ~RefineBetaBarrel();
         
-        RefineBetaBarrel(AntibodyInfoOP antibody_info);
+    RefineBetaBarrel(AntibodyInfoOP antibody_info);
     
-        RefineBetaBarrel(AntibodyInfoOP antibody_info,
-                         core::scoring::ScoreFunctionCOP dock_scorefxn,
-                         core::scoring::ScoreFunctionCOP pack_scorefxn);
+    RefineBetaBarrel(AntibodyInfoOP antibody_info,
+                    core::scoring::ScoreFunctionCOP dock_scorefxn,
+                    core::scoring::ScoreFunctionCOP pack_scorefxn);
     
-        virtual void apply( core::pose::Pose & pose_in );
-        virtual std::string get_name() const;
+    virtual void apply( core::pose::Pose & pose_in );
+    virtual std::string get_name() const;
     
-        void set_task_factory(core::pack::task::TaskFactoryCOP tf){
-            tf_ = new pack::task::TaskFactory(*tf);
-        }
+    void set_task_factory(core::pack::task::TaskFactoryCOP tf);
     
     
-        void set_dock_score_func(scoring::ScoreFunctionCOP dock_scorefxn ){
-            dock_scorefxn_ = new core::scoring::ScoreFunction(*dock_scorefxn);
-        }
+    void set_dock_score_func(scoring::ScoreFunctionCOP dock_scorefxn ){
+        dock_scorefxn_ = new core::scoring::ScoreFunction(*dock_scorefxn);
+    }
     
-        void set_pack_score_func(scoring::ScoreFunctionCOP pack_scorefxn){
-            pack_scorefxn_ = new core::scoring::ScoreFunction(*pack_scorefxn);
-        }
+    void set_pack_score_func(scoring::ScoreFunctionCOP pack_scorefxn){
+        pack_scorefxn_ = new core::scoring::ScoreFunction(*pack_scorefxn);
+    }
     
-        void turn_off_repulsive_ramp(){
-            repulsive_ramp_ = false;
-        }
+    void turn_off_repulsive_ramp(){
+        repulsive_ramp_ = false;
+    }
+    
+    void turn_on_and_pass_the_pymol(moves::PyMolMoverOP pymol){
+        use_pymol_diy_ = true;
+        pymol_ = pymol;
+    }
             
-    private:
-        bool user_defined_;
-        bool repulsive_ramp_;
-        AntibodyInfoOP ab_info_;
-    	pack::task::TaskFactoryOP tf_;
+private:
+    bool user_defined_;
+    bool repulsive_ramp_;
+    AntibodyInfoOP ab_info_;
+    pack::task::TaskFactoryOP tf_;
+    
+    moves::PyMolMoverOP pymol_;
+    bool use_pymol_diy_;
         
-        void init( );
-
+    void init( );
+    void finalize_setup(core::pose::Pose & pose_in );
     
-        LHRepulsiveRampOP lh_repulsive_ramp_;
-        LHSnugFitLegacyOP lh_snugfit_;
-        docking::DockMCMProtocolOP dock_mcm_protocol_;
+    LHRepulsiveRampOP lh_repulsive_ramp_;
+    LHSnugFitLegacyOP lh_snugfit_;
+    docking::DockMCMProtocolOP dock_mcm_protocol_;
     
+    core::scoring::ScoreFunctionOP dock_scorefxn_;
+    core::scoring::ScoreFunctionOP pack_scorefxn_;
     
-    
-        core::scoring::ScoreFunctionOP dock_scorefxn_;
-        core::scoring::ScoreFunctionOP pack_scorefxn_;
+    kinematics::MoveMapOP cdr_dock_map_;
     
     
 };

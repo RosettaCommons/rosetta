@@ -212,6 +212,9 @@ namespace antibody2{
         
 		Size jump_pos1 ( geometry::residue_center_of_mass( pose_in, 1, rb_cutpoint ) );
 		Size jump_pos2 ( geometry::residue_center_of_mass( pose_in,rb_cutpoint+1, nres ) );
+        //TR<<rb_cutpoint<<std::endl;
+        //TR<<jump_pos1<<std::endl;
+        //TR<<jump_pos2<<std::endl;
         
 		// make sure rb jumps do not reside in the loop region
 		for( loops::Loops::const_iterator it= loops_in.begin(), it_end = loops_in.end(); it != it_end; ++it ) {
@@ -486,52 +489,108 @@ namespace antibody2{
     
     
     
+    
+core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in ) 
+{
+    using namespace pack::task;
+    using namespace pack::task::operation;
+        
+    TR << "Utility: Setting Up Packer Task" << std::endl;
+
+    core::pack::task::TaskFactoryOP tf = new TaskFactory;
+    tf->clear();
+        
+    tf->push_back(new OperateOnCertainResidues(new PreventRepackingRLT, new ResidueLacksProperty("PROTEIN") ));
+    tf->push_back(new InitializeFromCommandline );
+    tf->push_back(new IncludeCurrent );
+    tf->push_back(new RestrictToRepacking );
+    tf->push_back(new NoRepackDisulfides );
+        
+    // incorporating Ian's UnboundRotamer operation.
+    // note that nothing happens if unboundrot option is inactive!
+    pack::rotamer_set::UnboundRotamersOperationOP 
+    unboundrot = new pack::rotamer_set::UnboundRotamersOperation();
+    unboundrot->initialize_from_command_line();
+        
+    operation::AppendRotamerSetOP unboundrot_operation = new operation::AppendRotamerSet( unboundrot );
+    tf->push_back( unboundrot_operation );
+        
+    // adds scoring bonuses for the "unbound" rotamers, if any
+    core::pack::dunbrack::load_unboundrot( pose_in );
     //TODO:
-    //JQX:
-    // What you need is to input the "tf" object, 
-    // do something to change the value of this "tf" object
-    // right now, it is OK, but JQX must come back to make sure the value of tf 
-    // can be changed in this function. If not, maybe this function should return a 
-    // pointer
+    //JQX: need to understand this pose_in!!!! 
+        
+    TR << "Utility: Done: Setting Up Packer Task" << std::endl;
     
-    void setup_packer_task(pose::Pose & pose_in, core::pack::task::TaskFactoryOP & tf ) 
-    {
-		using namespace pack::task;
-		using namespace pack::task::operation;
+    return tf;
         
-
-        tf->clear();
-        tf = new TaskFactory;
-        
-        
-		TR << "Utility: Setting Up Packer Task" << std::endl;
-        
-		tf->push_back( new OperateOnCertainResidues( new PreventRepackingRLT, new ResidueLacksProperty("PROTEIN") ) );
-		tf->push_back( new InitializeFromCommandline );
-		tf->push_back( new IncludeCurrent );
-		tf->push_back( new RestrictToRepacking );
-		tf->push_back( new NoRepackDisulfides );
-        
-		// incorporating Ian's UnboundRotamer operation.
-		// note that nothing happens if unboundrot option is inactive!
-		pack::rotamer_set::UnboundRotamersOperationOP unboundrot = new pack::rotamer_set::UnboundRotamersOperation();
-		unboundrot->initialize_from_command_line();
-        
-		operation::AppendRotamerSetOP unboundrot_operation = new operation::AppendRotamerSet( unboundrot );
-		tf->push_back( unboundrot_operation );
-        
-		// adds scoring bonuses for the "unbound" rotamers, if any
-		core::pack::dunbrack::load_unboundrot( pose_in );
-        
-
-        
-		TR << "Utility: Done: Setting Up Packer Task" << std::endl;
-        
-	} // setup_packer_task
+} // setup_packer_task
 
 
 
-    
+/*    void
+    dle_extreme_repack(
+                       pose::Pose & pose_in,
+                       int repack_cycles,
+                       ObjexxFCL::FArray1D_bool & allow_repack,
+                       bool rt_min,
+                       bool rotamer_trials,
+                       bool force_one_repack,
+                       bool use_unbounds
+                       )
+    { 
+        using namespace pose;
+        
+        // Exit if not fullatom 
+        if( !pose_in.fullatom() ) {
+            std::cout << "Repack called in centroid mode" << std::endl;
+            std::cout << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" << std::endl;
+            std::cout << "------NOT REPACKING-----------" << std::endl;
+            return;
+        }
+        // Saving parameters
+        bool initial_rot_trial = score_get_try_rotamers();
+        bool initial_min_rot = get_minimize_rot_flag();
+        score_set_minimize_rot( rt_min );
+        score_set_try_rotamers( rotamer_trials );
+        // initial allowed chi movement
+        FArray1D_bool old_chi_move( pose_in.total_residue(), false );
+        for( int i = 1; i <= pose_in.total_residue(); i++ ) {
+            // storing old
+            old_chi_move(i) = pose_in.get_allow_chi_move(i);
+            // setting new
+            pose_in.set_allow_chi_move( i, allow_repack(i) || old_chi_move(i) );
+        }
+        Score_weight_map weight_map( score12 );
+        Monte_carlo mc( pose_in, weight_map, 2.0 );
+        // repack idealized native
+        Pose start_native_pose;
+        start_native_pose = pose_in;
+        for(int i=1; i <= repack_cycles; i++) {
+            pose_in = start_native_pose;
+            if( use_unbounds )
+                dle_pack_with_unbound( pose_in, allow_repack, true  ); // include_current = true
+            else
+                pose_in.repack( allow_repack, true ); //include_current =  true
+            pose_in.score( weight_map );
+            score_set_minimize_rot( false );
+            score_set_try_rotamers( false ); 
+            if( force_one_repack && (i == 1) ) mc.reset( pose_in );
+            mc.boltzmann( pose_in );
+            score_set_minimize_rot( rt_min );
+            score_set_try_rotamers( rotamer_trials );
+        }
+        pose_in = mc.low_pose();
+        pose_in.score( weight_map );
+        
+        // Restoring Globals
+        score_set_minimize_rot( initial_rot_trial );
+        score_set_try_rotamers( initial_min_rot );
+        pose_in.set_allow_chi_move( old_chi_move );
+        
+        return;
+    }
+*/
     
     
     
