@@ -41,6 +41,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/simple_moves/GreenPacker.hh>
 #include <protocols/jd2/Job.hh>
 #include <utility/vector0.hh>
 #include <core/pose/symmetry/util.hh>
@@ -263,6 +264,42 @@ PointMutationCalculator::mutate_and_relax(
 }
 
 void
+PointMutationCalculator::mutate_and_relax(
+	pose::Pose & pose,
+	Size const & resi,
+	AA const & target_aa,
+	protocols::simple_moves::GreenPackerOP green_packer
+){
+	using namespace core::pack::task;
+	using namespace core::pack::task::operation;
+	using namespace core::chemical;
+
+	//make bool vector of allowed aa's [1,20], all false except for target_aa
+	vector1< bool > allowed_aas;
+	allowed_aas.clear();
+	allowed_aas.assign( num_canonical_aas, false );
+	allowed_aas[ target_aa ] = true;
+	//make mut_res task factory by copying input task_factory,
+	//then restrict to mutates resi to target_aa and repack 8A shell
+	core::pack::task::TaskFactoryOP mut_res = new core::pack::task::TaskFactory( *task_factory() );
+	protocols::toolbox::task_operations::DesignAroundOperationOP repack_around_op =
+		new protocols::toolbox::task_operations::DesignAroundOperation;
+	repack_around_op->design_shell( -1.0 ); //neg radius insures no designing nbrs
+	repack_around_op->repack_shell( 8.0 );
+	repack_around_op->allow_design( true ); //because we still want to design resi
+	repack_around_op->include_residue( resi );
+	mut_res->push_back( repack_around_op );
+//	TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to ";
+	//only use green packer if not symmetric!
+	assert( !core::pose::symmetry::is_symmetric( pose ) );
+	green_packer->set_task_factory( mut_res );
+	green_packer->apply( pose );
+//	TR<<pose.residue( resi ).name3()<<". Now relaxing..."<<std::endl;
+	//then run input relax mover
+	relax_mover()->apply( pose );
+}
+
+void
 PointMutationCalculator::eval_filters(
 	pose::Pose & pose,
 	bool & filter_pass,
@@ -327,8 +364,9 @@ PointMutationCalculator::calc_point_mut_filters(
 //	PackerTaskCOP task = task_factory()->create_task_and_apply_taskoperations( start_pose );
 	PackerTaskCOP task = task_factory_->create_task_and_apply_taskoperations( start_pose );
 
-	//get vector< Size > of protein seqpos being designed
+	//get vector< Size > of protein seqpos being designed and group id mask for green packer (0 is designed, 1 is rp only)
 	vector1< core::Size > being_designed;
+	utility::vector1< Size > group_ids;
 	being_designed.clear();
 	for( core::Size resi = 1; resi <= start_pose.total_residue(); ++resi ){
 		if(core::pose::symmetry::is_symmetric(start_pose)) {
@@ -336,12 +374,25 @@ PointMutationCalculator::calc_point_mut_filters(
 				break;
 			}
 		}
-		if( task->residue_task( resi ).being_designed() && start_pose.residue(resi).is_protein() )
+		if( task->residue_task( resi ).being_designed() && start_pose.residue(resi).is_protein() ){
 			being_designed.push_back( resi );
+			group_ids.push_back( 0 ); 
+		} else{
+			group_ids.push_back( 1 ); 
+		}
 	}
 	if( being_designed.empty() ) {
 		TR.Warning << "WARNING: No residues are listed as designable." << std::endl;
 	}
+
+	//GreenPacker stuff, precompute non-designable residues' interaxn graph
+	protocols::simple_moves::UserDefinedGroupDiscriminatorOP user_defined_group_discriminator(
+			new protocols::simple_moves::UserDefinedGroupDiscriminator );
+	user_defined_group_discriminator->set_group_ids( group_ids );
+	protocols::simple_moves::GreenPackerOP green_packer( new protocols::simple_moves::GreenPacker );
+	green_packer->set_group_discriminator( user_defined_group_discriminator );
+	green_packer->set_scorefunction( *scorefxn() );
+	green_packer->set_reference_round_task_factory( task_factory() );
 
 	//for each seqpos in being_designed vector
 	foreach( core::Size const resi, being_designed ){
@@ -365,7 +416,9 @@ PointMutationCalculator::calc_point_mut_filters(
 			//TODO: if no filter defined, just use total_score
 			bool filter_pass;
 			vector1< Real > vals;
-			mutate_and_relax( pose, resi, target_aa );
+			//only use green packer if not symmetric (symm not supported for green packer)
+			if( core::pose::symmetry::is_symmetric( pose ) ) mutate_and_relax( pose, resi, target_aa );
+			else mutate_and_relax( pose, resi, target_aa, green_packer );
 			eval_filters( pose, filter_pass, vals );
 
 			//don't store this aa/val if any filter failed
