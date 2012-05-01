@@ -32,7 +32,7 @@
 
 #include <protocols/docking/DockMCMCycle.fwd.hh>
 #include <utility/vector1.hh>
-
+#include <core/kinematics/MoveMap.fwd.hh>
 
 namespace protocols {
 namespace docking {
@@ -87,10 +87,14 @@ public:
 	// protocol functions
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
+    
+    void set_move_map(core::kinematics::MoveMapOP movemap );
 
 private:
 	DockingHighResFilterOP filter_;
 	DockMCMCycleOP dock_mcm_; //JQX: make it as a memmber
+    bool movemap_reset_ ;
+    core::kinematics::MoveMapOP movemap_;
 };
 
 } // docking

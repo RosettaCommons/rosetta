@@ -48,6 +48,8 @@
 #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/docking/SidechainMinMover.hh>
 #include <ObjexxFCL/format.hh>
+#include <core/kinematics/MoveMap.hh>
+
 
 // AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 
@@ -133,6 +135,7 @@ DockMCMProtocol::init()
 {
 	moves::Mover::type( "DockMCMProtocol" );
 	filter_ = new DockingHighResFilter();
+    movemap_reset_ = false;
 }
 
 
@@ -229,6 +232,9 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 	jd2::write_score_tracer( pose, "DockMCM_start" );
 
 	dock_mcm_ = new DockMCMCycle( movable_jumps(), scorefxn(), scorefxn_pack() );
+    if(movemap_reset_){
+        dock_mcm_->set_move_map(movemap_);
+    }
 	//check if we are ignoring the default docking task
 	if( !ignore_default_task() ){
 	 	TR << "Using the DockingTaskFactory." << std::endl;
@@ -328,6 +334,10 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 
 
 
+void DockMCMProtocol::set_move_map(core::kinematics::MoveMapOP movemap){
+    movemap_reset_ = true;
+    movemap_ = movemap;
+}
 
 
 
