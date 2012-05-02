@@ -46,7 +46,7 @@ namespace task_operations {
 		return new ModifyAnnealer( *this );
 	}
 	
-	void ModifyAnnealer::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const{
+	void ModifyAnnealer::apply( core::pose::Pose const &, core::pack::task::PackerTask & task ) const{
 		task.disallow_quench(disallow_quench_);
 		task.high_temp(high_temp_);
 		task.low_temp(low_temp_);
