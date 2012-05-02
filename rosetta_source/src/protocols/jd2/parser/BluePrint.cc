@@ -261,7 +261,7 @@ BluePrint::read_blueprint( std::string const & filename )
 
 			if( tokens[1] == "SSPAIR" || tokens[1] == "FOLDINFO" ) {
 				// set string of strand pairings
-				strand_pairings_ = tokens[1];
+				strand_pairings_ = tokens[2];
 			} else if( tokens[1] == "HHPAIR" ) {
 				// set string of helix pairings
 				helix_pairings_ = tokens[2];
