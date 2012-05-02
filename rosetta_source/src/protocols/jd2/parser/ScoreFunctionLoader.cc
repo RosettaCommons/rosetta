@@ -19,7 +19,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh> 
+#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <basic/Tracer.hh>
@@ -94,10 +94,22 @@ void ScoreFunctionLoader::load_data(
 				if( mod_tag->hasOption( "softrep_etable" )) {
 					if ( mod_tag->getOption<bool>( "softrep_etable" )) {
 						emoptions.etable_type( core::scoring::FA_STANDARD_SOFT );
-						
+
 					}
 				}
 
+				if( mod_tag->hasOption( "hack_elec_min_dis" )) {
+					emoptions.hackelec_min_dis( mod_tag->getOption<core::Real>( "hack_elec_min_dis" ) );
+				}
+				if( mod_tag->hasOption( "hack_elec_max_dis" )) {
+					emoptions.hackelec_max_dis( mod_tag->getOption<core::Real>( "hack_elec_max_dis" ) );
+				}
+				if( mod_tag->hasOption( "hack_elec_dielectric" )) {
+					emoptions.hackelec_die( mod_tag->getOption<core::Real>( "hack_elec_dielectric" ) );
+				}
+				if( mod_tag->hasOption( "hack_elec_no_dis_dep_die" )) {
+					emoptions.hackelec_no_dis_dep_die( mod_tag->getOption<bool>( "hack_elec_no_dis_dep_die" ) );
+				}
 				if( mod_tag->hasOption( "exclude_protein_protein_hack_elec" )) {
 					emoptions.exclude_protein_protein_hack_elec( mod_tag->getOption<bool>( "exclude_protein_protein_hack_elec" ) );
 				}
@@ -135,11 +147,11 @@ void ScoreFunctionLoader::load_data(
 		}
 
 		//fpd should we symmetrize scorefunction?
-		bool const scorefxn_symm( scorefxn_tag->getOption<bool>( "symmetric", 0 ) ); 
-		if (scorefxn_symm) { 
-			in_scorefxn = ScoreFunctionOP( new SymmetricScoreFunction( in_scorefxn ) ); 
+		bool const scorefxn_symm( scorefxn_tag->getOption<bool>( "symmetric", 0 ) );
+		if (scorefxn_symm) {
+			in_scorefxn = ScoreFunctionOP( new SymmetricScoreFunction( in_scorefxn ) );
 			TR<<"symmetrizing "<<scorefxn_name<<'\n';
-		} 
+		}
 
 		data.add( "scorefxns" , scorefxn_name, in_scorefxn );
 	}//end user-defined scorefxns
