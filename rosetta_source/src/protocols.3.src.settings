@@ -391,6 +391,7 @@ sources = {
 		"InterfaceTaskOperation",
 		"JointSequenceOperation",
 		"LimitAromaChi2Operation",
+		"ModifyAnnealer",
 		"PreventChainFromRepackingOperation",
 		"PreventResiduesFromRepackingOperation",
 		"ProteinInterfaceDesignOperation",

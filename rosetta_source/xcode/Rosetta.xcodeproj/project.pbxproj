@@ -264,6 +264,9 @@
 		224121FCE2C72E79BAC8E4C1 /* util.cc in Sources */ = {isa = PBXBuildFile; fileRef = B3787EB869237A79B10EE49D /* util.cc */; };
 		225469DF7A86F575BEB8079F /* EtableEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = AF22EA799BC86249664DDE9D /* EtableEnergy.cc */; };
 		226075B60AB3EA23D37BAF3A /* SymmetricFragmentMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1AA2562A3D8F6D6C91A6128E /* SymmetricFragmentMover.cc */; };
+		2264C70F155080A800B836C2 /* ModifyAnnealer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2264C70C155080A800B836C2 /* ModifyAnnealer.cc */; };
+		2264C710155080A800B836C2 /* ModifyAnnealer.fwd.hh in Headers */ = {isa = PBXBuildFile; fileRef = 2264C70D155080A800B836C2 /* ModifyAnnealer.fwd.hh */; };
+		2264C711155080A800B836C2 /* ModifyAnnealer.hh in Headers */ = {isa = PBXBuildFile; fileRef = 2264C70E155080A800B836C2 /* ModifyAnnealer.hh */; };
 		2269B581E8EC1007768C77E5 /* AtomInResidueAtomInResiduePairFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5E9085631B357EFEC15E7AAF /* AtomInResidueAtomInResiduePairFeatures.cc */; };
 		22F18096360A7C81789273B3 /* MatrixScoringScheme.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7CCEAA6A0AC5D679AE1B7917 /* MatrixScoringScheme.cc */; };
 		2318536F681CBF19DADA1343 /* RotamerSetFactory.cc in Sources */ = {isa = PBXBuildFile; fileRef = BF38D97746917B796AA6F2ED /* RotamerSetFactory.cc */; };
@@ -535,6 +538,7 @@
 		3B9466E5148CCEC600C2FBE5 /* libprotocols.7.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946624148CBFBF00C2FBE5 /* libprotocols.7.a */; };
 		3B9466E6148CCEC600C2FBE5 /* libutility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07513EE143D00772777 /* libutility.a */; };
 		3B9466E7148CCECF00C2FBE5 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9466CA148CCD8600C2FBE5 /* libz.dylib */; };
+		3BAED98A15515FD4004B505D /* ModifyAnnealerCreator.hh in Headers */ = {isa = PBXBuildFile; fileRef = 3BAED98915515FD4004B505D /* ModifyAnnealerCreator.hh */; };
 		3BCB2A2CCA5EDB99A27B3DDB /* LoopMoverFromCommandLine.cc in Sources */ = {isa = PBXBuildFile; fileRef = 55D122BA2FF2D1555474B5B3 /* LoopMoverFromCommandLine.cc */; };
 		3BD12DC061F3A209841CDE41 /* DoubleDensePDInteractionGraph.cc in Sources */ = {isa = PBXBuildFile; fileRef = BC1665F61F04AA9C5B76A8B2 /* DoubleDensePDInteractionGraph.cc */; };
 		3BDE59B89C6905040F1959A2 /* ResFilterFactory.cc in Sources */ = {isa = PBXBuildFile; fileRef = 914E266B2CFCC420522CF87F /* ResFilterFactory.cc */; };
@@ -7527,6 +7531,9 @@
 		2249BF0457BB3DD5A6FFD425 /* TrieCountPair1BC4.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TrieCountPair1BC4.hh; path = ../src/core/scoring/etable/etrie/TrieCountPair1BC4.hh; sourceTree = SOURCE_ROOT; };
 		224A43B93780160EED8EA7B7 /* ScoreType.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScoreType.cc; path = ../src/core/scoring/ScoreType.cc; sourceTree = SOURCE_ROOT; };
 		225935E86265C0B8FA710D36 /* compute_sasa.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = compute_sasa.hh; path = ../src/core/scoring/packstat/compute_sasa.hh; sourceTree = SOURCE_ROOT; };
+		2264C70C155080A800B836C2 /* ModifyAnnealer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModifyAnnealer.cc; sourceTree = "<group>"; };
+		2264C70D155080A800B836C2 /* ModifyAnnealer.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ModifyAnnealer.fwd.hh; sourceTree = "<group>"; };
+		2264C70E155080A800B836C2 /* ModifyAnnealer.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ModifyAnnealer.hh; sourceTree = "<group>"; };
 		2268D5A367C3C5554649BD88 /* PseudocontactShiftEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PseudocontactShiftEnergy.hh; path = ../src/protocols/scoring/methods/pcs/PseudocontactShiftEnergy.hh; sourceTree = SOURCE_ROOT; };
 		226F2EC073FC2F7207BE981B /* SeedFoldTree.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SeedFoldTree.cc; path = ../src/protocols/seeded_abinitio/SeedFoldTree.cc; sourceTree = SOURCE_ROOT; };
 		228745E3D44698692FBBFE00 /* HBondParameterFeatures.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HBondParameterFeatures.fwd.hh; path = ../src/protocols/features/HBondParameterFeatures.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -8252,6 +8259,7 @@
 		3B9466AB148CC98F00C2FBE5 /* rosetta_scripts */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rosetta_scripts; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B9466CA148CCD8600C2FBE5 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = SDKs/MacOSX10.7.sdk/usr/lib/libz.dylib; sourceTree = DEVELOPER_DIR; };
 		3B9D7D4F75F95FDEF26F835D /* MatchOutputter.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MatchOutputter.hh; path = ../src/protocols/match/output/MatchOutputter.hh; sourceTree = SOURCE_ROOT; };
+		3BAED98915515FD4004B505D /* ModifyAnnealerCreator.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ModifyAnnealerCreator.hh; sourceTree = "<group>"; };
 		3BB44B25D7DD1D715145AA8C /* DimensionExpression.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DimensionExpression.hh; path = "../src/ObjexxFCL//DimensionExpression.hh"; sourceTree = SOURCE_ROOT; };
 		3BCA848F8A7A671E012735A9 /* PoseEvaluator.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PoseEvaluator.fwd.hh; path = ../src/protocols/evaluation/PoseEvaluator.fwd.hh; sourceTree = SOURCE_ROOT; };
 		3BCE7D8C14862E7600FCBFAF /* rosetta_scripts.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = rosetta_scripts.cc; path = ../src/apps/public/rosetta_scripts/rosetta_scripts.cc; sourceTree = "<group>"; };
@@ -18069,6 +18077,10 @@
 				E28317D157A7E2F767B03390 /* ThreadSequenceOperation.fwd.hh */,
 				16664E7B8232B531CA72A6EA /* ThreadSequenceOperation.hh */,
 				3E743FFB667BA9785198EE52 /* ThreadSequenceOperationCreator.hh */,
+				2264C70C155080A800B836C2 /* ModifyAnnealer.cc */,
+				2264C70D155080A800B836C2 /* ModifyAnnealer.fwd.hh */,
+				2264C70E155080A800B836C2 /* ModifyAnnealer.hh */,
+				3BAED98915515FD4004B505D /* ModifyAnnealerCreator.hh */,
 			);
 			name = task_operations;
 			path = ../src/protocols/toolbox/task_operations/;
@@ -23364,6 +23376,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2264C710155080A800B836C2 /* ModifyAnnealer.fwd.hh in Headers */,
+				2264C711155080A800B836C2 /* ModifyAnnealer.hh in Headers */,
+				3BAED98A15515FD4004B505D /* ModifyAnnealerCreator.hh in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25395,6 +25410,7 @@
 				B40D4D1C8D3B98798C380078 /* RestrictToNeighborhoodOperation.cc in Sources */,
 				0FD9B72F74EFFEAB26243149 /* SeqprofConsensusOperation.cc in Sources */,
 				EBE7DBF9220EE3761286F9C8 /* ThreadSequenceOperation.cc in Sources */,
+				2264C70F155080A800B836C2 /* ModifyAnnealer.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

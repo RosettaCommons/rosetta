@@ -232,7 +232,7 @@ void SimAnnealerBase::setup_temperature(const FArray1D< core::PackerEnergy > & l
 {
 	bool calc_rot_freq = get_calc_rot_freq();
 	core::PackerEnergy avgloopE = 0.0f;
-	if (( nn == get_outeriterations() )&&(!calc_rot_freq))
+	if (( nn == get_outeriterations() )&&(!calc_rot_freq) && !disallow_quench_ )
 	{
 		set_to_quench();
 		temperature_ = lowtemp_;
