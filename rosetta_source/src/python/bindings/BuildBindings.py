@@ -239,6 +239,8 @@ def main(args):
             buildModule(n, bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
 
     else:
+        #buildModules('utility',   bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
+
         # we want to start with lib that is longest to build - that way we can do multi-core build more efficiently
         buildModules('core',      bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
         buildModules('protocols', bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
@@ -931,7 +933,10 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
 
     cpp_defines = '-DPYROSETTA -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK -DBOOST_NO_MT'
     if Options.cross_compile: cpp_defines += ' -I../src/platform/windows/PyRosetta'
+    elif Platform == "macos": cpp_defines += ' -I../src/platform/macos'
     else: cpp_defines += ' -I../src/platform/linux'
+
+    gccxml_options = '--gccxml-compiler llvm-g++-4.2' if Platform == "macos" else ''
 
     cc_files = []
     add_option  = getCompilerOptions()
@@ -1034,7 +1039,7 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
         # we need  -DBOOST_NO_INITIALIZER_LISTS or gccxml choke on protocols/genetic_algorithm/GeneticAlgorithm.hh
         # GCCXML version
         # -DPYROSETTA
-        if execute('Generating XML representation...', 'gccxml  %s -fxml=%s %s -I. -I../external/include -I../external/boost_1_46_1 -I../external/dbio -DBOOST_NO_INITIALIZER_LISTS ' % (source_hh, xml_name, cpp_defines), not Options.continue_): continue
+        if execute('Generating XML representation...', 'gccxml %s %s -fxml=%s %s -I. -I../external/include -I../external/boost_1_46_1 -I../external/dbio -DBOOST_NO_INITIALIZER_LISTS ' % (gccxml_options, source_hh, xml_name, cpp_defines), not Options.continue_): continue
 
         namespaces_to_wrap = ['::'+path.replace('/', '::')+'::']
         # Temporary injecting Mover in to protocols level
@@ -1108,7 +1113,7 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
 
         if xml_recompile or (not Options.update):
 
-            if execute('Generating XML representation...', 'gccxml  %s -fxml=%s %s -I. -I../external/include -I../external/boost_1_46_1  -I../external/dbio -DBOOST_NO_INITIALIZER_LISTS ' % (all_at_once_source_cpp, all_at_once_xml, cpp_defines), not Options.continue_ ):
+            if execute('Generating XML representation...', 'gccxml %s %s -fxml=%s %s -I. -I../external/include -I../external/boost_1_46_1  -I../external/dbio -DBOOST_NO_INITIALIZER_LISTS ' % (gccxml_options, all_at_once_source_cpp, all_at_once_xml, cpp_defines), not Options.continue_ ):
                 return new_headers
 
             namespaces_to_wrap = ['::'+path.replace('/', '::')+'::']
