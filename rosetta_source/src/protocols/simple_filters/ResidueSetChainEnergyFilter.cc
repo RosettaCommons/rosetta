@@ -148,8 +148,8 @@ ResidueSetChainEnergyFilter::compute(
 	scorefxn_->score( in_pose );
 
 	utility::vector1< core::Size > const res_set_vec( protocols::rosetta_scripts::get_resnum_list_ordered( string_resnums_, in_pose ) );
-	core::Size chain_seqpos_begin( in_pose.conformation().chain_begin( chain_ ) );
-	core::Size chain_seqpos_end( in_pose.conformation().chain_end( chain_ ) );
+//	core::Size chain_seqpos_begin( in_pose.conformation().chain_begin( chain_ ) );
+//	core::Size chain_seqpos_end( in_pose.conformation().chain_end( chain_ ) );
 	// the neighbor/energy links
 	EnergyGraph & energy_graph( in_pose.energies().energy_graph() );
 	core::Real score( 0. );
@@ -161,7 +161,7 @@ ResidueSetChainEnergyFilter::compute(
 			//the other seqpos connected to this edge
 			core::Size const iseq2( edge->get_first_node_ind() );
 			//skip if iseq2 is not in the chain we care about
-			if( in_pose.chain( iseq2 ) != chain_ ) continue;
+			if( static_cast< core::Size >( in_pose.chain( iseq2 ) ) != chain_ ) continue;
 
 			// the pair energies cached in the link
 			EnergyMap const & emap( edge->fill_energy_map() );
