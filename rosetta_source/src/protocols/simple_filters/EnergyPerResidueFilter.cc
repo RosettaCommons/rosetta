@@ -45,7 +45,6 @@ EnergyPerResidueFilterCreator::create_filter() const { return new EnergyPerResid
 std::string
 EnergyPerResidueFilterCreator::keyname() const { return "EnergyPerResidue"; }
 
-
 EnergyPerResidueFilter::EnergyPerResidueFilter( 
 	core::Size const resnum,
 	core::scoring::ScoreFunctionCOP scorefxn,
@@ -75,7 +74,6 @@ EnergyPerResidueFilter::EnergyPerResidueFilter(
 
 		}
 	}
-
 EnergyPerResidueFilter::EnergyPerResidueFilter( EnergyPerResidueFilter const &init ) :
 	//utility::pointer::ReferenceCount(),
 	Filter( init ), resnum_( init.resnum_ ),
@@ -88,6 +86,56 @@ EnergyPerResidueFilter::EnergyPerResidueFilter( EnergyPerResidueFilter const &in
 {
 	using namespace core::scoring;
 	if( init.scorefxn_ ) scorefxn_ = new core::scoring::ScoreFunction( *init.scorefxn_ );
+}
+
+core::scoring::ScoreFunctionOP
+EnergyPerResidueFilter::scorefxn() const{
+	return scorefxn_;
+}
+
+void
+EnergyPerResidueFilter::scorefxn( core::scoring::ScoreFunctionOP scorefxn ){
+	scorefxn_ = scorefxn;
+}
+
+core::scoring::ScoreType
+EnergyPerResidueFilter::score_type() const{
+	return score_type_;
+}
+
+void
+EnergyPerResidueFilter::score_type( core::scoring::ScoreType score_type ){
+	score_type_ = score_type;
+}
+
+core::Real
+EnergyPerResidueFilter::threshold() const{
+	return threshold_;
+}
+
+void
+EnergyPerResidueFilter::threshold( core::Real const th ){
+	threshold_ = th;
+}
+
+bool
+EnergyPerResidueFilter::bb_bb() const{
+	return bb_bb_;
+}
+
+void
+EnergyPerResidueFilter::bb_bb( bool const b_b ){
+	bb_bb_ = b_b;
+}
+
+core::Size
+EnergyPerResidueFilter::resnum() const{
+	return resnum_;
+}
+
+void
+EnergyPerResidueFilter::resnum( core::Size const rn ){
+	resnum_ = rn;
 }
 
 EnergyPerResidueFilter::~EnergyPerResidueFilter() {}
@@ -104,7 +152,7 @@ EnergyPerResidueFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::Dat
 	whole_interface_ = tag->getOption<bool>( "whole_interface" , 0 );
 	rb_jump_ = tag->getOption<core::Size>( "jump_number", 1 );
 	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_distance_cutoff" , 8.0 );
-	bb_bb_ = tag->getOption< bool >("bb_bb", 0 );
+	bb_bb_ = tag->getOption< bool >("bb_bb", false );
 	
 	if (whole_interface_==1 ) {
 		resnum_ = 1;

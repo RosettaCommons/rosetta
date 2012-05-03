@@ -50,9 +50,19 @@ public:
 	core::Real compute( core::pose::Pose const & pose ) const;
 	virtual ~EnergyPerResidueFilter();
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	core::Size resnum() const;
+	core::scoring::ScoreFunctionOP scorefxn() const;
+	core::scoring::ScoreType score_type() const;
+	core::Real threshold() const;
+	bool bb_bb() const;
+	void resnum( core::Size const rn );
+	void scorefxn( core::scoring::ScoreFunctionOP scorefxn );
+	void score_type( core::scoring::ScoreType score_type );
+	void threshold( core::Real const th );
+	void bb_bb( bool const b_b );
 private:
 	core::Size resnum_;
-	core::scoring::ScoreFunctionOP scorefxn_;
+	core::scoring::ScoreFunctionOP scorefxn_; //?
 	core::scoring::ScoreType score_type_;
 	core::Real threshold_;
 	bool whole_interface_;
