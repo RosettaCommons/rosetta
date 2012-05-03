@@ -32,6 +32,7 @@
 
 // Filter creators
 #include <devel/matdes/SymUnsatHbondFilterCreator.hh>
+#include <devel/matdes/AverageInterfaceEnergyFilterCreator.hh>
 
 // dataloader creators
 //#include <devel/constrained_sequence_design/SequenceConstraintLoaderCreator.hh>
@@ -69,6 +70,7 @@ static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::Res
 
 // Filter creators
 static protocols::filters::FilterRegistrator< devel::matdes::SymUnsatHbondFilterCreator > SymUnsatHbondFilterCreator_registrator;
+static protocols::filters::FilterRegistrator< devel::matdes::AverageInterfaceEnergyFilterCreator > AverageInterfaceEnergyFilterCreator_registrator;
 
 void init( int argc, char * argv [] )
 {

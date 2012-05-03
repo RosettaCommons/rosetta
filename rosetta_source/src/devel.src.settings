@@ -85,6 +85,7 @@ sources = {
 		"RestrictIdentitiesToRepackingOperation",
 		"OligomericAverageDegreeFilter",
 		"SymUnsatHbondFilter",
+		"AverageInterfaceEnergyFilter",
         ],
 	"devel/metal_interface": [
 		"AddMetalSiteConstraints",
