@@ -3610,12 +3610,12 @@ void ElectronDensity::initializeSymmOps( utility::vector1< std::string > const &
 				float denom = std::atof( &rows[j][startDenom]);
 
 				// make sure this shift corresponds to a point in the map
-				core::Size oldMinMult = MINMULT[j];
-				while ( std::fmod(MINMULT[j] , denom) > 1e-6 ) MINMULT[j] += oldMinMult;
+				core::Size oldMinMult = MINMULT[j-1];
+				while ( std::fmod(MINMULT[j-1] , denom) > 1e-6 ) MINMULT[j-1] += oldMinMult;
 
-				trans[j] = std::atof( &rows[j][startNum]) / denom;
+				trans[j-1] = std::atof( &rows[j][startNum]) / denom;
 			} else {
-				trans[j] = 0;
+				trans[j-1] = 0;
 			}
 
 			if (rows[j].find("-X") != std::string::npos)
