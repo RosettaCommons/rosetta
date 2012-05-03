@@ -165,7 +165,7 @@ sources = {
                 #"ragul_darc_minimize",
                 "ragul_darc_run",
                 #"ragul_test_darc_run",
-                #"ragul_test_darc_score",
+                "ragul_test_darc_score",
                 #"ragul_run_darc_with_input_eggshell",
                 #"ragul_darc_get_rmsd",
  	],
