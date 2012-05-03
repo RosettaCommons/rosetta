@@ -141,23 +141,28 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 	  	rbtm.step_size( 10000.0 );
   		rbtm.apply( *copy_pose );
 	}
-	if( copy_stretch() ) // just copy the aligned stretch, and then go straight to relax. No repacking
+	if( copy_stretch() ){ // just copy the aligned stretch, and then go straight to relax. No repacking
 		copy_pose->copy_segment( alignment_.size()/*how many residues*/, p/*src*/, alignment_.begin()->first/*start on target*/, alignment_.begin()->second/*start on src*/ );
+		copy_pose->conformation().detect_disulfides();
+	}
 	else{ // no copy_stretch. Repack etc. carefully
 		DesignAroundOperationOP dao = new DesignAroundOperation;
 		dao->design_shell( packing_shell() );
 		std::vector< core::Size > diffs;
 		diffs.clear();
-		for( std::map< core::Size, core::Size >::const_iterator aln=alignment_.begin(); aln!=alignment_.end(); ++aln )
-			if( pose()->conformation().residue( aln->first ).aa() != p.conformation().residue( aln->second ).aa() ) diffs.push_back( aln->first );
-
-		TR<<"baseline: "<<baseline_val()<<std::endl;
 		TR<<"differences at positions: ";
-		foreach( core::Size const d, diffs ){
-			dao->include_residue( d );
-			TR<<d<<", ";
+		for( std::map< core::Size, core::Size >::const_iterator aln=alignment_.begin(); aln!=alignment_.end(); ++aln ){
+			char const res1_name(pose()->conformation().residue( aln->first ).name1());
+			char const res2_name(p.conformation().residue( aln->second ).name1());
+			if( res1_name != res2_name ) {
+				diffs.push_back( aln->first );
+				TR<<res1_name<<aln->first<<res2_name<<", ";
+			}
 		}
 		TR<<std::endl;
+		TR<<"baseline: "<<baseline_val()<<std::endl;
+		foreach( core::Size const d, diffs )
+			dao->include_residue( d );
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;
 		TaskFactoryOP tf = new TaskFactory;
@@ -275,6 +280,8 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagPtr const tag,
 						if( pdbinfo2->chain( p_res ) == residues2_cstr ) break;
 					for( core::Size index = 0; ; ++index ){/// push aligned residues
 						alignment_[ pose_res ] = p_res;
+						if( pose_res == pose()->total_residue() || p_res == p.total_residue() )//end of chains -> stop aligning
+							break;
 						pose_res++; p_res++;
 						if( pdbinfo1->chain( pose_res ) != residues1_cstr ||
 							pdbinfo2->chain( p_res ) != residues2_cstr ) /// end of aligned chains
