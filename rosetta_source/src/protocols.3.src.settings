@@ -227,6 +227,7 @@ sources = {
 		"ResidueBurialFilter",
 		"ResidueDistanceFilter",
 		"ResiduesInInterfaceFilter",
+		"ResidueSetChainEnergyFilter",
 		"RGFilter",
 		"RmsdEvaluator",
 		"RmsdEvaluatorCreator",

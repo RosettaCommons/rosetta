@@ -154,7 +154,7 @@ void NMerPSSMEnergy::read_nmer_energy_table( std::string const pssm_fname ) {
 				+ pssm_fname + " has double entry for aa " + char_aa );
 		if( tokens.size() != nmer_length_ + 1 ) utility_exit_with_message( "[ERROR] NMer PSSM database file "
 				+ pssm_fname + " has wrong number entries at line " + line
-				+ "\n\tfound: " + utility::to_string( tokens.size() ) + " expected: " + utility::to_string( Size( nmer_length_ + 1 ) ) );
+				+ "\n\tfound: " + utility::to_string( tokens.size() ) + " expected: " + utility::to_string( Size( nmer_length_ + 1 ) ) + "\nNote: Space delimited! No tabs!" );
 		utility::vector1< Real > seqpos_scores( nmer_length_, 0.0 );
 		for( Size ival = 2; ival <= tokens.size(); ++ival ){
 			Real const score( atof( tokens[ ival ].c_str() ) );
@@ -192,7 +192,8 @@ NMerPSSMEnergy::residue_energy(
 //	if( seqpos < nmer_nterm_ + 1 || seqpos > pose.total_residue() - nmer_cterm_ ) return;
 
 	//over each pssm
-	for( Size ipssm = 1; ipssm <= all_nmer_pssms_.size(); ++ipssm ){
+	Size const n_pssms( all_nmer_pssms_.size() );
+	for( Size ipssm = 1; ipssm <= n_pssms; ++ipssm ){
 		std::map< chemical::AA, utility::vector1< core::Real > > const this_nmer_pssm( all_nmer_pssms_[ ipssm ] );
 		if( this_nmer_pssm.empty() ) continue; //this really shouldn't happen, but just in case
 		//calc nmer's score for this pssm
@@ -239,6 +240,9 @@ NMerPSSMEnergy::residue_energy(
 		//add sum of all frames' rsd energies into emap
 		emap[ nmer_pssm ] += rsd_energy;
 	}
+	//normalize energy by number of pssms used
+	//otherwise avg scores would become huge if we use lots of pssms instead of just 1
+	emap[ nmer_pssm ] /= n_pssms;
 	return;
 }
 

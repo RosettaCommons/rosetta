@@ -15,8 +15,6 @@
 #include <fstream>
 // AUTO-REMOVED #include <utility/file/FileName.hh>
 #include <iostream>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
 #include <numeric/random/random.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/pose/Pose.hh>
@@ -47,7 +45,9 @@
 #include <core/pose/symmetry/util.hh>
 
 //Auto Headers
+#include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 namespace protocols {
 namespace design_opt {
@@ -386,6 +386,19 @@ PointMutationCalculator::calc_point_mut_filters(
 	}
 
 	//GreenPacker stuff, precompute non-designable residues' interaxn graph
+	//dont use green packer if symmetric (symm not supported for green packer)
+	//dont use green packer if user specifies linmem interaxn graph (is calc on the fly)
+	bool use_precomp_rot_pair_nrgs( true );
+	if( basic::options::option[ basic::options::OptionKeys::packing::linmem_ig ].user() ){
+		TR << "Note: you are using linmem_ig in your options: " <<
+				"packing will be slower because GreedyOpt can't use GreenPacker precomputed rotamer pair energies" << std::endl;
+		use_precomp_rot_pair_nrgs = false;
+	}
+	if( core::pose::symmetry::is_symmetric( start_pose ) ){
+		TR << "Note: you are using symmetry: " <<
+				"packing will be slower because GreedyOpt can't use GreenPacker precomputed rotamer pair energies" << std::endl;
+		use_precomp_rot_pair_nrgs = false;
+	}
 	protocols::simple_moves::UserDefinedGroupDiscriminatorOP user_defined_group_discriminator(
 			new protocols::simple_moves::UserDefinedGroupDiscriminator );
 	user_defined_group_discriminator->set_group_ids( group_ids );
@@ -416,9 +429,8 @@ PointMutationCalculator::calc_point_mut_filters(
 			//TODO: if no filter defined, just use total_score
 			bool filter_pass;
 			vector1< Real > vals;
-			//only use green packer if not symmetric (symm not supported for green packer)
-			if( core::pose::symmetry::is_symmetric( pose ) ) mutate_and_relax( pose, resi, target_aa );
-			else mutate_and_relax( pose, resi, target_aa, green_packer );
+			if( use_precomp_rot_pair_nrgs ) mutate_and_relax( pose, resi, target_aa, green_packer );
+			else mutate_and_relax( pose, resi, target_aa ); 
 			eval_filters( pose, filter_pass, vals );
 
 			//don't store this aa/val if any filter failed
