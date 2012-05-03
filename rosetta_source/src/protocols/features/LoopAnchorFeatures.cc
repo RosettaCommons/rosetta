@@ -23,6 +23,7 @@
 
 // Utility Headers
 #include <numeric/HomogeneousTransform.hh>
+ #include <utility/exit.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
@@ -61,18 +62,18 @@ static basic::Tracer TR( "protocols.features.LoopAnchorFeatures" );
 LoopAnchorFeatures::LoopAnchorFeatures() :
 	FeaturesReporter(),
 	min_loop_length_(5),
-	max_loop_length_(30)
+	max_loop_length_(30),
+	use_single_residue_to_define_anchor_transfrom_(true)
 {}
 
 LoopAnchorFeatures::LoopAnchorFeatures( LoopAnchorFeatures const & src) :
 	FeaturesReporter(),
 	min_loop_length_(src.min_loop_length_),
-	max_loop_length_(src.max_loop_length_)
+	max_loop_length_(src.max_loop_length_),
+	use_single_residue_to_define_anchor_transfrom_(src.use_single_residue_to_define_anchor_transfrom_)
 {}
 
 LoopAnchorFeatures::~LoopAnchorFeatures() {}
-
-
 
 string
 LoopAnchorFeatures::type_name() const { return "LoopAnchorFeatures"; }
@@ -106,6 +107,8 @@ LoopAnchorFeatures::schema() const {
 			"	phi REAL,\n"
 			"	psi REAL,\n"
 			"	theta REAL,\n"
+			"	alpha REAL,\n"
+			"	omega REAL,\n"
 			"   FOREIGN KEY (struct_id, residue_begin, residue_end)\n"
 			"       REFERENCES loop_anchors (struct_id, residue_begin, residue_end)\n"
 			"       DEFERRABLE INITIALLY DEFERRED,\n"
@@ -131,6 +134,8 @@ LoopAnchorFeatures::schema() const {
 			"	phi REAL,\n"
 			"	psi REAL,\n"
 			"	theta REAL,\n"
+			"	alpha REAL,\n"
+			"	omega REAL,\n"
 			"   FOREIGN KEY (struct_id, residue_begin, residue_end)\n"
 			"       REFERENCES loop_anchors (struct_id, residue_begin, residue_end),\n"
 			"   PRIMARY KEY(struct_id, residue_begin, residue_end));";
@@ -159,7 +164,8 @@ LoopAnchorFeatures::parse_my_tag(
 	max_loop_length_ = tag->getOption<Size>("max_loop_length", 30);
 
 	set_use_relevant_residues_as_loop_length( tag->getOption<bool>("use_relevant_residues_as_loop_length", 0) );
-    
+  set_use_single_residue_to_define_anchor_transfrom( tag->getOption<bool>("use_single_residue_to_define_anchor_transfrom", 1) );
+
 	if(max_loop_length_ < min_loop_length_){
 		std::stringstream error_msg;
 		error_msg
@@ -186,7 +192,7 @@ LoopAnchorFeatures::report_features(
 		safely_prepare_statement(loop_anchors_stmt_string, db_session));
 
 	string loop_anchor_transforms_stmt_string =
-		"INSERT INTO loop_anchor_transforms VALUES (?,?,?,?,?,?,?,?,?);";
+		"INSERT INTO loop_anchor_transforms VALUES (?,?,?,?,?,?,?,?,?,?,?);";
 	statement loop_anchor_transforms_stmt(
 		safely_prepare_statement(loop_anchor_transforms_stmt_string, db_session));
 
@@ -225,22 +231,30 @@ LoopAnchorFeatures::report_features(
 				loop_anchors_stmt.bind(3,end);
 				basic::database::safely_write_to_database(loop_anchors_stmt);
 
-
+				vector1<Size> start_res = start_residue(begin);
+				vector1<Size> end_res = end_residue(end);
+				vector1<Size> atom_set = atoms();
+				
 				HomogeneousTransform<Real> anchor_transform(
-					compute_anchor_transform(pose, begin, end));
-
+					compute_anchor_transform(pose, start_res, end_res, atom_set));
+				
 				xyzVector<Real> t(anchor_transform.point());
 				xyzVector<Real> r(anchor_transform.euler_angles_rad());
+				
+				Real alpha = compute_atom_angles(pose, start_res, atom_set);
+				Real omega = compute_atom_angles(pose, end_res, atom_set);
 
-				loop_anchor_transforms_stmt.bind(1,struct_id);
-				loop_anchor_transforms_stmt.bind(2,begin);
-				loop_anchor_transforms_stmt.bind(3,end);
-				loop_anchor_transforms_stmt.bind(4,t.x());
-				loop_anchor_transforms_stmt.bind(5,t.y());
-				loop_anchor_transforms_stmt.bind(6,t.z());
-				loop_anchor_transforms_stmt.bind(7,r.x());
-				loop_anchor_transforms_stmt.bind(8,r.y());
-				loop_anchor_transforms_stmt.bind(9,r.z());
+				loop_anchor_transforms_stmt.bind(1, struct_id);
+				loop_anchor_transforms_stmt.bind(2, begin);
+				loop_anchor_transforms_stmt.bind(3, end);
+				loop_anchor_transforms_stmt.bind(4, t.x());
+				loop_anchor_transforms_stmt.bind(5, t.y());
+				loop_anchor_transforms_stmt.bind(6, t.z());
+				loop_anchor_transforms_stmt.bind(7, r.x());
+				loop_anchor_transforms_stmt.bind(8, r.y());
+				loop_anchor_transforms_stmt.bind(9, r.z());
+				loop_anchor_transforms_stmt.bind(10, alpha);
+				loop_anchor_transforms_stmt.bind(11, omega);
 				basic::database::safely_write_to_database(loop_anchor_transforms_stmt);
 			}
 		}
@@ -251,6 +265,11 @@ LoopAnchorFeatures::report_features(
 void LoopAnchorFeatures::set_use_relevant_residues_as_loop_length( bool const use_relevant_residues_as_loop_length )
 {
     use_relevant_residues_as_loop_length_ = use_relevant_residues_as_loop_length;
+}
+
+void LoopAnchorFeatures::set_use_single_residue_to_define_anchor_transfrom( bool const use_single_residue_to_define_anchor_transfrom )
+{
+    use_single_residue_to_define_anchor_transfrom_ = use_single_residue_to_define_anchor_transfrom;
 }
 
 Size LoopAnchorFeatures::min_loop_length( vector1< bool > const & relevant_residues )
@@ -277,26 +296,95 @@ Size LoopAnchorFeatures::determine_correct_length( vector1< bool > const & relev
 	return default_length;
 }
 
+vector1<Size>
+LoopAnchorFeatures::start_residue(Size resNo){
+	vector1<Size> residue_vector;
+	if (use_single_residue_to_define_anchor_transfrom_){
+		residue_vector.push_back(resNo);
+		residue_vector.push_back(resNo);
+		residue_vector.push_back(resNo);
+	} else{
+		residue_vector.push_back(resNo);
+		residue_vector.push_back(resNo + 1);
+		residue_vector.push_back(resNo + 2);
+	}
+	return residue_vector;
+}
+
+vector1<Size>
+LoopAnchorFeatures::end_residue(Size resNo){
+	vector1<Size> residue_vector;
+	if (use_single_residue_to_define_anchor_transfrom_){
+		residue_vector.push_back(resNo);
+		residue_vector.push_back(resNo);
+		residue_vector.push_back(resNo);
+	} else{
+		residue_vector.push_back(resNo - 2);
+		residue_vector.push_back(resNo - 1);
+		residue_vector.push_back(resNo);
+	}
+	return residue_vector;
+}
+
+vector1<Size>
+LoopAnchorFeatures::atoms(){
+	vector1<Size> atom_vector;
+	// 1, 2, 3 corresponds to N, CA, C, respectively
+	if (use_single_residue_to_define_anchor_transfrom_) {
+		atom_vector.push_back(1);
+		atom_vector.push_back(2);
+		atom_vector.push_back(3);
+	} else{
+		// Multiple residues being used to define transform - only use CA coordinates
+		atom_vector.push_back(2);
+		atom_vector.push_back(2);
+		atom_vector.push_back(2);
+	}
+	return atom_vector;
+}
+
+
 HomogeneousTransform<Real>
 LoopAnchorFeatures::compute_anchor_transform(
 	Pose const & pose,
-	Size residue_begin,
-	Size residue_end){
-
-  HomogeneousTransform<Real> take_off_frame(
-		pose.residue(residue_begin).xyz(1),
-		pose.residue(residue_begin).xyz(2),
-		pose.residue(residue_begin).xyz(3));
+	vector1<Size> const & residue_begin,
+	vector1<Size> const & residue_end,
+	vector1<Size> const & atoms){
+	
+	runtime_assert_string_msg( (residue_begin.size() == atoms.size()) && (residue_begin.size() == residue_end.size()) && 
+		(residue_begin.size() == 3), "The length of the residues and atoms vectors must be exactly 3.");
+	
+	HomogeneousTransform<Real> take_off_frame(
+		pose.residue(residue_begin[1]).xyz(atoms[1]),
+		pose.residue(residue_begin[2]).xyz(atoms[2]),
+		pose.residue(residue_begin[3]).xyz(atoms[3]));
 
 	HomogeneousTransform<Real> landing_frame(
-		pose.residue(residue_end).xyz(1),
-		pose.residue(residue_end).xyz(2),
-		pose.residue(residue_end).xyz(3));
+		pose.residue(residue_end[1]).xyz(atoms[1]),
+		pose.residue(residue_end[2]).xyz(atoms[2]),
+		pose.residue(residue_end[3]).xyz(atoms[3]));
 
 	HomogeneousTransform<Real> anchor_transform(
 		take_off_frame.inverse() * landing_frame);
 
 	return anchor_transform;
+}
+
+Real
+LoopAnchorFeatures::compute_atom_angles(
+	Pose const & pose,
+	vector1<Size> const & residues,
+	vector1<Size> const & atoms){
+	
+	runtime_assert_string_msg( residues.size() == atoms.size() && residues.size() == 3, 
+		"The length of the residues and atoms vectors must be exactly 3.");
+	
+	xyzVector<Real> first_vector(
+		pose.residue(residues[1]).xyz(atoms[1]) - pose.residue(residues[2]).xyz(atoms[2]));
+	xyzVector<Real> second_vector(
+		pose.residue(residues[3]).xyz(atoms[3])  - pose.residue(residues[2]).xyz(atoms[2]));
+	
+	return numeric::arccos(first_vector.dot(second_vector)/(first_vector.norm() * second_vector.norm()));
 }
 
 } //namesapce

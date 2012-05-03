@@ -67,13 +67,27 @@ public:
     void
     set_use_relevant_residues_as_loop_length( bool const use_relevant_residues_as_loop_length );
     
+    void
+    set_use_single_residue_to_define_anchor_transfrom( bool const use_single_residue_to_define_anchor_transfrom );
+
 private:
 
 	numeric::HomogeneousTransform<core::Real>
 	compute_anchor_transform(
 		core::pose::Pose const & pose,
-		core::Size residue_begin,
-		core::Size residue_end);
+		utility::vector1<core::Size> const & residue_begin,
+		utility::vector1<core::Size> const & residue_end,
+		utility::vector1<core::Size> const & atoms);
+	
+	core::Real
+	compute_atom_angles(
+		core::pose::Pose const & pose,
+		utility::vector1<core::Size> const & residues,
+		utility::vector1<core::Size> const & atoms);
+	
+	utility::vector1<Size> start_residue(Size resNo);
+	utility::vector1<Size> end_residue(Size resNo);
+	utility::vector1<Size> atoms();
 	
 	core::Size min_loop_length( utility::vector1< bool > const & relevant_residue );
 	core::Size max_loop_length( utility::vector1< bool > const & relevant_residue );
@@ -83,6 +97,7 @@ private:
 private:
 
 	bool use_relevant_residues_as_loop_length_;
+	bool use_single_residue_to_define_anchor_transfrom_;
 	core::Size min_loop_length_;
 	core::Size max_loop_length_;
 
