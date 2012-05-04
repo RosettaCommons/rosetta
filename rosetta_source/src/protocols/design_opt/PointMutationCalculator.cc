@@ -429,8 +429,9 @@ PointMutationCalculator::calc_point_mut_filters(
 			//TODO: if no filter defined, just use total_score
 			bool filter_pass;
 			vector1< Real > vals;
-			if( use_precomp_rot_pair_nrgs ) mutate_and_relax( pose, resi, target_aa, green_packer );
-			else mutate_and_relax( pose, resi, target_aa );
+//			if( use_precomp_rot_pair_nrgs ) mutate_and_relax( pose, resi, target_aa, green_packer );
+//			else mutate_and_relax( pose, resi, target_aa );
+			mutate_and_relax( pose, resi, target_aa );
 			eval_filters( pose, filter_pass, vals );
 
 			//don't store this aa/val if any filter failed
