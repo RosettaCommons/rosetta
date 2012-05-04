@@ -117,7 +117,7 @@ sin_cos_range( T const & x, T const & tol = T( .001 ) )
 		//    or we need a larger tolerance for some call sites on certain (which?) h/w
 		return ( x >= T( 0.0 ) ? T( 1.0 ) : T( -1.0 ) );
 #endif
-#ifdef MPI
+#ifdef USEMPI
 		std::string const warning( "NANs occured in sin_cos_range!" );
   	throw( utility::excn::EXCN_Msg_Exception( warning ) );
 #endif
