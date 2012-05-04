@@ -146,7 +146,7 @@ private:
 	core::Real arg_sweep_cutoff_;
 
 	/// interface can be declared as all catalytic res
-	bool catalytic_res_part_of_interface_;
+	bool catalytic_res_part_of_interface_, catres_only_;
 	/// Depending on the design_ variable setting the cut1 and cut2 can be turned off and no design will take place.
 	bool design_;
 	/// Turn of design (repack_only_), or repacking and design (score_only_)
@@ -192,7 +192,7 @@ public:
 
 private:
 	/// Reweight protein-ligand interaction by a factor of lig_packer_weight_.
-	core::Real lig_packer_weight_;
+	core::Real lig_packer_weight_, catres_weight_;
 };
 
 class AddRigidBodyLigandConfs : public core::pack::task::operation::TaskOperation
