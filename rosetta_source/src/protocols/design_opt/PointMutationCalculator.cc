@@ -85,8 +85,8 @@ PointMutationCalculator::PointMutationCalculator(
 	scorefxn_ = scorefxn;
 	dump_pdb_ = dump_pdb;
 	sample_types_ = sample_types;
-	
-	for( Size isamp = 1; isamp <= sample_types.size(); ++isamp ){	
+
+	for( Size isamp = 1; isamp <= sample_types.size(); ++isamp ){
 		if( sample_types_[ isamp ] != "high" && sample_types_[ isamp ] != "low" ){
 			TR << "WARNING: the sample type, " << sample_types_[ isamp ] << ", is not defined. Use \'high\' or \'low\'." << std::endl;
 			runtime_assert( false );
@@ -115,7 +115,7 @@ PointMutationCalculator::PointMutationCalculator(
 	dump_pdb_ = dump_pdb;
 	sample_types_ = sample_types;
 
-	for( Size isamp = 1; isamp <= sample_types.size(); ++isamp ){	
+	for( Size isamp = 1; isamp <= sample_types.size(); ++isamp ){
 		if( sample_types_[ isamp ] != "high" && sample_types_[ isamp ] != "low" ){
 			TR << "WARNING: the sample type, " << sample_types_[ isamp ] << ", is not defined. Use \'high\' or \'low\'." << std::endl;
 			runtime_assert( false );
@@ -376,9 +376,9 @@ PointMutationCalculator::calc_point_mut_filters(
 		}
 		if( task->residue_task( resi ).being_designed() && start_pose.residue(resi).is_protein() ){
 			being_designed.push_back( resi );
-			group_ids.push_back( 0 ); 
+			group_ids.push_back( 0 );
 		} else{
-			group_ids.push_back( 1 ); 
+			group_ids.push_back( 1 );
 		}
 	}
 	if( being_designed.empty() ) {
@@ -430,7 +430,7 @@ PointMutationCalculator::calc_point_mut_filters(
 			bool filter_pass;
 			vector1< Real > vals;
 			if( use_precomp_rot_pair_nrgs ) mutate_and_relax( pose, resi, target_aa, green_packer );
-			else mutate_and_relax( pose, resi, target_aa ); 
+			else mutate_and_relax( pose, resi, target_aa );
 			eval_filters( pose, filter_pass, vals );
 
 			//don't store this aa/val if any filter failed
@@ -443,7 +443,7 @@ PointMutationCalculator::calc_point_mut_filters(
 				using namespace protocols::jd2;
 				JobOP job( JobDistributor::get_instance()->current_job() );
 				std::stringstream fname;
-				fname << job->input_tag() << pose.residue( resi ).name3() << resi << pose.residue( resi ).name3()<<".pdb";
+				fname << job->input_tag() << start_pose.residue( resi ).name3() << resi << pose.residue( resi ).name3()<<".pdb";
 				TR<<"Saving pose "<<fname.str() << std::endl;
 				pose.dump_scored_pdb( fname.str(), *scorefxn() );
 			}
