@@ -95,35 +95,38 @@ public:
 
   virtual void parse_tag( TagPtr );
 
- 	void
+	void
 	find_design_interface(
 		core::pose::Pose const & pose,
 		std::set< core::Size > const & interface_target_res,
- 		core::Real cut1,
+		core::Real cut1,
 		core::Real cut2,
 		core::Real cut3,
 		core::Real cut4,
-	 	utility::vector1< bool > & repack_res,
+		utility::vector1< bool > & repack_res,
 		utility::vector1< bool > & design_res
 		) const;
 
- 	void
+	void
 	find_design_interface_arg_sweep(
 		core::pose::Pose const & pose,
 		std::set< core::Size > const & interface_target_res,
- 		core::Real cut1,
+		core::Real cut1,
 		core::Real cut2,
 		core::Real cut3,
 		core::Real cut4,
 		core::Real arg_sweep_cutoff,
-	 	utility::vector1< bool > & repack_res,
+		utility::vector1< bool > & repack_res,
 		utility::vector1< bool > & design_res
 		) const;
 
 	static void register_options();
 
-	bool get_design() const {	return design_;}
-  void set_design(bool const design_in) {design_ = design_in;}
+	bool get_design() const { return design_;}
+	void set_design(bool const design_in) {design_ = design_in;}
+
+	bool get_no_design_cys() const { return no_design_cys_;}
+	void set_no_design_cys(bool const no_design_cys_in) {no_design_cys_ = no_design_cys_in;}
 
 	void
 	set_design_target_res( std::set< core::Size > const & target_res )
@@ -158,6 +161,8 @@ private:
 	std::string resfilename_;
 	std::set< core::Size > design_target_res_;
 	bool add_observer_cache_segs_to_interface_;
+	/// Should we prohibit designing to non disulfide cys?
+	bool no_design_cys_;
 };
 
 ///@brief Class to alter a packer task to speficially upweight the protein-ligand interaction energies

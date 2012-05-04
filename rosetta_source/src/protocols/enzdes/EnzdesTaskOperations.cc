@@ -202,7 +202,8 @@ DetectProteinLigandInterface::DetectProteinLigandInterface():
 	detect_design_interface_(true), catalytic_res_part_of_interface_(false), design_(true),
 	repack_only_(false), score_only_(false),
 	resfilename_(), //Empty string
-	add_observer_cache_segs_to_interface_(false)
+	add_observer_cache_segs_to_interface_(false),
+	no_design_cys_(true)
 {
 	init_from_options();
 	design_target_res_.clear();
@@ -247,6 +248,7 @@ DetectProteinLigandInterface::parse_tag( TagPtr tag )
 	arg_sweep_cutoff_ = tag->getOption< core::Real >( "arg_sweep_cutoff", 3.7 );
 	design_ = tag->getOption< bool >( "design", 1 );
 	resfilename_ =  tag->getOption< std::string >( "resfile", "");
+	no_design_cys_ = ! ( tag->getOption< bool >( "design_to_cys", 0 ) );
 	if( tag->hasOption("segment_interface") ) add_observer_cache_segs_to_interface_ = tag->getOption< bool >( "segment_interface", true );
 
 	if( tag->hasOption("catres_interface") )  catalytic_res_part_of_interface_ = tag->getOption< bool >( "catres_interface", true );
@@ -266,11 +268,11 @@ PackerTask & task) const
 		tr.Info << "Reading resfile input from: " << resfilename_ <<  std::endl;
 		core::pack::task::operation::ReadResfileAndObeyLengthEvents resfile_read( resfilename_ );
 		resfile_read.apply( pose, task );
-	  if( !design_ ){
-	    for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i){
-	      if(task.design_residue(i) ) task.nonconst_residue_task(i).restrict_to_repacking();
-	    }
-	  }
+		if( !design_ ){
+			for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i){
+				if(task.design_residue(i) ) task.nonconst_residue_task(i).restrict_to_repacking();
+			}
+		}
 	} // end (if resfile)
 
 	// detect design interface, only at positions marked "AUTO" in resfile if there is a resfile
@@ -287,10 +289,10 @@ PackerTask & task) const
 			if (cut4 < cut3) { cut4 = cut3; }
 			tr.Warning << "WARNING: detect design interface cutpoints should be in ascending order. Was " << cut1_ << " " << cut2_ << " " << cut3_ << " " << cut4_ << "; Reset to " << cut1 << " " << cut2 << " " << cut3 << " " << cut4 << std::endl;
 		}
-	  if( !design_ ){
-	    cut1 = 0.0;
-	    cut2 = 0.0;
-	  }
+		if( !design_ ){
+			cut1 = 0.0;
+			cut2 = 0.0;
+		}
 
 		std::set< core::Size > interface_target_res = design_target_res_;
 		if( ( interface_target_res.size() == 0 ) && catalytic_res_part_of_interface_ ){
@@ -326,15 +328,15 @@ PackerTask & task) const
 			find_design_interface( pose, interface_target_res, cut1, cut2, cut3, cut4, repack_res, design_res );
 		}
 
- 		//setup the task accordingly
- 		//default behavior for design will be everything except cys, and of course we want to leave disulfide bonds untouched
+		//setup the task accordingly
+		//default behavior for design will be everything except cys, and of course we want to leave disulfide bonds untouched
 		for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i){
 			// only do auto-detection if the residue was set to AUTO above in detect_res initialization
 			if (detect_res[i] == true){
 				if( design_res[i] == true) {
 					if( pose.residue( i ).aa() == core::chemical::aa_cys && pose.residue( i ).has_variant_type( core::chemical::DISULFIDE ) ){
 						task.nonconst_residue_task( i ).restrict_to_repacking();
-					} else {
+					} else if ( no_design_cys_ ) {
 						utility::vector1< bool > keep_aas( core::chemical::num_canonical_aas, true );
 						if( pose.residue( i ).aa() != core::chemical::aa_cys ) keep_aas[ core::chemical::aa_cys ] = false;
 						task.nonconst_residue_task(i).restrict_absent_canonical_aas( keep_aas );
@@ -354,18 +356,18 @@ PackerTask & task) const
 
 	//in case we are only interested in scoring
 	if( score_only_ ) {
-	  for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i){
-	    task.nonconst_residue_task(i).prevent_repacking();
-	  }
+		for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i){
+			task.nonconst_residue_task(i).prevent_repacking();
+		}
 	}
 
 	//in case we are only interested in repacking
 	else if( repack_only_ ) {
-	  for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i){
-	    if(task.design_residue(i)) {
-	        task.nonconst_residue_task(i).restrict_to_repacking();
-	    }
-	  }
+		for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i){
+			if(task.design_residue(i)) {
+				task.nonconst_residue_task(i).restrict_to_repacking();
+			}
+		}
 	}
 
 	// As a final check print out everything designed
@@ -404,11 +406,11 @@ DetectProteinLigandInterface::find_design_interface(
 	core::Real cut4_sq = cut4 * cut4;
 
 	for( std::set< core::Size >::const_iterator targ_it( interface_target_res.begin()),targ_end(interface_target_res.end());
-			 targ_it != targ_end; ++targ_it ){
+			targ_it != targ_end; ++targ_it ){
 
 		repack_res[ *targ_it ] = true;
-	  // on protein side, have to do distance check
-	  core::conformation::Residue const & targ_rsd = pose.residue( *targ_it );
+		// on protein side, have to do distance check
+		core::conformation::Residue const & targ_rsd = pose.residue( *targ_it );
 		core::Size targ_res_atom_start = 1;
 		if( targ_rsd.is_protein() ){
 			design_res[ *targ_it ] = true; //might be designable
@@ -416,36 +418,36 @@ DetectProteinLigandInterface::find_design_interface(
 			targ_res_atom_start = targ_rsd.first_sidechain_atom();
 		}
 
-	  for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i) {
+		for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i) {
 			if( design_res[i] ) continue; //in case this is already set to design, we don't have to loop over it again
 			if( interface_target_res.find( i ) != interface_target_res.end() ) continue;
-	    core::conformation::Residue const & prot_rsd = pose.residue(i);
-	    for(core::Size k = targ_res_atom_start, k_end = targ_rsd.nheavyatoms(); k <= k_end; ++k) {
-	     core::Vector prot_cb, prot_ca;
-	      if( prot_rsd.has("CB") ) prot_cb = prot_rsd.xyz("CB");
-	      if( prot_rsd.has("CA") ) prot_ca = prot_rsd.xyz("CA"); // GLY
-	      core::Real ca_dist2 = targ_rsd.xyz(k).distance_squared( prot_ca );
-	      if( ca_dist2 <= cut4_sq ) {
-	        if( ca_dist2 <= cut3_sq ) {
-	          if( ca_dist2 <= cut2_sq ) {
-	            if( ca_dist2 <= cut1_sq) {
-	              design_res[i] = true;
-	              repack_res[i] = false;
+			core::conformation::Residue const & prot_rsd = pose.residue(i);
+			for(core::Size k = targ_res_atom_start, k_end = targ_rsd.nheavyatoms(); k <= k_end; ++k) {
+				core::Vector prot_cb, prot_ca;
+				if( prot_rsd.has("CB") ) prot_cb = prot_rsd.xyz("CB");
+				if( prot_rsd.has("CA") ) prot_ca = prot_rsd.xyz("CA"); // GLY
+				core::Real ca_dist2 = targ_rsd.xyz(k).distance_squared( prot_ca );
+				if( ca_dist2 <= cut4_sq ) {
+					if( ca_dist2 <= cut3_sq ) {
+						if( ca_dist2 <= cut2_sq ) {
+							if( ca_dist2 <= cut1_sq) {
+								design_res[i] = true;
+								repack_res[i] = false;
 								break;
-	            } // cut1
-	            else if( prot_rsd.has("CB") ) {
-	              core::Real cb_dist2 = targ_rsd.xyz(k).distance_squared( prot_cb );
-	              //                tr.Info << "cb_dist2 is " << cb_dist2 << "; ";
-	              if( cb_dist2 < ca_dist2 ) {
-	                design_res[i] = true;
-	                repack_res[i] = false;
+							} // cut1
+							else if( prot_rsd.has("CB") ) {
+								core::Real cb_dist2 = targ_rsd.xyz(k).distance_squared( prot_cb );
+								//                tr.Info << "cb_dist2 is " << cb_dist2 << "; ";
+								if( cb_dist2 < ca_dist2 ) {
+									design_res[i] = true;
+									repack_res[i] = false;
 									break;
-	              }
-	              else {
-	                repack_res[i] = true;
-	              }
-	            }  // end of non-gly residues
-	            else if ( prot_rsd.has("2HA") ) {   //glycine doesn't have a CB, so use 2HA to get position where CB would be
+								}
+								else {
+									repack_res[i] = true;
+								}
+							}  // end of non-gly residues
+							else if ( prot_rsd.has("2HA") ) {   //glycine doesn't have a CB, so use 2HA to get position where CB would be
 								// use the name "cb" to describe the 2HA atom; design if 2HA < CA
 								prot_cb = prot_rsd.xyz("2HA");
 								core::Real cb_dist2 = targ_rsd.xyz(k).distance_squared( prot_cb );
@@ -457,28 +459,28 @@ DetectProteinLigandInterface::find_design_interface(
 								else {   // 2HA is further than CA
 									repack_res[i] = true;
 								}
-	            }  // end of gly residues
+							}  // end of gly residues
 							else {  // Exception handling case for residue without CB or 2HA
 								tr.Info << "Weird residue without CB or 2HA. Watch out! Residue:" << i << std::endl;
 								design_res[i] = false;
-	              repack_res[i] = true;
+								repack_res[i] = true;
 								break;
 							} // end of exception catching for neither CB nor 2HA
-	          } //cut2
-	          else {
-	            repack_res[i] = true;
-	          }
-	        } //cut3
+						} //cut2
+						else {
+						repack_res[i] = true;
+						}
+					} //cut3
 
-	        else if( prot_rsd.has("CB") ) {
-	          core::Real cb_dist2 = targ_rsd.xyz(k).distance_squared( prot_cb );
-	          if( cb_dist2 < ca_dist2 ) {
-	            repack_res[i] = true;
-	          }
-	        }
-	      } //cut4
-	    } //loop over target res atoms
-	  } //loop over protein residues
+					else if( prot_rsd.has("CB") ) {
+						core::Real cb_dist2 = targ_rsd.xyz(k).distance_squared( prot_cb );
+						if( cb_dist2 < ca_dist2 ) {
+							repack_res[i] = true;
+						}
+					}
+				} //cut4
+			} //loop over target res atoms
+		} //loop over protein residues
 	} //loop over target residues
 
 	std::string repackres_string(""), designres_string;
@@ -708,11 +710,11 @@ PackerTask & task) const
 {
 	//If applicable, set the ligand weigths to the specified value
 	if( lig_packer_weight_ != 1.0 ){
-	  core::pack::task::IGEdgeReweighterOP lig_up = new protocols::toolbox::IGLigandDesignEdgeUpweighter( lig_packer_weight_ );
-	  core::pack::task::IGEdgeReweightContainerOP IGreweight = task.set_IGEdgeReweights();
-	  IGreweight->add_reweighter( lig_up );
+		core::pack::task::IGEdgeReweighterOP lig_up = new protocols::toolbox::IGLigandDesignEdgeUpweighter( lig_packer_weight_ );
+		core::pack::task::IGEdgeReweightContainerOP IGreweight = task.set_IGEdgeReweights();
+		IGreweight->add_reweighter( lig_up );
 
-	  tr.Info << "Packer Energies between ligand and design residues are upweighted by factor " << lig_packer_weight_ << "." << std::endl;
+		tr.Info << "Packer Energies between ligand and design residues are upweighted by factor " << lig_packer_weight_ << "." << std::endl;
 
 	} //if different ligand weights are asked for
 } //apply
