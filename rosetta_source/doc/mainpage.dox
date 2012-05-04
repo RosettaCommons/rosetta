@@ -29,6 +29,7 @@ put links to commonly referred to documentation pages here.
 	- @ref robust "How to make mini 'robust' against badly formatted PDBs"
 	- @ref RNA_protein_changes "How to use combined RNA-protein poses (not possible by default!)"
 	- @ref preparing_structures "How to prepare structures for use in Rosetta"
+	- @ref preparing_ligands "How to prepare ligands for use in Rosetta"
 
 @section docs_core Core Tutorial and Reference
 	- kinematics
