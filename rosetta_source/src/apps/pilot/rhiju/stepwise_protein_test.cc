@@ -647,12 +647,21 @@ calc_rms_test(){
 	ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 	utility::vector1< std::string > const silent_files_in( option[ in::file::silent ]() );
 	SilentFilePoseInputStreamOP input = new SilentFilePoseInputStream( silent_files_in );
+
 	native_pose = PoseOP( new Pose );
 	std::string native_pdb_file  = option[ in::file::native ];
 	import_pose::pose_from_pdb( *native_pose, *rsd_set, native_pdb_file );
+
 	std::string const silent_file_out( option[ out::file::silent  ]() );
 	core::io::silent::SilentFileDataOP sfd_dummy;
-	utility::vector1< Size > const calc_rms_res_ = option[ calc_rms_res ]();
+	utility::vector1< Size > calc_rms_res_ = option[ calc_rms_res ]();
+
+	// Do we need to slice up native pose?
+	if ( option[ working_res ].user() ) {
+		pdbslice( *native_pose, option[ working_res ]() );
+		calc_rms_res_ = convert_to_working_res( calc_rms_res_, option[ working_res ]() );
+	}
+
 
 	while ( input->has_another_pose() ) {
 
