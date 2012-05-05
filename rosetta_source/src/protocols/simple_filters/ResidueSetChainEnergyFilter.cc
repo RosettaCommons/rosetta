@@ -159,7 +159,8 @@ ResidueSetChainEnergyFilter::compute(
 				el_iter != energy_graph.get_node( iseq1 )->edge_list_end(); ++el_iter ){
 			EnergyEdge * edge( static_cast< EnergyEdge *> ( *el_iter ) );
 			//the other seqpos connected to this edge
-			core::Size const iseq2( edge->get_first_node_ind() );
+			core::Size iseq2( edge->get_first_node_ind() );
+			if( iseq2 == iseq1 ) iseq2 = edge->get_second_node_ind();
 			//skip if iseq2 is not in the chain we care about
 			if( static_cast< core::Size >( in_pose.chain( iseq2 ) ) != chain_ ) continue;
 
