@@ -31,6 +31,7 @@
 #include <protocols/toolbox/match_enzdes_util/EnzCstTemplateRes.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
+#include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 // AUTO-REMOVED #include <protocols/forge/build/BuildInstruction.hh> // REQUIRED FOR WINDOWS
 
@@ -76,6 +77,10 @@ RemodelEnzdesCstModule::apply(core::pose::Pose & pose)
 
 bool not_packed = true;
 		for (core::Size block = 1 ; block <= cstblocksize_; ++block){
+			//initialize block internals
+			cst_pairs_[ block ]->set_mcfi( this->mcfi_list( block )->mcfi( 1 ) );
+
+
 			if (!backbone_only_ && (!cst_pairs_[block]->resA()->is_backbone() || !cst_pairs_[block]->resB()->is_backbone())) { //s-b, s-s don't apply if not after design
 
 				TR << "replace sidechain" << std::endl;
