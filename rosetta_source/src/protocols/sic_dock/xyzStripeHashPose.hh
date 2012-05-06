@@ -30,29 +30,29 @@ class xyzStripeHashPose : public numeric::geometry::hashing::xyzStripeHash<doubl
 public:
   xyzStripeHashPose(double radius) : numeric::geometry::hashing::xyzStripeHash<double>(radius) {}
   xyzStripeHashPose(double radius, core::pose::Pose p, xyzStripeHashPoseMode m = BB ) : numeric::geometry::hashing::xyzStripeHash<double>(radius) {
-	  init_with_pose(p,BB);
+	  init_with_pose(p,m);
   }
   void init_with_pose(core::pose::Pose const & p, xyzStripeHashPoseMode m = BB) {
 	  utility::vector1<double> dummy;
-	  init_with_pose(p,dummy,BB);
+	  init_with_pose(p,dummy,m);
   }
 
 	void init_with_pose(core::pose::Pose const & p, core::id::AtomID_Map<double> const & amap) {
 		using core::id::AtomID;
 		int natom = 0;
 		if( amap.n_residue() != p.n_residue()) utility_exit_with_message("BAD ATOMID_MAP");
-		for(int ir = 1; ir <= p.n_residue(); ++ir) {
+		for(int ir = 1; ir <= (int)p.n_residue(); ++ir) {
 			core::conformation::Residue const & r(p.residue(ir));
-			for(int ia = 1; ia <= amap.n_atom(ir); ia++) {
+			for(int ia = 1; ia <= (int)amap.n_atom(ir); ia++) {
 				if(amap[AtomID(ia,ir)] > 0)  natom++;
 			}
 		}
 		utility::vector1<numeric::xyzVector<double> > atoms(natom);
 		utility::vector1<double>                      meta (natom);
 		uint count = 0;
-		for(int ir = 1; ir <= p.n_residue(); ++ir) {
+		for(int ir = 1; ir <= (int)p.n_residue(); ++ir) {
 			core::conformation::Residue const & r(p.residue(ir));
-			for(int ia = 1; ia <= amap.n_atom(ir); ia++) {
+			for(int ia = 1; ia <= (int)amap.n_atom(ir); ia++) {
 				if(amap[AtomID(ia,ir)] > 0) {
 					atoms[++count] = p.xyz(AtomID(ia,ir));
 					meta [  count] = amap[AtomID(ia,ir)];
@@ -64,7 +64,7 @@ public:
 
   void init_with_pose(core::pose::Pose const & p, utility::vector1<double> const & meta_in, xyzStripeHashPoseMode m = BB) {
     int natom = 0;
-    for(int ir = 1; ir <= p.n_residue(); ++ir) {
+    for(int ir = 1; ir <= (int)p.n_residue(); ++ir) {
       core::conformation::Residue const & r(p.residue(ir));
       if( NBR==m ) natom++;
       if( CB==m ) if(r.has("CB")) natom++;
@@ -75,7 +75,7 @@ public:
     utility::vector1<numeric::xyzVector<double> > atoms(natom);
     utility::vector1<double>                      meta (natom);
     uint count = 0;
-    for(int ir = 1; ir <= p.n_residue(); ++ir) {
+    for(int ir = 1; ir <= (int)p.n_residue(); ++ir) {
       core::conformation::Residue const & r(p.residue(ir));
       if(NBR==m) {
         int ia = r.nbr_atom();

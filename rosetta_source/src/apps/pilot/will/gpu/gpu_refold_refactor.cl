@@ -6,12 +6,15 @@ void refold(
   __local float *C__xyz,
   __local float *O__xyz,
   __local float *CB_xyz,
-  __local float *H__xyz,
-  __local float *CENxyz
+  __local float *H__xyz
 ){
-  // first phase uses O,CB,H as temp storage
-  // could be done more efficiently
+
+  // first fold up each individual residue... this is the only time trig functions are needed
+  // geometry is hard-coded for canonical bond lengths / angles... this would neeed to be made
+  // more flexible
   for(uint ichunk = 0; ichunk < N; ichunk+=get_global_size(0)) {
+    // first phase uses O,CB,H as temp storage
+    // could be done more efficiently
     uint const i = get_global_id(0) + ichunk;
     uint const i3 = 3u*i;
     if( i < N-1u ) {
@@ -140,6 +143,7 @@ void refold(
     }
   }
 
+  // now join segments of length 2 / 4 / 8 / 16 / 32 / 64 / 128 / .....
   for(uint c = 2u; c < N*2u-3u; c=2u*c) {
     for(uint ichunk = 0; ichunk < N; ichunk+=get_global_size(0)) {
       uint const i3 = 3u*(get_global_id(0)+ichunk);

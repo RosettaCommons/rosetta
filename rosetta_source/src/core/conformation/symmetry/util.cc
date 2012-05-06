@@ -23,6 +23,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
 //#include <core/pose/Pose.hh>
+#include <core/kinematics/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -39,16 +40,16 @@
 
 // Numeric headers
 #include <numeric/random/random.hh>
+#include <numeric/xyzMatrix.hh>
+#include <numeric/xyzVector.hh>
+#include <numeric/xyz.functions.hh>
 // AUTO-REMOVED #include <numeric/xyzTriple.hh>
-
+// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
+#include <ObjexxFCL/format.hh>
 
 #include <utility/vector1.hh>
 
@@ -60,6 +61,145 @@ namespace symmetry {
 
 static basic::Tracer TR("core.conformation.symmetry.util");
 static numeric::random::RandomGenerator RG(408529); // <- Magic number, do not change it!!!
+
+Size fold_tree_entry_point(conformation::Conformation const & src_conf, Size lb_resi=0, Size ub_resi=0) {
+	int resi = -1;
+	if(lb_resi==0) lb_resi = 1;
+	if(ub_resi==0) ub_resi = src_conf.size();
+	for(int i = 1; i <= (int)src_conf.fold_tree().num_jump(); ++i) {
+		Size up = src_conf.fold_tree().upstream_jump_residue(i);
+		Size dn = src_conf.fold_tree().downstream_jump_residue(i);
+		if( lb_resi <= dn && dn <= ub_resi && ( up < lb_resi || ub_resi < up ) ) resi = dn; // dn in bounds, up out
+	}
+	if( (int)lb_resi <= resi && resi <= (int)ub_resi ) return resi; // if resi good, return it
+	resi = src_conf.fold_tree().root();
+	if( (int)lb_resi <= resi && resi <= (int)ub_resi ) return resi; // try fold_tree root
+	utility_exit_with_message("can'd get fold_tree root in range!!!");
+	return 0; // this will never happen
+}
+
+// sheffler
+/// @details get residue index
+Size process_residue_request(conformation::Conformation const & src_conf, std::string input, Size lb_resi=0, Size ub_resi=0) {
+	int resi = -1;
+	if(lb_resi==0) lb_resi = 1;
+	if(ub_resi==0) ub_resi = src_conf.size();
+	if(input=="FT"    || input=="KEEP_FOLDTREE_ANCHOR") resi = fold_tree_entry_point( src_conf, lb_resi, ub_resi );
+	if(input=="COM"   || input=="CENTER_OF_MASS"      ) resi = residue_center_of_mass( src_conf, lb_resi, ub_resi );
+	if(input=="FIRST" || input=="FIRST_RESIDUE"       ) resi = lb_resi;
+	if(input=="LAST"  || input=="LAST_RESIDUE"        ) resi = ub_resi;
+	if(input=="") resi = 0;
+	if(resi == -1) resi = utility::string2int(input);
+	if(resi < 0) utility_exit_with_message("error in process_residue_request: '"+input+"'");
+	// TR << "process_residue_request: '" << input << "' to " << resi << std::endl;
+	return resi;
+}
+
+bool is_jump_intracomponent(std::map<char,std::pair<Size,Size> > chain2range, Size up, Size dn) {
+	for(std::map<char,std::pair<Size,Size> >::const_iterator it = chain2range.begin(); it != chain2range.end(); ++it) {
+		Size const lb = it->second.first, ub = it->second.second;
+		if( lb <= up && up <= ub && lb <= dn && dn <= ub ) return true;
+	}
+	return false;
+}
+
+char which_component(std::map<char,std::pair<Size,Size> > chain2range, Size resi) {
+	for(std::map<char,std::pair<Size,Size> >::const_iterator it = chain2range.begin(); it != chain2range.end(); ++it) {
+		Size const lb = it->second.first, ub = it->second.second;
+		if( lb <= resi && resi <= ub ) return it->first;
+	}
+	utility_exit_with_message("resi not in any component!");
+	return (char)NULL; // this will never happen
+}
+
+core::kinematics::FoldTree
+get_component_contiguous_foldtree(
+	core::kinematics::FoldTree const & f_orig,
+	std::map<char,std::pair<Size,Size> > const & /*chain2range*/ // maybe use later
+) {
+	if( f_orig.num_cutpoint() != (int)f_orig.num_jump() ) utility_exit_with_message("FoldTree ISANITY!!!!!!!");
+	ObjexxFCL::FArray1D_int cuts( f_orig.num_cutpoint() );
+	ObjexxFCL::FArray2D_int jumps( 2, f_orig.num_jump() );
+
+	// simple way for now
+	for(int i = 1; i <= f_orig.num_cutpoint(); ++i) {
+		cuts(i) = f_orig.cutpoint(i);
+		jumps(1,i) = f_orig.cutpoint(i);
+		jumps(2,i) = f_orig.cutpoint(i)+1;
+	}
+	core::kinematics::FoldTree f_contig;
+	f_contig.tree_from_jumps_and_cuts(f_orig.nres(),f_orig.num_jump(),jumps,cuts);
+	f_contig.reorder(1);
+
+	// complicated way....
+	// int jcount = 0;
+	// utility::vector1<Size> intercomp_up,intercomp_dn;
+	// for(int i = 1; i <= f_orig.num_jump(); ++i) {
+	// 	Size up = f_orig.upstream_jump_residue(i);
+	// 	Size dn = f_orig.downstream_jump_residue(i);
+	// 	if( is_jump_intracomponent(chain2range,up,dn) ) {
+	// 		jump(1,++jcount) = up;
+	// 		jump(1,  jcount) = dn;
+	// 	} else {
+	// 		intercomp_up.push_back(up);
+	// 		intercomp_dn.push_back(dn);
+	// 	}
+	// }
+	// for(int i = 1; i <= intercomp_dn.size(); ++i){
+	// 	int lb = f_orig.boundary_left(intercomp_dn[i]);
+	// }
+
+	// //test output
+	// std::map<Size,std::string> labels;
+	// for(std::map<char,std::pair<Size,Size> >::const_iterator i = chain2range.begin(); i != chain2range.end(); ++i) {
+	// 	for(Size ir = i->second.first; ir <= i->second.second; ++ir) {
+	// 		labels[ir] = std::string("Chain") + i->first;
+	// 	}
+	// }
+	// TR << "get_component_contiguous_foldtree" << std::endl;
+	// TR << "ORIG   " << f_orig << std::endl;
+	// TR << "CONTIG " << f_contig << std::endl;
+	// TR << "ORIG:\n"   << core::kinematics::visualize_fold_tree(f_orig,labels)   << std::endl;
+	// TR << "CONTIG:\n" << core::kinematics::visualize_fold_tree(f_contig,labels) << std::endl;
+	// utility_exit_with_message("SETNETRINT");
+	return f_contig;
+}
+
+
+// sheffler
+/// @details get a mapping of chain chars to resi ranges
+std::map<char,std::pair<Size,Size> >
+get_chain2range( Conformation const & src_conf, std::map< int, char > src_conf2pdb_chain ) {
+	// TR << src_conf.num_chains() << endl;
+	// for(Size i = 1; i <= src_conf.num_chains(); ++i){
+	// 	TR << "src_conf chain " << i << " " << src_conf.chain_begin(i) << "-" << src_conf.chain_end  (i) << endl;		
+	// }
+	// TR << "PDBINFO CHAIN MAP" << endl;
+	// for(map< int, char >::const_iterator i = src_conf2pdb_chain.begin(); i != src_conf2pdb_chain.end(); ++i) {
+	// 	TR << i->first << " " << i->second << endl;
+	// }
+	// TR << "END PDBINFO CHAIN MAP" << endl;
+	std::map<char,std::pair<Size,Size> > crange;
+	std::string const nullchain = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+	for(Size i = 1; i <= src_conf.num_chains(); ++i) {
+		char chain = src_conf2pdb_chain.count(i)==0 ? nullchain[i-1] : src_conf2pdb_chain[i];
+		if(crange.count(chain)==0) crange[chain] = std::make_pair(99999999,0);
+		crange[chain].first  = std::min( src_conf.chain_begin(i), crange[chain].first  );
+		crange[chain].second = std::max( src_conf.chain_end  (i), crange[chain].second );
+	}
+	// sanity check
+	for(std::map<char,std::pair<Size,Size> >::const_iterator i = crange.begin(); i != crange.end(); ++i) {
+		// TR << "get_chain2range " << i->first << " " << i->second.first << "-" << i->second.second << std::endl;
+		if( i->second.first > i->second.second ) utility_exit_with_message("THIS SHOULD NEVER HAPPEN!");
+		for(std::map<char,std::pair<Size,Size> >::const_iterator j = crange.begin(); j != crange.end(); ++j) {
+			if( i->second.first==j->second.first && i->second.second==j->second.second ) continue; // same
+			if( i->second.first > j->second.first && i->second.first > j->second.second ) continue; // disjoint, i < j
+			if( j->second.first > i->second.first && j->second.first > i->second.second ) continue; // disjoint, j > i
+			utility_exit_with_message("[ERROR] overlapping chain ranges in pose!!!!!!!!");
+		}
+	}
+	return crange;
+}
 
 /// @details  Attempt to detect whether a conformation is symmetric
 bool
@@ -74,49 +214,85 @@ is_symmetric( conformation::symmetry::SymmetryInfo const & symminfo )
 	return symminfo.get_use_symmetry();
 }
 
+// utility::vector1<numeric::xyzVector<core::Real> >
+// conf_coords(conformation::Conformation & conf, Size lb=1, Size ub=0) {
+// 	if(ub==0) ub = conf.size();
+// 	utility::vector1<numeric::xyzVector<core::Real> > coords;
+// 	for(int ir = lb; ir <= ub; ++ir){
+// 		coords.push_back(conf.residue(ir).xyz(1));
+// 	}
+// 	return coords;
+// }
+
+// bool check_coords(
+// 	utility::vector1<numeric::xyzVector<core::Real> > const & a,
+// 	utility::vector1<numeric::xyzVector<core::Real> > const & b
+// ){
+// 	if(a.size() != b.size()) utility_exit_with_message("ERROR");
+// 	bool err = false;
+// 	for(int ir = 1; ir <= a.size(); ++ir) {
+// 		if( a[ir].distance(b[ir]) > 0.00001 ) {
+// 			std::cerr << "different at " << ir << std::endl;
+// 			err = true;
+// 		}
+// 	}
+// 	return err;
+// }
+
 /// @details Generate a symmetric conformation from a monomeric pose and symmetry information
 /// stored in the SymmData object
 conformation::symmetry::SymmetricConformationOP
 setup_symmetric_conformation(
 	conformation::Conformation & src_conformation,
-	conformation::symmetry::SymmData & symmdata
+	conformation::symmetry::SymmData & symmdata,
+	std::map< int, char > src_conf2pdb_chain
 )
 {
+	// utility::vector1<numeric::xyzVector<core::Real> > orig_coords = conf_coords(src_conformation);
+
+	if( symmdata.get_num_components() > 1 ) {
+		// TR << "\n========== BEG orig fold tree ===========" << std::endl;
+		// TR << src_conformation.fold_tree() << std::endl;
+		// TR << "\n" << core::kinematics::visualize_fold_tree(src_conformation.fold_tree()) << std::endl;
+		// TR << "\n========== END orig_fold_tree ===========" << std::endl;
+		std::map<char,std::pair<Size,Size> > const chain2range = get_chain2range(src_conformation,src_conf2pdb_chain);
+		core::kinematics::FoldTree newft = get_component_contiguous_foldtree(src_conformation.fold_tree(),chain2range);
+		// utility::vector1<numeric::xyzVector<core::Real> > before = conf_coords(src_conformation);
+		src_conformation.fold_tree( newft );
+		// utility::vector1<numeric::xyzVector<core::Real> > after = conf_coords(src_conformation);
+		// if(check_coords(before,after)) utility_exit_with_message("error");
+		// TR << "\n========== BEG component_contiguous_foldtree ===========" << std::endl;
+		// TR << src_conformation.fold_tree() << std::endl;
+		// TR << "\n" << core::kinematics::visualize_fold_tree(src_conformation.fold_tree()) << std::endl;
+		// TR << "\n========== END component_contiguous_foldtree ===========" << std::endl;
+	}
+
 	Size njump_orig = src_conformation.fold_tree().num_jump();
 
 	// maybe a little inefficient: first build a standard conformation, then construct symmetric conformation at the end
-  conformation::Conformation conf( src_conformation );
+	conformation::Conformation conf( src_conformation );
 
-	// if anchor is 0 then use com
-	if ( symmdata.get_anchor_residue() == 0 ) {
-		core::Size new_anchor ( core::conformation::symmetry::residue_center_of_mass( conf, 1, conf.size() ) );
-		symmdata.set_anchor_residue( new_anchor );
-	}
-
-// recenter the pose to the origin?
+	// recenter the pose to the origin?
 	if ( symmdata.get_recenter() ) {
 		core::conformation::symmetry::recenter( conf, symmdata );
 	}
 
 	// Setup temporary variables
-  Size const nres_monomer( conf.size() );
-  Size const njump_monomer( conf.fold_tree().num_jump() );
+	Size const nres_monomer( conf.size() );
+	Size const njump_monomer( conf.fold_tree().num_jump() );
 
-	//runtime_assert( nres_monomer == symmdata.get_nres_subunit() );
-	//runtime_assert( njump_monomer == symmdata.get_njump_subunit() );
-
-  // setup the pseudo residues
+	// setup the pseudo residues
 	std::map< std::string, conformation::symmetry::VirtualCoordinate > coords ( symmdata.get_virtual_coordinates() );
 	std::map< std::string, std::pair< std::string, std::string > > virtual_connects( symmdata.get_virtual_connects() );
 	std::map< Size, std::string > virtual_num_to_id (symmdata.get_virtual_num_to_id() );
 
 	// Setup virtual residues
 	{
-    // create the new residue
-    chemical::ResidueTypeSet const & rsd_set( src_conformation.residue(1).residue_type_set() );
+		// create the new residue
+		chemical::ResidueTypeSet const & rsd_set( src_conformation.residue(1).residue_type_set() );
 		conformation::ResidueOP rsd( conformation::ResidueFactory::create_residue( rsd_set.name_map( "VRT" ) ) );
 
-    // root the fold_tree at this pseudo residue
+		// root the fold_tree at this pseudo residue
 //    {
 //      kinematics::FoldTree f( conf.fold_tree() );
 //      f.reorder( conf.size() );
@@ -129,53 +305,68 @@ setup_symmetric_conformation(
 			}
 			std::string tag ( virtual_num_to_id.find( i )->second );
 			if ( coords.find( tag ) == coords.end() ) {
-        utility_exit_with_message( "[ERROR] Cannot find tag " + tag );
-      }
+				utility_exit_with_message( "[ERROR] Cannot find tag " + tag );
+			}
 			conformation::symmetry::VirtualCoordinate virt_coord( coords.find( tag )->second );
-      rsd->set_xyz( "ORIG", virt_coord.get_origin() );
-      rsd->set_xyz( "X", virt_coord.get_x().normalized() + virt_coord.get_origin() );
-      rsd->set_xyz( "Y", virt_coord.get_y().normalized() + virt_coord.get_origin() );
-      conf.append_residue_by_jump( *rsd, conf.size() ); //append it to the end of the monomeri
+			rsd->set_xyz( "ORIG", virt_coord.get_origin() );
+			rsd->set_xyz( "X", virt_coord.get_x().normalized() + virt_coord.get_origin() );
+			rsd->set_xyz( "Y", virt_coord.get_y().normalized() + virt_coord.get_origin() );
+			conf.append_residue_by_jump( *rsd, conf.size() ); //append it to the end of the monomeri
 		}
 	}
 
 	// now insert the other conformations. This step will create a fold_tree that will be discarded at a later stage.
 	// Optimally we want to set the fold tree directly but that turns out to be difficult. TODO change
-  kinematics::Jump const monomer_jump( conf.jump( njump_monomer+1 ) );
-  for ( Size i=1; i< symmdata.get_subunits(); ++i ) {
-		 Size const insert_seqpos( nres_monomer * i + 1 ); // desired sequence position of residue 1 in inserted conformation
-    Size const insert_jumppos( njump_monomer * i + 1 ); // desired jump number of 1st jump in inserted conformation
-    Size const anchor_pseudo( nres_monomer * i + i + 1 ); // in current numbering
-    Size const new_jump_number( njump_monomer*( i + 1 ) + i + 1 );
-    conf.insert_conformation_by_jump( src_conformation, insert_seqpos, insert_jumppos, anchor_pseudo, new_jump_number);
+	//	kinematics::Jump const monomer_jump( conf.jump( njump_monomer+1 ) );
+	for ( Size i=1; i< symmdata.get_subunits(); ++i ) {
+		Size const insert_seqpos( nres_monomer * i + 1 ); // desired sequence position of residue 1 in inserted conformation
+		Size const insert_jumppos( njump_monomer * i + 1 ); // desired jump number of 1st jump in inserted conformation
+		Size const anchor_pseudo( nres_monomer * i + i + 1 ); // in current numbering
+		Size const new_jump_number( njump_monomer*( i + 1 ) + i + 1 );
+		conf.insert_conformation_by_jump( src_conformation, insert_seqpos, insert_jumppos, anchor_pseudo, new_jump_number);
 //		conf.set_jump( new_jump_number, monomer_jump );
-  }
+	}
+
+	core::kinematics::visualize_fold_tree(conf.fold_tree());
+
 	// Now generate the fold_tree from the symmdata and set it into the conformation. In the future we want to be able to use a
 	// atom tree for this.
-	kinematics::FoldTree f ( core::conformation::symmetry::set_fold_tree_from_symm_data( src_conformation, symmdata ) );
+	kinematics::FoldTree f ( core::conformation::symmetry::set_fold_tree_from_symm_data( src_conformation, symmdata, src_conf2pdb_chain ) );
 	// set the root of the fold tree
 	Size new_root ( conf.size() - coords.size() + symmdata.get_root() );
 	f.reorder( new_root );
 	TR.Debug << f << std::endl;
 	conf.fold_tree( f );
 
-  // now build the symmetry info object
-	conformation::symmetry::SymmetryInfo const symm_info( symmdata, nres_monomer, njump_monomer );
+	// if(check_coords(orig_coords, conf_coords(conf,1,orig_coords.size()) )) utility_exit_with_message("error");
 
-  // now create the symmetric conformation
+	// now build the symmetry info object
+	conformation::symmetry::SymmetryInfo const symm_info( symmdata, nres_monomer, njump_monomer+1-symmdata.get_num_components() );
+
+	// now create the symmetric conformation
 	conformation::symmetry::SymmetricConformationOP symm_conf = new conformation::symmetry::SymmetricConformation( conf, symm_info );
+
+	// if(check_coords(orig_coords, conf_coords(*symm_conf,1,orig_coords.size()) ));// utility_exit_with_message("error");
 
 	// apply independent jumps so the structure is created symmetrically
 	for ( Size i=1; i<= f.num_jump(); ++i ) {
-		if ( symm_info.jump_is_independent( i ) )
+		if ( symm_info.jump_is_independent( i ) ) {
 			symm_conf->set_jump( i, conf.jump( i ) );
+		}
 	}
 
+	// if(check_coords(orig_coords, conf_coords(*symm_conf,1,orig_coords.size()) ));// utility_exit_with_message("error");
+
 	// renumber the dof information to take the internal jumps into consideration
-	core::conformation::symmetry::shift_jump_numbers_in_dofs( *symm_conf, njump_orig * symmdata.get_subunits() );
+	core::conformation::symmetry::shift_jump_numbers_in_dofs( *symm_conf, (njump_orig+1-symmdata.get_num_components()) * symmdata.get_subunits() );
+
+	// if( symmdata.get_num_components() > 1 ) {
+		// TR << symm_conf->fold_tree() << std::endl;
+	 	TR << "=================== SYM FOLD TREE, jump notation: =symfixed= *indep* #symdof# jump[=follows] ========================\n"
+	 	   << show_foldtree(*symm_conf,symmdata,get_chain2range(src_conformation,src_conf2pdb_chain)) << std::endl;
+	 // }
 
 	return symm_conf;
-
 }
 
 // @details Make a fold tree from data stored in the SymmData object. This would have to make sense.
@@ -183,9 +374,12 @@ setup_symmetric_conformation(
 kinematics::FoldTree
 set_fold_tree_from_symm_data(
 	conformation::Conformation & src_conformation,
-	conformation::symmetry::SymmData & symmdata
+	conformation::symmetry::SymmData & symmdata,
+	std::map< int, char > src_conf2pdb_chain
 )
 {
+	std::map<char,std::pair<Size,Size> > const chain2range = get_chain2range(src_conformation,src_conf2pdb_chain);
+
 	using namespace kinematics;
 	FoldTree f, f_orig = src_conformation.fold_tree();
 	f.clear();
@@ -194,94 +388,256 @@ set_fold_tree_from_symm_data(
 	Size num_res_subunit( src_conformation.size() );
 	Size subunits( symmdata.get_subunits() );
 	Size num_cuts_subunit( f_orig.num_cutpoint() );
-	Size num_jumps_subunit( f_orig.num_jump() );
 	Size num_virtuals( symmdata.get_virtual_coordinates().size() );
 	Size num_virtual_connects ( symmdata.get_virtual_connects().size() );
 	Size num_res_real( num_res_subunit*subunits );
-	Size anchor ( symmdata.get_anchor_residue() );
+	Size anchor ( process_residue_request(src_conformation,symmdata.get_anchor_residue() ) );
 
 	// Check that input data makes sense
 	if ( anchor > num_res_subunit ) {
 			utility_exit_with_message( "Anchor outside the subunit..." );
 	}
 
-	// Store number of jumps and cuts
-	Size njumps( 0 );
-	Size total_num_cuts( num_cuts_subunit*subunits + subunits + num_virtuals - 1 );
-	Size total_num_jumps( num_jumps_subunit*subunits + num_virtual_connects );
+	if( symmdata.get_num_components() == 1 ) {
 
-	// store information from subunit foldtree
-	utility::vector1< int > cuts_subunit( f_orig.cutpoints() );
-	ObjexxFCL::FArray1D_int cuts( total_num_cuts );
-	ObjexxFCL::FArray2D_int jump_points_subunit( 2, num_jumps_subunit ),
-													jumps( 2, total_num_jumps );
 
-	for ( Size i = 1; i<= f_orig.num_jump(); ++i ) {
-		jump_points_subunit(1,i) = f_orig.upstream_jump_residue(i);
-		jump_points_subunit(2,i) = f_orig.downstream_jump_residue(i);
-	}
+		Size num_jumps_subunit( f_orig.num_jump() );
 
-	// Now add jumps and cuts for the other subunits
-	for ( Size i = 0; i < subunits; ++i ) {
-    for ( Size j = 1; j <= num_jumps_subunit; ++j ) {
-      ++njumps;
-			int new_cut_pos( i*num_res_subunit + cuts_subunit.at( j ) );
-			cuts( njumps ) = new_cut_pos;
-      	int new_jump_pos1( i*num_res_subunit + jump_points_subunit(1,j) );
-			int new_jump_pos2( i*num_res_subunit + jump_points_subunit(2,j) );
-      	jumps(1, njumps ) = std::min(new_jump_pos1,new_jump_pos2);
-			jumps(2, njumps ) = std::max(new_jump_pos1,new_jump_pos2);
-    }
-  }
+		// Store number of jumps and cuts
+		Size njumps( 0 );
+		Size total_num_cuts( num_cuts_subunit*subunits + subunits + num_virtuals - 1 );
+		Size total_num_jumps( num_jumps_subunit*subunits + num_virtual_connects );
 
-	// why copy the maps?
-	std::map< std::string, std::pair< std::string, std::string > > const virtual_connect( symmdata.get_virtual_connects() );
-	std::map< std::string, Size > virtual_id_to_num (symmdata.get_virtual_id_to_num() );
-	std::map< Size, std::string > virtual_num_to_id (symmdata.get_virtual_num_to_id() );
-	std::map< std::string, Size > virtual_id_to_subunit (symmdata.get_virt_id_to_subunit_num() );
+		// store information from subunit foldtree
+		utility::vector1< int > cuts_subunit( f_orig.cutpoints() );
+		ObjexxFCL::FArray1D_int cuts( total_num_cuts );
+		ObjexxFCL::FArray2D_int jump_points_subunit( 2, num_jumps_subunit ),
+														jumps( 2, total_num_jumps );
 
-	std::map< std::string, std::pair< std::string, std::string > >::const_iterator it_start = virtual_connect.begin();
-	std::map< std::string, std::pair< std::string, std::string > >::const_iterator it_end = virtual_connect.end();
-	for ( std::map< std::string, std::pair< std::string, std::string > >::const_iterator it = it_start; it != it_end; ++it ) {
-		std::pair< std::string, std::string > connect( it->second );
-		std::string pos_id1( connect.first );
-		std::string pos_id2( connect.second );
-		if ( pos_id2 == "SUBUNIT" ) {
-			int subunit = virtual_id_to_subunit.find( pos_id1 )->second;
-			++njumps;
-			cuts( njumps ) = num_res_subunit*subunit;
-			int jump_pos1( ( subunit-1 )*num_res_subunit + anchor );
-			int jump_pos2( num_res_real + virtual_id_to_num.find( pos_id1 )->second );
-			jumps(1, njumps ) = std::min(jump_pos1,jump_pos2);
-			jumps(2, njumps ) = std::max(jump_pos1,jump_pos2);
+		for ( Size i = 1; i<= f_orig.num_jump(); ++i ) {
+			jump_points_subunit(1,i) = f_orig.upstream_jump_residue(i);
+			jump_points_subunit(2,i) = f_orig.downstream_jump_residue(i);
 		}
+
+		// Now add jumps and cuts for the other subunits
+		for ( Size i = 0; i < subunits; ++i ) {
+		    for ( Size j = 1; j <= num_jumps_subunit; ++j ) {
+				++njumps;
+				int new_cut_pos( i*num_res_subunit + cuts_subunit.at( j ) );
+				cuts( njumps ) = new_cut_pos;
+				int new_jump_pos1( i*num_res_subunit + jump_points_subunit(1,j) );
+				int new_jump_pos2( i*num_res_subunit + jump_points_subunit(2,j) );
+				jumps(1, njumps ) = std::min(new_jump_pos1,new_jump_pos2);
+				jumps(2, njumps ) = std::max(new_jump_pos1,new_jump_pos2);
+			}
+		}
+
+		// why copy the maps?
+		std::map< std::string, std::pair< std::string, std::string > > const virtual_connect( symmdata.get_virtual_connects() );
+		std::map< std::string, Size > virtual_id_to_num (symmdata.get_virtual_id_to_num() );
+		std::map< Size, std::string > virtual_num_to_id (symmdata.get_virtual_num_to_id() );
+		std::map< std::string, Size > virtual_id_to_subunit (symmdata.get_virt_id_to_subunit_num() );
+
+		std::map< std::string, std::pair< std::string, std::string > >::const_iterator it_start = virtual_connect.begin();
+		std::map< std::string, std::pair< std::string, std::string > >::const_iterator it_end = virtual_connect.end();
+		for ( std::map< std::string, std::pair< std::string, std::string > >::const_iterator it = it_start; it != it_end; ++it ) {
+			std::pair< std::string, std::string > connect( it->second );
+			std::string pos_id1( connect.first );
+			std::string pos_id2( connect.second );
+			if ( pos_id2 == "SUBUNIT" ) {
+				int subunit = virtual_id_to_subunit.find( pos_id1 )->second;
+				++njumps;
+				cuts( njumps ) = num_res_subunit*subunit;
+				int jump_pos1( ( subunit-1 )*num_res_subunit + anchor );
+				int jump_pos2( num_res_real + virtual_id_to_num.find( pos_id1 )->second );
+				jumps(1, njumps ) = std::min(jump_pos1,jump_pos2);
+				jumps(2, njumps ) = std::max(jump_pos1,jump_pos2);
+			}
+		}
+
+		// Read jump structure from symmdata
+
+		// Read the virtual connect data and add the new connections. They are stored in virtual_connects. We also need to
+		// know the mapping between mapping between name of virtual residues and the jump number
+		Size pos( 0 );
+		for ( std::map< std::string, std::pair< std::string, std::string > >::const_iterator it = it_start; it != it_end; ++it ) {
+					std::pair< std::string, std::string > connect( it->second );
+			std::string pos_id1( connect.first );
+			std::string pos_id2( connect.second );
+			// We have already added the jumps from virtual residues to their corresponding subunits
+			if ( pos_id2 == "SUBUNIT" ) continue;
+			++njumps;
+			++pos;
+			assert( virtual_id_to_num.find( pos_id1 ) != virtual_id_to_num.end() && virtual_id_to_num.find( pos_id2 ) != virtual_id_to_num.end() );
+			Size pos1 ( virtual_id_to_num.find( pos_id1 )->second );
+			Size pos2 ( virtual_id_to_num.find( pos_id2 )->second );
+	     	cuts( njumps ) = num_res_real + pos;
+			jumps(1, njumps ) = num_res_real + std::min(pos1,pos2);
+			jumps(2, njumps ) = num_res_real + std::max(pos1,pos2);
+		}
+
+		// Now create foldtree
+		f.tree_from_jumps_and_cuts( num_res_real + num_virtuals, njumps, jumps, cuts );
+		f.reorder( num_res_real + 1 );
+		return f;
+
+
+
+	} else if( symmdata.get_num_components() > 1 ) {
+		using std::map;
+		using std::endl;
+		using std::string;
+		using std::pair;
+		using std::make_pair;
+		using ObjexxFCL::fmt::I;
+
+		Size num_jumps_subunit( f_orig.num_jump() + 1 - symmdata.get_num_components() );
+
+		// Store number of jumps and cuts
+		Size njumps( 0 ), ncuts(0);
+		Size total_num_cuts( num_cuts_subunit*subunits + subunits + num_virtuals - 1 );
+		Size total_num_jumps( num_jumps_subunit*subunits + num_virtual_connects );
+		utility::vector1< int > cuts_subunit( f_orig.cutpoints() );
+		ObjexxFCL::FArray2D_int jumps( 2, total_num_jumps );
+
+		// TR << "NUM COMPONENTS: " << symmdata.get_num_components() << std::endl;
+		ObjexxFCL::FArray2D_int jump_points_subunit( 2, num_jumps_subunit );
+		Size nsubjump = 0;
+		for ( Size i = 1; i<= f_orig.num_jump(); ++i ) {
+			Size const up = f_orig.upstream_jump_residue(i);
+			Size const dn = f_orig.downstream_jump_residue(i);
+			bool up_and_dn_within_component = is_jump_intracomponent(chain2range,up,dn);
+			if(!up_and_dn_within_component) {
+				TR << "this intrasub jump will be replaced with a SUBUNIT jump " << up << " " << dn << endl;
+				continue;
+			}
+			nsubjump++;
+			jump_points_subunit(1,nsubjump) = up;
+			jump_points_subunit(2,nsubjump) = dn;
+		}
+		if(nsubjump != num_jumps_subunit){
+			// TR << "f_orig.num_jump()             " << f_orig.num_jump() << std::endl;
+			// TR << "symmdata.get_num_components() " << symmdata.get_num_components() << std::endl;
+			// TR << "nsubjump                      " << nsubjump << std::endl;
+			utility_exit_with_message("intra-subunit jump mismatch!");
+		}
+
+		// Now add jumps and cuts for the other subunits
+		for ( Size i = 0; i < subunits; ++i ) {
+			for ( Size j = 1; j <= nsubjump; ++j ) {
+				++njumps;
+				int new_jump_pos1( i*num_res_subunit + jump_points_subunit(1,j) );
+				int new_jump_pos2( i*num_res_subunit + jump_points_subunit(2,j) );
+				jumps(1, njumps ) = std::min(new_jump_pos1,new_jump_pos2);
+				jumps(2, njumps ) = std::max(new_jump_pos1,new_jump_pos2);
+			}
+		}
+
+
+		std::map< std::string, std::pair< std::string, std::string > > const & virtual_connect( symmdata.get_virtual_connects() );
+		std::map< std::string, Size > const & virtual_id_to_num (symmdata.get_virtual_id_to_num() );
+		std::map< Size, std::string > const & virtual_num_to_id (symmdata.get_virtual_num_to_id() );
+		std::map< std::string, Size > const & virtual_id_to_subunit (symmdata.get_virt_id_to_subunit_num() );
+		// for(map<string,Size>::const_iterator it = virtual_id_to_subunit.begin(); it != virtual_id_to_subunit.end(); ++it) {
+		// 	TR << "virtual_id_to_subunit " << it->first << " " << it->second << endl;
+		// }
+		map< string, char > const & virtual_id_to_subunit_chain(symmdata.get_virt_id_to_subunit_chain() );
+		map< string, string > const & virtual_id_to_subunit_residue(symmdata.get_virt_id_to_subunit_residue() );
+		// sanity check for SUBUNIT chain / residue
+		// for(map<char,pair<Size,Size> >::const_iterator i = chain2range.begin(); i != chain2range.end(); ++i) {
+		// 	TR << "get_chain2range " << i->first << " " << i->second.first << "-" << i->second.second << endl;
+		// }
+		for(map<string,char>::const_iterator it = virtual_id_to_subunit_chain.begin(); it != virtual_id_to_subunit_chain.end(); ++it) {
+			string virt =  it->first;
+			char chain = it->second;
+			if( chain == (char)0 ) chain = src_conf2pdb_chain.count(1) ? src_conf2pdb_chain[1] : 'A';
+			if(chain2range.find(chain)==chain2range.end()){
+				std::cerr << "missing chain in pdb: " << chain << std::endl;
+				utility_exit_with_message("missing chain in symfile/pdb");
+			}
+			Size beg = chain2range.find(chain)->second.first;
+			Size end = chain2range.find(chain)->second.second;
+			Size resi = process_residue_request( src_conformation, virtual_id_to_subunit_residue.find(virt)->second, beg, end );
+			if( !( beg <= resi && resi <= end ) ) {
+				TR << "SUBUNIT chain " << chain << " assertion fail: " << beg << " <= " << resi << " <= " << end << endl;
+				utility_exit_with_message("requested residue out of bounds: "+virtual_id_to_subunit_residue.find(virt)->second);
+			}
+			// TR << "SUBUNIT chain: " << virt << " " << chain << " " << resi << endl;
+		}
+
+		std::map< std::string, std::pair< std::string, std::string > >::const_iterator it_start = virtual_connect.begin();
+		std::map< std::string, std::pair< std::string, std::string > >::const_iterator it_end = virtual_connect.end();
+		for ( std::map< std::string, std::pair< std::string, std::string > >::const_iterator it = it_start; it != it_end; ++it ) {
+			std::pair< std::string, std::string > connect( it->second );
+			std::string pos_id1( connect.first );
+			std::string pos_id2( connect.second );
+			if ( pos_id2 == "SUBUNIT" ) {
+				char chain = virtual_id_to_subunit_chain.find(pos_id1)->second;
+				if( chain == (char)0 ) chain = src_conf2pdb_chain.count(1) ? src_conf2pdb_chain[1] : 'A';
+				Size beg = chain2range.find(chain)->second.first;
+				Size end = chain2range.find(chain)->second.second;
+				Size resi = process_residue_request( src_conformation, virtual_id_to_subunit_residue.find(pos_id1)->second, beg, end );
+				// TR << "set SUBUNIT jumps " << pos_id1 << " chain: " << chain << " anchor: " << resi << " range: " << beg << "-" << end << endl;
+				int subunit = virtual_id_to_subunit.find( pos_id1 )->second;
+				++njumps;
+				Size this_anchor = resi ? resi : anchor;
+				if( this_anchor < beg || end < this_anchor) utility_exit_with_message("bad anchor "+virtual_id_to_subunit_residue.find(pos_id1)->second);
+				// cuts from subunit already
+				// cuts(njumps) = (subunit-1)*num_res_subunit + end;
+				int jump_pos1( (subunit-1)*num_res_subunit + this_anchor );
+				int jump_pos2( num_res_real + virtual_id_to_num.find( pos_id1 )->second );
+				jumps(1, njumps ) = std::min(jump_pos1,jump_pos2);
+				jumps(2, njumps ) = std::max(jump_pos1,jump_pos2);
+			}
+		}
+
+		// Read jump structure from symmdata
+
+		// Read the virtual connect data and add the new connections. They are stored in virtual_connects. We also need to
+		// know the mapping between mapping between name of virtual residues and the jump number
+		Size pos( 0 );
+		for ( std::map< std::string, std::pair< std::string, std::string > >::const_iterator it = it_start; it != it_end; ++it ) {
+			std::pair< std::string, std::string > connect( it->second );
+			std::string pos_id1( connect.first );
+			std::string pos_id2( connect.second );
+			// We have already added the jumps from virtual residues to their corresponding subunits
+			if ( pos_id2 == "SUBUNIT" ) continue;
+			++njumps;
+			++pos;
+			assert( virtual_id_to_num.find( pos_id1 ) != virtual_id_to_num.end() && virtual_id_to_num.find( pos_id2 ) != virtual_id_to_num.end() );
+			Size pos1 ( virtual_id_to_num.find( pos_id1 )->second );
+			Size pos2 ( virtual_id_to_num.find( pos_id2 )->second );
+			jumps(1, njumps ) = num_res_real + std::min(pos1,pos2);
+			jumps(2, njumps ) = num_res_real + std::max(pos1,pos2);
+		}
+
+		ObjexxFCL::FArray1D_int cuts( total_num_cuts );
+		for ( Size i = 0; i < subunits; ++i ) {
+			for(Size j = 1; j <= f_orig.num_jump(); ++j) {
+				cuts( ++ncuts ) = i*num_res_subunit + cuts_subunit.at(j);
+			}
+			cuts(++ncuts) = num_res_subunit*(i+1);
+		}
+		for(Size i = 1; i < num_virtuals; ++i) {
+			cuts(++ncuts) = i+num_res_real;
+		}
+
+
+		// // Now create foldtree
+		// TR << "create new fold tree, oldnjump " << f.num_jump() << " newnjump " << njumps << std::endl;
+		// for(int i = 1; i <= total_num_cuts; ++i){
+		// 	TR << i << " " << cuts(i) << std::endl;
+		// }
+		f.tree_from_jumps_and_cuts( num_res_real + num_virtuals, njumps, jumps, cuts, num_res_real+1 );
+		f.reorder( num_res_real + 1 );
+		return f;
+
+	} else {
+		TR << "num_componints: " << symmdata.get_num_components() << std::endl;
+		utility_exit_with_message("BAD num_componints");
 	}
 
-	// Read jump structure from symmdata
-
-	// Read the virtual connect data and add the new connections. They are stored in virtual_connects. We also need to
-	// know the mapping between mapping between name of virtual residues and the jump number
-	Size pos( 0 );
-	for ( std::map< std::string, std::pair< std::string, std::string > >::const_iterator it = it_start; it != it_end; ++it ) {
-				std::pair< std::string, std::string > connect( it->second );
-		std::string pos_id1( connect.first );
-		std::string pos_id2( connect.second );
-		// We have already added the jumps from virtual residues to their corresponding subunits
-		if ( pos_id2 == "SUBUNIT" ) continue;
-		++njumps;
-		++pos;
-		assert( virtual_id_to_num.find( pos_id1 ) != virtual_id_to_num.end() && virtual_id_to_num.find( pos_id2 ) != virtual_id_to_num.end() );
-		Size pos1 ( virtual_id_to_num.find( pos_id1 )->second );
-		Size pos2 ( virtual_id_to_num.find( pos_id2 )->second );
-     	cuts( njumps ) = num_res_real + pos;
-		jumps(1, njumps ) = num_res_real + std::min(pos1,pos2);
-		jumps(2, njumps ) = num_res_real + std::max(pos1,pos2);
-	}
-
-	// Now create foldtree
-	f.tree_from_jumps_and_cuts( num_res_real + num_virtuals, njumps, jumps, cuts );
-	f.reorder( num_res_real + 1 );
-	return f;
+	return FoldTree(0); // this will never happen
 }
 
 // this function is STILL under construction...
@@ -308,7 +664,7 @@ replaced_symmetric_foldtree_with_new_monomer(
 		f.delete_segment( begin, end );
 		//f.insert_fold_tree_by_jump(f, insert_seqpos, insert_jumppos, anchor_pos, anchor_jump_number, anchor_atom, root_atom);
 
-  }
+	}
 
 	return f;
 }
@@ -322,14 +678,14 @@ recenter(
 	conformation::symmetry::SymmData & symmdata
 )
 {
-	conformation::Residue anchor ( src_conformation.residue( symmdata.get_anchor_residue() ) );
+	conformation::Residue anchor ( src_conformation.residue( process_residue_request(src_conformation,symmdata.get_anchor_residue()) ) );
 	Vector trans( anchor.xyz( "CA" ) );
 	for ( Size i = 1; i <= src_conformation.size(); ++i ) {
-    for ( Size j = 1; j <= src_conformation.residue_type(i).natoms(); ++j ) {
-      id::AtomID id( j, i );
-      src_conformation.set_xyz( id, src_conformation.xyz(id) - trans );
-    }
-  }
+		for ( Size j = 1; j <= src_conformation.residue_type(i).natoms(); ++j ) {
+			id::AtomID id( j, i );
+			src_conformation.set_xyz( id, src_conformation.xyz(id) - trans );
+		}
+	}
 }
 
 // @details shift jump numbers in dof
@@ -343,7 +699,7 @@ shift_jump_numbers_in_dofs(
 
 	runtime_assert( is_symmetric( conformation ) );
 	SymmetricConformation & symm_conf (
-	      dynamic_cast<SymmetricConformation & > ( conformation ) );
+				dynamic_cast<SymmetricConformation & > ( conformation ) );
 	SymmetryInfoOP symm_info( symm_conf.Symmetry_Info() );
 
 	std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
@@ -362,7 +718,7 @@ shift_jump_numbers_in_dofs(
 
 kinematics::FoldTree
 get_asymm_unit_fold_tree( core::conformation::Conformation const &conf ) {
-  if( !is_symmetric( conf ) ) {
+	if( !is_symmetric( conf ) ) {
 		return conf.fold_tree();
 	}
 
@@ -396,21 +752,21 @@ symmetrize_fold_tree(
 	kinematics::FoldTree & f
 ) {
 
-  if( !is_symmetric( conf ) ) {
+	if( !is_symmetric( conf ) ) {
 		return;
 	}
 
 	// basic idea: grabs jumps and cuts from monomer, symmetrize them,
 	//    retain VRT jumps and cuts, generate a new fold tree
- 	kinematics::FoldTree f_orig = f;
+	kinematics::FoldTree f_orig = f;
 	//TR.Error << "symmetrize_fold_tree() called with " << f << std::endl;
 	//TR.Error << "reference fold tree =  " << p.fold_tree() << std::endl;
 
-  conformation::symmetry::SymmetricConformation const & symm_conf (
-        dynamic_cast<conformation::symmetry::SymmetricConformation const & > ( conf ) );
-  conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
-  Size nres_subunit ( symm_info->num_independent_residues() );
-  Size nsubunits ( symm_info->subunits() );
+	conformation::symmetry::SymmetricConformation const & symm_conf (
+				dynamic_cast<conformation::symmetry::SymmetricConformation const & > ( conf ) );
+	conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
+	Size nres_subunit ( symm_info->num_independent_residues() );
+	Size nsubunits ( symm_info->subunits() );
 	Size num_nonvrt = symm_info->num_total_residues_without_pseudo();
 
 	// 1 - Get monomer jumps, cuts, and anchor
@@ -497,8 +853,8 @@ symmetrize_fold_tree(
 
 void
 set_asymm_unit_fold_tree( core::conformation::Conformation &conf, kinematics::FoldTree const &f) {
-  if( !is_symmetric( conf ) ) {
-		return conf.fold_tree( f );
+	if( !is_symmetric( conf ) ) {
+		conf.fold_tree( f );
 	}
 
 	kinematics::FoldTree f_new = f;
@@ -525,7 +881,7 @@ residue_center_of_mass(
 		} else {
 			Vector ca_pos( conformation.residue( i ).atom( "CA" ).xyz() );
 			center += ca_pos;
-			}
+		}
 	}
 	center /= (stop-start+1);
 
@@ -549,9 +905,9 @@ return_nearest_residue(
 		Vector ca_pos;
 		if( !conformation.residue( i ).is_protein() ){
 			ca_pos = conformation.residue( i ).nbr_atom_xyz();
-			} else {
+		} else {
 			ca_pos = conformation.residue( i ).atom( "CA" ).xyz() ;
-			}
+		}
 
 		ca_pos -= center;
 		Real tmp_dist( ca_pos.length_squared() );
@@ -561,6 +917,71 @@ return_nearest_residue(
 		}
 	}
 	return res;
+}
+
+std::string
+show_foldtree(
+	core::conformation::symmetry::SymmetricConformation const & symm_conf,
+	SymmData const & symmdata,
+	std::map<char,std::pair<Size,Size> > const & chain2range
+){
+	Size nsub = symm_conf.Symmetry_Info()->subunits();
+	Size nres_monomer = symm_conf.Symmetry_Info()->num_independent_residues();
+	Size nreal = nsub * nres_monomer;
+
+	// label real res by chain
+	std::map<Size,std::string> labels;
+	for(std::map<char,std::pair<Size,Size> >::const_iterator i = chain2range.begin(); i != chain2range.end(); ++i) {
+		for(Size is = 1; is <= nsub; ++is) {
+			for(Size ir = i->second.first; ir <= i->second.second; ++ir) {
+				labels[(is-1)*nres_monomer+ir] = std::string("Sub") + ObjexxFCL::string_of(is) + std::string("") + i->first;
+			}
+		}
+	}
+	// label virtuals by name in symdef
+	Size Nreal = symm_conf.Symmetry_Info()->num_total_residues_without_pseudo();
+	for(std::map<Size,std::string>::const_iterator i = symmdata.get_virtual_num_to_id().begin(); i != symmdata.get_virtual_num_to_id().end(); ++i) {
+		labels[i->first+Nreal] = i->second;
+	}
+	std::map<Size,char> mark_jump_to_res;
+	for(Size i = 1; i <= symm_conf.fold_tree().num_jump(); ++i) {
+		if( symm_conf.Symmetry_Info()->jump_is_independent(i) ) {
+			mark_jump_to_res[symm_conf.fold_tree().downstream_jump_residue(i)] = '*';
+		}
+	}
+	for(Size i = 1; i <= symm_conf.fold_tree().num_jump(); ++i) {
+		Size up = symm_conf.fold_tree().upstream_jump_residue(i);
+		Size dn = symm_conf.fold_tree().downstream_jump_residue(i);		
+		if( symm_conf.Symmetry_Info()->jump_is_independent(i) && up > nreal && dn > nreal ) {
+			mark_jump_to_res[symm_conf.fold_tree().downstream_jump_residue(i)] = '=';
+		}
+	}
+	std::map<Size,SymDof> dofs( symm_conf.Symmetry_Info()->get_dofs() );
+	for(std::map<Size,SymDof>::const_iterator i = dofs.begin(); i != dofs.end(); ++i) {
+		// TR << "SymDOF " << i->first << " " << i->second << std::endl;
+		mark_jump_to_res[symm_conf.fold_tree().downstream_jump_residue(i->first)] = '#';
+	}
+	std::map<Size,Size> jump_follows;
+	for(Size i = 1; i <= symm_conf.fold_tree().num_jump(); ++i){
+		if(symm_conf.Symmetry_Info()->jump_follows(i)!=(Size)0) {
+			jump_follows[i] = symm_conf.Symmetry_Info()->jump_follows(i);
+		}
+	}
+
+	// for(Size i = 1; i <= symm_conf.fold_tree().num_jump(); ++i){
+	// 	using ObjexxFCL::fmt::I;
+	// 	Size up = symm_conf.fold_tree().upstream_jump_residue(i);
+	// 	Size dn = symm_conf.fold_tree().downstream_jump_residue(i);		
+	// 	TR << "JUMP " << I(3,i) << " " << I(4,up) << " -> " << I(4,dn) 
+	// 	   << " " << (symm_conf.Symmetry_Info()->jump_is_independent(i) ? "I" : " ")
+	// 	   << " " << I(3,symm_conf.Symmetry_Info()->jump_follows(i))
+	// 	   << " " << labels[up] << " " << labels[dn] 
+	// 	   << " " << (dofs.find(i)!=dofs.end() ? "DOF" : "" )
+	// 	   << std::endl;
+	// }
+
+	return core::kinematics::visualize_fold_tree(symm_conf.fold_tree(),labels,mark_jump_to_res,jump_follows);
+
 }
 
 

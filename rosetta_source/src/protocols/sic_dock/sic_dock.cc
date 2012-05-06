@@ -90,15 +90,15 @@ namespace sic_dock {
 		xh2_cb_ = new xyzStripeHashPose(basic::options::option[basic::options::OptionKeys::sicdock::contact_dis]());
 		xh2_bb_->init_with_pose(pose2,clash_atoms2);
 		xh2_cb_->init_with_pose(pose2,score_atoms2);
-		for(int ir = 1; ir <= pose1.n_residue(); ++ir) {
-			for(int ia = 1; ia <= clash_atoms1.n_atom(ir); ++ia) { if(clash_atoms1[AtomID(ia,ir)] > 0) clash1_.push_back(pose1.xyz(AtomID(ia,ir))); }
-			for(int ia = 1; ia <= score_atoms1.n_atom(ir); ++ia) { if(score_atoms1[AtomID(ia,ir)] > 0) score1_.push_back(pose1.xyz(AtomID(ia,ir))); }
-			for(int ia = 1; ia <= score_atoms1.n_atom(ir); ++ia) { if(score_atoms1[AtomID(ia,ir)] > 0) w1_.push_back(score_atoms1[AtomID(ia,ir)]); }
+		for(int ir = 1; ir <= (int)pose1.n_residue(); ++ir) {
+			for(int ia = 1; ia <= (int)clash_atoms1.n_atom(ir); ++ia) { if(clash_atoms1[AtomID(ia,ir)] > 0) clash1_.push_back(pose1.xyz(AtomID(ia,ir))); }
+			for(int ia = 1; ia <= (int)score_atoms1.n_atom(ir); ++ia) { if(score_atoms1[AtomID(ia,ir)] > 0) score1_.push_back(pose1.xyz(AtomID(ia,ir))); }
+			for(int ia = 1; ia <= (int)score_atoms1.n_atom(ir); ++ia) { if(score_atoms1[AtomID(ia,ir)] > 0) w1_.push_back(score_atoms1[AtomID(ia,ir)]); }
 		}
-		for(int ir = 1; ir <= pose2.n_residue(); ++ir) {
-			for(int ia = 1; ia <= clash_atoms2.n_atom(ir); ++ia) { if(clash_atoms2[AtomID(ia,ir)] > 0) clash2_.push_back(pose2.xyz(AtomID(ia,ir))); }
-			for(int ia = 1; ia <= score_atoms2.n_atom(ir); ++ia) { if(score_atoms2[AtomID(ia,ir)] > 0) score2_.push_back(pose2.xyz(AtomID(ia,ir))); }
-			for(int ia = 1; ia <= score_atoms2.n_atom(ir); ++ia) { if(score_atoms2[AtomID(ia,ir)] > 0) w2_.push_back(score_atoms2[AtomID(ia,ir)]); }
+		for(int ir = 1; ir <= (int)pose2.n_residue(); ++ir) {
+			for(int ia = 1; ia <= (int)clash_atoms2.n_atom(ir); ++ia) { if(clash_atoms2[AtomID(ia,ir)] > 0) clash2_.push_back(pose2.xyz(AtomID(ia,ir))); }
+			for(int ia = 1; ia <= (int)score_atoms2.n_atom(ir); ++ia) { if(score_atoms2[AtomID(ia,ir)] > 0) score2_.push_back(pose2.xyz(AtomID(ia,ir))); }
+			for(int ia = 1; ia <= (int)score_atoms2.n_atom(ir); ++ia) { if(score_atoms2[AtomID(ia,ir)] > 0) w2_.push_back(score_atoms2[AtomID(ia,ir)]); }
 		}
 	}
 
@@ -152,8 +152,8 @@ namespace sic_dock {
 		xmx = min(xmx,xmx1); xmn = max(xmn,xmn1);
 		ymx = min(ymx,ymx1); ymn = max(ymn,ymn1);
 	}
-	double SICFast::get_score(core::kinematics::Stub const & xa, core::kinematics::Stub const & xb,
-														vector1<Vec> const & cba, vector1<Vec> const & cbb, Vec ori, double mindis)
+	double SICFast::get_score(core::kinematics::Stub const & xa, core::kinematics::Stub const & /*xb*/,
+	                          vector1<Vec> const & /*cba*/, vector1<Vec> const & cbb, Vec ori, double mindis)
 	{
 		vector1<double> const & wa = w2_;
 		vector1<double> const & wb = w1_;
@@ -204,8 +204,8 @@ namespace sic_dock {
 		// }
 		return score;
 	}
-	double SICFast::refine_mindis_with_xyzHash(core::kinematics::Stub const & xa, core::kinematics::Stub const & xb,
-																						 vector1<Vec> const & pa, vector1<Vec> const & pb, double mindis, Vec ori)
+	double SICFast::refine_mindis_with_xyzHash(core::kinematics::Stub const & xa, core::kinematics::Stub const & /*xb*/,
+	                                           vector1<Vec> const & /*pa*/, vector1<Vec> const & pb, double mindis, Vec ori)
 	{
 
 		numeric::geometry::hashing::xyzStripeHash<double> const * xh( xh2_bb_ );
@@ -320,12 +320,12 @@ namespace sic_dock {
     if( grid(i,j,k) <= t ) return 0;
     grid(i,j,k) = t;
     int nmark = 1;
-    if(i>1           ) nmark += flood_fill3D(i-1,j  ,k  ,grid,t);
-    if(i<grid.size1()) nmark += flood_fill3D(i+1,j  ,k  ,grid,t);
-    if(j>1           ) nmark += flood_fill3D(i  ,j-1,k  ,grid,t);
-    if(j<grid.size2()) nmark += flood_fill3D(i  ,j+1,k  ,grid,t);
-    if(k>1           ) nmark += flood_fill3D(i  ,j  ,k-1,grid,t);
-    if(k<grid.size3()) nmark += flood_fill3D(i  ,j  ,k+1,grid,t);
+    if(i>1                ) nmark += flood_fill3D(i-1,j  ,k  ,grid,t);
+    if(i<(int)grid.size1()) nmark += flood_fill3D(i+1,j  ,k  ,grid,t);
+    if(j>1                ) nmark += flood_fill3D(i  ,j-1,k  ,grid,t);
+    if(j<(int)grid.size2()) nmark += flood_fill3D(i  ,j+1,k  ,grid,t);
+    if(k>1                ) nmark += flood_fill3D(i  ,j  ,k-1,grid,t);
+    if(k<(int)grid.size3()) nmark += flood_fill3D(i  ,j  ,k+1,grid,t);
     return nmark;
   }
 
@@ -338,8 +338,8 @@ namespace sic_dock {
 		core::id::AtomID_Map<bool> atom_subset;
 		utility::vector1<Real> rsd_sasa;
 		core::pose::initialize_atomid_map(atom_subset, pose, false);
-		for(int i = 2; i <= pose.n_residue()-1; ++i) {
-			for(int ia = 1; ia <= pose.residue(i).nheavyatoms(); ++ia) {
+		for(int i = 2; i <= (int)pose.n_residue()-1; ++i) {
+			for(int ia = 1; ia <= (int)pose.residue(i).nheavyatoms(); ++ia) {
 				if(pose.residue(i).atom_is_backbone(ia))
 					atom_subset[core::id::AtomID(ia,i)] = true;
 			}

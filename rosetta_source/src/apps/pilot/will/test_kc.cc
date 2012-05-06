@@ -338,112 +338,42 @@ void test_kc2() {
 	Pose pose;
 	core::import_pose::pose_from_pdb(pose,option[in::file::s]()[1]);
 
-	Size irsd = 2, jrsd = 3;
 
-
-	atoms.push_back(pose.residue(irsd-1).xyz("N" ));
-	atoms.push_back(pose.residue(irsd-1).xyz("CA"));
-	atoms.push_back(pose.residue(irsd-1).xyz("C" ));
-
-	atoms.push_back(pose.residue(irsd  ).xyz("CA"));
-	atoms.push_back(pose.residue(irsd  ).xyz("CB"));
-	atoms.push_back((pose.residue(irsd  ).xyz("CB")+pose.residue(irsd  ).xyz("SG"))/2.0);
-
-	atoms.push_back((pose.residue(irsd  ).xyz("CB")+pose.residue(irsd  ).xyz("SG"))/2.0+Vec(1,1,1));
-	atoms.push_back((pose.residue(irsd  ).xyz("CB")+pose.residue(irsd  ).xyz("SG"))/2.0-Vec(1,1,1));
-	atoms.push_back((pose.residue(irsd  ).xyz("CB")+pose.residue(irsd  ).xyz("SG"))/2.0);
-
-	atoms.push_back(pose.residue(irsd  ).xyz("SG"));
-	atoms.push_back( Vec( 20.194500, 19.257750, 7.478500) );
-	atoms.push_back(pose.residue(jrsd  ).xyz("SG"));
-
-	atoms.push_back((pose.residue(jrsd  ).xyz("CB")+pose.residue(jrsd  ).xyz("SG"))/2.0);
-	atoms.push_back((pose.residue(jrsd  ).xyz("CB")+pose.residue(jrsd  ).xyz("SG"))/2.0+Vec(1,1,1));
-	atoms.push_back((pose.residue(jrsd  ).xyz("CB")+pose.residue(jrsd  ).xyz("SG"))/2.0-Vec(1,1,1));
-
-	atoms.push_back((pose.residue(jrsd  ).xyz("CB")+pose.residue(jrsd  ).xyz("SG"))/2.0);
-	atoms.push_back(pose.residue(jrsd  ).xyz("CB"));
-	atoms.push_back(pose.residue(jrsd  ).xyz("CA"));
-
-	atoms.push_back(pose.residue(jrsd+1).xyz("N" ));
-	atoms.push_back(pose.residue(jrsd+1).xyz("CA"));
-	atoms.push_back(pose.residue(jrsd+1).xyz("C" ));
-	pivots.push_back(5);
-	pivots.push_back(11);
-	pivots.push_back(17);
-
-
+	for(int i = 1; i <= 8; ++i) {
+		atoms.push_back(pose.residue(i).xyz("N" ));
+		atoms.push_back(pose.residue(i).xyz("CA"));
+		atoms.push_back(pose.residue(i).xyz("C" ));
+	}	
 	// {
-	// 	utility::io::ozstream out("test_0.pdb");
-	// 	for(Size i = 1; i <= atoms.size(); ++i) {
-	// 		using namespace ObjexxFCL::fmt;
-	// 		out<<"HETATM"<<I(5,i)<<' '<<"VIZ "<<' '<<"VIZ"<<' '<<"A"<<I(4,i)<<"    "<<F(8,3,atoms[i].x())<<F(8,3,atoms[i].y())<<F(8,3,atoms[i].z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+	// 	utility::io::ozstream out("start.pdb");
+	// 	using namespace ObjexxFCL::fmt;
+	// 	for(int i = 0; i < 8; ++i) {
+	// 		out<<"ATOM  "<<I(5,3*i+1)<<' '<<"  N "<<' '<<"ALA"<<' '<<"A"<<I(4,i+1)<<"    "<<F(8,3,atoms[3*i+1].x())<<F(8,3,atoms[3*i+1].y())<<F(8,3,atoms[3*i+1].z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+	// 		out<<"ATOM  "<<I(5,3*i+2)<<' '<<" CA "<<' '<<"ALA"<<' '<<"A"<<I(4,i+1)<<"    "<<F(8,3,atoms[3*i+2].x())<<F(8,3,atoms[3*i+2].y())<<F(8,3,atoms[3*i+2].z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+	// 		out<<"ATOM  "<<I(5,3*i+3)<<' '<<"  C "<<' '<<"ALA"<<' '<<"A"<<I(4,i+1)<<"    "<<F(8,3,atoms[3*i+3].x())<<F(8,3,atoms[3*i+3].y())<<F(8,3,atoms[3*i+3].z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 	// 	}
 	// 	out.close();
 	// }
 
+
+	pivots.push_back(5);
+	pivots.push_back(8);
+	pivots.push_back(20);
+
 	numeric::kinematic_closure::chainTORS(atoms.size(), vecs2vv(atoms), dt, da, db, R0, Q0);
-	// for(int i = 1; i <= 3; i++) {
-	// 	R0[i]    = 0.0;
-	// 	Q0[i][1] = 0.0;
-	// 	Q0[i][2] = 0.0;
-	// 	Q0[i][3] = 0.0;
-	// }
-
-	// for(reals::iterator i = db.begin(); i != db.end(); ++i) {
-	// 	TR << "B " << *i << std::endl;
-	// }
-	// for(reals::iterator i = da.begin(); i != da.end(); ++i) {
-	// 	TR << "A " << *i << std::endl;
-	// }
-	// for(reals::iterator i = dt.begin(); i != dt.end(); ++i) {
-	// 	TR << "T " << *i << std::endl;
-	// }
-
-	// db[4] = 3.89;
-	// db[5] = 3.89;
-	// da[5] = 109.5;
-
+	// db[12] = 3.0;
 	numeric::kinematic_closure::bridgeObjects( vecs2vv(atoms), dt, da, db, pivots, order, t_ang, b_ang, b_len, nsol );
-
-	TR << "nsol " << nsol << std::endl;
-
+	std::cout << nsol << std::endl;
 	for(int isol = 1; isol <= nsol; isol++) {
 		utility::vector1<utility::vector1<core::Real> > atm_out;
 		numeric::kinematic_closure::chainXYZ(atoms.size(),b_len[isol],b_ang[isol],t_ang[isol],false,R0,Q0,atm_out);
 		utility::io::ozstream out("test2_"+ObjexxFCL::string_of(isol)+".pdb");
-			using namespace ObjexxFCL::fmt;
-			out<<"ATOM  "<<I(5, 1)<<' '<<"  N "<<' '<<"ALA"<<' '<<"A"<<I(4,1)<<"    "<<F(8,3,atm_out[ 1][1])<<F(8,3,atm_out[ 1][2])<<F(8,3,atm_out[ 1][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			out<<"ATOM  "<<I(5, 2)<<' '<<" CA "<<' '<<"ALA"<<' '<<"A"<<I(4,1)<<"    "<<F(8,3,atm_out[ 2][1])<<F(8,3,atm_out[ 2][2])<<F(8,3,atm_out[ 2][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			out<<"ATOM  "<<I(5, 3)<<' '<<"  C "<<' '<<"ALA"<<' '<<"A"<<I(4,1)<<"    "<<F(8,3,atm_out[ 3][1])<<F(8,3,atm_out[ 3][2])<<F(8,3,atm_out[ 3][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			out<<"ATOM  "<<I(5, 4)<<' '<<" CA "<<' '<<"CYS"<<' '<<"A"<<I(4,2)<<"    "<<F(8,3,atm_out[ 4][1])<<F(8,3,atm_out[ 4][2])<<F(8,3,atm_out[ 4][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			out<<"ATOM  "<<I(5, 5)<<' '<<" CB "<<' '<<"CYS"<<' '<<"A"<<I(4,2)<<"    "<<F(8,3,atm_out[ 5][1])<<F(8,3,atm_out[ 5][2])<<F(8,3,atm_out[ 5][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-
-			out<<"ATOM  "<<I(5, 7)<<' '<<" SG "<<' '<<"CYS"<<' '<<"A"<<I(4,2)<<"    "<<F(8,3,atm_out[10][1])<<F(8,3,atm_out[10][2])<<F(8,3,atm_out[10][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			out<<"HETATM"<<I(5, 8)<<' '<<" FE "<<' '<<" FE"<<' '<<"A"<<I(4,3)<<"    "<<F(8,3,atm_out[11][1])<<F(8,3,atm_out[11][2])<<F(8,3,atm_out[11][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			out<<"ATOM  "<<I(5, 9)<<' '<<" SG "<<' '<<"CYS"<<' '<<"A"<<I(4,4)<<"    "<<F(8,3,atm_out[12][1])<<F(8,3,atm_out[12][2])<<F(8,3,atm_out[12][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-
-			out<<"ATOM  "<<I(5,11)<<' '<<" CB "<<' '<<"CYS"<<' '<<"A"<<I(4,4)<<"    "<<F(8,3,atm_out[17][1])<<F(8,3,atm_out[17][2])<<F(8,3,atm_out[17][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			out<<"ATOM  "<<I(5,12)<<' '<<" CA "<<' '<<"CYS"<<' '<<"A"<<I(4,4)<<"    "<<F(8,3,atm_out[18][1])<<F(8,3,atm_out[18][2])<<F(8,3,atm_out[18][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			out<<"ATOM  "<<I(5,13)<<' '<<"  N "<<' '<<"ALA"<<' '<<"A"<<I(4,5)<<"    "<<F(8,3,atm_out[19][1])<<F(8,3,atm_out[19][2])<<F(8,3,atm_out[19][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			out<<"ATOM  "<<I(5,14)<<' '<<" CA "<<' '<<"ALA"<<' '<<"A"<<I(4,5)<<"    "<<F(8,3,atm_out[20][1])<<F(8,3,atm_out[20][2])<<F(8,3,atm_out[20][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			out<<"ATOM  "<<I(5,15)<<' '<<"  C "<<' '<<"ALA"<<' '<<"A"<<I(4,5)<<"    "<<F(8,3,atm_out[21][1])<<F(8,3,atm_out[21][2])<<F(8,3,atm_out[21][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			// out<<"ATOM  "<<I(5, 1)<<' '<<"  N "<<' '<<"ALA"<<' '<<"A"<<I(4,1)<<"    "<<F(8,3,atm_out[ 1][1])<<F(8,3,atm_out[ 1][2])<<F(8,3,atm_out[ 1][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			// out<<"ATOM  "<<I(5, 2)<<' '<<" CA "<<' '<<"ALA"<<' '<<"A"<<I(4,1)<<"    "<<F(8,3,atm_out[ 2][1])<<F(8,3,atm_out[ 2][2])<<F(8,3,atm_out[ 2][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			// out<<"ATOM  "<<I(5, 3)<<' '<<"  C "<<' '<<"ALA"<<' '<<"A"<<I(4,1)<<"    "<<F(8,3,atm_out[ 3][1])<<F(8,3,atm_out[ 3][2])<<F(8,3,atm_out[ 3][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			// out<<"ATOM  "<<I(5, 4)<<' '<<"  N "<<' '<<"CYS"<<' '<<"A"<<I(4,2)<<"    "<<F(8,3,atm_out[ 4][1])<<F(8,3,atm_out[ 4][2])<<F(8,3,atm_out[ 4][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			// out<<"ATOM  "<<I(5, 5)<<' '<<" CA "<<' '<<"CYS"<<' '<<"A"<<I(4,2)<<"    "<<F(8,3,atm_out[ 5][1])<<F(8,3,atm_out[ 5][2])<<F(8,3,atm_out[ 5][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			// out<<"ATOM  "<<I(5, 6)<<' '<<" CB "<<' '<<"CYS"<<' '<<"A"<<I(4,2)<<"    "<<F(8,3,atm_out[ 6][1])<<F(8,3,atm_out[ 6][2])<<F(8,3,atm_out[ 6][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			// out<<"ATOM  "<<I(5, 8)<<' '<<" SG "<<' '<<"CYS"<<' '<<"A"<<I(4,2)<<"    "<<F(8,3,atm_out[ 8][1])<<F(8,3,atm_out[ 8][2])<<F(8,3,atm_out[ 8][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			// out<<"HETATM"<<I(5, 9)<<' '<<" FE "<<' '<<" FE"<<' '<<"A"<<I(4,3)<<"    "<<F(8,3,atm_out[ 9][1])<<F(8,3,atm_out[ 9][2])<<F(8,3,atm_out[ 9][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			// out<<"ATOM  "<<I(5,10)<<' '<<" SG "<<' '<<"CYS"<<' '<<"A"<<I(4,4)<<"    "<<F(8,3,atm_out[10][1])<<F(8,3,atm_out[10][2])<<F(8,3,atm_out[10][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			// out<<"ATOM  "<<I(5,12)<<' '<<" CB "<<' '<<"CYS"<<' '<<"A"<<I(4,4)<<"    "<<F(8,3,atm_out[12][1])<<F(8,3,atm_out[12][2])<<F(8,3,atm_out[12][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			// out<<"ATOM  "<<I(5,13)<<' '<<" CA "<<' '<<"CYS"<<' '<<"A"<<I(4,4)<<"    "<<F(8,3,atm_out[13][1])<<F(8,3,atm_out[13][2])<<F(8,3,atm_out[13][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			// out<<"ATOM  "<<I(5,14)<<' '<<"  C "<<' '<<"CYS"<<' '<<"A"<<I(4,4)<<"    "<<F(8,3,atm_out[14][1])<<F(8,3,atm_out[14][2])<<F(8,3,atm_out[14][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			// out<<"ATOM  "<<I(5,15)<<' '<<"  N "<<' '<<"ALA"<<' '<<"A"<<I(4,5)<<"    "<<F(8,3,atm_out[15][1])<<F(8,3,atm_out[15][2])<<F(8,3,atm_out[15][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			// out<<"ATOM  "<<I(5,16)<<' '<<" CA "<<' '<<"ALA"<<' '<<"A"<<I(4,5)<<"    "<<F(8,3,atm_out[16][1])<<F(8,3,atm_out[16][2])<<F(8,3,atm_out[16][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-			// out<<"ATOM  "<<I(5,17)<<' '<<"  C "<<' '<<"ALA"<<' '<<"A"<<I(4,5)<<"    "<<F(8,3,atm_out[17][1])<<F(8,3,atm_out[17][2])<<F(8,3,atm_out[17][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
-
+		using namespace ObjexxFCL::fmt;
+		for(int i = 0; i < 8; ++i) {
+			out<<"ATOM  "<<I(5,3*i+1)<<' '<<"  N "<<' '<<"ALA"<<' '<<"A"<<I(4,i+1)<<"    "<<F(8,3,atm_out[3*i+1][1])<<F(8,3,atm_out[3*i+1][2])<<F(8,3,atm_out[3*i+1][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+			out<<"ATOM  "<<I(5,3*i+2)<<' '<<" CA "<<' '<<"ALA"<<' '<<"A"<<I(4,i+1)<<"    "<<F(8,3,atm_out[3*i+2][1])<<F(8,3,atm_out[3*i+2][2])<<F(8,3,atm_out[3*i+2][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+			out<<"ATOM  "<<I(5,3*i+3)<<' '<<"  C "<<' '<<"ALA"<<' '<<"A"<<I(4,i+1)<<"    "<<F(8,3,atm_out[3*i+3][1])<<F(8,3,atm_out[3*i+3][2])<<F(8,3,atm_out[3*i+3][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+		}
 		out.close();
 	}
 }
@@ -452,5 +382,5 @@ void test_kc2() {
 int main (int argc, char *argv[]) {
   devel::init(argc,argv);
 	//	numeric::kinematic_closure::test_bridgeObjects();
-	test_kc();
+	test_kc2();
 }

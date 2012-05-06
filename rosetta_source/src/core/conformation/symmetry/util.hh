@@ -21,7 +21,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/types.hh>
-
+#include <map>
 
 namespace core {
 namespace conformation {
@@ -36,13 +36,15 @@ is_symmetric( conformation::symmetry::SymmetryInfo const & symminfo );
 conformation::symmetry::SymmetricConformationOP
 setup_symmetric_conformation(
 	conformation::Conformation & src_conformation,
-	conformation::symmetry::SymmData & symmdata
+	conformation::symmetry::SymmData & symmdata,
+	std::map< int, char > conf2pdb_chain = std::map< int, char >()
 );
 
 kinematics::FoldTree
 set_fold_tree_from_symm_data(
 	conformation::Conformation & src_conformation,
-	conformation::symmetry::SymmData & symmdata
+	conformation::symmetry::SymmData & symmdata,
+	std::map< int, char > conf2pdb_chain = std::map< int, char >()
 );
 
 kinematics::FoldTree
@@ -87,6 +89,13 @@ return_nearest_residue(
 	int const begin,
 	int const end,
 	core::Vector center
+);
+
+std::string
+show_foldtree(
+	core::conformation::symmetry::SymmetricConformation const & symm_conf,
+	SymmData const & symdata,
+	std::map<char,std::pair<Size,Size> > const & chain2range
 );
 
 

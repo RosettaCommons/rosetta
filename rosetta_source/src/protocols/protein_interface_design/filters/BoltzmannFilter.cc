@@ -24,6 +24,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+#include <ObjexxFCL/format.hh>
+using ObjexxFCL::fmt::F;
+
 
 namespace protocols {
 namespace protein_interface_design{
@@ -111,16 +114,22 @@ BoltzmannFilter::compute( core::pose::Pose const & pose ) const{
 	using protocols::filters::FilterCOP;
 
 	core::Real positive_sum( 0.0 ), negative_sum( 0.0 );
-
+	std::string s = "BOLTZ: ";
 	for( core::Size index = 1; index <= get_positive_filters().size(); ++index ){
 		core::Real const filter_val( get_positive_filters()[ index ]->report_sm( pose ));
+		s += F(7,3,filter_val)+" ";
 		positive_sum += exp( -filter_val / temperature() );
-		if( anchors_.size() >= index )
+		if( anchors_.size() >= index ) {
 			negative_sum += exp( ( filter_val - anchors_[ index ] ) / temperature() );
+		}
 	}
 
-	foreach( FilterCOP filter, get_negative_filters() )
-		negative_sum += exp( -filter->report_sm( pose ) / temperature() );
+	foreach( FilterCOP filter, get_negative_filters() ) {
+		core::Real filter_val = filter->report_sm( pose );
+		s += F(7,3,filter_val)+" ";
+		negative_sum += exp( -filter_val / temperature() );
+	}
+	std::cout << s << -positive_sum/(positive_sum+negative_sum) << std::endl;
 
 	return( -positive_sum / ( positive_sum + negative_sum ));
 }

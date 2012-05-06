@@ -1,0 +1,20 @@
+symmetry_name c2
+subunits 2
+number_of_interfaces 1
+E = 2*CompSubuS1 + 1*(CompSubuS1:CompSubuS2)
+anchor_residue COM
+virtual_coordinates_start
+xyz ROOT       0,0,1 0,+1,0 0,0,0
+xyz CompRootS  0,0,1 0,+1,0 0,0,0
+xyz CompCntrS  0,0,1 0,+1,0 0,0,0
+xyz CompSubuS1 0,0,1 0,+1,0 0,0,0
+xyz CompSubuS2 0,0,1 0,-1,0 0,0,0
+virtual_coordinates_stop
+connect_virtual Jump_to_CompRootS  ROOT       CompRootS
+connect_virtual Jump_to_CompCntrS  CompRootS  CompCntrS
+connect_virtual Jump_to_CompSubuS1 CompCntrS  CompSubuS1
+connect_virtual Jump_to_CompSubuS2 CompCntrS  CompSubuS2
+connect_virtual Jump_to_SUBUNIT_S1 CompSubuS1 SUBUNIT
+connect_virtual Jump_to_SUBUNIT_S2 CompSubuS2 SUBUNIT
+set_dof Jump_to_CompCntrS x angle_x
+set_jump_group GroupJump_to_SUBUNITS Jump_to_SUBUNIT_S1 Jump_to_SUBUNIT_S2

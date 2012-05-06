@@ -1,0 +1,32 @@
+symmetry_name c2
+subunits 2
+number_of_interfaces 1
+E = 2*CompSubuA1 + 1*(CompSubuA1:CompSubuA2)
+anchor_residue COM
+virtual_coordinates_start
+xyz ROOT       0,0,1 0,+1,0 0,0,0
+xyz CompRootA  0,0,1 0,+1,0 0,0,0
+xyz CompCntrA  0,0,1 0,+1,0 0,0,0
+xyz CompSubuA1 0,0,1 0,+1,0 0,0,0
+xyz CompSubuA2 0,0,1 0,-1,0 0,0,0
+xyz CompRootB  0,0,1 0,+1,0 0,0,0
+xyz CompCntrB  0,0,1 0,+1,0 0,0,0
+xyz CompSubuB1 0,0,1 0,+1,0 0,0,0
+xyz CompSubuB2 0,0,1 0,-1,0 0,0,0
+virtual_coordinates_stop
+connect_virtual Jump_to_CompRootA  ROOT       CompRootA
+connect_virtual Jump_to_CompCntrA  CompRootA  CompCntrA
+connect_virtual Jump_to_CompSubuA1 CompCntrA  CompSubuA1
+connect_virtual Jump_to_CompSubuA2 CompCntrA  CompSubuA2
+connect_virtual Jump_to_SUBUNIT_A1 CompSubuA1            SUBUNIT A 1
+connect_virtual Jump_to_SUBUNIT_A2 CompSubuA2            SUBUNIT A 1
+connect_virtual Jump_to_CompRootB  ROOT       CompRootB
+connect_virtual Jump_to_CompCntrB  CompRootB  CompCntrB
+connect_virtual Jump_to_CompSubuB1 CompCntrB  CompSubuB1
+connect_virtual Jump_to_CompSubuB2 CompCntrB  CompSubuB2
+connect_virtual Jump_to_SUBUNIT_B1 CompSubuB1            SUBUNIT B 36
+connect_virtual Jump_to_SUBUNIT_B2 CompSubuB2            SUBUNIT B 36
+set_dof Jump_to_CompCntrA x angle_x
+set_dof Jump_to_CompCntrB x angle_x
+set_jump_group GroupJump_to_SUBUNITA Jump_to_SUBUNIT_A1 Jump_to_SUBUNIT_A2
+set_jump_group GroupJump_to_SUBUNITB Jump_to_SUBUNIT_B1 Jump_to_SUBUNIT_B2

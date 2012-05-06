@@ -1,13 +1,16 @@
 #include <protocols/simple_moves/ScoreMover.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/pose/util.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/import_pose/import_pose.hh>
 #include <protocols/cluster/cluster.hh>
 #include <protocols/loops/Loops.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <basic/options/option.hh>
+#include <basic/options/option_macros.hh>
 #include <devel/init.hh>
 #include <iostream>
 #include <string>
@@ -19,9 +22,20 @@
 #include <utility/vector1.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
+#include <ObjexxFCL/format.hh>
 
+using ObjexxFCL::fmt::F;
 using namespace protocols::cluster;
 
+
+OPT_1GRP_KEY( FileVector, ccd, rmsd_matrix )
+
+void
+register_options() {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	NEW_OPT(ccd::rmsd_matrix,"files to compare","");
+}
 
 bool
 use_in_rmsd(
@@ -65,15 +79,14 @@ public:
 
 	virtual void
 	align_clusters() {
+		Pose posecen = poselist[ clusterlist[0][0] ];
 		for ( int i=0;i<(int)clusterlist.size();i++ ) {
-			std::vector< int > new_cluster;
-			Pose posecen = poselist[ clusterlist[i][0] ];
-			for ( int j=1;j<(int)clusterlist[i].size();j++ ) {
+			for ( int j=0;j<(int)clusterlist[i].size();j++ ) {
 				Pose & pose = poselist[ clusterlist[i][j] ];
-				// align
 				core::id::AtomID_Map< core::id::AtomID > amap;
-				for(int ir = 1; ir <= pose.n_residue(); ++ir) {
-					for(int ia = 1; ia <= pose.residue(ir).nheavyatoms(); ++ia) {
+				core::pose::initialize_atomid_map(amap,pose,core::id::BOGUS_ATOM_ID);
+				for(int ir = 1; ir <= (int)pose.n_residue(); ++ir) {
+					for(int ia = 1; ia <= (int)pose.residue(ir).nheavyatoms(); ++ia) {
 						if(use_in_rmsd(posecen,pose,ir,ia)) {
 							using core::id::AtomID;
 							amap[AtomID(ia,ir)] = AtomID(ia,ir);
@@ -81,12 +94,11 @@ public:
 					}
 				}
 				core::scoring::superimpose_pose( pose, posecen, amap );
-
 			}
 		}
 	}
 };
-
+typedef utility::pointer::owning_ptr<ClusterCycDisulf> ClusterCycDisulfOP;
 
 using namespace core;
 using namespace ObjexxFCL;
@@ -106,7 +118,64 @@ main( int argc, char * argv [] ) {
 	using namespace protocols::cluster;
 	using namespace basic::options::OptionKeys::cluster;
 
+	register_options();
 	devel::init(argc, argv);
+
+
+
+
+
+// def bestalign(s1,s2):
+// 	ol1 = [x for x in cmd.get_object_list() if x.startswith(s1)]
+// 	ol2 = [x for x in cmd.get_object_list() if x.startswith(s2)]
+// 	keepers = []
+// 	for o1 in ol1:
+// 		mn = 9e9
+// 		mo = None
+// 		for o2 in ol2:
+// 			r = cmd.align(o1,o2)[0]
+// 			if r < mn:
+// 				mn = r
+// 				mo = o2
+// 		cmd.align(o1,mo)
+// 		keepers.append(mo)
+// 		print "%7.3f    %10s %10s"%(mn,o1,mo)
+// 	for o2 in ol2:
+// 		if o2 not in keepers:
+// 			cmd.delete(o2)
+
+
+	if(option[ccd::rmsd_matrix].user()) {
+		utility::vector1<std::string> files1 = option[in::file::s]();
+		utility::vector1<std::string> files2 = option[ccd::rmsd_matrix]();
+		utility::vector1< core::pose::PoseOP > poses1 = core::import_pose::poseOPs_from_pdbs(files1);
+		utility::vector1< core::pose::PoseOP > poses2 = core::import_pose::poseOPs_from_pdbs(files2);
+		for(int i = 1; i <= (int)poses1.size(); ++i) {
+			core::Real mn = 9e9;
+			int mj = 0;
+			for(int j = 1; j <= (int)poses2.size(); ++j) {
+				core::Real r = core::scoring::rmsd_with_super( *poses1[i], *poses2[j], use_in_rmsd );
+				if( r < mn ) {
+					mn = r;
+					mj = j;
+				}
+			}
+			std::cout << F(7,3,mn) << " " << files1[i] << " " << files2[mj] << std::endl;
+			core::pose::Pose tmp1(*poses1[i]);
+			core::id::AtomID_Map<core::id::AtomID> atom_map;
+			core::pose::initialize_atomid_map(atom_map,tmp1,core::id::BOGUS_ATOM_ID);
+			core::scoring::superimpose_pose(tmp1,*poses2[mj],atom_map);
+		}
+
+
+
+		return 0;
+	}
+
+
+
+
+
 
 	if ( !option[ out::output ].user() ) {
 		option[ out::nooutput ].value( true );
@@ -123,7 +192,7 @@ main( int argc, char * argv [] ) {
 		sfxn = sfxn_sym;
 	}
 
-	ClusterPhilStyleOP clustering = new ClusterCycDisulf;
+	ClusterCycDisulfOP clustering = new ClusterCycDisulf;
 
 	clustering->set_score_function( sfxn );
 	clustering->set_cluster_radius(
@@ -179,6 +248,7 @@ main( int argc, char * argv [] ) {
 	}
 
 	clustering->print_summary();
+	clustering->align_clusters();
 	clustering->print_cluster_PDBs( option[ out::prefix ]() );
 
 	clustering->print_cluster_assignment();

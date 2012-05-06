@@ -76,9 +76,9 @@ RNA_LoopCloseSampler::RNA_LoopCloseSampler ( Size const moving_suite, Size const
 	bin_size_ ( 20 ),
 	n_construct_ ( 0 ),
 	rep_cutoff_ ( 0.1 ),
-	epsilon_range_ ( 40.0 ),
 	torsion_range_ ( 20.0 ),
 	torsion_increment_ ( 5.0 ),
+	epsilon_range_ ( 40.0 ),
 	just_output_score_ ( false ),
 	sample_only_ ( false ),
 	sample_native_torsion_ ( false ) {

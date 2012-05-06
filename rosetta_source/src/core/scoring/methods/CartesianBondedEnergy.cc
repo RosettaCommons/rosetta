@@ -243,14 +243,14 @@ TorsionDatabase::lookup(
 		bool need_to_constrain=true, proton_chi=false;
 
 		// backbone
-		if ( atm2 <= newres->last_backbone_atom() && atm3 <= newres->last_backbone_atom() )
+		if ( atm2 <= (int)newres->last_backbone_atom() && atm3 <= (int)newres->last_backbone_atom() )
 				need_to_constrain = false;
 
 		// chi
 		for ( Size j=1, j_end = restype.nchi(); j<= j_end; ++j ) {
 			id::AtomID n1,n2,n3,n4;
 			newpose.conformation().get_torsion_angle_atom_ids( id::TorsionID(1,id::CHI,j) ,n1,n2,n3,n4);
-			if ( (n2.atomno() == atm2 && n3.atomno() == atm3) || (n2.atomno() == atm3 && n3.atomno() == atm2) ) {
+			if ( ((int)n2.atomno() == atm2 && (int)n3.atomno() == atm3) || ((int)n2.atomno() == atm3 && (int)n3.atomno() == atm2) ) {
 				if (restype.is_proton_chi( j ) ) {
 					proton_chi = true;
 				} else {

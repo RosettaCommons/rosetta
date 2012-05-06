@@ -42,6 +42,7 @@
 
 #include <utility/vector1.hh>
 
+#include <ObjexxFCL/format.hh>
 
 
 namespace core {
@@ -452,6 +453,292 @@ linearize_fold_tree( core::kinematics::FoldTree const & tree ) {
 	}
 	return newtree;
 }
+
+
+
+
+
+
+
+////////////////////////// sheffler visualize FT ////////////////////////////////////
+
+void replace_substr(std::string& str, const std::string from, const std::string to){
+    size_t start_pos = 0;
+    while((start_pos = str.find(from, start_pos)) != std::string::npos) {
+        str.replace(start_pos, from.length(), to);
+        start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+    }
+}
+
+std::string operator*(std::string const s, size_t n) {
+    std::string r; // empty string
+    r.reserve(n * s.size());
+    for (size_t i=0; i<n; i++) r += s;
+    return r;
+}
+
+std::string pad_dash(Size npad, std::string s) {
+	// return s;
+	int topad = npad-s.size();
+	if( topad > 0 && topad%2==0) return std::string("-")*(topad/2  ) + s + std::string("-")*(topad/2);
+	if( topad > 0 && topad%2==1) return std::string("-")*(topad/2+1) + s + std::string("-")*(topad/2);
+	else return s;
+}
+std::string pad_dash_left(Size npad, std::string s) {
+	// return s;
+	int topad = npad-s.size();
+	if( topad > 0 ) return s + std::string("-")*topad;
+	else return s;
+}
+std::string pad_dash_right(Size npad, std::string s) {
+	// return s;
+	int topad = npad-s.size();
+	if( topad > 0 ) return std::string("-")*topad + s;
+	else return s;
+}
+
+struct Node {
+	Node(std::string _name, Size _jnum, Size _jumpfrom, Size _jumpto, char _jumpmark=(char)NULL, Size _follows=0) 
+		: name(_name), jnum(_jnum), jumpfrom(_jumpfrom), jumpto(_jumpto), prefix_len(8), follows(_follows), jumpmark(_jumpmark), parent(NULL) {}
+	~Node(){ for(utility::vector1<Node*>::iterator i = children.begin(); i != children.end(); ++i) delete *i; }
+	void setparent(Node *p) {
+		parent = p;
+		parent->children.push_back(this);
+	}
+	Node* root() { return parent==NULL ? this : parent->root();	}
+	std::string str() {
+		using ObjexxFCL::string_of;
+		using std::string;
+		string s;
+		for(utility::vector1<Node*>::const_iterator ic = children.begin(); ic != children.end(); ++ic) {
+			string mark = ((*ic)->jumpmark==(char)NULL) ? "-" : string("")+(*ic)->jumpmark;
+			string vchar = children.size()==1 ? "" : (*ic==children.back() ? " "  : "|");
+			string schar = children.size()==1 ? "" : (*ic==children.back() ? "\\" : "|");
+			std::string uprsd = ((*ic)->jumpfrom!=0) ? pad_dash_left(3,string_of((*ic)->jumpfrom)) : std::string("");
+			std::string dnrsd = ((*ic)->jumpto!=0) ? pad_dash_right(4,">"+string_of((*ic)->jumpto))+":" : std::string(">");
+			std::string jstr;
+			if( (*ic)->follows!=0 ) { // no mark if follows
+				jstr = "j" + string_of((*ic)->jnum) + ( ((*ic)->follows) ? "="+string_of((*ic)->follows) : "" );
+			} else {
+				jstr = mark + "j" + string_of((*ic)->jnum) + mark;
+			}
+			std::string prefix = schar + uprsd + "--"+pad_dash(prefix_len,jstr) + "--" + dnrsd;
+			string news = (*ic)->str();
+ 			string pad = string(" ")*(prefix.size()-1);
+ 			if(children.size()==1) pad += string(" ")*(name.size()+1);
+			replace_substr(news,"\n","\n"+vchar+pad);
+			if(children.size()==1) s +=      prefix+news;
+			else                   s += "\n"+prefix+news;			
+		}
+		s = name + s;
+		return s;
+	}
+	std::string name;
+	Size jnum, jumpfrom, jumpto, prefix_len, follows;
+	char jumpmark;
+	Node *parent; // worried about cycles, no owning_ptr
+	utility::vector1<Node*> children; 
+};
+
+struct TreeVizBuilder {
+	utility::vector1<Size> lb_,ub_;
+	FoldTree const & ft;
+
+	TreeVizBuilder(core::kinematics::FoldTree const & _ft) : ft(_ft) {
+		lb_.resize(ft.nres(),0);
+		ub_.resize(ft.nres(),0);		
+	}
+
+	void get_ft_node_bounds(Size res, Size & out_lb, Size & out_ub) {
+		if(lb_[res]==0)	{
+			lb_[res]=1, ub_[res]=ft.nres();
+			for(int i = 1; i <= ft.num_cutpoint(); ++i) {
+				Size c = (Size)ft.cutpoint(i);
+				if( c <  res ) lb_[res] = std::max(lb_[res],c+1);
+				if( c >= res ) ub_[res] = std::min(ub_[res],c  );
+			}
+		}
+		out_lb = lb_[res];
+		out_ub = ub_[res];
+	}
+
+	Size get_ft_node_lower_bound(Size res) {
+		Size lb,ub;	get_ft_node_bounds(res,lb,ub);
+		return lb;
+	}
+
+	Size is_single(Size res) {
+		Size lb,ub;	get_ft_node_bounds(res,lb,ub);		
+		return lb==ub;
+	}
+
+
+	Size get_ft_node_subroot(Size res) {
+		Size lb,ub;	get_ft_node_bounds(res,lb,ub);
+		for(Size i = 1; i <= ft.num_jump(); ++i){
+			Size dn = ft.downstream_jump_residue(i);
+			if( lb <= dn && dn <= ub ) return dn;
+		}
+		return lb; // default subroot is first res
+	}
+
+	void expand_node_labels_partial_by_contig(std::map<Size,std::string> & node_labels_partial) {
+		utility::vector1<Size> tocheck;
+		for(std::map<Size,std::string>::iterator i = node_labels_partial.begin(); i != node_labels_partial.end(); ++i) {
+			tocheck.push_back(i->first);
+		}
+		for(utility::vector1<Size>::const_iterator i = tocheck.begin(); i != tocheck.end(); ++i) {
+		for(utility::vector1<Size>::const_iterator j = tocheck.begin(); j != tocheck.end(); ++j) {
+			if( *i == *j ) continue;
+			// TR << "check " << *i << " " << *j << endl;
+			if( get_ft_node_lower_bound(*i) == get_ft_node_lower_bound(*j) ) {
+				if(node_labels_partial[*i] != node_labels_partial[*j]) {
+					utility_exit_with_message("non-matching node_labels_partial requested in same FT contig");
+				}
+			}
+			}
+			Size lb,ub;	get_ft_node_bounds(*i,lb,ub);
+			for(Size ir = lb; ir <= ub; ++ir) {
+				node_labels_partial[ir] = node_labels_partial[*i];
+			}
+		}
+	}
+
+	utility::vector1<std::string>
+	get_res_nodenames( std::map<Size,std::string> node_labels_partial ){
+		using ObjexxFCL::fmt::I;
+		int npad = 1;
+		if( ft.nres() >    9 ) npad = 2;
+		if( ft.nres() >   99 ) npad = 3;
+		if( ft.nres() >  999 ) npad = 4;
+		if( ft.nres() > 9999 ) npad = 5;
+		npad = 0;		
+		utility::vector1<std::string> names(ft.nres(),"ERROR_this_name_was_not_set");
+		for(Size i = 1; i <= ft.nres(); ++i) {
+			Size lb,ub;	get_ft_node_bounds(i,lb,ub);
+			std::string lbl = node_labels_partial.count(lb) ? node_labels_partial[lb] : "Contig";
+			// Size rt = get_ft_node_subroot(i);
+			// std::string resrange = ((lb==rt)?"":I(npad,lb)+"<-") + I(npad,rt) + ((ub==rt)?"":"->"+I(npad,ub));
+			std::string resrange = I(npad,lb) + ((ub==lb)?"":"-"+I(npad,ub));
+			names[i] = lbl + "(" + resrange + ")";
+		}
+		return names;
+	}
+
+	Size get_jump_num_to_contig_of_resi( Size resi) {
+		Size lb,ub;	get_ft_node_bounds(resi,lb,ub);
+		for(Size i=1; i <= ft.num_jump(); ++i) {
+			if( lb <= (Size)ft.downstream_jump_residue(i) && (Size)ft.downstream_jump_residue(i) <= ub ) return i;
+		}
+		return 0;
+	}
+
+};
+
+std::string
+visualize_fold_tree(
+	FoldTree const & ft,
+	std::map<Size,std::string> const & node_labels_partial_in,
+	std::map<Size,char> const & mark_jump_to_res,
+	std::map<Size,Size> const & jump_follows
+){
+	TreeVizBuilder tvb(ft);
+
+	std::map<Size,std::string> node_labels_partial(node_labels_partial_in);
+	tvb.expand_node_labels_partial_by_contig(node_labels_partial);
+	utility::vector1<std::string> res_to_nodename = tvb.get_res_nodenames(node_labels_partial);
+
+	// make Node array
+	std::map<std::string,Node*> nodemap;
+	for(Size ir = 1; ir <= ft.nres(); ++ir) {
+		if( nodemap.count(res_to_nodename[ir]) ) continue;
+		Size lb,ub;	tvb.get_ft_node_bounds(ir,lb,ub);
+		Size jnum = tvb.get_jump_num_to_contig_of_resi(ir);
+		Size jumpfrom = (jnum&&!tvb.is_single(ft.  upstream_jump_residue(jnum))) ? ft.  upstream_jump_residue(jnum) : 0;
+		Size jumpto   = (jnum&&!tvb.is_single(ft.downstream_jump_residue(jnum))) ? ft.downstream_jump_residue(jnum) : 0;
+		char markjump = (char)NULL;
+		for(Size jr = lb; jr <= ub; ++jr) if(mark_jump_to_res.count(jr)) markjump = mark_jump_to_res.find(jr)->second;
+		Size follows = jump_follows.find(jnum)!=jump_follows.end() ? jump_follows.find(jnum)->second : (Size)0;
+		nodemap[res_to_nodename[ir]] = new Node(res_to_nodename[ir],jnum,jumpfrom,jumpto,markjump,follows);
+	}
+	// set tree topology
+	for(Size i = 1; i <= ft.num_jump(); ++i) {
+		std::string up = res_to_nodename[ft.  upstream_jump_residue(i)];
+		std::string dn = res_to_nodename[ft.downstream_jump_residue(i)];
+		if(up==dn) {
+			std::cerr << "bad jump " << i << " from " << ft.upstream_jump_residue(i) << " to " << ft.downstream_jump_residue(i) << std::endl;
+			utility_exit_with_message("BAD FOLD TREE NODES!!!!!!!");
+		}
+		nodemap[dn]->setparent(nodemap[up]);
+	}
+	// sanity check: make sure tree is connected
+	for(std::map<std::string,Node*>::const_iterator i = nodemap.begin(); i != nodemap.end(); ++i) {
+		std::string rootname0 = nodemap.begin()->second->root()->name;
+		if( rootname0 != i->second->root()->name ) utility_exit_with_message("Nodes not connected!!!");
+		// std::cerr << "=========================== " << i->second->name << " ===========================" << std::endl;
+		// std::cerr << i->second->str() << std::endl;
+		// std::cerr << "========================================================================" << std::endl;
+	}
+
+	return nodemap.begin()->second->root()->str();
+}
+std::string
+visualize_fold_tree( FoldTree const & ft ) {
+	std::map<Size,std::string> empty_labels;
+	std::map<Size,char> empty_marks;
+	std::map<Size,Size> empty_follows;
+	return visualize_fold_tree( ft, empty_labels, empty_marks, empty_follows );
+}
+
+std::string
+visualize_fold_tree(	FoldTree const & ft, std::map<Size,std::string> const & node_labels_partial ) {
+	std::map<Size,char> empty_marks;
+	std::map<Size,Size> empty_follows;
+	return visualize_fold_tree( ft, node_labels_partial, empty_marks, empty_follows );
+}
+
+std::string
+visualize_fold_tree(	FoldTree const & ft, std::map<Size,char> const & mark_jump_to_res ) {
+	std::map<Size,std::string> empty_labels;
+	std::map<Size,Size> empty_follows;
+	return visualize_fold_tree( ft, empty_labels, mark_jump_to_res, empty_follows );
+}
+
+// std::string show_foldtree(core::conformation::symmetry::SymmetricConformation const & symm_conf, SymmData const & symmdata) {
+// 	Size Nreal = symm_conf.Symmetry_Info()->num_total_residues_without_pseudo();
+// 	// get optional labels
+// 	std::map<Size,std::string> node_labels_partial;
+// 	for(std::map<Size,std::string>::const_iterator i = symmdata.get_virtual_num_to_id().begin(); i != symmdata.get_virtual_num_to_id().end(); ++i) {
+// 		node_labels_partial[i->first+Nreal] = i->second;
+// 	}
+// 	// get non-unique names for each res, inefficient but enures coverage
+// 	utility::vector1<std::string> res_to_nodename = get_res_nodenames(symm_conf.fold_tree(),node_labels_partial);
+// 	// make Node array
+// 	std::map<std::string,Node*> nodemap;
+// 	for(Size ir = 1; ir <= symm_conf.size(); ++ir) {
+// 		std::string dofstr = "";
+// 		std::map<Size,SymDof> dofs( symm_conf.Symmetry_Info()->get_dofs() );
+// 		for(std::map<Size,SymDof>::const_iterator i = dofs.begin(); i != dofs.end(); ++i) {
+// 			if(symm_conf.fold_tree().downstream_jump_residue(i->first)==ir) dofstr = "ISDOF";
+// 		}
+// 		if( 0==nodemap.count(res_to_nodename[ir]) ) nodemap[res_to_nodename[ir]] = new Node(res_to_nodename[ir],dofstr);
+// 	}
+// 	// set tree topology
+// 	for(int i = 1; i <= symm_conf.fold_tree().num_jump(); ++i) {
+// 		std::string up = res_to_nodename[symm_conf.fold_tree().  upstream_jump_residue(i)];
+// 		std::string dn = res_to_nodename[symm_conf.fold_tree().downstream_jump_residue(i)];
+// 		if(up==dn) utility_exit_with_message("BAD FOLD TREE NODES!!!!!!!");
+// 		nodemap[dn]->setparent(nodemap[up]);
+// 	}
+// 	// sanity check: make sure tree is connected
+// 	for(std::map<std::string,Node*>::const_iterator i = nodemap.begin(); i != nodemap.end(); ++i) {
+// 		std::string rootname0 = nodemap.begin()->second->root()->name;
+// 		if( rootname0 != i->second->root()->name ) utility_exit_with_message("Nodes not connected!!!");
+// 	}
+// 	return nodemap.begin()->second->root()->str();
+// }
+
+//////////////////////////// END sheffler visualize fold tree
 
 
 } // namespace kinematics

@@ -100,7 +100,7 @@ reorient_extended_fibril(
   using namespace id;
 
   kinematics::FoldTree f( src_conformation.fold_tree() );
-  Size anchor ( symmdata.get_anchor_residue() );
+  Size anchor ( utility::string2int(symmdata.get_anchor_residue()) );
   Size next_anchor ( anchor <= src_conformation.size() - 2 ? anchor + 2 : anchor - 2 );
   chemical::ResidueType const& rt1 ( src_conformation.residue_type ( anchor ) );
   chemical::ResidueType const& rt2 ( src_conformation.residue_type ( next_anchor ) );

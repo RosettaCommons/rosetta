@@ -65,9 +65,10 @@ class SymmData : public utility::pointer::ReferenceCount
 	std::string symmetry_name_;
 	std::string symmetry_type_;
 	core::Size subunits_;
+	core::Size num_components_;
 	core::Size interfaces_;
 	core::Size score_subunit_;
-	core::Size anchor_residue_;
+	std::string anchor_residue_;
 	bool recenter_;
 	core::Size root_;
 	SymSlideInfo slide_info_;
@@ -80,6 +81,8 @@ class SymmData : public utility::pointer::ReferenceCount
 	std::map< std::string, Size > jump_string_to_jump_num_;
 	std::map< std::string, Size > virt_id_to_virt_num_;
 	std::map< std::string, Size > virt_id_to_subunit_num_;
+	std::map< std::string, char > virt_id_to_subunit_chain_;
+	std::map< std::string, std::string > virt_id_to_subunit_residue_;
 	std::map< Size, std::string > virt_num_to_virt_id_;
 	std::map< Size, std::string > subunit_num_to_virt_id_;
 	std::map< Size, WtedClones > jump_clones_;
@@ -88,6 +91,7 @@ class SymmData : public utility::pointer::ReferenceCount
 	utility::vector1< Size > score_multiply_subunit_;
 	utility::vector1< Size > include_subunit_;
 	utility::vector1< Size > output_subunit_;
+
 	core::Real cell_a_;
 	core::Real cell_b_;
 	core::Real cell_c_;
@@ -133,14 +137,20 @@ class SymmData : public utility::pointer::ReferenceCount
 	//Size
 	//get_njump_subunit() const;
 
-	std::string
+	std::string const &
 	get_symmetry_name() const;
 
-	std::string
+	std::string const &
 	get_symmetry_type() const;
 
 	core::Size
 	get_subunits() const;
+
+	core::Size get_num_components() const;
+	core::Size component_lower_resi_monomer(Size i) const;
+	core::Size component_lower_resi_monomer(char i) const;	
+	core::Size component_upper_resi_monomer(Size i) const;
+	core::Size component_upper_resi_monomer(char i) const;	
 
 	core::Size
 	get_interfaces() const;
@@ -148,7 +158,7 @@ class SymmData : public utility::pointer::ReferenceCount
 	core::Size
 	get_score_subunit() const;
 
-	core::Size
+	std::string const &
 	get_anchor_residue() const;
 
 	bool
@@ -157,54 +167,60 @@ class SymmData : public utility::pointer::ReferenceCount
 	core::Size
 	get_root() const;
 
-	utility::vector1< Size >
+	utility::vector1< Size > const &
 	get_score_multiply_subunit() const;
 
-	utility::vector1< Size >
+	utility::vector1< Size > const &
 	get_include_subunit() const;
 
-	utility::vector1< Size >
+	utility::vector1< Size > const &
 	get_output_subunit() const;
 
-	std::vector< numeric::xyzMatrix< core::Real > >
+	std::vector< numeric::xyzMatrix< core::Real > > const &
 	get_rotation_matrix() const;
 
-	std::vector< numeric::xyzMatrix< core::Real > >
+	std::vector< numeric::xyzMatrix< core::Real > > const &
 	get_translation_matrix() const;
 
 	//std::vector< std::vector< std::string> > get_symm_transforms() const;
 
-	std::map< std::string, VirtualCoordinate >
-  get_virtual_coordinates() const;
+	std::map< std::string, VirtualCoordinate > const &
+	get_virtual_coordinates() const;
 
 	core::Size
 	get_num_virtual() const;
 
-	std::map< Size, SymDof >
+	std::map< Size, SymDof > const &
 	get_dofs() const;
 
-	std::map< Size, WtedClones >
+	std::map< Size, WtedClones > const &
 	get_jump_clones() const;
 
-	std::map< std::string, Size >
+	std::map< std::string, Size > const &
 	get_jump_string_to_jump_num() const;
 
-	std::map< std::string, Size >
-	get_virtual_id_to_num();
+	std::map< std::string, Size > const &
+	get_virtual_id_to_num() const;
 
-	std::map< std::string, Size >
+	std::map< std::string, Size > const &
 	get_virt_id_to_subunit_num() const;
 
-	std::map< Size, std::string >
+	std::map< std::string, char > const &
+	get_virt_id_to_subunit_chain() const;
+
+	std::map< std::string, std::string > const &
+	get_virt_id_to_subunit_residue() const;
+
+	std::map< Size, std::string > const &
 	get_subunit_num_to_virt_id() const;
 
-	std::map< Size, std::string >
-	get_virtual_num_to_id();
+	std::map< Size, std::string > const &
+	get_virtual_num_to_id() const;
 
-	std::map< std::string, std::pair< std::string, std::string > >
+	std::map< std::string, std::pair< std::string, std::string > > const &
 	get_virtual_connects() const;
 
-	SymSlideInfo
+	SymSlideInfo const &
 	get_slide_info() const;
 
 	core::Real
@@ -252,7 +268,7 @@ class SymmData : public utility::pointer::ReferenceCount
 
 	void
 	set_anchor_residue(
-		core::Size anchor
+		std::string anchor
 	);
 
 	void

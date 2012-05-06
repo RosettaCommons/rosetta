@@ -315,7 +315,7 @@ lzs(
 
 Size pose_natom(core::pose::Pose const& p){
   Size natom = 0;
-  for(int ir = 1; ir <= p.n_residue(); ++ir) natom += p.residue(ir).nheavyatoms();
+  for(int ir = 1; ir <= (int)p.n_residue(); ++ir) natom += p.residue(ir).nheavyatoms();
   return natom;
 }
 
@@ -327,12 +327,12 @@ void remove_termini(core::pose::Pose & p) {
 }
 
 Vec safe_xyz(core::pose::Pose const & p, int ano, int rsd) {
-  if(rsd<1 || rsd>p.n_residue()) return Vec(NAN,NAN,NAN);
+  if(rsd<1 || rsd>(int)p.n_residue()) return Vec(NAN,NAN,NAN);
   return p.xyz(AtomID(ano,rsd));
 }
 
 Vec orb_xyz(core::pose::Pose const & p, int oi, int rsd) {
-  if(rsd<1 || rsd>p.n_residue()) return Vec(NAN,NAN,NAN);
+  if(rsd<1 || rsd>(int)p.n_residue()) return Vec(NAN,NAN,NAN);
   return p.residue(rsd).orbital_xyz(oi);
 }
 

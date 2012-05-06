@@ -27,6 +27,7 @@
 #include <basic/Tracer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
+#include <core/pack/make_symmetric_task.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/scoring/ScoreFunction.hh>
 // AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
@@ -253,10 +254,12 @@ PointMutationCalculator::mutate_and_relax(
 //	TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to ";
 	//run PackRotamers with mutate_residue task
 	protocols::simple_moves::PackRotamersMoverOP pack;
-	if( core::pose::symmetry::is_symmetric( pose ) )
-		pack =  new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue );
-	else
+	if( core::pose::symmetry::is_symmetric( pose ) ) {
+		// core::pack::make_symmetric_PackerTask(pose,mutate_residue);
+		pack = new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue );
+	} else {
 		pack = new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue );
+	}
 	pack->apply( pose );
 //	TR<<pose.residue( resi ).name3()<<". Now relaxing..."<<std::endl;
 	//then run input relax mover

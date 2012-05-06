@@ -97,12 +97,12 @@ int main(int argc, char *argv[]) {
 		std::cout << xyzhash.grid_size() << std::endl;
 		std::cout << xyzhash.natom() << std::endl;
 		std::cout << xyzhash.xdim() << " " << xyzhash.ydim() << " " << xyzhash.zdim() << std::endl;
-		for(Size j = 0; j < xyzhash.natom(); ++j) {
+		for(Size j = 0; j < (int)xyzhash.natom(); ++j) {
 			std::cout << F(12,7,xyzhash.grid_atoms()[j].x) << " ";
 			std::cout << F(12,7,xyzhash.grid_atoms()[j].y) << " ";
 			std::cout << F(12,7,xyzhash.grid_atoms()[j].z) << std::endl;
 		}
-		for(Size j = 0; j < xyzhash.xdim()*xyzhash.ydim()*xyzhash.zdim(); ++j) {
+		for(Size j = 0; j < (int)xyzhash.xdim()*xyzhash.ydim()*xyzhash.zdim(); ++j) {
 			std::cout << xyzhash.grid_stripe()[j].x << " ";
 			std::cout << xyzhash.grid_stripe()[j].y << std::endl;
 		}
@@ -140,7 +140,7 @@ int main(int argc, char *argv[]) {
 	std::cout << "Natom: " << real_natom << " " << xyzhash.natom() << std::endl;
 	{
 		utility::vector1<Vec> hashpts;
-		for(Size i = 0; i < xyzhash.natom(); ++i) {
+		for(Size i = 0; i < (int)xyzhash.natom(); ++i) {
 			hashpts.push_back( Vec( xyzhash.grid_atoms()[i].x, xyzhash.grid_atoms()[i].y, xyzhash.grid_atoms()[i].z ) );
 		}
 		dump_points_pdb(hashpts,"input_xyzhash.pdb");
@@ -149,7 +149,7 @@ int main(int argc, char *argv[]) {
 	
 	double tifc=0.0,th=0.0,ts=0.0,t=0.0;
 	int tot = 0;
-	for(Size i = 0; i < basic::options::option[basic::options::OptionKeys::out::nstruct](); ++i) {
+	for(Size i = 0; i < (int)basic::options::option[basic::options::OptionKeys::out::nstruct](); ++i) {
 		Vec rv( numeric::random::uniform(),numeric::random::uniform(),numeric::random::uniform() );
 		rv.x() = (mx.x()-mn.x()) * rv.x() + mn.x();
 		rv.y() = (mx.y()-mn.y()) * rv.y() + mn.y();
@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
 	    Vec tmp = rv+xyzhash.translation();
 		t = time_highres();
 		int safe_nbcount = 0.0;
-		for(Size j = 0; j < xyzhash.natom(); ++j) {
+		for(Size j = 0; j < (int)xyzhash.natom(); ++j) {
 			float const & hx = xyzhash.grid_atoms()[j].x;
 			float const & hy = xyzhash.grid_atoms()[j].y;
 			float const & hz = xyzhash.grid_atoms()[j].z;

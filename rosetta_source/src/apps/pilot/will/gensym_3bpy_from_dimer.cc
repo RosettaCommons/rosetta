@@ -930,7 +930,7 @@ void run() {
 					relax_mover->apply(psym);
 					// psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_min.pdb");
 					sfsym->show(psym);
-					protocols::simple_moves::GreedyOptMutationMover gomm;
+					protocols::design_opt::GreedyOptMutationMover gomm;
 					gomm.task_factory( task_factory );
 					gomm.scorefxn( sfsym );
 					gomm.filter( filter );

@@ -39,7 +39,8 @@
 
 #include <core/types.hh>
 
-
+#include <string>
+#include <map>
 
 
 namespace core {
@@ -91,6 +92,33 @@ simple_visualize_fold_tree_and_movemap_bb_chi( FoldTree const & fold_tree, MoveM
 ///B:FOLD_TREE  EDGE 1 78 -1  EDGE 78 79 1  EDGE 79 454 -1  EDGE 454 455 2  EDGE 455 540 -1  EDGE 540 541 3  EDGE 541 697 -1
 core::kinematics::FoldTree
 linearize_fold_tree( core::kinematics::FoldTree const & tree );
+
+/// sheffler
+std::string
+visualize_fold_tree(
+	FoldTree const & fold_tree
+);
+
+std::string
+visualize_fold_tree(
+	FoldTree const & fold_tree,
+	std::map<Size,std::string> const & node_labels_partial 
+);
+
+std::string
+visualize_fold_tree(
+	FoldTree const & fold_tree,
+	std::map<Size,char> const & mark_jump_to_res
+);	
+
+std::string
+visualize_fold_tree(
+	FoldTree const & fold_tree,
+	std::map<Size,std::string> const & node_labels_partial,
+	std::map<Size,char> const & mark_jump_to_res,
+	std::map<Size,Size> const & jump_follows
+);
+
 
 } // namespace kinematics
 } // namespace core

@@ -9,8 +9,10 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/conformation/util.hh>
+#include <core/id/AtomID.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <numeric/xyz.functions.hh>
@@ -27,11 +29,15 @@
 
 
 OPT_KEY( Integer, cdsf_max_res )
+OPT_KEY( File, cdsf_match_pdb )
+OPT_KEY( Real, cdsf_rms_cut )
 
 void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	NEW_OPT( cdsf_max_res ,"" , 12 );
+	NEW_OPT( cdsf_match_pdb ,"" , "" );
+	NEW_OPT( cdsf_rms_cut ,"" , 0.2 );
 }
 
 void get_hb_info(core::pose::Pose & pose, int start, int stop, int & exhb, int & inhb, int & inhbsc) {
@@ -43,7 +49,7 @@ void get_hb_info(core::pose::Pose & pose, int start, int stop, int & exhb, int &
 	shb->score(pose);
 	core::scoring::hbonds::HBondSet hbset;
  	core::scoring::hbonds::fill_hbond_set( pose, false, hbset, false, true, true, true );
- 	for(int i = 1; i <= (int)hbset.nhbonds(); ++i) {
+ 	for(int i = 1; i <= hbset.nhbonds(); ++i) {
  		int dr = hbset.hbond(i).don_res();
 		int ar = hbset.hbond(i).acc_res();
 		bool din = start <= dr && dr <= stop;
@@ -70,43 +76,35 @@ int main(int argc, char *argv[]) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	utility::io::izstream idone("done.list");
-	string s;
-	set<string> done;
-	while(idone >> s) done.insert(s);
+
+	core::pose::Pose svd;
+	core::import_pose::pose_from_pdb(svd,option[cdsf_match_pdb]());
+	core::pose::remove_lower_terminus_type_from_pose_residue(svd,         1     );
+	core::pose::remove_upper_terminus_type_from_pose_residue(svd,svd.n_residue());
+
+	if(svd.n_residue()!=3) utility_exit_with_message("oiarestn");
 
 	utility::vector1<string> fnames = option[in::file::s]();
-	for(int ifile=1; ifile <= (int)fnames.size(); ++ifile) {
+	for(int ifile=1; ifile <= fnames.size(); ++ifile) {
 		string fn = utility::file_basename(fnames[ifile]);
-		if(done.count(fn)!=0) continue;
-		cout << "BEGIN " << fn << endl;
 		core::pose::Pose pose;
 		core::import_pose::pose_from_pdb(pose,fnames[ifile]);
-		for(int ir=1; ir <= (int)pose.n_residue(); ++ir) {
-			if(pose.residue(ir).aa() != core::chemical::aa_cys) continue;
-			for(int jr=ir+3; jr < ir+option[cdsf_max_res](); ++jr) {
-				if(jr > (int)pose.n_residue()) break;
-				if(pose.residue(jr).aa() != core::chemical::aa_cys) continue;
-				if(!core::conformation::is_disulfide_bond( pose.conformation(),ir,jr)) continue;
-				bool terminus = false;
-				for(int i=ir+1; i < jr; ++i) terminus |= pose.residue(i).is_terminus();
-				if(terminus) continue;
-				core::pose::Pose tmp;
-				tmp.append_residue_by_jump(pose.residue(ir),1);
-				for(int i=ir+1; i <= jr; ++i) tmp.append_residue_by_bond(pose.residue(i));
-				string outfile = option[out::file::o]+"/"+fn+"_"+ObjexxFCL::string_of(ir)+"_"+ObjexxFCL::string_of(jr)+".pdb";
-
-
-				int exhb=0,inhb=0,inhbsc=0;
-				get_hb_info(pose,ir,jr,exhb,inhb,inhbsc);
-
-
-				using namespace ObjexxFCL::fmt;
-				cout << "HIT " << " " << I(4,ir) << " " << I(4,jr) << " " << I(4,exhb) << " " << I(4,inhb) << " " << I(4,inhbsc) << " " << outfile << endl;
-				tmp.dump_pdb(outfile);
+		for(int ir=2; ir <= pose.n_residue()-4; ++ir) {
+			std::map< core::id::AtomID, core::id::AtomID > m;
+			for(int ii=1;ii<=5;++ii) m[core::id::AtomID(ii,ir+0)] = core::id::AtomID(ii,1);
+			for(int ii=1;ii<=5;++ii) m[core::id::AtomID(ii,ir+1)] = core::id::AtomID(ii,2);
+			for(int ii=1;ii<=5;++ii) m[core::id::AtomID(ii,ir+2)] = core::id::AtomID(ii,3);
+			core::Real rms = rms_at_corresponding_atoms(pose,svd,m);
+			if(rms < option[cdsf_rms_cut]()) {
+				std::cout << rms << " " << fn << " " << ir << std::endl;
+				core::pose::Pose tmp(pose);
+				tmp.replace_residue(ir+0,svd.residue(1),true);
+				tmp.replace_residue(ir+1,svd.residue(2),true);
+				tmp.replace_residue(ir+2,svd.residue(3),true);
+				tmp.dump_pdb(option[out::file::o]()+"/"+fn+"_"+ObjexxFCL::string_of(ir)+"_"+"svd.pdb");
 			}
+
 		}
-		cout << "DONE " << fn << endl;
 	}
 
 	return 0;

@@ -216,6 +216,10 @@ public:
 	bool read_silent_struct( std::string const & filename );
 	bool write_silent_struct( std::string const & filename );
 
+	std::string get_jump_name(Size i) const;
+	Size get_jump_num(std::string i) const;
+	void set_jump_name(Size i, std::string);
+
 private:
 
 	// mapping from each primary jump to it's clones
@@ -261,6 +265,10 @@ private:
 
 	// Slide info
 	SymSlideInfo slide_info_;
+
+	std::map<Size,std::string> jnum2name_;
+	std::map<std::string,Size> name2jnum_;	
+
 }; // SymmetryInfo
 
 

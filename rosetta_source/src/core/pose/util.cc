@@ -2319,7 +2319,7 @@ core::Size get_hash_excluding_chain(char const & chain, core::pose::Pose const &
 
 	for(core::Size res_num = 1; res_num <= pose.n_residue(); ++res_num)
 	{
-		if(chain_id == pose.chain(res_num))
+		if((int)chain_id == pose.chain(res_num))
 		{
 			continue;
 		}

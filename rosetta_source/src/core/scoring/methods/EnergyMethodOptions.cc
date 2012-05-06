@@ -47,12 +47,12 @@ EnergyMethodOptions::EnergyMethodOptions():
 	hackelec_no_dis_dep_die_(false),
 	exclude_DNA_DNA_(true), // rosetta++ default
 	hbond_options_(new hbonds::HBondOptions()),
+	cst_max_seq_sep_(core::SZ_MAX),
 	cartbonded_len_(-1.0),
 	cartbonded_ang_(-1.0),
 	cartbonded_tors_(-1.0),
 	cartbonded_proton_(-1.0),
 	cartbonded_linear_(false),
-	cst_max_seq_sep_(core::SZ_MAX),
 	bond_angle_residue_type_param_set_(NULL)
 {
 	initialize_from_options();

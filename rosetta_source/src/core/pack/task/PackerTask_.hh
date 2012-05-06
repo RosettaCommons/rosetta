@@ -133,11 +133,6 @@ public:
 	virtual void or_operate_on_ex3( bool operate );
 	virtual void or_operate_on_ex4( bool operate );
 
-	virtual bool operate_on_ex1() const { return operate_on_ex1_; }
-	virtual bool operate_on_ex2() const { return operate_on_ex2_; }
-	virtual bool operate_on_ex3() const { return operate_on_ex3_; }
-	virtual bool operate_on_ex4() const { return operate_on_ex4_; }
-
 	virtual void or_exdna_sample_level( ExtraRotSample exdna_sample_level );
 
 	virtual void or_optimize_h( bool setting );
@@ -161,8 +156,32 @@ public:
 	///@brief sample proton chi.
 	virtual bool sample_rna_chi() const;
 
-	///@brief return ex1.
 	virtual bool ex1() const;
+	virtual bool ex2() const;
+	virtual bool ex3() const;
+	virtual bool ex4() const;
+
+	virtual ExtraRotSample ex1_sample_level() const;
+	virtual ExtraRotSample ex2_sample_level() const;
+	virtual ExtraRotSample ex3_sample_level() const;
+	virtual ExtraRotSample ex4_sample_level() const;
+
+	virtual bool ex1aro() const;
+	virtual bool ex2aro() const;
+	virtual bool ex1aro_exposed() const;
+	virtual bool ex2aro_exposed() const;
+
+	virtual ExtraRotSample ex1aro_sample_level() const;
+	virtual ExtraRotSample ex2aro_sample_level() const;
+	virtual ExtraRotSample ex1aro_exposed_sample_level() const;
+	virtual ExtraRotSample ex2aro_exposed_sample_level() const;
+
+	virtual ExtraRotSample exdna_sample_level() const;
+
+	virtual bool operate_on_ex1() const;
+	virtual bool operate_on_ex2() const;
+	virtual bool operate_on_ex3() const;
+	virtual bool operate_on_ex4() const;
 
 	///@brief lower extrachi_cutoff to given value; do nothing if not a decrease
 	virtual void and_extrachi_cutoff( Size num_neighbors_to_be_called_buried );
@@ -616,7 +635,7 @@ public:
 	virtual
 	void remap_residue_level_tasks(
 		core::id::SequenceMappingCOP seqmap,
-		core::pose::Pose & pose
+		core::pose::Pose const & pose
 	);
 
 private: // private methods

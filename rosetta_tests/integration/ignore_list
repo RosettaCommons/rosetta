@@ -18,3 +18,4 @@ core.pack.dunbrack: Finished reading Dunbrack Libraries
 core.pack.dunbrack: Memory usage:
 core.pack.dunbrack: ... with [0-9]+ bytes
 core.pack.dunbrack: Total memory on Dunbrack Libraries: [0-9]+ bytes.
+current_directory=

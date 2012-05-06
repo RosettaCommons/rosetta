@@ -1,0 +1,92 @@
+symmetry_name c2
+subunits 2
+number_of_interfaces 1
+E = 2*CompSubuP1 + 1*(CompSubuP1:CompSubuP2)
+anchor_residue COM
+virtual_coordinates_start
+xyz ROOT       0,0,1 0,+1,0 0,0,0
+xyz CompRootG  0,0,1 0,+1,0 0,0,0
+xyz CompCntrG  0,0,1 0,+1,0 0,0,0
+xyz CompSubuG1 0,0,1 0,+1,0 0,0,0
+xyz CompSubuG2 0,0,1 0,-1,0 0,0,0
+xyz CompRootH  0,0,1 0,+1,0 0,0,0
+xyz CompCntrH  0,0,1 0,+1,0 0,0,0
+xyz CompSubuH1 0,0,1 0,+1,0 0,0,0
+xyz CompSubuH2 0,0,1 0,-1,0 0,0,0
+xyz CompRootM  0,0,1 0,+1,0 0,0,0
+xyz CompCntrM  0,0,1 0,+1,0 0,0,0
+xyz CompSubuM1 0,0,1 0,+1,0 0,0,0
+xyz CompSubuM2 0,0,1 0,-1,0 0,0,0
+xyz CompRootL  0,0,1 0,+1,0 0,0,0
+xyz CompCntrL  0,0,1 0,+1,0 0,0,0
+xyz CompSubuL1 0,0,1 0,+1,0 0,0,0
+xyz CompSubuL2 0,0,1 0,-1,0 0,0,0
+xyz CompRootP  0,0,1 0,+1,0 0,0,0
+xyz CompCntrP  0,0,1 0,+1,0 0,0,0
+xyz CompSubuP1 0,0,1 0,+1,0 0,0,0
+xyz CompSubuP2 0,0,1 0,-1,0 0,0,0
+xyz CompRootV  0,0,1 0,+1,0 0,0,0
+xyz CompCntrV  0,0,1 0,+1,0 0,0,0
+xyz CompSubuV1 0,0,1 0,+1,0 0,0,0
+xyz CompSubuV2 0,0,1 0,-1,0 0,0,0
+xyz CompRootX  0,0,1 0,+1,0 0,0,0
+xyz CompCntrX  0,0,1 0,+1,0 0,0,0
+xyz CompSubuX1 0,0,1 0,+1,0 0,0,0
+xyz CompSubuX2 0,0,1 0,-1,0 0,0,0
+virtual_coordinates_stop
+connect_virtual Jump_to_CompRootG  ROOT       CompRootG
+connect_virtual Jump_to_CompCntrG  CompRootG  CompCntrG
+connect_virtual Jump_to_CompSubuG1 CompCntrG  CompSubuG1
+connect_virtual Jump_to_CompSubuG2 CompCntrG  CompSubuG2
+connect_virtual Jump_to_SUBUNIT_G1 CompSubuG1            SUBUNIT G CENTER_OF_MASS
+connect_virtual Jump_to_SUBUNIT_G2 CompSubuG2            SUBUNIT G CENTER_OF_MASS
+connect_virtual Jump_to_CompRootH  ROOT       CompRootH
+connect_virtual Jump_to_CompCntrH  CompRootH  CompCntrH
+connect_virtual Jump_to_CompSubuH1 CompCntrH  CompSubuH1
+connect_virtual Jump_to_CompSubuH2 CompCntrH  CompSubuH2
+connect_virtual Jump_to_SUBUNIT_H1 CompSubuH1            SUBUNIT H CENTER_OF_MASS
+connect_virtual Jump_to_SUBUNIT_H2 CompSubuH2            SUBUNIT H CENTER_OF_MASS
+connect_virtual Jump_to_CompRootM  ROOT       CompRootM
+connect_virtual Jump_to_CompCntrM  CompRootM  CompCntrM
+connect_virtual Jump_to_CompSubuM1 CompCntrM  CompSubuM1
+connect_virtual Jump_to_CompSubuM2 CompCntrM  CompSubuM2
+connect_virtual Jump_to_SUBUNIT_M1 CompSubuM1            SUBUNIT M CENTER_OF_MASS
+connect_virtual Jump_to_SUBUNIT_M2 CompSubuM2            SUBUNIT M CENTER_OF_MASS
+connect_virtual Jump_to_CompRootL  ROOT       CompRootL
+connect_virtual Jump_to_CompCntrL  CompRootL  CompCntrL
+connect_virtual Jump_to_CompSubuL1 CompCntrL  CompSubuL1
+connect_virtual Jump_to_CompSubuL2 CompCntrL  CompSubuL2
+connect_virtual Jump_to_SUBUNIT_L1 CompSubuL1            SUBUNIT L CENTER_OF_MASS
+connect_virtual Jump_to_SUBUNIT_L2 CompSubuL2            SUBUNIT L CENTER_OF_MASS
+connect_virtual Jump_to_CompRootP  ROOT       CompRootP
+connect_virtual Jump_to_CompCntrP  CompRootP  CompCntrP
+connect_virtual Jump_to_CompSubuP1 CompCntrP  CompSubuP1
+connect_virtual Jump_to_CompSubuP2 CompCntrP  CompSubuP2
+connect_virtual Jump_to_SUBUNIT_P1 CompSubuP1            SUBUNIT P CENTER_OF_MASS
+connect_virtual Jump_to_SUBUNIT_P2 CompSubuP2            SUBUNIT P CENTER_OF_MASS
+connect_virtual Jump_to_CompRootV  ROOT       CompRootV
+connect_virtual Jump_to_CompCntrV  CompRootV  CompCntrV
+connect_virtual Jump_to_CompSubuV1 CompCntrV  CompSubuV1
+connect_virtual Jump_to_CompSubuV2 CompCntrV  CompSubuV2
+connect_virtual Jump_to_SUBUNIT_V1 CompSubuV1            SUBUNIT V CENTER_OF_MASS
+connect_virtual Jump_to_SUBUNIT_V2 CompSubuV2            SUBUNIT V CENTER_OF_MASS
+connect_virtual Jump_to_CompRootX  ROOT       CompRootX
+connect_virtual Jump_to_CompCntrX  CompRootX  CompCntrX
+connect_virtual Jump_to_CompSubuX1 CompCntrX  CompSubuX1
+connect_virtual Jump_to_CompSubuX2 CompCntrX  CompSubuX2
+connect_virtual Jump_to_SUBUNIT_X1 CompSubuX1            SUBUNIT X CENTER_OF_MASS
+connect_virtual Jump_to_SUBUNIT_X2 CompSubuX2            SUBUNIT X CENTER_OF_MASS
+set_dof Jump_to_CompCntrG x angle_x
+set_dof Jump_to_CompCntrH x angle_x
+set_dof Jump_to_CompCntrM x angle_x
+set_dof Jump_to_CompCntrL x angle_x
+set_dof Jump_to_CompCntrP x angle_x
+set_dof Jump_to_CompCntrV x angle_x
+set_dof Jump_to_CompCntrX x angle_x
+set_jump_group GroupJump_to_SUBUNITG Jump_to_SUBUNIT_G1 Jump_to_SUBUNIT_G2
+set_jump_group GroupJump_to_SUBUNITH Jump_to_SUBUNIT_H1 Jump_to_SUBUNIT_H2
+set_jump_group GroupJump_to_SUBUNITM Jump_to_SUBUNIT_M1 Jump_to_SUBUNIT_M2
+set_jump_group GroupJump_to_SUBUNITL Jump_to_SUBUNIT_L1 Jump_to_SUBUNIT_L2
+set_jump_group GroupJump_to_SUBUNITP Jump_to_SUBUNIT_P1 Jump_to_SUBUNIT_P2
+set_jump_group GroupJump_to_SUBUNITV Jump_to_SUBUNIT_V1 Jump_to_SUBUNIT_V2
+set_jump_group GroupJump_to_SUBUNITX Jump_to_SUBUNIT_X1 Jump_to_SUBUNIT_X2

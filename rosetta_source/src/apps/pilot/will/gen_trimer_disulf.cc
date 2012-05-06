@@ -126,8 +126,8 @@ get_rotamers(
 	dummy_task->nonconst_residue_task( irsd ).and_extrachi_cutoff(0);
 	dummy_task->nonconst_residue_task( irsd ).or_include_current( false ); //need to do this because the residue was built from internal coords and is probably crumpled up
 	dummy_task->nonconst_residue_task( irsd ).or_fix_his_tautomer( true ); //since we only want rotamers for the specified restype
-	dummy_task->nonconst_residue_task( irsd ).or_ex1( true ); //since we only want rotamers for the specified restype
-	dummy_task->nonconst_residue_task( irsd ).or_ex2( true ); //since we only want rotamers for the specified restype
+	dummy_task->nonconst_residue_task( irsd ).or_ex1( ex1 ); //since we only want rotamers for the specified restype
+	dummy_task->nonconst_residue_task( irsd ).or_ex2( ex2 ); //since we only want rotamers for the specified restype
 	core::graph::GraphOP dummy_png = core::pack::create_packer_graph( pose, dummy_sfxn, dummy_task );
 	core::pack::rotamer_set::RotamerSetFactory rsf;
 	rotset = rsf.create_rotamer_set( pose.residue( irsd ) );
@@ -138,7 +138,7 @@ get_rotamers(
 
 // get chi lists with more canonical rotamers first
 vector1<vector1<Real> >
-get_chis(
+get_chis_complicated(
   core::pose::Pose & pose,
   core::Size irsd
 ){
@@ -195,6 +195,32 @@ get_chis(
 	return chis;
 }
 
+vector1<vector1<Real> >
+get_chis(
+  core::pose::Pose & pose,
+  core::Size irsd
+){
+	vector1<vector1<Real> > chis;
+	core::pack::rotamer_set::RotamerSetOP rotset00 = get_rotamers(pose,irsd,false,false);
+	for(Size irot = 1; irot <= rotset00->num_rotamers(); ++irot) {
+		core::Real chi1i = rotset00->rotamer(irot)->chi(1);
+		core::Real chi2i = rotset00->rotamer(irot)->chi(2);
+		if( fabs(chi2i) < 30.0 ) continue;
+		for(Size jrot = 1; jrot <= rotset00->num_rotamers(); ++jrot) {
+			core::Real chi1j = rotset00->rotamer(jrot)->chi(1);
+			core::Real chi2j = rotset00->rotamer(jrot)->chi(2);
+			if( fabs(chi2j) < 30.0 ) continue;
+			vector1<Real> tmp(4);
+			tmp[1] = chi1i;
+			tmp[2] = chi2i;
+			tmp[3] = chi1j;
+			tmp[4] = chi2j;
+			chis.push_back(tmp);
+		}			
+	}		
+	return chis;
+}
+
 
 int get_N(core::pose::Pose const & inp) {
 	Size c = inp.chain(1);
@@ -226,7 +252,7 @@ int get_N(core::pose::Pose const & inp) {
 	return N;
 }
 
-core::pose::Pose make_two_trimers(core::pose::Pose const & inp, int N) {
+core::pose::Pose make_two_trimers(core::pose::Pose const & inp, Size icys, Size N) {
 	core::pose::Pose pose;
 	for(Size i = 1; i <= 3*N; ++i) {
 		if(inp.residue(i).is_lower_terminus()||inp.residue(i).is_ligand()) {
@@ -258,6 +284,27 @@ core::pose::Pose make_two_trimers(core::pose::Pose const & inp, int N) {
 			pose.append_residue_by_bond(partner.residue(i));
 		}
 	}
+	assert(pose.n_residue()==6*N);
+
+	std::cout << pose.fold_tree() << std::endl;
+
+	using namespace core::kinematics;
+	FoldTree ft = pose.fold_tree();
+	ObjexxFCL::FArray2D<int> jumps(2,5);
+	ObjexxFCL::FArray1D<int> cuts(5);
+	for(int i = 1; i <= 5; ++i) cuts(i) = N*i;
+	jumps(1,1) = 1*N; jumps(2,1) = 2*N;
+	jumps(1,2) = 1*N; jumps(2,2) = 3*N;
+	jumps(1,3) = icys; jumps(2,3) = 3*N+icys;
+	jumps(1,4) = 4*N; jumps(2,4) = 5*N;
+	jumps(1,5) = 4*N; jumps(2,5) = 6*N;
+	ft.tree_from_jumps_and_cuts(6*N,5,jumps,cuts);
+	ft.set_jump_atoms(3,"SG","SG");
+
+	pose.fold_tree(ft);
+
+	std::cout << pose.fold_tree() << std::endl;
+
 	return pose;
 }
 
@@ -290,11 +337,11 @@ bool clash_check_bb(core::pose::Pose & pose, Size icys, Size N, Size Nsub) {
 		Size inatom = pose.residue(ir).aa() == core::chemical::aa_gly ? 4 : 5;
 		for(Size ia = 1; ia <= inatom; ++ia) {
 			Vec iX = pose.xyz(AtomID(ia,ir));			
-			if( ir!=icys && pose.xyz(AtomID(6,Nsub*N+icys)).distance_squared(iX) < 10.0 ) return false;
+			if( ir!=icys && pose.xyz(AtomID(6,Nsub*N+icys)).distance_squared(iX) < 7.0 ) return false;
 			for(Size jr = Nsub*N+1; jr <= 2*Nsub*N; ++jr) {
 				Size jnatom = pose.residue(jr).aa() == core::chemical::aa_gly ? 4 : 5;
 				for(Size ja = 1; ja <= jnatom; ++ja) {
-					if( pose.xyz(AtomID(ja,jr)).distance_squared(iX) < 10.0 ) return false;
+					if( pose.xyz(AtomID(ja,jr)).distance_squared(iX) < 8.0 ) return false;
 				}
 			}
 		}
@@ -302,7 +349,7 @@ bool clash_check_bb(core::pose::Pose & pose, Size icys, Size N, Size Nsub) {
 	return true;
 }
 
-Real repack(core::pose::Pose & pose, core::scoring::ScoreFunction const & sfxn, Size icys, Size N) {
+Real repackmin(core::pose::Pose & pose, core::scoring::ScoreFunction const & sfxn, Size icys, Size N) {
 	core::conformation::ResidueOP old1 = pose.residue(0*N+icys).clone();
 	core::conformation::ResidueOP old2 = pose.residue(3*N+icys).clone();
 	// core::pose::replace_pose_residue_copying_existing_coordinates(pose,0*N+icys,pose.residue(1).residue_type_set().name_map("CYD"));
@@ -312,6 +359,13 @@ Real repack(core::pose::Pose & pose, core::scoring::ScoreFunction const & sfxn, 
 	task->restrict_to_repacking();
 	task->or_include_current(true);
 	core::pack::pack_rotamers(pose,sfxn,task);
+
+	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
+	movemap->set_bb(false); movemap->set_chi(true); movemap->set_jump(false);
+	// movemap->set_dof();
+	protocols::simple_moves::MinMover min(movemap, &sfxn, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+	min.apply(pose);
+
 	Real s = sfxn(pose);
 	pose.replace_residue(0*N+icys,*old1,false);
 	pose.replace_residue(3*N+icys,*old2,false);
@@ -325,17 +379,23 @@ struct HIT {
 	HIT(Pose const & _pose, Real _ddg, string _fn) : pose(_pose), ddg(_ddg), fn(_fn) {}
 };
 
-void generate_disulfide_conformations(core::pose::Pose const & in_pose, Size N) {
+void generate_disulfide_conformations(core::pose::Pose const & in_pose, Size icys, Size N) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	core::pose::Pose pose(in_pose);
 	core::scoring::ScoreFunctionOP score12 = core::scoring::ScoreFunctionFactory::create_score_function("standard");
+	score12->set_weight(core::scoring::dslf_ss_dst,10.0); // S-S
+	score12->set_weight(core::scoring::dslf_cs_ang,10.0); // CB-S-S
+	score12->set_weight(core::scoring::dslf_ss_dih,10.0); //
+	score12->set_weight(core::scoring::dslf_ca_dih, 1.0);
 	core::scoring::ScoreFunction sf;
-	Size icys = 1;
-	for(icys = 1; icys < N; ++icys){
-		if(pose.residue(icys).aa() == core::chemical::aa_cys) break;
-	}
-	Real score_ref = repack(pose,*score12,icys,N);
+
+	core::pose::Pose tmp(pose);
+	tmp.dump_pdb("test.pdb");
+	Real score_ref = repackmin(tmp,*score12,icys,N);
+	tmp.dump_pdb("testmin.pdb");
+	
+
 	if( pose.residue(icys).xyz("SG").distance(pose.residue(3*N+icys).xyz("SG")) > 2.2 ) {
 		utility_exit_with_message("BAD DISULFIDE!!!");
 	}
@@ -402,41 +462,41 @@ void generate_disulfide_conformations(core::pose::Pose const & in_pose, Size N) 
 		Real chi2i = chis[irot][2];	
 		Real chi1j = chis[irot][3];
 		Real chi2j = chis[irot][4];
-		if(irot%100==0) std::cout << "porgress " << 6*irot << " of " << 6*chis.size() << std::endl;
-		for(Size idsf = 0; idsf < 6; ++idsf) {
+		std::cout << "progress " << 2*irot << " of " << 2*chis.size() << std::endl;
+		for(Size idsf = 0; idsf < 2; ++idsf) {
 			Real chiss = 90.0;
-			if( idsf == 1 ) chiss =   80.0;
-			if( idsf == 2 ) chiss =  100.0;
-			if( idsf == 3 ) chiss =  -90.0;
-			if( idsf == 4 ) chiss =  -80.0;
-			if( idsf == 5 ) chiss = -100.0;
+			if( idsf == 1 ) chiss =  -90.0;
+			// if( idsf == 2 ) chiss =   80.0;
+			// if( idsf == 3 ) chiss =  100.0;
+			// if( idsf == 4 ) chiss =  -80.0;
+			// if( idsf == 5 ) chiss = -100.0;
 
 			string fn = "alt_disulf_"+string_of(chi1i)+"_"+string_of(chi2i)+"_"+string_of(chiss)+"_"+string_of(chi2j)+"_"+string_of(chi1j)+".pdb";
 			// std::cout << "check " << string_of(chi1i)+"_"+string_of(chi2i)+"_"+string_of(chiss)+"_"+string_of(chi2j)+"_"+string_of(chi1j) << std::endl;
 			// check small
 			set_disulf(small,smallicys,nsmall,1,chi1i,chi2i,chiss,chi2j,chi1j);
 			if( !clash_check_bb(small,smallicys,nsmall,1) ) {
-				// std::cout << "clash small  " << chi1i << " " << " " << chi2i << " " << chiss << " " << chi2j << " " << chi1j << std::endl;
+				std::cout << "clash small  " << chi1i << " " << " " << chi2i << " " << chiss << " " << chi2j << " " << chi1j << std::endl;
 				continue;					
 			}
 			set_disulf(med,medicys,nmed,1,chi1i,chi2i,chiss,chi2j,chi1j);
 			if( !clash_check_bb(med,medicys,nmed,1) ) {
-				// std::cout << "clash medium " << chi1i << " " << " " << chi2i << " " << chiss << " " << chi2j << " " << chi1j << std::endl;
+				std::cout << "clash medium " << chi1i << " " << " " << chi2i << " " << chiss << " " << chi2j << " " << chi1j << std::endl;
 				continue;					
 			}
 			// now full
 			set_disulf(pose,icys,N,3,chi1i,chi2i,chiss,chi2j,chi1j);
 			if( !clash_check_bb(pose,icys,N,3) ) {
-				// std::cout << "clash full   " << chi1i << " " << " " << chi2i << " " << chiss << " " << chi2j << " " << chi1j << std::endl;
+				std::cout << "clash full   " << chi1i << " " << " " << chi2i << " " << chiss << " " << chi2j << " " << chi1j << std::endl;
 				continue;					
 			}
 			if( core::scoring::CA_rmsd(in_pose,pose) < option[gendsf::rms_cutoff]() ) {
-				// std::cout << "same " << " " << string_of(chi1i)+"_"+string_of(chi2i)+"_"+string_of(chiss)+"_"+string_of(chi2j)+"_"+string_of(chi1j)+".pdb";
+				std::cout << "same " << " " << string_of(chi1i)+"_"+string_of(chi2i)+"_"+string_of(chiss)+"_"+string_of(chi2j)+"_"+string_of(chi1j)+".pdb";
 				// pose.dump_pdb("same_"+string_of(chi1i)+"_"+string_of(chi2i)+"_"+string_of(chiss)+"_"+string_of(chi2j)+"_"+string_of(chi1j)+".pdb");
 				continue;
 			}
-			Real ddg = repack(pose,*score12,icys,N) - score_ref;
-			if(ddg > 100.0) continue;
+			Real ddg = repackmin(pose,*score12,icys,N) - score_ref;
+			// if(ddg > 100.0) continue;
 			bool seenit = false;
 			for(Size ip = 1; ip <= alts.size(); ++ip) {
 				if( core::scoring::CA_rmsd(pose,alts[ip].pose) < option[gendsf::rms_cutoff]() ) {
@@ -469,8 +529,9 @@ int main (int argc, char *argv[]) {
 		Pose pnat;
 		core::import_pose::pose_from_pdb(pnat,fn);
 		Size N = get_N(pnat);
-		Pose tri2 = make_two_trimers(pnat,N);
-		generate_disulfide_conformations(tri2,N);
+		Size icys = 1; for(icys = 1; icys < N; ++icys) if(pnat.residue(icys).aa() == core::chemical::aa_cys) break;
+		Pose tri2 = make_two_trimers(pnat,icys,N);
+		generate_disulfide_conformations(tri2,icys,N);
 	}
 }
 

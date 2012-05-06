@@ -411,6 +411,7 @@ sources = {
 		#"plot_hb",
 	],
 	"pilot/will" : [
+                "sym_multicomp_test",
 		"FunGroupTK",
 		"FunGroupTK_test",
 		"IKFGDB",

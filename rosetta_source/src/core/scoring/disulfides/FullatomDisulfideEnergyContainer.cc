@@ -366,7 +366,7 @@ ResidueNeighborConstIteratorOP
 FullatomDisulfideEnergyContainer::const_upper_neighbor_iterator_begin( int resid ) const
 {
 	assert( !empty() );
-	if ( resid <= resid_2_disulfide_index_.size() &&
+	if ( resid <= (int)resid_2_disulfide_index_.size() &&
 			 resid_2_disulfide_index_[ resid ] != NO_DISULFIDE &&
 			(Size) resid < other_neighbor_id( resid_2_disulfide_index_[ resid ], resid ) ) {
 		return new DisulfResNeighbConstIterator( this, resid, resid_2_disulfide_index_[ resid ]  );
@@ -405,7 +405,7 @@ FullatomDisulfideEnergyContainer::neighbor_iterator_end( int )
 	ResidueNeighborIteratorOP
 FullatomDisulfideEnergyContainer::upper_neighbor_iterator_begin( int resid )
 {
-	if ( resid <= resid_2_disulfide_index_.size() &&
+	if ( resid <= (int)resid_2_disulfide_index_.size() &&
 			 resid_2_disulfide_index_[ resid ] != NO_DISULFIDE &&
 			(Size) resid < other_neighbor_id( resid_2_disulfide_index_[ resid ], resid ) ) {
 		return new DisulfResNeighbIterator( this, resid, resid_2_disulfide_index_[ resid ]  );

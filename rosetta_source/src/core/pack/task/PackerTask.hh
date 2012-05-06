@@ -98,7 +98,7 @@ public:
 	virtual void or_ex4_sample_level( ExtraRotSample ex4_sample_level ) = 0;
 
 	virtual void or_ex1aro( bool ex1aro ) = 0;
-	virtual void or_ex2aro( bool ex2aro_only ) = 0;
+	virtual void or_ex2aro( bool ex2aro ) = 0;
 	virtual void or_ex1aro_exposed( bool ex1aro_exposed ) = 0;
 	virtual void or_ex2aro_exposed( bool ex2aro_exposed ) = 0;
 
@@ -114,6 +114,28 @@ public:
 	virtual void or_operate_on_ex3( bool operate ) = 0;
 	virtual void or_operate_on_ex4( bool operate ) = 0;
 
+	virtual bool ex1() const = 0;
+	virtual bool ex2() const = 0;
+	virtual bool ex3() const = 0;
+	virtual bool ex4() const = 0;
+
+	virtual ExtraRotSample ex1_sample_level() const = 0;
+	virtual ExtraRotSample ex2_sample_level() const = 0;
+	virtual ExtraRotSample ex3_sample_level() const = 0;
+	virtual ExtraRotSample ex4_sample_level() const = 0;
+
+	virtual bool ex1aro() const = 0;
+	virtual bool ex2aro() const = 0;
+	virtual bool ex1aro_exposed() const = 0;
+	virtual bool ex2aro_exposed() const = 0;
+
+	virtual ExtraRotSample ex1aro_sample_level() const = 0;
+	virtual ExtraRotSample ex2aro_sample_level() const = 0;
+	virtual ExtraRotSample ex1aro_exposed_sample_level() const = 0;
+	virtual ExtraRotSample ex2aro_exposed_sample_level() const = 0;
+
+	virtual ExtraRotSample exdna_sample_level() const = 0;
+
 	virtual bool operate_on_ex1() const = 0;
 	virtual bool operate_on_ex2() const = 0;
 	virtual bool operate_on_ex3() const = 0;
@@ -124,8 +146,6 @@ public:
 
 	virtual void sample_rna_chi( bool setting ) = 0;
 	virtual bool sample_rna_chi() const = 0;
-
-	virtual bool ex1() const = 0;
 
 	virtual void or_optimize_h( bool setting ) = 0;
 	virtual bool optimize_h() const = 0;
@@ -164,8 +184,8 @@ public:
 	///@brief
 	virtual bool is_original_type( chemical::ResidueTypeCAP type ) const = 0;
 
-  ///@brief
-  virtual chemical::ResidueTypeSet const & get_original_residue_set() const = 0;
+	///@brief
+	virtual chemical::ResidueTypeSet const & get_original_residue_set() const = 0;
 
 	// expand (or) the list of available aa's for non-cannonicals
 	virtual void allow_noncanonical_aa(
@@ -407,7 +427,7 @@ public:
 	virtual
 	void remap_residue_level_tasks(
 		core::id::SequenceMappingCOP seqmap,
-		core::pose::Pose & pose
+		core::pose::Pose const & pose
 	) = 0;
 
 	// stream (I)/O ////////////////////////////////////////////////////

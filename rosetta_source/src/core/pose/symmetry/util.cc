@@ -78,7 +78,7 @@ is_symmetric( pose::Pose const & pose )
 bool
 is_symmetric( scoring::ScoreFunction const & scorefxn )
 {
-  return ( dynamic_cast< scoring::symmetry::SymmetricScoreFunction const * >( &scorefxn ) );
+	return ( dynamic_cast< scoring::symmetry::SymmetricScoreFunction const * >( &scorefxn ) );
 }
 
 
@@ -87,7 +87,7 @@ conformation::symmetry::SymmetryInfoCOP symmetry_info( pose::Pose const & pose )
 {
 	runtime_assert( is_symmetric( pose ) );
 	conformation::symmetry::SymmetricConformation const & SymmConf (
-   dynamic_cast<conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
+	 dynamic_cast<conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
 	return SymmConf.Symmetry_Info();
 }
 
@@ -95,14 +95,14 @@ conformation::symmetry::SymmetryInfoCOP symmetry_info( pose::Pose const & pose )
 bool
 scorefxn_is_symmetric( conformation::Conformation const & conf )
 {
-  return ( dynamic_cast< conformation::symmetry::SymmetricConformation const * >( &conf ) );
+	return ( dynamic_cast< conformation::symmetry::SymmetricConformation const * >( &conf ) );
 }
 
 /// @details  Attempt to detect whether a pose is symmetric
 bool
 scorefxn_is_symmetric( pose::Pose const & pose )
 {
-  return conformation::symmetry::is_symmetric( pose.conformation() );
+	return conformation::symmetry::is_symmetric( pose.conformation() );
 }
 
 /// @details constructs a symmetric pose with a symmetric conformation and energies object
@@ -145,11 +145,12 @@ make_symmetric_pose(
 )
 {
 	pose::PDBInfoOP pdb_info_src( pose.pdb_info() );
-	if ( !pose.pdb_info() )
+	if ( !pose.pdb_info() ) {
 		pdb_info_src = new pose::PDBInfo( pose, true );
+	}
 
 	conformation::symmetry::SymmetricConformationOP symm_conf
-		( setup_symmetric_conformation( pose.conformation(), symmdata ) );
+		( setup_symmetric_conformation( pose.conformation(), symmdata, conf2pdb_chain(pose) ) );
 
 	scoring::symmetry::SymmetricEnergiesOP symm_energy ( new scoring::symmetry::SymmetricEnergies( pose.energies()) );
 
@@ -169,7 +170,7 @@ make_symmetric_pose(
 /// and symmetry definition file on command line. Requires the presence of a symmetry_definition file
 void
 make_symmetric_pose(
-  pose::Pose & pose,
+	pose::Pose & pose,
 	std::string symmdef_file
 )
 {
@@ -215,7 +216,7 @@ void extract_asymmetric_unit(core::pose::Pose const& pose_in, core::pose::Pose &
 	}
 
 	SymmetricConformation const & symm_conf (
-	      dynamic_cast<SymmetricConformation const & > ( pose_in.conformation() ) );
+				dynamic_cast<SymmetricConformation const & > ( pose_in.conformation() ) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 	bool jump_to_next = false;
@@ -326,12 +327,12 @@ make_symmetric_pdb_info(
 {
 	using namespace core::conformation::symmetry;
 
-	std::string chr_chains( "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$^&.<>?]{}|-_\\~`\"')=%" );
+	std::string chr_chains( "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~`\"')=%qrstuvwxyz" );
 
 	runtime_assert( is_symmetric( pose ) );
 	runtime_assert( pdb_info_target->nres() == pose.total_residue() );
 	SymmetricConformation const & symm_conf (
-	      dynamic_cast<SymmetricConformation const & > ( pose.conformation() ) );
+				dynamic_cast<SymmetricConformation const & > ( pose.conformation() ) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 	// for updating chain IDs we need to know how many chains are in the scoring subunit
@@ -339,7 +340,7 @@ make_symmetric_pdb_info(
 	for ( Size res=1; res <= pdb_info_src->nres(); ++res ) {
 		char chn_id = pdb_info_src->chain( res );
 		Size chn_idx = chr_chains.find(chn_id);
-	  if (chn_idx!=std::string::npos) {  // maybe chn is some other character ... the output chain IDs will be funky then ...
+		if (chn_idx!=std::string::npos) {  // maybe chn is some other character ... the output chain IDs will be funky then ...
 			lastchnid = std::max( lastchnid, chn_idx );
 		}
 	}
@@ -402,7 +403,7 @@ extract_asymmetric_unit_pdb_info(
 	}
 
 	SymmetricConformation const & symm_conf (
-	      dynamic_cast<SymmetricConformation const & > ( pose.conformation() ) );
+				dynamic_cast<SymmetricConformation const & > ( pose.conformation() ) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 	for ( Size res=1; res <= symm_info->get_nres_subunit(); ++res ) {
@@ -438,8 +439,8 @@ make_symmetric_movemap(
 	using namespace core::conformation::symmetry;
 
 	runtime_assert( is_symmetric( pose ) );
-  SymmetricConformation const & symm_conf (
-        dynamic_cast<SymmetricConformation const & > ( pose.conformation()) );
+	SymmetricConformation const & symm_conf (
+				dynamic_cast<SymmetricConformation const & > ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 	// allow only one subunit to change chi and torsions
@@ -506,7 +507,7 @@ make_symmetric_movemap(
 		int upstream_resid = pose.fold_tree().upstream_jump_residue (jump_nbr);
 		int downstream_resid = pose.fold_tree().downstream_jump_residue (jump_nbr);
 		if ( upstream_resid <= numNonVrt && downstream_resid <= numNonVrt &&
-		     symm_info->bb_is_independent(upstream_resid) && symm_info->bb_is_independent(downstream_resid) ) {
+				 symm_info->bb_is_independent(upstream_resid) && symm_info->bb_is_independent(downstream_resid) ) {
 			bool jump_move( movemap_in->get_jump( jump_nbr ) );
 			for ( Size i = X_DOF; i <= Z_ANGLE_DOF; ++i ) {
 				id::DOF_ID const & id( pose.conformation().dof_id_from_torsion_id(id::TorsionID(jump_nbr,id::JUMP,i)));
@@ -520,8 +521,8 @@ make_symmetric_movemap(
 	}
 
 	// Then allow only dofs according to the dof information
-  for ( it = it_begin; it != it_end; ++it ) {
-    int jump_nbr ( (*it).first );
+	for ( it = it_begin; it != it_end; ++it ) {
+		int jump_nbr ( (*it).first );
 		SymDof dof( (*it).second );
 
 		//bool jump_move( false );
@@ -609,36 +610,36 @@ find_symmetric_basejump_anchor( pose::Pose & pose )
 void
 find_new_symmetric_jump_residues( core::pose::Pose & pose )
 {
-  using namespace core::conformation::symmetry;
+	using namespace core::conformation::symmetry;
 
-  runtime_assert( is_symmetric( pose ) );
-  SymmetricConformation & symm_conf (
-        dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
-  SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
+	runtime_assert( is_symmetric( pose ) );
+	SymmetricConformation & symm_conf (
+				dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
+	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
-  Size nres_subunit ( symm_info->num_independent_residues() );
-  Size anchor_start ( pose::symmetry::find_symmetric_basejump_anchor( pose ) );
+	Size nres_subunit ( symm_info->num_independent_residues() );
+	Size anchor_start ( pose::symmetry::find_symmetric_basejump_anchor( pose ) );
 
-  //Looking in central half of each segment -- pick a random point.
-  Size anchor = static_cast<Size>( RG.uniform() * (nres_subunit/2) ) +
-    (nres_subunit/4) + 1;
+	//Looking in central half of each segment -- pick a random point.
+	Size anchor = static_cast<Size>( RG.uniform() * (nres_subunit/2) ) +
+		(nres_subunit/4) + 1;
 
-  if ( basic::options::option[ basic::options::OptionKeys::fold_and_dock::set_anchor_at_closest_point ] )
-  {
-    //Find Closest point of contact.
-    core::Real mindist = pose.residue(anchor).xyz("CEN").distance( pose.residue(anchor + nres_subunit).xyz("CEN") );
-    for (Size i = 1; i <= nres_subunit; i++) {
-      Size const j = i + nres_subunit;
-      core::Real dist = pose.residue(i).xyz("CEN").distance( pose.residue(j).xyz("CEN") );
-      if ( dist < mindist ){
-        mindist = dist;
-        anchor = i;
-      }
-    }
-  }
+	if ( basic::options::option[ basic::options::OptionKeys::fold_and_dock::set_anchor_at_closest_point ] )
+	{
+		//Find Closest point of contact.
+		core::Real mindist = pose.residue(anchor).xyz("CEN").distance( pose.residue(anchor + nres_subunit).xyz("CEN") );
+		for (Size i = 1; i <= nres_subunit; i++) {
+			Size const j = i + nres_subunit;
+			core::Real dist = pose.residue(i).xyz("CEN").distance( pose.residue(j).xyz("CEN") );
+			if ( dist < mindist ){
+				mindist = dist;
+				anchor = i;
+			}
+		}
+	}
 
-  // Update the fold tree with the new jump points
-  kinematics::FoldTree f ( pose.conformation().fold_tree() );
+	// Update the fold tree with the new jump points
+	kinematics::FoldTree f ( pose.conformation().fold_tree() );
 
 	// Setyp the lists of jumps and cuts
 	Size num_jumps( f.num_jump() );
@@ -673,9 +674,9 @@ find_new_symmetric_jump_residues( core::pose::Pose & pose )
 		anchor = symm_info->bb_follows( anchor );
 	}
 
-  // This is the basejump
-  int root ( f.root() );
-  int const jump_number ( f.get_jump_that_builds_residue( anchor_start ) );
+	// This is the basejump
+	int root ( f.root() );
+	int const jump_number ( f.get_jump_that_builds_residue( anchor_start ) );
 	int residue_that_builds_anchor( f.upstream_jump_residue( jump_number ) );
 
 	jumps(1, jump_number ) = anchor;
@@ -687,17 +688,17 @@ find_new_symmetric_jump_residues( core::pose::Pose & pose )
 		try_assert = false;
 	}
 
-  for ( std::vector< Size>::const_iterator
-          clone     = symm_info->bb_clones( anchor_start ).begin(),
-          clone_end = symm_info->bb_clones( anchor_start ).end();
-          clone != clone_end; ++clone ) {
-    int jump_clone ( f.get_jump_that_builds_residue( *clone ) );
-    int takeoff_pos ( f.upstream_jump_residue( jump_clone ) );
-    int new_anchor ( anchor - anchor_start + *clone );
+	for ( std::vector< Size>::const_iterator
+					clone     = symm_info->bb_clones( anchor_start ).begin(),
+					clone_end = symm_info->bb_clones( anchor_start ).end();
+					clone != clone_end; ++clone ) {
+		int jump_clone ( f.get_jump_that_builds_residue( *clone ) );
+		int takeoff_pos ( f.upstream_jump_residue( jump_clone ) );
+		int new_anchor ( anchor - anchor_start + *clone );
 		if ( try_assert ) runtime_assert( jumps(1,jump_clone) == int( *clone ) && jumps(2,jump_clone) == takeoff_pos );
 		jumps(1, jump_clone ) = new_anchor;
-	  jumps(2, jump_clone ) = takeoff_pos;
-	  //std::cout<<"new_anchor "<<new_anchor<< " " <<anchor<<" "<<anchor_start<<" "<< takeoff_pos <<std::endl;
+		jumps(2, jump_clone ) = takeoff_pos;
+		//std::cout<<"new_anchor "<<new_anchor<< " " <<anchor<<" "<<anchor_start<<" "<< takeoff_pos <<std::endl;
 	}
 	/* debug
 	std::cout<<"cuts ";
@@ -713,7 +714,7 @@ find_new_symmetric_jump_residues( core::pose::Pose & pose )
 	*/
 	f.tree_from_jumps_and_cuts( pose.conformation().size(), num_jumps, jumps, cuts );
 	f.reorder( root );
-   pose.conformation().fold_tree( f );
+	 pose.conformation().fold_tree( f );
 }
 
 // @details this function rotates a anchor residue to the x-axis defined by the virtual residue
@@ -722,14 +723,14 @@ find_new_symmetric_jump_residues( core::pose::Pose & pose )
 void
 rotate_anchor_to_x_axis( core::pose::Pose & pose ){
 
-  //first anchor point -- assume its the first jump.
-  kinematics::FoldTree f( pose.fold_tree() );
+	//first anchor point -- assume its the first jump.
+	kinematics::FoldTree f( pose.fold_tree() );
 	int anchor ( find_symmetric_basejump_anchor( pose ) );
 	int const jump_number ( f.get_jump_that_builds_residue( anchor ) );
 	int coordsys_residue( f.upstream_jump_residue( jump_number ) );
-  //Where is this stupid anchor point now?
+	//Where is this stupid anchor point now?
 	Vector anchor_pos ( pose.residue( anchor ).xyz("CA") );
-  float theta = std::atan2(  anchor_pos(2), anchor_pos(1) );
+	float theta = std::atan2(  anchor_pos(2), anchor_pos(1) );
 
 	// we should make sure that the residue type is VRT
 	runtime_assert( pose.residue( coordsys_residue ).name() == "VRT" );
@@ -749,7 +750,7 @@ rotate_anchor_to_x_axis( core::pose::Pose & pose ){
 	runtime_assert( std::abs( coordsys_rot.det() - 1.0 ) < 1e-6 );
 
 	// initialize a rotation matrix that rotates the anchor to cartesian x
-  numeric::xyzMatrix< Real > z_rot = numeric::z_rotation_matrix_degrees(
+	numeric::xyzMatrix< Real > z_rot = numeric::z_rotation_matrix_degrees(
 		( -1.0 * numeric::conversions::to_degrees( theta ) ) );
 
 	kinematics::Jump base_jump( pose.jump( jump_number ) );
@@ -796,7 +797,7 @@ get_symm_axis( core::pose::Pose & pose ) {
 	if( !is_symmetric( pose ) ) return numeric::xyzVector< core::Real >(0,0,0);
 
 	conformation::symmetry::SymmetricConformation const & symm_conf (
-        dynamic_cast<conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
+				dynamic_cast<conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
 	conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 	// find first independent residue
@@ -806,7 +807,7 @@ get_symm_axis( core::pose::Pose & pose ) {
 			base = i;
 			break;
 		}
-    }
+		}
 
 	// find clones
 	utility::vector1< core::Size > base_clones = symm_info->bb_clones( base );
@@ -824,7 +825,7 @@ make_residue_mask_symmetric( core::pose::Pose const &p, utility::vector1< bool >
 	if( !is_symmetric( p ) ) return;
 
 	conformation::symmetry::SymmetricConformation const & symm_conf (
-        dynamic_cast<conformation::symmetry::SymmetricConformation const & > ( p.conformation() ) );
+				dynamic_cast<conformation::symmetry::SymmetricConformation const & > ( p.conformation() ) );
 	conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 	// Size nres_subunit ( symm_info->num_independent_residues() );
 	// Size nsubunits ( symm_info->subunits() );
@@ -844,7 +845,7 @@ make_residue_mask_symmetric( core::pose::Pose const &p, utility::vector1< bool >
 // jump framework
 kinematics::FoldTree
 sealed_symmetric_fold_tree( core::pose::Pose & pose ) {
-  if( !is_symmetric( pose ) ) {
+	if( !is_symmetric( pose ) ) {
 		TR.Error << "sealed_symmetric_fold_tree called with assymetric fold tree. Return FoldTree" << std::endl;
 		return pose.fold_tree();
 	}
@@ -853,10 +854,10 @@ sealed_symmetric_fold_tree( core::pose::Pose & pose ) {
 	kinematics::FoldTree f = f_orig;
 	//TR.Error << "sealed_symmetric_fold_tree called with " << f_orig << std::endl;
 
-  conformation::symmetry::SymmetricConformation const & symm_conf (
-        dynamic_cast<conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
-  conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
-  Size nres_subunit ( symm_info->num_independent_residues() );
+	conformation::symmetry::SymmetricConformation const & symm_conf (
+				dynamic_cast<conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
+	conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
+	Size nres_subunit ( symm_info->num_independent_residues() );
 
 	// mjo commenting out 'nsubunits' because it is not used and casus a warning
 	//Size nsubunits ( symm_info->subunits() );
@@ -924,31 +925,44 @@ sealed_symmetric_fold_tree( core::pose::Pose & pose ) {
 // symmetric can moved moved appropriately.
 int
 get_sym_aware_jump_num ( core::pose::Pose const & pose, int jump_num ) {
-
 	using namespace core::conformation::symmetry;
-
 	int sym_jump = jump_num;
-  if (core::pose::symmetry::is_symmetric(pose)) {
-	  SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
-    std::map<Size,SymDof> dofs = sym_info->get_dofs();
-    sym_jump = 0;
-    for(std::map<Size,SymDof>::iterator i = dofs.begin(); i != dofs.end(); i++) {
-      Size jump_num = i->first;
-      if (sym_jump == 0) {
-        sym_jump = jump_num;
-      } else {
-        utility_exit_with_message("Warning! Multiple symmetric DOFs found!");
-      }
-    }
-    if (sym_jump == 0) {
-      utility_exit_with_message("No sym_dofs found!");
-    }
-  }
-
+	if (core::pose::symmetry::is_symmetric(pose)) {
+		SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
+		std::map<Size,SymDof> dofs = sym_info->get_dofs();
+		sym_jump = 0;
+		for(std::map<Size,SymDof>::iterator i = dofs.begin(); i != dofs.end(); i++) {
+			Size jump_num = i->first;
+			if (sym_jump == 0) {
+				sym_jump = jump_num;
+			} else {
+				utility_exit_with_message("Warning! Multiple symmetric DOFs found!");
+			}
+		}
+		if (sym_jump == 0) {
+			utility_exit_with_message("No sym_dofs found!");
+		}
+	}
 	return sym_jump;
-
 } // get_symdof_from_jump_num
 
+
+utility::vector1<std::string>
+sym_dof_names(core::pose::Pose const & pose) {
+	using namespace core::conformation::symmetry;
+	utility::vector1<std::string> names;
+	SymmetryInfoCOP syminfo = core::pose::symmetry::symmetry_info(pose);
+	std::map<Size,SymDof> dofs = syminfo->get_dofs();
+	for(std::map<Size,SymDof>::iterator i = dofs.begin(); i != dofs.end(); i++) {
+		names.push_back(syminfo->get_jump_name(i->first));
+	}
+	return names;
+}
+
+int
+sym_dof_jump_num(core::pose::Pose const & pose, std::string jname){
+	return core::pose::symmetry::symmetry_info(pose)->get_jump_num(jname);
+}
 
 } // symmetry
 } // pose

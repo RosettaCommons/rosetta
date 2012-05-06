@@ -495,9 +495,95 @@ bool ResidueLevelTask_::sample_rna_chi() const
 	return sample_rna_chi_;
 }
 
-bool ResidueLevelTask_::ex1() const
+
+bool ResidueLevelTask_::ex1() const 
 {
 	return ex1_;
+}
+bool ResidueLevelTask_::ex2() const 
+{
+	return ex2_;
+}
+bool ResidueLevelTask_::ex3() const 
+{
+	return ex3_;
+}
+bool ResidueLevelTask_::ex4() const 
+{
+	return ex4_;
+}
+
+ExtraRotSample ResidueLevelTask_::ex1_sample_level() const 
+{
+	return ex1_sample_level_;
+}
+ExtraRotSample ResidueLevelTask_::ex2_sample_level() const 
+{
+	return ex2_sample_level_;
+}
+ExtraRotSample ResidueLevelTask_::ex3_sample_level() const 
+{
+	return ex3_sample_level_;
+}
+ExtraRotSample ResidueLevelTask_::ex4_sample_level() const 
+{
+	return ex4_sample_level_;
+}
+
+bool ResidueLevelTask_::ex1aro() const 
+{
+	return ex1aro_;
+}
+bool ResidueLevelTask_::ex2aro() const 
+{
+	return ex2aro_;
+}
+bool ResidueLevelTask_::ex1aro_exposed() const 
+{
+	return ex1aro_exposed_;
+}
+bool ResidueLevelTask_::ex2aro_exposed() const 
+{
+	return ex2aro_exposed_;
+}
+
+ExtraRotSample ResidueLevelTask_::ex1aro_sample_level() const 
+{
+	return ex1aro_sample_level_;
+}
+ExtraRotSample ResidueLevelTask_::ex2aro_sample_level() const 
+{
+	return ex2aro_sample_level_;
+}
+ExtraRotSample ResidueLevelTask_::ex1aro_exposed_sample_level() const 
+{
+	return ex1aro_exposed_sample_level_;
+}
+ExtraRotSample ResidueLevelTask_::ex2aro_exposed_sample_level() const 
+{
+	return ex2aro_exposed_sample_level_;
+}
+
+ExtraRotSample ResidueLevelTask_::exdna_sample_level() const 
+{
+	return exdna_sample_level_;
+}
+
+bool ResidueLevelTask_::operate_on_ex1() const 
+{
+	return operate_on_ex1_;
+}
+bool ResidueLevelTask_::operate_on_ex2() const 
+{
+	return operate_on_ex2_;
+}
+bool ResidueLevelTask_::operate_on_ex3() const 
+{
+	return operate_on_ex3_;
+}
+bool ResidueLevelTask_::operate_on_ex4() const 
+{
+	return operate_on_ex4_;
 }
 
 void ResidueLevelTask_::or_optimize_h( bool setting )
@@ -776,10 +862,11 @@ void ResidueLevelTask_::allow_noncanonical_aa(
 	chemical::ResidueTypeCAPs const & aas( residue_set.residue_types() );
 
 	for ( chemical::ResidueTypeCAPs::const_iterator	aas_iter = aas.begin(), aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-    if ( original_residue_type_->variants_match( **aas_iter ) &&
+	    if ( original_residue_type_->variants_match( **aas_iter ) &&
 			std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(), *aas_iter ) ==	allowed_residue_types_.end() && /* haven't already added it */
-			aaname ==	(**aas_iter).name3() ) {
-		allowed_residue_types_.push_back( *aas_iter );
+			aaname ==	(**aas_iter).name3() )
+	    {
+			allowed_residue_types_.push_back( *aas_iter );
 		}
 	}
 
@@ -1641,13 +1728,12 @@ operator << ( std::ostream & os, PackerTask const & t )
 
 void PackerTask_::remap_residue_level_tasks(
 	core::id::SequenceMappingCOP seqmap,
-	core::pose::Pose & pose
+	core::pose::Pose const & pose
 ){
 	utility::vector1< bool > remapped_pack_residue;
 	utility::vector1< ResidueLevelTask_ > remapped_residue_tasks;
 
-  core::id::SequenceMapping reverse_seqmap =
-		core::id::SequenceMapping( *seqmap );
+	core::id::SequenceMapping reverse_seqmap = core::id::SequenceMapping( *seqmap );
 	reverse_seqmap.reverse();
 
 	for( Size ii = 1; ii <= pose.total_residue(); ++ii ){

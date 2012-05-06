@@ -93,7 +93,7 @@ H3PerturbCCD::H3PerturbCCD() : Mover() {
 H3PerturbCCD::~H3PerturbCCD() {}
     
     
-H3PerturbCCD::H3PerturbCCD(loops::LoopOP a_cdr_loop) : Mover()         
+H3PerturbCCD::H3PerturbCCD(loops::LoopOP /*a_cdr_loop*/) : Mover()
 {
     user_defined_ = false;
         

@@ -70,6 +70,12 @@ bool SymmetryInfo::operator!=( SymmetryInfo const & s )
 
 SymmetryInfo::SymmetryInfo( SymmData const & symm_data, Size const nres_subunit, Size const njump_subunit )
 {
+	Size joff = njump_subunit*symm_data.get_subunits();
+	std::map<std::string,Size> const & name2num = symm_data.get_jump_string_to_jump_num();
+	for(std::map<std::string,Size>::const_iterator i = name2num.begin(); i != name2num.end(); ++i) {
+		name2jnum_[i->first] = i->second+joff;
+		jnum2name_[i->second+joff] = i->first;
+	}
 	if (  symm_data.get_jump_clones().size() > 0 ) {
 		initialize( nres_subunit, njump_subunit,
 			symm_data.get_subunits(), symm_data.get_num_virtual(),
@@ -83,7 +89,8 @@ SymmetryInfo::SymmetryInfo( SymmData const & symm_data, Size const nres_subunit,
 			symm_data.get_score_multiply_subunit(), symm_data.get_slide_info(),
 			symm_data.get_interfaces() );
 	}
-	TR<<*this<<std::endl;
+	if(symm_data.get_num_components()==1) TR       << *this << std::endl;
+	else                                  TR.Debug << *this << std::endl;
 }
 
 SymmetryInfo::SymmetryInfo(
@@ -1375,6 +1382,24 @@ SymmetryInfo::get_asymmetric_seqpos( Size const res ) const
 Size
 SymmetryInfo::subunit_index( Size const seqpos ) const {
 	return ( (seqpos-1) / num_independent_residues() + 1 );
+}
+
+std::string
+SymmetryInfo::get_jump_name(Size jnum) const {
+	if( 0 == jnum2name_.count(jnum) ) utility_exit_with_message("bad jump num");
+	return jnum2name_.find(jnum)->second;
+}
+
+Size
+SymmetryInfo::get_jump_num(std::string jname) const {
+	if( 0 == name2jnum_.count(jname) ) utility_exit_with_message("bad jump name");
+	return name2jnum_.find(jname)->second;
+}
+
+void
+SymmetryInfo::set_jump_name(Size jnum, std::string jname) {
+	jnum2name_[jnum] = jname;
+	name2jnum_[jname] = jnum;
 }
 
 
