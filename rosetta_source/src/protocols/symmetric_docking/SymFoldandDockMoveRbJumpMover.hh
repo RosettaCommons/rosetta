@@ -12,7 +12,6 @@
 
 
 #ifndef INCLUDED_protocols_symmetric_docking_SymFoldAndDockMoveRbJumpMover_hh
-
 #define INCLUDED_protocols_symmetric_docking_SymFoldAndDockMoveRbJumpMover_hh
 
 // Unit headers

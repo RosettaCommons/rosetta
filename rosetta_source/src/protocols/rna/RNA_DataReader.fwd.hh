@@ -11,10 +11,10 @@
 /// @brief  Pose forward declarations header
 /// @author Rhiju Das
 
-#include <utility/pointer/owning_ptr.hh>
-
 #ifndef INCLUDED_protocols_rna_RNA_DataReader_fwd_hh
 #define INCLUDED_protocols_rna_RNA_DataReader_fwd_hh
+
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols{
 namespace rna{

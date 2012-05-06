@@ -11,8 +11,8 @@
 /// @brief  Base class for BasicSequenceCreators for the BasicSequence load-time factory registration scheme
 /// @author James Thompson
 
-#ifndef INCLUDED_core_silent_BasicSequenceCreators_hh
-#define INCLUDED_core_silent_BasicSequenceCreators_hh
+#ifndef INCLUDED_core_sequence_BasicSequenceCreators_hh
+#define INCLUDED_core_sequence_BasicSequenceCreators_hh
 
 // AUTO-REMOVED #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceCreator.hh>

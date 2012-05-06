@@ -12,8 +12,8 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 
-#ifndef INCLUDED_core_scoring_methods_EnergyMethodRegisterer_hh
-#define INCLUDED_core_scoring_methods_EnergyMethodRegisterer_hh
+#ifndef INCLUDED_core_scoring_methods_EnergyMethodRegistrator_hh
+#define INCLUDED_core_scoring_methods_EnergyMethodRegistrator_hh
 
 // Package headers
 #include <core/scoring/ScoringManager.hh>

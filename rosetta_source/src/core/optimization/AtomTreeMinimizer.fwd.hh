@@ -11,13 +11,11 @@
 /// @brief  core::optimization::AtomTreeMinimizer forward declarations
 /// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
 
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/access_ptr.hh>
-
-
 #ifndef INCLUDED_core_optimization_AtomTreeMinimizer_fwd_hh
 #define INCLUDED_core_optimization_AtomTreeMinimizer_fwd_hh
 
+#include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/access_ptr.hh>
 
 namespace core {
 namespace optimization {

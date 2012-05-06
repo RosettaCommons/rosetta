@@ -12,8 +12,8 @@
 /// @author Parin Sripakdeevong (sripakpa@stanford.edu), Rhiju Das (rhiju@stanford.edu)
 
 
-#ifndef INCLUDED_core_scoring_rna_RNA_RNA_FullAtomVDW_BasePhosphate_hh
-#define INCLUDED_core_scoring_rna_RNA_RNA_FullAtomVDW_BasePhosphate_hh
+#ifndef INCLUDED_core_scoring_rna_RNA_FullAtomVDW_BasePhosphate_hh
+#define INCLUDED_core_scoring_rna_RNA_FullAtomVDW_BasePhosphate_hh
 
 // Unit headers
 #include <core/scoring/rna/RNA_FullAtomVDW_BasePhosphate.fwd.hh>
@@ -54,7 +54,7 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 	void
-	residue_fast_pair_energy_attached_H( //copy from atom_pair_energy_inline.hh  
+	residue_fast_pair_energy_attached_H( //copy from atom_pair_energy_inline.hh
 		core::conformation::Residue const & res1,
 		int const atomno1,
 		core::conformation::Residue const & res2,

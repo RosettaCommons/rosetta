@@ -10,8 +10,8 @@
 /// @file protocols/nonlocal/Region.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_NONLOCAL_REGION_HH_
-#define PROTOCOLS_NONLOCAL_REGION_HH_
+#ifndef INCLUDED_PROTOCOLS_NONLOCAL_REGION_HH
+#define INCLUDED_PROTOCOLS_NONLOCAL_REGION_HH
 
 // Unit header
 #include <protocols/nonlocal/Region.fwd.hh>

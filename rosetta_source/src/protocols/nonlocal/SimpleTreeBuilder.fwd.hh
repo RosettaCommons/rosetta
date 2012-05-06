@@ -10,8 +10,8 @@
 /// @file protocols/nonlocal/SimpleTreeBuilder.fwd.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_NONLOCAL_SIMPLE_TREE_BUILDER_fwd_hh
-#define PROTOCOLS_NONLOCAL_SIMPLE_TREE_BUILDER_fwd_hh
+#ifndef INCLUDED_PROTOCOLS_NONLOCAL_SIMPLETREEBUILDER_fwd_hh
+#define INCLUDED_PROTOCOLS_NONLOCAL_SIMPLETREEBUILDER_fwd_hh
 
 #include <utility/pointer/owning_ptr.fwd.hh>
 

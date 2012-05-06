@@ -14,8 +14,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_SWA_PoseSetup_HH
-#define INCLUDED_protocols_swa_SWA_PoseSetup_HH
+#ifndef INCLUDED_protocols_swa_StepWisePoseSetup_HH
+#define INCLUDED_protocols_swa_StepWisePoseSetup_HH
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>

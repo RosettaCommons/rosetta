@@ -12,8 +12,8 @@
 /// @author James Thompson
 
 
-#ifndef INCLUDED_core_scoring_constraints_HarmonicFunc_fwd_hh
-#define INCLUDED_core_scoring_constraints_HarmonicFunc_fwd_hh
+#ifndef INCLUDED_core_scoring_constraints_SigmoidFunc_fwd_hh
+#define INCLUDED_core_scoring_constraints_SigmoidFunc_fwd_hh
 
 #include <utility/pointer/owning_ptr.fwd.hh>
 

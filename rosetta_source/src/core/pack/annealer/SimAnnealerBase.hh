@@ -12,8 +12,8 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 
-#ifndef INCLIDED_rosetta_pack_annealer_SimAnnealerBase_HH
-#define INCLIDED_rosetta_pack_annealer_SimAnnealerBase_HH
+#ifndef INCLUDED_core_pack_annealer_SimAnnealerBase_HH
+#define INCLUDED_core_pack_annealer_SimAnnealerBase_HH
 
 // Unit Headers
 #include <core/pack/annealer/SimAnnealerBase.fwd.hh>

@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/feature/FeaturesReporterCreator.hh
+/// @file   protocols/feature/FeatureReporterCreator.hh
 /// @brief  Base class for FeaturesReporterCreators for the FeaturesReporter load-time factory registration scheme
 /// @author Matthew O'Meara
 
-#ifndef INCLUDED_protocols_features_FeaturesReporterCreator_hh
-#define INCLUDED_protocols_features_FeaturesReporterCreator_hh
+#ifndef INCLUDED_protocols_features_FeatureReporterCreator_hh
+#define INCLUDED_protocols_features_FeatureReporterCreator_hh
 
 // Unit Headers
 #include <protocols/features/FeaturesReporterCreator.fwd.hh>

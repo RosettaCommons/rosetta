@@ -12,15 +12,15 @@
 /// @brief
 /// @author tim
 
+#ifndef INCLUDED_protocols_jd2_message_listening_DbMoverMessageListener_hh
+#define INCLUDED_protocols_jd2_message_listening_DbMoverMessageListener_hh
+
 #include <protocols/jd2/message_listening/MessageListener.hh>
 
 #include <core/types.hh>
 
 #include <string>
 #include <map>
-
-#ifndef INCLUDED_protocols_jd2_message_listening_DbMoverMessageListener_hh
-#define INCLUDED_protocols_jd2_message_listening_DbMoverMessageListener_hh
 
 namespace protocols {
 namespace jd2 {

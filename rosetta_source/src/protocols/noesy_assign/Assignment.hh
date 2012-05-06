@@ -110,3 +110,5 @@ private:
 };
 
 extern PeakAssignment const BOGUS_ASSIGNMENT;
+
+#endif

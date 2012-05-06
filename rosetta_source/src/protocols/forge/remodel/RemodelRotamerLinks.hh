@@ -12,8 +12,8 @@
 //trigger the use of a FixbbLinkingRotamerAnnealer by pack_rotamers, which will
 //multiple sidechain substitutions in the sim annealing process
 
-#ifndef INCLUDED_protocols_forge_RemodelRotamerLinks_hh
-#define INCLUDED_protocols_forge_RemodelRotamerLinks_hh
+#ifndef INCLUDED_protocols_forge_remodel_RemodelRotamerLinks_hh
+#define INCLUDED_protocols_forge_remodel_RemodelRotamerLinks_hh
 
 #include <protocols/forge/remodel/RemodelRotamerLinks.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.hh>

@@ -11,8 +11,8 @@
 /// @brief  Pose forward declarations header
 /// @author Phil Bradley
 
-#ifndef INCLUDED_protocols_rna_CoarseRNA_LoopCloser_FWD_HH
-#define INCLUDED_protocols_rna_CoarseRNA_LoopCloser_FWD_HH
+#ifndef INCLUDED_protocols_coarse_rna_CoarseRNA_LoopCloser_FWD_HH
+#define INCLUDED_protocols_coarse_rna_CoarseRNA_LoopCloser_FWD_HH
 
 
 //Auto Headers

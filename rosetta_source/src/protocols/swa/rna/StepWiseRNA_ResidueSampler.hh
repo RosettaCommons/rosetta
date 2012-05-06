@@ -15,8 +15,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_SWA_ResidueSampler_HH
-#define INCLUDED_protocols_swa_SWA_ResidueSampler_HH
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_ResidueSampler_HH
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_ResidueSampler_HH
 
 //#include <numeric/xyzMatrix.hh>
 //#include <numeric/xyzVector.hh>
@@ -24,7 +24,7 @@
 #include <protocols/swa/rna/StepWiseRNA_VirtualRiboseSampler.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator_Wrapper.fwd.hh> 
+#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator_Wrapper.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_FloatingBase_Sampler_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.hh>     //Feb 02, 2012: Need this to pass rosetta_tools/python_cc_reader/test_all_headers_compile.py
 #include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.fwd.hh>
@@ -129,7 +129,7 @@ namespace rna {
 		void
 		set_include_syn_chi( bool const & setting){ include_syn_chi_=setting ; }
 
-		void 
+		void
 		set_allow_syn_pyrimidine(  bool const & setting){ allow_syn_pyrimidine_ =setting; }
 
 		void
@@ -146,7 +146,7 @@ namespace rna {
 
 		void
 		set_user_input_VDW_bin_screener(StepWiseRNA_VDW_Bin_ScreenerOP const & user_input_VDW_bin_screener){ user_input_VDW_bin_screener_= user_input_VDW_bin_screener; }
- 
+
 		void
 		set_extra_epsilon_rotamer( bool const & setting){ extra_epsilon_rotamer_ = setting; }
 
@@ -208,10 +208,10 @@ namespace rna {
 		Chain_break_screening_general( core::pose::Pose & chain_break_screening_pose, core::scoring::ScoreFunctionOP const & chainbreak_scorefxn, core::Size const five_prime_res);
 
 		void
-		standard_sampling_WRAPPER( core::pose::Pose & pose, 
-									     			  FloatingBaseChainClosureJobParameter const & prev_sugar_FB_JP, 
+		standard_sampling_WRAPPER( core::pose::Pose & pose,
+									     			  FloatingBaseChainClosureJobParameter const & prev_sugar_FB_JP,
 															FloatingBaseChainClosureJobParameter const & curr_sugar_FB_JP,
-								   		   			FloatingBaseChainClosureJobParameter const & five_prime_CB_sugar_FB_JP, 
+								   		   			FloatingBaseChainClosureJobParameter const & five_prime_CB_sugar_FB_JP,
 												     	FloatingBaseChainClosureJobParameter const & three_prime_CB_sugar_FB_JP);
 
 		void
@@ -229,8 +229,8 @@ namespace rna {
 																			core::pose::Pose & current_pose_screen,
 																			core::Real const & base_rep_score,
 																			core::Real const &  base_atr_score,
-																			core::Real & delta_rep_score, 
-																			core::Real & delta_atr_score,  
+																			core::Real & delta_rep_score,
+																			core::Real & delta_atr_score,
 																			core::Size const & gap_size,
 																			bool const & Is_internal);
 
@@ -240,8 +240,8 @@ namespace rna {
 																			core::pose::Pose & current_pose_screen,
 																			core::Real const & base_rep_score,
 																			core::Real const &  base_atr_score,
-																			core::Real & delta_rep_score, 
-																			core::Real & delta_atr_score, 
+																			core::Real & delta_rep_score,
+																			core::Real & delta_atr_score,
 																			core::Size const & gap_size,
 																			bool const & Is_internal);
 
@@ -285,14 +285,14 @@ namespace rna {
 
 		bool
 		Is_current_sugar_virtual( core::pose::Pose const & pose ) const;
-	
+
 		bool
 		Is_five_prime_chain_break_sugar_virtual( core::pose::Pose const & pose ) const;
 
 		bool
 		Is_three_prime_chain_break_sugar_virtual( core::pose::Pose const & pose ) const;
 
-		utility::vector1< pose_data_struct2 > 
+		utility::vector1< pose_data_struct2 >
 		previous_floating_base_chain_closure(core::pose::Pose & viewer_pose, FloatingBaseChainClosureJobParameter const & FB_job_params, std::string const name);
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -334,7 +334,7 @@ namespace rna {
 		bool medium_fast_;
 		bool integration_test_mode_;
 		bool floating_base_;
-	
+
 		StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener_;
 
 		bool parin_favorite_output_;
@@ -359,8 +359,8 @@ namespace rna {
 		bool debug_eplison_south_sugar_mode_;
 		bool exclude_alpha_beta_gamma_sampling_;
 		bool combine_long_loop_mode_;
-		bool do_not_sample_multiple_virtual_sugar_; 
-		bool sample_ONLY_multiple_virtual_sugar_; 
+		bool do_not_sample_multiple_virtual_sugar_;
+		bool sample_ONLY_multiple_virtual_sugar_;
 		bool assert_no_virt_ribose_sampling_;
 		bool output_pdb_;
 

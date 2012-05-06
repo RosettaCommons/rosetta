@@ -11,8 +11,8 @@
 /// @author Sam DeLuca
 /// @author Stephanie Hirst
 
-#ifndef INCLUDED_numeric_interpolation_util_HH_
-#define INCLUDED_numeric_interpolation_util_HH_
+#ifndef INCLUDED_numeric_interpolation_util_HH
+#define INCLUDED_numeric_interpolation_util_HH
 
 #include <numeric/interpolation/spline/SplineGenerator.hh>
 
@@ -24,4 +24,4 @@ spline::SplineGenerator spline_from_file(std::string const & filename, platform:
 }
 }
 
-#endif /* UTIL_HH_ */
+#endif /* INCLUDED_numeric_interpolation_util_HH */

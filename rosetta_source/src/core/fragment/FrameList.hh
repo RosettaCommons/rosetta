@@ -13,8 +13,8 @@
 /// @author Oliver Lange (olange@u.washington.edu)
 /// @date   Wed Oct 20 12:08:31 2007
 ///
-#ifndef core_fragments_FrameList_HH
-#define core_fragments_FrameList_HH
+#ifndef INCLUDED_core_fragment_FrameList_HH
+#define INCLUDED_core_fragment_FrameList_HH
 
 // Unit Headers
 #include <core/fragment/FrameList.fwd.hh>

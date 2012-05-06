@@ -12,8 +12,8 @@
 /// @brief
 /// @author Tim Jacobs
 
-#ifndef Rosetta_HelixBundleFeatures_hh
-#define Rosetta_HelixBundleFeatures_hh
+#ifndef INCLUDED_protocols_features_helixAssembly_HelixBundleFeatures_hh
+#define INCLUDED_protocols_features_helixAssembly_HelixBundleFeatures_hh
 
 //Unit
 #include <protocols/features/helixAssembly/HelixBundleFeatures.fwd.hh>
@@ -58,7 +58,7 @@ public:
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>
 	features_reporter_dependencies() const;
-	
+
 	///@brief collect all the feature data for the pose
 	virtual
 	core::Size

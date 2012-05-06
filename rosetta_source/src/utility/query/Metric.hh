@@ -15,8 +15,8 @@
 /// @date   Thu Aug  9 19:49:23 2007
 ///
 
-#ifndef utility_query_Metric_HH
-#define utility_query_Metric_HH
+#ifndef INCLUDED_utility_query_Metric_HH
+#define INCLUDED_utility_query_Metric_HH
 
 #include <core/types.hh>
 

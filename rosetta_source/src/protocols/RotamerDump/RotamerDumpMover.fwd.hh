@@ -10,8 +10,8 @@
 /// @file   /rotamerstats/src/protocols/RotamerDump/RotamerDumpMover.fwd.hh
 /// @author Sam DeLuca
 
-#ifndef protocols_RotamerDump_RotamerDumpMOver_FWD_HH_
-#define protocols_RotamerDump_RotamerDumpMOver_FWD_HH_
+#ifndef INCLUDED_protocols_RotamerDump_RotamerDumpMover_FWD_HH
+#define INCLUDED_protocols_RotamerDump_RotamerDumpMover_FWD_HH
 
 namespace protocols {
 namespace RotamerDump {

@@ -11,8 +11,8 @@
 /// @brief Add constraints to the current pose conformation.
 /// @author Yifan Song
 
-#ifndef INCLUDED_protocols_moves_ClearConstraintsMover_hh
-#define INCLUDED_protocols_moves_ClearConstraintsMover_hh
+#ifndef INCLUDED_protocols_simple_moves_ClearConstraintsMover_hh
+#define INCLUDED_protocols_simple_moves_ClearConstraintsMover_hh
 
 #include <protocols/moves/Mover.hh>
 
@@ -23,7 +23,7 @@ class ClearConstraintsMover : public moves::Mover {
 public:
 	ClearConstraintsMover();
 	virtual ~ClearConstraintsMover();
-	
+
 	virtual void apply( Pose & );
 	virtual std::string get_name() const;
 

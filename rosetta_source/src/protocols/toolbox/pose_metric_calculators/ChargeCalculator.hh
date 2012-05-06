@@ -9,8 +9,8 @@
 /// @author Florian Richter, floric@u.washington.edu, nov 2010
 
 
-#ifndef INCLUDED_protocols_toolbox_PoseMetricCalculators_ChargeCalculator_HH
-#define INCLUDED_protocols_toolbox_PoseMetricCalculators_ChargeCalculator_HH
+#ifndef INCLUDED_protocols_toolbox_pose_metric_calculators_ChargeCalculator_HH
+#define INCLUDED_protocols_toolbox_pose_metric_calculators_ChargeCalculator_HH
 
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 #include <core/pose/Pose.fwd.hh>

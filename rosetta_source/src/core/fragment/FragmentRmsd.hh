@@ -10,8 +10,8 @@
 /// @file core/fragment/FragmentRmsd.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef CORE_FRAGMENT_FRAGMENT_RMSD_HH_
-#define CORE_FRAGMENT_FRAGMENT_RMSD_HH_
+#ifndef INCLUDED_CORE_FRAGMENT_FRAGMENTRMSD_HH
+#define INCLUDED_CORE_FRAGMENT_FRAGMENTRMSD_HH
 
 // Unit header
 #include <core/fragment/FragmentRmsd.fwd.hh>

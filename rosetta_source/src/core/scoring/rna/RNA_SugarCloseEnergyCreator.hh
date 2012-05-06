@@ -11,8 +11,8 @@
 /// @brief  Declaration for the class that connects RNA_SugarCloseEnergy with the ScoringManager
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_core_scoring_methods_RNA_SugarCloseEnergyCreator_HH
-#define INCLUDED_core_scoring_methods_RNA_SugarCloseEnergyCreator_HH
+#ifndef INCLUDED_core_scoring_rna_RNA_SugarCloseEnergyCreator_HH
+#define INCLUDED_core_scoring_rna_RNA_SugarCloseEnergyCreator_HH
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 

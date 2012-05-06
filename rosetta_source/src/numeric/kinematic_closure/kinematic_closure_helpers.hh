@@ -11,8 +11,8 @@
 /// @brief  Header file for kinematic_closure_helpers.cc
 /// @author Daniel J. Mandell
 
-#ifndef INCLUDE_src_numeric_kinematic_closure_kinematic_closure_helpers_hh
-#define INCLUDE_src_numeric_kinematic_closure_kinematic_closure_helpers_hh
+#ifndef INCLUDED_numeric_kinematic_closure_kinematic_closure_helpers_hh
+#define INCLUDED_numeric_kinematic_closure_kinematic_closure_helpers_hh
 
 // Rosetta Headers
 #include <numeric/types.hh>

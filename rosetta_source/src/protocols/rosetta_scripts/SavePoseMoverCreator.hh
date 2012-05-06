@@ -11,8 +11,8 @@
 ///@brief This class will create instances of Mover SavePoseMover for the MoverFactory
 ///@author Florian Richter
 
-#ifndef INCLUDED_protocols_moves_SavePoseMoverCreator_hh
-#define INCLUDED_protocols_moves_SavePoseMoverCreator_hh
+#ifndef INCLUDED_protocols_rosetta_scripts_SavePoseMoverCreator_hh
+#define INCLUDED_protocols_rosetta_scripts_SavePoseMoverCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 

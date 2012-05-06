@@ -14,8 +14,8 @@
 /// @date   Wed Aug 22 12:08:31 2007
 ///
 
-#ifndef core_fragments_FragSetCollection_HH
-#define core_fragments_FragSetCollection_HH
+#ifndef INCLUDED_core_fragment_FragSetCollection_HH
+#define INCLUDED_core_fragment_FragSetCollection_HH
 
 // Unit Headers
 #include <core/fragment/FragSetCollection.fwd.hh>

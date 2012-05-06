@@ -10,8 +10,8 @@
 /// @file protocols/medal/MedalExchangeMover.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_MEDAL_MEDAL_EXCHANGE_MOVER_HH_
-#define PROTOCOLS_MEDAL_MEDAL_EXCHANGE_MOVER_HH_
+#ifndef INCLUDED_PROTOCOLS_MEDAL_MEDALEXCHANGEMOVER_HH
+#define INCLUDED_PROTOCOLS_MEDAL_MEDALEXCHANGEMOVER_HH
 
 // Unit header
 #include <protocols/medal/MedalExchangeMover.fwd.hh>

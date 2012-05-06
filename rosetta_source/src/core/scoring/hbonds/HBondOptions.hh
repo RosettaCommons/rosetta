@@ -21,8 +21,8 @@
 /// 6) add it to HBondOptions::show
 
 
-#ifndef INCLUDE_core_scoring_hbonds_HBondOptions_HH
-#define INCLUDE_core_scoring_hbonds_HBondOptions_HH
+#ifndef INCLUDED_core_scoring_hbonds_HBondOptions_HH
+#define INCLUDED_core_scoring_hbonds_HBondOptions_HH
 
 // Unit headers
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>

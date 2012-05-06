@@ -11,16 +11,16 @@
 /// @brief
 /// @author Oliver Lange (oliver.lange@tum.de)
 
-#ifndef INCLUDED_protocols_docking_TemperedDocking_fwd_hh
-#define INCLUDED_protocols_docking_TemperedDocking_fwd_hh
+#ifndef INCLUDED_protocols_docking_DockSetupMover_fwd_hh
+#define INCLUDED_protocols_docking_DockSetupMover_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace docking {
 
-class TemperedDocking;
-typedef utility::pointer::owning_ptr< TemperedDocking > TemperedDockingOP;
+class DockingSetupMover;
+typedef utility::pointer::owning_ptr< DockingSetupMover > DockingSetupMoverOP;
 
 }
 }

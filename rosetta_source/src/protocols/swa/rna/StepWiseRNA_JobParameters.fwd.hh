@@ -11,10 +11,10 @@
 /// @brief  Various OPS for various classes.
 /// @author Rhiju Das
 
-#include <utility/pointer/owning_ptr.hh>
-
 #ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_JobParameters_fwd_hh
 #define INCLUDED_protocols_swa_rna_StepWiseRNA_JobParameters_fwd_hh
+
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols{
 namespace swa{

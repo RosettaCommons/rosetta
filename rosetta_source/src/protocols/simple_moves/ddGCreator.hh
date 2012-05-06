@@ -11,23 +11,23 @@
 /// @brief  Declaration of the ddGCreator class for the ddG mover
 /// @author Sam DeLuca (sam@decarboxy.com)
 
-#ifndef INCLUDED_protocols_protein_interface_design_movers_ddGCreator_hh
-#define INCLUDED_protocols_protein_interface_design_movers_ddGCreator_hh
+#ifndef INCLUDED_protocols_simple_moves_ddGCreator_hh
+#define INCLUDED_protocols_simple_moves_ddGCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
 namespace simple_moves {
-	
+
 class ddGCreator : public moves::MoverCreator
 {
 public:
 	virtual moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
 	static  std::string mover_name();
-	
+
 };
-	
+
 }
 }
 

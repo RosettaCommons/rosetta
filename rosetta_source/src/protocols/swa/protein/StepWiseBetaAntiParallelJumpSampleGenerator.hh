@@ -15,8 +15,8 @@
 /// @author Parin Sripakdeevong
 
 
-#ifndef INCLUDED_protocols_swa_SWA_BetaAntiParallelJumpSampleGenerator_HH
-#define INCLUDED_protocols_swa_SWA_BetaAntiParallelJumpSampleGenerator_HH
+#ifndef INCLUDED_protocols_swa_protein_StepWiseBetaAntiParallelJumpSampleGenerator_HH
+#define INCLUDED_protocols_swa_protein_StepWiseBetaAntiParallelJumpSampleGenerator_HH
 
 #include <protocols/swa/protein/StepWiseProteinJumpSampleGenerator.hh>
 #include <core/pose/Pose.fwd.hh>

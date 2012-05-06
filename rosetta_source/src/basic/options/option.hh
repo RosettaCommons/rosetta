@@ -11,6 +11,9 @@
 /// @brief  Program options global and initialization function
 /// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
 
+#ifndef INCLUDED_basic_options_option_hh
+#define INCLUDED_basic_options_option_hh
+
 // Utility headers
 #include <utility/options/OptionCollection.hh>
 
@@ -142,9 +145,6 @@
 #include <string>
 #include <utility>
 #include <vector>
-
-#ifndef INCLUDED_basic_options_option_hh
-#define INCLUDED_basic_options_option_hh
 
 namespace basic {
 namespace options {

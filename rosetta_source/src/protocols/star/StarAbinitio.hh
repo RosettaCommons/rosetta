@@ -10,8 +10,8 @@
 /// @file protocols/star/StarAbinitio.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_STAR_STAR_ABINITIO_HH_
-#define PROTOCOLS_STAR_STAR_ABINITIO_HH_
+#ifndef INCLUDED_PROTOCOLS_STAR_STARABINITIO_HH
+#define INCLUDED_PROTOCOLS_STAR_STARABINITIO_HH
 
 // Unit header
 #include <protocols/star/StarAbinitio.fwd.hh>

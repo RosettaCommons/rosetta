@@ -12,8 +12,8 @@
 /// @brief
 /// @author Sagar Khare (khares@uw.edu)
 
-#ifndef INCLUDE_src_protocols_enzdes_EnzRepackMinimize_fwd_hh
-#define INCLUDE_src_protocols_enzdes_EnzRepackMinimize_fwd_hh
+#ifndef INCLUDED_protocols_enzdes_EnzRepackMinimize_fwd_hh
+#define INCLUDED_protocols_enzdes_EnzRepackMinimize_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 

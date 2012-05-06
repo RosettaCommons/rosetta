@@ -13,8 +13,8 @@
 /// @author Sam DeLuca
 
 
-#ifndef CORE_chemical_sdf_ctab_parser_HH_
-#define CORE_chemical_sdf_ctab_parser_HH_
+#ifndef INCLUDED_CORE_chemical_sdf_ctab_parser_HH
+#define INCLUDED_CORE_chemical_sdf_ctab_parser_HH
 
 #include <string>
 #include <map>

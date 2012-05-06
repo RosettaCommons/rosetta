@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/protein_interface_design/filters/FilterScanFilter.fwd.hh
+/// @file   protocols/protein_interface_design/filters/FilterScan.fwd.hh
 /// @brief  forward declaration for FilterScanFilter
 /// @author  Sarel Fleishman sarelf@uw.edu
 
 
-#ifndef INCLUDED_protocols_protein_interface_design_filters_FilterScanFilter_fwd_hh
-#define INCLUDED_protocols_protein_interface_design_filters_FilterScanFilter_fwd_hh
+#ifndef INCLUDED_protocols_protein_interface_design_filters_FilterScan_fwd_hh
+#define INCLUDED_protocols_protein_interface_design_filters_FilterScan_fwd_hh
 
 
 // Utility headers

@@ -12,8 +12,8 @@
 /// @author Evangelos A. Coutsias
 /// @author Daniel J. Mandell
 
-#ifndef INCLUDE_src_numeric_kinematic_closure_dixon_hh
-#define INCLUDE_src_numeric_kinematic_closure_dixon_hh
+#ifndef INCLUDED_numeric_kinematic_closure_dixon_hh
+#define INCLUDED_numeric_kinematic_closure_dixon_hh
 
 // Rosetta Headers
 #include <numeric/types.hh>

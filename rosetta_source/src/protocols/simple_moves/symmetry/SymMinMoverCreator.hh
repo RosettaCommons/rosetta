@@ -11,8 +11,8 @@
 ///@brief This class will create instances of protocols::moves::Mover MinMover for the protocols::moves::MoverFactory
 ///@author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_simple_moves_SymMinMoverCreator_hh
-#define INCLUDED_protocols_simple_moves_SymMinMoverCreator_hh
+#ifndef INCLUDED_protocols_simple_moves_symmetry_SymMinMoverCreator_hh
+#define INCLUDED_protocols_simple_moves_symmetry_SymMinMoverCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 

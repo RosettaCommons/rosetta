@@ -11,8 +11,8 @@
 /// @brief  does implicit fast clash checking WRT the provided pose
 /// @author Will Sheffler (will@sheffler.me)
 
-#ifndef INCLUDED_protocols_scoring_methods_ImplicitFastClashCheck_fwd_hh
-#define INCLUDED_protocols_scoring_methods_ImplicitFastClashCheck_fwd_hh
+#ifndef INCLUDED_protocols_scoring_ImplicitFastClashCheck_fwd_hh
+#define INCLUDED_protocols_scoring_ImplicitFastClashCheck_fwd_hh
 
 
 #include <utility/pointer/access_ptr.hh>

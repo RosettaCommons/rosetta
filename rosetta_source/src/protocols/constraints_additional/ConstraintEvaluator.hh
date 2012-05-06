@@ -17,8 +17,8 @@
 
 
 
-#ifndef INCLUDED_protocols_evaluation_ConstraintEvaluator_hh
-#define INCLUDED_protocols_evaluation_ConstraintEvaluator_hh
+#ifndef INCLUDED_protocols_constraints_additional_ConstraintEvaluator_hh
+#define INCLUDED_protocols_constraints_additional_ConstraintEvaluator_hh
 
 #include <protocols/constraints_additional/ConstraintEvaluator.fwd.hh>
 

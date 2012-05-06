@@ -11,6 +11,9 @@
 /// @brief  Librarian template for sorting through and extracting desired fragments
 /// @author Yih-En Andrew Ban (yab@u.washington.edu)
 
+#ifndef INCLUDED_core_fragment_picking_old_concepts_Librarian_hh
+#define INCLUDED_core_fragment_picking_old_concepts_Librarian_hh
+
 // unit headers
 #include <core/fragment/picking_old/concepts/Librarian.fwd.hh>
 
@@ -27,12 +30,6 @@
 
 #include <utility/vector1.fwd.hh>
 #include <utility/pointer/owning_ptr.fwd.hh>
-
-
-
-#ifndef INCLUDED_core_fragment_picking_old_concepts_Librarian_hh
-#define INCLUDED_core_fragment_picking_old_concepts_Librarian_hh
-
 
 namespace core {
 namespace fragment {

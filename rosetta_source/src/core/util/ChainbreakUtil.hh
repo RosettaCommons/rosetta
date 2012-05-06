@@ -10,8 +10,8 @@
 /// @file protocols/nonlocal/Region.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef CORE_UTIL_CHAINBREAK_UTIL_HH_
-#define CORE_UTIL_CHAINBREAK_UTIL_HH_
+#ifndef INCLUDED_CORE_UTIL_CHAINBREAKUTIL_HH
+#define INCLUDED_CORE_UTIL_CHAINBREAKUTIL_HH
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>

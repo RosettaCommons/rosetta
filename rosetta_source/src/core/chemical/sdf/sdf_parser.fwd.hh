@@ -13,8 +13,8 @@
 /// @author Sam DeLuca
 
 
-#ifndef INCLUDED_core_chemical_sdf_sdf_parser_FWD_HH_
-#define INCLUDED_core_chemical_sdf_sdf_parser_FWD_HH_
+#ifndef INCLUDED_core_chemical_sdf_sdf_parser_FWD_HH
+#define INCLUDED_core_chemical_sdf_sdf_parser_FWD_HH
 
 namespace core {
 namespace chemical {

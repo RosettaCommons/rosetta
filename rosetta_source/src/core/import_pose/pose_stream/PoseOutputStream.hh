@@ -12,8 +12,8 @@
 /// @author James Thompson
 
 
-#ifndef core_io_pose_stream_PoseOutputStream_HH
-#define core_io_pose_stream_PoseOutputStream_HH
+#ifndef INCLUDED_core_import_pose_pose_stream_PoseOutputStream_HH
+#define INCLUDED_core_import_pose_pose_stream_PoseOutputStream_HH
 
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>

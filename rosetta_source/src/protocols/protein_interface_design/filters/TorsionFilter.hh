@@ -11,8 +11,8 @@
 /// @brief Reports the average degree of connectivity of interface residues
 /// @author Sarel Fleishman (sarelf@uw.edu)
 
-#ifndef INCLUDED_protocols_protein_interface_design_filters_Torsion_hh
-#define INCLUDED_protocols_protein_interface_design_filters_Torsion_hh
+#ifndef INCLUDED_protocols_protein_interface_design_filters_TorsionFilter_hh
+#define INCLUDED_protocols_protein_interface_design_filters_TorsionFilter_hh
 
 
 // Project Headers

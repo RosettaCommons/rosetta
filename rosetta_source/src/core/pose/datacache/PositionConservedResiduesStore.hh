@@ -10,8 +10,8 @@
 /// @file core/pose/datacache/PositionConservedResiduesStore.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef CORE_POSE_DATACACHE_POSITIONCONSERVEDRESIDUESSTORE_HH_
-#define CORE_POSE_DATACACHE_POSITIONCONSERVEDRESIDUESSTORE_HH_
+#ifndef INCLUDED_CORE_POSE_DATACACHE_POSITIONCONSERVEDRESIDUESSTORE_HH
+#define INCLUDED_CORE_POSE_DATACACHE_POSITIONCONSERVEDRESIDUESSTORE_HH
 
 // Unit header
 #include <core/pose/datacache/PositionConservedResiduesStore.fwd.hh>

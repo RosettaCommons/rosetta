@@ -14,8 +14,8 @@
 /// @author James Thompson
 /// @date   Wed Oct 20 12:08:31 2007
 ///
-#ifndef core_fragments_Frame_HH
-#define core_fragments_Frame_HH
+#ifndef INCLUDED_core_fragment_Frame_HH
+#define INCLUDED_core_fragment_Frame_HH
 
 // Unit Headers
 #include <core/fragment/Frame.fwd.hh>

@@ -10,8 +10,8 @@
 /// @file protocols/moves/CyclicMover.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_MOVES_CYCLIC_MOVER_HH_
-#define PROTOCOLS_MOVES_CYCLIC_MOVER_HH_
+#ifndef INCLUDED_PROTOCOLS_MOVES_CYCLICMOVER_HH
+#define INCLUDED_PROTOCOLS_MOVES_CYCLICMOVER_HH
 
 // Unit header
 #include <protocols/moves/CyclicMover.fwd.hh>

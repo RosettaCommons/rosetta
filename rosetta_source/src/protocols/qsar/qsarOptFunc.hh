@@ -10,8 +10,8 @@
 /// @file   src/protocols/qsar/qsarOptFunc.hh
 /// @author Sam DeLuca
 
-#ifndef INCLUDED_protocols_qsar_qsarOptFunc_HH_
-#define INCLUDED_protocols_qsar_qsarOptFunc_HH_
+#ifndef INCLUDED_protocols_qsar_qsarOptFunc_HH
+#define INCLUDED_protocols_qsar_qsarOptFunc_HH
 
 #include <core/optimization/Multifunc.hh>
 #include <protocols/qsar/qsarOptFunc.fwd.hh>

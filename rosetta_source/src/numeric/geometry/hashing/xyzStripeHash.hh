@@ -1,3 +1,12 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
 #ifndef INCLUDED_numeric_geometry_hashing_xyzStripeHash_hh
 #define INCLUDED_numeric_geometry_hashing_xyzStripeHash_hh
 
@@ -128,7 +137,7 @@ public:
     translation_.z() = FUDGE - zmn;
 		xmx_ = xmx-xmn+FUDGE+grid_size_;
 		ymx_ = ymx-ymn+FUDGE+grid_size_;
-		zmx_ = zmx-zmn+FUDGE+grid_size_;				
+		zmx_ = zmx-zmn+FUDGE+grid_size_;
     // for(int iz = 0; iz < zdim(); ++iz) for(int iy = 0; iy < ydim(); ++iy) for(int ix = 0; ix < xdim(); ++ix) {
     //       int i = ix+xdim_*iy+xdim_*ydim_*iz;
     //       TR<<"GRID CELL "<<ix<<" "<<iy<<" "<<iz<<std::endl;
@@ -175,7 +184,7 @@ public:
     v = v+translation_;
     T x = v.x(); T y = v.y(); T z = v.z();
 		if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return 0; // worth it iff
-		if( x > xmx_ || y > ymx_ || z > zmx_ ) return 0;                      // worth it iff 
+		if( x > xmx_ || y > ymx_ || z > zmx_ ) return 0;                      // worth it iff
     int count = 0;
     int const ix   = (x<0) ? 0 : numeric::min(xdim_-1,(int)(x/grid_size_));
     int const iy0  = (y<0) ? 0 : y/grid_size_;
@@ -190,7 +199,7 @@ public:
 				assert(ig < xdim_*ydim_*zdim_);
 				assert(ix < xdim_);
 				assert(iy < ydim_);
-				assert(iz < zdim_);				
+				assert(iz < zdim_);
         int const igl = grid_stripe_[ig].x;
         int const igu = grid_stripe_[ig].y;
         for(int i = igl; i < igu; ++i) {
@@ -219,7 +228,7 @@ public:
 				assert(ig < xdim_*ydim_*zdim_);
 				assert(ix < xdim_);
 				assert(iy < ydim_);
-				assert(iz < zdim_);				
+				assert(iz < zdim_);
         int const igl = grid_stripe_[ig].x;
         int const igu = grid_stripe_[ig].y;
         for(int i = igl; i < igu; ++i) {

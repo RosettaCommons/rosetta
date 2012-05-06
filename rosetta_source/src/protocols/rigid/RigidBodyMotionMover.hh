@@ -10,8 +10,8 @@
 /// @file protocols/rigid/RigidBodyMotionMover.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_RIGID_RIGID_BODY_MOTION_MOVER_HH_
-#define PROTOCOLS_RIGID_RIGID_BODY_MOTION_MOVER_HH_
+#ifndef INCLUDED_PROTOCOLS_RIGID_RIGIDBODYMOTIONMOVER_HH
+#define INCLUDED_PROTOCOLS_RIGID_RIGIDBODYMOTIONMOVER_HH
 
 // Unit header
 #include <protocols/rigid/RigidBodyMotionMover.fwd.hh>

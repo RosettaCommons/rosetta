@@ -11,8 +11,8 @@
 /// @brief Add constraints to the current pose conformation.
 /// @author Yifan Song
 
-#ifndef INCLUDED_protocols_moves_AddConstraintsToCurrentConformationMover_hh
-#define INCLUDED_protocols_moves_AddConstraintsToCurrentConformationMover_hh
+#ifndef INCLUDED_protocols_simple_moves_AddConstraintsToCurrentConformationMover_hh
+#define INCLUDED_protocols_simple_moves_AddConstraintsToCurrentConformationMover_hh
 
 #include <protocols/moves/Mover.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
@@ -28,7 +28,7 @@ public:
 
 	AddConstraintsToCurrentConformationMover();
 	virtual ~AddConstraintsToCurrentConformationMover();
-		
+
 	virtual void apply( core::pose::Pose & );
 	virtual std::string get_name() const;
 
@@ -36,7 +36,7 @@ public:
 
 	virtual moves::MoverOP clone() const;
 	virtual moves::MoverOP fresh_instance() const;
-	
+
 	virtual void
 	parse_my_tag( TagPtr const, moves::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & );
 
@@ -47,7 +47,7 @@ public:
 									   Filters_map const &,
 									   moves::Movers_map const &,
 									   Pose const & );
-	
+
 private:
 	// pointers to data that are passed in
 	TaskFactoryCOP task_factory_;

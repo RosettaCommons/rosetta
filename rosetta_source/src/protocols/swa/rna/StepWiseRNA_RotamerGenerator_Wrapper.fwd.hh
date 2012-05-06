@@ -12,10 +12,10 @@
 /// @author Rhiju Das
 /// @author Parin Sripakdeevong
 
-#include <utility/pointer/owning_ptr.hh>
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_RotamerGenerator_Wrapper_FWD_HH
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_RotamerGenerator_Wrapper_FWD_HH
 
-#ifndef INCLUDED_protocols_STEPWISE_ROTAMER_GENERATOR_WRAPPER_FWD_HH
-#define INCLUDED_protocols_STEPWISE_ROTAMER_GENERATOR_WRAPPER_FWD_HH
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols{
 namespace swa{

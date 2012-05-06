@@ -12,6 +12,9 @@
 /// @brief
 /// @author tim
 
+#ifndef INCLUDED_protocols_features_BatchFeatures_HH
+#define INCLUDED_protocols_features_BatchFeatures_HH
+
 // Unit Headers
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/BatchFeatures.fwd.hh>
@@ -24,10 +27,6 @@
 #include <string>
 
 #include <utility/vector1.hh>
-
-
-#ifndef INCLUDED_protocols_features_BatchFeatures_HH
-#define INCLUDED_protocols_features_BatchFeatures_HH
 
 namespace protocols{
 namespace features{

@@ -12,8 +12,8 @@
 
 
 
-#ifndef INCLUDE_utility_sql_database_sqlite3_interface_HH
-#define INCLUDE_utility_sql_database_sqlite3_interface_HH
+#ifndef INCLUDED_utility_sql_database_sqlite3_interface_HH
+#define INCLUDED_utility_sql_database_sqlite3_interface_HH
 
 // Unit Headers
 #include <utility/sql_database/sqlite3_interface.fwd.hh>
@@ -219,4 +219,4 @@ private:
 
 #endif // DB_SQLITE3
 
-#endif // INCLUDE_utility_sql_database_sqlite3_interface_HH
+#endif // INCLUDED_utility_sql_database_sqlite3_interface_HH

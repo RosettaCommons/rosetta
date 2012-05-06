@@ -12,8 +12,8 @@
 /// @brief
 /// @author Andrew Leaver-Fay
 
-#ifndef INCLUDE_src_utility_FixedSizeLexicographicalIterator_tmpl_hh
-#define INCLUDE_src_utility_FixedSizeLexicographicalIterator_tmpl_hh
+#ifndef INCLUDED_utility_FixedSizeLexicographicalIterator_tmpl_hh
+#define INCLUDED_utility_FixedSizeLexicographicalIterator_tmpl_hh
 
 // Unit headers
 #include <utility/FixedSizeLexicographicalIterator.hh>

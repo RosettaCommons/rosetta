@@ -11,7 +11,7 @@
 /// @author Christopher Miles (cmiles@uw.edu)
 
 #ifndef INCLUDED_protocols_simple_moves_ExtendedPoseMover_FWD_HH
-#define INCLUDED_protocols_simple_simple_moves_ExtendedPoseMover_FWD_HH
+#define INCLUDED_protocols_simple_moves_ExtendedPoseMover_FWD_HH
 
 #include <utility/pointer/owning_ptr.fwd.hh>
 

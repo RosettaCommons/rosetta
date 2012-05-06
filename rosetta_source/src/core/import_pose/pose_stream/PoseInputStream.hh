@@ -12,8 +12,8 @@
 /// @author James Thompson
 
 
-#ifndef core_io_pose_stream_PoseInputStream_HH
-#define core_io_pose_stream_PoseInputStream_HH
+#ifndef INCLUDED_core_import_pose_pose_stream_PoseInputStream_HH
+#define INCLUDED_core_import_pose_pose_stream_PoseInputStream_HH
 
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>

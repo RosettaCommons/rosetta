@@ -15,8 +15,8 @@
 ///
 
 
-#ifndef protocols_simple_moves_WobbleMover_HH
-#define protocols_simple_moves_WobbleMover_HH
+#ifndef INCLUDED_protocols_simple_moves_WobbleMover_HH
+#define INCLUDED_protocols_simple_moves_WobbleMover_HH
 
 // Unit Headers There needs to be a forward header for this class.
 /// #include <protocols/abinitio/WobbleMover.fwd.hh>

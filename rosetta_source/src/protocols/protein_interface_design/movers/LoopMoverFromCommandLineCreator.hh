@@ -11,8 +11,8 @@
 /// @brief  Declaration of the MoverCreator class for the LoopRemodelFromCommandLine
 /// @author Jordan Willis(jordan.r.willis@vanderbilt.edu)
 
-#ifndef INCLUDED_protocols_moves_LoopMoverFromCommandLineCreator_HH
-#define INCLUDED_protocols_moves_LoopMoverFromCommandLineCreator_HH
+#ifndef INCLUDED_protocols_protein_interface_design_movers_LoopMoverFromCommandLineCreator_HH
+#define INCLUDED_protocols_protein_interface_design_movers_LoopMoverFromCommandLineCreator_HH
 
 // Project headers
 #include <protocols/moves/MoverCreator.hh>

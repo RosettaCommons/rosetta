@@ -10,8 +10,8 @@
 /// @file protocols/abinitio/DomainAssembly.hh
 /// @author Sarel Fleishman (sarelf@u.washington.edu), Jacob Corn (jecorn@u.washington.edu)
 
-#ifndef INCLUDED_abinitio_movers_DomainAssembly_hh
-#define INCLUDED_abinitio_movers_DomainAssembly_hh
+#ifndef INCLUDED_protocols_abinitio_DomainAssembly_hh
+#define INCLUDED_protocols_abinitio_DomainAssembly_hh
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>

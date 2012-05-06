@@ -13,8 +13,8 @@
 ///         for the sequence being designed.
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocolspack_daemon_DynamicAggregateFunction_hh
-#define INCLUDED_protocolspack_daemon_DynamicAggregateFunction_hh
+#ifndef INCLUDED_protocols_pack_daemon_DynamicAggregateFunction_hh
+#define INCLUDED_protocols_pack_daemon_DynamicAggregateFunction_hh
 
 // Unit headers
 #include <protocols/pack_daemon/DynamicAggregateFunction.fwd.hh>
@@ -721,7 +721,7 @@ private:
 	);
 
 	/// @brief used to determine the number of requested NPD properties that will be
-	/// calculated; used to size the variable_expressions_for_npd_properties_ array. 
+	/// calculated; used to size the variable_expressions_for_npd_properties_ array.
 	Size count_num_npd_properties() const;
 
 private:

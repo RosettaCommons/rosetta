@@ -10,7 +10,8 @@
 /// @file protocols/vip/VIP_Utils.hh
 /// @brief
 
-
+#ifndef INCLUDED_protocols_vip_VIP_Utils_HH
+#define INCLUDED_protocols_vip_VIP_Utils_HH
 
 #include "core/scoring/packstat/types.hh"
 #include "core/scoring/packstat/SimplePDB_Atom.hh"
@@ -56,3 +57,4 @@ core::Real output_packstat( core::pose::Pose & );
 void set_local_movemap( core::pose::Pose & pose, core::Size position, core::kinematics::MoveMapOP mmap );
 
 }}
+#endif

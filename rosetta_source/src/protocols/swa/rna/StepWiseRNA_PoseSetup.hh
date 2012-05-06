@@ -15,8 +15,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_SWA_PoseSetup_hh
-#define INCLUDED_protocols_swa_SWA_PoseSetup_hh
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_PoseSetup_hh
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_PoseSetup_hh
 
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -51,7 +51,7 @@ namespace rna {
 
 		/////////////////////////////////////////////////////////////////////////
 
-	  virtual void apply( core::pose::Pose & pose);    
+	  virtual void apply( core::pose::Pose & pose);
 
 		virtual std::string get_name() const;
 
@@ -65,7 +65,7 @@ namespace rna {
 		set_bulge_res( utility::vector1 < core::Size > const & bulge_res ){ bulge_res_ = bulge_res; }
 
 		void
-		set_virtual_res( utility::vector1 < core::Size > const & virtual_res_list){ virtual_res_list_ = virtual_res_list; } 	
+		set_virtual_res( utility::vector1 < core::Size > const & virtual_res_list){ virtual_res_list_ = virtual_res_list; }
 
 		void
 		set_native_virtual_res( utility::vector1 < core::Size > const & native_virtual_res_list ){ native_virtual_res_list_ = native_virtual_res_list; } //Parin Mar 22, 2010
@@ -75,7 +75,7 @@ namespace rna {
 
 		void
 		set_verbose( bool const setting){ verbose_=setting;}
-		
+
 		void
 		setup_native_pose( core::pose::Pose & pose );
 
@@ -117,7 +117,7 @@ namespace rna {
 		core::Real
 		get_nearest_dist_to_O2star( core::Size const O2star_seq_num, core::pose::Pose const & input_pose, utility::vector1< core::Size > const input_res_list , utility::vector1< core::Size > const & common_res_list);
 
-		//void 
+		//void
 		//ensure_idealize_bond_length_bond_angle_at_cutpoint( core::pose::Pose & working_pose);
 
 		void
@@ -126,7 +126,7 @@ namespace rna {
 		void
 		verify_protonated_H1_adenosine_variants( core::pose::Pose & pose ) const;
 
-		void 
+		void
 		add_aa_virt_rsd_as_root( core::pose::Pose & pose );
 
 	private:
@@ -144,7 +144,7 @@ namespace rna {
 		utility::vector1< Size > virtual_res_list_;
 		utility::vector1< Size > native_virtual_res_list_;
 
-		bool rebuild_bulge_mode_; 
+		bool rebuild_bulge_mode_;
 		bool output_pdb_;
 
 	};

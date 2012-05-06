@@ -10,8 +10,8 @@
 /// @file   src/protocols/qsar/scoring_grid/HbaGridCreator.hh
 /// @author Sam DeLuca
 
-#ifndef INCLUDED_protocols_qsar_scoring_grid_HbaGridCreator_HH_
-#define INCLUDED_protocols_qsar_scoring_grid_HbaGridCreator_HH_
+#ifndef INCLUDED_protocols_qsar_scoring_grid_HbaGridCreator_HH
+#define INCLUDED_protocols_qsar_scoring_grid_HbaGridCreator_HH
 
 #include <protocols/qsar/scoring_grid/GridCreator.hh>
 #include <utility/tag/Tag.fwd.hh>

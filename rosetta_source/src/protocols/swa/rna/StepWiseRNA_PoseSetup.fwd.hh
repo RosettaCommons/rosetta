@@ -11,11 +11,10 @@
 /// @author Rhiju Das
 /// @author Parin Sripakdeevong
 
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_PoseSetup_FWD_HH
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_PoseSetup_FWD_HH
+
 #include <utility/pointer/owning_ptr.hh>
-
-#ifndef INCLUDED_protocols_swa_SWA_PoseSetup_FWD_HH
-#define INCLUDED_protocols_swa_SWA_PoseSetup_FWD_HH
-
 
 namespace protocols{
 namespace swa{

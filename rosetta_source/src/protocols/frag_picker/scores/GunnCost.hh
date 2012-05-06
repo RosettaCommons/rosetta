@@ -13,8 +13,8 @@
 /// @date   Wed Aug 22 12:08:31 2007
 ///
 
-#ifndef protocols_frag_picker_scores_GunnCost_HH
-#define protocols_frag_picker_scores_GunnCost_HH
+#ifndef INCLUDED_protocols_frag_picker_scores_GunnCost_HH
+#define INCLUDED_protocols_frag_picker_scores_GunnCost_HH
 
 
 // Project Headers

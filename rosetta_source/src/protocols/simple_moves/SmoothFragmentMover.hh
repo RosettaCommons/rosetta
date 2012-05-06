@@ -15,8 +15,8 @@
 ///
 
 
-#ifndef protocols_fragments_SmoothFragmentMover_HH
-#define protocols_fragments_SmoothFragmentMover_HH
+#ifndef INCLUDED_protocols_simple_moves_SmoothFragmentMover_HH
+#define INCLUDED_protocols_simple_moves_SmoothFragmentMover_HH
 
 // Unit Headers
 #include <protocols/simple_moves/SmoothFragmentMover.fwd.hh>

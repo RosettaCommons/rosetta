@@ -23,8 +23,8 @@
 /// @author Joerg Schaarschmidt
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef INCLUDED_protocols_moves_ContactMap_hh
-#define INCLUDED_protocols_moves_ContactMap_hh
+#ifndef INCLUDED_protocols_contact_map_ContactMap_hh
+#define INCLUDED_protocols_contact_map_ContactMap_hh
 
 // Unit headers
 #include <protocols/contact_map/ContactMap.fwd.hh>

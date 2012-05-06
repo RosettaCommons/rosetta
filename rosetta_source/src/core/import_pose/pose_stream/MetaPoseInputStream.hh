@@ -13,8 +13,8 @@
 
 // libRosetta headers
 
-#ifndef core_io_pose_stream_MetaPoseInputStream_HH
-#define core_io_pose_stream_MetaPoseInputStream_HH
+#ifndef INCLUDED_core_import_pose_pose_stream_MetaPoseInputStream_HH
+#define INCLUDED_core_import_pose_pose_stream_MetaPoseInputStream_HH
 
 #include <core/types.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>

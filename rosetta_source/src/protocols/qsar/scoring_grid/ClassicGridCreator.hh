@@ -10,8 +10,8 @@
 /// @file   /git/src/protocols/qsar/scoring_grid/ClassicGridCreator.hh
 /// @author Sam DeLuca
 
-#ifndef CLASSICGRIDCREATOR_HH_
-#define CLASSICGRIDCREATOR_HH_
+#ifndef INCLUDED_protocols_qsar_scoring_grid_CLASSICGRIDCREATOR_HH
+#define INCLUDED_protocols_qsar_scoring_grid_CLASSICGRIDCREATOR_HH
 
 #include <protocols/qsar/scoring_grid/GridCreator.hh>
 #include <utility/tag/Tag.fwd.hh>

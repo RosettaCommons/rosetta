@@ -13,8 +13,8 @@
 
 /// @author Tim jacobs
 
-#ifndef HELICALFRAGMENT_HH_
-#define HELICALFRAGMENT_HH_
+#ifndef INCLUDED_protocols_features_helixAssembly_HELICALFRAGMENT_HH
+#define INCLUDED_protocols_features_helixAssembly_HELICALFRAGMENT_HH
 
 //Core
 #include <core/types.hh>

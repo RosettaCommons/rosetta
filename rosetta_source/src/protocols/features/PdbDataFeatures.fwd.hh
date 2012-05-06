@@ -10,8 +10,8 @@
 /// @file   src/protocols/features/PdbDataFeatures.fwd.hh
 /// @author Sam DeLuca
 
-#ifndef INCLUDED_protocols_features_PdbDataFeatures_FWD_HH_
-#define INCLUDED_protocols_features_PdbDataFeatures_FWD_HH_
+#ifndef INCLUDED_protocols_features_PdbDataFeatures_FWD_HH
+#define INCLUDED_protocols_features_PdbDataFeatures_FWD_HH
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>

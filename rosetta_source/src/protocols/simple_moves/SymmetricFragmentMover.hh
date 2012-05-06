@@ -14,8 +14,8 @@
 /// @date   Wed Aug 22 12:08:31 2007
 ///
 
-#ifndef protocols_simple_moves_SymmetricFragmentMover_HH
-#define protocols_simple_moves_SymmetricFragmentMover_HH
+#ifndef INCLUDED_protocols_simple_moves_SymmetricFragmentMover_HH
+#define INCLUDED_protocols_simple_moves_SymmetricFragmentMover_HH
 
 // Unit Headers
 #include <protocols/simple_moves/SymmetricFragmentMover.fwd.hh>

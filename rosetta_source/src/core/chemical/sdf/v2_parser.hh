@@ -10,8 +10,8 @@
 /// @file   src/core/chemical/sdf/v2_parser.hh
 /// @author Sam DeLuca
 
-#ifndef INCLDUED_core_chemical_sdf_v2_parser_HH_
-#define INCLDUED_core_chemical_sdf_v2_parser_HH_
+#ifndef INCLUDED_core_chemical_sdf_v2_parser_HH
+#define INCLUDED_core_chemical_sdf_v2_parser_HH
 
 #include <core/chemical/sdf/v2_parser.fwd.hh>
 #include <core/chemical/sdf/ctab_base.hh>

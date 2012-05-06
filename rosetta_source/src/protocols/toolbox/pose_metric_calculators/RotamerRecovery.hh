@@ -39,11 +39,11 @@
 /////////////////////////////////////////////////////////////////////////
 
 
-
-
 /// @file
 /// @brief
 
+#ifndef INCLUDED_protocols_toolbox_pose_metric_calculators_RotamerRecovery_hh
+#define INCLUDED_protocols_toolbox_pose_metric_calculators_RotamerRecovery_hh
 
 //#include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
@@ -51,11 +51,6 @@
 #include <utility/vector1.hh>
 
 #include <core/pose/Pose.fwd.hh>
-
-
-
-#ifndef INCLUDED_protocols_toolbox_pose_metric_calculators_RotamerRecovery_hh
-#define INCLUDED_protocols_toolbox_pose_metric_calculators_RotamerRecovery_hh
 
 namespace protocols{
 namespace toolbox{

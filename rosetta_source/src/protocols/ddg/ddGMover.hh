@@ -11,6 +11,9 @@
 /// @brief
 /// @author Liz Kellogg
 
+#ifndef INCLUDED_protocols_ddg_ddGMover_hh
+#define INCLUDED_protocols_ddg_ddGMover_hh
+
 /// Where is the ddGMover.fwd.hh include?
 
 // Package headers
@@ -37,10 +40,6 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
-
-#ifndef INCLUDED_protocols_ddg_ddGMover_hh
-#define INCLUDED_protocols_ddg_ddGMover_hh
 
 namespace protocols {
 namespace ddg {

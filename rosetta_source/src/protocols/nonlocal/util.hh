@@ -10,8 +10,8 @@
 /// @file protocols/nonlocal/util.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_NONLOCAL_UTIL_HH_
-#define PROTOCOLS_NONLOCAL_UTIL_HH_
+#ifndef INCLUDED_PROTOCOLS_NONLOCAL_UTIL_HH
+#define INCLUDED_PROTOCOLS_NONLOCAL_UTIL_HH
 
 // C/C++ headers
 // AUTO-REMOVED #include <string>
@@ -77,7 +77,7 @@ void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::Lo
 /// @brief Computes the distance between consecutive CA atoms. If the distance exceeds
 /// <threshold>, creates a new chunk and adds it to <chunks>.
 void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::LoopsOP chunks, double threshold);
-	
+
 /// @brief Returns the unweighted score of the ScoreType for the given residue. Assumes that the Pose has recently been scored by ScoreFunction with non-zero weight for the ScoreType.
 core::Real get_per_residue_score(
 	core::Size rsd_idx,

@@ -11,8 +11,8 @@
 /// @brief  Base class for EvaluatorCreators for the Evaluator load-time factory registration scheme
 /// @author Matthew O'Meara
 
-#ifndef INCLUDED_protocols_evaluator_EvaluatorCreator_hh
-#define INCLUDED_protocols_evaluator_EvaluatorCreator_hh
+#ifndef INCLUDED_protocols_evaluation_EvaluatorCreator_hh
+#define INCLUDED_protocols_evaluation_EvaluatorCreator_hh
 
 // Unit Headers
 #include <protocols/evaluation/EvaluatorCreator.fwd.hh>

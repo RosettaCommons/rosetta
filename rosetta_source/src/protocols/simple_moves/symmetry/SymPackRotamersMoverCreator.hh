@@ -11,8 +11,8 @@
 ///@brief This class will create instances of protocols::moves::Mover PackRotamersMover for the protocols::moves::MoverFactory
 ///@author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_simple_moves_SymPackRotamersMoverCreator_hh
-#define INCLUDED_protocols_simple_moves_SymPackRotamersMoverCreator_hh
+#ifndef INCLUDED_protocols_simple_moves_symmetry_SymPackRotamersMoverCreator_hh
+#define INCLUDED_protocols_simple_moves_symmetry_SymPackRotamersMoverCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 

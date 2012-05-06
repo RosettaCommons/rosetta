@@ -12,8 +12,8 @@
 /// @author David E. Kim (dekim@u.washington.edu)
 
 
-#ifndef INCLUDED_protocols_frag_picker_NonlocalPair_hh
-#define INCLUDED_protocols_frag_picker_NonlocalPair_hh
+#ifndef INCLUDED_protocols_frag_picker_nonlocal_NonlocalPair_hh
+#define INCLUDED_protocols_frag_picker_nonlocal_NonlocalPair_hh
 
 // unit headers
 #include <protocols/frag_picker/nonlocal/NonlocalPair.fwd.hh>

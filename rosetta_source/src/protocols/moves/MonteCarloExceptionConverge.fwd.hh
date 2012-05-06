@@ -12,8 +12,8 @@
 /// @author
 
 
-#ifndef INCLUDED_protocols_moves_ConvergenceCheck_fwd_hh
-#define INCLUDED_protocols_moves_ConvergenceCheck_fwd_hh
+#ifndef INCLUDED_protocols_moves_MonteCarloExceptionConverge_fwd_hh
+#define INCLUDED_protocols_moves_MonteCarloExceptionConverge_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 

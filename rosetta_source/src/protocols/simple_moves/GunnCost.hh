@@ -13,8 +13,8 @@
 /// @date   Wed Aug 22 12:08:31 2007
 ///
 
-#ifndef protocols_simple_moves_GunnCost_HH
-#define protocols_simple_moves_GunnCost_HH
+#ifndef INCLUDED_protocols_simple_moves_GunnCost_HH
+#define INCLUDED_protocols_simple_moves_GunnCost_HH
 
 // Unit Headers
 //#include <protocols/simple_moves/GunnTuple.fwd.hh>

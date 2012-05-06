@@ -11,10 +11,10 @@
 /// @brief  Electron density forward declarations
 /// @author Frank DiMaio
 
-#ifdef ELEC_DENS
-
 #ifndef INCLUDED_core_scoring_electron_density_ElectronDensity_fwd_hh
 #define INCLUDED_core_scoring_electron_density_ElectronDensity_fwd_hh
+
+#ifdef ELEC_DENS
 
 //Utility headers
 //too bad we can't use owning_ptr.fwd.hh

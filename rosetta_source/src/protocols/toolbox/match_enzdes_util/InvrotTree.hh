@@ -8,12 +8,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/toolbox/match_enzdes_util/TheozymeInvrotTree.hh
+/// @file   protocols/toolbox/match_enzdes_util/InvrotTree.hh
 /// @brief  class to hold inverse rotamers associated with theozyme / cstfile
 /// @author Florian Richter, flosopher@gmail.com, march 2012
 
-#ifndef INCLUDED_protocols_toolbox_match_enzdes_util_TheozymeInvrotTree_hh
-#define INCLUDED_protocols_toolbox_match_enzdes_util_TheozymeInvrotTree_hh
+#ifndef INCLUDED_protocols_toolbox_match_enzdes_util_InvrotTree_hh
+#define INCLUDED_protocols_toolbox_match_enzdes_util_InvrotTree_hh
 
 // Unit headers
 #include <protocols/toolbox/match_enzdes_util/InvrotTree.fwd.hh>

@@ -11,10 +11,10 @@
 /// @brief  RNA_Fragments forward declarations header
 /// @author Rhiju Das
 
-#include <utility/pointer/owning_ptr.hh>
-
 #ifndef INCLUDED_protocols_rna_RNA_Fragments_FWD_HH
 #define INCLUDED_protocols_rna_RNA_Fragments_FWD_HH
+
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols{
 namespace rna{

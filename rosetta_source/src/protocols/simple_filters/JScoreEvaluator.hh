@@ -12,8 +12,8 @@
 /// @author James Thompson
 ///
 
-#ifndef _INCLUDED_protocols_simple_filters_JScoreEvaluator_hh_
-#define _INCLUDED_protocols_simple_filters_JScoreEvaluator_hh_
+#ifndef INCLUDED_protocols_simple_filters_JScoreEvaluator_hh
+#define INCLUDED_protocols_simple_filters_JScoreEvaluator_hh
 
 #include <string>
 #include <utility/vector1.hh>

@@ -10,8 +10,8 @@
 /// @file protocols/nonlocal/TreeBuilderFactory.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_NONLOCAL_TREEBUILDERFACTORY_HH_
-#define PROTOCOLS_NONLOCAL_TREEBUILDERFACTORY_HH_
+#ifndef INCLUDED_PROTOCOLS_NONLOCAL_TREEBUILDERFACTORY_HH
+#define INCLUDED_PROTOCOLS_NONLOCAL_TREEBUILDERFACTORY_HH
 
 // C/C++ headers
 #include <string>

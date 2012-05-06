@@ -11,8 +11,8 @@
 /// @brief  FilterCreators for the Torsion
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_protein_interface_design_filters_TorsionCreator_hh
-#define INCLUDED_protocols_protein_interface_design_filters_TorsionCreator_hh
+#ifndef INCLUDED_protocols_protein_interface_design_filters_TorsionFilterCreator_hh
+#define INCLUDED_protocols_protein_interface_design_filters_TorsionFilterCreator_hh
 
 // Package Headers
 #include <protocols/filters/FilterCreator.hh>

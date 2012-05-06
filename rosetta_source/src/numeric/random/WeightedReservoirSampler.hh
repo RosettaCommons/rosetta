@@ -10,8 +10,8 @@
 /// @file numeric/random/WeightedReservoirSampler.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef NUMERIC_RANDOM_WEIGHTEDRESERVOIRSAMPLER_hh_
-#define NUMERIC_RANDOM_WEIGHTEDRESERVOIRSAMPLER_hh_
+#ifndef INCLUDED_NUMERIC_RANDOM_WEIGHTEDRESERVOIRSAMPLER_hh
+#define INCLUDED_NUMERIC_RANDOM_WEIGHTEDRESERVOIRSAMPLER_hh
 
 // C/C++ headers
 #include <cmath>
@@ -141,4 +141,4 @@ class WeightedReservoirSampler : boost::noncopyable {
 }  // namespace random
 }  // namespace numeric
 
-#endif  // NUMERIC_RANDOM_WEIGHTEDRESERVOIRSAMPLER_hh_
+#endif  // INCLUDED_NUMERIC_RANDOM_WEIGHTEDRESERVOIRSAMPLER_hh

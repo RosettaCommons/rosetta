@@ -13,8 +13,8 @@
 /// @author Sam Deluca
 /// @author Chris Miles
 
-#ifndef INCLUDED_utility_sql_database_DatabaseConnectionManager_fwd_hh
-#define INCLUDED_utility_sql_database_DatabaseConnectionManager_fwd_hh
+#ifndef INCLUDED_utility_sql_database_DatabaseSessionManager_fwd_hh
+#define INCLUDED_utility_sql_database_DatabaseSessionManager_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 

@@ -12,8 +12,8 @@
 /// @author Chris Miles
 
 
-#ifndef INCLUDE_utility_sql_database_DatabaseSessionManager_HH
-#define INCLUDE_utility_sql_database_DatabaseSessionManager_HH
+#ifndef INCLUDED_utility_sql_database_DatabaseSessionManager_HH
+#define INCLUDED_utility_sql_database_DatabaseSessionManager_HH
 
 // Unit Headers
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>

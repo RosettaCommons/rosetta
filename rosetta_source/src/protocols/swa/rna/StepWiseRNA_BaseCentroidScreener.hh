@@ -15,8 +15,8 @@
 /// @author Parin Sripakdeevong
 
 
-#ifndef INCLUDED_protocols_swa_SWA_RNA_BaseCentroidScreener_HH
-#define INCLUDED_protocols_swa_SWA_RNA_BaseCentroidScreener_HH
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_BaseCentroidScreener_HH
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_BaseCentroidScreener_HH
 
 #include <core/types.hh>
 #include <core/kinematics/Stub.fwd.hh>

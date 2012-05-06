@@ -12,7 +12,7 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 #ifndef INCLUDED_protocols_simple_filters_InterfaceBindingEnergyDensityFilter_fwd_hh
-#define INCLUDED_protocols_simple_filters_InterfaceBindingEnergyDensityFilterr_fwd_hh
+#define INCLUDED_protocols_simple_filters_InterfaceBindingEnergyDensityFilter_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 

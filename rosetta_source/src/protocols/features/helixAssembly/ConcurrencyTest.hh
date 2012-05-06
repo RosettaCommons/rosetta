@@ -12,6 +12,9 @@
 /// @brief
 /// @author tim
 
+#ifndef INCLUDED_protocols_features_helixAssembly_ConcurrencyTest_hh
+#define INCLUDED_protocols_features_helixAssembly_ConcurrencyTest_hh
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -46,9 +49,6 @@
 #include <basic/options/util.hh>
 #include <basic/options/keys/helixAssembly.OptionKeys.gen.hh>
 
-#ifndef INCLUDED_ConcurrencyTest_hh
-#define INCLUDED_ConcurrencyTest_hh
-
 namespace protocols {
 namespace features {
 namespace helixAssembly {
@@ -57,21 +57,21 @@ class ConcurrencyTest : public protocols::features::FeaturesReporter
 {
 
 public:
-	
+
 	ConcurrencyTest(){}
-	
+
 	virtual
 	std::string
 	type_name() const  {
 		return "HelixBundleFeatures";
 	}
-	
+
 	///@brief return sql statements that sets up the appropriate tables
 	///to contain the features.
 	virtual
 	std::string
 	schema() const;
-	
+
 	///@brief collect all the feature data for the pose
 	virtual
 	core::Size
@@ -82,7 +82,7 @@ public:
 					utility::sql_database::sessionOP db_session
 					);
 };
-	
+
 }
 }
 }

@@ -12,8 +12,8 @@
 /// @brief
 /// @author Florian Richter
 
-#ifndef INCLUDE_src_protocols_enzdes_EnzdesBaseProtocol_fwd_hh
-#define INCLUDE_src_protocols_enzdes_EnzdesBaseProtocol_fwd_hh
+#ifndef INCLUDED_protocols_enzdes_EnzdesBaseProtocol_fwd_hh
+#define INCLUDED_protocols_enzdes_EnzdesBaseProtocol_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>

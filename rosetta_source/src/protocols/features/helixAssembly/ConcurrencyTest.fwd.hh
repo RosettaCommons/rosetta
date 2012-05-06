@@ -11,8 +11,8 @@
 /// @brief
 /// @author Tim Jacobs
 
-#ifndef INCLUDED_protocols_features_ConcurrencyTest_fwd_hh
-#define INCLUDED_protocols_features_ConcurrencyTest_fwd_hh
+#ifndef INCLUDED_protocols_features_helixAssembly_ConcurrencyTest_fwd_hh
+#define INCLUDED_protocols_features_helixAssembly_ConcurrencyTest_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>

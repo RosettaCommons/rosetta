@@ -12,8 +12,8 @@
 /// @author  Sarel Fleishman sarelf@uw.edu
 
 
-#ifndef INCLUDED_protocols_protein_interface_design_filters_Torsion_fwd_hh
-#define INCLUDED_protocols_protein_interface_design_filters_Torsion_fwd_hh
+#ifndef INCLUDED_protocols_protein_interface_design_filters_TorsionFilter_fwd_hh
+#define INCLUDED_protocols_protein_interface_design_filters_TorsionFilter_fwd_hh
 
 
 // Utility headers

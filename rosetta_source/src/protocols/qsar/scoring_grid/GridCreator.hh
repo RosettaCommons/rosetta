@@ -11,8 +11,8 @@
 /// @brief Base class for GridCreators for the Grid load time factory registration scheme
 /// @author Sam DeLuca
 
-#ifndef INCLUDED_protocols_qsar_scoring_grid_GridCreator_HH_
-#define INCLUDED_protocols_qsar_scoring_grid_GridCreator_HH_
+#ifndef INCLUDED_protocols_qsar_scoring_grid_GridCreator_HH
+#define INCLUDED_protocols_qsar_scoring_grid_GridCreator_HH
 
 #include <core/types.hh>
 #include <protocols/qsar/scoring_grid/GridBase.fwd.hh>

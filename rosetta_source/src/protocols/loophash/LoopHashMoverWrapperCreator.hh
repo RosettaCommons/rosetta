@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/loophash/movers/LoopHashMoverWrapperCreator.hh
+/// @file   protocols/loophash/LoopHashMoverWrapperCreator.hh
 /// @brief  Declaration of the MoverCreator class for the LoopHashMoverWrapper
 /// @author Sarel Fleishman (sarelf@uw.edu)
 
-#ifndef INCLUDED_protocols_loophash_movers_LoopHashMoverWrapperCreator_hh
-#define INCLUDED_protocols_loophash_movers_LoopHashMoverWrapperCreator_hh
+#ifndef INCLUDED_protocols_loophash_LoopHashMoverWrapperCreator_hh
+#define INCLUDED_protocols_loophash_LoopHashMoverWrapperCreator_hh
 
 // Project headers
 #include <protocols/moves/MoverCreator.hh>

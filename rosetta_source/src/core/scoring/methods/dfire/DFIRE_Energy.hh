@@ -11,8 +11,8 @@
 /// @author James Thompson
 
 
-#ifndef INCLUDED_core_scoring_methods_DFIRE_Energy_HH
-#define INCLUDED_core_scoring_methods_DFIRE_Energy_HH
+#ifndef INCLUDED_core_scoring_methods_dfire_DFIRE_Energy_HH
+#define INCLUDED_core_scoring_methods_dfire_DFIRE_Energy_HH
 
 // Unit Headers
 #include <core/scoring/methods/dfire/DFIRE_Energy.fwd.hh>

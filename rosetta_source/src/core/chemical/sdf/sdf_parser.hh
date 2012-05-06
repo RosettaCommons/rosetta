@@ -13,8 +13,8 @@
 /// @author Sam DeLuca
 
 
-#ifndef INCLUDED_core_chemical_sdf_sdf_parser_HH_
-#define INCLUDED_core_chemical_sdf_sdf_parser_HH_
+#ifndef INCLUDED_core_chemical_sdf_sdf_parser_HH
+#define INCLUDED_core_chemical_sdf_sdf_parser_HH
 
 #include <core/chemical/sdf/sdf_parser.fwd.hh>
 #include <core/chemical/ResidueType.hh>

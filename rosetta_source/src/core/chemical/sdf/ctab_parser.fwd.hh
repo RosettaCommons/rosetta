@@ -13,8 +13,8 @@
 /// @author Sam DeLuca
 
 
-#ifndef CORE_chemical_sdf_ctab_parser_FWD_HH_
-#define CORE_chemical_sdf_ctab_parser_FWD_HH_
+#ifndef INCLUDED_CORE_chemical_sdf_ctab_parser_FWD_HH
+#define INCLUDED_CORE_chemical_sdf_ctab_parser_FWD_HH
 
 namespace core {
 namespace chemical {
@@ -29,4 +29,4 @@ class elementToType;
 } // io
 } // core
 
-#endif /* CTAB_PARSER_FWD_HH_ */
+#endif /* INCLUDED_CORE_chemical_sdf_ctab_parser_FWD_HH */

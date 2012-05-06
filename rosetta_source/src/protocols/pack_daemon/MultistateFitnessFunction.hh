@@ -12,8 +12,8 @@
 ///         (not to be confused with J. Ashworth's MultiStateFitnessFunction class)
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocolspack_daemon_MultistateFitnessFunction_hh
-#define INCLUDED_protocolspack_daemon_MultistateFitnessFunction_hh
+#ifndef INCLUDED_protocols_pack_daemon_MultistateFitnessFunction_hh
+#define INCLUDED_protocols_pack_daemon_MultistateFitnessFunction_hh
 
 // Unit headers
 #include <protocols/pack_daemon/MultistateFitnessFunction.fwd.hh>

@@ -11,8 +11,8 @@
 ///@brief This class will create instances of Mover ContactMap for the MoverFactory
 ///@author Joerg Schaarschmidt (joerg.schaarschmidt@medizin.uni-leipzig.de)
 
-#ifndef INCLUDED_protocols_moves_ContactMapCreator_hh
-#define INCLUDED_protocols_moves_ContactMapCreator_hh
+#ifndef INCLUDED_protocols_contact_map_ContactMapCreator_hh
+#define INCLUDED_protocols_contact_map_ContactMapCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 

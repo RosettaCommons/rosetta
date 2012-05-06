@@ -11,6 +11,8 @@
 /// @brief
 /// @author Mike Tyka
 
+#ifndef INCLUDED_protocols_wum_MPI_Relax_hh
+#define INCLUDED_protocols_wum_MPI_Relax_hh
 
 #include <protocols/wum/MPI_WorkUnitManager.hh>
 #include <protocols/wum/WorkUnitManager.hh>
@@ -22,11 +24,6 @@
 
 #include <string>
 #include <vector>
-
-
-#ifndef INCLUDED_protocols_wum_MPI_Relax_hh
-#define INCLUDED_protocols_wum_MPI_Relax_hh
-
 
 namespace protocols {
 namespace wum {

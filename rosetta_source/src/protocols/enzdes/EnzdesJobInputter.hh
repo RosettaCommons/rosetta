@@ -10,8 +10,8 @@
 /// @file   protocols/enzdes/EnzdesJobInputter.hh
 /// @author Florian Richter (floric@u.washington.edu ), Sagar Khare (khares@u.washington.edu)
 
-#ifndef _INCLUDED_protocols_enzdes_EnzdesJobInputter_hh_
-#define _INCLUDED_protocols_enzdes_EnzdesJobInputter_hh_
+#ifndef INCLUDED_protocols_enzdes_EnzdesJobInputter_hh
+#define INCLUDED_protocols_enzdes_EnzdesJobInputter_hh
 
 //unit headers
 #include <protocols/jd2/PDBJobInputter.hh>

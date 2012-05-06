@@ -10,8 +10,8 @@
 /// @file protocols/seeded_abinitio/SeedFoldTree.fwd.hh
 /// @author Eva-Maria Strauch (evas01@uw.edu)
 
-#ifndef PROTOCOLS_SEEDED_ABINITIO_SEEDFOLDTREE_FWD_HH_
-#define PROTOCOLS_NONLOCAL_POLICY_FWD_HH_
+#ifndef INCLUDED_PROTOCOLS_SEEDED_ABINITIO_SEEDFOLDTREE_FWD_HH
+#define INCLUDED_PROTOCOLS_SEEDED_ABINITIO_SEEDFOLDTREE_FWD_HH
 
 #include <utility/pointer/owning_ptr.fwd.hh>
 
@@ -25,4 +25,4 @@ typedef utility::pointer::owning_ptr<SeedFoldTree const> SeedFoldTreeCOP;
 }  // namespace seeded_abinitio
 }  // namespace protocols
 
-#endif  // PROTOCOLS_SEEDED_ABINITIO_SEEDFOLDTREE_FWD_HH_
+#endif  // INCLUDED_PROTOCOLS_SEEDED_ABINITIO_SEEDFOLDTREE_FWD_HH

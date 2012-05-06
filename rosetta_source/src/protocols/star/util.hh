@@ -10,8 +10,8 @@
 /// @file protocols/star/util.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_STAR_UTIL_HH_
-#define PROTOCOLS_STAR_UTIL_HH_
+#ifndef INCLUDED_PROTOCOLS_STAR_UTIL_HH
+#define INCLUDED_PROTOCOLS_STAR_UTIL_HH
 
 // C/C++ headers
 #include <string>

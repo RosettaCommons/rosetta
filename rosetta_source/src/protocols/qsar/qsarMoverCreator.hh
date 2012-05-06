@@ -11,8 +11,8 @@
 ///@brief This class will create instances of Mover qsar for the MoverFactory
 ///@author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_ligand_docking_qsarCreator_hh
-#define INCLUDED_protocols_ligand_docking_qsarCreator_hh
+#ifndef INCLUDED_protocols_qsar_qsarMoverCreator_hh
+#define INCLUDED_protocols_qsar_qsarMoverCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 

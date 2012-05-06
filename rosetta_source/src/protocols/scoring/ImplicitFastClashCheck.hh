@@ -11,8 +11,8 @@
 /// @brief  does implicit fast clash checking WRT the provided pose
 /// @author Will Sheffler (will@sheffler.me)
 
-#ifndef INCLUDED_protocols_scoring_methods_ImplicitFastClashCheck_hh
-#define INCLUDED_protocols_scoring_methods_ImplicitFastClashCheck_hh
+#ifndef INCLUDED_protocols_scoring_ImplicitFastClashCheck_hh
+#define INCLUDED_protocols_scoring_ImplicitFastClashCheck_hh
 
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/kinematics/Stub.hh>

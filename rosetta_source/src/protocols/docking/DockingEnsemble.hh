@@ -11,8 +11,8 @@
 /// @brief container class for ensemble docking information to be used with ConformerSwitchMover
 /// @author Monica Berrondo
 
-#ifndef INCLUDED_protocols_moves_DockingEnsemble_HH
-#define INCLUDED_protocols_moves_DockingEnsemble_HH
+#ifndef INCLUDED_protocols_docking_DockingEnsemble_HH
+#define INCLUDED_protocols_docking_DockingEnsemble_HH
 
 // Unit headers
 #include <protocols/docking/DockingEnsemble.fwd.hh>

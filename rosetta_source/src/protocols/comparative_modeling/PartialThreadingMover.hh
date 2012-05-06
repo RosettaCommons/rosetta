@@ -13,8 +13,8 @@
 
 // libRosetta headers
 
-#ifndef protocols_comparative_modeling_PartialThreadingMover_HH
-#define protocols_comparative_modeling_PartialThreadingMover_HH
+#ifndef INCLUDED_protocols_comparative_modeling_PartialThreadingMover_HH
+#define INCLUDED_protocols_comparative_modeling_PartialThreadingMover_HH
 
 #include <protocols/comparative_modeling/ThreadingMover.hh>
 

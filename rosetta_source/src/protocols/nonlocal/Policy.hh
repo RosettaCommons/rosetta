@@ -10,8 +10,8 @@
 /// @file protocols/nonlocal/Policy.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_NONLOCAL_POLICY_HH_
-#define PROTOCOLS_NONLOCAL_POLICY_HH_
+#ifndef INCLUDED_PROTOCOLS_NONLOCAL_POLICY_HH
+#define INCLUDED_PROTOCOLS_NONLOCAL_POLICY_HH
 
 // Unit headers
 #include <protocols/nonlocal/Policy.fwd.hh>

@@ -12,8 +12,8 @@
 /// @author
 
 
-#ifndef INCLUDED_protocols_moves_ConvergenceCheck_hh
-#define INCLUDED_protocols_moves_ConvergenceCheck_hh
+#ifndef INCLUDED_protocols_moves_MonteCarloExceptionConverge_hh
+#define INCLUDED_protocols_moves_MonteCarloExceptionConverge_hh
 
 
 // type headers

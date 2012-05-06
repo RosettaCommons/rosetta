@@ -11,8 +11,8 @@
 /// @brief mover for setting centroid score of secondary structure through parser
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
-#ifndef INCLUDED_protocols_forge_components_SetSecStructEnergies_hh
-#define INCLUDED_protocols_forge_components_SetSecStructEnergies_hh
+#ifndef INCLUDED_protocols_fldsgn_potentials_SetSecStructEnergies_hh
+#define INCLUDED_protocols_fldsgn_potentials_SetSecStructEnergies_hh
 
 // unit headers
 #include <protocols/fldsgn/potentials/SetSecStructEnergies.fwd.hh>

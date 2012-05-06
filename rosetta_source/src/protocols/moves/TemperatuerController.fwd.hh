@@ -11,8 +11,8 @@
 /// @brief  TemperatureController forward declarations header
 /// @author
 
-#ifndef INCLUDED_protocols_moves_TemperatureController_fwd_hh
-#define INCLUDED_protocols_moves_TemperatureController_fwd_hh
+#ifndef INCLUDED_protocols_moves_TemperatuerController_fwd_hh
+#define INCLUDED_protocols_moves_TemperatuerController_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>

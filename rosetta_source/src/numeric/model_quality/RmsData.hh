@@ -14,8 +14,8 @@
 /// @date   Thu Jan 10 06:55:37 2008
 ///
 
-#ifndef numeric_model_quality_Rms_Data_HH
-#define numeric_model_quality_Rms_Data_HH
+#ifndef INCLUDED_numeric_model_quality_RmsData_HH
+#define INCLUDED_numeric_model_quality_RmsData_HH
 
 #include <numeric/types.hh>
 #include <numeric/xyzVector.hh>

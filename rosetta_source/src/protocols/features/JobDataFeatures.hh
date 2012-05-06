@@ -10,8 +10,8 @@
 /// @file   src/protocols/features/JobDataFeatures.hh
 /// @author Sam DeLuca
 
-#ifndef INCLUDED_protocols_features_JobDataFeatures_hh_
-#define INCLUDED_protocols_features_JobDataFeatures_hh_
+#ifndef INCLUDED_protocols_features_JobDataFeatures_hh
+#define INCLUDED_protocols_features_JobDataFeatures_hh
 
 //unit headers
 #include <protocols/features/FeaturesReporter.hh>

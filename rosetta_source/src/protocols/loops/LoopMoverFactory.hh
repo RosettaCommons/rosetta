@@ -12,8 +12,8 @@
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 
-#ifndef INCLUDED_protocols_evaluator_LoopMoverFactory_hh
-#define INCLUDED_protocols_evaluator_LoopMoverFactory_hh
+#ifndef INCLUDED_protocols_loops_LoopMoverFactory_hh
+#define INCLUDED_protocols_loops_LoopMoverFactory_hh
 
 // Unit Headers
 #include <protocols/loops/LoopMoverFactory.fwd.hh>

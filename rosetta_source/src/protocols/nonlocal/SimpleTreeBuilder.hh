@@ -10,8 +10,8 @@
 /// @file protocols/nonlocal/SimpleTreeBuilder.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_NONLOCAL_SIMPLE_TREE_BUILDER_HH_
-#define PROTOCOLS_NONLOCAL_SIMPLE_TREE_BUILDER_HH_
+#ifndef INCLUDED_PROTOCOLS_NONLOCAL_SIMPLETREEBUILDER_HH
+#define INCLUDED_PROTOCOLS_NONLOCAL_SIMPLETREEBUILDER_HH
 
 // Unit headers
 #include <protocols/nonlocal/SimpleTreeBuilder.fwd.hh>

@@ -14,8 +14,8 @@
 /// @author James Thompson
 /// @date   Wed Oct 20 12:08:31 2007
 ///
-#ifndef core_fragments_BaseCacheUnit_HH
-#define core_fragments_BaseCacheUnit_HH
+#ifndef INCLUDED_core_fragment_BaseCacheUnit_HH
+#define INCLUDED_core_fragment_BaseCacheUnit_HH
 
 // Unit Headers
 //#include <core/fragment/BaseCacheUnit.fwd.hh>

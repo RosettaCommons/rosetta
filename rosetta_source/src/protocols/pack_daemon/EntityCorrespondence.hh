@@ -11,8 +11,8 @@
 /// @brief  declaration for class EntityCorrespondence
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocolspack_daemon_EntityCorrespondence_hh
-#define INCLUDED_protocolspack_daemon_EntityCorrespondence_hh
+#ifndef INCLUDED_protocols_pack_daemon_EntityCorrespondence_hh
+#define INCLUDED_protocols_pack_daemon_EntityCorrespondence_hh
 
 // Unit headers
 #include <protocols/pack_daemon/EntityCorrespondence.fwd.hh>

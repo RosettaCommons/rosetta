@@ -10,8 +10,8 @@
 /// @file protocols/frag_picker/nonlocal/NonlocalFrags.fwd.hh
 /// @author David Kim (dekim@u.washington.edu)
 
-#ifndef PROTOCOLS_FRAG_PICKER_NONLOCAL_NONLOCALFRAGS_FWD_HH_
-#define PROTOCOLS_FRAG_PICKER_NONLOCAL_NONLOCALFRAGS_FWD_HH_
+#ifndef INCLUDED_PROTOCOLS_FRAG_PICKER_NONLOCAL_NONLOCALFRAGS_FWD_HH
+#define INCLUDED_PROTOCOLS_FRAG_PICKER_NONLOCAL_NONLOCALFRAGS_FWD_HH
 
 #include <utility/pointer/owning_ptr.fwd.hh>
 

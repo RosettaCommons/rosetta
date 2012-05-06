@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file SWA_Clusterer.hh
+/// @file StepWiseClusterer.hh
 /// @brief
 /// @detailed
 ///
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_SWA_Clusterer_HH
-#define INCLUDED_protocols_swa_SWA_Clusterer_HH
+#ifndef INCLUDED_protocols_swa_StepWiseClusterer_HH
+#define INCLUDED_protocols_swa_StepWiseClusterer_HH
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.fwd.hh>

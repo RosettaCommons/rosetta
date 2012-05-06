@@ -11,8 +11,8 @@
 /// @brief  Contact counts.
 /// @author David E. Kim (dekim@u.washington.edu)
 
-#ifndef INCLUDED_protocols_frag_picker_contact_counts_hh
-#define INCLUDED_protocols_frag_picker_contact_counts_hh
+#ifndef INCLUDED_protocols_frag_picker_ContactCounts_hh
+#define INCLUDED_protocols_frag_picker_ContactCounts_hh
 
 // unit headers
 #include <protocols/frag_picker/ContactCounts.fwd.hh>

@@ -12,7 +12,6 @@
 
 
 #ifndef INCLUDED_protocols_fibril_SetupForFibrilMover_hh
-
 #define INCLUDED_protocols_fibril_SetupForFibrilMover_hh
 
 // Unit headers

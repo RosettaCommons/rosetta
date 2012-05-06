@@ -11,8 +11,8 @@
 /// @brief
 /// @author James Thompson
 
-#ifndef core_io_pose_stream_SilentFilePoseInputStream_FWD_HH
-#define core_io_pose_stream_SilentFilePoseInputStream_FWD_HH
+#ifndef INCLUDED_core_import_pose_pose_stream_SilentFilePoseInputStream_FWD_HH
+#define INCLUDED_core_import_pose_pose_stream_SilentFilePoseInputStream_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 

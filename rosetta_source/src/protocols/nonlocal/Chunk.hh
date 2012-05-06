@@ -10,8 +10,8 @@
 /// @file protocols/nonlocal/Chunk.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_NONLOCAL_CHUNK_HH_
-#define PROTOCOLS_NONLOCAL_CHUNK_HH_
+#ifndef INCLUDED_PROTOCOLS_NONLOCAL_CHUNK_HH
+#define INCLUDED_PROTOCOLS_NONLOCAL_CHUNK_HH
 
 // Unit headers
 #include <protocols/nonlocal/Chunk.fwd.hh>

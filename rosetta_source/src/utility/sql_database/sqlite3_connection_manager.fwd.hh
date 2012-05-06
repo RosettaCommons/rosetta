@@ -10,10 +10,10 @@
 /// @brief  Easy Access to sqlite3 database; manage connections
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 
-#ifdef DB_SQLITE3
-
 #ifndef INCLUDED_utility_sql_database_sqlite3_connection_manager_fwd_hh
 #define INCLUDED_utility_sql_database_sqlite3_connection_manager_fwd_hh
+
+#ifdef DB_SQLITE3
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -29,6 +29,6 @@ typedef utility::pointer::owning_ptr< Sqlite3ConnectionManager const > Sqlite3Co
 } // namespace sql_database
 } // namespace utility
 
-#endif // INCLUDED_utility_sql_database_sqlite3_connection_manager_FWD_HH
-
 #endif // DB_SQLITE3
+
+#endif // INCLUDED_utility_sql_database_sqlite3_connection_manager_FWD_HH

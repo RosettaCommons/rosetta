@@ -37,6 +37,8 @@
 /// @last_modified December 12 2010
 /////////////////////////////////////////////////////////////////////////
 
+#ifndef INCLUDED_core_chemical_orbitals_ICoorOrbitalData_hh
+#define INCLUDED_core_chemical_orbitals_ICoorOrbitalData_hh
 
 // Project headers
 // AUTO-REMOVED #include <core/chemical/ResidueType.fwd.hh>
@@ -51,9 +53,6 @@
 #include <string>
 
 //Auto Headers
-#ifndef INCLUDED_core_chemical_orbitals_ICoorOrbitalData_hh
-#define INCLUDED_core_chemical_orbitals_ICoorOrbitalData_hh
-
 namespace core{
 namespace chemical{
 namespace orbitals{

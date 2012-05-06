@@ -10,8 +10,8 @@
 /// @file core/util/kinematics_util.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef CORE_UTIL_KINEMATICS_UTIL_HH_
-#define CORE_UTIL_KINEMATICS_UTIL_HH_
+#ifndef INCLUDED_CORE_UTIL_KINEMATICS_UTIL_HH
+#define INCLUDED_CORE_UTIL_KINEMATICS_UTIL_HH
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>

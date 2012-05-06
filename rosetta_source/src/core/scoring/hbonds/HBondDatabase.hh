@@ -11,6 +11,9 @@
 /// @author John Karanicolas
 /// @author Matthew O'Meara
 
+#ifndef INCLUDED_core_scoring_hbonds_HBondDatabase_hh
+#define INCLUDED_core_scoring_hbonds_HBondDatabase_hh
+
 // Unit Headers
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 
@@ -33,11 +36,6 @@
 	#include <core/scoring/hbonds/polynomial.hh>
 	#include <core/scoring/hbonds/FadeInterval.hh>
 #endif
-
-
-
-#ifndef INCLUDED_core_scoring_hbonds_HBondDatabase_hh
-#define INCLUDED_core_scoring_hbonds_HBondDatabase_hh
 
 namespace core {
 namespace scoring {

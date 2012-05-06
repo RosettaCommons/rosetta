@@ -10,8 +10,8 @@
 /// @file   src/basic/database/sql_utils.hh
 /// @author Sam DeLuca
 
-#ifndef INCLUDED_basic_database_sql_utils_HH_
-#define INCLUDED_basic_database_sql_utils_HH_
+#ifndef INCLUDED_basic_database_sql_utils_HH
+#define INCLUDED_basic_database_sql_utils_HH
 
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
@@ -79,4 +79,4 @@ void write_schema_to_database(
 }
 }
 
-#endif /* SQL_UTILS_HH_ */
+#endif /* INCLUDED_basic_database_sql_utils_HH */

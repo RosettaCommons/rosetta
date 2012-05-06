@@ -11,8 +11,8 @@
 /// @brief  MetropolisHastingsMover forward declarations header
 /// @author
 
-#ifndef INCLUDED_protocols_canonical_sampling_MetropolisHastingsMover_fwd_hh
-#define INCLUDED_protocols_canonical_sampling_MetropolisHastingsMover_fwd_hh
+#ifndef INCLUDED_protocols_canonical_sampling_SidechainMetropolisHastingsMover_fwd_hh
+#define INCLUDED_protocols_canonical_sampling_SidechainMetropolisHastingsMover_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>

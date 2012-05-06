@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/filters/FilterScanFilter.hh
+/// @file protocols/filters/FilterScan.hh
 /// @brief Scans a task factory, mutates to each designable residue and evaluates a filter. Mutations that pass the filter are output in a resfile format
 /// @author Sarel Fleishman (sarelf@uw.edu)
 
-#ifndef INCLUDED_protocols_protein_interface_design_filters_FilterScanFilter_hh
-#define INCLUDED_protocols_protein_interface_design_filters_FilterScanFilter_hh
+#ifndef INCLUDED_protocols_protein_interface_design_filters_FilterScan_hh
+#define INCLUDED_protocols_protein_interface_design_filters_FilterScan_hh
 
 
 // Project Headers

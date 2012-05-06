@@ -12,8 +12,8 @@
 /// @author Oliver Lange
 
 
-#ifndef INCLUDED_protocols_loops_loop_closure_WidthFirstSlidingWindowLoopClosure_fwd_hh
-#define INCLUDED_protocols_loops_loop_closure_WidthFirstSlidingWindowLoopClosure_fwd_hh
+#ifndef INCLUDED_protocols_loops_loop_closure_ccd_WidthFirstSlidingWindowLoopClosure_fwd_hh
+#define INCLUDED_protocols_loops_loop_closure_ccd_WidthFirstSlidingWindowLoopClosure_fwd_hh
 
 
 // Utility headers

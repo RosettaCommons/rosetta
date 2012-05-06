@@ -10,8 +10,8 @@
 /// @file protocols/nonlocal/Chunk.fwd.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_NONLOCAL_CHUNK_FWD_HH_
-#define PROTOCOLS_NONLOCAL_CHUNK_FWD_HH_
+#ifndef INCLUDED_PROTOCOLS_NONLOCAL_CHUNK_FWD_HH
+#define INCLUDED_PROTOCOLS_NONLOCAL_CHUNK_FWD_HH
 
 #include <utility/pointer/owning_ptr.fwd.hh>
 

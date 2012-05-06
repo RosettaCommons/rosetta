@@ -14,8 +14,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_SWA_Minimizer_HH
-#define INCLUDED_protocols_swa_SWA_Minimizer_HH
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_Minimizer_HH
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_Minimizer_HH
 
 //#include <numeric/xyzMatrix.hh>
 //#include <numeric/xyzVector.hh>
@@ -77,7 +77,7 @@ namespace rna {
 		set_native_edensity_score_cutoff( core::Real const & setting); //Fang's electron density code
 
 		void
-		set_verbose( bool const setting){verbose_=setting;} 
+		set_verbose( bool const setting){verbose_=setting;}
 
 		void
 		set_centroid_screen(bool const setting){centroid_screen_=setting;} //For testing purposes.
@@ -92,7 +92,7 @@ namespace rna {
 		set_perform_minimize(bool const setting){perform_minimize_=setting;}
 
 		void
-		set_num_pose_minimize(Size const setting){num_pose_minimize_=setting;} 
+		set_num_pose_minimize(Size const setting){num_pose_minimize_=setting;}
 
 		void
 		set_minimize_and_score_sugar(bool const setting){minimize_and_score_sugar_=setting;}
@@ -159,8 +159,8 @@ namespace rna {
 
 		bool perform_minimize_; //Parin Mar 12, 2012
 
-		core::Size num_pose_minimize_; 
-		bool minimize_and_score_sugar_; 
+		core::Size num_pose_minimize_;
+		bool minimize_and_score_sugar_;
 		bool rename_tag_;
 
 		std::map< core::id::AtomID, core::id::AtomID > pose_to_native_map_;

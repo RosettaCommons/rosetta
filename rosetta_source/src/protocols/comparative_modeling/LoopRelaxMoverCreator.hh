@@ -11,8 +11,8 @@
 ///@brief
 ///@author Sarel
 
-#ifndef INCLUDED_protocols_enzdes_LoopRelaxMoverCreator_hh
-#define INCLUDED_protocols_enzdes_LoopRelaxMoverCreator_hh
+#ifndef INCLUDED_protocols_comparative_modeling_LoopRelaxMoverCreator_hh
+#define INCLUDED_protocols_comparative_modeling_LoopRelaxMoverCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 

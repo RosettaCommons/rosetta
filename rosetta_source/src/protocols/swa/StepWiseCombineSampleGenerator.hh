@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file SWA_ResidueSampler.hh
+/// @file
 /// @brief
 /// @detailed
 ///
@@ -15,8 +15,8 @@
 /// @author Parin Sripakdeevong
 
 
-#ifndef INCLUDED_protocols_swa_SWA_CombineSampleGenerator_HH
-#define INCLUDED_protocols_swa_SWA_CombineSampleGenerator_HH
+#ifndef INCLUDED_protocols_swa_StepWiseCombineSampleGenerator_HH
+#define INCLUDED_protocols_swa_StepWiseCombineSampleGenerator_HH
 
 #include <protocols/swa/StepWisePoseSampleGenerator.hh>
 #include <core/pose/Pose.fwd.hh>

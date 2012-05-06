@@ -10,13 +10,13 @@
 /// @file DatabaseEntryWorkUnit.cc
 ///
 /// @brief A work unit base class that can serialize and deserialize a map representing a database row (keys are column names, values are column values)
-///        and a string representing a query to be executed by the master node upon completion of the workunit. This work unit should be treated as a 
-///        pure virtual since no run() function is implemented. 
+///        and a string representing a query to be executed by the master node upon completion of the workunit. This work unit should be treated as a
+///        pure virtual since no run() function is implemented.
 
 /// @author Tim Jacobs
 
-#ifndef DatabaseEntryWorkUnit_hh
-#define DatabaseEntryWorkUnit_hh
+#ifndef INCLUDED_protocols_wum_DatabaseEntryWorkUnit_hh
+#define INCLUDED_protocols_wum_DatabaseEntryWorkUnit_hh
 
 //Unit
 #include <protocols/wum/DatabaseEntryWorkUnit.fwd.hh>
@@ -35,42 +35,42 @@ namespace wum{
 
 class DatabaseEntryWorkUnit : public protocols::wum::WorkUnitBase {
 public:
-    
+
     DatabaseEntryWorkUnit(utility::sql_database::sessionOP db_session);
-    
+
     DatabaseEntryWorkUnit( std::map<std::string,std::string> row_map );
-    
+
     virtual ~DatabaseEntryWorkUnit(){}
-    
+
     virtual protocols::wum::WorkUnitBaseOP clone() const {
         return new DatabaseEntryWorkUnit( *this );
     }
-        
+
     /// @brief Accessor for database query string
     std::string result_query_string(){return result_query_string_;}
-    
+
 protected:
 //    void set_defaults();
-    
+
     /// @brief Serialize the row_map_
     virtual void serialize();
-    
+
     /// @brief Deserialize the row_map_
     virtual void deserialize();
-    
+
 protected:
-    
+
     /// @brief The database connection
     utility::sql_database::sessionOP db_session_;
-        
+
     /// @brief map that represents a database row - keys are columns, values are values
     std::map<std::string,std::string> row_map_;
-    
+
     /// @brief A string that stores the database query you want to run when finished with the work unit
     std::string result_query_string_;
-    
+
 };
-    
+
 }//namespace wum
 }//namespace protocols
 

@@ -10,8 +10,8 @@
 /// @file protocols/simple_moves/rational_mc/RationalMonteCarlo.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef INCLUDE_protocols_simple_moves_rational_mc_RationalMonteCarlo_HH
-#define INCLUDE_protocols_simple_moves_rational_mc_RationalMonteCarlo_HH
+#ifndef INCLUDED_protocols_simple_moves_rational_mc_RationalMonteCarlo_HH
+#define INCLUDED_protocols_simple_moves_rational_mc_RationalMonteCarlo_HH
 
 // Unit header
 #include <protocols/simple_moves/rational_mc/RationalMonteCarlo.fwd.hh>

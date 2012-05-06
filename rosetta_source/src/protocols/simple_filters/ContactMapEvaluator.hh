@@ -11,6 +11,9 @@
 /// @brief
 /// @author James Thompson
 
+#ifndef INCLUDED_protocols_simple_filters_ContactMapEvaluator_hh
+#define INCLUDED_protocols_simple_filters_ContactMapEvaluator_hh
+
 // libRosetta headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
@@ -19,10 +22,6 @@
 #include <algorithm>
 
 #include <utility/vector1.hh>
-
-
-#ifndef INCLUDED_protocols_simple_filters_ContactMapEvaluator_hh
-#define INCLUDED_protocols_simple_filters_ContactMapEvaluator_hh
 
 namespace protocols  {
 namespace simple_filters {

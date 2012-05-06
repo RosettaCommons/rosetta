@@ -11,8 +11,8 @@
 /// @brief  header file for GenericJobInputter class, part of August 2008 job distributor as planned at RosettaCon08
 /// @author Oliver Lange
 
-#ifndef INCLUDED_protocols_jd2_GenericJobInputter_fwd_hh
-#define INCLUDED_protocols_jd2_GenericJobInputter_fwd_hh
+#ifndef INCLUDED_protocols_comparative_modeling_GenericJobInputter_fwd_hh
+#define INCLUDED_protocols_comparative_modeling_GenericJobInputter_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 

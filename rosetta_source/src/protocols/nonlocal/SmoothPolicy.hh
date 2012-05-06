@@ -10,8 +10,8 @@
 /// @file protocols/nonlocal/SmoothPolicy.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_NONLOCAL_SMOOTHPOLICY_HH_
-#define PROTOCOLS_NONLOCAL_SMOOTHPOLICY_HH_
+#ifndef INCLUDED_PROTOCOLS_NONLOCAL_SMOOTHPOLICY_HH
+#define INCLUDED_PROTOCOLS_NONLOCAL_SMOOTHPOLICY_HH
 
 // Project headers
 #include <core/types.hh>

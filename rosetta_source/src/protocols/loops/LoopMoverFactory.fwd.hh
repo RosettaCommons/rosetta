@@ -11,8 +11,8 @@
 /// @brief  report data to database
 /// @author Matthew O'Meara
 
-#ifndef INCLUDED_protocols_evaluator_LoopMoverFactory_fwd_hh
-#define INCLUDED_protocols_evaluator_LoopMoverFactory_fwd_hh
+#ifndef INCLUDED_protocols_loops_LoopMoverFactory_fwd_hh
+#define INCLUDED_protocols_loops_LoopMoverFactory_fwd_hh
 
 namespace protocols{
 namespace loops{

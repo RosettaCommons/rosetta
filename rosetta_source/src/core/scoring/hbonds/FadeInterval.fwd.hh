@@ -12,11 +12,10 @@
 /// @author Jack Snoeyink
 /// @author Matthew O'Meara
 
-
-#include <utility/pointer/owning_ptr.hh>
-
 #ifndef INCLUDED_core_scoring_hbonds_FadeInterval_fwd_hh
 #define INCLUDED_core_scoring_hbonds_FadeInterval_fwd_hh
+
+#include <utility/pointer/owning_ptr.hh>
 
 namespace core{
 namespace scoring{

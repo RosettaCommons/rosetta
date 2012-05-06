@@ -12,8 +12,8 @@
 /// @author Oliver Lange (olange@u.washington.edu)
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef core_fragment_FragmentIO_HH
-#define core_fragment_FragmentIO_HH
+#ifndef INCLUDED_core_fragment_FragmentIO_HH
+#define INCLUDED_core_fragment_FragmentIO_HH
 
 // Project Headers
 #include <core/types.hh>

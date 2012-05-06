@@ -14,8 +14,8 @@
 /// @author James Thompson
 /// @date   Wed Oct 20 12:08:31 2007
 ///
-#ifndef core_fragments_FragID_FWD_HH
-#define core_fragments_FragID_FWD_HH
+#ifndef INCLUDED_core_fragment_FragID_FWD_HH
+#define INCLUDED_core_fragment_FragID_FWD_HH
 
 #include <utility/vector1.fwd.hh>
 

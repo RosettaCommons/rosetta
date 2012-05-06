@@ -10,8 +10,8 @@
 /// @file protocols/moves/util.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_MOVES_UTIL_HH_
-#define PROTOCOLS_MOVES_UTIL_HH_
+#ifndef INCLUDED_PROTOCOLS_MOVES_UTIL_HH
+#define INCLUDED_PROTOCOLS_MOVES_UTIL_HH
 
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>

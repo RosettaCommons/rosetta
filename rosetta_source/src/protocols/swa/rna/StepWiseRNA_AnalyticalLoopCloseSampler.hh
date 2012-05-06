@@ -9,11 +9,11 @@
 
 /// @file StepWiseRNA_AnalyticalLoopCloseSampler.hh
 /// @brief Alternative SWA sampling using Analytical Loop Closure
-/// @author Fang-Chieh Chou 
+/// @author Fang-Chieh Chou
 
 
-#ifndef INCLUDED_protocols_swa_SWA_ResidueSampler_HH
-#define INCLUDED_protocols_swa_SWA_ResidueSampler_HH
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_AnalyticalLoopCloseSampler_HH
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_AnalyticalLoopCloseSampler_HH
 
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
@@ -57,7 +57,7 @@ public:
 	virtual std::string get_name() const {
 		return "StepWiseRNA_AnalyticalLoopCloseSampler";
 	}
-	
+
 	void
 	set_centroid_screen ( bool const setting ) {
 		centroid_screen_ = setting;

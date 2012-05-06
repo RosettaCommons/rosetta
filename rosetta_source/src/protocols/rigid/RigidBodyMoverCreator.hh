@@ -12,8 +12,8 @@
 ///@author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
 ///@author Rocco Moretti (rmoretti@u.washington.edu)
 
-#ifndef INCLUDED_protocols_moves_RigidBodyMoverCreator_hh
-#define INCLUDED_protocols_moves_RigidBodyMoverCreator_hh
+#ifndef INCLUDED_protocols_rigid_RigidBodyMoverCreator_hh
+#define INCLUDED_protocols_rigid_RigidBodyMoverCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 

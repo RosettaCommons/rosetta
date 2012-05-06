@@ -14,8 +14,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_SWA_LoopBridger_HH
-#define INCLUDED_protocols_swa_SWA_LoopBridger_HH
+#ifndef INCLUDED_protocols_swa_protein_StepWiseProteinLoopBridger_HH
+#define INCLUDED_protocols_swa_protein_StepWiseProteinLoopBridger_HH
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/Ramachandran.hh>

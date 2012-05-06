@@ -14,8 +14,8 @@
 /// @date   Thu Aug  10 19:49:23 2007
 ///
 
-#ifndef utility_query_types_HH
-#define utility_query_types_HH
+#ifndef INCLUDED_utility_query_types_HH
+#define INCLUDED_utility_query_types_HH
 
 #include <string>
 

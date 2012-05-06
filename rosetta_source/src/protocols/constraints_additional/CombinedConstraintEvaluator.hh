@@ -17,8 +17,8 @@
 
 
 
-#ifndef INCLUDED_protocols_evaluation_CombinedConstraintEvaluator_hh
-#define INCLUDED_protocols_evaluation_CombinedConstraintEvaluator_hh
+#ifndef INCLUDED_protocols_constraints_additional_CombinedConstraintEvaluator_hh
+#define INCLUDED_protocols_constraints_additional_CombinedConstraintEvaluator_hh
 
 #ifdef WIN32
 #include <protocols/constraints_additional/ConstraintEvaluator.hh>

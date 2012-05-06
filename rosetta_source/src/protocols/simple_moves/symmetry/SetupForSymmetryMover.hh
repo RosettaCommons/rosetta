@@ -12,7 +12,6 @@
 
 
 #ifndef INCLUDED_protocols_simple_moves_symmetry_SetupForSymmetryMover_hh
-
 #define INCLUDED_protocols_simple_moves_symmetry_SetupForSymmetryMover_hh
 
 // Unit headers

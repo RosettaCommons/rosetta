@@ -15,8 +15,8 @@
 /// @author Parin Sripakdeevong
 
 
-#ifndef INCLUDED_protocols_swa_SWA_PoseCombineSampleGenerator_HH
-#define INCLUDED_protocols_swa_SWA_PoseCombineSampleGenerator_HH
+#ifndef INCLUDED_protocols_swa_StepWisePoseCombineSampleGenerator_HH
+#define INCLUDED_protocols_swa_StepWisePoseCombineSampleGenerator_HH
 
 #include <protocols/swa/StepWisePoseSampleGenerator.hh>
 #include <protocols/swa/InputStreamWithResidueInfo.fwd.hh>

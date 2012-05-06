@@ -14,8 +14,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_SWA_Proteins_ProtocolUtil_HH
-#define INCLUDED_protocols_swa_SWA_Proteins_ProtocolUtil_HH
+#ifndef INCLUDED_protocols_swa_protein_StepWiseProteinUtil_HH
+#define INCLUDED_protocols_swa_protein_StepWiseProteinUtil_HH
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID_Map.fwd.hh>

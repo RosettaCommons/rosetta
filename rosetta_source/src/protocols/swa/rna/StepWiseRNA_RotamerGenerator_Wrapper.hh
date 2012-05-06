@@ -15,14 +15,14 @@
 /// @author Parin Sripakdeevong
 
 
-#ifndef INCLUDED_protocols_swa_SWA_RNA_RotamerGenerator_Wrapper_HH
-#define INCLUDED_protocols_swa_SWA_RNA_RotamerGenerator_Wrapper_HH
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_RotamerGenerator_Wrapper_HH
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_RotamerGenerator_Wrapper_HH
 
-#include <protocols/swa/rna/StepWiseRNA_Classes.hh> 
+#include <protocols/swa/rna/StepWiseRNA_Classes.hh>
 
 #include <protocols/swa/rna/StepWiseRNA_RotamerGenerator.hh>  //Feb 09, 2012: Uncomment this line. Necessary for BOINC build? (R47296 by cmiles)
 
-#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator.fwd.hh> 
+#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator.fwd.hh>
 
 #include <core/types.hh>
 #include <core/id/TorsionID.fwd.hh>
@@ -56,7 +56,7 @@ namespace rna {
 		utility::vector1< Torsion_Info > get_next_rotamer();
 
 		void set_sample_extra_rotamers( bool const & setting ){ sample_extra_rotamers_ = setting; }
-		
+
 		void set_fast( bool const & setting );
 
 		void set_sample_chi_torsion( bool const & setting){ sample_chi_torsion_ = setting; }

@@ -14,8 +14,8 @@
 /// @date   Rebased to next year.
 ///
 
-#ifndef protocols_simple_moves_SequenceProfileMover_HH
-#define protocols_simple_moves_SequenceProfileMover_HH
+#ifndef INCLUDED_protocols_simple_moves_SequenceProfileMover_HH
+#define INCLUDED_protocols_simple_moves_SequenceProfileMover_HH
 
 // Unit Headers
 #include <protocols/simple_moves/SequenceProfileMover.fwd.hh>

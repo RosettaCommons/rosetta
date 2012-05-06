@@ -15,8 +15,8 @@
 /// @author Florian Richter (floric@u.washington.edu)
 /// @date   all time machine buttons are stuck
 ///
-#ifndef core_fragments_BBTorsionAndAnglesSRFD_HH
-#define core_fragments_BBTorsionAndAnglesSRFD_HH
+#ifndef INCLUDED_core_fragment_BBTorsionAndAnglesSRFD_HH
+#define INCLUDED_core_fragment_BBTorsionAndAnglesSRFD_HH
 
 // Unit Headers
 #include <core/fragment/BBTorsionSRFD.hh>

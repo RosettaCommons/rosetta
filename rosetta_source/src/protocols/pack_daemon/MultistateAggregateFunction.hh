@@ -12,8 +12,8 @@
 ///         (not to be confused with J. Ashworth's MultiStateAggregateFunction class)
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocolspack_daemon_MultistateAggregateFunction_hh
-#define INCLUDED_protocolspack_daemon_MultistateAggregateFunction_hh
+#ifndef INCLUDED_protocols_pack_daemon_MultistateAggregateFunction_hh
+#define INCLUDED_protocols_pack_daemon_MultistateAggregateFunction_hh
 
 // Unit headers
 #include <protocols/pack_daemon/MultistateAggregateFunction.fwd.hh>

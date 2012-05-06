@@ -11,8 +11,8 @@
 /// @brief  Forward declaration of the RestrictToCDRH3Loop class
 /// @author Brian D. Weitzner (brian.weitzner@gmail.com)
 
-#ifndef INCLUDED_protocols_toolbox_task_operations_RestrcitToCDRH3Loop_fwd_hh
-#define INCLUDED_protocols_toolbox_task_operations_RestrcitToCDRH3Loop_fwd_hh
+#ifndef INCLUDED_protocols_toolbox_task_operations_RestrictToCDRH3Loop_fwd_hh
+#define INCLUDED_protocols_toolbox_task_operations_RestrictToCDRH3Loop_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 

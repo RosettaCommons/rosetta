@@ -16,8 +16,8 @@
 /// @author Andrew Leaver-Fay
 
 
-#ifndef INCLUDED_core_scoring_methods_LK_BALL_ENERGY_HH
-#define INCLUDED_core_scoring_methods_LK_BALL_ENERGY_HH
+#ifndef INCLUDED_core_scoring_methods_LK_BALLENERGY_HH
+#define INCLUDED_core_scoring_methods_LK_BALLENERGY_HH
 
 // Unit Headers
 #include <core/scoring/methods/LK_BallEnergy.fwd.hh>

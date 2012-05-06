@@ -12,8 +12,8 @@
 /// @author Ian Davis
 /// @date   Wed Aug 22 12:10:37 2007
 
-#ifndef core_scoring_rms_util_templ_HH
-#define core_scoring_rms_util_templ_HH
+#ifndef INCLUDED_core_scoring_rms_util_tmpl_HH
+#define INCLUDED_core_scoring_rms_util_tmpl_HH
 
 #include <core/types.hh>
 #include <core/pose/Pose.hh>

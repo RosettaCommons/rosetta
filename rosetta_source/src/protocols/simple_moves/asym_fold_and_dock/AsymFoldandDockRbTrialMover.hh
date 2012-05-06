@@ -12,7 +12,6 @@
 
 
 #ifndef INCLUDED_protocols_simple_moves_asym_fold_and_dock_AsymFoldandDockRbTrialMover_hh
-
 #define INCLUDED_protocols_simple_moves_asym_fold_and_dock_AsymFoldandDockRbTrialMover_hh
 
 // Unit headers

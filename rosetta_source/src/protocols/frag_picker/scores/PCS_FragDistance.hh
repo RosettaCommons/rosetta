@@ -11,8 +11,8 @@
 /// @brief  Scores fragments by disulfide-linke Calpha distances
 /// @author Robert Vernon
 
-#ifndef INCLUDED_protocols_frag_picker_PCS_FragDistance_HH
-#define INCLUDED_protocols_frag_picker_PCS_FragDistance_HH
+#ifndef INCLUDED_protocols_frag_picker_scores_PCS_FragDistance_HH
+#define INCLUDED_protocols_frag_picker_scores_PCS_FragDistance_HH
 
 // package headers
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>

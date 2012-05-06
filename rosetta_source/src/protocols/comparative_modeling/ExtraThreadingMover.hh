@@ -14,8 +14,8 @@
 
 // libRosetta headers
 
-#ifndef protocols_comparative_modeling_ExtraThreadingMover_HH
-#define protocols_comparative_modeling_ExtraThreadingMover_HH
+#ifndef INCLUDED_protocols_comparative_modeling_ExtraThreadingMover_HH
+#define INCLUDED_protocols_comparative_modeling_ExtraThreadingMover_HH
 
 #include <protocols/moves/Mover.hh>
 

@@ -10,8 +10,8 @@
 /// @file utility/minmax.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef UTILITY_MINMAX_HH_
-#define UTILITY_MINMAX_HH_
+#ifndef INCLUDED_UTILITY_MINMAX_HH
+#define INCLUDED_UTILITY_MINMAX_HH
 
 // C/C++ headers
 #include <vector>
@@ -91,4 +91,4 @@ int argmax(const utility::vector1<T>& iterable) {
 
 }  // namespace utility
 
-#endif  // UTILITY_MINMAX_HH_
+#endif  // INCLUDED_UTILITY_MINMAX_HH

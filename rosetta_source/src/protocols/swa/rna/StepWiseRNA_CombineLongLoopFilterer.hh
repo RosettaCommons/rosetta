@@ -15,8 +15,8 @@
 /// @author Rhiju Das (rhiju@stanford.edu)
 
 
-#ifndef INCLUDED_protocols_swa_SWA_CombineLongLoopFilterer_hh
-#define INCLUDED_protocols_swa_SWA_CombineLongLoopFilterer_hh
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_CombineLongLoopFilterer_hh
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_CombineLongLoopFilterer_hh
 
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -48,7 +48,7 @@ namespace rna {
 		Combine_Tags_Info():
 			side_one_tag( "" ),
 			side_two_tag( "" ),
-			//combine_score( 999999999999.99 ) //Feb 12, 2012 This might lead to server-test error at R47200 
+			//combine_score( 999999999999.99 ) //Feb 12, 2012 This might lead to server-test error at R47200
 			combine_score( 999999.9) //Feb 12, 2012
 		{
 		}
@@ -116,7 +116,7 @@ namespace rna {
 
 		//void
 		//set_score_diff_cut(core::Real const setting){score_diff_cut_=setting;}
-	
+
 		void
 		set_filter_for_previous_contact(core::Real const setting){filter_for_previous_contact_=setting;}
 
@@ -142,8 +142,8 @@ namespace rna {
 
 
 		bool
-		previously_builded_res_VDW_filter(pose_data_struct2 const & side_ONE_pose_data , 
-																		pose_data_struct2 const & side_TWO_pose_data , 
+		previously_builded_res_VDW_filter(pose_data_struct2 const & side_ONE_pose_data ,
+																		pose_data_struct2 const & side_TWO_pose_data ,
 																		core::Real const overlap_dist_cutoff,
 																		core::Size const num_atom_contacts_cutoff);
 
@@ -157,10 +157,10 @@ namespace rna {
 		moving_res_contact_filter(pose_data_struct2 const & side_ONE_pose_data , pose_data_struct2 const & side_TWO_pose_data );
 
 		void
-		align_all_pose( utility::vector1< pose_data_struct2 > const & side_ONE_pose_data_list, 
+		align_all_pose( utility::vector1< pose_data_struct2 > const & side_ONE_pose_data_list,
 									 utility::vector1< pose_data_struct2 > const & side_TWO_pose_data_list);
 
-	
+
 		void
 		do_some_filtering();
 
@@ -180,7 +180,7 @@ namespace rna {
 //		score_sort_citeria(Combine_Tags_Info tag_info_1, Combine_Tags_Info tag_info_2);
 
 		void
-		sort_Combine_Tags_Info(utility::vector1< Combine_Tags_Info > & combine_tags_info_list); 
+		sort_Combine_Tags_Info(utility::vector1< Combine_Tags_Info > & combine_tags_info_list);
 
 
 		std::string
@@ -226,7 +226,7 @@ namespace rna {
 		core::Real best_combine_score_;
 		core::Real worst_combine_score_;
 		//core::Real score_diff_cut_;
-		core::Real const contact_dist_cutoff_; 
+		core::Real const contact_dist_cutoff_;
 		core::Real const clash_dist_cutoff_;
 		core::Size const num_contact_cutoff_;
 		core::Size const num_clash_cutoff_;

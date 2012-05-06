@@ -15,8 +15,8 @@
 /// @author Parin Sripakdeevong
 
 
-#ifndef INCLUDED_protocols_swa_SWA_ProteinMainChainSampleGenerator_HH
-#define INCLUDED_protocols_swa_SWA_ProteinMainChainSampleGenerator_HH
+#ifndef INCLUDED_protocols_swa_protein_StepWiseProteinMainChainSampleGenerator_HH
+#define INCLUDED_protocols_swa_protein_StepWiseProteinMainChainSampleGenerator_HH
 
 #include <protocols/swa/StepWisePoseSampleGenerator.hh>
 #include <core/pose/Pose.fwd.hh>

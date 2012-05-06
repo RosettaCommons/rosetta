@@ -14,8 +14,8 @@
 /// @date   Wed Aug 22 12:08:31 2007
 ///
 
-#ifndef core_fragments_OrderedFragSetIterator_HH
-#define core_fragments_OrderedFragSetIterator_HH
+#ifndef INCLUDED_core_fragment_OrderedFragSetIterator__HH
+#define INCLUDED_core_fragment_OrderedFragSetIterator__HH
 
 // Unit Headers
 //#include <core/fragment/ConstantLengthFragSet.fwd.hh>

@@ -11,6 +11,9 @@
 /// @brief
 /// @author James Thompson
 
+#ifndef INCLUDED_protocols_comparative_modeling_features_TorsionFeature_HH
+#define INCLUDED_protocols_comparative_modeling_features_TorsionFeature_HH
+
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <utility/vector1.hh>
@@ -20,10 +23,6 @@
 #include <protocols/comparative_modeling/features/TorsionFeature.fwd.hh>
 
 #include <utility/vector1.hh>
-
-
-#ifndef protocols_comparative_modeling_features_TorsionFeature_HH
-#define protocols_comparative_modeling_features_TorsionFeature_HH
 
 namespace protocols {
 namespace comparative_modeling {

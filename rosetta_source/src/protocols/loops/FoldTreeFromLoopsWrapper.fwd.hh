@@ -11,8 +11,8 @@
 /// @brief  FoldTreeFromLoops forward declarations header
 /// @author Sarel
 
-#ifndef INCLUDED_protocols_loops_FoldTreeFromLoops_FWD_HH
-#define INCLUDED_protocols_loops_FoldTreeFromLoops_FWD_HH
+#ifndef INCLUDED_protocols_loops_FoldTreeFromLoopsWrapper_FWD_HH
+#define INCLUDED_protocols_loops_FoldTreeFromLoopsWrapper_FWD_HH
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>

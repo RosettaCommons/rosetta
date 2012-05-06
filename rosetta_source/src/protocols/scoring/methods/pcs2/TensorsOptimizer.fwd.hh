@@ -29,3 +29,5 @@ namespace pcs2{
 }//namespace methods
 }//namespace scoring
 }//namespace protocols
+
+#endif

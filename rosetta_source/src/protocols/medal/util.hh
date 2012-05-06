@@ -10,8 +10,8 @@
 /// @file protocols/medal/util.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_MEDAL_UTIL_HH_
-#define PROTOCOLS_MEDAL_UTIL_HH_
+#ifndef INCLUDED_PROTOCOLS_MEDAL_UTIL_HH
+#define INCLUDED_PROTOCOLS_MEDAL_UTIL_HH
 
 // External headers
 #include <boost/unordered_set.hpp>

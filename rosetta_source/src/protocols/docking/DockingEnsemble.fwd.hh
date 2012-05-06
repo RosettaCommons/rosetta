@@ -11,8 +11,8 @@
 /// @brief  DockingEnsemble forward declarations header
 /// @author Monica Berrondo
 
-#ifndef INCLUDED_protocols_moves_DockingEnsemble_FWD_HH
-#define INCLUDED_protocols_moves_DockingEnsemble_FWD_HH
+#ifndef INCLUDED_protocols_docking_DockingEnsemble_FWD_HH
+#define INCLUDED_protocols_docking_DockingEnsemble_FWD_HH
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>

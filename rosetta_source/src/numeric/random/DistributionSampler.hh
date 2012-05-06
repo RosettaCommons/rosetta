@@ -10,8 +10,8 @@
 /// @file numeric/random/DistributionSampler.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef NUMERIC_RANDOM_DISTRIBUTIONSAMPLER_HH_
-#define NUMERIC_RANDOM_DISTRIBUTIONSAMPLER_HH_
+#ifndef INCLUDED_NUMERIC_RANDOM_DISTRIBUTIONSAMPLER_HH
+#define INCLUDED_NUMERIC_RANDOM_DISTRIBUTIONSAMPLER_HH
 
 // External headers
 #include <boost/utility.hpp>
@@ -53,4 +53,4 @@ class DistributionSampler : boost::noncopyable {
 }  // namespace random
 }  // namespace numeric
 
-#endif  // NUMERIC_RANDOM_DISTRIBUTIONSAMPLER_HH_
+#endif  // INCLUDED_NUMERIC_RANDOM_DISTRIBUTIONSAMPLER_HH

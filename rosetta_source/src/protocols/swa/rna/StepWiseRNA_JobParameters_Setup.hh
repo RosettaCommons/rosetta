@@ -15,8 +15,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_SWA_JobParameters_Setup_HH
-#define INCLUDED_protocols_swa_SWA_JobParameters_Setup_HH
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_JobParameters_Setup_HH
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_JobParameters_Setup_HH
 
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -149,10 +149,10 @@ namespace rna {
 		void
 		figure_out_Prepend_Internal(core::Size const root_res, InternalWorkingResidueParameter const & internal_params);
 
-		void 
+		void
 		figure_out_working_moving_suite();
 
-		void	
+		void
 		figure_out_Is_prepend_map();
 
 		bool
@@ -180,7 +180,7 @@ namespace rna {
 		get_user_input_alignment_res_list(core::Size const root_res);
 
 		utility::vector1< core::Size >
-		get_previously_closed_cutpoint_from_imported_silent_file() const; 
+		get_previously_closed_cutpoint_from_imported_silent_file() const;
 
 
 		/////////////////////////////////////////////////////////////////////////////////////
@@ -203,9 +203,9 @@ namespace rna {
 
 		utility::vector1< std::string > alignment_res_string_list_;
 		bool filter_user_alignment_res_;
-		
-		utility::vector1< std::string > input_tags_; //for check_for_previously_closed_cutpoint_with_input_pose 
-		utility::vector1< std::string > silent_files_in_; //for check_for_previously_closed_cutpoint_with_input_pose 
+
+		utility::vector1< std::string > input_tags_; //for check_for_previously_closed_cutpoint_with_input_pose
+		utility::vector1< std::string > silent_files_in_; //for check_for_previously_closed_cutpoint_with_input_pose
 		bool allow_chain_boundary_jump_partner_right_at_fixed_BP_;
 		bool allow_fixed_res_at_moving_res_;
 		bool simple_append_map_;

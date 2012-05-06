@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/protocols/features/ProteinSilentReport_util.hh
+/// @file
 /// @author Sam DeLuca
 
-#ifndef INCLUDED_protocols_features_ProteinSilentReprot_util_HH_
-#define INCLUDED_protocols_features_ProteinSilentReprot_util_HH_
+#ifndef INCLUDED_protocols_features_DatabaseStatements_HH
+#define INCLUDED_protocols_features_DatabaseStatements_HH
 
 #include <core/types.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>

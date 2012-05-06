@@ -10,8 +10,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-#ifndef INCLUDED_protocols_rna_CoarseRNA_FragmentsClasses_HH
-#define INCLUDED_protocols_rna_CoarseRNA_FragmentsClasses_HH
+#ifndef INCLUDED_protocols_coarse_rna_CoarseRNA_Fragments_HH
+#define INCLUDED_protocols_coarse_rna_CoarseRNA_Fragments_HH
 
 #include <protocols/rna/RNA_Fragments.hh>
 #include <protocols/toolbox/AllowInsert.fwd.hh>

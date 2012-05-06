@@ -11,8 +11,8 @@
 /// @brief  Packer's standard annealer class declaration
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_core_pack_annealer_FixbbCoupledRotamerSimAnnealer_fwd_hh
-#define INCLUDED_core_pack_annealer_FixbbCoupledRotamerSimAnnealer_fwd_hh
+#ifndef INCLUDED_core_pack_annealer_FixbbLinkingRotamerSimAnnealer_fwd_hh
+#define INCLUDED_core_pack_annealer_FixbbLinkingRotamerSimAnnealer_fwd_hh
 
 // Unit Headers
 

@@ -11,6 +11,9 @@
 /// @brief  Utility functions for scoring chainbreaks.
 /// @author James Thompson
 
+#ifndef INCLUDED_core_scoring_methods_chainbreak_util_hh
+#define INCLUDED_core_scoring_methods_chainbreak_util_hh
+
 #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <core/id/AtomID.fwd.hh>
 // AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
@@ -43,3 +46,5 @@ void find_cutpoint_variants(
 } // namespace methods
 } // namespace scoring
 } // namespace core
+
+#endif

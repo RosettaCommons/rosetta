@@ -14,8 +14,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_SWA_Packer_HH
-#define INCLUDED_protocols_swa_SWA_Packer_HH
+#ifndef INCLUDED_protocols_swa_protein_StepWiseProteinPacker_HH
+#define INCLUDED_protocols_swa_protein_StepWiseProteinPacker_HH
 
 #include <protocols/swa/StepWisePoseSampleGenerator.fwd.hh>
 #include <protocols/swa/PoseFilter.fwd.hh>

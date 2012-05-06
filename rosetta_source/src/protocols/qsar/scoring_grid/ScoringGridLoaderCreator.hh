@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/qsar/scoring_grid/StandardDataLoaderCreator.hh
+/// @file   protocols/qsar/scoring_grid/ScoringGridLoaderCreator.hh
 /// @brief  Creator classes for the default DataLoader classes, TaskOperationLoader and ScoreFunctionLoader
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_qsar_scoring_grid_StandardLoaderCreators_HH
-#define INCLUDED_protocols_qsar_scoring_grid_StandardLoaderCreators_HH
+#ifndef INCLUDED_protocols_qsar_scoring_grid_ScoringGridLoaderCreator_HH
+#define INCLUDED_protocols_qsar_scoring_grid_ScoringGridLoaderCreator_HH
 
 // Package headers
 #include <protocols/jd2/parser/DataLoaderCreator.hh>

@@ -11,8 +11,8 @@
 /// @brief
 /// @author Florian Richter, floric@u.washington.edu
 
-#ifndef INCLUDE_src_core_pack_task_IGEdgeReweightContainer_fwd_hh
-#define INCLUDE_src_core_pack_task_IGEdgeReweightContainer_fwd_hh
+#ifndef INCLUDED_core_pack_task_IGEdgeReweightContainer_fwd_hh
+#define INCLUDED_core_pack_task_IGEdgeReweightContainer_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 

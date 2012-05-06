@@ -11,8 +11,8 @@
 /// @brief  Declaration for the class that connects RNA_FullAtomVDW_BasePhosphate with the ScoringManager
 /// @author Parin Sripakdeevong, Rhiju Das (rhiju@stanford.edu)
 
-#ifndef INCLUDED_core_scoring_methods_RNA_FullAtomVDW_BasePhosphate_FWD_HH
-#define INCLUDED_core_scoring_methods_RNA_FullAtomVDW_BasePhosphate_FWD_HH
+#ifndef INCLUDED_core_scoring_rna_RNA_FullAtomVDW_BasePhosphateCreator_HH
+#define INCLUDED_core_scoring_rna_RNA_FullAtomVDW_BasePhosphateCreator_HH
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 #include <core/scoring/rna/RNA_FullAtomVDW_BasePhosphateCreator.fwd.hh>

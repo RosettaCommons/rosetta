@@ -10,8 +10,8 @@
 /// @file src/protocols/comparative_modeling/coord_util.hh
 /// @author James Thompson
 
-#ifndef INCLUDE_src_protocols_comparative_modeling_coord_util_hh
-#define INCLUDE_src_protocols_comparative_modeling_coord_util_hh
+#ifndef INCLUDED_protocols_comparative_modeling_coord_util_hh
+#define INCLUDED_protocols_comparative_modeling_coord_util_hh
 
 #include <core/pose/Pose.fwd.hh>
 

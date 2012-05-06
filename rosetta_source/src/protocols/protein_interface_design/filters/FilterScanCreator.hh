@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/protein_interface_design/filters/FilterScanFilterCreator.hh
+/// @file   protocols/protein_interface_design/filters/FilterScanCreator.hh
 /// @brief  FilterCreators for the FilterScanFilter
 /// @author Sarel Fleishman (sarelf@uw.edu)
 
-#ifndef INCLUDED_protocols_protein_interface_design_filters_FilterScanFilterCreator_hh
-#define INCLUDED_protocols_protein_interface_design_filters_FilterScanFilterCreator_hh
+#ifndef INCLUDED_protocols_protein_interface_design_filters_FilterScanCreator_hh
+#define INCLUDED_protocols_protein_interface_design_filters_FilterScanCreator_hh
 
 // Package Headers
 #include <protocols/filters/FilterCreator.hh>

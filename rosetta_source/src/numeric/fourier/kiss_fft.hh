@@ -11,6 +11,9 @@
 /// @brief
 /// @author Frank DiMaio
 
+#ifndef INCLUDED_numeric_fourier_kiss_fft_hh
+#define INCLUDED_numeric_fourier_kiss_fft_hh
+
 #include <iostream>
 #include <string>
 #include <limits>
@@ -18,9 +21,6 @@
 #include <complex>
 
 #include <numeric/fourier/kiss_fft_state.hh>
-
-#ifndef INCLUDED_numeric_fourier_kiss_fft_hh
-#define INCLUDED_numeric_fourier_kiss_fft_hh
 
 namespace numeric {
 namespace fourier {

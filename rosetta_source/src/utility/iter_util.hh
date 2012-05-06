@@ -10,8 +10,8 @@
 /// @file utility/iter_util.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef UTILITY_ITERATOR_UTIL_hh_
-#define UTILITY_ITERATOR_UTIL_hh_
+#ifndef INCLUDED_UTILITY_ITER_UTIL_hh
+#define INCLUDED_UTILITY_ITER_UTIL_hh
 
 // C/C++ headers
 #include <algorithm>
@@ -39,4 +39,4 @@ BidirectionalIterator find_closest(BidirectionalIterator first,
 
 }  // namespace utility
 
-#endif  // UTILITY_ITERATOR_UTIL_hh_
+#endif  // INCLUDED_UTILITY_ITER_UTIL_hh

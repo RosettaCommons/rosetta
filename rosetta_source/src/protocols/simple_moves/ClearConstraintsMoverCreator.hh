@@ -11,8 +11,8 @@
 ///@brief This class will create instances of Mover ConstraintSetMover for the MoverFactory
 ///@author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_moves_ClearConstraintsMoverCreator_hh
-#define INCLUDED_protocols_moves_ClearConstraintsMoverCreator_hh
+#ifndef INCLUDED_protocols_simple_moves_ClearConstraintsMoverCreator_hh
+#define INCLUDED_protocols_simple_moves_ClearConstraintsMoverCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 

@@ -15,8 +15,8 @@
 ///
 
 
-#ifndef core_fragments_ConstraintFragmentMover_HH
-#define core_fragments_ConstraintFragmentMover_HH
+#ifndef INCLUDED_protocols_simple_moves_ConstraintFragmentMover_HH
+#define INCLUDED_protocols_simple_moves_ConstraintFragmentMover_HH
 
 // Unit Headers
 //#include <protocols/simple_moves/ConstraintFragmentMover.fwd.hh>

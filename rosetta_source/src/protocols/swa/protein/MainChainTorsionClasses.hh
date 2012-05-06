@@ -14,8 +14,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_SWA_MainChainTorsionClasses_HH
-#define INCLUDED_protocols_swa_SWA_MainChainTorsionClasses_HH
+#ifndef INCLUDED_protocols_swa_protein_MainChainTorsionClasses_HH
+#define INCLUDED_protocols_swa_protein_MainChainTorsionClasses_HH
 
 #include <utility/pointer/ReferenceCount.hh>
 #include <core/types.hh>

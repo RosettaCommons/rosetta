@@ -12,8 +12,8 @@
 
 
 
-#ifndef INCLUDE_utility_sql_database_sqlite3_connection_manager_HH
-#define INCLUDE_utility_sql_database_sqlite3_connection_manager_HH
+#ifndef INCLUDED_utility_sql_database_sqlite3_connection_manager_HH
+#define INCLUDED_utility_sql_database_sqlite3_connection_manager_HH
 
 #ifdef DB_SQLITE3
 // this interface requires the DB_SQLITE3 compilation flag
@@ -169,4 +169,4 @@ private:  // Private Data
 
 #endif // DB_SQLITE3
 
-#endif // INCLUDE_utility_sql_database_sqlite3_connection_manager_HH
+#endif // INCLUDED_utility_sql_database_sqlite3_connection_manager_HH

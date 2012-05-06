@@ -11,8 +11,8 @@
 /// @brief
 /// @author Tim Jacobs
 
-#ifndef INCLUDED_protocols_features_HelixBundleFeatures_fwd_hh
-#define INCLUDED_protocols_features_HelixBundleFeatures_fwd_hh
+#ifndef INCLUDED_protocols_features_helixAssembly_HelixBundleFeatures_fwd_hh
+#define INCLUDED_protocols_features_helixAssembly_HelixBundleFeatures_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>

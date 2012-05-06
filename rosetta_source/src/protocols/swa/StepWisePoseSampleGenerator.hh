@@ -15,8 +15,8 @@
 /// @author Parin Sripakdeevong
 
 
-#ifndef INCLUDED_protocols_swa_SWA_PoseSampleGenerator_HH
-#define INCLUDED_protocols_swa_SWA_PoseSampleGenerator_HH
+#ifndef INCLUDED_protocols_swa_StepWisePoseSampleGenerator_HH
+#define INCLUDED_protocols_swa_StepWisePoseSampleGenerator_HH
 
 #include <core/pose/Pose.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>

@@ -10,8 +10,8 @@
 /// @file   src/protocols/qsar/RenderGridsToKinemageCreator.hh
 /// @author Sam DeLuca
 
-#ifndef INCLUDED_protocols_qsar_RenderGridsToKinemageCreator_HH_
-#define INCLUDED_protocols_qsar_RenderGridsToKinemageCreator_HH_
+#ifndef INCLUDED_protocols_qsar_RenderGridsToKinemageCreator_HH
+#define INCLUDED_protocols_qsar_RenderGridsToKinemageCreator_HH
 
 #include <protocols/moves/MoverCreator.hh>
 

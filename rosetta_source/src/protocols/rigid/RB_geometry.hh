@@ -14,8 +14,8 @@
 /// I also added 3 methods to get downstream and upstream centroids so we can avoid "dummy" centroids
 
 
-#ifndef INCLUDED_protocols_geometry_RB_geometry_hh
-#define INCLUDED_protocols_geometry_RB_geometry_hh
+#ifndef INCLUDED_protocols_rigid_RB_geometry_hh
+#define INCLUDED_protocols_rigid_RB_geometry_hh
 
 
 // Package headers

@@ -14,8 +14,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_SWA_Screener_HH
-#define INCLUDED_protocols_swa_SWA_Screener_HH
+#ifndef INCLUDED_protocols_swa_protein_StepWiseProteinScreener_HH
+#define INCLUDED_protocols_swa_protein_StepWiseProteinScreener_HH
 
 #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>

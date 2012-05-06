@@ -10,8 +10,8 @@
 /// @file   src/protocols/features/JobDataFeatures.fwd.hh
 /// @author Sam DeLuca
 
-#ifndef INCLUDED_protocols_features_JobDataFeatures_fwd_hh_
-#define INCLUDED_protocols_features_JobDataFeatures_fwd_hh_
+#ifndef INCLUDED_protocols_features_JobDataFeatures_fwd_hh
+#define INCLUDED_protocols_features_JobDataFeatures_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 

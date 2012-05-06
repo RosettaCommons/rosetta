@@ -11,8 +11,8 @@
 /// @brief  Declaration of the MoverCreator class for the DomainAssembly
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_abinitio_movers_DomainAssemblyCreator_hh
-#define INCLUDED_abinitio_movers_DomainAssemblyCreator_hh
+#ifndef INCLUDED_protocols_abinitio_DomainAssemblyCreator_hh
+#define INCLUDED_protocols_abinitio_DomainAssemblyCreator_hh
 
 // Project headers
 #include <protocols/moves/MoverCreator.hh>

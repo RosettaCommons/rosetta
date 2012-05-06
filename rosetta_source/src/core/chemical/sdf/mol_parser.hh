@@ -14,8 +14,8 @@
 
 
 
-#ifndef INCLUDED_core_chemical_sdf_mol_parser_HH_
-#define INCLUDED_core_chemical_sdf_mol_parser_HH_
+#ifndef INCLUDED_core_chemical_sdf_mol_parser_HH
+#define INCLUDED_core_chemical_sdf_mol_parser_HH
 
 // AUTO-REMOVED #include <core/chemical/ResidueType.hh>
 #include <utility/vector1.hh>

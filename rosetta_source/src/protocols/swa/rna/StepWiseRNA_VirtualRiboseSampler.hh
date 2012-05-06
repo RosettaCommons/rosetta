@@ -14,8 +14,8 @@
 ///  @author Parin Sripakdeevong
 
 
-#ifndef INCLUDED_protocols_swa_SWA_VirtualRiboseSampler_HH
-#define INCLUDED_protocols_swa_SWA_VirtualRiboseSampler_HH
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_VirtualRiboseSampler_HH
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_VirtualRiboseSampler_HH
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -71,8 +71,8 @@ class FB_Pose_Data{
 	core::pose::PoseOP pose_OP;
 	std::string tag;
 	std::string base_tag;
-	bool Is_chain_close; 
-	core::Real base_rep_score; 
+	bool Is_chain_close;
+	core::Real base_rep_score;
 	core::kinematics::FoldTree starting_fold_tree;
 	core::scoring::constraints::ConstraintSetOP starting_cst_set_OP;
 
@@ -84,7 +84,7 @@ class FloatingBaseChainClosureJobParameter{
 
 	public:
 
-	
+
 		FloatingBaseChainClosureJobParameter(core::Size const input_moving_res, core::Size const input_reference_res):
 			sample_sugar(true),
 			moving_res ( input_moving_res ),
@@ -106,12 +106,12 @@ class FloatingBaseChainClosureJobParameter{
 				if(moving_res+2!=reference_res){
 					std::cout << "moving_res= " << moving_res << " reference_res= " << reference_res;
 					utility_exit_with_message("prepend, but moving_res+2!=reference_res!");
-				}			
+				}
 			}else{
 				if(moving_res-2!=reference_res){
 					std::cout << "moving_res= " << moving_res << " reference_res= " << reference_res;
 					utility_exit_with_message("append, but moving_res-2!=reference_res!");
-				}			
+				}
 			}
 
 		}
@@ -127,12 +127,12 @@ class FloatingBaseChainClosureJobParameter{
 
 		void
 		check_compatibility(core::Size const nres) const{
-			using namespace ObjexxFCL;	
+			using namespace ObjexxFCL;
 
 			if(moving_res<1 || moving_res> nres) utility_exit_with_message( "moving_res<1 || moving_res> nres. moving_res= " + string_of(moving_res) );
 			if(bulge_res <1 || bulge_res> nres) utility_exit_with_message( "bulge_res <1 || bulge_res> nres. bulge_res= " + string_of(bulge_res) );
 			if(reference_res<1 || reference_res> nres) utility_exit_with_message( "reference_res<1 || reference_res> nres. reference_res= " + string_of(reference_res) );
-	
+
 			//Should check here that moving_res contain virtual ribose and bulge_res is a virtual_rna_residue?
 		}
 
@@ -159,7 +159,7 @@ class FloatingBaseChainClosureJobParameter{
 			Output_boolean(" Is_prepend= " , Is_prepend);
 			std::cout << " reference_res=" << reference_res;
 
-			std::cout <<" moving_res=" << moving_res; 			
+			std::cout <<" moving_res=" << moving_res;
 			print_base_state("|base_state=", moving_res_base_state );
 			print_ribose_pucker_state("|pucker_state=", moving_res_pucker_state);
 
@@ -167,8 +167,8 @@ class FloatingBaseChainClosureJobParameter{
 			print_base_state("|base_state=", bulge_res_base_state );
 			print_ribose_pucker_state("|pucker_state=", bulge_res_pucker_state);
 
-			std::cout << " bulge_suite= " << bulge_suite << " five_prime_chain_break= " << five_prime_chain_break; 
-	
+			std::cout << " bulge_suite= " << bulge_suite << " five_prime_chain_break= " << five_prime_chain_break;
+
 		}
 
 	public:
@@ -197,16 +197,16 @@ fast_full_atom_VDW_repulsion_screen(core::pose::Pose const & pose, core::Size co
 //Duplication of Chain_break_screening function from StepWiseRNA_ResidueSampler.cc. NEED TO MERGE THEM BACK TOGETHER AFTER TESTING! Apr 20,2010. Parin S.
 bool
 floating_base_full_atom_van_der_Waals_screening(core::pose::Pose & current_pose_screen,
-																								core::Real const & base_rep_score, 
+																								core::Real const & base_rep_score,
 																								core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
-																		 						SillyCountStruct & count_data, 
+																		 						SillyCountStruct & count_data,
 																								bool const verbose);
 
 //Duplication of Chain_break_screening function from StepWiseRNA_ResidueSampler.cc. NEED TO MERGE THEM BACK TOGETHER AFTER TESTING! Apr 20,2010. Parin S.
 bool
-floating_base_chain_break_screening(core::pose::Pose & chain_break_screening_pose, 
+floating_base_chain_break_screening(core::pose::Pose & chain_break_screening_pose,
 																	core::scoring::ScoreFunctionOP const & chainbreak_scorefxn,
-																	SillyCountStruct & count_data, 
+																	SillyCountStruct & count_data,
 																	core::Size const & five_prime_res,
 																	std::string const & tag,
                                     bool const verbose);
@@ -221,7 +221,7 @@ floating_base_chain_closure_setup(utility::vector1< pose_data_struct2 > const & 
 																	bool const do_minimize);
 
 void
-floating_base_chain_closure_sampling(utility::vector1< FB_Pose_Data > & pose_data_list, 
+floating_base_chain_closure_sampling(utility::vector1< FB_Pose_Data > & pose_data_list,
 	                                   core::pose::Pose & viewer_pose,
 																		 FloatingBaseChainClosureJobParameter const & FB_job_params,
 																	   core::scoring::ScoreFunctionOP const & chainbreak_scorefxn,
@@ -231,19 +231,19 @@ floating_base_chain_closure_sampling(utility::vector1< FB_Pose_Data > & pose_dat
 
 
 utility::vector1< pose_data_struct2 >
-floating_base_chain_closure_post_process(utility::vector1< FB_Pose_Data > & pose_data_list, 
+floating_base_chain_closure_post_process(utility::vector1< FB_Pose_Data > & pose_data_list,
 	                                       core::pose::Pose & viewer_pose,
 																				 core::scoring::ScoreFunctionOP const & sampling_scorefxn,
 																		 		 FloatingBaseChainClosureJobParameter const & FB_job_params,
 																				 bool const rm_chain_break_jump_point=true);
 
-utility::vector1< pose_data_struct2 > 
-sample_virtual_ribose_and_bulge_and_close_chain(core::pose::Pose & viewer_pose, 
-																						 FloatingBaseChainClosureJobParameter const & FB_job_params, 
+utility::vector1< pose_data_struct2 >
+sample_virtual_ribose_and_bulge_and_close_chain(core::pose::Pose & viewer_pose,
+																						 FloatingBaseChainClosureJobParameter const & FB_job_params,
 																						 std::string const name,
-																						 core::scoring::ScoreFunctionOP const & scorefxn, 
-																						 core::scoring::ScoreFunctionOP const & sampling_scorefxn, 
-																						 core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn, 
+																						 core::scoring::ScoreFunctionOP const & scorefxn,
+																						 core::scoring::ScoreFunctionOP const & sampling_scorefxn,
+																						 core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
 																						 core::scoring::ScoreFunctionOP const & chainbreak_scorefxn,
 																						 StepWiseRNA_JobParametersCOP & job_parameters,
 																						 bool const virtual_ribose_is_from_prior_step=true);
@@ -251,7 +251,7 @@ sample_virtual_ribose_and_bulge_and_close_chain(core::pose::Pose & viewer_pose,
 
 void
 minimize_all_sampled_floating_bases(core::pose::Pose & viewer_pose,
-																		utility::vector1<FloatingBaseChainClosureJobParameter> const & FB_JP_list, 
+																		utility::vector1<FloatingBaseChainClosureJobParameter> const & FB_JP_list,
 																		utility::vector1< pose_data_struct2 > & pose_data_list,
 																		core::scoring::ScoreFunctionOP const & sampling_scorefxn,
 																		StepWiseRNA_JobParametersCOP const & job_parameters,
@@ -266,15 +266,15 @@ copy_bulge_res_and_ribose_torsion(FloatingBaseChainClosureJobParameter const & F
 
 void
 enumerate_starting_pose_data_list(utility::vector1< pose_data_struct2 > & starting_pose_data_list,
-																utility::vector1< FloatingBaseChainClosureJobParameter > const & FB_CC_JP_list, 
+																utility::vector1< FloatingBaseChainClosureJobParameter > const & FB_CC_JP_list,
 																core::pose::Pose const & pose);
 
 
-utility::vector1< FloatingBaseChainClosureJobParameter > 
+utility::vector1< FloatingBaseChainClosureJobParameter >
 setup_FB_CC_JP_list(core::pose::Pose const & pose, utility::vector1< std::string > const & sample_virtual_ribose_string_list, StepWiseRNA_JobParametersCOP & job_parameters);
 
 void
-sample_user_specified_virtual_riboses(core::pose::Pose & pose, utility::vector1< std::string > const & sample_virtual_ribose_string_list, 
+sample_user_specified_virtual_riboses(core::pose::Pose & pose, utility::vector1< std::string > const & sample_virtual_ribose_string_list,
 										 						    StepWiseRNA_JobParametersCOP & job_parameters, core::scoring::ScoreFunctionOP const & scorefxn,
 																		std::string const silent_file_out, std::string const input_tag);
 

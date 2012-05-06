@@ -13,8 +13,8 @@
 /// @brief silent input file reader for mini.
 /// @author James Thompson
 
-#ifndef INCLUDED_core_io_silent_SequenceFactory_fwd_hh
-#define INCLUDED_core_io_silent_SequenceFactory_fwd_hh
+#ifndef INCLUDED_core_sequence_SequenceFactory_fwd_hh
+#define INCLUDED_core_sequence_SequenceFactory_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 

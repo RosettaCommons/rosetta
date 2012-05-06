@@ -15,10 +15,10 @@
 /// @author Parin Sripakdeevong
 
 
-#ifndef INCLUDED_protocols_swa_SWA_RNA_JobParameters_HH
-#define INCLUDED_protocols_swa_SWA_RNA_JobParameters_HH
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_JobParameters_HH
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_JobParameters_HH
 
-#include <protocols/swa/rna/StepWiseRNA_Classes.hh> 
+#include <protocols/swa/rna/StepWiseRNA_Classes.hh>
 #include <core/kinematics/FoldTree.hh>
 
 #include <core/pose/Pose.fwd.hh>
@@ -92,10 +92,10 @@ namespace rna {
 		utility::vector1< core::Size > const & working_best_alignment() const;
 
 
-		utility::vector1< core::Size > const & native_alignment() const; 
-		utility::vector1< core::Size > const & working_native_alignment() const; 
+		utility::vector1< core::Size > const & native_alignment() const;
+		utility::vector1< core::Size > const & working_native_alignment() const;
 
-	 
+
 		utility::vector1< core::Size > const & global_sample_res_list() const;
 		utility::vector1< core::Size > const & working_global_sample_res_list() const;
 
@@ -111,7 +111,7 @@ namespace rna {
 		utility::vector1< core::Size > const & protonated_H1_adenosine_list() const;
 		utility::vector1< core::Size > const & working_protonated_H1_adenosine_list() const;
 
-		void set_output_extra_RMSDs( bool const & setting );	
+		void set_output_extra_RMSDs( bool const & setting );
 		void set_Is_simple_full_length_job_params( bool const & setting );
 
 		void set_full_sequence( std::string const & setting );
@@ -149,14 +149,14 @@ namespace rna {
 		void set_working_best_alignment(utility::vector1< core::Size > const & setting);
 
 		void set_native_alignment( utility::vector1< core::Size > const & setting);
-		void set_working_native_alignment( utility::vector1< core::Size > const & setting); 
+		void set_working_native_alignment( utility::vector1< core::Size > const & setting);
 
 		void set_global_sample_res_list( utility::vector1< core::Size > const & setting);
 		void set_force_syn_chi_res_list( utility::vector1< core::Size > const & setting);
 		void set_force_north_ribose_list( utility::vector1< core::Size > const & setting);
 		void set_force_south_ribose_list( utility::vector1< core::Size > const & setting);
 		void set_protonated_H1_adenosine_list( utility::vector1< core::Size > const & setting);
-		void set_add_virt_res_as_root( bool const setting){ add_virt_res_as_root_=setting; }	
+		void set_add_virt_res_as_root( bool const setting){ add_virt_res_as_root_=setting; }
 
 
 		core::pose::PoseCOP	working_native_pose() const;

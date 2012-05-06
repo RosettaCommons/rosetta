@@ -10,8 +10,8 @@
 /// @file protocols/nonlocal/StarTreeBuilder.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_NONLOCAL_STARTREEBUILDER_HH_
-#define PROTOCOLS_NONLOCAL_STARTREEBUILDER_HH_
+#ifndef INCLUDED_PROTOCOLS_NONLOCAL_STARTREEBUILDER_HH
+#define INCLUDED_PROTOCOLS_NONLOCAL_STARTREEBUILDER_HH
 
 // Unit headers
 #include <protocols/nonlocal/StarTreeBuilder.fwd.hh>

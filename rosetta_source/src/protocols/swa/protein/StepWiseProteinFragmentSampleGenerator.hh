@@ -15,8 +15,8 @@
 /// @author Parin Sripakdeevong
 
 
-#ifndef INCLUDED_protocols_swa_SWA_ProteinFragmentSampleGenerator_HH
-#define INCLUDED_protocols_swa_SWA_ProteinFragmentSampleGenerator_HH
+#ifndef INCLUDED_protocols_swa_protein_StepWiseProteinFragmentSampleGenerator_HH
+#define INCLUDED_protocols_swa_protein_StepWiseProteinFragmentSampleGenerator_HH
 
 #include <protocols/swa/StepWisePoseSampleGenerator.hh>
 #include <core/fragment/Frame.fwd.hh>

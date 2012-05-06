@@ -14,16 +14,16 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_SWA_RNAUtil_hh
-#define INCLUDED_protocols_swa_SWA_RNAUtil_hh
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_Util_hh
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_Util_hh
 
 
 #include <protocols/swa/rna/StepWiseRNA_ResidueInfo.hh>
-#include <protocols/swa/rna/StepWiseRNA_Classes.hh> 
+#include <protocols/swa/rna/StepWiseRNA_Classes.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh> 
+#include <core/io/silent/BinaryRNASilentStruct.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
@@ -35,7 +35,7 @@
 #include <core/chemical/AA.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <numeric/angle.functions.hh> 
+#include <numeric/angle.functions.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/conformation/Residue.hh>
@@ -66,7 +66,7 @@ bool Is_H4star_atom(std::string const & atom_name);
 bool Is_three_prime_phosphate_atom(std::string const & atom_name);
 bool Is_five_prime_phosphate_atom(std::string const & atom_name);
 bool Is_phosphate_atom(std::string const & atom_name);
-	
+
 
 void
 minimize_with_constraints(core::pose::Pose & pose, core::kinematics::MoveMap const & mm, core::scoring::ScoreFunctionOP const & scorefxn, core::optimization::MinimizerOptions const & options);
@@ -99,33 +99,33 @@ core::Size
 get_matching_atom_name(std::string const & atom_name, core::conformation::Residue const & rsd);
 
 void
-setup_suite_atom_id_map( core::conformation::Residue const & rsd_1, 
-												core::conformation::Residue const & rsd_2, 
+setup_suite_atom_id_map( core::conformation::Residue const & rsd_1,
+												core::conformation::Residue const & rsd_2,
 												core::id::AtomID_Map< core::id::AtomID > & atom_ID_map,
-												bool const base_only=true); 
+												bool const base_only=true);
 
 
 void
-setup_suite_atom_id_map(core::conformation::Residue const & rsd_1, 
-                        core::conformation::Residue const & rsd_2, 
-                        core::Size const res_num_1, 
+setup_suite_atom_id_map(core::conformation::Residue const & rsd_1,
+                        core::conformation::Residue const & rsd_2,
+                        core::Size const res_num_1,
 											 core::Size const res_num_2, //allow for the possibility that two poses have different sizes Jun 9, 2010
                         core::id::AtomID_Map< core::id::AtomID > & atom_ID_map,
 											 bool const base_only=true);
 
 void
-setup_suite_atom_id_map(core::pose::Pose const & pose_1, 
-											 core::pose::Pose const & pose_2, 
-											 core::Size const base_res, 
+setup_suite_atom_id_map(core::pose::Pose const & pose_1,
+											 core::pose::Pose const & pose_2,
+											 core::Size const base_res,
 											 core::id::AtomID_Map< core::id::AtomID > & atom_ID_map,
 											 bool const base_only=true);
 
 
 void
 setup_suite_atom_id_map(core::pose::Pose const & pose_1,  ////Dec 23, 2011.
-											 core::pose::Pose const & pose_2, 
-											 core::Size const base_res_1, 
-											 core::Size const base_res_2,  
+											 core::pose::Pose const & pose_2,
+											 core::Size const base_res_1,
+											 core::Size const base_res_2,
 											 core::id::AtomID_Map< core::id::AtomID > & atom_ID_map,
 											 bool const base_only=true);
 
@@ -134,11 +134,11 @@ core::id::AtomID_Map< core::id::AtomID >
 create_alignment_id_map(	core::pose::Pose & mod_pose, core::pose::Pose const & ref_pose, utility::vector1< core::Size > const & rmsd_residue_list, bool const base_only=true);
 
 void
-align_poses( core::pose::Pose & moving_pose, 
-					  std::string const moving_tag, 
-						core::pose::Pose const & static_pose, 
-						std::string const static_tag, 
-						utility::vector1< core::Size > const & working_best_alignment, 
+align_poses( core::pose::Pose & moving_pose,
+					  std::string const moving_tag,
+						core::pose::Pose const & static_pose,
+						std::string const static_tag,
+						utility::vector1< core::Size > const & working_best_alignment,
 						bool const base_only=true);
 
 utility::vector1< core::Size >
@@ -183,7 +183,7 @@ core::Real
 string_to_real(std::string const input_string);
 
 
-utility::vector1<std::string> 
+utility::vector1<std::string>
 Tokenize(std::string const str, std::string delimiters);
 
 bool
@@ -258,7 +258,7 @@ bool
 Remove_virtual_O2Star_hydrogen(core::pose::Pose & pose);
 
 core::Real
-suite_rmsd(core::pose::Pose const & pose1,core::pose::Pose const & pose2, core::Size const & seq_num, bool const prepend_res, bool const ignore_virtual_atom=false); 
+suite_rmsd(core::pose::Pose const & pose1,core::pose::Pose const & pose2, core::Size const & seq_num, bool const prepend_res, bool const ignore_virtual_atom=false);
 
 core::Real
 full_length_rmsd_over_residue_list(core::pose::Pose const & pose1, core::pose::Pose const & pose2, utility::vector1 < core::Size > const & residue_list, std::string const & full_sequence, bool const verbose, bool const ignore_virtual_atom);
@@ -298,22 +298,22 @@ suite_square_deviation(core::pose::Pose const & pose1, core::pose::Pose const & 
 void
 Output_title_text(std::string const title);
 
-bool 
+bool
 Check_chain_closable(numeric::xyzVector<core::Real> const & xyz_1, numeric::xyzVector<core::Real> const & xyz_2, core::Size const gap_size);
 
 bool
 Check_chain_closable(core::pose::Pose const & pose, core::Size const five_prime_chain_break_res, core::Size const gap_size );
 
 bool
-Check_chain_closable_floating_base(core::pose::Pose const & five_prime_pose, 
-                                   core::pose::Pose const & three_prime_pose, 
-																	 core::Size const five_prime_chain_break_res, 
+Check_chain_closable_floating_base(core::pose::Pose const & five_prime_pose,
+                                   core::pose::Pose const & three_prime_pose,
+																	 core::Size const five_prime_chain_break_res,
                                    core::Size const gap_size );
 
 void
-get_C4_C3_distance_range(core::conformation::Residue const & five_prime_rsd, 
-												 core::conformation::Residue const & three_prime_rsd, 
-												 core::Distance & C4_C3_dist_min, 
+get_C4_C3_distance_range(core::conformation::Residue const & five_prime_rsd,
+												 core::conformation::Residue const & three_prime_rsd,
+												 core::Distance & C4_C3_dist_min,
 												 core::Distance & C4_C3_dist_max);
 
 void
@@ -380,7 +380,7 @@ bool
 Is_same_ribose_pucker(core::pose::Pose const & current_pose, core::pose::Pose const & cluster_center_pose, core::Size const seq_num);
 
 
-void 
+void
 sleep(core::Size mseconds);
 
 
@@ -391,8 +391,8 @@ setup_simple_fold_tree(core::pose::Pose & pose);
 
 void
 get_atom_coordinates(utility::vector1< std::pair< core::id::AtomID, numeric::xyzVector<core::Real> > > & xyz_list,
-										 core::Size const & seq_num, 
-										 core::conformation::Residue const & rsd_at_origin, 
+										 core::Size const & seq_num,
+										 core::conformation::Residue const & rsd_at_origin,
 										 core::kinematics::Stub const & moving_res_base_stub);
 
 
@@ -409,11 +409,11 @@ void
 set_CCD_torsions_to_zero(core::pose::Pose & pose, core::Size const five_prime_res);
 
 core::Size
-virtualize_energetically_unfavorable_nucleotides(core::pose::Pose & input_pose, 
-																							utility::vector1< core::Size > const & allow_bulge_res_list, 
-																							core::scoring::ScoreFunctionOP const & scorefxn, 
+virtualize_energetically_unfavorable_nucleotides(core::pose::Pose & input_pose,
+																							utility::vector1< core::Size > const & allow_bulge_res_list,
+																							core::scoring::ScoreFunctionOP const & scorefxn,
 																							std::string const & tag,
-																							bool const allow_pre_virtualize, 
+																							bool const allow_pre_virtualize,
 																							bool const allow_consecutive_bulges,
 																							bool const verbose);
 
@@ -468,7 +468,7 @@ rescale_scorefxn(core::scoring::ScoreFunctionOP const & starting_scorefxn, core:
 void
 show_scorefxn_weight_lines(core::scoring::ScoreFunctionOP const & scorefxn, std::string const title);
 //Doesn't work on MAC!!
-//void 
+//void
 //process_mem_usage(double& vm_usage, double& resident_set, core::Size count);
 
 }

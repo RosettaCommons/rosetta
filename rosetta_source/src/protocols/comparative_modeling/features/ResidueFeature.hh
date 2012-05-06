@@ -12,6 +12,9 @@
 /// modeling.
 /// @author James Thompson
 
+#ifndef INCLUDED_protocols_comparative_modeling_features_ResidueFeature_HH
+#define INCLUDED_protocols_comparative_modeling_features_ResidueFeature_HH
+
 // AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -27,10 +30,6 @@
 #ifdef WIN32
 #include <string>
 #endif
-
-
-#ifndef protocols_comparative_modeling_features_ResidueFeature_HH
-#define protocols_comparative_modeling_features_ResidueFeature_HH
 
 namespace protocols {
 namespace comparative_modeling {

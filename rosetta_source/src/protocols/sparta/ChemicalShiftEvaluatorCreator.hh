@@ -11,8 +11,8 @@
 /// @brief  Header for ChemicalShiftsEvaluatorCreator
 /// @author Matthew O'Meara
 
-#ifndef INCLUDED_protocols_sparta_ChemicalShiftsEvaluatorCreator_hh
-#define INCLUDED_protocols_sparta_ChemicalShiftsEvaluatorCreator_hh
+#ifndef INCLUDED_protocols_sparta_ChemicalShiftEvaluatorCreator_hh
+#define INCLUDED_protocols_sparta_ChemicalShiftEvaluatorCreator_hh
 
 // Unit Headers
 #include <protocols/evaluation/EvaluatorCreator.hh>

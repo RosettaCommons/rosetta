@@ -12,8 +12,8 @@
 /// @brief
 /// @author tim
 
-#ifndef INCLUDED_ConcurrencyTestCreator_HH
-#define INCLUDED_ConcurrencyTestCreator_HH
+#ifndef INCLUDED_protocols_features_helixAssembly_ConcurrencyTestCreator_HH
+#define INCLUDED_protocols_features_helixAssembly_ConcurrencyTestCreator_HH
 
 // Unit Headers
 #include <protocols/features/FeaturesReporterCreator.hh>

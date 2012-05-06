@@ -11,8 +11,8 @@
 /// @brief  report Orbital geometry and scores to features Statistics Scientific Benchmark
 /// @author Matthew O'Meara
 
-#ifndef INCLUDED_protocols_features_ProtocolsFeatures_hh
-#define INCLUDED_protocols_features_ProtocolsFeatures_hh
+#ifndef INCLUDED_protocols_features_ProtocolFeatures_hh
+#define INCLUDED_protocols_features_ProtocolFeatures_hh
 
 // Unit Headers
 #include <protocols/features/FeaturesReporter.hh>

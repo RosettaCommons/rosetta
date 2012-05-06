@@ -15,6 +15,9 @@
 ///
 /// @author Oliver Lange
 
+#ifndef INCLUDED_basic_options_option_macros_hh
+#define INCLUDED_basic_options_option_macros_hh
+
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/after_opts.hh>
@@ -206,3 +209,5 @@
   namespace basic { 	namespace options {	namespace OptionKeys { namespace grp1 { namespace grp2 { namespace grp3 { \
 	    basic::options::type##OptionKey const key( #grp1":"#grp2":"#grp3":"#key ); \
 	  }}}}}}
+
+#endif

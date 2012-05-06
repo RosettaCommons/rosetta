@@ -11,8 +11,8 @@
 /// @brief  fragment picker type declarations
 /// @author David E. Kim (dekim@u.washington.edu)
 
-#ifndef INCLUDED_protocols_frag_picker_contact_types_hh
-#define INCLUDED_protocols_frag_picker_contact_types_hh
+#ifndef INCLUDED_protocols_frag_picker_ContactTypes_hh
+#define INCLUDED_protocols_frag_picker_ContactTypes_hh
 
 // C++ headers
 #include <string>

@@ -10,8 +10,8 @@
 /// @file   src/protocols/qsar/scoring_grid/GridFactory.hh
 /// @author Sam DeLuca
 
-#ifndef INCLUDED_protocols_qsar_scoring_grid_GridFactory_HH_
-#define INCLUDED_protocols_qsar_scoring_grid_GridFactory_HH_
+#ifndef INCLUDED_protocols_qsar_scoring_grid_GridFactory_HH
+#define INCLUDED_protocols_qsar_scoring_grid_GridFactory_HH
 
 //Unit Headers
 #include <protocols/qsar/scoring_grid/GridFactory.fwd.hh>

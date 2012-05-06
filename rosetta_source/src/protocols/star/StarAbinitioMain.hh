@@ -10,8 +10,8 @@
 /// @file protocols/star/StarAbinitioMain.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_STAR_STAR_MAIN_HH_
-#define PROTOCOLS_STAR_STAR_MAIN_HH_
+#ifndef INCLUDED_PROTOCOLS_STAR_STARABINITIOMAIN_HH
+#define INCLUDED_PROTOCOLS_STAR_STARABINITIOMAIN_HH
 
 namespace protocols {
 namespace star {

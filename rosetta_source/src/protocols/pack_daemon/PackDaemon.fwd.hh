@@ -12,8 +12,8 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 
-#ifndef INCLUDED_protocolspack_daemon_PackDaemon_fwd_hh
-#define INCLUDED_protocolspack_daemon_PackDaemon_fwd_hh
+#ifndef INCLUDED_protocols_pack_daemon_PackDaemon_fwd_hh
+#define INCLUDED_protocols_pack_daemon_PackDaemon_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 

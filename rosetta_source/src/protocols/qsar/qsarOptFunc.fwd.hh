@@ -10,8 +10,8 @@
 /// @file   src/protocols/qsar/qsarOptFunc.fwd.hh
 /// @author Sam DeLuca
 
-#ifndef INCLUDED_protocols_qsar_qsarOptFunc_FWD_HH_
-#define INCLUDED_protocols_qsar_qsarOptFunc_FWD_HH_
+#ifndef INCLUDED_protocols_qsar_qsarOptFunc_FWD_HH
+#define INCLUDED_protocols_qsar_qsarOptFunc_FWD_HH
 
 namespace protocols {
 namespace qsar {

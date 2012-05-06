@@ -11,8 +11,8 @@
 /// @brief
 /// @author James Thompson
 
-#ifndef core_io_pose_stream_SilentFilePoseInputStream_HH
-#define core_io_pose_stream_SilentFilePoseInputStream_HH
+#ifndef INCLUDED_core_import_pose_pose_stream_SilentFilePoseInputStream_HH
+#define INCLUDED_core_import_pose_pose_stream_SilentFilePoseInputStream_HH
 
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.fwd.hh>

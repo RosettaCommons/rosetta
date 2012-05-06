@@ -14,8 +14,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_SWA_BetaAntiparallelUtil_HH
-#define INCLUDED_protocols_swa_SWA_BetaAntiparallelUtil_HH
+#ifndef INCLUDED_protocols_swa_protein_StepWiseBetaAntiparallelUtil_HH
+#define INCLUDED_protocols_swa_protein_StepWiseBetaAntiparallelUtil_HH
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>

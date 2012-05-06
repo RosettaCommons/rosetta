@@ -11,8 +11,8 @@
 /// @brief
 /// @author Steven Lewis smlewi@gmail.com, Brian Weitzner brian.weitzner@gmail.com
 
-#ifndef INCLUDED_protocols_jd2_GenericJobInputterCreator_hh
-#define INCLUDED_protocols_jd2_GenericJobInputterCreator_hh
+#ifndef INCLUDED_protocols_comparative_modeling_GenericJobInputterCreator_hh
+#define INCLUDED_protocols_comparative_modeling_GenericJobInputterCreator_hh
 
 #include <protocols/jd2/JobInputterCreator.hh>
 

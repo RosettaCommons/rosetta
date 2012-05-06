@@ -14,8 +14,8 @@
 /// @date   Wed Aug 22 12:08:31 2007
 ///
 
-#ifndef core_fragments_FramelistIterator_HH
-#define core_fragments_FramelistIterator_HH
+#ifndef INCLUDED_core_fragment_FramelistIterator__HH
+#define INCLUDED_core_fragment_FramelistIterator__HH
 
 // Package Headers
 // AUTO-REMOVED #include <core/fragment/Frame.hh>

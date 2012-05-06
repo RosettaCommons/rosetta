@@ -14,8 +14,8 @@
 /// @date   Wed Aug 22 12:08:31 2007
 ///
 
-#ifndef core_fragments_FragID_Iterator_FWD_HH
-#define core_fragments_FragID_Iterator_FWD_HH
+#ifndef INCLUDED_core_fragment_FragID_Iterator_FWD_HH
+#define INCLUDED_core_fragment_FragID_Iterator_FWD_HH
 
 
 namespace core {

@@ -10,8 +10,8 @@
 /// @file protocols/nonlocal/StarTreeBuilder.fwd.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_NONLOCAL_STARTREEBUILDER_fwd_hh_
-#define PROTOCOLS_NONLOCAL_STARTREEBUILDER_fwd_hh_
+#ifndef INCLUDED_PROTOCOLS_NONLOCAL_STARTREEBUILDER_fwd_hh
+#define INCLUDED_PROTOCOLS_NONLOCAL_STARTREEBUILDER_fwd_hh
 
 #include <utility/pointer/owning_ptr.fwd.hh>
 

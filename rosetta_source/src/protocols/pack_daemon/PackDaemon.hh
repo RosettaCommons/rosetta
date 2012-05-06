@@ -11,8 +11,8 @@
 /// @brief  declaration for class PackDaemon
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocolspack_daemon_PackDaemon_hh
-#define INCLUDED_protocolspack_daemon_PackDaemon_hh
+#ifndef INCLUDED_protocols_pack_daemon_PackDaemon_hh
+#define INCLUDED_protocols_pack_daemon_PackDaemon_hh
 
 // Unit headers
 #include <protocols/pack_daemon/PackDaemon.fwd.hh>

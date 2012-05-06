@@ -10,8 +10,8 @@
 /// @file protocols/frag_picker/SidechainContactDistCutoff.fwd.hh
 /// @author David Kim (dekim@u.washington.edu)
 
-#ifndef PROTOCOLS_FRAG_PICKER_SIDECHAIN_CONTACT_DIST_CUTOFF_FWD_HH_
-#define PROTOCOLS_FRAG_PICKER_SIDECHAIN_CONTACT_DIST_CUTOFF_FWD_HH_
+#ifndef INCLUDED_PROTOCOLS_FRAG_PICKER_SIDECHAINCONTACTDISTCUTOFF_FWD_HH
+#define INCLUDED_PROTOCOLS_FRAG_PICKER_SIDECHAINCONTACTDISTCUTOFF_FWD_HH
 
 #include <utility/pointer/owning_ptr.fwd.hh>
 

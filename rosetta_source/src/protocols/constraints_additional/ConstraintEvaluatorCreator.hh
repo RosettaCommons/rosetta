@@ -11,8 +11,8 @@
 /// @brief  Header for ConstraintsEvaluatorCreator
 /// @author Matthew O'Meara
 
-#ifndef INCLUDED_protocols_constraints_additional_ConstraintsEvaluatorCreator_hh
-#define INCLUDED_protocols_constraints_additional_ConstraintsEvaluatorCreator_hh
+#ifndef INCLUDED_protocols_constraints_additional_ConstraintEvaluatorCreator_hh
+#define INCLUDED_protocols_constraints_additional_ConstraintEvaluatorCreator_hh
 
 // Unit Headers
 #include <protocols/evaluation/EvaluatorCreator.hh>

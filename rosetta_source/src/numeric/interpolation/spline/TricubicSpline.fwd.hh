@@ -6,8 +6,8 @@
 
 // @author Steven Combs
 
-#ifndef INCLUDED_numeric_interpolation_spline_Bicubic_spline_fwd_hh
-#define INCLUDED_numeric_interpolation_spline_Bicubic_spline_fwd_hh
+#ifndef INCLUDED_numeric_interpolation_spline_TricubicSpline_fwd_hh
+#define INCLUDED_numeric_interpolation_spline_TricubicSpline_fwd_hh
 
 namespace numeric {
 namespace interpolation {
@@ -21,4 +21,4 @@ namespace spline {
 
 
 
-#endif /* BICUBIC_SPLINE_FWD_HH_ */
+#endif /* INCLUDED_numeric_interpolation_spline_TricubicSpline_fwd_hh */

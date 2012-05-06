@@ -12,8 +12,8 @@
 /// @brief  A fragment as list of SingleResidue Data
 /// @author Oliver Lange (olange@u.washington.edu)
 
-#ifndef core_fragments_BBTorsionSRFD_HH
-#define core_fragments_BBTorsionSRFD_HH
+#ifndef INCLUDED_core_fragment_BBTorsionSRFD_HH
+#define INCLUDED_core_fragment_BBTorsionSRFD_HH
 
 // Unit Headers
 #include <core/fragment/BBTorsionSRFD.fwd.hh>

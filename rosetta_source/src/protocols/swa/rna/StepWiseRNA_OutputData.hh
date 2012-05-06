@@ -14,8 +14,8 @@
 /// @author Parin Sripakdeevong
 
 
-#ifndef INCLUDED_protocols_swa_SWA_RNA_OutputData_HH
-#define INCLUDED_protocols_swa_SWA_RNA_OutputData_HH
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_OutputData_HH
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_OutputData_HH
 
 
 #include <protocols/swa/rna/StepWiseRNA_ResidueInfo.hh>

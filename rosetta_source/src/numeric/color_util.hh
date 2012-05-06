@@ -10,8 +10,8 @@
 /// @file   src/numeric/color_util.hh
 /// @author Sam DeLuca
 
-#ifndef INCLUDED_numeric_color_util_HH_
-#define INCLUDED_numeric_color_util_HH_
+#ifndef INCLUDED_numeric_color_util_HH
+#define INCLUDED_numeric_color_util_HH
 
 #include <platform/types.hh>
 #include <numeric/xyzVector.fwd.hh>
@@ -32,4 +32,4 @@ numeric::xyzVector<platform::Real> hsv_to_rgb(numeric::xyzVector<platform::Real>
 
 }
 
-#endif /* COLOR_UTIL_HH_ */
+#endif /* COLOR_UTIL_HH */

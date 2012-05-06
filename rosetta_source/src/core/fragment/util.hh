@@ -11,8 +11,8 @@
 /// @brief  some utilities for fragments
 /// @author Oliver Lange (olange@u.washington.edu)
 /// @date   Wed Oct 20 12:08:31 2007
-#ifndef core_fragment_util_HH
-#define core_fragment_util_HH
+#ifndef INCLUDED_core_fragment_util_HH
+#define INCLUDED_core_fragment_util_HH
 
 // Project Headers
 #include <core/types.hh>

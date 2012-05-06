@@ -12,8 +12,8 @@
 /// @author Nobuyasu Koga
 
 
-#ifndef INCLUDED_protocols_potentials_fldsgn_AACompositionEnergy_FWD_HH
-#define INCLUDED_protocols_potentials_fldsgn_AACompositionEnergy_FWD_HH
+#ifndef INCLUDED_protocols_fldsgn_potentials_AACompositionEnergy_FWD_HH
+#define INCLUDED_protocols_fldsgn_potentials_AACompositionEnergy_FWD_HH
 
 namespace protocols {
 namespace fldsgn {

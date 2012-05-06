@@ -13,8 +13,8 @@
 
 /// @author Tim Jacobs
 
-#ifndef DatabaseEntryWorkUnit_fwd_hh
-#define DatabaseEntryWorkUnit_fwd_hh
+#ifndef INCLUDED_protocols_wum_DatabaseEntryWorkUnit_fwd_hh
+#define INCLUDED_protocols_wum_DatabaseEntryWorkUnit_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -27,5 +27,5 @@ typedef utility::pointer::owning_ptr< DatabaseEntryWorkUnit const > DatabaseEntr
 
 }//namespace wum
 }//namespace protocols
-    
+
 #endif

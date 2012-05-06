@@ -14,8 +14,8 @@
 /// @date   Wed Aug 22 12:08:31 2007
 ///
 
-#ifndef core_fragments_FragData_HH
-#define core_fragments_FragData_HH
+#ifndef INCLUDED_protocols_abinitio_FragmentCost_HH
+#define INCLUDED_protocols_abinitio_FragmentCost_HH
 
 // Unit Headers
 // AUTO-REMOVED #include <core/fragment/FragData.fwd.hh>

@@ -14,8 +14,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_SWA_ProteinCCD_Closer_HH
-#define INCLUDED_protocols_swa_SWA_ProteinCCD_Closer_HH
+#ifndef INCLUDED_protocols_swa_protein_StepWiseProteinCCD_Closer_HH
+#define INCLUDED_protocols_swa_protein_StepWiseProteinCCD_Closer_HH
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/TorsionID.hh>

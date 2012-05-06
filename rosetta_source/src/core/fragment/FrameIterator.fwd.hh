@@ -14,8 +14,8 @@
 /// @date   Tue Sep 08 08:59:43 EDT 2009 @583 /Internet Time/
 ///
 
-#ifndef core_fragments_FrameIterators_FWD_HH
-#define core_fragments_FrameIterators_FWD_HH
+#ifndef INCLUDED_core_fragment_FrameIterator_FWD_HH
+#define INCLUDED_core_fragment_FrameIterator_FWD_HH
 
 namespace core {
 namespace fragment {

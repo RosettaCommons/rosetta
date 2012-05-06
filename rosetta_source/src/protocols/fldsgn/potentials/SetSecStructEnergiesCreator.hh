@@ -11,8 +11,8 @@
 ///@brief This class will create instances of Mover SetSecStructEnergies for the MoverFactory
 ///@author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_fldsgn_SetSecStructEnergiesCreator_hh
-#define INCLUDED_protocols_fldsgn_SetSecStructEnergiesCreator_hh
+#ifndef INCLUDED_protocols_fldsgn_potentials_SetSecStructEnergiesCreator_hh
+#define INCLUDED_protocols_fldsgn_potentials_SetSecStructEnergiesCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 

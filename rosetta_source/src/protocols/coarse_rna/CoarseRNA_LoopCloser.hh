@@ -14,8 +14,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_rna_CoarseRNA_LoopCloser_HH
-#define INCLUDED_protocols_rna_CoarseRNA_LoopCloser_HH
+#ifndef INCLUDED_protocols_coarse_rna_CoarseRNA_LoopCloser_HH
+#define INCLUDED_protocols_coarse_rna_CoarseRNA_LoopCloser_HH
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/toolbox/AllowInsert.hh>

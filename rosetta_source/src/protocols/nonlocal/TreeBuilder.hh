@@ -10,8 +10,8 @@
 /// @file protocols/nonlocal/TreeBuilder.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_NONLOCAL_TREEBUILDER_HH_
-#define PROTOCOLS_NONLOCAL_TREEBUILDER_HH_
+#ifndef INCLUDED_PROTOCOLS_NONLOCAL_TREEBUILDER_HH
+#define INCLUDED_PROTOCOLS_NONLOCAL_TREEBUILDER_HH
 
 // Unit headers
 #include <protocols/nonlocal/TreeBuilder.fwd.hh>

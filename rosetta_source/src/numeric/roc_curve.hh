@@ -10,8 +10,8 @@
 /// @file   src/numeric/roc_curve.hh
 /// @author Sam DeLuca
 
-#ifndef INCLUDED_numeric_roc_curve_HH_
-#define INCLUDED_numeric_roc_curve_HH_
+#ifndef INCLUDED_numeric_roc_curve_HH
+#define INCLUDED_numeric_roc_curve_HH
 
 //unit headers
 #include <numeric/roc_curve.fwd.hh>
@@ -82,4 +82,4 @@ private:
 }
 
 
-#endif /* ROC_CURVE_HH_ */
+#endif /* INCLUDED_numeric_roc_curve_HH */

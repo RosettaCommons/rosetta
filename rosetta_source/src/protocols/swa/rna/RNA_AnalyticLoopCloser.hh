@@ -14,8 +14,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_rna_RNA_AnalyticLoopCloser_HH
-#define INCLUDED_protocols_rna_RNA_AnalyticLoopCloser_HH
+#ifndef INCLUDED_protocols_swa_rna_RNA_AnalyticLoopCloser_HH
+#define INCLUDED_protocols_swa_rna_RNA_AnalyticLoopCloser_HH
 
 #include <protocols/moves/Mover.hh>
 #include <core/id/NamedAtomID.hh>

@@ -10,8 +10,8 @@
 /// @file protocols/nonlocal/BiasedFragmentMover.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_NONLOCAL_BIASED_FRAGMENT_MOVER_HH_
-#define PROTOCOLS_NONLOCAL_BIASED_FRAGMENT_MOVER_HH_
+#ifndef INCLUDED_PROTOCOLS_NONLOCAL_BIASEDFRAGMENTMOVER_HH
+#define INCLUDED_PROTOCOLS_NONLOCAL_BIASEDFRAGMENTMOVER_HH
 
 // Unit header
 #include <protocols/nonlocal/BiasedFragmentMover.fwd.hh>

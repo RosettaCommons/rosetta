@@ -10,8 +10,8 @@
 /// @file numeric/prob_util.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef NUMERIC_PROB_UTIL_hh_
-#define NUMERIC_PROB_UTIL_hh_
+#ifndef INCLUDED_NUMERIC_PROB_UTIL_hh
+#define INCLUDED_NUMERIC_PROB_UTIL_hh
 
 // C/C++ headers
 #include <algorithm>

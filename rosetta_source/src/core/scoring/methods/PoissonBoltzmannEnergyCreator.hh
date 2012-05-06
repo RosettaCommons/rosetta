@@ -11,8 +11,8 @@
 /// @brief  Declaration for the class that connects PB_elec energy with the ScoringManager
 /// @author Yifan Song
 
-#ifndef INCLUDED_core_scoring_methods_PoissonBoltzmannCreator_HH
-#define INCLUDED_core_scoring_methods_PoissonBoltzmannCreator_HH
+#ifndef INCLUDED_core_scoring_methods_PoissonBoltzmannEnergyCreator_HH
+#define INCLUDED_core_scoring_methods_PoissonBoltzmannEnergyCreator_HH
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 

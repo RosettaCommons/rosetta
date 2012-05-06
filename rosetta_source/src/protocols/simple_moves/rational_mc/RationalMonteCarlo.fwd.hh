@@ -10,8 +10,8 @@
 /// @file protocols/simple_moves/rational_mc/RationalMonteCarlo.fwd.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef INCLUDE_protocols_simple_moves_rational_mc_RationalMonteCarlo_FWD_HH
-#define INCLUDE_protocols_simple_moves_rational_mc_RationalMonteCarlo_FWD_HH
+#ifndef INCLUDED_protocols_simple_moves_rational_mc_RationalMonteCarlo_FWD_HH
+#define INCLUDED_protocols_simple_moves_rational_mc_RationalMonteCarlo_FWD_HH
 
 #include <utility/pointer/owning_ptr.fwd.hh>
 

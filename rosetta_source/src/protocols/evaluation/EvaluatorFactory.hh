@@ -12,8 +12,8 @@
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 
-#ifndef INCLUDED_protocols_evaluator_EvaluatorFactory_hh
-#define INCLUDED_protocols_evaluator_EvaluatorFactory_hh
+#ifndef INCLUDED_protocols_evaluation_EvaluatorFactory_hh
+#define INCLUDED_protocols_evaluation_EvaluatorFactory_hh
 
 // Unit Headers
 #include <protocols/evaluation/EvaluatorFactory.fwd.hh>

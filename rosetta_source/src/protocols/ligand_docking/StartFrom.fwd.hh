@@ -10,8 +10,8 @@
 /// @file   src/protocols/ligand_docking/StartFrom.fwd.hh
 /// @author Sam DeLuca
 
-#ifndef INCLUDED_protocols_ligand_docking_startfrom_fwd_HH_
-#define INCLUDED_protocols_ligand_docking_startfrom_fwd_HH_
+#ifndef INCLUDED_protocols_ligand_docking_startfrom_fwd_HH
+#define INCLUDED_protocols_ligand_docking_startfrom_fwd_HH
 
 #include <utility/pointer/owning_ptr.hh>
 

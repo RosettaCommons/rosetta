@@ -8,16 +8,15 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 /// @author Rhiju Das
 
+#ifndef INCLUDED_protocols_rna_RNA_FragmentMover_fwd_hh
+#define INCLUDED_protocols_rna_RNA_FragmentMover_fwd_hh
+
 #include <core/types.hh>
 #include <protocols/rna/RNA_FragmentMover.hh>
 
 #include <utility/vector1.hh>
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
-
-
-#ifndef INCLUDED_protocols_rna_RNA_FragmentMover_fwd_hh
-#define INCLUDED_protocols_rna_RNA_FragmentMover_fwd_hh
 
 namespace protocols{
 namespace rna{

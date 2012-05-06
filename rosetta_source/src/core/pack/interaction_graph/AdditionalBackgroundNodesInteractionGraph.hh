@@ -12,8 +12,8 @@
 /// @author Andrew Leaver-Fay
 /// @author Ron Jacak (ron.jacak@gmail.com)
 
-#ifndef ADDITIONAL_BACKGROUND_NODES_INTERACTION_GRAPH_H
-#define ADDITIONAL_BACKGROUND_NODES_INTERACTION_GRAPH_H
+#ifndef INCLUDED_core_pack_interaction_graph_AdditionalBackgroundNodesInteractionGraph_HH
+#define INCLUDED_core_pack_interaction_graph_AdditionalBackgroundNodesInteractionGraph_HH
 
 // AUTO-REMOVED #include <core/pack/interaction_graph/InteractionGraphBase.hh>
 

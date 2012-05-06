@@ -10,8 +10,8 @@
 /// @file   protocols/ligand_docking/qsar/RenderGridsToKinemage.hh
 /// @author Sam DeLuca
 
-#ifndef INCLUDED_protocols_qsar_RenderGridsToKinemage_HH_
-#define INCLUDED_protocols_qsar_RenderGridsToKinemage_HH_
+#ifndef INCLUDED_protocols_qsar_RenderGridsToKinemage_HH
+#define INCLUDED_protocols_qsar_RenderGridsToKinemage_HH
 
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 

@@ -14,8 +14,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_rna_RNA_DeNovoProtocol_HH
-#define INCLUDED_protocols_rna_RNA_DeNovoProtocol_HH
+#ifndef INCLUDED_protocols_coarse_rna_CoarseRNA_DeNovoProtocol_HH
+#define INCLUDED_protocols_coarse_rna_CoarseRNA_DeNovoProtocol_HH
 
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/chemical/ResidueTypeSet.fwd.hh>

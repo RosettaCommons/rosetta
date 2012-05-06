@@ -8,8 +8,8 @@
 /// @brief Class for a tracer that writes all output to a file.
 /// @author Matt O'Meara (mattjomeara@gmail.com)
 
-#ifndef INCLUDE_basic_tracer_to_file_hh
-#define INCLUDE_basic_tracer_to_file_hh
+#ifndef INCLUDED_basic_TracerToFile_hh
+#define INCLUDED_basic_TracerToFile_hh
 
 
 
@@ -56,4 +56,4 @@ private:
 } // namespace basic
 
 
-#endif // INCLUDE_basic_tracer_to_file_hh
+#endif // INCLUDED_basic_TracerToFile_hh

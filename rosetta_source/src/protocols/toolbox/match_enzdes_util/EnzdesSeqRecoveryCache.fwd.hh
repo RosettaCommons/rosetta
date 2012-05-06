@@ -12,8 +12,8 @@
 /// @brief
 /// @author Sinisa Bjelic
 
-#ifndef INCLUDE_src_protocols_toolbox_match_enzdes_util_EnzdesSeqRecoveryCache_fwd_hh
-#define INCLUDE_src_protocols_toolbox_match_enzdes_util_EnzdesSeqRecoveryCache_fwd_hh
+#ifndef INCLUDED_protocols_toolbox_match_enzdes_util_EnzdesSeqRecoveryCache_fwd_hh
+#define INCLUDED_protocols_toolbox_match_enzdes_util_EnzdesSeqRecoveryCache_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>

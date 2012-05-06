@@ -11,8 +11,8 @@
 /// @brief An object for reading/writing a simple xml-like language.
 /// @author Paul Murphy
 
-#ifndef PROTOCOLS_TAG_TAG_HH
-#define PROTOCOLS_TAG_TAG_HH
+#ifndef INCLUDED_utility_tag_tag_HH
+#define INCLUDED_utility_tag_tag_HH
 
 #include <iosfwd>
 #include <map>
@@ -145,4 +145,4 @@ std::ostream& operator<<(std::ostream& out, TagPtr const& tag);
 } // namespace tag
 } // namespace utility
 
-#endif // PROTOCOLS_TAG_TAG_HH
+#endif // INCLUDED_utility_tag_tag_HH

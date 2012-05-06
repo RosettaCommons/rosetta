@@ -10,8 +10,8 @@
 /// @file protocols/star/Extender.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_STAR_EXTENDER_HH_
-#define PROTOCOLS_STAR_EXTENDER_HH_
+#ifndef INCLUDED_PROTOCOLS_STAR_EXTENDER_HH
+#define INCLUDED_PROTOCOLS_STAR_EXTENDER_HH
 
 // External headers
 #include <boost/utility.hpp>

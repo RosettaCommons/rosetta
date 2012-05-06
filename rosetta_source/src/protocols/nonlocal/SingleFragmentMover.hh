@@ -10,8 +10,8 @@
 /// @file protocols/nonlocal/SingleFragmentMover.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_NONLOCAL_SINGLEFRAGMENTMOVER_HH_
-#define PROTOCOLS_NONLOCAL_SINGLEFRAGMENTMOVER_HH_
+#ifndef INCLUDED_PROTOCOLS_NONLOCAL_SINGLEFRAGMENTMOVER_HH
+#define INCLUDED_PROTOCOLS_NONLOCAL_SINGLEFRAGMENTMOVER_HH
 
 // Unit header
 #include <protocols/nonlocal/SingleFragmentMover.fwd.hh>

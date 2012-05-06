@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/backrub/BackrubMoverCreator.hh
-///@brief This class will create instances of Mover BackrubMover for the MoverFactory
-///@author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
-///@author Rocco Moretti (rmoretti@u.washington.edu)
+///@file
+///@brief
+///@author
+///@author
 
-#ifndef INCLUDED_protocols_moves_FlexPepDockingProtocolCreator_hh
-#define INCLUDED_protocols_moves_FlexPepDockingProtocolCreator_hh
+#ifndef INCLUDED_protocols_flexpep_docking_FlexPepDockingProtocolCreator_hh
+#define INCLUDED_protocols_flexpep_docking_FlexPepDockingProtocolCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 

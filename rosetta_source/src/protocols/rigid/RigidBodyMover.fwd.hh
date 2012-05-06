@@ -11,8 +11,8 @@
 /// @brief  RigidBodyMover forward declarations header
 /// @author
 
-#ifndef INCLUDED_protocols_moves_RigidBodyMover_fwd_hh
-#define INCLUDED_protocols_moves_RigidBodyMover_fwd_hh
+#ifndef INCLUDED_protocols_rigid_RigidBodyMover_fwd_hh
+#define INCLUDED_protocols_rigid_RigidBodyMover_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>

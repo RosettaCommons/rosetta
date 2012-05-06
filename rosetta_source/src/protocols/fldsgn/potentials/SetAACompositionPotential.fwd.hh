@@ -11,8 +11,8 @@
 /// @brief  forward declaration for SetAACompositionPotential
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
-#ifndef INCLUDED_protocols_fldsgn_SetAACompositionPotential_FWD_HH
-#define INCLUDED_protocols_fldsgn_SetAACompositionPotential_FWD_HH
+#ifndef INCLUDED_protocols_fldsgn_potentials_SetAACompositionPotential_FWD_HH
+#define INCLUDED_protocols_fldsgn_potentials_SetAACompositionPotential_FWD_HH
 
 // utility headers
 #include <utility/pointer/access_ptr.hh>

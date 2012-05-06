@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/frag_picker/BestTotalScoreSelector.fwd.hh
+/// @file
 /// @brief
-/// @author Dominik Gront (dgront@chem.uw.edu.pl)
+/// @author
 
-#ifndef INCLUDED_protocols_frag_picker_BestTotalScoreSelector_fwd_hh
-#define INCLUDED_protocols_frag_picker_BestTotalScoreSelector_fwd_hh
+#ifndef INCLUDED_protocols_frag_picker_CustomScoreSelector_fwd_hh
+#define INCLUDED_protocols_frag_picker_CustomScoreSelector_fwd_hh
 
 // utility headers
 #include <utility/pointer/access_ptr.hh>
@@ -21,15 +21,15 @@
 namespace protocols {
 namespace frag_picker {
 
-class BestTotalScoreSelector;
+class CustomScoreSelector;
 
-typedef utility::pointer::owning_ptr<BestTotalScoreSelector>
-		BestTotalScoreSelectorOP;
-typedef utility::pointer::owning_ptr<BestTotalScoreSelector const>
-		BestTotalScoreSelectorCOP;
+typedef utility::pointer::owning_ptr<CustomScoreSelector>
+		CustomScoreSelectorOP;
+typedef utility::pointer::owning_ptr<CustomScoreSelector const>
+		CustomScoreSelectorCOP;
 
 } // frag_picker
 } // protocols
 
 
-#endif /* INCLUDED_protocols_frag_picker_BestTotalScoreSelector_FWD_HH */
+#endif

@@ -7,19 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/*
-@file ScoringScheme.hh
-@brief abstract base class for representing scoring schemes for alignments.
-@detailed ScoringScheme objects contain two scoring rules:
-- a rule for comparing any character from a sequence to a gap character (usually
-liste as gap insertion and gap extension, or d and e)
-- a rule for scoring two elements from a sequence (simply S)
-Generally the rule for scoring gaps is composed of a gap insertion and a gap
-extension parameter. It's important to note that alignments derived using
-the ScoringScheme and Aligner objects are only guaranteed to be optimal if
-every element of S is bigger than -2 * e.
-@author James Thompson
-*/
+/// @file ScoringScheme.hh
+/// @brief abstract base class for representing scoring schemes for alignments.
+/// @detailed ScoringScheme objects contain two scoring rules:
+/// - a rule for comparing any character from a sequence to a gap character (usually
+/// liste as gap insertion and gap extension, or d and e)
+/// - a rule for scoring two elements from a sequence (simply S)
+/// Generally the rule for scoring gaps is composed of a gap insertion and a gap
+/// extension parameter. It's important to note that alignments derived using
+/// the ScoringScheme and Aligner objects are only guaranteed to be optimal if
+/// every element of S is bigger than -2 * e.
+/// @author James Thompson
 
 #ifndef INCLUDED_core_sequence_ScoringScheme_hh
 #define INCLUDED_core_sequence_ScoringScheme_hh

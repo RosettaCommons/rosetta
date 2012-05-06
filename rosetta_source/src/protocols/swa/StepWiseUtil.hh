@@ -14,8 +14,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_SWA_Util_HH
-#define INCLUDED_protocols_swa_SWA_Util_HH
+#ifndef INCLUDED_protocols_swa_StepWiseUtil_HH
+#define INCLUDED_protocols_swa_StepWiseUtil_HH
 
 
 #include <core/pose/Pose.fwd.hh>

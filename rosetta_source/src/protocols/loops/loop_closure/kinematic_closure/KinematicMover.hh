@@ -15,8 +15,8 @@
 ///
 
 
-#ifndef protocols_loops_loop_closure_kinematic_closure_KinematicMover_HH
-#define protocols_loops_loop_closure_kinematic_closure_KinematicMover_HH
+#ifndef INCLUDED_protocols_loops_loop_closure_kinematic_closure_KinematicMover_HH
+#define INCLUDED_protocols_loops_loop_closure_kinematic_closure_KinematicMover_HH
 
 // Unit Headers
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.fwd.hh>

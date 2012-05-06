@@ -12,8 +12,8 @@
 /// @author
 
 
-#ifndef INCLUDED_protocols_moves_rigid_body_moves_hh
-#define INCLUDED_protocols_moves_rigid_body_moves_hh
+#ifndef INCLUDED_protocols_rigid_rigid_body_moves_hh
+#define INCLUDED_protocols_rigid_rigid_body_moves_hh
 
 
 // Package headers

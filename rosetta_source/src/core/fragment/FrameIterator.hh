@@ -14,8 +14,8 @@
 /// @date   Wed Aug 22 12:08:31 2007
 ///
 
-#ifndef core_fragments_FrameIterators_HH
-#define core_fragments_FrameIterators_HH
+#ifndef INCLUDED_core_fragment_FrameIterator_HH
+#define INCLUDED_core_fragment_FrameIterator_HH
 
 // Unit Headers
 #include <core/fragment/FrameIterator.fwd.hh>

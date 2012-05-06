@@ -12,6 +12,8 @@
 /// @author Mike Tyka
 /// @author Ken Jung
 
+#ifndef INCLUDED_protocols_loophash_LoopHashMap_hh
+#define INCLUDED_protocols_loophash_LoopHashMap_hh
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -32,12 +34,6 @@
 
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
-
-
-
-#ifndef INCLUDED_protocols_loophash_LoopHashMap_hh
-#define INCLUDED_protocols_loophash_LoopHashMap_hh
-
 
 namespace protocols {
 namespace loophash {

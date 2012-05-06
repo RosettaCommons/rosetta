@@ -12,11 +12,10 @@
 /// @brief
 /// @author tim
 
-#include <utility/sql_database/DatabaseSessionManager.hh>
-
-
 #ifndef INCLUDED_protocols_features_util_hh
 #define INCLUDED_protocols_features_util_hh
+
+#include <utility/sql_database/DatabaseSessionManager.hh>
 
 #include <string>
 #include <map>

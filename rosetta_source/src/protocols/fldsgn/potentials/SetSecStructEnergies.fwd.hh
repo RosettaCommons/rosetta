@@ -11,8 +11,8 @@
 /// @brief  forward declaration for SetSecStructEnergies
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
-#ifndef INCLUDED_protocols_potentials_fldsgn_SetSecStructEnergies_FWD_hh
-#define INCLUDED_protocols_potentials_fldsgn_SetSecStructEnergies_FWD_hh
+#ifndef INCLUDED_protocols_fldsgn_potentials_SetSecStructEnergies_FWD_hh
+#define INCLUDED_protocols_fldsgn_potentials_SetSecStructEnergies_FWD_hh
 
 // utility headers
 #include <utility/pointer/access_ptr.hh>

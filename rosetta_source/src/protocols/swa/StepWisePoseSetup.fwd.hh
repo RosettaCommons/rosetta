@@ -11,10 +11,10 @@
 /// @brief  Various OPS for various classes.
 /// @author Rhiju Das
 
-#include <utility/pointer/owning_ptr.hh>
+#ifndef INCLUDED_protocols_swa_StepWisePoseSetup_FWD_HH
+#define INCLUDED_protocols_swa_StepWisePoseSetup_FWD_HH
 
-#ifndef INCLUDED_protocols_STEPWISE_PoseSetup_FWD_HH
-#define INCLUDED_protocols_STEPWISE_PoseSetup_FWD_HH
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols{
 namespace swa{

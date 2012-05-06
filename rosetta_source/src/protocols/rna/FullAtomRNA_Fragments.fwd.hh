@@ -11,12 +11,11 @@
 /// @brief  Pose forward declarations header
 /// @author Rhiju Das
 
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
-
-
 #ifndef INCLUDED_protocols_rna_FullAtomRNA_Fragments_FWD_HH
 #define INCLUDED_protocols_rna_FullAtomRNA_Fragments_FWD_HH
+
+#include <utility/pointer/access_ptr.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols{
 namespace rna{

@@ -11,8 +11,8 @@
 /// @brief
 /// @author Florian Richter
 
-#ifndef INCLUDED_protocols_moves_SavePoseMover_fwd_hh
-#define INCLUDED_protocols_moves_SavePoseMover_fwd_hh
+#ifndef INCLUDED_protocols_rosetta_scripts_SavePoseMover_fwd_hh
+#define INCLUDED_protocols_rosetta_scripts_SavePoseMover_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 

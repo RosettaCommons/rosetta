@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file TemperedDocking
-/// @brief low resolution docking using parallel or simulated tempering
+/// @file
+/// @brief
 /// @detailed
 /// @author Oliver Lange
 

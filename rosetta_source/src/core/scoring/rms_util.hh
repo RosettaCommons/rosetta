@@ -14,8 +14,8 @@
 /// @author Ian Davis
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef core_scoring_rms_util_HH
-#define core_scoring_rms_util_HH
+#ifndef INCLUDED_core_scoring_rms_util_HH
+#define INCLUDED_core_scoring_rms_util_HH
 
 // C/C++ headers
 // AUTO-REMOVED #include <iostream>

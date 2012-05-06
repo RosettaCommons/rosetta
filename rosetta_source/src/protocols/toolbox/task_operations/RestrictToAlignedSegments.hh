@@ -11,8 +11,8 @@
 /// @brief  TaskOperation class that restricts a chain to repacking
 /// @author Sarel Fleishman sarelf@uw.edu
 
-#ifndef INCLUDED_protocols_toolbox_task_operations_RestrictToAlignedSegmentsOperation_hh
-#define INCLUDED_protocols_toolbox_task_operations_RestrictToAlignedSegmentsOperation_hh
+#ifndef INCLUDED_protocols_toolbox_task_operations_RestrictToAlignedSegments_hh
+#define INCLUDED_protocols_toolbox_task_operations_RestrictToAlignedSegments_hh
 
 // Unit Headers
 #include <protocols/toolbox/task_operations/RestrictToAlignedSegments.fwd.hh>

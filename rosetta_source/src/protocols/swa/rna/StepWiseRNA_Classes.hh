@@ -14,8 +14,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_SWA_RNAClasses_HH
-#define INCLUDED_protocols_swa_SWA_RNAClasses_HH
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_Classes_HH
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_Classes_HH
 
 
 #include <core/pose/Pose.fwd.hh>
@@ -105,7 +105,7 @@ class Torsion_Info{
 			value(0.0)
 		{
 		}
-		
+
 		~Torsion_Info(){};
 
 	core::id::TorsionID id;

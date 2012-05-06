@@ -10,8 +10,8 @@
 /// @file core/fragment/FragmentRmsd.fwd.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef CORE_FRAGMENT_FRAGMENT_RMSD_FWD_HH_
-#define CORE_FRAGMENT_FRAGMENT_RMSD_FWD_HH_
+#ifndef INCLUDED_CORE_FRAGMENT_FRAGMENTRMSD_FWD_HH
+#define INCLUDED_CORE_FRAGMENT_FRAGMENTRMSD_FWD_HH
 
 #include <utility/pointer/owning_ptr.fwd.hh>
 

@@ -11,8 +11,8 @@
 /// @brief  report data to database
 /// @author Matthew O'Meara
 
-#ifndef INCLUDED_protocols_evaluator_EvaluatorFactory_fwd_hh
-#define INCLUDED_protocols_evaluator_EvaluatorFactory_fwd_hh
+#ifndef INCLUDED_protocols_evaluation_EvaluatorFactory_fwd_hh
+#define INCLUDED_protocols_evaluation_EvaluatorFactory_fwd_hh
 
 namespace protocols{
 namespace evaluation{

@@ -11,8 +11,8 @@
 /// @brief  FilterCreators for the filters defined in RelativeSegmentFilterCreator.hh
 /// @author Sarel
 
-#ifndef INCLUDED_protocols_protein_interface_design_filters_RelativeSegmentFilterCreaetor_hh
-#define INCLUDED_protocols_protein_interface_design_filters_RelativeSegmentFilterCreaetor_hh
+#ifndef INCLUDED_protocols_protein_interface_design_filters_RelativeSegmentFilterCreator_hh
+#define INCLUDED_protocols_protein_interface_design_filters_RelativeSegmentFilterCreator_hh
 
 // Package Headers
 #include <protocols/filters/FilterCreator.hh>

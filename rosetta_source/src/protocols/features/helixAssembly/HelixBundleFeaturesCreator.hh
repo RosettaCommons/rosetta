@@ -11,8 +11,8 @@
 /// @brief
 /// @author Tim Jacobs
 
-#ifndef INCLUDED_HelixBundleFeaturesCreator_hh
-#define INCLUDED_HelixBundleFeaturesCreator_hh
+#ifndef INCLUDED_protocols_features_helixAssembly_HelixBundleFeaturesCreator_hh
+#define INCLUDED_protocols_features_helixAssembly_HelixBundleFeaturesCreator_hh
 
 // Unit Headers
 #include <protocols/features/FeaturesReporterCreator.hh>

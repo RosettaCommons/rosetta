@@ -12,8 +12,8 @@
 /// @brief
 /// @author Florian Richter
 
-#ifndef INCLUDED_protocols_moves_SavePoseMover_hh
-#define INCLUDED_protocols_moves_SavePoseMover_hh
+#ifndef INCLUDED_protocols_rosetta_scripts_SavePoseMover_hh
+#define INCLUDED_protocols_rosetta_scripts_SavePoseMover_hh
 
 //unit headers
 #include <protocols/rosetta_scripts/SavePoseMover.fwd.hh>

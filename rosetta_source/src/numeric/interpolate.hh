@@ -10,8 +10,8 @@
 /// @file numeric/interpolate.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef NUMERIC_INTERPOLATE_hh_
-#define NUMERIC_INTERPOLATE_hh_
+#ifndef INCLUDED_NUMERIC_INTERPOLATE_hh
+#define INCLUDED_NUMERIC_INTERPOLATE_hh
 
 namespace numeric {
 
@@ -23,4 +23,4 @@ double linear_interpolate(Value start, Value stop, unsigned curr_stage, unsigned
 
 }  // namespace numeric
 
-#endif  // NUMERIC_PROB_UTIL_hh_
+#endif  // INCLUDED_NUMERIC_PROB_UTIL_hh

@@ -11,8 +11,8 @@
 /// @brief  FilterCreators for the filters defined in HbondsToResidueFilterCreator.hh
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocols_protein_interface_design_filters_HbondsToResidueFilterCreaetor_hh
-#define INCLUDED_protocols_protein_interface_design_filters_HbondsToResidueFilterCreaetor_hh
+#ifndef INCLUDED_protocols_protein_interface_design_filters_HbondsToResidueFilterCreator_hh
+#define INCLUDED_protocols_protein_interface_design_filters_HbondsToResidueFilterCreator_hh
 
 // Package Headers
 #include <protocols/filters/FilterCreator.hh>

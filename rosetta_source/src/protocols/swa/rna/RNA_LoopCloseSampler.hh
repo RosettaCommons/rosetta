@@ -14,8 +14,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_rna_LoopCloseSampler_HH
-#define INCLUDED_protocols_swa_rna_LoopCloseSampler_HH
+#ifndef INCLUDED_protocols_swa_rna_RNA_LoopCloseSampler_HH
+#define INCLUDED_protocols_swa_rna_RNA_LoopCloseSampler_HH
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>

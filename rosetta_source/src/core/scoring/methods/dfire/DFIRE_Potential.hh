@@ -11,8 +11,8 @@
 /// @brief  DFIRE Potential class declaration
 /// @author James Thompson
 
-#ifndef INCLUDED_core_scoring_methods_DFIRE_Potential_HH
-#define INCLUDED_core_scoring_methods_DFIRE_Potential_HH
+#ifndef INCLUDED_core_scoring_methods_dfire_DFIRE_Potential_HH
+#define INCLUDED_core_scoring_methods_dfire_DFIRE_Potential_HH
 
 // core
 // AUTO-REMOVED #include <core/pose/Pose.hh>

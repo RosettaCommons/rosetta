@@ -11,8 +11,8 @@
 /// @brief  ContactMap forward declarations header
 /// @author Joerg Schaarschmidt
 
-#ifndef INCLUDED_protocols_moves_ContactMap_fwd_hh
-#define INCLUDED_protocols_moves_ContactMap_fwd_hh
+#ifndef INCLUDED_protocols_contact_map_ContactMap_fwd_hh
+#define INCLUDED_protocols_contact_map_ContactMap_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -25,7 +25,7 @@ namespace contact_map{
 class ContactMap;
 class Contact;
 class ContactPartner;
-    
+
 typedef utility::pointer::owning_ptr< ContactMap > ContactMapOP;
 typedef utility::pointer::owning_ptr< ContactMap const > ContactMapCOP;
 typedef utility::pointer::access_ptr< ContactPartner > ContactPartnerAP;

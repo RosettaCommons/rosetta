@@ -14,8 +14,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_SWA_ResidueSampler_HH
-#define INCLUDED_protocols_swa_SWA_ResidueSampler_HH
+#ifndef INCLUDED_protocols_swa_protein_StepWiseProteinResidueSampler_HH
+#define INCLUDED_protocols_swa_protein_StepWiseProteinResidueSampler_HH
 
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.fwd.hh>

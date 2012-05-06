@@ -11,8 +11,8 @@
 /// @brief  PoissonBoltzmann potential class forward delcaration
 /// @author Yifan Song (yfsong@uw.edu)
 
-#ifndef INCLUDED_core_scoring_PoissonBoltzmannPotential_FWD_HH
-#define INCLUDED_core_scoring_PoissonBoltzmannPotential_FWD_HH
+#ifndef INCLUDED_core_scoring_methods_dfire_DFIRE_Potential_FWD_HH
+#define INCLUDED_core_scoring_methods_dfire_DFIRE_Potential_FWD_HH
 
 namespace core {
 namespace scoring {

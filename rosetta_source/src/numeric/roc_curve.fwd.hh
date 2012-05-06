@@ -10,8 +10,8 @@
 /// @file   src/numeric/roc_curve.fwd.hh
 /// @author Sam DeLuca
 
-#ifndef INCLUDED_numeric_roc_curve_FWD_HH_
-#define INCLUDED_numeric_roc_curve_FWD_HH_
+#ifndef INCLUDED_numeric_roc_curve_FWD_HH
+#define INCLUDED_numeric_roc_curve_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -34,4 +34,4 @@ typedef utility::pointer::owning_ptr<RocCurve> RocCurveOP;
 }
 
 
-#endif /* ROC_CURVE_FWD_HH_ */
+#endif /*  INCLUDED_numeric_roc_curve_FWD_HH */

@@ -17,8 +17,8 @@
 /// @author James Thompson
 
 
-#ifndef INCLUDED_protocols_loops_loop_closure_WidthFirstSlidingWindowLoopClosure_hh
-#define INCLUDED_protocols_loops_loop_closure_WidthFirstSlidingWindowLoopClosure_hh
+#ifndef INCLUDED_protocols_loops_loop_closure_ccd_WidthFirstSlidingWindowLoopClosure_hh
+#define INCLUDED_protocols_loops_loop_closure_ccd_WidthFirstSlidingWindowLoopClosure_hh
 
 // Unit Headers
 #include <protocols/loops/loop_closure/ccd/WidthFirstSlidingWindowLoopClosure.fwd.hh>

@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/protocols/fldsgn/filters/HelixPairingFilter.fwd.hh
+/// @file   src/protocols/fldsgn/filters/HelixKinkFilter.fwd.hh
 /// @brief
 /// @author Nobuyasu Koga (nobuyasu@uw.edu)
 
 
-#ifndef INCLUDED_protocols_fldsgn_filters_HelixPairingFilter_fwd_hh
-#define INCLUDED_protocols_fldsgn_filters_HelixPairingFilter_fwd_hh
+#ifndef INCLUDED_protocols_fldsgn_filters_HelixKinkFilter_fwd_hh
+#define INCLUDED_protocols_fldsgn_filters_HelixKinkFilter_fwd_hh
 
 
 // Utility headers
@@ -24,11 +24,11 @@ namespace fldsgn {
 namespace filters {
 
 // Forward
-class HelixPairingFilter;
+class HelixKinkFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< HelixPairingFilter >  HelixPairingFilterOP;
-typedef utility::pointer::owning_ptr< HelixPairingFilter const >  HelixPairingFilterCOP;
+typedef utility::pointer::owning_ptr< HelixKinkFilter >  HelixKinkFilterOP;
+typedef utility::pointer::owning_ptr< HelixKinkFilter const >  HelixKinkFilterCOP;
 
 } // namespace protocols
 } // namespace fldsgn

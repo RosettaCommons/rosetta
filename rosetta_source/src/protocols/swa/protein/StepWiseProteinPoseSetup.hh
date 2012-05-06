@@ -14,8 +14,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_SWA_Proteins_PoseSetup_HH
-#define INCLUDED_protocols_swa_SWA_Proteins_PoseSetup_HH
+#ifndef INCLUDED_protocols_swa_protein_StepWiseProteinPoseSetup_HH
+#define INCLUDED_protocols_swa_protein_StepWiseProteinPoseSetup_HH
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>

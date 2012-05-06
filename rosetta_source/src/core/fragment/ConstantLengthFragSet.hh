@@ -14,8 +14,8 @@
 /// @date   Wed Aug 22 12:08:31 2007
 ///
 
-#ifndef core_fragments_ConstantLengthFragSet_HH
-#define core_fragments_ConstantLengthFragSet_HH
+#ifndef INCLUDED_core_fragment_ConstantLengthFragSet_HH
+#define INCLUDED_core_fragment_ConstantLengthFragSet_HH
 
 // Unit Headers
 #include <core/fragment/ConstantLengthFragSet.fwd.hh>

@@ -11,8 +11,8 @@
 /// @brief
 /// @author Yih-En Andrew Ban (yab@u.washington.edu)
 
-#ifndef INCLUDED_protocols_forge_components_BluePrintBDR_hh
-#define INCLUDED_protocols_forge_components_BluePrintBDR_hh
+#ifndef INCLUDED_protocols_fldsgn_BluePrintBDR_hh
+#define INCLUDED_protocols_fldsgn_BluePrintBDR_hh
 
 // unit headers
 #include <protocols/fldsgn/BluePrintBDR.fwd.hh>
@@ -125,7 +125,7 @@ public: // accessors
 
 	/// @brief the centroid level score function, default "fldsgn_cen"
 	ScoreFunction const & scorefunction() const;
-	
+
 	////
 	Size instruction_size() const { return manager_.size(); }
 
@@ -165,7 +165,7 @@ public: // mutators
 	///  string matches up properly, and remember to use any special characters,
 	///  e.g. the insertion character for SegmentInsert
 	void add_instruction(	BuildInstructionOP bi );
-	
+
 	/// @brief create directed dependency between two instructions
 	void create_directed_dependency( BuildInstructionOP u, BuildInstructionOP v	);
 

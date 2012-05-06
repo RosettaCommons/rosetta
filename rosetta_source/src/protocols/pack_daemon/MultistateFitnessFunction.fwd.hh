@@ -11,8 +11,8 @@
 /// @brief  forward declaration of class MultistateFitnessFunction
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_protocolspack_daemon_MultistateFitnessFunction_fwd_hh
-#define INCLUDED_protocolspack_daemon_MultistateFitnessFunction_fwd_hh
+#ifndef INCLUDED_protocols_pack_daemon_MultistateFitnessFunction_fwd_hh
+#define INCLUDED_protocols_pack_daemon_MultistateFitnessFunction_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>

@@ -10,8 +10,8 @@
 /// @file protocols/medal/MedalMain.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_MEDAL_MEDAL_MAIN_HH_
-#define PROTOCOLS_MEDAL_MEDAL_MAIN_HH_
+#ifndef INCLUDED_PROTOCOLS_MEDAL_MEDALMAIN_HH
+#define INCLUDED_PROTOCOLS_MEDAL_MEDALMAIN_HH
 
 namespace protocols {
 namespace medal {
