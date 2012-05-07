@@ -30,7 +30,7 @@
 #include <core/pack/make_symmetric_task.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/chemical/ResidueType.hh>
 #include <utility/vector1.hh>
 #include <protocols/moves/Mover.hh>
@@ -251,7 +251,7 @@ PointMutationCalculator::mutate_and_relax(
 	PackerTaskOP mutate_residue = mut_res->create_task_and_apply_taskoperations( pose );
 	mutate_residue->initialize_from_command_line().or_include_current( true );
 	mutate_residue->nonconst_residue_task( resi ).restrict_absent_canonical_aas( allowed_aas );
-//	TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to ";
+//	TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to " << target_aa << std::endl;
 	//run PackRotamers with mutate_residue task
 	protocols::simple_moves::PackRotamersMoverOP pack;
 	if( core::pose::symmetry::is_symmetric( pose ) ) {
@@ -261,7 +261,7 @@ PointMutationCalculator::mutate_and_relax(
 		pack = new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue );
 	}
 	pack->apply( pose );
-//	TR<<pose.residue( resi ).name3()<<". Now relaxing..."<<std::endl;
+//	TR<<"Now relaxing "<<pose.residue( resi ).name3()<<std::endl;
 	//then run input relax mover
 	relax_mover()->apply( pose );
 }
@@ -286,17 +286,30 @@ PointMutationCalculator::mutate_and_relax(
 	//then restrict to mutates resi to target_aa and repack 8A shell
 	core::pack::task::TaskFactoryOP mut_res = new core::pack::task::TaskFactory( *task_factory() );
 	protocols::toolbox::task_operations::DesignAroundOperationOP repack_around_op =
-		new protocols::toolbox::task_operations::DesignAroundOperation;
+			new protocols::toolbox::task_operations::DesignAroundOperation;
 	repack_around_op->design_shell( -1.0 ); //neg radius insures no designing nbrs
 	repack_around_op->repack_shell( 8.0 );
 	repack_around_op->allow_design( true ); //because we still want to design resi
 	repack_around_op->include_residue( resi );
+	core::pack::task::operation::RestrictAbsentCanonicalAASOP restrict_to_aa_op =
+			new core::pack::task::operation::RestrictAbsentCanonicalAAS;
+	restrict_to_aa_op->include_residue( resi );
+	restrict_to_aa_op->keep_aas( allowed_aas );
+	core::pack::task::operation::InitializeFromCommandlineOP init_from_cmd_op =
+			new core::pack::task::operation::InitializeFromCommandline;
+	core::pack::task::operation::IncludeCurrentOP incl_curr_op =
+		new core::pack::task::operation::IncludeCurrent;
 	mut_res->push_back( repack_around_op );
+	mut_res->push_back( restrict_to_aa_op );
+	mut_res->push_back( init_from_cmd_op );
+	mut_res->push_back( incl_curr_op );
+//	TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to " << target_aa << std::endl;
 //	TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to ";
 	//only use green packer if not symmetric!
 	assert( !core::pose::symmetry::is_symmetric( pose ) );
 	green_packer->set_task_factory( mut_res );
 	green_packer->apply( pose );
+//	TR<<"Now relaxing "<<pose.residue( resi ).name3()<<std::endl;
 //	TR<<pose.residue( resi ).name3()<<". Now relaxing..."<<std::endl;
 	//then run input relax mover
 	relax_mover()->apply( pose );
@@ -432,9 +445,9 @@ PointMutationCalculator::calc_point_mut_filters(
 			//TODO: if no filter defined, just use total_score
 			bool filter_pass;
 			vector1< Real > vals;
-//			if( use_precomp_rot_pair_nrgs ) mutate_and_relax( pose, resi, target_aa, green_packer );
-//			else mutate_and_relax( pose, resi, target_aa );
-			mutate_and_relax( pose, resi, target_aa );
+			if( use_precomp_rot_pair_nrgs ) mutate_and_relax( pose, resi, target_aa, green_packer );
+			else mutate_and_relax( pose, resi, target_aa );
+//			mutate_and_relax( pose, resi, target_aa );
 			eval_filters( pose, filter_pass, vals );
 
 			//don't store this aa/val if any filter failed
