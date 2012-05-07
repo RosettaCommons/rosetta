@@ -131,7 +131,8 @@ ResidueSetChainEnergyFilter::compute(
 	Pose in_pose( pose );
 
 	// make sure that scoring weights are compatible with pose's residue type set
-	// check centroid case
+	// check centroid case 
+	//TODO: this is a hacky and not robust way of checking for centroid!
 	if( ( ( *scorefxn_ )[ fa_rep ] == 0.0 && ( *scorefxn_ )[ fa_atr ] == 0.0 ) // full atom terms are off
 				&& ( ( *scorefxn_ )[ interchain_vdw ] > 0.0 || ( *scorefxn_ )[ vdw ] > 0.0 )  ) // a centroid term is on
 		{
@@ -153,7 +154,10 @@ ResidueSetChainEnergyFilter::compute(
 	// the neighbor/energy links
 	EnergyGraph & energy_graph( in_pose.energies().energy_graph() );
 	core::Real score( 0. );
-	for( core::Size iseq1 = 1; iseq1 <= res_set_vec.size(); ++iseq1 ){
+	for( core::Size i_res_vec = 1; i_res_vec <= res_set_vec.size(); ++i_res_vec ){
+		Size iseq1( res_set_vec[ i_res_vec ] );
+		assert( iseq1 <= in_pose.total_residue() );
+		TR<< "Summing energies: seqpos: " << iseq1 << std::endl;
     //search over energy edges
     for( graph::Graph::EdgeListIter el_iter  = energy_graph.get_node( iseq1 )->edge_list_begin();
 				el_iter != energy_graph.get_node( iseq1 )->edge_list_end(); ++el_iter ){
@@ -161,6 +165,7 @@ ResidueSetChainEnergyFilter::compute(
 			//the other seqpos connected to this edge
 			core::Size iseq2( edge->get_first_node_ind() );
 			if( iseq2 == iseq1 ) iseq2 = edge->get_second_node_ind();
+			//TR<< "set seqpos: " << iseq1 << " chain: " << in_pose.chain( iseq1 ) << " :: chain seqpos: " << iseq2 << " chain: " << in_pose.chain( iseq2 ) << std::endl;
 			//skip if iseq2 is not in the chain we care about
 			if( static_cast< core::Size >( in_pose.chain( iseq2 ) ) != chain_ ) continue;
 
