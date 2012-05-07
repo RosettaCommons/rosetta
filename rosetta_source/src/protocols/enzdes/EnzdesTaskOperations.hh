@@ -163,6 +163,7 @@ private:
 	bool add_observer_cache_segs_to_interface_;
 	/// Should we prohibit designing to non disulfide cys?
 	bool no_design_cys_;
+	bool catres_only_;
 };
 
 ///@brief Class to alter a packer task to speficially upweight the protein-ligand interaction energies
@@ -198,6 +199,7 @@ public:
 private:
 	/// Reweight protein-ligand interaction by a factor of lig_packer_weight_.
 	core::Real lig_packer_weight_;
+	core::Real catres_packer_weight_;
 };
 
 class AddRigidBodyLigandConfs : public core::pack::task::operation::TaskOperation

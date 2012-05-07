@@ -203,7 +203,8 @@ DetectProteinLigandInterface::DetectProteinLigandInterface():
 	repack_only_(false), score_only_(false),
 	resfilename_(), //Empty string
 	add_observer_cache_segs_to_interface_(false),
-	no_design_cys_(true)
+	no_design_cys_(true),
+	catres_only_(false)
 {
 	init_from_options();
 	design_target_res_.clear();
@@ -253,6 +254,8 @@ DetectProteinLigandInterface::parse_tag( TagPtr tag )
 
 	if( tag->hasOption("catres_interface") )  catalytic_res_part_of_interface_ = tag->getOption< bool >( "catres_interface", true );
 	if( tag->hasOption("arg_sweep_interface") )  arg_sweep_interface_ = tag->getOption< bool >( "arg_sweep_interface", true );
+	if( tag->hasOption("catres_only_interface")) catres_only_ = tag->getOption< bool >( "catres_only_interface", true );
+
 }
 
 /// @brief Change a packer task in some way.  The input pose is the one to which the input
@@ -295,15 +298,18 @@ PackerTask & task) const
 		}
 
 		std::set< core::Size > interface_target_res = design_target_res_;
-		if( ( interface_target_res.size() == 0 ) && catalytic_res_part_of_interface_ ){
+		if( ( interface_target_res.size() == 0 ) && (catalytic_res_part_of_interface_ || catres_only_) ){
 			for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i){
-				if( enzutil::is_catalytic_seqpos( pose, i ) ) interface_target_res.insert( i );
+				if( enzutil::is_catalytic_seqpos( pose, i ) ) {
+					if (pose.residue_type( i ).is_ligand() && !catres_only_) interface_target_res.insert( i );
+					if (!pose.residue_type( i ).is_ligand()) interface_target_res.insert( i );
+				}
 			}
 		}
 
 		if( add_observer_cache_segs_to_interface_ ) add_observer_cache_segments_to_set( pose, interface_target_res );
 
-		if( interface_target_res.size() ==0 ) interface_target_res.insert( pose.fold_tree().downstream_jump_residue( pose.num_jump() ) );
+		if( interface_target_res.size() ==0 && !catres_only_ ) interface_target_res.insert( pose.fold_tree().downstream_jump_residue( pose.num_jump() ) );
 		// initialize detect_res vector, specifies whether the designability of a residue should be decided by find_design_interface
 		for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i){
 			if( ! resfilename_.empty() ){
@@ -679,6 +685,7 @@ DetectProteinLigandInterface::add_observer_cache_segments_to_set(
 ProteinLigandInterfaceUpweighter::ProteinLigandInterfaceUpweighter()
 {
 	init_from_options();
+	catres_packer_weight_=1.0;
 }
 
 ProteinLigandInterfaceUpweighter::~ProteinLigandInterfaceUpweighter() {}
@@ -700,12 +707,13 @@ void
 ProteinLigandInterfaceUpweighter::parse_tag( TagPtr tag )
 {
 	if( tag->hasOption("interface_weight") ) lig_packer_weight_ = tag->getOption< core::Real >( "interface_weight", 1.0 );
+	if( tag->hasOption("catres_interface_weight") ) catres_packer_weight_ = tag->getOption< core::Real >( "catres_interface_weight", 1.0 );
 }
 
 /// @brief Change a packer task in some way.  The input pose is the one to which the input
 /// task will be later applied.
 void ProteinLigandInterfaceUpweighter::apply(
-Pose const & /*pose*/,
+Pose const & pose,
 PackerTask & task) const
 {
 	//If applicable, set the ligand weigths to the specified value
@@ -717,6 +725,20 @@ PackerTask & task) const
 		tr.Info << "Packer Energies between ligand and design residues are upweighted by factor " << lig_packer_weight_ << "." << std::endl;
 
 	} //if different ligand weights are asked for
+	if (catres_packer_weight_ !=1.0){
+     utility::vector1< core::Size > catres;
+     utility::vector1< core::Size > design_residues;
+     for (core::Size ii= 1; ii<=pose.total_residue(); ++ii){
+        if ( enzutil::is_catalytic_seqpos( pose, ii) && pose.residue( ii ).is_protein() ) catres.push_back( ii );
+        else if (task.design_residue( ii )) design_residues.push_back( ii );
+     }
+
+     core::pack::task::IGEdgeReweighterOP catres_up = new protocols::toolbox::ResidueGroupIGEdgeUpweighter( catres_packer_weight_, catres , design_residues );
+     task.set_IGEdgeReweights()->add_reweighter( catres_up );
+
+    tr.Info << "Packer Energies between catalytic residues and design residues are upweighted by factor " << catres_packer_weight_ << "." << std::endl;
+  } //if different catalytic-residue weights are asked for
+
 } //apply
 
 void
