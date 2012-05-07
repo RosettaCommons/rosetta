@@ -17,6 +17,7 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
+#include <protocols/toolbox/match_enzdes_util/AllowedSeqposForGeomCst.hh>
 #include <protocols/toolbox/match_enzdes_util/InvrotTree.hh>
 
 #include <test/protocols/init_util.hh>

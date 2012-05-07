@@ -18,6 +18,8 @@
 /// unit headeers
 #include <protocols/toolbox/match_enzdes_util/InvrotTreeNodeBase.fwd.hh>
 
+/// package headers
+#include <protocols/toolbox/match_enzdes_util/AllowedSeqposForGeomCst.fwd.hh>
 
 /// project headers
 #include <core/conformation/Residue.fwd.hh>
@@ -37,28 +39,6 @@ namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
-/// @brief a simple helper class that holds a list of what sequence positions
-/// each geom cst is allowd to be at
-/// not sure about the ideal home of this class yet, the matcher task
-/// could use it too
-class AllowedSeqposForGeomCst : public utility::pointer::ReferenceCount {
-
-public:
-  typedef core::Size Size;
-
-  AllowedSeqposForGeomCst( utility::vector1< utility::vector1< Size > > const & seqpos_for_geomcst );
-
-  ~AllowedSeqposForGeomCst();
-
-  utility::vector1< Size > const &
-  seqpos_for_geomcst( Size geomcst ) const {
-    return seqpos_for_geomcst_[ geomcst ];
-  }
-
-private:
-  //dimension of this vector is num_geomcst
-  utility::vector1< utility::vector1< Size > > seqpos_for_geomcst_;
-};
 
 ///@ brief helper class for collecting all different definitions of invrots from a tree
 class InvrotCollector : public utility::pointer::ReferenceCount {

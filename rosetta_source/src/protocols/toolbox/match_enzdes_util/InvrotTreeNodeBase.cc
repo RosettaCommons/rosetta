@@ -12,7 +12,7 @@
 /// @brief  Forward declaration for inverse rotamer tree node base
 /// @author Florian Richter, flosopher@gmail.com, mar 2012
 
-/// unit headeers
+/// unit headers
 #include <protocols/toolbox/match_enzdes_util/InvrotTreeNodeBase.hh>
 
 //project headers
@@ -26,14 +26,6 @@ namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
-
-AllowedSeqposForGeomCst::AllowedSeqposForGeomCst(
-  utility::vector1< utility::vector1< Size > > const & seqpos_for_geomcst )
-  : seqpos_for_geomcst_( seqpos_for_geomcst )
-{}
-
-
-AllowedSeqposForGeomCst::~AllowedSeqposForGeomCst(){}
 
 InvrotCollector::InvrotCollector(
   Size num_residue_lists )

@@ -143,7 +143,10 @@ MatcherMover::apply( core::pose::Pose & pose )
 	oats[ 1 ] = core::id::AtomID( nbr2, 1 ); oats[ 2 ] = core::id::AtomID( nbr1, 1 ); oats[ 3 ] = core::id::AtomID( cent, 1 );
 
 	mtask->set_downstream_pose( ligpose,  oats );
-	if( match_positions_.size() != 0 ) mtask->set_original_scaffold_build_points( match_positions_ );
+	if( match_positions_.size() != 0 ){
+		mtask->set_ignore_cmdline_for_build_points( true );
+		mtask->set_original_scaffold_build_points( match_positions_ );
+	}
 
 	mtask->initialize_from_command_line();
 

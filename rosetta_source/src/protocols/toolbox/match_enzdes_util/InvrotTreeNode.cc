@@ -17,6 +17,7 @@
 #include <protocols/toolbox/match_enzdes_util/InvrotTreeNode.hh>
 
 //package headers
+#include <protocols/toolbox/match_enzdes_util/AllowedSeqposForGeomCst.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzCstTemplateRes.hh>
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>

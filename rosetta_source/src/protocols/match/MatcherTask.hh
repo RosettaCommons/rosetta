@@ -91,6 +91,8 @@ public:
 
 	void clear_downstream_orientation_atoms();
 
+	void
+	set_ignore_cmdline_for_build_points( bool setting );
 	/// @brief Uniformly consider the same set of build points for each of the geometric constrains
 	void set_original_scaffold_build_points( utility::vector1< Size > const & resids );
 
@@ -352,6 +354,7 @@ private:
 	bool enumerate_ligand_rotamers_;
 	bool only_enumerate_non_match_redundant_ligand_rotamers_;
 
+	bool ignore_cmdline_for_build_points_;
 	bool share_build_points_for_geomcsts_;
 	utility::vector1< Size > generic_pose_build_resids_;
 	utility::vector1< utility::vector1< Size > > per_cst_pose_build_resids_;
