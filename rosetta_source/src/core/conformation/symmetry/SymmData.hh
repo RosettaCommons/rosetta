@@ -147,10 +147,6 @@ class SymmData : public utility::pointer::ReferenceCount
 	get_subunits() const;
 
 	core::Size get_num_components() const;
-	core::Size component_lower_resi_monomer(Size i) const;
-	core::Size component_lower_resi_monomer(char i) const;	
-	core::Size component_upper_resi_monomer(Size i) const;
-	core::Size component_upper_resi_monomer(char i) const;	
 
 	core::Size
 	get_interfaces() const;
