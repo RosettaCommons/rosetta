@@ -291,12 +291,20 @@ rm -r ref/; ./integration.py    # create reference results using only default se
                 print "All tests passed."
 
         if options.yaml:
+            import json
+            data = dict(total=len(tests), failed=diffs, details=results, brief=makeBriefResults(full_log))
+            f = file(options.yaml, 'w')
+            json.dump(data, f, sort_keys=True, indent=2)
+            f.close()
+            
+            '''
             f = file(options.yaml, 'w')
             brief = makeBriefResults(full_log)
             brief = brief.replace('"', '\\"')
             brief = '"' + brief.replace('\n', '\\n') + '"'
             f.write("{total : %s, failed : %s, details : %s, brief : %s}" % (len(tests), diffs, results, brief) )
             f.close()
+            '''
 
     return 0
 
