@@ -26,9 +26,10 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/pose/symmetry/util.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <protocols/protein_interface_design/design_utils.hh>
-
+#include <core/pose/util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -43,7 +44,10 @@ SequenceRecoveryFilter::SequenceRecoveryFilter() :
 	parent( "SequenceRecovery" ),
 	task_factory_( NULL ),
 	reference_pose_( NULL ),
-	rate_threshold_( 0.0 )
+	rate_threshold_( 0.0 ),
+	mutation_threshold_( 100 ),
+	mutations_( 0 ),
+	verbose_( 0 )
 {}
 
 core::pack::task::TaskFactoryOP
@@ -89,43 +93,132 @@ SequenceRecoveryFilter::reference_pose( core::pose::Pose const & pose )
 	reference_pose_ = new core::pose::Pose( pose );
 }
 
+core::Size
+SequenceRecoveryFilter::mutation_threshold() const
+{
+	return( mutation_threshold_ );
+}
+
+void
+SequenceRecoveryFilter::mutation_threshold( core::Size const mut )
+{
+	mutation_threshold_ = mut;
+}
+
+bool
+SequenceRecoveryFilter::mutations() const
+{
+	return( mutations_ );
+}
+
+void
+SequenceRecoveryFilter::mutations( bool const muts )
+{
+	mutations_ = muts;
+}
+
+bool
+SequenceRecoveryFilter::verbose() const
+{
+	return( verbose_ );
+}
+
+void
+SequenceRecoveryFilter::verbose( bool const verb )
+{
+	verbose_ = verb;
+}
+
 bool
 SequenceRecoveryFilter::apply(core::pose::Pose const & pose ) const
 {
-	core::Real const recovery_rate( compute( pose ) );
-	TR<<"Sequence recovery rate evaluates to "<<recovery_rate<<". ";
-	if( recovery_rate <= rate_threshold_ ){
-		TR<<"Failing."<<std::endl;
-		return false;
+	if ( mutations_ ) {
+		core::Size const num_mutations( (core::Size) compute( pose ) );
+		TR<<"The designed pose possesses "<<num_mutations<<" compared to the reference pose. ";
+		if( num_mutations <= mutation_threshold_ ){
+			TR<<"Success."<<std::endl;
+			return true;
+		} else {
+			TR<<"Failing."<<std::endl;
+			return false;
+		}		
+	} else {
+		core::Real const recovery_rate( compute( pose ) );
+		TR<<"Sequence recovery rate evaluates to "<<recovery_rate<<". ";
+		if( recovery_rate <= rate_threshold_ ){
+			TR<<"Failing."<<std::endl;
+			return false;
+		} else {
+		TR<<"Success."<<std::endl;
+			return true;
+		}
 	}
-	TR<<"Success."<<std::endl;
-	return true;
 }
 
 core::Real
 SequenceRecoveryFilter::compute( core::pose::Pose const & pose ) const{
 	runtime_assert( task_factory() );
 	runtime_assert( reference_pose() );
-	if( reference_pose()->total_residue() != pose.total_residue() )
+	core::Size total_residue_ref;
+	core::pose::Pose asym_ref_pose;
+	//core::scoring::ScoreFunctionOP score12 = core::scoring::ScoreFunctionFactory::create_score_function("standard", "score12");
+	if(core::pose::symmetry::is_symmetric( *reference_pose() )) { 
+		core::pose::symmetry::extract_asymmetric_unit( *reference_pose(), asym_ref_pose);
+		//(*score12)(asym_ref_pose);	
+  	for (core::Size i = 1; i <= asym_ref_pose.total_residue(); ++i) {
+    	if (asym_ref_pose.residue_type(i).name() == "VRT") {
+				asym_ref_pose.conformation().delete_residue_slow(asym_ref_pose.total_residue());
+			}
+		}
+		total_residue_ref = asym_ref_pose.total_residue(); 
+	} else {
+		total_residue_ref = reference_pose()->total_residue(); 
+		asym_ref_pose = *reference_pose();
+	} 
+	core::Size total_residue;
+	core::pose::Pose asym_pose;
+	if (core::pose::symmetry::is_symmetric( pose )) { 
+		core::pose::symmetry::extract_asymmetric_unit(pose, asym_pose);
+		//(*score12)(asym_pose);	
+  	for (core::Size i = 1; i <= asym_pose.total_residue(); ++i) {
+    	if (asym_pose.residue_type(i).name() == "VRT") {
+				asym_pose.conformation().delete_residue_slow(asym_pose.total_residue());
+			}
+		}
+		total_residue = asym_pose.total_residue(); 
+	} else {
+		total_residue = pose.total_residue(); 
+		asym_pose = pose;
+	}
+	if( total_residue_ref != total_residue )
 		utility_exit_with_message( "Reference pose and current pose have a different number of residues" );
 	core::pack::task::PackerTaskOP packer_task( task_factory_->create_task_and_apply_taskoperations( pose ) );
 	core::Size designable_count( 0 );
-	for( core::Size resi=1; resi<=pose.total_residue(); ++resi )
-		if( packer_task->being_designed( resi ) ) ++designable_count;
+	for( core::Size resi=1; resi<=total_residue; ++resi )
+		if( packer_task->being_designed( resi ) ) {
+			 designable_count++;
+		}
 
 	if( !designable_count )
 		utility_exit_with_message( "No designable residues identified in pose. Are you sure you have set the correct task operations?" );
 
 	using namespace core::scoring;
   protocols::protein_interface_design::ReportSequenceDifferences rsd( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
-  rsd.calculate( *reference_pose(), pose );
+  rsd.calculate( asym_ref_pose, asym_pose );
   std::map< core::Size, std::string > const res_names1( rsd.res_name1() );
   core::Size const mutated( res_names1.size() );
   core::Real const rate( 1.0 - (core::Real) mutated / designable_count );
   TR<<"Your design mover mutated "<<mutated<<" positions out of "<<designable_count<<" designable positions. Sequence recovery is: "<<rate<<std::endl;
-	return( rate );
+	if ( verbose_ ) {
+		rsd.report( TR );
+		TR.flush();
+	}	
+	if ( mutations_ ) {
+		return( (core::Real) mutated );
+	} else {
+		return( rate );
+	}
 }
-
 core::Real
 SequenceRecoveryFilter::report_sm( core::pose::Pose const & pose ) const
 {
@@ -148,6 +241,9 @@ SequenceRecoveryFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	TR << "SequenceRecoveryFilter"<<std::endl;
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	rate_threshold( tag->getOption< core::Real >( "rate_threshold", 0.0 ) );
+	mutation_threshold( tag->getOption< core::Size >( "mutation_threshold", 100 ) );
+	mutations( tag->getOption< bool >( "report_mutations", 0 ) );
+	verbose( tag->getOption< bool >( "verbose", 0 ) );
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

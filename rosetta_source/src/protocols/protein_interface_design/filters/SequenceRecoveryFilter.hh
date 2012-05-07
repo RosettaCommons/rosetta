@@ -51,6 +51,12 @@ public:
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );
 	core::Real rate_threshold() const;
 	void rate_threshold( core::Real const rate );
+	core::Size mutation_threshold() const;
+	void mutation_threshold( core::Size const mut );
+	bool mutations() const;
+	void mutations( bool const muts );
+	bool verbose() const;
+	void verbose( bool const verb );
 	core::pose::PoseCOP reference_pose() const;
 	void reference_pose( core::pose::PoseCOP reference_pose );
 	void reference_pose( core::pose::Pose const & pose );
@@ -63,6 +69,9 @@ private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::pose::PoseCOP reference_pose_;
 	core::Real rate_threshold_;
+	core::Size mutation_threshold_;
+	bool mutations_;
+	bool verbose_;
 };
 
 } // filters
