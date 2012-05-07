@@ -267,7 +267,7 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
 //    my_LoopMover xxx ;
 //    xxx.set_extended_torsions( pose_in, cdr_h3 );
        set_extended_torsions( pose_in, cdr_h3 );
-       pose_in.dump_pdb("extended_idealized_centroid.pdb");
+       //pose_in.dump_pdb("extended_idealized_centroid.pdb");
         //JQX:  this function is in loops_main.cc file
         //      firstly, idealize the loop (indealize bonds as well)
         //      phi(-150),  all the residue, except the first one
@@ -296,7 +296,7 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
         pose_in.set_omega(framework_loop_begin - 1, hfr_pose_.omega( unaligned_cdr_loop_begin - 1 ) );
     }
 
-        pose_in.dump_pdb("after_copying_nter.pdb");
+        //pose_in.dump_pdb("after_copying_nter.pdb");
 
     
     antibody2::AntibodyInfoOP starting_antibody;
@@ -319,7 +319,7 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
         
 
         
-        pose_in.dump_pdb("after_c_insert.pdb");
+        //pose_in.dump_pdb("after_c_insert.pdb");
 
 
         h3_perturb_ccd_build_->apply(pose_in);
@@ -354,14 +354,6 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
     protocols::simple_moves::ReturnSidechainMover recover_sidechains( start_pose, allow_chi_copy );
     recover_sidechains.apply( pose_in );
     
-    pose_in.dump_pdb("0.5_Right_After_LOOPClose.pdb");
-
-    // Pack-min-pack, use all default fold_tree, task_factory, move_map and variants in CDRsMinPackMin
-    CDRsMinPackMinOP cdrs_min_pack_min = new  CDRsMinPackMin(ab_info_);// all the CDRs
-        if(sc_min_) cdrs_min_pack_min->set_sc_min(true);
-        if(rt_min_) cdrs_min_pack_min->set_rt_min(true);
-    cdrs_min_pack_min -> apply(pose_in);
-
     TR << "Finished applying CDR H3 modeler" << std::endl;
     
 

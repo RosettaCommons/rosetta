@@ -608,7 +608,7 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in )
                 count++;
                 core::Size res_counter = k;
                 core::Size nat_counter = native_ab_info->get_ab_framework()[j].start()+count-1;
-                TR<< res_counter<<"    "<<nat_counter<<std::endl;
+                //TR<< res_counter<<"    "<<nat_counter<<std::endl;
 
                 for( core::Size atm_counter=1; atm_counter <= 4; atm_counter++ ) {
                     core::id::AtomID const id1( atm_counter, res_counter );

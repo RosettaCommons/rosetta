@@ -374,10 +374,15 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
             if(rt_min_)              { model_cdrh3->set_rt_min(true); }
             if(use_pymol_diy_) model_cdrh3->turn_on_and_pass_the_pymol(pymol_);
         model_cdrh3->apply( pose );
-        pose.dump_pdb("1st_finish_model_h3.pdb");
+        //pose.dump_pdb("1st_finish_model_h3.pdb");
 
     }
         
+    CDRsMinPackMinOP cdrs_min_pack_min = new CDRsMinPackMin(ab_info_);
+        if(sc_min_) cdrs_min_pack_min->set_sc_min(true);
+        if(rt_min_) cdrs_min_pack_min->set_rt_min(true);
+    cdrs_min_pack_min -> apply(pose);
+
     
 	// Step 2: SnugFit: relieve the clashes between L-H
 	if ( snugfit_ ) { 
@@ -388,7 +393,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
             if(rt_min_)              { refine_beta_barrel->set_rt_min(true); }
             if (use_pymol_diy_) {refine_beta_barrel -> turn_on_and_pass_the_pymol(pymol_);}
         refine_beta_barrel->apply(pose);
-        pose.dump_pdb("2nd_finish_snugfit.pdb");
+        //pose.dump_pdb("2nd_finish_snugfit.pdb");
 	}
 
     
@@ -399,7 +404,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
             cdr_highres_refine_ -> pass_start_pose(start_pose_);
             if(use_pymol_diy_) cdr_highres_refine_ -> turn_on_and_pass_the_pymol(pymol_);
         cdr_highres_refine_ -> apply(pose);
-        pose.dump_pdb("3rd_finish_h3_refine.pdb");
+        //pose.dump_pdb("3rd_finish_h3_refine.pdb");
 
 
         // Minimize CDR H2 loop if this is a camelid
@@ -415,9 +420,8 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
     }
     
     //FoldTree, MoveMap, TaskFactory and Variants will be taken care of inside
-    CDRsMinPackMinOP cdrs_min_pack_min_ = new CDRsMinPackMin(ab_info_);
-    cdrs_min_pack_min_ -> apply(pose);
-     pose.dump_pdb("4th_final_min_pack_min.pdb");
+    cdrs_min_pack_min -> apply(pose);
+     //pose.dump_pdb("4th_final_min_pack_min.pdb");
     
     
     
