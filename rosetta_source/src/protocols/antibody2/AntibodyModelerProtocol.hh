@@ -78,7 +78,6 @@ public:
     void set_sc_min (bool scmin) {sc_min_ = scmin ;}
     void set_rt_min (bool rtmin) {rt_min_ = rtmin ;}
 
-	void relax_cdrs( pose::Pose & pose );
 
 	void display_constraint_residues( pose::Pose & pose );
         

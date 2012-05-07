@@ -313,7 +313,8 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
                 h3_cter_insert_mover_->apply(pose_in);
             }
             else{
-                utility_exit_with_message("Loop Size is Less than 6");
+                //utility_exit_with_message("Loop Size is Less than 6");
+		TR<<"Loop Size is Less than 6, skip h3_cter_insert "<<std::endl;
             }
         }
         
