@@ -35,6 +35,21 @@
 namespace protocols {
 namespace antibody2 {
 
+    
+struct FrameWork{
+public:
+    core::Size start(){return start_;}
+    core::Size stop() {return stop_;}
+    std::string chain_name(){return chain_name_;}
+    void set_start (core::Size num){start_=num;}
+    void set_stop  (core::Size num){stop_ =num;}
+    void set_chain_name (std::string name){chain_name_ = name;}
+private:
+    core::Size    start_;
+    core::Size    stop_;
+    std::string chain_name_;
+};
+    
 /// antibody2 definition
 class AntibodyInfo : public utility::pointer::ReferenceCount {
 
@@ -66,10 +81,7 @@ public:
     bool is_camelid()  { return is_camelid_;  }
     utility::vector1<char> get_Fv_sequence() { return Fv_sequence_;}
 
-	/// align current Fv to native.Fv
-	void align_to_native( core::pose::Pose & pose, 
-                          antibody2::AntibodyInfo & native, 
-                          core::pose::Pose & native_pose );
+
     
     void load_CDR_query_info_to_check();
 
@@ -91,6 +103,10 @@ public:
 	void detect_and_set_regular_CDR_H3_stem_type( core::pose::Pose & pose );
     
     void get_CDRs_numbering();
+    utility::vector1<FrameWork> get_ab_framework(){return Ab_framework_;}
+    utility::vector1<FrameWork> get_Hfr(){return Hfr_;}
+    utility::vector1<FrameWork> get_Lfr(){return Lfr_;}
+
 	void set_default( bool camelid );
     void identify_CDR_from_a_sequence(std::string & querychain);
     
@@ -100,7 +116,8 @@ public:
     docking::DockJumps LH_dock_jump(){ return LH_dock_jumps_;}
 
     std::string LH_dock_partner(){return LH_dock_partners_;}
-
+    
+    void all_cdr_VL_VH_fold_tree( core::pose::Pose & pose_in);
     
 private:
 	// cdr loops
@@ -110,8 +127,6 @@ private:
     std::string L1_seq_, L2_seq_, L3_seq_;
     std::string H1_seq_,H2_seq_,H3_seq_;
 
-    
-	core::Size hfr_[7][3]; // array of framework residues for alignment
 
     CDR_Numbering_Begin_Map CDR_numbering_begin_;
     CDR_Numbering_End_Map CDR_numbering_end_;
@@ -123,6 +138,9 @@ private:
     
     utility::vector1< char > Fv_sequence_;
  
+    
+    utility::vector1<FrameWork> Lfr_, Hfr_, Ab_framework_ ;
+    
     docking::DockJumps LH_dock_jumps_;
     std::string LH_dock_partners_;
     

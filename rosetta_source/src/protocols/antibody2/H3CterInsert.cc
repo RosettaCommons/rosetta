@@ -33,6 +33,7 @@
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/AntibodyUtil.hh>
 #include <protocols/moves/PyMolMover.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
 
 
 
@@ -122,65 +123,54 @@ void H3CterInsert::apply(pose::Pose & pose)
     
     TR <<  "Inserting CDR H3 C-ter Fragments" << std::endl;
     
-    // Storing initial fold tree
-    kinematics::FoldTree const input_tree( pose.fold_tree() );
+    Size loop_begin(0), loop_end(0), cutpoint(0);
     
     
     
+    loop_begin = ab_info_->get_CDR_loop("h3")->start()-1;  //JQX: to match R2_Antibody
+    cutpoint   = ab_info_->get_CDR_loop("h3")->cut(); // keep the cutpoint unchanged
+    loop_end   = ab_info_->get_CDR_loop("h3")->stop()+2; //JQX: to match R2_Antibody
     
-    Size loop_begin(0), loop_end(0), cutpoint(0), random_H3_ter(0);
-    
-    //utility::vector1< fragment::FragData >::const_iterator H3_ter;
-    fragment::FragData f;
-    
-    loop_begin    = ab_info_->get_CDR_loop("h3")->start()-1;  //JQX: to match R2_Antibody
-    cutpoint      = ab_info_->get_CDR_loop("h3")->start() + 1; //JQX: to match R2_Antibody
-    random_H3_ter = RG.random_range( 1, H3_base_library_.size() ); 
-    //H3_ter = H3_base_library_.begin();
-    
-    loop_end = ab_info_->get_CDR_loop("h3")->stop()+2; //JQX: to match R2_Antibody
-    
-    loops::Loop cdr_h3( loop_begin, loop_end, cutpoint,	0, true );
-    
-    //    simple_one_loop_fold_tree( pose, cdr_h3 ); // JQX: this doesn't match R2_Antibody
-    
-    setup_simple_fold_tree(loop_begin, cutpoint, loop_end,pose.total_residue(), pose);
-    
-    
+    setup_simple_fold_tree(loop_begin, cutpoint, loop_end, pose.total_residue(), pose);
     TR<<pose.fold_tree()<<std::endl;
     
-    // choosing a base randomly
-    //H3_ter = H3_ter + random_H3_ter;//R2 style, comment out
+    
+    
+    fragment::FragData f;
+    Size random_H3_ter(0);
+    random_H3_ter = RG.random_range( 1, H3_base_library_.size() ); 
     f = H3_base_library_[ random_H3_ter ];
     //    TR<<H3_base_library_.size()<<std::endl;
-    //    f = H3_base_library_[ 30 ]; //JQX: a test case to match R2_Antibody
+       // f = H3_base_library_[ 1 ]; //JQX: a test case to match R2_Antibody
     //JQX: realize R2_antibody the fragment data was vector, not vector1
     //JQX: in another word, R2->20 match R3->21
     //TODO:
     //JQX: for the M18 case, the H3_base_library_[ 30 ] has a problem in both R2 and R3
-    TR<<f<<std::endl;
+    //     OK, this is due to the database used omega-phi-psi, but Rosetta use phi-psi-omega
+    //     the omega is the the omega of last residue
+    //TR<<f<<std::endl;
     
     //inserting base dihedrals
     Size cter_insertion_pos( is_camelid_ ? 4 : 2 ); // not sure why 4 for camelid
     
     
-    if( (ab_info_->get_CDR_loop("h3")->stop() - cter_insertion_pos) <=
-       ab_info_->get_CDR_loop("h3")->start() )
+    if( (ab_info_->get_CDR_loop("h3")->stop() - cter_insertion_pos) <= ab_info_->get_CDR_loop("h3")->start() )
     {
-        TR << "H3 LOOP IS TOO SHORT: CAN NOT USE N-TERM INFORMATION"<< std::endl;
+        TR << "H3 LOOP IS TOO SHORT: CAN NOT USE C-TERM INFORMATION"<< std::endl;
     }
     else {
-        // H3_ter->apply(...); // R2 style
-        f.apply( pose, 
-                ab_info_->get_CDR_loop("h3")->stop() - cter_insertion_pos, 
-                ab_info_->get_CDR_loop("h3")->stop() + 1 );
+        f.apply( pose, ab_info_->get_CDR_loop("h3")->stop() - cter_insertion_pos, ab_info_->get_CDR_loop("h3")->stop() + 1 );
+        
+        //for( Size ii=ab_info_->get_CDR_loop("h3")->stop() - cter_insertion_pos; ii<=ab_info_->get_CDR_loop("h3")->stop() + 1 ; ii++ ){
+          //  pose.set_phi(ii, f );
+        
+       // }
+
+        
     }
     if(use_pymol_diy_) pymol_->apply(pose);
     //JQX: it seems movemap is not required..... kind of weird, but it works! maybe there's a default movemap
-    
-    // Restoring pose fold tree
-    pose.fold_tree( input_tree );
-    
+        
     
     TR <<  "Finished Inserting CDR H3 C-ter Fragments" << std::endl;
     
@@ -348,19 +338,25 @@ void H3CterInsert::read_H3_cter_fragment(bool is_camelid )
         
         //camelid antibody
         if( is_camelid && end_not_reached && base_match ){
+
             H3_base_library_.push_back( f );
         }
         
         // regular antibody
         else if( end_not_reached && (H3_length==pdb_H3_length) && base_match ){
+            //TR<< "111111111111      H3_length = "<<H3_length<<"     pdb_h3_length="<<pdb_H3_length<<"    base_match="<<base_match<<std::endl;
+            //TR<<pdb_name<<"   "<<omega<<"    "<<phi<<"    "<<psi<<std::endl;
+
             H3_base_library_.push_back( f );
         }
         
         
         if( end_not_reached && seq_match && base_match ){
+
             H3_base_library_seq_kink.push_back( f );
         }
         if( end_not_reached && base_match  ){
+
             H3_base_library_kink.push_back( f );
         }
     }
@@ -368,9 +364,9 @@ void H3CterInsert::read_H3_cter_fragment(bool is_camelid )
     
     
     
-    for (int i=1;i<=H3_base_library_.size();i++) 
-        TR<<H3_base_library_[i]<<std::endl;
-    
+    //for (int i=1;i<=H3_base_library_.size();i++) {
+    //    TR<<H3_base_library_[i]<<std::endl;
+    //}
     
     H3_ter_library_stream.close();
     H3_ter_library_stream.clear();

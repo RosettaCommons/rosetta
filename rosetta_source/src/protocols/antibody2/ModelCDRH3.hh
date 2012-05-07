@@ -78,10 +78,10 @@ public:
 
 
 	/// @brief set scorefunction for low resolution of CDR H3 modeling
-	void set_lowres_score_func(scoring::ScoreFunctionCOP lowres_scorefxn );
+	void set_lowres_score_func(core::scoring::ScoreFunctionCOP lowres_scorefxn );
 
 	/// @brief set scorefunction for high resolution of CDR H3 modeling
-	void set_highres_score_func(scoring::ScoreFunctionCOP highres_scorefxn);
+	void set_highres_score_func(core::scoring::ScoreFunctionCOP highres_scorefxn);
 
 	/// @brief set task factory 
     void set_task_factory(pack::task::TaskFactoryCOP tf);
@@ -94,9 +94,16 @@ public:
     
     void turn_on_and_pass_the_pymol(moves::PyMolMoverOP pymol);
     
+    void set_sc_min(bool sc_min){
+        sc_min_ = sc_min;
+    }
+    
+    void set_rt_min(bool rt_min){
+        rt_min_ = rt_min;
+    }
+    
 private:
 	bool user_defined_;
-	pose::Pose start_pose_;
     
     bool do_cter_insert_;
 
@@ -121,8 +128,8 @@ private:
     moves::PyMolMoverOP pymol_;
 
 	// score functions
-	scoring::ScoreFunctionOP lowres_scorefxn_;
-	scoring::ScoreFunctionOP highres_scorefxn_;
+    core::scoring::ScoreFunctionOP lowres_scorefxn_;
+    core::scoring::ScoreFunctionOP highres_scorefxn_;
 
 	/// @brief benchmark flag
 	bool benchmark_;
@@ -152,6 +159,9 @@ private:
     H3CterInsertOP h3_cter_insert_mover_;
     H3PerturbCCDOP h3_perturb_ccd_build_;
     
+    bool sc_min_;
+    bool rt_min_;
+    
 }; // class ModelCDRH3
 
 
@@ -159,10 +169,10 @@ private:
 
 
 // JQX: make a class, which inherits from abstract class "loop_mover"
-class my_LoopMover: public protocols::loops::loop_mover::LoopMover {
-protected:
-    virtual basic::Tracer & tr() const;
-};
+//class my_LoopMover: public protocols::loops::loop_mover::LoopMover {
+//protected:
+//    virtual basic::Tracer & tr() const;
+//};
     
 
 

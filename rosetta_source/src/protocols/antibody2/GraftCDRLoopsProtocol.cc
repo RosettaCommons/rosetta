@@ -43,6 +43,8 @@
 #include <protocols/moves/PyMolMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/TrialMover.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <protocols/loops/loops_main.hh>
 
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/RotamerTrialsMover.hh>
@@ -55,6 +57,7 @@
 #include <protocols/antibody2/Ab_TemplateInfo.hh>
 #include <protocols/antibody2/GraftCDRLoopsProtocol.hh>
 #include <protocols/antibody2/AntibodyUtil.hh>
+#include <protocols/antibody2/CDRsMinPackMin.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -224,8 +227,7 @@ void GraftCDRLoopsProtocol::setup_objects() {
     scorefxn_pack_->set_weight( core::scoring::overlap_chainbreak, 10./3. );
     scorefxn_pack_->set_weight( core::scoring::atom_pair_constraint, 1.00 );
 
-    mc_ = new moves::MonteCarlo( *scorefxn_pack_, 0.8 );
-	tf_ = new core::pack::task::TaskFactory;
+
     
 	sync_objects_with_flags();
     
@@ -309,29 +311,20 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
     
     // Exact match Aroop's old code in Rosetta 2:
     // graft all CDRs by superimpose stems, then pack the whole new pose
-    // RotamerTrial <-> PackRotamers <-> RotamerTrialsMin/SideChainMin(optional)
     
+    // When do packing, pack the whole pose, but minimize the CDRs
     tf_ = setup_packer_task(frame_pose);
-	simple_moves::RotamerTrialsMoverOP rotamer_trial_mover = new simple_moves::RotamerTrialsMover( scorefxn_pack_, tf_ );
-    simple_moves::PackRotamersMoverOP  pack_rotamers_mover = new simple_moves::PackRotamersMover();
-        pack_rotamers_mover->score_function( scorefxn_pack_ );
-        pack_rotamers_mover->task_factory( tf_ );
     
-    graft_sequence_->add_mover(rotamer_trial_mover);
-    graft_sequence_->add_mover(pack_rotamers_mover);
+    CDRsMinPackMinOP cdrs_min_pack_min = new CDRsMinPackMin(ab_info_);
+        cdrs_min_pack_min -> set_task_factory(tf_);
+        // the tf_ include all the residues, the movemap is to use the deafult one in CDRsMinPackMin, which is the CDRs
+        cdrs_min_pack_min->set_sc_min(sc_min_);
+        cdrs_min_pack_min->set_sc_min(rt_min_);
     
     
-    if ( rt_min_ ){ 
-        simple_moves::RotamerTrialsMinMoverOP rtmin = new simple_moves::RotamerTrialsMinMover( scorefxn_pack_, tf_ );
-        moves::TrialMoverOP rtmin_trial = new moves::TrialMover( rtmin, mc_ );
-        graft_sequence_->add_mover(rtmin_trial); 
-    }
-    if ( sc_min_ ){ 
-        core::pack::task::TaskFactoryCOP my_tf( tf_); // input must be COP, weird
-        docking::SidechainMinMoverOP scmin_mover = new docking::SidechainMinMover( scorefxn_pack_, my_tf );
-        moves::TrialMoverOP scmin_trial = new moves::TrialMover( scmin_mover, mc_ );
-        graft_sequence_->add_mover(scmin_trial); 
-    }
+       
+    graft_sequence_->add_mover(cdrs_min_pack_min);
+    
 
 
 }
@@ -402,10 +395,10 @@ void GraftCDRLoopsProtocol::apply( pose::Pose & frame_pose ) {
     if( get_native_pose() ) native_pose = *get_native_pose();
     else                    native_pose = frame_pose;
     
-    AntibodyInfo native_ab( native_pose, camelid_ );
+    AntibodyInfoOP native_ab_info = new AntibodyInfo( native_pose, camelid_ );
     
     
-    ab_info_->align_to_native( frame_pose, native_ab, native_pose );
+    align_to_native( frame_pose, native_pose, ab_info_, native_ab_info );
     
     
     basic::prof_show();

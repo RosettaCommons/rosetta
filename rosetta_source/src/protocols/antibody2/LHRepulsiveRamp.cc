@@ -18,71 +18,18 @@
 
 
 #include <protocols/antibody2/LHRepulsiveRamp.hh>
-
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-
-#include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loop.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-
-
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <core/import_pose/import_pose.hh>
-
-
-#include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
-
-
-
-#include <core/pack/task/PackerTask.hh>
+#include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <core/pack/task/operation/OperateOnCertainResidues.hh>
-#include <core/pack/task/operation/OptH.hh>
-#include <core/pack/task/operation/ResFilters.hh>
-#include <core/pack/task/operation/ResLvlTaskOperations.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/dunbrack/RotamerConstraint.hh>
-
-
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
-using namespace ObjexxFCL::fmt;
-
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/moves/TrialMover.hh>
-#include <protocols/docking/SidechainMinMover.hh>
-#include <protocols/moves/JumpOutMover.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/RepeatMover.hh>
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/antibody2/AntibodyUtil.hh>
 #include <protocols/moves/PyMolMover.hh>
-
 #include <protocols/docking/DockMCMCycle.hh>
-#include <protocols/docking/util.hh>
-
-
-
-
-
-
-#include <core/chemical/VariantType.hh>
-//JQX:: this header file took care of the "CUTPOINT_LOWER" options below
-
-// TODO: make a general DockRepulsiveRamp mover without antibody info and implement into Docking
 
 
 using basic::T;
@@ -99,33 +46,18 @@ namespace antibody2 {
 
     
 // default constructor
-LHRepulsiveRamp::LHRepulsiveRamp() : Mover() {
-
-}
-
+LHRepulsiveRamp::LHRepulsiveRamp() : Mover() {}
 
     
-LHRepulsiveRamp::LHRepulsiveRamp(AntibodyInfoOP antibody_in) : Mover() {
-    user_defined_ = false;
-    
-    init(antibody_in,false);
-}
-    
-LHRepulsiveRamp::LHRepulsiveRamp(AntibodyInfoOP antibody_in, bool camelid) : Mover() {
-    user_defined_ = false;
-    
-    init(antibody_in, camelid);
-}
-    
-    
-LHRepulsiveRamp::LHRepulsiveRamp( AntibodyInfoOP antibody_in,
+LHRepulsiveRamp::LHRepulsiveRamp(  docking::DockJumps const movable_jumps,
                                    core::scoring::ScoreFunctionCOP dock_scorefxn,
                                    core::scoring::ScoreFunctionCOP pack_scorefxn ) : Mover(){
     user_defined_ = true;
+    jump_ = movable_jumps;
     dock_scorefxn_ = new core::scoring::ScoreFunction(*dock_scorefxn);
     pack_scorefxn_ = new core::scoring::ScoreFunction(*pack_scorefxn);
     
-    init(antibody_in, false);
+    init();
 }
     
     
@@ -138,23 +70,24 @@ protocols::moves::MoverOP LHRepulsiveRamp::clone() const {
 }
     
     
-
     
-    
-void LHRepulsiveRamp::init(AntibodyInfoOP antibody_in, bool camelid ) 
+void LHRepulsiveRamp::init( ) 
 {
     set_default();
-    ab_info_ = antibody_in;
-    is_camelid_ = camelid;
     
-    tf_ = NULL;
+
     
+    //JQX: Jeff wants this repulsive ramping mover to be more general, therefore, no default 
+    //      tf, movemap, and scorefxn are set up here, to avoid any unnecessary confusion.
 }
     
     
 void LHRepulsiveRamp::set_default(){
     benchmark_       = false;
     use_pymol_diy_   = false;
+    sc_min_ =false;
+    rt_min_ =false;
+    
 
     rep_ramp_cycles_ = 3 ;
     rot_mag_         = 2.0 ;
@@ -162,25 +95,12 @@ void LHRepulsiveRamp::set_default(){
     num_repeats_     = 4;
     
     if(!user_defined_){
-        dock_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
-            dock_scorefxn_->set_weight( core::scoring::chainbreak, 1.0 );
-            dock_scorefxn_->set_weight( core::scoring::overlap_chainbreak, 10./3. ); 
-        pack_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "standard" );
+
     }
 
 }
     
-    
-    
-    
-std::string LHRepulsiveRamp::get_name() const {
-    return "LHRepulsiveRamp";
-}
 
-    
-    
-
-    
     
     
 ///////////////////////////////////////////////////////////////////////////
@@ -201,33 +121,18 @@ std::string LHRepulsiveRamp::get_name() const {
 ///
 /// @global_read fa_rep : fullatom repulsive weight
 ///
-/// @global_write fa_rep ( It is reset to the original value at the end )
-///
 /// @remarks A particular portion is  commented out,which can be
 ///          uncommented if one  uses a  low  resolution  homology  model.
 ///          Check details in the beginning of the commented out region
 ///
-/// @references
-///
-/// @authors Aroop 07/13/2010    
-///
-/// @last_modified 07/13/2010
 ///////////////////////////////////////////////////////////////////////////
     
 void LHRepulsiveRamp::apply( pose::Pose & pose ) {
     TR<<"start apply function ..."<<std::endl;
     
-    // remove cutpoints variants for all cdrs
-    // "true" forces removal of variants even from non-cutpoints
-    loops::remove_cutpoint_variants( pose, true );
-    using namespace core::chemical;
-    for ( loops::Loops::const_iterator it = ab_info_->all_cdr_loops_.begin(),
-         it_end = ab_info_->all_cdr_loops_.end();	it != it_end; ++it ) {
-        core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, it->cut() );
-        core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER,it->cut()+1);
-    }
-    //TODO: JQX don't understand what the above is doing, why remove that?
-    //      It seems it re-added all the cutpoints to all the loops, so that the chain-break scoring function can work.
+    //JQX: the fold_tree and variants should have been set up in "pose"
+    //     executed outside of this class
+    
     
     // add scores to map
     ( *dock_scorefxn_ )( pose );
@@ -251,11 +156,13 @@ void LHRepulsiveRamp::apply( pose::Pose & pose ) {
         temp_dock_scorefxn->set_weight( core::scoring::fa_rep, rep_weight );
         
 
-        docking::DockMCMCycleOP dockmcm_cyclemover = new docking::DockMCMCycle( ab_info_->LH_dock_jump(), temp_dock_scorefxn, pack_scorefxn_ );
+        docking::DockMCMCycleOP dockmcm_cyclemover = new docking::DockMCMCycle( jump_, temp_dock_scorefxn, pack_scorefxn_ );
         //TODO: print scoring function in apply and move "new" out
             dockmcm_cyclemover->set_rot_magnitude(rot_mag_);
             dockmcm_cyclemover->set_task_factory(tf_);
-            dockmcm_cyclemover->set_move_map(cdr_dock_map_);
+            dockmcm_cyclemover->set_move_map(movemap_);
+            if(sc_min_) {dockmcm_cyclemover->set_scmin(true);}
+            if(sc_min_) {dockmcm_cyclemover->set_scmin(true);}
         
         for (Size j=1; j<=num_repeats_; j++) {
             dockmcm_cyclemover -> apply(pose);
@@ -271,22 +178,27 @@ void LHRepulsiveRamp::apply( pose::Pose & pose ) {
 
 }
     
-
     
+
+std::string LHRepulsiveRamp::get_name() const {
+    return "LHRepulsiveRamp";
+}
     
 void LHRepulsiveRamp::set_task_factory(pack::task::TaskFactoryCOP tf){        
     tf_ = new pack::task::TaskFactory(*tf);
 }
     
-void LHRepulsiveRamp::set_move_map(kinematics::MoveMapCOP cdr_dock_map){
-    cdr_dock_map_ = new kinematics::MoveMap(*cdr_dock_map);
+void LHRepulsiveRamp::set_move_map(kinematics::MoveMapCOP movemap){
+    movemap_ = new kinematics::MoveMap(*movemap);
 }
 
+    
+void LHRepulsiveRamp::set_dock_jump(docking::DockJumps jump){
+    jump_ = jump;
+}
 
+    
+    
 } // namespace antibody2
 } // namespace protocols
-
-
-
-
 

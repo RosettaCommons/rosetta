@@ -61,16 +61,13 @@ public:
     
     /// @brief constructor with arguments
     RefineCDRH3HighRes(AntibodyInfoOP antibody_info, std::string loop_name, 
-                       scoring::ScoreFunctionCOP highres_scorefxn );
+                       core::scoring::ScoreFunctionCOP highres_scorefxn );
 
     /// @brief constructor with arguments
     RefineCDRH3HighRes( AntibodyInfoOP antibody_info);
 
 
-    void set_task_factory(core::pack::task::TaskFactoryCOP tf){
-        tf_ = new core::pack::task::TaskFactory(*tf);
-    }
-
+    void set_task_factory(pack::task::TaskFactoryCOP tf);
 
     virtual protocols::moves::MoverOP clone() const;
 
@@ -91,7 +88,7 @@ public:
 
     virtual std::string get_name() const;
     
-	void set_highres_score_func(scoring::ScoreFunctionCOP highres_scorefxn){
+	void set_highres_score_func(core::scoring::ScoreFunctionCOP highres_scorefxn){
         highres_scorefxn_ = new core::scoring::ScoreFunction(*highres_scorefxn);
     }
 
@@ -144,8 +141,6 @@ private:
 	/// @brief actually enables H3 filter for H3 operations
 	bool H3_filter_;
 
-	/// @brief use random cutpoints for h3 modeling
-	bool h3_random_cut_;
 
  	/// @brief number of flanking residues:default 5
 	core::Size flank_size_;

@@ -17,10 +17,8 @@
 
 
 #include <core/pose/PDBInfo.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <utility/tools/make_vector1.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
 #include <protocols/moves/PyMolMover.hh>
 #include <protocols/antibody2/RefineBetaBarrel.hh>
@@ -30,28 +28,22 @@
 #include <protocols/antibody2/LHSnugFitLegacy.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
-
-#include <protocols/docking/DockingProtocol.hh> //JQX
-#include <protocols/docking/DockingHighRes.hh> //JQX
-#include <protocols/docking/util.hh> //JQX
-#include <basic/options/keys/docking.OptionKeys.gen.hh>  //JQX
-
-
-
-
-
-
+#include <protocols/docking/DockingProtocol.hh>
+#include <protocols/docking/DockingHighRes.hh> 
+#include <protocols/docking/util.hh> 
+#include <basic/options/keys/docking.OptionKeys.gen.hh> 
 #include <basic/Tracer.hh>
-
+#include <core/chemical/ResidueType.hh>
+#include <utility/vector1.hh>
+#include <core/chemical/VariantType.hh>
+#include <core/conformation/Residue.hh>
+#include <core/pose/util.hh>
 
 static basic::Tracer TR("protocols.antibody2.RefineBetaBarrel");
 
 using namespace core;
-
 namespace protocols {
 namespace antibody2 {
-        
-        
         
         
 // default constructor
@@ -89,27 +81,12 @@ void RefineBetaBarrel::init( ){
 
     repulsive_ramp_ = true;
     use_pymol_diy_  = false;
+    sc_min_ = false;
+    rt_min_ = false;
 
 }
    
 
-    
-
-    
-    
-std::string RefineBetaBarrel::get_name() const {
-    return "RefineBetaBarrel";
-}
-    
-    
-    
-void RefineBetaBarrel::set_task_factory(core::pack::task::TaskFactoryCOP tf){
-    tf_ = new pack::task::TaskFactory(*tf);
-}
-    
-    
-    
-    
     
     
 void RefineBetaBarrel::finalize_setup(pose::Pose & pose ){
@@ -118,7 +95,7 @@ void RefineBetaBarrel::finalize_setup(pose::Pose & pose ){
     // add scores to map
     ( *dock_scorefxn_ )( pose );
         
-    //setting MoveMap
+    // ************ MoveMap *************
     cdr_dock_map_ = new kinematics::MoveMap();
     cdr_dock_map_->clear();
     cdr_dock_map_->set_chi( false );
@@ -138,7 +115,7 @@ void RefineBetaBarrel::finalize_setup(pose::Pose & pose ){
         cdr_dock_map_->set_jump( ii, false );
         
         
-    // TaskFactory
+    // ************ TaskFactory ************ 
     //set up sidechain movers for rigid body jump and loop & neighbors
     using namespace core::pack::task;
     using namespace core::pack::task::operation;
@@ -152,12 +129,40 @@ void RefineBetaBarrel::finalize_setup(pose::Pose & pose ){
     if(!tf_){
         tf_= setup_packer_task(pose);
         tf_->push_back( new RestrictToInterface( ab_info_->LH_dock_jump(), loop_residues ) );
-        //tf_->push_back( new RestrictToInterface( movable_jumps_ ) ); // TODO: maybe you don't need to repack the loops
     }
         
-    //core::pack::task::PackerTaskOP my_task2(tf_->create_task_and_apply_taskoperations(pose));
-    //TR<<*my_task2<<std::endl; exit(-1);
-        
+    core::pack::task::PackerTaskOP my_task2(tf_->create_task_and_apply_taskoperations(pose));
+    //TR<<*my_task2<<std::endl; //exit(-1);
+
+    
+    
+    //************  FoldTree ************ 
+    
+    ab_info_ -> all_cdr_VL_VH_fold_tree( pose );
+    TR<<pose.fold_tree()<<std::endl;
+    
+    
+    //************  Variants ************
+    // JQX: 
+    // 1. setting up the fold_tree doesn't automatically 
+    //    update the variants in residue_type
+    // 2. the variants you saw from the PackTask are not the
+    //    same as the variants in residue_type
+    // 3. access the variants by a). pose.residue_type(i).variant_types()[1]
+    //                           b). pose.residue(i).type().variant_types()[1]
+
+    loops::remove_cutpoint_variants( pose, true ); //remove first
+    loops::add_cutpoint_variants( pose ); // add back, based on the cutpoints defined by fold_tree
+    
+/*
+    for (Size i=1; i<=pose.total_residue();i++) {
+        if (pose.residue(i).type().variant_types().size()>0){
+            TR<<"residue "<<i<<"    "<< pose.residue(i).type().variant_types()[1]<<std::endl;
+        }
+        else{ TR<<"residue "<<i<<std::endl; }
+    }
+    exit(-1);
+*/
     TR<<"   finish finalize_setup function !!!"<<std::endl;
         
 }
@@ -165,31 +170,31 @@ void RefineBetaBarrel::finalize_setup(pose::Pose & pose ){
     
     
     
-    
 void RefineBetaBarrel::apply( pose::Pose & pose ) {
     
     finalize_setup(pose);
-
-    all_cdr_VL_VH_fold_tree( pose, ab_info_->all_cdr_loops_ );
     
-    
+    //JQX:
+    // the repulsive_ramp_ docking mover is very general now based on Jeff's request!
+    // it will be moved to DockingProtocol soon
+    // one must specify fold_tree and variants before using this mover
     if(repulsive_ramp_) {
-        lh_repulsive_ramp_ = new LHRepulsiveRamp(ab_info_, dock_scorefxn_, pack_scorefxn_);
+        lh_repulsive_ramp_ = new LHRepulsiveRamp(ab_info_->LH_dock_jump(), dock_scorefxn_, pack_scorefxn_);
             lh_repulsive_ramp_ -> set_move_map(cdr_dock_map_);
             lh_repulsive_ramp_ -> set_task_factory(tf_);
+            if(sc_min_) lh_repulsive_ramp_ -> set_sc_min(true);
+            if(rt_min_) lh_repulsive_ramp_ -> set_rt_min(true);
             if(use_pymol_diy_) lh_repulsive_ramp_ -> turn_on_and_pass_the_pymol (pymol_);
         lh_repulsive_ramp_->apply(pose);
         TR<<"   finish repulsive ramping !"<<std::endl;
     }
     
     
-    
-    // TODO: 
-    // JQX: pass the move map, 
     dock_mcm_protocol_ = new docking::DockMCMProtocol( ab_info_->LH_dock_jump(), dock_scorefxn_, pack_scorefxn_ );
         dock_mcm_protocol_ -> set_task_factory(tf_);
         dock_mcm_protocol_ -> set_move_map(cdr_dock_map_);
-
+        if(sc_min_) dock_mcm_protocol_ -> set_sc_min(true);
+        if(rt_min_) dock_mcm_protocol_ -> set_rt_min(true);
     dock_mcm_protocol_ -> apply(pose);
     if(use_pymol_diy_) pymol_ -> apply(pose);
 
@@ -199,17 +204,17 @@ void RefineBetaBarrel::apply( pose::Pose & pose ) {
 
 
     
+std::string RefineBetaBarrel::get_name() const {
+    return "RefineBetaBarrel";
+}
     
-
-
+void RefineBetaBarrel::set_task_factory(core::pack::task::TaskFactoryCOP tf){
+    tf_ = new pack::task::TaskFactory(*tf);
+}
     
     
     
 
 }// namespace antibody2
 }// namespace protocols
-
-
-
-
 

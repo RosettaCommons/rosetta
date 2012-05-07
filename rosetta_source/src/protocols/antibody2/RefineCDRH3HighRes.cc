@@ -105,8 +105,10 @@ RefineCDRH3HighRes::RefineCDRH3HighRes( AntibodyInfoOP antibody_info, std::strin
 }
   
     
-RefineCDRH3HighRes::RefineCDRH3HighRes(AntibodyInfoOP antibody_info, std::string loop_name,
-                   scoring::ScoreFunctionCOP highres_scorefxn ) : Mover()  
+RefineCDRH3HighRes::RefineCDRH3HighRes(AntibodyInfoOP antibody_info, 
+                                       std::string loop_name,
+                                       scoring::ScoreFunctionCOP highres_scorefxn 
+                                       ) : Mover()  
 {
     user_defined_ = true;
     ab_info_    = antibody_info;
@@ -129,20 +131,14 @@ void RefineCDRH3HighRes::init( )
     set_default();
         
     the_loop_   = *(ab_info_->get_CDR_loop(loop_name_));
+    
     loop_begin_ = the_loop_.start();
+    cutpoint_   = the_loop_.cut();
     loop_end_   = the_loop_.stop();
     loop_size_  = ( loop_end_ - loop_begin_ ) + 1;
-    gamma_ = std::pow( (last_temp_/init_temp_), (1.0/loop_size_)); 
-    //TODO: check this gama value carefully
-
-    cutpoint_ = loop_begin_ + int(loop_size_/2);
-        
-    if( h3_random_cut_ ){
-        //	cutpoint_ = dle_choose_random_cutpoint(loop_begin_, loop_end_);
-    }
-        
-    the_loop_.set_cut(cutpoint_);
-        
+    
+    gamma_ = std::pow( (last_temp_/init_temp_), (1.0/loop_size_)); //TODO: check this gama value carefully
+                
     n_small_moves_ =  numeric::max(Size(5), Size(loop_size_/2)) ;
     inner_cycles_ = loop_size_;
     outer_cycles_ = 2; //JQX: assume the SnugFit step has done some minimization
@@ -170,7 +166,6 @@ void RefineCDRH3HighRes::set_default()
 
     benchmark_         = false;
 	refine_input_loop_ = false;
-	h3_random_cut_     = false;
     use_pymol_diy_     = false;
     is_camelid_        = false;
 
@@ -236,15 +231,9 @@ void RefineCDRH3HighRes::finalize_setup( core::pose::Pose & pose ){
 
     tf_=setup_packer_task( start_pose_);
     
-    // set cutpoint variants for correct chainbreak scoring
-    if( !pose.residue( cutpoint_ ).is_upper_terminus() ) {
-        if( !pose.residue( cutpoint_ ).has_variant_type(chemical::CUTPOINT_LOWER)){
-            core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cutpoint_ );
-        }
-        if( !pose.residue( cutpoint_ + 1 ).has_variant_type(chemical::CUTPOINT_UPPER ) ){
-            core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cutpoint_ + 1 );
-        }
-    }
+    // score the pose first
+    (*highres_scorefxn_) (pose);
+    
 
     // the list of residues that are allowed to pack
     for(Size ii=1; ii <=pose.total_residue();ii++) {allow_repack_.push_back(false);}
@@ -307,6 +296,11 @@ void RefineCDRH3HighRes::finalize_setup( core::pose::Pose & pose ){
         simple_fold_tree( pose, loop_begin_ - flank_size_ - 1, cutpoint_, loop_end_ + flank_size_ + 1 );
     }
     change_FT_to_flankloop_ = new ChangeFoldTreeMover( pose.fold_tree() );
+    
+    // cut points variants for chain-break scoring
+    loops::remove_cutpoint_variants( pose, true ); //remove first
+    loops::add_cutpoint_variants( pose ); 
+    
     
     
     // pack the loop and its neighboring residues
@@ -507,7 +501,9 @@ void RefineCDRH3HighRes::apply( pose::Pose & pose ) {
 
     
 
-    
+void RefineCDRH3HighRes::set_task_factory(pack::task::TaskFactoryCOP tf){
+    tf_ = new pack::task::TaskFactory(*tf);
+}
 
 
 

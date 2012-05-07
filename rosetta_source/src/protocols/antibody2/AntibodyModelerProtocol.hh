@@ -19,23 +19,19 @@
 #ifndef INCLUDED_protocols_antibody2_AntibodyModelerProtocol_hh
 #define INCLUDED_protocols_antibody2_AntibodyModelerProtocol_hh
 
+#include <utility/vector1.hh>
+#include <core/types.hh>
+#include <core/pose/Pose.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/types.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/moves/PyMolMover.fwd.hh>
-
-#include <protocols/antibody2/ModelCDRH3.fwd.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/AntibodyModelerProtocol.fwd.hh>
-#include <protocols/antibody2/RefineBetaBarrel.fwd.hh>
-#include <protocols/antibody2/RefineCDRH3HighRes.fwd.hh>
-#include <utility/vector1.hh>
 
 
 
@@ -87,26 +83,23 @@ public:
 	void display_constraint_residues( pose::Pose & pose );
         
     void show( std::ostream & out=std::cout );
-    friend std::ostream & operator<<(std::ostream& out, const AntibodyModelerProtocol & ab_m_2 );
+    friend std::ostream & operator<<(std::ostream& out, const AntibodyModelerProtocol & ab_m );
     
     
 
 private:
     bool model_h3_;
-    bool extreme_repacking_;
-	bool snugfit_;
+	 bool snugfit_;
     bool refine_h3_;
-	bool camelid_;
-	bool camelid_constraints_;
     bool H3_filter_;
     bool cter_insert_;
     bool LH_repulsive_ramp_;
-    pose::Pose start_pose_;
     bool sc_min_;
-	bool rt_min_;
+    bool rt_min_;
+    bool camelid_;
+	 bool camelid_constraints_;
     
     /// @brief refine H3 only
-	bool antibody_refine_;
     core::Real cen_cst_, high_cst_;
     moves::PyMolMoverOP pymol_;
     bool use_pymol_diy_;
@@ -134,11 +127,6 @@ private:
 	//packer task
 	pack::task::TaskFactoryOP tf_;
 
-	// movers
-	ModelCDRH3OP model_cdrh3_;
-    RefineBetaBarrelOP refine_beta_barrel_;
-    RefineCDRH3HighResOP cdr_highres_refine_;
-
 	/// @brief Assigns user specified values to primitive members using command line options
 	void init_from_options();
 
@@ -151,8 +139,7 @@ private:
 
 	void setup_objects();
 
-}; // class AntibodyModelerProtocol
-
+}; // class
     
     
     

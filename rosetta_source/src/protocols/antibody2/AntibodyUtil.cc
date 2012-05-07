@@ -47,7 +47,6 @@
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
-#include <protocols/rigid/RB_geometry.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 
 
@@ -184,87 +183,6 @@ namespace antibody2{
     
     
     
-    ///////////////////////////////////////////////////////////////////////////
-	/// @begin all_cdr_VL_VH_fold_tree
-	///
-	/// @brief change to all CDR and VL-VH dock fold tree
-	///
-	/// @authors Aroop 07/13/2010
-	///
-	/// @last_modified 07/13/2010
-	///////////////////////////////////////////////////////////////////////////
-	void all_cdr_VL_VH_fold_tree( pose::Pose & pose_in, const loops::Loops & loops_in ) 
-    {
-        
-		using namespace kinematics;
-        
-		Size nres = pose_in.total_residue();
-		core::pose::PDBInfoCOP pdb_info = pose_in.pdb_info();
-		char second_chain = 'H';
-		Size rb_cutpoint(0);
-        
-		for ( Size i = 1; i <= nres; ++i ) {
-			if( pdb_info->chain( i ) == second_chain) {
-				rb_cutpoint = i-1;
-				break;
-			}
-		}
-        
-		Size jump_pos1 ( geometry::residue_center_of_mass( pose_in, 1, rb_cutpoint ) );
-		Size jump_pos2 ( geometry::residue_center_of_mass( pose_in,rb_cutpoint+1, nres ) );
-        //TR<<rb_cutpoint<<std::endl;
-        //TR<<jump_pos1<<std::endl;
-        //TR<<jump_pos2<<std::endl;
-        
-		// make sure rb jumps do not reside in the loop region
-		for( loops::Loops::const_iterator it= loops_in.begin(), it_end = loops_in.end(); it != it_end; ++it ) {
-			if ( jump_pos1 >= ( it->start() - 1 ) &&
-                jump_pos1 <= ( it->stop() + 1) )
-				jump_pos1 = it->stop() + 2;
-			if ( jump_pos2 >= ( it->start() - 1 ) &&
-                jump_pos2 <= ( it->stop() + 1) )
-				jump_pos2 = it->start() - 2;
-		}
-        
-		// make a simple rigid-body jump first
-		setup_simple_fold_tree(jump_pos1,rb_cutpoint,jump_pos2,nres, pose_in );
-        
-		// add the loop jump into the current tree,
-		// delete some old edge accordingly
-		FoldTree f( pose_in.fold_tree() );
-        
-		for( loops::Loops::const_iterator it=loops_in.begin(),
-            it_end=loops_in.end(); it != it_end; ++it ) {
-			Size const loop_start ( it->start() );
-			Size const loop_stop ( it->stop() );
-			Size const loop_cutpoint ( it->cut() );
-			Size edge_start(0), edge_stop(0);
-			bool edge_found = false;
-			const FoldTree & f_const = f;
-			Size const num_jump = f_const.num_jump();
-			for( FoldTree::const_iterator it2=f_const.begin(),
-                it2_end=f_const.end(); it2 !=it2_end; ++it2 ) {
-				edge_start = std::min( it2->start(), it2->stop() );
-				edge_stop = std::max( it2->start(), it2->stop() );
-				if ( ! it2->is_jump() && loop_start > edge_start
-                    && loop_stop < edge_stop ) {
-					edge_found = true;
-					break;
-				}
-			}
-            
-			f.delete_unordered_edge( edge_start, edge_stop, Edge::PEPTIDE);
-			f.add_edge( loop_start-1, loop_stop+1, num_jump+1 );
-			f.add_edge( edge_start, loop_start-1, Edge::PEPTIDE );
-			f.add_edge( loop_start-1, loop_cutpoint, Edge::PEPTIDE );
-			f.add_edge( loop_cutpoint+1, loop_stop+1, Edge::PEPTIDE );
-			f.add_edge( loop_stop+1, edge_stop, Edge::PEPTIDE );
-		}
-        
-		f.reorder(1);
-		pose_in.fold_tree(f);
-	} // all_cdr_VL_VH_fold_tree
-    
     
 
     
@@ -353,10 +271,13 @@ namespace antibody2{
                                                       pose_in.residue( stop - 1).xyz( CA ),
                                                       pose_in.residue( stop - 2).xyz( CA ),
                                                       pose_in.residue( stop - 3).xyz( CA ) ) ); 
-
+        
+        //pose_in.dump_pdb("check_cter_dihedral.pdb");
+    
         
          TR << "Base Dihedral: " << base_dihedral << std::endl;
-        
+
+
         
         // JQX: the code in the below if statement was in Rosetta 2, but Aroop did not port it into R3
         //      Maybe he has already tested that, the performance was better if using extra 
@@ -651,7 +572,7 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in )
         for ( Size i = loop_start; i <= loop_end; ++i ) superpos_partner(i) = true;
         
         using namespace core::scoring;
-        Real rmsG = rmsd_no_super_subset( native_pose, pose_in, superpos_partner, is_protein_CA );
+        Real rmsG = rmsd_no_super_subset( native_pose, pose_in, superpos_partner, is_protein_backbone_including_O );
         return ( rmsG );
     } 
     
@@ -672,6 +593,35 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in )
     
 
     
+    void align_to_native( core::pose::Pose & pose, 
+                         core::pose::Pose & native_pose,
+                         AntibodyInfoOP ab_info,
+                         AntibodyInfoOP native_ab_info ) {
+        
+        core::id::AtomID_Map< core::id::AtomID > atom_map;
+        core::pose::initialize_atomid_map( atom_map, pose, core::id::BOGUS_ATOM_ID );
+        
+        
+        for (core::Size j=1; j<= ab_info->get_ab_framework().size();j++){
+            core::Size count=0;
+            for (core::Size k=ab_info->get_ab_framework()[j].start(); k<= ab_info->get_ab_framework()[j].stop();k++){
+                count++;
+                core::Size res_counter = k;
+                core::Size nat_counter = native_ab_info->get_ab_framework()[j].start()+count-1;
+                TR<< res_counter<<"    "<<nat_counter<<std::endl;
+
+                for( core::Size atm_counter=1; atm_counter <= 4; atm_counter++ ) {
+                    core::id::AtomID const id1( atm_counter, res_counter );
+                    core::id::AtomID const id2( atm_counter, nat_counter );
+                    atom_map[ id1 ] = id2;
+                }
+            }
+        }
+        
+        core::scoring::superimpose_pose( pose, native_pose, atom_map );
+        
+    } // align_to_native()
+
     
     
 

@@ -20,15 +20,13 @@
 #define INCLUDED_protocols_antibody2_RefineBetaBarrel_hh
 
 #include <protocols/moves/Mover.hh>
-
 #include <protocols/antibody2/RefineBetaBarrel.fwd.hh>
 #include <protocols/antibody2/AntibodyInfo.fwd.hh>
-#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/antibody2/LHRepulsiveRamp.fwd.hh>
 #include <protocols/antibody2/LHSnugFitLegacy.fwd.hh>
 #include <protocols/docking/DockMCMProtocol.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <protocols/moves/PyMolMover.fwd.hh>
 
 #ifdef PYROSETTA
@@ -64,11 +62,11 @@ public:
     void set_task_factory(core::pack::task::TaskFactoryCOP tf);
     
     
-    void set_dock_score_func(scoring::ScoreFunctionCOP dock_scorefxn ){
+    void set_dock_score_func(core::scoring::ScoreFunctionCOP dock_scorefxn ){
         dock_scorefxn_ = new core::scoring::ScoreFunction(*dock_scorefxn);
     }
     
-    void set_pack_score_func(scoring::ScoreFunctionCOP pack_scorefxn){
+    void set_pack_score_func(core::scoring::ScoreFunctionCOP pack_scorefxn){
         pack_scorefxn_ = new core::scoring::ScoreFunction(*pack_scorefxn);
     }
     
@@ -80,8 +78,18 @@ public:
         use_pymol_diy_ = true;
         pymol_ = pymol;
     }
+    
+    void set_sc_min(bool sc_min){
+        sc_min_ = sc_min;
+    }
+    
+    void set_rt_min(bool rt_min){
+        rt_min_ = rt_min;
+    }
             
 private:
+    bool sc_min_;
+    bool rt_min_;
     bool user_defined_;
     bool repulsive_ramp_;
     AntibodyInfoOP ab_info_;

@@ -54,8 +54,7 @@ void setup_simple_fold_tree(
                                 core::pose::Pose & pose_in );
     
     
-void all_cdr_VL_VH_fold_tree( core::pose::Pose & pose_in, 
-                            const loops::Loops & loops );
+
     
     
 bool CDR_H3_filter(
@@ -96,7 +95,15 @@ core::Real global_loop_rmsd ( const core::pose::Pose & pose_in,
     
 std::string get_seq_from_a_loop(core::pose::Pose & pose_in, loops::LoopOP  loop);
     
-
+    
+/// align current Fv to native.Fv
+void align_to_native( core::pose::Pose & pose, 
+                      core::pose::Pose & native_pose,
+                      AntibodyInfoOP ab_info,
+                      AntibodyInfoOP native_ab_info
+                     );
+    
+    
 } //namespace antibody2
 } //namespace protocols
 

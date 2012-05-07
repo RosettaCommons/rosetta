@@ -43,8 +43,6 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/chemical/VariantType.hh>
-//JQX:: this header file took care of the "CUTPOINT_LOWER" options below
-
 
 #include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
 #include <protocols/loops/loops_main.hh>
@@ -93,7 +91,7 @@ H3PerturbCCD::H3PerturbCCD() : Mover() {
 H3PerturbCCD::~H3PerturbCCD() {}
     
     
-H3PerturbCCD::H3PerturbCCD(loops::LoopOP /*a_cdr_loop*/) : Mover()
+H3PerturbCCD::H3PerturbCCD(loops::LoopOP a_cdr_loop) : Mover()         
 {
     user_defined_ = false;
         
@@ -207,13 +205,7 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
         utility_exit_with_message("Loop too small for modeling");
     }
     
-    // set cutpoint variants for correct chainbreak scoring
-    if( !pose_in.residue( trimmed_cdr_h3.cut() ).is_upper_terminus() ) {
-        if( !pose_in.residue( trimmed_cdr_h3.cut() ).has_variant_type(chemical::CUTPOINT_LOWER))
-            core::pose::add_variant_type_to_pose_residue( pose_in, chemical::CUTPOINT_LOWER, trimmed_cdr_h3.cut() );
-        if( !pose_in.residue( trimmed_cdr_h3.cut() + 1 ).has_variant_type(chemical::CUTPOINT_UPPER ) )
-            core::pose::add_variant_type_to_pose_residue( pose_in, chemical::CUTPOINT_UPPER, trimmed_cdr_h3.cut() + 1 );
-    }
+
     
     
     
@@ -248,6 +240,16 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
     TR<<trimmed_cdr_h3<<std::endl;
     TR<<pose_in<<std::endl;
 
+    
+    // set cutpoint variants for correct chainbreak scoring
+    loops::remove_cutpoint_variants( pose_in, true );
+    if( !pose_in.residue( trimmed_cdr_h3.cut() ).is_upper_terminus() ) {
+        if( !pose_in.residue( trimmed_cdr_h3.cut() ).has_variant_type(chemical::CUTPOINT_LOWER))
+            core::pose::add_variant_type_to_pose_residue( pose_in, chemical::CUTPOINT_LOWER, trimmed_cdr_h3.cut() );
+        if( !pose_in.residue( trimmed_cdr_h3.cut() + 1 ).has_variant_type(chemical::CUTPOINT_UPPER ) )
+            core::pose::add_variant_type_to_pose_residue( pose_in, chemical::CUTPOINT_UPPER, trimmed_cdr_h3.cut() + 1 );
+    }
+    
     
     //setting MoveMap
     //JQX: all the chi angles of all the side chains are flexible
@@ -416,18 +418,10 @@ void H3PerturbCCD::read_and_store_fragments( core::pose::Pose & pose ) {
         
     protocols::loops::read_loop_fragments( frag_libs );
         
-    Size frag_size = (ab_info_->get_CDR_loop("h3")->stop() - ab_info_->get_CDR_loop("h3")->start()) + 3;
+    Size frag_size = (ab_info_->get_CDR_loop("h3")->stop() - ab_info_->get_CDR_loop("h3")->start()) + 3; //JQX: why +3??
     TR<<frag_size<<std::endl;
     
-    Size cutpoint =   ab_info_->get_CDR_loop("h3")->start() + int(frag_size/2);
-    TR<<cutpoint<<std::endl;
 
-    
-    setup_simple_fold_tree( ab_info_->get_CDR_loop("h3")->start() - 1, 
-                            cutpoint,
-                            ab_info_->get_CDR_loop("h3")->stop() + 1,
-                            pose.total_residue(),
-                            pose );
         
     FragSetOP offset_3mer_frags;
     

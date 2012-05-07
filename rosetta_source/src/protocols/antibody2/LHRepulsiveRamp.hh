@@ -21,21 +21,14 @@
 #define INCLUDED_protocols_antibody2_LHRepulsiveRamp_hh
 
 
-
-
-
 #include <protocols/antibody2/LHRepulsiveRamp.fwd.hh>
-
-#include <core/pose/Pose.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/antibody2/AntibodyInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/moves/RepeatMover.fwd.hh>
 #include <protocols/moves/PyMolMover.fwd.hh>
-#include <protocols/docking/DockTaskFactory.fwd.hh>
+#include <protocols/docking/types.hh>
+
 
 #ifdef PYROSETTA
 #include <protocols/moves/PyMolMover.hh>
@@ -56,11 +49,7 @@ public:
     
 	/// @brief constructor with arguments
     
-    LHRepulsiveRamp(AntibodyInfoOP antibody_in );
-    
-	LHRepulsiveRamp(AntibodyInfoOP antibody_in, bool camelid );
-    
-    LHRepulsiveRamp(AntibodyInfoOP antibody_in,
+    LHRepulsiveRamp( docking::DockJumps const movable_jumps,
                     core::scoring::ScoreFunctionCOP dock_scorefxn,
                     core::scoring::ScoreFunctionCOP pack_scorefxn );
         
@@ -85,23 +74,29 @@ public:
     
     
     void set_task_factory(pack::task::TaskFactoryCOP tf);
-    void set_move_map(kinematics::MoveMapCOP cdr_dock_map);
-    
-    core::Real set_rot_mag  (core::Real rot_mag)  {return rot_mag_  =rot_mag;  }
-    core::Real set_trans_mag(core::Real trans_mag){return trans_mag_=trans_mag;}
+    void set_move_map(kinematics::MoveMapCOP movemap);
+    void set_dock_jump(docking::DockJumps jump);
+    Real set_rot_mag  (core::Real rot_mag)  {return rot_mag_  =rot_mag;  }
+    Real set_trans_mag(core::Real trans_mag){return trans_mag_=trans_mag;}
     
     void turn_on_and_pass_the_pymol(moves::PyMolMoverOP pymol){
         use_pymol_diy_ = true;
         pymol_ = pymol;
     }
     
+    void set_sc_min(bool sc_min){
+        sc_min_ = sc_min;
+    }
+    
+    void set_rt_min(bool rt_min){
+        rt_min_ = rt_min;
+    }
+    
 private:
 
-    AntibodyInfoOP ab_info_;
     
     bool user_defined_;
     bool benchmark_;
-    bool is_camelid_;
     core::Size rep_ramp_cycles_;
     core::Real rot_mag_;
     core::Real trans_mag_;
@@ -113,19 +108,17 @@ private:
     scoring::ScoreFunctionOP dock_scorefxn_;
     scoring::ScoreFunctionOP pack_scorefxn_;
     
-    void init(AntibodyInfoOP ab_info, bool camelid);
-            
-    void snugfit_MC_min(pose::Pose & pose, core::scoring::ScoreFunctionOP  temp_scorefxn);
-
+    void init();
     
 	void repulsive_ramp( pose::Pose & pose_in, loops::Loops loops_in );
     
-
-    
     
 	//packer task
+    docking::DockJumps jump_;
     pack::task::TaskFactoryOP tf_;
-    kinematics::MoveMapOP cdr_dock_map_;
+    kinematics::MoveMapOP movemap_;
+    bool sc_min_;
+    bool rt_min_;
 };
     
     

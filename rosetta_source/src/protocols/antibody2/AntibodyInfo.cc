@@ -36,6 +36,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
 #include <utility/exit.hh>
+#include <protocols/rigid/RB_geometry.hh>
 #include <protocols/antibody2/AntibodyUtil.hh>
 #include <utility/tools/make_vector1.hh>
 
@@ -50,8 +51,6 @@ namespace antibody2{
 /// default constructor
 AntibodyInfo::AntibodyInfo() {
 	set_default( false/*is_camelid*/ );
-
-	for( core::Size i = 0; i <= 6; i++ ) hfr_[i][0] = hfr_[i][1] = hfr_[i][2] = 0;
 }
 
 
@@ -214,20 +213,32 @@ void AntibodyInfo::setup_CDR_loops( core::pose::Pose & pose, bool is_camelid ) {
 	loops_.insert( std::pair<std::string, loops::LoopOP>("h3", H3_) );
     H3_seq_ = get_seq_from_a_loop(pose, H3_);
 
-	hfr_[1][1] = pose.pdb_info()->pdb2pose( 'H', 5 );
-	hfr_[1][2] = pose.pdb_info()->pdb2pose( 'H', 6 );
-	hfr_[2][1] = pose.pdb_info()->pdb2pose( 'H', 10 );
-	hfr_[2][2] = pose.pdb_info()->pdb2pose( 'H', 25 );
-	hfr_[3][1] = pose.pdb_info()->pdb2pose( 'H', 36 );
-	hfr_[3][2] = pose.pdb_info()->pdb2pose( 'H', 39 );
-	hfr_[4][1] = pose.pdb_info()->pdb2pose( 'H', 46 );
-	hfr_[4][2] = pose.pdb_info()->pdb2pose( 'H', 49 );
-	hfr_[5][1] = pose.pdb_info()->pdb2pose( 'H', 66 );
-	hfr_[5][2] = pose.pdb_info()->pdb2pose( 'H', 94 );
-	hfr_[6][1] = pose.pdb_info()->pdb2pose( 'H', 103 );
-	hfr_[6][2] = pose.pdb_info()->pdb2pose( 'H', 110 );
 
 
+    FrameWork frmwk;
+
+    if(! is_camelid_){
+    frmwk.set_chain_name("L");
+    frmwk.set_start(pose.pdb_info()->pdb2pose('L',5));   frmwk.set_stop(pose.pdb_info()->pdb2pose('L',6));   Lfr_.push_back(frmwk);
+    frmwk.set_start(pose.pdb_info()->pdb2pose('L',10));  frmwk.set_stop(pose.pdb_info()->pdb2pose('L',23));  Lfr_.push_back(frmwk);
+    frmwk.set_start(pose.pdb_info()->pdb2pose('L',35));  frmwk.set_stop(pose.pdb_info()->pdb2pose('L',38));  Lfr_.push_back(frmwk);
+    frmwk.set_start(pose.pdb_info()->pdb2pose('L',45));  frmwk.set_stop(pose.pdb_info()->pdb2pose('L',49));  Lfr_.push_back(frmwk);
+    frmwk.set_start(pose.pdb_info()->pdb2pose('L',57));  frmwk.set_stop(pose.pdb_info()->pdb2pose('L',66));  Lfr_.push_back(frmwk);
+    frmwk.set_start(pose.pdb_info()->pdb2pose('L',71));  frmwk.set_stop(pose.pdb_info()->pdb2pose('L',88));  Lfr_.push_back(frmwk);
+    frmwk.set_start(pose.pdb_info()->pdb2pose('L',98));  frmwk.set_stop(pose.pdb_info()->pdb2pose('L',105)); Lfr_.push_back(frmwk);
+    for(Size ii=1; ii<=Lfr_.size();++ii){ Ab_framework_.push_back(Lfr_[ii]); }
+    }
+
+    frmwk.set_chain_name("H"); 
+    frmwk.set_start(pose.pdb_info()->pdb2pose('H',5));   frmwk.set_stop(pose.pdb_info()->pdb2pose('H',6));   Hfr_.push_back(frmwk);
+    frmwk.set_start(pose.pdb_info()->pdb2pose('H',10));  frmwk.set_stop(pose.pdb_info()->pdb2pose('H',25));  Hfr_.push_back(frmwk);
+    frmwk.set_start(pose.pdb_info()->pdb2pose('H',36));  frmwk.set_stop(pose.pdb_info()->pdb2pose('H',39));  Hfr_.push_back(frmwk);
+    frmwk.set_start(pose.pdb_info()->pdb2pose('H',46));  frmwk.set_stop(pose.pdb_info()->pdb2pose('H',49));  Hfr_.push_back(frmwk);
+    frmwk.set_start(pose.pdb_info()->pdb2pose('H',66));  frmwk.set_stop(pose.pdb_info()->pdb2pose('H',94));  Hfr_.push_back(frmwk);
+    frmwk.set_start(pose.pdb_info()->pdb2pose('H',103)); frmwk.set_stop(pose.pdb_info()->pdb2pose('H',110)); Hfr_.push_back(frmwk);
+    for(Size ii=1; ii<=Hfr_.size();++ii){ Ab_framework_.push_back(Hfr_[ii]); }
+
+    
 	all_cdr_loops_.sequential_order();
 
 	all_cdr_fold_tree( pose );
@@ -253,31 +264,6 @@ loops::LoopOP AntibodyInfo::get_CDR_loop( std::string loop ) {
 	if ( iter != loops_.end() ) {return iter->second;}
 }
 
-
-
-
-
-
-void AntibodyInfo::align_to_native( core::pose::Pose & pose, antibody2::AntibodyInfo & native, core::pose::Pose & native_pose ) {
-
-	core::id::AtomID_Map< core::id::AtomID > atom_map;
-	core::pose::initialize_atomid_map( atom_map, pose, core::id::BOGUS_ATOM_ID );
-
-	for( core::Size j = 1; j <= 6; j++ ) {
-		core::Size buffer_for_h3_end(0);
-		if( j == 6 ) buffer_for_h3_end = 1;
-		for( core::Size res_counter=hfr_[j][1]+buffer_for_h3_end,    nat_counter=native.hfr_[j][1]+buffer_for_h3_end;    res_counter<=hfr_[j][2];       res_counter++, nat_counter++ ) {
-			for( core::Size atm_counter=1; atm_counter <= 4; atm_counter++ ) {
-				core::id::AtomID const id1( atm_counter, res_counter );
-				core::id::AtomID const id2( atm_counter, nat_counter );
-				atom_map[ id1 ] = id2;
-			}
-		}
-	}
-
-	core::scoring::superimpose_pose( pose, native_pose, atom_map );
-
-} // align_to_native()
 
 
 
@@ -455,13 +441,94 @@ void AntibodyInfo::all_cdr_fold_tree( core::pose::Pose & pose ) {
 
 } // all_cdr_fold_tree()
 
+///////////////////////////////////////////////////////////////////////////
+/// @begin all_cdr_VL_VH_fold_tree
+///
+/// @brief change to all CDR and VL-VH dock fold tree
+///
+/// @authors Aroop 07/13/2010
+///
+/// @last_modified 07/13/2010
+///////////////////////////////////////////////////////////////////////////
+void AntibodyInfo::all_cdr_VL_VH_fold_tree( pose::Pose & pose_in ) 
+{
+       
+	using namespace kinematics;
+        
+	Size nres = pose_in.total_residue();
+	core::pose::PDBInfoCOP pdb_info = pose_in.pdb_info();
+	char second_chain = 'H';
+	Size rb_cutpoint(0);
+        
+	for ( Size i = 1; i <= nres; ++i ) {
+		if( pdb_info->chain( i ) == second_chain) {
+			rb_cutpoint = i-1;
+			break;
+		}
+	}
+        
+    core::Size jump_pos1 ( geometry::residue_center_of_mass( pose_in, 1, rb_cutpoint ) );
+    core::Size jump_pos2 ( geometry::residue_center_of_mass( pose_in,rb_cutpoint+1, nres ) );
+    //TR<<rb_cutpoint<<std::endl;
+    //TR<<jump_pos1<<std::endl;
+    //TR<<jump_pos2<<std::endl;
+        
+    // make sure rb jumps do not reside in the loop region
+    for( loops::Loops::const_iterator it= all_cdr_loops_.begin(), it_end = all_cdr_loops_.end(); it != it_end; ++it ) {
+        if ( jump_pos1 >= ( it->start() - 1 ) &&
+            jump_pos1 <= ( it->stop() + 1) )
+            jump_pos1 = it->stop() + 2;
+        if ( jump_pos2 >= ( it->start() - 1 ) &&
+            jump_pos2 <= ( it->stop() + 1) )
+            jump_pos2 = it->start() - 2;
+    }
+        
+    // make a simple rigid-body jump first
+    setup_simple_fold_tree(jump_pos1,rb_cutpoint,jump_pos2,nres, pose_in );
+        
+    // add the loop jump into the current tree,
+    // delete some old edge accordingly
+    FoldTree f( pose_in.fold_tree() );
+        
+    for( loops::Loops::const_iterator it=all_cdr_loops_.begin(),
+        it_end=all_cdr_loops_.end(); it != it_end; ++it ) {
+        Size const loop_start ( it->start() );
+        Size const loop_stop ( it->stop() );
+        Size const loop_cutpoint ( it->cut() );
+        Size edge_start(0), edge_stop(0);
+        bool edge_found = false;
+        const FoldTree & f_const = f;
+        Size const num_jump = f_const.num_jump();
+        for( FoldTree::const_iterator it2=f_const.begin(),
+            it2_end=f_const.end(); it2 !=it2_end; ++it2 ) {
+            edge_start = std::min( it2->start(), it2->stop() );
+            edge_stop = std::max( it2->start(), it2->stop() );
+            if ( ! it2->is_jump() && loop_start > edge_start
+                && loop_stop < edge_stop ) {
+                edge_found = true;
+                break;
+            }
+        }
+            
+        f.delete_unordered_edge( edge_start, edge_stop, Edge::PEPTIDE);
+        f.add_edge( loop_start-1, loop_stop+1, num_jump+1 );
+        f.add_edge( edge_start, loop_start-1, Edge::PEPTIDE );
+        f.add_edge( loop_start-1, loop_cutpoint, Edge::PEPTIDE );
+        f.add_edge( loop_cutpoint+1, loop_stop+1, Edge::PEPTIDE );
+        f.add_edge( loop_stop+1, edge_stop, Edge::PEPTIDE );
+    }
+        
+    f.reorder(1);
+    pose_in.fold_tree(f);
+} // all_cdr_VL_VH_fold_tree
+    
 
     
     
     
     
-    // JQX:: assuming Chothia numbering
-    //   setup_CDRs_numbering
+// JQX:: assuming Chothia numbering    
+//   setup_CDRs_numbering
 void AntibodyInfo::get_CDRs_numbering(){
     CDR_numbering_begin_.insert( std::pair<std::string, core::Size>("l1", 24) );
     CDR_numbering_end_.insert( std::pair<std::string, core::Size>("l1", 34) );

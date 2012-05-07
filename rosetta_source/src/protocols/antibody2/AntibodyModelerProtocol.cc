@@ -83,7 +83,7 @@
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/AntibodyModelerProtocol.hh>
 #include <protocols/antibody2/ModelCDRH3.hh>
-
+#include <protocols/antibody2/CDRsMinPackMin.hh>
 #include <protocols/antibody2/RefineCDRH3HighRes.hh>
 #include <protocols/antibody2/RefineBetaBarrel.hh>
 
@@ -135,10 +135,12 @@ void AntibodyModelerProtocol::init()
 void AntibodyModelerProtocol::set_default()
 {
 	TR <<  "Setting Up defaults.........." << std::endl;
-    model_h3_  = true;
-    extreme_repacking_ =  true;
-	snugfit_   = true;
-    refine_h3_ = true;
+    model_h3_              = true;
+        H3_filter_         = true;
+        cter_insert_       = true;
+	snugfit_               = true;
+        LH_repulsive_ramp_ = true;
+    refine_h3_             = true;
     
 	benchmark_ = false;
 	camelid_   = false;
@@ -146,10 +148,8 @@ void AntibodyModelerProtocol::set_default()
     cst_weight_ = 0.0;
     cen_cst_ = 10.0;
     high_cst_ = 100.0; // if changed here, please change at the end of AntibodyModeler as well
-    H3_filter_ = true;
-    cter_insert_ = true;
+
     use_pymol_diy_ = false;
-    LH_repulsive_ramp_ = true;
     
     sc_min_ = false;
     rt_min_ = false;
@@ -215,6 +215,7 @@ void AntibodyModelerProtocol::init_from_options()
     //if ( option[ OptionKeys::antibody::rt_min_ ].user() ) {
 	//	set_rt_min( option[ OptionKeys::antibody::rt_min_ ]() );
 	//}
+
     
 	//set native pose if asked for
 	if ( option[ OptionKeys::in::file::native ].user() ) {
@@ -241,13 +242,7 @@ void
 AntibodyModelerProtocol::setup_objects() {
     
 	sync_objects_with_flags();
-    
-    // setup all the fold trees
-    
-    // setup all the move maps
-    
-    // setup all the task factories
-    tf_ = new pack::task::TaskFactory;
+
 
     // setup all the scoring functions
     pack_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("standard" );
@@ -262,9 +257,6 @@ AntibodyModelerProtocol::setup_objects() {
         loop_scorefxn_highres_->set_weight( scoring::overlap_chainbreak, 10./3. );
         loop_scorefxn_highres_->set_weight( scoring::atom_pair_constraint, high_cst_ );
     
-    model_cdrh3_        = NULL;
-    refine_beta_barrel_ = NULL;
-    cdr_highres_refine_ = NULL;
     
     // miscellaneous
     pymol_ = new protocols::moves::PyMolMover;
@@ -287,17 +279,17 @@ std::string AntibodyModelerProtocol::get_name() const
     
     
 
-void AntibodyModelerProtocol::finalize_setup( pose::Pose & frame_pose ) 
+void AntibodyModelerProtocol::finalize_setup( pose::Pose & pose ) 
 {
 	TR<<"AAAAAAAA     cst_weight: "<<cst_weight_<<std::endl;
 	if(  cst_weight_ != 0.00  ) {
 		simple_moves::ConstraintSetMoverOP cdr_constraint = new simple_moves::ConstraintSetMover();
-		cdr_constraint->apply( frame_pose );
+		cdr_constraint->apply( pose );
 	}
 
 	// check for native and input pose
 	if ( !get_input_pose() ) {
-		pose::PoseOP input_pose = new pose::Pose(frame_pose); 
+		pose::PoseOP input_pose = new pose::Pose(pose); 
 		set_input_pose( input_pose );   // JQX: pass the input_pose to the mover.input_pose_
 	}
 
@@ -307,7 +299,7 @@ void AntibodyModelerProtocol::finalize_setup( pose::Pose & frame_pose )
 		TR << "Danger Will Robinson! Native is an impostor!" << std::endl;
         TR << "   'native_pose' is just a copy of the 'input_pose'    " << std::endl;
         TR << "    since you didn't sepcifiy the native pdb name"<<std::endl;
-		native_pose = new pose::Pose(frame_pose);
+		native_pose = new pose::Pose(pose);
 	} else {
 		native_pose = new pose::Pose( *get_native_pose() );
 	}
@@ -316,12 +308,14 @@ void AntibodyModelerProtocol::finalize_setup( pose::Pose & frame_pose )
 
 	set_native_pose( native_pose ); // pass the native pose to the mover.native_pose_
 
-    ab_info_ = new AntibodyInfo(frame_pose,camelid_);
+    ab_info_ = new AntibodyInfo(pose,camelid_);
     TR<<*ab_info_<<std::endl;
-        
-    tf_ = setup_packer_task(frame_pose);
     
-    //core::pack::task::PackerTaskOP my_task2(tf_->create_task_and_apply_taskoperations(frame_pose));
+    //AntibodyInfoOP native_ab_info = new AntibodyInfo(*native_pose,camelid_);
+        
+    tf_ = setup_packer_task(pose);
+    
+    //core::pack::task::PackerTaskOP my_task2(tf_->create_task_and_apply_taskoperations(pose));
     //TR<<*my_task2<<std::endl; exit(-1);
 
 
@@ -330,7 +324,7 @@ void AntibodyModelerProtocol::finalize_setup( pose::Pose & frame_pose )
 
 
 //APPLY
-void AntibodyModelerProtocol::apply( pose::Pose & frame_pose ) {
+void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 
     using namespace chemical;
     using namespace id;
@@ -340,7 +334,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & frame_pose ) {
 
 
     // the default inital secstruct is all "L" loop!
-    start_pose_ = frame_pose;
+    pose::Pose start_pose_ = pose;
     
 
 
@@ -349,7 +343,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & frame_pose ) {
     }
     
     if ( first_apply_with_current_setup_ ){ 
-        finalize_setup(frame_pose);  
+        finalize_setup(pose);  
         first_apply_with_current_setup_=false; 
     }
 
@@ -359,139 +353,106 @@ void AntibodyModelerProtocol::apply( pose::Pose & frame_pose ) {
 	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 	// utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 
-	pose::set_ss_from_phipsi( frame_pose );
+	pose::set_ss_from_phipsi( pose );
     
 
 	// display constraints and return
 	if( camelid_constraints_ ) {
-		display_constraint_residues( frame_pose );
+		display_constraint_residues( pose );
 		return;
 	}
-
-
-
-
+    
+    
     // Step 1: model the cdr h3 in centroid mode
     // JQX notes: pay attention to the way it treats the stems when extending the loop
-    if(use_pymol_diy_) pymol_->apply(frame_pose);
+    if(use_pymol_diy_) pymol_->apply(pose);
     if(model_h3_){ 
-        model_cdrh3_  = new ModelCDRH3( ab_info_, loop_scorefxn_centroid_, loop_scorefxn_highres_);
-        if(cter_insert_ ==false) { model_cdrh3_->turn_off_cter_insert(); }
-        if(H3_filter_   ==false) { model_cdrh3_->turn_off_H3_filter();   }
-        model_cdrh3_->set_task_factory(tf_);
-        if(use_pymol_diy_) model_cdrh3_->turn_on_and_pass_the_pymol(pymol_);
-        model_cdrh3_->apply( frame_pose );
-    }
-    
-    
-    // Step 2: packing the CDRs
-    if(extreme_repacking_) { 
-        relax_cdrs( frame_pose );    
-    }
+        ModelCDRH3OP model_cdrh3  = new ModelCDRH3( ab_info_, loop_scorefxn_centroid_, loop_scorefxn_highres_);
+            if(cter_insert_ ==false) { model_cdrh3->turn_off_cter_insert(); }
+            if(H3_filter_   ==false) { model_cdrh3->turn_off_H3_filter();   }
+            if(sc_min_)              { model_cdrh3->set_sc_min(true); }
+            if(rt_min_)              { model_cdrh3->set_rt_min(true); }
+            if(use_pymol_diy_) model_cdrh3->turn_on_and_pass_the_pymol(pymol_);
+        model_cdrh3->apply( pose );
+        pose.dump_pdb("1st_finish_model_h3.pdb");
 
+    }
+        
     
-    
-    
-	// Step 3: SnugFit: relieve the clashes between L-H
+	// Step 2: SnugFit: relieve the clashes between L-H
 	if ( snugfit_ ) { 
-        refine_beta_barrel_ = new RefineBetaBarrel(ab_info_, dock_scorefxn_highres_, pack_scorefxn_);
-        if (!LH_repulsive_ramp_) {refine_beta_barrel_-> turn_off_repulsive_ramp();}
-        if (use_pymol_diy_) {refine_beta_barrel_ -> turn_on_and_pass_the_pymol(pymol_);}
-        refine_beta_barrel_->apply(frame_pose);
+        RefineBetaBarrelOP refine_beta_barrel = new RefineBetaBarrel(ab_info_, dock_scorefxn_highres_, pack_scorefxn_);
+            // it has default movemap, tf, and fold_tree
+            if (!LH_repulsive_ramp_) {refine_beta_barrel-> turn_off_repulsive_ramp();}
+            if(sc_min_)              { refine_beta_barrel->set_sc_min(true); }
+            if(rt_min_)              { refine_beta_barrel->set_rt_min(true); }
+            if (use_pymol_diy_) {refine_beta_barrel -> turn_on_and_pass_the_pymol(pymol_);}
+        refine_beta_barrel->apply(pose);
+        pose.dump_pdb("2nd_finish_snugfit.pdb");
 	}
 
-
     
-	// Step 4: Full Atom Relax 
+    
+	// Step 3: Full Atom Relax 
     if(refine_h3_){
-        //$$$$$$$$$$$$$$$$$$$$$$$$
-        
-        cdr_highres_refine_ = new RefineCDRH3HighRes(ab_info_, "h3", loop_scorefxn_highres_); 
-        cdr_highres_refine_ -> set_task_factory(tf_);
-        cdr_highres_refine_ -> pass_start_pose(start_pose_);
-        if(use_pymol_diy_) cdr_highres_refine_ -> turn_on_and_pass_the_pymol(pymol_);
-        cdr_highres_refine_ -> apply(frame_pose);
-        frame_pose.dump_pdb("finish_h3_refinement.pdb");
+        RefineCDRH3HighResOP cdr_highres_refine_ = new RefineCDRH3HighRes(ab_info_, "h3", loop_scorefxn_highres_); 
+            cdr_highres_refine_ -> pass_start_pose(start_pose_);
+            if(use_pymol_diy_) cdr_highres_refine_ -> turn_on_and_pass_the_pymol(pymol_);
+        cdr_highres_refine_ -> apply(pose);
+        pose.dump_pdb("3rd_finish_h3_refine.pdb");
 
 
-        //$$$$$$$$$$$$$$$$$$$$$$$$$
-        if( !benchmark_ ) 
-        {
-            Size repack_cycles(1);
-            if( antibody_refine_ && !snugfit_ ){repack_cycles = 3;}
-            protocols::simple_moves::PackRotamersMoverOP packer;
-            packer = new protocols::simple_moves::PackRotamersMover( loop_scorefxn_highres_ );
-            packer->task_factory(tf_);
-            packer->nloop( repack_cycles );
-            packer->apply( frame_pose );
-        }
-        if(use_pymol_diy_) pymol_->apply(frame_pose);
-
-        return;
         // Minimize CDR H2 loop if this is a camelid
-    
         if( camelid_ ) {
-            //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
             RefineCDRH3HighRes cdr_highres_refine( ab_info_); // because of h2
-            //cdr_highres_refine.turn_off_h3_default();
-            cdr_highres_refine.turn_off_h3_filter();
-            cdr_highres_refine.apply(frame_pose);
-            //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+                //cdr_highres_refine.turn_off_h3_default();
+                cdr_highres_refine.turn_off_h3_filter();
+            cdr_highres_refine.apply(pose);
         
             //JQX: remove the duplicated code, camelid H2 will be automatically taken care of
             //     see the code in RefineCDRH3HighRes file
         }
     }
     
+    //FoldTree, MoveMap, TaskFactory and Variants will be taken care of inside
+    CDRsMinPackMinOP cdrs_min_pack_min_ = new CDRsMinPackMin(ab_info_);
+    cdrs_min_pack_min_ -> apply(pose);
+     pose.dump_pdb("4th_final_min_pack_min.pdb");
     
-    relax_cdrs( frame_pose );    
-
     
+    
+    
+    // Step 4: Store the homolgy models
     
     // align pose to native pose
     pose::Pose native_pose = *get_native_pose();
-    antibody2::AntibodyInfo native_ab( native_pose, camelid_ );
-    //		ab_info_.align_to_native( pose, native_ab, native_pose );
+    antibody2::AntibodyInfoOP native_ab_info = new AntibodyInfo(native_pose,camelid_);
+    align_to_native( pose, native_pose, ab_info_, native_ab_info );
     
     
-	// Step 5: Store the homolgy models
-    
-	// remove cutpoints variants for all cdrs
-	// "true" forces removal of variants even from non-cutpoints
-	loops::remove_cutpoint_variants( frame_pose, true );
-
-	// Define CDR H3 loop
-	Size frag_size   = (ab_info_->get_CDR_loop("h3")->stop()  - ab_info_->get_CDR_loop("h3")->start()) + 3;
-	Size cutpoint    =  ab_info_->get_CDR_loop("h3")->start() + int( frag_size / 2 );
-	loops::Loop cdr_h3( ab_info_->get_CDR_loop("h3")->start(), ab_info_->get_CDR_loop("h3")->stop(), cutpoint, 0, false );
-
-	// Fold Tree
-	antibody2::simple_one_loop_fold_tree( frame_pose, cdr_h3 );
+    ab_info_ -> all_cdr_fold_tree(pose);
 
 	// Redefining CDR H3 cutpoint variants
-	loops::add_single_cutpoint_variant( frame_pose, cdr_h3 );
-
-    // reset the score weight here, to make it match to Aroop's R3 antibody code
-    loop_scorefxn_highres_->set_weight( core::scoring::chainbreak, 1.0 );
-    loop_scorefxn_highres_->set_weight( core::scoring::overlap_chainbreak, 10./3. );
-    loop_scorefxn_highres_->set_weight( core::scoring::atom_pair_constraint, 1.00 );
+    loops::remove_cutpoint_variants( pose, true );
+	loops::add_cutpoint_variants( pose );
     
     // add scores to map for outputting constraint score
-	( *loop_scorefxn_highres_ )( frame_pose );
-	Real constraint_score = frame_pose.energies().total_energies()[ core::scoring::atom_pair_constraint ];
+	( *loop_scorefxn_highres_ )( pose );
+    
+	Real constraint_score = pose.energies().total_energies()[ core::scoring::atom_pair_constraint ];
 
 	// removing constraint score
 	loop_scorefxn_highres_->set_weight( core::scoring::atom_pair_constraint, 0.00 );
 	// add scores to map for output
-	( *loop_scorefxn_highres_ )( frame_pose );
+	TR<< "Final Score = "<< ( *loop_scorefxn_highres_ )( pose ) << std::endl;
 
-	job->add_string_real_pair("AA_H3", global_loop_rmsd( frame_pose, *get_native_pose(), ab_info_->get_CDR_loop("h3") ));
-	job->add_string_real_pair("AB_H2", global_loop_rmsd( frame_pose, *get_native_pose(), ab_info_->get_CDR_loop("h2") ));
-	job->add_string_real_pair("AC_H1", global_loop_rmsd( frame_pose, *get_native_pose(), ab_info_->get_CDR_loop("h1") ));
+	job->add_string_real_pair("H3_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_loop("h3") ));
+	job->add_string_real_pair("H2_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_loop("h2") ));
+	job->add_string_real_pair("H1_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_loop("h1") ));
 	if( camelid_ == false ) {
-		job->add_string_real_pair("AC_L3", global_loop_rmsd( frame_pose, *get_native_pose(), ab_info_->get_CDR_loop("l3") ));
-		job->add_string_real_pair("AD_L2", global_loop_rmsd( frame_pose, *get_native_pose(), ab_info_->get_CDR_loop("l2") ));
-		job->add_string_real_pair("AE_L1", global_loop_rmsd( frame_pose, *get_native_pose(), ab_info_->get_CDR_loop("l1") ));
+		job->add_string_real_pair("L3_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_loop("l3") ));
+		job->add_string_real_pair("L2_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_loop("l2") ));
+		job->add_string_real_pair("L1_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_loop("l1") ));
 	}
 	job->add_string_real_pair("AF_constraint", constraint_score);
 
@@ -508,108 +469,6 @@ void AntibodyModelerProtocol::apply( pose::Pose & frame_pose ) {
 
     
 
-
-
-
-///////////////////////////////////////////////////////////////////////////
-/// @begin relax_cdrs     //JQX: packing, minimization, and mintrial
-///
-/// @brief relaxes all cdrs simultaneously
-///
-/// @detailed based on the all_cdrs loop definiton, minimizes only those
-///           regions. A standard dfpmin is utilized with score12 and chain
-///           -break and chain-overlap set. The allow_bb/chi arrays are
-///           changed accordingly but then are reset to their initial
-///           states before exiting the routine. Similarly the fold tree
-///           and jump movements are restored to their initial states
-///
-///
-/// @authors Aroop 02/15/2010
-///
-/// @last_modified 02/15/2010
-///////////////////////////////////////////////////////////////////////////
-void AntibodyModelerProtocol::relax_cdrs( core::pose::Pose & pose )
-{
-	using namespace pack;
-	using namespace pack::task;
-	using namespace pack::task::operation;
-	using namespace protocols;
-	using namespace protocols::toolbox::task_operations;
-	using namespace protocols::moves;
-	// Storing initial fold tree
-	kinematics::FoldTree const input_tree( pose.fold_tree() );
-
-	// changing to all cdr fold tree
-	ab_info_->all_cdr_fold_tree( pose );
-
-	// adding cutpoint variants for chainbreak score computation
-	loops::add_cutpoint_variants( pose );
-    
-    // score functions
-    loop_scorefxn_highres_->set_weight( core::scoring::chainbreak, 10. / 3. );
-    loop_scorefxn_highres_->set_weight( core::scoring::overlap_chainbreak, 10. / 3. );
-    ( *loop_scorefxn_highres_ )( pose );
-    
-	//setting MoveMap
-	kinematics::MoveMapOP allcdr_map;
-	allcdr_map = new kinematics::MoveMap();
-	allcdr_map->clear();
-	allcdr_map->set_chi( false );
-	allcdr_map->set_bb( false );
-	utility::vector1< bool> bb_is_flexible( pose.total_residue(), false );
-    utility::vector1< bool> sc_is_flexible( pose.total_residue(), false );
-
-	select_loop_residues( pose, ab_info_->all_cdr_loops_, false /*include_neighbors*/, bb_is_flexible );
-	allcdr_map->set_bb( bb_is_flexible );
-	select_loop_residues( pose, ab_info_->all_cdr_loops_, true /*include_neighbors*/, sc_is_flexible );
-	allcdr_map->set_chi( sc_is_flexible );
-	for( Size ii = 1; ii <= ab_info_->all_cdr_loops_.num_loop(); ii++ ){
-		allcdr_map->set_jump( ii, false );
-    }
-
-
-
-	Real min_tolerance = 0.1;
-	if( benchmark_ ) min_tolerance = 1.0;
-	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
-	bool nb_list = true;
-    simple_moves::MinMoverOP  all_cdr_min_moves = new simple_moves::MinMover( allcdr_map,loop_scorefxn_highres_, min_type, min_tolerance, nb_list );
-    all_cdr_min_moves->apply( pose );
-    if(use_pymol_diy_) pymol_->apply(pose);
-
-    if( !benchmark_ ) {
-        simple_moves::PackRotamersMoverOP repack=new simple_moves::PackRotamersMover( loop_scorefxn_highres_ );
-        tf_ = setup_packer_task(pose);
-        ( *loop_scorefxn_highres_ )( pose );
-        tf_->push_back( new RestrictToInterface( sc_is_flexible ) );
-        repack->task_factory( tf_ );
-        repack->apply( pose );
-        if(use_pymol_diy_) pymol_->apply(pose);
-
-
-        simple_moves::RotamerTrialsMinMoverOP rtmin = new simple_moves::RotamerTrialsMinMover( loop_scorefxn_highres_, tf_ );
-        rtmin->apply( pose );
-        if(use_pymol_diy_) pymol_->apply(pose);
-
-    }
-
-    // Restoring pose fold tree
-    pose.fold_tree( input_tree );
-} // relax_cdrs
-
-    
-    
-    
-    
-    
-
-
-
-
-
-
-
-    
     
     
     
@@ -673,7 +532,7 @@ void AntibodyModelerProtocol::show( std::ostream & out ) {
     out << *this;
 }
     
-std::ostream & operator<<(std::ostream& out, const AntibodyModelerProtocol & ab_m_2 ){
+std::ostream & operator<<(std::ostream& out, const AntibodyModelerProtocol & ab_m ){
     using namespace ObjexxFCL::fmt;
         
     // All output will be 80 characters - 80 is a nice number, don't you think?
@@ -683,15 +542,14 @@ std::ostream & operator<<(std::ostream& out, const AntibodyModelerProtocol & ab_
     out << line_marker << space( 74 ) << line_marker << std::endl;
 
     // Display the state of the antibody modeler protocol that will be used
-    out << line_marker << "  camelid                : " << ab_m_2.camelid_     << std::endl;
+    out << line_marker << "  camelid                : " << ab_m.camelid_     << std::endl;
     out << line_marker << std::endl;
-    out << line_marker << "  model_h3               : " << ab_m_2.model_h3_    << std::endl;
-    out << line_marker << "     cter_insert         : " << ab_m_2.cter_insert_ << std::endl;
-    out << line_marker << "     H3_filter           : " << ab_m_2.H3_filter_   << std::endl;
-    out << line_marker << "  extreme_repacking_     : " << ab_m_2.extreme_repacking_   << std::endl;
-    out << line_marker << "  snugfit                : " << ab_m_2.snugfit_     << std::endl;
-    out << line_marker << "     LH_repulsive_ramp   : " << ab_m_2.LH_repulsive_ramp_ << std::endl;
-    out << line_marker << "  refine_h3              : " << ab_m_2.refine_h3_     << std::endl;
+    out << line_marker << "  model_h3               : " << ab_m.model_h3_    << std::endl;
+    out << line_marker << "     cter_insert         : " << ab_m.cter_insert_ << std::endl;
+    out << line_marker << "     H3_filter           : " << ab_m.H3_filter_   << std::endl;
+    out << line_marker << "  snugfit                : " << ab_m.snugfit_     << std::endl;
+    out << line_marker << "     LH_repulsive_ramp   : " << ab_m.LH_repulsive_ramp_ << std::endl;
+    out << line_marker << "  refine_h3              : " << ab_m.refine_h3_     << std::endl;
     out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
     return out;
 }

@@ -92,6 +92,7 @@
 #include <protocols/antibody2/H3CterInsert.hh>
 #include <protocols/antibody2/RefineCDRH1Centroid.hh>
 #include <protocols/moves/PyMolMover.hh>
+#include <protocols/antibody2/CDRsMinPackMin.hh>
 
 
 
@@ -157,6 +158,8 @@ void ModelCDRH3::set_default()
     loops_flag_         = true;
     dle_flag_           = true;
     use_pymol_diy_      = false;
+    sc_min_             = false;
+    rt_min_             = false;
         
     c_ter_stem_ = 3;
     max_cycle_ = 20;
@@ -224,7 +227,6 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
 
     
     set_highres_score_func(highres_scorefxn_);
-    start_pose_ = pose_in;
 
     pose::Pose start_pose = pose_in;
 
@@ -232,7 +234,7 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
 
     Size framework_loop_begin( ab_info_->get_CDR_loop("h3")->start() );
     Size framework_loop_end  ( ab_info_->get_CDR_loop("h3")->stop()  );
-    Size cutpoint = framework_loop_begin + 1;
+    Size cutpoint = ab_info_->get_CDR_loop("h3")->cut() ; // keep the cutpoint unchanged
     Size framework_loop_size = (framework_loop_end - framework_loop_begin) + 1;
 
     loops::Loop cdr_h3( framework_loop_begin, framework_loop_end, cutpoint, 0, true );
@@ -262,10 +264,10 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
 
     
     // some initialization before you do h3 loop modeling
-    my_LoopMover xxx ;
-    xxx.set_extended_torsions( pose_in, cdr_h3 );
-//        set_extended_torsions( pose_in, cdr_h3 );
-       pose_in.dump_pdb("extend_centroid.pdb");
+//    my_LoopMover xxx ;
+//    xxx.set_extended_torsions( pose_in, cdr_h3 );
+       set_extended_torsions( pose_in, cdr_h3 );
+       pose_in.dump_pdb("extended_idealized_centroid.pdb");
         //JQX:  this function is in loops_main.cc file
         //      firstly, idealize the loop (indealize bonds as well)
         //      phi(-150),  all the residue, except the first one
@@ -298,7 +300,7 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
 
     
     antibody2::AntibodyInfoOP starting_antibody;
-    starting_antibody = ab_info_;
+    starting_antibody = new AntibodyInfo(*ab_info_);
     bool closed_cutpoints( false );
     
     h3_perturb_ccd_build_->pass_the_loop(input_loop);
@@ -345,22 +347,21 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
     to_full_atom.apply( pose_in );
 
     utility::vector1<bool> allow_chi_copy( pose_in.total_residue(), true );
-    for( Size ii = ab_info_->get_CDR_loop("h3")->start(); ii <= ( ab_info_->get_CDR_loop("h3")->stop() ); ii++ )
-					allow_chi_copy[ii] = false;
-    //recover sidechains from starting structures
-    protocols::simple_moves::ReturnSidechainMover recover_sidechains( start_pose_, allow_chi_copy );
+    for( Size ii=ab_info_->get_CDR_loop("h3")->start(); ii<=ab_info_->get_CDR_loop("h3")->stop(); ii++ ){
+        allow_chi_copy[ii] = false;
+    }
+    //recover sidechains from starting structures except H3
+    protocols::simple_moves::ReturnSidechainMover recover_sidechains( start_pose, allow_chi_copy );
     recover_sidechains.apply( pose_in );
     
-    
+    pose_in.dump_pdb("0.5_Right_After_LOOPClose.pdb");
 
-    // Packer
-    simple_moves::PackRotamersMoverOP packer = new simple_moves::PackRotamersMover( highres_scorefxn_ );
-    packer->task_factory(tf_);  //JQX: repack everything
-    packer->apply( pose_in );
+    // Pack-min-pack, use all default fold_tree, task_factory, move_map and variants in CDRsMinPackMin
+    CDRsMinPackMinOP cdrs_min_pack_min = new  CDRsMinPackMin(ab_info_);// all the CDRs
+        if(sc_min_) cdrs_min_pack_min->set_sc_min(true);
+        if(rt_min_) cdrs_min_pack_min->set_rt_min(true);
+    cdrs_min_pack_min -> apply(pose_in);
 
-
-
-    pose_in.dump_pdb("finish_apply_CDR_H3_modeler.pdb");
     TR << "Finished applying CDR H3 modeler" << std::endl;
     
 
@@ -375,9 +376,9 @@ std::string ModelCDRH3::get_name() const {
 }
 
 
-basic::Tracer & my_LoopMover::tr() const{
-    return TR;
-}
+//basic::Tracer & my_LoopMover::tr() const{
+//    return TR;
+//}
 
 
 

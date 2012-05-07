@@ -129,7 +129,6 @@ private:
     Ab_TemplateInfoOP ab_t_info_ ;
 
 	//packer task
-    moves::MonteCarloOP mc_;
 	pack::task::TaskFactoryOP tf_;
 
 	/// @brief Assigns user specified values to primitive members using command line options
