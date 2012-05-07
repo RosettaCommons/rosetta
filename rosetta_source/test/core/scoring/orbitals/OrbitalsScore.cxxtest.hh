@@ -79,7 +79,7 @@ public:
 		sfxn.set_weight(orbitals_hpol_bb, 1);
 		sfxn.set_weight(orbitals_orbitals, 1);
 		Real start_score = sfxn(pose);
-		TS_ASSERT_DELTA( -14.1672, start_score, 0.0001 );
+		TS_ASSERT_DELTA( -14.1677, start_score, 0.0001 );
 
 
 
