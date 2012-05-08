@@ -158,10 +158,13 @@ ParallelTempering::initialize_simulation(
 	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
 	core::Size cycle //default=0; non-zero if trajectory is restarted
 ) {
+	tr.Trace << "ParallelTempering::initialize_simul1... " << std::endl;
 	Parent::initialize_simulation(pose, metropolis_hastings_mover,cycle);
+	tr.Trace << "ParallelTempering::initialize_simul2... " << std::endl;
 #ifdef USEMPI
 	set_mpi_comm( jd2::current_mpi_comm() );
 #endif
+	tr.Trace << "ParallelTempering::initialize_simul3... " << std::endl;
 	Size const nlevels( n_temp_levels() );
 	allocate_buffers( nlevels );
 	setup_exchange_schedule( nlevels );
@@ -170,6 +173,7 @@ ParallelTempering::initialize_simulation(
 	last_exchange_schedule_ = 0;
 	start_time_ = clock() / basic::SHRINK_FACTOR;
 	total_mpi_wait_time_ = 0;
+	tr.Trace << "Initialized ParallelTempering! " << std::endl;
 }
 
 void
@@ -207,6 +211,7 @@ ParallelTempering::finalize_simulation(
 }
 
 void ParallelTempering::setup_exchange_schedule( Size nlevels ) {
+	tr.Trace << "ParallelTempering::setup_exchange_schedule for " << nlevels << std::endl;
 	exchange_schedules_.clear();
 	ExchangeSchedule list;
 
@@ -236,6 +241,7 @@ void ParallelTempering::setup_exchange_schedule( Size nlevels ) {
 }
 
 void ParallelTempering::allocate_buffers( core::Size nlevels ) {
+	tr.Trace << "ParallelTempering::allocate_buffers for " << nlevels << std::endl;
 	deallocate_buffers();
 	last_energies_ = new double[nlevels];
 	rank2tlevel_ = new int[nlevels];
@@ -362,12 +368,14 @@ void ParallelTempering::init_from_options() {
 #ifdef USEMPI
 void ParallelTempering::set_mpi_comm( MPI_Comm const& mpi_comm ) {
 	if ( mpi_comm != MPI_COMM_NULL ) {
+		tr.Trace << "ParallelTempering::Duplicate mpi-communicator" << std::endl;
 		MPI_Comm_dup( mpi_comm, &mpi_comm_ );
 		MPI_Comm_rank( mpi_comm_, &rank_ );
 		int size;
 		MPI_Comm_size( mpi_comm_, &size );
 		runtime_assert( size == n_temp_levels() );
 	} else {
+		tr.Trace << "ParallelTempering::Duplicate mpi-communicator" << std::endl;
 		mpi_comm_ = MPI_COMM_NULL;
 	}
 }

@@ -134,6 +134,7 @@ SilentTrajectoryRecorder::write_model(
 	runtime_assert( jd2::jd2_used() );
 	std::string filename( metropolis_hastings_mover ? metropolis_hastings_mover->output_file_name(file_name(), cumulate_jobs(), cumulate_replicas()) : file_name() );
 	core::Size mc = model_count();
+	tr.Debug << "write model " << filename << " count: " << mc << std::endl;
 	jd2::output_intermediate_pose( pose, filename, mc,  ( mc % score_stride_ ) != 0 && mc > 1 ); //write always first a structure
 }
 
@@ -153,7 +154,7 @@ SilentTrajectoryRecorder::restart_simulation(
 	temp_level = 1;
 	temperature = -1.0;
 	cycle = 0;
-
+	//co
 	//check for correct tags in file
 	tr.Info << "restarting from trajector file " << physical_filename << ". Reading tags now ..." << std::endl;
 	io::silent::SilentFileData sfd( physical_filename );
@@ -200,16 +201,14 @@ SilentTrajectoryRecorder::observe_after_metropolis(
 	protocols::moves::MonteCarlo const& mc( *(metropolis_hastings_mover.monte_carlo()) );
 	Pose const& pose( mc.last_accepted_pose() );
 	if (step_count() % std::max(stride(),(core::Size)500) == 0) {
-		if ( tr.Info.visible() ) {
-			jd2::JobOP job( jd2::get_current_job() ) ;
-			tr.Info << step_count() << " E=" << pose.energies().total_energy();
-			//output what is in job-object (e.g. temperature )
-			for ( jd2::Job::StringRealPairs::const_iterator it( job->output_string_real_pairs_begin()), end(job->output_string_real_pairs_end()); it != end; ++it ) {
-				tr.Info << " " << it->first << "=" << it->second;
-			}
-			tr.Info << std::endl;
+		jd2::JobOP job( jd2::get_current_job() ) ;
+		tr.Info << step_count() << " E=" << pose.energies().total_energy();
+		//output what is in job-object (e.g. temperature )
+		for ( jd2::Job::StringRealPairs::const_iterator it( job->output_string_real_pairs_begin()), end(job->output_string_real_pairs_end()); it != end; ++it ) {
+			tr.Info << " " << it->first << "=" << it->second;
 		}
 		mc.show_counters();
+		tr.Info << std::endl;
 	}
 
 	Parent::observe_after_metropolis(metropolis_hastings_mover);

@@ -185,6 +185,7 @@ void TemperingBase::initialize_simulation(
 	protocols::canonical_sampling::MetropolisHastingsMover const &,
 	core::Size //default=0; non-zero if trajectory is restarted
 ) {
+	tr.Trace << "initialize Tempering Base... " << std::endl;
 	if ( !instance_initialized_ ) init_from_options();
 	current_temp_=temperatures_.size();
 	monte_carlo()->set_temperature( temperatures_[ current_temp_ ] );
@@ -197,6 +198,7 @@ void TemperingBase::initialize_simulation(
 		job_->add_string_real_pair( "temp_level", current_temp_ );
 	}
 	temp_trial_count_ = 0;
+	tr.Trace << "initialized Tempering Base!!!" << std::endl;
 }
 
 void
