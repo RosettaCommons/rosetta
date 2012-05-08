@@ -1,3 +1,7 @@
 -extra_res_fa inputs/CTP_match.params
 -match:geometric_constraint_file inputs/CTP_RKRE_1acid2acid.cst
-
+#note: the two flags below are unnecessary when using
+#this executable in a real life setting. they're only there
+#so this test can cover some other related functionality
+-s inputs/dummy_align_input.pdb
+-match::scaffold_active_site_residues inputs/dummy.pos
