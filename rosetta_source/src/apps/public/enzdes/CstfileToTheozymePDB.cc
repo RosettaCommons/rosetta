@@ -17,25 +17,30 @@
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/import_pose/import_pose.hh>
+#include <core/pose/Pose.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/match.OptionKeys.gen.hh>
+#include <basic/options/util.hh>
+#include <protocols/toolbox/match_enzdes_util/AlignPoseToInvrotTreeMover.hh>
+#include <protocols/toolbox/match_enzdes_util/AllowedSeqposForGeomCst.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/InvrotTree.hh>
 #include <basic/Tracer.hh>
 
 void
-match_main();
+create_theozyme_pdb();
 
 int main( int argc, char * argv [] )
 {
 
 	devel::init( argc, argv );
 
-	match_main();
+	create_theozyme_pdb();
 }
 
 void
-match_main()
+create_theozyme_pdb()
 {
 
 	basic::Tracer tr( "apps.public.enzdes.CstfileToTheozymePDB.cc" );
@@ -58,5 +63,19 @@ match_main()
 		outname_base = "PDB_Model_"+cstfile_name.substr(slash_loc+1, cstfile_name.size() );
 	}
 	invrot_tree->dump_invrots_tree_as_multimodel_pdbs( outname_base );
+
+	//stealth functionality: can also use this app to read in a pose
+	//and align it to the theozyme
+	utility::vector1< std::string > input_files = basic::options::start_files();
+	if( input_files.size() == 1){
+		core::pose::PoseOP pose = new core::pose::Pose();
+		core::import_pose::pose_from_pdb( *pose, input_files[ 1 ] );
+		protocols::toolbox::match_enzdes_util::AllowedSeqposForGeomCstOP allowed_seqpos = new protocols::toolbox::match_enzdes_util::AllowedSeqposForGeomCst();
+		allowed_seqpos->initialize_from_command_line( pose );
+		protocols::toolbox::match_enzdes_util::AlignPoseToInvrotTreeMover align_pose( invrot_tree, allowed_seqpos);
+
+		align_pose.apply( *pose );
+		pose->dump_pdb("theozyme_tree_align.pdb");
+	}
 }
 

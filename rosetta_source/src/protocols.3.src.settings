@@ -342,6 +342,7 @@ sources = {
 		"superimpose",
 	],
 	"protocols/toolbox/match_enzdes_util": [
+		"AlignPoseToInvrotTreeMover",
 		"AllowedSeqposForGeomCst",
 		"EnzConstraintIO",
 		"EnzConstraintParameters",
