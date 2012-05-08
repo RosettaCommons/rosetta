@@ -350,7 +350,7 @@ bool TemperingBase::initialize_from_file( std::string const& filename ) {
 	// table format
 	while ( getline( in, line ) ) {
 		std::istringstream line_stream( line );
-		Real temp, weight, wcount;
+		Real temp;
 		line_stream >> temp;
 		if ( !line_stream.good() ) tr.Error << "format error in temperature file: " << filename << " at line " << line << std::endl;
 		temperatures_.push_back( temp );

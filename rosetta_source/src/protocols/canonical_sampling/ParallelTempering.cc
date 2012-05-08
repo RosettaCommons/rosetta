@@ -217,7 +217,7 @@ void ParallelTempering::setup_exchange_schedule( Size nlevels ) {
 
 	//0<->1, 2<->3...
 	list.clear();
-	for (int i=0; i<nlevels-1; i+=2) {
+	for (int i=0; i < (int)nlevels-1; i+=2) {
 		std::pair<int, int> elem(i, i+1);
 		list.push_back(elem);
 		if (rank() == 0) {
@@ -229,7 +229,7 @@ void ParallelTempering::setup_exchange_schedule( Size nlevels ) {
 
 	//1<->2, 3<->4...
 	list.clear();
-	for (int i=1; i<nlevels-1; i+=2) {
+	for (int i=1; i<(int)nlevels-1; i+=2) {
 		std::pair<int, int> elem(i, i+1);
 		list.push_back(elem);
 		if (rank() == 0) {
@@ -268,7 +268,7 @@ ParallelTempering::temperature_move( core::Real MPI_ONLY( score ) ) {
 	check_temp_consistency();
 	if ( !time_for_temp_move() ) return temperature();
 
-	Size const nlevels( n_temp_levels() );
+	//	Size const nlevels( n_temp_levels() );
 #ifdef USEMPI
 	//get infomation
 	double last_energy = score;
