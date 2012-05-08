@@ -162,7 +162,7 @@ bool PcsEnergyController::read_tag( std::string tag, std::istream& is ) {
 		}
 
 		if(weight < 0){
-			std::cerr << "problem while parsing the tag '" << tag << "' . Expecting 1 string followed by one POSITIF weight" << std::endl;
+			std::cerr << "problem while parsing the tag '" << tag << "' . Expecting 1 string followed by one POSITIVE weight" << std::endl;
 			utility_exit();
 		}
 		g.filenames_.push_back(filename);
