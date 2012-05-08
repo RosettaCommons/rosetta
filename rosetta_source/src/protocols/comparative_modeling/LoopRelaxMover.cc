@@ -433,14 +433,14 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 
 	long starttime = time(NULL);
-	bool all_loops_closed = false;
+	bool all_loops_closed = true;
 	bool tmp_all_loops_closed = false;
 	if ( remodel() != "no" ) {
 		TR << "====================================================================================" << std::endl;
 		TR << "===" << std::endl;
 		TR << "===   Remodel    " << std::endl;
 		TR << "===" << std::endl;
-
+		all_loops_closed = false;
 		if ( !checkpoints_.recover_checkpoint( pose, curr_job_tag, "remodel", false, true) ) {
 
 			if ( debug ) pose.dump_pdb(curr_job_tag + "_before_rebuild.pdb");
@@ -1179,6 +1179,7 @@ LoopRelaxMover::parse_my_tag( TagPtr const tag, DataMap &data, protocols::filter
 	if( tag->getOption< bool >( "read_fragments", false ) )
 		loops::read_loop_fragments( frag_libs_ );
 
+	//read tag "scorefxn"
 	fa_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data, "score12" ) );
 	cen_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data, "score4L" ) );
 	//cen_scorefxn_->set_weight( core::scoring::chainbreak, 10.0 / 3.0 );

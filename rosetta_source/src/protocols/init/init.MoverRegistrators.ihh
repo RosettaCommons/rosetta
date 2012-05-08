@@ -156,11 +156,14 @@ static MoverRegistrator< protein_interface_design::movers::SaveAndRetrieveSidech
 static MoverRegistrator< protein_interface_design::movers::SetAtomTreeCreator > reg_SetAtomTreeCreator;
 static MoverRegistrator< protein_interface_design::movers::SetTemperatureFactorCreator > reg_SetTemperatureFactorCreator;
 static MoverRegistrator< protein_interface_design::movers::SetupHotspotConstraintsMoverCreator > reg_SetupHotspotConstraintsMoverCreator;
+
+static MoverRegistrator< protein_interface_design::movers::SetupHotspotConstraintsLoopsMoverCreator > reg_SetupHotspotConstraintsLoopsMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::SpinMoverCreator > reg_SpinMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::SpliceCreator > reg_SpliceCreator;
 static MoverRegistrator< protein_interface_design::movers::TaskAwareCstsCreator > reg_TaskAwareCstsCreator;
 static MoverRegistrator< protein_interface_design::movers::SubroutineMoverCreator > reg_SubroutineCreator;
 static MoverRegistrator< protein_interface_design::movers::TryRotamersCreator > reg_TryRotamersCreator;
+static MoverRegistrator< protein_interface_design::movers::ShoveResidueMoverCreator > reg_ShoveResidueMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::VLBCreator > reg_VLBCreator;
 
 static MoverRegistrator< qsar::RenderGridsToKinemageCreator> reg_RenderGridsToKinemageCreator;

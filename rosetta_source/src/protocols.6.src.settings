@@ -111,6 +111,7 @@ sources = {
 		"SequenceRecoveryFilter",
 		"SpecificResiduesNearInterfaceFilter",
 		"StubScoreFilter",
+		"StubScoreLoopsFilter",
 		"TorsionFilter",
 	],
 	"protocols/protein_interface_design/movers": [
@@ -149,11 +150,13 @@ sources = {
 		"SetAtomTree",
 		"SetTemperatureFactor",
 		"SetupHotspotConstraintsMover",
+		"SetupHotspotConstraintsLoopsMover",
 		"SpinMover",
 		"Splice",
 		"SubroutineMover",
 		"TaskAwareCsts",
 		"TryRotamers",
+		"ShoveResidueMover",
 		"VLB",
 	],
 "protocols/seeded_abinitio": [

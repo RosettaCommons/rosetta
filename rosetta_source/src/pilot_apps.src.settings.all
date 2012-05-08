@@ -355,6 +355,7 @@ sources = {
 	],
 	"pilot/olli" : [
                 "r_play_with_etables",
+                #"r_build_hotspot_loops",
 		#"r_abrelax",
 		#"r_fake_noe",
 		"r_pdb2top",

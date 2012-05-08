@@ -123,6 +123,7 @@ TryRotamers::apply ( pose::Pose & pose )
 	//would invalidate residue objects.
 	Residue res_ = pose.residue( resnum_ );
 
+	TR << "current fold-tree:\n" << pose.fold_tree() << std::endl;
 	if( automatic_connection_ ){
 		core::kinematics::FoldTree const new_ft( make_hotspot_foldtree( pose ) );
 		TR<<"New foldtree:\n"<<new_ft<<std::endl;

@@ -67,6 +67,7 @@ static FilterRegistrator< protocols::protein_interface_design::filters::RmsdFilt
 static FilterRegistrator< protocols::protein_interface_design::filters::SequenceRecoveryFilterCreator > reg_SequenceRecoveryFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::SpecificResiduesNearInterfaceFilterCreator > reg_SpecificResiduesNearInterfaceFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::StubScoreFilterCreator > reg_StubScoreFilterCreator;
+static FilterRegistrator< protocols::protein_interface_design::filters::StubScoreLoopsFilterCreator > reg_StubScoreLoopsFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::TorsionCreator > reg_TorsionCreator;
 
 static FilterRegistrator< protocols::simple_filters::AlaScanFilterCreator > reg_AlaScanFilterCreator;

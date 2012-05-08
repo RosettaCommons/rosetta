@@ -1359,8 +1359,7 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 						// Apply it directly
 						constraints_.push_back( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant ) );
 					}
-				}
-				else hs_stub->second->set_scaffold_status( resnum, protocols::hotspot_hashing::reject );
+				}	else hs_stub->second->set_scaffold_status( resnum, protocols::hotspot_hashing::reject );
 				//else TR << " FailSelfEnergy=" << stub_bonus_value << std::endl;
 				// ****** reject the pairing
 				// ******else hs_stub->scaffold_status( resnum, reject );

@@ -237,6 +237,7 @@ sources = {
 		"RotamerBoltzmannWeight",
 		"SAXSScoreFilter",
 		"ScoreCutoffFilter",
+		"ConstraintScoreCutoffFilter",
 		"ScoreEvaluator",
 		"ScoreTypeFilter",
 		"ShapeComplementarityFilter",

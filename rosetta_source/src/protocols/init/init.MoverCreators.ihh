@@ -153,11 +153,13 @@
 #include <protocols/protein_interface_design/movers/SetAtomTreeCreator.hh>
 #include <protocols/protein_interface_design/movers/SetTemperatureFactorCreator.hh>
 #include <protocols/protein_interface_design/movers/SetupHotspotConstraintsMoverCreator.hh>
+#include <protocols/protein_interface_design/movers/SetupHotspotConstraintsLoopsMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/SpinMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/SpliceCreator.hh>
 #include <protocols/protein_interface_design/movers/TaskAwareCstsCreator.hh>
 #include <protocols/protein_interface_design/movers/SubroutineMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/TryRotamersCreator.hh>
+#include <protocols/protein_interface_design/movers/ShoveResidueMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/VLBCreator.hh>
 
 #include <protocols/qsar/RenderGridsToKinemageCreator.hh>

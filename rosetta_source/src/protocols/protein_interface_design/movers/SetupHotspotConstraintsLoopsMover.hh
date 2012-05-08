@@ -7,18 +7,20 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file devel/protein_interface_design/movers/SetupHotspotConstraintsMover.hh
+/// @file devel/protein_interface_design/movers/SetupHotspotConstraintsLoopsMover.hh
 /// @brief Derived classes from DockDesign for dock design
 /// @author Sarel Fleishman (sarelf@u.washington.edu)
 
-#ifndef INCLUDED_protocols_protein_interface_design_movers_SetupHotspotConstraintsMover_hh
-#define INCLUDED_protocols_protein_interface_design_movers_SetupHotspotConstraintsMover_hh
+#ifndef INCLUDED_protocols_protein_interface_design_movers_SetupHotspotConstraintsLoopsMover_hh
+#define INCLUDED_protocols_protein_interface_design_movers_SetupHotspotConstraintsLoopsMover_hh
 
 // Project Headers
-#include <protocols/protein_interface_design/movers/SetupHotspotConstraintsMover.fwd.hh>
+#include <protocols/protein_interface_design/movers/SetupHotspotConstraintsLoopsMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
+
 #include <protocols/hotspot_hashing/HotspotStubSet.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -28,31 +30,37 @@ namespace protocols {
 namespace protein_interface_design {
 namespace movers {
 
-class SetupHotspotConstraintsMover : public protocols::moves::Mover {
+class SetupHotspotConstraintsLoopsMover : public protocols::moves::Mover {
 
 public:
 
-	SetupHotspotConstraintsMover();
-	SetupHotspotConstraintsMover(
-		protocols::hotspot_hashing::HotspotStubSetCOP hotspot_stub_set,
-		core::Size const chain_to_design,
-		core::Real const & CB_force_constant,
-		core::Real const & worst_allowed_stub_bonus,
-		bool const apply_self_energies,
-		core::Real const & bump_cutoff,
-		bool const apply_ambiguous_constraints,
-		bool const colonyE
+	SetupHotspotConstraintsLoopsMover();
+	SetupHotspotConstraintsLoopsMover(
+			protocols::hotspot_hashing::HotspotStubSetCOP hotspot_stub_set
 	);
+	//		core::Size const chain_to_design,
+	//	core::Real const & CB_force_constant,
+	//	core::Real const & worst_allowed_stub_bonus,
+	//	bool const apply_self_energies,
+	//	core::Real const & bump_cutoff,
+	//	bool const apply_ambiguous_constraints,
+	//	bool const colonyE
+
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const;
 
-	SetupHotspotConstraintsMover( SetupHotspotConstraintsMover const & init );
+	SetupHotspotConstraintsLoopsMover( SetupHotspotConstraintsLoopsMover const & init );
 
+	core::Size generate_csts( core::pose::Pose const& pose,  core::scoring::constraints::ConstraintCOPs& constraints );
 	void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
-	~SetupHotspotConstraintsMover();
+	~SetupHotspotConstraintsLoopsMover();
+
+	void set_resfile( std::string const& setting ) {
+		resfile_ = setting;
+	}
 
 private:
 	protocols::hotspot_hashing::HotspotStubSetOP hotspot_stub_set_;
@@ -63,11 +71,12 @@ private:
 	core::Real bump_cutoff_;
 	bool apply_ambiguous_constraints_;
 	bool colonyE_;
+	std::string resfile_;
 };
 
 } // movers
 } // protein_interface_design
 } // devel
 
-#endif /*INCLUDED_protocols_protein_interface_design_movers_SetupHotspotConstraintsMover_HH*/
+#endif /*INCLUDED_protocols_protein_interface_design_movers_SetupHotspotConstraintsLoopsMover_HH*/
 

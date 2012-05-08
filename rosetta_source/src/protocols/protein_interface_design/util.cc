@@ -122,7 +122,7 @@ make_hotspot_foldtree( core::pose::Pose const & pose )
 	ft.clear();
 
 	utility::vector1< core::Size > connection_points;
-	for( core::Size jump( 1 ); jump<=pose.num_jump(); ++jump ){
+	for ( core::Size jump( 1 ); jump<=pose.num_jump(); ++jump ) {
 		core::Size const resi( pose.conformation().chain_begin( jump + 1) );
 		std::string const residue_type( pose.residue( resi ).name3() );
 		std::string const connect_to( optimal_connection_point( residue_type ) );
