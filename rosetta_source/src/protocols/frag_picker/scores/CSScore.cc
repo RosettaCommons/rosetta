@@ -62,9 +62,9 @@ CSScore::CSScore(Size priority, Real lowest_acceptable_value, bool use_lowest,
 	//outfile_ = utility::io::ozstream tmp("allcomparisons.out");
 	//outfile_.open("allcomparisons.out");
 
-	trCSScore << "READING SHIFTS!" << std::endl;
+	trCSScore.Debug << "READING SHIFTS!" << std::endl;
 	CS2ndShift secondary_shift_calculator(reader, true);
-	trCSScore << "SHOULD BE DONE WRITING 2nd SHIFTS" << std::endl;
+	trCSScore.Debug << "SHOULD BE DONE WRITING 2nd SHIFTS" << std::endl;
 
 	target_shifts_ = secondary_shift_calculator.shifts();
 }
@@ -80,7 +80,7 @@ void CSScore::do_caching(VallChunkOP current_chunk) {
 	//Real const clip_factor(3.0);
 
 	bool vall_data(false);
-	trCSScore << "caching CS score for " << current_chunk->get_pdb_id()
+	trCSScore.Debug << "caching CS score for " << current_chunk->get_pdb_id()
 	                        << " of size " << current_chunk->size() << std::endl;
 
 	//Check to see if the cache needs to be recalculated
@@ -124,6 +124,16 @@ void CSScore::do_caching(VallChunkOP current_chunk) {
 				//on v_shifts for that type of atom at the vall residue's specific phi/psi location
 				// (Think of v_shift as a phi/psi dependent and atom type dependent weight constant)
 				VallResidueOP res = current_chunk->at(i);
+
+				if ( res->secondary_shifts().size() < q_shift_type*2 ) {
+					trCSScore.Warning << "Chunk has not enough secondary shifts to perform this query at position "
+										 << i << " " << std::endl
+										 << "pdb_id: " << current_chunk->get_pdb_id() << std::endl
+										 << "chain_id: " << current_chunk->get_chain_id() << std::endl
+										 << "sequence: " << current_chunk->get_sequence() << std::endl;
+					continue;
+				}
+
 				Real v_shift(res->secondary_shifts()[(q_shift_type*2)-1]);
 				//q_shift_type*2-1 because the array of 12 numbers goes shift1, sigma1, shift2, sigma2...
 				Real v_sigma(res->secondary_shifts()[ q_shift_type*2 ]);
@@ -174,7 +184,7 @@ void CSScore::do_caching(VallChunkOP current_chunk) {
 
 	scores_ = temp;
 
-	trCSScore << "caching CS score for " << current_chunk->get_pdb_id()
+	trCSScore.Debug << "caching CS score for " << current_chunk->get_pdb_id()
 	                << " of size " << current_chunk->size()
 	                << ". The matrix is: "<<scores_.size()<<" x "<<scores_[1].size()<<std::endl;
 }
