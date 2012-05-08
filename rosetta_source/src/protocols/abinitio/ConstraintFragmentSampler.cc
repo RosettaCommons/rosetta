@@ -86,7 +86,6 @@ void protocols::abinitio::ConstraintFragmentSampler::register_options() {
 	option.add_relevant( fold_cst::seq_sep_stages );
 	option.add_relevant( fold_cst::skip_on_noviolation_in_stage1 );
 	option.add_relevant( fold_cst::stage1_ramp_cst_cycle_factor );
-	option.add_relevant( fold_cst::stage2_constraint_threshold );
 	option.add_relevant( fold_cst::ignore_sequence_seperation );
 	option.add_relevant( fold_cst::no_recover_low_at_constraint_switch );
 	option.add_relevant( fold_cst::ramp_coord_cst );
@@ -132,7 +131,6 @@ void ConstraintFragmentSampler::set_defaults() {
 	}
 
 	bSkipOnNoViolation_ = option[ fold_cst::skip_on_noviolation_in_stage1 ];
-	constraint_threshold_ = option[ fold_cst::stage2_constraint_threshold ];
 
 	bNoRecoverLowAtSwitch_ = option[ fold_cst::no_recover_low_at_constraint_switch ];
 
