@@ -24,7 +24,8 @@
 
 // project headers
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.fwd.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/io/pdb/file_data.hh>
 // AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 // AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/id/TorsionID.hh>
@@ -1381,7 +1382,26 @@ void RemodelLoopMover::loophash_stage(
 
 		Real6 loop_transform;
 
-		PoseOP pose_for_rt = new Pose(constantPose); //probably redundant, but const pose can't change foldtree.
+		PoseOP pose_for_rt = new Pose();
+
+		// for a pose carrying ligand, find the last peptide edge and only use the
+		// peptide part
+		using namespace core::chemical;
+
+		Size max_res = 0;
+		for (int i = 1; i<= constantPose.total_residue(); i++){
+			if (!constantPose.residue_type(i).is_ligand()){ //if not ligand, and assume ligand is always at the end!
+				max_res = i;
+			}
+		}
+		utility::vector1< core::Size > residue_indices;
+		for(int i = 1; i <= max_res; ++i){
+				residue_indices.push_back(i);
+		}
+		ResidueTypeSetCAP residue_set(
+				ChemicalManager::get_instance()->residue_type_set( CENTROID )
+		);
+		core::io::pdb::pose_from_pose(*pose_for_rt, constantPose, *residue_set, residue_indices);
 
 		core::kinematics::FoldTree f;
 		f.simple_tree(pose_for_rt->total_residue());
@@ -1404,12 +1424,13 @@ void RemodelLoopMover::loophash_stage(
 		BackboneSegment backbone_;
 		LoopHashMap &hashmap = loop_hash_library->gethash(loopsize);
 
+		Size lh_ex_limit = basic::options::option[ OptionKeys::remodel::lh_ex_limit];
 		std::vector < core::Size > leap_index_list;
 
 		TR << "radius = ";
-		for (Size radius = 0; radius <= 5 ; radius++ ){
+		for (Size radius = 0; radius <= lh_ex_limit ; radius++ ){
 			hashmap.radial_lookup( radius, loop_transform, leap_index_list );
-			TR << radius << "... ";
+			TR << radius << "... " << std::endl;
 			if (leap_index_list.size() < 1000){ //making sure at least harvest one segment to build.
 				continue;
 			} else {

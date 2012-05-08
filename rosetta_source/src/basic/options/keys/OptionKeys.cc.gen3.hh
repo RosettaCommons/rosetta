@@ -205,6 +205,7 @@ namespace remodel { IntegerOptionKey const collect_clustered_top( "remodel:colle
 namespace remodel { IntegerOptionKey const dr_cycles( "remodel:dr_cycles" );  }
 namespace remodel { IntegerOptionKey const two_chain_tree( "remodel:two_chain_tree" );  }
 namespace remodel { IntegerOptionKey const repeat_structure( "remodel:repeat_structure" );  }
+namespace remodel { IntegerOptionKey const lh_ex_limit( "remodel:lh_ex_limit" );  }
 namespace remodel { BooleanOptionKey const cen_minimize( "remodel:cen_minimize" );  }
 namespace remodel { IntegerOptionKey const core_cutoff( "remodel:core_cutoff" );  }
 namespace remodel { IntegerOptionKey const boundary_cutoff( "remodel:boundary_cutoff" );  }

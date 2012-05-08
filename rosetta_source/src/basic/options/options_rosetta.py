@@ -4012,6 +4012,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option(  'dr_cycles', 'Integer', desc='number of design-refine cycles to use', default = '3'),
 		Option(  'two_chain_tree', 'Integer', desc='label the start of the second chain'),
                 Option(  'repeat_structure', 'Integer', desc='build identical repeats this many times', default='1'),
+                Option(  'lh_ex_limit', 'Integer', desc='loophasing neighboring bin expansion limit', default='5'),
                 Option(  'cen_minimize', 'Boolean' , desc= 'centroid minimization after fragment building', default = 'false'),
 		Option(  'core_cutoff', 'Integer', desc='number of neighbors required to consider core in auto design', default = '15'),
 		Option(  'boundary_cutoff', 'Integer', desc='number of neighbors required to consider boundary in auto design', default = '10'),

@@ -2052,6 +2052,7 @@ option.add( basic::options::OptionKeys::remodel::collect_clustered_top, "take th
 option.add( basic::options::OptionKeys::remodel::dr_cycles, "number of design-refine cycles to use" ).def(3);
 option.add( basic::options::OptionKeys::remodel::two_chain_tree, "label the start of the second chain" );
 option.add( basic::options::OptionKeys::remodel::repeat_structure, "build identical repeats this many times" ).def(1);
+option.add( basic::options::OptionKeys::remodel::lh_ex_limit, "loophasing neighboring bin expansion limit" ).def(5);
 option.add( basic::options::OptionKeys::remodel::cen_minimize, "centroid minimization after fragment building" ).def(false);
 option.add( basic::options::OptionKeys::remodel::core_cutoff, "number of neighbors required to consider core in auto design" ).def(15);
 option.add( basic::options::OptionKeys::remodel::boundary_cutoff, "number of neighbors required to consider boundary in auto design" ).def(10);
