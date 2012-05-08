@@ -90,6 +90,11 @@ void Pool_RMSD::clear(){
 	pool_.clear();
 }
 
+
+void Pool_RMSD::set_excluded_residues( utility::vector1< core::Size > const& excluded_residues ) {
+	excluded_residues_ = excluded_residues;
+}
+
 void Pool_RMSD::fill_pool( std::string const& silent_file ) {
 	//tags_.clear();
 	//pool_.clear();
@@ -216,7 +221,11 @@ core::Size Pool_RMSD::evaluate( FArray2D_double& coords, std::string& best_decoy
 	}
 	tr.Debug << "evaluating: start from index " << index << " of " << pool_.n_decoys() << std::endl;
 
-	FArray1D_double const weights( pool_.n_atoms(), 1.0 );
+	FArray1D_double weights( pool_.n_atoms(), 1.0 );
+	for ( utility::vector1< core::Size >::const_iterator it = excluded_residues_.begin(); it!=excluded_residues_.end(); ++it ) {
+		weights( *it ) = 0.0;
+	}
+
 	FArray1D_double transvec( 3 );
 	toolbox::reset_x( pool_.n_atoms(), coords, weights, transvec );//center coordinates
   //n_atoms is simply # CA atoms in each "pose"

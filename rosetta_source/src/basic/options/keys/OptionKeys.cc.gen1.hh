@@ -392,6 +392,7 @@ namespace mc { FileOptionKey const read_structures_into_pool( "mc:read_structure
 namespace mc { IntegerOptionKey const convergence_check_frequency( "mc:convergence_check_frequency" );  }
 namespace mc { FileOptionKey const known_structures( "mc:known_structures" );  }
 namespace mc { RealOptionKey const max_rmsd_against_known_structures( "mc:max_rmsd_against_known_structures" );  }
+namespace mc { IntegerVectorOptionKey const excluded_residues_from_rmsd( "mc:excluded_residues_from_rmsd" );  }
 namespace mc { IntegerOptionKey const heat_convergence_check( "mc:heat_convergence_check" );  }
 namespace batch_relax { BooleanOptionKey const batch_relax( "batch_relax" );  }
 namespace batch_relax { IntegerOptionKey const batch_size( "batch_relax:batch_size" );  }
@@ -609,4 +610,3 @@ namespace lh { RealOptionKey const grid_angle_multiplier( "lh:grid_angle_multipl
 namespace lh { IntegerOptionKey const skim_size( "lh:skim_size" );  }
 namespace lh { IntegerOptionKey const rounds( "lh:rounds" );  }
 namespace lh { StringOptionKey const jobname( "lh:jobname" );  }
-namespace lh { IntegerOptionKey const max_lib_size( "lh:max_lib_size" );  }

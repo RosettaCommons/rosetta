@@ -2045,6 +2045,7 @@ Options = Option_Group( '',
 			default='known_structs.in'
 		), ##using this option will cause that tag of nearest structure to sampled decoys is reported
 		Option( 'max_rmsd_against_known_structures', 'Real', desc='stop sampling if rmsd to a known-structure is lower than X',default='1.5' ),
+		Option( 'excluded_residues_from_rmsd', 'IntegerVector', desc='residues that are not used for RMSD computation in pool' ),
 		Option( 'heat_convergence_check', 'Integer',
 			desc ="jump out of current abinitio run if X unsuccesful mc-trials reached", default='0'),
 	), # mc

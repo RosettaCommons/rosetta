@@ -51,6 +51,10 @@ void setup_convergence_checks_from_cmdline( moves::MonteCarlo& mc ) {
        option[ OptionKeys::mc::known_structures ]()
 		);
 
+		if ( option[ OptionKeys::mc::excluded_residues_from_rmsd ].user() ) {
+			pool_ptr->set_excluded_residues( option[ OptionKeys::mc::excluded_residues_from_rmsd ]() );
+		}
+
 		mc.push_back( new Pool_ConvergenceCheck( pool_ptr, option[ OptionKeys::mc::max_rmsd_against_known_structures ]()  ));
 		protocols::jd2::JobDistributor::get_instance()->job_outputter()->add_evaluation( new Pool_Evaluator( pool_ptr ) );
 

@@ -4848,6 +4848,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 1.5</dd><br>
 </dl>
 <dl>
+<dt><b>-excluded_residues_from_rmsd</b> \<IntegerVector\><dt>
+<dd>residues that are not used for RMSD computation in pool</dd><br>
+</dl>
+<dl>
 <dt><b>-heat_convergence_check</b> \<Integer\><dt>
 <dd>jump out of current abinitio run if X unsuccesful mc-trials reached</dd><br>
 <dd>Default: 0</dd><br>

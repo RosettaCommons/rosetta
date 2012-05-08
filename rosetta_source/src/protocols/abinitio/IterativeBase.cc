@@ -230,7 +230,7 @@ void protocols::abinitio::IterativeBase::register_options() {
 		NEW_OPT( iterative::dcut,"in ADAPT1 what dcut should be chosen",7);
 		NEW_OPT( iterative::initial_beta_topology,"start with this file as beta.top in stage3","" );
 		NEW_OPT( iterative::force_topology_resampling,"if strand-fraction is low topology sampling is usually skipped. Override this with this flags", false );
-		NEW_OPT( iterative::recompute_beta_Naccept, "recompute beta-topology after minimum of Naccept structures -- if no initial_beta_topology always recompute", -1 );
+		NEW_OPT( iterative::recompute_beta_Naccept, "recompute beta-topology after minimum of Naccept structures -- if no initial_beta_topology always recompute", 2000 );
 		NEW_OPT( iterative::flags_fullatom, "point to flag-file to read flags for fullatom-refinement and loop-closing specify e.g., as ../flags_fullatom ","");
 		options_registered_ = true;
 	}
@@ -293,7 +293,7 @@ IterativeBase::IterativeBase(std::string name )
 
 	if (  option[ OptionKeys::iterative::force_scored_region ].user() ) {
 		std::ifstream is( option[ OptionKeys::iterative::force_scored_region ]().name().c_str() );
-		
+
 		if (!is.good()) {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ OptionKeys::iterative::force_scored_region ]().name() + "'" );
 		}
@@ -760,8 +760,15 @@ void IterativeBase::gen_evaluation_output( Batch& batch, bool fullatom ) {
 			flags << "-mc:known_structures " << batch.dir() << "/pool.in" << std::endl;
 		} else 	flags << "-mc:known_structures " << name() << "/decoys.out" << std::endl;
 		flags << "-mc:max_rmsd_against_known_structures " << std::max( 0.0, min_diversity_list_[ stage() ] - 0.25 ) << std::endl;
+		if ( basic::options::option[ basic::options::OptionKeys::in::replonly_residues ].user() ) {
+			flags << "-mc:excluded_residues_from_rmsd ";
+			utility::vector1<Size> replonly_rsd = basic::options::option[ basic::options::OptionKeys::in::replonly_residues ]();
+			for ( utility::vector1<Size>::const_iterator it = replonly_rsd.begin(); it != replonly_rsd.end(); ++it ) {
+				flags << " "<< *it;
+			}
+			flags << std::endl;
+		}
 	}
-
 } //gen_evaluation
 
 ///@brief in the comp. modelling protocol the topo-resampling stage might also contain a RigidChunkClaimer...
@@ -980,7 +987,7 @@ void IterativeBase::gen_resample_fragments( Batch& batch ) {
 		&& ( option[ OptionKeys::iterative::scored_ss_core ]() || option[ OptionKeys::iterative::force_scored_region ].user() ) ) {
 		if (  option[ OptionKeys::iterative::force_scored_region ].user() ) {
 			std::ifstream is( option[ OptionKeys::iterative::force_scored_region ]().name().c_str() );
-			
+
 			if (!is.good()) {
 				utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ OptionKeys::iterative::force_scored_region ]().name() + "'" );
 			}

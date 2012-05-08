@@ -95,7 +95,7 @@ public:
 	void add( ObjexxFCL::FArray2D_double const&, core::Size nres, std::string new_tag);
 
 	//void add( ObjexxFCL::FArray2D_double const&, core::Size nres, core::Size num_added, utility::vector1<std::string> const& new_tag);
-
+	void set_excluded_residues( utility::vector1< core::Size > const& excluded_residues );
 protected:
 
 	core::Size natom() const {return pool_.n_atoms();} //yuan
@@ -110,6 +110,9 @@ private:
 	ObjexxFCL::FArray1D_double weights_;
 	Tags tags_;
 	core::Size reserve_size_;
+
+	//residues excluded from RMSD calculation
+	utility::vector1< core::Size > excluded_residues_;
 };
 
 class Pool_ConvergenceCheck : public moves::MonteCarloExceptionConverge {

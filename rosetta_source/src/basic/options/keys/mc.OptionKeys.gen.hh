@@ -27,6 +27,7 @@ namespace mc { extern FileOptionKey const read_structures_into_pool; }
 namespace mc { extern IntegerOptionKey const convergence_check_frequency; }
 namespace mc { extern FileOptionKey const known_structures; }
 namespace mc { extern RealOptionKey const max_rmsd_against_known_structures; }
+namespace mc { extern IntegerVectorOptionKey const excluded_residues_from_rmsd; }
 namespace mc { extern IntegerOptionKey const heat_convergence_check; }
 
 } // namespace OptionKeys
