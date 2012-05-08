@@ -63,9 +63,9 @@ Size SingleFileBuffer::nr_open_slaves() const {
 
 void SingleFileBuffer::close( Size slave ) {
 	if ( unfinished_blocks_[ slave ].size() == 0 ) {
-		tr.Info << "EMPTY OPEN/CLOSE Operation from slave " << slave << std::endl;
+		tr.Trace << "EMPTY OPEN/CLOSE Operation from slave " << slave << std::endl;
 	}
-	tr.Info << "close " << filename_ << " from slave " << slave << std::endl;
+	tr.Debug << "close " << filename_ << " from slave " << slave << std::endl;
 	flush( slave );
 	//BufferMap::iterator iter = unfinished_blocks_.find( slave );
 	//	if ( iter!=unfinished_blocks_.end() ) {
@@ -123,19 +123,19 @@ WriteFileSFB::WriteFileSFB( std::string const& filename, core::Size channel, boo
 		if ( append ) {
 			if ( !utility::file::file_exists( filename ) ) {
 				//			out_.open( filename.c_str() );
-				tr.Info << "open file " << filename << " ... " << std::endl;
+				tr.Debug << "open file " << filename << " ... " << std::endl;
 				out_.open( filename.c_str() );
 				if ( out_.good() ) status = MPI_SUCCESS_NEW;
 			} else {
 
-				tr.Info << "open file (append) " << filename << " ... " << std::endl;
+				tr.Debug << "open file (append) " << filename << " ... " << std::endl;
 				//			out_.open_append( filename.c_str() );
 				out_.open( filename.c_str(), std::ios::app );
 				if ( out_.good() ) status = MPI_SUCCESS_APPEND;
 			}
 		}	else {
 			//		out_.open( filename.c_str() );
-			tr.Info << "open file " << filename << " ... " << std::endl;
+			tr.Debug << "open file " << filename << " ... " << std::endl;
 			out_.open( filename.c_str() );
 			if ( out_.good() ) status = MPI_SUCCESS_NEW;
 		}
@@ -152,7 +152,7 @@ WriteFileSFB::WriteFileSFB( std::string const& filename, core::Size channel, boo
 }
 
 WriteFileSFB::~WriteFileSFB() {
-	tr.Info << "close file " << filename() << std::endl;
+	tr.Debug << "close file " << filename() << std::endl;
 	out_.close();
 }
 
@@ -161,8 +161,8 @@ void WriteFileSFB::write_lines( LineBuffer const& buf ) {
 	static time_t ntime;
 	static time_t last_time;
 	ntime = clock();
-	if ( buf.size()==1 ) tr.Info << -1.0*(all_start_time-ntime)/CLOCKS_PER_SEC << " " << 1.0*( ntime-last_time )/CLOCKS_PER_SEC << " seconds: write block of " << buf.begin()->size() << " characters to file " << filename() << std::endl;
-	else tr.Info << -1.0*(all_start_time-ntime)/CLOCKS_PER_SEC << " " <<1.0*( ntime-last_time )/CLOCKS_PER_SEC << " seconds: write " << buf.size() << " blocks of data to file " << filename() << std::endl;
+	if ( buf.size()==1 ) tr.Debug << -1.0*(all_start_time-ntime)/CLOCKS_PER_SEC << " " << 1.0*( ntime-last_time )/CLOCKS_PER_SEC << " seconds: write block of " << buf.begin()->size() << " characters to file " << filename() << std::endl;
+	else tr.Debug << -1.0*(all_start_time-ntime)/CLOCKS_PER_SEC << " " <<1.0*( ntime-last_time )/CLOCKS_PER_SEC << " seconds: write " << buf.size() << " blocks of data to file " << filename() << std::endl;
 	last_time = ntime;
 
 	copy( buf.begin(), buf.end(), std::ostream_iterator< std::string>( out_ ) );
@@ -177,7 +177,7 @@ void WriteFileSFB::block( core::Size slave ) {
 	tr.Debug << "block file " << filename() << std::endl;
 	//out_.flush();
 	Base::block(slave);
-	tr.Info << "open file (append): " << filename() << std::endl;
+	tr.Debug << "open file (append): " << filename() << std::endl;
 	out_.open( filename().c_str() , std::ios::app );
 }
 

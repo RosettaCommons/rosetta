@@ -138,7 +138,7 @@ void MpiFileBuffer::run() {
 		} else if ( msg_type == MPI_STREAM_CLOSE ) {
 			close_channel( slave, channel_id );
 		} else if ( msg_type == MPI_STREAM_FLUSH ) {
-			tr.Info << "MPI_STREAM_FLUSH received" << std::endl;
+			tr.Debug << "MPI_STREAM_FLUSH received" << std::endl;
 			flush_channel( slave, channel_id );
 		} else if ( msg_type == MPI_WIND_DOWN ) {
 			bStop_ = true;
@@ -296,7 +296,7 @@ void MpiFileBuffer::clear_channel_from_garbage_collector( core::Size channel ) {
 #ifdef USEMPI
 void MpiFileBuffer::open_channel( Size slave, std::string const& filename, bool append, Size& status ) {
 	//find filename in our file-map...
-	tr.Info << "open mpi-channel from slave-node " << slave << " for file: " << filename << std::endl;
+	tr.Debug << "open mpi-channel from slave-node " << slave << " for file: " << filename << std::endl;
 	Filenames::const_iterator iter = open_files_.find( filename );
 	Size channel;
 	if ( iter != open_files_.end() ) {

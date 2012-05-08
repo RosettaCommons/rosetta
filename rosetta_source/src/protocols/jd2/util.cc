@@ -230,6 +230,8 @@ MPI_Comm const& current_mpi_comm() {
 	}
 	//return MPI_COMM_WORLD; //causes warning: returning reference to temporary
 	//workaround to avoid warning ( MPI_COMM_WORLD is actually a macro )
+	TR.Trace << "Requested jd2::current_mpi_comm() but apparently flag -run:n_replica was not set.";
+	TR.Trace << "Returning MPI_COMM_WORLD" << std::endl;
 	static MPI_Comm my_mpi_comm_world = MPI_COMM_NULL;
 	MPI_Comm_dup( MPI_COMM_WORLD, &my_mpi_comm_world );
 	return my_mpi_comm_world;
