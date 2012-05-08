@@ -61,8 +61,12 @@ public:
     return freq;
   }
 
+	bool is_folded() const {
+		return window_ > 0.1;
+	}
+
 	void show( std::ostream& os ) const {
-		if ( window_ > 0.1 ) {
+		if ( is_folded() ) {
 			os << "FOLDED with " << window_ << " " << start() << " " << end() << std::endl;
 		} else {
 			os << "UNFOLDED" << std::endl;

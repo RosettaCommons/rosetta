@@ -126,6 +126,7 @@ void PeakFileFormat::write_header( std::ostream& os ) {
 	//dimension 1
   atom_names.push_back( ObjexxFCL::lowercased( info1_->main_atom() ) );
   tolerances.push_back( info1_->proton_tolerance() );
+
   os << "# Number of dimensions " << dim << std::endl;
 	os << "#FILENAME " << filename() << std::endl;
 	std::string format_str = "xeasy" + utility::to_string( dim ) + "D";
@@ -135,6 +136,20 @@ void PeakFileFormat::write_header( std::ostream& os ) {
     os << "#INAME " << ct << " " << atom_names[ ct ] << std::endl;
     cyana_str += atom_names[ ct ];
   }
+	if ( info1_->fold_proton_resonance().is_folded() ) {
+		os << "#FOLD "<< dim << " " << info1_->fold_proton_resonance().start() << " " << info1_->fold_proton_resonance().end() << std::endl;
+	}
+	if ( info1_->fold_label_resonance().is_folded() ) {
+		os << "#FOLD "<< 1 << " " << info1_->fold_proton_resonance().start() << " " << info1_->fold_proton_resonance().end() << std::endl;
+	}
+
+	if ( info2_->fold_proton_resonance().is_folded() ) {
+		os << "#FOLD "<< dim-1 << " " << info1_->fold_proton_resonance().start() << " " << info1_->fold_proton_resonance().end() << std::endl;
+	}
+	if ( info2_->fold_label_resonance().is_folded() ) {
+		os << "#FOLD "<< 2 << " " << info1_->fold_proton_resonance().start() << " " << info1_->fold_proton_resonance().end() << std::endl;
+	}
+
   os << "#CYANAFORMAT " << cyana_str << std::endl;
   os << "#TOLERANCE ";
   for ( Size ct = 1; ct <= tolerances.size(); ct++ ) {

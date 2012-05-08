@@ -131,9 +131,9 @@ public:
       return info1_->fold_label_resonance()( freq );
     } else if ( i==4 ) {
       return info2_->fold_label_resonance()( freq );
-    } else {
-      runtime_assert( false ); //should never get here...
-    }
+    };
+    runtime_assert( false ); //should never get here...
+    return 0.0; //to make compiler happy
   }
 //  virtual void read_from_stream( std::istream& );
 //   virtual void add_assignment_from_stream( std::istream& );
