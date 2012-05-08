@@ -167,7 +167,7 @@ void ResidualDipolarCoupling::read_RDC_file( Size expid, std::string const& file
 			throw( utility::excn::EXCN_BadInput(" invalid line "+line+" in rdc-file "+filename));
 		}
 
-		if ( res1 < 1 || res1 < 1 ) {
+		if ( res1 < 1 || res2 < 1 ) {
 			tr.Error << "negative residue number in line " << line << " in rdc-file " << filename << std::endl;
 			throw( utility::excn::EXCN_BadInput(" invalid line "+line+" in rdc_file " + filename ) );
 		}
