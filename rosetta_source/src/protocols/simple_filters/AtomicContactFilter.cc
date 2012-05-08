@@ -52,7 +52,9 @@ AtomicContactFilter::AtomicContactFilter( core::Size const res1, core::Size cons
 	sidechain_( sidechain ),
 	backbone_( backbone ),
 	protons_( protons )
-{}
+{
+	range1_.push_back( residue1_ );
+}
 
 /// @return Whether a disulfide bond is possible between any of the targets
 bool AtomicContactFilter::apply(core::pose::Pose const & pose ) const
@@ -73,27 +75,31 @@ AtomicContactFilter::compute( core::pose::Pose const & pose ) const
 		runtime_assert( get_resid() );
 	}
 	core::Real nearest_distance( 10000 );
-	Residue const res1( pose.residue( residue1_ ) ), res2( pose.residue( get_resid() ) );
+	Residue const res2( pose.residue( get_resid() ) );
+	for ( utility::vector1< core::Size >::const_iterator it=range1_.begin(); it!=range1_.end(); ++it ) {
+		core::Size residue1=*it;
+		Residue const res1( pose.residue( residue1 ) );
 
-	Atoms::const_iterator atom1_begin( res1.atom_begin() ), atom1_end( res1.atom_end() ), atom2_begin( res2.atom_begin() ), atom2_end( res2.atom_end() );
-	if( sidechain_ && !backbone_ ){
-		atom1_begin = res1.sidechainAtoms_begin();
-		atom2_begin = res2.sidechainAtoms_begin();
+		Atoms::const_iterator atom1_begin( res1.atom_begin() ), atom1_end( res1.atom_end() ), atom2_begin( res2.atom_begin() ), atom2_end( res2.atom_end() );
+		if( sidechain_ && !backbone_ ){
+			atom1_begin = res1.sidechainAtoms_begin();
+			atom2_begin = res2.sidechainAtoms_begin();
+		}
+		if( !sidechain_ && backbone_ ){
+			atom1_end = res1.sidechainAtoms_begin();
+			atom2_end = res2.sidechainAtoms_begin();
+		}
+		if( !protons_ ){
+			atom1_end = res1.heavyAtoms_end();
+			atom2_end = res2.heavyAtoms_end();
+		}
+		for( Atoms::const_iterator atom1=atom1_begin; atom1!=atom1_end; ++atom1 ){
+			for( Atoms::const_iterator atom2=atom2_begin; atom2!=atom2_end; ++atom2 ){
+				core::Real const dist( atom1->xyz().distance( atom2->xyz() ) );
+				if( dist <= nearest_distance ) nearest_distance = dist;
+			}//foreach atom2
+		}//foreach atom1
 	}
-	if( !sidechain_ && backbone_ ){
-		atom1_end = res1.sidechainAtoms_begin();
-		atom2_end = res2.sidechainAtoms_begin();
-	}
-	if( !protons_ ){
-		atom1_end = res1.heavyAtoms_end();
-		atom2_end = res2.heavyAtoms_end();
-	}
-	for( Atoms::const_iterator atom1=atom1_begin; atom1!=atom1_end; ++atom1 ){
-		for( Atoms::const_iterator atom2=atom2_begin; atom2!=atom2_end; ++atom2 ){
-			core::Real const dist( atom1->xyz().distance( atom2->xyz() ) );
-			if( dist <= nearest_distance ) nearest_distance = dist;
-		}//foreach atom2
-	}//foreach atom1
 	return( nearest_distance );
 }
 
@@ -117,8 +123,21 @@ void AtomicContactFilter::parse_my_tag( utility::tag::TagPtr const tag,
 		core::pose::Pose const & pose)
 {
 	distance_ = tag->getOption< core::Real >( "distance", 4.0 );
-	std::string const res1( tag->getOption< std::string >( "residue1" ) );
-	residue1_ = protocols::rosetta_scripts::parse_resnum( res1, pose );
+	if ( tag->hasOption("range1") ) {
+		residue1_ = 0;
+		std::istringstream range_str( tag->getOption< std::string >( "range1" ) );
+		core::Size num1, num2;
+		range_str >> num1 >> num2;
+		if ( !range_str.good() ) TR << "cannot read parameter range1" << std::endl;
+		for ( core::Size i=num1; i<=num2; ++i ) {
+			range1_.push_back( i );
+		}
+	}
+	if ( range1_.size() == 0 ) {
+		std::string const res1( tag->getOption< std::string >( "residue1" ) );
+		residue1_ = protocols::rosetta_scripts::parse_resnum( res1, pose );
+		range1_.push_back( residue1_ );
+	}
 	if( tag->hasOption( "residue2" ) ){
 		std::string const res2( tag->getOption< std::string >( "residue2" ) );
 		set_resid( protocols::rosetta_scripts::parse_resnum( res2, pose ) );

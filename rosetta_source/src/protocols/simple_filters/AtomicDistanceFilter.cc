@@ -69,7 +69,8 @@ AtomicDistanceFilter::compute( core::pose::Pose const & pose ) const
 	core::Real nearest_distance( 999999 );
 
 	assert(residue1_ <= pose.n_residue() && residue2_ <= pose.n_residue());
-	Residue const res1( pose.residue( residue1_ ) ), res2( pose.residue( residue2_ ) );
+	Residue const& res1( pose.residue( residue1_ ) );
+	Residue const& res2( pose.residue( residue2_ ) );
 
 	core::Size a1start(1), a1end(res1.natoms());
 	if ( ! astype1_ ) { // If given by name, look only at the single atom
