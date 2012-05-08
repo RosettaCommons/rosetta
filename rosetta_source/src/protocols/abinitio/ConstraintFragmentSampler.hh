@@ -199,9 +199,6 @@ private:
   //@brief just for screen output: how verbose should it be
   Size show_viol_level_;
 
-  //@brief abolish run in stage2 if constraint threshold is violated -- '0' = inactive
-  Size constraint_threshold_;
-
 	//@brief usually we do a recover_low before we increase the number of active constraints
 	bool bNoRecoverLowAtSwitch_;
 
