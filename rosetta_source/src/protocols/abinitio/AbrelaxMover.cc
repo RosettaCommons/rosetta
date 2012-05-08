@@ -43,6 +43,8 @@
 #include <protocols/topology_broker/util.hh>
 #include <protocols/viewer/viewers.hh>
 
+#include <protocols/simple_moves/RepulsiveOnlyMover.hh>
+
 // Utility headers
 #include <basic/options/option.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -231,6 +233,14 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 	//   setup -- e.g., sequence --> pose
 	//
 	topology_broker()->apply( pose ); //creates pose and a state in the topology_broker needed for the whole run
+
+	// apply a mover which calculates only repulsive energy on designate residues
+	{
+		protocols::simple_moves::RepulsiveOnlyMover replonly;
+		replonly.set_mutate_to_glycine( false );
+		replonly.apply( pose );
+	}
+
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "start_pose" );  //add viewer
 
 #ifdef BOINC_GRAPHICS
@@ -352,6 +362,13 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 		protocols::relax::RelaxProtocolBaseCOP relax_prot = relax_protocol();
 		core::scoring::ScoreFunctionCOP last_scorefxn_cop = relax_prot->get_scorefxn();
 		last_scorefxn = last_scorefxn_cop->clone();
+	}
+
+
+	{// apply a mover which calculates only repulsive energy on designate residues
+		protocols::simple_moves::RepulsiveOnlyMover replonly;
+		replonly.set_mutate_to_glycine( false );
+		replonly.apply( pose );
 	}
 
 	if( option[ basic::options::OptionKeys::abinitio::close_loops_by_idealizing ]() ){

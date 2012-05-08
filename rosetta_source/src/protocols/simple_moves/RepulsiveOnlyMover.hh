@@ -50,8 +50,12 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
+	void set_mutate_to_glycine( bool setting ) {
+		mutate_to_glycine_ = setting;
+	}
 
 private:
+	bool mutate_to_glycine_;
 };
 
 } // moves

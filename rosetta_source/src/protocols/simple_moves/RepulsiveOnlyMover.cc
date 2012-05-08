@@ -15,9 +15,9 @@
 // Unit Headers
 #include <protocols/simple_moves/RepulsiveOnlyMover.hh>
 
-// Package headers 
+// Package headers
 
-// Project headers 
+// Project headers
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/AtomType.hh>
@@ -50,7 +50,7 @@ static basic::Tracer TR( "protocol.mover.RepulsiveOnlyMover" );
 
 
 /// RepulsiveOnlyMover; based on the protocols::moves::Mover basis class
-RepulsiveOnlyMover::RepulsiveOnlyMover() : protocols::moves::Mover() {}
+RepulsiveOnlyMover::RepulsiveOnlyMover() : protocols::moves::Mover(), mutate_to_glycine_( true ) {}
 RepulsiveOnlyMover::~RepulsiveOnlyMover() {}
 
 
@@ -58,7 +58,7 @@ RepulsiveOnlyMover::~RepulsiveOnlyMover() {}
 void
 RepulsiveOnlyMover::apply( core::pose::Pose & pose ) {
 	if (	basic::options::option[basic::options::OptionKeys::in::replonly_loops]() ){
-		for ( core::Size i=1; i<=pose.n_residue(); i++ ){   
+		for ( core::Size i=1; i<=pose.n_residue(); i++ ){
 			if ( pose.secstruct(i)=='L' ){
 				if ( ! pose.residue(i).has_variant_type( core::chemical::REPLONLY ) ){
 					core::pose::remove_lower_terminus_type_from_pose_residue( pose, i );
@@ -75,18 +75,20 @@ RepulsiveOnlyMover::apply( core::pose::Pose & pose ) {
 	if ( basic::options::option[ basic::options::OptionKeys::in::replonly_residues ].user() ){
 		utility::vector1<Size> replonly_rsd = basic::options::option[ basic::options::OptionKeys::in::replonly_residues ]();
 		//TR << "RepulsiveOnly protocols::moves::Mover has been called" << std::endl;
-		for ( core::Size i=1; i<=replonly_rsd.size(); i++ ){   
-			core::chemical::ResidueType const & gly( pose.residue(i).residue_type_set().name_map("GLY") );
-			core::pose::replace_pose_residue_copying_existing_coordinates( pose, replonly_rsd[i], gly );
-		//TR << replonly_rsd[i] << " has been changed as GLY" << std::endl;
+		for ( core::Size i=1; i<=replonly_rsd.size(); i++ ){
+			if ( mutate_to_glycine_ ) {
+				core::chemical::ResidueType const & gly( pose.residue(replonly_rsd[i]).residue_type_set().name_map("GLY") );
+				core::pose::replace_pose_residue_copying_existing_coordinates( pose, replonly_rsd[i], gly );
+				TR << replonly_rsd[i] << " has been changed as GLY" << std::endl;
+			}
 			if ( ! pose.residue( replonly_rsd[i] ).has_variant_type( core::chemical::REPLONLY ) ){
 				core::pose::remove_lower_terminus_type_from_pose_residue( pose, replonly_rsd[i] );
 				core::pose::remove_upper_terminus_type_from_pose_residue( pose, replonly_rsd[i] );
 				core::pose::add_variant_type_to_pose_residue( pose, "REPLONLY", replonly_rsd[i] );
-			} 
-		}   
-	}   
-}   
+			}
+		}
+	}
+}
 
 std::string
 RepulsiveOnlyMover::get_name() const {
