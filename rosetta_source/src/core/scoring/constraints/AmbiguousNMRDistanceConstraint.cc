@@ -171,7 +171,7 @@ void parse_NMR_name( std::string name, core::Size res, AmbiguousNMRDistanceConst
 																									 || aa == aa_his ) ) {
 		if ( aa == aa_arg || aa == aa_lys || aa == aa_pro ) {
 			atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HD", res ), pose ) );
-			atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HD", res ), pose ) );
+			atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HD", res ), pose ) );
 		} else { // tyr, phe, his (his doesn't get down here... )
 			atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "HD1", res ), pose ) );
 			atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "HD2", res ), pose ) );
