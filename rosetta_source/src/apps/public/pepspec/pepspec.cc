@@ -652,7 +652,7 @@ pep_rmsd_analysis(
 	Size this_pep_begin( pep_begin ); 
 	Size this_pep_end( pep_end ); 
 
-	Size ref_prot_chain;
+	Size ref_prot_chain( 1 );
 	for( Size i = 1; i <= ref_pose.conformation().num_chains(); ++i ){
 		if( i == ref_pep_chain ) continue;
 		if( !( ref_pose.residue( ref_pose.conformation().chain_begin( i ) ).is_protein() ) ) continue;
@@ -662,8 +662,6 @@ pep_rmsd_analysis(
 		}
 	}
 	Size ref_prot_begin( ref_pose.conformation().chain_begin( ref_prot_chain ) ); 
-	Size ref_prot_end( ref_pose.conformation().chain_end( ref_prot_chain ) ); 
-	Size ref_prot_anchor( ref_prot_begin );
 
 	Size pep_nterm( pep_anchor - this_pep_begin );
 	Size ref_pep_nterm( ref_pep_anchor - ref_pep_begin );
@@ -698,7 +696,7 @@ pep_rmsd_analysis(
 	}
 	Real total_rmsd( 0 );
 	std::string rmsd_analysis( "" );
-	for( int i_seq = 0; i_seq <= nterm + cterm; ++i_seq ){
+	for( Size i_seq = 0; i_seq <= nterm + cterm; ++i_seq ){
 		Size ref_pep_seqpos = ref_pep_begin + i_seq;
 		Size pep_seqpos = this_pep_begin + i_seq;
 		Real sd( ref_pose.residue( ref_pep_seqpos ).xyz( "CA" ).distance_squared( pose.residue( pep_seqpos ).xyz( "CA" ) ) );
@@ -750,11 +748,8 @@ pep_phipsi_analysis(
 		cterm = ref_pep_cterm;
 	}
 
-	Real total_phi( 0 );
-	Real total_psi( 0 );
-	Real total_omega( 0 );
 	std::string phipsi_analysis( "" );
-	for( int i_seq = 0; i_seq <= nterm + cterm; ++i_seq ){
+	for( Size i_seq = 0; i_seq <= nterm + cterm; ++i_seq ){
 		Size ref_pep_seqpos = ref_pep_begin + i_seq;
 		Size pep_seqpos = this_pep_begin + i_seq;
 		Real ramadev( 0 );
