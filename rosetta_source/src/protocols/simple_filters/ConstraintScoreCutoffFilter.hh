@@ -21,6 +21,10 @@
 #include <protocols/filters/Filter.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 
+#ifdef PYROSETTA
+	#include <core/scoring/constraints/Constraint.hh>
+#endif
+
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <basic/options/option.hh>
@@ -90,7 +94,7 @@ public:
 	void set_score_type( core::scoring::ScoreType scotype );
 
 	core::Real get_score( core::pose::Pose const & pose ) const;
-	void apply_cst( core::pose::Pose const& pose ) const;
+	// Undefined commentiong out to fix PyRosetta build  void apply_cst( core::pose::Pose const& pose ) const;
 
 	virtual std::string name() const {
 		return "ConstraintScoreCutoffFilter";

@@ -100,8 +100,8 @@ def main(args):
     )
 
     parser.add_option("--continue",
-      default=True,
-      action="store_false", dest="continue_",
+      default=False,
+      action="store_true", dest="continue_",
       help="Debug only. Continue building after encounter the error.",
       )
 
@@ -346,7 +346,7 @@ def execute(message, command_line, return_=False, untilSuccesses=False, print_ou
         if not return_: sys.exit(1)
 
     if return_ == 'output': return output
-    else: return False
+    else: return res
 
 
 def _execute(message, commandline, return_=False):
@@ -1039,7 +1039,7 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
         # we need  -DBOOST_NO_INITIALIZER_LISTS or gccxml choke on protocols/genetic_algorithm/GeneticAlgorithm.hh
         # GCCXML version
         # -DPYROSETTA
-        if execute('Generating XML representation...', 'gccxml %s %s -fxml=%s %s -I. -I../external/include -I../external/boost_1_46_1 -I../external/dbio -DBOOST_NO_INITIALIZER_LISTS ' % (gccxml_options, source_hh, xml_name, cpp_defines), not Options.continue_): continue
+        if execute('Generating XML representation...', 'gccxml %s %s -fxml=%s %s -I. -I../external/include -I../external/boost_1_46_1 -I../external/dbio -DBOOST_NO_INITIALIZER_LISTS ' % (gccxml_options, source_hh, xml_name, cpp_defines), Options.continue_): continue
 
         namespaces_to_wrap = ['::'+path.replace('/', '::')+'::']
         # Temporary injecting Mover in to protocols level
@@ -1070,7 +1070,7 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
                 "%(compiler)s %(fname)s -o %(obj_name)s -c \
                  %(add_option)s %(cpp_defines)s -I../external/include -I../external/dbio \
                  %(include_paths)s " % dict(add_option=add_option, fname=fname, obj_name=obj_name, include_paths=include_paths, compiler=Options.compiler, cpp_defines=cpp_defines),
-                 not Options.continue_):
+                 Options.continue_):
                 pass
                 '''
                 print 'Compiliation failed... Creating empty C++ file to test includes...'
@@ -1094,7 +1094,7 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
                     dst=dst_name, libpaths=libpaths, runtime_libpaths=runtime_libpaths, dest=dest, boost_lib=Options.boost_lib,
                     python_lib=Options.python_lib, compiler=Options.compiler
                     ),
-                 not Options.continue_)
+                 Options.continue_)
 
     if Options.one_lib_file:
         f = file(all_at_once_source_cpp, 'w');
@@ -1113,7 +1113,7 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
 
         if xml_recompile or (not Options.update):
 
-            if execute('Generating XML representation...', 'gccxml %s %s -fxml=%s %s -I. -I../external/include -I../external/boost_1_46_1  -I../external/dbio -DBOOST_NO_INITIALIZER_LISTS ' % (gccxml_options, all_at_once_source_cpp, all_at_once_xml, cpp_defines), not Options.continue_ ):
+            if execute('Generating XML representation...', 'gccxml %s %s -fxml=%s %s -I. -I../external/include -I../external/boost_1_46_1  -I../external/dbio -DBOOST_NO_INITIALIZER_LISTS ' % (gccxml_options, all_at_once_source_cpp, all_at_once_xml, cpp_defines), Options.continue_ ):
                 return new_headers
 
             namespaces_to_wrap = ['::'+path.replace('/', '::')+'::']
@@ -1146,25 +1146,24 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
                 failed = False
 
                 if not Options.cross_compile:
-                    if execute("Compiling...", comiler_cmd % comiler_dict, True):
+                    if execute("Compiling...", comiler_cmd % comiler_dict, return_=True):
                         if Options.compiler != 'clang': failed = True
-                        elif execute("Compiling...", comiler_cmd % dict(comiler_dict, compiler='gcc'), True): failed = True
+                        elif execute("Compiling...", comiler_cmd % dict(comiler_dict, compiler='gcc'), return_=True): failed = True
 
-                if not Options.continue_  and failed: return new_headers
+                if Options.continue_ and failed: return new_headers
 
                 objs_list.append(all_at_once_N_obj)
 
-            if not Options.cross_compile:
-                execute("Linking...", # -fPIC -ffloat-store -ffor-scope
-                    "cd %(dest)s/../ && %(compiler)s %(obj)s %(add_option)s  \
-                    -lmini -lstdc++ -lz\
-                     -l%(python_lib)s \
-                     -l%(boost_lib)s \
-                     %(libpaths)s %(runtime_libpaths)s -o %(dst)s" % dict(add_option=add_loption, obj=' '.join(objs_list),
-                        dst=all_at_once_lib, libpaths=libpaths, runtime_libpaths=runtime_libpaths, dest=dest, boost_lib=Options.boost_lib,
-                        python_lib=Options.python_lib, compiler=Options.compiler
-                        ),
-                     not Options.continue_)
+            if not Options.cross_compile:  # -fPIC -ffloat-store -ffor-scope
+                linker_cmd = "cd %(dest)s/../ && %(compiler)s %(obj)s %(add_option)s -lmini -lstdc++ -lz -l%(python_lib)s \
+                              -l%(boost_lib)s %(libpaths)s %(runtime_libpaths)s -o %(dst)s"
+                linker_dict = dict(add_option=add_loption, obj=' '.join(objs_list), dst=all_at_once_lib, libpaths=libpaths, runtime_libpaths=runtime_libpaths, dest=dest, boost_lib=Options.boost_lib,
+                        python_lib=Options.python_lib, compiler=Options.compiler)
+
+                if execute("Linking...", linker_cmd % linker_dict, return_= (True if Options.compiler != 'gcc' or Options.continue_ else False) ):
+                    if Options.compiler != 'gcc':
+                        execute("Linking...", linker_cmd % dict(linker_dict, compiler='gcc'), return_= Options.continue_ )
+
             else: execute("Toching %s file..." % all_at_once_lib, 'cd %(dest)s/../ && touch %(dst)s' % dict(dest=dest, dst=all_at_once_lib) )
 
 
