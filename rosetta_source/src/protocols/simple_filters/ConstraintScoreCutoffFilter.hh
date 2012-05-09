@@ -94,7 +94,7 @@ public:
 	void set_score_type( core::scoring::ScoreType scotype );
 
 	core::Real get_score( core::pose::Pose const & pose ) const;
-	// Undefined commentiong out to fix PyRosetta build  void apply_cst( core::pose::Pose const& pose ) const;
+	// Undefined commenting out to fix PyRosetta build  void apply_cst( core::pose::Pose const& pose ) const;
 
 	virtual std::string name() const {
 		return "ConstraintScoreCutoffFilter";
