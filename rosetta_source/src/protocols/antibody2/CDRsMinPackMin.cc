@@ -61,6 +61,12 @@ namespace protocols {
 namespace antibody2 {
 
 // default constructor
+CDRsMinPackMin::CDRsMinPackMin() : Mover() 
+{
+        user_defined_ = false;
+}
+    
+    
 CDRsMinPackMin::CDRsMinPackMin(AntibodyInfoOP antibody_info) : Mover() 
 {
 	user_defined_ = false;

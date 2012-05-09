@@ -158,6 +158,7 @@ private:
 
     H3CterInsertOP h3_cter_insert_mover_;
     H3PerturbCCDOP h3_perturb_ccd_build_;
+    //LoopMoverOP h3_perturb_ccd_build_;
     
     bool sc_min_;
     bool rt_min_;

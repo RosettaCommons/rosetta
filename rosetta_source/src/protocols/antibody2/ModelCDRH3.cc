@@ -241,6 +241,11 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
     loops::Loop trimmed_cdr_h3(framework_loop_begin, framework_loop_end - c_ter_stem_, cutpoint, 0, true );
     loops::Loop input_loop;
     
+    if( framework_loop_size <= 6 ) {
+        do_cter_insert_ = false;
+        TR<<"loop_size <= 6, AUTOMATICALLY TURNING OFF THE C_TERMINAL INSERT"<<std::endl;
+    }
+    
     if (do_cter_insert_){
         //JQX: the h3 loop removing the cterminal 3 residues
         input_loop = trimmed_cdr_h3;
@@ -314,7 +319,7 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
             }
             else{
                 //utility_exit_with_message("Loop Size is Less than 6");
-		TR<<"Loop Size is Less than 6, skip h3_cter_insert "<<std::endl;
+                TR<<"Loop Size is Less than 6, skip h3_cter_insert "<<std::endl;
             }
         }
         
