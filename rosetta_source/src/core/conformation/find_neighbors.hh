@@ -91,7 +91,7 @@ find_neighbors(
 	// when detecting neighbors for 150 points.
 	core::Size const N_POINTS_BREAK_EVEN = 150;
 
-	PROF_START( basic::TEST2 );
+	//	PROF_START( basic::TEST2 );
 
 	if ( strategy == THREEDGRID || ( strategy == AUTOMATIC && basic::options::option[ basic::options::OptionKeys::score::find_neighbors_3dgrid ] )) {
 		find_neighbors_3dgrid( point_graph, neighbor_cutoff );
@@ -100,7 +100,7 @@ find_neighbors(
 	} else { // Use automatic or an octree strategy
 		find_neighbors_octree( point_graph, neighbor_cutoff, strategy );
 	}
-	PROF_STOP( basic::TEST2 );
+	//	PROF_STOP( basic::TEST2 );
 
 }
 
@@ -501,7 +501,7 @@ find_neighbors_restricted(
 	// when detecting neighbors for 150 points.
 	core::Size const N_POINTS_BREAK_EVEN = 150;
 
-	PROF_START( basic::TEST2 );
+	//	PROF_START( basic::TEST2 );
 
 	if ( strategy == THREEDGRID || ( strategy == AUTOMATIC && basic::options::option[ basic::options::OptionKeys::score::find_neighbors_3dgrid ] )) {
 		find_neighbors_3dgrid_restricted<Vertex,Edge>( point_graph, neighbor_cutoff, residue_selection );
@@ -510,7 +510,7 @@ find_neighbors_restricted(
 	} else { // Use automatic or an octree strategy
 		find_neighbors_octree_restricted<Vertex,Edge>( point_graph, neighbor_cutoff, residue_selection, strategy );
 	}
-	PROF_STOP( basic::TEST2 );
+	//	PROF_STOP( basic::TEST2 );
 }
 
 template <class Vertex, class Edge>
