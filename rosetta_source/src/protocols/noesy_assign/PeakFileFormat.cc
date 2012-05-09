@@ -140,14 +140,14 @@ void PeakFileFormat::write_header( std::ostream& os ) {
 		os << "#FOLD "<< dim << " " << info1_->fold_proton_resonance().start() << " " << info1_->fold_proton_resonance().end() << std::endl;
 	}
 	if ( info1_->fold_label_resonance().is_folded() ) {
-		os << "#FOLD "<< 1 << " " << info1_->fold_proton_resonance().start() << " " << info1_->fold_proton_resonance().end() << std::endl;
+		os << "#FOLD "<< 1 << " " << info1_->fold_label_resonance().start() << " " << info1_->fold_label_resonance().end() << std::endl;
 	}
 
 	if ( info2_->fold_proton_resonance().is_folded() ) {
-		os << "#FOLD "<< dim-1 << " " << info1_->fold_proton_resonance().start() << " " << info1_->fold_proton_resonance().end() << std::endl;
+		os << "#FOLD "<< dim-1 << " " << info2_->fold_proton_resonance().start() << " " << info2_->fold_proton_resonance().end() << std::endl;
 	}
 	if ( info2_->fold_label_resonance().is_folded() ) {
-		os << "#FOLD "<< 2 << " " << info1_->fold_proton_resonance().start() << " " << info1_->fold_proton_resonance().end() << std::endl;
+		os << "#FOLD "<< 2 << " " << info2_->fold_label_resonance().start() << " " << info2_->fold_label_resonance().end() << std::endl;
 	}
 
   os << "#CYANAFORMAT " << cyana_str << std::endl;
