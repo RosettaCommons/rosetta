@@ -46,9 +46,9 @@ void setup_tag2string() {
 
 	// now fill in
 	tag2string[ TEST1 ] = "TEST1";
-	tag2string[ TEST2 ] = "FIND_NEIGHBORS";
-	tag2string[ TEST3 ] = "COMPUTE_GUNN";
-	tag2string[ TEST4 ] = "SMOOTH_MOVE";
+	tag2string[ TEST2 ] = "TEST2";
+	tag2string[ TEST3 ] = "TEST3";
+	tag2string[ TEST4 ] = "TEST4";
 	tag2string[ ATOM_TREE_UPDATE_INTERNAL_COORDS ] = "ATOM_TREE_UPDATE_INTERNAL_COORDS";
 	tag2string[ ATOM_TREE_UPDATE_XYZ_COORDS ] = "ATOM_TREE_UPDATE_XYZ_COORDS";
 	tag2string[ ROTAMER_TRIALS ] = "ROTAMER_TRIALS";
@@ -267,6 +267,38 @@ void setup_tag2string() {
 	tag2string[ SILENT_FILL_STRUCT ] = "SILENT_FILL_STRUCT";
 }
 
+
+std::map<std::string, double> dynamic_prof_total;
+std::map<std::string, int> dynamic_prof_calls;
+
+DynamicProfileThis::DynamicProfileThis( std::string const& tag ) {
+	using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+
+	// don't profile unless instructed to via the option -run:profile
+	if (!option[basic::options::OptionKeys::run::profile])
+		return;
+
+	tag_ = tag;
+	start_clock_ = clock() / SHRINK_FACTOR;
+}
+
+DynamicProfileThis::~DynamicProfileThis() {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+// don't profile unless instructed to via the option -run:profile
+	if (!option[basic::options::OptionKeys::run::profile])
+		return;
+
+	clock_t const current( clock() / SHRINK_FACTOR );
+	clock_t const start( start_clock_ );
+
+	if ( current >= start ) {
+		dynamic_prof_total[ tag_ ] += clock_factor * ( current - start );
+		dynamic_prof_calls[ tag_ ] += 1;
+	}
+}
+
 void prof_show() {
 	using namespace ObjexxFCL;
 	basic::Tracer tt( "core.util.prof", basic::t_info, true /*muted by default*/ );
@@ -303,6 +335,15 @@ void prof_show() {
 		if ( ncalls ) tt << F(12,2,t) << ' ' << I(9,ncalls) << ' ' << I(9,bcalls)
 										 << ' ' << F(12,3, clocks_per_call ) << ' ' << tag2string[tag] << '\n';
 	}
+	for ( std::map< std::string, double >::const_iterator it=dynamic_prof_total.begin(); it!=dynamic_prof_total.end(); ++it ) {
+		std::string const& tag( it->first );
+		double const t( it->second );
+		int const ncalls( dynamic_prof_calls[tag] );
+		double const clocks_per_call( ncalls != 0 ? t/ncalls : 0.0 );
+		if ( ncalls ) tt << F(12,2,t) << ' ' << I(9,ncalls) << ' ' << I(9,0)
+										 << ' ' << F(12,3, clocks_per_call ) << ' ' << tag << '\n';
+
+	}
 	tt << "========================================\n";
 	tt << "========================================\n";
 	tt << "========================================" << std::endl;
@@ -329,5 +370,6 @@ void prof_reset() {
 
 	PROF_START( TOTAL );
 }
+
 
 } // basic

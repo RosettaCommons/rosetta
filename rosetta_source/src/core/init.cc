@@ -481,6 +481,16 @@ void init(int argc, char * argv [])
 
 	// set Tracer options
 	basic::TracerOptions & TO( basic::Tracer::tracer_options() );
+	if( basic::options::option[ out::mute_warning ].active() )   TO.muted_warning = basic::options::option[ out::mute_warning ]();
+	if( basic::options::option[ out::mute_info ].active() )   TO.muted_info = basic::options::option[ out::mute_info ]();
+	if( basic::options::option[ out::mute_debug ].active() )   TO.muted_debug = basic::options::option[ out::mute_debug ]();
+	if( basic::options::option[ out::mute_trace ].active() )   TO.muted_trace = basic::options::option[ out::mute_trace ]();
+
+	if( basic::options::option[ out::unmute_error ].active() )   TO.unmuted_error = basic::options::option[ out::unmute_error ]();
+	if( basic::options::option[ out::unmute_warning ].active() )   TO.unmuted_warning = basic::options::option[ out::unmute_warning ]();
+	if( basic::options::option[ out::unmute_info ].active() )   TO.unmuted_info = basic::options::option[ out::unmute_info ]();
+	if( basic::options::option[ out::unmute_debug ].active() )   TO.unmuted_debug = basic::options::option[ out::unmute_debug ]();
+
 	if( basic::options::option[ out::mute ].active() )   TO.muted = basic::options::option[ out::mute ]();
 
 	if( basic::options::option[ out::unmute ].active() ) TO.unmuted = basic::options::option[ out::unmute ]();

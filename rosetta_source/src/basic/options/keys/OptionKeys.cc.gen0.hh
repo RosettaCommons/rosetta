@@ -165,6 +165,7 @@ namespace out { IntegerOptionKey const std_IO_exit_error_code( "out:std_IO_exit_
 namespace out { StringVectorOptionKey const mute_warning( "out:mute_warning" );  }
 namespace out { StringVectorOptionKey const mute_info( "out:mute_info" );  }
 namespace out { StringVectorOptionKey const mute_debug( "out:mute_debug" );  }
+namespace out { StringVectorOptionKey const mute_trace( "out:mute_trace" );  }
 namespace out { StringVectorOptionKey const unmute_error( "out:unmute_error" );  }
 namespace out { StringVectorOptionKey const unmute_warning( "out:unmute_warning" );  }
 namespace out { StringVectorOptionKey const unmute_info( "out:unmute_info" );  }

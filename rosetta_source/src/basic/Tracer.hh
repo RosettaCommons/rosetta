@@ -126,6 +126,26 @@ struct TracerOptions
 
 	/// @brief list of unmuted channels
 	utility::vector1<std::string> unmuted;
+
+	/// @brief channel is muted for all but error-level
+  utility::vector1<std::string> muted_warning;
+
+	/// @brief channel is muted for all but warning and error level
+	utility::vector1<std::string> muted_info;
+
+	/// @brief and so on...
+	utility::vector1<std::string> muted_debug;
+	utility::vector1<std::string> muted_trace;
+
+	/// @brief channel is unmuted for error level
+	utility::vector1<std::string> unmuted_error;
+
+	/// @brief channel is unmuted for error and warning level
+	utility::vector1<std::string> unmuted_warning;
+
+	/// @brief and so on...
+	utility::vector1<std::string> unmuted_info;
+	utility::vector1<std::string> unmuted_debug;
 };
 
 
@@ -233,7 +253,7 @@ private: /// Functions
 
 	/// @brief calcualte visibility of the current object depending of the channel name and priority.
 	void calculate_visibility(void) const;
-	static void calculate_visibility(std::string const &channel, int priority, bool &visible, bool &muted, bool muted_by_default);
+	static void calculate_visibility(std::string const &channel, int priority, bool &visible, int &mute_level, bool muted_by_default);
 
 
 private: /// Data members

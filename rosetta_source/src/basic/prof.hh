@@ -416,6 +416,8 @@ enum ProfTag {
 	n_prof_tags = TOTAL
 };
 
+
+
 extern utility::vector1< std::string > tag2string;
 extern utility::vector1< clock_t > start_clock;
 extern utility::vector1< double > total_clock;
@@ -477,6 +479,15 @@ public:
 	}
 private:
 	ProfTag tag_;
+};
+
+class DynamicProfileThis {
+public:
+	DynamicProfileThis( std::string const& prof_tag );
+	~DynamicProfileThis();
+private:
+	clock_t start_clock_;
+	std::string tag_;
 };
 
 } // basic

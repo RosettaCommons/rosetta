@@ -46,6 +46,7 @@ namespace out { extern IntegerOptionKey const std_IO_exit_error_code; }
 namespace out { extern StringVectorOptionKey const mute_warning; }
 namespace out { extern StringVectorOptionKey const mute_info; }
 namespace out { extern StringVectorOptionKey const mute_debug; }
+namespace out { extern StringVectorOptionKey const mute_trace; }
 namespace out { extern StringVectorOptionKey const unmute_error; }
 namespace out { extern StringVectorOptionKey const unmute_warning; }
 namespace out { extern StringVectorOptionKey const unmute_info; }

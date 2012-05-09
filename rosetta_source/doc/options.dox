@@ -771,6 +771,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Mute specified Tracer channels for msgs with priority debug and less</dd><br>
 </dl>
 <dl>
+<dt><b>-mute_trace</b> \<StringVector\><dt>
+<dd>Mute specified Tracer channels for msgs with priority debug and less</dd><br>
+</dl>
+<dl>
 <dt><b>-unmute_error</b> \<StringVector\><dt>
 <dd>Unmute specified Tracer channels for msgs of priority ERROR and more</dd><br>
 </dl>
@@ -9917,6 +9921,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-repeat_structure</b> \<Integer\><dt>
 <dd>build identical repeats this many times</dd><br>
 <dd>Default: 1</dd><br>
+</dl>
+<dl>
+<dt><b>-lh_ex_limit</b> \<Integer\><dt>
+<dd>loophasing neighboring bin expansion limit</dd><br>
+<dd>Default: 5</dd><br>
 </dl>
 <dl>
 <dt><b>-cen_minimize</b> \<Boolean\><dt>
