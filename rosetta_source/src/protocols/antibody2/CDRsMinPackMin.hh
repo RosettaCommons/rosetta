@@ -80,7 +80,6 @@ private:
 	bool rt_min_;
     
     /// @brief refine H3 only
-	bool antibody_refine_;
     core::Real cen_cst_, high_cst_;
     moves::PyMolMoverOP pymol_;
     bool use_pymol_diy_;

@@ -255,7 +255,10 @@ std::ostream & operator<<(std::ostream& out, const CDRsMinPackMin & ab_m_2 ){
     out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
     out << line_marker << A( 47, "Rosetta 3 Antibody Modeler" ) << space( 27 ) << line_marker << std::endl;
     out << line_marker << space( 74 ) << line_marker << std::endl;
-
+    out << line_marker << "  sc_min                : " << ab_m_2.sc_min_     << std::endl;
+    out << line_marker << "  rt_min                : " << ab_m_2.rt_min_    << std::endl;
+    out << line_marker << std::endl;
+   
     // Display the state of the antibody modeler protocol that will be used
     out << line_marker << std::endl;
     out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
