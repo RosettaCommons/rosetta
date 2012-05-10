@@ -110,9 +110,9 @@ ConstraintsEnergy::residue_pair_energy(
 ) const
 {
 	if ( pose.constraint_set() == 0 ) return;
-	PROF_START( basic::CONSTRAINT_SCORE );
+	//	PROF_START( basic::CONSTRAINT_SCORE );
 	pose.constraint_set()->residue_pair_energy( rsd1, rsd2, pose, sfxn, emap );
-	PROF_STOP( basic::CONSTRAINT_SCORE );
+	//	PROF_STOP( basic::CONSTRAINT_SCORE );
 }
 
 bool
@@ -136,7 +136,7 @@ ConstraintsEnergy::residue_pair_energy_ext(
 {
 	CstMinimizationDataCOP res_cst = static_cast< CstMinimizationData const * > ( min_data.get_data( cst_respair_data )() );
 	if (!res_cst) return;
-	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
+	//	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
 	res_cst->constraints().residue_pair_energy( rsd1, rsd2, sfxn.weights(), emap );
 }
 
@@ -159,7 +159,7 @@ ConstraintsEnergy::setup_for_minimizing_for_residue(
 	ResSingleMinimizationData & res_data_cache
 ) const
 {
-	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
+	//	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
 	pose.constraint_set()->setup_for_minimizing_for_residue( rsd, pose, sfxn, minmap, res_data_cache );
 }
 
@@ -175,7 +175,7 @@ ConstraintsEnergy::setup_for_minimizing_for_residue_pair(
 	ResPairMinimizationData & respair_data_cache
 ) const
 {
-	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
+	//	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
 	pose.constraint_set()->setup_for_minimizing_for_residue_pair(
 		rsd1, rsd2, pose, sfxn, minmap,
 		res1_data_cache, res2_data_cache, respair_data_cache );
@@ -200,7 +200,7 @@ ConstraintsEnergy::setup_for_scoring_for_residue_pair(
 {
 	CstMinimizationDataOP res_cst = static_cast< CstMinimizationData * > ( data_cache.get_data( cst_respair_data )() );
 	if (!res_cst) return;
-	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
+	//	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
 	res_cst->constraints().setup_for_scoring( ResiduePairXYZ( rsd1, rsd2 ), sfxn );
 
 }
@@ -224,7 +224,7 @@ ConstraintsEnergy::setup_for_derivatives_for_residue_pair(
 {
 	CstMinimizationDataOP res_cst = static_cast< CstMinimizationData * > ( data_cache.get_data( cst_respair_data )() );
 	if (!res_cst) return;
-	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
+	//	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
 	res_cst->constraints().setup_for_derivatives( ResiduePairXYZ( rsd1, rsd2 ), sfxn );
 }
 
@@ -265,7 +265,7 @@ ConstraintsEnergy::eval_residue_pair_derivatives(
 {
 	CstMinimizationDataCOP res_cst = static_cast< CstMinimizationData const * > ( min_data.get_data( cst_respair_data )() );
 	if (!res_cst) return;
-	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
+	//	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
 	for ( Size ii = 1; ii <= rsd1.natoms(); ++ii ) {
 		res_cst->constraints().eval_respair_atom_derivative(
 			id::AtomID( ii, rsd1.seqpos() ), rsd1, rsd2, weights, r1_atom_derivs[ ii ].f1(), r1_atom_derivs[ ii ].f2() );
@@ -303,9 +303,9 @@ ConstraintsEnergy::eval_intrares_energy(
 ) const
 {
 	if ( pose.constraint_set() == 0 ) return;
-	PROF_START( basic::CONSTRAINT_SCORE );
+	//	PROF_START( basic::CONSTRAINT_SCORE );
 	pose.constraint_set()->eval_intrares_energy( rsd, pose, sfxn, emap );
-	PROF_STOP( basic::CONSTRAINT_SCORE );
+	//	PROF_STOP( basic::CONSTRAINT_SCORE );
 }
 
 /// @brief request of minimization routines that they use the extended intraresidue energy
@@ -346,7 +346,7 @@ ConstraintsEnergy::setup_for_scoring_for_residue(
 	ResSingleMinimizationData & min_data
 ) const
 {
-	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
+	//	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
 	CstMinimizationDataOP res_cst = static_cast< CstMinimizationData * > ( min_data.get_data( cst_res_data )() );
 	if (!res_cst) return;
 	res_cst->constraints().setup_for_scoring( ResidueXYZ( rsd ), sfxn );
@@ -368,7 +368,7 @@ ConstraintsEnergy::setup_for_derivatives_for_residue(
 	ResSingleMinimizationData & min_data
 ) const
 {
-	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
+	//	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
 	CstMinimizationDataOP res_cst = static_cast< CstMinimizationData * > ( min_data.get_data( cst_res_data )() );
 	if (!res_cst) return;
 	res_cst->constraints().setup_for_derivatives( ResidueXYZ( rsd ), sfxn );
@@ -402,7 +402,7 @@ ConstraintsEnergy::eval_intrares_derivatives(
 	utility::vector1< DerivVectorPair > & atom_derivs
 ) const
 {
-	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
+	//	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
 	CstMinimizationDataCOP res_cst = static_cast< CstMinimizationData const * > ( min_data.get_data( cst_res_data )() );
 	if (!res_cst) return;
 	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
@@ -459,7 +459,7 @@ ConstraintsEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & s
 	if ( pose.constraint_set() == 0 ) return; //this will never happen: since empty constraint_set is created as soon as method constraint_set() is called
 	// however, if one jumps out here after asking !has_constraints() it breaks in ScoringFunction.cc:604 because the
 	// long_rang_container is not setup for constraints.
-	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
+	//	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
 	Energies & energies( pose.energies() );
 	bool create_new_cstcontainer( false );
 	if ( energies.long_range_container( constraints_lr ) == 0 ) {
@@ -485,7 +485,7 @@ ConstraintsEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & s
 void
 ConstraintsEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sfxn ) const
 {
-	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
+	//	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
 	pose.constraint_set()->setup_for_derivatives( pose, sfxn );  //fpd
 }
 
@@ -507,7 +507,7 @@ ConstraintsEnergy::finalize_total_energy(
 ) const
 {
 	if ( pose.constraint_set() == 0 ) return;
-	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
+	//	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
 	pose.constraint_set()->eval_non_residue_pair_energy( pose, sfxn, totals );
 }
 
@@ -529,7 +529,7 @@ ConstraintsEnergy::eval_atom_derivative(
 ) const
 {
 	if ( !pose.constraint_set()->has_constraints() ) return;
-	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
+	//	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
 	pose.constraint_set()->eval_multibody_atom_derivative( id, pose, sfxn, weights, F1, F2 );
 }
 
