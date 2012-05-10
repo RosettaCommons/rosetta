@@ -292,9 +292,9 @@ void ArchiveBase::restore_status( std::istream& is ) {
 
 void ArchiveBase::save_status( std::ostream& os ) const {
 	using namespace ObjexxFCL::fmt;
-	os << "total_accepts accepts_since_last_batch total_proposed proposed_since_last_batch\n"
-		 << RJ( 14, total_accepts_ ) << RJ( 25, accepts_since_last_batch_ )
-		 << RJ( 15, total_proposed_ ) << RJ( 30, proposed_since_last_batch_) << std::endl;
+	os << "total_accepts accepts_during_stage total_proposed proposed_during_stage\n"
+		 << RJ( 14, total_accepts_+accepts_since_last_batch_ ) << RJ( 25, accepts_since_last_batch_ )
+		 << RJ( 15, total_proposed_+proposed_since_last_batch_ ) << RJ( 30, proposed_since_last_batch_) << std::endl;
 	os << "acceptance_history: " << floating_acceptance_ratio_ << "\nAH: ";
 	Size const cols( 50 );
 	Size ct( cols );

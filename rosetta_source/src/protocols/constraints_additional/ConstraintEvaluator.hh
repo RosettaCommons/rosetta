@@ -79,6 +79,9 @@ public:
 	void set_combine_ratio( core::Size setting ) {
 		constraints_combine_ratio_ = setting;
 	}
+	void set_cst_source( std::string const& tag ) {
+		cst_source_ = tag;
+	}
 
 private:
 	//add constraint set to pose --- ready for scoring
@@ -94,6 +97,7 @@ private:
 	core::Real threshold_;
 	Size max_seq_sep_;
 	Size constraints_combine_ratio_;
+	std::string cst_source_;
 };
 
 

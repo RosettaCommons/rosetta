@@ -94,6 +94,7 @@ public:
 
 protected:
 
+	void start_evaluation_timer() const;
 	///@brief yields an "evaluated" silent-struct which can be queried with select_score
 	///@detail will run scoring-process if evaluate_local() otherwise just returns the intpu-silent-struct
 	core::io::silent::SilentStructOP evaluate_silent_struct( core::io::silent::SilentStructOP from_batch ) const;
@@ -169,6 +170,8 @@ private:
 
 	///@brief keep track whether our options have been registered at start up
 	static bool options_registered_;
+
+	mutable time_t start_eval_time_;
 
 };
 

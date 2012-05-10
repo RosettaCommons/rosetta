@@ -47,6 +47,7 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
+#include <basic/prof.hh>
 // AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <utility/file/file_sys_util.hh>
 
@@ -74,7 +75,8 @@ ConstraintEvaluator::ConstraintEvaluator( std::string tag, ConstraintSet const& 
 		viol_level_ ( viol_level  ),
 		threshold_( threshold ),
 		max_seq_sep_( max_seq_sep ),
-		constraints_combine_ratio_( 1 )
+		constraints_combine_ratio_( 1 ),
+		cst_source_( "n/a" )
 {}
 
 ConstraintEvaluator::ConstraintEvaluator( std::string tag, ConstraintCOPs const& csts, Size viol_level, Real threshold, Size max_seq_sep )
@@ -86,7 +88,8 @@ ConstraintEvaluator::ConstraintEvaluator( std::string tag, ConstraintCOPs const&
 		viol_level_ ( viol_level  ),
 		threshold_( threshold ),
 		max_seq_sep_( max_seq_sep ),
-		constraints_combine_ratio_( 1 )
+		constraints_combine_ratio_( 1 ),
+		cst_source_( "n/a" )
 {
 	constraints_->add_constraints( csts );
 }
@@ -100,7 +103,8 @@ ConstraintEvaluator::ConstraintEvaluator( std::string tag, std::string file_name
 		viol_level_ ( viol_level  ),
 		threshold_( threshold ),
 		max_seq_sep_( max_seq_sep ),
-		constraints_combine_ratio_( 1 )
+		constraints_combine_ratio_( 1 ),
+		cst_source_( "n/a" )
 {
 	//check file exists
 	if ( !utility::file::file_exists( file_name_ ) ) {
@@ -128,9 +132,9 @@ void ConstraintEvaluator::prepare_pose( core::pose::Pose const& pose_in, core::p
 		runtime_assert( utility::file::file_exists( file_name_) ); //it has already been checked... here it is an assertion
 
 		using namespace core::scoring::constraints;
-		ConstraintCreatorCOP new_atom_pair_creator( new constraints_additional::NamedAtomPairConstraintCreator );
-		ConstraintCreatorCOP orig_atom_pair_creator( ConstraintFactory::get_instance()->get_creator( "AtomPair" ) ); // <-- this may actually be a NamedAtomPairConstraintCreator, we don't know; restore it, when done.
-		ConstraintFactory::get_instance()->replace_creator( new_atom_pair_creator );
+		//		ConstraintCreatorCOP new_atom_pair_creator( new constraints_additional::NamedAtomPairConstraintCreator );
+		//		ConstraintCreatorCOP orig_atom_pair_creator( ConstraintFactory::get_instance()->get_creator( "AtomPair" ) ); // <-- this may actually be a NamedAtomPairConstraintCreator, we don't know; restore it, when done.
+		//		ConstraintFactory::get_instance()->replace_creator( new_atom_pair_creator );
 		try{
 			now_cst = ConstraintIO::get_instance()->read_constraints( file_name_, new ConstraintSet, pose );
 			scoring::constraints::ConstraintCOPs added_constraints = now_cst->get_all_constraints();
@@ -152,7 +156,7 @@ void ConstraintEvaluator::prepare_pose( core::pose::Pose const& pose_in, core::p
 
 		//restore original cst-type
 		//ConstraintIO::get_cst_factory().add_type( orig_atom_pair_type );
-		ConstraintFactory::get_instance()->replace_creator( orig_atom_pair_creator );
+		//ConstraintFactory::get_instance()->replace_creator( orig_atom_pair_creator );
 
 	}
 
@@ -183,11 +187,21 @@ void ConstraintEvaluator::prepare_pose( core::pose::Pose const& pose_in, core::p
 }
 
 Real ConstraintEvaluator::apply( core::pose::Pose& pose_in ) const {
+	//	PROF_START( basic::TEST1 );
 	pose::Pose pose( pose_in );
+	//	PROF_STOP( basic::TEST1 );
+
+	//	PROF_START( basic::TEST2 );
 	prepare_pose( pose_in, pose );
+	//	PROF_STOP( basic::TEST2 );
+
+	//	PROF_START( basic::TEST3 );
 	ScoreFunction scfxn;
 	scfxn.set_weight( atom_pair_constraint, 1.0 );
-	return scfxn( pose );
+	core::Real score( scfxn( pose ) );
+	//	PROF_STOP( basic::TEST3 );
+
+	return score;
 }
 
 std::string ConstraintEvaluator::name( core::Size i ) const {
@@ -199,14 +213,24 @@ std::string ConstraintEvaluator::name( core::Size i ) const {
 
 
 void ConstraintEvaluator::apply( core::pose::Pose& pose_in, std::string, core::io::silent::SilentStruct &pss ) const {
+	//	PROF_START( basic::TEST1 );
 	pose::Pose pose( pose_in );
+	//	PROF_STOP( basic::TEST1 );
 
+	//	PROF_START( basic::TEST2 );
 	prepare_pose( pose_in, pose );
+	//	PROF_STOP( basic::TEST2 );
 
+	//	PROF_START( basic::TEST3 );
 	ScoreFunction scfxn;
 	scfxn.set_weight( atom_pair_constraint, 1.0 );
+	core::Real score( scfxn( pose ) );
+	//	PROF_STOP( basic::TEST3 );
 
-	pss.add_energy( name( 1 ), scfxn( pose ) );
+	pss.add_energy( name( 1 ), score );
+	if ( cst_source_ != "n/a" ) {
+		pss.add_string_value( "cst_source_"+name(1), cst_source_ );
+	}
 	//	pss.add_energy( name( 2 ), pose.constraint_set()->show_violations( tr.Info, pose, viol_level_, threshold_ ) );
 	//	return scfxn( pose );
 

@@ -58,6 +58,8 @@ public:
 		TOPO_RESAMPLING,
 		PURE_TOPO_RESAMPLING,
 		STAGE2_RESAMPLING,
+		NOESY_PHASEII_TOPO,
+		NOESY_PHASEII_S2_RESAMPLING,
 		CEN2FULLATOM,
 		//		CEN2FULLATOM_NON_POOL_DECOYS,
 		LAST_CENTROID_START = CEN2FULLATOM,
@@ -119,7 +121,7 @@ protected:
 
 // 	core::Real noesy_assign_float_cycle() const { return noesy_assign_float_cycle_; }
 	void set_noesy_assign_float_cycle( core::Real setting ) { noesy_assign_float_cycle_ = setting; }
-	bool scored_core_initialized_;
+	bool never_switched_noe_filter_;
 	loops::Loops scored_core_;
 	///@brief even in centroid mode the end of abinitio will have a fast relax... enables cs-score and noe-assignment
 	bool super_quick_relax_of_centroids_;
@@ -168,6 +170,7 @@ protected:
 
 	///OBSOLET cores are computed by compute_cores() in idle()
 	loops::Loops const& core( core::Size i ) {
+		if ( i == 1 ) { return core15_; };
 		if ( i == 2 ) { return core2_; };
 		if ( i == 3 ) { return core3_; };
 		if ( i == 4 ) { return core4_; };
@@ -212,9 +215,6 @@ private:
 	///@brief [OBSOLET] add score_coreX and rms_coreX evaluators (and columns) with 0.0 weight
 	void add_core_evaluator( loops::Loops const& core, std::string const& core_tag );
 
-	///@brief restrict scoring to core-regions
-	void set_scored_core();
-
 	///@brief  calls increment_stage() if appropriate
 	void test_for_stage_end();
 
@@ -222,6 +222,9 @@ private:
 	void increment_stage();
 
 	void read_noisy_assing_data_from_last_batch();
+
+	void replace_noesy_filter_constraints();
+	void rescore_archive();
 
 private:
 	///  ----------------- -- private data members -- --------------------
@@ -245,6 +248,7 @@ private:
 	core::Size last_accepted_decoys_in_idle_;
 
 	///core-regions --- used in IterativeFullatom for the "rigid-core" sampling step...
+	loops::Loops core15_;
 	loops::Loops core2_;
 	loops::Loops core3_;
 	loops::Loops core4_;

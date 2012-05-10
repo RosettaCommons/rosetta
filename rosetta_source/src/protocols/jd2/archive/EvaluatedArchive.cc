@@ -102,6 +102,10 @@ EvaluatedArchive::EvaluatedArchive( ArchiveManagerAP ptr )
 	setup_default_evaluators();
 }
 
+void EvaluatedArchive::start_evaluation_timer() const {
+	start_eval_time_ = time(NULL);
+	tr.Trace << "start evaluation" << std::endl;
+}
 
 bool EvaluatedArchive::add_structure( core::io::silent::SilentStructOP from_batch ) {
 	core::io::silent::SilentStructOP evaluated_decoy = evaluate_silent_struct( from_batch );
@@ -119,6 +123,10 @@ bool EvaluatedArchive::add_evaluated_structure( core::io::silent::SilentStructOP
 
 	//if we are at the end this decoy has a worse score than all others
 	if ( iss != decoys().end() || decoys().size() < nstruct() ) {
+		int now = time(NULL);
+		int eval_time = now-start_eval_time_;
+		evaluated_decoy->add_energy( "eval_time", 1.0*eval_time, 1.0 );
+		tr.Trace << "add evaluated structure " << evaluated_decoy->decoy_tag() << "  after " << eval_time << " seconds of evaluation."<< std::endl;
 		add_structure_at_position( iss, evaluated_decoy );
 		return true;
 	}
@@ -135,11 +143,14 @@ void EvaluatedArchive::read_structures( core::io::silent::SilentFileData& sfd, B
 		tr.Info << name << " " << weight << std::endl;
 	}
 	Parent::read_structures( sfd, batch );
+	tr.Info << "finished reading structures for batch: " << batch.batch() << std::endl;
+	basic::prof_show();
 }
 
 ///@details evaluate decoy... if non-local evaluation just copy silent-struct
 core::io::silent::SilentStructOP
 EvaluatedArchive::evaluate_silent_struct( core::io::silent::SilentStructOP iss ) const {
+	start_evaluation_timer();
 
 	//non-local evalution ? just return input
 	if ( !evaluate_local() ) {
@@ -173,6 +184,12 @@ EvaluatedArchive::evaluate_silent_struct( core::io::silent::SilentStructOP iss )
 			pss->add_energy( it->name(), it->value(), it->weight() );
 		}
 	}
+	int total_time = 0;
+	if ( pss->has_energy( "total_eval_time" ) ) {
+		int total_time = pss->get_energy( "total_eval_time" );
+	}
+	total_time += time(NULL)-start_eval_time_;
+	pss->add_energy( "total_eval_time", total_time, 1.0 );
 	return pss;
 
 }
@@ -192,6 +209,8 @@ EvaluatedArchive::evaluate_pose( core::io::silent::SilentStructOP iss, core::pos
 	PROF_START( basic::ARCHIVE_EVALUATORS );
  	for ( EvaluatorMap::const_iterator it=evaluators_.begin(), eit=evaluators_.end();
 				it!=eit; ++it ) {
+		//		tr.Trace << "evaluate with " << it->first << std::endl;
+		//		basic::DynamicProfileThis here( "Evaluate "+it->first );
 		it->second->apply( pose, iss->decoy_tag(), *iss );
 	}
 	PROF_STOP( basic::ARCHIVE_EVALUATORS );
@@ -318,10 +337,9 @@ void EvaluatedArchive::set_weight( std::string const& column, core::Real weight 
 
 core::Real EvaluatedArchive::get_weight( std::string const& column ) {
 	//	runtime_assert( has_evaluator( column ) ); or part of score!
-	if ( has_evaluator( column ) ) {
-		return select_weights_[ column ];
-	};
-	return 0.0;
+	WeightMap::iterator iter = select_weights_.find( column );
+	if ( iter != select_weights_.end() ) return iter->second;
+	else return 0.0;
 }
 
 bool EvaluatedArchive::has_evaluator( std::string const& column ) {
@@ -362,12 +380,12 @@ void EvaluatedArchive::setup_default_evaluators() {
 		set_weight( SPECIAL_INITIAL_DECOY_PENALTY , option[ OptionKeys::iterative::penalize_initial_decoys ]() );
 	}
 
-	evaluation::MetaPoseEvaluator cmdline_evals;
-	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(cmdline_evals);
-	for ( evaluation::MetaPoseEvaluator::EvaluatorList::const_iterator it = cmdline_evals.evaluators().begin();
-				it != cmdline_evals.evaluators().end(); ++it ) {
- 		add_evaluation( *it );
-	}
+	//	evaluation::MetaPoseEvaluator cmdline_evals;
+	//	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(cmdline_evals);
+	//	for ( evaluation::MetaPoseEvaluator::EvaluatorList::const_iterator it = cmdline_evals.evaluators().begin();
+	//				it != cmdline_evals.evaluators().end(); ++it ) {
+	// 		add_evaluation( *it );
+	//	}
 }
 
 /* =================== end maintenance of evaluators and weights ====================== */

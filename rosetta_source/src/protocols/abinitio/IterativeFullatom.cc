@@ -110,7 +110,6 @@ IterativeFullatom::IterativeFullatom()
 		}
 	}
 	set_noesy_assign_float_cycle( option[ iterative::fapool_first_noesy_cycle_nr ]() );
-	scored_core_initialized_ = true;
 	if ( super_quick_relax_of_centroids_ ) {
 		set_weight( "score_fa", 1.0 );
 		set_weight( "prefa_centroid_score", 0.0 );
