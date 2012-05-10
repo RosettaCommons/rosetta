@@ -118,7 +118,7 @@ VDW_Energy::residue_pair_energy(
 {
 	using namespace etable::count_pair;
 	Real score(0.0);
-	basic::ProfileThis doit( basic::VDW_ENERGY );
+	//	basic::ProfileThis doit( basic::VDW_ENERGY );
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		// assuming only a single bond right now -- generalizing to arbitrary topology
 		// also assuming crossover of 4, should be closest (?) to classic rosetta
@@ -192,7 +192,7 @@ VDW_Energy::eval_atom_derivative(
  	) const
 {
 	using namespace etable::count_pair;
-	basic::ProfileThis doit( basic::VDW_ENERGY );
+	//	basic::ProfileThis doit( basic::VDW_ENERGY );
 	// what is my charge?
 	Size const pos1( atom_id.rsd() );
 	Size const i   ( atom_id.atomno() );

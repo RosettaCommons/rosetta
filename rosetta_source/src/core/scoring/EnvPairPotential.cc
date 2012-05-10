@@ -302,7 +302,7 @@ EnvPairPotential::compute_centroid_environment(
 	pose::Pose & pose
 ) const
 {
-	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
+	//	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
 
 	CenListInfo & cenlist( nonconst_cenlist_from_pose( pose ));
 
@@ -329,9 +329,9 @@ EnvPairPotential::compute_centroid_environment(
  				Size const j( edge->get_second_node_ind() );
  				conformation::Residue const & rsd2 ( pose.residue(j) );
  				if ( !rsd2.is_protein() ) continue;
- 
+
  				Real const cendist = edge->square_distance();
- 
+
  				//  compute arrays needed for C-beta  energy function
  				//  first do a coarse grain reality check on centroid separations
  				if ( cendist <= cen_dist_cutoff_12_pad ) {
@@ -365,7 +365,7 @@ EnvPairPotential::evaluate_env_and_cbeta_scores(
 {
 	//using ObjexxFCL::fmt::F; // debugging
 	//using ObjexxFCL::fmt::I;
-	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
+	//	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
 
 	CenListInfo const & cenlist( cenlist_from_pose( pose ));
 
@@ -424,7 +424,7 @@ EnvPairPotential::evaluate_pair_and_cenpack_score(
 	Real & cenpack_contribution
 ) const
 {
-	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
+	//	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
 
 	pair_contribution    = 0.0;
 	cenpack_contribution = 0.0;

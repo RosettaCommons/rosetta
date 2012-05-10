@@ -152,14 +152,14 @@ SmoothEnvPairPotential::SmoothEnvPairPotential() {
 					if (tag == "GAUSSIAN")
 						currEnv.add_gaussian(g);
 					else
-						currEnv.add_sigmoid(g); 
+						currEnv.add_sigmoid(g);
 				}
 			}
 		} else if (tag == "PAIR:") {
 			// do pair stuff
 			// do env stuff
 			l >> aa1 >> aa2;
-			SmoothScoreTermCoeffs & currPair = 
+			SmoothScoreTermCoeffs & currPair =
 				pair_[std::min(aa1,aa2)][std::max(aa1,aa2)];  // symmetrical; just store one half
 
 			l >> tag;
@@ -243,7 +243,7 @@ void
 SmoothEnvPairPotential::compute_centroid_environment(
 	pose::Pose & pose
 ) const {
-	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
+	//	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
 
 	SigmoidWeightedCenList<Real> & cenlist( nonconst_cenlist_from_pose( pose ));
 
@@ -281,7 +281,7 @@ void
 SmoothEnvPairPotential::compute_dcentroid_environment(
 	pose::Pose & pose
 ) const {
-	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
+	//	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
 
 	SigmoidWeightedCenList< numeric::xyzVector< Real > > & dcenlist( nonconst_dcenlist_from_pose( pose ));
 
@@ -333,7 +333,7 @@ SmoothEnvPairPotential::evaluate_env_and_cbeta_scores(
 	Real & cb_score6,
 	Real & cb_score12
 ) const {
-	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
+	//	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
 
 	SigmoidWeightedCenList< Real > const & cenlist( cenlist_from_pose( pose ));
 
@@ -349,7 +349,7 @@ SmoothEnvPairPotential::evaluate_env_and_cbeta_scores(
 		cb_score12 = cbeta12_.func( fcen12 );
 	} else {
 		env_score = 0.0;
-		cb_score6  = 0.0; 
+		cb_score6  = 0.0;
 		cb_score12 = 0.0;
 	}
 }
@@ -363,7 +363,7 @@ SmoothEnvPairPotential::evaluate_pair_and_cenpack_score(
 	Real & pair_contribution,
 	Real & cenpack_contribution
 ) const {
-	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
+	//	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
 
 	pair_contribution    = 0.0;
 	cenpack_contribution = 0.0;
@@ -401,7 +401,7 @@ SmoothEnvPairPotential::evaluate_env_and_cbeta_deriv(
 		numeric::xyzVector<Real> & d_cb_score6,
 		numeric::xyzVector<Real> & d_cb_score12
 	) const {
-	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
+	//	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
 
 	d_env_score = 0.0;
 	d_cb_score6  = 0.0;
@@ -437,7 +437,7 @@ SmoothEnvPairPotential::evaluate_pair_and_cenpack_deriv(
 		Real & d_pair,
 		Real & d_cenpack
 	) const {
-	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
+	//	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
 
 	d_pair = 0.0;
 	d_cenpack = 0.0;
