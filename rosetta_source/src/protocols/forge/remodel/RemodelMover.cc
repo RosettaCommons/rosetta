@@ -228,7 +228,8 @@ RemodelMover::RemodelMover( RemodelMover const & rval ) :
 	//resfile_( rval.resfile_ ),
 	dr_cycles_( rval.dr_cycles_ ),
 	centroid_sfx_( rval.centroid_sfx_->clone() ),
-	fullatom_sfx_( rval.fullatom_sfx_->clone() )
+	fullatom_sfx_( rval.fullatom_sfx_->clone() ),
+	blueprint_( rval.blueprint_ )
 {
 	if ( rval.vlb_.get() ) {
 		vlb_ = new VarLengthBuild( *rval.vlb_ );
@@ -360,7 +361,16 @@ void RemodelMover::apply( Pose & pose ) {
 	protocols::forge::remodel::RemodelData remodel_data;
 	protocols::forge::remodel::WorkingRemodelSet working_model;
 	// read blueprint
-	remodel_data.getLoopsToBuildFromFile();
+	
+	//TR << "blueprint value 0 is " << blueprint_ << std::endl;
+
+	if (blueprint_ == "") { 
+		//TR << "blueprint value 1 is " << blueprint_ << std::endl;
+		blueprint_ = option[basic::options::OptionKeys::remodel::blueprint](); 
+		//TR << "blueprint value 2 is " << blueprint_ << std::endl;
+	} 
+
+	remodel_data.getLoopsToBuildFromFile(blueprint_); 
 
 	TR << pose.total_residue() << std::endl;
 	ObjexxFCL::FArray1D_char dsspSS( pose.total_residue() );
@@ -1622,12 +1632,18 @@ utility::vector1< bool > const & RemodelMover::allowed_surface_aa() {
 /// @brief parse xml
 void
 RemodelMover::parse_my_tag(
-	TagPtr const,
-	DataMap &,
-	Filters_map const &,
-	Movers_map const &,
-	Pose const & )
-{}
+	utility::tag::TagPtr const tag,
+	DataMap & /*data*/,
+	Filters_map const & /*filters*/,
+	Movers_map const & /*movers*/,
+	Pose const & /*pose*/ )
+{
+		TR << "blueprint_tag value 0 is " << blueprint_ << std::endl;	
+	if( tag->hasOption("blueprint") ) {
+		blueprint_ = tag->getOption<std::string>( "blueprint" );
+		TR << "blueprint_tag value 1 is " << blueprint_ << std::endl;
+	}
+}
 
 
 

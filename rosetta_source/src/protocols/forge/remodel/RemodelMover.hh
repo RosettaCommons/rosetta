@@ -462,6 +462,12 @@ private: // data
 	/// @brief the full-atom scorefunction to use, default score12
 	ScoreFunctionOP fullatom_sfx_;
 
+
+	//blueprint
+	String blueprint_; 
+
+
+
 struct instruction_flags {
   Size num_trajectory;
   Size num_report ;

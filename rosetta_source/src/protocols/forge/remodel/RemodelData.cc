@@ -109,14 +109,14 @@ protocols::forge::remodel::RemodelData::RemodelData(){
 }
 
 void
-protocols::forge::remodel::RemodelData::getLoopsToBuildFromFile()
+protocols::forge::remodel::RemodelData::getLoopsToBuildFromFile(std::string filename)
 {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
 // read blueprint file and load everything into the maps
-	std::string filename(option[basic::options::OptionKeys::remodel::blueprint]());
+//	std::string filename(option[basic::options::OptionKeys::remodel::blueprint]());
 
 	if (filename == ""){
 		TR_REMODEL << "can't find blueprint file for remodel!" << std::endl;
