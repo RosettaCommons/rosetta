@@ -435,6 +435,11 @@ public:
 	/// @brief output operator
 	friend std::ostream & operator <<(std::ostream & os, PackerTask const & t);
 
+	virtual
+	void
+	update_commutative(
+		PackerTask const & to_copy
+	) = 0;
 
 };
 

@@ -684,7 +684,7 @@ void ResidueLevelTask_::prevent_repacking()
 	allowed_residue_types_.clear();
 	determine_if_designing();
 	determine_if_repacking();
-	mode_tokens.push_back("NATRO");
+	mode_tokens_.push_back("NATRO");
 }
 
 
@@ -697,32 +697,32 @@ ResidueLevelTask_::restrict_absent_canonical_aas( utility::vector1< bool > const
 	Size num_allowed = std::count( allowed_aas.begin(), allowed_aas.end(), true);
 	std::ostringstream aas;
 	if (num_allowed == 0){
-		mode_tokens.push_back("EMPTY");
+		mode_tokens_.push_back("EMPTY");
 	} else if ( num_allowed == chemical::num_canonical_aas ){
 		// this doesn't constrain anything...
 	} else if (num_allowed < chemical::num_canonical_aas/2){
-		mode_tokens.push_back("PIKAA");
+		mode_tokens_.push_back("PIKAA");
 		for( Size i = 1; i <= chemical::num_canonical_aas; ++i ){
 			if( allowed_aas[ i ] ){
 				aas << chemical::oneletter_code_from_aa( static_cast<chemical::AA>(i) );
 			}
 		}
 	} else {
-		mode_tokens.push_back("NOTAA");
+		mode_tokens_.push_back("NOTAA");
 		for( Size i = 1; i <= chemical::num_canonical_aas; ++i ){
 			if( !allowed_aas[ i ] ){
 				aas << chemical::oneletter_code_from_aa( static_cast<chemical::AA>(i) );
 			}
 		}
 	}
-	mode_tokens.push_back(aas.str() );
+	mode_tokens_.push_back(aas.str() );
 	do_restrict_absent_canonical_aas( allowed_aas );
 }
 
 void
 ResidueLevelTask_::restrict_absent_canonical_aas( utility::vector1< bool > const & allowed_aas, std::string const & mode )
 {
-	mode_tokens.push_back( mode );
+	mode_tokens_.push_back( mode );
 	do_restrict_absent_canonical_aas( allowed_aas );
 }
 
@@ -804,8 +804,8 @@ ResidueLevelTask_::restrict_absent_nas(
 		//nas << chemical::oneletter_code_from_aa( *na );
 		nas << chemical::name_from_aa( *na );
 	}
-	mode_tokens.push_back( "NA" );
-	mode_tokens.push_back( nas.str() );
+	mode_tokens_.push_back( "NA" );
+	mode_tokens_.push_back( nas.str() );
 
 }
 
@@ -829,7 +829,7 @@ ResidueLevelTask_::restrict_to_repacking()
 	design_disabled_ = true;
 	determine_if_designing();
 	determine_if_repacking();
-	mode_tokens.push_back("NATAA");
+	mode_tokens_.push_back("NATAA");
 }
 
 bool ResidueLevelTask_::is_original_type( chemical::ResidueTypeCAP type ) const
@@ -870,8 +870,8 @@ void ResidueLevelTask_::allow_noncanonical_aa(
 		}
 	}
 
-	mode_tokens.push_back("NC");
-	mode_tokens.push_back(aaname);
+	mode_tokens_.push_back("NC");
+	mode_tokens_.push_back(aaname);
 
 	determine_if_designing();
 	determine_if_repacking();
@@ -1072,6 +1072,340 @@ ResidueLevelTask_::append_rotamerset_operation(
 
 
 
+
+
+
+void
+ResidueLevelTask_::update_union( ResidueLevelTask const & t )
+{
+	T << "ResidueLevelTask_::update_union" << std::endl;
+	ResidueLevelTask_ const & o(dynamic_cast<ResidueLevelTask_ const &>(t));
+
+	for(utility::vector1<std::string>::const_iterator i = o.behaviors_.begin(); i != o.behaviors_.end(); ++i){
+		if( std::find(behaviors_.begin(),behaviors_.end(),*i) == behaviors_.end() ) {
+			std::cout << "behaviors_ add " << *i;
+			behaviors_.push_back(*i);
+		}
+	}
+	for(rotamer_set::RotamerOperations::const_iterator i = o.rotamer_operations_.begin(); i != o.rotamer_operations_.end(); ++i){
+		if( std::find(rotamer_operations_.begin(),rotamer_operations_.end(),*i) == rotamer_operations_.end() ) {
+			std::cout << "rotamer_operations_ add " << *i;
+			rotamer_operations_.push_back(*i);
+		}
+	}
+	for(rotamer_set::RotSetOperationList::const_iterator i = o.rotsetops_.begin(); i != o.rotsetops_.end(); ++i){
+		if( std::find(rotsetops_.begin(),rotsetops_.end(),*i) == rotsetops_.end() ) {
+			std::cout << "rotsetops_ add " << *i;
+			rotsetops_.push_back(*i);
+		}
+	}
+	for(std::vector<std::string>::const_iterator i = o.mode_tokens_.begin(); i != o.mode_tokens_.end(); ++i){
+		if( std::find(mode_tokens_.begin(),mode_tokens_.end(),*i) == mode_tokens_.end() ) {
+			std::cout << "mode_tokens_ add " << *i;
+			mode_tokens_.push_back(*i);
+		}
+	}
+	for(ResidueTypeCAPList::const_iterator i = o.allowed_residue_types_.begin(); i != o.allowed_residue_types_.end(); ++i){
+		if( std::find(allowed_residue_types_.begin(),allowed_residue_types_.end(),*i) == allowed_residue_types_.end() ) {
+			std::cout << "allowed_residue_types_ add " << (*i)->name();
+			allowed_residue_types_.push_back(*i);
+			std::cout << " set disabled false ";
+
+		}
+	}
+
+	determine_if_designing();
+	determine_if_repacking();
+	design_disabled_ = !designing_;
+	disabled_  = !repacking_;
+
+	include_current_             |= o.include_current_;
+	adducts_                     |= o.adducts_;
+	optimize_H_mode_             |= o.optimize_H_mode_;
+	preserve_c_beta_             |= o.preserve_c_beta_;
+	flip_HNQ_                    |= o.flip_HNQ_;
+	fix_his_tautomer_            |= o.fix_his_tautomer_;
+	sample_proton_chi_           |= o.sample_proton_chi_;
+	sample_rna_chi_              |= o.sample_rna_chi_;
+	ex1_                         |= o.ex1_;
+	ex2_                         |= o.ex2_;
+	ex3_                         |= o.ex3_;
+	ex4_                         |= o.ex4_;
+	ex1aro_                      |= o.ex1aro_;
+	ex2aro_                      |= o.ex2aro_;
+	ex1aro_exposed_              |= o.ex1aro_exposed_;
+	ex2aro_exposed_              |= o.ex2aro_exposed_;
+	operate_on_ex1_              |= o.operate_on_ex1_;
+	operate_on_ex2_              |= o.operate_on_ex2_;
+	operate_on_ex3_              |= o.operate_on_ex3_;
+	operate_on_ex4_              |= o.operate_on_ex4_;
+	use_input_sc_                |= o.use_input_sc_;
+	ex1_sample_level_             = (ExtraRotSample)std::max((int)ex1_sample_level_,(int)o.ex1_sample_level_);
+	ex2_sample_level_             = (ExtraRotSample)std::max((int)ex2_sample_level_,(int)o.ex2_sample_level_);
+	ex3_sample_level_             = (ExtraRotSample)std::max((int)ex3_sample_level_,(int)o.ex3_sample_level_);
+	ex4_sample_level_             = (ExtraRotSample)std::max((int)ex4_sample_level_,(int)o.ex4_sample_level_);
+	ex1aro_sample_level_          = (ExtraRotSample)std::max((int)ex1aro_sample_level_,(int)o.ex1aro_sample_level_);
+	ex2aro_sample_level_          = (ExtraRotSample)std::max((int)ex2aro_sample_level_,(int)o.ex2aro_sample_level_);
+	ex1aro_exposed_sample_level_  = (ExtraRotSample)std::max((int)ex1aro_exposed_sample_level_,(int)o.ex1aro_exposed_sample_level_);
+	ex2aro_exposed_sample_level_  = (ExtraRotSample)std::max((int)ex2aro_exposed_sample_level_,(int)o.ex2aro_exposed_sample_level_);
+	exdna_sample_level_           = (ExtraRotSample)std::max((int)exdna_sample_level_,(int)o.exdna_sample_level_);
+	extrachi_cutoff_              = std::min(o.extrachi_cutoff_,extrachi_cutoff_);
+
+}
+
+
+void
+ResidueLevelTask_::update_intersection( ResidueLevelTask const & t )
+{
+	T << "ResidueLevelTask_::update_union" << std::endl;
+	ResidueLevelTask_ const & o(dynamic_cast<ResidueLevelTask_ const &>(t));
+
+	utility::vector1<std::string> new_behaviors;
+	for(utility::vector1<std::string>::const_iterator i = o.behaviors_.begin(); i != o.behaviors_.end(); ++i){
+		if( std::find(  behaviors_.begin(),  behaviors_.end(),*i) !=   behaviors_.end() &&
+			std::find(o.behaviors_.begin(),o.behaviors_.end(),*i) != o.behaviors_.end() ){
+			new_behaviors.push_back(*i);
+		}
+	}
+	behaviors_ = new_behaviors;
+
+	rotamer_set::RotamerOperations new_rotamer_operations;
+	for(rotamer_set::RotamerOperations::const_iterator i = o.rotamer_operations_.begin(); i != o.rotamer_operations_.end(); ++i){
+		if( std::find(  rotamer_operations_.begin(),  rotamer_operations_.end(),*i) !=   rotamer_operations_.end() &&
+			std::find(o.rotamer_operations_.begin(),o.rotamer_operations_.end(),*i) != o.rotamer_operations_.end() ){
+			rotamer_operations_.push_back(*i);
+		}
+	}
+	rotamer_operations_ = new_rotamer_operations;
+
+
+
+	rotamer_set::RotSetOperationList new_rotsetops;
+	for(rotamer_set::RotSetOperationList::const_iterator i = o.rotsetops_.begin(); i != o.rotsetops_.end(); ++i){
+		if( std::find(  rotsetops_.begin(),  rotsetops_.end(),*i) !=   rotsetops_.end() &&
+			std::find(o.rotsetops_.begin(),o.rotsetops_.end(),*i) != o.rotsetops_.end() ){
+			rotsetops_.push_back(*i);
+		}
+	}
+	rotsetops_ = new_rotsetops;
+
+	std::vector<std::string> new_mode_tokens_;
+	for(std::vector<std::string>::const_iterator i = o.mode_tokens_.begin(); i != o.mode_tokens_.end(); ++i){
+		if( std::find(  mode_tokens_.begin(),  mode_tokens_.end(),*i) !=   mode_tokens_.end() &&
+			std::find(o.mode_tokens_.begin(),o.mode_tokens_.end(),*i) != o.mode_tokens_.end() ){
+			mode_tokens_.push_back(*i);
+		}
+	}
+	mode_tokens_ = new_mode_tokens_;
+
+	ResidueTypeCAPList new_allowed_residue_types;
+	for(ResidueTypeCAPList::const_iterator i = o.allowed_residue_types_.begin(); i != o.allowed_residue_types_.end(); ++i){
+		if( std::find(  allowed_residue_types_.begin(),  allowed_residue_types_.end(),*i) !=   allowed_residue_types_.end() &&
+			std::find(o.allowed_residue_types_.begin(),o.allowed_residue_types_.end(),*i) != o.allowed_residue_types_.end() ){
+			allowed_residue_types_.push_back(*i);
+		}
+	}
+	allowed_residue_types_ = new_allowed_residue_types;
+
+	determine_if_designing();
+	determine_if_repacking();
+	design_disabled_ = !designing_;
+	disabled_  = !repacking_;
+
+	include_current_             &= o.include_current_;
+	adducts_                     &= o.adducts_;
+	optimize_H_mode_             &= o.optimize_H_mode_;
+	preserve_c_beta_             &= o.preserve_c_beta_;
+	flip_HNQ_                    &= o.flip_HNQ_;
+	fix_his_tautomer_            &= o.fix_his_tautomer_;
+	sample_proton_chi_           &= o.sample_proton_chi_;
+	sample_rna_chi_              &= o.sample_rna_chi_;
+	ex1_                         &= o.ex1_;
+	ex2_                         &= o.ex2_;
+	ex3_                         &= o.ex3_;
+	ex4_                         &= o.ex4_;
+	ex1aro_                      &= o.ex1aro_;
+	ex2aro_                      &= o.ex2aro_;
+	ex1aro_exposed_              &= o.ex1aro_exposed_;
+	ex2aro_exposed_              &= o.ex2aro_exposed_;
+	operate_on_ex1_              &= o.operate_on_ex1_;
+	operate_on_ex2_              &= o.operate_on_ex2_;
+	operate_on_ex3_              &= o.operate_on_ex3_;
+	operate_on_ex4_              &= o.operate_on_ex4_;
+	use_input_sc_                &= o.use_input_sc_;
+	ex1_sample_level_             = (ExtraRotSample)std::min((int)ex1_sample_level_,(int)o.ex1_sample_level_);
+	ex2_sample_level_             = (ExtraRotSample)std::min((int)ex2_sample_level_,(int)o.ex2_sample_level_);
+	ex3_sample_level_             = (ExtraRotSample)std::min((int)ex3_sample_level_,(int)o.ex3_sample_level_);
+	ex4_sample_level_             = (ExtraRotSample)std::min((int)ex4_sample_level_,(int)o.ex4_sample_level_);
+	ex1aro_sample_level_          = (ExtraRotSample)std::min((int)ex1aro_sample_level_,(int)o.ex1aro_sample_level_);
+	ex2aro_sample_level_          = (ExtraRotSample)std::min((int)ex2aro_sample_level_,(int)o.ex2aro_sample_level_);
+	ex1aro_exposed_sample_level_  = (ExtraRotSample)std::min((int)ex1aro_exposed_sample_level_,(int)o.ex1aro_exposed_sample_level_);
+	ex2aro_exposed_sample_level_  = (ExtraRotSample)std::min((int)ex2aro_exposed_sample_level_,(int)o.ex2aro_exposed_sample_level_);
+	exdna_sample_level_           = (ExtraRotSample)std::min((int)exdna_sample_level_,(int)o.exdna_sample_level_);
+	extrachi_cutoff_              = std::max(o.extrachi_cutoff_,extrachi_cutoff_);
+
+}
+
+void
+ResidueLevelTask_::update_commutative(
+	ResidueLevelTask const & t
+){
+	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+	ResidueLevelTask_ const & o(dynamic_cast<ResidueLevelTask_ const &>(t));
+
+	include_current_              = o.include_current_;
+	adducts_                      = o.adducts_;
+	designing_                    = o.designing_;
+	repacking_                    = o.repacking_;
+	optimize_H_mode_              = o.optimize_H_mode_;
+	preserve_c_beta_              = o.preserve_c_beta_;
+	flip_HNQ_                     = o.flip_HNQ_;
+	fix_his_tautomer_             = o.fix_his_tautomer_;
+	disabled_                     = o.disabled_;
+	design_disabled_              = o.design_disabled_;
+	sample_proton_chi_            = o.sample_proton_chi_;
+	sample_rna_chi_               = o.sample_rna_chi_;
+	ex1_                          = o.ex1_;
+	ex2_                          = o.ex2_;
+	ex3_                          = o.ex3_;
+	ex4_                          = o.ex4_;
+	ex1aro_                       = o.ex1aro_;
+	ex2aro_                       = o.ex2aro_;
+	ex1aro_exposed_               = o.ex1aro_exposed_;
+	ex2aro_exposed_               = o.ex2aro_exposed_;
+	ex1_sample_level_             = o.ex1_sample_level_;
+	ex2_sample_level_             = o.ex2_sample_level_;
+	ex3_sample_level_             = o.ex3_sample_level_;
+	ex4_sample_level_             = o.ex4_sample_level_;
+	ex1aro_sample_level_          = o.ex1aro_sample_level_;
+	ex2aro_sample_level_          = o.ex2aro_sample_level_;
+	ex1aro_exposed_sample_level_  = o.ex1aro_exposed_sample_level_;
+	ex2aro_exposed_sample_level_  = o.ex2aro_exposed_sample_level_;
+	exdna_sample_level_           = o.exdna_sample_level_;
+	extrachi_cutoff_              = o.extrachi_cutoff_;
+	operate_on_ex1_               = o.operate_on_ex1_;
+	operate_on_ex2_               = o.operate_on_ex2_;
+	operate_on_ex3_               = o.operate_on_ex3_;
+	operate_on_ex4_               = o.operate_on_ex4_;
+	use_input_sc_                 = o.use_input_sc_;
+
+	target_residue_type_ = o.target_residue_type_;
+
+	allowed_residue_types_.clear(); allowed_residue_types_.insert(allowed_residue_types_.begin(),o.allowed_residue_types_.begin(),o.allowed_residue_types_.end());
+	rotamer_operations_   .clear(); rotamer_operations_   .insert(rotamer_operations_   .begin(),o.rotamer_operations_   .begin(),o.rotamer_operations_   .end());
+	rotsetops_            .clear(); rotsetops_            .insert(rotsetops_            .begin(),o.rotsetops_            .begin(),o.rotsetops_            .end());
+	behaviors_            .clear(); behaviors_            .insert(behaviors_            .begin(),o.behaviors_            .begin(),o.behaviors_            .end());
+	mode_tokens_           .clear(); mode_tokens_           .insert(mode_tokens_           .begin(),o.mode_tokens_           .begin(),o.mode_tokens_           .end());
+}
+
+void
+PackerTask_::update_residue_union(
+	Size resid,
+	ResidueLevelTask const & t 
+){
+	ResidueLevelTask_ const & o(dynamic_cast<ResidueLevelTask_ const &>(t));
+	residue_tasks_[resid].update_union(o);
+	pack_residue_[resid] = residue_tasks_[resid].being_packed();
+}
+
+void
+PackerTask_::update_residue_intersection(
+	Size resid,
+	ResidueLevelTask const & t
+){
+	ResidueLevelTask_ const & o(dynamic_cast<ResidueLevelTask_ const &>(t));
+	residue_tasks_[resid].update_intersection(o);
+	pack_residue_[resid] = residue_tasks_[resid].being_packed();
+}
+
+void
+PackerTask_::update_residue_commutative(
+	Size resid,
+	ResidueLevelTask const & t
+){
+	ResidueLevelTask_ const & o(dynamic_cast<ResidueLevelTask_ const &>(t));
+	residue_tasks_[resid].update_commutative(o);
+	pack_residue_[resid] = residue_tasks_[resid].being_packed();
+}
+
+void
+PackerTask_::update_commutative(
+	PackerTask const & t
+){
+
+	for(int i = 0; i < 9; ++i){
+		std::cerr << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+		std::cerr << "!!!!!!!!!!!!!!  update update_commutative temporarially is copy! !!!!!!!!!!!!!!" << std::endl;
+		std::cerr << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+	}
+
+	PackerTask_ const & o(dynamic_cast<PackerTask_ const &>(t));
+
+	if( nres_ != o.nres_ ) utility_exit_with_message("unmatching nres_");
+	disallow_quench_ = o.disallow_quench_;
+	bump_check_ = o.bump_check_;
+	optimize_H_ = o.optimize_H_;
+	multi_cool_annealer_ = o.multi_cool_annealer_;
+	double_lazy_ig_ = o.double_lazy_ig_;
+	lazy_ig_ = o.lazy_ig_;
+	linmem_ig_ = o.linmem_ig_;
+	high_temp_ = o.high_temp_;
+	low_temp_ = o.low_temp_;
+	max_rotbump_energy_ = o.max_rotbump_energy_;
+	mca_history_size_ = o.mca_history_size_;
+	dlig_mem_limit_ = o.dlig_mem_limit_;
+	n_to_be_packed_ = o.n_to_be_packed_;
+	n_to_be_packed_up_to_date_ = o.n_to_be_packed_up_to_date_;
+
+	rotamer_couplings_ = o.rotamer_couplings_;
+	rotamer_links_ = o.rotamer_links_;
+
+	if(o.IG_edge_reweights_) {
+		IG_edge_reweights_  = new IGEdgeReweightContainer(nres_);
+		for(utility::vector1< IGEdgeReweighterOP >::const_iterator i = o.IG_edge_reweights_->reweighters_begin();
+			i != o.IG_edge_reweights_->reweighters_end(); ++i) {
+			IG_edge_reweights_->add_reweighter(*i);
+		}
+	} else {
+		IG_edge_reweights_ = NULL;
+	}
+
+	for(Size i = 1; i <= residue_tasks_.size(); ++i) residue_tasks_[i].update_commutative(o.residue_tasks_[i]);
+	for(Size i = 1; i <= pack_residue_.size(); ++i) pack_residue_[i] = residue_tasks_[i].being_packed();
+}
+
+void
+PackerTask_::request_symmetrize_by_intersection(){
+	if( symmetry_status_ == NO_SYMMETRIZATION_REQUEST ){
+		symmetry_status_ = REQUEST_SYMMETRIZE_BY_INTERSECTION;
+	}
+	if( symmetry_status_ != REQUEST_SYMMETRIZE_BY_INTERSECTION ) {
+		utility_exit_with_message("PackerTask can be symmetrized by union or by intersection but not both.");
+	}
+}
+
+void
+PackerTask_::request_symmetrize_by_union(){
+	if( symmetry_status_ == NO_SYMMETRIZATION_REQUEST ){
+		symmetry_status_ = REQUEST_SYMMETRIZE_BY_UNION;
+	}
+	if( symmetry_status_ != REQUEST_SYMMETRIZE_BY_UNION ) {
+		utility_exit_with_message("PackerTask can be symmetrized by union or by intersection but not both.");
+	}
+}
+
+bool
+PackerTask_::symmetrize_by_union() const {
+	return symmetry_status_ == REQUEST_SYMMETRIZE_BY_UNION;
+}
+
+bool
+PackerTask_::symmetrize_by_intersection() const {
+	return symmetry_status_ == REQUEST_SYMMETRIZE_BY_INTERSECTION;
+}
+
+
 ///@details constructor requires a pose.  most settings are in ResidueLevelTask
 ///nres_ is copied from the pose, all residues are set to be packable by default, and bump_check is true
 ///the constructor reads NEITHER the command line flags NOR a resfile; this must be done after creation!
@@ -1094,7 +1428,8 @@ PackerTask_::PackerTask_(
 	max_rotbump_energy_( 5.0 ),
 	low_temp_( -1.0 ), //default --> let annealer pick
 	high_temp_( -1.0 ), //default --> let annealer pick
-	disallow_quench_( false )
+	disallow_quench_( false ),
+	symmetry_status_(NO_SYMMETRIZATION_REQUEST)
 {
 	//create residue-level tasks
 	residue_tasks_.reserve( nres_ );
@@ -1124,6 +1459,9 @@ Size PackerTask_::total_residue() const
 void
 PackerTask_::clean_residue_task( conformation::Residue const & original_residue, Size const seqpos)
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	if ( !pack_residue_[ seqpos ] ){
 		--n_to_be_packed_;
 		pack_residue_[ seqpos ] = true;
@@ -1135,6 +1473,9 @@ PackerTask_::clean_residue_task( conformation::Residue const & original_residue,
 ///This does not affect underlying ResidueLevelTasks, but at the moment there is no method for reversing
 void PackerTask_::temporarily_fix_everything()
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	for ( Size ii = 1; ii <= nres_; ++ii )
 	{
 		pack_residue_[ ii ] = false;
@@ -1147,6 +1488,9 @@ void PackerTask_::temporarily_fix_everything()
 ///reverse with same function, opposite bool input
 void PackerTask_::temporarily_set_pack_residue( int resid, bool setting )
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	if ( ! setting && pack_residue_[ resid ]) {
 		--n_to_be_packed_;
 	} else if ( setting && ! pack_residue_[ resid ] ) {
@@ -1186,11 +1530,19 @@ bool PackerTask_::design_any() const
 	return false;
 }
 
-void PackerTask_::set_bump_check( bool setting ) { bump_check_ = setting; }
+void PackerTask_::set_bump_check( bool setting ) {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
+	bump_check_ = setting;
+}
 bool PackerTask_::bump_check() const { return bump_check_; }
 
 void PackerTask_::and_max_rotbump_energy( Real setting )
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	if ( setting < 0 ) return;
 	if ( setting < max_rotbump_energy_ ) {
 		max_rotbump_energy_ = setting;
@@ -1205,6 +1557,9 @@ Real PackerTask_::max_rotbump_energy() const
 
 void PackerTask_::or_include_current( bool setting )
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	if ( ! setting ) return; // short circuit
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
 		residue_tasks_[ ii ].or_include_current( setting );
@@ -1213,6 +1568,9 @@ void PackerTask_::or_include_current( bool setting )
 
 void PackerTask_::or_include_current( bool setting, Size resid )
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	residue_tasks_[ resid ].or_include_current( setting );
 }
 
@@ -1223,12 +1581,18 @@ bool PackerTask_::include_current( Size resid ) const
 
 void PackerTask_::add_behavior( std::string const & behavior )
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
 		residue_tasks_[ ii ].add_behavior( behavior );
 	}
 }
 void PackerTask_::add_behavior( std::string const & behavior, Size resid )
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	residue_tasks_[ resid ].add_behavior( behavior );
 }
 bool PackerTask_::has_behavior( std::string const & behavior, Size resid ) const
@@ -1248,19 +1612,30 @@ PackerTask_::target_type( Size resid ) const
 // adducts
 void PackerTask_::or_adducts( bool setting )
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	if ( ! setting ) return; // short circuit
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
 		residue_tasks_[ ii ].or_adducts( setting );
 	}
 }
-void PackerTask_::or_adducts( bool setting, Size resid )
-	{ residue_tasks_[ resid ].or_adducts( setting ); }
-bool PackerTask_::adducts( Size resid ) const
-	{ return residue_tasks_[ resid ].adducts(); }
+void PackerTask_::or_adducts( bool setting, Size resid ){
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
+	residue_tasks_[ resid ].or_adducts( setting );
+}
+bool PackerTask_::adducts( Size resid ) const {
+	return residue_tasks_[ resid ].adducts();
+}
 
 
 void PackerTask_::or_optimize_h_mode( bool setting )
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	if ( ! setting ) return; // short circuit
 
 	optimize_H_ = setting;
@@ -1273,6 +1648,9 @@ void PackerTask_::or_optimize_h_mode( bool setting )
 
 void PackerTask_::or_preserve_c_beta( bool setting )
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	if ( ! setting ) return; // short circuit
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
 		residue_tasks_[ ii ].or_preserve_c_beta( setting );
@@ -1281,6 +1659,9 @@ void PackerTask_::or_preserve_c_beta( bool setting )
 
 void PackerTask_::or_flip_HNQ( bool setting )
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	if ( ! setting ) return; // short circuit
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
 		residue_tasks_[ ii ].or_flip_HNQ( setting );
@@ -1290,6 +1671,9 @@ void PackerTask_::or_flip_HNQ( bool setting )
 
 void PackerTask_::or_fix_his_tautomer( utility::vector1<int> const & positions, bool setting )
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	if ( ! setting ) return;
 	if ( positions.size() == 0 ) { // no positions defined, set for all residue_tasks_
 		for (Size ii=1; ii<=nres_; ++ii) {
@@ -1304,16 +1688,25 @@ void PackerTask_::or_fix_his_tautomer( utility::vector1<int> const & positions, 
 
 void PackerTask_::or_linmem_ig( bool setting )
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	linmem_ig_ |= setting;
 }
 
 bool PackerTask_::linmem_ig() const
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	return linmem_ig_;
 }
 
 void PackerTask_::or_lazy_ig( bool setting )
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	lazy_ig_ |= setting;
 }
 
@@ -1324,6 +1717,9 @@ bool PackerTask_::lazy_ig() const
 
 void PackerTask_::or_double_lazy_ig( bool setting )
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	double_lazy_ig_ = setting;
 }
 
@@ -1334,6 +1730,9 @@ bool PackerTask_::double_lazy_ig() const
 
 void PackerTask_::decrease_double_lazy_ig_memlimit( Size nbytes_for_rpes )
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	if ( nbytes_for_rpes != 0 ) {
 		if ( nbytes_for_rpes < dlig_mem_limit_ || dlig_mem_limit_ == 0 ) {
 			dlig_mem_limit_ = nbytes_for_rpes;
@@ -1350,6 +1749,9 @@ Size PackerTask_::double_lazy_ig_memlimit() const
 PackerTask &
 PackerTask_::initialize_extra_rotamer_flags_from_command_line()
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
 		residue_tasks_[ ii ].initialize_extra_rotamer_flags_from_command_line();
 	}
@@ -1358,6 +1760,9 @@ PackerTask_::initialize_extra_rotamer_flags_from_command_line()
 
 void PackerTask_::or_multi_cool_annealer( bool setting )
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	if ( ! (rotamer_couplings_ || rotamer_links_) ) {
 		multi_cool_annealer_ |= setting;
 	}
@@ -1370,6 +1775,9 @@ bool PackerTask_::multi_cool_annealer() const
 
 void PackerTask_::increase_multi_cool_annealer_history_size( Size setting )
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	if ( setting > mca_history_size_ ) mca_history_size_ = setting;
 }
 
@@ -1383,6 +1791,9 @@ Size PackerTask_::multi_cool_annealer_history_size() const
 PackerTask &
 PackerTask_::initialize_from_command_line()
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -1427,6 +1838,9 @@ PackerTask_::restrict_to_residues(
 	utility::vector1< bool > const & residues_allowed_to_be_packed
 )
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
 		if ( ! residues_allowed_to_be_packed[ ii ] ) {
 			residue_tasks_[ ii ].prevent_repacking(); // permenent disabling of the residue
@@ -1442,6 +1856,9 @@ PackerTask_::restrict_to_residues(
 PackerTask &
 PackerTask_::restrict_to_repacking()
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
 		residue_tasks_[ ii ].restrict_to_repacking();
 	}
@@ -1460,6 +1877,9 @@ PackerTask_::residue_task( Size resid ) const
 ResidueLevelTask &
 PackerTask_::nonconst_residue_task( Size resid )
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	n_to_be_packed_up_to_date_ = false;
 	return residue_tasks_[ resid ];
 }
@@ -1498,6 +1918,9 @@ PackerTask_::rotamer_couplings() const
 void
 PackerTask_::rotamer_couplings( PackerTask::RotamerCouplingsCOP setting )
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	rotamer_couplings_ = setting;
 	if ( setting ) {
 		multi_cool_annealer_ = false;
@@ -1523,6 +1946,9 @@ PackerTask_::rotamer_links() const
 void
 PackerTask_::rotamer_links( PackerTask::RotamerLinksCOP setting )
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	rotamer_links_ = setting;
 	if ( setting ) {
 		multi_cool_annealer_ = false;
@@ -1537,6 +1963,9 @@ PackerTask_::IGEdgeReweights() const{
 IGEdgeReweightContainerOP
 PackerTask_::set_IGEdgeReweights()
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	if( !IG_edge_reweights_ ){
 		IG_edge_reweights_ = new IGEdgeReweightContainer( nres_ );
 	}
@@ -1549,6 +1978,9 @@ PackerTask_::append_rotamer_operation(
 	rotamer_set::RotamerOperationOP rotop
 )
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
 		residue_tasks_[ ii ].append_rotamer_operation( rotop );
 	}
@@ -1559,6 +1991,9 @@ PackerTask_::append_rotamerset_operation(
 	rotamer_set::RotamerSetOperationOP rotsetop
 )
 {
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
 		residue_tasks_[ ii ].append_rotamerset_operation( rotsetop );
 	}
@@ -1578,34 +2013,51 @@ PackerTask_::update_n_to_be_packed() const
 
 //some get-set functions for annealer options
 void
-PackerTask_::low_temp( Real const & low_temp ){ low_temp_ = low_temp; }
+PackerTask_::low_temp( Real const & low_temp ){ 
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
+	low_temp_ = low_temp;
+}
 
 void
-PackerTask_::high_temp( Real const & high_temp ){ high_temp_ = high_temp; }
+PackerTask_::high_temp( Real const & high_temp ){ 
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
+	high_temp_ = high_temp;
+}
 
 void
-PackerTask_::disallow_quench( bool const & disallow_quench ){ disallow_quench_ = disallow_quench; }
+PackerTask_::disallow_quench( bool const & disallow_quench ){
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
+	disallow_quench_ = disallow_quench;
+}
 
 Real
-PackerTask_::low_temp() const{ return low_temp_; }
+PackerTask_::low_temp() const { return low_temp_; }
 
 Real
-PackerTask_::high_temp() const{ return high_temp_; }
+PackerTask_::high_temp() const { return high_temp_; }
 
 bool
-PackerTask_::disallow_quench() const{ return disallow_quench_;}
+PackerTask_::disallow_quench() const { return disallow_quench_;}
 
 std::string ResidueLevelTask_::task_mode() const{
 	std::ostringstream modes;
-	for( std::vector<std::string>::const_iterator i = mode_tokens.begin(); i < mode_tokens.end(); ++i){
+	for( std::vector<std::string>::const_iterator i = mode_tokens_.begin(); i < mode_tokens_.end(); ++i){
 		modes << *i << " ";
 	}
 	return modes.str();
 }
 
-std::string ResidueLevelTask_::get_ex_flags( Size const chiid,
-																						 Size const exaro_sample_level,
-																						 Size const ex_sample_level) const {
+std::string ResidueLevelTask_::get_ex_flags(
+	Size const chiid,
+	Size const exaro_sample_level,
+	Size const ex_sample_level
+) const {
 	std::ostringstream ex_flags;
 
 	if (exaro_sample_level == 1){
@@ -1730,6 +2182,9 @@ void PackerTask_::remap_residue_level_tasks(
 	core::id::SequenceMappingCOP seqmap,
 	core::pose::Pose const & pose
 ){
+	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
+		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
+	}
 	utility::vector1< bool > remapped_pack_residue;
 	utility::vector1< ResidueLevelTask_ > remapped_residue_tasks;
 

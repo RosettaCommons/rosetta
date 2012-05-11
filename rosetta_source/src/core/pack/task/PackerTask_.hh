@@ -272,6 +272,27 @@ public:
 	virtual	std::string	command_string( ) const;
 
 
+	///////////////////////////// dangerous update functions
+
+	virtual
+	void
+	update_union(
+		ResidueLevelTask const & res_task_in
+	);
+
+	virtual
+	void
+	update_intersection(
+		ResidueLevelTask const & res_task_in
+	);
+
+	virtual
+	void
+	update_commutative(
+		ResidueLevelTask const & res_task_in
+	);
+
+
 
 private: // private methods
 	///@brief private: bookkeeping for ex1
@@ -381,8 +402,15 @@ private:
 	rotamer_set::RotSetOperationList rotsetops_;
 
 
-	std::vector<std::string> mode_tokens;
+	std::vector<std::string> mode_tokens_;
 
+};
+
+enum PackerTaskSymmetryStatus {
+	NO_SYMMETRIZATION_REQUEST,
+	REQUEST_SYMMETRIZE_BY_UNION,
+	REQUEST_SYMMETRIZE_BY_INTERSECTION,
+	ALREADY_SYMMETRIZED
 };
 
 
@@ -638,6 +666,47 @@ public:
 		core::pose::Pose const & pose
 	);
 
+	//////////////////////// dangerous update functions ///////////////////////
+
+	virtual
+	void
+	update_residue_union(
+		Size resid,
+		ResidueLevelTask const & res_task_in
+	);
+
+	virtual
+	void
+	update_residue_intersection(
+		Size resid,
+		ResidueLevelTask const & res_task_in
+	);
+
+	virtual
+	void
+	update_residue_commutative(
+		Size resid,
+		ResidueLevelTask const & res_task_in
+	);
+
+	virtual
+	void
+	update_commutative(
+		PackerTask const & tark_in
+	);
+
+	void
+	request_symmetrize_by_intersection();
+
+	void
+	request_symmetrize_by_union();
+
+	bool
+	symmetrize_by_union() const;
+
+	bool
+	symmetrize_by_intersection() const;
+
 private: // private methods
 	void
 	update_n_to_be_packed() const;
@@ -689,6 +758,8 @@ private:
 	///@details holds specific residue residue weights to be used in packing
 	IGEdgeReweightContainerOP IG_edge_reweights_;
 
+	// sheffler
+	PackerTaskSymmetryStatus symmetry_status_;
 };
 
 //NOTE: parse_resfile is now an independent function in ResfileReader.hh, not a member function of the PackerTask hierarchy
