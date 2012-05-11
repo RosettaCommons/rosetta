@@ -120,8 +120,8 @@ HamiltonianExchange::HamiltonianExchange(	HamiltonianExchange const & other ) :
 	hamiltonians_( other.hamiltonians_ ),
 	exchange_schedules_( other.exchange_schedules_ ),
 	current_exchange_schedule_( other.current_exchange_schedule_ ),
-	exchange_grid_dimension_( other.exchange_grid_dimension_ ),
 	exchange_grid_( other.exchange_grid_ ),
+	exchange_grid_dimension_( other.exchange_grid_dimension_ ),
 	successfully_initialized_( false )
 {
 #ifndef USEMPI
