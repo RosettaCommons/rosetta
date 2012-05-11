@@ -67,6 +67,8 @@ MPIMultiCommJobDistributor::MPIMultiCommJobDistributor( core::Size sub_size ) {
 
 void MPIMultiCommJobDistributor::setup_sub_communicators( Size sub_size ) {
 	n_comm_ = ( n_rank()-min_client_rank() ) / sub_size;
+	tr.Debug << " can allocate " << n_comm_ << " communication groups " << std::endl;
+	tr.Debug << " n_rank: " << n_rank() << " sub_size: " << sub_size << std::endl;
 	set_n_worker( n_comm_ );
 #ifdef USEMPI
 	if ( n_comm_ < 1 ) {
@@ -95,8 +97,8 @@ void MPIMultiCommJobDistributor::setup_sub_communicators( Size sub_size ) {
 		MPI_Comm_create( MPI_COMM_WORLD, mpi_groups_[ i_comm ], &(mpi_communicators_[ i_comm ]) );
 	}
 
-	runtime_assert( rank() < min_client_rank() || communicator_handle_ && communicator_handle_ <= mpi_communicators_.size() );
-	if ( rank() >= min_client_rank() ) {
+	runtime_assert( rank() < min_client_rank() || communicator_handle_ == 0 || communicator_handle_ <= mpi_communicators_.size() );
+	if ( rank() >= min_client_rank() && communicator_handle_ ) {
 		MPI_Comm_rank( mpi_communicators_[ communicator_handle_ ], &sub_rank_ );
 	} else {
 		sub_rank_ = -1;
