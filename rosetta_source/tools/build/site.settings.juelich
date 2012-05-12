@@ -36,8 +36,11 @@ settings = {
         },
     },	 	
      
-    "gcc, 4.3, mpi" : { 
-	"overrides" : {
+    "gcc, 4.3, mpi" : {
+        "appends" : {
+            "defines"       : [ "USEMPI" ],
+        }, 
+        "overrides" : {
 	   "cxx" : "mpicxx"
         },
     },	 	
