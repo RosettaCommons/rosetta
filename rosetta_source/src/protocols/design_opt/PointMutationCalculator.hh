@@ -58,7 +58,7 @@ public:
 		bool dump_pdb = false
 	);
 	virtual ~PointMutationCalculator();
-	
+
 	void mutate_and_relax(
 		core::pose::Pose & pose,
 		core::Size const & resi,
@@ -96,6 +96,8 @@ public:
 	void dump_pdb( bool const dump_pdb );
 	utility::vector1< std::string > sample_types() const;
 	void sample_types( utility::vector1< std::string > const sample_types );
+	void rtmin( bool const r );
+	bool rtmin() const;
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::scoring::ScoreFunctionOP scorefxn_;
@@ -103,10 +105,11 @@ private:
 	protocols::moves::MoverOP relax_mover_;
 	utility::vector1< std::string > sample_types_;
 	bool dump_pdb_;
+	bool rtmin_; //dflt false; should we rtmin after repack?
 };
 
 
-} // design_opt 
+} // design_opt
 } // protocols
 
 

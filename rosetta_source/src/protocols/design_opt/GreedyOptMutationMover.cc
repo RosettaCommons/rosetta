@@ -73,7 +73,8 @@ GreedyOptMutationMover::GreedyOptMutationMover() :
 	sample_type_( "low" ),
 	dump_pdb_( false ),
 	diversify_lvl_( 1 ),
-	stopping_condition_( NULL )
+	stopping_condition_( NULL ),
+	rtmin_( false )
 {
 	if( sample_type_ == "high" ){
 		flip_sign_ = Real( -1 );
@@ -300,6 +301,7 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 	core::pose::Pose start_pose( pose );
 	design_opt::PointMutationCalculatorOP ptmut_calc( new design_opt::PointMutationCalculator(
 				task_factory(), scorefxn(), relax_mover(), filter(), sample_type(), dump_pdb() ) );
+	ptmut_calc->rtmin( rtmin() );
 
 	//create vec of pairs of seqpos, vector of AA/val pairs that pass input filter
 	//only calc the ptmut data and sort once per pose, not at every nstruct iteration
@@ -430,6 +432,7 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagPtr const tag,
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	//load dump_pdb
 	dump_pdb( tag->getOption< bool >( "dump_pdb", false ) );
+	rtmin( tag->getOption< bool >( "rtmin", false ) );
 	if( tag->hasOption( "stopping_condition" ) ){
 		std::string const stopping_filter_name( tag->getOption< std::string >( "stopping_condition" ) );
 		stopping_condition( protocols::rosetta_scripts::parse_filter( stopping_filter_name, filters ) );
@@ -437,6 +440,13 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagPtr const tag,
 	}
 }
 
+void
+GreedyOptMutationMover::rtmin( bool const b ){
+	rtmin_ = b;
+}
+
+bool
+GreedyOptMutationMover::rtmin() const{ return rtmin_; }
 
 } // moves
 } // protocols

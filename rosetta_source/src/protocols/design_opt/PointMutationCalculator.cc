@@ -39,6 +39,7 @@
 #define foreach BOOST_FOREACH
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/GreenPacker.hh>
 #include <protocols/jd2/Job.hh>
@@ -67,7 +68,8 @@ PointMutationCalculator::PointMutationCalculator() :
 	relax_mover_( NULL ),
 //	filters_( NULL ), /*TODO: this throws a warning!*/
 //	sample_type_( "low" )
-	dump_pdb_( false )
+	dump_pdb_( false ),
+	rtmin_( false )
 {}
 
 //full ctor
@@ -251,9 +253,10 @@ PointMutationCalculator::mutate_and_relax(
 	PackerTaskOP mutate_residue = mut_res->create_task_and_apply_taskoperations( pose );
 	mutate_residue->initialize_from_command_line().or_include_current( true );
 	mutate_residue->nonconst_residue_task( resi ).restrict_absent_canonical_aas( allowed_aas );
-//	TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to " << target_aa << std::endl;
+	TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to ";
 	//run PackRotamers with mutate_residue task
 	protocols::simple_moves::PackRotamersMoverOP pack;
+	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin;
 	if( core::pose::symmetry::is_symmetric( pose ) ) {
 		mutate_residue->request_symmetrize_by_union();
 		pack = new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue );
@@ -261,7 +264,12 @@ PointMutationCalculator::mutate_and_relax(
 		pack = new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue );
 	}
 	pack->apply( pose );
-//	TR<<"Now relaxing "<<pose.residue( resi ).name3()<<std::endl;
+	if( rtmin() ){
+		rtmin = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn(), *mutate_residue );
+		rtmin->apply( pose );
+		TR<<"Finished rtmin"<<std::endl;
+	}
+	TR<<pose.residue( resi ).name3()<<". Now relaxing..."<<std::endl;
 	//then run input relax mover
 	relax_mover()->apply( pose );
 }
@@ -331,7 +339,10 @@ PointMutationCalculator::eval_filters(
 		Real const flip_sign( sample_types_[ ifilt ] == "high" ? -1 : 1 );
 		Real const val( flip_sign * ( filters_[ ifilt ] )->report_sm( pose ) );
 		//TODO: option to bail at first fail??
-		if( !filter_pass ) TR<< "Filter " << ifilt << " with value "<< val << std::endl;
+		if( !filter_pass )
+			TR<< "Filter " << ifilt << " fails with value "<< val << std::endl;
+		else
+			TR<< "Filter " << ifilt << " succeeds with value "<< val<< std::endl;
 		vals.push_back( val );
 	}
 }
@@ -499,6 +510,16 @@ PointMutationCalculator::calc_point_mut_filters(
 */
 
 }
+
+bool
+PointMutationCalculator::rtmin() const{
+	return rtmin_;
+}
+
+void
+PointMutationCalculator::rtmin( bool const r ){ rtmin_ = r;}
+
+
 
 } // design_opt
 } // protocols

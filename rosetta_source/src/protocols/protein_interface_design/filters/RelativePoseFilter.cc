@@ -37,6 +37,7 @@
 #include <core/conformation/symmetry/SymmDataFactory.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -62,7 +63,8 @@ RelativePoseFilter::RelativePoseFilter() :
 	baseline_val_( -9999 ),
 	unbound_( false ),
 	copy_stretch_( false ),
-	symmetry_definition_("")
+	symmetry_definition_(""),
+	rtmin_( false )
 {
 	alignment_.clear();
 }
@@ -186,11 +188,17 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 		}//for i=1->total_residue
 		using namespace protocols::simple_moves;
 		PackRotamersMoverOP prm;
+		RotamerTrialsMinMoverOP rtmin;
 		if( core::pose::symmetry::is_symmetric( *copy_pose ) )
 			prm = new symmetry::SymPackRotamersMover( scorefxn(), pack );
 		else
 			prm = new PackRotamersMover( scorefxn(), pack );
 		prm->apply( *copy_pose );
+		if( rtmin() ){
+			rtmin = new RotamerTrialsMinMover( scorefxn(), *pack );
+			rtmin->apply( *copy_pose );
+			TR<<"finished rtmin"<<std::endl;
+		}
 	}/// end else no copy_stretch
 	relax_mover()->apply( *copy_pose );
 	return( copy_pose );
@@ -207,11 +215,11 @@ RelativePoseFilter::compute( core::pose::Pose const & p ) const{
 		dump.apply( *threaded_pose );
 	}
 	if( baseline() ){
-		TR<<"filter val, baseline: "<<filter_val<<", "<<baseline_val()<<std::endl;
+		TR<<"filter "<<filter_name()<<" reports value, baseline: "<<filter_val<<", "<<baseline_val()<<std::endl;
 		return( filter_val - baseline_val() );
 	}
 	else{
-		TR<<"filter val: "<<filter_val<<std::endl;
+		TR<<"filter "<<filter_name()<<" val: "<<filter_val<<std::endl;
 		return( filter_val );
 	}
 }
@@ -253,6 +261,7 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	}
 	relax_mover( parse_mover( tag->getOption< std::string >( "relax_mover", "null" ), movers ) );
 	filter( parse_filter( tag->getOption< std::string >( "filter" ), filters ) );
+	filter_name( tag->getOption< std::string> ( "name" ) );
 	baseline( tag->getOption< bool >( "baseline", 1 ));
 	if( baseline() ){
 		relax_mover()->apply( *pose() );
@@ -299,11 +308,12 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	}
 	scorefxn( parse_score_function( tag, data ) );
 	packing_shell( tag->getOption( "packing_shell", packing_shell() ));
+	rtmin( tag->getOption< bool >("rtmin", 0 ) );
 	runtime_assert( packing_shell() >= 0 );
 	thread( tag->getOption< bool >( "thread", thread() ) );
 	unbound( tag->getOption< bool >( "unbound", false ) );
 	copy_stretch( tag->getOption< bool >( "copy_stretch", false ) );
-	TR<<"with pdb: "<<pose_fname<<" dumping fname "<<dump_pose_fname()<<" thread: "<<thread()<<" unbound "<<unbound()<<" copy_stretch: "<<copy_stretch()<<" and packing_shell: "<<packing_shell();
+	TR<<"with pdb: "<<pose_fname<<" dumping fname "<<dump_pose_fname()<<" thread: "<<thread()<<" unbound "<<unbound()<<" copy_stretch: "<<copy_stretch()<<" rtmin "<<rtmin()<<" and packing_shell: "<<packing_shell();
 	if(symmetry_definition_!="") TR<<" symmetry: "<<symmetry_definition_<<std::endl;
 	TR<<std::endl;
 }
@@ -377,6 +387,20 @@ std::string
 RelativePoseFilter::symmetry_definition() const{
 	return symmetry_definition_;
 }
+
+void
+RelativePoseFilter::filter_name( std::string const s ){
+	filter_name_ = s;
+}
+
+std::string
+RelativePoseFilter::filter_name()const{ return filter_name_; }
+
+bool
+RelativePoseFilter::rtmin() const{ return rtmin_; }
+
+void
+RelativePoseFilter::rtmin( bool const b ){ rtmin_ = b; }
 
 } // filters
 } // protein_interface_design

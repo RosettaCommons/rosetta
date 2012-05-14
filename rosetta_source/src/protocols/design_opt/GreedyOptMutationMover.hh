@@ -47,7 +47,7 @@ public:
 		core::Real filter_delta = 0,
 		std::string sample_type = "low",
 		bool dump_pdb = false,
-		core::Size diversify_lvl = core::Size( 1 ), 
+		core::Size diversify_lvl = core::Size( 1 ),
 		protocols::filters::FilterOP stopping_condition = protocols::filters::FilterOP( NULL )
 	);
 
@@ -79,6 +79,8 @@ public:
 	void diversify_lvl( core::Size const diversify_lvl );
 	void stopping_condition( protocols::filters::FilterOP f ){ stopping_condition_ = f; }
 	protocols::filters::FilterOP stopping_condition() const{ return stopping_condition_; }
+	bool rtmin() const;
+	void rtmin( bool const b );
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::scoring::ScoreFunctionOP scorefxn_;
@@ -92,6 +94,7 @@ private:
 	protocols::filters::FilterOP stopping_condition_; // dflt NULL ; if defined, stops greedy optimization when the filter's apply evaluates to true;
 	utility::vector1< std::pair< core::Size, utility::vector1< std::pair< core::chemical::AA, core::Real > > > > seqpos_aa_val_vec_;
 	core::pose::Pose ref_pose_;
+	bool rtmin_; //dflt false; should we rtmin after packing?
 };
 
 

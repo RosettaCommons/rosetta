@@ -78,6 +78,10 @@ public:
 	void copy_stretch( bool const b ){ copy_stretch_ = b; }
 	void symmetry_definition( std::string const s );
 	std::string symmetry_definition() const;
+	std::string filter_name() const;
+	void filter_name( std::string const s );
+	void rtmin( bool const b);
+	bool rtmin() const;
 private:
 	protocols::filters::FilterOP filter_; //which filter to use
 	protocols::moves::MoverOP relax_mover_; // a mover to be called before evaluating the filter's value.
@@ -93,6 +97,8 @@ private:
 	bool copy_stretch_; //dflt false; rather than change residue identities, copy an entire stretch of residues (this means using replace_residue w/o orient backbone, and will normally lead to very poor behaviour. Use with care, and probably only on entire chains which are pre-aligned.)
 	std::string symmetry_definition_;
 	core::conformation::symmetry::SymmDataOP symmdata_;
+	std::string filter_name_; //for tracer output to tell us which filter is reporting the current value in multi-filter optimizations.
+	bool rtmin_; //dflt false; after repacking the substituted residues, should we also rtmin?
 };
 
 } // filters
