@@ -49,7 +49,7 @@ make_symmetric_PackerTask_by_truncation(
 	using namespace conformation::symmetry;
 	using namespace pose::symmetry;
 
-	assert( is_symmetric( pose ) );
+	assert( core::pose::symmetry::is_symmetric( pose ) );
 
 	SymmetricConformation const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
@@ -68,7 +68,7 @@ make_new_symmetric_PackerTask_by_truncation(
 	task::PackerTaskCOP non_symmetric_task
 ){
 	using namespace core::pack::task;
-	assert( is_symmetric( pose ) );
+	assert( core::pose::symmetry::is_symmetric( pose ) );
 	PackerTaskOP new_task = non_symmetric_task->clone();
 	make_symmetric_PackerTask_by_truncation(pose,new_task);
 	return new_task;
@@ -80,7 +80,7 @@ make_new_symmetric_PackerTask_by_union(
 	task::PackerTaskCOP non_symmetric_task
 ){
 	using namespace core::pack::task;
-	assert( is_symmetric( pose ) );
+	assert( core::pose::symmetry::is_symmetric( pose ) );
 
 	PackerTaskOP new_task = TaskFactory::create_packer_task(pose);
 	PackerTask_ const & o(dynamic_cast<PackerTask_ const &>(*non_symmetric_task));
@@ -115,7 +115,7 @@ make_new_symmetric_PackerTask_by_intersection(
 	task::PackerTaskCOP non_symmetric_task
 ){
 	using namespace core::pack::task;
-	assert( is_symmetric( pose ) );
+	assert( core::pose::symmetry::is_symmetric( pose ) );
 
 	PackerTaskOP new_task = TaskFactory::create_packer_task(pose);
 	PackerTask_ const & o(dynamic_cast<PackerTask_ const &>(*non_symmetric_task));
@@ -150,7 +150,7 @@ make_new_symmetric_PackerTask_by_requested_method(
 	task::PackerTaskCOP non_symmetric_task
 ){
 	using namespace core::pack::task;
-	assert( is_symmetric( pose ) );
+	assert( core::pose::symmetry::is_symmetric( pose ) );
 	PackerTask_ const & o(dynamic_cast<PackerTask_ const &>(*non_symmetric_task));
 
 	if( o.symmetrize_by_union() ){
