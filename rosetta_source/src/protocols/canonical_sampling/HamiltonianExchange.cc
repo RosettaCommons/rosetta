@@ -214,7 +214,7 @@ HamiltonianExchange::initialize_simulation(
 #ifdef USEMPI
 	set_mpi_comm( jd2::current_mpi_comm() );
 #endif
-	Size const nlevels( n_temp_levels() );
+	//	Size const nlevels( n_temp_levels() );
 	current_exchange_schedule_ = 0;
 	set_current_temp( rank()+1 );
 	monte_carlo()->reset_scorefxn( pose, *hamiltonians_[ rank()+1 ] );
@@ -262,12 +262,12 @@ void HamiltonianExchange::setup_exchange_schedule() {
 	GridCoord max_coord( n_dim, 0 );
 	for ( Grid::const_iterator it=exchange_grid_.begin(); it!=exchange_grid_.end(); ++it ) {
 		GridCoord const& coord( *it );
-		for ( Size dim=1; dim<=n_dim; ++dim ) {
+		for ( Size dim=1; (int)dim<=n_dim; ++dim ) {
 			if ( coord[ dim ] > max_coord[ dim ] ) max_coord[ dim ] = coord[ dim ];
 		}
 	}
 
-	for ( Size dim=1; dim<=n_dim; ++dim ) {
+	for ( Size dim=1; (int)dim<=n_dim; ++dim ) {
 		//make list of uniqe groups: if dim==2 (1,1,1), (1,2,1), (1,3,1), ... (1, N, 1) should be one group
 		typedef std::list< std::pair< core::Size, core::Size > > Level2GridpointList;
 		typedef std::map< core::Size, Level2GridpointList > Groups;
@@ -436,6 +436,7 @@ HamiltonianExchange::temperature_move( pose::Pose& MPI_ONLY( pose ), core::Real 
 		monte_carlo()->score_function( *hamiltonians_[ new_level ] );
 	}
 #endif
+	return temperature();
 }
 
 void HamiltonianExchange::next_exchange_schedule() {
