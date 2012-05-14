@@ -695,21 +695,29 @@ public:
 		PackerTask const & tark_in
 	);
 
+	virtual
 	void
 	request_symmetrize_by_intersection();
 
+	virtual
 	void
 	request_symmetrize_by_union();
 
+	virtual
 	bool
 	symmetrize_by_union() const;
 
+	virtual
 	bool
 	symmetrize_by_intersection() const;
 
 private: // private methods
 	void
 	update_n_to_be_packed() const;
+
+	virtual
+	PackerTask &
+	operator=(PackerTask const &);
 
 private:
 

@@ -152,7 +152,7 @@ struct Hit : public utility::pointer::ReferenceCount {
 		Real c11,c12,c21,c22;
 		bool idmr;
 		Hit();
-		Hit(Size i, Size j, Real i11, Real i12, Real i21, Real i22, bool id) : c11(i11),c12(i12),c21(i21),c22(i22),idmr(id) {}
+		Hit(Size , Size , Real i11, Real i12, Real i21, Real i22, bool id) : c11(i11),c12(i12),c21(i21),c22(i22),idmr(id) {}
 };
 typedef utility::pointer::owning_ptr<Hit> HitOP;
 
@@ -409,7 +409,7 @@ void run(std::string fname) {
 #ifdef USE_OPENMP
 #pragma omp parallel for schedule(dynamic,1)
 #endif
-  for(int ihis=2; ihis<=nres-1; ++ihis) {
+  for(int ihis=2; ihis<=(int)nres-1; ++ihis) {
     Pose tmp;
 #ifdef USE_OPENMP
 #pragma omp critical

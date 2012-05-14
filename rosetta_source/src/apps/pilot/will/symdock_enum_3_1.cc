@@ -515,9 +515,12 @@ struct TCDock {
 			std::vector<protocols::sic_dock::SICFast> sics;
 			sics.resize(num_threads());
 			for(int i = 0; i < num_threads(); ++i){
-				sics[i].init(i12?cmp1in_   :cmp2in_    ,i12?cmp1in_  :cmp2in_   ,
-										 i12?clashmap1_:clashmap2_,i12?clashmap1_:clashmap2_,
-										 i12?scoremap1_:scoremap2_,i12?scoremap1_:scoremap2_);
+				sics[i].init( i12? cmp1in_   :cmp2in_,
+				              i12? cmp1in_   :cmp2in_   ,
+				              i12? clashmap1_:clashmap2_,
+				              i12? clashmap1_:clashmap2_,
+				              i12? scoremap1_:scoremap2_,
+				              i12? scoremap1_:scoremap2_);
 				//				sics[i].init(i12?cmp1in_:cmp2in_, i12?cmp1cbs_:cmp2cbs_, i12?cmp1wts_:cmp2wts_,
 				//										 i12?cmp1in_:cmp2in_, i12?cmp1cbs_:cmp2cbs_, i12?cmp1wts_:cmp2wts_);
 			}

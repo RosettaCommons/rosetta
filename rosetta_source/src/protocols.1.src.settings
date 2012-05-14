@@ -145,6 +145,9 @@ sources = {
 		"viewers",
 		"visualize",
 	],
+	"protocols/sic_dock" : [
+		"sic_dock", # sheffler
+	],
 }
 include_path = [
 ]

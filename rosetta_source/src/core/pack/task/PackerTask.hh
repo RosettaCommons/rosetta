@@ -441,6 +441,28 @@ public:
 		PackerTask const & to_copy
 	) = 0;
 
+	virtual
+	void
+	request_symmetrize_by_intersection() = 0;
+
+	virtual
+	void
+	request_symmetrize_by_union() = 0;
+
+	virtual
+	bool
+	symmetrize_by_union() const = 0;
+
+	virtual
+	bool
+	symmetrize_by_intersection() const = 0;
+
+private:
+
+	virtual
+	PackerTask &
+	operator=(PackerTask const &) = 0;
+	
 };
 
 //NOTE: parse_resfile is now an independent function in ResfileReader.hh, not a member function of the PackerTask hierarchy

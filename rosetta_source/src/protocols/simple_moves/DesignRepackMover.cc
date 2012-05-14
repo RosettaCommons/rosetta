@@ -275,7 +275,7 @@ DesignRepackMover::setup_packer_and_movemap( core::pose::Pose const & in_pose )
 		core::pack::task::parse_resfile(pose, *task_);
 
 	if ( symmetry_ ) {
-		core::pack::make_symmetric_PackerTask( in_pose, task_ );
+		core::pack::make_symmetric_PackerTask_by_truncation( in_pose, task_ );
 	}
 }
 

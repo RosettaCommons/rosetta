@@ -481,7 +481,7 @@ core::kinematics::Stub res2stub(core::pose::Pose const & pose, Size rsd, core::k
 Real ik_his_clamp(Pose & pose,
 																		Size rsd1, Size rsd2,
 																		ImplicitFastClashCheck & ifc,
-																		vector1<HitOP> & hits,
+																		vector1<HitOP> & ,
 																		vector1<core::pack::rotamer_set::RotamerSetOP> const & rots1,
 																		vector1<core::pack::rotamer_set::RotamerSetOP> const & rots2
 																		) {
@@ -858,7 +858,7 @@ void run(std::string fname) {
 #ifdef USE_OPENMP
 #pragma omp parallel for schedule(dynamic,1)
 #endif
-   for(int ihis=2; ihis<=nres-1; ++ihis) {
+   for(int ihis=2; ihis<=(int)nres-1; ++ihis) {
 					Pose tmp;
 #ifdef USE_OPENMP
 #pragma omp critical

@@ -29,6 +29,7 @@ option.add( basic::options::OptionKeys::in::add_orbitals, "Will add orbitals to 
 option.add( basic::options::OptionKeys::in::remember_unrecognized_res, "Ignore unrecognized residues, but remember them in PDBInfo." ).def(false);
 option.add( basic::options::OptionKeys::in::remember_unrecognized_water, "Remember waters along with other unrecognized residues." ).def(false);
 option.add( basic::options::OptionKeys::in::detect_disulf, "Forcably enable or disable disulfide detection. When unspecified, rosetta conservatively detects disulfides in full atom input based on SG distance, but will not form centroid disulfides. Setting `-detect_disulf true` will force  aggressive disulfide detection in centroid poses based on CB distance. Setting `-detect_disulf false` disables all detection, even in full atom poses. Note that disabling disulfides causes severe clashes for native disulfides." ).legal(true).legal(false);
+option.add( basic::options::OptionKeys::in::detect_disulf_tolerance, "disulf tolerance" ).def(0.5);
 option.add( basic::options::OptionKeys::in::fix_disulf, "Specify disulfide connectivity via a file. Disulfides are specified as two whitespace-seperated residue indicies per line. This option replaces the old '-run:fix_disulf' option." );
 option.add( basic::options::OptionKeys::in::use_stupid_foldtree_format, "use the fold-tree format that existed for one week after revision 21447" ).def(false);
 option.add( basic::options::OptionKeys::in::target_residues, "which residue numbers to pass for getDistConstraints" );
@@ -615,10 +616,10 @@ option.add( basic::options::OptionKeys::abinitio::HD_fa_penalty, "penalty for ea
 option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with interior/exterior predictions for strands" );
 option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
 option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
+option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
 option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
@@ -1230,10 +1231,10 @@ option.add( basic::options::OptionKeys::lh::grid_angle_multiplier, "No descripti
 option.add( basic::options::OptionKeys::lh::skim_size, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::rounds, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" ).def("default");
-option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
+option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
 option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
 option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
@@ -1845,10 +1846,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_templat
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
-option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
+option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);

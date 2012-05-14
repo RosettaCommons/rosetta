@@ -47,7 +47,7 @@ public:
 		int natom = 0;
 		if( amap.n_residue() != p.n_residue()) utility_exit_with_message("BAD ATOMID_MAP");
 		for(int ir = 1; ir <= (int)p.n_residue(); ++ir) {
-			core::conformation::Residue const & r(p.residue(ir));
+			// core::conformation::Residue const & r(p.residue(ir));
 			for(int ia = 1; ia <= (int)amap.n_atom(ir); ia++) {
 				if(amap[AtomID(ia,ir)] > 0)  natom++;
 			}
@@ -56,7 +56,7 @@ public:
 		utility::vector1<double>                      meta (natom);
 		uint count = 0;
 		for(int ir = 1; ir <= (int)p.n_residue(); ++ir) {
-			core::conformation::Residue const & r(p.residue(ir));
+			// core::conformation::Residue const & r(p.residue(ir));
 			for(int ia = 1; ia <= (int)amap.n_atom(ir); ia++) {
 				if(amap[AtomID(ia,ir)] > 0) {
 					atoms[++count] = p.xyz(AtomID(ia,ir));

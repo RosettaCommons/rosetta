@@ -16,6 +16,8 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/util.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
 
@@ -768,6 +770,7 @@ void
 SymmetricConformation::detect_disulfides()
 {
 	using namespace graph;
+	using namespace basic::options;
 
 	// gather all cys, construct mapping from resid to cys index
 	utility::vector1< Size > resid_2_cysid( size(), 0 );
@@ -800,7 +803,9 @@ SymmetricConformation::detect_disulfides()
 	}
 	// SG-SG distance for fullatom, CB-CB distance otherwise
 	Real const typical_disulfide_distance = fullatom? 2.02 : 3.72;
-	Real const tolerance = fullatom? 0.5 : 1.0;
+	Real const tolerance = option[OptionKeys::in::detect_disulf_tolerance].user()
+	                     ? option[OptionKeys::in::detect_disulf_tolerance]()
+	                     : ( fullatom? 0.5 : 1.0 );
 	std::string const distance_atom = fullatom? "SG" : "CB";
 
 	// Create point graph

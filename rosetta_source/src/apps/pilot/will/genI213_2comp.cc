@@ -461,7 +461,7 @@ struct DsfHit {
 };
 
 vector1<DsfHit> find_dsf( Pose & p3a, Pose & p3b, ImplicitFastClashCheck const & ifc, vector1<vector1<Real> > cyschi1,
-                          Mat const & R2, Vec const & C2, Real dunth, Real angth ) {
+                          Mat const & R2, Vec const & C2, Real /*dunth*/, Real /*angth*/ ) {
   vector1<DsfHit> hits;
   core::chemical::ResidueTypeSetCAP  rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
   Pose cys;
@@ -785,7 +785,7 @@ void design_1comp(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
   utility::vector1< core::scoring::constraints::ConstraintCOP > res_cst = add_favor_native_cst(pose);
 
   if( core::pose::symmetry::is_symmetric(pose) ) {
-    core::pack::make_symmetric_PackerTask(pose,task);
+    core::pack::make_symmetric_PackerTask_by_truncation(pose,task);
     protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
     repack.apply(pose);
   } else {
@@ -821,7 +821,7 @@ void design_1comp(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
 }
 
 
-Real ddg(Pose const & p_in, ScoreFunctionOP sf, Size Ntri, Real & rholes, Real & hsp, Real & ssp, Real & sht) {
+Real ddg(Pose const & p_in, ScoreFunctionOP sf, Size Ntri, Real & rholes, Real & /*hsp*/, Real & ssp, Real & sht) {
   TR << "ddg" << std::endl;
   core::scoring::symmetry::SymmetricScoreFunction sfhsp,sfssp,sfsht;
   sfhsp.set_weight(core::scoring::hs_pair,1.0);
@@ -851,7 +851,7 @@ Real ddg(Pose const & p_in, ScoreFunctionOP sf, Size Ntri, Real & rholes, Real &
   sf->set_weight(core::scoring::fa_rep,rorig/4.0);
   //TR << "ddg repack 1" << std::endl;
   if( core::pose::symmetry::is_symmetric(p) ) {
-    core::pack::make_symmetric_PackerTask(p,task);
+    core::pack::make_symmetric_PackerTask_by_truncation(p,task);
     protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
     repack.apply(p);
   } else {
@@ -1282,7 +1282,7 @@ vector1<Hit> dock(Pose & init, string fname) {
               ssym.replace_residue(dhits[id].rsd2+init.n_residue()*i,ala.residue(1),true);
             }
 
-            Real rholes,hsp,ssp,sht;
+            Real rholes=0,hsp=0,ssp=0,sht=0;
             core::io::silent::SilentStructOP ss( new core::io::silent::ScoreFileSilentStruct );
             sf->score(ssym);
             ss->fill_struct(ssym,option[out::file::o]+"/"+tag+"_dsf"+lzs(id,3)+".pdb.gz");
@@ -1311,7 +1311,7 @@ vector1<Hit> dock(Pose & init, string fname) {
             TR << "design 1 component" << std::endl;
             design_1comp(sym,sf,todes.n_residue());
             {
-              Real rholes,hsp,ssp,sht;
+              Real rholes=0,hsp=0,ssp=0,sht=0;
               core::io::silent::SilentStructOP ss( new core::io::silent::ScoreFileSilentStruct );
               sf->score(sym);
               ss->fill_struct(sym,option[out::file::o]+"/"+tag+"_1comp.pdb.gz");

@@ -131,6 +131,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Forcably enable or disable disulfide detection. When unspecified, rosetta conservatively detects disulfides in full atom input based on SG distance, but will not form centroid disulfides. Setting `-detect_disulf true` will force  aggressive disulfide detection in centroid poses based on CB distance. Setting `-detect_disulf false` disables all detection, even in full atom poses. Note that disabling disulfides causes severe clashes for native disulfides.</dd><br>
 </dl>
 <dl>
+<dt><b>-detect_disulf_tolerance</b> \<Real\><dt>
+<dd>disulf tolerance</dd><br>
+<dd>Default: 0.5</dd><br>
+</dl>
+<dl>
 <dt><b>-fix_disulf</b> \<File\><dt>
 <dd>Specify disulfide connectivity via a file. Disulfides are specified as two whitespace-seperated residue indicies per line. This option replaces the old '-run:fix_disulf' option.</dd><br>
 </dl>

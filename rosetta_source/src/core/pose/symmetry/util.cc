@@ -163,6 +163,7 @@ make_symmetric_pose(
 
 	assert( is_symmetric( pose ) );
 
+	pose.conformation().detect_disulfides();
 	pose.conformation().detect_bonds();
 }
 

@@ -48,6 +48,7 @@ enum Enum {
 	FILTER_STAGE2_END,
 	ARBITRARY_FLOAT_DATA,
 	POSE_BEFORE_CAVITIES_ADDED,
+	STM_STORED_TASKS,
 	STRING_MAP, // string-based annotations about a Pose
 	SCORE_LINE_STRINGS, // score entries composed of a pair< string, string >
 	HOLES_POSE_INFO,
@@ -55,7 +56,7 @@ enum Enum {
 	TEMPLATE_HYBRIDIZATION_HISTORY,  // during template hybridization, the source id for each residue
 	DAB_SASA_POSE_INFO,
 	DAB_SEV_POSE_INFO,
-  CHEMICAL_SHIFT_ANISOTROPY_DATA, //NMR Chemical Shift Anisotropy
+	CHEMICAL_SHIFT_ANISOTROPY_DATA, //NMR Chemical Shift Anisotropy
 	RESIDUAL_DIPOLAR_COUPLING_DATA,//NMR Residual Dipolar Coupling data
 	RESIDUAL_DIPOLAR_COUPLING_DATA_ROHL,//NMR Residual Dipolar Coupling data - for rdc_rohl
 	RESIDUAL_DIPOLAR_COUPLING_SEGMENTS_DATA,

@@ -115,7 +115,7 @@ ConstraintScoreCutoffFilter::parse_my_tag( utility::tag::TagPtr const tag, proto
 }
 
 void
-ConstraintScoreCutoffFilter::report( std::ostream & ostr, core::pose::Pose const & pose ) const
+ConstraintScoreCutoffFilter::report( std::ostream & /*ostr*/, core::pose::Pose const & /*pose*/ ) const
 { }
 
 

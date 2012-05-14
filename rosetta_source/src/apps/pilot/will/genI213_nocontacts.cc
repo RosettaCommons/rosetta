@@ -175,11 +175,11 @@ public:
 virtual
 void
 fill_f1_f2(
-             AtomID const & atom,
-             core::scoring::constraints::XYZ_Func const & xyz,
-             Vec & F1,
-             Vec & F2,
-             core::scoring::EnergyMap const & weights
+             AtomID const & ,
+             core::scoring::constraints::XYZ_Func const & ,
+             Vec & ,
+             Vec & ,
+             core::scoring::EnergyMap const &
              ) const {}
 
 virtual core::scoring::constraints::ConstraintOP
@@ -199,7 +199,7 @@ private:
 
 
 
-inline Real const sqr(Real const r) { return r*r; }
+inline Real sqr(Real const r) { return r*r; }
 inline Real sigmoidish_neighbor( Real const & sqdist ) {
   if( sqdist > 9.*9. ) {
     return 0.0;
@@ -891,7 +891,7 @@ void design_1comp(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
 	pose.add_constraints( res_cst2 );
 
   if( core::pose::symmetry::is_symmetric(pose) ) {
-    core::pack::make_symmetric_PackerTask(pose,task);
+    core::pack::make_symmetric_PackerTask_by_truncation(pose,task);
     protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
     repack.apply(pose);
   } else {
@@ -954,7 +954,7 @@ void repack_iface(Pose & p, ScoreFunctionOP sf, Size Ntri, vector1<bool> & iface
   //sf->set_weight(core::scoring::fa_rep,rorig/4.0);
 
   if( core::pose::symmetry::is_symmetric(p) ) {
-    core::pack::make_symmetric_PackerTask(p,task);
+    core::pack::make_symmetric_PackerTask_by_truncation(p,task);
     protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
     repack.apply(p);
   } else {
@@ -1366,7 +1366,7 @@ vector1<Hit> dock(Pose & init, string fname) {
             //TR << dhits[id].rsd1 << " " << dhits[id].rsd2 << std::endl;
             core::conformation::Residue rtmp1 = sym.residue(dhits[id].rsd1);
             core::conformation::Residue rtmp2 = sym.residue(dhits[id].rsd2);
-            for(int i = 0; i < todes.n_residue()/init.n_residue(); ++i) {
+            for(int i = 0; i < (int)todes.n_residue()/(int)init.n_residue(); ++i) {
               sym.replace_residue(dhits[id].rsd1+init.n_residue()*i,cys.residue(1),true);
               sym.replace_residue(dhits[id].rsd2+init.n_residue()*i,cys.residue(1),true);
               sym.set_chi(1,dhits[id].rsd1+init.n_residue()*i,dhits[id].chi11);
@@ -1379,7 +1379,7 @@ vector1<Hit> dock(Pose & init, string fname) {
             TR << "design w/ dsf" << std::endl;
             design_1comp(sym,sf,todes.n_residue());
             Pose ssym(sym);
-            for(int i = 0; i < todes.n_residue()/init.n_residue(); ++i) {
+            for(int i = 0; i < (int)todes.n_residue()/(int)init.n_residue(); ++i) {
               ssym.replace_residue(dhits[id].rsd1+init.n_residue()*i,ala.residue(1),true);
               ssym.replace_residue(dhits[id].rsd2+init.n_residue()*i,ala.residue(1),true);
             }
@@ -1413,7 +1413,7 @@ vector1<Hit> dock(Pose & init, string fname) {
             TR << "design 1 component" << std::endl;
             design_1comp(sym,sf,todes.n_residue());
             {
-              Real rholes,hsp,ssp,sht;
+              Real rholes=0,hsp=0,ssp=0,sht=0;
               core::io::silent::SilentStructOP ss( new core::io::silent::ScoreFileSilentStruct );
               sf->score(sym);
               ss->fill_struct(sym,option[out::file::o]+"/"+tag+"_1comp.pdb.gz");
@@ -1474,7 +1474,7 @@ vector1<Hit> dock(Pose & init, string fname) {
 						}
 
             {
-              Real rholes,hsp,ssp,sht;
+              Real rholes=0,hsp=0,ssp=0,sht=0;
               core::io::silent::SilentStructOP ss( new core::io::silent::ScoreFileSilentStruct );
               sf2 ->score(sym);
               ss->fill_struct(sym,option[out::file::o]+"/"+tag+"_2comp.pdb.gz");

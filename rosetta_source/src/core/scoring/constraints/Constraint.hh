@@ -269,11 +269,7 @@ public:
 		pose::Pose const &,
 		Size,
 		Real threshold = 1
-	) const {
-		out << "Constraint_show_violation stubbed out!\n" ;
-		threshold = 1; //to make compile happy
-		return 0;
-	}
+	) const;
 
 	/// @brief Returns the Func object associated with this Constraint object.
 	virtual

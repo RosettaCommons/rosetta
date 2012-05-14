@@ -39,6 +39,8 @@
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>
 #include <basic/basic.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // AUTO-REMOVED #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
@@ -1801,7 +1803,7 @@ Conformation::detect_disulfides()
 {
 	basic::ProfileThis doit( basic::CONFORMATION_DETECT_DISULF );
 	using namespace graph;
-
+	using namespace basic::options;
 
 	// gather all cys, construct mapping from resid to cys index
 	utility::vector1< Size > resid_2_cysid( size(), 0 );
@@ -1834,7 +1836,9 @@ Conformation::detect_disulfides()
 	}
 	// SG-SG distance for fullatom, CB-CB distance otherwise
 	Real const typical_disulfide_distance = fullatom? 2.02 : 3.72;
-	Real const tolerance = fullatom? 0.5 : 1.0;
+	Real const tolerance = option[OptionKeys::in::detect_disulf_tolerance].user()
+	                     ? option[OptionKeys::in::detect_disulf_tolerance]()
+	                     : ( fullatom? 0.5 : 1.0 );
 	std::string const distance_atom = fullatom? "SG" : "CB";
 
 	// Create point graph

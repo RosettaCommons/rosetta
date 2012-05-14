@@ -1459,9 +1459,6 @@ Size PackerTask_::total_residue() const
 void
 PackerTask_::clean_residue_task( conformation::Residue const & original_residue, Size const seqpos)
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	if ( !pack_residue_[ seqpos ] ){
 		--n_to_be_packed_;
 		pack_residue_[ seqpos ] = true;
@@ -1473,9 +1470,6 @@ PackerTask_::clean_residue_task( conformation::Residue const & original_residue,
 ///This does not affect underlying ResidueLevelTasks, but at the moment there is no method for reversing
 void PackerTask_::temporarily_fix_everything()
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	for ( Size ii = 1; ii <= nres_; ++ii )
 	{
 		pack_residue_[ ii ] = false;
@@ -1488,9 +1482,6 @@ void PackerTask_::temporarily_fix_everything()
 ///reverse with same function, opposite bool input
 void PackerTask_::temporarily_set_pack_residue( int resid, bool setting )
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	if ( ! setting && pack_residue_[ resid ]) {
 		--n_to_be_packed_;
 	} else if ( setting && ! pack_residue_[ resid ] ) {
@@ -1531,18 +1522,12 @@ bool PackerTask_::design_any() const
 }
 
 void PackerTask_::set_bump_check( bool setting ) {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	bump_check_ = setting;
 }
 bool PackerTask_::bump_check() const { return bump_check_; }
 
 void PackerTask_::and_max_rotbump_energy( Real setting )
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	if ( setting < 0 ) return;
 	if ( setting < max_rotbump_energy_ ) {
 		max_rotbump_energy_ = setting;
@@ -1557,9 +1542,6 @@ Real PackerTask_::max_rotbump_energy() const
 
 void PackerTask_::or_include_current( bool setting )
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	if ( ! setting ) return; // short circuit
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
 		residue_tasks_[ ii ].or_include_current( setting );
@@ -1568,9 +1550,6 @@ void PackerTask_::or_include_current( bool setting )
 
 void PackerTask_::or_include_current( bool setting, Size resid )
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	residue_tasks_[ resid ].or_include_current( setting );
 }
 
@@ -1581,18 +1560,12 @@ bool PackerTask_::include_current( Size resid ) const
 
 void PackerTask_::add_behavior( std::string const & behavior )
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
 		residue_tasks_[ ii ].add_behavior( behavior );
 	}
 }
 void PackerTask_::add_behavior( std::string const & behavior, Size resid )
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	residue_tasks_[ resid ].add_behavior( behavior );
 }
 bool PackerTask_::has_behavior( std::string const & behavior, Size resid ) const
@@ -1612,18 +1585,12 @@ PackerTask_::target_type( Size resid ) const
 // adducts
 void PackerTask_::or_adducts( bool setting )
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	if ( ! setting ) return; // short circuit
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
 		residue_tasks_[ ii ].or_adducts( setting );
 	}
 }
 void PackerTask_::or_adducts( bool setting, Size resid ){
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	residue_tasks_[ resid ].or_adducts( setting );
 }
 bool PackerTask_::adducts( Size resid ) const {
@@ -1633,9 +1600,6 @@ bool PackerTask_::adducts( Size resid ) const {
 
 void PackerTask_::or_optimize_h_mode( bool setting )
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	if ( ! setting ) return; // short circuit
 
 	optimize_H_ = setting;
@@ -1648,9 +1612,6 @@ void PackerTask_::or_optimize_h_mode( bool setting )
 
 void PackerTask_::or_preserve_c_beta( bool setting )
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	if ( ! setting ) return; // short circuit
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
 		residue_tasks_[ ii ].or_preserve_c_beta( setting );
@@ -1659,9 +1620,6 @@ void PackerTask_::or_preserve_c_beta( bool setting )
 
 void PackerTask_::or_flip_HNQ( bool setting )
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	if ( ! setting ) return; // short circuit
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
 		residue_tasks_[ ii ].or_flip_HNQ( setting );
@@ -1671,9 +1629,6 @@ void PackerTask_::or_flip_HNQ( bool setting )
 
 void PackerTask_::or_fix_his_tautomer( utility::vector1<int> const & positions, bool setting )
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	if ( ! setting ) return;
 	if ( positions.size() == 0 ) { // no positions defined, set for all residue_tasks_
 		for (Size ii=1; ii<=nres_; ++ii) {
@@ -1688,25 +1643,16 @@ void PackerTask_::or_fix_his_tautomer( utility::vector1<int> const & positions, 
 
 void PackerTask_::or_linmem_ig( bool setting )
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	linmem_ig_ |= setting;
 }
 
 bool PackerTask_::linmem_ig() const
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	return linmem_ig_;
 }
 
 void PackerTask_::or_lazy_ig( bool setting )
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	lazy_ig_ |= setting;
 }
 
@@ -1717,9 +1663,6 @@ bool PackerTask_::lazy_ig() const
 
 void PackerTask_::or_double_lazy_ig( bool setting )
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	double_lazy_ig_ = setting;
 }
 
@@ -1730,9 +1673,6 @@ bool PackerTask_::double_lazy_ig() const
 
 void PackerTask_::decrease_double_lazy_ig_memlimit( Size nbytes_for_rpes )
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	if ( nbytes_for_rpes != 0 ) {
 		if ( nbytes_for_rpes < dlig_mem_limit_ || dlig_mem_limit_ == 0 ) {
 			dlig_mem_limit_ = nbytes_for_rpes;
@@ -1749,9 +1689,6 @@ Size PackerTask_::double_lazy_ig_memlimit() const
 PackerTask &
 PackerTask_::initialize_extra_rotamer_flags_from_command_line()
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
 		residue_tasks_[ ii ].initialize_extra_rotamer_flags_from_command_line();
 	}
@@ -1760,9 +1697,6 @@ PackerTask_::initialize_extra_rotamer_flags_from_command_line()
 
 void PackerTask_::or_multi_cool_annealer( bool setting )
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	if ( ! (rotamer_couplings_ || rotamer_links_) ) {
 		multi_cool_annealer_ |= setting;
 	}
@@ -1775,9 +1709,6 @@ bool PackerTask_::multi_cool_annealer() const
 
 void PackerTask_::increase_multi_cool_annealer_history_size( Size setting )
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	if ( setting > mca_history_size_ ) mca_history_size_ = setting;
 }
 
@@ -1791,9 +1722,6 @@ Size PackerTask_::multi_cool_annealer_history_size() const
 PackerTask &
 PackerTask_::initialize_from_command_line()
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -1838,9 +1766,6 @@ PackerTask_::restrict_to_residues(
 	utility::vector1< bool > const & residues_allowed_to_be_packed
 )
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
 		if ( ! residues_allowed_to_be_packed[ ii ] ) {
 			residue_tasks_[ ii ].prevent_repacking(); // permenent disabling of the residue
@@ -1856,9 +1781,6 @@ PackerTask_::restrict_to_residues(
 PackerTask &
 PackerTask_::restrict_to_repacking()
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
 		residue_tasks_[ ii ].restrict_to_repacking();
 	}
@@ -1877,9 +1799,6 @@ PackerTask_::residue_task( Size resid ) const
 ResidueLevelTask &
 PackerTask_::nonconst_residue_task( Size resid )
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	n_to_be_packed_up_to_date_ = false;
 	return residue_tasks_[ resid ];
 }
@@ -1918,9 +1837,6 @@ PackerTask_::rotamer_couplings() const
 void
 PackerTask_::rotamer_couplings( PackerTask::RotamerCouplingsCOP setting )
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	rotamer_couplings_ = setting;
 	if ( setting ) {
 		multi_cool_annealer_ = false;
@@ -1946,9 +1862,6 @@ PackerTask_::rotamer_links() const
 void
 PackerTask_::rotamer_links( PackerTask::RotamerLinksCOP setting )
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	rotamer_links_ = setting;
 	if ( setting ) {
 		multi_cool_annealer_ = false;
@@ -1963,9 +1876,6 @@ PackerTask_::IGEdgeReweights() const{
 IGEdgeReweightContainerOP
 PackerTask_::set_IGEdgeReweights()
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	if( !IG_edge_reweights_ ){
 		IG_edge_reweights_ = new IGEdgeReweightContainer( nres_ );
 	}
@@ -1978,9 +1888,6 @@ PackerTask_::append_rotamer_operation(
 	rotamer_set::RotamerOperationOP rotop
 )
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
 		residue_tasks_[ ii ].append_rotamer_operation( rotop );
 	}
@@ -1991,9 +1898,6 @@ PackerTask_::append_rotamerset_operation(
 	rotamer_set::RotamerSetOperationOP rotsetop
 )
 {
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
 		residue_tasks_[ ii ].append_rotamerset_operation( rotsetop );
 	}
@@ -2014,25 +1918,16 @@ PackerTask_::update_n_to_be_packed() const
 //some get-set functions for annealer options
 void
 PackerTask_::low_temp( Real const & low_temp ){ 
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	low_temp_ = low_temp;
 }
 
 void
 PackerTask_::high_temp( Real const & high_temp ){ 
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	high_temp_ = high_temp;
 }
 
 void
 PackerTask_::disallow_quench( bool const & disallow_quench ){
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	disallow_quench_ = disallow_quench;
 }
 
@@ -2182,9 +2077,6 @@ void PackerTask_::remap_residue_level_tasks(
 	core::id::SequenceMappingCOP seqmap,
 	core::pose::Pose const & pose
 ){
-	if( symmetry_status_ == ALREADY_SYMMETRIZED ){
-		utility_exit_with_message("PackerTask cannot be modified after symmetrization");
-	}
 	utility::vector1< bool > remapped_pack_residue;
 	utility::vector1< ResidueLevelTask_ > remapped_residue_tasks;
 
@@ -2213,6 +2105,12 @@ void PackerTask_::remap_residue_level_tasks(
 	update_n_to_be_packed();
 
 }
+
+PackerTask &
+PackerTask_::operator=(PackerTask const &){
+	utility_exit_with_message("illegal");
+}
+
 
 } //namespace task
 } //namespace pack

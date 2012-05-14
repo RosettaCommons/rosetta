@@ -1319,7 +1319,7 @@ int main (int argc, char *argv[]) {
       { wp=pose; lg=ctp; }
       wp.replace_residue(ir,lys.residue(1),true);
       for(Size jr = 3; jr <= pose.n_residue()-2; ++jr) {
-        if(ir==jr) continue;
+        if(ir==(int)jr) continue;
         if(sasa[jr] > 0.1) continue;
         //if( (ir*jr+jr+3*ir+999999999)%10!=0 ) continue;
         wp.replace_residue(jr,asp.residue(1),true);
@@ -1351,7 +1351,7 @@ int main (int argc, char *argv[]) {
       { wp=pose; lg=ctp; }
       wp.replace_residue(ir,arg.residue(1),true);
       for(Size jr = 3; jr <= pose.n_residue()-2; ++jr) {
-        if(ir==jr) continue;
+        if(ir==(int)jr) continue;
         if(sasa[jr] > 0.1) continue;
         //if( (ir*jr+jr+3*ir+999999999)%5!=0 ) continue;
         wp.replace_residue(jr,asp.residue(1),true);

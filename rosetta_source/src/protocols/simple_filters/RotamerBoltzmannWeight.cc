@@ -290,7 +290,7 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	tf->push_back( new core::pack::task::operation::IncludeCurrent );
 	PackerTaskOP ptask( tf->create_task_and_apply_taskoperations( pose ) );
 	if (core::pose::symmetry::is_symmetric(pose)) {
-		core::pack::make_symmetric_PackerTask(pose, ptask); // NK 110621
+		core::pack::make_symmetric_PackerTask_by_truncation(pose, ptask); // NK 110621
 	}
 	ResidueLevelTask & restask( ptask->nonconst_residue_task( resi ) );
 	restask.restrict_to_repacking();
@@ -305,7 +305,7 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	tf->push_back( des_around );
 	PackerTaskOP task = tf->create_task_and_apply_taskoperations( pose );
 	if (core::pose::symmetry::is_symmetric(pose)) {
-		core::pack::make_symmetric_PackerTask(pose, task); // NK 110621
+		core::pack::make_symmetric_PackerTask_by_truncation(pose, task); // NK 110621
 	}
 	protocols::simple_filters::ScoreTypeFilter const stf( scorefxn_, core::scoring::total_score, 0 );
 

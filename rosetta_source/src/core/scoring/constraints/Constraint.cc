@@ -28,6 +28,18 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
+Size
+Constraint::show_violations(
+	std::ostream & out,
+	pose::Pose const &,
+	Size,
+	Real threshold
+) const {
+	out << "Constraint_show_violation stubbed out!\n" ;
+	threshold = 1; //to make compile happy
+	return 0;
+}
+
 utility::vector1< core::Size >
 Constraint::residues() const {
 	utility::vector1< int > pos_list;

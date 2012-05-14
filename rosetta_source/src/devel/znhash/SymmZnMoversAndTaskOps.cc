@@ -479,7 +479,7 @@ void ZNCoordinationConstraintPlacerMover::mutate_the_interface_to_alanine( core:
 
 	protocols::simple_moves::symmetry::SymPackRotamersMover sympack;
 	mutate_interface_residues_to_alanine_task_ = core::pack::task::TaskFactory::create_packer_task( p );
-	core::pack::make_symmetric_PackerTask( p, mutate_interface_residues_to_alanine_task_ );
+	core::pack::make_symmetric_PackerTask_by_truncation( p, mutate_interface_residues_to_alanine_task_ );
 	protocols::toolbox::task_operations::RestrictToInterface rti_taskop;
 	for ( Size ii = 1; ii <= p.fold_tree().num_jump(); ++ii ) { rti_taskop.add_jump( ii ); }
 	rti_taskop.distance( 12 );

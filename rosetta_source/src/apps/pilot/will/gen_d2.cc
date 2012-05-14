@@ -476,7 +476,7 @@ core::kinematics::Stub res2stub(core::pose::Pose const & pose, Size rsd, core::k
 }
 
 
-void ik_his4(Pose & pose, Pose & his4, Size rsd1, Size rsd2, Size rsd3, Size rsd4, Vec symcen1, Vec symaxs1, Vec ZN ){
+void ik_his4(Pose & , Pose & his4, Size , Size , Size , Size , Vec symcen1, Vec symaxs1, Vec ZN ){
   utility::vector1<Size> pivots (3), order (3);
   utility::vector1<utility::vector1<Real> > t_ang, b_ang, b_len;
   int nsol=0;
@@ -563,7 +563,7 @@ void ik_his4(Pose & pose, Pose & his4, Size rsd1, Size rsd2, Size rsd3, Size rsd
 }
 
 // {{{ void ik_arg_glu_frnt(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & ifc, vector1<HitOP> & hits) {
-Real ik_his_clamp(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & ifc, vector1<HitOP> & hits, vector1<core::pack::rotamer_set::RotamerSetOP> const & rotsets) {
+Real ik_his_clamp(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & ifc, vector1<HitOP> & , vector1<core::pack::rotamer_set::RotamerSetOP> const & rotsets) {
   using namespace basic::options::OptionKeys;
   using namespace core::id;
   if( pose.residue(rsd1).xyz("CB").distance_squared(pose.residue(rsd2).xyz("CB")) > 144.0 ) return 0;
@@ -923,7 +923,7 @@ void run(std::string fname) {
 #ifdef USE_OPENMP
 #pragma omp parallel for schedule(dynamic,1)
 #endif
-   for(int ihis=2; ihis<=nres-1; ++ihis) {
+   for(int ihis=2; ihis<=(int)nres-1; ++ihis) {
 					Pose tmp;
 #ifdef USE_OPENMP
 #pragma omp critical

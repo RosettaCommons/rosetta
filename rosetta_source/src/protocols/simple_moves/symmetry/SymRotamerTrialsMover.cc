@@ -220,6 +220,7 @@ SymEnergyCutRotamerTrialsMover::make_symmetric_task(
 )
 {
   assert( core::pose::symmetry::is_symmetric( pose ) );
+  if( task->symmetrize_by_union() || task->symmetrize_by_intersection() ) return; // new machinery
   SymmetricConformation & SymmConf (
     dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
   core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );

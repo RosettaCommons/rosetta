@@ -24,6 +24,7 @@ namespace in { BooleanOptionKey const add_orbitals( "in:add_orbitals" );  }
 namespace in { BooleanOptionKey const remember_unrecognized_res( "in:remember_unrecognized_res" );  }
 namespace in { BooleanOptionKey const remember_unrecognized_water( "in:remember_unrecognized_water" );  }
 namespace in { BooleanOptionKey const detect_disulf( "in:detect_disulf" );  }
+namespace in { RealOptionKey const detect_disulf_tolerance( "in:detect_disulf_tolerance" );  }
 namespace in { FileOptionKey const fix_disulf( "in:fix_disulf" );  }
 namespace in { BooleanOptionKey const use_stupid_foldtree_format( "in:use_stupid_foldtree_format" );  }
 namespace in { IntegerVectorOptionKey const target_residues( "in:target_residues" );  }
@@ -610,4 +611,3 @@ namespace abinitio { RealOptionKey const HD_fa_penalty( "abinitio:HD_fa_penalty"
 namespace abinitio { FileOptionKey const sheet_edge_pred( "abinitio:sheet_edge_pred" );  }
 namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score_scalling" );  }
 namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
-namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constraint_skip_rate" );  }

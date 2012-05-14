@@ -883,7 +883,7 @@ void design_1comp(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
 	pose.add_constraints( res_cst2 );
 
   if( core::pose::symmetry::is_symmetric(pose) ) {
-    core::pack::make_symmetric_PackerTask(pose,task);
+    core::pack::make_symmetric_PackerTask_by_truncation(pose,task);
     protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
     repack.apply(pose);
   } else {
@@ -945,7 +945,7 @@ void repack_iface(Pose & p, ScoreFunctionOP sf, Size Ntri, vector1<bool> & iface
   //sf->set_weight(core::scoring::fa_rep,rorig/4.0);
 
   if( core::pose::symmetry::is_symmetric(p) ) {
-    core::pack::make_symmetric_PackerTask(p,task);
+    core::pack::make_symmetric_PackerTask_by_truncation(p,task);
     protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
     repack.apply(p);
   } else {

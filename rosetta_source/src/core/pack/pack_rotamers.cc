@@ -17,6 +17,7 @@
 // Package Headers
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/task/PackerTask.hh>
+#include <core/pack/make_symmetric_task.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.hh>
@@ -349,12 +350,14 @@ void
 symmetric_pack_rotamers(
   pose::Pose & pose,
   scoring::ScoreFunction const & scfxn,
-  task::PackerTaskCOP task
+  task::PackerTaskCOP non_symmetric_task
 )
 {
   using namespace interaction_graph;
   using namespace rotamer_set;
   PROF_START( basic::PACK_ROTAMERS );
+
+  task::PackerTaskCOP task = make_new_symmetric_PackerTask_by_requested_method(pose,non_symmetric_task);
 
   pack_scorefxn_pose_handshake( pose, scfxn);
 

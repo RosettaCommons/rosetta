@@ -138,7 +138,7 @@ design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> revert_pos, utili
 	}	
 
   // Actually perform design
-	make_symmetric_PackerTask(pose, task);
+	make_symmetric_PackerTask_by_truncation(pose, task);
 	protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
 	packer->apply(pose);
 
@@ -171,7 +171,7 @@ design_using_resfile(Pose & pose, ScoreFunctionOP sf, std::string resfile, utili
 		}
 	}
 
-  make_symmetric_PackerTask(pose, task);
+  make_symmetric_PackerTask_by_truncation(pose, task);
 	// Get rid of Nobu's rotamers of death
 	core::pack::task::operation::TaskOperationCOP limit_rots = new protocols::toolbox::task_operations::LimitAromaChi2Operation();
 	limit_rots->apply(pose, *task);
@@ -211,7 +211,7 @@ repack(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos) {
   }
 
   // Actually repack.
-  make_symmetric_PackerTask(pose, task);
+  make_symmetric_PackerTask_by_truncation(pose, task);
 	// Get rid of Nobu's rotamers of death
 	core::pack::task::operation::TaskOperationCOP limit_rots = new protocols::toolbox::task_operations::LimitAromaChi2Operation();
 	limit_rots->apply(pose, *task);

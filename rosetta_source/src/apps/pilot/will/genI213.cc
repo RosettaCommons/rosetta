@@ -287,7 +287,7 @@ struct Hit {
 };
 
 std::pair<vector1<Hit>,vector1<Hit> >
-dock(Pose & init, string fname) {
+dock(Pose & init, string /*fname*/) {
 
   using namespace basic::options::OptionKeys;
 
@@ -333,7 +333,7 @@ dock(Pose & init, string fname) {
     Size irsd = *iiter;
     // ssq
     for( int iss = int(irsd)-2; iss <= int(irsd)+2; ++iss) {
-      if( iss < 1 || iss > pose.n_residue() ) goto contss;
+      if( iss < 1 || iss > (int)pose.n_residue() ) goto contss;
       if( pose.secstruct(iss) != 'L' ) goto doness;
     } goto doness; contss: continue; doness:
 

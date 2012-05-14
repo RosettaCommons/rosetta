@@ -25,9 +25,17 @@ namespace core {
 namespace pack {
 
 void
-make_symmetric_PackerTask(
+make_symmetric_PackerTask_by_truncation(
   pose::Pose const & pose,
   pack::task::PackerTaskOP task
+);
+
+// @brief make_union_symmetric_task
+// @details make a symmetric task by union or intersection as specified in the Task
+task::PackerTaskOP
+make_new_symmetric_PackerTask_by_requested_method(
+	pose::Pose const & pose,
+	task::PackerTaskCOP non_symmetric_task
 );
 
 } // pack

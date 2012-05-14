@@ -1022,7 +1022,7 @@ struct HubDenovo {
 			}
 			task->nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aas);
 		}
-		core::pack::make_symmetric_PackerTask(p,task);
+		core::pack::make_symmetric_PackerTask_by_truncation(p,task);
 		// tr << "TASK:" << std::endl;
 		// tr << *task << std::endl;
 		// utility_exit_with_message("aritns");

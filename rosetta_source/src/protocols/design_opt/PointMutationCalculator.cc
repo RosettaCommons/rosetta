@@ -255,7 +255,7 @@ PointMutationCalculator::mutate_and_relax(
 	//run PackRotamers with mutate_residue task
 	protocols::simple_moves::PackRotamersMoverOP pack;
 	if( core::pose::symmetry::is_symmetric( pose ) ) {
-		// core::pack::make_symmetric_PackerTask(pose,mutate_residue);
+		mutate_residue->request_symmetrize_by_union();
 		pack = new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue );
 	} else {
 		pack = new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue );
@@ -378,8 +378,12 @@ PointMutationCalculator::calc_point_mut_filters(
 	seqpos_aa_vals_vec.clear();
 	//apply input task factory to pose
 //	PackerTaskCOP task = task_factory()->create_task_and_apply_taskoperations( start_pose );
-	PackerTaskCOP task = task_factory_->create_task_and_apply_taskoperations( start_pose );
-
+	PackerTaskOP tmptask = task_factory_->create_task_and_apply_taskoperations( start_pose );
+	if(core::pose::symmetry::is_symmetric(start_pose)) {
+		tmptask->request_symmetrize_by_union();
+		tmptask = core::pack::make_new_symmetric_PackerTask_by_requested_method(start_pose,tmptask);
+	}
+	PackerTaskCOP task = tmptask;
 	//get vector< Size > of protein seqpos being designed and group id mask for green packer (0 is designed, 1 is rp only)
 	vector1< core::Size > being_designed;
 	utility::vector1< Size > group_ids;

@@ -85,7 +85,6 @@ MatDesDesign::apply(Pose& pose) {
     }
 
 		// Repack and minimize using score12
-  	make_symmetric_PackerTask(pose, task);
 		// design
   	protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(scorefxn_design_, task);
   	packer->apply(pose);
@@ -164,7 +163,6 @@ MatDesDesign::repack(Pose & pose, ScoreFunctionOP sf, std::set<Size> design_pos)
   }
 
   // Actually repack.
-  make_symmetric_PackerTask(pose, task);
   protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
   packer->apply(pose);
 

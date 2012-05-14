@@ -136,7 +136,7 @@ design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> revert_pos, utili
 	}	
 
   // Actually perform design
-	make_symmetric_PackerTask(pose, task);
+	make_symmetric_PackerTask_by_truncation(pose, task);
 	protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
 	packer->apply(pose);
 
@@ -170,7 +170,7 @@ design_using_resfile(Pose & pose, ScoreFunctionOP sf, std::string resfile, utili
 	}
 
   // Actually perform design
-  make_symmetric_PackerTask(pose, task);
+  make_symmetric_PackerTask_by_truncation(pose, task);
   protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
   packer->apply(pose);
 
@@ -206,7 +206,7 @@ repack(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos) {
   }
 
   // Actually repack.
-  make_symmetric_PackerTask(pose, task);
+  make_symmetric_PackerTask_by_truncation(pose, task);
   protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
   packer->apply(pose);
 

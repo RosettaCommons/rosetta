@@ -124,7 +124,7 @@ void run() {
   Size startrsd = 0;
   {
     utility::io::izstream inz(option[out::file::o]()+"/willmatch_chorismate.progress");
-    while( inz >> startfile >> startrsd );
+    while( inz >> startfile >> startrsd ) ;
     inz.close();
     if(startfile != "") TR<<"continuing from "<<startfile<<" "<<startrsd<<std::endl;
   }

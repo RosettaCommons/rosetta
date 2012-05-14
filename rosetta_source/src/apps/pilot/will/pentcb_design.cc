@@ -246,7 +246,7 @@ vector1<Size> design(Pose & p, Size nmono) {
   utility::vector1< core::scoring::constraints::ConstraintCOP > res_cst = add_favor_native_cst(p);
   p.add_constraints( res_cst );
 	
-  core::pack::make_symmetric_PackerTask(p,task);
+  core::pack::make_symmetric_PackerTask_by_truncation(p,task);
   protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
   repack.apply(p);
 
@@ -281,7 +281,7 @@ void repack(Pose & p, Size nmono, vector1<Size> const & iface) {
       task->nonconst_residue_task(i).prevent_repacking();
     }
   }
-  core::pack::make_symmetric_PackerTask(p,task);
+  core::pack::make_symmetric_PackerTask_by_truncation(p,task);
   protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
   repack.apply(p);
 }

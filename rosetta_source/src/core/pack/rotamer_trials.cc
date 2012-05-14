@@ -23,6 +23,7 @@
 // AUTO-REMOVED #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pack/task/PackerTask.hh>
+#include <core/pack/make_symmetric_task.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -199,7 +200,7 @@ void
 symmetric_rotamer_trials(
 	pose::Pose & pose,
 	scoring::ScoreFunction const & scfxn,
-	task::PackerTaskCOP input_task
+	task::PackerTaskCOP non_symmetric_task
 )
 {
 	using namespace numeric::random;
@@ -207,6 +208,8 @@ symmetric_rotamer_trials(
 
 //clock_t starttime = clock();
 	PROF_START( basic::ROTAMER_TRIALS );
+
+	task::PackerTaskCOP input_task = make_new_symmetric_PackerTask_by_requested_method(pose,non_symmetric_task);
 
 	pack_scorefxn_pose_handshake( pose, scfxn);
 

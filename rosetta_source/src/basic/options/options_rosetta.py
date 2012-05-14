@@ -127,6 +127,7 @@ Options = Option_Group( '',
 			legal=['true','false'],
 			# default depends on the residue type.
 			),
+		Option( 'detect_disulf_tolerance', 'Real', desc='disulf tolerance', default="0.5" ),
 		Option( 'fix_disulf', 'File',
 			desc="Specify disulfide connectivity via a file. Disulfides are "
 				"specified as two whitespace-seperated residue indicies per line. "

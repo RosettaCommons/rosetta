@@ -327,7 +327,7 @@ void fixbb_design(Pose & pose, Size ibpy, Size dsub) {
 	utility::vector1< core::scoring::constraints::ConstraintCOP > res_cst = add_favor_native_cst(pose);
 	pose.add_constraints( res_cst );
 
-	core::pack::make_symmetric_PackerTask(pose, task);
+	core::pack::make_symmetric_PackerTask_by_truncation(pose, task);
 	protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
 	packer->apply(pose);
 
@@ -391,7 +391,7 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
 		pose.add_constraints( res_cst );
 
 		// Actually perform design.
-		core::pack::make_symmetric_PackerTask(pose, task);
+		core::pack::make_symmetric_PackerTask_by_truncation(pose, task);
 		protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
 		packer->apply(pose);
 
@@ -547,7 +547,7 @@ void repack(Pose & pose, Size ibpy, Size dsub) {
 	}
 
 	// Actually perform design.
-	core::pack::make_symmetric_PackerTask(pose, task);
+	core::pack::make_symmetric_PackerTask_by_truncation(pose, task);
 	protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
 	packer->apply(pose);
 }

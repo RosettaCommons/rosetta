@@ -204,7 +204,7 @@ void design_homodimer(Pose & pose, ScoreFunctionOP sf, vector1<Size> const & mat
 	}
 	// TR << std::endl;
 	
-	core::pack::make_symmetric_PackerTask(pose,task);
+	core::pack::make_symmetric_PackerTask_by_truncation(pose,task);
 	// TR << *task << std::endl;
 	
 	// pose.dump_pdb("test.pdb");

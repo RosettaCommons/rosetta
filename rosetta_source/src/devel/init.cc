@@ -19,8 +19,8 @@
 // Factories
 #include <core/pack/task/operation/TaskOperationRegistrator.hh>
 #include <core/pack/task/operation/TaskOperationFactory.hh>
-#include <protocols/moves/MoverFactory.hh>
 #include <protocols/filters/FilterFactory.hh> 
+#include <protocols/moves/MoverFactory.hh>
 #include <protocols/jd2/parser/DataLoaderFactory.hh>
 //#include <devel/constrained_sequence_design/SequenceConstraintFactory.hh>
 
@@ -29,10 +29,12 @@
 //#include <devel/constrained_sequence_design/ConstrainedDesignMoverCreator.hh>
 #include <devel/matdes/SymmetrizerMoverCreator.hh>
 #include <devel/matdes/TaskAwareSymMinMoverCreator.hh>
+#include <devel/matdes/StoreTaskMoverCreator.hh>
 
 // Filter creators
+#include <devel/matdes/OligomericAverageDegreeFilterCreator.hh>
 #include <devel/matdes/SymUnsatHbondFilterCreator.hh>
-#include <devel/matdes/AverageInterfaceEnergyFilterCreator.hh>
+#include <devel/matdes/TaskAwareAlaScanCreator.hh>
 
 // dataloader creators
 //#include <devel/constrained_sequence_design/SequenceConstraintLoaderCreator.hh>
@@ -47,7 +49,8 @@
 #include <devel/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>
 #include <devel/matdes/BuildingBlockInterfaceOperationCreator.hh>
 #include <devel/matdes/RestrictToNonzeroSASAOperationCreator.hh>
-#include <devel/matdes/RestrictIdentitiesToRepackingOperationCreator.hh>
+#include <devel/matdes/RestrictIdentitiesOperationCreator.hh>
+#include <devel/matdes/RetrieveStoredTaskOperationCreator.hh>
 
 #include <utility/vector1.hh>
 
@@ -61,16 +64,19 @@ protocols::moves::MoverRegistrator< devel::znhash::InsertZincCoordinationRemarkL
 protocols::moves::MoverRegistrator< znhash::LoadZnCoordNumHbondCalculatorMoverCreator > reg_LoadZnCoordNumHbondCalculatorMoverCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::SymmetrizerMoverCreator > reg_SymmetrizerMoverCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::TaskAwareSymMinMoverCreator > reg_TaskAwareSymMinMoverCreator;
+static protocols::moves::MoverRegistrator< devel::matdes::StoreTaskMoverCreator > reg_StoreTaskMoverCreator;
 
 // Task creators
 core::pack::task::operation::TaskOperationRegistrator< devel::znhash::DisableZnCoordinationResiduesTaskOpCreator > reg_DisableZnCoordinationResiduesTaskOpCreator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::BuildingBlockInterfaceOperationCreator > BuildingBlockInterfaceOperationCreator_registrator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RestrictToNonzeroSASAOperationCreator > RestrictToNonzeroSASAOperationCreator_registrator;
-static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RestrictIdentitiesToRepackingOperationCreator > RestrictIdentitiesToRepackingOperationCreator_registrator;
-
-// Filter creators
+static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RestrictIdentitiesOperationCreator > RestrictIdentitiesOperationCreator_registrator;
+static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RetrieveStoredTaskOperationCreator > RetrieveStoredTaskOperationCreator_registrator;
+ 
+// Filter creators 
+static protocols::filters::FilterRegistrator< devel::matdes::OligomericAverageDegreeFilterCreator > OligomericAverageDegreeFilterCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::matdes::SymUnsatHbondFilterCreator > SymUnsatHbondFilterCreator_registrator;
-static protocols::filters::FilterRegistrator< devel::matdes::AverageInterfaceEnergyFilterCreator > AverageInterfaceEnergyFilterCreator_registrator;
+static protocols::filters::FilterRegistrator< devel::matdes::TaskAwareAlaScanCreator > TaskAwareAlaScanCreator_registrator;
 
 void init( int argc, char * argv [] )
 {

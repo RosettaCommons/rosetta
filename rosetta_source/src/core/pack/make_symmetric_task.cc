@@ -12,57 +12,38 @@
 
 // Unit headers
 #include <core/pack/make_symmetric_task.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmData.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymDof.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/VirtualCoordinate.hh>
-// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricEnergies.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask_.hh>
+#include <core/pack/task/TaskFactory.hh>
 
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
-// Utility functions
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/fold_and_dock.OptionKeys.gen.hh>
 #include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <numeric/xyzTriple.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <core/kinematics/Edge.hh>
 #include <core/pose/symmetry/util.hh>
 
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
-
-// AUTO-REMOVED #include <basic/Tracer.hh>
-
-// ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 
 #include <utility/vector1.hh>
 
+#include <basic/Tracer.hh>
 
+
+static basic::Tracer TR("core.pack.make_symmetric_task");
 
 namespace core {
 namespace pack {
 
 void
-make_symmetric_PackerTask(
-  pose::Pose const & pose,
-  pack::task::PackerTaskOP task
+make_symmetric_PackerTask_by_truncation(
+	pose::Pose const & pose,
+	pack::task::PackerTaskOP task
 )
 {
 	using namespace conformation::symmetry;
@@ -74,11 +55,113 @@ make_symmetric_PackerTask(
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
-  for ( Size i = 1; i <= pose.total_residue(); ++i ) {
-  if ( !symm_info->chi_is_independent(i) ) {
-      task->nonconst_residue_task( i ).prevent_repacking();
-    }
-  }
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	if ( !symm_info->chi_is_independent(i) ) {
+			task->nonconst_residue_task( i ).prevent_repacking();
+		}
+	}
+}
+
+task::PackerTaskOP
+make_new_symmetric_PackerTask_by_truncation(
+	pose::Pose const & pose,
+	task::PackerTaskCOP non_symmetric_task
+){
+	using namespace core::pack::task;
+	assert( is_symmetric( pose ) );
+	PackerTaskOP new_task = non_symmetric_task->clone();
+	make_symmetric_PackerTask_by_truncation(pose,new_task);
+	return new_task;
+}
+
+task::PackerTaskOP
+make_new_symmetric_PackerTask_by_union(
+	pose::Pose const & pose,
+	task::PackerTaskCOP non_symmetric_task
+){
+	using namespace core::pack::task;
+	assert( is_symmetric( pose ) );
+
+	PackerTaskOP new_task = TaskFactory::create_packer_task(pose);
+	PackerTask_ const & o(dynamic_cast<PackerTask_ const &>(*non_symmetric_task));
+	PackerTask_       & n(dynamic_cast<PackerTask_       &>(*new_task));
+
+	if( !o.symmetrize_by_union() ) utility_exit_with_message("incorrect PackerTask symmetrization request");
+
+	n.update_commutative(o);
+
+	conformation::symmetry::SymmetricConformation const & SymmConf( dynamic_cast<conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
+	conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
+
+	for( Size i = 1; i <= symm_info->num_total_residues_without_pseudo(); ++i ) {
+		Size const ifollow = symm_info->chi_follows(i);
+		if( ifollow != 0 && ifollow != i ) {
+			n.update_residue_union(ifollow,o.residue_task(i));
+		}
+	}
+
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	if ( !symm_info->chi_is_independent(i) ) {
+			n.nonconst_residue_task( i ).prevent_repacking();
+		}
+	}
+
+	return new_task;
+}
+
+task::PackerTaskOP
+make_new_symmetric_PackerTask_by_intersection(
+	pose::Pose const & pose,
+	task::PackerTaskCOP non_symmetric_task
+){
+	using namespace core::pack::task;
+	assert( is_symmetric( pose ) );
+
+	PackerTaskOP new_task = TaskFactory::create_packer_task(pose);
+	PackerTask_ const & o(dynamic_cast<PackerTask_ const &>(*non_symmetric_task));
+	PackerTask_       & n(dynamic_cast<PackerTask_       &>(*new_task));
+
+	if( !o.symmetrize_by_intersection() ) utility_exit_with_message("incorrect PackerTask symmetrization request");
+
+	n.update_commutative(o);
+
+	conformation::symmetry::SymmetricConformation const & SymmConf( dynamic_cast<conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
+	conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
+
+	for( Size i = 1; i <= symm_info->num_total_residues_without_pseudo(); ++i ) {
+		Size const ifollow = symm_info->chi_follows(i);
+		if( ifollow != 0 && ifollow != i ) {
+			n.update_residue_intersection(ifollow,o.residue_task(i));
+		}
+	}
+
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+	if ( !symm_info->chi_is_independent(i) ) {
+			n.nonconst_residue_task( i ).prevent_repacking();
+		}
+	}
+
+	return new_task;
+}
+
+task::PackerTaskOP
+make_new_symmetric_PackerTask_by_requested_method(
+	pose::Pose const & pose,
+	task::PackerTaskCOP non_symmetric_task
+){
+	using namespace core::pack::task;
+	assert( is_symmetric( pose ) );
+	PackerTask_ const & o(dynamic_cast<PackerTask_ const &>(*non_symmetric_task));
+
+	if( o.symmetrize_by_union() ){
+		return make_new_symmetric_PackerTask_by_union(pose,non_symmetric_task);
+	}
+	if( o.symmetrize_by_intersection() ){
+		return make_new_symmetric_PackerTask_by_intersection(pose,non_symmetric_task);
+	}
+	// TR << "YOU HAVE NOT SPECIFIED HOW YOUR PACKERTASK SHOULD BE SYMMETRIZED, TRUNCATING IT!" << std::endl;
+	// return make_new_symmetric_PackerTask_by_truncation(pose,non_symmetric_task);
+	return non_symmetric_task->clone();
 }
 
 } // pack

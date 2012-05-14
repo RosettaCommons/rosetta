@@ -276,7 +276,7 @@ struct Hit {
   bool idsf;
   Mat rotn;
   Vec rcen;
-  Hit(Real sc, Size ic, Real i1, Real i2, bool id, Mat r, Vec c) : score(sc),icys(ic),ch1(i1),ch2(i2),idsf(id),rotn(r),rcen(c) {}
+  Hit(Real sc, Size ic, Real i1, Real i2, bool id, Mat r, Vec c) : score(sc),ch1(i1),ch2(i2),icys(ic),idsf(id),rotn(r),rcen(c) {}
 };
 struct HitCmp {
   bool operator() (Hit const & i, Hit const & j) { return i.score < j.score; }

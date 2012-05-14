@@ -183,7 +183,7 @@ void design(Pose & pose, ScoreFunctionOP sf, vector1<Size> iface_res ) {
 	}
 
 	// do the design
-	core::pack::make_symmetric_PackerTask(pose,task);
+	core::pack::make_symmetric_PackerTask_by_truncation(pose,task);
 	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(pose);
 	
