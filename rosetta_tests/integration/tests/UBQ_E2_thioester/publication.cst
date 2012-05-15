@@ -1,0 +1,82 @@
+#ambiguous ion pair
+AmbiguousConstraint
+AtomPair OE1 106 NH1 196 BOUNDED 0 2.5 2 0.5 chargepair
+AtomPair OE1 106 NH2 196 BOUNDED 0 2.5 2 0.5 chargepair
+AtomPair OE2 106 NH1 196 BOUNDED 0 2.5 2 0.5 chargepair
+AtomPair OE2 106 NH2 196 BOUNDED 0 2.5 2 0.5 chargepair
+END_AMBIGUOUS
+
+#Helix capping
+#note that this is a bug, but this is how the publication code ran, so it is faithfully reproduced here
+AmbiguousConstraint
+AtomPair O 102 HA  196 BOUNDED 0 2 5 0.5 helixcap
+AtomPair O 102 2HB 196 BOUNDED 0 2 5 0.5 helixcap
+END_AMBIGUOUS
+
+#this is how the helix capping constraint was intended to work
+#AmbiguousConstraint
+#AtomPair O 102 1HH1 196 BOUNDED 0 2 5 0.5 helixcap
+#AtomPair O 102 1HH2 196 BOUNDED 0 2 5 0.5 helixcap
+#END_AMBIGUOUS
+
+#I44 face
+AmbiguousConstraint
+AtomPair CA 4   CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 8   CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 11  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 15  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 16  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 17  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 18  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 19  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 21  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 38  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 39  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 40  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 41  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 42  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 43  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 44  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 46  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 47  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 60  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 61  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 62  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 63  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 64  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 66  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 77  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 79  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 82  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 83  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 85  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 87  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 88  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 89  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 90  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 91  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 92  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 94  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 95  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 96  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 98  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 99  CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 101 CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 102 CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 103 CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 105 CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 108 CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 109 CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 110 CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 111 CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 113 CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 115 CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 117 CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 121 CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 122 CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 124 CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 125 CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 128 CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 134 CA 198 BOUNDED 0 7 5 0.5 I44_generic
+AtomPair CA 135 CA 198 BOUNDED 0 7 5 0.5 I44_generic
+END_AMBIGUOUS

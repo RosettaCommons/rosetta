@@ -58,3 +58,9 @@
 
 #muted tracers - ignore if you please
 -mute core.pack.task protocols.toolbox.PoseMetricCalculators.NeighborsByDistanceCalculator core.util.prof
+
+-cst_fa_file publication.cst
+-cst_fa_weight 50
+
+#activate only for the publication case
+-publication true

@@ -25,20 +25,17 @@
 #include <core/conformation/Conformation.hh>
 
 #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <protocols/toolbox/task_operations/RestrictByCalculatorsOperation.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/BoundConstraint.hh>
-#include <core/scoring/constraints/AmbiguousConstraint.hh>
+#include <core/scoring/constraints/util.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/kinematics/util.hh>
+#include <core/kinematics/AtomTree.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
@@ -50,7 +47,6 @@
 
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-// AUTO-REMOVED #include <protocols/loops/loops_main.hh>
 
 //movers
 #include <protocols/moves/MonteCarlo.hh>
@@ -76,7 +72,6 @@
 
 // Numeric Headers
 #include <numeric/conversions.hh>
-// AUTO-REMOVED #include <numeric/xyz.io.hh>
 
 // Utility Headers
 #include <devel/init.hh>
@@ -85,6 +80,7 @@
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <basic/prof.hh>
+#include <utility/vector0.hh>
 
 // C++ headers
 #include <string>
@@ -96,18 +92,13 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
-#include <utility/vector0.hh>
-
-//Auto Headers
-#include <core/kinematics/AtomTree.hh>
-
 //local options
 basic::options::FileOptionKey const UBQpdb("UBQpdb");
 basic::options::FileOptionKey const E2pdb("E2pdb");
 basic::options::IntegerOptionKey const E2_residue("E2_residue");
 basic::options::RealOptionKey const SASAfilter("SASAfilter");
 basic::options::RealOptionKey const scorefilter("scorefilter");
-basic::options::RealOptionKey const constraintweight("constraintweight");
+basic::options::BooleanOptionKey const publication("publication");
 
 //tracers
 using basic::Error;
@@ -129,7 +120,6 @@ public:
 		//set up fullatom scorefunction
 		using namespace core::scoring;
 		fullatom_scorefunction_ = getScoreFunction();
-		fullatom_scorefunction_->set_weight( atom_pair_constraint, basic::options::option[constraintweight].value());
 
 		TR << "Using fullatom scorefunction from commandline:\n" << *fullatom_scorefunction_;
 
@@ -316,55 +306,16 @@ public:
 		using protocols::toolbox::task_operations::RestrictByCalculatorsOperation;
 		task_factory_->push_back(new RestrictByCalculatorsOperation( calcs_and_calcns ));
 
-		//create constraints
-// 		CA-CA distance for charge pair in 1fxt: 10 angstroms (E117, R42), becomes (E109, R??); absolute resids 106, 196)
-// I44 CA-CA distance to three nearby residues: 6.2 (1fxt A111, I44) (absolute resids 102, 198)
-//     7.7	  1fxt Q114, I44; absolute resids 105, 198
-//     7.9 ?? comes to same E as in charge pair
-// basin of at least 2 angstroms zero constraint?
-
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "I44neighbors", new protocols::toolbox::pose_metric_calculators::NeighborsByDistanceCalculator( 198 ) );
-
-		using namespace core::scoring::constraints;
-		using core::id::AtomID;
-		AmbiguousConstraintOP ambig_ionpair( new AmbiguousConstraint() );
-		BoundFuncOP chargepair( new BoundFunc( 0, 2.5, 2, "chargepair") );
-		ambig_ionpair->add_individual_constraint(new AtomPairConstraint( AtomID(8, 106), AtomID(10, 196), chargepair ) );
-		ambig_ionpair->add_individual_constraint(new AtomPairConstraint( AtomID(8, 106), AtomID(11, 196), chargepair ) );
-		ambig_ionpair->add_individual_constraint(new AtomPairConstraint( AtomID(9, 106), AtomID(10, 196), chargepair ) );
-		ambig_ionpair->add_individual_constraint(new AtomPairConstraint( AtomID(9, 106), AtomID(11, 196), chargepair ) );
-		starting_pose_.add_constraint( ambig_ionpair );
-
-		AmbiguousConstraintOP ambig_helixcap( new AmbiguousConstraint() );
-		BoundFuncOP helixcap( new BoundFunc( 0, 2, 5, "helixcap") );
-		ambig_helixcap->add_individual_constraint(new AtomPairConstraint( AtomID(4, 102), AtomID(13, 196), helixcap ) );
-		ambig_helixcap->add_individual_constraint(new AtomPairConstraint( AtomID(4, 102), AtomID(15, 196), helixcap ) );
-		starting_pose_.add_constraint( ambig_helixcap );
-
-		BoundFuncOP I44_gen( new BoundFunc( 0, 7, 5, "I44_generic") );
-
-		AmbiguousConstraintOP ambig( new AmbiguousConstraint() );
-
-		//yes, this is a raw array
-		core::Size e2_face_array[] = { 4, 8, 11, 15, 16, 17, 18, 19, 21, 38, 39, 40, 41, 42, 43, 44, 46, 47, 60, 61, 62, 63, 64, 66, 77, 79, 82, 83, 85, 87, 88, 89, 90, 91, 92, 94, 95, 96, 98, 99, 101, 102, 103, 105, 108, 109, 110, 111, 113, 115, 117, 121, 122, 124, 125, 128, 134, 135};
-
-		utility::vector1< core::Size > e2_face_vec(e2_face_array, e2_face_array+(sizeof(e2_face_array)/sizeof(e2_face_array[0])));
-
-		for(core::Size i(1); i<=e2_face_vec.size(); ++i){
-			ambig->add_individual_constraint( new AtomPairConstraint( AtomID(2, e2_face_vec[i]), AtomID(2, 198), I44_gen ) );
-			TR << e2_face_vec[i] << " ";
+		//calculator for number of neighbors for I44
+		if ( basic::options::option[publication].value()) {
+			core::pose::metrics::CalculatorFactory::Instance().register_calculator( "I44neighbors", new protocols::toolbox::pose_metric_calculators::NeighborsByDistanceCalculator( 198 ) );
 		}
-		TR << "size " << e2_face_vec.size() << std::endl;
 
-		starting_pose_.add_constraint( ambig );
-
-		//starting_pose_.add_constraint( new AtomPairConstraint( AtomID(2, 102), AtomID(2, 198), new BoundFunc( 0, 9, 10, "I44_1") ) );
-		//starting_pose_.add_constraint( new AtomPairConstraint( AtomID(2, 105), AtomID(2, 198), new BoundFunc( 0, 10, 10, "I44_2") ) );
-
-// 		TR << " " << starting_pose_.xyz(AtomID(2, 106))<< " " <<  starting_pose_.xyz(AtomID(2, 196))
-// 	<< " " <<		starting_pose_.xyz(AtomID(2, 102))<< " " << starting_pose_.xyz(AtomID(2, 198))
-// 	<< " " <<		starting_pose_.xyz(AtomID(2, 105))<< " " <<starting_pose_.xyz( AtomID(2, 198)) << std::endl;
+		//add constraints; protected internally if no constraints
+		core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose( starting_pose_ );
+		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *fullatom_scorefunction_ );
 	}
+
 	virtual ~UBQ_E2Mover(){};
 
 	virtual
@@ -576,13 +527,15 @@ public:
 		job_me->add_string_real_pair("cysteine_chi1_C-CA-CB-SG", degrees(pose.atom_tree().torsion_angle(atomIDs[1], atomIDs[2], atomIDs[3], atomIDs[4])));
 		job_me->add_string_real_pair("cysteine_chi2_CA-CB-SG-C", degrees(pose.atom_tree().torsion_angle(atomIDs[2], atomIDs[3], atomIDs[4], atomIDs[5])));
 		job_me->add_string_real_pair("thioester_CB-SG-C-CA", degrees(pose.atom_tree().torsion_angle(atomIDs[3], atomIDs[4], atomIDs[5], atomIDs[6])));
-		job_me->add_string_real_pair("glycine_psi_SG-C-CA-N", degrees(pose.atom_tree().torsion_angle(atomIDs[4], atomIDs[5], atomIDs[6], atomIDs[7])));
-		job_me->add_string_real_pair("glycine_phi_C-CA-N-C", degrees(pose.atom_tree().torsion_angle(atomIDs[5], atomIDs[6], atomIDs[7], atomIDs[8])));
+		job_me->add_string_real_pair("Cterm_psi_SG-C-CA-N", degrees(pose.atom_tree().torsion_angle(atomIDs[4], atomIDs[5], atomIDs[6], atomIDs[7])));
+		job_me->add_string_real_pair("Cterm_phi_C-CA-N-C", degrees(pose.atom_tree().torsion_angle(atomIDs[5], atomIDs[6], atomIDs[7], atomIDs[8])));
 
-		//I44 neighbors
-		basic::MetricValue< core::Size > I44numn;
-		copy.metric("I44neighbors", "num_neighbors", I44numn);
-		job_me->add_string_real_pair("I44neighbors", I44numn.value());
+		if ( basic::options::option[ publication ].value()) {
+			//I44 neighbors
+			basic::MetricValue< core::Size > I44numn;
+			copy.metric("I44neighbors", "num_neighbors", I44numn);
+			job_me->add_string_real_pair("I44neighbors", I44numn.value());
+		}
 
 		set_last_move_status(protocols::moves::MS_SUCCESS);
 		return;
@@ -640,7 +593,7 @@ int main( int argc, char* argv[] )
  	option.add( E2_residue, "E2 catalytic cysteine (PDB numbering)").def(85);
 	option.add( SASAfilter, "filter out interface dSASA less than this").def(1000);
 	option.add( scorefilter, "filter out total score greater than this").def(10);
-	option.add( constraintweight, "atom pair cst weight").def(50);
+	option.add( publication, "output statistics used in publication.  TURN OFF if not running publication demo.").def(false);
 
 	//initialize options
 	devel::init(argc, argv);
