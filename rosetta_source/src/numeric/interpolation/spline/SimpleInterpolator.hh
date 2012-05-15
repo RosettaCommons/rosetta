@@ -17,6 +17,8 @@
 #define INCLUDED_numeric_interpolation_spline_SimpleInterpolator_hh
 
 #include <numeric/interpolation/spline/Interpolator.hh>
+#include <utility/json_spirit/json_spirit_writer.h>
+#include <utility/json_spirit/json_spirit_reader.h>
 
 #include <numeric/interpolation/spline/spline_functions.hh>
 
@@ -39,7 +41,14 @@ public:
 	  Real ubdy
 	);
 
+	SimpleInterpolator();
+
 	void interpolate( Real x, Real & y, Real & dy );
+
+	/// @brief serialize the Interpolator to a json_spirit object
+	virtual utility::json_spirit::Value serialize();
+	/// @brief deserialize a json_spirit object to a Interpolator
+	virtual void deserialize(utility::json_spirit::mObject data);
 
 private:
 

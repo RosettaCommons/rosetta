@@ -56,6 +56,31 @@ RepGrid::RepGrid(core::Real weight) : SingleGrid("RepGrid",weight), radius_(2.25
 {
 }
 
+utility::json_spirit::Value RepGrid::serialize()
+{
+	using utility::json_spirit::Value;
+	using utility::json_spirit::Pair;
+
+	// [inner_radius, outer_radius]
+	Pair radius("radius",radius_);
+	Pair bb("bb",Value(bb_));
+	Pair sc("sc",Value(sc_));
+	Pair ligand("ligand",Value(ligand_));
+	Pair base_data("base_data",SingleGrid::serialize());
+
+	return Value(utility::tools::make_vector(radius,bb,sc,ligand,base_data));
+
+}
+
+void RepGrid::deserialize(utility::json_spirit::mObject data)
+{
+	radius_ = data["radius"].get_real();
+	bb_ = data["bb"].get_real();
+	sc_ = data["sc"].get_real();
+	ligand_ = data["ligand"].get_real();
+	SingleGrid::deserialize(data["base_data"].get_obj());
+}
+
 void
 RepGrid::parse_my_tag(utility::tag::TagPtr const tag){
 

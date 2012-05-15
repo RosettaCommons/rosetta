@@ -12,12 +12,14 @@
 
 #include <protocols/qsar/scoring_grid/HbaGrid.hh>
 #include <protocols/qsar/scoring_grid/HbaGridCreator.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-#include <core/conformation/Residue.hh>
-#include <core/chemical/AtomType.hh>
-#include <utility/tag/Tag.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
+#include <core/chemical/AtomType.hh>
+
+#include <utility/tag/Tag.hh>
+#include <utility/tools/make_vector.hh>
+#include <utility/json_spirit/json_spirit_value.h>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/io/mpistream.hh>
@@ -55,6 +57,30 @@ HbaGrid::HbaGrid() : SingleGrid("HbaGrid",1.0), radius_(2.4),width_(1.0),magnitu
 HbaGrid::HbaGrid(core::Real weight) : SingleGrid ("HbaGrid",weight), radius_(2.4),width_(1.0), magnitude_(-1.0)
 {
 
+}
+
+
+utility::json_spirit::Value HbaGrid::serialize()
+{
+	using utility::json_spirit::Value;
+	using utility::json_spirit::Pair;
+
+	Pair radius_record("radius",Value(radius_));
+	Pair width_record("width",Value(width_));
+	Pair magnitude_record("mag",Value(magnitude_));
+	Pair base_data("base_data",SingleGrid::serialize());
+
+	return Value(utility::tools::make_vector(radius_record,width_record,magnitude_record,base_data));
+
+}
+
+void HbaGrid::deserialize(utility::json_spirit::mObject data)
+{
+	radius_ = data["radius"].get_real();
+	width_ = data["width"].get_real();
+	magnitude_ = data["mag"].get_real();
+
+	SingleGrid::deserialize(data["base_data"].get_obj());
 }
 
 void

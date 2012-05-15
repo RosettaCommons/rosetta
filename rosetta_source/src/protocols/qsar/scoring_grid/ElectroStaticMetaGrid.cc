@@ -15,6 +15,8 @@
 #include <core/conformation/Residue.hh>
 
 #include <utility/tag/Tag.hh>
+#include <utility/tools/make_vector.hh>
+#include <utility/json_spirit/json_spirit_value.h>
 
 #include <basic/Tracer.hh>
 
@@ -63,6 +65,66 @@ ElectroStaticMetaGrid::ElectroStaticMetaGrid() : type_("ElectroStaticMetaGrid"),
 	charges_ = utility::vector1<core::Real>(charges,charges+sizeof(charges)/sizeof(core::Real));
 
 }
+
+utility::json_spirit::Value ElectroStaticMetaGrid::serialize()
+{
+	using utility::json_spirit::Value;
+	using utility::json_spirit::Pair;
+
+	Pair type_record("type",Value(type_));
+	Pair chain_record("chain",Value(chain_));
+	Pair weight_record("weight",Value(weight_));
+
+	std::vector<Value> charge_data;
+	for(utility::vector1<core::Real>::iterator it = charges_.begin();it != charges_.end();++it)
+	{
+		charge_data.push_back(Value(charge_data));
+	}
+
+	Pair charge_record("charge",charge_data);
+
+	std::vector<Value> subgrid_data;
+	for(std::map<core::Real, ChargeGrid>::iterator it = charge_grid_map_.begin(); it != charge_grid_map_.end();++it)
+	{
+		// [charge,<subgrid object>]
+		Value current_grid(utility::tools::make_vector(Value(it->first),it->second.serialize()));
+		subgrid_data.push_back(current_grid);
+	}
+
+	Pair subgrid_record("grids",subgrid_data);
+
+	return Value(utility::tools::make_vector(type_record,chain_record,weight_record,charge_record,subgrid_record));
+
+
+}
+
+void ElectroStaticMetaGrid::deserialize(utility::json_spirit::mObject data)
+{
+	type_ = data["type"].get_str();
+	chain_ = data["chain"].get_str()[0];
+	weight_ = data["weight"].get_real();
+
+	charges_.clear();
+	utility::json_spirit::mArray charge_data(data["charge"].get_array());
+	for(utility::json_spirit::mArray::iterator it = charge_data.begin(); it != charge_data.end();++it)
+	{
+		charges_.push_back(it->get_real());
+	}
+
+	charge_grid_map_.clear();
+	utility::json_spirit::mArray grid_data(data["grids"].get_array());
+
+	for(utility::json_spirit::mArray::iterator it = grid_data.begin(); it != grid_data.end();++it)
+	{
+		utility::json_spirit::mArray grid_entry(it->get_array());
+		core::Real grid_charge = grid_entry[0].get_real();
+		ChargeGrid current_grid;
+		current_grid.deserialize(grid_entry[1].get_obj());
+		charge_grid_map_[grid_charge] = current_grid;
+	}
+
+}
+
 
 void ElectroStaticMetaGrid::initialize(core::Vector const & center, core::Real width, core::Real resolution)
 {

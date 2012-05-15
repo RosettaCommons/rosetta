@@ -102,6 +102,42 @@ polarizGrid::polarizGrid(core::Real weight) : SingleGrid("polarizGrid",weight), 
 	infile.close();
 }
 
+
+utility::json_spirit::Value polarizGrid::serialize()
+{
+	using utility::json_spirit::Value;
+	using utility::json_spirit::Pair;
+
+	Pair radius_record("radius",radius_);
+	std::vector<Value> tpsa_data;
+	//std::map<std::string,core::Real>
+	for(std::map<std::string,core::Real>::iterator it = TPSA_map_.begin(); it != TPSA_map_.end(); ++it)
+	{
+		tpsa_data.push_back(utility::tools::make_vector(Value(it->first),Value(it->second) ) );
+	}
+
+	Pair tpsa_record("tpsa",tpsa_data);
+	Pair base_data("base_data",SingleGrid::serialize());
+	return Value(utility::tools::make_vector(radius_record,tpsa_record,base_data));
+
+}
+
+void polarizGrid::deserialize(utility::json_spirit::mObject data)
+{
+	radius_ = data["radius"].get_real();
+	TPSA_map_.clear();
+	utility::json_spirit::mArray tpsa_data(data["tpsa"].get_array());
+	for(utility::json_spirit::mArray::iterator it = tpsa_data.begin();it != tpsa_data.end();++it)
+	{
+		std::string key = it[0].get_str();
+		core::Real value = it[1].get_real();
+		TPSA_map_[key] = value;
+	}
+
+	SingleGrid::deserialize(data["base_data"].get_obj());
+
+}
+
 void
 polarizGrid::parse_my_tag(utility::tag::TagPtr const tag){
 	if (!tag->hasOption("weight")){

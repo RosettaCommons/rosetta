@@ -20,11 +20,15 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/pose/util.hh>
-#include <basic/database/open.hh>
-#include <numeric/interpolation/util.hh>
-#include <utility/tag/Tag.hh>
-
 #include <core/pose/Pose.hh>
+
+#include <basic/database/open.hh>
+
+#include <numeric/interpolation/util.hh>
+#include <numeric/interpolation/spline/SimpleInterpolator.hh>
+
+#include <utility/tag/Tag.hh>
+#include <utility/tools/make_vector.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -137,7 +141,25 @@ core::Real VdwGrid::score(core::conformation::Residue const & residue, core::Rea
 	return score;
 }
 
+utility::json_spirit::Value VdwGrid::serialize()
+{
+	using utility::json_spirit::Value;
+	using utility::json_spirit::Pair;
 
+	Pair cutoff_data("cutoff",Value(cutoff_));
+	Pair spline_data("spline",lj_spline_->serialize());
+	Pair base_data("base_data",SingleGrid::serialize());
+
+}
+
+void VdwGrid::deserialize(utility::json_spirit::mObject data)
+{
+	cutoff_ = data["cutoff"].get_real();
+	numeric::interpolation::spline::InterpolatorOP interp = new numeric::interpolation::spline::SimpleInterpolator;
+	interp->deserialize(data["cutoff"].get_obj());
+	lj_spline_ = interp;
+	SingleGrid::deserialize(data["base_data"].get_obj());
+}
 
 }
 }

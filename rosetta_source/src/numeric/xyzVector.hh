@@ -32,6 +32,7 @@
 #include <numeric/trig.functions.hh>
 #include <platform/types.hh>
 
+
 // C++ headers
 #include <cassert>
 #include <cmath>

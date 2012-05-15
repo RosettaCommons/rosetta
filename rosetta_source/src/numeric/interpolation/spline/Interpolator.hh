@@ -19,6 +19,7 @@
 #include <numeric/types.hh>
 
 #include <utility/vector1.hh>
+#include <utility/json_spirit/json_spirit_value.h>
 
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
@@ -58,6 +59,10 @@ public:
 	/// @brief compute the y value of the lower bound function given an x value
 	void compute_ub_function_solution(Real x, Real & y) const;
 
+	/// @brief serialize the Interpolator to a json_spirit object
+	virtual utility::json_spirit::Value serialize();
+	/// @brief deserialize a json_spirit object to a Interpolator
+	virtual void deserialize(utility::json_spirit::mObject data);
 
 private:
 

@@ -20,8 +20,15 @@
 // Package Headers
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzVector.io.hh>
+#include <numeric/xyz.json.hh>
 
 #include <boost/functional/hash.hpp>
+
+#include <utility/json_spirit/json_spirit_reader.h>
+#include <utility/json_spirit/json_spirit_writer.h>
+
+#include <sstream>
+#include <iostream>
 
 // --------------- Test Class --------------- //
 
@@ -240,6 +247,23 @@ class XYZVectorTests : public CxxTest::TestSuite {
 
 		TS_ASSERT(xyz_hasher(v) == xyz_hasher(w));
 		TS_ASSERT(xyz_hasher(v) != xyz_hasher(x));
+
+	}
+
+	/// @brief serialization tests
+	void test_xyzVector_Serialization() {
+		numeric::xyzVector_float v( 1.0, 2.0, 3.0 );
+
+		std::ostringstream ss;
+		ss << utility::json_spirit::write(numeric::serialize(v));
+		utility::json_spirit::mValue v_data;
+		utility::json_spirit::read(ss.str(),v_data);
+		numeric::xyzVector_float w;
+		utility::json_spirit::mArray point_array(v_data.get_array());
+		w = numeric::deserialize<float>(point_array);
+		TS_ASSERT_DELTA(v.x(), w.x(),delta_percent);
+		TS_ASSERT_DELTA(v.y(), w.y(),delta_percent);
+		TS_ASSERT_DELTA(v.z(), w.z(),delta_percent);
 
 	}
 

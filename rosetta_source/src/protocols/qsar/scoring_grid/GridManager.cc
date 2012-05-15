@@ -27,7 +27,10 @@
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/exit.hh>
-
+#include <utility/tools/make_vector.hh>
+#include <utility/file/file_sys_util.hh>
+#include <utility/json_spirit/json_spirit_writer.h>
+#include <utility/json_spirit/json_spirit_reader.h>
 //STL headers
 #include <iostream>
 #include <fstream>
