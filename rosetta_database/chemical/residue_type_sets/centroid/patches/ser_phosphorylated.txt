@@ -1,5 +1,5 @@
-## fullatom protein phosphorylation patch for serine
-## By Andy M. Chen, June 2009, achen39@jhu.edu
+## centroid protein phosphorylation patch for serine
+## By Andy M. Chen, June 2009, achen39@jhu.edu (????)
 
 NAME phosphorylated
 TYPES PHOSPHORYLATION
