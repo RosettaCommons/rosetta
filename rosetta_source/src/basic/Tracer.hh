@@ -200,7 +200,7 @@ public:
 	static void super_mute(bool f) { super_mute_ = f; }
 
 	static void flush_all_tracers();
-
+	std::string const& channel() { return channel_; }
 public: /// Inner Classes
 	 /// @brief Small inner class acting as a proxy to an object that hold it.
 	class TracerProxy : public otstream // std::ostringstream //

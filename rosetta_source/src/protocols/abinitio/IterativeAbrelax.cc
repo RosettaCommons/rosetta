@@ -40,6 +40,7 @@
 
 #include <utility/vector1.hh>
 
+#include <ctime>
 
 static basic::Tracer tr("protocols.iterative");
 
@@ -140,8 +141,23 @@ void IterativeAbrelax::set_manager( jd2::archive::ArchiveManagerAP manager ) {
 
 
 void IterativeAbrelax::idle() {
+	int start_time( time(NULL) );
 	centroid_archive_.idle();
+	int later( time(NULL) );
+	int centroid_idle( later-start_time);
+	if ( centroid_idle > 10 ) {
+		tr.Debug << "spend " << centroid_idle << " seconds in idle() function of " << centroid_archive_.name() << std::endl;
+		if ( fullatom_ ) tr.Debug << "will postpone idle() call for " << fullatom_archive_.name() << std::endl;
+		return;
+	}
 	if ( fullatom_ ) fullatom_archive_.idle();
+	int final( time(NULL) );
+	int fullatom_idle( final-later );
+	if ( fullatom_idle > 10 ) {
+		tr.Debug << "spend " << fullatom_idle << " seconds in idle() function of " << fullatom_archive_.name() << std::endl;
+		tr.Debug << "will postpone idle() call for " << fullatom_archive_.name() << std::endl;
+		return;
+	}
 }
 
 void IterativeAbrelax::save_to_file( std::string suffix ) {

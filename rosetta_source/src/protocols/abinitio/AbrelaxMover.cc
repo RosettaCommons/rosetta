@@ -23,6 +23,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/kinematics/ShortestPathInFoldTree.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <protocols/abinitio/FragmentSampler.hh>
@@ -349,6 +350,12 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 	if ( relax_protocol() || b_return_unrelaxed_fullatom_ ) {
 		tr << "AbrelaxMover: switch to fullatom" << std::endl;
 		jd2::get_current_job()->add_string_real_pair( "prefa_centroid_score", 	((sampling_protocol()->current_scorefxn())( pose ) ) );
+		core::scoring::ScoreFunctionOP clean_score3( core::scoring::ScoreFunctionFactory::create_score_function( "score3" ) );
+		clean_score3->set_weight( scoring::linear_chainbreak, 1.33 );
+		clean_score3->set_weight( scoring::overlap_chainbreak, 1.0 );
+		clean_score3->set_weight( scoring::chainbreak, 1.0 );
+		jd2::get_current_job()->add_string_real_pair( "prefa_clean_score3", ((*clean_score3)(pose)) );
+
 		topology_broker()->switch_to_fullatom( pose );
 
 		// we're now in fullatom mode - so upate the score function.

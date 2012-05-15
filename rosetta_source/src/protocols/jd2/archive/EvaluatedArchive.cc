@@ -56,7 +56,7 @@ static basic::Tracer tr("protocols.jd2.Archive");
 //OPT_1GRP_KEY( Boolean, iterative, simulate_bg4_cbtreatment )
 OPT_1GRP_KEY( Boolean, iterative, evaluate_only_on_slaves )
 OPT_1GRP_KEY( Real, iterative, penalize_initial_decoys )
-
+OPT_1GRP_KEY( Boolean, iterative, normalize_scores )
 std::string const SPECIAL_INITIAL_DECOY_PENALTY( "special_initial_decoy_penalty" );
 
 bool protocols::jd2::archive::EvaluatedArchive::options_registered_( false );
@@ -69,6 +69,7 @@ void protocols::jd2::archive::EvaluatedArchive::register_options() {
 		//	NEW_OPT( iterative::simulate_bg4_cbtreatment, "this gives special cb weights", false );
 		NEW_OPT( iterative::evaluate_only_on_slaves,"do not re-evaluate decoys when they are read into archvie (e.g. on BlueGene)", false );
 		NEW_OPT( iterative::penalize_initial_decoys, "decoys read from input_pool have X extra score", 1000.0 );
+		NEW_OPT( iterative::normalize_scores, "score-variations are determined to normalize scores", false );
 		options_registered_ = true;
 	}
 }
@@ -112,6 +113,11 @@ bool EvaluatedArchive::add_structure( core::io::silent::SilentStructOP from_batc
 	return add_evaluated_structure( evaluated_decoy );
 }
 
+///@detail before we can apply score-fxn we have to add extra data: RDC, NOES, (not supported yet: PCS, ... )
+void EvaluatedArchive::score( pose::Pose & pose ) const {
+	scorefxn()( pose );
+}
+
 bool EvaluatedArchive::add_evaluated_structure( core::io::silent::SilentStructOP evaluated_decoy ) {
 	//get score
 	Real new_decoy_score ( select_score( evaluated_decoy ) );
@@ -140,7 +146,12 @@ void EvaluatedArchive::read_structures( core::io::silent::SilentFileData& sfd, B
 	for ( WeightMap::const_iterator it=select_weights_.begin(); it != select_weights_.end(); ++it ) {
 		std::string const& name( it->first );
 		core::Real const& weight( it->second );
-		tr.Info << name << " " << weight << std::endl;
+		tr.Info << name << " " << weight << " " << weight/score_variations_[ name ] << std::endl;
+	}
+	if ( evaluate_local() ) {
+		tr.Info << "The score will be computed according to " << std::endl;
+		scorefxn().show_pretty( tr.Info );
+		tr.Info << std::endl;
 	}
 	Parent::read_structures( sfd, batch );
 	tr.Info << "finished reading structures for batch: " << batch.batch() << std::endl;
@@ -166,7 +177,7 @@ EvaluatedArchive::evaluate_silent_struct( core::io::silent::SilentStructOP iss )
 	//need to keep prefa_centroid_score...
 	using namespace core::io::silent;
 	utility::vector1< SilentEnergy > old_energies( pss->energies() );
-
+	runtime_assert( pss->has_energy( "chem_shifts" ) );
 	//make pose for scoring and evaluation purposes
 	PROF_START( basic::ARCHIVE_FILL_POSE );
 	pose::Pose pose;
@@ -178,12 +189,13 @@ EvaluatedArchive::evaluate_silent_struct( core::io::silent::SilentStructOP iss )
 	//now evaluate the pose
 	pss = evaluate_pose( pss, pose );
 
-	//add all old energy terms that have not been re-computed, e.g., prefa_centroid_score
+
 	for ( utility::vector1< SilentEnergy >::const_iterator it = old_energies.begin(); it != old_energies.end(); ++it ) {
 		if ( it->name() != "_archive_select_score_" && !pss->has_energy( it->name() )) {
 			pss->add_energy( it->name(), it->value(), it->weight() );
 		}
 	}
+	runtime_assert( pss->has_energy( "chem_shifts" ) );
 	int total_time = 0;
 	if ( pss->has_energy( "total_eval_time" ) ) {
 		int total_time = pss->get_energy( "total_eval_time" );
@@ -232,7 +244,7 @@ Real EvaluatedArchive::select_score( SilentStructOP evaluated_decoy ) {
 	///no cached score: compute score and cache it
 	Real sum( 0.0 );
 
-	///iterate over evaluators
+	///sum all enegy terms to get 'archive_select_score' ---- iterate over evaluators
 	for ( WeightMap::const_iterator it=select_weights_.begin(); it != select_weights_.end(); ++it ) {
 		std::string const& name( it->first );
 		Real const& weight( it->second );
@@ -247,7 +259,9 @@ Real EvaluatedArchive::select_score( SilentStructOP evaluated_decoy ) {
 			if ( !evaluated_decoy->has_energy( name ) ) {
 				throw EXCN_Archive( "energy name "+name+" not found in returned decoys -- run with rescoring in archive to avoid this or fix your batches" );
 			} // add weighted column-value to final score
-			sum += weight * evaluated_decoy->get_energy( name );
+			if ( weight > 0.01 ) {
+				sum += weight * evaluated_decoy->get_energy( name ) / score_variations_[ name ];
+			}
 		}
 	}
 
@@ -286,6 +300,44 @@ void EvaluatedArchive::sort() {
 
 // --------------------------- end sort ------------------------------
 
+///@detail determine variations of the non-zero weighted (select_weight_) scores by taking the difference Q3-Q1 (upper / lower quartil)
+void EvaluatedArchive::determine_score_variations() {
+	if ( !basic::options::option[ basic::options::OptionKeys::iterative::normalize_scores ]() ) return;
+	tr.Info << "determine score variations in EvaluatedArchive " << name() << "... " << std::endl;
+	score_variations_.clear();
+	core::Size ndecoys( decoys().size() );
+	core::Size half( ndecoys / 2 );
+	core::Size lowQ( half / 2 );
+	core::Size highQ( half + lowQ );
+	utility::vector1<core::Real> values( ndecoys );
+	for ( WeightMap::const_iterator it = select_weights_.begin(); it != select_weights_.end(); ++it ) {
+		if ( it->first == "special_initial_decoy_penalty" ) continue;
+		if ( it->second > 0.01 ) {
+			std::string const& name( it->first );
+			Size ct( 1 );
+			for ( SilentStructs::iterator iss = decoys().begin(); iss != decoys().end(); ++iss, ++ct ) {
+				if ( !(*iss)->has_energy( name ) ) {
+					throw EXCN_Archive( "energy name "+name+" not found in returned decoys -- run with rescoring in archive to avoid this or fix your batches" );
+				} // add weighted column-value to final score
+				values[ct]=(*iss)->get_energy( name );
+			}
+			if ( ndecoys > 5 ) {
+				runtime_assert( lowQ > 0 && highQ < ndecoys );
+				std::sort(values.begin(), values.end());
+				score_variations_[ it->first ] = std::abs( values[highQ]-values[lowQ] );
+				tr.Info << "score variation of " << score_variations_[ it->first ] << " for " << name
+								<< " between " << values[lowQ]  << " at " << lowQ
+								<< " and "     << values[highQ] << " at " << highQ << std::endl;
+			} else { //not enough decoys
+				score_variations_[ it->first ] = 1.0;
+			}
+			if ( score_variations_[ it->first ]< 1e-20 ) {
+				score_variations_[ it->first ]= 1e-20;
+			}
+		} // if weight > 0.01
+	} //for select_weights
+} //determine_score_variations
+
 
 ///@detail rescore and sort archive
 void EvaluatedArchive::rescore() {
@@ -293,11 +345,15 @@ void EvaluatedArchive::rescore() {
 
 	//rescore all decoys
 	for ( SilentStructs::iterator iss = decoys().begin(); iss != decoys().end(); ++iss ) {
-		*iss = evaluate_silent_struct( *iss );
+		*iss = evaluate_silent_struct( *iss ); //_archive_select_score_ will be removed here
 	}
 	scores_are_clean_ = true; //do this first, since SortPredicate asks for the select_score
 
-	sort();
+	//determine reweight weights
+	determine_score_variations();
+
+	sort(); //here the summing is done via select_score() and a new _archive_select_score_ is computed
+
 	tr.Debug << "...done rescoring and sorting " << std::endl;
 // 	if ( tr.Trace.visible() ) {
 // 		for ( SilentStructs::const_iterator it = decoys().begin(); it != decoys().end(); ++it ) {
@@ -310,9 +366,10 @@ void EvaluatedArchive::rescore() {
 /* =================== maintenance of evaluators and weights ====================== */
 
 void EvaluatedArchive::add_evaluation( evaluation::PoseEvaluatorOP eval, Real weight ) {
+	tr.Info << "added evaluator " << eval->name( 1 ) << " with weight " << weight << " to EvaluatedArchive " << name() << std::endl;
 	for ( Size i=1; i<= eval->size(); i++ ) {
 		std::string const& column( eval->name( i ) );
-		select_weights_[ column ] = weight;
+		set_weight( column, weight );
 		evaluators_[ column ] = eval;
 	}
 	scores_are_clean_ = false;
@@ -333,13 +390,23 @@ void EvaluatedArchive::remove_evaluation( std::string const& name ) {
 void EvaluatedArchive::set_weight( std::string const& column, core::Real weight ) {
 	//	runtime_assert( has_evaluator( column ) ); or part of score!
 	select_weights_[ column ] = weight;
+	if ( weight > 0.01 ) {
+		score_variations_[ column ] = 1.0; // to make sure we have a value ( e.g., in case we do no local evaluation )
+		scores_are_clean_ = false; //need to re-determine the score-variations
+	}
 }
 
-core::Real EvaluatedArchive::get_weight( std::string const& column ) {
+core::Real EvaluatedArchive::get_weight( std::string const& column ) const {
 	//	runtime_assert( has_evaluator( column ) ); or part of score!
-	WeightMap::iterator iter = select_weights_.find( column );
+	WeightMap::const_iterator iter = select_weights_.find( column );
 	if ( iter != select_weights_.end() ) return iter->second;
 	else return 0.0;
+}
+
+core::Real EvaluatedArchive::score_variation( std::string const& column ) const {
+	WeightMap::const_iterator iter = score_variations_.find( column );
+	if ( iter != score_variations_.end() ) return iter->second;
+	else return 1.0;
 }
 
 bool EvaluatedArchive::has_evaluator( std::string const& column ) {

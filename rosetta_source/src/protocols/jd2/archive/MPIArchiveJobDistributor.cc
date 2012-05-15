@@ -269,6 +269,8 @@ MPIArchiveJobDistributor::process_message(
 ) {
 	runtime_assert( rank() == master_rank() );
 
+	basic::show_time( tr,  "jd2 main msg-loop: process message..." );
+
 	// send out any pending notifications to archive if present -- this is non-blocking
 	_notify_archive(); //we should get here often enough... (basically every finished job
 	//-- unless of course we haven't started any jobs yet)

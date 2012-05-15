@@ -32,8 +32,9 @@
 // AUTO-REMOVED #include <protocols/noesy_assign/NoesyModule.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
-
+//for dynamic patching
+#include <utility/options/keys/FileVectorOptionKey.hh>
+#include <utility/io/ozstream.fwd.hh>
 
 // Third-party Headers
 #include <boost/functional/hash.hpp>
@@ -113,8 +114,10 @@ public:
 	// cen2fullatom-stage ( stage5 )
 	virtual void gen_evaluation_output( jd2::archive::Batch& batch, bool fullatom = false );
 
+	// cen2fullatom-stage ( stage5 )
+	virtual void gen_dynamic_patches( jd2::archive::Batch& batch );
 
-// ///@brief need to get these from the IterativeCentroid to IterativeFullatom at end of stage5 ;
+	// ///@brief need to get these from the IterativeCentroid to IterativeFullatom at end of stage5 ;
 // 	std::string const& first_noesy_fa_cst_file() const { return first_noesy_fa_cst_file_; }
 protected:
  	//void set_first_noesy_fa_cst_file( std::string setting ) { first_noesy_fa_cst_file_ = setting; }
@@ -123,9 +126,8 @@ protected:
 	void set_noesy_assign_float_cycle( core::Real setting ) { noesy_assign_float_cycle_ = setting; }
 	bool never_switched_noe_filter_;
 	loops::Loops scored_core_;
-	///@brief even in centroid mode the end of abinitio will have a fast relax... enables cs-score and noe-assignment
-	bool super_quick_relax_of_centroids_;
 
+	bool super_quick_relax_of_centroids() const { return super_quick_relax_of_centroids_; }
 	/// ------------- helper functions to be used from generate_batch() --------------------
 
 	void gen_resample_topologies( jd2::archive::Batch& batch );
@@ -168,6 +170,16 @@ protected:
 		return cen_score_patch_;
 	}
 
+	///@brief this is set from score::atom_pair_constraint of the pool-scorefunction
+	core::Real overall_cstfilter_weight() const {
+		return overall_cstfilter_weight_;
+	}
+
+	///@brief this is set from score::atom_pair_constraint of the pool-scorefunction
+	void set_overall_cstfilter_weight( core::Real setting ) {
+		overall_cstfilter_weight_ = setting;
+	}
+
 	///OBSOLET cores are computed by compute_cores() in idle()
 	loops::Loops const& core( core::Size i ) {
 		if ( i == 1 ) { return core15_; };
@@ -201,7 +213,7 @@ protected:
 	}
 
 	void test_broker_settings( jd2::archive::Batch const& batch );
-
+	void setup_filter_cst( core::Real weight );
 private:
 
 	///@brief score a pose with Pool-Scoring function (adds necessary data to pose (RDC, constraints,  etc ) )
@@ -224,8 +236,15 @@ private:
 	void read_noisy_assing_data_from_last_batch();
 
 	void replace_noesy_filter_constraints();
-	void rescore_archive();
+	void rescore_nonlocal_archive();
 
+	void setup_autoNOE();
+	void do_dynamic_patching(
+			jd2::archive::Batch& batch,
+			utility::io::ozstream& flags,
+			std::string score,
+			utility::options::FileVectorOptionKey const& key
+	) const;
 private:
 	///  ----------------- -- private data members -- --------------------
 
@@ -275,6 +294,9 @@ private:
 	std::string fa_score_;
 	std::string fa_score_patch_;
 
+	///@brief this is set from score::atom_pair_constraint of the pool-scorefunction
+	core::Real overall_cstfilter_weight_;
+
 	std::string target_sequence_; //read from in:file:fasta in c'stor
 
 	protocols::noesy_assign::NoesyModuleOP noesy_module_;
@@ -292,11 +314,17 @@ private:
 	boost::hash<std::string> hasher;
 
 	///@brief even in centroid mode the end of abinitio will have a fast relax... enables cs-score and noe-assignment
-	//bool super_quick_relax_of_centroids_;
 	bool recover_centroid_structure_for_pool_;
 
 	std::string chemshift_column_;
 	bool bDoBetaJumping_;
+
+	///@brief even in centroid mode the end of abinitio will have a fast relax... enables cs-score and noe-assignment
+	bool super_quick_relax_of_centroids_;
+
+
+	///@brief use the score_variations from EvaluatedArchive to determine new sampling weights
+	bool use_dynamic_weights_for_sampling_;
 
 	///@brief cache some of the experimental data so we don't reload from file for each evaluation
 	mutable core::scoring::ResidualDipolarCouplingOP rdc_data_; //need to cache this to avoid reading RDC file each time...

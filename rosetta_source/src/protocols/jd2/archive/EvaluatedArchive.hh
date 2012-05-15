@@ -93,6 +93,9 @@ public:
 	virtual void init_from_decoy_set( core::io::silent::SilentFileData const& sfd ) = 0;
 
 protected:
+	///@brief typedefs for Evaluators and Weights
+	typedef std::map< std::string, core::Real > WeightMap;
+	typedef std::map< std::string, evaluation::PoseEvaluatorOP > EvaluatorMap;
 
 	void start_evaluation_timer() const;
 	///@brief yields an "evaluated" silent-struct which can be queried with select_score
@@ -127,7 +130,7 @@ protected:
 	/// (i.e, score, chainbreak, external evaluation like score_final )
 	void set_weight( std::string const& column, core::Real weight );
 
-	core::Real get_weight( std::string const& column );
+	core::Real get_weight( std::string const& column ) const;
 
 	///@brief set scorefxn used for evaluation
 	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn_ );
@@ -137,6 +140,13 @@ protected:
 protected:
 	core::scoring::ScoreFunctionOP scorefxn_non_const();
 
+	///@brief score a pose
+	virtual void score( core::pose::Pose& pose ) const;
+
+	WeightMap const& score_variations() const {
+		return score_variations_;
+	}
+	core::Real score_variation( std::string const& col ) const;
 private:
 
 	///@brief call score( pose ) and collect energies into result
@@ -144,15 +154,12 @@ private:
 	/// for convenience the pointer result is also return value
 	virtual core::io::silent::SilentStructOP evaluate_pose( core::io::silent::SilentStructOP result, core::pose::Pose& input_pose ) const;
 
-	///@brief score a pose
-	virtual void score( core::pose::Pose& pose ) const = 0;
-
 	///@brief re-sort decoys based on select_score
 	void sort();
 
-	///@brief typedefs for Evaluators and Weights
-	typedef std::map< std::string, core::Real > WeightMap;
-	typedef std::map< std::string, evaluation::PoseEvaluatorOP > EvaluatorMap;
+	///@brief determine variation of scores (those that are non-zeros in select_weights_ )
+	void determine_score_variations();
+
 
 	///@brief scorefxn_ for evaluate( SilentStruct, Pose const& )
 	core::scoring::ScoreFunctionOP scorefxn_;
@@ -160,6 +167,7 @@ private:
 	///@brief Evaluators and weights for select_score and evaluate
 	WeightMap select_weights_;
 	EvaluatorMap evaluators_;
+	WeightMap score_variations_;
 
 	///@brief keep track wether cached scores in _archive_select_score_ are up-to-date
 	bool scores_are_clean_; //false after add_evaluation or change of scorefxn_

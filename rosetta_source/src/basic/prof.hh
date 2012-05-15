@@ -15,6 +15,7 @@
 #define INCLUDED_basic_prof_hh
 
 #include <utility/vector1.hh>
+#include <basic/Tracer.hh>
 #include <string>
 
 #include <platform/types.hh>
@@ -489,6 +490,10 @@ private:
 	clock_t start_clock_;
 	std::string tag_;
 };
+
+///@brief print "TIME_STAMP: Www Mmm dd hh:mm:ss yyyy msg" on tr.Error and on std::cerr (if boolean is true)
+extern bool show_time_on_cerr;
+void show_time( basic::Tracer& tr, std::string const& msg );
 
 } // basic
 

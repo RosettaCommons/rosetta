@@ -16,10 +16,12 @@
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <string>
+#include <time.h>
 
 //Auto Headers
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
+#include <boost/algorithm/string.hpp>
 
 //Auto using namespaces
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
@@ -37,6 +39,19 @@ utility::vector1< int > bad_calls( n_prof_tags, 0 );
 clock_t const SHRINK_FACTOR( 2 );
 
 double const clock_factor( ( (double) SHRINK_FACTOR * 100.0 ) / CLOCKS_PER_SEC );
+
+bool show_time_on_cerr( false );
+void show_time( basic::Tracer& tr, std::string const& msg ) {
+	using namespace std;
+	time_t rawtime;
+  struct tm * timeinfo;
+  time ( &rawtime );
+  timeinfo = localtime ( &rawtime );
+	std::string date( asctime( timeinfo ) );
+	boost::trim(date);
+	tr.Error << "TIME_STAMP: " << date << " " << msg << std::endl;
+	if ( show_time_on_cerr ) std::cerr << tr.channel() << ": TIME_STAMP: " << date << " " << msg << std::endl;
+}
 
 void setup_tag2string() {
 	tag2string.clear();

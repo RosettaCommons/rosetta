@@ -99,6 +99,7 @@ sources = {
 		"AsymFoldandDockClaimer",
 		"ClaimerMessage",
 		"ConstraintClaimer",
+		"ConstraintEvaluatorWrapper",
 		"CoordConstraintClaimer",
 		"CutBiasClaimer",
 		"DensityScoringClaimer",

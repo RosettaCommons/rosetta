@@ -95,7 +95,6 @@ IterativeFullatom::IterativeFullatom()
 	set_scorefxn( scorefxn );
 	perturb_start_structures_ = option[ iterative::perturb_fa_resampling ];
 
-	mem_tr << "after setup fa-score function" << std::endl;
 	//Base class sets chainbreak scores as convenience if not in patches..
 	// this will go wrong in fullatom mode, since chainbreaks not returned ... remove here
 	if ( !evaluate_local() ) {
@@ -103,16 +102,30 @@ IterativeFullatom::IterativeFullatom()
 		remove_evaluation( "overlap_chainbreak" );
 
 		if ( noesy_assign::NoesyModule::cmdline_options_activated() ) {
-			set_weight( "noesy_autoassign_cst", option[ iterative::fapool_noesy_cst_weight ]() );
+			set_weight( "noesy_autoassign_cst", option[ iterative::fapool_noesy_cst_weight ]()*overall_cstfilter_weight());
 		}
 		if ( option[ iterative::fapool_chemicalshift_weight ].user() ) {
 			set_weight( chemshift_column(), option[ iterative::fapool_chemicalshift_weight ]() );
 		}
+	} else { //evaluate local
+		set_weight( "score", 1.0 );
+		set_weight( "atom_pair_constraint", 0 ); //this is now done via FILTER mechanism of ConstraintClaimer only !
+		if ( std::abs( scorefxn->get_weight( scoring::atom_pair_constraint ) - overall_cstfilter_weight() ) > 0.1 ) {
+			set_overall_cstfilter_weight( scorefxn->get_weight( scoring::atom_pair_constraint ) );
+			setup_filter_cst( overall_cstfilter_weight() );
+		}
+		scorefxn->set_weight( scoring::atom_pair_constraint, 0 );
+
+		set_weight( "rdc", scorefxn->get_weight( scoring::rdc ) );
+		scorefxn->set_weight( scoring::rdc, 0 );
+
+		set_scorefxn( scorefxn );
 	}
 	set_noesy_assign_float_cycle( option[ iterative::fapool_first_noesy_cycle_nr ]() );
-	if ( super_quick_relax_of_centroids_ ) {
-		set_weight( "score_fa", 1.0 );
+	if ( super_quick_relax_of_centroids() ) {
+		set_weight( "score_fa", evaluate_local() ? 0.0 : 1.0 );
 		set_weight( "prefa_centroid_score", 0.0 );
+		set_weight( "prefa_clean_score3", 0.0 );
 	}
 }
 

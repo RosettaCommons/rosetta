@@ -305,6 +305,7 @@ ArchiveManager::go( ArchiveBaseOP archive )
 	bool stop( false );
 	bool print_status( true );
 	while ( !stop || unfinished_batches() ) {
+		basic::show_time( tr,  "manager main msg-loop: probe for message..." );
 		if ( print_status ) {
 			tr.Debug << "probing for message in ArchiveManager" << std::endl;
 			tr.Debug << "\nSTATUS: " << (stop ? "STOP send: " : "" ) << "  ------ unfinished_batches: " << unfinished_batches() << std::endl;
@@ -332,6 +333,7 @@ ArchiveManager::go( ArchiveBaseOP archive )
 		// 			//check if there is something this time...
 		// 			MPI_Iprobe( jd_master_rank_, MPI_ARCHIVE_TAG, MPI_COMM_WORLD, &flag, &status );
 		// 		}
+
 		try {
 			//if there is a message -- go get it.
 			int buf[ 6 ]={0,0,0,0,0,0};
@@ -340,7 +342,9 @@ ArchiveManager::go( ArchiveBaseOP archive )
 				int merrno = MPI_Recv( &buf, 6, MPI_INT, jd_master_rank_, MPI_ARCHIVE_TAG, MPI_COMM_WORLD, &status );
 				if ( merrno != MPI_SUCCESS ) tr.Error << "ERROR: MPI_Recv error " << std::endl;
 #endif
+				basic::show_time( tr,  "manager main msg-loop: received message..." );
 			}	else { //nothing received
+				basic::show_time( tr,  "manager main msg-loop: no message: idle..." );
 				idle();
 				continue;
 			}
@@ -356,9 +360,10 @@ ArchiveManager::go( ArchiveBaseOP archive )
 				Size const bad( buf[ 3 ] );
 				Size const good( buf[ 4 ] );
 				Size const total( buf[ 5 ] ); //total nr of jobs
+				basic::show_time( tr,  "ArchiveManager receveid job-completion..." );
 				tr.Debug << "ArchiveManager received JOB_COMPLETION " << batch_id << " " << bad << " " << good << " " << total << std::endl;
 				jobs_completed_[ batch_id ] = CompletionMessage( batch_id, final, bad, good, total );
-				break;
+				break; //switch
 			}
 			case QUEUE_EMPTY:	{
 				Size const batch_id( buf[ 1 ] );
@@ -373,22 +378,22 @@ ArchiveManager::go( ArchiveBaseOP archive )
 						--max_working_batch_id;
 					if ( batch_id <= max_working_batch_id ) {
 						tr.Info << "ArchiveManager ignored outdated QUEUE_EMPTY with batch_id " << batch_id << " -- already submitted " << batches_.size() << std::endl;
-						break;
+						break; //switch
 					}
 				}
 				//any job-completions we should work thru before generating a new batch?
 				PROF_START( basic::ARCHIVE_CRITICAL_JOBSCOMPLETE );
 				while ( jobs_completed_.size() ) {
 					jobs_completed(); //get thru these before making job decisions
-					theArchive_->idle();
 				}
 				PROF_STOP( basic::ARCHIVE_CRITICAL_JOBSCOMPLETE );
+				//		theArchive_->idle(); why was this in the job-completed loop ?
 
 				PROF_START( basic::ARCHIVE_GEN_BATCH );
 				//this is a valid QUEUE_EMPTY request: do something about it
 				tr.Info << "ArchiveManager received QUEUE_EMPTY" << std::endl;
 				tr.Debug << "JD batch_id: " << batch_id << " max_working_batch_id: " << max_working_batch_id << std::endl;
-
+				basic::show_time( tr,  "manager main msg-loop: queue empty..." );
 				if ( !theArchive_->finished() ) {
 					//if !finished Archive should always generate a batch...
 					//but let's make sure by monitoring, since it would be bad if we hang in the communication...
@@ -405,12 +410,13 @@ ArchiveManager::go( ArchiveBaseOP archive )
 				}
 				PROF_STOP( basic::ARCHIVE_GEN_BATCH );
 				basic::prof_show();
-				break;
+				break; //switch
 			}
 			default:
 				utility_exit_with_message( "unknown msg in ArchiveManager " + ObjexxFCL::string_of( msg_tag ) );
-			}
+			} //switch
 		} catch ( utility::excn::EXCN_Base &excn ) {
+			basic::show_time( tr,  "Exception in main msg-loop !" );
 			tr.Error << "[ERROR] " << excn.msg() << std::endl;
 			tr.Error << "spinning down" << std::endl;
 			save_archive();
