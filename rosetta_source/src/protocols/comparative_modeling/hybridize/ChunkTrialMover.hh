@@ -56,41 +56,33 @@ class ChunkTrialMover: public protocols::moves::Mover
 {
 	
 public:
-ChunkTrialMover(
-				utility::vector1 < core::pose::PoseCOP > const & template_poses,
-                utility::vector1 < protocols::loops::Loops > const & template_chunks,
-				Loops ss_chunks_pose,
-                bool random_template = true,
-				AlignOption align_option = all_chunks,
-				Size max_registry_shift = 0);
-
-void
+	ChunkTrialMover(
+		utility::vector1 < core::pose::PoseCOP > const & template_poses,
+						utility::vector1 < protocols::loops::Loops > const & template_chunks,
+		Loops ss_chunks_pose,
+		bool random_template = true,
+		AlignOption align_option = all_chunks,
+		Size max_registry_shift = 0);
+	
+	void
 	get_alignment_from_template(
-                                core::pose::PoseCOP  template_pose,
-                                std::map <core::Size, core::Size> & seqpos_alignment
-                                );
-
+			core::pose::PoseCOP  template_pose,
+			std::map <core::Size, core::Size> & seqpos_alignment );
 	
-void
-get_alignment_from_chunk_mapping(std::map <core::Size, core::Size> const & chunk_mapping,
-								 Loops const template_ss_chunks,
-								 Loops const target_ss_chunks,
-								 std::map <core::Size, core::Size> & sequence_alignment);
+	void
+	get_alignment_from_chunk_mapping(std::map <core::Size, core::Size> const & chunk_mapping,
+									 Loops const template_ss_chunks,
+									 Loops const target_ss_chunks,
+									 std::map <core::Size, core::Size> & sequence_alignment);
 
-void set_template(core::Size const template_number);
-core::Size template_number();
-void pick_random_template();
-
-void pick_random_chunk(core::pose::Pose & pose);
-
-Size trial_counter(Size ires);
-	
-void
-	apply(core::pose::Pose & pose);
-
-std::string
-	get_name() const;
-	
+	void set_template(core::Size const template_number);
+	core::Size template_number();
+	void pick_random_template();
+	void pick_random_chunk(core::pose::Pose & pose);
+	Size trial_counter(Size ires);
+	void apply(core::pose::Pose & pose);
+	std::string get_name() const;
+		
 private:
 	InsertChunkMover align_chunk_;
 	AlignOption align_option_;

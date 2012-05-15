@@ -40,47 +40,40 @@ class InsertChunkMover: public protocols::moves::Mover
 
 public:
 	
-InsertChunkMover();
-~InsertChunkMover();
-
-void set_bb_xyz_aligned(core::pose::Pose & pose);
-
-bool success() {
-    return success_;
-}
-    
-void reset_torsion(bool reset_torsion_unaligned) {
-    reset_torsion_unaligned_ = reset_torsion_unaligned;
-}
-
-void set_template(core::pose::PoseCOP template_pose, core::Size template_id,
-				  std::map <core::Size, core::Size> const & sequence_alignment );
-
-void set_aligned_chunk(core::pose::Pose const & pose, Size const jump_number);
-
-void set_reset_torsion_unaligned(bool reset_torsion_unaligned);
+	InsertChunkMover();
+	~InsertChunkMover();
 	
-void steal_torsion_from_template(core::pose::Pose & pose);
+	void set_bb_xyz_aligned(core::pose::Pose & pose);
 	
-void steal_torsion_and_bonds_from_template(core::pose::Pose & pose);
+	bool success() {
+			return success_;
+	}
+			
+	void reset_torsion(bool reset_torsion_unaligned) {
+			reset_torsion_unaligned_ = reset_torsion_unaligned;
+	}
 	
-bool get_local_sequence_mapping(core::pose::Pose & pose,
-								int registry_shift = 0,
-								Size MAX_TRIAL = 100 );
+	void set_template(core::pose::PoseCOP template_pose, core::Size template_id,
+						std::map <core::Size, core::Size> const & sequence_alignment );
 	
-void change_anchor(core::pose::Pose & pose,
-				   Size jump_number,
-				   Size new_anchor_seqpos);
+	void set_aligned_chunk(core::pose::Pose const & pose, Size const jump_number, bool anchor_insert_only_in);
+	
+	void set_reset_torsion_unaligned(bool reset_torsion_unaligned);
+		
+	bool get_local_sequence_mapping(core::pose::Pose & pose,
+									int registry_shift = 0,
+									Size MAX_TRIAL = 100 );
+		
 	void check_overlap(core::pose::Pose & pose);
-	
-void set_registry_shift(int registry_shift);
-	
-Size trial_counter(Size ires);
-	
-void apply(core::pose::Pose & pose);
-	
-std::string get_name() const;
-	
+		
+	void set_registry_shift(int registry_shift);
+		
+	Size trial_counter(Size ires);
+		
+	void apply(core::pose::Pose & pose);
+		
+	std::string get_name() const;
+
 private:
 	core::pose::PoseCOP template_pose_;
 	core::Size template_id_;
@@ -90,11 +83,12 @@ private:
 	Size seqpos_start_; // start and end seqpose of the chunk, downstream of the jump
 	Size seqpos_stop_;
 	Size seqpos_aligned_start_; // start and end seqpose of the aligned piece
-	Size seqpos_aligned_stop_; 
+	Size seqpos_aligned_stop_;
+	bool anchor_insert_only_;
 
-    bool success_;
 	int registry_shift_;
 	char secstruct_;
+	bool success_;
 
 	// parameters of the protocol
 	bool reset_torsion_unaligned_; // reset torsion of unaligned region to the default value for the given secondary structure

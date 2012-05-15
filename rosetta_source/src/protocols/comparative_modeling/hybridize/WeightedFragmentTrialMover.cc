@@ -48,12 +48,13 @@ void WeightedFragmentTrialMover::update_sampler_weights( utility::vector1< core:
 			// disallow insertion across anchors
 			bool cross_anchor = false;
 			for (Size i_anchor = 1; i_anchor <= anchor_reses_.size() && !cross_anchor; ++i_anchor) {
-				if (i_anchor>=seqpos_start && i_anchor<=seqpos_end) cross_anchor = true;
+				if (anchor_reses_[i_anchor]>=seqpos_start && anchor_reses_[i_anchor]<=seqpos_end) cross_anchor = true;
 			}
 			if (cross_anchor) continue;
 
 			for (Size seqpos = seqpos_start; seqpos <= seqpos_end; ++seqpos) { // accumulate the weights of all residues in the fragment
 				frame_weights[i_frame] += residue_weights[seqpos];
+
 			}
 		}
 		weighted_sampler_[i_frag_set].weights(frame_weights);
@@ -70,7 +71,7 @@ void WeightedFragmentTrialMover::apply(core::pose::Pose & pose)
 	core::fragment::FrameIterator frame_it = frag_libs_[i_frag_set]->begin();
 	advance(frame_it, insert_pos-1);
 	Size i_frag = RG.random_range(1, frame_it->nr_frags());
-	
+
 	frame_it->apply( i_frag, pose );
 }
 	
