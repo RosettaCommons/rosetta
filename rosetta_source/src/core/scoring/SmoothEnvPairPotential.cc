@@ -52,13 +52,13 @@ Real SmoothScoreTermCoeffs::func( Real x ) const {
 
 Real SmoothScoreTermCoeffs::dfunc( Real x ) const {
 	Real dy = 0;
-	for (int i=1; i<=sigmoid_coeffs_.size(); ++i) {
+	for (core::Size i=1; i<=sigmoid_coeffs_.size(); ++i) {
 		numeric::xyzVector< Real > const &q = sigmoid_coeffs_[i];
 		Real e = exp( -q[2]*x - q[1] );
 		Real d = (1 + e);
 		dy += q[0]*q[2]*e / (d*d);
 	}
-	for (int i=1; i<=gaussian_coeffs_.size(); ++i) {
+	for (core::Size i=1; i<=gaussian_coeffs_.size(); ++i) {
 		numeric::xyzVector< Real > const &n = gaussian_coeffs_[i];
 		dy += n[0] * (n[1]-x) / (n[2]*n[2]) * exp( -(n[1]-x)*(n[1]-x) / (2*n[2]*n[2]) );
 	}
@@ -93,7 +93,7 @@ SmoothEnvPairPotential::SmoothEnvPairPotential() {
 			} else if (tag == "GAUSSIAN" || tag == "SIGMOID") {
 				Size ngauss; l >> ngauss;
 				numeric::xyzVector<Real> g;
-				for (int i=1; i<=ngauss; ++i) {
+				for (core::Size i=1; i<=ngauss; ++i) {
 					l >> g[0] >> g[1] >> g[2];
 					if (tag == "GAUSSIAN")
 						cbeta6_.add_gaussian(g);
@@ -110,7 +110,7 @@ SmoothEnvPairPotential::SmoothEnvPairPotential() {
 			} else if (tag == "GAUSSIAN" || tag == "SIGMOID") {
 				Size ngauss; l >> ngauss;
 				numeric::xyzVector<Real> g;
-				for (int i=1; i<=ngauss; ++i) {
+				for (core::Size i=1; i<=ngauss; ++i) {
 					l >> g[0] >> g[1] >> g[2];
 					if (tag == "GAUSSIAN")
 						cbeta12_.add_gaussian(g);
@@ -127,7 +127,7 @@ SmoothEnvPairPotential::SmoothEnvPairPotential() {
 			} else if (tag == "GAUSSIAN" || tag == "SIGMOID") {
 				Size ngauss; l >> ngauss;
 				numeric::xyzVector<Real> g;
-				for (int i=1; i<=ngauss; ++i) {
+				for (core::Size i=1; i<=ngauss; ++i) {
 					l >> g[0] >> g[1] >> g[2];
 					if (tag == "GAUSSIAN")
 						cenpack_.add_gaussian(g);
@@ -147,7 +147,7 @@ SmoothEnvPairPotential::SmoothEnvPairPotential() {
 			} else if (tag == "GAUSSIAN" || tag == "SIGMOID") {
 				Size ngauss; l >> ngauss;
 				numeric::xyzVector<Real> g;
-				for (int i=1; i<=ngauss; ++i) {
+				for (core::Size i=1; i<=ngauss; ++i) {
 					l >> g[0] >> g[1] >> g[2];
 					if (tag == "GAUSSIAN")
 						currEnv.add_gaussian(g);
@@ -169,7 +169,7 @@ SmoothEnvPairPotential::SmoothEnvPairPotential() {
 			} else if (tag == "GAUSSIAN" || tag == "SIGMOID") {
 				Size ngauss; l >> ngauss;
 				numeric::xyzVector<Real> g;
-				for (int i=1; i<=ngauss; ++i) {
+				for (core::Size i=1; i<=ngauss; ++i) {
 					l >> g[0] >> g[1] >> g[2];
 					if (tag == "GAUSSIAN")
 						currPair.add_gaussian(g);
