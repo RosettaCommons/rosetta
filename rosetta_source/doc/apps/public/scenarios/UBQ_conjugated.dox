@@ -10,13 +10,13 @@
 ///@author Steven Lewis smlewi@gmail.com
 /*!
 
-@page UBQ_conjugated Documentation for UBQ_E2_thioester, UBQ_Gp_CYD-CYD, UBQ_Gp_CYX-Cterm, and UBQ_Gp_LYX-Cterm applications
+@page UBQ_conjugated Documentation for UBQ_E2_thioester, UBQ_Gp_CYD-CYD, and UBQ_Gp_LYX-Cterm applications
 
 @section metadata Metadata
-Last edited 2/13/12.  Code by Steven Lewis.  Corresponding PI Brian Kuhlman bkuhlman@email.unc.edu.
+Last edited 5/15/12.  Code by Steven Lewis.  Corresponding PI Brian Kuhlman bkuhlman@email.unc.edu.
 
 @section contents_note Note on contents and history
-This page documents four applications, UBQ_E2_thioester, UBQ_Gp_CYD-CYD, UBQ_Gp_CYX-Cterm, and UBQ_Gp_LYX-Cterm.  The code and documentation were originally written for the thioester version.  The other versions are modifications of the first, and they all behave nearly the same from the outside, so they are all documented here.  Assume the document is talking about the thioester case, but also assume what it says is true for the other cases.
+This page documents three applications, UBQ_E2_thioester, UBQ_Gp_CYD-CYD, and UBQ_Gp_LYX-Cterm.  The code and documentation were originally written for the thioester version.  The other versions are modifications of the first, and they all behave nearly the same from the outside, so they are all documented here.  Assume the document is talking about the thioester case, but also assume what it says is true for the other cases.
 
 @section code_demos Code and Demo
 The code is at <code>rosetta/rosetta_source/src/apps/public/scenarios/chemically_conjugated_docking/UBQ_E2_thioester/</code>; there's an integration test+demo at <code>rosetta/rosetta_source/test/integration/tests/UBQ_E2_thioester/</code>.  The same is true for the other versions of the application (altering the path as appropriate).  Note that the integration test is vastly under-cycled relative to getting it to do anything useful: the number of cycles it demonstrates should be sufficient to show some remodeling but not enough to get anywhere useful.  To run that demo, go to that directory and run <code> [path to executeable] -database [path to database] (at-symbol)options</code>
@@ -32,7 +32,9 @@ For the (publication-pending) UBQ_Gp series of executables:
 @section purpose Purpose
 This code (UBQ_E2_thioester) was written for a relatively singular application: modeling the thioester-linked state of an E2 enzyme charged with ubiquitin.  It serves no other purpose.  We had hypotheses about what this state might look like and used this code to generate models to examine those hypotheses and generate testable mutations.  It is included in the release because it was published, not because it is expected to serve other purposes.
 
-A second, unrelated experiment was built on the code for that first project.  Here, we wished to examine how a G-protein (ras) would behave when chemically conjugated to ubiquitin.  The CYX-Cterm code is a direct port from the thioester version to work with the new experimental system, and the LYX-cterm and CYD-CYD versions are to mimic the native and experimental versions of the linkage.  These are four separate executables because the differences between them, while slight, do not lend themselves to straightforward code modularization and reuse...it really needs to be rewritten.
+A second, unrelated experiment was built on the code for that first project.  Here, we wished to examine how a G-protein (ras) would behave when chemically conjugated to ubiquitin.  The LYX-cterm and CYD-CYD versions are to mimic the native and experimental versions of the linkage.  These are separate executables because the differences between them, while slight, do not lend themselves to straightforward code modularization and reuse...it really needs to be rewritten.
+
+In ALL CASES, the code does not require use of an E2 enzyme, a GTPase, or ubiquitin.  Use whatever proteins you need.  I am willing to entertain renames to something that captures their function better.
 
 @section algorithm Algorithm
 There are two important novel chunks of code associated with this algorithm.
@@ -63,10 +65,10 @@ UBQ_E2_thioester supports three types of options: general rosetta options (packi
 UBQ_E2_thioester options
 @li UBQpdb - File - input UBQ PDB, we used 1UBQ.
 @li E2pdb - File - input E2 PDB; we used a trimmed version of 2OB4.  Renamed GTPasepdb for the UBQ_Gp series.
-@li E2_residue - Integer - Which E2 residue is the active cysteine?  85 is default; correct for 2OB4.  Renamed GPTase_residue for the UBQ_Gp series
+@li E2_residue - Integer - Which E2 residue is the active cysteine?  85 is default; correct for 2OB4.  Renamed GPTase_residue for the UBQ_Gp series.
 @li SASAfilter - Real - minimum SASA filter value.  Default 1000 used for production.
 @li scorefilter - Real - filter value for maximum total score.  Default 10; 0 used for production.
-@li constraintweight - Real - weight on the constraint term in the scorefunction.  Default 50 used for production.
+@li publication - Boolean - Publication mode?  In publication mode, the code runs an extra analysis step to find the neighbors of ubiquitin I44.  This is used for the integration test and for reproducibility but has no other purpose.  Defaults to false, but use true for reproduction.
 
 AnchoredDesign options (borrowed for simplicity, not tied to AnchoredDesign in any other way); all are in the AnchoredDesign namespace
 @li AnchoredDesign::refine_temp - real - Monte Carlo temperature for refine phase (0.8 used for production)
@@ -79,6 +81,8 @@ General options:  All packing namespace options loaded by the PackerTask are res
 @li nstruct - integer - number of structures to generate
 @li packing:repack_only - boolean - because you don't want to design, you should pass this
 @li generic_job_name - file - this tags the output with a particular name, useful because since there's no normal job distributor input it give strange names to the outputs.
+@li cst_fa_weight - weight for constraints.  Was originally implemented as -constraintweight.  50 used for production.
+@li cst_fa_file - file path for constraints.  Originally, these were hard-coded into the file; instead they are now supplied as publication.cst in the integration test/demo.
 
 @section postprocessing Post Processing
 Pick the best models by total score and look at the satisfaction of your experimentally-derived constraints to decide which you think is most plausible.  We used the models to successfully predict a mutation to rescue a defect caused by UBQ I44A.
@@ -86,4 +90,5 @@ Pick the best models by total score and look at the satisfaction of your experim
 @section changelog Changes since last release
 Rosetta 3.3 was the first release.
 For the 3.4 release, the UBQ_Gp series of applications was added.
+For 3.5, the constraint code was factored out into a constraint file publication.cst, and some system-specific details in the code were altered to run under a "publication" flag.  With these changes, UBQ_Gp_CYX-Cterm was deprecated and deleted.
 */
