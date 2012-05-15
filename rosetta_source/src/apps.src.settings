@@ -143,9 +143,9 @@ sources = {
 		"erraser_minimizer",
 	],
 	"public/swa_rna": [
-		"swa_rna_analytical_closure", 
-		"swa_rna_main", 
-		"swa_rna_util", 
+		"swa_rna_analytical_closure",
+		"swa_rna_main",
+		"swa_rna_util",
 	],
 	"public/rosetta_scripts": [
 		"revert_design_to_native",
@@ -163,7 +163,6 @@ sources = {
 		"FloppyTail", # /* Steven Lewis, doc/apps/public/scenarios/FloppyTail.dox, test/integration/tests/FloppyTail/ */
 		"chemically_conjugated_docking/UBQ_E2_thioester", # /* Steven Lewis, doc/apps/public/scenarios/UBQ_conjugated.dox, test/integration/tests/UBQ_E2_thioester/ */
                 "chemically_conjugated_docking/UBQ_Gp_CYD-CYD"  , # /* Steven Lewis, doc/apps/public/scenarios/UBQ_conjugated.dox, test/integration/tests/UBQ_Gp_CYD-CYD/   */
-                "chemically_conjugated_docking/UBQ_Gp_CYX-Cterm", # /* Steven Lewis, doc/apps/public/scenarios/UBQ_conjugated.dox, test/integration/tests/UBQ_Gp_CYX-Cterm/ */
                 "chemically_conjugated_docking/UBQ_Gp_LYX-Cterm", # /* Steven Lewis, doc/apps/public/scenarios/UBQ_conjugated.dox, test/integration/tests/UBQ_Gp_LYX-Cterm/ */
                 ],
 }
