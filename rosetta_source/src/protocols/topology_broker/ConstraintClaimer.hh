@@ -79,9 +79,21 @@ public:
 
 	virtual bool read_tag( std::string tag, std::istream & );
 
-	virtual void add_constraints( core::pose::Pose& /*pose*/ );
+	virtual void add_constraints( core::pose::Pose& /*pose*/ ) const;
 
+	//	ConstraintSetCOP constraints() const { return constraints_; }
+	//	ConstraintSetCOP fa_constraints() const { return fa_constraints_; }
+	core::Real filter_weight() const { return filter_weight_; }
+	std::string const& filter_name() const { return filter_name_; }
+	core::Size combine_ratio() const { return combine_ratio_; }
+	std::string const& tag() const { return tag_; }
 
+	void set_cst_file( std::string const& );
+	void set_fullatom( bool setting );
+	void set_centroid( bool setting );
+	void set_skip_redundant( bool setting );
+	void set_combine_ratio( core::Size setting );
+	void set_filter_weight( core::Real weight );
 private:
 	std::string filename_, fa_filename_;
 	std::string cst_filename_;
@@ -91,7 +103,7 @@ private:
 
 	mutable core::pose::Pose constraint_ref_pose_;
 	mutable std::string sequence_;
-
+	mutable utility::vector1< bool > combine_exclude_res_;
 	///@brief true if constraints are active in centroid mode
 	bool bCentroid_;
 
@@ -105,13 +117,17 @@ private:
 
 	///@brief combine constraints randomly into Ambiguous Constraints
 	core::Size combine_ratio_;  //default 1: no constraint combination
-	utility::vector1< bool > combine_exclude_res_;
+
 
 	///@brief at most one constraint per residue pair ( does not look at bounds... )
 	bool skip_redundant_;
 
 	///@brief how many residues left and right do we exclude other "redundant" constraints...
 	core::Size skip_redundant_width_;
+
+	///@brief which weight should this constraint set have when used as a filter
+	core::Real filter_weight_;
+	std::string filter_name_;
 }; //class ConstraintClaimer
 
 }

@@ -72,7 +72,9 @@ ConstraintClaimer::ConstraintClaimer() :
 	bCmdFlag_( false ),
 	combine_ratio_( 1 ),
 	skip_redundant_( false ),
-	skip_redundant_width_( 1 )
+	skip_redundant_width_( 1 ),
+	filter_weight_( 0.0 ),
+	filter_name_( "" )
 {}
 
 ConstraintClaimer::ConstraintClaimer( std::string filename, std::string tag ) :
@@ -84,7 +86,9 @@ ConstraintClaimer::ConstraintClaimer( std::string filename, std::string tag ) :
 	bCmdFlag_( false ),
 	combine_ratio_( 1 ),
 	skip_redundant_( false ),
-	skip_redundant_width_( 1 )
+	skip_redundant_width_( 1 ),
+	filter_weight_( 0.0 ),
+	filter_name_( "" )
 {}
 
 ConstraintClaimer::ConstraintClaimer( bool CmdFlag, bool centroid, bool fullatom )
@@ -96,7 +100,9 @@ ConstraintClaimer::ConstraintClaimer( bool CmdFlag, bool centroid, bool fullatom
 		bCmdFlag_( CmdFlag ),
 		combine_ratio_( 1 ),
 		skip_redundant_( false ),
-		skip_redundant_width_( 1 )
+		skip_redundant_width_( 1 ),
+		filter_weight_( 0.0 ),
+		filter_name_( "" )
 {
 	runtime_assert( CmdFlag );
 }
@@ -135,7 +141,7 @@ void ConstraintClaimer::new_decoy() {
 
 
 
-void ConstraintClaimer::add_constraints( core::pose::Pose& pose ) {
+void ConstraintClaimer::add_constraints( core::pose::Pose& pose ) const {
 	using namespace basic::options;
 	bool fullatom( pose.is_fullatom() );
 	if ( fullatom && !bFullatom_ ) return;
@@ -150,11 +156,11 @@ void ConstraintClaimer::add_constraints( core::pose::Pose& pose ) {
 		std::string const file( option[ OptionKeys::constraints::combine_exclude_region ]() );
 		loops::LoopsFileIO loop_file_reader;
 		std::ifstream is( file.c_str() );
-		
+
 		if (!is.good()) {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
 		}
-		
+
 		loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(is, file, false, "RIGID");
 		loops::Loops rigid_core = loops::Loops( loops );
 		combine_exclude_res_.resize( pose.total_residue(), false );
@@ -215,12 +221,49 @@ bool ConstraintClaimer::read_tag( std::string tag, std::istream& is ) {
 	} else if ( tag == "CMD_FLAG" ) {
 		bCmdFlag_ = true;
 	} else if ( tag == "COMBINE_RATIO" ) {
-		Size ratio;
-		is >> ratio;
-		combine_ratio_ = ratio;
+		is >> combine_ratio_;
+	} else if ( tag == "FILTER_WEIGHT" ) {
+		is >> filter_weight_;
+	} else if ( tag == "FILTER_NAME" ) {
+		is >> filter_name_;
 	} else return Parent::read_tag( tag, is );
 	return true;
 }
+
+void ConstraintClaimer::set_cst_file( std::string const& file ) {
+	filename_ = file;
+	constraints_ = NULL;
+	fa_constraints_ = NULL;
+}
+
+void ConstraintClaimer::set_fullatom( bool setting ) {
+	bFullatom_ = setting;
+	constraints_ = NULL;
+	fa_constraints_ = NULL;
+}
+
+void ConstraintClaimer::set_centroid( bool setting ) {
+	bCentroid_ = setting;
+	constraints_ = NULL;
+	fa_constraints_ = NULL;
+}
+
+void ConstraintClaimer::set_skip_redundant( bool setting ) {
+	skip_redundant_ = setting;
+	constraints_ = NULL;
+	fa_constraints_ = NULL;
+}
+
+void ConstraintClaimer::set_combine_ratio( core::Size setting ) {
+	combine_ratio_ = setting;
+	constraints_ = NULL;
+	fa_constraints_ = NULL;
+}
+
+void ConstraintClaimer::set_filter_weight( core::Real setting ) {
+	filter_weight_ = setting;
+}
+
 
 
 } //topology_broker

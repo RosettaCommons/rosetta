@@ -151,7 +151,7 @@ void CoordConstraintClaimer::read_cst_pose() {
 	sequence_ = "";
 }
 
-void CoordConstraintClaimer::add_constraints( core::pose::Pose& pose ) {
+void CoordConstraintClaimer::add_constraints( core::pose::Pose& pose ) const {
 	//	Size new_root;
 
 	std::string const new_sequence ( pose.annotated_sequence( true ) );
@@ -274,7 +274,7 @@ void CoordConstraintClaimer::read_constraints_from_file( pose::Pose const& cst_p
 	}
 }
 
-void CoordConstraintClaimer::superimpose( pose::Pose const& pose ) {
+void CoordConstraintClaimer::superimpose( pose::Pose const& pose ) const {
 	ConstraintCOPs all_cst = constraints_->get_all_constraints();
 	ConstraintSetOP new_set = new ConstraintSet;
 
@@ -368,7 +368,7 @@ void CoordConstraintClaimer::set_defaults() {
 
 bool CoordConstraintClaimer::read_tag( std::string tag, std::istream& is ) {
 	loops::LoopsFileIO loop_file_reader;
-	
+
 	if ( tag == "pdb_file" || tag == "PDB_FILE" ) {
 		is >> filename_;
 		read_cst_pose();
@@ -381,7 +381,7 @@ bool CoordConstraintClaimer::read_tag( std::string tag, std::istream& is ) {
 		std::string file;
 		is >> file;
 		std::ifstream infile( file.c_str() );
-		
+
 		if (!infile.good()) {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
 		}
@@ -412,7 +412,7 @@ bool CoordConstraintClaimer::read_tag( std::string tag, std::istream& is ) {
 		std::string file;
 		is >> file;
 		std::ifstream infile( file.c_str() );
-		
+
 		if (!infile.good()) {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
 		}

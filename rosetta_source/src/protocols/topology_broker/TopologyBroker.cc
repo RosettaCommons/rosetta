@@ -178,7 +178,7 @@ core::fragment::FragSetCOP TopologyBroker::loop_frags( core::kinematics::MoveMap
 	return frags;
 }
 
-void TopologyBroker::add_constraints( core::pose::Pose &pose ) {
+void TopologyBroker::add_constraints( core::pose::Pose &pose ) const {
 	pose.constraint_set( NULL );
 	for ( TopologyClaimers::const_iterator top = claimers_.begin();
 					top != claimers_.end(); ++top ) {

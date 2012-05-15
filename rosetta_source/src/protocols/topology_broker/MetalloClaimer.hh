@@ -104,7 +104,7 @@ public:
 		return "MetalloClaimer";
 	}
 
-	virtual void add_constraints( core::pose::Pose& /*pose*/ );
+	virtual void add_constraints( core::pose::Pose& /*pose*/ ) const;
 
 	//void set_mover( simple_moves::FragmentMoverOP mover ) {
 	//		mover_ = mover;

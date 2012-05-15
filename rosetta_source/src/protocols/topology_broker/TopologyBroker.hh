@@ -97,10 +97,10 @@ namespace protocols {
 namespace topology_broker {
 
 class TopologyBroker : public utility::pointer::ReferenceCount {
-	typedef utility::vector1< TopologyClaimerOP > TopologyClaimers;
 	typedef core::Size StageID;
+	typedef utility::vector1< TopologyClaimerOP > TopologyClaimers;
 public:
-
+	typedef TopologyClaimers::const_iterator const_iterator;
 	///constructor
 	TopologyBroker();
 	~TopologyBroker();
@@ -127,6 +127,14 @@ public:
 		assert(i >= 1 && i <= claimers_.size());
 		return claimers_[i];
   }
+
+	TopologyClaimers::const_iterator begin() const {
+		return claimers_.begin();
+	}
+
+	TopologyClaimers::const_iterator end() const {
+		return claimers_.end();
+	}
 
 	/// @brief Returns the number of claimers associated with the broker
 	core::Size num_claimers() const {
@@ -220,7 +228,7 @@ private:
 	void initialize_dofs( DofClaims& claims, core::pose::Pose& new_pose );
 
 	///@brief add constraints --> referred to Claimers ( e.g., ConstraintClaimer, RigidChunkClaimer )
-	void add_constraints( core::pose::Pose& );
+	void add_constraints( core::pose::Pose& ) const;
 
 private:
 	///@brief vector of Claimers --- RigidChunkClaimer, FragmentClaimer, ConstraintClaimer, etc.

@@ -85,7 +85,7 @@ void MetalloClaimer::initialize_residues( core::pose::Pose& pose, SequenceClaimO
 	new_decoy();
 }
 
-void MetalloClaimer::add_constraints( core::pose::Pose& ) {
+void MetalloClaimer::add_constraints( core::pose::Pose& ) const {
 }
 
 void  MetalloClaimer::set_defaults() {

@@ -78,14 +78,14 @@ public:
 	}
 
 
-	virtual void add_constraints( core::pose::Pose& /*pose*/ );
+	virtual void add_constraints( core::pose::Pose& /*pose*/ ) const;
 
 	virtual void new_decoy();
 
 	virtual void new_decoy( core::pose::Pose const& );
 
 	///@brief superimpose xyz coords in constraints_ with pose
-	void superimpose( core::pose::Pose const& );
+	void superimpose( core::pose::Pose const& ) const;
 
 protected:
 
