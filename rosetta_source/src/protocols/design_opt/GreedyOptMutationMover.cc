@@ -49,6 +49,8 @@
 #include <core/pose/symmetry/util.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 
+#include <utility/io/ozstream.hh>
+
 //Auto Headers
 #include <basic/options/keys/OptionKeys.hh>
 
@@ -72,6 +74,7 @@ GreedyOptMutationMover::GreedyOptMutationMover() :
 	filter_delta_( 0 ),
 	sample_type_( "low" ),
 	dump_pdb_( false ),
+	dump_table_( false ),
 	diversify_lvl_( 1 ),
 	stopping_condition_( NULL ),
 	rtmin_( false )
@@ -112,6 +115,7 @@ GreedyOptMutationMover::GreedyOptMutationMover(
 	sample_type_ = sample_type;
 	diversify_lvl_ = diversify_lvl;
 	dump_pdb_ = dump_pdb;
+	dump_table_ = false;
 	stopping_condition_ = stopping_condition;
 
 	if( sample_type_ == "high" ){
@@ -214,6 +218,17 @@ GreedyOptMutationMover::dump_pdb() const{
 }
 
 void
+GreedyOptMutationMover::dump_table( bool const dump_table ){
+	dump_table_ = dump_table;
+	clear_cached_data();
+}
+
+bool
+GreedyOptMutationMover::dump_table() const{
+	return dump_table_;
+}
+
+void
 GreedyOptMutationMover::sample_type( std::string const sample_type ){
   sample_type_ = sample_type;
 	clear_cached_data();
@@ -243,6 +258,29 @@ GreedyOptMutationMover::scorefxn( core::scoring::ScoreFunctionOP scorefxn ){
 core::scoring::ScoreFunctionOP
 GreedyOptMutationMover::scorefxn() const{
 	return scorefxn_;
+}
+
+void
+GreedyOptMutationMover::dump_scoring_table( std::string filename, core::pose::Pose const & ref_pose ) const{
+  utility::io::ozstream outtable(filename);
+	if( outtable ){
+		for( core::Size ii(1); ii <= seqpos_aa_val_vec_.size(); ++ii) {
+			core::Size pos( seqpos_aa_val_vec_[ii].first );
+			utility::vector1< std::pair< core::chemical::AA, core::Real > > const & aa_pairs( seqpos_aa_val_vec_[ii].second );
+			outtable << pos ;
+			if( ref_pose.pdb_info() ) {
+				outtable << " (" << ref_pose.pdb_info()->pose2pdb(pos) << ")";
+			}
+			outtable << '\t';
+			for( core::Size jj(1); jj <= aa_pairs.size(); ++jj ) {
+				outtable << aa_pairs[jj].first << ((ref_pose.aa(pos) == aa_pairs[jj].first)?"*:":":") << aa_pairs[jj].second << " ";
+			}
+			outtable << std::endl;
+		}
+	} else {
+		TR.Warning << "WARNING: Unable to open file " << filename << " for writing GreedyOptMutationMover table output." << std::endl;
+	}
+  outtable.close();
 }
 
 //utility funxns for comparing values in sort
@@ -330,6 +368,16 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 		//first pair element of vector in pair( size, vec( pair ) )
 		std::sort( seqpos_aa_val_vec_.begin(), seqpos_aa_val_vec_.end(), cmp_pair_vec_by_first_vec_val );
 
+		//finally, dump table to file, if requested.
+		if( dump_table() ){
+			std::string fname( "GreedyOptTable" );
+			if( protocols::jd2::jd2_used() ){
+				fname += "_" + protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag();
+			}
+			fname += ".tab";
+			std::replace( fname.begin(), fname.end(), '/', '_'); // In case we have qualified path names.
+			dump_scoring_table( fname, start_pose );
+		}
 	}
 
 	TR<<"Combining sorted independently optimal mutations… " << std::endl;
@@ -432,6 +480,8 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagPtr const tag,
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	//load dump_pdb
 	dump_pdb( tag->getOption< bool >( "dump_pdb", false ) );
+	//load dump_table
+	dump_table( tag->getOption< bool >( "dump_table", false ) );
 	rtmin( tag->getOption< bool >( "rtmin", false ) );
 	if( tag->hasOption( "stopping_condition" ) ){
 		std::string const stopping_filter_name( tag->getOption< std::string >( "stopping_condition" ) );

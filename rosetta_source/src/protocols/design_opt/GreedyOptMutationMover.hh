@@ -73,6 +73,9 @@ public:
 	void filter( protocols::filters::FilterOP filter );
 	bool dump_pdb() const;
 	void dump_pdb( bool const dump_pdb );
+	bool dump_table() const;
+	void dump_table( bool const dump_table );
+	void dump_scoring_table( std::string filename, core::pose::Pose const & ref_pose  ) const;
 	std::string sample_type() const;
 	void sample_type( std::string const sample_type );
 	core::Size diversify_lvl() const;
@@ -89,6 +92,7 @@ private:
 	core::Real filter_delta_;
 	std::string sample_type_;
 	bool dump_pdb_;
+	bool dump_table_;
 	core::Size diversify_lvl_;
 	core::Real flip_sign_;
 	protocols::filters::FilterOP stopping_condition_; // dflt NULL ; if defined, stops greedy optimization when the filter's apply evaluates to true;
