@@ -123,7 +123,7 @@ rotamer_from_chi(
 	RotVector & rot
 )
 {
-	assert( rsd.rotamer_aa() <= chemical::num_canonical_aas );
+	assert( rsd.aa() <= chemical::num_canonical_aas );
 
 	SingleResidueRotamerLibraryCAP rotlib = RotamerLibrary::get_instance().get_rsd_library( rsd.type() );
 	if ( rotlib ) {
