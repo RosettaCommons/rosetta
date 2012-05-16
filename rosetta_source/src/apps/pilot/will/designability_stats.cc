@@ -127,7 +127,7 @@ collect_stats(core::pose::Pose & pose, std::string tag) {
 			core::kinematics::Stub sjr(CBj,CAj,Nj);
 			Real dx,dy,dz,ex,ey,ez;
 			get_xform_stats(sir,sjr,dx,dy,dz,ex,ey,ez);
-			std::cout << "RES_RES_XFORM " << tag << " " << ir << " " << jr << " " << dx << " " << dy << " " << dz << " " << ex << " " << ey  << " " << ez << std::endl;
+			std::cout<<"RES_RES_XFORM"<<tag<<" "<<ir<<" "<<jr<<" "<<pose.secstruct(ir)<<" "<<pose.secstruct(jr)<<" "<<dx<<" "<<dy<<" "<<dz<<" "<<ex<<" "<<ey<<" "<<ez<<std::endl;
 			// utility_exit_with_message("foo");
 		}
 	}
