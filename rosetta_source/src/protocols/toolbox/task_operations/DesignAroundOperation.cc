@@ -15,6 +15,7 @@
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperationCreator.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -92,7 +93,7 @@ DesignAroundOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 	set< core::Size > focus_residues;// all of the residues that were input (notice that the method is const, so I can't change resid_)
 	focus_residues.clear();
 	focus_residues.insert( resid_.begin(), resid_.end() );
-	set< core::Size > const res_vec( protocols::rosetta_scripts::get_resnum_list( string_resnums_, pose ) );
+	set< core::Size > const res_vec( core::pose::get_resnum_list( string_resnums_, pose ) );
 	focus_residues.insert( res_vec.begin(), res_vec.end() );
 
 		utility::vector1< core::Size > packing_residues, prevent_repacking_residues;

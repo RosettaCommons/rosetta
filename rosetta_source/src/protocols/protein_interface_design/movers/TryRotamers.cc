@@ -31,6 +31,7 @@
 
 #include <core/graph/Graph.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 #include <basic/Tracer.hh>
@@ -208,7 +209,7 @@ TryRotamers::parse_my_tag( TagPtr const tag,
 		Movers_map const &,
 		Pose const & pose)
 {
-	resnum_ = protocols::rosetta_scripts::get_resnum( tag, pose );
+	resnum_ = core::pose::get_resnum( tag, pose );
 	automatic_connection_ = tag->getOption< bool >( "automatic_connection", 1 );
 	string const scorefxn_name( tag->getOption<string>( "scorefxn", "score12" ) );
 	scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name) ));
@@ -233,7 +234,7 @@ TryRotamers::parse_my_tag( TagPtr const tag,
   	std::string const shove_val( tag->getOption< std::string >( "shove" ) );
   	utility::vector1< std::string > const shove_keys( utility::string_split( shove_val, ',' ) );
   	foreach( std::string const key, shove_keys ){
-			core::Size const resnum( protocols::rosetta_scripts::parse_resnum( key, pose ) );
+			core::Size const resnum( core::pose::parse_resnum( key, pose ) );
 			shove_residues_.push_back( resnum );
 			TR<<"Using shove atomtype for "<< key <<'\n';
 		}

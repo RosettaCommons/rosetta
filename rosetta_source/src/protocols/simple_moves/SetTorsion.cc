@@ -26,6 +26,7 @@
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <protocols/filters/Filter.fwd.hh> //Filters_map
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <basic/Tracer.hh>
 #include <core/kinematics/Jump.hh>
 #include <utility/vector0.hh>
@@ -105,7 +106,7 @@ void SetTorsion::parse_my_tag( utility::tag::TagPtr const tag,
 		Pose const & pose)
 {
 	angle( tag->getOption< core::Real >( "angle" ) );
-	resnum( protocols::rosetta_scripts::parse_resnum( tag->getOption< std::string >( "resnum" ), pose ) );
+	resnum( core::pose::parse_resnum( tag->getOption< std::string >( "resnum" ), pose ) );
 	torsion_name( tag->getOption< std::string >( "torsion_name" ) );
 	TR<<"Set torsion "<<torsion_name_<<" at residue "<< resnum_ << " to "<<angle_<<std::endl;
 }

@@ -18,6 +18,7 @@
 
 // Package headers
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -212,7 +213,7 @@ LoopFinder::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters::
 	if( interface_ ) runtime_assert( pose.num_jump() >= 1 );
 	mingap_ = tag->getOption<core::Size>( "mingap", 1 );
 	if( tag->hasOption( "resnum" ) || ( tag->hasOption( "pdb_num" ) ))	{
-		resnum_ = protocols::rosetta_scripts::get_resnum( tag, pose );
+		resnum_ = core::pose::get_resnum( tag, pose );
 		TR<<"user specified residue " << resnum_ << " for distance cutoff" << std::endl;
 
 	}

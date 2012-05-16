@@ -19,6 +19,7 @@
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 //Auto Headers
@@ -135,7 +136,7 @@ Torsion::parse_my_tag( utility::tag::TagPtr const tag,
 	upper( tag->getOption< core::Real >( "upper", 0 ) );
 	torsion( tag->getOption< std::string >( "torsion", "" ) );
 	if( tag->hasOption( "resnum" ))
-		resnum( protocols::rosetta_scripts::parse_resnum( tag->getOption< std::string >( "resnum" ), pose ) );
+		resnum( core::pose::parse_resnum( tag->getOption< std::string >( "resnum" ), pose ) );
 	else resnum( 0 );
 	TR<<"resnum: "<<resnum()<<" lower "<<lower()<<" upper: "<<upper()<<std::endl;
 }

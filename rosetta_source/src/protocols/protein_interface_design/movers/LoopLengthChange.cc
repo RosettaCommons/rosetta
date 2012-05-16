@@ -23,7 +23,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -98,10 +98,8 @@ LoopLengthChange::get_name() const {
 void
 LoopLengthChange::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
 {
-	using namespace protocols::rosetta_scripts;
-
-	loop_start( parse_resnum( tag->getOption< std::string >( "loop_start" ), pose ) );
-	loop_end( parse_resnum( tag->getOption< std::string >( "loop_end" ), pose ) );
+	loop_start( core::pose::parse_resnum( tag->getOption< std::string >( "loop_start" ), pose ) );
+	loop_end( core::pose::parse_resnum( tag->getOption< std::string >( "loop_end" ), pose ) );
 	delta( tag->getOption< int >( "delta" ) );
 
   runtime_assert( loop_end() > loop_start() );

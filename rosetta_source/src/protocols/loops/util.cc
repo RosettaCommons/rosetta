@@ -75,6 +75,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <boost/foreach.hpp>
@@ -396,11 +397,11 @@ loops_from_string( std::string const loop_str, core::pose::Pose const & pose ){
  	foreach( std::string const residue_pair, loops_vec ){
     utility::vector1< std::string > const residues( utility::string_split( residue_pair, ':' ) );
     runtime_assert( residues.size() == 2 || residues.size() == 3 );
-    core::Size const loop_start( protocols::rosetta_scripts::parse_resnum( residues[ 1 ], pose ) );
-    core::Size const loop_stop( protocols::rosetta_scripts::parse_resnum( residues[ 2 ], pose ) );
+    core::Size const loop_start( core::pose::parse_resnum( residues[ 1 ], pose ) );
+    core::Size const loop_stop( core::pose::parse_resnum( residues[ 2 ], pose ) );
     core::Size loop_cut( 0 );
 	  if( residues.size() == 3 )
-      loop_cut = protocols::rosetta_scripts::parse_resnum( residues[ 3 ], pose );
+      loop_cut = core::pose::parse_resnum( residues[ 3 ], pose );
     runtime_assert( loop_start <= loop_stop );
 	  runtime_assert( loop_start >= 1 );
     runtime_assert( loop_stop <= pose.total_residue() );

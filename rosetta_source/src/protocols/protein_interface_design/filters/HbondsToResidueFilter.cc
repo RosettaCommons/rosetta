@@ -33,6 +33,7 @@
 #include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/ScoreType.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
 //#include <protocols/moves/ResidueMover.hh>
@@ -114,7 +115,7 @@ HbondsToResidueFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::Data
 	bb_bb_ = tag->getOption<bool>( "bb_bb", 0 );
 	backbone_ = tag->getOption<bool>( "backbone", 0 );
 	sidechain_ = tag->getOption<bool>( "sidechain", 1 );
-	resnum_ = protocols::rosetta_scripts::get_resnum( tag, pose );
+	resnum_ = core::pose::get_resnum( tag, pose );
 
 	TR<<"Hbonds to residue filter for resnum "<<resnum_<<" with "<<partners_<<" hbonding partners"<<std::endl;
 }

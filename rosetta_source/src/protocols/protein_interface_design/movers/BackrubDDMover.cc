@@ -43,6 +43,7 @@
 #include <basic/options/option.hh>
 #include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 
 #include <protocols/scoring/Interface.hh>
 #include <core/kinematics/Edge.hh>
@@ -432,14 +433,14 @@ void BackrubDDMover::parse_my_tag(
 	for( utility::vector0< TagPtr >::const_iterator br_it=backrub_tags.begin(); br_it!=backrub_tags.end(); ++br_it ) {
 		TagPtr const br_tag_ptr = *br_it;
 		if( br_tag_ptr->getName() == "residue" ) {
-			core::Size const resnum( protocols::rosetta_scripts::get_resnum( br_tag_ptr, pose ) );
+			core::Size const resnum( core::pose::get_resnum( br_tag_ptr, pose ) );
 			residues_.push_back( resnum );
 		}
 		if( br_tag_ptr->getName() == "span" ) {
 			string const begin_str( br_tag_ptr->getOption<string>( "begin" ) );
 			string const end_str( br_tag_ptr->getOption<string>( "end" ) );
-			core::Size const begin( protocols::rosetta_scripts::parse_resnum( begin_str, pose ) );
-			core::Size const end( protocols::rosetta_scripts::parse_resnum( end_str, pose ) );
+			core::Size const begin( core::pose::parse_resnum( begin_str, pose ) );
+			core::Size const end( core::pose::parse_resnum( end_str, pose ) );
 			runtime_assert( end > begin );
 			runtime_assert( begin>=1);
 			runtime_assert( end<=pose.total_residue() );

@@ -38,6 +38,7 @@
 #include <basic/Tracer.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/selection.hh>
 #include <utility/vector1.hh>
 
 #include <core/pose/util.hh>
@@ -151,8 +152,8 @@ parse_seeds( core::pose::Pose const & pose, utility::vector1 < std::pair < std::
 
     for( Size iter = 1 ; iter <= seed_vector.size() ; ++ iter ){
       TR.Debug<<"sanity check, seed_vector[iter].first " <<seed_vector[iter].first <<std::endl; ////////////
-      core::Size const begin = protocols::rosetta_scripts::parse_resnum( seed_vector[iter].first, pose ) ;
-      core::Size const end   = protocols::rosetta_scripts::parse_resnum( seed_vector[iter].second, pose );
+      core::Size const begin = core::pose::parse_resnum( seed_vector[iter].first, pose ) ;
+      core::Size const end   = core::pose::parse_resnum( seed_vector[iter].second, pose );
       //runtime_assert( end > begin );
       //runtime_assert( begin>=1);
       //runtime_assert( end<=pose.total_residue() );

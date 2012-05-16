@@ -33,6 +33,7 @@
 
 //other
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 
 
 // C++ headers
@@ -57,6 +58,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/DataMap.hh> 
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 
 //loops
 #include <protocols/loops/Loop.hh>
@@ -474,8 +476,8 @@ GrowPeptides::parse_my_tag(
 			//needs some assertions to avoid bogus input
 			std::string const beginS( btag->getOption<std::string>( "begin" ) );
 			std::string const endS( btag->getOption<std::string>( "end" ) );
-			core::Size const begin( protocols::rosetta_scripts::parse_resnum( beginS, *curr_pose_ ) );
-			core::Size const end( protocols::rosetta_scripts::parse_resnum( endS, *curr_pose_ ) );
+			core::Size const begin( core::pose::parse_resnum( beginS, *curr_pose_ ) );
+			core::Size const end( core::pose::parse_resnum( endS, *curr_pose_ ) );
 			all_seeds_.add_loop( begin , end , 0, 0, false );
 			TR <<"parsing seeds: \n"<< begin <<" and " << end <<std::endl;
 
@@ -493,8 +495,8 @@ GrowPeptides::parse_my_tag(
 				utility_exit_with_message("need to specify a template pdb to steal sequenc spans");
 			std::string const begin_str( btag->getOption<std::string>( "begin" ) );
 			std::string const end_str( btag->getOption<std::string>( "end" ) );
-			core::Size const begin( protocols::rosetta_scripts::parse_resnum( begin_str, *template_pdb_ ) );
-			core::Size const end( protocols::rosetta_scripts::parse_resnum( end_str, *template_pdb_ ) );
+			core::Size const begin( core::pose::parse_resnum( begin_str, *template_pdb_ ) );
+			core::Size const end( core::pose::parse_resnum( end_str, *template_pdb_ ) );
 			runtime_assert( end > begin );
 			runtime_assert( begin>=1);
 			runtime_assert( end<=template_pdb_->total_residue() );

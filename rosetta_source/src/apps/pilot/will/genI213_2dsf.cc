@@ -84,7 +84,7 @@ static basic::Tracer TR("genI213");
 static core::io::silent::SilentFileData sfd;
 
 
-inline Real const sqr(Real const r) { return r*r; }
+inline Real sqr(Real const r) { return r*r; }
 inline Real sigmoidish_neighbor( Real const & sqdist ) {
   if( sqdist > 9.*9. ) {
     return 0.0;
@@ -134,7 +134,7 @@ void run() {
 
 	protocols::scoring::ImplicitFastClashCheck ifc(init,3.0);
 
-  Size nres = init.n_residue();
+  // Size nres = init.n_residue();
   // ScoreFunctionOP sf = core::scoring::getScoreFunction();
   ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::getScoreFunction());
 

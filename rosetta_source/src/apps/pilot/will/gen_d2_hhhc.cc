@@ -118,7 +118,7 @@ typedef utility::vector1<Vec> Vecs;
 static basic::Tracer TR("gen_d2");
 
 
-inline Real const sqr(Real const r) { return r*r; }
+inline Real sqr(Real const r) { return r*r; }
 inline Real sigmoidish_neighbor( Real const & sqdist ) {
   if( sqdist > 9.*9. ) {
     return 0.0;
@@ -489,7 +489,7 @@ Real ik_his_clamp(Pose & pose,
   using namespace core::id;
   if( pose.residue(rsd1).xyz("CB").distance_squared(pose.residue(rsd2).xyz("CB")) > 144.0 ) return 0;
   Real mxcb = 0.0;
-  Real his_rep_th = 5.0;
+  // Real his_rep_th = 5.0;
 
   Pose his,cys;
   make_pose_from_sequence(his,"H","fa_standard",false);
@@ -804,7 +804,7 @@ void run(std::string fname) {
   using namespace pose;
   using namespace scoring;
 
-  Size ANGLE_INCR=30;
+  // Size ANGLE_INCR=30;
 
   // setup stuff
   ResidueTypeSetCAP frs=ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );

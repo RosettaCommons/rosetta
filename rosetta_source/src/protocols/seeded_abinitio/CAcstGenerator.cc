@@ -13,6 +13,7 @@
 #include <protocols/seeded_abinitio/CAcstGenerator.hh>
 #include <protocols/seeded_abinitio/CAcstGeneratorCreator.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <boost/foreach.hpp>
 #include <core/types.hh>
 
@@ -345,8 +346,8 @@ CAcstGenerator::parse_my_tag( TagPtr const tag,
 			//needs some assertions to avoid bogus input
 			std::string const beginS( btag->getOption<std::string>( "begin" ) );
 			std::string const endS( btag->getOption<std::string>( "end" ) );
-			core::Size const begin( protocols::rosetta_scripts::parse_resnum( beginS, *curr_pose_ ) );
-			core::Size const end( protocols::rosetta_scripts::parse_resnum( endS, *curr_pose_ ) );
+			core::Size const begin( core::pose::parse_resnum( beginS, *curr_pose_ ) );
+			core::Size const end( core::pose::parse_resnum( endS, *curr_pose_ ) );
 			
 			TR.Debug <<"parsing seeds: \n"<< begin <<" and " << end <<std::endl; 
 			TR.Debug <<"seeds: "<< all_seeds_ <<std::endl;
@@ -359,8 +360,8 @@ CAcstGenerator::parse_my_tag( TagPtr const tag,
 			
 			std::string const begin_str( btag->getOption<std::string>( "begin" ) );
 			std::string const end_str( btag->getOption<std::string>( "end" ) );
-			core::Size const begin( protocols::rosetta_scripts::parse_resnum( begin_str, *curr_pose_ ) );
-			core::Size const end( protocols::rosetta_scripts::parse_resnum( end_str, *curr_pose_ ) );
+			core::Size const begin( core::pose::parse_resnum( begin_str, *curr_pose_ ) );
+			core::Size const end( core::pose::parse_resnum( end_str, *curr_pose_ ) );
 			clear_seeds_.add_loop( begin , end , 0, 0, false );
 			
 		}//end seed tags

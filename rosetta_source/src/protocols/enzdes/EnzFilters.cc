@@ -51,6 +51,7 @@
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/ChargeCalculator.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
@@ -203,8 +204,8 @@ DiffAtomSasaFilter::parse_my_tag( TagPtr const tag, DataMap &, Filters_map const
 {
 	 if ( tag->hasOption("res1_res_num") ) resid1_ =  tag->getOption<core::Size>( "res1_res_num", 0 );
 	 if ( tag->hasOption("res2_res_num") ) resid2_ =  tag->getOption<core::Size>( "res2_res_num", 0 );
-	 if ( tag->hasOption("res1_pdb_num") ) resid1_ = protocols::rosetta_scripts::get_resnum(tag, pose, "res1_");
-	 if ( tag->hasOption("res2_pdb_num") ) resid2_ = protocols::rosetta_scripts::get_resnum(tag, pose, "res2_");
+	 if ( tag->hasOption("res1_pdb_num") ) resid1_ = core::pose::get_resnum(tag, pose, "res1_");
+	 if ( tag->hasOption("res2_pdb_num") ) resid2_ = core::pose::get_resnum(tag, pose, "res2_");
 	if (resid1_==0 || resid2_==0){//ligand
     protocols::ligand_docking::LigandBaseProtocol ligdock;
     if (resid1_==0) resid1_ = ligdock.get_ligand_id(pose);
@@ -536,7 +537,7 @@ EnzScoreFilter::parse_my_tag( TagPtr const tag, DataMap & data, Filters_map cons
 {
   using namespace core::scoring;
 	is_cstE_ = false;
-	if (tag->hasOption( "pdb_num" )) resnum_ = protocols::rosetta_scripts::get_resnum(tag, pose);
+	if (tag->hasOption( "pdb_num" )) resnum_ = core::pose::get_resnum(tag, pose);
 	else if (tag->hasOption( "res_num" )) resnum_ =  tag->getOption<core::Size>( "res_num", 0 );
 	cstid_ = tag->getOption<std::string>( "cstid", "" );
 
@@ -674,7 +675,7 @@ RepackWithoutLigandFilter::parse_my_tag( TagPtr const tag, DataMap &data, Filter
 		if( tag->hasOption("target_res") ) {
 			std::string target_res = tag->getOption<std::string>("target_res", "" );
 			if (target_res=="all_repacked") rms_all_rpked_ = true;
-			else target_res_ = protocols::rosetta_scripts::get_resnum_list(tag, "target_res",pose);
+			else target_res_ = core::pose::get_resnum_list(tag, "target_res",pose);
 		}
 		if( tag->hasOption("target_cstids") ) {
 			cstid_list_ = tag->getOption<std::string>("target_cstids", "" );

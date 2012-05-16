@@ -357,6 +357,10 @@ read_topology_file(
 			rsd->aa( tag );
 			found_AA_record = true;
 
+		} else if ( tag == "ROTAMER_AA" ) {
+			l >> tag;
+			rsd->rotamer_aa( tag );
+
 		} else if ( tag == "NAME" ) {
 			l >> tag;
 			rsd->name( tag );

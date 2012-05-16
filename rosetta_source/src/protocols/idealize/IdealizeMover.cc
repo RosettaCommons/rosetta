@@ -61,6 +61,7 @@
 // AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 
 //Auto Headers
 #include <core/chemical/AtomType.hh>
@@ -309,7 +310,7 @@ IdealizeMover::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::D
 	chainbreaks( tag->getOption< bool >( "chainbreaks", false ) );
 	report_CA_rmsd( tag->getOption< bool >( "report_CA_rmsd", true ) );
 	if( tag->hasOption( "ignore_residues_in_csts" ) )
-		ignore_residues_in_csts( protocols::rosetta_scripts::get_resnum_list( tag, "ignore_residues_in_csts", pose ) );
+		ignore_residues_in_csts( core::pose::get_resnum_list( tag, "ignore_residues_in_csts", pose ) );
 	impose_constraints( tag->getOption< bool >( "impose_constraints", 1 ) );
 	constraints_only( tag->getOption< bool >( "constraints_only", 0 ) );
 

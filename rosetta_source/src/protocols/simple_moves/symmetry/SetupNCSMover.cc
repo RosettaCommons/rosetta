@@ -16,6 +16,7 @@
 
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
@@ -130,12 +131,12 @@ void SetupNCSMover::apply( core::pose::Pose & pose ) {
 
 	// map residue ranges -> resid pairs (using PDBinfo if necessary)
 	for (int i=1; i<=src_.size(); ++i) {
-		utility::vector1<Size> src_i = protocols::rosetta_scripts::get_resnum_list_ordered( src_[i], pose );
+		utility::vector1<Size> src_i = core::pose::get_resnum_list_ordered( src_[i], pose );
 
 		core::Real temp_a=src_i.size();
 		TZ.Debug << "src angle size " << temp_a << std::endl;
 
-		utility::vector1<Size> tgt_i = protocols::rosetta_scripts::get_resnum_list_ordered( tgt_[i], pose );
+		utility::vector1<Size> tgt_i = core::pose::get_resnum_list_ordered( tgt_[i], pose );
 
 		core::Real temp_b=tgt_i.size();
 		TZ.Debug << "src angle size " << temp_b << std::endl;
@@ -211,8 +212,8 @@ void SetupNCSMover::apply( core::pose::Pose & pose ) {
 	
 	  // map residue ranges -> resid pairs (using PDBinfo if necessary)
 	  for (int i=1; i<=srcE_.size(); ++i) {
-	    utility::vector1<Size> srcE_i = protocols::rosetta_scripts::get_resnum_list_ordered( srcE_[i], pose );
-	    utility::vector1<Size> tgtE_i = protocols::rosetta_scripts::get_resnum_list_ordered( tgtE_[i], pose );
+	    utility::vector1<Size> srcE_i = core::pose::get_resnum_list_ordered( srcE_[i], pose );
+	    utility::vector1<Size> tgtE_i = core::pose::get_resnum_list_ordered( tgtE_[i], pose );
 	    runtime_assert( srcE_i.size() == tgtE_i.size() );
 	
 	    //
@@ -243,12 +244,12 @@ void SetupNCSMover::apply( core::pose::Pose & pose ) {
 	  
 	  // map residue ranges -> resid pairs (using PDBinfo if necessary)
 	for (int i=1; i<=srcD_.size(); ++i ) {
-	    utility::vector1<Size> srcD_i = protocols::rosetta_scripts::get_resnum_list_ordered( srcD_[i], pose );
+	    utility::vector1<Size> srcD_i = core::pose::get_resnum_list_ordered( srcD_[i], pose );
 
 			core::Real temp_d=srcD_i.size();
 			TZ.Debug << "src 1 size " << temp_d << std::endl;
 
-	    utility::vector1<Size> tgtD_i = protocols::rosetta_scripts::get_resnum_list_ordered( tgtD_[i], pose );
+	    utility::vector1<Size> tgtD_i = core::pose::get_resnum_list_ordered( tgtD_[i], pose );
 	    runtime_assert( srcD_i.size() == tgtD_i.size() );
 	    runtime_assert( srcD_i.size() % 2 == 0 );
 	

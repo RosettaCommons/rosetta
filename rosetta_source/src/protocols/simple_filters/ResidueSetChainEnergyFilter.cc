@@ -36,6 +36,7 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/conformation/Conformation.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 
 namespace protocols{
 namespace simple_filters {
@@ -148,7 +149,7 @@ ResidueSetChainEnergyFilter::compute(
 
 	scorefxn_->score( in_pose );
 
-	utility::vector1< core::Size > const res_set_vec( protocols::rosetta_scripts::get_resnum_list_ordered( string_resnums_, in_pose ) );
+	utility::vector1< core::Size > const res_set_vec( core::pose::get_resnum_list_ordered( string_resnums_, in_pose ) );
 //	core::Size chain_seqpos_begin( in_pose.conformation().chain_begin( chain_ ) );
 //	core::Size chain_seqpos_end( in_pose.conformation().chain_end( chain_ ) );
 	// the neighbor/energy links

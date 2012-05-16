@@ -10,6 +10,7 @@
 
 #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -113,7 +114,7 @@ PackRotamersMoverPartGreedy::parse_my_tag(
   	scorefxn_minimize_ = new ScoreFunction( *datamap.get< ScoreFunction * >( "scorefxns", scorefxn_minimize ) );
 	//target residues for greedy opt around
 	 if( tag->hasOption("target_residues") ) {
-      		target_residues_ = protocols::rosetta_scripts::get_resnum_list(tag, "target_residues",pose);
+      		target_residues_ = core::pose::get_resnum_list(tag, "target_residues",pose);
 	}
 	use_cstids_ = false;
 	if( tag->hasOption("target_cstids") ) {

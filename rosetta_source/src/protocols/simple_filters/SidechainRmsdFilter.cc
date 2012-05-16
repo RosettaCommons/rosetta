@@ -17,6 +17,7 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Conformation.hh>
@@ -50,8 +51,8 @@ SidechainRmsdFilter::~SidechainRmsdFilter(){}
 void
 SidechainRmsdFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data_map, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
 {
-	res1_ = protocols::rosetta_scripts::get_resnum( tag, pose, "res1_" );
-	res2_ = protocols::rosetta_scripts::get_resnum( tag, pose, "res2_" );
+	res1_ = core::pose::get_resnum( tag, pose, "res1_" );
+	res2_ = core::pose::get_resnum( tag, pose, "res2_" );
 	rmsd_threshold_ = tag->getOption<core::Real>("threshold", 1.0);
 	include_backbone_ = tag->getOption<bool>("include_backbone", false);
 	

@@ -82,7 +82,7 @@ static basic::Tracer TR("gentetra");
 static core::io::silent::SilentFileData sfd;
 
 
-inline Real const sqr(Real const r) { return r*r; }
+inline Real sqr(Real const r) { return r*r; }
 inline Real sigmoidish_neighbor( Real const & sqdist ) {
   if( sqdist > 9.*9. ) {
     return 0.0;

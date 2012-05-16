@@ -30,6 +30,7 @@
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/BasicFilters.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -215,7 +216,7 @@ HotspotHasherMover::parse_my_tag( TagPtr const tag, DataMap & data, protocols::f
 	// target_resnum gets set below with residues
 	target_resnum_ = 0;
 	if( tag->hasOption( "target_residue_pdb_num" ) || tag->hasOption( "target_residue_res_num" ) ) {
-		target_resnum_ = protocols::rosetta_scripts::get_resnum( tag, pose, "target_residue_" );
+		target_resnum_ = core::pose::get_resnum( tag, pose, "target_residue_" );
 	}
 
 	target_distance_ = tag->getOption<core::Real>( "target_distance", 15.0 );

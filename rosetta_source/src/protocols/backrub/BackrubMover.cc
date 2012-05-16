@@ -20,6 +20,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 // AUTO-REMOVED #include <protocols/canonical_sampling/ThermodynamicObserver.hh> // needed for Windows build
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 
 // Core Headers
 #include <core/chemical/ResidueType.hh>
@@ -166,7 +167,7 @@ protocols::backrub::BackrubMover::parse_my_tag(
 )
 {
 	if ( tag->hasOption("pivot_residues") ) {
-		pivot_residues_ = protocols::rosetta_scripts::get_resnum_list(tag, "pivot_residues", pose);
+		pivot_residues_ = core::pose::get_resnum_list(tag, "pivot_residues", pose);
 	}
 
 	if ( tag->hasOption("pivot_atoms") ) {

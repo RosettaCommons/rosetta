@@ -101,9 +101,9 @@ void run() {
   core::chemical::ResidueTypeSetCAP cen_residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );
   core::chemical::ResidueTypeSetCAP  fa_residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
   Real tmpdis = option[willmatch::max_dis_metal]();
-  Real const MXDSMTL = tmpdis*tmpdis;
-  Real const MXAGMTL = option[willmatch::max_ang_metal]();
-  Real const MATCH_OVERLAP_DOT = cos(numeric::conversions::radians(option[willmatch::match_overlap_ang]()));
+  // Real const MXDSMTL = tmpdis*tmpdis;
+  // Real const MXAGMTL = option[willmatch::max_ang_metal]();
+  // Real const MATCH_OVERLAP_DOT = cos(numeric::conversions::radians(option[willmatch::match_overlap_ang]()));
 
 
 
@@ -142,8 +142,8 @@ void run() {
     Pose native = in_fa;
     Size nres = in_fa.n_residue();
     core::chemical::ResidueType const & rtala( in_fa.residue(1).residue_type_set().name_map("ALA") );
-    core::chemical::ResidueType const & rtasp( in_fa.residue(1).residue_type_set().name_map("ASP") );
-    core::chemical::ResidueType const & rtglu( in_fa.residue(1).residue_type_set().name_map("GLU") );
+    // core::chemical::ResidueType const & rtasp( in_fa.residue(1).residue_type_set().name_map("ASP") );
+    // core::chemical::ResidueType const & rtglu( in_fa.residue(1).residue_type_set().name_map("GLU") );
     core::chemical::ResidueType const & rtarg( in_fa.residue(1).residue_type_set().name_map("ARG") );
     for(Size i = 1; i <= nres; ++i) core::pose::replace_pose_residue_copying_existing_coordinates(in_fa,i,rtala);
     Pose const fa_pose = in_fa;
@@ -211,7 +211,7 @@ void run() {
 
     Real cbcb_thresh2 = 11.5*11.5;
     Real cbcg_thresh2 = 10.8*10.8;
-    Real cbcd_thresh2 = 9.3*9.3;
+    // Real cbcd_thresh2 = 9.3*9.3;
     Real cgcg_thresh2 = 9.9*9.9;
     Real cgcd_thresh2 = 8.5*8.5;
     Real cdcd_thresh2 = 7.0*7.0;

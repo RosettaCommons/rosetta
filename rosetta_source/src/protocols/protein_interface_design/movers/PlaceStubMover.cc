@@ -48,6 +48,7 @@
 
 #include <protocols/protein_interface_design/movers/SetAtomTree.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 
 // Utility Headers
 #include <utility/exit.hh>
@@ -1027,7 +1028,7 @@ PlaceStubMover::parse_my_tag( TagPtr const tag,
 	disallowed_host_pos_.clear();
 	if( tag->hasOption("allowed_host_res") ) {
 		utility::vector1<Size> allowed_host_pos(
-			protocols::rosetta_scripts::get_resnum_list(
+			core::pose::get_resnum_list(
 				tag, "allowed_host_res", pose ));
 		//disallowed is the set complement of allowed
 

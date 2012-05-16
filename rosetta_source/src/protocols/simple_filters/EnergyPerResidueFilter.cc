@@ -21,6 +21,7 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <protocols/scoring/Interface.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
@@ -162,7 +163,7 @@ EnergyPerResidueFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::Dat
 		<< "\n and scorefxn " <<scorefxn_name <<" will be used" <<std::endl;
 	}
 	else {
-		resnum_ = protocols::rosetta_scripts::get_resnum( tag, pose );
+		resnum_ = core::pose::get_resnum( tag, pose );
 		energy_per_residue_filter_tracer<<"EnergyPerResidueFilter for residue "<<resnum_<<" of score_type "<<score_type_<<" with cutoff "<<threshold_<<std::endl;
 	}
 }

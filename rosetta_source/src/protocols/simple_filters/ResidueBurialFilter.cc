@@ -21,6 +21,7 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
@@ -91,7 +92,7 @@ void
 ResidueBurialFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
 {
 	if( tag->hasOption( "res_num" ) || tag->hasOption( "pdb_num" ) )
-		target_residue_ = protocols::rosetta_scripts::get_resnum( tag, pose );
+		target_residue_ = core::pose::get_resnum( tag, pose );
 	distance_threshold_ = tag->getOption<core::Real>( "distance", 8.0 );
 	neighbors_ = tag->getOption<core::Size>( "neighbors", 1 );
 	residue_fraction_buried( tag->getOption< core::Real >( "residue_fraction_buried", 0.0001 ) );

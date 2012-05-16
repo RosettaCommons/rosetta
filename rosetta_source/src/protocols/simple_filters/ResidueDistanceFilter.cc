@@ -17,6 +17,7 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
@@ -41,8 +42,8 @@ ResidueDistanceFilter::~ResidueDistanceFilter(){}
 void
 ResidueDistanceFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
 {
-	res1_ = protocols::rosetta_scripts::get_resnum( tag, pose, "res1_" );
-	res2_ = protocols::rosetta_scripts::get_resnum( tag, pose, "res2_" );
+	res1_ = core::pose::get_resnum( tag, pose, "res1_" );
+	res2_ = core::pose::get_resnum( tag, pose, "res2_" );
 	distance_threshold_ = tag->getOption<core::Real>( "distance", 8.0 );
 
 	residue_distance_filter_tracer<<"ResidueDistanceFilter with distance threshold of "<<distance_threshold_<<" between residues "<<res1_<<" and "<<res2_<<std::endl;

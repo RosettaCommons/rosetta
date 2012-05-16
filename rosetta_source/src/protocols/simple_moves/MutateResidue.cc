@@ -30,6 +30,7 @@
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <protocols/filters/Filter.fwd.hh> //Filters_map
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <basic/Tracer.hh>
 #include <core/kinematics/Jump.hh>
 #include <utility/vector0.hh>
@@ -156,7 +157,7 @@ void MutateResidue::parse_my_tag( utility::tag::TagPtr const tag,
 		TR.Error << "Error: no 'target' parameter specified." << std::endl;
 		utility_exit();
 	}
-	target_ = protocols::rosetta_scripts::parse_resnum(
+	target_ = core::pose::parse_resnum(
 		tag->getOption<string>("target"),pose);
 
 	if( !tag->hasOption("new_res") ){

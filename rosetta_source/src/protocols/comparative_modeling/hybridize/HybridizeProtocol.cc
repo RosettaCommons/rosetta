@@ -27,6 +27,7 @@
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/util.hh>
@@ -99,6 +100,7 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 
 #include <protocols/moves/DataMap.hh>
 
@@ -1134,7 +1136,7 @@ HybridizeProtocol::parse_my_tag(
 			core::Size cluster_id = (*tag_it)->getOption<core::Size>( "cluster_id", 1 );
 			utility::vector1<core::Size> cst_reses;
 			if ((*tag_it)->hasOption( "constrain_res" ))
-				 cst_reses = protocols::rosetta_scripts::get_resnum_list_ordered( (*tag_it)->getOption<std::string>("constrain_res"), pose );
+				 cst_reses = core::pose::get_resnum_list_ordered( (*tag_it)->getOption<std::string>("constrain_res"), pose );
 
 			std::string symm_file = (*tag_it)->getOption<std::string>( "symmdef", "" );
 

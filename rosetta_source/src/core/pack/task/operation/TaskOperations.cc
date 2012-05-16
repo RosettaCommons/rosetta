@@ -24,6 +24,7 @@
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/selection.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/cacheable_observers.hh>
 #include <core/pose/datacache/ObserverCache.hh>
@@ -932,9 +933,13 @@ TaskOperationOP PreventRepacking::clone() const
 }
 
 void
-PreventRepacking::apply( pose::Pose const &, PackerTask & task ) const
+PreventRepacking::apply( pose::Pose const & pose, PackerTask & task ) const
 {
-	for(utility::vector1< core::Size >::const_iterator it(residues_to_prevent_.begin()), end(residues_to_prevent_.end());
+	utility::vector1<core::Size> const res = core::pose::get_resnum_list_ordered( residue_selection_, pose );
+	utility::vector1<core::Size> residues_to_prevent = residues_to_prevent_;
+	residues_to_prevent.insert(residues_to_prevent.end(),res.begin(),res.end());
+
+	for(utility::vector1< core::Size >::const_iterator it(residues_to_prevent.begin()), end(residues_to_prevent.end());
 			it != end; ++it)
 		{task.nonconst_residue_task(*it).prevent_repacking();}
 	return;
@@ -949,7 +954,7 @@ PreventRepacking::clear() { residues_to_prevent_.clear(); }
 void
 PreventRepacking::parse_tag( TagPtr tag )
 {
-	include_residue( tag->getOption< core::Size >( "resnum", 0 ) );
+	residue_selection_ = tag->getOption<std::string>("resnum","0");
 }
 
 

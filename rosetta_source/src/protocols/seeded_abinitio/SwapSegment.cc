@@ -25,6 +25,7 @@
 
 //other
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 
 // C++ headers
 #include <string>
@@ -278,8 +279,8 @@ SwapSegment::parse_my_tag(
 			if( !previously_grown_ ){
 				std::string const beginS( btag->getOption<std::string>( "begin" ) );
 				std::string const endS( btag->getOption<std::string>( "end" ) );
-				begin =( protocols::rosetta_scripts::parse_resnum( beginS, pose ) );
-				end   =( protocols::rosetta_scripts::parse_resnum( endS, pose ) );
+				begin =( core::pose::parse_resnum( beginS, pose ) );
+				end   =( core::pose::parse_resnum( endS, pose ) );
 			TR.Debug<<"string seeds: \n"<< beginS <<" and " << endS <<std::endl;
 			}
 			

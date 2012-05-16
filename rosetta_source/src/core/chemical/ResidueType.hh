@@ -1455,6 +1455,12 @@ public:
 	{
 		aa_ = aa_from_name( type );
 	}
+	/// @brief AA to use for rotamer library
+	void
+	rotamer_aa( std::string const & type )
+	{
+		rotamer_aa_ = aa_from_name( type );
+	}
 
 
 
@@ -1538,6 +1544,13 @@ public:
 	aa() const
 	{
 		return aa_;
+	}
+
+	AA const &
+	rotamer_aa() const
+	{
+		if(rotamer_aa_==aa_unk) return aa_;
+		return rotamer_aa_;
 	}
 
 
@@ -2067,7 +2080,7 @@ private:
 	// features
 
 	/// standard rosetta aa-type for knowledge-based potentials, may be aa_unk
-	AA aa_;
+	AA aa_,rotamer_aa_;
 
 	/// unique residue id
 	std::string name_;

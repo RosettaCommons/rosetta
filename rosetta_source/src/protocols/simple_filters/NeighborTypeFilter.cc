@@ -21,6 +21,7 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -47,7 +48,7 @@ NeighborTypeFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap
 			residue_types_[ core::chemical::aa_from_name( type ) ] = true;
     }
 	}
-	target_residue_ = protocols::rosetta_scripts::get_resnum( tag, pose );
+	target_residue_ = core::pose::get_resnum( tag, pose );
 	distance_threshold_ = tag->getOption<core::Real>( "distance", 8.0 );
 
 	neighbor_type_filter_tracer<<"NeighborTypeFilter with distance threshold of "<<distance_threshold_<<" around residue "<<target_residue_<<std::endl;

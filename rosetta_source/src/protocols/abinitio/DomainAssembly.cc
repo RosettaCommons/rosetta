@@ -35,6 +35,7 @@
 #include <utility/tag/Tag.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 
 //Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
@@ -206,8 +207,8 @@ DomainAssembly::get_name() const {
 void
 DomainAssembly::parse_my_tag( TagPtr const tag, DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
-	linker_start_ = protocols::rosetta_scripts::get_resnum( tag, pose, "linker_start_" );
-	linker_end_   = protocols::rosetta_scripts::get_resnum( tag, pose, "linker_end_" );
+	linker_start_ = core::pose::get_resnum( tag, pose, "linker_start_" );
+	linker_end_   = core::pose::get_resnum( tag, pose, "linker_end_" );
 	runtime_assert( linker_end_ > linker_start_ );
 	runtime_assert( linker_start_ > 0 );
 	runtime_assert( linker_end_ < pose.total_residue() );

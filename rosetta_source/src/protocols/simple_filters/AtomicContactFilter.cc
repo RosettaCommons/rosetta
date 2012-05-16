@@ -27,6 +27,7 @@
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/vector0.hh>
@@ -135,12 +136,12 @@ void AtomicContactFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	}
 	if ( range1_.size() == 0 ) {
 		std::string const res1( tag->getOption< std::string >( "residue1" ) );
-		residue1_ = protocols::rosetta_scripts::parse_resnum( res1, pose );
+		residue1_ = core::pose::parse_resnum( res1, pose );
 		range1_.push_back( residue1_ );
 	}
 	if( tag->hasOption( "residue2" ) ){
 		std::string const res2( tag->getOption< std::string >( "residue2" ) );
-		set_resid( protocols::rosetta_scripts::parse_resnum( res2, pose ) );
+		set_resid( core::pose::parse_resnum( res2, pose ) );
 		modifiable( false );
 	}
 	else{

@@ -38,6 +38,7 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
@@ -171,9 +172,9 @@ VLB::parse_my_tag(
 		if( tag->getName() == "Bridge" ) {
 			// connect two contiguous but disjoint sections of a Pose into one continuous section
 			string const res1( tag->getOption< std::string >( "left" ) );
-			Size const left = parse_resnum( res1, pose );
+			Size const left = core::pose::parse_resnum( res1, pose );
 			string const res2( tag->getOption< std::string >( "right" ) );
-			Size const right = parse_resnum( res2, pose );
+			Size const right = core::pose::parse_resnum( res2, pose );
 
 			string const ss( tag->getOption< std::string >( "ss", "" ) );
 			string const aa( tag->getOption< std::string >( "aa", "" ) );
@@ -184,9 +185,9 @@ VLB::parse_my_tag(
 		if( tag->getName() == "ConnectRight" ) {
 			//instruction to jump-connect one Pose onto the right side of another
 			string const res1( tag->getOption< std::string >( "left" ) );
-			Size const left = parse_resnum( res1, pose );
+			Size const left = core::pose::parse_resnum( res1, pose );
 			string const res2( tag->getOption< std::string >( "right" ) );
-			Size const right = parse_resnum( res2, pose );
+			Size const right = core::pose::parse_resnum( res2, pose );
 
 			string const pose_fname( tag->getOption< std::string >( "pdb", "" ) );
 			runtime_assert( pose_fname != "" );
@@ -203,7 +204,7 @@ VLB::parse_my_tag(
 			///  desired length+1.
 
 			string const res1( tag->getOption< std::string >( "pos" ) );
-			Size const pos = parse_resnum( res1, pose );
+			Size const pos = core::pose::parse_resnum( res1, pose );
 
 			string const ss( tag->getOption< std::string >( "ss", "" ) );
 			string const aa( tag->getOption< std::string >( "aa", "" ) );
@@ -213,7 +214,7 @@ VLB::parse_my_tag(
 		if( tag->getName() == "GrowRight" ) {
 			/// instruction to create a c-side extension
 			string const res1( tag->getOption< std::string >( "pos" ) );
-			Size const pos = parse_resnum( res1, pose );
+			Size const pos = core::pose::parse_resnum( res1, pose );
 
 			string const ss( tag->getOption< std::string >( "ss", "" ) );
 			string const aa( tag->getOption< std::string >( "aa", "" ) );
@@ -240,9 +241,9 @@ VLB::parse_my_tag(
 			///  or decide randomly between the two (default RANDOM). Random is only random on parsing, not per ntrial.
 
 			string const res1( tag->getOption< std::string >( "left" ) );
-			Size const left = parse_resnum( res1, pose );
+			Size const left = core::pose::parse_resnum( res1, pose );
 			string const res2( tag->getOption< std::string >( "right" ) );
-			Size const right = parse_resnum( res2, pose );
+			Size const right = core::pose::parse_resnum( res2, pose );
 			Interval const ival( left, right );
 
 			string const ss( tag->getOption< std::string >( "ss", "L^L" ) );
@@ -267,9 +268,9 @@ VLB::parse_my_tag(
 		if( tag->getName() == "SegmentRebuild" ) {
 			/// @brief instruction to rebuild a segment
 			string const res1( tag->getOption< std::string >( "left" ) );
-			Size const left = parse_resnum( res1, pose );
+			Size const left = core::pose::parse_resnum( res1, pose );
 			string const res2( tag->getOption< std::string >( "right" ) );
-			Size const right = parse_resnum( res2, pose );
+			Size const right = core::pose::parse_resnum( res2, pose );
 			Interval const ival( left, right);
 
 			string const ss( tag->getOption< std::string >( "ss", "" ) );
@@ -284,9 +285,9 @@ VLB::parse_my_tag(
 			/// move_map: fixed backbone residues in this movemap will be used for new jumps
 			/// swap_in: swap in this pose
 			string const res1( tag->getOption< std::string >( "left" ) );
-			Size const left = parse_resnum( res1, pose );
+			Size const left = core::pose::parse_resnum( res1, pose );
 			string const res2( tag->getOption< std::string >( "right" ) );
-			Size const right = parse_resnum( res2, pose );
+			Size const right = core::pose::parse_resnum( res2, pose );
 
 			Interval const ival( left, right);
 

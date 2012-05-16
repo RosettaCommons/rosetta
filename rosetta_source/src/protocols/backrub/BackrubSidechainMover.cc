@@ -25,6 +25,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 // AUTO-REMOVED #include <protocols/canonical_sampling/ThermodynamicObserver.hh> // needed for Windows build
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -148,7 +149,7 @@ protocols::backrub::BackrubSidechainMover::parse_my_tag(
 )
 {
 	if ( tag->hasOption("pivot_residues") ) {
-		set_pivot_residues(protocols::rosetta_scripts::get_resnum_list(tag, "pivot_residues", pose));
+		set_pivot_residues(core::pose::get_resnum_list(tag, "pivot_residues", pose));
 	}
 
 	core::pack::task::TaskFactoryOP new_task_factory( new core::pack::task::TaskFactory );

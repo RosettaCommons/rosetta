@@ -40,6 +40,7 @@
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <protocols/protein_interface_design/movers/AddChainBreak.hh>
 #include <utility/io/izstream.hh>
 #include <iostream>
@@ -520,8 +521,8 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 	runtime_assert( tag->hasOption( "torsion_database" ) != tag->hasOption( "source_pdb" ) );
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	if( !tag->hasOption( "task_operations" ) ){
-		from_res( protocols::rosetta_scripts::parse_resnum( tag->getOption< std::string >( "from_res", "0" ), pose ) );
-		to_res( protocols::rosetta_scripts::parse_resnum( tag->getOption< std::string >( "to_res", "0" ), pose ) );
+		from_res( core::pose::parse_resnum( tag->getOption< std::string >( "from_res", "0" ), pose ) );
+		to_res( core::pose::parse_resnum( tag->getOption< std::string >( "to_res", "0" ), pose ) );
 	}
 	if( tag->hasOption( "torsion_database" ) ){
 		torsion_database_fname( tag->getOption< std::string >( "torsion_database" ) );

@@ -89,7 +89,7 @@ static basic::Tracer TR("genI213");
 static core::io::silent::SilentFileData sfd;
 
 
-inline Real const sqr(Real const r) { return r*r; }
+inline Real sqr(Real const r) { return r*r; }
 inline Real sigmoidish_neighbor( Real const & sqdist ) {
   if( sqdist > 9.*9. ) {
     return 0.0;
@@ -313,7 +313,7 @@ dock(Pose & init, string /*fname*/) {
   protocols::scoring::ImplicitFastClashCheck ifc3(init,3.5);
   protocols::scoring::ImplicitFastClashCheck ifc2(init,2.8);
 
-  Size nres = init.n_residue();
+  // Size nres = init.n_residue();
   // ScoreFunctionOP sf = core::scoring::getScoreFunction();
   ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::getScoreFunction());
 
@@ -652,7 +652,7 @@ void design(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
   // pose.dump_pdb("test.pdb");
   // utility_exit_with_message("dbg sasa");
 
-  Size nres = pose.n_residue();
+  // Size nres = pose.n_residue();
   PackerTaskOP task = TaskFactory::create_packer_task(pose);
   // task->initialize_extra_rotamer_flags_from_command_line();
   vector1< bool > aac(20,false);

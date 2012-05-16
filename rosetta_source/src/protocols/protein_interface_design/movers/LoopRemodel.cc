@@ -35,6 +35,7 @@
 #include <protocols/forge/methods/fragment_functions.hh> // smallmer_from_largemer
 #include <protocols/protein_interface_design/movers/SaveAndRetrieveSidechains.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 
 #include <protocols/simple_moves/MinMover.hh>
 
@@ -470,8 +471,8 @@ LoopRemodel::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters:
 		loops_ = data.get< protocols::loops::Loops * >( "loops", "found_loops" ); // from LoopFinder
 	}
 	else {
-		loop_start_ = protocols::rosetta_scripts::get_resnum( tag, pose, "loop_start_" );
-		loop_end_   = protocols::rosetta_scripts::get_resnum( tag, pose, "loop_end_" );
+		loop_start_ = core::pose::get_resnum( tag, pose, "loop_start_" );
+		loop_end_   = core::pose::get_resnum( tag, pose, "loop_end_" );
 		core::Size const cutpt = (loop_start_+loop_end_)/2; // put cutpoint in the middle of the loop
 		protocols::loops::LoopOP loop = new protocols::loops::Loop( loop_start_, loop_end_, cutpt );
 		loops_ = new protocols::loops::Loops;

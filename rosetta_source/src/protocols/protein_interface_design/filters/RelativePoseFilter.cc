@@ -28,6 +28,7 @@
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 #include <utility/string_util.hh>
@@ -298,7 +299,7 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagPtr const tag,
 					}
 				}//fi aligning two chains
 			else /// aligning individual residues
-				alignment_[ parse_resnum( residues[ 1 ], *pose() ) ] = parse_resnum( residues[ 2 ], p );
+				alignment_[ core::pose::parse_resnum( residues[ 1 ], *pose() ) ] = core::pose::parse_resnum( residues[ 2 ], p );
 		}
 	}
 	else{

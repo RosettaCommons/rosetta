@@ -23,6 +23,7 @@
 #include <core/pose/Pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
@@ -99,7 +100,7 @@ AddChainBreak::apply( core::pose::Pose & pose )
 	core::kinematics::FoldTree f( pose.fold_tree() );
 
 	if( resnum() != "" ){
-		core::Size const resn( protocols::rosetta_scripts::parse_resnum( resnum(), pose ) );
+		core::Size const resn( core::pose::parse_resnum( resnum(), pose ) );
 
 		if( change_foldtree() ){
 			f.new_jump( resn, resn+1, resn );

@@ -106,6 +106,8 @@ private:
 	std::string type_;
 	bool skip_ala_scan_;//dflt false; if true, only considers the task_factory
 	bool fast_calc_; //default false for now
+	bool no_modified_ddG_;
+	std::string target_residues_;
 };
 
 } // simple_filters

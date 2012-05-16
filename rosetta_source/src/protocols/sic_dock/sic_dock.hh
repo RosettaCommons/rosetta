@@ -34,6 +34,21 @@ public:
 	virtual ~SICFast();
 
 	void init(
+		core::pose::Pose const & pose1
+	);
+
+	void init(
+		core::pose::Pose const & pose1,
+		core::pose::Pose const & pose2
+	);
+
+	void init(
+		core::pose::Pose const & pose1,
+		core::id::AtomID_Map<core::Real> const & clash_atoms1,
+		core::id::AtomID_Map<core::Real> const & score_atoms1
+	);
+
+	void init(
 		core::pose::Pose const & pose1,
 		core::pose::Pose const & pose2,
 		core::id::AtomID_Map<core::Real> const & clash_atoms1, // currently >0 means include in clash check
@@ -42,22 +57,9 @@ public:
 		core::id::AtomID_Map<core::Real> const & score_atoms2  // 
 	);
 
-	// void init(
-	// 					core::pose::Pose         const & cmp1in,
-	// 					utility::vector1<Vec>            cmp1cbs,
-	// 					utility::vector1<double> const & cmp1wts,
-	// 					core::pose::Pose         const & cmp2in,
-	// 					utility::vector1<Vec>            cmp2cbs,
-	// 					utility::vector1<double> const & cmp2wts
-	// 					);
-
 	double slide_into_contact(
 		core::kinematics::Stub const & xa,
 		core::kinematics::Stub const & xb,
-		utility::vector1<Vec>          pa,
-		utility::vector1<Vec>          pb,
-		utility::vector1<Vec>  const & cba,
-		utility::vector1<Vec>  const & cbb,
 		Vec                            ori,
 		double                       & score
 	);
@@ -90,13 +92,13 @@ private:
 	);
 	void
 	get_bounds(
-		utility::vector1<Vec> & pa,
-		utility::vector1<Vec> & pb
+		utility::vector1<Vec> const & pa,
+		utility::vector1<Vec> const & pb
 	);
 	void
 	fill_plane_hash(
-		utility::vector1<Vec> & pa,
-		utility::vector1<Vec> & pb
+		utility::vector1<Vec> const & pa,
+		utility::vector1<Vec> const & pb
 	);
 	double
 	get_mindis_with_plane_hashes();
@@ -105,11 +107,12 @@ private:
 	double xmx1,xmn1,ymx1,ymn1,xmx,xmn,ymx,ymn;
 	double CTD,CLD,CTD2,CLD2,BIN;
 	int xlb,ylb,xub,yub;
-	xyzStripeHashPose *xh2_bb_,*xh2_cb_;
-	utility::vector1<Vec>    clash1_,clash2_;
-	utility::vector1<Vec>    score1_,score2_;
+	xyzStripeHashPose *xh1c_,*xh1s_;
+	xyzStripeHashPose *xh2c_,*xh2s_;
+	// utility::vector1<Vec>    clash1_,clash2_;
+	// utility::vector1<Vec>    score1_,score2_;
 	utility::vector1<double> w1_,w2_;
-	ObjexxFCL::FArray2D<Vec> ha,hb;
+	ObjexxFCL::FArray2D<Vec> ha,hb; // 2D hashes
 
 };
 

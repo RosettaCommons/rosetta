@@ -18,6 +18,7 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <protocols/moves/DataMap.hh>
 
 #include <boost/foreach.hpp>
@@ -317,7 +318,7 @@ adjust_des_residues( pose::Pose & pose,
 		utility::vector1< core::Size > design_res;
 		
 		foreach( std::string const key, design_keys ){
-			core::Size const resnum( protocols::rosetta_scripts::parse_resnum( key, pose ));
+			core::Size const resnum( core::pose::parse_resnum( key, pose ));
 			TR.Debug<<"design within seed, residue: "<< key <<", parsed: "<< resnum <<std::endl;
 			design_res.push_back( resnum); 
 			TR<<"allowing design for "<<key<<std::endl;

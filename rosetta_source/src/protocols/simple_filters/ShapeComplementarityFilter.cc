@@ -25,6 +25,7 @@
 #include <utility/vector1.fwd.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/matdes.OptionKeys.gen.hh>
 
@@ -212,12 +213,12 @@ ShapeComplementarityFilter::parse_my_tag(
 	jump_id_ = tag->getOption<Size>( "jump", 1 );
 
 	if(tag->hasOption("residues1")) {
-		residues1_ = protocols::rosetta_scripts::get_resnum_list(tag, "residues1", pose);
+		residues1_ = core::pose::get_resnum_list(tag, "residues1", pose);
 		if(residues1_.empty())
 			tr.Warning << "Failed to parse residue range: " << tag->getOption<std::string> ("residues1") << ". Using default." << std::endl;
 	}
 	if(tag->hasOption("residues2")) {
-		residues2_ = protocols::rosetta_scripts::get_resnum_list(tag, "residues2", pose);
+		residues2_ = core::pose::get_resnum_list(tag, "residues2", pose);
 		if(residues2_.empty())
 			tr.Warning << "Failed to parse residue range: " << tag->getOption<std::string> ("residues2") << ". Using default." << std::endl;
 	}

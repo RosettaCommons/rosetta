@@ -478,6 +478,7 @@ public:
 
 private:
 	utility::vector1< core::Size > residues_to_prevent_;
+	std::string residue_selection_;
 };
 
 

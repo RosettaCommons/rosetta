@@ -120,7 +120,7 @@ using protocols::scoring::ImplicitFastClashCheck;
 static basic::Tracer TR("genmatch");
 
 
-inline Real const sqr(Real const r) { return r*r; }
+inline Real sqr(Real const r) { return r*r; }
 inline Real sigmoidish_neighbor( Real const & sqdist ) {
   if( sqdist > 9.*9. ) {
     return 0.0;
@@ -311,7 +311,7 @@ void run(std::string fname) {
   using namespace pose;
   using namespace scoring;
 
-  Size ANGLE_INCR=30;
+  // Size ANGLE_INCR=30;
 
   // setup stuff
   ResidueTypeSetCAP frs=ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );

@@ -31,6 +31,7 @@
 #include <core/types.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <utility/string_util.hh>
 #include <boost/foreach.hpp>
 #include <utility/tag/Tag.hh>
@@ -117,8 +118,8 @@ void parse_spans(
 	
 	for( Size iter = 1 ; iter <= span_vector.size() ; ++ iter ){
 		TR.Debug <<"sanity check, span_vector[iter].first " <<span_vector[iter].first <<std::endl;
-		core::Size const begin = protocols::rosetta_scripts::parse_resnum( span_vector[iter].first, pose ) ;
-		core::Size const end   = protocols::rosetta_scripts::parse_resnum( span_vector[iter].second, pose );
+		core::Size const begin = core::pose::parse_resnum( span_vector[iter].first, pose ) ;
+		core::Size const end   = core::pose::parse_resnum( span_vector[iter].second, pose );
 		//runtime_assert( end > begin );
 		//runtime_assert( begin>=1);
 		//runtime_assert( end<=pose.total_residue() );
@@ -140,7 +141,7 @@ adjust_residues(
 	utility::vector1< core::Size > design_res;
 
 	foreach( std::string const key, design_keys ){
-		core::Size const resnum( protocols::rosetta_scripts::parse_resnum( key, pose ));
+		core::Size const resnum( core::pose::parse_resnum( key, pose ));
 		//TR.Debug<<"design within seed, residue: "<< key <<", parsed: "<< resnum <<std::endl;
 		design_res.push_back( resnum);
 		TR.Debug<<"parsed "<<key<<std::endl;
@@ -160,7 +161,7 @@ void adjust_single_residues(
 	utility::vector1< std::string > const single_keys( utility::string_split( single_residues, ',' ) );
 	
 	foreach( std::string const key, single_keys ){
-		core::Size const resnum( protocols::rosetta_scripts::parse_resnum( key, pose ));
+		core::Size const resnum( core::pose::parse_resnum( key, pose ));
 		resi_collection.insert( resnum );
 	}
 }

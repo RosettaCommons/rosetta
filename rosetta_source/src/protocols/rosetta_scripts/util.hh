@@ -40,33 +40,6 @@
 namespace protocols {
 namespace rosetta_scripts {
 
-core::Size
-get_resnum( utility::tag::TagPtr const tag_ptr, core::pose::Pose const & pose, std::string const & prefix="" );
-
-/// @brief Extracts a residue number from a string.
-/// @detail Recognizes two forms of numbering:
-///   - Rosetta residue numbers (numbered sequentially from 1 to the last residue
-///     in the pose). These have the form [0-9]+
-///   - PDB numbers. These have the form [0-9]+[A-Z], where the trailing letter
-///     is the chain ID.
-/// @return the rosetta residue number for the string, or 0 upon an error
-core::Size
-parse_resnum(std::string const& resnum, core::pose::Pose const& pose);
-
-/// @brief Extracts a list of residue numbers from a tag.
-/// @details The tag should contain a comma-separated list of numbers, in either
-///   pdb or rosetta format (@see parse_resnum for details)
-utility::vector1<core::Size>
-get_resnum_list(utility::tag::TagPtr const tag_ptr, std::string const& tag, core::pose::Pose const& pose);
-
-/// @brief returns a resnum list directly from a string
-std::set< core::Size >
-get_resnum_list( std::string const str, core::pose::Pose const & pose );
-
-/// @brief returns a resnum list directly from a string, preserving order
-utility::vector1<core::Size>
-get_resnum_list_ordered( std::string const str, core::pose::Pose const & pose );
-
 utility::vector1< core::pack::task::operation::TaskOperationOP >
 get_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap const & data );
 

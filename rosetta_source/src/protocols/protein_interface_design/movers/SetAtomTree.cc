@@ -30,6 +30,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/PDBPoseMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <utility/vector0.hh>
 
 
@@ -190,7 +191,7 @@ SetAtomTree::apply( core::pose::Pose & pose )
 		return;
 	}
 
-	core::Size const resnum( protocols::rosetta_scripts::parse_resnum( resnum_, pose ) );
+	core::Size const resnum( core::pose::parse_resnum( resnum_, pose ) );
 	core::conformation::Residue const res_central( pose.residue( resnum ) );;
 
   std::string connect_to( connect_to_ );

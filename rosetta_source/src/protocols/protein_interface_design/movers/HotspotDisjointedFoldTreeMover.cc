@@ -37,6 +37,7 @@
 #include <protocols/moves/DataMap.hh>
 #include <protocols/simple_filters/RotamerBoltzmannWeight.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
@@ -192,7 +193,7 @@ HotspotDisjointedFoldTreeMover::parse_my_tag( TagPtr const tag, DataMap & data, 
 	scorefxn( data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name ) );
 	chain( tag->getOption< core::Size >( "chain", 2 ) );
 	interface_radius( tag->getOption< core::Real >( "radius", 8.0 ) );
-	utility::vector1< core::Size > v1 = protocols::rosetta_scripts::get_resnum_list( tag, "resnums", pose );
+	utility::vector1< core::Size > v1 = core::pose::get_resnum_list( tag, "resnums", pose );
 	foreach( core::Size const r, v1 ){ add_residue( r ); }
 
 	runtime_assert( ddG_threshold() <= 100.0 || get_residues().size() );

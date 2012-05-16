@@ -13,6 +13,8 @@
 
 #include <core/chemical/AA.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/selection.hh>
+#include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <utility/tag/Tag.hh>
@@ -78,7 +80,8 @@ RotamerBoltzmannWeight::RotamerBoltzmannWeight() :
 	repack_( true ),
 	type_( "" ),
 	skip_ala_scan_( false ),
-	fast_calc_(false)
+	fast_calc_(false),
+	no_modified_ddG_(false)
 {
 	threshold_probabilities_per_residue_.assign( core::chemical::num_canonical_aas, 1 );
 }
@@ -204,7 +207,7 @@ RotamerBoltzmannWeight::first_pass_ala_scan( core::pose::Pose const & pose ) con
 	}
 	core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 	for( core::Size resi=1; resi<=pose.total_residue(); ++resi ){
-		if( packer_task->being_packed( resi ) ){
+		if( packer_task->being_packed( resi ) && pose.residue( resi ).is_protein()){
 			if( skip_ala_scan() ){
 				TR<<"Adding residue "<<resi<<" to hotspot list\n";
 				hotspot_residues.push_back( resi );
@@ -229,45 +232,53 @@ RotamerBoltzmannWeight::compute( core::pose::Pose const & const_pose ) const{
 	ddGs_.clear();
 	rotamer_probabilities_.clear();
 
-	utility::vector1< core::Size > hotspot_res;
+	utility::vector1<Size> hotspot_res = core::pose::get_resnum_list_ordered(target_residues_,const_pose);
+	// for(Size i = 1; i <= hotspot_res.size(); ++i) {
+	// 	std::cerr << "RotamerBoltzmannWeight calc res: " << hotspot_res[i] << std::endl;
+	// }
 	core::pose::Pose unbound_pose( const_pose );
-	if( type_ == "monomer" ) {
-		protocols::toolbox::SelectResiduesByLayer srb( true, true, false );
-		utility::vector1< core::chemical::AA > select_aa_types;
-		select_aa_types.push_back( core::chemical::aa_tyr );
-		select_aa_types.push_back( core::chemical::aa_phe );
-		select_aa_types.push_back( core::chemical::aa_trp );
-		select_aa_types.push_back( core::chemical::aa_leu );
-		select_aa_types.push_back( core::chemical::aa_ile );
-		srb.restrict_aatypes_for_selection( select_aa_types );
-		hotspot_res = srb.compute( const_pose );
-	} else {
-		if( unbound() ){
-			using namespace protocols::moves;
-			int sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num(unbound_pose, rb_jump() ); // JB 120420
-			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( unbound_pose, sym_aware_jump_id ) ); // JB 120420
-			translate->step_size( 1000.0 );
-			translate->apply( unbound_pose );
+	if( hotspot_res.size()==0 ) {
+		if( type_ == "monomer" ) {
+			protocols::toolbox::SelectResiduesByLayer srb( true, true, false );
+			utility::vector1< core::chemical::AA > select_aa_types;
+			select_aa_types.push_back( core::chemical::aa_tyr );
+			select_aa_types.push_back( core::chemical::aa_phe );
+			select_aa_types.push_back( core::chemical::aa_trp );
+			select_aa_types.push_back( core::chemical::aa_leu );
+			select_aa_types.push_back( core::chemical::aa_ile );
+			srb.restrict_aatypes_for_selection( select_aa_types );
+			hotspot_res = srb.compute( const_pose );
+		} else {
+			if( unbound() ){
+				using namespace protocols::moves;
+				int sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num(unbound_pose, rb_jump() ); // JB 120420
+				rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( unbound_pose, sym_aware_jump_id ) ); // JB 120420
+				translate->step_size( 1000.0 );
+				translate->apply( unbound_pose );
+			}
+			hotspot_res = first_pass_ala_scan( const_pose );
 		}
-		hotspot_res = first_pass_ala_scan( const_pose );
 	}
-
 	if( hotspot_res.size() == 0 ){
 		TR<<"No hot-spot residues detected in first pass alanine scan. Doing nothing"<<std::endl;
 		return( 0 );
-	}
-	else
+	} else {
 		TR<<hotspot_res.size()<<" hot-spot residues detected."<<std::endl;
+	}
 
 	protocols::toolbox::pose_metric_calculators::RotamerBoltzCalculator rotboltz_calc( this->scorefxn(), this->temperature(), this->repacking_radius() );
 
 	foreach( core::Size const hs_res, hotspot_res ){
 		core::Real const boltz_weight( fast_calc_ ? rotboltz_calc.computeBoltzWeight( unbound_pose, hs_res ) : compute_Boltzmann_weight( unbound_pose, hs_res ) );
-		TR<<const_pose.residue( hs_res ).name3()<<hs_res<<" "<<boltz_weight<<'\n';
+		 TR<<const_pose.residue( hs_res ).name3()<<hs_res<<" "<<boltz_weight<<'\n';
 		rotamer_probabilities_[ hs_res ] = boltz_weight;
 	}
 	TR.flush();
-	return( 0.0 );
+	core::Real avg = 0.0;
+	for( std::map<core::Size,core::Real>::const_iterator i = rotamer_probabilities_.begin(); i != rotamer_probabilities_.end(); ++i) {
+		avg += i->second;
+	}		
+	return - avg / (core::Real)rotamer_probabilities_.size();
 }
 
 core::Real
@@ -297,6 +308,7 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	core::graph::GraphOP packer_graph = new core::graph::Graph( pose.total_residue() );
 	ptask->set_bump_check( true );
 	rotset->build_rotamers( pose, *scorefxn_, *ptask, packer_graph, false );
+	// TR << "num rotamers for resi " << resi << " is: " << rotset->num_rotamers() << std::endl;
 
 /// des_around will mark all residues around resi for design, the rest for packing.
 	protocols::toolbox::task_operations::DesignAroundOperationOP des_around = new protocols::toolbox::task_operations::DesignAroundOperation;
@@ -345,6 +357,7 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 		pose = const_min_pose;
 		pose.replace_residue( resi, **rotamer, false/*orient bb*/ );
 		core::pack::pack_rotamers( pose, *scorefxn(), task );
+		// std::cerr << "CHI " << rotamer->chi1() << " " << rotamer->chi2() << std::endl;
 		min_mover->apply( pose );
 		core::Real const score( stf.compute( pose ) );
 		TR<<"This rotamer has score "<<score<<std::endl;
@@ -373,6 +386,13 @@ core::Real
 RotamerBoltzmannWeight::report_sm( core::pose::Pose const & pose ) const
 {
 	compute( pose );
+	if (no_modified_ddG_) {
+		core::Real avg = 0.0;
+		for( std::map<core::Size,core::Real>::const_iterator i = rotamer_probabilities_.begin(); i != rotamer_probabilities_.end(); ++i) {
+			avg += i->second;
+		}		
+		return - avg / (core::Real)rotamer_probabilities_.size();
+	}
 	return( compute_modified_ddG( pose, TR ));
 }
 
@@ -404,7 +424,7 @@ RotamerBoltzmannWeight::interface_interaction_energy( core::pose::Pose const & p
 void
 RotamerBoltzmannWeight::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
-	if( type_ == "monomer" ) {
+	if( type_ == "monomer" || no_modified_ddG_ ) {
 		out<<"RotamerBoltzmannWeightFilter returns "<<compute( pose )<<std::endl;
 		out<<"RotamerBoltzmannWeightFilter final report\n";
 		out<<"Residue"<<'\t'<<"ddG"<<'\t'<<"RotamerProbability"<<'\n';
@@ -452,7 +472,10 @@ RotamerBoltzmannWeight::parse_my_tag( utility::tag::TagPtr const tag,
 		threshold_probability( aa, threshold_probability_input );
 	}
 
+	target_residues_ = tag->getOption<std::string>("target_residues","");
+
 	fast_calc_ = tag->getOption< bool >("fast_calc",0);
+	no_modified_ddG_ = tag->getOption< bool >("no_modified_ddG",0);
 
 	skip_ala_scan( tag->getOption< bool >( "skip_ala_scan", 0 ) );
 	TR<<"with options repacking radius: "<<repacking_radius()<<" and jump "<<rb_jump()<<" unbound "<<unbound()<<" ddG threshold "<<ddG_threshold()<<" temperature "<<temperature()<<" energy reduction factr "<<energy_reduction_factor()<<" entropy_reduction "<<compute_entropy_reduction()<<" repack "<<repack()<<" skip_ala_scan "<<skip_ala_scan()<<std::endl;
@@ -534,6 +557,7 @@ RotamerBoltzmannWeight::type(std::string const & s)
 core::Real
 RotamerBoltzmannWeight::compute_modified_ddG( core::pose::Pose const & pose, std::ostream & out ) const
 {
+	if (no_modified_ddG_) return (0.0);
 	protocols::simple_filters::DdgFilter ddg_filter( 100/*ddg_threshold*/, scorefxn(), rb_jump(), repack() ? 3 : 1 /*repeats*/ ); //120423
 	ddg_filter.repack( repack() );
 

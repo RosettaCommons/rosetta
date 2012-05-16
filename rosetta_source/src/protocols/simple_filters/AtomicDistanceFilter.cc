@@ -25,6 +25,7 @@
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/vector0.hh>
@@ -137,8 +138,8 @@ void AtomicDistanceFilter::parse_my_tag( utility::tag::TagPtr const tag,
 
 	std::string const res1( tag->getOption< std::string >( "residue1" ) );
 	std::string const res2( tag->getOption< std::string >( "residue2" ) );
-	residue1_ = protocols::rosetta_scripts::parse_resnum( res1, pose );
-	residue2_ = protocols::rosetta_scripts::parse_resnum( res2, pose );
+	residue1_ = core::pose::parse_resnum( res1, pose );
+	residue2_ = core::pose::parse_resnum( res2, pose );
 
 	if (residue1_ == 0) {
 		TR << "Residue number "<<res1<<" not found in pose."<<std::endl;

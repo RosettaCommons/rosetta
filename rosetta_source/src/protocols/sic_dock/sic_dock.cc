@@ -39,6 +39,16 @@ typedef numeric::xyzMatrix<core::Real> Mat;
 
 template<typename T> inline T sqr(T x) { return x*x; }
 
+
+void dump_points_pdb(utility::vector1<Vec> const & p, std::string fn) {
+        using namespace ObjexxFCL::fmt;
+        std::ofstream o(fn.c_str());
+        for(Size i = 1; i <= p.size(); ++i) {
+                std::string rn = "VIZ";                o<<"HETATM"<<I(5,i)<<' '<<" CA "<<' '<<rn<<' '<<"A"<<I(4,i)<<"    "<<F(8,3,p[i].x())<<F(8,3,p[i].y())<<F(8,3,p[i].z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+        }        o.close();
+}
+
+
 inline double sigmoid( double const & sqdist, double const & start, double const & stop ) {
 	if( sqdist > stop*stop ) {
 		return 0.0;
@@ -51,33 +61,77 @@ inline double sigmoid( double const & sqdist, double const & start, double const
 	}
 }
 
+int neighbor_count(core::pose::Pose const &pose, int ires, double distance_threshold=10.0) {
+	core::conformation::Residue const resi( pose.residue( ires ) );
+	Size resi_neighbors( 0 );
+	for(Size jres = 1; jres <= pose.n_residue(); ++jres) {
+		core::conformation::Residue const resj( pose.residue( jres ) );
+		double const distance( resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) );
+		if( distance <= distance_threshold ){
+			++resi_neighbors;
+		}
+	}
+	return resi_neighbors;
+}
+
+
 SICFast::~SICFast() {
-	if(xh2_bb_) delete xh2_bb_;
-	if(xh2_cb_) delete xh2_cb_;
+	if(xh2c_) delete xh2c_;
+	if(xh2s_) delete xh2s_;
 }
 
 SICFast::SICFast() :
 	CTD(basic::options::option[basic::options::OptionKeys::sicdock::contact_dis]()),
 	CLD(basic::options::option[basic::options::OptionKeys::sicdock::clash_dis]()),
 	CTD2(sqr(CTD)),CLD2(sqr(CLD)),BIN(CLD*basic::options::option[basic::options::OptionKeys::sicdock::hash_2D_vs_3D]()),
-	xh2_bb_(NULL),xh2_cb_(NULL)
+	xh1c_(NULL),xh1s_(NULL),xh2c_(NULL),xh2s_(NULL)
 {}
 
 
+void 
+SICFast::init(
+	core::pose::Pose const & pose
+) {
+	init(pose,pose);
+}
 
-// void SICFast::init(core::pose::Pose const & cmp1in, vector1<Vec> cmp1cbs, vector1<double> const & cmp1wts,
-// 									 core::pose::Pose const & cmp2in, vector1<Vec> cmp2cbs, vector1<double> const & cmp2wts
-// 									 )
-// {
-// 	xh2_bb_ = new xyzStripeHashPose(basic::options::option[basic::options::OptionKeys::sicdock::clash_dis]()+0.5);
-// 	xh2_cb_ = new xyzStripeHashPose(basic::options::option[basic::options::OptionKeys::sicdock::contact_dis]());
-// 	xh2_bb_->init_with_pose(cmp2in,BB);
-// 	xh2_cb_->init_with_pose(cmp2in,cmp2wts,CB);
-// 	w1_ = cmp1wts;
-// 	w2_ = cmp2wts;
-// }
+void
+SICFast::init(
+	core::pose::Pose const & pose,
+	core::id::AtomID_Map<core::Real> const & clash_atoms,
+	core::id::AtomID_Map<core::Real> const & score_atoms
+){
+	init(pose,pose,clash_atoms,clash_atoms,score_atoms,score_atoms);
+}
 
-void SICFast::init(
+void 
+SICFast::init(
+	core::pose::Pose const & pose1,
+	core::pose::Pose const & pose2
+){
+	using core::id::AtomID;
+	core::id::AtomID_Map<core::Real> clashmap1,contactmap1,clashmap2,contactmap2;
+	core::pose::initialize_atomid_map(  clashmap1,pose1,-1.0);
+	core::pose::initialize_atomid_map(  clashmap2,pose2,-1.0);
+	core::pose::initialize_atomid_map(contactmap1,pose1,-1.0);
+	core::pose::initialize_atomid_map(contactmap2,pose2,-1.0);
+	for(Size i = 1; i <= pose1.n_residue(); ++i) {
+		if(pose1.residue(i).has("CB")) 
+			contactmap1[AtomID(pose1.residue(i).atom_index("CB"),i)] = min(1.0,(double)neighbor_count(pose1,i)/20.0);
+		for(int j = 1; j <= ((pose1.residue(i).name3()=="GLY")?4:5); ++j)
+			clashmap1[AtomID(j,i)] = pose1.residue(i).atom_type(j).lj_radius();
+	}
+	for(Size i = 1; i <= pose2.n_residue(); ++i) {
+		if(pose2.residue(i).has("CB"))
+			contactmap2[AtomID(pose2.residue(i).atom_index("CB"),i)] = min(1.0,(double)neighbor_count(pose2,i)/20.0);
+		for(int j = 1; j <= ((pose2.residue(i).name3()=="GLY")?4:5); ++j)
+			clashmap2[AtomID(j,i)] = pose2.residue(i).atom_type(j).lj_radius();
+	}
+	init(pose1,pose2,clashmap1,clashmap2,contactmap1,contactmap2);
+}
+
+void
+SICFast::init(
 	core::pose::Pose const & pose1,
 	core::pose::Pose const & pose2,
 	core::id::AtomID_Map<core::Real> const & clash_atoms1,
@@ -86,40 +140,38 @@ void SICFast::init(
 	core::id::AtomID_Map<core::Real> const & score_atoms2
 ){
 	using core::id::AtomID;
-	xh2_bb_ = new xyzStripeHashPose(basic::options::option[basic::options::OptionKeys::sicdock::clash_dis]()+0.5);
-	xh2_cb_ = new xyzStripeHashPose(basic::options::option[basic::options::OptionKeys::sicdock::contact_dis]());
-	xh2_bb_->init_with_pose(pose2,clash_atoms2);
-	xh2_cb_->init_with_pose(pose2,score_atoms2);
-	for(int ir = 1; ir <= (int)pose1.n_residue(); ++ir) {
-		for(int ia = 1; ia <= (int)clash_atoms1.n_atom(ir); ++ia) { if(clash_atoms1[AtomID(ia,ir)] > 0) clash1_.push_back(   pose1.xyz(AtomID(ia,ir))); }
-		for(int ia = 1; ia <= (int)score_atoms1.n_atom(ir); ++ia) { if(score_atoms1[AtomID(ia,ir)] > 0) score1_.push_back(   pose1.xyz(AtomID(ia,ir))); }
-		for(int ia = 1; ia <= (int)score_atoms1.n_atom(ir); ++ia) { if(score_atoms1[AtomID(ia,ir)] > 0)     w1_.push_back(score_atoms1[AtomID(ia,ir)]); }
-	}
-	for(int ir = 1; ir <= (int)pose2.n_residue(); ++ir) {
-		for(int ia = 1; ia <= (int)clash_atoms2.n_atom(ir); ++ia) { if(clash_atoms2[AtomID(ia,ir)] > 0) clash2_.push_back(   pose2.xyz(AtomID(ia,ir))); }
-		for(int ia = 1; ia <= (int)score_atoms2.n_atom(ir); ++ia) { if(score_atoms2[AtomID(ia,ir)] > 0) score2_.push_back(   pose2.xyz(AtomID(ia,ir))); }
-		for(int ia = 1; ia <= (int)score_atoms2.n_atom(ir); ++ia) { if(score_atoms2[AtomID(ia,ir)] > 0)     w2_.push_back(score_atoms2[AtomID(ia,ir)]); }
-	}
+	xh1c_ = new xyzStripeHashPose(basic::options::option[basic::options::OptionKeys::sicdock::clash_dis]()+0.5);
+	xh2c_ = new xyzStripeHashPose(basic::options::option[basic::options::OptionKeys::sicdock::clash_dis]()+0.5);
+	xh1s_ = new xyzStripeHashPose(basic::options::option[basic::options::OptionKeys::sicdock::contact_dis]());
+	xh2s_ = new xyzStripeHashPose(basic::options::option[basic::options::OptionKeys::sicdock::contact_dis]());
+	xh1c_->init_with_pose(pose1,clash_atoms1);
+	xh2c_->init_with_pose(pose2,clash_atoms2);
+	xh1s_->init_with_pose(pose1,score_atoms1);
+	xh2s_->init_with_pose(pose2,score_atoms2);
+	for(int i=0;i<xh1s_->natom();++i) w1_.push_back( xh1s_->grid_atoms()[i].w );
+	for(int i=0;i<xh2s_->natom();++i) w2_.push_back( xh2s_->grid_atoms()[i].w );
 }
 
 double
-SICFast::slide_into_contact(core::kinematics::Stub const & xa,
+SICFast::slide_into_contact(
+	core::kinematics::Stub const & xa,
 	core::kinematics::Stub const & xb,
-	utility::vector1<Vec>          pa,
-	utility::vector1<Vec>          pb,
-	utility::vector1<Vec>  const & cba,
-	utility::vector1<Vec>  const & cbb,
 	Vec                            ori,
 	double                       & score
 ){
-	rotate_points(pa,pb,ori);
-	get_bounds(pa,pb);
-	fill_plane_hash(pa,pb);
+	utility::vector1<Vec> pb,pa,sb,sa;
+	for(int i=0;i<xh1c_->natom();++i)pa.push_back(xb.local2global(Vec(xh1c_->grid_atoms()[i].x,xh1c_->grid_atoms()[i].y,xh1c_->grid_atoms()[i].z)-xh1c_->translation()));
+	for(int i=0;i<xh2c_->natom();++i)pb.push_back(xa.local2global(Vec(xh2c_->grid_atoms()[i].x,xh2c_->grid_atoms()[i].y,xh2c_->grid_atoms()[i].z)-xh2c_->translation()));
+	for(int i=0;i<xh1s_->natom();++i)sa.push_back(xb.local2global(Vec(xh1s_->grid_atoms()[i].x,xh1s_->grid_atoms()[i].y,xh1s_->grid_atoms()[i].z)-xh1s_->translation()));
+	for(int i=0;i<xh2s_->natom();++i)sb.push_back(xa.local2global(Vec(xh2s_->grid_atoms()[i].x,xh2s_->grid_atoms()[i].y,xh2s_->grid_atoms()[i].z)-xh2s_->translation()));
+	rotate_points(pb,pa,ori);
+	get_bounds(pb,pa);
+	fill_plane_hash(pb,pa);
 	double const mindis_approx = get_mindis_with_plane_hashes();
-	double const mindis = refine_mindis_with_xyzHash(xa,xb,pa,pb,mindis_approx,ori);
-	//cerr << brute_mindis(pa,pb,Vec(0,0,-mindis)) << endl;
-	// if( fabs(CLD2-brute_mindis(pa,pb,Vec(0,0,-mindis))) > 0.0001 ) utility_exit_with_message("DIAF!");
-	if(score != -12345.0) score = get_score(xa,xb,cba,cbb,ori,mindis);
+	double const mindis = refine_mindis_with_xyzHash(xa,xb,pb,pa,mindis_approx,ori);
+	//cerr << brute_mindis(pb,pa,Vec(0,0,-mindis)) << endl;
+	// if( fabs(CLD2-brute_mindis(pb,pa,Vec(0,0,-mindis))) > 0.0001 ) utility_exit_with_message("DIAF!");
+	if(score != -12345.0) score = get_score(xa,xb,sb,sa,ori,mindis);
 	return mindis;
 }
 
@@ -127,35 +179,27 @@ SICFast::slide_into_contact(core::kinematics::Stub const & xa,
 
 void
 SICFast::rotate_points(
-	vector1<Vec> & pa,
 	vector1<Vec> & pb,
+	vector1<Vec> & pa,
 	Vec ori
 ){
-	// // get points, rotated ro ori is 0,0,1, might already be done
-	// Mat rot = Mat::identity();
-	// if     ( ori.dot(Vec(0,0,1)) < -0.99999 ) rot = rotation_matrix( Vec(1,0,0).cross(ori), (double)-acos(Vec(0,0,1).dot(ori)) );
-	// else if( ori.dot(Vec(0,0,1)) <  0.99999 ) rot = rotation_matrix( Vec(0,0,1).cross(ori), (double)-acos(Vec(0,0,1).dot(ori)) );
-	// if( rot != Mat::identity() ) {
-	//         for(vector1<Vec>::iterator ia = pa.begin(); ia != pa.end(); ++ia) *ia = rot*(*ia);
-	//         for(vector1<Vec>::iterator ib = pb.begin(); ib != pb.end(); ++ib) *ib = rot*(*ib);
-	// }
 	Mat rot = rotation_matrix_degrees( (ori.z() < -0.99999) ? Vec(1,0,0) : (Vec(0,0,1)+ori.normalized())/2.0 , 180.0 );
-	for(vector1<Vec>::iterator ia = pa.begin(); ia != pa.end(); ++ia) *ia = rot*(*ia);
-	for(vector1<Vec>::iterator ib = pb.begin(); ib != pb.end(); ++ib) *ib = rot*(*ib);
+	for(vector1<Vec>::iterator ia = pb.begin(); ia != pb.end(); ++ia) *ia = rot*(*ia);
+	for(vector1<Vec>::iterator ib = pa.begin(); ib != pa.end(); ++ib) *ib = rot*(*ib);
 }
 
 void
 SICFast::get_bounds(
-	vector1<Vec> & pa,
-	vector1<Vec> & pb
+	vector1<Vec> const & pb,
+	vector1<Vec> const & pa
 ){
 	// get bounds for plane hashes
 	xmx1=-9e9,xmn1=9e9,ymx1=-9e9,ymn1=9e9,xmx=-9e9,xmn=9e9,ymx=-9e9,ymn=9e9;
-	for(vector1<Vec>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+	for(vector1<Vec>::const_iterator ia = pb.begin(); ia != pb.end(); ++ia) {
 		xmx1 = max(xmx1,ia->x()); xmn1 = min(xmn1,ia->x());
 		ymx1 = max(ymx1,ia->y()); ymn1 = min(ymn1,ia->y());
 	}
-	for(vector1<Vec>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+	for(vector1<Vec>::const_iterator ib = pa.begin(); ib != pa.end(); ++ib) {
 		xmx = max(xmx,ib->x()); xmn = min(xmn,ib->x());
 		ymx = max(ymx,ib->y()); ymn = min(ymn,ib->y());
 	}
@@ -168,18 +212,18 @@ double
 SICFast::get_score(
 	core::kinematics::Stub const & xa,
 	core::kinematics::Stub const & /*xb*/,
-	vector1<Vec> const & /*cba*/,
-	vector1<Vec> const & cbb,
+	vector1<Vec> const & /*sb*/,
+	vector1<Vec> const & sa,
 	Vec ori,
 	double mindis
 ){
 	vector1<double> const & wa = w2_;
 	vector1<double> const & wb = w1_;
-	numeric::geometry::hashing::xyzStripeHash<double> const * xh( xh2_cb_);
+	numeric::geometry::hashing::xyzStripeHash<double> const * xh( xh2s_);
 	//		Mat R = numeric::rotation_matrix_degrees(axsa,-anga);
 	float score = 0.0;
 	vector1<double>::const_iterator iwb = wb.begin();
-	for(vector1<Vec>::const_iterator i = cbb.begin(); i != cbb.end(); ++i,++iwb) {
+	for(vector1<Vec>::const_iterator i = sa.begin(); i != sa.end(); ++i,++iwb) {
 		Vec v = xa.global2local((*i)-mindis*ori) + xh->translation();
 		if( v.x() < -xh->grid_size_ || v.y() < -xh->grid_size_ || v.z() < -xh->grid_size_ ) continue; // worth it?
 		if( v.x() >  xh->xmx_       || v.y() >  xh->ymx_       || v.z() >  xh->zmx_       ) continue; // worth it?
@@ -206,20 +250,6 @@ SICFast::get_score(
 			}
 		}
 	}
-	// double cbcount = 0.0;
-	// vector1<double>::const_iterator iwa = wa.begin();
-	// for(vector1<Vec>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia,++iwa) {
-	// 	vector1<double>::const_iterator iwb = wb.begin();
-	// 	for(vector1<Vec>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib,++iwb) {
-	// 		double d2 = ib->distance_squared( (*ia) + (mindis*ori) );
-	// 		if( d2 < CTD2 ) {
-	// 			cbcount += sigmoid(d2, CLD, CTD ) * (*iwa) * (*iwb);
-	// 		}
-	// 	}
-	// }
-	// if( fabs(cbcount-score) > 0.0001 ) {
-	// 	cout << "btute/hash score mismatch!!!! " << anga << " " << angb << " " << cbcount << " " << score << endl;
-	// }
 	return score;
 }
 
@@ -227,18 +257,18 @@ double
 SICFast::refine_mindis_with_xyzHash(
 	core::kinematics::Stub const & xa,
 	core::kinematics::Stub const & /*xb*/,
-	vector1<Vec> const & /*pa*/,
-	vector1<Vec> const & pb,
+	vector1<Vec> const & /*pb*/,
+	vector1<Vec> const & pa,
 	double mindis,
 	Vec ori
 ){
-	numeric::geometry::hashing::xyzStripeHash<double> const * xh( xh2_bb_ );
+	numeric::geometry::hashing::xyzStripeHash<double> const * xh( xh2c_ );
 	Mat Rori = rotation_matrix_degrees( (ori.z() < -0.99999) ? Vec(1,0,0) : (Vec(0,0,1)+ori.normalized())/2.0 , 180.0 );
 	//Mat R    = numeric::rotation_matrix_degrees(axsa,-anga);
 	//Mat Rinv = numeric::rotation_matrix_degrees(axsa, anga);
 	while(true){
 		double correction_hash = 9e9;
-		for(vector1<Vec>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+		for(vector1<Vec>::const_iterator ib = pa.begin(); ib != pa.end(); ++ib) {
 			Vec const v = xa.global2local(Rori*((*ib)-Vec(0,0,mindis))) + xh->translation();
 			Vec const b = Rori * xa.local2global(v);
 			if( v.x() < -xh->grid_size_ || v.y() < -xh->grid_size_ || v.z() < -xh->grid_size_ ) continue; // worth it?
@@ -272,34 +302,13 @@ SICFast::refine_mindis_with_xyzHash(
 		mindis += correction_hash;
 		if( fabs(correction_hash) < 0.001 ) break;
 	}
-	// double correction_safe = 9e9;
-	// for(vector1<Vec>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
-	// 	Vec const v = ((*ib)-Vec(0,0,mindis));
-	// 	// dbg2.push_back(v);
-	// 	for(vector1<Vec>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
-	// 		// correction_safe = min(correction_safe,ia->distance_squared(v));
-	// 		double const dxy2 = (ia->x()-v.x())*(ia->x()-v.x()) + (ia->y()-v.y())*(ia->y()-v.y());
-	// 		if( dxy2 >= CLD2 ) continue;
-	// 		// cout << "BRUTE " << dxy2 << endl;
-	// 		double const dz = v.z() - ia->z() - sqrt(CLD2-dxy2);
-	// 		if( dz < correction_safe) correction_safe = dz;
-	// 	}
-	// }
-	// #ifdef USE_OPENMP
-	// #pragma omp critical
-	// #endif
-	// if( fabs(correction_safe-correction_hash) > 0.01 ) {
-	// 	cout << F(9,5,correction_hash) << " " << F(9,5,correction_safe) << " " << mindis << endl;
-	// 	// utility_exit_with_message("FOO");
-	// }
-
 	return mindis;
 }
 
 void
 SICFast::fill_plane_hash(
-	vector1<Vec> & pa,
-	vector1<Vec> & pb
+	vector1<Vec> const & pb,
+	vector1<Vec> const & pa
 ){
 	xlb = (int)(xmn/BIN)-2; xub = (int)(xmx/BIN+0.999999999)+2; // one extra on each side for correctness,
 	ylb = (int)(ymn/BIN)-2; yub = (int)(ymx/BIN+0.999999999)+2; // and one extra for outside atoms
@@ -307,7 +316,7 @@ SICFast::fill_plane_hash(
 	hb.dimension(xub-xlb+1,yub-ylb+1,Vec(0,0, 9e9));
 	int const xsize = xub-xlb+1;
 	int const ysize = yub-ylb+1;
-	for(vector1<Vec>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+	for(vector1<Vec>::const_iterator ia = pb.begin(); ia != pb.end(); ++ia) {
 		int const ix = (int)((ia->x()/BIN)-xlb+0.999999999);
 		int const iy = (int)((ia->y()/BIN)-ylb+0.999999999);
 		if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
@@ -315,7 +324,7 @@ SICFast::fill_plane_hash(
 		// bool const test = !( ix < 1 || ix > xsize || iy < 1 || iy > ysize) && ha(ix,iy).z() < ia->z();
 		// ha(ix,iy) = test ? *ia : ha(ix,iy);
 	}
-	for(vector1<Vec>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+	for(vector1<Vec>::const_iterator ib = pa.begin(); ib != pa.end(); ++ib) {
 		int const ix = (int)((ib->x()/BIN)-xlb+0.999999999);
 		int const iy = (int)((ib->y()/BIN)-ylb+0.999999999);
 		if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;

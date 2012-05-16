@@ -19,6 +19,7 @@
 
 // Project headers
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
@@ -92,7 +93,7 @@ PeptideStapleDesignMover::get_name() const {
 void
 PeptideStapleDesignMover::parse_my_tag( TagPtr const tag, DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
-	core::Size const staple_start( protocols::rosetta_scripts::get_resnum( tag, pose ));
+	core::Size const staple_start( core::pose::get_resnum( tag, pose ));
 	core::Size const gap( tag->getOption<core::Size>( "staple_gap", 4 ) );
 	stapler_ = new protocols::simple_moves::PeptideStapleMover( staple_start, gap );
 }

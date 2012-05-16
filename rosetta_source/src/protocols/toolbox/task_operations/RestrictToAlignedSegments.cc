@@ -15,6 +15,7 @@
 #include <protocols/toolbox/task_operations/RestrictToAlignedSegments.hh>
 #include <protocols/toolbox/task_operations/RestrictToAlignedSegmentsCreator.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
 
@@ -149,8 +150,8 @@ RestrictToAlignedSegmentsOperation::parse_tag( TagPtr tag )
 		}
 		else
 			source_pose_.push_back( source_pose_[ i - 1 ] );
-		core::Size const parsed_start( parse_resnum( start_res[ i ], *source_pose_[ i ] ) );
-		core::Size const parsed_stop ( parse_resnum( stop_res[ i ], *source_pose_[ i ] ) );
+		core::Size const parsed_start( core::pose::parse_resnum( start_res[ i ], *source_pose_[ i ] ) );
+		core::Size const parsed_stop ( core::pose::parse_resnum( stop_res[ i ], *source_pose_[ i ] ) );
 		start_res_.push_back( parsed_start );
 		stop_res_. push_back( parsed_stop );
 	}

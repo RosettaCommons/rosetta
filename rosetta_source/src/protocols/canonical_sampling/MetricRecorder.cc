@@ -29,6 +29,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 // AUTO-REMOVED #include <protocols/canonical_sampling/ThermodynamicMover.hh>  // required for Windows build
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <utility/tag/Tag.hh>
 
 // External library headers
@@ -254,7 +255,7 @@ MetricRecorder::add_torsion(
 	std::string name // = ""
 )
 {
-	core::Size parsed_rsd = protocols::rosetta_scripts::parse_resnum(rsd, pose);
+	core::Size parsed_rsd = core::pose::parse_resnum(rsd, pose);
 
 	std::transform(type.begin(), type.end(), type.begin(), toupper);
 	core::id::TorsionType parsed_type;

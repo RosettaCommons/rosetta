@@ -19,6 +19,7 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/protein_interface_design/movers/PlaceUtils.hh>
 #include <core/conformation/Conformation.hh>
@@ -116,7 +117,7 @@ AddSidechainConstraintsToHotspots::parse_my_tag( TagPtr const tag,
 {
 	chain( tag->getOption< core::Size >( "chain", 2 ) );
 	coord_sdev( tag->getOption< core::Real >( "coord_sdev", 1.0 ) );
-	utility::vector1< core::Size > v1 = protocols::rosetta_scripts::get_resnum_list( tag, "resnums", pose );
+	utility::vector1< core::Size > v1 = core::pose::get_resnum_list( tag, "resnums", pose );
 	foreach( core::Size const r, v1 ){ add_residue( r ); }
 }
 

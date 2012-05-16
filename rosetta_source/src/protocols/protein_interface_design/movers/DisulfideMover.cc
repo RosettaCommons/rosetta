@@ -30,6 +30,7 @@
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <protocols/filters/Filter.fwd.hh> //Filters_map
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -319,7 +320,7 @@ void DisulfideMover::parse_my_tag( utility::tag::TagPtr const tag,
 
 	// Set target to the residue specified by "target_pdb_num" or "target_res_num"
 	if( tag->hasOption("targets") ){
-		target_residues_ = protocols::rosetta_scripts::get_resnum_list(tag, "targets",pose);
+		target_residues_ = core::pose::get_resnum_list(tag, "targets",pose);
 	}
 
 	using namespace core::scoring;

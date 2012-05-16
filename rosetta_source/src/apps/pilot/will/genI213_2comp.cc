@@ -105,7 +105,7 @@ static basic::Tracer TR("genI213");
 static core::io::silent::SilentFileData sfd;
 
 
-inline Real const sqr(Real const r) { return r*r; }
+inline Real sqr(Real const r) { return r*r; }
 inline Real sigmoidish_neighbor( Real const & sqdist ) {
   if( sqdist > 9.*9. ) {
     return 0.0;
@@ -673,7 +673,7 @@ void design_1comp(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
   // pose.dump_pdb("test.pdb");
   // utility_exit_with_message("dbg sasa");
 
-  Size nres = pose.n_residue();
+  // Size nres = pose.n_residue();
   PackerTaskOP task = TaskFactory::create_packer_task(pose);
   // task->initialize_extra_rotamer_flags_from_command_line();
   vector1< bool > aac(20,false);
@@ -821,7 +821,7 @@ void design_1comp(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
 }
 
 
-Real ddg(Pose const & p_in, ScoreFunctionOP sf, Size Ntri, Real & rholes, Real & /*hsp*/, Real & ssp, Real & sht) {
+Real ddg(Pose const & p_in, ScoreFunctionOP sf, Size Ntri, Real & rholes, Real & /*hsp*/, Real & /*ssp*/, Real & /*sht*/) {
   TR << "ddg" << std::endl;
   core::scoring::symmetry::SymmetricScoreFunction sfhsp,sfssp,sfsht;
   sfhsp.set_weight(core::scoring::hs_pair,1.0);
@@ -956,7 +956,7 @@ vector1<Hit> dock(Pose & init, string fname) {
     init.replace_residue(ir,ala.residue(1),true);
   }
 
-  Size nres = init.n_residue();
+  // Size nres = init.n_residue();
   // ScoreFunctionOP sf = core::scoring::getScoreFunction();
   ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::getScoreFunction());
 
@@ -1264,7 +1264,7 @@ vector1<Hit> dock(Pose & init, string fname) {
             //TR << dhits[id].rsd1 << " " << dhits[id].rsd2 << std::endl;
             core::conformation::Residue rtmp1 = sym.residue(dhits[id].rsd1);
             core::conformation::Residue rtmp2 = sym.residue(dhits[id].rsd2);
-            for(int i = 0; i < todes.n_residue()/init.n_residue(); ++i) {
+            for(int i = 0; i < (int)todes.n_residue()/(int)init.n_residue(); ++i) {
               sym.replace_residue(dhits[id].rsd1+init.n_residue()*i,cys.residue(1),true);
               sym.replace_residue(dhits[id].rsd2+init.n_residue()*i,cys.residue(1),true);
               sym.set_chi(1,dhits[id].rsd1+init.n_residue()*i,dhits[id].chi11);
@@ -1277,7 +1277,7 @@ vector1<Hit> dock(Pose & init, string fname) {
             TR << "design w/ dsf" << std::endl;
             design_1comp(sym,sf,todes.n_residue());
             Pose ssym(sym);
-            for(int i = 0; i < todes.n_residue()/init.n_residue(); ++i) {
+            for(int i = 0; i < (int)todes.n_residue()/(int)init.n_residue(); ++i) {
               ssym.replace_residue(dhits[id].rsd1+init.n_residue()*i,ala.residue(1),true);
               ssym.replace_residue(dhits[id].rsd2+init.n_residue()*i,ala.residue(1),true);
             }
@@ -1339,7 +1339,7 @@ vector1<Hit> dock(Pose & init, string fname) {
             TR << "design 2 component" << std::endl;
             design_1comp(sym,sf2,todes.n_residue());
             {
-              Real rholes,hsp,ssp,sht;
+              Real rholes=0,hsp=0,ssp=0,sht=0;
               core::io::silent::SilentStructOP ss( new core::io::silent::ScoreFileSilentStruct );
               sf2 ->score(sym);
               ss->fill_struct(sym,option[out::file::o]+"/"+tag+"_2comp.pdb.gz");

@@ -27,6 +27,7 @@
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
@@ -203,12 +204,12 @@ RmsdFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::Data
 	for( utility::vector0< utility::tag::TagPtr >::const_iterator it=rmsd_tags.begin(); it!=rmsd_tags.end(); ++it ) {
 		utility::tag::TagPtr const rmsd_tag = *it;
 		if( rmsd_tag->getName() == "residue" ) {
-			core::Size const resnum( protocols::rosetta_scripts::get_resnum( rmsd_tag, *reference_pose_ ) );
+			core::Size const resnum( core::pose::get_resnum( rmsd_tag, *reference_pose_ ) );
 			selection_.push_back( resnum );
 		}
 		if( rmsd_tag->getName() == "span" ) {
-			core::Size const begin( protocols::rosetta_scripts::get_resnum( rmsd_tag, *reference_pose_, "begin_" ) );
-			core::Size const end( protocols::rosetta_scripts::get_resnum( rmsd_tag, *reference_pose_, "end_" ) );
+			core::Size const begin( core::pose::get_resnum( rmsd_tag, *reference_pose_, "begin_" ) );
+			core::Size const end( core::pose::get_resnum( rmsd_tag, *reference_pose_, "end_" ) );
 			runtime_assert( end > begin );
 			runtime_assert( begin>=1);
 			runtime_assert( end<=reference_pose_->total_residue() );

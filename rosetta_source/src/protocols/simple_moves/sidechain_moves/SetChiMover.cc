@@ -26,6 +26,7 @@
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <protocols/filters/Filter.fwd.hh> //Filters_map
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <basic/Tracer.hh>
 
 namespace protocols {
@@ -92,7 +93,7 @@ void SetChiMover::parse_my_tag( utility::tag::TagPtr const tag,
 		Pose const & pose)
 {
 	angle( tag->getOption< core::Real >( "angle" ) );
-	resnum( protocols::rosetta_scripts::parse_resnum( tag->getOption< std::string >( "resnum" ), pose ) );
+	resnum( core::pose::parse_resnum( tag->getOption< std::string >( "resnum" ), pose ) );
 	chinum( tag->getOption< core::Size >( "chinum" ) );
 	
 }

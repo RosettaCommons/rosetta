@@ -151,6 +151,7 @@ ResidueType::ResidueType(
 	is_coarse_( false ), //currently for coarse_RNA only
 	is_adduct_( false ),
 	aa_( aa_unk ),
+	rotamer_aa_( aa_unk ),
 	//
 	nbr_atom_(1),
 	molecular_weight_(0),

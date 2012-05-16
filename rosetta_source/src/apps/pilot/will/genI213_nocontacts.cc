@@ -167,8 +167,8 @@ public:
 
   virtual
   void
-  score( core::scoring::constraints::XYZ_Func const & xyz_func, core::scoring::EnergyMap const & weights, core::scoring::EnergyMap & emap ) const {
-		Real const weight(weights[ this->score_type() ] );
+  score( core::scoring::constraints::XYZ_Func const & xyz_func, core::scoring::EnergyMap const & , core::scoring::EnergyMap & emap ) const {
+		// Real const weight(weights[ this->score_type() ] );
 		if( xyz_func.residue(seqpos1_).name3() == xyz_func.residue(seqpos2_).name3() ) emap[ this->score_type() ] -= bonus_;
   }
 
@@ -555,7 +555,7 @@ struct DsfHit {
 };
 
 vector1<DsfHit> find_dsf( Pose & p3a, Pose & p3b, ImplicitFastClashCheck const & ifc, vector1<vector1<Real> > cyschi1,
-                          Mat const & R2, Vec const & C2, Real dunth, Real angth ) {
+                          Mat const & R2, Vec const & C2, Real , Real  ) {
   vector1<DsfHit> hits;
   core::chemical::ResidueTypeSetCAP  rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
   Pose cys;
@@ -768,7 +768,7 @@ void design_1comp(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
   // pose.dump_pdb("test.pdb");
   // utility_exit_with_message("dbg sasa");
 
-  Size nres = pose.n_residue();
+  // Size nres = pose.n_residue();
   PackerTaskOP task = TaskFactory::create_packer_task(pose);
   // task->initialize_extra_rotamer_flags_from_command_line();
   vector1< bool > aac(20,false);
@@ -965,7 +965,7 @@ void repack_iface(Pose & p, ScoreFunctionOP sf, Size Ntri, vector1<bool> & iface
 }
 
 
-Real ddg(Pose const & p_in, ScoreFunctionOP sf, Size Ntri, Real & rholes, Real & hsp, Real & ssp, Real & sht) {
+Real ddg(Pose const & p_in, ScoreFunctionOP sf, Size Ntri, Real & rholes, Real & , Real & , Real & ) {
   TR << "ddg" << std::endl;
 	ScoreFunctionOP sfhsp,sfssp,sfsht;
   if(core::pose::symmetry::is_symmetric(p_in)) {
@@ -988,18 +988,18 @@ Real ddg(Pose const & p_in, ScoreFunctionOP sf, Size Ntri, Real & rholes, Real &
 
   Real s0 = sf->score(p);
   Real p0 = core::scoring::packing::compute_dec15_score(p);
-  Real hsp0 = sfhsp->score(p);
-  Real ssp0 = sfssp->score(p);
-  Real sht0 = sfsht->score(p);
+  // Real hsp0 = sfhsp->score(p);
+  // Real ssp0 = sfssp->score(p);
+  // Real sht0 = sfsht->score(p);
   //p.dump_pdb("test1.pdb");
   for(Size ir = 1; ir <= Ntri; ++ir)for(Size ia = 1; ia <= p.residue_type(ir).natoms(); ++ia) p.set_xyz(AtomID(ia,ir),p.xyz(AtomID(ia,ir))+Vec(9999,9999,9999));
 
 	repack_iface(p,sf,Ntri,iface);
 
   Real s1 = sf->score(p);
-  Real hsp1 = sfhsp->score(p);
-  Real ssp1 = sfssp->score(p);
-  Real sht1 = sfsht->score(p);
+  // Real hsp1 = sfhsp->score(p);
+  // Real ssp1 = sfssp->score(p);
+  // Real sht1 = sfsht->score(p);
 
   for(Size ir = 1; ir <= Ntri; ++ir)for(Size ia = 1; ia <= p.residue_type(ir).natoms(); ++ia) p.set_xyz(AtomID(ia,ir),p.xyz(AtomID(ia,ir))-Vec(9999,9999,9999));
   //  p.dump_pdb("test2.pdb");
@@ -1078,7 +1078,7 @@ vector1<Hit> dock(Pose & init, string fname) {
     init.replace_residue(ir,ala.residue(1),true);
   }
 
- Size nres = init.n_residue();
+// Size nres = init.n_residue();
   // ScoreFunctionOP sf = core::scoring::getScoreFunction();
   ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::getScoreFunction());
 
@@ -1289,13 +1289,13 @@ vector1<Hit> dock(Pose & init, string fname) {
             if(!keepme[iadd]) continue;
             Pose & pi(toadd[iadd]);
             //pi.dump_pdb("test"+str(iadd)+".pdb");
-            bool contact = false;
+            // bool contact = false;
             for(Size ir = 1; ir <= pi.n_residue(); ++ir) {
               Vec const X(  R2*(pi.xyz(AtomID(5,ir))-C2)+C2  );
               for(vector1<Vec>::const_iterator jcb = cba.begin(); jcb != cba.end(); ++jcb) {
                 if( X.distance_squared( *jcb ) < CONTACT_D2 ) {
                   xcbc++;
-                  contact = true;
+                  // contact = true;
                 }
               }
               for(Size jadd = 1; jadd <= toadd.size(); ++jadd) {
@@ -1304,7 +1304,7 @@ vector1<Hit> dock(Pose & init, string fname) {
                 for(Size jr = 1; jr <= pj.n_residue(); ++jr) {
                   if( X.distance_squared( pj.xyz(AtomID(5,jr)) ) < CONTACT_D2 ) {
                     xcbc++;
-                    contact = true;
+                    // contact = true;
                   }
                 }
               }
@@ -1384,7 +1384,7 @@ vector1<Hit> dock(Pose & init, string fname) {
               ssym.replace_residue(dhits[id].rsd2+init.n_residue()*i,ala.residue(1),true);
             }
 
-            Real rholes,hsp,ssp,sht;
+            Real rholes=0,hsp=0,ssp=0,sht=0;
             core::io::silent::SilentStructOP ss( new core::io::silent::ScoreFileSilentStruct );
             sf->score(ssym);
             ss->fill_struct(ssym,option[out::file::o]+"/"+tag+"_dsf"+lzs(id,3)+".pdb.gz");

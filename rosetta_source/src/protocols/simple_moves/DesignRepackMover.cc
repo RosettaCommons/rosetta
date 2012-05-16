@@ -52,6 +52,7 @@
 
 // Unit Headers
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 
 
 // C++ headers
@@ -341,7 +342,7 @@ DesignRepackMover::parse_my_tag( utility::tag::TagPtr const tag, protocols::move
 	for( utility::vector0< TagPtr >::const_iterator repack_it=repack_tags.begin(); repack_it!=repack_tags.end(); ++repack_it ) {
 		TagPtr const repack_ptr = *repack_it;
 		if( repack_ptr->getName() == "residue" ) {
-			core::Size const resnum( protocols::rosetta_scripts::get_resnum( repack_ptr, pose ) );
+			core::Size const resnum( core::pose::get_resnum( repack_ptr, pose ) );
 			target_residues_.push_back( resnum );
 		}
 	}

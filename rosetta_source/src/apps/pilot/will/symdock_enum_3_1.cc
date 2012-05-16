@@ -30,6 +30,7 @@ DONE
 #include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
@@ -425,7 +426,7 @@ struct TCDock {
 			int const natom = (cmp1in_.residue(i).name3()=="GLY") ? 4 : 5;
 			for(int j = 1; j <= natom; ++j) {
 				Vec const & v( cmp1in_.residue(i).xyz(j) );
-				clashmap1_[AtomID(j,i)] = 1.0;
+				clashmap1_[AtomID(j,i)] = cmp1in_.residue(i).atom_type(j).lj_radius();
 				cmp1pts_.push_back(v);
 			}
 		}
@@ -439,14 +440,14 @@ struct TCDock {
 			int const natom = (cmp2in_.residue(i).name3()=="GLY") ? 4 : 5;
 			for(int j = 1; j <= natom; ++j) {
 				Vec const & v( cmp2in_.residue(i).xyz(j) );
-				clashmap2_[AtomID(j,i)] = 1.0;
+				clashmap2_[AtomID(j,i)] = cmp2in_.residue(i).atom_type(j).lj_radius();
 				cmp2pts_.push_back(v);
 			}
 		}
 
 		sics_.resize(num_threads());
 		for(int i = 0; i < num_threads(); ++i) sics_[i] = new protocols::sic_dock::SICFast;
-//  for(int i = 0; i < num_threads(); ++i) sics_[i]->init(cmp1in_,cmp1cbs_,cmp1wts_,cmp2in_,cmp2cbs_,cmp2wts_);
+	//  for(int i = 0; i < num_threads(); ++i) sics_[i]->init(cmp1in_,cmp1cbs_,cmp1wts_,cmp2in_,cmp2cbs_,cmp2wts_);
 		for(int i = 0; i < num_threads(); ++i) sics_[i]->init(cmp1in_,cmp2in_,clashmap1_,clashmap2_,scoremap1_,scoremap2_);
 
 		cmp1mnpos_.resize(cmp1nangle_,0.0);
@@ -466,7 +467,7 @@ struct TCDock {
 
 	}
 	virtual ~TCDock() {
-		for(int i = 0; i < sics_.size(); ++i) if(sics_[i]) delete sics_[i];
+		for(int i = 0; i < (int)sics_.size(); ++i) if(sics_[i]) delete sics_[i];
 	}
 	int num_threads() {
 		#ifdef USE_OPENMP
@@ -495,9 +496,17 @@ struct TCDock {
 		}
 		return other_axis.normalized();
 	}
+	Matf swap_axis_rotation(string type) {
+		if( type[1] == '2' ) {
+			return rotation_matrix_degrees( axismap_[type[0]+string("3")],120.0);
+		} else {
+			return rotation_matrix_degrees( axismap_[type[0]+string("2")],180.0);
+		}
+		return Matf::identity();
+	}
 	void precompute_intra() {
 		double const CONTACT_D	= basic::options::option[basic::options::OptionKeys::sicdock::contact_dis]();
-		double const CLASH_D		= basic::options::option[basic::options::OptionKeys::sicdock::	clash_dis]();
+		double const CLASH_D    = basic::options::option[basic::options::OptionKeys::sicdock::	clash_dis]();
 		double const CONTACT_D2 = sqr(CONTACT_D);
 		double const CLASH_D2	= sqr(CLASH_D);
 		// compute high/low min dis for pent and cmp1 here, input to sicfast and don't allow any below
@@ -540,8 +549,8 @@ struct TCDock {
 					double score = 0;
 					core::kinematics::Stub xa,xb;
 					xa.M = rotation_matrix_degrees(axis ,(double)icmp);
-					xb.M = rotation_matrix_degrees(axis2,(double)icmp);
-					double const d = sics[thread_num()].slide_into_contact(xa,xb,ptsA,ptsB,cbA,cbB,sicaxis,score);
+					xb.M = rotation_matrix_degrees(axis2,(double)icmp) * swap_axis_rotation(i12?cmp1type_:cmp2type_);
+					double const d = sics[thread_num()].slide_into_contact(xa,xb,sicaxis,score);
 					if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for cmppos! "+ObjexxFCL::string_of(icmp));
 					(ipn?cmpmnpos:cmpmnneg)[icmp+1] = (ipn?-1.0:1.0) * d/2.0/sin( angle_radians(axis2,Vecf(0,0,0),axis)/2.0 );
 					(ipn?cmpdspos:cmpdsneg)[icmp+1] = (ipn?-1.0:1.0) * d;
@@ -549,15 +558,15 @@ struct TCDock {
 					for(vector1<Vecf>::iterator iv = cbB.begin(); iv != cbB.end(); ++iv) *iv = (*iv) - d*sicaxis;
 					vector1<double> wA(cmpwts),wB(cmpwts);
 					prune_cb_pairs(cbA,cbB,wA,wB,CONTACT_D2); // mutates inputs!!!!!!!!!!
-					double lastcbc = 9e9;
+					// double lastcbc = 9e9;
 					for(int i = 1; i <= 200; ++i) {
 						double cbc = 0.0;
 						vector1<double>::const_iterator iwa=wA.begin(), iwb=wB.begin();
 						for( vector1<Vecf>::const_iterator ia=cbA.begin(), ib=cbB.begin(); ia != cbA.end(); ++ia,++ib,++iwa,++iwb) {
 							cbc += sigmoid( ia->distance_squared(*ib) , CLASH_D, CONTACT_D ) * (*iwa) * (*iwa);
 						}
-						assert(lastcbc >= cbc);
-						lastcbc = cbc;
+						// assert(lastcbc >= cbc);
+						// lastcbc = cbc;
 						(ipn?cmpcbpos:cmpcbneg)(icmp+1,i) = cbc;
 						if(cbc==0.0) break;
 						for(vector1<Vecf>::iterator iv = cbA.begin(); iv != cbA.end(); ++iv) *iv = (*iv) + (ipn?0.1:-0.1)*axis;
@@ -742,10 +751,10 @@ struct TCDock {
 			//std::cout << "calc" << std::endl;
 
 			core::kinematics::Stub xa,xb;
-			xa.M = rotation_matrix_degrees(cmp2axs_,(double)icmp2);
-			xb.M = rotation_matrix_degrees(cmp1axs_,(double)icmp1);
+			xa.M = rotation_matrix_degrees(cmp1axs_,(double)icmp1);
+			xb.M = rotation_matrix_degrees(cmp2axs_,(double)icmp2);
 
-			double const d = sics_[thread_num()]->slide_into_contact(xa,xb,pb,pa,cbb,cba,sicaxis,icbc);
+			double const d = sics_[thread_num()]->slide_into_contact(xb,xa,sicaxis,icbc);
 			dori = d;
 			if(d > 0) utility_exit_with_message("ZERO!!");
 			double const theta=(double)iori;
@@ -906,14 +915,14 @@ struct TCDock {
 		// #ifdef USE_OPENMP
 		// #pragma omp parallel for schedule(dynamic,1)
 		// #endif
-		for(int ifh = 0; ifh < ffhist.size(); ++ifh) {
+		for(int ifh = 0; ifh < (int)ffhist.size(); ++ifh) {
 			protocols::sic_dock::flood_fill3D(N+1,N+1,N+1,grid, grid(N+1,N+1,N+1)-0.000001 - 0.2);
 			double count = 0;
 			int Nedge = option[tcdock::peak_grid_smooth]();
 			ObjexxFCL::FArray3D<double> grid2(grid);
-			for(int i = 1+Nedge; i <= grid.size1()-Nedge; ++i) {
-				for(int j = 1+Nedge; j <= grid.size2()-Nedge; ++j) {
-					for(int k = 1+Nedge; k <= grid.size3()-Nedge; ++k) {
+			for(int i = 1+Nedge; i <= (int)grid.size1()-Nedge; ++i) {
+				for(int j = 1+Nedge; j <= (int)grid.size2()-Nedge; ++j) {
+					for(int k = 1+Nedge; k <= (int)grid.size3()-Nedge; ++k) {
 						if( grid(i,j,k)!=grid(N+1,N+1,N+1) ) continue;
 						int ninside = 0;
 						for(int di = -Nedge; di <= Nedge; ++di) {
@@ -937,9 +946,9 @@ struct TCDock {
 			#endif
 			if( std::find(dumpg.begin(),dumpg.end(),ilm)!=dumpg.end() ) {
 				utility::io::ozstream o(("out/grid_"+ObjexxFCL::string_of(ilm)+"_"+ObjexxFCL::string_of(ifh)+".dat.gz"));
-				for(int i = 1; i <= grid.size1(); ++i) {
-					for(int j = 1; j <= grid.size2(); ++j) {
-						for(int k = 1; k <= grid.size3(); ++k) {
+				for(int i = 1; i <= (int)grid.size1(); ++i) {
+					for(int j = 1; j <= (int)grid.size2(); ++j) {
+						for(int k = 1; k <= (int)grid.size3(); ++k) {
 							o << grid2(i,j,k) << endl;
 						}
 					}
@@ -964,7 +973,7 @@ struct TCDock {
 		     << I(3,h.icmp2) << " "
 		     << F(8,3,dcmp2) << " "
 			 << I(3,h.iori);
-		for(int ifh = 1; ifh <= ffhist.size(); ++ifh) {
+		for(int ifh = 1; ifh <= (int)ffhist.size(); ++ifh) {
 			cout << " " << F(5,2,ffhist[ifh]);
 		}
 		cout << endl;
@@ -989,7 +998,7 @@ struct TCDock {
 		{                                                         // 3deg loop
 			double max1=0;
 			// dump_onecomp();
-			precompute_intra();
+			precompute_intra(); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			cout << "main loop 1 over icmp2, icmp1, iori every 3 degrees" << endl;
 			double max_score = 0;
 			for(int icmp1 = 0; icmp1 < cmp1nangle_; icmp1+=3) {
@@ -1050,7 +1059,7 @@ struct TCDock {
 			#ifdef USE_OPENMP
 			#pragma omp parallel for schedule(dynamic,1)
 			#endif
-			for(int ilmx = 1; ilmx <= cmp2lmx.size(); ++ilmx)  {       //  MAIN LOOP 2
+			for(int ilmx = 1; ilmx <= (int)cmp2lmx.size(); ++ilmx)  {       //  MAIN LOOP 2
 				if( (ilmx-1)%(option[tcdock::nsamp1]()/10)==0 && ilmx!=1) cout<<" highres dock "<<cmp1name_<<" "<<(double(ilmx-1)/(option[tcdock::nsamp1]()/100))<<"% done"<<endl;
 				for(vector1<int>::const_iterator picmp2 = cmp2lmx[ilmx].begin(); picmp2 != cmp2lmx[ilmx].end(); ++picmp2) {
 					int icmp2 = *picmp2; vector1<Vecf> pb,cbb; get_cmp2(icmp2,pb,cbb);
@@ -1066,9 +1075,9 @@ struct TCDock {
 		}
 		vector1<LMAX> local_maxima;	{                             // get local radial disp maxima (minima, really)
 			double highscore = -9e9;
-			for(int i = 1; i <= gradii.size1(); ++i){
-				for(int j = 1; j <= gradii.size2(); ++j){
-					for(int k = 1; k <= gradii.size3(); ++k){
+			for(int i = 1; i <=(int) gradii.size1(); ++i){
+				for(int j = 1; j <= (int)gradii.size2(); ++j){
+					for(int k = 1; k <= (int)gradii.size3(); ++k){
 						double const val = gradii(i,j,k);
 						if( val < -9e8 ) continue;
 						double nbmax = -9e9;
@@ -1128,14 +1137,14 @@ struct TCDock {
 			// #ifdef USE_OPENMP
 			// #pragma omp parallel for schedule(dynamic,1)
 			// #endif
-			for(int ifh = 0; ifh < ffhist.size(); ++ifh) {
+			for(int ifh = 0; ifh < (int)ffhist.size(); ++ifh) {
 				protocols::sic_dock::flood_fill3D(N+1,N+1,N+1,grid, grid(N+1,N+1,N+1)-0.000001 - 0.2);
 				double count = 0;
 				int Nedge = option[tcdock::peak_grid_smooth]();
 				ObjexxFCL::FArray3D<double> grid2(grid);
-				for(int i = 1+Nedge; i <= grid.size1()-Nedge; ++i) {
-					for(int j = 1+Nedge; j <= grid.size2()-Nedge; ++j) {
-						for(int k = 1+Nedge; k <= grid.size3()-Nedge; ++k) {
+				for(int i = 1+Nedge; i <= (int)grid.size1()-Nedge; ++i) {
+					for(int j = 1+Nedge; j <= (int)grid.size2()-Nedge; ++j) {
+						for(int k = 1+Nedge; k <= (int)grid.size3()-Nedge; ++k) {
 							if( grid(i,j,k)!=grid(N+1,N+1,N+1) ) continue;
 							int ninside = 0;
 							for(int di = -Nedge; di <= Nedge; ++di) {
@@ -1159,9 +1168,9 @@ struct TCDock {
 				#endif
 				if( std::find(dumpg.begin(),dumpg.end(),ilm)!=dumpg.end() ) {
 					utility::io::ozstream o(("out/grid_"+ObjexxFCL::string_of(ilm)+"_"+ObjexxFCL::string_of(ifh)+".dat.gz"));
-					for(int i = 1; i <= grid.size1(); ++i) {
-						for(int j = 1; j <= grid.size2(); ++j) {
-							for(int k = 1; k <= grid.size3(); ++k) {
+					for(int i = 1; i <= (int)grid.size1(); ++i) {
+						for(int j = 1; j <= (int)grid.size2(); ++j) {
+							for(int k = 1; k <= (int)grid.size3(); ++k) {
 								o << grid2(i,j,k) << endl;
 							}
 						}
@@ -1185,7 +1194,7 @@ struct TCDock {
 			     << I(3,h.icmp2) << " "
 			     << F(8,3,dcmp2) << " "
 				 << I(3,h.iori);
-			for(int ifh = 1; ifh <= ffhist.size(); ++ifh) {
+			for(int ifh = 1; ifh <= (int)ffhist.size(); ++ifh) {
 				cout << " " << F(5,2,ffhist[ifh]);
 			}
 			cout << endl;
@@ -1227,7 +1236,7 @@ int main (int argc, char *argv[]) {
 			}
 		}
 	}
-	cout << "DONE testing: starting to redo SICFast interface, different init" << endl;
+	cout << "DONE testing: starting to redo SICFast interface, simplify sic_dock" << endl;
 }
 
 

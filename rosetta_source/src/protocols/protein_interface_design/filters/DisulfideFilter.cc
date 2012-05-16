@@ -25,6 +25,7 @@
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <protocols/protein_interface_design/movers/DisulfideMover.hh>
 
 // Utility Headers
@@ -138,7 +139,7 @@ void DisulfideFilter::parse_my_tag( utility::tag::TagPtr const tag,
 
 	// Set target to the residue specified by "target_pdb_num" or "target_res_num"
 	if( tag->hasOption("targets") ) {
-		targets_ = protocols::rosetta_scripts::get_resnum_list(tag, "targets",pose);
+		targets_ = core::pose::get_resnum_list(tag, "targets",pose);
 	}
 
 	TR.Info << "DisulfideFilter targeting residues ";

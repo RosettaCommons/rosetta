@@ -123,7 +123,7 @@ rotamer_from_chi(
 	RotVector & rot
 )
 {
-	assert( rsd.aa() <= chemical::num_canonical_aas );
+	assert( rsd.rotamer_aa() <= chemical::num_canonical_aas );
 
 	SingleResidueRotamerLibraryCAP rotlib = RotamerLibrary::get_instance().get_rsd_library( rsd.type() );
 	if ( rotlib ) {
@@ -450,8 +450,8 @@ RotamerLibrary::rsd_library_already_loaded( chemical::ResidueType const & rsd_ty
 	}
 
 	if ( rsd_type.residue_type_set().name() == chemical::FA_STANDARD &&
-			rsd_type.aa() <= chemical::num_canonical_aas ) {
-		return aa_libraries_[ rsd_type.aa() ] != 0;
+			rsd_type.rotamer_aa() <= chemical::num_canonical_aas ) {
+		return aa_libraries_[ rsd_type.rotamer_aa() ] != 0;
 	}
 
 	std::string const key( rsd_type.name()+"@"+rsd_type.residue_type_set().name() );
@@ -461,7 +461,7 @@ RotamerLibrary::rsd_library_already_loaded( chemical::ResidueType const & rsd_ty
 		return true;
 	// Dunbrack library only applies to fullatom residue types, right?
 	} else if ( rsd_type.residue_type_set().name() != chemical::CENTROID
-			&& libraries_.find( rsd_type.aa() ) != libraries_.end() ) {
+			&& libraries_.find( rsd_type.rotamer_aa() ) != libraries_.end() ) {
 		return true;
 	}
 
@@ -480,8 +480,8 @@ RotamerLibrary::get_rsd_library( chemical::ResidueType const & rsd_type ) const
 	}
 
 	if ( rsd_type.residue_type_set().name() == chemical::FA_STANDARD &&
-			rsd_type.aa() <= chemical::num_canonical_aas ) {
-		return aa_libraries_[ rsd_type.aa() ];
+			rsd_type.rotamer_aa() <= chemical::num_canonical_aas ) {
+		return aa_libraries_[ rsd_type.rotamer_aa() ];
 	}
 
 	std::string const key( rsd_type.name()+"@"+rsd_type.residue_type_set().name() );
@@ -491,8 +491,8 @@ RotamerLibrary::get_rsd_library( chemical::ResidueType const & rsd_type ) const
 		return reslibraries_.find( rsd_type.name() )->second;
 	// Dunbrack library only applies to fullatom residue types, right?
 	} else if ( rsd_type.residue_type_set().name() != chemical::CENTROID
-			&& libraries_.find( rsd_type.aa() ) != libraries_.end() ) {
-		return libraries_.find( rsd_type.aa() )->second;
+			&& libraries_.find( rsd_type.rotamer_aa() ) != libraries_.end() ) {
+		return libraries_.find( rsd_type.rotamer_aa() )->second;
 	}
 
 	if ( rsd_type.is_ligand() && rsd_type.get_RotamerLibraryName() != "" ) {

@@ -19,6 +19,7 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/selection.hh>
 #include <utility/tag/Tag.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
@@ -321,9 +322,9 @@ LoopHashMoverWrapper::parse_my_tag( TagPtr const tag,
 	start_res_ = 2;
 	stop_res_ = 0;
 	if ( tag->hasOption( "start_res_num" ))
-		start_res_ = protocols::rosetta_scripts::get_resnum( tag, pose, "start_" );
+		start_res_ = core::pose::get_resnum( tag, pose, "start_" );
 	if ( tag->hasOption( "stop_res_num" ))
-		stop_res_ = protocols::rosetta_scripts::get_resnum( tag, pose, "stop_" );
+		stop_res_ = core::pose::get_resnum( tag, pose, "stop_" );
 
 	string const loop_sizes_str( tag->getOption< string >( "loop_sizes" ) );
 	vector1< string > const loop_sizes_split( utility::string_split( loop_sizes_str, ',' ) );

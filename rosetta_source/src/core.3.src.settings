@@ -52,6 +52,7 @@ sources = {
 		"PDBInfo",
 		"PDBPoseMap",
 		"Pose",
+                "selection",
 		"util",
 	],
 	"core/pose/datacache": [
