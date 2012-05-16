@@ -96,7 +96,8 @@ ResidueBurialFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMa
 	distance_threshold_ = tag->getOption<core::Real>( "distance", 8.0 );
 	neighbors_ = tag->getOption<core::Size>( "neighbors", 1 );
 	residue_fraction_buried( tag->getOption< core::Real >( "residue_fraction_buried", 0.0001 ) );
-	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
+	if( tag->hasOption( "task_operations" ) )
+		task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 
 	residue_burial_filter_tracer<<"ResidueBurialFilter with distance threshold of "<<distance_threshold_<<" around residue "<<target_residue_<<" residue_fraction_buried "<<residue_fraction_buried()<<" with "<<neighbors_<<" neighbors."<<std::endl;
 }
