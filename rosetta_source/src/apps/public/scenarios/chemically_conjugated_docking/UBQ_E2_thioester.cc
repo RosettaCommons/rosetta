@@ -61,6 +61,8 @@
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/rigid/RotateJumpAxisMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 
 #include <basic/MetricValue.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
@@ -68,6 +70,8 @@
 #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
+#include <protocols/toolbox/pose_metric_calculators/InterGroupNeighborsCalculator.hh>
+
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
 
 // Numeric Headers
@@ -99,6 +103,7 @@ basic::options::IntegerOptionKey const E2_residue("E2_residue");
 basic::options::RealOptionKey const SASAfilter("SASAfilter");
 basic::options::RealOptionKey const scorefilter("scorefilter");
 basic::options::BooleanOptionKey const publication("publication");
+basic::options::BooleanOptionKey const two_ubiquitins("two_ubiquitins");
 
 //tracers
 using basic::Error;
@@ -106,6 +111,24 @@ using basic::Warning;
 static basic::Tracer TR("apps.public.scenarios.chemically_conjugated_docking.UBQ_E2_thioester");
 
 class UBQ_E2Mover : public protocols::moves::Mover {
+
+private: //enum for atomID vector for tracking bonds near the thioester
+	enum atomID {
+		CYS_C  = 1,
+		CYS_CA = 2,
+		CYS_CB = 3,
+		CYS_SG = 4,
+		GLY_C  = 5,
+		GLY_CA = 6,
+		GLY_N  = 7,
+		GLY2_C = 8,
+		LYS_2HZ= 9,
+		LYS_NZ = 10,
+		LYS_CE = 11,
+		LYS_CD = 12,
+		atomID_tot = LYS_CD
+	};
+
 public:
 	UBQ_E2Mover()
 	: init_for_input_yet_(false),
@@ -115,7 +138,8 @@ public:
 		loop_(), //we want default ctor
 		atomIDs(8, core::id::BOGUS_ATOM_ID ),
 		InterfaceSasaDefinition_("InterfaceSasaDefinition_" + 1),
-		IAM_(new protocols::analysis::InterfaceAnalyzerMover)
+		IAM_(new protocols::analysis::InterfaceAnalyzerMover),
+		two_ubiquitins_(false)
 	{
 		//set up fullatom scorefunction
 		using namespace core::scoring;
@@ -131,6 +155,8 @@ public:
 		}
 
 		IAM_->set_use_centroid_dG(false);
+
+		two_ubiquitins_ = basic::options::option[ two_ubiquitins ].value();
 	}
 
 	///@brief init_on_new_input system allows for initializing these details the first time apply() is called.  the job distributor will reinitialize the whole mover when the input changes (a freshly constructed mover, which will re-run this on first apply().
@@ -156,6 +182,8 @@ public:
 		core::pose::Pose UBQ;
 		core::import_pose::pose_from_pdb( UBQ, basic::options::option[UBQpdb].value() );
 		core::Size const UBQlength = UBQ.total_residue();
+		core::pose::PoseOP UBQ_second;
+		if(two_ubiquitins_) UBQ_second = new core::pose::Pose(UBQ);
 
 		//determine cysteine target
 		runtime_assert(E2.conformation().num_chains() == 1);
@@ -248,6 +276,53 @@ public:
 		atomIDs[7] = core::id::AtomID( ubq_rsd_type.atom_index("N" ), complexlength );
 		atomIDs[8] = core::id::AtomID( ubq_rsd_type.atom_index("C" ), complexlength-1 );
 
+		if(two_ubiquitins_) {
+			//now add in the second ubiquitin - link to thioester C=O from lys48
+			complex.conformation().append_residue_by_jump(UBQ_second->residue(48), complexlength, "C", "NZ", true);
+			for( core::Size i(49); i <= UBQlength; ++i) complex.conformation().append_polymer_residue_after_seqpos(UBQ_second->residue(i), complex.total_residue(), false);
+			for( core::Size i(47); i >= 1; --i) complex.conformation().prepend_polymer_residue_before_seqpos(UBQ_second->residue(i), complexlength+1, false);
+
+			//check it!
+			TR << complex.fold_tree() << std::endl;
+
+			//continue paking atomIDs vector
+			core::chemical::ResidueType const & lys_rsd_type( fa_standard->name_map("LYS") );
+			//atomIDs[LYS_2HZ] = core::id::AtomID( lys_rsd_type.atom_index("2HZ"), complexlength + 48);
+			//atomIDs[LYS_NZ]  = core::id::AtomID( lys_rsd_type.atom_index("NZ" ), complexlength + 48);
+			//atomIDs[LYS_CE]  = core::id::AtomID( lys_rsd_type.atom_index("CE" ), complexlength + 48);
+			//atomIDs[LYS_CD]  = core::id::AtomID( lys_rsd_type.atom_index("CD" ), complexlength + 48);
+
+			atomIDs.push_back(core::id::AtomID( lys_rsd_type.atom_index("2HZ"), complexlength + 48));
+			atomIDs.push_back(core::id::AtomID( lys_rsd_type.atom_index("NZ" ), complexlength + 48));
+			atomIDs.push_back(core::id::AtomID( lys_rsd_type.atom_index("CE" ), complexlength + 48));
+			atomIDs.push_back(core::id::AtomID( lys_rsd_type.atom_index("CD" ), complexlength + 48));
+
+			//ok, jump is in place (numbered 1) - now we have to make a statement about where to put it
+			//relevant atoms for placing NZ
+			core::Vector const & C_xyz(complex.residue(complexlength).atom("C").xyz());
+			core::Vector const & O_xyz(complex.residue(complexlength).atom("O").xyz());
+			//TR << "C " << C_xyz << " O " << O_xyz << std::endl;
+			core::Vector newpos(C_xyz+(3*(C_xyz-O_xyz)/O_xyz.distance(C_xyz)));
+			core::Vector oldpos(complex.residue(complexlength+48).atom("NZ").xyz());
+
+			//core::Vector oldposC(complex.residue(complexlength+48).atom("CE").xyz());
+			//core::Vector newposC(newpos+(oldpos-oldposC));
+
+			//force NZ (alone) to proper position - this breaks the lysine
+			complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("NZ"), complexlength+48), newpos);
+			//	complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("CE"), complexlength+48), newposC);
+
+			//get a copy of that jump
+			core::kinematics::Jump newjump(complex.atom_tree().jump(core::id::AtomID(lys_rsd_type.atom_index("NZ"), complexlength+48)));
+
+			//reset NZ position to fix the lysine
+			complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("NZ"), complexlength+48), oldpos);
+			//	complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("CE"), complexlength+48), oldposC);
+
+			//reapply the properly-calculated jump
+			complex.conformation().set_jump_now(1, newjump);
+		}
+
 		starting_pose_ = complex;
 		starting_pose_.dump_pdb("starting_complex.pdb");
 		TR << "starting pose finished." << std::endl;
@@ -293,21 +368,122 @@ public:
 		prevent->include_residue(E2_cys);
 		task_factory_->push_back(prevent);
 
-		std::string const interface_calc("UBQE2_InterfaceNeighborDefinitionCalculator");
-		std::string const neighborhood_calc("UBQE2_NeighborhoodByDistanceCalculator");
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc, new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(2)) );
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc, new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_posns ) );
+		//old way - this is not wrong, but it is inferior to the method below
+		if(basic::options::option[publication].value()){
+			std::string const interface_calc("UBQE2_InterfaceNeighborDefinitionCalculator");
+			std::string const neighborhood_calc("UBQE2_NeighborhoodByDistanceCalculator");
+			core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc, new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(2)) );
+			core::pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc, new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_posns ) );
 
-		//this is the constructor parameter for the calculator - pairs of calculators and calculations to perform
-		utility::vector1< std::pair< std::string, std::string> > calcs_and_calcns;
-		calcs_and_calcns.push_back(std::make_pair(interface_calc, "interface_residues"));
-		calcs_and_calcns.push_back(std::make_pair(neighborhood_calc, "neighbors"));
+			//this is the constructor parameter for the calculator - pairs of calculators and calculations to perform
+			utility::vector1< std::pair< std::string, std::string> > calcs_and_calcns;
+			calcs_and_calcns.push_back(std::make_pair(interface_calc, "interface_residues"));
+			calcs_and_calcns.push_back(std::make_pair(neighborhood_calc, "neighbors"));
 
-		using protocols::toolbox::task_operations::RestrictByCalculatorsOperation;
-		task_factory_->push_back(new RestrictByCalculatorsOperation( calcs_and_calcns ));
+			using protocols::toolbox::task_operations::RestrictByCalculatorsOperation;
+			task_factory_->push_back(new RestrictByCalculatorsOperation( calcs_and_calcns ));
+
+		} else {
+
+			TR << "using new way" << std::endl;
+			//new way
+			//partially stolen from FloppyTail - I need to go back and extract this code unit
+			utility::vector1< std::set < core::Size > > regions; //a set of regions to turn into groups for comparison
+			std::set < core::Size > const empty; //easier to add empty sets to the vector than construct-then-add
+
+			//E2
+			core::Size const E2_end(complex.conformation().chain_end(1));
+			regions.push_back(empty); //insert a new set to work with
+			core::Size const E2_index(1);
+			for(core::Size i(1); i<=E2_end; ++i) {
+				regions[E2_index].insert(i);
+			}
+
+			//ubiquitin tail
+			//complexlength = end of ubiquitin in ubq+e2 pose
+			core::Size const tail_begin(complexlength-2);
+			regions.push_back(empty); //insert a new set to work with
+			core::Size const tail_index(2);
+			for(core::Size i(complexlength); i>=tail_begin; --i) {
+				regions[tail_index].insert(i);
+			}
+
+			//ubiquitin core+tail
+			//including the tail in both groups ensures it will always repack
+			regions.push_back(empty); //insert a new set to work with
+			core::Size const ubq_index(3);
+			for(core::Size i(E2_end+1); i<=complexlength; ++i) {
+				regions[ubq_index].insert(i);
+			}
+
+			if(two_ubiquitins_) {
+				//second ubiquitin
+				regions.push_back(empty); //insert a new set to work with
+				core::Size const ubq2_index(4);
+				core::Size const nres(complex.total_residue());
+				for(core::Size i(complexlength+1); i<=nres; ++i) {
+					regions[ubq2_index].insert(i);
+				}
+			}
+
+			//this will double-count loop residues with E2 - but that's fine, it just ensures they pack no matter what
+			if( !loop_posns.empty() ){
+				regions.push_back(loop_posns);
+			}
+
+			//make all pairs of groups (without replacement
+			//if you have 1, 2, 3, 4; make 1-2, 1-3, 1-4, 2-3, 2-4, 3-4
+			core::Size const num_regions(regions.size());
+			utility::vector1< std::pair< std::set<core::Size>, std::set<core::Size> > > vector_of_pairs;
+			for(core::Size first_group(1); first_group < num_regions; ++first_group) {
+				for(core::Size second_group(first_group+1); second_group <= num_regions; ++second_group){
+					vector_of_pairs.push_back(std::make_pair(regions[first_group], regions[second_group]));
+				}
+			}
+
+
+			//check contents of vector_of_pairs
+			core::Size const num_pairs(vector_of_pairs.size());
+			for(core::Size i(1); i<=num_pairs; ++i){
+				core::Size const
+					onestart(*(vector_of_pairs[i].first.begin())),
+					onestop(*(vector_of_pairs[i].first.rbegin())),
+					twostart(*(vector_of_pairs[i].second.begin())),
+					twostop(*(vector_of_pairs[i].second.rbegin()));
+
+				TR << "IGNC will compare group " << onestart << "-" << onestop << " with " << twostart << "-" << twostop << std::endl;
+
+				core::Size guess(onestart);
+				for(std::set<core::Size>::const_iterator iter(vector_of_pairs[i].first.begin()), end(vector_of_pairs[i].first.end()); iter != end; ++iter) {
+					if(guess++ != *iter) TR.Error << "non-contiguous set, debug me!" << std::endl;
+					//TR << *iter << std::endl;
+				}
+				guess = twostart;
+				for(std::set<core::Size>::const_iterator iter(vector_of_pairs[i].second.begin()), end(vector_of_pairs[i].second.end()); iter != end; ++iter) {
+					if(guess++ != *iter) TR.Error << "non-contiguous set, debug me!" << std::endl;
+					//TR << *iter << std::endl;
+				}
+
+			}
+
+			//check if calculator exists; create if not
+			std::string const calc("IGNC_FloppyTail");
+			if(core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists(calc)){
+				core::pose::metrics::CalculatorFactory::Instance().remove_calculator(calc);
+				TR << "removed a PoseMetricCalculator " << calc << ", hopefully this is due to multiple inputs to FloppyTail and not a name clash" << std::endl;
+			}
+			core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc, new protocols::toolbox::pose_metric_calculators::InterGroupNeighborsCalculator(vector_of_pairs) );
+
+			//now that calculator exists, add the sucker to the TaskFactory via RestrictByCalculatorsOperation
+			utility::vector1< std::pair< std::string, std::string> > calculators_used;
+			std::pair< std::string, std::string> IGNC_cmd( calc, "neighbors" );
+			calculators_used.push_back( IGNC_cmd );
+			task_factory_->push_back( new protocols::toolbox::task_operations::RestrictByCalculatorsOperation( calculators_used ) );
+
+		}
 
 		//calculator for number of neighbors for I44
-		if ( basic::options::option[publication].value()) {
+		if ( basic::options::option[publication].value() ) {
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( "I44neighbors", new protocols::toolbox::pose_metric_calculators::NeighborsByDistanceCalculator( 198 ) );
 		}
 
@@ -410,6 +586,41 @@ public:
 
 		}
 
+		if(two_ubiquitins_){
+			//////////////////////////////RotateJumpAxisMover for second ubiquitin//////////////////////
+			protocols::rigid::RotateJumpAxisMoverOP RJAmover(new protocols::rigid::RotateJumpAxisMover(1));
+			backbone_mover->add_mover(RJAmover, 1);
+
+			/////////////////////////////sidechainmover for second ubiquitin/////////////////////////////
+			core::Size Kres(pose.fold_tree().jump_edge(1).stop());
+			core::pack::task::PackerTaskOP task(core::pack::task::TaskFactory::create_packer_task((pose)));
+			utility::vector1_bool packable(pose.total_residue(), false); //false = nobody is packable
+			packable[Kres] = true;
+			task->restrict_to_residues(packable); //now only one position is mobile
+			task->restrict_to_repacking();
+			task->nonconst_residue_task(Kres).or_ex1_sample_level(core::pack::task::EX_SIX_QUARTER_STEP_STDDEVS);
+			task->nonconst_residue_task(Kres).or_ex2_sample_level(core::pack::task::EX_SIX_QUARTER_STEP_STDDEVS);
+			task->nonconst_residue_task(Kres).or_ex3_sample_level(core::pack::task::EX_SIX_QUARTER_STEP_STDDEVS);
+			task->nonconst_residue_task(Kres).or_ex4_sample_level(core::pack::task::EX_SIX_QUARTER_STEP_STDDEVS);
+			//		TR << *task << std::endl;
+
+			protocols::simple_moves::sidechain_moves::SidechainMoverOP SCmover( new protocols::simple_moves::sidechain_moves::SidechainMover() );
+			SCmover->set_task(task);
+			SCmover->set_prob_uniform(0); //we want only Dunbrack rotamers, 0 percent chance of uniform sampling
+
+			backbone_mover->add_mover(SCmover, 1);
+
+			//////////////////////////////added "chi" for lysine//////////////////////////////////////
+			protocols::simple_moves::TorsionDOFMoverOP DOF_mover_lys(new protocols::simple_moves::TorsionDOFMover);
+			DOF_mover_lys->set_DOF(atomIDs[LYS_2HZ], atomIDs[LYS_NZ], atomIDs[LYS_CE], atomIDs[LYS_CD]);
+			DOF_mover_lys->check_mmt(false);
+			DOF_mover_lys->temp(10);
+			DOF_mover_lys->set_angle_range(-180, 180);
+			DOF_mover_lys->tries(1000);
+
+			backbone_mover->add_mover(DOF_mover_lys, 1);
+		}
+
 		/////////////////////////minimize backbone DOFs//////////////////////////////////////////////
 		using protocols::simple_moves::MinMoverOP;
 		using protocols::simple_moves::MinMover;
@@ -495,31 +706,36 @@ public:
 			return;
 		}
 
-		//filter on interface SASA - requires some hacking to break up thioester
-		core::pose::Pose copy(pose);
-		//hack the pose up for analysis purposes
-		core::Size const cbreak(copy.conformation().chain_end(1));
-		using core::kinematics::Edge;
-		core::kinematics::FoldTree main_tree(copy.total_residue());
-		main_tree.clear();
-		main_tree.add_edge(Edge(1, cbreak, Edge::PEPTIDE));
-		main_tree.add_edge(Edge(cbreak+1, copy.total_residue(), Edge::PEPTIDE));
-		main_tree.add_edge(Edge(cbreak, cbreak+1, 1));
-		main_tree.reorder(1);
-		//TR << main_tree << std::endl;
-		copy.fold_tree(main_tree);
+		//these interface analyses are less interpretable in the three-body case
+		if(!two_ubiquitins_){
 
- 		//Filter on SASA
-		basic::MetricValue< core::Real > mv_delta_sasa;
-		copy.metric(InterfaceSasaDefinition_, "delta_sasa", mv_delta_sasa);
-		if(mv_delta_sasa.value() < basic::options::option[SASAfilter].value()){
-			set_last_move_status(protocols::moves::FAIL_RETRY);
-			TR << "interface SASA filter failed; SASA " << mv_delta_sasa.value() << std::endl;
-			return;
+			//filter on interface SASA - requires some hacking to break up thioester
+			core::pose::Pose copy(pose);
+			//hack the pose up for analysis purposes
+			core::Size const cbreak(copy.conformation().chain_end(1));
+			using core::kinematics::Edge;
+			core::kinematics::FoldTree main_tree(copy.total_residue());
+			main_tree.clear();
+			main_tree.add_edge(Edge(1, cbreak, Edge::PEPTIDE));
+			main_tree.add_edge(Edge(cbreak+1, copy.total_residue(), Edge::PEPTIDE));
+			main_tree.add_edge(Edge(cbreak, cbreak+1, 1));
+			main_tree.reorder(1);
+			//TR << main_tree << std::endl;
+			copy.fold_tree(main_tree);
+
+			//Filter on SASA
+			basic::MetricValue< core::Real > mv_delta_sasa;
+			copy.metric(InterfaceSasaDefinition_, "delta_sasa", mv_delta_sasa);
+			if(mv_delta_sasa.value() < basic::options::option[SASAfilter].value()){
+				set_last_move_status(protocols::moves::FAIL_RETRY);
+				TR << "interface SASA filter failed; SASA " << mv_delta_sasa.value() << std::endl;
+				return;
+			}
+
+			//passed filters; run IAM
+			IAM_->apply(copy);
+
 		}
-
-		//passed filters; run IAM
-		IAM_->apply(copy);
 
 		//print mobile region fine-grained data
 		protocols::jd2::JobOP job_me(protocols::jd2::JobDistributor::get_instance()->current_job());
@@ -533,7 +749,7 @@ public:
 		if ( basic::options::option[ publication ].value()) {
 			//I44 neighbors
 			basic::MetricValue< core::Size > I44numn;
-			copy.metric("I44neighbors", "num_neighbors", I44numn);
+			pose.metric("I44neighbors", "num_neighbors", I44numn);
 			job_me->add_string_real_pair("I44neighbors", I44numn.value());
 		}
 
@@ -579,6 +795,9 @@ private:
 
 	protocols::analysis::InterfaceAnalyzerMoverOP IAM_;
 
+	//used for two-ubiquitins mode
+	bool two_ubiquitins_;
+
 };
 
 typedef utility::pointer::owning_ptr< UBQ_E2Mover > UBQ_E2MoverOP;
@@ -593,7 +812,8 @@ int main( int argc, char* argv[] )
  	option.add( E2_residue, "E2 catalytic cysteine (PDB numbering)").def(85);
 	option.add( SASAfilter, "filter out interface dSASA less than this").def(1000);
 	option.add( scorefilter, "filter out total score greater than this").def(10);
-	option.add( publication, "output statistics used in publication.  TURN OFF if not running publication demo.").def(false);
+	option.add( publication, "output statistics used in publication.  TURN OFF if not running (original Saha et al.) publication demo.").def(false);
+	option.add( two_ubiquitins, "Mind-blowing - use two ubiquitins (assembled for a K48 linkage) to try to examine the transition state.  Don't use this option unless trying to reproduce publication XXXX").def(false);
 
 	//initialize options
 	devel::init(argc, argv);

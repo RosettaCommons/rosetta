@@ -64,3 +64,6 @@
 
 #activate only for the publication case
 -publication true
+
+#activate only for second publication case
+-two_ubiquitins false
