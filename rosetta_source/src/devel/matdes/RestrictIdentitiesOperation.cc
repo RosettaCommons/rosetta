@@ -113,11 +113,6 @@ RestrictIdentitiesOperation::apply( core::pose::Pose const & pose, core::pack::t
    	}
 	}
 
-	// obsolete
-	// Truncate task if symmetric
-	// if ( core::pose::symmetry::is_symmetric(pose) )
-	// 	core::pack::make_symmetric_PackerTask_by_truncation(pose, & task);
-
 }
 
 // @brief parse xml

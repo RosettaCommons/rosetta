@@ -30,6 +30,11 @@ static basic::Tracer TR("devel.matdes.STMStoredTask");
 // @brief default constructor
 STMStoredTask::STMStoredTask() {}
 
+// @brief copy constructor
+STMStoredTask::STMStoredTask(const STMStoredTask & rval) :
+  tasks_( rval.tasks_)
+{ }
+
 // @brief setter
 void STMStoredTask::set_task( core::pack::task::PackerTaskOP task, std::string task_name ) { tasks_[ task_name ] = task; }
 

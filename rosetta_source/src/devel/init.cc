@@ -35,6 +35,8 @@
 #include <devel/matdes/OligomericAverageDegreeFilterCreator.hh>
 #include <devel/matdes/SymUnsatHbondFilterCreator.hh>
 #include <devel/matdes/TaskAwareAlaScanCreator.hh>
+#include <devel/matdes/SaveResfileToDiskFilterCreator.hh>
+#include <devel/matdes/TaskAwareSASAFilterCreator.hh>
 
 // dataloader creators
 //#include <devel/constrained_sequence_design/SequenceConstraintLoaderCreator.hh>
@@ -77,6 +79,8 @@ static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::Ret
 static protocols::filters::FilterRegistrator< devel::matdes::OligomericAverageDegreeFilterCreator > OligomericAverageDegreeFilterCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::matdes::SymUnsatHbondFilterCreator > SymUnsatHbondFilterCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::matdes::TaskAwareAlaScanCreator > TaskAwareAlaScanCreator_registrator;
+static protocols::filters::FilterRegistrator< devel::matdes::SaveResfileToDiskFilterCreator > SaveResfileToDiskFilterCreator_registrator;
+static protocols::filters::FilterRegistrator< devel::matdes::TaskAwareSASAFilterCreator > TaskAwareSASAFilterCreator_registrator;
 
 void init( int argc, char * argv [] )
 {

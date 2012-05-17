@@ -7,25 +7,35 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-#ifndef INCLUDED_devel_matdes_RestrictIdentitiesToRepackingOperationCreator_hh
-#define INCLUDED_devel_matdes_RestrictIdentitiesToRepackingOperationCreator_hh
+/// @file   devel/matdes/TaskAwareSASAFilterCreator.hh
+/// @brief  FilterCreator for the TaskAwareSASAFilter
+/// @author Neil King (neilking@u.washington.edu)
 
-#include <core/pack/task/operation/TaskOperationCreator.hh>
+#ifndef INCLUDED_devel_matdes_TaskAwareSASAFilterCreator_hh
+#define INCLUDED_devel_matdes_TaskAwareSASAFilterCreator_hh
 
+
+// Package Headers
+#include <protocols/filters/FilterCreator.hh>
+
+// Utility Headers
+#include <utility/pointer/ReferenceCount.hh>
+
+// c++ headers
 #include <string>
-
 
 namespace devel {
 namespace matdes {
 
-class RestrictIdentitiesToRepackingOperationCreator : public core::pack::task::operation::TaskOperationCreator {
+class TaskAwareSASAFilterCreator : public protocols::filters::FilterCreator
+{
 public:
-	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
-	virtual std::string keyname() const { return "RestrictIdentitiesToRepacking"; }
+	virtual protocols::filters::FilterOP create_filter() const;
+	virtual std::string keyname() const;
 };
+
 
 } //namespace matdes
 } //namespace devel
 
 #endif
-

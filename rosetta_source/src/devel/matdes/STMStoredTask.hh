@@ -29,6 +29,7 @@ public:
 
 	// constructors
 	STMStoredTask();
+	STMStoredTask( const STMStoredTask& rval );
 	virtual basic::datacache::CacheableDataOP clone() const;
 	virtual basic::datacache::CacheableDataOP fresh_instance() const;
 

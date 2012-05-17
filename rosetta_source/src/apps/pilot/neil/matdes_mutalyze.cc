@@ -359,7 +359,9 @@ newer_sc(Pose &pose, utility::vector1<Size> intra_subs, Real& int_area, Real& sc
   if (scc.Calc()) {
     sc = scc.GetResults().sc;
     int_area = scc.GetResults().surface[2].trimmedArea;
-  }
+  } else {
+		TR << "FUCK! sc failed!" << std::endl;
+	}
 }
 
 // Pose must be scored in order for this to work.

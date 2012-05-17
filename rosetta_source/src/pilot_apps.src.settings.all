@@ -387,6 +387,8 @@ sources = {
 		#"matdes_dock",
 		#"matdes_design",
 		#"coiled_coil_search",
+		#"gen_trimer_disulf",
+		#"matdes_mutalyze",
 	],
 	"pilot/nikolas" : [
 		#"r_segment_rdc",

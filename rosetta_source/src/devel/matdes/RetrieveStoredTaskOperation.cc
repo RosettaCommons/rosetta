@@ -84,7 +84,7 @@ RetrieveStoredTaskOperation::apply( core::pose::Pose const & pose, core::pack::t
 		if (!stored_tasks.has_task(task_name_)) {
 			utility_exit_with_message("No stored task with the name " + task_name_ + " found");
 		} else {
-  			task.update_commutative( *( stored_tasks.get_task( task_name_ ) ) );
+ 			task.update_commutative( *( stored_tasks.get_task( task_name_ ) ) );
 		}
 	}
 }

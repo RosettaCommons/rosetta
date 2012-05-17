@@ -81,6 +81,7 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 	bool repack_;
 	bool report_diffs_;
+	std::set< std::string > exempt_identities_;
 
 };
 

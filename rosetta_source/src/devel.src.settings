@@ -89,6 +89,8 @@ sources = {
 		"StoreTaskMover",
 		"STMStoredTask",
 		"RetrieveStoredTaskOperation",
+		"SaveResfileToDiskFilter",
+		"TaskAwareSASAFilter",
         ],
 	"devel/metal_interface": [
 		"AddMetalSiteConstraints",

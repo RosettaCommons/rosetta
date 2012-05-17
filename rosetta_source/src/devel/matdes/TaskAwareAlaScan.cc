@@ -54,6 +54,8 @@
 #include <utility/tag/Tag.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 #include <devel/matdes/TaskAwareAlaScan.hh>
 #include <devel/matdes/TaskAwareAlaScanCreator.hh>
@@ -139,6 +141,14 @@ TaskAwareAlaScan::parse_my_tag(
 	repack( tag->getOption< bool >( "repack", 1 ) );
 	report_diffs( tag->getOption< bool >("report_diffs", 1) );
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data, scorefxn_name );
+  std::string unparsed_exempt_identities = tag->getOption< std::string >( "exempt_identities" );
+  if( unparsed_exempt_identities != "" ){
+    utility::vector1< std::string > const ids( utility::string_split( unparsed_exempt_identities , ',' ) );
+    exempt_identities_.clear();
+    foreach( std::string const id, ids ){
+        exempt_identities_.insert( id );
+    }
+  }
 }
 
 // @brief Calculate the ddG for an alanine mutation at the specified position
@@ -155,7 +165,10 @@ TaskAwareAlaScan::ddG_for_single_residue( core::pose::Pose const & const_pose, c
 	// First, mutate the residue in question to alanine
   utility::vector1< bool > allowed_aas;
   allowed_aas.assign( core::chemical::num_canonical_aas, false );
-  allowed_aas[ core::chemical::aa_ala ] = true;
+  if ( exempt_identities_.find( pose.residue( resi ).name3() ) != exempt_identities_.end() )
+    allowed_aas[ pose.residue( resi ).aa() ] = true;
+  else
+    allowed_aas[ core::chemical::aa_ala ] = true;
   using namespace core::pack::task;
   PackerTaskOP task = TaskFactory::create_packer_task( pose );
   task->initialize_from_command_line().or_include_current( true );
@@ -199,9 +212,7 @@ TaskAwareAlaScan::report( std::ostream & out, core::pose::Pose const & const_pos
 	core::Size const rb_jump( jump_ );
 	core::pose::Pose pose( const_pose );
 	bool symmetric = 0;
-  if (core::pose::symmetry::is_symmetric(pose)) {
-    symmetric = 1;
-  }
+  if (core::pose::symmetry::is_symmetric(pose)) { symmetric = 1; }
 
 	protocols::simple_filters::DdgFilter const ddg_filter( 10000, scorefxn_, rb_jump, 1, symmetric );
   protocols::simple_filters::ScoreTypeFilter const energy_filter( scorefxn_, core::scoring::total_score, 0 );
@@ -219,11 +230,9 @@ TaskAwareAlaScan::report( std::ostream & out, core::pose::Pose const & const_pos
   } else {
     TR << "Warning: You have not provided any TaskOperations. A default will be used." << std::endl;
   }
-	if (symmetric){
+	if (symmetric) {
 		core::pack::make_symmetric_PackerTask_by_truncation(pose, task);
-		//task = core::pack::make_new_symmetric_PackerTask_by_union(pose,task);
 	}
-	TR << *task << std::endl;
 
 	// For packable residues, calculate the ddG/score upon mutation to alanine
   for (core::Size resi = 1; resi <= pose.n_residue(); resi++) {

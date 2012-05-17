@@ -51,15 +51,11 @@ void
 StoreTaskMover::apply( core::pose::Pose & pose )
 {
 
-	// Create the PackerTask using the TaskFactory created in parse_my_tag;
-	// make it symmetric if need be.
+	// Create the PackerTask using the TaskFactory created in parse_my_tag
 	runtime_assert( task_factory_ );
-	// core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
 	core::pack::task::PackerTaskOP 	task = task_factory_->create_task_and_apply_taskoperations( pose );
-	// if ( core::pose::symmetry::is_symmetric(pose) ){
-  //   //core::pack::make_symmetric_PackerTask_by_truncation(pose, task);
-	// 	task = core::pack::make_new_symmetric_PackerTask_by_union(pose,task);
-	// }
+	if (core::pose::symmetry::is_symmetric(pose))
+		core::pack::make_symmetric_PackerTask_by_truncation(pose, task); // Does this need to be fixed or omitted?
 	// If the pose doesn't have STM_STORED_TASK data, put a blank STMStoredTask in there.
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::STM_STORED_TASKS ) ) {
 		devel::matdes::STMStoredTaskOP blank_tasks = new devel::matdes::STMStoredTask();
