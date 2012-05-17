@@ -54,15 +54,17 @@ TaskAwareSASAFilter::TaskAwareSASAFilter():
   task_factory_( NULL ),
   threshold_( 0 ),
   designable_only_( false ),
-	sc_only_( false )
+	sc_only_( false ),
+	probe_radius_( 2.2 )
 {}
 
 // @brief constructor with arguments
-TaskAwareSASAFilter::TaskAwareSASAFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const t, bool const d, bool const s ):
+TaskAwareSASAFilter::TaskAwareSASAFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const t, bool const d, bool const s, core::Real r ):
 	task_factory_( task_factory ),
 	threshold_( t ),
 	designable_only_( d ),
-	sc_only_( s )
+	sc_only_( s ),
+	probe_radius_( r )
 {}
 
 // @brief copy constructor
@@ -71,7 +73,8 @@ TaskAwareSASAFilter::TaskAwareSASAFilter( TaskAwareSASAFilter const & rval ):
 	task_factory_( rval.task_factory_ ),
 	threshold_( rval.threshold_ ),
 	designable_only_( rval.designable_only_),
-	sc_only_( rval.sc_only_ )
+	sc_only_( rval.sc_only_ ),
+	probe_radius_( rval.probe_radius_ )
 {}
 
 protocols::filters::FilterOP
@@ -96,7 +99,7 @@ void TaskAwareSASAFilter::task_factory( core::pack::task::TaskFactoryOP task_fac
 void TaskAwareSASAFilter::threshold( core::Real const t ) { threshold_ = t; }
 void TaskAwareSASAFilter::designable_only( bool const d ) { designable_only_ = d; }
 void TaskAwareSASAFilter::sc_only( bool const s ) { sc_only_ = s; }
-void TaskAwareSASAFilter::probe_radius( bool const r ) { probe_radius_ = r; }
+void TaskAwareSASAFilter::probe_radius( core::Real const r ) { probe_radius_ = r; }
 
 /// @brief
 core::Real TaskAwareSASAFilter::compute( Pose const & pose, bool const verbose ) const
@@ -122,6 +125,7 @@ core::Real TaskAwareSASAFilter::compute( Pose const & pose, bool const verbose )
 	    }
 		}
 	}
+	TR << "probe_radius: " << probe_radius() << std::endl;
   core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius(), false, atom_mask );
   utility::vector1<Real> resi_sasa(pose.n_residue(),0.0);
 
@@ -165,7 +169,7 @@ TaskAwareSASAFilter::parse_my_tag(
 	protocols::moves::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
   task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
   threshold( tag->getOption< core::Real >( "threshold", 0 ) );

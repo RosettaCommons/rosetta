@@ -21,6 +21,7 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
+#include <utility/vector1.hh>
 
 // STL headers
 #include <set>
@@ -50,6 +51,10 @@ sidechain_sasa(Pose const & pose, Real probe_radius = 2.2);
 
 std::set<Size>
 pick_design_position(core::pose::Pose const & pose, Size nsub_bblock = 1, Real contact_dist=10.0, Real bblock_dist = 5.0, Real probe_radius = 2.2);
+
+core::pose::Pose
+get_neighbor_subs(core::pose::Pose const &pose, utility::vector1<Size> intra_subs);
+
 } // devel
 } // matdes
 #endif

@@ -65,7 +65,7 @@ public:// constructor/destructor
 	TaskAwareSASAFilter();
 
 	// @brief constructor with arguments
-	TaskAwareSASAFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const t, bool const d, bool const s);
+	TaskAwareSASAFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const t, bool const d, bool const s, core::Real r );
 
 	// @brief copy constructor
 	TaskAwareSASAFilter( TaskAwareSASAFilter const & rval );
@@ -94,7 +94,7 @@ public:// setters
 	void threshold( core::Real const t );
 	void designable_only( bool const d );
 	void sc_only( bool const s );
-	void probe_radius( bool const r );
+	void probe_radius( core::Real const r );
 
 public:// getters
 	core::pack::task::TaskFactoryOP task_factory() const;

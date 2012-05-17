@@ -34,9 +34,11 @@
 // Filter creators
 #include <devel/matdes/OligomericAverageDegreeFilterCreator.hh>
 #include <devel/matdes/SymUnsatHbondFilterCreator.hh>
+#include <devel/matdes/AverageInterfaceEnergyFilterCreator.hh>
 #include <devel/matdes/TaskAwareAlaScanCreator.hh>
 #include <devel/matdes/SaveResfileToDiskFilterCreator.hh>
 #include <devel/matdes/TaskAwareSASAFilterCreator.hh>
+#include <devel/matdes/InterfacePackingFilterCreator.hh>
 
 // dataloader creators
 //#include <devel/constrained_sequence_design/SequenceConstraintLoaderCreator.hh>
@@ -78,9 +80,11 @@ static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::Ret
 // Filter creators 
 static protocols::filters::FilterRegistrator< devel::matdes::OligomericAverageDegreeFilterCreator > OligomericAverageDegreeFilterCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::matdes::SymUnsatHbondFilterCreator > SymUnsatHbondFilterCreator_registrator;
+static protocols::filters::FilterRegistrator< devel::matdes::AverageInterfaceEnergyFilterCreator > AverageInterfaceEnergyFilterCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::matdes::TaskAwareAlaScanCreator > TaskAwareAlaScanCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::matdes::SaveResfileToDiskFilterCreator > SaveResfileToDiskFilterCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::matdes::TaskAwareSASAFilterCreator > TaskAwareSASAFilterCreator_registrator;
+static protocols::filters::FilterRegistrator< devel::matdes::InterfacePackingFilterCreator > InterfacePackingFilterCreator_registrator;
 
 void init( int argc, char * argv [] )
 {

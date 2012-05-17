@@ -21,6 +21,10 @@
 #include <basic/MetricValue.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/DataMap.hh>
+// Jacob
+#include <core/pose/symmetry/util.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/pose/symmetry/util.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -133,7 +137,8 @@ InterfaceSasaFilter::compute( core::pose::Pose const & pose ) const {
 	using namespace protocols::moves;
 
 	core::pose::Pose split_pose( pose );
-	rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( split_pose, jump() ) );
+	int sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num(split_pose, jump() ); // JB 120516
+	rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( split_pose, sym_aware_jump_id ) ); // JB 120516
 	translate->step_size( 1000.0 );
 	translate->apply( split_pose );
 
@@ -145,8 +150,14 @@ InterfaceSasaFilter::compute( core::pose::Pose const & pose ) const {
 		core::Real const bound_sasa( mv_sasa.value() );
 		split_pose.metric( "sasa", "total_sasa", mv_sasa );
 		core::Real const unbound_sasa( mv_sasa.value() );
-		core::Real const buried_sasa( unbound_sasa - bound_sasa );
-		return( buried_sasa );
+		if( core::pose::symmetry::is_symmetric( pose )) {
+			core::conformation::symmetry::SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
+			core::Real const buried_sasa( (unbound_sasa - bound_sasa) /(sym_info->subunits()));
+			return( buried_sasa );
+		} else {
+			core::Real const buried_sasa(unbound_sasa - bound_sasa);
+			return( buried_sasa );
+		}
 	}
 	else{
 		MetricValue< id::AtomID_Map< core::Real > > atom_sasa;

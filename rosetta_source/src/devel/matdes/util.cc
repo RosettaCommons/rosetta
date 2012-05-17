@@ -43,8 +43,7 @@ namespace devel {
 namespace matdes {
 
 core::pack::task::PackerTaskOP
-make_interface_design_packertask(core::pose::Pose & /*pose*/) {
-	return NULL;
+make_interface_design_packertask(core::pose::Pose & pose) {
 }
 
 void
@@ -181,6 +180,38 @@ pick_design_position(core::pose::Pose const & pose, Size nsub_bblock, Real conta
 	return design_pos;
 }
 
+// Figure out which chains touch chain A, and return those chains
+
+core::pose::Pose
+get_neighbor_subs (Pose const &pose, utility::vector1<Size> intra_subs) {
+  Pose sub_pose;
+  core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
+  Size nres_monomer = symm_info->num_independent_residues();
+  sub_pose.append_residue_by_jump(pose.residue(1),1);
+  for (Size i=2; i<=nres_monomer; ++i) {
+    sub_pose.append_residue_by_bond(pose.residue(i));
+  }
+  for (Size i=1; i<=symm_info->subunits(); ++i) {
+    if (std::find(intra_subs.begin(), intra_subs.end(), i) != intra_subs.end()) continue;
+    bool contact = false;
+    Size start = (i-1)*nres_monomer;
+    for (Size ir=1; ir<=nres_monomer; ir++) {
+      if (pose.energies().residue_total_energies(ir+start)[core::scoring::fa_atr] < 0) {
+        contact = true;
+        break;
+      }
+    }
+    if (contact) {
+      sub_pose.append_residue_by_jump(pose.residue(start+1),sub_pose.n_residue());
+      for (Size ir=2; ir<=nres_monomer; ir++) {
+        sub_pose.append_residue_by_bond(pose.residue(ir+start));
+      }
+    }
+  }
+
+  return sub_pose;
+
+}
 
 } // devel
 } // matdes
