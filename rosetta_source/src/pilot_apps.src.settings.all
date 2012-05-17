@@ -414,7 +414,9 @@ sources = {
 		#"plot_hb",
 	],
 	"pilot/will" : [
-                "CXdock",
+		"hubdenovo",
+		"designability_stats",
+		"CXdock",
 		"symdock_enum_3_1",
 		"sym_multicomp_test",
 		#"FunGroupTK",

@@ -508,6 +508,15 @@ ADD_PROPERTY LOWER_TERMINUS ## implies terminus
 
 END_CASE
 
+BEGIN_CASE ## D-4-FLUORO-PROLINE #################################################
+
+## these define which residues match this case
+BEGIN_SELECTOR
+NAME3 CHC
+END_SELECTOR
+
+END_CASE
+
 BEGIN_CASE ### THE GENERAL CASE ##########################################
 
 ## these are the operations involved
