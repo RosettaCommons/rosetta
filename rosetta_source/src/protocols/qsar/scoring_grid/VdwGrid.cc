@@ -51,6 +51,12 @@ GridBaseOP VdwGridCreator::create_grid(utility::tag::TagPtr const tag) const
 	return vdw_grid;
 }
 
+GridBaseOP VdwGridCreator::create_grid() const
+{
+	return new VdwGrid();
+}
+
+
 std::string VdwGridCreator::grid_name()
 {
 	return "VdwGrid";

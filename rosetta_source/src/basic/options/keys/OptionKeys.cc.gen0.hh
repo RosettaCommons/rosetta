@@ -131,6 +131,7 @@ namespace mysql { StringOptionKey const password( "mysql:password" );  }
 namespace mysql { IntegerOptionKey const port( "mysql:port" );  }
 namespace qsar { BooleanOptionKey const qsar( "qsar" );  }
 namespace qsar { StringOptionKey const weights( "qsar:weights" );  }
+namespace qsar { StringOptionKey const grid_dir( "qsar:grid_dir" );  }
 namespace residues { BooleanOptionKey const residues( "residues" );  }
 namespace residues { StringVectorOptionKey const patch_selectors( "residues:patch_selectors" );  }
 namespace PCS { BooleanOptionKey const PCS( "PCS" );  }
@@ -610,4 +611,3 @@ namespace abinitio { RealOptionKey const HD_penalty( "abinitio:HD_penalty" );  }
 namespace abinitio { RealOptionKey const HD_fa_penalty( "abinitio:HD_fa_penalty" );  }
 namespace abinitio { FileOptionKey const sheet_edge_pred( "abinitio:sheet_edge_pred" );  }
 namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score_scalling" );  }
-namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }

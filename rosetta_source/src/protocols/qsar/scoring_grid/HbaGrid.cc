@@ -44,6 +44,11 @@ GridBaseOP HbaGridCreator::create_grid(utility::tag::TagPtr const tag) const
 	return hba_grid;
 }
 
+GridBaseOP HbaGridCreator::create_grid() const
+{
+	return new HbaGrid();
+}
+
 std::string HbaGridCreator::grid_name()
 {
 	return "HbaGrid";

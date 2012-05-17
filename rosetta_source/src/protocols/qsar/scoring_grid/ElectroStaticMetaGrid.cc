@@ -45,6 +45,12 @@ GridBaseOP ElectroStaticMetaGridCreator::create_grid(utility::tag::TagPtr const 
 	return electrostatic_grid;
 }
 
+GridBaseOP ElectroStaticMetaGridCreator::create_grid() const
+{
+	return new ElectroStaticMetaGrid();
+}
+
+
 std::string ElectroStaticMetaGridCreator::grid_name()
 {
 	return "ElectroStaticMetaGrid";

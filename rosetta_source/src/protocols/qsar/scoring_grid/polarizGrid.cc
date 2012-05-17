@@ -44,6 +44,11 @@ GridBaseOP polarizGridCreator::create_grid(utility::tag::TagPtr const tag) const
 	return polariz_grid;
 }
 
+GridBaseOP polarizGridCreator::create_grid() const
+{
+	return new polarizGrid();
+}
+
 std::string polarizGridCreator::grid_name()
 {
 	return "polarizGrid";

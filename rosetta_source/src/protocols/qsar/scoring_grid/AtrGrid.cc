@@ -41,6 +41,13 @@ GridBaseOP AtrGridCreator::create_grid(utility::tag::TagPtr const tag) const
 	return atr_grid;
 }
 
+GridBaseOP AtrGridCreator::create_grid() const
+{
+
+	return new AtrGrid();
+}
+
+
 std::string AtrGridCreator::grid_name()
 {
 	return "AtrGrid";

@@ -36,6 +36,11 @@ GridBaseOP ClassicGridCreator::create_grid(utility::tag::TagPtr const tag) const
 	return classic_grid;
 }
 
+GridBaseOP ClassicGridCreator::create_grid() const
+{
+	return new ClassicGrid();
+}
+
 std::string ClassicGridCreator::grid_name()
 {
 	return "ClassicGrid";

@@ -16,6 +16,7 @@
 //Unit Headers
 #include <protocols/qsar/scoring_grid/GridFactory.fwd.hh>
 #include <protocols/qsar/scoring_grid/GridCreator.hh>
+#include <utility/json_spirit/json_spirit_reader.h>
 
 // Utility Headers
 #include <utility/factory/WidgetRegistrator.hh>
@@ -59,6 +60,9 @@ public:
 
 	///@brief create Grid given grid tag
 	GridBaseOP new_grid(utility::tag::TagPtr const tag) const;
+
+	///@brief create Grid given a serialized grid object
+	GridBaseOP new_grid(utility::json_spirit::mObject data ) const;
 
 private:
 	GridFactory();

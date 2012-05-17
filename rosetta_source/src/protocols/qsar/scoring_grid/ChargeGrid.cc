@@ -59,10 +59,17 @@ std::string ChargeGridCreator::keyname() const
 
 GridBaseOP ChargeGridCreator::create_grid(utility::tag::TagPtr const tag) const
 {
-	GridBaseOP classic_grid = new ChargeGrid();
-	classic_grid->parse_my_tag(tag);
-	return classic_grid;
+	GridBaseOP charge_grid = new ChargeGrid();
+	charge_grid->parse_my_tag(tag);
+	return charge_grid;
 }
+
+GridBaseOP ChargeGridCreator::create_grid() const
+{
+
+	return new ChargeGrid();
+}
+
 
 std::string ChargeGridCreator::grid_name()
 {

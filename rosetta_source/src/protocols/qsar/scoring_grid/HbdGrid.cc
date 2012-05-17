@@ -41,6 +41,12 @@ GridBaseOP HbdGridCreator::create_grid(utility::tag::TagPtr const tag) const
 
 	return hbd_grid;
 }
+GridBaseOP HbdGridCreator::create_grid() const
+{
+	return new HbdGrid();
+}
+
+
 
 std::string HbdGridCreator::grid_name()
 {

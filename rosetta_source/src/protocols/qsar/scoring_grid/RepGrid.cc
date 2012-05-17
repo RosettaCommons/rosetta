@@ -42,6 +42,11 @@ GridBaseOP RepGridCreator::create_grid(utility::tag::TagPtr const tag) const
 	return rep_grid;
 }
 
+GridBaseOP RepGridCreator::create_grid() const
+{
+	return new RepGrid();
+}
+
 std::string RepGridCreator::grid_name()
 {
 	return "RepGrid";
