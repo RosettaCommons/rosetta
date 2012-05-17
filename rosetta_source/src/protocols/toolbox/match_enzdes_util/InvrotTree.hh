@@ -60,7 +60,7 @@ public:
 	void
 	generate_inverse_rotamer_constraints(
 		core::pose::Pose const & pose,
-		AllowedSeqposForGeomCstOP geomcst_seqpos
+		AllowedSeqposForGeomCstCOP geomcst_seqpos
 	);
 
 	/// @brief convenience access function

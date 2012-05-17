@@ -36,7 +36,7 @@ InvrotCollector::InvrotCollector(
 }
 
 InvrotCollector::InvrotCollector( InvrotCollector const & other )
-  : invrots_(other.invrots_), owner_nodes_and_locations_(other.owner_nodes_and_locations_)
+  : ReferenceCount(), invrots_(other.invrots_), owner_nodes_and_locations_(other.owner_nodes_and_locations_)
 {}
 
 InvrotCollector::~InvrotCollector(){}
@@ -67,7 +67,7 @@ InvrotCollector::set_invrots_for_listnum(
 
 InvrotTreeNodeBase::InvrotTreeNodeBase(
   InvrotTreeNodeBaseCAP parent_node )
-  : parent_node_(parent_node ), location_in_parent_node_(1)
+  : ReferenceCount(), parent_node_(parent_node ), location_in_parent_node_(1)
 {}
 
 InvrotTreeNodeBase::~InvrotTreeNodeBase(){}

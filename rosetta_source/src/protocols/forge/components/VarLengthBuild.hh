@@ -398,13 +398,19 @@ public: // mutators
 	}
 
 
-public: //constraint management
+public: //constraint / setup mover management management
 
 	void
 	clear_rcgs();
 
 	void
 	add_rcg( RemodelConstraintGeneratorOP rcg );
+
+	void
+	clear_setup_movers();
+
+	void
+	add_setup_mover( moves::MoverOP mover_in );
 
 
 public: // fragment management
@@ -616,6 +622,11 @@ private: // data
 
 	/// @brief collection of RCGs to manage remodel constraints
 	utility::vector1< RemodelConstraintGeneratorOP > rcgs_;
+
+	/// @brief collection of movers that get a chance to modify
+	/// the pose after the new lenght has been setup but before
+	/// remodeling starts
+	utility::vector1< moves::MoverOP > setup_movers_;
 
 
 	/// @brief Flag to turn on restart mode, in which VLB assumes that the Pose

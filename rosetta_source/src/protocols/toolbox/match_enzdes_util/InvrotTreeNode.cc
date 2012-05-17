@@ -200,7 +200,7 @@ InvrotTreeNode::initialize_from_enzcst_io(
 core::scoring::constraints::ConstraintCOP
 InvrotTreeNode::generate_constraints(
 	core::pose::Pose const &  pose,
-	AllowedSeqposForGeomCstOP geomcst_seqpos
+	AllowedSeqposForGeomCstCOP geomcst_seqpos
 ) const
 {
 

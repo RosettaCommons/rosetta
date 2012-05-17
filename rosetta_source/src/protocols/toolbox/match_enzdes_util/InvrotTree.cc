@@ -65,7 +65,7 @@ InvrotTree::get_constraint_for_target_state( Size target_state ) const {
 void
 InvrotTree::generate_inverse_rotamer_constraints(
 	core::pose::Pose const & pose,
-	AllowedSeqposForGeomCstOP geomcst_seqpos
+	AllowedSeqposForGeomCstCOP geomcst_seqpos
 )
 {
 	if( invrot_targets_.size() == 0 ) utility_exit_with_message("InvrotTree is asked to generate constraints even though no target states exist. Something is wrong somewhere.");

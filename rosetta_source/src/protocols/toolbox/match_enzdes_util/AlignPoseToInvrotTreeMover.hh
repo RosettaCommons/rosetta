@@ -24,6 +24,7 @@
 #include <protocols/toolbox/match_enzdes_util/AllowedSeqposForGeomCst.fwd.hh>
 
 // Project headers
+#include <core/conformation/Residue.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 //#include <core/scoring/constraints/Constraint.fwd.hh>
@@ -63,6 +64,28 @@ public:
 	virtual
 	void
 	apply( core::pose::Pose & pose );
+
+	/// @brief sets up a foldtree such that
+	/// the anchor residue doesn't move,
+	/// i.e. a backward edge from anchor to 1
+	/// and a forward edge from anchor to seqpos
+	/// also need to setup the jumps at anchor res
+	void
+	setup_foldtree_around_anchor_invrot(
+		core::pose::Pose & pose,
+		Size const anchor_seqpos,
+		Size const first_target_seqpos ) const;
+
+	/// @brief silly helper function to get the equivalent
+	/// of a certain residue in a new residue type set
+	/// note if the passed in residue is already of the
+	/// required residue type set, nothing changes, just
+	/// passes back input pointer
+	core::conformation::ResidueCOP
+	switch_residue_type_set(
+		core::conformation::ResidueCOP residue,
+		std::string const desired_restype_set_name
+	) const;
 
 private:
 

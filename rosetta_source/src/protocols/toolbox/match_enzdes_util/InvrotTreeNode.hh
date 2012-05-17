@@ -78,7 +78,7 @@ public:
 	core::scoring::constraints::ConstraintCOP
 	generate_constraints(
 		core::pose::Pose const & pose,
-		AllowedSeqposForGeomCstOP geomcst_seqpos
+		AllowedSeqposForGeomCstCOP geomcst_seqpos
 	) const;
 
 	utility::vector1< std::list< core::conformation::ResidueCOP > >

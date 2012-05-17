@@ -28,6 +28,7 @@
 #include <protocols/forge/build/BuildInstruction.fwd.hh>
 #include <protocols/forge/build/BuildManager.hh>
 #include <protocols/forge/components/VarLengthBuild.fwd.hh>
+#include <protocols/toolbox/match_enzdes_util/InvrotTree.fwd.hh>
 // AUTO-REMOVED #include <protocols/forge/constraints/SheetConstraintsRCG.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -246,6 +247,11 @@ private: // protocol methods
 	/// @brief set instruction by blueprint
 	bool set_instruction_blueprint( Pose const & pose );
 
+	/// @brief set up folding aroung theozyme
+	/// in a vlb
+	void
+	setup_invrot_tree_in_vlb( VarLengthBuild & vlb, Pose & pose ) const;
+
 
 private: // data
 
@@ -306,6 +312,8 @@ private: // data
 	/// @brief Entire sequence except for rebuilding regions become poly Val
 	bool use_poly_val_;
 
+	/// @brief in case we're folding up around a ligand
+	protocols::toolbox::match_enzdes_util::InvrotTreeOP invrot_tree_;
 
 private: // per-stage movers
 

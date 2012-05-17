@@ -45,10 +45,15 @@
 
 #include <protocols/forge/constraints/NtoC_RCG.hh>
 #include <protocols/forge/constraints/ConstraintFileRCG.hh>
+#include <protocols/forge/constraints/InvrotTreeRCG.hh>
 #include <protocols/fldsgn/SheetConstraintsRCG.hh>
 #include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
 // AUTO-REMOVED #include <protocols/forge/remodel/RemodelLoopMover.hh>
 #include <protocols/forge/build/SegmentRebuild.hh>
+#include <protocols/toolbox/match_enzdes_util/AlignPoseToInvrotTreeMover.hh>
+#include <protocols/toolbox/match_enzdes_util/AllowedSeqposForGeomCst.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
+#include <protocols/toolbox/match_enzdes_util/InvrotTree.hh>
 
 #include <protocols/moves/DataMap.hh>
 #include <protocols/toolbox/pose_manipulation.hh>
@@ -105,7 +110,8 @@ BluePrintBDR::BluePrintBDR() :
 	constraint_file_( "" ),
 	dump_pdb_when_fail_( "" ),
 	rmdl_attempts_( 1 ),
-	use_poly_val_( true )
+	use_poly_val_( true ),
+	invrot_tree_(NULL)
 {}
 
 /// @brief value constructor
@@ -125,7 +131,8 @@ BluePrintBDR::BluePrintBDR( String const & filename, bool const ss_from_blueprin
 	constraint_file_( "" ),
 	dump_pdb_when_fail_( "" ),
 	rmdl_attempts_( 1 ),
-	use_poly_val_( true )
+	use_poly_val_( true ),
+	invrot_tree_(NULL)
 {
 	set_blueprint( filename );
 }
@@ -148,7 +155,8 @@ BluePrintBDR::BluePrintBDR( BluePrintOP const & blueprintOP, bool const ss_from_
 	constraint_file_( "" ),
 	dump_pdb_when_fail_( "" ),
 	rmdl_attempts_( 1 ),
-	use_poly_val_( true )
+	use_poly_val_( true ),
+	invrot_tree_(NULL)
 {}
 
 /// @Brief copy constructor
@@ -171,7 +179,8 @@ BluePrintBDR::BluePrintBDR( BluePrintBDR const & rval ) :
 	constraint_file_( rval.constraint_file_ ),
 	dump_pdb_when_fail_( rval.dump_pdb_when_fail_ ),
 	rmdl_attempts_( rval.rmdl_attempts_ ),
-	use_poly_val_( rval.use_poly_val_ )
+	use_poly_val_( rval.use_poly_val_ ),
+	invrot_tree_(rval.invrot_tree_)
 {
 	if ( rval.vlb_.get() ) {
 		vlb_ = new VarLengthBuild( *rval.vlb_ );
@@ -386,6 +395,20 @@ BluePrintBDR::set_instruction_blueprint( Pose const & pose )
 	return true;
 } // set_build_instruction
 
+void
+BluePrintBDR::setup_invrot_tree_in_vlb( VarLengthBuild & vlb, Pose & pose  ) const
+{
+
+	toolbox::match_enzdes_util::AllowedSeqposForGeomCstOP allowed_seqpos = new protocols::toolbox::match_enzdes_util::AllowedSeqposForGeomCst();
+	allowed_seqpos->initialize_from_command_line( &pose ); //this could be moved somewhere else to only initialize once, but probably not that important
+	toolbox::match_enzdes_util::AlignPoseToInvrotTreeMoverOP align_pose( new toolbox::match_enzdes_util::AlignPoseToInvrotTreeMover( invrot_tree_, allowed_seqpos ));
+
+	forge::constraints::InvrotTreeRCGOP invrot_rcg( new forge::constraints::InvrotTreeRCG( invrot_tree_, allowed_seqpos ) );
+	vlb.add_rcg( invrot_rcg );
+	vlb.clear_setup_movers(); //safety
+	vlb.add_setup_mover( align_pose );
+}
+
 
 /// @brief apply defined moves to given Pose
 void
@@ -531,6 +554,10 @@ bool BluePrintBDR::centroid_build(
 		vlb_->add_rcg( cst );
 	}
 
+	if( invrot_tree_ ){
+		this->setup_invrot_tree_in_vlb( *vlb_, pose );
+	}
+
 	vlb_->scorefunction( sfx_ );
 	vlb_->vall_memory_usage( protocols::forge::components::VLB_VallMemoryUsage::CLEAR_IF_CACHING_FRAGMENTS );
 	vlb_->use_fullmer( use_fullmer_ );
@@ -636,6 +663,14 @@ BluePrintBDR::parse_my_tag(
 	// entire sequence except for rebuilding parts become poly-Val ( default true )
 	use_poly_val_ = tag->getOption<bool>( "use_poly_val", 1 );
 
+	//in case we'ref folding up around a ligand
+	if( tag->hasOption("invrot_tree")){
+		String cstfilename = tag->getOption<String>( "invrot_tree", "");
+		toolbox::match_enzdes_util::EnzConstraintIOOP enzcst_io( new toolbox::match_enzdes_util::EnzConstraintIO( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) ) );
+		enzcst_io->read_enzyme_cstfile( cstfilename );
+		invrot_tree_ = new protocols::toolbox::match_enzdes_util::TheozymeInvrotTree( enzcst_io );
+		invrot_tree_->generate_targets_and_inverse_rotamers();
+	}
 }
 
 

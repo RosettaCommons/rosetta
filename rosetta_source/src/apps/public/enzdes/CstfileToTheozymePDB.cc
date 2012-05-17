@@ -21,6 +21,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/match.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/util.hh>
 #include <protocols/toolbox/match_enzdes_util/AlignPoseToInvrotTreeMover.hh>
 #include <protocols/toolbox/match_enzdes_util/AllowedSeqposForGeomCst.hh>
@@ -66,16 +67,18 @@ create_theozyme_pdb()
 
 	//stealth functionality: can also use this app to read in a pose
 	//and align it to the theozyme
-	utility::vector1< std::string > input_files = basic::options::start_files();
-	if( input_files.size() == 1){
-		core::pose::PoseOP pose = new core::pose::Pose();
-		core::import_pose::pose_from_pdb( *pose, input_files[ 1 ] );
-		protocols::toolbox::match_enzdes_util::AllowedSeqposForGeomCstOP allowed_seqpos = new protocols::toolbox::match_enzdes_util::AllowedSeqposForGeomCst();
-		allowed_seqpos->initialize_from_command_line( pose );
-		protocols::toolbox::match_enzdes_util::AlignPoseToInvrotTreeMover align_pose( invrot_tree, allowed_seqpos);
+	if( basic::options::option[basic::options::OptionKeys::in::file::s].user() ){
+		utility::vector1< std::string > input_files = basic::options::start_files();
+		if( input_files.size() == 1){
+			core::pose::PoseOP pose = new core::pose::Pose();
+			core::import_pose::pose_from_pdb( *pose, input_files[ 1 ] );
+			protocols::toolbox::match_enzdes_util::AllowedSeqposForGeomCstOP allowed_seqpos = new protocols::toolbox::match_enzdes_util::AllowedSeqposForGeomCst();
+			allowed_seqpos->initialize_from_command_line( pose );
+			protocols::toolbox::match_enzdes_util::AlignPoseToInvrotTreeMover align_pose( invrot_tree, allowed_seqpos);
 
-		align_pose.apply( *pose );
-		pose->dump_pdb("theozyme_tree_align.pdb");
+			align_pose.apply( *pose );
+			pose->dump_pdb("theozyme_tree_align.pdb");
+		}
 	}
 }
 

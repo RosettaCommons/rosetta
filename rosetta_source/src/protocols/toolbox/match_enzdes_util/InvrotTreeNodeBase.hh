@@ -110,7 +110,7 @@ public:
   core::scoring::constraints::ConstraintCOP
   generate_constraints(
     core::pose::Pose const & pose,
-    AllowedSeqposForGeomCstOP geomcst_seqpos
+    AllowedSeqposForGeomCstCOP geomcst_seqpos
   ) const = 0;
 
 

@@ -49,7 +49,7 @@ InvrotTarget::~InvrotTarget(){}
 core::scoring::constraints::ConstraintCOP
 InvrotTarget::generate_constraints(
     core::pose::Pose const & pose,
-    AllowedSeqposForGeomCstOP geomcst_seqpos
+    AllowedSeqposForGeomCstCOP geomcst_seqpos
 ) const
 {
 	if( next_nodes_.size() == 0 ) utility_exit_with_message("generate constraints function called on InvrotTraget that's not pointing to any next_nodes, something's wrong somewhere.");

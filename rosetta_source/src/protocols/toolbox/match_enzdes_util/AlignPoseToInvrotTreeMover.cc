@@ -26,13 +26,16 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/match.OptionKeys.gen.hh>
 
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/types.hh>
+#include <core/util/SwitchResidueTypeSet.hh>
 
 #include <basic/Tracer.hh>
 
@@ -123,20 +126,64 @@ AlignPoseToInvrotTreeMover::apply( core::pose::Pose & pose ){
   //2. now we need to add the target residues to the aligned pose,
   //and try to setup the fold tree the right way
   //2a
-  //std::list<core::conformation::ResidueCOP>::const_iterator target_it( all_invrots[ picked_collector ]->invrots()[0].begin() );
-  //Size first_target_seqpos( pose.total_residue() + 1 );
-  //pose.append_residue_by_jump( **target_it, pose.total_residue() );
-  //target_it++;
-  //Size jump_num = pose.num_jump();
-  //for( ; target_it != all_invrots[ picked_collector ]->invrots()[0].end(); ++target_it){
-  //  pose.append_residue_by_jump( **target_it, first_target_seqpos );
-  //}
+  std::list<core::conformation::ResidueCOP>::const_iterator target_it( all_invrots[ picked_collector ]->invrots()[0].begin() );
+  Size first_target_seqpos( pose.total_residue() + 1 );
+  //have to add something to switch target res to centroid here
+  core::conformation::ResidueCOP ligres( this->switch_residue_type_set( *target_it,  pose.residue(1).residue_type_set().name()) );
+
+  pose.append_residue_by_jump( *ligres, pose.total_residue() );
+  target_it++;
+  Size jump_num = pose.num_jump();
+  for( ; target_it != all_invrots[ picked_collector ]->invrots()[0].end(); ++target_it){
+    core::conformation::ResidueCOP ligres( this->switch_residue_type_set( *target_it,  pose.residue(1).residue_type_set().name()) );
+    pose.append_residue_by_jump( *ligres, first_target_seqpos );
+  }
 
   //2b. fold tree setup
+  //TR << "pose fold tree before mod: " << pose.fold_tree() << std::endl; //debug
+  this->setup_foldtree_around_anchor_invrot( pose, picked_seqpos, first_target_seqpos );
+  //TR << "pose fold tree after mod: " << pose.fold_tree() << std::endl; //debug
 
 }
 
 
+/// @details the simplest possible implementation for now
+/// assumes the pose only has one chain
+void
+AlignPoseToInvrotTreeMover::setup_foldtree_around_anchor_invrot(
+  core::pose::Pose & pose,
+   Size const anchor_seqpos,
+  Size const first_target_seqpos ) const
+{
+
+  using namespace core::kinematics;
+  FoldTree new_fold_tree;
+  new_fold_tree.add_edge( anchor_seqpos, 1, Edge::PEPTIDE );
+  new_fold_tree.add_edge( anchor_seqpos, first_target_seqpos - 1, Edge::PEPTIDE );
+  Size num_jumps_to_add( pose.total_residue() - first_target_seqpos + 1 );
+  for( Size i =0; i < num_jumps_to_add; ++i ){
+    new_fold_tree.add_edge( anchor_seqpos, first_target_seqpos +i, i + 1 );
+  }
+  if( !new_fold_tree.check_fold_tree() ) {
+    utility_exit_with_message("Invalid fold tree after trying to set up around invrot anchor residue");
+  }
+  pose.fold_tree( new_fold_tree );
+}
+
+core::conformation::ResidueCOP
+AlignPoseToInvrotTreeMover::switch_residue_type_set(
+  core::conformation::ResidueCOP residue,
+  std::string const desired_restype_set_name
+) const{
+
+  if( desired_restype_set_name != residue->residue_type_set().name() ){
+    core::pose::PoseOP temp_pose = new core::pose::Pose();
+    temp_pose->append_residue_by_jump( *residue, (Size) 0 );
+    core::util::switch_to_residue_type_set( *temp_pose, desired_restype_set_name );
+    residue = &(temp_pose->residue(1));
+  }
+  return residue;
+}
 
 }
 }

@@ -33,6 +33,7 @@ sources = {
 	"protocols/forge/constraints": [
 		"ConstraintFileRCG",
 		"InverseRotamersRCG",
+		"InvrotTreeRCG",
 		"NtoC_RCG",
 	],
 	"protocols/forge/methods": [

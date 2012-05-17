@@ -222,6 +222,19 @@ VarLengthBuild::add_rcg( RemodelConstraintGeneratorOP rcg )
 	rcgs_.push_back( rcg );
 }
 
+void
+VarLengthBuild::clear_setup_movers() {
+	setup_movers_.clear();
+}
+
+void
+VarLengthBuild::add_setup_mover( moves::MoverOP mover_in )
+{
+	//maybe we should clone the mover?
+	setup_movers_.push_back( mover_in );
+}
+
+
 /// @brief clear any currently cached fragments
 void VarLengthBuild::clear_fragments() {
 	fragments_picked_ = false;
@@ -362,6 +375,12 @@ void VarLengthBuild::apply( Pose & pose ) {
 				pose.set_omega(i, 180);
 			}
 		}
+	}
+
+	//flo may '12, give user supplied setup movers
+	//a chance to modify the pose before centroid building happens
+	for( 	utility::vector1< moves::MoverOP >::iterator mover_it( setup_movers_.begin() ); mover_it != setup_movers_.end(); ++mover_it ){
+		(*mover_it)->apply( pose );
 	}
 
 	// centroid level protocol
