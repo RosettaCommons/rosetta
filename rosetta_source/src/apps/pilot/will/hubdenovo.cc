@@ -1075,7 +1075,7 @@ struct HubDenovo {
 
 		return bounde - ubounde;
 	}
-	void run(Size NITER = 9999999999) {
+	void run(Size NITER = 999999999) {
 		using namespace core::scoring;
 		for(int iter = 1; iter < (int)NITER; ++iter) {
 			std::cout << "!!!!!!!!!!!!!!!!!!! " << iter << " " << sf3->get_weight(core::scoring::atom_pair_constraint) << std::endl;
