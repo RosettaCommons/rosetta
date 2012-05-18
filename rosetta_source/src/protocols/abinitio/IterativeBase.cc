@@ -1783,7 +1783,6 @@ void IterativeBase::restore_status( std::istream& is ) {
 }
 
 void IterativeBase::save_status( std::ostream& os ) const {
-	basic::show_time( tr,  "save "+name()+" status");
 	EvaluatedArchive::save_status( os );
 	os << "IterationStage: " << stage_;
 	os << "   first_batch_this_stage: " << first_batch_this_stage_;

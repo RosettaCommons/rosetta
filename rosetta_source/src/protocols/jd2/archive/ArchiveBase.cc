@@ -240,6 +240,7 @@ void ArchiveBase::save_to_file( std::string suffix ) {
 	rename( tmp_filename.c_str(), filename.c_str() );
 
 	utility::io::ozstream status( dirname+"/STATUS" );
+	basic::show_time( tr,  "save "+name()+" status");
 	save_status( status );
 }
 

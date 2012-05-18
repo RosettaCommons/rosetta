@@ -305,13 +305,14 @@ ArchiveManager::go( ArchiveBaseOP archive )
 	bool stop( false );
 	bool print_status( true );
 	while ( !stop || unfinished_batches() ) {
-		basic::show_time( tr,  "manager main msg-loop: probe for message..." );
-		if ( print_status ) {
+
+		if ( print_status && tr.Debug.visible() ) {
 			tr.Debug << "probing for message in ArchiveManager" << std::endl;
 			tr.Debug << "\nSTATUS: " << (stop ? "STOP send: " : "" ) << "  ------ unfinished_batches: " << unfinished_batches() << std::endl;
 			tr.Debug << "POOL_STATUS: " << std::endl;
 			theArchive_->save_status( tr.Debug );
 			tr.Debug << "END_STATUS\n\n"<< std::endl;
+			basic::show_time( tr,  "manager main msg-loop: probe for message..." );
 			print_status = false;
 		}
 		//is there a message ?
@@ -342,9 +343,9 @@ ArchiveManager::go( ArchiveBaseOP archive )
 				int merrno = MPI_Recv( &buf, 6, MPI_INT, jd_master_rank_, MPI_ARCHIVE_TAG, MPI_COMM_WORLD, &status );
 				if ( merrno != MPI_SUCCESS ) tr.Error << "ERROR: MPI_Recv error " << std::endl;
 #endif
-				basic::show_time( tr,  "manager main msg-loop: received message..." );
+				//				basic::show_time( tr,  "manager main msg-loop: received message..." );
 			}	else { //nothing received
-				basic::show_time( tr,  "manager main msg-loop: no message: idle..." );
+				//				basic::show_time( tr,  "manager main msg-loop: no message: idle..." );
 				idle();
 				continue;
 			}
