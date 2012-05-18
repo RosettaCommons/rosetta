@@ -131,7 +131,7 @@ main( int argc, char * argv [] ) {
 	std::string output_fn = option[ out::file::alignment ]();
 	utility::io::ozstream output( output_fn );
 	SWAligner sw_align;
-	ScoringSchemeOP ss( new SimpleScoringScheme( 120, 0, -100, 0 ) );
+	ScoringSchemeOP ss( new SimpleScoringScheme( 120, 0, -140, 0 ) );
 	Size query_index_ = 1 ;
 	Size template_index_ = 2;
 
@@ -165,6 +165,7 @@ main( int argc, char * argv [] ) {
 				Pose template_pose;
 				template_pose = pose_it->second;
 				string pdbTemplate_ungapped(template_pose.sequence());
+
 				SequenceOP t_target_seq( new Sequence(
 					target_ungapped,
 					it->sequence(1)->id(),
@@ -187,8 +188,7 @@ main( int argc, char * argv [] ) {
 					template_id_full,
 					1
 				));
-
-
+				//SequenceAlignment intermediate = sw_align.align( t_align_seq, t_pdb_seq, ss );
 				SequenceAlignment intermediate = sw_align.align( t_align_seq, t_pdb_seq, ss );
 				if ( intermediate.identities() != intermediate.length() ) {
 					tr.Warning << "Mismatch between sequence from alignment! Picked up error ";
