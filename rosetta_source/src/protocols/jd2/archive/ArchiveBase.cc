@@ -53,6 +53,7 @@ static basic::Tracer tr("protocols.jd2.Archive");
 using basic::mem_tr;
 // Utility headers
 #include <basic/options/option_macros.hh>
+#include <basic/prof.hh>
 
 #include <utility/vector1.hh>
 #include <boost/algorithm/string/erase.hpp>
