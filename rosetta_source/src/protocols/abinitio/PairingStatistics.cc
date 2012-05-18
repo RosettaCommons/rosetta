@@ -112,6 +112,7 @@ PairingStatEntry::PairingStatEntry( core::scoring::dssp::StrandPairing const& st
 bool PairingStatEntry::add_pairing( core::scoring::dssp::StrandPairing const& new_strand, Model const& id ) {
   bool success( true );
   if ( models_.size() ) {
+		//queries 'mergeable'
     success = strand_pairing_.merge( new_strand, true /*do_merge */);
   } else {
     strand_pairing_ = new_strand;
@@ -132,16 +133,50 @@ bool PairingStatEntry::has_model( std::string const& model ) const {
 	return false;
 }
 
+bool PairingStatEntry::operator==( PairingStatEntry const& other) const {
+	return strand_pairing_.mergeable( other.pairing() );
+}
+
+bool PairingStatEntry::operator!=( PairingStatEntry const& other) const {
+	return !strand_pairing_.mergeable( other.pairing() );
+}
+
+bool _MergableEntries::operator() (core::scoring::dssp::StrandPairing const& p1, core::scoring::dssp::StrandPairing const& p2) const {
+	return p1.mergeable( p2 );
+}
+
+void PairingStatistics::add_entry(core::scoring::dssp::StrandPairing const& ps, Model const& id ) {
+	StatEntries::iterator itentry = entries_.find( ps );
+	bool merged( false );
+	if ( itentry != entries_.end() ) {
+		//			tr.Trace << "found that it matches with " << itentry->first << std::endl;
+		merged = itentry->second.add_pairing( ps, id );
+		//			if (!merged) tr.Trace << "strangely couldn't merge the matched one..."<< std::endl;
+		//			else tr.Trace << "new merged strand is " << itentry->second.pairing() << std::endl;
+		core::scoring::dssp::StrandPairing const& key( itentry->first );
+		core::scoring::dssp::StrandPairing const& new_pairing( itentry->second.pairing() );
+		if ( merged && ( !entries_.key_eq()( new_pairing, key ) ) ) {
+			core::scoring::dssp::StrandPairing new_pairing( itentry->second.pairing() ); //need a copy
+			entries_.erase( itentry );
+			add_entry( new_pairing, id );
+			//			entries_[ itentry->second.pairing() ] = itentry->second;
+		}
+	}
+	if ( !merged ) entries_[ ps ]=PairingStatEntry( ps, id );
+		//for ( StatEntries::iterator itentry = entries_.begin(), eitentry = entries_.end();
+		//	  itentry != eitentry && !merged; ++itentry ) {
+		//      merged = itentry->add_pairing( *it, id );
+		//    }
+}
+
 void PairingStatistics::add_topology( core::scoring::dssp::StrandPairingSet const& topology, Model const& id ) {
 	//	if (! topology.size() ) return; //also add empty sets  -- otherwise the modelname floats around and can't be found in this list
   for ( core::scoring::dssp::StrandPairingSet::const_iterator it = topology.begin(), eit = topology.end();
 	it != eit; ++it  ) {
     bool merged ( false );
-    for ( StatEntries::iterator itentry = entries_.begin(), eitentry = entries_.end();
-	  itentry != eitentry && !merged; ++itentry ) {
-      merged = itentry->add_pairing( *it, id );
-    }
-    if ( !merged ) entries_.push_back( PairingStatEntry( *it, id ) );
+		tr.Trace << "adding stand pairing to hash.. " << *it << std::endl;
+
+										 //.push_back( PairingStatEntry( *it, id ) );
   }
   topols_[ id ] = topology;
 }
@@ -170,12 +205,16 @@ PairingStatistics::PairingStatistics( core::scoring::dssp::StrandPairingSet cons
 }
 
 core::Real PairingStatistics::strand_weight( core::scoring::dssp::StrandPairing const& pairing ) const {
-  for ( StatEntries::const_iterator entry= entries_.begin(), eentry = entries_.end();
-	entry != eentry; ++entry ) {
-    if ( entry->compatible( pairing ) ) {
-      return entry->weight();
-    }
-  }
+	StatEntries::const_iterator itentry = entries_.find( pairing );
+	if ( itentry != entries_.end() ) {
+		return itentry->second.weight();
+	}
+	//  for ( StatEntries::const_iterator entry= entries_.begin(), eentry = entries_.end();
+	//	entry != eentry; ++entry ) {
+	//    if ( entry->compatible( pairing ) ) {
+	//      return entry->weight();
+	//    }
+	//  }
   return 0.0;
 }
 
@@ -189,6 +228,7 @@ core::Real PairingStatistics::weight( Model id ) const {
 }
 
 void PairingStatistics::compute_model_weights(  ModelFreq& model_freq ) {
+	Real const contact_order_weight( basic::options::option[ basic::options::OptionKeys::jumps::contact_score ] );
   std::list< std::pair< core::Real, Model > > weight_list;
   for ( Topologies::const_iterator top = topols_.begin(), etop=topols_.end();
 	top != etop; ++top ) {
@@ -198,19 +238,28 @@ void PairingStatistics::compute_model_weights(  ModelFreq& model_freq ) {
     for ( core::scoring::dssp::StrandPairingSet::const_iterator pairing = top->second.begin(),
 	    epairing = top->second.end(); pairing != epairing; ++pairing ) {
       // find pairing in entries
-      for ( StatEntries::iterator entry= entries_.begin(), eentry = entries_.end();
-	    entry != eentry; ++entry ) {
-				if ( entry->compatible( *pairing ) ) {
-					Real const contact_order_weight( basic::options::option[ basic::options::OptionKeys::jumps::contact_score ] );
-					Real const weight( 1.0/norm * entry->frequency() * ( entry->size()-1.0
-							+ contact_order_weight * ( std::max( 0, (int) entry->contact_order() - 20)) ) );
-					entry->set_weight( weight );//so far only used for output later on
-					score += weight;
-					break;
-				}
-      }
-    } // added score for each pairing
-    weight_list.push_back( std::make_pair( score, top->first ) );
+			StatEntries::iterator itentry = entries_.find( *pairing );
+			if ( itentry != entries_.end() ) {
+				Real const weight( 1.0/norm * itentry->second.frequency() * ( itentry->second.size()-1.0
+						+ contact_order_weight * ( std::max( 0, (int) itentry->second.contact_order() - 20)) ) );
+				itentry->second.set_weight( weight );//so far only used for output later on
+				score += weight;
+			}
+		}
+//
+//       for ( StatEntries::iterator entry= entries_.begin(), eentry = entries_.end();
+// 	    entry != eentry; ++entry ) {
+// 				if ( entry->compatible( *pairing ) ) {
+// 					Real const contact_order_weight( basic::options::option[ basic::options::OptionKeys::jumps::contact_score ] );
+// 					Real const weight( 1.0/norm * entry->frequency() * ( entry->size()-1.0
+// 							+ contact_order_weight * ( std::max( 0, (int) entry->contact_order() - 20)) ) );
+// 					entry->set_weight( weight );//so far only used for output later on
+// 					score += weight;
+// 					break;
+// 				}
+//       }
+    //} // added score for each pairing
+		weight_list.push_back( std::make_pair( score, top->first ) );
     //		weights_[ top->first ] = score; //also want the score in a map NAME --> score
   } // score for each model/topology
   weight_list.sort();
@@ -318,7 +367,7 @@ std::istream& operator>> ( std::istream& is, PairingStatEntry& ps ) {
 std::ostream& operator<< (std::ostream& out, StatEntries const& ps ) {
   for ( StatEntries::const_iterator it = ps.begin(), eit = ps.end();
 				it != eit; ++it ) {
-		out << *it << "\n";
+		out << it->second << "\n";
   }
 	return out;
 }
@@ -327,7 +376,7 @@ std::istream& operator>> (std::istream& is, StatEntries& pslist) {
 	pslist.clear();
 	PairingStatEntry ps;
 	while ( is >> ps ) { //not perfect because it fucks up the stream and the next line...
-		pslist.push_back(  ps );
+		pslist[ ps.pairing() ] = ps;
 	}
 	return is;
 }
@@ -342,6 +391,11 @@ std::istream & operator>>( std::istream &is, PairingStatistics &ps) {
 		return is;
 	}
 	tr.Trace << " read " << ntops << " topologies from file... " << std::endl;
+	ps.model_weight_.reserve( ntops+10 );
+
+	//cause the hash-container to have at least ntops*3+10 buckets
+	ps.entries_.rehash( ntops*3+10 );
+
 	for ( Size ct_top = 1; ct_top <= ntops; ct_top++ ) {
 		Size nstrand;
 		Real model_weight;
@@ -352,6 +406,7 @@ std::istream & operator>>( std::istream &is, PairingStatistics &ps) {
 			is.setstate( std::ios_base::failbit );
 			return is;
 		}
+		tr.Debug << "reading strand-topology " << model_ID << " with " << nstrand << " strands... "<<std::endl;
 		core::scoring::dssp::StrandPairingSet sps;
 		for ( Size ct = 1; ct <= nstrand; ct++ ) {
 			core::scoring::dssp::StrandPairing pairing;
@@ -375,23 +430,33 @@ std::istream & operator>>( std::istream &is, PairingStatistics &ps) {
 			sps.push_back( pairing );
 
 			//maintain also an extra list of all individual strand-pairings found... "PairingStatEntry"
-			bool found( false );
-			for ( StatEntries::iterator try_entry= ps.entries_.begin(), eentry = ps.entries_.end();
-						try_entry != eentry; ++try_entry ) {
-				if ( try_entry->compatible( pairing ) ) {
-					found = true;
-					if ( try_entry->weight() != weight ) {
-						tr.Warning << "inconsistent weights in topology " << *try_entry << std::endl;
-						tr.Warning << "new weight: " << weight << " for strand " << pairing << std::endl;
-					}
-					try_entry->models().push_back( model_ID );
-					break;
-				} // if
-			} //for
-			if ( !found ) {
+			//too slow: option one, skip this condensing test -> check memory
+			// otpion two,
+			//	bool found( false );
+			// for ( StatEntries::iterator try_entry= ps.entries_.begin(), eentry = ps.entries_.end();
+// 						try_entry != eentry; ++try_entry ) {
+// 				if ( try_entry->compatible( pairing ) ) {
+// 					found = true;
+// 					if ( try_entry->weight() != weight ) {
+// 						tr.Warning << "inconsistent weights in topology " << *try_entry << std::endl;
+// 						tr.Warning << "new weight is ignored: " << weight << " for strand " << pairing << "which had weight " << try_entry->weight() << std::endl;
+// 					}
+// 					try_entry->models().push_back( model_ID );
+// 					break;
+// 				} // if
+// 			}
+			StatEntries::iterator try_entry = ps.entries_.find( pairing );
+			if ( try_entry != ps.entries_.end() ) {
+				if ( try_entry->second.weight() != weight ) {
+					tr.Warning << "inconsistent weights in topology " << try_entry->second << std::endl;
+					tr.Warning << "new weight is ignored: " << weight << " for strand " << pairing << "which had weight " << try_entry->second.weight() << std::endl;
+				}
+				try_entry->second.models().push_back( model_ID );
+			} else {
 				PairingStatEntry entry( pairing, model_ID );
+				entry.models().reserve( ntops );
 				entry.set_weight( weight );
-				ps.entries_.push_back( entry );
+				ps.entries_[ pairing ] = entry;
 			}
 
 		} // finished reading this topology

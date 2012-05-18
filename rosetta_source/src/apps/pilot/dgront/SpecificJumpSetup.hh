@@ -54,6 +54,10 @@ public:
 	SpecificJumpSetup( Size , core::conformation::SecondaryStructureOP,core::pose::PoseOP,int ,int,int,int);
 	SpecificJumpSetup( Size , core::conformation::SecondaryStructureOP ,core::pose::PoseOP ,int ,int *,int*,int*,int*);
 
+  std::string type_name() const {
+    return "SpecificJumpSetup";
+  }
+
         virtual
         JumpSample
         create_jump_sample( ) const;

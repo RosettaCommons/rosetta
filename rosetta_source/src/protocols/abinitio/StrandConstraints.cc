@@ -277,7 +277,7 @@ void StrandConstraints::add_pairing( PairingStatEntry const& pairing_entry ) {
 StrandConstraints::StrandConstraints( PairingStatistics const& strand_stats ) {
   for ( PairingStatistics::const_iterator it = strand_stats.begin(), eit = strand_stats.end();
 	it != eit; ++it ) {
-    add_pairing( *it );
+    add_pairing( it->second );
   }
   tr.Info << (*this) << std::endl;
 }

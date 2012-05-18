@@ -52,6 +52,9 @@ public:
 	LibraryJumpSetup( Size , SecondaryStructureOP,core::pose::PoseOP,int ,int,int,int);
 	LibraryJumpSetup( Size , SecondaryStructureOP ,core::pose::PoseOP ,int ,int *,int*,int*,int*);
 
+  std::string type_name() const {
+    return "LibraryJumpSetup";
+  }
         virtual
         JumpSample
         create_jump_sample( ) const;

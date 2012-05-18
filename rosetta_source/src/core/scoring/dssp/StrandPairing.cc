@@ -46,7 +46,7 @@
 
 #include <core/scoring/dssp/PairingsList.hh>
 #include <utility/vector1.hh>
-
+#include <boost/functional/hash.hpp>
 
 static basic::Tracer tr("core.scoring.dssp");
 
@@ -123,6 +123,7 @@ void StrandPairingSet::compute( FArray2_float const &hbonds,
 					 && hbonds(j-1,i+1) < threshold ) ) {
 				Size orientation, pleating;
 				get_pleating(pose, i, j, orientation, pleating);
+				//				tr.Debug << "found antiparallel pair at (" << i << "," << j << ") "<<std::endl;
 				add_pairing(i, j, true , pleating );
       } else if (	// parallel bridge
 								 ( hbonds(i-1,j) < threshold
@@ -131,6 +132,7 @@ void StrandPairingSet::compute( FArray2_float const &hbonds,
 									&& hbonds(i,j+1) < threshold ) ) {
 				Size orientation, pleating;
 				get_pleating(pose, i, j, orientation, pleating);
+				//				tr.Debug << "found parallel pair at (" << i << "," << j << ") "<<std::endl;
 				//								tr.Trace << "ben: para phil: " << orientation << std::endl;
 				add_pairing(i,j, false, pleating );
       }
@@ -442,6 +444,21 @@ void StrandPairing::show_internals( std::ostream& out ) const {
 		out << pleating1[ i ] << " ";
 	}
 	out << std::endl;
+}
+
+std::size_t StrandPairing::hash_value() const {
+	std::ostringstream str;
+	str << (antipar ? 'A' : 'P') << '_';
+	core::Size regA, regE;
+	if (antipar) {
+		regA=begin1_ + end2_;
+		regE=end1_ + begin2_;
+	} else {
+		regA=begin2_-begin1_;
+		regE=end2_-end1_;
+	}
+	str << regA << '_' << regE;
+	return boost::hash_value(str.str());
 }
 
 bool StrandPairing::mergeable( const StrandPairing &other ) const {

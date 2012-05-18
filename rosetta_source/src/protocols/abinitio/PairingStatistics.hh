@@ -53,7 +53,7 @@
 
 #include <protocols/abinitio/Templates.fwd.hh>
 #include <utility/vector1.hh>
-
+#include <boost/unordered_map.hpp>
 
 namespace protocols {
 namespace abinitio {
@@ -105,6 +105,8 @@ public:
 
 	friend std::istream& operator>> ( std::istream& is, PairingStatEntry& ps );
 
+	bool operator==(PairingStatEntry const& other) const;
+	bool operator!=(PairingStatEntry const& other) const;
 private:
   ModelList models_;
   core::scoring::dssp::StrandPairing strand_pairing_;
@@ -116,11 +118,38 @@ inline std::ostream& operator<< ( std::ostream& out, PairingStatEntry const& ps 
 	return out;
 }
 
-typedef utility::vector1< PairingStatEntry > StatEntries;
+inline std::size_t hash_value(PairingStatEntry const& val ) {
+	return val.pairing().hash_value();
+}
+inline std::size_t hash_value(core::scoring::dssp::StrandPairing const& val ) {
+	return val.hash_value();
+}
+
+class _MergableEntries {
+public:
+	bool operator() (
+				core::scoring::dssp::StrandPairing const&,
+   			core::scoring::dssp::StrandPairing const&
+	) const;
+};
+class _HashEntry {
+public:
+	std::size_t operator() ( core::scoring::dssp::StrandPairing const& ps) const {
+		return hash_value( ps );
+	}
+};
+
+typedef utility::vector1< PairingStatEntry > StatEntryList;
+typedef boost::unordered_map<
+	core::scoring::dssp::StrandPairing,
+	PairingStatEntry,
+	_HashEntry,
+	_MergableEntries
+	> StatEntries;
 
 class PairingStatistics : public utility::pointer::ReferenceCount {
 public:
-  typedef StatEntries::const_iterator const_iterator;
+	typedef StatEntries::const_iterator const_iterator;
   typedef PairingStatEntry::Model Model; //String ID !!!
   typedef std::map< Model, core::scoring::dssp::StrandPairingSet > Topologies;
   typedef std::map< Model, core::Size > ModelFreq;
@@ -190,7 +219,7 @@ public:
   }
 
 	static void register_options();
-
+	void add_entry(core::scoring::dssp::StrandPairing const& ps, Model const& id );
   void add_topology( core::scoring::dssp::StrandPairingSet const& topology, Model const& id );
 
   void compute_model_weights( ModelFreq& );

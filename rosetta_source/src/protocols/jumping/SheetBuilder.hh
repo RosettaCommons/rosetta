@@ -67,6 +67,10 @@ public:
 	//d'stor
 	virtual ~SheetBuilder();
 
+	std::string type_name() const {
+		return "SheetBuilder";
+	}
+
 	virtual
 	JumpSample
 	create_jump_sample() const;

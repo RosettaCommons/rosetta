@@ -58,6 +58,7 @@ public:
 	~StrandPairing();
 
 	core::Size operator==(const StrandPairing &rhs) const;
+	//	core::Size operator!=(const StrandPairing &rhs) const;
 	core::Size operator<(const StrandPairing &rhs) const;
 
 	core::Size size() const {
@@ -78,7 +79,7 @@ public:
 
 	core::Size get_register() const;
 	void get_all_register_and_bulges( SizeList& regs, SizeList& bulges ) const;
-
+	std::size_t hash_value() const;
 	bool contains(core::Size res) const;
 	bool is_bulge(core::Size res) const;
 	bool is_ladder() const;

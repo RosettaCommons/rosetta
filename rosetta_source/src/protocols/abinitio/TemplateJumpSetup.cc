@@ -220,7 +220,7 @@ TemplateJumpSetup::clean_jumps( JumpSample const& target_jumps ) const {
 		core::scoring::dssp::Pairing target_pairing( target_jumps.get_pairing( (*jump_frame)->start(), (*jump_frame)->stop() ) );
 		bool found( false );
 		for ( PairingStatistics::const_iterator it = strand_stats_->begin(); !found && it != strand_stats_->end(); ++it ) {
-			found =  it->pairing().has_pairing( target_pairing );
+			found =  it->second.pairing().has_pairing( target_pairing );
 		}
 		if ( found ) {
 			filtered_jumps.push_back( target_pairing );//add

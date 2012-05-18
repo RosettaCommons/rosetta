@@ -56,6 +56,9 @@ public:
 		Interval cut_reg_;
 	};
 
+	std::string type_name() const {
+		return "ResiduePairJumpSetup";
+	}
 
 public:
 

@@ -369,7 +369,7 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 		protocols::relax::RelaxProtocolBaseCOP relax_prot = relax_protocol();
 		core::scoring::ScoreFunctionCOP last_scorefxn_cop = relax_prot->get_scorefxn();
 		last_scorefxn = last_scorefxn_cop->clone();
-	}
+	} //switched to fullatom
 
 
 	{// apply a mover which calculates only repulsive energy on designate residues

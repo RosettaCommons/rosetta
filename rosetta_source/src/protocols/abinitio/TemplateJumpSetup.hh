@@ -59,6 +59,9 @@ public:
 	);
 
 	~TemplateJumpSetup();
+	std::string type_name() const {
+		return "TemplateJumpSetup";
+	}
 
 	virtual
   jumping::JumpSample create_jump_sample() const;

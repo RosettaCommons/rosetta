@@ -96,6 +96,9 @@ public:
 	///@brief take from a given JumpSample only those Jumps, which could also have been created by create_jump_sample()
 	virtual
 	JumpSample clean_jumps( JumpSample const& ) const = 0;
+
+	virtual std::string type_name() const = 0;
+
 };
 
 
@@ -114,7 +117,9 @@ public:
 		Interval cut_reg_;
 	};
 
-
+	std::string type_name() const {
+		return "JumpSetup";
+	}
 public:
 
 	typedef utility::vector1< JumpDef >::const_iterator const_iterator;
@@ -243,6 +248,10 @@ public:
 		Interval jump_;
 		core::Real weight_;
 	};
+
+	std::string type_name() const {
+		return "JumpSelector";
+	}
 
 public:
 	typedef utility::vector1< JumpWeightDef > JumpList;

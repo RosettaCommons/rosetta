@@ -61,7 +61,9 @@ public:
 protected:
 	//default do nothing always use input_sheet_sizes_ as sheet_sizes_.
 	virtual SheetTopology create_new_random_topol() const;
-
+	std::string type_name() const {
+		return "RandomSheetBuilder";
+	}
 private:
   SheetTopology input_sheet_sizes_;
 

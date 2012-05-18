@@ -48,7 +48,7 @@
 
 #include <core/fragment/Frame.hh>
 #include <utility/vector1.hh>
-
+#include <typeinfo>
 
 // option key includes
 
@@ -155,11 +155,14 @@ void JumpClaimer::init_jumps() {
 		Size attempts( 10 );
 		do {
 			current_jumps_ = jump_def_->create_jump_sample();
+			if ( tr.Debug.visible() && !current_jumps_.is_valid() ) {
+				tr.Debug << "was not able to make fold-tree for " << current_jumps_ << std::endl;
+			}
 		} while ( !current_jumps_.is_valid() && attempts-- );
 	}
 
 	if ( !current_jumps_.is_valid() ) {
-		throw utility::excn::EXCN_BadInput("not able to build valid fold-tree in JumpClaimer");
+		throw utility::excn::EXCN_BadInput("not able to build valid fold-tree from a "+jump_def_->type_name()+" in 10 attempts in JumpClaimer");
 	}
 	tr.Debug << "current_jumps " << current_jumps_ << std::endl;
 
