@@ -111,7 +111,7 @@ int main( int argc, char** argv ) {
 		if ( tr.Debug.visible() ) {
 			PairingList pl;
 			strand_pairings.get_beta_pairs( pl );
-			tr.Debug << pl;
+			tr.Debug << pl << std::endl;
 		}
 	}
 	if ( option[ in::file::silent ].user() ) {
@@ -135,7 +135,7 @@ int main( int argc, char** argv ) {
 
 			// get strand pairings
 			StrandPairingSet strand_pairings( pose );
-			//std::cout << strand_pairings << std::endl;
+			tr.Debug << strand_pairings << std::endl;
 			tag = ObjexxFCL::right_string_of( ct, 4, '0');
 			ps.add_topology( strand_pairings, tag );
 			model_freq[ tag.substr(0, 4) ] += 1;
@@ -164,7 +164,7 @@ int main( int argc, char** argv ) {
 		if ( tr.Debug.visible() ) {
 			PairingList pl;
 			sp.get_beta_pairs( pl );
-			tr.Debug << pl;
+			tr.Debug << pl << std::endl;
 		}
 		if ( option[ in::ref_top ].user() ) { ///Compute a compatibility score
 			utility::io::izstream is( option[ in::ref_top ] );
