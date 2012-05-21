@@ -32,6 +32,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/scoring/constraints/util.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -490,6 +491,10 @@ public:
 		//add constraints; protected internally if no constraints
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose( starting_pose_ );
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *fullatom_scorefunction_ );
+		core::scoring::constraints::ConstraintSetCOP cst_set(starting_pose_.constraint_set());
+		if(cst_set && false){
+			cst_set->show_definition(TR, starting_pose_);
+		}
 	}
 
 	virtual ~UBQ_E2Mover(){};
