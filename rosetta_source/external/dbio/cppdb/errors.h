@@ -18,6 +18,7 @@
 #ifndef CPPDB_ERRORS_H
 #define CPPDB_ERRORS_H
 #include <stdexcept>
+#include <string>
 
 namespace cppdb {
 	///

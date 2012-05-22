@@ -19,7 +19,7 @@
 #ifdef CPPDB_WITH_SQLITE3
 # define CPPDB_SOURCE
 #endif
-#include <sqlite3/sqlite3.h>
+#include <sqlite3.h>
 
 #include <cppdb/backend.h>
 #include <cppdb/errors.h>
@@ -31,6 +31,7 @@
 #include <map>
 #include <stdlib.h>
 #include <string.h>
+#include <vector>
 
 // Boost Headers
 #include <boost/uuid/uuid.hpp>
@@ -93,15 +94,24 @@ namespace cppdb {
 				v=tmp;
 				return true;
 			}
-	
-            virtual bool fetch(int col,boost::uuids::uuid &v) 
+
+			virtual bool fetch(int col,boost::uuids::uuid &v) 
 			{
-                std::string s;
-                bool result = fetch(col,s);
-                boost::uuids::string_generator gen;
-                v = gen(s);
-                return result;
+				std::stringstream ss;
+				bool result = fetch(col,ss);
+				std::string buffer = ss.str();
+				std::string hex = "0123456789ABCDEF"; 
+				std::string uuid_string = std::string(32, '0'); 
+				for(int pos = 0; pos < 16; pos++){ 
+					uuid_string[pos*2] = hex[(buffer[pos] >> 4) & 0xF]; 
+					uuid_string[(pos*2) + 1] = hex[(buffer[pos]) & 0x0F]; 
+				} 
+
+				boost::uuids::string_generator gen;
+				v = gen(uuid_string);
+				return result;
 			}
+	
 			virtual bool fetch(int col,short &v) 
 			{
 				return do_fetch(col,v);
@@ -245,29 +255,33 @@ namespace cppdb {
 					reset_=true;
 				}
 			}
-            virtual void bind(int col,boost::uuids::uuid const &v) 
+			virtual void bind(int col,boost::uuids::uuid const &v) 
 			{
-				bind(col, to_string(v));
+				reset_stat();
+				std::ostringstream ss;
+				std::copy(v.begin(), v.end(), std::ostream_iterator<const unsigned char>(ss));
+				std::string tmp = ss.str();
+				check_bind(sqlite3_bind_text(st_,col,tmp.c_str(),tmp.size(),SQLITE_TRANSIENT));
 			}
 			virtual void bind(int col,std::string const &v) 
 			{
 				reset_stat();
-				check_bind(sqlite3_bind_text(st_,col,v.c_str(),v.size(),SQLITE_TRANSIENT));
+				check_bind(sqlite3_bind_text(st_,col,v.c_str(),v.size(),SQLITE_STATIC));
 			}
 			virtual void bind(int col,char const *s)
 			{
 				reset_stat();
-				check_bind(sqlite3_bind_text(st_,col,s,-1,SQLITE_TRANSIENT));
+				check_bind(sqlite3_bind_text(st_,col,s,-1,SQLITE_STATIC));
 			}
 			virtual void bind(int col,char const *b,char const *e) 
 			{
 				reset_stat();
-				check_bind(sqlite3_bind_text(st_,col,b,e-b,SQLITE_TRANSIENT));
+				check_bind(sqlite3_bind_text(st_,col,b,e-b,SQLITE_STATIC));
 			}
 			virtual void bind(int col,std::tm const &v)
 			{
 				reset_stat();
-				std::string tmp = format_time(v);
+				std::string tmp = cppdb::format_time(v);
 				check_bind(sqlite3_bind_text(st_,col,tmp.c_str(),tmp.size(),SQLITE_TRANSIENT));
 			}
 			virtual void bind(int col,std::istream &v) 
@@ -389,6 +403,7 @@ namespace cppdb {
 			sqlite3 *conn_;
 			bool reset_;
 			std::string sql_query_;
+			std::vector<std::string> uuids_;
 		};
 		class connection : public backend::connection {
 		public:
@@ -416,17 +431,32 @@ namespace cppdb {
 
 				std::string vfs = ci.get("vfs");
 				char const *cvfs = vfs.empty() ? (char const *)(0) : vfs.c_str();
-
-				if(sqlite3_open_v2(dbname.c_str(),&conn_,flags,cvfs)!=SQLITE_OK) {
-					if(conn_ == 0) {
-						throw cppdb_error("sqlite3:failed to create db object");
+				
+				int busy = ci.get("busy_timeout",-1);
+				
+				try {
+					if(sqlite3_open_v2(dbname.c_str(),&conn_,flags,cvfs)!=SQLITE_OK) {
+						if(conn_ == 0) {
+							throw cppdb_error("sqlite3:failed to create db object");
+						}
+						
+						throw cppdb_error(std::string("sqlite3:Failed to open connection:")
+								+ sqlite3_errmsg(conn_));
+						
+						if(busy!=-1 && sqlite3_busy_timeout(conn_,busy)!=0) {
+							throw cppdb_error(std::string("sqlite3:Failed to set timeout:")
+									+ sqlite3_errmsg(conn_));
+						}
 					}
-					std::string error_message;
-					try { error_message = sqlite3_errmsg(conn_); }catch(...){}
-					sqlite3_close(conn_);
-					conn_ = 0;
-					throw cppdb_error("sqlite3:Failed to open connection:" + error_message);
 				}
+				catch(...) {
+					if(conn_) {
+						sqlite3_close(conn_);
+						conn_ = 0;
+					}
+					throw;
+				}
+				
 			}
 			virtual ~connection() 
 			{

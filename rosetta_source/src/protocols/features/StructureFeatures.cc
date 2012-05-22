@@ -81,8 +81,9 @@ StructureFeatures::~StructureFeatures(){}
 string
 StructureFeatures::type_name() const { return "StructureFeatures"; }
 
-string
-StructureFeatures::schema() const {
+void
+StructureFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
+	
 	using namespace basic::database::schema_generator;
 
 	//Don't autoincrement the struct_id because it is a UUID generated here
@@ -98,6 +99,8 @@ StructureFeatures::schema() const {
 	structures.add_column( tag );
 	structures.add_column( input_tag );
 
+	structures.write(db_session);
+	
 	/***sampled_structures***/
 	Schema sampled_structures("sampled_structures");
 	sampled_structures.add_foreign_key(ForeignKey(batch_id, "batches", "batch_id", true /*defer*/));
@@ -110,7 +113,7 @@ StructureFeatures::schema() const {
 	unique_cols.push_back(batch_id);
 	sampled_structures.add_constraint(new UniqueConstraint(unique_cols));
 
-	return structures.print() + sampled_structures.print();
+	sampled_structures.write(db_session);
 }
 
 utility::vector1<std::string>
@@ -152,7 +155,7 @@ StructureFeatures::report_features(
 		uuids_rng(numeric::random::RG);
 	boost::uuids::uuid struct_id = uuids_rng();
 
-	structure_stmt.bind(1, struct_id);
+	structure_stmt.bind(1,struct_id);
 	structure_stmt.bind(2, batch_id);
 	structure_stmt.bind(3, tag);
 	structure_stmt.bind(4, input_tag);
@@ -174,13 +177,13 @@ StructureFeatures::report_features(
 //	"WHERE\n"
 //	"   struct_id = ?;";
 //	cppdb::statement select_stmt(basic::database::safely_prepare_statement(select_string,db_session));
-//	select_stmt.bind(1, struct_id);
+//	select_stmt.bind(1, to_string(struct_id);
 //
 //	cppdb::result res(basic::database::safely_read_from_database(select_stmt));
 //	if(!res.next()) {
 //		TR << "No existing structure found, adding the new one" << endl;
 //
-//		structure_stmt.bind(1, struct_id);
+//		structure_stmt.bind(1, to_string(struct_id);
 //		structure_stmt.bind(2, tag);
 //		structure_stmt.bind(3, input_tag);
 //
@@ -190,7 +193,7 @@ StructureFeatures::report_features(
 //
 //	std::string batch_structures_string = "INSERT INTO batch_structures (struct_id, batch_id) VALUES (?,?);";
 //	statement batch_structures_stmt(safely_prepare_statement(batch_structures_string, db_session));
-//	batch_structures_stmt.bind(1, struct_id);
+//	batch_structures_stmt.bind(1, to_string(struct_id);
 //	batch_structures_stmt.bind(2, batch_id);
 //	basic::database::safely_write_to_database(batch_structures_stmt);
 }

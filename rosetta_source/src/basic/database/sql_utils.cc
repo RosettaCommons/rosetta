@@ -159,6 +159,7 @@
 // Boost Headers
 #include <boost/foreach.hpp>
 #include <boost/tokenizer.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 #define foreach BOOST_FOREACH
 
 
@@ -373,7 +374,16 @@ table_exists(
 	{
 		std::string statement_string = "SHOW TABLES WHERE Tables_in_"+db_name+" = ?;";
 		stmt = safely_prepare_statement(statement_string,db_session);
-	}else
+	}
+	else if(db_mode == "postgres")
+	{
+		std::string statement_string=
+		"SELECT tablename \n"
+		"FROM pg_catalog.pg_tables \n"
+		"WHERE tablename = ?;";
+		stmt = safely_prepare_statement(statement_string, db_session);
+	}
+	else
 	{
 		utility_exit_with_message("unknown database mode");
 	}
@@ -388,8 +398,26 @@ table_exists(
 	}
 }
 
+//Simply (probably overly so) protection from SQL injection
+void
+check_statement_sanity(std::string sql){
+	if (!boost::istarts_with(sql, "SELECT")){
+		utility_exit_with_message("ERROR: Database select statement is not safe! Only SELECT statements are allowed.");
+	}
+		
+	int semicolon_count=0;
+	for (size_t i = 0; i < sql.size(); i++){
+		if (sql[i] == ';'){
+			semicolon_count++;
+		} 
+	}
+	if(semicolon_count > 1){
+		utility_exit_with_message("Database select statement is not safe! Only 1 SQL statement is allowed");
+	}
+}
+
 //This should ideally only be used for reference tables that have static data that needs to only be written once(ex: dssp_codes)
-std::string generate_insert_ignore_stmt(std::string table_name, std::vector<std::string> column_names, std::vector<std::string> values){
+void insert_or_ignore(std::string table_name, std::vector<std::string> column_names, std::vector<std::string> values, utility::sql_database::sessionOP db_session){
 
 	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
 	std::string statement_string="";
@@ -412,6 +440,9 @@ std::string generate_insert_ignore_stmt(std::string table_name, std::vector<std:
 			}
 		}
 		statement_string+=");";
+		
+		cppdb::statement stmt = (*db_session) << statement_string;
+		safely_write_to_database(stmt);
 	}else if(db_mode == "mysql")
 	{
 		statement_string = "INSERT IGNORE into "+table_name+"(";
@@ -430,41 +461,67 @@ std::string generate_insert_ignore_stmt(std::string table_name, std::vector<std:
 			}
 		}
 		statement_string+=");";
+		
+		cppdb::statement stmt = (*db_session) << statement_string;
+		safely_write_to_database(stmt);
 	}
 	else if(db_mode == "postgres")
 	{
 		//This is a dirty postgres hack and seems to be the easiest workaround for lack of INSERT IGNORE support in postgres
-		statement_string = "DELETE FROM "+table_name+" WHERE ";
+		std::string select_statement_string = "SELECT * FROM "+table_name+" WHERE ";
 		for(size_t i=0; i<column_names.size(); i++){
-			statement_string+=column_names[i] + "=" + values[i];
+			select_statement_string+=column_names[i] + "=" + values[i];
 			if(i != column_names.size()-1){
-				statement_string+=" AND ";
+				select_statement_string+=" AND ";
 			}
 		}
-		statement_string+=";\n";
+		select_statement_string+=";";
 
-		statement_string += "INSERT into "+table_name+"(";
-		for(size_t i=0; i<column_names.size(); i++){
-			statement_string+=column_names[i];
-			if(i != column_names.size()-1){
-				statement_string+=",";
+		cppdb::statement select_stmt = (*db_session) << select_statement_string;
+		cppdb::result res = safely_read_from_database(select_stmt);
+		
+		if(!res.next()){
+			statement_string += "INSERT into "+table_name+"(";
+			for(size_t i=0; i<column_names.size(); i++){
+				statement_string+=column_names[i];
+				if(i != column_names.size()-1){
+					statement_string+=",";
+				}
 			}
-		}
 
-		statement_string+=") VALUES(";
-		for(size_t i=0; i<values.size(); i++){
-			statement_string+=values[i];
-			if(i != column_names.size()-1){
-				statement_string+=",";
+			statement_string+=") VALUES(";
+			for(size_t i=0; i<values.size(); i++){
+				statement_string+=values[i];
+				if(i != column_names.size()-1){
+					statement_string+=",";
+				}
 			}
+			statement_string+=");";
+			cppdb::statement stmt = (*db_session) << statement_string;
+			safely_write_to_database(stmt);
 		}
-		statement_string+=");";
 	}
 	else
 	{
 		utility_exit_with_message("unknown database mode");
 	}
-	return statement_string;
+//	boost::char_separator< char > sep(";");
+//	boost::tokenizer< boost::char_separator< char > > tokens( statement_string, sep );
+//	foreach( std::string const & stmt_str, tokens){
+//		std::string trimmed_stmt_str(utility::trim(stmt_str, " \n\t"));
+//		if(trimmed_stmt_str.size()){
+//			try{
+//				cppdb::statement stmt = (*db_session) << trimmed_stmt_str + ";";
+//				safely_write_to_database(stmt);
+//			} catch (cppdb::cppdb_error e) {
+//				TR.Error
+//				<< "ERROR reading schema \n"
+//				<< trimmed_stmt_str << std::endl;
+//				TR.Error << e.what() << std::endl;
+//				utility_exit();
+//			}
+//		}
+//	}
 }
 
 void write_schema_to_database(

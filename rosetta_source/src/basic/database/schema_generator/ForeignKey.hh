@@ -10,7 +10,7 @@
 /// @file ForeignKey.hh
 ///
 /// @brief
-/// @author tim
+/// @author Tim Jacobs
 
 
 #ifndef INCLUDED_basic_database_schema_generator_ForeignKey_HH

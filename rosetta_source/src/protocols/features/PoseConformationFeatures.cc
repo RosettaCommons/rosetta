@@ -41,6 +41,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
+#include <basic/Tracer.hh>
 
 
 // Numeric Headers
@@ -64,6 +65,8 @@
 
 namespace protocols{
 namespace features{
+
+static basic::Tracer TR("protocols.features.PoseConformationFeatures");
 
 using std::string;
 using std::stringstream;
@@ -97,8 +100,9 @@ using cppdb::result;
 string
 PoseConformationFeatures::type_name() const { return "PoseConformationFeatures"; }
 
-string
-PoseConformationFeatures::schema() const {
+void
+PoseConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
+	
 	using namespace basic::database::schema_generator;
 
 	Column struct_id("struct_id",DbUUID(), false /*not null*/, false /*don't autoincrement*/);
@@ -109,10 +113,11 @@ PoseConformationFeatures::schema() const {
 
 	pose_conformations.add_column( Column("annotated_sequence", DbText()) );
 	pose_conformations.add_column( Column("total_residue", DbInteger()) );
-	pose_conformations.add_column( Column("fullatom", DbBoolean()) );
+	pose_conformations.add_column( Column("fullatom", DbInteger()) );
 
-
-	/******pose_trees******/
+	pose_conformations.write(db_session);
+	
+	/******fold_trees******/
 	Schema fold_trees("fold_trees");
 	fold_trees.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
 
@@ -121,32 +126,35 @@ PoseConformationFeatures::schema() const {
 	fold_trees.add_column( Column("stop_res", DbInteger()) );
 	fold_trees.add_column( Column("stop_atom", DbText()) );
 	fold_trees.add_column( Column("label", DbInteger()) );
-	fold_trees.add_column( Column("keep_stub_in_residue", DbBoolean()) );
+	fold_trees.add_column( Column("keep_stub_in_residue", DbInteger()) );
 
+	fold_trees.write(db_session);
 
 	/******jumps******/
 	Schema jumps("jumps");
 	jumps.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
 	jumps.add_column( Column("jump_id", DbInteger()) );
-	jumps.add_column( Column("xx", DbInteger()) );
-	jumps.add_column( Column("xy", DbInteger()) );
-	jumps.add_column( Column("xz", DbInteger()) );
-	jumps.add_column( Column("yx", DbInteger()) );
-	jumps.add_column( Column("yy", DbInteger()) );
-	jumps.add_column( Column("yz", DbInteger()) );
-	jumps.add_column( Column("zx", DbInteger()) );
-	jumps.add_column( Column("zy", DbInteger()) );
-	jumps.add_column( Column("zz", DbInteger()) );
-	jumps.add_column( Column("x", DbInteger()) );
-	jumps.add_column( Column("y", DbInteger()) );
-	jumps.add_column( Column("z", DbInteger()) );
+	jumps.add_column( Column("xx", DbDouble()) );
+	jumps.add_column( Column("xy", DbDouble()) );
+	jumps.add_column( Column("xz", DbDouble()) );
+	jumps.add_column( Column("yx", DbDouble()) );
+	jumps.add_column( Column("yy", DbDouble()) );
+	jumps.add_column( Column("yz", DbDouble()) );
+	jumps.add_column( Column("zx", DbDouble()) );
+	jumps.add_column( Column("zy", DbDouble()) );
+	jumps.add_column( Column("zz", DbDouble()) );
+	jumps.add_column( Column("x", DbDouble()) );
+	jumps.add_column( Column("y", DbDouble()) );
+	jumps.add_column( Column("z", DbDouble()) );
 
+	jumps.write(db_session);
+	
 	/******chain_endings******/
 	Schema chain_endings("chain_endings");
 	chain_endings.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
 	chain_endings.add_column( Column("end_pos", DbInteger()) );
 
-	return pose_conformations.print() + "\n" + fold_trees.print() + "\n" + jumps.print() + "\n" + chain_endings.print();
+	chain_endings.write(db_session);	
 }
 
 utility::vector1<std::string>
@@ -305,27 +313,32 @@ PoseConformationFeatures::load_into_pose(
 	load_jumps(db_session, struct_id, pose);
 	load_chain_endings(db_session, struct_id, pose);
 }
-
+	
 void
 PoseConformationFeatures::load_sequence(
 	sessionOP db_session,
 	boost::uuids::uuid struct_id,
 	Pose & pose
 ){
-
+	
+	if(!basic::database::table_exists(db_session, "pose_conformations")){
+		TR << "WARNING: pose_conformations table does not exist and thus respective data will not be added to the pose!" << std::endl;
+		return;
+	}
+	
 	std::string statement_string =
-		"SELECT\n"
-		"	annotated_sequence,\n"
-		"	total_residue,\n"
-		"	fullatom\n"
-		"FROM\n"
-		"	pose_conformations\n"
-		"WHERE\n"
-		"	pose_conformations.struct_id = ?;";
+	"SELECT\n"
+	"	annotated_sequence,\n"
+	"	total_residue,\n"
+	"	fullatom\n"
+	"FROM\n"
+	"	pose_conformations\n"
+	"WHERE\n"
+	"	pose_conformations.struct_id = ?;";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,struct_id);
 	result res(basic::database::safely_read_from_database(stmt));
-
+	
 	if(!res.next()){
 		stringstream error_message;
 		error_message << "Unable to locate structure with struct_id '" << to_string(struct_id) << "'";
@@ -333,13 +346,13 @@ PoseConformationFeatures::load_sequence(
 	}
 	string annotated_sequence;
 	Size total_residue, fullatom;
+	
 	res >> annotated_sequence >> total_residue >> fullatom;
-
+	
 	ResidueTypeSetCAP residue_set(ChemicalManager::get_instance()->residue_type_set(
-		fullatom ? FA_STANDARD : CENTROID));
+																					fullatom ? FA_STANDARD : CENTROID));
 	make_pose_from_sequence(pose, annotated_sequence, *residue_set);
 	runtime_assert(pose.total_residue() == total_residue );
-
 }
 
 
@@ -349,6 +362,11 @@ PoseConformationFeatures::load_fold_tree(
 	boost::uuids::uuid struct_id,
 	Pose & pose
 ){
+
+	if(!basic::database::table_exists(db_session, "fold_trees")){
+		TR << "WARNING: fold_trees table does not exist and thus respective data will not be added to the pose!" << std::endl;
+		return;
+	}
 
 	statement stmt = (*db_session) <<
 				"SELECT\n"
@@ -380,6 +398,8 @@ PoseConformationFeatures::load_fold_tree(
 	}
 	// TODO verify that pose.fold_tree(t) is ok (not cleared from the stack)
 	pose.fold_tree(t);
+	
+	TR.Debug << "Fold tree loaded" << std::endl;
 }
 
 void
@@ -388,6 +408,11 @@ PoseConformationFeatures::load_jumps(
 	boost::uuids::uuid struct_id,
 	Pose & pose
 ){
+	if(!basic::database::table_exists(db_session, "jumps")){
+		TR << "WARNING: jumps table does not exist and thus respective data will not be added to the pose!" << std::endl;
+		return;
+	}
+
 	//note the Conformation object sorts the chain_endings after they are passed in.
 	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
 
@@ -415,7 +440,7 @@ PoseConformationFeatures::load_jumps(
 			"	jumps.struct_id=?;";
 		stmt = basic::database::safely_prepare_statement(statement_string,db_session);
 
-	}else if(db_mode == "mysql")
+	}else if(db_mode == "mysql" || db_mode == "postgres")
 	{
 
 		std::string statement_string =
@@ -456,6 +481,8 @@ PoseConformationFeatures::load_jumps(
 		xyzVector< Real > t(x, y, z);
 		pose.set_jump(jump_id, Jump(RT(r,t)));
 	}
+	
+	TR.Debug << "Jumps loaded" << std::endl;
 }
 
 void
@@ -464,6 +491,11 @@ PoseConformationFeatures::load_chain_endings(
 	boost::uuids::uuid struct_id,
 	Pose & pose
 ){
+
+	if(!basic::database::table_exists(db_session, "chain_endings")){
+		TR << "WARNING: chain_endings table does not exist and thus respective data will not be added to the pose!" << std::endl;
+		return;
+	}
 
 	//note the Conformation object sorts the chain_endings after they are passed in.
 
@@ -488,6 +520,8 @@ PoseConformationFeatures::load_chain_endings(
 		chain_endings.push_back(end_pos);
 	}
 	pose.conformation().chain_endings(chain_endings);
+	
+	TR.Debug << "Chain endings loaded" << std::endl;
 }
 
 

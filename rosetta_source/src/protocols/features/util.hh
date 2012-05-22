@@ -10,7 +10,7 @@
 /// @file util.hh
 ///
 /// @brief
-/// @author tim
+/// @author Tim Jacobs
 
 #ifndef INCLUDED_protocols_features_util_hh
 #define INCLUDED_protocols_features_util_hh

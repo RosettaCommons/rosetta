@@ -20,6 +20,7 @@
 
 //External
 #include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 // Utility Headers
 #include <numeric/HomogeneousTransform.hh>
@@ -244,7 +245,7 @@ LoopAnchorFeatures::report_features(
 				Real alpha = compute_atom_angles(pose, start_res, atom_set);
 				Real omega = compute_atom_angles(pose, end_res, atom_set);
 
-				loop_anchor_transforms_stmt.bind(1, struct_id);
+				loop_anchor_transforms_stmt.bind(1,struct_id);
 				loop_anchor_transforms_stmt.bind(2, begin);
 				loop_anchor_transforms_stmt.bind(3, end);
 				loop_anchor_transforms_stmt.bind(4, t.x());

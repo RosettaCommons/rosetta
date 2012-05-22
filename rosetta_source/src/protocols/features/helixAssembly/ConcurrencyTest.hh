@@ -10,7 +10,7 @@
 /// @file ConcurrencyTest.hh
 ///
 /// @brief
-/// @author tim
+/// @author Tim Jacobs
 
 #ifndef INCLUDED_protocols_features_helixAssembly_ConcurrencyTest_hh
 #define INCLUDED_protocols_features_helixAssembly_ConcurrencyTest_hh
@@ -65,13 +65,11 @@ public:
 	type_name() const  {
 		return "HelixBundleFeatures";
 	}
-
-	///@brief return sql statements that sets up the appropriate tables
-	///to contain the features.
-	virtual
-	std::string
-	schema() const;
-
+	
+	///@brief generate the table schemas and write them to the database
+	virtual void
+	write_schema_to_db(utility::sql_database::sessionOP db_session) const;
+	
 	///@brief collect all the feature data for the pose
 	virtual
 	core::Size

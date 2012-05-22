@@ -16,6 +16,9 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 #define CPPDB_DRIVER_SOURCE
+#ifdef CPPDB_WITH_MYSQL
+# define CPPDB_SOURCE
+#endif
 #include <mysql.h>
 
 #include <cppdb/backend.h>
@@ -45,7 +48,8 @@ class cppdb_myerror : public cppdb_error
 public:
 	cppdb_myerror(std::string const &str) : 
 		cppdb_error("cppdb::mysql::" + str)
-	{ }
+	{
+	}
 };
 namespace unprep {
 	class result : public backend::result {
@@ -116,13 +120,20 @@ namespace unprep {
 			v = parse_number<T>(std::string(s,len),fmt_);
 			return true;
 		}
-          virtual bool fetch(int col,boost::uuids::uuid &v) 
-		{
-              std::string s=to_string(v);
-              bool result = fetch(col,s);
-              boost::uuids::string_generator gen;
-              v = gen(s);
-              return result;
+		virtual bool fetch(int col,boost::uuids::uuid &v) {
+			std::stringstream ss;
+			bool result = fetch(col,ss);
+			std::string buffer = ss.str();
+			std::string hex = "0123456789ABCDEF"; 
+			std::string uuid_string = std::string(32, '0'); 
+			for(int pos = 0; pos < 16; pos++){ 
+				uuid_string[pos*2] = hex[(buffer[pos] >> 4) & 0xF]; 
+				uuid_string[(pos*2) + 1] = hex[(buffer[pos]) & 0x0F]; 
+			} 
+
+			boost::uuids::string_generator gen;
+			v = gen(uuid_string);
+			return result;
 		}
 		virtual bool fetch(int col,short &v) 
 		{
@@ -285,10 +296,12 @@ namespace unprep {
 			return query_;
 		}
 
-    virtual void bind(int col,boost::uuids::uuid const &v) 
+		virtual void bind(int col,boost::uuids::uuid const &v) 
 		{
-      std::string struct_id_string(to_string(v));
-		  bind(col,struct_id_string.c_str(),struct_id_string.c_str()+struct_id_string.size());
+			std::ostringstream ss;
+			std::copy(v.begin(), v.end(), std::ostream_iterator<const unsigned char>(ss));
+			std::string tmp=ss.str();
+			bind(col,tmp);
 		}
 
 		virtual void bind(int col,std::string const &s)
@@ -316,7 +329,7 @@ namespace unprep {
 			s.clear();
 			s.reserve(30);
 			s+='\'';
-			s+=format_time(v);
+			s+=cppdb::format_time(v);
 			s+='\'';
 		}
 		virtual void bind(int col,std::istream &v)
@@ -530,7 +543,6 @@ namespace prep {
 				for(int i=0;i<cols_;i++) {
 					if(bind_data_[i].error && !bind_data_[i].is_null && bind_data_[i].length >= sizeof(bind_data_[i].buf)) {
 						bind_data_[i].vbuf.resize(bind_data_[i].length);
-						MYSQL_BIND b=MYSQL_BIND();
 						bind_[i].buffer = &bind_data_[i].vbuf.front();
 						bind_[i].buffer_length = bind_data_[i].length;
 						if(mysql_stmt_fetch_column(stmt_,&bind_[i],i,0)) {
@@ -567,13 +579,21 @@ namespace prep {
 			v=parse_number<T>(std::string(d.ptr,d.length),fmt_);
 			return true;
 		}
-          virtual bool fetch(int col,boost::uuids::uuid &v) 
+		virtual bool fetch(int col,boost::uuids::uuid &v) 
 		{
-              std::string s=to_string(v);
-              bool result = fetch(col,s);
-              boost::uuids::string_generator gen;
-              v = gen(s);
-              return result;
+			std::stringstream ss;
+			bool result = fetch(col,ss);
+			std::string buffer = ss.str();
+			std::string hex = "0123456789ABCDEF"; 
+			std::string uuid_string = std::string(32, '0'); 
+			for(int pos = 0; pos < 16; pos++){ 
+				uuid_string[pos*2] = hex[(buffer[pos] >> 4) & 0xF]; 
+				uuid_string[(pos*2) + 1] = hex[(buffer[pos]) & 0x0F]; 
+			}
+
+			boost::uuids::string_generator gen;
+			v = gen(uuid_string);
+			return result;
 		}
 		virtual bool fetch(int col,short &v) 
 		{
@@ -845,7 +865,7 @@ namespace prep {
 			}
 			void set(std::tm const &t)
 			{
-				set_str(format_time(t));
+				set_str(cppdb::format_time(t));
 			}
 			void bind_it(MYSQL_BIND *b) 
 			{
@@ -883,8 +903,10 @@ namespace prep {
 		///
     virtual void bind(int col,boost::uuids::uuid const &v) 
 		{
-      std::string struct_id_string(to_string(v));
-		  bind(col,struct_id_string.c_str(),struct_id_string.c_str()+struct_id_string.size());
+			std::ostringstream ss;
+			std::copy(v.begin(), v.end(), std::ostream_iterator<const unsigned char>(ss));
+			at(col).set_str(ss.str());
+			at(col).is_blob = true;
 		}
 
 		///
@@ -1444,7 +1466,7 @@ private:
 	void mysql_set_option(mysql_option option, const void* arg)
 	{
 		// char can be casted to void but not the other way, support older API
-		if(mysql_options(conn_, option, reinterpret_cast<char const *>(arg))) {
+		if(mysql_options(conn_, option, static_cast<char const *>(arg))) {
 			throw cppdb_error("cppdb::mysql failed to set option");
 		}
 	}

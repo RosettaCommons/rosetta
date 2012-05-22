@@ -41,6 +41,7 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+#include <boost/uuid/uuid_io.hpp>
 
 // C++ Headers
 #include <cmath>
@@ -66,16 +67,16 @@ ResidueConformationFeatures::type_name() const {
 	return "ResidueConformationFeatures";
 }
 
-string
-ResidueConformationFeatures::schema() const {
+void
+ResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;
 	
 	//******nonprotein_residue_conformation******//
 	Column struct_id("struct_id",DbUUID(), false);
 	Column seqpos("seqpos",DbInteger(), false);
-	Column phi("phi",DbReal(), false);
-	Column psi("psi",DbReal(), false);
-	Column omega("omega",DbReal(), false);
+	Column phi("phi",DbDouble(), false);
+	Column psi("psi",DbDouble(), false);
+	Column omega("omega",DbDouble(), false);
 	
 	utility::vector1<Column> non_prot_res_pkeys;
 	non_prot_res_pkeys.push_back(struct_id);
@@ -99,9 +100,11 @@ ResidueConformationFeatures::schema() const {
 	nonprotein_residue_conformation.add_column(omega);
 	nonprotein_residue_conformation.add_foreign_key(ForeignKey(fkey_cols, "residues", fkey_reference_cols, true));
 	
+	nonprotein_residue_conformation.write(db_session);
+	
 	//******nonprotein_residue_angles******//
 	Column chinum("chinum",DbInteger(), false);
-	Column chiangle("chiangle",DbReal(), false);
+	Column chiangle("chiangle",DbDouble(), false);
 	
 	utility::vector1<Column> non_prot_res_angle_keys;
 	non_prot_res_angle_keys.push_back(struct_id);
@@ -115,11 +118,13 @@ ResidueConformationFeatures::schema() const {
 	nonprotein_residue_angles.add_column(chiangle);
 	nonprotein_residue_angles.add_foreign_key(ForeignKey(fkey_cols, "residues", fkey_reference_cols, true));
 
+	nonprotein_residue_angles.write(db_session);
+	
 	//******residue_atom_coords******//
 	Column atomno("atomno",DbInteger(), false);
-	Column x("x",DbReal(), false);
-	Column y("y",DbReal(), false);
-	Column z("z",DbReal(), false);
+	Column x("x",DbDouble(), false);
+	Column y("y",DbDouble(), false);
+	Column z("z",DbDouble(), false);
 	
 	utility::vector1<Column> res_atm_coords_pkeys;
 	res_atm_coords_pkeys.push_back(struct_id);
@@ -135,9 +140,7 @@ ResidueConformationFeatures::schema() const {
 	residue_atom_coords.add_column(z);
 	residue_atom_coords.add_foreign_key(ForeignKey(fkey_cols, "residues", fkey_reference_cols, true));
 
-	return nonprotein_residue_conformation.print() + "\n" 
-	+ nonprotein_residue_angles.print() + "\n" 
-	+ residue_atom_coords.print();
+	residue_atom_coords.write(db_session);
 	
 //	if(db_mode == "sqlite3")
 //	{

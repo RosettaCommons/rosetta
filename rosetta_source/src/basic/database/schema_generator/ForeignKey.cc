@@ -10,7 +10,7 @@
 /// @file ForeignKey.cc
 ///
 /// @brief
-/// @author tim
+/// @author Tim Jacobs
 
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>

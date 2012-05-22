@@ -29,7 +29,7 @@ namespace cppdb {
 	{
 		char buf[64]= {0};
 		strftime(buf,sizeof(buf),"%Y-%m-%d %H:%M:%S",&v);
-		return buf;
+		return std::string(buf);
 	}
 
 	std::tm parse_time(std::string const &v)

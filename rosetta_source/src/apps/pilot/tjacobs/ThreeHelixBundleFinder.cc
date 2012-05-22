@@ -2,7 +2,7 @@
 //  ThreeHelixBundleFinder.cc
 //  Rosetta
 //
-//  Created by tim on 1/23/12.
+//  Created by Tim Jacobs on 1/23/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 

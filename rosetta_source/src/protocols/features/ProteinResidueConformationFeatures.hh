@@ -30,6 +30,7 @@
 
 // C++ Headers
 #include <string>
+#include <set>
 
 #include <utility/vector1.hh>
 
@@ -48,9 +49,9 @@ public:
 
 	virtual ~ProteinResidueConformationFeatures(){}
 
-	///@brief return sql statements that setup the right tables
-	std::string
-	schema() const;
+	///@brief generate the table schemas and write them to the database
+	virtual void
+	write_schema_to_db(utility::sql_database::sessionOP db_session) const;
 
 	///@brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
@@ -79,7 +80,7 @@ public:
 		utility::sql_database::sessionOP db_session,
 		boost::uuids::uuid struct_id,
 		core::pose::Pose & pose);
-
+	
 	void
 	load_conformation(
 		utility::sql_database::sessionOP db_session,

@@ -119,6 +119,11 @@ namespace cppdb {
 	
 	#	define CPPDB_LIBRARY_SUFFIX_V1 "-" CPPDB_SOVERSION CPPDB_LIBRARY_SUFFIX
 	#	define CPPDB_LIBRARY_SUFFIX_V2 CPPDB_LIBRARY_SUFFIX
+	
+	#elif defined(__APPLE__)
+	
+	#	define CPPDB_LIBRARY_SUFFIX_V1 "." CPPDB_SOVERSION CPPDB_LIBRARY_SUFFIX
+	#	define CPPDB_LIBRARY_SUFFIX_V2 CPPDB_LIBRARY_SUFFIX
 
 	#else
 
@@ -186,9 +191,12 @@ namespace cppdb {
 		no_default_directory_(false)
 	{
 	}
+// Borland erros on hidden destructors in classes without only static methods.
+#ifndef __BORLANDC__
 	driver_manager::~driver_manager()
 	{
 	}
+#endif
 	
 	void driver_manager::add_search_path(std::string const &p)
 	{

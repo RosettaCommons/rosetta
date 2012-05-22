@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////////////
-//
-//  Copyright (C) 2010-2011  Artyom Beilis (Tonkikh) <artyomtnk@yahoo.com>
-//
+//                                                                             
+//  Copyright (C) 2010-2011  Artyom Beilis (Tonkikh) <artyomtnk@yahoo.com>     
+//                                                                             
 //  Distributed under:
 //
 //                   the Boost Software License, Version 1.0.
-//              (See accompanying file LICENSE_1_0.txt or copy at
+//              (See accompanying file LICENSE_1_0.txt or copy at 
 //                     http://www.boost.org/LICENSE_1_0.txt)
 //
 //  or (at your opinion) under:
@@ -19,9 +19,7 @@
 #include <cppdb/atomic_counter.h>
 #include <string.h>
 
-#if defined(CPPDB_DISABLE_THREAD_SAFETY)
-
-#elif defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__CYGWIN__)
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__CYGWIN__)
 
 #   include <windows.h>
 #   define cppdb_atomic_set(p,v) ((p)->l=v)
@@ -80,42 +78,17 @@
 #   define cppdb_atomic_set(p,v) ((p)->i=v)
 #   define cppdb_atomic_add_and_fetch(p,d) ( __exchange_and_add(&(p)->i,d)+d )
 
+
 #else  // Failing back to pthreads
 # include <pthread.h>
-# define CPPDB_PTHREAD_ATOMIC
+# define CPPDB_PTHREAD_ATOMIC 
 #endif
 
 
 namespace cppdb {
 
-#if defined(CPPDB_DISABLE_THREAD_SAFETY)
-
-	//non-atomic atomic_counter
-	//use this thread-unsafe version when thread safety is not an issue
-	atomic_counter::atomic_counter(long value){
-		value_.l = value;
-	}
-
-	atomic_counter::~atomic_counter(){
-	}
-
-	long atomic_counter::inc(){
-		long result= ++value_.l;
-		return result;
-	}
-
-	long atomic_counter::dec(){
-		long result= --value_.l;
-		return result;
-	}
-
-	long atomic_counter::get() const {
-		long result= value_.l;
-		return result;
-	}
-
-#elif !defined(CPPDB_PTHREAD_ATOMIC)
-	atomic_counter::atomic_counter(long value)
+#if !defined(CPPDB_PTHREAD_ATOMIC)
+	atomic_counter::atomic_counter(long value)  
 	{
 		memset(&value_,0,sizeof(value_));
 		mutex_ = 0;
@@ -125,7 +98,7 @@ namespace cppdb {
 	atomic_counter::~atomic_counter()
 	{
 	}
-
+	
 	long atomic_counter::inc()
 	{
 		return cppdb_atomic_add_and_fetch( &value_, 1 );
@@ -144,9 +117,9 @@ namespace cppdb {
 #else
 
 	#define MUTEX (reinterpret_cast<pthread_mutex_t *>(mutex_))
-	atomic_counter::atomic_counter(long value)
+	atomic_counter::atomic_counter(long value) 
 	{
-		mutex_ = new pthread_mutex_t;
+		mutex_ = new pthread_mutex_t; 
 		pthread_mutex_init(MUTEX,0);
 		value_.l=value;
 	}

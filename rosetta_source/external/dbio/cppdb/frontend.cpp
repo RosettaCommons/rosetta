@@ -19,11 +19,29 @@
 #include <cppdb/frontend.h>
 #include <cppdb/backend.h>
 #include <cppdb/conn_manager.h>
-
-#include <boost/uuid/uuid.hpp>
+#include <cppdb/pool.h>
 
 namespace cppdb {
 	struct result::data {};
+
+	class throw_guard {
+	public:
+		throw_guard(ref_ptr<backend::connection> const &conn) : conn_(conn.get())
+		{
+		}
+		void done()
+		{
+			conn_ = 0;
+		}
+		~throw_guard()
+		{
+			if(conn_ && std::uncaught_exception()) {
+				conn_->recyclable(false);
+			}
+		}
+	private:
+		backend::connection *conn_;
+	};
 
 	result::result() :
 		eof_(false),
@@ -75,6 +93,8 @@ namespace cppdb {
 
 	bool result::next()
 	{
+		throw_guard g(conn_);
+
 		if(eof_)
 			return false;
 		fetched_=true;
@@ -142,6 +162,7 @@ namespace cppdb {
 		return is_null(index(n));
 	}
 
+	
 	bool result::fetch(int col,boost::uuids::uuid &v) { return res_->fetch(col,v); }
 	bool result::fetch(int col,short &v) { return res_->fetch(col,v); }
 	bool result::fetch(int col,unsigned short &v) { return res_->fetch(col,v); }
@@ -158,7 +179,7 @@ namespace cppdb {
 	bool result::fetch(int col,std::tm &v) { return res_->fetch(col,v); }
 	bool result::fetch(int col,std::ostream &v) { return res_->fetch(col,v); }
 
-    bool result::fetch(std::string const &n,boost::uuids::uuid &v) { return res_->fetch(index(n),v); }
+	bool result::fetch(std::string const &n,boost::uuids::uuid &v) { return res_->fetch(index(n),v); }
 	bool result::fetch(std::string const &n,short &v) { return res_->fetch(index(n),v); }
 	bool result::fetch(std::string const &n,unsigned short &v) { return res_->fetch(index(n),v); }
 	bool result::fetch(std::string const &n,int &v) { return res_->fetch(index(n),v); }
@@ -174,7 +195,7 @@ namespace cppdb {
 	bool result::fetch(std::string const &n,std::tm &v) { return res_->fetch(index(n),v); }
 	bool result::fetch(std::string const &n,std::ostream &v) { return res_->fetch(index(n),v); }
 
-    bool result::fetch(boost::uuids::uuid &v) { return res_->fetch(current_col_++,v); }
+	bool result::fetch(boost::uuids::uuid &v) { return res_->fetch(current_col_++,v); }
 	bool result::fetch(short &v) { return res_->fetch(current_col_++,v); }
 	bool result::fetch(unsigned short &v) { return res_->fetch(current_col_++,v); }
 	bool result::fetch(int &v) { return res_->fetch(current_col_++,v); }
@@ -222,8 +243,20 @@ namespace cppdb {
 	{
 	}
 
+	bool statement::empty() const
+	{
+		return !stat_;
+	}
+
+	void statement::clear()
+	{
+		stat_.reset();
+		conn_.reset();
+	}
+
 	void statement::reset()
 	{
+		throw_guard g(conn_);
 		placeholder_ = 1;
 		stat_->reset();
 	}
@@ -256,7 +289,8 @@ namespace cppdb {
 	{
 		return manipulator(*this);
 	}
-    statement &statement::bind(boost::uuids::uuid v)
+
+	statement &statement::bind(boost::uuids::uuid v)
 	{
 		stat_->bind(placeholder_++,v);
 		return *this;
@@ -334,7 +368,7 @@ namespace cppdb {
 	}
 
 
-    void statement::bind(int col,boost::uuids::uuid v)
+	void statement::bind(int col,boost::uuids::uuid v)
 	{
 		stat_->bind(col,v);
 	}
@@ -397,24 +431,29 @@ namespace cppdb {
 
 	long long statement::last_insert_id()
 	{
+		throw_guard g(conn_);
 		return stat_->sequence_last(std::string());
 	}
 
 	long long statement::sequence_last(std::string const &seq)
 	{
+		throw_guard g(conn_);
 		return stat_->sequence_last(seq);
 	}
 	unsigned long long statement::affected()
 	{
+		throw_guard g(conn_);
 		return stat_->affected();
 	}
 
 	result statement::row()
 	{
+		throw_guard g(conn_);
 		ref_ptr<backend::result> backend_res = stat_->query();
 		result res(backend_res,stat_,conn_);
 		if(res.next()) {
 			if(res.res_->has_next() == backend::result::next_row_exists) {
+				g.done();
 				throw multiple_rows_query();
 			}
 		}
@@ -423,6 +462,7 @@ namespace cppdb {
 	
 	result statement::query()
 	{
+		throw_guard g(conn_);
 		ref_ptr<backend::result> res(stat_->query());
 		return result(res,stat_,conn_);
 	}
@@ -432,6 +472,7 @@ namespace cppdb {
 	}
 	void statement::exec() 
 	{
+		throw_guard g(conn_);
 		stat_->exec();
 	}
 
@@ -449,9 +490,12 @@ namespace cppdb {
 		conn_ = other.conn_;
 		return *this;
 	}
-	session::session(ref_ptr<backend::connection> conn) : 
-		conn_(conn) 
+	session::session(ref_ptr<backend::connection> conn) : conn_(conn)
 	{
+	}
+	session::session(ref_ptr<backend::connection> conn,once_functor const &f) : conn_(conn)
+	{
+		once(f);
 	}
 	session::~session()
 	{
@@ -463,6 +507,16 @@ namespace cppdb {
 	session::session(std::string const &cs)
 	{
 		open(cs);
+	}
+	session::session(connection_info const &ci,once_functor const &f)
+	{
+		open(ci);
+		once(f);
+	}
+	session::session(std::string const &cs,once_functor const &f)
+	{
+		open(cs);
+		once(f);
 	}
 	
 	void session::open(connection_info const &ci)
@@ -485,6 +539,7 @@ namespace cppdb {
 	
 	statement session::prepare(std::string const &query)
 	{
+		throw_guard g(conn_);
 		ref_ptr<backend::statement> stat_ptr(conn_->prepare(query));
 		statement stat(stat_ptr,conn_);
 		return stat;
@@ -492,6 +547,7 @@ namespace cppdb {
 	
 	statement session::create_statement(std::string const &query)
 	{
+		throw_guard g(conn_);
 		ref_ptr<backend::statement> stat_ptr(conn_->get_statement(query));
 		statement stat(stat_ptr,conn_);
 		return stat;
@@ -499,6 +555,7 @@ namespace cppdb {
 	
 	statement session::create_prepared_statement(std::string const &query)
 	{
+		throw_guard g(conn_);
 		ref_ptr<backend::statement> stat_ptr(conn_->get_prepared_statement(query));
 		statement stat(stat_ptr,conn_);
 		return stat;
@@ -506,6 +563,7 @@ namespace cppdb {
 	
 	statement session::create_prepared_uncached_statement(std::string const &query)
 	{
+		throw_guard g(conn_);
 		ref_ptr<backend::statement> stat_ptr(conn_->get_prepared_uncached_statement(query));
 		statement stat(stat_ptr,conn_);
 		return stat;
@@ -522,14 +580,17 @@ namespace cppdb {
 	}
 	void session::begin()
 	{
+		throw_guard g(conn_);
 		conn_->begin();
 	}
 	void session::commit()
 	{
+		throw_guard g(conn_);
 		conn_->commit();
 	}
 	void session::rollback()
 	{
+		throw_guard g(conn_);
 		conn_->rollback();
 	}
 	std::string session::escape(char const *b,char const *e)
@@ -551,6 +612,23 @@ namespace cppdb {
 	std::string session::engine()
 	{
 		return conn_->engine();
+	}
+
+	void session::once_called(bool v)
+	{
+		conn_->once_called(v);
+	}
+	bool session::once_called()
+	{
+		return conn_->once_called();
+	}
+
+	void session::once(once_functor const &f)
+	{
+		if(!once_called()) {
+			f(*this);
+			once_called(true);
+		}
 	}
 	
 	struct transaction::data {};
@@ -583,7 +661,42 @@ namespace cppdb {
 		conn_->clear_cache();
 	}
 
+	void session::clear_pool()
+	{
+		conn_->clear_cache();
+		conn_->recyclable(false);
+		conn_->get_pool()->clear();
+	}
 
+	bool session::recyclable()
+	{
+		return conn_->recyclable();
+	}
+	void session::recyclable(bool v)
+	{
+		conn_->recyclable(v);
+	}
 
+	connection_specific_data *session::get_specific(std::type_info const &t)
+	{
+		return conn_->connection_specific_get(t);
+	}
+	connection_specific_data *session::release_specific(std::type_info const &t)
+	{
+		return conn_->connection_specific_release(t);
+	}
+	void session::reset_specific(std::type_info const &t,connection_specific_data *p)
+	{
+		conn_->connection_specific_reset(t,p);
+	}
+
+	char const *version_string()
+	{
+		return CPPDB_VERSION;
+	}
+	int version_number()
+	{
+		return CPPDB_MAJOR * 10000 + CPPDB_MINOR * 100 + CPPDB_PATCH;
+	}
 
 }  // cppdb

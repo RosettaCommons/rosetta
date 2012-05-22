@@ -16,6 +16,7 @@
 
 //External
 #include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 // Project Headers
 #include <core/chemical/AA.hh>
@@ -33,6 +34,7 @@
 
 //Basic Headers
 #include <basic/database/sql_utils.hh>
+#include <basic/Tracer.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
@@ -48,6 +50,8 @@
 
 namespace protocols{
 namespace features{
+
+static basic::Tracer TR("protocols.features.ProteinResidueConformationFeatures");
 
 using std::string;
 using core::Size;
@@ -67,21 +71,22 @@ ProteinResidueConformationFeatures::type_name() const {
 	return "ProteinResidueConformationFeatures";
 }
 
-string
-ProteinResidueConformationFeatures::schema() const {
+void
+ProteinResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
+	
 	using namespace basic::database::schema_generator;
 	
 	//******protein_residue_conformation******//
 	Column struct_id("struct_id",DbUUID(), false);
 	Column seqpos("seqpos",DbInteger(), false);
 	Column secstruct("secstruct",DbText(), false);
-	Column phi("phi",DbReal(), false);
-	Column psi("psi",DbReal(), false);
-	Column omega("omega",DbReal(), false);
-	Column chi1("chi1",DbReal(), false);
-	Column chi2("chi2",DbReal(), false);
-	Column chi3("chi3",DbReal(), false);
-	Column chi4("chi4",DbReal(), false);
+	Column phi("phi",DbDouble(), false);
+	Column psi("psi",DbDouble(), false);
+	Column omega("omega",DbDouble(), false);
+	Column chi1("chi1",DbDouble(), false);
+	Column chi2("chi2",DbDouble(), false);
+	Column chi3("chi3",DbDouble(), false);
+	Column chi4("chi4",DbDouble(), false);
 
 	
 	utility::vector1<Column> prot_res_pkeys;
@@ -109,12 +114,13 @@ ProteinResidueConformationFeatures::schema() const {
 	protein_residue_conformation.add_column(chi4);
 	protein_residue_conformation.add_foreign_key(ForeignKey(fkey_cols, "residues", fkey_reference_cols, true));
 
+	protein_residue_conformation.write(db_session);
 	
 	//******residue_atom_coords******//
 	Column atomno("atomno",DbInteger(), false);
-	Column x("x",DbReal(), false);
-	Column y("y",DbReal(), false);
-	Column z("z",DbReal(), false);
+	Column x("x",DbDouble(), false);
+	Column y("y",DbDouble(), false);
+	Column z("z",DbDouble(), false);
 	
 	utility::vector1<Column> res_atm_coords_pkeys;
 	res_atm_coords_pkeys.push_back(struct_id);
@@ -130,7 +136,7 @@ ProteinResidueConformationFeatures::schema() const {
 	residue_atom_coords.add_column(z);
 	residue_atom_coords.add_foreign_key(ForeignKey(fkey_cols, "residues", fkey_reference_cols, true));
 	
-	return protein_residue_conformation.print() + "\n" + residue_atom_coords.print();
+	residue_atom_coords.write(db_session);
 	
 //	if(db_mode == "sqlite3")
 //	{
@@ -223,10 +229,10 @@ ProteinResidueConformationFeatures::report_features(
 			break;
 		}
 	}
-
+	
 	//cppdb::transaction transact_guard(*db_session);
-	std::string conformation_string = "INSERT INTO protein_residue_conformation VALUES (?,?,?,?,?,?,?,?,?,?)";
-	std::string atom_string = "INSERT INTO residue_atom_coords VALUES(?,?,?,?,?,?)";
+	std::string conformation_string = "INSERT INTO protein_residue_conformation (struct_id, seqpos, secstruct, phi, psi, omega, chi1, chi2, chi3, chi4) VALUES (?,?,?,?,?,?,?,?,?,?)";
+	std::string atom_string = "INSERT INTO residue_atom_coords (struct_id, seqpos, atomno, x, y, z) VALUES(?,?,?,?,?,?)";
 
 	statement conformation_statement(basic::database::safely_prepare_statement(conformation_string,db_session));
 	statement atom_statement(basic::database::safely_prepare_statement(atom_string,db_session));
@@ -261,7 +267,8 @@ ProteinResidueConformationFeatures::report_features(
 		Real chi4 = fullatom && resi.nchi() >= 4 ? resi.chi(4) : 0.0;
 
 
-		conformation_statement.bind(1,struct_id);
+		std::string struct_id_string(to_string(struct_id));
+		conformation_statement.bind(1,struct_id_string);
 		conformation_statement.bind(2,i);
 		conformation_statement.bind(3,secstruct);
 		conformation_statement.bind(4,phi);
@@ -279,7 +286,7 @@ ProteinResidueConformationFeatures::report_features(
 			{
 				core::Vector coords = resi.xyz(atom);
 
-				atom_statement.bind(1,struct_id);
+				atom_statement.bind(1,struct_id_string);
 				atom_statement.bind(2,i);
 				atom_statement.bind(3,atom);
 				atom_statement.bind(4,coords.x());
@@ -302,11 +309,12 @@ ProteinResidueConformationFeatures::delete_record(
 	utility::sql_database::sessionOP db_session
 ){
 
+	std::string struct_id_string(to_string(struct_id));
 	statement conf_stmt(basic::database::safely_prepare_statement("DELETE FROM protein_residue_conformation WHERE struct_id = ?;\n",db_session));
-	conf_stmt.bind(1,struct_id);
+	conf_stmt.bind(1,struct_id_string);
 	basic::database::safely_write_to_database(conf_stmt);
 	statement atom_stmt(basic::database::safely_prepare_statement("DELETE FROM residue_atom_coords WHERE struct_id = ?;\n",db_session));
-	atom_stmt.bind(1,struct_id);
+	atom_stmt.bind(1,struct_id_string);
 	basic::database::safely_write_to_database(atom_stmt);
 
 }
@@ -320,13 +328,18 @@ ProteinResidueConformationFeatures::load_into_pose(
 ){
 	load_conformation(db_session, struct_id, pose);
 }
-
+	
 void
 ProteinResidueConformationFeatures::load_conformation(
 	sessionOP db_session,
 	boost::uuids::uuid struct_id,
 	Pose & pose
 ){
+
+	if(!basic::database::table_exists(db_session, "protein_residue_conformation")){
+		TR << "WARNING: protein_residue_conformation table does not exist and thus respective data will not be added to the pose!" << std::endl;
+		return;
+	}
 
 	set_coords_for_residues(db_session,struct_id,pose);
 
@@ -348,7 +361,8 @@ ProteinResidueConformationFeatures::load_conformation(
 			"WHERE\n"
 			"	protein_residue_conformation.struct_id=?;";
 		statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
-		stmt.bind(1,struct_id);
+		std::string struct_id_string(to_string(struct_id));
+		stmt.bind(1,struct_id_string);
 
 		result res(basic::database::safely_read_from_database(stmt));
 
@@ -428,7 +442,8 @@ void ProteinResidueConformationFeatures::set_coords_for_residues(
 		"WHERE\n"
 		"	residue_atom_coords.struct_id=?;";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
-	stmt.bind(1,struct_id);
+	std::string struct_id_string(to_string(struct_id));
+	stmt.bind(1,struct_id_string);
 
 	result res(basic::database::safely_read_from_database(stmt));
 

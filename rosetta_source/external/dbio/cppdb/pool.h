@@ -35,10 +35,10 @@ namespace cppdb {
 	///
 	/// \brief Connections pool, allows to handle multiple connections for specific connection string.
 	///
-	/// Note connections_manager provide more generic interface and hides pools inside it. So you 
-	/// generally should not use this class directly.
+	/// Note \ref connections_manager provide more generic interface and hides pools inside it. So you 
+	/// generally should use this class only when you prefer to avoid using some global singleton object.
 	///
-	/// Unlike connections_manager, it uses pool by default unless its size defined as 0.
+	/// Unlike \ref connections_manager, it uses pool by default unless its size defined as 0.
 	///
 	/// All this class member functions are thread safe to use from several threads for the same object
 	///
@@ -52,6 +52,13 @@ namespace cppdb {
 		static ref_ptr<pool> create(std::string const &connection_string);
 		/// Create new pool for a parsed connection string \a ci
 		static ref_ptr<pool> create(connection_info const &ci);
+		
+		///
+		/// Shortcut of cppdb::ref_ptr<cppdb::pool> as cppdb::pool::pointer.
+		///
+		/// The pointer that is used to handle pool object
+		///
+		typedef ref_ptr<pool> pointer;
 
 		~pool();
 
@@ -63,6 +70,12 @@ namespace cppdb {
 		/// Collect connections that were not used for a long time (close them)
 		///
 		void gc();
+
+		///
+		/// Remove all connections from the pool
+		///
+		void clear();
+
 		/// \cond INTERNAL
 		void put(backend::connection *c_in);
 		/// \endcond
@@ -75,7 +88,7 @@ namespace cppdb {
 		struct entry {
 			entry() : last_used(0) {}
 			ref_ptr<backend::connection> conn;
-			time_t last_used;
+			std::time_t last_used;
 		};
 
 		typedef std::list<entry> pool_type;

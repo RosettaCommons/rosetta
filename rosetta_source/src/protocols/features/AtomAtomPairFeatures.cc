@@ -42,6 +42,7 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+#include <boost/uuid/uuid_io.hpp>
 
 // C++ Headers
 #include <algorithm>
@@ -281,7 +282,7 @@ AtomAtomPairFeatures::report_atom_pairs(
 				Real const lower_break(min_dist_ + (dist_bin - 1)*bin_width);
 				Real const upper_break(min_dist_ + dist_bin * bin_width);
 				Size const count(counts(i_atom1,i_elem2->second, dist_bin));
-				stmt.bind(1, struct_id);
+				stmt.bind(1,struct_id);
 				stmt.bind(2, relevant_atom_names_[i_atom1]);
 				stmt.bind(3, i_elem2->first);
 				stmt.bind(4, lower_break);

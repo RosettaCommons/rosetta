@@ -36,6 +36,7 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+#include <boost/uuid/uuid_io.hpp>
 
 //Auto Headers
 namespace protocols{

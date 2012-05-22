@@ -57,7 +57,10 @@ void safely_write_to_database(cppdb::statement & statement);
 
 cppdb::result safely_read_from_database(cppdb::statement & statement);
 
-std::string generate_insert_ignore_stmt(std::string table_name, std::vector<std::string> column_names, std::vector<std::string> values);
+void insert_or_ignore(std::string table_name, std::vector<std::string> column_names, std::vector<std::string> values, utility::sql_database::sessionOP db_session);
+
+void
+check_statement_sanity(std::string sql);
 
 bool
 table_exists(

@@ -19,9 +19,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//External
-#include <boost/uuid/uuid.hpp>
-
 // Platform Headers
 #include <basic/Tracer.hh>
 #include <core/chemical/AA.hh>
@@ -45,6 +42,8 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 // Boost Headers
 #include <boost/foreach.hpp>

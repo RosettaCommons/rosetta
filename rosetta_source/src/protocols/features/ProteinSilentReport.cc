@@ -36,6 +36,7 @@
 #include <protocols/features/util.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <basic/options/option.hh>
+#include <basic/database/sql_utils.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 // Platform Headers
@@ -60,11 +61,10 @@
 
 #include <protocols/jd2/Job.hh>
 
-
-static basic::Tracer ProteinSilentReportTracer("protocols.features.ProteinSilentReport");
-
 namespace protocols{
 namespace features{
+
+static basic::Tracer TR("protocols.features.ProteinSilentReport");
 
 using utility::sql_database::sessionOP;
 using utility::vector1;
@@ -182,16 +182,30 @@ ProteinSilentReport::apply(
 	}
 }
 
+//void
+//ProteinSilentReport::load_pose(
+//	sessionOP db_session,
+//	std::string tag,
+//	core::Size protocol_id,
+//	Pose & pose){
+//
+//	tag_into_pose(pose,tag);
+//
+//	boost::uuids::uuid struct_id = structure_features_->get_struct_id(db_session, tag,protocol_id);
+//
+//	pose_conformation_features_->load_into_pose(db_session, struct_id, pose);
+//	pdb_data_features_->load_into_pose(db_session,struct_id,pose);
+//	job_data_features_->load_into_pose(db_session, struct_id, pose);
+//	pose_comments_features_->load_into_pose(db_session, struct_id, pose);
+//	protein_residue_conformation_features_->load_into_pose(db_session, struct_id, pose);
+//	residue_conformation_features_->load_into_pose(db_session,struct_id,pose);
+//}
+	
 void
 ProteinSilentReport::load_pose(
 	sessionOP db_session,
-	std::string tag,
-	core::Size protocol_id,
+	boost::uuids::uuid struct_id,
 	Pose & pose){
-
-	tag_into_pose(pose,tag);
-
-	boost::uuids::uuid struct_id = structure_features_->get_struct_id(db_session, tag,protocol_id);
 
 	pose_conformation_features_->load_into_pose(db_session, struct_id, pose);
 	pdb_data_features_->load_into_pose(db_session,struct_id,pose);
@@ -199,6 +213,28 @@ ProteinSilentReport::load_pose(
 	pose_comments_features_->load_into_pose(db_session, struct_id, pose);
 	protein_residue_conformation_features_->load_into_pose(db_session, struct_id, pose);
 	residue_conformation_features_->load_into_pose(db_session,struct_id,pose);
+}
+	
+void
+ProteinSilentReport::load_pose(
+	sessionOP db_session,
+	boost::uuids::uuid struct_id,
+	std::set<core::Size> residue_numbers,   
+	Pose & pose){
+	
+	//first load in the entire pose, then delete unspecified residues. This will be slower than 
+	//it needs to be but should result in the most sensible state of the fold/atom trees.
+	load_pose(db_session, struct_id, pose);
+	
+	int total_res=pose.total_residue();
+	int num_removed_residues=0;
+	for(int i=1; i<=total_res; ++i){
+		//if the residue wasn't specified, delete it
+		if(residue_numbers.find(i)==residue_numbers.end()){
+			pose.conformation().delete_residue_slow(i-num_removed_residues);
+			++num_removed_residues;
+		}
+	}
 }
 
 bool ProteinSilentReport::is_initialized() const

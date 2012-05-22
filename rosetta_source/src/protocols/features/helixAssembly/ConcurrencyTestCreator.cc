@@ -10,7 +10,7 @@
 /// @file ConcurrencyTestCreator.cc
 ///
 /// @brief
-/// @author tim
+/// @author Tim Jacobs
 
 // Unit Headers
 #include <protocols/features/helixAssembly/ConcurrencyTestCreator.hh>

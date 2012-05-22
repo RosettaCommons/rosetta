@@ -10,7 +10,7 @@
 /// @file MessageListenerFactory.cc
 ///
 /// @brief A factory for lazily initializing message listeners. This should be used in conjunction the the MPIWorkPoolJobDistributor's message listening functionality
-/// @author tim
+/// @author Tim Jacobs
 
 #include <core/types.hh>
 

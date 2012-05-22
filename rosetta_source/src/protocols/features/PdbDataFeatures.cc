@@ -21,10 +21,13 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
-// Basic Headers
-#include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
+//Basic Headers
 #include <basic/database/sql_utils.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
+#include <basic/database/schema_generator/Constraint.hh>
 
 //Utility Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
@@ -80,63 +83,119 @@ string PdbDataFeatures::type_name() const
 	return "PdbDataFeatures";
 }
 
-string PdbDataFeatures::schema() const
-{
-	string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
-	if(db_mode == "sqlite3")
-	{
-		return
-			"CREATE TABLE IF NOT EXISTS residue_pdb_identification (\n"
-			"	struct_id BLOB,\n"
-			"	residue_number INTEGER,\n"
-			"	chain_id TEXT,\n"
-			"	insertion_code TEXT,\n"
-			"	pdb_residue_number INTEGER,\n"
-			"	FOREIGN KEY (struct_id)\n"
-			"		REFERENCES structures (struct_id)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	PRIMARY KEY(struct_id, residue_number));\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS residue_pdb_confidence (\n"
-			"	struct_id BLOB,\n"
-			"	residue_number INTEGER,\n"
-			"	max_temperature REAL,\n"
-			"	max_bb_temperature REAL,\n"
-			"	max_sc_temperature REAL,\n"
-			"	min_occupancy REAL,\n"
-			"	min_bb_occupancy REAL,\n"
-			"	min_sc_occupancy REAL,\n"
-			"	FOREIGN KEY (struct_id)\n"
-			"		REFERENCES structures (struct_id)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	PRIMARY KEY(struct_id, residue_number));";
-	}else if(db_mode=="mysql")
-	{
-		return
-			"CREATE TABLE IF NOT EXISTS residue_pdb_identification (\n"
-			"	struct_id BINARY(36),\n"
-			"	residue_number INTEGER,\n"
-			"	chain_id TEXT,\n"
-			"	insertion_code TEXT,\n"
-			"	pdb_residue_number INTEGER,\n"
-			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"
-			"	PRIMARY KEY (struct_id, residue_number));\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS residue_pdb_confidence (\n"
-			"	struct_id BINARY(36),\n"
-			"	residue_number INTEGER,\n"
-			"	max_temperature REAL,\n"
-			"	max_bb_temperature REAL,\n"
-			"	max_sc_temperature REAL,\n"
-			"	min_occupancy REAL,\n"
-			"	min_bb_occupancy REAL,\n"
-			"	min_sc_occupancy REAL,\n"
-			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"
-			"	PRIMARY KEY (struct_id, residue_number));";
-	}else
-	{
-		return "";
-	}
+void
+PdbDataFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
+	using namespace basic::database::schema_generator;
+	
+	Column struct_id("struct_id",DbUUID(), false);
+	Column residue_number("residue_number",DbInteger(), false);
+	
+	utility::vector1<Column> pkey_cols;
+	pkey_cols.push_back(struct_id);
+	pkey_cols.push_back(residue_number);
+	
+	//******residue_pdb_identification******//
+	Column chain_id("chain_id",DbText(), false);
+	Column insertion_code("insertion_code",DbText(), false);
+	Column pdb_residue_number("pdb_residue_number",DbInteger(), false);
+	
+	utility::vector1<std::string> fkey_reference_cols;
+	fkey_reference_cols.push_back("struct_id");
+	fkey_reference_cols.push_back("resNum");
+	
+	Schema residue_pdb_identification("residue_pdb_identification", PrimaryKey(pkey_cols));
+	residue_pdb_identification.add_column(struct_id);
+	residue_pdb_identification.add_column(residue_number);
+	residue_pdb_identification.add_column(chain_id);
+	residue_pdb_identification.add_column(insertion_code);
+	residue_pdb_identification.add_column(pdb_residue_number);
+	
+	residue_pdb_identification.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true));
+	
+	residue_pdb_identification.write(db_session);	
+	
+	
+	//******residue_pdb_confidence******//
+	Column max_temperature("max_temperature",DbReal(), false);
+	Column max_bb_temperature("max_bb_temperature",DbReal(), false);
+	Column max_sc_temperature("max_sc_temperature",DbReal(), false);
+	Column min_occupancy("min_occupancy",DbReal(), false);
+	Column min_bb_occupancy("min_bb_occupancy",DbReal(), false);
+	Column min_sc_occupancy("min_sc_occupancy",DbReal(), false);
+	
+	utility::vector1<Column> pdb_ident_pkeys;
+	pdb_ident_pkeys.push_back(struct_id);
+	pdb_ident_pkeys.push_back(residue_number);
+	
+	Schema residue_pdb_confidence("residue_pdb_confidence", PrimaryKey(pkey_cols));
+	residue_pdb_confidence.add_column(struct_id);
+	residue_pdb_confidence.add_column(residue_number);
+	residue_pdb_confidence.add_column(max_temperature);
+	residue_pdb_confidence.add_column(max_bb_temperature);
+	residue_pdb_confidence.add_column(max_sc_temperature);
+	residue_pdb_confidence.add_column(min_occupancy);
+	residue_pdb_confidence.add_column(min_bb_occupancy);
+	residue_pdb_confidence.add_column(min_sc_occupancy);
+
+	residue_pdb_confidence.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true));
+	
+	residue_pdb_confidence.write(db_session);
+	
+//	string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
+//	if(db_mode == "sqlite3")
+//	{
+//		return
+//			"CREATE TABLE IF NOT EXISTS residue_pdb_identification (\n"
+//			"	struct_id BLOB,\n"
+//			"	residue_number INTEGER,\n"
+//			"	chain_id TEXT,\n"
+//			"	insertion_code TEXT,\n"
+//			"	pdb_residue_number INTEGER,\n"
+//			"	FOREIGN KEY (struct_id)\n"
+//			"		REFERENCES structures (struct_id)\n"
+//			"		DEFERRABLE INITIALLY DEFERRED,\n"
+//			"	PRIMARY KEY(struct_id, residue_number));\n"
+//			"\n"
+//			"CREATE TABLE IF NOT EXISTS residue_pdb_confidence (\n"
+//			"	struct_id BLOB,\n"
+//			"	residue_number INTEGER,\n"
+//			"	max_temperature REAL,\n"
+//			"	max_bb_temperature REAL,\n"
+//			"	max_sc_temperature REAL,\n"
+//			"	min_occupancy REAL,\n"
+//			"	min_bb_occupancy REAL,\n"
+//			"	min_sc_occupancy REAL,\n"
+//			"	FOREIGN KEY (struct_id)\n"
+//			"		REFERENCES structures (struct_id)\n"
+//			"		DEFERRABLE INITIALLY DEFERRED,\n"
+//			"	PRIMARY KEY(struct_id, residue_number));";
+//	}else if(db_mode=="mysql")
+//	{
+//		return
+//			"CREATE TABLE IF NOT EXISTS residue_pdb_identification (\n"
+//			"	struct_id BINARY(36),\n"
+//			"	residue_number INTEGER,\n"
+//			"	chain_id TEXT,\n"
+//			"	insertion_code TEXT,\n"
+//			"	pdb_residue_number INTEGER,\n"
+//			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"
+//			"	PRIMARY KEY (struct_id, residue_number));\n"
+//			"\n"
+//			"CREATE TABLE IF NOT EXISTS residue_pdb_confidence (\n"
+//			"	struct_id BINARY(36),\n"
+//			"	residue_number INTEGER,\n"
+//			"	max_temperature REAL,\n"
+//			"	max_bb_temperature REAL,\n"
+//			"	max_sc_temperature REAL,\n"
+//			"	min_occupancy REAL,\n"
+//			"	min_bb_occupancy REAL,\n"
+//			"	min_sc_occupancy REAL,\n"
+//			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"
+//			"	PRIMARY KEY (struct_id, residue_number));";
+//	}else
+//	{
+//		return "";
+//	}
 }
 
 utility::vector1<std::string>

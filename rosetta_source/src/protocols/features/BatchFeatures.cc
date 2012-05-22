@@ -10,7 +10,7 @@
 /// @file BatchFeatures.cc
 ///
 /// @brief
-/// @author tim
+/// @author Tim Jacobs
 
 // Unit Headers
 #include <protocols/features/BatchFeatures.hh>
@@ -42,11 +42,12 @@
 #include <string>
 #include <sstream>
 
-static basic::Tracer TR("protocols.features.BatchFeatures");
 
 namespace protocols{
 namespace features{
 
+static basic::Tracer TR("protocols.features.BatchFeatures");
+	
 using std::string;
 using std::stringstream;
 using basic::options::OptionKeys::parser::protocol;
@@ -68,10 +69,10 @@ BatchFeatures::~BatchFeatures(){}
 string
 BatchFeatures::type_name() const { return "BatchFeatures"; }
 
-string
-BatchFeatures::schema() const {
+void
+BatchFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
+	
 	using namespace basic::database::schema_generator;
-
 
 	PrimaryKey batch_id(
 		Column("batch_id", DbInteger(), false /*not null*/, true /*autoincrement*/));
@@ -83,16 +84,14 @@ BatchFeatures::schema() const {
 		true /*defer*/);
 
 	Column name(Column("name", DbText()));
-
 	Column description(Column("description", DbText()));
-
 
 	Schema batches("batches", batch_id);
 	batches.add_foreign_key(protocol_id);
 	batches.add_column(name);
 	batches.add_column(description);
 
-	return batches.print();
+	batches.write(db_session);
 }
 
 utility::vector1<std::string>

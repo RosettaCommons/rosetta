@@ -10,7 +10,7 @@
 /// @file PrimaryKey.hh
 ///
 /// @brief
-/// @author tim
+/// @author Tim Jacobs
 
 
 #ifndef INCLUDED_basic_database_schema_generator_PrimaryKey_HH

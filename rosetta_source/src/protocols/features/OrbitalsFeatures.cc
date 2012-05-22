@@ -38,6 +38,7 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+#include <boost/uuid/uuid_io.hpp>
 
 #include <utility/exit.hh>
 
@@ -320,7 +321,7 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 			}
 		}
 		if(OrbHdist <=10.0 && orb_hpol == true){
-			orbital_H_statement.bind(1, struct_id);
+			orbital_H_statement.bind(1,struct_id);
 			orbital_H_statement.bind(2, resNum1);
 			orbital_H_statement.bind(3, resName1);
 			orbital_H_statement.bind(4,orbNum1 );
@@ -341,7 +342,7 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 			basic::database::safely_write_to_database(orbital_H_statement);
 		}
 		if(OrbHdist <=10.0 && orb_orb== true){
-			orbital_orbital_statement.bind(1, struct_id);
+			orbital_orbital_statement.bind(1,struct_id);
 			orbital_orbital_statement.bind(2, resNum1);
 			orbital_orbital_statement.bind(3, resName1);
 			orbital_orbital_statement.bind(4,orbNum1 );
@@ -366,7 +367,7 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 			basic::database::safely_write_to_database(orbital_orbital_statement);
 		}
 		if(OrbHdist <=10.0 && orb_haro == true){
-			orbital_Haro_statement.bind(1, struct_id);
+			orbital_Haro_statement.bind(1,struct_id);
 			orbital_Haro_statement.bind(2, resNum1);
 			orbital_Haro_statement.bind(3, resName1);
 			orbital_Haro_statement.bind(4,orbNum1 );
@@ -444,7 +445,7 @@ OrbitalsFeatures::report_haro_orbital_interactions(
 			}
 		}
 		if(OrbHdist <=10.0){
-			orbital_H_statement.bind(1, struct_id);
+			orbital_H_statement.bind(1,struct_id);
 			orbital_H_statement.bind(2, resNum1);
 			orbital_H_statement.bind(3, res1name);
 			orbital_H_statement.bind(4,orbNum1 );

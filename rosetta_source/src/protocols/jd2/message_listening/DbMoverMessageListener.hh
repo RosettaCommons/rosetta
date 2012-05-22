@@ -10,7 +10,7 @@
 /// @file DbMoverMessageListener.hh
 ///
 /// @brief
-/// @author tim
+/// @author Tim Jacobs
 
 #ifndef INCLUDED_protocols_jd2_message_listening_DbMoverMessageListener_hh
 #define INCLUDED_protocols_jd2_message_listening_DbMoverMessageListener_hh

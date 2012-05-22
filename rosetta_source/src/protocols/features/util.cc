@@ -11,7 +11,7 @@
 ///
 /// @brief
 
-/// @author tim
+/// @author Tim Jacobs
 // MPI headers
 
 #ifdef USEMPI

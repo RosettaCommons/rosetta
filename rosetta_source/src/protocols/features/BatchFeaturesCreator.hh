@@ -11,7 +11,7 @@
 ///
 /// @brief
 
-/// @author tim
+/// @author Tim Jacobs
 
 #ifndef INCLUDED_protocols_features_BatchFeaturesCreator_hh
 #define INCLUDED_protocols_features_BatchFeaturesCreator_hh

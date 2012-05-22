@@ -16,6 +16,7 @@
 
 //External
 #include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
 #include <boost/assign/list_of.hpp>
 
 // Project Headers
@@ -68,8 +69,8 @@ ResidueSecondaryStructureFeatures::~ResidueSecondaryStructureFeatures() {}
 string
 ResidueSecondaryStructureFeatures::type_name() const { return "ResidueSecondaryStructureFeatures"; }
 
-string
-ResidueSecondaryStructureFeatures::schema() const {
+void
+ResidueSecondaryStructureFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{	
 	using namespace basic::database::schema_generator;
 	using namespace basic::database;
 	using namespace boost::assign;
@@ -78,19 +79,19 @@ ResidueSecondaryStructureFeatures::schema() const {
 	Column label("label", DbText(), false);
 	Schema dssp_codes("dssp_codes", PrimaryKey(code));
 	dssp_codes.add_column(label);
-
+	
+	dssp_codes.write(db_session);
+	
 	std::vector<std::string> dssp_cols = list_of("code")("label");
-	std::string dssp_code_inserts=
-	generate_insert_ignore_stmt("dssp_codes", dssp_cols, list_of("'H'")("'H: a-Helix'"))+"\n"+
-	generate_insert_ignore_stmt("dssp_codes", dssp_cols, list_of("'E'")("'E: b-Sheet'"))+"\n"+
-	generate_insert_ignore_stmt("dssp_codes", dssp_cols, list_of("'T'")("'T: HB Turn'"))+"\n"+
-	generate_insert_ignore_stmt("dssp_codes", dssp_cols, list_of("'G'")("'G: 3/10 Helix'"))+"\n"+
-	generate_insert_ignore_stmt("dssp_codes", dssp_cols, list_of("'B'")("'B: b-Bridge'"))+"\n"+
-	generate_insert_ignore_stmt("dssp_codes", dssp_cols, list_of("'S'")("'S: Bend'"))+"\n"+
-	generate_insert_ignore_stmt("dssp_codes", dssp_cols, list_of("'I'")("'I: pi-Helix'"))+"\n"+
-	generate_insert_ignore_stmt("dssp_codes", dssp_cols, list_of("' '")("'Irregular'"));
-
-
+	insert_or_ignore("dssp_codes", dssp_cols, list_of("'H'")("'H: a-Helix'"), db_session);
+	insert_or_ignore("dssp_codes", dssp_cols, list_of("'E'")("'E: b-Sheet'"), db_session);
+	insert_or_ignore("dssp_codes", dssp_cols, list_of("'T'")("'T: HB Turn'"), db_session);
+	insert_or_ignore("dssp_codes", dssp_cols, list_of("'G'")("'G: 3/10 Helix'"), db_session);
+	insert_or_ignore("dssp_codes", dssp_cols, list_of("'B'")("'B: b-Bridge'"), db_session);
+	insert_or_ignore("dssp_codes", dssp_cols, list_of("'S'")("'S: Bend'"), db_session);
+	insert_or_ignore("dssp_codes", dssp_cols, list_of("'I'")("'I: pi-Helix'"), db_session);
+	insert_or_ignore("dssp_codes", dssp_cols, list_of("' '")("'Irregular'"), db_session);
+	
 	//	"CREATE TABLE IF NOT EXISTS dssp_codes(\n"
 	//	"	code TEXT,\n"
 	//	"	label TEXT,\n"
@@ -133,6 +134,8 @@ ResidueSecondaryStructureFeatures::schema() const {
 	residue_secondary_structure.add_foreign_key(ForeignKey(fkey_cols, "residues", fkey_reference_cols, true));
 	residue_secondary_structure.add_foreign_key(dssp_fk);
 
+	residue_secondary_structure.write(db_session);
+	
 	/******helix_segments******/
 	Column helix_id("helix_id",DbInteger(), false);
 	Column residue_begin("residue_begin",DbInteger(), false);
@@ -159,7 +162,9 @@ ResidueSecondaryStructureFeatures::schema() const {
 
 	helix_segments.add_foreign_key(ForeignKey(fkey_cols_begin, "residues", fkey_reference_cols, true));
 	helix_segments.add_foreign_key(ForeignKey(fkey_cols_end, "residues", fkey_reference_cols, true));
-
+	
+	helix_segments.write(db_session);
+	
 	/******beta_segments******/
 	Column beta_id("beta_id",DbInteger(), false);
 
@@ -176,13 +181,8 @@ ResidueSecondaryStructureFeatures::schema() const {
 
 	beta_segments.add_foreign_key(ForeignKey(fkey_cols_begin, "residues", fkey_reference_cols, true));
 	beta_segments.add_foreign_key(ForeignKey(fkey_cols_end, "residues", fkey_reference_cols, true));
-
-	return dssp_codes.print() + "\n" +
-		dssp_code_inserts+"\n"+
-		residue_secondary_structure.print() + "\n" +
-		helix_segments.print() + "\n" +
-		beta_segments.print();
-
+	
+	beta_segments.write(db_session);
 }
 
 utility::vector1<std::string>

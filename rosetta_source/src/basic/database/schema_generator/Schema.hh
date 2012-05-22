@@ -10,7 +10,7 @@
 /// @file Schema.hh
 ///
 /// @brief
-/// @author tim
+/// @author Tim Jacobs
 
 #ifndef INCLUDED_basic_database_schema_generator_Schema_HH
 #define INCLUDED_basic_database_schema_generator_Schema_HH
@@ -19,6 +19,8 @@
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Constraint.hh>
+
+#include <utility/sql_database/DatabaseSessionManager.hh>
 
 #include <boost/unordered_set.hpp>
 
@@ -45,6 +47,8 @@ public:
 	void add_constraint(ConstraintOP constraint);
 
 	std::string print();
+	
+	void write(utility::sql_database::sessionOP db_session);
 
 private:
 

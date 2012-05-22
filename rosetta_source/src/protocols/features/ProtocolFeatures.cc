@@ -71,9 +71,9 @@ ProtocolFeatures::~ProtocolFeatures(){}
 
 string
 ProtocolFeatures::type_name() const { return "ProtocolFeatures"; }
-
-string
-ProtocolFeatures::schema() const {
+	
+void
+ProtocolFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{	
 	using namespace basic::database::schema_generator;
 
 	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
@@ -89,7 +89,7 @@ ProtocolFeatures::schema() const {
 		protocols.add_column( Column("svn_url", DbText()) );
 		protocols.add_column( Column("svn_version", DbText()) );
 		protocols.add_column( Column("script", DbText()) );
-		return protocols.print();
+		protocols.write(db_session);
 	}
 
 	else{
@@ -102,10 +102,8 @@ ProtocolFeatures::schema() const {
 		protocols.add_column( Column("svn_url", DbText()) );
 		protocols.add_column( Column("svn_version", DbText()) );
 		protocols.add_column( Column("script", DbText()) );
-		return protocols.print();
+		protocols.write(db_session);
 	}
-
-
 }
 
 utility::vector1<std::string>

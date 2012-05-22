@@ -10,7 +10,7 @@
 /// @file ConcurrencyTest.hh
 ///
 /// @brief
-/// @author tim
+/// @author Tim Jacobs
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,19 +45,28 @@
 #include <basic/Tracer.hh>
 #include <basic/options/util.hh>
 #include <basic/options/keys/helixAssembly.OptionKeys.gen.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
 
 namespace protocols {
 namespace features {
 namespace helixAssembly {
 
-	std::string
-	ConcurrencyTest::schema() const {
-		return
-
-		"CREATE TABLE IF NOT EXISTS concurrency_test (\n"
-		"   id SERIAL PRIMARY KEY,\n"
-		"   random_num INTEGER);"
-		;
+	void
+	ConcurrencyTest::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
+		
+		using namespace basic::database::schema_generator;
+		
+		PrimaryKey id(Column("id", DbUUID(), false));
+		Column random_number(Column("description", DbInteger()));
+		
+		Schema concurrency_test("concurrency_test", id);
+		concurrency_test.add_column(random_number);
+		
+		concurrency_test.write(db_session);
+		
 	}
 
 	///@brief collect all the feature data for the pose
@@ -65,16 +74,16 @@ namespace helixAssembly {
 	ConcurrencyTest::report_features(
 		core::pose::Pose const &,
 		utility::vector1<bool> const &,
-		boost::uuids::uuid ,
+		boost::uuids::uuid struct_id,
 		utility::sql_database::sessionOP db_session
 	){
 
-		std::cout << "I'M ABOUT TO COMMIT A BUNCH O' STUFF. SNAP" << std::endl;
-
-		std::string test_insert =  "INSERT INTO concurrency_test (random_num) VALUES (?);";
-		for(int i=1; i<=10000; i++){
+		
+		std::string test_insert =  "INSERT INTO concurrency_test (id, random_num) VALUES (?);";
+		for(int i=1; i<=100000; i++){
 			cppdb::statement test_stmt(basic::database::safely_prepare_statement(test_insert,db_session));
-			test_stmt.bind(1,rand());
+			test_stmt.bind(1,struct_id);
+			test_stmt.bind(2,rand());
 			basic::database::safely_write_to_database(test_stmt);
 		}
 		return 0;

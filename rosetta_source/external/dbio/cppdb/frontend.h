@@ -21,10 +21,16 @@
 #include <cppdb/errors.h>
 #include <cppdb/ref_ptr.h>
 
+// Borland errors about unknown pool-type without this include.
+#ifdef __BORLANDC__
+#include <cppdb/backend.h>
+#endif
+
 #include <iosfwd>
 #include <ctime>
 #include <string>
 #include <memory>
+#include <typeinfo>
 
 #include <boost/uuid/uuid.hpp>
 
@@ -38,13 +44,29 @@ namespace cppdb {
 	class statement;
 	class session;
 	class connection_info;
+	class connection_specific_data;
 
+	///
+	/// Get CppDB Version String. It consists of "A.B.C", where A
+	/// is a major version number, B is a minor version number and 
+	/// C is patch version
+	///
+	CPPDB_API char const *version_string();
+	///
+	/// Return CppDB version as a number as a sum A * 10000 + B * 100 + C
+	/// where A is a major version number, B is a minor version number and 
+	/// C is patch version
+	///
+	CPPDB_API int version_number();
 	
+// Borland needs pool.h, but not this forward declaration.
+#ifndef __BORLANDC__
 	namespace backend {
 		class result;
 		class statement;
 		class connection;
 	}
+#endif
 	
 	///
 	/// Null value marker
@@ -113,6 +135,69 @@ namespace cppdb {
 		return tags::use_tag<T>(value,tag);
 	}
 
+	/// \cond INTERNAL
+	namespace details {
+		template<typename Object>
+		class functor {
+		public:
+			functor(functor const &other)  : 
+				functor_(other.functor_),
+				wrapper_(other.wrapper_)
+			{
+			}
+			functor const &operator=(functor const &other) 
+			{
+				functor_ = other.functor_;
+				wrapper_ = other.wrapper_;
+				return *this;
+			}
+			functor(void (*func)(Object &))
+			{
+				functor_ = reinterpret_cast<void *>(reinterpret_cast<size_t>(func));
+				wrapper_ = &functor::call_func;
+				
+			}
+			template<typename RealFunctor>
+			functor(RealFunctor const &f)
+			{
+				// The usual casts are not enough for all compilers
+				functor_ = reinterpret_cast<void const *>(&f);
+				wrapper_ = &functor<Object>::template call_it<RealFunctor>;
+			}
+			void operator()(Object &p) const
+			{
+				wrapper_(functor_,p);
+			}
+		private:
+			static void call_func(void const *pointer,Object &parameter)
+			{
+				typedef void function_type(Object &);
+				function_type *f = reinterpret_cast<function_type *>(reinterpret_cast<size_t>((pointer)));
+				f(parameter);
+			}
+			template<typename Functor>
+			static void call_it(void const *pointer,Object &parameter)
+			{
+				Functor const *f_ptr = reinterpret_cast<Functor const *>(pointer);
+				Functor const &f=*f_ptr;
+				f(parameter);
+			}
+			void const *functor_;
+			void (*wrapper_)(void const *,Object &);
+		};
+	} // details
+	/// \endcond
+
+	#ifdef CPPDB_DOXYGEN
+	///
+	/// Special object that can be constructed from generic function like object \a f.
+	///
+	/// So once_functor(f) can be created if f can be used like f(s) where s is \ref cppdb::session
+	///
+	typedef unspecified_class_type once_functor;
+	#else
+	typedef details::functor<session> once_functor;
+	#endif
 
 	///
 	/// \brief This object represents query result.
@@ -207,8 +292,8 @@ namespace cppdb {
 		/// If the data type is not same it tries to cast the data, if casting fails or the
 		/// data is out of the type range, throws bad_value_cast().
 		///
-        bool fetch(int col,boost::uuids::uuid &v);
-        ///
+		bool fetch(int col,boost::uuids::uuid &v);
+		///
 		/// \copydoc fetch(int,uuid&)
 		///
 		bool fetch(int col,short &v);
@@ -280,8 +365,8 @@ namespace cppdb {
 		///
 		/// If the \a n value is invalid throws invalid_column exception
 		///
-        bool fetch(std::string const &n,boost::uuids::uuid &v);
-        ///
+		bool fetch(std::string const &n,boost::uuids::uuid &v);
+		///
 		/// \copydoc fetch(std::string const &,short&)
 		///
 		bool fetch(std::string const &n,short &v);
@@ -359,8 +444,8 @@ namespace cppdb {
 		/// It is not required to call rewind_column() after calling next() as column index is reset
 		/// automatically.
 		///
-        bool fetch(boost::uuids::uuid &v);
-        /// \copydoc fetch(uuid&)
+		bool fetch(boost::uuids::uuid &v);
+		/// \copydoc fetch(uuid&)
 		bool fetch(short &v);
 		/// \copydoc fetch(short&)
 		bool fetch(unsigned short &v);
@@ -410,7 +495,7 @@ namespace cppdb {
 		bool fetch(std::ostream &v);
 
 		///
-		/// Get a value of type \a T from column named \a name (starting from 0). If the column
+		/// Get a value of type \a T from column named \a name. If the column
 		/// is null throws null_value_fetch(), if the column \a name is invalid throws invalid_column,
 		/// if the column value cannot be converted to type T (see fetch functions) it throws bad_value_cast.
 		///	
@@ -423,7 +508,21 @@ namespace cppdb {
 				throw null_value_fetch();
 			return v;
 		}
-	
+
+		///
+		/// Get a value of type \a T from column named \a name. If the column
+		/// is null returns \a def, if the column \a name is invalid throws invalid_column,
+		/// if the column value cannot be converted to type T (see fetch functions) it throws bad_value_cast.
+		///	
+		template<typename T>
+		T get(std::string const &name, T const &def)
+		{
+			T v=T();
+			if(!fetch(name,v))
+				return def;
+			return v;
+		}
+
 		///
 		/// Get a value of type \a T from column \a col (starting from 0). If the column
 		/// is null throws null_value_fetch(), if the column index is invalid throws invalid_column,
@@ -435,6 +534,20 @@ namespace cppdb {
 			T v=T();
 			if(!fetch(col,v))
 				throw null_value_fetch();
+			return v;
+		}
+
+		///
+		/// Get a value of type \a T from column \a col (starting from 0). If the column
+		/// is null returns \a def, if the column index is invalid throws invalid_column,
+		/// if the column value cannot be converted to type T (see fetch functions) it throws bad_value_cast.
+		///	
+		template<typename T>
+		T get(int col, T const &def)
+		{
+			T v=T();
+			if(!fetch(col,v))
+				return def;
 			return v;
 		}
 
@@ -533,8 +646,24 @@ namespace cppdb {
 		///
 		/// You must use it if you use the same statement multiple times.
 		///
+		/// Note, it is different from clear() where the statement is fully released and access to
+		/// it would throw an exception
+		///
 		void reset();
 
+		///
+		/// Clear the statement, removes it, any access to statement object would throw an exception till it would
+		/// be assigned once again
+		///
+		
+		void clear();
+
+		///
+		/// Check if the statement is empty, it is empty when created with default constructor or when cleared 
+		/// with clear() member function.
+		///
+		bool empty() const;
+		
 		///
 		/// Bind a value \a v to the next placeholder (starting from the first) marked with '?' marker in the query.
 		///
@@ -543,8 +672,8 @@ namespace cppdb {
 		///
 		/// If placeholder was not binded the behavior is undefined and may vary between different backends.
 		///
-        statement &bind(boost::uuids::uuid v);
-        /// \copydoc bind(uuid)
+		statement &bind(boost::uuids::uuid v);
+		/// \copydoc bind(uuid)
 		statement &bind(int v);
 		/// \copydoc bind(int)
 		statement &bind(unsigned v);
@@ -617,6 +746,17 @@ namespace cppdb {
 		///
 		statement &bind_null();
 
+// Without the following statement &operator<<(T v) errors for tags::use_tag<T> as T.
+#ifdef __BORLANDC__
+		template<typename T>
+		statement &bind(tags::use_tag<T> const &val)
+		{
+			if(val.tag == null_value)
+				return bind_null();
+			else
+				return bind(val.value);
+		}
+#endif
 
 		///
 		/// Bind a value \a v to the placeholder number \a col (starting from 1) marked with '?' marker in the query.
@@ -626,8 +766,8 @@ namespace cppdb {
 		///
 		/// If placeholder was not binded the behavior is undefined and may vary between different backends.
 		///
-        void bind(int col,boost::uuids::uuid v);
-        /// \copydoc bind(int,uuid)
+		void bind(int col,boost::uuids::uuid v);
+		/// \copydoc bind(int,uuid)
 		void bind(int col,int v);
 		/// \copydoc bind(int,int)
 		void bind(int col,unsigned v);
@@ -908,7 +1048,44 @@ namespace cppdb {
 		/// \copydetails cppdb::parse_connection_string(std::string const&,std::string&,std::map<std::string,std::string>&);
 		///
 		session(std::string const &cs);
-
+		///
+		/// Create a session using a parsed connection string \a ci and call \a f if
+		/// a \ref once() was not called yet.
+		///
+		/// It is useful for setting session specific options for new
+		/// connection, not reused from the pool one.
+		///
+		/// Requirements: \ref once_functor is an object that can be created from generic
+		/// function like object func, such that func(*this) is valid expression
+		///
+		/// \copydetails cppdb::parse_connection_string(std::string const&,std::string&,std::map<std::string,std::string>&);
+		///
+		session(connection_info const &ci,once_functor const &f);
+		///
+		/// Create a session using a connection string \a cs and call \a f if 
+		/// a \ref once() was not called yet.
+		///
+		/// It is useful for setting session specific options for new
+		/// connection, not reused from the pool one.
+		///
+		/// Requirements: \ref once_functor is an object that can be created from generic
+		/// function like object func, such that func(*this) is valid expression
+		///
+		/// \copydetails cppdb::parse_connection_string(std::string const&,std::string&,std::map<std::string,std::string>&);
+		///
+		session(std::string const &cs,once_functor const &f);
+		///
+		/// Create a session using a pointer to backend::connection and call \a f if 
+		/// a \ref once() was not called yet.
+		///
+		/// It is useful for setting session specific options for new
+		/// connection, not reused from the pool one.
+		///
+		/// Requirements: \ref once_functor is an object that can be created from generic
+		/// function like object func, such that func(*this) is valid expression
+		///
+		///
+		session(ref_ptr<backend::connection> conn,once_functor const &f);
 		///
 		/// Create a session using a pointer to backend::connection.
 		///
@@ -972,6 +1149,13 @@ namespace cppdb {
 		void clear_cache();
 
 		///
+		/// Clear connections pool associated with this session's connection.
+		///
+		/// Automatically calls clear_cache(); 
+		///
+		void clear_pool();
+
+		///
 		/// Begin a transaction. Don't use it directly for RAII reasons. Use transaction class instead.
 		///
 		void begin();
@@ -1013,6 +1197,78 @@ namespace cppdb {
 		/// Get an SQL engine name, it may be not the same as driver name for multiple engine drivers like odbc.
 		///
 		std::string engine();
+		///
+		/// Check if this session's connection can be recycled for reuse in a pool.
+		///
+		/// If an exception is thrown during operation on DB this flag is reset
+		/// to false by the front-end classes result, statement, session.
+		///
+		/// Default is true 
+		/// 
+		bool recyclable();
+		
+		///
+		/// Set recyclable state of the session. If some problem occurs on connection
+		/// that prevents its reuse it should be called with false parameter.
+		/// 
+		void recyclable(bool value);
+
+		///
+		/// Returns true of session specific initialization is done, otherwise returns false
+		///
+		bool once_called();
+		///
+		/// Set flag to true if session specific initialization is done, otherwise set it to false
+		///
+		void once_called(bool state);
+		///
+		/// Call the functional \a f on the connection only once. If the connection
+		/// created first time then f would be called. If the connection is created 
+		/// from connection pool and thus setup functor was called, f would not be called.
+		///
+		/// Requirements: \ref once_functor is an object that can be created from generic
+		/// function like object func, such that func(*this) is valid expression
+		///
+		void once(once_functor const &f);
+		
+		
+		///
+		/// Get connection specific object by its type \a t, returns 0 if not installed yet
+		///
+		connection_specific_data *get_specific(std::type_info const &t);
+		///
+		/// Transfers ownership on the connection specific object of type \a t, returns 0 if not installed yet
+		///
+		connection_specific_data *release_specific(std::type_info const &t);
+		///
+		/// Deletes connection specific object of type \a t, and sets a new one \a p (if not NULL)
+		///
+		void reset_specific(std::type_info const &t,connection_specific_data *p=0);
+		
+		///
+		/// Get connection specific object by its type \a T, returns 0 if not installed yet
+		///
+		template<typename T>
+		T *get_specific()
+		{
+			return static_cast<T*>(get_specific(typeid(T)));
+		}
+		///
+		/// Transfers ownership on the connection specific object of type \a T, returns 0 if not installed yet
+		///
+		template<typename T>
+		T *release_specific()
+		{
+			return static_cast<T*>(release_specific(typeid(T)));
+		}
+		///
+		/// Deletes connection specific object of type \a T, and sets a new one \a p (if not NULL)
+		///
+		template<typename T>
+		void reset_specific(T *p=0)
+		{
+			reset_specific(typeid(T),p);
+		}
 
 	private:
 		struct data;
@@ -1047,6 +1303,7 @@ namespace cppdb {
 		///
 		void rollback();
 	private:
+		
 		struct data;
 		session *s_;
 		bool commited_;

@@ -16,6 +16,7 @@
 
 //External
 #include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 // Project Headers
 #include <basic/options/option.hh>
@@ -31,6 +32,7 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/Constraint.hh>
+#include <basic/Tracer.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -45,6 +47,8 @@
 namespace protocols{
 namespace features{
 
+static basic::Tracer TR("protocols.features.ResidueFeatures");
+	
 using std::string;
 using core::Size;
 using core::Real;
@@ -67,8 +71,8 @@ ResidueFeatures::~ResidueFeatures()
 string
 ResidueFeatures::type_name() const { return "ResidueFeatures"; }
 
-string
-ResidueFeatures::schema() const {
+void
+ResidueFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;
 	
 	Column struct_id("struct_id",DbUUID(), false);
@@ -87,9 +91,9 @@ ResidueFeatures::schema() const {
 	residues.add_column(res_type);
 	residues.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true));
 	
-	//TODO add constraint
+	//TODO add constraint resNum > 0
 	
-	return residues.print();
+	residues.write(db_session);
 	
 //	if(db_mode == "sqlite3")
 //	{
@@ -144,8 +148,8 @@ ResidueFeatures::insert_residue_rows(
 	boost::uuids::uuid const struct_id,
 	sessionOP db_session
 ){
-
-	std::string statement_string = "INSERT INTO residues VALUES (?,?,?,?);";
+	
+	std::string statement_string = "INSERT INTO residues (struct_id, resNum, name3, res_type) VALUES (?,?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
 	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
@@ -154,6 +158,8 @@ ResidueFeatures::insert_residue_rows(
 
 		string const name3( res.name3() );
 		string const res_type( res.name() );
+		
+		//TR << "residues binding - " << to_string(struct_id) << " " << resNum << " " << name3 << " " << res_type << std::endl;
 
 		stmt.bind(1,struct_id);
 		stmt.bind(2,resNum);

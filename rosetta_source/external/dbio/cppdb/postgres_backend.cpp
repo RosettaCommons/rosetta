@@ -117,13 +117,13 @@ namespace cppdb {
 				v=parse_number<T>(tmp,ss_);
 				return true;
 			}
-            virtual bool fetch(int col,boost::uuids::uuid &v) 
+			virtual bool fetch(int col,boost::uuids::uuid &v) 
 			{
-                std::string s=to_string(v);
-                bool result = fetch(col,s);
-                boost::uuids::string_generator gen;
-                v = gen(s);
-                return result;
+				std::string s;
+				bool result = fetch(col,s);
+				boost::uuids::string_generator gen;
+				v = gen(s);
+				return result;
 			}
 			virtual bool fetch(int col,short &v)
 			{
@@ -374,10 +374,12 @@ namespace cppdb {
 				params_plengths_.swap(lengths);
 				params_set_.swap(flags);
 			}
-      virtual void bind(int col,boost::uuids::uuid const &v) 
+			virtual void bind(int col,boost::uuids::uuid const &v) 
 			{
-        std::string struct_id_string(to_string(v));
-				bind(col,struct_id_string.c_str(),struct_id_string.c_str()+struct_id_string.size());
+				std::ostringstream ss;
+				std::copy(v.begin(), v.end(), std::ostream_iterator<const unsigned char>(ss));
+				params_values_[col-1]=ss.str();
+				params_set_[col-1]=binary_param;
 			}
 			virtual void bind(int col,std::string const &v)
 			{
@@ -397,7 +399,7 @@ namespace cppdb {
 			virtual void bind(int col,std::tm const &v) 
 			{
 				check(col);
-				params_values_[col-1]=format_time(v);
+				params_values_[col-1]=cppdb::format_time(v);
 				params_set_[col-1]=text_param;
 			}
 			virtual void bind(int col,std::istream &in)

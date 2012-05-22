@@ -27,6 +27,7 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+#include <boost/uuid/uuid_io.hpp>
 
 // C++ Headers
 #include <sstream>

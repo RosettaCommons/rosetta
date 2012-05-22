@@ -42,10 +42,18 @@ namespace cppdb {
 			ss >> v;
 			if(ss.fail() || !std::ws(ss).eof())
 				throw bad_value_cast();
+#ifdef __BORLANDC__
+#pragma warn -8008 // condition always true/false
+#pragma warn -8066 // unreachable code
+#endif
 			if(std::numeric_limits<T>::is_integer) {
 				if(v > std::numeric_limits<T>::max() || v < std::numeric_limits<T>::min())
 					throw bad_value_cast();
 			}
+#ifdef __BORLANDC__
+#pragma warn .8008
+#pragma warn .8066
+#endif
 			return static_cast<T>(v);
 		}
 		T v;

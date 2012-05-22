@@ -10,7 +10,7 @@
 /// @file Column.cc
 ///
 /// @brief
-/// @author tim
+/// @author Tim Jacobs
 
 //Unit Headers
 #include <basic/database/schema_generator/Column.hh>

@@ -56,7 +56,8 @@ public:
 	}
 
 	///@brief return sql statements that sets up the appropriate tables
-	///to contain the features.
+	///to contain the features. This should be removed once everything
+	///has been moved to the schema generator
 	virtual
 	std::string
 	schema() const { return "";}
@@ -71,9 +72,10 @@ public:
 	}
 
 
-	///@brief convience function to write the schema to a database.
-	///There is no need to overload this in the derived class.
-	void
+	///@brief Define the schema and write it to the database. This is 
+	///most easily achieved using the schema_generator. Once everything
+	///has converted to the schema generator this should be made a pure virtual
+	virtual void
 	write_schema_to_db(
 		utility::sql_database::sessionOP db_session
 	) const;

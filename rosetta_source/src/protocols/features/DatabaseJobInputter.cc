@@ -44,6 +44,9 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+#include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/string_generator.hpp>
+
 
 // C++ headers
 #include <string>
@@ -97,18 +100,20 @@ DatabaseJobInputter::load_options_from_option_system(){
 	// system--but using it makes sense here because, it serves the same
 	// purpose: specify which structures to use from the data source.
 
-	if (option.has(in::file::tags) && option[in::file::tags].user()){
-		set_tags(option[in::file::tags]);
-	}
+	//TODO allow list of struct ids (it's not immediately clear how to do this with SQLite due to the fact that there is no simple "unhex" functionality
+//	if (option.has(in::file::tags) && option[in::file::tags].user()){
+//		set_tags(option[in::file::tags]);
+//	}
 	if(option[in::file::tags].user() && option[in::select_structures_from_database].user()) {
 		utility_exit_with_message("you cannot use -in:file:tags and -in:select_structures_from_database simultaniously");
 	}
 
 	if (option[in::select_structures_from_database].user()) {
-		set_tags_from_sql(option[in::select_structures_from_database]);
+		set_struct_ids_from_sql(option[in::select_structures_from_database]);
 	}
 
-	input_protocol_id_ = option[in::database_protocol];
+	//TODO do we want this still?
+//	input_protocol_id_ = option[in::database_protocol];
 
 }
 
@@ -151,33 +156,16 @@ DatabaseJobInputter::set_scorefunction(ScoreFunctionOP scorefunction ){
 }
 
 
-/// @details The specified tags indicate which structures should be
-/// used.  If no tags are specified, then all tags will be used.  Tags
-/// are short strings that uniquely identify a structure.  WARNING: As
-/// of Jan '11, gives a pose there are several places one my look for
-/// such a string identifier:
-///    * If the pose has a PDBInfo object: pose.pdb_info()->name()
-///    * tag_from_pose(pose) <=> pose.data().get(JOBDIST_OUTPUT_TAG)
-///    * JobDistributor::get_instance()->current_job()->input_tag()
-///
-/// The last two will work, and the first will work when pdb info
-/// stored with the structures in the database.
-
-void
-DatabaseJobInputter::set_tags(
-	vector1< string > const & tags
-) {
-	tags_ = tags;
-}
-
-void DatabaseJobInputter::set_tags_from_sql(utility::vector1<std::string> const & sql)
+/// @details The specified struct_ids indicate which structures should be
+/// used.  If no ids are specified, then all will be used.  Unless a tag column
+/// is specified in the SQL statement, the job name (and
+/// consequently, the file output name) will be an ASCII hexadecimal representation
+/// of the struct_id (a boost UUID). If a tag column is given, then the file name will
+/// be the tag associated with the given row.
+void DatabaseJobInputter::set_struct_ids_from_sql(utility::vector1<std::string> const & sql)
 {
-	//first do some basic validation, make sure this is a SELECT command that is selecting the tag or structures.tag
-	if(sql.size() < 2 || (sql[1] != "SELECT" && !(sql[2] == "tag" || sql[2] == "structures.tag"))) {
-		utility_exit_with_message("you must provide an SQL SELECT command that selects the tag or structures.tag column");
-	}
-
 	std::string sql_command(utility::join(sql, " "));
+	basic::database::check_statement_sanity(sql_command);
 
 	sessionOP db_session(basic::database::get_db_session(database_fname_));
 
@@ -196,19 +184,51 @@ void DatabaseJobInputter::set_tags_from_sql(utility::vector1<std::string> const 
 			continue;
 		}
 	}
-	while(res.next()){
-		string tag;
-		res >> tag;
-		tags_.push_back(tag);
+	
+	bool res_nums_specified = false;
+	if(res.find_column("resnum") != -1){res_nums_specified=true;}
+	
+	bool tags_specified = false;
+	if(res.find_column("tag") != -1){tags_specified=true;}
+	
+	if(res.find_column("struct_id") != -1){	
+		while(res.next()){
+			boost::uuids::uuid struct_id;
+			res.fetch("struct_id", struct_id);
+			
+			std::string tag;
+			if(tags_specified){
+				res.fetch("tag", tag);
+				if(tag_structures_.count(tag) > 0 && tag_structures_[tag] != struct_id){
+					utility_exit_with_message("You have specified non-unque input tags which can cause ambigous output. Please make input tags unique");
+				}				
+			}
+			else{
+				tag = to_string(struct_id);
+			}
+			tag_structures_[tag] = struct_id;
+			
+			if(res_nums_specified){
+				core::Size resnum;
+				res.fetch("resnum", resnum);
+				tag_residues_[tag].insert(resnum);
+			}
+		}
+		if(!tag_structures_.size()){
+			utility_exit_with_message("The provided SQL query did not produce any struct_ids");
+		}
+	}
+	else{
+		utility_exit_with_message("Must provide an SQL SELECT command that selects the struct_id column from the structures table");
 	}
 }
 
-void
-DatabaseJobInputter::get_tags(
-	vector1< string > & tags
-) {
-	tags = tags_;
-}
+//void
+//DatabaseJobInputter::get_tags(
+//	vector1< string > & tags
+//) {
+//	tags = tags_;
+//}
 
 
 
@@ -228,13 +248,21 @@ DatabaseJobInputter::pose_from_job(
 	pose.clear();
 
 	if ( !job->inner_job()->get_pose() ) {
-		tr.Debug << "filling pose from Database (tag = " << tag	<< ")" << endl;
+		tr.Debug << "filling pose from Database (input tag = " << tag << ")" << endl;
 		sessionOP db_session(basic::database::get_db_session(database_fname_));
 
-		protein_silent_report_->load_pose(db_session, tag,input_protocol_id_, pose);
+		boost::uuids::uuid struct_id = struct_id=tag_structures_[tag];
+
+		if(!tag_residues_.size()){
+			protein_silent_report_->load_pose(db_session, struct_id, pose);
+		}
+		else{
+			tr << "Residues list size " << tag_residues_[tag].size() << std::endl;
+			protein_silent_report_->load_pose(db_session, struct_id, tag_residues_[tag], pose);
+		}
 
 	} else {
-		tr.Debug << "filling pose from saved copy (tag = " << tag << ")" << endl;
+		tr.Debug << "filling pose from saved copy (input tag = " << tag << ")" << endl;
 		pose = *(job->inner_job()->get_pose());
 	}
 
@@ -253,7 +281,7 @@ void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::Jobs &
 
 	Size const nstruct(get_nstruct());
 
-	if(!tags_.size()){
+	if(!tag_structures_.size()){
 		sessionOP db_session(basic::database::get_db_session(database_fname_));
 
 		result res;
@@ -261,7 +289,7 @@ void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::Jobs &
 		{
 			try
 			{
-				res = (*db_session) << "SELECT tag FROM structures;";
+				res = (*db_session) << "SELECT struct_id FROM structures;";
 				break;
 			}catch(cppdb::cppdb_error &)
 			{
@@ -272,9 +300,9 @@ void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::Jobs &
 			}
 		}
 		while(res.next()){
-			string tag;
-			res >> tag;
-			tags_.push_back(tag);
+			boost::uuids::uuid struct_id;
+			res >> struct_id;
+			tag_structures_[to_string(struct_id)]=struct_id;
 		}
 
 	}
@@ -289,13 +317,15 @@ void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::Jobs &
 	// input1_0002
 	// input2_0002
 	// ....
-	tr.Debug << "reserve memory for InnerJob List " << tags_.size() << endl;
-	inner_jobs.reserve( tags_.size() );
+	tr.Debug << "reserve memory for InnerJob List " << tag_structures_.size() << endl;
+	inner_jobs.reserve( tag_structures_.size() );
 	tr.Debug
-		<< "fill list with " << tags_.size()
+		<< "fill list with " << tag_structures_.size()
 		<< " InnerJob Objects" << endl;
 
-	foreach(string tag, tags_) inner_jobs.push_back(new protocols::jd2::InnerJob(tag, nstruct));
+	for(std::map<std::string, boost::uuids::uuid>::const_iterator iter=tag_structures_.begin(); iter!=tag_structures_.end(); ++iter){
+		inner_jobs.push_back(new protocols::jd2::InnerJob(iter->first, nstruct));
+	} 
 
 	tr.Debug
 		<< "reserve list for " << inner_jobs.size() * nstruct

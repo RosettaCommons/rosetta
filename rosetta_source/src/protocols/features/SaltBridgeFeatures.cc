@@ -15,7 +15,9 @@
 #include <protocols/features/SaltBridgeFeatures.hh>
 
 //External
+#include <cppdb/frontend.h>
 #include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 // Platform Headers
 #include <core/pose/Pose.hh>
@@ -39,9 +41,6 @@
 // Utility Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
-
-// External Headers
-#include <cppdb/frontend.h>
 
 // C++ Headers
 #include <string>

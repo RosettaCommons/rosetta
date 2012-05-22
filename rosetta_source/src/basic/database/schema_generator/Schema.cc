@@ -18,9 +18,13 @@
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 
+#include <basic/database/sql_utils.hh>
+
 // Basic Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
+
 
 // Utility Headers
 #include <utility/exit.hh>
@@ -29,10 +33,14 @@
 #include <stdio.h>
 #include <set>
 
+
 namespace basic{
 namespace database{
 namespace schema_generator{
 
+static basic::Tracer TR("basic.database.schema_generator.Schema");
+
+	
 Schema::Schema(std::string table_name):
 table_name_(table_name)
 {
@@ -87,8 +95,14 @@ void Schema::add_constraint(ConstraintOP constraint){
 }
 
 std::string Schema::print(){
-	std::string schema_string = "CREATE TABLE IF NOT EXISTS " + table_name_ + "(\n\t";
-
+	std::string schema_string = "";
+	if(database_mode_ == "postgres"){
+		schema_string += "CREATE TABLE " + table_name_ + "(";
+	}
+	else{
+		schema_string += "CREATE TABLE IF NOT EXISTS " + table_name_ + "(";
+	}
+	
 	for (utility::vector1<Column>::const_iterator it=columns_.begin(); it!=columns_.end(); it++){
 		if(it!=columns_.begin()){
 			schema_string += ",\n\t";
@@ -122,6 +136,37 @@ std::string Schema::print(){
 	return schema_string;
 }
 
+//Write this schema to the database
+void Schema::write(utility::sql_database::sessionOP db_session){
+	std::string stmt_string = this->print();
+	
+	bool exists=false;
+	
+	try{
+		//Older versions of postgres do not support "create table if not exists"
+		if(database_mode_ == "postgres"){
+			std::string exists_string = "SELECT *\n"
+			"FROM pg_catalog.pg_tables \n"
+			"WHERE tablename = '" + table_name_ + "';";
+			cppdb::statement exists_stmt = (*db_session) << exists_string;
+			cppdb::result res = safely_read_from_database(exists_stmt);
+			if(res.next()){
+				exists=true;
+			}
+		}
+		if(!exists){
+			cppdb::statement stmt = (*db_session) << stmt_string;
+			safely_write_to_database(stmt);
+		}
+	} catch (cppdb::cppdb_error e) {
+		TR.Error
+		<< "ERROR reading schema \n"
+		<< stmt_string << std::endl;
+		TR.Error << e.what() << std::endl;
+		utility_exit();
+	}
+}
+	
 } // schema_generator
 } // namespace database
 } // namespace utility

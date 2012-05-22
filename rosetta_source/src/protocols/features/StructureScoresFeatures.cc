@@ -15,7 +15,17 @@
 #include <protocols/features/StructureScoresFeatures.hh>
 
 //External
+#include <cppdb/frontend.h>
 #include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
+
+//Basic Headers
+#include <basic/database/sql_utils.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
+#include <basic/database/schema_generator/Constraint.hh>
 
 // Platform Headers
 #include <basic/options/option.hh>
@@ -33,9 +43,6 @@
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/database/sql_utils.hh>
-
-// External Headers
-#include <cppdb/frontend.h>
 
 // C++ Headers
 #include <sstream>
@@ -105,36 +112,55 @@ StructureScoresFeatures::~StructureScoresFeatures() {}
 string
 StructureScoresFeatures::type_name() const { return "StructureScoresFeatures"; }
 
-string
-StructureScoresFeatures::schema() const {
-	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
+void
+StructureScoresFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
+	using namespace basic::database::schema_generator;
+	
+	//******structure_scores******//
+	Column struct_id("struct_id",DbUUID(), false);
+	Column score_type_id("score_type_id",DbInteger(), false);
+	Column score_value("score_value",DbInteger(), false);
 
-	if(db_mode == "sqlite3")
-	{
-		return
-			"CREATE TABLE IF NOT EXISTS structure_scores (\n"
-			"	struct_id BLOB,\n"
-			"	score_type_id INTEGER,\n"
-			"	score_value INTEGER,\n"
-			"	FOREIGN KEY (struct_id)\n"
-			"		REFERENCES structures (struct_id)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	FOREIGN KEY (score_type_id)\n"
-			"		REFERENCES score_types (score_type_id)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	PRIMARY KEY (struct_id, score_type_id));";
-	}else if(db_mode == "mysql")
-	{
-		return
-			"CREATE TABLE IF NOT EXISTS structure_scores (\n"
-			"	struct_id BINARY(36) REFERENCES structures (struct_id),\n"
-			"	score_type_id INTEGER REFERENCES score_types (score_type_id),\n"
-			"	score_value INTEGER,\n"
-			"	PRIMARY KEY (struct_id, score_type_id));\n";
-	}else
-	{
-		return "";
-	}
+	utility::vector1<Column> pkey_cols;
+	pkey_cols.push_back(struct_id);
+	pkey_cols.push_back(score_type_id);
+	
+	Schema structure_scores("structure_scores", PrimaryKey(pkey_cols));
+	structure_scores.add_column(struct_id);
+	structure_scores.add_column(score_type_id);
+	structure_scores.add_column(score_value);
+
+	structure_scores.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true));
+	structure_scores.add_foreign_key(ForeignKey(score_type_id, "score_types", "score_type_id", true));
+	
+	structure_scores.write(db_session);
+	
+//	if(db_mode == "sqlite3")
+//	{
+//		return
+//			"CREATE TABLE IF NOT EXISTS structure_scores (\n"
+//			"	struct_id BLOB,\n"
+//			"	score_type_id INTEGER,\n"
+//			"	score_value INTEGER,\n"
+//			"	FOREIGN KEY (struct_id)\n"
+//			"		REFERENCES structures (struct_id)\n"
+//			"		DEFERRABLE INITIALLY DEFERRED,\n"
+//			"	FOREIGN KEY (score_type_id)\n"
+//			"		REFERENCES score_types (score_type_id)\n"
+//			"		DEFERRABLE INITIALLY DEFERRED,\n"
+//			"	PRIMARY KEY (struct_id, score_type_id));";
+//	}else if(db_mode == "mysql")
+//	{
+//		return
+//			"CREATE TABLE IF NOT EXISTS structure_scores (\n"
+//			"	struct_id BINARY(36) REFERENCES structures (struct_id),\n"
+//			"	score_type_id INTEGER REFERENCES score_types (score_type_id),\n"
+//			"	score_value INTEGER,\n"
+//			"	PRIMARY KEY (struct_id, score_type_id));\n";
+//	}else
+//	{
+//		return "";
+//	}
 
 }
 

@@ -43,6 +43,7 @@
 
 // C++ Headers
 #include <map>
+#include <set>
 
 #include <utility/vector1.hh>
 
@@ -85,6 +86,19 @@ public:
 		utility::sql_database::sessionOP db_session,
 		std::string tag,
 		core::Size protocol_id,
+		core::pose::Pose & pose);
+		
+	void
+	load_pose(
+		utility::sql_database::sessionOP db_session,
+		boost::uuids::uuid struct_id,
+		core::pose::Pose & pose);
+		
+	void
+	load_pose(
+		utility::sql_database::sessionOP db_session,
+		boost::uuids::uuid struct_id,
+		std::set<core::Size> residue_numbers,
 		core::pose::Pose & pose);
 
 	void

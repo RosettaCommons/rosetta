@@ -74,7 +74,7 @@ namespace cppdb {
 			return 0;
 		ref_ptr<backend::connection> c;
 		pool_type garbage;
-		time_t now = time(0);
+		std::time_t now = time(0);
 		{
 			mutex::guard l(lock_);
 			// Nothing there should throw so it is safe
@@ -107,7 +107,7 @@ namespace cppdb {
 		if(limit_ == 0)
 			return;
 		pool_type garbage;
-		time_t now = time(0);
+		std::time_t now = time(0);
 		{
 			mutex::guard l(lock_);
 			// under lock do all very fast
@@ -146,6 +146,15 @@ namespace cppdb {
 		put(0);
 	}
 
+	void pool::clear()
+	{
+		pool_type garbage;
+		{
+			mutex::guard l(lock_);
+			garbage.swap(pool_);
+			size_ = 0;
+		} // destroy outside mutex scope
+	}
 }
 
 

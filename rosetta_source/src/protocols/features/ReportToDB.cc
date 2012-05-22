@@ -35,6 +35,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/features/FeaturesReporterFactory.hh>
@@ -535,9 +536,7 @@ ReportToDB::write_features_reporters_table(
 		"features_reporters",
 		PrimaryKey( Column("report_name", DbTextKey())));
 
-	statement features_reporters_stmt(
-		safely_prepare_statement(features_reporters.print(), db_session));
-	safely_write_to_database(features_reporters_stmt);
+	features_reporters.write(db_session);
 
 	//Only report features that aren't already in the database
 	string select_string =
@@ -583,9 +582,7 @@ ReportToDB::write_batch_reports_table(
 	batch_reports_unique.push_back(report_name);
 	batch_reports.add_constraint( new UniqueConstraint(batch_reports_unique) );
 
-	statement batch_reports_stmt(
-		safely_prepare_statement(batch_reports.print(), db_session));
-	safely_write_to_database(batch_reports_stmt);
+	batch_reports.write(db_session);
 }
 
 void

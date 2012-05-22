@@ -22,15 +22,25 @@
 #include <string>
 #include <memory>
 #include <map>
+#include <typeinfo>
 #include <cppdb/defs.h>
 #include <cppdb/errors.h>
 #include <cppdb/ref_ptr.h>
+#include <cppdb/connection_specific.h>
+
+// Borland errors about unknown pool-type without this include.
+#ifdef __BORLANDC__
+#include <cppdb/pool.h>
+#endif
 
 #include <boost/uuid/uuid.hpp>
 
 namespace cppdb {
 	class connection_info;
+// Borland needs pool.h, but not this forward declaration.
+#ifndef __BORLANDC__
 	class pool;
+#endif
 
 	///
 	/// \brief This namepace includes all classes required to implement a cppdb SQL backend.
@@ -66,7 +76,7 @@ namespace cppdb {
 			/// return false, otherwise return true
 			///
 			virtual bool next() = 0;
-            ///
+			///
 			/// Fetch an UUID value for column \a col starting from 0.
 			///
 			/// Should throw invalid_column() \a col value is invalid, should throw bad_value_cast() if the underlying data
@@ -230,8 +240,8 @@ namespace cppdb {
 			/// caching 
 			///
 			virtual std::string const &sql_query() = 0;
-           
-            ///
+
+			///
 			/// Bind a UUID value to column \a col (starting from 1). You may assume
 			/// that the reference remains valid until real call of query() or exec()
 			///
@@ -239,8 +249,7 @@ namespace cppdb {
 			/// ignore if it is impossible to know whether the placeholder exists without special
 			/// support from back-end.
 			///
-            virtual void bind(int col,boost::uuids::uuid const &) = 0;
-            
+			virtual void bind(int col,boost::uuids::uuid const &) = 0;
 			///
 			/// Bind a text value to column \a col (starting from 1). You may assume
 			/// that the reference remains valid until real call of query() or exec()
@@ -521,6 +530,7 @@ namespace cppdb {
 			virtual ~connection();
 			/// \cond INTERNAL
 			void set_pool(ref_ptr<pool> p);
+			ref_ptr<pool> get_pool(); 
 			void set_driver(ref_ptr<loadable_driver> drv);
 			static void dispose(connection *c);
 			ref_ptr<statement> prepare(std::string const &q);
@@ -581,7 +591,51 @@ namespace cppdb {
 			/// Clear statements cache
 			///
 			void clear_cache();
+
+			///
+			/// Check if session specific preparations are done
+			///
+			/// For new connections always false
+			///
+			bool once_called() const;
 			
+			///
+			/// Set once status - true if called flase 
+			/// 
+			void once_called(bool v);
+
+			///
+			/// Get connection specific data pointer of the type \a type , default 0.
+			///
+			/// The ownership is not changed
+			///
+			connection_specific_data *connection_specific_get(std::type_info const &type) const;
+			///
+			/// Release ownership connection specific data pointer of the type \a type
+			///
+			connection_specific_data *connection_specific_release(std::type_info const &type);
+			///
+			/// Remove old connection specific data and set new one for a given
+			/// type \a type , the ownership on \a p is transferred to connection.
+			///
+			void connection_specific_reset(std::type_info const &type,connection_specific_data *p = 0);
+
+			///
+			/// Check if this back-end can be recycled for reuse in a pool.
+			///
+			/// If an exception is thrown during operation on DB this flag is reset
+			/// to false by the front-end classes result, statement, session.
+			///
+			/// Default is true 
+			/// 
+			bool recyclable();
+			
+			///
+			/// Set recyclable state of the session. If some problem occurs on connection
+			/// that prevents its reuse it should be called with false parameter.
+			/// 
+			void recyclable(bool value);
+
 		private:
 
 			struct data;
@@ -590,9 +644,10 @@ namespace cppdb {
 			ref_ptr<loadable_driver> driver_;
 			ref_ptr<pool> pool_;
 			unsigned default_is_prepared_ : 1;
-			unsigned reserverd_ : 31;
+			unsigned once_called_ : 1;
+			unsigned recyclable_ : 1;
+			unsigned reserverd_ : 29;
 		};
-
 
 	} // backend
 } // cppdb

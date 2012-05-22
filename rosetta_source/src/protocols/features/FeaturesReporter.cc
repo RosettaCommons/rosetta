@@ -16,6 +16,7 @@
 
 //External
 #include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 // Project Headers
 #include <basic/Tracer.hh>
@@ -166,7 +167,7 @@ FeaturesReporter::delete_records_from_table(
 	stringstream sql;
 	sql << "DELETE FROM " << table_name << " WHERE struct_id = ?;";
 	statement stmt(safely_prepare_statement(sql.str(), db_session));
-	stmt.bind(1, struct_id);
+	stmt.bind(1,struct_id);
 	safely_write_to_database(stmt);
 }
 

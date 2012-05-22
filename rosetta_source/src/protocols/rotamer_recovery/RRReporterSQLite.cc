@@ -401,7 +401,7 @@ RRReporterSQLite::report_rotamer_recovery_features(
 	std::string statement_string = "INSERT INTO rotamer_recovery VALUES (?,?,?,?);";
 	statement stmt(safely_prepare_statement(statement_string, db_session_));
 
-	stmt.bind(1, struct_id1);
+	stmt.bind(1,struct_id1);
 	stmt.bind(2, res1.seqpos());
 	stmt.bind(3, score);
 	stmt.bind(4, recovered);

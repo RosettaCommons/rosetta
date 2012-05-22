@@ -10,7 +10,7 @@
 /// @file DataType.hh
 ///
 /// @brief
-/// @author tim
+/// @author Tim Jacobs
 
 #ifndef INCLUDED_basic_database_schema_generator_DbDataType_HH
 #define INCLUDED_basic_database_schema_generator_DbDataType_HH
@@ -55,19 +55,26 @@ public:
 	DbInteger(int size);
 };
 
-//General integer data type
-class DbBoolean : public DbDataType {
-public:
-	DbBoolean();
-
-};
+/// DOES NOT WORK WITH CPPDB - USE INTEGER INSTEAD
+////boolean data type
+//class DbBoolean : public DbDataType {
+//public:
+//	DbBoolean();
+//
+//};
 
 class DbBigInt : public DbDataType {
 public:
 	DbBigInt();
 
 };
-
+	
+//Double data type
+class DbDouble : public DbDataType {
+public:
+	DbDouble();
+};
+	
 //Real data type
 class DbReal : public DbDataType {
 public:

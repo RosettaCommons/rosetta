@@ -168,8 +168,16 @@ namespace cppdb {
 		//////////////
 		//connection
 		//////////////
-
-		struct connection::data {};
+		
+		struct connection::data {
+			typedef std::list<connection_specific_data *> conn_specific_type;
+			conn_specific_type conn_specific;
+			~data()
+			{
+				for(conn_specific_type::iterator p=conn_specific.begin();p!=conn_specific.end();++p)
+					delete *p;
+			}
+		};
 		ref_ptr<statement> connection::prepare(std::string const &q) 
 		{
 			if(default_is_prepared_)
@@ -204,10 +212,11 @@ namespace cppdb {
 			return st;
 		}
 
-
-
 		connection::connection(connection_info const &info) :
-			pool_(0)
+			d(new connection::data),
+			pool_(0),
+			once_called_(0),
+			recyclable_(1)
 		{
 			int cache_size = info.get("@stmt_cache_size",64);
 			if(cache_size > 0) {
@@ -225,6 +234,64 @@ namespace cppdb {
 		{
 		}
 
+		bool connection::once_called() const
+		{
+			return once_called_;
+		}
+		void connection::once_called(bool v)
+		{
+			once_called_ = v;
+		}
+		connection_specific_data *connection::connection_specific_get(std::type_info const &type) const
+		{
+			for(data::conn_specific_type::const_iterator p=d->conn_specific.begin();p!=d->conn_specific.end();++p) {
+				if(typeid(**p) == type)
+					return *p;
+			}
+			return 0;
+		}
+		connection_specific_data *connection::connection_specific_release(std::type_info const &type)
+		{
+			for(data::conn_specific_type::iterator p=d->conn_specific.begin();p!=d->conn_specific.end();++p) {
+				if(typeid(**p) == type) {
+					connection_specific_data *ptr = *p;
+					d->conn_specific.erase(p);
+					return ptr;
+				}
+			}
+			return 0;
+		}
+		void connection::connection_specific_reset(std::type_info const &type,connection_specific_data *ptr)
+		{
+			std::auto_ptr<connection_specific_data> tmp(ptr);
+			if(ptr && typeid(*ptr)!=type) {
+				throw cppdb_error(
+					std::string("cppdb::connection_specific::Inconsistent pointer type")
+					+ typeid(*ptr).name() 
+					+ " and std::type_info reference:"
+					+ type.name()
+				);
+			}
+			for(data::conn_specific_type::iterator p=d->conn_specific.begin();p!=d->conn_specific.end();++p) {
+				if(typeid(**p) == type) {
+					delete *p;
+					if(ptr)
+						*p = tmp.release();
+					else
+						d->conn_specific.erase(p);
+					return;
+				}
+			}
+			if(ptr) {
+				d->conn_specific.push_back(0);
+				d->conn_specific.back() = tmp.release();
+			}
+		}
+
+		ref_ptr<pool> connection::get_pool()
+		{
+			return pool_;
+		}
 		void connection::set_pool(ref_ptr<pool> p)
 		{
 			pool_ = p;
@@ -237,6 +304,16 @@ namespace cppdb {
 		{
 			cache_.clear();
 		}
+
+		void connection::recyclable(bool opt)
+		{
+			recyclable_ = opt;
+		}
+
+		bool connection::recyclable()
+		{
+			return recyclable_;
+		}
 		
 		void connection::dispose(connection *c)
 		{
@@ -244,7 +321,7 @@ namespace cppdb {
 				return;
 			ref_ptr<pool> p = c->pool_;
 			c->pool_ = 0;
-			if(p)
+			if(p && c->recyclable())
 				p->put(c);
 			else {
 				c->clear_cache();
@@ -287,6 +364,17 @@ namespace cppdb {
 		}
 
 	} // backend
+
+	struct connection_specific_data::data {};
+
+	connection_specific_data::connection_specific_data()
+	{
+	}
+	connection_specific_data::~connection_specific_data()
+	{
+	}
+	
+	
 } // cppdb
 
 

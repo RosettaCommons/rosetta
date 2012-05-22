@@ -41,7 +41,10 @@ namespace cppdb {
 	///
 	class CPPDB_API connections_manager {
 		connections_manager();
+// Borland erros on hidden destructors in classes without only static methods.
+#ifndef __BORLANDC__
 		~connections_manager();
+#endif
 		connections_manager(connections_manager const &);
 		void operator = (connections_manager const &);
 	public:

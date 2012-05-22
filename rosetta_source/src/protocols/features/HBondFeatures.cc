@@ -16,6 +16,7 @@
 
 //External
 #include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 // Package Headers
 #include <core/scoring/hbonds/HBondSet.hh>

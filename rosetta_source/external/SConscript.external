@@ -66,7 +66,9 @@ def build_sqlite3(current_project):
 def build_cppdb(current_project):
     actual = ProjectSettings(current_project)
     env = build.environment.Clone()
+    actual.libraries.append("dl")
     actual.libraries.append("sqlite3")
+    actual.include_path.append("dbio/sqlite3")
     if "postgres" in build.options.extras:
         actual.include_path.append("dbio/postgreSQL")
         actual.libraries.append("pq")
@@ -82,6 +84,10 @@ def build_cppdb(current_project):
     env.Append(CPPDEFINES=['CPPDB_DISABLE_SHARED_OBJECT_LOADING'])
     env.Append(CPPDEFINES=['CPPDB_DISABLE_THREAD_SAFETY'])
     env.Append(CPPDEFINES=['CPPDB_SOVERSION=\\"0\\"'])
+    env.Append(CPPDEFINES=['CPPDB_MAJOR=0'])
+    env.Append(CPPDEFINES=['CPPDB_MINOR=3'])
+    env.Append(CPPDEFINES=['CPPDB_PATCH=0'])
+    env.Append(CPPDEFINES=['CPPDB_VERSION=\\"0.3.0\\"'])
     env.Append(CPPDEFINES=['CPPDB_WITH_SQLITE3'])
     if "postgres" in build.options.extras:
     	env.Append(CPPDEFINES=['CPPDB_WITH_PQ'])

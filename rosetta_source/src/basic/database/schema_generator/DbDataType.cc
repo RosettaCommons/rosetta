@@ -11,7 +11,7 @@
 ///
 /// @brief
 
-/// @author tim
+/// @author Tim Jacobs
 
 #include <basic/database/schema_generator/DbDataType.hh>
 
@@ -116,12 +116,13 @@ DbDataType()
 	}
 }
 
-/*********Boolean data types*********/
-DbBoolean::DbBoolean():
-DbDataType()
-{
-	type_string_ = "BOOLEAN";
-}
+/// DOES NOT WORK WITH CPPDB - USE INTEGER INSTEAD
+///*********Boolean data types*********/
+//DbBoolean::DbBoolean():
+//DbDataType()
+//{
+//	type_string_ = "BOOLEAN";
+//}
 
 DbReal::DbReal():
 DbDataType()
@@ -129,6 +130,24 @@ DbDataType()
 	type_string_ = "REAL";
 }
 
+DbDouble::DbDouble():
+DbDataType()
+{
+	if(this->database_mode_.compare("sqlite3") == 0){
+		type_string_ = "REAL";
+	}
+	else if(this->database_mode_.compare("postgres") == 0){
+		type_string_ = "DOUBLE PRECISION";
+	}
+	//I can't figure out how to write the 16byte UUID into a varbinary(16). I don't like mysql.
+	else if(this->database_mode_.compare("mysql") == 0){
+		type_string_ = "DOUBLE";
+	}
+	else{
+		utility_exit_with_message("ERROR: Invalid database mode supplied. Please specify sqlite3, mysql, or postgres");
+	}
+}
+	
 /*********UUID data types*********/
 DbUUID::DbUUID():
 DbDataType()
@@ -141,7 +160,7 @@ DbDataType()
 	}
 	//I can't figure out how to write the 16byte UUID into a varbinary(16). I don't like mysql.
 	else if(this->database_mode_.compare("mysql") == 0){
-		type_string_ = "BINARY(36)";
+		type_string_ = "BINARY(16)";
 	}
 	else{
 		utility_exit_with_message("ERROR: Invalid database mode supplied. Please specify sqlite3, mysql, or postgres");

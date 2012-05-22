@@ -11,7 +11,7 @@
 ///
 /// @brief
 
-/// @author tim
+/// @author Tim Jacobs
 
 // Unit Headers
 #include <protocols/features/BatchFeaturesCreator.hh>

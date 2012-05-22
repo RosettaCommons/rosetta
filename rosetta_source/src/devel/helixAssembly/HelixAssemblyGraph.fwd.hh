@@ -7,27 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file BatchFeatures.fwd.hh
+/// @file HelixAssemblyGraph.fwd.hh
 ///
 /// @brief
 /// @author Tim Jacobs
 
 
-#ifndef INCLUDED_protocols_features_BatchFeatures_FWD_HH
-#define INCLUDED_protocols_features_BatchFeatures_FWD_HH
+
+#ifndef INCLUDED_HelixAssemblyGraph_FWD_HH
+#define INCLUDED_HelixAssemblyGraph_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols{
-namespace features{
+class HelixAssemblyGraph;
+typedef utility::pointer::owning_ptr< HelixAssemblyGraph > HelixAssemblyGraphOP;
+typedef utility::pointer::owning_ptr< HelixAssemblyGraph const > HelixAssemblyGraphCOP;
 
-class BatchFeatures;
-typedef utility::pointer::owning_ptr< BatchFeatures > BatchFeaturesOP;
-typedef utility::pointer::owning_ptr< BatchFeatures const > BatchFeaturesCOP;
-
-}
-}
-    
 #endif
 
 

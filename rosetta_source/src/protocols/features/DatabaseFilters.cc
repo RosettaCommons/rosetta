@@ -149,7 +149,7 @@ WriteDeletePair get_write_delete_pair(
 	//See if our current model is better
 	if(current_model_score < cutoff_score )
 	{
-		utility::vector1<boost::uuids::uuid> struct_ids_to_delete(1, struct_id_to_remove);
+		utility::vector1<boost::uuids::uuid> struct_ids_to_delete(1,struct_id_to_remove);
 		return WriteDeletePair(true, struct_ids_to_delete);
 	}else
 	{

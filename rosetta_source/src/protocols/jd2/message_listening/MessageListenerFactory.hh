@@ -10,7 +10,7 @@
 /// @file MessageListenerFactor.hh
 ///
 /// @brief
-/// @author tim
+/// @author Tim Jacobs
 
 
 

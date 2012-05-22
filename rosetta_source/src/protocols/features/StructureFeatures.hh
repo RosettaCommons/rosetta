@@ -47,9 +47,9 @@ public:
 	std::string
 	type_name() const;
 
-	///@brief return sql statements that setup the right tables
-	std::string
-	schema() const;
+	///@brief generate the table schemas and write them to the database
+	virtual void
+	write_schema_to_db(utility::sql_database::sessionOP db_session) const;
 
 	///@brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.

@@ -10,7 +10,7 @@
 /// @file ConcurrencyTestCreator.hh
 ///
 /// @brief
-/// @author tim
+/// @author Tim Jacobs
 
 #ifndef INCLUDED_protocols_features_helixAssembly_ConcurrencyTestCreator_HH
 #define INCLUDED_protocols_features_helixAssembly_ConcurrencyTestCreator_HH

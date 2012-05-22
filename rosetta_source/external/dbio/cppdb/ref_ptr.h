@@ -65,6 +65,14 @@ namespace cppdb {
 			reset(other.p);
 			return *this;
 		}
+// Borland warns on assignments using operator=(ref_ptr...) with new sometype(...).
+#ifdef __BORLANDC__
+		ref_ptr const &operator=(T *other)
+		{
+			reset(other);
+			return *this;
+		}
+#endif
 		///
 		/// Get he pointer value, it may return NULL in case of empty pointer
 		///
@@ -85,7 +93,7 @@ namespace cppdb {
 		T *operator->() const
 		{
 			if(!p)
-				throw cppdb_error("Attempt to access an empty object");
+				throw cppdb_error("cppdb::ref_ptr: attempt to access an empty object");
 			return p;
 		}
 		///
@@ -94,7 +102,7 @@ namespace cppdb {
 		T &operator*() const
 		{
 			if(!p)
-				throw cppdb_error("Attempt to access an empty object");
+				throw cppdb_error("cppdb::ref_ptr: attempt to access an empty object");
 			return *p;
 		}
 		///

@@ -19,6 +19,7 @@
 
 //External
 #include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 // Platform Headers
 #include <core/chemical/AA.hh>
@@ -31,10 +32,13 @@
 #include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
-// Basic Headers
-#include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
+//Basic Headers
 #include <basic/database/sql_utils.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
+#include <basic/database/schema_generator/Constraint.hh>
 
 
 // External Headers
@@ -70,34 +74,52 @@ using cppdb::result;
 string
 PoseCommentsFeatures::type_name() const { return "PoseCommentsFeatures"; }
 
-string
-PoseCommentsFeatures::schema() const {
-	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
-
-	if(db_mode == "sqlite3")
-	{
-		return
-			"CREATE TABLE IF NOT EXISTS pose_comments (\n"
-			"	struct_id BLOB,\n"
-			"	comment_key TEXT,\n"
-			"	value TEXT,\n"
-			"	FOREIGN KEY (struct_id)\n"
-			"		REFERENCES structures (struct_id)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	PRIMARY KEY(struct_id, comment_key));";
-	}else if(db_mode == "mysql")
-	{
-		return
-			"CREATE TABLE IF NOT EXISTS pose_comments (\n"
-			"	struct_id BINARY(36),\n"
-			"	comment_key VARCHAR(255),\n"
-			"	value TEXT,\n"
-			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"
-			"	PRIMARY KEY(struct_id, comment_key));";
-	}else
-	{
-		return "";
-	}
+void
+PoseCommentsFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{	
+	using namespace basic::database::schema_generator;
+	
+	//******pose_comments******//
+	Column struct_id("struct_id",DbUUID(), false);
+	Column comment_key("comment_key",DbText(), false);
+	Column value("value",DbText(), false);
+	
+	utility::vector1<Column> pkey_cols;
+	pkey_cols.push_back(struct_id);
+	pkey_cols.push_back(comment_key);
+	
+	Schema pose_comments("pose_comments", PrimaryKey(pkey_cols));
+	pose_comments.add_column(struct_id);
+	pose_comments.add_column(comment_key);
+	pose_comments.add_column(value);
+	
+	pose_comments.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true));
+	
+	pose_comments.write(db_session);
+	
+//	if(db_mode == "sqlite3")
+//	{
+//		return
+//			"CREATE TABLE IF NOT EXISTS pose_comments (\n"
+//			"	struct_id BLOB,\n"
+//			"	comment_key TEXT,\n"
+//			"	value TEXT,\n"
+//			"	FOREIGN KEY (struct_id)\n"
+//			"		REFERENCES structures (struct_id)\n"
+//			"		DEFERRABLE INITIALLY DEFERRED,\n"
+//			"	PRIMARY KEY(struct_id, comment_key));";
+//	}else if(db_mode == "mysql")
+//	{
+//		return
+//			"CREATE TABLE IF NOT EXISTS pose_comments (\n"
+//			"	struct_id BINARY(36),\n"
+//			"	comment_key VARCHAR(255),\n"
+//			"	value TEXT,\n"
+//			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"
+//			"	PRIMARY KEY(struct_id, comment_key));";
+//	}else
+//	{
+//		return "";
+//	}
 
 }
 

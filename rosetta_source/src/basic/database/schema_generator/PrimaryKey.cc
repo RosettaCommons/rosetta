@@ -10,7 +10,7 @@
 /// @file PrimaryKey.cc
 ///
 /// @brief
-/// @author tim
+/// @author Tim Jacobs
 
 #include <basic/database/schema_generator/PrimaryKey.hh>
 //#include <basic/database/schema_generator/Column.hh>

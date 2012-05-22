@@ -32,6 +32,11 @@
 
 //C++ Headers
 #include <string>
+#include <map>
+#include <set>
+
+//External
+#include <boost/uuid/uuid.hpp>
 
 namespace protocols {
 namespace features {
@@ -68,17 +73,13 @@ public:
 	void
 	set_scorefunction(core::scoring::ScoreFunctionOP scorefunction );
 
-	/// @brief Set input tags.  If none are specified, use all tags
-	void
-	set_tags(utility::vector1< std::string > const & tags);
-
 	/// @brief set input tags using a database SELECT command
 	void
-	set_tags_from_sql(utility::vector1<std::string> const & sql);
+	set_struct_ids_from_sql(utility::vector1<std::string> const & sql);
 
-	/// @brief Get input tags
-	void
-	get_tags(utility::vector1< std::string > & tags);
+//	/// @brief Get input tags
+//	void
+//	get_tags(utility::vector1< std::string > & tags);
 
 	/// @brief this function is responsible for filling the pose reference with
 	/// the pose indicated by the job.  The Job object (within its InnerJob)
@@ -102,8 +103,8 @@ private:
 	protocols::features::ProteinSilentReportOP protein_silent_report_;
 	std::string database_fname_;
 	core::Size input_protocol_id_;
-	utility::vector1< std::string > tags_;
-
+	std::map< std::string, boost::uuids::uuid > tag_structures_;
+	std::map< std::string, std::set< core::Size > > tag_residues_;
 }; // DatabaseJobInputter
 
 } // namespace features

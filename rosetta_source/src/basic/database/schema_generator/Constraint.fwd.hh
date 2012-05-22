@@ -10,7 +10,7 @@
 /// @file Constraint.fwd.hh
 ///
 /// @brief
-/// @author tim
+/// @author Tim Jacobs
 
 
 

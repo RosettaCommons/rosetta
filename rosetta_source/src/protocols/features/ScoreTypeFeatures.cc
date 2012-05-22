@@ -17,6 +17,14 @@
 //External
 #include <boost/uuid/uuid.hpp>
 
+//Basic Headers
+#include <basic/database/sql_utils.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
+#include <basic/database/schema_generator/Constraint.hh>
+
 // Platform Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
@@ -96,36 +104,54 @@ ScoreTypeFeatures::~ScoreTypeFeatures() {}
 string
 ScoreTypeFeatures::type_name() const { return "ScoreTypeFeatures"; }
 
-string
-ScoreTypeFeatures::schema() const {
-	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
+void
+ScoreTypeFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 
-	if(db_mode == "sqlite3")
-	{
-		return
-			"CREATE TABLE IF NOT EXISTS score_types (\n"
-			"	protocol_id INTEGER,\n"
-			"	score_type_id INTEGER,\n"
-			"	score_type_name TEXT,\n"
-			"	PRIMARY KEY (protocol_id, score_type_id)\n"
-			"	FOREIGN KEY (protocol_id)\n"
-			"		REFERENCES protocols (protocol_id)\n"
-			"		DEFERRABLE INITIALLY DEFERRED);\n"
-			"\n";
-	}else if(db_mode == "mysql")
-	{
-		return
-			"CREATE TABLE IF NOT EXISTS score_types (\n"
-			"	protocol_id INTEGER REFERENCES protocols (protocol_id),\n"
-			"	score_type_id INTEGER,\n"
-			"	score_type_name TEXT,\n"
-			"   PRIMARY KEY (protocol_id, score_type_id));\n"
-			"\n";
-	}else
-	{
-		return "";
-	}
+	using namespace basic::database::schema_generator;
+	
+	//******score_types******//
+	Column protocol_id("protocol_id",DbInteger(), false);
+	Column score_type_id("score_type_id",DbInteger(), false);
+	Column score_type_name("score_type_name",DbText(), false);
+	
+	utility::vector1<Column> pkey_cols;
+	pkey_cols.push_back(protocol_id);
+	pkey_cols.push_back(score_type_id);
+	
+	Schema score_types("score_types", PrimaryKey(pkey_cols));
+	score_types.add_column(protocol_id);
+	score_types.add_column(score_type_id);
+	score_types.add_column(score_type_name);
+	
+	score_types.add_foreign_key(ForeignKey(protocol_id, "protocols", "protocol_id", true));
+	
+	score_types.write(db_session);
 
+//	if(db_mode == "sqlite3")
+//	{
+//		return
+//			"CREATE TABLE IF NOT EXISTS score_types (\n"
+//			"	protocol_id INTEGER,\n"
+//			"	score_type_id INTEGER,\n"
+//			"	score_type_name TEXT,\n"
+//			"	PRIMARY KEY (protocol_id, score_type_id)\n"
+//			"	FOREIGN KEY (protocol_id)\n"
+//			"		REFERENCES protocols (protocol_id)\n"
+//			"		DEFERRABLE INITIALLY DEFERRED);\n"
+//			"\n";
+//	}else if(db_mode == "mysql")
+//	{
+//		return
+//			"CREATE TABLE IF NOT EXISTS score_types (\n"
+//			"	protocol_id INTEGER REFERENCES protocols (protocol_id),\n"
+//			"	score_type_id INTEGER,\n"
+//			"	score_type_name TEXT,\n"
+//			"   PRIMARY KEY (protocol_id, score_type_id));\n"
+//			"\n";
+//	}else
+//	{
+//		return "";
+//	}
 }
 
 utility::vector1<std::string>
