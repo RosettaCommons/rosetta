@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @author Sarel Fleishman (sarelf@uw.edu)
+/// @author Jacob Bale (balej@uw.edu)
 #include <devel/matdes/InterfacePackingFilter.hh>
 #include <devel/matdes/InterfacePackingFilterCreator.hh>
 
@@ -147,7 +147,7 @@ InterfacePackingFilter::report( std::ostream & out, core::pose::Pose const & pos
 
 void
 InterfacePackingFilter::parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & data,
+		protocols::moves::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & )

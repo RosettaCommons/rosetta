@@ -34,7 +34,7 @@ public:
 	virtual std::string keyname() const;
 };
 
-}
-}
+} //matdes
+} //devel
 
 #endif

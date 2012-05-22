@@ -14,11 +14,18 @@
 #ifndef INCLUDED_devel_matdes_SymUnsatHbondFilter_fwd_hh
 #define INCLUDED_devel_matdes_SymUnsatHbondFilter_fwd_hh
 
+// Utility headers
+#include <utility/pointer/owning_ptr.fwd.hh>
 
 namespace devel {
 namespace matdes {
 
+// Forward
 class SymUnsatHbondFilter;
+
+// Types
+typedef utility::pointer::owning_ptr< SymUnsatHbondFilter >  SymUnsatHbondFilterOP;
+typedef utility::pointer::owning_ptr< SymUnsatHbondFilter const >  SymUnsatHbondFilterCOP;
 
 }
 }

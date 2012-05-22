@@ -11,7 +11,7 @@
 /// @brief 
 /// @author Neil King ( neilking@uw.edu )
 /// @author Javier Castellanos ( javiercv@uw.edu )
-
+/// @author Jacob Bale (balej@uw.edu)
 
 // Package headers
 #include <devel/matdes/util.hh>

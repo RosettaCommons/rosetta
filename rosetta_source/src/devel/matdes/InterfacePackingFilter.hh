@@ -7,9 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/filters/InterfacePackingFilter.hh
-/// @brief Reports to Tracer which residues are designable in a taskfactory
-/// @author Sarel Fleishman (sarelf@uw.edu)
+/// @file devel/matdes/InterfacePackingFilter.hh
+/// @brief Calculates the RosettaHoles score for the atoms within a user-defined cutoff distance 
+/// (default = 9.0) of the subpose interface.  Filters based on lower and upper thresholds, 
+/// which are set to -/+5 by default.
+/// @author Jacob Bale (balej@uw.edu)
 
 #ifndef INCLUDED_devel_matdes_InterfacePackingFilter_hh
 #define INCLUDED_devel_matdes_InterfacePackingFilter_hh
@@ -38,7 +40,6 @@ private:
 public:
 	/// @brief default ctor
 	InterfacePackingFilter();
-	///@brief Constructor with a single target residue
 	virtual bool apply( core::pose::Pose const & pose ) const;
 	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	virtual core::Real report_sm( core::pose::Pose const & pose ) const;

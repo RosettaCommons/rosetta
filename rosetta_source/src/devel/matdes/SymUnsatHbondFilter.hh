@@ -26,28 +26,85 @@ namespace devel {
 namespace matdes {
 
 /// @brief filters based on an upper bound # of buried unsatisfied polar residues
-class SymUnsatHbondFilter : public protocols::filters::Filter
-{
+class SymUnsatHbondFilter : public protocols::filters::Filter {
 public:
-	SymUnsatHbondFilter() : protocols::filters::Filter( "SymUnsatHbonds" ) {}
-	SymUnsatHbondFilter( core::Size const upper_threshold, core::Size const jump_num );
-	bool apply( core::pose::Pose const & pose ) const;
-	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-	core::Real report_sm( core::pose::Pose const & pose ) const;
-	protocols::filters::FilterOP clone() const {
-		return new SymUnsatHbondFilter( *this );
-	}
-	protocols::filters::FilterOP fresh_instance() const{
-		return new SymUnsatHbondFilter();
-	}
 
-	virtual ~SymUnsatHbondFilter();
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+  typedef protocols::filters::Filter Super;
+  typedef protocols::filters::Filter Filter;
+  typedef protocols::filters::FilterOP FilterOP;
+  typedef core::Real Real;
+  typedef core::pose::Pose Pose;
+
+  typedef utility::tag::TagPtr TagPtr;
+  typedef protocols::filters::Filters_map Filters_map;
+  typedef protocols::moves::DataMap DataMap;
+  typedef protocols::moves::Movers_map Movers_map;
+
+public:
+	// @brief default constructor
+	SymUnsatHbondFilter();
+
+	// @brief constructor with arguments
+	SymUnsatHbondFilter( core::Size const upper_cutoff, core::Size const jump, bool verb, bool write );
+
+	// @brief copy constructor
+	SymUnsatHbondFilter( SymUnsatHbondFilter const & rval );
+
+	virtual ~SymUnsatHbondFilter(){}
+
+public:// virtual constructor
+
+	// @brief make clone
+  virtual protocols::filters::FilterOP clone() const;
+
+  // @brief make fresh instance
+  virtual protocols::filters::FilterOP fresh_instance() const;
+
+public:// accessor
+  // @brief get name of this filter
+  virtual std::string name() const { return "SymUnsatHbond"; }
+
+public:// setters
+	void upper_threshold( core::Size const upper_cutoff );
+	void jump_num( core::Size const jump );
+	void verbose( bool const verb );
+	void write2pdb( bool const write );
+
+public:// getters
+	core::Size upper_threshold() const;
+	core::Size jump_num() const;
+	bool verbose() const;
+	bool write2pdb() const;
+
+public:// parser
+
+  virtual void parse_my_tag( TagPtr const tag,
+    DataMap &,
+    protocols::filters::Filters_map const &,
+    Movers_map const &,
+    Pose const & );
+
+public:// virtual main operation
+
+	// @brief returns true if given pose passes the filter, false otherwise.
+	virtual bool apply( core::pose::Pose const & pose ) const;
+
+	// @brief report information to scorefile and std::out
+	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
+	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
+
+	// @brief calc number of unsatisfied hydrogen bonds
+	core::Real compute( core::pose::Pose const & pose, bool const & verb, bool const & write ) const;
+	void write_to_pdb( std::string const residue_name, core::Size const residue, std::string const atom_name ) const;
+	void write_pymol_string_to_pdb( std::string const pymol_selection ) const;
 
 private:
-	core::Real compute( core::pose::Pose const & pose ) const;
+
 	core::Size upper_threshold_;
 	core::Size jump_num_;
+	bool verbose_;
+	bool write2pdb_;
+
 };
 
 }

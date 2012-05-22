@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/protein_interface_design/filters/InterfacePackingFilter.fwd.hh
+/// @file   devel/matdes/InterfacePackingFilter.fwd.hh
 /// @brief  forward declaration for InterfacePackingFilter
-/// @author  Sarel Fleishman sarelf@uw.edu
+/// @author  Jacob Bale balej@uw.edu
 
 
 #ifndef INCLUDED_devel_matdes_InterfacePackingFilter_fwd_hh

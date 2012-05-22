@@ -11,6 +11,7 @@
 /// @brief 
 /// @author Neil King ( neilking@uw.edu )
 /// @author Javier Castellanos ( javiercv@uw.edu )
+/// @author Jacob Bale (balej@uw.edu)
 
 #ifndef INCLUDED_devel_matdes_util_hh
 #define INCLUDED_devel_matdes_util_hh

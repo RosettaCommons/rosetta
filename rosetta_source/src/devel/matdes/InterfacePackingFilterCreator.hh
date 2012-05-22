@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/protein_interface_design/filters/InterfacePackingFilterCreator.hh
+/// @file   devel/matdes/InterfacePackingFilterCreator.hh
 /// @brief  FilterCreators for the InterfacePackingFilter
-/// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @author Jacob Bale (balej@uw.edu)
 
 #ifndef INCLUDED_devel_matdes_InterfacePackingFilterCreator_hh
 #define INCLUDED_devel_matdes_InterfacePackingFilterCreator_hh

@@ -36,6 +36,8 @@
 #include <utility/tag/Tag.hh>
 #include <ObjexxFCL/format.hh>
 #include <core/pose/symmetry/util.hh>
+#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/JobDistributor.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -61,28 +63,58 @@ namespace matdes {
 
 static basic::Tracer TR( "devel.matdes.SymUnsatHbondFilter" );
 
-protocols::filters::FilterOP
-SymUnsatHbondFilterCreator::create_filter() const 
-{ 
-return new SymUnsatHbondFilter; 
-}
 
-std::string
-SymUnsatHbondFilterCreator::keyname() const { 
-return "SymUnsatHbonds"; 
-}
-
-SymUnsatHbondFilter::SymUnsatHbondFilter( core::Size const upper_threshold, core::Size const jump_num ):
-	Filter( "SymUnsatHbonds" ),
-	upper_threshold_( upper_threshold ),
-	jump_num_( jump_num )
+// @brief default constructor
+SymUnsatHbondFilter::SymUnsatHbondFilter():
+  upper_threshold_( 20 ),
+  jump_num_( 1 ),
+	verbose_( 0 ),
+	write2pdb_( 0 )
 {}
 
-SymUnsatHbondFilter::~SymUnsatHbondFilter() {}
+// @brief constructor with arguments 
+SymUnsatHbondFilter::SymUnsatHbondFilter( core::Size const upper_cutoff, core::Size const jump, bool verb, bool write ):
+	Filter( "SymUnsatHbonds" ),
+	upper_threshold_( upper_cutoff ),
+	jump_num_( jump ),
+	verbose_( verb ),
+	write2pdb_( write )
+{}
+
+// @brief copy constructor
+SymUnsatHbondFilter::SymUnsatHbondFilter( SymUnsatHbondFilter const & rval ):
+	Super( rval ),
+	upper_threshold_( rval.upper_threshold_ ),
+	jump_num_( rval.jump_num_ ),
+	verbose_( rval.verbose_ ),
+	write2pdb_( rval.write2pdb_ )
+{}
+
+protocols::filters::FilterOP
+SymUnsatHbondFilter::fresh_instance() const{
+  return new SymUnsatHbondFilter();
+}
+
+protocols::filters::FilterOP
+SymUnsatHbondFilter::clone() const{
+  return new SymUnsatHbondFilter( *this );
+}
+
+// @brief getters
+core::Size SymUnsatHbondFilter::upper_threshold() const { return upper_threshold_; }
+core::Size SymUnsatHbondFilter::jump_num() const { return jump_num_; }
+bool SymUnsatHbondFilter::verbose() const { return verbose_; }
+bool SymUnsatHbondFilter::write2pdb() const { return write2pdb_; }
+
+// @brief setters
+void SymUnsatHbondFilter::upper_threshold( core::Size const upper_cutoff ) { upper_threshold_ = upper_cutoff; }
+void SymUnsatHbondFilter::jump_num( core::Size const jump ) { jump_num_ = jump; }
+void SymUnsatHbondFilter::verbose( bool const verb ) { verbose_ = verb; }
+void SymUnsatHbondFilter::write2pdb( bool const write ) { write2pdb_ = write; }
 
 // Find residues with buried polar atoms.
 core::Real
-SymUnsatHbondFilter::compute( core::pose::Pose const & pose ) const
+SymUnsatHbondFilter::compute( core::pose::Pose const & pose, bool const & verb, bool const & write ) const
 {
 	Size nres_asymmetric_unit;	
 	if(core::conformation::symmetry::is_symmetric( pose.conformation() )){
@@ -95,7 +127,7 @@ SymUnsatHbondFilter::compute( core::pose::Pose const & pose ) const
 	core::pose::Pose bound = pose;
   core::pose::Pose unbound = bound;
 
-	int sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num( unbound, jump_num_ ); // JB 120420
+	int sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num( unbound, jump_num() ); // JB 120420
 	protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( unbound, sym_aware_jump_id ) );
 	translate->step_size( 1000.0 );
 	translate->apply( unbound );
@@ -122,30 +154,65 @@ SymUnsatHbondFilter::compute( core::pose::Pose const & pose ) const
 			if (bound_am[core::id::AtomID(ia,ir)] != unbound_am[core::id::AtomID(ia,ir)]) {
 				buried_unsat_polars++;
 				if (flag == 0) {
-					TR << "buried unsat polar(s): " << bound.residue(ir).name3() << ir << "\t" << bound.residue(ir).atom_name(ia);
-					select_buried_unsat_polars.append("resi " + ObjexxFCL::string_of(ir) + " and name " + bound.residue(ir).atom_name(ia) + "+ ");   
+					if ( verb ) { 
+						TR << "buried unsat polar(s): " << bound.residue(ir).name3() << ir << "\t" << bound.residue(ir).atom_name(ia);
+						select_buried_unsat_polars.append("resi " + ObjexxFCL::string_of(ir) + " and name " + bound.residue(ir).atom_name(ia) + "+ ");   
+					}
+					if ( write ) { 
+						write_to_pdb( bound.residue(ir).name3(), ir, bound.residue(ir).atom_name(ia) ); 
+					}
 					flag = 1;
 				} else {
-					TR << "," << bound.residue(ir).atom_name(ia);
+					if ( verb ) {
+						TR << "," << bound.residue(ir).atom_name(ia);
+					}
 				}
 			}
 		}
-		if (flag) TR << std::endl;
+		if ( verb ) {
+			if (flag) { 
+				TR << std::endl;
+			}
+		}
 	}
-	select_buried_unsat_polars.erase(select_buried_unsat_polars.end()-2,select_buried_unsat_polars.end());
-	TR << select_buried_unsat_polars << ") and ";
-	TR << std::endl;
+	if ( verb ) {
+		select_buried_unsat_polars.erase(select_buried_unsat_polars.end()-2,select_buried_unsat_polars.end());
+		TR << select_buried_unsat_polars << ") and ";
+		TR << std::endl;
+	}
+	if ( write ) { 
+		write_pymol_string_to_pdb( select_buried_unsat_polars ); 
+	}
 	return buried_unsat_polars;
 }
 
+void SymUnsatHbondFilter::write_to_pdb( std::string const residue_name, core::Size const residue, std::string const atom_name ) const
+{
+
+	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
+	std::string filter_name = this->name();
+	std::string user_name = this->get_user_defined_name();
+	std::string unsat_pols_string = filter_name + " " + user_name + ": " + residue_name + ObjexxFCL::string_of(residue) + " " + atom_name ;
+	job->add_string(unsat_pols_string);
+}
+
+void SymUnsatHbondFilter::write_pymol_string_to_pdb( std::string const pymol_selection ) const
+{
+
+	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
+	std::string filter_name = this->name();
+	std::string user_name = this->get_user_defined_name();
+	std::string pymol_string = filter_name + " " + user_name + ": " + pymol_selection + ") and " ;
+	job->add_string(pymol_string);
+}
 
 bool
 SymUnsatHbondFilter::apply( core::pose::Pose const & pose ) const 
 {
-	core::Real const unsat_hbonds( compute( pose ) );
+	core::Real const unsat_hbonds( compute( pose, verbose(), write2pdb() ) );
 
 	TR<<"# unsatisfied hbonds: "<<unsat_hbonds<<". ";
-	if( unsat_hbonds <= upper_threshold_ ){
+	if( unsat_hbonds <= upper_threshold() ){
 		TR<<"passing."<<std::endl;
 		return true;
 	}
@@ -155,28 +222,38 @@ SymUnsatHbondFilter::apply( core::pose::Pose const & pose ) const
 	}
 }
 
+
+// @brief parse xml
 void
-SymUnsatHbondFilter::report( std::ostream & out, core::pose::Pose const & pose ) const 
+SymUnsatHbondFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
-	core::Real const unsat_hbonds( compute( pose ));
-	out<<"# unsatisfied hbonds: "<< unsat_hbonds<<'\n';
+	upper_threshold( tag->getOption<core::Size>( "cutoff", 20 ) );
+	jump_num( tag->getOption<core::Size>( "jump", 1 ) );
+	verbose( tag->getOption< bool >( "verbose", 0 ) );
+	write2pdb( tag->getOption< bool >("write2pdb", 0) );
+
+	TR<<"Buried Unsatisfied Hbond filter over jump number " << jump_num() << " with cutoff " << upper_threshold() << std::endl;
 }
 
 core::Real
 SymUnsatHbondFilter::report_sm( core::pose::Pose const & pose ) const 
 {
-	core::Real const unsat_hbonds( compute( pose ));
+	core::Real const unsat_hbonds( compute( pose, false, false ));
 	return( unsat_hbonds );
 }
 
 void
-SymUnsatHbondFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & /*datamap*/, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+SymUnsatHbondFilter::report( std::ostream & out, core::pose::Pose const & pose ) const 
 {
-	jump_num_ = tag->getOption<core::Size>( "jump", 1 );
-	upper_threshold_ = tag->getOption<core::Size>( "cutoff", 20 );
-
-	TR<<"Buried Unsatisfied Hbond filter over jump number " << jump_num_ << " with cutoff " << upper_threshold_ << std::endl;
+	core::Real const unsat_hbonds( compute( pose, false, false ));
+	out<<"# unsatisfied hbonds: "<< unsat_hbonds<<'\n';
 }
+
+protocols::filters::FilterOP 
+SymUnsatHbondFilterCreator::create_filter() const { return new SymUnsatHbondFilter; }
+
+std::string 
+SymUnsatHbondFilterCreator::keyname() const { return "SymUnsatHbonds"; }
 
 } //namespace matdes
 } //namespace devel
