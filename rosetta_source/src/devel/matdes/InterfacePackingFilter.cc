@@ -98,8 +98,8 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 	if (!basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block].user()) {
     utility_exit_with_message("ERROR: You have not set the required option -matdes::num_subs_building_block");
   } else {
-		Size num_subs = basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block]();
-    for(int intrasub=1; intrasub<=num_subs; intrasub++) {
+		core::Size num_subs = basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block]();
+    for(core::Size intrasub=1; intrasub<=num_subs; intrasub++) {
       intra_subs.push_back(intrasub);
     }
   }
