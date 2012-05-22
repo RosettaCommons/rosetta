@@ -42,7 +42,6 @@
 #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/GreenPacker.hh>
-#include <protocols/jd2/Job.hh>
 #include <utility/vector0.hh>
 #include <core/pose/symmetry/util.hh>
 
@@ -472,10 +471,8 @@ PointMutationCalculator::calc_point_mut_filters(
 			aa_vals.push_back( pair< AA, vector1< Real > >( target_aa, vals ) );
 			//dump pdb?
 			if( dump_pdb() ){
-				using namespace protocols::jd2;
-				JobOP job( JobDistributor::get_instance()->current_job() );
 				std::stringstream fname;
-				fname << job->input_tag() << start_pose.residue( resi ).name3() << resi << pose.residue( resi ).name3()<<".pdb";
+				fname << protocols::jd2::current_output_name() << start_pose.residue( resi ).name3() << resi << pose.residue( resi ).name3()<<".pdb";
 				TR<<"Saving pose "<<fname.str() << std::endl;
 				pose.dump_scored_pdb( fname.str(), *scorefxn() );
 			}

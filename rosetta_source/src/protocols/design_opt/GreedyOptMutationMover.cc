@@ -41,10 +41,8 @@
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/jd2/Job.hh>
 #include <utility/vector0.hh>
 #include <core/pose/symmetry/util.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
@@ -262,7 +260,7 @@ GreedyOptMutationMover::scorefxn() const{
 
 void
 GreedyOptMutationMover::dump_scoring_table( std::string filename, core::pose::Pose const & ref_pose ) const{
-  utility::io::ozstream outtable(filename);
+  utility::io::ozstream outtable(filename, std::ios::out | std::ios::app ); // Append if logfile already exists.
 	if( outtable ){
 		for( core::Size ii(1); ii <= seqpos_aa_val_vec_.size(); ++ii) {
 			core::Size pos( seqpos_aa_val_vec_[ii].first );
@@ -277,6 +275,7 @@ GreedyOptMutationMover::dump_scoring_table( std::string filename, core::pose::Po
 			}
 			outtable << std::endl;
 		}
+		outtable << std::endl; // Blank line at end to seperate.
 	} else {
 		TR.Warning << "WARNING: Unable to open file " << filename << " for writing GreedyOptMutationMover table output." << std::endl;
 	}
@@ -372,10 +371,9 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 		if( dump_table() ){
 			std::string fname( "GreedyOptTable" );
 			if( protocols::jd2::jd2_used() ){
-				fname += "_" + protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag();
+				fname += "_" + protocols::jd2::current_output_name();
 			}
 			fname += ".tab";
-			std::replace( fname.begin(), fname.end(), '/', '_'); // In case we have qualified path names.
 			dump_scoring_table( fname, start_pose );
 		}
 	}
