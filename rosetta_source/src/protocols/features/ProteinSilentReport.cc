@@ -182,25 +182,6 @@ ProteinSilentReport::apply(
 	}
 }
 
-//void
-//ProteinSilentReport::load_pose(
-//	sessionOP db_session,
-//	std::string tag,
-//	core::Size protocol_id,
-//	Pose & pose){
-//
-//	tag_into_pose(pose,tag);
-//
-//	boost::uuids::uuid struct_id = structure_features_->get_struct_id(db_session, tag,protocol_id);
-//
-//	pose_conformation_features_->load_into_pose(db_session, struct_id, pose);
-//	pdb_data_features_->load_into_pose(db_session,struct_id,pose);
-//	job_data_features_->load_into_pose(db_session, struct_id, pose);
-//	pose_comments_features_->load_into_pose(db_session, struct_id, pose);
-//	protein_residue_conformation_features_->load_into_pose(db_session, struct_id, pose);
-//	residue_conformation_features_->load_into_pose(db_session,struct_id,pose);
-//}
-	
 void
 ProteinSilentReport::load_pose(
 	sessionOP db_session,

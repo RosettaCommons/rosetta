@@ -19,7 +19,33 @@
 #include <cppdb/shared_object.h>
 #include <string>
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
+#if defined(CPPDB_DISABLE_SHARED_OBJECT_LOADING)
+// Disable shared object loading by simply asserting false when
+// an attempt to call dlopen, dlclose or dlsym is made
+#	define RTLD_LAZY 0
+#	include <cassert>
+	namespace cppdb {
+		namespace {
+                	void *dlopen(char const *,int)
+			{
+                        	assert(false);
+                        	char * return_value = NULL;
+				return return_value; // have to return something.
+			}
+                	void dlclose(void *)
+			{
+                        	assert(false);
+			}
+                	void *dlsym(void *,char const *)
+			{
+                        	assert(false); 
+                        	char * return_value = NULL;
+				return return_value; // have to return something.
+			}
+		}
+	}
+
+#elif defined(WIN32) || defined(_WIN32) || defined(__WIN32)
 #	include <windows.h>
 #	define RTLD_LAZY 0
 

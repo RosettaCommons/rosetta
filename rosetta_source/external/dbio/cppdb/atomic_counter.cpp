@@ -19,7 +19,9 @@
 #include <cppdb/atomic_counter.h>
 #include <string.h>
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__CYGWIN__)
+#if defined(CPPDB_DISABLE_THREAD_SAFETY)
+
+#elif defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__CYGWIN__)
 
 #   include <windows.h>
 #   define cppdb_atomic_set(p,v) ((p)->l=v)
@@ -86,8 +88,33 @@
 
 
 namespace cppdb {
+#if defined(CPPDB_DISABLE_THREAD_SAFETY)
 
-#if !defined(CPPDB_PTHREAD_ATOMIC)
+	//non-atomic atomic_counter
+	//use this thread-unsafe version when thread safety is not an issue
+	atomic_counter::atomic_counter(long value){
+		value_.l = value;
+	}
+
+	atomic_counter::~atomic_counter(){
+	}
+
+	long atomic_counter::inc(){
+		long result= ++value_.l;
+		return result;
+	}
+
+	long atomic_counter::dec(){
+		long result= --value_.l;
+		return result;
+	}
+
+	long atomic_counter::get() const {
+		long result= value_.l;
+		return result;
+	}
+
+#elif !defined(CPPDB_PTHREAD_ATOMIC)
 	atomic_counter::atomic_counter(long value)  
 	{
 		memset(&value_,0,sizeof(value_));

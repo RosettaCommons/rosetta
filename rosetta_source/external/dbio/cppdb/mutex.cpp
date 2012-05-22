@@ -18,7 +18,16 @@
 #define CPPDB_SOURCE
 #include <cppdb/mutex.h>
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
+#ifdef CPPDB_DISABLE_THREAD_SAFETY
+	namespace cppdb {
+        	mutex::mutex() {}
+        	mutex::~mutex() {}
+        	void mutex::lock() {}
+        	void mutex::unlock() {}
+  }
+
+
+#elif defined(WIN32) || defined(_WIN32) || defined(__WIN32)
 
 #	include <windows.h>
 	
