@@ -75,7 +75,7 @@ create_theozyme_pdb()
 			protocols::toolbox::match_enzdes_util::AllowedSeqposForGeomCstOP allowed_seqpos = new protocols::toolbox::match_enzdes_util::AllowedSeqposForGeomCst();
 			allowed_seqpos->initialize_from_command_line( pose );
 			protocols::toolbox::match_enzdes_util::AlignPoseToInvrotTreeMover align_pose( invrot_tree, allowed_seqpos);
-
+			align_pose.set_add_target_to_pose( true );
 			align_pose.apply( *pose );
 			pose->dump_pdb("theozyme_tree_align.pdb");
 		}

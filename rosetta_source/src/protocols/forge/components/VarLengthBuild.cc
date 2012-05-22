@@ -95,6 +95,8 @@ VarLengthBuild::VarLengthBuild() :
 	use_fullmer_( false ),
 	max_linear_chainbreak_( 0.07 ),
 	fragments_picked_( false ),
+	user_provided_movers_apply_cycle_(3),
+	loop_mover_fold_tree_constant_(false),
 	restart_mode_( false ),
 	ignore_cmdline_enzdes_cstfile_(false)
 {}
@@ -113,6 +115,8 @@ VarLengthBuild::VarLengthBuild( BuildManager const & manager ) :
 	use_fullmer_( false ),
 	max_linear_chainbreak_( 0.07 ),
 	fragments_picked_( false ),
+	user_provided_movers_apply_cycle_(3),
+	loop_mover_fold_tree_constant_(false),
 	restart_mode_( false ),
 	ignore_cmdline_enzdes_cstfile_(false)
 {}
@@ -131,6 +135,8 @@ VarLengthBuild::VarLengthBuild( BuildManager const & manager, RemodelData const 
 	use_fullmer_( false ),
 	max_linear_chainbreak_( 0.07 ),
 	fragments_picked_( false ),
+	user_provided_movers_apply_cycle_(3),
+	loop_mover_fold_tree_constant_(false),
 	restart_mode_( false ),
 	ignore_cmdline_enzdes_cstfile_(false)
 {}
@@ -153,6 +159,11 @@ VarLengthBuild::VarLengthBuild( VarLengthBuild const & rval ) :
 	new_sequence_override_( rval.new_sequence_override_ ),
 	max_linear_chainbreak_( rval.max_linear_chainbreak_ ),
 	abego_( rval.abego_ ),
+	rcgs_( rval.rcgs_ ),
+	setup_movers_(rval.setup_movers_),
+	user_provided_movers_(rval.user_provided_movers_),
+	user_provided_movers_apply_cycle_(rval.user_provided_movers_apply_cycle_),
+	loop_mover_fold_tree_constant_(rval.loop_mover_fold_tree_constant_),
 	restart_mode_( rval.restart_mode_ ),
 	ignore_cmdline_enzdes_cstfile_(rval.ignore_cmdline_enzdes_cstfile_)
 {
@@ -232,6 +243,18 @@ VarLengthBuild::add_setup_mover( moves::MoverOP mover_in )
 {
 	//maybe we should clone the mover?
 	setup_movers_.push_back( mover_in );
+}
+
+void
+VarLengthBuild::clear_user_provided_movers() {
+	user_provided_movers_.clear();
+}
+
+void
+VarLengthBuild::add_user_provided_mover( moves::MoverOP mover_in )
+{
+	//maybe we should clone the mover?
+	user_provided_movers_.push_back( mover_in );
 }
 
 
@@ -379,22 +402,25 @@ void VarLengthBuild::apply( Pose & pose ) {
 
 	//flo may '12, give user supplied setup movers
 	//a chance to modify the pose before centroid building happens
+	//pose.dump_pdb("vlb_bef_setup_movers.pdb");
 	for( 	utility::vector1< moves::MoverOP >::iterator mover_it( setup_movers_.begin() ); mover_it != setup_movers_.end(); ++mover_it ){
 		(*mover_it)->apply( pose );
 	}
+	//pose.dump_pdb("vlb_aft_setup_movers.pdb");
 
 	// centroid level protocol
 	if ( get_last_move_status() == MS_SUCCESS ) {
 		if ( pose.residue( 1 ).residue_type_set().name() != core::chemical::CENTROID ) {
 			core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
 		}
-
+		//pose.dump_pdb("vlb_bef_centroid_build.pdb");
 		if ( centroid_build( pose ) ) {
 			set_last_move_status( MS_SUCCESS );
 		} else {
 			set_last_move_status( FAIL_DO_NOT_RETRY );
 		}
 	}
+	//pose.dump_pdb("vlb_aft_centroid_build.pdb");
 
   if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
 	  if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure] == 1){
@@ -729,6 +755,13 @@ VarLengthBuild::MoverOP VarLengthBuild::loop_mover_instance(
 		loop_mover->add_fragments( frag1_ );
 
 		loop_mover->false_movemap( false_mm );
+
+		if( loop_mover_fold_tree_constant_ ) loop_mover->set_keep_input_foldtree(true);
+
+		if( user_provided_movers_.size() != 0 ){
+			loop_mover->set_user_provided_movers( user_provided_movers_ );
+			loop_mover->user_provided_movers_apply_cycle( user_provided_movers_apply_cycle_ );
+		}
 
 		lm = loop_mover;
 

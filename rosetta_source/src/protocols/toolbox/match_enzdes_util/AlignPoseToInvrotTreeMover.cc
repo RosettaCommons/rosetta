@@ -58,7 +58,8 @@ AlignPoseToInvrotTreeMover::AlignPoseToInvrotTreeMover(
   InvrotTreeCOP invrot_tree,
   AllowedSeqposForGeomCstCOP seqpos
   ) : Mover(),
-      invrot_tree_(invrot_tree), seqpos_(seqpos)
+      add_target_to_pose_(false), invrot_tree_(invrot_tree),
+      seqpos_(seqpos), all_invrots_( invrot_tree->collect_all_inverse_rotamers() )
 {}
 
 AlignPoseToInvrotTreeMover::~AlignPoseToInvrotTreeMover(){}
@@ -75,9 +76,12 @@ AlignPoseToInvrotTreeMover::get_name() const{
 /// 2. grab the InvrotTarget residues and add them to the pose
 ///    this entails setting up the foldtree such that the target
 ///    residues are upstream of the rest of the pose
+/// WARNING: right now this absolutely only works for InvrotTrees
+///          where the target is one ligand
 void
 AlignPoseToInvrotTreeMover::apply( core::pose::Pose & pose ){
 
+  //TR << "pose fold tree at apply start: " << pose.fold_tree() << std::endl; //debug
   //for now, this only works for trees that have one target only
   //changing it won't be hard, but need to think about how to communicate
   //chosen state between this mover and other things using it
@@ -85,18 +89,18 @@ AlignPoseToInvrotTreeMover::apply( core::pose::Pose & pose ){
   runtime_assert( invrot_tree_->num_target_states() == 1 );
 
   //1a. get the invrots and pick a random one from the first list
-  utility::vector1< InvrotCollectorCOP > all_invrots( invrot_tree_->collect_all_inverse_rotamers() );
-  Size picked_collector( numeric::random::random_range( 1, all_invrots.size() ) );
-  Size picked_geomcst( numeric::random::random_range( 1, all_invrots[picked_collector]->invrots().size() - 1 ) );
-  Size picked_rotamer( numeric::random::random_range(1, all_invrots[ picked_collector ]->invrots()[picked_geomcst].size() ) );
+  //utility::vector1< InvrotCollectorCOP > all_invrots(  );
+  Size picked_collector( numeric::random::random_range( 1, all_invrots_.size() ) );
+  Size picked_geomcst( numeric::random::random_range( 1, all_invrots_[picked_collector]->invrots().size() - 1 ) );
+  Size picked_rotamer( numeric::random::random_range(1, all_invrots_[ picked_collector ]->invrots()[picked_geomcst].size() ) );
 
   //temp debug
-  picked_collector = 1;
-  picked_geomcst = 1;
-  picked_rotamer = 1;
+  //picked_collector = 1;
+  //picked_geomcst = 1;
+  //picked_rotamer = 1;
   //temp debug over
 
-  std::list<core::conformation::ResidueCOP>::const_iterator list_it( all_invrots[ picked_collector ]->invrots()[picked_geomcst].begin() );
+  std::list<core::conformation::ResidueCOP>::const_iterator list_it( all_invrots_[ picked_collector ]->invrots()[picked_geomcst].begin() );
   for( Size i =1; i < picked_rotamer; ++i ) list_it++; //not ideal, but a list is what we have
   core::conformation::ResidueCOP ranrot( *list_it );
 
@@ -109,7 +113,8 @@ AlignPoseToInvrotTreeMover::apply( core::pose::Pose & pose ){
   //pick a random residue
   Size picked_seqpos( seqpos_->seqpos_for_geomcst(picked_geomcst)[ numeric::random::random_range(1,seqpos_->seqpos_for_geomcst(picked_geomcst).size() ) ] );
   //temp debug
-  picked_seqpos = seqpos_->seqpos_for_geomcst(picked_geomcst)[1];
+  //picked_seqpos = seqpos_->seqpos_for_geomcst(picked_geomcst)[1];
+  //TR << "there are " << all_invrots.size() << " invrot collectors, picked collector has " << all_invrots[ picked_collector ]->invrots()[0].size() << " rotamers in 0th element." << std::endl;
   //temp debug over
 
   core::id::AtomID_Map< core::id::AtomID > atom_map( core::id::BOGUS_ATOM_ID );
@@ -126,17 +131,30 @@ AlignPoseToInvrotTreeMover::apply( core::pose::Pose & pose ){
   //2. now we need to add the target residues to the aligned pose,
   //and try to setup the fold tree the right way
   //2a
-  std::list<core::conformation::ResidueCOP>::const_iterator target_it( all_invrots[ picked_collector ]->invrots()[0].begin() );
-  Size first_target_seqpos( pose.total_residue() + 1 );
-  //have to add something to switch target res to centroid here
-  core::conformation::ResidueCOP ligres( this->switch_residue_type_set( *target_it,  pose.residue(1).residue_type_set().name()) );
-
-  pose.append_residue_by_jump( *ligres, pose.total_residue() );
-  target_it++;
-  Size jump_num = pose.num_jump();
-  for( ; target_it != all_invrots[ picked_collector ]->invrots()[0].end(); ++target_it){
+  std::list<core::conformation::ResidueCOP>::const_iterator target_it( all_invrots_[ picked_collector ]->invrots()[0].begin() );
+  Size first_target_seqpos( pose.total_residue() );
+  if( add_target_to_pose_ ){
+    first_target_seqpos++;
+    //have to add something to switch target res to centroid here
     core::conformation::ResidueCOP ligres( this->switch_residue_type_set( *target_it,  pose.residue(1).residue_type_set().name()) );
-    pose.append_residue_by_jump( *ligres, first_target_seqpos );
+
+    pose.append_residue_by_jump( *ligres, pose.total_residue() );
+    target_it++;
+    Size jump_num = pose.num_jump();
+
+    //below commented out for now. need to think about how to best approach a
+    //case where the ligand can have different rotameric states
+    //for( ; target_it != all_invrots[ picked_collector ]->invrots()[0].end(); ++target_it){
+    //  core::conformation::ResidueCOP ligres( this->switch_residue_type_set( *target_it,  pose.residue(1).residue_type_set().name()) );
+    //  pose.append_residue_by_jump( *ligres, first_target_seqpos );
+    //}
+  }
+  // if the target already was in the pose, that means its
+  // position got fucked up during the above superimpose call,
+  // so we need to reset it to the position in the invrot tree
+  // current implemenation absolutely only works for one ligand case
+  else{
+    pose.replace_residue( first_target_seqpos, *(this->switch_residue_type_set( *target_it,  pose.residue(1).residue_type_set().name())), false );
   }
 
   //2b. fold tree setup
@@ -146,6 +164,13 @@ AlignPoseToInvrotTreeMover::apply( core::pose::Pose & pose ){
 
 }
 
+void
+AlignPoseToInvrotTreeMover::set_add_target_to_pose(
+  bool const setting
+)
+{
+  add_target_to_pose_ = setting;
+}
 
 /// @details the simplest possible implementation for now
 /// assumes the pose only has one chain
@@ -162,6 +187,7 @@ AlignPoseToInvrotTreeMover::setup_foldtree_around_anchor_invrot(
   new_fold_tree.add_edge( anchor_seqpos, first_target_seqpos - 1, Edge::PEPTIDE );
   Size num_jumps_to_add( pose.total_residue() - first_target_seqpos + 1 );
   for( Size i =0; i < num_jumps_to_add; ++i ){
+    //TR << "URZ adding jump between res " << anchor_seqpos << " of restype " << pose.residue_type( anchor_seqpos ).name() << " and " << first_target_seqpos + i << ", which is of restype " << pose.residue_type(  first_target_seqpos + i ).name() << std::endl;
     new_fold_tree.add_edge( anchor_seqpos, first_target_seqpos +i, i + 1 );
   }
   if( !new_fold_tree.check_fold_tree() ) {

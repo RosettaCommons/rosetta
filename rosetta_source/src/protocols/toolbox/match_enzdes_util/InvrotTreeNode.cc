@@ -26,6 +26,7 @@
 //project headers
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <core/scoring/constraints/MultiConstraint.hh>
 
@@ -199,11 +200,11 @@ InvrotTreeNode::initialize_from_enzcst_io(
 /// see brief description in .hh file
 core::scoring::constraints::ConstraintCOP
 InvrotTreeNode::generate_constraints(
-	core::pose::Pose const &  pose,
+	core::pose::Pose const & pose,
 	AllowedSeqposForGeomCstCOP geomcst_seqpos
 ) const
 {
-
+	core::id::AtomID fixed_pt( this->get_fixed_pt( pose ) );
 	utility::vector1< core::scoring::constraints::ConstraintCOP > constraints_this_node;
 	for( core::Size i = 1; i <= invrots_and_next_nodes_.size(); ++i ){
 
@@ -211,7 +212,7 @@ InvrotTreeNode::generate_constraints(
 		utility::vector1< core::scoring::constraints::ConstraintCOP > constraints_this_invrot_node_pair;
 
 		//1a. create the ambiguous constraint for this set of inverse rotamers
-		constraints_this_invrot_node_pair.push_back( constrain_pose_res_to_invrots( invrots_and_next_nodes_[i].first, geomcst_seqpos->seqpos_for_geomcst( geom_cst_), pose ) );
+		constraints_this_invrot_node_pair.push_back( constrain_pose_res_to_invrots( invrots_and_next_nodes_[i].first, geomcst_seqpos->seqpos_for_geomcst( geom_cst_), pose, fixed_pt ) );
 
 		//1b.
 		for( utility::vector1< InvrotTreeNodeBaseOP >::const_iterator node_it( invrots_and_next_nodes_[i].second.begin() ), node_end( invrots_and_next_nodes_[i].second.end() ); node_it != node_end; ++node_it ){
@@ -227,6 +228,36 @@ InvrotTreeNode::generate_constraints(
 	if( constraints_this_node.size() == 1 ) return constraints_this_node[1];
 
 	return new core::scoring::constraints::AmbiguousConstraint( constraints_this_node );
+}
+
+
+/// @details approach: get the target residues,
+/// then find a residue in the pose that has the
+/// same name as the first target residue and a
+/// neighbor atom in the same position. this will
+/// be the fixed point. exit w error if not found
+core::id::AtomID
+InvrotTreeNode::get_fixed_pt( core::pose::Pose const & pose ) const
+{
+	InvrotTreeNodeBaseCAP parent(this->parent_node() );
+	if( !parent ) utility_exit_with_message("the impossible just happened");
+
+	utility::vector1< std::list< core::conformation::ResidueCOP > > parent_res( parent->all_target_residues( this ) );
+  std::string target_name3( (*parent_res[1].begin())->name3() );
+  core::Vector const & xyz_to_find( (*parent_res[1].begin())->nbr_atom_xyz() );
+
+  for( Size i = 1; i<= pose.total_residue(); ++i ){
+		if(pose.residue_type(i).name3() == target_name3 ){
+			for( Size j =1; j<= pose.residue(i).atoms().size(); ++j ){
+				if( xyz_to_find.distance_squared( pose.residue(i).atom(j).xyz() ) < 0.1 ){
+					return core::id::AtomID( j, i );
+				}
+			}
+		}
+	}
+  //if we get here, that means no atom was found and shit's fucked up somewhere
+  utility_exit_with_message("No success when trying to find a fixed pt in the InvrotTree that's also in the pose. Shit's fucked up somewhere.");
+  return core::id::AtomID( 0, 0 ); // to pacify compiler
 }
 
 

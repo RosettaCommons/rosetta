@@ -19,6 +19,7 @@
 #include <core/types.hh>
 
 #include <core/conformation/Residue.fwd.hh>
+#include <core/id/AtomID.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/scoring/constraints/AmbiguousConstraint.fwd.hh>
@@ -37,6 +38,15 @@ replace_residue_keeping_all_atom_positions(
 	core::Size res_pos
 );
 
+/// @brief fowarding function for function below
+core::scoring::constraints::AmbiguousConstraintCOP
+constrain_pose_res_to_invrots(
+	std::list< core::conformation::ResidueCOP> const & invrots,
+	utility::vector1< core::Size > const & seqpos,
+	core::pose::Pose const & pose,
+	core::scoring::constraints::FuncOP constraint_func = NULL
+);
+
 /// @brief constraints each invrot to the
 /// backbone of each seqpos and throws all
 /// those constraints into one ambiguous
@@ -46,6 +56,7 @@ constrain_pose_res_to_invrots(
 	std::list< core::conformation::ResidueCOP> const & invrots,
 	utility::vector1< core::Size > const & seqpos,
 	core::pose::Pose const & pose,
+	core::id::AtomID const & fixed_pt,
 	core::scoring::constraints::FuncOP constraint_func = NULL
 );
 

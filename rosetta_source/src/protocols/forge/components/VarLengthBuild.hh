@@ -381,6 +381,10 @@ public: // mutators
 		max_linear_chainbreak_ = tol;
 	}
 
+	inline
+	void loop_mover_fold_tree_constant( bool const flag ){
+		loop_mover_fold_tree_constant_ = flag;
+	}
 
 	/// @brief Flag to turn on restart mode, in which VLB assumes that the Pose
 	///  fed to it during apply() has already been modified by the manager.
@@ -411,6 +415,12 @@ public: //constraint / setup mover management management
 
 	void
 	add_setup_mover( moves::MoverOP mover_in );
+
+	void
+	clear_user_provided_movers();
+
+	void
+	add_user_provided_mover( moves::MoverOP mover_in );
 
 
 public: // fragment management
@@ -628,6 +638,21 @@ private: // data
 	/// remodeling starts
 	utility::vector1< moves::MoverOP > setup_movers_;
 
+	/// @brief collection of movers that mess with the pose
+	/// during RemodelLoopMover apply where n is determined by the variable below
+	/// gets piped straight into RemodelLoopMover, only has an effect
+	/// if this is the loop mover used
+	utility::vector1< moves::MoverOP > user_provided_movers_;
+
+	/// @brief determines how often the above movers get called
+	/// in the loop mover, also only has an effect if the
+	/// RemodelLoopMover is used (default 3)
+	Size user_provided_movers_apply_cycle_;
+
+	/// @brief tell RemodelLoopMover to keep the foldtree untouched
+	/// also only has an effect if RemodelLoopmover is used
+	/// note: will only tell loop mover is this is set to true
+	bool loop_mover_fold_tree_constant_;
 
 	/// @brief Flag to turn on restart mode, in which VLB assumes that the Pose
 	///  fed to it during apply() has already been modified by the manager.

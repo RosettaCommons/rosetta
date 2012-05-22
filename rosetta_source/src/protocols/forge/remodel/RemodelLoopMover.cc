@@ -127,8 +127,10 @@ RemodelLoopMover::RemodelLoopMover() :
 	allowed_closure_attempts_( 1 ), //switched from 3 so no accumulation
 	simultaneous_cycles_( 2 ),
 	independent_cycles_( 8 ),
+	user_provided_movers_apply_cycle_(3),
 	boost_closure_cycles_( 30 ),
-	temperature_( 2.0 )
+	temperature_( 2.0 ),
+	keep_input_foldtree_( false )
 {
 	set_param_from_options();
 }
@@ -144,8 +146,10 @@ RemodelLoopMover::RemodelLoopMover( loops::LoopsOP const loops ) :
 	allowed_closure_attempts_( 1 ),
 	simultaneous_cycles_( 2 ),
 	independent_cycles_( 8 ),
+	user_provided_movers_apply_cycle_(3),
 	boost_closure_cycles_( 30 ),
-	temperature_( 2.0 )
+	temperature_( 2.0 ),
+	keep_input_foldtree_( false )
 {
 	set_param_from_options();
 }
@@ -163,9 +167,12 @@ RemodelLoopMover::RemodelLoopMover( RemodelLoopMover const & rval ) :
 	allowed_closure_attempts_( rval.allowed_closure_attempts_ ),
 	simultaneous_cycles_( rval.simultaneous_cycles_ ),
 	independent_cycles_( rval.independent_cycles_ ),
+	user_provided_movers_(rval.user_provided_movers_),
+	user_provided_movers_apply_cycle_(rval.user_provided_movers_apply_cycle_),
 	boost_closure_cycles_( rval.boost_closure_cycles_ ),
 	temperature_( rval.temperature_ ),
-	fragsets_( rval.fragsets_ )
+	fragsets_( rval.fragsets_ ),
+	keep_input_foldtree_(rval.keep_input_foldtree_)
 {}
 
 
@@ -196,6 +203,10 @@ void RemodelLoopMover::set_param_from_options(){
 	if( option[ OptionKeys::remodel::RemodelLoopMover::independent_cycles ].user() )       independent_cycles_       = option[ OptionKeys::remodel::RemodelLoopMover::independent_cycles ].value();
 	if( option[ OptionKeys::remodel::RemodelLoopMover::boost_closure_cycles ].user() ) 	   boost_closure_cycles_     = option[ OptionKeys::remodel::RemodelLoopMover::boost_closure_cycles ].value();
 	if( option[ OptionKeys::remodel::RemodelLoopMover::temperature ].user() ) 	           temperature_              = option[ OptionKeys::remodel::RemodelLoopMover::temperature ].value();
+	// flo may '12 the below option is different bc it's
+	// replacing the way it was used in the code until now,
+	// where the check for the user didn't happen
+	keep_input_foldtree_ = option[OptionKeys::remodel::no_jumps];
 }
 
 /// @registere options
@@ -221,6 +232,13 @@ RemodelLoopMover::ScoreFunction const & RemodelLoopMover::scorefunction() const 
 void RemodelLoopMover::scorefunction( ScoreFunction const & sfx ) {
 	//sfx_ = new ScoreFunction( sfx );
 	sfx_ =  sfx.clone();
+}
+
+void
+RemodelLoopMover::set_user_provided_movers( utility::vector1< moves::MoverOP > const & movers )
+{
+	user_provided_movers_.clear();
+	user_provided_movers_ = movers;
 }
 
 
@@ -1096,7 +1114,7 @@ void RemodelLoopMover::randomize_stage( Pose & pose ) {
 	enforce_false_movemap( movemap );
 
 	// set appropriate topology
-	if (basic::options::option[basic::options::OptionKeys::remodel::no_jumps]){
+	if ( 	keep_input_foldtree_ ){
 	}
 	else {
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
@@ -1150,7 +1168,7 @@ void RemodelLoopMover::insert_random_smallestmer_per_loop(
 	}
 
 	// set appropriate topology
-	if (basic::options::option[basic::options::OptionKeys::remodel::no_jumps]){
+	if ( keep_input_foldtree_ ){
 	}
 	else {
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
@@ -1325,7 +1343,7 @@ void RemodelLoopMover::loophash_stage(
 		//Size const max_inner_cycles = std::max( static_cast< Size >( 50 ), 10 * n_moveable );
 
 		// set appropriate topology
-		if (basic::options::option[basic::options::OptionKeys::remodel::no_jumps]){
+		if ( keep_input_foldtree_ ){
 		}
 		else {
 			if ( core::pose::symmetry::is_symmetric( pose ) ) {
@@ -1685,7 +1703,7 @@ void RemodelLoopMover::simultaneous_stage(
 	assert( !frag_movers.empty() );
 
 	// set appropriate topology
-	if (basic::options::option[basic::options::OptionKeys::remodel::no_jumps]){
+	if ( keep_input_foldtree_ ){
 	}
 	else {
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
@@ -1717,6 +1735,7 @@ void RemodelLoopMover::simultaneous_stage(
 	Size const n_standard_cycles = total_standard_cycles();
 	Size const max_outer_cycles = simultaneous_cycles();
 	Size const max_inner_cycles = std::max( 50 * loops_to_model->size(), 10 * n_moveable );
+	bool apply_user_provided_movers( user_provided_movers_.size() != 0 );
 
 	// reset counters
 	mc.reset_counters();
@@ -1796,6 +1815,18 @@ void RemodelLoopMover::simultaneous_stage(
 							mc.boltzmann( pose, "ccd_move" );
 						}
 					}
+				}
+			}
+
+			if( apply_user_provided_movers && ( inner % user_provided_movers_apply_cycle_ == 0 ) ){
+				for( utility::vector1< moves::MoverOP >::iterator move_it( user_provided_movers_.begin() ); move_it != user_provided_movers_.end(); ++move_it ){
+					(*move_it)->apply( pose );
+					mc.boltzmann( pose, "user_provided_simul" );
+					//if( inner % 50 == 0 ){
+					//	static Size simulposecount = 0;
+					//	simulposecount++;
+					//	pose.dump_pdb("simulstage"+utility::to_string( simulposecount )+".pdb" );
+					//}
 				}
 			}
 
@@ -1900,9 +1931,10 @@ void RemodelLoopMover::independent_stage(
 		// parameters
 		Size const n_moveable = count_moveable_residues( movemap, loop.start(), loop.stop() );
 		Size const max_inner_cycles = std::max( static_cast< Size >( 50 ), 10 * n_moveable );
+		bool apply_user_provided_movers( user_provided_movers_.size() != 0 );
 
 		// set appropriate topology
-		if (basic::options::option[basic::options::OptionKeys::remodel::no_jumps]){
+		if ( keep_input_foldtree_ ){
 		}
 		else {
 			if ( core::pose::symmetry::is_symmetric( pose ) ) {
@@ -1995,6 +2027,18 @@ void RemodelLoopMover::independent_stage(
 							ccd_moves( 10, pose, movemap, (int)loop.start(), (int)loop.stop(), (int)loop.cut() );
 						}
 						mc.boltzmann( pose, "ccd_move" );
+					}
+				}
+
+				if( apply_user_provided_movers && ( inner % user_provided_movers_apply_cycle_ == 0 ) ){
+					for( utility::vector1< moves::MoverOP >::iterator move_it( user_provided_movers_.begin() ); move_it != user_provided_movers_.end(); ++move_it ){
+						(*move_it)->apply( pose );
+						mc.boltzmann( pose, "user_provided_indep" );
+						//if( inner % 50 == 0 ){
+						//	static Size indepposecount = 0;
+						//	indepposecount++;
+						//	pose.dump_pdb("indepstage"+utility::to_string( indepposecount )+".pdb" );
+						//}
 					}
 				}
 
@@ -2129,7 +2173,7 @@ void RemodelLoopMover::boost_closure_stage(
 		Size const max_inner_cycles = std::max( static_cast< Size >( 50 ), 10 * n_moveable );
 
 		// set appropriate topology
-		if (basic::options::option[basic::options::OptionKeys::remodel::no_jumps]){
+		if ( keep_input_foldtree_){
 		}
 		else {
 			if ( core::pose::symmetry::is_symmetric( pose ) ) {

@@ -23,6 +23,8 @@
 #include <protocols/toolbox/match_enzdes_util/InvrotTreeNodeBase.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 
+//project headers
+#include <core/id/AtomID.fwd.hh>
 
 // Utility headers
 //#include <util
@@ -80,6 +82,14 @@ public:
 		core::pose::Pose const & pose,
 		AllowedSeqposForGeomCstCOP geomcst_seqpos
 	) const;
+
+
+	/// @brief this function returns the AtomID for an atom
+	/// in the pose that's supposed to stay fixed during
+	/// folding, i.e. the neighbor atom of the first target
+	/// needed to generate the right backbone_stub constraints
+	core::id::AtomID
+	get_fixed_pt( core::pose::Pose const & pose ) const;
 
 	utility::vector1< std::list< core::conformation::ResidueCOP > >
   all_target_residues( InvrotTreeNodeBaseCAP child_node ) const;

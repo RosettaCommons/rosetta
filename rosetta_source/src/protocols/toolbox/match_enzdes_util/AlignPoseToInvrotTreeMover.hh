@@ -20,8 +20,9 @@
 #include <protocols/moves/Mover.hh>
 
 // package headers
-#include <protocols/toolbox/match_enzdes_util/InvrotTree.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/AllowedSeqposForGeomCst.fwd.hh>
+#include <protocols/toolbox/match_enzdes_util/InvrotTree.fwd.hh>
+#include <protocols/toolbox/match_enzdes_util/InvrotTreeNodeBase.fwd.hh>
 
 // Project headers
 #include <core/conformation/Residue.fwd.hh>
@@ -65,6 +66,9 @@ public:
 	void
 	apply( core::pose::Pose & pose );
 
+	void
+	set_add_target_to_pose( bool const setting );
+
 	/// @brief sets up a foldtree such that
 	/// the anchor residue doesn't move,
 	/// i.e. a backward edge from anchor to 1
@@ -89,8 +93,10 @@ public:
 
 private:
 
+	bool add_target_to_pose_; //this variable decides whether the target residues are added or not
 	InvrotTreeCOP invrot_tree_;
 	AllowedSeqposForGeomCstCOP seqpos_;
+	utility::vector1< InvrotCollectorCOP > all_invrots_;
 
 };
 

@@ -78,6 +78,8 @@ replace_residue_keeping_all_atom_positions(
 } //replace_residues_keeping_positions
 
 
+/// @details forwarding function, allows stuff to call this functionality
+///          without caller having to specify root
 core::scoring::constraints::AmbiguousConstraintCOP
 constrain_pose_res_to_invrots(
 	std::list< core::conformation::ResidueCOP > const & invrots,
@@ -86,11 +88,26 @@ constrain_pose_res_to_invrots(
 	core::scoring::constraints::FuncOP constraint_func
 )
 {
+	core::id::AtomID fixed_pt( pose.atom_tree().root()->atom_id() );
+	return constrain_pose_res_to_invrots( invrots, seqpos, pose, fixed_pt, constraint_func );
+}
+
+
+core::scoring::constraints::AmbiguousConstraintCOP
+constrain_pose_res_to_invrots(
+	std::list< core::conformation::ResidueCOP > const & invrots,
+	utility::vector1< core::Size > const & seqpos,
+	core::pose::Pose const & pose,
+	core::id::AtomID const & fixed_pt,
+	core::scoring::constraints::FuncOP constraint_func
+)
+{
 	using namespace core::scoring::constraints;
 
 	if( !constraint_func ) constraint_func = new BoundFunc( 0, 0.05, 0.4, "invrot");
 	//see the comment in protocols/ligand_docking/LigandBaseProtocol.cc::restrain_protein_Calphas
-	core::id::AtomID fixed_pt( pose.atom_tree().root()->atom_id() );
+	//core::id::AtomID fixed_pt( pose.atom_tree().root()->atom_id() );
+	//tr << "Hackack fixed_pt was passed in to be AtomID " << fixed_pt << std::endl;
 
 	utility::vector1< ConstraintCOP > all_res_invrot_csts;
 	core::Size totrescount(0);

@@ -179,6 +179,7 @@ BackboneStubConstraint::score( XYZ_Func const & xyz_func, EnergyMap const & weig
 	core::Real ref_dist = curr_ref_location.distance_squared( fixed_reference_point_ );
 	if ( ref_dist > 1E-8 ) {
 		TR << "ERROR - BackboneStubConstraint requires a fixed reference atom, but this atom has moved!!" << std::endl;
+		TR << "Reference location was " << fixed_reference_point_.x() << ", " << fixed_reference_point_.y() << ", " << fixed_reference_point_.z() << ", now it's " << curr_ref_location.x() << ", " << curr_ref_location.y() << ", " << curr_ref_location.z() << std::endl;
 		std::exit(1);
 	}
 

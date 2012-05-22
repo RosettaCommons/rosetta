@@ -400,13 +400,23 @@ BluePrintBDR::setup_invrot_tree_in_vlb( VarLengthBuild & vlb, Pose & pose  ) con
 {
 
 	toolbox::match_enzdes_util::AllowedSeqposForGeomCstOP allowed_seqpos = new protocols::toolbox::match_enzdes_util::AllowedSeqposForGeomCst();
-	allowed_seqpos->initialize_from_command_line( &pose ); //this could be moved somewhere else to only initialize once, but probably not that important
-	toolbox::match_enzdes_util::AlignPoseToInvrotTreeMoverOP align_pose( new toolbox::match_enzdes_util::AlignPoseToInvrotTreeMover( invrot_tree_, allowed_seqpos ));
+	//stupid: apparently we have to make a copy of the pose on the heap for
+	//the initialization of allowed_seqpos to work
+	core::pose::PoseOP posecopy( new core::pose::Pose( pose ) );
+	allowed_seqpos->initialize_from_command_line( posecopy ); //this could be moved somewhere else to only initialize once, but probably not that important
+	toolbox::match_enzdes_util::AlignPoseToInvrotTreeMoverOP setup_align_pose( new toolbox::match_enzdes_util::AlignPoseToInvrotTreeMover( invrot_tree_, allowed_seqpos ));
+	setup_align_pose->set_add_target_to_pose( true );
+
+	toolbox::match_enzdes_util::AlignPoseToInvrotTreeMoverOP run_align_pose( new toolbox::match_enzdes_util::AlignPoseToInvrotTreeMover( invrot_tree_, allowed_seqpos ));
 
 	forge::constraints::InvrotTreeRCGOP invrot_rcg( new forge::constraints::InvrotTreeRCG( invrot_tree_, allowed_seqpos ) );
 	vlb.add_rcg( invrot_rcg );
+	vlb.loop_mover_fold_tree_constant( true ); //we're taking care of the fold tree through the above align movers
 	vlb.clear_setup_movers(); //safety
-	vlb.add_setup_mover( align_pose );
+	vlb.add_setup_mover( setup_align_pose );
+
+	vlb.clear_user_provided_movers();
+	vlb.add_user_provided_mover( run_align_pose );
 }
 
 
@@ -670,6 +680,14 @@ BluePrintBDR::parse_my_tag(
 		enzcst_io->read_enzyme_cstfile( cstfilename );
 		invrot_tree_ = new protocols::toolbox::match_enzdes_util::TheozymeInvrotTree( enzcst_io );
 		invrot_tree_->generate_targets_and_inverse_rotamers();
+
+		//this also means that we'd like the constraint score terms turned on
+		if( sfx_->has_zero_weight( core::scoring::coordinate_constraint ) ) sfx_->set_weight( core::scoring::coordinate_constraint, 1.0 );
+		if( sfx_->has_zero_weight( core::scoring::atom_pair_constraint ) ) sfx_->set_weight( core::scoring::atom_pair_constraint, 1.0 );
+		if( sfx_->has_zero_weight( core::scoring::angle_constraint ) ) sfx_->set_weight( core::scoring::angle_constraint, 1.0 );
+		if( sfx_->has_zero_weight( core::scoring::dihedral_constraint ) ) sfx_->set_weight( core::scoring::dihedral_constraint, 1.0 );
+		if( sfx_->has_zero_weight( core::scoring::backbone_stub_constraint ) ) sfx_->set_weight( core::scoring::backbone_stub_constraint, 1.0 );
+
 	}
 }
 

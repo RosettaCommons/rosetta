@@ -278,6 +278,13 @@ public: // mutators
 		independent_cycles_ = cycles;
 	}
 
+	void
+	set_user_provided_movers( utility::vector1< moves::MoverOP > const & movers );
+
+	inline
+	void user_provided_movers_apply_cycle( Size const cycle ) {
+		user_provided_movers_apply_cycle_ = cycle; }
+
 
 	/// @brief the maximum number of possible lockdown closure cycles to perform
 	inline
@@ -297,6 +304,10 @@ public: // mutators
 		repeat_tail_length_ = length;
 	}
 
+	inline
+	void
+	set_keep_input_foldtree( bool const setting ){
+		keep_input_foldtree_ = setting; }
 
 public: // loop management
 
@@ -544,6 +555,16 @@ private: // data
 	/// @brief the number of independent closure cycles to perform (default 8)
 	Size independent_cycles_;
 
+	/// @brief collection of movers that mess with the pose
+	/// every n fragment/ccd steps during inneriterations of simultaneous,
+	/// and independent stage, where n is determined by the variable below
+	/// gives the user a chance to add their own flavor to the fragment sampling
+	/// done by this protocol
+	utility::vector1< moves::MoverOP > user_provided_movers_;
+
+	/// @brief determines how often the above movers get called
+	/// during fragment insertion/ccd steps (default 3 )
+	Size user_provided_movers_apply_cycle_;
 
 	/// @brief the maximum number of possible boost closure cycles to perform
 	///  (default 30)
@@ -558,6 +579,10 @@ private: // data
 
   /// @brief local copy of repeat pose
 	Pose repeat_pose_;
+
+	///@brief whether to keep the FoldTree untouched, i.e. trust the
+	///user to supply a decent FoldTree
+	bool keep_input_foldtree_;
 
 
 };
