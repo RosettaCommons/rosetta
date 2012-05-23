@@ -21,6 +21,7 @@
 
 // Project Headers
 #include <basic/Tracer.hh>
+#include <basic/database/sql_utils.hh>
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
 #include <core/conformation/Residue.hh>
@@ -91,8 +92,12 @@ public:
     using core::scoring::all_atom_rmsd;
     using core::scoring::CA_gdtmm;
 
+		TR << "retrieving uuids from DB" << std::endl;
+		utility::vector1<boost::uuids::uuid> uuids = basic::database::struct_ids_from_tag(db_session_,"1ten");
+		TS_ASSERT(uuids.size() == 1);
+
     core::pose::Pose copy_1ten;
-    protein_silent_report_->load_pose(db_session_, "1ten",1, copy_1ten);
+    protein_silent_report_->load_pose(db_session_, uuids[1], copy_1ten);
 
     TS_ASSERT(pose_1ten_.total_residue() == copy_1ten.total_residue());
     TS_ASSERT(pose_1ten_.sequence() == copy_1ten.sequence());

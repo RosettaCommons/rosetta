@@ -146,8 +146,9 @@ public:
 
 		foreach( FeaturesReporterOP const & reporter, features_reporters_ ){
 			tr << "Writing schema for '" << reporter->type_name() << "'" << std::endl;
-			cppdb::statement schema = (*db_session_) << reporter->schema();
-			schema.exec();
+			reporter->write_schema_to_db(db_session_);
+			//cppdb::statement schema = (*db_session_) << reporter->schema();
+			//schema.exec();
 		}
 	}
 

@@ -27,6 +27,7 @@
 #include <utility/pointer/owning_ptr.fwd.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
+#include <utility/vector1.hh>
 #include <cassert>
 #include <cstddef>
 #include <iosfwd>
@@ -34,6 +35,7 @@
 #include <vector>
 #include <boost/scoped_ptr.hpp>
 #include <cppdb/frontend.h>
+#include <boost/uuid/uuid.hpp>
 
 namespace basic {
 namespace database {
@@ -74,6 +76,9 @@ set_cache_size(
 	std::string db_mode,
 	platform::Size cache_size);
 
+utility::vector1<boost::uuids::uuid>
+struct_ids_from_tag(utility::sql_database::sessionOP db_session,
+					std::string const & tag);
 
 void write_schema_to_database(
 	std::string schema,

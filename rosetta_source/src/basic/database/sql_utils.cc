@@ -357,7 +357,24 @@ cppdb::result safely_read_from_database(cppdb::statement & statement)
 	}
 }
 
-bool
+utility::vector1<boost::uuids::uuid>
+struct_ids_from_tag(utility::sql_database::sessionOP db_session,
+					std::string const & tag){
+	std::string statement_string = "SELECT struct_id FROM structures WHERE tag=?;";
+	cppdb::statement stmt = safely_prepare_statement(statement_string,db_session);
+	stmt.bind(1,tag);
+	cppdb::result res = stmt.query();
+	
+	utility::vector1<boost::uuids::uuid> uuids;
+	while(res.next()){
+		boost::uuids::uuid uuid;
+		res >> uuid;
+		uuids.push_back(uuid);
+	}
+	return uuids;
+}
+
+	bool
 table_exists(
 	sessionOP db_session,
 	string const & table_name
