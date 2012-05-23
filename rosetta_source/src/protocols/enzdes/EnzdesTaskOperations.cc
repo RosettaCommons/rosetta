@@ -204,7 +204,9 @@ DetectProteinLigandInterface::DetectProteinLigandInterface():
 	resfilename_(), //Empty string
 	add_observer_cache_segs_to_interface_(false),
 	no_design_cys_(true),
-	catres_only_(false)
+	catres_only_(false),
+	use_cstid_list_(false),
+	cstid_list_()
 {
 	init_from_options();
 	design_target_res_.clear();
@@ -255,6 +257,10 @@ DetectProteinLigandInterface::parse_tag( TagPtr tag )
 	if( tag->hasOption("catres_interface") )  catalytic_res_part_of_interface_ = tag->getOption< bool >( "catres_interface", true );
 	if( tag->hasOption("arg_sweep_interface") )  arg_sweep_interface_ = tag->getOption< bool >( "arg_sweep_interface", true );
 	if( tag->hasOption("catres_only_interface")) catres_only_ = tag->getOption< bool >( "catres_only_interface", true );
+	if( tag->hasOption("target_cstids")) {
+		use_cstid_list_ = true;
+		cstid_list_ = tag->getOption< std::string >( "target_cstids", "" );
+	}
 
 }
 
@@ -298,6 +304,16 @@ PackerTask & task) const
 		}
 
 		std::set< core::Size > interface_target_res = design_target_res_;
+		
+		// if picking neighbors of particular cstids only
+		if ( ( interface_target_res.size() == 0 ) && use_cstid_list_ ){
+			utility::vector1< core::Size > trg_res;
+			protocols::enzdes::enzutil::get_resnum_from_cstid_list( cstid_list_, pose, trg_res );
+			std::unique( trg_res.begin(), trg_res.end() );
+			std::set< core::Size > trg_set( trg_res.begin(), trg_res.end() );
+			interface_target_res = trg_set;
+		}
+
 		if( ( interface_target_res.size() == 0 ) && (catalytic_res_part_of_interface_ || catres_only_) ){
 			for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i){
 				if( enzutil::is_catalytic_seqpos( pose, i ) ) {
@@ -310,6 +326,13 @@ PackerTask & task) const
 		if( add_observer_cache_segs_to_interface_ ) add_observer_cache_segments_to_set( pose, interface_target_res );
 
 		if( interface_target_res.size() ==0 && !catres_only_ ) interface_target_res.insert( pose.fold_tree().downstream_jump_residue( pose.num_jump() ) );
+		
+		tr.Info << "Choosing the following residues as targets for detecting interface: ";
+		for( std::set< core::Size >::const_iterator targ_it( interface_target_res.begin()),targ_end(interface_target_res.end());targ_it != targ_end; ++targ_it ){
+				tr.Info << *targ_it << "+";
+		}
+		tr.Info <<  std::endl;
+		
 		// initialize detect_res vector, specifies whether the designability of a residue should be decided by find_design_interface
 		for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i){
 			if( ! resfilename_.empty() ){

@@ -164,6 +164,8 @@ private:
 	/// Should we prohibit designing to non disulfide cys?
 	bool no_design_cys_;
 	bool catres_only_;
+	bool use_cstid_list_;
+	std::string cstid_list_;
 };
 
 ///@brief Class to alter a packer task to speficially upweight the protein-ligand interaction energies
