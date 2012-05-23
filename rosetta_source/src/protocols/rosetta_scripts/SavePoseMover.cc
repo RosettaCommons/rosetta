@@ -16,8 +16,11 @@
 
 //project headers
 #include <core/pose/Pose.hh>
+#include <core/import_pose/import_pose.hh>
+
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <basic/Tracer.hh>
 
 #include <utility/tag/Tag.hh>
 
@@ -27,6 +30,8 @@
 // C++ Headers
 
 // ObjexxFCL Headers
+
+static basic::Tracer TR( "protocols.simple_moves.SavePoseMover" );
 
 namespace protocols {
 namespace rosetta_scripts {
@@ -73,6 +78,18 @@ SavePoseMover::parse_my_tag( TagPtr const tag, protocols::moves::DataMap & data_
 	if( tag->hasOption("reference_name") ){
 		reference_pose_ = saved_reference_pose(tag,data_map );
 	}
+
+	else utility_exit_with_message("Need to specify name under which to save pose.");
+	
+	if( tag->hasOption( "pdb_file" ) ){
+		std::string const template_pdb_fname( tag->getOption< std::string >( "pdb_file" ));
+		//*reference_pose_ = new core::pose::Pose
+		//template_pdb_ =  new core::pose::Pose ;
+		core::import_pose::pose_from_pdb( *reference_pose_, template_pdb_fname );
+		TR <<"reading in " << template_pdb_fname << " pdb with " << reference_pose_->total_residue() <<" residues"<<std::endl;
+		//template_presence = true;
+	}
+	
 	else utility_exit_with_message("Need to specify name under which to save pose.");
 
 	if( tag->hasOption("restore_pose") ){
