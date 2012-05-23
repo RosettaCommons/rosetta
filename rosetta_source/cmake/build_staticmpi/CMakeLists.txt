@@ -4,7 +4,6 @@ INCLUDE(../build/build.pre.cmake)
 INCLUDE(../build/external.static.cmake)
 
 ADD_DEFINITIONS(-DNDEBUG)
-ADD_DEFINITIONS(-DUSEMPI)
 SET(COMPILE_FLAGS "-pipe -w -O2")
 
 SET( LIBRARIES
@@ -57,10 +56,11 @@ SET(LINK_STATIC_LIBS
     ${CMAKE_CURRENT_SOURCE_DIR}/libcppdb-static.a  
     -lz) 
 ### libc must be linked dynamically if using static ompi libs
-SET(LINK_DYNAMIC_LIBS "-Wl,-Bdynamic -l c")
+##SET(LINK_DYNAMIC_LIBS "-Wl,-Bdynamic -l c")
 
 # trailing static needed so mpicc actually uses static ompi libs
-SET(TRAILING_STATIC "-Wl,-Bstatic")
+#SET(TRAILING_STATIC "-Wl,-Bstatic -lgcc_eh")
+SET(TRAILING_STATIC "-Bstatic")
 
 ### Put all the libraries together
 ### ORDER IS IMPORTANT, do not change unless you understand -Wl,-Bstatic
@@ -68,21 +68,20 @@ SET(LINK_ALL_LIBS ${LINK_STATIC_LIBS} ${LINK_DYNAMIC_LIBS} ${TRAILING_STATIC})
 
 ### Change dynamic linker from default /lib/ld64.so.1 to /lib64/ld-2.5.so,
 ### since that file doesn't exist and path is hardcoded
-SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--dynamic-linker /lib64/ld-2.5.so")
+### SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--dynamic-linker /lib64/ld-2.5.so")
 
 
 
 ##### Top level binaries
 ### loophash_createfiltereddb 
 SET(BINARIES
-    ../../src/apps/pilot/kenjung/loophash_createfiltereddb.cc
-    ../../src/apps/pilot/mike/loophash_mpi.cc
-    ../../src/apps/public/relax.cc
+    ../../src/apps/public/boinc/minirosetta.cc
+		../../src/apps/public/relax.cc
 )
 
 FOREACH(BINARY ${BINARIES})
     GET_FILENAME_COMPONENT(BIN_NAME ${BINARY} NAME_WE)
-    SET(BIN_NAME ${BIN_NAME}.mpi)
+    #SET(BIN_NAME ${BIN_NAME}.mpi)
     ADD_EXECUTABLE(${BIN_NAME} ${BINARY}) 
     TARGET_LINK_LIBRARIES(${BIN_NAME} ${LINK_ALL_LIBS})
     SET_TARGET_PROPERTIES(${BIN_NAME} PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
@@ -90,3 +89,5 @@ FOREACH(BINARY ${BINARIES})
     ADD_DEPENDENCIES(${BIN_NAME} ${LIBRARIES})
     #ADD_CUSTOM_COMMAND(TARGET ${BIN_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${BIN_NAME} /work/kenjung/minibin/)
 ENDFOREACH( BINARY )
+
+#INCLUDE( ../build/apps.all.cmake )
