@@ -413,6 +413,7 @@ sources = {
 		"RestrictToInterfaceVectorOperation",
 		"RestrictToNeighborhoodOperation",
 		"SeqprofConsensusOperation",
+		"SetIGTypeOperation",
 		"ThreadSequenceOperation",
 	],
 }

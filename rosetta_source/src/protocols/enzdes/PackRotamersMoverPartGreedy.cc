@@ -29,11 +29,16 @@
 #include <protocols/enzdes/enzdes_util.hh>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
+#include <core/scoring/EnergyGraph.hh>
 
 //#include <core/pack/task/operation/TaskOperation.fwd.hh>
 //#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 //#include <utility/string_util.hh>
+// Numeric Headers
+#include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
+#include <utility/sort_predicates.hh>
 
 
 namespace protocols {
@@ -48,6 +53,7 @@ using namespace scoring;
 using basic::Warning;
 using basic::t_warning;
 static basic::Tracer TR("protocols.enzdes.PackRotamersMoverPartGreedy");
+static numeric::random::RandomGenerator trg_RG(10805); // <- Magic number, do not change it!!!
 
 std::string
 PackRotamersMoverPartGreedyCreator::keyname() const
@@ -80,7 +86,8 @@ PackRotamersMoverPartGreedy::PackRotamersMoverPartGreedy() :
 	scorefxn_minimize_(0),
 	task_factory_(0),
 	target_residues_(0),
-	threshold_(0)
+	threshold_(0),
+	n_best_(0)
 {}
 
 std::string
@@ -123,6 +130,10 @@ PackRotamersMoverPartGreedy::parse_my_tag(
     	}
 	//distance threshold for neighbor check in greedy opt
 	 threshold_  =  tag->getOption<core::Real>("distance_threshold", 8.0 );
+	//if choose targets based on N-best residues
+	if( tag->hasOption("choose_best_n") ) {
+		n_best_ = tag->getOption<core::Size>("choose_best_n", 0 );
+	} 
 }
 
 std::string
@@ -167,8 +178,14 @@ PackRotamersMoverPartGreedy::apply( Pose & pose )
         std::unique( target_residues_.begin(), target_residues_.end() );
 
    }
+  if (n_best_>0){
+	utility::vector1< core::Size > n_best_res = choose_n_best( greedy_pose, n_best_ );
+	target_residues_.insert( target_residues_.begin(), n_best_res.begin(), n_best_res.end() );
+        std::unique( target_residues_.begin(), target_residues_.end() );
+  }
   runtime_assert(target_residues_.size()>0);
-  //
+  //randomly shuffle targets
+  random_permutation( target_residues_ , trg_RG );
   //Make sure target residues are held fixed
    for( utility::vector1< core::Size >::const_iterator pos_it = target_residues_.begin(); pos_it != target_residues_.end(); ++pos_it ){
 	task_->nonconst_residue_task( *pos_it ).prevent_repacking();
@@ -349,6 +366,38 @@ PackRotamersMoverPartGreedy::target_residues( utility::vector1< core::Size > & t
 	target_residues_ = trg_res;
 }
 
+utility::vector1<core::Size>  
+PackRotamersMoverPartGreedy::choose_n_best( core::pose::Pose const & pose , core::Size const & n_best ){
+
+	using namespace core::graph;
+	using namespace core::scoring;
+	std::list< std::pair< core::Size, core::Real > > residue_energies;
+	utility::vector1<core::Size> chosen_residues;
+	core::pose::Pose nonconst_pose( pose );
+	(*scorefxn_repack_)(nonconst_pose);
+ 	EnergyMap const curr_weights = nonconst_pose.energies().weights();
+	core::Size res (1);
+	for (core::Size ii=1;ii<=pose.total_residue();++ii){
+  		if (pose.residue( ii ).is_ligand()) res = ii;
+	}
+	//Fill residue_energies of interface residues by traversing energy graph
+	for( EdgeListConstIterator egraph_it = nonconst_pose.energies().energy_graph().get_node( res )->const_edge_list_begin(); egraph_it != nonconst_pose.energies().energy_graph().get_node( res )->const_edge_list_end(); ++egraph_it){
+		core::Size const int_resi = (*egraph_it)->get_other_ind( res );
+		EnergyEdge const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
+		core::Real intE = Eedge->dot( curr_weights );
+		residue_energies.push_back( std::make_pair( int_resi, intE));	
+  	}//for each egraph_it
+
+	//Sort and return n_best
+	residue_energies.sort( utility::SortSecond< core::Size, core::Real >() );
+	core::Size counter(1);
+	for( std::list< std::pair<core::Size, core::Real> >::iterator it = residue_energies.begin();counter<=n_best; ++it){
+		chosen_residues.push_back( it->first );
+		TR << "Chose residue "<<it->first<<" with interface energy "<<it->second <<std::endl; 
+		counter++;
+	}
+	return chosen_residues;
+}
 /*core::PackerEnergy PackRotamersMoverPartGreedy::run_with_ig( Pose & pose, utility::vector0< int > rot_to_pack, InteractionGraphBaseOP ig) const
 {
 	return pack_rotamers_run( pose, task(), rotamer_sets(), ig, rot_to_pack );

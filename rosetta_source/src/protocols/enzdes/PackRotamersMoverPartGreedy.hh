@@ -89,7 +89,12 @@ public:
 	void task_factory( core::pack::task::TaskFactoryOP p );
 	void task( core::pack::task::PackerTaskOP task );
   void target_residues (utility::vector1< core::Size > & trg_res);
-
+	
+	//choose n best residues interacting with ligand
+	utility::vector1<core::Size> choose_n_best( 
+		core::pose::Pose const & pose, 
+		core::Size const & n_best 
+	);
 	
 private:
 	core::scoring::ScoreFunctionOP scorefxn_repack_;
@@ -102,6 +107,7 @@ private:
 	bool use_cstids_;
 	core::Real threshold_;
 	std::string cstid_list_;
+  core::Size n_best_;
 };
 
 
