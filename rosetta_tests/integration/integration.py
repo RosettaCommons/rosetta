@@ -292,11 +292,11 @@ rm -r ref/; ./integration.py    # create reference results using only default se
 
         if options.yaml:
             import json
-            data = dict(total=len(tests), failed=diffs, details=results, brief=makeBriefResults(full_log))
+            data = dict(total=len(tests), failed=diffs, details=results, brief=makeBriefResults(full_log).decode('utf8', 'replace'))
             f = file(options.yaml, 'w')
             json.dump(data, f, sort_keys=True, indent=2)
             f.close()
-            
+
             '''
             f = file(options.yaml, 'w')
             brief = makeBriefResults(full_log)
