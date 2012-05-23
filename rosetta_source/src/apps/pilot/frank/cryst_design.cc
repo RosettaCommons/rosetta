@@ -40,11 +40,13 @@
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/electron_density/util.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 #include <core/types.hh>
+#include <core/pack/task/ResfileReader.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/viewer/viewers.hh>
@@ -84,6 +86,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 #include <fstream>
@@ -259,6 +262,10 @@ design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool 
 	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 	PackerTaskOP task( TaskFactory::create_packer_task( pose ));
 
+	if (basic::options::option[basic::options::OptionKeys::packing::resfile].user()) {
+		core::pack::task::parse_resfile( pose, *task);
+	}
+
 	// Set which residues can be designed
 	for (Size i=1; i<=pose.n_residue(); i++) {
 		if (!sym_info->bb_is_independent(i)) {
@@ -387,7 +394,14 @@ public:
 		air_filter_     = option[crystdes::air]();
 		
 		cen_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("score0");
-		cenmin_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("cen_std");
+		cenmin_scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction();
+		cenmin_scorefxn_->set_weight( core::scoring::vdw, 0.5 );
+		cenmin_scorefxn_->set_weight( core::scoring::cbeta_smooth, 1.0 );
+		cenmin_scorefxn_->set_weight( core::scoring::cenpack_smooth, 1.0 );
+		cenmin_scorefxn_->set_weight( core::scoring::cen_env_smooth, 1.0 );
+		cenmin_scorefxn_->set_weight( core::scoring::hbond_lr_bb, 1.0 );
+		cenmin_scorefxn_->set_weight( core::scoring::hbond_sr_bb, 1.0 );
+
 		fa_scorefxn_  = core::scoring::getScoreFunction();
 
 		// Get the favor_native_residue weight from the command line
@@ -465,9 +479,8 @@ public:
 		core::io::silent::SilentFileData sfd;	
 
 		// loop over all positions
-		core::Real gamma=0;  // fpd no need to sample both alpha & gamma for low values of beta
+		core::Real gamma=0;  // fpd no need to sample both alpha & gamma for small values of beta
 		core::Real alpha=alpha_;
-		//for (core::Real alpha=-ang_max_; alpha<=ang_max_; alpha+=ang_step_)
 		for (core::Real beta=0; beta<=ang_max_; beta+=ang_step_)
 		for (core::Real x=trans_min_; x<=trans_max_; x+=trans_step_)
 		for (core::Real y=trans_min_; y<=trans_max_; y+=trans_step_)

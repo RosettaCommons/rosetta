@@ -114,6 +114,9 @@ void SingleFragmentMover::apply(core::pose::Pose& pose) {
 
   Size insertion_pos = chunk->choose();
 
+	while (!movable_->get_bb(insertion_pos))
+		insertion_pos = chunk->choose();
+
   // delegate responsibility for choosing the fragment to the policy
   const Frame& frame = library_[insertion_pos];
   Size fragment_pos = policy_->choose(frame, pose);

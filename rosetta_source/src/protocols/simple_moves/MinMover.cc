@@ -234,10 +234,13 @@ void MinMover::parse_opts(
 	score_function( data.get< ScoreFunction * >( "scorefxns", scorefxn_name ) );
 	if ( tag->hasOption("jump") ) {
 		if ( ! movemap_ ) movemap_ = new MoveMap;
-		if( tag->getOption< core::Size > ( "jump" ) == 0 ) {
+		utility::vector1<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );
+		// string 'ALL' makes all jumps movable
+		if (jumps.size() == 1 && (jumps[1] == "ALL" || jumps[1] == "All" || jumps[1] == "all" || jumps[1] == "*") ) {
+			movemap_->set_jump( true );
+		} else if( tag->getOption< core::Size > ( "jump" ) == 0 ) {
 			movemap_->set_jump( false );
 		} else {
-			utility::vector1<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );
 			foreach(std::string jump, jumps){
 				Size const value = std::atoi( jump.c_str() ); // convert to C string, then convert to integer, then set a Size (phew!)
 				TR << "Setting min on jump " << value << std::endl;

@@ -245,6 +245,7 @@ sources = {
 		"SidechainRmsdFilter",
 		"StructuralSimilarityEvaluator",
 		"StructureSimilarityEvaluatorCreator",
+		"SymmetricMotifFilter",
 		"TerminusDistanceFilter",
 	],
 	"protocols/simple_moves": [
