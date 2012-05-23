@@ -1,4 +1,3 @@
-namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
 namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constraint_skip_rate" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }
@@ -145,6 +144,8 @@ namespace score { BooleanOptionKey const output_residue_energies( "score:output_
 namespace score { StringOptionKey const fa_custom_pair_distance_file( "score:fa_custom_pair_distance_file" );  }
 namespace score { RealOptionKey const disulf_matching_probe( "score:disulf_matching_probe" );  }
 namespace score { RealVectorOptionKey const bonded_params( "score:bonded_params" );  }
+namespace score { BooleanOptionKey const bonded_params_CHARMM_angle( "score:bonded_params_CHARMM_angle" );  }
+namespace score { BooleanOptionKey const bonded_params_CHARMM_length( "score:bonded_params_CHARMM_length" );  }
 namespace score { RealOptionKey const pro_close_planar_constraint( "score:pro_close_planar_constraint" );  }
 namespace score { BooleanOptionKey const linear_bonded_potential( "score:linear_bonded_potential" );  }
 namespace score { namespace saxs { BooleanOptionKey const saxs( "score:saxs" );  } }

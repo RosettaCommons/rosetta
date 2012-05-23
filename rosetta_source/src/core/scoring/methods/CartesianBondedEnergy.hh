@@ -22,6 +22,8 @@
 #include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/mm/MMBondAngleLibrary.fwd.hh>
+#include <core/scoring/mm/MMBondLengthLibrary.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -43,6 +45,7 @@
 typedef boost::tuples::tuple< std::string, int, int, int, int > residx_atm_quad;
 typedef boost::tuples::tuple< std::string, int, int, int > residx_atm_triple;
 typedef boost::tuples::tuple< std::string, int, int > residx_atm_pair;
+//typedef boost::tuples::tuple< std::string, std::string, std::string > atm_name_triple;
 
 namespace boost {
 namespace tuples {
@@ -50,9 +53,11 @@ namespace tuples {
 std::size_t hash_value(residx_atm_quad const& e); 
 std::size_t hash_value(residx_atm_triple const& e); 
 std::size_t hash_value(residx_atm_pair const& e); 
+//std::size_t hash_value(atm_name_triple const& e); 
 bool operator==(residx_atm_quad const& a,residx_atm_quad const& b); 
 bool operator==(residx_atm_triple const& a,residx_atm_triple const& b); 
 bool operator==(residx_atm_pair const& a,residx_atm_pair const& b); 
+//bool operator==(atm_name_triple const& a,atm_name_triple const& b); 
 
 }
 }
@@ -91,7 +96,9 @@ public:
 
 	// lookup ideal bondangle; insert in DB if not there
 	void
-	lookup( core::chemical::ResidueType const & restype, int atm1, int atm2, int atm3, Real &Ktheta, Real &d0 );
+	lookup( core::pose::Pose const & pose, core::conformation::Residue const & res,
+		   int atm1, int atm2, int atm3, Real &Ktheta, Real &d0);
+
 
 private:
 	//fpd involves a string comparison (restype) .. could be faster
@@ -100,6 +107,7 @@ private:
 	boost::unordered_map< residx_atm_triple, core::Real > Kangles_;
 
 	Real k_angle;  // can only be set in constructor
+	mm::MMBondAngleLibrary const & mm_bondangle_library_;
 };
 
 
@@ -111,7 +119,7 @@ public:
 
 	// lookup ideal bondlength; insert in DB if not there
 	void
-	lookup( core::chemical::ResidueType const & restype, int atm1, int atm2, Real &Kd, Real &d0 );
+	lookup( core::pose::Pose const & pose, core::conformation::Residue const & res, int atm1, int atm2, Real &Kd, Real &d0 );
 
 private:
 	//fpd involves a string comparison (restype) .. could be faster
@@ -120,6 +128,7 @@ private:
 	boost::unordered_map< residx_atm_pair, core::Real > Klengths_;
 
 	Real k_length;  // can only be set in constructor
+	mm::MMBondLengthLibrary const & mm_bondlength_library_;
 };
 
 

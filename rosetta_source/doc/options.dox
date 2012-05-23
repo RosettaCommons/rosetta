@@ -3651,6 +3651,14 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Spring constants for bonded parameters [length,angle,torsion,proton-torsion] (default 600,300,300,60)</dd><br>
 </dl>
 <dl>
+<dt><b>-bonded_params_CHARMM_angle</b> \<Boolean\><dt>
+<dd>use CHARMM spring constants</dd><br>
+</dl>
+<dl>
+<dt><b>-bonded_params_CHARMM_length</b> \<Boolean\><dt>
+<dd>use CHARMM spring constants</dd><br>
+</dl>
+<dl>
 <dt><b>-pro_close_planar_constraint</b> \<Real\><dt>
 <dd>stdev of CD,N,CA,prevC trigonal planar constraint in pro_close energy method</dd><br>
 <dd>Default: 0.1</dd><br>

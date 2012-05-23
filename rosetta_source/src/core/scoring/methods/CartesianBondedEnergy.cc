@@ -31,6 +31,10 @@
 #include <core/chemical/AA.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/TorsionID.hh>
+#include <core/chemical/AtomType.hh>
+#include <core/scoring/mm/MMBondAngleLibrary.hh>
+#include <core/scoring/mm/MMBondLengthLibrary.hh>
+#include <core/scoring/ScoringManager.hh>
 
 #include <core/scoring/PeptideBondedEnergyContainer.hh>
 #include <core/scoring/Energies.hh>
@@ -51,6 +55,7 @@
 // options
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/optE.OptionKeys.gen.hh>
 
 // C++ headers
 #include <iostream>
@@ -58,7 +63,7 @@
 #include <utility/vector1.hh>
 
 #include <core/pose/PDBInfo.hh>
-#define CUTOFF 10 
+#define CUTOFF 0 
 
 namespace boost {
 namespace tuples {
@@ -88,6 +93,7 @@ std::size_t hash_value(residx_atm_pair const& e) {
 	boost::hash_combine(seed, e.get<2>());
 	return seed;
 }
+
 bool operator==(residx_atm_quad const& a,residx_atm_quad const& b) {
 	return a.get<0>() == b.get<0>() && a.get<1>() == b.get<1>() &&
 	       a.get<2>() == b.get<2>() && a.get<3>() == b.get<3>() &&
@@ -159,7 +165,8 @@ std::string get_restag( core::chemical::ResidueType const & restype ) {
 
 ////////////////////////
 // constructors
-BondLengthDatabase::BondLengthDatabase(Real k_length_in) {
+BondLengthDatabase::BondLengthDatabase(Real k_length_in) :
+	mm_bondlength_library_( ScoringManager::get_instance()->get_MMBondLengthLibrary() ) {
 	// check energy method options first, then command flag, then go to default
 	if (k_length_in >= 0) {
 		k_length = k_length_in;
@@ -172,7 +179,8 @@ BondLengthDatabase::BondLengthDatabase(Real k_length_in) {
 	TR.Debug << "Set Klength to " << k_length << std::endl;
 }
 
-BondAngleDatabase::BondAngleDatabase(Real k_angle_in) {
+BondAngleDatabase::BondAngleDatabase(Real k_angle_in) :
+	mm_bondangle_library_( ScoringManager::get_instance()->get_MMBondAngleLibrary() ) {
 	// check energy method options first, then command flag, then go to default
 	if (k_angle_in >= 0) {
 		k_angle = k_angle_in;
@@ -347,14 +355,14 @@ TorsionDatabase::lookup(
 // atm ids > 0 ==> atom index
 // atm ids < 0 ==> residue connection id
 void
-BondAngleDatabase::lookup(
-		core::chemical::ResidueType const & restype, int atm1, int atm2, int atm3, Real &Ktheta, Real &theta0 ) {
+BondAngleDatabase::lookup( 
+	pose::Pose const & pose, conformation::Residue const & res, int atm1, int atm2, int atm3, Real &Ktheta, Real &theta0 ) {
 	using namespace core::chemical;
 
 	Ktheta=k_angle;
-
+	ResidueType const & restype = res.type();
 	std::string restag = get_restag( restype );
-
+ 
 	// lookup in table
 	residx_atm_triple tuple( restag, atm1,atm2,atm3 );
 	boost::unordered_map<residx_atm_triple,core::Real>::iterator b_it = bondangles_.find( tuple );
@@ -368,25 +376,65 @@ BondAngleDatabase::lookup(
 	}
 
 	// Create mini-conformation for idealized residue
-	core::conformation::ResidueOP newres = conformation::ResidueFactory::create_residue( restype );
+	conformation::ResidueOP newres = conformation::ResidueFactory::create_residue( restype );
+	
+	// if interres angle, get neighbor info 
+	Size neighb_mmatm;
+	int const resconn = std::min( std::min( atm1, atm2 ), atm3 );	
+	if ( resconn < 0) {		
+		Size const neighb = res.residue_connection_partner( -resconn );
+		conformation::Residue const neighb_res = pose.residue( neighb );
+		Size const neighb_resconn = res.residue_connection_conn_id( -resconn );
+		ResidueType const & neighb_restype = neighb_res.type();
+		Size const neighb_atm = neighb_restype.residue_connection( neighb_resconn ).atomno();
+		neighb_mmatm = neighb_restype.mm_atom_type_index( neighb_atm );
+	}
 
+	// use these for mm Ktheta lookup
+	Size mmatm1, mmatm2, mmatm3;						
+	
 	// get angle
 	numeric::xyzVector<core::Real> x,y,z; // atom coords
-	if (atm1 > 0)
+	if (atm1 > 0) {
+		mmatm1 = restype.mm_atom_type_index( atm1 );
 		x = newres->atom( atm1 ).xyz();
-	else
+	}
+	else {
+		mmatm1 = neighb_mmatm;
 		x = newres->residue_connection( -atm1 ).icoor().build( restype );
-	if (atm2 > 0)
+	}
+	if (atm2 > 0) {
+		mmatm2 = restype.mm_atom_type_index( atm2 );
 		y = newres->atom( atm2 ).xyz();
-	else
+	}
+	else {
+		mmatm2 = neighb_mmatm;
 		y = newres->residue_connection( -atm2 ).icoor().build( restype );
-	if (atm3 > 0)
+	}
+	if (atm3 > 0) {
+		mmatm3 = restype.mm_atom_type_index( atm3 );
 		z = newres->atom( atm3 ).xyz();
-	else
+	}
+	else {
+		mmatm3 = neighb_mmatm;
 		z = newres->residue_connection( -atm3 ).icoor().build( restype );
+	}
 
 	theta0 = numeric::angle_radians ( x,y,z );
+	
+	// get Ktheta from CHARMM
+	if ( basic::options::option[ basic::options::OptionKeys::score::bonded_params_CHARMM_angle ].user() ) {
 
+		mm::mm_bondangle_atom_tri mm_atomtype_set( mmatm1, mmatm2, mmatm3);
+		mm::mm_bondangle_library_citer_pair pair = mm_bondangle_library_.lookup(
+			mm_atomtype_set.key1(),
+			mm_atomtype_set.key2(),
+			mm_atomtype_set.key3() 
+		);
+		Ktheta = ((pair.first)->second).key1();			// look in core/mm/MMBondAngleLibrary.hh to figure out this one
+		//TR << "Set Ktheta to " << Ktheta << std::endl;
+	}
+		
 	//fpd ignore proline C-ND which is handled by pro_close
 	if (restype.aa() == core::chemical::aa_pro) {
 		bool hasCD = (atm1>0 && restype.atom_name(atm1)==" CD ")
@@ -428,11 +476,11 @@ BondAngleDatabase::lookup(
 // atm ids < 0 ==> residue connection id
 void
 BondLengthDatabase::lookup
-  ( core::chemical::ResidueType const & restype, int atm1, int atm2, Real &Kd, Real &d0 ) {
+	( pose::Pose const & pose, conformation::Residue const & res, int atm1, int atm2, Real &Kd, Real &d0 ) {
 	using namespace core::chemical;
 
 	Kd=k_length;
-
+	ResidueType const & restype = res.type();
 	std::string restag = get_restag( restype );
 
 	// lookup in table
@@ -450,18 +498,62 @@ BondLengthDatabase::lookup
 	// Create mini-conformation for idealized residue
 	core::conformation::ResidueOP newres = conformation::ResidueFactory::create_residue( restype );
 
+	// if interres angle, get neighbor info 
+	Size neighb_mmatm;
+	int const resconn = std::min( atm1, atm2 );	
+	if ( resconn < 0) {		
+		Size const neighb = res.residue_connection_partner( -resconn );
+		conformation::Residue const neighb_res = pose.residue( neighb );
+		Size const neighb_resconn = res.residue_connection_conn_id( -resconn );
+		ResidueType const & neighb_restype = neighb_res.type();
+		Size const neighb_atm = neighb_restype.residue_connection( neighb_resconn ).atomno();
+		neighb_mmatm = neighb_restype.mm_atom_type_index( neighb_atm );
+		//TR.Debug << "resconn atom name: " << neighb_res.atom_name( neighb_atm ) << "rsd atom name: " << res.atom_name( std::max(atm1, atm2)) << std::endl;
+		//TR.Debug << "rsd atom no: " << std::max(atm1, atm2) << " resconn atom no: " << neighb_atm << std::endl;
+		//TR.Debug << "rsd mm_atom no: " << restype.mm_atom_type_index( atm1 ) << " resconn mm_atom no: " << neighb_mmatm << std::endl;
+	}
+
+	// use these for mm Ktheta lookup
+	Size mmatm1, mmatm2;
+
 	// get length
 	numeric::xyzVector<core::Real> x,y,z; // atom coords
-	if (atm1 > 0)
+	if (atm1 > 0) {
+		mmatm1 = restype.mm_atom_type_index( atm1 );
 		x = newres->atom( atm1 ).xyz();
-	else
+	}
+	else {
+		mmatm1 = neighb_mmatm;
 		x = newres->residue_connection( -atm1 ).icoor().build( restype );
-	if (atm2 > 0)
+	}
+	if (atm2 > 0) {
+		mmatm2 = restype.mm_atom_type_index( atm2 );
 		y = newres->atom( atm2 ).xyz();
-	else
+	}
+	else {
+		mmatm2 = neighb_mmatm;
 		y = newres->residue_connection( -atm2 ).icoor().build( restype );
+	}
 
 	d0 = (x-y).length();
+	  
+	// get Kd from CHARMM
+	if ( basic::options::option[ basic::options::OptionKeys::score::bonded_params_CHARMM_length ].user() ) {
+		mm::mm_bondlength_atom_pair mm_atomtype_set( mmatm1, mmatm2 );
+		mm::mm_bondlength_library_citer_pair pair = mm_bondlength_library_.lookup(
+			mm_atomtype_set.key1(),
+			mm_atomtype_set.key2()
+		);
+		Kd = ((pair.first)->second).key1();			// look in core/mm/MMBondLengthLibrary.hh to figure out this one
+
+		/*// lookup is supposed to return 0 for virtual and exit with error if param not found. fatal error is disabled for now.
+		if ( Kd == 0 and !( restype.atom_type(atm1).is_virtual() || restype.atom_type(atm2).is_virtual() ) ) {
+			Kd = 300;								//arbitrary number
+			TR << "Unknown Kd set to " << Kd << std::endl;
+		}
+		else
+			TR.Debug << "Set Kd to " << Kd << std::endl;*/
+	}
 
 	// fpd ignore proline C-ND which is handled by pro_close
 	if (restype.aa() == core::chemical::aa_pro &&
@@ -609,7 +701,7 @@ CartesianBondedEnergy::residue_pair_energy(
 
 			// lookup Ktheta and theta0
 			Real Ktheta, theta0;
-			db_angle_->lookup( rsd1.type(), res1_lower_atomno, resconn_atomno1, -resconn_id1, Ktheta, theta0 );
+			db_angle_->lookup( pose, rsd1, res1_lower_atomno, resconn_atomno1, -resconn_id1, Ktheta, theta0 );
 
 			if (Ktheta == 0.0) continue;
 
@@ -638,7 +730,7 @@ CartesianBondedEnergy::residue_pair_energy(
 
 			// lookup Ktheta and theta0
 			Real Ktheta, theta0;
-			db_angle_->lookup( rsd2.type(), res2_lower_atomno, resconn_atomno2, -resconn_id2, Ktheta, theta0 );
+			db_angle_->lookup( pose, rsd2, res2_lower_atomno, resconn_atomno2, -resconn_id2, Ktheta, theta0 );
 
 			if (Ktheta == 0.0) continue;
 			Real const angle = numeric::angle_radians(
@@ -665,9 +757,11 @@ CartesianBondedEnergy::residue_pair_energy(
 		Real length =
 			( rsd2.atom( resconn_atomno2 ).xyz() - rsd1.atom( resconn_atomno1 ).xyz() ).length();
 
+		//TR.Debug << "interres resconn atom name: " << rsd1.atom_name( resconn_atomno1 ) << "rsd atom name: " << rsd2.atom_name( resconn_atomno2 ) << std::endl;
+		//TR.Debug << "interres rsd1 atom no: " << resconn_atomno1 << " rsd2 (resconn) atom no: " << resconn_atomno2 << std::endl;
 		// lookup Ktheta and theta0
 		Real Kd, d0;
-		db_length_->lookup( rsd1.type(), resconn_atomno1, -resconn_id1, Kd, d0 );
+		db_length_->lookup( pose, rsd1, resconn_atomno1, -resconn_id1, Kd, d0 );
 
 		if (pose.pdb_info() && 0.5*Kd*(length-d0) * (length-d0) > CUTOFF) {
 			TR.Debug << pose.pdb_info()->name() << " pdbpos rsd1: " << pose.pdb_info()->number(rsd1.seqpos()) << " length rsd1 rsd2: " << rsd1.seqpos() << " -- " << rsd2.seqpos() << "  "
@@ -764,7 +858,7 @@ CartesianBondedEnergy::eval_intrares_energy(
 
 		// lookup Ktheta and theta0
 		Real Ktheta, theta0;
-		db_angle_->lookup( rsd.type(), rt1, rt2, rt3, Ktheta, theta0 );
+		db_angle_->lookup( pose, rsd, rt1, rt2, rt3, Ktheta, theta0 );
 		if (Ktheta == 0.0) continue;
 
 		// get angle
@@ -800,9 +894,11 @@ CartesianBondedEnergy::eval_intrares_energy(
 				if ( rsd_type.aa() == core::chemical::aa_vrt)
 					continue;
 
+				//TR << "intrares resconn atom name: " << rsd.atom_name( atm_i ) << "rsd atom name: " << rsd.atom_name( atm_j ) << std::endl;
+				//TR << "intrares rsd atom no: " << atm_i << " rsd atom no: " << atm_j << std::endl;
 				// lookup Ktheta and theta0
 				Real Kd, d0;
-				db_length_->lookup( rsd.type(), atm_i, atm_j, Kd, d0 );
+				db_length_->lookup( pose, rsd, atm_i, atm_j, Kd, d0 );
 				if (Kd == 0.0) continue;
 
 				Real const d = ( rsd.atom( atm_i ).xyz()-rsd.atom( atm_j ).xyz() ).length();
@@ -927,7 +1023,7 @@ CartesianBondedEnergy::eval_atom_derivative(
 
 		// lookup Ktheta and theta0
 		Real Ktheta, theta0;
-		db_angle_->lookup( res.type(), ii_bangle.key1(), ii_bangle.key2(), ii_bangle.key3(), Ktheta, theta0);
+		db_angle_->lookup( pose, res, ii_bangle.key1(), ii_bangle.key2(), ii_bangle.key3(), Ktheta, theta0);
 		if (Ktheta == 0.0) continue;
 
 		Vector f1(0.0), f2(0.0);
@@ -967,7 +1063,7 @@ CartesianBondedEnergy::eval_atom_derivative(
 
 		// lookup Kd and d0
 		Real Kd, d0;
-		db_length_->lookup( res.type(), atomno, atm2, Kd, d0 );
+		db_length_->lookup( pose, res, atomno, atm2, Kd, d0 );
 		if (Kd == 0.0) continue;
 
 		Vector f1(0.0), f2(0.0);
@@ -1013,7 +1109,7 @@ CartesianBondedEnergy::eval_atom_derivative(
 
 		// lookup Ktheta and theta0
 		Real Ktheta, theta0;
-		db_angle_->lookup( res.type(), -ii_resconn, ii_pair.key1(), ii_pair.key2(), Ktheta, theta0 );
+		db_angle_->lookup( pose, res, -ii_resconn, ii_pair.key1(), ii_pair.key2(), Ktheta, theta0 );
 		if (Ktheta == 0.0) continue;
 
 		Vector f1(0.0), f2(0.0);
@@ -1078,7 +1174,7 @@ CartesianBondedEnergy::eval_atom_derivative(
 
 			// lookup Ktheta and theta0
 			Real Ktheta, theta0;
-			db_angle_->lookup( neighb_res.type(), -neighb_resconn, neighb_atom1, neighb_atom2, Ktheta, theta0 );
+			db_angle_->lookup( pose, neighb_res, -neighb_resconn, neighb_atom1, neighb_atom2, Ktheta, theta0 );
 			if (Ktheta == 0.0) continue;
 
 			numeric::deriv::angle_p1_deriv(
@@ -1123,7 +1219,7 @@ CartesianBondedEnergy::eval_atom_derivative(
 
 		// lookup Kd and d0
 		Real Kd, d0;
-		db_length_->lookup( res.type(), atomno, -ii_resconn, Kd, d0 );
+		db_length_->lookup( pose, res, atomno, -ii_resconn, Kd, d0 );
 		if (Kd == 0.0) continue;
 
 		Vector f1(0.0), f2(0.0);
