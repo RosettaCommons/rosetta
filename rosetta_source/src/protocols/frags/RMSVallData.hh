@@ -169,17 +169,19 @@ public:
 		std::string const &pref_seq,
 		char const force_ss,
 		core::fragment::FrameOP & frame,
-		core::Real randomness = 0.0
+		core::Real randomness = 0.0,
+		core::Real oversample = 5.0
 	) const {
 		Size const frag_size( templ.size() );
 		assert( frag_size == pref_seq.length() );
 
 		// reset heaps
-		FArray1D_int heap( 5*nfrags + 2 );
-		FArray1D_float coheap( 5*nfrags + 2 );
-		protocols::frags::heap_init( heap, coheap, 5*nfrags );   // out-of-date????
-
 		Size const my_size( size() );
+		Size bucket1_size( (Size)std::ceil(oversample*nfrags) );
+		if (oversample<=0) { bucket1_size =  my_size - frag_size + 1; }
+		FArray1D_int heap( bucket1_size + 2 );
+		FArray1D_float coheap( bucket1_size + 2 );
+		protocols::frags::heap_init( heap, coheap, bucket1_size );
 
 		// center template
 		ObjexxFCL::FArray2D< core::Real > tmpl_pos( 3,frag_size ), tgt_pos( 3,frag_size );
@@ -257,7 +259,7 @@ public:
 		Size exact_matches(0);
 		Real worst_score(999), best_score(999);
 
-		for ( Size nn = 5*nfrags; nn >=1; --nn ) {
+		for ( Size nn = bucket1_size; nn >=1; --nn ) {
 			bool err;
 			int vall_pos;
 			float score;// heaps use float!!!
@@ -326,6 +328,7 @@ public:
 
 
 		std::cerr << "rms-frags: " <<
+		             nfrags << " of " << bucket1_size <<
 		             " exact_matches: " << exact_matches <<
 	               " best_score: "    << best_score <<
 		             " worst_score: "   << worst_score << std::endl;
