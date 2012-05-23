@@ -20,6 +20,7 @@
 
 //External
 #include <boost/uuid/uuid.hpp>
+#include <cppdb/frontend.h>
 
 // Utility Headers
 #include <numeric/HomogeneousTransform.fwd.hh>
@@ -72,19 +73,6 @@ public:
 
 private:
 
-	numeric::HomogeneousTransform<core::Real>
-	compute_anchor_transform(
-		core::pose::Pose const & pose,
-		utility::vector1<core::Size> const & residue_begin,
-		utility::vector1<core::Size> const & residue_end,
-		utility::vector1<core::Size> const & atoms);
-	
-	core::Real
-	compute_atom_angles(
-		core::pose::Pose const & pose,
-		utility::vector1<core::Size> const & residues,
-		utility::vector1<core::Size> const & atoms);
-	
 	utility::vector1<Size> start_residue(Size resNo);
 	utility::vector1<Size> end_residue(Size resNo);
 	utility::vector1<Size> atoms();
@@ -93,7 +81,26 @@ private:
 	core::Size max_loop_length( utility::vector1< bool > const & relevant_residue );
 	core::Size determine_correct_length( utility::vector1< bool > const & relevant_residue, Size default_length );
 	
-
+	numeric::HomogeneousTransform<core::Real>
+	compute_anchor_transform(
+		core::pose::Pose const & pose,
+		utility::vector1<core::Size> const & residue_begin,
+		utility::vector1<core::Size> const & residue_end,
+		utility::vector1<core::Size> const & atoms);
+	
+	void
+	compute_transform_and_write_to_db(
+		boost::uuids::uuid struct_id,
+		core::Size begin,
+		core::Size end,
+		core::pose::Pose const & pose,
+		cppdb::statement & stmt);
+	
+	core::Real
+	compute_atom_angles(
+		core::pose::Pose const & pose,
+		utility::vector1<core::Size> const & residues,
+		utility::vector1<core::Size> const & atoms);
 private:
 
 	bool use_relevant_residues_as_loop_length_;

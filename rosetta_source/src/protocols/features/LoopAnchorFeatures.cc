@@ -62,16 +62,16 @@ static basic::Tracer TR( "protocols.features.LoopAnchorFeatures" );
 
 LoopAnchorFeatures::LoopAnchorFeatures() :
 	FeaturesReporter(),
+	use_single_residue_to_define_anchor_transfrom_(true),
 	min_loop_length_(5),
-	max_loop_length_(30),
-	use_single_residue_to_define_anchor_transfrom_(true)
+	max_loop_length_(30)
 {}
 
 LoopAnchorFeatures::LoopAnchorFeatures( LoopAnchorFeatures const & src) :
 	FeaturesReporter(),
+	use_single_residue_to_define_anchor_transfrom_(src.use_single_residue_to_define_anchor_transfrom_),
 	min_loop_length_(src.min_loop_length_),
-	max_loop_length_(src.max_loop_length_),
-	use_single_residue_to_define_anchor_transfrom_(src.use_single_residue_to_define_anchor_transfrom_)
+	max_loop_length_(src.max_loop_length_)
 {}
 
 LoopAnchorFeatures::~LoopAnchorFeatures() {}
@@ -113,6 +113,23 @@ LoopAnchorFeatures::schema() const {
 			"   FOREIGN KEY (struct_id, residue_begin, residue_end)\n"
 			"       REFERENCES loop_anchors (struct_id, residue_begin, residue_end)\n"
 			"       DEFERRABLE INITIALLY DEFERRED,\n"
+			"   PRIMARY KEY(struct_id, residue_begin, residue_end));"
+			"\n"
+			"CREATE TABLE IF NOT EXISTS loop_anchor_transforms_three_res (\n"
+			"	struct_id BLOB,\n"
+			"	residue_begin INTEGER,\n"
+			"	residue_end INTEGER,\n"
+			"	x REAL,\n"
+			"	y REAL,\n"
+			"	z REAL,\n"
+			"	phi REAL,\n"
+			"	psi REAL,\n"
+			"	theta REAL,\n"
+			"	alpha REAL,\n"
+			"	omega REAL,\n"
+			"   FOREIGN KEY (struct_id, residue_begin, residue_end)\n"
+			"       REFERENCES loop_anchors (struct_id, residue_begin, residue_end)\n"
+			"       DEFERRABLE INITIALLY DEFERRED,\n"
 			"   PRIMARY KEY(struct_id, residue_begin, residue_end));";
 	}else if(db_mode == "mysql")
 	{
@@ -126,6 +143,22 @@ LoopAnchorFeatures::schema() const {
 			"	PRIMARY KEY(struct_id, residue_begin, residue_end));"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS loop_anchor_transforms (\n"
+			"	struct_id BINARY(36),\n"
+			"	residue_begin INTEGER,\n"
+			"	residue_end INTEGER,\n"
+			"	x REAL,\n"
+			"	y REAL,\n"
+			"	z REAL,\n"
+			"	phi REAL,\n"
+			"	psi REAL,\n"
+			"	theta REAL,\n"
+			"	alpha REAL,\n"
+			"	omega REAL,\n"
+			"   FOREIGN KEY (struct_id, residue_begin, residue_end)\n"
+			"       REFERENCES loop_anchors (struct_id, residue_begin, residue_end),\n"
+			"   PRIMARY KEY(struct_id, residue_begin, residue_end));"
+			"\n"
+			"CREATE TABLE IF NOT EXISTS loop_anchor_transforms_three_res (\n"
 			"	struct_id BINARY(36),\n"
 			"	residue_begin INTEGER,\n"
 			"	residue_end INTEGER,\n"
@@ -165,7 +198,6 @@ LoopAnchorFeatures::parse_my_tag(
 	max_loop_length_ = tag->getOption<Size>("max_loop_length", 30);
 
 	set_use_relevant_residues_as_loop_length( tag->getOption<bool>("use_relevant_residues_as_loop_length", 0) );
-  set_use_single_residue_to_define_anchor_transfrom( tag->getOption<bool>("use_single_residue_to_define_anchor_transfrom", 1) );
 
 	if(max_loop_length_ < min_loop_length_){
 		std::stringstream error_msg;
@@ -175,8 +207,6 @@ LoopAnchorFeatures::parse_my_tag(
 		utility_exit_with_message(error_msg.str());
 	}
 }
-
-
 
 /// @details
 /// An anchor is a take off and landing for a loop.
@@ -197,6 +227,11 @@ LoopAnchorFeatures::report_features(
 	statement loop_anchor_transforms_stmt(
 		safely_prepare_statement(loop_anchor_transforms_stmt_string, db_session));
 
+	string loop_anchor_transforms_three_res_stmt_string =
+		"INSERT INTO loop_anchor_transforms_three_res VALUES (?,?,?,?,?,?,?,?,?,?,?);";
+	statement loop_anchor_transforms_three_res_stmt(
+		safely_prepare_statement(loop_anchor_transforms_three_res_stmt_string, db_session));
+	
 	vector1<Size>::const_iterator chain_ending(pose.conformation().chain_endings().begin());
 	vector1<Size>::const_iterator chain_ending_end(pose.conformation().chain_endings().end());
 	
@@ -232,31 +267,12 @@ LoopAnchorFeatures::report_features(
 				loop_anchors_stmt.bind(3,end);
 				basic::database::safely_write_to_database(loop_anchors_stmt);
 
-				vector1<Size> start_res = start_residue(begin);
-				vector1<Size> end_res = end_residue(end);
-				vector1<Size> atom_set = atoms();
-				
-				HomogeneousTransform<Real> anchor_transform(
-					compute_anchor_transform(pose, start_res, end_res, atom_set));
-				
-				xyzVector<Real> t(anchor_transform.point());
-				xyzVector<Real> r(anchor_transform.euler_angles_rad());
-				
-				Real alpha = compute_atom_angles(pose, start_res, atom_set);
-				Real omega = compute_atom_angles(pose, end_res, atom_set);
+				set_use_single_residue_to_define_anchor_transfrom(true);
+				compute_transform_and_write_to_db(struct_id, begin, end, pose, loop_anchor_transforms_stmt);
 
-				loop_anchor_transforms_stmt.bind(1,struct_id);
-				loop_anchor_transforms_stmt.bind(2, begin);
-				loop_anchor_transforms_stmt.bind(3, end);
-				loop_anchor_transforms_stmt.bind(4, t.x());
-				loop_anchor_transforms_stmt.bind(5, t.y());
-				loop_anchor_transforms_stmt.bind(6, t.z());
-				loop_anchor_transforms_stmt.bind(7, r.x());
-				loop_anchor_transforms_stmt.bind(8, r.y());
-				loop_anchor_transforms_stmt.bind(9, r.z());
-				loop_anchor_transforms_stmt.bind(10, alpha);
-				loop_anchor_transforms_stmt.bind(11, omega);
-				basic::database::safely_write_to_database(loop_anchor_transforms_stmt);
+				set_use_single_residue_to_define_anchor_transfrom(false);
+				compute_transform_and_write_to_db(struct_id, begin, end, pose, loop_anchor_transforms_three_res_stmt);
+				
 			}
 		}
 	}
@@ -320,9 +336,9 @@ LoopAnchorFeatures::end_residue(Size resNo){
 		residue_vector.push_back(resNo);
 		residue_vector.push_back(resNo);
 	} else{
-		residue_vector.push_back(resNo - 2);
-		residue_vector.push_back(resNo - 1);
 		residue_vector.push_back(resNo);
+		residue_vector.push_back(resNo - 1);
+		residue_vector.push_back(resNo - 2);
 	}
 	return residue_vector;
 }
@@ -369,6 +385,41 @@ LoopAnchorFeatures::compute_anchor_transform(
 		take_off_frame.inverse() * landing_frame);
 
 	return anchor_transform;
+}
+
+void
+LoopAnchorFeatures::compute_transform_and_write_to_db(
+	boost::uuids::uuid struct_id,
+	Size begin,
+	Size end,
+	Pose const & pose,
+	statement & stmt){
+
+	vector1<Size> start_res = start_residue(begin);
+	vector1<Size> end_res = end_residue(end);
+	vector1<Size> atom_set = atoms();
+
+	HomogeneousTransform<Real> anchor_transform(
+		compute_anchor_transform(pose, start_res, end_res, atom_set));
+
+	xyzVector<Real> t(anchor_transform.point());
+	xyzVector<Real> r(anchor_transform.euler_angles_rad());
+
+	Real alpha = compute_atom_angles(pose, start_res, atom_set);
+	Real omega = compute_atom_angles(pose, end_res, atom_set);
+
+	stmt.bind(1, struct_id);
+	stmt.bind(2, begin);
+	stmt.bind(3, end);
+	stmt.bind(4, t.x());
+	stmt.bind(5, t.y());
+	stmt.bind(6, t.z());
+	stmt.bind(7, r.x());
+	stmt.bind(8, r.y());
+	stmt.bind(9, r.z());
+	stmt.bind(10, alpha);
+	stmt.bind(11, omega);
+	basic::database::safely_write_to_database(stmt);
 }
 
 Real
