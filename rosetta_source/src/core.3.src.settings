@@ -332,6 +332,7 @@ sources = {
 		"EnvSmoothEnergy",
 		"Fa_MbenvEnergy",
 		"Fa_MbsolvEnergy",
+		"GaussianOverlapEnergy",
 		"GenBornEnergy",
 		"HybridVDW_Energy",
 		"LinearChainbreakEnergy",
