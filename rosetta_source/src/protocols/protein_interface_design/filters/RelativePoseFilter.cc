@@ -39,6 +39,8 @@
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -249,8 +251,14 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	using namespace protocols::rosetta_scripts;
 
 	TR << "RelativePoseFilter"<<std::endl;
-	std::string const pose_fname( tag->getOption< std::string >( "pdb_name" ) );
-	pose( core::import_pose::pose_from_pdb( pose_fname, false /*read foldtree*/ ) );
+	std::string pose_fname ("");
+	bool use_native ( tag->getOption< bool >( "use_native_pdb", false ));
+	if (use_native)	pose( core::import_pose::pose_from_pdb(basic::options::option[ basic::options::OptionKeys::in::file::native ], false));
+	
+	if ( tag->hasOption( "pdb_name" ) ) {
+			pose_fname = tag->getOption< std::string >( "pdb_name" );
+			pose( core::import_pose::pose_from_pdb( pose_fname, false /*read foldtree*/ ) );
+	}
 	if( tag->hasOption( "symmetry_definition" ) ){
 		symmetry_definition_ = tag->getOption< std::string >( "symmetry_definition", "" );
 		if(core::pose::symmetry::is_symmetric(*pose_)) {
