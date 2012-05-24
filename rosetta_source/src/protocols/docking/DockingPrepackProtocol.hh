@@ -22,6 +22,7 @@
 // Unit Headers
 #include <protocols/docking/DockingPrepackProtocol.fwd.hh>
 #include <protocols/docking/DockingHighRes.hh>
+#include <protocols/docking/DockingInitialPerturbation.fwd.hh>
 
 // Package headers
 #include <protocols/docking/SidechainMinMover.fwd.hh>
@@ -76,6 +77,7 @@ private:
 	SidechainMinMoverOP scmin_mover_;
 	SequenceMoverOP pack_operations_;
 	bool dock_ppk_;
+    FaDockingSlideIntoContactOP fa_dock_slide_into_contact_;
 
 	/// @brief Performs setup that requires a pose
 	void finalize_setup( core::pose::Pose & );

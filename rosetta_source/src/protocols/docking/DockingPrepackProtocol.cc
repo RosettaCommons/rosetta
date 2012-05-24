@@ -23,6 +23,7 @@
 #include <protocols/docking/util.hh>
 #include <protocols/docking/DockTaskFactory.hh>
 #include <protocols/docking/SidechainMinMover.hh>
+#include <protocols/docking/DockingInitialPerturbation.hh>
 
 // Project headers
 #include <core/pack/task/TaskFactory.hh>
@@ -181,10 +182,12 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 
 	//bringing the packed structures together
 	for(  DockJumps::const_iterator jump= movable_jumps().begin() ; jump != movable_jumps().end(); ++jump ) {
-		rigid::RigidBodyTransMoverOP translate_back ( new rigid::RigidBodyTransMover(pose, *jump) );
-		translate_back->step_size( trans_magnitude_ );
-		translate_back->trans_axis().negate();
-		translate_back->apply(pose);
+		//rigid::RigidBodyTransMoverOP translate_back ( new rigid::RigidBodyTransMover(pose, *jump) );
+		//translate_back->step_size( trans_magnitude_ );
+		//translate_back->trans_axis().negate();
+		//translate_back->apply(pose);
+        fa_dock_slide_into_contact_ = new FaDockingSlideIntoContact(*jump);
+        fa_dock_slide_into_contact_-> apply(pose);
 	}
 
 	if (dock_ppk_){
