@@ -257,9 +257,8 @@ void GridManager::update_grids(core::pose::Pose const & pose, core::Vector const
 void GridManager::update_grids(core::pose::Pose const & pose,  core::Vector const & center)
 {
 
-	core::Size chain_hash = core::pose::get_hash_excluding_chain(chain_,pose);
-	std::string hash_string(utility::to_string(chain_hash));
-	std::map<core::Size,GridMap>::const_iterator grid_cache_entry(grid_map_cache_.find(chain_hash));
+	std::string chain_hash = core::pose::get_sha1_hash_excluding_chain(chain_,pose);
+	std::map<std::string,GridMap>::const_iterator grid_cache_entry(grid_map_cache_.find(chain_hash));
 
 	bool grid_directory_active = basic::options::option[basic::options::OptionKeys::qsar::grid_dir].user();
 
@@ -280,7 +279,7 @@ void GridManager::update_grids(core::pose::Pose const & pose,  core::Vector cons
 		{
 			//files are in the format grid_directory/hash.json.gz
 			std::string directory_path(basic::options::option[basic::options::OptionKeys::qsar::grid_dir]());
-			utility::io::izstream grid_file(directory_path+"/"+hash_string+".json.gz");
+			utility::io::izstream grid_file(directory_path+"/"+chain_hash+".json.gz");
 			if(grid_file)
 			{
 				utility::json_spirit::mValue gridmap_data;
@@ -314,14 +313,14 @@ void GridManager::update_grids(core::pose::Pose const & pose,  core::Vector cons
 		{
 			//if we just made a grid, we should write it to the disk for safekeeping.
 			std::string directory_path(basic::options::option[basic::options::OptionKeys::qsar::grid_dir]());
-			std::string temp_path(directory_path+"/"+hash_string+".inprogress");
+			std::string temp_path(directory_path+"/"+chain_hash+".inprogress");
 			if(!utility::file::file_exists(temp_path))  //If the inprogress file is there something else is busy writing
 			{
 				utility::io::ozstream progress_file(temp_path);
 				progress_file << "temp" <<std::endl;
 				progress_file.close();
 
-				utility::io::ozstream grid_file(directory_path+"/"+hash_string+".json.gz");
+				utility::io::ozstream grid_file(directory_path+"/"+chain_hash+".json.gz");
 
 				grid_file << utility::json_spirit::write(serialize()) << std::endl;
 				grid_file.close();

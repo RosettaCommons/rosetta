@@ -207,8 +207,8 @@ void StartFrom::apply(core::pose::Pose & pose){
 		move_ligand_to_desired_centroid(jump_id, desired_centroid, pose);
 	}else if(!potential_starting_positions_.empty())
 	{
-		core::Size hash = core::pose::get_hash_excluding_chain(chain_[0],pose);
-		std::map<core::Size,core::Vector >::iterator position_hash = potential_starting_positions_.find(hash);
+		std::string hash = core::pose::get_sha1_hash_excluding_chain(chain_[0],pose);
+		std::map<std::string,core::Vector >::iterator position_hash = potential_starting_positions_.find(hash);
 		if(position_hash != potential_starting_positions_.end())
 		{
 			core::Size jump_id = core::pose::get_jump_id_from_chain(chain_, pose);
@@ -241,7 +241,7 @@ void StartFrom::parse_startfrom_file(std::string filename)
 	        "x" : 0.0020,
 	        "y" : -0.004,
 	        "z" : 0.0020,
-	        "hash" : 14518543732039167129
+	        "hash" : "aa2aff055d19bc32e483df7ff4ae08361a768931"
 	    }
 	]
 	*/
@@ -251,7 +251,7 @@ void StartFrom::parse_startfrom_file(std::string filename)
 	{
 		utility::json_spirit::mObject position_data(start_it->get_obj());
 
-		core::Size hash = position_data["hash"].get_uint64();
+		std::string hash = position_data["hash"].get_str();
 		core::Real x = position_data["x"].get_real();
 		core::Real y = position_data["y"].get_real();
 		core::Real z = position_data["z"].get_real();

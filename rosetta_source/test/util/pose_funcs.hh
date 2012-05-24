@@ -40,6 +40,9 @@ trp_cage_ideal();
 std::string
 pdb_string_1ten();
 
+std::string
+pdb_string_2res_1ten_2res_trp_cage();
+
 inline
 core::pose::Pose
 fullatom_pose_from_string(
@@ -85,6 +88,11 @@ inline
 core::pose::PoseOP
 create_twores_1ubq_poseop() {
 	return fullatom_poseop_from_string( ubq_twores_string() );
+}
+
+inline core::pose::Pose
+create_pdb_string_2res_1ten_2res_trp_cage_pose() {
+	return fullatom_pose_from_string(pdb_string_2res_1ten_2res_trp_cage());
 }
 
 
@@ -2400,6 +2408,68 @@ trp_cage_ideal()
 		"ATOM    302 1HB  SER A  20       2.205  11.332   0.293  1.00  0.00              \n"
 		"ATOM    303 2HB  SER A  20       1.584  11.889   1.864  1.00  0.00              \n"
 		"ATOM    304  HG  SER A  20       2.871  10.016   2.696  1.00  0.00              \n"
+		"TER\n";
+}
+
+inline
+std::string pdb_string_2res_1ten_2res_trp_cage()
+{
+	return
+		"ATOM      3  N   LEU A   1      30.980  35.302  12.030  1.00 32.50           N  \n"
+		"ATOM      4  CA  LEU A   1      32.048  36.234  11.756  1.00 31.31           C  \n"
+		"ATOM      5  C   LEU A   1      32.230  37.196  12.910  1.00 28.72           C  \n"
+		"ATOM      6  O   LEU A   1      31.296  37.650  13.562  1.00 27.63           O  \n"
+		"ATOM      7  CB  LEU A   1      31.771  37.027  10.494  1.00 33.95           C  \n"
+		"ATOM      8  CG  LEU A   1      31.960  36.329   9.177  1.00 33.82           C  \n"
+		"ATOM      9  CD1 LEU A   1      31.324  37.143   8.089  1.00 33.55           C  \n"
+		"ATOM     10  CD2 LEU A   1      33.439  36.146   8.922  1.00 36.14           C  \n"
+		"ATOM     11  H   LEU A   1      30.105  35.412  11.606  1.00  0.00           H  \n"
+		"ATOM     12  N   ASP A   2      33.483  37.494  13.121  1.00 28.42           N  \n"
+		"ATOM     13  CA  ASP A   2      33.930  38.405  14.151  1.00 32.74           C  \n"
+		"ATOM     14  C   ASP A   2      33.677  39.850  13.665  1.00 31.63           C  \n"
+		"ATOM     15  O   ASP A   2      33.906  40.129  12.481  1.00 26.95           O  \n"
+		"ATOM     16  CB  ASP A   2      35.394  38.035  14.273  1.00 38.31           C  \n"
+		"ATOM     17  CG  ASP A   2      36.242  38.978  15.082  1.00 46.29           C  \n"
+		"ATOM     18  OD1 ASP A   2      36.224  38.901  16.305  1.00 55.21           O  \n"
+		"ATOM     19  OD2 ASP A   2      37.087  39.848  14.433  1.00 54.50           O  \n"
+		"ATOM     20  H   ASP A   2      34.144  37.116  12.512  1.00  0.00           H  \n"
+		"ATOM     21  HD2 ASP A   2      36.874  40.753  14.738  1.00  0.00           H  \n"
+		"TER\n"
+		"ATOM      1  N   ASN B   3      -8.725   4.221  -0.522  1.00  0.00              \n"
+		"ATOM      2  CA  ASN B   3      -8.590   3.159  -1.511  1.00  0.00              \n"
+		"ATOM      3  C   ASN B   3      -7.130   2.937  -1.885  1.00  0.00              \n"
+		"ATOM      4  O   ASN B   3      -6.662   1.800  -1.952  1.00  0.00              \n"
+		"ATOM      5  CB  ASN B   3      -9.411   3.449  -2.754  1.00  0.00              \n"
+		"ATOM      6  CG  ASN B   3     -10.882   3.189  -2.582  1.00  0.00              \n"
+		"ATOM      7  OD1 ASN B   3     -11.326   2.684  -1.545  1.00  0.00              \n"
+		"ATOM      8  ND2 ASN B   3     -11.628   3.456  -3.624  1.00  0.00              \n"
+		"ATOM      9 1H   ASN B   3      -9.265   5.035  -0.734  1.00  0.00              \n"
+		"ATOM     10 2H   ASN B   3      -9.137   4.026   0.368  1.00  0.00              \n"
+		"ATOM     11 3H   ASN B   3      -7.913   4.695  -0.183  1.00  0.00              \n"
+		"ATOM     12  HA  ASN B   3      -8.948   2.216  -1.094  1.00  0.00              \n"
+		"ATOM     13 1HB  ASN B   3      -9.274   4.379  -3.309  1.00  0.00              \n"
+		"ATOM     14 2HB  ASN B   3      -8.971   2.624  -3.315  1.00  0.00              \n"
+		"ATOM     15 1HD2 ASN B   3     -12.616   3.307  -3.581  1.00  0.00              \n"
+		"ATOM     16 2HD2 ASN B   3     -11.210   3.808  -4.461  1.00  0.00              \n"
+		"ATOM     17  N   LEU B   4      -6.414   4.030  -2.127  1.00  0.00              \n"
+		"ATOM     18  CA  LEU B   4      -4.993   3.959  -2.449  1.00  0.00              \n"
+		"ATOM     19  C   LEU B   4      -4.238   3.117  -1.429  1.00  0.00              \n"
+		"ATOM     20  O   LEU B   4      -3.492   2.207  -1.791  1.00  0.00              \n"
+		"ATOM     21  CB  LEU B   4      -4.396   5.370  -2.524  1.00  0.00              \n"
+		"ATOM     22  CG  LEU B   4      -4.849   6.329  -1.416  1.00  0.00              \n"
+		"ATOM     23  CD1 LEU B   4      -3.657   6.742  -0.563  1.00  0.00              \n"
+		"ATOM     24  CD2 LEU B   4      -5.514   7.548  -2.039  1.00  0.00              \n"
+		"ATOM     25  H   LEU B   4      -6.865   4.932  -2.088  1.00  0.00              \n"
+		"ATOM     26  HA  LEU B   4      -4.862   3.469  -3.413  1.00  0.00              \n"
+		"ATOM     27 1HB  LEU B   4      -3.343   5.123  -2.397  1.00  0.00              \n"
+		"ATOM     28 2HB  LEU B   4      -4.548   5.822  -3.504  1.00  0.00              \n"
+		"ATOM     29  HG  LEU B   4      -5.599   5.807  -0.822  1.00  0.00              \n"
+		"ATOM     30 1HD1 LEU B   4      -3.988   7.423   0.221  1.00  0.00              \n"
+		"ATOM     31 2HD1 LEU B   4      -3.211   5.857  -0.109  1.00  0.00              \n"
+		"ATOM     32 3HD1 LEU B   4      -2.918   7.241  -1.188  1.00  0.00              \n"
+		"ATOM     33 1HD2 LEU B   4      -5.836   8.229  -1.250  1.00  0.00              \n"
+		"ATOM     34 2HD2 LEU B   4      -4.804   8.057  -2.691  1.00  0.00              \n"
+		"ATOM     35 3HD2 LEU B   4      -6.380   7.233  -2.621  1.00  0.00              \n"
 		"TER\n";
 }
 

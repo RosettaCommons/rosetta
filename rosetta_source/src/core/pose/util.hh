@@ -552,7 +552,6 @@ core::Size num_hbond_donors(
 		core::Size const end,
 		core::pose::Pose const & pose
 );
-
 core::Size
 num_chi_angles(
 	core::Size begin,
@@ -565,6 +564,8 @@ get_hash_from_chain(char const & chain, core::pose::Pose const & pose);
 
 core::Size
 get_hash_excluding_chain(char const & chain, core::pose::Pose const & pose);
+
+std::string get_sha1_hash_excluding_chain(char const & chain, core::pose::Pose const & pose);
 
 /// @brief Initialize a DOF_ID_Map for a given Pose using the DOF_ID_Map's current default fill values
 template< typename T >

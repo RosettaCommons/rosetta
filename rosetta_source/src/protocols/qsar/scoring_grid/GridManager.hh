@@ -100,7 +100,7 @@ private:
 private:
 	static GridManager * instance_;
 
-	std::map<core::Size,GridMap> grid_map_cache_;
+	std::map<std::string,GridMap> grid_map_cache_;
 
 	GridMap grid_map_;
 	ScoreMap score_map_;

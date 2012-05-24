@@ -314,4 +314,14 @@ public: // tests
 		TS_ASSERT(!core::pose::compare_atom_coordinates(p1, p2, precision));
 
 	}
+
+	void test_conformation_sha1() {
+		core::pose::Pose const p1 = create_pdb_string_2res_1ten_2res_trp_cage_pose();
+		core::pose::Pose p2(p1);
+
+		std::string p1_hash(core::pose::get_sha1_hash_excluding_chain('A',p1));
+		std::string p2_hash(core::pose::get_sha1_hash_excluding_chain('A',p2));
+		TS_ASSERT(p1_hash == p2_hash);
+	}
+
 }; // class PoseUtilTests

@@ -27,6 +27,8 @@
 #include <sstream>
 #include <string>
 
+#include <boost/uuid/sha1.hpp>
+
 namespace utility {
 
 void ReadFromFileOrDie(const std::string& filename, std::string* contents) {
@@ -343,6 +345,38 @@ std::string replace_environment_variables(std::string input)
 			return input;
 		}
 	}
+}
+
+std::string string_to_sha1(std::string const & input_string)
+{
+	//Based on https://gist.github.com/990731
+	unsigned int digest[5];
+	boost::uuids::detail::sha1 hasher;
+	hasher.process_bytes(input_string.c_str(),input_string.size());
+
+
+	char hash[20];
+	std::stringstream output_hash;
+
+	hasher.get_digest(digest);
+
+	for(int i = 0; i < 5;++i)
+	{
+		const char* tmp = reinterpret_cast<char*>(digest);
+		hash[i*4] = tmp[i*4+3];
+		hash[i*4+1] = tmp[i*4+2];
+		hash[i*4+2] = tmp[i*4+1];
+		hash[i*4+3] = tmp[i*4];
+	}
+
+	output_hash << std::hex;
+
+	for(int i = 0; i < 20 ; ++i)
+	{
+		output_hash << ((hash[i] & 0x000000F0) >> 4) <<  (hash[i] & 0x0000000F);
+	}
+
+	return output_hash.str();
 }
 
 } // namespace utility

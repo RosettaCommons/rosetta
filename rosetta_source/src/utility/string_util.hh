@@ -128,6 +128,9 @@ bool same_ignoring_spaces( std::string const & s1, std::string const & s2 ) {
 	return t1 == t2;
 }
 
+//@brief compute the sha1 hash of a string and return it as a string in hexadecimal form
+std::string string_to_sha1(std::string const & input_string);
+
 inline
 void replace_in( std::string & s, const char from, const char *to )
 {

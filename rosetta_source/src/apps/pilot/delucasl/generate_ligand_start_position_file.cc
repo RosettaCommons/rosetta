@@ -47,7 +47,7 @@ int main(int argc, char*argv[])
 	{
 		core::pose::PoseOP current_pose(core::import_pose::pose_from_pdb(*file_it,false));
 
-		core::Size protein_hash = core::pose::get_hash_excluding_chain(ligand_id,*current_pose);
+		std::string protein_hash = core::pose::get_sha1_hash_excluding_chain(ligand_id,*current_pose);
 		core::Size ligand_chain_id = core::pose::get_chain_id_from_chain(ligand_id,*current_pose);
 		core::conformation::ResidueCOPs ligand_residues(core::pose::get_chain_residues(*current_pose,ligand_chain_id));
 		std::cout << *file_it <<std::endl;
@@ -63,7 +63,7 @@ int main(int argc, char*argv[])
 		utility::json_spirit::Pair x_coord("x",nbr_atom_coords.x());
 		utility::json_spirit::Pair y_coord("y",nbr_atom_coords.y());
 		utility::json_spirit::Pair z_coord("z",nbr_atom_coords.z());
-		utility::json_spirit::Pair hash_record("hash",static_cast<boost::uint64_t>(protein_hash));
+		utility::json_spirit::Pair hash_record("hash",protein_hash);
 
 		utility::json_spirit::Value data_point(utility::tools::make_vector(in_tag,x_coord,y_coord,z_coord,hash_record));
 		json_data.push_back(data_point);

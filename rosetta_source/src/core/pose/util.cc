@@ -30,9 +30,11 @@
 // AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <numeric/constants.hh>
 #include <numeric/xyz.functions.hh>
+#include <numeric/xyzVector.string.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
+#include <utility/string_util.hh>
 
 // Project headers
 // AUTO-REMOVED #include <core/chemical/AtomType.hh>
@@ -2333,6 +2335,31 @@ core::Size get_hash_excluding_chain(char const & chain, core::pose::Pose const &
 	}
 
 	return hash;
+}
+
+std::string get_sha1_hash_excluding_chain(char const & chain, core::pose::Pose const & pose)
+{
+
+	std::stringstream coord_stream;
+
+	core::Size chain_id = get_chain_id_from_chain(chain,pose);
+
+	for(core::Size res_num = 1; res_num <= pose.n_residue(); ++res_num)
+	{
+		if((int)chain_id == pose.chain(res_num))
+		{
+			continue;
+		}
+
+		core::Size natoms = pose.conformation().residue(res_num).natoms();
+		for(core::Size atom_num = 1; atom_num <= natoms; ++atom_num)
+		{
+			id::AtomID atom_id(atom_num,res_num);
+			PointPosition current_xyz = pose.conformation().xyz(atom_id);
+			coord_stream << numeric::truncate_and_serialize_xyz_vector(current_xyz,5);
+		}
+	}
+	return utility::string_to_sha1(coord_stream.str());
 }
 
 void
