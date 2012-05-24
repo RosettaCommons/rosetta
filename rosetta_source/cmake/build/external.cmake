@@ -8,6 +8,7 @@ set(CPPDB_SOVERSION 0)
 
 # General settings
 
+include_directories(../../external/dbio/sqlite3)
 include_directories(../../external/dbio)
 include_directories(../../external)
 
@@ -19,6 +20,10 @@ add_definitions(-DCPPDB_LIBRARY_SUFFIX="${CMAKE_SHARED_LIBRARY_SUFFIX}")
 add_definitions(-DCPPDB_SOVERSION="${CPPDB_SOVERSION}")
 add_definitions(-DCPPDB_DISABLE_THREAD_SAFETY)
 add_definitions(-DCPPDB_DISABLE_SHARED_OBJECT_LOADING)
+add_definitions(-DCPPDB_MAJOR=0)
+add_definitions(-DCPPDB_MINOR=3)
+add_definitions(-DCPPDB_PATCH=0)
+add_definitions(-DCPPDB_VERSION="0.3.0")
 
 # Backend configuration
 
