@@ -96,11 +96,11 @@ generate_relax_from_cmd( bool NULL_if_no_flag ) {
 	} else if ( option[ OptionKeys::relax::script ].user() ) {
 		protocol = new FastRelax( scorefxn, option[ OptionKeys::relax::script ]() );
 	} else if ( option[ OptionKeys::relax::quick ]() ){
-		protocol = new FastRelax( scorefxn, option[ OptionKeys::relax::default_repeats ]() );
+		protocol = new FastRelax( scorefxn, option[ OptionKeys::relax::default_repeats ]() /*default 5*/);
 	} else if ( option[ OptionKeys::relax::thorough ]() ){
 		protocol = new FastRelax( scorefxn, 15 );
 	} else if ( option[ OptionKeys::relax::fast ]() ) {
-		protocol = new FastRelax( scorefxn, option[ OptionKeys::relax::default_repeats ]() );
+		protocol = new FastRelax( scorefxn, option[ OptionKeys::relax::default_repeats ]() /*default 5*/);
 	} else if ( option[ OptionKeys::relax::classic ]() ) {
 		protocol = new ClassicRelax ( scorefxn );
 	} else if ( option[ OptionKeys::relax::mini ]() ) {
