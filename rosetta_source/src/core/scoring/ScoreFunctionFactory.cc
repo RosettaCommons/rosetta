@@ -48,6 +48,10 @@ namespace scoring {
 ScoreFunctionOP
 ScoreFunctionFactory::create_score_function( std::string weights_tag )
 {
+	utility::vector1< std::string > patch_tags;
+	return create_score_function( weights_tag, patch_tags );
+	/* removing duplicated code OL 5/24/2012 */
+	/*
 	ScoreFunctionOP scorefxn( new ScoreFunction );
 
 	load_weights_file( weights_tag, scorefxn );
@@ -63,6 +67,7 @@ ScoreFunctionFactory::create_score_function( std::string weights_tag )
 	}
 
 	return scorefxn;
+	*/
 }
 
 
@@ -97,7 +102,7 @@ ScoreFunctionFactory::create_score_function( std::string weights_tag, utility::v
 	for ( utility::vector1< std::string >::const_iterator it = patch_tags.begin(); it != patch_tags.end(); ++it ) {
 		std::string const& patch_tag( *it );
 		if ( patch_tag.size() && patch_tag != "NOPATCH" ) {
-			tr.Debug << "SCOREFUNCTION: apply patch "  << patch_tag << std::endl;
+			//			tr.Debug << "SCOREFUNCTION: apply patch "  << patch_tag << std::endl;
 			scorefxn->apply_patch_from_file( patch_tag );
 		}
 	}
@@ -124,8 +129,11 @@ ScoreFunctionFactory::create_score_function( std::string weights_tag, std::strin
 
 	// create a new scorefunction
 	ScoreFunctionOP scorefxn( new ScoreFunction );
-
-	std::string patch_tag_local( patch_tag );
+	utility::vector1< std::string > patch_tags;
+	patch_tags.push_back( patch_tag );
+	return create_score_function( weights_tag, patch_tags );
+	/* REMOVING DUPLICATED CODE OL 5/24/2012 */
+	/*	std::string patch_tag_local( patch_tag );
 	if ( weights_tag == STANDARD_WTS && patch_tag == SCORE12_PATCH &&
 			basic::options::option[ basic::options::OptionKeys::corrections::score::score12prime ] ) {
 		weights_tag = "score12prime";
@@ -150,6 +158,7 @@ ScoreFunctionFactory::create_score_function( std::string weights_tag, std::strin
 	}
 
 	return scorefxn;
+	*/
 }
 
 void ScoreFunctionFactory::apply_user_defined_reweighting_( core::scoring::ScoreFunctionOP scorefxn ) {
@@ -236,7 +245,7 @@ core::scoring::ScoreFunctionOP getScoreFunction( bool const is_fullatom /* defau
 	if( option[ score::empty ]() ) return scorefxn;
 
 	std::string weight_set = option[ score::weights ];
-	std::string patch      = option[ score::patch ];
+	utility::vector1< std::string > patch_tags = option[ score::patch ]();
 
 
 	if ( !option[ score::weights ].user() && !is_fullatom ){
@@ -251,24 +260,26 @@ core::scoring::ScoreFunctionOP getScoreFunction( bool const is_fullatom /* defau
 		/// and has not also asked for the score12 patch, then do not apply the score12 patch to it.
 		if ( ( weight_set == "standard" && !option[ score::weights ].user() ) &&
 				 ( !option[ score::patch ].user() ) ) {
-			patch = "score12";
+			patch_tags.push_back( "score12" );
 			if( basic::options::option[basic::options::OptionKeys::corrections::correct]) {
 				weight_set = "score12_w_corrections";
-				patch = "" ;
+				patch_tags.clear();
 			} else if ( basic::options::option[ basic::options::OptionKeys::corrections::score::score12prime ] ) {
 				weight_set = "score12prime";
-				patch = "";
+				patch_tags.clear();
 			}
 		}
 
 	}
 
 	T("core.scoring.ScoreFunctionFactory") << "SCOREFUNCTION: " << weight_set << std::endl;
-	if ( patch == "" ) {
+	if ( patch_tags.size() == 0 ) {
 		scorefxn = scoring::ScoreFunctionFactory::create_score_function( weight_set );
 	} else {
-		T("core.scoring.ScoreFunctionFactory") << "SCOREFUNCTION PATCH: " << patch << std::endl;
-		scorefxn = scoring::ScoreFunctionFactory::create_score_function( weight_set, patch );
+		if ( patch_tags.size() > 1 && patch_tags[1]=="" && patch_tags[2]!="" ) {
+			T("core.scoring.ScoreFunctionFactory") << "SCOREFUNCTION PATCH: " << patch_tags[2] << std::endl;
+		}	else if ( patch_tags[1]!="" ) T("core.scoring.ScoreFunctionFactory") << "SCOREFUNCTION PATCH: " << patch_tags[1] << std::endl;
+		scorefxn = scoring::ScoreFunctionFactory::create_score_function( weight_set, patch_tags );
 	}
 
 	// add in constraint weights if specified by the user. maybe we want other constraint

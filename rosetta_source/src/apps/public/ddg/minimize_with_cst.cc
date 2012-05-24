@@ -318,11 +318,11 @@ main( int argc, char* argv [] )
 
 	//	io::pdb::pose_from_pdb( pose, options::start_file() ); // gets filename from -s option
 
-	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( option[score::weights]);
+	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( option[score::weights],basic::options::option[score::patch]());
 
-	if(basic::options::option[score::patch].user()){
+	/*	if(basic::options::option[score::patch].user()){
 		scorefxn->apply_patch_from_file(basic::options::option[score::patch]);
-	}
+		}*/
 	bool read_from_silent = false;
 	vector1<std::string> files;
 	//	utility::vector1<std::string> tags;

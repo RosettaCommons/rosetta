@@ -3469,7 +3469,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: "empty"</dd><br>
 </dl>
 <dl>
-<dt><b>-patch</b> \<String\><dt>
+<dt><b>-patch</b> \<FileVector\><dt>
 <dd>Name of patch file (without extension)</dd><br>
 <dd>Default: ""</dd><br>
 </dl>
@@ -10614,10 +10614,12 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-correct_NH_length</b> \<Boolean\><dt>
 <dd>fix N-H bond-vector to 1.04 as measured in ottiger&bax 98</dd><br>
+<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-reduced_couplings</b> \<Boolean\><dt>
 <dd>gives more equal weights to different bond-vectors</dd><br>
+<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-weights</b> \<File\><dt>

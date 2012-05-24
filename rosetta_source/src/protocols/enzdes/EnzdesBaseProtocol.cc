@@ -104,10 +104,13 @@ EnzdesBaseProtocol::EnzdesBaseProtocol():
 		loop_bb_min_allowed_dev_ = basic::options::option[ basic::options::OptionKeys::enzdes::loop_bb_min_allowed_dev];
 		include_all_design_targets_in_design_interface_ = basic::options::option[ basic::options::OptionKeys::enzdes::include_catres_in_interface_detection];
 
-		std::string score_patch = basic::options::option[ basic::options::OptionKeys::score::patch ];
+		//		std::string score_patch = basic::options::option[ basic::options::OptionKeys::score::patch ];
 
-		if( score_patch == "" )	reduced_sfxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "enzdes_polyA_min" );
-		else reduced_sfxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "enzdes_polyA_min", score_patch );
+		//		if( score_patch == "" )	reduced_sfxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "enzdes_polyA_min" );
+		//		else reduced_sfxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "enzdes_polyA_min", score_patch );
+		using namespace basic::options;
+		using namespace core::scoring;
+		reduced_sfxn_ = ScoreFunctionFactory::create_score_function( "enzdes_polyA_min", option[ OptionKeys::score::patch ]() );
 
 		if( basic::options::option[basic::options::OptionKeys::enzdes::chi_min].user() )chi_min_ = true;
 		else chi_min_= false;
@@ -137,8 +140,8 @@ EnzdesBaseProtocol::EnzdesBaseProtocol():
 				lig_min_stddev_= 0.0;
 			}
 		}
-			if( basic::options::option[basic::options::OptionKeys::enzdes::fix_catalytic_aa].user() ) fix_catalytic_aa_ = true;
-			else fix_catalytic_aa_= false;
+		if( basic::options::option[basic::options::OptionKeys::enzdes::fix_catalytic_aa].user() ) fix_catalytic_aa_ = true;
+		else fix_catalytic_aa_= false;
 
 		//if( basic::options::option[basic::options::OptionKeys::score::weights].user() ){
 		//	std::string weights_tag = basic::options::option[basic::options::OptionKeys::score::weights];
@@ -147,9 +150,12 @@ EnzdesBaseProtocol::EnzdesBaseProtocol():
 		if ( basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
 			scorefxn_ = core::scoring::getScoreFunction(); // This call handles the database vs working directory resolution -- DONT SUBVERT OR DUPLICATE IT
 		}
-		else{
-			if( score_patch == "" ) scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("enzdes");
+		else {
+			scorefxn_ = ScoreFunctionFactory::create_score_function( "enzdes", option[ OptionKeys::score::patch ]() );
+			/*			if( score_patch == "" ) scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("enzdes");
 			else scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("enzdes", score_patch);
+			*/
+
 		}
 
 		if (scorefxn_->has_zero_weight( core::scoring::coordinate_constraint ) ){
