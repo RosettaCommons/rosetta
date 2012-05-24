@@ -350,11 +350,11 @@ namespace loophash {
 		// truncating to integer is good
 		core::Size begin = assigned_num * num_lines / 4 / num_partitions;
 		core::Size end = ( assigned_num + 1 ) * num_lines / 4 / num_partitions;
-		if( assigned_num == num_partitions - 1 ) end = 0;
+		//if( assigned_num == num_partitions - 1 ) end = 0;
 		loopdb_range.first = begin;
-		loopdb_range.second = end == 0 ? 0 : end - 1;
+		loopdb_range.second = end; 
 
-		TR.Info << "Reading in proteins " << begin << " to " << end << " out of " << num_lines / 4 << std::endl;
+		TR.Info << "Reading in proteins " << begin << " to " << end << " out of " << num_lines / 4 << " , partition: "  << assigned_num+1 << "/"<< num_partitions << std::endl;
 		// clear eof bit
 		file.clear();
 		file.seekg( 0, std::ios_base::beg );
@@ -364,6 +364,8 @@ namespace loophash {
 		std::string command;
 		int line_counter = -1;
 		bool is_homolog = false;
+
+		unsigned int stat_count_protein = 0;
 		while( getline( file, line ) ) {
 			line_counter++;
 			if( line_counter / 4 < int(begin) ) continue;
@@ -376,6 +378,7 @@ namespace loophash {
 			if( command == "pdb" ) {
 				new_protein.extra_key = extra_data_.size();
 				extra_data.pdb_id = line.substr( 4 );
+				stat_count_protein++; // count the number of proteins read in
 				if( homologs_.find( extra_data.pdb_id ) != homologs_.end() ) is_homolog = true;
 			}
 			if( load_extra ) {
@@ -412,6 +415,7 @@ namespace loophash {
 				}
 			}
 		}
+		TR.Info << "Read in " << stat_count_protein << " proteins" << std::endl;
 		TR.Info << "Data_ size " << data_.size() << std::endl;
 		file.close();
 	}
