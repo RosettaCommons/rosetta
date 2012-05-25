@@ -68,11 +68,7 @@ private:
 
 	void set_fragments();
 	void fragments_to_string() const;
-	utility::vector1< // the first index is the atom type index from chemical manager,
-		utility::vector1< //the second index is a list of residue/connections that connect to this atom type
-			std::pair<core::conformation::ResidueCOP, core::Size>
-		>
-	> fragments_;
+	utility::vector1< core::conformation::ResidueCOP> fragments_;
 
 
 

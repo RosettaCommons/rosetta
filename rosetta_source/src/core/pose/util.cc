@@ -2292,6 +2292,33 @@ core::Size num_chi_angles(
 	return total_chi_angles;
 }
 
+core::Real
+molecular_mass(
+		core::Size begin,
+		core::Size const end,
+		core::pose::Pose const & pose
+){
+	core::Real mass = 0;
+	for (; begin <= end; ++begin) {
+		mass += pose.residue(begin).type().molecular_mass();
+	}
+	return mass;
+}
+
+core::Real
+molar_mass(
+		core::Size begin,
+		core::Size const end,
+		core::pose::Pose const & pose
+){
+	core::Real mass = 0;
+	for (; begin <= end; ++begin) {
+		mass += pose.residue(begin).type().molar_mass();
+	}
+	return mass;
+}
+
+
 core::Size get_hash_from_chain(char const & chain, core::pose::Pose const & pose)
 {
 	core::Size hash = 0;

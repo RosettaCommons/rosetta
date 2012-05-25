@@ -339,7 +339,8 @@ public:
 		int connection_index = 0,
 		Size anchor_residue = 0,
 		int anchor_connection_index = 0,
-		bool const start_new_chain = false
+		bool const start_new_chain = false,
+		bool const lookup_bond_length = false
 	);
 
 	/// @brief glues to seqpos and perhaps also seqpos+1

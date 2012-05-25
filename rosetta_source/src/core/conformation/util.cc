@@ -28,9 +28,11 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/IdealBondLengthSet.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/NamedStubID.hh>
@@ -60,14 +62,12 @@
 #include <utility/exit.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
+#include <utility/io/izstream.hh>
 
 // C++ headers
 // #include <algorithm>
 #include <cassert>
-// #include <cstddef>
-// #include <iostream>
-// #include <fstream>
-// AUTO-REMOVED #include <utility>
+
 #include <basic/Tracer.hh>
 
 #include <core/chemical/ChemicalManager.hh>
@@ -81,15 +81,14 @@ static basic::Tracer TR( "core.conformation.util" );
 namespace core {
 namespace conformation {
 
-
-
 void
 orient_residue_for_ideal_bond(
 	Residue & moving_rsd,
 	chemical::ResidueConnection const & moving_connection,
 	Residue const & fixed_rsd,
 	chemical::ResidueConnection const & fixed_connection,
-	Conformation const & conformation // unused
+	Conformation const & conformation,
+	bool lookup_bond_length
 )
 {
 
@@ -118,17 +117,44 @@ orient_residue_for_ideal_bond(
 
 	// we want to move b2 to align with a2 and b3 to align with a3. Torsion about the a2->a3 bond
 	// (ie the inter-residue bond) determined by atoms a1 and b4 (torsion set to 0 by default).
-	//
+
+	core::Size fixed_rsd_atom_type_index = fixed_rsd.atom_type_index(fixed_connection.atomno());
+	core::Size moving_rsd_atom_type_index = moving_rsd.atom_type_index(moving_connection.atomno());
+	if( lookup_bond_length ){
+		std::cout<< "moving atom_type_index " << moving_rsd_atom_type_index<< std::endl;
+		std::cout<< "fixed atom_type_index " << fixed_rsd_atom_type_index<< std::endl;
+
+	//	Real bond_length= lookup_bond_length(fixed_rsd_atom_type_index, moving_rsd_atom_type_index);
+		core::chemical::ChemicalManager *cm= core::chemical::ChemicalManager::get_instance();
+		core::chemical::IdealBondLengthSetCAP ideal_bond_lengths= cm->ideal_bond_length_set( core::chemical::FA_STANDARD );
+
+		Real bond_length= ideal_bond_lengths->get_bond_length( fixed_rsd_atom_type_index, moving_rsd_atom_type_index);
+		Vector old_bond= a3-a2;
+		Vector new_bond= old_bond;
+	//	new_bond.normalize(2);
+		new_bond.normalize(bond_length);
+		Vector offset = new_bond - old_bond;
+
+
+		a3 += offset;
+		//b2 -= offset;
+	}
+
+
 	kinematics::Stub A( a3, a2, a1 ), B( b3, b2, b4 );
 
 	for ( Size i=1; i<= moving_rsd.natoms(); ++i ) {
-		moving_rsd.set_xyz(i, A.local2global( B.global2local( moving_rsd.xyz(i) ) ) );
+		Vector global = A.local2global( B.global2local( moving_rsd.xyz(i)));
+		//global.z(global.z() -1.1);
+		moving_rsd.set_xyz(i, global );
 	}
 
-	moving_rsd.actcoord() = A.local2global( B.global2local( moving_rsd.actcoord() ) );
+	Vector global_action_coord= A.local2global( B.global2local( moving_rsd.actcoord() ));
+	//global_action_coord.z(global_action_coord.z() -1.1);
+	//global_action_coord-=.47;
+	moving_rsd.actcoord() = global_action_coord;
+
 }
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////////////

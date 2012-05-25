@@ -154,7 +154,8 @@ ResidueType::ResidueType(
 	rotamer_aa_( aa_unk ),
 	//
 	nbr_atom_(1),
-	molecular_weight_(0),
+	molecular_mass_(0),
+	molar_mass_(0),
 	n_actcoord_atoms_( 0 ),
 	//
 	lower_connect_id_( 0 ),
@@ -356,7 +357,8 @@ ResidueType::add_atom(
 	if( elements_ )	{ // Be robust if elements_ isn't defined.
 		std::string const & element_name= (*atom_types_)[type].element();
 		int const element_index = elements_->element_index(element_name);
-		molecular_weight_ = (*elements_)[element_index].weight();
+		molecular_mass_ += (*elements_)[element_index].mass();
+		molar_mass_ += (*elements_)[element_index].weight();
 	} else {
 		tr.Warning << "WARNING Elements set undefined." << std::endl;
 	}
@@ -1725,20 +1727,12 @@ ResidueType::set_backbone_heavyatom( std::string const & name )
 
 
 Size
-ResidueType::add_residue_connection(
-		std::string const & atom_name,
-		std::string const & connect_atom_type
-)
+ResidueType::add_residue_connection( std::string const & atom_name )
 {
 	finalized_ = false;
 
 	++n_non_polymeric_residue_connections_;
-	residue_connections_.push_back(
-		ResidueConnection(
-			atom_index( atom_name ),
-			atom_types_->atom_type_index( connect_atom_type )
-		)
-	);
+	residue_connections_.push_back( ResidueConnection( atom_index( atom_name ) ) );
 	update_residue_connection_mapping();
 	return residue_connections_.size();
 }

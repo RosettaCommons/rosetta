@@ -45,6 +45,7 @@
 // Package headers
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
+#include <core/chemical/IdealBondLengthSet.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 //#include <core/chemical/CSDAtomTypeSet.fwd.hh>
@@ -78,6 +79,9 @@ public:
 	ElementSetCAP
 	element_set( std::string const & tag );
 
+	/// @brief query ideal_bond_lengths
+	IdealBondLengthSetCAP ideal_bond_length_set(std::string const & tag);
+
 	/// @brief query mm_atom_type_set by a name tag
 	MMAtomTypeSetCAP
 	mm_atom_type_set( std::string const & tag );
@@ -99,9 +103,11 @@ public:
 	nonconst_residue_type_set( std::string const & tag );
 
 
+
 private:
 	typedef std::map< std::string, AtomTypeSetOP > AtomTypeSets;
 	typedef std::map< std::string, ElementSetOP > ElementSets;
+	typedef std::map< std::string, IdealBondLengthSetOP> IdealBondLengthSets;
 	typedef std::map< std::string, orbitals::OrbitalTypeSetOP > OrbitalTypeSets;
 	typedef std::map< std::string, MMAtomTypeSetOP > MMAtomTypeSets;
 //	typedef std::map< std::string, CSDAtomTypeSetOP > CSDAtomTypeSets;
@@ -126,6 +132,7 @@ private:
 	/// @brief lookup map for querying residue_type_set by name tag
 	ResidueTypeSets residue_type_sets_;
 
+	IdealBondLengthSets ideal_bond_length_sets_;
 };
 
 } // namespace core

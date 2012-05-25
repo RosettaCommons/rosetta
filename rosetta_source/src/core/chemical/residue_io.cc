@@ -257,14 +257,13 @@ read_topology_file(
 	for (Size i=1; i<= nlines; ++i ) {
 		std::string const & line( lines[i] );
 		std::istringstream l( line );
-		std::string tag,atom1,atom2,atom3,atom4, rotate, connect_type, orbitals_tag, orbital;
+		std::string tag,atom1,atom2,atom3,atom4, rotate, orbitals_tag, orbital;
 		l >> tag;
 		if ( l.fail() ) continue;
 		if ( tag == "CONNECT" ) {
 			l >> atom1;
 			l >> rotate; // not used here
-			if ( l >> connect_type) rsd->add_residue_connection( atom1,  connect_type);
-			else rsd->add_residue_connection( atom1);
+			rsd->add_residue_connection( atom1);
 			//std::cout << "CONNECT record depricated " << std::endl;
 		} else if ( tag == "TYPE" ) {
 			// will probably handle this differently later on

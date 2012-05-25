@@ -426,12 +426,13 @@ Pose::append_residue_by_bond(
 	int const connection, // = 0,
 	Size const anchor_residue, // = 0,
 	int const anchor_connection, // = 0,
-	bool const start_new_chain // = false
+	bool const start_new_chain, // = false
+	bool const lookup_bond_length // = false
 )
 {
 	//PyAssert( (anchor_residue>0) && (anchor_residue<=total_residue()), "Pose::append_residue_by_bond( ...Size const anchor_residue... ): variable anchor_residue is out of range!" );    // check later: may be fixed in conformation
 	energies_->clear(); // TEMPORARY
-	conformation_->append_residue_by_bond( new_rsd, build_ideal_geometry, connection, anchor_residue, anchor_connection, start_new_chain);
+	conformation_->append_residue_by_bond( new_rsd, build_ideal_geometry, connection, anchor_residue, anchor_connection, start_new_chain, lookup_bond_length);
 }
 
 void

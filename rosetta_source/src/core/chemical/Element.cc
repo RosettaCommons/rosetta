@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/chemical/Element.cc
-/// @brief  Molecular mechanics atom type class
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @brief  Element class
+/// @author Gordon Lemmon
 
 // Project headers
 #include <core/chemical/Element.hh>

@@ -98,23 +98,12 @@ GrowLigand::set_fragments(){
 	rs.set_property("FRAGMENT");
 	core::chemical::ChemicalManager *cm= core::chemical::ChemicalManager::get_instance();
 	core::chemical::ResidueTypeSetCAP rsd_set= cm->residue_type_set( core::chemical::FA_STANDARD );
-	core::chemical::AtomTypeSetCAP atom_set= cm->atom_type_set( core::chemical::FA_STANDARD );
-	core::Size atom_set_size= atom_set->n_atomtypes();
-	fragments_.assign(atom_set_size, utility::vector1< std::pair<core::conformation::ResidueCOP, core::Size> >() );
 	core::chemical::ResidueTypeCAPs fragment_types= rs.select( *rsd_set );
 	grow_ligand_tracer<< fragment_types.size()<< " fragment_types"<< std::endl;
 
 	foreach(core::chemical::ResidueTypeCAP fragment_type, fragment_types){
-		core::conformation::Residue* temp= new core::conformation::Residue(*fragment_type, true);
-		for(core::Size i=1; i<= temp->n_residue_connections(); ++i){
-			core::chemical::ResidueConnection const & res_conn= temp->residue_connection(i);
-			int atom_index_number= res_conn.atomno();
-			int atom_type_index= temp->atom_type_index(atom_index_number);
-			std::pair<core::conformation::ResidueCOP, core::Size> pair(temp, i);
-			fragments_[atom_type_index].push_back(pair);
-		}
-
-		grow_ligand_tracer<< "frag_name: "<< temp->name()<< std::endl;
+		fragments_.push_back( new core::conformation::Residue(*fragment_type, true) );
+		grow_ligand_tracer<< "frag_name: "<< fragment_type->name()<< std::endl;
 	}
 }
 
@@ -166,31 +155,34 @@ GrowLigand::apply( core::pose::Pose & pose )
 		unconnected_residues=find_unconnected_residues(pose, start, end);
 	}
 
-	numeric::random::random_permutation(unconnected_residues, numeric::random::RG);// shuffle vector
+	core::Size grow_from = numeric::random::random_element(unconnected_residues);
+	core::Size grow_from_connection= random_connection(&pose.residue(grow_from));
+	core::conformation::ResidueCOP growth = numeric::random::random_element(fragments_);
+	core::Size growth_connection= random_connection(growth);
+	bool const build_ideal_geometry= true;
+	bool const start_new_chain = false;
+	bool const lookup_bond_length = true;
 
-	foreach(core::Size grow_from, unconnected_residues){
-		core::Size grow_from_connection= random_connection(&pose.residue(grow_from));
-		core::Size atom_type_index= pose.residue(grow_from).residue_connection(grow_from_connection).atom_type_index();
-		utility::vector1< std::pair<core::conformation::ResidueCOP, core::Size > >
-				residue_connection_pairs= fragments_[atom_type_index];
-		if( residue_connection_pairs.size() > 0 ){
-			std::pair<core::conformation::ResidueCOP, core::Size > const growth= numeric::random::random_element(residue_connection_pairs);
-			bool build_ideal_geometry= true;
-			pose.append_residue_by_bond(*(growth.first), build_ideal_geometry, growth.second, grow_from, grow_from_connection);
-			return;
-		}
-	}
-
+	pose.append_residue_by_bond(
+			*growth,
+			build_ideal_geometry,
+			growth_connection,
+			grow_from,
+			grow_from_connection,
+			start_new_chain,
+			lookup_bond_length
+	);
+	return;
 }
 
 void GrowLigand::fragments_to_string() const{
 	for(core::Size i=1; i <= fragments_.size(); ++i){
-		utility::vector1< std::pair<core::conformation::ResidueCOP, core::Size> >::const_iterator  begin= fragments_[i].begin();
-		for(; begin != fragments_[i].end(); ++begin){
-			core::conformation::Residue const & res= *(begin->first);
-			core::Size connect_id= begin->second;
-			std::string name= res.name();
-			grow_ligand_tracer<< "atom_type, res_name, connection"<< i << " "<< name << " "<< connect_id<< std::endl;
+		utility::vector1< core::conformation::ResidueCOP>::const_iterator  begin= fragments_.begin();
+		for(; begin != fragments_.end(); ++begin){
+			//core::conformation::Residue const & res= *begin;
+			//core::Size connect_id= begin;
+			//std::string name= begin->name();
+			grow_ligand_tracer<< "atom_type, res_name, connection"<<" "<< (*begin)->name() << " "<< std::endl;
 		}
 	}
 }

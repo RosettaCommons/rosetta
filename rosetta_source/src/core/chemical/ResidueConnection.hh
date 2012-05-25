@@ -62,18 +62,15 @@ public:
 	ResidueConnection():
 		atomno_( 0 ),
 		icoor_(),
-		index_( 0 ),
-		atom_type_index_(-1)
+		index_( 0 )
 	{}
 	/// @brief constructor with atom index number
 	ResidueConnection(
-		int const atomno_in,
-		int const atom_type_index_in= -1
+		int const atomno_in
 	):
 		atomno_( atomno_in ),
 		icoor_(),
-		index_( 0 ),
-		atom_type_index_(atom_type_index_in)
+		index_( 0 )
 	{}
 	/// @brief constructor with atom index number and AtomICoor
 	ResidueConnection(
@@ -82,8 +79,7 @@ public:
 	):
 		atomno_( atomno_in ),
 		icoor_( icoor_in ),
-		index_( 0 ),
-		atom_type_index_(-1)
+		index_( 0 )
 	{}
 
 	/// @brief constructor with atom index number, AtomICoor, and connection index
@@ -94,8 +90,7 @@ public:
 	):
 		atomno_( atomno_in ),
 		icoor_( icoor_in ),
-		index_( index ),
-		atom_type_index_(-1)
+		index_( index )
 	{}
 
 	/// @brief get atom index number
@@ -103,12 +98,6 @@ public:
 	atomno() const
 	{
 		return atomno_;
-	}
-
-	/// @brief get the atom type index of the atom this connection should connect to.
-	int
-	atom_type_index() const{
-		return atom_type_index_;
 	}
 
 	/// @brief set atom index number
@@ -142,7 +131,6 @@ private:
 	AtomICoor icoor_;
 	/// Which residue connection # am I in my owners list of residue connections?
 	int index_;
-	int atom_type_index_; /// the atom type to which this atom was connected
 };
 
 } // chemical

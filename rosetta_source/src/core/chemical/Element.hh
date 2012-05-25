@@ -57,9 +57,9 @@ public:
 	std::string const& symbol() const { return symbol_; }
 	/// @brief Return the full name of the Element
 	std::string const& name() const { return name_; }
-	/// @brief Return the LJ radius of the atom type
+	/// @brief the weight of this element (an average of all isotopes)
 	Real weight() const { return weight_; }
-	/// @brief Return the LJ well depth of the atom type
+	/// @brief The mass of the most common
 	core::Size mass() const { return mass_; }
 
 private:

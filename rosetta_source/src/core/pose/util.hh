@@ -559,6 +559,20 @@ num_chi_angles(
 	core::pose::Pose const & pose
 );
 
+core::Real
+molecular_mass(
+		core::Size begin,
+		core::Size const end,
+		core::pose::Pose const & pose
+);
+
+core::Real
+molar_mass(
+		core::Size begin,
+		core::Size const end,
+		core::pose::Pose const & pose
+);
+
 core::Size
 get_hash_from_chain(char const & chain, core::pose::Pose const & pose);
 

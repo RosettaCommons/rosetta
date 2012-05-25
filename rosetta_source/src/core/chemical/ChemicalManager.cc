@@ -39,6 +39,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ElementSet.hh>
+#include <core/chemical/IdealBondLengthSet.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.hh>
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -345,7 +346,21 @@ ChemicalManager::nonconst_residue_type_set( std::string const & tag )
 	return *( residue_type_sets_.find( tag )->second );
 }
 
-
+/// @details if the tag is not in the map, input it from a database file and add it
+/// to the map for future look-up.
+IdealBondLengthSetCAP
+ChemicalManager::ideal_bond_length_set( std::string const & tag )
+{
+	IdealBondLengthSets::const_iterator iter( ideal_bond_length_sets_.find( tag ) );
+	if ( iter == ideal_bond_length_sets_.end() ) {
+		// read from file
+		std::string const filename( basic::database::full_name( "chemical/atom_type_sets/"+tag+"/ideal_bond_lengths.txt" ));
+		IdealBondLengthSetOP new_set( new IdealBondLengthSet() );
+		new_set->read_file( filename );
+		iter = ideal_bond_length_sets_.insert( std::make_pair( tag, new_set ) ).first;
+	}
+	return iter->second();
+}
 
 // global data
 /// @brief tag name for querying fullatom chemical type set.

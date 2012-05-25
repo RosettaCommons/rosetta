@@ -1010,10 +1010,17 @@ public:
 	}
 
 	/// @brief get the molecular weight of this residue
-	core::Real &
-	molecular_weight()
+	core::Real const &
+	molecular_mass() const
 	{
-		return molecular_weight_;
+		return molecular_mass_;
+	}
+
+	/// @brief get the molecular weight of this residue
+	core::Real const &
+	molar_mass() const
+	{
+		return molar_mass_;
 	}
 
 	/// @brief sets atom_base[ atom1 ] = atom2
@@ -1215,10 +1222,7 @@ public:
 	/// Doesnt set the ideal geometry -- maybe it should?
 	///
 	Size
-	add_residue_connection(
-		std::string const & atom_name,
-		std::string const & connect_atom_type= "VIRT"
-	);
+	add_residue_connection( std::string const & atom_name );
 
 
 
@@ -2097,7 +2101,8 @@ private:
 	/// radius cutoff to define neighors
 	Real nbr_radius_;
 
-	Real molecular_weight_;
+	Real molecular_mass_;
+	Real molar_mass_;
 
 	/// number of actcoord atoms
 	/**

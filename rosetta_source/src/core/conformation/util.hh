@@ -50,7 +50,8 @@ orient_residue_for_ideal_bond(
 	chemical::ResidueConnection const & moving_connection,
 	Residue const & fixed_rsd,
 	chemical::ResidueConnection const & fixed_connection,
-	Conformation const & conformation // unused
+	Conformation const & conformation,
+	bool lookup_bond_length = false
 );
 
 /// @brief  Sets the two bond angles and the bond length across the junction, rebuilds dependent atoms (eg O,H)

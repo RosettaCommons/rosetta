@@ -434,7 +434,8 @@ public:
 		int const connection = 0,
 		Size const anchor_residue = 0,
 		int const anchor_connection = 0,
-		bool const start_new_chain = false
+		bool const start_new_chain = false,
+		bool const lookup_bond_length = false
 	);
 
 	///

@@ -420,9 +420,12 @@ Conformation::append_residue_by_bond(
 	int residue_connection_index, // = 0,
 	Size anchor_pos, // = 0,
 	int anchor_residue_connection_index, // = 0
-	bool const start_new_chain // default false
+	bool const start_new_chain, // default false
+	bool const lookup_bond_length // default false
 )
 {
+	if(!build_ideal_geometry) assert(!lookup_bond_length); // lookup only possible if building ideal geometry
+
 	pre_nresidue_change();
 
 	// handle first residue: special case
@@ -471,8 +474,7 @@ Conformation::append_residue_by_bond(
 		ideal_geometry_rsd = new_rsd.clone();
 
 		if ( residue_coordinates_need_updating_ ) update_residue_coordinates( anchor_pos ); // safety
-		orient_residue_for_ideal_bond( *ideal_geometry_rsd, new_rsd_connection, anchor_rsd, anchor_rsd_connection,
-				*this );
+		orient_residue_for_ideal_bond( *ideal_geometry_rsd, new_rsd_connection, anchor_rsd, anchor_rsd_connection, *this, lookup_bond_length );
 
 	}
 
@@ -722,9 +724,7 @@ Conformation::append_polymer_residue_after_seqpos(
 		// this is a little wasteful, creating a new copy, but we need non-const access
 		ideal_geometry_rsd = new_rsd.clone();
 
-		orient_residue_for_ideal_bond( *ideal_geometry_rsd,
-			new_rsd.lower_connect(), anchor_rsd, anchor_rsd.upper_connect(),
-			*this );
+		orient_residue_for_ideal_bond(*ideal_geometry_rsd, new_rsd.lower_connect(), anchor_rsd, anchor_rsd.upper_connect(), *this );
 	}
 	bool const join_lower( true );
 	bool const join_upper( !fold_tree_->is_cutpoint( seqpos ) );
@@ -773,9 +773,7 @@ Conformation::prepend_polymer_residue_before_seqpos(
 		// this is a little wasteful, creating a new copy, but we need non-const access
 		ideal_geometry_rsd = new_rsd.clone();
 
-		orient_residue_for_ideal_bond( *ideal_geometry_rsd,
-			new_rsd.upper_connect(), anchor_rsd, anchor_rsd.lower_connect(),
-			*this);
+		orient_residue_for_ideal_bond(*ideal_geometry_rsd, new_rsd.upper_connect(), anchor_rsd, anchor_rsd.lower_connect(), *this );
 	}
 
 	bool const join_upper( true );
