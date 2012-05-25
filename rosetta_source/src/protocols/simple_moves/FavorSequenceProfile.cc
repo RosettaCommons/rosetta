@@ -20,6 +20,7 @@
 // AUTO-REMOVED #include <core/id/AtomID.hh> // needed for Windows build
 #include <core/import_pose/import_pose.hh>
 #include <core/sequence/Sequence.hh>
+#include <core/sequence/util.hh>
 #include <core/sequence/SequenceProfile.hh>
 
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
@@ -157,18 +158,19 @@ FavorSequenceProfile::parse_my_tag( utility::tag::TagPtr const tag, protocols::m
 
 	core::Size num_struct(0);
 	if( tag->getOption< bool >( "use_native", false ) ) ++num_struct;
+	if( tag->getOption< bool >( "use_fasta", false ) ) ++num_struct;
 	if( tag->getOption< bool >( "use_starting", false ) ) ++num_struct;
 	if( tag->getOption< bool >( "use_current", false ) ) ++num_struct;
 	if( tag->hasOption("pdbname") ) ++num_struct;
 
 	if( ! num_struct &&  ! tag->hasOption("pssm") ) {
-		utility_exit_with_message("Must set one of 'pssm', 'use_native', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
+		utility_exit_with_message("Must set one of 'pssm', 'use_native', 'use_fasta', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
 	}
 	if( num_struct && tag->hasOption("pssm") ) {
-		utility_exit_with_message("Cannot set both 'pssm' and one of 'use_native', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
+		utility_exit_with_message("Cannot set both 'pssm' and one of 'use_native', 'use_fasta', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
 	}
 	if( num_struct > 1 ) {
-		utility_exit_with_message("Can only set one of 'use_native', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
+		utility_exit_with_message("Can only set one of 'use_native', 'use_fasta', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
 	}
 	if( tag->hasOption("matrix") && tag->hasOption("pssm")  ) {
 		TR.Warning << "WARNING In option matrix not used with pssm specification." << std::endl;
@@ -181,6 +183,13 @@ FavorSequenceProfile::parse_my_tag( utility::tag::TagPtr const tag, protocols::m
 		core::pose::Pose nat_pose;
 		core::import_pose::pose_from_pdb( nat_pose, basic::options::option[ basic::options::OptionKeys::in::file::native ] );
 		core::sequence::Sequence seq(nat_pose.sequence(), basic::options::option[ basic::options::OptionKeys::in::file::native ]);
+		set_sequence( seq, matrix_ );
+	}
+	if( tag->getOption< bool >( "use_fasta", false ) ) {
+	  std::string fasta_file( core::sequence::read_fasta_file_str( basic::options::option[ basic::options::OptionKeys::in::file::fasta ]()[1] )[1] );
+    std::string name("unknown");
+    core::sequence::Sequence seq( fasta_file, name );
+		std::cout << seq << std::endl;
 		set_sequence( seq, matrix_ );
 	}
 	if( tag->getOption< bool >( "use_starting", false ) ) {
