@@ -175,8 +175,7 @@ void PairingStatistics::add_topology( core::scoring::dssp::StrandPairingSet cons
 	it != eit; ++it  ) {
     bool merged ( false );
 		tr.Trace << "adding stand pairing to hash.. " << *it << std::endl;
-
-										 //.push_back( PairingStatEntry( *it, id ) );
+		add_entry( *it, id );
   }
   topols_[ id ] = topology;
 }
