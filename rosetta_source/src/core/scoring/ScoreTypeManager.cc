@@ -109,6 +109,8 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "cenpack" ] = cenpack;
 	name2score_type_[ "hybrid_vdw" ] = hybrid_vdw;
 	name2score_type_[ "fa_cust_pair_dist" ] = fa_cust_pair_dist;
+        name2score_type_[ "gauss" ] = gauss;
+
 
 	// PyRosetta score types
 	fill_score_range(name2score_type_, "PyRosettaTwoBodyContextIndepenedentEnergy", PyRosettaTwoBodyContextIndepenedentEnergy_first, PyRosettaTwoBodyContextIndepenedentEnergy_last);
@@ -311,7 +313,6 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "dof_constraint" ] = dof_constraint;
 	name2score_type_[ "rms_energy" ] = rms;
 	name2score_type_[ "suck" ] = suck;
-	name2score_type_[ "gauss" ] = gauss;
 	name2score_type_[ "res_type_constraint" ] = res_type_constraint;
 	name2score_type_[ "res_type_linking_constraint" ] = res_type_linking_constraint;
 	name2score_type_[ "pocket_constraint" ] = pocket_constraint;

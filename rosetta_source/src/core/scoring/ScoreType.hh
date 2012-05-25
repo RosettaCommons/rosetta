@@ -122,6 +122,10 @@ enum ScoreType {
 
 	hybrid_vdw,     // hybrid centroid+fa
 
+	// gaussian overlap
+        gauss,
+
+
 	rna_vdw,          // low res clash check for RNA
 	rna_base_backbone,          // Bases to 2'-OH, phosphates, etc.
 	rna_backbone_backbone,      // 2'-OH to 2'-OH, phosphates, etc.
@@ -214,9 +218,6 @@ enum ScoreType {
 	Mpair,
 	// sucker atom energy
 	suck,
-
-	// gaussian overlap
-	gauss,
 
 	//RNA stuff
 	//Low resolution
