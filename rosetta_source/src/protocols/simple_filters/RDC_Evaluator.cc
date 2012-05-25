@@ -21,7 +21,8 @@
 
 // Package Headers
 #include <core/scoring/ResidualDipolarCoupling.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/methods/ResidualDipolarCouplingEnergy.hh>
+
 
 // Project Headers
 #include <core/io/silent/SilentStruct.hh>
@@ -48,7 +49,24 @@ namespace protocols {
 namespace simple_filters {
 using namespace core;
 
+RDC_Evaluator::RDC_Evaluator( std::string tag ) :
+	evaluation::SingleValuePoseEvaluator< Real >( tag )
+{}
 
+//RDC_Evaluator::RDC_Evaluator( utility::vector1< std::string > const& rdc_files, std::string tag) :
+//	evaluation::SingleValuePoseEvaluator< Real >( tag ),
+//	rdc_files_( rdc_files )
+//{
+//	init_rdcs();
+//}
+
+static core::scoring::methods::ResidualDipolarCouplingEnergy energy_evaluator;
+ ///@brief evaluate pose
+core::Real
+RDC_Evaluator::apply( core::pose::Pose& pose ) const {
+	return energy_evaluator.eval_dipolar( pose, rdc_data_ ); //const
+}
+  ///@brief evaluate pose
 SelectRDC_Evaluator::SelectRDC_Evaluator( std::list< Size > const& selection, std::string tag, std::string file )
   : evaluation::SingleValuePoseEvaluator< Real >( "rdc"+tag ),
 		selection_( selection ),
@@ -86,13 +104,7 @@ SelectRDC_Evaluator::SelectRDC_Evaluator( core::pose::Pose const& pose, std::str
 
 Real
 SelectRDC_Evaluator::apply( core::pose::Pose& pose ) const {
-  core::Real rdc;
-	scoring::ScoreFunction scorefxn;
-  scorefxn.set_weight( scoring::rdc, 1 );
-	pose::Pose test_pose( pose );
-	scoring::store_RDC_in_pose( rdc_data_, test_pose );
-	rdc = scorefxn( test_pose );
-	return rdc;
+	return energy_evaluator.eval_dipolar( pose, *rdc_data_ ); //cons
 }
 
 void

@@ -41,13 +41,28 @@
 //// C++ headers
 #include <list>
 
-#include <core/scoring/ResidualDipolarCoupling.fwd.hh>
+#include <core/scoring/ResidualDipolarCoupling.hh>
 #include <core/scoring/rms_util.hh>
 #include <utility/vector1.hh>
 
 
 namespace protocols {
 namespace simple_filters {
+
+
+class RDC_Evaluator : public evaluation::SingleValuePoseEvaluator< core::Real > {
+public:
+  RDC_Evaluator( std::string tag = "rdc" );
+	//  RDC_Evaluator( utility::vector1< std::string > const& rdc_files, std::string tag = "rdc" );
+
+  ///@brief evaluate pose
+  virtual core::Real apply( core::pose::Pose& ) const;
+
+private:
+	std::string tag_;
+  mutable core::scoring::ResidualDipolarCoupling rdc_data_; //initialized automatically from -in:file:rdc
+};
+
 
 class SelectRDC_Evaluator : public evaluation::SingleValuePoseEvaluator< core::Real > {
 public:

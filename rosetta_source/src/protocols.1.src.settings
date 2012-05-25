@@ -78,6 +78,8 @@ sources = {
 		"ArchiveManager",
 		"EvaluatedArchive",
 		"MPIArchiveJobDistributor",
+                "NormalizedEvaluatedArchive",
+                "VarianceStatisticsArchive",
 	],
 	"protocols/jd2/message_listening": [
 		"DbMoverMessageListener",

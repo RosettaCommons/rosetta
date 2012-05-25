@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/ResidualDipolarCoupling.hh
 /// @brief  Uses NMR RDC for scoring
-/// @author Srivatsan Raman
+/// @author Srivatsan Raman, Oliver Lange
 
 #ifndef INCLUDED_core_scoring_ResidualDipolarCoupling_hh
 #define INCLUDED_core_scoring_ResidualDipolarCoupling_hh

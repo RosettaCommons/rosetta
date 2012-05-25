@@ -66,6 +66,7 @@ public:
 
 	//this is probably obsoleted
 	//	virtual bool ready_for_batch() const = 0;
+	virtual void initialize() = 0;
 
 	///@brief old-batches might be outdated and should not be computed anymore
 	/// return true for this query if this is the case for old_batch
@@ -134,7 +135,7 @@ public:
 
 	//obsolet ?
 	//	virtual bool ready_for_batch() const { return false; };
-
+	virtual void initialize() {};
 
 	virtual void generate_batch() = 0;
 
@@ -189,13 +190,13 @@ public:
 	core::Size total_accepts() { return total_accepts_ + accepts_since_last_batch(); };
 	bool statistics_valid() { return  acceptance_history_.size() > min_structures_for_acceptance_statistics_; };
 
-
+	SilentStructs const& decoys() const { return decoys_; };
+	SilentStructs& decoys() { return decoys_; };
 protected:
 	virtual void count_structure( Batch const& batch, bool accepted  );
 	void count_removed_structures( core::Size n_removed );
 
-	SilentStructs& decoys() { return decoys_; };
-	SilentStructs const& decoys() const { return decoys_; };
+
 
 	///@brief call to insert structure at position given by iterator
 	void add_structure_at_position( SilentStructs::iterator iss, core::io::silent::SilentStructOP new_decoy );

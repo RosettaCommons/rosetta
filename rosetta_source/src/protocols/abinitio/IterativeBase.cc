@@ -17,6 +17,7 @@
 #include <protocols/abinitio/IterativeBase.hh>
 #include <protocols/jd2/archive/ArchiveManager.hh>
 
+
 // Package Headers
 #include <protocols/noesy_assign/NoesyModule.hh>
 #include <protocols/noesy_assign/NoesyModule.impl.hh>
@@ -71,6 +72,7 @@
 #include <protocols/simple_filters/JumpEvaluator.hh>
 #include <protocols/simple_filters/RmsdEvaluator.hh>
 #include <protocols/simple_filters/ScoreEvaluator.hh>
+#include <protocols/simple_filters/RDC_Evaluator.hh>
 #include <protocols/evaluation/util.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/loops/Loop.hh>
@@ -101,7 +103,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
-
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 // Third-party Headers
 #include <boost/functional/hash.hpp>
 
@@ -173,7 +175,7 @@ OPT_1GRP_KEY( String, iterative, initial_beta_topology )
 OPT_1GRP_KEY( Integer, iterative, recompute_beta_Naccept )
 OPT_1GRP_KEY( String, iterative, flags_fullatom )
 OPT_1GRP_KEY( Boolean, iterative, force_topology_resampling )
-OPT_1GRP_KEY( Boolean, iterative, use_dynamic_weights_for_sampling )
+OPT_2GRP_KEY( Boolean, iterative, normalize, sampling )
 
 std::string const NOESY_CST_FILE_NAME("noe_auto_assign.cst");
 
@@ -198,7 +200,7 @@ void protocols::abinitio::IterativeBase::register_options() {
 		NEW_OPT( iterative::rmsf_nstruct, "how many structures of pool used for computations of cores", 30 );
 		NEW_OPT( iterative::cen_score, "energy function for centroid pool", "score3" );
 		NEW_OPT( iterative::cen_score_patch, "patch of centroi_pool energy function", "NOPATCH" );
-		NEW_OPT( iterative::fa_score, "energy function for centroid pool", "score13_env_hb" );
+		NEW_OPT( iterative::fa_score, "energy function for centroid pool", "score12_full" );
 		NEW_OPT( iterative::fa_score_patch, "patch of centroi_pool energy function", "NOPATCH" );
 		NEW_OPT( iterative::max_nstruct, "give maximum numbers of structures generated for a given stage before switch -- 0 for infinite, -1 for skip stage", 0);
 
@@ -235,7 +237,7 @@ void protocols::abinitio::IterativeBase::register_options() {
 		NEW_OPT( iterative::force_topology_resampling,"if strand-fraction is low topology sampling is usually skipped. Override this with this flags", false );
 		NEW_OPT( iterative::recompute_beta_Naccept, "recompute beta-topology after minimum of Naccept structures -- if no initial_beta_topology always recompute", 2000 );
 		NEW_OPT( iterative::flags_fullatom, "point to flag-file to read flags for fullatom-refinement and loop-closing specify e.g., as ../flags_fullatom ","");
-		NEW_OPT( iterative::use_dynamic_weights_for_sampling,
+		NEW_OPT( iterative::normalize::sampling,
 			"dynamically determined score-variation will be used for patching the sampling stage scores", false );
 
 		options_registered_ = true;
@@ -256,6 +258,41 @@ void warn_obsolete_flags() {
 	OBSOLETE(iterative::copy_pool_for_convergence_check);
 	OBSOLETE(iterative::fix_core);
 	OBSOLETE(iterative::enumerate::Naccept);
+	OBSOLETE(iterative::min_core_fraction_to_score);
+	OBSOLETE(iterative::force_scored_region);
+	OBSOLETE(iterative::scored_ss_core);
+
+	OBSOLETE( iterative::perturb_resampling);
+
+	OBSOLETE( iterative::chainbreak_evaluator_weight);
+
+	//OBSOLETE( iterative::safety_hatch_scorecut);
+	OBSOLETE( iterative::cluster);
+
+
+//OBSOLETE( iterative::cenpool_chemicalshift_weight);
+//OBSOLETE( iterative::chemicalshift_column);
+//OBSOLETE( iterative::super_quick_relax_protocol);
+//OBSOLETE( iterative::centroid_before_quickrelax_weight);
+//OBSOLETE( iterative::fullatom_after_quickrelax_weight);
+//OBSOLETE( iterative::limit_decoys_for_noe_assign);
+//OBSOLETE( iterative::centroid_quickrelax);
+
+//noesy
+//OBSOLETE( iterative::skip_redundant_constraints);
+//OBSOLETE( iterative::cenpool_noesy_cst_weight);
+//OBSOLETE( iterative::delay_noesy_reassign);
+//OBSOLETE( iterative::initial_noe_auto_assign_csts);
+//OBSOLETE( iterative::auto_assign_scheme);
+//OBSOLETE( iterative::dcut);
+
+//OBSOLETE( iterative::initial_beta_topology);
+//OBSOLETE( iterative::force_topology_resampling);
+//OBSOLETE( iterative::recompute_beta_Naccept);
+
+//OBSOLETE( iterative::flags_fullatom);
+//OBSOLETE( iterative::normalize::sampling);
+
 }
 
 namespace protocols {
@@ -309,8 +346,8 @@ bool decide_on_beta_jumping_from_frags() {
 }
 
 
-IterativeBase::IterativeBase(std::string name )
-	: EvaluatedArchive(),
+IterativeBase::IterativeBase(std::string name_in )
+	: Parent(),
 
 		stage_( ENUMERATION ),
 		finish_stage_( LAST_CENTROID_START ),
@@ -335,7 +372,7 @@ IterativeBase::IterativeBase(std::string name )
 		current_noesy_sampling_file_( "n/a" ),
 		bCombineNoesyCst_( true ),
 		super_quick_relax_of_centroids_( option[ iterative::centroid_quickrelax ]() ),
-		use_dynamic_weights_for_sampling_( option[ iterative::use_dynamic_weights_for_sampling ]() ),
+		use_dynamic_weights_for_sampling_( option[ iterative::normalize::sampling ]() ),
 		rdc_data_( NULL ),
 		cst_data_( NULL ),
 		cst_fa_data_( NULL )
@@ -350,53 +387,9 @@ IterativeBase::IterativeBase(std::string name )
 	}
 
 	//name is e.g., centroid_pool or fullatom_pool
-	set_name( name );
+	set_name( name_in );
 
-	// --- setup scorefxn
-	core::scoring::ScoreFunctionOP scorefxn =
-		core::scoring::ScoreFunctionFactory::create_score_function( cen_score(), cen_score_patch() );
-	tr.Info << "create Archive Scorefunction with: "
-					<<  option[ iterative::cen_score]() << " "
-					<<  option[ iterative::cen_score_patch ]() << std::endl;
-
-	mem_tr << "setup cen-scorefxn" << std::endl;
-
-	//manually set the chainbreaks if user has forgotten to specify them ...
-	fix_chainbreak_patch( scorefxn, cen_score_patch() );
-
-	set_scorefxn( scorefxn );
-
-	// --- setup pool-evaluation
-	if ( evaluate_local() ) {
-		set_weight( "score", 1.0 );
-		//setup constraint-evaluation for filter-cst from the ConstraintClaimers ( -broker:setup )
-	///@brief set scorefxn used for evaluation
-		set_weight( "atom_pair_constraint", 0 ); //this is now done via FILTER mechanism of ConstraintClaimer only !
-		set_overall_cstfilter_weight( scorefxn->get_weight( scoring::atom_pair_constraint ) );
-		setup_filter_cst( overall_cstfilter_weight() );
-		scorefxn->set_weight( scoring::atom_pair_constraint, 0 );
-
-		//		set_weight( "prefa_clean_score3", option[ iterative::centroid_before_quickrelax_weight ]() );
-		set_weight( "rdc", scorefxn->get_weight( scoring::rdc ) );
-		scorefxn->set_weight( scoring::rdc, 0 );
-
-		set_scorefxn( scorefxn );
-	} else {
-		set_weight( "score", 0.0 ); //don't use score that comes back --- but the score_final thing
-		set_weight( "score_final", 1.0 );
-	}
-
-	//will setup autoNOE module if cmd-line options activated -- might set super_quick_relax_of_centroids_ to true.
-	setup_autoNOE();
-
-	// setup chemical shift rescoring -- this is done on worker side, here we pick up the column and give it a weight
-	if ( option[ iterative::cenpool_chemicalshift_weight ].user() ) {
-		chemshift_column_ = option[ iterative::chemicalshift_column ]();
-		set_weight( option[ iterative::chemicalshift_column ](), option[ iterative::cenpool_chemicalshift_weight ]() );
-		super_quick_relax_of_centroids_=true;
-	}
-
-	// --- setup stage-steering parameters
+// --- setup stage-steering parameters
 	// maximum of sampled structures per stage
 	max_nstruct_list_ = option[ iterative::max_nstruct ]();
 	if ( max_nstruct_list_.size() != ( FINISHED-1 ) ) {
@@ -448,6 +441,53 @@ IterativeBase::IterativeBase(std::string name )
 	if ( tr.Trace.visible() ) {
 		if ( reference_pose_ ) reference_pose_->dump_pdb("reference_pose_in_IterativeBase.pdb");
 		tr.Trace << "target_sequence_:\n " << target_sequence_ << std::endl;
+	}
+}
+
+void IterativeBase::initialize() {
+	Parent::initialize();
+	// --- setup scorefxn
+	core::scoring::ScoreFunctionOP scorefxn =
+		core::scoring::ScoreFunctionFactory::create_score_function( cen_score(), cen_score_patch() );
+	tr.Info << "create Archive Scorefunction with: "
+					<<  option[ iterative::cen_score]() << " "
+					<<  option[ iterative::cen_score_patch ]() << std::endl;
+
+	mem_tr << "setup cen-scorefxn" << std::endl;
+
+	//manually set the chainbreaks if user has forgotten to specify them ...
+	fix_chainbreak_patch( scorefxn, cen_score_patch() );
+
+	set_scorefxn( scorefxn );
+
+	// --- setup pool-evaluation
+	if ( evaluate_local() ) {
+		set_weight( "score", 1.0 );
+		//setup constraint-evaluation for filter-cst from the ConstraintClaimers ( -broker:setup )
+	///@brief set scorefxn used for evaluation
+		set_weight( "atom_pair_constraint", 0 ); //this is now done via FILTER mechanism of ConstraintClaimer only !
+		set_overall_cstfilter_weight( scorefxn->get_weight( scoring::atom_pair_constraint ) );
+		setup_filter_cst( overall_cstfilter_weight() );
+		scorefxn->set_weight( scoring::atom_pair_constraint, 0 );
+
+		//		set_weight( "prefa_clean_score3", option[ iterative::centroid_before_quickrelax_weight ]() );
+		add_evaluation( new simple_filters::RDC_Evaluator("rdc"), scorefxn->get_weight( scoring::rdc ) );
+		scorefxn->set_weight( scoring::rdc, 0 );
+
+		set_scorefxn( scorefxn );
+	} else {
+		set_weight( "score", 0.0 ); //don't use score that comes back --- but the score_final thing
+		set_weight( "score_final", 1.0 );
+	}
+
+	//will setup autoNOE module if cmd-line options activated -- might set super_quick_relax_of_centroids_ to true.
+	setup_autoNOE();
+
+	// setup chemical shift rescoring -- this is done on worker side, here we pick up the column and give it a weight
+	if ( option[ iterative::cenpool_chemicalshift_weight ].user() ) {
+		chemshift_column_ = option[ iterative::chemicalshift_column ]();
+		set_weight( option[ iterative::chemicalshift_column ](), option[ iterative::cenpool_chemicalshift_weight ]() );
+		super_quick_relax_of_centroids_=true;
 	}
 
 	bDoBetaJumping_ = decide_on_beta_jumping_from_frags();
@@ -727,7 +767,7 @@ void IterativeBase::do_dynamic_patching( jd2::archive::Batch& batch, utility::io
 	if ( get_weight("score")>0.001 ) {
 		var_score = score_variation("score");
 	} else if ( get_weight("prefa_clean_score3") > 0.001 ) {
-		var_score = score_variation("prefa_clean_score3" );
+		var_score = score_variation("prefa_clean_score3");
 	} else {
 		runtime_assert(false); //should find either score or prefa_clean_score3
 	}
@@ -740,13 +780,14 @@ void IterativeBase::do_dynamic_patching( jd2::archive::Batch& batch, utility::io
 	//get patched scorefxn
 	scoring::ScoreFunctionOP scorefxn  = scoring::ScoreFunctionFactory::create_score_function( score, option[ key ]()[1] );
 	std::ostringstream patches;
-	bool have_patch;
+	bool have_patch( false );
 	for ( ScoreTypeMap::const_iterator it = dynamic_scores.begin(); it != dynamic_scores.end(); ++it ) {
 		if ( scorefxn->get_weight( it->first ) > 0.00001 ) {
 			core::Real var_rel;
 			if ( it->second == "atom_pair_constraint" ) {
 				core::Real var_sum( 0 ); core::Size ct_cst( 0 );
-				for ( WeightMap::const_iterator vit = score_variations().begin(); vit != score_variations().end(); ++vit ) {
+				WeightMap const& variations( score_variations() );
+				for ( WeightMap::const_iterator vit = variations.begin(); vit != variations.end(); ++vit ) {
 					if ( vit->first.find( "filter_cst" ) != std::string::npos ) {
 						var_sum += vit->second;
 						++ct_cst;
@@ -756,7 +797,8 @@ void IterativeBase::do_dynamic_patching( jd2::archive::Batch& batch, utility::io
 				var_sum /= ct_cst;
 				var_rel=var_sum/var_score;
 			} else { //not a atom_pair_constraint
-				var_rel=score_variation( it->second )/var_score;
+				var_rel=score_variation( it->second );
+				var_rel/=var_score;
 			}
 			core::Real patch = scorefxn->get_weight( it->first )/var_rel;
 			patches << it->second << " = " << patch << std::endl;
@@ -767,18 +809,22 @@ void IterativeBase::do_dynamic_patching( jd2::archive::Batch& batch, utility::io
 		std::string patch_file ( batch.dir()+"/dynamic_abinitio_"+score+".patch" );
 		utility::io::ozstream patch_fd( patch_file );
 		patch_fd << patches.str() << std::endl;
-		flags << key.id() << patch_file << std::endl;
+		tr.Info << "dynamic patching: write to flag-file " << key.id() << " " << patch_file << std::endl;
+		flags << "-" << key.id() << " " << patch_file << std::endl;
+		//		std::cerr << "dynamic patching for " << key.id() << std::endl;
 	}
 }
 
 void IterativeBase::gen_dynamic_patches( jd2::archive::Batch& batch ) {
 	if ( !use_dynamic_weights_for_sampling_ ) return;
+
 	utility::io::ozstream flags( batch.flag_file(), std::ios::app );
 	do_dynamic_patching( batch, flags, "score0",  OptionKeys::abinitio::stage1_patch  );
 	do_dynamic_patching( batch, flags, "score1",  OptionKeys::abinitio::stage2_patch  );
 	do_dynamic_patching( batch, flags, "score2",  OptionKeys::abinitio::stage3a_patch  );
 	do_dynamic_patching( batch, flags, "score5",  OptionKeys::abinitio::stage3b_patch  );
 	do_dynamic_patching( batch, flags, "score3",  OptionKeys::abinitio::stage4_patch  );
+	do_dynamic_patching( batch, flags, "score12", OptionKeys::score::patch  );
 }
 
 
@@ -1592,6 +1638,9 @@ void IterativeBase::add_fullatom_flags( jd2::archive::Batch& batch ) {
 	utility::io::ozstream flags( batch.flag_file(), std::ios::app );
 	//these are many.... should there be some input file ?
 	//	flags << "@../flags_fullatom" << std::endl;
+	if ( !option[ iterative::flags_fullatom ].user() ) {
+		utility_exit_with_message( "option -iterative:flags_fullatom is required !!! ");
+	}
 	flags << "@"<< option[ iterative::flags_fullatom ]() << std::endl;
 
 	if ( option[ constraints::cst_fa_file ].user() ) {
@@ -1715,25 +1764,8 @@ void IterativeBase::add_core_evaluator( loops::Loops const& core, std::string co
 	core.write_loops_to_file( name()+"/"+core_tag+".gen.rigid", "RIGID" ); //so we have them for other evaluations
 }
 
-
-
-
-// void IterativeBase::restore_from_file( std::string const& dirname ) {
-// 	EvaluatedArchive::restore_from_file( dirname );
-// 	utility::io::izstream stage( dirname+"/IterationStage" );
-// 	int bla;
-// 	stage >> bla;
-// 	stage_ = IterationStage( bla );
-// }
-
-// void IterativeBase::save_to_file( std::string const& dirname ) {
-// 	EvaluatedArchive::save_to_file( dirname );
-// 	utility::io::ozstream stage( dirname+"/IterationStage" );
-// 	stage << stage_;
-// }
-
 void IterativeBase::restore_status( std::istream& is ) {
-	EvaluatedArchive::restore_status( is );
+	Parent::restore_status( is );
 	int bla; std::string tag;
 	is >> tag >> bla;
 	runtime_assert( tag == "IterationStage:" );
@@ -1783,7 +1815,7 @@ void IterativeBase::restore_status( std::istream& is ) {
 }
 
 void IterativeBase::save_status( std::ostream& os ) const {
-	EvaluatedArchive::save_status( os );
+	Parent::save_status( os );
 	os << "IterationStage: " << stage_;
 	os << "   first_batch_this_stage: " << first_batch_this_stage_;
 	os << "   first_fullatom_batch: " << first_fullatom_batch_;

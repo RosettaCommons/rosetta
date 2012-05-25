@@ -71,10 +71,10 @@ void protocols::abinitio::IterativeAbrelax::register_options() {
 
 IterativeAbrelax::IterativeAbrelax()
 	: Parent( "abstract" ),
-		centroid_archive_(&fullatom_archive_ ),
+		centroid_archive_( &fullatom_archive_ ), //calling cstor of IterativeCentroid
 		fullatom_( false )
 {
-	fullatom_ = option[ iterative::fullatom ];
+	fullatom_ = option[ iterative::fullatom ]();
 	//not needed anymore: if I initialize base with this finish_stage
 	if ( !fullatom_ ) centroid_archive_.set_finish_stage( IterativeBase::LAST_CENTROID_START );
 }
@@ -99,6 +99,11 @@ void IterativeAbrelax::read_structures( core::io::silent::SilentFileData& sfd, B
 
 bool IterativeAbrelax::finished() const {
 	return ( centroid_archive_.finished() && !fullatom_ ) || fullatom_archive_.finished();
+}
+
+void IterativeAbrelax::initialize() {
+	centroid_archive_.initialize();
+	if ( fullatom_ ) fullatom_archive_.initialize();
 }
 
 bool IterativeAbrelax::still_interested( Batch const& batch ) const {

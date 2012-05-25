@@ -17,8 +17,9 @@
 //#include <protocols/abinitio/IterativeAbrelax.fwd.hh>
 
 // Package Headers
-#include <protocols/jd2/archive/EvaluatedArchive.hh>
+#include <protocols/jd2/archive/NormalizedEvaluatedArchive.hh>
 #include <protocols/jd2/archive/ArchiveManager.fwd.hh>
+
 
 // Project Headers
 #include <protocols/abinitio/PairingStatistics.fwd.hh>
@@ -50,8 +51,8 @@
 namespace protocols {
 namespace abinitio {
 
-class IterativeBase : public jd2::archive::EvaluatedArchive {
-	typedef jd2::archive::EvaluatedArchive Parent;
+class IterativeBase : public jd2::archive::NormalizedEvaluatedArchive {
+	typedef jd2::archive::NormalizedEvaluatedArchive Parent;
 	typedef utility::vector1< core::io::silent::SilentStructOP > SilentStructVector;
 public:
 	enum IterationStage {
@@ -75,10 +76,16 @@ public:
 	///@brief archive is finished when at last stage
   virtual bool finished() const { return stage_ >= finish_stage_; };
 
+	///@brief do initializing work that requires fully setup object here
+	virtual void initialize();
+
 	///@brief where to stop ?
 	void set_finish_stage( IterationStage setting ) {
 		finish_stage_ = setting;
 	}
+
+	///@brief  calls increment_stage() if appropriate
+	void test_for_stage_end();
 
 	///@brief overloaded to make input decoys appear the same as decoys coming from batches
 	virtual void init_from_decoy_set( core::io::silent::SilentFileData const& sfd );
@@ -227,9 +234,6 @@ private:
 	///@brief [OBSOLET] add score_coreX and rms_coreX evaluators (and columns) with 0.0 weight
 	void add_core_evaluator( loops::Loops const& core, std::string const& core_tag );
 
-	///@brief  calls increment_stage() if appropriate
-	void test_for_stage_end();
-
 	///@brief necessary steps to go to next stage... e.g., saving snapshot of archive
 	void increment_stage();
 
@@ -330,7 +334,6 @@ private:
 	mutable core::scoring::ResidualDipolarCouplingOP rdc_data_; //need to cache this to avoid reading RDC file each time...
 	mutable core::scoring::constraints::ConstraintSetOP cst_data_;
 	mutable core::scoring::constraints::ConstraintSetOP cst_fa_data_;
-
 	/// ------------------ register cmdline options ---------------------------
 
 private:

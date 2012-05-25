@@ -69,6 +69,9 @@ public:
 
   IterativeAbrelax();
 
+	//	virtual bool ready_for_batch() const { return false; };
+	virtual void initialize();
+
   virtual bool finished() const;
 	//  virtual bool ready_for_batch() const;
 	virtual bool still_interested( jd2::archive::Batch const& batch ) const;

@@ -84,8 +84,15 @@ using namespace jd2::archive;
 IterativeFullatom::IterativeFullatom()
 	: IterativeBase( "fullatom_pool" )
 {
+	perturb_start_structures_ = option[ iterative::perturb_fa_resampling ];
+}
+
+void IterativeFullatom::initialize() {
+	Parent::initialize();
+	// --- setup scorefxn
 	set_stage( LAST_CENTROID_START );
 	set_finish_stage( FINISHED );
+	test_for_stage_end();
 	mem_tr << "before setup fa-score function" << std::endl;
 
 	core::scoring::ScoreFunctionOP scorefxn =
@@ -93,7 +100,6 @@ IterativeFullatom::IterativeFullatom()
 
 	// if local evaluation done by cmdline_cst evaluator
 	set_scorefxn( scorefxn );
-	perturb_start_structures_ = option[ iterative::perturb_fa_resampling ];
 
 	//Base class sets chainbreak scores as convenience if not in patches..
 	// this will go wrong in fullatom mode, since chainbreaks not returned ... remove here

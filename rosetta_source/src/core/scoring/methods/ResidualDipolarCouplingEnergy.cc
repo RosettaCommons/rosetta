@@ -175,15 +175,22 @@ ResidualDipolarCouplingEnergy::rdc_from_pose(
 // this has to be spread out over different routines to make this energy yield derivatives
 //////////////////////////////////////////////////////
 Real ResidualDipolarCouplingEnergy::eval_dipolar(
-  pose::Pose & pose
+		pose::Pose& pose
 ) const
 {
-
 	ResidualDipolarCoupling& rdc_data( rdc_from_pose( pose ) );
-	utility::vector1< core::scoring::RDC > const& All_RDC_lines( rdc_data.get_RDC_data() );
+	return eval_dipolar( pose, rdc_data );
+}
+
+Real ResidualDipolarCouplingEnergy::eval_dipolar(
+		pose::Pose const& pose,
+		ResidualDipolarCoupling& rdc_data
+) const
+{
 	Real score;
 	//Size const nrow( All_RDC_lines.size() ); //number of experimental couplins
 	if ( basic::options::option[ basic::options::OptionKeys::rdc::iterate_weights ].user() ) {
+		utility::vector1< core::scoring::RDC > const& All_RDC_lines( rdc_data.get_RDC_data() );
 		Real const sigma2( basic::options::option[ basic::options::OptionKeys::rdc::iterate_weights ] );
 		Real const tol( basic::options::option[ basic::options::OptionKeys::rdc::iterate_tol ] );
 		bool const reset( basic::options::option[ basic::options::OptionKeys::rdc::iterate_reset ] );
@@ -199,7 +206,6 @@ Real ResidualDipolarCouplingEnergy::eval_dipolar(
 			out << std::endl;
 		} //dump_weights
 	} else {
-
 		static std::string const fit_method(
 			basic::options::option[ basic::options::OptionKeys::rdc::fit_method ]()
 		);
@@ -207,54 +213,52 @@ Real ResidualDipolarCouplingEnergy::eval_dipolar(
 			tr.Trace << "residual-energy method chosen: 'svd' " << std::endl;
 			score = rdc_data.compute_dipscore( pose );
 		} else {
-				using namespace basic::options;
-      	using namespace basic::options::OptionKeys;
-				if (option[ OptionKeys::rdc::fixDa].user()) {
-					if (option[ OptionKeys::rdc::fixR].user()) {
-								//Real const tensorDa( option[ OptionKeys::rdc::fixDa] );
-								//Real const tensorR( option[ OptionKeys::rdc::fixR] );
-								utility::vector1<Real> const tensorDa = option[ OptionKeys::rdc::fixDa]();
-								utility::vector1<Real> const tensorR = option[ OptionKeys::rdc::fixR]();
+			using namespace basic::options;
+			using namespace basic::options::OptionKeys;
+			if (option[ OptionKeys::rdc::fixDa].user()) {
+				if (option[ OptionKeys::rdc::fixR].user()) {
+					//Real const tensorDa( option[ OptionKeys::rdc::fixDa] );
+					//Real const tensorR( option[ OptionKeys::rdc::fixR] );
+					utility::vector1<Real> const tensorDa = option[ OptionKeys::rdc::fixDa]();
+					utility::vector1<Real> const tensorR = option[ OptionKeys::rdc::fixR]();
 
-								//make sure R is between 0 and 2/3
-								 for ( core::Size i = 1; i <= option[ OptionKeys::rdc::fixR ]().size(); ++i) {
-										if ( (tensorR[i] < 0) || (tensorR[i] > 2.0/3.0) ) {
-    									utility_exit_with_message("0=< R <=2/3");
-										}
-								}
+					//make sure R is between 0 and 2/3
+					for ( core::Size i = 1; i <= option[ OptionKeys::rdc::fixR ]().size(); ++i) {
+						if ( (tensorR[i] < 0) || (tensorR[i] > 2.0/3.0) ) {
+							utility_exit_with_message("0=< R <=2/3");
+						}
+					}
 
-								//make sure user provide the same number Da and R
-								if (  ( option[ OptionKeys::rdc::fixDa ]().size() !=	option[ OptionKeys::in::file::rdc ]().size() )
-               || ( option[ OptionKeys::rdc::fixR ]().size() !=  option[ OptionKeys::in::file::rdc ]().size() )   )  {
-    									utility_exit_with_message("Number of Da and R must be the same as in number of experiment");
-								}
+					//make sure user provide the same number Da and R
+					if (  ( option[ OptionKeys::rdc::fixDa ]().size() !=	option[ OptionKeys::in::file::rdc ]().size() )
+						|| ( option[ OptionKeys::rdc::fixR ]().size() !=  option[ OptionKeys::in::file::rdc ]().size() )   )  {
+						utility_exit_with_message("Number of Da and R must be the same as in number of experiment");
+					}
 
-								score = rdc_data.compute_dipscore_nlsDaR( pose, tensorDa , tensorR );
-								} //end of Da and R
-					else {
-								//Real const tensorDa( option[ OptionKeys::rdc::fixDa] );
-								utility::vector1<Real> const tensorDa = option[ OptionKeys::rdc::fixDa]();
-							  //tr.Trace << "nls and fixDa: " << tensorDa  << std::endl;
-								score = rdc_data.compute_dipscore_nlsDa( pose, tensorDa);
-						} //end of Da and noR
-					}//end of fixDa
+					score = rdc_data.compute_dipscore_nlsDaR( pose, tensorDa , tensorR );
+				} else { //end of Da and R
+					//Real const tensorDa( option[ OptionKeys::rdc::fixDa] );
+					utility::vector1<Real> const tensorDa = option[ OptionKeys::rdc::fixDa]();
+					//tr.Trace << "nls and fixDa: " << tensorDa  << std::endl;
+					score = rdc_data.compute_dipscore_nlsDa( pose, tensorDa);
+				} //end of Da and noR
+			}	else {//end of fixDa
+				if (option[ OptionKeys::rdc::fixR].user()) {
+					//Real const tensorR( option[ OptionKeys::rdc::fixR] );
+					utility::vector1<Real> const tensorR = option[ OptionKeys::rdc::fixR]();
+					//tr.Trace << "nls and fixR: " << tensorR << std::endl;
+					for ( core::Size i = 1; i <= option[ OptionKeys::rdc::fixR ]().size(); ++i) {
+						if ( (tensorR[i] < 0) || (tensorR[i] > 2.0/3.0) ) {
+							utility_exit_with_message("0=< R <=2/3");
+						}
+					}
+					score = rdc_data.compute_dipscore_nlsR( pose, tensorR);
+				}//end of noDa and R
 				else {
-					if (option[ OptionKeys::rdc::fixR].user()) {
-								//Real const tensorR( option[ OptionKeys::rdc::fixR] );
-								utility::vector1<Real> const tensorR = option[ OptionKeys::rdc::fixR]();
-							  //tr.Trace << "nls and fixR: " << tensorR << std::endl;
-								 for ( core::Size i = 1; i <= option[ OptionKeys::rdc::fixR ]().size(); ++i) {
-										if ( (tensorR[i] < 0) || (tensorR[i] > 2.0/3.0) ) {
-    									utility_exit_with_message("0=< R <=2/3");
-										}
-								}
-								score = rdc_data.compute_dipscore_nlsR( pose, tensorR);
-								}//end of noDa and R
-					else {
-							  //tr.Trace << "nls" << std::endl;
-								score = rdc_data.compute_dipscore_nls( pose );
-								}//end of noDa and noR
-					}//end of no fixDa
+					//tr.Trace << "nls" << std::endl;
+					score = rdc_data.compute_dipscore_nls( pose );
+				}//end of noDa and noR
+			}//end of no fixDa
 		}//end of nls
 	}//end of else dump
 	return score;

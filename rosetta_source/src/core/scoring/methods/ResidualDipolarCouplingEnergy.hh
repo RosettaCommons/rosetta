@@ -99,6 +99,11 @@ public:
 		Vector & F2
 	) const;
 
+	Real eval_dipolar(
+		pose::Pose const& pose,
+		ResidualDipolarCoupling& rdc_data
+	) const;
+
  private:
 
 	ResidualDipolarCoupling& rdc_from_pose(
@@ -106,9 +111,8 @@ public:
 	) const;
 
 	Real eval_dipolar(
-		pose::Pose & pose
+		pose::Pose& pose
 	) const;
-
 
 private:
 

@@ -17,6 +17,7 @@
 // Unit headers
 #include <protocols/jd2/archive/ArchiveManager.fwd.hh>
 #include <protocols/jd2/archive/ArchiveBase.hh>
+#include <protocols/jd2/archive/VarianceStatisticsArchive.fwd.hh>
 //#include <protocols/jd2/archive/EvaluatedArchive.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 
@@ -92,10 +93,9 @@ public:
 	///@brief overloaded to make input decoys appear the same as decoys coming from batches
 	virtual void init_from_decoy_set( core::io::silent::SilentFileData const& sfd ) = 0;
 
-protected:
 	///@brief typedefs for Evaluators and Weights
 	typedef std::map< std::string, core::Real > WeightMap;
-	typedef std::map< std::string, evaluation::PoseEvaluatorOP > EvaluatorMap;
+	typedef std::map< std::string, evaluation::PoseEvaluatorCOP > EvaluatorMap;
 
 	void start_evaluation_timer() const;
 	///@brief yields an "evaluated" silent-struct which can be queried with select_score
@@ -115,10 +115,10 @@ protected:
 	}
 
 	///@brief recompute all score-values of all decoys and re-order the archive by (new) select_score
-	void rescore();
+	virtual void rescore();
 
 	///@brief add new PoseEvaluation to set of evaluators, specify weight for contribution to select_score()
-	void add_evaluation( evaluation::PoseEvaluatorOP, core::Real weight = 0.0 );
+	void add_evaluation( evaluation::PoseEvaluatorCOP, core::Real weight = 0.0 );
 
 	///@brief remove Evaluator
 	void remove_evaluation( std::string const& column );
@@ -137,18 +137,33 @@ protected:
 
 	core::scoring::ScoreFunction const & scorefxn() const;
 
+	virtual WeightMap const& score_variations() const;
+
+	virtual core::Real score_variation( std::string const& col ) const;
+
+	WeightMap const& weights() const {
+		return select_weights_;
+	}
+
+	EvaluatorMap const& evaluators() const {
+		return evaluators_;
+	}
+
+	void set_weights( WeightMap const& setting );
+	void set_evaluators( EvaluatorMap const&, WeightMap const& );
+
+	///overloaded to save / restore the variance_archive_
+	virtual void save_to_file( std::string suffix = "" );
+
 protected:
 	core::scoring::ScoreFunctionOP scorefxn_non_const();
 
 	///@brief score a pose
 	virtual void score( core::pose::Pose& pose ) const;
 
-	WeightMap const& score_variations() const {
-		return score_variations_;
-	}
-	core::Real score_variation( std::string const& col ) const;
-private:
+	virtual void invalidate_score_variations() {}
 
+private:
 	///@brief call score( pose ) and collect energies into result
 	/// this is low-level function: it expects that result already contains the coordinates of the pose
 	/// for convenience the pointer result is also return value
@@ -157,8 +172,6 @@ private:
 	///@brief re-sort decoys based on select_score
 	void sort();
 
-	///@brief determine variation of scores (those that are non-zeros in select_weights_ )
-	void determine_score_variations();
 
 
 	///@brief scorefxn_ for evaluate( SilentStruct, Pose const& )
@@ -167,10 +180,13 @@ private:
 	///@brief Evaluators and weights for select_score and evaluate
 	WeightMap select_weights_;
 	EvaluatorMap evaluators_;
-	WeightMap score_variations_;
+
+	WeightMap dummy_score_variations_;
 
 	///@brief keep track wether cached scores in _archive_select_score_ are up-to-date
-	bool scores_are_clean_; //false after add_evaluation or change of scorefxn_
+	mutable bool scores_are_clean_; //false after add_evaluation or change of scorefxn_
+
+	mutable bool score_variations_are_clean_;
 
 	///@brief local evaluation or is evaluation outsourced to slave nodes?
 	bool b_evaluate_incoming_decoys_;
@@ -180,6 +196,8 @@ private:
 	static bool options_registered_;
 
 	mutable time_t start_eval_time_;
+
+	VarianceStatisticsArchiveOP variance_archive_;
 
 };
 

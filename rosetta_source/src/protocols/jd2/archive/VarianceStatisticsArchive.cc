@@ -1,0 +1,73 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// This file is part of the Rosetta software suite and is made available under license.
+// The Rosetta software is developed by the contributing members of the Rosetta Commons consortium.
+// (C) 199x-2009 Rosetta Commons participating institutions and developers.
+// For more information, see http://www.rosettacommons.org/.
+
+/// @file IterativeAbrelax
+/// @brief iterative protocol starting with abinitio and getting progressively more concerned with full-atom relaxed structures
+/// @detailed
+/// @author Oliver Lange
+
+// Unit Headers
+#include <protocols/jd2/archive/VarianceStatisticsArchive.hh>
+
+// Package Headers
+#include <core/io/silent/SilentStruct.hh>
+
+// Utility Headers
+#include <basic/Tracer.hh>
+#include <basic/MemTracer.hh>
+#include <numeric/random/random.hh>
+
+
+static basic::Tracer tr("protocols.iterative.VarianceStatistics");
+using basic::mem_tr;
+
+static numeric::random::RandomGenerator RG(410142); // <- Magic number, do not change
+
+using core::Real;
+
+
+namespace protocols {
+namespace jd2 {
+namespace archive {
+
+
+VarianceStatisticsArchive::VarianceStatisticsArchive( std::string name )
+	: insertion_prob_( 0.1 )
+{
+	set_name( name );
+}
+
+
+bool VarianceStatisticsArchive::add_evaluated_structure( core::io::silent::SilentStructOP evaluated_decoy ) {
+	if ( decoys().size() < nstruct() ) {
+		tr.Debug << "added " << evaluated_decoy->decoy_tag() << " to " << name() << std::endl;
+		decoys().insert( decoys().begin(), evaluated_decoy );
+		invalidate_score_variations();
+		return true;
+	}
+
+	if ( RG.uniform() < insertion_prob_ ) { //keep or not ?
+		//replace with random element
+		Size rg_pos( static_cast< int >( RG.uniform() * decoys().size() ) );
+		runtime_assert( rg_pos < decoys().size() && rg_pos >= 0 );
+		SilentStructs::iterator it=decoys().begin();
+		while ( rg_pos-- > 0 ) {
+			++it;
+		}
+		runtime_assert( it != decoys().end() );
+		*it=evaluated_decoy;
+		invalidate_score_variations();
+		return true;
+	}
+
+	return false;
+}
+
+}
+} //abinitio
+} //protocols

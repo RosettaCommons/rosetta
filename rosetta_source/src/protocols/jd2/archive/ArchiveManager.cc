@@ -260,7 +260,7 @@ ArchiveManager::ArchiveManager( core::Size archive_rank, core::Size jd_master_ra
   archive_rank_( archive_rank ),
 	jd_master_rank_( jd_master_rank ),
 	file_buf_rank_( file_buf_rank ),
-	save_archive_time_interval_( 5 )
+	save_archive_time_interval_( 60 )
 {
 	runtime_assert( options_registered_ );
 }
@@ -279,6 +279,7 @@ ArchiveManager::go( ArchiveBaseOP archive )
 	tr.Debug << "starting ArchiveManager ..." << archive_rank_ << " " << jd_master_rank_ << " " << file_buf_rank_ << std::endl;
 	theArchive_ = archive;
 	theArchive_->set_manager( this );
+	theArchive_->initialize();
 	mem_tr << "initialized IterativeAbrelax" << std::endl;
 	try {
 		if ( !restore_archive() ) {
