@@ -51,6 +51,8 @@ sources = {
 		"ProteinBackboneAtomAtomPairFeaturesCreator",
 		"ProteinBackboneTorsionAngleFeatures",
 		"ProteinBackboneTorsionAngleFeaturesCreator",
+		"ProteinBondGeometryFeatures",
+		"ProteinBondGeometryFeaturesCreator",
 		"ProteinResidueConformationFeatures",
 		"ProteinResidueConformationFeaturesCreator",
 		"ProteinRMSDFeatures",

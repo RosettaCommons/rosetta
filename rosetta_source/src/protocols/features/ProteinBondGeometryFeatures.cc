@@ -1,0 +1,621 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   protocols/features/ProteinBondGeometryFeatures.cc
+/// @brief  report Backbone Torsional Angle features
+/// @author Matthew O'Meara
+
+// Unit Headers
+#include <core/scoring/methods/CartesianBondedEnergy.hh>
+#include <protocols/features/ProteinBondGeometryFeatures.hh>
+
+// Project Headers
+#include <core/conformation/Residue.hh>
+#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/vector1.hh>
+#include <basic/database/sql_utils.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <numeric/xyz.functions.hh>
+#include <core/chemical/AtomType.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <basic/basic.hh>
+#include <basic/Tracer.hh>
+#include <core/pose/PDBInfo.hh>
+
+// Platform Headers
+#include <core/pose/Pose.hh>
+
+// External Headers
+#include <cppdb/frontend.h>
+#include <boost/uuid/uuid.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/uuid/uuid_io.hpp>
+
+namespace protocols{
+namespace features{
+
+using std::string;
+using cppdb::statement;
+using core::Size;
+using core::Real;
+using core::conformation::Residue;
+using core::pose::Pose;
+using utility::vector1;
+using utility::sql_database::sessionOP;
+
+static basic::Tracer TR("protocols.features.ProteinBondGeometry");
+
+ProteinBondGeometryFeatures::ProteinBondGeometryFeatures(){
+	// if flag _or_ energy method wants a linear potential, make the potential linear - ptc: just the flag here
+	linear_bonded_potential_ = 
+	basic::options::option[ basic::options::OptionKeys::score::linear_bonded_potential ]();
+		
+	// initialize databases
+	if (basic::options::option[ basic::options::OptionKeys::score::bonded_params ].user()) {
+		utility::vector1<core::Real> params = basic::options::option[ basic::options::OptionKeys::score::bonded_params ]();
+
+		db_angle_ = new core::scoring::methods::BondAngleDatabase( params[2] );		//initialize from score:bonded_params 
+		db_length_ = new core::scoring::methods::BondLengthDatabase( params[1] );
+		db_torsion_ = new core::scoring::methods::TorsionDatabase( params[3], params[4] );
+	}
+	else {
+		db_angle_ = new core::scoring::methods::BondAngleDatabase(150);		//initialize defaults
+		db_length_ = new core::scoring::methods::BondLengthDatabase(300);
+		db_torsion_ = new core::scoring::methods::TorsionDatabase(150,50);
+	}
+}
+
+ProteinBondGeometryFeatures::ProteinBondGeometryFeatures( ProteinBondGeometryFeatures const & ) :
+	FeaturesReporter()
+{
+}
+
+ProteinBondGeometryFeatures::~ProteinBondGeometryFeatures(){}
+
+string
+ProteinBondGeometryFeatures::type_name() const { return "ProteinBondGeometryFeatures"; }
+
+string
+ProteinBondGeometryFeatures::schema() const {
+	return
+		"CREATE TABLE IF NOT EXISTS bond_intrares_angles (\n"
+		"	struct_id BLOB,\n"
+		"	resNum INTEGER,\n"
+		"	cenAtmNum INTEGER,\n"
+		"	outAtm1Num INTEGER,\n"
+		"	outAtm2Num INTEGER,\n"
+		"	cenAtmName TEXT,\n"
+		"	outAtm1Name TEXT,\n"
+		"	outAtm2Name TEXT,\n"	
+		"	ideal REAL,\n"
+		"	observed REAL,\n"
+		"	difference REAL,\n"
+		"	energy REAL,\n"
+		"	FOREIGN KEY (struct_id, resNum)\n"
+		"		REFERENCES residues (struct_id, resNum)\n"
+		"		DEFERRABLE INITIALLY DEFERRED,\n"
+		"	PRIMARY KEY (struct_id, resNum, cenAtmNum, outAtm1Num, outAtm2Num));"
+		"CREATE TABLE IF NOT EXISTS bond_interres_angles (\n"
+		"	struct_id BLOB,\n"
+		"	cenResNum INTEGER,\n"
+		"	connResNum INTEGER,\n"
+		"	cenAtmNum INTEGER,\n"
+		"	outAtmCenNum INTEGER,\n"
+		"	outAtmConnNum INTEGER,\n"
+		"	cenAtmName TEXT,\n"
+		"	outAtmCenName TEXT,\n"
+		"	outAtmConnName TEXT,\n"
+		"	ideal REAL,\n"
+		"	observed REAL,\n"
+		"	difference REAL,\n"
+		"	energy REAL,\n"
+		"	FOREIGN KEY (struct_id, cenResNum)\n"
+		"		REFERENCES residues (struct_id, cenResNum)\n"
+		"		DEFERRABLE INITIALLY DEFERRED,\n"
+		"	PRIMARY KEY (struct_id, cenResNum, connResNum, cenAtmNum, outAtmCenNum, outAtmConnNum));"
+		"CREATE TABLE IF NOT EXISTS bond_intrares_lengths (\n"
+		"	struct_id BLOB,\n"
+		"	resNum INTEGER,\n"
+		"	atm1Num INTEGER,\n"
+		"	atm2Num INTEGER,\n"
+		"	atm1Name TEXT,\n"
+		"	atm2Name TEXT,\n"
+		"	ideal REAL,\n"
+		"	observed REAL,\n"
+		"	difference REAL,\n"
+		"	energy REAL,\n"
+		"	FOREIGN KEY (struct_id, resNum)\n"
+		"		REFERENCES residues (struct_id, resNum)\n"
+		"		DEFERRABLE INITIALLY DEFERRED,\n"
+		"	PRIMARY KEY (struct_id, resNum, atm1Num, atm2Num));"
+		"CREATE TABLE IF NOT EXISTS bond_interres_lengths (\n"
+		"	struct_id BLOB,\n"
+		"	res1Num INTEGER,\n"
+		"	res2Num INTEGER,\n"
+		"	atm1Num INTEGER,\n"
+		"	atm2Num INTEGER,\n"
+		"	atm1Name TEXT,\n"
+		"	atm2Name TEXT,\n"
+		"	ideal REAL,\n"
+		"	observed REAL,\n"
+		"	difference REAL,\n"
+		"	energy REAL,\n"
+		"	FOREIGN KEY (struct_id, res1Num)\n"
+		"		REFERENCES residues (struct_id, res1Num)\n"
+		"		DEFERRABLE INITIALLY DEFERRED,\n"
+		"	PRIMARY KEY (struct_id, res1Num, atm1Num, atm2Num));"
+		"CREATE TABLE IF NOT EXISTS bond_intrares_torsions (\n"
+		"	struct_id BLOB,\n"
+		"	resNum INTEGER,\n"
+		"	atm1Num INTEGER,\n"
+		"	atm2Num INTEGER,\n"
+		"	atm3Num INTEGER,\n"
+		"	atm4Num INTEGER,\n"
+		"	atm1Name TEXT,\n"
+		"	atm2Name TEXT,\n"
+		"	atm3Name TEXT,\n"
+		"	atm4Name TEXT,\n"
+		"	ideal REAL,\n"
+		"	observed REAL,\n"
+		"	difference REAL,\n"
+		"	energy REAL,\n"
+		"	FOREIGN KEY (struct_id, resNum)\n"
+		"		REFERENCES residues (struct_id, resNum)\n"
+		"		DEFERRABLE INITIALLY DEFERRED,\n"
+		"	PRIMARY KEY (struct_id, resNum, atm1Num, atm2Num, atm3Num, atm4Num));";
+}
+
+utility::vector1<std::string>
+ProteinBondGeometryFeatures::features_reporter_dependencies() const {
+	utility::vector1<std::string> dependencies;
+	dependencies.push_back("ResidueFeatures");
+	return dependencies;
+}
+
+Size
+ProteinBondGeometryFeatures::report_features(
+	Pose const & pose,
+	vector1< bool > const & relevant_residues,
+	boost::uuids::uuid const struct_id,
+	sessionOP db_session
+){
+	report_intrares_angles( pose, relevant_residues, struct_id, db_session );
+	report_interres_angles( pose, relevant_residues, struct_id, db_session );
+	report_intrares_lengths( pose, relevant_residues, struct_id, db_session );
+	report_interres_lengths( pose, relevant_residues, struct_id, db_session );
+	report_intrares_torsions( pose, relevant_residues, struct_id, db_session );
+	return 0;
+}
+	
+void
+ProteinBondGeometryFeatures::report_intrares_angles(
+	Pose const & pose,
+	vector1< bool > const & relevant_residues,
+	boost::uuids::uuid const struct_id,
+	sessionOP db_session
+){
+	std::string statement_string ="INSERT INTO bond_intrares_angles VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+
+	Real energy_angle = 0;
+	
+	for (Size i = 1; i <= pose.total_residue(); ++i) {
+		if(!relevant_residues[i]) continue;
+
+		Residue const & rsd = pose.residue(i);
+		if(!rsd.is_protein()) continue;
+
+		//following code ripped off from core/scoring/methods/CartesianBondedEnergy.cc
+
+		// get residue type
+		core::chemical::ResidueType const & rsd_type = rsd.type();
+		
+		// for each angle in the residue
+		for ( Size bondang = 1; bondang <= rsd_type.num_bondangles(); ++bondang ) {
+			// get ResidueType ints
+			Size rt1 = ( rsd_type.bondangle( bondang ) ).key1();
+			Size rt2 = ( rsd_type.bondangle( bondang ) ).key2();
+			Size rt3 = ( rsd_type.bondangle( bondang ) ).key3();
+			
+			// check for vrt
+			//if ( rsd_type.atom_type(rt1).is_virtual()
+			//       || rsd_type.atom_type(rt2).is_virtual()
+			//       || rsd_type.atom_type(rt3).is_virtual() )
+			if ( rsd_type.aa() == core::chemical::aa_vrt)
+				continue;
+			
+			// lookup Ktheta and theta0
+			Real Ktheta, theta0;
+			db_angle_->lookup( pose, rsd, rt1, rt2, rt3, Ktheta, theta0 );
+			if (Ktheta == 0.0) continue;
+			
+			// get angle
+			Real const angle = numeric::angle_radians(
+													  rsd.atom( rt1 ).xyz(),
+													  rsd.atom( rt2 ).xyz(),
+													  rsd.atom( rt3 ).xyz() );
+
+			if (linear_bonded_potential_ && std::fabs(angle - theta0)>1) {
+				energy_angle = 0.5*Ktheta*std::fabs(angle-theta0);
+				//TR << "intrares_angles - linear_bonded energy: " << energy_angle << std::endl;
+			} else {
+				energy_angle = 0.5*Ktheta*(angle-theta0) * (angle-theta0);
+				//TR << "intrares_angles - energy: " << energy_angle << std::endl;
+				/*TR.Debug << pose.pdb_info()->name() << " seqpos: " << rsd.seqpos() << " pdbpos: " << pose.pdb_info()->number(rsd.seqpos()) << " intrares angle: " <<
+ 				rsd_type.name() << " : " <<
+				rsd.atom_name( rt1 ) << " , " << rsd.atom_name( rt2 ) << " , " <<
+				rsd.atom_name( rt3 ) << "   " << angle << "  " << theta0 << "     " <<
+				Ktheta << " " << 0.5*Ktheta*(angle-theta0) * (angle-theta0) << std::endl;*/
+			}
+			
+			const std::string tmp = boost::lexical_cast<std::string>(struct_id);
+
+			//report results here
+			stmt.bind(1,struct_id);
+			stmt.bind(2,i);
+			stmt.bind(3,rt2);
+			stmt.bind(4,rt1);
+			stmt.bind(5,rt3);
+			stmt.bind(6,rsd.atom_type( rt2 ).name());
+			stmt.bind(7,rsd.atom_type( rt1 ).name());
+			stmt.bind(8,rsd.atom_type( rt3 ).name());
+			stmt.bind(9,theta0);
+			stmt.bind(10,angle);
+			stmt.bind(11,angle-theta0);
+			stmt.bind(12,energy_angle);
+			basic::database::safely_write_to_database(stmt);
+		}
+	}
+}
+	
+void
+ProteinBondGeometryFeatures::report_interres_angles(
+	Pose const & pose,
+	vector1< bool > const & relevant_residues,
+	boost::uuids::uuid const struct_id,
+	sessionOP db_session
+){	
+	std::string statement_string ="INSERT INTO bond_interres_angles VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	
+	for (Size i = 1; i <= pose.total_residue(); ++i) {
+		if(!relevant_residues[i]) continue;		
+		Residue const & rsd1 = pose.residue(i);
+		if(!rsd1.is_protein()) continue;
+		
+		for (Size j = i+1; j <= pose.total_residue(); ++j) {
+			if(!relevant_residues[j]) continue;
+			Residue const & rsd2 = pose.residue(j);
+			if(!rsd2.is_protein()) continue;
+			
+			//following code ripped off from core/scoring/methods/CartesianBondedEnergy.cc
+			
+			// bail out if the residues aren't bonded
+			if (!rsd1.is_bonded(rsd2)) continue;
+			
+			//fpd chainbreak variants also mess things up
+			//fpd check for chainbreaks
+			if ( pose.fold_tree().is_cutpoint( std::min( rsd1.seqpos(), rsd2.seqpos() ) ) ) continue;
+			
+			// get residue types
+			core::chemical::ResidueType const & rsd1_type = rsd1.type();
+			core::chemical::ResidueType const & rsd2_type = rsd2.type();
+			
+			utility::vector1< Size > const & r1_resconn_ids( rsd1.connections_to_residue( rsd2 ) );
+			
+			for ( Size ii = 1; ii <= r1_resconn_ids.size(); ++ii ) {
+				
+				Size const resconn_id1( r1_resconn_ids[ii] );
+				Size const resconn_id2( rsd1.residue_connection_conn_id( resconn_id1 ) );
+				
+				Size const resconn_atomno1( rsd1.residue_connection( resconn_id1 ).atomno() );
+				Size const resconn_atomno2( rsd2.residue_connection( resconn_id2 ).atomno() );
+				
+				/// compute the bond-angle energies from pairs of atoms within-1 bond on rsd1 with
+				/// the the connection atom on rsd2.
+				utility::vector1< core::chemical::two_atom_set > const & rsd1_atoms_wi1_bond_of_ii(
+																							 rsd1_type.atoms_within_one_bond_of_a_residue_connection( resconn_id1 ));
+				for ( Size jj = 1; jj <= rsd1_atoms_wi1_bond_of_ii.size(); ++jj ) {
+					assert( rsd1_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno1 );
+					Size const res1_lower_atomno = rsd1_atoms_wi1_bond_of_ii[ jj ].key2();
+					
+					Real const angle = numeric::angle_radians(
+															  rsd1.atom( res1_lower_atomno ).xyz(),
+															  rsd1.atom( resconn_atomno1 ).xyz(),
+															  rsd2.atom( resconn_atomno2 ).xyz() );
+					
+					// lookup Ktheta and theta0
+					Real Ktheta, theta0;
+					db_angle_->lookup( pose, rsd1, res1_lower_atomno, resconn_atomno1, -resconn_id1, Ktheta, theta0 );
+					
+					if (Ktheta == 0.0) continue;
+					
+					// accumulate the energy
+					Real energy_angle = 0;		//ptc - don't accumulate, report each angle on it's own
+					if (linear_bonded_potential_ && std::fabs(angle-theta0)>1) {
+						energy_angle += 0.5*Ktheta*std::fabs(angle-theta0);
+					} else {
+						energy_angle += 0.5*Ktheta*(angle-theta0) * (angle-theta0);
+					}
+					
+					//report results here
+					stmt.bind(1,struct_id);
+					stmt.bind(2,i);
+					stmt.bind(3,j);
+					stmt.bind(4,resconn_atomno1);
+					stmt.bind(5,res1_lower_atomno);
+					stmt.bind(6, resconn_atomno2);
+					stmt.bind(7, rsd1.atom_type( resconn_atomno1 ).name());
+					stmt.bind(8, rsd1.atom_type( res1_lower_atomno ).name());
+					stmt.bind(9, rsd2.atom_type( resconn_atomno2 ).name());
+					stmt.bind(10,theta0);
+					stmt.bind(11,angle);
+					stmt.bind(12,angle-theta0);
+					stmt.bind(13,energy_angle);
+					basic::database::safely_write_to_database(stmt);
+				}
+				
+				/// compute the bond-angle energies from pairs of atoms within-1 bond on rsd2 with
+				/// the the connection atom on rsd1.
+				utility::vector1< core::chemical::two_atom_set > const & rsd2_atoms_wi1_bond_of_ii(
+																							 rsd2_type.atoms_within_one_bond_of_a_residue_connection( resconn_id2 ));
+				for ( Size jj = 1; jj <= rsd2_atoms_wi1_bond_of_ii.size(); ++jj ) {
+					assert( rsd2_atoms_wi1_bond_of_ii[ jj ].key1() == resconn_atomno2 );
+					Size const res2_lower_atomno = rsd2_atoms_wi1_bond_of_ii[ jj ].key2();
+					
+					// lookup Ktheta and theta0
+					Real Ktheta, theta0;
+					db_angle_->lookup( pose, rsd2, res2_lower_atomno, resconn_atomno2, -resconn_id2, Ktheta, theta0 );
+					
+					if (Ktheta == 0.0) continue;
+					Real const angle = numeric::angle_radians(
+															  rsd2.atom( res2_lower_atomno ).xyz(),
+															  rsd2.atom( resconn_atomno2 ).xyz(),
+															  rsd1.atom( resconn_atomno1 ).xyz() );
+					
+					// accumulate the energy
+					Real energy_angle = 0;		//ptc - don't accumulate, report each angle on it's own
+					if (linear_bonded_potential_ && std::fabs(angle-theta0)>1) {
+						energy_angle += 0.5*Ktheta*std::fabs(angle-theta0);
+					} else {
+						energy_angle += 0.5*Ktheta*(angle-theta0) * (angle-theta0);
+					}
+					
+					//report results here
+					stmt.bind(1,struct_id);
+					stmt.bind(2,j);
+					stmt.bind(3,i);
+					stmt.bind(4,resconn_atomno2);
+					stmt.bind(5,res2_lower_atomno);
+					stmt.bind(6, resconn_atomno1);
+					stmt.bind(7, rsd2.atom_type( resconn_atomno2 ).name());
+					stmt.bind(8, rsd2.atom_type( res2_lower_atomno ).name());
+					stmt.bind(9, rsd1.atom_type( resconn_atomno1 ).name());
+					stmt.bind(10,theta0);
+					stmt.bind(11,angle);
+					stmt.bind(12,angle-theta0);
+					stmt.bind(13,energy_angle);
+					basic::database::safely_write_to_database(stmt);
+				}
+			}
+		}
+	}
+}
+
+void
+ProteinBondGeometryFeatures::report_intrares_lengths(
+	Pose const & pose,
+	vector1< bool > const & relevant_residues,
+	boost::uuids::uuid const struct_id,
+	sessionOP db_session
+){
+	std::string statement_string ="INSERT INTO bond_intrares_lengths VALUES (?,?,?,?,?,?,?,?,?,?)";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	
+	for (Size i = 1; i <= pose.total_residue(); ++i) {
+		if(!relevant_residues[i]) continue;
+		
+		Residue const & rsd = pose.residue(i);
+		if(!rsd.is_protein()) continue;
+		
+		//following code ripped off from core/scoring/methods/CartesianBondedEnergy.cc
+		
+		core::chemical::ResidueType const & rsd_type = rsd.type();
+
+		// for each bond in the residue
+		// for each bonded atom
+		for (Size atm_i=1; atm_i<=rsd_type.natoms(); ++atm_i) {
+			core::chemical::AtomIndices atm_nbrs = rsd_type.nbrs( atm_i );
+			for (Size j=1; j<=atm_nbrs.size(); ++j) {
+				Size atm_j = atm_nbrs[j];
+				if ( atm_i<atm_j ) { // only score each bond once -- use restype index to define ordering
+					// check for vrt
+					//if ( rsd_type.atom_type(atm_i).is_virtual() || rsd_type.atom_type(atm_j).is_virtual() )
+					if ( rsd_type.aa() == core::chemical::aa_vrt)
+						continue;
+					
+					// lookup Ktheta and theta0
+					Real Kd, d0;
+					db_length_->lookup( pose, rsd, atm_i, atm_j, Kd, d0 );
+					if (Kd == 0.0) continue;
+					
+					Real const d = ( rsd.atom( atm_i ).xyz()-rsd.atom( atm_j ).xyz() ).length();
+					
+					// accumulate the energy
+					Real energy_length = 0;		//ptc - don't accumulate, report each length on it's own
+					if (linear_bonded_potential_ && std::fabs(d - d0)>1) {
+						energy_length += 0.5*Kd*std::fabs(d-d0);
+					} else {
+						energy_length += 0.5*Kd*(d-d0)*(d-d0);
+					}
+			
+					//report results here
+					stmt.bind(1,struct_id);
+					stmt.bind(2,i);
+					stmt.bind(3,atm_i);
+					stmt.bind(4,atm_j);
+					stmt.bind(5, rsd.atom_type( atm_i ).name());
+					stmt.bind(6, rsd.atom_type( atm_j ).name());
+					stmt.bind(7,d0);
+					stmt.bind(8,d);
+					stmt.bind(9,d-d0);
+					stmt.bind(10,energy_length);
+					basic::database::safely_write_to_database(stmt);
+				}
+			}
+		}
+	}
+}
+	
+void
+ProteinBondGeometryFeatures::report_interres_lengths(
+	Pose const & pose,
+	vector1< bool > const & relevant_residues,
+	boost::uuids::uuid const struct_id,
+	sessionOP db_session
+){
+	std::string statement_string ="INSERT INTO bond_interres_lengths VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+
+		
+	for (Size i = 1; i <= pose.total_residue(); ++i) {
+		if(!relevant_residues[i]) continue;		
+		Residue const & rsd1 = pose.residue(i);
+		if(!rsd1.is_protein()) continue;
+		
+		for (Size j = i+1; j <= pose.total_residue(); ++j) {
+			if(!relevant_residues[j]) continue;
+			Residue const & rsd2 = pose.residue(j);
+			if(!rsd2.is_protein()) continue;
+			
+			//following code ripped off from core/scoring/methods/CartesianBondedEnergy.cc
+			
+			// bail out if the residues aren't bonded
+			if (!rsd1.is_bonded(rsd2)) continue;
+
+			//fpd chainbreak variants also mess things up
+			//fpd check for chainbreaks
+			if ( pose.fold_tree().is_cutpoint( std::min( rsd1.seqpos(), rsd2.seqpos() ) ) ) continue;
+			
+			utility::vector1< Size > const & r1_resconn_ids( rsd1.connections_to_residue( rsd2 ) );
+			
+			for ( Size ii = 1; ii <= r1_resconn_ids.size(); ++ii ) {
+				
+				Size const resconn_id1( r1_resconn_ids[ii] );
+				Size const resconn_id2( rsd1.residue_connection_conn_id( resconn_id1 ) );
+				
+				Size const resconn_atomno1( rsd1.residue_connection( resconn_id1 ).atomno() );
+				Size const resconn_atomno2( rsd2.residue_connection( resconn_id2 ).atomno() );
+	
+		
+				/// finally, compute the bondlength across the interface
+				Real length =
+				( rsd2.atom( resconn_atomno2 ).xyz() - rsd1.atom( resconn_atomno1 ).xyz() ).length();	
+					
+				// lookup Ktheta and theta0
+				Real Kd, d0;
+				db_length_->lookup( pose, rsd1, resconn_atomno1, -resconn_id1, Kd, d0 );
+				
+				// accumulate the energy
+				Real energy_length = 0;			//ptc - dont accumulate energy, report each length on it's own.
+				if (linear_bonded_potential_ && std::fabs(length-d0)>1) {
+					energy_length += 0.5*Kd*std::fabs(length-d0);
+				} else {
+					energy_length += 0.5*Kd*(length-d0)*(length-d0);
+				}
+				
+				//report results here
+				stmt.bind(1,struct_id);
+				stmt.bind(2,i);
+				stmt.bind(3,j);
+				stmt.bind(4,resconn_atomno1);
+				stmt.bind(5,resconn_atomno2);
+				stmt.bind(6, rsd1.atom_type( resconn_atomno1 ).name());
+				stmt.bind(7, rsd2.atom_type( resconn_atomno2 ).name());
+				stmt.bind(7,d0);
+				stmt.bind(8,length);
+				stmt.bind(9,length-d0);
+				stmt.bind(10,energy_length);
+				basic::database::safely_write_to_database(stmt);
+			}
+		}
+	}
+}
+	
+void
+ProteinBondGeometryFeatures::report_intrares_torsions(
+	Pose const & pose,
+	vector1< bool > const & relevant_residues,
+	boost::uuids::uuid const struct_id,
+	sessionOP db_session
+){
+	std::string statement_string ="INSERT INTO bond_intrares_torsions VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	
+	for (Size i = 1; i <= pose.total_residue(); ++i) {
+		if(!relevant_residues[i]) continue;
+		
+		Residue const & rsd = pose.residue(i);
+		if(!rsd.is_protein()) continue;
+		
+		//following code ripped off from core/scoring/methods/CartesianBondedEnergy.cc
+		
+		core::chemical::ResidueType const & rsd_type = rsd.type();
+	
+		// for each torsion _that doesn't correspond to a DOF_ID in the pose_
+		for ( Size dihe = 1; dihe <= rsd_type.ndihe(); ++dihe ){
+			// get ResidueType ints
+			int rt1 = ( rsd_type.dihedral( dihe ) ).key1();
+			int rt2 = ( rsd_type.dihedral( dihe ) ).key2();
+			int rt3 = ( rsd_type.dihedral( dihe ) ).key3();
+			int rt4 = ( rsd_type.dihedral( dihe ) ).key4();
+			
+			// lookup Ktheta and theta0
+			Real Kphi, phi0, phi_step;
+			db_torsion_->lookup( rsd.type(), rt1, rt2, rt3, rt4, Kphi, phi0, phi_step );
+			if (Kphi == 0.0) continue;
+			
+			// get angle
+			Real angle = numeric::dihedral_radians
+			( rsd.atom( rt1 ).xyz(), rsd.atom( rt2 ).xyz(),
+			 rsd.atom( rt3 ).xyz(), rsd.atom( rt4 ).xyz() );
+			
+			// accumulate the energy
+			Real energy_torsion = 0;			//ptc - dont accumulate energy, report each torsion on it's own
+			Real del_phi = basic::subtract_radian_angles(angle, phi0);
+			if (phi_step>0) del_phi = basic::periodic_range( del_phi, phi_step );
+			
+			if (linear_bonded_potential_ && std::fabs(del_phi)>1) 
+				energy_torsion += 0.5*Kphi*std::fabs(del_phi);
+			else 
+				energy_torsion += 0.5*Kphi*del_phi*del_phi;
+			
+			//report results here
+			stmt.bind(1,struct_id);
+			stmt.bind(2,i);
+			stmt.bind(3,rt1);
+			stmt.bind(4,rt2);
+			stmt.bind(5,rt3);
+			stmt.bind(6,rt4);
+			stmt.bind(7,rsd.atom_type( rt1 ).name() );
+			stmt.bind(8,rsd.atom_type( rt2 ).name() );
+			stmt.bind(9,rsd.atom_type( rt3 ).name() );
+			stmt.bind(10,rsd.atom_type( rt4 ).name() );
+			stmt.bind(11,phi0);
+			stmt.bind(12,angle);
+			stmt.bind(13,del_phi);
+			stmt.bind(14,energy_torsion);
+			basic::database::safely_write_to_database(stmt);
+		}
+	}
+}
+	
+} // namesapce
+} // namespace
