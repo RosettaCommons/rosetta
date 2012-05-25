@@ -6,7 +6,7 @@
 -in:file:spanfile input/BRD4.span
 -membrane:Membed_init
 -score:weights input/membrane_highres.wts
--nstruct 1
+-out:nstruct 1
 -in:file:fullatom
 -out:file:silent_struct_type binary
 -out:file:silent BRD4_frlx.out

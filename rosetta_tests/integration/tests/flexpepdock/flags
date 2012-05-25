@@ -4,7 +4,7 @@
 #-torsionsMCM # replaced by pep_refine
 -pep_refine
 -rep_ramp_cycles 2 # remove from production runs
--nstruct 1 # use 100-1000 in production runs
+-out:nstruct 1 # use 100-1000 in production runs
 -ex1
 -ex2aro
 -mute core.io.database

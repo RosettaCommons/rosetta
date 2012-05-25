@@ -1,6 +1,6 @@
 -s 1NX1_clean_repack_min_all.pdb
 -resfile resfile_pos_610_HLU
--nstruct 1
+-out:nstruct 1
 -inner_num 1
 -pert_num 1
 -ia_ener 100

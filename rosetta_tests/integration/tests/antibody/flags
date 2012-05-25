@@ -2,7 +2,7 @@
 -detect_disulf true
 -input_fv FR02
 -out:level 550
--nstruct 1
+-out:nstruct 1
 -graft_l1
 -graft_l2
 -graft_l3

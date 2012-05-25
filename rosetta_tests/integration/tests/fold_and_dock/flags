@@ -22,7 +22,7 @@
 -evaluation:rmsd_target input/2akf.pdb
 -evaluation:rmsd_column _
 -evaluation:symmetric_rmsd
--nstruct 1
+-out:nstruct 1
 -out:file:silent_struct_type binary
 -relax:quick
 -relax:jump_move

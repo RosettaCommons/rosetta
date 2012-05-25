@@ -3,5 +3,5 @@
 -resfile input/oop_dimer.res 
 -in:file:fullatom 
 -score:weights mm_std 
--nstruct 1 
+-out:nstruct 1 
 -oop_plus_positions 1 3 

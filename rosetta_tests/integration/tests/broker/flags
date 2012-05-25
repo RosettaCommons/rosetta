@@ -19,6 +19,6 @@
 -out:file:silent result
 -run:intermediate_structures
 -abinitio:stage1_patch input/xyz_patch
--nstruct 1
+-out:nstruct 1
 -out:level 300
 -out:file:scorefile score.sc

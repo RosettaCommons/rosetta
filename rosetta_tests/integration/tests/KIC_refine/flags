@@ -10,7 +10,7 @@
 -out:path ./
 -ex1
 -ex2
--nstruct 1
+-out:nstruct 1
 -mute core.util.prof ## don't show timing info
 -mute core.io.database ## don't show database info
 -run:test_cycles ## to make integration test fast

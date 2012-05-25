@@ -1,5 +1,5 @@
 -s chunk001_uucg_RNA.pdb
--nstruct 3
+-out:nstruct 3
 -ex1:level 4
 -dump
 -score:weights rna_hires.wts

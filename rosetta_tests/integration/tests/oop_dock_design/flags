@@ -1,6 +1,6 @@
 -include_patches patches/oop_pre.txt patches/oop_post.txt
 -s input/mdm2_oop.pdb
--nstruct 1
+-out:nstruct 1
 -resfile input/oop_dimer.res
 -constraints::cst_fa_file input/constraint_file
 -constraints::cst_fa_weight 1 

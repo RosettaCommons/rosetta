@@ -17,6 +17,6 @@
 -edensity::sliding_window 5
 -cm::aln_format grishin
 -MR::max_gaplength_to_model 4
--nstruct 1
+-out:nstruct 1
 -ignore_unrecognized_res
 -overwrite

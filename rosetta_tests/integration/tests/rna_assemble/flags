@@ -2,7 +2,7 @@
 -fasta add.fasta 
 -in:file:silent_struct_type binary_rna  
 -cycles 2000 
--nstruct 1
+-out:nstruct 1
 -out:file:silent add_assemble.out 
 -params_file add_assemble.params 
 -cst_file add_mutate_map_threetertiarycontacts_assemble.cst 

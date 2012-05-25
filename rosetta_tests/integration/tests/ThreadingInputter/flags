@@ -53,5 +53,5 @@
 -skip_convergence_check
 -overlap_chainbreak
 
--nstruct 1
+-out:nstruct 1
 -run:test_cycles
