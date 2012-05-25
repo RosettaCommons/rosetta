@@ -215,6 +215,9 @@ enum ScoreType {
 	// sucker atom energy
 	suck,
 
+	// gaussian overlap
+	gauss,
+
 	//RNA stuff
 	//Low resolution
 	rna_rg,           // Radius of gyration for RNA
