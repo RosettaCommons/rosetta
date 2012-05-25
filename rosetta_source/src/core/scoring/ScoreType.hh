@@ -123,7 +123,7 @@ enum ScoreType {
 	hybrid_vdw,     // hybrid centroid+fa
 
 	// gaussian overlap
-        gauss,
+	// gauss,
 
 
 	rna_vdw,          // low res clash check for RNA

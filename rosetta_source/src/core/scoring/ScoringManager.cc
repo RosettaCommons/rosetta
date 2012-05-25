@@ -1119,6 +1119,8 @@ ScoringManager::energy_method(
 		return new constraints::ConstraintsEnergy;
 	case suck:
 		return new SuckerEnergy;
+//	case gauss:
+//		return new GaussianOverlapEnergy;
 	case pack_stat:
 		return new PackStatEnergy;
 	case surface:
