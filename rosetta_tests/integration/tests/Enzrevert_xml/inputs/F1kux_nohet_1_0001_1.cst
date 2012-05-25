@@ -1,0 +1,77 @@
+
+    # P - GLY 105
+
+    CST::BEGIN
+    NATIVE
+    TEMPLATE::   ATOM_MAP: 1 atom_name:  O6 P1 O8
+    TEMPLATE::   ATOM_MAP: 1 residue3:  X00
+    
+    TEMPLATE::   ATOM_MAP: 2 atom_name: N CA C ,
+    TEMPLATE::   ATOM_MAP: 2 residue1:  G
+    TEMPLATE::   ATOM_MAP: 2 is_backbone
+
+    
+    CONSTRAINT:: distanceAB:  2.76  0.05  100.  0  1
+    CONSTRAINT::    angle_A:  134.49    5.0  10.0  360.  1
+    CONSTRAINT::    angle_B:  99.25    5.0  10.0  360.  1
+    
+    CONSTRAINT::  torsion_A: -123.97     5.0  10.0  360.  1
+    CONSTRAINT:: torsion_AB: 18.83    5.0  10.00  360.  1
+    CONSTRAINT::  torsion_B:  -92.95    5.0  10.00  360.  1
+
+    
+    CST::END
+    # P - SER 108
+
+    CST::BEGIN
+    NATIVE
+    TEMPLATE::   ATOM_MAP: 1 atom_name:  O5 P1 O8
+    TEMPLATE::   ATOM_MAP: 1 residue3:  X00
+    
+    TEMPLATE::   ATOM_MAP: 2 atom_type: OH ,
+    TEMPLATE::   ATOM_MAP: 2 residue1:  S
+    
+    CONSTRAINT:: distanceAB:  2.76  0.05  100.  0  1
+    CONSTRAINT::    angle_A:  138.58    5.0  10.0  360.  1
+    CONSTRAINT::    angle_B:  109.27    5.0  10.0  360.  1
+    
+    CONSTRAINT::  torsion_A: -8.11     5.0  10.0  360.  1
+    CONSTRAINT:: torsion_AB: 174.14    5.0  10.00  360.  1
+    CONSTRAINT::  torsion_B:  71.67    5.0  10.00  360.  1
+
+    
+    CST::END# cst constraint descriptor for esterase active site featuring a 
+#a cys/his catalytic diad and one backbone oxyanion hols,
+# F.Richter, Baker lab, UW,   floric@u.washington.edu
+# L. Nivon nivon@u.washington.edu
+#
+#    O4
+#    ||
+#  R-C17-O7-R'
+#
+
+
+
+#block 1 for cysteine interacting with substrate
+
+CST::BEGIN
+  TEMPLATE::   ATOM_MAP: 1 atom_name: C17 O4 O7
+  TEMPLATE::   ATOM_MAP: 1 residue3: X00
+
+  TEMPLATE::   ATOM_MAP: 2 atom_type: S   ,
+  TEMPLATE::   ATOM_MAP: 2 residue3: CYS
+ 
+  CONSTRAINT:: distanceAB:    2.00   0.30 180.00  1       2
+  CONSTRAINT::    angle_A:  105.49   4.00 100.00  360.00  1
+  CONSTRAINT::    angle_B:  119.12   8.00  50.00  360.00  2
+  CONSTRAINT::  torsion_A:  107.84  10.00  50.00  360.00  2
+  CONSTRAINT::  torsion_B:  100.71  15.00   0.00  180.00  2
+  CONSTRAINT:: torsion_AB:   -1.67  75.00   5.00  180.00  5
+
+  ALGORITHM_INFO:: match
+    IGNORE_UPSTREAM_PROTON_CHI
+    CHI_STRATEGY:: CHI 1 EX_FOUR_HALF_STEP_STDDEVS	
+  ALGORITHM_INFO::END
+ 
+CST::END
+
