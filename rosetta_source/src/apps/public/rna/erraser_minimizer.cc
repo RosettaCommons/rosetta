@@ -814,7 +814,7 @@ pdb_minimizer() {
 	scorefxn -> show ( std::cout, pose );
 	Real const score = ( (*scorefxn) (pose) );
 	Real const edens_score = ( (*edens_scorefxn) (pose) );
-	if (score > score_before || edens_score > edens_score_before * 0.9) {
+	if (score > score_before + 5 || edens_score > edens_score_before * 0.9) {
 		std::cout << "current_score = " << score << ", start_score = " << score_before << std::endl;
 		std::cout << "current_edens_score = " << edens_score << ", start_edens_score = " << edens_score_before << std::endl;
 		std::cout << "The minimization went wild!!! Try alternative minimization using dfpmin with use_nb_list=false .." << std::endl;
@@ -827,7 +827,7 @@ pdb_minimizer() {
 		scorefxn -> show ( std::cout, pose );
 		Real const score = ( (*scorefxn) (pose) );
 		Real const edens_score = ( (*edens_scorefxn) (pose) );
-		if (score > score_before || edens_score > edens_score_before * 0.9) {
+		if (score > score_before + 5 || edens_score > edens_score_before * 0.9) {
 			std::cout << "current_score = " << score << ", start_score = " << score_before << std::endl;
 			std::cout << "current_edens_score = " << edens_score << ", start_edens_score = " << edens_score_before << std::endl;
 			utility_exit_with_message("The minimization went wild!!!");
