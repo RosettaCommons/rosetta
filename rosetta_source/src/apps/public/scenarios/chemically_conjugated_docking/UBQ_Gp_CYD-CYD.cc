@@ -12,6 +12,7 @@
 /// @author Steven Lewis
 
 // Unit Headers
+#include <apps/public/scenarios/chemically_conjugated_docking/Gp_quantification_metrics.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -107,6 +108,7 @@ basic::options::IntegerOptionKey const GTPase_residue("GTPase_residue");
 basic::options::RealOptionKey const SASAfilter("SASAfilter");
 basic::options::RealOptionKey const scorefilter("scorefilter");
 basic::options::IntegerOptionKey const n_tail_res("n_tail_res");
+basic::options::BooleanOptionKey const publication("publication");
 
 //tracers
 using basic::Error;
@@ -549,7 +551,6 @@ public:
 			TR << "interface SASA filter failed; SASA " << mv_delta_sasa.value() << std::endl;
 			return;
 		}
-
 		//passed filters; run IAM
 		IAM_->apply(copy);
 
@@ -564,6 +565,9 @@ public:
 		//job_me->add_string_real_pair("disulf_dist", pose.xyz(atomIDs[4]).distance(pose.xyz(atomIDs[5])));
 
 		set_last_move_status(protocols::moves::MS_SUCCESS);
+		if(basic::options::option[publication].value()){
+			apps::public1::scenarios::chemically_conjugated_docking::create_extra_output(pose, TR, true, GTPase_cyd_);
+		}
 		return;
 	}
 
@@ -622,6 +626,7 @@ int main( int argc, char* argv[] )
 	option.add( SASAfilter, "filter out interface dSASA less than this").def(10);
 	option.add( scorefilter, "filter out total score greater than this").def(1000);
 	option.add( n_tail_res, "Number of c-terminal \"tail\" residues to make flexible (terminus inclusive)").def(3);
+	option.add( publication, "output statistics used in publication.  TURN OFF if not running publication demo.").def(false);
 
 	//initialize options
 	devel::init(argc, argv);

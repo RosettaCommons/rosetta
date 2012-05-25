@@ -12,6 +12,7 @@
 /// @author Steven Lewis
 
 // Unit Headers
+#include <apps/public/scenarios/chemically_conjugated_docking/Gp_quantification_metrics.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -106,6 +107,7 @@ basic::options::FileOptionKey const GTPasepdb("GTPasepdb");
 basic::options::IntegerOptionKey const GTPase_residue("GTPase_residue");
 basic::options::RealOptionKey const SASAfilter("SASAfilter");
 basic::options::RealOptionKey const scorefilter("scorefilter");
+basic::options::BooleanOptionKey const publication("publication");
 
 //tracers
 using basic::Error;
@@ -548,6 +550,9 @@ public:
 		job_me->add_string_real_pair("glycine_phi_C-CA-N-C", degrees(pose.atom_tree().torsion_angle(atomIDs[5], atomIDs[6], atomIDs[7], atomIDs[8])));
 
 		set_last_move_status(protocols::moves::MS_SUCCESS);
+		if(basic::options::option[publication].value()){
+			apps::public1::scenarios::chemically_conjugated_docking::create_extra_output(pose, TR, true, GTPase_lys_);
+		}
 		return;
 	}
 
@@ -605,6 +610,7 @@ int main( int argc, char* argv[] )
  	option.add( GTPase_residue, "GTPase lysine (PDB numbering)").def(85);
 	option.add( SASAfilter, "filter out interface dSASA less than this").def(10);
 	option.add( scorefilter, "filter out total score greater than this").def(1000);
+	option.add( publication, "output statistics used in publication.  TURN OFF if not running publication demo.").def(false);
 
 	//initialize options
 	devel::init(argc, argv);
