@@ -402,7 +402,8 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 
 		core::Size head = -1, tail = -1, headNew = -1, tailNew = -1; //safety, init to negative values
 
-		if (option[ OptionKeys::remodel::repeat_structure].user() && input_pose.total_residue() == seg_size * rep_number){ //repeat and the blueprint do not match input pdb
+		//use temp_For_copy to identify if it's de novo build; not empty means it's a loop case.
+		if ( option[ OptionKeys::remodel::repeat_structure].user() && !temp_for_copy.empty()) { 
 			//duplicate length of dssp and aastring
 			DSSP += DSSP;
 			aa += aa;
