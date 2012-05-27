@@ -22,7 +22,7 @@
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/SequenceProfile.hh>
-
+#include <core/conformation/Conformation.hh>
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
 
 #include <protocols/moves/DataMap.hh>
@@ -73,7 +73,8 @@ FavorSequenceProfile::FavorSequenceProfile( ) :
 	weight_( 1.0 ),
 	use_current_(false),
 	matrix_("BLOSUM62"),
-	scaling_("prob")
+	scaling_("prob"),
+	chain_(0)
 {}
 
 void
@@ -132,8 +133,16 @@ FavorSequenceProfile::apply( core::pose::Pose & pose )
 	if( weight_ != 1.0 ) {
 		profile->rescale(weight_);
 	}
+	//using varibles for start/stop in case a sequence for only one chain was specified
+	core::Size start_seq = 1;
+	core::Size stop_seq = pose.total_residue();
 
-	for( core::Size seqpos( 1 ), end( pose.total_residue() ); seqpos <= end; ++seqpos ) {
+	if( chain_ > 0 ){
+		start_seq = pose.conformation().chain_begin( chain_ );
+    stop_seq  =   pose.conformation().chain_end( chain_ );		
+	}
+
+	for( core::Size seqpos( start_seq ), end( stop_seq ); seqpos <= end; ++seqpos ) {
 		pose.add_constraint( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile ) );
 	}
 }
@@ -175,6 +184,8 @@ FavorSequenceProfile::parse_my_tag( utility::tag::TagPtr const tag, protocols::m
 	if( tag->hasOption("matrix") && tag->hasOption("pssm")  ) {
 		TR.Warning << "WARNING In option matrix not used with pssm specification." << std::endl;
 	}
+	if( tag->hasOption("chain"))
+		chain_ = tag->getOption<core::Size>("chain", 0 );
 
 	set_scaling( tag->getOption< std::string >( "scaling", "prob" ) );
 

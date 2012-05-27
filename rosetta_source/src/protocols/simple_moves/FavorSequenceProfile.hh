@@ -55,6 +55,7 @@ private:
 	bool use_current_;
 	std::string matrix_;
 	std::string scaling_;
+	core::Size chain_;
 	core::sequence::SequenceProfileOP ref_profile_;
 };
 
