@@ -153,6 +153,9 @@ void AntibodyModelerProtocol::set_default()
     
     sc_min_ = false;
     rt_min_ = false;
+    
+    h3_perturb_type_ = "legacy_ccd"; // legacy_ccd, kic, ccd
+    h3_refine_type_  = "legacy_refine"; // legacy_refine, kic, ccd
 }
 
     
@@ -215,7 +218,12 @@ void AntibodyModelerProtocol::init_from_options()
     //if ( option[ OptionKeys::antibody::rt_min_ ].user() ) {
 	//	set_rt_min( option[ OptionKeys::antibody::rt_min_ ]() );
 	//}
-
+    //if ( option[ OptionKeys::antibody::h3_perturb_type ].user() ) {
+	//	set_perturb_type( option[ OptionKeys::antibody::h3_perturb_type ]() );
+	//}
+    //if ( option[ OptionKeys::antibody::h3_refine_type ].user() ) {
+	//	set_refine_type( option[ OptionKeys::antibody::h3_refine_type ]() );
+	//}
     
 	//set native pose if asked for
 	if ( option[ OptionKeys::in::file::native ].user() ) {
@@ -367,11 +375,10 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
     // JQX notes: pay attention to the way it treats the stems when extending the loop
     if(use_pymol_diy_) pymol_->apply(pose);
     if(model_h3_){ 
-        ModelCDRH3OP model_cdrh3  = new ModelCDRH3( ab_info_, loop_scorefxn_centroid_, loop_scorefxn_highres_);
+        ModelCDRH3OP model_cdrh3  = new ModelCDRH3( ab_info_, loop_scorefxn_centroid_);
+            model_cdrh3->set_perturb_type(h3_perturb_type_); //legacy_ccd, ccd, kic
             if(cter_insert_ ==false) { model_cdrh3->turn_off_cter_insert(); }
             if(H3_filter_   ==false) { model_cdrh3->turn_off_H3_filter();   }
-            if(sc_min_)              { model_cdrh3->set_sc_min(true); }
-            if(rt_min_)              { model_cdrh3->set_rt_min(true); }
             if(use_pymol_diy_) model_cdrh3->turn_on_and_pass_the_pymol(pymol_);
         model_cdrh3->apply( pose );
         //pose.dump_pdb("1st_finish_model_h3.pdb");

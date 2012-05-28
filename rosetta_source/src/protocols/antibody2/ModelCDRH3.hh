@@ -33,7 +33,7 @@
 #include <protocols/antibody2/H3CterInsert.fwd.hh>
 #include <protocols/moves/PyMolMover.fwd.hh>
 #include <basic/Tracer.hh>
-
+#include <protocols/loops/loop_mover/IndependentLoopMover.fwd.hh>
 
 
 
@@ -56,8 +56,7 @@ public:
     
 	/// @brief constructor with arguments
 	ModelCDRH3(  AntibodyInfoOP antibody_info ,                         
-                core::scoring::ScoreFunctionCOP lowres_scorefxn,
-                core::scoring::ScoreFunctionCOP highres_scorefxn);
+                core::scoring::ScoreFunctionCOP lowres_scorefxn);
 
 	/// @brief default destructor
 	~ModelCDRH3();
@@ -80,9 +79,6 @@ public:
 	/// @brief set scorefunction for low resolution of CDR H3 modeling
 	void set_lowres_score_func(core::scoring::ScoreFunctionCOP lowres_scorefxn );
 
-	/// @brief set scorefunction for high resolution of CDR H3 modeling
-	void set_highres_score_func(core::scoring::ScoreFunctionCOP highres_scorefxn);
-
 	/// @brief set task factory 
     void set_task_factory(pack::task::TaskFactoryCOP tf);
     
@@ -94,12 +90,9 @@ public:
     
     void turn_on_and_pass_the_pymol(moves::PyMolMoverOP pymol);
     
-    void set_sc_min(bool sc_min){
-        sc_min_ = sc_min;
-    }
-    
-    void set_rt_min(bool rt_min){
-        rt_min_ = rt_min;
+
+    void set_perturb_type(std::string setting){
+        remodel_ = setting;
     }
     
 private:
@@ -109,14 +102,8 @@ private:
 
 	// constraints
 	Real cen_cst_;
-	Real high_cst_;
     pose::Pose hfr_pose_;
     
-    /// @brief size of loop above which 9mer frags are used
-	Size cutoff_9_; // default 16
-    
-	/// @brief size of loop above which 3mer frags are used
-	Size cutoff_3_; // default 6
     
     /// @brief Number of ADDITIONAL residues modeled from H3_CTERM
 	///        These residues range from H:n-2,n-1,n,n+1 of H3
@@ -129,14 +116,9 @@ private:
 
 	// score functions
     core::scoring::ScoreFunctionOP lowres_scorefxn_;
-    core::scoring::ScoreFunctionOP highres_scorefxn_;
 
 	/// @brief benchmark flag
 	bool benchmark_;
-    
-	/// @brief flag indicating that current loop being modeled is CDR H3
-	bool current_loop_is_H3_;
-
     
 	/// @brief loop_building in docking
 	bool loops_flag_;
@@ -158,10 +140,10 @@ private:
 
     H3CterInsertOP h3_cter_insert_mover_;
     H3PerturbCCDOP h3_perturb_ccd_build_;
-    //LoopMoverOP h3_perturb_ccd_build_;
+    loops::loop_mover::IndependentLoopMoverOP remodel_mover_;
+
     
-    bool sc_min_;
-    bool rt_min_;
+    std::string remodel_;
     
 }; // class ModelCDRH3
 

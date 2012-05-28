@@ -70,13 +70,18 @@ public:
 	void set_SnugFit    ( bool snugfit    ) {snugfit_     = snugfit;  }
     void set_H3Filter   ( bool H3_filter  ) {H3_filter_   = H3_filter;}
     void set_CterInsert ( bool cter_insert) {cter_insert_ = cter_insert;}
+    void set_camelid    ( bool camelid    ) {camelid_ = camelid; }
+    void set_sc_min     ( bool scmin      ) {sc_min_ = scmin ;}
+    void set_rt_min     ( bool rtmin      ) {rt_min_ = rtmin ;}
+    void set_perturb_type( std::string perturb_type) {h3_perturb_type_=perturb_type;}
+    void set_refine_type ( std::string refine_type)  {h3_refine_type_=refine_type;}
     void set_cst_weight ( core::Real const cst_weight){cst_weight_=cst_weight;}
-    void set_camelid( bool camelid )  { camelid_ = camelid; }
+
+    
 	void set_camelid_constraints(bool camelid_constraints ) { 
         camelid_constraints_ = camelid_constraints; 
     }
-    void set_sc_min (bool scmin) {sc_min_ = scmin ;}
-    void set_rt_min (bool rtmin) {rt_min_ = rtmin ;}
+
 
 	void display_constraint_residues( pose::Pose & pose );
         
@@ -87,7 +92,7 @@ public:
 
 private:
     bool model_h3_;
-	 bool snugfit_;
+    bool snugfit_;
     bool refine_h3_;
     bool H3_filter_;
     bool cter_insert_;
@@ -95,7 +100,9 @@ private:
     bool sc_min_;
     bool rt_min_;
     bool camelid_;
-	 bool camelid_constraints_;
+    bool camelid_constraints_;
+    std::string h3_perturb_type_;
+    std::string h3_refine_type_;
     
     /// @brief refine H3 only
     core::Real cen_cst_, high_cst_;
