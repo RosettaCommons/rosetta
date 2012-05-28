@@ -120,7 +120,7 @@ BetaTurnDetectionFeatures::schema() const {
 	{
 		return
 			"CREATE TABLE IF NOT EXISTS beta_turns (\n"
-			"	struct_id BINARY(36),\n"
+			"	struct_id BINARY(16),\n"
 			"	residue_begin INTEGER,\n"
             "   turn_type VARCHAR(255),\n"
 			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"

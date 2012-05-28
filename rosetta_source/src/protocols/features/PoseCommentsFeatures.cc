@@ -111,7 +111,7 @@ PoseCommentsFeatures::write_schema_to_db(utility::sql_database::sessionOP db_ses
 //	{
 //		return
 //			"CREATE TABLE IF NOT EXISTS pose_comments (\n"
-//			"	struct_id BINARY(36),\n"
+//			"	struct_id BINARY(16),\n"
 //			"	comment_key VARCHAR(255),\n"
 //			"	value TEXT,\n"
 //			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"

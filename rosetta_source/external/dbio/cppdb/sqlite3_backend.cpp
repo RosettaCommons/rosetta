@@ -97,19 +97,12 @@ namespace cppdb {
 
 			virtual bool fetch(int col,boost::uuids::uuid &v) 
 			{
-				std::stringstream ss;
-				bool result = fetch(col,ss);
-				std::string buffer = ss.str();
-				std::string hex = "0123456789ABCDEF"; 
-				std::string uuid_string = std::string(32, '0'); 
-				for(int pos = 0; pos < 16; pos++){ 
-					uuid_string[pos*2] = hex[(buffer[pos] >> 4) & 0xF]; 
-					uuid_string[(pos*2) + 1] = hex[(buffer[pos]) & 0x0F]; 
-				} 
-
-				boost::uuids::string_generator gen;
-				v = gen(uuid_string);
-				return result;
+				if(do_is_null(col))
+					return false;
+				char const *txt = (char const *)sqlite3_column_text(st_,col);
+				int size = sqlite3_column_bytes(st_,col);
+				memcpy(&v,txt,16);
+				return true;
 			}
 	
 			virtual bool fetch(int col,short &v) 

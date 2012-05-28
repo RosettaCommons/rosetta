@@ -112,7 +112,7 @@ ResidueFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session)
 //	{
 //		return
 //			"CREATE TABLE IF NOT EXISTS residues (\n"
-//			"	struct_id BINARY(36),\n"
+//			"	struct_id BINARY(16),\n"
 //			"	resNum INTEGER,\n"
 //			"	name3 TEXT,\n"
 //			"	res_type TEXT,\n"

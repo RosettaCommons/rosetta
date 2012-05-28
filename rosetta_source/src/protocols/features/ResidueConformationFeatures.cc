@@ -181,7 +181,7 @@ ResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP
 //	{
 //		return
 //			"CREATE TABLE IF NOT EXISTS nonprotein_residue_conformation (\n"
-//			"	struct_id BINARY(36),\n"
+//			"	struct_id BINARY(16),\n"
 //			"	seqpos INTEGER,\n"
 //			"	phi DOUBLE,\n"
 //			"	psi DOUBLE,\n"
@@ -190,7 +190,7 @@ ResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP
 //			"	PRIMARY KEY (struct_id, seqpos));\n"
 //			"\n"
 //			"CREATE TABLE IF NOT EXISTS nonprotein_residue_angles (\n"
-//			"	struct_id BINARY(36),\n"
+//			"	struct_id BINARY(16),\n"
 //			"	seqpos INTEGER,\n"
 //			"	chinum INTEGER,\n"
 //			"	chiangle DOUBLE,\n"
@@ -198,7 +198,7 @@ ResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP
 //			"	PRIMARY KEY (struct_id, seqpos, chinum));\n"
 //			"\n"
 //			"CREATE TABLE IF NOT EXISTS residue_atom_coords (\n"
-//			"	struct_id BINARY(36),\n"
+//			"	struct_id BINARY(16),\n"
 //			"	seqpos INTEGER,\n"
 //			"	atomno INTEGER,\n"
 //			"	x DOUBLE,\n"

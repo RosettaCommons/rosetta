@@ -121,19 +121,12 @@ namespace unprep {
 			return true;
 		}
 		virtual bool fetch(int col,boost::uuids::uuid &v) {
-			std::stringstream ss;
-			bool result = fetch(col,ss);
-			std::string buffer = ss.str();
-			std::string hex = "0123456789ABCDEF"; 
-			std::string uuid_string = std::string(32, '0'); 
-			for(int pos = 0; pos < 16; pos++){ 
-				uuid_string[pos*2] = hex[(buffer[pos] >> 4) & 0xF]; 
-				uuid_string[(pos*2) + 1] = hex[(buffer[pos]) & 0x0F]; 
-			} 
-
-			boost::uuids::string_generator gen;
-			v = gen(uuid_string);
-			return result;
+			size_t len;
+			char const *s=at(col,len);
+			if(!s)
+				return false;
+			memcpy(&v,s,len);
+			return true;
 		}
 		virtual bool fetch(int col,short &v) 
 		{
@@ -581,19 +574,11 @@ namespace prep {
 		}
 		virtual bool fetch(int col,boost::uuids::uuid &v) 
 		{
-			std::stringstream ss;
-			bool result = fetch(col,ss);
-			std::string buffer = ss.str();
-			std::string hex = "0123456789ABCDEF"; 
-			std::string uuid_string = std::string(32, '0'); 
-			for(int pos = 0; pos < 16; pos++){ 
-				uuid_string[pos*2] = hex[(buffer[pos] >> 4) & 0xF]; 
-				uuid_string[(pos*2) + 1] = hex[(buffer[pos]) & 0x0F]; 
-			}
-
-			boost::uuids::string_generator gen;
-			v = gen(uuid_string);
-			return result;
+			bind_data &d=at(col);
+			if(d.is_null)
+				return false;
+			memcpy(&v,d.ptr,d.length);
+			return true;
 		}
 		virtual bool fetch(int col,short &v) 
 		{

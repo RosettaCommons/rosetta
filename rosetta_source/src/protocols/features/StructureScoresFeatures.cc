@@ -153,7 +153,7 @@ StructureScoresFeatures::write_schema_to_db(utility::sql_database::sessionOP db_
 //	{
 //		return
 //			"CREATE TABLE IF NOT EXISTS structure_scores (\n"
-//			"	struct_id BINARY(36) REFERENCES structures (struct_id),\n"
+//			"	struct_id BINARY(16) REFERENCES structures (struct_id),\n"
 //			"	score_type_id INTEGER REFERENCES score_types (score_type_id),\n"
 //			"	score_value INTEGER,\n"
 //			"	PRIMARY KEY (struct_id, score_type_id));\n";

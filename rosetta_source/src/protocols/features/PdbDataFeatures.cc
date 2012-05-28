@@ -173,7 +173,7 @@ PdbDataFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session)
 //	{
 //		return
 //			"CREATE TABLE IF NOT EXISTS residue_pdb_identification (\n"
-//			"	struct_id BINARY(36),\n"
+//			"	struct_id BINARY(16),\n"
 //			"	residue_number INTEGER,\n"
 //			"	chain_id TEXT,\n"
 //			"	insertion_code TEXT,\n"
@@ -182,7 +182,7 @@ PdbDataFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session)
 //			"	PRIMARY KEY (struct_id, residue_number));\n"
 //			"\n"
 //			"CREATE TABLE IF NOT EXISTS residue_pdb_confidence (\n"
-//			"	struct_id BINARY(36),\n"
+//			"	struct_id BINARY(16),\n"
 //			"	residue_number INTEGER,\n"
 //			"	max_temperature REAL,\n"
 //			"	max_bb_temperature REAL,\n"
