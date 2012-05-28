@@ -43,17 +43,33 @@ dens <- ddply(f, .(sample_source), function(sub_f) {
 	densdf
 })
 
-plot_id <- "ramachandran_zoom_beta"
+if (nrow(sample_sources) > 24) {
+	stop("Unable to label facet panel because there arn't enough letters in the alphebet!")
+}
 
+facet_labels <- data.frame(
+	sample_source = sample_sources$sample_source,
+	label=toupper(letters[1:nrow(sample_sources)]))
+
+
+plot_id <- "ramachandran_zoom_beta"
 ggplot(data=dens) +
 	theme_bw() +
 	geom_raster(aes(x=x, y=y, fill=z)) +
 	geom_indicator(aes(indicator=counts), group=1, color="black", ypos=.99) +
+	geom_indicator(
+		data=facet_labels,
+		aes(indicator=label),
+		group=1,
+		color="black",
+		xpos=.03,
+		ypos=.03,
+		size=20) +
 	coord_equal(ratio=1) +
 	scale_fill_gradient('Scaled Density', low="white", high="black") +
 	opts(legend.position="bottom", legend.direction="horizontal") +
-	opts(title = paste(
-		"Backbone Torsion Angles in the Beta-Region; B-Factor < 30", sep="")) +
+#	opts(title = paste(
+#		"Backbone Torsion Angles in the Beta-Region; B-Factor < 30", sep="")) +
 	scale_x_continuous(expression(paste("phi Angle (Degrees)", sep="")), limits=phi_range) +
 	scale_y_continuous(expression(paste("psi Angle (Degrees)", sep="")), limits=psi_range) +
 	facet_wrap(~sample_source)

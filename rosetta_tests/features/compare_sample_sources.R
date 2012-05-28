@@ -1,4 +1,4 @@
-#!/usr/bin/env Rscript --vanilla
+#!/usr/bin/env Rscript
 # -*- tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 # vi: set ts=2 noet:
 #
@@ -334,7 +334,12 @@ initialize_sample_sources <- function(ss_cmp){
 				"for sample source '", ss$id, "' does not exist.", sep=""))
 		}
 
-		data.frame(fname=database_path, sample_source=ss$id)
+		#TODO filter null values because they lead to errors
+		data.frame(
+			fname=database_path,
+			sample_source=ss$id,
+			ss[names(ss) != "id"])
+
 	})
 
 	if(nrow(sample_sources) != length(unique(sample_sources$sample_source))){

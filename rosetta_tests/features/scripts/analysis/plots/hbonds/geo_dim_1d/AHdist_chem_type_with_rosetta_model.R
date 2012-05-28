@@ -12,7 +12,7 @@ feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "AHdist_chem_type_with_rosetta_model",
 author = "Matthew O'Meara",
 brief_description = "",
-feature_reporter_dependencies = c("HBondFeatures"),
+feature_reporter_dependencies = c("HBondFeatures", "HBondParameterFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
 source("scripts/analysis/plots/hbonds/hbond_geo_dim_scales.R")
@@ -59,7 +59,7 @@ dens <- estimate_density_1d(
 	"AHdist", weight_fun = radial_3d_normalization)
 
 
-dens$y <- -log(dens$y)*.35
+dens$y_energy <- -log(dens$y)*.35
 
 dens.model <-
   expand.grid(
@@ -78,8 +78,15 @@ dens.model <- ddply(dens.model,
     polynomials, don_chem_type, acc_chem_type)
 
   x <- seq(xmin, xmax, length.out=100)
-  z <- data.frame(x=x, y=predict(poly$poly, x), sample_source=factor("Rosetta Model"))
-	z$y <- ifelse(z$x >= poly$xmin & z$x <= poly$xmax, z$y, NA)
+
+	normalization <- .03
+	temperature <- 10
+	z <- data.frame(
+		x=x,
+		y_energy=predict(poly$poly, x),
+		sample_source=factor("Rosetta Model"))
+	z$y_energy <- ifelse(z$x >= poly$xmin & z$x <= poly$xmax, z$y, NA)
+	z$y <- normalization * exp(-z$y_energy * temperature)
 	z
 })
 
@@ -103,13 +110,29 @@ dens$acc_chem_type_name <- factor(dens$acc_chem_type,
 
 dens <- dens[!is.na(dens$acc_chem_type_name) & !is.na(dens$don_chem_type_name),]
 
-plot_id <- "hbond_AHdist_chem_type_with_parameters"
+plot_id <- "hbond_AHdist_chem_type_with_parameters_energy"
+p <- ggplot(data=dens) + theme_bw() +
+	geom_line(aes(x, y_energy, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
+	facet_grid(don_chem_type_name ~ acc_chem_type_name) +
+	opts(title = "HBond A-H Distance by Chemical Type, B-Factor < 30\nnormalized for equal weight per unit distance in density estimation") +
+	scale_y_continuous("Energy (arbitrary units)", limits=c(-.6,1.1), breaks=c(-.5,0, .5)) +
+	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(.5,3), breaks=c(1, 1.5, 2, 2.5))
+
+if(nrow(sample_sources) <= 3){
+	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+}
+
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+
+plot_id <- "hbond_AHdist_chem_type_with_parameters_probability"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x, y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_grid(don_chem_type_name ~ acc_chem_type_name) +
 	opts(title = "HBond A-H Distance by Chemical Type, B-Factor < 30\nnormalized for equal weight per unit distance in density estimation") +
-	scale_y_continuous("Energy (arbitrary units)", limits=c(-.6,1.1), breaks=c(-.5,0, .5)) +
+	scale_y_continuous("Feature Density") +
 	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(.5,3), breaks=c(1, 1.5, 2, 2.5))
 
 if(nrow(sample_sources) <= 3){

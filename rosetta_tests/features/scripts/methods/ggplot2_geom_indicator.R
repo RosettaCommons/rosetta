@@ -80,6 +80,7 @@ GeomIndicator <- proto(ggplot2:::Geom, {
 		}
 
 		indicator <- data$indicator[1]
+		size <- data$size[1]
 		if(!is.na(indicator) && !is.null(indicator)){
 				if(is.character(indicator)){
 		indicator_display_value <- indicator
@@ -91,15 +92,15 @@ GeomIndicator <- proto(ggplot2:::Geom, {
 			textGrob(indicator_display_value,
 						 unit(xpos, "npc"), unit(ypos, "npc") - unit(level, "line"),
 						 just=c(xjust, yjust),
-						 gp=gpar(col=colour, cex=.75))
+						 gp=gpar(col=colour, fontsize=size, cex=.75))
 		}
 	}
 	desc_params <- list()
 	default_stat <- function(.) StatIdentity
-	icon <- function(.) textGrob("text", gp=gpar(cex=1.2))
+	icon <- function(.) textGrob("text", gp=gpar(cex=.75))
 	desc <- "Count Instances"
 	required_aes <- c("indicator")
-	default_aes <- function(.) aes(colour="black", xpos="right", ypos="top", xjust=NULL, yjust=NULL, size=5, group=1)
+	default_aes <- function(.) aes(colour="black", xpos="right", ypos="top", xjust=NULL, yjust=NULL, size=12, group=1)
 	guide_geom <- function(x) "text"
 	example <- function(.){
 		data <- rbind(

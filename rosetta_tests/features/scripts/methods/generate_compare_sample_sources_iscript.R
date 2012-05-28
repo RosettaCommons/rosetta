@@ -77,12 +77,8 @@ iscript_summarize_configuration <- function(ss_cmp){
 }
 
 iscript_sample_sources <- function(sample_sources){
-  cat("#directory were the .db3 feature database are located\n",
-      file=iscript_fname, append=TRUE)
-  cat("sample_sources <- get_sample_sources(c(
-	\"", paste(sample_sources$fname, collapse="\",\n	\""), "\"))\n",
-      file=iscript_fname, sep="", append=TRUE)
-  cat("\n", file=iscript_fname, append=TRUE)
+	dump("sample_sources", file=iscript_fname, append=TRUE)
+	cat("\n", file=iscript_fname, append=TRUE)
 }
 
 iscript_output_formats <- function(output_formats){

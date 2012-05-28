@@ -9,104 +9,148 @@
 
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
-id = "OHdonor_AHdist_morse_fit",
+id = "OHdonor",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
-morse_fn <- function(x, D_a, a, r_0, min_e){
-	D_a*(1+exp(-2*a*(x-r_0))-2*exp(-a*(x-r_0)))+min_e
-}
+
+extract_transform_features <- function(sample_sources){
+	sele <-"
+SELECT
+	geom.AHdist,
+FROM
+	hbond_geom_coords AS geom,
+	hbonds AS hb,
+	hbond_sites AS don, hbond_sites AS acc
+WHERE
+	geom.struct_id = hb.struct_id AND geom.hbond_id = hb.hbond_id AND
+	don.struct_id = hb.struct_id AND don.site_id = hb.don_id AND
+	acc.struct_id = hb.struct_id AND acc.site_id = hb.acc_id AND
+	acc.HBChemType != 'hbacc_PBA' AND
+	(don.HBChemType = 'hbdon_AHX' OR don.HBChemType = 'hbdon_HXL');"
+
+	query_sample_sources(sample_sources, sele)
+
+plot_id <- "OHdonor_AHdist_all_acceptor_types"
+dens <- estimate_density_1d(
+  data = all_geom,
+  ids = c("sample_source"),
+  variable = "AHdist",
+  weight_fun = radial_3d_normalization)
+
+p <- ggplot(data=dens) + theme_bw() +
+	geom_line(aes(x=x, y=y, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
+	opts(title = "Hydroxyl Donor Hydrogen Bonds A-H Distance\n(normalized for equal weight per unit distance)") +
+	scale_y_continuous(
+		"Feature Density",
+		limits=c(0,2.9), breaks=0:2) +
+	scale_x_continuous(
+		expression(paste('Acceptor -- Hydrogen Distance (', ring(A), ')')),
+		limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
+
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+plot_id <- "OHdonor_cosBAH_all_acceptor_types"
+dens <- estimate_density_1d(
+  data = all_geom,
+  ids = c("sample_source"),
+  variable = "cosBAH")
+p <- ggplot(data=dens) + theme_bw() +
+	geom_line(aes(aes(x=acos(x)*180/pi, y=y, colour=sample_source)) +
+	geom_indicator(indicator=counts, colour=sample_source, group=sample_source)) +
+	opts(title = "Hydroxyl Donor Hydrogen Bonds BAH Angle \n(normalized for equal weight per unit distance)") +
+	labs(x=expression(paste('Base -- Acceptor -- Hydrogen (degrees)')),
+	     y="Feature Density")
 
 
-estimate_densities <- function(dOH_clause){
-	sele <- paste("
-	SELECT geo.AHdist
-  FROM   hbonds AS hb,
-         hbond_sites AS don, hbond_sites AS acc,
-         hbond_geom_coords AS geo
-  WHERE  geo.struct_id = hb.struct_id AND geo.hbond_id = hb.hbond_id AND
-         don.struct_id = hb.struct_id AND don.site_id  = hb.don_id AND
-         acc.struct_id = hb.struct_id AND acc.site_id  = hb.acc_id AND
-         geo.AHdist < 2.6 AND
-         ", dOH_clause, ";", sep="")
-	f <- query_sample_sources(sample_sources, sele)
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-	cat("estimate_density\n")
-	dens <- estimate_density_1d(f, c("sample_source"), "AHdist", radial_3d_normalization)
-	dens$energy = -log(dens$y)
+plot_id <- "OHdonor_cosAHD_all_acceptor_types"
+dens <- estimate_density_1d(
+  data = all_geom,
+  ids = c("sample_source"),
+  variable = "cosAHD")
+p <- ggplot(data=dens) + theme_bw() +
+	geom_line(aes(x=acos(x)*180/pi, y=y, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
+	opts(title = "Hydroxyl Donor Hydrogen Bonds BAH Angle \n(normalized for equal weight per unit distance)") +
+	labs(x=expression(paste('Acceptor -- Hydrogen -- Donor (degrees)')),
+              y="Feature Density")
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-	cat("computting morse regression\n")
-	ddply(dens, .(sample_source), function(d){
-		d$morse <- 0
-		d$r_0 <- 0
-		tryCatch({
-			m1 <- nls(energy ~ morse_fn(x, D_a, a, r_0, min_e), d,
-				start=list(D_a=7, a=1.8, r_0=1.75, min_e=-1), algorithm="port",
-				trace=TRUE, weights=y)
-			print(m1$m$getPars())
-			d$morse <- predict(m1,dens$x)
-			d$r_0 <- m1$m$getPars()["r_0"]
-
-			},
-			error=function(e){
-				cat("Unable to fit morse function to ", as.character(d$sample_source[1]), "\n")
-				print(paste("failed with error: ", e, sep=""))
-			})
-		d
-	})
-}
-
-plot_parts <- list(
-  theme_bw(),
-	geom_hline(yintercept = 0, color="darkgray"),
-	geom_line(aes(x=x, y=energy)),
-	geom_line(aes(x=x, y=morse), colour="blue"),
-  geom_indicator(aes(indicator=counts)),
-  geom_indicator(aes(indicator=r_0, xpos="left", ypos="top")),
-	facet_wrap( ~ sample_source, ncol=1),
-	labs(x=expression(paste('Acceptor -- Proton Distance (', ring(A), ')')),
-		y="-log(FeatureDensity)"),
-	scale_y_continuous(limits=c(-3,5), breaks=((0:8)-3)),
-	scale_x_continuous(limits=c(1.5,2.6), breaks=c(1.6, 1.9, 2.2, 2.5)))
-
-
-plot_id <- "AHdist_all_OHdonor_fit_energy"
-dens <- estimate_densities(
-	"(don.HBChemType='hbdon_AHX' OR don.HBChemType='hbdon_HXL')")
-ggplot(dens) + plot_parts +
-	opts(title = "Hydrogen Bonds A-H Distance for HXL or AHX donors\nnormalized for equal weight per unit distance")
+plot_id <- "OHdonor_chi_all_acceptor_types"
+dens <- estimate_density_1d_wrap(
+  data = all_geom,
+  ids = c("sample_source"),
+  variable = "chi")
+p <- ggplot(data=dens) + theme_bw() +
+	geom_line(aes(x=acos(x)*360/pi, y=y, colour=sample_source)) +
+	geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
+	opts(title = "Hydroxyl Donor Hydrogen Bonds BAH Angle \n(normalized for equal weight per unit distance)") +
+	labs(x=expression(paste('Acceptor Base -- Acceptor Torsion (degrees)')),
+	     y="Feature Density")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
-plot_id <- "AHdist_dOH_1_fit_energy"
-dens <- estimate_densities(
-	"don.HBChemType='hbdon_AHX' AND
-	(acc.HBChemType='hbacc_AHX' OR acc.HBChemType='hbacc_HXL' OR
-	 acc.HBChemType='hbacc_CXA' OR acc.HBChemType='hbacc_CXL' OR
-   acc.HBChemType='hbacc_PBA')")
-ggplot(dens) + plot_parts +
-	opts(title = "Hydrogen Bonds A-H Distance by Chemical Type for AHX donors with AHX, HXL, CXA, CXL, or PBA acceptors\nnormalized for equal weight per unit distance")
+
+sidechain_geom <- all_geom[all_geom$acc_chem_type != "hbacc_PBA",]
+
+plot_id <- "OHdonor_AHdist_sidechain_acceptor_types"
+dens <- estimate_density_1d(
+  data = sidechain_geom,
+  ids = c("sample_source"),
+  variable = "AHdist",
+  weight_fun = radial_3d_normalization)
+p <- ggplot(data=dens) + theme_bw() +
+	geom_line(aes(x=x, y=y, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
+	opts(title = "Hydroxyl Donor Hydrogen Bonds A-H Distance to Sidechain Acceptors\n(normalized for equal weight per unit distance)") +
+	scale_y_continuous("Feature Density", limits=c(0,2.9), breaks=0:2) +
+	scale_x_continuous(
+		expression(paste('Acceptor -- Proton Distance (', ring(A), ')')),
+		limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-plot_id <- "AHdist_dOH_2_fit_energy"
-dens <- estimate_densities(
-	"don.HBChemType='hbdon_HXL' AND
-	(acc.HBChemType='hbacc_AHX' OR acc.HBChemType='hbacc_HXL' OR
-	 acc.HBChemType='hbacc_CXA' OR acc.HBChemType='hbacc_CXL' OR
-   acc.HBChemType='hbacc_PBA')")
-ggplot(dens) + plot_parts +
-	opts(title = "Hydrogen Bonds A-H Distance by Chemical Type for HXL donors with AXL, HXL, CXA, CXL, or PBA acceptors\nnormalized for equal weight per unit distance")
+plot_id <- "OHdonor_cosBAH_sidechain_acceptor_types"
+dens <- estimate_density_1d(
+  data = sidechain_geom,
+  ids = c("sample_source"),
+  variable = "cosBAH")
+p <- ggplot(data=dens) + theme_bw() +
+	geom_line(aes(x=acos(x)*360/pi, y=y, colour=sample_source)) +
+	geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
+	opts(title = "Hydroxyl Donor Hydrogen Bonds BAH Angle to Sidechain Acceptors\n(normalized for equal weight per unit distance)") +
+	labs(x=expression(paste('Base -- Acceptor -- Hydrogen (degrees)')),
+              y="Feature Density")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-plot_id <- "AHdist_dOH_3_fit_energy"
-dens <- estimate_densities(
-	"(don.HBChemType='hbdon_AHX' OR don.HBChemType='hbdon_HXL') AND
-	 (acc.HBChemType='hbacc_IMD' OR acc.HBChemType='hbacc_IME')")
-ggplot(dens) + plot_parts +
-	opts(title = "Hydrogen Bonds A-H Distance by Chemical Type for AHX or HXL donors with IMD or IME acceptors\nnormalized for equal weight per unit distance")
+plot_id <- "OHdonor_cosAHD_sidechain_acceptor_types"
+dens <- estimate_density_1d(
+  data = sidechain_geom,
+  ids = c("sample_source"),
+  variable = "cosAHD")
+p <- ggplot(data=dens) + theme_bw() +
+	geom_line(aes(x=acos(x)*360/pi, y=y, colour=sample_source)) +
+	geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
+	opts(title = "Hydroxyl Donor Hydrogen Bonds AHD Angle to Sidechain Acceptors\n(normalized for equal weight per unit distance)") +
+	labs(x=expression(paste('Acceptor -- Hydrogen -- Donor (degrees)')),
+              y="Feature Density")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
+plot_id <- "OHdonor_chi_sidechain_acceptor_types"
+dens <- estimate_density_1d_logspline(
+  data = sidechain_geom,
+  ids = c("sample_source"),
+  variable = "chi")
+p <- ggplot(data=dens) + theme_bw() +
+	geom_line(aes(x=acos(x)*360/pi, y=y, colour=sample_source)) +
+	geom_indicator(aes(colour=sample_source, indicator=counts, group=sample_source)) +
+	opts(title = "Hydroxyl Donor Hydrogen Bonds chi Torsion Angle to Sidechain Acceptors\n(normalized for equal weight per unit distance)") +
+	labs(x=expression(paste('Acceptor Base -- Acceptor Torsion (degrees)')),
+	     y="log(FeatureDensity + 1)")
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 })) # end FeaturesAnalysis

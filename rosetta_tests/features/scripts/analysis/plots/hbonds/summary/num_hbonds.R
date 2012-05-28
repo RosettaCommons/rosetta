@@ -67,4 +67,49 @@ ggplot(f, aes(don_chem_type_name, log(don_chem_type_count))) + theme_bw() +
   labs(x="Donor Type", y="log(Counts)")
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
+
+sele <-"
+SELECT
+  don_site.HBChemType AS don_chem_type,
+  acc_site.HBChemType AS acc_chem_type,
+  count(*) AS chem_type_count
+FROM
+  hbonds AS hbond,
+  hbond_sites AS don_site,
+  hbond_sites AS acc_site
+WHERE
+  hbond.struct_id == don_site.struct_id AND hbond.don_id == don_site.site_id AND
+  hbond.struct_id == acc_site.struct_id AND hbond.acc_id == acc_site.site_id
+GROUP BY
+  don_site.HBChemType,
+  acc_site.HBChemType;"
+
+f <- query_sample_sources(sample_sources, sele)
+
+f$don_chem_type_name <- don_chem_type_name_linear(f$don_chem_type)
+f$acc_chem_type_name <- acc_chem_type_name_linear(f$acc_chem_type)
+f <- na.omit(f, method="r")
+
+plot_id <- "hbonds_num_don_acc_by_chem_type"
+ggplot(f, aes(don_chem_type_name, log(chem_type_count))) + theme_bw() +
+  geom_line(aes(colour=sample_source, group=sample_source), size=.2) +
+	geom_point(aes(colour=sample_source), size=2) +
+	facet_wrap( ~ acc_chem_type_name) +
+  opts(title = "Number of HBonds by Donor and Acceptor Type") +
+  labs(x="Donor Type", y="log(Counts)") +
+	coord_flip()
+
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+plot_id <- "hbonds_num_acc_don_by_chem_type"
+ggplot(f, aes(acc_chem_type_name, log(chem_type_count))) + theme_bw() +
+  geom_line(aes(colour=sample_source, group=sample_source), size=.2) +
+	geom_point(aes(colour=sample_source), size=2) +
+	facet_wrap( ~ don_chem_type_name) +
+  opts(title = "Number of HBonds by Acceptor and Donor Type") +
+  labs(x="Acceptor Type", y="log(Counts)") +
+	coord_flip() +
+
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
 })) # end FeaturesAnalysis
