@@ -49,7 +49,7 @@ void dump_points_pdb(utility::vector1<Vec> const & p, std::string fn) {
 }
 
 
-inline double sigmoid( double const & sqdist, double const & start, double const & stop ) {
+inline double dist_score( double const & sqdist, double const & start, double const & stop ) {
 	if( sqdist > stop*stop ) {
 		return 0.0;
 	} else if( sqdist < start*start ) {
@@ -244,7 +244,7 @@ SICFast::get_score(
 					numeric::geometry::hashing::xyzStripeHash<double>::float4 const & a2 = xh->grid_atoms_[i];
 					float const d2 = (v.x()-a2.x)*(v.x()-a2.x) + (v.y()-a2.y)*(v.y()-a2.y) + (v.z()-a2.z)*(v.z()-a2.z);
 					if( d2 <= xh->grid_size2_ ) {
-						score += sigmoid(d2, CLD, CTD ) * a2.w * (*iwb);
+						score += dist_score(d2, CLD, CTD ) * a2.w * (*iwb);
 					}
 				}
 			}
