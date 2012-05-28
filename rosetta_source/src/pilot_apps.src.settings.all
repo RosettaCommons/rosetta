@@ -416,7 +416,7 @@ sources = {
 	"pilot/will" : [
 		"hubdenovo",
 		"designability_stats",
-		"CXdock",
+#		"CXdock",
 		"symdock_enum_3_1",
 		"sym_multicomp_test",
 		#"FunGroupTK",
