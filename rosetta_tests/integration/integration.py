@@ -76,7 +76,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
     parser.add_option("--host",
       default=[],
       action="append",
-      help="ssh to HOST to run some tests. Assumes shared filesystem. May specify multiple times. May specify HOST or USER@HOST.",
+      help="ssh to HOST to run some tests. Assumes shared filesystem. May specify multiple times. May specify HOST or USER@HOST. For 5 jobs per host, HOST/5",
     )
     parser.add_option("--digs",
       default=0,
@@ -190,10 +190,20 @@ rm -r ref/; ./integration.py    # create reference results using only default se
             #thread.setDaemon(True) # shouldn't be necessary here
             thread.start()
         for host in options.host:
-            worker = Worker(queue, outdir, options, host=host, timeout_minutes=options.timeout)
-            thread = threading.Thread(target=worker.work)
-            #thread.setDaemon(True) # shouldn't be necessary here
-            thread.start()
+            if host.count('/') > 1:
+              sys.exit("only one forward slash per host specification")
+            parts = host.split('/')
+            nodes=None
+            if len(parts) == 1:
+              nodes=1
+            if len(parts) == 2:
+              host= parts[0]
+              nodes= int(parts[1])
+            for node in range(nodes):
+              worker = Worker(queue, outdir, options, host=host, timeout_minutes=options.timeout)
+              thread = threading.Thread(target=worker.work)
+              #thread.setDaemon(True) # shouldn't be necessary here
+              thread.start()
 
         # Wait for them to finish
         queue.join()
@@ -364,7 +374,15 @@ class Worker:
                         extras = self.opts.extras
                         binext = self.opts.extras+"."+platform+compiler+mode
                         # Read the command from the file "command"
-                        cmd = file(path.join(workdir, "command")).read().strip()
+                        cmd=''
+                        # A horrible hack b/c SSH doesn't honor login scripts like .bash_profile
+                        # when executing specific remote commands.
+                        # This causes problems with e.g. the custom Python install on the Whips.
+                        # So we replace the default remote PATH with the current local one. 
+                        if self.host is not None:
+                          cmd = 'PATH="%s"\n%s' % (os.environ["PATH"], cmd)
+                        cmd += '\n'
+                        cmd += file(path.join(workdir, "command")).read().strip()
                         cmd = cmd % vars() # variable substitution using Python printf style
                         cmd_line_sh = path.join(workdir, "command.sh")
                         f = file(cmd_line_sh, 'w');  f.write(cmd);  f.close() # writing back so test can be easily re-run by user lately...
@@ -376,13 +394,9 @@ class Worker:
                         # Can't use cwd=workdir b/c it modifies *local* dir, not remote dir.
                         else:
                             print "Running  %-40s on %20s ..." % (test, self.host)
-                            # A horrible hack b/c SSH doesn't honor login scripts like .bash_profile
-                            # when executing specific remote commands.
-                            # This causes problems with e.g. the custom Python install on the Whips.
-                            # So we replace the default remote PATH with the current local one.
-                            cmd = 'PATH="%s"\n%s' % (os.environ["PATH"], cmd)
-                            proc = subprocess.Popen(["ssh", self.host, cmd], preexec_fn=os.setpgrp)#, cwd=workdir)
-
+                            bash_cmd='bash '+cmd_line_sh
+                            proc = subprocess.Popen(["ssh", self.host, bash_cmd], preexec_fn=os.setpgrp)#, cwd=workdir)
+                            #os._exit(os.EX_IOERR)
                         start = time.time() # refined start time
                         if self.timeout == 0:
                             retcode = proc.wait() # does this block all threads?
@@ -396,7 +410,10 @@ class Worker:
                                 #os.kill(proc.pid, signal.SIGTERM)
                                 os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
                         if retcode != 0 and retcode is not None:
-                            error_string = "*** Test %s did not run!  Check your --mode flag and paths. [%s]\n" % (test, datetime.datetime.now())
+                            if self.host is None:
+                              error_string = "*** Test %s did not run on host %s!  Check your --mode flag and paths. [%s]\n" % (test, 'local_host', datetime.datetime.now())
+                            else:
+                              error_string = "*** Test %s did not run on host %s!  Check your --mode flag and paths. [%s]\n" % (test, self.host, datetime.datetime.now())
                             print error_string,
 
                             # Writing error_string to a file, so integration test should fail for sure
