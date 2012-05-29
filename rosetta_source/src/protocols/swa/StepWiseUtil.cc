@@ -278,19 +278,22 @@ namespace swa {
 
 		new_pose.clear();
 
-
 		for ( Size i = 1; i <= slice_res.size(); i++ ) {
-			//		std::cout << "About to append " << i << std::endl;
+
 			ResidueOP residue_to_add = pose.residue( slice_res[ i ] ).clone() ;
-			if ( (i > 1 &&  ( slice_res[i] != slice_res[i-1] + 1 )) /*new segment*/ || residue_to_add->is_lower_terminus() ){
+
+			if ( (i > 1 &&  ( slice_res[i] != slice_res[i-1] + 1 )) /*new segment*/ || residue_to_add->is_lower_terminus() || residue_to_add->has_variant_type( "N_ACETYLATION") || (i>1 && pose.fold_tree().is_cutpoint( slice_res[i-1] ) )  ){
 				if( residue_to_add->is_RNA() && (i>1) && new_pose.residue_type(i-1).is_RNA() ){
+
 					new_pose.append_residue_by_jump(  *residue_to_add, i-1,
 																						chi1_torsion_atom( new_pose.residue(i-1) ),
-																						chi1_torsion_atom( *residue_to_add ) );
+																						chi1_torsion_atom( *residue_to_add ), true /*new chain*/ );
 				} else {
-					new_pose.append_residue_by_jump(  *residue_to_add, i-1  ) ;
+
+					new_pose.append_residue_by_jump(  *residue_to_add, i-1, "", "", true /*new chain*/ );
 				}
 			} else {
+
 				new_pose.append_residue_by_bond(  *residue_to_add  ) ;
 			}
 		}
