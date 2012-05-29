@@ -681,7 +681,8 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			// I'm not too sure if the changing the default weight makes sense
 			full_weights[ scale_param ] = cmd.param1;
 		}   else
-
+		if( cmd.command == "batch_shave" ){  // grab the score and remember the pose if the score is better then ever before.
+		} else
 		if( cmd.command == "show_weights" ){
 			local_scorefxn->show(TR, pose);
 		}   else
