@@ -14,24 +14,29 @@
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/rna/RNA_Util.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <protocols/rna/RNA_ProtocolUtil.hh>
 
-#include <core/kinematics/FoldTree.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
+#include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/AtomTree.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
+#include <core/kinematics/Stub.hh>
 
-#include <core/options/option.hh>
-#include <core/options/after_opts.hh>
-#include <core/options/option_macros.hh>
+#include <basic/options/option.hh>
+#include <basic/options/option_macros.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/import_pose/import_pose.hh>
 
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
@@ -43,6 +48,7 @@
 #include <numeric/conversions.hh>
 
 #include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/string.functions.hh>
 
@@ -53,14 +59,10 @@
 #include <string>
 
 //silly using/typedef
-
-#include <core/util/Tracer.hh>
-using core::util::T;
-
 // option key includes
 
-#include <core/options/keys/out.OptionKeys.gen.hh>
-#include <core/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <core/conformation/Conformation.hh>
@@ -71,13 +73,9 @@ using core::util::T;
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
 //Auto using namespaces end
 
-
-using core::util::Error;
-using core::util::Warning;
-
 using namespace core;
 //using namespace protocols;
-using namespace core::options::OptionKeys;
+using namespace basic::options::OptionKeys;
 
 using utility::vector1;
 using io::pdb::dump_pdb;
@@ -86,6 +84,7 @@ OPT_KEY( Boolean, ch_o_bonds )
 OPT_KEY( Boolean, fa_cenpack )
 OPT_KEY( Boolean, aro_pack )
 OPT_KEY( Boolean, proline_rama )
+OPT_KEY( Boolean, rna_stack )
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
@@ -537,6 +536,270 @@ proline_rama_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose,
 
 }
 
+
+
+///////////////////////////////////////////////////////////////////////////
+utility::vector1< utility::vector1< std::string > > get_ring_atoms( core::conformation::Residue const & rsd ){
+
+	using namespace core::chemical;
+	using namespace utility::tools;
+
+	// could speed this up with a map, probably.
+	utility::vector1< utility::vector1< std::string > > ring_atom_sets;
+	AA const & res_type = rsd.aa();
+
+	utility::vector1< std::string > ring_atom_set1, ring_atom_set2;
+
+	if (res_type == na_rad){
+		ring_atom_set1.push_back( " C4 " );
+		ring_atom_set1.push_back( " C5 " );
+		ring_atom_set1.push_back( " N7 " );
+		ring_atom_set1.push_back( " C8 " );
+		ring_atom_set1.push_back( " N9 " );
+
+		ring_atom_set2.push_back( " N1 " );
+		ring_atom_set2.push_back( " C6 " );
+		ring_atom_set2.push_back( " C5 " );
+		ring_atom_set2.push_back( " C4 " );
+		ring_atom_set2.push_back( " N3 " );
+		ring_atom_set2.push_back( " C2 " );
+	}
+
+	if (res_type == na_rcy){
+		ring_atom_set1.push_back( " N1 " );
+		ring_atom_set1.push_back( " C2 " );
+		ring_atom_set1.push_back( " N3 " );
+		ring_atom_set1.push_back( " C4 " );
+		ring_atom_set1.push_back( " C5 " );
+		ring_atom_set1.push_back( " C6 " );
+
+	}
+
+	if (res_type == na_rgu){
+		ring_atom_set1.push_back( " C4 " );
+		ring_atom_set1.push_back( " C5 " );
+		ring_atom_set1.push_back( " N7 " );
+		ring_atom_set1.push_back( " C8 " );
+		ring_atom_set1.push_back( " N9 " );
+
+		ring_atom_set2.push_back( " N1 " );
+		ring_atom_set2.push_back( " C6 " );
+		ring_atom_set2.push_back( " C5 " );
+		ring_atom_set2.push_back( " C4 " );
+		ring_atom_set2.push_back( " N3 " );
+		ring_atom_set2.push_back( " C2 " );
+
+	}
+
+	if (res_type == na_ura){
+		ring_atom_set1.push_back( " N1 " );
+		ring_atom_set1.push_back( " C2 " );
+		ring_atom_set1.push_back( " N3 " );
+		ring_atom_set1.push_back( " C4 " );
+		ring_atom_set1.push_back( " C5 " );
+		ring_atom_set1.push_back( " C6 " );
+	}
+
+	ring_atom_sets.push_back( ring_atom_set1 );
+	if ( ring_atom_set2.size() > 0 ) 	ring_atom_sets.push_back( ring_atom_set2 );
+
+	return ring_atom_sets;
+
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+std::string get_WC_atom( core::chemical::AA const & res_type ){
+	using namespace core::chemical;
+	std::string WC_atom( "" );
+	if ( res_type == na_rad ) WC_atom = " N1 ";
+	if ( res_type == na_rcy ) WC_atom = " N3 ";
+	if ( res_type == na_rgu ) WC_atom = " N1 ";
+	if ( res_type == na_ura ) WC_atom = " N3 ";
+	return WC_atom;
+}
+
+///////////////////////////////////////////////////////////////////////////
+std::string get_H_atom( core::chemical::AA const & res_type ){
+	using namespace core::chemical;
+	std::string H_atom( "" );
+	if ( res_type == na_rad ) H_atom = "N7";
+	if ( res_type == na_rcy ) H_atom = "C5";
+	if ( res_type == na_rgu ) H_atom = "N7";
+	if ( res_type == na_ura ) H_atom = "C5";
+	return H_atom;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void
+get_ring_centroids_and_stubs( core::conformation::Residue const & rsd,
+															utility::vector1< Vector > & ring_centroids,
+															utility::vector1< core::kinematics::Stub > & ring_stubs ){
+
+	using namespace core::chemical;
+	using namespace core::scoring::rna;
+	using namespace core::kinematics;
+
+	ring_centroids.clear();
+	ring_stubs.clear();
+
+	utility::vector1< utility::vector1< std::string > > ring_atom_sets = get_ring_atoms( rsd );
+
+	Vector const overall_centroid = get_rna_base_centroid( rsd, false );
+	Stub   const overall_stub( get_rna_base_coordinate_system( rsd, overall_centroid ), overall_centroid );
+
+	for ( Size n = 1; n <= ring_atom_sets.size(); n++ ){
+
+		utility::vector1< std::string > ring_atom_set = ring_atom_sets[ n ];
+		Vector centroid( 0 );
+
+		for ( Size i = 1; i <= ring_atom_set.size(); i++ ){
+			centroid += rsd.xyz( ring_atom_set[ i ] );
+		}
+		centroid /= static_cast< Real >( ring_atom_set.size() );
+
+		ring_centroids.push_back( centroid );
+
+		ring_stubs.push_back( overall_stub ); // could also define a more 'local' coordinate system, but this is sort of arbitrary.
+	}
+
+
+
+}
+
+Size
+base_type_num( core::chemical::AA res_type ){
+	using namespace core::chemical;
+	Size num( 0 );
+	if ( res_type == na_rad ) num = 1;
+	if ( res_type == na_rcy ) num = 2;
+	if ( res_type == na_rgu ) num = 3;
+	if ( res_type == na_ura )  num = 4;
+	return num;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void
+rna_stack_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, Size const count, char const chain, Size & total_residues )
+{
+
+	using namespace core::conformation;
+	using namespace core::chemical;
+	using namespace core::kinematics;
+	using namespace core::scoring;
+	using namespace protocols::rna;
+	using namespace scoring::rna;
+
+	Size const nres = pose.total_residue();
+
+	Size res_count( 0 );
+
+	static bool init( false );
+
+	utility::vector1< utility::vector1< Vector > > all_ring_centroids;
+	utility::vector1< utility::vector1< Stub > >   all_ring_stubs;
+	utility::vector1< Vector  > all_base_centroids;
+	utility::vector1< Stub  >   all_base_stubs;
+
+	for (Size i = 1; i <= nres; i++) {
+
+		utility::vector1< Vector > ring_centroids; // can have 1 or 2 depending on whether base is pyrimidine or purine.
+		utility::vector1< Stub > ring_stubs;
+
+		if ( pose.residue( i ).is_RNA() ) get_ring_centroids_and_stubs( pose.residue(i), ring_centroids, ring_stubs );
+
+		all_ring_centroids.push_back( ring_centroids );
+		all_ring_stubs.push_back( ring_stubs ); // WARNING -- THESE ARE NOT CENTERED ON RINGS ACTUALLY. NOT USED BELOW.
+
+		Vector const base_centroid = get_rna_base_centroid( pose.residue( i ), false );
+		all_base_centroids.push_back( base_centroid );
+		all_base_stubs.push_back( Stub( get_rna_base_coordinate_system( pose.residue( i ), base_centroid ),  base_centroid ) );
+
+	}
+
+	Distance const DIST_CUTOFF = 12.0;
+	Distance const Z_MIN = 2.4;
+	Distance const Z_MAX = 6.0;
+
+	static ScoreFunctionOP scorefxn( new ScoreFunction );
+	scorefxn->set_weight( rna_base_pair, 1.0 );
+	(*scorefxn)( pose );
+	ObjexxFCL::FArray1D <bool> edge_is_base_pairing( 3, false );// dummy array
+	std::cout << "Finished scoring to get base pairs" << std::endl;
+
+	utility::vector1< Size > secstruct_nums;
+	char secstruct;
+	for ( Size i = 1; i <= nres; i++ ){
+		get_base_pairing_info( pose, i, secstruct, edge_is_base_pairing );
+		Size secstruct_num( 0 );
+		if (secstruct == 'H' ) secstruct_num = 1;
+		secstruct_nums.push_back( secstruct_num );
+	}
+
+	for (Size i = 1; i <= nres; i++) {
+
+		res_count++;
+
+		Vector const & base_centroid1 = all_base_centroids[ i ];
+		Stub const & base_stub1    = all_base_stubs[ i ];
+
+		for (Size j = 1; j <= nres; j++) {
+
+			if ( i == j ) continue;
+
+			utility::vector1< Vector > const & ring_centroids2 = all_ring_centroids[ j ];
+			utility::vector1< Stub >   const & ring_stubs2     = all_ring_stubs[ j ];
+
+
+			Vector const & base_centroid2 = all_base_centroids[ j ];
+			Stub const & base_stub2 = all_base_stubs[ j ];
+
+			Real const orientation = dot( base_stub1.M.col_z(),  base_stub2.M.col_z() );
+
+
+			for ( Size n = 1; n <= ring_centroids2.size(); n++ ) {
+
+				Vector const & ring_centroid2 = ring_centroids2[ n ];
+				Stub const &       ring_stub2 = ring_stubs2[ n ];
+
+				// are we close?
+				Distance d = ( base_centroid1 - ring_centroid2 ).length();
+
+				if ( d > DIST_CUTOFF ) continue;
+
+				// are we stacking?
+
+				Distance z =  dot( ring_centroid2 - base_centroid1, base_stub1.M.col_z() );
+
+				if ( std::abs( z ) < Z_MIN ) continue;
+				if ( std::abs( z ) > Z_MAX ) continue;
+
+				Distance x =  dot( ring_centroid2 - base_centroid1, base_stub1.M.col_x() );
+				Distance y =  dot( ring_centroid2 - base_centroid1, base_stub1.M.col_y() );
+
+				out << I(4, count )
+						<< " " << I(4, i )
+						<< " " << I(4, j )
+						<< "      " << base_type_num( pose.residue(i).aa() )
+						<< " " << base_type_num( pose.residue(j).aa() )
+						<< " " << F(5,2,orientation)
+						<< " " << secstruct_nums[ j ]
+						<< " " << n
+						<< " " << F(8,3,x)
+						<< " " << F(8,3,y)
+						<< " " << F(8,3,z)
+						<< std::endl;
+			} // n
+
+		} // j
+	} // i
+
+	std::cout << "Processed " << res_count << " residues from chain " << chain << std::endl;
+
+	total_residues += res_count;
+
+}
+
 //////////////////////////////////////////
 void output_centroid_stats( utility::io::ozstream & out )
 {
@@ -564,8 +827,10 @@ void lowercase(char string[])
 void
 rhiju_pdbstats()
 {
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace core::chemical;
+	using namespace core::import_pose;
 
 	//	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 	std::string const file_path( option[ in::path::pdb ]( 1 ) );
@@ -578,6 +843,13 @@ rhiju_pdbstats()
 		return;
 	}
 
+	ResidueTypeSetCAP rsd_set;
+	if ( option[rna_stack]() ){
+  	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	} else {
+		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+
+	}
 	std::string outfile  = option[ out::file::o ];
 	utility::io::ozstream out( outfile );
 
@@ -605,7 +877,7 @@ rhiju_pdbstats()
 
 		if (chain == '_' ) chain = ' ';
 
-		io::pdb::pose_from_pdb( pose, file_path + '/' + pdb_file );
+		pose_from_pdb( pose, *rsd_set, file_path + '/' + pdb_file );
 
 		count++;
 		std::cout << "Doing input file " << I(4,count) << " ==> " << pdb_file << " " << chain << std::endl;
@@ -618,6 +890,8 @@ rhiju_pdbstats()
 			aro_pack_pdbstats_from_pose( out, pose, count, chain, total_residues );
 		} else if ( option[ proline_rama ] ) {
 			proline_rama_pdbstats_from_pose( out, pose, count, chain, total_residues );
+		} else if ( option[ rna_stack ] ) {
+			rna_stack_pdbstats_from_pose( out, pose, count, chain, total_residues );
 		}
 		std::cout << "TOTAL RESIDUES Processed: " << total_residues << std::endl;
 
@@ -637,12 +911,13 @@ int
 main( int argc, char * argv [] )
 {
 
-	using namespace core::options;
+	using namespace basic::options;
 
 	NEW_OPT( ch_o_bonds, "Testing existence of CH<-->O bonds", false );
 	NEW_OPT( fa_cenpack, "Centroid-centroid pairwise correlations", false );
 	NEW_OPT( aro_pack, "Aromatic geometry", false );
 	NEW_OPT( proline_rama, "Proline ramachandran inference", false );
+	NEW_OPT( rna_stack, "RNA stack -- revisit at level of rings", false );
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup
