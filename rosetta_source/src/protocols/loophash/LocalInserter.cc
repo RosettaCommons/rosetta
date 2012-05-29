@@ -103,7 +103,7 @@ namespace loophash {
 		core::Real final_score = scorefxn_cen_cst_(newpose);
 
 		TR.Debug << "INSERTRESULT: " << final_rms << "  " << final_score << std::endl;
-		core::pose::setPoseExtraScores( newpose, "censcore", final_score );
+		core::pose::setPoseExtraScores( newpose, "lh_censcore", final_score );
 
 		//transfer_phi_psi( newpose, start_pose );
 
