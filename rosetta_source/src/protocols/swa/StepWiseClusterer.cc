@@ -21,8 +21,6 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/io/silent/SilentStruct.hh>
@@ -30,17 +28,11 @@
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.tmpl.hh>
-// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
-// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
-// AUTO-REMOVED #include <basic/datacache/CacheableString.hh>
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 #include <basic/options/option.hh>
@@ -126,6 +118,8 @@ namespace swa {
 		using namespace core::chemical;
 		using namespace core::pose;
 
+		clock_t const time_start( clock() );
+
 		rsd_set_ = core::chemical::ChemicalManager::get_instance()->residue_type_set( rsd_type_set_ );
 
 		// basic initialization
@@ -136,6 +130,9 @@ namespace swa {
 		} else {
 			do_some_clustering();
 		}
+
+		std::cout << "Total time in StepWiseClusterer: " <<
+			static_cast<Real>(clock() - time_start) / CLOCKS_PER_SEC << std::endl;
 
 	}
 
@@ -161,14 +158,18 @@ namespace swa {
 		using namespace core::pose;
 
 		hit_score_cutoff_ = false;
+
+		//for loop modeling, little chunk of pose used to calculate rms -- and saved.
+		PoseOP pose_op( new Pose );
+		Pose & pose = *pose_op;
+
 		while ( input_->has_another_pose() ) {
 
-			PoseOP pose_op( new Pose );
 			core::io::silent::SilentStructOP silent_struct( input_->next_struct() );
-			silent_struct->fill_pose( *pose_op, *rsd_set_ );
+			silent_struct->fill_pose( pose );
 
 			Real score( 0.0 );
-			getPoseExtraScores( *pose_op, "score", score );
+			getPoseExtraScores( pose, "score", score );
 
 			if ( !score_min_defined_ ){
 				score_min_ = score;
@@ -181,16 +182,22 @@ namespace swa {
 			}
 
 			std::string tag( silent_struct->decoy_tag() );
-			TR << "CHECKING " << tag << " with score " << score << " against list of size " << pose_output_list_.size();
+			TR << "Checking: " << tag << " with score " << score << " against list of size " << pose_output_list_.size();
+
+			// carve out subset of residues for rms calculation.
+			if ( calc_rms_res_.size() > 0 )	pdbslice( pose, calc_rms_res_ );
 
 			Size const found_close_cluster = check_for_closeness( pose_op );
+
 			if ( found_close_cluster == 0 )  {
-				TR << " ... added. " << std::endl;
-				if ( pose_output_list_.size() >= max_decoys_ ) break;
+				PoseOP pose_save( new Pose );
+				*pose_save = pose;
 				tag_output_list_.push_back(  tag );
-				pose_output_list_.push_back(  pose_op );
+				pose_output_list_.push_back(  pose_save );
 				silent_struct_output_list_.push_back(  silent_struct  );
 				num_pose_in_cluster_.push_back( 1 );
+				TR << " ... added. " << std::endl;
+				if ( pose_output_list_.size() >= max_decoys_ ) break;
 			} else{
 				num_pose_in_cluster_[ found_close_cluster ]++;
 				TR << " ... not added. " << std::endl;
@@ -295,23 +302,16 @@ namespace swa {
 
 			Real rmsd( 0.0 );
 
-			//			std::cout << "checking agaist pose " << n << " out of " << pose_output_list_.size() << std::endl;
-			//			std::cout << " pose_output_list_[ n ]->size " << pose_output_list_[ n ]->total_residue() << std::endl;
-			//			std::cout << " pose_op->size " << pose_op->total_residue() << std::endl;
 
-			if ( calc_rms_res_.size() == 0 ) {
+			if ( calc_rms_res_.size() == 0 || force_align_ ) {
 				rmsd = rms_at_corresponding_atoms( *(pose_output_list_[ n ]), *pose_op, corresponding_atom_id_map_ );
-			} else if ( force_align_ ) {
-				rmsd = rms_at_corresponding_atoms( *(pose_output_list_[ n ]), *pose_op, corresponding_atom_id_map_, calc_rms_res_ );
 			} else {
 				// assumes prealignment of poses!!!
 				rmsd = rms_at_corresponding_atoms_no_super( *(pose_output_list_[ n ]), *pose_op,
-																										corresponding_atom_id_map_, calc_rms_res_ );
+																										corresponding_atom_id_map_ );
 			}
 
 			if ( rmsd < cluster_radius_ )	{
-				//std::cout << "[ " << rmsd << " inside cutoff " << cluster_radius_ << " ] " ;
-				//				std::cout << "FAIL! " << n << " " << rmsd << " " << cluster_radius_ << std::endl;
 				return n;
 			}
 		}

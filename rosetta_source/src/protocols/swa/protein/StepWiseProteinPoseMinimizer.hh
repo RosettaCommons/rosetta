@@ -39,6 +39,8 @@ namespace protein {
   public:
 
     //constructor!
+		StepWiseProteinPoseMinimizer( core::io::silent::SilentFileDataOP sfd, utility::vector1< Size > const & moving_residues );
+
     StepWiseProteinPoseMinimizer( PoseList & pose_list, utility::vector1< Size > const & moving_residues );
 
     //destructor -- necessary?
@@ -48,7 +50,6 @@ namespace protein {
     virtual void apply( core::pose::Pose & pose_to_visualize );
 
 	virtual std::string get_name() const;
-
 
     void set_silent_file( std::string const & setting );
     void set_min_tolerance( core::Real const & setting );
@@ -76,6 +77,12 @@ namespace protein {
   private:
 
 		void
+		initialize_parameters();
+
+		void
+		initialize_protein_input_silent_file_data_from_pose_list( PoseList & pose_list );
+
+		void
 		let_neighboring_chis_minimize(
 																	core::kinematics::MoveMap & mm,
 																	core::pose::Pose & pose );
@@ -94,7 +101,7 @@ namespace protein {
 
 		core::scoring::ScoreFunctionOP fa_scorefxn_;
 
-		core::io::silent::SilentFileDataOP sfd_;
+		core::io::silent::SilentFileDataOP sfd_, input_silent_file_data_;
 
 		std::string min_type_;
 		core::Real min_tolerance_;

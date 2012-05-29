@@ -14,8 +14,6 @@
 // libRosetta headers
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
-//#include <core/scoring/dunbrack/SingleResidueDunbrackLibrary.hh>
-//#include <core/scoring/dunbrack/DunbrackRotamer.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
@@ -145,10 +143,6 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray3D.hh>
-//RNA stuff.
-//#include <protocols/rna/RNA_FragmentsClasses.hh>
-//#include <protocols/rna/RNA_DeNovoProtocol.hh>
-//#include <protocols/rna/RNA_StructureParameters.hh>
 
 //Job dsitributor
 #include <protocols/jobdist/JobDistributors.hh>
@@ -157,7 +151,6 @@
 
 
 // C++ headers
-//#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -220,7 +213,6 @@ OPT_KEY( Boolean, generate_beta_database )
 OPT_KEY( Boolean, combine_loops )
 OPT_KEY( Boolean, skip_minimize )
 OPT_KEY( Boolean, rescore_only )
-//OPT_KEY( Real, filter_rmsd )
 OPT_KEY( Real, score_diff_cut )
 OPT_KEY( Real, centroid_score_diff_cut )
 OPT_KEY( Real, rmsd_screen )
@@ -261,6 +253,18 @@ OPT_KEY( Integer, ccd_close_res )
 OPT_KEY( IntegerVector, bridge_res )
 
 void
+initialize_native_pose( core::pose::PoseOP & native_pose, core::chemical::ResidueTypeSetCAP & rsd_set );
+
+void
+generate_samples_and_cluster( core::pose::Pose & pose,
+															protocols::swa::StepWiseJobParametersOP & job_parameters,
+															protocols::swa::StepWisePoseSetupOP & stepwise_pose_setup,
+															utility::vector1< protocols::swa::InputStreamWithResidueInfoOP > & input_streams,
+															utility::vector1 < Size > & moving_residues,
+															protocols::swa::StepWiseClustererOP & stepwise_clusterer,
+															std::string const & silent_file );
+
+void
 enable_sampling_of_loop_takeoff( protocols::swa::StepWisePoseSampleGeneratorOP & sample_generator,
 																 protocols::swa::StepWiseJobParametersOP job_parameters,
 																 pose::Pose & pose );
@@ -293,6 +297,7 @@ rebuild_test(){
 	bool const centroid_mode = option[ centroid ]();
 	if ( centroid_mode ) rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( CENTROID );
 
+
 	//Read in desired fasta.
 	std::string const fasta_file = option[ in::file::fasta ]()[1];
 	core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( fasta_file )[1];
@@ -300,20 +305,7 @@ rebuild_test(){
 
 	// Read in native pose.
 	PoseOP native_pose;
-	if (option[ in::file::native ].user() ) {
-		native_pose = PoseOP( new Pose );
-		std::string native_pdb_file  = option[ in::file::native ];
-		import_pose::pose_from_pdb( *native_pose, *rsd_set, native_pdb_file );
-
-		native_pose->conformation().detect_disulfides();
-		if (!option[ disulfide_file ].user() ){
-			for (Size n = 1; n <= native_pose->total_residue(); n++){
-				if ( native_pose->residue_type( n ).has_variant_type( chemical::DISULFIDE ) ) utility_exit_with_message( "native pose has disulfides -- you should probable specify disulfides with -disulfide_file" );
-			}
-		}
-
-		if ( option[ dump ]() ) native_pose->dump_pdb("full_native.pdb");
-	}
+	initialize_native_pose( native_pose, rsd_set );
 
 	////////////////////////////////////////////////////
 	// Actual read in of any starting poses.
@@ -326,6 +318,7 @@ rebuild_test(){
 
   utility::vector1< core::Size > const moving_res_list = option[ sample_res ]();
 
+	// move following to its own function?
 	StepWisePoseSetupOP stepwise_pose_setup =
 		new StepWisePoseSetup( moving_res_list, /*the first element of moving_res_list is the sampling_res*/
 													 desired_sequence,
@@ -349,8 +342,6 @@ rebuild_test(){
 
 	stepwise_pose_setup->apply( pose );
 
-	//std::cout << "Set SECSTRUCT: " << pose.secstruct() << std::endl;
-
 	StepWiseJobParametersOP & job_parameters = stepwise_pose_setup->job_parameters();
 	utility::vector1 < Size > moving_residues = job_parameters->working_moving_res_list();
 
@@ -359,20 +350,113 @@ rebuild_test(){
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
 	std::string const silent_file = option[ out::file::silent  ]();
-	std::string const silent_file_sample   = get_file_name( silent_file, "_pack" );
 	std::string const silent_file_minimize = get_file_name( silent_file, "_minimize" );
-	std::string const silent_file_centroid = get_file_name( silent_file, "_centroid" );
+
+	////////////////////////////////////////////////////////////////////
+	StepWiseClustererOP stepwise_clusterer;
+	generate_samples_and_cluster( pose, job_parameters, stepwise_pose_setup, input_streams,
+																moving_residues, stepwise_clusterer, silent_file );
+
+	////////////////////////////////////////////////////////////////////
+	// move following to its own function?
+	// Minimize...
+	//	PoseList minimize_pose_list = stepwise_clusterer.clustered_pose_list();
+	StepWiseProteinPoseMinimizer stepwise_pose_minimizer( stepwise_clusterer->silent_file_data(), moving_residues );
+	ScoreFunctionOP minimize_scorefxn( core::scoring::getScoreFunction() );
+	if (minimize_scorefxn->get_weight( atom_pair_constraint ) == 0.0) minimize_scorefxn->set_weight( atom_pair_constraint, 1.0 ); //go ahead and turn these on
+	if (minimize_scorefxn->get_weight( coordinate_constraint) == 0.0) minimize_scorefxn->set_weight( coordinate_constraint, 1.0 ); // go ahead and turn these on
+	check_scorefxn_has_constraint_terms_if_pose_has_constraints( pose, minimize_scorefxn );
+	minimize_scorefxn->set_weight( linear_chainbreak, 150.0 );
+	stepwise_pose_minimizer.set_scorefxn( minimize_scorefxn );
+	if( option[ dump ] ) stepwise_pose_minimizer.set_silent_file( silent_file_minimize );
+	stepwise_pose_minimizer.set_move_jumps_between_chains( option[ move_jumps_between_chains ]() );
+	//stepwise_pose_minimizer.set_constraint_set( cst_set );
+	stepwise_pose_minimizer.set_native_pose( job_parameters->working_native_pose() );
+	stepwise_pose_minimizer.set_calc_rms_res( job_parameters->working_calc_rms_res() ); // used for calculating rmsds to native.
+	stepwise_pose_minimizer.set_fixed_res( job_parameters->working_fixed_res() );
+	stepwise_pose_minimizer.set_move_takeoff_torsions( !option[ disable_sampling_of_loop_takeoff ]() );
+	stepwise_pose_minimizer.set_rescore_only( option[ rescore_only ]() );
+	if ( option[ min_type ].user() )	stepwise_pose_minimizer.set_min_type( option[ min_type ]() );
+	if ( option[ min_tolerance ].user() ) stepwise_pose_minimizer.set_min_tolerance( option[ min_tolerance ]() );
+
+	if ( !option[ skip_minimize ]() ){
+
+		stepwise_pose_minimizer.apply( pose );
+		stepwise_clusterer->set_silent_file_data( stepwise_pose_minimizer.silent_file_data() );
+		stepwise_clusterer->cluster();
+
+	}
+
+	stepwise_clusterer->output_silent_file( silent_file );
+
+}
+
+////////////////////////////////////////////////////////////////
+void
+initialize_native_pose( core::pose::PoseOP & native_pose, core::chemical::ResidueTypeSetCAP & rsd_set ){
+
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace core::pose;
+
+	if ( !option[ in::file::native ].user() ) return;
+
+	native_pose = new Pose;
+
+	std::string native_pdb_file  = option[ in::file::native ];
+	import_pose::pose_from_pdb( *native_pose, *rsd_set, native_pdb_file );
+
+	native_pose->conformation().detect_disulfides();
+	if (!option[ disulfide_file ].user() ){
+		for (Size n = 1; n <= native_pose->total_residue(); n++){
+			if ( native_pose->residue_type( n ).has_variant_type( chemical::DISULFIDE ) ) utility_exit_with_message( "native pose has disulfides -- you should probable specify disulfides with -disulfide_file" );
+		}
+	}
+
+	// this is weird, but I'm trying to reduce memory footprint by not saving the big 2-body energy arrays that get allocated
+	// when native_poses with missing atoms are 'packed' during pose_from_pdb().
+	//	native_pose->set_new_energies_object( 0 );
+	if ( option[ dump ]() ) native_pose->dump_pdb("full_native.pdb");
+
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////
+void
+generate_samples_and_cluster( core::pose::Pose & pose,
+															protocols::swa::StepWiseJobParametersOP & job_parameters,
+															protocols::swa::StepWisePoseSetupOP & stepwise_pose_setup,
+															utility::vector1< protocols::swa::InputStreamWithResidueInfoOP > & input_streams,
+															utility::vector1 < Size > & moving_residues,
+															protocols::swa::StepWiseClustererOP & stepwise_clusterer,
+															std::string const & silent_file ){
+
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace core::chemical;
+	using namespace core::conformation;
+	using namespace core::kinematics;
+	using namespace core::scoring;
+	using namespace core::scoring::constraints;
+	using namespace core::io::silent;
+	using namespace core::pose;
+	using namespace core::pack;
+	using namespace protocols::swa;
+	using namespace protocols::swa::protein;
 
 	/////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////
 	// What are we going to do? SampleGenerator encodes this information...
-  // move following into its own function?
 	/////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////
 	bool optimize_all( false ); // Usually move_all is specified by sample_res...
 	StepWisePoseSampleGeneratorOP sample_generator;
 	bool full_optimize = option[ global_optimize ]();
 	bool disallow_backbone_sampling_ = option[ disallow_backbone_sampling ]();
+
+	std::string const silent_file_sample   = get_file_name( silent_file, "_pack" );
+	std::string const silent_file_centroid = get_file_name( silent_file, "_centroid" );
+
 	if ( option[ in::file::frag_files ].user() ){
 
 		std::string const frag_file  = option[ in::file::frag_files ]()[ 1 ];
@@ -530,63 +614,25 @@ rebuild_test(){
 	/////////////////////////////
 	// Have an option to read structure back in from disk?  may be useful for checkpointing.
 	// For now just take in silent structs prepared by the stepwise_residue_sampler.
-	protocols::swa::StepWiseClusterer stepwise_clusterer(  stepwise_packer.silent_file_data() );
+	stepwise_clusterer = new protocols::swa::StepWiseClusterer (  stepwise_packer.silent_file_data() );
 	Size max_decoys( 400 );
 	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
-	stepwise_clusterer.set_max_decoys( max_decoys );
-	stepwise_clusterer.set_cluster_by_all_atom_rmsd( option[ cluster_by_all_atom_rmsd ] ); // false by default
-	stepwise_clusterer.set_rename_tags( true /*option[ rename_tags ]*/ );
+	stepwise_clusterer->set_max_decoys( max_decoys );
+	stepwise_clusterer->set_cluster_by_all_atom_rmsd( option[ cluster_by_all_atom_rmsd ] ); // false by default
+	stepwise_clusterer->set_rename_tags( true /*option[ rename_tags ]*/ );
 	// this is important (trick from parin ) -- since most of the pose is fixed during
 	//  sampling, only calculate rmsd over moving residues for this clustering!
-	stepwise_clusterer.set_calc_rms_res( moving_residues );
-	if (full_optimize) stepwise_clusterer.set_force_align( true );
+	stepwise_clusterer->set_calc_rms_res( moving_residues );
+	if (full_optimize) stepwise_clusterer->set_force_align( true );
 	Real cluster_radius( 0.1 );
 	if ( option[rescore_only]() ) cluster_radius = 0.0; // no clustering will actually happen
 	if ( option[ OptionKeys::cluster::radius ].user() ) cluster_radius = option[ OptionKeys::cluster::radius ]();
-	stepwise_clusterer.set_cluster_radius( cluster_radius	);
+	stepwise_clusterer->set_cluster_radius( cluster_radius	);
 
-	stepwise_clusterer.cluster();
+	stepwise_clusterer->cluster();
 
-	// NO LONGER IN USE, minimizer always on
 	// Perhaps we should output decoys into a silent file at this point -- for checkpointing.
-	if ( option[ dump ]()	) stepwise_clusterer.output_silent_file( "CLUSTER_"+silent_file );
-
-	// NO LONGER IN USE, CARRIED OUT BY CLUSTERER
-	// StepWiseProteinFilterer stepwise_filterer;
-	//		stepwise_filterer.set_final_number( option[ n_minimize ]()  );
-	//		stepwise_filterer.filter( pose_list, minimize_pose_list );
-	//		std::cout << "FILTER " << pose_list.size() << " " << minimize_pose_list.size() << std::endl;
-
-	// Minimize...
-	PoseList minimize_pose_list = stepwise_clusterer.clustered_pose_list();
-	StepWiseProteinPoseMinimizer stepwise_pose_minimizer( minimize_pose_list, moving_residues );
-	ScoreFunctionOP minimize_scorefxn( core::scoring::getScoreFunction() );
-	if (minimize_scorefxn->get_weight( atom_pair_constraint ) == 0.0) minimize_scorefxn->set_weight( atom_pair_constraint, 1.0 ); //go ahead and turn these on
-	if (minimize_scorefxn->get_weight( coordinate_constraint) == 0.0) minimize_scorefxn->set_weight( coordinate_constraint, 1.0 ); // go ahead and turn these on
-	check_scorefxn_has_constraint_terms_if_pose_has_constraints( pose, minimize_scorefxn );
-	minimize_scorefxn->set_weight( linear_chainbreak, 150.0 );
-	stepwise_pose_minimizer.set_scorefxn( minimize_scorefxn );
-	if( option[ dump ] ) stepwise_pose_minimizer.set_silent_file( silent_file_minimize );
-	stepwise_pose_minimizer.set_move_jumps_between_chains( option[ move_jumps_between_chains ]() );
-	//stepwise_pose_minimizer.set_constraint_set( cst_set );
-	stepwise_pose_minimizer.set_native_pose( job_parameters->working_native_pose() );
-	stepwise_pose_minimizer.set_calc_rms_res( job_parameters->working_calc_rms_res() ); // used for calculating rmsds to native.
-	stepwise_pose_minimizer.set_fixed_res( job_parameters->working_fixed_res() );
-	stepwise_pose_minimizer.set_move_takeoff_torsions( !option[ disable_sampling_of_loop_takeoff ]() );
-	stepwise_pose_minimizer.set_rescore_only( option[ rescore_only ]() );
-	if ( option[ min_type ].user() )	stepwise_pose_minimizer.set_min_type( option[ min_type ]() );
-	if ( option[ min_tolerance ].user() ) stepwise_pose_minimizer.set_min_tolerance( option[ min_tolerance ]() );
-
-	if ( !option[ skip_minimize ]() ){
-
-		stepwise_pose_minimizer.apply( pose );
-		stepwise_clusterer.set_silent_file_data( stepwise_pose_minimizer.silent_file_data() );
-		stepwise_clusterer.cluster();
-
-	}
-
-	stepwise_clusterer.output_silent_file( silent_file );
-
+	if ( option[ dump ]()	) stepwise_clusterer->output_silent_file( "CLUSTER_"+silent_file );
 }
 
 ///////////////////////////////////////////////////////////////

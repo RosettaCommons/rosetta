@@ -27,6 +27,7 @@
 #include <core/types.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <protocols/swa/StepWiseUtil.hh> // For PoseList. This is a bit silly.
+#include <protocols/swa/StepWiseClusterer.fwd.hh>
 
 #include <map>
 #include <string>
