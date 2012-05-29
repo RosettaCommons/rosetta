@@ -56,10 +56,14 @@ public:
 
 	void random_perturbation( bool const & setting ) { random_perturbation_ = setting; }
 
+	void
+	set_minimize_all( bool const & setting ) { minimize_all_ = setting; }
+
 private:
 
 	void
 	set_Aform_torsions( core::pose::Pose & pose, Size const & n );
+
 
 	void
 	build_on_base_pair( core::pose::Pose & pose, Size const & n, char const & seq1, char const & seq2 );
@@ -74,6 +78,7 @@ private:
 
 	bool verbose_;
 	bool random_perturbation_;
+	bool minimize_all_;
 	std::string const ideal_jump;
 
 	core::chemical::ResidueTypeSetCAP rsd_set;

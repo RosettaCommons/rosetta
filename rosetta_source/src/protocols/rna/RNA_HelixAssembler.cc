@@ -75,6 +75,7 @@ static numeric::random::RandomGenerator RG(17720);  // <- Magic number, do not c
 RNA_HelixAssembler::RNA_HelixAssembler():
 	verbose_( true ),
 	random_perturbation_( false ),
+	minimize_all_( false ),
 	ideal_jump( "RT -0.994805 -0.0315594 0.0967856 -0.0422993 0.992919 -0.111004 -0.092597 -0.114522 -0.989096 6.34696 -0.449942 0.334582 " ),
 	rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA ) ),
 	ALPHA_A_FORM( -64.11),
@@ -94,7 +95,12 @@ RNA_HelixAssembler::RNA_HelixAssembler():
 	// scorefxn->set_weight( core::scoring::rna_torsion, 5.0 );
 	scorefxn->set_weight( core::scoring::atom_pair_constraint, 5.0 );
 	scorefxn->set_weight( core::scoring::rna_torsion, 20.0 );
-	scorefxn->set_weight( core::scoring::fa_stack, 1.0 );
+	//scorefxn->set_weight( core::scoring::fa_stack, 0.125 );
+
+	// why are we getting clashes?
+	//	scorefxn->set_weight( core::scoring::fa_rep, 1.0 );
+	//	scorefxn->set_weight( core::scoring::fa_intra_rep, 0.1 );
+
 }
 
 
@@ -205,7 +211,6 @@ RNA_HelixAssembler::build_on_base_pair( pose::Pose & pose, Size const & n, char 
 	ResidueOP rsd2( ResidueFactory::create_residue( *(rsd_set->aa_map( aa_from_oneletter_code( seq2 ) )[1] ) ) );
 	pose.prepend_polymer_residue_before_seqpos( *rsd2, n + 1, true /*build_ideal_geometry*/ );
 
-
 	pose.set_torsion( TorsionID( n-1, BB, 5),  EPSILON_A_FORM);
 	pose.set_torsion( TorsionID( n-1, BB, 6),  ZETA_A_FORM);
 
@@ -270,14 +275,21 @@ RNA_HelixAssembler::minimize_base_step( pose::Pose & pose, Size const n ){
 	options.nblist_auto_update( true );
 
 	kinematics::MoveMap mm;
-	mm.set_bb( false );
-	mm.set_chi( false );
-	mm.set_jump( false );
-	for (Size i = n-1; i <= n+2; i++ ) {
-		mm.set_bb( i, true );
-		mm.set_chi( i, true );
+
+	if (minimize_all_){
+		mm.set_bb( true );
+		mm.set_chi( true );
+		mm.set_jump( true );
+	} else {
+		mm.set_bb( false );
+		mm.set_chi( false );
+		mm.set_jump( false );
+		for (Size i = n-1; i <= n+2; i++ ) {
+			mm.set_bb( i, true );
+			mm.set_chi( i, true );
+		}
+		//mm.set_jump( true );
 	}
-	//mm.set_jump( true );
 
 	minimizer.run( pose, mm, *scorefxn, options );
 	(*scorefxn)( pose );

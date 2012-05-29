@@ -87,6 +87,7 @@ using io::pdb::dump_pdb;
 // i.e., OPT_KEY( Type, key ) -->  OptionKey::key
 // to have them in a namespace use OPT_1GRP_KEY( Type, grp, key ) --> OptionKey::grp::key
 OPT_KEY( String,  seq )
+OPT_KEY( Boolean,  minimize_all )
 
 /////////////////////////////////////////////////
 void
@@ -128,6 +129,7 @@ rna_build_helix_test(){
 
 	RNA_HelixAssembler rna_helix_assembler;
 	//rna_helix_assembler.random_perturbation( true );
+	rna_helix_assembler.set_minimize_all( option[ minimize_all ]() );
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
 	Size const nstruct = option[ out::nstruct ];
@@ -167,6 +169,7 @@ main( int argc, char * argv [] )
 	using namespace basic::options;
 
 	NEW_OPT( seq, "Input sequence", "" );
+	NEW_OPT( minimize_all, "minimize all torsions in respone to each base pair addition", false );
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup
