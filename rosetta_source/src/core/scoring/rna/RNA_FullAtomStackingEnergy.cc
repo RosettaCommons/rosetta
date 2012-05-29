@@ -32,7 +32,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 
-#include <core/chemical/AtomType.hh> 
+#include <core/chemical/AtomType.hh>
 
 
 // Utility headers
@@ -310,8 +310,8 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 	Size const m( atom_id.atomno() );
 	conformation::Residue const & rsd1( pose.residue( i ) );
 
-	if(rsd1.is_virtual(m)) return;
-
+	if (rsd1.is_virtual(m)) return;
+	if ( !rsd1.is_RNA() ) return;
 
 	if ( m > rsd1.nheavyatoms() ) return;
 
@@ -344,6 +344,8 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 		if ( pos1_fixed && domain_map(i) == domain_map(j) ) continue; //Fixed w.r.t. one another.
 
 		conformation::Residue const & rsd2( pose.residue( j ) );
+
+		if ( !rsd2.is_RNA() ) continue;
 
 		//Look for occlusion by other base atoms? Or all other heavy atoms?
 		//		Size const atom_num_start = base_base_only_ ? rsd2.first_sidechain_atom() : 1 ; //check_base_base_OK take care of this part.
