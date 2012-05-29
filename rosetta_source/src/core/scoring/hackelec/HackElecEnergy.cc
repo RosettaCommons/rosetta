@@ -317,7 +317,7 @@ HackElecEnergy::residue_pair_energy(
 
 	Real score(0.0);
 
-	static Real const attached_h_max_dis2 = hydrogen_interaction_cutoff2();
+	Real const attached_h_max_dis2 = hydrogen_interaction_cutoff2();
 
 	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return;
 
