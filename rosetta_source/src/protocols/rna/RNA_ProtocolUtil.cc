@@ -97,6 +97,15 @@ figure_out_reasonable_rna_fold_tree( pose::Pose & pose )
 
 	for (Size i=1; i < nres; ++i) {
 
+		if ( !pose.residue(i).is_RNA() && !pose.residue(i+1).is_RNA() )  continue;
+
+		if ( (  pose.residue(i).is_RNA() && !pose.residue(i+1).is_RNA() ) ||
+				 ( !pose.residue(i).is_RNA() &&  pose.residue(i+1).is_RNA() ) ) {
+			f.new_jump( i, i+1, i );
+			m++;
+			continue;
+		}
+
 		if ( scoring::rna::is_rna_chainbreak( pose, i ) ){
 
 			f.new_jump( i, i+1, i );
