@@ -15,13 +15,15 @@
 
 #include <numeric/xyzVector.hh>
 
+#include <numeric/types.hh>
+
 #include <sstream>
 #include <string>
 namespace numeric
 {
 
 template <typename T>
-std::string truncate_and_serialize_xyz_vector(xyzVector<T> vector,core::Real precision)
+std::string truncate_and_serialize_xyz_vector(xyzVector<T> vector, Real precision)
 {
 	std::stringstream vector_stream;
 
