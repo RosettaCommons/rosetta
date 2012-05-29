@@ -99,15 +99,17 @@ VariantType const SC_ORBITALS("SC_ORBITALS");
 VariantType const N_ACETYLATION( "N_ACETYLATION" );
 VariantType const C_METHYLAMIDATION( "C_METHYLAMIDATION" );
 
-// @ brief only the repulsive energy will be considered during structure calculations
+///@ brief only the repulsive energy will be considered during structure calculations
 VariantType const REPLONLY("REPLONLY");
 
-// @ brief oop_pre patch, used for oligooxopiperazines (OOPs)
+///@ brief oop_pre patch, used for oligooxopiperazines (OOPs)
 VariantType const OOP_PRE("OOP_PRE");
-// @ brief oop_post patch, used for oligooxopiperazines (OOPs)
+///@ brief oop_post patch, used for oligooxopiperazines (OOPs)
 VariantType const OOP_POST("OOP_POST");
 
-
+///@brief This is used for chemically conjugable residues (LYX, CYX)
+///used for sidechain conjugation (like ubiquitination)
+VariantType const SIDECHAIN_CONJUGATION("SIDECHAIN_CONJUGATION");
 
 } // chemical
 } // core

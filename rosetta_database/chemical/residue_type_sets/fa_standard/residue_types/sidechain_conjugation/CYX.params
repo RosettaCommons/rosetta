@@ -2,7 +2,7 @@
 #version 0.1
 # icoor for connect-bond is from 1FXT, which contains a CYX - Glycine bond
 NAME CYX
-VARIANT MODRES
+VARIANT SIDECHAIN_CONJUGATION
 IO_STRING CYX C
 TYPE POLYMER #residue type
 AA CYS

@@ -14,7 +14,7 @@ NOT VARIANT_TYPE ACETYLATION
 #The following are necessary to prevent patching of CYD, CYV, and CYX (the patch is meant for CYS only)
 NOT VARIANT_TYPE DISULFIDE
 NOT VARIANT_TYPE DEPROTONATED
-NOT VARIANT_TYPE MODRES
+NOT VARIANT_TYPE SIDECHAIN_CONJUGATION
 END_SELECTOR
 
 ## now we search for a case that matches the residue, take the first one
@@ -87,8 +87,5 @@ ADD_CHI_ROTAMER 3  176.91  20.00   # 4.5%
 ##   or the lower tail of the -132.92 bin. Since 176.91 degrees is close to the anti conformation, however,
 ##   the data point is kept as a separate bin.
 
-
 END_CASE
-
-
 

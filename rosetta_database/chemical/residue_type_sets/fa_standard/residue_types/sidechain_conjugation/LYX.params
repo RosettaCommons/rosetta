@@ -1,6 +1,7 @@
 #rosetta residue topology file
 #version 0.1
 NAME LYX
+VARIANT SIDECHAIN_CONJUGATION
 IO_STRING LYX X
 TYPE POLYMER #residue type
 AA LYS
