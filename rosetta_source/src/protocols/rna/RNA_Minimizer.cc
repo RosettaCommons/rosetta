@@ -305,6 +305,8 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 
 	for  (Size i = 1; i <= nres; i++ )  {
 
+		if ( !pose.residue(i).is_RNA() ) continue;
+
 			for (Size j = 1; j <= NUM_RNA_TORSIONS; j++) {
 				id::TorsionID rna_torsion_id( i, id::BB, j );
 				if ( j > NUM_RNA_MAINCHAIN_TORSIONS) rna_torsion_id = id::TorsionID( i, id::CHI, j - NUM_RNA_MAINCHAIN_TORSIONS );
@@ -332,11 +334,13 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 	for (Size n = 1; n <= pose.fold_tree().num_jump(); n++ ){
 		Size const jump_pos1( pose.fold_tree().upstream_jump_residue( n ) );
 		std::string const jump_atom1( pose.fold_tree().upstream_atom( n ) );
-		AtomID const jump_atom_id1( named_atom_id_to_atom_id( NamedAtomID( jump_atom1, jump_pos1 ), pose ) );
+		AtomID jump_atom_id1( 1, jump_pos1 );
+		if (jump_atom1.size() > 0) jump_atom_id1 = named_atom_id_to_atom_id( NamedAtomID( jump_atom1, jump_pos1 ), pose );
 
 		Size const jump_pos2( pose.fold_tree().downstream_jump_residue( n ) );
 		std::string const jump_atom2( pose.fold_tree().downstream_atom( n ) );
-		AtomID const jump_atom_id2( named_atom_id_to_atom_id(NamedAtomID( jump_atom2, jump_pos2 ), pose ) );
+		AtomID jump_atom_id2( 1, jump_pos2 );
+		if (jump_atom2.size() > 0) jump_atom_id2 = named_atom_id_to_atom_id( NamedAtomID( jump_atom2, jump_pos2 ), pose );
 
 		// No -- should look at actual atoms that are connected by jump, not residues.
 		//if (allow_insert_->get( jump_pos1 ) || allow_insert_->get( jump_pos2 ) ) 	 mm.set_jump( n, true );
