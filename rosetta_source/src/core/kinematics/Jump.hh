@@ -125,7 +125,8 @@ public:
 
 	/// @brief Given the desired magnitude of the translation and rotation
 	/// components, applies Gaussian perturbation to this jump.
-	void gaussian_move(int const dir, float const trans_mag, float const rot_mag);
+	/// Return the move that was applied
+	utility::vector1<Real> gaussian_move(int const dir, float const trans_mag, float const rot_mag);
 
 	 // @brief make a gaussian move with one selected rb dof
   void
@@ -199,7 +200,7 @@ public:
 
 	/// @brief get rb_delta by direction
 	inline
-	const utility::vector1<Real> &
+	utility::vector1<Real> const &
 	get_rb_delta( int const dir ) const;
 
 	/// @brief get rb_delta by direction and rb_number
@@ -210,6 +211,10 @@ public:
 	/// @brief set rb_delta by direction and rb_number
 	void
 	set_rb_delta( int const rb_no, int const dir, Real const value );
+
+	/// @brief set rb_deltas by direction
+	void
+	set_rb_deltas( int const dir, utility::vector1<Real> const & );
 
 	/// @brief get rb_center by direction
 	inline

@@ -36,6 +36,8 @@
 
 // ObjexxFCL Headers
 
+#include <numeric/xyzMatrix.hh>
+
 // C++ Headers
 #include <map>
 
@@ -119,12 +121,17 @@ protected:
 
 	/// center of rotation
 	core::Vector rot_center_;
+	bool freeze_; // use the same movement as before (if one is set) during apply
 
 public:
 	// Can't change jump number after creation b/c it determines center of rotation!
 	//void rb_jump_( int const rb_jump_in ) { rb_jump_ = rb_jump_in; }
 	int rb_jump() const { return rb_jump_; }
 	void rb_jump(int jump_id){rb_jump_ = jump_id;} // set jump
+
+	void unfreeze(){freeze_=false;}  // create a new trans_axis during apply
+	void freeze(){freeze_=true;} // use the same trans_axis as before (if one is set) during apply
+
 };
 
 // does a perturbation defined by the rotational and translational magnitudes
@@ -178,20 +185,18 @@ public:
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 
-
-
-
 	void rot_magnitude( core::Real const magnitude ) { rot_mag_ = magnitude; }
 
 	void trans_magnitude( core::Real const magnitude ) { trans_mag_ = magnitude; }
 
 	/// @brief Manual override of rotation center.
-	void rot_center( core::Vector const /*rot_center_in*/ );
+	void rot_center( core::Vector const /*rot_center_in*/ ); // recreate unless freeze is specified.
 
 protected:
 	/// perturbation magnitudes (rotational and translational)
 	core::Real rot_mag_;
 	core::Real trans_mag_;
+	utility::vector1<core::Real>  rb_delta_; // size 6: translateXYZ, rotateXYZ
 private:
 	Partner partner_;
 	bool interface_;
@@ -273,7 +278,8 @@ public:
 		int const rb_jump_in=1,
 		Partner const partner_in=partner_downstream,
 		int phi_angle=360,
-		int psi_angle=360
+		int psi_angle=360,
+		bool update_center_after_move=true
 	);
 
 	RigidBodyRandomizeMover( RigidBodyRandomizeMover const & );
@@ -286,6 +292,8 @@ private:
 	Partner partner_; // which partner gets randomized
 	core::Size phi_angle_;
 	core::Size psi_angle_;
+	numeric::xyzMatrix_double rotation_matrix_;
+	bool update_center_after_move_;
 
 };
 
@@ -379,11 +387,6 @@ private:
 	core::Real step_size_;
 	core::Real random_step_; // by saving these we can apply the same random step to other things after we freeze
 	core::Vector trans_axis_;// by saving these we can apply the same random step to other things after we freeze
-	bool freeze_; // use the same movement as before (if one is set) during apply
-
-public:
-	void unfreeze(){freeze_=false;}  // create a new trans_axis during apply
-	void freeze(){freeze_=true;} // use the same trans_axis as before (if one is set) during apply
 };
 
 // Initialize all dofs in the system randomly. Start by rotation angles

@@ -65,7 +65,7 @@ const Real max_allowed_rot_mag ( 60.0 );
 // default constructor
 RigidBodyMover::RigidBodyMover() :
 		protocols::canonical_sampling::ThermodynamicMover(),
-		rb_jump_( 1 ), dir_( n2c ), rot_center_( 0.0 )
+		rb_jump_( 1 ), dir_( n2c ), rot_center_( 0.0 ), freeze_(false)
 {
 	Mover::type( "RigidBodyBase" );
 }
@@ -76,7 +76,7 @@ RigidBodyMover::RigidBodyMover(
 	Direction dir_in
 ):
 	protocols::canonical_sampling::ThermodynamicMover(),
-	rb_jump_( rb_jump_in ), dir_( dir_in ), rot_center_( 0.0 )
+	rb_jump_( rb_jump_in ), dir_( dir_in ), rot_center_( 0.0 ), freeze_(false)
 {
 	Mover::type( "RigidBodyBase" );
 	if ( dir_ == random ) {
@@ -91,7 +91,8 @@ RigidBodyMover::RigidBodyMover( RigidBodyMover const & src ) :
 	protocols::canonical_sampling::ThermodynamicMover( src ),
 	rb_jump_( src.rb_jump_ ),
 	dir_( src.dir_ ),
-	rot_center_( src.rot_center_ )
+	rot_center_( src.rot_center_ ),
+	freeze_(src.freeze_)
 {}
 
 RigidBodyMover::~RigidBodyMover() {}
@@ -224,21 +225,22 @@ void RigidBodyPerturbMover::apply( core::pose::Pose & pose )
 {
 	// Want to update our center of rotation every time we take a step.
 	// baseclass jump is chosen at random from movable jumps every apply
-	if( movable_jumps_.size() > 1 ) {
-		rb_jump_ = numeric::random::random_element( movable_jumps_ );
-	}
-	else { rb_jump_ = movable_jumps_[1]; }
+	rb_jump_ = ( movable_jumps_.size() > 1 ) ?
+			numeric::random::random_element( movable_jumps_ )
+		: movable_jumps_[1];
 
 	TR.Debug << "Set movable jump #" << rb_jump_ << std::endl;
-	core::Vector dummy_up, dummy_down;
-	if (interface_){
-		protocols::geometry::centroids_by_jump_int(pose, rb_jump_, dummy_up, dummy_down);
-	} else {
-		protocols::geometry::centroids_by_jump(pose, rb_jump_, dummy_up, dummy_down, ok_for_centroid_calculation_ );
-	}
 
-	if ( partner_ == partner_downstream ) rot_center_ = dummy_down;
-	else rot_center_ = dummy_up;
+	// Set center of rotation unless we are frozen.
+	if(!freeze_){
+		core::Vector dummy_up, dummy_down;
+		if (interface_){
+			protocols::geometry::centroids_by_jump_int(pose, rb_jump_, dummy_up, dummy_down);
+		} else {
+			protocols::geometry::centroids_by_jump(pose, rb_jump_, dummy_up, dummy_down, ok_for_centroid_calculation_ );
+		}
+		rot_center_ = ( partner_ == partner_downstream ) ? dummy_down : dummy_up;
+	}
 
 	core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );
 	core::kinematics::Stub downstream_stub = pose.conformation().downstream_jump_stub( rb_jump_ );
@@ -248,7 +250,13 @@ void RigidBodyPerturbMover::apply( core::pose::Pose & pose )
 	if ( rot_mag_ >= max_allowed_rot_mag ) {
 		Warning() << "Large Gaussian rotational perturbations don't make sense!  Bad choices with -dock_pert?  Use -randomize[12] instead." << std::endl;
 	}
-	flexible_jump.gaussian_move( dir_, trans_mag_, rot_mag_ );
+
+	if(!freeze_){
+		rb_delta_ = flexible_jump.gaussian_move( dir_, trans_mag_, rot_mag_ );
+	}else{
+		flexible_jump.set_rb_deltas(dir_, rb_delta_);
+		flexible_jump.fold_in_rb_deltas();
+	}
 	pose.set_jump( rb_jump_, flexible_jump );
 } // RigidBodyPerturbMover::apply()
 
@@ -391,7 +399,8 @@ RigidBodyRandomizeMover::RigidBodyRandomizeMover() :
 	parent(),
 	partner_( partner_downstream ),
 	phi_angle_(360),
-	psi_angle_(360)
+	psi_angle_(360),
+	update_center_after_move_(true)
 {
 	moves::Mover::type( "RigidBodyRandomize" );
 }
@@ -402,12 +411,14 @@ RigidBodyRandomizeMover::RigidBodyRandomizeMover(
 	int const rb_jump_in,
 	Partner const partner_in,
 	int phi_angle,
-	int psi_angle
+	int psi_angle,
+	bool update_center_after_move
 ):
 	RigidBodyMover( rb_jump_in ),
 	partner_( partner_in ),
 	phi_angle_(phi_angle),
-	psi_angle_(psi_angle)
+	psi_angle_(psi_angle),
+	update_center_after_move_(update_center_after_move)
 {
 	moves::Mover::type( "RigidBodyRandomize" );
 	core::Vector upstream_dummy, downstream_dummy;
@@ -438,13 +449,17 @@ void RigidBodyRandomizeMover::apply( core::pose::Pose & pose )
 			 << rot_center_.z() << std::endl;
 	// comments for set_rb_center() explain which stub to use when!
 	flexible_jump.set_rb_center( dir_, downstream_stub, rot_center_ );
-	flexible_jump.rotation_by_matrix( upstream_stub, rot_center_, protocols::geometry::random_reorientation_matrix(phi_angle_, psi_angle_) );
+	if(!freeze_) rotation_matrix_ = protocols::geometry::random_reorientation_matrix(phi_angle_, psi_angle_);
+	flexible_jump.rotation_by_matrix( upstream_stub, rot_center_,  rotation_matrix_);
 		TRBM << "Randomize: " << "Jump (after):  " << flexible_jump << std::endl;
 	pose.set_jump( rb_jump_, flexible_jump );
-	core::Vector dummy_up, dummy_down;
-	protocols::geometry::centroids_by_jump(pose, rb_jump_, dummy_up, dummy_down);
-	if ( partner_ == 2 ) rot_center_ = dummy_down;
-	else rot_center_ = dummy_up;
+	
+	if(update_center_after_move_){ // update rot_center_ // TODO fix this so we don't update center, because that ruins our freezing ability
+		core::Vector dummy_up, dummy_down;
+		protocols::geometry::centroids_by_jump(pose, rb_jump_, dummy_up, dummy_down);
+		rot_center_ = ( partner_ == 2 ) ? dummy_down : dummy_up;
+	}
+
 	TRBM << "Randomize: " << "Rot  (after): "
 	     << rot_center_.x() << " "
 		 << rot_center_.y() << " "
@@ -576,7 +591,7 @@ RigidBodyTransMover::get_name() const {
 }
 
 
-UniformSphereTransMover::UniformSphereTransMover() : parent(), step_size_(1), trans_axis_(), random_step_(0), freeze_(false)
+UniformSphereTransMover::UniformSphereTransMover() : parent(), step_size_(1), random_step_(0), trans_axis_()
 {
 	moves::Mover::type( "UniformSphereTrans" );
 	reset_trans_axis();
@@ -589,9 +604,9 @@ UniformSphereTransMover::UniformSphereTransMover(
 ):
 	parent( rb_jump_in ),
 	step_size_( step_size_in ),
-	trans_axis_(),
 	random_step_(0),
-	freeze_(false)
+	trans_axis_()
+
 {
 	moves::Mover::type( "UniformSphereTrans" );
 	reset_trans_axis(); // start with a random trans_axis, freeze is valid without first calling apply
@@ -601,9 +616,9 @@ UniformSphereTransMover::UniformSphereTransMover( UniformSphereTransMover const 
 	//utility::pointer::ReferenceCount(),
 	parent( src ),
 	step_size_( src.step_size_ ),
-	trans_axis_(src.trans_axis_),
 	random_step_(src.random_step_),
-	freeze_(src.freeze_)
+	trans_axis_(src.trans_axis_)
+
 {}
 
 UniformSphereTransMover::~UniformSphereTransMover() {}

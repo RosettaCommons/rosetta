@@ -164,13 +164,17 @@ Jump::random_trans( const float dist_in )
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @details clear existing rb_delta first if any and then apply the gaussian move
-void Jump::gaussian_move(int const dir, float const trans_mag, float const rot_mag) {
+/// Return the move that was applied.
+utility::vector1<Real>
+Jump::gaussian_move(int const dir, float const trans_mag, float const rot_mag) {
 	fold_in_rb_deltas(); // clear rb_delta
 	for ( int i = 1; i <= 3; ++i ) {
 		set_rb_delta( i, dir, Real( trans_mag * jump_RG.gaussian() ) );
 		set_rb_delta( i+3, dir, Real( rot_mag * jump_RG.gaussian() ) );
 	}
+	utility::vector1<Real> this_rb_delta =  get_rb_delta(dir);
 	fold_in_rb_deltas();
+	return this_rb_delta;
 }
 
 /// @details do a gaussian move along a certain rb direction
@@ -196,6 +200,12 @@ Jump::set_rb_delta(
 )
 {
 	rb_delta[ rb_index(dir) ][rb_no] = value;
+}
+
+/// @brief set rb_deltas by direction
+void
+Jump::set_rb_deltas( int const dir, utility::vector1<Real> const & rb_deltas){
+	rb_delta[ rb_index(dir) ] = rb_deltas;
 }
 
 
