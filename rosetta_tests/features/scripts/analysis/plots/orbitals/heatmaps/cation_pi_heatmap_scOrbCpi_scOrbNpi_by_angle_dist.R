@@ -40,14 +40,18 @@ run=function(self, sample_sources, output_dir, output_formats){
 	
 	plot_id = "cation_pi_stat_bin2d_heatmap_AOO_scOrbPi_scOrbNpi_all_residues_by_angle_dist"
 	ggplot(f, aes(x=AOO_angle, y=OrbHdist)) +
-			stat_bin2d(aes(x=AOO_angle, y=OrbOrbdist, fill=..count..)) + 
-			scale_fill_gradient(low = "white", high = "steelblue")
+			stat_bin2d(aes(x=AOO_angle, y=OrbOrbdist, fill=..count..), binwidth = c(0.1, 0.5), xlim =c(-1, 0), ylim = c(0, 3)) + 
+			scale_fill_gradient(low = "white", high = "steelblue") +
+			scale_x_discrete(paste('Acceptor -- Orbital -- Orbital')) +  
+			scale_y_discrete(paste('scOrbCpi scOrbNpi Counts < 2.5 A from Orbital -- Orbital'))
 	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 	
 	
 	plot_id = "cation_pi_stat_density2d_heatmap_AOO_scOrbPi_scOrbNpi_all_residues_by_angle_dist"
-	ggplot(f, aes(x=AOO_angle, y=OrbHdist)) + stat_density2d(aes(x=AOO_angle, y=OrbOrbdist, fill = ..density..), geom="raster", contour=F) + 
-			scale_fill_gradient(low = "white", high = "steelblue")	
+	ggplot(f, aes(x=AOO_angle, y=OrbHdist)) + stat_density2d(aes(x=AOO_angle, y=OrbOrbdist, fill = ..density..), geom="raster", contour=F, binwidth = c(0.1, 0.5), xlim =c(-1, 0), ylim = c(0, 3)) + 
+			scale_fill_gradient(low = "white", high = "steelblue") +
+			scale_x_discrete(paste('Acceptor -- Orbital -- Orbital')) +  
+			scale_y_discrete(paste('scOrbCpi scOrbNpi Counts < 2.5 A from Orbital -- Orbital'))
 	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 	
 })) # end FeaturesAnalysis

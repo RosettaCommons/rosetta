@@ -37,7 +37,7 @@ all_geom <- query_sample_sources(sample_sources, sele)
 #plot_id = paste("hist_AOH_scOrbPi_scHaro_all_residues", ss_id, sep="_")
 plot_id = "hist_AOH_scOrbPi_scHaro_all_residues"
 ggplot(data=all_geom) +
-		geom_freqpoly(aes(x=AOH_angle, fill=sample_source, color = sample_source), binwidth=0.1, position="dodge") +
+		geom_freqpoly(aes(x=AOH_angle, fill=sample_source, color = sample_source), binwidth=0.1) +
   opts(title = "AOH Pi-Pi measured via Orb - Haro \n", 
 		  "ScOrbCpi to Haro Combined: TYR, PHE, TRP") +
   scale_x_continuous(breaks=c(-1,-.9,-.8,-.7,-.6,-.5,-.4, -.3, -.2, -.1, 0, .1, .2, .3, .4, .5, .6, .7, .8), paste('Acceptor -- Orbital -- Hydrogen (degrees)'))
@@ -46,7 +46,7 @@ save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 plot_id = "hist_DHO_scOrbPi_scHaro_all_residues"
 ggplot(data=all_geom) +
-		geom_freqpoly(aes(x=DHO_angle, fill=sample_source, color = sample_source), binwidth=0.1, position="dodge") +
+		geom_freqpoly(aes(x=DHO_angle, fill=sample_source, color = sample_source), binwidth=0.1) +
   opts(title = "DHO Pi-Pi measured via Orb - Haro \n", 
 		  "ScOrbCpi to Haro Combined: TYR, PHE, TRP") +
   scale_x_continuous(breaks=c(-1,-.9,-.8,-.7,-.6,-.5,-.4, -.3, -.2, -.1, 0, .1, .2, .3, .4, .5, .6, .7, .8), paste('Donor -- Hydrogen -- Orbital (degrees)'))

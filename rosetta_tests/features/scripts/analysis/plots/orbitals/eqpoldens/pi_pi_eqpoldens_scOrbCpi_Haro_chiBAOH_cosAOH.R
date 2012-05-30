@@ -34,7 +34,7 @@ run=function(self, sample_sources, output_dir, output_formats){
 			Haro_orbital
 			WHERE
 			(((resName1 = 'PHE' OR resName1 = 'TYR' OR resName1 = 'TRP' ) AND (resName2 = 'PHE' OR resName2 = 'TYR' OR resName2 = 'TRP')))  AND 
-			OrbHdist < 2.5 AND 
+			OrbHdist < 2 AND 
 			OrbName1 = 'C.pi.sp2' AND
 			ABS(resNum1 - resNum2) > 5;"
 	
@@ -43,7 +43,7 @@ run=function(self, sample_sources, output_dir, output_formats){
 	f <- transform(f,
 			capx = 2*sin(acos(cosAOH)/2)*cos(chiBAOH),
 			capy = 2*sin(acos(cosAOH)/2)*sin(chiBAOH))
-	
+
 	capx_limits <- c(-1.5,1.5)
 	capy_limits <- capx_limits
 	

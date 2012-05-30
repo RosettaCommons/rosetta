@@ -67,6 +67,22 @@ public:
 
 	virtual
 	void
+	setup_for_minimizing(
+		pose::Pose & pose,
+		ScoreFunction const & ,
+		kinematics::MinimizerMapBase const &
+	) const;
+
+
+	virtual
+	void
+	finalize_total_energy(
+		pose::Pose & pose,
+		ScoreFunction const &,
+		EnergyMap &
+	) const;
+	virtual
+	void
 	finalize_after_derivatives( pose::Pose & pose, ScoreFunction const &  ) const;
 
 

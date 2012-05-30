@@ -36,14 +36,18 @@ WHERE
 	
 	plot_id = "pi_pi_stat_bin2d_heatmap_AOH_scOrbPi_Haro_all_residues"
 	ggplot(f, aes(x=AOH_angle, y=OrbHdist)) +
-			stat_bin2d(aes(x=AOH_angle, y=OrbHdist, fill=..count..)) + 
-			scale_fill_gradient(low = "white", high = "steelblue")
+			stat_bin2d(aes(x=AOH_angle, y=OrbHdist, fill=..count..), binwidth = c(0.1, 0.5), xlim =c(-1, 0), ylim = c(0, 3)) + 
+			scale_fill_gradient(low = "white", high = "steelblue") +
+			scale_x_discrete(paste('Acceptor -- Orbital -- Hydrogen')) +  
+			scale_y_discrete(paste('scOrbCpi scHaro Counts < 3.0 A from Orbital -- Hydrogen'))
 	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 	
 	
 	plot_id = "pi_pi_stat_density2d_heatmap_AOH_scOrbPi_Haro_all_residues"
-	ggplot(f, aes(x=AOH_angle, y=OrbHdist)) + stat_density2d(aes(x=AOH_angle, y=OrbHdist, fill = ..density..), geom="raster", contour=F) + 
-			scale_fill_gradient(low = "white", high = "steelblue")	
+	ggplot(f, aes(x=AOH_angle, y=OrbHdist)) + stat_density2d(aes(x=AOH_angle, y=OrbHdist, fill = ..density..), geom="raster", contour=F, binwidth = c(0.1, 0.5), xlim =c(-1, 0), ylim = c(0, 3)) + 
+			scale_fill_gradient(low = "white", high = "steelblue") +
+			scale_x_discrete(paste('Acceptor -- Orbital -- Hydrogen')) +  
+			scale_y_discrete(paste('scOrbCpi scHaro Counts < 3.0 A from Orbital -- Hydrogen'))
 	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 	
 })) # end FeaturesAnalysis

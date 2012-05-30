@@ -34,7 +34,13 @@ public:
 	enum h_type { Hpol_scOrbH, Haro_scOrbH, Hpol_bbOrbH };
 
 
-	OrbitalsLookup( utility::vector1< std::string > const & DHO_energies, utility::vector1< std::string > const & AOH_energies, utility::vector1< std::string > const & AOO_energies, utility::vector1< std::string > const & DOO_energies );
+	OrbitalsLookup(
+			utility::vector1< std::string > const & DHO_energies,
+			utility::vector1< std::string > const & AOH_energies,
+			utility::vector1< std::string > const & AOO_energies,
+			utility::vector1< std::string > const & DOO_energies,
+			utility::vector1< std::string > const & ACO_AOH_orb_Hpol_energies
+			);
 
 	utility::vector1< utility::vector1< core::Real > > parse_files(
 			std::string const & file,
@@ -61,7 +67,8 @@ public:
 		core::Real & energy,
 		core::Real & distance_derivative,
 		core::Real & angle_derivative,
-		bool check_derivative
+		bool check_derivative,
+		bool ACO
 	) const;
 
 	void OrbOrbDist_cosAOD_energy(
@@ -105,7 +112,7 @@ private:
 
 	utility::vector1< numeric::interpolation::spline::BicubicSpline  > AOD_orb_orb_splines_;
 	utility::vector1< numeric::interpolation::spline::BicubicSpline  > DOA_orb_orb_splines_;
-
+	utility::vector1< numeric::interpolation::spline::BicubicSpline  > ACO_AOH_orb_Hpol_splines_;
 
 	mutable core::Real scOrb_scHpol_weight_;
 	mutable core::Real scOrb_scOrb_weight_;

@@ -107,6 +107,29 @@ OrbitalsScore::finalize_after_derivatives( pose::Pose & pose, ScoreFunction cons
 }
 
 
+void
+OrbitalsScore::finalize_total_energy(
+	pose::Pose & pose,
+	ScoreFunction const &,
+	EnergyMap &
+) const{
+	for(core::Size resid=1; resid <= pose.n_residue(); ++resid){
+		pose.update_orbital_coords(resid);
+	}
+}
+
+
+void
+OrbitalsScore::setup_for_minimizing(
+	pose::Pose & pose,
+	ScoreFunction const & ,
+	kinematics::MinimizerMapBase const &
+) const{
+	for(core::Size resid=1; resid <= pose.n_residue(); ++resid){
+		pose.update_orbital_coords(resid);
+	}
+}
+
 bool OrbitalsScore::defines_intrares_energy(core::scoring::EnergyMap const &) const{
 	return false;
 }
@@ -454,14 +477,29 @@ void OrbitalsScore::get_orb_H_distance_and_energy(
 				lookup_table_.OrbHdist_cosDHO_energy(htype, orbital_type, dist, cosDHO, bb_h_energy, d_deriv, a_deriv, false);
 				added_bb_h_energy += bb_h_energy;
 				bb_h_energy=0;
-				lookup_table_.OrbHdist_cosAOH_energy(htype, orbital_type, dist, cosAOH, bb_h_energy, d_deriv, a_deriv, false);
+				lookup_table_.OrbHdist_cosAOH_energy(htype, orbital_type, dist, cosAOH, bb_h_energy, d_deriv, a_deriv, false, false);
 				added_bb_h_energy += bb_h_energy;
 			}else{
 				lookup_table_.OrbHdist_cosDHO_energy(htype, orbital_type, dist, cosDHO, sc_energy, d_deriv, a_deriv, false);
 				added_sc_energy += sc_energy;
 				sc_energy=0;
-				lookup_table_.OrbHdist_cosAOH_energy(htype, orbital_type, dist, cosAOH, sc_energy, d_deriv, a_deriv, false);
-				added_sc_energy += sc_energy;
+				//a little confusing without context. This checks to see if the residue is an aromatic residue. If it is an aromatic residue
+				//then we need to check if the orbital we are looking at is the action center orbital. If it is, then we use a separate
+				//energy than if it were. This is done because the action center orbital has a different angle associated with the acceptor
+				//orbital hydrogen angle. why? because there is no index for action centers, thefore the Acceptor is the first action center atom
+				if(res1.aa() == chemical::aa_tyr || res1.aa() == chemical::aa_phe || res1.aa() == chemical::aa_tyr){
+					if(*orbital_index<=2){
+						lookup_table_.OrbHdist_cosAOH_energy(htype, orbital_type, dist, cosAOH, sc_energy, d_deriv, a_deriv, false, true);
+						added_sc_energy += sc_energy;
+
+					}else{
+						lookup_table_.OrbHdist_cosAOH_energy(htype, orbital_type, dist, cosAOH, sc_energy, d_deriv, a_deriv, false, false);
+						added_sc_energy += sc_energy;
+					}
+				}else{
+					lookup_table_.OrbHdist_cosAOH_energy(htype, orbital_type, dist, cosAOH, sc_energy, d_deriv, a_deriv, false, false);
+					added_sc_energy += sc_energy;
+				}
 			}
 		}
 	}
@@ -858,7 +896,22 @@ void OrbitalsScore::assign_orb_H_derivs(
 			//this starts the AOH derivative calculation
 
 			core::Real cosAOH(cos_of(Axyz, Orbxyz, Hxyz));
-			lookup_table_.OrbHdist_cosAOH_energy(htype, orbital_type, OrbHdist, cosAOH, energy, d_deriv, a_deriv, true);
+			//a little confusing without context. This checks to see if the residue is an aromatic residue. If it is an aromatic residue
+			//then we need to check if the orbital we are looking at is the action center orbital. If it is, then we use a separate
+			//energy than if it were. This is done because the action center orbital has a different angle associated with the acceptor
+			//orbital hydrogen angle. why? because there is no index for action centers, thefore the Acceptor is the first action center atom
+
+			if(res1.aa() == chemical::aa_tyr || res1.aa() == chemical::aa_phe || res1.aa() == chemical::aa_tyr){
+				if(*orbital_index<=2){
+					lookup_table_.OrbHdist_cosAOH_energy(htype, orbital_type, OrbHdist, cosAOH, energy, d_deriv, a_deriv, true, true);
+				}else{
+					lookup_table_.OrbHdist_cosAOH_energy(htype, orbital_type, OrbHdist, cosAOH, energy, d_deriv, a_deriv, true, false);
+				}
+			}else{
+				lookup_table_.OrbHdist_cosAOH_energy(htype, orbital_type, OrbHdist, cosAOH, energy, d_deriv, a_deriv, true, false);
+			}
+
+
 
 
 

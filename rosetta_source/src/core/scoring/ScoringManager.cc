@@ -593,7 +593,7 @@ ScoringManager::get_NVLookupTable() const
 			utility::vector1< std::string > AOH_energies;
 			utility::vector1< std::string > AOO_orb_orb_energies;
 			utility::vector1< std::string > DOO_orb_orb_energies;
-
+			utility::vector1< std::string > ACO_energies;
 
 			DHO_energies.push_back("scoring/score_functions/orbitals/BiCubic_DHO_Hpol_scOrbH.txt");//DHO_energies[1]
 			DHO_energies.push_back("scoring/score_functions/orbitals/BiCubic_DHO_Hpol_bbOrbH.txt");//DHO_energies[2]
@@ -605,7 +605,12 @@ ScoringManager::get_NVLookupTable() const
 
 			AOO_orb_orb_energies.push_back("scoring/score_functions/orbitals/BiCubic_AOD_OrbOrb.txt");
 			DOO_orb_orb_energies.push_back("scoring/score_functions/orbitals/BiCubic_DOA_OrbOrb.txt");
-			orbitals_lookup_table_ = new orbitals::OrbitalsLookup(DHO_energies, AOH_energies, AOO_orb_orb_energies, DOO_orb_orb_energies);
+
+
+			ACO_energies.push_back("scoring/score_functions/orbitals/BiCubic_ACO.txt");
+
+			orbitals_lookup_table_ = new orbitals::OrbitalsLookup(
+					DHO_energies, AOH_energies, AOO_orb_orb_energies, DOO_orb_orb_energies,ACO_energies );
 
 		}
 		return *orbitals_lookup_table_;

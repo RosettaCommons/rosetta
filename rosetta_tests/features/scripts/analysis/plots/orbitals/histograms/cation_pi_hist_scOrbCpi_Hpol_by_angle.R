@@ -27,8 +27,7 @@ run=function(self, sample_sources, output_dir, output_formats){
 			FROM
 			HPOL_orbital
 			WHERE
-			(((resName1 = 'TYR' OR resName1 = 'PHE' OR resName1 = 'TRP') AND (resName2 = 'ARG' OR resName2 = 'LYS')) OR 
-			((resName1 = 'LYS' OR resName1 = 'ARG' ) AND (resName2 = 'TYR' OR resName2 = 'PHE' OR resName2 = 'TRP'))) 
+			((resName1 = 'TYR' OR resName1 = 'PHE' OR resName1 = 'TRP') AND (resName2 = 'ARG' OR resName2 = 'LYS'))  
 			AND OrbHdist < 3;"
 	
 	
@@ -36,7 +35,7 @@ run=function(self, sample_sources, output_dir, output_formats){
 
 	plot_id = "cation_pi_hist_AOH_scOrbPi_Hpol_all_residues"
 	ggplot(data=all_geom) +
-			geom_freqpoly(aes(x=AOH_angle, fill=sample_source, color = sample_source), density=0.1, binwidth=0.1, position="dodge") +
+			geom_freqpoly(aes(x=AOH_angle, fill=sample_source, color = sample_source), density=0.1, binwidth=0.1) +
 			opts(title = "AOH Cation - Pi Measured Via Orb - Hpol \n",
 					"ScOrbCpi to Hpol TYR/PHE/TRP to LYS/ARG") +
 			scale_x_continuous(breaks=c(-1,-.9,-.8,-.7,-.6,-.5,-.4, -.3, -.2, -.1, 0, .1, .2, .3, .4, .5, .6, .7, .8), paste('Acceptor -- Orbital -- Hydrogen'))
@@ -45,7 +44,7 @@ run=function(self, sample_sources, output_dir, output_formats){
 	
 	plot_id = "cation_pi_hist_DHO_scOrbPi_Hpol_all_residues"
 	ggplot(data=all_geom) +
-			geom_freqpoly(aes(x=DHO_angle, fill=sample_source, color = sample_source), binwidth=0.1, position="dodge") +
+			geom_freqpoly(aes(x=DHO_angle, fill=sample_source, color = sample_source), binwidth=0.1) +
 			opts(title = "DHO Cation - Pi Measured Via Orb - Hpol \n",
 						"ScOrbCpi to Hpol TYR/PHE/TRP to LYS/ARG") +
 			scale_x_continuous(breaks=c(-1,-.9,-.8,-.7,-.6,-.5,-.4, -.3, -.2, -.1, 0, .1, .2, .3, .4, .5, .6, .7, .8), paste('Donor -- Hydrogen -- Orbital'))

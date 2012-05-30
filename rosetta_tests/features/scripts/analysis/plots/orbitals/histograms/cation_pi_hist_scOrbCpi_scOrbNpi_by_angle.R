@@ -39,7 +39,7 @@ run=function(self, sample_sources, output_dir, output_formats){
 	all_geom <- query_sample_sources(sample_sources, sele)
 	plot_id = "cation_pi_hist_AOO_scOrbPi_scOrbNpi_all_residues"
 	ggplot(data=all_geom) +
-			geom_freqpoly(aes(x=AOO_angle, fill=sample_source, color = sample_source ), binwidth=0.1, position="dodge") +
+			geom_freqpoly(aes(x=AOO_angle, fill=sample_source, color = sample_source ), binwidth=0.1) +
 			opts(title = "AOO Cation - Pi Measured Via Orb - Orb \n",
 						 "scOrbCpi to scOrbNpi TYR/PHE/TRP to LYS/ARG") +
 			scale_x_continuous(breaks=c(-1,-.9,-.8,-.7,-.6,-.5,-.4, -.3, -.2, -.1, 0, .1, .2, .3, .4, .5, .6, .7, .8), paste('Acceptor -- Orbital -- Orbital'))

@@ -41,9 +41,10 @@ namespace orbitals{
 //this function reads in the potentials from database. The potentials are already in the form of Energy.
 OrbitalsLookup::OrbitalsLookup(
 		utility::vector1< std::string > const & DHO_energies,
-		utility::vector1< std::string > const & /* AOH_energies */,
+		utility::vector1< std::string > const & AOH_energies,
 		utility::vector1< std::string > const & AOD_orb_orb_energies,
-		utility::vector1< std::string > const & DOA_orb_orb_energies
+		utility::vector1< std::string > const & DOA_orb_orb_energies,
+		utility::vector1< std::string > const & ACO_AOH_orb_Hpol_energies
 ) :
 	number_stats_(6),
 	number_elements_(600)
@@ -141,22 +142,8 @@ OrbitalsLookup::OrbitalsLookup(
 	std::cout << "###################################################################################\n#####################3" << std::endl;
 */
 
-/*
-	for(core::Real i=0.00; i <= 4; i+=0.1){
-		core::Size number=0;
-		for(core::Real j=-1.0; j<=0; j+=0.05){
-			++number;
-			if( number == 40){
-				std::cout << DHO_Hpol_scOrbH_vector_spline[1].F((numeric::MakeVector(i,j))) << std::endl;
 
-			}else{
-				std::cout << DHO_Hpol_scOrbH_vector_spline[1].F((numeric::MakeVector(i,j))) << " ";
-				//std::cout << i << " " << j << std::endl;
-			}
-		}
-	}
-	std::cout << "###################################################################################\n#####################3" << std::endl;
-*/
+
 
 
 /*
@@ -182,11 +169,11 @@ OrbitalsLookup::OrbitalsLookup(
 
 
 	std::map<core::Size, std::pair<core::Size, core::Size> > AOH_Hpol_scOrbscH_map;
-	utility::vector1< utility::vector1< core::Real > > AOH_Hpol_scOrbH_vector = parse_files(DHO_energies[1], AOH_Hpol_scOrbscH_map);
+	utility::vector1< utility::vector1< core::Real > > AOH_Hpol_scOrbH_vector = parse_files(AOH_energies[1], AOH_Hpol_scOrbscH_map);
 	std::map<core::Size, std::pair<core::Size, core::Size> > AOH_bbOrbscH_map;
-	utility::vector1< utility::vector1< core::Real > > AOH_Hpol_bbOrbH_vector = parse_files(DHO_energies[2], AOH_bbOrbscH_map);
+	utility::vector1< utility::vector1< core::Real > > AOH_Hpol_bbOrbH_vector = parse_files(AOH_energies[2], AOH_bbOrbscH_map);
 	std::map<core::Size, std::pair<core::Size, core::Size> > AOH_HARO_scOrbscH_map;
-	utility::vector1< utility::vector1< core::Real > > AOH_Haro_scOrbH_vector = parse_files(DHO_energies[3], AOH_HARO_scOrbscH_map);
+	utility::vector1< utility::vector1< core::Real > > AOH_Haro_scOrbH_vector = parse_files(AOH_energies[3], AOH_HARO_scOrbscH_map);
 
 
 
@@ -232,7 +219,69 @@ OrbitalsLookup::OrbitalsLookup(
 		AOH_Haro_scOrbH_splines_.push_back(AOH_Haro_scOrbH_vector_spline[count]);
 	}
 
+/*
+
+
 	//std::cout << "###################################################################################\n#####################3" << std::endl;
+	for(core::Real i=0.00; i <= 4; i+=0.1){
+			core::Size number=0;
+			for(core::Real j=-1.0; j<=1; j+=0.05){
+				++number;
+				if( number == 80){
+					std::cout << i << " " << j << ", " << std::endl;
+
+				}else{
+					std::cout <<  i << " " << j << ", ";
+					//std::cout << i << " " << j << std::endl;
+				}
+			}
+		}
+
+	std::cout << "########################################################################################################3" << std::endl;
+
+	for(core::Real i=0.00; i <= 4; i+=0.1){
+		core::Size number=0;
+		for(core::Real j=-1.0; j<=1; j+=0.05){
+			++number;
+			if( number == 40){
+				std::cout << AOH_Hpol_scOrbH_splines_[1].F((numeric::MakeVector(i,j))) <<  "\n" << std::endl;
+			}else{
+				std::cout << AOH_Hpol_scOrbH_splines_[1].F((numeric::MakeVector(i,j))) << " ";
+				//std::cout << i << " " << j << std::endl;
+			}
+		}
+	}
+	std::cout << "########################################################################################################3" << std::endl;
+	std::cout << "########################################################################################################3" << std::endl;
+
+	std::cout << "table ";
+	core::Size number=0;
+	for(core::Real j=-1.0; j<=1; j+=0.025){
+		++number;
+		if( number == 80){
+			std::cout << j << std::endl;
+		}else{
+			std::cout << j << " ";
+		}
+	}
+	for(core::Real i=0.00; i <= 4; i+=0.05){
+		core::Size number=0;
+		std::cout << i << " ";
+		for(core::Real j=-1.0; j<=1; j+=0.025){
+			++number;
+			if( number == 80){
+				std::cout << AOH_Hpol_scOrbH_splines_[1].F((numeric::MakeVector(i,j))) << std::endl;
+			}else{
+				std::cout << AOH_Hpol_scOrbH_splines_[1].F((numeric::MakeVector(i,j))) << " ";
+				//std::cout << i << " " << j << std::endl;
+			}
+		}
+	}
+
+
+
+*/
+
 
 
 
@@ -296,6 +345,31 @@ OrbitalsLookup::OrbitalsLookup(
 	}
 	std::cout << "###################################################################################\n#####################3" << std::endl;
 */
+
+
+
+
+	std::map<core::Size, std::pair<core::Size, core::Size> > ACO_AOH_orb_Hpol_map;
+	utility::vector1< utility::vector1< core::Real > > ACO_AOH_orb_Hpol_vector = parse_files(ACO_AOH_orb_Hpol_energies[1], ACO_AOH_orb_Hpol_map);
+	utility::vector1< numeric::MathMatrix<core::Real> > ACO_AOH_orb_Hpol_vector_matrix;
+
+
+ //MathMatrix requires an array, not a vector. To get an array from a vector, we can use the & vector[1]. See wikipedia!
+	numeric::MathMatrix<core::Real> ACO_AOH_orb_Hpol_matrix(ACO_AOH_orb_Hpol_map[1].second, ACO_AOH_orb_Hpol_map[1].first, & ACO_AOH_orb_Hpol_vector[1][1] );
+	ACO_AOH_orb_Hpol_vector_matrix.push_back(ACO_AOH_orb_Hpol_matrix);
+
+	utility::vector1<numeric::interpolation::spline::BicubicSpline> ACO_AOH_orb_Hpol_vector_spline;
+
+
+
+		bicubic_spline.train(behavior, start, delta, ACO_AOH_orb_Hpol_vector_matrix[1], linear_cont, first_deriv);
+		ACO_AOH_orb_Hpol_vector_spline.push_back( bicubic_spline );
+
+
+	//store all splines in a private member look up table. This allows for looking up the values in the actual score and provides an
+	//interface for the OrbitalsScore class.
+		ACO_AOH_orb_Hpol_splines_.push_back(ACO_AOH_orb_Hpol_vector_spline[1]);
+
 
 
 }//end orbitalsLookup
@@ -408,7 +482,8 @@ void OrbitalsLookup::OrbHdist_cosAOH_energy
 	core::Real & energy,
 	core::Real & distance_derivative,
 	core::Real & angle_derivative,
-	bool check_derivative
+	bool check_derivative,
+	bool ACO //action centor orbital?
 ) const
 {
 	if ( distance > 4.0 ) { energy = distance_derivative = angle_derivative = 0.0; return; }
@@ -429,9 +504,16 @@ void OrbitalsLookup::OrbHdist_cosAOH_energy
 
 		}
 		if(h_enum == Haro_scOrbH){
-			const numeric::interpolation::spline::BicubicSpline &spline(AOH_Haro_scOrbH_splines_[static_cast <core::Size>(orb_type_name)]);
-			distance_derivative = spline.dFdx(dist_angle_pair);
-			angle_derivative = spline.dFdy(dist_angle_pair);
+			if(ACO){
+				const numeric::interpolation::spline::BicubicSpline &spline(ACO_AOH_orb_Hpol_splines_[static_cast <core::Size>(orb_type_name)]);
+				distance_derivative = spline.dFdx(dist_angle_pair);
+				angle_derivative = spline.dFdy(dist_angle_pair);
+			}else{
+				const numeric::interpolation::spline::BicubicSpline &spline(AOH_Haro_scOrbH_splines_[static_cast <core::Size>(orb_type_name)]);
+				distance_derivative = spline.dFdx(dist_angle_pair);
+				angle_derivative = spline.dFdy(dist_angle_pair);
+			}
+
 		}
 		if(h_enum == Hpol_bbOrbH){
 			const numeric::interpolation::spline::BicubicSpline &spline(AOH_Hpol_bbOrbH_splines_[static_cast <core::Size>(orb_type_name)]);
@@ -448,8 +530,13 @@ void OrbitalsLookup::OrbHdist_cosAOH_energy
 			}
 		}
 		if(h_enum == Haro_scOrbH){
-			const numeric::interpolation::spline::BicubicSpline &spline(AOH_Haro_scOrbH_splines_[static_cast <core::Size>(orb_type_name)]);
-			energy = spline.F(dist_angle_pair);
+			if(ACO){
+				const numeric::interpolation::spline::BicubicSpline &spline(ACO_AOH_orb_Hpol_splines_[static_cast <core::Size>(orb_type_name)]);
+				energy = spline.F(dist_angle_pair);
+			}else{
+				const numeric::interpolation::spline::BicubicSpline &spline(AOH_Haro_scOrbH_splines_[static_cast <core::Size>(orb_type_name)]);
+				energy = spline.F(dist_angle_pair);
+			}
 		}
 		if(h_enum == Hpol_bbOrbH){
 			const numeric::interpolation::spline::BicubicSpline &spline(AOH_Hpol_bbOrbH_splines_[static_cast <core::Size>(orb_type_name)]);

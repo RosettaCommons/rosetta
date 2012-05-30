@@ -499,7 +499,7 @@ OrbitalsFeatures::set_OrbH_features_data(
 	orbName1=res1.orbital_type(Orbindex).name();
 	htype2=res2.atom_type(Hindex).name();
 	Real const container(Orbxyz.distance(Hxyz));
-	xyzVector<Real> const Axyz(res1.atom(Aindex).xyz());
+	xyzVector<Real>  Axyz(res1.atom(Aindex).xyz());
 	core::Size Dindex(res2.bonded_neighbor(Hindex)[1]);
 	xyzVector<Real> Dxyz(res2.xyz(Dindex));
 	AOH_angle = cos_of(Axyz, Orbxyz, Hxyz );
@@ -516,6 +516,10 @@ OrbitalsFeatures::set_OrbH_features_data(
 	if(res2name == "PHE" || res2name == "TYR" || res2name == "TRP" || res2name == "HIS"){
 		res2.update_actcoord();
 		Bxyz= res2.actcoord();
+
+	}
+	if(res2name == "ARG"){
+		Bxyz = res2.atom(res2.atom_index(" CZ ")).xyz();;
 	}
 
 	xyzVector<Real> AHunit = Orbxyz - Hxyz;
@@ -533,8 +537,14 @@ OrbitalsFeatures::set_OrbH_features_data(
 	if(res1name == "PHE" || res1name == "TYR" || res1name == "TRP" || res1name == "HIS"){
 		res1.update_actcoord();
 		Bxyz= res1.actcoord();
+		if(Orbindex <= 2){
+			Bxyz = Axyz;
+			Axyz = res1.actcoord();
+		}
 	}
-
+	if(res1name == "ARG"){
+		Bxyz = res1.atom(res1.atom_index(" CZ ")).xyz();;
+	}
 	AHunit = Hxyz - Orbxyz;
 	AHunit.normalize();
 
