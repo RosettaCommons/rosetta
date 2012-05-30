@@ -104,6 +104,7 @@ basic::options::IntegerOptionKey const E2_residue("E2_residue");
 basic::options::RealOptionKey const SASAfilter("SASAfilter");
 basic::options::RealOptionKey const scorefilter("scorefilter");
 basic::options::BooleanOptionKey const publication("publication");
+basic::options::IntegerOptionKey const n_tail_res("n_tail_res");
 basic::options::BooleanOptionKey const two_ubiquitins("two_ubiquitins");
 
 //tracers
@@ -336,11 +337,14 @@ public:
 		//setup MoveMaps
 		//small/shear behave improperly @ the last residue - psi is considered nonexistent and the wrong phis apply.
 		thioester_mm_ = new core::kinematics::MoveMap;
+		for( core::Size i(1), ntailres(basic::options::option[n_tail_res]); i<ntailres; ++i){ //slightly irregular < comparison because C-terminus is functionally zero-indexed
+			thioester_mm_->set_bb((complexlength-i), true);
+		}
 		//thioester_mm_->set_bb(complexlength, true);
 		//thioester_mm_->set(core::id::TorsionID(complexlength, core::id::BB, core::id::phi_torsion), true);
 		//thioester_mm_->set(core::id::TorsionID(complexlength, core::id::BB, core::id::psi_torsion), true);
-		thioester_mm_->set_bb(complexlength-1, true);
-		thioester_mm_->set_bb(complexlength-2, true);
+		//thioester_mm_->set_bb(complexlength-1, true);
+		//thioester_mm_->set_bb(complexlength-2, true);
 		//thioester_mm_->set(complex.atom_tree().torsion_angle_dof_id(atomIDs[2], atomIDs[3], atomIDs[4], atomIDs[5]), false);
 
 		//setup loop
@@ -818,6 +822,7 @@ int main( int argc, char* argv[] )
 	option.add( SASAfilter, "filter out interface dSASA less than this").def(1000);
 	option.add( scorefilter, "filter out total score greater than this").def(10);
 	option.add( publication, "output statistics used in publication.  TURN OFF if not running (original Saha et al.) publication demo.").def(false);
+	option.add( n_tail_res, "Number of c-terminal \"tail\" residues to make flexible (terminus inclusive)").def(3);
 	option.add( two_ubiquitins, "Mind-blowing - use two ubiquitins (assembled for a K48 linkage) to try to examine the transition state.  Don't use this option unless trying to reproduce publication XXXX").def(false);
 
 	//initialize options

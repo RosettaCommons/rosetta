@@ -61,3 +61,6 @@
 
 #used to turn on system-specific calculations used in the original publication - turn off if not running the integration test
 -publication true
+
+#number of moving C-terminal tail residues on attached protein (ubiquitin)
+-n_tail_res 3

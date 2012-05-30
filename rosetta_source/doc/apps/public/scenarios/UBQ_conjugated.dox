@@ -13,7 +13,7 @@
 @page UBQ_conjugated Documentation for UBQ_E2_thioester, UBQ_Gp_CYD-CYD, and UBQ_Gp_LYX-Cterm applications
 
 @section metadata Metadata
-Last edited 5/15/12.  Code by Steven Lewis.  Corresponding PI Brian Kuhlman bkuhlman@email.unc.edu.
+Last edited 5/30/12.  Code by Steven Lewis.  Corresponding PI Brian Kuhlman bkuhlman@email.unc.edu.
 
 @section contents_note Note on contents and history
 This page documents three applications, UBQ_E2_thioester, UBQ_Gp_CYD-CYD, and UBQ_Gp_LYX-Cterm.  The code and documentation were originally written for the thioester version.  The other versions are modifications of the first, and they all behave nearly the same from the outside, so they are all documented here.  Assume the document is talking about the thioester case, but also assume what it says is true for the other cases.
@@ -69,6 +69,7 @@ UBQ_E2_thioester options
 @li SASAfilter - Real - minimum SASA filter value.  Default 1000 used for production.
 @li scorefilter - Real - filter value for maximum total score.  Default 10; 0 used for production.
 @li publication - Boolean - Publication mode?  In publication mode, the code runs an extra analysis step to find the neighbors of ubiquitin I44.  This is used for the integration test and for reproducibility but has no other purpose.  Defaults to false, but use true for reproduction.
+@li n_tail_res - Integer - number of moving C-terminal tail residues on attached protein (ubiquitin).  Defaults to 3, which matches the original publication.  Not present at the time of publication.
 
 AnchoredDesign options (borrowed for simplicity, not tied to AnchoredDesign in any other way); all are in the AnchoredDesign namespace
 @li AnchoredDesign::refine_temp - real - Monte Carlo temperature for refine phase (0.8 used for production)

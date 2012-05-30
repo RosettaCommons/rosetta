@@ -67,3 +67,6 @@
 
 #activate only for second publication case
 -two_ubiquitins false
+
+#number of moving C-terminal tail residues on attached protein (ubiquitin)
+-n_tail_res 3
