@@ -20,6 +20,8 @@
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
+#include <core/conformation/Conformation.hh>
+#include <core/pose/util.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -41,21 +43,28 @@ namespace simple_filters {
 // @brief default constructor
 PackStatFilter::PackStatFilter():
 	Filter( "PackStat" ),
-	filtered_score_( 0.58 )  // ideally, ~0.65 is required for good packing
+	filtered_score_( 0.58 ),  // ideally, ~0.65 is required for good packing
+	chain_( 0 ),
+	repeats_( 1 )
 {}
 
+//PackStatFilter::~PackStatFilter(){}
 
 // @brief constructor with arguments
 PackStatFilter::PackStatFilter( Real const & score ):
 	Filter( "PackStat" ),
-	filtered_score_( score )
+	filtered_score_( score ),
+	chain_(0),
+	repeats_(1)
 {}
 
 // @brief copy constructor
 PackStatFilter::PackStatFilter( PackStatFilter const & rval ):
 	//utility::pointer::ReferenceCount(),
 	Super( rval ),
-	filtered_score_( rval.filtered_score_ )
+	filtered_score_( rval.filtered_score_ ),
+	chain_(rval.chain_),
+	repeats_(rval.repeats_)
 {}
 
 // @brief set filtered secondary structure
@@ -70,8 +79,22 @@ PackStatFilter::compute( Pose const & pose ) const
 {
 	// calc packstat
 	core::Real packscore;
-	packscore = core::scoring::packstat::compute_packing_score( pose );
-	return packscore;
+	
+	// repeats to average
+	core::Real packscore_average( 0.0 );
+
+    for( core::Size i = 1; i<=repeats_; i++ ){
+			if( chain_ < 1 )
+				packscore = core::scoring::packstat::compute_packing_score( pose );
+			else{
+				core::pose::Pose single_chain( pose.split_by_chain( chain_ ) );
+				packscore = core::scoring::packstat::compute_packing_score( single_chain );		
+			}
+		packscore_average += packscore;
+		tr << "repeat " << i << ": packscore: " << packscore << std::endl;
+    }
+
+    return packscore_average / (core::Real)repeats_;
 }
 
 /// @brief
@@ -106,6 +129,8 @@ PackStatFilter::parse_my_tag(
 {
  	filtered_score_ = tag->getOption<Real>( "threshold", 0.58 ); // ideally, ~0.65 is required for good packing
 	tr << "Structures with packstat score " << filtered_score_ << " will be filtred." << std::endl;
+	chain_ = tag->getOption<core::Size>( "chain", 0 );
+	repeats_ = tag->getOption<core::Size>( "repeats", 1 );
 }
 
 filters::FilterOP

@@ -118,7 +118,12 @@ public:// virtual main operation
 	/// @brief calc packstat score
 	Real compute( Pose const & pose ) const;
 
-
+	/// @brief determine which chain to evaluate, 0 is all
+	core::Size chain_;
+	
+	/// @brief how many times to repeat evaluation
+	core::Size repeats_;
+	
 private:
 
 	Real filtered_score_;
