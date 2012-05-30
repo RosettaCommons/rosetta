@@ -50,6 +50,8 @@ The protocol also includes embedded machinery for generating constraints which a
 @section limits Limitations
 The thioester code is full of hardcoded assumptions that you are using our E2 of interest (CDC34 from PDB 2OB4) and ubiquitin (from 1UBQ, but other structures ought to work).  This code was genericized to UBQ_Gp_CYX-Cterm, which will probably work with other sequences as needed.
 
+This code is not safe to use with silent-file output.  The contortions used to build the sidechain hookup cannot be re-processed by Rosetta's silent file input--output works fine but you can never read the files back in again.  PDB-silent-file output *might* work but I've found that to be buggy in general so I can't recommend it.
+
 @section inputs Input Files
 See test/integration/tests/UBQ_E2_thioester/ for example usage.  Basically all you need is an input structure.
 @li You will NOT be using standard job distributor inputs (-s/-l PDBs or silent files.).  Use -UBQpdb and -E2pdb (or GTPasepdb) to pass in those structures.
