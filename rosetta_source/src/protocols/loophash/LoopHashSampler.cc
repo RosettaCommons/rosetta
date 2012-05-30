@@ -93,6 +93,23 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 	return as < bs;
 }
 
+
+// Just a handy datastructure to carry over some statistics together with the actual retrieve index
+struct FilterBucket {
+  FilterBucket():
+			retrieve_index(0), 
+			BBrms(0),
+			filter_pro(0), 
+			filter_beta(0), 
+			filter_gly(0)   
+	{}
+  core::Size retrieve_index; 
+  core::Real BBrms;
+	core::Size filter_pro; 
+	core::Size filter_beta; 
+	core::Size filter_gly;  
+};
+
   // @brief create a set of structures for a the given range of residues and other parameters
  void
  LoopHashSampler::build_structures(
@@ -119,7 +136,16 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 
 		Size impossible_torsion_rejects = 0;
 		Size impossible_torsion_candidates = 0;
-    std::string sequence = start_pose.sequence();
+    int runcount=0;
+    runcount++;
+    core::Size count_loop_builds = 0;
+		core::Size count_filter_pro = 0;
+		core::Size count_filter_beta = 0;
+		core::Size count_filter_gly = 0;
+		core::Size count_rejected_carms = 0;
+		core::Size count_rejected_bbrms = 0;
+    core::Size count_max_rad = 0;  
+		std::string sequence = start_pose.sequence();
 
     core::pose::Pose original_pose = start_pose;
     core::pose::Pose edit_pose = start_pose;
@@ -161,9 +187,7 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 		}
 
 
-    int runcount=0;
-    runcount++;
-
+		
     core::Size start_res = start_res_;
     core::Size stop_res = stop_res_;
 
@@ -203,23 +227,11 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 
 				// make up some function that uses sample weight to generate model number cutoffs
 				// and one that gives a max_bbrms and min_bbrms
-				// Make it slightly dependent on round
-				//core::Size sw_nmodels = (int)(avg_sw/5*(1.0+(round-1)/60));
-				core::Size sw_nmodels = (core::Size)(avg_sw*max_struct_/50*(1.0+(round-1)/60));
+				core::Size sw_nmodels = (core::Size)(avg_sw*max_struct_/50);
 				core::Size sw_nfrags = (core::Size)avg_sw*400;
 				
 				// Limit how many structures chosen from a given radius
-				// Make it dependent on round, less for higher rounds
-				//core::Size sw_nmodels_per_rad = (int)(avg_sw/50*3);
 				core::Size sw_nmodels_per_rad = (core::Size)(avg_sw*max_struct_per_radius_/50);
-
-				/* dont change these based on avg_sw for now
-				set_min_rms(  avg_sw/10   );
-				set_max_rms(  avg_sw/8  );
-				set_min_bbrms( avg_sw/20  );  
-				set_max_bbrms(  avg_sw/12  );
-				*/
-
 
 				// we want sw_nmodels models no matter what
 				// but if there is a brrms constraint, we might never reach x models
@@ -229,9 +241,11 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 				core::Size models_seen = 0;
 
 				for( Size radius = 0; radius <= max_radius_; radius++ ) {
+					count_max_rad = std::max( count_max_rad, radius );
 					core::Size models_seen_this_rad = 0;
 					std::vector < core::Size > leap_index_bucket;
-					std::vector < core::Size > filter_leap_index_bucket;
+					std::vector < FilterBucket > filter_leap_index_bucket;
+					
 					hashmap.radial_lookup( radius, loop_transform, leap_index_bucket );
 					//TR << "radius, lookup_size = " << radius << ", " << leap_index_bucket.size() << std::endl;
 
@@ -261,59 +275,84 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 							const std::vector< core::Real > psi = new_bs.psi();
 							// Check phi/psi angles against the sequence
 							// Pose counts residues starting from one, so offset that
-							bool offlimits=false;
-							if( get_filter_by_phipsi() ){
-								for( core::Size bs_position = 0; bs_position < phi.size() ; ++bs_position ){
-									int sequence_position = ir - 1 + bs_position;
-									offlimits = true;
-									// Proline
-									if( sequence[sequence_position] == 'P' ) {
-										 if( phi[bs_position] < -103 || phi[bs_position] > -33 ) break;
-									}
-									// Beta branched residues
-									if( sequence[sequence_position] == 'I' || sequence[sequence_position] == 'V' || sequence[sequence_position] == 'T' ) {
-											if( phi[bs_position] > -40 ) break; 
-									}
-									// Non glycine residues are confined to only part of the positive phi region
-									// populated by glycine residues
-									if( sequence[sequence_position] != 'I' || sequence[sequence_position] != 'V' || sequence[sequence_position] != 'T' || 
-											sequence[sequence_position] != 'P'||  sequence[sequence_position] != 'G' ) {
-											if( phi[bs_position] > 70 ) break; 
-									}
-									if( sequence[sequence_position] != 'G' ) {
-										 if( psi[bs_position] < -75 && psi[bs_position] > -170 ) break;
-									}
-									// Residues other than glycine preceding prolines are quite restricted
+							bool offlimits = false;
+						  bool filter_pro = false;
+							bool filter_beta = false;
+							bool filter_gly = false;
+							for( core::Size bs_position = 0; bs_position < phi.size() ; ++bs_position ){
+								int sequence_position = ir - 1 + bs_position;
+								
+								// Proline
+								if( sequence[sequence_position] == 'P' ) {
+									 if( phi[bs_position] < -103 || phi[bs_position] > -33 ) filter_pro = true; 
+								}
+								// Beta branched residues
+								if( sequence[sequence_position] == 'I' || sequence[sequence_position] == 'V' || sequence[sequence_position] == 'T' ) {
+										if( phi[bs_position] > -40 ) filter_beta = true; 
+								}
+								// Non glycine residues are confined to only part of the positive phi region
+								// populated by glycine residues
+								if( sequence[sequence_position] != 'G' ) {
+									 if( phi[bs_position] > 70 ) filter_gly = true;
+								}
+								if( sequence[sequence_position] != 'G' ) {
+									 if( psi[bs_position] < -75 && psi[bs_position] > -170 ) filter_gly = true;
+								}
+								// Residues other than glycine preceding prolines are quite restricted
 //									if( sequence[sequence_position] == 'P' ) {
 //										 if( phi[bs_position] < 40 && sequence[sequence_position] != 'G' ) {
 //													if( psi[bs_position] > -25 || phi[bs_position] < -90 ) break;
 //										 }
 //									}
-									offlimits = false;
-								}
+							}
+						
+						  // were any of the filters triggered ?
+							if( filter_pro || filter_beta || filter_gly ) offlimits = true;
+
+							// ignore filtering if filtering is switched off by user.
+							if( !get_filter_by_phipsi() ){
+							  offlimits = false;
 							}
 							
 							impossible_torsion_candidates++;
+							
+							// count rejection stats
+							if( filter_pro )  count_filter_pro ++;
+							if( filter_beta	)	count_filter_beta ++;
+							if( filter_gly ) 	count_filter_gly ++;
+							
 							if( offlimits ) {
 									impossible_torsion_rejects++;
 							} else {
-									filter_leap_index_bucket.push_back( *it );
+
+							    FilterBucket bucket; 
+									bucket.retrieve_index = *it;
+									bucket.BBrms = BBrms;
+									bucket.filter_pro  = filter_pro  ? 1 : 0;
+									bucket.filter_beta = filter_beta ? 1 : 0;
+									bucket.filter_gly  = filter_gly  ? 1 : 0;
+
+
+									filter_leap_index_bucket.push_back( bucket );
 							}
 							fragments_seen++;
 							if( fragments_seen > sw_nfrags ) break; // continue with however many are in the bucket now, and break at end
+						} else {
+							count_rejected_bbrms ++;
 						}
 					}
 
+					// treat the fragments in a random order
 					std::random_shuffle( filter_leap_index_bucket.begin(), filter_leap_index_bucket.end());
 
 					// Now create models and check rms after insertion
-					for(  std::vector < core::Size >::const_iterator it = filter_leap_index_bucket.begin();
+					for(  std::vector < FilterBucket >::const_iterator it = filter_leap_index_bucket.begin();
 							it != filter_leap_index_bucket.end();
 							++it ){
 
 						clock_t starttime = clock();
 
-						core::Size retrieve_index = *it;
+						core::Size retrieve_index = it->retrieve_index;
 						LeapIndex cp = hashmap.get_peptide( retrieve_index );
 
 						BackboneSegment new_bs;
@@ -323,6 +362,7 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 						//transfer_phi_psi( start_pose, newpose );			//fpd necessary??
 
 						core::Real final_rms = inserter_->make_local_bb_change( newpose, original_pose, new_bs, ir );
+    				count_loop_builds++;
 
 						bool isok = false;
 						if ( ( final_rms < max_rms_ ) && ( final_rms > min_rms_) ){
@@ -337,6 +377,14 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 								core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
 							new_struct->fill_struct( mynewpose );    // make the silent struct from the copy pose
 							new_struct->energies_from_pose( newpose ); // take energies from the modified pose, not the copy pose
+							new_struct->add_energy( "lh_carms", final_rms );
+							new_struct->add_energy( "lh_bbrms", it->BBrms );
+							new_struct->add_energy( "lh_radius", radius );
+							new_struct->add_energy( "lh_loopsize", loop_size );
+							new_struct->add_energy( "lh_filter_pro", it->filter_pro );
+							new_struct->add_energy( "lh_filter_beta", it->filter_beta );
+							new_struct->add_energy( "lh_filter_gly", it->filter_gly );
+							
 							//TR << "SAMPLER: " << new_struct->get_energy("censcore") << std::endl;
 							// Add donor history for this round of loophash only
 
@@ -371,9 +419,11 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 							lib_structs.push_back( new_struct );
 							models_seen++;
 							models_seen_this_rad++;
-							if( models_seen > sw_nmodels ) break;
-							if( models_seen_this_rad > sw_nmodels_per_rad ) break;
+							if( models_seen >= sw_nmodels ) break;
+							if( models_seen_this_rad >= sw_nmodels_per_rad ) break;
 							isok = true;
+						}else{
+							count_rejected_carms ++;
 						}
 
 						//if ( lib_structs.size() > 2  ) return;
@@ -394,7 +444,19 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 		long endtime = time(NULL);
 
 
-		TR.Info << "LHS: " << start_res << "-" << stop_res << ":  " <<lib_structs.size() << "struc " << endtime - starttime << " secs, rej: " << impossible_torsion_rejects << "/" << impossible_torsion_candidates << std::endl;
+		TR.Info << "LHS: " << start_res << "-" << stop_res << ":  " 
+		        << lib_structs.size() << " struc "
+						<< endtime - starttime << " secs " 
+						<< " Total: "   << impossible_torsion_candidates 
+						<< " RejTor: "  << impossible_torsion_rejects 
+						<< " RejPro: "  << count_filter_pro
+						<< " RejBeta: "	<< count_filter_beta
+						<< " RejGly: " << count_filter_gly
+						<< " RejCA(" << min_rms_ << "-" << max_rms_ << "): "   << count_rejected_carms
+						<< " RejBB: "   << count_rejected_bbrms
+						<< " Built: "   << count_loop_builds
+						<< " MaxRad: " << count_max_rad
+						<< std::endl;
 
 		for( std::vector< core::io::silent::SilentStructOP >::iterator it=lib_structs.begin();
 				it != lib_structs.end(); ++it ){
@@ -487,14 +549,6 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 			core::Size sw_nfrags = 100;
 			core::Size sw_nmodels_per_rad = 5;
 
-			/* dont change these based on avg_sw for now
-			set_min_rms(  avg_sw/10   );
-			set_max_rms(  avg_sw/8  );
-			set_min_bbrms( avg_sw/20  );  
-			set_max_bbrms(  avg_sw/12  );
-			*/
-
-
 			// we want sw_nmodels models no matter what
 			// but if there is a brrms constraint, we might never reach x models
 			// some breakpoint, like x bins checked or x frags checked
@@ -537,6 +591,7 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 					}
 				}
 
+				// treat the fragments in random order
 				std::random_shuffle( filter_leap_index_bucket.begin(), filter_leap_index_bucket.end());
 
 				// Now create models and check rms after insertion
@@ -562,8 +617,8 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 						lib_structs.push_back( newpose );
 						models_seen++;
 						models_seen_this_rad++;
-						if( models_seen > sw_nmodels ) break;
-						if( models_seen_this_rad > sw_nmodels_per_rad ) break;
+						if( models_seen >= sw_nmodels ) break;
+						if( models_seen_this_rad >= sw_nmodels_per_rad ) break;
 						isok = true;
 					}
 
