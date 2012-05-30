@@ -347,7 +347,12 @@ LoopHashMap::setup( core::Size loop_size)
 {
 	loop_size_ = loop_size;
 
-	TR.Info << "Setting up hash_: Size:  " << loop_size << std::endl;
+	if( loop_size > 1 ){
+		// only show this if this class is being set up with a meaningful parameter. Loop_size == 1 means it was called without an argument to the constructor and
+		// so its just an intermediate data structure.
+		TR.Info << "Setting up hash_: Size:  " << loop_size << std::endl;
+	
+	}
 
 	BoundingBox bounding_box( core::Vector(
 				-HASH_POSITION_GRID_BASE*(int)loop_size,
