@@ -988,6 +988,77 @@ def basetype(t):
   return str(t)
 
 
+def getIncludes(files):
+    ''' return string with includes for finalize2
+    '''
+    files = files[:]
+
+    output = ''
+
+    output = set()
+    for f in files[:]:
+        cc_file = f.replace('.hh', '.cc')
+        if os.path.isfile(cc_file):
+            files.append(cc_file)
+
+    for f in files:
+        lines = commands.getoutput(  "cat %s | grep '^#include <core' | grep '\.hh\|\.hpp'" % f) + '\n'        \
+                + commands.getoutput("cat %s | grep '^#include <numeric' | grep '\.hh\|\.hpp'" % f) + '\n'   \
+                + commands.getoutput("cat %s | grep '^#include <utility' | grep '\.hh\|\.hpp'" % f) + '\n'   \
+                + commands.getoutput("cat %s | grep '^#include <protocols' | grep '\.hh\|\.hpp'" % f) + '\n' \
+                + commands.getoutput("cat %s | grep '^#include <basic' | grep '\.hh\|\.hpp'" % f) + '\n' \
+                + commands.getoutput("cat %s | grep '^#include <ObjexxFCL' | grep '\.hh\|\.hpp'" % f) + '\n'
+                #+ commands.getoutput("cat %s | grep '^#include <boost' | grep '\.hh\|\.hpp'" % f) + '\n'
+
+        for i in lines.split('\n'):
+            if i:
+                #print 'i=', i
+                iname = i[i.index('<')+1 : i.index('>')]
+                if os.path.isfile( iname.replace('.fwd', '') ): i = i.replace('.fwd', '')
+                output.add(i)
+
+    output = '\n'.join(output)
+
+
+    lines = list( set( output.split('\n') ) );  lines.sort()
+    output = '\n'.join( lines ) + '\n'
+    return output
+
+
+def finalize2(fname, dest, path, module_name='_noname', add_by_hand=False, includes=''):
+
+    f = open(fname);  s = '#include <boost/python.hpp>\n' + includes + f.read();  f.close()
+
+    namespace = os.path.basename(path)
+    by_hand = dest + '/../src/' + path + '/_' + namespace + '__by_hand.cc'
+    #print '!++ ', by_hand, add_by_hand, 'namespace=%s' % namespace, 'path=%s' % path
+    if os.path.isfile(by_hand) and add_by_hand:
+        print 'Adding by bindings writen by hand...'
+        f = open(by_hand);
+        s = f.read() + '\n\n' + s
+        f.close()
+
+        #s = re.sub('BOOST_PYTHON_MODULE\(.*\)\{',
+        #           'BOOST_PYTHON_MODULE(_%(n)s){\n  wrap__%(n)s__by_hand();' % dict(n=namespace),
+        #           s)
+
+        if add_by_hand:
+            s = re.sub('BOOST_PYTHON_MODULE\(.*\)\{',
+                   'BOOST_PYTHON_MODULE(%(module_name)s){\n  wrap__%(n)s__by_hand();' % dict(n=namespace, module_name=module_name),
+                   s)
+        else:
+            s = re.sub('BOOST_PYTHON_MODULE\(.*\)\{',
+                   'BOOST_PYTHON_MODULE(%(module_name)s){' % dict(n=namespace, module_name=module_name),
+                   s)
+
+
+    f = open(fname,'w')
+    f.write(s)
+    f.close()
+
+
+
+
 def finalize(fname, dest, path, mb, module_name='_noname', add_by_hand=False, files=[], add_includes=True):
     files = files[:]
     #print 'finalize... add_by_hand=%s' % add_by_hand, files

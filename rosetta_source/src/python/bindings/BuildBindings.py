@@ -39,6 +39,15 @@ import tools.CppParser
 from optparse import OptionParser, IndentedHelpFormatter
 
 
+class NT:  # named tuple
+    def __init__(self, **entries): self.__dict__.update(entries)
+    def __repr__(self):
+        r = '|'
+        for i in dir(self):
+            if not i.startswith('__'): r += '%s --> %s, ' % (i, getattr(self, i))
+        return r[:-2]+'|'
+
+
 
 # global include dict 'file' --> bool;  True mean include file, False - exclude
 # if key is not present that mean that this file/names space is new, it will be excluded and
@@ -48,7 +57,7 @@ IncludeDict = None  # we set it on purpose to None instead of {}, this should ca
 #  Here we will store new files and dirs. This will be saved to 'IncludeDict.new' in the end.
 IncludeDictNew = {}
 
-Jobs = []  # Global list of spawned process pid's
+Jobs = []  # Global list of NameTuples  (pid, tag)
 
 
 def main(args):
@@ -183,6 +192,11 @@ def main(args):
       help="Number of processors to use on when building(default: 1)",
     )
 
+    parser.add_option("-p", "--parsing-jobs",
+      default=1,
+      type="int",
+      help="Number of processors to use for parsing when building. WARNING: Some namespace will consume huge amount of memory when parsing (up to ~4Gb), use this option with caution! (default: 1)",
+    )
 
 
     (options, args) = parser.parse_args(args=args[1:])
@@ -203,6 +217,8 @@ def main(args):
     if (Options.jobs > 1) and Options.sort_IncludeDict:
         print 'Option --update-IncludeDict could be used only with -j1... exiting...'
         return 1
+
+    if Options.parsing_jobs > Options.jobs: Options.parsing_jobs = Options.jobs  # Seriously now...
 
     # assuming that we in rosetta/rosetta_source/src/python/bindings directory at that point
     mini_path = os.path.abspath('./../../../')
@@ -239,19 +255,24 @@ def main(args):
             buildModule(n, bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
 
     else:
-        #buildModules('utility',   bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
+        buildModules('utility',   bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
+        buildModules('numeric',   bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
+        buildModules('basic',     bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
+        buildModules('core',      bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
+        buildModules('protocols', bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
 
         # we want to start with lib that is longest to build - that way we can do multi-core build more efficiently
+        '''
         buildModules('core',      bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
         buildModules('protocols', bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
         buildModules('utility',   bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
         buildModules('numeric',   bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
         buildModules('basic',     bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
-
+        '''
     error = False
-    for p in Jobs:
+    for j in Jobs:
         try:
-            r = os.waitpid(p, 0)  # waiting for all child process to termintate...
+            r = os.waitpid(j.pid, 0)  # waiting for all child process to termintate...
             if r[1] :  # process ended but with error, special case we will have to wait for all process to terminate and call system exit.
                 error = True
 
@@ -260,7 +281,7 @@ def main(args):
 
 
     if error:
-        print '~Some of the build scripts return an error, PyRosetta build failed!'
+        print_('Some of the build scripts return an error, PyRosetta build failed!', color='red', bright=True)
         sys.exit(1)
 
 
@@ -349,40 +370,76 @@ def execute(message, command_line, return_=False, untilSuccesses=False, print_ou
     else: return res
 
 
-def _execute(message, commandline, return_=False):
-    print message
-    print commandline
-    (res, output) = commands.getstatusoutput(commandline)
-    print output
-    if res:
-        print "\nEncounter error while executing: ", commandline
-        if return_: return True
-        else: sys.exit(1)
+def print_(msg, color=None, background=None, bright=False, blink=False, action='print', endline=True):
+    ''' print string with color and background. Avoid printing and return results str instead if action is 'return'. Also check for 'Options.no_colors'
+    '''
+    colors = dict(black=0, red=1, green=2, yellow=3, blue=4, magenta=5, cyan=6, white=7)  # standard ASCII colors
 
-    return False
+    if 'Options' in globals()  and  hasattr(Options, 'no_colors')  and  Options.no_colors: s = msg
+    else:
+        s  = ['3%s' % colors[color] ] if color else []
+        s += ['4%s' % colors[background] ] if background else []
+        s += ['1'] if bright else []
+        s += ['5'] if blink else []
+
+        s = '\033[%sm%s\033[0m%s' % (';'.join(s), msg, '\n' if endline else '')
+
+    if action == 'print': sys.stdout.write(s)
+    else: return s
 
 
-def mfork():
+
+def mFork(tag=None, overhead=0):
     ''' Check if number of child process is below Options.jobs. And if it is - fork the new pocees and return its pid.
     '''
-    while len(Jobs) >= Options.jobs :
-        for p in Jobs[:] :
-            r = os.waitpid(p, os.WNOHANG)
-            if r == (p, 0):  # process have ended without error
-                Jobs.remove(p)
-            elif r[0] == p :  # process ended but with error, special case we will have to wait for all process to terminate and call system exit.
-                for p in Jobs:
+    #print_('Groups:%s' % os.getgroups(), color='cyan')
+    while len(Jobs) >= Options.jobs + overhead:
+        for j in Jobs[:] :
+            r = os.waitpid(j.pid, os.WNOHANG)
+            if r == (j.pid, 0):  # process have ended without error
+                Jobs.remove(j)
+            elif r[0] == j.pid :  # process ended but with error, special case we will have to wait for all process to terminate and call system exit.
+                for j in Jobs:
                     try:
-                        os.waitpid(p, 0)
+                        os.waitpid(j.pid, 0)
                     except OSError: pass
 
-                print 'Some of the build scripts return an error, PyRosetta build failed!'
+                print_('Some of the build scripts return an error, PyRosetta build failed!', color='red', bright=True)
                 sys.exit(1)
 
-        if len(Jobs) >= Options.jobs: time.sleep(.2)
+        if len(Jobs) >= Options.jobs + overhead: time.sleep(.2)
+
+    sys.stdout.flush()
     pid = os.fork()
-    if pid: Jobs.append(pid) # We are parent!
+    if pid: Jobs.append( NT(pid=pid, tag=tag) )  # We are parent!
     return pid
+
+def mWait(tag):
+    ''' Wait for process tagged with 'tag' for completion
+    '''
+    while True :
+        for j in [ x for x in Jobs if x.pid==tag]:
+            try:
+                r = os.waitpid(j.pid, os.WNOHANG)
+                if r == (j.pid, 0):  # process have ended without error
+                    Jobs.remove(j)
+                elif r[0] == j.pid :  # process ended but with error, special case we will have to wait for all process to terminate and call system exit.
+                    for j in Jobs:
+                        try:
+                            os.waitpid(j.pid, 0)
+                        except OSError: pass
+
+                    print_('Some of the build scripts return an error, PyRosetta build failed!', color='red', bright=True)
+                    sys.exit(1)
+                else: time.sleep(.2);  break
+
+            except OSError, e:
+                if e.errno == errno.ESRCH:  # process already got closed, we assume that this is done by child process and any error will be reported by proc. that closed it
+                    Jobs.remove(j)
+
+        else: return
+
+
 
 def getCompilerOptions():
     #if Platform == 'linux':
@@ -447,15 +504,18 @@ def buildModules__old(path, dest, include_paths, libpaths, runtime_libpaths, gcc
         #dname = dest+'/' + os.path.dirname(dir_name)
         dname = dest+'/' + dir_name
         if not os.path.isdir(dname): os.makedirs(dname)
-        if Options.jobs > 1:
+        '''
+        if Options.parsing_jobs > 1:
             sys.stdout.flush()
-            pid = mfork()
+            pid = mFork()
             if not pid:  # we are child process
                 buildModule(dir_name, dest, include_paths, libpaths, runtime_libpaths, gccxml_path)
                 sys.exit(0)
 
         else:
             IncludeDictNew.update( buildModule(dir_name, dest, include_paths, libpaths, runtime_libpaths, gccxml_path) )
+            '''
+        IncludeDictNew.update( buildModule(dir_name, dest, include_paths, libpaths, runtime_libpaths, gccxml_path) )
 
     os.path.walk(path, visit, None)
 
@@ -493,15 +553,17 @@ def buildModules(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_p
         #dname = dest+'/' + os.path.dirname(dir_name)
         dname = dest+'/' + dir_name
         if not os.path.isdir(dname): os.makedirs(dname)
-        if Options.jobs > 1:
+        '''if Options.parsing_jobs > 1:
             sys.stdout.flush()
-            pid = mfork()
+            pid = mFork()
             if not pid:  # we are child process
                 buildModule(dir_name, dest, include_paths, libpaths, runtime_libpaths, gccxml_path)
                 sys.exit(0)
 
         else:
-            IncludeDictNew.update( buildModule(dir_name, dest, include_paths, libpaths, runtime_libpaths, gccxml_path) )
+            IncludeDictNew.update( buildModule(dir_name, dest, include_paths, libpaths, runtime_libpaths, gccxml_path) ) '''
+
+        IncludeDictNew.update( buildModule(dir_name, dest, include_paths, libpaths, runtime_libpaths, gccxml_path) )
 
 
 
@@ -964,7 +1026,8 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
         xml_recompile = False
 
     for fl in headers:
-        print '\033[32m\033[1m%s\033[0m' % fl
+        #print '\033[32m\033[1m%s\033[0m' % fl
+        print_(fl, color='green', bright=True)
 
         #print 'Binding:', files
         hbase = fl.split('/')[-1][:-3]
@@ -1112,6 +1175,7 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
         f = file( dest + '/' + path + '/__init__.py', 'w');  f.write(t+'from %s import *\n' % all_at_once_base);  f.close()
 
         if xml_recompile or (not Options.update):
+            if os.path.isfile(all_at_once_lib): os.remove(all_at_once_lib)
 
             if execute('Generating XML representation...', 'gccxml %s %s -fxml=%s %s -I. -I../external/include -I../external/boost_1_46_1  -I../external/dbio -DBOOST_NO_INITIALIZER_LISTS ' % (gccxml_options, all_at_once_source_cpp, all_at_once_xml, cpp_defines), Options.continue_ ):
                 return new_headers
@@ -1124,20 +1188,27 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
                                                       by_hand_beginning=by_hand_beginning, by_hand_ending=by_hand_ending)
 
             objs_list = []
+
+            print_('Getting include list...', color='black', bright=True)
+            includes = exclude.getIncludes(headers)
+
+            print_('Finalizing[%s]' % len(code), color='black', bright=True, endline=False);  sys.stdout.flush()
             for i in range( len(code) ):
                 all_at_once_N_cpp = all_at_once_cpp+'%s.cpp' % i
                 all_at_once_N_obj = all_at_once_obj+'%s.o' % i
+                if os.path.isfile(all_at_once_N_obj): os.remove(all_at_once_N_obj)
 
-
-                for fl in headers:
-                    code[i] = '#include <%s>\n' % fl + code[i]
+                for fl in headers: code[i] = '#include <%s>\n' % fl + code[i]
 
                 f = file(all_at_once_N_cpp, 'w');  f.write(code[i]);  f.close()
 
-                #exclude.finalize(all_at_once_N_cpp, dest, path, None, module_name=all_at_once_base, add_by_hand = (i == len(code)-1), files=headers, add_includes=True)
-                exclude.finalize(all_at_once_N_cpp, dest, path, None, module_name=all_at_once_base, add_by_hand = False, files=headers, add_includes=True)
+                exclude.finalize2(all_at_once_N_cpp, dest, path, module_name=all_at_once_base, add_by_hand = False, includes=includes)
+                print_('.', color='black', bright=True, endline=False); sys.stdout.flush()
+            print_(' Done!', color='black', bright=True);
 
-                #finalize_init(all_at_once_N_cpp)
+            for i in range( len(code) ):
+                all_at_once_N_cpp = all_at_once_cpp+'%s.cpp' % i
+                all_at_once_N_obj = all_at_once_obj+'%s.o' % i
 
                 # -fPIC
                 comiler_cmd = "%(compiler)s %(fname)s -o %(obj_name)s -c %(add_option)s %(cpp_defines)s -I../external/include  -I../external/dbio %(include_paths)s "
@@ -1146,23 +1217,46 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
                 failed = False
 
                 if not Options.cross_compile:
-                    if execute("Compiling...", comiler_cmd % comiler_dict, return_=True):
-                        if Options.compiler != 'clang': failed = True
-                        elif execute("Compiling...", comiler_cmd % dict(comiler_dict, compiler='gcc'), return_=True): failed = True
+                    def compile_():
+                        if execute("Compiling...", comiler_cmd % comiler_dict, return_=True):
+                            if Options.compiler != 'clang': failed = True
+                            elif execute("Compiling...", comiler_cmd % dict(comiler_dict, compiler='gcc'), return_=True): failed = True
 
-                if Options.continue_ and failed: return new_headers
+                    if Options.jobs > 1:
+                        pid = mFork(tag=path)
+                        if not pid:  # we are child process
+                            compile_()
+                            sys.exit(0)
 
-                objs_list.append(all_at_once_N_obj)
+                    else:
+                        compile_()
+
+                if Options.jobs == 1:
+                    if Options.continue_ and failed: return new_headers
+
+                    objs_list.append(all_at_once_N_obj)
 
             if not Options.cross_compile:  # -fPIC -ffloat-store -ffor-scope
+
                 linker_cmd = "cd %(dest)s/../ && %(compiler)s %(obj)s %(add_option)s -lmini -lstdc++ -lz -l%(python_lib)s \
                               -l%(boost_lib)s %(libpaths)s %(runtime_libpaths)s -o %(dst)s"
                 linker_dict = dict(add_option=add_loption, obj=' '.join(objs_list), dst=all_at_once_lib, libpaths=libpaths, runtime_libpaths=runtime_libpaths, dest=dest, boost_lib=Options.boost_lib,
                         python_lib=Options.python_lib, compiler=Options.compiler)
+                def linking():
+                    if execute("Linking...", linker_cmd % linker_dict, return_= (True if Options.compiler != 'gcc' or Options.continue_ else False) ):
+                        if Options.compiler != 'gcc':
+                            execute("Linking...", linker_cmd % dict(linker_dict, compiler='gcc'), return_= Options.continue_ )
 
-                if execute("Linking...", linker_cmd % linker_dict, return_= (True if Options.compiler != 'gcc' or Options.continue_ else False) ):
-                    if Options.compiler != 'gcc':
-                        execute("Linking...", linker_cmd % dict(linker_dict, compiler='gcc'), return_= Options.continue_ )
+                if Options.jobs > 1:
+
+                    pid = mFork(tag=path+'+linking', overhead=1)  # we most likely can start extra linking process, beceause it depend on compilation to  finish. There is no point of waiting for it...
+                    if not pid:  # we are child process
+                        mWait(tag=path)  # wait for all compilation jobs to finish...
+                        linking()
+                        sys.exit(0)
+                else:
+                    linking()
+
 
             else: execute("Toching %s file..." % all_at_once_lib, 'cd %(dest)s/../ && touch %(dst)s' % dict(dest=dest, dst=all_at_once_lib) )
 
