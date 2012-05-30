@@ -127,7 +127,8 @@ public:
   /// @brief Batch Relax, a new even faster way to relax entire batches of structures.
 	void batch_apply( 
 		std::vector < core::io::silent::SilentStructOP > &  input_structs,
-		core::scoring::constraints::ConstraintSetOP input_csts = NULL );
+		core::scoring::constraints::ConstraintSetOP input_csts = NULL,
+		core::Real decay_rate = 0.5 );
 
 protected:
 

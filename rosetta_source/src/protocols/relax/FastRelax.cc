@@ -971,7 +971,9 @@ struct SRelaxPose {
 
 void FastRelax::batch_apply(
 		std::vector < SilentStructOP > & input_structs,
-		core::scoring::constraints::ConstraintSetOP input_csts /* =NULL */ ){
+		core::scoring::constraints::ConstraintSetOP input_csts, // = NULL 
+		core::Real decay_rate // = 0.5 
+		){
 	using namespace basic::options;
 	using namespace core::scoring;
 	using namespace core::conformation;
@@ -987,12 +989,11 @@ void FastRelax::batch_apply(
   protocols::simple_moves::PackRotamersMoverOP pack_full_repack_;
 	core::kinematics::MoveMapOP local_movemap = get_movemap()->clone();
 	core::pose::Pose pose;
-	core::Real decay_rate = 0.7;
 
 
 
 	TR.Debug  << "================== RelaxScriptBatchRelax: " << script_.size() << " ===============================" << std::endl;
-	TR.Info  << "BatchRelax: Size: " << input_structs.size() << "Seqsize: " <<  script_.size() << std::endl;
+	TR.Info  << "BatchRelax: Size: " << input_structs.size() << " Scriptlength: " <<  script_.size() << std::endl;
 
 	// 432mb
 
@@ -1234,7 +1235,7 @@ void FastRelax::batch_apply(
 			}
 
 		}	else
-		if( cmd.command == "batch_shave" ){  // grab the score and remember the pose if the score is better then ever before.
+		if( cmd.command == "batch_shave" ){  
 			if( cmd.nparams < 1 ){ utility_exit_with_message( "More parameters expected after : " + cmd.command  ); }
 			core::Real reduce_factor = cmd.param1;
 			if( (reduce_factor <= 0) ||  (reduce_factor >= 1.0)  ){ utility_exit_with_message( "Parameter after : " + cmd.command + " should be > 0 and < 1 " ); }
