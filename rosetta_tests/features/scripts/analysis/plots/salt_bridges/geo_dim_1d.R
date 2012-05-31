@@ -30,17 +30,18 @@ FROM
 	structures AS struct,
 	salt_bridges AS sb,
 	hbond_sites AS acc, residues as don
-	residue_pdb_confidence AS don_con, hbond_sites_pdb AS acc_con
+--	residue_pdb_confidence AS don_con, hbond_sites_pdb AS acc_con
 WHERE
 	sb.struct_id = struct.struct_id AND
 	don.struct_id = sb.struct_id AND don.resNum = sb.don_resNum AND
 	acc.struct_id = sb.struct_id AND acc.site_id = sb.acc_id AND
-	don_con.struct_id = sb.struct_id AND don_con.residue_number = sb.don_resNum AND
-	acc_con.struct_id = sb.struct_id AND acc_con.site_id = sb.acc_id AND
-	don_con.max_sc_temperature < 30 AND acc_con.heavy_atom_temperature < 30 AND
+--	don_con.struct_id = sb.struct_id AND don_con.residue_number = sb.don_resNum AND
+--	acc_con.struct_id = sb.struct_id AND acc_con.site_id = sb.acc_id AND
+--	don_con.max_sc_temperature < 30 AND acc_con.heavy_atom_temperature < 30 AND
 	sb.rho > 2;"
 
 f <- query_sample_sources(sample_sources, sele)
+f <- na.omit(f, method="r")
 
 f <- transform(f,	theta = theta * 180/pi,	psi = psi * 180/pi)
 
