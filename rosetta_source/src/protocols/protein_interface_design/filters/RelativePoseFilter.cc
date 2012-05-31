@@ -217,6 +217,7 @@ RelativePoseFilter::compute( core::pose::Pose const & p ) const{
 		dump.set_scorefxn( scorefxn() );
 		dump.apply( *threaded_pose );
 	}
+	TR<<"filter "<<filter_name()<<" reports value pos: "<<filter_val<<", "<<std::endl;
 	if( baseline() ){
 		TR<<"filter "<<filter_name()<<" reports value, baseline: "<<filter_val<<", "<<baseline_val()<<std::endl;
 		return( filter_val - baseline_val() );

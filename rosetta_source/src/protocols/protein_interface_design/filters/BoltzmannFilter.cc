@@ -37,7 +37,9 @@ static basic::Tracer TR( "protocols.protein_interface_design.filters.BoltzmannFi
 ///@brief default ctor
 BoltzmannFilter::BoltzmannFilter() :
 	temperature_( 0.6 ),
-	fitness_threshold_( 0.0 )
+	fitness_threshold_( 0.0 ),
+	triage_filter_( -9999 ),
+	norm_neg_( false )
 {
 	positive_filters_.clear();
 	negative_filters_.clear();
@@ -64,6 +66,27 @@ void
 BoltzmannFilter::temperature( core::Real const t ){
 	temperature_ = t;
 }
+
+core::Real
+BoltzmannFilter::triage_filter() const{
+	  return triage_filter_;
+}
+
+void
+BoltzmannFilter::triage_filter( core::Real const t ){
+	  triage_filter_ = t;
+}
+
+void
+BoltzmannFilter::norm_neg( bool const n ){
+	  norm_neg_ = n;
+}
+
+bool
+BoltzmannFilter::norm_neg() const{
+	return norm_neg_;
+}
+
 
 utility::vector1< protocols::filters::FilterOP >
 BoltzmannFilter::get_positive_filters() const{
@@ -114,6 +137,7 @@ BoltzmannFilter::compute( core::pose::Pose const & pose ) const{
 	using protocols::filters::FilterCOP;
 
 	core::Real positive_sum( 0.0 ), negative_sum( 0.0 );
+	core::Size negative_counter( 0.0 );
 	std::string s = "BOLTZ: ";
 	for( core::Size index = 1; index <= get_positive_filters().size(); ++index ){
 		core::Real const filter_val( get_positive_filters()[ index ]->report_sm( pose ));
@@ -127,10 +151,24 @@ BoltzmannFilter::compute( core::pose::Pose const & pose ) const{
 	foreach( FilterCOP filter, get_negative_filters() ) {
 		core::Real filter_val = filter->report_sm( pose );
 		s += F(7,3,filter_val)+" ";
-		negative_sum += exp( -filter_val / temperature() );
+		if ( filter_val >= triage_filter() ){
+			negative_sum += exp( -filter_val / temperature() );
+			negative_counter += 1;
+			TR<<"Taken filter: "<<filter->get_user_defined_name()<<" filter val: "<< filter_val<<std::endl;
+			}
 	}
-	TR << s << -positive_sum/(positive_sum+negative_sum) << std::endl;
-
+	TR << s << -positive_sum/(positive_sum+negative_sum) <<std::endl;
+			if ( norm_neg() ){
+				TR<<"Counter: "<< negative_counter <<std::endl;
+				if( !negative_counter ){
+					TR<<"Normalized fitness: 0 "<<std::endl;
+					return 0;
+				}
+				TR<<"Normalized fitness: " << ((-positive_sum / ( positive_sum + negative_sum )) / ( get_positive_filters().size()/(get_positive_filters().size()+negative_counter)))<<std::endl;
+				TR<<"Number of positive states: " << get_positive_filters().size() << std::endl;
+				return ( (-positive_sum / ( positive_sum + negative_sum )) / ( get_positive_filters().size()/(get_positive_filters().size()+negative_counter)) );
+			}
+	TR<<"Fitness: " << ( -positive_sum / ( positive_sum + negative_sum )) << std::endl;
 	return( -positive_sum / ( positive_sum + negative_sum ));
 }
 
@@ -156,6 +194,8 @@ BoltzmannFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	runtime_assert( tag->hasOption( "anchors" ) || tag->hasOption( "negative_filters" ) );
 	fitness_threshold( tag->getOption< core::Real >( "fitness_threshold", 0 ) );
 	temperature( tag->getOption< core::Real >( "temperature", 0.6 ) );
+	triage_filter( tag->getOption< core::Real >( "triage_filter", -9999 ) );
+	norm_neg( tag->getOption< bool >( "norm_neg", false ) );
 	utility::vector1< std::string > const positive_filter_names( utility::string_split( tag->getOption< std::string >( "positive_filters" ), ',' ) );
 	utility::vector1< std::string > negative_filter_names, anchors_string;
 	negative_filter_names.clear(); anchors_string.clear();
@@ -170,7 +210,7 @@ BoltzmannFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	foreach( std::string const anchor_str, anchors_string )
 		anchors_.push_back( (core::Real) utility::string2float( anchor_str ) );
 
-	TR<<"with options temperature: "<<temperature()<<" fitness_threshold "<<fitness_threshold()<<"  "<<get_positive_filters().size()<<" positive and "<<get_negative_filters().size()<<" negative filters."<<std::endl;
+	TR<<"with options temperature: "<<temperature()<<"  triage_filter "<<triage_filter()<<" fitness_threshold "<<fitness_threshold()<<"  "<<get_positive_filters().size()<<" positive and "<<get_negative_filters().size()<<" negative filters."<<std::endl;
 	if( anchors().size() > 0 ){
 		TR<<"defined "<<anchors().size()<<" anchors"<<std::endl;
 		runtime_assert( get_positive_filters().size() == anchors().size());
