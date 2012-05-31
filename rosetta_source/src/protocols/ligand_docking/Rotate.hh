@@ -49,10 +49,14 @@ struct Rotate_info{ // including default values
 	Distribution distribution;
 	core::Size degrees;
 	core::Size cycles;
+	utility::vector1<core::Size> tag_along_chains; // must be one residue per chain, eg water, metal
+	utility::vector1<core::Size> tag_along_jumps;
+	utility::vector1<core::Size> tag_along_residues;
 };
 
 struct Ligand_info{
-	core::conformation::ResidueCOPs residues;
+	core::conformation::ResidueCOPs residues; // multiple per main ligand
+	core::conformation::ResidueCOPs tag_along_residues; // one per tag_along_chain
 	int atr;
 	int rep;
 	core::kinematics::Jump jump;
@@ -98,8 +102,8 @@ private:
 	utility::vector1< Ligand_info> create_random_rotations(
 			utility::pointer::owning_ptr<core::grid::CartGrid<int> > const & grid,
 			protocols::rigid::RigidBodyMoverOP const mover,
-			core::Size const begin,
-			core::pose::Pose & pose
+			core::pose::Pose & pose,
+			core::Size chain_begin
 	)const;
 
 //	utility::vector1<Ligand_info> create_random_rotations(
@@ -142,7 +146,9 @@ bool check_RMSD(
 void apply_rotate(
 		protocols::rigid::RigidBodyMoverOP mover,
 		core::pose::Pose & pose,
-		core::Vector const & center
+		core::Vector const & center,
+		core::Size jump_id,
+		utility::vector1<core::Size> tag_along_chains
 );
 
 void add_ligand_conditionally(

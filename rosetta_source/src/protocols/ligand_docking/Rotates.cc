@@ -119,9 +119,8 @@ Rotates::parse_my_tag(
 		utility::vector1<core::Size> chain_ids = core::pose::get_chain_ids_from_chain(chain, pose);
 		foreach(core::Size chain_id, chain_ids){
 			Rotate_info rotate_info;
-			rotate_info.chain = chain;
-			rotate_info.chain_id= chain_id;
-			rotate_info.jump_id= core::pose::get_jump_id_from_chain_id(chain_id, pose);
+			rotate_info.chain_id = chain_id;
+			rotate_info.jump_id = core::pose::get_jump_id_from_chain_id(chain_id, pose);
 			rotate_info.distribution= distribution;
 			rotate_info.degrees = degrees;
 			rotate_info.cycles = cycles;

@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/ligand_docking/ChainExistsFilter.cc
+/// @file protocols/ligand_docking/MolarMassFilter.cc
 /// @brief Find packing defects at an interface using packstat score terms
 /// @author Jacob Corn (jecorn@u.washington.edu)
 
 // Unit headers
-#include <protocols/ligand_docking/ChainExistsFilter.hh>
-#include <protocols/ligand_docking/ChainExistsFilterCreator.hh>
+#include <protocols/ligand_docking/MolarMassFilter.hh>
+#include <protocols/ligand_docking/MolarMassFilterCreator.hh>
 
 
 #include <protocols/filters/Filter.hh>
@@ -35,38 +35,49 @@
 namespace protocols {
 namespace ligand_docking {
 
-static basic::Tracer atom_tracer( "protocols.ligand_docking.ChainExistsFilter" );
+static basic::Tracer atom_tracer( "protocols.ligand_docking.MolarMassFilter" );
 
 bool
-ChainExistsFilter::apply( core::pose::Pose const & pose ) const {
+MolarMassFilter::apply( core::pose::Pose const & pose ) const {
 	assert(chain_.size()==1 );
-	utility::vector1<core::Size> chain_ids= core::pose::get_chain_ids_from_chain(chain_, pose);
+	assert(mass_limit_ >0 );
+	core::Size const chain_id= core::pose::get_chain_id_from_chain(chain_, pose);
+	core::Size const start = pose.conformation().chain_begin(chain_id);
+	core::Size const end = pose.conformation().chain_end(chain_id);
 
-	if(chain_ids.empty()) return false;
+	core::Real mass=0;
 
+
+	if(	core::pose::molar_mass(start,end,pose) > mass_limit_ ){
+		atom_tracer<< "Reached atom limit"<< std::endl;
+		return false;
+	}
 	return true;
 }
 
 void
-ChainExistsFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+MolarMassFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 
-	if ( tag->getName() != "ChainExists" ) {
+	if ( tag->getName() != "MolarMass" ) {
 		atom_tracer << " received incompatible Tag " << tag << std::endl;
 		assert(false);
 		return;
 	}
-	if ( ! tag->hasOption("chain")){
-		utility_exit_with_message("ChainExists filter needs a 'chain' option");
+	if ( ! (tag->hasOption("chain") && tag->hasOption("mass_limit") ) ){
+		utility_exit_with_message("MolarMass filter needs a 'chain' and an 'mass_limit' option");
 	}
 	chain_ = tag->getOption<std::string>("chain");
+	mass_limit_ = tag->getOption<core::Size>("mass_limit");
+
+
 }
 
 protocols::filters::FilterOP
-ChainExistsFilterCreator::create_filter() const { return new ChainExistsFilter; }
+MolarMassFilterCreator::create_filter() const { return new MolarMassFilter; }
 
 std::string
-ChainExistsFilterCreator::keyname() const { return "ChainExists"; }
+MolarMassFilterCreator::keyname() const { return "MolarMass"; }
 
 
 

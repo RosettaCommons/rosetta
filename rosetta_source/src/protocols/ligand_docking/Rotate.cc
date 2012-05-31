@@ -140,6 +140,21 @@ Rotate::parse_my_tag(
 	rotate_info_.distribution= get_distribution(distribution_str);
 	rotate_info_.degrees = tag->getOption<core::Size>("degrees");
 	rotate_info_.cycles = tag->getOption<core::Size>("cycles");
+
+	if ( tag->hasOption("tag_along_chains") ){
+		std::string const tag_along_chains_str = tag->getOption<std::string>("tag_along_chains");
+		utility::vector1<std::string> tag_along_chain_strs= utility::string_split(tag_along_chains_str, ',');
+		foreach(std::string tag_along_chain_str, tag_along_chain_strs){
+			utility::vector1<core::Size> chain_ids= get_chain_ids_from_chain(tag_along_chain_str, pose);
+			foreach( core::Size chain_id, chain_ids){
+				rotate_info_.tag_along_chains.push_back(chain_id);
+				rotate_info_.tag_along_jumps.push_back( core::pose::get_jump_id_from_chain_id(chain_id, pose) );
+				core::Size const chain_begin (pose.conformation().chain_begin(chain_id));
+				assert( chain_begin == pose.conformation().chain_end(chain_id));
+				rotate_info_.tag_along_residues.push_back( chain_begin );
+			}
+		}
+	}
 }
 
 void Rotate::apply(core::pose::Pose & pose){
@@ -148,7 +163,9 @@ void Rotate::apply(core::pose::Pose & pose){
 	qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();
 	if(grid_manager->size() == 0)
 	{
-		utility::pointer::owning_ptr<core::grid::CartGrid<int> > const grid = make_atr_rep_grid_without_ligand(pose, center,rotate_info_.chain_id);
+		utility::vector1<core::Size> all_chain_ids = rotate_info_.tag_along_chains;
+		all_chain_ids.push_back(rotate_info_.chain_id);
+		utility::pointer::owning_ptr<core::grid::CartGrid<int> > const grid = make_atr_rep_grid_without_ligands(pose, center, all_chain_ids);
 		rotate_ligand(grid, pose);// move ligand to a random point in binding pocket
 	}else
 	{
@@ -181,9 +198,9 @@ void Rotate::rotate_ligand(
 	else if(rotate_info_.distribution == Gaussian){
 		mover= new protocols::rigid::RigidBodyPerturbMover ( rotate_info_.jump_id, rotate_info_.degrees, 0 /*translate*/);
 	}
-	core::Size chain_begin = pose.conformation().chain_begin(rotate_info_.chain_id);
 
-	utility::vector1< Ligand_info> ligands= create_random_rotations(grid, mover, chain_begin, pose);
+	core::Size chain_begin = pose.conformation().chain_begin(rotate_info_.chain_id);
+	utility::vector1< Ligand_info> ligands= create_random_rotations(grid, mover, pose, chain_begin);
 
 	core::Size const jump_choice=  (core::Size) numeric::random::RG.random_range(1, ligands.size());
 	{
@@ -193,7 +210,12 @@ void Rotate::rotate_ligand(
 			pose.replace_residue(chain_begin, *residue, false /*orient backbone*/);// assume rotamers are oriented?
 			++chain_begin;
 		}
-
+		for(core::Size i=1; i <= rotate_info_.tag_along_residues.size(); ++i){
+			assert(rotate_info_.tag_along_residues.size() == ligands[jump_choice].tag_along_residues[i]);
+			core::Size residue_id = rotate_info_.tag_along_residues[i];
+			core::conformation::ResidueCOP residue = ligands[jump_choice].tag_along_residues[i];
+			pose.replace_residue(residue_id, *residue, false /*orient backbone*/);// assume rotamers are oriented?
+		}
 	}
 }
 
@@ -216,8 +238,8 @@ utility::vector1< Ligand_info>
 Rotate::create_random_rotations(
 		utility::pointer::owning_ptr<core::grid::CartGrid<int> > const & grid,
 		protocols::rigid::RigidBodyMoverOP const mover,
-		core::Size const begin,
-		core::pose::Pose & pose
+		core::pose::Pose & pose,
+		core::Size begin
 )const{
 	core::Size const end = pose.conformation().chain_end(rotate_info_.chain_id);
 	core::Size const heavy_atom_number= core::pose::num_heavy_atoms(begin, end, pose);
@@ -226,7 +248,8 @@ Rotate::create_random_rotations(
 	core::Vector const center = protocols::geometry::downstream_centroid_by_jump(local_pose, rotate_info_.jump_id);
 
 	utility::vector1< Ligand_info> ligands;  ///TODO make this a set.  The set should check for another pose with a similar RMSD.
-	core::Size max_diversity= 5*core::pose::num_chi_angles(begin, end, local_pose)+1; // who knows why?  copied from Ian's code.
+	// "num_chi_angles" code comes from Ian Davis, who knows why. I added the max fxn so that waters can rotate (they have too few chi angles)
+	core::Size const max_diversity= std::max(5, static_cast<int>(5*core::pose::num_chi_angles(begin, end, local_pose)+1) );
 
 	Ligand_info best=create_random_rotation(grid, mover, center, begin, end, local_pose);// first case;
 	add_ligand_conditionally(best, ligands, heavy_atom_number);
@@ -251,12 +274,23 @@ Ligand_info Rotate::create_random_rotation(
 		core::Size const end,
 		core::pose::Pose & local_pose
 ) const{
-	apply_rotate(mover, local_pose, center);
+	apply_rotate(mover, local_pose, center, rotate_info_.jump_id, rotate_info_.tag_along_jumps);
 	rb_grid_rotamer_trials_atr_rep(*grid, local_pose, begin, end);
 	core::kinematics::Jump jump= local_pose.jump(rotate_info_.jump_id);
 	std::pair<int, int> const scores= get_rb_atr_and_rep_scores(*grid, local_pose, begin, end);
-	core::conformation::ResidueCOPs const residues= core::pose::get_chain_residues(local_pose, rotate_info_.chain_id);
-	return Ligand_info(residues, scores, jump);
+	Ligand_info ligand_info;
+	ligand_info.jump= jump;
+	ligand_info.atr= scores.first;
+	ligand_info.rep= scores.second;
+
+	ligand_info.residues = core::pose::get_chain_residues(local_pose, rotate_info_.chain_id);
+
+	foreach(core::Size chain_id, rotate_info_.tag_along_chains){
+		core::conformation::ResidueCOPs tag_along_residues = core::pose::get_chain_residues(local_pose, chain_id);
+		assert(tag_along_residues.size() == 1);
+		ligand_info.tag_along_residues.push_back(tag_along_residues[1]);
+	}
+	return ligand_info;
 }
 
 void add_ligand_conditionally(
@@ -275,11 +309,24 @@ void add_ligand_conditionally(
 void apply_rotate(
 		protocols::rigid::RigidBodyMoverOP mover,
 		core::pose::Pose & pose,
-		core::Vector const & center
+		core::Vector const & center,
+		core::Size jump_id,
+		utility::vector1<core::Size> const tag_along_jumps
 ){
+	mover->rb_jump(jump_id);
 	mover->apply(pose);
 	pose.update_actcoords();///TODO Verify necessity
 	mover->rot_center(center); // restore the old center so ligand doesn't walk away (really necessary?)
+
+	mover->freeze();
+
+	foreach(core::Size jump_id, tag_along_jumps){
+		mover->rb_jump(jump_id);
+		mover->apply(pose);
+	}
+
+	mover->unfreeze();
+
 }
 
 bool check_score(

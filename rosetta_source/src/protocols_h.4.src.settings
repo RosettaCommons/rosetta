@@ -61,6 +61,8 @@ sources = {
 		"LigandDockProtocol",
 		"MinimizeBackbone",
 		"MinimizeLigand",
+		"MolarMassFilter",
+		"MolecularMassFilter",
 		"MoveMapBuilder",
 		"RandomConformerMover",
 		"RandomConformers",

@@ -7,55 +7,69 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/protein_interface_design/filters/CompleteConnectionsFilter.hh
+/// @file protocols/ligand_docking/MolarMassFilter.hh
 /// @brief Find packing defects at an interface using packstat score terms
 /// @author Jacob Corn (jecorn@u.washington.edu)
 
-#ifndef INCLUDED_protocols_filters_CompleteConnectionsFilter_hh
-#define INCLUDED_protocols_filters_CompleteConnectionsFilter_hh
+#ifndef INCLUDED_protocols_ligand_docking_MolarMassFilter_hh
+#define INCLUDED_protocols_ligand_docking_MolarMassFilter_hh
 
 
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
+
 #include <utility/tag/Tag.fwd.hh>
+// AUTO-REMOVED #include <list>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
-namespace filters {
+namespace ligand_docking {
 
-class CompleteConnectionsFilter : public protocols::filters::Filter
+class MolarMassFilter : public protocols::filters::Filter
 {
 public:
-	CompleteConnectionsFilter() : protocols::filters::Filter( "CompleteConnections" ) {}
-
-	CompleteConnectionsFilter(std::string chain) :
-		protocols::filters::Filter( "CompleteConnections" ),
-		chain_(chain)
+	MolarMassFilter() :
+		//utility::pointer::ReferenceCount(),
+		protocols::filters::Filter( "MolarMass" )
 	{}
 
-	CompleteConnectionsFilter( CompleteConnectionsFilter const & init ) :
-			protocols::filters::Filter( init ),
-			chain_(init.chain_)
+	MolarMassFilter(std::string chain, core::Size molar_mass_limit ) :
+		//utility::pointer::ReferenceCount(),
+		protocols::filters::Filter( "MolarMass" ),
+		chain_(chain),
+		mass_limit_(molar_mass_limit)
+	{}
+
+	MolarMassFilter( MolarMassFilter const & init ) :
+		//utility::pointer::ReferenceCount(),
+		protocols::filters::Filter( init ),
+		chain_(init.chain_),
+		mass_limit_(init.mass_limit_)
+
 	{};
 
-	virtual ~CompleteConnectionsFilter(){};
+	virtual ~MolarMassFilter(){};
 
 	bool apply( core::pose::Pose const & pose ) const;
 	protocols::filters::FilterOP clone() const {
-		return new CompleteConnectionsFilter( *this );
+		return new MolarMassFilter( *this );
 	}
 
 	protocols::filters::FilterOP fresh_instance() const{
-		return new CompleteConnectionsFilter();
+		return new MolarMassFilter();
 	}
 
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose );
 
 private:
 	std::string chain_;
+	core::Size mass_limit_;
 };
-} // filters
+} // ligand_docking
 } // protocols
 
-#endif //INCLUDED_protocols_ProteinInterfaceDesign_filters_CompleteConnectionsFilter_HH_
+#endif //INCLUDED_protocols_ProteinInterfaceDesign_ligand_docking_MolarMassFilter_HH_
 

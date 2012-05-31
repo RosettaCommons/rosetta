@@ -44,9 +44,11 @@ static basic::Tracer TR("core.chemical.ResidueTypeSetTests.cxxtest");
 class ResidueTypeSetTests : public CxxTest::TestSuite {
 
 public:
+	core::Real delta_percent;
 
 	void setUp() {
 		core_init();
+		delta_percent=0.0001;
 	}
 
 	void tearDown() {}
@@ -69,6 +71,7 @@ public:
 		//TR << A(width, rss) << I(width,rs->residue_types().size()) << endl;
 
 		ResidueType const & serine = rs->name_map( "SER" );
+		TS_ASSERT_DELTA(serine.molecular_mass(), 87, delta_percent);
 
 		ResidueTypeOP modser = serine.clone();
 		modser->nbr_radius( 15.0);
