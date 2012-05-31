@@ -32,6 +32,7 @@ sources = {
 		"LHRepulsiveRamp",
 		"LHSnugFitLegacy",
 		"RefineCDRH3HighRes",
+		"H3RefineCCD",
 		"RefineCDRH1Centroid",
 		"CDRsMinPackMin"
 	],

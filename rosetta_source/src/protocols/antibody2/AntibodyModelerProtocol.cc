@@ -155,7 +155,7 @@ void AntibodyModelerProtocol::set_default()
     rt_min_ = false;
     
     h3_perturb_type_ = "legacy_ccd"; // legacy_ccd, kic, ccd
-    h3_refine_type_  = "legacy_refine"; // legacy_refine, kic, ccd
+    h3_refine_type_  = "legacy_refine_ccd"; // legacy_refine, kic, ccd
 }
 
     
@@ -407,9 +407,8 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
     
 	// Step 3: Full Atom Relax 
     if(refine_h3_){
-        RefineCDRH3HighResOP cdr_highres_refine_ = new RefineCDRH3HighRes(ab_info_, "h3", loop_scorefxn_highres_); 
+        RefineCDRH3HighResOP cdr_highres_refine_ = new RefineCDRH3HighRes(ab_info_, h3_refine_type_, loop_scorefxn_highres_); 
             cdr_highres_refine_ -> pass_start_pose(start_pose_);
-            if(use_pymol_diy_) cdr_highres_refine_ -> turn_on_and_pass_the_pymol(pymol_);
         cdr_highres_refine_ -> apply(pose);
         //pose.dump_pdb("3rd_finish_h3_refine.pdb");
 
