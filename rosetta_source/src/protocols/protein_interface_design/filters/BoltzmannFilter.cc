@@ -129,7 +129,7 @@ BoltzmannFilter::compute( core::pose::Pose const & pose ) const{
 		s += F(7,3,filter_val)+" ";
 		negative_sum += exp( -filter_val / temperature() );
 	}
-	std::cout << s << -positive_sum/(positive_sum+negative_sum) << std::endl;
+	TR << s << -positive_sum/(positive_sum+negative_sum) << std::endl;
 
 	return( -positive_sum / ( positive_sum + negative_sum ));
 }
