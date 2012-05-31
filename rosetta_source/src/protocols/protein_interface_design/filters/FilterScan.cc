@@ -231,18 +231,26 @@ FilterScanFilter::single_substitution( core::pose::Pose & pose, core::Size const
   }
   TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to ";
   protocols::simple_moves::PackRotamersMoverOP pack;
-  protocols::simple_moves::RotamerTrialsMinMoverOP rtmin; //this is optional
-  if( core::pose::symmetry::is_symmetric( pose ) )
- 	 pack =  new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue );
-  else{
- 	 pack = new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue );
- 	 rtmin = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn(), *mutate_residue );
+  if( core::pose::symmetry::is_symmetric( pose ) ) {
+		pack =  new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue );
+	} else{
+		pack = new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue );
   }
   pack->apply( pose );
-  if( rtmin() )
- 	 rtmin->apply( pose );
+  if( rtmin() ) {
+		// definition/allocation of RTmin mover must flag dependant, as some scoreterms are incompatable with RTmin initilization
+		protocols::simple_moves::RotamerTrialsMinMoverOP rtmin;
+		if( core::pose::symmetry::is_symmetric( pose ) ) {
+			utility_exit_with_message("Cannot currently use FilterScan with rtmin on a symmetric pose!");
+		} else{
+			rtmin = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn(), *mutate_residue );
+		}
+		rtmin->apply( pose );
+	}
   TR<<pose.residue( resi ).name3()<<". Now relaxing..."<<std::endl;
-  relax_mover()->apply( pose );
+	if ( relax_mover() ) {
+		relax_mover()->apply( pose );
+	}
 }
 
 bool

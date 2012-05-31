@@ -264,13 +264,19 @@ PointMutationCalculator::mutate_and_relax(
 	}
 	pack->apply( pose );
 	if( rtmin() ){
+		// definition/allocation of RTmin mover must flag dependant, as some scoreterms are incompatable with RTmin initilization
+		if( core::pose::symmetry::is_symmetric( pose ) ) {
+			utility_exit_with_message("Cannot currently use PointMutationCalculator (GreedyOptMutation/ParetoOptMutation) with rtmin on a symmetric pose!");
+		}
 		rtmin = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn(), *mutate_residue );
 		rtmin->apply( pose );
 		TR<<"Finished rtmin"<<std::endl;
 	}
 	TR<<pose.residue( resi ).name3()<<". Now relaxing..."<<std::endl;
 	//then run input relax mover
-	relax_mover()->apply( pose );
+	if( relax_mover() ) {
+		relax_mover()->apply( pose );
+	}
 }
 
 void
