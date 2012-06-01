@@ -53,7 +53,8 @@ public:
 
 	void tearDown() {}
 
-	void test_residue_type_sets() {
+	///SML 060112: I am disabling this test because it breaks the core unit tests when run at -j1.  The addition of "bigser" to the residue type set is never reverted, there's no way to delete it from the residue type set, and there's no way to make a COPY of the residue type set that can be safely modified.  "bigser" stays in the residue type set for further tests, which breaks later tests that assume the 20 standard residue types exist.
+	/*	void ///test_residue_///type_sets() { //extra comments put in to break up misautomated detection of test names
 		using namespace core::chemical;
 		using namespace ObjexxFCL::fmt;
 
@@ -98,7 +99,7 @@ public:
 		//TR << "old pointer addr is " << pointer10 << ", new pointer addr is " << newpointer10 << std::endl;
 		//TS_ASSERT( pointer10 == newpointer10 );
 	}
-
+	*/
 
 	void test_extra_params() {
 		using namespace core::chemical;
