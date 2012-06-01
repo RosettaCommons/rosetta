@@ -390,7 +390,6 @@ namespace loophash {
 		while( input.has_another_pose() ) {
 			core::pose::Pose pose;
 			input.fill_pose( pose, *rsd_set ); // no other way to increment the inputstream
-		  TR << counter << " " << num_partitions_ << " " << assigned_num_ << std::endl;
 			if ( (num_partitions_ > 1) && (counter++ % num_partitions_ != assigned_num_) ) continue;
 			extract_data_from_pose(  pose  );
 		}
