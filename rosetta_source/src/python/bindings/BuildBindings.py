@@ -11,7 +11,7 @@
 ## @brief  Build Python buidings for mini
 ## @author Sergey Lyskov
 
-import os, re, sys, time, commands, shutil, platform, os.path, itertools, gc
+import os, re, sys, time, commands, shutil, platform, os.path, itertools, gc, json
 import subprocess
 
 # Create global 'Platform' that will hold info of current system
@@ -198,6 +198,15 @@ def main(args):
       help="Number of processors to use for parsing when building. WARNING: Some namespace will consume huge amount of memory when parsing (up to ~4Gb), use this option with caution! (default: 1)",
     )
 
+    parser.add_option('--no-color',
+      action="store_false", dest='color', default=True,
+      help="Disable color output [Good when piping output to file]",
+    )
+
+    parser.add_option('-v', "--verbose",
+      action="store_true", default=False,
+      help="Generate verbose output.",
+    )
 
     (options, args) = parser.parse_args(args=args[1:])
     global Options;  Options = options
@@ -255,14 +264,9 @@ def main(args):
             buildModule(n, bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
 
     else:
-        buildModules('utility',   bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
-        buildModules('numeric',   bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
-        buildModules('basic',     bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
-        buildModules('core',      bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
-        buildModules('protocols', bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
-
-        # we want to start with lib that is longest to build - that way we can do multi-core build more efficiently
+        buildModules(['utility', 'numeric', 'basic', 'core', 'protocols'],   bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
         '''
+        # we want to start with lib that is longest to build - that way we can do multi-core build more efficiently
         buildModules('core',      bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
         buildModules('protocols', bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
         buildModules('utility',   bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
@@ -303,7 +307,7 @@ def main(args):
         updateList.append( (IncludeDict,'IncludeDict') )
 
     for dc, fl in updateList:
-        print 'Updating include dictionary file %s...' % fl
+        if Options.verbose: print 'Updating include dictionary file %s...' % fl
 
         def f_cmp(a, b):
             a_, b_ = a.split('/'), b.split('/')
@@ -371,11 +375,11 @@ def execute(message, command_line, return_=False, untilSuccesses=False, print_ou
 
 
 def print_(msg, color=None, background=None, bright=False, blink=False, action='print', endline=True):
-    ''' print string with color and background. Avoid printing and return results str instead if action is 'return'. Also check for 'Options.no_colors'
+    ''' print string with color and background. Avoid printing and return results str instead if action is 'return'. Also check for 'Options.no_color'
     '''
     colors = dict(black=0, red=1, green=2, yellow=3, blue=4, magenta=5, cyan=6, white=7)  # standard ASCII colors
 
-    if 'Options' in globals()  and  hasattr(Options, 'no_colors')  and  Options.no_colors: s = msg
+    if 'Options' in globals()  and  hasattr(Options, 'color')  and  not Options.color: s = str(msg)
     else:
         s  = ['3%s' % colors[color] ] if color else []
         s += ['4%s' % colors[background] ] if background else []
@@ -414,28 +418,29 @@ def mFork(tag=None, overhead=0):
     if pid: Jobs.append( NT(pid=pid, tag=tag) )  # We are parent!
     return pid
 
-def mWait(tag):
+def mWait(tag=None, all_=False):
     ''' Wait for process tagged with 'tag' for completion
     '''
     while True :
-        for j in [ x for x in Jobs if x.pid==tag]:
-            try:
-                r = os.waitpid(j.pid, os.WNOHANG)
-                if r == (j.pid, 0):  # process have ended without error
-                    Jobs.remove(j)
-                elif r[0] == j.pid :  # process ended but with error, special case we will have to wait for all process to terminate and call system exit.
-                    for j in Jobs:
-                        try:
-                            os.waitpid(j.pid, 0)
-                        except OSError: pass
+        for j in [ x for x in Jobs if x.pid==tag or all_==True]:
+            # try:
+            r = os.waitpid(j.pid, os.WNOHANG)
+            if r == (j.pid, 0):  # process have ended without error
+                Jobs.remove(j)
+            elif r[0] == j.pid :  # process ended but with error, special case we will have to wait for all process to terminate and call system exit.
+                for j in Jobs:
+                    try:
+                        os.waitpid(j.pid, 0)
+                    except OSError: pass
 
-                    print_('Some of the build scripts return an error, PyRosetta build failed!', color='red', bright=True)
-                    sys.exit(1)
-                else: time.sleep(.2);  break
-
+                print_('Some of the build scripts return an error, PyRosetta build failed!', color='red', bright=True)
+                sys.exit(1)
+            else: time.sleep(.2);  break
+            '''
             except OSError, e:
                 if e.errno == errno.ESRCH:  # process already got closed, we assume that this is done by child process and any error will be reported by proc. that closed it
                     Jobs.remove(j)
+                    '''
 
         else: return
 
@@ -485,7 +490,7 @@ def buildModules__old(path, dest, include_paths, libpaths, runtime_libpaths, gcc
 
         if Options.build_all:
             if exclude.isBanned(dir_name):
-                print 'Dir %s is banned! Skipping...' % dir_name
+                if Options.verbose: print 'Dir %s is banned! Skipping...' % dir_name
                 return
         else:
             if dir_name in IncludeDict:
@@ -499,7 +504,7 @@ def buildModules__old(path, dest, include_paths, libpaths, runtime_libpaths, gcc
 
 
 
-        print "buildModules(...): '%s', " % dir_name
+        #print "buildModules(...): '%s', " % dir_name
         #print "Directory: ", dir_name
         #dname = dest+'/' + os.path.dirname(dir_name)
         dname = dest+'/' + dir_name
@@ -520,50 +525,60 @@ def buildModules__old(path, dest, include_paths, libpaths, runtime_libpaths, gcc
     os.path.walk(path, visit, None)
 
 
-def buildModules(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path):
+def buildModules(paths, dest, include_paths, libpaths, runtime_libpaths, gccxml_path):
     ''' recursive build buinding for given dir name, and store them in dest.
     '''
     #os.path.walk(path, visit, None)
     dir_list = []
-    for dir_name, _, files in os.walk(path):
-        if dir_name.find('.svn') >= 0: continue  # exclude all svn related namespaces
+    for path in paths:
+        for dir_name, _, files in os.walk(path):
+            if dir_name.find('.svn') >= 0: continue  # exclude all svn related namespaces
 
-        if Options.build_all:
-            if exclude.isBanned(dir_name):
-                print 'Dir %s is banned! Skipping...' % dir_name
-                continue
-        else:
-            if dir_name in IncludeDict:
-                if not IncludeDict[dir_name][0]:
-                    print 'Skipping dir %s...' % dir_name
+            if Options.build_all:
+                if exclude.isBanned(dir_name):
+                    if Options.verbose: print 'Dir %s is banned! Skipping...' % dir_name
                     continue
             else:
-                print "Skipping new dir", dir_name
-                IncludeDictNew[dir_name] = (False, 999, [])
-                continue
+                if dir_name in IncludeDict:
+                    if not IncludeDict[dir_name][0]:
+                        print 'Skipping dir %s...' % dir_name
+                        continue
+                else:
+                    print "Skipping new dir", dir_name
+                    IncludeDictNew[dir_name] = (False, 999, [])
+                    continue
 
-        dir_list.append( (dir_name, files) )
+            dir_list.append( (dir_name, files) )
 
     dir_list.sort(key=lambda x: -len(x[1]))  # sort dirs by number of files, most populated first. This should improve speed of multi-thread builds
     #for d, fs in dir_list: print len(fs), d
 
-    for dir_name, _ in dir_list:
-        print "buildModules(...): '%s', " % dir_name
-        #print "Directory: ", dir_name
-        #dname = dest+'/' + os.path.dirname(dir_name)
-        dname = dest+'/' + dir_name
-        if not os.path.isdir(dname): os.makedirs(dname)
-        '''if Options.parsing_jobs > 1:
-            sys.stdout.flush()
-            pid = mFork()
-            if not pid:  # we are child process
-                buildModule(dir_name, dest, include_paths, libpaths, runtime_libpaths, gccxml_path)
-                sys.exit(0)
+    if Options.one_lib_file and Options.build_all:
+        mb = []
+        for dir_name, _ in dir_list:
+            #print "buildModules(...): '%s', " % dir_name
+            dname = dest+'/' + dir_name
+            if not os.path.isdir(dname): os.makedirs(dname)
 
-        else:
-            IncludeDictNew.update( buildModule(dir_name, dest, include_paths, libpaths, runtime_libpaths, gccxml_path) ) '''
+            mb.append( ModuleBuilder(dir_name, dest, include_paths, libpaths, runtime_libpaths, gccxml_path) )
+            mb[-1].generateBindings()
+            gc.collect()
 
-        IncludeDictNew.update( buildModule(dir_name, dest, include_paths, libpaths, runtime_libpaths, gccxml_path) )
+        mWait(all_=True)  # waiting for all jobs to finish before movinf in to next phase
+
+        for b in mb:
+            b.buildBindings()
+            gc.collect()
+
+    else:
+        for dir_name, _ in dir_list:
+            print "buildModules(...): '%s', " % dir_name
+            #print "Directory: ", dir_name
+            #dname = dest+'/' + os.path.dirname(dir_name)
+            dname = dest+'/' + dir_name
+            if not os.path.isdir(dname): os.makedirs(dname)
+
+            IncludeDictNew.update( buildModule(dir_name, dest, include_paths, libpaths, runtime_libpaths, gccxml_path) )
 
 
 
@@ -899,11 +914,12 @@ _TestInludes_ = ''
 def buildModule(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path):
     ''' Build one namespace and return dict of newly found heades.
     '''
+    '''
     testName = 'python/bindings/TestIncludes.py'
     global _TestInludes_
     _TestInludes_ += 'import rosetta.%s\n' % path.replace('/', '.')
     f = file(testName, 'w');  f.write(_TestInludes_);  f.close()
-
+    '''
     gc.collect()
 
     if Options.py_plus_plus:
@@ -915,6 +931,261 @@ def buildModule(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_pa
     else:
         #print 'Using Clang...'
         return buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path)
+
+
+
+class ModuleBuilder:
+    def __init__(self, path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path):
+        ''' Non recursive build buinding for given dir name, and store them in dest.
+            path - relative path to namespace
+            dest - path to root file destination, actual dest will be dest + path
+
+            return dict of a newly found headers.
+
+            This is a class because we want to generate path/name only once etc.
+        '''
+        global Options
+        if Options.verbose: print 'CppXML route: ModuleBuilder.init...', path, dest
+
+        self.path = path
+        self.dest = dest
+
+
+        # Creating list of headers
+        self.headers = [os.path.join(path, d)
+                            for d in os.listdir(path)
+                                if os.path.isfile( os.path.join(path, d) )
+                                    and d.endswith('.hh')
+                                    and not d.endswith('.fwd.hh')
+                                    ]
+
+        self.headers.sort()
+
+        for h in self.headers[:]:
+            if exclude.isBanned(h):
+                if Options.verbose: print "Banning header:", h
+                self.headers.remove(h)
+
+        if Options.verbose: print_(self.headers, color='black', bright=True)
+
+        self.fname_base = dest + '/' + path
+
+        if not os.path.isdir(self.fname_base): os.makedirs(self.fname_base)
+
+        #print 'Creating __init__.py file...'
+        f = file( dest + '/' + path + '/__init__.py', 'w');  f.close()
+        if not self.headers:  return   # if source files is empty then __init__.py should be empty too
+
+        def finalize_init(current_fname):
+                #print 'Finalizing Creating __init__.py file...'
+                f = file( dest + '/' + path + '/__init__.py', 'a');
+                f.write('from %s import *\n' % os.path.basename(current_fname)[:-3]);
+                f.close()
+
+        self.finalize_init = finalize_init
+
+        self.include_paths = ' -I'.join( [''] + include_paths + ['../src/platform/linux' , '../src'] )
+
+        self.libpaths = ' -L'.join( ['', dest] + libpaths )
+        self.runtime_libpaths = ' -Xlinker -rpath '.join( [''] + runtime_libpaths + ['rosetta'] )
+
+        self.cpp_defines = '-DPYROSETTA -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK -DBOOST_NO_MT'
+        if Options.cross_compile: self.cpp_defines += ' -I../src/platform/windows/PyRosetta'
+        elif Platform == "macos": self.cpp_defines += ' -I../src/platform/macos'
+        else: self.cpp_defines += ' -I../src/platform/linux'
+
+        self.gccxml_options = '--gccxml-compiler llvm-g++-4.2' if Platform == "macos" else ''
+
+        self.cc_files = []
+        self.add_option  = getCompilerOptions()
+        self.add_loption = getLinkerOptions()
+
+        self.by_hand_beginning_file = dest+ '/../src/' + path + '/_%s__by_hand_beginning.cc' % path.split('/')[-1]
+        self.by_hand_ending_file = dest+ '/../src/' + path + '/_%s__by_hand_ending.cc' % path.split('/')[-1]
+
+        self.by_hand_beginning = file(self.by_hand_beginning_file).read() if os.path.isfile(self.by_hand_beginning_file) else ''
+        self.by_hand_ending = file(self.by_hand_ending_file).read() if os.path.isfile(self.by_hand_ending_file) else ''
+
+        self.all_at_once_base = '__' + path.split('/')[-1] + '_all_at_once_'
+        self.all_at_once_source_cpp = self.fname_base + '/' + self.all_at_once_base + '.source.cc'
+        self.all_at_once_cpp = self.fname_base + '/' + self.all_at_once_base + '.'
+        self.all_at_once_obj = self.fname_base + '/' + self.all_at_once_base + '.'
+        self.all_at_once_xml = self.fname_base + '/' + self.all_at_once_base + '.xml'
+        self.all_at_once_lib = self.fname_base + '/' + self.all_at_once_base + '.so'
+        self.all_at_once_json = self.fname_base + '/' + self.all_at_once_base + '.json'
+        self.all_at_once_relative_files = []
+
+
+    def generateBindings(self):
+        ''' This function only generate XML file, parse it and generate list of sources that saved in sources.json. We assume that one_lib_file and build_all option is on here.
+        '''
+        if not self.headers: return
+
+        xml_recompile = False
+        for fl in self.headers:
+            #print 'Binding:', files
+            hbase = fl.split('/')[-1][:-3]
+            hbase = hbase.replace('.', '_')
+            #print 'hbase = ', hbase
+            #if hbase == 'init': hbase='tint'  # for some reason Boost don't like 'init' name ? by hand?
+
+            fname = self.fname_base + '/' + '_' + hbase + '.cc'
+            '''
+            inc_name =  fname_base + '/' + '_' + hbase + '.hh'
+            obj_name =  fname_base + '/' + '_' + hbase + '.o'
+            xml_name =  fname_base + '/' + '_' + hbase + '.xml'
+            cc_for_xml_name =  fname_base + '/' + '_' + hbase + '.xml.cpp'
+            dst_name =  fname_base + '/' + '_' + hbase + '.so'
+            if Platform == 'cygwin' : dst_name =  fname_base + '/' + '_' + hbase + '.dll'
+            decl_name = fname_base + '/' + '_' + hbase + '.exposed_decl.pypp.txt'
+            '''
+            self.cc_files.append(fname)
+
+            if Options.update:
+                try:
+                    if fl == self.headers[0]:  # for first header we additionaly check if 'by_hand' code is up to date
+                        if os.path.isfile(self.by_hand_beginning_file) and os.path.getmtime(self.by_hand_beginning_file) > os.path.getmtime(self.all_at_once_json): raise os.error
+                        if os.path.isfile(self.by_hand_ending_file) and os.path.getmtime(self.by_hand_ending_file) > os.path.getmtime(self.all_at_once_json): raise os.error
+
+                    if os.path.getmtime(fl) > os.path.getmtime(self.all_at_once_json):
+                        xml_recompile = True
+                    else:
+                        if Options.verbose: print 'File: %s is up to date - skipping' % fl
+
+                except os.error: xml_recompile = True
+
+            if xml_recompile: print_(fl, color='green', bright=True)
+
+            source_fwd_hh = fl.replace('.hh', '.fwd.hh')
+            source_hh = fl
+            source_cc = fl.replace('.hh', '.cc')
+
+            self.all_at_once_relative_files.extend( [source_fwd_hh, source_hh, source_cc] )  # just collecting file names...
+
+
+        f = file(self.all_at_once_source_cpp, 'w');
+        for fl in self.headers: f.write('#include <%s>\n' % fl);
+        f.close()
+
+
+        #print 'Finalizing Creating __init__.py file...'
+        namespace = os.path.basename(self.path)
+        py_init_file = self.dest + '/../src/' + self.path + '/__init__.py'
+        if os.path.isfile(py_init_file): t = file(py_init_file).read()
+        else: t = ''
+        f = file( self.dest + '/' + self.path + '/__init__.py', 'w');  f.write(t+'from %s import *\n' % self.all_at_once_base);  f.close()
+
+        if xml_recompile or (not Options.update):
+            if os.path.isfile(self.all_at_once_lib): os.remove(self.all_at_once_lib)
+
+            def generate():
+                if execute('Generating XML representation...', 'gccxml %s %s -fxml=%s %s -I. -I../external/include -I../external/boost_1_46_1  -I../external/dbio -DBOOST_NO_INITIALIZER_LISTS ' % (self.gccxml_options, self.all_at_once_source_cpp, self.all_at_once_xml, self.cpp_defines), Options.continue_ ): return
+
+                namespaces_to_wrap = ['::'+self.path.replace('/', '::')+'::']
+                # Temporary injecting Mover in to protocols level
+                #if path == 'protocols': namespaces_to_wrap.append('::protocols::moves::')
+
+                code = tools.CppParser.parseAndWrapModule(self.all_at_once_base, namespaces_to_wrap, self.all_at_once_xml, self.all_at_once_relative_files, max_funcion_size=Options.max_function_size,
+                                                          by_hand_beginning=self.by_hand_beginning, by_hand_ending=self.by_hand_ending)
+
+                print_('Getting include list...', color='black', bright=True)
+                includes = exclude.getIncludes(self.headers)
+
+                print_('Finalizing[%s]' % len(code), color='black', bright=True, endline=False);  sys.stdout.flush()
+                for i in range( len(code) ):
+                    all_at_once_N_cpp = self.all_at_once_cpp+'%s.cpp' % i
+                    all_at_once_N_obj = self.all_at_once_obj+'%s.o' % i
+                    if os.path.isfile(all_at_once_N_obj): os.remove(all_at_once_N_obj)
+
+                    for fl in self.headers: code[i] = '#include <%s>\n' % fl + code[i]
+
+                    f = file(all_at_once_N_cpp, 'w');  f.write(code[i]);  f.close()
+
+                    exclude.finalize2(all_at_once_N_cpp, self.dest, self.path, module_name=self.all_at_once_base, add_by_hand = False, includes=includes)
+                    print_('.', color='black', bright=True, endline=False); sys.stdout.flush()
+                print_(' Done!', color='black', bright=True);
+
+                json.dump(code, file(self.all_at_once_json, 'w') )
+
+            if Options.jobs > 1:
+                pid = mFork()
+                if not pid:  # we are child process
+                    generate()
+                    sys.exit(0)
+
+            else: generate()
+
+
+    def buildBindings(self):
+        ''' Build early generated bindings.
+        '''
+        if not self.headers: return
+
+        recompile = True
+
+        if Options.update:
+            if os.path.isfile(self.all_at_once_lib) and  os.path.getmtime(self.all_at_once_json) < os.path.getmtime(self.all_at_once_lib): recompile = False
+
+        if recompile or (not Options.update):
+            code = json.load( file(self.all_at_once_json) )
+
+            objs_list = []
+            for i in range( len(code) ):
+                all_at_once_N_cpp = self.all_at_once_cpp+'%s.cpp' % i
+                all_at_once_N_obj = self.all_at_once_obj+'%s.o' % i
+
+                # -fPIC
+                comiler_cmd = "%(compiler)s %(fname)s -o %(obj_name)s -c %(add_option)s %(cpp_defines)s -I../external/include  -I../external/dbio %(include_paths)s "
+                comiler_dict = dict(add_option=self.add_option, fname=all_at_once_N_cpp, obj_name=all_at_once_N_obj, include_paths=self.include_paths, compiler=Options.compiler, cpp_defines=self.cpp_defines)
+
+                failed = False
+
+                if not Options.cross_compile:
+                    def compile_():
+                        if execute("Compiling...", comiler_cmd % comiler_dict, return_=True):
+                            if Options.compiler != 'clang': failed = True
+                            elif execute("Compiling...", comiler_cmd % dict(comiler_dict, compiler='gcc'), return_=True): failed = True
+
+                    if Options.jobs > 1:
+                        pid = mFork(tag=self.path)
+                        if not pid:  # we are child process
+                            compile_()
+                            sys.exit(0)
+
+                    else:
+                        compile_()
+
+                if Options.jobs == 1:
+                    if Options.continue_ and failed: return new_headers
+
+                    objs_list.append(all_at_once_N_obj)
+
+            if not Options.cross_compile:  # -fPIC -ffloat-store -ffor-scope
+
+                linker_cmd = "cd %(dest)s/../ && %(compiler)s %(obj)s %(add_option)s -lmini -lstdc++ -lz -l%(python_lib)s \
+                              -l%(boost_lib)s %(libpaths)s %(runtime_libpaths)s -o %(dst)s"
+                linker_dict = dict(add_option=self.add_loption, obj=' '.join(objs_list), dst=self.all_at_once_lib, libpaths=self.libpaths, runtime_libpaths=self.runtime_libpaths, dest=self.dest, boost_lib=Options.boost_lib,
+                        python_lib=Options.python_lib, compiler=Options.compiler)
+                def linking():
+                    if execute("Linking...", linker_cmd % linker_dict, return_= (True if Options.compiler != 'gcc' or Options.continue_ else False) ):
+                        if Options.compiler != 'gcc':
+                            execute("Linking...", linker_cmd % dict(linker_dict, compiler='gcc'), return_= Options.continue_ )
+
+                if Options.jobs > 1:
+
+                    pid = mFork(tag=self.path+'+linking', overhead=1)  # we most likely can start extra linking process, beceause it depend on compilation to  finish. There is no point of waiting for it...
+                    if not pid:  # we are child process
+                        mWait(tag=self.path)  # wait for all compilation jobs to finish...
+                        linking()
+                        sys.exit(0)
+                else:
+                    linking()
+
+
+            else: execute("Toching %s file..." % all_at_once_lib, 'cd %(dest)s/../ && touch %(dst)s' % dict(dest=dest, dst=all_at_once_lib) )
+
+        #print 'Done!'
+
 
 
 def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path):
