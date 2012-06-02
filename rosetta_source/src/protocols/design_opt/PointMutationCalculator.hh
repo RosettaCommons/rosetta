@@ -47,7 +47,9 @@ public:
 		protocols::moves::MoverOP relax_mover,
 		utility::vector1< protocols::filters::FilterOP > filters,
 		utility::vector1< std::string > sample_types,
-		bool dump_pdb = false
+		bool dump_pdb = false,
+		core::Real design_shell = -1.0,
+		core::Real repack_shell = 8.0
 	);
 	PointMutationCalculator(
 		core::pack::task::TaskFactoryOP task_factory,
@@ -55,7 +57,9 @@ public:
 		protocols::moves::MoverOP relax_mover,
 		protocols::filters::FilterOP filter,
 		std::string sample_type = "low",
-		bool dump_pdb = false
+		bool dump_pdb = false,
+		core::Real design_shell = -1.0,
+		core::Real repack_shell = 8.0
 	);
 	virtual ~PointMutationCalculator();
 
@@ -98,6 +102,9 @@ public:
 	void sample_types( utility::vector1< std::string > const sample_types );
 	void rtmin( bool const r );
 	bool rtmin() const;
+	void set_design_shell( core::Real dz_shell );
+	void set_repack_shell( core::Real rp_shell );
+
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::scoring::ScoreFunctionOP scorefxn_;
@@ -106,6 +113,8 @@ private:
 	utility::vector1< std::string > sample_types_;
 	bool dump_pdb_;
 	bool rtmin_; //dflt false; should we rtmin after repack?
+	core::Real design_shell_; // dflt -1 which does not mutate the neighbors
+	core::Real repack_shell_;
 };
 
 

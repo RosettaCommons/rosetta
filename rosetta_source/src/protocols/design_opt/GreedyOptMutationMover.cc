@@ -339,6 +339,8 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 	design_opt::PointMutationCalculatorOP ptmut_calc( new design_opt::PointMutationCalculator(
 				task_factory(), scorefxn(), relax_mover(), filter(), sample_type(), dump_pdb() ) );
 	ptmut_calc->rtmin( rtmin() );
+	ptmut_calc->set_design_shell( design_shell_ );
+	ptmut_calc->set_repack_shell( repack_shell_ );
 
 	//create vec of pairs of seqpos, vector of AA/val pairs that pass input filter
 	//only calc the ptmut data and sort once per pose, not at every nstruct iteration
@@ -464,6 +466,10 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagPtr const tag,
 	if( mover_it == movers.end() )
 		utility_exit_with_message( "Relax mover "+relax_mover_name+" not found" );
 	relax_mover( mover_it->second );
+	//should mutations be allowed around the tested/introduced point mutation, if so, what shell radius
+	design_shell_ = tag->getOption< core::Real >( "design_shell", -1.0 );
+	//repack which radius after mutating
+	repack_shell_ = tag->getOption< core::Real >( "repack_shell", 8.0 );
 	//load sample_type
 	sample_type( tag->getOption< std::string >( "sample_type", "low" ) );
 	//load diversify_lvl

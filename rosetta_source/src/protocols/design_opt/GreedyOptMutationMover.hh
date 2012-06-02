@@ -99,6 +99,8 @@ private:
 	utility::vector1< std::pair< core::Size, utility::vector1< std::pair< core::chemical::AA, core::Real > > > > seqpos_aa_val_vec_;
 	core::pose::Pose ref_pose_;
 	bool rtmin_; //dflt false; should we rtmin after packing?
+	core::Real design_shell_;//dflt -1 to only allow pointmutations, higher allows suroundings to be designed as well
+	core::Real repack_shell_;
 };
 
 

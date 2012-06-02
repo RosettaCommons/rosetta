@@ -68,7 +68,9 @@ PointMutationCalculator::PointMutationCalculator() :
 //	filters_( NULL ), /*TODO: this throws a warning!*/
 //	sample_type_( "low" )
 	dump_pdb_( false ),
-	rtmin_( false )
+	rtmin_( false ),
+	design_shell_( -1.0),
+	repack_shell_( 8.0 )
 {}
 
 //full ctor
@@ -78,7 +80,9 @@ PointMutationCalculator::PointMutationCalculator(
 	protocols::moves::MoverOP relax_mover,
 	vector1< protocols::filters::FilterOP > filters,
 	utility::vector1< std::string > sample_types,
-	bool dump_pdb
+	bool dump_pdb,
+	core::Real design_shell,
+	core::Real repack_shell
 )
 {
 	task_factory_ = task_factory;
@@ -87,6 +91,8 @@ PointMutationCalculator::PointMutationCalculator(
 	scorefxn_ = scorefxn;
 	dump_pdb_ = dump_pdb;
 	sample_types_ = sample_types;
+	design_shell_ = design_shell;
+	repack_shell_ = repack_shell;
 
 	for( Size isamp = 1; isamp <= sample_types.size(); ++isamp ){
 		if( sample_types_[ isamp ] != "high" && sample_types_[ isamp ] != "low" ){
@@ -103,7 +109,10 @@ PointMutationCalculator::PointMutationCalculator(
 	protocols::moves::MoverOP relax_mover,
 	protocols::filters::FilterOP filter,
 	std::string sample_type,
-	bool dump_pdb
+	bool dump_pdb,
+	core::Real design_shell,
+	core::Real repack_shell
+	
 )
 {
 	vector1< protocols::filters::FilterOP > filters;
@@ -116,6 +125,8 @@ PointMutationCalculator::PointMutationCalculator(
 	scorefxn_ = scorefxn;
 	dump_pdb_ = dump_pdb;
 	sample_types_ = sample_types;
+	design_shell_ = design_shell;
+	repack_shell_ = repack_shell;
 
 	for( Size isamp = 1; isamp <= sample_types.size(); ++isamp ){
 		if( sample_types_[ isamp ] != "high" && sample_types_[ isamp ] != "low" ){
@@ -196,6 +207,16 @@ PointMutationCalculator::scorefxn() const{
 	return scorefxn_;
 }
 
+void
+PointMutationCalculator::set_design_shell( core::Real dz_shell ){
+	design_shell_ = dz_shell;
+}
+
+void
+PointMutationCalculator::set_repack_shell( core::Real rp_shell ){
+	repack_shell_ = rp_shell;
+}
+
 /*
 //utility funxns for comparing values in sort
 bool
@@ -243,8 +264,8 @@ PointMutationCalculator::mutate_and_relax(
 	core::pack::task::TaskFactoryOP mut_res = new core::pack::task::TaskFactory( *task_factory() );
 	protocols::toolbox::task_operations::DesignAroundOperationOP repack_around_op =
 		new protocols::toolbox::task_operations::DesignAroundOperation;
-	repack_around_op->design_shell( -1.0 ); //neg radius insures no designing nbrs
-	repack_around_op->repack_shell( 8.0 );
+	repack_around_op->design_shell( design_shell_ ); //neg radius insures no designing nbrs, positive will do so!
+	repack_around_op->repack_shell( repack_shell_ );
 	repack_around_op->allow_design( true ); //because we still want to design resi
 	repack_around_op->include_residue( resi );
 	mut_res->push_back( repack_around_op );
@@ -264,9 +285,9 @@ PointMutationCalculator::mutate_and_relax(
 	}
 	pack->apply( pose );
 	if( rtmin() ){
-		// definition/allocation of RTmin mover must flag dependant, as some scoreterms are incompatable with RTmin initilization
+		 // definition/allocation of RTmin mover must flag dependant, as some scoreterms are incompatable with RTmin initilization
 		if( core::pose::symmetry::is_symmetric( pose ) ) {
-			utility_exit_with_message("Cannot currently use PointMutationCalculator (GreedyOptMutation/ParetoOptMutation) with rtmin on a symmetric pose!");
+			utility_exit_with_message("Cannot currently use PointMutationCalculator (GreedyOptMutation/ParetoOptMutation) with rtmin on a symmetric pose!");          
 		}
 		rtmin = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn(), *mutate_residue );
 		rtmin->apply( pose );
@@ -274,7 +295,7 @@ PointMutationCalculator::mutate_and_relax(
 	}
 	TR<<pose.residue( resi ).name3()<<". Now relaxing..."<<std::endl;
 	//then run input relax mover
-	if( relax_mover() ) {
+	if( relax_mover() ) { 
 		relax_mover()->apply( pose );
 	}
 }
@@ -300,8 +321,8 @@ PointMutationCalculator::mutate_and_relax(
 	core::pack::task::TaskFactoryOP mut_res = new core::pack::task::TaskFactory( *task_factory() );
 	protocols::toolbox::task_operations::DesignAroundOperationOP repack_around_op =
 			new protocols::toolbox::task_operations::DesignAroundOperation;
-	repack_around_op->design_shell( -1.0 ); //neg radius insures no designing nbrs
-	repack_around_op->repack_shell( 8.0 );
+	repack_around_op->design_shell( design_shell_ ); //neg radius insures no designing nbrs
+	repack_around_op->repack_shell( repack_shell_ );
 	repack_around_op->allow_design( true ); //because we still want to design resi
 	repack_around_op->include_residue( resi );
 	core::pack::task::operation::RestrictAbsentCanonicalAASOP restrict_to_aa_op =
