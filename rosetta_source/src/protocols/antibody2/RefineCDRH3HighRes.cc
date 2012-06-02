@@ -26,6 +26,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintFactory.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
+#include <core/scoring/Energies.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <protocols/loops/Loop.hh>
@@ -112,9 +113,11 @@ void RefineCDRH3HighRes::init( ) {
 void RefineCDRH3HighRes::set_default()
 { 
     refine_mode_    = "legacy_refine_ccd";
+    flank_size_     = 2;
     H3_filter_      = true;
     flank_relax_    = true;
     high_cst_       = 100.0;
+    num_filter_tries_ = 10;
     
     if(!user_defined_){
         highres_scorefxn_ = scoring::ScoreFunctionFactory::create_score_function("standard", "score12" );
@@ -157,37 +160,87 @@ void RefineCDRH3HighRes::apply(core::pose::Pose &pose){
     using namespace basic::options;
 	using namespace basic::options::OptionKeys;
     
+
     
     if( refine_mode_ == "legacy_refine_ccd" ){
         H3RefineCCDOP legacy_refine_ccd = new H3RefineCCD(ab_info_, "h3", highres_scorefxn_); 
             legacy_refine_ccd -> pass_start_pose(start_pose_);
         legacy_refine_ccd -> apply(pose);
-    }
+    }  // the legacy refine_ccd method
+    
     else{
+                
+        loops::LoopOP h3_loop = ab_info_->get_CDR_loop("h3");
+        
+        if(flank_relax_){
+            // JQX: The idea is to minimize the flanking residues backbones on each stems, 
+            //      but only minimization, no perturbation (small, shear, etc ..) to them.
+            //      The fold_tree should be set correctly for the MinMover (or AtomTreeMinimizer). 
+            //      Will this special fold_tree affect perturbation? I don't think so. It doesn't really matter 
+            //      2 or 3 residues before loop_begin or after loop_end, as long as the cut point is in
+            //      the middle and the loop is within two jumps points.
+            simple_fold_tree( pose,  h3_loop->start()- 1 - flank_size_, h3_loop->cut(), h3_loop->stop() + 1 + flank_size_ );
+        }
+        else{
+            simple_fold_tree( pose,  h3_loop->start()- 1, h3_loop->cut(), h3_loop->stop() + 1 );
+        }
+        //JQX: be careful, no fold_tree operations are conducted in the two movers below.
         
         loops::LoopsOP pass_loops = new loops::Loops(); 
-        pass_loops->add_loop(  *(ab_info_->get_CDR_loop("h3"))  );   
+        pass_loops->add_loop(  *h3_loop  );   
+        
+        
+        core::Size itry=1;
+        core::Real best_score=0.0;
+        core::pose::Pose best_pose;
         
         if(refine_mode_ == "refine_ccd"){ 
             loops::loop_mover::refine::LoopMover_Refine_CCD refine_ccd( pass_loops, highres_scorefxn_ );
             if(get_native_pose()) {     refine_ccd.set_native_pose( get_native_pose() );    }
-            refine_ccd.apply( pose );
+            while (itry<=num_filter_tries_){
+                refine_ccd.apply( pose );
+                if(H3_filter_){ 
+                        if( CDR_H3_filter(pose, *h3_loop, false) ) { break;} 
+                        else{
+                                if(  pose.energies().total_energy() <= best_score ){
+                                    best_score = pose.energies().total_energy();
+                                    best_pose = pose;
+                                }
+                        }
+                }
+                else {break;}
+                if(itry==num_filter_tries_) { pose=best_pose; }
+            }
         }
                              
         else if(refine_mode_ == "refine_kic"){
             //loops.remove_terminal_loops( pose );
             loops::loop_mover::refine::LoopMover_Refine_KIC refine_kic( pass_loops, highres_scorefxn_ );
             if(get_native_pose()) {     refine_kic.set_native_pose( get_native_pose() );    }
-            refine_kic.apply( pose );
-
+            while (itry<=num_filter_tries_ ){
+                refine_kic.apply( pose );
+                if(H3_filter_){ 
+                        if( CDR_H3_filter(pose, *h3_loop, false) ) { break;} 
+                        else{
+                            if(  pose.energies().total_energy() <= best_score ){
+                                best_score = pose.energies().total_energy();
+                                best_pose = pose;
+                            }
+                        }
+                }
+                else {break;}
+                if(itry==num_filter_tries_) { pose=best_pose; }
+            }
         }
+        
         else{
             utility_exit_with_message("the refinement method is not available!");
         }
-    }
+             
+    }// refine_CCD or refine_KIC
     
     
-}
+}//apply
     
     
 
@@ -197,6 +250,5 @@ void RefineCDRH3HighRes::apply(core::pose::Pose &pose){
 
 } // namespace antibody2
 } // namespace protocols
-
 
 

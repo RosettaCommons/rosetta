@@ -76,10 +76,22 @@ public:
         flank_relax_ = false;
     }
     
-    void turn_off_h3_filter(){
-        H3_filter_=false;
+    void set_h3_filter(bool setting){
+        H3_filter_=setting;
+    }
+    
+    void set_num_filter_tries(core::Size setting){
+        num_filter_tries_=setting;
     }
 
+    void set_flank_relax(bool setting){
+        flank_relax_=setting;
+    }
+    
+    void set_flank_size(core::Size setting){
+        flank_size_=setting;
+    }
+    
     virtual void apply( core::pose::Pose & pose );
 
     
@@ -124,8 +136,11 @@ private:
     /// @brief actually enables H3 filter for H3 operations
 	bool H3_filter_;
     
+    core::Size num_filter_tries_;
+    
     std::string refine_mode_;
         core::Real high_cst_;
+    
 
 };
 

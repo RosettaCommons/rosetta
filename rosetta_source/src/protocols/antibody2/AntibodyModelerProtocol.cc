@@ -141,6 +141,7 @@ void AntibodyModelerProtocol::set_default()
 	snugfit_               = true;
         LH_repulsive_ramp_ = true;
     refine_h3_             = true;
+    middle_pack_min_       = true;
     
 	benchmark_ = false;
 	camelid_   = false;
@@ -166,15 +167,20 @@ void AntibodyModelerProtocol::register_options()
 
     option.add_relevant( OptionKeys::antibody::model_h3 );
 	option.add_relevant( OptionKeys::antibody::snugfit );
-    option.add_relevant( OptionKeys::run::benchmark );
-	option.add_relevant( OptionKeys::antibody::camelid );
+    option.add_relevant( OptionKeys::antibody::camelid );
 	option.add_relevant( OptionKeys::antibody::camelid_constraints );
+    option.add_relevant( OptionKeys::run::benchmark );
 	option.add_relevant( OptionKeys::constraints::cst_weight );
 	option.add_relevant( OptionKeys::in::file::native );
     //option.add_relevant( OptionKeys::antibody::H3_filter );
     //option.add_relevant( OptionKeys::antibody::cter_insert );
-    //option.add_relevant( OptionKeys::antibody::sc_min_);
-    //option.add_relevant( OptionKeys::antibody::rt_min_);
+    //option.add_relevant( OptionKeys::antibody::sc_min);
+    //option.add_relevant( OptionKeys::antibody::rt_min);
+    //option.add_relevant( OptionKeys::antibody::flank_residue_min);
+    //option.add_relevant( OptionKeys::antibody::flank_residue_size);
+    //option.add_relevant( OptionKeys::loops::remodel);
+    //option.add_relevant( OptionKeys::loops::refine);
+    //option.add_relevant( OptionKeys::antibody::middle_pack_min);
 }
 
     
@@ -212,18 +218,21 @@ void AntibodyModelerProtocol::init_from_options()
     //if ( option[ OptionKeys::antibody::cter_insert ].user() ) {
 	//	set_CterInsert( option[ OptionKeys::antibody::cter_insert ]() );
 	//}
-    //if ( option[ OptionKeys::antibody::sc_min_ ].user() ) {
-	//	set_sc_min( option[ OptionKeys::antibody::sc_min_ ]() );
+    //if ( option[ OptionKeys::antibody::sc_min ].user() ) {
+	//	set_sc_min( option[ OptionKeys::antibody::sc_min ]() );
 	//}
-    //if ( option[ OptionKeys::antibody::rt_min_ ].user() ) {
-	//	set_rt_min( option[ OptionKeys::antibody::rt_min_ ]() );
+    //if ( option[ OptionKeys::antibody::rt_min ].user() ) {
+	//	set_rt_min( option[ OptionKeys::antibody::rt_min ]() );
 	//}
-    //if ( option[ OptionKeys::antibody::h3_perturb_type ].user() ) {
-	//	set_perturb_type( option[ OptionKeys::antibody::h3_perturb_type ]() );
+    //if ( option[ OptionKeys::loops::remodel ].user() ) {
+	//	set_perturb_type( option[ OptionKeys::loops::remodel ]() );
 	//}
-    //if ( option[ OptionKeys::antibody::h3_refine_type ].user() ) {
-	//	set_refine_type( option[ OptionKeys::antibody::h3_refine_type ]() );
+    //if ( option[ OptionKeys::loops::refine ].user() ) {
+	//	set_refine_type( option[ OptionKeys::loops::refine ]() );
 	//}
+    //if ( option[ OptionKeys::antibody::middle_pack_min].user() ){
+    //  set_middle_pack_min( option[ OptionKeys::loops::refine ] )
+    //}
     
 	//set native pose if asked for
 	if ( option[ OptionKeys::in::file::native ].user() ) {
@@ -384,11 +393,14 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
         //pose.dump_pdb("1st_finish_model_h3.pdb");
 
     }
-        
-    CDRsMinPackMinOP cdrs_min_pack_min = new CDRsMinPackMin(ab_info_);
-        if(sc_min_) cdrs_min_pack_min->set_sc_min(true);
-        if(rt_min_) cdrs_min_pack_min->set_rt_min(true);
-    cdrs_min_pack_min -> apply(pose);
+     
+    
+    //if(middle_pack_min_){
+        CDRsMinPackMinOP cdrs_min_pack_min = new CDRsMinPackMin(ab_info_);
+            if(sc_min_) cdrs_min_pack_min->set_sc_min(true);
+            if(rt_min_) cdrs_min_pack_min->set_rt_min(true);
+        cdrs_min_pack_min -> apply(pose);
+    //}
 
     
 	// Step 2: SnugFit: relieve the clashes between L-H
@@ -409,20 +421,9 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
     if(refine_h3_){
         RefineCDRH3HighResOP cdr_highres_refine_ = new RefineCDRH3HighRes(ab_info_, h3_refine_type_, loop_scorefxn_highres_); 
             cdr_highres_refine_ -> pass_start_pose(start_pose_);
+            cdr_highres_refine_ -> set_h3_filter(H3_filter_);
         cdr_highres_refine_ -> apply(pose);
         //pose.dump_pdb("3rd_finish_h3_refine.pdb");
-
-
-        // Minimize CDR H2 loop if this is a camelid
-        if( camelid_ ) {
-            RefineCDRH3HighRes cdr_highres_refine( ab_info_); // because of h2
-                //cdr_highres_refine.turn_off_h3_default();
-                cdr_highres_refine.turn_off_h3_filter();
-            cdr_highres_refine.apply(pose);
-        
-            //JQX: remove the duplicated code, camelid H2 will be automatically taken care of
-            //     see the code in RefineCDRH3HighRes file
-        }
     }
     
     //FoldTree, MoveMap, TaskFactory and Variants will be taken care of inside
@@ -552,14 +553,17 @@ std::ostream & operator<<(std::ostream& out, const AntibodyModelerProtocol & ab_
     out << line_marker << space( 74 ) << line_marker << std::endl;
 
     // Display the state of the antibody modeler protocol that will be used
-    out << line_marker << "  camelid                : " << ab_m.camelid_     << std::endl;
+    out << line_marker << "  camelid              : " << ab_m.camelid_           << std::endl;
     out << line_marker << std::endl;
-    out << line_marker << "  model_h3               : " << ab_m.model_h3_    << std::endl;
-    out << line_marker << "     cter_insert         : " << ab_m.cter_insert_ << std::endl;
-    out << line_marker << "     H3_filter           : " << ab_m.H3_filter_   << std::endl;
-    out << line_marker << "  snugfit                : " << ab_m.snugfit_     << std::endl;
-    out << line_marker << "     LH_repulsive_ramp   : " << ab_m.LH_repulsive_ramp_ << std::endl;
-    out << line_marker << "  refine_h3              : " << ab_m.refine_h3_     << std::endl;
+    out << line_marker << "  model_h3             : " << ab_m.model_h3_          
+                                                      <<"   h3_perturb_type="<<ab_m.h3_perturb_type_<<std::endl;
+    out << line_marker << "     cter_insert       : " << ab_m.cter_insert_       << std::endl;
+    out << line_marker << "     H3_filter         : " << ab_m.H3_filter_         << std::endl;
+    out << line_marker << "  snugfit              : " << ab_m.snugfit_           << std::endl;
+    out << line_marker << "     LH_repulsive_ramp : " << ab_m.LH_repulsive_ramp_ << std::endl;
+    out << line_marker << "  refine_h3            : " << ab_m.refine_h3_         
+                                                      <<"   h3_refine_type="<<ab_m.h3_refine_type_<<std::endl;
+    out << line_marker << "     H3_filter         : " << ab_m.H3_filter_         << std::endl;
     out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
     return out;
 }

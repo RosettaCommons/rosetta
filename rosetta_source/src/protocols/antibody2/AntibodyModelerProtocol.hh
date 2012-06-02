@@ -65,19 +65,48 @@ public:
     static void register_options();
     
 	// simple inline setters
-    void set_BenchMark  ( bool benchmark  ) {benchmark_   = benchmark;}
-    void set_ModelH3    ( bool model_h3   ) {model_h3_    = model_h3; }
-	void set_SnugFit    ( bool snugfit    ) {snugfit_     = snugfit;  }
-    void set_H3Filter   ( bool H3_filter  ) {H3_filter_   = H3_filter;}
-    void set_CterInsert ( bool cter_insert) {cter_insert_ = cter_insert;}
-    void set_camelid    ( bool camelid    ) {camelid_ = camelid; }
-    void set_sc_min     ( bool scmin      ) {sc_min_ = scmin ;}
-    void set_rt_min     ( bool rtmin      ) {rt_min_ = rtmin ;}
-    void set_perturb_type( std::string perturb_type) {h3_perturb_type_=perturb_type;}
-    void set_refine_type ( std::string refine_type)  {h3_refine_type_=refine_type;}
-    void set_cst_weight ( core::Real const cst_weight){cst_weight_=cst_weight;}
-
-    
+    void set_BenchMark(bool benchmark) {
+        benchmark_ = benchmark;
+    }
+    void set_ModelH3(bool model_h3) {
+        model_h3_ = model_h3; 
+    }
+	void set_SnugFit(bool snugfit) {
+        snugfit_ = snugfit;  
+    }
+    void set_H3Filter(bool H3_filter) {
+        H3_filter_ = H3_filter;
+    }
+    void set_CterInsert (bool cter_insert) {
+        cter_insert_ = cter_insert;
+    }
+    void set_camelid(bool camelid) {
+        camelid_ = camelid; 
+    }
+    void set_sc_min(bool scmin) {
+        sc_min_ = scmin ;
+    }
+    void set_rt_min(bool rtmin) {
+        rt_min_ = rtmin ;
+    }
+    void set_perturb_type(std::string remodel) {
+        h3_perturb_type_ = remodel;
+    }
+    void set_refine_type (std::string refine)  {
+        h3_refine_type_ = refine;
+    }
+    void set_cst_weight ( core::Real const cst_weight){
+        cst_weight_ = cst_weight;
+    }
+    void set_flank_residue_min (bool flank_residue_min) {
+        flank_residue_min_ = flank_residue_min;
+    }
+    void set_flank_residue_size(core::Real const flank_residue_size) {
+        flank_residue_size_ = flank_residue_size;
+    }
+    void set_middle_pack_min( bool middle_pack_min) {
+        middle_pack_min_ = middle_pack_min;
+    }
 	void set_camelid_constraints(bool camelid_constraints ) { 
         camelid_constraints_ = camelid_constraints; 
     }
@@ -101,10 +130,12 @@ private:
     bool rt_min_;
     bool camelid_;
     bool camelid_constraints_;
+    bool flank_residue_min_;
+    bool flank_residue_size_;
+    bool middle_pack_min_;
     std::string h3_perturb_type_;
     std::string h3_refine_type_;
     
-    /// @brief refine H3 only
     core::Real cen_cst_, high_cst_;
     moves::PyMolMoverOP pymol_;
     bool use_pymol_diy_;
