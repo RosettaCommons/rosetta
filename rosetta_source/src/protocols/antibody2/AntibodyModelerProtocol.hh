@@ -22,13 +22,9 @@
 #include <utility/vector1.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/moves/PyMolMover.fwd.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/AntibodyModelerProtocol.fwd.hh>
@@ -65,17 +61,32 @@ public:
     static void register_options();
     
 	// simple inline setters
-    void set_BenchMark(bool benchmark) {
-        benchmark_ = benchmark;
+    void set_BenchMark(bool setting) {
+        benchmark_ = setting;
     }
-    void set_camelid(bool camelid) {
-        camelid_ = camelid; 
+    void set_ModelH3(bool setting) {
+        model_h3_ = setting; 
     }
-    void set_sc_min(bool scmin) {
-        sc_min_ = scmin ;
+	void set_SnugFit(bool setting) {
+        snugfit_ = setting;  
     }
-    void set_rt_min(bool rtmin) {
-        rt_min_ = rtmin ;
+    void set_refine_h3(bool setting){
+        refine_h3_ = setting;
+    }
+    void set_H3Filter(bool setting) {
+        h3_filter_ = setting;
+    }
+    void set_CterInsert (bool setting) {
+        cter_insert_ = setting;
+    }
+    void set_sc_min(bool setting) {
+        sc_min_ = setting ;
+    }
+    void set_rt_min(bool setting) {
+        rt_min_ = setting ;
+    }
+    void set_flank_residue_min (bool setting) {
+        flank_residue_min_ = setting;
     }
     void set_perturb_type(std::string remodel) {
         h3_perturb_type_ = remodel;
@@ -91,9 +102,6 @@ public:
     }
     void set_middle_pack_min( bool middle_pack_min) {
         middle_pack_min_ = middle_pack_min;
-    }
-	void set_camelid_constraints(bool camelid_constraints ) { 
-        camelid_constraints_ = camelid_constraints; 
     }
 
 
@@ -120,7 +128,6 @@ private:
     bool middle_pack_min_;
     std::string h3_perturb_type_;
     std::string h3_refine_type_;
-    
     core::Real cen_cst_, high_cst_;
     moves::PyMolMoverOP pymol_;
     bool use_pymol_diy_;

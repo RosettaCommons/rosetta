@@ -40,6 +40,10 @@ namespace antibody { extern BooleanOptionKey const refine_h3; }
 namespace antibody { extern BooleanOptionKey const h3_filter; }
 namespace antibody { extern BooleanOptionKey const cter_insert; }
 namespace antibody { extern BooleanOptionKey const flank_residue_min; }
+namespace antibody { extern BooleanOptionKey const sc_min; }
+namespace antibody { extern BooleanOptionKey const rt_min; }
+namespace antibody { extern StringOptionKey const remodel; }
+namespace antibody { extern StringOptionKey const refine; }
 namespace antibody { extern BooleanOptionKey const snug_loops; }
 namespace antibody { extern FileOptionKey const input_fv; }
 namespace antibody { extern BooleanOptionKey const camelid; }

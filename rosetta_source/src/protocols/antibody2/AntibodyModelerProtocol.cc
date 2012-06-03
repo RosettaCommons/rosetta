@@ -16,33 +16,19 @@
 /// @author Jianqing Xu ( xubest@gmail.com )
 
 #include <protocols/jobdist/JobDistributors.hh> // SJF Keep first for mpi
-
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueSelector.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/MoveMap.hh>
-
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
-
-#include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <core/pack/task/operation/OperateOnCertainResidues.hh>
-#include <core/pack/task/operation/OptH.hh>
-#include <core/pack/task/operation/ResFilters.hh>
-#include <core/pack/task/operation/ResLvlTaskOperations.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-
-
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -51,7 +37,9 @@
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
-
+#include <core/pose/datacache/CacheableDataType.hh>
+#include <basic/datacache/BasicDataCache.hh>
+#include <basic/datacache/DiagnosticData.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
@@ -60,25 +48,13 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/DiagnosticData.hh>
-
 #include <protocols/jd2/ScoreMap.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
-#include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/PyMolMover.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
-
 #include <protocols/antibody2/AntibodyUtil.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/AntibodyModelerProtocol.hh>
@@ -157,7 +133,7 @@ void AntibodyModelerProtocol::set_default()
     sc_min_ = false;
     rt_min_ = false;
     
-    h3_perturb_type_ = "legacy_ccd"; // legacy_ccd, kic, ccd
+    h3_perturb_type_ = "legacy_perturb_ccd"; // legacy_perturb_ccd, kic, ccd
     h3_refine_type_  = "legacy_refine_ccd"; // legacy_refine, kic, ccd
 }
 
@@ -177,12 +153,12 @@ void AntibodyModelerProtocol::register_options()
     option.add_relevant( OptionKeys::antibody::refine_h3 );
     option.add_relevant( OptionKeys::antibody::h3_filter );
     option.add_relevant( OptionKeys::antibody::cter_insert );
-    //option.add_relevant( OptionKeys::antibody::sc_min);
-    //option.add_relevant( OptionKeys::antibody::rt_min);
+    option.add_relevant( OptionKeys::antibody::sc_min);
+    option.add_relevant( OptionKeys::antibody::rt_min);
     option.add_relevant( OptionKeys::antibody::flank_residue_min);
     //option.add_relevant( OptionKeys::antibody::flank_residue_size);
-    //option.add_relevant( OptionKeys::loops::remodel);
-    //option.add_relevant( OptionKeys::loops::refine);
+    option.add_relevant( OptionKeys::antibody::remodel);
+    option.add_relevant( OptionKeys::antibody::refine);
     //option.add_relevant( OptionKeys::antibody::middle_pack_min);
 }
 
@@ -198,28 +174,22 @@ void AntibodyModelerProtocol::init_from_options()
 	TR <<  "Start Reading and Setting Options ..." << std::endl;
     
     if ( option[OptionKeys::antibody::model_h3].user() ){
-        model_h3_ = option[ OptionKeys::antibody::model_h3 ]();
+        set_ModelH3( option[OptionKeys::antibody::model_h3]() );
     }
 	if ( option[ OptionKeys::antibody::snugfit ].user() ){
-        snugfit_ = option[ OptionKeys::antibody::snugfit ]();
+        set_SnugFit( option[ OptionKeys::antibody::snugfit ]() );
     }    
     if ( option[ OptionKeys::antibody::refine_h3 ].user() ){
-        refine_h3_ = option[ OptionKeys::antibody::refine_h3 ]();
+        set_refine_h3( option[ OptionKeys::antibody::refine_h3 ]()  );
     }   
     if ( option[ OptionKeys::antibody::cter_insert ].user() ){
-        cter_insert_ = option[ OptionKeys::antibody::cter_insert ]();
+        set_CterInsert( option[ OptionKeys::antibody::cter_insert ]() );
     }
     if ( option[ OptionKeys::antibody::h3_filter ].user() ) {
-        h3_filter_ = option[ OptionKeys::antibody::h3_filter ]() ;
+        set_H3Filter ( option[ OptionKeys::antibody::h3_filter ]() );
     }
     if ( option[ OptionKeys::antibody::flank_residue_min ].user() ) {
-        flank_residue_min_ = option[ OptionKeys::antibody::flank_residue_min ]() ;
-    }
-	if ( option[ OptionKeys::antibody::camelid ].user() ){
-        set_camelid( option[ OptionKeys::antibody::camelid ]() );
-    }
-	if ( option[ OptionKeys::antibody::camelid_constraints ].user() ){
-        set_camelid_constraints( option[ OptionKeys::antibody::camelid_constraints ]() );
+        set_flank_residue_min ( option[ OptionKeys::antibody::flank_residue_min ]() );
     }
 	if ( option[ OptionKeys::run::benchmark ].user() ){
         set_BenchMark( option[ OptionKeys::run::benchmark ]() );
@@ -227,19 +197,18 @@ void AntibodyModelerProtocol::init_from_options()
     if ( option[ OptionKeys::constraints::cst_weight ].user() ) {
 		set_cst_weight( option[ OptionKeys::constraints::cst_weight ]() );
 	}
-
-    //if ( option[ OptionKeys::antibody::sc_min ].user() ) {
-	//	set_sc_min( option[ OptionKeys::antibody::sc_min ]() );
-	//}
-    //if ( option[ OptionKeys::antibody::rt_min ].user() ) {
-	//	set_rt_min( option[ OptionKeys::antibody::rt_min ]() );
-	//}
-    //if ( option[ OptionKeys::loops::remodel ].user() ) {
-	//	set_perturb_type( option[ OptionKeys::loops::remodel ]() );
-	//}
-    //if ( option[ OptionKeys::loops::refine ].user() ) {
-	//	set_refine_type( option[ OptionKeys::loops::refine ]() );
-	//}
+    if ( option[ OptionKeys::antibody::sc_min ].user() ) {
+        set_sc_min( option[ OptionKeys::antibody::sc_min ]() );
+	}
+    if ( option[ OptionKeys::antibody::rt_min ].user() ) {
+		set_rt_min( option[ OptionKeys::antibody::rt_min ]() );
+	}
+    if ( option[ OptionKeys::antibody::remodel ].user() ) {
+		set_perturb_type( option[ OptionKeys::antibody::remodel ]() );
+	}
+    if ( option[ OptionKeys::antibody::refine ].user() ) {
+		set_refine_type( option[ OptionKeys::antibody::refine ]() );
+	}
     //if ( option[ OptionKeys::antibody::middle_pack_min].user() ){
     //  set_middle_pack_min( option[ OptionKeys::loops::refine ] )
     //}
@@ -254,11 +223,6 @@ void AntibodyModelerProtocol::init_from_options()
 		set_native_pose(NULL);
 	}
     
-
-    
-	if( camelid_ ) {
-		snugfit_ = false;
-	}
     
     TR <<  "Finish Reading and Setting Options !!!" << std::endl;
 }
@@ -395,7 +359,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
     if(use_pymol_diy_) pymol_->apply(pose);
     if(model_h3_){ 
         ModelCDRH3OP model_cdrh3  = new ModelCDRH3( ab_info_, loop_scorefxn_centroid_);
-            model_cdrh3->set_perturb_type(h3_perturb_type_); //legacy_ccd, ccd, kic
+            model_cdrh3->set_perturb_type(h3_perturb_type_); //legacy_perturb_ccd, ccd, kic
             if(cter_insert_ ==false) { model_cdrh3->turn_off_cter_insert(); }
             if(h3_filter_   ==false) { model_cdrh3->turn_off_H3_filter();   }
             if(use_pymol_diy_) model_cdrh3->turn_on_and_pass_the_pymol(pymol_);

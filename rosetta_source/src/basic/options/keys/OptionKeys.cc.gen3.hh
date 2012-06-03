@@ -1,6 +1,3 @@
-namespace RBSegmentRelax { StringOptionKey const cst_pdb( "RBSegmentRelax:cst_pdb" );  }
-namespace RBSegmentRelax { IntegerOptionKey const nrbmoves( "RBSegmentRelax:nrbmoves" );  }
-namespace RBSegmentRelax { IntegerOptionKey const nrboutercycles( "RBSegmentRelax:nrboutercycles" );  }
 namespace RBSegmentRelax { StringOptionKey const rb_scorefxn( "RBSegmentRelax:rb_scorefxn" );  }
 namespace RBSegmentRelax { BooleanOptionKey const skip_fragment_moves( "RBSegmentRelax:skip_fragment_moves" );  }
 namespace RBSegmentRelax { BooleanOptionKey const skip_seqshift_moves( "RBSegmentRelax:skip_seqshift_moves" );  }
@@ -378,6 +375,10 @@ namespace antibody { BooleanOptionKey const refine_h3( "antibody:refine_h3" );  
 namespace antibody { BooleanOptionKey const h3_filter( "antibody:h3_filter" );  }
 namespace antibody { BooleanOptionKey const cter_insert( "antibody:cter_insert" );  }
 namespace antibody { BooleanOptionKey const flank_residue_min( "antibody:flank_residue_min" );  }
+namespace antibody { BooleanOptionKey const sc_min( "antibody:sc_min" );  }
+namespace antibody { BooleanOptionKey const rt_min( "antibody:rt_min" );  }
+namespace antibody { StringOptionKey const remodel( "antibody:remodel" );  }
+namespace antibody { StringOptionKey const refine( "antibody:refine" );  }
 namespace antibody { BooleanOptionKey const snug_loops( "antibody:snug_loops" );  }
 namespace antibody { FileOptionKey const input_fv( "antibody:input_fv" );  }
 namespace antibody { BooleanOptionKey const camelid( "antibody:camelid" );  }

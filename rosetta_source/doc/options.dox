@@ -10804,6 +10804,26 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: true</dd><br>
 </dl>
 <dl>
+<dt><b>-sc_min</b> \<Boolean\><dt>
+<dd>minimize the side chain after finishing the rotamer packing</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-rt_min</b> \<Boolean\><dt>
+<dd>minimize the rotamer each packing</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-remodel</b> \<String\><dt>
+<dd>Choose a perturb method to model H3 in centroid mode</dd><br>
+<dd>Default: "legacy_perturb_ccd"</dd><br>
+</dl>
+<dl>
+<dt><b>-refine</b> \<String\><dt>
+<dd>Choose a refine method to model H3 in high-resol model</dd><br>
+<dd>Default: "legacy_perturb_ccd"</dd><br>
+</dl>
+<dl>
 <dt><b>-snug_loops</b> \<Boolean\><dt>
 <dd>Allow CDR loop backbone flexibility during minimization</dd><br>
 <dd>Default: false</dd><br>

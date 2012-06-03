@@ -102,7 +102,7 @@ void ModelCDRH3::set_default()
     dle_flag_           = true;
     use_pymol_diy_      = false;
 
-    remodel_            = "legacy_ccd";
+    remodel_            = "legacy_perturb_ccd";
         
     c_ter_stem_ = 3;
     max_cycle_ = 20;
@@ -193,7 +193,7 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
     // Building centroid mode loop
     to_centroid.apply( pose_in );
 
-    if(remodel_=="legacy_ccd"){
+    if(remodel_=="legacy_perturb_ccd"){
     // some initialization before you do h3 loop modeling
 //    my_LoopMover xxx ;
 //    xxx.set_extended_torsions( pose_in, cdr_h3 );
@@ -276,7 +276,7 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
         
         //pose_in.dump_pdb("after_c_insert.pdb");
 
-        if(remodel_=="legacy_ccd"){
+        if(remodel_=="legacy_perturb_ccd"){
             h3_perturb_ccd_build_->apply(pose_in);
         }
         else{

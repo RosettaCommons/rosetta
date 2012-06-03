@@ -618,10 +618,10 @@ option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with in
 option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
 option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
+option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
-option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
 option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
@@ -1235,11 +1235,11 @@ option.add( basic::options::OptionKeys::lh::skim_size, "No description" ).def(10
 option.add( basic::options::OptionKeys::lh::rounds, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" ).def("default");
 option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
+option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
+option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
-option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
-option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
 option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
 option.add( basic::options::OptionKeys::lh::expire_after_rounds, "If set to > 0 this causes the Master to expire a structure after it has gone through this many cycles" ).def(0);
 option.add( basic::options::OptionKeys::lh::mpi_resume, "Prefix (Ident string) for resuming a previous job!" );
@@ -1852,12 +1852,12 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb fi
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
+option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);
-option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of rigid-body moves" ).def("score5");
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of rigid-body moves" ).def("score5");
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
@@ -2234,6 +2234,10 @@ option.add( basic::options::OptionKeys::antibody::refine_h3, "Refine CDR H3 in h
 option.add( basic::options::OptionKeys::antibody::h3_filter, "filter decoys having neither kink nor extend form" ).def(true);
 option.add( basic::options::OptionKeys::antibody::cter_insert, "insert kind or extend Ab fragments to CDR H3" ).def(true);
 option.add( basic::options::OptionKeys::antibody::flank_residue_min, "minimize flank residues of CDR H3 during high-reso refinement" ).def(true);
+option.add( basic::options::OptionKeys::antibody::sc_min, "minimize the side chain after finishing the rotamer packing" ).def(false);
+option.add( basic::options::OptionKeys::antibody::rt_min, "minimize the rotamer each packing" ).def(false);
+option.add( basic::options::OptionKeys::antibody::remodel, "Choose a perturb method to model H3 in centroid mode" ).def("legacy_perturb_ccd");
+option.add( basic::options::OptionKeys::antibody::refine, "Choose a refine method to model H3 in high-resol model" ).def("legacy_perturb_ccd");
 option.add( basic::options::OptionKeys::antibody::snug_loops, "Allow CDR loop backbone flexibility during minimization" ).def(false);
 option.add( basic::options::OptionKeys::antibody::input_fv, "input antibody variable (Fv) region" ).def("FR02.pdb");
 option.add( basic::options::OptionKeys::antibody::camelid, "Camelid input with only heavy (VH) chain" ).def(false);
