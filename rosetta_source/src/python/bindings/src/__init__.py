@@ -92,7 +92,7 @@ from rosetta.protocols.docking import *
 from rosetta.protocols.loops import *
 from rosetta.protocols.relax import *
 
-from rosetta.protocols.rigid import *
+#from rosetta.protocols.rigid import *
 from rosetta.protocols.simple_moves import *
 
 

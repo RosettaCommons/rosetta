@@ -1175,35 +1175,37 @@ class ModuleBuilder:
         if not self.headers: return
         source_list = json.load( file(self.all_at_once_json) )
 
-        recompile = False
+        relink = False
 
         if Options.update:
             for (all_at_once_N_cpp, all_at_once_N_obj) in source_list:
-                if not os.path.isfile(self.all_at_once_lib)  or  os.path.getmtime( all_at_once_N_obj) > os.path.getmtime(self.all_at_once_lib): recompile = True; break
+                if not os.path.isfile(self.all_at_once_lib)  or  os.path.getmtime( all_at_once_N_obj) > os.path.getmtime(self.all_at_once_lib): relink = True; break
 
-        if not Options.cross_compile:  # -fPIC -ffloat-store -ffor-scope
-            objs_list = map(lambda x:x[1], source_list)
-            linker_cmd = "cd %(dest)s/../ && %(compiler)s %(obj)s %(add_option)s -lmini -lstdc++ -lz -l%(python_lib)s \
-                          -l%(boost_lib)s %(libpaths)s %(runtime_libpaths)s -o %(dst)s"
-            linker_dict = dict(add_option=self.add_loption, obj=' '.join(objs_list), dst=self.all_at_once_lib, libpaths=self.libpaths, runtime_libpaths=self.runtime_libpaths, dest=self.dest, boost_lib=Options.boost_lib,
-                    python_lib=Options.python_lib, compiler=Options.compiler)
-            def linking():
-                if execute("Linking...", linker_cmd % linker_dict, return_= (True if Options.compiler != 'gcc' or Options.continue_ else False) ):
-                    if Options.compiler != 'gcc':
-                        execute("Linking...", linker_cmd % dict(linker_dict, compiler='gcc'), return_= Options.continue_ )
 
-            if Options.jobs > 1:
+        if relink:
+            if not Options.cross_compile:  # -fPIC -ffloat-store -ffor-scope
+                objs_list = map(lambda x:x[1], source_list)
+                linker_cmd = "cd %(dest)s/../ && %(compiler)s %(obj)s %(add_option)s -lmini -lstdc++ -lz -l%(python_lib)s \
+                              -l%(boost_lib)s %(libpaths)s %(runtime_libpaths)s -o %(dst)s"
+                linker_dict = dict(add_option=self.add_loption, obj=' '.join(objs_list), dst=self.all_at_once_lib, libpaths=self.libpaths, runtime_libpaths=self.runtime_libpaths, dest=self.dest, boost_lib=Options.boost_lib,
+                        python_lib=Options.python_lib, compiler=Options.compiler)
+                def linking():
+                    if execute("Linking...", linker_cmd % linker_dict, return_= (True if Options.compiler != 'gcc' or Options.continue_ else False) ):
+                        if Options.compiler != 'gcc':
+                            execute("Linking...", linker_cmd % dict(linker_dict, compiler='gcc'), return_= Options.continue_ )
 
-                pid = mFork(tag=self.path+'+linking', overhead=1)  # we most likely can start extra linking process, beceause it depend on compilation to  finish. There is no point of waiting for it...
-                if not pid:  # we are child process
-                    #mWait(tag=self.path)  # wait for all compilation jobs to finish...
+                if Options.jobs > 1:
+
+                    pid = mFork(tag=self.path+'+linking', overhead=1)  # we most likely can start extra linking process, beceause it depend on compilation to  finish. There is no point of waiting for it...
+                    if not pid:  # we are child process
+                        #mWait(tag=self.path)  # wait for all compilation jobs to finish...
+                        linking()
+                        sys.exit(0)
+                else:
                     linking()
-                    sys.exit(0)
-            else:
-                linking()
 
 
-        else: execute("Toching %s file..." % all_at_once_lib, 'cd %(dest)s/../ && touch %(dst)s' % dict(dest=dest, dst=all_at_once_lib) )
+            else: execute("Toching %s file..." % all_at_once_lib, 'cd %(dest)s/../ && touch %(dst)s' % dict(dest=dest, dst=all_at_once_lib) )
 
         #print 'Done!'
 

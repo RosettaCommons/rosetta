@@ -1,10 +1,10 @@
 #! /usr/bin/python
+# :noTabs=true:
 # List of commands used in PyRosetts Workshop #2
 
 # A simple de Novo Folding Algorithm
 # import modules
-from random import *
-from math import *
+import random, math
 
 from rosetta import *
 init()
@@ -18,15 +18,17 @@ kT = 1.0
 
 def random_move(pose):
     # select random residue
-    res = randint(1, pose.total_residue())
+    res = random.randint(1, pose.total_residue())
 
     # select and set random torsion angle distributed around old angle
-    if randint(PHI, PSI) == PHI:
+    if random.randint(PHI, PSI) == PHI:
         torsion = pose.phi(res)
-        pose.set_phi(res, gauss(torsion, 25))
+        a = random.gauss(torsion, 25)
+        pose.set_phi(res, a)
     else:
         torsion = pose.psi(res)
-        pose.set_psi(res, gauss(torsion, 25))
+        a = random.gauss(torsion, 25)
+        pose.set_psi(res, a)
 
 # initialize pose objects
 p = Pose()
@@ -61,9 +63,9 @@ for i in range(100):
     # accept if new energy score is improved
     # reject or accept if new energy score is worse based on Metropolis criteria
     if deltaE > 0:
-        P = exp(-deltaE/kT)  # probability of accepting move diminishes
+        P = math.exp(-deltaE/kT)  # probability of accepting move diminishes
                              # exponetially with increasing energy
-        roll = uniform(0.0, 1.0)
+        roll = random.uniform(0.0, 1.0)
         if roll >= P:
             p.assign(last_pose)  # reject pose and reassign previous
             continue
