@@ -4,6 +4,7 @@
 import sys
 
 from rosetta import *
+from rosetta.protocols.rigid import *
 init()
 
 '''

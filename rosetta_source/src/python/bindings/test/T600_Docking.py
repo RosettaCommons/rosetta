@@ -8,6 +8,7 @@
 ## @author Sergey Lyskov
 
 from rosetta import *
+from rosetta.protocols.rigid import *
 rosetta.init()
 
 print 'Docking ----------------------------------------------------'
