@@ -334,15 +334,8 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	else {
 		tr() << "not performing initial kinematic perturbation" << std::endl;
 		if (option[ OptionKeys::loops::vicinity_sampling ]()) {
-            // AS: as the perturber is not externally visible any more, generate a new, vicinity-sampling perturber here and replace the previous one
-            // in the long term it might be good to have a dedicated VicinitySamplingKinematicPerturber
-            loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP perturber =
-            new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( &myKinematicMover );
-            perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 			perturber->set_sample_vicinity( true );
 			perturber->set_degree_vicinity( option[ OptionKeys::loops::vicinity_degree ]() );
-            myKinematicMover.set_perturber( perturber );
-
 		}
 	}
 

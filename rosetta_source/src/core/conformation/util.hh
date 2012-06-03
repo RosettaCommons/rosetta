@@ -339,12 +339,6 @@ stub_id_to_named_stub_id(
 	conformation::Residue const & rsd
 );
 
-// @brief determine torsion bins for given phi/psi/omega combination
-// assume that omega is 180 if not specified
-// @author Amelie Stein
-// @date Wed May  2 11:18:29 PDT 2012
-char get_torsion_bin (core::Real phi, core::Real psi, core::Real omega = 180);
-
 /* - undefinded, commenting out to make PyRosetta compile...
 id::StubID
 named_stub_id_to_named_stub_id(
