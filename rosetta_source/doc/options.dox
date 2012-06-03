@@ -10784,6 +10784,26 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-refine_h3</b> \<Boolean\><dt>
+<dd>Refine CDR H3 in high resolution</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-h3_filter</b> \<Boolean\><dt>
+<dd>filter decoys having neither kink nor extend form</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-cter_insert</b> \<Boolean\><dt>
+<dd>insert kind or extend Ab fragments to CDR H3</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-flank_residue_min</b> \<Boolean\><dt>
+<dd>minimize flank residues of CDR H3 during high-reso refinement</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
 <dt><b>-snug_loops</b> \<Boolean\><dt>
 <dd>Allow CDR loop backbone flexibility during minimization</dd><br>
 <dd>Default: false</dd><br>

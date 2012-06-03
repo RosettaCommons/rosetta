@@ -136,11 +136,12 @@ void AntibodyModelerProtocol::set_default()
 {
 	TR <<  "Setting Up defaults.........." << std::endl;
     model_h3_              = true;
-        H3_filter_         = true;
+        h3_filter_         = true;
         cter_insert_       = true;
 	snugfit_               = true;
         LH_repulsive_ramp_ = true;
     refine_h3_             = true;
+        flank_residue_min_ = true;
     middle_pack_min_       = true;
     
 	benchmark_ = false;
@@ -149,6 +150,7 @@ void AntibodyModelerProtocol::set_default()
     cst_weight_ = 0.0;
     cen_cst_ = 10.0;
     high_cst_ = 100.0; // if changed here, please change at the end of AntibodyModeler as well
+    flank_residue_size_ = 2;
 
     use_pymol_diy_ = false;
     
@@ -172,11 +174,12 @@ void AntibodyModelerProtocol::register_options()
     option.add_relevant( OptionKeys::run::benchmark );
 	option.add_relevant( OptionKeys::constraints::cst_weight );
 	option.add_relevant( OptionKeys::in::file::native );
-    //option.add_relevant( OptionKeys::antibody::H3_filter );
-    //option.add_relevant( OptionKeys::antibody::cter_insert );
+    option.add_relevant( OptionKeys::antibody::refine_h3 );
+    option.add_relevant( OptionKeys::antibody::h3_filter );
+    option.add_relevant( OptionKeys::antibody::cter_insert );
     //option.add_relevant( OptionKeys::antibody::sc_min);
     //option.add_relevant( OptionKeys::antibody::rt_min);
-    //option.add_relevant( OptionKeys::antibody::flank_residue_min);
+    option.add_relevant( OptionKeys::antibody::flank_residue_min);
     //option.add_relevant( OptionKeys::antibody::flank_residue_size);
     //option.add_relevant( OptionKeys::loops::remodel);
     //option.add_relevant( OptionKeys::loops::refine);
@@ -195,10 +198,22 @@ void AntibodyModelerProtocol::init_from_options()
 	TR <<  "Start Reading and Setting Options ..." << std::endl;
     
     if ( option[OptionKeys::antibody::model_h3].user() ){
-        set_ModelH3(option[OptionKeys::antibody::model_h3]() );
+        model_h3_ = option[ OptionKeys::antibody::model_h3 ]();
     }
 	if ( option[ OptionKeys::antibody::snugfit ].user() ){
-        set_SnugFit( option[ OptionKeys::antibody::snugfit ]() );
+        snugfit_ = option[ OptionKeys::antibody::snugfit ]();
+    }    
+    if ( option[ OptionKeys::antibody::refine_h3 ].user() ){
+        refine_h3_ = option[ OptionKeys::antibody::refine_h3 ]();
+    }   
+    if ( option[ OptionKeys::antibody::cter_insert ].user() ){
+        cter_insert_ = option[ OptionKeys::antibody::cter_insert ]();
+    }
+    if ( option[ OptionKeys::antibody::h3_filter ].user() ) {
+        h3_filter_ = option[ OptionKeys::antibody::h3_filter ]() ;
+    }
+    if ( option[ OptionKeys::antibody::flank_residue_min ].user() ) {
+        flank_residue_min_ = option[ OptionKeys::antibody::flank_residue_min ]() ;
     }
 	if ( option[ OptionKeys::antibody::camelid ].user() ){
         set_camelid( option[ OptionKeys::antibody::camelid ]() );
@@ -212,12 +227,7 @@ void AntibodyModelerProtocol::init_from_options()
     if ( option[ OptionKeys::constraints::cst_weight ].user() ) {
 		set_cst_weight( option[ OptionKeys::constraints::cst_weight ]() );
 	}
-    //if ( option[ OptionKeys::antibody::H3_filter ].user() ) {
-	//	set_H3Filter( option[ OptionKeys::antibody::H3_filter ]() );
-	//}
-    //if ( option[ OptionKeys::antibody::cter_insert ].user() ) {
-	//	set_CterInsert( option[ OptionKeys::antibody::cter_insert ]() );
-	//}
+
     //if ( option[ OptionKeys::antibody::sc_min ].user() ) {
 	//	set_sc_min( option[ OptionKeys::antibody::sc_min ]() );
 	//}
@@ -387,7 +397,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
         ModelCDRH3OP model_cdrh3  = new ModelCDRH3( ab_info_, loop_scorefxn_centroid_);
             model_cdrh3->set_perturb_type(h3_perturb_type_); //legacy_ccd, ccd, kic
             if(cter_insert_ ==false) { model_cdrh3->turn_off_cter_insert(); }
-            if(H3_filter_   ==false) { model_cdrh3->turn_off_H3_filter();   }
+            if(h3_filter_   ==false) { model_cdrh3->turn_off_H3_filter();   }
             if(use_pymol_diy_) model_cdrh3->turn_on_and_pass_the_pymol(pymol_);
         model_cdrh3->apply( pose );
         //pose.dump_pdb("1st_finish_model_h3.pdb");
@@ -420,8 +430,11 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 	// Step 3: Full Atom Relax 
     if(refine_h3_){
         RefineCDRH3HighResOP cdr_highres_refine_ = new RefineCDRH3HighRes(ab_info_, h3_refine_type_, loop_scorefxn_highres_); 
+            cdr_highres_refine_ -> set_refine_mode(h3_refine_type_);
+            cdr_highres_refine_ -> set_h3_filter(h3_filter_);
+            cdr_highres_refine_ -> set_flank_relax(flank_residue_min_);
+            if (flank_residue_min_) cdr_highres_refine_->set_flank_size(flank_residue_size_);
             cdr_highres_refine_ -> pass_start_pose(start_pose_);
-            cdr_highres_refine_ -> set_h3_filter(H3_filter_);
         cdr_highres_refine_ -> apply(pose);
         //pose.dump_pdb("3rd_finish_h3_refine.pdb");
     }
@@ -558,12 +571,12 @@ std::ostream & operator<<(std::ostream& out, const AntibodyModelerProtocol & ab_
     out << line_marker << "  model_h3             : " << ab_m.model_h3_          
                                                       <<"   h3_perturb_type="<<ab_m.h3_perturb_type_<<std::endl;
     out << line_marker << "     cter_insert       : " << ab_m.cter_insert_       << std::endl;
-    out << line_marker << "     H3_filter         : " << ab_m.H3_filter_         << std::endl;
+    out << line_marker << "     h3_filter         : " << ab_m.h3_filter_         << std::endl;
     out << line_marker << "  snugfit              : " << ab_m.snugfit_           << std::endl;
     out << line_marker << "     LH_repulsive_ramp : " << ab_m.LH_repulsive_ramp_ << std::endl;
     out << line_marker << "  refine_h3            : " << ab_m.refine_h3_         
                                                       <<"   h3_refine_type="<<ab_m.h3_refine_type_<<std::endl;
-    out << line_marker << "     H3_filter         : " << ab_m.H3_filter_         << std::endl;
+    out << line_marker << "     h3_filter         : " << ab_m.h3_filter_         << std::endl;
     out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
     return out;
 }

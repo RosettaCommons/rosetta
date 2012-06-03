@@ -36,6 +36,10 @@ namespace antibody { extern BooleanOptionKey const graft_h3; }
 namespace antibody { extern StringOptionKey const h3_template; }
 namespace antibody { extern BooleanOptionKey const model_h3; }
 namespace antibody { extern BooleanOptionKey const snugfit; }
+namespace antibody { extern BooleanOptionKey const refine_h3; }
+namespace antibody { extern BooleanOptionKey const h3_filter; }
+namespace antibody { extern BooleanOptionKey const cter_insert; }
+namespace antibody { extern BooleanOptionKey const flank_residue_min; }
 namespace antibody { extern BooleanOptionKey const snug_loops; }
 namespace antibody { extern FileOptionKey const input_fv; }
 namespace antibody { extern BooleanOptionKey const camelid; }

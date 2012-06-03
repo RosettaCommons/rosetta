@@ -617,10 +617,10 @@ option.add( basic::options::OptionKeys::abinitio::HD_fa_penalty, "penalty for ea
 option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with interior/exterior predictions for strands" );
 option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
 option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
-option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
 option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
@@ -1233,11 +1233,11 @@ option.add( basic::options::OptionKeys::lh::grid_space_multiplier, "No descripti
 option.add( basic::options::OptionKeys::lh::grid_angle_multiplier, "No description" ).def(2.5);
 option.add( basic::options::OptionKeys::lh::skim_size, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::rounds, "No description" ).def(100);
+option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" ).def("default");
+option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" ).def("default");
-option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
-option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
 option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
 option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
@@ -1849,12 +1849,12 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_templat
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
+option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
-option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of rigid-body moves" ).def("score5");
@@ -2230,6 +2230,10 @@ option.add( basic::options::OptionKeys::antibody::graft_h3, "Graft CDR H3 from t
 option.add( basic::options::OptionKeys::antibody::h3_template, "Choose specified template for CDR H3 grafting" ).def("h3.pdb");
 option.add( basic::options::OptionKeys::antibody::model_h3, "Model CDR H3 from scratch using fragments" ).def(false);
 option.add( basic::options::OptionKeys::antibody::snugfit, "Adjust relative orientation of VL-VH" ).def(false);
+option.add( basic::options::OptionKeys::antibody::refine_h3, "Refine CDR H3 in high resolution" ).def(true);
+option.add( basic::options::OptionKeys::antibody::h3_filter, "filter decoys having neither kink nor extend form" ).def(true);
+option.add( basic::options::OptionKeys::antibody::cter_insert, "insert kind or extend Ab fragments to CDR H3" ).def(true);
+option.add( basic::options::OptionKeys::antibody::flank_residue_min, "minimize flank residues of CDR H3 during high-reso refinement" ).def(true);
 option.add( basic::options::OptionKeys::antibody::snug_loops, "Allow CDR loop backbone flexibility during minimization" ).def(false);
 option.add( basic::options::OptionKeys::antibody::input_fv, "input antibody variable (Fv) region" ).def("FR02.pdb");
 option.add( basic::options::OptionKeys::antibody::camelid, "Camelid input with only heavy (VH) chain" ).def(false);

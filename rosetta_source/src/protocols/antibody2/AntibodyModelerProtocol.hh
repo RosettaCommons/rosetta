@@ -68,18 +68,6 @@ public:
     void set_BenchMark(bool benchmark) {
         benchmark_ = benchmark;
     }
-    void set_ModelH3(bool model_h3) {
-        model_h3_ = model_h3; 
-    }
-	void set_SnugFit(bool snugfit) {
-        snugfit_ = snugfit;  
-    }
-    void set_H3Filter(bool H3_filter) {
-        H3_filter_ = H3_filter;
-    }
-    void set_CterInsert (bool cter_insert) {
-        cter_insert_ = cter_insert;
-    }
     void set_camelid(bool camelid) {
         camelid_ = camelid; 
     }
@@ -97,9 +85,6 @@ public:
     }
     void set_cst_weight ( core::Real const cst_weight){
         cst_weight_ = cst_weight;
-    }
-    void set_flank_residue_min (bool flank_residue_min) {
-        flank_residue_min_ = flank_residue_min;
     }
     void set_flank_residue_size(core::Real const flank_residue_size) {
         flank_residue_size_ = flank_residue_size;
@@ -123,7 +108,7 @@ private:
     bool model_h3_;
     bool snugfit_;
     bool refine_h3_;
-    bool H3_filter_;
+    bool h3_filter_;
     bool cter_insert_;
     bool LH_repulsive_ramp_;
     bool sc_min_;

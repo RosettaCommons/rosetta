@@ -72,26 +72,21 @@ public:
     void turn_on_benchmark(){
         benchmark_=true;
     }
-    void turn_off_flank_relax(){
-        flank_relax_ = false;
-    }
-    
     void set_h3_filter(bool setting){
         H3_filter_=setting;
     }
-    
     void set_num_filter_tries(core::Size setting){
         num_filter_tries_=setting;
     }
-
     void set_flank_relax(bool setting){
         flank_relax_=setting;
     }
-    
     void set_flank_size(core::Size setting){
         flank_size_=setting;
     }
-    
+    void set_refine_mode(std::string refine_mode){
+        refine_mode_ = refine_mode;
+    }
     virtual void apply( core::pose::Pose & pose );
 
     

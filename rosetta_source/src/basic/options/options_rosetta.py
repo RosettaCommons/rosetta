@@ -4311,6 +4311,22 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='Adjust relative orientation of VL-VH',
 			default='false'
 			),
+		Option( 'refine_h3', 'Boolean',
+			desc='Refine CDR H3 in high resolution',
+			default='true'
+			),
+		Option( 'h3_filter', 'Boolean',
+			desc='filter decoys having neither kink nor extend form',
+			default='true'
+			),
+		Option( 'cter_insert', 'Boolean',
+			desc='insert kind or extend Ab fragments to CDR H3',
+			default='true'
+			),
+		Option( 'flank_residue_min', 'Boolean',
+			desc='minimize flank residues of CDR H3 during high-reso refinement',
+			default='true'
+			),
 		Option( 'snug_loops', 'Boolean',
 			desc='Allow CDR loop backbone flexibility during minimization',
 			default='false'
