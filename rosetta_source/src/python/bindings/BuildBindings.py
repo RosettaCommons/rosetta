@@ -1180,6 +1180,7 @@ class ModuleBuilder:
         if Options.update:
             for (all_at_once_N_cpp, all_at_once_N_obj) in source_list:
                 if not os.path.isfile(self.all_at_once_lib)  or  os.path.getmtime( all_at_once_N_obj) > os.path.getmtime(self.all_at_once_lib): relink = True; break
+        else: relink = True
 
 
         if relink:
