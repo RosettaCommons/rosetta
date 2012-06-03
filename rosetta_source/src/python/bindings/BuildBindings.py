@@ -12,7 +12,7 @@
 ## @author Sergey Lyskov
 
 import os, re, sys, time, commands, shutil, platform, os.path, itertools, gc, json
-import subprocess
+import subprocess #, errno
 
 # Create global 'Platform' that will hold info of current system
 if sys.platform.startswith("linux"): Platform = "linux" # can be linux1, linux2, etc
@@ -422,8 +422,10 @@ def mWait(tag=None, all_=False):
     ''' Wait for process tagged with 'tag' for completion
     '''
     while True :
-        for j in [ x for x in Jobs if x.pid==tag or all_==True]:
-            # try:
+        #print 'Waiting for %s: ' % tag, Jobs
+        for j in [ x for x in Jobs if x.tag==tag or all_==True]:
+            #print 'Waiting2: ', Jobs
+            #try:
             r = os.waitpid(j.pid, os.WNOHANG)
             if r == (j.pid, 0):  # process have ended without error
                 Jobs.remove(j)
@@ -439,8 +441,7 @@ def mWait(tag=None, all_=False):
             '''
             except OSError, e:
                 if e.errno == errno.ESRCH:  # process already got closed, we assume that this is done by child process and any error will be reported by proc. that closed it
-                    Jobs.remove(j)
-                    '''
+                    Jobs.remove(j) '''
 
         else: return
 
@@ -567,7 +568,13 @@ def buildModules(paths, dest, include_paths, libpaths, runtime_libpaths, gccxml_
         mWait(all_=True)  # waiting for all jobs to finish before movinf in to next phase
 
         for b in mb:
-            b.buildBindings()
+            b.compileBindings()
+            gc.collect()
+
+        mWait(all_=True)  # waiting for all jobs to finish before movinf in to next phase
+
+        for b in mb:
+            b.linkBindings()
             gc.collect()
 
     else:
@@ -1092,9 +1099,12 @@ class ModuleBuilder:
                 includes = exclude.getIncludes(self.headers)
 
                 print_('Finalizing[%s]' % len(code), color='black', bright=True, endline=False);  sys.stdout.flush()
+                source_list = []
                 for i in range( len(code) ):
                     all_at_once_N_cpp = self.all_at_once_cpp+'%s.cpp' % i
                     all_at_once_N_obj = self.all_at_once_obj+'%s.o' % i
+                    source_list.append((all_at_once_N_cpp, all_at_once_N_obj))
+
                     if os.path.isfile(all_at_once_N_obj): os.remove(all_at_once_N_obj)
 
                     for fl in self.headers: code[i] = '#include <%s>\n' % fl + code[i]
@@ -1105,7 +1115,7 @@ class ModuleBuilder:
                     print_('.', color='black', bright=True, endline=False); sys.stdout.flush()
                 print_(' Done!', color='black', bright=True);
 
-                json.dump(code, file(self.all_at_once_json, 'w') )
+                json.dump(source_list, file(self.all_at_once_json, 'w') )
 
             if Options.jobs > 1:
                 pid = mFork()
@@ -1116,23 +1126,23 @@ class ModuleBuilder:
             else: generate()
 
 
-    def buildBindings(self):
+    def compileBindings(self):
         ''' Build early generated bindings.
         '''
         if not self.headers: return
+        source_list = json.load( file(self.all_at_once_json) )
 
-        recompile = True
+        recompile = False
 
         if Options.update:
-            if os.path.isfile(self.all_at_once_lib) and  os.path.getmtime(self.all_at_once_json) < os.path.getmtime(self.all_at_once_lib): recompile = False
+            for (all_at_once_N_cpp, all_at_once_N_obj) in source_list:
+                if not os.path.isfile(all_at_once_N_obj)  or  os.path.getmtime(all_at_once_N_cpp) > os.path.getmtime(all_at_once_N_obj): recompile = True; break
 
         if recompile or (not Options.update):
-            code = json.load( file(self.all_at_once_json) )
 
-            objs_list = []
-            for i in range( len(code) ):
-                all_at_once_N_cpp = self.all_at_once_cpp+'%s.cpp' % i
-                all_at_once_N_obj = self.all_at_once_obj+'%s.o' % i
+            for (all_at_once_N_cpp, all_at_once_N_obj) in source_list: #range( len(code) ):
+                #all_at_once_N_cpp = self.all_at_once_cpp+'%s.cpp' % i
+                #all_at_once_N_obj = self.all_at_once_obj+'%s.o' % i
 
                 # -fPIC
                 comiler_cmd = "%(compiler)s %(fname)s -o %(obj_name)s -c %(add_option)s %(cpp_defines)s -I../external/include  -I../external/dbio %(include_paths)s "
@@ -1158,31 +1168,42 @@ class ModuleBuilder:
                 if Options.jobs == 1:
                     if Options.continue_ and failed: return new_headers
 
-                    objs_list.append(all_at_once_N_obj)
 
-            if not Options.cross_compile:  # -fPIC -ffloat-store -ffor-scope
+    def linkBindings(self):
+        ''' Build early generated bindings.
+        '''
+        if not self.headers: return
+        source_list = json.load( file(self.all_at_once_json) )
 
-                linker_cmd = "cd %(dest)s/../ && %(compiler)s %(obj)s %(add_option)s -lmini -lstdc++ -lz -l%(python_lib)s \
-                              -l%(boost_lib)s %(libpaths)s %(runtime_libpaths)s -o %(dst)s"
-                linker_dict = dict(add_option=self.add_loption, obj=' '.join(objs_list), dst=self.all_at_once_lib, libpaths=self.libpaths, runtime_libpaths=self.runtime_libpaths, dest=self.dest, boost_lib=Options.boost_lib,
-                        python_lib=Options.python_lib, compiler=Options.compiler)
-                def linking():
-                    if execute("Linking...", linker_cmd % linker_dict, return_= (True if Options.compiler != 'gcc' or Options.continue_ else False) ):
-                        if Options.compiler != 'gcc':
-                            execute("Linking...", linker_cmd % dict(linker_dict, compiler='gcc'), return_= Options.continue_ )
+        recompile = False
 
-                if Options.jobs > 1:
+        if Options.update:
+            for (all_at_once_N_cpp, all_at_once_N_obj) in source_list:
+                if not os.path.isfile(self.all_at_once_lib)  or  os.path.getmtime( all_at_once_N_obj) > os.path.getmtime(self.all_at_once_lib): recompile = True; break
 
-                    pid = mFork(tag=self.path+'+linking', overhead=1)  # we most likely can start extra linking process, beceause it depend on compilation to  finish. There is no point of waiting for it...
-                    if not pid:  # we are child process
-                        mWait(tag=self.path)  # wait for all compilation jobs to finish...
-                        linking()
-                        sys.exit(0)
-                else:
+        if not Options.cross_compile:  # -fPIC -ffloat-store -ffor-scope
+            objs_list = map(lambda x:x[1], source_list)
+            linker_cmd = "cd %(dest)s/../ && %(compiler)s %(obj)s %(add_option)s -lmini -lstdc++ -lz -l%(python_lib)s \
+                          -l%(boost_lib)s %(libpaths)s %(runtime_libpaths)s -o %(dst)s"
+            linker_dict = dict(add_option=self.add_loption, obj=' '.join(objs_list), dst=self.all_at_once_lib, libpaths=self.libpaths, runtime_libpaths=self.runtime_libpaths, dest=self.dest, boost_lib=Options.boost_lib,
+                    python_lib=Options.python_lib, compiler=Options.compiler)
+            def linking():
+                if execute("Linking...", linker_cmd % linker_dict, return_= (True if Options.compiler != 'gcc' or Options.continue_ else False) ):
+                    if Options.compiler != 'gcc':
+                        execute("Linking...", linker_cmd % dict(linker_dict, compiler='gcc'), return_= Options.continue_ )
+
+            if Options.jobs > 1:
+
+                pid = mFork(tag=self.path+'+linking', overhead=1)  # we most likely can start extra linking process, beceause it depend on compilation to  finish. There is no point of waiting for it...
+                if not pid:  # we are child process
+                    #mWait(tag=self.path)  # wait for all compilation jobs to finish...
                     linking()
+                    sys.exit(0)
+            else:
+                linking()
 
 
-            else: execute("Toching %s file..." % all_at_once_lib, 'cd %(dest)s/../ && touch %(dst)s' % dict(dest=dest, dst=all_at_once_lib) )
+        else: execute("Toching %s file..." % all_at_once_lib, 'cd %(dest)s/../ && touch %(dst)s' % dict(dest=dest, dst=all_at_once_lib) )
 
         #print 'Done!'
 
