@@ -42,6 +42,9 @@
 #include <ObjexxFCL/FArray2D.fwd.hh>
 #include <ObjexxFCL/FArray4D.fwd.hh>
 
+// C++ Headers
+#include <map>
+
 
 namespace core {
 namespace scoring {
@@ -90,6 +93,26 @@ public:
 		Real & psi
 	) const;
 
+	/// @brief functions for torsion-bin restricted but otherwise random phi/psi angles
+	/// @author Amelie Stein
+	
+	void
+	random_phipsi_from_rama_by_torsion_bin(
+										   AA const res_aa,
+										   Real & phi,
+										   Real & psi,
+										   char const torsion_bin
+										   ) const;
+	
+	core::Size get_torsion_bin_index(char torsion_bin) const;
+	
+	void
+	init_rama_sampling_tables_by_torsion_bin(); 
+	
+	void
+	get_entries_per_torsion_bin( AA const res_aa, std::map< char, core::Size > & tb_frequencies ) const;
+	
+
 
 	///////////////////////////////
 	// unused??
@@ -112,7 +135,7 @@ public:
 private:
 
 	void read_rama();
-	void init_rama_sampling_table();
+	void init_rama_sampling_table( char const torsion_bin );
 /*
 	static
 	void
@@ -135,6 +158,8 @@ private:
 	static int const n_aa_ = 20; // Ramachandran score defined for the cananical AAs only.
 	static ObjexxFCL::FArray2D< Real > ram_entropy_;
 	utility::vector1< utility::vector1< utility::vector1< Real > > > rama_sampling_table_; // vector of allowed phi/psi pairs for each residue
+	utility::vector1 < utility::vector1< utility::vector1< utility::vector1< Real > > > > rama_sampling_table_by_torsion_bin_; // first entry will be a letter indicating the torsion bin, the rest is like in the regular rama_sampling_table_
+
 
 /*
 	static bool procheck_map_initialized_
