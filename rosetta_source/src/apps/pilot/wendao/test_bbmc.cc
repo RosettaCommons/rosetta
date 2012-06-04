@@ -26,10 +26,10 @@
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMCMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/moves/TrajectoryRecorder.hh>
+#include <protocols/canonical_sampling/TrajectoryRecorder.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/PyMolMover.hh>
-#include <protocols/moves/mc_convergence_checks/Pool_ConvergenceCheck.hh>
+#include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
 
 // Core Headers
 #include <core/chemical/ResidueType.hh>
