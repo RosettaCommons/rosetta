@@ -2237,6 +2237,7 @@ option.add( basic::options::OptionKeys::antibody::cter_insert, "insert kind or e
 option.add( basic::options::OptionKeys::antibody::flank_residue_min, "minimize flank residues of CDR H3 during high-reso refinement" ).def(true);
 option.add( basic::options::OptionKeys::antibody::sc_min, "minimize the side chain after finishing the rotamer packing" ).def(false);
 option.add( basic::options::OptionKeys::antibody::rt_min, "minimize the rotamer each packing" ).def(false);
+option.add( basic::options::OptionKeys::antibody::bad_nter, "the n-terminal is bad because of bad H3 grafting" ).def(true);
 option.add( basic::options::OptionKeys::antibody::remodel, "Choose a perturb method to model H3 in centroid mode" ).def("legacy_perturb_ccd");
 option.add( basic::options::OptionKeys::antibody::refine, "Choose a refine method to model H3 in high-resol model" ).def("legacy_perturb_ccd");
 option.add( basic::options::OptionKeys::antibody::snug_loops, "Allow CDR loop backbone flexibility during minimization" ).def(false);

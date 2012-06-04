@@ -378,6 +378,7 @@ namespace antibody { BooleanOptionKey const cter_insert( "antibody:cter_insert" 
 namespace antibody { BooleanOptionKey const flank_residue_min( "antibody:flank_residue_min" );  }
 namespace antibody { BooleanOptionKey const sc_min( "antibody:sc_min" );  }
 namespace antibody { BooleanOptionKey const rt_min( "antibody:rt_min" );  }
+namespace antibody { BooleanOptionKey const bad_nter( "antibody:bad_nter" );  }
 namespace antibody { StringOptionKey const remodel( "antibody:remodel" );  }
 namespace antibody { StringOptionKey const refine( "antibody:refine" );  }
 namespace antibody { BooleanOptionKey const snug_loops( "antibody:snug_loops" );  }

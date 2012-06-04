@@ -4339,6 +4339,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='minimize the rotamer each packing',
 			default='false'
 			),
+		Option( 'bad_nter', 'Boolean',
+			desc='the n-terminal is bad because of bad H3 grafting',
+			default='true'
+			),
 		Option('remodel', 'String',
 			desc='Choose a perturb method to model H3 in centroid mode',
 			default='legacy_perturb_ccd'

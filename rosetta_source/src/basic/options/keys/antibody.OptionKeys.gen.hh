@@ -43,6 +43,7 @@ namespace antibody { extern BooleanOptionKey const cter_insert; }
 namespace antibody { extern BooleanOptionKey const flank_residue_min; }
 namespace antibody { extern BooleanOptionKey const sc_min; }
 namespace antibody { extern BooleanOptionKey const rt_min; }
+namespace antibody { extern BooleanOptionKey const bad_nter; }
 namespace antibody { extern StringOptionKey const remodel; }
 namespace antibody { extern StringOptionKey const refine; }
 namespace antibody { extern BooleanOptionKey const snug_loops; }

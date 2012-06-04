@@ -106,6 +106,9 @@ public:
     void set_middle_pack_min( bool middle_pack_min) {
         middle_pack_min_ = middle_pack_min;
     }
+    void set_bad_nter(bool setting){
+        bad_nter_ = setting;
+    }
 
 
 	void display_constraint_residues( pose::Pose & pose );
@@ -134,6 +137,7 @@ private:
     core::Real cen_cst_, high_cst_;
     moves::PyMolMoverOP pymol_;
     bool use_pymol_diy_;
+    bool bad_nter_;
     
 	// Benchmark mode for shorter_cycles
 	bool benchmark_;

@@ -120,6 +120,7 @@ void AntibodyModelerProtocol::set_default()
         flank_residue_min_ = true;
     middle_pack_min_       = true;
     
+    bad_nter_  = true;
 	benchmark_ = false;
 	camelid_   = false;
 	camelid_constraints_ = false;
@@ -161,6 +162,7 @@ void AntibodyModelerProtocol::register_options()
     option.add_relevant( OptionKeys::antibody::refine);
     //option.add_relevant( OptionKeys::antibody::middle_pack_min);
     option.add_relevant( OptionKeys::antibody::h3_filter_tolerance);
+    option.add_relevant( OptionKeys::antibody::bad_nter);
 }
 
     
@@ -213,6 +215,9 @@ void AntibodyModelerProtocol::init_from_options()
     if ( option[ OptionKeys::antibody::refine ].user() ) {
 		set_refine_type( option[ OptionKeys::antibody::refine ]() );
 	}
+    if ( option[ OptionKeys::antibody::bad_nter].user()  ){
+        set_bad_nter(option[ OptionKeys::antibody::bad_nter]() );
+    }
     //if ( option[ OptionKeys::antibody::middle_pack_min].user() ){
     //  set_middle_pack_min( option[ OptionKeys::loops::refine ] )
     //}
@@ -366,6 +371,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
             model_cdrh3->set_perturb_type(h3_perturb_type_); //legacy_perturb_ccd, ccd, kic
             if(cter_insert_ ==false) { model_cdrh3->turn_off_cter_insert(); }
             if(h3_filter_   ==false) { model_cdrh3->turn_off_H3_filter();   }
+            model_cdrh3->set_bad_nter(bad_nter_); 
             if(use_pymol_diy_) model_cdrh3->turn_on_and_pass_the_pymol(pymol_);
         model_cdrh3->apply( pose );
         //pose.dump_pdb("1st_finish_model_h3.pdb");

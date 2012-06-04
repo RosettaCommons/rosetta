@@ -10819,6 +10819,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-bad_nter</b> \<Boolean\><dt>
+<dd>the n-terminal is bad because of bad H3 grafting</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
 <dt><b>-remodel</b> \<String\><dt>
 <dd>Choose a perturb method to model H3 in centroid mode</dd><br>
 <dd>Default: "legacy_perturb_ccd"</dd><br>

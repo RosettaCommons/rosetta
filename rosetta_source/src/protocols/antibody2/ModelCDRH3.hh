@@ -95,6 +95,10 @@ public:
         remodel_ = setting;
     }
     
+    void set_bad_nter(bool setting){
+        bad_nter_ = setting;
+    }
+    
 private:
 	bool user_defined_;
     
@@ -126,6 +130,7 @@ private:
 	/// @brief insert fragment in docking
 	bool dle_flag_;
     
+    bool bad_nter_;
 
 
 	/// @brief is camelid antibody without light chain

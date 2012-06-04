@@ -24,13 +24,8 @@
 #include <core/pose/Pose.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/simple_moves/MinMover.fwd.hh>
-#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.fwd.hh>
-#include <protocols/moves/ChangeFoldTreeMover.fwd.hh>
 #include <protocols/antibody2/AntibodyInfo.fwd.hh>
 #include <protocols/antibody2/RefineCDRH3HighRes.fwd.hh>
 

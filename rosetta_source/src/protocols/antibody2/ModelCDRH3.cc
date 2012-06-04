@@ -101,7 +101,8 @@ void ModelCDRH3::set_default()
     loops_flag_         = true;
     dle_flag_           = true;
     use_pymol_diy_      = false;
-
+    bad_nter_           = true;
+    
     remodel_            = "legacy_perturb_ccd";
         
     c_ter_stem_ = 3;
@@ -245,22 +246,21 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
     
     
     /*  JQX: the following code is probably not ncessary*/
+    if(bad_nter_){
+        Size unaligned_cdr_loop_begin(0), unaligned_cdr_loop_end(0);
+        std::string const path = basic::options::option[ basic::options::OptionKeys::in::path::path ]()[1];
+        core::import_pose::pose_from_pdb( hfr_pose_, path+"hfr.pdb" );
+        std::string cdr_name = "h3";
+        AntibodyInfoOP hfr_info =  new AntibodyInfo ( hfr_pose_, cdr_name );
+        unaligned_cdr_loop_begin = hfr_info->current_start;
+        unaligned_cdr_loop_end   = hfr_info->current_end;
     
-    Size unaligned_cdr_loop_begin(0), unaligned_cdr_loop_end(0);
-    std::string const path = basic::options::option[ basic::options::OptionKeys::in::path::path ]()[1];
-    core::import_pose::pose_from_pdb( hfr_pose_, path+"hfr.pdb" );
-    std::string cdr_name = "h3";
-    AntibodyInfoOP hfr_info =  new AntibodyInfo ( hfr_pose_, cdr_name );
-    unaligned_cdr_loop_begin = hfr_info->current_start;
-    unaligned_cdr_loop_end   = hfr_info->current_end;
-    
-    if(framework_loop_size > 4){  //JQX: add this if statement to match R2_antibody
-        pose_in.set_psi  (framework_loop_begin - 1, hfr_pose_.psi( unaligned_cdr_loop_begin - 1 )   );
-        pose_in.set_omega(framework_loop_begin - 1, hfr_pose_.omega( unaligned_cdr_loop_begin - 1 ) );
-    }
-
+        if(framework_loop_size > 4){  //JQX: add this if statement to match R2_antibody
+            pose_in.set_psi  (framework_loop_begin - 1, hfr_pose_.psi( unaligned_cdr_loop_begin - 1 )   );
+            pose_in.set_omega(framework_loop_begin - 1, hfr_pose_.omega( unaligned_cdr_loop_begin - 1 ) );
+        }
         //pose_in.dump_pdb("after_copying_nter.pdb");
-
+    }
     
     antibody2::AntibodyInfoOP starting_antibody;
     starting_antibody = new AntibodyInfo(*ab_info_);

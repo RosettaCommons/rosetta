@@ -19,26 +19,16 @@
 
 #include <protocols/antibody2/RefineCDRH3HighRes.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintFactory.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/Energies.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loop_mover/LoopMover.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/AntibodyUtil.hh>
 #include <protocols/antibody2/H3RefineCCD.hh>
@@ -156,10 +146,6 @@ void RefineCDRH3HighRes::pass_start_pose(core::pose::Pose & start_pose){
     
 void RefineCDRH3HighRes::apply(core::pose::Pose &pose){
     
-    
-    using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-    
 
     
     if( refine_mode_ == "legacy_refine_ccd" ){
@@ -194,15 +180,18 @@ void RefineCDRH3HighRes::apply(core::pose::Pose &pose){
         core::Real best_score=0.0;
         core::pose::Pose best_pose;
         std::stringstream Num;  std::string str_num;
+        core::pose::Pose pose_before_refine = pose; //JQX: save the current pose before doing any refinement
         
         if(refine_mode_ == "refine_ccd"){ 
             loops::loop_mover::refine::LoopMover_Refine_CCD refine_ccd( pass_loops, highres_scorefxn_ );
             if(get_native_pose()) {     refine_ccd.set_native_pose( get_native_pose() );    }
             while (itry<=num_filter_tries_){
                 TR<<"   Trying Refinement  ................. "<<itry<<std::endl;
+                pose = pose_before_refine;
                 refine_ccd.apply( pose );
-                    Num<<itry; Num>>str_num; Num.str(""); Num.clear();
-                    pose.dump_pdb("after_refine_"+str_num+".pdb");
+                
+                Num<<itry; Num>>str_num; Num.str(""); Num.clear();
+                pose.dump_pdb("after_refine_"+str_num+".pdb");
                 
                 if(H3_filter_){ 
                         if( CDR_H3_filter(pose, *h3_loop, false) ) { break;} 
@@ -227,9 +216,11 @@ void RefineCDRH3HighRes::apply(core::pose::Pose &pose){
             if(get_native_pose()) {     refine_kic.set_native_pose( get_native_pose() );    }
             while (itry<=num_filter_tries_ ){
                 TR<<"   Trying Refinement  ................. "<<itry<<std::endl;
+                pose = pose_before_refine;
                 refine_kic.apply( pose );
-                    Num<<itry; Num>>str_num; Num.str(""); Num.clear();
-                    pose.dump_pdb("after_refine_"+str_num+".pdb");
+                
+                Num<<itry; Num>>str_num; Num.str(""); Num.clear();
+                pose.dump_pdb("after_refine_"+str_num+".pdb");
                 
                 if(H3_filter_){ 
                         if( CDR_H3_filter(pose, *h3_loop, false) ) { break;} 
