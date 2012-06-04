@@ -51,6 +51,8 @@ public:
 	void extract_data_from_pose( core::pose::Pose& pose, core::Size nres, protocols::frag_picker::VallChunkOP chunk = NULL );
 
 	void extract_data_from_pose( core::pose::Pose& pose );
+	
+	bool test_saving_library( core::pose::Pose, core::Size ir, bool deposit );
 
 	void test_loop_sample( core::pose::Pose& pose, core::Size nres );
 

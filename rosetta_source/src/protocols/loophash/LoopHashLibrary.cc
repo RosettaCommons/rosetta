@@ -947,6 +947,63 @@ namespace loophash {
 	}
 
 
+	bool LoopHashLibrary::test_saving_library( core::pose::Pose pose, core::Size ir, bool deposit ){
+		using namespace core;
+		using namespace core::pose;
+		using namespace conformation;
+		using namespace kinematics;
+		using namespace numeric::geometry::hashing;
+
+		Size jr;
+		core::Size index=0;
+		core::Size loop_size = hash_sizes_[0];
+		jr = ir+loop_size;
+		Real6 t;
+		LeapIndex leap_index;
+		if(!get_rt_over_leap_fast( pose, ir, jr, t )) return false;
+		leap_index.index   = index;
+		leap_index.offset = (ir-1)*3;
+		LoopHashMap &hashmap = gethash( loop_size );
+		
+		BackboneSegment pose_bs;
+		pose_bs.read_from_pose( pose, ir, loop_size );
+	
+		if( deposit ){
+			bbdb_.add_pose( pose, pose.total_residue(), index, NULL );
+
+			TR << "ADD: "
+				<< ir  << " " << jr  << " "
+				<< t[1]	<<	 " " << t[2]	<<	 " " << t[3]	<<	 " " << t[4]	<<	 " " << t[5]	<<	 " " << t[6] << " "
+				<< leap_index.index << " "
+				<< leap_index.offset
+				<< std::endl;
+			hashmap.add_leap( leap_index, t );
+		
+			pose_bs.print();
+		}
+
+		// Now read it back.
+	
+		std::vector < core::Size > leap_index_bucket;
+		TR << "Radial lookup ... " << std::endl;
+		hashmap.radial_lookup( 0, t, leap_index_bucket );
+		
+		core::Size example_index = leap_index_bucket[0];
+		TR << "Get the actual strucure index (not just the bin index) << " << std::endl;
+	
+		LeapIndex cp = hashmap.get_peptide( example_index );
+		
+		// Retrieve the actual backbone structure
+		BackboneSegment new_bs;
+		this->backbone_database().get_backbone_segment( cp.index, cp.offset, hashmap.get_loop_size() , new_bs );
+		new_bs.print();
+
+		bool result = new_bs.compare(pose_bs,0.1);
+
+		if(result) TR << "TEST OK " << std::endl; else TR << "TEST FAIL" << std::endl; 
+		TR << "Done testing!" << std::endl;
+		return result;
+	}
 
 
 	void LoopHashLibrary::test_loop_sample( core::pose::Pose& pose, core::Size nres )
