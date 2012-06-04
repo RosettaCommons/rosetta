@@ -163,6 +163,33 @@ namespace loophash {
 		for(  std::vector<core::Real>::const_iterator it = omega_.begin(); it != omega_.end(); ++it ) TR << *it << "  " ;
 		TR << std::endl;
 	}
+	
+	bool BackboneSegment::compare(const BackboneSegment &bs1, core::Real tolerance) const {
+		const BackboneSegment &bs2 = (*this); 
+		
+		if( bs1.phi().size() != bs2.phi().size() ) return false;
+		if( bs1.psi().size() != bs2.psi().size() ) return false;
+		if( bs1.omega().size() != bs2.omega().size() ) return false;
+		
+		for( core::Size i = 0; i < bs1.phi().size(); i++ )    if( (bs1.phi()[i]    - bs2.phi()[i]) > tolerance ) return false;
+		for( core::Size i = 0; i < bs1.psi().size(); i++ )    if( (bs1.psi()[i]    - bs2.psi()[i])  > tolerance ) return false;
+		for( core::Size i = 0; i < bs1.omega().size(); i++ )  if( (bs1.omega()[i]  - bs2.omega()[i])  > tolerance ) return false;
+	
+		return true;
+	}
+	bool BackboneSegment::operator==( const BackboneSegment &bs1 ) const {
+		const BackboneSegment &bs2 = (*this); 
+		
+		if( bs1.phi().size() != bs2.phi().size() ) return false;
+		if( bs1.psi().size() != bs2.psi().size() ) return false;
+		if( bs1.omega().size() != bs2.omega().size() ) return false;
+		
+		for( core::Size i = 0; i < bs1.phi().size(); i++ ) if( bs1.phi()[i] == bs2.phi()[i] ) return false;
+		for( core::Size i = 0; i < bs1.psi().size(); i++ ) if( bs1.psi()[i] == bs2.psi()[i] ) return false;
+		for( core::Size i = 0; i < bs1.omega().size(); i++ ) if( bs1.omega()[i] == bs2.omega()[i] ) return false;
+	
+		return true;
+	}
 
 	core::Real get_rmsd( const BackboneSegment &bs1, const BackboneSegment &bs2 ){
 		core::Real sumsqr = 0;

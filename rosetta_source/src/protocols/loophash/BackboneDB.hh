@@ -89,6 +89,14 @@ class BackboneSegment {
 		const std::vector<core::Real> &phi()   const { return phi_; }
 		const std::vector<core::Real> &psi()   const { return psi_; }
 		const std::vector<core::Real> &omega() const { return omega_; }
+		
+		bool compare(const BackboneSegment &bs1, core::Real tolerance) const;
+
+		bool operator==( const BackboneSegment &bs1 ) const;
+
+		bool operator!=(const BackboneSegment &other) const {
+		     return !(*this == other);
+		}
 
 		core::Size get_mem_foot_print(){ return phi_.size() * 3 * sizeof( core::Real ) + sizeof( BackboneSegment ); }
 	private:
