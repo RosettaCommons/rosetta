@@ -16,6 +16,6 @@ dslf_ss_dih 1
 dslf_ca_dih 1
 rama 0.2
 omega 0.5
-fa_dun 0.56
-p_aa_pp 0.32
+fa_dun 0.65
+p_aa_pp 0.47
 ref 1
