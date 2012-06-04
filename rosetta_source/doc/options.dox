@@ -10794,6 +10794,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: true</dd><br>
 </dl>
 <dl>
+<dt><b>-h3_filter_tolerance</b> \<Real\><dt>
+<dd>maximum number of tries for the filter</dd><br>
+<dd>Default: 5</dd><br>
+</dl>
+<dl>
 <dt><b>-cter_insert</b> \<Boolean\><dt>
 <dd>insert kind or extend Ab fragments to CDR H3</dd><br>
 <dd>Default: true</dd><br>

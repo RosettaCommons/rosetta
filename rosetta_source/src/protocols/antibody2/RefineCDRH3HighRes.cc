@@ -117,7 +117,7 @@ void RefineCDRH3HighRes::set_default()
     H3_filter_      = true;
     flank_relax_    = true;
     high_cst_       = 100.0;
-    num_filter_tries_ = 10;
+    num_filter_tries_ = 5;
     
     if(!user_defined_){
         highres_scorefxn_ = scoring::ScoreFunctionFactory::create_score_function("standard", "score12" );
@@ -193,12 +193,17 @@ void RefineCDRH3HighRes::apply(core::pose::Pose &pose){
         core::Size itry=1;
         core::Real best_score=0.0;
         core::pose::Pose best_pose;
+        std::stringstream Num;  std::string str_num;
         
         if(refine_mode_ == "refine_ccd"){ 
             loops::loop_mover::refine::LoopMover_Refine_CCD refine_ccd( pass_loops, highres_scorefxn_ );
             if(get_native_pose()) {     refine_ccd.set_native_pose( get_native_pose() );    }
             while (itry<=num_filter_tries_){
+                TR<<"   Trying Refinement  ................. "<<itry<<std::endl;
                 refine_ccd.apply( pose );
+                    Num<<itry; Num>>str_num; Num.str(""); Num.clear();
+                    pose.dump_pdb("after_refine_"+str_num+".pdb");
+                
                 if(H3_filter_){ 
                         if( CDR_H3_filter(pose, *h3_loop, false) ) { break;} 
                         else{
@@ -207,9 +212,12 @@ void RefineCDRH3HighRes::apply(core::pose::Pose &pose){
                                     best_pose = pose;
                                 }
                         }
+
                 }
                 else {break;}
                 if(itry==num_filter_tries_) { pose=best_pose; }
+                
+                itry++;
             }
         }
                              
@@ -218,7 +226,11 @@ void RefineCDRH3HighRes::apply(core::pose::Pose &pose){
             loops::loop_mover::refine::LoopMover_Refine_KIC refine_kic( pass_loops, highres_scorefxn_ );
             if(get_native_pose()) {     refine_kic.set_native_pose( get_native_pose() );    }
             while (itry<=num_filter_tries_ ){
+                TR<<"   Trying Refinement  ................. "<<itry<<std::endl;
                 refine_kic.apply( pose );
+                    Num<<itry; Num>>str_num; Num.str(""); Num.clear();
+                    pose.dump_pdb("after_refine_"+str_num+".pdb");
+                
                 if(H3_filter_){ 
                         if( CDR_H3_filter(pose, *h3_loop, false) ) { break;} 
                         else{
@@ -230,6 +242,8 @@ void RefineCDRH3HighRes::apply(core::pose::Pose &pose){
                 }
                 else {break;}
                 if(itry==num_filter_tries_) { pose=best_pose; }
+                
+                itry++;
             }
         }
         

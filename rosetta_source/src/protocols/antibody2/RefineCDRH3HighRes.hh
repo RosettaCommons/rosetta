@@ -25,12 +25,9 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-
 #include <protocols/loops/Loops.hh>
-
 #include <protocols/simple_moves/MinMover.fwd.hh>
 #include <protocols/simple_moves/PackRotamersMover.fwd.hh>
-
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/moves/ChangeFoldTreeMover.fwd.hh>
@@ -65,9 +62,6 @@ public:
 	/// @brief default destructor
 	~RefineCDRH3HighRes();
 
-
-
-    void pass_start_pose(core::pose::Pose & start_pose);
     
     void turn_on_benchmark(){
         benchmark_=true;
@@ -94,7 +88,7 @@ public:
         highres_scorefxn_ = new core::scoring::ScoreFunction(*highres_scorefxn);
     }
 
-    
+    void pass_start_pose(core::pose::Pose & start_pose);
     virtual std::string get_name() const;
     virtual protocols::moves::MoverOP clone() const;
 
@@ -102,41 +96,22 @@ public:
 private:
 
     AntibodyInfoOP ab_info_;
- 
     bool user_defined_;
     bool benchmark_;
-
+	core::scoring::ScoreFunctionOP highres_scorefxn_;
+	core::Size flank_size_;
+	bool flank_relax_;
+    core::pose::Pose start_pose_;
+	core::pack::task::TaskFactoryOP tf_;
+    bool H3_filter_;
+    core::Size num_filter_tries_;
+    std::string refine_mode_;
+    core::Real high_cst_;
+    
     void set_default();
     void init();
     void finalize_setup( core::pose::Pose & pose );
-
-    // score functions
-	core::scoring::ScoreFunctionOP highres_scorefxn_;
-
- 	/// @brief number of flanking residues:default 5
-	core::Size flank_size_;
-
-	/// @brief relax flanking regions of h3
-	bool flank_relax_;
-
-    core::pose::Pose start_pose_;
-
-	//packer task
-	core::pack::task::TaskFactoryOP tf_;
-
-    /// @brief just refine input loop
-	bool refine_input_loop_;
     
-    
-    /// @brief actually enables H3 filter for H3 operations
-	bool H3_filter_;
-    
-    core::Size num_filter_tries_;
-    
-    std::string refine_mode_;
-        core::Real high_cst_;
-    
-
 };
 
 
@@ -149,11 +124,5 @@ private:
 } // namespace protocols
 
 #endif
-
-
-
-
-
-
 
 

@@ -127,7 +127,7 @@ void AntibodyModelerProtocol::set_default()
     cen_cst_ = 10.0;
     high_cst_ = 100.0; // if changed here, please change at the end of AntibodyModeler as well
     flank_residue_size_ = 2;
-
+    h3_filter_tolerance_ = 5;
     use_pymol_diy_ = false;
     
     sc_min_ = false;
@@ -160,6 +160,7 @@ void AntibodyModelerProtocol::register_options()
     option.add_relevant( OptionKeys::antibody::remodel);
     option.add_relevant( OptionKeys::antibody::refine);
     //option.add_relevant( OptionKeys::antibody::middle_pack_min);
+    option.add_relevant( OptionKeys::antibody::h3_filter_tolerance);
 }
 
     
@@ -187,6 +188,9 @@ void AntibodyModelerProtocol::init_from_options()
     }
     if ( option[ OptionKeys::antibody::h3_filter ].user() ) {
         set_H3Filter ( option[ OptionKeys::antibody::h3_filter ]() );
+    }
+    if ( option[ OptionKeys::antibody::h3_filter_tolerance ].user() ){
+        set_H3Filter_Tolerance( option[ OptionKeys::antibody::h3_filter_tolerance ]()  );
     }
     if ( option[ OptionKeys::antibody::flank_residue_min ].user() ) {
         set_flank_residue_min ( option[ OptionKeys::antibody::flank_residue_min ]() );
@@ -396,6 +400,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
         RefineCDRH3HighResOP cdr_highres_refine_ = new RefineCDRH3HighRes(ab_info_, h3_refine_type_, loop_scorefxn_highres_); 
             cdr_highres_refine_ -> set_refine_mode(h3_refine_type_);
             cdr_highres_refine_ -> set_h3_filter(h3_filter_);
+            cdr_highres_refine_ -> set_num_filter_tries(h3_filter_tolerance_);
             cdr_highres_refine_ -> set_flank_relax(flank_residue_min_);
             if (flank_residue_min_) cdr_highres_refine_->set_flank_size(flank_residue_size_);
             cdr_highres_refine_ -> pass_start_pose(start_pose_);
@@ -449,6 +454,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 	basic::prof_show();
 
 
+    TR<<"Antibody Modeling Protocol Finished!!!!"<<std::endl<<std::endl<<std::endl;
 }// end apply
 
 
@@ -526,21 +532,26 @@ std::ostream & operator<<(std::ostream& out, const AntibodyModelerProtocol & ab_
     // All output will be 80 characters - 80 is a nice number, don't you think?
     std::string line_marker = "///";
     out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
+    out << line_marker << std::endl;
     out << line_marker << A( 47, "Rosetta 3 Antibody Modeler" ) << space( 27 ) << line_marker << std::endl;
     out << line_marker << space( 74 ) << line_marker << std::endl;
 
     // Display the state of the antibody modeler protocol that will be used
-    out << line_marker << "  camelid              : " << ab_m.camelid_           << std::endl;
+    out << line_marker << "  camelid              : " << ab_m.camelid_                   << std::endl;
     out << line_marker << std::endl;
-    out << line_marker << "  model_h3             : " << ab_m.model_h3_          
-                                                      <<"   h3_perturb_type="<<ab_m.h3_perturb_type_<<std::endl;
-    out << line_marker << "     cter_insert       : " << ab_m.cter_insert_       << std::endl;
-    out << line_marker << "     h3_filter         : " << ab_m.h3_filter_         << std::endl;
-    out << line_marker << "  snugfit              : " << ab_m.snugfit_           << std::endl;
-    out << line_marker << "     LH_repulsive_ramp : " << ab_m.LH_repulsive_ramp_ << std::endl;
-    out << line_marker << "  refine_h3            : " << ab_m.refine_h3_         
-                                                      <<"   h3_refine_type="<<ab_m.h3_refine_type_<<std::endl;
-    out << line_marker << "     h3_filter         : " << ab_m.h3_filter_         << std::endl;
+    out << line_marker << " ******  model_h3  :  "          << ab_m.model_h3_            << std::endl;
+    out << line_marker << "         h3_perturb_type     = '"<< ab_m.h3_perturb_type_<<"'"<< std::endl;
+    out << line_marker << "         cter_insert         = " << ab_m.cter_insert_         << std::endl;
+    out << line_marker << "         h3_filter           = " << ab_m.h3_filter_           << std::endl;  
+    out << line_marker << std::endl;
+    out << line_marker << " ******  snugfit   :  "          << ab_m.snugfit_             << std::endl;
+    out << line_marker << "         LH_repulsive_ramp   = " << ab_m.LH_repulsive_ramp_   << std::endl;
+    out << line_marker << std::endl;
+    out << line_marker << " ******  refine_h3 :  "          << ab_m.refine_h3_           << std::endl;      
+    out << line_marker << "         h3_refine_type      = '"<< ab_m.h3_refine_type_<<"'" << std::endl;
+    out << line_marker << "         h3_filter           = " << ab_m.h3_filter_           << std::endl;
+    out << line_marker << "         h3_filter_tolerance = " << ab_m.h3_filter_tolerance_ << std::endl;
+    out << line_marker << std::endl;
     out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
     return out;
 }

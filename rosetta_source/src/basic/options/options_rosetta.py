@@ -4319,6 +4319,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='filter decoys having neither kink nor extend form',
 			default='true'
 			),
+		Option( 'h3_filter_tolerance', 'Real',
+			desc='maximum number of tries for the filter',
+			default='5'
+			),
 		Option( 'cter_insert', 'Boolean',
 			desc='insert kind or extend Ab fragments to CDR H3',
 			default='true'

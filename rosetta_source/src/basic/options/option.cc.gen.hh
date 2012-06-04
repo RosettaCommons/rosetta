@@ -2232,6 +2232,7 @@ option.add( basic::options::OptionKeys::antibody::model_h3, "Model CDR H3 from s
 option.add( basic::options::OptionKeys::antibody::snugfit, "Adjust relative orientation of VL-VH" ).def(false);
 option.add( basic::options::OptionKeys::antibody::refine_h3, "Refine CDR H3 in high resolution" ).def(true);
 option.add( basic::options::OptionKeys::antibody::h3_filter, "filter decoys having neither kink nor extend form" ).def(true);
+option.add( basic::options::OptionKeys::antibody::h3_filter_tolerance, "maximum number of tries for the filter" ).def(5);
 option.add( basic::options::OptionKeys::antibody::cter_insert, "insert kind or extend Ab fragments to CDR H3" ).def(true);
 option.add( basic::options::OptionKeys::antibody::flank_residue_min, "minimize flank residues of CDR H3 during high-reso refinement" ).def(true);
 option.add( basic::options::OptionKeys::antibody::sc_min, "minimize the side chain after finishing the rotamer packing" ).def(false);

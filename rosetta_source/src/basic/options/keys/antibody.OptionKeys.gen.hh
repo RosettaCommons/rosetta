@@ -38,6 +38,7 @@ namespace antibody { extern BooleanOptionKey const model_h3; }
 namespace antibody { extern BooleanOptionKey const snugfit; }
 namespace antibody { extern BooleanOptionKey const refine_h3; }
 namespace antibody { extern BooleanOptionKey const h3_filter; }
+namespace antibody { extern RealOptionKey const h3_filter_tolerance; }
 namespace antibody { extern BooleanOptionKey const cter_insert; }
 namespace antibody { extern BooleanOptionKey const flank_residue_min; }
 namespace antibody { extern BooleanOptionKey const sc_min; }

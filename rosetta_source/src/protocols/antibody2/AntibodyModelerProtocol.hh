@@ -94,6 +94,9 @@ public:
     void set_refine_type (std::string refine)  {
         h3_refine_type_ = refine;
     }
+    void set_H3Filter_Tolerance(core::Size const number){
+        h3_filter_tolerance_ = number;
+    }
     void set_cst_weight ( core::Real const cst_weight){
         cst_weight_ = cst_weight;
     }
@@ -139,6 +142,8 @@ private:
 
 	bool flags_and_objects_are_in_sync_;
 	bool first_apply_with_current_setup_;
+    core::Size h3_filter_tolerance_;
+
 
 	// used as a flag to enable reading in of cst files
 	core::Real cst_weight_;

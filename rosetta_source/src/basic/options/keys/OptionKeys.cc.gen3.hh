@@ -373,6 +373,7 @@ namespace antibody { BooleanOptionKey const model_h3( "antibody:model_h3" );  }
 namespace antibody { BooleanOptionKey const snugfit( "antibody:snugfit" );  }
 namespace antibody { BooleanOptionKey const refine_h3( "antibody:refine_h3" );  }
 namespace antibody { BooleanOptionKey const h3_filter( "antibody:h3_filter" );  }
+namespace antibody { RealOptionKey const h3_filter_tolerance( "antibody:h3_filter_tolerance" );  }
 namespace antibody { BooleanOptionKey const cter_insert( "antibody:cter_insert" );  }
 namespace antibody { BooleanOptionKey const flank_residue_min( "antibody:flank_residue_min" );  }
 namespace antibody { BooleanOptionKey const sc_min( "antibody:sc_min" );  }
