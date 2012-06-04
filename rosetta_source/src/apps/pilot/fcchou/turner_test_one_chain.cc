@@ -141,7 +141,7 @@ get_suite_ideal_A_form_torsions(){
 }
 //////////////////////////////////
 void
-apply_nucleoside_torsion( utility::vector1< Real > const & torsion_set, 
+apply_nucleoside_torsion( utility::vector1< Real > const & torsion_set,
 													pose::Pose & pose,
 													Size const moving_res){
 
@@ -166,7 +166,7 @@ apply_nucleoside_torsion( utility::vector1< Real > const & torsion_set,
 }
 //////////////////////////////////
 void
-apply_suite_torsion( utility::vector1< Real > const & torsion_set, 
+apply_suite_torsion( utility::vector1< Real > const & torsion_set,
 											pose::Pose & pose,
 											Size const moving_suite,
 											bool const sample_3prime_pucker = true){
@@ -244,7 +244,7 @@ setup_one_chain_pose ( pose::Pose & pose, bool is_virtualize = true ) {
 }
 //////////////////////////////////
 void
-initialize_o2star_pack( pose::Pose const & pose, 
+initialize_o2star_pack( pose::Pose const & pose,
 												scoring::ScoreFunctionOP const scorefxn,
 												scoring::ScoreFunctionOP o2star_pack_scorefxn,
 												pack::task::PackerTaskOP o2star_pack_task ) {
@@ -383,6 +383,38 @@ score2bin(Real const score, Real const min_score, Real const max_score, Real con
 	}
 	return std::ceil( (score - min_score) / bin_size );
 }
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+void
+save_decoy_to_silent_file_data( core::io::silent::SilentFileDataOP & silent_file_data,
+																std::string const tag,
+																pose::Pose const & pose, pose::Pose const & pose_reference ){
+	using namespace core::io::silent;
+	BinaryRNASilentStruct s( pose, tag );
+	s.add_energy( "rms", core::scoring::all_atom_rmsd( pose, pose_reference ) );
+	silent_file_data->add_structure( s );
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+void
+cluster_and_output_silent_file( core::io::silent::SilentFileDataOP & silent_file_data,
+																 std::string const & silent_file ){
+	using namespace protocols::swa;
+
+	StepWiseClustererOP stepwise_clusterer = new StepWiseClusterer( silent_file_data );
+	Size max_decoys( 400 );
+	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
+	stepwise_clusterer->set_max_decoys( max_decoys );
+	stepwise_clusterer->set_rename_tags( true /*option[ rename_tags ]*/ );
+	Real cluster_radius( 0.7 );
+	if ( option[ OptionKeys::cluster::radius ].user() ) cluster_radius = option[ OptionKeys::cluster::radius ]();
+	stepwise_clusterer->cluster();
+	stepwise_clusterer->output_silent_file( silent_file );
+
+}
+
 //////////////////////////////////
 void
 one_chain_MC_sampling(){
@@ -396,6 +428,7 @@ one_chain_MC_sampling(){
 	using namespace pack::task;
 	using namespace utility::io;
 	using namespace scoring::rna;
+	using namespace io::silent;
 
 	Pose pose, pose_full;
 	setup_one_chain_pose( pose );
@@ -405,6 +438,8 @@ one_chain_MC_sampling(){
 	pose_full.dump_pdb("ideal_full.pdb");
 	Size const n_residue = pose.n_residue();
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
+
+	Pose pose_start = pose;
 
 	//Setup scoring function
 	std::string const force_field_name = option[force_field];
@@ -435,7 +470,7 @@ one_chain_MC_sampling(){
 		sample_range = kT_sys * 24.0 / double(n_residue);
 	}
 
-	// initialize for o2star rotamer trials. 	
+	// initialize for o2star rotamer trials.
 	PackerTaskOP o2star_pack_task =  pack::task::TaskFactory::create_packer_task( pose );
 	ScoreFunctionOP o2star_pack_scorefxn = new ScoreFunction;
 	if ( option[ o2star_trials ]() ) {
@@ -477,6 +512,10 @@ one_chain_MC_sampling(){
 	if (is_saving_decoy) {
 		output_decoy.open(outfile_decoy);
 	}
+	SilentFileDataOP silent_file_data;
+	std::string const silent_file = option[ out::file::silent ]();
+	bool const save_silent = ( silent_file.size() > 0 );
+	if ( save_silent ) silent_file_data = new SilentFileData;
 
 	std::cout << "Start MC sampling" << std::endl;
 	for (Size count = 1; count <= num_cycle; count++) {
@@ -515,12 +554,15 @@ one_chain_MC_sampling(){
 			++n_accpet;
 			if (is_saving_decoy && score < decoy_cutoff) {
 				output_decoy << score << ' ' << nucleoside_torsion[1] << ' ' << nucleoside_torsion[2];
-				for (Size i = first_res; i <= n_residue - 1; ++i) {
+				for (Size i = first_res; i <= first_res /*n_residue - 1*/ ; ++i) {
 					for (Size j = 1; j <= suite_torsion[i].size(); ++j) {
 						output_decoy << ' ' << suite_torsion[i][j];
 					}
 				}
 				output_decoy << std::endl;
+
+				std::string const tag = "S_"+lead_zero_string_of(n_accpet,6);
+				if (save_silent) save_decoy_to_silent_file_data( silent_file_data, tag, pose, pose_start /*reference*/ );
 			}
 		} else {
 			nucleoside_torsion_new = nucleoside_torsion;
@@ -539,7 +581,7 @@ one_chain_MC_sampling(){
 		++hist[bin];
 
 	}
-	
+
 	std::cout << "Total number of rotamers applied: " << num_cycle << std::endl;
 	std::cout << "sampling stdev: " << sample_range << std::endl;
 	std::cout << "accept rate:" << (1.0 * n_accpet / num_cycle) << std::endl;
@@ -555,7 +597,7 @@ one_chain_MC_sampling(){
 		}
 		if (hist[i] != 0) last_bin = i;
 	}
-	
+
 	ozstream out;
 	out.open( outfile );
 	out << "Score N_sample" << std::endl;
@@ -565,6 +607,9 @@ one_chain_MC_sampling(){
 		out << score << " " << hist[i] << std::endl;
 	}
 	out.close();
+
+	if ( save_silent ) cluster_and_output_silent_file( silent_file_data, silent_file );
+
 }
 
 //////////////////////////////////
