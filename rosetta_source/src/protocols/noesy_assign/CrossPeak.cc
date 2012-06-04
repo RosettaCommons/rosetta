@@ -185,7 +185,7 @@ CrossPeak::create_fa_and_cen_constraint(
 	FuncOP func( new BoundFunc(1.5,
 				distance_bound(),
 				weight,
-				"automatic NOE Peak "+ObjexxFCL::string_of( peak_id() )+" "+filename()
+			  "automatic NOE Peak "+ObjexxFCL::string_of( peak_id() )+" "+filename()+" Volume: "+ObjexxFCL::string_of( volume() )
 			)
 		);
 

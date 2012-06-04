@@ -562,14 +562,14 @@ Size AmbiguousNMRDistanceConstraint::show_violations(
 	Size verbose_level,
 	Real threshold
 ) const {
-
-//  	if ( verbose_level > 80 ) {
-//  		out << "AmbiguousNMRDistanceConstraint ("
-//  			<< pose.residue_type(atom1_.rsd() ).atom_name( atom1_.atomno() ) << ":"
-//  			<< atom1_.atomno() << "," << atom1_.rsd() << "-"
-//  			<< pose.residue_type(atom2_.rsd() ).atom_name( atom2_.atomno() ) << ":"
-//  			<< atom2_.atomno() << "," << atom2_.rsd() << ") ";
-// 	}
+	
+ 	if ( verbose_level > 80 ) {
+  out << "\nAmbiguousNMRDistanceConstraint ( "
+			<< pose.residue_type(atoms1_.front().rsd() ).atom_name( atoms1_.front().atomno() ) << " : "
+			<< atoms1_.front().rsd() << " - "
+			<< pose.residue_type(atoms2_.front().rsd() ).atom_name( atoms2_.front().atomno() ) << " : "
+			<< atoms2_.front().rsd() << " ) ";
+	}
 // 	if ( verbose_level > 120 ) { //don't ask but I had a really weird bug to track down!
 // 		conformation::Conformation const & conformation( pose.conformation() );
 // 		Vector const & xyz1( conformation.xyz( atom1_ ) ), xyz2( conformation.xyz( atom2_ ) );

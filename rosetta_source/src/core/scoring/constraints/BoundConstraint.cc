@@ -94,11 +94,14 @@ BoundFunc::show_violations( std::ostream& out, Real x, Size verbose_level, Real 
 	if (verbose_level > 100) {
 		out << " " << type_ << " " ;
 	}
-	if ( verbose_level > 75 && verbose_level < 79 ) {
+	if ( verbose_level > 75  ) {
 		out << x << " [ " << lb_ << " , " << ub_ << "] ";
-		if ( x < lb_ && ( this->func(x) > threshold ) ) out << "TOO SHORT\n";
-		else if ( x > ub_ && ( this->func(x) > threshold ) ) out << "VIOLATED\n";
-		else out << "PASSED\n";
+		if ( x < lb_ && ( this->func(x) > threshold ) ) out << "TOO SHORT";
+		else if ( x > ub_ && ( this->func(x) > threshold ) ) out << "VIOLATED";
+		else out << "PASSED";
+		if ( verbose_level > 80 ) { 
+			out << " " << type_ << "\n";
+		} else out << "\n";
 	} else if ( verbose_level > 100 ) {
 		out << x << " in[ " << lb_ << " , " << ub_ << " ] ";
 		if ( x < lb_ ) out << (x - lb_) / sd_ << "\n";
@@ -109,6 +112,8 @@ BoundFunc::show_violations( std::ostream& out, Real x, Size verbose_level, Real 
 		else if ( x > ub_ && ( this->func(x) > threshold )) out << "+";
 		else out << ".";
 	}
+		
+		
 	if ( this->func(x) <= threshold ) return 0;
 	return 1;
 }
@@ -116,8 +121,9 @@ BoundFunc::show_violations( std::ostream& out, Real x, Size verbose_level, Real 
 void
 BoundFunc::show_definition( std::ostream &out ) const {
 	using namespace ObjexxFCL::fmt;
-	out << "BOUNDED " << std::setprecision( 4 ) << RJ(7, lb_) << " " << RJ(7, ub_) << " " << RJ(3,sd_) << " "  << A(5, type_) << " ";
-	if ( rswitch_ != 0.5 ) out << RJ(5,rswitch_ );
+	out << "BOUNDED " << std::setprecision( 4 ) << RJ(7, lb_) << " " << RJ(7, ub_) << " " << RJ(3,sd_) << " "; 
+	if ( rswitch_ != 0.5 ) out << RJ(5,rswitch_ ) << " ";
+  out << type_;
 	out << "\n";
 }
 
@@ -134,7 +140,9 @@ BoundFunc::read_data( std::istream& in ) {
 		rswitch_ = float_of( tag );
 		in >> type_;
 	} else {
-		type_ = tag;
+		std::string line;
+		getline( in, line );
+		type_ = tag+line;
 	}
 }
 
