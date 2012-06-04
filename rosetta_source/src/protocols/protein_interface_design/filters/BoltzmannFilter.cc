@@ -38,7 +38,7 @@ static basic::Tracer TR( "protocols.protein_interface_design.filters.BoltzmannFi
 BoltzmannFilter::BoltzmannFilter() :
 	temperature_( 0.6 ),
 	fitness_threshold_( 0.0 ),
-	triage_filter_( -9999 ),
+	triage_threshold_( -9999 ),
 	norm_neg_( false )
 {
 	positive_filters_.clear();
@@ -68,13 +68,13 @@ BoltzmannFilter::temperature( core::Real const t ){
 }
 
 core::Real
-BoltzmannFilter::triage_filter() const{
-	  return triage_filter_;
+BoltzmannFilter::triage_threshold() const{
+	  return triage_threshold_;
 }
 
 void
-BoltzmannFilter::triage_filter( core::Real const t ){
-	  triage_filter_ = t;
+BoltzmannFilter::triage_threshold( core::Real const t ){
+	  triage_threshold_ = t;
 }
 
 void
@@ -151,7 +151,7 @@ BoltzmannFilter::compute( core::pose::Pose const & pose ) const{
 	foreach( FilterCOP filter, get_negative_filters() ) {
 		core::Real filter_val = filter->report_sm( pose );
 		s += F(7,3,filter_val)+" ";
-		if ( filter_val >= triage_filter() ){
+		if ( filter_val >= triage_threshold() ){
 			negative_sum += exp( -filter_val / temperature() );
 			negative_counter += 1;
 			TR<<"Taken filter: "<<filter->get_user_defined_name()<<" filter val: "<< filter_val<<std::endl;
@@ -194,7 +194,7 @@ BoltzmannFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	runtime_assert( tag->hasOption( "anchors" ) || tag->hasOption( "negative_filters" ) );
 	fitness_threshold( tag->getOption< core::Real >( "fitness_threshold", 0 ) );
 	temperature( tag->getOption< core::Real >( "temperature", 0.6 ) );
-	triage_filter( tag->getOption< core::Real >( "triage_filter", -9999 ) );
+	triage_threshold( tag->getOption< core::Real >( "triage_threshold", -9999 ) );
 	norm_neg( tag->getOption< bool >( "norm_neg", false ) );
 	utility::vector1< std::string > const positive_filter_names( utility::string_split( tag->getOption< std::string >( "positive_filters" ), ',' ) );
 	utility::vector1< std::string > negative_filter_names, anchors_string;
@@ -210,7 +210,7 @@ BoltzmannFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	foreach( std::string const anchor_str, anchors_string )
 		anchors_.push_back( (core::Real) utility::string2float( anchor_str ) );
 
-	TR<<"with options temperature: "<<temperature()<<"  triage_filter "<<triage_filter()<<" fitness_threshold "<<fitness_threshold()<<"  "<<get_positive_filters().size()<<" positive and "<<get_negative_filters().size()<<" negative filters."<<std::endl;
+	TR<<"with options temperature: "<<temperature()<<"  triage_threshold "<<triage_threshold()<<" fitness_threshold "<<fitness_threshold()<<"  "<<get_positive_filters().size()<<" positive and "<<get_negative_filters().size()<<" negative filters."<<std::endl;
 	if( anchors().size() > 0 ){
 		TR<<"defined "<<anchors().size()<<" anchors"<<std::endl;
 		runtime_assert( get_positive_filters().size() == anchors().size());

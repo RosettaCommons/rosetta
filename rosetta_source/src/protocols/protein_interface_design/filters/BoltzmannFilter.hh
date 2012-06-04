@@ -58,8 +58,8 @@ public:
 	utility::vector1< protocols::filters::FilterOP > get_negative_filters() const;
 	void temperature( core::Real const temp );
 	core::Real temperature() const;
-	void triage_filter( core::Real const t );
-	core::Real triage_filter() const;
+	void triage_threshold( core::Real const t );
+	core::Real triage_threshold() const;
 	core::Real fitness_threshold() const;
 	void fitness_threshold( core::Real const f );
   bool norm_neg() const;
@@ -71,7 +71,7 @@ private:
 
 	core::Real temperature_;
 	core::Real fitness_threshold_;
-	core::Real triage_filter_;
+	core::Real triage_threshold_;
 	bool norm_neg_;
 };
 
