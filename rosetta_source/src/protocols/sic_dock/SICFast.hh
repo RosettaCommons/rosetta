@@ -7,9 +7,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-#ifndef INCLUDED_protocols_sic_dock_sic_dock_hh
-#define INCLUDED_protocols_sic_dock_sic_dock_hh
+#ifndef INCLUDED_protocols_sic_dock_SICFast_hh
+#define INCLUDED_protocols_sic_dock_SICFast_hh
 
+#include <protocols/sic_dock/SICFast.fwd.hh>
 
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
@@ -20,12 +21,12 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <protocols/sic_dock/xyzStripeHashPose.fwd.hh>
-
+#include <utility/pointer/ReferenceCount.hh>
 
 namespace protocols {
 namespace sic_dock {
 
-class SICFast {
+class SICFast : public utility::pointer::ReferenceCount {
 public:
 	typedef numeric::xyzVector<core::Real> Vec;
 
@@ -57,6 +58,7 @@ public:
 		core::id::AtomID_Map<core::Real> const & score_atoms2  // 
 	);
 
+	// return distace xb*pose2 must move along ori to contact xa*pose1
 	double slide_into_contact(
 		core::kinematics::Stub const & xa,
 		core::kinematics::Stub const & xb,
@@ -64,73 +66,15 @@ public:
 		double                       & score
 	);
 
-
 private:
-	double
-	refine_mindis_with_xyzHash(
-		core::kinematics::Stub const & xa,
-		core::kinematics::Stub const & xb,
-		utility::vector1<Vec> const & pa,
-		utility::vector1<Vec> const & pb,
-		double mindis,
-		Vec ori
-	);
-	double
-	get_score(
-		core::kinematics::Stub const & xa,
-		core::kinematics::Stub const & xb,
-		utility::vector1<Vec> const & cba,
-		utility::vector1<Vec> const & cbb,
-		Vec ori,
-		double mindis
-	);
-	void
-	rotate_points(
-		utility::vector1<Vec> & pa,
-		utility::vector1<Vec> & pb,
-		Vec ori
-	);
-	void
-	get_bounds(
-		utility::vector1<Vec> const & pa,
-		utility::vector1<Vec> const & pb
-	);
-	void
-	fill_plane_hash(
-		utility::vector1<Vec> const & pa,
-		utility::vector1<Vec> const & pb
-	);
-	double
-	get_mindis_with_plane_hashes();
-
-private:
-	double xmx1,xmn1,ymx1,ymn1,xmx,xmn,ymx,ymn;
 	double CTD,CLD,CTD2,CLD2,BIN;
-	int xlb,ylb,xub,yub;
 	xyzStripeHashPose *xh1c_,*xh1s_;
 	xyzStripeHashPose *xh2c_,*xh2s_;
-	// utility::vector1<Vec>    clash1_,clash2_;
-	// utility::vector1<Vec>    score1_,score2_;
 	utility::vector1<double> w1_,w2_;
-	ObjexxFCL::FArray2D<Vec> ha,hb; // 2D hashes
-
 };
 
 
 int flood_fill3D(int i, int j, int k, ObjexxFCL::FArray3D<double> & grid, double t);
-
-
-// core::pose::Pose ntrim(core::pose::Pose const & pose, int Nsym) {
-// 	core::pose::Pose trimmed(pose);
-// 	for(int i=1; i <= Nsym; ++i) {
-// 		trimmed.conformation().delete_residue_slow(1); // This is probably not quite right.
-// 	}
-// 	return trimmed;
-// }
-
-// void trim_tails(core::pose::Pose & pose, int Nsym) {
-// 	// for(int i = 1; i < )
-// }
 
 void termini_exposed(core::pose::Pose const & pose, bool & ntgood, bool & ctgood );
 

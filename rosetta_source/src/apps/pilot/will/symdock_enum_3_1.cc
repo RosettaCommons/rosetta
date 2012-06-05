@@ -19,8 +19,7 @@ DONE
 	contacts weight by avg. deg.
 */
 
-#include <protocols/sic_dock/sic_dock.hh>
-
+#include <protocols/sic_dock/SICFast.hh>
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -307,7 +306,7 @@ struct TCDock {
 	string cmp1name_,cmp2name_,cmp1type_,cmp2type_,symtype_;
 	int cmp1nangle_,cmp2nangle_,cmp1nsub_,cmp2nsub_;
 	std::map<string,Vecf> axismap_;
-	std::vector<protocols::sic_dock::SICFast*> sics_;
+	protocols::sic_dock::SICFast sic_;
 	bool abort_;
 	core::id::AtomID_Map<core::Real> clashmap1_,clashmap2_,scoremap1_,scoremap2_;
 	TCDock( string cmp1pdb, string cmp2pdb, string cmp1type, string cmp2type ) : cmp1type_(cmp1type),cmp2type_(cmp2type),abort_(false) {
@@ -445,10 +444,7 @@ struct TCDock {
 			}
 		}
 
-		sics_.resize(num_threads());
-		for(int i = 0; i < num_threads(); ++i) sics_[i] = new protocols::sic_dock::SICFast;
-	//  for(int i = 0; i < num_threads(); ++i) sics_[i]->init(cmp1in_,cmp1cbs_,cmp1wts_,cmp2in_,cmp2cbs_,cmp2wts_);
-		for(int i = 0; i < num_threads(); ++i) sics_[i]->init(cmp1in_,cmp2in_,clashmap1_,clashmap2_,scoremap1_,scoremap2_);
+		sic_.init(cmp1in_,cmp2in_,clashmap1_,clashmap2_,scoremap1_,scoremap2_);
 
 		cmp1mnpos_.resize(cmp1nangle_,0.0);
 		cmp2mnpos_.resize(cmp2nangle_,0.0);
@@ -467,7 +463,6 @@ struct TCDock {
 
 	}
 	virtual ~TCDock() {
-		for(int i = 0; i < (int)sics_.size(); ++i) if(sics_[i]) delete sics_[i];
 	}
 	int num_threads() {
 		#ifdef USE_OPENMP
@@ -521,18 +516,13 @@ struct TCDock {
 			ObjexxFCL::FArray2D<double> & cmpcbpos( i12?cmp1cbpos_:cmp2cbpos_ );
 			ObjexxFCL::FArray2D<double> & cmpcbneg( i12?cmp1cbneg_:cmp2cbneg_ );
 
-			std::vector<protocols::sic_dock::SICFast> sics;
-			sics.resize(num_threads());
-			for(int i = 0; i < num_threads(); ++i){
-				sics[i].init( i12? cmp1in_   :cmp2in_,
-				              i12? cmp1in_   :cmp2in_   ,
-				              i12? clashmap1_:clashmap2_,
-				              i12? clashmap1_:clashmap2_,
-				              i12? scoremap1_:scoremap2_,
-				              i12? scoremap1_:scoremap2_);
-				//				sics[i].init(i12?cmp1in_:cmp2in_, i12?cmp1cbs_:cmp2cbs_, i12?cmp1wts_:cmp2wts_,
-				//										 i12?cmp1in_:cmp2in_, i12?cmp1cbs_:cmp2cbs_, i12?cmp1wts_:cmp2wts_);
-			}
+			protocols::sic_dock::SICFast sic;
+			sic.init( i12? cmp1in_   :cmp2in_,
+				      i12? cmp1in_   :cmp2in_   ,
+				      i12? clashmap1_:clashmap2_,
+				      i12? clashmap1_:clashmap2_,
+				      i12? scoremap1_:scoremap2_,
+				      i12? scoremap1_:scoremap2_);
 
 			for(int ipn = 0; ipn < 2; ++ipn) {
 				#ifdef USE_OPENMP
@@ -548,9 +538,9 @@ struct TCDock {
 					Vecf const sicaxis = ipn ? (axis2-axis).normalized() : (axis-axis2).normalized();
 					double score = 0;
 					core::kinematics::Stub xa,xb;
-					xa.M = rotation_matrix_degrees(axis ,(double)icmp);
-					xb.M = rotation_matrix_degrees(axis2,(double)icmp) * swap_axis_rotation(i12?cmp1type_:cmp2type_);
-					double const d = sics[thread_num()].slide_into_contact(xa,xb,sicaxis,score);
+					xa.M = rotation_matrix_degrees(axis2,(double)icmp) * swap_axis_rotation(i12?cmp1type_:cmp2type_);
+					xb.M = rotation_matrix_degrees(axis ,(double)icmp);
+					double const d = sic.slide_into_contact(xa,xb,sicaxis,score);
 					if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for cmppos! "+ObjexxFCL::string_of(icmp));
 					(ipn?cmpmnpos:cmpmnneg)[icmp+1] = (ipn?-1.0:1.0) * d/2.0/sin( angle_radians(axis2,Vecf(0,0,0),axis)/2.0 );
 					(ipn?cmpdspos:cmpdsneg)[icmp+1] = (ipn?-1.0:1.0) * d;
@@ -754,7 +744,7 @@ struct TCDock {
 			xa.M = rotation_matrix_degrees(cmp1axs_,(double)icmp1);
 			xb.M = rotation_matrix_degrees(cmp2axs_,(double)icmp2);
 
-			double const d = sics_[thread_num()]->slide_into_contact(xb,xa,sicaxis,icbc);
+			double const d = sic_.slide_into_contact(xa,xb,sicaxis,icbc);
 			dori = d;
 			if(d > 0) utility_exit_with_message("ZERO!!");
 			double const theta=(double)iori;
@@ -1105,7 +1095,7 @@ struct TCDock {
 			std::sort(local_maxima.begin(),local_maxima.end(),compareLMAX);
 			cout << "N maxima: " << local_maxima.size() << ", best score: " << highscore << endl;
 			string nc1=cmp1type_.substr(1,1), nc2=cmp2type_.substr(1,1);
-			cout << "                          tag     score   diam   tdis   inter    ";
+			cout << "                              tag     score   diam   tdis   inter    ";
 			cout << "sc"+nc1+"    sc"+nc2+"  nr"+nc1+"  a"+nc1+"       r"+nc1+"  nr"+nc2+"  a"+nc2+"       r"+nc2+" ori";
 			cout << "  v0.2  v0.4  v0.6  v0.8  v1.0  v1.2  v1.4  v1.6  v1.8  v2.0";
 			cout << "  v2.2  v2.4  v2.6  v2.8  v3.0  v3.2  v3.4  v3.6  v3.8  v4.0  v4.2  v4.4  v4.6  v4.8  v5.0" << endl;
@@ -1236,7 +1226,7 @@ int main (int argc, char *argv[]) {
 			}
 		}
 	}
-	cout << "DONE testing: starting to redo SICFast interface, simplify sic_dock" << endl;
+	cout << "DONE testing: make SICFast thread safe" << endl;
 }
 
 

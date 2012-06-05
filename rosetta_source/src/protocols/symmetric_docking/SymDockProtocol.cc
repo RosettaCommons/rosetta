@@ -358,10 +358,7 @@ SymDockProtocol::apply( pose::Pose & pose )
 	core::pose::Pose starting_pose = pose;
 	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 
-	if ( option[ OptionKeys::constraints::cst_file ].user() ){
-		protocols::simple_moves::ConstraintSetMoverOP docking_constraint = new protocols::simple_moves::ConstraintSetMover();
-		docking_constraint->apply( starting_pose );
-
+	if ( option[ OptionKeys::constraints::cst_file ].user() || option[ OptionKeys::constraints::cst_fa_file ].user() ){
 		core::scoring::symmetry::SymmetricScoreFunctionOP docking_scorefxn_cst, docking_highres_cst;
 		docking_scorefxn_cst = new core::scoring::symmetry::SymmetricScoreFunction( *docking_score_low_ ) ;
 		docking_scorefxn_cst->set_weight(core::scoring::atom_pair_constraint, 1.0);
@@ -392,6 +389,9 @@ SymDockProtocol::apply( pose::Pose & pose )
 
 			// first convert to centroid mode
 			to_centroid.apply( pose );
+			if ( option[ OptionKeys::constraints::cst_file ].user() || option[ OptionKeys::constraints::cst_fa_file ].user() ){
+				protocols::simple_moves::ConstraintSetMover().apply(pose);
+			}
 
 			// make starting perturbations based on command-line flags over each movable jump (takes care of dock_pert and randomize)
 			simple_moves::symmetry::SymDockingInitialPerturbation initial( true /*slide into contact*/ );
@@ -430,9 +430,12 @@ SymDockProtocol::apply( pose::Pose & pose )
 
 			if (!local_refine_ || !pose.is_fullatom()){
 				to_all_atom.apply( pose );
+				if ( option[ OptionKeys::constraints::cst_file ].user() || option[ OptionKeys::constraints::cst_fa_file ].user() ){
+					protocols::simple_moves::ConstraintSetMover().apply(pose);
+				}
 				recover_sidechains.apply( pose );
 			//	recover_sidechains( pose, *get_input_pose());
-				}
+			}
 
 			// run high resolution docking
 			TR.Debug << "DockingHighRes object created" << std::endl;

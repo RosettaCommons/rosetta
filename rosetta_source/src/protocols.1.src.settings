@@ -148,7 +148,8 @@ sources = {
 		"visualize",
 	],
 	"protocols/sic_dock" : [
-		"sic_dock", # sheffler
+		"SICFast", # sheffler
+		"designability_score", # sheffler
 	],
 }
 include_path = [

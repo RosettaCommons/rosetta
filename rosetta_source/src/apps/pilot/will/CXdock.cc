@@ -38,7 +38,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <numeric/xyzVector.hh>
-#include <protocols/sic_dock/sic_dock.hh>
+#include <protocols/sic_dock/SICFast.hh>
 #include <protocols/sic_dock/designability_score.hh>
 
 #include <apps/pilot/will/will_util.ihh>
@@ -360,17 +360,17 @@ dock(
 				
 				Real t = sics_[thread_num()]->slide_into_contact(x1,x2,Vec(0,0,1),cbc);
 				
+				Hit h(iss,irt,cbc,syms[ic]);
+				h.s1 = x1;
+				h.s2 = x2;
+				h.s1.v += t*Vec(0,0,1);
+				h.xscore = compute_xform_score(xfs,h.s1,h.s2,stubs,ss);
+				h.rmsd = get_rmsd( native_ca, init_ca, h ); //, init_pose );
 				if(cbc >= CONTACT_TH){
 					#ifdef USE_OPENMP
 					#pragma omp critical
 					#endif
 					{
-						Hit h(iss,irt,cbc,syms[ic]);
-						h.s1 = x1;
-						h.s2 = x2;
-						h.s1.v += t*Vec(0,0,1);
-						h.xscore = compute_xform_score(xfs,h.s1,h.s2,stubs,ss);
-						h.rmsd = get_rmsd( native_ca, init_ca, h ); //, init_pose );
 						hits[ic].push_back(h);
 
 						// Pose olig;

@@ -38,7 +38,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <numeric/xyzVector.hh>
-#include <protocols/sic_dock/sic_dock.hh>
+#include <protocols/sic_dock/SICFast.hh>
 #include <protocols/sic_dock/designability_score.hh>
 
 #include <apps/pilot/will/will_util.ihh>
@@ -121,6 +121,34 @@ struct Hit {
 bool cmpHit(Hit i,Hit j) { return i.score > j.score; }
 
 
+class SlideTask;
+typedef utility::pointer::owning_ptr< SlideTask > SlideTaskOP;
+typedef utility::pointer::owning_ptr< SlideTask const > SlideTaskCOP;
+
+
+class SlideTask : public utility::pointer::ReferenceCount {
+public:
+	SlideTask(
+		core::pose::Pose const & pose,
+		vector1<Vec> const & ssamp
+	): pose_(pose),
+	   ssamp_(ssamp)
+	{}
+	core::pose::Pose const & pose () const { return pose_; }
+	vector1<Vec>     const & ssamp() const { return ssamp_; }
+private:
+	core::pose::Pose const & pose_;
+	vector1<Vec> const & ssamp_;
+	std::vector<protocols::sic_dock::SICFastCOP> sics_;
+
+};
+
+void
+make_nmer(
+	SlideTaskOP stask
+){
+
+}
 
 
 // dock pose against rotated version of itself
