@@ -215,7 +215,7 @@ void run() {
 				utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ rigid::in ]().name() + "'" );
 			}
 			
-			loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(is, option[ rigid::in ](), false, "RIGID");
+			loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(is, option[ rigid::in ](), false, "RIGID");
 			loops::Loops rigid = loops::Loops( loops );
 
 			for ( Size i=1;i<=rmsf_tool->eval_.n_atoms(); ++i ) {

@@ -1,0 +1,22 @@
+#
+# In production runs consider using atleast 10000
+-loops:max_kic_build_attempts 1
+-run:test_cycles
+#
+# Using the -in:path flag makes the "input tag" just the filename
+-in:file:fullatom
+-in:path ../../tests/loop_modeling/inputs
+-s 4fxn.start_0001.pdb
+#
+# Since the important output is the feature database,
+# ignore the job distributor output.
+-out:nooutput
+-overwrite
+-parser:protocol parser_script.xml
+#
+# Mute some tracers...
+#-mute protocols.jobdist
+#-mute core.io
+#-mute core.conformation
+#-mute core.pack
+

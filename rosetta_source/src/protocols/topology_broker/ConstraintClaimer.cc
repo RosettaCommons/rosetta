@@ -161,7 +161,7 @@ void ConstraintClaimer::add_constraints( core::pose::Pose& pose ) const {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
 		}
 
-		loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(is, file, false, "RIGID");
+		loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(is, file, false, "RIGID");
 		loops::Loops rigid_core = loops::Loops( loops );
 		combine_exclude_res_.resize( pose.total_residue(), false );
 		rigid_core.transfer_to_residue_vector( combine_exclude_res_, true );

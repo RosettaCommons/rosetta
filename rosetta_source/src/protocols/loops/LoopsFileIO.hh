@@ -36,30 +36,26 @@ namespace loops {
 class LoopsFileIO : public utility::pointer::ReferenceCount {
 
 public:
-	typedef utility::vector1< SerializedLoop > SerializedLoopList;
-
-
-public:
 
 	//constructor
 	LoopsFileIO();
-	
-    //copy constructor
+
+		//copy constructor
 	LoopsFileIO( const LoopsFileIO & src );
-    
-	
+
+
 	// assignment operator
 	LoopsFileIO & operator =( LoopsFileIO const & src );
-    
-    // destructor
-    ~LoopsFileIO();
-    
+
+		// destructor
+		~LoopsFileIO();
+
 	friend std::ostream & operator<<( std::ostream & os, const LoopsFileIO & loops_file_io );
-    
+
 
 	SerializedLoopList read_loop_file( std::string filename );
-	
-	SerializedLoopList use_custom_legacy_file_format( 
+
+	SerializedLoopList use_custom_legacy_file_format(
 		std::istream & is,
 		std::string filename,
 		bool strict_looprelax_checks,
@@ -68,13 +64,13 @@ public:
 
 private:
 
-	void read_stream_to_END( 
+	void read_stream_to_END(
 		std::istream & is,
 		std::string filename /*for error msg */,
 		bool strict_looprelax_checks = true,
 		std::string token = "LOOP" );
 
-private:	
+private:
 	SerializedLoopList loops_;
 
 }; // LoopsFileIO

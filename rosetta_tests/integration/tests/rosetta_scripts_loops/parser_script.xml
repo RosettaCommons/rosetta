@@ -1,0 +1,43 @@
+<ROSETTASCRIPTS>
+	<TASKOPERATIONS>
+		<ReadResfileFromDB name=loop_residues db=rosetta_inputs.db3 db_mode=sqlite3 table=resfiles/>		
+	</TASKOPERATIONS>
+	<LOOP_DEFINITIONS>
+		<Loops name=loops_A>
+			<loop start=54 stop=65 cut=60 extended=1/>
+			<loop start=74 stop=79 cut=75/>
+		</Loops>
+		<LoopsFile name=loops_B filename="../../tests/loop_modeling/inputs/4fxn.loop_file"/>
+		<LoopsDatabase name=loops_C database_name=rosetta_inputs.db3/>
+	</LOOP_DEFINITIONS>
+	<MOVERS>
+		<LoopRelaxMover name=loop_relax_A remodel=perturb_kic refine=refine_kic compute_rmsd=0 loops=loops_A/>
+		<ReportToDB name=features_A db="features.db3" sample_source="A" task_operations=loop_residues>
+			<feature name=ResidueFeatures/>
+			<feature name=ProteinBackboneTorsionAngleFeatures/>
+		</ReportToDB>
+
+		<LoopRelaxMover name=loop_relax_B remodel=perturb_kic refine=refine_kic compute_rmsd=0 loops=loops_B/>
+		<ReportToDB name=features_B db="features.db3" sample_source="B" task_operations=loop_residues>
+			<feature name=ResidueFeatures/>
+			<feature name=ProteinBackboneTorsionAngleFeatures/>
+		</ReportToDB>
+
+		<LoopRelaxMover name=loop_relax_C remodel=perturb_kic refine=refine_kic compute_rmsd=0 loops=loops_C/>
+		<ReportToDB name=features_C db="features.db3" sample_source="C" task_operations=loop_residues>
+			<feature name=ResidueFeatures/>
+			<feature name=ProteinBackboneTorsionAngleFeatures/>
+		</ReportToDB>
+
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover=loop_relax_A/>
+		<Add mover=features_A/>
+		<Add mover=loop_relax_B/>
+		<Add mover=features_B/>
+		<Add mover=loop_relax_C/>
+		<Add mover=features_C/>
+	</PROTOCOLS>
+</ROSETTASCRIPTS>
+
+

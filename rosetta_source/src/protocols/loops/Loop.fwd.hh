@@ -21,6 +21,9 @@
 // Project header
 #include <core/types.hh>
 
+// Utility Header
+#include <utility/vector1.hh>
+
 namespace protocols {
 namespace loops {
 
@@ -35,6 +38,11 @@ struct SerializedLoop {
 	core::Real skip_rate;
 	bool extended;
 };
+
+typedef utility::vector1< SerializedLoop > SerializedLoopList;
+typedef utility::pointer::owning_ptr< SerializedLoopList > SerializedLoopListOP;
+typedef utility::pointer::owning_ptr< SerializedLoopList const >
+	SerializedLoopListCOP;
 
 } //namespace loops
 } //namespace protocols

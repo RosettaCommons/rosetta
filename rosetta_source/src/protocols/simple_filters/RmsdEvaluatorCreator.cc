@@ -128,7 +128,7 @@ void RmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval 
 					if (!is.good()) {
 						utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + value + "'" );
 					}
-					loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(is, value, false, "RIGID");
+					loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(is, value, false, "RIGID");
 					core = loops::Loops( loops );
 			} else {
 					utility_exit_with_message( "key not recognized: "+key+" possible keys: { heavy }" );
@@ -192,7 +192,7 @@ void RmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval 
 				if (!is.good()) {
 					utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + selection_file + "'" );
 				}
-				loops::LoopsFileIO::SerializedLoopList list_of_loops;
+				loops::SerializedLoopList list_of_loops;
 				if ( loop_rms ) {
 					list_of_loops = loop_file_reader.use_custom_legacy_file_format(is, selection_file, false, "LOOP");
 					loops = loops::Loops( list_of_loops );

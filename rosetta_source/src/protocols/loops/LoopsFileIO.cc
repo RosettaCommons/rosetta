@@ -54,7 +54,7 @@ std::ostream & operator<< ( std::ostream & os, const LoopsFileIO & /*loops*/ ) {
 }
 
 
-void LoopsFileIO::read_stream_to_END( 
+void LoopsFileIO::read_stream_to_END(
 	std::istream & is,
 	std::string filename /*for error msg */,
 	bool strict_looprelax_checks,
@@ -63,13 +63,13 @@ void LoopsFileIO::read_stream_to_END(
 	std::string line;
 	int linecount=0;
 	int errcount=50; //if we reach 0 we bail!
-	
+
 	loops_.clear();
-	
+
 	while( getline( is, line) ) {
 		linecount++;
 		utility::vector1< std::string > tokens ( utility::split( line ) );
-		
+
 		SerializedLoop current_loop;
 		if( tokens.size() > 0 ) {
 			if ( tokens[1].substr(0,3) == "END" ) break;
@@ -105,7 +105,7 @@ void LoopsFileIO::read_stream_to_END(
 						else                      extend_loop = true;
 					}
 				}
-				
+
 				current_loop.extended = extend_loop;
 				if ( current_loop.start > current_loop.stop || ( current_loop.start==current_loop.stop && strict_looprelax_checks ) ) {
 					utility_exit_with_message( "[ERROR] Error parsing " + filename + " ( line " + ObjexxFCL::string_of( linecount ) + " ): " + " Invalid loop definition (start residue " + ( strict_looprelax_checks ? ">=" : ">" )  + " end residue) - ERROR"  );
@@ -156,23 +156,23 @@ void LoopsFileIO::read_stream_to_END(
  		}
 	} //while
 }
-	
-LoopsFileIO::SerializedLoopList LoopsFileIO::read_loop_file( std::string filename )
+
+SerializedLoopList LoopsFileIO::read_loop_file( std::string filename )
 {
 	std::ifstream infile( filename.c_str() );
 
 	if (!infile.good()) {
 		utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + filename + "'" );
 	}
-	
+
 	// TODO: The read_stream_to_END stuff should be moved to its own class that will handle the various types of input
 	// files
 	read_stream_to_END( infile, filename );
-	
+
 	return loops_;
 }
 
-LoopsFileIO::SerializedLoopList LoopsFileIO::use_custom_legacy_file_format( 
+SerializedLoopList LoopsFileIO::use_custom_legacy_file_format(
 	std::istream & is,
 	std::string filename,
 	bool strict_looprelax_checks,
@@ -184,8 +184,8 @@ LoopsFileIO::SerializedLoopList LoopsFileIO::use_custom_legacy_file_format(
 
 LoopsFileIO & LoopsFileIO::operator =( LoopsFileIO const & src )
 {
-    loops_ = src.loops_;
-    return *this;
+		loops_ = src.loops_;
+		return *this;
 }
 
 

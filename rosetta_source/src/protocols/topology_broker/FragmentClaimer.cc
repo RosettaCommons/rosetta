@@ -228,7 +228,7 @@ void FragmentClaimer::initialize_dofs( core::pose::Pose& pose, DofClaims const& 
 bool FragmentClaimer::read_tag( std::string tag, std::istream& is ) {
 	loops::LoopsFileIO loop_file_reader;
 	if ( tag == "REGION" ) {
-		loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, type(), false /*no strict checking */, "RIGID" );
+		loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, type(), false /*no strict checking */, "RIGID" );
 		region_ = loops::Loops( loops );
 	} else if ( tag == "region_file" || tag == "REGION_FILE" ) {
 		std::string file;
@@ -238,7 +238,7 @@ bool FragmentClaimer::read_tag( std::string tag, std::istream& is ) {
 		if (!infile.good()) {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
 		}
-		loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( infile, file, false /*no strict checking */, "RIGID" );
+		loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( infile, file, false /*no strict checking */, "RIGID" );
 		region_ = loops::Loops( loops ); // <==
 	} else if ( tag == "SEQUENCE_REGION" ) {
 		std::string label;

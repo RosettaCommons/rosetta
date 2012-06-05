@@ -45,6 +45,9 @@
 #include <protocols/init/init.EvaluatorCreators.ihh>
 #include <protocols/init/init.EvaluatorRegistrators.ihh>
 
+#include <protocols/init/init.LoopsDefinerCreators.ihh>
+#include <protocols/init/init.LoopsDefinerRegistrators.ihh>
+
 #include <protocols/init/init.TaskOperationCreators.ihh>
 #include <protocols/init/init.TaskOperationRegistrators.ihh>
 

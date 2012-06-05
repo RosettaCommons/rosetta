@@ -1782,7 +1782,7 @@ void IterativeBase::restore_status( std::istream& is ) {
 	if ( is.good() && tag == "SCORED_CORE:" ) {
 		//OBSOLETE TAG: read anyway for backward compatibility
 		loops::LoopsFileIO loop_file_reader;
-		loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, name()+"STATUS file", false /*no strict checking */, "RIGID" );
+		loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, name()+"STATUS file", false /*no strict checking */, "RIGID" );
 		tr.Warning << "WARNING: found obsolete tag SCORE_CORE in status file" << std::endl;
 	}
 	is >> tag;

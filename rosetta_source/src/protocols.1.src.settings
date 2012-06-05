@@ -92,6 +92,7 @@ sources = {
 		"DataLoaderFactory",
 		"FragmentReader",
 		"FragSetLoader",
+		"LoopsDefinerLoader",
 		"MonteCarloLoader",
 		"ScoreFunctionLoader",
 		"TaskOperationLoader",

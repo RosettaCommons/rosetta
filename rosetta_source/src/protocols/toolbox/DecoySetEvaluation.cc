@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   
-/// @brief  
+/// @file
+/// @brief
 /// @author smart money says oliver
 
 
@@ -106,28 +106,28 @@ DecoySetEvaluation::DecoySetEvaluation() : COM( 3 ),n_decoys_( 0 ), n_atoms_( 0 
 {}
 
 void DecoySetEvaluation::reserve( core::Size n_resize ) {
-  if ( n_resize == n_decoys_max_ ) return;
-  n_decoys_max_ = n_resize;
-  if ( n_atoms_ ) coords_.redimension( 3, n_atoms_, n_decoys_max_ );
+	if ( n_resize == n_decoys_max_ ) return;
+	n_decoys_max_ = n_resize;
+	if ( n_atoms_ ) coords_.redimension( 3, n_atoms_, n_decoys_max_ );
 }
 
 void DecoySetEvaluation::prepare_push_back( core::Size nres ) {
 	if ( n_decoys_ == 0 ) {
-    n_atoms_ = nres;
-    coords_.dimension( 3, n_atoms_, n_decoys_max_ );
-    weights_.dimension( n_atoms_, 1.0 );
-    ref_structure_.dimension( 3, n_atoms_ );
-  } else {
-    if ( n_atoms_ != nres ) {
-      utility_exit_with_message( "can't insert poses with varying sizes into DecoySetEvaluation" );
-    }
-  }
+		n_atoms_ = nres;
+		coords_.dimension( 3, n_atoms_, n_decoys_max_ );
+		weights_.dimension( n_atoms_, 1.0 );
+		ref_structure_.dimension( 3, n_atoms_ );
+	} else {
+		if ( n_atoms_ != nres ) {
+			utility_exit_with_message( "can't insert poses with varying sizes into DecoySetEvaluation" );
+		}
+	}
 
-  if ( n_decoys_ >= n_decoys_max_ ) {
-    // we could also just resize... but I want the user to know.. because he should keep track which decoy is which...
-    throw utility::excn::EXCN_RangeError( "you can't add any more decoys to DecoySetEvaluation ");
-  }
-  ++n_decoys_;
+	if ( n_decoys_ >= n_decoys_max_ ) {
+		// we could also just resize... but I want the user to know.. because he should keep track which decoy is which...
+		throw utility::excn::EXCN_RangeError( "you can't add any more decoys to DecoySetEvaluation ");
+	}
+	++n_decoys_;
 }
 
 void DecoySetEvaluation::push_back( core::pose::Pose& pose ) {
@@ -141,13 +141,13 @@ void DecoySetEvaluation::push_back( core::pose::Pose& pose ) {
 	prepare_push_back( nres );
 
 	// fill coords
-  for ( core::Size i = 1; i <= nres; i++ ) {
-    id::NamedAtomID idCA( "CA", i );
-    PointPosition const& xyz = pose.xyz( idCA );
+	for ( core::Size i = 1; i <= nres; i++ ) {
+		id::NamedAtomID idCA( "CA", i );
+		PointPosition const& xyz = pose.xyz( idCA );
 		for ( core::Size d = 1; d<=3; ++d ) {
-      coords_( d, i, n_decoys_ ) = xyz[ d-1 ];
-    }
-  }
+			coords_( d, i, n_decoys_ ) = xyz[ d-1 ];
+		}
+	}
 
 	if ( n_decoys_ == 1 ) {
 		ref_pose_ = pose;
@@ -157,26 +157,26 @@ void DecoySetEvaluation::push_back( core::pose::Pose& pose ) {
 
 
 void DecoySetEvaluation::push_back_CA_xyz( ObjexxFCL::FArray2_double const& xyz, core::Size nres ) {
-  prepare_push_back( nres ); //increments n_decoys_
+	prepare_push_back( nres ); //increments n_decoys_
 
 	// fill coords
-  for ( core::Size i = 1; i <= nres; i++ ) {
+	for ( core::Size i = 1; i <= nres; i++ ) {
 		for ( core::Size d = 1; d<=3; ++d ) {
-      coords_( d, i, n_decoys_ ) = xyz( d, i );
-    }
-  }
+			coords_( d, i, n_decoys_ ) = xyz( d, i );
+		}
+	}
 }
 
 /*
 void DecoySetEvaluation::push_back_CA_xyz( ObjexxFCL::FArray2D< core::Real > const& xyz, core::Size nres ) {
-  prepare_push_back( nres );
+	prepare_push_back( nres );
 
 	// fill coords
-  for ( core::Size i = 1; i <= n_atoms_; i++ ) {
+	for ( core::Size i = 1; i <= n_atoms_; i++ ) {
 		for ( core::Size d = 1; d<=3; ++d ) {
-      coords_( d, i, n_decoys_ ) = xyz( d, i );
-    }
-  }
+			coords_( d, i, n_decoys_ ) = xyz( d, i );
+		}
+	}
 }
 */
 
@@ -303,18 +303,18 @@ Real DecoySetEvaluation::rmsf( core::Size pos ) {
 }
 
 void DecoySetEvaluation::rmsf( utility::vector1< Real >& result ) {
-  result.clear();
-  result.reserve( n_atoms_ );
+	result.clear();
+	result.reserve( n_atoms_ );
 
-  for ( Size pos = 1; pos <= n_atoms_; ++pos ) {
+	for ( Size pos = 1; pos <= n_atoms_; ++pos ) {
 		result.push_back( rmsf( pos ) );
-  }
+	}
 }
 
 void DecoySetEvaluation::rmsf( FArray1_double& result ) {
-  for ( Size pos = 1; pos <= n_atoms_; ++pos ) {
+	for ( Size pos = 1; pos <= n_atoms_; ++pos ) {
 		result( pos ) = rmsf( pos );
-  }
+	}
 }
 
 //return icenter
@@ -462,12 +462,12 @@ using namespace basic::options::OptionKeys;
 	if ( option[ dist_cst::excl_rigid ].user() ) {
 		loops::LoopsFileIO loop_file_reader;
 		std::ifstream is( option[ dist_cst::excl_rigid ]().name().c_str() );
-		
+
 		if (!is.good()) {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ dist_cst::excl_rigid ]().name() + "'" );
 		}
-		
-		loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(is, option[ dist_cst::excl_rigid ](), false, "RIGID" );
+
+		loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(is, option[ dist_cst::excl_rigid ](), false, "RIGID" );
 		rigid = loops::Loops( loops );
 	}
 	//	utility::vector1< core::Real > dist_sorted;
@@ -593,7 +593,7 @@ using namespace basic::options::OptionKeys;
 		using namespace scoring::constraints;
 		LocalCoordinateConstraint cst(
 				id::AtomID( ref_pose.residue(pos).atom_index("CA"), pos),
-  				core::pose::named_stub_id_to_stub_id( id::NamedStubID( "N", "CA", "C", root ), ref_pose ),
+					core::pose::named_stub_id_to_stub_id( id::NamedStubID( "N", "CA", "C", root ), ref_pose ),
 				xyz_av,
 				new BoundFunc( lb, ub, 1.0, "CM_DECOYS" )
 		);
@@ -623,5 +623,3 @@ using namespace basic::options::OptionKeys;
 
 } //evaluation
 } //protocols
-
-

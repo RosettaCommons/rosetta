@@ -19,6 +19,7 @@
 #include <protocols/loops/loop_mover/refine/LoopMover_CCDCreator.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/loops/loops_definers/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/conformation/Residue.hh>
 #include <boost/foreach.hpp>
@@ -222,8 +223,7 @@ LoopMover_Refine_CCD::parse_my_tag( utility::tag::TagPtr const tag, protocols::m
 		protocols::rosetta_scripts::parse_movemap( tag, pose, move_map_, data, false/*don't reset movemap, keep falses, unless stated otherwise*/ );
 	}
 	if( tag->hasOption( "loops" ) ){
-		std::string const loops_str( tag->getOption< std::string >( "loops" ) );
-		loops( loops_from_string( loops_str, pose ) );
+		loops( loops_definers::load_loop_definitions(tag, data, pose) );
 	}
 	if( tag->hasOption( "scorefxn" ) ) this->set_scorefxn( new core::scoring::ScoreFunction( *data.get< core::scoring::ScoreFunction * >( "scorefxns", tag->getOption<std::string>( "scorefxn" ) ) ) );
 

@@ -52,6 +52,14 @@ public:
 	virtual std::string keyname() const;
 };
 
+class LoopsDefinerLoaderCreator : public DataLoaderCreator
+{
+public:
+	virtual DataLoaderOP create_loader() const;
+	virtual std::string keyname() const;
+};
+
+
 
 } //namespace parser
 } //namespace jd2

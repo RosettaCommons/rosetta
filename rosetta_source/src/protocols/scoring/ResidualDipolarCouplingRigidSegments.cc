@@ -227,7 +227,7 @@ extern ResidualDipolarCouplingRigidSegmentsOP retrieve_RDC_segments_from_pose(co
 		}
 
 		loops::LoopsFileIO loop_file_reader;
-		loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, filename, false /*no strict checking */, "RDC_SEGMENT" );
+		loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, filename, false /*no strict checking */, "RDC_SEGMENT" );
 		segment_definitions_ = loops::Loops( loops );
 	}
 

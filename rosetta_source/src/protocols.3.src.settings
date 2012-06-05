@@ -103,6 +103,16 @@ sources = {
 		"KinematicPerturber",
 		"KinematicWrapper",
 	],
+	"protocols/loops/loops_definers": [
+	    "LoopsDatabaseDefiner",
+	    "LoopsDatabaseDefinerCreator",
+	    "LoopsDefinerFactory",
+	    "LoopsExplicitDefiner",
+	    "LoopsExplicitDefinerCreator",
+	    "LoopsFileDefiner",
+	    "LoopsFileDefinerCreator",
+	    "util",
+	],
 	"protocols/loops/loop_mover": [
 	    "IndependentLoopMover",
 	    "LoopMover",

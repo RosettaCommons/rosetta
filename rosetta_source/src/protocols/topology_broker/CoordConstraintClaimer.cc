@@ -375,7 +375,7 @@ bool CoordConstraintClaimer::read_tag( std::string tag, std::istream& is ) {
 	} else if ( tag == "CST_FILE" ) {
 		is >> cst_filename_;
 	} else if ( tag == "REGION" ) {
-		loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, type(), false /*no strict checking */, "RIGID" );
+		loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, type(), false /*no strict checking */, "RIGID" );
 		rigid_ = loops::Loops( loops );
 	} else if ( tag == "region_file" ) {
 		std::string file;
@@ -385,7 +385,7 @@ bool CoordConstraintClaimer::read_tag( std::string tag, std::istream& is ) {
 		if (!infile.good()) {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
 		}
-		loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, file, false /*no strict checking */, "RIGID" );
+		loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, file, false /*no strict checking */, "RIGID" );
 		rigid_ = loops::Loops( loops ); // <==
 	} else if ( tag == "ROOT" ) {
 		is >> root_;
@@ -406,7 +406,7 @@ bool CoordConstraintClaimer::read_tag( std::string tag, std::istream& is ) {
 	} else if ( tag == "SUPERIMPOSE" ) {
 		bSuperimpose_ = true;
 	} else if ( tag == "SUPERIMPOSE_REGION" ) {
-        loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, type(), false /*no strict checking */, "RIGID" );
+        loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, type(), false /*no strict checking */, "RIGID" );
 		superimpose_regions_ = loops::Loops( loops );
 	} else if ( tag == "SUPERIMPOSE_REGION_FILE" ) {
 		std::string file;
@@ -416,7 +416,7 @@ bool CoordConstraintClaimer::read_tag( std::string tag, std::istream& is ) {
 		if (!infile.good()) {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
 		}
-		loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( infile, file, false /*no strict checking */, "RIGID" );
+		loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( infile, file, false /*no strict checking */, "RIGID" );
 		superimpose_regions_ = loops::Loops( loops ); // <==
 	} else if ( tag == "POTENTIAL" ) {
 		std::string func_type;

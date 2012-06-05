@@ -138,7 +138,7 @@ void ExtraScoreEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
 				}
 				
 				loops::LoopsFileIO loop_file_reader;
-				loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, select_string, false /*no strict checking */, "RIGID" );
+				loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, select_string, false /*no strict checking */, "RIGID" );
 				loops::Loops core( loops );
 				
 				utility::vector1< Size> selection;

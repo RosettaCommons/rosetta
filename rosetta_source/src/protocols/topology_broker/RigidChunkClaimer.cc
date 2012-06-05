@@ -83,9 +83,9 @@ protocols::loops::Loops generate_rigid_from_alignment( pose::Pose query_pose, co
 // can have more than two child on C(=0) for instance
 RigidChunkClaimer::RigidChunkClaimer()
 	: bExclusive_( true ),
-	  bAllowAdjacentJumps_( false ),
-	  bUseInputPose_( true ),
-	  bRigidInRelax_( false ) {}
+		bAllowAdjacentJumps_( false ),
+		bUseInputPose_( true ),
+		bRigidInRelax_( false ) {}
 
 RigidChunkClaimer::RigidChunkClaimer( pose::Pose const& input_pose, loops::Loops rigid ) :
 	input_pose_( input_pose ),
@@ -130,27 +130,27 @@ bool RigidChunkClaimer::read_tag( std::string tag, std::istream& is ) {
 			file );
 		runtime_assert( input_pose_.is_fullatom() );
 	} else if ( tag == "REGION" ) {
-		loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, type(), false /*no strict checking */, "RIGID" );
+		loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, type(), false /*no strict checking */, "RIGID" );
 		rigid_core_ = loops::Loops( loops );
 	} else if ( tag == "region_file" || tag == "REGION_FILE" ) {
 		std::string file;
 		is >> file;
 		std::ifstream infile( file.c_str() );
-		
+
 		if (!infile.good()) {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
 		}
-		loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( infile, file, false /*no strict checking */, "RIGID" );
+		loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( infile, file, false /*no strict checking */, "RIGID" );
 		rigid_core_ = loops::Loops( loops ); // <==
 	} else if ( tag == "loop_file" || tag == "LOOP_FILE" ) {
 		std::string file;
 		is >> file;
 		std::ifstream infile( file.c_str() );
-		
+
 		if (!infile.good()) {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
 		}
-		loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( infile, file, false /*no strict checking */, "RIGID" );
+		loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( infile, file, false /*no strict checking */, "RIGID" );
 		protocols::loops::Loops loop_defs = loops::Loops( loops ); // <==
 		loop_defs = loop_defs.invert( input_pose_.total_residue() );
 		tr << "Rigid core: " << input_pose_.total_residue() << std::endl << loop_defs << std::endl;
@@ -184,21 +184,21 @@ void RigidChunkClaimer::init_after_reading() {
 }
 
 void RigidChunkClaimer::select_parts() {
-  current_rigid_core_.clear();
-  int attempts = 0;
+	current_rigid_core_.clear();
+	int attempts = 0;
 	if ( rigid_core_.size() == 0 ) return;//nothing to select
-  while ( current_rigid_core_.size() == 0 && attempts < 50 ) {
+	while ( current_rigid_core_.size() == 0 && attempts < 50 ) {
 		++attempts;
-    for ( loops::Loops::const_iterator it = rigid_core_.begin(), eit = rigid_core_.end();
+		for ( loops::Loops::const_iterator it = rigid_core_.begin(), eit = rigid_core_.end();
 					it != eit; ++it ) {
-      if ( RG.uniform() >= it->skip_rate() )  {
+			if ( RG.uniform() >= it->skip_rate() )  {
 				current_rigid_core_.push_back( *it );
-      }
-    }
-  }
-  if ( current_rigid_core_.size() == 0 ) {
-    current_rigid_core_ = rigid_core_;
-  }
+			}
+		}
+	}
+	if ( current_rigid_core_.size() == 0 ) {
+		current_rigid_core_ = rigid_core_;
+	}
 	if ( random_grow_loops_by_ > 0 ) {
 		core::Size nres( current_rigid_core_[ current_rigid_core_.size() ].stop() + 200 ); //it doesn't matter for this where exactly nres is.
 		loops::Loops loops( current_rigid_core_.invert( nres ) );
@@ -421,15 +421,15 @@ void copy_internal_coords( pose::Pose& pose, pose::Pose const& ref_pose, loops::
 	///fpd fix connections
 	///fpd this requires that the input pose have one flanking residue on each side of each region
 	for ( loops::Loops::const_iterator region = core.begin(); region != core.end(); ++region ) {
-	  Size loop_start = region->start();
+		Size loop_start = region->start();
 		Size loop_stop  = region->stop();
 
 		bool lower_connect = ( loop_start > 1
-		                       && !pose.residue(loop_start).is_lower_terminus()
-		                       && !pose.fold_tree().is_cutpoint( loop_start-1 ) );
+													 && !pose.residue(loop_start).is_lower_terminus()
+													 && !pose.fold_tree().is_cutpoint( loop_start-1 ) );
 		bool upper_connect = ( loop_stop < pose.total_residue()
-		                       && !pose.residue(loop_stop).is_upper_terminus()
-		                       && !pose.fold_tree().is_cutpoint( loop_stop ) );
+													 && !pose.residue(loop_stop).is_upper_terminus()
+													 && !pose.fold_tree().is_cutpoint( loop_stop ) );
 
 		if ( lower_connect ) {
 			tr.Trace << "fixing lower connection for " << loop_start << std::endl;
@@ -543,15 +543,15 @@ void RigidChunkClaimer::switch_to_fullatom( core::pose::Pose& pose , utility::ve
 	tr.Debug << " that have not moved from start-structure" << std::endl;
 } //switch to fullatom
 
-	
+
 // ================================================================================
 // ======================== JumpCalculator ========================================
 // ================================================================================
 RigidChunkClaimer::JumpCalculator::JumpCalculator( loops::Loops const& rigid, bool bAllowAdjacentJumps )
 	: rigid_ ( rigid ),
-	  visited_( rigid.size(), 0 ),
-	  new_nr_( 1 ),
-	  bAllowAdjacentJumps_( bAllowAdjacentJumps ) {}
+		visited_( rigid.size(), 0 ),
+		new_nr_( 1 ),
+		bAllowAdjacentJumps_( bAllowAdjacentJumps ) {}
 
 bool is_not_neighbor_to_rigid( loops::Loops const& rigid, Size pos1, Size pos2 ) {
 	Size up1 = rigid.loop_index_of_residue( pos1-1 );
@@ -604,8 +604,8 @@ bool RigidChunkClaimer::JumpCalculator::good_jump( Size up, Size down ) {
 
 	// at this point rigid1 and rigid2 refer to rigid regions but not the same --- this might be useful if we need to connect rigid regions
 
-  runtime_assert( visited_.size() >= up_loop );
-  runtime_assert( visited_.size() >= down_loop );
+	runtime_assert( visited_.size() >= up_loop );
+	runtime_assert( visited_.size() >= down_loop );
 	// jump touches unvisited regions or visited but yet disconnected regions
 	if ( !visited_[ up_loop ] || !visited_[ down_loop ] || ( visited_[ up_loop ] != visited_[ down_loop ] ) ) {
 
@@ -667,7 +667,7 @@ RigidChunkClaimer::JumpCalculator::generate_rigidity_jumps( RigidChunkClaimer* T
 							 + static_cast< Size >( 0.5*( rigid_loops[ region ].stop()-rigid_loops[ region ].start() ) ) );
 			extra_jumps.push_back( new JumpClaim( THIS, anchor, target_pos, DofClaim::EXCLUSIVE ) );
 			visited_[ region ] = visited_[ root_reg ];
-			
+
 			if ( old_visited ) { //if we connected a cluster make sure to update all its nodes
 				for ( Size i=1; i<=visited_.size(); i++ ) {
 					if ( visited_[ i ] == old_visited ) visited_[ i ] = visited_[ root_reg ];

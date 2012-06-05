@@ -115,7 +115,7 @@ bool AsymFoldandDockClaimer::read_tag( std::string tag, std::istream& is ) {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
 		}
 		loops::LoopsFileIO loop_file_reader;
-		loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(infile, file, false, "LOOP" );
+		loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(infile, file, false, "LOOP" );
 		loops::Loops loop_defs = loops::Loops( loops ); // <==
 //		loop_defs = loop_defs.invert( input_pose_.total_residue() );
 		tr << "Flexible residues: " << input_pose_.total_residue() << std::endl << loop_defs << std::endl;

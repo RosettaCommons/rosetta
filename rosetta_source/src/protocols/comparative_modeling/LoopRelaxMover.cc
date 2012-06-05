@@ -64,6 +64,7 @@
 #include <protocols/simple_filters/RmsdEvaluator.hh>
 #include <protocols/evaluation/EvaluatorFactory.hh>
 #include <protocols/idealize/IdealizeMover.hh>
+#include <protocols/loops/loops_definers/util.hh>
 #include <protocols/loops/loop_mover/IndependentLoopMover.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 #include <protocols/loops/LoopMoverFactory.hh>
@@ -1186,26 +1187,7 @@ LoopRelaxMover::parse_my_tag( TagPtr const tag, DataMap &data, protocols::filter
 	//cen_scorefxn_->set_weight( core::scoring::chainbreak, 10.0 / 3.0 );
 	loops::loop_mover::loops_set_chainbreak_weight(  cen_scorefxn_, 1 );
 
-	utility::vector1< std::string > const loops_vec( utility::string_split( tag->getOption< std::string >( "loops" ), ',' ) );
-
-/// each loop should have the format loop_start:loop_end:cut
-/// if cut is not set then it's taken to be 0. Residue numbering can follow the
-/// pdb numbering
- 	protocols::loops::LoopsOP loops_from_tag = new loops::Loops();
-	foreach( std::string const residue_pair, loops_vec ){
-		utility::vector1< std::string > const residues( utility::string_split( residue_pair, ':' ) );
-		runtime_assert( residues.size() == 2 || residues.size() == 3 );
-		core::Size const loop_start( core::pose::parse_resnum( residues[ 1 ], pose ) );
-		core::Size const loop_stop( core::pose::parse_resnum( residues[ 2 ], pose ) );
-		core::Size loop_cut( 0 );
-		if( residues.size() == 3 )
-			loop_cut = core::pose::parse_resnum( residues[ 3 ], pose );
-		runtime_assert( loop_start <= loop_stop );
-		runtime_assert( loop_start >= 1 );
-		runtime_assert( loop_stop <= pose.total_residue() );
-		loops_from_tag->add_loop( loop_start, loop_stop, loop_cut );
-	}
-	loops( loops_from_tag );
+	loops( loops::loops_definers::load_loop_definitions(tag, data, pose) );
 }
 
 std::string

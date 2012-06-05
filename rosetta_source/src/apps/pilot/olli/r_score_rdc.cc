@@ -154,7 +154,7 @@ void RDCToolMover::apply( core::pose::Pose &pose ) {
 				utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ residue_subset ]().name() + "'" );
 			}
 			
-			loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(is, option[ residue_subset ](), false, "RIGID");
+			loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(is, option[ residue_subset ](), false, "RIGID");
 			loops::Loops rigid_core = loops::Loops( loops ); // <==
 			ResidualDipolarCoupling::RDC_lines filtered;
 			for ( ResidualDipolarCoupling::RDC_lines::const_iterator it = data.begin(); it != data.end(); ++it ) {

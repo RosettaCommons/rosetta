@@ -20,6 +20,7 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/util.hh>
+#include <protocols/loops/loops_definers/util.hh>
 
 // Project headers
 #include <core/kinematics/FoldTree.hh>
@@ -44,21 +45,21 @@ FoldTreeFromLoops::FoldTreeFromLoops() :
 
 FoldTreeFromLoops::~FoldTreeFromLoops() {}
 
-protocols::moves::MoverOP FoldTreeFromLoops::clone() const 
+protocols::moves::MoverOP FoldTreeFromLoops::clone() const
 {
-    return protocols::moves::MoverOP( new FoldTreeFromLoops( *this ) );
+		return protocols::moves::MoverOP( new FoldTreeFromLoops( *this ) );
 }
 
 protocols::moves::MoverOP FoldTreeFromLoops::fresh_instance() const
 {
-    return protocols::moves::MoverOP( new FoldTreeFromLoops );
+		return protocols::moves::MoverOP( new FoldTreeFromLoops );
 }
 
 void
 FoldTreeFromLoops::apply( core::pose::Pose & pose )
 {
 	if( loops()->empty() )
-		loops( loops_from_string( loop_str(), pose ) );
+		utility_exit_with_message( "No loops were specified");
 	core::kinematics::FoldTree f;
 	fold_tree_from_loops( pose, *loops(), f );
 	TR<<"old foldtree "<<pose.fold_tree()<<"\nNew foldtree ";
@@ -72,30 +73,34 @@ FoldTreeFromLoops::get_name() const {
 }
 
 void
-FoldTreeFromLoops::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
-{
-	loop_str( tag->getOption< std::string >( "loops" ) );
+FoldTreeFromLoops::parse_my_tag(
+	TagPtr const tag,
+	protocols::moves::DataMap & data,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const & pose
+) {
 
-	TR<<"FoldTreeFromLoops with loops "<<loop_str()<<std::endl;
+	loops_ = loops_definers::load_loop_definitions(tag, data, pose);
 }
 
 void FoldTreeFromLoops::loop_str( std::string const str )
 {
-    loop_str_ = str;
+		loop_str_ = str;
 }
-std::string FoldTreeFromLoops::loop_str() const 
+std::string FoldTreeFromLoops::loop_str() const
 {
-    return loop_str_;
+		return loop_str_;
 }
 
-void FoldTreeFromLoops::loops( LoopsOP const l ) 
-{ 
-    loops_ = l; 
+void FoldTreeFromLoops::loops( LoopsOP const l )
+{
+		loops_ = l;
 }
 
 LoopsOP FoldTreeFromLoops::loops() const
-{ 
-    return loops_; 
+{
+		return loops_;
 }
 
 std::string

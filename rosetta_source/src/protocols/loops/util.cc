@@ -396,7 +396,13 @@ loops_from_string( std::string const loop_str, core::pose::Pose const & pose ){
   LoopsOP loops_from_tag = new Loops();
  	foreach( std::string const residue_pair, loops_vec ){
     utility::vector1< std::string > const residues( utility::string_split( residue_pair, ':' ) );
-    runtime_assert( residues.size() == 2 || residues.size() == 3 );
+		if(residues.size() != 2 && residues.size() != 3){
+			utility_exit_with_message(
+				"To specify a loops string it must have the format "
+				"\"loop_start:loop_end:cut[,loop_start:loop_end:cut...]\". "
+				"If the cut is not set, then it is taken to be zero. "
+				"The residue numbering can use the pdb numbering.");
+		}
     core::Size const loop_start( core::pose::parse_resnum( residues[ 1 ], pose ) );
     core::Size const loop_stop( core::pose::parse_resnum( residues[ 2 ], pose ) );
     core::Size loop_cut( 0 );
