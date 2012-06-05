@@ -108,7 +108,7 @@ int main (int argc, char *argv[]) {
 		Pose test;
 		core::pose::symmetry::extract_asymmetric_unit(pose,test);
 		if( core::scoring::CA_rmsd(init,test) > 0.001 ) {
-			std::cerr << "FAIL " << files[ifile] << " " << option[basic::options::OptionKeys::symmetry::symmetry_definition]() << std::endl;
+			std::cout << "FAIL " << files[ifile] << " " << option[basic::options::OptionKeys::symmetry::symmetry_definition]() << std::endl;
 			continue;
 		}
 		bool fail = false;
