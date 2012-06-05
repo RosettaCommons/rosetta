@@ -63,6 +63,7 @@ namespace lh { extern IntegerOptionKey const max_loophash_per_structure; }
 namespace lh { extern RealOptionKey const rms_limit; }
 namespace lh { extern BooleanOptionKey const centroid_only; }
 namespace lh { extern BooleanOptionKey const write_centroid_structs; }
+namespace lh { extern BooleanOptionKey const write_all_fa_structs; }
 namespace lh { extern BooleanOptionKey const sandbox; }
 namespace lh { extern BooleanOptionKey const create_db; }
 namespace lh { extern FileOptionKey const sample_weight_file; }

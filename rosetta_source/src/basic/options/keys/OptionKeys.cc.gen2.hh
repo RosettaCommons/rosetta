@@ -14,6 +14,7 @@ namespace lh { IntegerOptionKey const max_loophash_per_structure( "lh:max_loopha
 namespace lh { RealOptionKey const rms_limit( "lh:rms_limit" );  }
 namespace lh { BooleanOptionKey const centroid_only( "lh:centroid_only" );  }
 namespace lh { BooleanOptionKey const write_centroid_structs( "lh:write_centroid_structs" );  }
+namespace lh { BooleanOptionKey const write_all_fa_structs( "lh:write_all_fa_structs" );  }
 namespace lh { BooleanOptionKey const sandbox( "lh:sandbox" );  }
 namespace lh { BooleanOptionKey const create_db( "lh:create_db" );  }
 namespace lh { FileOptionKey const sample_weight_file( "lh:sample_weight_file" );  }
@@ -613,4 +614,3 @@ namespace RBSegmentRelax { RealOptionKey const cst_wt( "RBSegmentRelax:cst_wt" )
 namespace RBSegmentRelax { RealOptionKey const cst_width( "RBSegmentRelax:cst_width" );  }
 namespace RBSegmentRelax { StringOptionKey const cst_pdb( "RBSegmentRelax:cst_pdb" );  }
 namespace RBSegmentRelax { IntegerOptionKey const nrbmoves( "RBSegmentRelax:nrbmoves" );  }
-namespace RBSegmentRelax { IntegerOptionKey const nrboutercycles( "RBSegmentRelax:nrboutercycles" );  }

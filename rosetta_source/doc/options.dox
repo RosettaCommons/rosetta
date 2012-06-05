@@ -5890,22 +5890,22 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-min_bbrms</b> \<Real\><dt>
 <dd>No description</dd><br>
-<dd>Default: 0.0</dd><br>
+<dd>Default: 20.0</dd><br>
 </dl>
 <dl>
 <dt><b>-max_bbrms</b> \<Real\><dt>
 <dd>No description</dd><br>
-<dd>Default: 100000.0</dd><br>
+<dd>Default: 1400.0</dd><br>
 </dl>
 <dl>
 <dt><b>-min_rms</b> \<Real\><dt>
 <dd>No description</dd><br>
-<dd>Default: 0.0</dd><br>
+<dd>Default: 0.5</dd><br>
 </dl>
 <dl>
 <dt><b>-max_rms</b> \<Real\><dt>
 <dd>No description</dd><br>
-<dd>Default: 100.0</dd><br>
+<dd>Default: 4.0</dd><br>
 </dl>
 <dl>
 <dt><b>-filter_by_phipsi</b> \<Boolean\><dt>
@@ -6044,6 +6044,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-write_centroid_structs</b> \<Boolean\><dt>
 <dd>Output raw loophashed decoys as well as relaxed ones</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-write_all_fa_structs</b> \<Boolean\><dt>
+<dd>Write out all structures returned from batch relax</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>

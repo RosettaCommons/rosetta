@@ -1221,10 +1221,10 @@ option.add( basic::options::OptionKeys::lh::bss, "Use BinaryProteinSilentStruct 
 option.add( basic::options::OptionKeys::lh::refstruct, "File with a target reference structure" ).def("");
 option.add( basic::options::OptionKeys::lh::homo_file, "File containing homologs to exclude" ).def("");
 option.add( basic::options::OptionKeys::lh::createdb_rms_cutoff, "RMS cutoff used for throwing out similar fragments." ).def(0).def(0).def(0);
-option.add( basic::options::OptionKeys::lh::min_bbrms, "No description" ).def(0.0);
-option.add( basic::options::OptionKeys::lh::max_bbrms, "No description" ).def(100000.0);
-option.add( basic::options::OptionKeys::lh::min_rms, "No description" ).def(0.0);
-option.add( basic::options::OptionKeys::lh::max_rms, "No description" ).def(100.0);
+option.add( basic::options::OptionKeys::lh::min_bbrms, "No description" ).def(20.0);
+option.add( basic::options::OptionKeys::lh::max_bbrms, "No description" ).def(1400.0);
+option.add( basic::options::OptionKeys::lh::min_rms, "No description" ).def(0.5);
+option.add( basic::options::OptionKeys::lh::max_rms, "No description" ).def(4.0);
 option.add( basic::options::OptionKeys::lh::filter_by_phipsi, "No description" ).def(true);
 option.add( basic::options::OptionKeys::lh::max_radius, "No description" ).def(4);
 option.add( basic::options::OptionKeys::lh::max_struct, "No description" ).def(10);
@@ -1255,6 +1255,7 @@ option.add( basic::options::OptionKeys::lh::max_loophash_per_structure, "No desc
 option.add( basic::options::OptionKeys::lh::rms_limit, "How to deal with returned relaxed structures" ).def(2.0);
 option.add( basic::options::OptionKeys::lh::centroid_only, "false" ).def(false);
 option.add( basic::options::OptionKeys::lh::write_centroid_structs, "Output raw loophashed decoys as well as relaxed ones" ).def(false);
+option.add( basic::options::OptionKeys::lh::write_all_fa_structs, "Write out all structures returned from batch relax" ).def(false);
 option.add( basic::options::OptionKeys::lh::sandbox, "Sand box mode" ).def(false);
 option.add( basic::options::OptionKeys::lh::create_db, "Make database with this loopsize" ).def(false);
 option.add( basic::options::OptionKeys::lh::sample_weight_file, "Holds the initial per residue sample weights" );
@@ -1854,10 +1855,10 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on const
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
-option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of rigid-body moves" ).def("score5");
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);
+option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of rigid-body moves" ).def("score5");
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
