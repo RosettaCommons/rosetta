@@ -35,9 +35,14 @@ This protocol has been tested on a benchmark set of 51 proteins and found to inc
 The required files are in:
 rosetta/rosetta_source/src/apps/public/relax_w_allatom_cst
 
-@subsection short_protocol Short Protocol
+@subsection preparation Prepare pdb for relax (Do this first)
+These protocols are designed for a single-chain pdb. For multiple chains we recommend that you split the pdb into one for each chain and run the protocol separately on each. Note that we often "clean" structures to replace non-canonical amino acids with their closest counterparts using this script: clean_pdb_keep_ligand.py
 
-The longer (but not necessarily better) protocol described below has been incorporated into the relax appliction itself:
+<tt>python clean_pdb_keep_ligand.py your_structure_original.pdb -ignorechain</tt>
+
+@subsection short_protocol Short Protocol (recommended)
+
+Relax with all-heavy-atom constraints is built into the relax application itself. If this is a new structure you may want to first clean it up using the above script. Relax proceeds as follows:
 
 <tt>relax.linuxgccrelease @flags -database rosetta/rosetta_database [-extra_res_fa your_ligand.params] -relax:constrain_relax_to_start_coords -relax:coord_constrain_sidechains -relax:ramp_constraints false -s your_structure.pdb </tt>
 
@@ -53,11 +58,9 @@ The flags file can contain whatever packing and scorefunction flags you wish to 
 
 The strength and type of constraints uses can be varied with the <tt>-relax:coord_cst_stdev</tt> and <tt>-relax:coord_cst_width</tt> options. By default relax uses a harmonic constraint with the strength adjusted by coord_cst_stdev (smaller=tighter). If coord_cst_width is specified, a flat-bottomed, linear-walled constraint is used, with the size of the flat-bottomed well controlled by coord_cst_width (smaller=tighter), and the slope of the walls by coord_cst_stdev (smaller=tighter).
 
-@subsection long_protocol Longer Protocol
+@subsection long_protocol Longer Protocol (not recommended)
 
-(0) This protocol is designed for a single-chain pdb. For multiple chains we recommend that you split the pdb into one for each chain and run the protocol separately on each. Note that we often "clean" structures to replace non-canonical amino acids with their closest counterparts using this script: clean_pdb_keep_ligand.py
-
-<tt>python clean_pdb_keep_ligand.py your_structure_original.pdb -ignorechain</tt>
+In general the short protocol is preferred for most applications, since this version is more complicated and the two give nearly identical results. In this protocol an separate script first generates sidechain atom constraints from an input pdb, then the relax protocol is run with this pre-generated constrain file. The shorter protocol does this all in one step, and this version is largely deprecated. Certain users might prefer this protocol because it allows you to see a list of all constraints, and perhaps to modify constraints using other scripts/data, prior to relax. 
 
 (1) Generate sidechain coordinate constraints on your pdb using sidechain_cst_3.py:
 
