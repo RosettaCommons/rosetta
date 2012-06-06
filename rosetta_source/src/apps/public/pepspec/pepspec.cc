@@ -209,14 +209,19 @@ public:
 		Real score,
 		Real temp_init
 	);
-	Pose last_pose;
-	Real last_score;
-	Real temp;
+	Pose last_pose_;
+	Real last_score_;
+	Pose low_pose_;
+	Real low_score_;
+	Real temp_;
 	bool accept_;
 	bool accept();
 	void roll(
 		Pose & pose,
-		Real score
+		Real & score
+	);
+	void recover_low(
+		Pose & pose
 	);
 };
 
@@ -226,33 +231,49 @@ myMC::myMC(
 	Real temp_init
 )
 {
-	last_pose = pose;
-	last_score = score;
-	temp = temp_init;
+	last_pose_ = pose;
+	last_score_ = score;
+	low_pose_ = pose;
+	low_score_ = score;
+	temp_ = temp_init;
 	accept_ = true;
 }
 
 void
 myMC::roll(
 	Pose & pose,
-	Real score
+	Real & score
 )
 {
 	accept_ = false;
-	if( score <= last_score ) accept_ = true;
+	if( score <= last_score_ ){
+		accept_ = true;
+		if( score <= low_score_ ){
+			low_pose_ = pose;
+			low_score_ = score;
+		}
+	}
 	else{
-		Real dE = score - last_score;
-		Real p = std::exp( -1 * dE / temp );
+		Real dE = score - last_score_;
+		Real p = std::exp( -1 * dE / temp_ );
 		if( RG.uniform() < p ) accept_ = true;
 	}
 	if( accept_ ){
-		last_pose = pose;
-		last_score = score;
+		last_pose_ = pose;
+		last_score_ = score;
 	}
 	else{
-		pose = last_pose;
-		score = last_score;
+		pose = last_pose_;
+		score = last_score_;
 	}
+}
+
+void
+myMC::recover_low(
+	Pose & pose
+)
+{
+	pose = low_pose_;
 }
 
 bool
@@ -1070,7 +1091,8 @@ gen_pep_bb_sequential(
 
 		std::string this_input_seq( input_seq );
 		for( Size ii = 1; ii <= this_prepend; ++ii ){
-			pose.prepend_polymer_residue_before_seqpos( *res, pep_begin, false );
+//			pose.prepend_polymer_residue_before_seqpos( *res, pep_begin, false );
+			pose.prepend_polymer_residue_before_seqpos( *res, pep_begin, true );
 			pep_end = pep_end + 1;
 			pep_anchor = pep_anchor + 1;
 			pose.set_omega( pep_begin, 180.0 );
@@ -1078,7 +1100,8 @@ gen_pep_bb_sequential(
 			pose.conformation().update_polymeric_connection( pep_begin + 1 );
 		}
 		for( Size ii = 1; ii <= this_append; ++ii ){
-			pose.append_polymer_residue_after_seqpos( *res, pep_end, false );
+//			pose.append_polymer_residue_after_seqpos( *res, pep_end, false );
+			pose.append_polymer_residue_after_seqpos( *res, pep_end, true );
 			pep_end = pep_end + 1;
 			pose.set_omega( pep_end - 1, 180.0 );
 			pose.conformation().update_polymeric_connection( pep_end );
@@ -1136,8 +1159,12 @@ gen_pep_bb_sequential(
 		}
 
 		//phi/psi insertion loop
-		if( !option[ pepspec::use_input_bb ] ){
-			Size this_build_loop( static_cast< int >( n_build_loop * std::max( this_prepend, this_append ) / std::max( n_prepend, n_append ) ) );
+		if( !option[ pepspec::use_input_bb ] && n_build_loop > 0 ){
+//			Size this_build_loop( static_cast< int >( n_build_loop * std::max( this_prepend, this_append ) / std::max( n_prepend, n_append ) ) );
+			//do at least 10 frags/phipsi
+			Size this_build_loop( std::min(
+					Size( 10 ),
+					Size( n_build_loop * std::max( this_prepend, this_append ) / std::max( n_prepend, n_append ) ) ) );
 
 			//get frags
 			Size const nfrags( this_build_loop );
@@ -1408,8 +1435,9 @@ get_binding_score(
 	ScoreFunctionOP full_scorefxn
 )
 {
-	Pose pep_pose( pose.split_by_chain( pep_chain ) );
+	( *full_scorefxn )( pose );
 	Real total_score( pose.energies().total_energies().dot( full_scorefxn->weights() ) );
+	Pose pep_pose( pose.split_by_chain( pep_chain ) );
 	packmin_unbound_pep( pep_pose, full_scorefxn );
 	( *full_scorefxn )( pep_pose );
 	Real pep_score = pep_pose.energies().total_energies().dot( full_scorefxn->weights() );
@@ -1450,11 +1478,14 @@ print_pep_analysis(
 	}
 	//score pep unbound state//
 	if( option[ pepspec::binding_score ] ){
+/*
 		Pose pep_pose( pose.split_by_chain( pep_chain ) );
 		packmin_unbound_pep( pep_pose, full_scorefxn );
 		( *full_scorefxn )( pep_pose );
 		Real pep_score = pep_pose.energies().total_energies().dot( full_scorefxn->weights() );
 		Real bind_score = total_score - pep_score;
+*/
+		Real bind_score( get_binding_score( pose, pep_chain, full_scorefxn ) );			
 		out_file<<"binding_score:\t"<<bind_score<<"\t";
 		out_file<<"binding-prot_score:\t"<<bind_score - prot_score<<"\t";
 //		TR << pdb_name + ".pep\t" << output_seq << "\t" << pep_pose.energies().total_energies().weighted_string_of( full_scorefxn->weights() ) + "\ttotal_score:\t" << pep_score << "\n";
@@ -1896,7 +1927,7 @@ RunPepSpec()
 				( *full_scorefxn )( pose );
 				design_seq->apply( pose );
 				if( option[ pepspec::binding_score ] ){
-					bind_score = get_binding_score( pose, pep_chain, soft_scorefxn );
+					bind_score = get_binding_score( pose, pep_chain, full_scorefxn );
 					mc_bind.roll( pose, bind_score );
 				}
 				else mc_relax->boltzmann( pose );
@@ -1924,12 +1955,12 @@ RunPepSpec()
 				( *soft_scorefxn )( pose );
 				design_seq->apply( pose );
 				if( option[ pepspec::binding_score ] ){
-					bind_score = get_binding_score( pose, pep_chain, soft_scorefxn );
+					bind_score = get_binding_score( pose, pep_chain, full_scorefxn );
 					mc_bind.roll( pose, bind_score );
 				}
 				else mc_relax->boltzmann( pose );
 				pdb_name = pdb_dir + "/" + out_nametag + "_" + string_of( peptide_loop ) + "_soft.pdb";
-				print_pep_analysis( pdb_name, out_file, pose, prot_score, soft_scorefxn, save_all_pdbs );
+				print_pep_analysis( pdb_name, out_file, pose, prot_score, full_scorefxn, save_all_pdbs );
 			}
 			//now try MCM desin against binding score
 			if( option[ pepspec::diversify_pep_seqs ] ){
@@ -1946,7 +1977,8 @@ RunPepSpec()
 				}
 			}
 			//recover best
-			mc_relax->recover_low( pose );
+			if( option[ pepspec::binding_score ] ) mc_bind.recover_low( pose );
+			else mc_relax->recover_low( pose );
 			pdb_name = pdb_dir + "/" + out_nametag + "_" + string_of( peptide_loop ) + ".pdb";
 			print_pep_analysis( pdb_name, out_file, pose, prot_score, full_scorefxn, save_low_pdbs );
 
