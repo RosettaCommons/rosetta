@@ -84,6 +84,8 @@ public:
 	bool set_fold_tree_from_loops() const{ return set_fold_tree_from_loops_; }
 	core::kinematics::MoveMapOP move_map() const;
 	void move_map( core::kinematics::MoveMapOP mm );
+	void set_flank_residue_min(bool value) {flank_residue_min_ = value;} // by JQX
+
 protected:
 	void read_options();
 
@@ -112,6 +114,7 @@ private:
 	bool packing_isolated_to_active_loops_;
 	bool set_fold_tree_from_loops_;
 	core::kinematics::MoveMapOP move_map_;
+	bool flank_residue_min_; //JQX
 
 }; // LoopMover_Refine_CCD
 

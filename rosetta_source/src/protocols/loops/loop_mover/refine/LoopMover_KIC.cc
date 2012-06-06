@@ -137,6 +137,7 @@ LoopMover_Refine_KIC::set_default_settings(){
 
 	fix_natsc_ = option[OptionKeys::loops::fix_natsc];
 	redesign_loop_ = false;
+	flank_residue_min_ = false; // by JQX
 	neighbor_dist_ = option[ OptionKeys::loops::neighbor_dist ]();
 	max_seglen_ = option[ OptionKeys::loops::kic_max_seglen ];
 	recover_low_ = ( ! option[ OptionKeys::loops::kic_recover_last ] );
@@ -353,6 +354,7 @@ void LoopMover_Refine_KIC::apply(
 	pose.update_residue_neighbors(); // to update 10A nbr graph
 	kinematics::MoveMap mm_all_loops; // DJM tmp
 	loops_set_move_map( pose, *loops(), fix_natsc_, mm_all_loops, neighbor_dist_);
+	if(flank_residue_min_){add_loop_flank_residues_bb_to_movemap(*loops(), mm_all_loops); } // added by JQX
 	minimizer->run( pose, mm_all_loops, *min_scorefxn, options ); // DJM tmp
 	mc.boltzmann( pose, move_type );
 	mc.show_scores();
@@ -545,6 +547,7 @@ void LoopMover_Refine_KIC::apply(
 					// the repack/design and subsequent minimization within this main_repack_trial block apply
 					// to all loops (and their neighbors, if requested)
 					loops_set_move_map( pose, *loops(), fix_natsc_, mm_all_loops, neighbor_dist_);
+					if(flank_residue_min_){add_loop_flank_residues_bb_to_movemap(*loops(), mm_all_loops); } // added by JQX
 					select_loop_residues( pose, *loops(), !fix_natsc_, allow_sc_move_all_loops, neighbor_dist_);
 
 					core::pose::symmetry::make_residue_mask_symmetric( pose, allow_sc_move_all_loops );  //fpd symmetrize res mask -- does nothing if pose is not symm
@@ -566,6 +569,7 @@ void LoopMover_Refine_KIC::apply(
 							//fpd  minimizing with the reduced movemap seems to cause occasional problems
 							//     in the symmetric case ... am looking into this
 							loops_set_move_map( pose, *loops(), fix_natsc_, mm_all_loops, neighbor_dist_ );
+							if(flank_residue_min_){add_loop_flank_residues_bb_to_movemap(*loops(), mm_all_loops); } // added by JQX
 							minimizer->run( pose, mm_all_loops, *min_scorefxn, options );
 						} else {
 							minimizer->run( pose, mm_all_loops, *min_scorefxn, options );

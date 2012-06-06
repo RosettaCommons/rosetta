@@ -107,7 +107,7 @@ void RefineCDRH3HighRes::set_default()
     H3_filter_      = true;
     flank_relax_    = true;
     high_cst_       = 100.0;
-    num_filter_tries_ = 5;
+    num_filter_tries_ = 20;
     
     if(!user_defined_){
         highres_scorefxn_ = scoring::ScoreFunctionFactory::create_score_function("standard", "score12" );
@@ -185,6 +185,7 @@ void RefineCDRH3HighRes::apply(core::pose::Pose &pose){
         if(refine_mode_ == "refine_ccd"){ 
             loops::loop_mover::refine::LoopMover_Refine_CCD refine_ccd( pass_loops, highres_scorefxn_ );
             if(get_native_pose()) {     refine_ccd.set_native_pose( get_native_pose() );    }
+            if(flank_relax_)      {     refine_ccd.set_flank_residue_min(flank_relax_);     }
             while (itry<=num_filter_tries_){
                 TR<<"   Trying Refinement  ................. "<<itry<<std::endl;
                 pose = pose_before_refine;
@@ -214,11 +215,11 @@ void RefineCDRH3HighRes::apply(core::pose::Pose &pose){
             //loops.remove_terminal_loops( pose );
             loops::loop_mover::refine::LoopMover_Refine_KIC refine_kic( pass_loops, highres_scorefxn_ );
             if(get_native_pose()) {     refine_kic.set_native_pose( get_native_pose() );    }
+            if(flank_relax_)      {     refine_kic.set_flank_residue_min(flank_relax_);     }
             while (itry<=num_filter_tries_ ){
                 TR<<"   Trying Refinement  ................. "<<itry<<std::endl;
                 pose = pose_before_refine;
                 refine_kic.apply( pose );
-                
                 Num<<itry; Num>>str_num; Num.str(""); Num.clear();
                 pose.dump_pdb("after_refine_"+str_num+".pdb");
                 

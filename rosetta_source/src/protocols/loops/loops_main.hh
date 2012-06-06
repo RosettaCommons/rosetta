@@ -102,6 +102,14 @@ set_move_map_for_centroid_loop(
 	core::kinematics::MoveMap & mm
 );
 
+///@brief add flank stem residues to the loop movemap
+void //made by JQX
+add_loop_flank_residues_bb_to_movemap(
+    Loops const & loops,
+    core::kinematics::MoveMap & mm,
+    core::Size flank_size=2
+);
+
 ///@brief close loops by the CCD mechanism
 void
 ccd_close_loops(

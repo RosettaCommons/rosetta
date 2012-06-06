@@ -128,7 +128,7 @@ void AntibodyModelerProtocol::set_default()
     cen_cst_ = 10.0;
     high_cst_ = 100.0; // if changed here, please change at the end of AntibodyModeler as well
     flank_residue_size_ = 2;
-    h3_filter_tolerance_ = 5;
+    h3_filter_tolerance_ = 20;
     use_pymol_diy_ = false;
     
     sc_min_ = false;

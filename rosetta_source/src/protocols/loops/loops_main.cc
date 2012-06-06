@@ -803,7 +803,32 @@ set_move_map_for_centroid_loop(
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////
+///// @details When building loops on a homology model, the qualities of the loop stems are 
+///// hard to control. Implementing small/shear/ccd movers to them may be too much. One
+///// may just want to minimize them when the loop refinement protocl is doing minimization.
+///// This is the function to add these extra residues to the movemap.  --JQX
+////////////////////////////////////////////////////////////////////////////////////////
+void    
+add_loop_flank_residues_bb_to_movemap(
+    Loops const & loops,
+    core::kinematics::MoveMap & mm,
+    core::Size flank_size
+){
+               
+    for( Loops::const_iterator it=loops.begin(), it_end=loops.end(); it != it_end; ++it ) {
+          
+        for(Size i=(it->start()-flank_size); i<=(it->start()-1); i++){
+            mm.set_bb(i, true);
+        }
+                                                     
+        for(Size i=(it->stop()+1); i<=(it->stop()+flank_size); i++){
+            mm.set_bb(i, true);
+        }
+                                                                           
+    }
 
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

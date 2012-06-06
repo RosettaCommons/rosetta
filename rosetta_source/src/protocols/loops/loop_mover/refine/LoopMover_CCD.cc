@@ -166,6 +166,7 @@ void LoopMover_Refine_CCD::set_default_settings()
 {
 		redesign_loop_ = false;
 		packing_isolated_to_active_loops_ = false;
+		flank_residue_min_ = false; // added by JQX
 }
 loop_mover::LoopMover::MoveMapOP LoopMover_Refine_CCD::move_map() const
 {
@@ -460,6 +461,7 @@ void LoopMover_Refine_CCD::apply(
 				}
 
 				setup_movemap( pose, *loops(), allow_repacked, mm_all_loops );
+				if(flank_residue_min_){add_loop_flank_residues_bb_to_movemap(*loops(), *mm_all_loops); } // added by JQX
 				minimizer->run( pose, *mm_all_loops, *scorefxn, options );
 
 				if (local_debug) {
@@ -494,6 +496,7 @@ void LoopMover_Refine_CCD::apply(
 				pack::rotamer_trials( pose, *scorefxn, this_packer_task );
 				(*scorefxn)(pose); // update 10A nbr graph, silly way to do this
 				setup_movemap( pose, *loops(), allow_repacked, mm_all_loops );
+				if(flank_residue_min_){add_loop_flank_residues_bb_to_movemap(*loops(), *mm_all_loops); } // added by JQX
 				minimizer->run( pose, *mm_all_loops, *scorefxn, options );
 				std::string move_type = "shear_ccd_min";
 				mc.boltzmann( pose, move_type );

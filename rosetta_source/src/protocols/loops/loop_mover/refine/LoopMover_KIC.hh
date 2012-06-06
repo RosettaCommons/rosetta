@@ -62,6 +62,7 @@ public:
 
 	void set_redesign_loop( bool value = true ){ redesign_loop_ = value; }
 	bool get_redesign_loop(){ return redesign_loop_; }
+	void set_flank_residue_min(bool value) {flank_residue_min_ = value;} // by JQX
 
 	void set_task_factory( core::pack::task::TaskFactoryOP value );
 	bool get_task_factory();
@@ -113,6 +114,7 @@ private:
 	bool fix_natsc_; // should side-chains neighboring the loop be fixed
 	bool optimize_only_kic_region_sidechains_after_move_; // Should we perform rotamer trials and minimization after every
 													      // KIC move but only within the neighbor_dist of the KIC segment
+	bool flank_residue_min_; //JQX
 };
 
 } //namespace refine
