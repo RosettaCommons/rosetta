@@ -57,6 +57,7 @@
 #include <protocols/loophash/LoopHashSampler.hh>
 #include <protocols/loophash/LocalInserter.hh>
 #include <protocols/loophash/BackboneDB.hh>
+#include <protocols/loops/Loops.hh>
 
 #include <numeric/geometry/hashing/SixDHasher.hh>
 #include <numeric/random/random.hh>
@@ -146,10 +147,10 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 
   LocalInserter_SimpleMinOP simple_inserter( new LocalInserter_SimpleMin() );
   LoopHashSampler  lsampler( library_, simple_inserter );
-  lsampler.set_min_bbrms( 20.0   );
-  lsampler.set_max_bbrms( 1400.0 );
-  lsampler.set_min_rms( 0.5 );
-  lsampler.set_max_rms( 4.0 );
+  lsampler.set_min_bbrms( option[ lh::min_bbrms ]()   );
+  lsampler.set_max_bbrms( option[ lh::max_bbrms ]() );
+  lsampler.set_min_rms( option[ lh::min_rms ]() );
+  lsampler.set_max_rms( option[ lh::max_rms ]() );
 	
 	core::pose::Pose native_pose;
 	if( option[ in::file::native ].user() ){
@@ -165,8 +166,27 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 	if( !pose.is_fullatom() ){
 		core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD);
 	}
+  
+	// pre relax!
+	//protocols::relax::FastRelax *pre_relax = new protocols::relax::FastRelax( fascorefxn,  option[ OptionKeys::relax::sequence_file ]() );
+	//pre_relax->apply( pose );
+	
+	
 	core::Real last_accepted_score = (*fascorefxn)(pose);
 
+	// See if a loopfile was defined - if so restrict sampling to those loops
+
+	protocols::loops::Loops loops(true);
+  utility::vector1< core::Size > selection;
+	loops.get_residues( selection );
+
+	TR << "Userdefined Loopregions: " << loops.size() << std::endl;
+	TR << loops << std::endl;
+	TR << "Residues: ";
+	for( core::Size i=1; i <= selection.size(); ++i) TR <<  selection[i] << " ";
+	TR << std::endl;
+	
+	//read_coord_cst(); //include this function later !                 
 
   for(int round = 1; round <= option[ OptionKeys::lh::rounds ]; round ++ ){
     core::Size total_starttime = time(NULL);
@@ -189,8 +209,19 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
     core::Size starttime2 = time(NULL);
 		core::Size sampler_chunk_size = 1;
 		core::Size start_res = std::max( core::Size(2), core::Size(rand()%(pose.total_residue() - sampler_chunk_size - 2 )) );
-		core::Size stop_res  = std::min( core::Size(pose.total_residue()), core::Size(start_res + sampler_chunk_size)  );
-  	lsampler.set_start_res( start_res ); 
+		core::Size stop_res  = std::min( core::Size(pose.total_residue()), core::Size(start_res + sampler_chunk_size - 1 )  );
+  	
+		// If a loopfile was given choose your insertion site from there
+		TR.Info << "Selection size: " << selection.size() << std::endl;
+		if( selection.size() > 0 ){
+			utility::vector1< core::Size > temp_selection = selection;
+			std::random_shuffle( temp_selection.begin(), temp_selection.end());
+			start_res = std::max( core::Size(2), core::Size( temp_selection[1] ) ); 
+			stop_res  = std::min( core::Size(pose.total_residue()), core::Size(start_res + sampler_chunk_size - 1)  );      
+			TR.Info << "SubselectionSample: " << start_res << " - " << stop_res << std::endl;
+		}
+	
+		lsampler.set_start_res( start_res ); 
   	lsampler.set_stop_res(  stop_res );
     lsampler.build_structures( pose, lib_structs );
     core::Size endtime2 = time(NULL);
@@ -219,13 +250,15 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 		for( core::Size h = 0; h < select_lib_structs.size(); h++){
       core::pose::Pose rpose;
       select_lib_structs[h]->fill_pose( rpose );
-
-   		core::Real refrms = 0;
+			
+			//rpose.dump_pdb("struct_" + string_of(h) + ".pdb" );
+   		
+			core::Real refrms = 0;
 			if( option[ lh::refstruct].user()) {
 			 	refrms = scoring::CA_rmsd( ref_pose, rpose );
 			}
 		  core::Real rms_factor = 10.0;
-			core::Real decoy_score = select_lib_structs[h]->get_energy("censcore") + refrms * rms_factor;
+			core::Real decoy_score = select_lib_structs[h]->get_energy("lh_censcore") + refrms * rms_factor;
 
 			select_lib_structs[h]->add_energy( "refrms",     refrms,      1.0 );
 			select_lib_structs[h]->add_energy( "comb_score", decoy_score, 1.0 );
@@ -292,6 +325,10 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
       core::Real score = (*fascorefxn)(rpose);
       TR.Info << "score: " << h << "  " << score << std::endl;
 
+			select_lib_structs[h]->add_energy("lh_score_new", score );
+			select_lib_structs[h]->add_energy("lh_score_old", last_accepted_score );
+			select_lib_structs[h]->add_energy("lh_score_diff", score - last_accepted_score );
+
       if( score < bestscore ){
         bestscore = score;
         bestindex = h;
@@ -311,7 +348,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 		if( mpi_metropolis_temp_ > 0.0 ) energy_diff_T = old_energy - new_energy;
 
 		if( ( energy_diff_T >= 0.0 ) ) metropolis_replace = true; // energy of new is simply lower
-		else if ( energy_diff_T > (-10.0) ){
+		else if ( (energy_diff_T/mpi_metropolis_temp_) > (-10.0) ){
 			core::Real random_float = RG.uniform();
 			if ( random_float < exp( energy_diff_T ) )  metropolis_replace = true;
 		}
@@ -320,7 +357,6 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 		 
 		if ( metropolis_replace ) {
 			pose = relax_winner;
-			last_accepted_score = new_energy;
 			// Ok, pose has new content
 			core::Real bestrms = scoring::CA_rmsd( native_pose, pose );
 			TR.Info << "BESTSCORE: " << bestscore << "BESTRMS" << bestrms << std::endl;
@@ -329,7 +365,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 			std::string silent_file_ = option[ OptionKeys::out::file::silent ]();
 			for( core::Size h = 0; h < select_lib_structs.size(); h++){
 
-				if( h == bestindex ) {
+				if( h == bestindex || option[ OptionKeys::lh::write_all_fa_structs ]()  ) {
 					core::pose::Pose rpose;
 					select_lib_structs[h]->fill_pose( rpose );
 					core::Real rms = scoring::CA_rmsd( native_pose, rpose );
@@ -342,7 +378,8 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 					sfd.write_silent_struct( *(select_lib_structs[h]) , silent_file_ );
 				}
 			}
-		}  // end of acceptance loop
+			last_accepted_score = new_energy;
+		}  // end of metropolis acceptance if-block
 
 		core::Size total_endtime = time(NULL);
 
@@ -484,14 +521,18 @@ main( int argc, char * argv [] )
 	MPI_Comm_rank( MPI_COMM_WORLD, ( int* )( &mpi_rank_ ) );
 	MPI_Comm_size( MPI_COMM_WORLD, ( int* )( &mpi_npes_ ) );
 
-	// unless you are rank one - go into infinite sleep loop
-	if( mpi_rank_ != 0 ){
-		TR << "NOT RANK 0: Sleeping .. " << std::endl;
-		while(true){
-			sleep( 10 );
-		}
+	// Ok the point of the following is to make sure each worker starts at a different 
+	// point in the pseudo random sequence. Offsetting each by 1 is enough, since the same random
+	// numbers will fall on different actions and the individual trajectories will diverge.
+	// this still allows us to make overall reproducible runs when settign a constant overall start seed.
+	core::Size random_sum=0;
+	for( core::Size i = 0; i < mpi_rank_; i ++ ){
+		
+		random_sum+=RG.random_range(1,65536)+rand()%65536;
 	}
-
+	TR << "Random Sum: " << random_sum    << std::endl;
+	TR << "Random:     " << RG.uniform()  << std::endl;
+	TR << "Random2:     " << rand() << std::endl;
 #endif
 
 
