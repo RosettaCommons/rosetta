@@ -13,6 +13,7 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
+#include <test/core/init_util.hh>
 
 // Project headers
 #include <basic/Tracer.hh>
@@ -35,12 +36,23 @@ static numeric::random::RandomGenerator RG(7299984);  // <- Magic number, do not
 
 namespace {
 
+using namespace core::sequence;
+using core::Size;
+using core::Real;
+using core::pose::Pose;
+using core::pose::make_pose_from_sequence;
 using namespace protocols;
 using namespace protocols::loophash;
 
 class LoophashTest: public CxxTest::TestSuite {
  public:
-  void test_database() {
+
+	void setUp() {
+		core_init();
+	}
+	
+	
+	void test_database() {
 		TR << "Testing..." << std::endl;
 		core::pose::Pose	sample_pose;
 
@@ -54,15 +66,13 @@ class LoophashTest: public CxxTest::TestSuite {
 			sample_pose.set_omega( ir, RG.uniform()*360.0 - 180.0 );
 		}
 		
-		sample_pose.dump_pdb("testout.pdb");
-
 		TR << "Importing test pose ..." << std::endl;
 
 		utility::vector1 < core::Size > loop_sizes;
 		loop_sizes.push_back( 10 );
 		loophash::LoopHashLibraryOP loop_hash_library = new loophash::LoopHashLibrary( loop_sizes, 0 , 1 );
 		
-		TS_ASSERT(loop_hash_library->test_saving_library( sample_pose, 14, true /*deposit structure*/ ));
+		TS_ASSERT(loop_hash_library->test_saving_library( sample_pose, 14, true ));
 
 		TR << "Save Library: " << std::endl;
 
@@ -75,10 +85,11 @@ class LoophashTest: public CxxTest::TestSuite {
 		
 		TR << "Retesting Library: " << std::endl;
 
-		TS_ASSERT(read_loop_hash_library->test_saving_library( sample_pose, 14, false /*dont deposit structure*/ ) );
+		TS_ASSERT(read_loop_hash_library->test_saving_library( sample_pose, 14, false  ) );
 		
 		TR << "Done test" << std::endl;
-  }
+
+}
 
 };
 
