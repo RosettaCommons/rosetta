@@ -18,6 +18,9 @@ sources = {
           "NonlocalUtil",
           "Region",
         ],
+	"loophash" : [
+		"loophash",
+	],
 	"abinitio" : [
 		"FragmentMover",
 		"GunnCost",
