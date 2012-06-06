@@ -45,7 +45,7 @@ public: // types
 
 	typedef std::map< std::string, LoopsDefinerCreatorCOP > LoopsDefinerCreatorMap;
 
-public: // constructors
+private: // constructors
 
 	// Private constructor to make it singleton managed
 	LoopsDefinerFactory();
