@@ -25,6 +25,6 @@ static DataLoaderRegistrator< MonteCarloLoaderCreator > reg_MonteCarloLoaderCrea
 static DataLoaderRegistrator< ligand_docking::InterfaceBuilderLoaderCreator > reg_InterfaceBuilderLoaderCreator;
 static DataLoaderRegistrator< ligand_docking::MoveMapBuilderLoaderCreator > reg_MoveMapBuilderLoaderCreator;
 static DataLoaderRegistrator< ligand_docking::LigandAreaLoaderCreator > reg_LigandAreaLoaderCreator;
-static DataLoaderRegistrator< LoopsDefinerLoaderCreator > reg_LoopsDefinerLoaderCreator;
+static DataLoaderRegistrator< loops::loops_definers::LoopsDefinerLoaderCreator > reg_LoopsDefinerLoaderCreator;
 
 } //namespace protocols

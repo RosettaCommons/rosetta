@@ -7,13 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/jd2/parser/LoopsDefinerLoader.cc
+/// @file   protocols/loops/loops_definers/LoopsDefinerLoader.cc
 /// @brief  Implementation the LoopsDefinerLoader class which implements the DataLoader interface
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 // Unit Headers
-#include <protocols/jd2/parser/LoopsDefinerLoader.hh>
-#include <protocols/jd2/parser/StandardLoaderCreators.hh>
+#include <protocols/loops/loops_definers/LoopsDefinerLoader.hh>
+#include <protocols/loops/loops_definers/LoopsDefinerCreator.hh>
+#include <protocols/loops/loops_definers/LoopsDefinerLoaderCreator.hh>
 
 // Project Headers
 #include <protocols/loops/loops_definers/LoopsDefiner.hh>
@@ -44,10 +45,10 @@ using protocols::loops::loops_definers::LoopsDefinerOP;
 using protocols::loops::loops_definers::LoopsDefinerFactory;
 
 namespace protocols {
-namespace jd2 {
-namespace parser {
+namespace loops {
+namespace loops_definers {
 
-static basic::Tracer TR( "protocols.jd2.parser.LoopsDefinerLoader" );
+static basic::Tracer TR( "protocols.loops.loops_definers.LoopsDefinerLoader" );
 
 LoopsDefinerLoader::LoopsDefinerLoader() {}
 LoopsDefinerLoader::~LoopsDefinerLoader() {}
@@ -79,13 +80,13 @@ void LoopsDefinerLoader::load_data(
 	TR.flush();
 }
 
-DataLoaderOP
+jd2::parser::DataLoaderOP
 LoopsDefinerLoaderCreator::create_loader() const { return new LoopsDefinerLoader; }
 
 string
 LoopsDefinerLoaderCreator::keyname() const { return "LOOP_DEFINITIONS"; }
 
 
-} //namespace parser
-} //namespace jd2
-} //namespace protocols
+} //namespace
+} //namespace
+} //namespace

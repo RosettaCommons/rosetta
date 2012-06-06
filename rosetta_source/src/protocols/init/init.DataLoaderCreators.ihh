@@ -14,5 +14,6 @@
 //DataLoaderCreator #includes
 #include <protocols/jd2/parser/DataLoaderFactory.hh>
 #include <protocols/jd2/parser/StandardLoaderCreators.hh>
+#include <protocols/loops/loops_definers/LoopsDefinerLoaderCreator.hh>
 #include <protocols/qsar/scoring_grid/ScoringGridLoaderCreator.hh>
 #include <protocols/ligand_docking/LigandDockingLoaderCreators.hh>

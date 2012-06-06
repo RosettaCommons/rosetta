@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/jd2/parser/LoopsDefinerLoader.hh
-/// @brief  Declartion of the XML parser's LoopsDefinerLoader class
+/// @file   protocols/loops/loops_definers/LoopsDefinerLoader.hh
+/// @brief  Declartion of the XML loops_definers's LoopsDefinerLoader class
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 
-#ifndef INCLUDED_protocols_jd2_parser_LoopsDefinerLoader_hh
-#define INCLUDED_protocols_jd2_parser_LoopsDefinerLoader_hh
+#ifndef INCLUDED_protocols_loops_loops_definers_LoopsDefinerLoader_hh
+#define INCLUDED_protocols_loops_loops_definers_LoopsDefinerLoader_hh
 
 // Package Headers
 #include <protocols/jd2/parser/DataLoader.hh>
@@ -21,11 +21,11 @@
 
 
 namespace protocols {
-namespace jd2 {
-namespace parser {
+namespace loops {
+namespace loops_definers {
 
 /// @brief A class for loading Loops data into the XML parser's DataMap.
-class LoopsDefinerLoader : public DataLoader
+class LoopsDefinerLoader : public jd2::parser::DataLoader
 {
 public:
 	LoopsDefinerLoader();
@@ -41,8 +41,8 @@ public:
 
 };
 
-} //namespace parser
-} //namespace jd2
-} //namespace protocols
+} //namespace
+} //namespace
+} //namespace
 
 #endif
