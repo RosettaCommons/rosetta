@@ -27,7 +27,7 @@ public:
 	typedef struct { T x,y,z,w; } float4;
 	//typedef unsigned int uint;
 	typedef unsigned short ushort;
-	typedef struct { ushort x,y; } ushort2;
+	typedef struct { unsigned short x,y; } ushort2;
 public:
 	T const grid_size_,grid_size2_;
 	int natom_;
@@ -264,8 +264,8 @@ private:
 
 inline short  short_min( short const a,  short const b) { return (a < b) ? a : b; }
 inline short  short_max( short const a,  short const b) { return (a > b) ? a : b; }
-inline short ushort_min(ushort const a, ushort const b) { return (a < b) ? a : b; }
-inline short ushort_max(ushort const a, ushort const b) { return (a > b) ? a : b; }
+inline short ushort_min(unsigned short const a, unsigned short const b) { return (a < b) ? a : b; }
+inline short ushort_max(unsigned short const a, unsigned short const b) { return (a > b) ? a : b; }
 
 
 } // namespace hashing

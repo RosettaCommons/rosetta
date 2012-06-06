@@ -18,6 +18,8 @@
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 
+#include <platform/types.hh>
+
 namespace protocols {
 namespace sic_dock {
 
@@ -54,7 +56,7 @@ public:
 		}
 		utility::vector1<numeric::xyzVector<double> > atoms(natom);
 		utility::vector1<double>                      meta (natom);
-		uint count = 0;
+		platform::uint count = 0;
 		for(int ir = 1; ir <= (int)p.n_residue(); ++ir) {
 			// core::conformation::Residue const & r(p.residue(ir));
 			for(int ia = 1; ia <= (int)amap.n_atom(ir); ia++) {
@@ -79,7 +81,7 @@ public:
 		}
 		utility::vector1<numeric::xyzVector<double> > atoms(natom);
 		utility::vector1<double>                      meta (natom);
-		uint count = 0;
+		platform::uint count = 0;
 		for(int ir = 1; ir <= (int)p.n_residue(); ++ir) {
 			core::conformation::Residue const & r(p.residue(ir));
 			if(NBR==m) {

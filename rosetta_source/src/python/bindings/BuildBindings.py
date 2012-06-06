@@ -233,7 +233,11 @@ def main(args):
     mini_path = os.path.abspath('./../../../')
 
     bindings_path = os.path.abspath('./rosetta')
-    if Options.cross_compile: bindings_path += '.windows'
+    if Options.cross_compile:
+        bindings_path += '.windows'
+        execute('Generating svn_version files...', 'cd ./../../../ && python svn_version.py')  # Now lets generate svn_version.* files and copy it to destination (so windows build could avoid running it).
+        shutil.copyfile('./../../core/svn_version.cc', bindings_path + '/svn_version.cc')
+
 
     if Options.debug: bindings_path += '_debug'
     if not os.path.isdir(bindings_path): os.makedirs(bindings_path)
@@ -1206,7 +1210,7 @@ class ModuleBuilder:
                     linking()
 
 
-            else: execute("Toching %s file..." % all_at_once_lib, 'cd %(dest)s/../ && touch %(dst)s' % dict(dest=dest, dst=all_at_once_lib) )
+            else: execute("Toching %s file..." % self.all_at_once_lib, 'cd %(dest)s/../ && touch %(dst)s' % dict(dest=self.dest, dst=self.all_at_once_lib) )
 
         #print 'Done!'
 
