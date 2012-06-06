@@ -218,7 +218,7 @@ class Tester:
             self.all_tests_by_lib[lib] = tests
 
 
-        if Options.one  or  Options.jobs < 5:
+        if Options.one:  # or Options.jobs < 5:
             for lib in UnitTestExecutable:
                 log_file = 'build/test/'+ platform + '/' + lib + '.log'
                 yaml_file = 'build/test/'+ platform + '/' + lib + '.yaml'
