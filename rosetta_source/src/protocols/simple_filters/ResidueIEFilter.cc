@@ -233,7 +233,7 @@ ResidueIEFilter::compute( core::pose::Pose const & pose ) const
 		core::Real res_intE (0.0);      
 	//Fill residue energies by traversing energy graph
 		for( EdgeListConstIterator egraph_it = in_pose.energies().energy_graph().get_node( res )->const_edge_list_begin(); egraph_it != in_pose.energies().energy_graph().get_node( res )->const_edge_list_end(); ++egraph_it){
-			core::Size const int_resi = (*egraph_it)->get_other_ind( res );
+			//core::Size const int_resi = (*egraph_it)->get_other_ind( res );
 			EnergyEdge const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
 			res_intE += Eedge->dot( curr_weights );
 		}//for each egraph_it
