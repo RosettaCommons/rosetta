@@ -28,6 +28,11 @@
 #include <core/kinematics/tree/BondedAtom.hh>
 #include <core/kinematics/tree/JumpAtom.hh>
 
+#include <core/conformation/ResidueFactory.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+
+
 typedef numeric::xyzVector<core::Real> Vec;
 typedef numeric::xyzMatrix<core::Real> Mat;
 
@@ -72,45 +77,6 @@ void register_options() {
 }
 
 void
-testfunc( core::pose::Pose const & pose,
-	int a1, int r1, int a2, int r2, int a3, int r3,
-	int a4, int r4, int a5, int r5, int a6, int r6, int a7, int r7,
-	numeric::geometry::hashing::Real6 &rt_6 
-){
-		using namespace core::kinematics;
-		core::id::StubID id1( AtomID(a1,r1), AtomID(a2,r2), AtomID(a3,r3) );
-		core::id::StubID id2( AtomID(a7,r7), AtomID(a4,r4), AtomID(a5,r5), AtomID(a6,r6) );	
-		RT rt2 = pose.conformation().get_stub_transform(id1,id2);
-		numeric::HomogeneousTransform< Real > ht2( rt2.get_rotation(), rt2.get_translation() );
-		numeric::xyzVector < Real > euler_angles2 =  ht2.euler_angles_rad();
-		if( fabs(rt_6[1]-rt2.get_translation().x()) < 0.01 &&
-		    fabs(rt_6[2]-rt2.get_translation().y()) < 0.01 &&
-		    fabs(rt_6[3]-rt2.get_translation().z()) < 0.01 && (
-		    	((fabs(rt_6[4]-euler_angles2.x()*180.0/numeric::constants::d::pi) < 0.01 || fabs(rt_6[4]-euler_angles2.x()*180.0/numeric::constants::d::pi-180.0) < 0.01) &&
-		    	 (fabs(rt_6[5]-euler_angles2.y()*180.0/numeric::constants::d::pi) < 0.01 || fabs(rt_6[5]-euler_angles2.y()*180.0/numeric::constants::d::pi-180.0) < 0.01) &&
-		    	 (fabs(rt_6[6]-euler_angles2.z()*180.0/numeric::constants::d::pi) < 0.01 || fabs(rt_6[6]-euler_angles2.z()*180.0/numeric::constants::d::pi-180.0) < 0.01) ))
-		    )
-		{
-			std::cout << "HIT ";
-
-			std::cout << rt2.get_translation().x() << " ";
-			std::cout << rt2.get_translation().y() << " ";
-			std::cout << rt2.get_translation().z() << " ";
-			std::cout << euler_angles2.x()*180.0/numeric::constants::d::pi << " ";
-			std::cout << euler_angles2.y()*180.0/numeric::constants::d::pi << " ";
-			std::cout << euler_angles2.z()*180.0/numeric::constants::d::pi << "     ";
-
-			std::cout << a1 << "," << r1 << "  "
-			          << a2 << "," << r2 << "  "
-			          << a3 << "," << r3 << "  "
-			          << a4 << "," << r4 << "  "
-			          << a5 << "," << r5 << "  "
-			          << a6 << "," << r6 << "  "
-			          << a7 << "," << r7 << std::endl;
-		}
-}
-
-void
 test_replicate_xform(){
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::loophash;
@@ -123,7 +89,7 @@ test_replicate_xform(){
 	for(Size lstart =        2; lstart < pose.n_residue()-1; ++lstart ){
 	for(Size lstop  = lstart+1; lstop  < pose.n_residue()  ; ++lstop  ){
 
-		std::cout << "testing... " << lstart << " " << lstop << std::endl;
+		// std::cout << "testing... " << lstart << " " << lstop << std::endl;
 
 		Real6 lxf_std, lxf_mine;
 		get_rt_over_leap_fast( pose, lstart, lstop, lxf_std );
@@ -149,6 +115,59 @@ test_replicate_xform(){
 
 
 	}}
+	std::cout << "all pairs OK" << std::endl;
+
+}
+
+void
+test_lh_counts(core::pose::Pose const & pose){
+	using namespace basic::options::OptionKeys;
+	using namespace protocols::loophash;
+	using namespace numeric::geometry::hashing;
+	using namespace core::kinematics;
+
+	utility::vector1<core::Size> loopsizes;
+	loopsizes.push_back(3);
+	loopsizes.push_back(4);
+	loopsizes.push_back(5);
+	loopsizes.push_back(6);
+	loopsizes.push_back(7);
+	loopsizes.push_back(8);
+	loopsizes.push_back(9);
+	loopsizes.push_back(10);
+
+	//======= load the library with the sizes you need
+	LoopHashLibraryOP loop_hash_library = new LoopHashLibrary ( loopsizes, 1, 0 );
+	loop_hash_library->load_mergeddb();
+
+	std::cout << "start counts" << std::endl;
+	int ncalls=0, hits0=0, hits1=0, hits2=0, hits3=0, hits4=0;
+	for(int i = 1; i <= 100; ++i){
+		hits0=0, hits1=0, hits2=0, hits3=0, hits4=0;
+		for(Size lstart =        2; lstart < pose.n_residue()-1; ++lstart ){
+		for(Size lstop  = lstart+1; lstop  < pose.n_residue()  ; ++lstop  ){
+			Real6 loop_transform;
+			get_rt_over_leap_without_foldtree_bs( pose, lstart, lstop, loop_transform );
+			ncalls++;
+			Size count0=0, count1=0, count2=0, count3=0, count4=0;
+			for(utility::vector1<core::Size>::const_iterator i = loopsizes.begin(); i != loopsizes.end(); ++i){
+				count0 += loop_hash_library->gethash(*i).radial_count(0,loop_transform);
+				count1 += loop_hash_library->gethash(*i).radial_count(1,loop_transform);
+				count2 += loop_hash_library->gethash(*i).radial_count(2,loop_transform);
+				// count3 += loop_hash_library->gethash(*i).radial_count(3,loop_transform);
+				// count4 += loop_hash_library->gethash(*i).radial_count(4,loop_transform);
+			}
+			hits0 += count0;
+			hits1 += count1;
+			hits2 += count2;
+			hits3 += count3;
+			hits4 += count4;
+			// if(count) std::cout << lstart << " " << lstop << " " << count << std::endl;
+		}}
+	}
+	std::cout << "done counts " << ncalls << " " << hits0 << " " << hits1 << " " << hits2 << " " << hits3 << " " << hits4 << std::endl;
+
+	utility_exit_with_message("exit");
 
 }
 
@@ -161,29 +180,22 @@ int main(int argc, char *argv[]) {
 	register_options();
 	devel::init(argc,argv);
 
-	test_replicate_xform();
+	// test_replicate_xform();
+	// test_lh_counts(pose);
 
 	std::string fname = option[in::file::s]()[1];
 	core::pose::Pose pose;
 	core::import_pose::pose_from_pdb( pose, fname );
+	core::pose::remove_upper_terminus_type_from_pose_residue(pose,2);
+	core::pose::remove_lower_terminus_type_from_pose_residue(pose,3);
 
-
-
-	Real6 loop_transform;
-	get_rt_over_leap_fast( pose, 4, 10, loop_transform );
-
-	assert(false);
-
-	cout << "DONE" << std::endl;
-
-/*
 
 	//======= Define the loop size database you need to collect ==========
 	utility::vector1<core::Size> loopsizes;
 	// loopsizes.push_back(3);
 	// loopsizes.push_back(4);
-	loopsizes.push_back(5);
-	// loopsizes.push_back(6);
+	// loopsizes.push_back(5);
+	loopsizes.push_back(6);
 	// loopsizes.push_back(7);
 	// loopsizes.push_back(8);
 	// loopsizes.push_back(9);
@@ -198,33 +210,14 @@ int main(int argc, char *argv[]) {
 	//===========BackboneSegment is a container of torsions ======
 	const BackboneDB & bbdb_ = loop_hash_library->backbone_database();
 
-
-	std::cout << "start counts" << std::endl;
-	int ncalls = 0;
-	for(int i = 1; i <= 10; ++i){
-		for(Size lstart =        2; lstart < pose.n_residue()-2; ++lstart ){
-		for(Size lstop  = lstart+2; lstop  < pose.n_residue()  ; ++lstop  ){
-			Real6 loop_transform;
-			get_rt_over_leap_fast( pose, lstart, lstop, loop_transform );
-			ncalls++;
-			Size count = 0;
-			for(utility::vector1<core::Size>::const_iterator i = loopsizes.begin(); i != loopsizes.end(); ++i){
-				count += loop_hash_library->gethash(*i).radial_count(1,loop_transform);
-			}
-			// if(count) std::cout << lstart << " " << lstop << " " << count << std::endl;
-		}}
-	}
-	std::cout << "done counts " << ncalls << std::endl;
-
-	utility_exit_with_message("exit");
-
 	for(utility::vector1<core::Size>::const_iterator i = loopsizes.begin(); i != loopsizes.end(); ++i){
 		Size loopsize = *i;
 
 		for(Size lstart = 2; lstart < pose.n_residue()-loopsize; ++lstart ){
 			Size lstop = lstart+loopsize;
-				Real6 loop_transform;
-				get_rt_over_leap_fast( pose, lstart, lstop, loop_transform );
+
+			Real6 loop_transform;
+			get_rt_over_leap_without_foldtree_bs( pose, lstart, lstop, loop_transform );
 
 			BackboneSegment backbone_;
 
@@ -233,7 +226,11 @@ int main(int argc, char *argv[]) {
 			//hash indices are stored in this vector for later access
 			std::vector < core::Size > leap_index_list;
 
-			hashmap.radial_lookup( 0, loop_transform, leap_index_list );
+			Size radius;
+			for(radius=0; radius < 5; ++radius){
+				hashmap.radial_lookup( radius, loop_transform, leap_index_list );
+				if(leap_index_list.size() > 0) break;
+			}
 			if( leap_index_list.size() == 0 ) {
 				std::cout << "FAIL " << fname << " " << lstart << " " << lstop << std::endl;
 			}
@@ -247,31 +244,40 @@ int main(int argc, char *argv[]) {
 				bs_vec_.push_back( backbone_ );
 			}
 			//=============Apply the fragments =======
-			Pose tmp(pose);
-			// FoldTree f;
-			// ObjexxFCL::FArray2D<int> jump(2,1); jump(1,1)=1; jump(2,1)=lstop;
-			// ObjexxFCL::FArray1D<int> cuts(1,1); cuts(1)=lstop-1;
-			// f.tree_from_jumps_and_cuts( tmp.n_residue(), 1, jump, cuts, 1 );
-			// f.reorder(1);
-			// tmp.fold_tree(f);
+			Pose tmp;
+			{
+				core::chemical::ResidueTypeSetCAP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
+				tmp.append_residue_by_jump(pose.residue(lstart-1),1);
+				tmp.append_residue_by_bond(pose.residue(lstart    ));
+				for(Size i = lstart+1; i <= lstop; ++i){
+					core::conformation::ResidueOP new_rsd( NULL );
+					new_rsd = core::conformation::ResidueFactory::create_residue( rs->name_map("ALA") );
+					cout << "apending residue " << new_rsd->name() << std::endl;
+					tmp.append_residue_by_bond( *new_rsd, true );
+					tmp.set_phi  ( tmp.n_residue(), 180.0 );
+					tmp.set_psi  ( tmp.n_residue(), 180.0 );
+					tmp.set_omega( tmp.n_residue()-1, 180.0 );
+				}
+				tmp.dump_pdb("test.pdb");
+			}
 
 			for ( std::vector< BackboneSegment >::iterator i = bs_vec_.begin(), ie = bs_vec_.end(); i != ie; ++i) {
-				std::vector<core::Real> phi = (*i).phi();
-				std::vector<core::Real> psi = (*i).psi();
-				std::vector<core::Real> omega = (*i).omega();
+				std::vector<core::Real> phi   = i->phi();
+				std::vector<core::Real> psi   = i->psi();
+				std::vector<core::Real> omega = i->omega();
 				Size seg_length = (*i).length();
 				for ( Size i = 0; i < seg_length; i++){
 					Size ires = lstart+i;  // this is terrible, due to the use of std:vector.  i has to start from 0, but positions offset by 1.
 					if (ires > pose.total_residue() ) break;
-					tmp.set_phi  ( ires, phi[i]);
-					tmp.set_psi  ( ires, psi[i]);
+					tmp.set_phi  ( ires, phi[i]  );
+					tmp.set_psi  ( ires, psi[i]  );
 					tmp.set_omega( ires, omega[i]);
 				}
-				tmp.dump_pdb("test_lh_"+str(lstart)+"_"+str(lstop)+"_"+str(0)+".pdb");
+				tmp.dump_pdb("test_lh_"+str(lstart)+"_"+str(lstop)+"_"+str(radius)+".pdb");
 			}
 		}
 
 	}
-*/
+
 }
 
