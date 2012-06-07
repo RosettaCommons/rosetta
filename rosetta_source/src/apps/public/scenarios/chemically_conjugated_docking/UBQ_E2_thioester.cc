@@ -42,6 +42,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/AtomType.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -106,6 +107,10 @@ basic::options::RealOptionKey const scorefilter("scorefilter");
 basic::options::BooleanOptionKey const publication("publication");
 basic::options::IntegerOptionKey const n_tail_res("n_tail_res");
 basic::options::BooleanOptionKey const two_ubiquitins("two_ubiquitins");
+basic::options::FileVectorOptionKey const extra_bodies( "extra_bodies" );
+
+//I know this is illegal; this is included here to be after the option key definitions, so that extra_bodies will be in scope for the code in this header
+#include <apps/public/scenarios/chemically_conjugated_docking/Gp_extra_bodies.hh>
 
 //tracers
 using basic::Error;
@@ -141,7 +146,8 @@ public:
 		atomIDs(8, core::id::BOGUS_ATOM_ID ),
 		InterfaceSasaDefinition_("InterfaceSasaDefinition_" + 1),
 		IAM_(new protocols::analysis::InterfaceAnalyzerMover),
-		two_ubiquitins_(false)
+		two_ubiquitins_(false),
+		extra_bodies_chains_() //uninitializable
 	{
 		//set up fullatom scorefunction
 		using namespace core::scoring;
@@ -325,6 +331,16 @@ public:
 			complex.conformation().set_jump_now(1, newjump);
 		}
 
+		////////////////////////////extra bodies/////////////////////////////////////////////////
+		//The purpose of this code is to allow for static extra things in the system; for its original
+		//incarnations, to allow for a RING domain to occlude its site on E2 and a GAP (+MG +GDP) to
+		//occlude ras
+
+		//check if extra bodies exist
+		if (basic::options::option[extra_bodies].user() == true) {
+			extra_bodies_chains_ = apps::public1::scenarios::chemically_conjugated_docking::add_extra_bodies(complex, TR);
+		}
+
 		starting_pose_ = complex;
 		starting_pose_.dump_pdb("starting_complex.pdb");
 		TR << "starting pose finished." << std::endl;
@@ -406,7 +422,7 @@ public:
 
 			//ubiquitin tail
 			//complexlength = end of ubiquitin in ubq+e2 pose
-			core::Size const tail_begin(complexlength-2);
+			core::Size const tail_begin(complexlength-basic::options::option[n_tail_res]+1); //odd construction accounts for functional zero-indexing of the tail
 			regions.push_back(empty); //insert a new set to work with
 			core::Size const tail_index(2);
 			for(core::Size i(complexlength); i>=tail_begin; --i) {
@@ -423,10 +439,12 @@ public:
 
 			if(two_ubiquitins_) {
 				//second ubiquitin
+				TR << "Assuming second ubiquitin is the third chain" << std::endl;
+				runtime_assert(complex.conformation().num_chains() >= 3);
 				regions.push_back(empty); //insert a new set to work with
 				core::Size const ubq2_index(4);
-				core::Size const nres(complex.total_residue());
-				for(core::Size i(complexlength+1); i<=nres; ++i) {
+				core::Size const ubq2_end(complex.conformation().chain_end(3));
+				for(core::Size i(complexlength+1); i<=ubq2_end; ++i) {
 					regions[ubq2_index].insert(i);
 				}
 			}
@@ -434,6 +452,11 @@ public:
 			//this will double-count loop residues with E2 - but that's fine, it just ensures they pack no matter what
 			if( !loop_posns.empty() ){
 				regions.push_back(loop_posns);
+			}
+
+			//if extra bodies exist, we are adding them to the first chain set
+			if (basic::options::option[extra_bodies].user() == true) {
+				apps::public1::scenarios::chemically_conjugated_docking::pack_extra_bodies(extra_bodies_chains_, complex, regions[E2_index], TR);
 			}
 
 			//make all pairs of groups (without replacement
@@ -446,7 +469,6 @@ public:
 				}
 			}
 
-
 			//check contents of vector_of_pairs
 			core::Size const num_pairs(vector_of_pairs.size());
 			for(core::Size i(1); i<=num_pairs; ++i){
@@ -458,24 +480,32 @@ public:
 
 				TR << "IGNC will compare group " << onestart << "-" << onestop << " with " << twostart << "-" << twostop << std::endl;
 
-				core::Size guess(onestart);
-				for(std::set<core::Size>::const_iterator iter(vector_of_pairs[i].first.begin()), end(vector_of_pairs[i].first.end()); iter != end; ++iter) {
-					if(guess++ != *iter) TR.Error << "non-contiguous set, debug me!" << std::endl;
-					//TR << *iter << std::endl;
-				}
-				guess = twostart;
-				for(std::set<core::Size>::const_iterator iter(vector_of_pairs[i].second.begin()), end(vector_of_pairs[i].second.end()); iter != end; ++iter) {
-					if(guess++ != *iter) TR.Error << "non-contiguous set, debug me!" << std::endl;
-					//TR << *iter << std::endl;
-				}
+				// if (basic::options::option[extra_bodies].user() == true) {
+				// 	TR.Error << "upcoming debug me non-contiguous set errors are not really errors if using extra bodies" << std::endl;
+				// }
+
+				// core::Size guess(onestart);
+				// for(std::set<core::Size>::const_iterator iter(vector_of_pairs[i].first.begin()), end(vector_of_pairs[i].first.end()); iter != end; ++iter) {
+				// 	if(guess++ != *iter) TR.Error << "non-contiguous set, debug me!" << std::endl;
+				// 	TR << *iter << std::endl;
+				// }
+				// guess = twostart;
+				// for(std::set<core::Size>::const_iterator iter(vector_of_pairs[i].second.begin()), end(vector_of_pairs[i].second.end()); iter != end; ++iter) {
+				// 	if(guess++ != *iter) TR.Error << "non-contiguous set, debug me!" << std::endl;
+				// 	TR << *iter << std::endl;
+				// }
 
 			}
 
+			if (basic::options::option[extra_bodies].user() == true) {
+				TR << "Those group labels do not take the piling of extra bodies into the first nonmoving group into account" << std::endl;
+			}
+
 			//check if calculator exists; create if not
-			std::string const calc("IGNC_FloppyTail");
+			std::string const calc("IGNC_UBQ_E2_thioester");
 			if(core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists(calc)){
 				core::pose::metrics::CalculatorFactory::Instance().remove_calculator(calc);
-				TR << "removed a PoseMetricCalculator " << calc << ", hopefully this is due to multiple inputs to FloppyTail and not a name clash" << std::endl;
+				TR.Error << "removed a PoseMetricCalculator " << calc << ", track down why" << std::endl;
 			}
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc, new protocols::toolbox::pose_metric_calculators::InterGroupNeighborsCalculator(vector_of_pairs) );
 
@@ -512,6 +542,8 @@ public:
 
 		//TR << "foldtree, movemap: " << std::endl;
 		//core::kinematics::simple_visualize_fold_tree_and_movemap( pose.fold_tree(), *movemap_, TR);
+
+		TR << "foldtree, " << pose.fold_tree() << std::flush;
 
 		/////////////////fullatom Monte Carlo//////////////////////////////////////////////////////////
 		//make the monte carlo object
@@ -716,7 +748,7 @@ public:
 		}
 
 		//these interface analyses are less interpretable in the three-body case
-		if(!two_ubiquitins_){
+		if(!two_ubiquitins_ && !basic::options::option[extra_bodies].user()) {
 
 			//filter on interface SASA - requires some hacking to break up thioester
 			core::pose::Pose copy(pose);
@@ -804,8 +836,11 @@ private:
 
 	protocols::analysis::InterfaceAnalyzerMoverOP IAM_;
 
-	//used for two-ubiquitins mode
+	///@brief used for two-ubiquitins mode
 	bool two_ubiquitins_;
+
+	///@brief used to track which chains are "extra" nonmoving bodies in extra bodies mode
+	utility::vector1< core::Size > extra_bodies_chains_;
 
 };
 
@@ -824,6 +859,7 @@ int main( int argc, char* argv[] )
 	option.add( publication, "output statistics used in publication.  TURN OFF if not running (original Saha et al.) publication demo.").def(false);
 	option.add( n_tail_res, "Number of c-terminal \"tail\" residues to make flexible (terminus inclusive)").def(3);
 	option.add( two_ubiquitins, "Mind-blowing - use two ubiquitins (assembled for a K48 linkage) to try to examine the transition state.  Don't use this option unless trying to reproduce publication XXXX").def(false);
+	option.add( extra_bodies, "extra structures to add before modeling.  Should be in the coordinate frame of the non-moving partner.  Will not move during modeling.  Will be detected as part of the nonmoving body for repacking purposes.").def("");
 
 	//initialize options
 	devel::init(argc, argv);

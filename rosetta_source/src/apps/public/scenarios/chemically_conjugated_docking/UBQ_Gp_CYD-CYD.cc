@@ -71,6 +71,7 @@
 #include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
+#include <protocols/toolbox/pose_metric_calculators/InterGroupNeighborsCalculator.hh>
 // AUTO-REMOVED #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
 
@@ -109,6 +110,10 @@ basic::options::RealOptionKey const SASAfilter("SASAfilter");
 basic::options::RealOptionKey const scorefilter("scorefilter");
 basic::options::IntegerOptionKey const n_tail_res("n_tail_res");
 basic::options::BooleanOptionKey const publication("publication");
+basic::options::FileVectorOptionKey const extra_bodies( "extra_bodies" );
+
+//I know this is illegal; this is included here to be after the option key definitions, so that extra_bodies will be in scope for the code in this header
+#include <apps/public/scenarios/chemically_conjugated_docking/Gp_extra_bodies.hh>
 
 //tracers
 using basic::Error;
@@ -269,6 +274,17 @@ public:
 		atomIDs[7] = core::id::AtomID( ubq_rsd_type.atom_index("CA" ), complexlength );
 		atomIDs[8] = core::id::AtomID( ubq_rsd_type.atom_index("C" ), complexlength );
 
+
+		////////////////////////////extra bodies/////////////////////////////////////////////////
+		//The purpose of this code is to allow for static extra things in the system; for its original
+		//incarnations, to allow for a RING domain to occlude its site on E2 and a GAP (+MG +GDP) to
+		//occlude ras
+
+		//check if extra bodies exist
+		if (basic::options::option[extra_bodies].user() == true) {
+			extra_bodies_chains_ = apps::public1::scenarios::chemically_conjugated_docking::add_extra_bodies(complex, TR);
+		}
+
 		starting_pose_ = complex;
 		starting_pose_.dump_pdb("starting_complex.pdb");
 		TR << "starting pose finished." << std::endl;
@@ -317,18 +333,120 @@ public:
 		prevent->include_residue(complexlength);
 		task_factory_->push_back(prevent);
 
-		std::string const interface_calc("UBQGTPase_InterfaceNeighborDefinitionCalculator");
-		std::string const neighborhood_calc("UBQGTPase_NeighborhoodByDistanceCalculator");
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc, new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(2)) );
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc, new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_posns ) );
+		if(false){
+			std::string const interface_calc("UBQGTPase_InterfaceNeighborDefinitionCalculator");
+			std::string const neighborhood_calc("UBQGTPase_NeighborhoodByDistanceCalculator");
+			core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc, new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(2)) );
+			core::pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc, new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_posns ) );
 
-		//this is the constructor parameter for the calculator - pairs of calculators and calculations to perform
-		utility::vector1< std::pair< std::string, std::string> > calcs_and_calcns;
-		calcs_and_calcns.push_back(std::make_pair(interface_calc, "interface_residues"));
-		calcs_and_calcns.push_back(std::make_pair(neighborhood_calc, "neighbors"));
+			//this is the constructor parameter for the calculator - pairs of calculators and calculations to perform
+			utility::vector1< std::pair< std::string, std::string> > calcs_and_calcns;
+			calcs_and_calcns.push_back(std::make_pair(interface_calc, "interface_residues"));
+			calcs_and_calcns.push_back(std::make_pair(neighborhood_calc, "neighbors"));
 
-		using protocols::toolbox::task_operations::RestrictByCalculatorsOperation;
-		task_factory_->push_back(new RestrictByCalculatorsOperation( calcs_and_calcns ));
+			using protocols::toolbox::task_operations::RestrictByCalculatorsOperation;
+			task_factory_->push_back(new RestrictByCalculatorsOperation( calcs_and_calcns ));
+
+		} else {
+			//functions, etc here use UBQ/E2 nomenclature until I can extract it out
+			TR << "using new way" << std::endl;
+			//new way
+			//partially stolen from FloppyTail - I need to go back and extract this code unit
+			utility::vector1< std::set < core::Size > > regions; //a set of regions to turn into groups for comparison
+			std::set < core::Size > const empty; //easier to add empty sets to the vector than construct-then-add
+
+			//E2
+			core::Size const E2_end(complex.conformation().chain_end(1));
+			regions.push_back(empty); //insert a new set to work with
+			core::Size const E2_index(1);
+			for(core::Size i(1); i<=E2_end; ++i) {
+				regions[E2_index].insert(i);
+			}
+
+			//ubiquitin tail
+			//complexlength = end of ubiquitin in ubq+e2 pose
+			core::Size const tail_begin(complexlength-basic::options::option[n_tail_res]+1); //odd construction accounts for functional zero-indexing of the tail
+			regions.push_back(empty); //insert a new set to work with
+			core::Size const tail_index(2);
+			for(core::Size i(complexlength); i>=tail_begin; --i) {
+				regions[tail_index].insert(i);
+			}
+
+			//ubiquitin core+tail
+			//including the tail in both groups ensures it will always repack
+			regions.push_back(empty); //insert a new set to work with
+			core::Size const ubq_index(3);
+			for(core::Size i(E2_end+1); i<=complexlength; ++i) {
+				regions[ubq_index].insert(i);
+			}
+
+			//this will double-count loop residues with E2 - but that's fine, it just ensures they pack no matter what
+			if( !loop_posns.empty() ){
+				regions.push_back(loop_posns);
+			}
+
+			//if extra bodies exist, we are adding them to the first chain set
+			if (basic::options::option[extra_bodies].user() == true) {
+				apps::public1::scenarios::chemically_conjugated_docking::pack_extra_bodies(extra_bodies_chains_, complex, regions[E2_index], TR);
+			}
+
+			//make all pairs of groups (without replacement
+			//if you have 1, 2, 3, 4; make 1-2, 1-3, 1-4, 2-3, 2-4, 3-4
+			core::Size const num_regions(regions.size());
+			utility::vector1< std::pair< std::set<core::Size>, std::set<core::Size> > > vector_of_pairs;
+			for(core::Size first_group(1); first_group < num_regions; ++first_group) {
+				for(core::Size second_group(first_group+1); second_group <= num_regions; ++second_group){
+					vector_of_pairs.push_back(std::make_pair(regions[first_group], regions[second_group]));
+				}
+			}
+
+			//check contents of vector_of_pairs
+			core::Size const num_pairs(vector_of_pairs.size());
+			for(core::Size i(1); i<=num_pairs; ++i){
+				core::Size const
+					onestart(*(vector_of_pairs[i].first.begin())),
+					onestop(*(vector_of_pairs[i].first.rbegin())),
+					twostart(*(vector_of_pairs[i].second.begin())),
+					twostop(*(vector_of_pairs[i].second.rbegin()));
+
+				TR << "IGNC will compare group " << onestart << "-" << onestop << " with " << twostart << "-" << twostop << std::endl;
+
+				// if (basic::options::option[extra_bodies].user() == true) {
+				// 	TR.Error << "upcoming debug me non-contiguous set errors are not really errors if using extra bodies" << std::endl;
+				// }
+
+				// core::Size guess(onestart);
+				// for(std::set<core::Size>::const_iterator iter(vector_of_pairs[i].first.begin()), end(vector_of_pairs[i].first.end()); iter != end; ++iter) {
+				// 	if(guess++ != *iter) TR.Error << "non-contiguous set, debug me!" << std::endl;
+				// 	TR << *iter << std::endl;
+				// }
+				// guess = twostart;
+				// for(std::set<core::Size>::const_iterator iter(vector_of_pairs[i].second.begin()), end(vector_of_pairs[i].second.end()); iter != end; ++iter) {
+				// 	if(guess++ != *iter) TR.Error << "non-contiguous set, debug me!" << std::endl;
+				// 	TR << *iter << std::endl;
+				// }
+
+			}
+
+			if (basic::options::option[extra_bodies].user() == true) {
+				TR << "Those group labels do not take the piling of extra bodies into the first nonmoving group into account" << std::endl;
+			}
+
+			//check if calculator exists; create if not
+			std::string const calc("IGNC_UBQ_Gp_CYD-CYD");
+			if(core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists(calc)){
+				core::pose::metrics::CalculatorFactory::Instance().remove_calculator(calc);
+				TR.Error << "removed a PoseMetricCalculator " << calc << ", track down why" << std::endl;
+			}
+			core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc, new protocols::toolbox::pose_metric_calculators::InterGroupNeighborsCalculator(vector_of_pairs) );
+
+			//now that calculator exists, add the sucker to the TaskFactory via RestrictByCalculatorsOperation
+			utility::vector1< std::pair< std::string, std::string> > calculators_used;
+			std::pair< std::string, std::string> IGNC_cmd( calc, "neighbors" );
+			calculators_used.push_back( IGNC_cmd );
+			task_factory_->push_back( new protocols::toolbox::task_operations::RestrictByCalculatorsOperation( calculators_used ) );
+
+		}
 
 		//create constraints
 		core::scoring::constraints::add_constraints_from_cmdline_to_pose( starting_pose_ ); //protected internally if no constraints
@@ -345,6 +463,8 @@ public:
 
 		//TR << "foldtree, movemap: " << std::endl;
 		//core::kinematics::simple_visualize_fold_tree_and_movemap( pose.fold_tree(), *movemap_, TR);
+
+		TR << "foldtree, " << pose.fold_tree() << std::flush;
 
 		/////////////////fullatom Monte Carlo//////////////////////////////////////////////////////////
 		//make the monte carlo object
@@ -529,30 +649,34 @@ public:
 			return;
 		}
 
-		//filter on interface SASA - requires some hacking to break up disulfide
-		core::pose::Pose copy(pose);
-		//hack the pose up for analysis purposes
-		core::Size const cbreak(copy.conformation().chain_end(1));
-		using core::kinematics::Edge;
-		core::kinematics::FoldTree main_tree(copy.total_residue());
-		main_tree.clear();
-		main_tree.add_edge(Edge(1, cbreak, Edge::PEPTIDE));
-		main_tree.add_edge(Edge(cbreak+1, copy.total_residue(), Edge::PEPTIDE));
-		main_tree.add_edge(Edge(cbreak, cbreak+1, 1));
-		main_tree.reorder(1);
-		//TR << main_tree << std::endl;
-		copy.fold_tree(main_tree);
+		//these interface analyses are less interpretable in the three-body case
+		if(!basic::options::option[extra_bodies].user()) {
 
- 		//Filter on SASA
-		basic::MetricValue< core::Real > mv_delta_sasa;
-		copy.metric(InterfaceSasaDefinition_, "delta_sasa", mv_delta_sasa);
-		if(mv_delta_sasa.value() < basic::options::option[SASAfilter].value()){
-			set_last_move_status(protocols::moves::FAIL_RETRY);
-			TR << "interface SASA filter failed; SASA " << mv_delta_sasa.value() << std::endl;
-			return;
+			//filter on interface SASA - requires some hacking to break up disulfide
+			core::pose::Pose copy(pose);
+			//hack the pose up for analysis purposes
+			core::Size const cbreak(copy.conformation().chain_end(1));
+			using core::kinematics::Edge;
+			core::kinematics::FoldTree main_tree(copy.total_residue());
+			main_tree.clear();
+			main_tree.add_edge(Edge(1, cbreak, Edge::PEPTIDE));
+			main_tree.add_edge(Edge(cbreak+1, copy.total_residue(), Edge::PEPTIDE));
+			main_tree.add_edge(Edge(cbreak, cbreak+1, 1));
+			main_tree.reorder(1);
+			//TR << main_tree << std::endl;
+			copy.fold_tree(main_tree);
+
+			//Filter on SASA
+			basic::MetricValue< core::Real > mv_delta_sasa;
+			copy.metric(InterfaceSasaDefinition_, "delta_sasa", mv_delta_sasa);
+			if(mv_delta_sasa.value() < basic::options::option[SASAfilter].value()){
+				set_last_move_status(protocols::moves::FAIL_RETRY);
+				TR << "interface SASA filter failed; SASA " << mv_delta_sasa.value() << std::endl;
+				return;
+			}
+			//passed filters; run IAM
+			IAM_->apply(copy);
 		}
-		//passed filters; run IAM
-		IAM_->apply(copy);
 
 		//print mobile region fine-grained data
 		protocols::jd2::JobOP job_me(protocols::jd2::JobDistributor::get_instance()->current_job());
@@ -611,6 +735,8 @@ private:
 
 	core::Size GTPase_cyd_; //converted to member data for sharing between setup and apply
 
+	///@brief used to track which chains are "extra" nonmoving bodies in extra bodies mode
+	utility::vector1< core::Size > extra_bodies_chains_;
 };
 
 typedef utility::pointer::owning_ptr< UBQ_GTPase_disulfide_Mover > UBQ_GTPase_disulfide_MoverOP;
@@ -627,6 +753,7 @@ int main( int argc, char* argv[] )
 	option.add( scorefilter, "filter out total score greater than this").def(1000);
 	option.add( n_tail_res, "Number of c-terminal \"tail\" residues to make flexible (terminus inclusive)").def(3);
 	option.add( publication, "output statistics used in publication.  TURN OFF if not running publication demo.").def(false);
+	option.add( extra_bodies, "extra structures to add before modeling.  Should be in the coordinate frame of the non-moving partner.  Will not move during modeling.  Will be detected as part of the nonmoving body for repacking purposes.").def("");
 
 	//initialize options
 	devel::init(argc, argv);
