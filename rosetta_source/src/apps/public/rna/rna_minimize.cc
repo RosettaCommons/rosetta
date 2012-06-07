@@ -23,7 +23,7 @@
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <devel/init.hh>
+#include <core/init.hh>
 
 #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
@@ -187,7 +187,7 @@ main( int argc, char * argv [] )
 	////////////////////////////////////////////////////////////////////////////
 	// setup
 	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+	core::init(argc, argv);
 
 	////////////////////////////////////////////////////////////////////////////
 	// end of setup

@@ -46,7 +46,7 @@
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/pose/util.hh>
 //#include <basic/database/open.hh>
-#include <devel/init.hh>
+#include <core/init.hh>
 #include <core/io/pdb/pose_io.hh>
 
 #include <utility/vector1.hh>
@@ -174,7 +174,7 @@ main( int argc, char * argv [] )
 	////////////////////////////////////////////////////////////////////////////
 	// setup
 	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+	core::init(argc, argv);
 
 
 	////////////////////////////////////////////////////////////////////////////

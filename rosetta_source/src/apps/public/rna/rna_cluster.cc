@@ -18,7 +18,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
-#include <devel/init.hh>
+#include <core/init.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/string.functions.hh>
 
@@ -116,7 +116,7 @@ main( int argc, char * argv [] )
 	////////////////////////////////////////////////////////////////////////////
 	// setup
 	////////////////////////////////////////////////////////////////////////////
-	devel::init(argc, argv);
+	core::init(argc, argv);
 
 
 	////////////////////////////////////////////////////////////////////////////
