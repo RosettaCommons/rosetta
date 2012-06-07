@@ -39,6 +39,8 @@
 #include <core/scoring/constraints/util.hh>
 #include <core/pose/PDBInfo.hh>
 
+#include <protocols/comparative_modeling/hybridize/TMalign.hh>
+
 // symmetry
 #include <core/pose/symmetry/util.hh>
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
@@ -241,7 +243,9 @@ partial_align(
 	if (iterate_convergence) {
 		core::id::AtomID_Map< core::id::AtomID > updated_atom_map(atom_map);
 		core::Real coverage = 1.0;
-		core::Size natoms_aln = updated_atom_map.size();
+		core::Size natoms_aln = atom_map_valid_size(pose, updated_atom_map);
+
+		//std::cout << "coverage: " << coverage  << " " << natoms_aln << std::endl;
 
 		for (int i=1; i<=distance_thresholds.size() && coverage>=min_coverage; ++i) {
 			core::Real my_d_sq = distance_thresholds[i]*distance_thresholds[i];
@@ -249,7 +253,8 @@ partial_align(
 			while (!converged) {
 				core::id::AtomID_Map< core::id::AtomID > updated_atom_map_last_round = updated_atom_map;
 				updated_atom_map = update_atom_map(pose, ref_pose, atom_map, my_d_sq);
-				coverage = ((core::Real)(updated_atom_map.size()))/natoms_aln;
+				coverage = ((core::Real)(atom_map_valid_size(pose, updated_atom_map)))/natoms_aln;
+				//std::cout << "coverage: " << coverage  << " " << natoms_aln << std::endl;
 				if (updated_atom_map == updated_atom_map_last_round || coverage<min_coverage) {
 					converged = true;
 				} else {
@@ -259,6 +264,22 @@ partial_align(
 			}
 		}
 	}
+}
+
+core::Size atom_map_valid_size(
+							   core::pose::Pose const & pose,
+							   core::id::AtomID_Map< core::id::AtomID > const & atom_map
+							   )
+{
+	core::Size n_valid = 0;
+	for ( Size ires=1; ires<= pose.total_residue(); ++ires ) {
+		for ( Size iatom=1; iatom<= pose.residue(ires).natoms(); ++iatom ) {
+			core::id::AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
+			if (!aid.valid()) continue;
+			++n_valid;
+		}
+	}
+	return n_valid;
 }
 
 core::id::AtomID_Map< core::id::AtomID >

@@ -17,6 +17,7 @@
 #include <protocols/comparative_modeling/hybridize/TemplateHistory.hh>
 #include <protocols/comparative_modeling/hybridize/util.hh>
 #include <protocols/comparative_modeling/hybridize/DDomainParse.hh>
+#include <protocols/comparative_modeling/hybridize/TMalign.hh>
 
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -1012,20 +1013,26 @@ HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose con
 		for (core::Size ires=1; ires<=pose.total_residue(); ++ires) {
 			for (core::Size iloop=1; iloop<=domains[i_domain].num_loop(); ++iloop) {
 				if ( pose.pdb_info()->number(ires) < domains[i_domain][iloop].start() || pose.pdb_info()->number(ires) > domains[i_domain][iloop].stop() ) continue;
-				
 				residue_list.push_back(ires);
-			
-				for (core::Size jres=1; jres<=ref_pose.total_residue(); ++jres) {
-					if ( pose.pdb_info()->number(ires) != ref_pose.pdb_info()->number(jres) ) continue;
-					if ( !pose.residue_type(ires).is_protein() ) continue;
-					core::id::AtomID const id1( pose.residue_type(ires).atom_index("CA"), ires );
-					core::id::AtomID const id2( ref_pose.residue_type(jres).atom_index("CA"), jres );
-
-					atom_map[ id1 ] = id2;
-					++n_mapped_residues;
-				}
 			}
 		}
+		std::list <Size> ref_residue_list;
+		for (core::Size jres=1; jres<=ref_pose.total_residue(); ++jres) {
+			for (core::Size iloop=1; iloop<=domains[i_domain].num_loop(); ++iloop) {
+				if ( ref_pose.pdb_info()->number(jres) < domains[i_domain][iloop].start() || ref_pose.pdb_info()->number(jres) > domains[i_domain][iloop].stop() ) continue;
+				ref_residue_list.push_back(jres);
+			}
+		}
+		
+		TMalign tm_align;
+		string seq_pose, seq_ref, aligned;
+		tm_align.apply(pose, ref_pose, residue_list, ref_residue_list);
+		tm_align.alignment2AtomMap(pose, ref_pose, residue_list, ref_residue_list, n_mapped_residues, atom_map);
+		tm_align.alignment2strings(pose, ref_pose, residue_list, ref_residue_list, seq_pose, seq_ref, aligned);
+		TR << seq_pose << std::endl;
+		TR << aligned << std::endl;
+		TR << seq_ref << std::endl;
+
 		if (n_mapped_residues >= 6) {
 			utility::vector1< core::Real > aln_cutoffs;
 			aln_cutoffs.push_back(6);

@@ -73,6 +73,11 @@ get_superposition_transformation(
 								 core::id::AtomID_Map< core::id::AtomID > const & atom_map,
 								 numeric::xyzMatrix< core::Real > &R, numeric::xyzVector< core::Real > &preT, numeric::xyzVector< core::Real > &postT );
 
+core::Size atom_map_valid_size(
+							   core::pose::Pose const & pose,
+							   core::id::AtomID_Map< core::id::AtomID > const & atom_map
+							   );
+
 void
 partial_align(
 			  core::pose::Pose & pose,
