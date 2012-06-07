@@ -237,6 +237,7 @@ sources = {
 		"RdcTargetEvaluatorCreator",
 		"ResidueBurialFilter",
 		"ResidueDistanceFilter",
+		"ResidueIEFilter",
 		"ResiduesInInterfaceFilter",
 		"ResidueSetChainEnergyFilter",
 		"RGFilter",
