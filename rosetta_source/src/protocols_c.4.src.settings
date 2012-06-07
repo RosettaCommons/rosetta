@@ -21,6 +21,8 @@ sources = {
 		"BatchFeaturesCreator",
 		"BetaTurnDetectionFeatures",
 		"BetaTurnDetectionFeaturesCreator",
+		"ChargeChargeFeatures",
+		"ChargeChargeFeaturesCreator",
 		"DatabaseFilters",
 		"DatabaseJobInputter",
 		"DatabaseJobOutputter",

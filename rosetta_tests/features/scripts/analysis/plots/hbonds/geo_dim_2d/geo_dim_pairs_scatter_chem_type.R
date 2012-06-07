@@ -51,42 +51,116 @@ set_plot_title <- function(xdim, ydim, ss_id){
 		paste("Hydrogen Bonds ", xdim, " vs ", ydim, "  ss_id: ", ss_id, sep=""))
 }
 
+set_plot_id <- function(xdim, ydim, ss_id){
+	paste("hbond_geo_dim_pairs_scatter", xdim, ydim, "chem_type", ss_id,  sep="_")
+}
+
 plot_each_ss <- function(sub_f){
 	ss_id <- sub_f$sample_source[1]
 	ss <- sample_sources[sample_sources$sample_source == ss_id,]
 
-	plot_id <- "hbond_geo_dim_pairs_scatter_cosBAH_AHdist_chem_type"
+	print(ss_id)
+	print(ss)
+
+	plot_id <- set_plot_id("cosBAH", "AHdist", ss_id)
 	ggplot(data=sub_f, aes(x=cosBAH, y=AHdist)) + plot_parts +
 		scale_x_cosBAH + scale_y_AHdist + set_plot_title("cosBAH", "AHdist", ss_id)
-	save_plots(self, plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-	plot_id <- "hbond_geo_dim_pairs_scatter_cosAHD_AHdist_chem_type"
+	plot_id <- set_plot_id("cosAHD", "AHdist", ss_id)
 	p <- ggplot(data=sub_f, aes(x=cosAHD, y=AHdist)) + plot_parts +
 		scale_x_cosAHD + scale_y_AHdist + set_plot_title("cosAHD", "AHdist", ss_id)
-	save_plots(self, plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-	plot_id <- "hbond_geo_dim_pairs_scatter_chi_AHdist_chem_type"
+	plot_id <- set_plot_id("CHI", "AHdist", ss_id)
 	p <- ggplot(data=sub_f, aes(x=chi, y=AHdist)) + plot_parts +
 		scale_x_chi + scale_y_AHdist + set_plot_title("CHI", "AHdist", ss_id)
-	save_plots(self, plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-	plot_id <- "hbond_geo_dim_pairs_scatter_cosAHD_cosBAH_chem_type"
+	plot_id <- set_plot_id("cosAHD", "cosBAH", ss_id)
 	p <- ggplot(data=sub_f, aes(x=cosAHD, y=cosBAH)) + plot_parts +
 		scale_x_cosAHD + scale_y_cosBAH + set_plot_title("cosAHD", "cosBAH", ss_id)
-	save_plots(self, plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-	plot_id <- "hbond_geo_dim_pairs_scatter_chi_cosBAH_chem_type"
+	plot_id <- set_plot_id("CHI", "cosAHD", ss_id)
 	p <- ggplot(data=sub_f, aes(x=chi, y=cosBAH)) + plot_parts +
 		scale_x_chi + scale_y_cosBAH + set_plot_title("CHI", "cosBAH", ss_id)
-	save_plots(self, plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
-	plot_id <- "hbond_geo_dim_pairs_scatter_chi_cosAHD_chem_type"
+	plot_id <- set_plot_id("CHI", "cosAHD", ss_id)
 	p <- ggplot(data=sub_f, aes(x=chi, y=cosAHD)) + plot_parts +
 		scale_x_chi + scale_y_cosAHD + set_plot_title("CHI", "cosAHD", ss_id)
-	save_plots(self, plot_id, ss, output_dir, output_formats)
+	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 }
 
 runtime <- system.time(d_ply(f, .(sample_source), .fun=plot_each_ss))
 print(paste("Plot Generation Time: ", runtime, sep=""))
+
+
+
+plot_parts <- list(
+	theme_bw(),
+	facet_wrap(~sample_source),
+	geom_point(size=.4),
+	stat_density2d(size=.2))
+
+set_plot_title <- function(xdim, ydim, don_chem_type, acc_chem_type){
+	opts(title =
+		paste(
+			"Hydrogen Bonds ", xdim, " vs ", ydim, "  ",
+			"don: ", don_chem_type, " acc: ", acc_chem_type, sep=""))
+}
+
+set_plot_id <- function(xdim, ydim, don_chem_type, acc_chem_type){
+	paste("hbond_geo_dim_pairs_scatter", xdim, ydim, don_chem_type, acc_chem_type, sep="_")
+}
+
+
+plot_each_chem_type <- function(sub_f){
+	don_chem_type <- as.character(sub_f$don_chem_type_name[1])
+	acc_chem_type <- as.character(sub_f$acc_chem_type_name[1])
+
+	plot_id <- set_plot_id("cosBAH", "AHdist", don_chem_type, acc_chem_type)
+	ggplot(data=sub_f, aes(x=cosBAH, y=AHdist)) + plot_parts +
+		scale_x_cosBAH + scale_y_AHdist +
+		set_plot_title("cosBAH", "AHdist", don_chem_type, acc_chem_type)
+	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+	plot_id <- set_plot_id("cosAHD", "AHdist", don_chem_type, acc_chem_type)
+	p <- ggplot(data=sub_f, aes(x=cosAHD, y=AHdist)) + plot_parts +
+		scale_x_cosAHD + scale_y_AHdist +
+		set_plot_title("cosAHD", "AHdist", don_chem_type, acc_chem_type)
+	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+	plot_id <- set_plot_id("CHI", "AHdist", don_chem_type, acc_chem_type)
+	p <- ggplot(data=sub_f, aes(x=chi, y=AHdist)) + plot_parts +
+		scale_x_chi + scale_y_AHdist +
+		set_plot_title("CHI", "AHdist", don_chem_type, acc_chem_type)
+	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+	plot_id <- set_plot_id("cosAHD", "cosBAH", don_chem_type, acc_chem_type)
+	p <- ggplot(data=sub_f, aes(x=cosAHD, y=cosBAH)) + plot_parts +
+		scale_x_cosAHD + scale_y_cosBAH +
+		set_plot_title("cosAHD", "cosBAH", don_chem_type, acc_chem_type)
+	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+	plot_id <- set_plot_id("CHI", "cosBAH", don_chem_type, acc_chem_type)
+	p <- ggplot(data=sub_f, aes(x=chi, y=cosBAH)) + plot_parts +
+		scale_x_chi + scale_y_cosBAH +
+		set_plot_title("CHI", "cosBAH", don_chem_type, acc_chem_type)
+	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+	plot_id <- set_plot_id("CHI", "cosAHD", don_chem_type, acc_chem_type)
+	p <- ggplot(data=sub_f, aes(x=chi, y=cosAHD)) + plot_parts +
+		scale_x_chi + scale_y_cosAHD +
+		set_plot_title("CHI", "cosAHD", don_chem_type, acc_chem_type)
+	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+}
+
+runtime <- system.time(d_ply(f, .(don_chem_type, acc_chem_type), .fun=plot_each_chem_type))
+print(paste("Plot Generation Time: ", runtime, sep=""))
+
+
 
 })) # end FeaturesAnalysis

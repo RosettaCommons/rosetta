@@ -31,6 +31,7 @@
             		<feature name=GeometricSolvationFeatures/>
 			<feature name=HBondParameterFeatures scorefxn=s/>
 			<feature name=SaltBridgeFeatures/>
+			<feature name=ChargeChargeFeatures/>
 			<feature name=OrbitalsFeatures/>
 			<feature name=HelixBundleFeatures/>
     </ReportToDB>

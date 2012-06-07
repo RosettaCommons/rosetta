@@ -18,6 +18,7 @@
 #include <protocols/features/AtomAtomPairFeaturesCreator.hh>
 #include <protocols/features/AtomTypesFeaturesCreator.hh>
 #include <protocols/features/BetaTurnDetectionFeaturesCreator.hh>
+#include <protocols/features/ChargeChargeFeaturesCreator.hh>
 #include <protocols/features/GeometricSolvationFeaturesCreator.hh>
 #include <protocols/features/HBondFeaturesCreator.hh>
 #include <protocols/features/HBondParameterFeaturesCreator.hh>
