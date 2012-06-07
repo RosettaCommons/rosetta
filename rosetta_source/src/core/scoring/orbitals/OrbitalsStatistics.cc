@@ -251,7 +251,7 @@ void OrbitalsStatistics::sc_H_orbital(
 							if(!resid1.atom_is_backbone(*atom_index)){
 
 
-									utility::vector1<core::Size> orbital_indices(resid1.bonded_orbitals(*atom_index));
+									utility::vector1<core::Size> const & orbital_indices(resid1.bonded_orbitals(*atom_index));
 									//iterate through the orbitals
 									for(
 											utility::vector1<core::Size>::const_iterator
@@ -414,7 +414,7 @@ void OrbitalsStatistics::bb_stats(
 						){
 							if(resid1.atom_is_backbone(*atom_index)){
 
-									utility::vector1<core::Size> orbital_indices(resid1.bonded_orbitals(*atom_index));
+									utility::vector1<core::Size> const & orbital_indices(resid1.bonded_orbitals(*atom_index));
 									//iterate through the orbitals
 									for(
 											utility::vector1<core::Size>::const_iterator

@@ -627,7 +627,7 @@ public:
 	}
 
 	/// @brief indices of the orbitals bonded to an atom
-	utility::vector1<core::Size> const
+	utility::vector1<core::Size> const &
 	bonded_orbitals(Size const atomno)const
 	{
 		return orbital_bonded_neighbor_[atomno];

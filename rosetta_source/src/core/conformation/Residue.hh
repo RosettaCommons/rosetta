@@ -994,7 +994,7 @@ public:
 	}
 
 
-	utility::vector1<core::Size> const
+	utility::vector1<core::Size> const &
 	bonded_orbitals(int const atm) const{
 		return rsd_type_.bonded_orbitals(atm);
 	}

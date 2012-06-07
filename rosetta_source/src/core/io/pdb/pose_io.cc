@@ -121,7 +121,7 @@ dump_pdb(
 			//now add orbitals if the atom type has orbitals
 			if(basic::options::option[ basic::options::OptionKeys::out::file::output_orbitals] &&
 					rsd.atom_type(j).atom_has_orbital()){
-				utility::vector1<core::Size> orbital_indices(rsd.bonded_orbitals(j));
+				utility::vector1<core::Size> const & orbital_indices(rsd.bonded_orbitals(j));
 				foreach(core::Size orbital_index, orbital_indices){
 					++number;
 					Vector orbital_xyz(rsd.orbital_xyz(orbital_index));
@@ -178,7 +178,7 @@ dump_bfactor_pdb(
 			//now add orbitals if the atom type has orbitals
 			if(basic::options::option[ basic::options::OptionKeys::out::file::output_orbitals] &&
 					rsd.atom_type(j).atom_has_orbital()){
-				utility::vector1<core::Size> orbital_indices(rsd.bonded_orbitals(j));
+				utility::vector1<core::Size> const & orbital_indices(rsd.bonded_orbitals(j));
 				foreach(core::Size orbital_index, orbital_indices){
 					++number;
 					Vector orbital_xyz(rsd.orbital_xyz(orbital_index));
@@ -224,7 +224,7 @@ dump_pdb_residue(
 			F(6,2,1.0) << F(6,2,0.0) << '\n';
 		if(basic::options::option[ basic::options::OptionKeys::out::file::output_orbitals] &&
 				rsd.atom_type(j).atom_has_orbital()){
-			utility::vector1<core::Size> orbital_indices(rsd.bonded_orbitals(j));
+			utility::vector1<core::Size> const & orbital_indices(rsd.bonded_orbitals(j));
 
 			foreach(core::Size orbital_index, orbital_indices){
 				Vector orbital_xyz(rsd.orbital_xyz(orbital_index));

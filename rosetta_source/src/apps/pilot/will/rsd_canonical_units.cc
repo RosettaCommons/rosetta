@@ -154,7 +154,7 @@ int main(int argc, char *argv[]) {
         }
         // orbitals
         if(ORB) {
-          vector1<Size> orb = t.bonded_orbitals(ai);
+          vector1<Size>  const & orb = t.bonded_orbitals(ai);
           if(t.atom_type(ai).is_acceptor()){
             for(Size oi = 1; oi <= orb.size(); ++oi) {
               using namespace orbitals;

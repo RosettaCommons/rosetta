@@ -497,7 +497,7 @@ write_additional_pdb_data(
 			char const chain( chains[ rsd.chain() ] );
 			for(core::Size j=1; j<=rsd.natoms(); ++j){
 				if(rsd.atom_type(j).atom_has_orbital()){
-					utility::vector1<core::Size> orbital_indices(rsd.bonded_orbitals(j));
+					utility::vector1<core::Size> const & orbital_indices(rsd.bonded_orbitals(j));
 					for(
 							utility::vector1<core::Size>::const_iterator
 							orbital_index = orbital_indices.begin(),
