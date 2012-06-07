@@ -105,6 +105,8 @@ AddChainBreak::apply( core::pose::Pose & pose )
 		if( change_foldtree() ){
 			f.new_jump( resn, resn+1, resn );
 		}
+		if(pose.residue(resn  ).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(pose,resn);
+		if(pose.residue(resn+1).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(pose,resn+1);
 		add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, resn );
 		add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, resn +1);
 	}

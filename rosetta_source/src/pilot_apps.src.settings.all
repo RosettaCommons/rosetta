@@ -414,6 +414,7 @@ sources = {
 		#"plot_hb",
 	],
 	"pilot/will" : [
+		"test_loop_hash",
 		"d3_bpy_linker",
 		"hubdenovo",
 #		"designability_stats",

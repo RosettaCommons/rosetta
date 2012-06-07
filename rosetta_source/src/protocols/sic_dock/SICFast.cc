@@ -233,7 +233,6 @@ get_mindis_with_plane_hashes(
 	double const & clashdis2
 ){
 	int const xsize=xub-xlb+1, ysize=yub-ylb+1;
-	int imna=0,jmna=0,imnb=0,jmnb=0;
 	double m = 9e9;
 	for(int i = 1; i <= xsize; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
 		for(int j = 1; j <= ysize; ++j) {
@@ -287,7 +286,7 @@ refine_mindis_with_xyzHash(
 					int const igu = xh->grid_stripe_[ig].y;
 					for(int i = igl; i < igu; ++i) {
 						numeric::geometry::hashing::xyzStripeHash<double>::float4 const & a2 = xh->grid_atoms_[i];
-						float const d2 = (v.x()-a2.x)*(v.x()-a2.x) + (v.y()-a2.y)*(v.y()-a2.y) + (v.z()-a2.z)*(v.z()-a2.z);
+						// float const d2 = (v.x()-a2.x)*(v.x()-a2.x) + (v.y()-a2.y)*(v.y()-a2.y) + (v.z()-a2.z)*(v.z()-a2.z);
 						Vec const a = Rori * xform_to_struct2_start.local2global(Vec(a2.x,a2.y,a2.z));
 						double const dxy2 = (a.x()-b.x())*(a.x()-b.x()) + (a.y()-b.y())*(a.y()-b.y());
 						if( dxy2 >= clash_dis_sq ) continue;

@@ -198,9 +198,9 @@ bool get_rt_over_leap( const core::pose::Pose& orig_pose, core::Size ir, core::S
 	rt_6[1] = rt.get_translation().x();
 	rt_6[2] = rt.get_translation().y();
 	rt_6[3] = rt.get_translation().z();
-	rt_6[4] = euler_angles.x()*180/3.1415;
-	rt_6[5] = euler_angles.y()*180/3.1415;
-	rt_6[6] = euler_angles.z()*180/3.1415;
+	rt_6[4] = euler_angles.x()*180.0/numeric::constants::d::pi;
+	rt_6[5] = euler_angles.y()*180.0/numeric::constants::d::pi;
+	rt_6[6] = euler_angles.z()*180.0/numeric::constants::d::pi;
 
 	// indicate success
 	return true;
@@ -319,9 +319,39 @@ bool get_rt_over_leap_fast( core::pose::Pose& pose, core::Size ir, core::Size jr
 	rt_6[1] = rt.get_translation().x();
 	rt_6[2] = rt.get_translation().y();
 	rt_6[3] = rt.get_translation().z();
-	rt_6[4] = euler_angles.x()*180/3.1415;
-	rt_6[5] = euler_angles.y()*180/3.1415;
-	rt_6[6] = euler_angles.z()*180/3.1415;
+	rt_6[4] = euler_angles.x()*180.0/numeric::constants::d::pi;
+	rt_6[5] = euler_angles.y()*180.0/numeric::constants::d::pi;
+	rt_6[6] = euler_angles.z()*180.0/numeric::constants::d::pi;
+
+	return true;
+}
+
+bool
+get_rt_over_leap_without_foldtree_bs(
+	core::pose::Pose const & pose,
+	core::Size ir,
+	core::Size jr,
+	numeric::geometry::hashing::Real6 &rt_6
+){
+	using core::id::AtomID;
+
+	if(!pose.residue(ir).is_protein()) return false;
+	if(!pose.residue(jr).is_protein()) return false;	
+
+	core::id::StubID id1( AtomID(2,ir), AtomID(1,ir), AtomID(            3                     ,ir-1) );
+	core::id::StubID id2( AtomID(2,jr), AtomID(1,jr), AtomID( pose.residue(jr).atom_index("H") ,jr  ) );	
+
+	RT rt = pose.conformation().get_stub_transform(id1,id2);
+
+	numeric::HomogeneousTransform< Real > ht( rt.get_rotation() , rt.get_translation() );
+	numeric::xyzVector < Real > euler_angles =  ht.euler_angles_rad();
+
+	rt_6[1] = rt.get_translation().x();
+	rt_6[2] = rt.get_translation().y();
+	rt_6[3] = rt.get_translation().z();
+	rt_6[4] = euler_angles.x()*180.0/numeric::constants::d::pi;
+	rt_6[5] = euler_angles.y()*180.0/numeric::constants::d::pi;
+	rt_6[6] = euler_angles.z()*180.0/numeric::constants::d::pi;
 
 	return true;
 }
@@ -506,6 +536,18 @@ void LoopHashMap::radial_lookup( core::Size radius,  numeric::geometry::hashing:
 			result.push_back( it->second );
 		}
 	}
+}
+
+Size LoopHashMap::radial_count( core::Size radius, numeric::geometry::hashing::Real6 center ) const
+{
+	center[4] = numeric::nonnegative_principal_angle_degrees(center[4] );
+	center[5] = numeric::nonnegative_principal_angle_degrees(center[5] );
+	std::vector< boost::uint64_t > bin_index_vec = hash_->radial_bin_index( radius, center );
+	Size count = 0;
+	for( core::Size i = 0; i < bin_index_vec.size(); ++i ) {
+		count += backbone_index_map_.count( bin_index_vec[i] );
+	}
+	return count;
 }
 
 void

@@ -48,6 +48,16 @@ bool get_rt_over_leap( const core::pose::Pose& orig_pose, core::Size ir, core::S
 ///     However this means that the pose passed cannot be a const pose, even though the function restores the fold tree afterwards..
 bool get_rt_over_leap_fast( core::pose::Pose& pose, core::Size ir, core::Size jr, numeric::geometry::hashing::Real6 &rt_6 );
 
+/// @brief This takes a pose and two residue positions and determines the rigid body transform of the Leap described by those two residues.
+// sheffler
+bool
+get_rt_over_leap_without_foldtree_bs(
+    core::pose::Pose const & pose,
+    core::Size ir,
+    core::Size jr,
+    numeric::geometry::hashing::Real6 &rt_6
+);
+
 
 /// @brief The LeapIndex stores information about a particular Leap. It hold the oroiginal high precision rigid body transform
 ///  and an Index to a Backbone Database (BackboneDB) that has the actual phi psi angles. THe storage of the precise RT takes a
@@ -121,6 +131,9 @@ public:
 
 		/// @brief Append to a bucket of vectors in the appropriate bin, radial lookup by transform
 		void radial_lookup( core::Size radius,  numeric::geometry::hashing::Real6 transform, std::vector < core::Size > &result );
+
+        /// @brief count hits in the appropriate bin, radial lookup by transform
+        core::Size radial_count( core::Size radius, numeric::geometry::hashing::Real6 center ) const;
 
 		/// @brief Append to a bucket of vectors in the appropriate bin, lookup by bin index
         /// Using core::Size instead of boost::uinst64_t

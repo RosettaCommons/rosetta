@@ -28,6 +28,10 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/VariantType.hh>
 
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/pose/symmetry/util.hh>
+
 #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
 
@@ -71,10 +75,19 @@ ChainbreakEnergy::finalize_total_energy(
  EnergyMap & totals
 ) const
 {
+	Size max_res = pose.n_residue();
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		using namespace core::conformation::symmetry;
+		SymmetricConformation const & symm_conf(dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
+		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
+		max_res = symm_info->num_independent_residues() - 1;
+	}
+
 	using conformation::Residue;
 	Real total_dev(0.0);
 	for ( int n=1; n<= pose.fold_tree().num_cutpoint(); ++n ) {
 		int const cutpoint( pose.fold_tree().cutpoint( n ) );
+		if(cutpoint > (int)max_res) continue;
 		Residue const & lower_rsd( pose.residue( cutpoint ) );
 		if ( !lower_rsd.has_variant_type( chemical::CUTPOINT_LOWER ) ) continue;
 
@@ -112,6 +125,15 @@ ChainbreakEnergy::eval_atom_derivative(
 	using conformation::Residue;
 	using chemical::CUTPOINT_LOWER;
 	using chemical::CUTPOINT_UPPER;
+
+	Size max_res = pose.n_residue();
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {		
+		using namespace core::conformation::symmetry;
+		SymmetricConformation const & symm_conf(dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
+		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
+		max_res = symm_info->num_independent_residues() - 1;
+		if( id.rsd() > max_res ) return;
+	}
 
 	if ( pose.fold_tree().is_cutpoint( id.rsd() ) && pose.residue(id.rsd() ).has_variant_type( CUTPOINT_LOWER ) ) {
 		Residue const & lower_rsd( pose.residue( id.rsd()     ) );

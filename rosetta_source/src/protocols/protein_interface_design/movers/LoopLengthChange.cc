@@ -83,9 +83,11 @@ LoopLengthChange::apply( core::pose::Pose & pose )
 
     ResidueTypeSet const & residue_set( pose.residue( 1 ).residue_type_set() ); // residuetypeset is noncopyable
     ResidueCOP new_res = ResidueFactory::create_residue( residue_set.name_map( name_from_aa( aa_from_oneletter_code( 'A' ) ) ) );
-    for( core::Size leng(1); leng<=(core::Size) delta(); ++leng )
+    for( core::Size leng(1); leng<=(core::Size) delta(); ++leng ){
       pose.conformation().safely_append_polymer_residue_after_seqpos( *new_res, loop_end() + leng - 1, true/*build_ideal
 _geometry*/ );
+      pose.set_omega(loop_end()+leng-1,180.0);
+    }
   }
   pose.update_residue_neighbors();
 }

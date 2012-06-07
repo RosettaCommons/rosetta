@@ -62,17 +62,17 @@ namespace symmetry {
 static basic::Tracer TR("core.conformation.symmetry.util");
 static numeric::random::RandomGenerator RG(408529); // <- Magic number, do not change it!!!
 
-Size fold_tree_entry_point(conformation::Conformation const & src_conf, Size lb_resi=0, Size ub_resi=0) {
+Size fold_tree_entry_point(core::kinematics::FoldTree const & ft, Size lb_resi=0, Size ub_resi=0) {
 	int resi = -1;
 	if(lb_resi==0) lb_resi = 1;
-	if(ub_resi==0) ub_resi = src_conf.size();
-	for(int i = 1; i <= (int)src_conf.fold_tree().num_jump(); ++i) {
-		Size up = src_conf.fold_tree().upstream_jump_residue(i);
-		Size dn = src_conf.fold_tree().downstream_jump_residue(i);
+	if(ub_resi==0) ub_resi = ft.nres();
+	for(int i = 1; i <= (int)ft.num_jump(); ++i) {
+		Size up = ft.upstream_jump_residue(i);
+		Size dn = ft.downstream_jump_residue(i);
 		if( lb_resi <= dn && dn <= ub_resi && ( up < lb_resi || ub_resi < up ) ) resi = dn; // dn in bounds, up out
 	}
 	if( (int)lb_resi <= resi && resi <= (int)ub_resi ) return resi; // if resi good, return it
-	resi = src_conf.fold_tree().root();
+	resi = ft.root();
 	if( (int)lb_resi <= resi && resi <= (int)ub_resi ) return resi; // try fold_tree root
 	utility_exit_with_message("can'd get fold_tree root in range!!!");
 	return 0; // this will never happen
@@ -84,7 +84,7 @@ Size process_residue_request(conformation::Conformation const & src_conf, std::s
 	int resi = -1;
 	if(lb_resi==0) lb_resi = 1;
 	if(ub_resi==0) ub_resi = src_conf.size();
-	if(input=="FT"    || input=="KEEP_FOLDTREE_ANCHOR") resi = fold_tree_entry_point( src_conf, lb_resi, ub_resi );
+	if(input=="FT"    || input=="KEEP_FOLDTREE_ANCHOR") resi = fold_tree_entry_point( src_conf.fold_tree(), lb_resi, ub_resi );
 	if(input=="COM"   || input=="CENTER_OF_MASS"      ) resi = residue_center_of_mass( src_conf, lb_resi, ub_resi );
 	if(input=="FIRST" || input=="FIRST_RESIDUE"       ) resi = lb_resi;
 	if(input=="LAST"  || input=="LAST_RESIDUE"        ) resi = ub_resi;
@@ -120,15 +120,29 @@ get_component_contiguous_foldtree(
 	if( f_orig.num_cutpoint() != (int)f_orig.num_jump() ) utility_exit_with_message("FoldTree ISANITY!!!!!!!");
 	ObjexxFCL::FArray1D_int cuts( f_orig.num_cutpoint() );
 	ObjexxFCL::FArray2D_int jumps( 2, f_orig.num_jump() );
+	// utility::vector1<std::string> upatom(f_orig.num_jump() );
+	utility::vector1<std::string> dnatom(f_orig.num_jump() );	
+
+	utility::vector1<int> cutpoints(f_orig.num_cutpoint());
+	for(int i = 1; i <= f_orig.num_cutpoint(); ++i) {
+		cutpoints[i] = f_orig.cutpoint(i);
+	}
+	std::sort(cutpoints.begin(),cutpoints.end());
+	cutpoints.push_back(f_orig.nres());
 
 	// simple way for now
-	for(int i = 1; i <= f_orig.num_cutpoint(); ++i) {
-		cuts(i) = f_orig.cutpoint(i);
-		jumps(1,i) = f_orig.cutpoint(i);
-		jumps(2,i) = f_orig.cutpoint(i)+1;
+	for(Size i = 1; i < cutpoints.size(); ++i) {
+		cuts(i) = cutpoints[i];
+		jumps(1,i) = cutpoints[i];
+		jumps(2,i) = fold_tree_entry_point(f_orig, cutpoints[i]+1,cutpoints[i+1]);
+		// upatom[i] = f_orig.upstream_atom(i);
+		dnatom[i] = f_orig.downstream_atom(i);
 	}
 	core::kinematics::FoldTree f_contig;
 	f_contig.tree_from_jumps_and_cuts(f_orig.nres(),f_orig.num_jump(),jumps,cuts);
+	for(Size i = 1; i < cutpoints.size(); ++i) {
+		f_contig.set_jump_atoms(i,"N",dnatom[i]);
+	}	
 	f_contig.reorder(1);
 
 	// complicated way....
@@ -361,6 +375,7 @@ setup_symmetric_conformation(
 	core::conformation::symmetry::shift_jump_numbers_in_dofs( *symm_conf, (njump_orig+1-symmdata.get_num_components()) * symmdata.get_subunits() );
 
 	// if( symmdata.get_num_components() > 1 ) {
+	 // 	TR << "=================== SYM FOLD TREE ========================" << std::endl;
 		// TR << symm_conf->fold_tree() << std::endl;
 	 	TR << "=================== SYM FOLD TREE, jump notation: =symfixed= *indep* #symdof# jump[=follows] ========================\n"
 	 	   << show_foldtree(*symm_conf,symmdata,get_chain2range(src_conformation,src_conf2pdb_chain)) << std::endl;
@@ -479,6 +494,28 @@ set_fold_tree_from_symm_data(
 		// Now create foldtree
 		f.tree_from_jumps_and_cuts( num_res_real + num_virtuals, njumps, jumps, cuts );
 		f.reorder( num_res_real + 1 );
+
+				// now set jump atoms from f_orig
+		{
+			std::map<int,std::string> downstream_res_to_jump_atom;
+			for(Size i = 1; i <= f_orig.num_jump(); ++i){
+				downstream_res_to_jump_atom[f_orig.downstream_jump_residue(i)] = f_orig.downstream_atom(i);
+			}		
+			for(Size i = 1; i <= f.num_jump(); ++i){
+				int upres = f.upstream_jump_residue(i);
+				int dnres = f.downstream_jump_residue(i);
+				int upres1 = (upres-1) % num_res_subunit + 1;
+				int dnres1 = (dnres-1) % num_res_subunit + 1;
+				if( dnres > (int)num_res_real ) continue;
+				if( downstream_res_to_jump_atom.find(dnres1) == downstream_res_to_jump_atom.end() ) continue;
+				if( downstream_res_to_jump_atom[dnres1] == "" ) continue;
+				std::string upatom = upres > (int)num_res_real ? "X" : src_conformation.residue(upres1).atom_name(1);
+				std::string dnatom = downstream_res_to_jump_atom[dnres1];
+				TR << "set SYM jump atoms: " << upres << ":" << upatom << " " << dnres << ":" << dnatom << std::endl;
+				f.set_jump_atoms(i, upatom, dnatom );
+			}
+		}
+
 		return f;
 
 
@@ -536,7 +573,7 @@ set_fold_tree_from_symm_data(
 
 		std::map< std::string, std::pair< std::string, std::string > > const & virtual_connect( symmdata.get_virtual_connects() );
 		std::map< std::string, Size > const & virtual_id_to_num (symmdata.get_virtual_id_to_num() );
-		std::map< Size, std::string > const & virtual_num_to_id (symmdata.get_virtual_num_to_id() );
+		// std::map< Size, std::string > const & virtual_num_to_id (symmdata.get_virtual_num_to_id() );
 		std::map< std::string, Size > const & virtual_id_to_subunit (symmdata.get_virt_id_to_subunit_num() );
 		// for(map<string,Size>::const_iterator it = virtual_id_to_subunit.begin(); it != virtual_id_to_subunit.end(); ++it) {
 		// 	TR << "virtual_id_to_subunit " << it->first << " " << it->second << endl;
@@ -630,6 +667,28 @@ set_fold_tree_from_symm_data(
 		// }
 		f.tree_from_jumps_and_cuts( num_res_real + num_virtuals, njumps, jumps, cuts, num_res_real+1 );
 		f.reorder( num_res_real + 1 );
+
+		// now set jump atoms from f_orig
+		{
+			std::map<int,std::string> downstream_res_to_jump_atom;
+			for(Size i = 1; i <= f_orig.num_jump(); ++i){
+				downstream_res_to_jump_atom[f_orig.downstream_jump_residue(i)] = f_orig.downstream_atom(i);
+			}		
+			for(Size i = 1; i <= f.num_jump(); ++i){
+				int upres = f.upstream_jump_residue(i);
+				int dnres = f.downstream_jump_residue(i);
+				int upres1 = (upres-1) % num_res_subunit + 1;
+				int dnres1 = (dnres-1) % num_res_subunit + 1;
+				if( dnres > (int)num_res_real ) continue;
+				if( downstream_res_to_jump_atom.find(dnres1) == downstream_res_to_jump_atom.end() ) continue;
+				if( downstream_res_to_jump_atom[dnres1] == "" ) continue;
+				std::string upatom = upres > (int)num_res_real ? "X" : src_conformation.residue(upres1).atom_name(1);
+				std::string dnatom = downstream_res_to_jump_atom[dnres1];
+				TR << "set SYM jump atoms: " << upres << ":" << upatom << " " << dnres << ":" << dnatom << std::endl;
+				f.set_jump_atoms(i, upatom, dnatom );
+			}
+		}
+
 		return f;
 
 	} else {
