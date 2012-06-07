@@ -1,0 +1,27 @@
+#Original ligand weights with the reference energy optimized for sequence recovery of the binding pocket. OptE used and trained on 51 proteins.
+#Dataset used for optimization was the CSAR dataset http://www.csardock.org/ 2012
+#Benchmark of weights on 234 proteins resulted in a 7% sequence recovery
+METHOD_WEIGHTS ref 0.0497258 -2.46822 0.817984 0.234042 0.349976 -0.379306 1.68114 -0.4552 0.548527 -0.392527 -0.615286 0.0697327 -1.36984 -0.383895 1.0298 0.963313 0.180077 -0.436006 0.445645 0.130317 
+fa_atr 0.8
+fa_rep 0.4
+fa_sol 0.6
+hack_elec 0.25
+pro_close 1
+fa_pair 0.8
+hbond_sr_bb 2
+hbond_lr_bb 2
+hbond_bb_sc 2
+hbond_sc 2
+dslf_ss_dst 0.5
+dslf_cs_ang 2
+dslf_ss_dih 5
+dslf_ca_dih 5
+atom_pair_constraint 1
+coordinate_constraint 1
+angle_constraint 1
+dihedral_constraint 1
+omega 0.5
+fa_dun 0.4
+p_aa_pp 0.5
+chainbreak 1
+ref 1
