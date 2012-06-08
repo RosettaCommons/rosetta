@@ -10,11 +10,12 @@
 #ifndef INCLUDED_numeric_geometry_hashing_xyzStripeHash_hh
 #define INCLUDED_numeric_geometry_hashing_xyzStripeHash_hh
 
+#include <numeric/geometry/hashing/xyzStripeHash.fwd.hh>
 #include <utility/vector1.hh>
 #include <numeric/types.hh>
 #include <numeric/xyzVector.hh>
 #include <ObjexxFCL/format.hh>
-
+#include <utility/pointer/ReferenceCount.hh>
 
 namespace numeric {
 namespace geometry {
@@ -22,7 +23,7 @@ namespace hashing {
 
 
 template<typename T>
-class xyzStripeHash {
+class xyzStripeHash : public utility::pointer::ReferenceCount {
 public:
 	typedef struct { T x,y,z,w; } float4;
 	//typedef unsigned int uint;

@@ -7,20 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-#ifndef INCLUDED_protocols_sic_dock_xyzStripeHashPose_fwd_hh
-#define INCLUDED_protocols_sic_dock_xyzStripeHashPose_fwd_hh
-
-#include <utility/pointer/owning_ptr.hh>
-
 namespace protocols {
 namespace sic_dock {
 
-	class xyzStripeHashPose;
-    typedef utility::pointer::owning_ptr< xyzStripeHashPose > xyzStripeHashPoseOP;
-	typedef utility::pointer::owning_ptr< xyzStripeHashPose const > xyzStripeHashPoseCOP;
 
-
-}
-}
-
-#endif
+} // sic_dock
+} // protocols

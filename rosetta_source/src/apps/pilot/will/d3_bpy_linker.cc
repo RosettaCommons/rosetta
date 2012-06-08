@@ -187,8 +187,8 @@ dock(
 		if(iss%1000==0) TR << iss << " of " << NSS << std::endl;
 		for(int irt = 1; irt <= (int)asamp.size(); ++irt) {
 			Mat R = rotation_matrix_degrees(ssamp[iss],(Real)asamp[irt]);
-			Stub const x1(    R , Vec(0,0,0) );
-			Stub const x2( R3*R , Vec(0,0,0) );
+			Stub x1(    R , Vec(0,0,0) );
+			Stub x2( R3*R , Vec(0,0,0) );
 			Real score; 
 			Real t = sics_[thread_num()]->slide_into_contact(x1,x2,Vec(0,0,1),score);
 			if(score >= CONTACT_TH){

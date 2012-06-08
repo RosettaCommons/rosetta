@@ -74,18 +74,13 @@ int neighbor_count(core::pose::Pose const &pose, int ires, double distance_thres
 	return resi_neighbors;
 }
 
-
-SICFast::~SICFast() {
-	if(xh2c_) delete xh2c_;
-	if(xh2s_) delete xh2s_;
-}
-
 SICFast::SICFast() :
 	CTD(basic::options::option[basic::options::OptionKeys::sicdock::contact_dis]()),
 	CLD(basic::options::option[basic::options::OptionKeys::sicdock::clash_dis]()),
 	CTD2(sqr(CTD)),CLD2(sqr(CLD)),BIN(CLD*basic::options::option[basic::options::OptionKeys::sicdock::hash_2D_vs_3D]()),
 	xh1c_(NULL),xh1s_(NULL),xh2c_(NULL),xh2s_(NULL)
 {
+	std::cout << "message from libprotocols1: refactoring sicfast 2" << std::endl;
 }
 
 
@@ -151,6 +146,14 @@ SICFast::init(
 	xh2s_->init_with_pose(pose2,score_atoms2);
 	for(int i=0;i<xh1s_->natom();++i) w1_.push_back( xh1s_->grid_atoms()[i].w );
 	for(int i=0;i<xh2s_->natom();++i) w2_.push_back( xh2s_->grid_atoms()[i].w );
+
+	std::cout << "SICFast::init" 
+	          << " c1 " << xh1c_->natom()
+	          << " c2 " << xh2c_->natom()
+	          << " s1 " << xh1s_->natom()
+	          << " s2 " << xh2s_->natom()
+	          << std::endl;
+
 }
 
 
@@ -252,7 +255,7 @@ get_mindis_with_plane_hashes(
 inline
 double
 refine_mindis_with_xyzHash(
-	xyzStripeHashPose const * xyz_hash,
+	xyzStripeHashPoseCOP xyz_hash,
 	core::kinematics::Stub const & xform_to_struct2_start,
 	vector1<Vec> const & pa,
 	Vec const & ori,
@@ -260,12 +263,13 @@ refine_mindis_with_xyzHash(
 	double const & mindis_approx
 ){
 	double mindis = mindis_approx;
-	numeric::geometry::hashing::xyzStripeHash<double> const * xh( xyz_hash );
+	numeric::geometry::hashing::xyzStripeHashRealCOP xh( xyz_hash );
 	Mat Rori = rotation_matrix_degrees( (ori.z() < -0.99999) ? Vec(1,0,0) : (Vec(0,0,1)+ori.normalized())/2.0 , 180.0 );
 	//Mat R    = numeric::rotation_matrix_degrees(axsa,-anga);
 	//Mat Rinv = numeric::rotation_matrix_degrees(axsa, anga);
 	while(true){
 		double correction_hash = 9e9;
+		int contacts = 0;
 		for(vector1<Vec>::const_iterator ib = pa.begin(); ib != pa.end(); ++ib) {
 			Vec const v = xform_to_struct2_start.global2local(Rori*((*ib)-Vec(0,0,mindis))) + xh->translation();
 			Vec const b = Rori * xform_to_struct2_start.local2global(v);
@@ -293,9 +297,14 @@ refine_mindis_with_xyzHash(
 						double const dz = b.z() - a.z() - sqrt(clash_dis_sq-dxy2);
 						// cout << "HASH " << dz << endl;
 						correction_hash = min(dz,correction_hash);
+						contacts++;
 					}
 				}
 			}
+		}
+		if(contacts == 0){
+			mindis = 9e9;
+			break;
 		}
 		mindis += correction_hash;
 		if( fabs(correction_hash) < 0.001 ) break;
@@ -306,7 +315,7 @@ refine_mindis_with_xyzHash(
 inline
 double
 get_score(
-	numeric::geometry::hashing::xyzStripeHash<double> const * xh2s,
+	numeric::geometry::hashing::xyzStripeHashRealCOP xh2s,
 	core::kinematics::Stub const & xa,
 	vector1<Vec> const & sa,
 	Vec const & ori,
@@ -315,7 +324,7 @@ get_score(
 	double const & contact_dis,
 	double mindis
 ){
-	numeric::geometry::hashing::xyzStripeHash<double> const * xh( xh2s);
+	numeric::geometry::hashing::xyzStripeHashRealCOP xh( xh2s);
 	//		Mat R = numeric::rotation_matrix_degrees(axsa,-anga);
 	float score = 0.0;
 	vector1<double>::const_iterator iwb = wsa.begin();
@@ -352,7 +361,7 @@ get_score(
 
 double
 SICFast::slide_into_contact(
-	core::kinematics::Stub const & xa,
+	core::kinematics::Stub       & xa,
 	core::kinematics::Stub const & xb,
 	Vec                            ori,
 	double                       & score
@@ -377,12 +386,22 @@ SICFast::slide_into_contact(
 	fill_plane_hash(pb,pa,xmx,xmn,ymx,ymn,BIN,ha,hb,xlb,ylb,xub,yub);
 
 	double const mindis_approx = get_mindis_with_plane_hashes(xlb,ylb,xub,yub,ha,hb,CLD2);
+	if( fabs(mindis_approx) > 9e8 ) {
+		score = 0.0;
+		return 9e9;
+	}
 
 	double const mindis = refine_mindis_with_xyzHash(xh2c_,xb,pa,ori,CLD2,mindis_approx);
+	if( fabs(mindis) > 9e8 ) {
+		score = 0.0;
+		return 9e9;
+	}
 
 	if(score != -12345.0) score = get_score(xh2s_,xb,sa,ori,w1_,CLD,CTD,mindis);
 
-	return mindis;
+	// originally wrote code sliding b into a. blah.
+	xa.v -= ori*mindis;
+	return -mindis;
 }
 
 

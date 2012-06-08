@@ -7,19 +7,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-#ifndef INCLUDED_protocols_sic_dock_xyzStripeHashPose_fwd_hh
-#define INCLUDED_protocols_sic_dock_xyzStripeHashPose_fwd_hh
+#ifndef INCLUDED_protocols_sic_dock_xyzStripeHash_fwd_hh
+#define INCLUDED_protocols_sic_dock_xyzStripeHash_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
+#include <core/types.hh>
 
-namespace protocols {
-namespace sic_dock {
+namespace numeric {
+namespace geometry {
+namespace hashing {
 
-	class xyzStripeHashPose;
-    typedef utility::pointer::owning_ptr< xyzStripeHashPose > xyzStripeHashPoseOP;
-	typedef utility::pointer::owning_ptr< xyzStripeHashPose const > xyzStripeHashPoseCOP;
+template<typename T>
+class xyzStripeHash;
+typedef utility::pointer::owning_ptr< xyzStripeHash<core::Real> > xyzStripeHashRealOP;
+typedef utility::pointer::owning_ptr< xyzStripeHash<core::Real> const > xyzStripeHashRealCOP;
+typedef utility::pointer::owning_ptr< xyzStripeHash<float> > xyzStripeHashFloatOP;
+typedef utility::pointer::owning_ptr< xyzStripeHash<float> const > xyzStripeHashFloatCOP;
 
-
+}
 }
 }
 

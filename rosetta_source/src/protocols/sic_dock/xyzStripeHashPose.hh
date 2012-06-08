@@ -10,6 +10,7 @@
 #ifndef INCLUDED_protocols_sic_dock_xyzStripeHashPose_hh
 #define INCLUDED_protocols_sic_dock_xyzStripeHashPose_hh
 
+#include <protocols/sic_dock/xyzStripeHashPose.fwd.hh>
 #include <numeric/geometry/hashing/xyzStripeHash.hh>
 
 #include <core/pose/Pose.hh>

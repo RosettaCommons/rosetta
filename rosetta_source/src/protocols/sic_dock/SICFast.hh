@@ -20,7 +20,7 @@
 #include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <protocols/sic_dock/xyzStripeHashPose.fwd.hh>
+#include <protocols/sic_dock/xyzStripeHashPose.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 namespace protocols {
@@ -32,7 +32,7 @@ public:
 
 	SICFast();
 
-	virtual ~SICFast();
+	virtual ~SICFast(){}
 
 	void init(
 		core::pose::Pose const & pose1
@@ -58,18 +58,19 @@ public:
 		core::id::AtomID_Map<core::Real> const & score_atoms2  // 
 	);
 
-	// return distace xb*pose2 must move along ori to contact xa*pose1
+	// return distace xmob*pose1 must move along ori to contact xfix*pose2
+	// moves xmob 
 	double slide_into_contact(
-		core::kinematics::Stub const & xa,
-		core::kinematics::Stub const & xb,
+		core::kinematics::Stub       & xmob,
+		core::kinematics::Stub const & xfix,
 		Vec                            ori,
 		double                       & score
 	);
 
 private:
 	double CTD,CLD,CTD2,CLD2,BIN;
-	xyzStripeHashPose *xh1c_,*xh1s_;
-	xyzStripeHashPose *xh2c_,*xh2s_;
+	xyzStripeHashPoseOP xh1c_,xh1s_;
+	xyzStripeHashPoseOP xh2c_,xh2s_;
 	utility::vector1<double> w1_,w2_;
 };
 
