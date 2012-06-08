@@ -18,16 +18,16 @@
 #define getmin(a,b) a>b?b:a
 //#define MAXLEN 10000                        //maximum length of filenames
 
-#include <stdio.h>
-#include <stdlib.h>
+//#include <stdio.h>
+//#include <stdlib.h>
 #include <math.h>
-#include <time.h>
+//#include <time.h>
 #include <string>
 //#include <malloc.h>
 
-#include <sstream>
-#include <iostream>
-#include <fstream>
+//#include <sstream>
+//#include <iostream>
+//#include <fstream>
 #include <vector>
 #include <iterator>
 #include <algorithm>
@@ -108,7 +108,7 @@ template < class A > void ResizeArray( A & array, int Narray1, int Narray2)
 {
 	array.resize(Narray1);
 	for(int i=0; i<Narray1; i++) array[i].resize(Narray2);
-};
+}
 
 /*
 template <class A> void NewArray(A *** array, int Narray1, int Narray2)
@@ -1315,9 +1315,9 @@ void free_memory()
 //     2, calculate TMscore
 int score_fun8( vector < numeric::xyzVector <core::Real> > const xa, 
                 vector < numeric::xyzVector <core::Real> > const ya, 
-                int n_ali,
-                double d,
-                int i_ali[], 
+                int const n_ali,
+                double const d,
+                vector <int> & i_ali, 
                 double *score1,
                 int score_sum_method
               )
@@ -1394,7 +1394,8 @@ double TMscore8_search( vector < numeric::xyzVector <core::Real> > const  xtm,
     int i, m;
     double score_max, score, rmsd;    
     const int kmax=Lali;    
-    int k_ali[kmax], ka, k;
+    vector <int> k_ali(kmax);
+	int ka, k;
     numeric::xyzVector<core::Real> t;
     numeric::xyzMatrix<core::Real> u;
 	double d;
@@ -1403,7 +1404,7 @@ double TMscore8_search( vector < numeric::xyzVector <core::Real> > const  xtm,
 	//iterative parameters
 	int n_it=20;            //maximum number of iterations
     const int n_init_max=6; //maximum number of different fragment length 
-    int L_ini[n_init_max];  //fragment lengths, Lali, Lali/2, Lali/4 ... 4   
+    vector <int> L_ini(n_init_max);  //fragment lengths, Lali, Lali/2, Lali/4 ... 4   
     int L_ini_min=4;
     if(Lali<4) L_ini_min=Lali;   
     int n_init=0, i_init;      
@@ -1425,7 +1426,8 @@ double TMscore8_search( vector < numeric::xyzVector <core::Real> > const  xtm,
     
     score_max=-1;
     //find the maximum score starting from local structures superposition
-    int i_ali[kmax], n_cut;
+    vector <int> i_ali(kmax);
+	int n_cut;
     int L_frag; //fragment length
     int iL_max; //maximum starting postion for the fragment
     for(i_init=0; i_init<n_init; i_init++)
@@ -1557,7 +1559,7 @@ double TMscore8_search( vector < numeric::xyzVector <core::Real> > const  xtm,
 // output:  the best rotaion matrix t, u that results in highest TMscore
 double detailed_search( vector < numeric::xyzVector <core::Real> > const x,
                         vector < numeric::xyzVector <core::Real> > const y, 
-                        int const x_len, 
+                        int const, 
                         int const y_len, 
                         vector < int > const invmap0,
                         numeric::xyzVector <core::Real> & t,
@@ -1594,7 +1596,7 @@ double detailed_search( vector < numeric::xyzVector <core::Real> > const x,
 
 
 //compute the score quickly in three iterations
-double get_score_fast(vector < numeric::xyzVector <core::Real> > const x, vector < numeric::xyzVector <core::Real> > const y, int const x_len, int const y_len, vector < int > const invmap)
+double get_score_fast(vector < numeric::xyzVector <core::Real> > const x, vector < numeric::xyzVector <core::Real> > const y, int const , int const y_len, vector < int > const invmap)
 {
     double rms, tmscore, tmscore1, tmscore2;
     int i, j, k;
@@ -1622,7 +1624,7 @@ double get_score_fast(vector < numeric::xyzVector <core::Real> > const x, vector
     //evaluate score   
     double di;
 	const int len=k;
-    double dis[len];    
+    vector <double> dis(len);    
 	double d00=d0_search;
 	double d002=d00*d00;
 	double d02=d0*d0;
@@ -2718,13 +2720,12 @@ void alignment2AtomMap(
 					   core::id::AtomID_Map< core::id::AtomID > & atom_map)
 {
 	double seq_id;          
-    int i, j, k;
+    int k;
     double d;
 	
 	do_rotation(xa, xt, xlen, t, u);
 	
 	seq_id=0;
-	int kk=0, i_old=0, j_old=0;
 
 	n_mapped_residues = 0;
 	for(k=0; k<n_ali8_; k++)
@@ -2748,11 +2749,7 @@ void alignment2AtomMap(
 	}
 }
 	
-void alignment2strings( core::pose::Pose const & pose,
-					   core::pose::Pose const & ref_pose,
-					   std::list <core::Size> const & residue_list,
-					   std::list <core::Size> const & ref_residue_list,
-					   string & seqxA,
+void alignment2strings(string & seqxA,
 					   string & seqyA,
 					   string & seqM
 )
@@ -3407,7 +3404,7 @@ int apply(core::pose::Pose const & pose1, core::pose::Pose const & pose2, std::l
 	//delete [] invmap;
 	//delete [] m1_;
 	//delete [] m2_;
-
+	return 0;
 }
 	
 };

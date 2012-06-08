@@ -39,8 +39,6 @@
 #include <core/scoring/constraints/util.hh>
 #include <core/pose/PDBInfo.hh>
 
-#include <protocols/comparative_modeling/hybridize/TMalign.hh>
-
 // symmetry
 #include <core/pose/symmetry/util.hh>
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
@@ -122,12 +120,12 @@ void generate_centroid_constraints(
 	//
 	utility::vector1< utility::vector1< core::Real > > tgt_dists(nres_tgt);
 	utility::vector1< utility::vector1< core::Real > > tgt_weights(nres_tgt);
-	for (int i=1; i<=templates.size(); ++i) {
+	for (int i=1; i<=(int)templates.size(); ++i) {
 		utility::vector1< bool > passed_gapcheck(nres_tgt,false);
-		for (int j=1; j<templates[i]->total_residue(); ++j ) {
+		for (int j=1; j<(int)templates[i]->total_residue(); ++j ) {
 			bool includeme=true;
-			for (int k=1; k<=GAPBUFFER && includeme; ++k) {
-				if ( j-k < 1 || j+k > templates[i]->total_residue() ) includeme=false;
+			for (int k=1; k<=(int)GAPBUFFER && includeme; ++k) {
+				if ( j-k < 1 || j+k > (int)templates[i]->total_residue() ) includeme=false;
 				else if (templates[i]->pdb_info()->number(j+k) - templates[i]->pdb_info()->number(j) != k ) includeme=false;
 				else if (templates[i]->pdb_info()->number(j-k) - templates[i]->pdb_info()->number(j) != -k ) includeme=false;
 			}
@@ -138,7 +136,7 @@ void generate_centroid_constraints(
 			if (!passed_gapcheck[j]) continue;
 			for (core::Size k=j+1; k<templates[i]->total_residue(); ++k ) {
 				if (!passed_gapcheck[k]) continue;
-				if (templates[i]->pdb_info()->number(k) - templates[i]->pdb_info()->number(j) < MINSEQSEP) continue;
+				if (templates[i]->pdb_info()->number(k) - templates[i]->pdb_info()->number(j) < (int)MINSEQSEP) continue;
 				core::Real dist = templates[i]->residue(j).xyz(2).distance( templates[i]->residue(k).xyz(2) );
 				if ( dist <= MAXDIST ) {
 					pose.add_constraint(
@@ -247,7 +245,7 @@ partial_align(
 
 		//std::cout << "coverage: " << coverage  << " " << natoms_aln << std::endl;
 
-		for (int i=1; i<=distance_thresholds.size() && coverage>=min_coverage; ++i) {
+		for (int i=1; i<=(int)distance_thresholds.size() && coverage>=min_coverage; ++i) {
 			core::Real my_d_sq = distance_thresholds[i]*distance_thresholds[i];
 			bool converged = false;
 			while (!converged) {

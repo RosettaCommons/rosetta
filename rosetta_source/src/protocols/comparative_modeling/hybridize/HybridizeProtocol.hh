@@ -38,7 +38,7 @@ class HybridizeProtocol : public protocols::moves::Mover {
 
 public:
 	HybridizeProtocol();
-	HybridizeProtocol(std::string template_list_file);
+	//HybridizeProtocol(std::string template_list_file);
 
 	void init();
 		
@@ -112,7 +112,8 @@ private:
 	core::Size batch_relax_, relax_repeats_;
 
 	utility::vector1 <std::string> fragfiles_;
-	core::fragment::FragSetOP fragments9_, fragments3_; // abinitio frag9,frag3 flags
+    core::fragment::FragSetOP fragments9_;
+	core::fragment::FragSetOP fragments3_; // abinitio frag9,frag3 flags
 
 	// native pose, aln
 	core::pose::PoseOP native_;

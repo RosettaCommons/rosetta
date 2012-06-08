@@ -194,6 +194,7 @@ HybridizeProtocol::HybridizeProtocol() :
 	}
 }
 
+/*
 HybridizeProtocol::HybridizeProtocol(std::string template_list_file) :
 	template_weights_sum_(0),
 	fragments3_(NULL),
@@ -202,7 +203,7 @@ HybridizeProtocol::HybridizeProtocol(std::string template_list_file) :
 	init();
 	read_template_structures(template_list_file);
 }
-
+*/
 // sets default options
 void
 HybridizeProtocol::init() {
@@ -356,15 +357,15 @@ HybridizeProtocol::initialize_and_sample_loops(
 	using namespace basic::options::OptionKeys;
 
 	// xyz copy starting model
-	for (int i=1; i<=chosen_templ->total_residue(); ++i)
-		for (int j=1; j<=chosen_templ->residue(i).natoms(); ++j) {
+	for (Size i=1; i<=chosen_templ->total_residue(); ++i)
+		for (Size j=1; j<=chosen_templ->residue(i).natoms(); ++j) {
 			core::id::AtomID src(j,i), tgt(j, chosen_templ->pdb_info()->number(i));
 			pose.set_xyz( tgt, chosen_templ->xyz( src ) );
 		}
 
 	// make loops as inverse of template_contigs_icluster
 	TR << "CONTIGS" << std::endl << template_contigs_icluster << std::endl;
-	core::Size ncontigs = template_contigs_icluster.size();
+	//core::Size ncontigs = template_contigs_icluster.size();
 	core::Size nres_tgt = pose.total_residue();
 
 	//symmetry
@@ -381,13 +382,13 @@ HybridizeProtocol::initialize_and_sample_loops(
 	protocols::loops::LoopsOP loops = new protocols::loops::Loops;
 	utility::vector1< bool > templ_coverage(nres_tgt, false);
 
-	for (int i=1; i<=chosen_templ->total_residue(); ++i) {
+	for (Size i=1; i<=chosen_templ->total_residue(); ++i) {
 		core::Size cres = chosen_templ->pdb_info()->number(i);
 		templ_coverage[cres] = true;
 	}
 
 	// remove 1-3 residue "segments"
-	for (int i=1; i<=nres_tgt-2; ++i) {
+	for (Size i=1; i<=nres_tgt-2; ++i) {
 		if (!templ_coverage[i] && templ_coverage[i+1] && !templ_coverage[i+2]) {
 			templ_coverage[i+1]=false;
 		} else if(i<=nres_tgt-3 && !templ_coverage[i] && templ_coverage[i+1] && templ_coverage[i+2] && !templ_coverage[i+3]) {
@@ -403,7 +404,7 @@ HybridizeProtocol::initialize_and_sample_loops(
 	// make loopfile
 	bool inloop=!templ_coverage[1];
 	core::Size loopstart=1, loopstop;
-	for (int i=2; i<=nres_tgt; ++i) {
+	for (Size i=2; i<=nres_tgt; ++i) {
 		if (templ_coverage[i] && inloop) {
 			// end loop
 			inloop = false;
@@ -464,7 +465,7 @@ HybridizeProtocol::initialize_and_sample_loops(
 		protocols::moves::MonteCarloOP mc1 = new protocols::moves::MonteCarlo( pose, *scorefxn, 2.0 );
 
 		core::Size neffcycles = (core::Size)(1000*option[cm::hybridize::stage1_increase_cycles]());
-		for (int n=1; n<=neffcycles; ++n) {
+		for (Size n=1; n<=neffcycles; ++n) {
 			frag9mover->apply( pose ); (*scorefxn)(pose); mc1->boltzmann( pose , "frag9" );
 			frag3mover->apply( pose ); (*scorefxn)(pose); mc1->boltzmann( pose , "frag3" );
 
@@ -478,7 +479,7 @@ HybridizeProtocol::initialize_and_sample_loops(
 		scorefxn->set_weight( core::scoring::linear_chainbreak, 2.0 );
 		(*scorefxn)(pose);
 		protocols::moves::MonteCarloOP mc2 = new protocols::moves::MonteCarlo( pose, *scorefxn, 2.0 );
-		for (int n=1; n<=neffcycles; ++n) {
+		for (Size n=1; n<=neffcycles; ++n) {
 			frag9mover->apply( pose ); (*scorefxn)(pose); mc2->boltzmann( pose , "frag9" );
 			frag3mover->apply( pose ); (*scorefxn)(pose); mc2->boltzmann( pose , "frag3" );
 
@@ -566,7 +567,7 @@ void HybridizeProtocol::read_template_structures(utility::file::FileName templat
 			utility::vector1<core::Size> cst_reses;
 			if ( str_stream >> cst_reses_str ) {
 				utility::vector1<std::string> cst_reses_parsed = utility::string_split( cst_reses_str , ',' ) ;
-				for (int i=1; i<= cst_reses_parsed.size(); ++i ) {
+				for (Size i=1; i<= cst_reses_parsed.size(); ++i ) {
 					cst_reses.push_back( (core::Size) std::atoi( cst_reses_parsed[i].c_str() ) );
 				}
 			}
@@ -710,7 +711,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 				}
 				
 				TR << "Found " << domains_all_templ[i_template].size() << " domains for template " << template_fn_[i_template] << std::endl;
-				for (int i=1; i<=domains_all_templ[i_template].size(); ++i) {
+				for (Size i=1; i<=domains_all_templ[i_template].size(); ++i) {
 					TR << "domain " << i << ": " << domains_all_templ[i_template][i] << std::endl;
 				}
 			}
@@ -718,7 +719,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			// combine domains that are not in the initial template
 			utility::vector1< loops::Loops > domains = expand_domains_to_full_length(domains_all_templ, initial_template_index, nres_tgt);
 			TR << "Final decision: " << domains.size() << " domains" << std::endl;
-			for (int i=1; i<= domains.size(); ++i) {
+			for (Size i=1; i<= domains.size(); ++i) {
 				TR << "domain " << i << ": " << domains[i] << std::endl;
 			}
 			
@@ -824,10 +825,10 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		history = *( static_cast< TemplateHistory* >( pose.data().get_ptr( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY )() ));
 
 		TR << "History :";
-		for (int i=1; i<= history->size(); ++i ) { TR << I(4,i); }
+		for (Size i=1; i<= history->size(); ++i ) { TR << I(4,i); }
 		TR << std::endl;
 		TR << "History :";
-		for (int i=1; i<= history->size(); ++i ) { TR << I(4, history->get(i)); }
+		for (Size i=1; i<= history->size(); ++i ) { TR << I(4, history->get(i)); }
 		TR << std::endl;
 
 		// stage "2.5" .. minimize with centroid energy + full-strength cart bonded
@@ -1012,14 +1013,14 @@ HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose con
 		core::Size n_mapped_residues=0;
 		for (core::Size ires=1; ires<=pose.total_residue(); ++ires) {
 			for (core::Size iloop=1; iloop<=domains[i_domain].num_loop(); ++iloop) {
-				if ( pose.pdb_info()->number(ires) < domains[i_domain][iloop].start() || pose.pdb_info()->number(ires) > domains[i_domain][iloop].stop() ) continue;
+				if ( pose.pdb_info()->number(ires) < (int)domains[i_domain][iloop].start() || pose.pdb_info()->number(ires) > (int)domains[i_domain][iloop].stop() ) continue;
 				residue_list.push_back(ires);
 			}
 		}
 		std::list <Size> ref_residue_list;
 		for (core::Size jres=1; jres<=ref_pose.total_residue(); ++jres) {
 			for (core::Size iloop=1; iloop<=domains[i_domain].num_loop(); ++iloop) {
-				if ( ref_pose.pdb_info()->number(jres) < domains[i_domain][iloop].start() || ref_pose.pdb_info()->number(jres) > domains[i_domain][iloop].stop() ) continue;
+				if ( ref_pose.pdb_info()->number(jres) < (int)domains[i_domain][iloop].start() || ref_pose.pdb_info()->number(jres) > (int)domains[i_domain][iloop].stop() ) continue;
 				ref_residue_list.push_back(jres);
 			}
 		}
@@ -1028,7 +1029,7 @@ HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose con
 		string seq_pose, seq_ref, aligned;
 		tm_align.apply(pose, ref_pose, residue_list, ref_residue_list);
 		tm_align.alignment2AtomMap(pose, ref_pose, residue_list, ref_residue_list, n_mapped_residues, atom_map);
-		tm_align.alignment2strings(pose, ref_pose, residue_list, ref_residue_list, seq_pose, seq_ref, aligned);
+		tm_align.alignment2strings(seq_pose, seq_ref, aligned);
 		TR << seq_pose << std::endl;
 		TR << aligned << std::endl;
 		TR << seq_ref << std::endl;
