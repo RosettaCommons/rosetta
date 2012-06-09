@@ -23,6 +23,10 @@
 #include <protocols/sic_dock/xyzStripeHashPose.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
+
+#include <protocols/sic_dock/RigidScore.hh>
+
+
 namespace protocols {
 namespace sic_dock {
 
@@ -63,15 +67,16 @@ public:
 	double slide_into_contact(
 		core::kinematics::Stub       & xmob,
 		core::kinematics::Stub const & xfix,
-		Vec                            ori,
-		double                       & score
-	);
+		Vec                            ori
+	) const;
 
 private:
 	double CTD,CLD,CTD2,CLD2,BIN;
 	xyzStripeHashPoseOP xh1c_,xh1s_;
 	xyzStripeHashPoseOP xh2c_,xh2s_;
 	utility::vector1<double> w1_,w2_;
+
+	CBScoreOP cbscore_;
 };
 
 

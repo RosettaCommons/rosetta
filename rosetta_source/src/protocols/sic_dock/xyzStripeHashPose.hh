@@ -37,15 +37,35 @@ enum xyzStripeHashPoseMode {
 class xyzStripeHashPose : public numeric::geometry::hashing::xyzStripeHash<double> {
 public:
 	xyzStripeHashPose(double radius) : numeric::geometry::hashing::xyzStripeHash<double>(radius) {}
-	xyzStripeHashPose(double radius, core::pose::Pose p, xyzStripeHashPoseMode m = BB ) : numeric::geometry::hashing::xyzStripeHash<double>(radius) {
+
+	xyzStripeHashPose(double radius,
+		core::pose::Pose const & p,
+		xyzStripeHashPoseMode m = BB
+	) : numeric::geometry::hashing::xyzStripeHash<double>(radius) {
 		init_with_pose(p,m);
 	}
-	void init_with_pose(core::pose::Pose const & p, xyzStripeHashPoseMode m = BB) {
+
+	xyzStripeHashPose(double radius,
+		core::pose::Pose const & p,
+		core::id::AtomID_Map<double> const & amap
+	) : numeric::geometry::hashing::xyzStripeHash<double>(radius) {
+		init_with_pose(p,amap);
+	}
+
+	void
+	init_with_pose(
+		core::pose::Pose const & p,
+		xyzStripeHashPoseMode m = BB
+	){
 		utility::vector1<double> dummy;
 		init_with_pose(p,dummy,m);
 	}
 
-	void init_with_pose(core::pose::Pose const & p, core::id::AtomID_Map<double> const & amap) {
+	void
+	init_with_pose(
+		core::pose::Pose const & p,
+		core::id::AtomID_Map<double> const amap
+	){
 		using core::id::AtomID;
 		int natom = 0;
 		if( amap.n_residue() != p.n_residue()) utility_exit_with_message("BAD ATOMID_MAP");
@@ -70,7 +90,12 @@ public:
 		init(atoms,meta);
 	}
 
-	void init_with_pose(core::pose::Pose const & p, utility::vector1<double> const & meta_in, xyzStripeHashPoseMode m = BB) {
+	void
+	init_with_pose(
+		core::pose::Pose const & p,
+		utility::vector1<double> const & meta_in,
+		xyzStripeHashPoseMode m = BB
+	){
 		int natom = 0;
 		for(int ir = 1; ir <= (int)p.n_residue(); ++ir) {
 			core::conformation::Residue const & r(p.residue(ir));
@@ -111,11 +136,11 @@ public:
 				}
 			}
 		}
-	if(meta_in.size()!=0) {
-		init(atoms,meta_in);
-	} else {
-		init(atoms,meta);
-	}
+		if(meta_in.size()!=0) {
+			init(atoms,meta_in);
+		} else {
+			init(atoms,meta);
+		}
 	}
 
 };

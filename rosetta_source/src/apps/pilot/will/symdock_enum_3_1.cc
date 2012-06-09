@@ -20,6 +20,8 @@ DONE
 */
 
 #include <protocols/sic_dock/SICFast.hh>
+#include <protocols/sic_dock/RigidScore.hh>
+#include <protocols/sic_dock/util.hh>
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -329,6 +331,8 @@ struct TCDock {
 	protocols::sic_dock::SICFast sic_;
 	bool abort_;
 	core::id::AtomID_Map<core::Real> clashmap1_,clashmap2_,scoremap1_,scoremap2_;
+	protocols::sic_dock::CBScoreOP cbscore_;
+
 	TCDock( string cmp1pdb, string cmp2pdb, string cmp1type, string cmp2type ) : cmp1type_(cmp1type),cmp2type_(cmp2type),abort_(false) {
 		#ifdef USE_OPENMP
 		cout << "OMP info: " << num_threads() << " " << thread_num() << endl;
@@ -456,6 +460,9 @@ struct TCDock {
 		}
 
 		sic_.init(cmp1in_,cmp2in_,clashmap1_,clashmap2_,scoremap1_,scoremap2_);
+		Real CTD(basic::options::option[basic::options::OptionKeys::sicdock::contact_dis]());
+		Real CLD(basic::options::option[basic::options::OptionKeys::sicdock::clash_dis]());
+		cbscore_ = new protocols::sic_dock::CBScore(cmp1in_,cmp1in_,CLD,CTD);
 
 		cmp1mnpos_.resize(cmp1nangle_,0.0);
 		cmp2mnpos_.resize(cmp2nangle_,0.0);
@@ -549,6 +556,7 @@ struct TCDock {
 				      i12? clashmap1_:clashmap2_,
 				      i12? scoremap1_:scoremap2_,
 				      i12? scoremap1_:scoremap2_);
+			protocols::sic_dock::CBScore sfxn(i12?cmp1in_:cmp2in_,CLASH_D,CONTACT_D);
 
 			for(int ipn = 0; ipn < 2; ++ipn) {
 				#ifdef USE_OPENMP
@@ -566,7 +574,7 @@ struct TCDock {
 					core::kinematics::Stub xa,xb;
 					xa.M = rotation_matrix_degrees(axis2,(double)icmp) * swap_axis_rotation(i12?cmp1type_:cmp2type_);
 					xb.M = rotation_matrix_degrees(axis ,(double)icmp);
-					double const d = -sic.slide_into_contact(xa,xb,sicaxis,score);
+					double const d = -protocols::sic_dock::slide_into_contact_and_score(sic,sfxn,xa,xb,sicaxis,score);
 					if( d > 0 ) utility_exit_with_message("d shouldn't be > 0 for cmppos! "+ObjexxFCL::string_of(icmp));
 					if(fabs(d) > 9e8){
 						utility_exit_with_message("precompute_intra error");
@@ -676,8 +684,18 @@ struct TCDock {
 		#pragma omp critical
 		#endif
 		{
-			p1 = cmp1in_;
-			p2 = cmp2in_;
+			p1.append_residue_by_jump(cmp1in_.residue(1),1,"","",false);
+			for(Size i = 2; i <= cmp1in_.n_residue()/cmp1nsub_; ++i) {
+				if(p1.residue(i-1).is_terminus()||p1.residue(i-1).is_ligand())
+				     p1.append_residue_by_jump(cmp1in_.residue(i),1);
+				else p1.append_residue_by_bond(cmp1in_.residue(i));
+			}
+			p2.append_residue_by_jump(cmp2in_.residue(1),1,"","", !sym ); // other chain iff not dumping sym complex (too many chains)
+			for(Size i = 2; i <= cmp2in_.n_residue()/cmp2nsub_; ++i) {
+				if(p2.residue(p2.n_residue()).is_terminus()||p2.residue(p2.n_residue()).is_ligand())
+				     p2.append_residue_by_jump(cmp2in_.residue(i),1);
+				else p2.append_residue_by_bond(cmp2in_.residue(i));
+			}
 		}
 		rot_pose  (p2,cmp2axs_,icmp2);
 		rot_pose  (p1,cmp1axs_,icmp1);
@@ -686,8 +704,8 @@ struct TCDock {
 
 		// pick rotations with best num contacts
 		int best1=0,best2=0,bestcount=0;
-		for(int ir1 = 1; ir1 <= cmp1nsub_; ++ir1){
-			for(int ir2 = 1; ir2 <= cmp2nsub_; ++ir2){
+		for(int ir1 = 0; ir1 < cmp1nsub_; ++ir1){
+			for(int ir2 = 0; ir2 < cmp2nsub_; ++ir2){
 				int ccount = 0;
 				for(Size ir=1; ir<=p1.n_residue(); ++ir){
 				for(Size jr=1; jr<=p2.n_residue(); ++jr){
@@ -702,16 +720,17 @@ struct TCDock {
 			}
 			rot_pose(p1,rotation_matrix_degrees(cmp1axs_,(Real)cmp1nangle_));
 		}
-
+		rot_pose(p1,rotation_matrix_degrees(cmp1axs_,(Real)best1*(Real)cmp1nangle_));
+		rot_pose(p2,rotation_matrix_degrees(cmp2axs_,(Real)best2*(Real)cmp2nangle_));
 
 		{
 			symm.append_residue_by_jump(p1.residue(1),1,"","",false);
-			for(Size i = 2; i <= p1.n_residue()/cmp1nsub_; ++i) {
+			for(Size i = 2; i <= p1.n_residue(); ++i) {
 				if(symm.residue(i-1).is_terminus()||symm.residue(i-1).is_ligand()) symm.append_residue_by_jump(p1.residue(i),1);
 				else                                symm.append_residue_by_bond(p1.residue(i));
 			}
 			symm.append_residue_by_jump(p2.residue(1),1,"","", !sym ); // other chain iff not dumping sym complex (too many chains)
-			for(Size i = 2; i <= p2.n_residue()/cmp2nsub_; ++i) {
+			for(Size i = 2; i <= p2.n_residue(); ++i) {
 				if(symm.residue(symm.n_residue()).is_terminus()||symm.residue(symm.n_residue()).is_ligand()) symm.append_residue_by_jump(p2.residue(i),1);
 				else                                             symm.append_residue_by_bond(p2.residue(i));
 			}
@@ -795,7 +814,7 @@ struct TCDock {
 			xa.M = rotation_matrix_degrees(cmp1axs_,(double)icmp1);
 			xb.M = rotation_matrix_degrees(cmp2axs_,(double)icmp2);
 
-			double const d = -sic_.slide_into_contact(xa,xb,sicaxis,icbc);
+			double const d = -slide_into_contact_and_score(sic_,*cbscore_,xa,xb,sicaxis,icbc);
 			if(fabs(d) > 9e8){
 				gscore(icmp2+1,icmp1+1,iori+1) = 0.0;
 				gradii(icmp2+1,icmp1+1,iori+1) = 9e9;
@@ -1048,9 +1067,10 @@ struct TCDock {
 		{                                                         // 3deg loop
 			// double max1=0;
 			// dump_onecomp();
-			precompute_intra(); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			// precompute_intra(); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			cout << "main loop 1 over icmp2, icmp1, iori every 3 degrees" << endl;
 			double max_score = 0;
+			int max_i1,max_i2,max_io;
 			for(int icmp1 = 0; icmp1 < cmp1nangle_; icmp1+=3) {
 				if(icmp1%15==0 && icmp1!=0) cout<<" lowres dock "<<cmp1name_<<" "<<I(2,100*icmp1/cmp1nangle_)<<"% done, max_score: "<<F(10,6,max_score)<<endl;
 				vector1<Vecf> pa,cba; get_cmp1(icmp1,pa,cba);
@@ -1070,7 +1090,6 @@ struct TCDock {
 							} else {
 								iori += (stg%2==0) ? -3 : 3;
 							}
-						// for(int iori = 0; iori < 360; ++iori) {
 							double const score = dock_score(icmp2,icmp1,iori);
 							if( -12345==score ) { stg++; newstage=true; continue; }
 							#ifdef USE_OPENMP
@@ -1079,18 +1098,25 @@ struct TCDock {
 							if(score > max_score) max_score = score;
 						}
 					} else {
-						for(int iori = 0; iori < 360; ++iori) {
+						for(int iori = 0; iori < 360; iori+=3) {
 							double const score = dock_score(icmp2,icmp1,iori);
 							#ifdef USE_OPENMP
 							#pragma omp critical
 							#endif
-							if(score > max_score) max_score = score;
+							if(score > max_score){
+								max_score = score;
+								max_i1 = icmp1;
+								max_i2 = icmp2;
+								max_io = iori;																
+							}
+							// if(9==icmp1&&69==icmp2) cout << I(3,iori) << " " << score << endl;
 						}						
 					}
+					// if(9==icmp1&&69==icmp2)	utility_exit_with_message("iori");
 				}
 			}
 			if(max_score<0.00001) utility_exit_with_message("cmp1 or cmp2 too large, no contacts!");
-			cout << "MAX3 " << max_score << endl;
+			cout << "MAX3 " << max_score << " " << max_i1 << " " << max_i2 << " " << max_io << endl;
 		}
 		utility::vector1<vector1<int> > cmp2lmx,cmp1lmx,orilmx; { // set up work for main loop 2
 			double topX_3 = 0;
@@ -1129,7 +1155,7 @@ struct TCDock {
 						int icmp1 = *picmp1; vector1<Vecf> pa,cba; get_cmp1(icmp1,pa,cba);
 						for(vector1<int>::const_iterator piori = orilmx[ilmx].begin(); piori != orilmx[ilmx].end(); ++piori) {
 							int iori = *piori;
-							dock_no_score(icmp2,icmp1,iori);
+							dock_score(icmp2,icmp1,iori);
 						}
 					}
 				}
@@ -1144,22 +1170,41 @@ struct TCDock {
 					for(int k = 1; k <= (int)gradii.size3(); ++k){
 						double const val = gradii(i,j,k);
 						if( val < -9e8 ) continue;
-						double nbmax = -9e9;
-						// int nedge = 0;
-						for(int di = -1; di <= 1; ++di){
-							for(int dj = -1; dj <= 1; ++dj){
-								for(int dk = -1; dk <= 1; ++dk){
-									if(di==0 && dj==0 && dk==0) continue;
-									int i2 = (i+di+gradii.size1()-1)%gradii.size1()+1;
-									int j2 = (j+dj+gradii.size2()-1)%gradii.size2()+1;
-									int k2 = (k+dk+gradii.size3()-1)%gradii.size3()+1;
-									double const nbval = gradii(i2,j2,k2);
-									nbmax = max(nbmax,nbval);
-								}
-							}
-						}
-						if( nbmax != -9e9 && val >= nbmax ) {
-							double score = dock_score(i-1,j-1,k-1);
+
+						double nbmax = -9e9, scoremax = -9e9;
+						// if( option[tcdock::geometric_minima_only]() ){
+						// 	// int nedge = 0;
+						// 	for(int di = -1; di <= 1; ++di){
+						// 		for(int dj = -1; dj <= 1; ++dj){
+						// 			for(int dk = -1; dk <= 1; ++dk){
+						// 				if(di==0 && dj==0 && dk==0) continue;
+						// 				int i2 = (i+di+gradii.size1()-1)%gradii.size1()+1;
+						// 				int j2 = (j+dj+gradii.size2()-1)%gradii.size2()+1;
+						// 				int k2 = (k+dk+gradii.size3()-1)%gradii.size3()+1;
+						// 				double const nbval = gradii(i2,j2,k2);
+						// 				nbmax = max(nbmax,nbval);
+						// 			}
+						// 		}
+						// 	}
+						// }
+						// if( option[tcdock::score_minima_only]() ){
+						// 	// int nedge = 0;
+						// 	for(int di = -1; di <= 1; ++di){
+						// 		for(int dj = -1; dj <= 1; ++dj){
+						// 			for(int dk = -1; dk <= 1; ++dk){
+						// 				if(di==0 && dj==0 && dk==0) continue;
+						// 				int i2 = (i+di+gradii.size1()-1)%gradii.size1()+1;
+						// 				int j2 = (j+dj+gradii.size2()-1)%gradii.size2()+1;
+						// 				int k2 = (k+dk+gradii.size3()-1)%gradii.size3()+1;
+						// 				double const nbval = gradii(i2,j2,k2);
+						// 				nbmax = max(nbmax,nbval);
+						// 			}
+						// 		}
+						// 	}
+						// }
+
+						if( /*nbmax != -9e9 &&*/ val >= nbmax ) {
+							double score = gscore(i,j,k); //dock_score(i-1,j-1,k-1);
 							if(score <= 0) continue;
 							local_maxima.push_back( LMAX(score,gradii(i,j,k),i-1,j-1,k-1) );
 							highscore = max(score,highscore);
@@ -1171,7 +1216,7 @@ struct TCDock {
 			cout << "N maxima: " << local_maxima.size() << ", best score: " << highscore << endl;
 			string nc1=cmp1type_.substr(1,1), nc2=cmp2type_.substr(1,1);
 			string pad = ""; for(int i = 1; i <= npad; ++i) pad += " ";
-			cout << pad << " tag     score   diam   tdis   inter    ";
+			cout << "  tag" << pad << "    score   diam   tdis   inter    ";
 			cout << "sc"+nc1+"    sc"+nc2+"  nr"+nc1+"  a"+nc1+"       r"+nc1+"  nr"+nc2+"  a"+nc2+"       r"+nc2+" ori";
 			cout << "  v0.2  v0.4  v0.6  v0.8  v1.0  v1.2  v1.4  v1.6  v1.8  v2.0";
 			cout << "  v2.2  v2.4  v2.6  v2.8  v3.0  v3.2  v3.4  v3.6  v3.8  v4.0  v4.2  v4.4  v4.6  v4.8  v5.0" << endl;
@@ -1344,7 +1389,7 @@ int main (int argc, char *argv[]) {
 			}
 		}
 	}
-	cout << "DONE testing: refactor SICFast scores" << endl;
+	cout << "DONE testing: refactor SICFast scores 2" << endl;
 }
 
 

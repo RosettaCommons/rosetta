@@ -20,7 +20,7 @@
 #include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <protocols/sic_dock/xyzStripeHashPose.fwd.hh>
+#include <protocols/sic_dock/xyzStripeHashPose.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 namespace protocols {
@@ -38,20 +38,7 @@ protected:
 	typedef utility::vector1<Real> Reals;
 public:
 
-	virtual ~RigidScore();
-
-	virtual
-	void
-	setup_for_scoring(
-		Pose const & pose1
-	) = 0;
-
-	virtual
-	void
-	setup_for_scoring(
-		Pose const & pose1,
-		Pose const & pose2
-	) = 0;
+	virtual ~RigidScore() {}
 
 	virtual
 	core::Real
@@ -65,22 +52,34 @@ public:
 
 class CBScore : public RigidScore {
 public:
-	CBScore();
+	CBScore(Real clash_dis, Real contact_dis);
 	virtual ~CBScore(){}
-	void setup_for_scoring(	Pose const & pose1 );
-	void setup_for_scoring( Pose const & pose1,	Pose const & pose2 );
-	core::Real score( Stub const & x1, Stub const & x2 );
-private:
-	xyzStripeHashPoseCOP hash1,hash2;
+	CBScore(
+		Pose const & pose1,
+		Real clash_dis,
+		Real contact_dis
+	);
+	CBScore(
+		Pose const & pose1,
+		Pose const & pose2,
+		Real clash_dis,
+		Real contact_dis
+	);
+	core::Real score( Stub const & x1, Stub const & x2 ) const;
+//private:
+	bool const hash_pose1_;
+	core::Real const clash_dis_, contact_dis_;
+	Reals const weights_;
+	Vecs const points_;
+	xyzStripeHashPose const xyzhash_;
+	// Pose const & pose1_,pose2_;
 };
 
 class Linkerscore : public RigidScore {
 public:
 	Linkerscore();
 	virtual ~Linkerscore(){}
-	void setup_for_scoring(	Pose const & pose1 );
-	void setup_for_scoring( Pose const & pose1,	Pose const & pose2 );
-	core::Real score( Stub const & x1, Stub const & x2 );
+	core::Real score( Stub const & x1, Stub const & x2 ) const;
 private:
 	// loophash crap
 };
@@ -89,9 +88,7 @@ class EdgeStandScore : public RigidScore {
 public:
 	EdgeStandScore();
 	virtual ~EdgeStandScore(){}
-	void setup_for_scoring(	Pose const & pose1 );
-	void setup_for_scoring( Pose const & pose1,	Pose const & pose2 );
-	core::Real score( Stub const & x1, Stub const & x2 );
+	core::Real score( Stub const & x1, Stub const & x2 ) const;
 private:
 	Vecs donors,acceptors;
 };
@@ -100,9 +97,7 @@ class HelixScore : public RigidScore {
 public:
 	HelixScore();
 	virtual ~HelixScore(){}
-	void setup_for_scoring(	Pose const & pose1 );
-	void setup_for_scoring( Pose const & pose1,	Pose const & pose2 );
-	core::Real score( Stub const & x1, Stub const & x2 );
+	core::Real score( Stub const & x1, Stub const & x2 ) const;
 private:
 };
 
@@ -110,9 +105,7 @@ class BuriedPolarScore : public RigidScore {
 public:
 	BuriedPolarScore();
 	virtual ~BuriedPolarScore(){}
-	void setup_for_scoring(	Pose const & pose1 );
-	void setup_for_scoring( Pose const & pose1,	Pose const & pose2 );
-	core::Real score( Stub const & x1, Stub const & x2 );
+	core::Real score( Stub const & x1, Stub const & x2 ) const;
 private:
 	Vecs polars;
 };

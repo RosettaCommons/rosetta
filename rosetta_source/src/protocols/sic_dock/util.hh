@@ -9,12 +9,47 @@
 #ifndef INCLUDED_protocols_sic_dock_util_hh
 #define INCLUDED_protocols_sic_dock_util_hh
 
-#include <protocols/sic_dock/RigidScore.hh>
-#include <protocols/sic_dock/SICFast.hh>
+#include <core/types.hh>
+#include <core/kinematics/Stub.fwd.hh>
+#include <protocols/sic_dock/RigidScore.fwd.hh>
+#include <protocols/sic_dock/SICFast.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+//#include <numeric/xyzVector.fwd.hh>
 
 namespace protocols {
 namespace sic_dock {
 
+int
+neighbor_count(
+	core::pose::Pose const & pose,
+	int ires,
+	double distance_threshold=10.0
+);
+
+double
+slide_into_contact_and_score(
+	protocols::sic_dock::SICFast    const & sic,
+	protocols::sic_dock::RigidScore const & sfxn,
+	core::kinematics::Stub                & xa,
+	core::kinematics::Stub          const & xb,
+	numeric::xyzVector<core::Real>  const & ori,
+	core::Real                            & score
+);
+
+core::pose::Pose const &                   pose_with_most_CBs( core::pose::Pose const & pose1, core::pose::Pose const & pose2 );
+bool                                       pose1_has_most_CBs( core::pose::Pose const & pose1, core::pose::Pose const & pose2 );
+core::Size                                          count_CBs( core::pose::Pose const & pose );
+core::id::AtomID_Map<double>          cb_weight_map_from_pose( core::pose::Pose const & pose );
+utility::vector1<numeric::xyzVector<core::Real> > get_CB_Vecs( core::pose::Pose const & pose );
+utility::vector1<core::Real>             cb_weights_from_pose( core::pose::Pose const & pose );
+
+void
+xform_pose(
+	core::pose::Pose & pose,
+	core::kinematics::Stub const & s,
+	core::Size sres=1,
+	core::Size eres=0
+);
 
 } // sic_dock
 } // protocols

@@ -45,7 +45,7 @@ public:
 	xyzStripeHash( T grid_size,
 	               utility::vector1<numeric::xyzVector<T> > const & atoms,
 	               utility::vector1<T> const & meta
-	) : grid_size_(grid_size), grid_atoms_(NULL), grid_stripe_(NULL)//,
+	) : grid_size_(grid_size), grid_size2_(grid_size*grid_size), grid_atoms_(NULL), grid_stripe_(NULL)//,
 		/*rotation_(numeric::xyzMatrix<Real>::identity()), translation_(T(0),T(0),T(0))*/
 	{
 		init(atoms,meta);

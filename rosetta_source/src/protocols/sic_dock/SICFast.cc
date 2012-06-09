@@ -4,6 +4,7 @@
 
 #include <protocols/sic_dock/SICFast.hh>
 #include <protocols/sic_dock/xyzStripeHashPose.hh>
+#include <protocols/sic_dock/util.hh>
 
 #include <basic/options/keys/sicdock.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
@@ -59,19 +60,6 @@ inline double dist_score( double const & sqdist, double const & start, double co
 		return (stop-dist)/(stop-start);
 		//return sqr(1.0	- sqr( (dist - start) / (stop - start) ) );
 	}
-}
-
-int neighbor_count(core::pose::Pose const &pose, int ires, double distance_threshold=10.0) {
-	core::conformation::Residue const resi( pose.residue( ires ) );
-	Size resi_neighbors( 0 );
-	for(Size jres = 1; jres <= pose.n_residue(); ++jres) {
-		core::conformation::Residue const resj( pose.residue( jres ) );
-		double const distance( resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) );
-		if( distance <= distance_threshold ){
-			++resi_neighbors;
-		}
-	}
-	return resi_neighbors;
 }
 
 SICFast::SICFast() :
@@ -144,15 +132,47 @@ SICFast::init(
 	xh2c_->init_with_pose(pose2,clash_atoms2);
 	xh1s_->init_with_pose(pose1,score_atoms1);
 	xh2s_->init_with_pose(pose2,score_atoms2);
-	for(int i=0;i<xh1s_->natom();++i) w1_.push_back( xh1s_->grid_atoms()[i].w );
-	for(int i=0;i<xh2s_->natom();++i) w2_.push_back( xh2s_->grid_atoms()[i].w );
+	w1_ = cb_weights_from_pose(pose1);
+	w2_ = cb_weights_from_pose(pose2);
 
-	std::cout << "SICFast::init" 
-	          << " c1 " << xh1c_->natom()
-	          << " c2 " << xh2c_->natom()
-	          << " s1 " << xh1s_->natom()
-	          << " s2 " << xh2s_->natom()
-	          << std::endl;
+	// cbscore_ = new CBScore(pose1,pose2,CLD,CTD);
+
+	// cout << "CBScore " 
+	//      << (cbscore_->hash_pose1_ ? cbscore_->xyzhash_.natom() : cbscore_->points_.size()) << " " 
+	//      << (cbscore_->hash_pose1_ ? cbscore_->points_.size() : cbscore_->xyzhash_.natom()) << endl;
+	// cout << "SICFast " 
+	//      << xh1s_->natom() << " "
+	//      << xh2s_->natom() << endl;
+
+ //     using namespace ObjexxFCL::fmt;
+ //     Real w1,w2;
+	//  for(int i = 0; i < w1_.size(); ++i){
+	//  	if( cbscore_->hash_pose1_ ){
+	//  		w1 =             xh1s_->grid_atoms_[i].w;
+	// 	 	w2 = cbscore_->xyzhash_.grid_atoms_[i].w;
+	// 	 } else {
+	// 	 	w1 =                w1_[i+1];
+	// 	 	w2 = cbscore_->weights_[i+1];
+	// 	 }
+	// 	 if(w1!=w2)	{
+	// 	 	cout << "WT1 " << cbscore_->hash_pose1_ << " " << I(3,i) << " " << F(7,3,w1) << " " << F(7,3,w2) << endl;		 	
+	// 	 	utility_exit_with_message("weights bad");
+	// 	 }
+	//  }
+	//  for(int i = 0; i < w2_.size(); ++i){
+	//  	if( !cbscore_->hash_pose1_ ){
+	//  		w1 =             xh2s_->grid_atoms_[i].w;
+	// 	 	w2 = cbscore_->xyzhash_.grid_atoms_[i].w;
+	// 	 } else {
+	// 	 	w1 =                w2_[i+1];
+	// 	 	w2 = cbscore_->weights_[i+1];
+	// 	 }
+	// 	 if(w1!=w2)	{
+	// 	 	cout << "WT2 " << cbscore_->hash_pose1_ << " " << I(3,i) << " " << F(7,3,w1) << " " << F(7,3,w2) << endl;		 	
+	// 	 	utility_exit_with_message("weights bad");
+	// 	 }
+	//  }
+	//  cout << "WEIGHTS OK" << endl;
 
 }
 
@@ -312,60 +332,66 @@ refine_mindis_with_xyzHash(
 	return mindis; // now fixed
 }
 
-inline
-double
-get_score(
-	numeric::geometry::hashing::xyzStripeHashRealCOP xh2s,
-	core::kinematics::Stub const & xa,
-	vector1<Vec> const & sa,
-	Vec const & ori,
-	utility::vector1<double> const wsa,
-	double const & clash_dis,
-	double const & contact_dis,
-	double mindis
-){
-	numeric::geometry::hashing::xyzStripeHashRealCOP xh( xh2s);
-	//		Mat R = numeric::rotation_matrix_degrees(axsa,-anga);
-	float score = 0.0;
-	vector1<double>::const_iterator iwb = wsa.begin();
-	for(vector1<Vec>::const_iterator i = sa.begin(); i != sa.end(); ++i,++iwb) {
-		Vec v = xa.global2local((*i)-mindis*ori) + xh->translation();
-		if( v.x() < -xh->grid_size_ || v.y() < -xh->grid_size_ || v.z() < -xh->grid_size_ ) continue; // worth it?
-		if( v.x() >  xh->xmx_       || v.y() >  xh->ymx_       || v.z() >  xh->zmx_       ) continue; // worth it?
-		int const ix	= (v.x()<0.0) ? 0 : (int)(numeric::min(xh->xdim_-1,(int)(v.x()/xh->grid_size_)));
-		int const iy0	= (v.y()<0.0) ? 0 : (int)(v.y()/xh->grid_size_);
-		int const iz0	= (v.z()<0.0) ? 0 : (int)(v.z()/xh->grid_size_);
-		int const iyl = numeric::max(0,iy0-1);
-		int const izl = numeric::max(0,iz0-1);
-		int const iyu = numeric::min((int)xh->ydim_,     iy0+2);
-		int const izu = numeric::min((int)xh->zdim_,(int)iz0+2);
-		for(int iy = iyl; iy < iyu; ++iy) {
-			for(int iz = izl; iz < izu; ++iz) {
-				int const ig = ix+xh->xdim_*iy+xh->xdim_*xh->ydim_*iz;
-				assert(ig < xh->xdim_*xh->ydim_*xh->zdim_ && ix < xh->xdim_ && iy < xh->ydim_ && iz < xh->zdim_);
-				int const igl = xh->grid_stripe_[ig].x;
-				int const igu = xh->grid_stripe_[ig].y;
-				for(int i = igl; i < igu; ++i) {
-					numeric::geometry::hashing::xyzStripeHash<double>::float4 const & a2 = xh->grid_atoms_[i];
-					float const d2 = (v.x()-a2.x)*(v.x()-a2.x) + (v.y()-a2.y)*(v.y()-a2.y) + (v.z()-a2.z)*(v.z()-a2.z);
-					if( d2 <= xh->grid_size2_ ) {
-						score += dist_score(d2, clash_dis, contact_dis ) * a2.w * (*iwb);
-					}
-				}
-			}
-		}
-	}
-	return score;
-}
+// inline
+// double
+// get_score(
+// 	numeric::geometry::hashing::xyzStripeHashRealCOP xh2s,
+// 	core::kinematics::Stub const & xb,
+// 	vector1<Vec> const & sa,
+// 	Vec const & ori,
+// 	utility::vector1<double> const wsa,
+// 	double const & clash_dis,
+// 	double const & contact_dis,
+// 	double mindis
+// ){
+// 	numeric::geometry::hashing::xyzStripeHashRealCOP xh( xh2s);
+
+// 	for(int i = 1; i <= 10; ++i){
+// 		std::cout << "SICFast points: " << i << " " << sa[i]+ori*mindis << std::endl;
+// 	}
+// 	std::cout << std::endl;
+
+// 	//		Mat R = numeric::rotation_matrix_degrees(axsa,-anga);
+// 	float score = 0.0;
+// 	vector1<double>::const_iterator iwb = wsa.begin();
+// 	for(vector1<Vec>::const_iterator i = sa.begin(); i != sa.end(); ++i,++iwb) {
+// 		Vec v = xb.global2local((*i)-mindis*ori) + xh->translation();
+// 		// v in hash-space
+// 		if( v.x() < -xh->grid_size_ || v.y() < -xh->grid_size_ || v.z() < -xh->grid_size_ ) continue; // worth it?
+// 		if( v.x() >  xh->xmx_       || v.y() >  xh->ymx_       || v.z() >  xh->zmx_       ) continue; // worth it?
+// 		int const ix	= (v.x()<0.0) ? 0 : (int)(numeric::min(xh->xdim_-1,(int)(v.x()/xh->grid_size_)));
+// 		int const iy0	= (v.y()<0.0) ? 0 : (int)(v.y()/xh->grid_size_);
+// 		int const iz0	= (v.z()<0.0) ? 0 : (int)(v.z()/xh->grid_size_);
+// 		int const iyl = numeric::max(0,iy0-1);
+// 		int const izl = numeric::max(0,iz0-1);
+// 		int const iyu = numeric::min((int)xh->ydim_,     iy0+2);
+// 		int const izu = numeric::min((int)xh->zdim_,(int)iz0+2);
+// 		for(int iy = iyl; iy < iyu; ++iy) {
+// 			for(int iz = izl; iz < izu; ++iz) {
+// 				int const ig = ix+xh->xdim_*iy+xh->xdim_*xh->ydim_*iz;
+// 				assert(ig < xh->xdim_*xh->ydim_*xh->zdim_ && ix < xh->xdim_ && iy < xh->ydim_ && iz < xh->zdim_);
+// 				int const igl = xh->grid_stripe_[ig].x;
+// 				int const igu = xh->grid_stripe_[ig].y;
+// 				for(int i = igl; i < igu; ++i) {
+// 					numeric::geometry::hashing::xyzStripeHash<double>::float4 const & a2 = xh->grid_atoms_[i];
+// 					float const d2 = (v.x()-a2.x)*(v.x()-a2.x) + (v.y()-a2.y)*(v.y()-a2.y) + (v.z()-a2.z)*(v.z()-a2.z);
+// 					if( d2 <= xh->grid_size2_ ) {
+// 						score += dist_score(d2, clash_dis, contact_dis ) * a2.w * (*iwb);
+// 					}
+// 				}
+// 			}
+// 		}
+// 	}
+// 	return score;
+// }
 
 
 double
 SICFast::slide_into_contact(
 	core::kinematics::Stub       & xa,
 	core::kinematics::Stub const & xb,
-	Vec                            ori,
-	double                       & score
-){
+	Vec                            ori
+) const {
 	utility::vector1<Vec> pb,pa,sb,sa;
 	for(int i=0;i<xh1c_->natom();++i)pa.push_back(xa.local2global(Vec(xh1c_->grid_atoms()[i].x,xh1c_->grid_atoms()[i].y,xh1c_->grid_atoms()[i].z)-xh1c_->translation()));
 	for(int i=0;i<xh2c_->natom();++i)pb.push_back(xb.local2global(Vec(xh2c_->grid_atoms()[i].x,xh2c_->grid_atoms()[i].y,xh2c_->grid_atoms()[i].z)-xh2c_->translation()));
@@ -386,21 +412,13 @@ SICFast::slide_into_contact(
 	fill_plane_hash(pb,pa,xmx,xmn,ymx,ymn,BIN,ha,hb,xlb,ylb,xub,yub);
 
 	double const mindis_approx = get_mindis_with_plane_hashes(xlb,ylb,xub,yub,ha,hb,CLD2);
-	if( fabs(mindis_approx) > 9e8 ) {
-		score = 0.0;
-		return 9e9;
-	}
+	if( fabs(mindis_approx) > 9e8 ) return 9e9;
 
 	double const mindis = refine_mindis_with_xyzHash(xh2c_,xb,pa,ori,CLD2,mindis_approx);
-	if( fabs(mindis) > 9e8 ) {
-		score = 0.0;
-		return 9e9;
-	}
+	if( fabs(mindis) > 9e8 ) return 9e9;
 
-	if(score != -12345.0) score = get_score(xh2s_,xb,sa,ori,w1_,CLD,CTD,mindis);
+	xa.v -= mindis*ori;
 
-	// originally wrote code sliding b into a. blah.
-	xa.v -= ori*mindis;
 	return -mindis;
 }
 
