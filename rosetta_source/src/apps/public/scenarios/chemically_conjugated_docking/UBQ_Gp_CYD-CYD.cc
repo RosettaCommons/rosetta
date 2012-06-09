@@ -111,6 +111,7 @@ basic::options::RealOptionKey const scorefilter("scorefilter");
 basic::options::IntegerOptionKey const n_tail_res("n_tail_res");
 basic::options::BooleanOptionKey const publication("publication");
 basic::options::FileVectorOptionKey const extra_bodies( "extra_bodies" );
+basic::options::BooleanOptionKey const pdz("pdz");
 
 //I know this is illegal; this is included here to be after the option key definitions, so that extra_bodies will be in scope for the code in this header
 #include <apps/public/scenarios/chemically_conjugated_docking/Gp_extra_bodies.hh>
@@ -690,7 +691,7 @@ public:
 
 		set_last_move_status(protocols::moves::MS_SUCCESS);
 		if(basic::options::option[publication].value()){
-			apps::public1::scenarios::chemically_conjugated_docking::create_extra_output(pose, TR, true, GTPase_cyd_);
+			apps::public1::scenarios::chemically_conjugated_docking::create_extra_output(pose, TR, !basic::options::option[pdz].value(), GTPase_cyd_);
 		}
 		return;
 	}
@@ -754,6 +755,7 @@ int main( int argc, char* argv[] )
 	option.add( n_tail_res, "Number of c-terminal \"tail\" residues to make flexible (terminus inclusive)").def(3);
 	option.add( publication, "output statistics used in publication.  TURN OFF if not running publication demo.").def(false);
 	option.add( extra_bodies, "extra structures to add before modeling.  Should be in the coordinate frame of the non-moving partner.  Will not move during modeling.  Will be detected as part of the nonmoving body for repacking purposes.").def("");
+	option.add( pdz, "use PDZ center of mass, not ubiquitin center of mass").def(false);
 
 	//initialize options
 	devel::init(argc, argv);

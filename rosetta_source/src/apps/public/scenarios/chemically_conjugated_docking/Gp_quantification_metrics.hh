@@ -107,21 +107,32 @@ void ubq_ras_rotation_angle(
 	core::pose::Pose const & pose,
 	basic::Tracer & TR,
 	protocols::jd2::JobOP job_me,
-	core::Size const GTPase_target){
+	core::Size const GTPase_target,
+	bool const ubiquitin){
 
 	//Generate "rotation angle" metric
 
 	//determine center of mass of ras & ubiquitin not kept in scope - dangerous
 	//because if UBQ backbone moves, center might move; that will cause problems -
 	//but this is how it was originally calculated
+	// UBQ:ras settings
 	// core::Size const ras_begin(1);
 	// core::Size const ras_end(166);
 	// core::Size const ubq_begin(167);
 	// core::Size const ubq_end(242);
 
-	// core::Size const ubq_center(protocols::geometry::residue_center_of_mass(pose, ubq_begin, ubq_end));
-	// core::Size const ras_center(protocols::geometry::residue_center_of_mass(pose, ras_begin, ras_end));
-	core::Size const ubq_center(209); //expected value
+	//PDZ:ras settings
+	// core::Size const ras_begin(1);
+	// core::Size const ras_end(166);
+	// core::Size const ubq_begin(167);
+	// core::Size const ubq_end(260);//262 or 263, depending on length
+
+	// core::Size const ubq_calculated_center(protocols::geometry::residue_center_of_mass(pose, ubq_begin, ubq_end));
+	// core::Size const ras_calculated_center(protocols::geometry::residue_center_of_mass(pose, ras_begin, ras_end));
+
+	// TR << "Calculated centers of mass: ubq/pdz: " << ubq_calculated_center << " ras: " << ras_calculated_center << std::endl;
+
+ 	core::Size const ubq_center(ubiquitin ? 209 : 224); //expected values for ubiquitin and PDZ, respectively
 	core::Size const ras_center(79); //expected value
 	core::Size const ras_linker(GTPase_target);
 	core::Size const ras_reference(112);
@@ -177,7 +188,7 @@ void create_extra_output(
 
 	if(ubiquitin) ubq_ras_distance(pose, TR, job_me);
 
-	ubq_ras_rotation_angle(pose, TR, job_me, GTPase_target);
+	ubq_ras_rotation_angle(pose, TR, job_me, GTPase_target, ubiquitin);
 
 	return;
 }
