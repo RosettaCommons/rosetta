@@ -415,7 +415,7 @@ sources = {
 	],
 	"pilot/will" : [
 		"test_loop_hash",
-		"d3_bpy_linker",
+#		"d3_bpy_linker",
 		"hubdenovo",
 #		"designability_stats",
 #		"CXdock",
