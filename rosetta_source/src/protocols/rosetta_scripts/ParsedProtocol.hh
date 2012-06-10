@@ -88,6 +88,7 @@ public:
 private:
 	void finish_protocol(Pose & pose);
 	bool apply_mover_filter_pair(Pose & pose, mover_filter_pair const & mover_pair);
+	bool apply_filter(Pose & pose, mover_filter_pair const & mover_pair);
 
 	void sequence_protocol(Pose & pose, utility::vector1< mover_filter_pair >::const_iterator mover_it_in);
 	void random_order_protocol(Pose & pose);

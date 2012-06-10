@@ -313,21 +313,14 @@ ParsedProtocol::get_additional_output( )
 		core::pose::PoseOP checkpoint = (*rmover_it).first->get_additional_output();
 		if (checkpoint) {
 			std::string const mover_name( rmover_it->first->get_name() );
-			std::string const filter_name( rmover_it->second->get_user_defined_name() );
 			TR<<"=======================RESUMING FROM "<<mover_name<<"======================="<<std::endl;
 			pose = checkpoint;
-			TR<<"=======================BEGIN FILTER "<<filter_name<<"=======================\n{"<<std::endl;
-			info().insert( info().end(), rmover_it->first->info().begin(), rmover_it->first->info().end() );
-			pose->update_residue_neighbors();
-			moves::MoverStatus status( (*rmover_it).first->get_last_move_status() );
-			bool const pass( status==protocols::moves::MS_SUCCESS  && (*rmover_it).second->apply( *pose ) );
-			TR<<"\n}\n=======================END FILTER "<<filter_name<<"======================="<<std::endl;
-			if( !pass ) {
-				if( status != protocols::moves::MS_SUCCESS )
-					protocols::moves::Mover::set_last_move_status( status );
+
+			if( ! apply_filter( *pose, *rmover_it) ) {
 				return pose;
+			} else {
+				break;
 			}
-			break;
 		}
 	}
 
@@ -340,23 +333,8 @@ ParsedProtocol::get_additional_output( )
 
 	// otherwise pick up from the checkpoint
 	for( utility::vector1< mover_filter_pair >::const_iterator mover_it = rmover_it.base();
-		 mover_it!=movers_.end(); ++mover_it ) {
-		std::string const mover_name( mover_it->first->get_name() );
-		std::string const filter_name( mover_it->second->get_user_defined_name() );
-
-		(*mover_it).first->set_native_pose( get_native_pose() );
-		TR<<"=======================BEGIN MOVER "<<mover_name<<"=======================\n{"<<std::endl;
-		(*mover_it).first->apply( *pose );
-		TR<<"\n}\n=======================END MOVER "<<mover_name<<"======================="<<std::endl;
-		TR<<"=======================BEGIN FILTER "<<filter_name<<"=======================\n{"<<std::endl;
-		info().insert( info().end(), mover_it->first->info().begin(), mover_it->first->info().end() );
-		pose->update_residue_neighbors();
-		moves::MoverStatus status( (*mover_it).first->get_last_move_status() );
-		bool const pass( status==protocols::moves::MS_SUCCESS  && (*mover_it).second->apply( *pose ) );
-		TR<<"\n}\n=======================END FILTER "<<filter_name<<"======================="<<std::endl;
-		if( !pass ) {
-			if( status != protocols::moves::MS_SUCCESS )
-				protocols::moves::Mover::set_last_move_status( status );
+			mover_it!=movers_.end(); ++mover_it ) {
+		if ( ! apply_mover_filter_pair( *pose, *mover_it ) ) {
 			return pose;
 		}
 	}
@@ -377,14 +355,20 @@ ParsedProtocol::get_additional_output( )
 bool ParsedProtocol::apply_mover_filter_pair(Pose & pose, mover_filter_pair const & mover_pair)
 {
 	std::string const mover_name( mover_pair.first->get_name() );
-	std::string const filter_name( mover_pair.second->get_user_defined_name() );
 
 	mover_pair.first->set_native_pose( get_native_pose() );
 	TR<<"=======================BEGIN MOVER "<<mover_name<<"=======================\n{"<<std::endl;
 	mover_pair.first->apply( pose );
 	TR<<"\n}\n=======================END MOVER "<<mover_name<<"======================="<<std::endl;
-	// collect Mover info: jd2 JobDistributor passes this info to Job,
-	// and JobOutputters may then write this info to output files
+
+	// Split out filter application in seperate function to allow for reuse in resuming from additional output pose cases.
+	return apply_filter( pose, mover_pair);
+}
+
+bool ParsedProtocol::apply_filter(Pose & pose, mover_filter_pair const & mover_pair)
+{
+	std::string const filter_name( mover_pair.second->get_user_defined_name() );
+
 	TR<<"=======================BEGIN FILTER "<<filter_name<<"=======================\n{"<<std::endl;
 	info().insert( info().end(), mover_pair.first->info().begin(), mover_pair.first->info().end() );
 	pose.update_residue_neighbors();
@@ -392,13 +376,16 @@ bool ParsedProtocol::apply_mover_filter_pair(Pose & pose, mover_filter_pair cons
 	bool const pass( status==protocols::moves::MS_SUCCESS  && mover_pair.second->apply( pose ) );
 	TR<<"\n}\n=======================END FILTER "<<filter_name<<"======================="<<std::endl;
 	if( !pass ) {
-		if( status != protocols::moves::MS_SUCCESS )
+		if( status != protocols::moves::MS_SUCCESS ) {
+			TR << "Mover " << mover_pair.first->get_name() << " reports failure!" << std::endl;
 			protocols::moves::Mover::set_last_move_status( status );
+		} else {
+			TR << "Filter " << filter_name << " reports failure!" << std::endl;
+		}
 		return false;
 	}
 	return true;
 }
-
 
 void ParsedProtocol::finish_protocol(Pose & pose) {
 	protocols::moves::Mover::set_last_move_status( protocols::moves::MS_SUCCESS ); // tell jobdistributor to save pose
