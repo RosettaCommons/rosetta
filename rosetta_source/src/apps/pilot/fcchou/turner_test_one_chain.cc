@@ -117,7 +117,11 @@ OPT_KEY( Boolean, check_clash )
 OPT_KEY( Boolean, o2star_trials )
 OPT_KEY( Boolean, sample_3_prime_end )
 OPT_KEY( Boolean, add_virt_res )
+OPT_KEY( Boolean, rmsd_vs_energy )
 OPT_KEY( RealVector, torsion_list )
+OPT_KEY( RealVector, kT_list )
+OPT_KEY( RealVector, ST_weight_list )
+OPT_KEY( Real, exchange_rate )
 
 static const scoring::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
 static numeric::random::RandomGenerator RG(245075);  // <- Magic number, do not change it!
@@ -141,7 +145,7 @@ get_suite_ideal_A_form_torsions(){
 }
 //////////////////////////////////
 void
-apply_nucleoside_torsion( utility::vector1< Real > const & torsion_set,
+apply_nucleoside_torsion( utility::vector1< Real > const & torsion_set, 
 													pose::Pose & pose,
 													Size const moving_res){
 
@@ -166,7 +170,7 @@ apply_nucleoside_torsion( utility::vector1< Real > const & torsion_set,
 }
 //////////////////////////////////
 void
-apply_suite_torsion( utility::vector1< Real > const & torsion_set,
+apply_suite_torsion( utility::vector1< Real > const & torsion_set, 
 											pose::Pose & pose,
 											Size const moving_suite,
 											bool const sample_3prime_pucker = true){
@@ -244,7 +248,7 @@ setup_one_chain_pose ( pose::Pose & pose, bool is_virtualize = true ) {
 }
 //////////////////////////////////
 void
-initialize_o2star_pack( pose::Pose const & pose,
+initialize_o2star_pack( pose::Pose const & pose, 
 												scoring::ScoreFunctionOP const scorefxn,
 												scoring::ScoreFunctionOP o2star_pack_scorefxn,
 												pack::task::PackerTaskOP o2star_pack_task ) {
@@ -383,39 +387,20 @@ score2bin(Real const score, Real const min_score, Real const max_score, Real con
 	}
 	return std::ceil( (score - min_score) / bin_size );
 }
-
-
-///////////////////////////////////////////////////////////////////////////////////////
-void
-save_decoy_to_silent_file_data( core::io::silent::SilentFileDataOP & silent_file_data,
-																std::string const tag,
-																pose::Pose const & pose, pose::Pose const & pose_reference ){
-	using namespace core::io::silent;
-	BinaryRNASilentStruct s( pose, tag );
-	s.add_energy( "rms", core::scoring::all_atom_rmsd( pose, pose_reference ) );
-	silent_file_data->add_structure( s );
-}
-
-
-///////////////////////////////////////////////////////////////////////////////////////
-void
-cluster_and_output_silent_file( core::io::silent::SilentFileDataOP & silent_file_data,
-																 std::string const & silent_file ){
-	using namespace protocols::swa;
-
-	StepWiseClustererOP stepwise_clusterer = new StepWiseClusterer( silent_file_data );
-	Size max_decoys( 400 );
-	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
-	stepwise_clusterer->set_max_decoys( max_decoys );
-	stepwise_clusterer->set_rename_tags( true /*option[ rename_tags ]*/ );
-	Real cluster_radius( 0.7 );
-	if ( option[ OptionKeys::cluster::radius ].user() ) cluster_radius = option[ OptionKeys::cluster::radius ]();
-	stepwise_clusterer->cluster();
-	stepwise_clusterer->output_silent_file( silent_file );
-
-}
-
 //////////////////////////////////
+Real rmsd_compute(core::pose::Pose const & pose, core::pose::Pose const & ref_pose) {
+	Size n_atom = 0;
+	Real sd = 0;
+	for (Size i = 1; i <= pose.total_residue(); ++i) {
+		for (Size j = 1; j <= pose.residue(i).nheavyatoms(); ++j) {
+			++n_atom;
+			sd += ( pose.residue(i).xyz(j) - ref_pose.residue(i).xyz(j) ).length_squared();
+		}
+	}
+	return sqrt(sd / double(n_atom) );
+}
+
+////////////////////////////////////
 void
 one_chain_MC_sampling(){
 	using namespace chemical;
@@ -428,18 +413,18 @@ one_chain_MC_sampling(){
 	using namespace pack::task;
 	using namespace utility::io;
 	using namespace scoring::rna;
-	using namespace io::silent;
 
-	Pose pose, pose_full;
+	Pose pose, pose_full, lowest_pose;
+	Real lowest_score = 9999;
 	setup_one_chain_pose( pose );
 	setup_one_chain_pose( pose_full, false );
+
+	Pose const ideal_pose = pose;
 
 	pose.dump_pdb("ideal.pdb");
 	pose_full.dump_pdb("ideal_full.pdb");
 	Size const n_residue = pose.n_residue();
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
-
-	Pose pose_start = pose;
 
 	//Setup scoring function
 	std::string const force_field_name = option[force_field];
@@ -454,6 +439,7 @@ one_chain_MC_sampling(){
 	Size const num_cycle = option[ n_sample ]();
 	bool const is_check_clash = option[ check_clash ] ();
 	bool const is_add_virt_res = option[ add_virt_res ] ();
+	bool const output_rmsd_vs_energy = option[ rmsd_vs_energy ] ();
 	Real const kT_sys = option[ kT ] ();
 	bool const is_saving_decoy = !(outfile_decoy == "");
 	Size first_res = 0;
@@ -470,7 +456,7 @@ one_chain_MC_sampling(){
 		sample_range = kT_sys * 24.0 / double(n_residue);
 	}
 
-	// initialize for o2star rotamer trials.
+	// initialize for o2star rotamer trials. 	
 	PackerTaskOP o2star_pack_task =  pack::task::TaskFactory::create_packer_task( pose );
 	ScoreFunctionOP o2star_pack_scorefxn = new ScoreFunction;
 	if ( option[ o2star_trials ]() ) {
@@ -484,6 +470,7 @@ one_chain_MC_sampling(){
 	utility::vector1< Real > nucleoside_torsion, nucleoside_torsion_new;
 	utility::vector1< utility::vector1< Real > > suite_torsion, suite_torsion_new;
 
+	Real const rep_score_cutoff = 100;
 	Real const max_score =  500.005;
 	Real const min_score = -90.005;
 	Real const bin_size  =   0.01;
@@ -508,14 +495,12 @@ one_chain_MC_sampling(){
 	bool const is_kT_inf = (kT_sys > 999);
 	Size n_accpet = 0;
 
-	ozstream output_decoy;
+	ozstream output_decoy, output_rmsd;
+	output_rmsd.open("rmsd_vs_energy.out");
+
 	if (is_saving_decoy) {
 		output_decoy.open(outfile_decoy);
 	}
-	SilentFileDataOP silent_file_data;
-	std::string const silent_file = option[ out::file::silent ]();
-	bool const save_silent = ( silent_file.size() > 0 );
-	if ( save_silent ) silent_file_data = new SilentFileData;
 
 	std::cout << "Start MC sampling" << std::endl;
 	for (Size count = 1; count <= num_cycle; count++) {
@@ -541,8 +526,8 @@ one_chain_MC_sampling(){
 
 		Real const rep_score = (*rep_scorefxn)( pose_full );
 		Real score_new;
-		if (is_check_clash && rep_score > 1.3 * max_score) {
-			score_new = 9999.99;
+		if (is_check_clash && rep_score > rep_score_cutoff) {
+			score_new = rep_score;
 		} else {
 			score_new = (*scorefxn)( pose );
 		}
@@ -554,15 +539,21 @@ one_chain_MC_sampling(){
 			++n_accpet;
 			if (is_saving_decoy && score < decoy_cutoff) {
 				output_decoy << score << ' ' << nucleoside_torsion[1] << ' ' << nucleoside_torsion[2];
-				for (Size i = first_res; i <= first_res /*n_residue - 1*/ ; ++i) {
+				for (Size i = first_res; i <= n_residue - 1; ++i) {
 					for (Size j = 1; j <= suite_torsion[i].size(); ++j) {
 						output_decoy << ' ' << suite_torsion[i][j];
 					}
 				}
 				output_decoy << std::endl;
+			}
 
-				std::string const tag = "S_"+lead_zero_string_of(n_accpet,6);
-				if (save_silent) save_decoy_to_silent_file_data( silent_file_data, tag, pose, pose_start /*reference*/ );
+			if (output_rmsd_vs_energy && score < decoy_cutoff) {
+				output_rmsd << score << ' ' << rmsd_compute(pose, ideal_pose) << std::endl;
+			}
+
+			if (score < lowest_score) {
+				lowest_score = score; 
+				lowest_pose = pose;
 			}
 		} else {
 			nucleoside_torsion_new = nucleoside_torsion;
@@ -581,12 +572,14 @@ one_chain_MC_sampling(){
 		++hist[bin];
 
 	}
-
+	
 	std::cout << "Total number of rotamers applied: " << num_cycle << std::endl;
 	std::cout << "sampling stdev: " << sample_range << std::endl;
 	std::cout << "accept rate:" << (1.0 * n_accpet / num_cycle) << std::endl;
 	Real const time_in_dinucleotide_test = static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC;
 	std::cout << "Time in dinucleotide sampler: " <<  time_in_dinucleotide_test << std::endl;
+
+	lowest_pose.dump_pdb("lowest.pdb");
 
 	Size first_bin = 0;
 	Size last_bin  = 0;
@@ -597,7 +590,473 @@ one_chain_MC_sampling(){
 		}
 		if (hist[i] != 0) last_bin = i;
 	}
+	
+	ozstream out;
+	out.open( outfile );
+	out << "Score N_sample" << std::endl;
+	out << "Total " << num_cycle << std::endl;
+	for (Size i = first_bin; i <= last_bin; ++i) {
+		Real score = min_score + (static_cast<Real>(i)- 0.5) * static_cast<Real>(bin_size);
+		out << score << " " << hist[i] << std::endl;
+	}
+	out.close();
+}
 
+//////////////////////////////////
+void
+one_chain_ST_MC () {
+	using namespace chemical;
+	using namespace scoring;
+	using namespace scoring::rna;
+	using namespace kinematics;
+	using namespace optimization;
+	using namespace pose;
+	using namespace pack;
+	using namespace pack::task;
+	using namespace utility::io;
+	using namespace scoring::rna;
+
+	Pose pose, pose_full, lowest_pose;
+	Real lowest_score = 9999;
+	setup_one_chain_pose( pose );
+	setup_one_chain_pose( pose_full, false );
+
+	Pose const ideal_pose = pose;
+
+	pose.dump_pdb("ideal.pdb");
+	pose_full.dump_pdb("ideal_full.pdb");
+	Size const n_residue = pose.n_residue();
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
+
+	//Setup scoring function
+	std::string const force_field_name = option[force_field];
+	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( force_field_name );
+	ScoreFunctionOP rep_scorefxn = new ScoreFunction;
+	rep_scorefxn->set_weight( fa_rep, scorefxn -> get_weight( fa_rep ) );
+	scorefxn -> show(pose);
+
+	std::string const outfile = option[ out::file::o ] ();
+	Real const decoy_cutoff = option[ out_decoy_score_cutoff ]();
+	Size const num_cycle = option[ n_sample ]();
+	bool const is_check_clash = option[ check_clash ] ();
+	bool const is_add_virt_res = option[ add_virt_res ] ();
+	bool const output_rmsd_vs_energy = option[ rmsd_vs_energy ] ();
+
+	Real const exchange_rate_ = option[ exchange_rate ]();
+	utility::vector1< Real > const kT_sys_list = option[ kT_list ] ();
+	utility::vector1< Real > const weight_list = option[ ST_weight_list ] ();
+	if ( kT_sys_list.size() != weight_list.size() ) {
+		utility_exit_with_message("kT_list and weight_list have different sizes!!!!!");
+	}
+	Size const n_temp =  kT_sys_list.size();
+	std::cout << "kT list: ";
+	for (Size i = 1; i <= n_temp; ++i) std::cout << kT_sys_list[i] << ' ';
+	std::cout << std::endl;
+
+	std::cout << "weight list: ";
+	for (Size i = 1; i <= n_temp; ++i) std::cout << weight_list[i] << ' ';
+	std::cout << std::endl;
+
+
+	Size first_res = 0;
+	if (is_add_virt_res) {
+		first_res = 2;
+	} else {
+		first_res = 1;
+	}
+
+	// initialize for o2star rotamer trials. 	
+	PackerTaskOP o2star_pack_task =  pack::task::TaskFactory::create_packer_task( pose );
+	ScoreFunctionOP o2star_pack_scorefxn = new ScoreFunction;
+	if ( option[ o2star_trials ]() ) {
+		initialize_o2star_pack(pose, scorefxn, o2star_pack_scorefxn, o2star_pack_task );
+	}
+
+	// Get ready for main loop.
+	clock_t const time_start( clock() );
+
+	utility::vector1< Size > hist;
+	utility::vector1< Real > nucleoside_torsion, nucleoside_torsion_new;
+	utility::vector1< utility::vector1< Real > > suite_torsion, suite_torsion_new;
+
+	Real const rep_score_cutoff = 100;
+	Real const max_score =  500.005;
+	Real const min_score = -90.005;
+	Real const bin_size  =   0.01;
+	for (Real i = min_score; i <= max_score; i += bin_size) {
+		hist.push_back(0);
+	}
+
+	utility::vector1< Real > A_form_torsion_set = get_suite_ideal_A_form_torsions();
+	nucleoside_torsion.push_back(A_form_torsion_set[6]);
+	nucleoside_torsion.push_back(A_form_torsion_set[7]);
+	nucleoside_torsion_new = nucleoside_torsion;
+	apply_nucleoside_torsion(nucleoside_torsion, pose, first_res);
+
+	for (Size i = first_res; i <= n_residue - 1; ++i) {
+		apply_suite_torsion( A_form_torsion_set, pose, i );
+		suite_torsion.push_back( A_form_torsion_set );
+		suite_torsion_new.push_back( A_form_torsion_set );
+	}
+	Real score = (*scorefxn)( pose );
+	pose.dump_pdb("test1.pdb");
+
+	Size kT_id = 1;
+	Size new_kT_id = 0;
+	Real kT_sys = kT_sys_list[kT_id];
+	Real score_new, score_saved, new_kT, beta_old, beta_new,log_prob, rep_score;
+	Size bin (0), n_accpet (0), n_exchange(0), n_accp_exch (0);
+	bool is_kT_inf = (kT_sys > 999);
+	Real sample_range = kT_sys * 24.0 / double(n_residue);
+
+
+	ozstream output_rmsd;
+	output_rmsd.open("rmsd_vs_energy.out");
+
+	std::cout << "Start MC sampling" << std::endl;
+	for (Size count = 1; count <= num_cycle; count++) {
+
+		if (is_kT_inf) {
+			for (Size i = first_res; i <= n_residue - 1; ++i) {
+				create_random_suite_torsion(suite_torsion_new[i + 1 - first_res]);
+				apply_suite_torsion( suite_torsion_new[i + 1 - first_res], pose, i );
+			}
+			create_random_nucleoside_torsion(nucleoside_torsion_new);
+			apply_nucleoside_torsion(nucleoside_torsion_new, pose, first_res);
+		} else {
+			for (Size i = first_res; i <= n_residue - 1; ++i) {
+				sample_near_suite_torsion(suite_torsion_new[i + 1 - first_res], sample_range);
+				apply_suite_torsion( suite_torsion_new[i + 1 - first_res], pose, i );
+			}
+			sample_near_nucleoside_torsion(nucleoside_torsion_new, sample_range);
+			apply_nucleoside_torsion(nucleoside_torsion_new, pose, first_res);
+		}
+
+
+//		if ( option[ o2star_trials ]() ) pack::rotamer_trials( pose, *o2star_pack_scorefxn, o2star_pack_task );
+
+		rep_score = (*rep_scorefxn)( pose_full );
+		if (is_check_clash && rep_score > rep_score_cutoff) {
+			score_new = rep_score;
+		} else {
+			score_new = (*scorefxn)( pose );
+		}
+
+		if (is_kT_inf || score_new <= score || RG.uniform() < exp( (score - score_new) / kT_sys )) {
+			score = score_new;
+			nucleoside_torsion = nucleoside_torsion_new;
+			suite_torsion = suite_torsion_new;
+			++n_accpet;
+			if (output_rmsd_vs_energy && score < decoy_cutoff) {
+				output_rmsd << score << ' ' << rmsd_compute(pose, ideal_pose) << std::endl;
+			}
+
+			if (score < lowest_score) {
+				lowest_score = score; 
+				lowest_pose = pose;
+			}
+		} else {
+			nucleoside_torsion_new = nucleoside_torsion;
+			suite_torsion_new = suite_torsion;
+		}
+
+		Real score_saved = score;
+		if (score_saved < min_score) {
+			std::cout << "Warning: score < min_score" << std::endl;
+			continue;
+		} else if (score_saved > max_score) {
+			score_saved = max_score;
+		}
+
+		Size const bin = score2bin( score_saved, min_score, max_score, bin_size );
+		++hist[bin];
+
+		//Try changing kT
+		if (RG.uniform() < exchange_rate_) {
+			++n_exchange;
+			(RG.uniform() < 0.5) ? new_kT_id = kT_id + 1 : new_kT_id = kT_id - 1;
+			if (new_kT_id < 1 || new_kT_id > n_temp) continue;
+			new_kT = kT_sys_list[new_kT_id];
+			beta_old = (kT_sys > 999) ? 0 : (1.0 / kT_sys);
+			beta_new = (new_kT > 999) ? 0 : (1.0 / new_kT);
+			log_prob = - (beta_new - beta_old) * score + (weight_list[new_kT_id] - weight_list[kT_id]);
+			if (log_prob > 0 || RG.uniform() < exp (log_prob) ) { //check if we want to exchange kT
+				++n_accp_exch;
+				kT_id = new_kT_id;
+				kT_sys = new_kT;
+				is_kT_inf = (kT_sys > 999);
+				sample_range = kT_sys * 24.0 / double(n_residue);
+			}
+		}
+
+	}
+	
+	std::cout << "Total number of rotamers applied: " << num_cycle << std::endl;
+	std::cout << "sampling stdev: " << sample_range << std::endl;
+	std::cout << "accept rate:" << (double(n_accpet) / num_cycle) << std::endl;
+	std::cout << "exchange rate:" << (double(n_exchange) / num_cycle) << std::endl;
+	std::cout << "exchange accept rate:" << (double(n_accp_exch) / n_exchange) << std::endl;
+	std::cout << "Time in sampler: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
+
+	lowest_pose.dump_pdb("lowest.pdb");
+
+	Size first_bin = 0;
+	Size last_bin  = 0;
+	for (Size i = 1; i <= hist.size(); ++i) {
+		if (first_bin == 0) {
+			if (hist[i] == 0) continue;
+			first_bin = i;
+		}
+		if (hist[i] != 0) last_bin = i;
+	}
+	
+	ozstream out;
+	out.open( outfile );
+	out << "Score N_sample" << std::endl;
+	out << "Total " << num_cycle << std::endl;
+	for (Size i = first_bin; i <= last_bin; ++i) {
+		Real score = min_score + (static_cast<Real>(i)- 0.5) * static_cast<Real>(bin_size);
+		out << score << " " << hist[i] << std::endl;
+	}
+	out.close();
+}
+//////////////////////////////////
+//////////////////////////////////
+
+
+//////////////////////////////////
+void
+one_chain_SWA_cluster(){
+	using namespace chemical;
+	using namespace scoring;
+	using namespace scoring::rna;
+	using namespace kinematics;
+	using namespace optimization;
+	using namespace pose;
+	using namespace pack;
+	using namespace pack::task;
+	using namespace utility::io;
+	using namespace scoring::rna;
+
+	//////////////////////
+	//SWA cluster centers
+	Real cluster_center [9] [9] =
+	{
+	{ 84.15, 64.58, 212.55, 304.78, 297.25, 181.88, 59.32, 152.01, 122.36 },
+	{ 84.37, 68.52, 216.09, 299.35, 290.05, 170.60, 53.62, 85.48, 79.70 },
+	{ 84.19, 73.48, 204.91, 288.81, 154.12, 210.17, 165.99, 85.21, 67.51 },
+	{ 84.38, 68.80, 196.64, 298.59, 159.83, 197.71, 179.87, 151.84, 91.93 },
+	{ 84.34, 63.77, 202.80, 300.08, 295.52, 199.65, 53.62, 146.75, 308.71 },
+	{ 84.43, 69.10, 203.71, 293.24, 155.14, 189.24, 173.08, 84.72, 246.89 },
+	{ 85.06, 67.14, 201.27, 297.07, 159.67, 189.54, 186.98, 147.72, 272.36 },
+	{ 84.51, 81.53, 209.94, 38.16, 151.99, 169.39, 52.11, 151.41, 117.12 },
+	{ 83.83, 76.83, 217.93, 288.53, 297.70, 178.78, 60.59, 153.16, 111.76 }
+	};
+	Real lowest_score_list [9] = {999, 999, 999, 999, 999, 999, 999, 999, 999};
+	Size counts_list [9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+	/////////////////////
+	Pose pose, pose_full, lowest_pose;
+	Real lowest_score = 9999;
+	setup_one_chain_pose( pose );
+	setup_one_chain_pose( pose_full, false );
+
+	Pose const ideal_pose = pose;
+	utility::vector1< Pose > lowest_pose_list;
+	for (Size i = 1; i <= 9; ++i) {
+		Pose pose_1 = pose;
+		lowest_pose_list.push_back(pose_1);
+	}
+
+	pose.dump_pdb("ideal.pdb");
+	pose_full.dump_pdb("ideal_full.pdb");
+	Size const n_residue = pose.n_residue();
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
+
+	//Setup scoring function
+	std::string const force_field_name = option[force_field];
+	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( force_field_name );
+	ScoreFunctionOP rep_scorefxn = new ScoreFunction;
+	rep_scorefxn->set_weight( fa_rep, scorefxn -> get_weight( fa_rep ) );
+	scorefxn -> show(pose);
+
+	std::string const outfile = option[ out::file::o ] ();
+	std::string const outfile_decoy = option[out_decoy] ();
+	Real const decoy_cutoff = option[ out_decoy_score_cutoff ]();
+	Size const num_cycle = option[ n_sample ]();
+	bool const is_check_clash = option[ check_clash ] ();
+	bool const is_add_virt_res = option[ add_virt_res ] ();
+	bool const output_rmsd_vs_energy = option[ rmsd_vs_energy ] ();
+	Real const kT_sys = option[ kT ] ();
+	bool const is_saving_decoy = !(outfile_decoy == "");
+	Size first_res = 0;
+	if (is_add_virt_res) {
+		first_res = 2;
+	} else {
+		first_res = 1;
+	}
+
+	Real sample_range;
+	if (option[ sampling_stddev ].user()) {
+		sample_range = option[ sampling_stddev ] ();
+	} else {
+		sample_range = kT_sys * 24.0 / double(n_residue);
+	}
+
+	// initialize for o2star rotamer trials. 	
+	PackerTaskOP o2star_pack_task =  pack::task::TaskFactory::create_packer_task( pose );
+	ScoreFunctionOP o2star_pack_scorefxn = new ScoreFunction;
+	if ( option[ o2star_trials ]() ) {
+		initialize_o2star_pack(pose, scorefxn, o2star_pack_scorefxn, o2star_pack_task );
+	}
+
+	// Get ready for main loop.
+	clock_t const time_start( clock() );
+
+	utility::vector1< Size > hist;
+	utility::vector1< Real > nucleoside_torsion, nucleoside_torsion_new;
+	utility::vector1< utility::vector1< Real > > suite_torsion, suite_torsion_new;
+
+	Real const rep_score_cutoff = 100;
+	Real const max_score =  500.005;
+	Real const min_score = -90.005;
+	Real const bin_size  =   0.01;
+	for (Real i = min_score; i <= max_score; i += bin_size) {
+		hist.push_back(0);
+	}
+
+	utility::vector1< Real > A_form_torsion_set = get_suite_ideal_A_form_torsions();
+	nucleoside_torsion.push_back(A_form_torsion_set[6]);
+	nucleoside_torsion.push_back(A_form_torsion_set[7]);
+	nucleoside_torsion_new = nucleoside_torsion;
+	apply_nucleoside_torsion(nucleoside_torsion, pose, first_res);
+
+	for (Size i = first_res; i <= n_residue - 1; ++i) {
+		apply_suite_torsion( A_form_torsion_set, pose, i );
+		suite_torsion.push_back( A_form_torsion_set );
+		suite_torsion_new.push_back( A_form_torsion_set );
+	}
+	Real score = (*scorefxn)( pose );
+	pose.dump_pdb("test1.pdb");
+
+	bool const is_kT_inf = (kT_sys > 999);
+	Size n_accpet = 0;
+
+	ozstream output_decoy, output_rmsd;
+	output_rmsd.open("rmsd_vs_energy.out");
+
+	if (is_saving_decoy) {
+		output_decoy.open(outfile_decoy);
+	}
+
+	std::cout << "Start MC sampling" << std::endl;
+	for (Size count = 1; count <= num_cycle; count++) {
+
+		if (is_kT_inf) {
+			for (Size i = first_res; i <= n_residue - 1; ++i) {
+				create_random_suite_torsion(suite_torsion_new[i + 1 - first_res]);
+				apply_suite_torsion( suite_torsion_new[i + 1 - first_res], pose, i );
+			}
+			create_random_nucleoside_torsion(nucleoside_torsion_new);
+			apply_nucleoside_torsion(nucleoside_torsion_new, pose, first_res);
+		} else {
+			for (Size i = first_res; i <= n_residue - 1; ++i) {
+				sample_near_suite_torsion(suite_torsion_new[i + 1 - first_res], sample_range);
+				apply_suite_torsion( suite_torsion_new[i + 1 - first_res], pose, i );
+			}
+			sample_near_nucleoside_torsion(nucleoside_torsion_new, sample_range);
+			apply_nucleoside_torsion(nucleoside_torsion_new, pose, first_res);
+		}
+
+
+//		if ( option[ o2star_trials ]() ) pack::rotamer_trials( pose, *o2star_pack_scorefxn, o2star_pack_task );
+
+		Real const rep_score = (*rep_scorefxn)( pose_full );
+		Real score_new;
+		if (is_check_clash && rep_score > rep_score_cutoff) {
+			score_new = rep_score;
+		} else {
+			score_new = (*scorefxn)( pose );
+		}
+
+		if (is_kT_inf || score_new <= score || RG.uniform() < exp( (score - score_new) / kT_sys )) {
+			score = score_new;
+			nucleoside_torsion = nucleoside_torsion_new;
+			suite_torsion = suite_torsion_new;
+			++n_accpet;
+
+			if (output_rmsd_vs_energy && score < decoy_cutoff) {
+				output_rmsd << score << ' ' << rmsd_compute(pose, ideal_pose) << std::endl;
+			}
+
+			if (score < lowest_score) {
+				lowest_score = score; 
+				lowest_pose = pose;
+			}
+
+			//////Find if near SWA clustering center///////
+			Size n = 0;
+			for (;n < 9; ++n) {
+				Size m = 0;
+				for (;m < 9; ++m) {
+					Real angle;
+					if (m < 2) {
+						angle = nucleoside_torsion[m + 1];
+					} else {
+						angle = suite_torsion[1][m - 1];
+					}
+					//std::cout << angle << ' ' << cluster_center[n][m] << std::endl;
+					if ( abs( angle - cluster_center[n][m] ) > 20 ) {
+						//std::cout << std::endl;
+						break;
+					}
+				}
+				if (m == 9)	break;
+			}
+
+			if (n != 9) {
+				++counts_list[n];
+				if (score < lowest_score_list[n]) {
+					lowest_score_list[n] = score;
+					lowest_pose_list[n+1] = pose;
+				}
+			}
+		  //////////////////////////////////////////////////
+		} else {
+			nucleoside_torsion_new = nucleoside_torsion;
+			suite_torsion_new = suite_torsion;
+		}
+
+		Real score_saved = score;
+		if (score_saved < min_score) {
+			std::cout << "Warning: score < min_score" << std::endl;
+			continue;
+		} else if (score_saved > max_score) {
+			score_saved = max_score;
+		}
+
+		Size const bin = score2bin( score_saved, min_score, max_score, bin_size );
+		++hist[bin];
+
+	}
+	
+	std::cout << "Total number of rotamers applied: " << num_cycle << std::endl;
+	std::cout << "sampling stdev: " << sample_range << std::endl;
+	std::cout << "accept rate:" << (1.0 * n_accpet / num_cycle) << std::endl;
+	Real const time_in_dinucleotide_test = static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC;
+	std::cout << "Time in dinucleotide sampler: " <<  time_in_dinucleotide_test << std::endl;
+
+	lowest_pose.dump_pdb("lowest.pdb");
+
+	Size first_bin = 0;
+	Size last_bin  = 0;
+	for (Size i = 1; i <= hist.size(); ++i) {
+		if (first_bin == 0) {
+			if (hist[i] == 0) continue;
+			first_bin = i;
+		}
+		if (hist[i] != 0) last_bin = i;
+	}
+	
 	ozstream out;
 	out.open( outfile );
 	out << "Score N_sample" << std::endl;
@@ -608,7 +1067,18 @@ one_chain_MC_sampling(){
 	}
 	out.close();
 
-	if ( save_silent ) cluster_and_output_silent_file( silent_file_data, silent_file );
+	ozstream out_SWA;
+	out_SWA.open( "SWA_clustering.profile" );
+	out_SWA << "counts lowest_E" << std::endl;
+	for (Size i = 0; i < 9; ++i) {
+		out_SWA << counts_list[i] << ' ' << lowest_score_list[i] << std::endl;
+		std::ostringstream oss;
+		oss << "SWA_cluster_lowest_"  << (i+1) << ".pdb";
+		if (lowest_score_list[i] < 100) {
+			lowest_pose_list[i+1].dump_pdb(oss.str());
+		}
+	}
+	out_SWA.close();
 
 }
 
@@ -619,6 +1089,10 @@ my_main( void* ) {
 
 	if ( algorithm_name == "one_chain_MC" ) {
 		one_chain_MC_sampling();
+	} else if ( algorithm_name == "one_chain_ST" ) {
+		one_chain_ST_MC();
+	} else if ( algorithm_name == "one_chain_cluster_SWA_test" ) {
+		one_chain_SWA_cluster();
 	}
 
 	protocols::viewer::clear_conformation_viewers();
@@ -641,8 +1115,12 @@ main( int argc, char * argv [] ) {
 	NEW_OPT( sampling_stddev, "Sampling standard deviation in degree", 0.0 );
 	NEW_OPT( kT, "kT of simulation in RU", 9999.99 );
 	NEW_OPT( check_clash, "check clahsed conformers", true );
-	NEW_OPT( add_virt_res, "Append a virtual residue", true );
+	NEW_OPT( rmsd_vs_energy, "", true );
+	NEW_OPT( add_virt_res, "Append a virtual residue", false );
 	NEW_OPT( o2star_trials, "do rotamer trials", false );
+	NEW_OPT( kT_list, "list of kT for ST", blank_size_vector_real );
+	NEW_OPT( ST_weight_list, "list of ST weights", blank_size_vector_real );
+	NEW_OPT( exchange_rate, "", 0.2 );
 	//////////////////////////////
 	// setup
 	//////////////////////////////
