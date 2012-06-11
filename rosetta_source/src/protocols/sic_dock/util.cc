@@ -35,6 +35,12 @@ int neighbor_count(core::pose::Pose const &pose, int ires, double distance_thres
 	return resi_neighbors;
 }
 
+Real
+cb_weight(core::pose::Pose const &pose, int ires, double distance_threshold=10.0) {
+	Real wt = numeric::min(1.0,(double)neighbor_count(pose,ires,distance_threshold)/20.0);
+	if(pose.secstruct(ires)=='L') wt = wt / 3.0; //TODO make option somehow
+	return wt;
+}
 
 double
 slide_into_contact_and_score(
@@ -57,10 +63,9 @@ cb_weight_map_from_pose(
 ){
 	core::id::AtomID_Map<double> amap;
 	core::pose::initialize_atomid_map(amap,pose,-1.0);
-	for(Size i = 1; i <= pose.n_residue(); ++i){
+	for(Size i = 1; i <= pose.n_residue(); ++i){		
 		if(pose.residue(i).has("CB")) {
-			double cbw = numeric::min(1.0,(double)neighbor_count(pose,i)/20.0);
-			amap[AtomID(pose.residue(i).atom_index("CB"),i)] = cbw;
+			amap[AtomID(pose.residue(i).atom_index("CB"),i)] = cb_weight(pose,i);
 		}
 	}
 	return amap;
@@ -73,8 +78,7 @@ cb_weights_from_pose(
 	utility::vector1<core::Real> wts;
 	for(Size i = 1; i <= pose.n_residue(); ++i){
 		if(pose.residue(i).has("CB")) {
-			double cbw = numeric::min(1.0,(double)neighbor_count(pose,i)/20.0);
-			wts.push_back(cbw);
+			wts.push_back( cb_weight(pose,i) );
 		}
 	}
 	return wts;

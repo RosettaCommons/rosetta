@@ -388,7 +388,7 @@ refine_mindis_with_xyzHash(
 
 double
 SICFast::slide_into_contact(
-	core::kinematics::Stub       & xa,
+	core::kinematics::Stub const & xa,
 	core::kinematics::Stub const & xb,
 	Vec                            ori
 ) const {
@@ -416,8 +416,6 @@ SICFast::slide_into_contact(
 
 	double const mindis = refine_mindis_with_xyzHash(xh2c_,xb,pa,ori,CLD2,mindis_approx);
 	if( fabs(mindis) > 9e8 ) return 9e9;
-
-	xa.v -= mindis*ori;
 
 	return -mindis;
 }

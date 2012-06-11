@@ -22,9 +22,13 @@
 #include <core/types.hh>
 #include <protocols/sic_dock/xyzStripeHashPose.hh>
 #include <utility/pointer/ReferenceCount.hh>
+#include <protocols/loophash/LoopHashLibrary.hh>
 
 namespace protocols {
 namespace sic_dock {
+
+	struct Vec3 { numeric::xyzVector<core::Real> a,b,c; };
+	typedef utility::vector1<Vec3> Vec3s;
 
 class RigidScore : public utility::pointer::ReferenceCount {
 protected:
@@ -36,6 +40,9 @@ protected:
 	typedef numeric::xyzMatrix<Real> Mat;
 	typedef utility::vector1<Vec> Vecs;
 	typedef utility::vector1<Real> Reals;
+	typedef utility::vector1<Size> Sizes;
+	typedef utility::vector1<Stub> Stubs;
+	typedef utility::vector1<RigidScoreCOP> Scores;
 public:
 
 	virtual ~RigidScore() {}
@@ -56,11 +63,6 @@ public:
 	virtual ~CBScore(){}
 	CBScore(
 		Pose const & pose1,
-		Real clash_dis,
-		Real contact_dis
-	);
-	CBScore(
-		Pose const & pose1,
 		Pose const & pose2,
 		Real clash_dis,
 		Real contact_dis
@@ -75,14 +77,26 @@ public:
 	// Pose const & pose1_,pose2_;
 };
 
-class Linkerscore : public RigidScore {
+
+class LinkerScore : public RigidScore {
 public:
-	Linkerscore();
-	virtual ~Linkerscore(){}
-	core::Real score( Stub const & x1, Stub const & x2 ) const;
+	LinkerScore(
+		Pose const & pose1,
+		Pose const & pose2,
+		Size max_loop_len
+	);
+	virtual ~LinkerScore(){}
+	core::Real  score( Stub const & x1, Stub const & x2 ) const;
+	void dump_linkers( Stub const & x1, Stub const & x2 ) const;
 private:
-	// loophash crap
+	protocols::loophash::LoopHashLibraryOP loop_hash_library_;
+	Sizes const loopsizes_;
+	Pose const & pose1_,pose2_;
+	Vec3s lowers1_,uppers1_,lowers2_,uppers2_;
+	Real max_dis2_;
 };
+
+
 
 class EdgeStandScore : public RigidScore {
 public:
@@ -109,6 +123,41 @@ public:
 private:
 	Vecs polars;
 };
+
+////// composite scores
+
+class JointScore : public RigidScore {
+public:
+	JointScore(){}
+	JointScore(
+		Scores scores,
+		Reals weights
+	);
+	void add_score(RigidScoreCOP score, Real weight);
+	virtual ~JointScore(){}
+	core::Real score( Stub const & x1, Stub const & x2 ) const;
+private:
+	Scores scores_;
+	Reals weights_;
+
+};
+
+
+
+// class CachedScore : public RigidScore {
+// public:
+// 	CachedScore(RigidScoreCOP score);
+// 	virtual ~CachedScore(){}
+// 	core::Real score( Stub const & x1, Stub const & x2 ) const;
+// private:
+// 	RigidScoreCOP score_;
+// 	// some kind of 6 dof hash
+// };
+
+
+
+
+
 
 } // namespace sic_dock
 } // namespace protocols

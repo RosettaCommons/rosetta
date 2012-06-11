@@ -40,6 +40,7 @@ DONE
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
+#include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/sasa.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <devel/init.hh>
@@ -54,6 +55,7 @@ DONE
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <core/scoring/methods/RG_Energy_Fast.hh>
+#include <time.h>
 
 //#include <numeric/geometry/hashing/xyzStripeHash.hh>
 
@@ -119,6 +121,7 @@ OPT_1GRP_KEY( Real , tcdock, redundant_angle )
 OPT_1GRP_KEY( Boolean , tcdock, ignore_intra_1 )
 OPT_1GRP_KEY( Boolean , tcdock, ignore_intra_2 )
 OPT_1GRP_KEY( Boolean , tcdock, fast_stage_one )
+OPT_1GRP_KEY( Integer , tcdock, max_linker_len )
 
 
 void register_options() {
@@ -166,6 +169,7 @@ void register_options() {
 		NEW_OPT( tcdock::ignore_intra_1  , "ignore c1-c1 interactions" , false  );
 		NEW_OPT( tcdock::ignore_intra_2  , "ignore c2-c2 interactions" , false  );		
 		NEW_OPT( tcdock::fast_stage_one  ,"faster stage one, may miss some"   , false  );
+		NEW_OPT( tcdock::max_linker_len  ,""   ,  10    );
 
 
 }
@@ -331,9 +335,22 @@ struct TCDock {
 	protocols::sic_dock::SICFast sic_;
 	bool abort_;
 	core::id::AtomID_Map<core::Real> clashmap1_,clashmap2_,scoremap1_,scoremap2_;
-	protocols::sic_dock::CBScoreOP cbscore_;
+	protocols::sic_dock::RigidScoreCOP rigid_sfxn_;
+	protocols::sic_dock::LinkerScoreCOP lnscore_;
+	Size conf_count_;
+	std::clock_t start_time_;
 
-	TCDock( string cmp1pdb, string cmp2pdb, string cmp1type, string cmp2type ) : cmp1type_(cmp1type),cmp2type_(cmp2type),abort_(false) {
+	TCDock(
+		string cmp1pdb,
+		string cmp2pdb,
+		string cmp1type,
+		string cmp2type
+	): 
+		cmp1type_(cmp1type),
+		cmp2type_(cmp2type),
+		abort_(false),
+		conf_count_(0)
+	{
 		#ifdef USE_OPENMP
 		cout << "OMP info: " << num_threads() << " " << thread_num() << endl;
 		#endif
@@ -370,6 +387,10 @@ struct TCDock {
 		if(cmp2type[1]=='4') { make_tetramer(cmp2in_); cmp2nsub_ = 4; }
 		if(cmp2type[1]=='5') { make_pentamer(cmp2in_); cmp2nsub_ = 5; }
 		if(option[tcdock::reverse]()) rot_pose(cmp1in_,Vecf(0,1,0),180.0);
+		core::scoring::dssp::Dssp(cmp1in_).insert_ss_into_pose(cmp1in_);
+		core::scoring::dssp::Dssp(cmp2in_).insert_ss_into_pose(cmp2in_);
+		// for(int i = 1; i <= cmp1in_.n_residue(); ++i) cout << cmp1in_.secstruct(i); cout << endl;
+		// for(int i = 1; i <= cmp2in_.n_residue(); ++i) cout << cmp2in_.secstruct(i); cout << endl;
 
 		bool nt1good=1,nt2good=1,ct1good=1,ct2good=1;
 		protocols::sic_dock::termini_exposed(cmp1in_,nt1good,ct1good);
@@ -462,7 +483,13 @@ struct TCDock {
 		sic_.init(cmp1in_,cmp2in_,clashmap1_,clashmap2_,scoremap1_,scoremap2_);
 		Real CTD(basic::options::option[basic::options::OptionKeys::sicdock::contact_dis]());
 		Real CLD(basic::options::option[basic::options::OptionKeys::sicdock::clash_dis]());
-		cbscore_ = new protocols::sic_dock::CBScore(cmp1in_,cmp1in_,CLD,CTD);
+
+		protocols::sic_dock::JointScoreOP  jtscore = new protocols::sic_dock::JointScore;
+		protocols::sic_dock::CBScoreCOP cbscore = new protocols::sic_dock::    CBScore(cmp1in_,cmp2in_,CLD,CTD);
+		lnscore_ = new protocols::sic_dock::LinkerScore(cmp1in_,cmp2in_,option[tcdock::max_linker_len]());
+		jtscore->add_score(cbscore,1.0);
+		jtscore->add_score(lnscore_,1.0);
+		rigid_sfxn_ = jtscore;
 
 		cmp1mnpos_.resize(cmp1nangle_,0.0);
 		cmp2mnpos_.resize(cmp2nangle_,0.0);
@@ -556,7 +583,7 @@ struct TCDock {
 				      i12? clashmap1_:clashmap2_,
 				      i12? scoremap1_:scoremap2_,
 				      i12? scoremap1_:scoremap2_);
-			protocols::sic_dock::CBScore sfxn(i12?cmp1in_:cmp2in_,CLASH_D,CONTACT_D);
+			protocols::sic_dock::CBScore sfxn(i12?cmp1in_:cmp2in_,i12?cmp1in_:cmp2in_,CLASH_D,CONTACT_D);
 
 			for(int ipn = 0; ipn < 2; ++ipn) {
 				#ifdef USE_OPENMP
@@ -814,7 +841,32 @@ struct TCDock {
 			xa.M = rotation_matrix_degrees(cmp1axs_,(double)icmp1);
 			xb.M = rotation_matrix_degrees(cmp2axs_,(double)icmp2);
 
-			double const d = -slide_into_contact_and_score(sic_,*cbscore_,xa,xb,sicaxis,icbc);
+			#ifdef USE_OPENMP
+			#pragma omp critical
+			#endif
+			{
+				// rot_pose(cmp1in_,sicaxis,180.0);
+				// rot_pose(cmp2in_,sicaxis,180.0);
+				// core::scoring::ScoreFunction sf;
+				// sf.set_weight(core::scoring::fa_rep,1.0);
+				// sf(cmp1in_);
+				// sf(cmp2in_);
+				// // int dummy;
+				// // for(Size ir = 1; ir <= cmp1in_.n_residue(); ++ir){
+				// // 	for(Size jr = 1; jr <= cmp2in_.n_residue(); ++jr){
+				// // 		for(Size ia = 1; ia < 5; ++ia){
+				// // 			for(Size ja = 1; ja < 5; ++ja){
+				// // 				dummy += cmp1in_.residue(ir).xyz(ia).distance_squared(cmp2in_.residue(jr).xyz(ja)) < 100;
+				// // 			}
+				// // 		}
+				// // 	}
+				// // }
+				// rot_pose(cmp1in_,sicaxis,180.0);			
+				// rot_pose(cmp2in_,sicaxis,180.0);
+				conf_count_++;
+			}
+
+			double const d = -slide_into_contact_and_score(sic_,*rigid_sfxn_,xa,xb,sicaxis,icbc);
 			if(fabs(d) > 9e8){
 				gscore(icmp2+1,icmp1+1,iori+1) = 0.0;
 				gradii(icmp2+1,icmp1+1,iori+1) = 9e9;
@@ -1067,12 +1119,25 @@ struct TCDock {
 		{                                                         // 3deg loop
 			// double max1=0;
 			// dump_onecomp();
-			// precompute_intra(); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			precompute_intra();
+
+			start_time_ = clock();
+			conf_count_ = 0;
+
 			cout << "main loop 1 over icmp2, icmp1, iori every 3 degrees" << endl;
 			double max_score = 0;
 			int max_i1,max_i2,max_io;
 			for(int icmp1 = 0; icmp1 < cmp1nangle_; icmp1+=3) {
-				if(icmp1%15==0 && icmp1!=0) cout<<" lowres dock "<<cmp1name_<<" "<<I(2,100*icmp1/cmp1nangle_)<<"% done, max_score: "<<F(10,6,max_score)<<endl;
+				if(icmp1%15==0 && icmp1!=0){
+					double rate = CLOCKS_PER_SEC * Real(conf_count_) / Real(clock()-start_time_);
+					cout<<" lowres dock "
+					    <<cmp1name_<<" "
+					    <<I(2,100*icmp1/cmp1nangle_)
+					    <<"% done, max_score: "
+					    <<F(10,6,max_score)
+					    <<" rate: "<<rate<<" confs/sec/thread"
+					    <<" "<<rate*num_threads()<<" confs/sec"<<endl;
+				}
 				vector1<Vecf> pa,cba; get_cmp1(icmp1,pa,cba);
 				#ifdef USE_OPENMP
 				#pragma omp parallel for schedule(dynamic,1)

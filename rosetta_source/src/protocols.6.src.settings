@@ -170,6 +170,13 @@ sources = {
 	"SeedSetupMover",
 	"SwapSegment",
 ],
+"protocols/sic_dock" : [ # sheffler
+	"SICFast",
+	"RigidScore",
+	"util",
+	"designability_score",
+],
+
 }
 include_path = [
 ]

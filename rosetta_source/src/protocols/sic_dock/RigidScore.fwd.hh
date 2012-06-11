@@ -23,21 +23,29 @@ class CBScore;
 typedef utility::pointer::owning_ptr< CBScore > CBScoreOP;
 typedef utility::pointer::owning_ptr< CBScore const > CBScoreCOP;
 
-class Linkerscore;
-typedef utility::pointer::owning_ptr< Linkerscore > LinkerscoreOP;
-typedef utility::pointer::owning_ptr< Linkerscore const > LinkerscoreCOP;
+class LinkerScore;
+typedef utility::pointer::owning_ptr< LinkerScore > LinkerScoreOP;
+typedef utility::pointer::owning_ptr< LinkerScore const > LinkerScoreCOP;
 
-class EdgeStandScore;
-typedef utility::pointer::owning_ptr< EdgeStandScore > EdgeStandScoreOP;
-typedef utility::pointer::owning_ptr< EdgeStandScore const > EdgeStandScoreCOP;
+// class EdgeStandScore;
+// typedef utility::pointer::owning_ptr< EdgeStandScore > EdgeStandScoreOP;
+// typedef utility::pointer::owning_ptr< EdgeStandScore const > EdgeStandScoreCOP;
 
-class HelixScore;
-typedef utility::pointer::owning_ptr< HelixScore > HelixScoreOP;
-typedef utility::pointer::owning_ptr< HelixScore const > HelixScoreCOP;
+// class HelixScore;
+// typedef utility::pointer::owning_ptr< HelixScore > HelixScoreOP;
+// typedef utility::pointer::owning_ptr< HelixScore const > HelixScoreCOP;
 
-class BuriedPolarScore;
-typedef utility::pointer::owning_ptr< BuriedPolarScore > BuriedPolarScoreOP;
-typedef utility::pointer::owning_ptr< BuriedPolarScore const > BuriedPolarScoreCOP;
+// class BuriedPolarScore;
+// typedef utility::pointer::owning_ptr< BuriedPolarScore > BuriedPolarScoreOP;
+// typedef utility::pointer::owning_ptr< BuriedPolarScore const > BuriedPolarScoreCOP;
+
+class JointScore;
+typedef utility::pointer::owning_ptr< JointScore > JointScoreOP;
+typedef utility::pointer::owning_ptr< JointScore const > JointScoreCOP;
+
+// class CachedScore;
+// typedef utility::pointer::owning_ptr< CachedScore > CachedScoreOP;
+// typedef utility::pointer::owning_ptr< CachedScore const > CachedScoreCOP;
 
 }
 }

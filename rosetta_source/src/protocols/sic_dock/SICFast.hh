@@ -65,7 +65,7 @@ public:
 	// return distace xmob*pose1 must move along ori to contact xfix*pose2
 	// moves xmob 
 	double slide_into_contact(
-		core::kinematics::Stub       & xmob,
+		core::kinematics::Stub const & xmob,
 		core::kinematics::Stub const & xfix,
 		Vec                            ori
 	) const;
