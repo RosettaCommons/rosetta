@@ -3081,13 +3081,34 @@ void parameter_set4scale(int len, double d_s)
 	
 }
 
-//TODO: SONG
 int apply(core::pose::Pose const & pose1, core::pose::Pose const & pose2)
 {
 	std::list <core::Size> residue_list1;
 	std::list <core::Size> residue_list2;
-	
+	for ( Size ires=1; ires<= pose1.total_residue(); ++ires ) {
+		if ( !pose1.residue(ires).is_protein() ) continue;
+		residue_list1.push_back(ires);
+	}
+	for ( Size ires=1; ires<= pose2.total_residue(); ++ires ) {
+		if ( !pose2.residue(ires).is_protein() ) continue;
+		residue_list2.push_back(ires);
+	}
+
 	return apply(pose1, pose2, residue_list1, residue_list2);
+}
+	
+core::Real TMscore(Size length) {
+	d0_out_=5.0;  
+	Size simplify_step=1;
+	Size score_sum_method=0;
+	
+	//normalized by user assigned length		
+	parameter_set4final(length);		
+	d0A=d0;
+	//d0_0=d0A;
+	//Lnorm_0=Lnorm_ass;
+	core::Real rmsd;
+	return TMscore8_search(xtm, ytm, n_ali8_, t, u, simplify_step, score_sum_method, &rmsd);	
 }
 	
 int apply(core::pose::Pose const & pose1, core::pose::Pose const & pose2, std::list <core::Size> residue_list1, std::list <core::Size> residue_list2)
@@ -3139,8 +3160,6 @@ int apply(core::pose::Pose const & pose1, core::pose::Pose const & pose2, std::l
 			invmap0[i]=invmap[i];
 		}
 	}
-	
-	
 	
 	/*********************************************************************************/
 	/*         get initial alignment based on secondary structure                    */ 
