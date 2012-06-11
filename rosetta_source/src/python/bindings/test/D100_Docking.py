@@ -335,7 +335,7 @@ protocol without the PyMOL_Observer.
 #    cycles/jobs to provide results quickly
 parser = optparse.OptionParser()
 parser.add_option('--pdb_filename', dest = 'pdb_filename',
-    default = 'demo/data/test_dock.pdb',    # default example PDB
+    default = 'test/data/demo/test_dock.pdb',    # default example PDB
     help = 'the PDB file containing the proteins to dock')
 # for more information on "partners", see sample_docking step 2.
 parser.add_option('--partners', dest = 'partners',

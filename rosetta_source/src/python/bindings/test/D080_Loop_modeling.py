@@ -446,7 +446,7 @@ will likely discard the proposed structure if it increases the score).
 #    cycles/jobs to provide results quickly
 parser = optparse.OptionParser()
 parser.add_option('--pdb_filename', dest = 'pdb_filename',
-    default = 'demo/data/test_in.pdb',    # default example PDB
+    default = 'test/data/demo/test_in.pdb',    # default example PDB
     help = 'the PDB file containing the loop to remodel')    
 # the loop options
 parser.add_option('--loop_begin', dest = 'loop_begin',
@@ -460,7 +460,7 @@ parser.add_option('--loop_cutpoint' , dest = 'loop_cutpoint',
     help = 'the cutpoint residue for the loop region')
 # the fragment file options
 parser.add_option('--frag_filename', dest = 'frag_filename',
-    default = 'demo/data/test_in.frag3',    # specific to each PDB (test_in.pdb here)
+    default = 'test/data/demo/test_in.frag3',    # specific to each PDB (test_in.pdb here)
     help = 'the file containing fragments corresponding to the PDB')
 parser.add_option('--frag_length', dest = 'frag_length',
     default = '3',    # must match the frag_filename

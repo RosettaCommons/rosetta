@@ -305,7 +305,7 @@ undergoing repairs though manually splitting a PDB is very easy).
 #    cycles/jobs to provide results quickly
 parser = optparse.OptionParser()
 parser.add_option('--pdb_filename', dest = 'pdb_filename',
-    default = 'demo/data/test_lig.pdb',    # default example PDB
+    default = 'test/data/demo/test_lig.pdb',    # default example PDB
     help = 'the PDB file containing the ligand and protein to dock')
 # for more information on "partners", see sample_docking step 2.
 parser.add_option('--partners', dest = 'partners',

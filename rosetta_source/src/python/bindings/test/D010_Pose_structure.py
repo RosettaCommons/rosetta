@@ -161,7 +161,7 @@ problems could be:
 #    cycles/jobs to provide results quickly
 parser = optparse.OptionParser()
 parser.add_option('--pdb_filename', dest = 'pdb_filename',
-    default = 'demo/data/test_in.pdb',    # default example PDB
+    default = 'test/data/demo/test_in.pdb',    # default example PDB
     help = 'the PDB file containing the loop to remodel')
 parser.add_option('--residues', dest = 'residues',
     default = '',    # default to the median residue number
