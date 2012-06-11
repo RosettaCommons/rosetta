@@ -29,6 +29,7 @@
 //#include <core/pack/task/operation/TaskOperation.hh>
 //#include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <basic/options/option.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/FilterFactory.hh>
@@ -123,6 +124,7 @@ typedef utility::vector0< TagPtr > TagPtrs;
 /// default are set to 1.0, but can be changed by the user globally (in the definition of the weight on the constraint),
 /// or in particular for each of the scorefunctions by changing the relevant term (which is set by default to the
 /// global value).
+/// OUTPUT is a section which allows the XML control of how things are output
 /// Notice that the order of the sections by which the protocol is written doesn't matter, BUT the order of the
 /// mover-filter pairs in PROTOCOLS section does matter.
 bool
@@ -132,7 +134,7 @@ DockDesignParser::generate_mover_from_pose( JobCOP, Pose & pose, MoverOP & in_mo
 
 	if( !new_input ) return modified_pose;
 
-	in_mover = new protocols::rosetta_scripts::ParsedProtocol;
+	protocols::rosetta_scripts::ParsedProtocolOP protocol( new protocols::rosetta_scripts::ParsedProtocol );
 
 	std::string const dock_design_filename( xml_fname == "" ? option[ OptionKeys::parser::protocol ] : xml_fname );
 	TR << "dock_design_filename=" << dock_design_filename << std::endl;
@@ -161,7 +163,6 @@ DockDesignParser::generate_mover_from_pose( JobCOP, Pose & pose, MoverOP & in_mo
 	DataMap data; // abstract objects, such as scorefunctions, to be used by filter and movers
 
 	MoverOP mover;
-	ScoreFunctionOP scorefxn;
 
 	typedef std::pair< std::string const, MoverOP > StringMover_pair;
 	typedef std::pair< std::string const, protocols::filters::FilterOP > StringFilter_pair;
@@ -177,12 +178,14 @@ DockDesignParser::generate_mover_from_pose( JobCOP, Pose & pose, MoverOP & in_mo
 	movers.insert( StringMover_pair( "null", null_mover) );
 
 // default scorefxns
+	ScoreFunctionOP commandline_sfxn = core::scoring::getScoreFunction();
 	ScoreFunctionOP score12 = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
 	ScoreFunctionOP docking_score = ScoreFunctionFactory::create_score_function( STANDARD_WTS, DOCK_PATCH );
 	ScoreFunctionOP soft_rep = ScoreFunctionFactory::create_score_function( SOFT_REP_DESIGN_WTS );
 	ScoreFunctionOP docking_score_low = ScoreFunctionFactory::create_score_function( "interchain_cen" );
 	ScoreFunctionOP score4L = ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );
 
+	data.add( "scorefxns", "commandline", commandline_sfxn );
 	data.add( "scorefxns", "score12", score12 );
 	data.add( "scorefxns", "score_docking", docking_score );
 	data.add( "scorefxns", "soft_rep", soft_rep );
@@ -196,6 +199,7 @@ DockDesignParser::generate_mover_from_pose( JobCOP, Pose & pose, MoverOP & in_mo
 	non_data_loader_tags.insert( "APPLY_TO_POSE" );
 	non_data_loader_tags.insert( "FILTERS" );
 	non_data_loader_tags.insert( "PROTOCOLS" );
+	non_data_loader_tags.insert( "OUTPUT" );
 
 	/// Load in data into the DataMap object.  All tags beside those listed
 	/// in the non_data_loader_tags set are considered DataLoader tags.
@@ -286,10 +290,19 @@ DockDesignParser::generate_mover_from_pose( JobCOP, Pose & pose, MoverOP & in_mo
 
 	////// ADD MOVER FILTER PAIRS
 	TagPtr const protocols_tag( tag->getTag("PROTOCOLS") );
-	in_mover->parse_my_tag( protocols_tag, data, filters, movers, pose );
+	protocol->parse_my_tag( protocols_tag, data, filters, movers, pose );
 	TR.flush();
 
+	////// Set Output options
+	if ( tag->hasTag("OUTPUT") ) {
+		TagPtr const output_tag( tag->getTag("OUTPUT") );
+		protocol->final_scorefxn( rosetta_scripts::parse_score_function( output_tag, data, "commandline" ) );
+	} else {
+		protocol->final_scorefxn( commandline_sfxn );
+	}
+
 	tag->die_for_unaccessed_options_recursively();
+	in_mover = protocol;
 	return modified_pose;
 }
 

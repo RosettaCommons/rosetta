@@ -22,6 +22,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/filters/Filter.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <utility/exit.hh>
 #include <protocols/moves/ResId.hh>
@@ -48,7 +49,12 @@ public:
 	typedef MoverFilterVector::iterator iterator;
 	typedef MoverFilterVector::const_iterator const_iterator;
 public:
-	ParsedProtocol() : protocols::moves::Mover( "ParsedProtocol" ),mode_("sequence"), last_attempted_mover_idx_( 0 ) {}
+	ParsedProtocol() :
+		protocols::moves::Mover( "ParsedProtocol" ),
+		final_scorefxn_( 0 ), // By default, don't rescore with any scorefunction.
+		mode_("sequence"),
+		last_attempted_mover_idx_( 0 )
+	{}
 	virtual void apply( Pose & pose );
 	virtual core::pose::PoseOP get_additional_output( );
 	virtual std::string get_name() const;
@@ -62,6 +68,9 @@ public:
 		mover_filter_pair p( mover_p, filter_p );
 		movers_.push_back( p );
 	}
+	void final_scorefxn( core::scoring::ScoreFunctionCOP scorefxn ) { final_scorefxn_ = scorefxn; }
+	core::scoring::ScoreFunctionCOP final_scorefxn() const { return final_scorefxn_; }
+	void final_score(core::pose::Pose & pose) const;
 	void report_all( Pose const & pose ) const; // cycles over all filter->report methods to output their values to a common stream.
 	void report_filters_to_job( Pose const & pose ) const;  // as above but reports to job object
 	void report_all_sm( std::map< std::string, core::Real > & score_map, Pose const & pose ) const; // ditto, but outputs filter values into score_map object
@@ -97,6 +106,7 @@ private:
 private:
 
 	MoverFilterVector movers_;
+	core::scoring::ScoreFunctionCOP final_scorefxn_;
 	std::string mode_;
 	utility::vector1< core::Real > apply_probability_; // if mode_="single_random", assigns a probability of execution to each mover/filter pair. Defaults to equal probabilities to all.
 	core::Size last_attempted_mover_idx_; //index to last attempted mover; useful for adaptive monte carlo

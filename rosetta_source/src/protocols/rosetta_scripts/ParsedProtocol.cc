@@ -25,6 +25,10 @@
 #include <core/kinematics/Jump.hh>
 #include <basic/Tracer.hh>
 
+#include <core/scoring/ScoreFunction.hh>
+
+#include <core/pose/symmetry/util.hh>
+#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/BasicFilters.hh>
@@ -109,21 +113,15 @@ ParsedProtocol::apply( Pose & pose )
 				if (checkpoint && mode_ != "sequence")
 					utility_exit_with_message("Mover "+mover_name+" returned multiple poses in a ParsedProtocol with mode!=sequence");
 
-				std::string const filter_name( rmover_it->second->get_user_defined_name() );
 				TR<<"=======================RESUMING FROM "<<mover_name<<"======================="<<std::endl;
 				pose = *checkpoint;
-				TR<<"=======================BEGIN FILTER "<<filter_name<<"=======================\n{"<<std::endl;
-				info().insert( info().end(), rmover_it->first->info().begin(), rmover_it->first->info().end() );
-				pose.update_residue_neighbors();
-				moves::MoverStatus status( (*rmover_it).first->get_last_move_status() );
-				bool const pass( status==protocols::moves::MS_SUCCESS  && (*rmover_it).second->apply( pose ) );
-				TR<<"\n}\n=======================END FILTER "<<filter_name<<"======================="<<std::endl;
-				if( !pass ) {
-					if( status != protocols::moves::MS_SUCCESS )
-						protocols::moves::Mover::set_last_move_status( status );
+
+				if( ! apply_filter( pose, *rmover_it) ) {
+					final_score(pose);
 					return;
+				} else {
+					break;
 				}
-				break;
 			}
 		}
 	}
@@ -138,12 +136,24 @@ ParsedProtocol::apply( Pose & pose )
 	{
 		TR <<"WARNING: mode is " << mode_ << " .This is not a valid ParsedProtocol Mode, your pose is being ignored" <<std::endl;
 	}
-
+	final_score(pose);
 }
 
 std::string
 ParsedProtocol::get_name() const {
 	return ParsedProtocolCreator::mover_name();
+}
+
+void
+ParsedProtocol::final_score(core::pose::Pose & pose) const {
+	core::scoring::ScoreFunctionCOP scorefxn = final_scorefxn() ;
+
+	if( ! scorefxn ) { return; }
+
+	if (core::pose::symmetry::is_symmetric(pose)) {
+		scorefxn = new core::scoring::symmetry::SymmetricScoreFunction(scorefxn);
+	}
+	(*scorefxn)(pose);
 }
 
 void

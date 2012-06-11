@@ -492,17 +492,6 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 		// check cases: SUCCESS, FAIL_RETRY, FAIL_DO_NOT_RETRY, FAIL_BAD_INPUT
 		if (status == protocols::moves::MS_SUCCESS)
 		{
-			if (using_parser)
-			{
-				core::scoring::ScoreFunctionOP scorefxn =
-						core::scoring::getScoreFunction();
-				//fpd if the pose is symmetric use a symmetric scorefunction
-				if (core::pose::symmetry::is_symmetric(pose))
-					scorefxn = core::scoring::ScoreFunctionOP(
-							new core::scoring::symmetry::SymmetricScoreFunction(
-									scorefxn));
-				(*scorefxn)(pose);
-			}
 			last_completed_job_ = current_job_id_;
 			job_succeeded(pose, jobtime);
 			//			tr.Info << job_outputter_->output_name( current_job_ ) << " reported success in " << jobtime << " seconds" << std::endl;
