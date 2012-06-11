@@ -80,7 +80,7 @@ PoseCommentsFeatures::write_schema_to_db(utility::sql_database::sessionOP db_ses
 	
 	//******pose_comments******//
 	Column struct_id("struct_id",DbUUID(), false);
-	Column comment_key("comment_key",DbText(), false);
+	Column comment_key("comment_key",DbTextKey(), false);
 	Column value("value",DbText(), false);
 	
 	utility::vector1<Column> pkey_cols;
@@ -93,7 +93,6 @@ PoseCommentsFeatures::write_schema_to_db(utility::sql_database::sessionOP db_ses
 	pose_comments.add_column(value);
 	
 	pose_comments.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true));
-	
 	pose_comments.write(db_session);
 	
 //	if(db_mode == "sqlite3")

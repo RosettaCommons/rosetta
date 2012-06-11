@@ -31,7 +31,7 @@
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/exit.hh>
-#include <utility/tools/make_vector.hh>:
+#include <utility/tools/make_vector.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/json_spirit/json_spirit_writer.h>
 #include <utility/json_spirit/json_spirit_reader.h>
@@ -397,7 +397,11 @@ utility::json_spirit::Value GridManager::serialize()
 	{
 		Value grid_name(it->first);
 		Value grid(it->second->serialize());
-		gridmap_data.push_back(Value(utility::tools::make_vector(grid_name,grid)));
+		std::vector<Value> grid_pair_values;
+		grid_pair_values.push_back(grid_name);
+		grid_pair_values.push_back(grid);
+		Value grid_pair(grid_pair_values);
+		gridmap_data.push_back(grid_pair);
 	}
 	return Value(gridmap_data);
 }

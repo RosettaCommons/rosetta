@@ -267,8 +267,8 @@ ProteinResidueConformationFeatures::report_features(
 		Real chi4 = fullatom && resi.nchi() >= 4 ? resi.chi(4) : 0.0;
 
 
-		std::string struct_id_string(to_string(struct_id));
-		conformation_statement.bind(1,struct_id_string);
+		//std::string struct_id_string(to_string(struct_id));
+		conformation_statement.bind(1,struct_id);
 		conformation_statement.bind(2,i);
 		conformation_statement.bind(3,secstruct);
 		conformation_statement.bind(4,phi);
@@ -286,7 +286,7 @@ ProteinResidueConformationFeatures::report_features(
 			{
 				core::Vector coords = resi.xyz(atom);
 
-				atom_statement.bind(1,struct_id_string);
+				atom_statement.bind(1,struct_id);
 				atom_statement.bind(2,i);
 				atom_statement.bind(3,atom);
 				atom_statement.bind(4,coords.x());
@@ -309,12 +309,12 @@ ProteinResidueConformationFeatures::delete_record(
 	utility::sql_database::sessionOP db_session
 ){
 
-	std::string struct_id_string(to_string(struct_id));
+	//std::string struct_id_string(to_string(struct_id));
 	statement conf_stmt(basic::database::safely_prepare_statement("DELETE FROM protein_residue_conformation WHERE struct_id = ?;\n",db_session));
-	conf_stmt.bind(1,struct_id_string);
+	conf_stmt.bind(1,struct_id);
 	basic::database::safely_write_to_database(conf_stmt);
 	statement atom_stmt(basic::database::safely_prepare_statement("DELETE FROM residue_atom_coords WHERE struct_id = ?;\n",db_session));
-	atom_stmt.bind(1,struct_id_string);
+	atom_stmt.bind(1,struct_id);
 	basic::database::safely_write_to_database(atom_stmt);
 
 }
@@ -361,8 +361,8 @@ ProteinResidueConformationFeatures::load_conformation(
 			"WHERE\n"
 			"	protein_residue_conformation.struct_id=?;";
 		statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
-		std::string struct_id_string(to_string(struct_id));
-		stmt.bind(1,struct_id_string);
+		//std::string struct_id_string(to_string(struct_id));
+		stmt.bind(1,struct_id);
 
 		result res(basic::database::safely_read_from_database(stmt));
 
@@ -442,8 +442,8 @@ void ProteinResidueConformationFeatures::set_coords_for_residues(
 		"WHERE\n"
 		"	residue_atom_coords.struct_id=?;";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
-	std::string struct_id_string(to_string(struct_id));
-	stmt.bind(1,struct_id_string);
+	//std::string struct_id_string(to_string(struct_id));
+	stmt.bind(1,struct_id);
 
 	result res(basic::database::safely_read_from_database(stmt));
 

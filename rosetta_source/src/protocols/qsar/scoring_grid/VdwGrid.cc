@@ -158,13 +158,14 @@ utility::json_spirit::Value VdwGrid::serialize()
 	#ifdef PYROSETTA
 		Value _;  return _;
 	#endif
+	return Value(utility::tools::make_vector(cutoff_data,spline_data,base_data));
 }
 
 void VdwGrid::deserialize(utility::json_spirit::mObject data)
 {
 	cutoff_ = data["cutoff"].get_real();
 	numeric::interpolation::spline::InterpolatorOP interp = new numeric::interpolation::spline::SimpleInterpolator;
-	interp->deserialize(data["cutoff"].get_obj());
+	interp->deserialize(data["spline"].get_obj());
 	lj_spline_ = interp;
 	SingleGrid::deserialize(data["base_data"].get_obj());
 }
