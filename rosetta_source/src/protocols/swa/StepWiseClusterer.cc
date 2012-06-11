@@ -40,6 +40,10 @@
 
 #include <list>
 
+#ifdef PYROSETTA
+	#include <time.h>
+#endif
+
 //Auto Headers
 #include <core/id/AtomID.hh>
 using namespace core;

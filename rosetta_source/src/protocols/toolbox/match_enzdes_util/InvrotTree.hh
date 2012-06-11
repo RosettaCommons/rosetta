@@ -36,6 +36,12 @@
 #include <utility/vector1.fwd.hh>
 
 
+#ifdef PYROSETTA
+	#include <protocols/toolbox/match_enzdes_util/InvrotTarget.hh>
+	#include <core/scoring/constraints/Constraint.hh>
+#endif
+
+
 namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {

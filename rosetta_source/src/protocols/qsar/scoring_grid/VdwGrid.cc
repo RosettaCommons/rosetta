@@ -155,7 +155,9 @@ utility::json_spirit::Value VdwGrid::serialize()
 	Pair cutoff_data("cutoff",Value(cutoff_));
 	Pair spline_data("spline",lj_spline_->serialize());
 	Pair base_data("base_data",SingleGrid::serialize());
-
+	#ifdef PYROSETTA
+		Value _;  return _;
+	#endif
 }
 
 void VdwGrid::deserialize(utility::json_spirit::mObject data)

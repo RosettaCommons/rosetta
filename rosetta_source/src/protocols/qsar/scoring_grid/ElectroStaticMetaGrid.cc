@@ -189,9 +189,10 @@ core::Real ElectroStaticMetaGrid::score(core::conformation::Residue const & resi
 		core::Real charge = residue.atomic_charge(atom_index);
 		core::Real nearest_charge_in_map = numeric::find_nearest_value<core::Real>(charges_,charge);
 		score += charge_grid_map_[nearest_charge_in_map].get_point(residue.xyz(atom_index));
-
 	}
-
+	#ifdef PYROSETTA
+	return score;
+	#endif
 }
 
 std::string ElectroStaticMetaGrid::get_type()

@@ -496,92 +496,92 @@ bool ResidueLevelTask_::sample_rna_chi() const
 }
 
 
-bool ResidueLevelTask_::ex1() const 
+bool ResidueLevelTask_::ex1() const
 {
 	return ex1_;
 }
-bool ResidueLevelTask_::ex2() const 
+bool ResidueLevelTask_::ex2() const
 {
 	return ex2_;
 }
-bool ResidueLevelTask_::ex3() const 
+bool ResidueLevelTask_::ex3() const
 {
 	return ex3_;
 }
-bool ResidueLevelTask_::ex4() const 
+bool ResidueLevelTask_::ex4() const
 {
 	return ex4_;
 }
 
-ExtraRotSample ResidueLevelTask_::ex1_sample_level() const 
+ExtraRotSample ResidueLevelTask_::ex1_sample_level() const
 {
 	return ex1_sample_level_;
 }
-ExtraRotSample ResidueLevelTask_::ex2_sample_level() const 
+ExtraRotSample ResidueLevelTask_::ex2_sample_level() const
 {
 	return ex2_sample_level_;
 }
-ExtraRotSample ResidueLevelTask_::ex3_sample_level() const 
+ExtraRotSample ResidueLevelTask_::ex3_sample_level() const
 {
 	return ex3_sample_level_;
 }
-ExtraRotSample ResidueLevelTask_::ex4_sample_level() const 
+ExtraRotSample ResidueLevelTask_::ex4_sample_level() const
 {
 	return ex4_sample_level_;
 }
 
-bool ResidueLevelTask_::ex1aro() const 
+bool ResidueLevelTask_::ex1aro() const
 {
 	return ex1aro_;
 }
-bool ResidueLevelTask_::ex2aro() const 
+bool ResidueLevelTask_::ex2aro() const
 {
 	return ex2aro_;
 }
-bool ResidueLevelTask_::ex1aro_exposed() const 
+bool ResidueLevelTask_::ex1aro_exposed() const
 {
 	return ex1aro_exposed_;
 }
-bool ResidueLevelTask_::ex2aro_exposed() const 
+bool ResidueLevelTask_::ex2aro_exposed() const
 {
 	return ex2aro_exposed_;
 }
 
-ExtraRotSample ResidueLevelTask_::ex1aro_sample_level() const 
+ExtraRotSample ResidueLevelTask_::ex1aro_sample_level() const
 {
 	return ex1aro_sample_level_;
 }
-ExtraRotSample ResidueLevelTask_::ex2aro_sample_level() const 
+ExtraRotSample ResidueLevelTask_::ex2aro_sample_level() const
 {
 	return ex2aro_sample_level_;
 }
-ExtraRotSample ResidueLevelTask_::ex1aro_exposed_sample_level() const 
+ExtraRotSample ResidueLevelTask_::ex1aro_exposed_sample_level() const
 {
 	return ex1aro_exposed_sample_level_;
 }
-ExtraRotSample ResidueLevelTask_::ex2aro_exposed_sample_level() const 
+ExtraRotSample ResidueLevelTask_::ex2aro_exposed_sample_level() const
 {
 	return ex2aro_exposed_sample_level_;
 }
 
-ExtraRotSample ResidueLevelTask_::exdna_sample_level() const 
+ExtraRotSample ResidueLevelTask_::exdna_sample_level() const
 {
 	return exdna_sample_level_;
 }
 
-bool ResidueLevelTask_::operate_on_ex1() const 
+bool ResidueLevelTask_::operate_on_ex1() const
 {
 	return operate_on_ex1_;
 }
-bool ResidueLevelTask_::operate_on_ex2() const 
+bool ResidueLevelTask_::operate_on_ex2() const
 {
 	return operate_on_ex2_;
 }
-bool ResidueLevelTask_::operate_on_ex3() const 
+bool ResidueLevelTask_::operate_on_ex3() const
 {
 	return operate_on_ex3_;
 }
-bool ResidueLevelTask_::operate_on_ex4() const 
+bool ResidueLevelTask_::operate_on_ex4() const
 {
 	return operate_on_ex4_;
 }
@@ -1302,7 +1302,7 @@ ResidueLevelTask_::update_commutative(
 void
 PackerTask_::update_residue_union(
 	Size resid,
-	ResidueLevelTask const & t 
+	ResidueLevelTask const & t
 ){
 	ResidueLevelTask_ const & o(dynamic_cast<ResidueLevelTask_ const &>(t));
 	residue_tasks_[resid].update_union(o);
@@ -1917,12 +1917,12 @@ PackerTask_::update_n_to_be_packed() const
 
 //some get-set functions for annealer options
 void
-PackerTask_::low_temp( Real const & low_temp ){ 
+PackerTask_::low_temp( Real const & low_temp ){
 	low_temp_ = low_temp;
 }
 
 void
-PackerTask_::high_temp( Real const & high_temp ){ 
+PackerTask_::high_temp( Real const & high_temp ){
 	high_temp_ = high_temp;
 }
 
@@ -2109,6 +2109,7 @@ void PackerTask_::remap_residue_level_tasks(
 PackerTask &
 PackerTask_::operator=(PackerTask const &){
 	utility_exit_with_message("illegal");
+	return *this;
 }
 
 

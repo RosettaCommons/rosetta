@@ -32,7 +32,6 @@
 // AUTO-REMOVED #include <protocols/forge/constraints/SheetConstraintsRCG.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-
 // C++ headers
 #include <string>
 
