@@ -34,6 +34,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -474,6 +475,10 @@ BluePrintBDR::apply( Pose & pose )
 	// output score
 	// sfx_->show( TR, pose );
 
+	//fpd reinitialize PDBinfo
+	if (pose.pdb_info()->obsolete()) {
+		pose.pdb_info( new core::pose::PDBInfo(pose, true) );
+	}
 }
 
 

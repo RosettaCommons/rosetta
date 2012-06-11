@@ -359,7 +359,7 @@ make_symmetric_pdb_info(
 		pdb_info_target->chain( res, chn_id );
 
 		// symmetrize B's
-		for ( Size atm=1; atm <= pose.residue(res).natoms(); ++atm) {
+		for ( Size atm=1; atm <= pdb_info_src->natoms(res) /*pose.residue(res).natoms()*/; ++atm) {
 			core::Real b_atm = pdb_info_src->temperature( res, atm );
 			pdb_info_target->temperature( res, atm, b_atm );
 		}
@@ -376,7 +376,7 @@ make_symmetric_pdb_info(
 			pdb_info_target->chain( clone_res, chr_chains[newchn_idx] );
 
 			// symmetrize B's
-			for ( Size atm=1; atm <= pose.residue(res).natoms(); ++atm) {
+			for ( Size atm=1; atm <= pdb_info_src->natoms(res) /*pose.residue(res).natoms()*/; ++atm) {
 				pdb_info_target->temperature( clone_res, atm, pdb_info_src->temperature( res, atm ) );
 			}
 		}

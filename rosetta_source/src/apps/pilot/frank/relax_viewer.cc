@@ -45,9 +45,6 @@ using namespace protocols;
 
 using utility::vector1;
 
-// add options
-OPT_1GRP_KEY( Boolean, relax_app, viewer )
-
 
 ///////////////////////////////////////////////////////////////////////////////
 void *
@@ -73,8 +70,8 @@ main( int argc, char * argv [] )
 	devel::init(argc, argv);
 
 	// use viewer if flag given
-		protocols::viewer::viewer_main( relax_main_local );
-		relax_main_local(NULL);
+	protocols::viewer::viewer_main( relax_main_local );
+	relax_main_local(NULL);
 
 	return 0;
 }

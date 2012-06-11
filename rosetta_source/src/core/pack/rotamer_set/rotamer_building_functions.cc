@@ -1062,7 +1062,7 @@ build_fixed_O_water_rotamers_independent(
 
 	// now loop over pairs
 	tt << "build_water_rotamers seqpos= " << seqpos << " found " << donors.size() << " nearby donors, " <<
-		acceptors.size() << " nearby acceptors. Built " << new_rotamers.size() << " rotamers." << '\n';
+		acceptors.size() << " nearby acceptors. Built " << new_rotamers.size() << " rotamers." << std::endl;
 
 
 
