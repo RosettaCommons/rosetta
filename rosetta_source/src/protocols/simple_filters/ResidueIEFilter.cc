@@ -26,7 +26,7 @@
 #include <utility/vector1.hh>
 #include <boost/foreach.hpp>
 #include <core/pose/selection.hh>
-
+#include <protocols/simple_filters/EnergyPerResidueFilter.hh>
 #define foreach BOOST_FOREACH
 
 namespace protocols {
@@ -74,6 +74,7 @@ ResidueIEFilter::ResidueIEFilter(
 			scorefxn_->set_weight( score_type_, old_weight );
 
 		}
+		not_intE_ = false;
 	}
 ResidueIEFilter::ResidueIEFilter( ResidueIEFilter const &init ) :
 	Filter( init ), resnums_( init.resnums_ ),
@@ -156,6 +157,7 @@ ResidueIEFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & 
 		}
 	}
 	runtime_assert(tag->hasOption("residues") || whole_pose_ || whole_interface_);
+	not_intE_ = tag->getOption<bool>( "use_resE" , 0 );
 }
 
 bool
@@ -183,10 +185,6 @@ ResidueIEFilter::apply( core::pose::Pose const & pose ) const
     }
   }
 
-  if (resnums_.size() == 0) {
-    tr << "No residues found. Skipping calculation."<< std::endl;
-    return false;
-  }
   std::unique( resnums_.begin(), resnums_.end() );
   tr << "The following residues will be considered for interaction energy calculation:"<< std::endl;
   foreach (core::Size const res, resnums_){
@@ -208,7 +206,7 @@ void
 ResidueIEFilter::report( std::ostream & out, core::pose::Pose const & pose ) const 
 {
 		core::Real const penalty( compute( pose ) );
-		out << "Total penalty is "<< penalty << std::endl;
+		out << "Total penalty for restype "<< restype_ << "is "<< penalty << std::endl;
 }
 
 
@@ -229,15 +227,26 @@ ResidueIEFilter::compute( core::pose::Pose const & pose ) const
 	(*scorefxn_)(in_pose);
 	core::Real penalty (0.0);
   EnergyMap const curr_weights = in_pose.energies().weights();
+  
+	if (resnums_.size() == 0) {
+    tr << "No residues found. Skipping calculation."<< std::endl;
+    return (0.0);
+  }
+	
   foreach (core::Size const res, resnums_){
-		core::Real res_intE (0.0);      
-	//Fill residue energies by traversing energy graph
-		for( EdgeListConstIterator egraph_it = in_pose.energies().energy_graph().get_node( res )->const_edge_list_begin(); egraph_it != in_pose.energies().energy_graph().get_node( res )->const_edge_list_end(); ++egraph_it){
-			//core::Size const int_resi = (*egraph_it)->get_other_ind( res );
-			EnergyEdge const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
-			res_intE += Eedge->dot( curr_weights );
-		}//for each egraph_it
-		tr << "Residue "<< pose.residue_type( res ).name3()<<res<< " has an interaction energy "<< res_intE <<", threshold is "<< threshold_<<" and penalty is ";
+		core::Real res_intE (0.0); 
+		if (not_intE_){
+			protocols::simple_filters::EnergyPerResidueFilter const eprf(res, scorefxn_, score_type_, 100000.0/*dummy threshold*/);
+			res_intE = eprf.compute( pose );
+		}
+		else{     
+		//Fill residue energies by traversing energy graph
+			for( EdgeListConstIterator egraph_it = in_pose.energies().energy_graph().get_node( res )->const_edge_list_begin(); egraph_it != in_pose.energies().energy_graph().get_node( res )->const_edge_list_end(); ++egraph_it){
+				EnergyEdge const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
+				res_intE += Eedge->dot( curr_weights );
+			}//for each egraph_it
+		}
+		tr << "Residue "<< pose.residue_type( res ).name3()<<res<< " has an (interaction) energy "<< res_intE <<", threshold is "<< threshold_<<" and penalty is ";
 		if (res_intE > threshold_) {
 			penalty+= (res_intE - threshold_);
 			tr<< (res_intE - threshold_) << std::endl;

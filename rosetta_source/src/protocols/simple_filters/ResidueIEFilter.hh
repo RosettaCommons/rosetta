@@ -71,6 +71,7 @@ private:
 	core::Real interface_distance_cutoff_;
 	core::Real max_penalty_;
 	core::Real penalty_factor_;
+	bool not_intE_;
 
 };
 
