@@ -285,7 +285,8 @@ void DisallowIfNonnative::disallow_aas( std::string const & aa_string ){
 	//functions to restrict what residues are looked at by operation
 	//selections are additive
 void DisallowIfNonnative::restrict_to_residue( core::Size const & resid){
-	residue_selection_.push_back( resid );
+	//chrisk: default to all residues if bogus seqpos 0 passed (e.g. through rosetta_scripts)
+	if( resid != 0 ) residue_selection_.push_back( resid );
 }
 void DisallowIfNonnative::restrict_to_residue( utility::vector1< core::Size > const & residues){
 	for(core::Size ii=1; ii<=residues.size(); ii++)
