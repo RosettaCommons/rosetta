@@ -50,6 +50,13 @@ xform_pose(
 	core::Size sres=1,
 	core::Size eres=0
 );
+void
+xform_pose_rev(
+	core::pose::Pose & pose,
+	core::kinematics::Stub const & s,
+	core::Size sres=1,
+	core::Size eres=0
+);
 
 } // sic_dock
 } // protocols

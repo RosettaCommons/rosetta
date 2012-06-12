@@ -55,7 +55,30 @@ DONE
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <core/scoring/methods/RG_Energy_Fast.hh>
-#include <time.h>
+
+
+
+// #include <time.h>
+// #ifdef __MACH__
+// #include <mach/mach_time.h>
+// #endif
+// double time_highres() {
+// #ifdef __MACH__
+//   mach_timebase_info_data_t info;
+//   mach_timebase_info(&info);
+//   return mach_absolute_time() / 1000000000.0;
+//   //uint64_t duration = mach_absolute_time();
+//   //duration *= info.numer;
+//   //duration /= info.denom;
+// #else
+//   timespec tp;
+//   clock_gettime(CLOCK_REALTIME, &tp);
+//   return tp.tv_sec + tp.tv_nsec/1000000000.0;
+// #endif
+//   return 0;
+// }
+
+
 
 //#include <numeric/geometry/hashing/xyzStripeHash.hh>
 
@@ -338,7 +361,7 @@ struct TCDock {
 	protocols::sic_dock::RigidScoreCOP rigid_sfxn_;
 	protocols::sic_dock::LinkerScoreCOP lnscore_;
 	Size conf_count_;
-	std::clock_t start_time_;
+	double start_time_;
 
 	TCDock(
 		string cmp1pdb,
@@ -841,30 +864,30 @@ struct TCDock {
 			xa.M = rotation_matrix_degrees(cmp1axs_,(double)icmp1);
 			xb.M = rotation_matrix_degrees(cmp2axs_,(double)icmp2);
 
-			#ifdef USE_OPENMP
-			#pragma omp critical
-			#endif
-			{
-				// rot_pose(cmp1in_,sicaxis,180.0);
-				// rot_pose(cmp2in_,sicaxis,180.0);
-				// core::scoring::ScoreFunction sf;
-				// sf.set_weight(core::scoring::fa_rep,1.0);
-				// sf(cmp1in_);
-				// sf(cmp2in_);
-				// // int dummy;
-				// // for(Size ir = 1; ir <= cmp1in_.n_residue(); ++ir){
-				// // 	for(Size jr = 1; jr <= cmp2in_.n_residue(); ++jr){
-				// // 		for(Size ia = 1; ia < 5; ++ia){
-				// // 			for(Size ja = 1; ja < 5; ++ja){
-				// // 				dummy += cmp1in_.residue(ir).xyz(ia).distance_squared(cmp2in_.residue(jr).xyz(ja)) < 100;
-				// // 			}
-				// // 		}
-				// // 	}
-				// // }
-				// rot_pose(cmp1in_,sicaxis,180.0);			
-				// rot_pose(cmp2in_,sicaxis,180.0);
-				conf_count_++;
-			}
+			// #ifdef USE_OPENMP
+			// #pragma omp critical
+			// #endif
+			// {
+			// 	// rot_pose(cmp1in_,sicaxis,180.0);
+			// 	// rot_pose(cmp2in_,sicaxis,180.0);
+			// 	// core::scoring::ScoreFunction sf;
+			// 	// sf.set_weight(core::scoring::fa_rep,1.0);
+			// 	// sf(cmp1in_);
+			// 	// sf(cmp2in_);
+			// 	// // int dummy;
+			// 	// // for(Size ir = 1; ir <= cmp1in_.n_residue(); ++ir){
+			// 	// // 	for(Size jr = 1; jr <= cmp2in_.n_residue(); ++jr){
+			// 	// // 		for(Size ia = 1; ia < 5; ++ia){
+			// 	// // 			for(Size ja = 1; ja < 5; ++ja){
+			// 	// // 				dummy += cmp1in_.residue(ir).xyz(ia).distance_squared(cmp2in_.residue(jr).xyz(ja)) < 100;
+			// 	// // 			}
+			// 	// // 		}
+			// 	// // 	}
+			// 	// // }
+			// 	// rot_pose(cmp1in_,sicaxis,180.0);			
+			// 	// rot_pose(cmp2in_,sicaxis,180.0);
+			// 	conf_count_++;
+			// }
 
 			double const d = -slide_into_contact_and_score(sic_,*rigid_sfxn_,xa,xb,sicaxis,icbc);
 			if(fabs(d) > 9e8){
@@ -1121,30 +1144,31 @@ struct TCDock {
 			// dump_onecomp();
 			precompute_intra();
 
-			start_time_ = clock();
-			conf_count_ = 0;
+			// start_time_ = time_highres();
+			// conf_count_ = 0;
 
 			cout << "main loop 1 over icmp2, icmp1, iori every 3 degrees" << endl;
 			double max_score = 0;
 			int max_i1,max_i2,max_io;
-			for(int icmp1 = 0; icmp1 < cmp1nangle_; icmp1+=3) {
-				if(icmp1%15==0 && icmp1!=0){
-					double rate = CLOCKS_PER_SEC * Real(conf_count_) / Real(clock()-start_time_);
-					cout<<" lowres dock "
-					    <<cmp1name_<<" "
-					    <<I(2,100*icmp1/cmp1nangle_)
-					    <<"% done, max_score: "
-					    <<F(10,6,max_score)
-					    <<" rate: "<<rate<<" confs/sec/thread"
-					    <<" "<<rate*num_threads()<<" confs/sec"<<endl;
-				}
-				vector1<Vecf> pa,cba; get_cmp1(icmp1,pa,cba);
-				#ifdef USE_OPENMP
-				#pragma omp parallel for schedule(dynamic,1)
-				#endif
-				for(int icmp2 = 0; icmp2 < cmp2nangle_; icmp2+=3) {
-					vector1<Vecf> pb,cbb; get_cmp2(icmp2,pb,cbb);
-					if(option[tcdock::fast_stage_one]()){
+			if(option[tcdock::fast_stage_one]()){
+				for(int icmp1 = 0; icmp1 < cmp1nangle_; icmp1+=3) {
+					if(icmp1%15==0 && icmp1!=0){
+						// double rate = Real(conf_count_) / Real(time_highres()-start_time_);
+						cout<<" lowres dock "
+						    <<cmp1name_<<" "
+						    <<I(2,100*icmp1/cmp1nangle_)
+						    <<"% done, max_score: "
+						    <<F(10,6,max_score)
+						    // <<" rate: "<<rate<<" confs/sec"
+						    // <<" "<<rate/double(num_threads())<<" confs/sec/thread"
+						    <<endl;
+					}
+					vector1<Vecf> pa,cba; get_cmp1(icmp1,pa,cba);
+					#ifdef USE_OPENMP
+					#pragma omp parallel for schedule(dynamic,1)
+					#endif
+					for(int icmp2 = 0; icmp2 < cmp2nangle_; icmp2+=3) {
+						vector1<Vecf> pb,cbb; get_cmp2(icmp2,pb,cbb);
 						int iori = -1, stg = 1;	bool newstage = true;
 						while(stg < 5) {
 							if(newstage) {
@@ -1162,22 +1186,46 @@ struct TCDock {
 							#endif
 							if(score > max_score) max_score = score;
 						}
-					} else {
-						for(int iori = 0; iori < 360; iori+=3) {
-							double const score = dock_score(icmp2,icmp1,iori);
-							#ifdef USE_OPENMP
-							#pragma omp critical
-							#endif
-							if(score > max_score){
-								max_score = score;
-								max_i1 = icmp1;
-								max_i2 = icmp2;
-								max_io = iori;																
-							}
-							// if(9==icmp1&&69==icmp2) cout << I(3,iori) << " " << score << endl;
-						}						
 					}
-					// if(9==icmp1&&69==icmp2)	utility_exit_with_message("iori");
+				}
+			} else {
+				vector1<numeric::xyzVector<int> > tasks;
+				for(int icmp1 = 0; icmp1 < cmp1nangle_; icmp1+=3) {
+					for(int icmp2 = 0; icmp2 < cmp2nangle_; icmp2+=3) {
+						for(int iori = 0; iori < 360; iori+=3) {
+							tasks.push_back( numeric::xyzVector<int>(icmp1,icmp2,iori) );
+						}
+					}
+				}
+				#ifdef USE_OPENMP
+				#pragma omp parallel for schedule(dynamic,1)
+				#endif
+				for(int i = 1; i <= (int)tasks.size(); ++i){
+					int icmp1 = tasks[i].x();
+					int icmp2 = tasks[i].y();
+					int iori  = tasks[i].z();
+					if(i%28800==0){
+						// double rate = Real(conf_count_) / Real(time_highres()-start_time_);
+						cout<<" lowres dock "
+						    <<cmp1name_<<" "
+						    <<I(2,100*icmp1/cmp1nangle_)
+						    <<"% done, max_score: "
+						    <<F(10,6,max_score)
+						    // <<" rate: "<<rate<<" confs/sec"
+						    // <<" "<<rate/num_threads()<<" confs/sec/thread"<<" " <<num_threads()
+						    <<endl;
+					}
+
+					double const score = dock_score(icmp2,icmp1,iori);
+					#ifdef USE_OPENMP
+					#pragma omp critical
+					#endif
+					if(score > max_score){
+						max_score = score;
+						// max_i1 = icmp1;
+						// max_i2 = icmp2;
+						// max_io = iori;																
+					}
 				}
 			}
 			if(max_score<0.00001) utility_exit_with_message("cmp1 or cmp2 too large, no contacts!");
@@ -1189,7 +1237,7 @@ struct TCDock {
 			for(Size i = 0; i < gscore.size(); ++i) if(gscore[i] > 0) cbtmp.push_back(gscore[i]);
 			std::sort(cbtmp.begin(),cbtmp.end());
 			topX_3 = cbtmp[max(1,(int)cbtmp.size()-option[tcdock::nsamp1]()+1)];
-			cout << "scanning top "<<option[tcdock::nsamp1]()<<" with score3 >= " << topX_3 << endl;
+			cout << "scanning top "<<min(option[tcdock::nsamp1](),(int)cbtmp.size())<<" with score3 >= " << topX_3 << endl;
 			for(int icmp2 = 0; icmp2 < cmp2nangle_; icmp2+=3) {
 				for(int icmp1 = 0; icmp1 < cmp1nangle_; icmp1+=3) {
 					for(int iori = 0; iori < 360; iori+=3) {
@@ -1236,7 +1284,7 @@ struct TCDock {
 						double const val = gradii(i,j,k);
 						if( val < -9e8 ) continue;
 
-						double nbmax = -9e9, scoremax = -9e9;
+						// double nbmax = -9e9, scoremax = -9e9;
 						// if( option[tcdock::geometric_minima_only]() ){
 						// 	// int nedge = 0;
 						// 	for(int di = -1; di <= 1; ++di){
@@ -1268,12 +1316,12 @@ struct TCDock {
 						// 	}
 						// }
 
-						if( /*nbmax != -9e9 &&*/ val >= nbmax ) {
+						// if( /*nbmax != -9e9 &&*/ val >= nbmax ) {
 							double score = gscore(i,j,k); //dock_score(i-1,j-1,k-1);
 							if(score <= 0) continue;
 							local_maxima.push_back( LMAX(score,gradii(i,j,k),i-1,j-1,k-1) );
 							highscore = max(score,highscore);
-						}
+						// }
 					}
 				}
 			}

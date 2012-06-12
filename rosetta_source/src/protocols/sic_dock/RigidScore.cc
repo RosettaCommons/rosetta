@@ -17,11 +17,16 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/string_util.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/conformation/ResidueFactory.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/scoring/sasa.hh>
 #include <core/pose/util.hh>
 #include <numeric/HomogeneousTransform.hh>
 #include <protocols/loophash/BackboneDB.hh>
+#include <protocols/loophash/LoopHashLibrary.hh>
+#include <protocols/loophash/LoopHashLibrary.fwd.hh>
 #include <protocols/loophash/LoopHashMap.hh>
 #include <basic/Tracer.hh>
 
@@ -171,9 +176,9 @@ get_leap_lower_stub(
 	Size ir
 ){
 	Vec3 lower;
-	lower.a = pose.residue(ir-1).xyz("CA");
-	lower.b = pose.residue(ir-1).xyz( "N");
-	lower.c = pose.residue(ir-2).xyz( "C");
+	lower.a = pose.residue(ir  ).xyz("CA");
+	lower.b = pose.residue(ir  ).xyz( "N");
+	lower.c = pose.residue(ir-1).xyz( "C");
 	return lower;
 }
 
@@ -205,9 +210,9 @@ get_termini_from_pose(
 	Vec3s & uppers
 ){
 	if( pose.residue(ir).is_upper_terminus() && 
-	    ir > 2 && 
+	    ir > 1 && 
 	   !pose.residue(ir  ).is_lower_terminus() && 
-	   !pose.residue(ir-1).is_lower_terminus() &&
+	   // !pose.residue(ir-1).is_lower_terminus() &&
 	   !pose.residue(ir-1).is_upper_terminus() &&
 	    pose.residue(ir-1).is_protein()
 	){
@@ -261,6 +266,25 @@ LinkerScore::LinkerScore(
 	// utility_exit_with_message("TEST LINK SCORE");
 }
 
+
+numeric::geometry::hashing::Real6
+get_leap_6dof(
+	Stub const & lower,
+	Stub const & upper
+){
+	core::kinematics::RT leap(lower,upper);
+	numeric::HomogeneousTransform< Real > ht( leap.get_rotation(), leap.get_translation() );
+	numeric::xyzVector < Real > euler_angles =  ht.euler_angles_rad();
+	numeric::geometry::hashing::Real6 rt_6;
+	rt_6[1] = leap.get_translation().x();
+	rt_6[2] = leap.get_translation().y();
+	rt_6[3] = leap.get_translation().z();
+	rt_6[4] = euler_angles.x()*180.0/numeric::constants::d::pi;
+	rt_6[5] = euler_angles.y()*180.0/numeric::constants::d::pi;
+	rt_6[6] = euler_angles.z()*180.0/numeric::constants::d::pi;	
+	return rt_6;
+}
+
 Size
 count_linkers(
 	Stub const & lower,
@@ -268,33 +292,92 @@ count_linkers(
 	protocols::loophash::LoopHashLibraryOP loop_hash_library,
 	Sizes const & loopsizes
 ){
-	using namespace protocols::loophash;
-	using namespace numeric::geometry::hashing;
-
-	core::kinematics::RT leap(lower,upper);
-	Real dist2 = leap.get_translation().length_squared();
-
 	if( loopsizes.size() == 0 ) return 0;
-	if( dist2 >= (10.0*Real(loopsizes.back())*Real(loopsizes.back())) ) return 0.0;
 
-	numeric::HomogeneousTransform< Real > ht( leap.get_rotation(), leap.get_translation() );
-	numeric::xyzVector < Real > euler_angles =  ht.euler_angles_rad();
-	Real6 rt_6;
-	rt_6[1] = leap.get_translation().x();
-	rt_6[2] = leap.get_translation().y();
-	rt_6[3] = leap.get_translation().z();
-	rt_6[4] = euler_angles.x()*180.0/numeric::constants::d::pi;
-	rt_6[5] = euler_angles.y()*180.0/numeric::constants::d::pi;
-	rt_6[6] = euler_angles.z()*180.0/numeric::constants::d::pi;
+	Real dist2 = core::kinematics::RT(lower,upper).get_translation().length_squared();
+	if( dist2 >= (10.0*Real(loopsizes.back())*Real(loopsizes.back())) ) return 0;
+
+	numeric::geometry::hashing::Real6 rt_6 = get_leap_6dof(lower,upper);
 
 	Size count0=0;
 	for(Sizes::const_iterator i = loopsizes.begin(); i != loopsizes.end(); ++i){
 		if( dist2 < (10.0*Real(*i)*Real(*i)) ){
-			count0 += loop_hash_library->gethash(*i).radial_count(0,rt_6);
+			count0 += loop_hash_library->gethash(*i).radial_count(2,rt_6);
 		} // else too far, don't bother lookup
 	}
 	return (Real)count0;
 }
+
+core::Size
+dump_loophash_linkers(
+	Stub const & lower,
+	Stub const & upper,
+	protocols::loophash::LoopHashLibraryOP loop_hash_library,
+	Sizes const & loopsizes
+){
+	protocols::loophash::BackboneDB const & bbdb_ = loop_hash_library->backbone_database();
+	protocols::loophash::BackboneSegment backbone_;
+	core::Size ndumped = 0;
+	for(Sizes::const_iterator ils = loopsizes.begin(); ils != loopsizes.end(); ++ils){
+		Size loopsize(*ils);
+	
+		protocols::loophash::LoopHashMap & hashmap( loop_hash_library->gethash(loopsize) );
+
+		numeric::geometry::hashing::Real6 rt_6 = get_leap_6dof(lower,upper);
+		if( rt_6[1]*rt_6[1]+rt_6[2]*rt_6[2]+rt_6[3]*rt_6[3] > 10.0*Real(loopsize)*Real(loopsize) ) continue;
+		std::vector < core::Size > leap_index_list;
+		for(Sizes::const_iterator i = loopsizes.begin(); i != loopsizes.end(); ++i){
+			hashmap.radial_lookup(2,rt_6,leap_index_list);
+		}
+
+		std::vector< protocols::loophash::BackboneSegment > bs_vec_;
+		for( std::vector < core::Size >::const_iterator itx = leap_index_list.begin(); itx != leap_index_list.end(); ++itx ){
+			core::Size bb_index = *itx;
+			protocols::loophash::LeapIndex cp = hashmap.get_peptide( bb_index );
+			bbdb_.get_backbone_segment( cp.index, cp.offset , loopsize , backbone_ );
+			bs_vec_.push_back( backbone_ );
+		}
+
+		Pose tmp;
+		{
+			core::chemical::ResidueTypeSetCAP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
+			for(Size i = 1; i <= loopsize+1; ++i){
+				core::conformation::ResidueOP new_rsd( NULL );
+				new_rsd = core::conformation::ResidueFactory::create_residue( rs->name_map("ALA") );
+				// cout << "apending residue " << new_rsd->name() << std::endl;
+				if(1==i) tmp.append_residue_by_jump( *new_rsd, 1 );
+				else     tmp.append_residue_by_bond( *new_rsd, true );
+				tmp.set_phi  ( tmp.n_residue(), 180.0 );
+				tmp.set_psi  ( tmp.n_residue(), 180.0 );
+				tmp.set_omega( tmp.n_residue(), 180.0 );
+			}
+			// tmp.dump_pdb("test.pdb");
+		}
+
+		int count = 0;
+		for ( std::vector<protocols::loophash::BackboneSegment>::const_iterator i = bs_vec_.begin(), ie = bs_vec_.end(); i != ie; ++i) {
+			std::vector<core::Real> phi   = i->phi();
+			std::vector<core::Real> psi   = i->psi();
+			std::vector<core::Real> omega = i->omega();
+			Size seg_length = (*i).length();
+			for ( Size i = 0; i < seg_length; i++){
+				Size ires = 2+i;  // this is terrible, due to the use of std:vector.  i has to start from 0, but positions offset by 1.
+				if (ires > tmp.total_residue() ) break;
+				tmp.set_phi  ( ires, phi[i]  );
+				tmp.set_psi  ( ires, psi[i]  );
+				tmp.set_omega( ires, omega[i]);
+			}
+			Stub s = vec3_to_stub(get_leap_lower_stub(tmp,2));
+			xform_pose_rev(tmp,s);
+			xform_pose(tmp,lower);
+			// tmp.delete_polymer_residue(tmp.n_residue());
+			tmp.dump_pdb("test_lh_"+ObjexxFCL::string_of(loopsize)+"_"+ObjexxFCL::string_of(++count)+".pdb");
+			++ndumped;
+		}
+	}
+	return ndumped;
+}
+
 
 inline Stub multstubs(Stub const & a, Stub const & b){
 	return Stub( a.M*b.M, a.M*b.v+a.v );
@@ -305,7 +388,7 @@ inline Stub invstub(Stub const & a){
 }
 
 Real linker_count2score(Size count){
-	return sqrt(count);
+	return 0.8*sqrt(count)+0.2*Real(count);
 }
 
 core::Real
@@ -318,7 +401,7 @@ LinkerScore::score(
 	using namespace numeric::geometry::hashing;
 	using namespace core::kinematics;
 
-	// if( x1.M.xx() < 0.9 && x2.M.xx() < 0.9 ){
+	// // if( x1.M.xx() < 0.9 && x2.M.xx() < 0.9 ){
 	// 	Vec3 lowerv = lowers1_.back();
 	// 	Vec3 upperv = uppers2_.front();
 
@@ -330,25 +413,13 @@ LinkerScore::score(
 	// 	Stub tmp2upper = vec3_to_stub( get_leap_upper_stub(tmp2,         1      ) );
 
 	// 	Stub lower = vec3_to_stub( x1, lowerv );
-	// 	Stub upper = vec3_to_stub( x2, upperv );		
+	// 	Stub upper = vec3_to_stub( x2, upperv );	
 
-	// 	// lower.a = x1.local2global(lower.a);
-	// 	// lower.b = x1.local2global(lower.b);
-	// 	// lower.c = x1.local2global(lower.c);				
-	// 	// upper.a = x2.local2global(upper.a);
-	// 	// upper.b = x2.local2global(upper.b);
-	// 	// upper.c = x2.local2global(upper.c);				
-
-	// 	cout << endl;
-	// 	cout <<     lower << endl;
-	// 	cout << tmp1lower << endl;
-	// 	cout << endl;
-	// 	cout <<     upper << endl;
-	// 	cout << tmp2upper << endl;
-	// 	cout << endl;
+	// 	if( core::kinematics::distance(lower,tmp1lower) > 0.0001 ) utility_exit_with_message("LinkerScore bad stub");
+	// 	if( core::kinematics::distance(upper,tmp2upper) > 0.0001 ) utility_exit_with_message("LinkerScore bad stub");		
 
 	// 	// Stub lower=multstubs(x2,*c1), upper=multstubs(x1,*n2);
-	// 	// core::kinematics::RT leap(lower,upper);
+	// 	// core::kinematics::RT leap(lower,uppepr);
 	// 	// Real dist2 = leap.get_translation().length_squared();
 	// 	utility_exit_with_message("foo");
 	// }
@@ -357,50 +428,57 @@ LinkerScore::score(
 	Real lkscore = 0.0;
 	for(Vec3s::const_iterator c1 = lowers1_.begin(); c1 != lowers1_.end(); ++c1){		
 	for(Vec3s::const_iterator n2 = uppers2_.begin(); n2 != uppers2_.end(); ++n2){
-		lkscore += linker_count2score( count_linkers( vec3_to_stub(x1,*c1), vec3_to_stub(x2,*n2), loop_hash_library_, loopsizes_ ) );
+		Real s = linker_count2score( count_linkers( vec3_to_stub(x1,*c1), vec3_to_stub(x2,*n2), loop_hash_library_, loopsizes_ ) );
+		lkscore += s;
 	}}
 	for(Vec3s::const_iterator c2 = lowers2_.begin(); c2 != lowers2_.end(); ++c2){		
 	for(Vec3s::const_iterator n1 = uppers1_.begin(); n1 != uppers1_.end(); ++n1){
-		lkscore += linker_count2score( count_linkers( vec3_to_stub(x2,*c2), vec3_to_stub(x1,*n1), loop_hash_library_, loopsizes_ ) );
-
-		// Stub lower=vec3_to_stub(x2,*c2), upper=vec3_to_stub(x1,*n1);
-		// core::kinematics::RT leap(lower,upper);
-		// Real dist = leap.get_translation().length();
-		// if( dist < 8.0 ){
-		// 	cout << dist << "    " << leap.get_translation() << endl;
-		// 	Pose tmp1(pose1_),tmp2(pose2_);
-		// 	xform_pose(tmp1,x1);
-		// 	xform_pose(tmp2,x2);
-		// 	tmp1.dump_pdb("test1.pdb");
-		// 	tmp2.dump_pdb("test2.pdb");
-		// 	utility_exit_with_message("FOO");
-		// }
-
-
+		Real s = linker_count2score( count_linkers( vec3_to_stub(x2,*c2), vec3_to_stub(x1,*n1), loop_hash_library_, loopsizes_ ) );
+		lkscore += s;
 	}}
+
+	if(lkscore > 3.0){
+	 	Size ndumped = 0;
+		for(Vec3s::const_iterator c1 = lowers1_.begin(); c1 != lowers1_.end(); ++c1){		
+		for(Vec3s::const_iterator n2 = uppers2_.begin(); n2 != uppers2_.end(); ++n2){
+			ndumped += dump_loophash_linkers( vec3_to_stub(x1,*c1), vec3_to_stub(x2,*n2), loop_hash_library_, loopsizes_ );
+		}}
+		for(Vec3s::const_iterator c2 = lowers2_.begin(); c2 != lowers2_.end(); ++c2){
+		for(Vec3s::const_iterator n1 = uppers1_.begin(); n1 != uppers1_.end(); ++n1){
+			ndumped += dump_loophash_linkers( vec3_to_stub(x2,*c2), vec3_to_stub(x1,*n1), loop_hash_library_, loopsizes_ );
+		}}
+		if( ndumped > 0 ){
+			Pose tmp1(pose1_),tmp2(pose2_);
+			xform_pose(tmp1,x1);
+		 	xform_pose(tmp2,x2);
+		 	tmp1.dump_pdb("comp1.pdb");
+		 	tmp2.dump_pdb("comp2.pdb");	 	
+			utility_exit_with_message("TEST LINKER");
+		}
+	}
 
 	return 10.0*lkscore;
 }
 
-void
-LinkerScore::dump_linkers(
-	Stub const & x1,
-	Stub const & x2
-) const {
-	using namespace basic::options::OptionKeys;
-	using namespace protocols::loophash;
-	using namespace numeric::geometry::hashing;
-	using namespace core::kinematics;
+// void
+// LinkerScore::dump_linkers(
+// 	Stub const & x1,
+// 	Stub const & x2
+// ) const {
+// 	using namespace basic::options::OptionKeys;
+// 	using namespace protocols::loophash;
+// 	using namespace numeric::geometry::hashing;
+// 	using namespace core::kinematics;
 
-	for(Vec3s::const_iterator c1 = lowers1_.begin(); c1 != lowers1_.end(); ++c1){		
-	for(Vec3s::const_iterator n2 = uppers2_.begin(); n2 != uppers2_.end(); ++n2){
-		linker_count2score( count_linkers( vec3_to_stub(x1,*c1), vec3_to_stub(x2,*n2), loop_hash_library_, loopsizes_ ) );
-	}}
-	for(Vec3s::const_iterator c2 = lowers2_.begin(); c2 != lowers2_.end(); ++c2){		
-	for(Vec3s::const_iterator n1 = uppers1_.begin(); n1 != uppers1_.end(); ++n1){
-		linker_count2score( count_linkers( vec3_to_stub(x2,*c2), vec3_to_stub(x1,*n1), loop_hash_library_, loopsizes_ ) );
-	}}
-}
+// 	for(Vec3s::const_iterator c1 = lowers1_.begin(); c1 != lowers1_.end(); ++c1){		
+// 	for(Vec3s::const_iterator n2 = uppers2_.begin(); n2 != uppers2_.end(); ++n2){
+// 		dump_linkers( vec3_to_stub(x1,*c1), vec3_to_stub(x2,*n2), loop_hash_library_, loopsizes_ ) );
+// 	}}
+// 	for(Vec3s::const_iterator c2 = lowers2_.begin(); c2 != lowers2_.end(); ++c2){		
+// 	for(Vec3s::const_iterator n1 = uppers1_.begin(); n1 != uppers1_.end(); ++n1){
+// 		dump_linkers( vec3_to_stub(x2,*c2), vec3_to_stub(x1,*n1), loop_hash_library_, loopsizes_ ) );
+// 	}}
+// }
 
 
 JointScore::JointScore(

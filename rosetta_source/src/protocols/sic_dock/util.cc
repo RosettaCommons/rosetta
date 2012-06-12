@@ -134,5 +134,16 @@ xform_pose( core::pose::Pose & pose, core::kinematics::Stub const & s, Size sres
   }
 }
 
+void
+xform_pose_rev( core::pose::Pose & pose, core::kinematics::Stub const & s, Size sres=1, Size eres=0 ) {
+  if(eres==0) eres = pose.n_residue();
+  for(Size ir = sres; ir <= eres; ++ir) {
+    for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
+      core::id::AtomID const aid(core::id::AtomID(ia,ir));
+      pose.set_xyz( aid, s.global2local(pose.xyz(aid)) );
+    }
+  }
+}
+
 } // sic_dock
 } // protocols
