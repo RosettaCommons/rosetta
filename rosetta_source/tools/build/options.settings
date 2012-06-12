@@ -44,6 +44,7 @@ options = {
         "profile",
         "coverage",
         "pyrosetta",
+        "pyrosetta_debug",
         'warnings_as_errors',
     ],
 

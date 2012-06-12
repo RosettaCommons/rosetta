@@ -232,14 +232,15 @@ def main(args):
     # assuming that we in rosetta/rosetta_source/src/python/bindings directory at that point
     mini_path = os.path.abspath('./../../../')
 
-    bindings_path = os.path.abspath('./rosetta')
+    bindings_path = 'rosetta'
+    bindings_path += '.debug' if Options.debug else '.release'
+
     if Options.cross_compile:
         bindings_path += '.windows'
         execute('Generating svn_version files...', 'cd ./../../../ && python svn_version.py')  # Now lets generate svn_version.* files and copy it to destination (so windows build could avoid running it).
         shutil.copyfile('./../../core/svn_version.cc', bindings_path + '/svn_version.cc')
 
 
-    if Options.debug: bindings_path += '_debug'
     if not os.path.isdir(bindings_path): os.makedirs(bindings_path)
     shutil.copyfile('src/__init__.py', bindings_path + '/__init__.py')
 
@@ -248,6 +249,11 @@ def main(args):
         if Options.debug: build_path    += '_debug'
         BuildRosettaOnWindows(build_path, bindings_path)
         sys.exit(0)
+
+    if os.path.islink('rosetta') or os.path.isdir('rosetta'): os.remove('rosetta')
+    os.symlink(bindings_path, 'rosetta')
+
+    bindings_path = os.path.abspath(bindings_path)
 
     if options.BuildMiniLibs:
         prepareMiniLibs(mini_path, bindings_path)
@@ -596,21 +602,21 @@ def buildModules(paths, dest, include_paths, libpaths, runtime_libpaths, gccxml_
 
 
 def prepareMiniLibs(mini_path, bindings_path):
-    #execute("Building mini libraries...", "cd %s && ./scons.py -j1 bin" % mini_path)
-    # static added becuse it link faster, we dont really use libs, we just want scons to build all files...
-    if Platform == "macos" and PlatformBits=='32': execute("Building mini libraries...", "cd %s && ./scons.py mode=pyrosetta arch=x86 arch_size=32 -j%s" % (mini_path, Options.jobs) )
-    elif Platform == "macos" and PlatformBits=='64': execute("Building mini libraries...", "cd %s && ./scons.py mode=pyrosetta -j%s" % (mini_path, Options.jobs) )
-    elif Platform == "cygwin": execute("Building mini libraries...", "cd %s && ./scons.py mode=pyrosetta bin -j%s" % (mini_path, Options.jobs) )
-    else: execute("Building mini libraries...", "cd %s && ./scons.py mode=pyrosetta -j%s" % (mini_path, Options.jobs) )
+    mode = 'pyrosetta_debug' if Options.debug else 'pyrosetta'
+
+    if Platform == "macos" and PlatformBits=='32': execute("Building mini libraries...", "cd %s && ./scons.py mode=%s arch=x86 arch_size=32 -j%s" % (mini_path, mode, Options.jobs) )
+    elif Platform == "macos" and PlatformBits=='64': execute("Building mini libraries...", "cd %s && ./scons.py mode=%s -j%s" % (mini_path, mode, Options.jobs) )
+    elif Platform == "cygwin": execute("Building mini libraries...", "cd %s && ./scons.py mode=%s bin -j%s" % (mini_path, mode, Options.jobs) )
+    else: execute("Building mini libraries...", "cd %s && ./scons.py mode=%s -j%s" % (mini_path, mode, Options.jobs) )
 
     # fix this for diferent platform
-    if Platform == "linux": lib_path = 'build/src/pyrosetta/linux/' + platform.release()[:3] + '/' + PlatformBits +'/x86/gcc/'
-    elif Platform == "cygwin": lib_path = 'build/src/pyrosetta/cygwin/1.7/32/x86/gcc/'
+    if Platform == "linux": lib_path = 'build/src/'+mode+'/linux/' + platform.release()[:3] + '/' + PlatformBits +'/x86/gcc/'
+    elif Platform == "cygwin": lib_path = 'build/src/'+mode+'/cygwin/1.7/32/x86/gcc/'
     else:
-        if Platform == "macos" and PlatformBits=='32': lib_path = 'build/src/pyrosetta/macos/10.5/32/x86/gcc/'
+        if Platform == "macos" and PlatformBits=='32': lib_path = 'build/src/'+mode+'/macos/10.5/32/x86/gcc/'
         if Platform == "macos" and PlatformBits=='64':
-            if platform.release()[:2] == '10': lib_path = 'build/src/pyrosetta/macos/10.6/64/x86/gcc/'
-            else: lib_path = 'build/src/pyrosetta/macos/10.7/64/x86/gcc/'
+            if platform.release()[:2] == '10': lib_path = 'build/src/'+mode+'/macos/10.6/64/x86/gcc/'
+            else: lib_path = 'build/src/'+mode+'/macos/10.7/64/x86/gcc/'
 
     # now lets add version to lib_path...
     lib_path += execute("Getting GCC version...", 'gcc -dumpversion', return_='output').strip()[0:3] + '/'

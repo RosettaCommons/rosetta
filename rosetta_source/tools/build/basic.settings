@@ -156,7 +156,7 @@ settings = {
         "appends" : {
             "version"       : [ "4", "0" ],
             "flags" : {
-                ## These flags causes memory exhaustion during compiling on MacOS 10.5 
+                ## These flags causes memory exhaustion during compiling on MacOS 10.5
                 #"compile"   : [ "-param inline-unit-growth=1000",
                 #"-param large-function-growth=50000" ],
             },
@@ -167,12 +167,12 @@ settings = {
         "appends" : {
             "version"       : [ "4", "1" ],
             "flags" : {
-               ## These flags causes memory exhaustion during compiling on the test server  
+               ## These flags causes memory exhaustion during compiling on the test server
                # "compile"   : [ "-param inline-unit-growth=1000",
                # "-param large-function-growth=50000" ],
             },
         },
-	
+
 	"overrides" : {
             "flags" : {
                 "cc"        : [ "std=c99" ],   # "-isystem external/boost_1_46_1/"],
@@ -230,6 +230,24 @@ settings = {
                 "warn"      : [ "Wno-unused-variable" ],
             },
             "defines"       : [ "NDEBUG", "PYROSETTA" ],
+        },
+    },
+
+    "gcc, pyrosetta_debug" : {
+        "appends" : {
+            "flags" : {
+                #"compile"   : [ "O3", "ffast-math", "funroll-loops", "finline-functions", "finline-limit=20000", "s" ],
+
+                "compile"   : [ "O0" ],  # <-- real debug... do we need it?
+                "mode"      : [
+                    "g", "ggdb", "ffloat-store"
+                ],
+
+                # Asserts can leave variables unused, making warnings spurious.
+                # We count on debug builds to catch actual unused variables.
+                "warn"      : [ "Wno-unused-variable" ],
+            },
+            "defines"       : [ "PYROSETTA" ],
         },
     },
 
@@ -392,14 +410,14 @@ settings = {
             "cxx"           : "g++-4.2",
         },
     },
-    
+
     "gcc, 4.2, macos, 10.7" : {
         "overrides" : {
             "cc"            : "llvm-gcc-4.2",
             "cxx"           : "llvm-g++-4.2",
         },
     },
-    
+
     "gcc, x86, 32" : {
         "appends" : {
             "flags" : {
@@ -608,7 +626,7 @@ settings = {
             "defines"       : [ "USEPOSTGRES" ],
         },
     },
-		
+
     "gcc, boost_mpi" : {
         "appends" : {
             "libraries"     : [ "libboost_serialization", "libboost_mpi" ],
@@ -1144,7 +1162,7 @@ settings = {
             },
         },
     },
-    
+
     "clang, warnings_as_errors" : {
         "appends" : {
             "flags" : {
@@ -1152,7 +1170,7 @@ settings = {
             },
         },
     },
-    
+
     "clang, postgres" : {
         "appends" : {
             "defines"       : [ "USEPOSTGRES" ],
@@ -1198,7 +1216,7 @@ settings = {
             "library_path" : [ "/usr/lib/gcc/x86_64-redhat-linux6E/4.4.0" ],
         },
     },
-    
+
     "clang, macos" : {
         "appends" : {
             "flags" : {

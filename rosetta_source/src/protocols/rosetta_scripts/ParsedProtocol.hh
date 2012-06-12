@@ -36,6 +36,10 @@
 #include <utility/vector1.hh>
 
 
+#ifdef PYROSETTA
+	#include <core/scoring/ScoreFunction.hh>
+#endif
+
 namespace protocols {
 namespace rosetta_scripts {
 

@@ -59,7 +59,7 @@ public:
 
 class CBScore : public RigidScore {
 public:
-	CBScore(Real clash_dis, Real contact_dis);
+	// Undefined, commenting out to fix PyRosetta build  CBScore(Real clash_dis, Real contact_dis);
 	virtual ~CBScore(){}
 	CBScore(
 		Pose const & pose1,
@@ -102,7 +102,7 @@ class EdgeStandScore : public RigidScore {
 public:
 	EdgeStandScore();
 	virtual ~EdgeStandScore(){}
-	core::Real score( Stub const & x1, Stub const & x2 ) const;
+	// Undefined, commenting out to fix PyRosetta build  core::Real score( Stub const & x1, Stub const & x2 ) const;
 private:
 	Vecs donors,acceptors;
 };
@@ -111,7 +111,7 @@ class HelixScore : public RigidScore {
 public:
 	HelixScore();
 	virtual ~HelixScore(){}
-	core::Real score( Stub const & x1, Stub const & x2 ) const;
+	// Undefined, commenting out to fix PyRosetta build  core::Real score( Stub const & x1, Stub const & x2 ) const;
 private:
 };
 
@@ -119,7 +119,7 @@ class BuriedPolarScore : public RigidScore {
 public:
 	BuriedPolarScore();
 	virtual ~BuriedPolarScore(){}
-	core::Real score( Stub const & x1, Stub const & x2 ) const;
+	// Undefined, commenting out to fix PyRosetta build  core::Real score( Stub const & x1, Stub const & x2 ) const;
 private:
 	Vecs polars;
 };
