@@ -129,6 +129,7 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
       }
     } // ia
   } // ir
+	TR << "if_score / count = " << if_score << " / " << count << " = " << (if_score / (Real)count) << std::endl;
   return if_score / (Real)count;
 }
 

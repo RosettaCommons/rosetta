@@ -933,6 +933,9 @@ get_sym_aware_jump_num ( core::pose::Pose const & pose, int jump_num ) {
 		std::map<Size,SymDof> dofs = sym_info->get_dofs();
 		sym_jump = 0;
 		for(std::map<Size,SymDof>::iterator i = dofs.begin(); i != dofs.end(); i++) {
+			//fpd if slide moves are not allowed on this jump, then skip it
+			if (!i->second.allow_dof(1) && !i->second.allow_dof(2) && !i->second.allow_dof(3)) continue;
+
 			Size jump_num = i->first;
 			if (sym_jump == 0) {
 				sym_jump = jump_num;
@@ -944,6 +947,7 @@ get_sym_aware_jump_num ( core::pose::Pose const & pose, int jump_num ) {
 			utility_exit_with_message("No sym_dofs found!");
 		}
 	}
+	TR << "Using jump " << sym_jump << std::endl;
 	return sym_jump;
 } // get_symdof_from_jump_num
 

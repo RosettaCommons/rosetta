@@ -111,15 +111,17 @@ core::Real OligomericAverageDegreeFilter::compute( Pose const & pose ) const
   core::Size count_residues( 0 );
   core::Size count_neighbors( 0 );
 	for( core::Size resi=1; resi<=pose.total_residue(); ++resi ){
+		if(pose.residue_type(resi).aa() == core::chemical::aa_vrt) continue;
     if( packer_task->being_packed( resi ) ){
-			if ( is_upstream(resi) ) { utility_exit_with_message("Your packable residues are upstream of the jump you defined! Check your TaskOperation or your jump."); }
+			//if ( is_upstream(resi) ) { utility_exit_with_message("Your packable residues are upstream of the jump you defined! Check your TaskOperation or your jump."); }
+			bool which_side = is_upstream(resi);  //fpd  designable residues may be upstream ... that's ok as long as we're separated
       core::Size resi_neighbors( 0 );
       ++count_residues;
 			core::conformation::Residue const res_target( pose.conformation().residue( resi ) );
       for( core::Size j=1; j<=pose.total_residue(); ++j ) {
-				if ( ! is_upstream(j) ) {
+				if ( is_upstream(j) == which_side ) {
 	        core::conformation::Residue const resj( pose.residue( j ) );
-					if(resj.type().name() == "VRT")
+					if(resj.aa() == core::chemical::aa_vrt)
 						continue;
 	        core::Real const distance( resj.xyz( resj.nbr_atom() ).distance( res_target.xyz( res_target.nbr_atom() ) ) );
 	        if( distance <= distance_threshold() ){

@@ -39,6 +39,9 @@
 #include <core/pose/util.hh>
 #include <utility/vector1.hh>
 
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/pose/symmetry/util.hh>
 
 using basic::T;
 using basic::Error;
@@ -57,6 +60,14 @@ void ReturnSidechainMover::apply( core::pose::Pose & pose ){
 	core::pose::Pose saved_input_pose(remembered_pose_);
 	core::Size nres( end_res_ - start_res_ + 1 );
 
+  //symmetry
+  core::conformation::symmetry::SymmetryInfoCOP symm_info;
+  if ( core::pose::symmetry::is_symmetric(remembered_pose_) ) {
+    core::conformation::symmetry::SymmetricConformation & SymmConf (
+      dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+    symm_info = SymmConf.Symmetry_Info();
+  }
+
 	if( nres != saved_input_pose.total_residue() )
 		utility_exit_with_message("ReturnSidechainMover used with poses of different length; aborting");
 
@@ -70,6 +81,7 @@ void ReturnSidechainMover::apply( core::pose::Pose & pose ){
 				copy_this_residue = true;
 		}
 
+		if (symm_info && !symm_info->bb_is_independent( i )) continue;
 		if (pose.residue_type(i).aa() == core::chemical::aa_vrt) continue;
 
 		if( copy_this_residue ) {

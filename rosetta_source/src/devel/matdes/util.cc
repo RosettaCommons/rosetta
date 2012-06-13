@@ -183,7 +183,13 @@ pick_design_position(core::pose::Pose const & pose, Size nsub_bblock, Real conta
 // Figure out which chains touch chain A, and return those chains
 
 core::pose::Pose
-get_neighbor_subs (Pose const &pose, utility::vector1<Size> intra_subs) {
+get_neighbor_subs (Pose const &pose_in, utility::vector1<Size> intra_subs) {
+	//fpd we need to first score the pose
+	Pose pose = pose_in;
+	core::scoring::symmetry::SymmetricScoreFunction sc_rep;
+	sc_rep.set_weight( core::scoring::fa_atr, 1.0 );
+	sc_rep( pose );
+
   Pose sub_pose;
   core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
   Size nres_monomer = symm_info->num_independent_residues();
@@ -210,7 +216,6 @@ get_neighbor_subs (Pose const &pose, utility::vector1<Size> intra_subs) {
   }
 
   return sub_pose;
-
 }
 
 } // devel
