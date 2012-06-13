@@ -11,9 +11,12 @@
 
 #include <core/types.hh>
 #include <core/kinematics/Stub.fwd.hh>
+#include <protocols/sic_dock/types.hh>
 #include <protocols/sic_dock/RigidScore.fwd.hh>
 #include <protocols/sic_dock/SICFast.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/id/AtomID_Map.hh>
+#include <numeric/geometry/hashing/SixDHasher.fwd.hh>
 //#include <numeric/xyzVector.fwd.hh>
 
 namespace protocols {
@@ -57,6 +60,14 @@ xform_pose_rev(
 	core::Size sres=1,
 	core::Size eres=0
 );
+
+utility::vector1<core::Size> range(core::Size beg, core::Size end);
+Vec3
+get_leap_lower_stub(
+	core::pose::Pose const & pose,
+	core::Size ir
+);
+
 
 } // sic_dock
 } // protocols

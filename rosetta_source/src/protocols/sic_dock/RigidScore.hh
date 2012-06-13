@@ -20,6 +20,7 @@
 #include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
+#include <protocols/sic_dock/types.hh>
 #include <protocols/sic_dock/xyzStripeHashPose.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
@@ -27,8 +28,6 @@
 namespace protocols {
 namespace sic_dock {
 
-	struct Vec3 { numeric::xyzVector<core::Real> a,b,c; };
-	typedef utility::vector1<Vec3> Vec3s;
 
 class RigidScore : public utility::pointer::ReferenceCount {
 protected:
@@ -83,7 +82,8 @@ public:
 	LinkerScore(
 		Pose const & pose1,
 		Pose const & pose2,
-		Size max_loop_len
+		Size max_loop_len,
+		Size lookup_radius
 	);
 	virtual ~LinkerScore(){}
 	core::Real  score( Stub const & x1, Stub const & x2 ) const;
@@ -91,8 +91,9 @@ public:
 private:
 	protocols::loophash::LoopHashLibraryOP loop_hash_library_;
 	Sizes const loopsizes_;
+	core::Size lookup_radius_;
 	Pose const & pose1_,pose2_;
-	Vec3s lowers1_,uppers1_,lowers2_,uppers2_;
+	TermInfo lowers1_,uppers1_,lowers2_,uppers2_;
 	Real max_dis2_;
 };
 

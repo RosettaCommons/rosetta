@@ -145,6 +145,7 @@ OPT_1GRP_KEY( Boolean , tcdock, ignore_intra_1 )
 OPT_1GRP_KEY( Boolean , tcdock, ignore_intra_2 )
 OPT_1GRP_KEY( Boolean , tcdock, fast_stage_one )
 OPT_1GRP_KEY( Integer , tcdock, max_linker_len )
+OPT_1GRP_KEY( Integer , tcdock, linker_lookup_radius )
 
 
 void register_options() {
@@ -193,6 +194,7 @@ void register_options() {
 		NEW_OPT( tcdock::ignore_intra_2  , "ignore c2-c2 interactions" , false  );		
 		NEW_OPT( tcdock::fast_stage_one  ,"faster stage one, may miss some"   , false  );
 		NEW_OPT( tcdock::max_linker_len  ,""   ,  10    );
+		NEW_OPT( tcdock::linker_lookup_radius  ,""   , 1 );
 
 
 }
@@ -508,9 +510,9 @@ struct TCDock {
 		Real CLD(basic::options::option[basic::options::OptionKeys::sicdock::clash_dis]());
 
 		protocols::sic_dock::JointScoreOP  jtscore = new protocols::sic_dock::JointScore;
-		protocols::sic_dock::CBScoreCOP cbscore = new protocols::sic_dock::    CBScore(cmp1in_,cmp2in_,CLD,CTD);
-		lnscore_ = new protocols::sic_dock::LinkerScore(cmp1in_,cmp2in_,option[tcdock::max_linker_len]());
-		jtscore->add_score(cbscore,1.0);
+		protocols::sic_dock::CBScoreCOP cbscore = new protocols::sic_dock::CBScore(cmp1in_,cmp2in_,CLD,CTD);
+		lnscore_ = new protocols::sic_dock::LinkerScore(cmp1in_,cmp2in_,option[tcdock::max_linker_len](),option[tcdock::linker_lookup_radius]());
+		jtscore->add_score(cbscore ,1.0);
 		jtscore->add_score(lnscore_,1.0);
 		rigid_sfxn_ = jtscore;
 

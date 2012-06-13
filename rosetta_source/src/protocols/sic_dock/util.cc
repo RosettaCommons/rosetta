@@ -19,7 +19,19 @@ using core::Size;
 using core::Real;
 using numeric::min;
 using core::id::AtomID;
-typedef numeric::xyzVector<core::Real> Vec;
+using std::cout;
+using std::endl;
+typedef core::Real Real;
+typedef core::Size Size;
+typedef core::pose::Pose Pose;
+typedef core::kinematics::Stub Stub;
+typedef numeric::xyzVector<Real> Vec;
+typedef numeric::xyzMatrix<Real> Mat;
+typedef utility::vector1<Vec> Vecs;
+typedef utility::vector1<Real> Reals;
+typedef utility::vector1<Size> Sizes;
+typedef utility::vector1<Stub> Stubs;
+typedef utility::vector1<RigidScoreCOP> Scores;
 
 
 int neighbor_count(core::pose::Pose const &pose, int ires, double distance_threshold=10.0) {
@@ -144,6 +156,17 @@ xform_pose_rev( core::pose::Pose & pose, core::kinematics::Stub const & s, Size 
     }
   }
 }
+
+
+
+
+utility::vector1<core::Size> range(core::Size beg, core::Size end){
+	utility::vector1<core::Size> v;
+	for(core::Size i = beg; i < end; ++i) v.push_back(i);
+	return v;
+}
+
+
 
 } // sic_dock
 } // protocols
