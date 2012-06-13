@@ -78,8 +78,8 @@ int Tracer::mpi_rank_( 0 );
 bool Tracer::TracerProxy::visible() const
 {
 	if( !visibility_calculated_ ) {
-		int mute_level;
-		calculate_visibility(channel_, priority_, visible_, mute_level, tracer_.muted_by_default_);
+		bool visible, muted;
+		calculate_visibility(channel_, priority_, visible, muted, tracer_.muted_by_default_);
 	}
 	return visible_;
 }
@@ -190,7 +190,6 @@ void Tracer::flush_all_channels()
 
 bool Tracer::visible( int priority ) const {
 	if (!visibility_calculated_) calculate_visibility();
-	muted_ = priority >= mute_level_;
 	if ( muted_ ) return false;
 	if ( priority > tracer_options_.level ) return false;
 	return true;
@@ -211,7 +210,6 @@ void Tracer::priority(int priority)
 {
 	priority_ = priority;
 	if (visibility_calculated_) {
-		muted_ = priority >= mute_level_;
 		visible_ = !muted_ && ( priority <= tracer_options_.level );
 	}
 }
@@ -220,14 +218,14 @@ void Tracer::priority(int priority)
 /// @details Calculate visibility of current Tracer object.
 void Tracer::calculate_visibility() const
 {
-	calculate_visibility(channel_, priority_, visible_, mute_level_, muted_by_default_);
+	calculate_visibility(channel_, priority_, visible_, muted_, muted_by_default_);
 	visibility_calculated_ = true;
 }
 
 
 /// @details Calculate visibility (static version) of current Tracer object using channel name and priority.
 /// result stored in 'muted' and 'visible'.
-void Tracer::calculate_visibility(std::string const &channel, int priority, bool &visible, int &mute_level, bool muted_by_default)
+void Tracer::calculate_visibility(std::string const &channel, int priority, bool &visible, bool &muted, bool muted_by_default)
 {
 	visible = false;
 	if( in(tracer_options_.muted, "all", true) ) {
@@ -251,77 +249,7 @@ void Tracer::calculate_visibility(std::string const &channel, int priority, bool
 		}
 	}
 
-
-	//	muted = !visible;
-	//comes at end now...	if( priority > tracer_options_.level ) visible = false;
-  if ( !visible ) mute_level = t_fatal;
-	else {
-		mute_level = 1000;
-		if ( in(tracer_options_.muted_trace, "all", true) ) {
-			mute_level = t_trace;
-		}
-		if ( in(tracer_options_.muted_trace, channel, false ) ) {
-			mute_level = t_trace;
-		}
-		if ( in(tracer_options_.muted_debug, "all", true) ) {
-			mute_level = t_debug;
-		}
-		if ( in(tracer_options_.muted_debug, channel, false ) ) {
-			mute_level = t_debug;
-		}
-
-		if ( in(tracer_options_.muted_info, "all", true) ) {
-			mute_level = t_info;
-		}
-		if ( in(tracer_options_.muted_info, channel, false ) ) {
-			mute_level = t_info;
-		}
-
-		if ( in(tracer_options_.muted_warning, "all", true) ) {
-			mute_level = t_warning;
-		}
-		if ( in(tracer_options_.muted_warning, channel, false ) ) {
-			mute_level = t_warning;
-		}
-	}
-	if ( mute_level < t_warning ) {
-		if ( in(tracer_options_.unmuted_error, "all", true) ) {
-			mute_level = t_warning;
-		}
-		if ( in(tracer_options_.unmuted_error, channel, false ) ) {
-			mute_level = t_warning;
-		}
-	}
-
-	if ( mute_level < t_info ) {
-		if ( in(tracer_options_.unmuted_warning, "all", true) ) {
-			mute_level = t_info;
-		}
-		if ( in(tracer_options_.unmuted_warning, channel, false ) ) {
-			mute_level = t_info;
-		}
-	}
-
-	if ( mute_level < t_debug ) {
-		if ( in(tracer_options_.unmuted_info, "all", true) ) {
-			mute_level = t_debug;
-		}
-		if ( in(tracer_options_.unmuted_info, channel, false ) ) {
-			mute_level = t_debug;
-		}
-
-	}
-
-	if ( mute_level < t_trace ) {
-		if ( in(tracer_options_.unmuted_debug, "all", true) ) {
-			mute_level = t_trace;
-		}
-		if ( in(tracer_options_.unmuted_debug, channel, false ) ) {
-			mute_level = t_trace;
-		}
-	}
-
-//if we are in MPI mode --- most of the time one doesn't want to see output from all nodes just the master and 1st client is plenty ..
+	//if we are in MPI mode --- most of the time one doesn't want to see output from all nodes just the master and 1st client is plenty ..
 #ifdef USEMPI
 	int already_initialized = 0;
 	int already_finalized = 0;
@@ -335,20 +263,16 @@ void Tracer::calculate_visibility(std::string const &channel, int priority, bool
 	}
 
 	if ( in(tracer_options_.muted, "all_high_mpi_rank", true ) ) {
-		if ( mpi_rank_>=2 ) {
-			mute_level = std::min( (int)t_warning, mute_level );
-		}
+		if ( mpi_rank_>=2 ) visible = false; //* visible: master and 1st client: rank 0 and rank1
 	}
 
 	if ( in(tracer_options_.muted, "all_high_mpi_rank_filebuf", true ) ) {
-		if ( mpi_rank_>=4 ) {
-			visible = false; //* visible: master, filebuf and 1st client: rank 0, 1, 2
-			mute_level = std::min( (int)t_warning, mute_level );
-		}
+		if ( mpi_rank_>=4 ) visible = false; //* visible: master, filebuf and 1st client: rank 0, 1, 2
 	}
-#endif
 
-	visible = (priority < mute_level) && ( priority <= tracer_options_.level );
+#endif
+	muted = !visible;
+	if( priority > tracer_options_.level ) visible = false;
 }
 
 
@@ -405,13 +329,13 @@ void Tracer::t_flush(std::string const &str)
 
 	if( ios_hook_ && ios_hook_.get()!=this &&
 			( in(monitoring_list_, channel_, false) || in(monitoring_list_, AllChannels, true ) ) ) {
-		if ( ios_hook_raw_ || visible() ){
+		if (ios_hook_raw_ || visible_){
 			prepend_channel_name<otstream>( *ios_hook_, str );
 			ios_hook_->flush();
 		}
 	}
 
-	if ( !super_mute_ && visible() ){
+	if ( !super_mute_ && visible_ ){
 		prepend_channel_name<std::ostream>( *final_channel, str );
 	}
 }
