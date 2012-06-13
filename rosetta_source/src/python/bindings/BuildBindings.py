@@ -236,7 +236,8 @@ def main(args):
     bindings_path += '.debug' if Options.debug else '.release'
 
     if Options.cross_compile:
-        bindings_path += '.windows'
+        bindings_path = 'rosetta.windows'
+        if not os.path.isdir(bindings_path): os.makedirs(bindings_path)
         execute('Generating svn_version files...', 'cd ./../../../ && python svn_version.py')  # Now lets generate svn_version.* files and copy it to destination (so windows build could avoid running it).
         shutil.copyfile('./../../core/svn_version.cc', bindings_path + '/svn_version.cc')
 
