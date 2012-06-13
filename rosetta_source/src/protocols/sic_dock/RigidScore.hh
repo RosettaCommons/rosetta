@@ -87,7 +87,7 @@ public:
 	);
 	virtual ~LinkerScore(){}
 	core::Real  score( Stub const & x1, Stub const & x2 ) const;
-	void dump_linkers( Stub const & x1, Stub const & x2 ) const;
+	// Undefined, commenting out to fix PyRosetta build  void dump_linkers( Stub const & x1, Stub const & x2 ) const;
 private:
 	protocols::loophash::LoopHashLibraryOP loop_hash_library_;
 	Sizes const loopsizes_;

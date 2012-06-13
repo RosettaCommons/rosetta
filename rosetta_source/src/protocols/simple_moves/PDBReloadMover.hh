@@ -16,7 +16,7 @@
 
 // Unit headers
 #include <protocols/simple_moves/PDBReloadMover.fwd.hh>
-#include <protocols/moves/Mover.hh> 
+#include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.hh>
 
 #include <utility/vector1.hh>
@@ -32,7 +32,7 @@ public:
 	/// 	empty constructor
 	PDBReloadMover();
 
-	PDBReloadMover( core::pose::Pose const & pose );
+	// Undefined, commenting out to fix PyRosetta build  PDBReloadMover( core::pose::Pose const & pose );
 
 	~PDBReloadMover();
 
