@@ -947,7 +947,6 @@ get_sym_aware_jump_num ( core::pose::Pose const & pose, int jump_num ) {
 			utility_exit_with_message("No sym_dofs found!");
 		}
 	}
-	TR << "Using jump " << sym_jump << std::endl;
 	return sym_jump;
 } // get_symdof_from_jump_num
 
