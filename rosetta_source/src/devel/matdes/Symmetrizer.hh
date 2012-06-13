@@ -74,11 +74,13 @@ private:
 	
 private:
 	std::string symm_file_;
-	Real radial_disp_;
-	Real angle_;
+	Real radial_disp_, radial_disp_min_, radial_disp_max_;
+	Real angle_, angle_min_, angle_max_;
+	Real radial_disp_delta_, angle_delta_;
 	char symmetry_axis_;
 	
 	bool explore_grid_;
+	std::string sampling_mode_;
 };
 
 } // matdes

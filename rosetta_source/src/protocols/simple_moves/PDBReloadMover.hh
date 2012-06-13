@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   SuperimposeMover.hh
+/// @file   PDBReloadMover.hh
 /// @brief
-/// @author Ingemar Andre
+/// @author Javier Castellanos (javiercv@uw.edu)
 
-#ifndef INCLUDED_protocols_simple_moves_SuperimposeMover_hh
-#define INCLUDED_protocols_simple_moves_SuperimposeMover_hh
+#ifndef INCLUDED_protocols_simple_moves_PDBReloadMover_hh
+#define INCLUDED_protocols_simple_moves_PDBReloadMover_hh
 
 // Unit headers
-#include <protocols/simple_moves/SuperimposeMover.fwd.hh>
-#include <protocols/moves/Mover.hh> // we need to store a pose
+#include <protocols/simple_moves/PDBReloadMover.fwd.hh>
+#include <protocols/moves/Mover.hh> 
 #include <core/pose/Pose.hh>
 
 #include <utility/vector1.hh>
@@ -25,41 +25,28 @@
 namespace protocols {
 namespace simple_moves {
 
-class SuperimposeMover : public moves::Mover {
+class PDBReloadMover : public moves::Mover {
 
 public:
 	/// @brief
 	/// 	empty constructor
-	SuperimposeMover();
+	PDBReloadMover();
 
-	SuperimposeMover( core::pose::Pose const & pose );
+	PDBReloadMover( core::pose::Pose const & pose );
 
-	~SuperimposeMover();
+	~PDBReloadMover();
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
-
-	void set_reference_pose( core::pose::Pose const & pose, Size start=1, Size end=-1);
-	void set_target_pose( Size start=1, Size end=-1);
-	void set_target_range( Size start, Size end );
 
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const;
 
-private:
-	core::Real superimpose( core::pose::Pose & mod_pose, core::pose::Pose const & ref_pose, Size ref_start, Size ref_end, Size target_start, Size target_end);
-
-private:
-
-	core::pose::PoseOP ref_pose_;
-	core::Size ref_start_, ref_end_;
-	core::Size target_start_, target_end_;
-
 };
 
 } // moves
 } // protocols
 
-#endif //INCLUDED_protocols_simple_moves_SuperimposeMover_HH
+#endif //INCLUDED_protocols_simple_moves_PDBReloadMover_HH

@@ -209,6 +209,8 @@ static MoverRegistrator< simple_moves::SequenceProfileMoverCreator > reg_Sequenc
 static MoverRegistrator< simple_moves::SetTorsionCreator > reg_SetTorsionCreator;
 static MoverRegistrator< simple_moves::ShearMoverCreator > reg_ShearMoverCreator;
 static MoverRegistrator< simple_moves::SmallMoverCreator > reg_SmallMoverCreator;
+static MoverRegistrator< simple_moves::SuperimposeMoverCreator > reg_SuperimposeMoverCreator;
+static MoverRegistrator< simple_moves::PDBReloadMoverCreator > reg_PDBReloadMoverCreator;
 static MoverRegistrator< simple_moves::SwitchResidueTypeSetMoverCreator > reg_SwitchResidueTypeSetMoverCreator;
 static MoverRegistrator< simple_moves::TaskAwareMinMoverCreator > reg_TaskAwareMinMoverCreator;
 

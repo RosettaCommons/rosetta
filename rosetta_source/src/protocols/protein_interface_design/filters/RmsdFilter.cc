@@ -89,7 +89,7 @@ RmsdFilter::compute( core::pose::Pose const & pose ) const
 	using namespace core::scoring;
 	core::pose::Pose copy_pose = pose;
 	core::pose::Pose native = *reference_pose_;
-	core::Real rmsd( 0 );
+	core::Real rmsd( 0.0 );
 
 	if ( !symmetry_ )
 		runtime_assert( copy_pose.total_residue() == native.total_residue() );
@@ -98,7 +98,8 @@ RmsdFilter::compute( core::pose::Pose const & pose ) const
 	FArray1D_bool selection_array( pose.total_residue(), false ); // on which residues to check rmsd
 	FArray1D_bool superimpose_array( pose.total_residue(), false ); // which residues to superimpose
 
-	if( selection_from_segment_cache_ ) core::pose::datacache::SpecialSegmentsObserver::set_farray_from_sso( superimpose_array, pose, true );
+	if( selection_from_segment_cache_ ) 
+		core::pose::datacache::SpecialSegmentsObserver::set_farray_from_sso( superimpose_array, pose, true );
 	else {
 		if( selection_.size() && superimpose_on_all() ){
 			core::pose::datacache::SpecialSegmentsObserver::set_farray_from_sso( superimpose_array, pose, true );
@@ -109,18 +110,16 @@ RmsdFilter::compute( core::pose::Pose const & pose ) const
 		}
 	}
 
-	using namespace core::scoring;
-	if ( reference_pose_->total_residue() == pose.total_residue() ) {
-		if( superimpose_ && !superimpose_on_all() ) {
-			if ( symmetry_ ) // SJF I haven't changed symmetry selection_array b/c I don't know which tests to use
-				rmsd = sym_rmsd_with_super_subset( copy_pose, native, selection_array, core::scoring::is_protein_CA );
-			else
-				rmsd = rmsd_with_super_subset( copy_pose, native, superimpose_array, core::scoring::is_protein_CA );
-		}
-		if( superimpose_ && superimpose_on_all() ){
-			calpha_superimpose_pose( copy_pose, native );
-			rmsd = core::scoring::rmsd_no_super_subset( copy_pose, native, selection_array, core::scoring::is_protein_CA );
-		}
+	if( superimpose_ && !superimpose_on_all() ) {
+		if ( symmetry_ ) // SJF I haven't changed symmetry selection_array b/c I don't know which tests to use
+			rmsd = sym_rmsd_with_super_subset( copy_pose, native, selection_array, core::scoring::is_protein_CA );
+		else
+			rmsd = rmsd_with_super_subset( copy_pose, native, superimpose_array, core::scoring::is_protein_CA );
+	}else if( superimpose_ && superimpose_on_all() ){
+		calpha_superimpose_pose( copy_pose, native );
+		rmsd = core::scoring::rmsd_no_super_subset( copy_pose, native, selection_array, core::scoring::is_protein_CA );
+	} else {
+		rmsd = core::scoring::rmsd_no_super_subset( copy_pose, native, selection_array, core::scoring::is_protein_CA );
 	}
 	return rmsd;
 }

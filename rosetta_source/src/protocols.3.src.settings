@@ -304,6 +304,7 @@ sources = {
 		"ShakeStructureMover",
 		"SmoothFragmentMover",
 		"SuperimposeMover",
+		"PDBReloadMover",
 		"SwitchResidueTypeSetMover",
 		"SymmetricFragmentMover",
 		"TailsScoreMover",
