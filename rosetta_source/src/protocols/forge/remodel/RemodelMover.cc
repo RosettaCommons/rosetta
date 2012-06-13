@@ -789,7 +789,7 @@ if (working_model.manager.size()!= 0){
 
 	//seriously refine the poses
 	Size filecount = 1;
-	core::Real current_score = 10000;
+	core::Real current_score = 100000;
 
 	TR << "clustered poses count: " << results.size() << std::endl;
 	for(std::vector<core::pose::PoseOP>::iterator it = results.begin(), end= results.end(); it!= end; it++){
@@ -1638,10 +1638,8 @@ RemodelMover::parse_my_tag(
 	Movers_map const & /*movers*/,
 	Pose const & /*pose*/ )
 {
-		TR << "blueprint_tag value 0 is " << blueprint_ << std::endl;	
 	if( tag->hasOption("blueprint") ) {
 		blueprint_ = tag->getOption<std::string>( "blueprint" );
-		TR << "blueprint_tag value 1 is " << blueprint_ << std::endl;
 	}
 }
 
