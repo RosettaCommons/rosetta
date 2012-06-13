@@ -21,7 +21,6 @@ namespace numeric {
 namespace geometry {
 namespace hashing {
 
-
 template<typename T>
 class xyzStripeHash : public utility::pointer::ReferenceCount {
 public:
@@ -29,6 +28,16 @@ public:
 	//typedef unsigned int uint;
 	typedef unsigned short ushort;
 	typedef struct { unsigned short x,y; } ushort2;
+	// struct const_iterator {
+	// 	const_iterator(float4 const *p) : p_(p) {}
+	// 	const_iterator & operator=(const const_iterator& r) { p_ = r.p_; return *this; }
+	// 	const_iterator & operator++() { ++p_; return *this } 
+	// 	std::pair<xyzVector<T>,T> operator*() { return std::make_pair(xyzVector<t>(p_->x,p->y,p->z),p->w); }
+	// 	bool operator!=(const_iterator const & r) const { return (p_ != r.p_); }
+	// 	bool operator==(const_iterator const & r) const { return (p_ == r.p_); }
+	// private:
+	// 	float4 *p_;
+	// };
 public:
 	T const grid_size_,grid_size2_;
 	int natom_;

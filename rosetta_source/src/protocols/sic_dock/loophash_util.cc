@@ -154,17 +154,17 @@ count_linkers(
 
 core::Size
 dump_loophash_linkers(
-	// Stub const & lower,
-	// Stub const & upper,
-	core::pose::Pose const & pose1,
-	core::pose::Pose const & pose2,	
+	Stub const & lower,
+	Stub const & upper,
+	// core::pose::Pose const & pose1,
+	// core::pose::Pose const & pose2,	
 	protocols::loophash::LoopHashLibraryOP loop_hash_library,
 	Sizes const & loopsizes,
 	Size radius
 ){
-	TermInfo lowers1,uppers1,lowers2,uppers2;
-	get_termini_from_pose(pose1_,uppers1_,lowers1_);
-	get_termini_from_pose(pose2_,uppers2_,lowers2_);
+	// TermInfo lowers1,uppers1,lowers2,uppers2;
+	// get_termini_from_pose(pose1_,uppers1_,lowers1_);
+	// get_termini_from_pose(pose2_,uppers2_,lowers2_);
 
 
 	protocols::loophash::BackboneDB const & bbdb_ = loop_hash_library->backbone_database();
