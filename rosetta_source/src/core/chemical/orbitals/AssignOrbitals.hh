@@ -52,6 +52,8 @@ public:
 			utility::vector1< numeric::xyzVector<core::Real> > const orbital_xyz_vectors
 	);
 
+	void assign_sp2_orbitals_to_one_bonded_atom(/*OrbInfo const & orbital_info,*/ core::chemical::AtomType const & atmtype);
+
 
 	utility::vector1< numeric::xyzVector<core::Real> > cross_product_helper(
 			core::Size const atm_index1,
