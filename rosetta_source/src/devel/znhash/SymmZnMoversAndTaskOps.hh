@@ -75,13 +75,13 @@ public:
 	void set_reference_pdb( std::string const & fname );
 	void set_match_pdb_listfilename( std::string const & fname );
 
-	virtual MoverOP clone();
+	virtual MoverOP clone() const;
 	virtual std::string get_name() const;
 	virtual void apply( core::pose::Pose & p );
 	ZnCoordinationScorerOP zn_score() const;
 
 	protocols::simple_moves::ReturnSidechainMoverOP recover_sidechains() const;
-	
+
 private:
 	core::Real znreach_; // how far does the zn score extend out to?
 	core::Real orbital_dist_; // how far from the Zn center should the orbitals be located?
@@ -112,10 +112,10 @@ public:
 	ZNCoordinationConstraintReporterMover(
 		InitializeZNCoordinationConstraintMoverOP init_zn
 	);
-	
-	virtual MoverOP clone();
+
+	virtual MoverOP clone() const;
 	virtual std::string get_name() const;
-	virtual void apply( core::pose::Pose & p );		
+	virtual void apply( core::pose::Pose & p );
 private:
 	InitializeZNCoordinationConstraintMoverOP init_zn_;
 
@@ -205,11 +205,11 @@ public:
 	ZNCoordinationConstraintPlacerMover(
 		InitializeZNCoordinationConstraintMoverOP init_zn
 	);
-	
+
 	void set_constraint_energy_cutoff( core::Real setting );
 	void set_four_residue_cst_fname( std::string const & fname );
 
-	virtual MoverOP clone();
+	virtual MoverOP clone() const;
 	virtual std::string get_name() const;
 	virtual void apply( core::pose::Pose & p );
 private:
@@ -227,12 +227,12 @@ private:
 		core::pose::Pose const & pose_w_scs,
 		core::pose::Pose & p
 	);
-	
-	void filter_by_constraint_score( core::pose::Pose const & p );	
+
+	void filter_by_constraint_score( core::pose::Pose const & p );
 
 	devel::znhash::ZnMatchData const & m1() const { return m1_; }
 	devel::znhash::ZnMatchData const & m2() const { return m2_; }
-		
+
 private:
 	InitializeZNCoordinationConstraintMoverOP init_zn_;
 	devel::znhash::ZnMatchData m1_; // best match chain A

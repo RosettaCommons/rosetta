@@ -395,7 +395,7 @@ RotamerSets::precompute_two_body_energies(
 	using namespace interaction_graph;
 	using namespace scoring;
 
-	std::clock_t starttime = clock();
+	//std::clock_t starttime = clock();
 
 	// Two body energies
 	//scoring::EnergyGraph const & energy_graph( pose.energies().energy_graph() );
@@ -473,8 +473,8 @@ RotamerSets::precompute_two_body_energies(
 		}
 	}
 
-	std::clock_t stoptime = clock();
-	std::cout << "Precompute rotamer pair energies took " << ((double) stoptime - starttime)/CLOCKS_PER_SEC << " seconds" << std::endl;
+	//std::clock_t stoptime = clock();
+	//std::cout << "Precompute rotamer pair energies took " << ((double) stoptime - starttime)/CLOCKS_PER_SEC << " seconds" << std::endl;
 }
 
 void

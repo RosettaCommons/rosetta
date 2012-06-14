@@ -142,7 +142,7 @@ void InitializeZNCoordinationConstraintMover::set_reference_pdb( std::string con
 void InitializeZNCoordinationConstraintMover::set_match_pdb_listfilename( std::string const & fname ) { match_pdb_listfilename_ = fname; }
 
 InitializeZNCoordinationConstraintMover::MoverOP
-InitializeZNCoordinationConstraintMover::clone() {
+InitializeZNCoordinationConstraintMover::clone() const {
 	return new InitializeZNCoordinationConstraintMover( *this );
 }
 
@@ -233,7 +233,7 @@ ZNCoordinationConstraintReporterMover::ZNCoordinationConstraintReporterMover(
 ) : parent( "ZNCoordinationConstraintReporterMover" ), init_zn_( init_zn ) {}
 
 ZNCoordinationConstraintReporterMover::MoverOP
-ZNCoordinationConstraintReporterMover::clone() {
+ZNCoordinationConstraintReporterMover::clone() const {
 	return new ZNCoordinationConstraintReporterMover( init_zn_ );
 }
 
@@ -411,7 +411,7 @@ void ZNCoordinationConstraintPlacerMover::set_four_residue_cst_fname(
 }
 
 ZNCoordinationConstraintPlacerMover::MoverOP
-ZNCoordinationConstraintPlacerMover::clone()
+ZNCoordinationConstraintPlacerMover::clone() const
 {
 	return new ZNCoordinationConstraintPlacerMover( init_zn_ );
 }
