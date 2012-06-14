@@ -33,7 +33,7 @@ void
 TrieCountPairBase::resolve_trie_vs_trie(
 	RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_1 > const & /*trie1*/,
 	RotamerTrieBase const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/)
 {
@@ -44,7 +44,7 @@ void
 TrieCountPairBase::resolve_trie_vs_trie(
 	RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & /*trie1*/,
 	RotamerTrieBase const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/)
 {
@@ -55,7 +55,7 @@ void
 TrieCountPairBase::resolve_trie_vs_trie(
 	RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_3 > const & /*trie1*/,
 	RotamerTrieBase const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/)
 {
@@ -66,7 +66,7 @@ void
 TrieCountPairBase::resolve_trie_vs_trie(
 	RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairDataGeneric > const & /*trie1*/,
 	RotamerTrieBase const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/)
 {
@@ -77,7 +77,7 @@ void
 TrieCountPairBase::resolve_trie_vs_path(
 	RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_1 > const & /*trie1*/,
 	RotamerTrieBase const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
@@ -89,7 +89,7 @@ void
 TrieCountPairBase::resolve_trie_vs_path(
 	RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & /*trie1*/,
 	RotamerTrieBase const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
@@ -101,7 +101,7 @@ void
 TrieCountPairBase::resolve_trie_vs_path(
 	RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_3 > const & /*trie1*/,
 	RotamerTrieBase const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
@@ -112,23 +112,20 @@ void
 TrieCountPairBase::resolve_trie_vs_path(
 	RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairDataGeneric > const & /*trie1*/,
 	RotamerTrieBase const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
 	utility_exit();
 }
 
-//XRW_B_T1
-/*
-
 void
 TrieCountPairBase::resolve_trie_vs_trie(
 	RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_1 > const & trie1,
 	RotamerTrieBase const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > & pair_energy_table,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > & temp_table)
+	etable::AnalyticEtableEvaluator const & sfxn,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table)
 {
 	utility_exit();
 }
@@ -138,9 +135,9 @@ void
 TrieCountPairBase::resolve_trie_vs_trie(
 	RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & trie1,
 	RotamerTrieBase const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > & pair_energy_table,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > & temp_table)
+	etable::AnalyticEtableEvaluator const & sfxn,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table)
 {
 	utility_exit();
 }
@@ -149,9 +146,9 @@ void
 TrieCountPairBase::resolve_trie_vs_trie(
 	RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_3 > const & trie1,
 	RotamerTrieBase const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > & pair_energy_table,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > & temp_table)
+	etable::AnalyticEtableEvaluator const & sfxn,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table)
 {
 	utility_exit();
 }
@@ -160,9 +157,9 @@ void
 TrieCountPairBase::resolve_trie_vs_trie(
 	RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairDataGeneric > const & trie1,
 	RotamerTrieBase const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > & pair_energy_table,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > & temp_table)
+	etable::AnalyticEtableEvaluator const & sfxn,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table)
 {
 	utility_exit();
 }
@@ -171,9 +168,9 @@ void
 TrieCountPairBase::resolve_trie_vs_path(
 	RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_1 > const & trie1,
 	RotamerTrieBase const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	utility::vector1< pack::PackerEnergy > & pair_energy_vector,
-	utility::vector1< pack::PackerEnergy > & temp_vector)
+	etable::AnalyticEtableEvaluator const & sfxn,
+	utility::vector1< core::PackerEnergy > & pair_energy_vector,
+	utility::vector1< core::PackerEnergy > & temp_vector)
 {
 	utility_exit();
 }
@@ -184,9 +181,9 @@ void
 TrieCountPairBase::resolve_trie_vs_path(
 	RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & trie1,
 	RotamerTrieBase const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	utility::vector1< pack::PackerEnergy > & pair_energy_vector,
-	utility::vector1< pack::PackerEnergy > & temp_vector)
+	etable::AnalyticEtableEvaluator const & sfxn,
+	utility::vector1< core::PackerEnergy > & pair_energy_vector,
+	utility::vector1< core::PackerEnergy > & temp_vector)
 {
 	utility_exit();
 }
@@ -196,9 +193,9 @@ void
 TrieCountPairBase::resolve_trie_vs_path(
 	RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_3 > const & trie1,
 	RotamerTrieBase const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	utility::vector1< pack::PackerEnergy > & pair_energy_vector,
-	utility::vector1< pack::PackerEnergy > & temp_vector)
+	etable::AnalyticEtableEvaluator const & sfxn,
+	utility::vector1< core::PackerEnergy > & pair_energy_vector,
+	utility::vector1< core::PackerEnergy > & temp_vector)
 {
 	utility_exit();
 }
@@ -207,14 +204,13 @@ void
 TrieCountPairBase::resolve_trie_vs_path(
 	RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairDataGeneric > const & trie1,
 	RotamerTrieBase const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	utility::vector1< pack::PackerEnergy > & pair_energy_vector,
-	utility::vector1< pack::PackerEnergy > & temp_vector)
+	etable::AnalyticEtableEvaluator const & sfxn,
+	utility::vector1< core::PackerEnergy > & pair_energy_vector,
+	utility::vector1< core::PackerEnergy > & temp_vector)
 {
 	utility_exit();
 }
 
-*/
 //XRW_E_T1
 
 // called when hbonds and etable tries get confused

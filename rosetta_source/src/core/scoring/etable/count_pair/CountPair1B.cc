@@ -55,7 +55,7 @@ void
 CountPair1BC3::residue_atom_pair_energy(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
-	etable::EtableEnergy const & etable_energy,
+	etable::TableLookupEvaluator const & etable_energy,
 	EnergyMap & emap
 ) const
 {
@@ -67,7 +67,7 @@ void
 CountPair1BC3::residue_atom_pair_energy_sidechain_backbone(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
-	etable::EtableEnergy const & etable_energy,
+	etable::TableLookupEvaluator const & etable_energy,
 	EnergyMap & emap
 ) const
 {
@@ -79,21 +79,19 @@ void
 CountPair1BC3::residue_atom_pair_energy_sidechain_whole(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
-	etable::EtableEnergy const & etable_energy,
+	etable::TableLookupEvaluator const & etable_energy,
 	EnergyMap & emap
 ) const
 {
 	inline_residue_atom_pair_energy_sidechain_whole( res1, res2, etable_energy, *this, emap );
 }
 
-//XRW_B_T1
-/*
 
 void
 CountPair1BC3::residue_atom_pair_energy(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
-	etable::CoarseEtableEnergy const & etable_energy,
+	etable::AnalyticEtableEvaluator const & etable_energy,
 	EnergyMap & emap
 ) const
 {
@@ -105,7 +103,7 @@ void
 CountPair1BC3::residue_atom_pair_energy_sidechain_backbone(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
-	etable::CoarseEtableEnergy const & etable_energy,
+	etable::AnalyticEtableEvaluator const & etable_energy,
 	EnergyMap & emap
 ) const
 {
@@ -117,15 +115,13 @@ void
 CountPair1BC3::residue_atom_pair_energy_sidechain_whole(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
-	etable::CoarseEtableEnergy const & etable_energy,
+	etable::AnalyticEtableEvaluator const & etable_energy,
 	EnergyMap & emap
 ) const
 {
 	inline_residue_atom_pair_energy_sidechain_whole( res1, res2, etable_energy, *this, emap );
 }
 
-*/
-//XRW_E_T1
 
 } // namespace count_pair
 } // namespace etable {

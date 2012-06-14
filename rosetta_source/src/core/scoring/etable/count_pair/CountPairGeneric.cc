@@ -23,6 +23,7 @@
 #include <platform/types.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
+#include <core/scoring/etable/Etable.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
 #include <core/scoring/etable/atom_pair_energy_inline.hh>
 #include <utility/vector1.hh>
@@ -145,7 +146,7 @@ void
 CountPairGeneric::residue_atom_pair_energy(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
-	etable::EtableEnergy const & etable_energy,
+	etable::TableLookupEvaluator const & etable_energy,
 	EnergyMap & emap
 ) const
 {
@@ -156,7 +157,7 @@ void
 CountPairGeneric::residue_atom_pair_energy_sidechain_backbone(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
-	etable::EtableEnergy const & etable_energy,
+	etable::TableLookupEvaluator const & etable_energy,
 	EnergyMap & emap
 ) const
 {
@@ -169,7 +170,7 @@ void
 CountPairGeneric::residue_atom_pair_energy_sidechain_whole(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
-	etable::EtableEnergy const & etable_energy,
+	etable::TableLookupEvaluator const & etable_energy,
 	EnergyMap & emap
 ) const
 {
@@ -182,7 +183,7 @@ void
 CountPairGeneric::residue_atom_pair_energy_backbone_backbone(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
-	etable::EtableEnergy const & etable_energy,
+	etable::TableLookupEvaluator const & etable_energy,
 	EnergyMap & emap
 ) const
 {
@@ -195,21 +196,18 @@ void
 CountPairGeneric::residue_atom_pair_energy_sidechain_sidechain(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
-	etable::EtableEnergy const & etable_energy,
+	etable::TableLookupEvaluator const & etable_energy,
 	EnergyMap & emap
 ) const
 {
 	inline_residue_atom_pair_energy_sidechain_sidechain( res1, res2, etable_energy, *this, emap );
 }
-
-//XRW_B_T1
-/*
 
 void
 CountPairGeneric::residue_atom_pair_energy(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
-	etable::CoarseEtableEnergy const & etable_energy,
+	etable::AnalyticEtableEvaluator const & etable_energy,
 	EnergyMap & emap
 ) const
 {
@@ -220,7 +218,7 @@ void
 CountPairGeneric::residue_atom_pair_energy_sidechain_backbone(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
-	etable::CoarseEtableEnergy const & etable_energy,
+	etable::AnalyticEtableEvaluator const & etable_energy,
 	EnergyMap & emap
 ) const
 {
@@ -233,7 +231,7 @@ void
 CountPairGeneric::residue_atom_pair_energy_sidechain_whole(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
-	etable::CoarseEtableEnergy const & etable_energy,
+	etable::AnalyticEtableEvaluator const & etable_energy,
 	EnergyMap & emap
 ) const
 {
@@ -245,7 +243,7 @@ void
 CountPairGeneric::residue_atom_pair_energy_backbone_backbone(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
-	etable::CoarseEtableEnergy const & etable_energy,
+	etable::AnalyticEtableEvaluator const & etable_energy,
 	EnergyMap & emap
 ) const
 {
@@ -256,15 +254,13 @@ void
 CountPairGeneric::residue_atom_pair_energy_sidechain_sidechain(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
-	etable::CoarseEtableEnergy const & etable_energy,
+	etable::AnalyticEtableEvaluator const & etable_energy,
 	EnergyMap & emap
 ) const
 {
 	inline_residue_atom_pair_energy_sidechain_sidechain( res1, res2, etable_energy, *this, emap );
 }
 
-*/
-//XRW_E_T1
 
 } // namespace count_pair
 } // namespace etable

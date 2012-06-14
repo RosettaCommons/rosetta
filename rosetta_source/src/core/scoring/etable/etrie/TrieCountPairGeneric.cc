@@ -15,15 +15,10 @@
 #include <core/scoring/etable/etrie/TrieCountPairGeneric.hh>
 
 // Package Headers
+#include <core/scoring/etable/Etable.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
-//XRW_B_T1
-//#include <core/scoring/etable/CoarseEtableEnergy.hh>
-//XRW_E_T1
-
 #include <core/scoring/etable/etrie/CountPairDataGeneric.hh>
-
 #include <core/scoring/hackelec/HackElecEnergy.hh>
-
 #include <core/scoring/methods/MMLJEnergyInter.hh>
 
 #include <core/scoring/trie/trie_vs_trie.hh>
@@ -106,7 +101,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -118,7 +113,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -130,7 +125,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -142,7 +137,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -154,7 +149,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -166,7 +161,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -178,7 +173,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -190,7 +185,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -202,7 +197,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -214,7 +209,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -226,7 +221,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -238,7 +233,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -250,7 +245,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -262,7 +257,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -274,7 +269,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -286,7 +281,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie1,
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
-	etable::EtableEnergy const & sfxn,
+	etable::TableLookupEvaluator const & sfxn,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
 )
@@ -299,7 +294,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/
 )
@@ -311,7 +306,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/
 )
@@ -323,7 +318,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/
 )
@@ -335,7 +330,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/
 )
@@ -347,7 +342,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/
 )
@@ -359,7 +354,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/
 )
@@ -371,7 +366,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/
 )
@@ -383,7 +378,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/
 )
@@ -395,7 +390,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/
 )
@@ -407,7 +402,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/
 )
@@ -419,7 +414,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/
 )
@@ -431,7 +426,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/
 )
@@ -443,7 +438,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/
 )
@@ -455,7 +450,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/
 )
@@ -467,7 +462,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie1*/,
 	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
-	etable::EtableEnergy const & /*sfxn*/,
+	etable::TableLookupEvaluator const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/
 )
@@ -479,7 +474,7 @@ void
 TrieCountPairGeneric::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie1,
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
-	etable::EtableEnergy const & sfxn,
+	etable::TableLookupEvaluator const & sfxn,
 	utility::vector1< core::PackerEnergy > & pair_energy_vector,
 	utility::vector1< core::PackerEnergy > & temp_vector)
 {
@@ -487,18 +482,15 @@ TrieCountPairGeneric::resolve_trie_vs_path(
 }
 
 
-
-//XRW_B_T1
-/*
-///////////////////////// CoarseEtableEnergy //////////////////////////////////
+///////////////////////// EtableEnergy -- analytic evaluation //////////////////////////////////
 
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie1,
-	RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > & pair_energy_table,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > & temp_table
+	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
 
 )
 {
@@ -507,11 +499,11 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie1,
-	RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > & pair_energy_table,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > &  temp_table
+	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &  /*temp_table*/
 )
 {
 	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
@@ -519,11 +511,11 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie1,
-	RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > & pair_energy_table,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > &  temp_table
+	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &  /*temp_table*/
 )
 {
 	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
@@ -531,11 +523,11 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie1,
-	RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > & pair_energy_table,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > &  temp_table
+	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &  /*temp_table*/
 )
 {
 	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
@@ -543,11 +535,11 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie1,
-	RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > & pair_energy_table,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > &  temp_table
+	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &  /*temp_table*/
 
 )
 {
@@ -556,11 +548,11 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie1,
-	RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > & pair_energy_table,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > &  temp_table
+	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &  /*temp_table*/
 )
 {
 	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
@@ -568,11 +560,11 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie1,
-	RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > & pair_energy_table,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > &  temp_table
+	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &  /*temp_table*/
 )
 {
 	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
@@ -580,11 +572,11 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie1,
-	RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > & pair_energy_table,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > &  temp_table
+	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &  /*temp_table*/
 )
 {
 	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
@@ -592,11 +584,11 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie1,
-	RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > & pair_energy_table,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > &  temp_table
+	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &  /*temp_table*/
 )
 {
 	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
@@ -604,11 +596,11 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie1,
-	RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > & pair_energy_table,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > &  temp_table
+	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &  /*temp_table*/
 )
 {
 	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
@@ -616,11 +608,11 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie1,
-	RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > & pair_energy_table,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > &  temp_table
+	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &  /*temp_table*/
 )
 {
 	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
@@ -628,11 +620,47 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie1,
-	RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > & pair_energy_table,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > &  temp_table
+	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &  /*temp_table*/
+)
+{
+	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
+}
+
+void
+TrieCountPairGeneric::resolve_trie_vs_trie(
+	RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &  /*temp_table*/
+)
+{
+	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
+}
+
+void
+TrieCountPairGeneric::resolve_trie_vs_trie(
+	RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &  /*temp_table*/
+)
+{
+	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
+}
+
+void
+TrieCountPairGeneric::resolve_trie_vs_trie(
+	RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > &  /*temp_table*/
 )
 {
 	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
@@ -641,47 +669,11 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie1,
-	RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > & pair_energy_table,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > &  temp_table)
-
-{
-	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
-}
-
-void
-TrieCountPairGeneric::resolve_trie_vs_trie(
-	RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie1,
-	RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > & pair_energy_table,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > &  temp_table)
-
-{
-	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
-}
-
-void
-TrieCountPairGeneric::resolve_trie_vs_trie(
-
-	RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie1,
-	RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > & pair_energy_table,
-	ObjexxFCL::FArray2D< pack::PackerEnergy > &  temp_table)
-
-{
-	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
-}
-
-void
-TrieCountPairGeneric::resolve_trie_vs_trie(
-	RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie1,
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
+	etable::AnalyticEtableEvaluator const & sfxn,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table)
+	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+)
 {
 	trie_vs_trie( trie1, trie2, *this, sfxn, pair_energy_table, temp_table );
 }
@@ -689,12 +681,12 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_path(
-	RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie1,
-	RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	utility::vector1< pack::PackerEnergy > & pair_energy_vector,
-	utility::vector1< pack::PackerEnergy > & temp_vector)
-
+	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
 {
 	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
 }
@@ -702,12 +694,24 @@ TrieCountPairGeneric::resolve_trie_vs_path(
 void
 TrieCountPairGeneric::resolve_trie_vs_path(
 
-	RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie1,
-	RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	utility::vector1< pack::PackerEnergy > & pair_energy_vector,
-	utility::vector1< pack::PackerEnergy > & temp_vector)
+	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
+{
+	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
+}
 
+void
+TrieCountPairGeneric::resolve_trie_vs_path(
+	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
 {
 	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
 }
@@ -715,12 +719,72 @@ TrieCountPairGeneric::resolve_trie_vs_path(
 void
 TrieCountPairGeneric::resolve_trie_vs_path(
 
-	RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie1,
-	RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	utility::vector1< pack::PackerEnergy > & pair_energy_vector,
-	utility::vector1< pack::PackerEnergy > & temp_vector)
+	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
+{
+	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
+}
 
+void
+TrieCountPairGeneric::resolve_trie_vs_path(
+	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
+{
+	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
+}
+
+void
+TrieCountPairGeneric::resolve_trie_vs_path(
+	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
+{
+	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
+}
+
+void
+TrieCountPairGeneric::resolve_trie_vs_path(
+	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
+{
+	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
+}
+
+void
+TrieCountPairGeneric::resolve_trie_vs_path(
+	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
+{
+	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
+}
+
+void
+TrieCountPairGeneric::resolve_trie_vs_path(
+	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
 {
 	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
 }
@@ -728,151 +792,71 @@ TrieCountPairGeneric::resolve_trie_vs_path(
 void
 TrieCountPairGeneric::resolve_trie_vs_path(
 
-	RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie1,
-	RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	utility::vector1< pack::PackerEnergy > & pair_energy_vector,
-	utility::vector1< pack::PackerEnergy > & temp_vector)
-
+	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
 {
 	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
 }
 
 void
 TrieCountPairGeneric::resolve_trie_vs_path(
-	RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie1,
-	RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	utility::vector1< pack::PackerEnergy > & pair_energy_vector,
-	utility::vector1< pack::PackerEnergy > & temp_vector)
-
+	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
 {
 	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
 }
 
 void
 TrieCountPairGeneric::resolve_trie_vs_path(
-	RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie1,
-	RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	utility::vector1< pack::PackerEnergy > & pair_energy_vector,
-	utility::vector1< pack::PackerEnergy > & temp_vector)
-
+	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
 {
 	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
 }
 
 void
 TrieCountPairGeneric::resolve_trie_vs_path(
-
-	RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie1,
-	RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	utility::vector1< pack::PackerEnergy > & pair_energy_vector,
-	utility::vector1< pack::PackerEnergy > & temp_vector)
-
+	RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
 {
 	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
 }
 
 void
 TrieCountPairGeneric::resolve_trie_vs_path(
-	RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie1,
-	RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	utility::vector1< pack::PackerEnergy > & pair_energy_vector,
-	utility::vector1< pack::PackerEnergy > & temp_vector)
-
+	RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairData_1_2 > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
 	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
 }
 
 void
 TrieCountPairGeneric::resolve_trie_vs_path(
-
-	RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie1,
-	RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	utility::vector1< pack::PackerEnergy > & pair_energy_vector,
-	utility::vector1< pack::PackerEnergy > & temp_vector)
-
-{
-	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
-}
-
-void
-TrieCountPairGeneric::resolve_trie_vs_path(
-
-	RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie1,
-	RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	utility::vector1< pack::PackerEnergy > & pair_energy_vector,
-	utility::vector1< pack::PackerEnergy > & temp_vector)
-
-{
-	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
-}
-
-void
-TrieCountPairGeneric::resolve_trie_vs_path(
-
-	RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie1,
-	RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	utility::vector1< pack::PackerEnergy > & pair_energy_vector,
-	utility::vector1< pack::PackerEnergy > & temp_vector)
-
-{
-	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
-}
-
-void
-TrieCountPairGeneric::resolve_trie_vs_path(
-	RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie1,
-	RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	utility::vector1< pack::PackerEnergy > & pair_energy_vector,
-	utility::vector1< pack::PackerEnergy > & temp_vector)
-
-{
-	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
-}
-
-void
-TrieCountPairGeneric::resolve_trie_vs_path(
-
-	RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie1,
-	RotamerTrie< EtableAtom, CountPairData_1_1 > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	utility::vector1< pack::PackerEnergy > & pair_energy_vector,
-	utility::vector1< pack::PackerEnergy > & temp_vector)
-
-{
-	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
-}
-
-void
-TrieCountPairGeneric::resolve_trie_vs_path(
-
-	RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie1,
-	RotamerTrie< EtableAtom, CountPairData_1_2 > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	utility::vector1< pack::PackerEnergy > & pair_energy_vector,
-	utility::vector1< pack::PackerEnergy > & temp_vector)
-
-{
-	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
-}
-
-void
-TrieCountPairGeneric::resolve_trie_vs_path(
-
-	RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie1,
-	RotamerTrie< EtableAtom, CountPairData_1_3 > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
-	utility::vector1< pack::PackerEnergy > & pair_energy_vector,
-	utility::vector1< pack::PackerEnergy > & temp_vector)
-
+	RotamerTrie< EtableAtom, CountPairDataGeneric > const & /*trie1*/,
+	RotamerTrie< EtableAtom, CountPairData_1_3 > const & /*trie2*/,
+	etable::AnalyticEtableEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
 {
 	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
 }
@@ -881,17 +865,14 @@ void
 TrieCountPairGeneric::resolve_trie_vs_path(
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie1,
 	RotamerTrie< EtableAtom, CountPairDataGeneric > const & trie2,
-	etable::CoarseEtableEnergy const & sfxn,
+	etable::AnalyticEtableEvaluator const & sfxn,
 	utility::vector1< core::PackerEnergy > & pair_energy_vector,
 	utility::vector1< core::PackerEnergy > & temp_vector)
 {
 	trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
 
-*/
-//XRW_E_T1
-
-// HBONDS
+////////////////////////////////// HBONDS //////////////////////////////////
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
 	RotamerTrie< hbonds::hbtrie::HBAtom, hbonds::hbtrie::HBCPData >  const & ,

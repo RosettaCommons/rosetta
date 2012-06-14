@@ -272,7 +272,7 @@ get_packing_score(
     using namespace core::scoring::methods;
     EnergyMethodOptions eopts;
 
-    core::scoring::methods::ShortRangeTwoBodyEnergyOP etable_energy_ = new EtableEnergy(
+    core::scoring::methods::ShortRangeTwoBodyEnergyOP etable_energy_ = new TableLookupEtableEnergy(
       *(ScoringManager::get_instance()->etable( eopts.etable_type() )), eopts );
    using namespace core::scoring;
     EnergyMap emap;

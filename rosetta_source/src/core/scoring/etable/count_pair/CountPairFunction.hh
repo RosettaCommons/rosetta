@@ -21,9 +21,6 @@
 // Project headers
 #include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/etable/EtableEnergy.fwd.hh>
-//XRW_B_T1
-//#include <core/scoring/etable/CoarseEtableEnergy.fwd.hh>
-//XRW_E_T1
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/types.hh>
 
@@ -71,7 +68,7 @@ public:
 	residue_atom_pair_energy(
 		conformation::Residue const &,
 		conformation::Residue const &,
-		etable::EtableEnergy const &,
+		etable::TableLookupEvaluator const &,
 		EnergyMap &
 	) const = 0;
 
@@ -80,7 +77,7 @@ public:
 	residue_atom_pair_energy_sidechain_backbone(
 		conformation::Residue const &,
 		conformation::Residue const &,
-		etable::EtableEnergy const &,
+		etable::TableLookupEvaluator const &,
 		EnergyMap &
 	) const = 0;
 
@@ -90,7 +87,7 @@ public:
 	residue_atom_pair_energy_sidechain_whole(
 		conformation::Residue const &,
 		conformation::Residue const &,
-		etable::EtableEnergy const &,
+		etable::TableLookupEvaluator const &,
 		EnergyMap &
 	) const = 0;
 
@@ -99,7 +96,7 @@ public:
 	residue_atom_pair_energy_backbone_backbone(
 		conformation::Residue const &,
 		conformation::Residue const &,
-		etable::EtableEnergy const &,
+		etable::TableLookupEvaluator const &,
 		EnergyMap &
 	) const = 0;
 
@@ -109,19 +106,16 @@ public:
 	residue_atom_pair_energy_sidechain_sidechain(
 		conformation::Residue const &,
 		conformation::Residue const &,
-		etable::EtableEnergy const &,
+		etable::TableLookupEvaluator const &,
 		EnergyMap &
 	) const = 0;
-
-	//XRW_B_T1
-	/*
 
 	virtual
 	void
 	residue_atom_pair_energy(
 		conformation::Residue const &,
 		conformation::Residue const &,
-		etable::CoarseEtableEnergy const &,
+		etable::AnalyticEtableEvaluator const &,
 		EnergyMap &
 	) const = 0;
 
@@ -130,7 +124,7 @@ public:
 	residue_atom_pair_energy_sidechain_backbone(
 		conformation::Residue const &,
 		conformation::Residue const &,
-		etable::CoarseEtableEnergy const &,
+		etable::AnalyticEtableEvaluator const &,
 		EnergyMap &
 	) const = 0;
 
@@ -140,7 +134,7 @@ public:
 	residue_atom_pair_energy_sidechain_whole(
 		conformation::Residue const &,
 		conformation::Residue const &,
-		etable::CoarseEtableEnergy const &,
+		etable::AnalyticEtableEvaluator const &,
 		EnergyMap &
 	) const = 0;
 
@@ -149,7 +143,7 @@ public:
 	residue_atom_pair_energy_backbone_backbone(
 		conformation::Residue const &,
 		conformation::Residue const &,
-		etable::CoarseEtableEnergy const &,
+		etable::AnalyticEtableEvaluator const &,
 		EnergyMap &
 	) const = 0;
 
@@ -159,12 +153,9 @@ public:
 	residue_atom_pair_energy_sidechain_sidechain(
 		conformation::Residue const &,
 		conformation::Residue const &,
-		etable::CoarseEtableEnergy const &,
+		etable::AnalyticEtableEvaluator const &,
 		EnergyMap &
 	) const = 0;
-
-	*/
-	//XRW_E_T1
 
 	/*static
 	count_pair_type

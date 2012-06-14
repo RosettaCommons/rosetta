@@ -3507,6 +3507,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Write out etables to files with given prefix</dd><br>
 </dl>
 <dl>
+<dt><b>-analytic_etable_evaluation</b> \<Boolean\><dt>
+<dd>Instead of interpolating between bins, use an analytic evaluation of the lennard-jones and solvation energis</dd><br>
+</dl>
+<dl>
 <dt><b>-rms_target</b> \<Real\><dt>
 <dd>Target of RMS optimization for RMS_Energy EnergyMethod</dd><br>
 <dd>Default: 0.0</dd><br>

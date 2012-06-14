@@ -554,7 +554,7 @@ public:
 				using namespace scoring;
 				using namespace scoring::etable;
 				methods::EnergyMethodOptions options; // default is fine
-				EtableEnergy etab_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
+				TableLookupEtableEnergy etab_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
 				ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > (minedge->res_pair_min_data().get_data_ref( etab_pair_nblist )) );
 				debug_nblist_for_respair( pose.residue(ii), pose.residue(jj), pose, sfxn, etab_energy, nblist );
 			}
@@ -771,7 +771,7 @@ public:
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & sfxn,
-		scoring::etable::EtableEnergy const & etab,
+		scoring::etable::TableLookupEtableEnergy const & etab,
 		scoring::ResiduePairNeighborList const & nblist
 	)
 	{

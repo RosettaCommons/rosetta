@@ -120,6 +120,7 @@ sources = {
 	],
 	"scoring/etable" : [
 		"EtableEnergy",
+		"TableVsAnalyticEtable",
 	],
 	"scoring/symmetry" : [
 		"SymmetricScoreTest",

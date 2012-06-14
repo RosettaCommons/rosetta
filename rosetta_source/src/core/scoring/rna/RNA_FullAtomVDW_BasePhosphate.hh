@@ -39,7 +39,7 @@ public:
 public:
 
 	/// @brief ctor
-	RNA_FullAtomVDW_BasePhosphate( etable::EtableEnergy const & etable_energy_in, etable::Etable const & etable_in);
+	RNA_FullAtomVDW_BasePhosphate( etable::TableLookupEtableEnergy const & etable_energy_in, etable::Etable const & etable_in);
 
 	/// @brief dtor
 	virtual ~RNA_FullAtomVDW_BasePhosphate();
@@ -114,7 +114,7 @@ public:
 
 private:
 
-	etable::EtableEnergy const etable_energy_;
+	etable::TableLookupEtableEnergy const etable_energy_;
 	etable::Etable const & etable_; // shouldn't this be a pointer? Reference count information is (dangerously) lost when
 
 	/// @brief RNA_FullAtomVDW_BasePhosphate( is context independent; indicates that no context graphs are required

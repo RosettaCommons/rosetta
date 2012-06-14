@@ -32,12 +32,19 @@
 
 // Unit Headers
 #include <core/scoring/etable/Etable.hh>
+#include <core/scoring/EnergyMap.hh>
+
+// Package headers
+#include <core/scoring/etable/count_pair/CountPairFunction.hh>
+#include <core/scoring/trie/RotamerTrieBase.hh>
+#include <core/scoring/trie/TrieCountPairBase.fwd.hh>
 
 #include <basic/options/option.hh>
 #include <utility/exit.hh>
 
 #include <utility/vector1.hh>
 #include <numeric/interpolation/spline/SplineGenerator.hh>
+#include <numeric/interpolation/spline/SimpleInterpolator.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -83,7 +90,7 @@ Etable::Etable(
 ):
 	// from atop_props_in:
 	atom_set_                 ( atom_set_in ),
-	n_atomtypes               ( atom_set_in->n_atomtypes() ),
+	n_atomtypes_              ( atom_set_in->n_atomtypes() ),
 
 	// from options
 	max_dis_                  ( options.max_dis ),
@@ -120,23 +127,79 @@ Etable::Etable(
 
 {
 
+	dimension_etable_arrays();
+	initialize_from_input_atomset( atom_set_in );
+	calculate_nblist_distance_thresholds( options );
+	read_alternate_parameter_set( atom_set_in, alternate_parameter_set );
+	calculate_hydrogen_atom_reach();
+	initialize_carbontypes_to_linearize_fasol();
+	make_pairenergy_table();
+}
+
+void
+Etable::dimension_etable_arrays()
+{
 	// size the arrays
-	ljatr_.dimension(  etable_disbins, n_atomtypes, n_atomtypes );
-	ljrep_.dimension(  etable_disbins, n_atomtypes, n_atomtypes );
-	solv1_.dimension(  etable_disbins, n_atomtypes, n_atomtypes );
-	solv2_.dimension(  etable_disbins, n_atomtypes, n_atomtypes );
-	dljatr_.dimension( etable_disbins, n_atomtypes, n_atomtypes );
-	dljrep_.dimension( etable_disbins, n_atomtypes, n_atomtypes );
-	dsolv_.dimension(  etable_disbins, n_atomtypes, n_atomtypes );
-	dsolv1_.dimension( etable_disbins, n_atomtypes, n_atomtypes );
+	if ( ! basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] )
+	{
+		ljatr_.dimension(  etable_disbins, n_atomtypes_, n_atomtypes_ );
+		ljrep_.dimension(  etable_disbins, n_atomtypes_, n_atomtypes_ );
+		solv1_.dimension(  etable_disbins, n_atomtypes_, n_atomtypes_ );
+		solv2_.dimension(  etable_disbins, n_atomtypes_, n_atomtypes_ );
+		dljatr_.dimension( etable_disbins, n_atomtypes_, n_atomtypes_ );
+		dljrep_.dimension( etable_disbins, n_atomtypes_, n_atomtypes_ );
+		dsolv_.dimension(  etable_disbins, n_atomtypes_, n_atomtypes_ );
+		dsolv1_.dimension( etable_disbins, n_atomtypes_, n_atomtypes_ );
+	}
 
-	lj_radius_.resize( n_atomtypes, 0.0 );
-	lj_wdepth_.resize( n_atomtypes, 0.0 );
-	lk_dgfree_.resize( n_atomtypes, 0.0 );
-	lk_lambda_.resize( n_atomtypes, 0.0 );
-	lk_volume_.resize( n_atomtypes, 0.0 );
+	lj_radius_.resize( n_atomtypes_, 0.0 );
+	lj_wdepth_.resize( n_atomtypes_, 0.0 );
+	lk_dgfree_.resize( n_atomtypes_, 0.0 );
+	lk_lambda_.resize( n_atomtypes_, 0.0 );
+	lk_volume_.resize( n_atomtypes_, 0.0 );
 
-	for ( int i=1; i<= n_atomtypes; ++i ) {
+	lj_sigma_.dimension( n_atomtypes_ + 1, n_atomtypes_ + 1 );
+	lj_r6_coeff_.dimension( n_atomtypes_ + 1, n_atomtypes_ + 1 );
+	lj_r12_coeff_.dimension( n_atomtypes_ + 1, n_atomtypes_ + 1 );
+	lj_switch_intercept_.dimension( n_atomtypes_ + 1, n_atomtypes_ + 1 );
+	lj_switch_slope_.dimension( n_atomtypes_ + 1, n_atomtypes_ + 1 );
+	lk_inv_lambda2_.dimension( n_atomtypes_ );
+	lk_coeff_.dimension( n_atomtypes_, n_atomtypes_ );
+	lk_min_dis2sigma_value_.dimension( n_atomtypes_ + 1, n_atomtypes_ + 1 );
+
+	//lj_minima.dimension( n_atomtypes_, n_atomtypes_ );
+	//lj_vals_at_minima.dimension( n_atomtypes_, n_atomtypes_ );
+
+	//ljatr_spline_xlo_xhi.dimension( n_atomtypes_, n_atomtypes_ );
+	//ljatr_spline_parameters.dimension( n_atomtypes_, n_atomtypes_ );
+
+	//ljrep_extra_repulsion.dimension( n_atomtypes_, n_atomtypes_ );
+	/// Set up the ExtraQuadraticRepulsion parameters for everything: by default, add in no extra repulsion
+	//ExtraQuadraticRepulsion exrep;
+	//exrep.xlo = 0; exrep.xhi = 0; exrep.slope = 0; exrep.extrapolated_slope = 0; exrep.ylo = 0;
+	//ljrep_extra_repulsion = exrep;
+
+	//fasol_spline_close_start_end.dimension( n_atomtypes_, n_atomtypes_ );
+	//fasol_spline_close.dimension( n_atomtypes_, n_atomtypes_ );
+	//fasol_spline_far.dimension( n_atomtypes_, n_atomtypes_ );
+
+	//ljrep_from_negcrossing.dimension( n_atomtypes_, n_atomtypes_ );
+	//ljrep_from_negcrossing = false;
+
+	//ljatr_final_weight.dimension( n_atomtypes_, n_atomtypes_); ljatr_final_weight = 1.0;
+	//fasol_final_weight.dimension( n_atomtypes_, n_atomtypes_); fasol_final_weight = 1.0;
+
+	Size n_unique_pair_types = n_atomtypes_ * n_atomtypes_ - ( n_atomtypes_ * (n_atomtypes_ - 1 ) / 2 );
+	analytic_parameters.resize( n_unique_pair_types );
+
+}
+
+void
+Etable::initialize_from_input_atomset(
+	chemical::AtomTypeSetCAP atom_set_in
+)
+{
+	for ( int i=1; i<= n_atomtypes_; ++i ) {
 		lj_radius_[i] = (*atom_set_in)[i].lj_radius();
 		lj_wdepth_[i] = (*atom_set_in)[i].lj_wdepth();
 		lk_dgfree_[i] = (*atom_set_in)[i].lk_dgfree();
@@ -151,13 +214,20 @@ Etable::Etable(
 
 	/// APL -- hydrophobic desolvation only; turn off hydrophilic desolvation penalty
 	if ( option[ score::no_lk_polar_desolvation ] ) {
-		for ( int i=1; i<= n_atomtypes; ++i ) {
+		for ( int i=1; i<= n_atomtypes_; ++i ) {
 			if ( (*atom_set_)[i].is_acceptor() || (*atom_set_)[i].is_donor() ) {
 				lk_dgfree_[i] = 0.0;
 			}
 		}
 	}
 
+}
+
+void
+Etable::calculate_nblist_distance_thresholds(
+	EtableOptions const & options
+)
+{
 	max_heavy_hydrogen_cutoff_    = option[ score::fa_Hatr ] ? max_dis_ : max_non_hydrogen_lj_radius_ + max_hydrogen_lj_radius_;
 	max_hydrogen_hydrogen_cutoff_ = option[ score::fa_Hatr ] ? max_dis_ : 2 * max_hydrogen_lj_radius_;
 	nblist_dis2_cutoff_XX_        = (options.max_dis+1.5) * (options.max_dis+1.5);
@@ -168,7 +238,14 @@ Etable::Etable(
 	//<< max_hydrogen_lj_radius_ << " " << max_heavy_hydrogen_cutoff_ << " "
 	//<< max_hydrogen_hydrogen_cutoff_ << std::endl;
 
+}
 
+void
+Etable::read_alternate_parameter_set(
+	chemical::AtomTypeSetCAP atom_set_in,
+	std::string const alternate_parameter_set
+)
+{
 	if ( alternate_parameter_set.size() ) {
 		/// uses alternate paramers
 		std::string param_name;
@@ -177,37 +254,42 @@ Etable::Etable(
 		if ( atom_set_in->has_extra_parameter( param_name ) ) {
 			TR << "Using alternate parameters: " << param_name << " in Etable construction." << std::endl;
 			Size const index( atom_set_in->extra_parameter_index( param_name ) );
-			for ( int i=1; i<= n_atomtypes; ++i ) lj_radius_[i] = (*atom_set_in)[i].extra_parameter( index );
+			for ( int i=1; i<= n_atomtypes_; ++i ) lj_radius_[i] = (*atom_set_in)[i].extra_parameter( index );
 		}
 
 		param_name = "LJ_WDEPTH_"+alternate_parameter_set;
 		if ( atom_set_in->has_extra_parameter( param_name ) ) {
 			TR << "Using alternate parameters: " << param_name << " in Etable construction."<<std::endl;
 			Size const index( atom_set_in->extra_parameter_index( param_name ) );
-			for ( int i=1; i<= n_atomtypes; ++i ) lj_wdepth_[i] = (*atom_set_in)[i].extra_parameter( index );
+			for ( int i=1; i<= n_atomtypes_; ++i ) lj_wdepth_[i] = (*atom_set_in)[i].extra_parameter( index );
 		}
 
 		param_name = "LK_DGFREE_"+alternate_parameter_set;
 		if ( atom_set_in->has_extra_parameter( param_name ) ) {
 			TR << "Using alternate parameters: " << param_name << " in Etable construction."<<std::endl;
 			Size const index( atom_set_in->extra_parameter_index( param_name ) );
-			for ( int i=1; i<= n_atomtypes; ++i ) lk_dgfree_[i] = (*atom_set_in)[i].extra_parameter( index );
+			for ( int i=1; i<= n_atomtypes_; ++i ) lk_dgfree_[i] = (*atom_set_in)[i].extra_parameter( index );
 		}
 
 		param_name = "LK_LAMBDA_"+alternate_parameter_set;
 		if ( atom_set_in->has_extra_parameter( param_name ) ) {
 			TR << "Using alternate parameters: " << param_name << " in Etable construction." << std::endl;
 			Size const index( atom_set_in->extra_parameter_index( param_name ) );
-			for ( int i=1; i<= n_atomtypes; ++i ) lk_lambda_[i] = (*atom_set_in)[i].extra_parameter( index );
+			for ( int i=1; i<= n_atomtypes_; ++i ) lk_lambda_[i] = (*atom_set_in)[i].extra_parameter( index );
 		}
 
 		param_name = "LK_VOLUME_"+alternate_parameter_set;
 		if ( atom_set_in->has_extra_parameter( param_name ) ) {
 			TR << "Using alternate parameters: " << param_name << " in Etable construction." << std::endl;
 			Size const index( atom_set_in->extra_parameter_index( param_name ) );
-			for ( int i=1; i<= n_atomtypes; ++i ) lk_volume_[i] = (*atom_set_in)[i].extra_parameter( index );
+			for ( int i=1; i<= n_atomtypes_; ++i ) lk_volume_[i] = (*atom_set_in)[i].extra_parameter( index );
 		}
 	}
+}
+
+void
+Etable::calculate_hydrogen_atom_reach()
+{
 
 	Real const MAX_H_HEAVY_DISTANCE = 1.35; // FIX THIS SULFUR to hydrogen bond length.
 
@@ -219,7 +301,15 @@ Etable::Etable(
 	hydrogen_interaction_cutoff2_ = basic::options::option[ score::fa_Hatr ] ?
 		std::pow( 2 * MAX_H_HEAVY_DISTANCE + max_dis_, 2 ) : max_lj_rep_for_h * max_lj_rep_for_h;
 
-	make_pairenergy_table();
+}
+
+void
+Etable::initialize_carbontypes_to_linearize_fasol()
+{
+	carbon_types.push_back( atom_set_->atom_type_index("CH1") );
+	carbon_types.push_back( atom_set_->atom_type_index("CH2") );
+	carbon_types.push_back( atom_set_->atom_type_index("CH3") );
+	carbon_types.push_back( atom_set_->atom_type_index("aroC") );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -262,29 +352,19 @@ Etable::make_pairenergy_table()
 	using namespace basic::options::OptionKeys;
 
 	//  locals
-	Real dis2,dis,dis2_step;
-	Real atrE,d_atrE,repE,d_repE,solvE1,solvE2,dsolvE1,dsolvE2;
 
+	ObjexxFCL::FArray1D< Real > ljatr( etable_disbins );
+	ObjexxFCL::FArray1D< Real > dljatr( etable_disbins);
+	ObjexxFCL::FArray1D< Real > ljrep( etable_disbins );
+	ObjexxFCL::FArray1D< Real > dljrep( etable_disbins );
+	ObjexxFCL::FArray1D< Real > fasol1( etable_disbins );
+	ObjexxFCL::FArray1D< Real > fasol2( etable_disbins );
+	ObjexxFCL::FArray1D< Real > dfasol( etable_disbins );
+	ObjexxFCL::FArray1D< Real > dfasol1( etable_disbins );
 
-	//  pre-calculated coefficients for high-speed potential calculation
-	//    computed in initialization function
-	//  Note: +1 atom type is a disulfide-bonded cysteine
-	//        (only if you are using the old disulfide hack)
-	FArray2D< Real > lj_sigma( n_atomtypes + 1, n_atomtypes + 1 );
-	FArray2D< Real > lj_r6_coeff( n_atomtypes + 1, n_atomtypes + 1 );
-	FArray2D< Real > lj_r12_coeff( n_atomtypes + 1, n_atomtypes + 1 );
-	FArray2D< Real > lj_switch_intercept( n_atomtypes + 1, n_atomtypes + 1 );
-	FArray2D< Real > lj_switch_slope( n_atomtypes + 1, n_atomtypes + 1 );
-	FArray1D< Real > lk_inv_lambda2( n_atomtypes );
-	FArray2D< Real > lk_coeff( n_atomtypes, n_atomtypes );
-	FArray2D< Real > lk_min_dis2sigma_value( n_atomtypes + 1, n_atomtypes + 1 );
-
-	// parameters to calculate the damping at max_dis range
-	Real damping_thresh_dis2;
-	int damping_disbins, normal_disbins;
-	Real dljatr_damp, dljrep_damp, dsolv1_damp, dsolv2_damp;
-	Real intercept_ljatr_damp, intercept_ljrep_damp;
-	Real intercept_solv1_damp, intercept_solv2_damp;
+	/// The index defining the range [1..normal_disbins] for which the
+	/// energy function is calculated analytically.
+	int const normal_disbins = calculate_normal_disbins();
 
 	//  etable parameters
 	TR << "Starting energy table calculation" << std::endl;
@@ -315,119 +395,105 @@ Etable::make_pairenergy_table()
 	 std::pow( lj_switch_sigma2dis, 7 ) );
 
 	//  initialize non-distance dependent coefficients
-	precalc_etable_coefficients(lj_sigma, lj_r6_coeff, lj_r12_coeff,
-	 lj_switch_intercept, lj_switch_slope, lk_inv_lambda2, lk_coeff,
-	 lk_min_dis2sigma_value );
+	precalc_etable_coefficients(lj_sigma_, lj_r6_coeff_, lj_r12_coeff_,
+	 lj_switch_intercept_, lj_switch_slope_, lk_inv_lambda2_, lk_coeff_,
+	 lk_min_dis2sigma_value_ );
 
 	//  calc distance**2 step per bin
-	dis2_step = 1.0 / bins_per_A2;
+	Real const dis2_step = 1.0 / bins_per_A2;
 
-	//  get the number of damping disbins
-	if ( add_long_range_damping ) {
-		Real const dif = max_dis_ - long_range_damping_length;
-		damping_thresh_dis2 = max_dis2 - ( dif * dif );
-		damping_disbins = static_cast< int >( damping_thresh_dis2*bins_per_A2 );
-		normal_disbins = etable_disbins-damping_disbins;
-	} else {
-		normal_disbins = etable_disbins;
-	}
+
+	int const slim( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] );
 
 	//  ctsa - step through distance**2 bins and calculate potential
-	for ( int atype1 = 1, atype_end = n_atomtypes; atype1 <= atype_end; ++atype1 ) {
+	for ( int atype1 = 1, atype_end = n_atomtypes_; atype1 <= atype_end; ++atype1 ) {
 		//check to make sure that atype1 is not virtual. This is important later
 		bool atype1_virtual(atom_type(atype1).is_virtual());
-		for ( int atype2 = 1; atype2 <= atype_end; ++atype2 ) {
+		for ( int atype2 = slim ? atype1 : 1 ; atype2 <= atype_end; ++atype2 ) {
 			bool atype2_virtual(atom_type(atype2).is_virtual());
+
 			//  ctsa - normal bins have their lj and lk values
 			//  calculated analytically
 			for ( int disbin = 1; disbin <= normal_disbins; ++disbin ) {
-				dis2 = ( disbin - 1 ) * dis2_step;
-				if(atype1_virtual || atype2_virtual){
-					ljatr_(disbin,atype2,atype1) = 0;
-					dljatr_(disbin,atype2,atype1) = 0;
-					ljrep_(disbin,atype2,atype1) = 0;
-					dljrep_(disbin,atype2,atype1) = 0;
-					solv1_(disbin,atype2,atype1) = 0;
-					solv2_(disbin,atype2,atype1) = 0;
-					dsolv_(disbin,atype2,atype1) = 0;
-					dsolv1_(disbin,atype2,atype1) = 0;
+				Real const dis2 = ( disbin - 1 ) * dis2_step;
+				if( atype1_virtual || atype2_virtual ) {
+					ljatr(  disbin) = 0;
+					dljatr( disbin) = 0;
+					ljrep(  disbin) = 0;
+					dljrep( disbin) = 0;
+					fasol1( disbin) = 0;
+					fasol2( disbin) = 0;
+					dfasol( disbin) = 0;
+					dfasol1(disbin) = 0;
 				} else{
+					Real atrE,d_atrE,repE,d_repE,solvE1,solvE2,dsolvE1,dsolvE2;
 					calc_etable_value(dis2,atype1,atype2,atrE,d_atrE,repE,d_repE,solvE1,
-							solvE2,dsolvE1,dsolvE2,lj_sigma, lj_r6_coeff,lj_r12_coeff,
-							lj_switch_intercept,lj_switch_slope, lk_inv_lambda2,
-							lk_coeff, lk_min_dis2sigma_value);
+							solvE2,dsolvE1,dsolvE2,lj_sigma_, lj_r6_coeff_,lj_r12_coeff_,
+							lj_switch_intercept_,lj_switch_slope_, lk_inv_lambda2_,
+							lk_coeff_, lk_min_dis2sigma_value_ );
 
-					ljatr_(disbin,atype2,atype1) = atrE;
-					dljatr_(disbin,atype2,atype1) = d_atrE;
-					ljrep_(disbin,atype2,atype1) = repE;
-					dljrep_(disbin,atype2,atype1) = d_repE;
-					solv1_(disbin,atype2,atype1) = solvE1;
-					solv2_(disbin,atype2,atype1) = solvE2;
-					dsolv_(disbin,atype2,atype1) = dsolvE1 + dsolvE2;
-					dsolv1_(disbin,atype2,atype1) = dsolvE1;
+					ljatr(  disbin) = atrE;
+					dljatr( disbin) = d_atrE;
+					ljrep(  disbin) = repE;
+					dljrep( disbin) = d_repE;
+					fasol1( disbin) = solvE1;
+					fasol2( disbin) = solvE2;
+					dfasol( disbin) = dsolvE1 + dsolvE2;
+					dfasol1(disbin) = dsolvE1;
 				}
 			}
-
-			if ( !add_long_range_damping ) goto L456;
-
-			// ctsa - remaining bins damp to 0. on a linear path
-			dljatr_damp = -ljatr_(normal_disbins,atype2,atype1) /
-					long_range_damping_length;
-			dljrep_damp = -ljrep_(normal_disbins,atype2,atype1) /
-					long_range_damping_length;
-			dsolv1_damp = -solv1_(normal_disbins,atype2,atype1) /
-					long_range_damping_length;
-			dsolv2_damp = -solv2_(normal_disbins,atype2,atype1) /
-					long_range_damping_length;
-
-			intercept_ljatr_damp = -dljatr_damp*max_dis_;
-			intercept_ljrep_damp = -dljrep_damp*max_dis_;
-			intercept_solv1_damp = -dsolv1_damp*max_dis_;
-			intercept_solv2_damp = -dsolv2_damp*max_dis_;
-
-			for ( int disbin = normal_disbins+1; disbin <= etable_disbins; ++disbin ) {
-				dis2 = ( disbin - 1 ) * dis2_step;
-				dis = std::sqrt(dis2);
-
-				ljatr_(disbin,atype2,atype1) = intercept_ljatr_damp + dis *dljatr_damp;
-				ljrep_(disbin,atype2,atype1) = intercept_ljrep_damp + dis *dljrep_damp;
-				solv1_(disbin,atype2,atype1) = intercept_solv1_damp + dis *dsolv1_damp;
-				solv2_(disbin,atype2,atype1) = intercept_solv2_damp + dis *dsolv2_damp;
-
-				dljatr_(disbin,atype2,atype1) = dljatr_damp;
-				dljrep_(disbin,atype2,atype1) = dljrep_damp;
-				dsolv_(disbin,atype2,atype1)  = dsolv1_damp + dsolv2_damp;
-				dsolv1_(disbin,atype2,atype1) = dsolv1_damp;
+			// save these parameters for the analytic evaluation of the etable energy
+			if ( atype1 <= atype2 ) {
+				EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
+				p.maxd2 = safe_max_dis2;
+				p.ljrep_linear_ramp_d2_cutoff = std::pow( lj_switch_dis2sigma * lj_sigma_( atype1, atype2 ), 2); // ie dis / lj_sigma < lj_switch_d2sigma
+				p.lj_r6_coeff = lj_r6_coeff_( atype1, atype2 );
+				p.lj_r12_coeff = lj_r12_coeff_( atype1, atype2 );
+				p.lj_switch_intercept = lj_switch_intercept_( atype1, atype2 );
+				p.lj_switch_slope = lj_switch_slope_( atype1, atype2 );
+				p.lk_coeff1 = lk_coeff_( atype1, atype2 );
+				p.lk_coeff2 = lk_coeff_( atype2, atype1 );
+				p.lk_min_dis2sigma_value = lk_min_dis2sigma_value_( atype2, atype1 );
 			}
 
-			L456:
+			if ( add_long_range_damping ) {
+				damp_long_range( normal_disbins,
+					ljatr, dljatr, ljrep, dljrep,
+					fasol1, fasol2, dfasol, dfasol1 );
+			}
 
 			//  ctsa - set last bin of all values to zero
-			ljatr_(etable_disbins,atype2,atype1) = 0.0;
-			ljrep_(etable_disbins,atype2,atype1) = 0.0;
-			solv1_(etable_disbins,atype2,atype1) = 0.0;
-			solv2_(etable_disbins,atype2,atype1) = 0.0;
+			ljatr( etable_disbins) = 0.0;
+			ljrep( etable_disbins) = 0.0;
+			fasol1(etable_disbins) = 0.0;
+			fasol2(etable_disbins) = 0.0;
+
+			// throwing this all into one function
+			modify_pot_one_pair(
+				atype1,atype2,
+				ljatr, dljatr, ljrep, dljrep,
+				fasol1, fasol2, dfasol, dfasol1 );
+
+			if( !option[ score::no_smooth_etables ] ) {
+				smooth_etables_one_pair(
+					atype1, atype2,
+					ljatr, dljatr, ljrep, dljrep,
+					fasol1, fasol2, dfasol, dfasol1 );
+			}
+
+			zero_hydrogen_and_water_ljatr_one_pair(
+				atype1, atype2,
+				ljrep, ljatr, dljatr,
+				fasol1, fasol2, dfasol, dfasol1 );
+
+			if ( ! slim ) {
+				assign_parameters_to_full_etables(
+					atype1, atype2,
+					ljatr, dljatr, ljrep, dljrep,
+					fasol1, fasol2, dfasol, dfasol1 );
+			}
 		}
 	}
-
-	//db  the following function call modifies the potential in three ways:
-	//db     (1) the solvation energy for nonpolar atoms is held constant below
-	//db     4.2A to avoid shifting the minimum in the LJ potential.
-	//db     (2) a short range repulsion is added between backbone oxygens which are
-	//db     otherwise brought too close together by the LJatr.
-	//db     (3) the range of the repulsive interaction between non polar hydrogens is
-	//db     increased slightly.  (this is currently commented out because the effects
-	//db     on design have not been tested)
-
-	//db  all three modifications are based on inspection of the atom pair distributions
-	//db  after extensive refinement.
-	modify_pot();
-
-	if( !option[ score::no_smooth_etables ] ) smooth_etables();
-
-	// sheffler changed this to happen after modify_pot so that
-	// etable smoothing of Hydrogens and Waters will work properly
-	if ( !option[ score::fa_Hatr ] ) zero_hydrogen_and_water_ljatr();
 
 
 	////////////////////////////////////////////////////////
@@ -472,6 +538,134 @@ Etable::make_pairenergy_table()
 	TR << "Finished calculating energy tables." << std::endl;
 }
 
+int
+Etable::calculate_normal_disbins() const
+{
+	// parameters to calculate the damping at max_dis range
+	Real damping_thresh_dis2;
+	int damping_disbins, normal_disbins;
+
+	//  get the number of damping disbins
+	if ( add_long_range_damping ) {
+		Real const dif = max_dis_ - long_range_damping_length;
+		damping_thresh_dis2 = max_dis2 - ( dif * dif );
+		damping_disbins = static_cast< int >( damping_thresh_dis2*bins_per_A2 );
+		normal_disbins = etable_disbins-damping_disbins;
+	} else {
+		normal_disbins = etable_disbins;
+	}
+	return normal_disbins;
+}
+
+void
+Etable::damp_long_range(
+	int const normal_disbins,
+	ObjexxFCL::FArray1A< Real > ljatr,
+	ObjexxFCL::FArray1A< Real > dljatr,
+	ObjexxFCL::FArray1A< Real > ljrep,
+	ObjexxFCL::FArray1A< Real > dljrep,
+	ObjexxFCL::FArray1A< Real > fasol1,
+	ObjexxFCL::FArray1A< Real > fasol2,
+	ObjexxFCL::FArray1A< Real > dfasol,
+	ObjexxFCL::FArray1A< Real > dfasol1
+)
+{
+	ljatr.dimension(   etable_disbins );
+	dljatr.dimension(  etable_disbins );
+	ljrep.dimension(   etable_disbins );
+	dljrep.dimension(  etable_disbins );
+	fasol1.dimension(  etable_disbins );
+	fasol2.dimension(  etable_disbins );
+	dfasol.dimension(  etable_disbins );
+	dfasol1.dimension( etable_disbins );
+
+	// ctsa - remaining bins damp to 0. on a linear path
+	Real const dljatr_damp = -ljatr( normal_disbins) / long_range_damping_length;
+	Real const dljrep_damp = -ljrep( normal_disbins) / long_range_damping_length;
+	Real const dsolv1_damp = -fasol1(normal_disbins) / long_range_damping_length;
+	Real const dsolv2_damp = -fasol2(normal_disbins) / long_range_damping_length;
+
+	Real const intercept_ljatr_damp = -dljatr_damp*max_dis_;
+	Real const intercept_ljrep_damp = -dljrep_damp*max_dis_;
+	Real const intercept_solv1_damp = -dsolv1_damp*max_dis_;
+	Real const intercept_solv2_damp = -dsolv2_damp*max_dis_;
+
+	Real const dis2_step = 1.0 / bins_per_A2;
+
+	for ( int disbin = normal_disbins+1; disbin <= etable_disbins; ++disbin ) {
+		Real const dis2 = ( disbin - 1 ) * dis2_step;
+		Real const dis = std::sqrt(dis2);
+
+		ljatr( disbin) = intercept_ljatr_damp + dis *dljatr_damp;
+		ljrep( disbin) = intercept_ljrep_damp + dis *dljrep_damp;
+		fasol1(disbin) = intercept_solv1_damp + dis *dsolv1_damp;
+		fasol2(disbin) = intercept_solv2_damp + dis *dsolv2_damp;
+
+		dljatr( disbin) = dljatr_damp;
+		dljrep( disbin) = dljrep_damp;
+		dfasol( disbin) = dsolv1_damp + dsolv2_damp;
+		dfasol1(disbin) = dsolv1_damp;
+	}
+
+}
+
+void
+Etable::assign_parameters_to_full_etables(
+	Size atype1,
+	Size atype2,
+	ObjexxFCL::FArray1A< Real > ljatr,
+	ObjexxFCL::FArray1A< Real > dljatr,
+	ObjexxFCL::FArray1A< Real > ljrep,
+	ObjexxFCL::FArray1A< Real > dljrep,
+	ObjexxFCL::FArray1A< Real > fasol1,
+	ObjexxFCL::FArray1A< Real > fasol2,
+	ObjexxFCL::FArray1A< Real > dfasol,
+	ObjexxFCL::FArray1A< Real > dfasol1
+)
+{
+	assert( ljatr_.size() != 0 );
+
+	ljatr.dimension(   etable_disbins );
+	dljatr.dimension(  etable_disbins );
+	ljrep.dimension(   etable_disbins );
+	dljrep.dimension(  etable_disbins );
+	fasol1.dimension(  etable_disbins );
+	fasol2.dimension(  etable_disbins );
+	dfasol.dimension(  etable_disbins );
+	dfasol1.dimension( etable_disbins );
+
+	/// Take slices of the large arrays
+	ObjexxFCL::FArray1A< Real > ljatr_full(   ljatr_(  1, atype2, atype1 ) );
+	ObjexxFCL::FArray1A< Real > dljatr_full(  dljatr_( 1, atype2, atype1 ) );
+	ObjexxFCL::FArray1A< Real > ljrep_full(   ljrep_(  1, atype2, atype1 ) );
+	ObjexxFCL::FArray1A< Real > dljrep_full(  dljrep_( 1, atype2, atype1 ) );
+	ObjexxFCL::FArray1A< Real > fasol1_full(  solv1_(  1, atype2, atype1 ) );
+	ObjexxFCL::FArray1A< Real > fasol2_full(  solv2_(  1, atype2, atype1 ) );
+	ObjexxFCL::FArray1A< Real > dfasol_full(  dsolv_(  1, atype2, atype1 ) );
+	ObjexxFCL::FArray1A< Real > dfasol1_full( dsolv1_( 1, atype2, atype1 ) );
+
+	ljatr_full.dimension(   etable_disbins );
+	dljatr_full.dimension(  etable_disbins );
+	ljrep_full.dimension(   etable_disbins );
+	dljrep_full.dimension(  etable_disbins );
+	fasol1_full.dimension(  etable_disbins );
+	fasol2_full.dimension(  etable_disbins );
+	dfasol_full.dimension(  etable_disbins );
+	dfasol1_full.dimension( etable_disbins );
+
+	/// Slice assignment
+	ljatr_full   = ljatr;
+	dljatr_full  = dljatr;
+	ljrep_full   = ljrep;
+	dljrep_full  = dljrep;
+	fasol1_full  = fasol1;
+	fasol2_full  = fasol2;
+	dfasol_full  = dfasol;
+	dfasol1_full = dfasol1;
+
+	
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @begin modify_pot
@@ -499,6 +693,19 @@ Etable::make_pairenergy_table()
 ///$$$ because of long range LJatr interactions not compensated by interactions with solvent
 ///$$$ (which are of course missing)
 ///
+/// Comments from DB:
+///db  the following function call modifies the potential in three ways:
+///db     (1) the solvation energy for nonpolar atoms is held constant below
+///db     4.2A to avoid shifting the minimum in the LJ potential.
+///db     (2) a short range repulsion is added between backbone oxygens which are
+///db     otherwise brought too close together by the LJatr.
+///db     (3) the range of the repulsive interaction between non polar hydrogens is
+///db     increased slightly.  (this is currently commented out because the effects
+///db     on design have not been tested)
+//db  all three modifications are based on inspection of the atom pair distributions
+//db  after extensive refinement.
+
+///
 /// @global_read
 /// pdbstatistics_pack.h:  ljatr,dljatr,ljrep, dljrep, solv1,solv2,dsolv
 ///
@@ -512,10 +719,29 @@ Etable::make_pairenergy_table()
 /// @authors ctsa 10-2003
 ///
 /// @last_modified
-/////////////////////////////////////////////////////////////////////////////////
 void
-Etable::modify_pot()
+Etable::modify_pot_one_pair(
+	Size const atype1,
+	Size const atype2,
+	ObjexxFCL::FArray1A< Real > ljatr,
+	ObjexxFCL::FArray1A< Real > dljatr,
+	ObjexxFCL::FArray1A< Real > ljrep,
+	ObjexxFCL::FArray1A< Real > dljrep,
+	ObjexxFCL::FArray1A< Real > fasol1,
+	ObjexxFCL::FArray1A< Real > fasol2,
+	ObjexxFCL::FArray1A< Real > dfasol,
+	ObjexxFCL::FArray1A< Real > dfasol1
+)
 {
+
+	ljatr.dimension(   etable_disbins );
+	dljatr.dimension(  etable_disbins );
+	ljrep.dimension(   etable_disbins );
+	dljrep.dimension(  etable_disbins );
+	fasol1.dimension(  etable_disbins );
+	fasol2.dimension(  etable_disbins );
+	dfasol.dimension(  etable_disbins );
+	dfasol1.dimension( etable_disbins );
 
 	using namespace std;
 
@@ -528,139 +754,190 @@ Etable::modify_pot()
 
 	if(mod_hhrep) {
 		TR << "fullatom_setup: modifying h-h repulsion "
-							<< " hhrep center "   << c
-							<< " hhrep height "   << h
-							<< " hhrep width "    << w
-							<< " hhrep exponent " << e
-							<< std::endl;
+			<< " hhrep center "   << c
+			<< " hhrep height "   << h
+			<< " hhrep width "    << w
+			<< " hhrep exponent " << e
+			<< std::endl;
 	}
 
 	{
 
-			Real const bin = ( 4.2 * 4.2 / .05 ) + 1.0; //SGM Off-by-1 bug fix: Add + 1.0: Index 1 is at distance^2==0
+		Size const OCbb_idx = atom_set_->atom_type_index("OCbb");
+		if ( atype1 == OCbb_idx && atype2 == OCbb_idx ) {
+			ExtraQuadraticRepulsion OCbb_OCbb_exrep;
+			OCbb_OCbb_exrep.xlo = 2.1; OCbb_OCbb_exrep.xhi = 3.6; OCbb_OCbb_exrep.slope = 2;
+			//OCbb_OCbb_exrep.extrapolated_slope = 0; OCbb_OCbb_exrep.ylo = 4.5; // 2*(1.5)^2;
+			OCbb_OCbb_exrep.extrapolated_slope = -6; /* d/dx 2*( 3.6 - x )^2 at x=2.1 ==> -2*2*1.5 */ OCbb_OCbb_exrep.ylo = 4.5; // 2*(1.5)^2;
+			//ljrep_extra_repulsion( OCbb_idx, OCbb_idx ) = OCbb_OCbb_exrep;
+			EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
+			p.ljrep_extra_repulsion = OCbb_OCbb_exrep;
+		}
+
+
+		Real const bin = ( 4.2 * 4.2 / .05 ) + 1.0; //SGM Off-by-1 bug fix: Add + 1.0: Index 1 is at distance^2==0
 		int const ibin( static_cast< int >( bin ) );
  		for ( int k = 1; k <= etable_disbins; ++k ) {
  			Real const dis = std::sqrt( ( k - 1 ) * .05f ); //SGM Off-by-1 bug fix: k -> ( k - 1 )
 
-
 			// if( !SMOOTH_ETABLES ) {
-				utility::vector1<int> carbon_types;
-				carbon_types.push_back( atom_set_->atom_type_index("CH1") );
-				carbon_types.push_back( atom_set_->atom_type_index("CH2") );
-				carbon_types.push_back( atom_set_->atom_type_index("CH3") );
-				carbon_types.push_back( atom_set_->atom_type_index("aroC") );
-				if ( dis < 4.2 ) {
-					for ( int i = 1, i_end = carbon_types.size(); i <= i_end; ++i ) {
-						for ( int j = 1, j_end = carbon_types.size(); j <= j_end; ++j ) {
-							int const ii = carbon_types[i];
-							int const jj = carbon_types[j];
-							solv1_(k,jj,ii) = solv1_(ibin,jj,ii);
-							solv1_(k,ii,jj) = solv1_(ibin,ii,jj); // Why is this duplicated?
-							solv2_(k,jj,ii) = solv2_(ibin,jj,ii);
-							solv2_(k,ii,jj) = solv2_(ibin,ii,jj); // Why is this duplicated?
-							dsolv_(k,jj,ii) = 0.0;
-							dsolv_(k,ii,jj) = 0.0; // Why is this duplicated?
-							dsolv1_(k,ii,jj) = 0.0;
-							dsolv1_(k,jj,ii) = 0.0; // Why is this duplicated?
-						}
-					}
+			if ( dis < 4.2 ) {
+				bool at1iscarbon(false), at2iscarbon(false);
+				for ( Size i = 1; i <= carbon_types.size(); ++i ) { at1iscarbon |= (atype1 == carbon_types[i] ); }
+				for ( Size i = 1; i <= carbon_types.size(); ++i ) { at2iscarbon |= (atype2 == carbon_types[i] ); }
+				if ( at1iscarbon && at2iscarbon ) {
+					fasol1(  k ) = fasol1( ibin );
+					fasol2(  k ) = fasol2( ibin );
+					dfasol(  k ) = 0.0;
+					dfasol1( k ) = 0.0;
 				}
-			// }
-
-//   push carbonyl oxygens (in beta sheets) apart.  a proxy for the missing
-//   electrostatic repulsion needed to counteract the LJatr which pulls the oxyens
-//   together
-			int const OCbb_idx = atom_set_->atom_type_index("OCbb");
-			if ( dis <= 3.6 ) {
-				Real const fac = std::max( dis - 3.6, -1.5 );
-// 				Real const fac = std::max( dis - 3.6f, -1.5f );
-				ljrep_(k,OCbb_idx,OCbb_idx) += 2 * ( fac * fac );
-				dljrep_(k,OCbb_idx,OCbb_idx) += 4 * fac;
 			}
-//  the following gives peak at 2.4 in 22 and 23 interactions. maybe push out a
-//  bit further.  (this is commented out because effects on design have not been
-//  tested)
+				//   push carbonyl oxygens (in beta sheets) apart.  a proxy for the missing
+				//   electrostatic repulsion needed to counteract the LJatr which pulls the oxyens
+				//   together
+			if ( dis <= 3.6 ) {
+				if ( atype1 == OCbb_idx && atype2 == OCbb_idx ) {
+					Real const fac = std::max( dis - 3.6, -1.5 );
+					//std::cout << "adding extra repulsion " << dis << " " << 2*fac*fac << " + " << ljrep_(k,OCbb_idx,OCbb_idx) <<  std::endl;
+					//Real const fac = std::max( dis - 3.6f, -1.5f );
+					ljrep(  k ) += 2 * ( fac * fac );
+					dljrep( k ) += 4 * fac;
+				}
+			}
+
+			//  the following gives peak at 2.4 in 22 and 23 interactions. maybe push out a
+			//  bit further.  (this is commented out because effects on design have not been
+			//  tested)
 
 			// use one half of a single term polynomial
 			// as the repulsive term for apolar hydrogens (types 23 & 24)
 
-// 			if( mod_hhrep ) {
-// 				if( dis < c ) {
-// 					for ( int j = 23; j <= 24; ++j ) {
-// 						for ( int kk = 23; kk <= 24; ++kk ) {
-// 							ljrep_(k,j,kk)  = h * pow( min(0.0f, (dis-c)/w ), e );//  +
-// 							dljrep_(k,j,kk) = h * e / w * pow( min(0.0f, dis-c)/w, e-1 ) ;//  +
-// 						}
-// 					}
-// 				}
-// 			}
+			// 			if( mod_hhrep ) {
+			// 				if( dis < c ) {
+			// 					for ( int j = 23; j <= 24; ++j ) {
+			// 						for ( int kk = 23; kk <= 24; ++kk ) {
+			// 							ljrep_(k,j,kk)  = h * pow( min(0.0f, (dis-c)/w ), e );//  +
+			// 							dljrep_(k,j,kk) = h * e / w * pow( min(0.0f, dis-c)/w, e-1 ) ;//  +
+			// 						}
+			// 					}
+			// 				}
+			// 			}
 
 		} // end  for ( int k = 1; k <= etable_disbins; ++k ) {
 
 
 	} //Objexx:SGM Extra {} scope is a VC++ work-around
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// calculate repulsive energy (ljrep and dljrep) for residues which have been marked as REPLONLY residue types
-//
-	//TR << "setting up REPLONLY residues to zero" << std::endl;
-	for ( int at1 = 1; at1 <= n_atomtypes; at1++ ){
-		for ( int at2 = 1; at2 <= n_atomtypes; at2++ ){
-			if ( at1 == atom_set_->atom_type_index( "REPLS" ) || at2 == atom_set_->atom_type_index( "REPLS" ) || at2 == atom_set_->atom_type_index( "HREPS" ) || at1 == atom_set_->atom_type_index( "HREPS" )){  
-				for ( int i = 1; i <= etable_disbins; i++ ){
- 					ljatr_(i,at1,at2) = 0.0;
-	 				dljatr_(i,at1,at2) = 0.0;
-					solv1_(i,at1,at2) = 0.0;
-					solv2_(i,at1,at2) = 0.0; 
-					dsolv_(i,at1,at2) = 0.0; 
-				}      
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// zero out the attractive and solvation energies for the REPLS and HREPS atom types
+	//
+	//	TR << "setting up REPLONLY residues to zero" << std::endl;
+	Size repls_idx = atom_set_->atom_type_index( "REPLS" );
+	Size hreps_idx = atom_set_->atom_type_index( "HREPS" );
+	if ( atype1 == repls_idx || atype2 == repls_idx || atype1 == hreps_idx || atype2 == hreps_idx ) {
+		Size last_rep_bin( 0 );
+		for ( int i = 1; i <= etable_disbins; i++ ){
+			ljatr(   i ) = 0.0;
+			dljatr(  i ) = 0.0;
+			fasol1(  i ) = 0.0;
+			fasol2(  i ) = 0.0;
+			dfasol(  i ) = 0.0;
+			dfasol1( i ) = 0.0;
+			if ( last_rep_bin == 0 && ljrep( i ) == 0.0 ) {
+				last_rep_bin = i;
 			}
-		}      
+		}
+		//std::cout << "zeroing ljatr_final_weight " << (*atom_set_)[at1].name() << " " << (*atom_set_)[at2].name() << std::endl;
+		//ljrep_from_negcrossing( atype1, atype2 ) = true;
+		//ljatr_final_weight(     atype1, atype2 ) = 0.0;
+		//fasol_final_weight(     atype1, atype2 ) = 0.0;
+		EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
+		p.ljrep_from_negcrossing = true;
+		// record the minimum value as the bin after the last value at which the repulsive energy is positive.
+		p.lj_minimum = std::sqrt( ( last_rep_bin - 1 ) * 1.0 / bins_per_A2 );
+		p.maxd2 = p.lj_minimum*p.lj_minimum; // also set this value as the maximum distance for which the energy should be evaluated
+		p.ljatr_final_weight = 0.0;
+		p.fasol_final_weight = 0.0;
 	}
 }
 
+
 void
-Etable::smooth_etables()
+Etable::smooth_etables_one_pair(
+	Size const atype1,
+	Size const atype2,
+	ObjexxFCL::FArray1A< Real > ljatr,
+	ObjexxFCL::FArray1A< Real > dljatr,
+	ObjexxFCL::FArray1A< Real > ljrep,
+	ObjexxFCL::FArray1A< Real > dljrep,
+	ObjexxFCL::FArray1A< Real > fasol1,
+	ObjexxFCL::FArray1A< Real > fasol2,
+	ObjexxFCL::FArray1A< Real > dfasol,
+	ObjexxFCL::FArray1A< Real > dfasol1
+)
 {
 	using namespace numeric::interpolation;
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	ljatr.dimension(   etable_disbins );
+	dljatr.dimension(  etable_disbins );
+	ljrep.dimension(   etable_disbins );
+	dljrep.dimension(  etable_disbins );
+	fasol1.dimension(  etable_disbins );
+	fasol2.dimension(  etable_disbins );
+	dfasol.dimension(  etable_disbins );
+	dfasol1.dimension( etable_disbins );
 
 	FArray1D<Real> dis(etable_disbins);
 	for(int i = 1; i <= etable_disbins; ++i) {
 		dis(i) = sqrt( ( i - 1 ) * 1.0 / bins_per_A2 );
 	}
 	FArray1D<int> bin_of_dis(100);
-  for(int i = 1; i <= 100; ++i) {
-    float d = ((float)i)/10.0;
-    bin_of_dis(i) = (int)( d*d * bins_per_A2 + 1 );
-  }
+	for(int i = 1; i <= 100; ++i) {
+		float d = ((float)i)/10.0;
+		bin_of_dis(i) = (int)( d*d * bins_per_A2 + 1 );
+	}
+	//FArray2D< int > minima_bin_indices( n_atomtypes_, n_atomtypes_ );
+	int minima_bin_index = 0;
 
 	//////////////////////////////////////////////////////////////////
 	// 1) change ljatr / ljrep split so that scaling is smooth
 	//////////////////////////////////////////////////////////////////
-	TR << "smooth_etable: changing atr/rep split to bottom of energy well" << std::endl;
-	for( int at1 = 1; at1 <= n_atomtypes; ++at1 ) {
-		for( int at2 = 1; at2 <= n_atomtypes; ++at2 ) {
+	if ( atype1 == 1 && atype2 == 1 ) {
+		TR << "smooth_etable: changing atr/rep split to bottom of energy well" << std::endl;
+	}
 
-			// find ljatr min
-			core::Real min_atr = 0.0;
-			int which_min = -1;
-			for(int i = 1; i <= etable_disbins; ++i) {
-				if ( ljatr_(i,at1,at2) < min_atr ) {
-					min_atr = ljatr_(i,at1,at2);
-					which_min = i;
-				}
-			}
-			// for dis below ljatr min, transfer ljatr to ljrep
-			if( min_atr < 0.0 ) {
-				for( int i = 1; i <= which_min; ++i ) {
-					 ljrep_(i,at1,at2) += ljatr_(i,at1,at2) - min_atr;
-					 ljatr_(i,at1,at2) -= ljatr_(i,at1,at2) - min_atr; // = min_atr;
-					dljrep_(i,at1,at2) += dljatr_(i,at1,at2);
-					dljatr_(i,at1,at2) -= dljatr_(i,at1,at2); // = 0;
-				}
-			}
-
+	// find ljatr min
+	core::Real min_atr = 0;
+	int which_min = -1;
+	for(int i = 1; i <= etable_disbins; ++i) {
+		if ( ljatr(i) < min_atr ) {
+			min_atr = ljatr(i);
+			which_min = i;
+		}
+	}
+	if ( which_min != -1 ) {
+		minima_bin_index = which_min;
+		//lj_minima(atype1,atype2) = dis( which_min );
+		//lj_vals_at_minima(atype1, atype2) = min_atr;
+		EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
+		p.lj_minimum = dis( which_min );
+		p.lj_val_at_minimum = min_atr;
+	} else {
+		//lj_minima(atype1,atype2) = max_dis_;
+		//lj_vals_at_minima( atype1,atype2) = 0;
+		EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
+		p.lj_minimum = max_dis_;
+		p.lj_val_at_minimum = 0;
+	}
+	// for dis below ljatr min, transfer ljatr to ljrep
+	if( min_atr < 0.0 ) {
+		for( int i = 1; i <= which_min; ++i ) {
+			ljrep(i)  += ljatr(i) - min_atr;
+			ljatr(i)  -= ljatr(i) - min_atr; // = min_atr;
+			dljrep(i) += dljatr(i);
+			dljatr(i) -= dljatr(i); // = 0;
 		}
 	}
 
@@ -668,88 +945,172 @@ Etable::smooth_etables()
 	///////////////////////////////////////////////////////////////////
 	// 2) spline smooth ljatr/ljrep at fa_max_dis cut
 	//////////////////////////////////////////////////////////////////
- 	TR << "smooth_etable: spline smoothing lj etables (maxdis = " << max_dis_ << ")" << std::endl;
- 	for( int at1 = 1; at1 <= n_atomtypes; ++at1 ) {
- 		for( int at2 = 1; at2 <= n_atomtypes; ++at2 ) {
+ 	if ( atype1 == 1 && atype2 == 1 ) {
+		TR << "smooth_etable: spline smoothing lj etables (maxdis = " << max_dis_ << ")" << std::endl;
+	}
 
- 			int start = bin_of_dis( (int)((max_dis_-1.5)*10.0) );//arg_max_first(dljatr_(1,at1,at2),1,600);
+	/// APL - 2012/6/14 - Take the bin maximum of the LJ-radii sum and (w/famxd=6) 4.5 A.  This change
+	/// effects the interaction of Br/Br and Br/I.
+	int start = std::max( bin_of_dis( (int)( (max_dis_-1.5) * 10.0) ), minima_bin_index );
+	Real lbx  = dis(start);
+	Real ubx  = dis(etable_disbins);
+	Real lby  =  ljatr(start);
+	Real lbdy = dljatr(start);
+	Real uby  = 0.0;
+	Real ubdy = 0.0;
+	//ljatr_spline_xlo_xhi(atype1,atype2) = std::make_pair( lbx, ubx );
+	{
+		EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
+		p.ljatr_spline_xlo = lbx;
+		p.ljatr_spline_xhi = ubx;
+	}
+	//std::cout << (*atom_set_)[at1].name() << " " << (*atom_set_)[at2].name() << " lj_minima: " << lj_minima(at1,at2) << " lj_vals_at_minima " << lj_vals_at_minima(at1,at2);
+	//std::cout << " lbx " << lbx << " ubx " << ubx << std::endl;
 
-			Real lbx  =     dis(start);
-			Real lby  =  ljatr_(start,at1,at2);
-			Real lbdy = dljatr_(start,at1,at2);
-			Real ubx  = dis(etable_disbins);
-			Real uby  = 0.0;
-			Real ubdy = 0.0;
-			SplineGenerator gen( lbx, lby, lbdy, ubx, uby, ubdy );
+	SplineGenerator gen( lbx, lby, lbdy, ubx, uby, ubdy );
 
-		 	if( option[ score::etable_lr ].user() ) {
-				Real modx = option[ score::etable_lr ]();
-				Real mody = lbx * 0.5;
-				gen.add_known_value( modx, mody );
-			}
+	/// APL -- Disabling this behavior since I think it is unused and if it is used, then it would
+	/// Prevent the analytic etable evaluation code I'm working on
+	//if( option[ score::etable_lr ].user() ) {
+	//		Real modx = option[ score::etable_lr ]();
+	//	Real mody = lbx * 0.5;
+	//	gen.add_known_value( modx, mody );
+	//}
 
-			InterpolatorOP interp( gen.get_interpolator() );
-			for( int i = start; i <= etable_disbins; ++i ) {
-				interp->interpolate( dis(i), ljatr_(i,at1,at2), dljatr_(i,at1,at2) );
-			}
+	InterpolatorOP interp( gen.get_interpolator() );
+	for( int i = start; i <= etable_disbins; ++i ) {
+		interp->interpolate( dis(i), ljatr(i), dljatr(i) );
+	}
 
- 		}
- 	}
+	// Save the spline parameters for the analytic evaluation
+	SimpleInterpolator * sinterp = dynamic_cast< SimpleInterpolator * > (interp() );
+	if ( ! sinterp ) {
+		utility_exit_with_message( "Etable created non-simple-interpolator in smooth_etables()" );
+	}
+	{
+		SplineParameters sparams;
+		sparams.ylo  = sinterp->y()[ 1 ];
+		sparams.yhi  = sinterp->y()[ 2 ];
+		sparams.y2lo = sinterp->ddy()[ 1 ];
+		sparams.y2hi = sinterp->ddy()[ 2 ];
+		//ljatr_spline_parameters( atype1, atype2 ) = sparams;
+		EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
+		p.ljatr_spline_parameters = sparams;
+	}
 
 	/////////////////////////////////////////////////////////////////////////////
-	// 2) spline smooth solv1/solv2 at fa_max_dis cut && and first switchpoint
+	// 3) spline smooth solv1/solv2 at fa_max_dis cut && and first switchpoint
 	/////////////////////////////////////////////////////////////////////////////
-	TR << "smooth_etable: spline smoothing solvation etables (max_dis = " << max_dis_ << ")" << std::endl;
-	for( int at1 = 1; at1 <= n_atomtypes; ++at1 ) {
-		for( int at2 = 1; at2 <= n_atomtypes; ++at2 ) {
+ 	if ( atype1 == 1 && atype2 == 1 ) {
+		TR << "smooth_etable: spline smoothing solvation etables (max_dis = " << max_dis_ << ")" << std::endl;
+	}
 
-			int SWTCH = 1;
-			for( SWTCH=1; SWTCH <= etable_disbins; ++SWTCH) {
-				// std::cerr << SWTCH << "," << at1 << "," << at2 << "," << solv1_(SWTCH,at1,at2) << " ";
-				if( (solv1_(SWTCH,at1,at2) != solv1_(1,at1,at2)) ||
-						(solv2_(SWTCH,at1,at2) != solv2_(1,at1,at2)) ) {
-					break;
-				}
-			}
-			if ( SWTCH > etable_disbins ) continue;
+	/// These two values do not depend on at1 or at2
+	int const S2 = bin_of_dis( (int)((max_dis_-1.5)*10.0) ); // start of spline 2
+	int const E2 = etable_disbins; // end os spline 2
 
-			int const S1 = std::max(1,SWTCH - 30);
-			int const E1 = std::min(SWTCH + 20,406);
-			int const S2 = bin_of_dis( (int)((max_dis_-1.5)*10.0) );
-			int const E2 = etable_disbins;
-			// std::cerr << "smooth solv " << S1 << " " << E1 << " " << S2 << " " << E2 << std::endl;
+	/// Save these values for the splines
+	fasol_spline_far_xlo = dis( S2 );
+	fasol_spline_far_xhi = dis( E2 );
+	fasol_spline_far_diff_xhi_xlo = fasol_spline_far_xhi - fasol_spline_far_xlo;
+	fasol_spline_far_diff_xhi_xlo_inv = 1 / fasol_spline_far_diff_xhi_xlo;
 
-			Real dsolv1e1 = (solv1_(E1+1,at1,at2)-solv1_(E1  ,at1,at2))/(dis(E1+1)-dis(E1  ));
-			Real dsolv1s2 = (solv1_(S2  ,at1,at2)-solv1_(S2-1,at1,at2))/(dis(S2  )-dis(S2-1));
-			Real dsolv2e1 = (solv2_(E1+1,at1,at2)-solv2_(E1  ,at1,at2))/(dis(E1+1)-dis(E1  ));
-			Real dsolv2s2 = (solv2_(S2  ,at1,at2)-solv2_(S2-1,at1,at2))/(dis(S2  )-dis(S2-1));
-
-			SplineGenerator gen11( dis(S1), solv1_(S1,at1,at2), 0.0     ,	dis(E1), solv1_(E1,at1,at2), dsolv1e1 );
-			SplineGenerator gen21( dis(S1), solv2_(S1,at1,at2), 0.0     ,	dis(E1), solv2_(E1,at1,at2), dsolv2e1 );
-			SplineGenerator gen12( dis(S2), solv1_(S2,at1,at2), dsolv1s2,	dis(E2), solv1_(E2,at1,at2), 0.0      );
-			SplineGenerator gen22( dis(S2), solv2_(S2,at1,at2), dsolv2s2,	dis(E2), solv2_(E2,at1,at2), 0.0      );
-
-			InterpolatorOP interp11( gen11.get_interpolator() );
-			InterpolatorOP interp21( gen21.get_interpolator() );
-			for( int i = S1; i <= E1; ++i ) {
-				Real d1,d2;
-				interp11->interpolate( dis(i), solv1_(i,at1,at2), d1 );
-				interp21->interpolate( dis(i), solv2_(i,at1,at2), d2 );
-				dsolv_(i,at1,at2) = d1+d2;
-				dsolv1_(i,at1,at2) = d1;
-			}
-
-			InterpolatorOP interp12( gen12.get_interpolator() );
-			InterpolatorOP interp22( gen22.get_interpolator() );
-			for( int i = S2; i <= E2; ++i ) {
-				Real d1,d2;
-				interp12->interpolate( dis(i), solv1_(i,at1,at2), d1 );
-				interp22->interpolate( dis(i), solv2_(i,at1,at2), d2 );
-				dsolv_(i,at1,at2)  = d1+d2;
-				dsolv1_(i,at1,at2) = d1;
-			}
-
+	int SWTCH = 1;
+	for( SWTCH=1; SWTCH <= etable_disbins; ++SWTCH) {
+		// std::cerr << SWTCH << "," << at1 << "," << at2 << "," << solv1_(SWTCH,at1,at2) << " ";
+		if( (fasol1(SWTCH) != fasol1(1)) ||
+			(fasol2(SWTCH) != fasol2(1)) ) {
+			break;
 		}
+	}
+	if ( SWTCH > etable_disbins ) {
+		// treat the range [0,famaxdis] as a constant (of zero) -- everything below
+		// the distance fasol_spline_close_start_end(at1,at2).first is evaluated as
+		// the constant fasol_spline_close(at1,at2).ylo.
+		//fasol_spline_close_start_end( atype1, atype2 ) = std::make_pair( fasol_spline_far_xhi, fasol_spline_far_xhi+1.0 );
+		SplineParameters sp; sp.ylo=0; sp.yhi=0; sp.y2lo = 0; sp.y2hi = 0;
+		//fasol_spline_close( atype1, atype2 ) = sp;
+		EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
+		p.fasol_spline_close = sp;
+		p.fasol_spline_close_start = fasol_spline_far_xhi;
+		p.fasol_spline_close_end   = fasol_spline_far_xhi+1.0;
+		return;
+	}
+
+	int const S1 = std::max(1,SWTCH - 30);
+	int const E1 = std::min(SWTCH + 20,406);
+	//std::cout << (*atom_set_)[atype1].name() << " " << (*atom_set_)[atype2].name() << " smooth solv " << S1 << " " << E1 << " " << S2 << " " << E2 << std::endl;
+
+	Real dsolv1e1 = (fasol1(E1+1)-fasol1(E1  ))/(dis(E1+1)-dis(E1  ));
+	Real dsolv1s2 = (fasol1(S2  )-fasol1(S2-1))/(dis(S2  )-dis(S2-1));
+	Real dsolv2e1 = (fasol2(E1+1)-fasol2(E1  ))/(dis(E1+1)-dis(E1  ));
+	Real dsolv2s2 = (fasol2(S2  )-fasol2(S2-1))/(dis(S2  )-dis(S2-1));
+
+	SplineGenerator gen11( dis(S1), fasol1(S1), 0.0     , dis(E1), fasol1(E1), dsolv1e1 );
+	SplineGenerator gen21( dis(S1), fasol2(S1), 0.0     , dis(E1), fasol2(E1), dsolv2e1 );
+	SplineGenerator gen12( dis(S2), fasol1(S2), dsolv1s2, dis(E2), fasol1(E2), 0.0      );
+	SplineGenerator gen22( dis(S2), fasol2(S2), dsolv2s2, dis(E2), fasol2(E2), 0.0      );
+
+	InterpolatorOP interp11( gen11.get_interpolator() );
+	InterpolatorOP interp21( gen21.get_interpolator() );
+	for( int i = S1; i <= E1; ++i ) {
+		Real d1,d2;
+		interp11->interpolate( dis(i), fasol1(i), d1 );
+		interp21->interpolate( dis(i), fasol2(i), d2 );
+		dfasol(i) = d1+d2;
+		dfasol1(i) = d1;
+	}
+
+	InterpolatorOP interp12( gen12.get_interpolator() );
+	InterpolatorOP interp22( gen22.get_interpolator() );
+	for( int i = S2; i <= E2; ++i ) {
+		Real d1,d2;
+		interp12->interpolate( dis(i), fasol1(i), d1 );
+		interp22->interpolate( dis(i), fasol2(i), d2 );
+		dfasol(i)  = d1+d2;
+		dfasol1(i) = d1;
+	}
+
+	/// Save the spline parameters
+	/// Represent the energy as simply the sum of the two splines: the polynomials may simply be added together.
+	{
+		SplineGenerator genclose( dis(S1), fasol1(S1) + fasol2(S1), 0, dis(E2), fasol1(E1)+fasol2(E1), dfasol(E1) );
+		InterpolatorOP interp_close( genclose.get_interpolator() );
+
+		SimpleInterpolator * sinterp_close = dynamic_cast< SimpleInterpolator * > (interp_close() );
+
+		if ( ! sinterp_close ) {
+			utility_exit_with_message( "Etable created non-simple-interpolator in smooth_etables()" );
+		}
+		SplineParameters sparams;
+		sparams.ylo  = sinterp_close->y()[ 1 ];
+		sparams.yhi  = sinterp_close->y()[ 2 ];
+		sparams.y2lo = sinterp_close->ddy()[ 1 ];
+		sparams.y2hi = sinterp_close->ddy()[ 2 ];
+
+		EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
+		p.fasol_spline_close = sparams;
+		p.fasol_spline_close_start = dis(S1);
+		p.fasol_spline_close_end = dis(E1);
+	}
+
+	{
+		// 2. far spline
+		// APL Smoother derivatives -- create a spline where the derivatives are actually correct
+		SplineGenerator genfar( dis(S2), fasol1(S2) + fasol2(S2), dfasol(S2), dis(E2), 0.0, 0.0 );
+		InterpolatorOP interp_far( genfar.get_interpolator() );
+
+		SimpleInterpolator * sinterp_far = dynamic_cast< SimpleInterpolator * > (interp_far() );
+		if ( ! sinterp_far ) {
+			utility_exit_with_message( "Etable created non-simple-interpolator in smooth_etables()" );
+		}
+		SplineParameters sparams;
+		sparams.ylo  = sinterp_far->y()[ 1 ];
+		sparams.yhi  = sinterp_far->y()[ 2 ];
+		sparams.y2lo = sinterp_far->ddy()[ 1 ];
+		sparams.y2hi = sinterp_far->ddy()[ 2 ];
+		EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
+		p.fasol_spline_far = sparams;
 	}
 
 }
@@ -786,8 +1147,8 @@ Etable::output_etable(
 	using namespace ObjexxFCL;
 
 	out << label << " " << etable_disbins << endl;
-	for(int at1 = 1; at1 <= n_atomtypes; at1++) {
-		for(int at2 = 1; at2 <= n_atomtypes; at2++) {
+	for(int at1 = 1; at1 <= n_atomtypes_; at1++) {
+		for(int at2 = 1; at2 <= n_atomtypes_; at2++) {
 			out << at1 << " "
 					<< at2 << " ";
 			for(int bin = 1; bin <= etable_disbins; bin++) {
@@ -940,7 +1301,7 @@ Etable::precalc_etable_coefficients(
 	// locals
 	Real sigma,sigma6,sigma12,wdepth;
 	Real inv_lambda;
-	FArray1D< Real > lk_coeff_tmp( n_atomtypes );
+	FArray1D< Real > lk_coeff_tmp( n_atomtypes_ );
 	Real thresh_dis,inv_thresh_dis2,x_thresh;
 	//int dstype;
 	//int const atype_sulfur = { 16 };
@@ -948,7 +1309,7 @@ Etable::precalc_etable_coefficients(
 	// coefficient for lk solvation
 
 	// include follows locals so that data statements can initialize included arrays
-	for ( int i = 1, e = n_atomtypes; i <= e; ++i ) {
+	for ( int i = 1, e = n_atomtypes_; i <= e; ++i ) {
 		inv_lambda = 1.0/lk_lambda(i);
 		//inv_lambda = 1.0/atom_type(i).lk_lambda();
 		lk_inv_lambda2(i) = inv_lambda * inv_lambda;
@@ -957,7 +1318,7 @@ Etable::precalc_etable_coefficients(
 		//atom_type(i).lk_dgfree() * inv_lambda;
 	}
 
-	for ( int i = 1, e = n_atomtypes; i <= e; ++i ) {
+	for ( int i = 1, e = n_atomtypes_; i <= e; ++i ) {
 		for ( int j = i; j <= e; ++j ) {
 
 			sigma = Wradius * ( lj_radius(i) + lj_radius(j) );
@@ -1143,7 +1504,7 @@ Etable::precalc_etable_coefficients(
 /////////////////////////////////////////////////////////////////////////////////
 void
 Etable::calc_etable_value(
-	Real & dis2,
+	Real dis2,
 	int & atype1,
 	int & atype2,
 	Real & atrE,
@@ -1201,8 +1562,8 @@ Etable::calc_etable_value(
 	//    when conditions are met
 // 	if ( ( atype1 == atype_sulfur && atype2 == atype_sulfur ) &&
 // 	 dis < disulfide_dis_thresh ) {
-// 		xtra_atype1 = n_atomtypes + 1;
-// 		xtra_atype2 = n_atomtypes + 1;
+// 		xtra_atype1 = n_atomtypes_ + 1;
+// 		xtra_atype2 = n_atomtypes_ + 1;
 // 	} else {
 		xtra_atype1 = atype1;
 		xtra_atype2 = atype2;
@@ -1274,25 +1635,51 @@ Etable::calc_etable_value(
 
 
 void
-Etable::zero_hydrogen_and_water_ljatr()
+Etable::zero_hydrogen_and_water_ljatr_one_pair(
+	Size const atype1,
+	Size const atype2,
+	ObjexxFCL::FArray1A< Real > ljrep,
+	ObjexxFCL::FArray1A< Real > ljatr,
+	ObjexxFCL::FArray1A< Real > dljatr,
+	ObjexxFCL::FArray1A< Real > fasol1,
+	ObjexxFCL::FArray1A< Real > fasol2,
+	ObjexxFCL::FArray1A< Real > dfasol,
+	ObjexxFCL::FArray1A< Real > dfasol1
+)
 {
-	int const HOH = atom_set_->atom_type_index("HOH");
-	for( int at1 = 1; at1 <= n_atomtypes; ++at1 ) {
-		for( int at2 = 1; at2 <= n_atomtypes; ++at2 ) {
+	ljrep.dimension(  etable_disbins );
+	ljatr.dimension(  etable_disbins );
+	dljatr.dimension( etable_disbins );
+	fasol1.dimension( etable_disbins );
+	fasol2.dimension( etable_disbins );
+	dfasol.dimension( etable_disbins );
+	dfasol1.dimension( etable_disbins );
 
-			// cbk  don't give hydrogens or water attractive lennard-jones
-			// cbk  this is so very short range cut-offs can be used
-			//if ( ( at1 >= 22 && at2 <= 26 ) || ( at2 >= 22 && at2 <= 26 ) ) { // BUG!  introduced in r19802
-			if( atom_type(at1).is_hydrogen() || atom_type(at2).is_hydrogen() || at1 == HOH || at2 == HOH ) {
-				for( int i = 1; i <= etable_disbins; ++i ) {
-		 			 ljatr_(i,at1,at2) = 0.0;
-					dljatr_(i,at1,at2) = 0.0;
-				}
+	Size const HOH = atom_set_->atom_type_index("HOH");
+	if ( atype1 == HOH || atype2 == HOH || atom_type(atype1).is_hydrogen() || atom_type(atype2).is_hydrogen() ) {
+
+		// cbk  don't give hydrogens or water attractive lennard-jones
+		// cbk  this is so very short range cut-offs can be used
+
+		Size first_zero_ljrep = 0;
+		for( int i = 1; i <= etable_disbins; ++i ) {
+			ljatr(i) = 0.0;
+			dljatr(i) = 0.0;
+			fasol1(i) = fasol2(i) = dfasol(i) = dfasol1(i) = 0.0; // APL TEMP.  Disable solvation term for hydrogen atoms
+			if ( first_zero_ljrep == 0 && ljrep(i) == 0.0 ) {
+				first_zero_ljrep = i;
 			}
-
 		}
+		//std::cout << "zeroing ljatr_final_weight " << (*atom_set_)[at1].name() << " " << (*atom_set_)[at2].name() << std::endl;
+		//ljatr_final_weight(atype1,atype2) = 0.0;
+		EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
+		p.ljatr_final_weight = 0.0;
+		p.fasol_final_weight = 0.0;
+		p.maxd2 = ( first_zero_ljrep - 1 ) * 1.0 / bins_per_A2;
+		p.hydrogen_interaction = true;
+		/// Disable fasol for hydrogens? Technically, fasol doesn't get disabled for hydrogens! fasol_final_weight(at1,at2) = 0.0;
+		/// This is surely a bug.
 	}
-
 }
 
 /// @brief Returns the maximum lj radius for any non-hydrogen
@@ -1310,6 +1697,39 @@ Etable::max_hydrogen_lj_radius() const
 {
 	return max_hydrogen_lj_radius_;
 }
+
+void Etable::interpolated_analytic_etable_evaluation(
+	core::conformation::Atom const & at1,
+	core::conformation::Atom const & at2,
+	core::Real & lj_atrE,
+	core::Real & lj_repE,
+	core::Real & fa_solE,
+	Real & dis2
+) const
+{
+	Real ljatrE_lo, ljrepE_lo, fasolE_lo;
+	Real ljatrE_hi, ljrepE_hi, fasolE_hi;
+	core::conformation::Atom at2_lo( at2 ), at2_hi( at2 );
+	dis2 = at1.xyz().distance_squared( at2.xyz() );
+	Real d2dummy;
+	int dis2bin = (int) ( dis2 * bins_per_A2 );
+
+	Real dis2lo = Real(dis2bin) / bins_per_A2;
+	Real dis2hi = Real(dis2bin  + 1 )/bins_per_A2;
+	at2_lo.xyz( Vector( std::sqrt( dis2lo ), 0, 0 ));
+	at2_hi.xyz( Vector( std::sqrt( dis2hi ), 0, 0 ));
+
+	analytic_etable_evaluation( at1, at2_lo, ljatrE_lo, ljrepE_lo, fasolE_lo, d2dummy );
+	analytic_etable_evaluation( at1, at2_hi, ljatrE_hi, ljrepE_hi, fasolE_hi, d2dummy );
+
+	Real alpha = (dis2*bins_per_A2 - dis2bin);
+	//std::cout << "debug " << dis2 << " " << dis2lo << " " << dis2hi << " " << alpha << " " << 1-alpha << " " << ljatrE_lo << " " << ljatrE_hi << std::endl;
+
+	lj_atrE = alpha * ljatrE_hi + (1-alpha) * ljatrE_lo;
+	lj_repE = alpha * ljrepE_hi + (1-alpha) * ljrepE_lo;
+	fa_solE = alpha * fasolE_hi + (1-alpha) * fasolE_lo;
+}
+
 
 
 

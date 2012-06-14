@@ -56,13 +56,16 @@ RNA_FullAtomVDW_BasePhosphateCreator::create_energy_method(
 
 	etable::Etable const & etable_in= *( ScoringManager::get_instance()->etable( options.etable_type() ) );
 
-	etable::EtableEnergy & etable_energy_in= (*(new etable::EtableEnergy( etable_in, options ) ) );
+	etable::TableLookupEtableEnergy etable_energy_in( etable_in, options );
 
 
 	//RNA_FullAtomVDW_BasePhosphateCreator is friend of BaseEtableEnergy.hh and hence can access its private variables.
-	etable_energy_in.st_atr_=fa_intra_RNA_base_phos_atr;
-	etable_energy_in.st_rep_=fa_intra_RNA_base_phos_rep;
-	etable_energy_in.st_sol_=fa_intra_RNA_base_phos_sol;
+	// No.  Don't go around declaring other classes your friends.  That's just pisses on everyone else's efforts to create
+	// an object oriented program.
+	etable_energy_in.intrares_evaluator().set_scoretypes(
+		fa_intra_RNA_base_phos_atr,
+		fa_intra_RNA_base_phos_rep,
+		fa_intra_RNA_base_phos_sol );
 
 	return new RNA_FullAtomVDW_BasePhosphate( etable_energy_in, etable_in);
 }
@@ -80,7 +83,7 @@ RNA_FullAtomVDW_BasePhosphateCreator::score_types_for_method() const {
 
 /// constructor
 RNA_FullAtomVDW_BasePhosphate::RNA_FullAtomVDW_BasePhosphate(
-	etable::EtableEnergy const & etable_energy_in,
+	etable::TableLookupEtableEnergy const & etable_energy_in,
 	etable::Etable const & etable_in
 ):
 	parent( new RNA_FullAtomVDW_BasePhosphateCreator ),
@@ -347,7 +350,7 @@ RNA_FullAtomVDW_BasePhosphate::eval_atom_derivative(
 
 		conformation::Atom const & atom2( rsd.atom( nbr_atomno ) );
 
-		Real const dE_dR_over_r= etable_energy_.eval_dE_dR_over_r( atom1, atom2, weights, f1, f2 );
+		Real const dE_dR_over_r= etable_energy_.intrares_evaluator().eval_dE_dR_over_r( atom1, atom2, weights, f1, f2 );
 
 		if ( dE_dR_over_r != 0.0 ) {
 			F1 += dE_dR_over_r * cp_weight * f1;

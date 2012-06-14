@@ -80,6 +80,9 @@ public:
 	void
 	etable_type( std::string const & type );
 
+	bool analytic_etable_evaluation() const { return analytic_etable_evaluation_; }
+	void analytic_etable_evaluation( bool setting ) { analytic_etable_evaluation_ = setting; }
+
 	///
 	std::string const &
 	unfolded_energies_type() const;
@@ -266,6 +269,7 @@ private:
 	// the assignment operator, the == comparison operator, and the show method in the .cc file!
 	/////////////////////////////////////////////////
 	std::string etable_type_;
+	bool analytic_etable_evaluation_;
 	std::string atom_vdw_atom_type_set_name_;
 	std::string unfolded_energies_type_;
 	MethodWeights method_weights_;

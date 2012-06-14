@@ -413,7 +413,7 @@ dump_clash_pdb(
 
 	// the neighbor/energy links
 	EnergyGraph & energy_graph( energies.energy_graph() );
-	EtableEnergy const etable_energy
+	TableLookupEtableEnergy const etable_energy
 		( *ScoringManager::get_instance()->etable( scorefxn.energy_method_options().etable_type() ),
 			scorefxn.energy_method_options() );
 
@@ -751,7 +751,7 @@ show_residue_residue_clashes(
 	using namespace conformation;
 	//using namespace scoring::hbonds;
 
-	EtableEnergy const etable_energy
+	TableLookupEtableEnergy const etable_energy
 		( *ScoringManager::get_instance()->etable( scorefxn.energy_method_options().etable_type() ),
 			scorefxn.energy_method_options() );
 
@@ -802,7 +802,7 @@ show_protein_DNA_interactions(
 
 	hbond_set.sort_by_weighted_energy();
 
-	EtableEnergy const etable_energy
+	TableLookupEtableEnergy const etable_energy
 		( *ScoringManager::get_instance()->etable( scorefxn.energy_method_options().etable_type() ),
 			scorefxn.energy_method_options() );
 	HackElecEnergy const elec_energy( scorefxn.energy_method_options() );

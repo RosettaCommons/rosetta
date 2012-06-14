@@ -37,6 +37,7 @@ namespace score { extern RealOptionKey const etable_lr; }
 namespace score { extern BooleanOptionKey const no_lk_polar_desolvation; }
 namespace score { extern StringOptionKey const input_etables; }
 namespace score { extern StringOptionKey const output_etables; }
+namespace score { extern BooleanOptionKey const analytic_etable_evaluation; }
 namespace score { extern RealOptionKey const rms_target; }
 namespace score { extern BooleanOptionKey const ramaneighbors; }
 namespace score { extern StringOptionKey const optH_weights; }

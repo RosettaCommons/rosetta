@@ -100,7 +100,7 @@ using core::scoring::ScoreFunction;
 using core::scoring::ScoringManager;
 using core::scoring::ScoreTypes;
 using core::scoring::TenANeighborGraph;
-using core::scoring::etable::EtableEnergy;
+using core::scoring::etable::TableLookupEtableEnergy;
 using core::scoring::hbonds::HBDonChemType;
 using core::scoring::hbonds::HBAccChemType;
 using core::scoring::hbonds::HBondTypeManager;
@@ -781,7 +781,7 @@ HBondFeatures::insert_hbond_lennard_jones_row(
 	Size const don_datmNum(don_res.atom_base(don_hatmNum));
 	Size const acc_batmNum(acc_res.atom_base(acc_atmNum));
 
-	EtableEnergy const etable_energy(
+	TableLookupEtableEnergy const etable_energy(
 		*ScoringManager::get_instance()->etable(
 			scfxn_->energy_method_options().etable_type() ),
 		scfxn_->energy_method_options() );

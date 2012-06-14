@@ -50,6 +50,15 @@ public:
 	/// @brief deserialize a json_spirit object to a Interpolator
 	virtual void deserialize(utility::json_spirit::mObject data);
 
+	/// @brief accessor for the x-values defining the interpolation knots
+	utility::vector1< Real > const & x()   const { return x_; }
+
+	/// @brief accessor for the y-values specified for each knot
+	utility::vector1< Real > const & y()   const { return y_; }
+
+	/// @brief accessors for the second derivative values specified for each knot
+	utility::vector1< Real > const & ddy() const { return ddy_; }
+
 private:
 
 	utility::vector1<Real> x_, y_, ddy_;

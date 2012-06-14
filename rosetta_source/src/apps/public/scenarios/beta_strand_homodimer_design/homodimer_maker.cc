@@ -219,7 +219,7 @@ HDmakerMover::bb_score(pose::Pose & pose, core::Size aligned_chain_num, core::sc
   // get instance of etable energy method
   core::scoring::methods::EnergyMethodOptions const & emo(scorefxn->energy_method_options());
   core::scoring::etable::Etable const & et(*(core::scoring::ScoringManager::get_instance()->etable(emo.etable_type())));
-  core::scoring::etable::EtableEnergy ete( et, emo );
+  core::scoring::etable::TableLookupEtableEnergy ete( et, emo );
 
   // iterate over both sets of atom and add into one emapvector
   //core::scoring::TwoBodyEMapVector tbemv;
@@ -240,7 +240,7 @@ HDmakerMover::bb_score(pose::Pose & pose, core::Size aligned_chain_num, core::sc
   if( pose.conformation().num_chains() >= 3){
       //core::scoring::TwoBodyEMapVector tbemv_all;
       core::scoring::EMapVector tbemv_all;
-      core::scoring::etable::EtableEnergy ete_all( et, emo );
+      core::scoring::etable::TableLookupEtableEnergy ete_all( et, emo );
       for ( Size ii = 1; ii <= chain1_bb_atoms.size(); ++ii ){
           for ( Size jj = 1; jj <= all_bb_atoms.size(); ++jj ) {
               //calc distr squared

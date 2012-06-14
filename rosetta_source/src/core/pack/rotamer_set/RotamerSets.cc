@@ -45,6 +45,7 @@
 
 // C++
 #include <fstream>
+#include <ctime>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.hh>
@@ -225,12 +226,12 @@ RotamerSets::build_rotamers(
 					else if ((*itr)->seqpos() == 1 && copies[jj] == 1  ){
 						cloneRes->copy_residue_connections( pose.residue(copies[jj]));
 					}
-					else if ( (*itr)->seqpos() == (int) pose.total_residue() && copies[jj] != (int) pose.total_residue() ){
+					else if ( (*itr)->seqpos() == pose.total_residue() && copies[jj] != (int) pose.total_residue() ){
 						if (cloneRes->has_variant_type("UPPER_TERMINUS")) cloneRes = core::pose::remove_variant_type_from_residue( *cloneRes, chemical::UPPER_TERMINUS, pose);
 						cloneRes->residue_connection_partner(1, copies[jj]-1, 2);
 						cloneRes->residue_connection_partner(2, copies[jj]+1, 1);
 					}
-					else if ( (*itr)->seqpos() == (int) pose.total_residue() && copies[jj] == (int) pose.total_residue() ){
+					else if ( (*itr)->seqpos() == pose.total_residue() && copies[jj] == (int) pose.total_residue() ){
 						cloneRes->copy_residue_connections( pose.residue(copies[jj]));
 					}
 					else {
@@ -394,6 +395,8 @@ RotamerSets::precompute_two_body_energies(
 	using namespace interaction_graph;
 	using namespace scoring;
 
+	std::clock_t starttime = clock();
+
 	// Two body energies
 	//scoring::EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 	for ( uint ii = 1; ii <= nmoltenres_; ++ ii )
@@ -469,6 +472,9 @@ RotamerSets::precompute_two_body_energies(
 			}
 		}
 	}
+
+	std::clock_t stoptime = clock();
+	std::cout << "Precompute rotamer pair energies took " << ((double) stoptime - starttime)/CLOCKS_PER_SEC << " seconds" << std::endl;
 }
 
 void

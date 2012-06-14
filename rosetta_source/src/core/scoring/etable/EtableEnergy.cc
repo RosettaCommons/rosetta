@@ -27,7 +27,11 @@
 #include <core/chemical/VariantType.hh>
 #include <core/pose/Pose.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+
 #include <utility/vector1.hh>
+
 
 
 namespace core {
@@ -41,7 +45,14 @@ methods::EnergyMethodOP
 EtableEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return new EtableEnergy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
+	/// The command line option needs to override the EnergyMethodOptions because an Etable initialized with
+	/// the analytic_etable_evaluation flag on will not have allocated the large etables necessary for the
+	/// TableLookupEtableEnergy class.
+	if ( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] || options.analytic_etable_evaluation() ) {
+		return new AnalyticEtableEnergy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
+	} else {
+		return new TableLookupEtableEnergy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
+	}
 }
 
 ScoreTypes
@@ -58,28 +69,45 @@ EtableEnergyCreator::score_types_for_method() const {
 
 
 /// construction with an etable
-EtableEnergy::EtableEnergy(
+TableLookupEtableEnergy::TableLookupEtableEnergy(
 	Etable const & etable_in,
 	methods::EnergyMethodOptions const & options
+)
+:
+	BaseEtableEnergy< TableLookupEtableEnergy > ( new EtableEnergyCreator, etable_in, options ),
+	intrares_evaluator_( etable_in ),
+	interres_evaluator_( etable_in )
+{
+	intrares_evaluator_.set_scoretypes( fa_intra_atr, fa_intra_rep, fa_intra_sol );
+	interres_evaluator_.set_scoretypes( fa_atr, fa_rep, fa_sol );
+}
+
+TableLookupEtableEnergy::TableLookupEtableEnergy(
+	TableLookupEtableEnergy const & src
 ) :
-	BaseEtableEnergy< EtableEnergy > ( new EtableEnergyCreator, etable_in, options, fa_atr, fa_rep, fa_sol ),
-	using_interres_scoretypes_( true )
+	BaseEtableEnergy< TableLookupEtableEnergy >( src ),
+	intrares_evaluator_( src.intrares_evaluator_ ),
+	interres_evaluator_( src.interres_evaluator_ )
 {
 }
 
+methods::EnergyMethodOP
+TableLookupEtableEnergy::clone() const {
+	return new TableLookupEtableEnergy( *this );
+}
 
 void
-EtableEnergy::setup_for_scoring_( pose::Pose const &pose, scoring::ScoreFunction const& ) const
+TableLookupEtableEnergy::setup_for_scoring_( pose::Pose const &pose, scoring::ScoreFunction const& ) const
 {
 	if (pose.total_residue()) {
-		if ( pose.residue(1).type().atom_type_set_ptr() != etable_.atom_set() ) {
+		if ( pose.residue(1).type().atom_type_set_ptr() != etable().atom_set() ) {
 			utility_exit_with_message( "Illegal attempt to score with non-identical atom set between pose and etable " );
 		}
 	}
 }
 
 bool
-EtableEnergy::defines_intrares_energy(
+TableLookupEtableEnergy::defines_intrares_energy(
 	EnergyMap const & weights
 ) const
 {
@@ -90,7 +118,7 @@ EtableEnergy::defines_intrares_energy(
 
 /// @brief
 void
-EtableEnergy::eval_intrares_energy(
+TableLookupEtableEnergy::eval_intrares_energy(
 	conformation::Residue const & res,
 	pose::Pose const & pose,
 	ScoreFunction const & sfxn,
@@ -105,21 +133,326 @@ EtableEnergy::eval_intrares_energy(
 	EnergyMap tbemap;
 	if ( pose.energies().use_nblist() ) return; // intraresidue atom pairs present in neighborlist, evaluated during finalize
 
-	if ( using_interres_scoretypes_ ) {
-		set_scoretypes( fa_intra_atr, fa_intra_rep, fa_intra_sol );
-		using_interres_scoretypes_ = false;
-	}
-	assert( rep_scoretype() == fa_intra_rep );
 	count_pair::CountPairFunctionOP cpfxn = get_intrares_countpair( res, pose, sfxn );
-	cpfxn->residue_atom_pair_energy( res, res, *this, tbemap );
-	emap[ fa_intra_atr ] = tbemap[ fa_intra_atr ];
-	emap[ fa_intra_rep ] = tbemap[ fa_intra_rep ];
-	emap[ fa_intra_sol ] = tbemap[ fa_intra_sol ];
+	//cpfxn->residue_atom_pair_energy( res, res, *this, tbemap );
+	intrares_evaluator_.residue_atom_pair_energy( res, res, *cpfxn, tbemap );
+	emap[ intrares_evaluator_.st_atr() ] = tbemap[ intrares_evaluator_.st_atr() ];
+	emap[ intrares_evaluator_.st_rep() ] = tbemap[ intrares_evaluator_.st_rep() ];
+	emap[ intrares_evaluator_.st_sol() ] = tbemap[ intrares_evaluator_.st_sol() ];
+}
+
+
+/// @details
+/// Version 2: apl - 2012/06/14 -- Etable smoothing change for LK sol.  Placing the
+///   start point for the spline that ramps the LJatr term to zero at the minimum of
+///   a) the VDW sum and b) (max_dis - 1.5), which, for famaxdis of 6 is 4.5 A.  This
+///   change effects the Br/Br and Br/I energies but no other atom-type pairs.
+core::Size
+TableLookupEtableEnergy::version() const
+{
+	return 2;
+	//return 1; // Initial versioning
+}
+
+
+/////////////////////// Analytic Etable Energy Evaluation /////////////////////////////////
+
+
+/// construction with an etable
+AnalyticEtableEnergy::AnalyticEtableEnergy(
+	Etable const & etable_in,
+	methods::EnergyMethodOptions const & options
+) :
+	BaseEtableEnergy< AnalyticEtableEnergy > ( new EtableEnergyCreator, etable_in, options ),
+	intrares_evaluator_( etable_in ),
+	interres_evaluator_( etable_in )
+{
+	intrares_evaluator_.set_scoretypes( fa_intra_atr, fa_intra_rep, fa_intra_sol );
+	interres_evaluator_.set_scoretypes( fa_atr, fa_rep, fa_sol );
+}
+
+AnalyticEtableEnergy::AnalyticEtableEnergy(
+	AnalyticEtableEnergy const & src
+) :
+	BaseEtableEnergy< AnalyticEtableEnergy >( src ),
+	intrares_evaluator_( src.intrares_evaluator_ ),
+	interres_evaluator_( src.interres_evaluator_ )
+{
+}
+
+methods::EnergyMethodOP
+AnalyticEtableEnergy::clone() const {
+	return new AnalyticEtableEnergy( *this );
+}
+
+void
+AnalyticEtableEnergy::setup_for_scoring_( pose::Pose const &pose, scoring::ScoreFunction const& ) const
+{
+	if (pose.total_residue()) {
+		if ( pose.residue(1).type().atom_type_set_ptr() != etable().atom_set() ) {
+			utility_exit_with_message( "Illegal attempt to score with non-identical atom set between pose and etable " );
+		}
+	}
+}
+
+bool
+AnalyticEtableEnergy::defines_intrares_energy(
+	EnergyMap const & weights
+) const
+{
+	return ( weights[ fa_intra_atr ] != 0 ||
+		weights[ fa_intra_rep ] != 0 ||
+		weights[ fa_intra_sol ] != 0 );
+}
+
+/// @brief
+void
+AnalyticEtableEnergy::eval_intrares_energy(
+	conformation::Residue const & res,
+	pose::Pose const & pose,
+	ScoreFunction const & sfxn,
+	EnergyMap & emap
+) const
+{
+	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
+	if ( res.has_variant_type( core::chemical::REPLONLY ) ){
+		return;
+	}
+
+	EnergyMap tbemap;
+	if ( pose.energies().use_nblist() ) return; // intraresidue atom pairs present in neighborlist, evaluated during finalize
+
+	count_pair::CountPairFunctionOP cpfxn = get_intrares_countpair( res, pose, sfxn );
+	//cpfxn->residue_atom_pair_energy( res, res, *this, tbemap );
+	intrares_evaluator_.residue_atom_pair_energy( res, res, *cpfxn, tbemap );
+	emap[ intrares_evaluator_.st_atr() ] = tbemap[ intrares_evaluator_.st_atr() ];
+	emap[ intrares_evaluator_.st_rep() ] = tbemap[ intrares_evaluator_.st_rep() ];
+	emap[ intrares_evaluator_.st_sol() ] = tbemap[ intrares_evaluator_.st_sol() ];
 }
 core::Size
-EtableEnergy::version() const
+AnalyticEtableEnergy::version() const
 {
-	return 1; // Initial versioning
+	return 2; // apl - 2012/06/14 -- analytic version kept in sync with table-based version.
+	// return 1; // Initial versioning
+}
+
+
+EtableEvaluator::EtableEvaluator( Etable const & etable ) :
+	atr_weight_( 1.0 ),
+	rep_weight_( 1.0 ),
+	sol_weight_( 1.0 ),
+	st_atr_( fa_atr ),
+	st_rep_( fa_rep ),
+	st_sol_( fa_sol ),
+	hydrogen_interaction_cutoff2_( etable.hydrogen_interaction_cutoff2() )
+{}
+
+EtableEvaluator::~EtableEvaluator() {}
+
+TableLookupEvaluator::TableLookupEvaluator(
+	Etable const & etable_in
+) :
+	EtableEvaluator( etable_in ),
+	ljatr_( etable_in.ljatr() ),
+	ljrep_( etable_in.ljrep() ),
+	solv1_( etable_in.solv1() ),
+	solv2_( etable_in.solv2() ),
+	dljatr_( etable_in.dljatr() ),
+	dljrep_( etable_in.dljrep() ),
+	dsolv_( etable_in.dsolv() ),
+	safe_max_dis2_( etable_in.get_safe_max_dis2() ),
+	etable_bins_per_A2_( etable_in.get_bins_per_A2() ),
+	dis2_step_( 1.0 / (Real) etable_bins_per_A2_ )
+{}
+
+TableLookupEvaluator::~TableLookupEvaluator() {}
+
+
+/// @details atom-pair-energy inline type resolution function
+void
+TableLookupEvaluator::residue_atom_pair_energy(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	count_pair::CountPairFunction const & cp,
+	EnergyMap & emap
+) const
+{
+	cp.residue_atom_pair_energy( rsd1, rsd2, *this, emap );
+}
+
+/// @details atom-pair-energy inline type resolution function
+void
+TableLookupEvaluator::residue_atom_pair_energy_sidechain_backbone(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	count_pair::CountPairFunction const & cp,
+	EnergyMap & emap
+) const
+{
+	cp.residue_atom_pair_energy_sidechain_backbone( rsd1, rsd2, *this, emap );
+}
+
+/// @details atom-pair-energy inline type resolution function
+void
+TableLookupEvaluator::residue_atom_pair_energy_sidechain_whole(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	count_pair::CountPairFunction const & cp,
+	EnergyMap & emap
+) const
+{
+	cp.residue_atom_pair_energy_sidechain_whole( rsd1, rsd2, *this, emap );
+}
+
+
+/// @details atom-pair-energy inline type resolution function
+void
+TableLookupEvaluator::residue_atom_pair_energy_backbone_backbone(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	count_pair::CountPairFunction const & cp,
+	EnergyMap & emap
+) const
+{
+	cp.residue_atom_pair_energy_backbone_backbone( rsd1, rsd2, *this, emap );
+}
+
+/// @details atom-pair-energy inline type resolution function
+void
+TableLookupEvaluator::residue_atom_pair_energy_sidechain_sidechain(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	count_pair::CountPairFunction const & cp,
+	EnergyMap & emap
+) const
+{
+	cp.residue_atom_pair_energy_sidechain_sidechain( rsd1, rsd2, *this, emap );
+}
+
+
+/// @details first level polymorphic type resolution function
+void
+TableLookupEvaluator::trie_vs_trie(
+	trie::RotamerTrieBase const & trie1,
+	trie::RotamerTrieBase const & trie2,
+	trie::TrieCountPairBase & cp,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+) const
+{
+	trie1.trie_vs_trie( trie2, cp, *this, pair_energy_table, temp_table );
+}
+
+/// @details first level polymorphic type resolution function
+void
+TableLookupEvaluator::trie_vs_path(
+	trie::RotamerTrieBase const & trie1,
+	trie::RotamerTrieBase const & trie2,
+	trie::TrieCountPairBase & cp,
+	utility::vector1< core::PackerEnergy > & pair_energy_vector,
+	utility::vector1< core::PackerEnergy > & temp_vector
+) const
+{
+	trie1.trie_vs_path( trie2, cp, *this, pair_energy_vector, temp_vector );
+}
+
+
+AnalyticEtableEvaluator::AnalyticEtableEvaluator( Etable const & etable ) :
+	EtableEvaluator( etable ),
+	etable_( etable ),
+	safe_max_dis2_( etable.get_safe_max_dis2() )
+{}
+
+AnalyticEtableEvaluator::~AnalyticEtableEvaluator() {}
+
+
+/// @details atom-pair-energy inline type resolution function
+void
+AnalyticEtableEvaluator::residue_atom_pair_energy(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	count_pair::CountPairFunction const & cp,
+	EnergyMap & emap
+) const
+{
+	cp.residue_atom_pair_energy( rsd1, rsd2, *this, emap );
+}
+
+/// @details atom-pair-energy inline type resolution function
+void
+AnalyticEtableEvaluator::residue_atom_pair_energy_sidechain_backbone(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	count_pair::CountPairFunction const & cp,
+	EnergyMap & emap
+) const
+{
+	cp.residue_atom_pair_energy_sidechain_backbone( rsd1, rsd2, *this, emap );
+}
+
+/// @details atom-pair-energy inline type resolution function
+void
+AnalyticEtableEvaluator::residue_atom_pair_energy_sidechain_whole(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	count_pair::CountPairFunction const & cp,
+	EnergyMap & emap
+) const
+{
+	cp.residue_atom_pair_energy_sidechain_whole( rsd1, rsd2, *this, emap );
+}
+
+
+/// @details atom-pair-energy inline type resolution function
+void
+AnalyticEtableEvaluator::residue_atom_pair_energy_backbone_backbone(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	count_pair::CountPairFunction const & cp,
+	EnergyMap & emap
+) const
+{
+	cp.residue_atom_pair_energy_backbone_backbone( rsd1, rsd2, *this, emap );
+}
+
+/// @details atom-pair-energy inline type resolution function
+void
+AnalyticEtableEvaluator::residue_atom_pair_energy_sidechain_sidechain(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	count_pair::CountPairFunction const & cp,
+	EnergyMap & emap
+) const
+{
+	cp.residue_atom_pair_energy_sidechain_sidechain( rsd1, rsd2, *this, emap );
+}
+
+
+
+/// @details first level polymorphic type resolution function
+void
+AnalyticEtableEvaluator::trie_vs_trie(
+	trie::RotamerTrieBase const & trie1,
+	trie::RotamerTrieBase const & trie2,
+	trie::TrieCountPairBase & cp,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+) const
+{
+	trie1.trie_vs_trie( trie2, cp, *this, pair_energy_table, temp_table );
+}
+
+/// @details first level polymorphic type resolution function
+void
+AnalyticEtableEvaluator::trie_vs_path(
+	trie::RotamerTrieBase const & trie1,
+	trie::RotamerTrieBase const & trie2,
+	trie::TrieCountPairBase & cp,
+	utility::vector1< core::PackerEnergy > & pair_energy_vector,
+	utility::vector1< core::PackerEnergy > & temp_vector
+) const
+{
+	trie1.trie_vs_path( trie2, cp, *this, pair_energy_vector, temp_vector );
 }
 
 

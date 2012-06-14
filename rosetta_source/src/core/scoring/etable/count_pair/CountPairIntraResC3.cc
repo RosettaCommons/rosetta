@@ -16,6 +16,8 @@
 #include <core/scoring/etable/count_pair/CountPairIntraResC3.hh>
 #include <core/scoring/etable/atom_pair_energy_inline.hh>
 
+#include <core/scoring/etable/EtableEnergy.hh>
+
 namespace core {
 namespace scoring {
 namespace etable {
@@ -49,7 +51,7 @@ void
 CountPairIntraResC3::residue_atom_pair_energy(
 	conformation::Residue const & res,
 	conformation::Residue const & ,
-	etable::EtableEnergy const & etable_energy,
+	etable::TableLookupEvaluator const & etable_energy,
 	EnergyMap & emap
 ) const
 {
@@ -61,7 +63,7 @@ void
 CountPairIntraResC3::residue_atom_pair_energy_sidechain_backbone(
 	conformation::Residue const & ,
 	conformation::Residue const & ,
-	etable::EtableEnergy const & ,
+	etable::TableLookupEvaluator const & ,
 	EnergyMap &
 ) const
 {
@@ -74,23 +76,19 @@ void
 CountPairIntraResC3::residue_atom_pair_energy_sidechain_whole(
 	conformation::Residue const & ,
 	conformation::Residue const & ,
-	etable::EtableEnergy const & ,
+	etable::TableLookupEvaluator const & ,
 	EnergyMap &
 ) const
 {
 	std::cerr << "Error: illegal call to CountPairIntraResC3::residue_atom_pair_energy_sidechain_whole" << std::endl;
 	utility_exit();
 }
-
-//XRW_B_T1
-/*
-
 
 void
 CountPairIntraResC3::residue_atom_pair_energy(
 	conformation::Residue const & res,
 	conformation::Residue const & ,
-	etable::CoarseEtableEnergy const & etable_energy,
+	etable::AnalyticEtableEvaluator const & etable_energy,
 	EnergyMap & emap
 ) const
 {
@@ -102,7 +100,7 @@ void
 CountPairIntraResC3::residue_atom_pair_energy_sidechain_backbone(
 	conformation::Residue const & ,
 	conformation::Residue const & ,
-	etable::CoarseEtableEnergy const & ,
+	etable::AnalyticEtableEvaluator const & ,
 	EnergyMap &
 ) const
 {
@@ -115,16 +113,13 @@ void
 CountPairIntraResC3::residue_atom_pair_energy_sidechain_whole(
 	conformation::Residue const & ,
 	conformation::Residue const & ,
-	etable::CoarseEtableEnergy const & ,
+	etable::AnalyticEtableEvaluator const & ,
 	EnergyMap &
 ) const
 {
 	std::cerr << "Error: illegal call to CountPairIntraResC3::residue_atom_pair_energy_sidechain_whole" << std::endl;
 	utility_exit();
 }
-
-*/
-//XRW_E_T1
 
 } // namespace count_pair
 } // namespace etable {

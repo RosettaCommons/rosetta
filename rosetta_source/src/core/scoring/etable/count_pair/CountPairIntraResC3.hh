@@ -69,7 +69,7 @@ public:
 	residue_atom_pair_energy(
 		conformation::Residue const & res1,
 		conformation::Residue const & res2,
-		etable::EtableEnergy const &,
+		etable::TableLookupEvaluator const &,
 		EnergyMap &
 	) const;
 
@@ -79,7 +79,7 @@ public:
 	residue_atom_pair_energy_sidechain_backbone(
 		conformation::Residue const &,
 		conformation::Residue const &,
-		etable::EtableEnergy const &,
+		etable::TableLookupEvaluator const &,
 		EnergyMap &
 	) const;
 
@@ -89,19 +89,16 @@ public:
 	residue_atom_pair_energy_sidechain_whole(
 		conformation::Residue const &,
 		conformation::Residue const &,
-		etable::EtableEnergy const &,
+		etable::TableLookupEvaluator const &,
 		EnergyMap &
 	) const;
-
-//XRW_B_T1
-/*
 
 	virtual
 	void
 	residue_atom_pair_energy(
 		conformation::Residue const & res1,
 		conformation::Residue const & res2,
-		etable::CoarseEtableEnergy const &,
+		etable::AnalyticEtableEvaluator const &,
 		EnergyMap &
 	) const;
 
@@ -111,7 +108,7 @@ public:
 	residue_atom_pair_energy_sidechain_backbone(
 		conformation::Residue const &,
 		conformation::Residue const &,
-		etable::CoarseEtableEnergy const &,
+		etable::AnalyticEtableEvaluator const &,
 		EnergyMap &
 	) const;
 
@@ -121,12 +118,10 @@ public:
 	residue_atom_pair_energy_sidechain_whole(
 		conformation::Residue const &,
 		conformation::Residue const &,
-		etable::CoarseEtableEnergy const &,
+		etable::AnalyticEtableEvaluator const &,
 		EnergyMap &
 	) const;
 
-*/
-//XRW_E_T1
 
 private:
 	utility::vector1< utility::vector1< int > > const & path_dists_;

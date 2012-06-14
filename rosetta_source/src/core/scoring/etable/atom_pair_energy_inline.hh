@@ -185,8 +185,7 @@ inline_residue_atom_pair_energy(
 			weight = 1.0;
 			path_dist = 0;
 			if(atom1_virtual || atom2_virtual){
-				etable_energy.virtual_atom_pair_energy(emap);
-
+				// NOOP! etable_energy.virtual_atom_pair_energy(emap);
 			}else{
 				if ( count_pair( i, j, weight, path_dist ) ) {
 					//							std::cout << "Atom Pair Energy: " << i << " with " << j << "   ";
@@ -257,7 +256,7 @@ inline_intraresidue_atom_pair_energy(
 			weight = 1.0;
 			path_dist = 0;
 			if(atom1_virtual || atom2_virtual){
-				etable_energy.virtual_atom_pair_energy(emap);
+				//etable_energy.virtual_atom_pair_energy(emap);
 			}else{
 
 			if ( count_pair( i, j, weight, path_dist ) ) {

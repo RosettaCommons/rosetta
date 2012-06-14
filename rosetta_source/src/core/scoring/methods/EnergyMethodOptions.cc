@@ -37,6 +37,7 @@ namespace methods {
 EnergyMethodOptions::EnergyMethodOptions():
 	// hard-wired default, but you can set this with etable_type( string )
 	etable_type_(FA_STANDARD_DEFAULT),
+	analytic_etable_evaluation_( false ),
 	atom_vdw_atom_type_set_name_(chemical::CENTROID), // can be set, see below
 	unfolded_energies_type_( UNFOLDED_SCORE12 ),
 	exclude_protein_protein_hack_elec_(false), // rosetta++ defaulted to true!
@@ -59,6 +60,7 @@ EnergyMethodOptions::EnergyMethodOptions():
 }
 
 void EnergyMethodOptions::initialize_from_options() {
+	analytic_etable_evaluation_ = basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ];
 	hackelec_max_dis_ = basic::options::option[basic::options::OptionKeys::score::hackelec_max_dis ]();
 	hackelec_min_dis_ = basic::options::option[basic::options::OptionKeys::score::hackelec_min_dis ]();
 	hackelec_die_ = basic::options::option[ basic::options::OptionKeys::score::hackelec_die ]();
@@ -76,28 +78,30 @@ EnergyMethodOptions::~EnergyMethodOptions() {}
 /// copy operator
 EnergyMethodOptions const &
 EnergyMethodOptions::operator=(EnergyMethodOptions const & src) {
-	etable_type_ = src.etable_type_;
-	atom_vdw_atom_type_set_name_ = src.atom_vdw_atom_type_set_name_;
-	unfolded_energies_type_ = src.unfolded_energies_type_;
-	method_weights_ = src.method_weights_;
-	ss_weights_ = src.ss_weights_;
-	exclude_protein_protein_hack_elec_ = src.exclude_protein_protein_hack_elec_;
-	exclude_monomer_hack_elec_ = src.exclude_monomer_hack_elec_;
-	hackelec_max_dis_ = src.hackelec_max_dis_;
-	hackelec_min_dis_ = src.hackelec_min_dis_;
-	hackelec_die_ = src.hackelec_die_;
-	hackelec_no_dis_dep_die_ = src.hackelec_no_dis_dep_die_;
-	exclude_DNA_DNA_ = src.exclude_DNA_DNA_;
-	hbond_options_ = new hbonds::HBondOptions( *(src.hbond_options_) );
-	cst_max_seq_sep_ = src.cst_max_seq_sep_;
-	bond_angle_central_atoms_to_score_ = src.bond_angle_central_atoms_to_score_;
-	bond_angle_residue_type_param_set_ = src.bond_angle_residue_type_param_set_;
-	cartbonded_len_ = src.cartbonded_len_;
-	cartbonded_ang_ = src.cartbonded_ang_;
-	cartbonded_tors_ = src.cartbonded_tors_;
-	cartbonded_proton_ = src.cartbonded_proton_;
-	cartbonded_linear_ = src.cartbonded_linear_;
-
+	if ( this != &src ) {
+		etable_type_ = src.etable_type_;
+		analytic_etable_evaluation_ = src.analytic_etable_evaluation_;
+		atom_vdw_atom_type_set_name_ = src.atom_vdw_atom_type_set_name_;
+		unfolded_energies_type_ = src.unfolded_energies_type_;
+		method_weights_ = src.method_weights_;
+		ss_weights_ = src.ss_weights_;
+		exclude_protein_protein_hack_elec_ = src.exclude_protein_protein_hack_elec_;
+		exclude_monomer_hack_elec_ = src.exclude_monomer_hack_elec_;
+		hackelec_max_dis_ = src.hackelec_max_dis_;
+		hackelec_min_dis_ = src.hackelec_min_dis_;
+		hackelec_die_ = src.hackelec_die_;
+		hackelec_no_dis_dep_die_ = src.hackelec_no_dis_dep_die_;
+		exclude_DNA_DNA_ = src.exclude_DNA_DNA_;
+		hbond_options_ = new hbonds::HBondOptions( *(src.hbond_options_) );
+		cst_max_seq_sep_ = src.cst_max_seq_sep_;
+		bond_angle_central_atoms_to_score_ = src.bond_angle_central_atoms_to_score_;
+		bond_angle_residue_type_param_set_ = src.bond_angle_residue_type_param_set_;
+		cartbonded_len_ = src.cartbonded_len_;
+		cartbonded_ang_ = src.cartbonded_ang_;
+		cartbonded_tors_ = src.cartbonded_tors_;
+		cartbonded_proton_ = src.cartbonded_proton_;
+		cartbonded_linear_ = src.cartbonded_linear_;
+	}
 	return *this;
 }
 
@@ -308,6 +312,7 @@ EnergyMethodOptions::bond_angle_residue_type_param_set(core::scoring::mm::MMBond
 bool
 operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 	return ( ( a.etable_type_ == b.etable_type_ ) &&
+		( a.analytic_etable_evaluation_ == b.analytic_etable_evaluation_ ) &&
 		( a.atom_vdw_atom_type_set_name_ == b.atom_vdw_atom_type_set_name_ ) &&
 		( a.unfolded_energies_type_ == b.unfolded_energies_type_ ) &&
 		( a.method_weights_ == b.method_weights_ ) &&
@@ -339,6 +344,7 @@ operator!=( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 void
 EnergyMethodOptions::show( std::ostream & out ) const {
 	if ( etable_type_.size() ) out << "EnergyMethodOptions::show: etable_type: " << etable_type_ <<'\n';
+	out << "analytic_etable_evaluation: " << analytic_etable_evaluation_ << '\n';
 	for ( MethodWeights::const_iterator it=method_weights_.begin(), ite = method_weights_.end(); it != ite; ++it ) {
 		out << "EnergyMethodOptions::show: method_weights: " << it->first;
 		for ( Size i=1; i<= it->second.size(); ++i ) {

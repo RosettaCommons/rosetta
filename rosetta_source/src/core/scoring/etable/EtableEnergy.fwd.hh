@@ -19,7 +19,9 @@ namespace core {
 namespace scoring {
 namespace etable {
 
-class EtableEnergy;
+class EtableEvaluator;
+class TableLookupEvaluator;
+class AnalyticEtableEvaluator;
 
 } // etable
 } // scoring

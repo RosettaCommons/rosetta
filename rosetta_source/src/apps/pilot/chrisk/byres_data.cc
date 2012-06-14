@@ -1160,7 +1160,7 @@ get_atom_lk_energy(
 	Real fa_sol_atom = 0.;
 	core::conformation::Residue const & resl( pose.residue( seqpos ) );
 //	core::conformation::Atom const & atoml( resl.atom(iatom) );
-	scoring::etable::EtableEnergy const etable_energy(
+	scoring::etable::TableLookupEtableEnergy const etable_energy(
 		*ScoringManager::get_instance()->etable( scorefxn->energy_method_options().etable_type() ),
 		scorefxn->energy_method_options()
 	);

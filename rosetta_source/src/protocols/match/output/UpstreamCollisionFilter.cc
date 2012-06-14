@@ -71,7 +71,7 @@ void MatchCollisionFilter::set_filter_by_lj( bool setting )
 		using namespace core::scoring::etable;
 		using namespace core::scoring::methods;
 		EnergyMethodOptions eopts;
-		etable_energy_ = new EtableEnergy(
+		etable_energy_ = new TableLookupEtableEnergy(
 			*(ScoringManager::get_instance()->etable( eopts.etable_type() )), eopts );
 	}
 }
