@@ -33,6 +33,7 @@
 #include <core/conformation/Residue.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/jd2/JobDistributor.hh>
 #include <fstream>
 
 // Parser headers
@@ -127,11 +128,16 @@ utility::vector1< core::Size > SaveResfileToDiskFilter::select_residues( Pose co
 void
 SaveResfileToDiskFilter::write_resfile( Pose const & pose, utility::vector1< core::Size > const & selected_residues ) const
 {
+	std::string resfile_to_write = resfile_name();
 
-  runtime_assert( resfile_name() != "" );
+	if (resfile_to_write == "") {
+		resfile_to_write = protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".resfile";
+	}
+
+  runtime_assert( resfile_to_write != "" );
   runtime_assert( !selected_residues.empty() );
 	std::ofstream resfile;
-  resfile.open( resfile_name().c_str(), std::ios::out );
+  resfile.open( resfile_to_write.c_str(), std::ios::out );
   resfile << resfile_general_property() << "\nstart\n";
 	for ( core::Size i=1; i<=selected_residues.size(); i++ ) {
 		resfile << selected_residues[i] << '\t' << pose.pdb_info()->chain(selected_residues[i]) << " PIKAA " << pose.residue(selected_residues[i]).name1() << '\n';
@@ -163,7 +169,7 @@ SaveResfileToDiskFilter::parse_my_tag(
 {
   task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	designable_only( tag->getOption< bool >( "designable_only", false ) );
-	resfile_name( tag->getOption< std::string >( "resfile_name", "dummy" ) );
+	resfile_name( tag->getOption< std::string >( "resfile_name", "" ) );
 	resfile_general_property( tag->getOption< std::string >( "resfile_general_property", "NATAA" ) );
 }
 /*
