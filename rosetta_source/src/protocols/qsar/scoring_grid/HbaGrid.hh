@@ -15,6 +15,7 @@
 
 #include <protocols/qsar/scoring_grid/HbaGrid.fwd.hh>
 #include <protocols/qsar/scoring_grid/SingleGrid.hh>
+#include <numeric/interpolation/spline/SplineGenerator.hh>
 
 #include <utility/vector1.hh>
 
@@ -29,9 +30,11 @@ class HbaGrid : public SingleGrid
 public:
 	HbaGrid();
 	HbaGrid(core::Real weight);
+	virtual ~HbaGrid();
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & ligand_chain_id_to_exclude);
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center);
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, utility::vector1<core::Size> ligand_chain_ids_to_exclude);
+	virtual core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map);
 	/// @brief serialize the SingleGrid to a json_spirit object
 	virtual utility::json_spirit::Value serialize();
 	/// @brief deserialize a json_spirit object to a SingleGrid
@@ -39,10 +42,7 @@ public:
 	void parse_my_tag(utility::tag::TagPtr const tag);
 
 private:
-
-	core::Real radius_;
-	core::Real width_;
-	core::Real magnitude_;
+	numeric::interpolation::spline::InterpolatorOP lj_spline_;
 
 };
 

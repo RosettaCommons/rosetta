@@ -1,27 +1,24 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
-// vi: set ts=2 noet:
-//
-// (c) Copyright Rosetta Commons Member Institutions.
-// (c) This file is part of the Rosetta software suite and is made available under license.
-// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
-// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   src/protocols/qsar/scoring_grid/HbaGrid.cc
 /// @author Sam DeLuca
 
 #include <protocols/qsar/scoring_grid/HbdGrid.hh>
 #include <protocols/qsar/scoring_grid/HbdGridCreator.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AtomType.hh>
-#include <utility/tag/Tag.hh>
-
+#include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
+
+#include <utility/tag/Tag.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/io/mpistream.hh>
 
+#include <numeric/interpolation/util.hh>
+
+#include <basic/database/open.hh>
 
 namespace protocols {
 namespace qsar {
@@ -41,6 +38,7 @@ GridBaseOP HbdGridCreator::create_grid(utility::tag::TagPtr const tag) const
 
 	return hbd_grid;
 }
+
 GridBaseOP HbdGridCreator::create_grid() const
 {
 	return new HbdGrid();
@@ -53,43 +51,50 @@ std::string HbdGridCreator::grid_name()
 	return "HbdGrid";
 }
 
-HbdGrid::HbdGrid(): SingleGrid ("HbdGrid",1.0), radius_(2.4),width_(1.0), magnitude_(-1.0)
+HbdGrid::HbdGrid(): SingleGrid ("HbdGrid",1.0)
 {
-
+	std::string lj_file(basic::database::full_name("scoring/qsar/hb_table.txt"));
+	lj_spline_ = numeric::interpolation::spline_from_file(lj_file,0.05).get_interpolator();
 }
 
-HbdGrid::HbdGrid(core::Real weight) : SingleGrid ("HbdGrid",weight), radius_(2.4),width_(1.0), magnitude_(-1.0)
+HbdGrid::HbdGrid(core::Real weight) : SingleGrid ("HbdGrid",weight)
 {
+	std::string lj_file(basic::database::full_name("scoring/qsar/hb_table.txt"));
+	lj_spline_ = numeric::interpolation::spline_from_file(lj_file,0.05).get_interpolator();
+}
 
+
+HbdGrid::~HbdGrid()
+{
+	
 }
 
 utility::json_spirit::Value HbdGrid::serialize()
 {
+	
 	using utility::json_spirit::Value;
 	using utility::json_spirit::Pair;
 
-	Pair radius_record("radius",Value(radius_));
-	Pair width_record("width",Value(width_));
-	Pair magnitude_record("mag",Value(magnitude_));
+	Pair spline_data("spline",lj_spline_->serialize());
 	Pair base_data("base_data",SingleGrid::serialize());
 
-	return Value(utility::tools::make_vector(radius_record,width_record,magnitude_record,base_data));
-
+	return Value(utility::tools::make_vector(spline_data,base_data));
 }
 
 void HbdGrid::deserialize(utility::json_spirit::mObject data)
 {
-	radius_ = data["radius"].get_real();
-	width_ = data["width"].get_real();
-	magnitude_ = data["mag"].get_real();
 
+	lj_spline_->deserialize(data["spline"].get_obj());
 	SingleGrid::deserialize(data["base_data"].get_obj());
 }
+	
 
 
 void
-HbdGrid::parse_my_tag(utility::tag::TagPtr const tag){
-	if (!tag->hasOption("weight")){
+HbdGrid::parse_my_tag(utility::tag::TagPtr const tag)
+{
+	if (!tag->hasOption("weight"))
+	{
 		utility_exit_with_message("Could not make HbdGrid: you must specify a weight when making a new grid");
 	}
 	set_weight( tag->getOption<core::Real>("weight") );
@@ -97,25 +102,23 @@ HbdGrid::parse_my_tag(utility::tag::TagPtr const tag){
 
 void HbdGrid::refresh(core::pose::Pose const & pose, core::Vector const & )
 {
-	for(core::Size residue_index = 1; residue_index <=pose.total_residue(); ++residue_index)
+	this->fill_with_value(0.0);
+
+	for(core::Size residue_index = 1; residue_index <= pose.total_residue();++residue_index)
 	{
-		core::conformation::Residue const & residue = pose.residue(residue_index);
-
+		core::conformation::Residue const residue = pose.residue(residue_index);
 		if(!residue.is_protein())
+		{
 			continue;
-		if(residue.has("O"))
-			this->diffuse_ring(residue.xyz("O"),radius_,width_,magnitude_);
-		//if(residue.has("N"))
-		//	this->diffuse_ring(residue.xyz("N"),radius_,width_,magnitude_);
-
-
-		for(core::Size atom_index=1; atom_index <= residue.natoms(); ++atom_index)
+		}
+		for(core::Size atom_index=1; atom_index <= residue.natoms();++  atom_index)
 		{
 			core::chemical::AtomType atom_type(residue.atom_type(atom_index));
-
 			if(atom_type.is_donor())
 			{
-				this->diffuse_ring(residue.xyz(atom_index),radius_,width_,magnitude_);
+				core::id::AtomID atom_id(atom_index,residue_index);
+				core::Vector xyz(pose.xyz(atom_id));
+				this->set_score_sphere_for_atom(lj_spline_,xyz,5.0);
 			}
 		}
 	}
@@ -129,6 +132,29 @@ void HbdGrid::refresh(core::pose::Pose const & pose, core::Vector const & center
 void HbdGrid::refresh(core::pose::Pose const & pose, core::Vector const & center, utility::vector1<core::Size> )
 {
 	refresh(pose,center);
+}
+
+
+core::Real HbdGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP )
+{
+	core::Real score = 0.0;
+	//GridBaseTracer << "map size is: " << qsar_map->size() <<std::endl;
+	for(core::Size atom_index = 1; atom_index <= residue.nheavyatoms() && score < max_score; ++atom_index)
+	{
+		core::Vector const & atom_coord(residue.xyz(atom_index));
+		if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
+		{
+			core::chemical::AtomType atom_type(residue.atom_type(atom_index));
+			if(atom_type.is_acceptor())
+			{
+				core::Real grid_value = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
+				score += grid_value;
+			}
+
+		}
+	}
+
+	return score*this->get_weight();
 }
 
 }

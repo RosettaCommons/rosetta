@@ -124,6 +124,10 @@ void VdwGrid::refresh(core::pose::Pose const & pose, core::Vector const & center
 	refresh(pose,center);
 }
 
+VdwGrid::~VdwGrid()
+{
+
+}
 
 core::Real VdwGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP )
 {

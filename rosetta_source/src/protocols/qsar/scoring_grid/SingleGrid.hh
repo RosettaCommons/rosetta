@@ -26,6 +26,7 @@
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.fwd.hh>
 
+#include <numeric/interpolation/spline/SplineGenerator.hh>
 #include <numeric/xyzVector.hh>
 
 #include <list>
@@ -112,7 +113,7 @@ public:
 	void set_distance_sphere( core::Vector const & coords,core::Real cutoff);
 	void set_point(core::Vector const & coords, core::Real value);
 	void set_distance_sphere_for_atom(core::Real const & atom_shell, core::Vector const & coords,core::Real cutoff);
-
+	void set_score_sphere_for_atom(numeric::interpolation::spline::InterpolatorOP lj_spline,core::Vector const & coords, core::Real cutoff);
 	/// @fill the entire grid with some value
 	void fill_with_value(core::Real);
 private:

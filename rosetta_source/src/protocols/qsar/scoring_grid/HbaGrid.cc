@@ -16,6 +16,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/id/AtomID.hh>
 
 #include <utility/tag/Tag.hh>
 #include <utility/tools/make_vector.hh>
@@ -24,6 +25,9 @@
 #include <utility/vector1.hh>
 #include <utility/io/mpistream.hh>
 
+#include <basic/database/open.hh>
+
+#include <numeric/interpolation/util.hh>
 
 namespace protocols {
 namespace qsar {
@@ -54,37 +58,38 @@ std::string HbaGridCreator::grid_name()
 	return "HbaGrid";
 }
 
-HbaGrid::HbaGrid() : SingleGrid("HbaGrid",1.0), radius_(2.4),width_(1.0),magnitude_(-1.0)
+HbaGrid::HbaGrid() : SingleGrid("HbaGrid",1.0)
+{
+	std::string lj_file(basic::database::full_name("scoring/qsar/hb_table.txt"));
+	lj_spline_ = numeric::interpolation::spline_from_file(lj_file,0.05).get_interpolator();
+}
+
+HbaGrid::HbaGrid(core::Real weight) : SingleGrid ("HbaGrid",weight)
+{
+	std::string lj_file(basic::database::full_name("scoring/qsar/hb_table.txt"));
+	lj_spline_ = numeric::interpolation::spline_from_file(lj_file,0.05).get_interpolator();
+}
+
+HbaGrid::~HbaGrid()
 {
 
 }
-
-HbaGrid::HbaGrid(core::Real weight) : SingleGrid ("HbaGrid",weight), radius_(2.4),width_(1.0), magnitude_(-1.0)
-{
-
-}
-
 
 utility::json_spirit::Value HbaGrid::serialize()
 {
 	using utility::json_spirit::Value;
 	using utility::json_spirit::Pair;
 
-	Pair radius_record("radius",Value(radius_));
-	Pair width_record("width",Value(width_));
-	Pair magnitude_record("mag",Value(magnitude_));
+	Pair spline_data("spline",lj_spline_->serialize());
 	Pair base_data("base_data",SingleGrid::serialize());
 
-	return Value(utility::tools::make_vector(radius_record,width_record,magnitude_record,base_data));
+	return Value(utility::tools::make_vector(spline_data,base_data));
 
 }
 
 void HbaGrid::deserialize(utility::json_spirit::mObject data)
 {
-	radius_ = data["radius"].get_real();
-	width_ = data["width"].get_real();
-	magnitude_ = data["mag"].get_real();
-
+	lj_spline_->deserialize(data["spline"].get_obj());
 	SingleGrid::deserialize(data["base_data"].get_obj());
 }
 
@@ -98,25 +103,24 @@ HbaGrid::parse_my_tag(utility::tag::TagPtr const tag){
 
 void HbaGrid::refresh(core::pose::Pose const & pose, core::Vector const & )
 {
-	for(core::Size residue_index = 1; residue_index <=pose.total_residue(); ++residue_index)
+
+	this->fill_with_value(0.0);
+
+	for(core::Size residue_index = 1; residue_index <= pose.total_residue();++residue_index)
 	{
-		core::conformation::Residue const & residue = pose.residue(residue_index);
-
+		core::conformation::Residue const residue = pose.residue(residue_index);
 		if(!residue.is_protein())
+		{
 			continue;
-		//if(residue.has("O"))
-		//	this->diffuse_ring(residue.xyz("O"),radius_,width_,magnitude_);
-		if(residue.has("N"))
-			this->diffuse_ring(residue.xyz("N"),radius_,width_,magnitude_);
-
-
-		for(core::Size atom_index=1; atom_index <= residue.natoms(); ++atom_index)
+		}
+		for(core::Size atom_index=1; atom_index <= residue.natoms();++atom_index)
 		{
 			core::chemical::AtomType atom_type(residue.atom_type(atom_index));
-
 			if(atom_type.is_acceptor())
 			{
-				this->diffuse_ring(residue.xyz(atom_index),radius_,width_,magnitude_);
+				core::id::AtomID atom_id(atom_index,residue_index);
+				core::Vector xyz(pose.xyz(atom_id));
+				this->set_score_sphere_for_atom(lj_spline_,xyz,5.0);
 			}
 		}
 	}
@@ -130,6 +134,28 @@ void HbaGrid::refresh(core::pose::Pose const & pose, core::Vector const & center
 void HbaGrid::refresh(core::pose::Pose const & pose, core::Vector const & center, utility::vector1<core::Size> )
 {
 	refresh(pose,center);
+}
+
+core::Real HbaGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map)
+{
+	core::Real score = 0.0;
+	//GridBaseTracer << "map size is: " << qsar_map->size() <<std::endl;
+	for(core::Size atom_index = 1; atom_index <= residue.nheavyatoms() && score < max_score;++atom_index)
+	{
+		core::Vector const & atom_coord(residue.xyz(atom_index));
+		if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
+		{
+			core::chemical::AtomType atom_type(residue.atom_type(atom_index));
+			if(atom_type.is_donor())
+			{
+				core::Real grid_value = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
+				score += grid_value;
+			}
+
+		}
+	}
+
+	return score*this->get_weight();
 }
 
 }

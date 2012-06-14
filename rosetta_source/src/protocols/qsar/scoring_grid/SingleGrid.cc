@@ -347,6 +347,46 @@ void SingleGrid::set_distance_sphere_for_atom(core::Real const & atom_shell,core
 	}
 }
 
+void SingleGrid::set_score_sphere_for_atom(numeric::interpolation::spline::InterpolatorOP lj_spline,core::Vector const & coords, core::Real cutoff)
+{
+	core::Real cutoff2 = cutoff*cutoff;
+	int x_count(0);
+	int y_count(0);
+	int z_count(0);
+
+	grid_.getNumberOfPoints(x_count,y_count,z_count);
+	core::Vector vector_radius (cutoff);
+	core::grid::CartGrid<core::Real>::GridPt grid_min = grid_.gridpt(coords - cutoff);
+	core::grid::CartGrid<core::Real>::GridPt grid_max = grid_.gridpt(coords + cutoff);
+	for(int x_index = std::max(0,grid_min.x()); x_index <= std::min(x_count-1,grid_max.x());++x_index)
+	{
+		for(int y_index = std::max(0,grid_min.y());y_index <= std::min(y_count-1,grid_max.y());++y_index)
+		{
+			for(int z_index = std::max(0,grid_min.z()); z_index <= std::min(z_count-1,grid_max.z());++z_index)
+			{
+				core::grid::CartGrid<core::Real>::GridPt point(x_index, y_index, z_index);
+				core::Vector box_center(grid_.coords(point));
+				core::Real distance2 = box_center.distance_squared(coords);
+				if(distance2 <= cutoff2)
+				{
+					core::Real distance = sqrt(distance2);
+					core::Real current_value = grid_.getValue(point);
+					core::Real spline_score = 0.0;
+					core::Real spline_score_deriv = 0.0;
+
+					lj_spline->interpolate(distance,spline_score,spline_score_deriv);
+					if(spline_score <= current_value)
+					{
+						grid_.setValue(point,spline_score);
+					}
+
+				}
+			}
+		}
+	}
+
+}
+
 void SingleGrid::diffuse_ring(core::Vector const & coords, core::Real radius, core::Real width, core::Real magnitude)
 {
 	core::Real radius_squared = radius*radius;

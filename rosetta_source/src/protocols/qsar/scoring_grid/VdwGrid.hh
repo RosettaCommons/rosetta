@@ -31,13 +31,14 @@ public:
 
 	VdwGrid();
 	VdwGrid(core::Real weight);
+	virtual ~VdwGrid();
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & );
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center);
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, utility::vector1<core::Size> );
 
 	void parse_my_tag(utility::tag::TagPtr const tag);
 
-	core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map);
+	virtual core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map);
 
 	/// @brief serialize the Interpolator to a json_spirit object
 	virtual utility::json_spirit::Value serialize();
