@@ -76,6 +76,13 @@ centroids_by_jump_int(
 	core::Vector & downstream_ctrd
 );
 
+numeric::xyzVector< core::Real>
+center_of_mass(
+	core::pose::Pose const & pose,
+	int const start,
+	int const stop
+);
+
 int
 residue_center_of_mass(
 	core::pose::Pose const & pose,

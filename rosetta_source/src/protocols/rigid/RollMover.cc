@@ -15,6 +15,7 @@
 #include <protocols/rigid/RollMover.hh>
 #include <protocols/rigid/RollMoverCreator.hh>
 // Package Headers
+#include <protocols/rigid/RB_geometry.hh>
 
 // Project Headers
 #include <core/conformation/Residue.hh>
@@ -118,22 +119,11 @@ RollMover::parse_my_tag(
 	moves::DataMap & /*datamap*/,
 	Filters_map const & /*filters*/,
 	moves::Movers_map const & /*movers*/,
-	Pose const & /*pose*/ )
+	Pose const & pose )
 {       
 
-        /*parse start_res*/
-	if( tag->hasOption("start_res") ) {
-		start_res_ = tag->getOption<core::Size>("start_res");
-	} else {
-		utility_exit_with_message("RollMover requires start_res option");
-	}
-
-	/*parse stop_res*/
-	if( tag->hasOption("stop_res") ) {
-		stop_res_ = tag->getOption<core::Size>("stop_res");
-	} else {
-		utility_exit_with_message("RollMover requires stop_res option");
-	}
+	start_res_ = ( tag->hasOption("start_res") ) ?  tag->getOption<core::Size>("start_res") : 1;
+	stop_res_ = ( tag->hasOption("stop_res") ) ?  tag->getOption<core::Size>("stop_res") : pose.total_residue();
 
 	/*parse min_angle*/
 	if( tag->hasOption("min_angle") ) {
@@ -151,6 +141,21 @@ RollMover::parse_my_tag(
 
 	bool axis_option_parsed = false;
 	bool translate_option_parsed = false;
+
+	if( tag->hasOption("axis") ) {	
+		switch(tag->getOption<char>("axis")) {
+			case 'x':
+				axis_ = numeric::xyzVector< core::Real >( 1.0, 0.0, 0.0 );
+				break;
+			case 'y':
+				axis_ = numeric::xyzVector< core::Real >( 0.0, 1.0, 0.0 );
+				break;
+			case 'z':
+				axis_ = numeric::xyzVector< core::Real >( 0.0, 0.0, 1.0 );
+				break;
+		}
+		axis_option_parsed = true;
+	}
 
 	foreach( utility::tag::TagPtr const child_tag, tag->getTags() ){
 		std::string name= child_tag->getName();
@@ -171,7 +176,9 @@ RollMover::parse_my_tag(
 		utility_exit_with_message("RollMover requires axis option");
 	}
 	if ( !translate_option_parsed ) {
-		utility_exit_with_message("RollMover requires translate option");
+		//utility_exit_with_message("RollMover requires translate option");
+		TR << "No translation given, using the pose's center of mass" << std::endl;
+		translate_ = protocols::geometry::center_of_mass(pose, start_res_, stop_res_);
 	}
 	
 }
