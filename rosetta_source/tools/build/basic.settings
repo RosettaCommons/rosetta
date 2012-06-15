@@ -641,7 +641,7 @@ settings = {
 
     "gcc, boost_thread" : {
         "appends" : {
-            "defines" : [ "MULTI_THREADED" ],
+            "defines" : [ "USE_BOOST_THREAD", "MULTI_THREADED" ],
             "libraries"     : [ "pthread", "boost_thread" ],
 	    "library_path"  : [ "/usr/local/lib", "/opt/boost/lib" ],
             "flags"         : {
