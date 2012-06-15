@@ -539,6 +539,7 @@ sources = {
 	"pilot/momeara" : [
 		"hbonds_test", # /* Matt O'Meara,Documentation Location,Demo Location */
 		"format_converter",
+		"features_database_schema",
 		#"hbond_param_sweep",
 	],
 	"pilot/labonte" : [
