@@ -337,14 +337,12 @@ PointMutationCalculator::mutate_and_relax(
 	mut_res->push_back( restrict_to_aa_op );
 	mut_res->push_back( init_from_cmd_op );
 	mut_res->push_back( incl_curr_op );
-//	TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to " << target_aa << std::endl;
-//	TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to ";
+	TR << "Mutation " << pose.residue( resi ).name1() << "_" << resi;
 	//only use green packer if not symmetric!
 	assert( !core::pose::symmetry::is_symmetric( pose ) );
 	green_packer->set_task_factory( mut_res );
 	green_packer->apply( pose );
-//	TR<<"Now relaxing "<<pose.residue( resi ).name3()<<std::endl;
-//	TR<<pose.residue( resi ).name3()<<". Now relaxing..."<<std::endl;
+	TR << "_" << pose.residue( resi ).name1();
 	//then run input relax mover
 	relax_mover()->apply( pose );
 }
@@ -365,12 +363,13 @@ PointMutationCalculator::eval_filters(
 		Real const flip_sign( sample_types_[ ifilt ] == "high" ? -1 : 1 );
 		Real const val( flip_sign * ( filters_[ ifilt ] )->report_sm( pose ) );
 		//TODO: option to bail at first fail??
-		if( !filter_pass )
-			TR<< "Filter " << ifilt << " fails with value "<< val << std::endl;
-		else
-			TR<< "Filter " << ifilt << " succeeds with value "<< val<< std::endl;
+		TR<< " :: Filter " << ifilt;
+		if( !filter_pass ) TR << " fail, ";
+		else TR << " pass, ";
+		TR << " value "<< val << " ::";
 		vals.push_back( val );
 	}
+	TR << std::endl;
 }
 
 //backcompatibility; overloaded interface that allows the same data struct but wth one val/aa instead of a vector
@@ -496,7 +495,7 @@ PointMutationCalculator::calc_point_mut_filters(
 			assert( !vals.empty() );
 			//store aa/val pair in seqpos_aa_vals_vec
 			aa_vals.push_back( pair< AA, vector1< Real > >( target_aa, vals ) );
-			//dump pdb?
+			//dump pdb? (only if filter passes)
 			if( dump_pdb() ){
 				std::stringstream fname;
 				fname << protocols::jd2::current_output_name() << start_pose.residue( resi ).name3() << resi << pose.residue( resi ).name3()<<".pdb";
