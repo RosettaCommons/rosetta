@@ -18,9 +18,17 @@ run=function(self, sample_sources, output_dir, output_formats){
 
 
 sele_1b <-"
-SELECT score_type, score_value
-FROM   residue_scores_1b
-WHERE  -2 < score_value AND score_value < 5;"
+SELECT
+	r.name3 AS res_type,
+	rs.score_type,
+	rs.score_value
+FROM
+	residues AS r,
+	residue_scores_1b as rs
+WHERE
+	rs.struct_id = r.struct_id AND
+	r.resNum = rs.resNum AND
+	-2 < score_value AND score_value < 5;"
 
 scores <- query_sample_sources(sample_sources, sele_1b)
 scores$score_type <- factor(scores$score_type)
@@ -37,6 +45,25 @@ d_ply(dens, .(score_type), function(sub_dens){
 		geom_line(aes(x=x, y=y, colour=sample_source)) +
 		geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 		opts(title = paste("Rosetta ", score_type, " Scores", sep="")) +
+		labs(x="Rosetta Energy Units") +
+		scale_y_continuous("FeatureDensity")
+	save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+})
+
+dens <- estimate_density_1d(
+  data = scores,
+  ids = c("sample_source", "score_type", "res_type"),
+  variable = "score_value")
+
+d_ply(dens, .(score_type), function(sub_dens){
+	score_type <- sub_dens$score_type[1]
+	plot_id <- paste("component_scores_", score_type, "_by_res_type", sep="")
+	p <- ggplot(data=sub_dens) + theme_bw() +
+		geom_line(aes(x=x, y=y, colour=sample_source)) +
+		geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
+		opts(title = paste("Rosetta ", score_type, " Scores", sep="")) +
+		facet_wrap(~res_type) +
 		labs(x="Rosetta Energy Units") +
 		scale_y_continuous("FeatureDensity")
 	save_plots(self, plot_id, sample_sources, output_dir, output_formats)

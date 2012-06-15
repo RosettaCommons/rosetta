@@ -358,7 +358,11 @@ initialize_output_formats <- function(opt, ss_cmp){
 		output_formats <- get_output_formats_from_comparison(
 			ss_cmp, all_output_formats)
 	} else {
-		output_formats <- c()
+
+		#only using the output formats from the command line if they are
+		#not specified in the analysis configuration. Note this is a
+		#little goofy, feel free to refactor...
+		output_formats <- get_output_formats(opt$options, all_output_formats)
 	}
 
 
@@ -368,10 +372,6 @@ initialize_output_formats <- function(opt, ss_cmp){
 		opt$options$output_web_raster <- T
 		opt$options$output_web_icon <- T
 	}
-	output_formats <- rbind(
-		output_formats,
-		get_output_formats(opt$options, all_output_formats))
-
 
 	if(nrow(output_formats) == 0){
 		stop(paste(

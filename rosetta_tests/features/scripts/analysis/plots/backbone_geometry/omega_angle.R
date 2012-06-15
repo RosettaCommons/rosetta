@@ -35,22 +35,51 @@ WHERE
 
 f <- query_sample_sources(sample_sources, sele)
 
-f$omega <- ifelse(f$omega < 0, f$omega + 360, f$omega)
+f$omega_180 <- ifelse(f$omega < 0, f$omega + 360, f$omega)
 
 dens <- estimate_density_1d(f[f$isomerization == 'trans',],
-	c("sample_source"), "omega")
+	c("sample_source"), "omega_180")
 
 plot_id <- "backbone_geometry_omega_angle_trans"
 p <- ggplot(dens) + theme_bw() +
 	geom_line(aes(x, y, colour=sample_source), size=2) +
-	opts(title = "Trans Omega Angle For B-Factor < 30") +
+	opts(title = "Trans Omega Angle; B-Factor < 30") +
 	geom_vline(x=180) +
         scale_x_continuous("Omega Angle (degrees)", limit=c(150,210), breaks=c(150, 160, 170, 180, 190, 200, 210)) +
 	scale_y_continuous("Feature Density")
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
+
+dens <- estimate_density_1d(f[f$isomerization == 'cis',],
+	c("sample_source"), "omega")
+
+plot_id <- "backbone_geometry_omega_angle_cis"
+p <- ggplot(dens) + theme_bw() +
+	geom_line(aes(x, y, colour=sample_source), size=2) +
+	opts(title = "Cis Omega Angle; B-Factor < 30") +
+	geom_vline(x=0) +
+        scale_x_continuous("Omega Angle (degrees)", limit=c(-30,30), breaks=c(-30, -20, -10, 0, 10, 20, 30)) +
+	scale_y_continuous("Feature Density")
+if(nrow(sample_sources) <= 3){
+	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+}
+save_plots(self, plot_id, sample_sources, output_dir, output_formats)
+
+
+z <- as.data.frame(xtabs(~sample_source + isomerization, f))
+plot_id <- "backbone_geometry_omega_angle_isomerization"
+p <- ggplot(f) + theme_bw() +
+	stat_bin(aes(x=isomerization, fill=sample_source), position="dodge") +
+	opts(title = "Omega Angle Trans/Cis Isomerization Ratio; B-factor < 30") +
+	scale_y_continuous("Counts") +
+	scale_x_discrete("Isomerization") +
+	scale_fill_discrete("Sample Source")
+if(nrow(sample_sources) <= 3){
+	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
+}
 save_plots(self, plot_id, sample_sources, output_dir, output_formats)
 
 
