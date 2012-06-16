@@ -70,15 +70,6 @@ dump_loophash_linkers(
 	core::Size radius = 0
 );
 
-/*inline
-core::kinematics::Stub
-multstubs(
-	core::kinematics::Stub const & a,
-	core::kinematics::Stub const & b
-);
-inline core::kinematics::Stub invstub(core::kinematics::Stub const & a);
-*/
-
 core::Real
 linker_count2score(
 	core::Size count

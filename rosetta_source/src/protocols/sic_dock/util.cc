@@ -11,6 +11,7 @@
 #include <protocols/sic_dock/SICFast.hh>
 #include <core/pose/util.hh>
 #include <numeric/xyz.functions.hh>
+#include <ObjexxFCL/FArray3D.hh>
 
 namespace protocols {
 namespace sic_dock {
@@ -165,6 +166,69 @@ utility::vector1<core::Size> range(core::Size beg, core::Size end){
 	for(core::Size i = beg; i < end; ++i) v.push_back(i);
 	return v;
 }
+
+int flood_fill3D(int i, int j, int k, ObjexxFCL::FArray3D<double> & grid, double t) {
+	if( grid(i,j,k) <= t ) return 0;
+	grid(i,j,k) = t;
+	int nmark = 1;
+	if(i>1                ) nmark += flood_fill3D(i-1,j  ,k  ,grid,t);
+	if(i<(int)grid.size1()) nmark += flood_fill3D(i+1,j  ,k  ,grid,t);
+	if(j>1                ) nmark += flood_fill3D(i  ,j-1,k  ,grid,t);
+	if(j<(int)grid.size2()) nmark += flood_fill3D(i  ,j+1,k  ,grid,t);
+	if(k>1                ) nmark += flood_fill3D(i  ,j  ,k-1,grid,t);
+	if(k<(int)grid.size3()) nmark += flood_fill3D(i  ,j  ,k+1,grid,t);
+	return nmark;
+}
+
+
+
+// void
+// termini_exposed(
+// 	core::pose::Pose const & pose,
+// 	bool & ntgood,
+// 	bool & ctgood
+// ){
+// 	using basic::options::option;
+// 	using namespace basic::options::OptionKeys;
+// 	core::id::AtomID_Map<Real> atom_sasa;
+// 	core::id::AtomID_Map<bool> atom_subset;
+// 	utility::vector1<Real> rsd_sasa;
+// 	core::pose::initialize_atomid_map(atom_subset, pose, false);
+// 	for(int i = 2; i <= (int)pose.n_residue()-1; ++i) {
+// 		for(int ia = 1; ia <= (int)pose.residue(i).nheavyatoms(); ++ia) {
+// 			if(pose.residue(i).atom_is_backbone(ia))
+// 				atom_subset[core::id::AtomID(ia,i)] = true;
+// 		}
+// 	}
+// 	atom_subset[core::id::AtomID(1,1)] = true;
+// 	atom_subset[core::id::AtomID(3,pose.n_residue())] = true;
+// 	core::scoring::calc_per_atom_sasa( pose, atom_sasa,rsd_sasa, 4.0, false, atom_subset );
+// 	Real nexpose = atom_sasa[core::id::AtomID(1,        1       )] / 12.56637 / 5.44 / 5.44;
+// 	Real cexpose = atom_sasa[core::id::AtomID(3,pose.n_residue())] / 12.56637 / 5.44 / 5.44;
+
+// 	Vec nt = pose.residue(        1       ).xyz("N");
+// 	Vec ct = pose.residue(pose.n_residue()).xyz("C");
+// 	Real nang = angle_degrees(nt,Vec(0,0,0),Vec(nt.x(),nt.y(),0));
+// 	Real cang = angle_degrees(ct,Vec(0,0,0),Vec(ct.x(),ct.y(),0));
+// 	ntgood = nexpose > option[sicdock::term_min_expose]() && nang < option[sicdock::term_max_angle]();
+// 	ctgood = cexpose > option[sicdock::term_min_expose]() && cang < option[sicdock::term_max_angle]();
+// 	// core::Real nnt=0.0,nct=0.0,gnt=0.0,gct=0.0;
+// 	// for(int ir=1; ir<=pose.n_residue(); ++ir) {
+// 	// 	for(int ia=1; ia<=5; ++ia) {
+// 	// 		Vec x = pose.residue(ir).xyz(ia);
+// 	// 		if(angle_degrees(x,Vec(0,0,0),nt) < 15.0 &&  ) {
+// 	// 			nnt += 1.0;
+// 	// 			if( nt.normalized().dot(x) < nt.length() )
+// 	// 				gnt += 1.0;
+// 	// 		}
+// 	// 		if(angle_degrees(x,Vec(0,0,0),ct) < 15.0 ) {
+// 	// 			nct += 1.0;
+// 	// 			if( ct.normalized().dot(x) < ct.length() )
+// 	// 				gct += 1.0;
+// 	// 		}
+// 	// 	}
+// 	// }
+// }
 
 
 

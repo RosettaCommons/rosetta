@@ -10,7 +10,7 @@
 #define INCLUDED_protocols_sic_dock_util_hh
 
 #include <core/types.hh>
-#include <core/kinematics/Stub.fwd.hh>
+#include <core/kinematics/Stub.hh>
 #include <protocols/sic_dock/types.hh>
 #include <protocols/sic_dock/RigidScore.fwd.hh>
 #include <protocols/sic_dock/SICFast.fwd.hh>
@@ -18,6 +18,8 @@
 #include <core/id/AtomID_Map.hh>
 #include <numeric/geometry/hashing/SixDHasher.fwd.hh>
 //#include <numeric/xyzVector.fwd.hh>
+#include <ObjexxFCL/FArray3D.fwd.hh>
+
 
 namespace protocols {
 namespace sic_dock {
@@ -67,6 +69,18 @@ get_leap_lower_stub(
 	core::pose::Pose const & pose,
 	core::Size ir
 );
+
+int flood_fill3D(int i, int j, int k, ObjexxFCL::FArray3D<double> & grid, double t);
+
+// void termini_exposed(core::pose::Pose const & pose, bool & ntgood, bool & ctgood );
+
+inline core::kinematics::Stub multstubs(core::kinematics::Stub const & a, core::kinematics::Stub const & b){
+	return core::kinematics::Stub( a.M*b.M, a.M*b.v+a.v );
+}
+inline core::kinematics::Stub invstub(core::kinematics::Stub const & a){
+	numeric::xyzMatrix<core::Real> const MR = a.M.transposed();
+	return core::kinematics::Stub( MR, MR * -a.v );
+}
 
 
 } // sic_dock

@@ -21,7 +21,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <protocols/sic_dock/types.hh>
-#include <protocols/sic_dock/xyzStripeHashPose.hh>
+#include <protocols/sic_dock/xyzStripeHashPoseWithMeta.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
 
@@ -72,7 +72,7 @@ public:
 	core::Real const clash_dis_, contact_dis_;
 	Reals const weights_;
 	Vecs const points_;
-	xyzStripeHashPose const xyzhash_;
+	xyzStripeHashPoseWithMeta const xyzhash_;
 	// Pose const & pose1_,pose2_;
 };
 

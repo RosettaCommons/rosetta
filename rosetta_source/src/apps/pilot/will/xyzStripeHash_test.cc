@@ -3,6 +3,7 @@
 // :noTabs=false:tabSize=4:indentSize=4:
 
 #include <numeric/geometry/hashing/xyzStripeHash.hh>
+#include <protocols/sic_dock/types.hh>
 #include <protocols/sic_dock/xyzStripeHashPose.hh>
 //#include <apps/pilot/will/gpu/gpu_refold.hh>
 
@@ -23,10 +24,9 @@
 
 #include <core/kinematics/Stub.hh>
 
-using core::Real;
 using core::Size;
 using core::id::AtomID;
-typedef numeric::xyzVector<core::Real> Vec;
+typedef numeric::xyzVector<double> Vec;
 
 #include <time.h>
 #include <sys/time.h>
@@ -72,11 +72,16 @@ void dump_points_pdb(utility::vector1<Vec> & p, std::string fn) {
 
 
 int main(int argc, char *argv[]) {
+	using numeric::geometry::hashing::xyzStripeHash;
 	register_options();
 	devel::init(argc,argv);
 
-	Real const DIST(4.0);
-	Real const DIST2(DIST*DIST);	
+	std::cout << "sizeof(utility::vector1< xyzVector<double> >) " 
+	          << sizeof(utility::vector1< numeric::xyzVector<double> >) << " " 
+	          << sizeof(xyzStripeHash<double>::ushort2)
+	          << std::endl;
+
+	double const DIST(3.5);
 	
 	core::pose::Pose p;
 	core::import_pose::pose_from_pdb(p,basic::options::option[basic::options::OptionKeys::in::file::s]()[1]);
@@ -87,22 +92,34 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	
-	protocols::scoring::ImplicitFastClashCheck ifc(p,4.0);
+	protocols::scoring::ImplicitFastClashCheck ifc(p,DIST);
 
 	protocols::sic_dock::xyzStripeHashPose xyzhash(DIST,p,protocols::sic_dock::HVY);
 	xyzhash.sanity_check();
+
+	// xyzStripeHash<double>::float4 const * j = xyzhash.grid_atoms_;
+	// for(xyzStripeHash<double>::xyz_iterator i = xyzhash.xyz_begin(); i != xyzhash.xyz_end(); ++i){
+	// 	numeric::xyzVector<double> const & a = *i;
+	// 	xyzStripeHash<double>::float4 const & b = *(j++);
+	// 	std::cout << a.x() <<" "<< b.x <<" "<< a.y() <<" "<< b.y <<" "<< a.z() <<" "<< b.z << std::endl;
+	// 	if( a.x() != b.x && a.y() != b.y && a.z() != b.z ){			
+	// 		utility_exit_with_message("BAD!!!!!");
+	// 	}
+	// }
+
+	// utility_exit_with_message("FOO");
 
 	if(basic::options::option[basic::options::OptionKeys::dump_hash]()) {
 		using namespace ObjexxFCL::fmt;
 		std::cout << xyzhash.grid_size() << std::endl;
 		std::cout << xyzhash.natom() << std::endl;
 		std::cout << xyzhash.xdim() << " " << xyzhash.ydim() << " " << xyzhash.zdim() << std::endl;
-		for(Size j = 0; j < (int)xyzhash.natom(); ++j) {
+		for(int j = 0; j < (int)xyzhash.natom(); ++j) {
 			std::cout << F(12,7,xyzhash.grid_atoms()[j].x) << " ";
 			std::cout << F(12,7,xyzhash.grid_atoms()[j].y) << " ";
 			std::cout << F(12,7,xyzhash.grid_atoms()[j].z) << std::endl;
 		}
-		for(Size j = 0; j < (int)xyzhash.xdim()*xyzhash.ydim()*xyzhash.zdim(); ++j) {
+		for(int j = 0; j < (int)xyzhash.xdim()*xyzhash.ydim()*xyzhash.zdim(); ++j) {
 			std::cout << xyzhash.grid_stripe()[j].x << " ";
 			std::cout << xyzhash.grid_stripe()[j].y << std::endl;
 		}
@@ -114,7 +131,7 @@ int main(int argc, char *argv[]) {
 			p.set_xyz(AtomID(ia,ir),p.xyz(AtomID(ia,ir))+xyzhash.translation());
 		}
 	}
-	p.dump_pdb("input_trans.pdb");
+	// p.dump_pdb("input_trans.pdb");
 	
 
 	Vec mn(9e9),mx(-9e9);
@@ -140,16 +157,16 @@ int main(int argc, char *argv[]) {
 	std::cout << "Natom: " << real_natom << " " << xyzhash.natom() << std::endl;
 	{
 		utility::vector1<Vec> hashpts;
-		for(Size i = 0; i < (int)xyzhash.natom(); ++i) {
+		for(int i = 0; i < (int)xyzhash.natom(); ++i) {
 			hashpts.push_back( Vec( xyzhash.grid_atoms()[i].x, xyzhash.grid_atoms()[i].y, xyzhash.grid_atoms()[i].z ) );
 		}
-		dump_points_pdb(hashpts,"input_xyzhash.pdb");
+		// dump_points_pdb(hashpts,"input_xyzhash.pdb");
 	}
 	
 	
 	double tifc=0.0,th=0.0,ts=0.0,t=0.0;
 	int tot = 0;
-	for(Size i = 0; i < (int)basic::options::option[basic::options::OptionKeys::out::nstruct](); ++i) {
+	for(int i = 0; i < (int)basic::options::option[basic::options::OptionKeys::out::nstruct](); ++i) {
 		Vec rv( numeric::random::uniform(),numeric::random::uniform(),numeric::random::uniform() );
 		rv.x() = (mx.x()-mn.x()) * rv.x() + mn.x();
 		rv.y() = (mx.y()-mn.y()) * rv.y() + mn.y();
@@ -158,18 +175,21 @@ int main(int argc, char *argv[]) {
 		// float const ry = rv.y();
 		// float const rz = rv.z();
 
+		numeric::geometry::hashing::Counter<double> counter;
+
+		int hash_nbcount;
 		t = time_highres();
-		int hash_nbcount = xyzhash.nbcount(rv);
+		hash_nbcount = xyzhash.nbcount(rv);
 		th += time_highres()-t;
 
-	    Vec tmp = rv+xyzhash.translation();
+		Vec tmp = rv+xyzhash.translation();
 		t = time_highres();
 		int safe_nbcount = 0.0;
-		for(Size j = 0; j < (int)xyzhash.natom(); ++j) {
-			float const & hx = xyzhash.grid_atoms()[j].x;
-			float const & hy = xyzhash.grid_atoms()[j].y;
-			float const & hz = xyzhash.grid_atoms()[j].z;
-			if( (hx-tmp.x())*(hx-tmp.x()) + (hy-tmp.y())*(hy-tmp.y()) + (hz-tmp.z())*(hz-tmp.z()) <= (float)DIST2 ) safe_nbcount++;
+		for(int j = 0; j < (int)xyzhash.natom(); ++j) {
+			double const & hx = xyzhash.grid_atoms()[j].x;
+			double const & hy = xyzhash.grid_atoms()[j].y;
+			double const & hz = xyzhash.grid_atoms()[j].z;
+			if( (hx-tmp.x())*(hx-tmp.x()) + (hy-tmp.y())*(hy-tmp.y()) + (hz-tmp.z())*(hz-tmp.z()) <= DIST*DIST ) safe_nbcount++;
 		}
 		ts += time_highres()-t;
 

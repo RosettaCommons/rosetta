@@ -152,7 +152,7 @@ Gfloat const DIS_C_N    = 1.3286850f;
 //   // for(int i = 0; i < p.n_residue(); ++i) {
 //   //   Pose tmp;
 //   //   core::pose::make_pose_from_sequence(tmp,"G",*crs,false);
-//   //   xyzStripeHashPose(tmp);
+//   //   xyzStripeHashPoseWithMeta(tmp);
 //   //   tmp.set_xyz(AtomID(1,1),Vec(bb[9*i+0],bb[9*i+1],bb[9*i+2]));
 //   //   tmp.set_xyz(AtomID(2,1),Vec(bb[9*i+3],bb[9*i+4],bb[9*i+5]));
 //   //   tmp.set_xyz(AtomID(3,1),Vec(bb[9*i+6],bb[9*i+7],bb[9*i+8]));

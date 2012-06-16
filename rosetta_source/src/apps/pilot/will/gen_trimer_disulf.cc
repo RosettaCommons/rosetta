@@ -71,7 +71,7 @@
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
-#include <protocols/sic_dock/xyzStripeHashPose.hh>
+#include <protocols/sic_dock/xyzStripeHashPoseWithMeta.hh>
 #include <sstream>
 // AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
@@ -226,7 +226,7 @@ int get_N(core::pose::Pose const & inp) {
 	Size c = inp.chain(1);
 	Size i = 2;
 	for(i = 2; i <= inp.n_residue(); ++i) {
-		if(inp.chain(i) != c) {
+		if(inp.chain(i) != (int)c) {
 			break;
 		}		
 	}

@@ -12,7 +12,23 @@
 #include <numeric/xyz.functions.hh>
 #include <utility/vector1.hh>
 
+
+namespace protocols {
+namespace sic_dock {
+
 struct Vec3 { numeric::xyzVector<core::Real> a,b,c; };
 typedef utility::vector1<std::pair<core::Size,Vec3> > TermInfo;
+
+enum PoseCoordPickMode {
+	NBR,
+	CB,
+	BB,
+	BNP,
+	HVY,
+	ALL
+};
+
+}
+}
 
 #endif

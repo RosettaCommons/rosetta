@@ -3,7 +3,7 @@
 // :noTabs=false:tabSize=4:indentSize=4:
 
 #include <protocols/sic_dock/RigidScore.hh>
-#include <protocols/sic_dock/xyzStripeHashPose.hh>
+#include <protocols/sic_dock/xyzStripeHashPoseWithMeta.hh>
 #include <protocols/sic_dock/util.hh>
 #include <protocols/sic_dock/loophash_util.hh>
 
@@ -50,13 +50,13 @@ typedef utility::vector1<Size> Sizes;
 typedef utility::vector1<Stub> Stubs;
 typedef utility::vector1<RigidScoreCOP> Scores;
 
-inline double dist_score( double const & sqdist, double const & start, double const & stop ) {
+inline Real dist_score( Real const & sqdist, Real const & start, Real const & stop ) {
 	if( sqdist > stop*stop ) {
 		return 0.0;
 	} else if( sqdist < start*start ) {
 		return 1.0;
 	} else {
-		double dist = sqrt( sqdist );
+		Real dist = sqrt( sqdist );
 		return (stop-dist)/(stop-start);
 		//return sqr(1.0	- sqr( (dist - start) / (stop - start) ) );
 	}
@@ -88,78 +88,41 @@ CBScore::CBScore(
     // pose2_(pose2)
 {}
 
+struct CBScoreVisitor {
+	Real const clash_dis,contact_dis;
+	Real score;
+	CBScoreVisitor(
+		Real const & clash_dis_in,
+		Real const & contact_dis_in
+	): 
+		clash_dis(clash_dis_in),
+		contact_dis(contact_dis_in),
+		score(0.0)
+	{}
+	void visit(
+		numeric::xyzVector<Real> const & /*v*/,
+		                   Real  const & vm,
+		numeric::xyzVector<Real> const & /*c*/, 
+		                   Real  const & cm,
+		                   Real  const & d2
+	){
+		score += dist_score(d2, clash_dis, contact_dis ) * vm * cm;
+	}
+};
+
 core::Real
 CBScore::score(
 	Stub const & x1,
 	Stub const & x2
 ) const {
-	Stub const & xh( hash_pose1_?x1:x2 );
-	Stub const & xp( hash_pose1_?x2:x1 );	
-
-	Vecs xpoints(points_);
-	for(Vecs::iterator i = xpoints.begin(); i != xpoints.end(); ++i){
-		*i = xp.local2global(*i);
-	}
-
-	xyzStripeHashPose const & H(xyzhash_);
-	Real score = 0.0;
+	Stub const xhp(multstubs(invstub(hash_pose1_?x1:x2),hash_pose1_?x2:x1));
+	CBScoreVisitor hash_visitor(clash_dis_,contact_dis_);
 	Reals::const_iterator iwb = weights_.begin();
-	for(Vecs::const_iterator i = xpoints.begin(); i != xpoints.end(); ++i,++iwb) {
-		Vec v = xh.global2local((*i)) + H.translation();
-		if( v.x() < -H.grid_size_ || v.y() < -H.grid_size_ || v.z() < -H.grid_size_ ) continue; // worth it?
-		if( v.x() >  H.xmx_       || v.y() >  H.ymx_       || v.z() >  H.zmx_       ) continue; // worth it?
-		int const ix  = (v.x()<0.0) ? 0 : (int)(numeric::min(H.xdim_-1,(int)(v.x()/H.grid_size_)));
-		int const iy0 = (v.y()<0.0) ? 0 : (int)(v.y()/H.grid_size_);
-		int const iz0 = (v.z()<0.0) ? 0 : (int)(v.z()/H.grid_size_);
-		int const iyl = numeric::max(0,iy0-1);
-		int const izl = numeric::max(0,iz0-1);
-		int const iyu = numeric::min((int)H.ydim_,     iy0+2);
-		int const izu = numeric::min((int)H.zdim_,(int)iz0+2);
-		for(int iy = iyl; iy < iyu; ++iy) {
-			for(int iz = izl; iz < izu; ++iz) {
-				int const ig = ix+H.xdim_*iy+H.xdim_*H.ydim_*iz;
-				assert(ig < H.xdim_*H.ydim_*H.zdim_ && ix < H.xdim_ && iy < H.ydim_ && iz < H.zdim_);
-				int const igl = H.grid_stripe_[ig].x;
-				int const igu = H.grid_stripe_[ig].y;
-				for(int i = igl; i < igu; ++i) {
-					numeric::geometry::hashing::xyzStripeHash<double>::float4 const & a2 = H.grid_atoms_[i];
-					Real const d2 = (v.x()-a2.x)*(v.x()-a2.x) + (v.y()-a2.y)*(v.y()-a2.y) + (v.z()-a2.z)*(v.z()-a2.z);
-					if( d2 <= H.grid_size2_ ) {
-						score += dist_score(d2, clash_dis_, contact_dis_ ) * a2.w * (*iwb);
-					}
-				}
-			}
-		}
+	for(Vecs::const_iterator i = points_.begin(); i != points_.end(); ++i,++iwb) {
+		xyzhash_.visit(xhp.local2global(*i),*iwb,hash_visitor);
 	}
-
-	// // // test
-	// utility::vector1<core::Real> w1,w2;
-	// Pose tmp1(pose1_),tmp2(pose2_);
-	// for(Size i = 1; i <= tmp1.n_residue(); ++i) w1.push_back(numeric::min(1.0,(double)neighbor_count(tmp1,i)/20.0));
-	// for(Size i = 1; i <= tmp2.n_residue(); ++i) w2.push_back(numeric::min(1.0,(double)neighbor_count(tmp2,i)/20.0));
-	// tmp1.dump_pdb("test0.pdb");
-	// tmp2.dump_pdb("test1.pdb");	
-	// xform_pose(tmp1,x1);
-	// xform_pose(tmp2,x2);
-	// tmp1.dump_pdb("test2.pdb");
-	// tmp2.dump_pdb("test3.pdb");	
-	// Real score2;
-	// for(Size ir = 1; ir <= tmp1.n_residue(); ++ir){
-	// 	if(!tmp1.residue(ir).has("CB")) continue;
-	// 	Vec p1 = tmp1.residue(ir).xyz("CB");
-	// 	for(Size jr = 1; jr <= tmp2.n_residue(); ++jr){
-	// 		if(!tmp2.residue(jr).has("CB")) continue;
-	// 		Vec p2 = tmp2.residue(jr).xyz("CB");
-	// 		Real d2 = p2.distance_squared(p1);
-	// 		score2 += dist_score(d2, clash_dis_, contact_dis_ ) * w1[ir] * w2[jr];
-	// 	}
-	// }
-	// std::TR << score << " " << score2 << std::endl;
-	// utility_exit_with_message("FOO");
-
-	return score;
+	return hash_visitor.score;
 }
-
 
 
 LinkerScore::LinkerScore(

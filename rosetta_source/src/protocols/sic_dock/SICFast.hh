@@ -12,19 +12,15 @@
 
 #include <protocols/sic_dock/SICFast.fwd.hh>
 
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray3D.hh>
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/kinematics/Stub.hh>
+#include <core/kinematics/Stub.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <protocols/sic_dock/xyzStripeHashPose.hh>
+#include <protocols/sic_dock/xyzStripeHashPose.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 
-#include <protocols/sic_dock/RigidScore.hh>
 
 
 namespace protocols {
@@ -36,7 +32,7 @@ public:
 
 	SICFast();
 
-	virtual ~SICFast(){}
+	virtual ~SICFast();
 
 	void init(
 		core::pose::Pose const & pose1
@@ -49,17 +45,14 @@ public:
 
 	void init(
 		core::pose::Pose const & pose1,
-		core::id::AtomID_Map<core::Real> const & clash_atoms1,
-		core::id::AtomID_Map<core::Real> const & score_atoms1
+		core::id::AtomID_Map<core::Real> const & clash_atoms1
 	);
 
 	void init(
 		core::pose::Pose const & pose1,
 		core::pose::Pose const & pose2,
 		core::id::AtomID_Map<core::Real> const & clash_atoms1, // currently >0 means include in clash check
-		core::id::AtomID_Map<core::Real> const & clash_atoms2, // could be nice if was clash radius
-		core::id::AtomID_Map<core::Real> const & score_atoms1, // weight for a "contact"
-		core::id::AtomID_Map<core::Real> const & score_atoms2  // 
+		core::id::AtomID_Map<core::Real> const & clash_atoms2  // could be nice if was clash radius
 	);
 
 	// return distace xmob*pose1 must move along ori to contact xfix*pose2
@@ -72,17 +65,10 @@ public:
 
 private:
 	double CTD,CLD,CTD2,CLD2,BIN;
-	xyzStripeHashPoseOP xh1c_,xh1s_;
-	xyzStripeHashPoseOP xh2c_,xh2s_;
+	xyzStripeHashPose *h1_,*h2_;
 	utility::vector1<double> w1_,w2_;
-
-	CBScoreOP cbscore_;
 };
 
-
-int flood_fill3D(int i, int j, int k, ObjexxFCL::FArray3D<double> & grid, double t);
-
-void termini_exposed(core::pose::Pose const & pose, bool & ntgood, bool & ctgood );
 
 
 } // namespace sic_dock

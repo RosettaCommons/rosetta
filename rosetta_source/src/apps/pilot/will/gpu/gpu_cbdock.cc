@@ -46,12 +46,12 @@
 #include <apps/pilot/will/mynamespaces.ihh>
 #include <apps/pilot/will/gpu/CL.hh>
 #include <apps/pilot/will/gpu/gpu_mat_vec.hh>
-#include <apps/pilot/will/xyzStripeHash.hh>
+#include <apps/pilot/will/xyzStripeHashWithMeta.hh>
 
 static basic::Tracer TR("gpu_cbdock");
 
 
-struct xyzStripeHash {
+struct xyzStripeHashWithMeta {
   float4  const * gatom  ;
   ushort2 const * gstripe;
   float   const   gsize  ;
@@ -59,7 +59,7 @@ struct xyzStripeHash {
   float   const   thresh2;
 };
 
-inline bool clash( xyzStripeHash const * h, float4 const a )
+inline bool clash( xyzStripeHashWithMeta const * h, float4 const a )
 {
   ushort const xdim = h->gdim.s0;
   ushort const ydim = h->gdim.s1;
@@ -96,7 +96,7 @@ inline bool clash( xyzStripeHash const * h, float4 const a )
   return false;
 }
 
-inline uint contacts( xyzStripeHash const * h, float4 const a )
+inline uint contacts( xyzStripeHashWithMeta const * h, float4 const a )
 {
   unsigned char ctcnt = (unsigned char)0u;
   ushort const xdim   = h->gdim.s0;
@@ -156,8 +156,8 @@ int main(int argc, char *argv[]) {
 
   // uint8 dimcl; dimcl.s0=clash.xdim(); dimcl.s1=clash.ydim(); dimcl.s2=clash.zdim(); dimcl.s3=dimcl.s0*dimcl.s1*dimcl.s2; dimcl.s4=clash.natom();
   // uint8 dimct; dimct.s0=ctact.xdim(); dimct.s1=ctact.ydim(); dimct.s2=ctact.zdim(); dimct.s3=dimct.s0*dimct.s1*dimct.s2; dimct.s4=ctact.natom();
-  // xyzStripeHash hcl = { clash.grid_atoms(), clash.grid_stripe(), clash.grid_size(), dimcl, 3.4f*3.4f };
-  // xyzStripeHash hct = { ctact.grid_atoms(), ctact.grid_stripe(), ctact.grid_size(), dimcl, 5.0f*5.0f };
+  // xyzStripeHashWithMeta hcl = { clash.grid_atoms(), clash.grid_stripe(), clash.grid_size(), dimcl, 3.4f*3.4f };
+  // xyzStripeHashWithMeta hct = { ctact.grid_atoms(), ctact.grid_stripe(), ctact.grid_size(), dimcl, 5.0f*5.0f };
 
   // core::id::AtomID_Map<Real> surf = get_surf_vol(p,1.4).surf;
 

@@ -1,8 +1,8 @@
 float
-octree_test( xyzStripeHash<float,float>::float4  const * gatom,
-             xyzStripeHash<float,float>::ushort2 const * gstripe,
+octree_test( xyzStripeHashWithMeta<float,float>::float4  const * gatom,
+             xyzStripeHashWithMeta<float,float>::ushort2 const * gstripe,
              float   const * gsize_in,
-             xyzStripeHash<float,float>::uint8   const * gdim,
+             xyzStripeHashWithMeta<float,float>::uint8   const * gdim,
              uint tmp
              //        float         * output
              ){

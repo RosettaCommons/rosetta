@@ -2,8 +2,8 @@
 // vi: set ts=2 noet:
 // :noTabs=false:tabSize=4:indentSize=4:
 
-#include <numeric/geometry/hashing/xyzStripeHash.hh>
-#include <protocols/sic_dock/xyzStripeHashPose.hh>
+#include <numeric/geometry/hashing/xyzStripeHashWithMeta.hh>
+#include <protocols/sic_dock/xyzStripeHashPoseWithMeta.hh>
 //#include <apps/pilot/will/gpu/gpu_refold.hh>
 
 #include <basic/options/option.hh>
@@ -39,7 +39,7 @@ void register_options() {
 
 
 utility::vector1<Vec>
-get_surface_points(core::pose::Pose const & p, Real DIST) {
+get_surface_points(core::pose::Pose const & p, Real /*DIST*/) {
 	SphereSample ss;
 	ss.pdb_from_level(1,"test1.pdb");
 	ss.pdb_from_level(2,"test2.pdb");
@@ -57,7 +57,7 @@ get_surface_points(core::pose::Pose const & p, Real DIST) {
 	}
 	
 //	for(Size )
-	
+	return points;
 }
 
 
@@ -83,19 +83,19 @@ int main(int argc, char *argv[]) {
 	
 	utility_exit_with_message("TEST GET SURF PTS");
 	
-	protocols::sic_dock::xyzStripeHashPose xyzhash(DIST,p,protocols::sic_dock::ALL);
+	protocols::sic_dock::xyzStripeHashPoseWithMeta xyzhash(DIST,p,protocols::sic_dock::ALL);
 	xyzhash.sanity_check();
 
 	using namespace ObjexxFCL::fmt;
 	std::cout << xyzhash.grid_size() << std::endl;
 	std::cout << xyzhash.natom() << std::endl;
 	std::cout << xyzhash.xdim() << " " << xyzhash.ydim() << " " << xyzhash.zdim() << std::endl;
-	for(Size j = 0; j < xyzhash.natom(); ++j) {
+	for(Size j = 0; j < (Size)xyzhash.natom(); ++j) {
 		std::cout << F(12,7,xyzhash.grid_atoms()[j].x) << " ";
 		std::cout << F(12,7,xyzhash.grid_atoms()[j].y) << " ";
 		std::cout << F(12,7,xyzhash.grid_atoms()[j].z) << std::endl;
 	}
-	for(Size j = 0; j < xyzhash.xdim()*xyzhash.ydim()*xyzhash.zdim(); ++j) {
+	for(Size j = 0; j < Size(xyzhash.xdim()*xyzhash.ydim()*xyzhash.zdim()); ++j) {
 		std::cout << xyzhash.grid_stripe()[j].x << " ";
 		std::cout << xyzhash.grid_stripe()[j].y << std::endl;
 	}

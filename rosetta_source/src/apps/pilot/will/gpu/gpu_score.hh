@@ -2,14 +2,14 @@
 #define INCLUDED_apps_pilot_will_gpu_gpu_score_hh
 
 
-#include <apps/pilot/will/xyzStripeHash.hh>
-#include <apps/pilot/will/xyzStripeHashPose.hh>
+#include <apps/pilot/will/xyzStripeHashWithMeta.hh>
+#include <apps/pilot/will/xyzStripeHashPoseWithMeta.hh>
 //#include <apps/pilot/will/gpu/gpu_refold.hh>
 
 
 
 
-void gpu_score_test(xyzStripeHashPoseMode pom) {
+void gpu_score_test(xyzStripeHashPoseWithMetaMode pom) {
   using namespace basic::options;
   using core::pose::Pose;
 
@@ -31,7 +31,7 @@ void gpu_score_test(xyzStripeHashPoseMode pom) {
   TR<<"MODE: "<<runmode<<" "<<NITER<<" "<<GRADIUS<<std::endl;
 
 
-  xyzStripeHashPose poc(GRADIUS,p,pom);
+  xyzStripeHashPoseWithMeta poc(GRADIUS,p,pom);
 //  protocols::scoring::ImplicitFastClashCheck ifc(p,GRADIUS);
 
 

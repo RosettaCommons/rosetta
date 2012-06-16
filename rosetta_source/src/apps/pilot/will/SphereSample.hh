@@ -111,7 +111,7 @@ public:
 		using namespace ObjexxFCL::fmt;
 		utility::io::ozstream out(fname);
 		int count = 0;
-		for(int i = 1; i <= num_sample(level); ++i) {
+		for(numeric::Size i = 1; i <= num_sample(level); ++i) {
 			SphereNode const & n( sample(level,i) );
 			numeric::xyzVector<numeric::Real> const & p(n.axis());
 			out<<"HETATM"<<I(5,++count)<<' '<<"NODE"<<' '<<"SPH"<<' '<<"A"<<I(4,1)<<"    ";
@@ -132,36 +132,36 @@ public:
 			}
 			assert( n.num_neighbor() == 5 || n.num_neighbor() == 6);
 			n5 += n.num_neighbor()==5;
-			for(int in = 1; in <= n.num_neighbor(); ++in) {
+			for(numeric::Size in = 1; in <= n.num_neighbor(); ++in) {
 				SphereNode const & b(n.neighbor(in));				
 				assert(n.level()==b.level());
 				bool is_neighbor = false;
-				for(int ib = 1; ib <= b.num_neighbor(); ++ib) {
+				for(numeric::Size ib = 1; ib <= b.num_neighbor(); ++ib) {
 					is_neighbor |= &b.neighbor(ib) == &n;
 				}
 				assert(is_neighbor);
 			}
-			for(int ic = 1; ic <= n.num_children(); ++ic) {
+			for(numeric::Size ic = 1; ic <= n.num_children(); ++ic) {
 				SphereNode const & c(n.child(ic));							
 				assert(n.level()+1==c.level());
 				bool is_parent = false;
-				for(int ip = 1; ip <= c.num_parents(); ++ip) {
+				for(numeric::Size ip = 1; ip <= c.num_parents(); ++ip) {
 					is_parent |= &c.parent(ip) == &n;
 				}
 				assert(is_parent);
 			}
-			for(int ip = 1; ip <= n.num_parents(); ++ip) {
+			for(numeric::Size ip = 1; ip <= n.num_parents(); ++ip) {
 				SphereNode const & p(n.parent(ip));
 				assert(n.level()-1==p.level());
 				bool is_child = false;
-				for(int ic = 1; ic <= p.num_children(); ++ic) {
+				for(numeric::Size ic = 1; ic <= p.num_children(); ++ic) {
 					is_child |= &p.child(ic) == &n;
 				}
 				assert(is_child);
 			}
 		}
-		for(int l = 1; l <= 7; ++l) {
-			for(int i = 1; i <= num_sample(l); ++i) {
+		for(numeric::Size l = 1; l <= 7; ++l) {
+			for(numeric::Size i = 1; i <= num_sample(l); ++i) {
 				assert( sample(l,i).level() == l);
 			}
 		}
@@ -181,6 +181,7 @@ public:
 			case 7: return 30722;
 			default: utility_exit_with_message("bad level");
 		}
+		return 0; // never
 	}
 	inline SphereNode const & sample(int l, int i) const { return *allnodes_[i+sample_offset(l)]; }
 	numeric::Size sample_offset(int level) const {
@@ -194,6 +195,7 @@ public:
 			case 7: return 10252;
 			default: utility_exit_with_message("bad level");
 		}
+		return 0; // never
 	}
 
 	int num_sample1() const { return num_sample(1); }

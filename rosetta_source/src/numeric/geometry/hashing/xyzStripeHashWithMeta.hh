@@ -7,10 +7,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-#ifndef INCLUDED_numeric_geometry_hashing_xyzStripeHash_hh
-#define INCLUDED_numeric_geometry_hashing_xyzStripeHash_hh
+#ifndef INCLUDED_numeric_geometry_hashing_xyzStripeHashWithMeta_hh
+#define INCLUDED_numeric_geometry_hashing_xyzStripeHashWithMeta_hh
 
-#include <numeric/geometry/hashing/xyzStripeHash.fwd.hh>
+#include <numeric/geometry/hashing/xyzStripeHashWithMeta.fwd.hh>
 #include <utility/vector1.hh>
 #include <numeric/types.hh>
 #include <numeric/xyzVector.hh>
@@ -22,20 +22,17 @@ namespace geometry {
 namespace hashing {
 
 template<typename T>
-struct Counter {
-	int count;
-	Counter():count(0){}
-	void visit( numeric::xyzVector<T> const &, numeric::xyzVector<T> const & ){ ++count; }
-};
-
-template<typename T>
-class xyzStripeHash : public utility::pointer::ReferenceCount {
+class xyzStripeHashWithMeta : public utility::pointer::ReferenceCount {
+	
 	inline short  short_min( short const a,  short const b) { return (a < b) ? a : b; }
 	inline short  short_max( short const a,  short const b) { return (a > b) ? a : b; }
 	inline short ushort_min(unsigned short const a, unsigned short const b) { return (a < b) ? a : b; }
 	inline short ushort_max(unsigned short const a, unsigned short const b) { return (a > b) ? a : b; }
+
 public:
-	typedef struct { T x,y,z; } float3;
+	typedef std::pair<numeric::xyzVector<T>,T> VecandVal;
+	typedef struct { T x,y,z,w; } float4;
+	//typedef unsigned int uint;
 	typedef unsigned short ushort;
 	typedef struct { unsigned short x,y; } ushort2;
 	typedef numeric::xyzVector<T> Vec;
@@ -43,21 +40,29 @@ public:
 	// iterators:
 	template<class C>
 	struct iter_base : public std::iterator<std::input_iterator_tag,T> {
-		iter_base(float3 const *p) : p_(p) {}
+		iter_base(float4 const *p) : p_(p) {}
 		C & operator=(C const & r) { p_ = r.p_; return *this; }
 		C & operator++() { ++p_; return static_cast<C &>(*this); } 
 		bool operator!=(C const & r) const { return (p_ != r.p_); }
 		bool operator==(C const & r) const { return (p_ == r.p_); }
 	protected:
-		float3 const *p_;
+		float4 const *p_;
 	};
-	struct iterator : public iter_base<iterator> {
-		iterator(float3 const *p) : iter_base<iterator>(p) {}
-		const Vec & operator*() { return *((Vec const *)(this->p_)); }
+	struct xyzmeta_iterator : public iter_base<xyzmeta_iterator> {
+		xyzmeta_iterator(float4 const *p) : iter_base<xyzmeta_iterator>(p) {}
+		const VecandVal & operator*() { return *((VecandVal const *)(this->p_)); }
+	};
+	struct xyz_iterator : public iter_base<xyz_iterator> {
+		xyz_iterator(float4 const *p) : iter_base<xyz_iterator>(p) {}
+		const xyzVector<T> & operator*() { return ((VecandVal const *)(this->p_))->first; }
+	};
+	struct meta_iterator : public iter_base<meta_iterator> {
+		meta_iterator(float4 const *p) : iter_base<meta_iterator>(p) {}
+		const T & operator*() { return *((VecandVal const *)(this->p_)); }
 	};
 	struct neighbor_iterator : public std::iterator<std::input_iterator_tag,T> {
-		neighbor_iterator( xyzStripeHash<T> const & h ): h_(h) {}
-		neighbor_iterator( xyzStripeHash<T> const & h, Vec const & v_in):
+		neighbor_iterator( xyzStripeHashWithMeta<T> const & h ): h_(h) {}
+		neighbor_iterator( xyzStripeHashWithMeta<T> const & h, numeric::xyzVector<T> const & v_in):
 			h_(h),
 			x  (v_in.x()+h_.translation_.x()),
 			y  (v_in.y()+h_.translation_.y()),
@@ -93,7 +98,7 @@ public:
 						i = igl-1;
 					} else {			
 						++i;
-						float3 const & a2 = h_.grid_atoms_[i];
+						float4 const & a2 = h_.grid_atoms_[i];
 						float const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
 						if( d2 <= h_.grid_size2_ ){
 							std::cout << "iter " 
@@ -109,13 +114,13 @@ public:
 			end();
 			return *this;
 		} 
-		const Vec & operator*() { return *((Vec const *)(grid_atoms_+i)); }
+		const VecandVal & operator*() { return *((VecandVal const *)(grid_atoms_+i)); }
 		// neighbor_iterator & operator=(const neighbor_iterator& r) { p_ = r.p_; return *this; }
 		bool operator!=(neighbor_iterator const & r) const { return (i != r.i); }
 		bool operator==(neighbor_iterator const & r) const { return (i == r.i); }
 		void end() { i = h_.natom(); }
 	private:
-		xyzStripeHash const & h_;
+		xyzStripeHashWithMeta const & h_;
 		T x,y,z;
 		int ix,iy0,iz0,iyl,izl,iyu,izu;
 		int iy,iz,ig,igl,igu,i;
@@ -123,7 +128,7 @@ public:
 
 public:
 
-	xyzStripeHash(
+	xyzStripeHashWithMeta(
 		T grid_size
 	):
 		grid_size_(grid_size),
@@ -132,8 +137,9 @@ public:
 		grid_stripe_(NULL),
 		neighbor_end_(*this)
 	{}
-	xyzStripeHash( T grid_size,
-	               utility::vector1<Vec > const & atoms
+	xyzStripeHashWithMeta( T grid_size,
+	               utility::vector1<numeric::xyzVector<T> > const & atoms,
+	               utility::vector1<T> const & meta
 	):
 		grid_size_(grid_size),
 		grid_size2_(grid_size*grid_size),
@@ -141,13 +147,16 @@ public:
 		grid_stripe_(NULL),
 		neighbor_end_(*this)
 	{
-		init(atoms);
+		init(atoms,meta);
 	}
 
 	void init(
-		utility::vector1<Vec > const & atoms
+		utility::vector1<numeric::xyzVector<T> > const & atoms,
+		utility::vector1<T> const & meta
 	){
-		if( atoms.size() > 65535 ) utility_exit_with_message("xyzStripeHash con only handle < 65535 atoms!");
+		// if( sizeof(T) < sizeof(M) ) utility_exit_with_message("octree metadata must fit in sizeof(T)!");
+		if( atoms.size() != meta.size() ) utility_exit_with_message("must be metadata for each point!");
+		if( atoms.size() > 65535 ) utility_exit_with_message("xyzStripeHashWithMeta con only handle < 65535 atoms!");
 
 // #define FUDGE 0.0f
 
@@ -171,7 +180,7 @@ public:
 		//   atoms[i].z -= zmn/*-FUDGE*/;
 		// }
 
-		//std::cout << "xyzStripeHash: " << xmn << " "  << ymn << " "  << zmn << " " << xmx << " "  << ymx << " "  << zmx << std::endl;
+		//std::cout << "xyzStripeHashWithMeta: " << xmn << " "  << ymn << " "  << zmn << " " << xmx << " "  << ymx << " "  << zmx << std::endl;
 
 		xdim_ = (int)((xmx-xmn+0.0001)/grid_size_+0.999999);
 		ydim_ = (int)((ymx-ymn+0.0001)/grid_size_+0.999999);
@@ -206,8 +215,8 @@ public:
 		//       int i = ix+xdim_*iy+xdim_*ydim_*iz;
 		//       TR<<ix<<" "<<iy<<" "<<iz<<" "<<I(3,gindex[i].x)<<" "<<I(3,gindex[i].y) <<" "<<I(3,grid_stripe_[i].x)<<" "<<I(3,grid_stripe_[i].y)<<std::endl;
 		//     }
-		float3 *gatom = new float3[natom_+4]; // space for 4 overflow atoms
-		for(int i=0;i<4;++i) {gatom[natom_+i].x=9e9;gatom[natom_+i].y=9e9;gatom[natom_+i].z=9e9;}
+		float4 *gatom = new float4[natom_+4]; // space for 4 overflow atoms
+		for(int i=0;i<4;++i) {gatom[natom_+i].x=9e9;gatom[natom_+i].y=9e9;gatom[natom_+i].z=9e9;gatom[natom_+i].w=9e9;}
 		ushort *gridc = new ushort[gsize];
 		for(int i = 0; i < gsize; ++i) gridc[i] = 0;
 		for(int i = 1; i <= natom_; ++i) {
@@ -219,6 +228,7 @@ public:
 			gatom[ idx ].x = atoms[i].x()-xmn/*+FUDGE*/;
 			gatom[ idx ].y = atoms[i].y()-ymn/*+FUDGE*/;
 			gatom[ idx ].z = atoms[i].z()-zmn/*+FUDGE*/;
+			gatom[ idx ].w = meta[i];
 			++(gridc[ig]);
 		}
 		grid_atoms_ = gatom;
@@ -238,16 +248,20 @@ public:
 		delete gridc;
 		delete gindex;
 	}
-	virtual ~xyzStripeHash() {
+	virtual ~xyzStripeHashWithMeta() {
 		if(grid_atoms_)  delete grid_atoms_;
 		if(grid_stripe_) delete grid_stripe_;
 	}
 
-	inline iterator begin(){ return iterator(grid_atoms_       ) ; }
-	inline iterator end()  { return iterator(grid_atoms_+natom_) ; }
+	xyz_iterator xyz_begin(){ return xyz_iterator(grid_atoms_       ) ; }
+	xyz_iterator xyz_end()  { return xyz_iterator(grid_atoms_+natom_) ; }
+	meta_iterator meta_begin(){ return meta_iterator(grid_atoms_       ) ; }
+	meta_iterator meta_end()  { return meta_iterator(grid_atoms_+natom_) ; }
+	xyzmeta_iterator xyzmeta_begin(){ return xyzmeta_iterator(grid_atoms_       ) ; }
+	xyzmeta_iterator xyzmeta_end()  { return xyzmeta_iterator(grid_atoms_+natom_) ; }
 
-	inline neighbor_iterator neighbor_begin( Vec v ) const { return neighbor_iterator(*this,v); }
-	inline neighbor_iterator const & neighbor_end() const { return neighbor_end_; }
+	neighbor_iterator neighbor_begin( xyzVector<T> v ) const { return neighbor_iterator(*this,v); }
+	neighbor_iterator const & neighbor_end() const { return neighbor_end_; }
 
 	bool sanity_check() const {
 		using namespace ObjexxFCL::fmt;
@@ -276,10 +290,11 @@ public:
 		return true;
 	}
 
-
 	inline
 	int
-	nbcount( Vec const & v_in ) const {
+	nbcount(
+		xyzVector<T> const & v_in
+	) const {
 		Vec const v = v_in+translation_;
 		T x = v.x(); T y = v.y(); T z = v.z();
 		if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return 0; // worth it iff
@@ -299,10 +314,10 @@ public:
 				assert(ix < xdim_);
 				assert(iy < ydim_);
 				assert(iz < zdim_);
-				int const & igl = grid_stripe_[ig].x;
-				int const & igu = grid_stripe_[ig].y;
+				int const igl = grid_stripe_[ig].x;
+				int const igu = grid_stripe_[ig].y;
 				for(int i = igl; i < igu; ++i) {
-					float3 const a2 = grid_atoms_[i];
+					float4 const a2 = grid_atoms_[i];
 					float const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
 					if( d2 <= grid_size2_ ) {
 						++count;
@@ -313,44 +328,14 @@ public:
 		return count;
 	}
 
-	inline
-	bool
-	clash( Vec const & v_in ) const {
-		Vec const v = v_in+translation_;
-		T x = v.x(); T y = v.y(); T z = v.z();
-		if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return false; // worth it iff
-		if( x > xmx_        || y > ymx_        || z > zmx_        ) return false; // worth it iff
-		int const ix   = (x<0) ? 0 : numeric::min(xdim_-1,(int)(x/grid_size_));
-		int const iy0  = (y<0) ? 0 : y/grid_size_;
-		int const iz0  = (z<0) ? 0 : z/grid_size_;
-		int const iyl = numeric::max(0,iy0-1);
-		int const izl = numeric::max(0,iz0-1);
-		int const iyu = numeric::min((int)ydim_,iy0+2);
-		int const izu = numeric::min((int)zdim_,(int)iz0+2);
-		for(int iy = iyl; iy < iyu; ++iy) {
-			for(int iz = izl; iz < izu; ++iz) {
-				int const ig = ix+xdim_*iy+xdim_*ydim_*iz;
-				assert(ig < xdim_*ydim_*zdim_);
-				assert(ix < xdim_);
-				assert(iy < ydim_);
-				assert(iz < zdim_);
-				int const & igl = grid_stripe_[ig].x;
-				int const & igu = grid_stripe_[ig].y;
-				for(int i = igl; i < igu; ++i) {
-					float3 const a2 = grid_atoms_[i];
-					float const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
-					if( d2 < grid_size2_ ) {
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
-
 	template<typename V>
+	inline
 	void
-	visit( Vec const & v_in, V & visitor ) const {
+	visit(
+		Vec const & v_in,
+		T const & m_in,
+		V & visitor
+	) const {
 		Vec const v = v_in+translation_;
 		T x = v.x(); T y = v.y(); T z = v.z();
 		if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return; // worth it iff
@@ -369,21 +354,28 @@ public:
 				assert(ix < xdim_);
 				assert(iy < ydim_);
 				assert(iz < zdim_);
-				int const & igl = grid_stripe_[ig].x;
-				int const & igu = grid_stripe_[ig].y;
+				int const igl = grid_stripe_[ig].x;
+				int const igu = grid_stripe_[ig].y;
 				for(int i = igl; i < igu; ++i) {
 					Vec const & c = *((Vec*)(grid_atoms_+i));
+					T   const & m = (grid_atoms_+i)->w;
 					float const d2 = (x-c.x())*(x-c.x()) + (y-c.y())*(y-c.y()) + (z-c.z())*(z-c.z());
 					if( d2 <= grid_size2_ ) {
-						visitor.visit(v,c,d2);
+						visitor.visit(v,m_in,c,m,d2);
 					}
 				}
 			}
 		}
 	}
+
 	template<typename V>
+	inline
 	void
-	visit_lax( Vec const & v_in, V & visitor ) const {
+	visit_lax(
+		Vec const & v_in,
+		T const & m_in,
+		V & visitor
+	) const {
 		Vec const v = v_in+translation_;
 		T x = v.x(); T y = v.y(); T z = v.z();
 		if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return; // worth it iff
@@ -402,18 +394,19 @@ public:
 				assert(ix < xdim_);
 				assert(iy < ydim_);
 				assert(iz < zdim_);
-				int const & igl = grid_stripe_[ig].x;
-				int const & igu = grid_stripe_[ig].y;
+				int const igl = grid_stripe_[ig].x;
+				int const igu = grid_stripe_[ig].y;
 				for(int i = igl; i < igu; ++i) {
 					Vec const & c = *((Vec*)(grid_atoms_+i));
-					visitor.visit(v,c);
+					T   const & m = (grid_atoms_+i)->w;
+					visitor.visit(v,m_in,c,m);
 				}
 			}
 		}
 	}
 
 
-	inline float3  const * grid_atoms() const { return grid_atoms_; }
+	inline float4  const * grid_atoms() const { return grid_atoms_; }
 	inline ushort2 const * grid_stripe() const { return grid_stripe_; }
 	inline int natom() const { return natom_; }
 	inline int xdim () const { return  xdim_; }
@@ -423,10 +416,10 @@ public:
 	inline const numeric::xyzVector<numeric::Real> translation() const { return translation_; }
 
 private:
-	xyzStripeHash();
+	xyzStripeHashWithMeta();
 	T const grid_size_,grid_size2_;
 	int natom_;
-	float3  const * grid_atoms_;
+	float4  const * grid_atoms_;
 	ushort2 const * grid_stripe_;
 	int xdim_,ydim_,zdim_;
 	T xmx_,ymx_,zmx_;
@@ -436,144 +429,8 @@ private:
 };
 
 
-
 } // namespace hashing
 } // namespace geometry
 } // namespace numeric
 
 #endif
-
-	// inline
-	// int
-	// nbcount_test( Vec const & v ) const {
-	// 	neighbor_iterator i(neighbor_begin(v));
-	// 	int count = 0;
-	// 	while( i != neighbor_end() ) { ++i; ++count; }
-	// 	return count;
-	// }
-
-	// inline 
-	// float
-	// ljenergy( float x, float y, float z ) {
-	// 	float e = 0.0f;
-	// 	int const ix  = (x<0) ? 0u : numeric::min(xdim_-1,(int)(x/grid_size_));
-	// 	int const iy0  = (y<0) ? 0u : y/grid_size_;
-	// 	int const iz0  = (z<0) ? 0u : z/grid_size_;
-	// 	int const iyl = numeric::max(0,iy0-1);
-	// 	int const izl = numeric::max(0,iz0-1);
-	// 	int const iyu = numeric::min((int)ydim_,iy0+2);
-	// 	int const izu = numeric::min((int)zdim_,(int)iz0+2);
-	// 	for(int iy = iyl; iy < iyu; ++iy) {
-	// 		for(int iz = izl; iz < izu; ++iz) {
-	// 			int const ig = ix+xdim_*iy+xdim_*ydim_*iz;
-	// 			assert(ig < xdim_*ydim_*zdim_);
-	// 			assert(ix < xdim_);
-	// 			assert(iy < ydim_);
-	// 			assert(iz < zdim_);
-	// 			int const igl = grid_stripe_[ig].x;
-	// 			int const igu = grid_stripe_[ig].y;
-	// 			for(int i = igl; i < igu; ++i) {
-	// 				float3 const a2 = grid_atoms_[i];
-	// 				float const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
-	// 				if( d2 <= grid_size_*grid_size_ ) {
-	// 					float const r = 4.0 / sqrt(d2);
-	// 					float const r2 = r*r;
-	// 					float const r3 = r2*r;
-	// 					float const r6 = r3*r2;
-	// 					float const ljtmp = r6*r6 - r6;
-	// 					if( d2 >= 4.0f ) e += ljtmp;
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// 	return e;
-	// }
-
-
-	// inline
-	// int
-	// nbcount_while1( Vec const & v_in ) const {
-	// 	Vec const v = v_in+translation_;
-	// 	T x = v.x(); T y = v.y(); T z = v.z();
-	// 	if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return 0; // worth it iff
-	// 	if( x > xmx_ || y > ymx_ || z > zmx_ ) return 0;                      // worth it iff
-	// 	int count = 0;
-	// 	int const ix   = (x<0) ? 0 : numeric::min(xdim_-1,(int)(x/grid_size_));
-	// 	int const iy0  = (y<0) ? 0 : y/grid_size_;
-	// 	int const iz0  = (z<0) ? 0 : z/grid_size_;
-	// 	int const iyl = numeric::max(0,iy0-1);
-	// 	int const izl = numeric::max(0,iz0-1);
-	// 	int const iyu = numeric::min((int)ydim_,iy0+2);
-	// 	int const izu = numeric::min((int)zdim_,(int)iz0+2);
-	// 	int iy = iyl-1;
-	// 	int iz=9999999,ig,igl,igu=0,i=9999999;
-	// 	while(iy < iyu){ 
-	// 		if(iz >= izu){
-	// 			++iy;
-	// 			iz = izl-1;
-	// 			i=9999999,igu=0;
-	// 		} else { 
-	// 			if( i >= igu ){
-	// 				++iz;
-	// 				ig = ix+xdim_*iy+xdim_*ydim_*iz;
-	// 				igl = grid_stripe_[ig].x;
-	// 				igu = grid_stripe_[ig].y;
-	// 				i = igl;
-	// 			} else {			
-	// 				float3 const a2 = grid_atoms_[i];
-	// 				float const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
-	// 				if( d2 <= grid_size2_ ) {
-	// 					++count;
-	// 				}
-	// 				++i;
-	// 			}
-	// 		}
-	// 	}
-	// 	return count;
-	// }
-
-	// inline
-	// int
-	// nbcount_while3( Vec const & v_in ) const {
-	// 	Vec const v = v_in+translation_;
-	// 	T x = v.x(); T y = v.y(); T z = v.z();
-	// 	if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return 0; // worth it iff
-	// 	if( x > xmx_ || y > ymx_ || z > zmx_ ) return 0;                      // worth it iff
-	// 	int count = 0;
-	// 	int const ix   = (x<0) ? 0 : numeric::min(xdim_-1,(int)(x/grid_size_));
-	// 	int const iy0  = (y<0) ? 0 : y/grid_size_;
-	// 	int const iz0  = (z<0) ? 0 : z/grid_size_;
-	// 	int const iyl = numeric::max(0,iy0-1);
-	// 	int const izl = numeric::max(0,iz0-1);
-	// 	int const iyu = numeric::min((int)ydim_,iy0+2);
-	// 	int const izu = numeric::min((int)zdim_,(int)iz0+2);
-	// 	int iy = iyl;
-	// 	int iz=9999999,ig,igl,igu,i=9999999;
-	// 	while(iy < iyu){ 
-	// 		iz = izl;
-	// 		while(iz < izu){ 
-	// 			ig = ix+xdim_*iy+xdim_*ydim_*iz;
-	// 			assert(ig < xdim_*ydim_*zdim_);
-	// 			assert(ix < xdim_);
-	// 			assert(iy < ydim_);
-	// 			assert(iz < zdim_);
-	// 			igl = grid_stripe_[ig].x;
-	// 			igu = grid_stripe_[ig].y;
-	// 			i = igl;
-	// 			while(i < igu){
-	// 				float3 const a2 = grid_atoms_[i];
-	// 				float const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
-	// 				if( d2 <= grid_size2_ ) {
-	// 					++count;
-	// 				}
-	// 				++i;
-	// 			}
-	// 			++iz;
-	// 		}
-	// 		++iy;
-	// 	}
-	// 	// if(count > 0) utility_exit_with_message("foo");
-	// 	return count;
-	// }
-
-

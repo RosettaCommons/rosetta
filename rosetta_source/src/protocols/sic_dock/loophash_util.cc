@@ -231,14 +231,6 @@ dump_loophash_linkers(
 }
 
 
-inline Stub multstubs(Stub const & a, Stub const & b){
-	return Stub( a.M*b.M, a.M*b.v+a.v );
-}
-inline Stub invstub(Stub const & a){
-	Mat const MR = a.M.transposed();
-	return Stub( MR, MR * -a.v );
-}
-
 Real linker_count2score(Size count){
 	return 0.8*sqrt(count)+0.2*Real(count);
 }
