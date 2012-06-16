@@ -64,19 +64,20 @@ dump_loophash_linkers(
 	core::kinematics::Stub const & lower,
 	core::kinematics::Stub const & upper,
 	// core::pose::Pose const & pose1,
-	// core::pose::Pose const & pose2,	
+	// core::pose::Pose const & pose2,
 	protocols::loophash::LoopHashLibraryOP loop_hash_library,
 	utility::vector1<core::Size> const & loopsizes,
 	core::Size radius = 0
 );
 
-inline 
-core::kinematics::Stub 
+/*inline
+core::kinematics::Stub
 multstubs(
 	core::kinematics::Stub const & a,
 	core::kinematics::Stub const & b
 );
 inline core::kinematics::Stub invstub(core::kinematics::Stub const & a);
+*/
 
 core::Real
 linker_count2score(

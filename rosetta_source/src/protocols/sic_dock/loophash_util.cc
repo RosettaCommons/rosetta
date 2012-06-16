@@ -78,9 +78,9 @@ get_termini_from_pose(
 	TermInfo & lowers,
 	TermInfo & uppers
 ){
-	if( pose.residue(ir).is_upper_terminus() && 
-	    ir > 1 && 
-	   !pose.residue(ir  ).is_lower_terminus() && 
+	if( pose.residue(ir).is_upper_terminus() &&
+	    ir > 1 &&
+	   !pose.residue(ir  ).is_lower_terminus() &&
 	   // !pose.residue(ir-1).is_lower_terminus() &&
 	   !pose.residue(ir-1).is_upper_terminus() &&
 	    pose.residue(ir-1).is_protein()
@@ -91,7 +91,7 @@ get_termini_from_pose(
 	if( pose.residue(ir).is_lower_terminus() &&
 	   !pose.residue(ir).is_upper_terminus() &&
 	    ir < pose.n_residue() &&
-	   !pose.residue(ir+1).is_lower_terminus() &&		   
+	   !pose.residue(ir+1).is_lower_terminus() &&
 	   !pose.residue(ir+1).is_upper_terminus() &&
 	    pose.residue(ir+1).is_protein()
 	){
@@ -124,7 +124,7 @@ get_leap_6dof(
 	rt_6[3] = leap.get_translation().z();
 	rt_6[4] = euler_angles.x()*180.0/numeric::constants::d::pi;
 	rt_6[5] = euler_angles.y()*180.0/numeric::constants::d::pi;
-	rt_6[6] = euler_angles.z()*180.0/numeric::constants::d::pi;	
+	rt_6[6] = euler_angles.z()*180.0/numeric::constants::d::pi;
 	return rt_6;
 }
 
@@ -157,7 +157,7 @@ dump_loophash_linkers(
 	Stub const & lower,
 	Stub const & upper,
 	// core::pose::Pose const & pose1,
-	// core::pose::Pose const & pose2,	
+	// core::pose::Pose const & pose2,
 	protocols::loophash::LoopHashLibraryOP loop_hash_library,
 	Sizes const & loopsizes,
 	Size radius
@@ -172,7 +172,7 @@ dump_loophash_linkers(
 	core::Size ndumped = 0;
 	for(Sizes::const_iterator ils = loopsizes.begin(); ils != loopsizes.end(); ++ils){
 		Size loopsize(*ils);
-	
+
 		protocols::loophash::LoopHashMap & hashmap( loop_hash_library->gethash(loopsize) );
 
 		numeric::geometry::hashing::Real6 rt_6 = get_leap_6dof(lower,upper);
