@@ -418,7 +418,7 @@ sources = {
 		"gen_trimer_disulf",
 		"gen_xtal_cys_dimer_from_trimer",
 		"xyzStripeHash_dump",
-		"xyzStripeHash_test",
+#		"xyzStripeHash_test",
 
 		"test_loop_hash",
 #		"d3_bpy_linker",
