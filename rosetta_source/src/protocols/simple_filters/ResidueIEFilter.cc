@@ -74,8 +74,9 @@ ResidueIEFilter::ResidueIEFilter(
 			scorefxn_->set_weight( score_type_, old_weight );
 
 		}
-		not_intE_ = false;
+		use_resE_ = false;
 	}
+
 ResidueIEFilter::ResidueIEFilter( ResidueIEFilter const &init ) :
 	Filter( init ), resnums_( init.resnums_ ),
 	restype_( init.restype_ ),
@@ -86,7 +87,8 @@ ResidueIEFilter::ResidueIEFilter( ResidueIEFilter const &init ) :
 	rb_jump_ (init.rb_jump_),
 	interface_distance_cutoff_ ( init.interface_distance_cutoff_),
 	max_penalty_ ( init.max_penalty_),
-	penalty_factor_ ( init.penalty_factor_)
+	penalty_factor_ ( init.penalty_factor_),
+	use_resE_ ( init.use_resE_ )
 {
 	using namespace core::scoring;
 	if( init.scorefxn_ ) scorefxn_ = new core::scoring::ScoreFunction( *init.scorefxn_ );
@@ -151,36 +153,62 @@ ResidueIEFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & 
 	max_penalty_ =  tag->getOption<core::Real>( "max_penalty", 1000.0 );
 	if(tag->hasOption("residues")) {
 		resnums_ = core::pose::get_resnum_list(tag, "residues", pose);
+
 		if(resnums_.empty()){
 			whole_pose_=1;	
+      whole_interface_=0;
 			tr<< "Failed to parse residues: " << tag->getOption<std::string> ("residues") << ". Using whole pose." << std::endl;
 		}
+    else
+    {
+      whole_pose_=0;
+      whole_interface_=0;
+    }
 	}
+
 	runtime_assert(tag->hasOption("residues") || whole_pose_ || whole_interface_);
-	not_intE_ = tag->getOption<bool>( "use_resE" , 0 );
+
+	use_resE_ = tag->getOption<bool>( "use_resE" , 0 );
 }
 
 bool
 ResidueIEFilter::apply( core::pose::Pose const & pose ) const
 {
-	  if ( whole_interface_)  {
+  if ( whole_interface_)
+  {
+		tr << "Detecting target resnums from interface." << std::endl;
+		resnums_.clear();
+
     if ( pose.conformation().num_chains() < 2 ) {
       tr << "pose must contain at least two chains!" << std::endl;
       return false;
     }
+
     core::pose::Pose in_pose = pose;
+
     (*scorefxn_)(in_pose);
     protocols::scoring::Interface interface_obj(rb_jump_);
+
     in_pose.update_residue_neighbors();
+
     interface_obj.distance( interface_distance_cutoff_ );
     interface_obj.calculate( in_pose );
-     for ( core::Size resnum = 1; resnum <= pose.total_residue(); ++resnum) {
-      if ( in_pose.residue(resnum).is_protein()  &&  interface_obj.is_interface( resnum ) && (in_pose.residue_type(resnum).name3() == restype_) ) resnums_.push_back( resnum );
+    for ( core::Size resnum = 1; resnum <= pose.total_residue(); ++resnum)
+    {
+      if ( in_pose.residue(resnum).is_protein()  &&  interface_obj.is_interface( resnum ) && (in_pose.residue_type(resnum).name3() == restype_) )
+      {
+        resnums_.push_back( resnum );
+      }
     }
   }
-  else if ( whole_pose_ ){
+  else if ( whole_pose_ )
+  {
+		tr << "Detecting target resnums from whole pose." << std::endl;
+		resnums_.clear();
+
     core::pose::Pose in_pose = pose;
-    for ( core::Size resnum = 1; resnum <= in_pose.total_residue(); ++resnum) {
+    for ( core::Size resnum = 1; resnum <= in_pose.total_residue(); ++resnum) 
+    {
       if ( in_pose.residue(resnum).is_protein()  && (in_pose.residue_type(resnum).name3() == restype_) ) resnums_.push_back( resnum );
     }
   }
@@ -233,25 +261,52 @@ ResidueIEFilter::compute( core::pose::Pose const & pose ) const
     return (0.0);
   }
 	
-  foreach (core::Size const res, resnums_){
+  foreach (core::Size const res, resnums_)
+  {
 		core::Real res_intE (0.0); 
-		if (not_intE_){
+
+		if (use_resE_)
+    {
 			protocols::simple_filters::EnergyPerResidueFilter const eprf(res, scorefxn_, score_type_, 100000.0/*dummy threshold*/);
 			res_intE = eprf.compute( pose );
 		}
-		else{     
-		//Fill residue energies by traversing energy graph
-			for( EdgeListConstIterator egraph_it = in_pose.energies().energy_graph().get_node( res )->const_edge_list_begin(); egraph_it != in_pose.energies().energy_graph().get_node( res )->const_edge_list_end(); ++egraph_it){
+		else
+    {     
+      core::Real res_intE_samechain (0.0);
+      core::Real res_intE_differentchain (0.0);
+
+      core::Size res_chain = in_pose.chain(res);
+
+      //Fill residue energies by traversing energy graph
+			for ( EdgeListConstIterator egraph_it = in_pose.energies().energy_graph().get_node( res )->const_edge_list_begin(); egraph_it != in_pose.energies().energy_graph().get_node( res )->const_edge_list_end(); ++egraph_it)
+      {
 				EnergyEdge const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
 				res_intE += Eedge->dot( curr_weights );
+
+        if (in_pose.chain(Eedge->get_other_ind(res)) == res_chain)
+        {
+          res_intE_samechain += Eedge->dot( curr_weights );
+        }
+        else
+        {
+          res_intE_differentchain += Eedge->dot( curr_weights );
+        }
 			}//for each egraph_it
+      tr << "Residue "<< pose.residue_type( res ).name3()<<res<< " has a intra-chain interaction energy "<< res_intE_samechain << std::endl;
+      tr << "Residue "<< pose.residue_type( res ).name3()<<res<< " has a inter-chain interaction energy "<< res_intE_differentchain << std::endl;
 		}
+
 		tr << "Residue "<< pose.residue_type( res ).name3()<<res<< " has an (interaction) energy "<< res_intE <<", threshold is "<< threshold_<<" and penalty is ";
-		if (res_intE > threshold_) {
+
+		if (res_intE > threshold_) 
+    {
 			penalty+= (res_intE - threshold_);
 			tr<< (res_intE - threshold_) << std::endl;
 		}
-		else tr << " 0"<<std::endl;
+		else 
+    {
+      tr << " 0"<<std::endl;
+    }
 	} //foreach res
 	
 	return( penalty * penalty_factor_ );
