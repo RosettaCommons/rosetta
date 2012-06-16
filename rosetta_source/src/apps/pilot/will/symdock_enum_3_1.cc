@@ -58,25 +58,25 @@ DONE
 
 
 
-#include <time.h>
-#ifdef __MACH__
-#include <mach/mach_time.h>
-#endif
-double time_highres() {
-#ifdef __MACH__
-  mach_timebase_info_data_t info;
-  mach_timebase_info(&info);
-  return mach_absolute_time() / 1000000000.0;
-  //uint64_t duration = mach_absolute_time();
-  //duration *= info.numer;
-  //duration /= info.denom;
-#else
-  timespec tp;
-  clock_gettime(CLOCK_REALTIME, &tp);
-  return tp.tv_sec + tp.tv_nsec/1000000000.0;
-#endif
-  return 0;
-}
+// #include <time.h>
+// #ifdef __MACH__
+// #include <mach/mach_time.h>
+// #endif
+// double time_highres() {
+// #ifdef __MACH__
+//   mach_timebase_info_data_t info;
+//   mach_timebase_info(&info);
+//   return mach_absolute_time() / 1000000000.0;
+//   //uint64_t duration = mach_absolute_time();
+//   //duration *= info.numer;
+//   //duration /= info.denom;
+// #else
+//   timespec tp;
+//   clock_gettime(CLOCK_REALTIME, &tp);
+//   return tp.tv_sec + tp.tv_nsec/1000000000.0;
+// #endif
+//   return 0;
+// }
 
 
 
@@ -1103,8 +1103,8 @@ struct TCDock {
 			// dump_onecomp();
 			precompute_intra();
 
-			start_time_ = time_highres();
-			conf_count_ = 0;
+			// start_time_ = time_highres();
+			// conf_count_ = 0;
 
 			cout << "main loop 1 over icmp2, icmp1, iori every 3 degrees" << endl;
 			double max_score = 0;
@@ -1112,14 +1112,14 @@ struct TCDock {
 			if(option[tcdock::fast_stage_one]()){
 				for(int icmp1 = 0; icmp1 < cmp1nangle_; icmp1+=3) {
 					if(icmp1%15==0 && icmp1!=0){
-						double rate = Real(conf_count_) / Real(time_highres()-start_time_);
+						// double rate = Real(conf_count_) / Real(time_highres()-start_time_);
 						cout<<" lowres dock "
 						    <<cmp1name_<<" "
 						    <<I(2,100*icmp1/cmp1nangle_)
 						    <<"% done, max_score: "
 						    <<F(10,6,max_score)
-						    <<" rate: "<<rate<<" confs/sec"
-						    <<" "<<rate/double(num_threads())<<" confs/sec/thread"
+						    // <<" rate: "<<rate<<" confs/sec"
+						    // <<" "<<rate/double(num_threads())<<" confs/sec/thread"
 						    <<endl;
 					}
 					#ifdef USE_OPENMP
@@ -1163,14 +1163,14 @@ struct TCDock {
 					int icmp2 = tasks[i].y();
 					int iori  = tasks[i].z();
 					if(i%28800==0){
-						double rate = Real(conf_count_) / Real(time_highres()-start_time_);
+						// double rate = Real(conf_count_) / Real(time_highres()-start_time_);
 						cout<<" lowres dock "
 						    <<cmp1name_<<" "
 						    <<I(2,100*icmp1/cmp1nangle_)
 						    <<"% done, max_score: "
 						    <<F(10,6,max_score)
-						    <<" rate: "<<rate<<" confs/sec"
-						    <<" "<<rate/num_threads()<<" confs/sec/thread"<<" " <<num_threads()
+						    // <<" rate: "<<rate<<" confs/sec"
+						    // <<" "<<rate/num_threads()<<" confs/sec/thread"<<" " <<num_threads()
 						    <<endl;
 					}
 
