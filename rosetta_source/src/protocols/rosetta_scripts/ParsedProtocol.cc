@@ -117,7 +117,7 @@ ParsedProtocol::apply( Pose & pose )
 				pose = *checkpoint;
 
 				if( ! apply_filter( pose, *rmover_it) ) {
-					final_score(pose);
+//					final_score(pose);
 					return;
 				} else {
 					break;
@@ -136,7 +136,8 @@ ParsedProtocol::apply( Pose & pose )
 	{
 		TR <<"WARNING: mode is " << mode_ << " .This is not a valid ParsedProtocol Mode, your pose is being ignored" <<std::endl;
 	}
-	final_score(pose);
+	if( get_last_move_status() == protocols::moves::MS_SUCCESS ) // no point scoring a failed trajectory (and sometimes you get etable vs. pose atomset mismatches
+		final_score(pose);
 }
 
 std::string
