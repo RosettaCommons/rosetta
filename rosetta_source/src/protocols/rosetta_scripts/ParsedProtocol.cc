@@ -16,7 +16,6 @@
 #include <protocols/moves/NullMover.hh>
 #include <protocols/moves/DataMapObj.hh>
 #include <protocols/moves/DataMap.hh>
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 // Project Headers
 #include <protocols/moves/Mover.hh>
@@ -393,16 +392,8 @@ bool ParsedProtocol::apply_filter(Pose & pose, mover_filter_pair const & mover_p
 		} else {
 			TR << "Filter " << filter_name << " reports failure!" << std::endl;
 		}
-		protocols::simple_moves::SwitchResidueTypeSetMover srtsm;
-		srtsm.type_set_tag( "fa_standard" );
-		srtsm.apply( pose );
-
 		return false;
 	}
-	protocols::simple_moves::SwitchResidueTypeSetMover srtsm;
-	srtsm.type_set_tag( "fa_standard" );
-	srtsm.apply( pose );
-
 	return true;
 }
 
