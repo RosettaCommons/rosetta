@@ -727,7 +727,7 @@ void DockingProtocol::set_rt_min( bool rt_min )
 
 void DockingProtocol::set_dock_min( bool const dock_min )
 {
-	assert ( !low_res_protocol_only_ );
+//	assert ( !low_res_protocol_only_ ); // SJF this assert doesn't make sense b/c set_dock_min is called even if low_res_protocol_only_ is set through parse_my_tag
 	dock_min_ = dock_min;
 }
 
