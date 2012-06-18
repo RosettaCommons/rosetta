@@ -56,8 +56,7 @@ namespace rna {
 	void
 	output_res_map(std::map< core::Size, core::Size > const & my_map, core::Size const max_seq_num);
 
-	void
-	output_is_prepend_map(std::map< core::Size, bool > const & my_map, core::Size const max_seq_num);
+	// Undefined, commenting out to fix PyRosetta build  void output_is_prepend_map(std::map< core::Size, bool > const & my_map, core::Size const max_seq_num);
 
 	void
 	Output_residue_list(utility::vector1<Residue_info> residue_list);

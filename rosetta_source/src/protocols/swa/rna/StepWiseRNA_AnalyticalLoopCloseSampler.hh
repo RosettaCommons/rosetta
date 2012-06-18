@@ -106,8 +106,7 @@ public:
 	void
 	set_cluster_rmsd ( core::Real const & setting );
 
-	void
-	set_allow_bulge_at_chainbreak ( bool const & setting );
+	// Undefined, commenting out to fix PyRosetta build  void set_allow_bulge_at_chainbreak ( bool const & setting );
 
 	utility::vector1< pose_data_struct2 > &
 	get_pose_data_list();

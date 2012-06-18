@@ -95,8 +95,7 @@ has_virtual_rna_residue_variant_type(core::pose::Pose & pose, core::Size const &
 void
 remove_all_variant_types(core::pose::Pose & pose);
 
-core::Size
-get_matching_atom_name(std::string const & atom_name, core::conformation::Residue const & rsd);
+// Undefined, commenting out to fix PyRosetta build  core::Size get_matching_atom_name(std::string const & atom_name, core::conformation::Residue const & rsd);
 
 void
 setup_suite_atom_id_map( core::conformation::Residue const & rsd_1,
@@ -222,7 +221,7 @@ Output_bool_list(std::string const tag, utility::vector1< core::Size > const & s
 void
 Output_size_list(std::string const tag, utility::vector1< core::Size > const & size_list, core::Size const spacing=40);
 
-bool seq_num_list_sort_citeria(core::Size seq_num_1, Residue_info seq_num_2);
+// Undefined, commenting out to fix PyRosetta build  bool seq_num_list_sort_citeria(core::Size seq_num_1, Residue_info seq_num_2);
 
 void
 Sort_pair_list(utility::vector1< std::pair<core::Size, core::Size> > pair_list);

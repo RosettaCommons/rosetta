@@ -61,14 +61,12 @@ namespace rna {
 		void
 		set_fixed_res(utility::vector1 < core::Size > const & fixed_res );
 
-		void
-		set_virtual_res(utility::vector1 < core::Size > const & set_virtual_res_list);
+		// Undefined, commenting out to fix PyRosetta build  void set_virtual_res(utility::vector1 < core::Size > const & set_virtual_res_list);
 
 		void
 		set_terminal_res(utility::vector1 < core::Size > const & terminal_res );
 
-		void
-		set_bulge_res(utility::vector1 < core::Size > const & bulge_res );
+		// // Undefined, commenting out to fix PyRosetta build  void set_bulge_res(utility::vector1 < core::Size > const & bulge_res );
 
 		void
 		set_jump_point_pair_list(utility::vector1< std::string > const & jump_point_pairs_string);

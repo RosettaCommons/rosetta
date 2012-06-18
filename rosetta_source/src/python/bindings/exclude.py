@@ -28,14 +28,9 @@ _SconsFiles = []
 def isFileInScons(fname):
     #print 'isFileInScons', fname, ' --> ', fname in _SconsFiles
     if not _SconsFiles:
-        for scons_file in ['ObjexxFCL', 'utility', 'numeric', 'basic', 'core.1', 'core.2', 'core.3', 'core.4', 'core.5',
-                'protocols.1',
-                'protocols_a.2', 'protocols_b.2',
-                'protocols.3',
-                'protocols_a.4', 'protocols_b.4', 'protocols_c.4', 'protocols_d.4', 'protocols_e.4', 'protocols_f.4', 'protocols_g.4', 'protocols_h.4',
-                'protocols_a.5', 'protocols_b.5', 'protocols_c.5',
-                'protocols.6', 'protocols.7', ]:
-            f = file('./%s.src.settings' % scons_file).read();  exec(f)
+        all_scons_files = [f for f in commands.getoutput('ls *.src.settings').split() if f not in ['apps.src.settings', 'devel.src.settings', 'pilot_apps.src.settings']]
+        for scons_file in all_scons_files:
+            f = file(scons_file).read();  exec(f)
             for k in sources:
                 for f in sources[k]:
                     #all_sources.append( k + '/' + f + obj_suffix)
@@ -72,6 +67,7 @@ BannedFiles = ['utility/PyHelper.hh', 'utility/keys', 'utility/options', 'utilit
     'protocols/swa/rna/StepWiseRNA_Classes.hh', # not in scons (.hh only)
 
     'protocols/viewer',  # OpenGL
+    'protocols/star',  # void* StarAbinitio_main(void*); etc
 
     #'protocols/wum/WorkUnitManager.hh', # strange linker errors, will deal with it later
 

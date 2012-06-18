@@ -48,8 +48,8 @@ namespace rna {
 		bool
 		Update_base_stub_list_and_Check_centroid_interaction( core::pose::Pose const & pose , SillyCountStruct & count_data);
 
-		bool
-		non_adjacent_and_stack_base(core::pose::Pose const & pose,  Size const & pos1, Size const & pos2, bool const verbose = false  );
+		// Undefined, commenting out to fix PyRosetta build
+		// bool non_adjacent_and_stack_base(core::pose::Pose const & pose,  Size const & pos1, Size const & pos2, bool const verbose = false  );
 
 		bool
 		Update_base_stub_list_and_Check_that_terminal_res_are_unstacked( core::pose::Pose const & pose, bool const reinitialize = false );
@@ -57,8 +57,7 @@ namespace rna {
 		bool
 		Check_that_terminal_res_are_unstacked( bool const verbose = false );
 
-		utility::vector1< core::Size > const &
-		moving_residues() const;
+		// Undefined, commenting out to fix PyRosetta build  utility::vector1< core::Size > const & moving_residues() const;
 
 	private:
 

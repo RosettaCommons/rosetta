@@ -158,8 +158,7 @@ Is_base_pair(core::kinematics::Stub const & moving_res_base,
 bool
 Is_strong_base_stack(core::kinematics::Stub const & moving_res_base, utility::vector1 < core::kinematics::Stub > const & other_residues_base_list);
 
-bool
-Is_medium_stack_base_and_medium_stack_base(core::kinematics::Stub const & moving_res_base, utility::vector1 < core::kinematics::Stub > const & other_residues_base_list);
+// Undefined, commenting out to fix PyRosetta build  bool Is_medium_stack_base_and_medium_stack_base(core::kinematics::Stub const & moving_res_base, utility::vector1 < core::kinematics::Stub > const & other_residues_base_list);
 
 bool
 Base_centroid_screening(core::kinematics::Stub const & moving_res_base, utility::vector1 < core::kinematics::Stub > const & other_residues_base_list, core::Size const num_nucleotides, SillyCountStruct & count_data, bool const allow_base_pair_only_screen);
@@ -186,10 +185,10 @@ void
 Analyze_base_bin_map(std::map<Base_bin , int , compare_base_bin> const & base_bin_map, std::string const foldername);
 
 void
-Analyze_base_bin_map(std::map<Base_bin , int , compare_base_bin> const & base_bin_map, std::string const & DOF_one, std::string const & DOF_two);
+Analyze_base_bin_map(std::map<Base_bin , int , compare_base_bin> const & base_bin_map, std::string const & DOF_one, std::string const & DOF_two, std::string const foldername);
 
-void
-Analyze_base_bin_map_old(std::map<Base_bin , int , compare_base_bin> const & base_bin_map, bool const Is_dinucleotide);
+
+// Undefined, commenting out to fix PyRosetta build  void Analyze_base_bin_map_old(std::map<Base_bin , int , compare_base_bin> const & base_bin_map, bool const Is_dinucleotide);
 
 void
 translate_then_rotate_pose(core::pose::Pose & pose, numeric::xyzVector<core::Real> const & vector, numeric::xyzMatrix< core::Real > const matrix, bool const verbose=false);

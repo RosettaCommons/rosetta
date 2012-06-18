@@ -631,17 +631,10 @@ def prepareMiniLibs(mini_path, bindings_path):
 
     # Now the funny part - we rebuild all libs to produce just one lib file...
     all_sources = []
-    for scons_file in ['ObjexxFCL', 'utility', 'numeric', 'basic', 'core.1', 'core.2', 'core.3', 'core.4', 'core.5',
-        'protocols.1',
-        'protocols_a.2', 'protocols_b.2',
-        'protocols.3',
-        'protocols_a.4', 'protocols_b.4', 'protocols_c.4', 'protocols_d.4', 'protocols_e.4', 'protocols_f.4', 'protocols_g.4', 'protocols_h.4',
-        'protocols_a.5', 'protocols_b.5', 'protocols_c.5', 'protocols_d.5', 'protocols_e.5', 'protocols_f.5',
-        'protocols.6', 'protocols.7', ]:
-
-    #for scons_file in ['utility']:
+    all_scons_files = [f for f in commands.getoutput('cd ../../ && ls *.src.settings').split() if f not in ['apps.src.settings', 'devel.src.settings', 'pilot_apps.src.settings']]
+    for scons_file in all_scons_files:
     #for scons_file in ['ObjexxFCL', 'numeric', 'utility',]:
-        f = file('./../../%s.src.settings' % scons_file).read();  exec(f)
+        f = file('./../../'+scons_file).read();  exec(f)
         for k in sources:
             for f in sources[k]:
                 #all_sources.append( scons_file + '/' + k + '/' + f + obj_suffix)
@@ -692,6 +685,7 @@ def getAllRosettaSourceFiles():
     obj_suffix = ''
 
     all_sources = []
+    assert False, 'Replace with dynamic scons file reading!'
     for scons_file in ['ObjexxFCL', 'utility', 'numeric', 'basic', 'core.1', 'core.2', 'core.3', 'core.4', 'core.5',
         'protocols.1',
         'protocols_a.2', 'protocols_b.2',

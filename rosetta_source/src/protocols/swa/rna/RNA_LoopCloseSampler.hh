@@ -89,7 +89,7 @@ public:
 	}
 
 	void set_scorefxn ( core::scoring::ScoreFunctionOP const & scorefxn );
-	Size get_n_construct();
+	// Undefined, commenting out to fix PyRosetta build  Size get_n_construct();
 
 
 private:
