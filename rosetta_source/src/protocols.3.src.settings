@@ -228,6 +228,7 @@ sources = {
 		"PalesEvaluatorCreator",
 		"PDDFScoreFilter",
 		"PoolEvaluatorCreator",
+		"PoseInfoFilter",
 		"PredictedBurialEvaluator",
 		"PredictedBurialFnEvaluatorCreator",
 		"RangeFilter",

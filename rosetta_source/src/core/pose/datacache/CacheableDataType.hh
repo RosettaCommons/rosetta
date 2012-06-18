@@ -12,6 +12,11 @@
 #ifndef INCLUDED_core_pose_datacache_CacheableDataType_hh
 #define INCLUDED_core_pose_datacache_CacheableDataType_hh
 
+#include <utility/vector1.hh>
+
+#include <string>
+#include <map>
+
 namespace core {
 namespace pose {
 namespace datacache {
@@ -76,6 +81,16 @@ enum Enum {
 	// to the list, remember to change the value below!
   num_cacheable_data_types = SURFACE_PARAMS
 };
+
+static std::string get_name( CacheableDataType::Enum datatype);
+
+private:
+	static void initialize_name_map();
+
+	static bool initialized_;
+
+	static utility::vector1< std::string > enum2name_;
+	static std::map< std::string, CacheableDataType::Enum > name2enum_;
 
 }; // class CacheableDataType
 

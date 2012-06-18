@@ -57,6 +57,7 @@ sources = {
 	],
 	"core/pose/datacache": [
 		"cacheable_observers",
+		"CacheableDataType",
 		"CacheableObserver",
 		"ObserverCache",
 		"PositionConservedResiduesStore",
