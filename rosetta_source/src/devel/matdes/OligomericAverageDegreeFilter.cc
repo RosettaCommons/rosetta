@@ -28,10 +28,13 @@
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <ObjexxFCL/FArray1D.hh>
+#include <ObjexxFCL/format.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/JobDistributor.hh>
 
 // Parser headers
 #include <protocols/filters/Filter.hh>
@@ -88,15 +91,17 @@ core::pack::task::TaskFactoryOP OligomericAverageDegreeFilter::task_factory() co
 core::Real OligomericAverageDegreeFilter::threshold() const { return threshold_; }
 core::Real OligomericAverageDegreeFilter::distance_threshold() const { return distance_threshold_; }
 core::Size OligomericAverageDegreeFilter::jump_id() const { return jump_id_; }
+bool OligomericAverageDegreeFilter::write2pdb() const { return write2pdb_; }
 
 // @brief setters
 void OligomericAverageDegreeFilter::task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
 void OligomericAverageDegreeFilter::threshold( core::Real const t ) { threshold_ = t; }
 void OligomericAverageDegreeFilter::distance_threshold( core::Real const d ) { distance_threshold_ = d; }
 void OligomericAverageDegreeFilter::jump_id( core::Size const jump ) { jump_id_ = jump; }
+void OligomericAverageDegreeFilter::write2pdb( bool const write ) { write2pdb_ = write; }
 
 /// @brief
-core::Real OligomericAverageDegreeFilter::compute( Pose const & pose ) const
+core::Real OligomericAverageDegreeFilter::compute( Pose const & pose, bool const & verbose, bool const & write ) const
 {
 
 	runtime_assert( task_factory() );
@@ -121,8 +126,7 @@ core::Real OligomericAverageDegreeFilter::compute( Pose const & pose ) const
       for( core::Size j=1; j<=pose.total_residue(); ++j ) {
 				if ( is_upstream(j) == which_side ) {
 	        core::conformation::Residue const resj( pose.residue( j ) );
-					if(resj.aa() == core::chemical::aa_vrt)
-						continue;
+					if(resj.aa() == core::chemical::aa_vrt) continue;
 	        core::Real const distance( resj.xyz( resj.nbr_atom() ).distance( res_target.xyz( res_target.nbr_atom() ) ) );
 	        if( distance <= distance_threshold() ){
 	          ++count_neighbors;
@@ -130,12 +134,24 @@ core::Real OligomericAverageDegreeFilter::compute( Pose const & pose ) const
 	        }
 				}
       }
-      TR << "Connectivity of " << res_target.name3() << resi << " is " << resi_neighbors << std::endl;
+			if ( verbose ) { TR << "Connectivity of " << res_target.name3() << resi << " is " << resi_neighbors << std::endl; }
+			if ( write ) { write_to_pdb( resi, res_target.name3(), resi_neighbors ); }
     }
   }
   return( (core::Real) count_neighbors / count_residues );
 
 } // compute
+
+void OligomericAverageDegreeFilter::write_to_pdb( core::Size const residue, std::string const residue_name, core::Size const neighbors ) const
+{
+
+	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
+	std::string filter_name = this->name();
+	std::string user_name = this->get_user_defined_name();
+	std::string output_string = filter_name + " " + user_name + ": " + residue_name + ObjexxFCL::string_of(residue) + " = " + ObjexxFCL::string_of(neighbors);
+	job->add_string(output_string);
+
+}
 
 // @brief returns true if the given pose passes the filter, false otherwise.
 // In this case, the test is whether the residues defined by the TaskOperation(s)
@@ -151,7 +167,7 @@ bool OligomericAverageDegreeFilter::apply( Pose const & pose ) const
 {
 
 	// Get the oligomeric avg_deg from the compute function and filter
-  core::Real const average_degree( compute( pose ) );
+  core::Real const average_degree( compute( pose, true, write2pdb() ) );
   return( average_degree >= threshold() );
 
 } // apply_filter
@@ -170,19 +186,20 @@ OligomericAverageDegreeFilter::parse_my_tag(
   threshold( tag->getOption< core::Size >( "threshold", 0 ) );
   distance_threshold( tag->getOption< core::Real >( "distance_threshold", 10.0 ) );
   jump_id( tag->getOption< core::Size >( "jump", 1 ) );
+	write2pdb( tag->getOption< bool >("write2pdb", 0) );
   TR << "with options threshold: " <<threshold() << " and distance_threshold " << distance_threshold() << std::endl;
 }
 
 core::Real
 OligomericAverageDegreeFilter::report_sm( core::pose::Pose const & pose ) const
 {
-  return( compute( pose ) );
+  return( compute( pose, false, false ) );
 } 
 
 void
 OligomericAverageDegreeFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
-  out << "AverageDegreeFilter returns " << compute( pose ) << std::endl;
+  out << "OligomericAverageDegreeFilter returns " << compute( pose, false, false ) << std::endl;
 }
 
 protocols::filters::FilterOP

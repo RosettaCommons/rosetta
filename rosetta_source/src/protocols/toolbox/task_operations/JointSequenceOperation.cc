@@ -122,8 +122,9 @@ JointSequenceOperation::apply( Pose const & pose, PackerTask & task ) const
 		if( !pose.residue_type( ii ).is_protein() ) continue;
 
 		int na_ii = ii - start + 1;
-    std::vector<core::sequence::SequenceOP>::const_iterator iter(sequences_.begin());                                             
-    char aa( (*(*iter))[ na_ii ] ); // aa char of native pose                                                                       
+//NK120531 -- These lines commented out bc they are useless and crash for symmetric systems.
+//NK120531    std::vector<core::sequence::SequenceOP>::const_iterator iter(sequences_.begin());                                             
+//NK120531    char aa( (*(*iter))[ na_ii ] ); // aa char of native pose                                                                       
 
 		utility::vector1< bool > allowed(core::chemical::num_canonical_aas, false);
 

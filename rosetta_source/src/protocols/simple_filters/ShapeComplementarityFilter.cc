@@ -28,6 +28,8 @@
 #include <core/pose/selection.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/matdes.OptionKeys.gen.hh>
+#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/JobDistributor.hh>
 
 // Parser headers
 #include <protocols/filters/Filter.hh>
@@ -165,8 +167,17 @@ core::Size ShapeComplementarityFilter::compute( Pose const & pose ) const
 /// @brief
 core::Real ShapeComplementarityFilter::report_sm( Pose const & pose ) const
 {
-	if(compute( pose ))
+	if(compute( pose )) {
+		if ( write_int_area_ ) {
+			protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
+			std::string column_header = this->get_user_defined_name() + "_int_area";
+			core::Real int_area = scc_.GetResults().area ;
+			if ( basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block].user() )
+				int_area = int_area / basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block]();
+			job->add_string_real_pair(column_header, int_area);
+		}
 		return scc_.GetResults().sc;
+	}
 	return -1;
 }
 
@@ -211,6 +222,7 @@ ShapeComplementarityFilter::parse_my_tag(
 	verbose_ = tag->getOption<Size>( "verbose", false );
 	quick_ = tag->getOption<Size>( "quick", false );
 	jump_id_ = tag->getOption<Size>( "jump", 1 );
+	write_int_area_ = tag->getOption<bool>( "write_int_area", false );
 
 	if(tag->hasOption("residues1")) {
 		residues1_ = core::pose::get_resnum_list(tag, "residues1", pose);

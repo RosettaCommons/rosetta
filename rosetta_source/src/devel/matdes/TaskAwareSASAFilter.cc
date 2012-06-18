@@ -34,6 +34,7 @@
 #include <core/conformation/Residue.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 
 // Parser headers
 #include <protocols/filters/Filter.hh>
@@ -55,16 +56,18 @@ TaskAwareSASAFilter::TaskAwareSASAFilter():
   threshold_( 0 ),
   designable_only_( false ),
 	sc_only_( false ),
-	probe_radius_( 2.2 )
+	probe_radius_( 2.2 ),
+	jump_id_( 0 )
 {}
 
 // @brief constructor with arguments
-TaskAwareSASAFilter::TaskAwareSASAFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const t, bool const d, bool const s, core::Real r ):
+TaskAwareSASAFilter::TaskAwareSASAFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const t, bool const d, bool const s, core::Real const r, core::Size const j ):
 	task_factory_( task_factory ),
 	threshold_( t ),
 	designable_only_( d ),
 	sc_only_( s ),
-	probe_radius_( r )
+	probe_radius_( r ),
+	jump_id_( j )
 {}
 
 // @brief copy constructor
@@ -74,7 +77,8 @@ TaskAwareSASAFilter::TaskAwareSASAFilter( TaskAwareSASAFilter const & rval ):
 	threshold_( rval.threshold_ ),
 	designable_only_( rval.designable_only_),
 	sc_only_( rval.sc_only_ ),
-	probe_radius_( rval.probe_radius_ )
+	probe_radius_( rval.probe_radius_ ),
+	jump_id_( rval.jump_id_ )
 {}
 
 protocols::filters::FilterOP
@@ -93,6 +97,7 @@ core::Real TaskAwareSASAFilter::threshold() const { return threshold_; }
 bool TaskAwareSASAFilter::designable_only() const { return designable_only_; }
 bool TaskAwareSASAFilter::sc_only() const { return sc_only_; }
 core::Real TaskAwareSASAFilter::probe_radius() const { return probe_radius_; }
+core::Size TaskAwareSASAFilter::jump_id() const { return jump_id_; }
 
 // @brief setters
 void TaskAwareSASAFilter::task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
@@ -100,13 +105,26 @@ void TaskAwareSASAFilter::threshold( core::Real const t ) { threshold_ = t; }
 void TaskAwareSASAFilter::designable_only( bool const d ) { designable_only_ = d; }
 void TaskAwareSASAFilter::sc_only( bool const s ) { sc_only_ = s; }
 void TaskAwareSASAFilter::probe_radius( core::Real const r ) { probe_radius_ = r; }
+void TaskAwareSASAFilter::jump_id( core::Size const j ) { jump_id_ = j; }
 
 /// @brief
-core::Real TaskAwareSASAFilter::compute( Pose const & pose, bool const verbose ) const
+core::Real TaskAwareSASAFilter::compute( Pose const & p, bool const verbose ) const
 {
+
+	core::pose::Pose pose = p;
 
 	runtime_assert( task_factory() );
   core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
+
+	// If a jump has been provided by the user, separate the pose by that jump.
+	if ( jump_id() != 0 ) {
+	  int sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num(pose, jump_id() );
+		protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( pose, sym_aware_jump_id ) );
+	  translate->step_size( 1000.0 );
+	  translate->apply( pose );
+	}
+
+	pose.dump_pdb("test.pdb");
 
 	// Calculate SASA for each of the selected residues and spit that out to the log file.
 	// Also add it to the total value.
@@ -125,7 +143,6 @@ core::Real TaskAwareSASAFilter::compute( Pose const & pose, bool const verbose )
 	    }
 		}
 	}
-	TR << "probe_radius: " << probe_radius() << std::endl;
   core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius(), false, atom_mask );
   utility::vector1<Real> resi_sasa(pose.n_residue(),0.0);
 
@@ -142,8 +159,7 @@ core::Real TaskAwareSASAFilter::compute( Pose const & pose, bool const verbose )
 			} else {
 				resi_sasa[resi] += rsd_sasa[resi];
 			}
-			if ( verbose )
-	      TR << "SASA of " << pose.residue(resi).name3() << resi << " is " << resi_sasa[resi] << std::endl;
+			if ( verbose ) { TR << "SASA of " << pose.residue(resi).name3() << resi << " is " << resi_sasa[resi] << std::endl; }
 			combined_sasa += resi_sasa[resi];
     }
   }
@@ -176,6 +192,7 @@ TaskAwareSASAFilter::parse_my_tag(
 	designable_only( tag->getOption< bool >( "designable_only", false ) );
 	sc_only( tag->getOption< bool >( "sc_only", false ) );
 	probe_radius( tag->getOption< core::Real >( "probe_radius", 2.2 ) );
+	jump_id( tag->getOption< core::Size >( "jump", 0 ) );
 }
 
 core::Real

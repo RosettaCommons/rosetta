@@ -54,6 +54,7 @@ public :
 	void scorefxn( core::scoring::ScoreFunctionOP const scorefxn );
 	void repack( bool const repack );
 	void report_diffs( bool const report_diffs );
+	void write2pdb( bool const write );
 
 	// Getters
 	core::pack::task::TaskFactoryOP task_factory() const;
@@ -61,6 +62,7 @@ public :
 	core::Size repeats() const;
 	bool repack() const;
 	bool report_diffs() const;
+	bool write2pdb() const;
 
 	// Dummy apply function
 	virtual bool apply( core::pose::Pose const & ) const;
@@ -71,7 +73,7 @@ public :
 	// Effector functions
 	core::Real ddG_for_single_residue( core::pose::Pose const & const_pose, core::Size const resi ) const;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
-//	void report_symmetry( std::ostream & out, core::pose::Pose const & pose ) const;
+	void write_to_pdb( core::Size const & residue, std::string const & residue_name, core::Real const & ddG ) const;
 
 private:
 
@@ -82,6 +84,7 @@ private:
 	bool repack_;
 	bool report_diffs_;
 	std::set< std::string > exempt_identities_;
+	bool write2pdb_;
 
 };
 

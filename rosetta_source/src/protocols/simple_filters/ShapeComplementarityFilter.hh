@@ -134,6 +134,7 @@ private:
 	Size verbose_;
 	utility::vector1<core::Size> residues1_;
 	utility::vector1<core::Size> residues2_;
+	bool write_int_area_;
 
 };
 

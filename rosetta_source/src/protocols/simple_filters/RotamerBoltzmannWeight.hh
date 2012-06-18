@@ -84,7 +84,10 @@ public:
 	void skip_ala_scan( bool const s );
 	std::string type() const;
 	void type( std::string const & s );
+	bool write2pdb() const;
+	void write2pdb( bool const write );
 	core::Real compute_modified_ddG( core::pose::Pose const & pose, std::ostream & out ) const;
+	void write_to_pdb( core::Size const residue, std::string const residue_name, core::Real const boltzmann_weight ) const;
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::Size rb_jump_; // dflt 1.
@@ -108,6 +111,7 @@ private:
 	bool fast_calc_; //default false for now
 	bool no_modified_ddG_;
 	std::string target_residues_;
+	bool write2pdb_;
 };
 
 } // simple_filters

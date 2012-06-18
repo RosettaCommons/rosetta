@@ -682,15 +682,19 @@ void
 	
 			// Calculate the ddG of the monomer in the assembled and unassembled states
 	   	protocols::simple_moves::ddG ddG_mover2 = protocols::simple_moves::ddG(score12, 1, true);
-	    ddG_mover2.calculate(pose);
-	    Real ddG2 = ddG_mover2.sum_ddG();
-	    TR << files[ifile] << " mutalyzed_ddG = " << ddG2 << std::endl;
+			Real avg_ddG = 0;
+			for (core::Size i=0; i<3; i++) {
+		    ddG_mover2.calculate(pose);
+				avg_ddG += ddG_mover2.sum_ddG();
+			}
+			Real pose_ddG = avg_ddG / 3;
+	    TR << files[ifile] << " mutalyzed_ddG = " << pose_ddG << std::endl;
 	    ddG_mover2.report_ddG(TR);
 
 			// Create a scorefile struct, add custom metrics to it
 			core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
 			ss_out->fill_struct(pose,fn);
-			ss_out->add_energy("ddG", ddG2);
+			ss_out->add_energy("ddG", pose_ddG);
 			ss_out->add_energy("air_energy", avg_interface_energy);
 			ss_out->add_energy("air_fa_atr", em[core::scoring::fa_atr] / mutalyze_pos.size());
 			ss_out->add_energy("air_fa_rep", em[core::scoring::fa_rep] / mutalyze_pos.size());
@@ -728,9 +732,13 @@ void
 
 					// Calculate the ddG of the monomer in the assembled and unassembled states
 					protocols::simple_moves::ddG ddG_mover3 = protocols::simple_moves::ddG(score12, 1, true);
-					ddG_mover3.calculate(pose_for_ala_scan);
-					Real ddG3 = ddG_mover3.sum_ddG();
-					TR << files[ifile] << " ala_scan_ddG for mutation " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << original_pose.residue(mutalyze_pos[ipos]).name3() << " = " << ddG3 << std::endl;
+		      avg_ddG = 0;
+		      for (core::Size i=0; i<3; i++) {
+		        ddG_mover3.calculate(pose_for_ala_scan);
+		        avg_ddG += ddG_mover3.sum_ddG();
+		      }
+					avg_ddG /= 3;
+					TR << files[ifile] << " ala_scan_ddG for mutation " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << original_pose.residue(mutalyze_pos[ipos]).name3() << " = " << avg_ddG << std::endl;
 					ddG_mover3.report_ddG(TR);
 				}
 			}
@@ -756,10 +764,14 @@ void
 
           // Calculate the ddG of the monomer in the assembled and unassembled states
           protocols::simple_moves::ddG ddG_mover4 = protocols::simple_moves::ddG(score12, 1, true);
-          ddG_mover4.calculate(pose_for_revert_scan);
-          Real ddG4 = ddG_mover4.sum_ddG();
-					if ((ddG2-ddG4) >= -0.5) {
-	          TR << files[ifile] << " rev_scan_ddG for reversion " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << original_pose.residue(mutalyze_pos[ipos]).name3() << " = " << ddG4 << std::endl;
+					avg_ddG = 0;
+          for (core::Size i=0; i<3; i++) {
+            ddG_mover4.calculate(pose_for_revert_scan);
+            avg_ddG += ddG_mover4.sum_ddG();
+          }
+					avg_ddG /= 3;
+					if ((pose_ddG-avg_ddG) >= -0.5) {
+	          TR << files[ifile] << " rev_scan_ddG for reversion " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << original_pose.residue(mutalyze_pos[ipos]).name3() << " = " << avg_ddG << std::endl;
 	          ddG_mover4.report_ddG(TR);
 					} else {
 						TR << files[ifile] << " rev_scan_ddG for reversion " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << original_pose.residue(mutalyze_pos[ipos]).name3() << " = " << 999999 << std::endl;

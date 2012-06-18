@@ -45,7 +45,10 @@ public:
 	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
 	virtual protocols::filters::FilterOP clone() const;
 	virtual protocols::filters::FilterOP fresh_instance() const;
-	core::Real compute( core::pose::Pose const & pose ) const;
+	core::Real compute( core::pose::Pose const & pose, bool const & write ) const;
+	void write_to_pdb(
+		std::map< core::Size, std::string > const & res_names1,
+		std::map< core::Size, std::string > const & res_names2 ) const;
 	virtual ~SequenceRecoveryFilter();
 	core::pack::task::TaskFactoryOP task_factory() const;
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );
@@ -57,6 +60,8 @@ public:
 	void mutations( bool const muts );
 	bool verbose() const;
 	void verbose( bool const verb );
+	bool write2pdb() const;
+	void write2pdb( bool const write );
 	core::pose::PoseCOP reference_pose() const;
 	void reference_pose( core::pose::PoseCOP reference_pose );
 	void reference_pose( core::pose::Pose const & pose );
@@ -72,6 +77,7 @@ private:
 	core::Size mutation_threshold_;
 	bool mutations_;
 	bool verbose_;
+	bool write2pdb_;
 };
 
 } // filters

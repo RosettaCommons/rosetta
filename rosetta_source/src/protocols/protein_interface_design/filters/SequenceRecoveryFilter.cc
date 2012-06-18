@@ -27,6 +27,9 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/symmetry/util.hh>
+#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/JobDistributor.hh>
+#include <ObjexxFCL/format.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <protocols/protein_interface_design/design_utils.hh>
 #include <core/pose/util.hh>
@@ -130,10 +133,22 @@ SequenceRecoveryFilter::verbose( bool const verb )
 }
 
 bool
+SequenceRecoveryFilter::write2pdb() const
+{
+	return( write2pdb_ );
+}
+
+void
+SequenceRecoveryFilter::write2pdb( bool const write )
+{
+	write2pdb_ = write;
+}
+
+bool
 SequenceRecoveryFilter::apply(core::pose::Pose const & pose ) const
 {
 	if ( mutations_ ) {
-		core::Size const num_mutations( (core::Size) compute( pose ) );
+		core::Size const num_mutations( (core::Size) compute( pose, false ) );
 		TR<<"The designed pose possesses "<<num_mutations<<" compared to the reference pose. ";
 		if( num_mutations <= mutation_threshold_ ){
 			TR<<"Success."<<std::endl;
@@ -143,7 +158,7 @@ SequenceRecoveryFilter::apply(core::pose::Pose const & pose ) const
 			return false;
 		}		
 	} else {
-		core::Real const recovery_rate( compute( pose ) );
+		core::Real const recovery_rate( compute( pose, false ) );
 		TR<<"Sequence recovery rate evaluates to "<<recovery_rate<<". ";
 		if( recovery_rate <= rate_threshold_ ){
 			TR<<"Failing."<<std::endl;
@@ -156,7 +171,7 @@ SequenceRecoveryFilter::apply(core::pose::Pose const & pose ) const
 }
 
 core::Real
-SequenceRecoveryFilter::compute( core::pose::Pose const & pose ) const{
+SequenceRecoveryFilter::compute( core::pose::Pose const & pose, bool const & write ) const{
 	runtime_assert( task_factory() );
 	runtime_assert( reference_pose() );
 	core::Size total_residue_ref;
@@ -206,6 +221,7 @@ SequenceRecoveryFilter::compute( core::pose::Pose const & pose ) const{
   protocols::protein_interface_design::ReportSequenceDifferences rsd( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
   rsd.calculate( asym_ref_pose, asym_pose );
   std::map< core::Size, std::string > const res_names1( rsd.res_name1() );
+  std::map< core::Size, std::string > const res_names2( rsd.res_name2() );
   core::Size const mutated( res_names1.size() );
   core::Real const rate( 1.0 - (core::Real) mutated / designable_count );
   TR<<"Your design mover mutated "<<mutated<<" positions out of "<<designable_count<<" designable positions. Sequence recovery is: "<<rate<<std::endl;
@@ -213,22 +229,42 @@ SequenceRecoveryFilter::compute( core::pose::Pose const & pose ) const{
 		rsd.report( TR );
 		TR.flush();
 	}	
+	if ( write ) {
+		write_to_pdb( res_names1, res_names2 );
+	}
 	if ( mutations_ ) {
 		return( (core::Real) mutated );
 	} else {
 		return( rate );
 	}
 }
+
+/// @brief Add each mutation to the output pdb if desired
+void
+SequenceRecoveryFilter::write_to_pdb( std::map< core::Size, std::string > const & res_names1, std::map< core::Size, std::string > const & res_names2 ) const {
+
+  protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
+  std::string user_name = this->get_user_defined_name();
+	std::map< Size, std::string >::const_iterator it_name1 = res_names1.begin();
+	std::map< Size, std::string >::const_iterator it_name2 = res_names2.begin();
+	while( it_name1 != res_names1.end() ) {
+		std::string output_string = "SequenceRecoveryFilter " + user_name + ": " + it_name2->second + ObjexxFCL::string_of( it_name1->first ) + it_name1->second;
+		job->add_string( output_string );
+		++it_name1; ++it_name2;
+ 	}
+
+}
+
 core::Real
 SequenceRecoveryFilter::report_sm( core::pose::Pose const & pose ) const
 {
-	return( compute( pose ) );
+	return( compute( pose, write2pdb() ) );
 }
 
 void
 SequenceRecoveryFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
-	out<<"SequenceRecoveryFilter returns "<<compute( pose )<<std::endl;
+	out<<"SequenceRecoveryFilter returns "<<compute( pose, false )<<std::endl;
 }
 
 void
@@ -244,6 +280,7 @@ SequenceRecoveryFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	mutation_threshold( tag->getOption< core::Size >( "mutation_threshold", 100 ) );
 	mutations( tag->getOption< bool >( "report_mutations", 0 ) );
 	verbose( tag->getOption< bool >( "verbose", 0 ) );
+	write2pdb( tag->getOption< bool >( "write2pdb", 0 ) );
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

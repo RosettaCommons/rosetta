@@ -94,12 +94,14 @@ public:// setters
 	void threshold( core::Real const t );
 	void distance_threshold( core::Real const d );
 	void jump_id( core::Size const jump );
+	void write2pdb( bool const write );
 
 public:// getters
 	core::pack::task::TaskFactoryOP task_factory() const;
 	core::Real threshold() const;
 	core::Real distance_threshold() const;
 	core::Size jump_id() const;
+	bool write2pdb() const;
 
 public:// parser
 
@@ -120,7 +122,8 @@ public:// virtual main operation
   virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
 
 	/// @brief calc oligomeric AverageDegree
-  core::Real compute( core::pose::Pose const & pose ) const;
+  core::Real compute( core::pose::Pose const & pose, bool const & verbose, bool const & write ) const;
+	void write_to_pdb( core::Size const residue, std::string const residue_name, core::Size const neighbors ) const;
 
 
 private:
@@ -129,6 +132,7 @@ private:
   core::Real threshold_;
   core::Real distance_threshold_;
 	core::Size jump_id_;
+	bool write2pdb_;
 
 };
 

@@ -49,6 +49,9 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/pack/make_symmetric_task.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/JobDistributor.hh>
+#include <ObjexxFCL/format.hh>
 
 // Jacob header 120423
 #include <core/pose/symmetry/util.hh>
@@ -270,8 +273,9 @@ RotamerBoltzmannWeight::compute( core::pose::Pose const & const_pose ) const{
 
 	foreach( core::Size const hs_res, hotspot_res ){
 		core::Real const boltz_weight( fast_calc_ ? rotboltz_calc.computeBoltzWeight( unbound_pose, hs_res ) : compute_Boltzmann_weight( unbound_pose, hs_res ) );
-		 TR<<const_pose.residue( hs_res ).name3()<<hs_res<<" "<<boltz_weight<<'\n';
+		TR<<const_pose.residue( hs_res ).name3()<<hs_res<<" "<<boltz_weight<<'\n';
 		rotamer_probabilities_[ hs_res ] = boltz_weight;
+		if ( write2pdb() ) { write_to_pdb( hs_res, const_pose.residue( hs_res ).name3(), boltz_weight ); }
 	}
 	TR.flush();
 	core::Real avg = 0.0;
@@ -478,7 +482,19 @@ RotamerBoltzmannWeight::parse_my_tag( utility::tag::TagPtr const tag,
 	no_modified_ddG_ = tag->getOption< bool >("no_modified_ddG",0);
 
 	skip_ala_scan( tag->getOption< bool >( "skip_ala_scan", 0 ) );
+	write2pdb( tag->getOption< bool >( "write2pdb", 0 ) );
 	TR<<"with options repacking radius: "<<repacking_radius()<<" and jump "<<rb_jump()<<" unbound "<<unbound()<<" ddG threshold "<<ddG_threshold()<<" temperature "<<temperature()<<" energy reduction factr "<<energy_reduction_factor()<<" entropy_reduction "<<compute_entropy_reduction()<<" repack "<<repack()<<" skip_ala_scan "<<skip_ala_scan()<<std::endl;
+}
+
+/// @brief Output per-residue Boltzmann weights to the output pdb file if desired
+void RotamerBoltzmannWeight::write_to_pdb( core::Size const residue, std::string const residue_name, core::Real const boltzmann_weight ) const
+{
+
+  protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
+  std::string user_name = this->get_user_defined_name();
+  std::string output_string = "RotamerBoltzmannWeight " + user_name + ": " + residue_name + ObjexxFCL::string_of(residue) + " = " + ObjexxFCL::string_of(boltzmann_weight);
+  job->add_string(output_string);
+
 }
 
 protocols::filters::FilterOP
@@ -551,6 +567,17 @@ void
 RotamerBoltzmannWeight::type(std::string const & s)
 {
 	type_ = s;
+}
+
+bool
+RotamerBoltzmannWeight::write2pdb() const
+{
+	return write2pdb_;
+}
+
+void
+RotamerBoltzmannWeight::write2pdb( bool const write ) {
+	write2pdb_ = write;
 }
 
 /// Note that compute( pose ) needs to have been run first. This merely sums over the probabilities

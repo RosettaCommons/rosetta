@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/simple_filters/TaskAwareAlaScan.cc
+/// @file devel/matdes/TaskAwareAlaScan.cc
 /// @brief
-/// @author Sarel Fleishman (sarelf@u.washington.edu), Jacob Corn (jecorn@u.washington.edu)
+/// @author Neil King (neilking@uw.edu)
 // Project Headers
 
 #include <ObjexxFCL/FArray1D.fwd.hh>
@@ -41,6 +41,9 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <map>
 #include <numeric/random/random.hh>
+#include <protocols/jd2/util.hh>
+#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -114,6 +117,7 @@ void TaskAwareAlaScan::repeats( core::Size const r ) { repeats_ = r; }
 void TaskAwareAlaScan::scorefxn( core::scoring::ScoreFunctionOP const scorefxn ) { scorefxn_ = scorefxn; }
 void TaskAwareAlaScan::repack( bool const repack ) { repack_ = repack; }
 void TaskAwareAlaScan::report_diffs( bool const report_diffs ) { report_diffs_ = report_diffs; }
+void TaskAwareAlaScan::write2pdb( bool const write ) { write2pdb_ = write; }
 
 // @brief getters
 core::pack::task::TaskFactoryOP TaskAwareAlaScan::task_factory() const { return task_factory_; }
@@ -121,6 +125,7 @@ core::Size TaskAwareAlaScan::jump() const { return jump_; }
 core::Size TaskAwareAlaScan::repeats() const { return repeats_; }
 bool TaskAwareAlaScan::repack() const { return repack_; }
 bool TaskAwareAlaScan::report_diffs() const { return report_diffs_; }
+bool TaskAwareAlaScan::write2pdb() const { return write2pdb_; }
 
 // @brief Dummy Filter apply function
 bool TaskAwareAlaScan::apply( core::pose::Pose const & ) const { return true; }
@@ -140,6 +145,7 @@ TaskAwareAlaScan::parse_my_tag(
 	std::string const scorefxn_name( tag->getOption< std::string >( "scorefxn", "score12" ));
 	repack( tag->getOption< bool >( "repack", 1 ) );
 	report_diffs( tag->getOption< bool >("report_diffs", 1) );
+	write2pdb( tag->getOption< bool >("write2pdb", 0) );
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data, scorefxn_name );
   std::string unparsed_exempt_identities = tag->getOption< std::string >( "exempt_identities" );
   if( unparsed_exempt_identities != "" ){
@@ -165,10 +171,13 @@ TaskAwareAlaScan::ddG_for_single_residue( core::pose::Pose const & const_pose, c
 	// First, mutate the residue in question to alanine
   utility::vector1< bool > allowed_aas;
   allowed_aas.assign( core::chemical::num_canonical_aas, false );
-  if ( exempt_identities_.find( pose.residue( resi ).name3() ) != exempt_identities_.end() )
+  std::string mut_name = "ALA";
+  if ( exempt_identities_.find( pose.residue( resi ).name3() ) != exempt_identities_.end() ) {
     allowed_aas[ pose.residue( resi ).aa() ] = true;
-  else
+		mut_name = pose.residue( resi ).name3();
+	} else {
     allowed_aas[ core::chemical::aa_ala ] = true;
+	}
   using namespace core::pack::task;
   PackerTaskOP task = TaskFactory::create_packer_task( pose );
   task->initialize_from_command_line().or_include_current( true );
@@ -199,6 +208,8 @@ TaskAwareAlaScan::ddG_for_single_residue( core::pose::Pose const & const_pose, c
   for( core::Size r=1; r<=repeats_; ++r )
     accumulate_ddg += (rb_jump==0 ? energy_filter.compute( pose ) : ddg_filter.compute( pose ) );
   core::Real const mut_ddg( accumulate_ddg / repeats_ );
+
+	TR << protocols::jd2::current_output_name() << " ala scan ddG for mutation " << const_pose.residue( resi ).name3() << resi << mut_name << " = " << mut_ddg << std::endl;
 
   TR.flush();
   return( mut_ddg );
@@ -243,15 +254,29 @@ TaskAwareAlaScan::report( std::ostream & out, core::pose::Pose const & const_pos
 
 			core::pose::PDBInfoCOP pose_info( const_pose.pdb_info() );
 			char const chain( pose_info->chain( resi ) );
-			core::Size const number( pose_info->number( resi ) );
 			std::string const res_type( const_pose.residue( resi ).name3() );
 			core::Real output_ddG = ( report_diffs() == 1 ) ? diff_ddg : mut_ddg;
-			out<<" "<<res_type<<" "<<number<<" "<<chain<<" : "<< ObjexxFCL::fmt::F (9,4,output_ddG)<<'\n';
+			// Output to pdb file
+			if ( write2pdb() ) { write_to_pdb( resi, res_type, output_ddG ); }
+			// Output to tracer
+			out<<" "<<res_type<<" "<<resi<<" "<<chain<<" : "<< ObjexxFCL::fmt::F (9,4,output_ddG)<<std::endl;
 		}
 	}
 	out<<std::endl;
 }
 
+void TaskAwareAlaScan::write_to_pdb( core::Size const & residue, std::string const & residue_name, core::Real const & ddG ) const
+{
+  
+  protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
+  std::string filter_name = this->name();
+  std::string user_name = this->get_user_defined_name();
+	std::string mut_name = "ALA";
+	if ( exempt_identities_.find( residue_name ) != exempt_identities_.end() ) { mut_name = residue_name; }
+  std::string output_string = filter_name + " " + user_name + ": " + residue_name + ObjexxFCL::string_of(residue) + mut_name + " = " + ObjexxFCL::fmt::F (9,4,ddG);
+  job->add_string(output_string);
+
+}
 
 protocols::filters::FilterOP
 TaskAwareAlaScanCreator::create_filter() const { return new TaskAwareAlaScan; }

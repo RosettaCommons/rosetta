@@ -53,6 +53,8 @@ public :
 	Real sum_ddG() const;
 	core::Size rb_jump() const { return rb_jump_; }
 	void rb_jump( core::Size j ) { rb_jump_ = j; }
+	core::Size repeats() const { return repeats_; }
+	void repeats( core::Size repeats ) { repeats_ = repeats; }
 	virtual ~ddG();
 	protocols::moves::MoverOP fresh_instance() const { return (protocols::moves::MoverOP) new ddG; }
 	protocols::moves::MoverOP clone() const;
