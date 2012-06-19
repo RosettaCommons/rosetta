@@ -17,6 +17,7 @@
 #include <core/fragment/FrameIterator.hh>
 
 #include <numeric/random/random.hh>
+#include <utility/exit.hh>
 
 static numeric::random::RandomGenerator RG(8401848);
 
