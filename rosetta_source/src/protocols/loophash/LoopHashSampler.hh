@@ -52,16 +52,14 @@ class LoopHashSampler : public utility::pointer::ReferenceCount  {
   /// @brief create a set of structures for a the given range of residues and other parameters stored int his class.
   void build_structures(
 		const core::pose::Pose& start_pose,
-    std::vector< core::io::silent::SilentStructOP > &lib_structs,
-		core::Size round = 1
+    std::vector< core::io::silent::SilentStructOP > &lib_structs
 	);
 
   /// @brief create a set of structures with closed gaps
   void close_gaps(
 		const core::pose::Pose& start_pose,
     std::vector< core::pose::Pose > &lib_structs,
-		core::Size loop_size,
-		core::Size round = 1
+		core::Size loop_size
 	);
 
   void set_start_res( core::Size  value ) {  start_res_  = value; }

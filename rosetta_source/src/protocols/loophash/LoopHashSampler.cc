@@ -24,7 +24,6 @@
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <utility/string_util.hh>
-// AUTO-REMOVED #include <utility/sort_predicates.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
@@ -93,29 +92,92 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 	return as < bs;
 }
 
+// returns a vector of real numbers, one per residue of pose, giving the 
+// sampling weight. weight of 1.0 corresponds to "normal", i.e. unmodified sampling weight.
+utility::vector1 < core::Real > extract_sample_weights( const core::pose::Pose &pose ){
+	std::string sample_weight_str;
+	core::pose::get_comment(pose, "sample_weight", sample_weight_str);
+	
+	utility::vector1 < std::string > sample_weight_input_parameters;
+	sample_weight_input_parameters = utility::split(sample_weight_str);
+	
+	utility::vector1 < core::Real > sample_weight;
+	for ( core::Size res_count = 1; res_count <= pose.total_residue(); ++res_count ){
+		core::Real new_sample_weight = 1.0;
+		if( res_count < sample_weight_input_parameters.size() ){
+			new_sample_weight = utility::string2float( sample_weight_input_parameters[res_count] );
+		}
+		sample_weight.push_back( new_sample_weight );
+	}
+	
+	return sample_weight;
+}		
+						
+
+bool is_valid_backbone( 
+		const std::string &sequence,
+		const core::Size &ir,  // sequence offset
+		const std::vector< core::Real > &phi,
+		const std::vector< core::Real > &psi,
+		bool &filter_pro, 
+		bool &filter_beta, 
+		bool &filter_gly 
+){
+	runtime_assert( phi.size() == psi.size() )
+
+	// Check phi/psi angles against the sequence
+	// Pose counts residues starting from one, so offset that
+	filter_pro = false;
+	filter_beta = false;
+	filter_gly = false;
+	
+	// now check every residue
+	for( core::Size bs_position = 0; bs_position < phi.size() ; ++bs_position ){
+		int sequence_position = ir - 1 + bs_position;
+		
+		// Proline
+		if( sequence[sequence_position] == 'P' ) {
+			 if( phi[bs_position] < -103 || phi[bs_position] > -33 ) filter_pro = true; 
+		}
+		// Beta branched residues
+		if( sequence[sequence_position] == 'I' || sequence[sequence_position] == 'V' || sequence[sequence_position] == 'T' ) {
+				if( phi[bs_position] > -40 ) filter_beta = true; 
+		}
+		// Non glycine residues are confined to only part of the positive phi region
+		// populated by glycine residues
+		if( sequence[sequence_position] != 'G' ) {
+			 if( phi[bs_position] > 70 ) filter_gly = true;
+		}
+		if( sequence[sequence_position] != 'G' ) {
+			 if( psi[bs_position] < -75 && psi[bs_position] > -170 ) filter_gly = true;
+		}
+	}
+				
+	// were any of the filters triggered ? only return true if all filters are false!
+	return !( filter_pro || filter_beta || filter_gly ); 
+}
 
 // Just a handy datastructure to carry over some statistics together with the actual retrieve index
 struct FilterBucket {
   FilterBucket():
 			retrieve_index(0), 
 			BBrms(0),
-			filter_pro(0), 
-			filter_beta(0), 
-			filter_gly(0)   
+			filter_pro(false), 
+			filter_beta(false), 
+			filter_gly(false)
 	{}
   core::Size retrieve_index; 
   core::Real BBrms;
-	core::Size filter_pro; 
-	core::Size filter_beta; 
-	core::Size filter_gly;  
+	bool filter_pro; 
+	bool filter_beta; 
+	bool filter_gly;  
 };
 
   // @brief create a set of structures for a the given range of residues and other parameters
  void
  LoopHashSampler::build_structures(
 		const core::pose::Pose& start_pose,
-    std::vector< core::io::silent::SilentStructOP > &lib_structs,
-		core::Size round
+    std::vector< core::io::silent::SilentStructOP > &lib_structs
 	)
   {
     using namespace core;
@@ -125,80 +187,57 @@ struct FilterBucket {
     using namespace numeric::geometry::hashing;
     using namespace optimization;
     using namespace id;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
 		runtime_assert( library_ );
-		TR.Trace << "Testing libstructs: " << "NStruct: " << lib_structs.size() << std::endl;
-
 
 		long starttime = time(NULL);
 
-		Size impossible_torsion_rejects = 0;
-		Size impossible_torsion_candidates = 0;
-    int runcount=0;
-    runcount++;
-    core::Size count_loop_builds = 0;
-		core::Size count_filter_pro = 0;
-		core::Size count_filter_beta = 0;
-		core::Size count_filter_gly = 0;
-		core::Size count_rejected_carms = 0;
-		core::Size count_rejected_bbrms = 0;
-    core::Size count_max_rad = 0;  
+		// Statistics counters
+		Size count_filter_rejects = 0;
+		Size count_total_loops = 0;
+    Size count_loop_builds = 0;
+		Size count_filter_pro = 0;
+		Size count_filter_beta = 0;
+		Size count_filter_gly = 0;
+		Size count_rejected_carms = 0;
+		Size count_rejected_bbrms = 0;
+    Size count_max_rad = 0;  
+	
+		// Parameters
+		core::Size models_build_this_loopsize_max =         std::max( Size(1), Size( max_struct_ / library_->hash_sizes().size()) ); 
+		core::Size models_build_this_loopsize_per_rad_max = std::max( Size(1), Size( models_build_this_loopsize_max * 2 / max_radius_ ));  
+		core::Size fragments_tried_this_loopsize_max =      models_build_this_loopsize_max * 200; 
+		TR <<  "LoopHashSampler limits: " << max_struct_ << " " << models_build_this_loopsize_max << "  " << models_build_this_loopsize_per_rad_max << "  " << fragments_tried_this_loopsize_max << std::endl;
+	
 		std::string sequence = start_pose.sequence();
 
     core::pose::Pose original_pose = start_pose;
     core::pose::Pose edit_pose = start_pose;
-	 	TR.Debug  << "Setting options.." << std::endl;
-	  //core::optimization::MinimizerOptions options( "dfpmin", 0.2, true , false );
-	  //core::optimization::MinimizerOptions options2( "dfpmin", 0.02,true , false );
 	  core::optimization::MinimizerOptions options( "lbfgs_armijo", 0.2, true , false );
 	  core::optimization::MinimizerOptions options2( "lbfgs_armijo", 0.02,true , false );
 
     kinematics::MoveMap final_mm;
     final_mm.set_bb(true);
-   // setup movemap & minimisation
-
-  //				for ( Size ii=ir; ii<= jr; ++ii ) {
-  //					final_mm.set_bb( ii, true );
-  //					if ( newpose->residue(ii).aa() == chemical::aa_pro ) final_mm.set( TorsionID( phi_torsion, BB, ii ), false );
-  //				}
 
     Size nres = start_pose.total_residue();
     Size ir, jr;
-    //Size newpep_index = 0;
 
-    //core::Size backbone_offset;
-    //bbdb_.add_pose( pose, backbone_offset );
-
-		// Get the sample weight array, split it and cast it as int
-		// rosetta string functions suck
-		std::string sample_weight_str;
-		core::pose::get_comment(start_pose, "sample_weight", sample_weight_str);
-		
-		utility::vector1 < std::string > sample_weight_input_parameters;
-		sample_weight_input_parameters = utility::split(sample_weight_str);
-		
-		utility::vector1 < core::Size > sample_weight;
-		for ( core::Size res_count = 1; res_count <= start_pose.total_residue(); ++res_count ){
-			core::Size new_sample_weight = 50;
-			if( res_count < sample_weight_input_parameters.size() ) new_sample_weight = utility::string2int( sample_weight_input_parameters[res_count] );
-			sample_weight.push_back( new_sample_weight );
-		}
-
-
-		
     core::Size start_res = start_res_;
     core::Size stop_res = stop_res_;
 
     // figure out start and stop residues
     if ( stop_res == 0 ) stop_res = nres;  // to do the whole protein just set stop_res to 0
-    start_res = std::max( start_res, (core::Size)2 ); // dont start before 2  - WHY ?
+    start_res = std::max( start_res, (core::Size)2 ); // dont start before 2  - WHY ? << cos you need a stub of at least 2 residues to calculate a proper takeoff point. Why ? I dont know. Rosettavoodoo. This knowledge has been lost in history. Historians have struggled for centuries to recover it.
+
 		if( start_res > stop_res ) stop_res = start_res;
 
 	 	TR << "Running: Start:" << start_res << "  End: " << stop_res << std::endl;
     for( ir = start_res; ir <= stop_res; ir ++ ){
-      for( core::Size k = 0; k < library_->hash_sizes().size(); k ++ ){
+      
+			// Loop over loopsizes in library
+			for( core::Size k = 0; k < library_->hash_sizes().size(); k ++ ){
         core::Size loop_size = library_->hash_sizes()[ k ];
 
         jr = ir + loop_size;
@@ -215,43 +254,23 @@ struct FilterBucket {
 
 
 				// Now we compute the per residue sample weight averaged over the segment
-				core::Real avg_sw = 0;
-				for( core::Size m = ir; m <= jr; m++ ) {
-						avg_sw += sample_weight[m];
-				}
-				avg_sw = avg_sw/loop_size;
-				if (avg_sw == 0 ) {
-					//TR << "Sample Weight is 0" << std::endl;
-					break;
-				}
 
-				// make up some function that uses sample weight to generate model number cutoffs
-				// and one that gives a max_bbrms and min_bbrms
-				core::Size sw_nmodels = (core::Size)(avg_sw*max_struct_/50);
-				core::Size sw_nfrags = (core::Size)avg_sw*400;
-				
-				// Limit how many structures chosen from a given radius
-				core::Size sw_nmodels_per_rad = (core::Size)(avg_sw*max_struct_per_radius_/50);
-
-				// we want sw_nmodels models no matter what
+				// we want models_build_this_loopsize_max models no matter what
 				// but if there is a brrms constraint, we might never reach x models
 				// some breakpoint, like x bins checked or x frags checked
 				// or radius check
-				core::Size fragments_seen = 0;
-				core::Size models_seen = 0;
+				core::Size fragments_tried_this_loopsize = 0;
+				core::Size models_build_this_loopsize = 0;
 
 				for( Size radius = 0; radius <= max_radius_; radius++ ) {
 					count_max_rad = std::max( count_max_rad, radius );
-					core::Size models_seen_this_rad = 0;
+					core::Size models_build_this_loopsize_this_rad = 0;
 					std::vector < core::Size > leap_index_bucket;
 					std::vector < FilterBucket > filter_leap_index_bucket;
 					
-					hashmap.radial_lookup( radius, loop_transform, leap_index_bucket );
-					//TR << "radius, lookup_size = " << radius << ", " << leap_index_bucket.size() << std::endl;
-
-					if( leap_index_bucket.size() == 0) {
-						continue;
-					}
+					hashmap.radial_lookup( radius, loop_transform, leap_index_bucket );     // grab list of fragments using radial lookup out from our loop transform
+					TR << "Rad: " << radius << "  " << leap_index_bucket.size() << std::endl;
+					if( leap_index_bucket.size() == 0)  continue;                           // no fragments found
 
 					// Now for every hit, get the internal coordinates and make a short list of replacement loops
 					// according to the RMS criteria
@@ -268,81 +287,39 @@ struct FilterBucket {
 						library_->backbone_database().get_backbone_segment( cp.index, cp.offset, hashmap.get_loop_size() , new_bs );
 
 						// Check the values against against any RMS limitations
+						// if violated then skip rest of loop
 						core::Real BBrms = get_rmsd( pose_bs, new_bs );
-						if( ( BBrms > min_bbrms_) && ( BBrms < max_bbrms_ ) ){
-							// Next part is ported from score_fragment.f so these are magical cutoffs
-							const std::vector< core::Real > phi = new_bs.phi();
-							const std::vector< core::Real > psi = new_bs.psi();
-							// Check phi/psi angles against the sequence
-							// Pose counts residues starting from one, so offset that
-							bool offlimits = false;
-						  bool filter_pro = false;
-							bool filter_beta = false;
-							bool filter_gly = false;
-							for( core::Size bs_position = 0; bs_position < phi.size() ; ++bs_position ){
-								int sequence_position = ir - 1 + bs_position;
-								
-								// Proline
-								if( sequence[sequence_position] == 'P' ) {
-									 if( phi[bs_position] < -103 || phi[bs_position] > -33 ) filter_pro = true; 
-								}
-								// Beta branched residues
-								if( sequence[sequence_position] == 'I' || sequence[sequence_position] == 'V' || sequence[sequence_position] == 'T' ) {
-										if( phi[bs_position] > -40 ) filter_beta = true; 
-								}
-								// Non glycine residues are confined to only part of the positive phi region
-								// populated by glycine residues
-								if( sequence[sequence_position] != 'G' ) {
-									 if( phi[bs_position] > 70 ) filter_gly = true;
-								}
-								if( sequence[sequence_position] != 'G' ) {
-									 if( psi[bs_position] < -75 && psi[bs_position] > -170 ) filter_gly = true;
-								}
-								// Residues other than glycine preceding prolines are quite restricted
-//									if( sequence[sequence_position] == 'P' ) {
-//										 if( phi[bs_position] < 40 && sequence[sequence_position] != 'G' ) {
-//													if( psi[bs_position] > -25 || phi[bs_position] < -90 ) break;
-//										 }
-//									}
-							}
-						
-						  // were any of the filters triggered ?
-							if( filter_pro || filter_beta || filter_gly ) offlimits = true;
-
-							// ignore filtering if filtering is switched off by user.
-							if( !get_filter_by_phipsi() ){
-							  offlimits = false;
-							}
-							
-							impossible_torsion_candidates++;
-							
-							// count rejection stats
-							if( filter_pro )  count_filter_pro ++;
-							if( filter_beta	)	count_filter_beta ++;
-							if( filter_gly ) 	count_filter_gly ++;
-							
-							if( offlimits ) {
-									impossible_torsion_rejects++;
-							} else {
-
-							    FilterBucket bucket; 
-									bucket.retrieve_index = *it;
-									bucket.BBrms = BBrms;
-									bucket.filter_pro  = filter_pro  ? 1 : 0;
-									bucket.filter_beta = filter_beta ? 1 : 0;
-									bucket.filter_gly  = filter_gly  ? 1 : 0;
-
-
-									filter_leap_index_bucket.push_back( bucket );
-							}
-							fragments_seen++;
-							if( fragments_seen > sw_nfrags ) break; // continue with however many are in the bucket now, and break at end
-						} else {
+						if( ( BBrms < min_bbrms_) || ( BBrms > max_bbrms_ ) ){
 							count_rejected_bbrms ++;
+							continue;
 						}
+
+						
+						FilterBucket bucket; 
+						bucket.retrieve_index = *it;  // save the bucket index for the next step later
+						bucket.BBrms = BBrms;         // also save the back bone RMS for later analysis & stats
+					
+						bool is_valid = 
+							   is_valid_backbone( sequence, ir, new_bs.phi(), new_bs.psi(),    // input is sequence, current position in sequence, and the phi/psi's of the proposed angles.
+								     	bucket.filter_pro, bucket.filter_beta, bucket.filter_gly );  // output is a bunch of booleans giving information about any clashes.
+						
+						// count rejection stats
+						if( bucket.filter_pro )  count_filter_pro ++;
+						if( bucket.filter_beta	)	count_filter_beta ++;
+						if( bucket.filter_gly ) 	count_filter_gly ++;
+						
+						if( (!get_filter_by_phipsi()) || is_valid ){ // should we filter at all and if so is it valid. 
+								filter_leap_index_bucket.push_back( bucket ); // add to our short list of good fragments
+						}else{
+								count_filter_rejects++;												// or increment reject counter
+						}
+						
+						count_total_loops++;
+						fragments_tried_this_loopsize++;
+						if( fragments_tried_this_loopsize > fragments_tried_this_loopsize_max ) break; // continue with however many are in the bucket now, and break at end
 					}
 
-					// treat the fragments in a random order
+					// treat the fragments in a random order so shuffle them up
 					std::random_shuffle( filter_leap_index_bucket.begin(), filter_leap_index_bucket.end());
 
 					// Now create models and check rms after insertion
@@ -417,10 +394,11 @@ struct FilterBucket {
 							new_struct->erase_comment( "donorhistory" );
 							new_struct->add_comment( "donorhistory", donorhistory );
 							lib_structs.push_back( new_struct );
-							models_seen++;
-							models_seen_this_rad++;
-							if( models_seen >= sw_nmodels ) break;
-							if( models_seen_this_rad >= sw_nmodels_per_rad ) break;
+							
+							models_build_this_loopsize++;
+							models_build_this_loopsize_this_rad++;
+							
+							
 							isok = true;
 						}else{
 							count_rejected_carms ++;
@@ -431,37 +409,48 @@ struct FilterBucket {
 						clock_t endtime = clock();
 
 						TR.Debug << "Clocks: " << endtime - starttime << "  " << final_rms << (isok ? " OK" : " Reject") << std::endl;
+							
+						if( models_build_this_loopsize >= models_build_this_loopsize_max ) break;
+						if( models_build_this_loopsize_this_rad >= models_build_this_loopsize_per_rad_max ) break;
 
 				}
 				// To break out of the outer for loop when these conditions are met
-				if( models_seen > sw_nmodels ) break;
-				if( fragments_seen > sw_nfrags) break;
+				if( models_build_this_loopsize >= models_build_this_loopsize_max ) break;
+				if( fragments_tried_this_loopsize >= fragments_tried_this_loopsize_max) break;
       }
-    }
+		
+			TR.Info << " IR: " << ir << " LS: " << loop_size  
+							<< " Frag: " << fragments_tried_this_loopsize << " ( " << fragments_tried_this_loopsize_max << " ) " 
+							<< " Modls: " << models_build_this_loopsize   << " ( " << models_build_this_loopsize_max << " ) " 
+    					<< std::endl;	
+
+
+		} // Loop over fragment sizes
+	} // Loop iver residue window
+
+
+	// Now just print some final statistics
+	long endtime = time(NULL);
+	TR.Info << "LHS: " << start_res << "-" << stop_res << ":  " 
+					<< " struc " << lib_structs.size() 
+					<< " (max) " << max_struct_ 
+					<< " secs " << endtime - starttime << " secs " 
+					<< " Total: "   << count_total_loops 
+					<< " RjTor: "  << count_filter_rejects 
+					<< " RjPro: "  << count_filter_pro
+					<< " RjBeta: "	<< count_filter_beta
+					<< " RjGly: "  << count_filter_gly
+					<< " RjCA("    << min_rms_ << "-" << max_rms_ << "): "   << count_rejected_carms
+					<< " RjBB: "   << count_rejected_bbrms
+					<< " Built: "   << count_loop_builds
+					<< " MaxRad: "  << count_max_rad
+
+					<< std::endl;
+
+	for( std::vector< core::io::silent::SilentStructOP >::iterator it=lib_structs.begin();
+			it != lib_structs.end(); ++it ){
+		TR.Debug << "Samples: " << (*it)->get_energy("censcore") << std::endl;
 	}
-
-
-		long endtime = time(NULL);
-
-
-		TR.Info << "LHS: " << start_res << "-" << stop_res << ":  " 
-		        << lib_structs.size() << " struc "
-						<< endtime - starttime << " secs " 
-						<< " Total: "   << impossible_torsion_candidates 
-						<< " RejTor: "  << impossible_torsion_rejects 
-						<< " RejPro: "  << count_filter_pro
-						<< " RejBeta: "	<< count_filter_beta
-						<< " RejGly: " << count_filter_gly
-						<< " RejCA(" << min_rms_ << "-" << max_rms_ << "): "   << count_rejected_carms
-						<< " RejBB: "   << count_rejected_bbrms
-						<< " Built: "   << count_loop_builds
-						<< " MaxRad: " << count_max_rad
-						<< std::endl;
-
-		for( std::vector< core::io::silent::SilentStructOP >::iterator it=lib_structs.begin();
-				it != lib_structs.end(); ++it ){
-			TR.Debug << "SAMPLER2" << (*it)->get_energy("censcore") << std::endl;
-		}
 
 
 
@@ -473,167 +462,9 @@ struct FilterBucket {
  LoopHashSampler::close_gaps(
 		const core::pose::Pose& start_pose,
     std::vector< core::pose::Pose> &lib_structs,
-		core::Size loop_size,
-		core::Size
+		core::Size loop_size
 	)
   {
-    using namespace core;
-    using namespace core::pose;
-    using namespace conformation;
-    using namespace kinematics;
-    using namespace numeric::geometry::hashing;
-    using namespace optimization;
-    using namespace id;
-
-		runtime_assert( library_ );
-		TR.Trace << "Testing libstructs: " << "NStruct: " << lib_structs.size() << std::endl;
-
-
-		long starttime = time(NULL);
-
-
-    core::pose::Pose original_pose = start_pose;
-    core::pose::Pose edit_pose = start_pose;
-
-
-	 	TR.Debug  << "Setting options.." << std::endl;
-	  //core::optimization::MinimizerOptions options( "dfpmin", 0.2, true , false );
-	  //core::optimization::MinimizerOptions options2( "dfpmin", 0.02,true , false );
-	  core::optimization::MinimizerOptions options( "lbfgs_armijo", 0.2, true , false );
-	  core::optimization::MinimizerOptions options2( "lbfgs_armijo", 0.02,true , false );
-
-    kinematics::MoveMap final_mm;
-    final_mm.set_bb(true);
-   // setup movemap & minimisation
-
-  //				for ( Size ii=ir; ii<= jr; ++ii ) {
-  //					final_mm.set_bb( ii, true );
-  //					if ( newpose->residue(ii).aa() == chemical::aa_pro ) final_mm.set( TorsionID( phi_torsion, BB, ii ), false );
-  //				}
-
-    Size nres = start_pose.total_residue();
-    Size ir, jr;
-    //Size newpep_index = 0;
-
-    //core::Size backbone_offset;
-    //bbdb_.add_pose( pose, backbone_offset );
-
-
-    int runcount=0;
-    runcount++;
-
-    core::Size start_res = start_res_;
-    core::Size stop_res = stop_res_;
-
-    // figure out start and stop residues
-    if ( stop_res == 0 ) stop_res = nres;  // to do the whole protein just set stop_res to 0
-    start_res = std::max( start_res, (core::Size)2 ); // dont start before 2  - WHY ?
-		if( start_res > stop_res ) stop_res = start_res;
-
-    for( ir = start_res; ir <= stop_res; ir ++ ){
-		
-			jr = ir + loop_size;
-			if ( ir > nres ) continue;
-			if ( jr > nres ) continue;
-
-			// get the rigid body transform for the current segment
-			BackboneSegment pose_bs;
-			pose_bs.read_from_pose( start_pose, ir, loop_size );
-			Real6 loop_transform;
-			if(!get_rt_over_leap( original_pose, ir, jr, loop_transform )) continue;
-
-			LoopHashMap &hashmap = library_->gethash( loop_size );
-
-
-			core::Size sw_nmodels = 10 ;
-			core::Size sw_nfrags = 100;
-			core::Size sw_nmodels_per_rad = 5;
-
-			// we want sw_nmodels models no matter what
-			// but if there is a brrms constraint, we might never reach x models
-			// some breakpoint, like x bins checked or x frags checked
-			// or radius check
-			core::Size fragments_seen = 0;
-			core::Size models_seen = 0;
-
-		
-			for( Size radius = 0; radius <= 1; radius++ ) {
-				core::Size models_seen_this_rad = 0;
-				std::vector < core::Size > leap_index_bucket;
-				std::vector < core::Size > filter_leap_index_bucket;
-				hashmap.radial_lookup( radius, loop_transform, leap_index_bucket );
-				//TR << "radius, lookup_size = " << radius << ", " << leap_index_bucket.size() << std::endl;
-
-				if( leap_index_bucket.size() == 0) {
-					continue;
-				}
-
-				// Now for every hit, get the internal coordinates and make a short list of replacement loops
-				// according to the RMS criteria
-				for(  std::vector < core::Size >::const_iterator it = leap_index_bucket.begin();
-						it != leap_index_bucket.end();
-						++it ){
-
-					// Get the actual strucure index (not just the bin index)
-					core::Size retrieve_index = (core::Size) (*it);
-					LeapIndex cp = hashmap.get_peptide( retrieve_index );
-
-					// Retrieve the actual backbone structure
-					BackboneSegment new_bs;
-					library_->backbone_database().get_backbone_segment( cp.index, cp.offset, hashmap.get_loop_size() , new_bs );
-
-					// Check the values against against any RMS limitations
-					core::Real BBrms = get_rmsd( pose_bs, new_bs );
-					if( ( BBrms > min_bbrms_) && ( BBrms < max_bbrms_ ) ){
-						filter_leap_index_bucket.push_back( *it );
-						fragments_seen++;
-						if( fragments_seen > sw_nfrags ) break; // continue with however many are in the bucket now, and break at end
-					}
-				}
-
-				// treat the fragments in random order
-				std::random_shuffle( filter_leap_index_bucket.begin(), filter_leap_index_bucket.end());
-
-				// Now create models and check rms after insertion
-				for(  std::vector < core::Size >::const_iterator it = filter_leap_index_bucket.begin();
-						it != filter_leap_index_bucket.end();
-						++it ){
-
-					clock_t starttime = clock();
-
-					core::Size retrieve_index = *it;
-					LeapIndex cp = hashmap.get_peptide( retrieve_index );
-
-					BackboneSegment new_bs;
-					library_->backbone_database().get_backbone_segment( cp.index, cp.offset, hashmap.get_loop_size() , new_bs );
-
-					core::pose::Pose newpose( start_pose );
-					//transfer_phi_psi( start_pose, newpose );			//fpd necessary??
-
-					core::Real final_rms = inserter_->make_local_bb_change_close_gaps( newpose, original_pose, new_bs, ir );
-
-					bool isok = false;
-					if ( ( final_rms < max_rms_ ) && ( final_rms > min_rms_) ){
-						lib_structs.push_back( newpose );
-						models_seen++;
-						models_seen_this_rad++;
-						if( models_seen >= sw_nmodels ) break;
-						if( models_seen_this_rad >= sw_nmodels_per_rad ) break;
-						isok = true;
-					}
-
-					//if ( lib_structs.size() > 2  ) return;
-
-					clock_t endtime = clock();
-
-					TR.Debug << "Clocks: " << endtime - starttime << "  " << final_rms << (isok ? " OK" : " Reject") << std::endl;
-
-			}
-			// To break out of the outer for loop when these conditions are met
-			if( models_seen > sw_nmodels ) break;
-			if( fragments_seen > sw_nfrags) break;
-		}
-	}
 }
 
 

@@ -110,7 +110,7 @@ LoopHashMoverWrapper::LoopHashMoverWrapper() :
 	ranking_cenfilter_( NULL ),
 	fafilter_( NULL ),
 	ranking_fafilter_( NULL ),
-	sample_weight_const_( 50 )
+	sample_weight_const_( 1 )
 {
 	loop_sizes_.clear();
 }
@@ -317,7 +317,7 @@ LoopHashMoverWrapper::parse_my_tag( TagPtr const tag,
 	max_struct_ = tag->getOption< Size >( "max_struct", 10 );
 	max_struct_per_radius_ = tag->getOption< Size >( "max_struct_per_radius", 10 );
 	filter_by_phipsi_ = tag->getOption< bool >( "filter_by_phipsi", 1 );
-	sample_weight_const_ = tag->getOption< Size >( "sample_weight_const", 50 );
+	sample_weight_const_ = tag->getOption< Real >( "sample_weight_const", 1.0 );
 
 	start_res_ = 2;
 	stop_res_ = 0;

@@ -144,7 +144,7 @@ WorkUnit_LoopHash::run()
 	TR.Info << "Running loophash function: Start: " << get_start() << " End: " << get_end() << std::endl;
 	core::Size starttime = time(NULL);
 
-	lsampler.build_structures( pose, decoys().store(), (int)start_struct->get_energy("round") );
+	lsampler.build_structures( pose, decoys().store() );
 
 	core::Size endtime = time(NULL);
 	TR.Info << "Build " << decoys().size() << " structures in " << endtime - starttime << " s " << std::endl;

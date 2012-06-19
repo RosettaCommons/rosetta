@@ -498,16 +498,16 @@ MPI_LoopHashRefine_Master::load_sample_weight() {
 					boost::split(r, line, boost::is_any_of("\t "));
 					
 				
-					int i;
+					core::Real i=0.0;
 					// Check for correct format
 					try {
-						i = boost::lexical_cast<int> (r[1] );
+						i = boost::lexical_cast<core::Real> (r[1] );
 					} catch( boost::bad_lexical_cast &) {
 							utility_exit_with_message( "Sample weight second column can't be casted to an int.");
 					}
 
-					if ( ! (i >= 0 && i <=100 )) {
-							utility_exit_with_message( "Sample weight second column is not an int between 0 and 100." );
+					if (i < 0) {
+							utility_exit_with_message( "Sample weight second column is not an float larger than 0." );
 						} else {
 							tmp += r[1] + " ";
 						}

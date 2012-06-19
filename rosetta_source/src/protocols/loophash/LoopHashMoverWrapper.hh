@@ -98,7 +98,7 @@ private:
 	// structure store
 	bool ideal_, filter_by_phipsi_;  // should we save space and assume structure is ideal?
 	std::vector< std::pair< Real, core::io::silent::SilentStructOP > > all_structs_;
-	core::Size sample_weight_const_; //dflt 50; sets the same sample weight throughout the pose
+	core::Real sample_weight_const_; //dflt 1.0 ; sets the same sample weight throughout the pose
 };
 
 
