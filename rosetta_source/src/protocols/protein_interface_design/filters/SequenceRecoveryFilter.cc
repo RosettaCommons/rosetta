@@ -209,14 +209,21 @@ SequenceRecoveryFilter::compute( core::pose::Pose const & pose, bool const & wri
 		utility_exit_with_message( "Reference pose and current pose have a different number of residues" );
 	core::pack::task::PackerTaskOP packer_task( task_factory_->create_task_and_apply_taskoperations( pose ) );
 	core::Size designable_count( 0 );
-	for( core::Size resi=1; resi<=total_residue; ++resi )
+	core::Size packable_count( 0 );
+	for( core::Size resi=1; resi<=total_residue; ++resi ) {
 		if( packer_task->being_designed( resi ) ) {
-			 designable_count++;
+			designable_count++;
 		}
-
-	if( !designable_count )
-		utility_exit_with_message( "No designable residues identified in pose. Are you sure you have set the correct task operations?" );
-
+		if( packer_task->being_packed( resi ) ) {
+			packable_count++;
+		}
+	}
+	if( !designable_count ) {
+		TR<<"Warning: No designable residues identified in pose. Are you sure you have set the correct task operations?"<<std::endl;
+		if( !packable_count ) {
+			utility_exit_with_message("No designable or packable residues identified in pose. Are you sure you have set the correct task operations?" );
+		}
+	}
 	using namespace core::scoring;
   protocols::protein_interface_design::ReportSequenceDifferences rsd( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
   rsd.calculate( asym_ref_pose, asym_pose );
