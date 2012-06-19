@@ -260,7 +260,7 @@ private: /// Functions
 	static void calculate_visibility(std::string const &channel, int priority, bool &visible, bool &muted, bool muted_by_default);
 
 	#ifdef EXPERIMENTAL_TRACER_FEATURES
-		static void experimental_calculate_visibility(std::string const &channel, int priority, bool &visible, bool &muted, bool muted_by_default);
+		static void experimental_calculate_visibility(std::string const &channel, int priority, bool &visible, int &mute_level, bool muted_by_default);
 	#endif // EXPERIMENTAL_TRACER_FEATURES
 
 

@@ -36,6 +36,9 @@ settings = {
             # that any change whatsoever to the PATH variable (or its
             # contents) will force a complete recompile.
             #"program_path"  : os.environ["PATH"].split(":"),
+
+            # Uncomment the line below to enable experimental mute level control in Tracer's
+            #"defines" : [ 'EXPERIMENTAL_TRACER_FEATURES' ],
         },
         "overrides" : {
         },
