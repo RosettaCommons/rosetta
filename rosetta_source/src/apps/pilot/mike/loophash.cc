@@ -151,7 +151,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
   lsampler.set_max_bbrms( option[ lh::max_bbrms ]() );
   lsampler.set_min_rms( option[ lh::min_rms ]() );
   lsampler.set_max_rms( option[ lh::max_rms ]() );
-	
+	lsampler.set_max_struct( skim_size );	
 	core::pose::Pose native_pose;
 	if( option[ in::file::native ].user() ){
 		core::import_pose::pose_from_pdb( native_pose, option[ in::file::native ]() );
