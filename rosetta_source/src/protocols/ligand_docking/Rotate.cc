@@ -333,8 +333,8 @@ bool check_score(
 		Ligand_info const ligand,
 		core::Size const heavy_atom_number
 ){
-	int const atr_threshold=0;
-	int const rep_threshold=-(int) (0.85 * heavy_atom_number);
+	int const rep_threshold=0;
+	int const atr_threshold=-(int) (0.85 * heavy_atom_number);
 	return ligand.atr <= atr_threshold && ligand.rep <= rep_threshold;
 }
 
