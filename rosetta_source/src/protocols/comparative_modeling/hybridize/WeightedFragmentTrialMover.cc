@@ -53,6 +53,9 @@ void WeightedFragmentTrialMover::update_sampler_weights( utility::vector1< core:
 			if (cross_anchor) continue;
 
 			for (Size seqpos = seqpos_start; seqpos <= seqpos_end; ++seqpos) { // accumulate the weights of all residues in the fragment
+				if (seqpos < 1 || seqpos > residue_weights.size()) {
+					utility_exit_with_message("FATAL. Fragment library size doesn't match with the size of protein.");
+				}
 				frame_weights[i_frame] += residue_weights[seqpos];
 
 			}
