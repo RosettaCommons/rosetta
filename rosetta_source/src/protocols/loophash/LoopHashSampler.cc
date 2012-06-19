@@ -72,17 +72,17 @@ LoopHashSampler::set_defaults(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	set_max_radius(  option[ lh::max_radius ]() );  
+	set_max_radius(  option[ lh::max_radius ]() );
 
-	set_min_bbrms(  option[ lh::min_bbrms ]() );  
+	set_min_bbrms(  option[ lh::min_bbrms ]() );
 	set_max_bbrms(  option[ lh::max_bbrms ] ()  );
 	set_min_rms(    option[ lh::min_rms ]() );
 	set_max_rms(    option[ lh::max_rms ]() );
 	set_max_struct(    option[ lh::max_struct ]() );
 	set_max_struct_per_radius(    option[ lh::max_struct_per_radius ]() );
 	set_max_nstruct( 10000000 ); // OBSOLETE?
-	
-	filter_by_phipsi_ = option[ lh::filter_by_phipsi ]();  
+
+	filter_by_phipsi_ = option[ lh::filter_by_phipsi ]();
 }
 
 bool cmp( core::pose::Pose a, core::pose::Pose b) {
@@ -92,15 +92,15 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 	return as < bs;
 }
 
-// returns a vector of real numbers, one per residue of pose, giving the 
+// returns a vector of real numbers, one per residue of pose, giving the
 // sampling weight. weight of 1.0 corresponds to "normal", i.e. unmodified sampling weight.
 utility::vector1 < core::Real > extract_sample_weights( const core::pose::Pose &pose ){
 	std::string sample_weight_str;
 	core::pose::get_comment(pose, "sample_weight", sample_weight_str);
-	
+
 	utility::vector1 < std::string > sample_weight_input_parameters;
 	sample_weight_input_parameters = utility::split(sample_weight_str);
-	
+
 	utility::vector1 < core::Real > sample_weight;
 	for ( core::Size res_count = 1; res_count <= pose.total_residue(); ++res_count ){
 		core::Real new_sample_weight = 1.0;
@@ -109,19 +109,19 @@ utility::vector1 < core::Real > extract_sample_weights( const core::pose::Pose &
 		}
 		sample_weight.push_back( new_sample_weight );
 	}
-	
-	return sample_weight;
-}		
-						
 
-bool is_valid_backbone( 
+	return sample_weight;
+}
+
+
+bool is_valid_backbone(
 		const std::string &sequence,
 		const core::Size &ir,  // sequence offset
 		const std::vector< core::Real > &phi,
 		const std::vector< core::Real > &psi,
-		bool &filter_pro, 
-		bool &filter_beta, 
-		bool &filter_gly 
+		bool &filter_pro,
+		bool &filter_beta,
+		bool &filter_gly
 ){
 	runtime_assert( phi.size() == psi.size() )
 
@@ -130,18 +130,18 @@ bool is_valid_backbone(
 	filter_pro = false;
 	filter_beta = false;
 	filter_gly = false;
-	
+
 	// now check every residue
 	for( core::Size bs_position = 0; bs_position < phi.size() ; ++bs_position ){
 		int sequence_position = ir - 1 + bs_position;
-		
+
 		// Proline
 		if( sequence[sequence_position] == 'P' ) {
-			 if( phi[bs_position] < -103 || phi[bs_position] > -33 ) filter_pro = true; 
+			 if( phi[bs_position] < -103 || phi[bs_position] > -33 ) filter_pro = true;
 		}
 		// Beta branched residues
 		if( sequence[sequence_position] == 'I' || sequence[sequence_position] == 'V' || sequence[sequence_position] == 'T' ) {
-				if( phi[bs_position] > -40 ) filter_beta = true; 
+				if( phi[bs_position] > -40 ) filter_beta = true;
 		}
 		// Non glycine residues are confined to only part of the positive phi region
 		// populated by glycine residues
@@ -152,25 +152,25 @@ bool is_valid_backbone(
 			 if( psi[bs_position] < -75 && psi[bs_position] > -170 ) filter_gly = true;
 		}
 	}
-				
+
 	// were any of the filters triggered ? only return true if all filters are false!
-	return !( filter_pro || filter_beta || filter_gly ); 
+	return !( filter_pro || filter_beta || filter_gly );
 }
 
 // Just a handy datastructure to carry over some statistics together with the actual retrieve index
 struct FilterBucket {
   FilterBucket():
-			retrieve_index(0), 
+			retrieve_index(0),
 			BBrms(0),
-			filter_pro(false), 
-			filter_beta(false), 
+			filter_pro(false),
+			filter_beta(false),
 			filter_gly(false)
 	{}
-  core::Size retrieve_index; 
+  core::Size retrieve_index;
   core::Real BBrms;
-	bool filter_pro; 
-	bool filter_beta; 
-	bool filter_gly;  
+	bool filter_pro;
+	bool filter_beta;
+	bool filter_gly;
 };
 
   // @brief create a set of structures for a the given range of residues and other parameters
@@ -203,14 +203,14 @@ struct FilterBucket {
 		Size count_filter_gly = 0;
 		Size count_rejected_carms = 0;
 		Size count_rejected_bbrms = 0;
-    Size count_max_rad = 0;  
-	
+    Size count_max_rad = 0;
+
 		// Parameters
-		core::Size models_build_this_loopsize_max =         std::max( Size(1), Size( max_struct_ / library_->hash_sizes().size()) ); 
-		core::Size models_build_this_loopsize_per_rad_max = std::max( Size(1), Size( models_build_this_loopsize_max * 2 / max_radius_ ));  
-		core::Size fragments_tried_this_loopsize_max =      models_build_this_loopsize_max * 200; 
+		core::Size models_build_this_loopsize_max =         std::max( Size(1), Size( max_struct_ / library_->hash_sizes().size()) );
+		core::Size models_build_this_loopsize_per_rad_max = std::max( Size(1), Size( models_build_this_loopsize_max * 2 / max_radius_ ));
+		core::Size fragments_tried_this_loopsize_max =      models_build_this_loopsize_max * 200;
 		TR <<  "LoopHashSampler limits: " << max_struct_ << " " << models_build_this_loopsize_max << "  " << models_build_this_loopsize_per_rad_max << "  " << fragments_tried_this_loopsize_max << std::endl;
-	
+
 		std::string sequence = start_pose.sequence();
 
     core::pose::Pose original_pose = start_pose;
@@ -235,7 +235,7 @@ struct FilterBucket {
 
 	 	TR << "Running: Start:" << start_res << "  End: " << stop_res << std::endl;
     for( ir = start_res; ir <= stop_res; ir ++ ){
-      
+
 			// Loop over loopsizes in library
 			for( core::Size k = 0; k < library_->hash_sizes().size(); k ++ ){
         core::Size loop_size = library_->hash_sizes()[ k ];
@@ -267,9 +267,9 @@ struct FilterBucket {
 					core::Size models_build_this_loopsize_this_rad = 0;
 					std::vector < core::Size > leap_index_bucket;
 					std::vector < FilterBucket > filter_leap_index_bucket;
-					
+
 					hashmap.radial_lookup( radius, loop_transform, leap_index_bucket );     // grab list of fragments using radial lookup out from our loop transform
-					TR << "Rad: " << radius << "  " << leap_index_bucket.size() << std::endl;
+					TR.Debug << "Rad: " << radius << "  " << leap_index_bucket.size() << std::endl;
 					if( leap_index_bucket.size() == 0)  continue;                           // no fragments found
 
 					// Now for every hit, get the internal coordinates and make a short list of replacement loops
@@ -294,26 +294,26 @@ struct FilterBucket {
 							continue;
 						}
 
-						
-						FilterBucket bucket; 
+
+						FilterBucket bucket;
 						bucket.retrieve_index = *it;  // save the bucket index for the next step later
 						bucket.BBrms = BBrms;         // also save the back bone RMS for later analysis & stats
-					
-						bool is_valid = 
+
+						bool is_valid =
 							   is_valid_backbone( sequence, ir, new_bs.phi(), new_bs.psi(),    // input is sequence, current position in sequence, and the phi/psi's of the proposed angles.
 								     	bucket.filter_pro, bucket.filter_beta, bucket.filter_gly );  // output is a bunch of booleans giving information about any clashes.
-						
+
 						// count rejection stats
 						if( bucket.filter_pro )  count_filter_pro ++;
 						if( bucket.filter_beta	)	count_filter_beta ++;
 						if( bucket.filter_gly ) 	count_filter_gly ++;
-						
-						if( (!get_filter_by_phipsi()) || is_valid ){ // should we filter at all and if so is it valid. 
+
+						if( (!get_filter_by_phipsi()) || is_valid ){ // should we filter at all and if so is it valid.
 								filter_leap_index_bucket.push_back( bucket ); // add to our short list of good fragments
 						}else{
 								count_filter_rejects++;												// or increment reject counter
 						}
-						
+
 						count_total_loops++;
 						fragments_tried_this_loopsize++;
 						if( fragments_tried_this_loopsize > fragments_tried_this_loopsize_max ) break; // continue with however many are in the bucket now, and break at end
@@ -361,7 +361,7 @@ struct FilterBucket {
 							new_struct->add_energy( "lh_filter_pro", it->filter_pro );
 							new_struct->add_energy( "lh_filter_beta", it->filter_beta );
 							new_struct->add_energy( "lh_filter_gly", it->filter_gly );
-							
+
 							//TR << "SAMPLER: " << new_struct->get_energy("censcore") << std::endl;
 							// Add donor history for this round of loophash only
 
@@ -369,11 +369,11 @@ struct FilterBucket {
 							BBData bb;
 							BBExtraData bbextra;
 							library_->backbone_database().get_protein( cp.index, bb );
-							
+
 							std::string donorhistory = new_struct->get_comment("donorhistory");
-							if( library_->backbone_database().extra_size() <= bb.extra_key ){ 
+							if( library_->backbone_database().extra_size() <= bb.extra_key ){
 								std::cerr << "ERROR: No extra data ?: " << library_->backbone_database().extra_size() << " < " << bb.extra_key << std::endl;
-								
+
 								donorhistory = donorhistory
 												+       utility::to_string( loop_size )
 												+ "/" + utility::to_string( library_->loopdb_range().first + cp.index )
@@ -382,7 +382,7 @@ struct FilterBucket {
 							}else{
 
 								library_->backbone_database().get_extra_data( bb.extra_key, bbextra );
-								
+
 								donorhistory = donorhistory
 												+       utility::to_string( loop_size )
 												+ "/" + utility::to_string( bbextra.pdb_id)
@@ -394,11 +394,11 @@ struct FilterBucket {
 							new_struct->erase_comment( "donorhistory" );
 							new_struct->add_comment( "donorhistory", donorhistory );
 							lib_structs.push_back( new_struct );
-							
+
 							models_build_this_loopsize++;
 							models_build_this_loopsize_this_rad++;
-							
-							
+
+
 							isok = true;
 						}else{
 							count_rejected_carms ++;
@@ -409,7 +409,7 @@ struct FilterBucket {
 						clock_t endtime = clock();
 
 						TR.Debug << "Clocks: " << endtime - starttime << "  " << final_rms << (isok ? " OK" : " Reject") << std::endl;
-							
+
 						if( models_build_this_loopsize >= models_build_this_loopsize_max ) break;
 						if( models_build_this_loopsize_this_rad >= models_build_this_loopsize_per_rad_max ) break;
 
@@ -418,11 +418,11 @@ struct FilterBucket {
 				if( models_build_this_loopsize >= models_build_this_loopsize_max ) break;
 				if( fragments_tried_this_loopsize >= fragments_tried_this_loopsize_max) break;
       }
-		
-			TR.Info << " IR: " << ir << " LS: " << loop_size  
-							<< " Frag: " << fragments_tried_this_loopsize << " ( " << fragments_tried_this_loopsize_max << " ) " 
-							<< " Modls: " << models_build_this_loopsize   << " ( " << models_build_this_loopsize_max << " ) " 
-    					<< std::endl;	
+
+			TR.Debug << " IR: " << ir << " LS: " << loop_size
+							<< " Frag: " << fragments_tried_this_loopsize << " ( " << fragments_tried_this_loopsize_max << " ) "
+							<< " Modls: " << models_build_this_loopsize   << " ( " << models_build_this_loopsize_max << " ) "
+    					<< std::endl;
 
 
 		} // Loop over fragment sizes
@@ -431,12 +431,12 @@ struct FilterBucket {
 
 	// Now just print some final statistics
 	long endtime = time(NULL);
-	TR.Info << "LHS: " << start_res << "-" << stop_res << ":  " 
-					<< " struc " << lib_structs.size() 
-					<< " (max) " << max_struct_ 
-					<< " secs " << endtime - starttime << " secs " 
-					<< " Total: "   << count_total_loops 
-					<< " RjTor: "  << count_filter_rejects 
+	TR.Info << "LHS: " << start_res << "-" << stop_res << ":  "
+					<< " struc " << lib_structs.size()
+					<< " (max) " << max_struct_
+					<< " secs " << endtime - starttime << " secs "
+					<< " Total: "   << count_total_loops
+					<< " RjTor: "  << count_filter_rejects
 					<< " RjPro: "  << count_filter_pro
 					<< " RjBeta: "	<< count_filter_beta
 					<< " RjGly: "  << count_filter_gly
