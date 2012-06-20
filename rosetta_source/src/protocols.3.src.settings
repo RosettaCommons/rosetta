@@ -278,6 +278,7 @@ sources = {
 		"ExtendedPoseMover",
 		"ExtendedPoseMoverCreator",
 		"FavorSequenceProfile",
+		"ForceDisulfidesMover",
 		"FragmentMover",
 		"GreenPacker",
 		"GunnCost",
