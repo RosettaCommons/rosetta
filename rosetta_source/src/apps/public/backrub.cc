@@ -55,8 +55,6 @@
 #include <basic/Tracer.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
 
 // Numeric Headers
@@ -73,9 +71,6 @@
 #include <basic/options/keys/backrub.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <core/graph/Graph.fwd.hh>
-// AUTO-REMOVED #include <core/id/DOF_ID_Range.hh>
-// AUTO-REMOVED #include <core/id/TorsionID_Range.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>

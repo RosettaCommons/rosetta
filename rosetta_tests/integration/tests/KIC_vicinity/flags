@@ -1,4 +1,4 @@
--loops:input_pdb input/2vkn.start.pdb
+-in:file:s input/2vkn.start.pdb
 -loops:loop_file input/2vkn.loops
 -loops:remodel no
 -loops:refine refine_kic
@@ -6,8 +6,8 @@
 -in:file:fullatom
 -in:file:native input/2vkn.start.pdb
 -out:file:fullatom
+-out:suffix _refine
 -out:overwrite
--out:prefix 2vkn_vicinity
 -out:path ./
 -ex1
 -ex2

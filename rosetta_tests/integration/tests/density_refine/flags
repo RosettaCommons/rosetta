@@ -1,5 +1,5 @@
 -in:file:fullatom
--loops:input_pdb inputs/1onc.model2.pdb
+-in:file:s inputs/1onc.model2.pdb
 -loops:loop_file inputs/1onc.loopfile
 -loops:frag_sizes 9 3 1
 -loops:frag_files  inputs/aa1onc_09_05.200_v1_3.gz inputs/aa1onc_03_05.200_v1_3 none

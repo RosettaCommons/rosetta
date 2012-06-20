@@ -1,13 +1,12 @@
--loops:input_pdb input/4fxn.start.pdb
 -loops:loop_file input/4fxn.loop
 -loops:remodel perturb_kic
 -loops:refine refine_kic
 -loops:max_kic_build_attempts 25
 -in:file:fullatom
 -in:file:native input/4fxn.start.pdb
+-in:file:s input/4fxn.start.pdb
 -out:file:fullatom
 -out:overwrite
--out:prefix 4fxn
 -out:path ./
 -ex1
 -ex2

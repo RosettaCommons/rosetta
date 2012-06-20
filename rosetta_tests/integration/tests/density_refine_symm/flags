@@ -1,5 +1,5 @@
 -in:file:fullatom
--loops:input_pdb inputs/1afo_INPUT.pdb
+-in:file:s inputs/1afo_INPUT.pdb
 -loops:loop_file inputs/1afo.loopfile
 -symmetry_definition inputs/1afo.symm
 -loops:frag_sizes 9 3 1

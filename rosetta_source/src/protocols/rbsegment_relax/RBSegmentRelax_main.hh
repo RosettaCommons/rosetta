@@ -15,7 +15,20 @@
 
 namespace protocols {
 //namespace rbsegment_relax {
-	int RBSegmentRelax_main( bool boinc_mode );
+
+class RBSegmentRelaxImpl : public protocols::moves::Mover{
+public:
+	RBSegmentRelaxImpl();
+	~RBSegmentRelaxImpl();
+	void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const;
+private:
+	core::scoring::ScoreFunctionOP scorefxn_rb_;
+};
+
+typedef utility::pointer::owning_ptr< RBSegmentRelaxImpl > RBSegmentRelaxImplOP;
+
+int RBSegmentRelax_main();
 //}
 }
 

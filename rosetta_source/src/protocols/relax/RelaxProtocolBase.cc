@@ -69,8 +69,9 @@
 #include <basic/Tracer.hh>
 
 #include <core/conformation/Residue.hh>
-#include <protocols/jobdist/Jobs.hh>
+//#include <protocols/jobdist/Jobs.hh>
 //#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -476,8 +477,9 @@ void RelaxProtocolBase::output_debug_structure( core::pose::Pose & pose, std::st
 	using namespace basic::options;
 	if ( option[ basic::options::OptionKeys::out::file::silent ].user() ) {
 		std::string silent_file="_"+prefix;
-		if ( get_current_job() && get_current_job()->output_file_name() != "" ) {
-			silent_file = get_current_job()->output_file_name()+silent_file;
+		std::string output_file_name= protocols::jd2::current_output_name();
+		if ( output_file_name != "" ) {
+			silent_file = output_file_name + silent_file;
 		} else silent_file = "bla"+silent_file;
 
 		SilentFileData sfd;

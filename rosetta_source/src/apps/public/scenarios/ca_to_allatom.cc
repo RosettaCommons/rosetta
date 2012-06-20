@@ -16,34 +16,19 @@
 
 // libRosetta headers
 
-#include <protocols/jobdist/JobDistributors.hh>
-#include <protocols/jobdist/Jobs.hh>
-#include <protocols/jobdist/standard_mains.hh>
+
+#include <protocols/jd2/JobDistributor.hh>
 
 #include <core/types.hh>
 
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED
-// AUTO-REMOVED #include <core/conformation/util.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 
-// AUTO-REMOVED #include <core/scoring/sasa.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
-//#include <core/scoring/ScoringManager.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
+
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/Func.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/HarmonicFunc.hh>
+
 #include <core/scoring/electron_density/util.hh>
 
 #include <core/pose/Pose.hh>
@@ -56,47 +41,27 @@
 #include <basic/options/after_opts.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/RBSegmentRelax.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <basic/basic.hh>
-// AUTO-REMOVED #include <basic/database/open.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/id/AtomID.hh>
 
 #include <core/io/silent/silent.fwd.hh>
-// AUTO-REMOVED #include <core/io/silent/BinaryProteinSilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
 
 #include <protocols/rbsegment_relax/RBSegmentRelax.hh>
 
 #include <protocols/loops/loops_main.hh>
-// AUTO-REMOVED #include <protocols/loops/ccd_closure.hh>
 #include <protocols/loops/Loops.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopMover.fwd.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopMover.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopMover_QuickCCD.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopMover_QuickCCD_Moves.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopMover_CCD.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopMover_KIC.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopMoverFactory.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopRelaxMover.hh>
-// AUTO-REMOVED #include <protocols/loops/looprelax_protocols.hh>
-// AUTO-REMOVED #include <protocols/loop_build/LoopBuild.hh>
 
-// AUTO-REMOVED #include <protocols/relax_protocols.hh>
+
 #include <utility/options/OptionCollection.hh>
 #include <protocols/simple_filters/RmsdEvaluator.hh>
 #include <protocols/evaluation/EvaluatorFactory.hh>
 #include <protocols/viewer/viewers.hh>
-//#include <protocols/simple_moves/BackboneMover.hh>
 
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 
 #include <basic/options/option_macros.hh>
 
@@ -164,13 +129,77 @@ numeric::xyzVector< core::Real > recenter_with_missing( core::pose::Pose &pose) 
 	return (-cog);
 }
 
-
-
-
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
+class CaToAllAtom : public protocols::moves::Mover{
+public:
+	CaToAllAtom();
+	virtual ~CaToAllAtom();
+	void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const;
+private:
+	core::scoring::ScoreFunctionOP scorefxn_cst_;
+	core::pose::Pose native_pose_;
 
+};
+
+typedef utility::pointer::owning_ptr< CaToAllAtom > CaToAllAtomOP;
+
+CaToAllAtom::CaToAllAtom(){
+	// RB scoring function; get from command line
+	scorefxn_cst_ = core::scoring::ScoreFunctionFactory::create_score_function(
+			basic::options::option[ basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn ]() );
+
+	// grab edens scores from CL as well
+	if ( basic::options::option[ basic::options::OptionKeys::edensity::mapfile ].user() ) {
+		core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *scorefxn_cst_ );
+	}
+
+	// Native pose
+	if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
+		core::import_pose::pose_from_pdb( native_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ]() );
+		core::pose::set_ss_from_phipsi( native_pose_ ); /// Is this necessary? Done by import pose?
+	}
+}
+
+CaToAllAtom::~CaToAllAtom(){}
+
+void CaToAllAtom::apply( core::pose::Pose & pose ){
+	// load rbsegs
+	utility::vector1< protocols::rbsegment_relax::RBSegment > rbsegs,rbsegs_remap;
+	utility::vector1< int > cutpts;
+	protocols::loops::Loops loops;
+	std::string filename( basic::options::option[ basic::options::OptionKeys::RBSegmentRelax::rb_file ]().name() );
+
+	protocols::evaluation::MetaPoseEvaluatorOP evaluator = new protocols::evaluation::MetaPoseEvaluator;
+	protocols::evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluator);
+	evaluator->add_evaluation( new protocols::simple_filters::SelectRmsdEvaluator( native_pose_, "_native" ) );
+
+	utility::vector1< core::fragment::FragSetOP > frag_libs;
+	bool hasLoopFile = basic::options::option[ basic::options::OptionKeys::loops::frag_files ].user();
+	if ( hasLoopFile )
+		protocols::loops::read_loop_fragments( frag_libs );
+
+	for (int i=1; i<=pose.fold_tree().num_cutpoint() ; ++i)
+		cutpts.push_back( pose.fold_tree().cutpoint(i) );
+	int last_peptide_res = pose.total_residue();
+	while ( !pose.residue( last_peptide_res ).is_protein() ) last_peptide_res--;
+
+	std::string rbfilename( basic::options::option[ basic::options::OptionKeys::RBSegmentRelax::rb_file ]().name() );
+	protocols::rbsegment_relax::read_RBSegment_file( rbsegs, loops, rbfilename, true, last_peptide_res , cutpts  );
+
+	protocols::rbsegment_relax::RBSegmentRelax shaker( scorefxn_cst_, rbsegs, loops );
+	shaker.initialize( frag_libs , basic::options::option[ basic::options::OptionKeys::ca_to_allatom::frag_randomness ]() );
+	shaker.set_bootstrap( true );
+	shaker.set_skip_lr( basic::options::option[ basic::options::OptionKeys::ca_to_allatom::no_lr ] );
+	shaker.set_fix_ligands( basic::options::option[ basic::options::OptionKeys::ca_to_allatom::fix_ligands ] );
+	shaker.apply( pose );
+}
+
+std::string CaToAllAtom::get_name() const{
+	return "CaToAllAtom";
+}
 
 void*
 ca_to_allatom_main( void * )
@@ -182,109 +211,94 @@ ca_to_allatom_main( void * )
 	using namespace basic::options::OptionKeys;
 	using namespace utility::file;
 
-	// RB scoring function; get from command line
-	core::scoring::ScoreFunctionOP scorefxn_cst
-	         = core::scoring::ScoreFunctionFactory::create_score_function(  option[ RBSegmentRelax::rb_scorefxn ]() );
+//	// load rbsegs
+//	utility::vector1< protocols::rbsegment_relax::RBSegment > rbsegs,rbsegs_remap;
+//	utility::vector1< int > cutpts;
+//	protocols::loops::Loops loops;
+//	std::string filename( option[ OptionKeys::RBSegmentRelax::rb_file ]().name() );
+//
+//	evaluation::MetaPoseEvaluatorOP evaluator = new evaluation::MetaPoseEvaluator;
+//	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluator);
+//	evaluator->add_evaluation( new simple_filters::SelectRmsdEvaluator( native_pose_, "_native" ) );
 
-	// grab edens scores from CL as well
-	if ( option[ edensity::mapfile ].user() ) {
-		core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *scorefxn_cst );
-	}
+//	utility::vector1< protocols::jobdist::BasicJobOP > input_jobs = protocols::jobdist::load_s_and_l();
 
-	// Native pose
-	core::pose::Pose native_pose, pose, start_pose;
-	if ( option[ in::file::native ].user() ) {
-		core::import_pose::pose_from_pdb(
-			native_pose, option[ in::file::native ]()
-		);
-		core::pose::set_ss_from_phipsi( native_pose );
-	}
+//	protocols::jobdist::BaseJobDistributorOP jobdist;
+//	bool const silent_output = option[ out::file::silent ].user();
+//	if ( silent_output ) {
+//		TZ << "Silent Output Mode " << std::endl;
+//		jobdist = new protocols::jobdist::PlainSilentFileJobDistributor(input_jobs);
+//	} else {
+//		TZ << "PDB Output Mode " << std::endl;
+//		jobdist = new protocols::jobdist::PlainPdbJobDistributor(input_jobs, "none");
+//	}
 
-	// load rbsegs
-	utility::vector1< protocols::rbsegment_relax::RBSegment > rbsegs,rbsegs_remap;
-	utility::vector1< int > cutpts;
-	protocols::loops::Loops loops;
-	std::string filename( option[ OptionKeys::RBSegmentRelax::rb_file ]().name() );
-
-	evaluation::MetaPoseEvaluatorOP evaluator = new evaluation::MetaPoseEvaluator;
-	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluator);
-	evaluator->add_evaluation( new simple_filters::SelectRmsdEvaluator( native_pose, "_native" ) );
-
-	utility::vector1< protocols::jobdist::BasicJobOP > input_jobs = protocols::jobdist::load_s_and_l();
-
-	protocols::jobdist::BaseJobDistributorOP jobdist;
-	bool const silent_output = option[ out::file::silent ].user();
-	if ( silent_output ) {
-		TZ << "Silent Output Mode " << std::endl;
-		jobdist = new protocols::jobdist::PlainSilentFileJobDistributor(input_jobs);
-	} else {
-		TZ << "PDB Output Mode " << std::endl;
-		jobdist = new protocols::jobdist::PlainPdbJobDistributor(input_jobs, "none");
-	}
-
-	if( option[ out::nooutput ]() ){
-		jobdist->disable_output();
-		jobdist->enable_ignorefinished();
-	}
+//	if( option[ out::nooutput ]() ){
+//		jobdist->disable_output();
+//		jobdist->enable_ignorefinished();
+//	}
 
 	// read fragments
-	utility::vector1< core::fragment::FragSetOP > frag_libs;
-	bool hasLoopFile = basic::options::option[ basic::options::OptionKeys::loops::frag_files ].user();
-	if ( hasLoopFile )
-		protocols::loops::read_loop_fragments( frag_libs );
+//	utility::vector1< core::fragment::FragSetOP > frag_libs;
+//	bool hasLoopFile = basic::options::option[ basic::options::OptionKeys::loops::frag_files ].user();
+//	if ( hasLoopFile )
+//		protocols::loops::read_loop_fragments( frag_libs );
 
-	protocols::jobdist::BasicJobOP curr_job, prev_job;
-	int curr_nstruct;
-	jobdist->startup();
-	while( jobdist->next_job(curr_job, curr_nstruct) ) {
-		std::string curr_job_tag = curr_job->output_tag( curr_nstruct );
+//	protocols::jobdist::BasicJobOP curr_job, prev_job;
+//	int curr_nstruct;
+//	jobdist->startup();
+//	while( jobdist->next_job(curr_job, curr_nstruct) ) {
+//		std::string curr_job_tag = curr_job->output_tag( curr_nstruct );
+//
+//		// read as-needed
+//		if ( !prev_job || curr_job->input_tag() != prev_job->input_tag() ) {
+//			core::import_pose::pose_from_pdb( start_pose, curr_job->input_tag() );
 
-		// read as-needed
-		if ( !prev_job || curr_job->input_tag() != prev_job->input_tag() ) {
-			core::import_pose::pose_from_pdb( start_pose, curr_job->input_tag() );
-
-			for (int i=1; i<=start_pose.fold_tree().num_cutpoint() ; ++i)
-				cutpts.push_back( start_pose.fold_tree().cutpoint(i) );
-			int last_peptide_res = start_pose.total_residue();
-			while ( !start_pose.residue( last_peptide_res ).is_protein() ) last_peptide_res--;
-
-			std::string rbfilename( option[ OptionKeys::RBSegmentRelax::rb_file ]().name() );
-			protocols::rbsegment_relax::read_RBSegment_file( rbsegs, loops, rbfilename, true, last_peptide_res , cutpts  );
-		}
-		pose = start_pose;
+//			for (int i=1; i<=start_pose.fold_tree().num_cutpoint() ; ++i)
+//				cutpts.push_back( start_pose.fold_tree().cutpoint(i) );
+//			int last_peptide_res = start_pose.total_residue();
+//			while ( !start_pose.residue( last_peptide_res ).is_protein() ) last_peptide_res--;
+//
+//			std::string rbfilename( option[ OptionKeys::RBSegmentRelax::rb_file ]().name() );
+//			protocols::rbsegment_relax::read_RBSegment_file( rbsegs, loops, rbfilename, true, last_peptide_res , cutpts  );
+//		}
+//		pose = start_pose;
 
 		// the rigid body movement mover
-		protocols::rbsegment_relax::RBSegmentRelax shaker( scorefxn_cst, rbsegs, loops );
-		shaker.initialize( frag_libs , option[ ca_to_allatom::frag_randomness ]() );
-		shaker.set_bootstrap( true );
-		shaker.set_skip_lr( option[ ca_to_allatom::no_lr ] );
-		shaker.set_fix_ligands( option[ ca_to_allatom::fix_ligands ] );
-		shaker.apply( pose );
+//		protocols::rbsegment_relax::RBSegmentRelax shaker( scorefxn_cst, rbsegs, loops );
+//		shaker.initialize( frag_libs , option[ ca_to_allatom::frag_randomness ]() );
+//		shaker.set_bootstrap( true );
+//		shaker.set_skip_lr( option[ ca_to_allatom::no_lr ] );
+//		shaker.set_fix_ligands( option[ ca_to_allatom::fix_ligands ] );
+//		shaker.apply( pose );
 
 		////
 		////  output
-		if ( silent_output ) {
-			protocols::jobdist::PlainSilentFileJobDistributor *jd =
-					 dynamic_cast< protocols::jobdist::PlainSilentFileJobDistributor * > (jobdist());
+//		if ( silent_output ) {
+//			protocols::jobdist::PlainSilentFileJobDistributor *jd =
+//					 dynamic_cast< protocols::jobdist::PlainSilentFileJobDistributor * > (jobdist());
+//
+//			std::string silent_struct_type( "binary" );  // default to binary
+//			if ( option[ out::file::silent_struct_type ].user() ) {
+//				silent_struct_type = option[ OptionKeys::out::file::silent_struct_type ];
+//			}
+//
+//			core::io::silent::SilentStructOP ss
+//				= core::io::silent::SilentStructFactory::get_instance()->get_silent_struct( silent_struct_type );
+//
+//			ss->fill_struct( pose, curr_job_tag );
+//
+//			jd->dump_silent( curr_nstruct, *ss );
+//		} else {
+//			jobdist->dump_pose_and_map( curr_job_tag, pose );    // output PDB
+//		}
+//
+//		prev_job = curr_job;
+//	} // loop over jobs
+//	jobdist->shutdown();
 
-			std::string silent_struct_type( "binary" );  // default to binary
-			if ( option[ out::file::silent_struct_type ].user() ) {
-				silent_struct_type = option[ OptionKeys::out::file::silent_struct_type ];
-			}
-
-			core::io::silent::SilentStructOP ss
-				= core::io::silent::SilentStructFactory::get_instance()->get_silent_struct( silent_struct_type );
-
-			ss->fill_struct( pose, curr_job_tag );
-
-			jd->dump_silent( curr_nstruct, *ss );
-		} else {
-			jobdist->dump_pose_and_map( curr_job_tag, pose );    // output PDB
-		}
-
-		prev_job = curr_job;
-	} // loop over jobs
-	jobdist->shutdown();
+	CaToAllAtomOP ca_to_all_atom = new CaToAllAtom();
+	protocols::jd2::JobDistributor::get_instance()->go( ca_to_all_atom );
 
 	return 0;
 }

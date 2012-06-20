@@ -216,7 +216,7 @@ main( int argc, char * argv [] )
 		} else if ( option[ run::protocol ]() == "star" ) {
 			protocols::star::StarAbinitio_main(NULL);
 		} else if ( option[ run::protocol ]() == "rbsegmentrelax" ) {
-			protocols::RBSegmentRelax_main( true );
+			protocols::RBSegmentRelax_main( );
 		} else if ( option[ run::protocol ]() == "boinc_debug" ) {
 			protocols::abinitio::run_boinc_debug();
 		} else if ( option[ run::protocol ]() == "flxbb" ) {

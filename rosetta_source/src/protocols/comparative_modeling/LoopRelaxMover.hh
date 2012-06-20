@@ -14,7 +14,7 @@
 #define INCLUDED_protocols_comparative_modeling_LoopRelaxMover_hh
 
 #include <core/types.hh>
-#include <core/fragment/FragSet.fwd.hh>
+#include <core/fragment/FragSet.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
