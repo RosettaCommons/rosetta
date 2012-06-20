@@ -37,6 +37,8 @@
 
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
+#include <core/id/AtomID.hh>
+#include <core/id/AtomID_Map.hh>
 
 namespace protocols {
 namespace comparative_modeling {
@@ -303,7 +305,11 @@ int read_pose(core::pose::Pose const & pose, std::list <core::Size> const & resi
 		//a[i][1] = pose.residue(ires).xyz("CA").y();
 		//a[i][2] = pose.residue(ires).xyz("CA").z();
 		seq[i] = pose.residue_type(ires).name1();
+		if (pose.pdb_info() != 0) {
 		resno[i] = pose.pdb_info()->number(ires);
+		}else{
+			resno[i] = ires;
+		}
 		i++;
 	}
 	//std::cout << seq << std::endl;
@@ -1745,7 +1751,9 @@ double get_initial( vector < numeric::xyzVector <core::Real> > const x,
                    )
 {
     int min_len=getmin(x_len, y_len);
-    if(min_len<=5) PrintErrorAndQuit("Sequence is too short <=5!\n");
+    if(min_len<=5) {
+		return 0.;
+	}
     
     int min_ali= min_len/2;              //minimum size of considered fragment 
     if(min_ali<=5)  min_ali=5;    
@@ -3113,6 +3121,10 @@ core::Real TMscore(Size length) {
 	
 int apply(core::pose::Pose const & pose1, core::pose::Pose const & pose2, std::list <core::Size> residue_list1, std::list <core::Size> residue_list2)
 {
+	if (residue_list1.size() < 5 || residue_list2.size() < 5) {
+		return 1;
+	}
+	
 	/*********************************************************************************/
 	/*                                load data                                      */ 
 	/*********************************************************************************/
