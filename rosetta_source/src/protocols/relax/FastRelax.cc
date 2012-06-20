@@ -666,11 +666,9 @@ void FastRelax::apply( core::pose::Pose & pose ){
 				if( cmd.command.substr(7) == "torsion" ) {
 					TR << "Using AtomTreeMinimizer with dfp"  << std::endl;
 					cartesian( false );
-					set_min_type("dfpmin_armijo_nonmonotone");
 				} else if( cmd.command.substr(7) == "cartesian" ) {
 					TR << "Using CartesianMinizer with lbfgs"  << std::endl;
 					cartesian( true );
-					set_min_type("lbfgs_armijo_nonmonotone");
 				}
 		}   else
 
@@ -1188,13 +1186,11 @@ void FastRelax::batch_apply(
 		if( cmd.command.substr(0,6) == "switch" ){
 			// no input validation as of now, relax will just die
 			if( cmd.command.substr(7) == "torsion" ) {
-				TR << "Using AtomTreeMinimizer with dfp"  << std::endl;
+				TR << "Using AtomTreeMinimizer"  << std::endl;
 				cartesian( false );
-				set_min_type("dfpmin_armijo_nonmonotone");
 			} else if( cmd.command.substr(7) == "cartesian" ) {
-				TR << "Using CartesianMinizer with lbfgs"  << std::endl;
+				TR << "Using CartesianMinimizer"  << std::endl;
 				cartesian( true );
-				set_min_type("lbfgs_armijo_nonmonotone");
 			}
 		}   else
 
