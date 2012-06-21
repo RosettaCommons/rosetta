@@ -12,6 +12,7 @@
 sources = {
 	"utility": [
 		"basic_sys_util",
+		"Binary_Util",
 		"exit",
 		"heap",
 		"inline_file_provider",

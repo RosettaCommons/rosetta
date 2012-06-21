@@ -35,7 +35,6 @@ sources = {
 	],
 	"core/io/silent": [
 		"BasicSilentStructCreators",
-		"Binary_Util",
 		"BinaryProteinSilentStruct",
 		"BinaryRNASilentStruct",
 		"RNA_SilentStruct",

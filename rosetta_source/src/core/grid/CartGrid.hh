@@ -28,6 +28,7 @@
 #include <utility/vector0.fwd.hh>
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
+#include <utility/Binary_Util.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 
@@ -479,20 +480,10 @@ public:
 		Pair size("size",utility::tools::make_vector(Value(this->nX_),Value(this->nY_),Value(this->nZ_)));
 		Pair length("length",utility::tools::make_vector(Value(this->lX_),Value(this->lY_),Value(this->lZ_)));
 
-		//All the data goes into a list in order.
-		std::vector< Value > data_values;
-		for (int i=0; i < this->nX_; i++) {
-			for (int j=0; j < this->nY_; j++) {
-				for (int k=0; k < this->nZ_; k++) {
+		std::string point_data;
+		utility::encode6bit((unsigned char*)zones_,npoints_*sizeof(T),point_data);
 
-					//We don't really have a way of knowing what type of data went into the grid, so turn it into a string for serialization
-					//std::string value_string(utility::to_string(this->getValue(i,j,k)));
-					data_values.push_back(utility::tools::make_vector(Value(i),Value(j),Value(k),Value(this->getValue(i,j,k))));
-				}
-			}
-		}
-
-		utility::json_spirit::Pair data("data",Value(data_values));
+		utility::json_spirit::Pair data("data",Value(point_data));
 
 		return utility::json_spirit::Value( utility::tools::make_vector(name,base,size,length,data) );
 
@@ -528,21 +519,9 @@ public:
 		this->setDimensions(nX, nY, nZ, lX, lY, lZ);
 		this->setupZones();
 
-		utility::json_spirit::mArray point_array = grid_data["data"].get_array();
+		std::string point_data = grid_data["data"].get_str();
+		utility::decode6bit((unsigned char*)zones_,point_data);
 
-		for(utility::json_spirit::mArray::iterator point_it = point_array.begin(); point_it != point_array.end(); ++point_it)
-		{
-			utility::json_spirit::mArray point_data = point_it->get_array();
-
-			//pull the data out of the json object as a string and do the conversion ourselves, since we don't know what the datatype is
-			int x = point_data[0].get_int();
-			int y = point_data[1].get_int();
-			int z = point_data[2].get_int();
-			T data = point_data[3].get_value<T>();
-
-			//T data = utility::from_string(value,T());
-			this->setValue(x,y,z,data);
-		}
 	}
 
 	void sum(utility::vector0<utility::pointer::owning_ptr<CartGrid<T> > > const & list_grids) {

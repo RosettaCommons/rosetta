@@ -8,7 +8,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file core/io/silent/BinaryRNASilentStruct.cc
+/// @file utility/BinaryRNASilentStruct.cc
 ///
 /// @brief
 /// @author Frank DiMaio
@@ -16,14 +16,12 @@
 /// @author Rhiju Das
 
 // mini headers
-#include <core/io/silent/Binary_Util.hh>
+#include <utility/Binary_Util.hh>
 
 // C++ Headers
 #include <string>
 
-namespace core {
-namespace io {
-namespace silent {
+namespace utility {
 
 void encode6bit(const unsigned char* memory, unsigned int length, std::string &jar){
 	jar = "";
@@ -82,6 +80,4 @@ int decode6bit(unsigned char* memory, const std::string &jar){
 ///
 //////////////
 
-}
-}
 }

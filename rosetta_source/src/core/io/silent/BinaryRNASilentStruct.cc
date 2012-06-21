@@ -34,6 +34,8 @@
 // AUTO-REMOVED #include <utility/io/ozstream.hh>
 // AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
+#include <utility/Binary_Util.hh>
+
 #include <basic/Tracer.hh>
 
 // AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
@@ -44,7 +46,7 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SharedSilentData.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
-#include <core/io/silent/Binary_Util.hh>
+
 // AUTO-REMOVED #include <basic/options/option.hh>
 
 #include <core/chemical/ChemicalManager.hh>
@@ -319,7 +321,7 @@ bool BinaryRNASilentStruct::init_from_lines(
 
 			int natoms = (tag.length()-1) / 16;
 			utility::vector1< numeric::xyzVector <float> > atm_buff( natoms+1 );
-			decode6bit( (unsigned char*)&(atm_buff[1]) , tag.substr(1) );
+			utility::decode6bit( (unsigned char*)&(atm_buff[1]) , tag.substr(1) );
 
 			// endianness check ...
 			//   check the dist between atoms 1 and 2 is unreasonable .. and flipping fixes then turn bitflip
@@ -328,11 +330,11 @@ bool BinaryRNASilentStruct::init_from_lines(
 			if (currpos == 1) {
 				core::Real len_check12 = (atm_buff[1]-atm_buff[2]).length();
 				if ( len_check12 < 0.5 || len_check12 > 2.0 ) {
-					swap4_aligned ( (void*) &(atm_buff[1][0]) , 3*natoms );
+					utility::swap4_aligned ( (void*) &(atm_buff[1][0]) , 3*natoms );
 						// recheck; if not better flip back
 					len_check12 = (atm_buff[1]-atm_buff[2]).length();
 					if ( len_check12 < 0.5 || len_check12 > 2.0 ) {
-						swap4_aligned ( (void*) &(atm_buff[1][0]) , 3*natoms );
+						utility::swap4_aligned ( (void*) &(atm_buff[1][0]) , 3*natoms );
 					} else {
 						tr.Warning << "reading big-endian binary silent file! " << decoy_tag() << std::endl;
 						bitflip = true;
@@ -340,7 +342,7 @@ bool BinaryRNASilentStruct::init_from_lines(
 				}
 			} else {
 				if (bitflip ) {
-					swap4_aligned ( (void*) &(atm_buff[1][0]) , 3*natoms );
+					utility::swap4_aligned ( (void*) &(atm_buff[1][0]) , 3*natoms );
 				}
 			}
 
@@ -518,7 +520,7 @@ void BinaryRNASilentStruct::print_conformation(
 		// make sure secstruct is valid
 		char this_secstr = secstruct_[i];
 		if (this_secstr < 'A' || this_secstr > 'Z') this_secstr = 'L';
-		encode6bit(  (unsigned char*)&atm_coords_[i][1][0], atm_coords_[i].size()*12, resline );  // ASSUMES FLOAT == 4 BYTES!!! (eep!)
+		utility::encode6bit(  (unsigned char*)&atm_coords_[i][1][0], atm_coords_[i].size()*12, resline );  // ASSUMES FLOAT == 4 BYTES!!! (eep!)
 		output << this_secstr << resline << ' ' << decoy_tag() << "\n";
 	} // for ( Size i = 1; i <= nres; ++i )
 } // print_conformation

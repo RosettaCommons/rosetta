@@ -8,23 +8,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file core/io/silent/BinaryRNASilentStruct.hh
+/// @file utility/BinaryRNASilentStruct.hh
 ///
 /// @brief
 /// @author Frank DiMaio
 /// @author Mike Tyka
 /// @author Rhiju Das
 
-#ifndef INCLUDED_core_io_silent_Binary_Util_hh
-#define INCLUDED_core_io_silent_Binary_Util_hh
+#ifndef INCLUDED_utility_Binary_Util_hh
+#define INCLUDED_utility_Binary_Util_hh
 
 // C++ Headers
 #include <string>
 
 
-namespace core {
-namespace io {
-namespace silent {
+namespace utility {
 
 ///////////////////////////////////
 // Endianness swap
@@ -102,8 +100,6 @@ int decode6bit(unsigned char* memory, const std::string &jar);
 
 ///
 //////////////
-}
-}
 }
 
 #endif

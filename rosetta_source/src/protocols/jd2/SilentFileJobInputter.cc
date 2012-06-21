@@ -71,67 +71,27 @@ void protocols::jd2::SilentFileJobInputter::pose_from_job(
 ) {
 	tr.Debug << "SilentFileJobInputter::pose_from_job" << std::endl;
 
-	std::string const input_tag(job->inner_job()->input_tag());
 	if ( !job->inner_job()->get_pose() ) {
-		//If nstruct == 1 the JobInputter cache will simply waste memory
-		if(get_nstruct() > 1) {
-			if(is_input_structure_in_cache(input_tag)) {
-				pose.clear();
+		//core::import_pose::pose_from_pdb( pose, job->inner_job()->input_tag() );
+		//		core::io::silent::SilentStructOP ss = sfd_[ job->inner_job()->input_tag() ];
+		tr.Debug << "filling pose from SilentFile (tag = " << job->inner_job()->input_tag()
+			<< ")" << std::endl;
+		pose.clear();
 
-				// kinda hacky fix for symmetry ... this should probably be added to Pose::clear()
-				// this will likely be overwritten in next assignment.... I move it further down OL 11/21/09
-				//		if ( core::pose::symmetry::is_symmetric( pose ) ) {
-				//	 		core::conformation::symmetry::make_asymmetric_pose( pose );
-				//		}
-
-				pose = get_input_structure_from_cache(input_tag);
-
-				/// should this really be here? If there is a pose in the job-object it should have the right properties already, no?
-				if ( core::pose::symmetry::is_symmetric( pose ) ) {
-			 		core::pose::symmetry::make_asymmetric_pose( pose );
-				}
-
-				tr.Debug << "filling pose from Jobinputter Cache (tag = " << input_tag
-					<< ")" << std::endl;
-			}else {
-				//core::import_pose::pose_from_pdb( pose, job->inner_job()->input_tag() );
-				//		core::io::silent::SilentStructOP ss = sfd_[ job->inner_job()->input_tag() ];
-				tr.Debug << "filling pose from SilentFile (tag = " << input_tag
-					<< ")" << std::endl;
-				pose.clear();
-
-				// kinda hacky fix for symmetry ... this should probably be added to Pose::clear()
-				if ( core::pose::symmetry::is_symmetric( pose ) ) {
-			 		core::pose::symmetry::make_asymmetric_pose( pose );
-				}
-
-				struct_from_job( job ).fill_pose( pose );
-				tag_into_pose( pose, input_tag );
-				insert_input_structure_into_cache(input_tag,pose);
-			}
-		}else {
-			//core::import_pose::pose_from_pdb( pose, job->inner_job()->input_tag() );
-			//		core::io::silent::SilentStructOP ss = sfd_[ job->inner_job()->input_tag() ];
-			tr.Debug << "filling pose from SilentFile (tag = " << input_tag
-				<< ")" << std::endl;
-			pose.clear();
-
-			// kinda hacky fix for symmetry ... this should probably be added to Pose::clear()
-			if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		 		core::pose::symmetry::make_asymmetric_pose( pose );
-			}
-
-			struct_from_job( job ).fill_pose( pose );
-			tag_into_pose( pose, input_tag );
-	//		if ( !sfd_.has_tag( job->inner_job()->input_tag() ) ) {
-	// 			utility_exit_with_message(" job with input tag " + job->inner_job()->input_tag() +" can't find his input structure ");
-	// 		}
-	// 		sfd_.get_structure( job->inner_job()->input_tag() ).fill_pose( pose );
-			//	ss->fill_pose( pose );//, ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
-			//		load_pose_into_job( pose, job ); //this is a HUGE memory leak... not really useful
-			//   making structure from silent-structs doesn't take that long...
+		// kinda hacky fix for symmetry ... this should probably be added to Pose::clear()
+		if ( core::pose::symmetry::is_symmetric( pose ) ) {
+	 		core::pose::symmetry::make_asymmetric_pose( pose );
 		}
 
+		struct_from_job( job ).fill_pose( pose );
+		tag_into_pose( pose, job->inner_job()->input_tag() );
+// 		if ( !sfd_.has_tag( job->inner_job()->input_tag() ) ) {
+// 			utility_exit_with_message(" job with input tag " + job->inner_job()->input_tag() +" can't find his input structure ");
+// 		}
+// 		sfd_.get_structure( job->inner_job()->input_tag() ).fill_pose( pose );
+		//	ss->fill_pose( pose );//, ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+		//		load_pose_into_job( pose, job ); //this is a HUGE memory leak... not really useful
+		//   making structure from silent-structs doesn't take that long...
 	} else {
 		pose.clear();
 
@@ -148,7 +108,7 @@ void protocols::jd2::SilentFileJobInputter::pose_from_job(
 	 		core::pose::symmetry::make_asymmetric_pose( pose );
 		}
 
-		tr.Debug << "filling pose from saved copy (tag = " << input_tag
+		tr.Debug << "filling pose from saved copy (tag = " << job->input_tag()
 			<< ")" << std::endl;
 	}
 }
