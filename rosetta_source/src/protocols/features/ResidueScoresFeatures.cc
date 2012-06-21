@@ -193,6 +193,11 @@ ResidueScoresFeatures::insert_residue_scores_rows(
 	// I would like to assert that this has been called, but I don't know how
 	//scfxn_.setup_for_scoring( pose );
 
+	//calling setup for scoring on a temp copy of the pose, maybe there's a better way of doing this
+	//but we can't (and shouldn't) require that the pose be previously setup for scoring before calling this mover
+	Pose temp_pose = pose;
+	scfxn_->setup_for_scoring(temp_pose);
+
 	ScoreTypes ci_1b( scfxn_->ci_1b_types() );
 	ScoreTypes cd_1b( scfxn_->cd_1b_types() );
 	ScoreTypes ci_2b( scfxn_->ci_2b_types() );
@@ -204,12 +209,12 @@ ResidueScoresFeatures::insert_residue_scores_rows(
 	statement oneb_stmt(basic::database::safely_prepare_statement(oneb_string,db_session));
 	statement twob_stmt(basic::database::safely_prepare_statement(twob_string,db_session));
 
-	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
+	for(Size resNum=1; resNum <= temp_pose.total_residue(); ++resNum){
 		if(!relevant_residues[resNum]) continue;
-		Residue rsd( pose.residue(resNum) );
+		Residue rsd( temp_pose.residue(resNum) );
 		{ // Context Independent One Body Energies
 			EnergyMap emap;
-			scfxn_->eval_ci_1b(rsd, pose, emap);
+			scfxn_->eval_ci_1b(rsd, temp_pose, emap);
 			for(ScoreTypes::const_iterator st = ci_1b.begin(), ste = ci_1b.end(); st != ste; ++st){
 				if(!emap[*st]) continue;
 
@@ -226,7 +231,7 @@ ResidueScoresFeatures::insert_residue_scores_rows(
 		}
 		{ // Context Dependent One Body Energies
 			EnergyMap emap;
-			scfxn_->eval_cd_1b(rsd, pose, emap);
+			scfxn_->eval_cd_1b(rsd, temp_pose, emap);
 			for(ScoreTypes::const_iterator
 				st = cd_1b.begin(), ste = cd_1b.end();
 				st != ste; ++st){
@@ -247,13 +252,13 @@ ResidueScoresFeatures::insert_residue_scores_rows(
 		}
 
 		// Two Body Energies
-		for(Size otherResNum=resNum+1; otherResNum <= pose.total_residue(); ++otherResNum){
+		for(Size otherResNum=resNum+1; otherResNum <= temp_pose.total_residue(); ++otherResNum){
 			if(!relevant_residues[otherResNum]) continue;
-			if(!scfxn_->are_they_neighbors(pose, resNum, otherResNum)) continue;
-			Residue otherRsd( pose.residue(otherResNum) );
+			if(!scfxn_->are_they_neighbors(temp_pose, resNum, otherResNum)) continue;
+			Residue otherRsd( temp_pose.residue(otherResNum) );
 			{ // Context Independent Two Body Energies
 				EnergyMap emap;
-				scfxn_->eval_ci_2b(rsd, otherRsd, pose, emap);
+				scfxn_->eval_ci_2b(rsd, otherRsd, temp_pose, emap);
 				for(ScoreTypes::const_iterator st = ci_2b.begin(), ste = ci_2b.end(); st != ste; ++st){
 					if(!emap[*st]) continue;
 
@@ -272,7 +277,7 @@ ResidueScoresFeatures::insert_residue_scores_rows(
 			}
 			{ // Context Dependent Two Body Energies
 				EnergyMap emap;
-				scfxn_->eval_cd_2b(rsd, otherRsd, pose, emap);
+				scfxn_->eval_cd_2b(rsd, otherRsd, temp_pose, emap);
 				for(ScoreTypes::const_iterator st = cd_2b.begin(), ste = cd_2b.end(); st != ste; ++st){
 					if(!emap[*st]) continue;
 					string const score_type(ScoreTypeManager::name_from_score_type(*st));
