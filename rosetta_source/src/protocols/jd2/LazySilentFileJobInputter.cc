@@ -58,16 +58,22 @@ namespace jd2 {
     utility::vector1< file::FileName > const silent_files( option[ OptionKeys::in::file::silent ]() );
     utility::vector1<std::string> tags;
 
+    // This code appears to suggest that it will work for multiple files - alas
+    // it doesnt. It only saves the tag names not the file names so ALL the tags
+    // will be attempted to be read from the first file.
+    // I added this assert here to so that the user doesnt accidentally try
+    // feedign through multiple files. 
+    runtime_assert( silent_files.size() <= 1 );
+
     for ( vector1< file::FileName >::const_iterator current_fn_ = silent_files.begin();
 	  current_fn_ != silent_files.end(); ++current_fn_
 	  ) {
       utility::vector1< std::string > filetags;
       core::Size startindex = tags.size();
       sfd_.read_tags_fast( *current_fn_, filetags );
-      tags.resize(tags.size() + filetags.size());
 
       for( core::Size jj = 1; jj <= filetags.size(); jj++ ) {
-	tags[ jj + startindex ] = filetags[jj];
+	      tags.push_back( filetags[jj] );
       }
     }
     
