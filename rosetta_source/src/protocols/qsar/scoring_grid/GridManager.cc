@@ -307,6 +307,13 @@ void GridManager::update_grids(core::pose::Pose const & pose,  core::Vector cons
 			current_grid->refresh(pose,center);
 			GridManagerTracer.Debug <<"done updating grid" <<std::endl;
 		}
+
+		if(basic::options::option[basic::options::OptionKeys::qsar::max_grid_cache_size].user() &&
+			grid_map_cache_.size() >= basic::options::option[basic::options::OptionKeys::qsar::max_grid_cache_size]() )
+		{
+			GridManagerTracer << "Grid cache exceeds max_cache_size, clearing old scoring grids to save memory." <<std::endl;
+			grid_map_cache_.clear();
+		}
 		grid_map_cache_.insert(std::make_pair(chain_hash,grid_map_));
 
 		if(grid_directory_active)

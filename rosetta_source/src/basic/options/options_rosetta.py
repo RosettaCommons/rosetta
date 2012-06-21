@@ -278,6 +278,7 @@ Options = Option_Group( '',
 	Option_Group( 'qsar',
 		Option( 'weights','String',default='standard',desc = 'select qsar weight set to use'),
 		Option( 'grid_dir','String',desc = 'Directory to store grids in'),
+		Option( 'max_grid_cache_size','Integer',desc= 'delete old grids if grid cache exceeds specified size')
 	),
 	Option_Group( 'residues',
 		Option( 'patch_selectors', 'StringVector', desc = 'allow patch files that have CMDLINE_SELECTOR tags can be switched on with this option' ),

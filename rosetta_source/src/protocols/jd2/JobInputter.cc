@@ -27,10 +27,9 @@
 
 #include <utility/vector1.hh>
 
+//STL headers
 
-///Utility headers
-
-///C++ headers
+#include <map>
 
 namespace protocols {
 namespace jd2 {
@@ -58,6 +57,41 @@ core::Size JobInputter::get_nstruct( ) const {
 		return option[ out::nstruct ]();
 	}
 }
+
+core::pose::Pose JobInputter::get_input_structure_from_cache(std::string const & input_tag) const
+{
+	std::map<std::string, core::pose::Pose>::const_iterator it(input_structure_cache_.find(input_tag));
+
+	//If you hit this assert it's because you didn't check the value of is_input_structure_in_cache first
+	assert(it != input_structure_cache_.end());
+	return it->second;
+
+}
+
+
+bool JobInputter::is_input_structure_in_cache(std::string const & input_tag) const
+{
+	std::map<std::string, core::pose::Pose>::const_iterator it(input_structure_cache_.find(input_tag));
+	if(it != input_structure_cache_.end())
+	{
+		return true;
+	}else
+	{
+		return false;
+	}
+}
+
+
+void JobInputter::insert_input_structure_into_cache(std::string const & input_tag, core::pose::Pose const & pose)
+{
+	std::map<std::string, core::pose::Pose>::const_iterator it(input_structure_cache_.find(input_tag));
+
+	//If you hit this assert it's because you didn't check the value of is_input_structure_in_cache first
+	assert(it == input_structure_cache_.end());
+
+	input_structure_cache_.insert(std::make_pair(input_tag,pose));
+}
+
 
 } // jd2
 } // protocols

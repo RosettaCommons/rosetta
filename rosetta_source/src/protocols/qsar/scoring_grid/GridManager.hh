@@ -32,6 +32,8 @@
 #include <string>
 #include <map>
 
+
+
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {

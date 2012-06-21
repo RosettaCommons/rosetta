@@ -248,17 +248,44 @@ DatabaseJobInputter::pose_from_job(
 	pose.clear();
 
 	if ( !job->inner_job()->get_pose() ) {
-		tr.Debug << "filling pose from Database (input tag = " << tag << ")" << endl;
-		sessionOP db_session(basic::database::get_db_session(database_fname_));
+		//If nstruct == 1 the JobInputter cache will simply waste memory
+		if(get_nstruct() > 1)
+		{
+			if(is_input_structure_in_cache(tag))
+			{
+				pose = get_input_structure_from_cache(tag);
+				tr.Debug << "filling pose from JobInputter cache (input tag = " << tag << ")" << endl;
+			}else
+			{
+				tr.Debug << "filling pose from Database (input tag = " << tag << ")" << endl;
+				sessionOP db_session(basic::database::get_db_session(database_fname_));
 
-		boost::uuids::uuid struct_id = struct_id=tag_structures_[tag];
+				boost::uuids::uuid struct_id = struct_id=tag_structures_[tag];
 
-		if(!tag_residues_.size()){
-			protein_silent_report_->load_pose(db_session, struct_id, pose);
-		}
-		else{
-			tr << "Residues list size " << tag_residues_[tag].size() << std::endl;
-			protein_silent_report_->load_pose(db_session, struct_id, tag_residues_[tag], pose);
+				if(!tag_residues_.size()){
+					protein_silent_report_->load_pose(db_session, struct_id, pose);
+				}
+				else{
+					tr << "Residues list size " << tag_residues_[tag].size() << std::endl;
+					protein_silent_report_->load_pose(db_session, struct_id, tag_residues_[tag], pose);
+				}
+				insert_input_structure_into_cache(tag,pose);
+			}
+
+		}else
+		{
+			tr.Debug << "filling pose from Database (input tag = " << tag << ")" << endl;
+			sessionOP db_session(basic::database::get_db_session(database_fname_));
+
+			boost::uuids::uuid struct_id = struct_id=tag_structures_[tag];
+
+			if(!tag_residues_.size()){
+				protein_silent_report_->load_pose(db_session, struct_id, pose);
+			}
+			else{
+				tr << "Residues list size " << tag_residues_[tag].size() << std::endl;
+				protein_silent_report_->load_pose(db_session, struct_id, tag_residues_[tag], pose);
+			}
 		}
 
 	} else {

@@ -132,6 +132,7 @@ namespace mysql { IntegerOptionKey const port( "mysql:port" );  }
 namespace qsar { BooleanOptionKey const qsar( "qsar" );  }
 namespace qsar { StringOptionKey const weights( "qsar:weights" );  }
 namespace qsar { StringOptionKey const grid_dir( "qsar:grid_dir" );  }
+namespace qsar { IntegerOptionKey const max_grid_cache_size( "qsar:max_grid_cache_size" );  }
 namespace residues { BooleanOptionKey const residues( "residues" );  }
 namespace residues { StringVectorOptionKey const patch_selectors( "residues:patch_selectors" );  }
 namespace PCS { BooleanOptionKey const PCS( "PCS" );  }
@@ -614,4 +615,3 @@ namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score
 namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
 namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constraint_skip_rate" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }
-namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }

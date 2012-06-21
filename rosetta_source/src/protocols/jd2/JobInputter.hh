@@ -21,12 +21,15 @@
 #include <protocols/jd2/Job.fwd.hh>
 
 //project headers
-#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 
 //utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <utility/vector1.hh>
+
+//STL headers
+#include <map>
 
 
 namespace protocols {
@@ -50,6 +53,15 @@ public:
 	///  using
 	virtual JobInputterInputSource::Enum input_source() const = 0;
 
+	/// @brief return the pose from the input structure cache
+	core::pose::Pose get_input_structure_from_cache(std::string const & input_tag) const;
+
+	/// @brief is there a matching pose in the input structure cache?
+	bool is_input_structure_in_cache(std::string const & input_tag) const;
+
+	/// @brief insert a pose into the input structure cache
+	void insert_input_structure_into_cache(std::string const & input_tag, core::pose::Pose const & pose);
+
 protected:
 	///@brief this function modifies the InnerJob's pose.  Access to that pose is via friendship.
 	void load_pose_into_job( core::pose::Pose const & pose, JobOP job );
@@ -58,6 +70,9 @@ protected:
 	void load_pose_into_job( core::pose::PoseCOP pose, JobOP job );
 
 	virtual core::Size get_nstruct() const;
+
+private:
+	std::map<std::string, core::pose::Pose> input_structure_cache_;
 
 }; // JobInputter
 

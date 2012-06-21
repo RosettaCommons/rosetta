@@ -13,19 +13,23 @@
 #ifndef INCLUDED_protocols_ligand_docking_Transform_hh
 #define INCLUDED_protocols_ligand_docking_Transform_hh
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/ligand_docking/Transform.fwd.hh>
-// AUTO-REMOVED #include <protocols/qsar/scoring_grid/GridManager.hh>
-// AUTO-REMOVED #include <numeric/numeric.functions.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <core/conformation/Residue.fwd.hh>
+#include <core/kinematics/Jump.fwd.hh>
+
 #include <utility/vector1.hh>
 
 
 namespace protocols {
 namespace ligand_docking {
+
+enum MoveType
+{
+	conformerMove,
+	transformMove
+};
 
 struct Transform_info{ // including default values
 
@@ -79,11 +83,24 @@ public:
 	*/
 
 private:
-	void transform_ligand(core::pose::Pose & pose);
+	utility::vector1<std::pair<core::SSize,core::kinematics::Jump> > transform_ligand(core::pose::Pose & pose);
+	core::Size change_conformer(core::pose::Pose & pose, core::Size const & seqpos);
 
+	void revert_conformer(
+		core::pose::Pose & pose,
+		core::Size const & conformer_index,
+		core::Size const & seqpos);
 
+	void revert_jumps(
+		core::pose::Pose & pose,
+		utility::vector1<std::pair<core::SSize,core::kinematics::Jump> > const & jumps);
 
-	void change_conformer(core::pose::Pose & pose, core::Size const & seqpos);
+	void revert_move(
+		core::pose::Pose & pose,
+		MoveType const & move_type,
+		core::Size const & conformer_index,
+		core::Size const & seqpos,
+		utility::vector1<std::pair<core::SSize,core::kinematics::Jump> > const & jumps);
 
 private:
 	//qsar::scoring_grid::GridManagerOP grid_manager_;

@@ -24,6 +24,7 @@ namespace OptionKeys {
 namespace qsar { extern BooleanOptionKey const qsar; }
 namespace qsar { extern StringOptionKey const weights; }
 namespace qsar { extern StringOptionKey const grid_dir; }
+namespace qsar { extern IntegerOptionKey const max_grid_cache_size; }
 
 } // namespace OptionKeys
 } // namespace options

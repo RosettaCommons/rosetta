@@ -51,13 +51,33 @@ protocols::jd2::PDBJobInputter::~PDBJobInputter(){}
 void protocols::jd2::PDBJobInputter::pose_from_job( core::pose::Pose & pose, JobOP job){
 	TR << "PDBJobInputter::pose_from_job" << std::endl;
 
+	std::string const input_tag(job->input_tag());
 	if( !job->inner_job()->get_pose() ){
-		core::import_pose::pose_from_pdb( pose, job->input_tag() );
+
+		//If nstruct == 1 the JobInputter cache will simply waste memory
+		if(get_nstruct() > 1)
+		{
+			if(is_input_structure_in_cache(input_tag))
+			{
+				pose = get_input_structure_from_cache(input_tag);
+				TR << "filling pose from JobInputter cache" << std::endl;
+			}else
+			{
+				core::import_pose::pose_from_pdb( pose, input_tag );
+				insert_input_structure_into_cache(input_tag,pose);
+				TR << "filling pose from PDB " << input_tag << std::endl;
+			}
+		}else
+		{
+			core::import_pose::pose_from_pdb( pose, input_tag );
+			TR << "filling pose from PDB " << input_tag << std::endl;
+		}
+
 		load_pose_into_job(pose, job);
-		TR << "filling pose from PDB " << job->input_tag() << std::endl;
+
 	} else {
 		pose = *(job->inner_job()->get_pose());
-		TR << "filling pose from saved copy " << job->input_tag() << std::endl;
+		TR << "filling pose from saved copy " << input_tag << std::endl;
 	}
 }
 
