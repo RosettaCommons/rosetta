@@ -233,7 +233,7 @@ def main(args):
     mini_path = os.path.abspath('./../../../')
 
     bindings_path = 'rosetta'
-    bindings_path += '.debug' if Options.debug else '.release'
+    #bindings_path += '.debug' if Options.debug else '.release'
 
     if Options.cross_compile:
         bindings_path = 'rosetta.windows'
@@ -251,8 +251,8 @@ def main(args):
         BuildRosettaOnWindows(build_path, bindings_path)
         sys.exit(0)
 
-    if os.path.islink('rosetta') or os.path.isdir('rosetta'): os.remove('rosetta')
-    os.symlink(bindings_path, 'rosetta')
+    #if os.path.islink('rosetta') or os.path.isdir('rosetta'): os.remove('rosetta')
+    #os.symlink(bindings_path, 'rosetta')
 
     bindings_path = os.path.abspath(bindings_path)
 
