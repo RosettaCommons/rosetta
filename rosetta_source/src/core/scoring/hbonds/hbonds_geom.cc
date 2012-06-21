@@ -59,6 +59,7 @@
 
 //Utility Headers
 #include <utility/basic_sys_util.hh>
+#include <utility/PyAssert.hh>
 
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
@@ -1225,12 +1226,8 @@ hb_energy_deriv(
 
 	// NaN check
 	if ( ! numeric::is_a_finitenumber( HDdis2, 1.0, 0.0 ) ) {
-		std::string const warning( "NANs occured in hbonding!" );
-		static bool warn_on_std_err = true;
-		if( warn_on_std_err ){
-			std::cerr << "Hbond tripped: " << utility::timestamp() << std::endl; std::cerr.flush();
-			warn_on_std_err = false;
-		}
+		std::string const warning( "NAN occurred in H-bonding calculations!" );
+		PyAssert(false, warning); // allows for better error handling from within Python
 		tr.Error << warning << std::endl;
 
 #ifndef BOINC
