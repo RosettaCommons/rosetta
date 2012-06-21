@@ -410,7 +410,7 @@ PDBInfo::chain(
 	char const chain_id
 )
 {
-	PyAssert( (res>0) && (res<nres()), "PDBInfo::chain( Size const res, char const chain_id ): res is not in this PDBInfo!" );
+	PyAssert( (res>0) && (res<residue_rec_.size()), "PDBInfo::chain( Size const res, char const chain_id ): res is not in this PDBInfo!" );
 	ResidueRecord & rr = residue_rec_[ res ];
 
 	// sync map
