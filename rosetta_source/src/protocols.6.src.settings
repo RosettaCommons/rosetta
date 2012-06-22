@@ -169,6 +169,7 @@ sources = {
 	"SeedFoldTree",
 	"SeedSetupMover",
 	"SwapSegment",
+	"SegmentHybridizer"
 ],
 "protocols/sic_dock" : [ # sheffler
 	"SICFast",

@@ -186,7 +186,7 @@ static MoverRegistrator< seeded_abinitio::GrowPeptidesCreator > GrowPeptidesCrea
 static MoverRegistrator< seeded_abinitio::SeedFoldTreeCreator > SeedFoldTreeCreator;
 static MoverRegistrator< seeded_abinitio::SeedSetupMoverCreator > SeedSetupMoverCreator;
 static MoverRegistrator< seeded_abinitio::SwapSegmentCreator > SwapSegmentCreator;
-
+static MoverRegistrator< seeded_abinitio::SegmentHybridizerCreator > SegmentHybridizerCreator; 
 static MoverRegistrator< simple_moves::AddConstraintsToCurrentConformationMoverCreator > reg_AddConstraintsToCurrentConformationMoverCreator;
 static MoverRegistrator< simple_moves::ClearConstraintsMoverCreator > reg_ClearConstraintsMoverCreator;
 static MoverRegistrator< simple_moves::ConsensusDesignMoverCreator > reg_ConsensusDesignMoverCreator;
