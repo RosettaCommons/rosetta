@@ -29,7 +29,5 @@
 
 -abrelax:fail_unclosed
 
--mute_warning core.chemical
--mute_warning core.io.pdb
--mute_warning core.conformation
--mute_warning  protocols.jobdist
+-out:levels core.chemical:warning core.io.pdb:warning core.conformation:warning
+-out:levels protocols.jobdist:warning
