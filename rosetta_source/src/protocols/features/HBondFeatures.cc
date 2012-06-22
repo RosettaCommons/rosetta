@@ -656,20 +656,15 @@ HBondFeatures::report_features(
 
 	TR << "Number of hydrogen bonds found: " << hbond_set.nhbonds() << endl;
 
-	Real const probe_radius_s(1.0);
-	AtomID_Map< Real > atom_sasa_s;
-	vector1< Real > residue_sasa_s;
-	calc_per_atom_sasa(pose, atom_sasa_s, residue_sasa_s, probe_radius_s);
+	Real const probe_radius_s(1.0), probe_radius_m(1.4), probe_radius_l(2.0);
+	AtomID_Map< Real > atom_sasa_s, atom_sasa_m, atom_sasa_l;
+	vector1< Real > residue_sasa_s, residue_sasa_m, residue_sasa_l;
 
-	Real const probe_radius_m(1.4);
-	AtomID_Map< Real > atom_sasa_m;
-	vector1< Real > residue_sasa_m;
-	calc_per_atom_sasa(pose, atom_sasa_m, residue_sasa_m, probe_radius_m);
-
-	Real const probe_radius_l(2.0);
-	AtomID_Map< Real > atom_sasa_l;
-	vector1< Real > residue_sasa_l;
-	calc_per_atom_sasa(pose, atom_sasa_l, residue_sasa_l, probe_radius_l);
+	if(pose.is_fullatom()){
+		calc_per_atom_sasa(pose, atom_sasa_s, residue_sasa_s, probe_radius_s);
+		calc_per_atom_sasa(pose, atom_sasa_m, residue_sasa_m, probe_radius_m);
+		calc_per_atom_sasa(pose, atom_sasa_l, residue_sasa_l, probe_radius_l);
+	}
 
 	AtomID_Map< vector1<HBondCOP> > site_partners;
 	initialize_atomid_map(site_partners, pose);
@@ -826,7 +821,7 @@ HBondFeatures::insert_site_pdb_row(
 
 void
 HBondFeatures::insert_site_environment_row(
-	Pose const &,
+	Pose const & pose,
 	Size resNum,
 	Size atmNum,
 	boost::uuids::uuid struct_id,
@@ -842,15 +837,24 @@ HBondFeatures::insert_site_environment_row(
 	Real const hbond_energy (site_hbond_energies(resNum, atmNum) );
 	Size const num_hbonds(site_partners(resNum,atmNum).size() );
 
-	statement stmt = (*db_session)
-		<< "INSERT INTO hbond_site_environment (struct_id, site_id, sasa_r100, sasa_r140, sasa_r200, hbond_energy, num_hbonds) VALUES (?,?,?,?,?,?,?);"
-		<< struct_id
-		<< site_id
-		<< atom_sasa_s[AtomID(atmNum, resNum)]
-		<< atom_sasa_m[AtomID(atmNum, resNum)]
-		<< atom_sasa_l[AtomID(atmNum, resNum)]
-		<< hbond_energy
-		<< num_hbonds;
+	string stmt_string("INSERT INTO hbond_site_environment (struct_id, site_id, sasa_r100, sasa_r140, sasa_r200, hbond_energy, num_hbonds) VALUES (?,?,?,?,?,?,?);");
+	statement stmt(basic::database::safely_prepare_statement(stmt_string, db_session));
+
+	stmt.bind(1, struct_id);
+	stmt.bind(2, site_id);
+
+	if(pose.is_fullatom()){
+		stmt.bind(3, atom_sasa_s[AtomID(atmNum, resNum)]);
+		stmt.bind(4, atom_sasa_m[AtomID(atmNum, resNum)]);
+		stmt.bind(5, atom_sasa_l[AtomID(atmNum, resNum)]);
+	} else {
+		stmt.bind_null(3);
+		stmt.bind_null(4);
+		stmt.bind_null(5);
+	}
+
+	stmt.bind(6, hbond_energy);
+	stmt.bind(7, num_hbonds);
 	basic::database::safely_write_to_database(stmt);
 
 }
