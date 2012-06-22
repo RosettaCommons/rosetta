@@ -9,7 +9,7 @@
 
 /// @file   protocols/features/ResidueScoresFeatures.cc
 /// @brief  report residue scores to features Statistics Scientific Benchmark
-/// @author Matthew O'Meara
+/// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 // Unit Headers
 #include <protocols/features/ResidueScoresFeatures.hh>
@@ -23,6 +23,10 @@
 #include <core/types.hh>
 #include <protocols/moves/DataMap.hh>
 #include <basic/database/sql_utils.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
 
 // Utility Headers
 #include <numeric/xyzVector.hh>
@@ -85,34 +89,93 @@ ResidueScoresFeatures::~ResidueScoresFeatures()
 string
 ResidueScoresFeatures::type_name() const { return "ResidueScoresFeatures"; }
 
-string
-ResidueScoresFeatures::schema() const {
-	return
-		"CREATE TABLE IF NOT EXISTS residue_scores_1b (\n"
-		"	struct_id BLOB,\n"
-		"	resNum INTEGER,\n"
-		"	score_type TEXT,\n"
-		"	score_value REAL,\n"
-		"	context_dependent  INTEGER,\n"
-		"	FOREIGN KEY (struct_id, resNum)\n"
-		"		REFERENCES residues (struct_id, resNum)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	PRIMARY KEY(struct_id, resNum, score_type));\n"
-		"\n"
-		"CREATE TABLE IF NOT EXISTS residue_scores_2b (\n"
-		"	struct_id BLOB,\n"
-		"	resNum1 INTEGER,\n"
-		"	resNum2 INTEGER,\n"
-		"	score_type TEXT,\n"
-		"	score_value REAL,\n"
-		"	context_dependent  INTEGER,\n"
-		"	FOREIGN KEY (struct_id, resNum1)\n"
-		"		REFERENCES residues (struct_id, resNum)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	FOREIGN KEY (struct_id, resNum2)\n"
-		"		REFERENCES residues (struct_id, resNum)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	PRIMARY KEY(struct_id, resNum1, resNum2, score_type));\n";
+void
+ResidueScoresFeatures::write_schema_to_db(
+	sessionOP db_session
+) const {
+	write_residue_scores_1b_table_schema(db_session);
+	write_residue_scores_2b_table_schema(db_session);
+}
+
+void
+ResidueScoresFeatures::write_residue_scores_1b_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column resNum("resNum", DbInteger());
+	Column score_type("score_type", DbText());
+	Column score_value("score_value", DbReal());
+	Column context_dependent("context_dependent", DbInteger());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(resNum);
+	primary_key_columns.push_back(score_type);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns;
+	foreign_key_columns.push_back(struct_id);
+	foreign_key_columns.push_back(resNum);
+	vector1< std::string > reference_columns;
+	reference_columns.push_back("struct_id");
+	reference_columns.push_back("resNum");
+	ForeignKey foreign_key(foreign_key_columns, "residues", reference_columns, true);
+
+	Schema table("residue_scores_1b", primary_key);
+	table.add_foreign_key(foreign_key);
+	table.add_column(score_type);
+	table.add_column(score_value);
+	table.add_column(context_dependent);
+
+	table.write(db_session);
+}
+
+void
+ResidueScoresFeatures::write_residue_scores_2b_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column resNum1("resNum1", DbInteger());
+	Column resNum2("resNum2", DbInteger());
+	Column score_type("score_type", DbText());
+	Column score_value("score_value", DbReal());
+	Column context_dependent("context_dependent", DbInteger());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(resNum1);
+	primary_key_columns.push_back(resNum2);
+	primary_key_columns.push_back(score_type);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns1;
+	foreign_key_columns1.push_back(struct_id);
+	foreign_key_columns1.push_back(resNum1);
+	vector1< std::string > reference_columns1;
+	reference_columns1.push_back("struct_id");
+	reference_columns1.push_back("resNum");
+	ForeignKey foreign_key1(foreign_key_columns1, "residues", reference_columns1, true);
+
+	Columns foreign_key_columns2;
+	foreign_key_columns2.push_back(struct_id);
+	foreign_key_columns2.push_back(resNum2);
+	vector1< std::string > reference_columns2;
+	reference_columns2.push_back("struct_id");
+	reference_columns2.push_back("resNum");
+	ForeignKey foreign_key2(foreign_key_columns2, "residues", reference_columns2, true);
+
+	Schema table("residue_scores_2b", primary_key);
+	table.add_foreign_key(foreign_key1);
+	table.add_foreign_key(foreign_key2);
+	table.add_column(score_type);
+	table.add_column(score_value);
+	table.add_column(context_dependent);
+
+	table.write(db_session);
 }
 
 utility::vector1<std::string>
@@ -203,8 +266,8 @@ ResidueScoresFeatures::insert_residue_scores_rows(
 	ScoreTypes ci_2b( scfxn_->ci_2b_types() );
 	ScoreTypes cd_2b( scfxn_->cd_2b_types() );
 
-	std::string oneb_string = "INSERT INTO residue_scores_1b VALUES (?,?,?,?,?);";
-	std::string twob_string = "INSERT INTO residue_scores_2b VALUES (?,?,?,?,?,?);";
+	std::string oneb_string = "INSERT INTO residue_scores_1b (struct_id, resNum, score_type, score_value, context_dependent) VALUES (?,?,?,?,?);";
+	std::string twob_string = "INSERT INTO residue_scores_2b (struct_id, resNum1, resNum2, score_type, score_value, context_dependent) VALUES (?,?,?,?,?,?);";
 
 	statement oneb_stmt(basic::database::safely_prepare_statement(oneb_string,db_session));
 	statement twob_stmt(basic::database::safely_prepare_statement(twob_string,db_session));

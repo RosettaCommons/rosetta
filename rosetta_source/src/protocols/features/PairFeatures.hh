@@ -9,7 +9,7 @@
 
 /// @file   protocols/features/PairFeatures.hh
 /// @brief  report residue and atom pair geometry and scores to features Statistics Scientific Benchmark
-/// @author Matthew O'Meara
+/// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 #ifndef INCLUDED_protocols_features_PairFeatures_hh
 #define INCLUDED_protocols_features_PairFeatures_hh
@@ -22,10 +22,8 @@
 #include <boost/uuid/uuid.hpp>
 
 // Project Headers
-// AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.fwd.hh>
 
 // C++ Headers
@@ -49,10 +47,18 @@ public:
 	std::string
 	type_name() const;
 
-	///@brief return sql statements that setup the right tables
-	std::string
-	schema() const;
+	///@brief generate the table schemas and write them to the database
+	void
+	write_schema_to_db(
+		utility::sql_database::sessionOP db_session) const;
 
+private:
+	///@brief generate the beta_turns table schema
+	void
+	write_residue_pairs_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+public:
 	///@brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>

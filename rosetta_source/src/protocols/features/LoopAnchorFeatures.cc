@@ -8,8 +8,9 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/features/LoopAnchorFeatures.cc
-/// @brief  report comments stored with each pose
-/// @author Matthew O'Meara
+/// @brief  report loop anchor features to a features database
+/// @author Matthew O'Meara (mattjomeara@gmail.com)
+/// @author Brian Weitzner
 
 // Unit Headers
 #include <protocols/features/LoopAnchorFeatures.hh>
@@ -34,6 +35,10 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -79,104 +84,148 @@ LoopAnchorFeatures::~LoopAnchorFeatures() {}
 string
 LoopAnchorFeatures::type_name() const { return "LoopAnchorFeatures"; }
 
-string
-LoopAnchorFeatures::schema() const {
-	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
+void
+LoopAnchorFeatures::write_schema_to_db(
+	sessionOP db_session
+) const {
+	write_loop_anchors_table_schema(db_session);
+	write_loop_anchor_transforms_table_schema(db_session);
+	write_loop_anchor_transforms_three_res_table_schema(db_session);
+}
 
-	if(db_mode == "sqlite3")
-	{
-		return
-			"CREATE TABLE IF NOT EXISTS loop_anchors (\n"
-			"	struct_id BLOB,\n"
-			"	residue_begin INTEGER,\n"
-			"	residue_end INTEGER,\n"
-			"	FOREIGN KEY (struct_id, residue_begin)\n"
-			"		REFERENCES residues (struct_id, resNum)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	FOREIGN KEY (struct_id, residue_end)\n"
-			"		REFERENCES residues (struct_id, resNum)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	PRIMARY KEY(struct_id, residue_begin, residue_end));\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS loop_anchor_transforms (\n"
-			"	struct_id BLOB,\n"
-			"	residue_begin INTEGER,\n"
-			"	residue_end INTEGER,\n"
-			"	x REAL,\n"
-			"	y REAL,\n"
-			"	z REAL,\n"
-			"	phi REAL,\n"
-			"	psi REAL,\n"
-			"	theta REAL,\n"
-			"	alpha REAL,\n"
-			"	omega REAL,\n"
-			"   FOREIGN KEY (struct_id, residue_begin, residue_end)\n"
-			"       REFERENCES loop_anchors (struct_id, residue_begin, residue_end)\n"
-			"       DEFERRABLE INITIALLY DEFERRED,\n"
-			"   PRIMARY KEY(struct_id, residue_begin, residue_end));"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS loop_anchor_transforms_three_res (\n"
-			"	struct_id BLOB,\n"
-			"	residue_begin INTEGER,\n"
-			"	residue_end INTEGER,\n"
-			"	x REAL,\n"
-			"	y REAL,\n"
-			"	z REAL,\n"
-			"	phi REAL,\n"
-			"	psi REAL,\n"
-			"	theta REAL,\n"
-			"	alpha REAL,\n"
-			"	omega REAL,\n"
-			"   FOREIGN KEY (struct_id, residue_begin, residue_end)\n"
-			"       REFERENCES loop_anchors (struct_id, residue_begin, residue_end)\n"
-			"       DEFERRABLE INITIALLY DEFERRED,\n"
-			"   PRIMARY KEY(struct_id, residue_begin, residue_end));";
-	}else if(db_mode == "mysql")
-	{
-		return
-			"CREATE TABLE IF NOT EXISTS loop_anchors (\n"
-			"	struct_id BINARY(16),\n"
-			"	residue_begin INTEGER,\n"
-			"	residue_end INTEGER,\n"
-            "   FOREIGN KEY (struct_id, residue_begin, residue_end)\n"
-            "       REFERENCES residues (struct_id, resNum),\n"
-			"	PRIMARY KEY(struct_id, residue_begin, residue_end));"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS loop_anchor_transforms (\n"
-			"	struct_id BINARY(16),\n"
-			"	residue_begin INTEGER,\n"
-			"	residue_end INTEGER,\n"
-			"	x REAL,\n"
-			"	y REAL,\n"
-			"	z REAL,\n"
-			"	phi REAL,\n"
-			"	psi REAL,\n"
-			"	theta REAL,\n"
-			"	alpha REAL,\n"
-			"	omega REAL,\n"
-			"   FOREIGN KEY (struct_id, residue_begin, residue_end)\n"
-			"       REFERENCES loop_anchors (struct_id, residue_begin, residue_end),\n"
-			"   PRIMARY KEY(struct_id, residue_begin, residue_end));"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS loop_anchor_transforms_three_res (\n"
-			"	struct_id BINARY(16),\n"
-			"	residue_begin INTEGER,\n"
-			"	residue_end INTEGER,\n"
-			"	x REAL,\n"
-			"	y REAL,\n"
-			"	z REAL,\n"
-			"	phi REAL,\n"
-			"	psi REAL,\n"
-			"	theta REAL,\n"
-			"	alpha REAL,\n"
-			"	omega REAL,\n"
-			"   FOREIGN KEY (struct_id, residue_begin, residue_end)\n"
-			"       REFERENCES loop_anchors (struct_id, residue_begin, residue_end),\n"
-			"   PRIMARY KEY(struct_id, residue_begin, residue_end));";
-	} else {
-		return "";
-	}
+void
+LoopAnchorFeatures::write_loop_anchors_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
 
+	Column struct_id("struct_id", DbUUID());
+	Column residue_begin("residue_begin", DbInteger());
+	Column residue_end("residue_end", DbInteger());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(residue_begin);
+	primary_key_columns.push_back(residue_end);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns1;
+	foreign_key_columns1.push_back(struct_id);
+	foreign_key_columns1.push_back(residue_begin);
+	vector1< std::string > reference_columns1;
+	reference_columns1.push_back("struct_id");
+	reference_columns1.push_back("resNum");
+	ForeignKey foreign_key1(foreign_key_columns1, "residues", reference_columns1, true);
+
+	Columns foreign_key_columns2;
+	foreign_key_columns2.push_back(struct_id);
+	foreign_key_columns2.push_back(residue_end);
+	vector1< std::string > reference_columns2;
+	reference_columns2.push_back("struct_id");
+	reference_columns2.push_back("resNum");
+	ForeignKey foreign_key2(foreign_key_columns2, "residues", reference_columns2, true);
+
+	Schema table("loop_anchors", primary_key);
+	table.add_foreign_key(foreign_key1);
+	table.add_foreign_key(foreign_key2);
+
+	table.write(db_session);
+}
+
+void
+LoopAnchorFeatures::write_loop_anchor_transforms_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column residue_begin("residue_begin", DbInteger());
+	Column residue_end("residue_end", DbInteger());
+	Column x("x", DbReal());
+	Column y("y", DbReal());
+	Column z("z", DbReal());
+	Column phi("phi", DbReal());
+	Column psi("psi", DbReal());
+	Column theta("theta", DbReal());
+	Column alpha("alpha", DbReal());
+	Column omega("omega", DbReal());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(residue_begin);
+	primary_key_columns.push_back(residue_end);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns;
+	foreign_key_columns.push_back(struct_id);
+	foreign_key_columns.push_back(residue_begin);
+	foreign_key_columns.push_back(residue_end);
+	vector1< std::string > reference_columns;
+	reference_columns.push_back("struct_id");
+	reference_columns.push_back("residue_begin");
+	reference_columns.push_back("residue_end");
+	ForeignKey foreign_key(foreign_key_columns, "loop_anchors", reference_columns, true);
+
+	Schema table("loop_anchor_transforms", primary_key);
+	table.add_foreign_key(foreign_key);
+	table.add_column(x);
+	table.add_column(y);
+	table.add_column(z);
+	table.add_column(phi);
+	table.add_column(psi);
+	table.add_column(theta);
+	table.add_column(alpha);
+	table.add_column(omega);
+
+	table.write(db_session);
+}
+
+void
+LoopAnchorFeatures::write_loop_anchor_transforms_three_res_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column residue_begin("residue_begin", DbInteger());
+	Column residue_end("residue_end", DbInteger());
+	Column x("x", DbReal());
+	Column y("y", DbReal());
+	Column z("z", DbReal());
+	Column phi("phi", DbReal());
+	Column psi("psi", DbReal());
+	Column theta("theta", DbReal());
+	Column alpha("alpha", DbReal());
+	Column omega("omega", DbReal());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(residue_begin);
+	primary_key_columns.push_back(residue_end);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns;
+	foreign_key_columns.push_back(struct_id);
+	foreign_key_columns.push_back(residue_begin);
+	foreign_key_columns.push_back(residue_end);
+	vector1< std::string > reference_columns;
+	reference_columns.push_back("struct_id");
+	reference_columns.push_back("residue_begin");
+	reference_columns.push_back("residue_end");
+	ForeignKey foreign_key(foreign_key_columns, "loop_anchors", reference_columns, true);
+
+	Schema table("loop_anchor_transforms_three_res", primary_key);
+	table.add_foreign_key(foreign_key);
+	table.add_column(x);
+	table.add_column(y);
+	table.add_column(z);
+	table.add_column(phi);
+	table.add_column(psi);
+	table.add_column(theta);
+	table.add_column(alpha);
+	table.add_column(omega);
+
+	table.write(db_session);
 }
 
 utility::vector1<std::string>
@@ -218,17 +267,17 @@ LoopAnchorFeatures::report_features(
 	boost::uuids::uuid struct_id,
 	sessionOP db_session
 ){
-	string loop_anchors_stmt_string = "INSERT INTO loop_anchors VALUES (?,?,?);";
+	string loop_anchors_stmt_string = "INSERT INTO loop_anchors (struct_id, residue_begin, residue_end) VALUES (?,?,?);";
 	statement loop_anchors_stmt(
 		safely_prepare_statement(loop_anchors_stmt_string, db_session));
 
 	string loop_anchor_transforms_stmt_string =
-		"INSERT INTO loop_anchor_transforms VALUES (?,?,?,?,?,?,?,?,?,?,?);";
+		"INSERT INTO loop_anchor_transforms (struct_id, residue_begin, residue_end, x, y, z, phi, psi, theta, alpha, omega) VALUES (?,?,?,?,?,?,?,?,?,?,?);";
 	statement loop_anchor_transforms_stmt(
 		safely_prepare_statement(loop_anchor_transforms_stmt_string, db_session));
 
 	string loop_anchor_transforms_three_res_stmt_string =
-		"INSERT INTO loop_anchor_transforms_three_res VALUES (?,?,?,?,?,?,?,?,?,?,?);";
+		"INSERT INTO loop_anchor_transforms_three_res (struct_id, residue_begin, residue_end, x, y, z, phi, psi, theta, alpha, omega) VALUES (?,?,?,?,?,?,?,?,?,?,?);";
 	statement loop_anchor_transforms_three_res_stmt(
 		safely_prepare_statement(loop_anchor_transforms_three_res_stmt_string, db_session));
 	

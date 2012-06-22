@@ -82,8 +82,9 @@ string
 StructureFeatures::type_name() const { return "StructureFeatures"; }
 
 void
-StructureFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
-	
+StructureFeatures::write_schema_to_db(
+	sessionOP db_session
+) const {
 	using namespace basic::database::schema_generator;
 
 	//Don't autoincrement the struct_id because it is a UUID generated here
@@ -100,7 +101,7 @@ StructureFeatures::write_schema_to_db(utility::sql_database::sessionOP db_sessio
 	structures.add_column( input_tag );
 
 	structures.write(db_session);
-	
+
 	/***sampled_structures***/
 	Schema sampled_structures("sampled_structures");
 	sampled_structures.add_foreign_key(ForeignKey(batch_id, "batches", "batch_id", true /*defer*/));

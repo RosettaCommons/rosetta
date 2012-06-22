@@ -91,15 +91,16 @@ RotamerFeatures::type_name() const {
 	return "RotamerFeatures";
 }
 
-string
-RotamerFeatures::schema(
+void
+RotamerFeatures::write_schema_to_db(
+	sessionOP db_session
 ) const {
-
-	return residue_rotamers_schema().print() + "\n";
+	write_residue_rotamers_table_schema(db_session);
 }
 
-basic::database::schema_generator::Schema
-RotamerFeatures::residue_rotamers_schema(
+void
+RotamerFeatures::write_residue_rotamers_table_schema(
+	sessionOP db_session
 ) const {
 	using namespace basic::database::schema_generator;
 
@@ -161,7 +162,7 @@ RotamerFeatures::residue_rotamers_schema(
 	residue_rotamers.add_column(chi4_deviation);
 	residue_rotamers.add_column(rotamer_bin_probability);
 	residue_rotamers.add_foreign_key(residues_foreign_key);
-	return residue_rotamers;
+	residue_rotamers.write(db_session);
 }
 
 
@@ -213,7 +214,7 @@ RotamerFeatures::report_features(
   }
 
 	string insert_sql(
-		"INSERT INTO residue_rotamers ("
+		"INSERT INTO residue_rotamers (struct_id, residue_number, rotamer_bin, nchi, semi_rotameric, chi1_mean, chi2_mean, chi3_mean, chi4_mean, chi1_standard_deviation, chi2_standard_deviation, chi3_standard_deviation, chi4_standard_deviation, chi1_deviation, chi2_deviation, chi3_deviation, chi4_deviation, rotamer_bin_probability) ("
 		"	struct_id,"
 		"	residue_number,"
 		"	rotamer_bin,"

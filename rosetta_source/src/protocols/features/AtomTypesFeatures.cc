@@ -65,12 +65,14 @@ AtomTypesFeatures::~AtomTypesFeatures() {}
 string
 AtomTypesFeatures::type_name() const { return "AtomTypesFeatures"; }
 
-string
-AtomTypesFeatures::schema() const {
+void
+AtomTypesFeatures::write_schema_to_db(
+	sessionOP db_session
+) const {
 	// NOTE: To support building feature databases in parallel, the
 	// ResidueTypeSet and ResidueType objects must be identified by
 	// their names rather then assigning them a unique id.
-	return atom_type_dbio_.schema();
+	return atom_type_dbio_.write_schema_to_db(db_session);
 }
 
 vector1<string>

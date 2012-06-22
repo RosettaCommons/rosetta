@@ -9,7 +9,7 @@
 
 /// @file   protocols/features/OrbitalsFeatures.hh
 /// @brief  report Orbital geometry and scores to features Statistics Scientific Benchmark
-/// @author Matthew O'Meara
+/// @author Steven Combs
 
 #ifndef INCLUDED_protocols_features_OrbitalsFeatures_hh
 #define INCLUDED_protocols_features_OrbitalsFeatures_hh
@@ -22,7 +22,6 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.fwd.hh>
 
 //External
@@ -49,10 +48,29 @@ public:
 	std::string
 	type_name() const;
 
-	///@brief return sql statements that setup the right tables
-	std::string
-	schema() const;
+	///@brief generate the table schemas and write them to the database
+	void
+	write_schema_to_db(
+		utility::sql_database::sessionOP db_session) const;
 
+private:
+	///@brief generate the HPOL_orbital table schema
+	void
+	write_HPOL_orbital_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+	///@brief generate the HARO_orbital table schema
+	void
+	write_HARO_orbital_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+	///@brief generate the HPOL_orbital table schema
+	void
+	write_orbital_orbital_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+
+public:
 	///@brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>

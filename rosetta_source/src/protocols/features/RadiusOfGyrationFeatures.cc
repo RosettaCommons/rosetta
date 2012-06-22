@@ -9,7 +9,7 @@
 
 /// @file   protocols/features/RadiusOfGyrationFeatures.cc
 /// @brief  report the radius of gyration to features Statistics Scientific Benchmark
-/// @author Matthew O'Meara
+/// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 // Unit Headers
 #include <protocols/features/RadiusOfGyrationFeatures.hh>
@@ -22,6 +22,11 @@
 // Utility Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
+
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -50,16 +55,37 @@ RadiusOfGyrationFeatures::~RadiusOfGyrationFeatures(){}
 string
 RadiusOfGyrationFeatures::type_name() const { return "RadiusOfGyrationFeatures"; }
 
-string
-RadiusOfGyrationFeatures::schema() const {
-	return
-		"CREATE TABLE IF NOT EXISTS radius_of_gyration (\n"
-		"	struct_id BLOB,\n"
-		"	radius_of_gyration REAL,\n"
-		"	FOREIGN KEY(struct_id)\n"
-		"		REFERENCES structures(struct_id)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	PRIMARY KEY(struct_id));";
+void
+RadiusOfGyrationFeatures::write_schema_to_db(
+	sessionOP db_session
+) const {
+	write_radius_of_gyration_table_schema(db_session);
+}
+
+void
+RadiusOfGyrationFeatures::write_radius_of_gyration_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column radius_of_gyration("radius_of_gyration", DbReal());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns;
+	foreign_key_columns.push_back(struct_id);
+	vector1< std::string > reference_columns;
+	reference_columns.push_back("struct_id");
+	ForeignKey foreign_key(foreign_key_columns, "structures", reference_columns, true);
+
+	Schema table("radius_of_gyration", primary_key);
+	table.add_foreign_key(foreign_key);
+	table.add_column(radius_of_gyration);
+
+	table.write(db_session);
 }
 
 utility::vector1<std::string>
@@ -78,7 +104,7 @@ RadiusOfGyrationFeatures::report_features(
 ){
 	RG_Energy_Fast rg;
 
-	std::string statement_string =  "INSERT INTO radius_of_gyration VALUES (?,?);";
+	std::string statement_string =  "INSERT INTO radius_of_gyration (struct_id, radius_of_gyration) VALUES (?,?);";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,struct_id);
 	stmt.bind(2,rg.calculate_rg_score(pose, relevant_residues));

@@ -27,17 +27,16 @@
 
 namespace protocols {
 namespace features {
-    
-    BatchFeaturesCreator::BatchFeaturesCreator() {}
-    BatchFeaturesCreator::~BatchFeaturesCreator() {}
-    FeaturesReporterOP BatchFeaturesCreator::create_features_reporter() const {
-        return new BatchFeatures;
-    }
-    
-    std::string BatchFeaturesCreator::type_name() const {
-        return "BatchFeatures";
-    }
-    
+
+		BatchFeaturesCreator::BatchFeaturesCreator() {}
+		BatchFeaturesCreator::~BatchFeaturesCreator() {}
+		FeaturesReporterOP BatchFeaturesCreator::create_features_reporter() const {
+				return new BatchFeatures;
+		}
+
+		std::string BatchFeaturesCreator::type_name() const {
+				return "BatchFeatures";
+		}
+
 } //namespace features
 } //namespace protocols
-

@@ -42,6 +42,12 @@
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
 
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
+
+
 // External Headers
 #include <cppdb/frontend.h>
 
@@ -101,34 +107,41 @@ BetaTurnDetectionFeatures::~BetaTurnDetectionFeatures() {}
 string
 BetaTurnDetectionFeatures::type_name() const { return "BetaTurnDetectionFeatures"; }
 
-string
-BetaTurnDetectionFeatures::schema() const {
-	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
+void
+BetaTurnDetectionFeatures::write_schema_to_db(
+	sessionOP db_session
+) const {
+	write_beta_turns_table_schema(db_session);
+}
 
-	if(db_mode == "sqlite3")
-	{
-		return
-			"CREATE TABLE IF NOT EXISTS beta_turns (\n"
-			"	struct_id BLOB,\n"
-			"	residue_begin INTEGER,\n"
-            "   turn_type TEXT,\n"
-			"	FOREIGN KEY (struct_id, residue_begin)\n"
-			"		REFERENCES residues (struct_id, resNum)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	PRIMARY KEY(struct_id, residue_begin));";
-    } else if(db_mode == "mysql")
-	{
-		return
-			"CREATE TABLE IF NOT EXISTS beta_turns (\n"
-			"	struct_id BINARY(16),\n"
-			"	residue_begin INTEGER,\n"
-            "   turn_type VARCHAR(255),\n"
-			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"
-			"	PRIMARY KEY(struct_id, residue_begin));";
-	} else {
-		return "";
-	}
+void
+BetaTurnDetectionFeatures::write_beta_turns_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
 
+	Column struct_id("struct_id", DbUUID());
+	Column residue_begin("residue_begin", DbInteger());
+	Column turn_type("turn_type", DbText());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(residue_begin);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns;
+	foreign_key_columns.push_back(struct_id);
+	foreign_key_columns.push_back(residue_begin);
+	vector1< std::string > reference_columns;
+	reference_columns.push_back("struct_id");
+	reference_columns.push_back("resNum");
+	ForeignKey foreign_key(foreign_key_columns, "residues", reference_columns, true);
+
+	Schema table("beta_turns", primary_key);
+	table.add_foreign_key(foreign_key);
+	table.add_column(turn_type);
+
+	table.write(db_session);
 }
 
 utility::vector1<std::string>
@@ -148,48 +161,48 @@ BetaTurnDetectionFeatures::report_features(
 	boost::uuids::uuid struct_id,
 	sessionOP db_session
 ){
-	string beta_turns_stmt_string = "INSERT INTO beta_turns VALUES (?,?,?);";
+	string beta_turns_stmt_string = "INSERT INTO beta_turns (struct_id, residue_begin, turn_type) VALUES (?,?,?);";
 	statement beta_turns_stmt(
 		safely_prepare_statement(beta_turns_stmt_string, db_session));
-    
+
 	for(SSize begin=1; begin <= SSize( pose.total_residue() - beta_turn_length ); ++begin){
-        Size end = begin + beta_turn_length;
-        
-        if ( !residue_range_is_relevant( relevant_residues, begin, end ) || !residue_range_is_protein( pose, begin, end ) || !all_turn_residues_are_on_the_same_chain( pose, begin ) || !beta_turn_present( pose, begin ) )
-        {
-            continue;
-        }
-    
-        // Add stuff to database
-        beta_turns_stmt.bind(1,struct_id);
-        beta_turns_stmt.bind(2,begin);
-        beta_turns_stmt.bind(3, beta_turn_type( pose, begin ) );
-        basic::database::safely_write_to_database( beta_turns_stmt );
-        
+		Size end = begin + beta_turn_length;
+
+		if ( !residue_range_is_relevant( relevant_residues, begin, end ) || !residue_range_is_protein( pose, begin, end ) || !all_turn_residues_are_on_the_same_chain( pose, begin ) || !beta_turn_present( pose, begin ) )
+		{
+				continue;
+		}
+
+		// Add stuff to database
+		beta_turns_stmt.bind(1,struct_id);
+		beta_turns_stmt.bind(2,begin);
+		beta_turns_stmt.bind(3, beta_turn_type( pose, begin ) );
+		basic::database::safely_write_to_database( beta_turns_stmt );
+
 	}
 	return 0;
 }
 
 void BetaTurnDetectionFeatures::setup_conformation_to_turn_type_map()
 {
-    if ( initialized_ ) return;
-    initialized_ = true;
-    
+		if ( initialized_ ) return;
+		initialized_ = true;
+
 	// These turn types are well characterized
-	conformation_to_turn_type_[ "AA" ] = "I";	
+	conformation_to_turn_type_[ "AA" ] = "I";
 	conformation_to_turn_type_[ "LL" ] = "I'";
 	conformation_to_turn_type_[ "BL" ] = "II";
 	conformation_to_turn_type_[ "EA" ] = "II'";
 	conformation_to_turn_type_[ "AB" ] = "VIII";
-	
+
 	// Type IV is essentially "other"
 	conformation_to_turn_type_[ "XX" ] = "IV";
-	
+
 	// These types are the working names for some new turn types
 	conformation_to_turn_type_[ "LE" ] = "VIII'";
 	conformation_to_turn_type_[ "AL" ] = "IX";
 	conformation_to_turn_type_[ "LA" ] = "IX'";
-	
+
 	// These turns have a CisProline at position three
 	/* My current binning of Ramachandran space is too coarse to differentiate these types, so I will just make a Type VI turn type
 	conformation_to_turn_type_[ "BACis" ] = "VIa1";
@@ -201,45 +214,45 @@ void BetaTurnDetectionFeatures::setup_conformation_to_turn_type_map()
 
 bool BetaTurnDetectionFeatures::all_turn_residues_are_on_the_same_chain( Pose const & pose, Size first_residue ) const
 {
-    Size chain = pose.residue( first_residue ).chain();
-    for ( Size residue_number = first_residue + 1; residue_number <= first_residue + beta_turn_length; ++residue_number )
-    {
-        if ( pose.residue( first_residue ).chain() != chain )
-        {
-            return false;
-        }
-    }
-    return true;
+		Size chain = pose.residue( first_residue ).chain();
+		for ( Size residue_number = first_residue + 1; residue_number <= first_residue + beta_turn_length; ++residue_number )
+		{
+				if ( pose.residue( first_residue ).chain() != chain )
+				{
+						return false;
+				}
+		}
+		return true;
 }
 
 bool BetaTurnDetectionFeatures::residue_range_is_relevant( vector1< bool > const & relevant_residues, Size range_begin, Size range_end ) const
 {
-    for ( Size current_residue = range_begin; current_residue <= range_end; ++current_residue )
-    {
-        if ( current_residue > relevant_residues.size() || !relevant_residues[ current_residue ] )
-        {
-            return false;
-        }
-    }
-    return true;
+		for ( Size current_residue = range_begin; current_residue <= range_end; ++current_residue )
+		{
+				if ( current_residue > relevant_residues.size() || !relevant_residues[ current_residue ] )
+				{
+						return false;
+				}
+		}
+		return true;
 }
 
 bool BetaTurnDetectionFeatures::residue_range_is_protein( Pose const & pose, Size range_begin, Size range_end ) const
 {
-    for ( Size current_residue = range_begin; current_residue <= range_end; ++current_residue )
-    {
-        if ( !pose.residue( current_residue ).is_protein() )
-        {
-            return false;
-        }
-    }
-    return true;
+		for ( Size current_residue = range_begin; current_residue <= range_end; ++current_residue )
+		{
+				if ( !pose.residue( current_residue ).is_protein() )
+				{
+						return false;
+				}
+		}
+		return true;
 }
 
 
 bool BetaTurnDetectionFeatures::beta_turn_present( Pose const & pose, Size first_residue ) const
 {
-    return ( pose.residue( first_residue ).xyz( "CA" ) -  pose.residue( first_residue + beta_turn_length ).xyz( "CA" ) ).norm() <= beta_turn_distance_cutoff; 
+		return ( pose.residue( first_residue ).xyz( "CA" ) -  pose.residue( first_residue + beta_turn_length ).xyz( "CA" ) ).norm() <= beta_turn_distance_cutoff;
 }
 
 string const & BetaTurnDetectionFeatures::beta_turn_type( Pose const & pose, Size first_residue ) const
@@ -249,7 +262,7 @@ string const & BetaTurnDetectionFeatures::beta_turn_type( Pose const & pose, Siz
 	{
 		rama_hash += determine_ramachandran_hash( pose.phi( residue_number ), pose.psi( residue_number ), pose.omega( residue_number ) );
 	}
-	
+
 	if ( rama_hash.size() > 2 )
 	{
 		if ( pose.residue( first_residue + beta_turn_length - 1 ).name().compare( "PRO" ) )
@@ -257,39 +270,39 @@ string const & BetaTurnDetectionFeatures::beta_turn_type( Pose const & pose, Siz
 			rama_hash = "XX";
 		}
 	}
-	
+
 	if (!conformation_to_turn_type_.count( rama_hash ) )
 	{
 		rama_hash = "XX";
 	}
-	
+
 	return conformation_to_turn_type_[ rama_hash ];
 }
 
 string BetaTurnDetectionFeatures::determine_ramachandran_hash( Real phi, Real psi, Real omega ) const
 {
-	
-	// This method uses extremely crude partitioning of Ramachandran space.  
+
+	// This method uses extremely crude partitioning of Ramachandran space.
 	// THESE DEFINITIONS ARE TEMPORARY AND WILL BE UPDATED SOON.
 	string peptide_bond_isomerization;
 	if ( omega > -90 && omega <= 90 )
 	{
 		peptide_bond_isomerization = "Cis";
 	}
-	
-	
-    if ( phi > 0. && phi <= 180. )
+
+
+		if ( phi > 0. && phi <= 180. )
 	{
-        if ( psi > -50. && psi <= 100. )
+				if ( psi > -50. && psi <= 100. )
 		{
-            return "L" + peptide_bond_isomerization;
+						return "L" + peptide_bond_isomerization;
 		}
 		else
 		{
 			return "E" + peptide_bond_isomerization;
 		}
 	}
-	else 
+	else
 	{
 		if ( psi > -100. && psi <= 50. )
 		{

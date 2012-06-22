@@ -153,9 +153,24 @@ public:
 		return false; // APL TEMP return hb_options_->use_incorrect_deriv();
 	}
 
-	std::string
-	report_parameter_features_schema() const;
+	void
+	report_parameter_features_schema_to_db(
+		utility::sql_database::sessionOP db_session) const;
 
+private:
+	void
+	write_hbond_fade_interval_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+	void
+	write_hbond_polynomial_1d_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+	void
+	write_hbond_evaluation_types_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+public:
 	core::Size
 	report_parameter_features(
 		utility::sql_database::sessionOP db_session ) const;

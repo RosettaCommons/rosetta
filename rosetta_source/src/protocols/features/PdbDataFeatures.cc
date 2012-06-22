@@ -86,35 +86,35 @@ string PdbDataFeatures::type_name() const
 void
 PdbDataFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;
-	
+
 	Column struct_id("struct_id",DbUUID(), false);
 	Column residue_number("residue_number",DbInteger(), false);
-	
+
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(struct_id);
 	pkey_cols.push_back(residue_number);
-	
+
 	//******residue_pdb_identification******//
 	Column chain_id("chain_id",DbText(), false);
 	Column insertion_code("insertion_code",DbText(), false);
 	Column pdb_residue_number("pdb_residue_number",DbInteger(), false);
-	
+
 	utility::vector1<std::string> fkey_reference_cols;
 	fkey_reference_cols.push_back("struct_id");
 	fkey_reference_cols.push_back("resNum");
-	
+
 	Schema residue_pdb_identification("residue_pdb_identification", PrimaryKey(pkey_cols));
 	residue_pdb_identification.add_column(struct_id);
 	residue_pdb_identification.add_column(residue_number);
 	residue_pdb_identification.add_column(chain_id);
 	residue_pdb_identification.add_column(insertion_code);
 	residue_pdb_identification.add_column(pdb_residue_number);
-	
+
 	residue_pdb_identification.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true));
-	
-	residue_pdb_identification.write(db_session);	
-	
-	
+
+	residue_pdb_identification.write(db_session);
+
+
 	//******residue_pdb_confidence******//
 	Column max_temperature("max_temperature",DbReal(), false);
 	Column max_bb_temperature("max_bb_temperature",DbReal(), false);
@@ -122,11 +122,11 @@ PdbDataFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session)
 	Column min_occupancy("min_occupancy",DbReal(), false);
 	Column min_bb_occupancy("min_bb_occupancy",DbReal(), false);
 	Column min_sc_occupancy("min_sc_occupancy",DbReal(), false);
-	
+
 	utility::vector1<Column> pdb_ident_pkeys;
 	pdb_ident_pkeys.push_back(struct_id);
 	pdb_ident_pkeys.push_back(residue_number);
-	
+
 	Schema residue_pdb_confidence("residue_pdb_confidence", PrimaryKey(pkey_cols));
 	residue_pdb_confidence.add_column(struct_id);
 	residue_pdb_confidence.add_column(residue_number);
@@ -138,9 +138,9 @@ PdbDataFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session)
 	residue_pdb_confidence.add_column(min_sc_occupancy);
 
 	residue_pdb_confidence.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true));
-	
+
 	residue_pdb_confidence.write(db_session);
-	
+
 //	string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
 //	if(db_mode == "sqlite3")
 //	{
@@ -242,7 +242,7 @@ void PdbDataFeatures::load_into_pose(
 	load_residue_pdb_confidence(db_session, struct_id, pose);
 }
 
-    
+
 void PdbDataFeatures::load_residue_pdb_identification(
 	sessionOP db_session,
 	boost::uuids::uuid struct_id,
@@ -255,7 +255,7 @@ void PdbDataFeatures::load_residue_pdb_identification(
 	vector1<char> insertion_codes;
 	string statement_string =
 		"SELECT\n"
-        "	r_id.struct_id,\n"
+				"	r_id.struct_id,\n"
 		"	r_id.residue_number,\n"
 		"	r_id.chain_id,\n"
 		"	r_id.insertion_code,\n"
@@ -264,26 +264,26 @@ void PdbDataFeatures::load_residue_pdb_identification(
 		"	residue_pdb_identification AS r_id\n"
 		"WHERE\n"
 		"	r_id.struct_id=?;";
-    
+
 	statement stmt(safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,struct_id);
 	result res(safely_read_from_database(stmt));
-    
+
 	while(res.next()) {
-        boost::uuids::uuid temp;
+				boost::uuids::uuid temp;
 		Size residue_number;
 		//cppdb doesn't do char's
 		string chain_id;
 		string insertion_code;
 		int pdb_residue_number;
-        
+
 		res >> temp >> residue_number >> chain_id >> insertion_code >> pdb_residue_number;
 
 		pdb_chains.push_back(chain_id[0]);
 		insertion_codes.push_back(insertion_code[0]);
-        pdb_numbers.push_back(pdb_residue_number);
+				pdb_numbers.push_back(pdb_residue_number);
 	}
-    
+
 	if(!pose.pdb_info()){
 		pose.pdb_info(new PDBInfo(pose.total_residue()));
 	}
@@ -299,7 +299,7 @@ void PdbDataFeatures::insert_residue_pdb_identification_rows(
 	Pose const & pose)
 {
 	Size res_num(pose.n_residue());
-	std::string statement_string = "INSERT INTO residue_pdb_identification VALUES (?,?,?,?,?);";
+	std::string statement_string = "INSERT INTO residue_pdb_identification (struct_id, residue_number, chain_id, insertion_code, pdb_residue_number) VALUES (?,?,?,?,?);";
 	statement stmt(safely_prepare_statement(statement_string,db_session));
 	for(Size index =1 ; index <= res_num; ++index)
 	{
@@ -393,7 +393,7 @@ void PdbDataFeatures::insert_residue_pdb_confidence_rows(
 	PDBInfoCOP pdb_info(pose.pdb_info());
 	if(!pdb_info) return;
 
-	std::string statement_string = "INSERT INTO residue_pdb_confidence VALUES (?,?,?,?,?,?,?,?);";
+	std::string statement_string = "INSERT INTO residue_pdb_confidence (struct_id, residue_number, max_temperature, max_bb_temperature, max_sc_temperature, min_occupancy, min_bb_occupancy, min_sc_occupancy) VALUES (?,?,?,?,?,?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	for(Size ri=1; ri <= pose.n_residue(); ++ri) {
 		Residue const & r(pose.residue(ri));
@@ -430,5 +430,3 @@ void PdbDataFeatures::insert_residue_pdb_confidence_rows(
 
 }
 }
-
-

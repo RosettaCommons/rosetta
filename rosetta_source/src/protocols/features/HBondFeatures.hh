@@ -9,7 +9,7 @@
 
 /// @file   protocols/features/HBondFeatures.hh
 /// @brief  report HBond geometry and scores to features Statistics Scientific Benchmark
-/// @author Matthew O'Meara
+/// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 #ifndef INCLUDED_protocols_features_HBondFeatures_hh
 #define INCLUDED_protocols_features_HBondFeatures_hh
@@ -67,10 +67,49 @@ public:
 	std::string
 	type_name() const;
 
-	///@brief return sql statements that setup the right tables
-	std::string
-	schema() const;
+	///@brief generate the table schemas and write them to the database
+	void
+	write_schema_to_db(
+		utility::sql_database::sessionOP db_session) const;
 
+private:
+	void
+	write_hbond_chem_types_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+	void
+	write_hbond_sites_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+	void
+	write_hbond_sites_pdb_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+	void
+	write_hbond_site_environment_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+	void
+	write_hbond_site_atoms_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+	void
+	write_hbonds_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+	void
+	write_hbond_lennard_jones_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+	void
+	write_hbond_geom_coords_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+	void
+	write_hbond_dehydrons_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+public:
 	///@brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>

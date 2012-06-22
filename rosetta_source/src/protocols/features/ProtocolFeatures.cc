@@ -73,7 +73,7 @@ string
 ProtocolFeatures::type_name() const { return "ProtocolFeatures"; }
 	
 void
-ProtocolFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{	
+ProtocolFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;
 
 	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
@@ -167,7 +167,7 @@ ProtocolFeatures::report_features(
 	cppdb::statement insert_statement;
 	if(protocol_id) {
 		TR << "Writing to protocols table with given protocol id: " << protocol_id << std::endl;
-		std::string insert_string("INSERT INTO protocols VALUES (?,?,?,?,?,?);");
+		std::string insert_string("INSERT INTO protocols (protocol_id, specified_options, command_line, svn_url, svn_version, script) VALUES (?,?,?,?,?,?);");
 		insert_statement = basic::database::safely_prepare_statement(insert_string,db_session);
 		insert_statement.bind(1,protocol_id);
 		insert_statement.bind(2,command_line);

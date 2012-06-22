@@ -75,50 +75,25 @@ string
 PoseCommentsFeatures::type_name() const { return "PoseCommentsFeatures"; }
 
 void
-PoseCommentsFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{	
+PoseCommentsFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;
-	
+
 	//******pose_comments******//
 	Column struct_id("struct_id",DbUUID(), false);
 	Column comment_key("comment_key",DbTextKey(), false);
 	Column value("value",DbText(), false);
-	
+
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(struct_id);
 	pkey_cols.push_back(comment_key);
-	
+
 	Schema pose_comments("pose_comments", PrimaryKey(pkey_cols));
 	pose_comments.add_column(struct_id);
 	pose_comments.add_column(comment_key);
 	pose_comments.add_column(value);
-	
+
 	pose_comments.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true));
 	pose_comments.write(db_session);
-	
-//	if(db_mode == "sqlite3")
-//	{
-//		return
-//			"CREATE TABLE IF NOT EXISTS pose_comments (\n"
-//			"	struct_id BLOB,\n"
-//			"	comment_key TEXT,\n"
-//			"	value TEXT,\n"
-//			"	FOREIGN KEY (struct_id)\n"
-//			"		REFERENCES structures (struct_id)\n"
-//			"		DEFERRABLE INITIALLY DEFERRED,\n"
-//			"	PRIMARY KEY(struct_id, comment_key));";
-//	}else if(db_mode == "mysql")
-//	{
-//		return
-//			"CREATE TABLE IF NOT EXISTS pose_comments (\n"
-//			"	struct_id BINARY(16),\n"
-//			"	comment_key VARCHAR(255),\n"
-//			"	value TEXT,\n"
-//			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"
-//			"	PRIMARY KEY(struct_id, comment_key));";
-//	}else
-//	{
-//		return "";
-//	}
 
 }
 
@@ -140,7 +115,7 @@ PoseCommentsFeatures::report_features(
 
 	typedef map< string, string >::value_type kv_pair;
 	//cppdb::transaction transact_guard(*db_session);
-	std::string statement_string = "INSERT INTO pose_comments VALUES (?,?,?);";
+	std::string statement_string = "INSERT INTO pose_comments (struct_id, comment_key, value) VALUES (?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	foreach(kv_pair const & kv, get_all_comments(pose)){
 		stmt.bind(1,struct_id);

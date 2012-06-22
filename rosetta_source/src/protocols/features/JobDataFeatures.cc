@@ -70,13 +70,13 @@ JobDataFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session)
 	job_string_data.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
 
 	job_string_data.write(db_session);
-	
+
 	Schema job_string_string_data("job_string_string_data",primary_key);
 	job_string_string_data.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
 	job_string_string_data.add_column(Column("data_value",DbText()));
 
 	job_string_string_data.write(db_session);
-	
+
 	Schema job_string_real_data("job_string_real_data",primary_key);
 	job_string_real_data.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
 	job_string_real_data.add_column(Column("data_value",DbReal()));
@@ -186,7 +186,7 @@ JobDataFeatures::load_string_data(
 void JobDataFeatures::insert_string_string_rows(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
 {
 	protocols::jd2::Job::StringStringPairs::const_iterator it(job->output_string_string_pairs_begin());
-	std::string statement_string = "INSERT INTO job_string_string_data (struct_id,data_key,data_value)  VALUES (?,?,?);";
+	std::string statement_string = "INSERT INTO job_string_string_data (struct_id, data_key, data_value) VALUES (?,?,?);";
 	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
 	for(; it != job->output_string_string_pairs_end();++it)
@@ -228,7 +228,7 @@ JobDataFeatures::load_string_string_data(
 void JobDataFeatures::insert_string_real_rows(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
 {
 	protocols::jd2::Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin());
-	std::string statement_string = "INSERT INTO job_string_real_data (struct_id,data_key,data_value) VALUES (?,?,?);";
+	std::string statement_string = "INSERT INTO job_string_real_data (struct_id, data_key, data_value) VALUES (?,?,?);";
 	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
 
@@ -273,4 +273,3 @@ JobDataFeatures::load_string_real_data(
 
 }
 }
-

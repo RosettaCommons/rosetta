@@ -66,21 +66,21 @@ BundlePairRmsdWorkUnit::run(){
 	boost::uuids::uuid struct_id_2 = gen(row_map_["struct_id_2"]);
 
 	core::Size pair_id_1 = string2int(row_map_["pair_id_1"]);
-	
+
 	bool pair_1_helix_1_flipped = string2int(row_map_["pair_1_helix_1_flipped"]);
 	core::Size pair_1_helix_1_begin = string2int(row_map_["pair_1_helix_1_begin"]);
 	core::Size pair_1_helix_1_end = string2int(row_map_["pair_1_helix_1_end"]);
-	
+
 	bool pair_1_helix_2_flipped = string2int(row_map_["pair_1_helix_2_flipped"]);
 	core::Size pair_1_helix_2_begin = string2int(row_map_["pair_1_helix_2_begin"]);
 	core::Size pair_1_helix_2_end = string2int(row_map_["pair_1_helix_2_end"]);
 
 	core::Size pair_id_2 = string2int(row_map_["pair_id_2"]);
-	
+
 	bool pair_2_helix_1_flipped = string2int(row_map_["pair_2_helix_1_flipped"]);
 	core::Size pair_2_helix_1_begin = string2int(row_map_["pair_2_helix_1_begin"]);
 	core::Size pair_2_helix_1_end = string2int(row_map_["pair_2_helix_1_end"]);
-	
+
 	bool pair_2_helix_2_flipped = string2int(row_map_["pair_2_helix_2_flipped"]);
 	core::Size pair_2_helix_2_begin = string2int(row_map_["pair_2_helix_2_begin"]);
 	core::Size pair_2_helix_2_end = string2int(row_map_["pair_2_helix_2_end"]);
@@ -100,12 +100,12 @@ BundlePairRmsdWorkUnit::run(){
 	"ORDER BY seqpos ASC;";
 
 	statement select_coords_stmt(basic::database::safely_prepare_statement(helix_coords_select,db_session_));
-	
+
 	select_coords_stmt.bind(1,struct_id_1);
 	select_coords_stmt.bind(2, pair_1_helix_1_begin);
 	select_coords_stmt.bind(3, pair_1_helix_1_end);
 	result pair_1_helix_1_res(basic::database::safely_read_from_database(select_coords_stmt));
-	
+
 	select_coords_stmt.bind(1,struct_id_2);
 	select_coords_stmt.bind(2, pair_2_helix_1_begin);
 	select_coords_stmt.bind(3, pair_2_helix_1_end);
@@ -116,11 +116,11 @@ BundlePairRmsdWorkUnit::run(){
 	utility::vector1< numeric::xyzVector<core::Real> > pair_2_helix_1_coords;
 	while(pair_1_helix_1_res.next()){
 		pair_2_helix_1_res.next();
-	
+
 		core::Real x1,y1,z1,x2,y2,z2;
 		pair_1_helix_1_res >> x1 >> y1 >> z1;
 		pair_2_helix_1_res >> x2 >> y2 >> z2;
-		
+
 //		TR << "Coords for pos " << counter << " of pair 1: " << x1 << " " << y1 << " " << z1 << std::endl;
 //		TR << "Coords for pos " << counter << " of pair 2: " << x2 << " " << y2 << " " << z2 << std::endl;
 		pair_1_helix_1_coords.push_back(numeric::xyzVector< core::Real >(x1,y1,z1));
@@ -129,27 +129,27 @@ BundlePairRmsdWorkUnit::run(){
 	}
 	if(pair_1_helix_1_flipped){reverse(pair_1_helix_1_coords.begin(), pair_1_helix_1_coords.end());}
 	if(pair_2_helix_1_flipped){reverse(pair_2_helix_1_coords.begin(), pair_2_helix_1_coords.end());}
-	
-	
+
+
 	select_coords_stmt.bind(1,struct_id_1);
 	select_coords_stmt.bind(2, pair_1_helix_2_begin);
 	select_coords_stmt.bind(3, pair_1_helix_2_end);
 	result pair_1_helix_2_res(basic::database::safely_read_from_database(select_coords_stmt));
-	
+
 	select_coords_stmt.bind(1,struct_id_2);
 	select_coords_stmt.bind(2, pair_2_helix_2_begin);
 	select_coords_stmt.bind(3, pair_2_helix_2_end);
 	result pair_2_helix_2_res(basic::database::safely_read_from_database(select_coords_stmt));
-	
+
 	utility::vector1< numeric::xyzVector<core::Real> > pair_1_helix_2_coords;
 	utility::vector1< numeric::xyzVector<core::Real> > pair_2_helix_2_coords;
 	while(pair_1_helix_2_res.next()){
 		pair_2_helix_2_res.next();
-		
+
 		core::Real x1,y1,z1,x2,y2,z2;
 		pair_1_helix_2_res >> x1 >> y1 >> z1;
 		pair_2_helix_2_res >> x2 >> y2 >> z2;
-		
+
 //		TR << "Coords for pos " << counter << " of pair 1: " << x1 << " " << y1 << " " << z1 << std::endl;
 //		TR << "Coords for pos " << counter << " of pair 2: " << x2 << " " << y2 << " " << z2 << std::endl;
 		pair_1_helix_2_coords.push_back(numeric::xyzVector< core::Real >(x1,y1,z1));
@@ -158,7 +158,7 @@ BundlePairRmsdWorkUnit::run(){
 	}
 	if(pair_1_helix_2_flipped){reverse(pair_1_helix_2_coords.begin(), pair_1_helix_2_coords.end());}
 	if(pair_2_helix_2_flipped){reverse(pair_2_helix_2_coords.begin(), pair_2_helix_2_coords.end());}
-	
+
 
 	utility::vector1< numeric::xyzVector<core::Real> > pair_1_coords;
 	pair_1_coords.insert( pair_1_coords.end(), pair_1_helix_1_coords.begin(), pair_1_helix_1_coords.end() );
@@ -169,14 +169,13 @@ BundlePairRmsdWorkUnit::run(){
 	pair_2_coords.insert( pair_2_coords.end(), pair_2_helix_2_coords.begin(), pair_2_helix_2_coords.end() );
 
 	core::Real bundle_pair_rmsd = numeric::model_quality::calc_rms(pair_1_coords,pair_2_coords);
-	
+
 	std::string comparison_insert = "INSERT INTO pair_comparisons(pair_id_1, pair_id_2,rmsd) VALUES(?,?,?);";
 	cppdb::statement comparison_insert_stmt(basic::database::safely_prepare_statement(comparison_insert,db_session_));
 	comparison_insert_stmt.bind(1, pair_id_1);
 	comparison_insert_stmt.bind(2, pair_id_2);
 	comparison_insert_stmt.bind(3, bundle_pair_rmsd);
-	basic::database::safely_write_to_database(comparison_insert_stmt);	
+	basic::database::safely_write_to_database(comparison_insert_stmt);
 
 	TR << "Bundle pair " << pair_id_1 << " and pair " << pair_id_2 << " RMSD: " << bundle_pair_rmsd << std::endl;
 }
-

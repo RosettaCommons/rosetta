@@ -47,6 +47,11 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/types.hh>
 #include <protocols/moves/DataMap.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
+
 
 // Utility Headers
 #include <numeric/xyzVector.hh>
@@ -61,6 +66,7 @@
 #include <cppdb/frontend.h>
 
 // Boost Headers
+#include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
@@ -124,6 +130,7 @@ using utility::tag::TagPtr;
 using cppdb::statement;
 using utility::vector1;
 using basic::Tracer;
+using basic::database::insert_or_ignore;
 
 static Tracer TR("protocols.features.HBondFeatures");
 
@@ -150,174 +157,430 @@ HBondFeatures::~HBondFeatures() {}
 string
 HBondFeatures::type_name() const { return "HBondFeatures"; }
 
-string
-HBondFeatures::schema() const {
-	return
-		"CREATE TABLE IF NOT EXISTS hbond_chem_types(\n"
-		"	chem_type TEXT,\n"
-		"	label TEXT,\n"
-		"	PRIMARY KEY(chem_type));\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbacc_NONE', 'aNONE');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbacc_PBA', 'aPBA: bb');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbacc_CXA', 'aCXA: n,q');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbacc_CXL', 'aCXL: d,e');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbacc_IMD', 'aIMD: h');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbacc_IME', 'aIME: h');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbacc_AHX', 'aAHX: t');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbacc_HXL', 'aHXL: s,t');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbacc_PCA_DNA', 'aPCA_DNA: O{1,2}P');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbacc_PES_DNA', 'aPES_DNA: O{3,5}*');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbacc_RRI_DNA', 'aRRI_DNA: O4*');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbacc_PCA_RNA', 'aPCA_RNA: O{1,2}P');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbacc_PES_RNA', 'aPES_RNA: O{3,5}*');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbacc_RRI_RNA', 'aRRI_RNA: O4*');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbacc_H2O', 'aH2O');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbacc_GENERIC_SP2BB', 'aGEN: sp2 bb');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbacc_GENERIC_SP2SC', 'aGEN: sp2 sc');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbacc_GENERIC_SP3BB', 'aGEN: sp3 bb');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbacc_GENERIC_SP3SC', 'aGEN: sp3 sc');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbacc_GENERIC_RINGBB', 'aGEN: ring bb');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbacc_GENERIC_RINGSC', 'aGEN: ring sc');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbdon_NONE', 'dNONE');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbdon_PBA', 'dPBA: bb');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbdon_CXA', 'dCXA: n,q');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbdon_IMD', 'dIMD: h');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbdon_IME', 'dIME: h');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbdon_IND', 'dIND: w');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbdon_AMO', 'dAMO: k');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbdon_GDE', 'dGDE: r');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbdon_GDH', 'dGDH: r');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbdon_AHX', 'dAHX: s,t');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbdon_HXL', 'dHXL: y');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbdon_H2O', 'dH2O');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbdon_GENERIC_BB', 'dGEN: bb');\n"
-		"	INSERT OR IGNORE INTO hbond_chem_types VALUES('hbdon_GENERIC_SC', 'dGEN: sc');\n"
-		"\n"
-		"CREATE TABLE IF NOT EXISTS hbond_sites (\n"
-		"	struct_id BLOB,\n"
-		"	site_id INTEGER,\n"
-		"	resNum INTEGER,\n"
-		"	atmNum INTEGER,\n"
-		"	is_donor BOOLEAN,\n"
-		"	chain INTEGER,\n"
-		"	resType TEXT,\n"
-		"	atmType TEXT,\n"
-		"	HBChemType TEXT,\n"
-		"	FOREIGN KEY(struct_id, resNum)\n"
-		"		REFERENCES residues(struct_id, resNum)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	FOREIGN KEY(HBChemType)\n"
-		"		REFERENCES hbond_chem_types(chem_type)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	PRIMARY KEY(struct_id, site_id));\n"
-		"\n"
-		"CREATE TABLE IF NOT EXISTS hbond_sites_pdb (\n"
-		"	struct_id BLOB,\n"
-		"	site_id INTEGER,\n"
-		"	chain TEXT,\n"
-		"	resNum INTEGER,\n"
-		"	iCode TEXT,\n"
-		"	heavy_atom_temperature REAL,\n"
-		"	heavy_atom_occupancy REAL,\n"
-		"	FOREIGN KEY(struct_id, site_id)\n"
-		"		REFERENCES hbond_sites(struct_id, site_id)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	PRIMARY KEY(struct_id, site_id));\n"
-		"\n"
-		"CREATE TABLE IF NOT EXISTS hbond_site_environment (\n"
-		"	struct_id BLOB,\n"
-		"	site_id INTEGER,\n"
-		"	sasa_r100 REAL,\n"
-		"	sasa_r140 REAL,\n"
-		"	sasa_r200 REAL,\n"
-		"	hbond_energy REAL,\n"
-		"	num_hbonds INTEGER,\n"
-		"	FOREIGN KEY(struct_id, site_id)\n"
-		"		REFERENCES hbond_sites(struct_id, site_id)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	PRIMARY KEY(struct_id, site_id));\n"
-		"\n"
-		"CREATE TABLE IF NOT EXISTS hbond_site_atoms (\n"
-		"	struct_id BLOB,\n"
-		"	site_id INTEGER,\n"
-		"	atm_x REAL,\n"
-		"	atm_y REAL,\n"
-		"	atm_z REAL,\n"
-		"	base_x REAL,\n"
-		"	base_y REAL,\n"
-		"	base_z REAL,\n"
-		"	bbase_x REAL,\n"
-		"	bbase_y REAL,\n"
-		"	bbase_z REAL,\n"
-		"	base2_x REAL,\n"
-		"	base2_y REAL,\n"
-		"	base2_z REAL,\n"
-		"	FOREIGN KEY(struct_id, site_id)\n"
-		"		REFERENCES hbond_sites(struct_id, site_id)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	PRIMARY KEY(struct_id, site_id));\n"
+void
+HBondFeatures::write_schema_to_db(
+	sessionOP db_session
+) const {
+	write_hbond_chem_types_table_schema(db_session);
+	write_hbond_sites_table_schema(db_session);
+	write_hbond_sites_pdb_table_schema(db_session);
+	write_hbond_site_environment_table_schema(db_session);
+	write_hbond_site_atoms_table_schema(db_session);
+	write_hbonds_table_schema(db_session);
+	write_hbond_lennard_jones_table_schema(db_session);
+	write_hbond_geom_coords_table_schema(db_session);
+	write_hbond_dehydrons_table_schema(db_session);
+}
 
-		"\n"
-		"CREATE TABLE IF NOT EXISTS hbonds (\n"
-		"	struct_id BLOB,\n"
-		"	hbond_id INTEGER,\n"
-		"	don_id INTEGER,\n"
-		"	acc_id INTEGER,\n"
-		"	HBEvalType INTEGER,\n"
-		"	energy REAL,\n"
-		"	envWeight REAL,\n"
-		"	score_weight REAL,\n"
-		"	donRank INTEGER,\n"
-		"	accRank INTEGER,\n"
-		"	FOREIGN KEY(struct_id, don_id)\n"
-		"		REFERENCES hbond_sites(struct_id, site_id)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	FOREIGN KEY(struct_id, acc_id)\n"
-		"		REFERENCES hbond_sites(struct_id, site_id)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	PRIMARY KEY(struct_id, hbond_id));\n"
-		"\n"
-		"CREATE TABLE IF NOT EXISTS hbond_lennard_jones (\n"
-		"	struct_id BLOB,\n"
-		"	hbond_id INTEGER,\n"
-		"	don_acc_atrE REAL,\n"
-		"	don_acc_repE REAL,\n"
-		"	don_acc_solv REAL,\n"
-		"	don_acc_base_atrE REAL,\n"
-		"	don_acc_base_repE REAL,\n"
-		"	don_acc_base_solv REAL,\n"
-		"	h_acc_atrE REAL,\n"
-		"	h_acc_repE REAL,\n"
-		"	h_acc_solv REAL,\n"
-		"	h_acc_base_atrE REAL,\n"
-		"	h_acc_base_repE REAL,\n"
-		"	h_acc_base_solv REAL,\n"
-		"	FOREIGN KEY(struct_id, hbond_id)\n"
-		"		REFERENCES hbonds(struct_id, hbond_id)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	PRIMARY KEY(struct_id, hbond_id));\n"
-		"\n"
-		"CREATE TABLE IF NOT EXISTS hbond_geom_coords (\n"
-		"	struct_id BLOB,\n"
-		"	hbond_id INTEGER,\n"
-		"	AHdist REAL,\n"
-		"	cosBAH REAL,\n"
-		"	cosAHD REAL,\n"
-		"	chi REAL,\n"
-		"	FOREIGN KEY (struct_id, hbond_id)\n"
-		"		REFERENCES hbonds (struct_id, hbond_id)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	PRIMARY KEY(struct_id, hbond_id));\n"
-		"\n"
-		"CREATE TABLE IF NOT EXISTS hbond_dehydrons (\n"
-		"	struct_id BLOB,\n"
-		"	hbond_id INTEGER,\n"
-		"	wrapping_count INTEEGER,\n"
-		"	FOREIGN KEY(struct_id, hbond_id)\n"
-		"		REFERENCES hbonds (struct_id, hbond_id)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	PRIMARY KEY(struct_id, hbond_id));\n";
+void
+HBondFeatures::write_hbond_chem_types_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+	using boost::assign::list_of;
 
+	Column chem_type("chem_type", DbText());
+	Column label("label", DbText());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(chem_type);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Schema table("hbond_chem_types", primary_key);
+	table.add_column(label);
+	table.write(db_session);
+
+	//insert static values
+	string const t("hbond_chem_types");
+	std::vector< string > c;
+	c.push_back("chem_type");
+	c.push_back("label");
+ 	insert_or_ignore(t, c, list_of("'hbacc_NONE'")("'aNONE'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbacc_PBA'")("'aPBA: bb'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbacc_CXA'")("'aCXA: n,q'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbacc_CXL'")("'aCXL: d,e'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbacc_IMD'")("'aIMD: h'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbacc_IME'")("'aIME: h'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbacc_AHX'")("'aAHX: t'"), db_session);
+ 	insert_or_ignore(t, c, list_of("'hbacc_HXL'")("'aHXL: s,t'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbacc_PCA_DNA'")("'aPCA_DNA: O{1,2}P'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbacc_PES_DNA'")("'aPES_DNA: O{3,5}*'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbacc_RRI_DNA'")("'aRRI_DNA: O4*'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbacc_PCA_RNA'")("'aPCA_RNA: O{1,2}P'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbacc_PES_RNA'")("'aPES_RNA: O{3,5}*'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbacc_RRI_RNA'")("'aRRI_RNA: O4*'"), db_session);
+ 	insert_or_ignore(t, c, list_of("'hbacc_H2O'")("'aH2O'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbacc_GENERIC_SP2BB'")("'aGEN: sp2 bb'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbacc_GENERIC_SP2SC'")("'aGEN: sp2 sc'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbacc_GENERIC_SP3BB'")("'aGEN: sp3 bb'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbacc_GENERIC_SP3SC'")("'aGEN: sp3 sc'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbacc_GENERIC_RINGBB'")("'aGEN: ring bb'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbacc_GENERIC_RINGSC'")("'aGEN: ring sc'"), db_session);
+
+	insert_or_ignore(t, c, list_of("'hbdon_NONE'")("'dNONE'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbdon_PBA'")("'dPBA: bb'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbdon_CXA'")("'dCXA: n,q'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbdon_IMD'")("'dIMD: h'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbdon_IME'")("'dIME: h'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbdon_IND'")("'dIND: w'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbdon_AMO'")("'dAMO: k'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbdon_GDE'")("'dGDE: r'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbdon_GDH'")("'dGDH: r'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbdon_AHX'")("'dAHX: s,t'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbdon_HXL'")("'dHXL: y'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbdon_H2O'")("'dH2O'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbdon_GENERIC_BB'")("'dGEN: bb'"), db_session);
+	insert_or_ignore(t, c, list_of("'hbdon_GENERIC_SC'")("'dGEN: sc'"), db_session);
+}
+
+void
+HBondFeatures::write_hbond_sites_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column site_id("site_id", DbInteger());
+	Column resNum("resNum", DbInteger());
+	Column atmNum("atmNum", DbInteger());
+	Column is_donor("is_donor", DbInteger());
+	Column chain("chain", DbInteger());
+	Column resType("resType", DbText());
+	Column atmType("atmType", DbText());
+	Column HBChemType("HBChemType", DbText());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(site_id);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns1;
+	foreign_key_columns1.push_back(struct_id);
+	foreign_key_columns1.push_back(resNum);
+	vector1< std::string > reference_columns1;
+	reference_columns1.push_back("struct_id");
+	reference_columns1.push_back("resNum");
+	ForeignKey foreign_key1(foreign_key_columns1, "residues", reference_columns1, true);
+
+	Columns foreign_key_columns2;
+	foreign_key_columns2.push_back(HBChemType);
+	vector1< std::string > reference_columns2;
+	reference_columns2.push_back("chem_type");
+	ForeignKey foreign_key2(foreign_key_columns2, "hbond_chem_types", reference_columns2, true);
+
+
+	Schema table("hbond_sites", primary_key);
+	table.add_foreign_key(foreign_key1);
+	table.add_foreign_key(foreign_key2);
+
+	table.add_column(atmNum);
+	table.add_column(is_donor);
+	table.add_column(chain);
+	table.add_column(resType);
+	table.add_column(atmType);
+
+
+	table.write(db_session);
+}
+
+void
+HBondFeatures::write_hbond_sites_pdb_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column site_id("site_id", DbInteger());
+	Column chain("chain", DbText(1));
+	Column resNum("resNum", DbInteger());
+	Column iCode("iCode", DbText(1));
+	Column heavy_atom_temperature("heavy_atom_temperature", DbReal());
+	Column heavy_atom_occupancy("heavy_atom_occupancy", DbReal());
+
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(site_id);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns;
+	foreign_key_columns.push_back(struct_id);
+	foreign_key_columns.push_back(site_id);
+	vector1< std::string > reference_columns;
+	reference_columns.push_back("struct_id");
+	reference_columns.push_back("site_id");
+	ForeignKey foreign_key(foreign_key_columns, "hbond_sites", reference_columns, true);
+
+	Schema table("hbond_sites_pdb", primary_key);
+	table.add_foreign_key(foreign_key);
+	table.add_column(chain);
+	table.add_column(resNum);
+	table.add_column(iCode);
+	table.add_column(heavy_atom_temperature);
+	table.add_column(heavy_atom_occupancy);
+
+	table.write(db_session);
+}
+
+void
+HBondFeatures::write_hbond_site_environment_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column site_id("site_id", DbInteger());
+	Column sasa_r100("sasa_r100", DbReal());
+	Column sasa_r140("sasa_r140", DbReal());
+	Column sasa_r200("sasa_r200", DbReal());
+	Column hbond_energy("hbond_energy", DbReal());
+	Column num_hbonds("num_hbonds", DbInteger());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(site_id);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns;
+	foreign_key_columns.push_back(struct_id);
+	foreign_key_columns.push_back(site_id);
+	vector1< std::string > reference_columns;
+	reference_columns.push_back("struct_id");
+	reference_columns.push_back("site_id");
+	ForeignKey foreign_key(foreign_key_columns, "hbond_sites", reference_columns, true);
+
+	Schema table("hbond_site_environment", primary_key);
+	table.add_foreign_key(foreign_key);
+	table.add_column(sasa_r100);
+	table.add_column(sasa_r140);
+	table.add_column(sasa_r200);
+	table.add_column(hbond_energy);
+	table.add_column(num_hbonds);
+
+	table.write(db_session);
+}
+
+void
+HBondFeatures::write_hbond_site_atoms_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column site_id("site_id", DbInteger());
+	Column atm_x("atm_x", DbReal());
+	Column atm_y("atm_y", DbReal());
+	Column atm_z("atm_z", DbReal());
+	Column base_x("base_x", DbReal());
+	Column base_y("base_y", DbReal());
+	Column base_z("base_z", DbReal());
+	Column bbase_x("bbase_x", DbReal());
+	Column bbase_y("bbase_y", DbReal());
+	Column bbase_z("bbase_z", DbReal());
+	Column base2_x("base2_x", DbReal());
+	Column base2_y("base2_y", DbReal());
+	Column base2_z("base2_z", DbReal());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(site_id);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns;
+	foreign_key_columns.push_back(struct_id);
+	foreign_key_columns.push_back(site_id);
+	vector1< std::string > reference_columns;
+	reference_columns.push_back("struct_id");
+	reference_columns.push_back("site_id");
+	ForeignKey foreign_key(foreign_key_columns, "hbond_sites", reference_columns, true);
+
+	Schema table("hbond_site_atoms", primary_key);
+	table.add_foreign_key(foreign_key);
+	table.add_column(atm_x);
+	table.add_column(atm_y);
+	table.add_column(atm_z);
+	table.add_column(base_x);
+	table.add_column(base_y);
+	table.add_column(base_z);
+	table.add_column(bbase_x);
+	table.add_column(bbase_y);
+	table.add_column(bbase_z);
+	table.add_column(base2_x);
+	table.add_column(base2_y);
+	table.add_column(base2_z);
+
+	table.write(db_session);
+}
+
+void
+HBondFeatures::write_hbonds_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column hbond_id("hbond_id", DbInteger());
+	Column don_id("don_id", DbInteger());
+	Column acc_id("acc_id", DbInteger());
+	Column HBEvalType("HBEvalType", DbInteger());
+	Column energy("energy", DbReal());
+	Column envWeight("envWeight", DbReal());
+	Column score_weight("score_weight", DbReal());
+	Column donRank("donRank", DbInteger());
+	Column accRank("accRank", DbInteger());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(hbond_id);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns1;
+	foreign_key_columns1.push_back(struct_id);
+	foreign_key_columns1.push_back(don_id);
+	vector1< std::string > reference_columns1;
+	reference_columns1.push_back("struct_id");
+	reference_columns1.push_back("site_id");
+	ForeignKey foreign_key1(foreign_key_columns1, "hbond_sites", reference_columns1, true);
+
+	Columns foreign_key_columns2;
+	foreign_key_columns2.push_back(struct_id);
+	foreign_key_columns2.push_back(acc_id);
+	vector1< std::string > reference_columns2;
+	reference_columns2.push_back("struct_id");
+	reference_columns2.push_back("site_id");
+	ForeignKey foreign_key2(foreign_key_columns2, "hbond_sites", reference_columns2, true);
+
+	Schema table("hbonds", primary_key);
+	table.add_foreign_key(foreign_key1);
+	table.add_foreign_key(foreign_key2);
+	table.add_column(don_id);
+	table.add_column(acc_id);
+	table.add_column(HBEvalType);
+	table.add_column(energy);
+	table.add_column(envWeight);
+	table.add_column(score_weight);
+	table.add_column(donRank);
+	table.add_column(accRank);
+
+	table.write(db_session);
+}
+
+void
+HBondFeatures::write_hbond_lennard_jones_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column hbond_id("hbond_id", DbInteger());
+	Column don_acc_atrE("don_acc_atrE", DbReal());
+	Column don_acc_repE("don_acc_repE", DbReal());
+	Column don_acc_solv("don_acc_solv", DbReal());
+	Column don_acc_base_atrE("don_acc_base_atrE", DbReal());
+	Column don_acc_base_repE("don_acc_base_repE", DbReal());
+	Column don_acc_base_solv("don_acc_base_solv", DbReal());
+	Column h_acc_atrE("h_acc_atrE", DbReal());
+	Column h_acc_repE("h_acc_repE", DbReal());
+	Column h_acc_solv("h_acc_solv", DbReal());
+	Column h_acc_base_atrE("h_acc_base_atrE", DbReal());
+	Column h_acc_base_repE("h_acc_base_repE", DbReal());
+	Column h_acc_base_solv("h_acc_base_solv", DbReal());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(hbond_id);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns;
+	foreign_key_columns.push_back(struct_id);
+	foreign_key_columns.push_back(hbond_id);
+	vector1< std::string > reference_columns;
+	reference_columns.push_back("struct_id");
+	reference_columns.push_back("hbond_id");
+	ForeignKey foreign_key(foreign_key_columns, "hbonds", reference_columns, true);
+
+	Schema table("hbond_lennard_jones", primary_key);
+	table.add_foreign_key(foreign_key);
+	table.add_column(don_acc_atrE);
+	table.add_column(don_acc_repE);
+	table.add_column(don_acc_solv);
+	table.add_column(don_acc_base_atrE);
+	table.add_column(don_acc_base_repE);
+	table.add_column(don_acc_base_solv);
+	table.add_column(h_acc_atrE);
+	table.add_column(h_acc_repE);
+	table.add_column(h_acc_solv);
+	table.add_column(h_acc_base_atrE);
+	table.add_column(h_acc_base_repE);
+	table.add_column(h_acc_base_solv);
+
+	table.write(db_session);
+}
+
+void
+HBondFeatures::write_hbond_geom_coords_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column hbond_id("hbond_id", DbInteger());
+	Column AHdist("AHdist", DbReal());
+	Column cosBAH("cosBAH", DbReal());
+	Column cosAHD("cosAHD", DbReal());
+	Column chi("chi", DbReal());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(hbond_id);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns;
+	foreign_key_columns.push_back(struct_id);
+	foreign_key_columns.push_back(hbond_id);
+	vector1< std::string > reference_columns;
+	reference_columns.push_back("struct_id");
+	reference_columns.push_back("hbond_id");
+	ForeignKey foreign_key(foreign_key_columns, "hbonds", reference_columns, true);
+
+	Schema table("hbond_geom_coords", primary_key);
+	table.add_foreign_key(foreign_key);
+	table.add_column(AHdist);
+	table.add_column(cosBAH);
+	table.add_column(cosAHD);
+	table.add_column(chi);
+
+	table.write(db_session);
+}
+
+void
+HBondFeatures::write_hbond_dehydrons_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column hbond_id("hbond_id", DbInteger());
+	Column wrapping_count("wrapping_count", DbInteger());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(hbond_id);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns;
+	foreign_key_columns.push_back(struct_id);
+	foreign_key_columns.push_back(hbond_id);
+	vector1< std::string > reference_columns;
+	reference_columns.push_back("struct_id");
+	reference_columns.push_back("hbond_id");
+	ForeignKey foreign_key(foreign_key_columns, "hbonds", reference_columns, true);
+
+	Schema table("hbond_dehydrons", primary_key);
+	table.add_foreign_key(foreign_key);
+	table.add_column(wrapping_count);
+
+	table.write(db_session);
 }
 
 utility::vector1<std::string>
@@ -326,7 +589,6 @@ HBondFeatures::features_reporter_dependencies() const {
 	dependencies.push_back("ResidueFeatures");
 	return dependencies;
 }
-
 
 void
 HBondFeatures::parse_my_tag(
@@ -514,17 +776,17 @@ HBondFeatures::insert_site_row(
 		atmType = pose.residue(resNum).atom_type(atmNum).name();
 	}
 
-	std::string statement_string = "INSERT INTO hbond_sites VALUES (?,?,?,?,?,?,?,?,?);";
+	std::string statement_string = "INSERT INTO hbond_sites (struct_id, site_id, resNum, HBChemType, atmNum, is_donor, chain, resType, atmType) VALUES (?,?,?,?,?,?,?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,struct_id);
 	stmt.bind(2,site_id);
 	stmt.bind(3,resNum);
-	stmt.bind(4,atmNum);
-	stmt.bind(5,is_donor);
-	stmt.bind(6,chain);
-	stmt.bind(7,resType);
-	stmt.bind(8,atmType);
-	stmt.bind(9,HBChemType);
+	stmt.bind(4,HBChemType);
+	stmt.bind(5,atmNum);
+	stmt.bind(6,is_donor);
+	stmt.bind(7,chain);
+	stmt.bind(8,resType);
+	stmt.bind(9,atmType);
 	basic::database::safely_write_to_database(stmt);
 
 }
@@ -549,7 +811,7 @@ HBondFeatures::insert_site_pdb_row(
 	Real const pdb_heavy_atom_occupancy(
 		pose.pdb_info()->occupancy(resNum, heavy_atmNum) );
 
-	std::string statement_string = "INSERT INTO hbond_sites_pdb VALUES (?,?,?,?,?,?,?);";
+	std::string statement_string = "INSERT INTO hbond_sites_pdb (struct_id, site_id, chain, resNum, iCode, heavy_atom_temperature, heavy_atom_occupancy) VALUES (?,?,?,?,?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,struct_id);
 	stmt.bind(2,site_id);
@@ -581,7 +843,7 @@ HBondFeatures::insert_site_environment_row(
 	Size const num_hbonds(site_partners(resNum,atmNum).size() );
 
 	statement stmt = (*db_session)
-		<< "INSERT INTO hbond_site_environment VALUES (?,?,?,?,?,?,?);"
+		<< "INSERT INTO hbond_site_environment (struct_id, site_id, sasa_r100, sasa_r140, sasa_r200, hbond_energy, num_hbonds) VALUES (?,?,?,?,?,?,?);"
 		<< struct_id
 		<< site_id
 		<< atom_sasa_s[AtomID(atmNum, resNum)]
@@ -625,7 +887,7 @@ HBondFeatures::insert_site_atoms_row(
 
 
 	statement stmt = (*db_session)
-		<< "INSERT INTO hbond_site_atoms VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
+		<< "INSERT INTO hbond_site_atoms (struct_id, site_id, atm_x, atm_y, atm_z, base_x, base_y, base_z, bbase_x, bbase_y, bbase_z, base2_x, base2_y, base2_z) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
 		<< struct_id
 		<< site_id
 		<< atm_x << atm_y << atm_z
@@ -698,7 +960,7 @@ HBondFeatures::insert_hbond_row(
 		hb_eval_type_weight(hbond.eval_type(), scfxn_->weights(), false /*intra_res*/ ));
 
 	statement stmt = (*db_session)
-		<< "INSERT INTO hbonds VALUES (?,?,?,?,?,?,?,?,?,?);"
+		<< "INSERT INTO hbonds (struct_id, hbond_id, don_id, acc_id, HBEvalType, energy, envWeight, score_weight, donRank, accRank) VALUES (?,?,?,?,?,?,?,?,?,?);"
 		<< struct_id
 		<< hbond_id
 		<< don_id
@@ -830,7 +1092,7 @@ HBondFeatures::insert_hbond_lennard_jones_row(
 
 
 	statement stmt = (*db_session)
-		<< "INSERT INTO hbond_lennard_jones VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
+		<< "INSERT INTO hbond_lennard_jones (struct_id, hbond_id, don_acc_atrE, don_acc_repE, don_acc_solv, don_acc_base_atrE, don_acc_base_repE, don_acc_base_solv, h_acc_atrE, h_acc_repE, h_acc_solv, h_acc_base_atrE, h_acc_base_repE, h_acc_base_solv) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
 		<< struct_id
 		<< hbond_id
 		<< don_acc_atrE
@@ -917,7 +1179,7 @@ HBondFeatures::insert_hbond_dehydron_row(
 	}
 
 	statement stmt = (*db_session)
-		<< "INSERT INTO hbond_dehydrons VALUES (?,?,?);"
+		<< "INSERT INTO hbond_dehydrons (struct_id, hbond_id, wrapping_count) VALUES (?,?,?);"
 		<< struct_id
 		<< hbond_id
 		<< wrapping_count;

@@ -21,12 +21,21 @@
 #include <basic/database/sql_utils.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
+
+
 
 #include <utility/vector1.hh>
 
 // Boost Headers
 #include <boost/foreach.hpp>
+#include <boost/assign/list_of.hpp>
 #define foreach BOOST_FOREACH
+
+#include <vector>
 
 namespace core {
 namespace chemical {
@@ -56,118 +65,161 @@ AtomTypeDatabaseIO::~AtomTypeDatabaseIO() {}
 //                      //
 //////////////////////////
 
-std::string AtomTypeDatabaseIO::schema() const
-{
-	// NOTE: To support building feature databases dentified by
-	// their names rather then assigning them a unique id.
 
-	string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
-	if(db_mode == "sqlite3") {
-		return
-			"CREATE TABLE IF NOT EXISTS atom_types (\n"
-			"	atom_type_set_name TEXT,\n"
-			"	name TEXT,\n"
-			"	element TEXT,\n"
-			"	lennard_jones_radius REAL,\n"
-			"	lennard_jones_well_depth REAL,\n"
-			"	lazaridis_karplus_lambda REAL,\n"
-			"	lazaridis_karplus_degrees_of_freedom REAL,\n"
-			"	lazaridis_karplus_volume REAL,\n"
-			"	PRIMARY KEY(atom_type_set_name, name));\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS atom_type_property_values (\n"
-			"	property TEXT,\n"
-			"	PRIMARY KEY(property));\n"
-			"\n"
-			"INSERT OR IGNORE INTO atom_type_property_values VALUES ('ACCEPTOR');\n"
-			"INSERT OR IGNORE INTO atom_type_property_values VALUES ('DONOR');\n"
-			"INSERT OR IGNORE INTO atom_type_property_values VALUES ('POLAR_HYDROGEN');\n"
-			"INSERT OR IGNORE INTO atom_type_property_values VALUES ('AROMATIC');\n"
-			"INSERT OR IGNORE INTO atom_type_property_values VALUES ('H2O');\n"
-			"INSERT OR IGNORE INTO atom_type_property_values VALUES ('ORBITALS');\n"
-			"INSERT OR IGNORE INTO atom_type_property_values VALUES ('VIRTUAL');\n"
-			"INSERT OR IGNORE INTO atom_type_property_values VALUES ('SP2_HYBRID');\n"
-			"INSERT OR IGNORE INTO atom_type_property_values VALUES ('SP3_HYBRID');\n"
-			"INSERT OR IGNORE INTO atom_type_property_values VALUES ('RING_HYBRID');\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS atom_type_properties (\n"
-			"	atom_type_set_name TEXT,\n"
-			"	name TEXT,\n"
-			"	property TEXT,\n"
-			"	FOREIGN KEY(atom_type_set_name, name)\n"
-			"		REFERENCES atom_types (atom_type_set_name, name)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	FOREIGN KEY(property)\n"
-			"		REFERENCES atom_type_property_values (property)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	PRIMARY KEY(atom_type_set_name, name, property));\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS atom_type_extra_parameters (\n"
-			"	atom_type_set_name TEXT,\n"
-			"	name TEXT,\n"
-			"	parameter TEXT,\n"
-			"	value REAL,\n"
-			"	FOREIGN KEY(atom_type_set_name, name)\n"
-			"		REFERENCES atom_types (atom_type_set_name, name)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	PRIMARY KEY(atom_type_set_name, name, parameter));";
-	} else if(db_mode == "mysql") {
-		return
-			"CREATE TABLE IF NOT EXISTS atom_types (\n"
-			"	atom_type_set_name VARCHAR(64),\n"
-			"	name VARCHAR(4),\n"
-			"	element VARCHAR(1),\n"
-			"	lennard_jones_radius REAL,\n"
-			"	lennard_jones_well_depth REAL,\n"
-			"	lazaridis_karplus_lambda REAL,\n"
-			"	lazaridis_karplus_degrees_of_freedom REAL,\n"
-			"	lazaridis_karplus_volume REAL,\n"
-			"	PRIMARY KEY(atom_type_set_name, name));\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS atom_type_proproperty_values (\n"
-			"	property VARCHAR(32),\n"
-			"	PRIMARY KEY(property));\n"
-			"\n"
-			"INSERT OR IGNORE INTO atom_type_property_values VALUES ( 'ACCEPTOR' );\n"
-			"INSERT OR IGNORE INTO atom_type_property_values VALUES ( 'DONOR' );\n"
-			"INSERT OR IGNORE INTO atom_type_property_values VALUES ( 'POLAR_HYDROGEN' );\n"
-			"INSERT OR IGNORE INTO atom_type_property_values VALUES ( 'AROMATIC' );\n"
-			"INSERT OR IGNORE INTO atom_type_property_values VALUES ( 'H2O' );\n"
-			"INSERT OR IGNORE INTO atom_type_property_values VALUES ( 'ORBITALS' );\n"
-			"INSERT OR IGNORE INTO atom_type_property_values VALUES ( 'VIRTUAL' );\n"
-			"INSERT OR IGNORE INTO atom_type_property_values VALUES ( 'SP2_HYBRID' );\n"
-			"INSERT OR IGNORE INTO atom_type_property_values VALUES ( 'SP3_HYBRID' );\n"
-			"INSERT OR IGNORE INTO atom_type_property_values VALUES ( 'RING_HYBRID' );\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS atom_type_properties (\n"
-			"	atom_type_set_name VARCHAR(64),\n"
-			"	name (4),\n"
-			"	property VARCHAR(32),\n"
-			"	FOREIGN KEY(atom_type_set_name, name)\n"
-			"		REFERENCES atom_types (atom_type_set_name, name),\n"
-			"	FOREIGN KEY(property)\n"
-			"		REFERENCES atom_type_property_values (property),\n"
-			"	PRIMARY KEY(atom_type_set_name, name, property))\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS atom_type_extra_parameters (\n"
-			"	atom_type_set_name VARCHAR(64),\n"
-			"	name (4),\n"
-			"	parameter TEXT,\n"
-			"	value REAL,\n"
-			"	FOREIGN KEY(atom_type_set_name, name)\n"
-			"		REFERENCES atom_types (atom_type_set_name, name)\n"
-			"	PRIMARY KEY(atom_type_set_name, name, parameter));";
-	} else {
-		return "";
-	}
+void
+AtomTypeDatabaseIO::write_schema_to_db(
+	sessionOP db_session
+) const {
+	write_atom_types_table_schema(db_session);
+	write_atom_type_property_values_table_schema(db_session);
+	write_atom_type_properties_table_schema(db_session);
+	write_atom_type_extra_parameters_table_schema(db_session);
+}
+
+void
+AtomTypeDatabaseIO::write_atom_types_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column atom_type_set_name("atom_type_set_name", DbText(64));
+	Column name("name", DbText(4));
+	Column element("element", DbText(1));
+	Column lennard_jones_radius("lennard_jones_radius", DbReal());
+	Column lennard_jones_well_depth("lennard_jones_well_depth", DbReal());
+	Column lazaridis_karplus_lambda("lazaridis_karplus_lambda", DbReal());
+	Column lazaridis_karplus_degrees_of_freedom("lazaridis_karplus_degrees_of_freedom", DbReal());
+	Column lazaridis_karplus_volume("lazaridis_karplus_volume", DbReal());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(atom_type_set_name);
+	primary_key_columns.push_back(name);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Schema table("atom_types", primary_key);
+	table.add_column(element);
+	table.add_column(lennard_jones_radius);
+	table.add_column(lennard_jones_well_depth);
+	table.add_column(lazaridis_karplus_lambda);
+	table.add_column(lazaridis_karplus_degrees_of_freedom);
+	table.add_column(lazaridis_karplus_volume);
+
+	table.write(db_session);
+}
+
+void
+AtomTypeDatabaseIO::write_atom_type_property_values_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+	using namespace basic::database;
+	using namespace boost::assign;
+
+	Column property("property", DbText(32));
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(property);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Schema table("atom_type_property_values", primary_key);
+
+	table.write(db_session);
+
+	// insert values
+	string const table_name("atom_type_property_values");
+	std::vector<string> column_names;
+	column_names.push_back("property");
+	insert_or_ignore(table_name, column_names, list_of("'ACCEPTOR'"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'ACCEPTOR'"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'DONOR'"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'POLAR_HYDROGEN'"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'AROMATIC'"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'H2O'"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'ORBITALS'"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'VIRTUAL'"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'SP2_HYBRID'"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'SP3_HYBRID'"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'RING_HYBRID'"), db_session);
 
 }
+
+void
+AtomTypeDatabaseIO::write_atom_type_properties_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column atom_type_set_name("atom_type_set_name", DbText(64));
+	Column name("name", DbText(4));
+	Column property("property", DbText(32));
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(atom_type_set_name);
+	primary_key_columns.push_back(name);
+	primary_key_columns.push_back(property);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns1;
+	foreign_key_columns1.push_back(atom_type_set_name);
+	foreign_key_columns1.push_back(name);
+	vector1< std::string > reference_columns1;
+	reference_columns1.push_back("atom_type_set_name");
+	reference_columns1.push_back("name");
+	ForeignKey foreign_key1(foreign_key_columns1, "atom_types", reference_columns1, true);
+
+	Columns foreign_key_columns2;
+	foreign_key_columns2.push_back(property);
+	vector1< std::string > reference_columns2;
+	reference_columns2.push_back("property");
+	ForeignKey foreign_key2(foreign_key_columns2, "atom_type_property_values", reference_columns2, true);
+
+
+	Schema table("atom_type_properties", primary_key);
+	table.add_foreign_key(foreign_key1);
+	table.add_foreign_key(foreign_key2);
+
+	table.write(db_session);
+}
+
+
+void
+AtomTypeDatabaseIO::write_atom_type_extra_parameters_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column atom_type_set_name("atom_type_set_name", DbText(64));
+	Column name("name", DbText(4));
+	Column parameter("parameter", DbText(32));
+	Column value("value", DbReal());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(atom_type_set_name);
+	primary_key_columns.push_back(name);
+	primary_key_columns.push_back(parameter);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns;
+	foreign_key_columns.push_back(atom_type_set_name);
+	foreign_key_columns.push_back(name);
+	vector1< std::string > reference_columns;
+	reference_columns.push_back("atom_type_set_name");
+	reference_columns.push_back("name");
+	ForeignKey foreign_key(foreign_key_columns, "atom_types", reference_columns, true);
+
+	Schema table("atom_type_extra_parameters", primary_key);
+	table.add_foreign_key(foreign_key);
+	table.add_column(value);
+
+	table.write(db_session);
+}
+
 
 void
 AtomTypeDatabaseIO::initialize(
 	sessionOP db_session
 ) const {
-	write_schema_to_database(schema(),db_session);
+	write_schema_to_db(db_session);
 }
 
 void
@@ -230,7 +282,7 @@ AtomTypeDatabaseIO::write_atom_type_table(
 	sessionOP db_session
 ) const {
 
-	string stmt_string = "INSERT INTO atom_types VALUES (?,?,?,?,?,?,?,?);";
+	string stmt_string = "INSERT INTO atom_types (atom_type_set_name, name, element, lennard_jones_radius, lennard_jones_well_depth, lazaridis_karplus_lambda, lazaridis_karplus_degrees_of_freedom, lazaridis_karplus_volume) VALUES (?,?,?,?,?,?,?,?);";
 	statement stmt(safely_prepare_statement(stmt_string, db_session));
 
 	stmt.bind(1,atom_type_set_name);
@@ -253,7 +305,7 @@ AtomTypeDatabaseIO::write_atom_type_properties_table(
 	sessionOP db_session
 ) const {
 
-	string statement_string = "INSERT INTO atom_type_properties VALUES (?,?,?);";
+	string statement_string = "INSERT INTO atom_type_properties (atom_type_set_name, name, property) VALUES (?,?,?);";
 	statement stmt(safely_prepare_statement(statement_string, db_session));
 
 	vector1<string> properties(atom_type.get_all_properties());
@@ -277,7 +329,7 @@ AtomTypeDatabaseIO::write_atom_type_extra_parameters_table(
 
 	string const atom_type_set_name = atom_type_set.name();
 
-	string stmt_string = "INSERT INTO atom_type_extra_parameters VALUES (?,?,?,?);";
+	string stmt_string = "INSERT INTO atom_type_extra_parameters (atom_type_set_name, name, parameter, value) VALUES (?,?,?,?);";
 	statement stmt(safely_prepare_statement(stmt_string, db_session));
 
 	for(std::map<std::string, int>::const_iterator

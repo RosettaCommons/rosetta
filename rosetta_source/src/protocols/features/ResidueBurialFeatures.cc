@@ -9,7 +9,7 @@
 
 /// @file   protocols/features/ResidueBurialFeatures.cc
 /// @brief  report residue burial to features statistics scientific benchmark
-/// @author Matthew O'Meara
+/// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 // Unit Headers
 #include <protocols/features/ResidueBurialFeatures.hh>
@@ -21,16 +21,17 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/TwelveANeighborGraph.hh>
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/nv/NVscore.hh>
-// AUTO-REMOVED #include <core/scoring/nv/NVscoreCreator.hh>
 #include <core/types.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 #include <basic/database/sql_utils.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
 
 // Numeric Headers
 #include <numeric/xyzVector.hh>
@@ -77,22 +78,51 @@ ResidueBurialFeatures::~ResidueBurialFeatures(){}
 string
 ResidueBurialFeatures::type_name() const { return "ResidueBurialFeatures"; }
 
-string
-ResidueBurialFeatures::schema() const {
-	return
-		"CREATE TABLE IF NOT EXISTS residue_burial (\n"
-		"	struct_id BLOB,\n"
-		"	resNum INTEGER,\n"
-		"	ten_a_neighbors INTEGER,\n"
-		"	twelve_a_neighbors INTEGER,\n"
-		"	neigh_vect_raw REAL,\n"
-		"	sasa_r100 REAL,\n"
-		"	sasa_r140 REAL,\n"
-		"	sasa_r200 REAL,\n"
-		"	FOREIGN KEY (struct_id, resNum)\n"
-		"		REFERENCES residues (struct_id, resNum)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	PRIMARY KEY (struct_id, resNum));\n";
+void
+ResidueBurialFeatures::write_schema_to_db(
+	sessionOP db_session
+) const {
+	write_residue_burial_table_schema(db_session);
+}
+
+void
+ResidueBurialFeatures::write_residue_burial_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column resNum("resNum", DbInteger());
+	Column ten_a_neighbors("ten_a_neighbors", DbInteger());
+	Column twelve_a_neighbors("twelve_a_neighbors", DbInteger());
+	Column neigh_vect_raw("neigh_vect_raw", DbReal());
+	Column sasa_r100("sasa_r100", DbReal());
+	Column sasa_r140("sasa_r140", DbReal());
+	Column sasa_r200("sasa_r200", DbReal());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(resNum);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns;
+	foreign_key_columns.push_back(struct_id);
+	foreign_key_columns.push_back(resNum);
+	vector1< std::string > reference_columns;
+	reference_columns.push_back("struct_id");
+	reference_columns.push_back("resNum");
+	ForeignKey foreign_key(foreign_key_columns, "residues", reference_columns, true);
+
+	Schema table("residue_burial", primary_key);
+	table.add_foreign_key(foreign_key);
+	table.add_column(ten_a_neighbors);
+	table.add_column(twelve_a_neighbors);
+	table.add_column(neigh_vect_raw);
+	table.add_column(sasa_r100);
+	table.add_column(sasa_r140);
+	table.add_column(sasa_r200);
+
+	table.write(db_session);
 }
 
 utility::vector1<std::string>
@@ -128,7 +158,7 @@ ResidueBurialFeatures::report_features(
 	vector1< Real > residue_sasa_l;
 	calc_per_atom_sasa( pose, atom_sasa_l, residue_sasa_l, probe_radius_l);
 
-	std::string statement_string = "INSERT INTO residue_burial VALUES (?,?,?,?,?,?,?,?);";
+	std::string statement_string = "INSERT INTO residue_burial (struct_id, resNum, ten_a_neighbors, twelve_a_neighbors, neigh_vect_raw, sasa_r100, sasa_r140, sasa_r200) VALUES (?,?,?,?,?,?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
 	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){

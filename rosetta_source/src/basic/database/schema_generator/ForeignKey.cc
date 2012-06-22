@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file ForeignKey.cc
+/// @file basic/database/schema_generator/ForeignKey.cc
 ///
-/// @brief
+/// @brief ForeignKey class for the schema generator framework
 /// @author Tim Jacobs
 
 #include <basic/database/schema_generator/ForeignKey.hh>
@@ -36,29 +36,50 @@ namespace basic{
 namespace database{
 namespace schema_generator{
 
-ForeignKey::ForeignKey(Column column, std::string reference_table, std::string reference_column):
-reference_table_(reference_table),
-defer_(false)
+using std::string;
+using utility::vector1;
+
+ForeignKey::ForeignKey(
+	Column column,
+	std::string reference_table,
+	std::string reference_column) :
+	database_mode_(),
+	columns_(),
+	reference_columns_(),
+	reference_table_(reference_table),
+	defer_(false)
 {
 	columns_.push_back(column);
 	reference_columns_.push_back(reference_column);
 	init_db_mode();
 }
 
-ForeignKey::ForeignKey(Column column, std::string reference_table, std::string reference_column, bool defer):
-reference_table_(reference_table),
-defer_(defer)
+ForeignKey::ForeignKey(
+	Column column,
+	string reference_table,
+	string reference_column,
+	bool defer) :
+	database_mode_(),
+	columns_(),
+	reference_columns_(),
+	reference_table_(reference_table),
+	defer_(defer)
 {
 	columns_.push_back(column);
 	reference_columns_.push_back(reference_column);
 	init_db_mode();
 }
-	
-ForeignKey::ForeignKey(utility::vector1<Column> columns, std::string reference_table, utility::vector1<std::string> reference_columns, bool defer):
-columns_(columns),
-reference_table_(reference_table),
-reference_columns_(reference_columns),
-defer_(defer)
+
+ForeignKey::ForeignKey(
+	Columns columns,
+	string reference_table,
+	vector1<string> reference_columns,
+	bool defer) :
+	database_mode_(),
+	columns_(columns),
+	reference_columns_(reference_columns),
+	reference_table_(reference_table),
+	defer_(defer)
 {
 	init_db_mode();
 }
@@ -72,29 +93,29 @@ void ForeignKey::init_db_mode(){
 	}
 }
 
-utility::vector1<Column> ForeignKey::columns(){
+Columns ForeignKey::columns(){
 	return this->columns_;
 }
-	
+
 std::string ForeignKey::print(){
 	std::string foreign_key_string = "FOREIGN KEY (";
-	
+
 	for(size_t i=1; i<=columns_.size(); ++i){
 		foreign_key_string += columns_[i].name();
 		if(i != columns_.size()){
-			foreign_key_string+=" ,";
+			foreign_key_string+=", ";
 		}
 	}
 	foreign_key_string += ") REFERENCES " + reference_table_ + "(";
-	
+
 	for(size_t i=1; i<=reference_columns_.size(); ++i){
 		foreign_key_string += reference_columns_[i];
 		if(i != reference_columns_.size()){
-			foreign_key_string+=" ,";
+			foreign_key_string+=", ";
 		}
 	}
 	foreign_key_string += ")";
-	
+
 	if(defer_){
 
 		if(this->database_mode_.compare("sqlite3") == 0 || this->database_mode_.compare("postgres") == 0){
@@ -113,4 +134,3 @@ std::string ForeignKey::print(){
 } // schema_generator
 } // namespace database
 } // namespace utility
-

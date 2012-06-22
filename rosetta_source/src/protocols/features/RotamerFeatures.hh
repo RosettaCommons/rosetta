@@ -116,13 +116,18 @@ public:
 
 	virtual ~RotamerFeatures(){}
 
-	///@brief return sql statements that setup the right tables
-	std::string
-	schema() const;
+	///@brief generate the table schemas and write them to the database
+	void
+	write_schema_to_db(
+		utility::sql_database::sessionOP db_session) const;
 
-	basic::database::schema_generator::Schema
-	residue_rotamers_schema() const;
+private:
+	///@brief generate the residue_rotamers table schema
+	void
+	write_residue_rotamers_table_schema(
+		utility::sql_database::sessionOP db_session) const;
 
+public:
 	///@brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>

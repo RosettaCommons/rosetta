@@ -32,6 +32,11 @@
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 #include <basic/database/sql_utils.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
+
 #include <protocols/moves/DataMap.hh>
 
 // ObjexxFCL Headers
@@ -141,20 +146,45 @@ AtomAtomPairFeatures::~AtomAtomPairFeatures(){}
 string
 AtomAtomPairFeatures::type_name() const { return "AtomAtomPairFeatures"; }
 
-string
-AtomAtomPairFeatures::schema() const {
-	return
-		"CREATE TABLE IF NOT EXISTS atom_pairs (\n"
-		"	struct_id BLOB,\n"
-		"	atom_type TEXT,\n"
-		"	element TEXT,\n"
-		"	lower_break REAL,\n"
-		"	upper_break REAL,\n"
-		"	count INTEGER,\n"
-		"	FOREIGN KEY (struct_id)\n"
-		"		REFERENCES structures (struct_id)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	PRIMARY KEY (struct_id, atom_type, element, lower_break));";
+void
+AtomAtomPairFeatures::write_schema_to_db(
+	sessionOP db_session
+) const {
+	write_atom_pairs_table_schema(db_session);
+}
+
+void
+AtomAtomPairFeatures::write_atom_pairs_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column atom_type("atom_type", DbText());
+	Column element("element", DbText());
+	Column lower_break("lower_break", DbReal());
+	Column upper_break("upper_break", DbReal());
+	Column count("count", DbInteger());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(atom_type);
+	primary_key_columns.push_back(element);
+	primary_key_columns.push_back(lower_break);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns;
+	foreign_key_columns.push_back(struct_id);
+	vector1< std::string > reference_columns;
+	reference_columns.push_back("struct_id");
+	ForeignKey foreign_key(foreign_key_columns, "structures", reference_columns, true);
+
+	Schema table("atom_pairs", primary_key);
+	table.add_foreign_key(foreign_key);
+	table.add_column(upper_break);
+	table.add_column(count);
+
+	table.write(db_session);
 }
 
 utility::vector1<std::string>
@@ -270,7 +300,7 @@ AtomAtomPairFeatures::report_atom_pairs(
 		}
 	}
 
-	string stmt_string = "INSERT INTO atom_pairs VALUES (?,?,?,?,?,?);";
+	string stmt_string = "INSERT INTO atom_pairs (struct_id, atom_type, element, lower_break, upper_break, count) VALUES (?,?,?,?,?,?);";
 	statement stmt(safely_prepare_statement(stmt_string,db_session));
 
 

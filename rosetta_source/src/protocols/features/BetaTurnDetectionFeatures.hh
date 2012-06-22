@@ -50,10 +50,18 @@ public:
 	virtual std::string
 	type_name() const;
 
-	///@brief return sql statements that setup the right tables
-	virtual std::string
-	schema() const;
+	///@brief generate the table schemas and write them to the database
+	void
+	write_schema_to_db(
+		utility::sql_database::sessionOP db_session) const;
 
+private:
+	///@brief generate the beta_turns table schema
+	void
+	write_beta_turns_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+public:
 	///@brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	virtual utility::vector1<std::string>
@@ -68,24 +76,24 @@ public:
 		utility::sql_database::sessionOP db_session);
 private:
 	static void setup_conformation_to_turn_type_map();
-	
-    bool all_turn_residues_are_on_the_same_chain( core::pose::Pose const & pose, Size first_residue ) const;
-    
-    bool residue_range_is_relevant( utility::vector1< bool > const & relevant_residues, Size range_begin, Size range_end ) const;
-    
-    bool residue_range_is_protein( core::pose::Pose const & pose, Size range_begin, Size range_end ) const;
 
-    bool beta_turn_present( core::pose::Pose const & pose, Size first_residue ) const;
-    
-    std::string const & beta_turn_type( core::pose::Pose const & pose, Size first_residue ) const;
+		bool all_turn_residues_are_on_the_same_chain( core::pose::Pose const & pose, Size first_residue ) const;
+
+		bool residue_range_is_relevant( utility::vector1< bool > const & relevant_residues, Size range_begin, Size range_end ) const;
+
+		bool residue_range_is_protein( core::pose::Pose const & pose, Size range_begin, Size range_end ) const;
+
+		bool beta_turn_present( core::pose::Pose const & pose, Size first_residue ) const;
+
+		std::string const & beta_turn_type( core::pose::Pose const & pose, Size first_residue ) const;
 	std::string determine_ramachandran_hash( core::Real phi, core::Real psi, core::Real omega ) const;
-	
+
 private:
-    static bool initialized_;
+		static bool initialized_;
 	static Size const beta_turn_length;
-    static core::Real const beta_turn_distance_cutoff;
-    static std::map< std::string, std::string > conformation_to_turn_type_;
-    
+		static core::Real const beta_turn_distance_cutoff;
+		static std::map< std::string, std::string > conformation_to_turn_type_;
+
 };
 
 } // features namespace

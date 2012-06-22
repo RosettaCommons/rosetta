@@ -21,6 +21,10 @@
 #include <core/scoring/orbitals/OrbitalsLookup.hh>
 #include <core/types.hh>
 #include <basic/database/sql_utils.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
 #include <core/chemical/orbitals/OrbitalType.hh>
 #include <core/chemical/AtomType.hh>
 //Numeric Headers
@@ -80,93 +84,229 @@ OrbitalsFeatures::~OrbitalsFeatures(){}
 
 string
 OrbitalsFeatures::type_name() const { return "OrbitalsFeatures"; }
+void
+OrbitalsFeatures::write_schema_to_db(
+	sessionOP db_session
+) const {
+	write_HPOL_orbital_table_schema(db_session);
+	write_HARO_orbital_table_schema(db_session);
+	write_orbital_orbital_table_schema(db_session);
+}
 
-string
-OrbitalsFeatures::schema() const {
-	return
-			"CREATE TABLE IF NOT EXISTS HPOL_orbital (\n"
-			"	struct_id BLOB,\n"
-			"	resNum1 INTEGER,\n"
-			"	resName1 INTEGER,\n"
-			"	orbNum1 INTEGER,\n"
-			"	orbName1 TEXT,\n"
-			"	resNum2 INTEGER,\n"
-			"	resName2 INTEGER,\n"
-			"	hpolNum2 INTEGER,\n"
-			"   htype2 TEXT,\n"
-			"	OrbHdist REAL,\n"
-			"	cosAOH REAL,\n" //used in R plots
-			"   cosDHO REAL, \n" //used in R plots
-			"   chiBAOH REAL, \n" //used in R plots
-			"   chiBDHO REAL, \n" //used in R plots
-			"   AOH_angle REAL, \n" //preserve stats used for KBP
-			"   DHO_angle REAL, \n" //preserve stats used for KBP
-			"   chiBAHD REAL, \n"
-			"   cosAHD REAL, \n"
-			"	FOREIGN KEY (struct_id, resNum1)\n"
-			"		REFERENCES residues (struct_id, resNum)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	FOREIGN KEY (struct_id, resNum2)\n"
-			"		REFERENCES residues (struct_id, resNum)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	PRIMARY KEY(struct_id, resNum1, orbName1, resNum2, hpolNum2));\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS HARO_orbital (\n"
-			"	struct_id BLOB,\n"
-			"	resNum1 INTEGER,\n"
-			"	resName1 INTEGER,\n"
-			"	orbNum1 INTEGER,\n"
-			"	orbName1 TEXT,\n"
-			"	resNum2 INTEGER,\n"
-			"	resName2 INTEGER,\n"
-			"	haroNum2 INTEGER,\n"
-			"   htype2 TEXT,\n"
-			"	OrbHdist REAL,\n"
-			"	cosAOH REAL,\n" //used in R plots
-			"   cosDHO REAL, \n" //used in R plots
-			"   chiBAOH REAL, \n" //used in R plots
-			"   chiBDHO REAL, \n" //used in R plots
-			"   AOH_angle REAL, \n" //preserve stats used for KBP
-			"   DHO_angle REAL, \n" //preserve stats used KBP
-			"   chiBAHD REAL, \n"
-			"   cosAHD REAL, \n"
-			"	FOREIGN KEY (struct_id, resNum1)\n"
-			"		REFERENCES residues (struct_id, resNum)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	FOREIGN KEY (struct_id, resNum2)\n"
-			"		REFERENCES residues (struct_id, resNum)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	PRIMARY KEY(struct_id, resNum1, orbName1, resNum2, haroNum2));\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS orbital_orbital (\n"
-			"	struct_id BLOB,\n"
-			"	resNum1 INTEGER,\n"
-			"	resName1 INTEGER,\n"
-			"	orbNum1 INTEGER,\n"
-			"	orbName1 TEXT,\n"
-			"	resNum2 INTEGER,\n"
-			"	resName2 INTEGER,\n"
-			"	OrbNum2 INTEGER,\n"
-			"   OrbName2 TEXT,\n"
-			"	OrbOrbdist REAL,\n"
-			"	cosAOO REAL,\n" //used in R plots
-			"   cosDOO REAL, \n" //used in R plots
-			"   chiBAOO REAL, \n" //used in R plots
-			"   chiBDOO REAL, \n" //used in R plots
-			"   AOO_angle REAL, \n" //preserve stats used for KBP
-			"   DOO_angle REAL, \n" //preserve stats used KBP
-			"   DOA_angle REAL, \n"
-			"   AOD_angle REAL, \n"
-			"   chiBAHD, \n"
-			"   cosAHD, \n"
-			"	FOREIGN KEY (struct_id, resNum1)\n"
-			"		REFERENCES residues (struct_id, resNum)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	FOREIGN KEY (struct_id, resNum2)\n"
-			"		REFERENCES residues (struct_id, resNum)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	PRIMARY KEY(struct_id, resNum1, orbName1, resNum2, OrbNum2));\n"
-			"\n";
+void
+OrbitalsFeatures::write_HPOL_orbital_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column resNum1("resNum1", DbInteger());
+	Column resName1("resName1", DbText());
+	Column orbNum1("orbNum1", DbInteger());
+	Column orbName1("orbName1", DbText());
+	Column resNum2("resNum2", DbInteger());
+	Column resName2("resName2", DbText());
+	Column hpolNum2("hpolNum2", DbInteger());
+	Column htype2("htype2", DbText());
+	Column OrbHdist("OrbHdist", DbReal());
+	Column cosAOH("cosAOH", DbReal());
+	Column cosDHO("cosDHO", DbReal());
+	Column chiBAOH("chiBAOH", DbReal());
+	Column chiBDHO("chiBDHO", DbReal());
+	Column AOH_angle("AOH_angle", DbReal());
+	Column DHO_angle("DHO_angle", DbReal());
+	Column chiBAHD("chiBAHD", DbReal());
+	Column cosAHD("cosAHD", DbReal());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(resNum1);
+	primary_key_columns.push_back(orbName1);
+	primary_key_columns.push_back(resNum2);
+	primary_key_columns.push_back(hpolNum2);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns1;
+	foreign_key_columns1.push_back(struct_id);
+	foreign_key_columns1.push_back(resNum1);
+	vector1< std::string > reference_columns1;
+	reference_columns1.push_back("struct_id");
+	reference_columns1.push_back("resNum");
+	ForeignKey foreign_key1(foreign_key_columns1, "residues", reference_columns1, true);
+
+	Columns foreign_key_columns2;
+	foreign_key_columns2.push_back(struct_id);
+	foreign_key_columns2.push_back(resNum2);
+	vector1< std::string > reference_columns2;
+	reference_columns2.push_back("struct_id");
+	reference_columns2.push_back("resNum");
+	ForeignKey foreign_key2(foreign_key_columns2, "residues", reference_columns2, true);
+
+
+	Schema table("HPOL_orbital", primary_key);
+	table.add_foreign_key(foreign_key1);
+	table.add_foreign_key(foreign_key2);
+	table.add_column(resName1);
+	table.add_column(orbNum1);
+	table.add_column(resName2);
+	table.add_column(hpolNum2);
+	table.add_column(htype2);
+	table.add_column(OrbHdist);
+	table.add_column(cosAOH);
+	table.add_column(cosDHO);
+	table.add_column(chiBAOH);
+	table.add_column(chiBDHO);
+	table.add_column(AOH_angle);
+	table.add_column(DHO_angle);
+	table.add_column(chiBAHD);
+	table.add_column(cosAHD);
+
+	table.write(db_session);
+}
+
+void
+OrbitalsFeatures::write_HARO_orbital_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column resNum1("resNum1", DbInteger());
+	Column resName1("resName1", DbText());
+	Column orbNum1("orbNum1", DbInteger());
+	Column orbName1("orbName1", DbText());
+	Column resNum2("resNum2", DbInteger());
+	Column resName2("resName2", DbText());
+	Column haroNum2("haroNum2", DbInteger());
+	Column htype2("htype2", DbText());
+	Column OrbHdist("orbHdist", DbReal());
+	Column cosAOH("cosAOH", DbReal());
+	Column cosDHO("cosDHO", DbReal());
+	Column chiBAOH("chiBAOH", DbReal());
+	Column chiBDHO("chiBDHO", DbReal());
+	Column AOH_angle("AOH_angle", DbReal());
+	Column DHO_angle("DHO_angle", DbReal());
+	Column chiBAHD("chiBAHD", DbReal());
+	Column cosAHD("cosAHD", DbReal());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(resNum1);
+	primary_key_columns.push_back(orbName1);
+	primary_key_columns.push_back(resNum2);
+	primary_key_columns.push_back(haroNum2);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns1;
+	foreign_key_columns1.push_back(struct_id);
+	foreign_key_columns1.push_back(resNum1);
+	vector1< std::string > reference_columns1;
+	reference_columns1.push_back("struct_id");
+	reference_columns1.push_back("resNum");
+	ForeignKey foreign_key1(foreign_key_columns1, "residues", reference_columns1, true);
+
+	Columns foreign_key_columns2;
+	foreign_key_columns2.push_back(struct_id);
+	foreign_key_columns2.push_back(resNum2);
+	vector1< std::string > reference_columns2;
+	reference_columns2.push_back("struct_id");
+	reference_columns2.push_back("resNum");
+	ForeignKey foreign_key2(foreign_key_columns2, "residues", reference_columns2, true);
+
+
+	Schema table("HARO_orbital", primary_key);
+	table.add_foreign_key(foreign_key1);
+	table.add_foreign_key(foreign_key2);
+	table.add_column(resName1);
+	table.add_column(orbNum1);
+	table.add_column(resName2);
+	table.add_column(haroNum2);
+	table.add_column(htype2);
+	table.add_column(OrbHdist);
+	table.add_column(cosAOH);
+	table.add_column(cosDHO);
+	table.add_column(chiBAOH);
+	table.add_column(chiBDHO);
+	table.add_column(AOH_angle);
+	table.add_column(DHO_angle);
+	table.add_column(chiBAHD);
+	table.add_column(cosAHD);
+
+	table.write(db_session);
+}
+
+void
+OrbitalsFeatures::write_orbital_orbital_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column resNum1("resNum1", DbInteger());
+	Column resName1("resName1", DbText());
+	Column orbNum1("orbNum1", DbInteger());
+	Column orbName1("orbName1", DbText());
+	Column resNum2("resNum2", DbInteger());
+	Column resName2("resName2", DbText());
+	Column orbNum2("orbNum2", DbInteger());
+	Column orbName2("orbName2", DbInteger());
+	Column orbOrbdist("orbOrbdist", DbReal());
+	Column cosAOO("cosAOO", DbReal());
+	Column cosDOO("cosDOO", DbReal());
+	Column chiBAOO("chiBAOO", DbReal());
+	Column chiBDOO("chiBDOO", DbReal());
+	Column AOO_angle("AOO_angle", DbReal());
+	Column DOO_angle("DOO_angle", DbReal());
+	Column DOA_angle("DOA_angle", DbReal());
+	Column AOD_angle("AOD_angle", DbReal());
+	Column chiBAHD("chiBAHD", DbReal());
+	Column cosAHD("cosAHD", DbReal());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(resNum1);
+	primary_key_columns.push_back(orbName1);
+	primary_key_columns.push_back(resNum2);
+	primary_key_columns.push_back(orbNum2);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns1;
+	foreign_key_columns1.push_back(struct_id);
+	foreign_key_columns1.push_back(resNum1);
+	vector1< std::string > reference_columns1;
+	reference_columns1.push_back("struct_id");
+	reference_columns1.push_back("resNum");
+	ForeignKey foreign_key1(foreign_key_columns1, "residues", reference_columns1, true);
+
+	Columns foreign_key_columns2;
+	foreign_key_columns2.push_back(struct_id);
+	foreign_key_columns2.push_back(resNum2);
+	vector1< std::string > reference_columns2;
+	reference_columns2.push_back("struct_id");
+	reference_columns2.push_back("resNum");
+	ForeignKey foreign_key2(foreign_key_columns2, "residues", reference_columns2, true);
+
+
+	Schema table("orbital_orbital", primary_key);
+	table.add_foreign_key(foreign_key1);
+	table.add_foreign_key(foreign_key2);
+	table.add_column(resName1);
+	table.add_column(orbNum1);
+	table.add_column(resName2);
+	table.add_column(orbName2);
+	table.add_column(orbOrbdist);
+	table.add_column(cosAOO);
+	table.add_column(cosDOO);
+	table.add_column(chiBAOO);
+	table.add_column(chiBDOO);
+	table.add_column(AOO_angle);
+	table.add_column(DOO_angle);
+	table.add_column(DOA_angle);
+	table.add_column(AOD_angle);
+	table.add_column(chiBAHD);
+	table.add_column(cosAHD);
+
+	table.write(db_session);
 }
 
 utility::vector1<std::string>
@@ -198,11 +338,11 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 		boost::uuids::uuid const struct_id,
 		sessionOP db_session
 ){
-	std::string orbita_H_string = "INSERT INTO HPOL_orbital VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+	std::string orbita_H_string = "INSERT INTO HPOL_orbital (struct_id, resNum1, orbName1, resNum2, hpolNum2, resName1, orbNum1, resName2, htype2, OrbHdist, cosAOH, cosDHO, chiBAOH, chiBDHO, AOH_angle, DHO_angle, chiBAHD, cosAHD) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement orbital_H_statement(basic::database::safely_prepare_statement(orbita_H_string,db_session));
-	std::string orbita_orbital_string = "INSERT INTO orbital_orbital VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+	std::string orbita_orbital_string = "INSERT INTO orbital_orbital (struct_id, resNum1, orbName1, resNum2, orbNum2, resName1, orbNum1, resName2, orbName2, orbOrbdist, cosAOO, cosDOO, chiBAOO, chiBDOO, AOO_angle, DOO_angle, DOA_angle, AOD_angle, chiBAHD, cosAHD) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement orbital_orbital_statement(basic::database::safely_prepare_statement(orbita_orbital_string,db_session));
-	std::string orbita_Haro_string = "INSERT INTO HARO_orbital VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+	std::string orbita_Haro_string = "INSERT INTO HARO_orbital (struct_id, resNum1, orbName1, resNum2, haroNum2, resName1, orbNum1, resName2, htype2, orbHdist, cosAOH, cosDHO, chiBAOH, chiBDHO, AOH_angle, DHO_angle, chiBAHD, cosAHD) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement orbital_Haro_statement(basic::database::safely_prepare_statement(orbita_Haro_string,db_session));
 
 
@@ -323,12 +463,12 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 		if(OrbHdist <=10.0 && orb_hpol == true){
 			orbital_H_statement.bind(1,struct_id);
 			orbital_H_statement.bind(2, resNum1);
-			orbital_H_statement.bind(3, resName1);
-			orbital_H_statement.bind(4,orbNum1 );
-			orbital_H_statement.bind(5, orbName1);
-			orbital_H_statement.bind(6, resNum2);
-			orbital_H_statement.bind(7, res2name);
-			orbital_H_statement.bind(8, hpolNum2);
+			orbital_H_statement.bind(3, orbName1);
+			orbital_H_statement.bind(4, resNum2);
+			orbital_H_statement.bind(5, hpolNum2);
+			orbital_H_statement.bind(6, resName1);
+			orbital_H_statement.bind(7,orbNum1 );
+			orbital_H_statement.bind(8, res2name);
 			orbital_H_statement.bind(9, htype2);
 			orbital_H_statement.bind(10, OrbHdist);
 			orbital_H_statement.bind(11, cosAOH);
@@ -344,12 +484,12 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 		if(OrbHdist <=10.0 && orb_orb== true){
 			orbital_orbital_statement.bind(1,struct_id);
 			orbital_orbital_statement.bind(2, resNum1);
-			orbital_orbital_statement.bind(3, resName1);
-			orbital_orbital_statement.bind(4,orbNum1 );
-			orbital_orbital_statement.bind(5, orbName1);
-			orbital_orbital_statement.bind(6, resNum2);
-			orbital_orbital_statement.bind(7, res2name);
-			orbital_orbital_statement.bind(8, OrbNum2);
+			orbital_orbital_statement.bind(3, orbName1);
+			orbital_orbital_statement.bind(4, resNum2);
+			orbital_orbital_statement.bind(5, OrbNum2);
+			orbital_orbital_statement.bind(6, resName1);
+			orbital_orbital_statement.bind(7, orbNum1);
+			orbital_orbital_statement.bind(8, res2name);
 			orbital_orbital_statement.bind(9, OrbName2);
 			orbital_orbital_statement.bind(10, OrbHdist);
 			orbital_orbital_statement.bind(11, cosAOO);
@@ -400,7 +540,7 @@ OrbitalsFeatures::report_haro_orbital_interactions(
 		boost::uuids::uuid const /* struct_id */,
 		sessionOP /* db_session */
 ){
-/*	std::string orbita_H_string = "INSERT INTO HARO_orbital VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+/*	std::string orbita_H_string = "INSERT INTO HARO_orbital (struct_id, resNum1, orbName1, resNum2, haroNum2, resName1, orbNum1, resName2, htype2, orbHdist, cosAOH, cosDHO, chiBAOH, chiBDHO, AOH_angle, DHO_angle, chiBAHD, cosAHD) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement orbital_H_statement(basic::database::safely_prepare_statement(orbita_H_string,db_session));
 
 

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/features/StructureFeatures.hh
-/// @brief  report Orbital geometry and scores to features Statistics Scientific Benchmark
+/// @brief  report structure identifiers to a features database
 /// @author Matthew O'Meara
 
 #ifndef INCLUDED_protocols_features_StructureFeatures_hh
@@ -30,7 +30,7 @@
 #include <string>
 
 #include <utility/vector1.hh>
-
+#include <utility/exit.hh>
 
 namespace protocols{
 namespace features{
@@ -63,6 +63,21 @@ public:
 		core::Size batch_id,
 		utility::sql_database::sessionOP db_session
 	);
+
+	///@brief collect all the feature data for the pose
+	core::Size
+	report_features(
+		core::pose::Pose const &,
+		utility::vector1< bool > const &,
+		boost::uuids::uuid,
+		utility::sql_database::sessionOP
+	) {
+		utility_exit_with_message(
+			"The score_type features reporter is a special feature reporter "
+			" Please use the other interface for report_features");
+		return 0;
+	}
+
 
 	///@brief collect all the feature data for the pose use
 	///This version allows the tag and the input tag to be specificed

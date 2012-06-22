@@ -70,7 +70,7 @@ string
 ResidueSecondaryStructureFeatures::type_name() const { return "ResidueSecondaryStructureFeatures"; }
 
 void
-ResidueSecondaryStructureFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{	
+ResidueSecondaryStructureFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;
 	using namespace basic::database;
 	using namespace boost::assign;
@@ -79,9 +79,9 @@ ResidueSecondaryStructureFeatures::write_schema_to_db(utility::sql_database::ses
 	Column label("label", DbText(), false);
 	Schema dssp_codes("dssp_codes", PrimaryKey(code));
 	dssp_codes.add_column(label);
-	
+
 	dssp_codes.write(db_session);
-	
+
 	std::vector<std::string> dssp_cols = list_of("code")("label");
 	insert_or_ignore("dssp_codes", dssp_cols, list_of("'H'")("'H: a-Helix'"), db_session);
 	insert_or_ignore("dssp_codes", dssp_cols, list_of("'E'")("'E: b-Sheet'"), db_session);
@@ -91,20 +91,6 @@ ResidueSecondaryStructureFeatures::write_schema_to_db(utility::sql_database::ses
 	insert_or_ignore("dssp_codes", dssp_cols, list_of("'S'")("'S: Bend'"), db_session);
 	insert_or_ignore("dssp_codes", dssp_cols, list_of("'I'")("'I: pi-Helix'"), db_session);
 	insert_or_ignore("dssp_codes", dssp_cols, list_of("' '")("'Irregular'"), db_session);
-	
-	//	"CREATE TABLE IF NOT EXISTS dssp_codes(\n"
-	//	"	code TEXT,\n"
-	//	"	label TEXT,\n"
-	//	"	PRIMARY KEY(code));\n"
-	//	"INSERT OR IGNORE INTO dssp_codes VALUES('H', 'H: a-Helix');\n"
-	//	"INSERT OR IGNORE INTO dssp_codes VALUES('E', 'E: b-Sheet');\n"
-	//	"INSERT OR IGNORE INTO dssp_codes VALUES('T', 'T: HB Turn');\n"
-	//	"INSERT OR IGNORE INTO dssp_codes VALUES('G', 'G: 3/10 Helix');\n"
-	//	"INSERT OR IGNORE INTO dssp_codes VALUES('B', 'B: b-Bridge');\n"
-	//	"INSERT OR IGNORE INTO dssp_codes VALUES('S', 'S: Bend');\n"
-	//	"INSERT OR IGNORE INTO dssp_codes VALUES('I', 'I: pi-Helix');\n"
-	//	"INSERT OR IGNORE INTO dssp_codes VALUES(' ', 'Irregular');\n"
-	//	"\n"
 
 	/******residue_secondary_structure******/
 	Column struct_id("struct_id",DbUUID(), false);
@@ -135,7 +121,7 @@ ResidueSecondaryStructureFeatures::write_schema_to_db(utility::sql_database::ses
 	residue_secondary_structure.add_foreign_key(dssp_fk);
 
 	residue_secondary_structure.write(db_session);
-	
+
 	/******helix_segments******/
 	Column helix_id("helix_id",DbInteger(), false);
 	Column residue_begin("residue_begin",DbInteger(), false);
@@ -162,9 +148,9 @@ ResidueSecondaryStructureFeatures::write_schema_to_db(utility::sql_database::ses
 
 	helix_segments.add_foreign_key(ForeignKey(fkey_cols_begin, "residues", fkey_reference_cols, true));
 	helix_segments.add_foreign_key(ForeignKey(fkey_cols_end, "residues", fkey_reference_cols, true));
-	
+
 	helix_segments.write(db_session);
-	
+
 	/******beta_segments******/
 	Column beta_id("beta_id",DbInteger(), false);
 
@@ -181,7 +167,7 @@ ResidueSecondaryStructureFeatures::write_schema_to_db(utility::sql_database::ses
 
 	beta_segments.add_foreign_key(ForeignKey(fkey_cols_begin, "residues", fkey_reference_cols, true));
 	beta_segments.add_foreign_key(ForeignKey(fkey_cols_end, "residues", fkey_reference_cols, true));
-	
+
 	beta_segments.write(db_session);
 }
 
@@ -211,9 +197,9 @@ ResidueSecondaryStructureFeatures::report_features(
 	//Size loop_counter=1;
 
 	//Create the statement strings outside the loops so we don't need to rcreate them for every residue
-	std::string sec_structure_statement_string = "INSERT INTO residue_secondary_structure VALUES (?,?,?);";
-	std::string helix_segment_statement_string = "INSERT INTO helix_segments VALUES (?,?,?,?);";
-	std::string beta_segment_statement_string = "INSERT INTO beta_segments VALUES (?,?,?,?);";
+	std::string sec_structure_statement_string = "INSERT INTO residue_secondary_structure (struct_id, resNum, dssp) VALUES (?,?,?);";
+	std::string helix_segment_statement_string = "INSERT INTO helix_segments (struct_id, helix_id, residue_begin, residue_end) VALUES (?,?,?,?);";
+	std::string beta_segment_statement_string = "INSERT INTO beta_segments (struct_id, beta_id, residue_begin, residue_end) VALUES (?,?,?,?);";
 	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
 		if(!relevant_residues[resNum]) continue;
 

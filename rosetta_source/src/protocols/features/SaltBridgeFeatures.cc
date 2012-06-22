@@ -37,6 +37,11 @@
 #include <numeric/sphericalVector.hh>
 #include <core/kinematics/Stub.hh>
 #include <numeric/constants.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
+
 
 // Utility Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
@@ -97,47 +102,60 @@ SaltBridgeFeatures::SaltBridgeFeatures(
 string
 SaltBridgeFeatures::type_name() const { return "SaltBridgeFeatures"; }
 
-string
-SaltBridgeFeatures::schema() const {
-	string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
-
-	if(db_mode == "sqlite3")
-	{
-		return
-			"CREATE TABLE IF NOT EXISTS salt_bridges (\n"
-			"	struct_id BLOB,\n"
-			"	don_resNum INTEGER,\n"
-			"	acc_id INTEGER,\n"
-			"	psi REAL,    -- angle around donor group\n"
-			"	theta REAL,  -- angle out of donor group plane\n"
-			"	rho REAL,    -- distance from center of donor group to acceptor\n"
-			"	orbital TEXT,-- syn or anti\n"
-			"	FOREIGN KEY (struct_id, don_resNum)\n"
-			"		REFERENCES residues (struct_id, resNum)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	FOREIGN KEY (struct_id, acc_id)\n"
-			"		REFERENCES hbond_sites (struct_id, site_id)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	PRIMARY KEY(struct_id, don_resNum, acc_id));";
-	} else if(db_mode == "mysql") {
-		return
-			"CREATE TABLE IF NOT EXISTS salt_bridges (\n"
-			"	struct_id BLOB,\n"
-			"	don_resNum INTEGER,\n"
-			"	acc_id INTEGER,\n"
-			"	psi REAL,    -- angle around donor group\n"
-			"	theta REAL,  -- angle out of donor group plane\n"
-			"	rho REAL,    -- distance from center of donor group to acceptor\n"
-			"	orbital TEXT,-- syn or anti\n"
-			"	FOREIGN KEY (struct_id, don_site)\n"
-			"		REFERENCES hbond_sites (struct_id, site_id)\n"
-			"	FOREIGN KEY (struct_id, acc_site)\n"
-			"		REFERENCES hbond_sites (struct_id, site_id)\n"
-			"	PRIMARY KEY(struct_id, don_site, acc_site));";
-	} else {
-		return "";
-	}
+void
+SaltBridgeFeatures::write_schema_to_db(
+	sessionOP db_session
+) const {
+	write_salt_bridges_table_schema(db_session);
 }
+
+void
+SaltBridgeFeatures::write_salt_bridges_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column don_resNum("don_resNum", DbInteger());
+	Column acc_id("acc_id", DbInteger());
+	Column psi("psi", DbReal());
+	Column theta("theta", DbReal());
+	Column rho("rho", DbReal());
+	Column orbital("orbital", DbText());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(don_resNum);
+	primary_key_columns.push_back(acc_id);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns1;
+	foreign_key_columns1.push_back(struct_id);
+	foreign_key_columns1.push_back(don_resNum);
+	vector1< std::string > reference_columns1;
+	reference_columns1.push_back("struct_id");
+	reference_columns1.push_back("resNum");
+	ForeignKey foreign_key1(foreign_key_columns1, "residues", reference_columns1, true);
+
+	Columns foreign_key_columns2;
+	foreign_key_columns2.push_back(struct_id);
+	foreign_key_columns2.push_back(acc_id);
+	vector1< std::string > reference_columns2;
+	reference_columns2.push_back("struct_id");
+	reference_columns2.push_back("site_id");
+	ForeignKey foreign_key2(foreign_key_columns2, "hbond_sites", reference_columns2, true);
+
+	Schema table("salt_bridges", primary_key);
+	table.add_foreign_key(foreign_key1);
+	table.add_foreign_key(foreign_key2);
+	table.add_column(psi);
+	table.add_column(theta);
+	table.add_column(rho);
+	table.add_column(orbital);
+
+	table.write(db_session);
+}
+
 
 utility::vector1<std::string>
 SaltBridgeFeatures::features_reporter_dependencies() const {
@@ -183,7 +201,7 @@ SaltBridgeFeatures::report_features(
 	sphericalVector<Real> local_o;
 	Angle psi, theta;
 	Length rho;
-	std::string salt_bridge_string = "INSERT INTO salt_bridges VALUES (?,?,?,?,?,?,?)";
+	std::string salt_bridge_string = "INSERT INTO salt_bridges (struct_id, don_resNum, acc_id, psi, theta, rho, orbital) VALUES (?,?,?,?,?,?,?)";
 	statement salt_bridge_statement(basic::database::safely_prepare_statement(salt_bridge_string,db_session));
 
 

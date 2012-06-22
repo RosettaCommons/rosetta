@@ -70,28 +70,28 @@ ResidueConformationFeatures::type_name() const {
 void
 ResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;
-	
+
 	//******nonprotein_residue_conformation******//
 	Column struct_id("struct_id",DbUUID(), false);
 	Column seqpos("seqpos",DbInteger(), false);
 	Column phi("phi",DbDouble(), false);
 	Column psi("psi",DbDouble(), false);
 	Column omega("omega",DbDouble(), false);
-	
+
 	utility::vector1<Column> non_prot_res_pkeys;
 	non_prot_res_pkeys.push_back(struct_id);
 	non_prot_res_pkeys.push_back(seqpos);
-	
+
 
 
 	utility::vector1<Column> fkey_cols;
 	fkey_cols.push_back(struct_id);
 	fkey_cols.push_back(seqpos);
-	
+
 	utility::vector1<std::string> fkey_reference_cols;
 	fkey_reference_cols.push_back("struct_id");
 	fkey_reference_cols.push_back("resNum");
-	
+
 	Schema nonprotein_residue_conformation("nonprotein_residue_conformation", PrimaryKey(non_prot_res_pkeys));
 	nonprotein_residue_conformation.add_column(struct_id);
 	nonprotein_residue_conformation.add_column(seqpos);
@@ -99,13 +99,13 @@ ResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP
 	nonprotein_residue_conformation.add_column(psi);
 	nonprotein_residue_conformation.add_column(omega);
 	nonprotein_residue_conformation.add_foreign_key(ForeignKey(fkey_cols, "residues", fkey_reference_cols, true));
-	
+
 	nonprotein_residue_conformation.write(db_session);
-	
+
 	//******nonprotein_residue_angles******//
 	Column chinum("chinum",DbInteger(), false);
 	Column chiangle("chiangle",DbDouble(), false);
-	
+
 	utility::vector1<Column> non_prot_res_angle_keys;
 	non_prot_res_angle_keys.push_back(struct_id);
 	non_prot_res_angle_keys.push_back(seqpos);
@@ -119,18 +119,18 @@ ResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP
 	nonprotein_residue_angles.add_foreign_key(ForeignKey(fkey_cols, "residues", fkey_reference_cols, true));
 
 	nonprotein_residue_angles.write(db_session);
-	
+
 	//******residue_atom_coords******//
 	Column atomno("atomno",DbInteger(), false);
 	Column x("x",DbDouble(), false);
 	Column y("y",DbDouble(), false);
 	Column z("z",DbDouble(), false);
-	
+
 	utility::vector1<Column> res_atm_coords_pkeys;
 	res_atm_coords_pkeys.push_back(struct_id);
 	res_atm_coords_pkeys.push_back(seqpos);
 	res_atm_coords_pkeys.push_back(atomno);
-	
+
 	Schema residue_atom_coords("residue_atom_coords", PrimaryKey(res_atm_coords_pkeys));
 	residue_atom_coords.add_column(struct_id);
 	residue_atom_coords.add_column(seqpos);
@@ -141,7 +141,7 @@ ResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP
 	residue_atom_coords.add_foreign_key(ForeignKey(fkey_cols, "residues", fkey_reference_cols, true));
 
 	residue_atom_coords.write(db_session);
-	
+
 //	if(db_mode == "sqlite3")
 //	{
 //		return
@@ -239,9 +239,9 @@ ResidueConformationFeatures::report_features(
 		}
 	}
 
-	std::string conformation_string = "INSERT INTO nonprotein_residue_conformation VALUES (?,?,?,?,?)";
-	std::string angle_string = "INSERT INTO nonprotein_residue_angles VALUES (?,?,?,?)";
-	std::string coords_string = "INSERT INTO residue_atom_coords VALUES(?,?,?,?,?,?)";
+	std::string conformation_string = "INSERT INTO nonprotein_residue_conformation (struct_id, seqpos, phi, psi, omega) VALUES (?,?,?,?,?)";
+	std::string angle_string = "INSERT INTO nonprotein_residue_angles (struct_id, seqpos, chinum, chiangle) VALUES (?,?,?,?)";
+	std::string coords_string = "INSERT INTO residue_atom_coords (struct_id, seqpos, atomno, x, y, z) VALUES (?,?,?,?,?,?)";
 
 	statement conformation_stmt(basic::database::safely_prepare_statement(conformation_string,db_session));
 	statement angle_stmt(basic::database::safely_prepare_statement(angle_string,db_session));
@@ -272,7 +272,7 @@ ResidueConformationFeatures::report_features(
 		conformation_stmt.bind(4,psi);
 		conformation_stmt.bind(5,omega);
 		basic::database::safely_write_to_database(conformation_stmt);
-	
+
 		for(core::Size chi_num = 1; chi_num <= resi.nchi();++chi_num){
 			core::Real chi_angle = resi.chi(chi_num);
 

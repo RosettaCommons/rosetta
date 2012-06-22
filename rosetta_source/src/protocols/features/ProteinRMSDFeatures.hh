@@ -9,7 +9,7 @@
 
 /// @file   protocols/features/ProteinRMSDFeatures.hh
 /// @brief  report ProteinRMSD similarity of structure against supplied reference structure
-/// @author Matthew O'Meara
+/// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 #ifndef INCLUDED_protocols_features_ProteinRMSDFeatures_hh
 #define INCLUDED_protocols_features_ProteinRMSDFeatures_hh
@@ -67,10 +67,18 @@ public:
 	utility::vector1<std::string>
 	features_reporter_dependencies() const;
 
-	///@brief return sql statements that setup the right tables
-	std::string
-	schema() const;
+	///@brief generate the table schemas and write them to the database
+	void
+	write_schema_to_db(
+		utility::sql_database::sessionOP db_session) const;
 
+private:
+	///@brief generate the protein_rmsd table schema
+	void
+	write_protein_rmsd_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+public:
 	core::pose::PoseCOP reference_pose() const;
 	void reference_pose(core::pose::PoseCOP);
 

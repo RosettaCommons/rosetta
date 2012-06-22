@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file BatchFeatures.cc
+/// @file protocols/features/BatchFeatures.cc
 ///
 /// @brief
 /// @author Tim Jacobs
@@ -47,7 +47,7 @@ namespace protocols{
 namespace features{
 
 static basic::Tracer TR("protocols.features.BatchFeatures");
-	
+
 using std::string;
 using std::stringstream;
 using basic::options::OptionKeys::parser::protocol;
@@ -71,7 +71,7 @@ BatchFeatures::type_name() const { return "BatchFeatures"; }
 
 void
 BatchFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
-	
+
 	using namespace basic::database::schema_generator;
 
 	PrimaryKey batch_id(

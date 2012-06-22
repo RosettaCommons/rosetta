@@ -9,7 +9,7 @@
 
 /// @file   protocols/features/ProtocolFeatures.hh
 /// @brief  report Orbital geometry and scores to features Statistics Scientific Benchmark
-/// @author Matthew O'Meara
+/// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 #ifndef INCLUDED_protocols_features_ProtocolFeatures_hh
 #define INCLUDED_protocols_features_ProtocolFeatures_hh
@@ -21,13 +21,12 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
-#include <utility/vector1.fwd.hh>
+#include <utility/vector1.hh>
+#include <utility/exit.hh>
 
 // C++ Headers
 #include <string>
 
-#include <utility/vector1.hh>
 
 
 namespace protocols{
@@ -59,9 +58,6 @@ public:
 	std::string
 	indices() const;
 
-	///@brief return sql statments that add indexes check invariants etc.
-	//std::string cleanup() const;
-
 	///@brief collect all the feature data for the pose
 	///if protocol_id is 0 autoincrement the protocol_id
 	core::Size
@@ -69,6 +65,22 @@ public:
 		core::Size protocol_id,
 		utility::sql_database::sessionOP db_session
 	);
+
+	///@brief collect all the feature data for the pose
+	core::Size
+	report_features(
+		core::pose::Pose const &,
+		utility::vector1< bool > const &,
+		boost::uuids::uuid,
+		utility::sql_database::sessionOP
+	) {
+		utility_exit_with_message(
+			"The protocol features reporter is a special feature reporter that "
+			"describes everthing about the execution of a Rosetta. Please use the other "
+			"interface for report_features");
+		return 0;
+	}
+
 
 };
 

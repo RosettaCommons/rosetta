@@ -25,6 +25,13 @@
 #include <utility/tag/Tag.hh>
 #include <basic/database/sql_utils.hh>
 
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
+
+
+
 // External Headers
 #include <cppdb/frontend.h>
 #include <boost/uuid/uuid_io.hpp>
@@ -78,17 +85,41 @@ RotamerBoltzmannWeightFeatures::~RotamerBoltzmannWeightFeatures(){}
 string
 RotamerBoltzmannWeightFeatures::type_name() const { return "RotamerBoltzmannWeightFeatures"; }
 
-string
-RotamerBoltzmannWeightFeatures::schema() const {
-	return
-		"CREATE TABLE IF NOT EXISTS rotamer_boltzmann_weight (\n"
-		"	struct_id BLOB,\n"
-		"	resNum INTEGER,\n"
-		"	boltzmann_weight REAL,\n"
-		"	FOREIGN KEY (struct_id, resNum)\n"
-		"		REFERENCES residues (struct_id, resNum)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	PRIMARY KEY (struct_id, resNum));\n";
+void
+RotamerBoltzmannWeightFeatures::write_schema_to_db(
+	sessionOP db_session
+) const {
+	write_rotamer_boltzmann_weight_table_schema(db_session);
+}
+
+void
+RotamerBoltzmannWeightFeatures::write_rotamer_boltzmann_weight_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column resNum("resNum", DbInteger());
+	Column boltzmann_weight("boltzmann_weight", DbReal());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(resNum);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns;
+	foreign_key_columns.push_back(struct_id);
+	foreign_key_columns.push_back(resNum);
+	vector1< std::string > reference_columns;
+	reference_columns.push_back("struct_id");
+	reference_columns.push_back("resNum");
+	ForeignKey foreign_key(foreign_key_columns, "residues", reference_columns, true);
+
+	Schema table("rotamer_boltzmann_weight", primary_key);
+	table.add_foreign_key(foreign_key);
+	table.add_column(boltzmann_weight);
+
+	table.write(db_session);
 }
 
 utility::vector1<std::string>
@@ -129,7 +160,7 @@ RotamerBoltzmannWeightFeatures::report_features(
 	sessionOP db_session
 ){
 
-	std::string statement_string = "INSERT INTO rotamer_boltzmann_weight VALUES (?,?,?);";
+	std::string statement_string = "INSERT INTO rotamer_boltzmann_weight (struct_id, resNum, boltzmann_weight) VALUES (?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
 		if(!relevant_residues[resNum]) continue;

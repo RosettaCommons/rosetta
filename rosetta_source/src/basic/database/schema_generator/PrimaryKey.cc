@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file PrimaryKey.cc
+/// @file basic/database/schema_generator/PrimaryKey.cc
 ///
-/// @brief
+/// @brief PrimaryKey class for the schema generator framework
 /// @author Tim Jacobs
 
 #include <basic/database/schema_generator/PrimaryKey.hh>
@@ -29,7 +29,7 @@ PrimaryKey::PrimaryKey(Column column){
 	columns_.push_back(column);
 }
 
-PrimaryKey::PrimaryKey(utility::vector1<Column> columns){
+PrimaryKey::PrimaryKey(Columns columns){
 	columns_ = columns;
 }
 
@@ -37,16 +37,17 @@ void PrimaryKey::add_column(Column column){
 	columns_.push_back(column);
 }
 
-utility::vector1<Column> PrimaryKey::columns(){
+Columns
+PrimaryKey::columns(){
 	return this->columns_;
 }
 
 std::string PrimaryKey::print(){
 	std::string primary_key_string = "PRIMARY KEY (";
 
-	for(utility::vector1<Column>::const_iterator it=columns_.begin(); it != columns_.end(); ++it){
+	for(Columns::const_iterator it=columns_.begin(); it != columns_.end(); ++it){
 		if(it!=columns_.begin()){
-			primary_key_string += ",";
+			primary_key_string += ", ";
 		}
 		primary_key_string += it->name();
 	}

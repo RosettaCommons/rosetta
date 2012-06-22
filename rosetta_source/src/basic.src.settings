@@ -30,6 +30,7 @@ sources = {
 		"Constraint",
 		"DbDataType",
 		"ForeignKey",
+		"Index",
 		"PrimaryKey",
 		"Schema",
 	],

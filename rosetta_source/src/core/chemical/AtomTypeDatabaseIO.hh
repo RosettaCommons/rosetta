@@ -35,10 +35,30 @@ public:
 
 public: // store in a database information associated with an atom type set
 
-	///@brief return sql statements that setup the right tables
-	std::string
-	schema() const;
+	///@brief generate the table schemas and write them to the database
+	void
+	write_schema_to_db(
+		utility::sql_database::sessionOP db_session) const;
 
+private:
+	void
+	write_atom_types_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+	void
+	write_atom_type_property_values_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+	void
+	write_atom_type_properties_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+	void
+	write_atom_type_extra_parameters_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+
+public:
 	///@brief write the schema
 	void
 	initialize(

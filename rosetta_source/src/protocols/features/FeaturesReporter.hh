@@ -72,13 +72,13 @@ public:
 	}
 
 
-	///@brief Define the schema and write it to the database. This is 
+	///@brief Define the schema and write it to the database. This is
 	///most easily achieved using the schema_generator. Once everything
 	///has converted to the schema generator this should be made a pure virtual
 	virtual void
 	write_schema_to_db(
 		utility::sql_database::sessionOP db_session
-	) const;
+	) const = 0;
 
 	///@brief collect all the feature data for the pose.
 	core::Size
@@ -96,7 +96,7 @@ public:
 		utility::vector1< bool > const & /*relevant_residues*/,
 		boost::uuids::uuid /*parent uuid*/,
 		utility::sql_database::sessionOP /*db_session*/
-	);
+	) = 0;
 
 	virtual
 	void

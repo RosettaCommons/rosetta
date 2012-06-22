@@ -26,6 +26,15 @@
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
+//Basic Headers
+#include <basic/database/sql_utils.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
+#include <basic/database/schema_generator/Constraint.hh>
+
+
 // Utility Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
@@ -33,9 +42,10 @@
 #include <cppdb/frontend.h>
 
 //C++ Headers
+#include <boost/assign/list_of.hpp>
 #include <ostream>
 #include <string>
-
+#include <vector>
 #include <utility/vector1.hh>
 
 
@@ -57,6 +67,7 @@ using core::pose::Pose;
 using protocols::jd2::JobDistributor;
 using utility::sql_database::DatabaseSessionManager;
 using utility::sql_database::sessionOP;
+using utility::vector1;
 using cppdb::statement;
 
 static Tracer TR("protocols.rotamer_recovery.RRReporterSQLite");
@@ -128,106 +139,149 @@ RRReporterSQLite::RRReporterSQLite( RRReporterSQLite const & src ) :
 
 RRReporterSQLite::~RRReporterSQLite() {}
 
-string
-RRReporterSQLite::schema(
-	RRReporterSQLite::OutputLevel::e output_level /* = OutputLevel::full */
-) {
-
-	switch( output_level ){
-
+void
+RRReporterSQLite::write_schema_to_db(
+	sessionOP db_session,
+	RRReporterSQLite::OutputLevel::e output_level /* = OutputLevel::ful */
+) const {
+	switch(output_level){
 	case OutputLevel::full:
-		return
-			"CREATE TABLE IF NOT EXISTS nchi (\n"
-			"	name3 TEXT,\n"
-			"	nchi INTEGER,\n"
-			"	PRIMARY KEY (name3));\n"
-			"\n"
-			"INSERT OR IGNORE INTO nchi VALUES('ARG', 4);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('LYS', 4);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('MET', 3);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('GLN', 3);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('GLU', 3);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('TYR', 2);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('ILE', 2);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('ASP', 2);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('TRP', 2);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('PHE', 2);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('HIS', 2);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('ASN', 2);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('THR', 1);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('SER', 1);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('PRO', 1);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('CYS', 1);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('VAL', 1);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('LEU', 1);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('ALA', 0);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('GLY', 0);\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS rotamer_recovery (\n"
-			"	struct1_name TEXT,\n"
-			"	name1 TEXT,\n"
-			"	name3 TEXT,\n"
-			"	residue_type TEXT,\n"
-			"	chain1 TEXT,\n"
-			"	res1 INTEGER,\n"
-			"	struct2_name TEXT,\n"
-			"	chain2 TEXT,\n"
-			"	res2 INTEGER,\n"
-			"	protocol_name TEXT,\n"
-			"	protocol_params TEXT,\n"
-			"	comparer_name TEXT,\n"
-			"	comparer_params TEXT,\n"
-			"	score REAL,\n"
-			"	recovered BOOLEAN,\n"
-			"	PRIMARY KEY (struct1_name, chain1, res1, struct2_name, chain2, res2));\n";
+		write_nchi_table_schema(db_session);
+		write_rotamer_recovery_full_table_schema(db_session);
 		break;
-
 	case OutputLevel::features:
-		return
-			"CREATE TABLE IF NOT EXISTS nchi (\n"
-			"	name3 TEXT,\n"
-			"	nchi INTEGER,\n"
-			"	PRIMARY KEY (name3));\n"
-			"\n"
-			"INSERT OR IGNORE INTO nchi VALUES('ARG', 4);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('LYS', 4);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('MET', 3);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('GLN', 3);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('GLU', 3);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('TYR', 2);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('ILE', 2);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('ASP', 2);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('TRP', 2);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('PHE', 2);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('HIS', 2);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('ASN', 2);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('THR', 1);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('SER', 1);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('PRO', 1);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('CYS', 1);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('VAL', 1);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('LEU', 1);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('ALA', 0);\n"
-			"INSERT OR IGNORE INTO nchi VALUES('GLY', 0);\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS rotamer_recovery (\n"
-			"	struct_id BLOB,\n"
-			"	resNum INTEGER,\n"
-			"	divergence REAL,\n"
-			"	recovered BOOLEAN,\n"
-			"	FOREIGN KEY (struct_id, resNum)\n"
-			"		REFERENCES residues (struct_id, resNum)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	PRIMARY KEY(struct_id, resNum));\n";
+		write_rotamer_recovery_features_table_schema(db_session);
 		break;
-
 	case OutputLevel::none:
-		return "";
-
+		break;
 	default:
 		utility_exit_with_message("Unrecognized Output Level.");
 	}
-	return "";
+}
+
+void
+RRReporterSQLite::write_nchi_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+	using namespace basic::database;
+	using namespace boost::assign;
+
+	Column name3("name3", DbText());
+	Column nchi("nchi", DbInteger());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(name3);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Schema table("nchi", primary_key);
+	table.add_column(nchi);
+	table.write(db_session);
+
+
+	// insert values
+	string table_name("nchi");
+	std::vector<string> column_names;
+	column_names.push_back("name3");
+	column_names.push_back("nchi");
+	insert_or_ignore(table_name, column_names, list_of("'ARG'")("4"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'LYS'")("4"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'MET'")("3"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'GLN'")("3"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'GLU'")("3"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'TYR'")("2"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'ILE'")("2"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'ASP'")("2"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'TRP'")("2"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'PHE'")("2"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'HIS'")("2"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'ASN'")("2"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'THR'")("1"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'SER'")("1"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'PRO'")("1"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'CYS'")("1"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'VAL'")("1"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'LEU'")("1"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'ALA'")("0"), db_session);
+	insert_or_ignore(table_name, column_names, list_of("'GLY'")("0"), db_session);
+}
+
+void
+RRReporterSQLite::write_rotamer_recovery_full_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct1_name("struct1_name", DbText());
+	Column name1("name1", DbText());
+	Column name3("name3", DbText());
+	Column residue_type("residue_type", DbText());
+	Column chain1("chain1", DbText());
+	Column res1("res1", DbInteger());
+	Column struct2_name("struct_name2", DbText());
+	Column chain2("chain2", DbText());
+	Column res2("res2", DbInteger());
+	Column protocol_name("protocol_name", DbText());
+	Column protocol_params("protocol_params", DbText());
+	Column comparer_name("comparer_name", DbText());
+	Column comparer_params("comparer_params", DbText());
+	Column score("score", DbReal());
+	Column recovered("recovered", DbInteger());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct1_name);
+	primary_key_columns.push_back(chain1);
+	primary_key_columns.push_back(res1);
+	primary_key_columns.push_back(struct2_name);
+	primary_key_columns.push_back(chain2);
+	primary_key_columns.push_back(res2);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Schema table("rotamer_recovery", primary_key);
+	table.add_column(name1);
+	table.add_column(name3);
+	table.add_column(residue_type);
+	table.add_column(protocol_name);
+	table.add_column(protocol_params);
+	table.add_column(comparer_name);
+	table.add_column(comparer_params);
+	table.add_column(score);
+	table.add_column(recovered);
+
+	table.write(db_session);
+}
+
+
+void
+RRReporterSQLite::write_rotamer_recovery_features_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column resNum("resNum", DbInteger());
+	Column divergence("divergence", DbReal());
+	Column recovered("recovered", DbInteger());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(resNum);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns;
+	foreign_key_columns.push_back(struct_id);
+	foreign_key_columns.push_back(resNum);
+	vector1< std::string > reference_columns;
+	reference_columns.push_back("struct_id");
+	reference_columns.push_back("resNum");
+	ForeignKey foreign_key(foreign_key_columns, "residues", reference_columns, true);
+
+	Schema table("rotamer_recovery", primary_key);
+	table.add_foreign_key(foreign_key);
+	table.add_column(divergence);
+	table.add_column(recovered);
+
+	table.write(db_session);
 }
 
 void
@@ -293,12 +347,7 @@ RRReporterSQLite::db_session(){
 		db_session_ =
 			DatabaseSessionManager::get_instance()->get_session(database_fname_);
 
-		basic::database::write_schema_to_database(
-			schema(get_output_level()), db_session_);
-		statement stmt(
-			safely_prepare_statement(
-				schema(get_output_level()), db_session_));
-		safely_write_to_database(stmt);
+		write_schema_to_db(db_session_, get_output_level());
 	}
 	return db_session_;
 }

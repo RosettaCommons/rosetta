@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/features/ProteinRMSDFeatures.cc
-/// @brief  report comments stored with each pose
-/// @author Matthew O'Meara
+/// @brief  report the root mean squared deviation between two poses
+/// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 // Unit Headers
 #include <protocols/features/ProteinRMSDFeatures.hh>
@@ -39,6 +39,11 @@
 // Basic Headers
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
+
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -101,46 +106,54 @@ ProteinRMSDFeatures::ProteinRMSDFeatures(
 	reference_pose_(reference_pose)
 {}
 
-string
-ProteinRMSDFeatures::schema() const {
-	string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
+void
+ProteinRMSDFeatures::write_schema_to_db(
+	sessionOP db_session
+) const {
+	write_protein_rmsd_table_schema(db_session);
+}
 
-	if(db_mode == "sqlite3") {
-		return
-			"CREATE TABLE IF NOT EXISTS protein_rmsd (\n"
-			"	struct_id BLOB,\n"
-			"	reference_tag TEXT,\n"
-			"	protein_CA REAL,\n"
-			"	protein_CA_or_CB REAL,\n"
-			"	protein_backbone REAL,\n"
-			"	protein_backbone_including_O REAL,\n"
-			"	protein_backbone_sidechain_heavyatom REAL,\n"
-			"	heavyatom REAL,\n"
-			"	nbr_atom REAL,\n"
-			"	all_atom REAL,\n"
-			"	FOREIGN KEY (struct_id)\n"
-			"		REFERENCES structures (struct_id)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	PRIMARY KEY(struct_id, reference_tag));";
-	}else if(db_mode == "mysql") {
-		return
-			"CREATE TABLE IF NOT EXISTS protein_rmsd (\n"
-			"	struct_id BINARY(16),\n"
-			"	reference_tag VARCHAR(255),\n"
-			"	protein_CA DOUBLE,\n"
-			"	protein_CA_or_CB DOUBLE,\n"
-			"	protein_backbone DOUBLE,\n"
-			"	protein_backbone_including_O DOUBLE,\n"
-			"	protein_backbone_sidechain_heavyatom DOUBLE,\n"
-			"	heavyatom DOUBLE,\n"
-			"	nbr_atom DOUBLE,\n"
-			"	all_atom DOUBLE,\n"
-			"	FOREIGN KEY (struct_id)\n"
-			"		REFERENCES structures (struct_id),\n"
-			"	PRIMARY KEY(struct_id, reference_tag));";
-	}else {
-		return "";
-	}
+void
+ProteinRMSDFeatures::write_protein_rmsd_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column reference_tag("reference_tag", DbText());
+	Column protein_CA("protein_CA", DbReal());
+	Column protein_CA_or_CB("protein_CA_or_CB", DbReal());
+	Column protein_backbone("protein_backbone", DbReal());
+	Column protein_backbone_including_O("protein_backbone_including_O", DbReal());
+	Column protein_backbone_sidechain_heavyatom("protein_backbone_sidechain_heavyatom", DbReal());
+	Column heavyatom("heavyatom", DbReal());
+	Column nbr_atom("nbr_atom", DbReal());
+	Column all_atom("all_atom", DbReal());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(reference_tag);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns;
+	foreign_key_columns.push_back(struct_id);
+	vector1< std::string > reference_columns;
+	reference_columns.push_back("struct_id");
+	ForeignKey foreign_key(foreign_key_columns, "structures", reference_columns, true);
+
+	Schema table("protein_rmsd", primary_key);
+	table.add_foreign_key(foreign_key);
+	table.add_column(reference_tag);
+	table.add_column(protein_CA);
+	table.add_column(protein_CA_or_CB);
+	table.add_column(protein_backbone);
+	table.add_column(protein_backbone_including_O);
+	table.add_column(protein_backbone_sidechain_heavyatom);
+	table.add_column(heavyatom);
+	table.add_column(nbr_atom);
+	table.add_column(all_atom);
+
+	table.write(db_session);
 }
 
 utility::vector1<std::string>
@@ -199,7 +212,7 @@ ProteinRMSDFeatures::report_features(
 		if(relevant_residues[i]) subset_residues.push_back(i);
 	}
 
-	std::string statement_string = "INSERT INTO protein_rmsd VALUES (?,?,?,?,?,?,?,?,?,?);";
+	std::string statement_string = "INSERT INTO protein_rmsd (struct_id, reference_tag, protein_CA, protein_CA_or_CB, protein_backbone, protein_backbone_including_O, protein_backbone_sidechain_heavyatom, heavyatom, nbr_atom, all_atom) VALUES (?,?,?,?,?,?,?,?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
 	stmt.bind(1,struct_id);

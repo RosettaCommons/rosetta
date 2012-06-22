@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file Constraints.hh
+/// @file basic/database/schema_generator/Constraints.hh
 ///
-/// @brief
+/// @brief Constraint class for the schema generator framework
 /// @author Tim Jacobs
 
 #ifndef INCLUDED_basic_database_schema_generator_Constraint_HH
@@ -22,6 +22,7 @@
 #include <basic/database/schema_generator/Column.hh>
 
 #include <string>
+#include <platform/types.hh>
 
 namespace basic{
 namespace database{
@@ -33,13 +34,13 @@ public:
 
 	Constraint(Column column);
 
-	Constraint(utility::vector1<Column> columns);
+	Constraint(Columns columns);
 
 	virtual std::string print() = 0;
 
 protected:
 
-	utility::vector1<Column> columns_;
+	Columns columns_;
 };
 
 //class ComparisonConstraint : public Constraint
@@ -70,11 +71,25 @@ class UniqueConstraint : public Constraint {
 public:
 
 	UniqueConstraint(Column column);
-	UniqueConstraint(utility::vector1<Column> columns);
+	UniqueConstraint(Columns columns);
 	virtual std::string print();
 
 };
 
+class GreaterThanConstraint : public Constraint {
+public:
+
+	GreaterThanConstraint(
+		Column column,
+		platform::Real value);
+
+	virtual
+	std::string
+	print();
+
+private:
+	platform::Real value_;
+};
 
 } // schema_generator
 } // namespace database

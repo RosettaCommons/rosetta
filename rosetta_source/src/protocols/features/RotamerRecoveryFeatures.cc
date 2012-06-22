@@ -120,10 +120,13 @@ RotamerRecoveryFeatures::~RotamerRecoveryFeatures() {}
 string
 RotamerRecoveryFeatures::type_name() const { return "RotamerRecoveryFeatures"; }
 
-string
-RotamerRecoveryFeatures::schema() const {
-	return RRReporterSQLite::schema(
-		RRReporterSQLite::OutputLevel::features );
+
+void
+RotamerRecoveryFeatures::write_schema_to_db(
+	sessionOP db_session
+) const {
+	RRReporterSQLite reporter;
+	reporter.write_schema_to_db(db_session, RRReporterSQLite::OutputLevel::features);
 }
 
 vector1<string>

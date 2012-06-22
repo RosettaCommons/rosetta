@@ -31,6 +31,7 @@
 #include <protocols/features/PoseConformationFeaturesCreator.hh>
 #include <protocols/features/ProteinBackboneTorsionAngleFeaturesCreator.hh>
 #include <protocols/features/ProteinBackboneAtomAtomPairFeaturesCreator.hh>
+#include <protocols/features/ProteinBondGeometryFeaturesCreator.hh>
 #include <protocols/features/ProteinResidueConformationFeaturesCreator.hh>
 #include <protocols/features/ProteinRMSDFeaturesCreator.hh>
 #include <protocols/features/ProtocolFeaturesCreator.hh>

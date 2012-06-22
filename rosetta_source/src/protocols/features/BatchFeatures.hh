@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file BatchFeatures.hh
+/// @file protocols/features/BatchFeatures.hh
 ///
 /// @brief
 /// @author Tim Jacobs
@@ -22,6 +22,7 @@
 // Project Headers
 #include <core/types.hh>
 #include <utility/vector1.fwd.hh>
+#include <utility/exit.hh>
 
 // C++ Headers
 #include <string>
@@ -68,6 +69,19 @@ public:
 					std::string description,
 					utility::sql_database::sessionOP db_session
 					);
+
+	core::Size
+	report_features(
+		core::pose::Pose const &,
+		utility::vector1< bool > const &,
+		boost::uuids::uuid,
+		utility::sql_database::sessionOP){
+		utility_exit_with_message(
+			"The batch features reporter is a special feature reporter that "
+			"represents a set of features extracted at once. Please use the other "
+			"interface for report_features");
+		return 0;
+	}
 
 };
 

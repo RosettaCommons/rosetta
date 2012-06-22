@@ -9,7 +9,7 @@
 
 /// @file   protocols/features/RadiusOfGyrationFeatures.hh
 /// @brief  report the radius of gyration to features Statistics Scientific Benchmark
-/// @author Matthew O'Meara
+/// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 #ifndef INCLUDED_protocols_features_RadiusOfGyrationFeatures_hh
 #define INCLUDED_protocols_features_RadiusOfGyrationFeatures_hh
@@ -49,10 +49,18 @@ public:
 	std::string
 	type_name() const;
 
-	///@brief return sql statements that setup the right tables
-	std::string
-	schema() const;
+	///@brief generate the table schemas and write them to the database
+	void
+	write_schema_to_db(
+		utility::sql_database::sessionOP db_session) const;
 
+private:
+	///@brief generate the radius_of_gyration table schema
+	void
+	write_radius_of_gyration_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+public:
 	///@brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>

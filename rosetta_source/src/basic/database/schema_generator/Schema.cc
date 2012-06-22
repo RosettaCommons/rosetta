@@ -17,6 +17,7 @@
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Index.hh>
 
 #include <basic/database/sql_utils.hh>
 
@@ -24,7 +25,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-
+#include <platform/types.hh>
 
 // Utility Headers
 #include <utility/exit.hh>
@@ -38,9 +39,13 @@ namespace basic{
 namespace database{
 namespace schema_generator{
 
+using platform::Size;
+using std::string;
+using std::stringstream;
+
 static basic::Tracer TR("basic.database.schema_generator.Schema");
 
-	
+
 Schema::Schema(std::string table_name):
 table_name_(table_name)
 {
@@ -54,7 +59,19 @@ primary_key_(primary_key)
 	init();
 }
 
-void Schema::init(){
+Schema::Schema(
+	Schema const & src
+) :
+	database_mode_(src.database_mode_),
+	primary_key_(src.primary_key_),
+	columns_(src.columns_),
+	foreign_keys_(src.foreign_keys_),
+	constraints_(src.constraints_),
+	indices_(src.indices_)
+{}
+
+void
+Schema::init(){
 	if(basic::options::option[basic::options::OptionKeys::inout::database_mode].user()){
 		database_mode_=basic::options::option[basic::options::OptionKeys::inout::database_mode].value();
 	}
@@ -63,18 +80,21 @@ void Schema::init(){
 	}
 
 	//Add primary key columns to schema list
-	utility::vector1<Column> key_columns = primary_key_.columns();
+	Columns key_columns = primary_key_.columns();
 	this->columns_.insert( columns_.end(), key_columns.begin(), key_columns.end() );
 
 }
 
-void Schema::add_foreign_key(ForeignKey key){
+void
+Schema::add_foreign_key(
+	ForeignKey key
+){
 	this->foreign_keys_.push_back(key);
 	//if the foreign key is also a primary key it will have already been added
 
-	utility::vector1<Column> key_cols = key.columns();
+	Columns key_cols = key.columns();
 
-	for(size_t i=1; i <= key_cols.size(); ++i){
+	for(Size i=1; i <= key_cols.size(); ++i){
 		if(!this->columns_.contains(key_cols[i]))
 		{
 			this->columns_.push_back(key_cols[i]);
@@ -82,7 +102,10 @@ void Schema::add_foreign_key(ForeignKey key){
 	}
 }
 
-void Schema::add_column(Column column){
+void
+Schema::add_column(
+	Column column
+){
 	//Don't add a column more than once
 	if(!this->columns_.contains(column))
 	{
@@ -90,58 +113,74 @@ void Schema::add_column(Column column){
 	}
 }
 
-void Schema::add_constraint(ConstraintOP constraint){
+void
+Schema::add_constraint(
+	ConstraintOP constraint
+){
 	this->constraints_.push_back(constraint);
 }
 
+void
+Schema::add_index(
+	Index index
+) {
+	indices_.push_back(index);
+}
+
 std::string Schema::print(){
-	std::string schema_string = "";
+	stringstream schema_string;
 	if(database_mode_ == "postgres"){
-		schema_string += "CREATE TABLE " + table_name_ + "(";
+		schema_string << "CREATE TABLE " << table_name_ << "(\n\t";
 	}
 	else{
-		schema_string += "CREATE TABLE IF NOT EXISTS " + table_name_ + "(";
+		schema_string << "CREATE TABLE IF NOT EXISTS " << table_name_ << "(\n\t";
 	}
-	
-	for (utility::vector1<Column>::const_iterator it=columns_.begin(); it!=columns_.end(); it++){
+
+	for (Columns::const_iterator it=columns_.begin(); it!=columns_.end(); it++){
 		if(it!=columns_.begin()){
-			schema_string += ",\n\t";
+			schema_string << ",\n\t";
 		}
-		schema_string += it->print();
+		schema_string << it->print();
 	}
 
 	for(size_t i=1; i<=foreign_keys_.size(); i++){
-		schema_string += ",\n\t" + foreign_keys_[i].print();
+		schema_string << ",\n\t" << foreign_keys_[i].print();
 	}
 
 	if(primary_key_.columns().size() > 0){
 		if(database_mode_ != "sqlite3"){
-			schema_string += ",\n\t" + primary_key_.print();
+			schema_string << ",\n\t" << primary_key_.print();
 		}
 		else{
 			//Prevent adding the primary key twice - this will happen if you have an autoincrementing primary key in sqlite3
-			utility::vector1<Column> keys = this->primary_key_.columns();
+			Columns keys = this->primary_key_.columns();
 
 			if(!(keys.size()==1 && keys.begin()->auto_increment())){
-				schema_string += ",\n\t" + primary_key_.print();
+				schema_string << ",\n\t" << primary_key_.print();
 			}
 		}
 	}
 
 	for(size_t i=1; i<=constraints_.size(); i++){
-		schema_string += ",\n\t" + constraints_[i]->print();
+		schema_string << ",\n\t" << constraints_[i]->print();
 	}
 
-	schema_string += ");";
-	return schema_string;
+	schema_string << ");\n";
+
+	for(Size i=1; i <= indices_.size(); ++i){
+		schema_string << indices_[i].print(table_name_);
+		schema_string << "\n";
+	}
+
+	return schema_string.str();
 }
 
 //Write this schema to the database
 void Schema::write(utility::sql_database::sessionOP db_session){
 	std::string stmt_string = this->print();
-	
+
 	bool exists=false;
-	
+
 	try{
 		//Older versions of postgres do not support "create table if not exists"
 		if(database_mode_ == "postgres"){
@@ -166,7 +205,7 @@ void Schema::write(utility::sql_database::sessionOP db_session){
 		utility_exit();
 	}
 }
-	
+
 } // schema_generator
 } // namespace database
 } // namespace utility

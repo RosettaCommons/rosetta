@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file Column.cc
+/// @file basic/database/schema_generator/Column.cc
 ///
-/// @brief
+/// @brief Column class for the schema generator framework
 /// @author Tim Jacobs
 
 //Unit Headers
@@ -27,32 +27,44 @@ namespace basic{
 namespace database{
 namespace schema_generator{
 
-Column::Column(std::string name, DbDataType type):
-name_(name),
-type_(type),
-allow_null_(true),
-auto_increment_(false)
+Column::Column(std::string name, DbDataType type) :
+	name_(name),
+	type_(type),
+	allow_null_(true),
+	auto_increment_(false)
 {
 	init_db_mode();
 }
 
-Column::Column(std::string name, DbDataType type, bool allow_null):
-name_(name),
-type_(type),
-allow_null_(allow_null),
-auto_increment_(false)
+Column::Column(std::string name, DbDataType type, bool allow_null) :
+	name_(name),
+	type_(type),
+	allow_null_(allow_null),
+	auto_increment_(false)
 {
 	init_db_mode();
 }
-	
-Column::Column(std::string name, DbDataType type, bool allow_null, bool auto_increment):
-name_(name),
-type_(type),
-allow_null_(allow_null),
-auto_increment_(auto_increment)
+
+Column::Column(std::string name, DbDataType type, bool allow_null, bool auto_increment) :
+	name_(name),
+	type_(type),
+	allow_null_(allow_null),
+	auto_increment_(auto_increment)
 {
 	init_db_mode();
 }
+
+Column::Column(Column const & src) :
+	ReferenceCount(),
+	name_(src.name_),
+	type_(src.type_),
+	allow_null_(src.allow_null_),
+	auto_increment_(src.auto_increment_)
+{
+	init_db_mode();
+}
+
+Column::~Column() {}
 
 void Column::init_db_mode(){
 	if(basic::options::option[basic::options::OptionKeys::inout::database_mode].user()){

@@ -434,7 +434,12 @@ check_statement_sanity(std::string sql){
 }
 
 //This should ideally only be used for reference tables that have static data that needs to only be written once(ex: dssp_codes)
-void insert_or_ignore(std::string table_name, std::vector<std::string> column_names, std::vector<std::string> values, utility::sql_database::sessionOP db_session){
+void
+insert_or_ignore(
+	std::string table_name,
+	std::vector<std::string> column_names,
+	std::vector<std::string> values,
+	utility::sql_database::sessionOP db_session){
 
 	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
 	std::string statement_string="";

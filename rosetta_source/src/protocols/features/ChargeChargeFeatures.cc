@@ -102,8 +102,10 @@ ChargeChargeFeatures::ChargeChargeFeatures(
 string
 ChargeChargeFeatures::type_name() const { return "ChargeChargeFeatures"; }
 
-string
-ChargeChargeFeatures::schema() const {
+void
+ChargeChargeFeatures::write_schema_to_db(
+	sessionOP db_session
+) const {
 
 	using namespace basic::database::schema_generator;
 
@@ -156,8 +158,7 @@ ChargeChargeFeatures::schema() const {
 	charge_charge_pairs.add_foreign_key(
 		ForeignKey(fkey_site2_cols, "hbond_sites", fkey_site2_reference_cols, true));
 
-	return charge_charge_pairs.print();
-
+	charge_charge_pairs.write(db_session);
 }
 
 utility::vector1<std::string>
@@ -228,7 +229,7 @@ ChargeChargeFeatures::report_features(
 	Length C1_x, C1_y, C1_z;
 	Length C2_x, C2_y, C2_z;
 
-	std::string charge_charge_string = "INSERT INTO charge_charge_pairs VALUES (?,?,?,?,?,?,?,?,?,?);";
+	std::string charge_charge_string = "INSERT INTO charge_charge_pairs (struct_id, q1_site_id, q2_site_id, q1_charge, q2_charge, B1q1q2_angle, B2q2q1_angle, q1q2_distance, B1q1_torsion, B2q2_torsion) VALUES (?,?,?,?,?,?,?,?,?,?);";
 	statement charge_charge_statement(basic::database::safely_prepare_statement(charge_charge_string,db_session));
 
 

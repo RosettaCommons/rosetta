@@ -32,7 +32,7 @@
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
-
+#include <utility/exit.hh>
 
 namespace protocols{
 namespace features{
@@ -67,6 +67,20 @@ public:
 		core::Size protocol_id,
 		utility::sql_database::sessionOP db_session
 	);
+
+	///@brief collect all the feature data for the pose
+	core::Size
+	report_features(
+		core::pose::Pose const &,
+		utility::vector1< bool > const &,
+		boost::uuids::uuid,
+		utility::sql_database::sessionOP
+	) {
+		utility_exit_with_message(
+			"The score_type features reporter is a special feature reporter "
+			" Please use the other interface for report_features");
+		return 0;
+	}
 
 	void delete_record(
 		boost::uuids::uuid struct_id,

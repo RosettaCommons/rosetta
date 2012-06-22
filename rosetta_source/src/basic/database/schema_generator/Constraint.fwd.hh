@@ -7,11 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file Constraint.fwd.hh
-///
-/// @brief
+/// @file basic/database/schema_generator/Constraint.fwd.hh
+/// @brief forwaard header for the constraints class in the schema generator framework
 /// @author Tim Jacobs
-
 
 
 #ifndef INCLUDED_basic_database_schema_generator_Constraint_fwd_hh
@@ -23,13 +21,22 @@ namespace basic{
 namespace database{
 namespace schema_generator{
 
-	// Forward declarations
-	class Constraint;
+// Forward declarations
+class Constraint;
+typedef utility::pointer::owning_ptr< Constraint > ConstraintOP;
+typedef utility::pointer::owning_ptr< Constraint const > ConstraintCOP;
 
-	typedef utility::pointer::owning_ptr< Constraint > ConstraintOP;
-	typedef utility::pointer::owning_ptr< Constraint const > ConstraintCOP;
+class UniqueConstraint;
+typedef utility::pointer::owning_ptr< UniqueConstraint > UniqueConstraintOP;
+typedef utility::pointer::owning_ptr< UniqueConstraint const > UniqueConstraintCOP;
+
+class GreaterThanConstraint;
+typedef utility::pointer::owning_ptr< GreaterThanConstraint > GreaterThanConstraintOP;
+typedef utility::pointer::owning_ptr< GreaterThanConstraint const > GreaterThanConstraintCOP;
+
 
 } // schema_generator
 } // namespace database
 } // namespace utility
+
 #endif

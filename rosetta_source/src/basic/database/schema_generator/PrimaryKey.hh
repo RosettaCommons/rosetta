@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file PrimaryKey.hh
+/// @file basic/database/schema_generator/PrimaryKey.hh
 ///
-/// @brief
+/// @brief PrimaryKey class for the schema generator framework
 /// @author Tim Jacobs
 
 
@@ -35,16 +35,16 @@ public:
 
 	PrimaryKey(Column column);
 
-	PrimaryKey(utility::vector1<Column> columns);
+	PrimaryKey(Columns columns);
 
 	void add_column(Column column);
 
-	utility::vector1<Column> columns();
+	Columns columns();
 
 	std::string print();
 
 private:
-	utility::vector1<Column> columns_;
+	Columns columns_;
 };
 
 } // schema_generator

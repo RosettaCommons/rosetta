@@ -91,50 +91,50 @@ HelixBundleFeatures::features_reporter_dependencies() const {
 	dependencies.push_back("ResidueSecondaryStructureFeatures");
 	return dependencies;
 }
-	
+
 void
 HelixBundleFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;
-	
+
 	/******helix_bundles******/
 	Column bundle_id("bundle_id",DbInteger(), false /*not null*/, true /*autoincrement*/);
 	Column struct_id("struct_id",DbUUID(), false /*not null*/, false /*don't autoincrement*/);
-	
+
 	Schema helix_bundles("helix_bundles", PrimaryKey(bundle_id));
 	helix_bundles.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
-	
+
 	helix_bundles.write(db_session);
-	
+
 	/******bundle_helices******/
 	Column helix_id("helix_id",DbInteger(), false /*not null*/, true /*autoincrement*/);
-	Column flipped("flipped",DbInteger());	
+	Column flipped("flipped",DbInteger());
 	Schema bundle_helices("bundle_helices", PrimaryKey(helix_id));
-	
+
 	bundle_helices.add_column(struct_id);
 	bundle_helices.add_column(flipped);
-	
+
 	Column residue_begin("residue_begin",DbInteger());
 	Column residue_end("residue_end",DbInteger());
-	
-	
+
+
 	utility::vector1<std::string> fkey_reference_cols;
 	fkey_reference_cols.push_back("struct_id");
 	fkey_reference_cols.push_back("resNum");
-	
+
 	utility::vector1<Column> fkey_cols_begin;
 	fkey_cols_begin.push_back(struct_id);
 	fkey_cols_begin.push_back(residue_begin);
-	
+
 	utility::vector1<Column> fkey_cols_end;
 	fkey_cols_end.push_back(struct_id);
 	fkey_cols_end.push_back(residue_end);
-	
+
 	ForeignKey bundle_id_fkey(Column("bundle_id",DbInteger(),false), "helix_bundles", "bundle_id");
-	
+
 	bundle_helices.add_foreign_key(bundle_id_fkey);
 	bundle_helices.add_foreign_key(ForeignKey(fkey_cols_begin, "residues", fkey_reference_cols, true /*defer*/));
 	bundle_helices.add_foreign_key(ForeignKey(fkey_cols_end, "residues", fkey_reference_cols, true /*defer*/));
-	
+
 	bundle_helices.write(db_session);
 
 //	"CREATE TABLE IF NOT EXISTS helix_bundles (\n"
@@ -260,7 +260,7 @@ HelixBundleFeatures::report_features(
 				HelicalFragment helix_i(0,0);
 				HelicalFragment helix_j(0,0);
 				HelicalFragment helix_k(0,0);
-				
+
 				bool helix_i_flipped=false;
 				bool helix_j_flipped=false;
 				bool helix_k_flipped=false;
@@ -340,8 +340,8 @@ HelixBundleFeatures::report_features(
 								<< "\n k:" << temp_helix_k.get_start() << "," << temp_helix_k.get_end() << endl;
 
 								if(temp_helix_i.get_size() >= min_helix_size_ &&
-								   temp_helix_j.get_size() >= min_helix_size_ &&
-								   temp_helix_k.get_size() >= min_helix_size_){
+									 temp_helix_j.get_size() >= min_helix_size_ &&
+									 temp_helix_k.get_size() >= min_helix_size_){
 
 									TR.Debug << "Size check passed!" << endl;
 
@@ -359,13 +359,13 @@ HelixBundleFeatures::report_features(
 										helix_i=temp_helix_i;
 										helix_j=temp_helix_j;
 										helix_k=temp_helix_k;
-										
+
 										helix_i_flipped=helix_i_start > helix_i_end;
 										helix_j_flipped=helix_j_start > helix_j_end;
 										helix_k_flipped=helix_k_start > helix_k_end;
-										
+
 										max_bundle_residues=temp_helix_i.get_size() + temp_helix_j.get_size() + temp_helix_k.get_size();
-										TR.Debug << "Found new parallel bundle i-" << temp_helix_i.get_size() << " j-" << temp_helix_j.get_size() 
+										TR.Debug << "Found new parallel bundle i-" << temp_helix_i.get_size() << " j-" << temp_helix_j.get_size()
 										<< " k-" << temp_helix_k.get_size() << endl;
 										broke=true;
 										break;
@@ -455,8 +455,8 @@ HelixBundleFeatures::report_features(
 								<< "\n k:" << temp_helix_k.get_start() << "," << temp_helix_k.get_end() << endl;
 
 								if(temp_helix_i.get_size() >= min_helix_size_ &&
-								   temp_helix_j.get_size() >= min_helix_size_ &&
-								   temp_helix_k.get_size() >= min_helix_size_){
+									 temp_helix_j.get_size() >= min_helix_size_ &&
+									 temp_helix_k.get_size() >= min_helix_size_){
 
 									TR.Debug << "Size check passed!" << endl;
 
@@ -473,13 +473,13 @@ HelixBundleFeatures::report_features(
 										helix_i=temp_helix_i;
 										helix_j=temp_helix_j;
 										helix_k=temp_helix_k;
-										
+
 										helix_i_flipped=helix_i_start > helix_i_end;
 										helix_j_flipped=helix_j_start > helix_j_end;
 										helix_k_flipped=helix_k_start > helix_k_end;
-										
+
 										max_bundle_residues=temp_helix_i.get_size() + temp_helix_j.get_size() + temp_helix_k.get_size();
-										TR.Debug << "Found new j-flipped bundle i-" << temp_helix_i.get_size() << " j-" << temp_helix_j.get_size() 
+										TR.Debug << "Found new j-flipped bundle i-" << temp_helix_i.get_size() << " j-" << temp_helix_j.get_size()
 										<< " k-" << temp_helix_k.get_size() << endl;
 										broke=true;
 										break;
@@ -568,8 +568,8 @@ HelixBundleFeatures::report_features(
 								<< "\n k:" << temp_helix_k.get_start() << "," << temp_helix_k.get_end() << endl;
 
 								if(temp_helix_i.get_size() >= min_helix_size_ &&
-								   temp_helix_j.get_size() >= min_helix_size_ &&
-								   temp_helix_k.get_size() >= min_helix_size_){
+									 temp_helix_j.get_size() >= min_helix_size_ &&
+									 temp_helix_k.get_size() >= min_helix_size_){
 
 									TR.Debug << "Size check passed!" << endl;
 
@@ -586,13 +586,13 @@ HelixBundleFeatures::report_features(
 										helix_i=temp_helix_i;
 										helix_j=temp_helix_j;
 										helix_k=temp_helix_k;
-										
+
 										helix_i_flipped=helix_i_start > helix_i_end;
 										helix_j_flipped=helix_j_start > helix_j_end;
 										helix_k_flipped=helix_k_start > helix_k_end;
-										
+
 										max_bundle_residues=temp_helix_i.get_size() + temp_helix_j.get_size() + temp_helix_k.get_size();
-										TR.Debug << "Found new k-flipped bundle i-" << temp_helix_i.get_size() << " j-" << temp_helix_j.get_size() 
+										TR.Debug << "Found new k-flipped bundle i-" << temp_helix_i.get_size() << " j-" << temp_helix_j.get_size()
 										<< " k-" << temp_helix_k.get_size() << endl;
 										broke=true;
 										break;
@@ -682,8 +682,8 @@ HelixBundleFeatures::report_features(
 
 								//Quit here if any of the helices are too small (they only get smaller)
 								if(temp_helix_i.get_size() >= min_helix_size_ &&
-								   temp_helix_j.get_size() >= min_helix_size_ &&
-								   temp_helix_k.get_size() >= min_helix_size_){
+									 temp_helix_j.get_size() >= min_helix_size_ &&
+									 temp_helix_k.get_size() >= min_helix_size_){
 
 									TR.Debug << "Size check passed!" << endl;
 
@@ -700,13 +700,13 @@ HelixBundleFeatures::report_features(
 										helix_i=temp_helix_i;
 										helix_j=temp_helix_j;
 										helix_k=temp_helix_k;
-										
+
 										helix_i_flipped=helix_i_start > helix_i_end;
 										helix_j_flipped=helix_j_start > helix_j_end;
 										helix_k_flipped=helix_k_start > helix_k_end;
-										
+
 										max_bundle_residues=temp_helix_i.get_size() + temp_helix_j.get_size() + temp_helix_k.get_size();
-										TR.Debug << "Found new j&k flipped bundle i-" << temp_helix_i.get_size() << " j-" << temp_helix_j.get_size() 
+										TR.Debug << "Found new j&k flipped bundle i-" << temp_helix_i.get_size() << " j-" << temp_helix_j.get_size()
 										<< " k-" << temp_helix_k.get_size() <<endl;
 										broke=true;
 										break;
@@ -731,39 +731,39 @@ HelixBundleFeatures::report_features(
 						HelicalFragment helix_i_window(0,0);
 						HelicalFragment helix_j_window(0,0);
 						HelicalFragment helix_k_window(0,0);
-						
+
 						if(helix_i_flipped){
 							helix_i_window = HelicalFragment(helix_i.get_end()-window_offset-(min_helix_size_-1), helix_i.get_end()-window_offset);
 						}else{
 							helix_i_window = HelicalFragment(helix_i.get_start()+window_offset, helix_i.get_start()+window_offset+(min_helix_size_-1));
 						}
-						
+
 						if(helix_j_flipped){
 							helix_j_window = HelicalFragment(helix_j.get_end()-window_offset-(min_helix_size_-1), helix_j.get_end()-window_offset);
 						}else{
 							helix_j_window = HelicalFragment(helix_j.get_start()+window_offset, helix_j.get_start()+window_offset+(min_helix_size_-1));
 						}
-						
+
 						if(helix_k_flipped){
 							helix_k_window = HelicalFragment(helix_k.get_end()-window_offset-(min_helix_size_-1), helix_k.get_end()-window_offset);
 						}else{
 							helix_k_window = HelicalFragment(helix_k.get_start()+window_offset, helix_k.get_start()+window_offset+(min_helix_size_-1));
 						}
-						
+
 						bundle_counter++;
 						TR << "saving bundle: " << bundle_counter << endl;
-						
+
 						string bundle_insert =  "INSERT INTO helix_bundles (struct_id)  VALUES (?);";
 						statement bundle_insert_stmt(basic::database::safely_prepare_statement(bundle_insert,db_session));
 						bundle_insert_stmt.bind(1,struct_id);
 						basic::database::safely_write_to_database(bundle_insert_stmt);
-						
+
 						TR << "Saving helices" << endl;
 						//Get bundle primary key
 						core::Size bundle_id(bundle_insert_stmt.sequence_last("helix_bundles_bundle_id_seq"));
-						
+
 						TR << "Bundle saved and given id: " << bundle_id << endl;
-						
+
 						string helix_insert =  "INSERT INTO bundle_helices (bundle_id, struct_id, residue_begin, residue_end, flipped) VALUES (?,?,?,?,?);";
 						statement helix_insert_stmt(basic::database::safely_prepare_statement(helix_insert,db_session));
 						helix_insert_stmt.bind(1,bundle_id);
@@ -772,21 +772,21 @@ HelixBundleFeatures::report_features(
 						helix_insert_stmt.bind(4,helix_i_window.get_end());
 						helix_insert_stmt.bind(5,helix_i_flipped);
 						basic::database::safely_write_to_database(helix_insert_stmt);
-						
+
 						helix_insert_stmt.bind(1,bundle_id);
 						helix_insert_stmt.bind(2,struct_id);
 						helix_insert_stmt.bind(3,helix_j_window.get_start());
 						helix_insert_stmt.bind(4,helix_j_window.get_end());
 						helix_insert_stmt.bind(5,helix_j_flipped);
 						basic::database::safely_write_to_database(helix_insert_stmt);
-						
+
 						helix_insert_stmt.bind(1,bundle_id);
 						helix_insert_stmt.bind(2,struct_id);
 						helix_insert_stmt.bind(3,helix_k_window.get_start());
 						helix_insert_stmt.bind(4,helix_k_window.get_end());
 						helix_insert_stmt.bind(5,helix_k_flipped);
 						basic::database::safely_write_to_database(helix_insert_stmt);
-						
+
 					}
 				}
 			}

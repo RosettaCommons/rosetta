@@ -34,8 +34,8 @@ typedef  utility::pointer::owning_ptr< BondAngleDatabase > BondAngleDatabaseOP;
 //typedef  utility::pointer::owning_ptr< BondLengthDatabase > BondLengthDatabaseOP;
 
 
-} // namespace 
-} // namespace 
+} // namespace
+} // namespace
 
 
 #endif //include guard

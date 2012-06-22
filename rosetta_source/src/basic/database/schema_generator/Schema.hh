@@ -9,7 +9,7 @@
 
 /// @file Schema.hh
 ///
-/// @brief
+/// @brief table definition for the schema generator framework
 /// @author Tim Jacobs
 
 #ifndef INCLUDED_basic_database_schema_generator_Schema_HH
@@ -19,6 +19,7 @@
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Constraint.hh>
+#include <basic/database/schema_generator/Index.hh>
 
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
@@ -36,9 +37,15 @@ class Schema
 
 public:
 
-	Schema(std::string table_name);
+	Schema(
+		std::string table_name);
 
-	Schema(std::string table_name, PrimaryKey primary_key);
+	Schema(
+		std::string table_name,
+		PrimaryKey primary_key);
+
+	Schema(
+		Schema const & src);
 
 	void add_foreign_key(ForeignKey key);
 
@@ -46,8 +53,10 @@ public:
 
 	void add_constraint(ConstraintOP constraint);
 
+	void add_index(Index index);
+
 	std::string print();
-	
+
 	void write(utility::sql_database::sessionOP db_session);
 
 private:
@@ -58,9 +67,10 @@ private:
 
 	std::string table_name_;
 	PrimaryKey primary_key_;
-	utility::vector1<Column> columns_;
+	Columns columns_;
 	utility::vector1<ForeignKey> foreign_keys_;
 	utility::vector1<ConstraintOP> constraints_;
+	utility::vector1<Index> indices_;
 };
 
 } // schema_generator

@@ -126,7 +126,7 @@ StructureScoresFeatures::write_schema_to_db(utility::sql_database::sessionOP db_
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(struct_id);
 	pkey_cols.push_back(score_type_id);
-	
+
 	Schema structure_scores("structure_scores", PrimaryKey(pkey_cols));
 	structure_scores.add_column(struct_id);
 	structure_scores.add_column(score_type_id);
@@ -139,33 +139,6 @@ StructureScoresFeatures::write_schema_to_db(utility::sql_database::sessionOP db_
 		structure_scores.add_foreign_key(ForeignKey(score_type_id, "score_types", "score_type_id", true));
 	}
 	structure_scores.write(db_session);
-	
-//	if(db_mode == "sqlite3")
-//	{
-//		return
-//			"CREATE TABLE IF NOT EXISTS structure_scores (\n"
-//			"	struct_id BLOB,\n"
-//			"	score_type_id INTEGER,\n"
-//			"	score_value INTEGER,\n"
-//			"	FOREIGN KEY (struct_id)\n"
-//			"		REFERENCES structures (struct_id)\n"
-//			"		DEFERRABLE INITIALLY DEFERRED,\n"
-//			"	FOREIGN KEY (score_type_id)\n"
-//			"		REFERENCES score_types (score_type_id)\n"
-//			"		DEFERRABLE INITIALLY DEFERRED,\n"
-//			"	PRIMARY KEY (struct_id, score_type_id));";
-//	}else if(db_mode == "mysql")
-//	{
-//		return
-//			"CREATE TABLE IF NOT EXISTS structure_scores (\n"
-//			"	struct_id BINARY(16) REFERENCES structures (struct_id),\n"
-//			"	score_type_id INTEGER REFERENCES score_types (score_type_id),\n"
-//			"	score_value INTEGER,\n"
-//			"	PRIMARY KEY (struct_id, score_type_id));\n";
-//	}else
-//	{
-//		return "";
-//	}
 
 }
 
@@ -245,7 +218,7 @@ StructureScoresFeatures::insert_structure_score_rows(
 
 	core::Real total_score= 0.0;
 
-	std::string statement_string = "INSERT INTO structure_scores VALUES (?,?,?);";
+	std::string statement_string = "INSERT INTO structure_scores (struct_id, score_type_id, score_value) VALUES (?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	for(Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id){
 		ScoreType type(static_cast<ScoreType>(score_type_id));

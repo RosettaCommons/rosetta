@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file basic/database/schema_generator/ForeignKey.hh
-/// @brief ForeignKey class for the schema generator framework
-/// @author Tim Jacobs
+/// @file basic/database/schema_generator/Index.hh
+/// @brief Index class for the schema generator framework
+/// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 
-#ifndef INCLUDED_basic_database_schema_generator_ForeignKey_HH
-#define INCLUDED_basic_database_schema_generator_ForeignKey_HH
+#ifndef INCLUDED_basic_database_schema_generator_Index_HH
+#define INCLUDED_basic_database_schema_generator_Index_HH
 
 #include <utility/vector1.hh>
 #include <basic/database/schema_generator/Column.hh>
@@ -25,26 +25,19 @@ namespace basic{
 namespace database{
 namespace schema_generator{
 
-class ForeignKey
-{
+class Index {
 public:
 
-	ForeignKey(
+	Index(
 		Column column,
-		std::string reference_table,
-		std::string reference_column);
+		bool unique=true);
 
-	ForeignKey(
-		Column column,
-		std::string reference_table,
-		std::string reference_column,
-		bool defer);
-
-	ForeignKey(
+	Index(
 		Columns columns,
-		std::string reference_table,
-		utility::vector1<std::string> reference_columns,
-		bool defer);
+		bool unique=true);
+
+	Index(
+		Index const & src);
 
 	void
 	init_db_mode();
@@ -52,19 +45,17 @@ public:
   Columns
 	columns();
 
-	std::string print();
+	bool
+	unique() { return unique_; }
+
+	std::string
+	print(
+		std::string const & table_name);
 
 private:
-
+	bool unique_;
 	std::string database_mode_;
 	Columns columns_;
-	utility::vector1<std::string> reference_columns_;
-	std::string reference_table_;
-
-	// Some database backends can defer enforcing the primary key until
-	// the end of the transaction, eg "DEFERABLE INITIALLY DEFFERED" in sqlite
-	// and it is not possible with MySQL.
-	bool defer_;
 };
 
 

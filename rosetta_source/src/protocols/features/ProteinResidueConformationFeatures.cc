@@ -73,9 +73,9 @@ ProteinResidueConformationFeatures::type_name() const {
 
 void
 ProteinResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
-	
+
 	using namespace basic::database::schema_generator;
-	
+
 	//******protein_residue_conformation******//
 	Column struct_id("struct_id",DbUUID(), false);
 	Column seqpos("seqpos",DbInteger(), false);
@@ -88,19 +88,19 @@ ProteinResidueConformationFeatures::write_schema_to_db(utility::sql_database::se
 	Column chi3("chi3",DbDouble(), false);
 	Column chi4("chi4",DbDouble(), false);
 
-	
+
 	utility::vector1<Column> prot_res_pkeys;
 	prot_res_pkeys.push_back(struct_id);
 	prot_res_pkeys.push_back(seqpos);
-	
+
 	utility::vector1<Column> fkey_cols;
 	fkey_cols.push_back(struct_id);
 	fkey_cols.push_back(seqpos);
-	
+
 	utility::vector1<std::string> fkey_reference_cols;
 	fkey_reference_cols.push_back("struct_id");
 	fkey_reference_cols.push_back("resNum");
-	
+
 	Schema protein_residue_conformation("protein_residue_conformation", PrimaryKey(prot_res_pkeys));
 	protein_residue_conformation.add_column(struct_id);
 	protein_residue_conformation.add_column(seqpos);
@@ -115,18 +115,18 @@ ProteinResidueConformationFeatures::write_schema_to_db(utility::sql_database::se
 	protein_residue_conformation.add_foreign_key(ForeignKey(fkey_cols, "residues", fkey_reference_cols, true));
 
 	protein_residue_conformation.write(db_session);
-	
+
 	//******residue_atom_coords******//
 	Column atomno("atomno",DbInteger(), false);
 	Column x("x",DbDouble(), false);
 	Column y("y",DbDouble(), false);
 	Column z("z",DbDouble(), false);
-	
+
 	utility::vector1<Column> res_atm_coords_pkeys;
 	res_atm_coords_pkeys.push_back(struct_id);
 	res_atm_coords_pkeys.push_back(seqpos);
 	res_atm_coords_pkeys.push_back(atomno);
-	
+
 	Schema residue_atom_coords("residue_atom_coords", PrimaryKey(res_atm_coords_pkeys));
 	residue_atom_coords.add_column(struct_id);
 	residue_atom_coords.add_column(seqpos);
@@ -135,67 +135,8 @@ ProteinResidueConformationFeatures::write_schema_to_db(utility::sql_database::se
 	residue_atom_coords.add_column(y);
 	residue_atom_coords.add_column(z);
 	residue_atom_coords.add_foreign_key(ForeignKey(fkey_cols, "residues", fkey_reference_cols, true));
-	
+
 	residue_atom_coords.write(db_session);
-	
-//	if(db_mode == "sqlite3")
-//	{
-//		return
-//			"CREATE TABLE IF NOT EXISTS protein_residue_conformation (\n"
-//			"	struct_id BLOB,\n"
-//			"	seqpos INTEGER,\n"
-//			"	secstruct STRING,\n"
-//			"	phi REAL,\n"
-//			"	psi REAL,\n"
-//			"	omega REAL,\n"
-//			"	chi1 REAL,\n"
-//			"	chi2 REAL,\n"
-//			"	chi3 REAL,\n"
-//			"	chi4 REAL,\n"
-//			"	FOREIGN KEY (struct_id, seqpos)\n"
-//			"		REFERENCES residues (struct_id, resNum)\n"
-//			"		DEFERRABLE INITIALLY DEFERRED,\n"
-//			"	PRIMARY KEY (struct_id, seqpos));\n"
-//			"\n"
-//			"CREATE TABLE IF NOT EXISTS residue_atom_coords (\n"
-//			"	struct_id BLOB,\n"
-//			"	seqpos INTEGER,\n"
-//			"	atomno INTEGER,\n"
-//			"	x REAL,\n"
-//			"	y REAL,\n"
-//			"	z REAL,\n"
-//			"	FOREIGN KEY (struct_id, seqpos)\n"
-//			"		REFERENCES residues (struct_id, resNum)\n"
-//			"		DEFERRABLE INITIALLY DEFERRED,\n"
-//			"	PRIMARY KEY (struct_id, seqpos, atomno));\n";
-//	}else if(db_mode == "mysql")
-//	{
-//		return
-//			"CREATE TABLE IF NOT EXISTS protein_residue_conformation (\n"
-//			"	struct_id BINARY(16) REFERENCES residues(struct_id),\n"
-//			"	seqpos INTEGER REFERENCES residues(resNum),\n"
-//			"	secstruct TEXT,\n"
-//			"	phi DOUBLE,\n"
-//			"	psi DOUBLE,\n"
-//			"	omega DOUBLE,\n"
-//			"	chi1 DOUBLE,\n"
-//			"	chi2 DOUBLE,\n"
-//			"	chi3 DOUBLE,\n"
-//			"	chi4 DOUBLE,\n"
-//			"	PRIMARY KEY (struct_id, seqpos));\n"
-//			"\n"
-//			"CREATE TABLE IF NOT EXISTS residue_atom_coords (\n"
-//			"	struct_id BINARY(16) REFERENCES residues(struct_id),\n"
-//			"	seqpos INTEGER REFERENCES residues(resNum),\n"
-//			"	atomno INTEGER,\n"
-//			"	x DOUBLE,\n"
-//			"	y DOUBLE,\n"
-//			"	z DOUBLE,\n"
-//			"	PRIMARY KEY (struct_id, seqpos, atomno));";
-//	}else
-//	{
-//		return "";
-//	}
 
 }
 
@@ -229,7 +170,7 @@ ProteinResidueConformationFeatures::report_features(
 			break;
 		}
 	}
-	
+
 	//cppdb::transaction transact_guard(*db_session);
 	std::string conformation_string = "INSERT INTO protein_residue_conformation (struct_id, seqpos, secstruct, phi, psi, omega, chi1, chi2, chi3, chi4) VALUES (?,?,?,?,?,?,?,?,?,?)";
 	std::string atom_string = "INSERT INTO residue_atom_coords (struct_id, seqpos, atomno, x, y, z) VALUES(?,?,?,?,?,?)";
@@ -328,7 +269,7 @@ ProteinResidueConformationFeatures::load_into_pose(
 ){
 	load_conformation(db_session, struct_id, pose);
 }
-	
+
 void
 ProteinResidueConformationFeatures::load_conformation(
 	sessionOP db_session,

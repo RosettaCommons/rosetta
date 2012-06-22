@@ -16,7 +16,6 @@
 
 // Project Headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
@@ -33,7 +32,6 @@
 #include <cppdb/frontend.h>
 
 // Boost Headers
-// AUTO-REMOVED #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
 // C++ Headers
@@ -96,10 +94,12 @@ HBondParameterFeatures::~HBondParameterFeatures() {}
 string
 HBondParameterFeatures::type_name() const { return "HBondParameterFeatures"; }
 
-string
-HBondParameterFeatures::schema() const {
+void
+HBondParameterFeatures::write_schema_to_db(
+	sessionOP db_session
+) const {
 	HBondDatabaseCOP hb_database(HBondDatabase::get_database());
-	return hb_database->report_parameter_features_schema();
+	return hb_database->report_parameter_features_schema_to_db(db_session);
 }
 
 utility::vector1<std::string>

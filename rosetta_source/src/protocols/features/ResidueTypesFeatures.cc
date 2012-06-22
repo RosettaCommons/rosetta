@@ -9,7 +9,7 @@
 
 /// @file   protocols/features/ResidueTypesFeatures.cc
 /// @brief  report ResidueTypes to features Statistics Scientific Benchmark
-/// @author Matthew O'Meara
+/// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 // Unit Headers
 #include <protocols/features/ResidueTypesFeatures.hh>
@@ -69,12 +69,14 @@ ResidueTypesFeatures::~ResidueTypesFeatures() {}
 string
 ResidueTypesFeatures::type_name() const { return "ResidueTypesFeatures"; }
 
-string
-ResidueTypesFeatures::schema() const {
+void
+ResidueTypesFeatures::write_schema_to_db(
+	sessionOP db_session
+) const {
 	// NOTE: To support building feature databases in parallel, the
 	// ResidueTypeSet and ResidueType objects must be identified by
 	// their names rather then assigning them a unique id.
-	return residue_dbio_.schema();
+	return residue_dbio_.write_schema_to_db(db_session);
 }
 
 utility::vector1<std::string>

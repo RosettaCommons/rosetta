@@ -32,6 +32,11 @@
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
 
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
+
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -69,41 +74,44 @@ GeometricSolvationFeatures::GeometricSolvationFeatures(
 	geo_sol_energy_(src.geo_sol_energy_)
 {}
 
-
-
 string
 GeometricSolvationFeatures::type_name() const { return "GeometricSolvationFeatures"; }
 
-string
-GeometricSolvationFeatures::schema() const {
-	string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
+void
+GeometricSolvationFeatures::write_schema_to_db(
+	sessionOP db_session
+) const {
+	write_geometric_solvation_table_schema(db_session);
+}
 
-	if(db_mode == "sqlite3")
-	{
-		return
-			"CREATE TABLE IF NOT EXISTS geometric_solvation (\n"
-			"	struct_id BLOB,\n"
-			"	hbond_site_id TEXT,\n"
-			"	geometric_solvation_exact REAL,\n"
-			"	FOREIGN KEY (struct_id, hbond_site_id)\n"
-			"		REFERENCES hbond_sites(struct_id, site_id)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	PRIMARY KEY(struct_id, hbond_site_id));";
-	}else if(db_mode == "mysql")
-	{
-		return
-			"CREATE TABLE IF NOT EXISTS geometric_solvation (\n"
-			"	struct_id BINARY(16),\n"
-			"	hbond_site_id INTEGER,\n"
-			"	geometric_solvation_exact TEXT,\n"
-			"	FOREIGN KEY (struct_id, hbond_site_id),\n"
-			"		REFERENCES hbond_sites (struct_id, site_id),\n"
-			"	PRIMARY KEY(struct_id, hbond_site_id));";
-	}else
-	{
-		return "";
-	}
+void
+GeometricSolvationFeatures::write_geometric_solvation_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
 
+	Column struct_id("struct_id", DbUUID());
+	Column hbond_site_id("hbond_site_id", DbInteger());
+	Column geometric_solvation_exact("geometric_solvation_exact", DbReal());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(hbond_site_id);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns;
+	foreign_key_columns.push_back(struct_id);
+	foreign_key_columns.push_back(hbond_site_id);
+	vector1< std::string > reference_columns;
+	reference_columns.push_back("struct_id");
+	reference_columns.push_back("site_id");
+	ForeignKey foreign_key(foreign_key_columns, "hbond_sites", reference_columns, true);
+
+	Schema table("geometric_solvation", primary_key);
+	table.add_foreign_key(foreign_key);
+	table.add_column(geometric_solvation_exact);
+
+	table.write(db_session);
 }
 
 utility::vector1<std::string>
@@ -144,7 +152,7 @@ GeometricSolvationFeatures::report_features(
 			pose.residue(resNum),
 			atmNum));
 
-		std::string insert_string = "INSERT INTO geometric_solvation VALUES (?,?,?)";
+		std::string insert_string = "INSERT INTO geometric_solvation (struct_id, hbond_site_id, geometric_solvation_exact) VALUES (?,?,?)";
 		statement insert_statement(basic::database::safely_prepare_statement(insert_string,db_session));
 		insert_statement.bind(1,struct_id);
 		insert_statement.bind(2,site_id);

@@ -105,53 +105,29 @@ string
 ScoreTypeFeatures::type_name() const { return "ScoreTypeFeatures"; }
 
 void
-ScoreTypeFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
+ScoreTypeFeatures::write_schema_to_db(
+	sessionOP db_session
+) const {
 
 	using namespace basic::database::schema_generator;
-	
+
 	//******score_types******//
-	Column protocol_id("protocol_id",DbInteger(), false);
+	Column batch_id("batch_id",DbInteger(), false);
 	Column score_type_id("score_type_id",DbInteger(), false);
 	Column score_type_name("score_type_name",DbText(), false);
-	
+
 	utility::vector1<Column> pkey_cols;
-	pkey_cols.push_back(protocol_id);
+	pkey_cols.push_back(batch_id);
 	pkey_cols.push_back(score_type_id);
-	
+
 	Schema score_types("score_types", PrimaryKey(pkey_cols));
-	score_types.add_column(protocol_id);
+	score_types.add_column(batch_id);
 	score_types.add_column(score_type_id);
 	score_types.add_column(score_type_name);
-	
-	score_types.add_foreign_key(ForeignKey(protocol_id, "protocols", "protocol_id", true));
-	
-	score_types.write(db_session);
 
-//	if(db_mode == "sqlite3")
-//	{
-//		return
-//			"CREATE TABLE IF NOT EXISTS score_types (\n"
-//			"	protocol_id INTEGER,\n"
-//			"	score_type_id INTEGER,\n"
-//			"	score_type_name TEXT,\n"
-//			"	PRIMARY KEY (protocol_id, score_type_id)\n"
-//			"	FOREIGN KEY (protocol_id)\n"
-//			"		REFERENCES protocols (protocol_id)\n"
-//			"		DEFERRABLE INITIALLY DEFERRED);\n"
-//			"\n";
-//	}else if(db_mode == "mysql")
-//	{
-//		return
-//			"CREATE TABLE IF NOT EXISTS score_types (\n"
-//			"	protocol_id INTEGER REFERENCES protocols (protocol_id),\n"
-//			"	score_type_id INTEGER,\n"
-//			"	score_type_name TEXT,\n"
-//			"   PRIMARY KEY (protocol_id, score_type_id));\n"
-//			"\n";
-//	}else
-//	{
-//		return "";
-//	}
+	score_types.add_foreign_key(ForeignKey(batch_id, "batches", "batch_id", true));
+
+	score_types.write(db_session);
 }
 
 utility::vector1<std::string>
@@ -171,6 +147,7 @@ ScoreTypeFeatures::report_features(
 	return 0;
 }
 
+
 void ScoreTypeFeatures::delete_record(
 	boost::uuids::uuid,
 	utility::sql_database::sessionOP ){}
@@ -185,10 +162,10 @@ ScoreTypeFeatures::insert_score_type_rows(
 	std::string statement_string;
 	if(db_mode == "sqlite3")
 	{
-		statement_string = "INSERT OR IGNORE INTO score_types VALUES (?,?,?);";
+		statement_string = "INSERT OR IGNORE INTO score_types (batch_id, score_type_id, score_type_name) VALUES (?,?,?);";
 	}else if(db_mode == "mysql")
 	{
-		statement_string = "INSERT IGNORE INTO score_types VALUES (?,?,?);";
+		statement_string = "INSERT IGNORE INTO score_types (batch_id, score_type_id, score_type_name) VALUES (?,?,?);";
 	}else
 	{
 		utility_exit_with_message("the database mode needs to be 'mysql' or 'sqlite3'");

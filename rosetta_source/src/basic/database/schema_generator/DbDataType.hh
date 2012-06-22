@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file DataType.hh
+/// @file basic/database/schema_generator/DataType.hh
 ///
-/// @brief
+/// @brief DbDataType class for the schema generator framework
 /// @author Tim Jacobs
 
 #ifndef INCLUDED_basic_database_schema_generator_DbDataType_HH
@@ -68,13 +68,13 @@ public:
 	DbBigInt();
 
 };
-	
+
 //Double data type
 class DbDouble : public DbDataType {
 public:
 	DbDouble();
 };
-	
+
 //Real data type
 class DbReal : public DbDataType {
 public:

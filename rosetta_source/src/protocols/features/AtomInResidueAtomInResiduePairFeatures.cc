@@ -27,6 +27,10 @@
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 #include <basic/database/sql_utils.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray5D.hh>
@@ -68,23 +72,52 @@ AtomInResidueAtomInResiduePairFeatures::~AtomInResidueAtomInResiduePairFeatures(
 string
 AtomInResidueAtomInResiduePairFeatures::type_name() const { return "AtomInResidueAtomInResiduePairFeatures"; }
 
-string
-AtomInResidueAtomInResiduePairFeatures::schema() const {
-	return
-		"CREATE TABLE IF NOT EXISTS atom_in_residue_pairs (\n"
-		"	struct_id BLOB,\n"
-		"	residue_type1 TEXT,\n"
-		"	atom_type1 TEXT,\n"
-		"	residue_type2 TEXT,\n"
-		"	atom_type2 TEXT,\n"
-		"	distance_bin TEXT,\n"
-		"	count INTEGER,\n"
-		"	FOREIGN KEY (struct_id)\n"
-		"		REFERENCES structures (struct_id)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	CONSTRAINT dist_is_nonnegative CHECK (count >= 0),\n"
-		"	PRIMARY KEY (struct_id, residue_type1, atom_type1, residue_type2, atom_type2, distance_bin));";
+void
+AtomInResidueAtomInResiduePairFeatures::write_schema_to_db(
+	sessionOP db_session
+) const {
+	write_atom_in_residue_pairs_table_schema(db_session);
 }
+
+void
+AtomInResidueAtomInResiduePairFeatures::write_atom_in_residue_pairs_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column residue_type1("residue_type1", DbText());
+	Column atom_type1("atom_type1", DbText());
+	Column residue_type2("residue_type2", DbText());
+	Column atom_type2("atom_type2", DbText());
+	Column distance_bin("distance_bin", DbText());
+	Column count("count", DbInteger());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(residue_type1);
+	primary_key_columns.push_back(atom_type1);
+	primary_key_columns.push_back(residue_type2);
+	primary_key_columns.push_back(atom_type2);
+	primary_key_columns.push_back(distance_bin);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns;
+	foreign_key_columns.push_back(struct_id);
+	vector1< std::string > reference_columns;
+	reference_columns.push_back("struct_id");
+	ForeignKey foreign_key(foreign_key_columns, "structures", reference_columns, true);
+
+	GreaterThanConstraintOP count_is_non_negative( new GreaterThanConstraint(count, 0));
+
+	Schema table("atom_in_residue_pairs", primary_key);
+	table.add_foreign_key(foreign_key);
+	table.add_constraint(count_is_non_negative);
+	table.add_column(count);
+
+	table.write(db_session);
+}
+
 
 utility::vector1<std::string>
 AtomInResidueAtomInResiduePairFeatures::features_reporter_dependencies() const {
@@ -170,7 +203,7 @@ AtomInResidueAtomInResiduePairFeatures::report_atom_pairs(
 		}
 	}
 
-	std::string stmt_string = "INSERT INTO atom_in_residue_pairs VALUES (?,?,?,?,?,?,?);";
+	std::string stmt_string = "INSERT INTO atom_in_residue_pairs (struct_id, residue_type1, atom_type1, residue_type2, atom_type2, distance_bin, count) VALUES (?,?,?,?,?,?,?);";
 	cppdb::statement stmt(basic::database::safely_prepare_statement(stmt_string,db_session));
 
 	for(Size aa1=1; aa1 <= max_res; ++aa1){

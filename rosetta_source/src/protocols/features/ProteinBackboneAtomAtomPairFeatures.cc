@@ -9,7 +9,7 @@
 
 /// @file   protocols/features/ProteinBackboneAtomAtomPairFeatures.cc
 /// @brief  report atom-atom pair distances between atoms in protein backbones to features Statistics Scientific Benchmark
-/// @author Matthew O'Meara
+/// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 // Unit Headers
 #include <protocols/features/ProteinBackboneAtomAtomPairFeatures.hh>
@@ -27,6 +27,12 @@
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 #include <basic/database/sql_utils.hh>
+
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
+
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -60,45 +66,100 @@ ProteinBackboneAtomAtomPairFeatures::~ProteinBackboneAtomAtomPairFeatures(){}
 string
 ProteinBackboneAtomAtomPairFeatures::type_name() const { return "ProteinBackboneAtomAtomPairFeatures"; }
 
-string
-ProteinBackboneAtomAtomPairFeatures::schema() const {
-	return
-		"CREATE TABLE IF NOT EXISTS protein_backbone_atom_atom_pairs (\n"
-		"	struct_id BLOB,\n"
-		"	resNum1 TEXT,\n"
-		"	resNum2 TEXT,\n"
-		"	N_N_dist REAL,\n"
-		"	N_Ca_dist REAL,\n"
-		"	N_C_dist REAL,\n"
-		"	N_O_dist REAL,\n"
-		" N_Ha_dist REAL,\n"
-		"	Ca_N_dist REAL,\n"
-		"	Ca_Ca_dist REAL,\n"
-		"	Ca_C_dist REAL,\n"
-		"	Ca_O_dist REAL,\n"
-		" Ca_Ha_dist REAL,\n"
-		"	C_N_dist REAL,\n"
-		"	C_Ca_dist REAL,\n"
-		"	C_C_dist REAL,\n"
-		"	C_O_dist REAL,\n"
-		" C_Ha_dist REAL,\n"
-		"	O_N_dist REAL,\n"
-		"	O_Ca_dist REAL,\n"
-		"	O_C_dist REAL,\n"
-		"	O_O_dist REAL,\n"
-		"	O_Ha_dist REAL,\n"
-		"	Ha_N_dist REAL,\n"
-		"	Ha_Ca_dist REAL,\n"
-		"	Ha_C_dist REAL,\n"
-		"	Ha_O_dist REAL,\n"
-		"	Ha_Ha_dist REAL,\n"
-		"	FOREIGN KEY (struct_id, resNum1)\n"
-		"		REFERENCES residues (struct_id, resNum)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	FOREIGN KEY (struct_id, resNum2)\n"
-		"		REFERENCES residues (struct_id, resNum)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	PRIMARY KEY (struct_id, resNum1, resNum2));\n";
+void
+ProteinBackboneAtomAtomPairFeatures::write_schema_to_db(
+	sessionOP db_session
+) const {
+	write_protein_backbone_atom_atom_pairs_table_schema(db_session);
+}
+
+void
+ProteinBackboneAtomAtomPairFeatures::write_protein_backbone_atom_atom_pairs_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column resNum1("resNum1", DbInteger());
+	Column resNum2("resNum2", DbInteger());
+	Column N_N_dist("N_N_dist", DbReal());
+	Column N_Ca_dist("N_Ca_dist", DbReal());
+	Column N_C_dist("N_C_dist", DbReal());
+	Column N_O_dist("N_O_dist", DbReal());
+	Column N_Ha_dist("N_Ha_dist", DbReal());
+	Column Ca_N_dist("Ca_N_dist", DbReal());
+	Column Ca_Ca_dist("Ca_Ca_dist", DbReal());
+	Column Ca_C_dist("Ca_C_dist", DbReal());
+	Column Ca_O_dist("Ca_O_dist", DbReal());
+	Column Ca_Ha_dist("Ca_Ha_dist", DbReal());
+	Column C_N_dist("C_N_dist", DbReal());
+	Column C_Ca_dist("C_Ca_dist", DbReal());
+	Column C_C_dist("C_C_dist", DbReal());
+	Column C_O_dist("C_O_dist", DbReal());
+	Column C_Ha_dist("C_Ha_dist", DbReal());
+	Column O_N_dist("O_N_dist", DbReal());
+	Column O_Ca_dist("O_Ca_dist", DbReal());
+	Column O_C_dist("O_C_dist", DbReal());
+	Column O_O_dist("O_O_dist", DbReal());
+	Column O_Ha_dist("O_Ha_dist", DbReal());
+	Column Ha_N_dist("Ha_N_dist", DbReal());
+	Column Ha_Ca_dist("Ha_Ca_dist", DbReal());
+	Column Ha_C_dist("Ha_C_dist", DbReal());
+	Column Ha_O_dist("Ha_O_dist", DbReal());
+	Column Ha_Ha_dist("Ha_Ha_dist", DbReal());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(resNum1);
+	primary_key_columns.push_back(resNum2);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns1;
+	foreign_key_columns1.push_back(struct_id);
+	foreign_key_columns1.push_back(resNum1);
+	vector1< std::string > reference_columns1;
+	reference_columns1.push_back("struct_id");
+	reference_columns1.push_back("resNum");
+	ForeignKey foreign_key1(foreign_key_columns1, "residues", reference_columns1, true);
+
+	Columns foreign_key_columns2;
+	foreign_key_columns2.push_back(struct_id);
+	foreign_key_columns2.push_back(resNum2);
+	vector1< std::string > reference_columns2;
+	reference_columns2.push_back("struct_id");
+	reference_columns2.push_back("resNum");
+	ForeignKey foreign_key2(foreign_key_columns2, "residues", reference_columns2, true);
+
+	Schema table("protein_backbone_atom_atom_pairs", primary_key);
+	table.add_foreign_key(foreign_key1);
+	table.add_foreign_key(foreign_key2);
+	table.add_column(N_N_dist);
+	table.add_column(N_Ca_dist);
+	table.add_column(N_C_dist);
+	table.add_column(N_O_dist);
+	table.add_column(N_Ha_dist);
+	table.add_column(Ca_N_dist);
+	table.add_column(Ca_Ca_dist);
+	table.add_column(Ca_C_dist);
+	table.add_column(Ca_O_dist);
+	table.add_column(Ca_Ha_dist);
+	table.add_column(C_N_dist);
+	table.add_column(C_Ca_dist);
+	table.add_column(C_C_dist);
+	table.add_column(C_O_dist);
+	table.add_column(C_Ha_dist);
+	table.add_column(O_N_dist);
+	table.add_column(O_Ca_dist);
+	table.add_column(O_C_dist);
+	table.add_column(O_O_dist);
+	table.add_column(O_Ha_dist);
+	table.add_column(Ha_N_dist);
+	table.add_column(Ha_Ca_dist);
+	table.add_column(Ha_C_dist);
+	table.add_column(Ha_O_dist);
+	table.add_column(Ha_Ha_dist);
+
+	table.write(db_session);
 }
 
 utility::vector1<std::string>
@@ -125,7 +186,7 @@ ProteinBackboneAtomAtomPairFeatures::report_features(
 ){
 	TenANeighborGraph const & tenA(pose.energies().tenA_neighbor_graph());
 
-	std::string statement_string = "INSERT INTO protein_backbone_atom_atom_pairs VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+	std::string statement_string = "INSERT INTO protein_backbone_atom_atom_pairs (struct_id, resNum1, resNum2, N_N_dist, N_Ca_dist, N_C_dist, N_O_dist, N_Ha_dist, Ca_N_dist, Ca_Ca_dist, Ca_C_dist, Ca_O_dist, Ca_Ha_dist, C_N_dist, C_Ca_dist, C_C_dist, C_O_dist, C_Ha_dist, O_N_dist, O_Ca_dist, O_C_dist, O_O_dist, O_Ha_dist, Ha_N_dist, Ha_Ca_dist, Ha_C_dist, Ha_O_dist, Ha_Ha_dist) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
 	for(Size resNum1=1; resNum1 <= pose.total_residue(); ++resNum1){

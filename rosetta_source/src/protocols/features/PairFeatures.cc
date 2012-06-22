@@ -9,7 +9,7 @@
 
 /// @file   protocols/features/PairFeatures.cc
 /// @brief  report orbital geometry and scores to features statistics scientific benchmark
-/// @author Matthew O'Meara
+/// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 // Unit Headers
 #include <protocols/features/PairFeatures.hh>
@@ -27,6 +27,11 @@
 #include <utility/vector1.hh>
 #include <basic/database/sql_utils.hh>
 
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
+#include <basic/database/schema_generator/Constraint.hh>
 // Numeric Headers
 #include <numeric/xyzVector.hh>
 
@@ -61,28 +66,70 @@ PairFeatures::~PairFeatures(){}
 string
 PairFeatures::type_name() const { return "PairFeatures"; }
 
-string
-PairFeatures::schema() const {
-	return
-		"CREATE TABLE IF NOT EXISTS residue_pairs (\n"
-		"	struct_id BLOB,\n"
-		"	resNum1 INTEGER,\n"
-		"	resNum2 INTEGER,\n"
-		"	res1_10A_neighbors INTEGER,\n"
-		"	res2_10A_neighbors INTEGER,\n"
-		"	actcoord_dist REAL,\n"
-		"	polymeric_sequence_dist INTEGER,\n"
-		"	FOREIGN KEY (struct_id, resNum1)\n"
-		"		REFERENCES residues (struct_id, resNum)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	FOREIGN KEY (struct_id, resNum2)\n"
-		"		REFERENCES residues (struct_id, resNum)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	CONSTRAINT res1_10A_neighbors_is_positive CHECK (res1_10A_neighbors >= 1),\n"
-		"	CONSTRAINT res2_10A_neighbors_is_positive CHECK (res2_10A_neighbors >= 1),\n"
-		"	CONSTRAINT actcoord_dist_is_nonnegative CHECK (actcoord_dist >= 0),\n"
-		"	PRIMARY KEY(struct_id, resNum1, resNum2));";
+void
+PairFeatures::write_schema_to_db(
+	sessionOP db_session
+) const {
+	write_residue_pairs_table_schema(db_session);
 }
+
+void
+PairFeatures::write_residue_pairs_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", DbUUID());
+	Column resNum1("resNum1", DbInteger());
+	Column resNum2("resNum2", DbInteger());
+	Column res1_10A_neighbors("res1_10A_neighbors", DbInteger());
+	Column res2_10A_neighbors("res2_10A_neighbors", DbInteger());
+	Column actcoord_dist("actcoord_dist", DbReal());
+	Column polymeric_sequence_dist("polymeric_sequence_dist", DbInteger());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(resNum1);
+	primary_key_columns.push_back(resNum2);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns1;
+	foreign_key_columns1.push_back(struct_id);
+	foreign_key_columns1.push_back(resNum1);
+	vector1< std::string > reference_columns1;
+	reference_columns1.push_back("struct_id");
+	reference_columns1.push_back("resNum");
+	ForeignKey foreign_key1(foreign_key_columns1, "residues", reference_columns1, true);
+
+	Columns foreign_key_columns2;
+	foreign_key_columns2.push_back(struct_id);
+	foreign_key_columns2.push_back(resNum2);
+	vector1< std::string > reference_columns2;
+	reference_columns2.push_back("struct_id");
+	reference_columns2.push_back("resNum");
+	ForeignKey foreign_key2(foreign_key_columns2, "residues", reference_columns2, true);
+
+	GreaterThanConstraintOP res1_10A_neighbors_is_positive(
+		new GreaterThanConstraint(res1_10A_neighbors, 1.0));
+	GreaterThanConstraintOP res2_10A_neighbors_is_positive(
+		new GreaterThanConstraint(res2_10A_neighbors, 1.0));
+
+	GreaterThanConstraintOP actcoord_dist_is_nonnegative(
+		new GreaterThanConstraint(actcoord_dist, 0));
+
+	Schema table("residue_pairs", primary_key);
+	table.add_foreign_key(foreign_key1);
+	table.add_foreign_key(foreign_key2);
+	table.add_constraint(res1_10A_neighbors_is_positive);
+	table.add_constraint(res2_10A_neighbors_is_positive);
+	table.add_column(res1_10A_neighbors);
+	table.add_column(res2_10A_neighbors);
+	table.add_column(actcoord_dist);
+	table.add_column(polymeric_sequence_dist);
+
+	table.write(db_session);
+}
+
 
 utility::vector1<std::string>
 PairFeatures::features_reporter_dependencies() const {
@@ -122,7 +169,7 @@ PairFeatures::report_residue_pairs(
 
 	TenANeighborGraph const & tenA( pose.energies().tenA_neighbor_graph() );
 
-	std::string statement_string = "INSERT INTO residue_pairs VALUES (?,?,?,?,?,?,?);";
+	std::string statement_string = "INSERT INTO residue_pairs (struct_id, resNum1, resNum2, res1_10A_neighbors, res2_10A_neighbors, actcoord_dist, polymeric_sequence_dist) VALUES (?,?,?,?,?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
 	for(Size resNum1=1; resNum1 <= pose.total_residue(); ++resNum1){

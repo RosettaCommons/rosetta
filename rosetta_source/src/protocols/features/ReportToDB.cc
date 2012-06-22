@@ -547,7 +547,7 @@ ReportToDB::write_features_reporters_table(
 	"	report_name = ?;";
 	statement select_stmt(safely_prepare_statement(select_string,db_session));
 
-	string insert_string = "INSERT INTO features_reporters VALUES (?);";
+	string insert_string = "INSERT INTO features_reporters (report_name) VALUES (?);";
 	statement insert_stmt(safely_prepare_statement(insert_string,db_session));
 
 	foreach(FeaturesReporterOP const & reporter, features_reporters_){
@@ -673,7 +673,7 @@ ReportToDB::report_features(
 		string report_name = features_reporters_[i]->type_name();
 
 		TR << "Reporting " << report_name << std::endl;
-		
+
 		try {
 			features_reporters_[i]->report_features(
 				pose, relevant_residues, struct_id, db_session);

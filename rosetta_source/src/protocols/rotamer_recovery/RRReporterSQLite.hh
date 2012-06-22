@@ -67,11 +67,29 @@ RRReporterSQLite();
 
 public: // public interface
 
-	static
-	std::string
-	schema(
-		OutputLevel::e output_level = OutputLevel::full);
+	///@brief generate the table schemas and write them to the database
+	void
+	write_schema_to_db(
+		utility::sql_database::sessionOP db_session,
+		OutputLevel::e output_level = OutputLevel::full) const;
 
+private:
+	///@brief generate the nchi table schema
+	void
+	write_nchi_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+	///@brief generate the full rotamer_recovery table schema
+	void
+	write_rotamer_recovery_full_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+	///@brief generate the features rotamer_recovery table schema
+	void
+	write_rotamer_recovery_features_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
+public:
 	void
 	set_protocol_info(
 		std::string const & protocol_name,

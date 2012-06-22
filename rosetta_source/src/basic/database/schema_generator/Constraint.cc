@@ -9,53 +9,92 @@
 
 /// @file Constraints.cc
 ///
-/// @brief
+/// @brief Constraints class for the schema generator framework
 /// @author Tim Jacobs
 
 #include <basic/database/schema_generator/Constraint.hh>
 #include <basic/database/schema_generator/Column.hh>
 
+#include <core/types.hh>
+
 #include <string>
+#include <sstream>
 #include <utility/exit.hh>
 
 namespace basic{
 namespace database{
 namespace schema_generator{
 
-Constraint::Constraint(Column column){
-	this->columns_.push_back(column);
+using std::string;
+using std::stringstream;
+using platform::Size;
+using platform::Real;
+
+
+Constraint::Constraint(
+	Column column
+) :
+	columns_()
+{
+	columns_.push_back(column);
 }
 
-Constraint::Constraint(utility::vector1<Column> columns):
-columns_(columns)
+Constraint::Constraint(
+	Columns columns
+) :
+	columns_(columns)
 {}
 
-//	std::string ComparisonConstraint::print(){
-//		std::string constraint_string;
-//
-//
-//	}
 
-UniqueConstraint::UniqueConstraint(Column column):
-Constraint(column)
+
+UniqueConstraint::UniqueConstraint(
+	Column column
+) :
+	Constraint(column)
 {}
 
-UniqueConstraint::UniqueConstraint(utility::vector1<Column> columns):
-Constraint(columns)
+UniqueConstraint::UniqueConstraint(
+	Columns columns
+) :
+	Constraint(columns)
 {}
 
-std::string UniqueConstraint::print(){
-	std::string constraint_string = "UNIQUE (";
+string
+UniqueConstraint::print(){
+	stringstream constraint;
 
-	for(int i=1; i<=columns_.size(); ++i){
+	constraint << "UNIQUE (";
+
+	for(Size i=1; i<=columns_.size(); ++i){
 		if(i!=1){
-			constraint_string += ",";
+			constraint << ", ";
 		}
-		constraint_string += columns_[i].name();
+		constraint << columns_[i].name();
 	}
-	constraint_string += ")";
-	return constraint_string;
+	constraint << ")";
+	return constraint.str();
 }
+
+
+GreaterThanConstraint::GreaterThanConstraint(
+	Column column,
+	platform::Real value
+) :
+	Constraint(column),
+	value_(value)
+{}
+
+string
+GreaterThanConstraint::print(){
+	stringstream constraint;
+
+	assert(columns_.size() == 1);
+
+	constraint << "CONSTRAINT " << columns_[1].name() << "_greater_than CHECK ";
+	constraint << "(" << columns_[1].name() << " >= " << value_ << ")";
+	return constraint.str();
+}
+
 
 } // schema_generator
 } // namespace database

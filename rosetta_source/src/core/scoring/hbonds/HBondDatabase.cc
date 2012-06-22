@@ -6,7 +6,7 @@
 // (C) 199x-2009 Rosetta Commons participating institutions and developers.
 // For more information, see http://www.rosettacommons.org/.
 
-/// @file   core/scoring/geometric_solvation/HBondDatabase.cc
+/// @file   core/scoring/hbonds/HBondDatabase.cc
 /// @brief  Database containing params for HBondEnergy
 /// @author John Karanicolas
 /// @author Matthew O'Meara
@@ -23,14 +23,14 @@
 #include <core/scoring/hbonds/constants.hh>
 #include <core/scoring/hbonds/FadeInterval.hh>
 
-// Project Headers
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.fwd.hh>
-
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/sql_utils.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/ForeignKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
+
 
 // Utility Headers
 #include <utility/io/izstream.hh>
@@ -43,7 +43,6 @@
 #include <cppdb/frontend.h>
 
 // Boost Headers
-// AUTO-REMOVED #include <boost/tokenizer.hpp>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
@@ -884,86 +883,261 @@ HBondDatabase::weight_type_lookup(
 	return p;
 }
 
-string
-HBondDatabase::report_parameter_features_schema() const {
-	return
-		"CREATE TABLE IF NOT EXISTS hbond_fade_interval(\n"
-		"	database_tag TEXT,\n"
-		"	name TEXT,\n"
-		"	junction_Type TEXT,\n"
-		"	min0 REAL,\n"
-		"	fmin REAL,\n"
-		"	fmax REAL,\n"
-		"	max0 REAL,\n"
-		"	PRIMARY KEY(database_tag, name));\n"
-		"\n"
-		"CREATE TABLE IF NOT EXISTS hbond_polynomial_1d (\n"
-		"	database_tag TEXT,\n"
-		"	name TEXT,\n"
-		"	dimension TEXT,\n"
-		"	xmin REAL,\n"
-		"	xmax REAL,\n"
-		"	min_val REAL,\n"
-		"	max_val REAL,\n"
-		"	root1 REAL,\n"
-		"	root2 REAL,\n"
-		"	degree INTEGER,\n"
-		"	c_a REAL,\n"
-		"	c_b REAL,\n"
-		"	c_c REAL,\n"
-		"	c_d REAL,\n"
-		"	c_e REAL,\n"
-		"	c_f REAL,\n"
-		"	c_g REAL,\n"
-		"	c_h REAL,\n"
-		"	c_i REAL,\n"
-		"	c_j REAL,\n"
-		"	c_k REAL,\n"
-		"	PRIMARY KEY(database_tag, name));\n"
-		"\n"
-		"CREATE TABLE IF NOT EXISTS hbond_evaluation_types (\n"
-		"	database_tag TEXT,\n"
-		"	don_chem_type TEXT,\n"
-		"	acc_chem_type TEXT,\n"
-		"	separation TEXT,\n"
-		"	AHdist_short_fade TEXT,\n"
-		"	AHdist_long_fade TEXT,\n"
-		"	cosBAH_fade TEXT,\n"
-		"	cosAHD_fade TEXT,\n"
-		"	AHdist TEXT,\n"
-		"	cosBAH_short TEXT,\n"
-		"	cosBAH_long TEXT,\n"
-		"	cosAHD_short TEXT,\n"
-		"	cosAHD_long TEXT,\n"
-		"	weight_type TEXT,\n"
-		"	FOREIGN KEY(database_tag, AHdist_short_fade)\n"
-		"		REFERENCES hbond_fade_interval(database_tag, name)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	FOREIGN KEY(database_tag, AHdist_long_fade)\n"
-		"		REFERENCES hbond_fade_interval(database_tag, name)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	FOREIGN KEY(database_tag, cosBAH_fade)\n"
-		"		REFERENCES hbond_fade_interval(database_tag, name)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	FOREIGN KEY(database_tag, cosAHD_fade)\n"
-		"		REFERENCES hbond_fade_interval(database_tag, name)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	FOREIGN KEY(database_tag, AHdist)\n"
-		"		REFERENCES hbond_polynomial_1d(database_tag, name)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	FOREIGN KEY(database_tag, cosBAH_short)\n"
-		"		REFERENCES hbond_polynomial_1d(database_tag, name)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	FOREIGN KEY(database_tag, cosBAH_long)\n"
-		"		REFERENCES hbond_polynomial_1d(database_tag, name)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	FOREIGN KEY(database_tag, cosAHD_short)\n"
-		"		REFERENCES hbond_polynomial_1d(database_tag, name)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	FOREIGN KEY(database_tag, cosAHD_long)\n"
-		"		REFERENCES hbond_polynomial_1d(database_tag, name)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"PRIMARY KEY (database_tag, don_chem_type, acc_chem_type, separation));\n";
+void
+HBondDatabase::report_parameter_features_schema_to_db(
+	sessionOP db_session
+) const {
+	write_hbond_fade_interval_table_schema(db_session);
+	write_hbond_polynomial_1d_table_schema(db_session);
+	write_hbond_evaluation_types_table_schema(db_session);
+}
+
+void
+HBondDatabase::write_hbond_fade_interval_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column database_tag("database_tag", DbText());
+	Column name("name", DbText());
+	Column junction_type("junction_type", DbText());
+	Column min0("min0", DbReal());
+	Column fmin("fmin", DbReal());
+	Column fmax("fmax", DbReal());
+	Column max0("max0", DbReal());
+
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(database_tag);
+	primary_key_columns.push_back(name);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Schema table("hbond_fade_interval", primary_key);
+	table.add_column(junction_type);
+	table.add_column(min0);
+	table.add_column(fmin);
+	table.add_column(fmax);
+	table.add_column(max0);
+
+	table.write(db_session);
+}
+
+void
+HBondDatabase::write_hbond_polynomial_1d_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column database_tag("database_tag", DbText());
+	Column name("name", DbText());
+	Column dimension("dimension", DbText());
+	Column xmin("xmin", DbReal());
+	Column xmax("xmax", DbReal());
+	Column min_val("min_val", DbReal());
+	Column max_val("max_val", DbReal());
+	Column root1("root1", DbReal());
+	Column root2("root2", DbReal());
+	Column degree("degree", DbInteger());
+	Column c_a("c_a", DbReal());
+	Column c_b("c_b", DbReal());
+	Column c_c("c_c", DbReal());
+	Column c_d("c_d", DbReal());
+	Column c_e("c_e", DbReal());
+	Column c_f("c_f", DbReal());
+	Column c_g("c_g", DbReal());
+	Column c_h("c_h", DbReal());
+	Column c_i("c_i", DbReal());
+	Column c_j("c_j", DbReal());
+	Column c_k("c_k", DbReal());
+
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(database_tag);
+	primary_key_columns.push_back(name);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Schema table("hbond_polynomial_1d", primary_key);
+	table.add_column(dimension);
+	table.add_column(xmin);
+	table.add_column(xmax);
+	table.add_column(min_val);
+	table.add_column(max_val);
+	table.add_column(root1);
+	table.add_column(root2);
+	table.add_column(degree);
+	table.add_column(c_a);
+	table.add_column(c_b);
+	table.add_column(c_c);
+	table.add_column(c_d);
+	table.add_column(c_e);
+	table.add_column(c_f);
+	table.add_column(c_g);
+	table.add_column(c_h);
+	table.add_column(c_i);
+	table.add_column(c_j);
+	table.add_column(c_k);
+	table.write(db_session);
+
+}
+
+void
+HBondDatabase::write_hbond_evaluation_types_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column database_tag("database_tag", DbText());
+	Column don_chem_type("don_chem_type", DbText());
+	Column acc_chem_type("acc_chem_type", DbText());
+	Column separation("separation", DbText());
+	Column AHdist_short_fade("AHdist_short_fade", DbText());
+	Column AHdist_long_fade("AHdist_long_fade", DbText());
+	Column cosBAH_fade("cosBAH_fade", DbText());
+	Column cosAHD_fade("cosAHD_fade", DbText());
+	Column AHdist("AHdist", DbText());
+	Column cosBAH_short("cosBAH_short", DbText());
+	Column cosBAH_long("cosBAH_long", DbText());
+	Column cosAHD_short("cosAHD_short", DbText());
+	Column cosAHD_long("cosAHD_long", DbText());
+	Column weight_type("weight_type", DbText());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(database_tag);
+	primary_key_columns.push_back(don_chem_type);
+	primary_key_columns.push_back(acc_chem_type);
+	primary_key_columns.push_back(separation);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns_AHdist_short_fade;
+	foreign_key_columns_AHdist_short_fade.push_back(database_tag);
+	foreign_key_columns_AHdist_short_fade.push_back(AHdist_short_fade);
+	vector1< std::string > reference_columns_AHdist_short_fade;
+	reference_columns_AHdist_short_fade.push_back("database_tag");
+	reference_columns_AHdist_short_fade.push_back("name");
+	ForeignKey foreign_key_AHdist_short_fade(
+		foreign_key_columns_AHdist_short_fade,
+		"hbond_fade_interval",
+		reference_columns_AHdist_short_fade,
+		true);
+
+	Columns foreign_key_columns_AHdist_long_fade;
+	foreign_key_columns_AHdist_long_fade.push_back(database_tag);
+	foreign_key_columns_AHdist_long_fade.push_back(AHdist_long_fade);
+	vector1< std::string > reference_columns_AHdist_long_fade;
+	reference_columns_AHdist_long_fade.push_back("database_tag");
+	reference_columns_AHdist_long_fade.push_back("name");
+	ForeignKey foreign_key_AHdist_long_fade(
+		foreign_key_columns_AHdist_long_fade,
+		"hbond_fade_interval",
+		reference_columns_AHdist_long_fade,
+		true);
+
+	Columns foreign_key_columns_cosBAH_fade;
+	foreign_key_columns_cosBAH_fade.push_back(database_tag);
+	foreign_key_columns_cosBAH_fade.push_back(cosBAH_fade);
+	vector1< std::string > reference_columns_cosBAH_fade;
+	reference_columns_cosBAH_fade.push_back("database_tag");
+	reference_columns_cosBAH_fade.push_back("name");
+	ForeignKey foreign_key_cosBAH_fade(
+		foreign_key_columns_cosBAH_fade,
+		"hbond_fade_interval",
+		reference_columns_cosBAH_fade,
+		true);
+
+	Columns foreign_key_columns_cosAHD_fade;
+	foreign_key_columns_cosAHD_fade.push_back(database_tag);
+	foreign_key_columns_cosAHD_fade.push_back(cosAHD_fade);
+	vector1< std::string > reference_columns_cosAHD_fade;
+	reference_columns_cosAHD_fade.push_back("database_tag");
+	reference_columns_cosAHD_fade.push_back("name");
+	ForeignKey foreign_key_cosAHD_fade(
+		foreign_key_columns_cosAHD_fade,
+		"hbond_fade_interval",
+		reference_columns_cosAHD_fade,
+		true);
+
+	Columns foreign_key_columns_AHdist;
+	foreign_key_columns_AHdist.push_back(database_tag);
+	foreign_key_columns_AHdist.push_back(AHdist);
+	vector1< std::string > reference_columns_AHdist;
+	reference_columns_AHdist.push_back("database_tag");
+	reference_columns_AHdist.push_back("name");
+	ForeignKey foreign_key_AHdist(
+		foreign_key_columns_AHdist,
+		"hbond_polynomial_1d",
+		reference_columns_AHdist,
+		true);
+
+	Columns foreign_key_columns_cosBAH_short;
+	foreign_key_columns_cosBAH_short.push_back(database_tag);
+	foreign_key_columns_cosBAH_short.push_back(cosBAH_short);
+	vector1< std::string > reference_columns_cosBAH_short;
+	reference_columns_cosBAH_short.push_back("database_tag");
+	reference_columns_cosBAH_short.push_back("name");
+	ForeignKey foreign_key_cosBAH_short(
+		foreign_key_columns_cosBAH_short,
+		"hbond_polynomial_1d",
+		reference_columns_cosBAH_short,
+		true);
+
+	Columns foreign_key_columns_cosBAH_long;
+	foreign_key_columns_cosBAH_long.push_back(database_tag);
+	foreign_key_columns_cosBAH_long.push_back(cosBAH_long);
+	vector1< std::string > reference_columns_cosBAH_long;
+	reference_columns_cosBAH_long.push_back("database_tag");
+	reference_columns_cosBAH_long.push_back("name");
+	ForeignKey foreign_key_cosBAH_long(
+		foreign_key_columns_cosBAH_long,
+		"hbond_polynomial_1d",
+		reference_columns_cosBAH_long,
+		true);
+
+	Columns foreign_key_columns_cosAHD_short;
+	foreign_key_columns_cosAHD_short.push_back(database_tag);
+	foreign_key_columns_cosAHD_short.push_back(cosAHD_short);
+	vector1< std::string > reference_columns_cosAHD_short;
+	reference_columns_cosAHD_short.push_back("database_tag");
+	reference_columns_cosAHD_short.push_back("name");
+	ForeignKey foreign_key_cosAHD_short(
+		foreign_key_columns_cosAHD_short,
+		"hbond_polynomial_1d",
+		reference_columns_cosAHD_short,
+		true);
+
+	Columns foreign_key_columns_cosAHD_long;
+	foreign_key_columns_cosAHD_long.push_back(database_tag);
+	foreign_key_columns_cosAHD_long.push_back(cosAHD_long);
+	vector1< std::string > reference_columns_cosAHD_long;
+	reference_columns_cosAHD_long.push_back("database_tag");
+	reference_columns_cosAHD_long.push_back("name");
+	ForeignKey foreign_key_cosAHD_long(
+		foreign_key_columns_cosAHD_long,
+		"hbond_polynomial_1d",
+		reference_columns_cosAHD_long,
+		true);
+
+	Schema table("hbond_evaluation_types", primary_key);
+	table.add_foreign_key(foreign_key_AHdist_short_fade);
+	table.add_foreign_key(foreign_key_AHdist_long_fade);
+	table.add_foreign_key(foreign_key_cosBAH_fade);
+	table.add_foreign_key(foreign_key_cosAHD_fade);
+	table.add_foreign_key(foreign_key_AHdist);
+	table.add_foreign_key(foreign_key_cosBAH_short);
+	table.add_foreign_key(foreign_key_cosBAH_long);
+	table.add_foreign_key(foreign_key_cosAHD_short);
+	table.add_foreign_key(foreign_key_cosAHD_long);
+	table.add_column(AHdist_short_fade);
+	table.add_column(AHdist_long_fade);
+	table.add_column(cosBAH_fade);
+	table.add_column(cosAHD_fade);
+	table.add_column(AHdist);
+	table.add_column(cosBAH_short);
+	table.add_column(cosBAH_long);
+	table.add_column(cosAHD_short);
+	table.add_column(cosAHD_long);
+	table.add_column(weight_type);
+
+	table.write(db_session);
 }
 
 Size
@@ -981,7 +1155,7 @@ HBondDatabase::report_parameter_features(
 
 
 	pair<string, FadeIntervalCOP> fade_name_interval;
-	std::string hbond_interval_string = "INSERT INTO hbond_fade_interval VALUES (?,?,?,?,?,?,?);";
+	std::string hbond_interval_string = "INSERT INTO hbond_fade_interval (database_tag, name, junction_type, min0, fmin, fmax, max0) VALUES (?,?,?,?,?,?,?);";
 	statement hbond_interval_statement(basic::database::safely_prepare_statement(hbond_interval_string,db_session));
 	foreach(fade_name_interval, HBFadeInterval_lookup_by_name_){
 		hbond_interval_statement.bind(1,database_tag);
@@ -996,7 +1170,7 @@ HBondDatabase::report_parameter_features(
 	}
 
 	pair<string, Polynomial_1dCOP> poly_name_fn;
-	std::string hbond_polynomial_string = "INSERT INTO hbond_polynomial_1d VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+	std::string hbond_polynomial_string = "INSERT INTO hbond_polynomial_1d (database_tag, name, dimension, xmin, xmax, min_val, max_val, root1, root2, degree, c_a, c_b, c_c, c_d, c_e, c_f, c_g, c_h, c_i, c_j, c_k) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement hbond_polynomial_statement(basic::database::safely_prepare_statement(hbond_polynomial_string,db_session));
 	foreach(poly_name_fn, HBPoly1D_lookup_by_name_){
 		hbond_polynomial_statement.bind(1,database_tag);
@@ -1021,7 +1195,7 @@ HBondDatabase::report_parameter_features(
 		basic::database::safely_write_to_database(hbond_polynomial_statement);
 	}
 
-	std::string hbond_evaluation_string = "INSERT INTO hbond_evaluation_types VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+	std::string hbond_evaluation_string = "INSERT INTO hbond_evaluation_types (database_tag, don_chem_type, acc_chem_type, separation, AHdist_short_fade, AHdist_long_fade, cosBAH_fade, cosAHD_fade, AHdist, cosBAH_short, cosBAH_long, cosAHD_short, cosAHD_long, weight_type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement hbond_evaluation_statement(basic::database::safely_prepare_statement(hbond_evaluation_string,db_session));
 	for (Size hbdon=1; hbdon <= hbdon_MAX; ++hbdon){
 		string const & don_chem_type(HBondTypeManager::name_from_don_chem_type(HBDonChemType(hbdon)));
