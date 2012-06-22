@@ -144,10 +144,6 @@ void LoopBuildMover::apply(core::pose::Pose & pose){
 
 	if ( ! basic::options::option[ basic::options::OptionKeys::out::file::silent ].user() ) {
 
-		if ( ! ( refine == "refine_kic" || remodel == "perturb_kic") ) {
-			return;
-		}
-		else { // DJM: for KIC output, until jobdist matures
 			// if closure failed don't output
 			if ( remodel == "perturb_kic" ) {
 				if ( loop_relax_mover_.get_last_move_status() != protocols::moves::MS_SUCCESS ) {
@@ -156,33 +152,31 @@ void LoopBuildMover::apply(core::pose::Pose & pose){
 					return;
 				}
 			}
+			if ( loop_relax_mover_.compute_rmsd() ) {
+				if ( remodel != "no" ) {
 
-			if ( remodel != "no" ) {
-
-				core::Real cen_looprms=0.0;
-				getPoseExtraScores( pose, "cen_looprms", cen_looprms );
-				job->add_string_real_pair("loop_cenrms ",cen_looprms );
-				// mirror to tracer
-				TR << "loop_cenrms: " << cen_looprms << std::endl;
+					core::Real cen_looprms=0.0;
+					getPoseExtraScores( pose, "cen_looprms", cen_looprms );
+					job->add_string_real_pair("loop_cenrms ",cen_looprms );
+					// mirror to tracer
+					TR << "loop_cenrms: " << cen_looprms << std::endl;
+				}
+				if ( refine != "no" ) {
+					core::Real final_looprms=0.0;
+					core::Real final_score=0.0;
+					core::Real final_chainbreak=0.0;
+					getPoseExtraScores( pose, "looprms", final_looprms );
+					getPoseExtraScores( pose, "final_looprelax_score", final_score );
+					getPoseExtraScores( pose, "final_chainbreak", final_chainbreak );
+					job->add_string_real_pair("loop_rms ", final_looprms);
+					job->add_string_real_pair("total_energy ", final_score);
+					job->add_string_real_pair("chainbreak ", final_chainbreak);
+					// mirror to tracer
+					TR << "loop_rms " << final_looprms << std::endl;
+					TR << "total_energy " << final_score << std::endl;
+					TR << "chainbreak " << final_chainbreak << std::endl;
+				}
 			}
-			if ( refine == "refine_kic" ) {
-				core::Real final_looprms=0.0;
-				core::Real final_score=0.0;
-				core::Real final_chainbreak=0.0;
-				getPoseExtraScores( pose, "looprms", final_looprms );
-				getPoseExtraScores( pose, "final_looprelax_score", final_score );
-				getPoseExtraScores( pose, "final_chainbreak", final_chainbreak );
-				job->add_string_real_pair("loop_rms ", final_looprms);
-				job->add_string_real_pair("total_energy ", final_score);
-				job->add_string_real_pair("chainbreak ", final_chainbreak);
-				// mirror to tracer
-				TR << "loop_rms " << final_looprms << std::endl;
-				TR << "total_energy " << final_score << std::endl;
-				TR << "chainbreak " << final_chainbreak << std::endl;
-			}
-
-		}
-
 	}
 	clock_t stoptime = clock();
 	if ( keep_time ) {
