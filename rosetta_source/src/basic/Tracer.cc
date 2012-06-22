@@ -80,15 +80,6 @@ bool Tracer::TracerProxy::visible() const
 	if( !visibility_calculated_ ) {
 		bool visible, muted;  int mute_level;
 		calculate_visibility(channel_, priority_, visible, muted, mute_level, tracer_.muted_by_default_);
-		/*
-		#ifndef EXPERIMENTAL_TRACER_FEATURES
-			bool visible, muted;
-			calculate_visibility(channel_, priority_, visible, muted, tracer_.muted_by_default_);
-		#else
-			int mute_level;
-			experimental_calculate_visibility(channel_, priority_, visible_, mute_level, tracer_.muted_by_default_);
-		#endif // EXPERIMENTAL_TRACER_FEATURES
-		*/
 	}
 	return visible_;
 }
@@ -139,7 +130,7 @@ Tracer::Tracer(std::string const & channel, TracerPriority priority, bool muted_
 	Debug(*this,   t_debug, channel),
 	Trace(*this,   t_trace, channel),
 	visible_(true), muted_( false ), muted_by_default_(muted_by_default), begining_of_the_line_(true),
-	visibility_calculated_(false)//, mute_level_(-1)
+	visibility_calculated_(false), mute_level_(-1)
 {
 	channel_ = channel;
 	priority_ = priority;
@@ -183,7 +174,7 @@ void Tracer::init(Tracer const & tr)
 
 	visible_ = true;
 	muted_ = false;
-	//mute_level_ = -1;
+	mute_level_ = -1;
 	begining_of_the_line_ = true;
 	visibility_calculated_ = false;
 }
@@ -201,12 +192,8 @@ void Tracer::flush_all_channels()
 bool Tracer::visible( int priority ) const {
 	if (!visibility_calculated_) calculate_visibility();
 
-	#ifdef EXPERIMENTAL_TRACER_FEATURES
-		muted_ = priority >= mute_level_;
-	#endif // EXPERIMENTAL_TRACER_FEATURES
-
 	if ( muted_ ) return false;
-	if ( priority > tracer_options_.level ) return false;
+	if ( priority > mute_level_ ) return false;
 	return true;
 }
 
@@ -240,13 +227,6 @@ void Tracer::priority(int priority)
 void Tracer::calculate_visibility() const
 {
 	calculate_visibility(channel_, priority_, visible_, muted_, mute_level_, muted_by_default_);
-	/*
-	#ifndef EXPERIMENTAL_TRACER_FEATURES
-		calculate_visibility(channel_, priority_, visible_, muted_, muted_by_default_);
-	#else
-		experimental_calculate_visibility(channel_, priority_, visible_, mute_level_, muted_by_default_);
-	#endif // EXPERIMENTAL_TRACER_FEATURES
-	*/
 	visibility_calculated_ = true;
 
 }
