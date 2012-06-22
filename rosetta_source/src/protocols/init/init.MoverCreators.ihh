@@ -182,6 +182,7 @@
 #include <protocols/seeded_abinitio/SeedFoldTreeCreator.hh>
 #include <protocols/seeded_abinitio/SeedSetupMoverCreator.hh>
 #include <protocols/seeded_abinitio/SwapSegmentCreator.hh>
+#include <protocols/seeded_abinitio/SegmentHybridizerCreator.hh>
 
 #include <protocols/simple_moves/AddConstraintsToCurrentConformationMoverCreator.hh>
 #include <protocols/simple_moves/BackboneMoverCreator.hh>
