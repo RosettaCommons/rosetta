@@ -201,6 +201,7 @@ std::string mode_specific_primary_key(bool auto_increment){
 	else{
 		utility_exit_with_message("ERROR: Invalid database mode supplied. Please specify sqlite3, mysql, or postgres");
 	}
+	return "";
 }
 
 utility::sql_database::sessionOP get_db_session(
@@ -257,6 +258,7 @@ sessionOP get_db_session(
 	{
 		utility_exit_with_message("You need to specify either 'mysql', 'postgres', or 'sqlite3' as a mode with -inout:database_mode.  You specified: "+db_mode);
 	}
+	return 0;
 }
 
 

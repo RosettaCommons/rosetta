@@ -19,6 +19,7 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/trig.functions.hh>
 #include <numeric/conversions.hh>
+#include <utility/assert.hh>
 
 namespace numeric {
 namespace deriv   {
@@ -86,8 +87,8 @@ dihedral_deriv_second(
 	// dtheta_dx has a value of ~ 572.96 for min_x and max_x
 	// this goes to infinity as x goes to -1 or 1
 
-
-	Real const thetaU( numeric::arccos( x )); // unsigned version of theta
+	// unsigned version of theta
+	ASSERT_ONLY(Real const thetaU( numeric::arccos( x ));)
 
 	theta = dihedral_radians( p1, p2, p3, p4 );
 

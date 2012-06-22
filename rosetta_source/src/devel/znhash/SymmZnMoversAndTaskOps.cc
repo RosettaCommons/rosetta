@@ -867,9 +867,6 @@ void FindZnCoordinatingResidues::find_coordinating_residues(
 				eiter != eiterend; ++eiter ) {
 			core::conformation::Residue const & nbr( copy_pose.residue( (*eiter)->get_other_ind( znxind ) ));
 
-			// Only looking for EDH coordination of the zinc -- this might need to change in the future
-			if ( nbr.aa() != aa_his &&  nbr.aa() != aa_asp && nbr.aa() != aa_glu ) continue;
-
 			std::pair< core::Real, core::Size > closest_dist_info;
 			switch ( nbr.aa() ) {
 				case aa_his :
@@ -881,6 +878,9 @@ void FindZnCoordinatingResidues::find_coordinating_residues(
 				case aa_glu :
 					closest_dist_info = closest_distance_to_desired_vrt( zncoord, vcoord, nbr, glu_coordinating_atoms );
 				break;
+			default:
+				// Only looking for EDH coordination of the zinc -- this might need to change in the future
+				continue;
 			}
 			if ( closest_dist_info.first < 0 ) continue;
 			if ( ind_w_best_dist == 0 ||  closest_dist_info.first < best_dist ) {

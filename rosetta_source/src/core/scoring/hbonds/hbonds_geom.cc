@@ -80,7 +80,7 @@ Real DUMMY_DERIV(0.0);
 bool DUMMY_BOOL(false);
 HBGeoDimType DUMMY_HBGEODIMTYPE(hbgd_NONE);
 HBondDerivs DUMMY_DERIVS;
-HBondDerivs const ZERO_DERIV2D = { DerivVectorPair(), DerivVectorPair(), DerivVectorPair(), DerivVectorPair() };
+HBondDerivs const ZERO_DERIV2D = { DerivVectorPair(), DerivVectorPair(), DerivVectorPair(), DerivVectorPair(), DerivVectorPair() };
 
 
 ///////////////////////////////////////////////////////////////////////////////

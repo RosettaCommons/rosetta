@@ -18,6 +18,7 @@
 
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
+#include <utility/assert.hh>
 
 namespace numeric {
 namespace deriv   {
@@ -126,8 +127,9 @@ p1_theta_deriv(
 
 	{ // more debugging
 		// pretend axis = u2, R_phi = p2
-		Vector const u_phi( v2.normalized() ), R_phi( p2 );
-		Real const deriv = - dot( u_phi, f1 ) - dot( cross( u_phi, R_phi ), f2);
+		ASSERT_ONLY(Vector const u_phi( v2.normalized() );)
+		ASSERT_ONLY(Vector const R_phi( p2 );)
+		ASSERT_ONLY(Real const deriv = - dot( u_phi, f1 ) - dot( cross( u_phi, R_phi ), f2);)
 		assert( std::abs( deriv ) < Real(1e-3) );
 		//std::cout << "deriv: " << deriv<< ' ' <<
 		//	F(9,3,u_phi(1)) << F(9,3,u_phi(2)) << F(9,3,u_phi(3)) << ' ' <<

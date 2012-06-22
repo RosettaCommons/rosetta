@@ -199,8 +199,8 @@ SaltBridgeFeatures::report_features(
 	PointPosition  bb, b, c, n, o_proj;
 	Stub don_frame;
 	sphericalVector<Real> local_o;
-	Angle psi, theta;
-	Length rho;
+	Angle psi(0), theta(0);
+	Length rho(0);
 	std::string salt_bridge_string = "INSERT INTO salt_bridges (struct_id, don_resNum, acc_id, psi, theta, rho, orbital) VALUES (?,?,?,?,?,?,?)";
 	statement salt_bridge_statement(basic::database::safely_prepare_statement(salt_bridge_string,db_session));
 

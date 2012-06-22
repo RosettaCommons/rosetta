@@ -251,7 +251,7 @@ DatabaseJobInputter::pose_from_job(
 		tr.Debug << "filling pose from Database (input tag = " << tag << ")" << endl;
 		sessionOP db_session(basic::database::get_db_session(database_fname_));
 
-		boost::uuids::uuid struct_id = struct_id=tag_structures_[tag];
+		boost::uuids::uuid struct_id = tag_structures_[tag];
 
 		if(!tag_residues_.size()){
 			protein_silent_report_->load_pose(db_session, struct_id, pose);

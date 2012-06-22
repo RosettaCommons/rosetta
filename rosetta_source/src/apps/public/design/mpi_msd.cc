@@ -281,7 +281,8 @@ public:
 	virtual
 	core::Real
 	calculate( core::pose::Pose const & p ) { 
-		Size chain_offset = 0;
+		// MJO COMMENTING OUT BECAUSE IT IS UNUSED:
+		// Size chain_offset = 0;
 		for ( core::Size ii = 1; ii <= p.total_residue(); ++ii ) {
 			if ( ! task_->being_packed( ii ) ) continue;
 			chains_[ resid_2_chain_and_resid_[ ii ].first ]->replace_residue(
