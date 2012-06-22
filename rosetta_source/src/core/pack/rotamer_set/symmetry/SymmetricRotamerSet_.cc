@@ -133,7 +133,7 @@ SymmetricRotamerSet_::compute_one_body_energies(
 			// multiply it with the number of subunits in the system
 			std::fill( temp_energies.begin(), temp_energies.end(), core::PackerEnergy( 0.0 ) );
 			sf.evaluate_rotamer_background_energies( *this, neighbor, pose, temp_energies );
-					PackerEnergyMultiply( temp_energies, symm_info->score_multiply( theresid, neighbor_id ) );
+					PackerEnergyMultiply( temp_energies, symm_info->score_multiply_factor() );
 					PackerEnergyAdd( energies, temp_energies );
 //					PackerEnergyAdd( energies, temp_energies );
 		} else {
