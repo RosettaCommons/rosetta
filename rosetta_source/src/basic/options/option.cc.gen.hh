@@ -169,15 +169,8 @@ option.add( basic::options::OptionKeys::out::sf, "filename for score output" ).d
 option.add( basic::options::OptionKeys::out::mute, "Mute specified Tracer chanels, specify 'all' to mute all chanels" );
 option.add( basic::options::OptionKeys::out::unmute, "UnMute specified Tracer chanels, specify 'all' to mute all chanels" );
 option.add( basic::options::OptionKeys::out::level, "Level of Tracer output, any level above will be muted. Availible levels: 0 - fatal, 100 - error, 200 - warning, 300 - info, 400 - debug, 500 - trace. For additional info please see: src/basic/Tracer.hh and doc page 'Tracer, tool for debug IO'. Default output level is 'info': 300" ).def(300);
+option.add( basic::options::OptionKeys::out::levels, "Specified hierarchical mute levels for individual channels in following format: -levels all:300 core.pose:500. Numeric values could be substituted with mute level names like: debug, info, error etc. Please note that all:<num> is synonymous to -level:<num>" );
 option.add( basic::options::OptionKeys::out::std_IO_exit_error_code, "Specify error code that will be used to exit if std::IO error detected.This is useful if you want to detect situations like: Rosetta output wasredirected to a file but disk got full etc. Default value is 0 which mean that error detection code is turned off." ).def(0);
-option.add( basic::options::OptionKeys::out::mute_warning, "Mute specified Tracer chanels for msgs with priority warning and less" );
-option.add( basic::options::OptionKeys::out::mute_info, "Mute specified Tracer channels for msgs with priority info and less" );
-option.add( basic::options::OptionKeys::out::mute_debug, "Mute specified Tracer channels for msgs with priority debug and less" );
-option.add( basic::options::OptionKeys::out::mute_trace, "Mute specified Tracer channels for msgs with priority debug and less" );
-option.add( basic::options::OptionKeys::out::unmute_error, "Unmute specified Tracer channels for msgs of priority ERROR and more" );
-option.add( basic::options::OptionKeys::out::unmute_warning, "Unmute specified Tracer chanels for msgs with priority warning and more" );
-option.add( basic::options::OptionKeys::out::unmute_info, "Unmute specified Tracer channels for msgs with priority info and more" );
-option.add( basic::options::OptionKeys::out::unmute_debug, "Unmute specified Tracer channels for msgs with priority debug and more" );
 option.add( basic::options::OptionKeys::out::chname, "Add Tracer chanel names to output" ).def(true);
 option.add( basic::options::OptionKeys::out::dry_run, "If set ComparingTracer will not generate any asserts, and save all Tracer output to a file" ).def(false);
 option.add( basic::options::OptionKeys::out::mpi_tracer_to_file, "MPI ONLY: Redirect all tracer output to this file with '_<mpi_rank>' appened as a suffix" ).def("tracer.out");
@@ -620,14 +613,14 @@ option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling 
 option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
-
-}
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
+option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
 option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::seq_sep_stages, "give vector with sequence_separation after stage1, stage3 and stage4" ).def(0);
-option.add( basic::options::OptionKeys::fold_cst::reramp_cst_cycles, "in stage2 do xxx cycles where atom_pair_constraint is ramped up" ).def(0);
+
+}
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::reramp_cst_cycles, "in stage2 do xxx cycles where atom_pair_constraint is ramped up" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::reramp_start_cstweight, "drop cst_weight to this value and ramp to 1.0 in stage2 -- needs reramp_cst_cycles > 0" ).def(0.01);
 option.add( basic::options::OptionKeys::fold_cst::reramp_iterations, "do X loops of annealing cycles" ).def(1);
 option.add( basic::options::OptionKeys::fold_cst::skip_on_noviolation_in_stage1, "if constraints report no violations --- skip cycles" ).def(false);
@@ -1239,12 +1232,12 @@ option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" )
 option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
+option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
 option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
 option.add( basic::options::OptionKeys::lh::expire_after_rounds, "If set to > 0 this causes the Master to expire a structure after it has gone through this many cycles" ).def(0);
-option.add( basic::options::OptionKeys::lh::mpi_resume, "Prefix (Ident string) for resuming a previous job!" );
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::mpi_resume, "Prefix (Ident string) for resuming a previous job!" );
 option.add( basic::options::OptionKeys::lh::mpi_feedback, "No description" ).legal("no").legal("add_n_limit").legal("add_n_replace").legal("single_replace").legal("single_replace_rounds").def("no");
 option.add( basic::options::OptionKeys::lh::mpi_batch_relax_chunks, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::mpi_batch_relax_absolute_max, "No description" ).def(300);
@@ -1858,10 +1851,10 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of har
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);
+option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of rigid-body moves" ).def("score5");
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of rigid-body moves" ).def("score5");
-option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));

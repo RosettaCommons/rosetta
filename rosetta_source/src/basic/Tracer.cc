@@ -78,7 +78,9 @@ int Tracer::mpi_rank_( 0 );
 bool Tracer::TracerProxy::visible() const
 {
 	if( !visibility_calculated_ ) {
-
+		bool visible, muted;  int mute_level;
+		calculate_visibility(channel_, priority_, visible, muted, mute_level, tracer_.muted_by_default_);
+		/*
 		#ifndef EXPERIMENTAL_TRACER_FEATURES
 			bool visible, muted;
 			calculate_visibility(channel_, priority_, visible, muted, tracer_.muted_by_default_);
@@ -86,7 +88,7 @@ bool Tracer::TracerProxy::visible() const
 			int mute_level;
 			experimental_calculate_visibility(channel_, priority_, visible_, mute_level, tracer_.muted_by_default_);
 		#endif // EXPERIMENTAL_TRACER_FEATURES
-
+		*/
 	}
 	return visible_;
 }
@@ -137,7 +139,7 @@ Tracer::Tracer(std::string const & channel, TracerPriority priority, bool muted_
 	Debug(*this,   t_debug, channel),
 	Trace(*this,   t_trace, channel),
 	visible_(true), muted_( false ), muted_by_default_(muted_by_default), begining_of_the_line_(true),
-	visibility_calculated_(false)
+	visibility_calculated_(false)//, mute_level_(-1)
 {
 	channel_ = channel;
 	priority_ = priority;
@@ -181,6 +183,7 @@ void Tracer::init(Tracer const & tr)
 
 	visible_ = true;
 	muted_ = false;
+	//mute_level_ = -1;
 	begining_of_the_line_ = true;
 	visibility_calculated_ = false;
 }
@@ -222,11 +225,13 @@ void Tracer::priority(int priority)
 {
 	priority_ = priority;
 	if (visibility_calculated_) {
+		/*
 		#ifdef EXPERIMENTAL_TRACER_FEATURES
 			muted_ = priority >= mute_level_;
 		#endif // EXPERIMENTAL_TRACER_FEATURES
-
-		visible_ = !muted_ && ( priority <= tracer_options_.level );
+		*/
+		//visible_ = !muted_ && ( priority <= tracer_options_.level );
+		visible_ = !muted_ && ( priority <= mute_level_ );
 	}
 }
 
@@ -234,12 +239,14 @@ void Tracer::priority(int priority)
 /// @details Calculate visibility of current Tracer object.
 void Tracer::calculate_visibility() const
 {
+	calculate_visibility(channel_, priority_, visible_, muted_, mute_level_, muted_by_default_);
+	/*
 	#ifndef EXPERIMENTAL_TRACER_FEATURES
 		calculate_visibility(channel_, priority_, visible_, muted_, muted_by_default_);
 	#else
 		experimental_calculate_visibility(channel_, priority_, visible_, mute_level_, muted_by_default_);
 	#endif // EXPERIMENTAL_TRACER_FEATURES
-
+	*/
 	visibility_calculated_ = true;
 
 }
@@ -247,7 +254,7 @@ void Tracer::calculate_visibility() const
 
 /// @details Calculate visibility (static version) of current Tracer object using channel name and priority.
 /// result stored in 'muted' and 'visible'.
-void Tracer::calculate_visibility(std::string const &channel, int priority, bool &visible, bool &muted, bool muted_by_default)
+void Tracer::calculate_visibility(std::string const &channel, int priority, bool &visible, bool &muted, int &mute_level_, bool muted_by_default)
 {
 	visible = false;
 	if( in(tracer_options_.muted, "all", true) ) {
@@ -294,12 +301,17 @@ void Tracer::calculate_visibility(std::string const &channel, int priority, bool
 
 #endif
 	muted = !visible;
-	if( priority > tracer_options_.level ) visible = false;
+
+	mute_level_ = tracer_options_.level;
+	calculate_tracer_level(tracer_options_.levels, channel, false, mute_level_);
+	//std::cout << "levels:" << tracer_options_.levels <<" ch:" << channel << " mute_level:" << mute_level_ << " priority:" << priority << std::endl;
+
+	if( priority > mute_level_ ) visible = false;
 }
 
 
 /// @details Check if string representing channel 'ch' is in vector<string> v. Return true if channel
-/// is in vector, false other wise.
+/// is in vector, false otherwise.
 /// Two mode of operation:
 /// Strict:  strict==true - channels compared verbatim.
 /// Regular: strict==false - comparing with hierarchy in mind,
@@ -318,6 +330,51 @@ bool Tracer::in(utility::vector1<std::string> const & v, std::string const ch, b
 	}
 	return false;
 }
+
+/// Same as before but return integer value for matched channel or closest match (we asume that 'v' in levels format, ie like: <channel name>:level )
+/// -1 if no match
+bool Tracer::calculate_tracer_level(utility::vector1<std::string> const & v, std::string const ch, bool strict, int &res)
+{
+	int len = 0;
+	bool math = false;
+
+	for(size_t i=1; i<=v.size(); i++) {
+		bool flag = false;
+		utility::vector1< std::string > spl = utility::string_split(v[i], ':');
+		//std::cout << "Split:" << spl << std::endl;
+
+		if( spl[1] == "all" && len == 0 ) flag = true;  // we can asume that 'all' is shorter then any valid core/protocol path... but we don't!
+
+		if( spl[1] == ch ) flag=true;
+
+		if( !strict ) {
+			if( ch.size() > spl[1].size() ) {
+				std::string s(ch);  s.resize(spl[1].size());
+				if( s == spl[1] ) flag=true;
+			}
+		}
+		if(flag  && ( len < spl[1].size() ) ) {
+			math = true;
+			len = spl[1].size();
+			if( spl[2] == "fatal" )   { res = t_fatal;   break; }
+			if( spl[2] == "error" )   { res = t_error;   break; }
+			if( spl[2] == "warning" ) { res = t_warning; break; }
+			if( spl[2] == "info" )    { res = t_info;    break; }
+			if( spl[2] == "debug" )   { res = t_debug;   break; }
+			if( spl[2] == "trace" )   { res = t_trace;   break; }
+
+			res = utility::string2int(spl[2]);
+			//std::cout << "Match:" << spl << " ch:" << ch << " res:"<< res << std::endl;
+		}
+		else {
+			//std::cout << "Fail:" << spl << " ch:" << ch << " res:"<< res << std::endl;
+		}
+
+	}
+	return math;
+}
+
+
 
 /// @dtails Write the contents of str to sout prepending the channel
 /// name on each line if the print_channel_name flag is set.
@@ -401,137 +458,6 @@ void Tracer::set_ios_hook(otstreamOP tr, std::string const & monitoring_channels
 	monitoring_list_ = utility::split(monitoring_channels_list);
 	ios_hook_raw_ = raw;
 }
-
-
-#ifdef EXPERIMENTAL_TRACER_FEATURES
-	/// @details Calculate visibility (static version) of current Tracer object using channel name and priority.
-	/// result stored in 'muted' and 'visible'.
-	void Tracer::experimental_calculate_visibility(std::string const &channel, int priority, bool &visible, int &mute_level, bool muted_by_default)
-	{
-			visible = false;
-			if( in(tracer_options_.muted, "all", true) ) {
-					if( in(tracer_options_.unmuted, channel, false) ) visible = true;
-					else visible = false;
-			}
-			else {
-					if( in(tracer_options_.unmuted, "all", true) ) {
-							if( in(tracer_options_.muted, channel, false) ) visible = false;
-							else visible = true;
-					}
-					else {  /// default bechavior: unmute unless muted_by_default is true
-							if( muted_by_default ) {
-									if( in(tracer_options_.unmuted, channel, false) ) visible = true;
-									else visible = false;
-							}
-							else {
-									if( in(tracer_options_.muted, channel, false) ) visible = false;
-									else visible = true;
-							}
-					}
-			}
-
-
-			//      muted = !visible;
-			//comes at end now...   if( priority > tracer_options_.level ) visible = false;
-	  if ( !visible ) mute_level = t_fatal;
-			else {
-					mute_level = 1000;
-					if ( in(tracer_options_.muted_trace, "all", true) ) {
-							mute_level = t_trace;
-					}
-					if ( in(tracer_options_.muted_trace, channel, false ) ) {
-							mute_level = t_trace;
-					}
-					if ( in(tracer_options_.muted_debug, "all", true) ) {
-							mute_level = t_debug;
-					}
-					if ( in(tracer_options_.muted_debug, channel, false ) ) {
-							mute_level = t_debug;
-					}
-
-					if ( in(tracer_options_.muted_info, "all", true) ) {
-							mute_level = t_info;
-					}
-					if ( in(tracer_options_.muted_info, channel, false ) ) {
-							mute_level = t_info;
-					}
-
-					if ( in(tracer_options_.muted_warning, "all", true) ) {
-							mute_level = t_warning;
-					}
-					if ( in(tracer_options_.muted_warning, channel, false ) ) {
-							mute_level = t_warning;
-					}
-			}
-			if ( mute_level < t_warning ) {
-					if ( in(tracer_options_.unmuted_error, "all", true) ) {
-							mute_level = t_warning;
-					}
-					if ( in(tracer_options_.unmuted_error, channel, false ) ) {
-							mute_level = t_warning;
-					}
-			}
-
-			if ( mute_level < t_info ) {
-					if ( in(tracer_options_.unmuted_warning, "all", true) ) {
-							mute_level = t_info;
-					}
-					if ( in(tracer_options_.unmuted_warning, channel, false ) ) {
-							mute_level = t_info;
-					}
-			}
-
-			if ( mute_level < t_debug ) {
-					if ( in(tracer_options_.unmuted_info, "all", true) ) {
-							mute_level = t_debug;
-					}
-					if ( in(tracer_options_.unmuted_info, channel, false ) ) {
-							mute_level = t_debug;
-					}
-
-			}
-
-			if ( mute_level < t_trace ) {
-					if ( in(tracer_options_.unmuted_debug, "all", true) ) {
-							mute_level = t_trace;
-					}
-					if ( in(tracer_options_.unmuted_debug, channel, false ) ) {
-							mute_level = t_trace;
-					}
-			}
-
-	//if we are in MPI mode --- most of the time one doesn't want to see output from all nodes just the master and 1st client is plenty ..
-	#ifdef USEMPI
-			int already_initialized = 0;
-			int already_finalized = 0;
-			MPI_Initialized( &already_initialized );
-			MPI_Finalized( &already_finalized );
-			if ( already_initialized != 0 && already_finalized == 0 ) {
-					int mpi_rank, mpi_nprocs;
-					MPI_Comm_rank (MPI_COMM_WORLD, &mpi_rank);/* get current process id */
-					MPI_Comm_size (MPI_COMM_WORLD, &mpi_nprocs);/* get number of processes */
-					mpi_rank_=mpi_rank;
-			}
-
-			if ( in(tracer_options_.muted, "all_high_mpi_rank", true ) ) {
-					if ( mpi_rank_>=2 ) {
-							mute_level = std::min( (int)t_warning, mute_level );
-					}
-			}
-
-			if ( in(tracer_options_.muted, "all_high_mpi_rank_filebuf", true ) ) {
-					if ( mpi_rank_>=4 ) {
-							visible = false; //* visible: master, filebuf and 1st client: rank 0, 1, 2
-							mute_level = std::min( (int)t_warning, mute_level );
-					}
-			}
-	#endif
-
-			visible = (priority < mute_level) && ( priority <= tracer_options_.level );
-	}
-
-#endif // EXPERIMENTAL_TRACER_FEATURES
-
 
 
 } // namespace basic

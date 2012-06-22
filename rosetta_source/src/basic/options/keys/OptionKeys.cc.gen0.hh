@@ -164,15 +164,8 @@ namespace out { FileOptionKey const sf( "out:sf" );  }
 namespace out { StringVectorOptionKey const mute( "out:mute" );  }
 namespace out { StringVectorOptionKey const unmute( "out:unmute" );  }
 namespace out { IntegerOptionKey const level( "out:level" );  }
+namespace out { StringVectorOptionKey const levels( "out:levels" );  }
 namespace out { IntegerOptionKey const std_IO_exit_error_code( "out:std_IO_exit_error_code" );  }
-namespace out { StringVectorOptionKey const mute_warning( "out:mute_warning" );  }
-namespace out { StringVectorOptionKey const mute_info( "out:mute_info" );  }
-namespace out { StringVectorOptionKey const mute_debug( "out:mute_debug" );  }
-namespace out { StringVectorOptionKey const mute_trace( "out:mute_trace" );  }
-namespace out { StringVectorOptionKey const unmute_error( "out:unmute_error" );  }
-namespace out { StringVectorOptionKey const unmute_warning( "out:unmute_warning" );  }
-namespace out { StringVectorOptionKey const unmute_info( "out:unmute_info" );  }
-namespace out { StringVectorOptionKey const unmute_debug( "out:unmute_debug" );  }
 namespace out { BooleanOptionKey const chname( "out:chname" );  }
 namespace out { BooleanOptionKey const dry_run( "out:dry_run" );  }
 namespace out { StringOptionKey const mpi_tracer_to_file( "out:mpi_tracer_to_file" );  }
@@ -615,3 +608,8 @@ namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score
 namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
 namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constraint_skip_rate" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }
+namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }
+namespace fold_cst { BooleanOptionKey const keep_skipped_csts( "fold_cst:keep_skipped_csts" );  }
+namespace fold_cst { BooleanOptionKey const no_minimize( "fold_cst:no_minimize" );  }
+namespace fold_cst { BooleanOptionKey const force_minimize( "fold_cst:force_minimize" );  }
+namespace fold_cst { RealVectorOptionKey const seq_sep_stages( "fold_cst:seq_sep_stages" );  }

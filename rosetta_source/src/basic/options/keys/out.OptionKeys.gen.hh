@@ -42,15 +42,8 @@ namespace out { extern FileOptionKey const sf; }
 namespace out { extern StringVectorOptionKey const mute; }
 namespace out { extern StringVectorOptionKey const unmute; }
 namespace out { extern IntegerOptionKey const level; }
+namespace out { extern StringVectorOptionKey const levels; }
 namespace out { extern IntegerOptionKey const std_IO_exit_error_code; }
-namespace out { extern StringVectorOptionKey const mute_warning; }
-namespace out { extern StringVectorOptionKey const mute_info; }
-namespace out { extern StringVectorOptionKey const mute_debug; }
-namespace out { extern StringVectorOptionKey const mute_trace; }
-namespace out { extern StringVectorOptionKey const unmute_error; }
-namespace out { extern StringVectorOptionKey const unmute_warning; }
-namespace out { extern StringVectorOptionKey const unmute_info; }
-namespace out { extern StringVectorOptionKey const unmute_debug; }
 namespace out { extern BooleanOptionKey const chname; }
 namespace out { extern BooleanOptionKey const dry_run; }
 namespace out { extern StringOptionKey const mpi_tracer_to_file; }

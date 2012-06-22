@@ -343,21 +343,13 @@ Options = Option_Group( '',
 				"For additional info please see: src/basic/Tracer.hh and doc "
 				"page 'Tracer, tool for debug IO'. Default output level is 'info': 300",
 			default="300" ),
+		Option( 'levels', 'StringVector', desc="Specified hierarchical mute levels for individual channels in following format: -levels all:300 core.pose:500. Numeric values could be substituted with mute level names like: debug, info, error etc. Please note that all:<num> is synonymous to -level:<num>"),
 
 		Option( 'std_IO_exit_error_code', 'Integer',
 			desc="Specify error code that will be used to exit if std::IO error detected."
 			     "This is useful if you want to detect situations like: Rosetta output was"
 			     "redirected to a file but disk got full etc. Default value is 0 which mean that error detection code is turned off.",
 			default="0" ),
-
-		Option( 'mute_warning', 'StringVector', desc="Mute specified Tracer chanels for msgs with priority warning and less"),
-		Option( 'mute_info', 'StringVector', desc="Mute specified Tracer channels for msgs with priority info and less"),
-		Option( 'mute_debug', 'StringVector', desc="Mute specified Tracer channels for msgs with priority debug and less"),
-		Option( 'mute_trace', 'StringVector', desc="Mute specified Tracer channels for msgs with priority debug and less"),
-		Option( 'unmute_error', 'StringVector', desc="Unmute specified Tracer channels for msgs of priority ERROR and more"),
-		Option( 'unmute_warning', 'StringVector', desc="Unmute specified Tracer chanels for msgs with priority warning and more"),
-		Option( 'unmute_info', 'StringVector', desc="Unmute specified Tracer channels for msgs with priority info and more"),
-		Option( 'unmute_debug', 'StringVector', desc="Unmute specified Tracer channels for msgs with priority debug and more"),
 
 		Option( 'chname', 'Boolean', desc="Add Tracer chanel names to output", default="true" ),
 		Option( 'dry_run', 'Boolean', desc="If set ComparingTracer will not generate any asserts, and save all Tracer output to a file", default="false" ),

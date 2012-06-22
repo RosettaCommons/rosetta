@@ -67,7 +67,9 @@ using basic::Error;
 using basic::Warning;
 
 //basic::Tracer TR("TTest", basic::t_info, true);
-basic::Tracer TR("TTest");
+basic::Tracer TR("core.TTest");
+basic::Tracer TR2("core.TTest.T2");
+
 
 using namespace core;
 using namespace basic;
@@ -105,6 +107,11 @@ void test_Tracer()
 	TR << "... regular output " << std::endl;
 	TR.Trace   << "Trace... " << "500" << std::endl;
 	TR << "... regular output " << std::endl;
+
+	TR2 << "TR2 regular" << std::endl;
+	TR2.Debug << "TR2.Debug " << std::endl;
+	TR2.Trace << "TR2.Trace " << std::endl;
+
 
 	TR.Fatal   << "Setting default level to 500 -----------------------------------" << std::endl;
 	TR(300) << "500!" << std::endl;
@@ -204,6 +211,11 @@ int main( int argc, char * argv [] )
 	basic::options::option.add_relevant(in::path::database);
 
 	devel::init(argc, argv);
+
+	test_Tracer();
+	std::cout << "Done !-------------------------------" << std::endl;
+	return 0;
+
 
 	TR << "Some unflushed output 1...\n";
 	TR << "Some unflushed output 2...\n";

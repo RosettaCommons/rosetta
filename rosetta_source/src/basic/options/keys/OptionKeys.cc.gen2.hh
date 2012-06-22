@@ -1,6 +1,3 @@
-namespace lh { IntegerOptionKey const library_expiry_time( "lh:library_expiry_time" );  }
-namespace lh { StringOptionKey const objective_function( "lh:objective_function" );  }
-namespace lh { IntegerOptionKey const expire_after_rounds( "lh:expire_after_rounds" );  }
 namespace lh { StringOptionKey const mpi_resume( "lh:mpi_resume" );  }
 namespace lh { StringOptionKey const mpi_feedback( "lh:mpi_feedback" );  }
 namespace lh { IntegerOptionKey const mpi_batch_relax_chunks( "lh:mpi_batch_relax_chunks" );  }
@@ -615,3 +612,4 @@ namespace RBSegmentRelax { RealOptionKey const cst_width( "RBSegmentRelax:cst_wi
 namespace RBSegmentRelax { StringOptionKey const cst_pdb( "RBSegmentRelax:cst_pdb" );  }
 namespace RBSegmentRelax { IntegerOptionKey const nrbmoves( "RBSegmentRelax:nrbmoves" );  }
 namespace RBSegmentRelax { IntegerOptionKey const nrboutercycles( "RBSegmentRelax:nrboutercycles" );  }
+namespace RBSegmentRelax { StringOptionKey const rb_scorefxn( "RBSegmentRelax:rb_scorefxn" );  }
