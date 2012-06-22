@@ -358,16 +358,16 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 			utility_exit_with_message("Native pose needed for OptionKeys::relax::constrain_relax_to_native_coords");
 		}
 		// TODO: Allow for input of an alignment on commandline
-		if (  pose.total_residue() == constraint_target_pose.total_residue() && 
+		if (  pose.total_residue() == constraint_target_pose.total_residue() &&
 				( !coord_constrain_sidechains_ || pose.sequence() != constraint_target_pose.sequence() ) ) {
 			// We match in size and (for sidechains) sequence - we're looking at the traditional 1:1 mapping.
 			seq_map = core::id::SequenceMapping::identity( pose.total_residue() );
 		} else {
 			// Try to match on a PDB-identity basis, or a sequence alignment basis if that fails.
-			TR << "Length " << (coord_constrain_sidechains_?"and/or identities ":"") << 
+			TR << "Length " << (coord_constrain_sidechains_?"and/or identities ":"") <<
 					"of input structure and native don't match - aligning on PDB identity or sequence." << std::endl;
 			seq_map = core::pose::sequence_map_from_pdbinfo( pose, constraint_target_pose );
-		}	
+		}
 		// Align the native pose to the input pose to avoid rotation/translation based
 		//  errors.
 		//fpd  (Only if not already rooted on a VRT to avoid problems with density/symmetry)
@@ -397,9 +397,7 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 
 		// Add virtual root
 		if ( pose.residue( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
-			pose.append_residue_by_jump
-				( *ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map( "VRT" ) ),
-					pose.total_residue()/2 );
+			core::pose::addVirtualResAsRoot(pose);
 		}
 
 		core::Size nres = pose.total_residue();
@@ -410,7 +408,7 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 
 			if ( coordconstraint_segments_.is_loop_residue( i ) ) {
 				Size j(seq_map[i]);
-				if( j == 0 ) continue; 
+				if( j == 0 ) continue;
 				assert( j <= n_targ_res ); // Should be, if map was set up properly.
 
 				Residue const & pose_i_rsd( pose.residue(i) );
@@ -418,25 +416,25 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 				core::Size last_atom( pose_i_rsd.last_backbone_atom() );
 				core::Size last_targ_atom( targ_j_rsd.last_backbone_atom() );
 				bool use_atom_names(false);
-				if ( coord_constrain_sidechains_ ) { 
+				if ( coord_constrain_sidechains_ ) {
 					last_atom = pose_i_rsd.nheavyatoms();
 					last_targ_atom = targ_j_rsd.nheavyatoms();
 					use_atom_names = pose_i_rsd.name() != targ_j_rsd.name(); // Don't bother with lookup if they're the same residue type.
-				}	
-				if ( !use_atom_names && last_atom != last_targ_atom ) { 
-					TR.Warning << "Warning: Coordinate constraint reference residue has different number of " << (coord_constrain_sidechains_?"heavy":"backbone") << " atoms: ref. " 
+				}
+				if ( !use_atom_names && last_atom != last_targ_atom ) {
+					TR.Warning << "Warning: Coordinate constraint reference residue has different number of " << (coord_constrain_sidechains_?"heavy":"backbone") << " atoms: ref. "
 						<< targ_j_rsd.name() << " (res " << j << ") versus  " << pose_i_rsd.name() << " (res " << i << "). - skipping." << std::endl;
-					continue; 
-				} 
+					continue;
+				}
 				for ( Size ii = 1; ii<= last_atom; ++ii ) {
 					Size jj(ii);
-					if ( use_atom_names ) { 
+					if ( use_atom_names ) {
 						std::string atomname( pose_i_rsd.atom_name(ii) );
 						if ( ! targ_j_rsd.has(atomname) ) {
-							TR.Debug << "Skip adding coordinate constraints for atom " << atomname << " of residue " << i << " (" << pose_i_rsd.name() << 
-								") - not found in residue " << j << " (" << targ_j_rsd.name() << ") of reference structure." << std::endl; 
+							TR.Debug << "Skip adding coordinate constraints for atom " << atomname << " of residue " << i << " (" << pose_i_rsd.name() <<
+								") - not found in residue " << j << " (" << targ_j_rsd.name() << ") of reference structure." << std::endl;
 							continue;
-						}	
+						}
 						jj = targ_j_rsd.atom_index( atomname );
 					}
 					core::scoring::constraints::FuncOP function;

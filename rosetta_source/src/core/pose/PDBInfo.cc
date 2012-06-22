@@ -279,7 +279,8 @@ PDBInfo::on_length_change( core::conformation::signals::LengthEvent const & even
 		}
 		case LengthEvent::RESIDUE_DELETE: {
 			delete_res( event.position, abs( event.length_change ) );
-			obsolete( true );
+			//Shouldn't obsolete PDBInfo on delete - every residue that still exists has valid information
+			//obsolete( true );
 			break;
 		}
 		default: {
