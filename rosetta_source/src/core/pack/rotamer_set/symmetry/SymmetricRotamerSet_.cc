@@ -190,7 +190,7 @@ SymmetricRotamerSet_::compute_one_body_energies(
 				(*lr_iter)->evaluate_rotamer_background_energies(
 					*this, pose.residue( neighbor_id ), pose, sf,
 					sf.weights(), temp_energies );
-					PackerEnergyMultiply( temp_energies, symm_info->score_multiply( theresid, neighbor_id ) );
+					PackerEnergyMultiply( temp_energies, symm_info->score_multiply_factor() );
 					PackerEnergyAdd( energies, temp_energies );
 			} else {
 				// We have a self interaction. We have to calculate the rotamer-rotamer pair interaction
