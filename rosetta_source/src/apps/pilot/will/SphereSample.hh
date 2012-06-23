@@ -39,7 +39,7 @@ class SphereSample {
 private:
 	utility::vector1<SphereNode*> allnodes_;
 public:
-	SphereSample() : allnodes_(40974,NULL){
+	SphereSample() : allnodes_(40974, (SphereNode*)(NULL) ){
 		read_sphere_data();
 		assert( sanity_check() );
 	}
