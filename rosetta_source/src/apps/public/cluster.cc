@@ -67,7 +67,7 @@ main( int argc, char * argv [] ) {
 	using namespace protocols::cluster;
 	using namespace basic::options::OptionKeys::cluster;
 
-	option.add_relevant( OptionKeys::cluster::input_score_filter           );
+	//option.add_relevant( OptionKeys::cluster::input_score_filter           );
 	option.add_relevant( OptionKeys::cluster::output_score_filter          );
 	option.add_relevant( OptionKeys::cluster::exclude_res                  );
 	option.add_relevant( OptionKeys::cluster::thinout_factor               );
@@ -107,7 +107,7 @@ main( int argc, char * argv [] ) {
 	std::cout << "                   -out:prefix  myprefix                       prefix the output structures with a string " << std::endl;
 	std::cout << "   Clustering:     -cluster:radius  <float>                    Cluster radius in A (for RMS clustering) or in inverse GDT_TS for GDT clustering. Use \"-1\" to trigger automatic radius detection" << std::endl;
 	std::cout << "                   -cluster:gdtmm                              Cluster by gdtmm instead of rms" << std::endl;
-	std::cout << "                   -cluster:input_score_filter  <float>        Ignore structures above certain energy " << std::endl;
+	//std::cout << "                   -cluster:input_score_filter  <float>        Ignore structures above certain energy " << std::endl;
 	std::cout << "                   -cluster:exclude_res <int> [<int> <int> ..] Exclude residue numbers               " << std::endl;
 	std::cout << "                   -cluster:radius        <float>              Cluster radius" << std::endl;
 	std::cout << "                   -cluster:limit_cluster_size      <int>      Maximal cluster size" << std::endl;
