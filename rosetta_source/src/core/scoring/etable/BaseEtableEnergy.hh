@@ -546,14 +546,14 @@ public:
 
 	/// APL -- consider reinstating this function!
 	// PyRosetta friendly version
-	//inline void atom_pair_energy(
-	//	conformation::Atom const & atom1,
-	//	conformation::Atom const & atom2,
-	//	Real const weight,
-	//	AtomPairEnergy & ape)
-	//const {
-	//		atom_pair_energy(atom1, atom2, weight, ape.attractive, ape.repulsive, ape.solvation, ape.bead_bead_interaction, ape.distance_squared);
-	//}
+	inline void atom_pair_energy(
+		conformation::Atom const & atom1,
+		conformation::Atom const & atom2,
+		Real const weight,
+		AtomPairEnergy & ape)
+	const {
+			atom_pair_energy(atom1, atom2, weight, ape.attractive, ape.repulsive, ape.solvation, ape.bead_bead_interaction, ape.distance_squared);
+	}
 
 
 	///
@@ -573,17 +573,17 @@ public:
 
 	/// APL -- Consider reinstating this function!
 	// PyRosetta friendly version
-	//inline
-	//void
-	//pair_energy_H(
-	//	conformation::Atom const & atom1,
-	//	conformation::Atom const & atom2,
-	//	Real weight,
-	//	AtomPairEnergy & ape
-	//) const {
-	//	ape.distance_squared = 0.0;
-	//	pair_energy_H(atom1, atom2, weight, ape.attractive, ape.repulsive, ape.solvation, ape.bead_bead_interaction);
-	//}
+	// inline
+	// void
+	// pair_energy_H(
+	// 	conformation::Atom const & atom1,
+	// 	conformation::Atom const & atom2,
+	// 	Real weight,
+	// 	AtomPairEnergy & ape
+	// ) const {
+	// 	ape.distance_squared = 0.0;
+	// 	pair_energy_H(atom1, atom2, weight, ape.attractive, ape.repulsive, ape.solvation, ape.bead_bead_interaction);
+	// }
 
 	///
 	inline
@@ -893,7 +893,7 @@ private:
 //) const
 //{
 //	bb = 0;
-//	etable_evaluator_->atom_pair_energy( atom1, atom2, weight, atr, rep, solv, d2 ); 
+//	etable_evaluator_->atom_pair_energy( atom1, atom2, weight, atr, rep, solv, d2 );
 //
 //	assert( ljatr_.active() );
 //	bb = 0.0; //bead-bead interaction energy only in CoarseTable
