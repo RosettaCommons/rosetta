@@ -164,6 +164,14 @@ pose_from_pdbstring(
 	std::string const & filename = ""
 );
 
+void
+pose_from_pdbstring(
+	pose::Pose & pose,
+	std::string const & pdbcontents,
+	chemical::ResidueTypeSet const & residue_set,
+	std::string const & filename
+);
+
 /// uses the CENTROID residue_set
 
 /// @brief Reads in data from input PDB  <filename>  and stores it in the Pose

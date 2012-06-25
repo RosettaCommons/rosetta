@@ -33,9 +33,9 @@
 
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
-
+#include <core/chemical/ResidueTypeSet.hh>
 #include <numeric/conversions.hh>
-
+#include <core/import_pose/import_pose.hh>
 //Auto Headers
 #include <core/conformation/Atom.fwd.hh>
 #include <core/id/NamedStubID.hh>
@@ -48,6 +48,7 @@
 #include <ObjexxFCL/FArray.fwd.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/database/open.hh>
 
 
 // --------------- Test Class --------------- //
@@ -61,18 +62,23 @@ using namespace core::scoring::methods;
 class OrbitalsEnergyTests : public CxxTest::TestSuite {
 
 public:
+	core::chemical::ResidueTypeSetOP oribitals_residue_type_set_;
 
 	void setUp() {
 		core_init();
 		basic::options::option[ basic::options::OptionKeys::in::add_orbitals](true);
+		oribitals_residue_type_set_ = new core::chemical::ResidueTypeSet( "ORBITALS_FA_STANDARD", basic::database::full_name("chemical/residue_type_sets/fa_standard/") );
 	}
-//	void test_true() { TS_ASSERT( true);
-	//}
+	void tearDown() {
+		basic::options::option[ basic::options::OptionKeys::in::add_orbitals ](false);
+		oribitals_residue_type_set_ = 0;
+	}
 
 
 	void test_orbital_scoring_function_values()
 	{
-		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::pose::Pose pose;
+		core::import_pose::pose_from_pdbstring(pose, trp_cage_ideal(), *oribitals_residue_type_set_, "trp_cage");
 		core::scoring::ScoreFunction sfxn;
 		sfxn.set_weight( orbitals_hpol, 1 );
 		sfxn.set_weight( orbitals_haro, 1 );

@@ -163,7 +163,6 @@ void AssignOrbitals::assign_orbitals( )
 				//get the atom indices of the bonded neighbors of atm_index2.
 				utility::vector1<core::Size> neighbor_bonded_atms2(restype_->bonded_neighbor(atm_index2));
 				core::Size atm_index3(AObondedatoms_[1]);
-				std::cout <<  restype_->atom_name(Aindex_) << restype_->atom_name(atm_index2) << restype_->atom_name(atm_index3) << restype_->name3() << std::endl;
 /*
 				for(core::Size x=1; x<= neighbor_bonded_atms2.size(); ++x){
 					//if atm_index is not equal to the index in neighbor bonded atoms to C2,do nothing,continue the loop.

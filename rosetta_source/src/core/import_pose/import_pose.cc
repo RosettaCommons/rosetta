@@ -444,6 +444,20 @@ pose_from_pdbstring(
 
 }
 
+
+void
+pose_from_pdbstring(
+	pose::Pose & pose,
+	std::string const & pdbcontents,
+	chemical::ResidueTypeSet const & residue_set,
+	std::string const & filename
+){
+	io::pdb::FileData fd = import_pose::PDB_DReader::createFileData( pdbcontents );
+	fd.filename = filename;
+	core::import_pose::build_pose( fd, pose, residue_set);
+}
+
+
 void
 centroid_pose_from_pdb(
 	pose::Pose & pose,
