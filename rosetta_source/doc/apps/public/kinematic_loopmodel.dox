@@ -59,9 +59,9 @@ Although this documentation refers to modeling loop regions, in practice KIC pro
 The following command lines will perform a <em>de novo</em> reconstruction of a protein loop (the starting coordinates will be discarded and the loop will be modeled from scratch), followed by all-atom refinement with extra rotamers.
 In order to discard the starting coordinates of the loop, be sure the 'Extend loop' field in the loop definition file is set to '1' (see @ref kic_inputs).
 
-Using the current version of Rosetta (Rosetta 3.3):
+Using the current version of Rosetta (Rosetta 3.4):
 @verbatim
-rosetta/rosetta_source/bin/loopmodel.<my_os>gccrelease -database <rosetta_database_path> -loops:remodel perturb_kic -loops:refine refine_kic -loops:input_pdb <my_starting_structure>.pdb -in:file:fullatom -loops:loop_file <my_loopfile>.loop -nstruct <num_desired_models> -ex1 -ex2 -overwrite
+rosetta/rosetta_source/bin/loopmodel.<my_os>gccrelease -database <rosetta_database_path> -loops:remodel perturb_kic -loops:refine refine_kic -in:file:s <my_starting_structure>.pdb -in:file:fullatom -loops:loop_file <my_loopfile>.loop -nstruct <num_desired_models> -ex1 -ex2 -overwrite
 @endverbatim
 
 Using the old version of Rosetta (Rosetta revision 24219) from the original publication by Mandell <em>et al.</em> (2009, see @ref kic_refs):
@@ -100,7 +100,7 @@ By definition, KIC moves are local perturbations, so the C-alpha atoms of start 
 
 @section kic_inputs Input Files
 The following files are required for kinematic loop modeling:
-@li Starting PDB file, specified by <code>-loops:input_pdb</code>.  The starting structure must have real coordinates for all residues outside the loop definition, plus the first and last residue of each loop region. In Rosetta revision 24219 used in the original publication by Mandell <em>et al.</em> (2009, see @ref kic_refs), this flag is called <code>-loops:template_pdb</code> instead. 
+@li Starting PDB file, specified by <code>-in:file:s</code>.  The starting structure must have real coordinates for all residues outside the loop definition, plus the first and last residue of each loop region. In Rosetta revision 24219 used in the original publication by Mandell <em>et al.</em> (2009, see @ref kic_refs), this flag is called <code>-loops:template_pdb</code> instead. 
 
 @li Loop definition file, specificied by <code>loops:loop_file</code> and shared across all loop modeling protocols. For each loop to be modeled, include the following on one line:
 @verbatim
@@ -132,11 +132,11 @@ LOOP 88 95 92 0 1
                                 default = 'quick_ccd'. For KIC, use 'perturb_kic'. [String]
 -loops:refine                   Selects the all-atom refinement stage protocol.
                                 Legal values: 'refine_kic','refine_ccd','no'. default = 'no'. For KIC, use 'refine_kic'. [String]
--loops:input_pdb                Path/name of input pdb file.  Note that this is NOT -s/-l like normal. [File]
 -loops:loop_file                Path/name of loop definition file. default = 'loop_file'. [File]
 @endverbatim
 @li The following general Rosetta options are commonly used with KIC:
 @verbatim
+-in:file:s                      Path/name of input pdb file. [File]
 -in:file:native                 Path/name of native pdb file. Backbone rmsd to this structure will be reported in each output decoy.
                                 If no native structure is provided, the protocol will return an rmsd of 0. [File]
 -in:file:fullatom               Read the input structure in full-atom mode. Set this flag to avoid discarding the native side chains and repacking the input structure
@@ -199,6 +199,7 @@ KIC has also been used to generate backbone ensembles for flexible backbone desi
 @verbatim
 loopmodel.linuxgccrelease -database <path/to/rosetta_database> -loops:refine refine_kic -loops:input_pdb structure.pdb -loops:loop_file modeling.loops -loops:outer_cycles 1 -loops:refine_init_temp 1.2 -loops:refine_final_temp 1.2 -loops:vicinity_sampling -loops:vicinity_degree 3 -loops:optimize_only_kic_region_sidechains_after_move -ex1 -ex2 -nstruct 100
 @endverbatim
+<strong>NOTE:</strong> The input pdb is now specified through the job distributor, using <code>-in:file:s</code> instead of <code>-loops:input_pdb</code>
 
 @section kic_outputs Expected Outputs
 Each output decoy contains information about the energy and rmsd of the model at the end of the file. If <code>-in:::file:native</code> is provided, the reported rmsd is the backbone (N, Ca, C, O) rmsd to the native loop(s). If not, the reported rmsd is 0. Example output looks like this:

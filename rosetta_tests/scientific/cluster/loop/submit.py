@@ -32,7 +32,7 @@ Error   = output/%(target)s.logerr
 Output  = output/%(target)s.logout
 arguments = -database %(database)s -loops::frag_sizes 9 3 1 -out:nstruct 25 -score:weights score13_env_hb \
             -loops::frag_files input/fragments/%(target)s/frag9.gz ./input/fragments/%(target)s/frag3.gz none \
-            -loops::input_pdb input/fragments/%(target)s/%(target)s.pdb \
+            -in::file::s input/fragments/%(target)s/%(target)s.pdb \
             -loops::loop_file input/loopdefs/%(target)s.loopfile \
             -in:file:native input/fragments/%(target)s/%(target)s.pdb \
             -psipred_ss2 input/fragments/%(target)s/psipred_ss2 -loops::extended \
