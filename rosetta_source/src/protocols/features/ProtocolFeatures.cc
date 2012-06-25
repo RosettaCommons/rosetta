@@ -71,12 +71,12 @@ ProtocolFeatures::~ProtocolFeatures(){}
 
 string
 ProtocolFeatures::type_name() const { return "ProtocolFeatures"; }
-	
+
 void
 ProtocolFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;
 
-	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
+	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::dbms::mode]);
 	bool protocol_id_mode = basic::options::option[basic::options::OptionKeys::out::database_protocol_id].user();
 
 	if(protocol_id_mode){
@@ -191,7 +191,7 @@ ProtocolFeatures::report_features(
 	if(protocol_id) {
 		return protocol_id;
 	} else {
-    return insert_statement.sequence_last("protocols_protocol_id_seq");
+		return insert_statement.sequence_last("protocols_protocol_id_seq");
 	}
 }
 

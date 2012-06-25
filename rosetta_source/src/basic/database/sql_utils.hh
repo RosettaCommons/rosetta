@@ -40,26 +40,46 @@
 namespace basic {
 namespace database {
 
-std::string mode_specific_primary_key(bool auto_increment);
+///@brief Aquire a database session using the command line options
+utility::sql_database::sessionOP
+get_db_session();
 
-utility::sql_database::sessionOP get_db_session(
+///@brief Aquire a database session using the command line parameters
+/// For postgres databases, the pq_schema acts like a namespace in the
+/// database
+utility::sql_database::sessionOP
+get_db_session(
 	std::string const & db_name,
-	bool const readonly = false,
-	bool const separate_db_per_mpi_process = false);
+	std::string const & pq_schema="");
 
-utility::sql_database::sessionOP get_db_session(
+///@brief Aquire a database session using the command line parameters
+/// For postgres databases, the pq_schema acts like a namespace in the
+/// database
+utility::sql_database::sessionOP
+get_db_session(
+	utility::sql_database::DatabaseMode::e db_mode,
 	std::string const & db_name,
-	std::string const & db_mode,
-	bool const readonly = false,
-	bool const separate_db_per_mpi_process = false);
+	std::string const & pq_schema="");
 
-cppdb::statement safely_prepare_statement(std::string const & statement_string, utility::sql_database::sessionOP db_session);
+cppdb::statement
+safely_prepare_statement(
+	std::string const & statement_string,
+	utility::sql_database::sessionOP db_session);
 
-void safely_write_to_database(cppdb::statement & statement);
+void
+safely_write_to_database(
+	cppdb::statement & statement);
 
-cppdb::result safely_read_from_database(cppdb::statement & statement);
+cppdb::result
+safely_read_from_database(
+	cppdb::statement & statement);
 
-void insert_or_ignore(std::string table_name, std::vector<std::string> column_names, std::vector<std::string> values, utility::sql_database::sessionOP db_session);
+void
+insert_or_ignore(
+	std::string table_name,
+	std::vector<std::string> column_names,
+	std::vector<std::string> values,
+	utility::sql_database::sessionOP db_session);
 
 void
 check_statement_sanity(std::string sql);
@@ -73,16 +93,17 @@ table_exists(
 void
 set_cache_size(
 	utility::sql_database::sessionOP db_session,
-	std::string db_mode,
 	platform::Size cache_size);
 
 utility::vector1<boost::uuids::uuid>
-struct_ids_from_tag(utility::sql_database::sessionOP db_session,
-					std::string const & tag);
+struct_ids_from_tag(
+	utility::sql_database::sessionOP db_session,
+	std::string const & tag);
 
 void write_schema_to_database(
 	std::string schema,
 	utility::sql_database::sessionOP db_session);
+
 
 }
 }

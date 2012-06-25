@@ -22,6 +22,7 @@
 
 // Unit Headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/sql_database/types.hh>
 
 //C++ Headers
 #include <string>
@@ -55,7 +56,7 @@ public:
 
 private:
 
-	std::string database_mode_;
+	utility::sql_database::DatabaseMode::e database_mode_;
 	std::string name_;
 	DbDataType type_;
 	bool allow_null_;

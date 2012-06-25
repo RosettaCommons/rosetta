@@ -21,6 +21,7 @@
 
 #include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/types.hh>
 
 #include <protocols/features/helixAssembly/ConcurrencyTest.hh>
 
@@ -31,31 +32,31 @@
 
 class DatabaseIOBenchmark : public Benchmark
 {
-public:	
+public:
 	utility::sql_database::sessionOP db_session_;
 	protocols::features::helixAssembly::ConcurrencyTest test_feature_;
-	
+
 	DatabaseIOBenchmark(std::string name) : Benchmark(name) {};
-	
+
 	virtual void setUp() {
 		db_session_ =
-			get_db_session("db_io_benchmark.db3", "sqlite3", false,
-			false));
-		
+			get_db_session(
+				utility::sql_database::DatabaseMode::sqlite3, "db_io_benchmark.db3");
+
 		test_feature_.write_schema_to_db(db_session);
 	}
-	
+
 	virtual void run(core::Real scaleFactor) {
-		
+
 		core::pose::Pose pose;
-		
+
 		boost::uuids::basic_random_generator<numeric::random::RandomGenerator>
 		uuids_rng(numeric::random::RG);
 		boost::uuids::uuid struct_id = uuids_rng();
-		
+
 		test_feature_.report_features(pose, struct_id, db_session_);
 	};
-	
+
 	virtual void tearDown() {};
-	
+
 };

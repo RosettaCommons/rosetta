@@ -17,10 +17,14 @@
 
 // Unit Headers
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
+#include <utility/sql_database/types.hh>
 
 // Utility Headers
 #include <utility/file/FileName.hh>
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/vector1.hh>
+
+#include <platform/types.hh>
 
 // Boost Headers
 #include <boost/scoped_ptr.hpp>
@@ -34,7 +38,20 @@
 namespace utility {
 namespace sql_database {
 
-class session : public cppdb::session, public utility::pointer::ReferenceCount {};
+class session : public cppdb::session, public utility::pointer::ReferenceCount {
+
+public:
+	void
+	set_db_mode(
+		DatabaseMode::e const db_mode) { db_mode_ = db_mode; }
+
+	DatabaseMode::e
+	get_db_mode() const { return db_mode_; }
+
+private:
+	DatabaseMode::e db_mode_;
+
+};
 
 class DatabaseSessionManager {
 
@@ -54,19 +71,56 @@ public:
 	DatabaseSessionManager *
 	get_instance();
 
-	// for SQLite the database_url is the file path for the database
+	///@brief Acquire a database session
 	sessionOP
-	get_session(
-		std::string const & db_fname,
+	get_db_session(
+		DatabaseMode::e db_mode,
+		std::string const & db_name,
+		std::string const & pq_schema,
+		std::string const & host,
+		std::string const & user,
+		std::string const & password,
+		platform::Size port,
+		bool readonly = false,
+		bool separate_db_per_mpi_process = false);
+
+
+	///@brief Acquire a sqlite3 database session
+	sessionOP
+	get_session_sqlite3(
+		std::string const & database,
 		bool const readonly=false,
 		bool const separate_db_per_mpi_process=false);
 
-	// overloaded get_session function for mysql
+	///@brief Acquire a mysql database session
 	sessionOP
-	get_session(
-                std::string const & db_mode, std::string const & host, std::string const & user, std::string const & password, std::string const & database,int const & port);
+	get_session_mysql(
+		std::string const & database,
+		std::string const & host,
+		std::string const & user,
+		std::string const & password,
+		platform::Size port);
+
+
+	///@brief Acquire a postgres database session
+	sessionOP
+	get_session_postgres(
+		std::string const & database,
+		std::string const & pq_schema,
+		std::string const & host,
+		std::string const & user,
+		std::string const & password,
+		platform::Size port);
 
 private:
+
+	void
+	set_postgres_schema_search_path(
+		sessionOP db_session,
+		utility::vector1< std::string > const & schema_search_path
+	);
+
+
 
 #ifndef MULTITHREADED
 	static boost::scoped_ptr< DatabaseSessionManager > instance_;

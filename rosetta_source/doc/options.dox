@@ -159,7 +159,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-use_database</b> \<Boolean\><dt>
-<dd>Read in structures from database.  Specify database via -inout:database_filename and wanted structures with -in:file:tags or select_structures_from_database</dd><br>
+<dd>Read in structures from database.  Specify database via -inout:dbms:database_name and wanted structures with -in:file:tags or select_structures_from_database</dd><br>
 </dl>
 <dl>
 <dt><b>-database_protocol</b> \<Integer\><dt>
@@ -168,7 +168,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-select_structures_from_database</b> \<StringVector\><dt>
-<dd>specify an SQL query to determine which structures get read in from a database specified with -inout:database_filename.  SELECT query must return structures.tag</dd><br>
+<dd>specify an SQL query to determine which structures get read in from a database specified with -inout:dbms:database_name.  SELECT query must return structures.tag</dd><br>
 </dl>
  </li>
 <li><h2>in:path</h2>
@@ -274,8 +274,13 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>the name of a database containing fullatom residue types (e.g. ligands)</dd><br>
 </dl>
 <dl>
+<dt><b>-extra_res_pq_schema</b> \<String\><dt>
+<dd>the name of a postgreSQL schema in the database containing fullatom residue types (e.g. ligands)</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
 <dt><b>-extra_res_database_mode</b> \<String\><dt>
-<dd>The type of database driver to use for -in:file:extra_res_database.  Acceptable values are 'mysql' or 'sqlite3'</dd><br>
+<dd>The type of database driver to use for -in:file:extra_res_database.</dd><br>
 <dd>Default: "sqlite3"</dd><br>
 </dl>
 <dl>
@@ -578,28 +583,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
  </li>
-<li><h2>mysql</h2>
-<dl>
-<dt><b>-mysql</b> \<Boolean\><dt>
-<dd>mysql option group</dd><br>
-</dl>
-<dl>
-<dt><b>-host</b> \<String\><dt>
-<dd>mySQL database hostname</dd><br>
-</dl>
-<dl>
-<dt><b>-user</b> \<String\><dt>
-<dd>mySQL database username</dd><br>
-</dl>
-<dl>
-<dt><b>-password</b> \<String\><dt>
-<dd>mySQL database password</dd><br>
-</dl>
-<dl>
-<dt><b>-port</b> \<Integer\><dt>
-<dd>mySQL database port</dd><br>
-</dl>
- </li>
 <li><h2>qsar</h2>
 <dl>
 <dt><b>-qsar</b> \<Boolean\><dt>
@@ -657,14 +640,51 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Output CONECT info between bonded atoms that are beyond 3.0 A apart; useful for coarse-grained representations.</dd><br>
 <dd>Default: false</dd><br>
 </dl>
+ </li>
+<li><h2>inout:dbms</h2>
 <dl>
-<dt><b>-database_filename</b> \<File\><dt>
-<dd>SQLite3 database filename (or mysql database name) to manage persistant data.</dd><br>
+<dt><b>-dbms</b> \<Boolean\><dt>
+<dd>database option group</dd><br>
 </dl>
 <dl>
-<dt><b>-database_mode</b> \<String\><dt>
-<dd>Database mode for pose IO</dd><br>
+<dt><b>-mode</b> \<String\><dt>
+<dd>Which backend to use by default for database access. Note, usage of 'mysql' requires building with extras=mysql and usage of 'postgres' requires building with extras=postgres'</dd><br>
 <dd>Default: "sqlite3"</dd><br>
+</dl>
+<dl>
+<dt><b>-database_name</b> \<String\><dt>
+<dd>name of the database. For sqlite3 databases this is a path in the file system usually with the '.db3' extension.</dd><br>
+</dl>
+<dl>
+<dt><b>-pq_schema</b> \<String\><dt>
+<dd>For posgres databases, specify the default schema with the database. For PostgreSQL database, schemas are like namespaces.</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-host</b> \<String\><dt>
+<dd>default hostname of database server</dd><br>
+</dl>
+<dl>
+<dt><b>-user</b> \<String\><dt>
+<dd>default username for database server access</dd><br>
+</dl>
+<dl>
+<dt><b>-password</b> \<String\><dt>
+<dd>default password for database server access</dd><br>
+</dl>
+<dl>
+<dt><b>-port</b> \<Integer\><dt>
+<dd>default port for database server access</dd><br>
+</dl>
+<dl>
+<dt><b>-readonly</b> \<Boolean\><dt>
+<dd>open sqlite3 database in read-only mode by default</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-separate_db_per_mpi_process</b> \<Boolean\><dt>
+<dd>In MPI mode,, open a separate sqlite3 database for each process with extension _<mpi_rank></dd><br>
+<dd>Default: false</dd><br>
 </dl>
  </li>
 <li><h2>out</h2>
@@ -718,7 +738,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-use_database</b> \<Boolean\><dt>
-<dd>Write out structures to database.  Specify database via -inout:database_filename and wanted structures with -in:file:tags</dd><br>
+<dd>Write out structures to database.  Specify database via -inout:dbms:database_name and wanted structures with -in:file:tags</dd><br>
 </dl>
 <dl>
 <dt><b>-database_protocol_id</b> \<Integer\><dt>

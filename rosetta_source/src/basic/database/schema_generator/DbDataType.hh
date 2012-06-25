@@ -17,6 +17,7 @@
 
 //C++
 #include <string>
+#include <utility/sql_database/types.hh>
 
 namespace basic{
 namespace database{
@@ -30,7 +31,7 @@ public:
 	std::string print() const;
 
 protected:
-	std::string database_mode_;
+	utility::sql_database::DatabaseMode::e database_mode_;
 	std::string type_string_;
 };
 

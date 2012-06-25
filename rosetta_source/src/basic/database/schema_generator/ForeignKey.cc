@@ -85,12 +85,8 @@ ForeignKey::ForeignKey(
 }
 
 void ForeignKey::init_db_mode(){
-	if(basic::options::option[basic::options::OptionKeys::inout::database_mode].user()){
-		database_mode_=basic::options::option[basic::options::OptionKeys::inout::database_mode].value();
-	}
-	else{
-		database_mode_="sqlite3";
-	}
+	database_mode_ =
+		basic::options::option[basic::options::OptionKeys::inout::dbms::mode];
 }
 
 Columns ForeignKey::columns(){
@@ -125,7 +121,7 @@ std::string ForeignKey::print(){
 			//MySQL does not support deferring foreign keys.
 		}
 		else{
-			utility_exit_with_message("ERROR:Please specify the database mode using -inout::database_mode. Valid options are: 'sqlite3', 'mysql', or 'postgres'");
+			utility_exit_with_message("ERROR:Please specify the database mode using -inout::dbms::mode. Valid options are: 'sqlite3', 'mysql', or 'postgres'");
 		}
 	}
 	return foreign_key_string;

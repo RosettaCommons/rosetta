@@ -56,6 +56,7 @@
 #include <basic/options/option.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/types.hh>
 
 
 // option key includes
@@ -227,18 +228,16 @@ ChemicalManager::residue_type_set( std::string const & tag )
 
 			if(basic::options::option[basic::options::OptionKeys::in::file::extra_res_database].user())
 			{
-				std::string database_name = basic::options::option[basic::options::OptionKeys::in::file::extra_res_database];
-				std::string database_mode = basic::options::option[basic::options::OptionKeys::in::file::extra_res_database_mode];
+				utility::sql_database::DatabaseMode::e database_mode(
+					utility::sql_database::database_mode_from_name(
+						basic::options::option[basic::options::OptionKeys::in::file::extra_res_database_mode]));
+				std::string database_name(basic::options::option[basic::options::OptionKeys::in::file::extra_res_database]);
+				std::string database_pq_schema(basic::options::option[basic::options::OptionKeys::in::file::extra_res_pq_schema]);
 
-				utility::sql_database::sessionOP db_session;
 
-				if(database_mode=="sqlite3")
-				{
-					db_session = basic::database::get_db_session(database_name,database_mode,true,false);
-				}else
-				{
-					db_session = basic::database::get_db_session(database_name,database_mode,false,false);
-				}
+				utility::sql_database::sessionOP db_session(
+					basic::database::get_db_session(database_mode, database_name, database_pq_schema));
+
 				ResidueDatabaseIO residue_database_interface;
 
 				if(basic::options::option[basic::options::OptionKeys::in::file::extra_res_database_resname_list].user())

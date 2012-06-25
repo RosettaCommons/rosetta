@@ -16,6 +16,7 @@
 #define INCLUDED_basic_database_schema_generator_Index_HH
 
 #include <utility/vector1.hh>
+#include <utility/sql_database/types.hh>
 #include <basic/database/schema_generator/Column.hh>
 
 //C++ Headers
@@ -54,7 +55,7 @@ public:
 
 private:
 	bool unique_;
-	std::string database_mode_;
+	utility::sql_database::DatabaseMode::e database_mode_;
 	Columns columns_;
 };
 

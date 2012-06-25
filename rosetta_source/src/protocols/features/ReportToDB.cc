@@ -9,7 +9,7 @@
 /// @file   protocols/features/ReportToDB.cc
 ///
 /// @brief  report all data to a database
-/// @author Matthew O'Meara
+/// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 
 #ifdef USEMPI
@@ -128,6 +128,7 @@ using protocols::moves::MoverOP;
 using protocols::moves::DataMap;
 using protocols::moves::Movers_map;
 using protocols::rosetta_scripts::parse_task_operations;
+using protocols::rosetta_scripts::parse_database_connection;
 using std::string;
 using std::endl;
 using std::accumulate;
@@ -145,9 +146,7 @@ static Tracer TR("protocols.features.ReportToDB");
 
 ReportToDB::ReportToDB():
 	Mover("ReportToDB"),
-	database_fname_("FeatureStatistics.db3"),
-	database_mode_("sqlite3"),
-	separate_db_per_mpi_process_(false),
+	db_session_(),
 	sample_source_("Rosetta: Unknown Protocol"),
 	scfxn_(getScoreFunction()),
 	use_transactions_(true),
@@ -164,9 +163,7 @@ ReportToDB::ReportToDB():
 
 ReportToDB::ReportToDB(string const & name):
 	Mover(name),
-	database_fname_("FeatureStatistics.db3"),
-	database_mode_("sqlite3"),
-	separate_db_per_mpi_process_(false),
+	db_session_(),
 	sample_source_("Rosetta: Unknown Protocol"),
 	scfxn_( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) ),
 	use_transactions_(true),
@@ -183,15 +180,13 @@ ReportToDB::ReportToDB(string const & name):
 
 ReportToDB::ReportToDB(
 	string const & name,
-	string const & database_fname,
+	sessionOP db_session,
 	string const & sample_source,
 	ScoreFunctionOP scfxn,
 	bool use_transactions,
 	Size cache_size) :
 	Mover(name),
-	database_fname_(database_fname),
-	database_mode_("sqlite3"),
-	separate_db_per_mpi_process_(false),
+	db_session_(db_session),
 	sample_source_(sample_source),
 	scfxn_(scfxn),
 	use_transactions_(use_transactions),
@@ -208,9 +203,7 @@ ReportToDB::ReportToDB(
 
 ReportToDB::ReportToDB( ReportToDB const & src):
 	Mover(src),
-	database_fname_(src.database_fname_),
-	database_mode_(src.database_mode_),
-	separate_db_per_mpi_process_(src.separate_db_per_mpi_process_),
+	db_session_(src.db_session_),
 	sample_source_(src.sample_source_),
 	name_(src.name_),
 	scfxn_(new ScoreFunction(* src.scfxn_)),
@@ -247,17 +240,6 @@ MoverOP ReportToDB::fresh_instance() const { return new ReportToDB; }
 MoverOP ReportToDB::clone() const
 {
 	return new ReportToDB( *this );
-}
-
-void
-ReportToDB::parse_db_tag_item(
-	TagPtr const tag){
-
-	if( tag->hasOption("db") ){
-		database_fname_ = tag->getOption<string>("db");
-	} else {
-		TR << "Field 'db' required for use of ReportToDB mover in Rosetta Scripts." << endl;
-	}
 }
 
 void
@@ -302,32 +284,6 @@ ReportToDB::parse_protocol_id_tag_item(
 
 }
 
-
-void
-ReportToDB::parse_db_mode_tag_item(
-	TagPtr const tag) {
-	if(tag->hasOption("db_mode")){
-		database_mode_ = tag->getOption<std::string>("db_mode");
-	} else {
-		database_mode_ = "sqlite3";
-	}
-}
-
-void
-ReportToDB::parse_separate_db_per_mpi_process_tag_item(
-	TagPtr const tag) {
-	if(tag->hasOption("separate_db_per_mpi_process")){
-		if(database_mode_ != "sqlite"){
-			TR.Warning << "Attempting to set 'separate_db_per_mpi_process', but the database mode is not 'sqlite'" << endl;
-		}
-		separate_db_per_mpi_process_ =
-			tag->getOption<bool>("separate_db_per_mpi_process");
-
-	} else {
-		separate_db_per_mpi_process_ = true;
-	}
-}
-
 void
 ReportToDB::parse_use_transactions_tag_item(
 	TagPtr const tag) {
@@ -355,11 +311,22 @@ ReportToDB::parse_my_tag(
 	Movers_map const & movers,
 	Pose const & pose )
 {
+	if(tag->hasOption("db")){
+		utility_exit_with_message("The 'db' tag has been deprecated. Please use 'database_name' instead.");
+	}
+
+	if(tag->hasOption("db_mode")){
+		utility_exit_with_message("The 'database_mode' tag has been deprecated. Please use 'database_mode' instead.");
+	}
+
+	if(tag->hasOption("separate_db_per_mpi_process")){
+		utility_exit_with_message("The 'parse_separate_db_per_mpi_process' tag has been deprecated. Please use 'database_parse_separate_db_per_mpi_process' instead.");
+	}
 
 	// Name of output features database:
 	// EXAMPLE: db=features_<sample_source>.db3
 	// REQUIRED
-	parse_db_tag_item(tag);
+	db_session_ = parse_database_connection(tag);
 
 	// Description of features database
 	// EXAMPLE: sample_source="This is a description of the sample source."
@@ -376,16 +343,6 @@ ReportToDB::parse_my_tag(
 	// EXAMPLE: protocol_id=6
 	// OPTIONAL default is to autoincrement the protocol_id in the protocols table
 	parse_protocol_id_tag_item(tag);
-
-	// The database backend to use ('sqlite3', 'mysql' etc)
-	// EXAMPLE: db_mode=sqlite3
-	parse_db_mode_tag_item(tag);
-
-	// For sqlite databases in mpi mode, decide if each node should
-	// write to it's own database or all write to one database
-	// EXAMPLE: separate_db_per_mpi_process=true
-	// OPTIONAL default false
-	parse_separate_db_per_mpi_process_tag_item(tag);
 
 	// Use transactions to group database i/o to be more efficient. Turning them off can help debugging.
 	// EXAMPLE: use_transactions=true
@@ -475,30 +432,26 @@ ReportToDB::initialize_reporters()
 	structure_features_ = new StructureFeatures();
 }
 
-utility::sql_database::sessionOP
+void
 ReportToDB::initialize_database(){
-	sessionOP db_session(
-		get_db_session(database_fname_, database_mode_, false,
-			separate_db_per_mpi_process_));
 
 	if (!initialized){
-		if(use_transactions_) db_session->begin();
+		if(use_transactions_) db_session_->begin();
 
-		protocol_features_->write_schema_to_db(db_session);
-		batch_features_->write_schema_to_db(db_session);
-		structure_features_->write_schema_to_db(db_session);
+		protocol_features_->write_schema_to_db(db_session_);
+		batch_features_->write_schema_to_db(db_session_);
+		structure_features_->write_schema_to_db(db_session_);
 
-		write_linking_tables(db_session);
+		write_linking_tables();
 
 		foreach( FeaturesReporterOP const & reporter, features_reporters_ ){
-			reporter->write_schema_to_db(db_session);
+			reporter->write_schema_to_db(db_session_);
 		}
 
-		if(use_transactions_) db_session->commit();
+		if(use_transactions_) db_session_->commit();
 
 		initialized = true;
 	}
-	return db_session;
 }
 
 vector1< bool >
@@ -527,28 +480,26 @@ ReportToDB::initialize_pose(
 /// all defined features reporters. The 'batch_reports' table link the
 /// features reporters with each batch defined in the 'batches' table.
 void
-ReportToDB::write_features_reporters_table(
-	utility::sql_database::sessionOP db_session
-) const {
+ReportToDB::write_features_reporters_table() const {
 	using namespace basic::database::schema_generator;
 
 	Schema features_reporters(
 		"features_reporters",
 		PrimaryKey( Column("report_name", DbTextKey())));
 
-	features_reporters.write(db_session);
+	features_reporters.write(db_session_);
 
 	//Only report features that aren't already in the database
 	string select_string =
-	"SELECT *\n"
-	"FROM\n"
-	"	features_reporters\n"
-	"WHERE\n"
-	"	report_name = ?;";
-	statement select_stmt(safely_prepare_statement(select_string,db_session));
+		"SELECT *\n"
+		"FROM\n"
+		"	features_reporters\n"
+		"WHERE\n"
+		"	report_name = ?;";
+	statement select_stmt(safely_prepare_statement(select_string, db_session_));
 
 	string insert_string = "INSERT INTO features_reporters (report_name) VALUES (?);";
-	statement insert_stmt(safely_prepare_statement(insert_string,db_session));
+	statement insert_stmt(safely_prepare_statement(insert_string, db_session_));
 
 	foreach(FeaturesReporterOP const & reporter, features_reporters_){
 		string const report_name(reporter->type_name());
@@ -563,9 +514,7 @@ ReportToDB::write_features_reporters_table(
 }
 
 void
-ReportToDB::write_batch_reports_table(
-	utility::sql_database::sessionOP db_session
-) const {
+ReportToDB::write_batch_reports_table() const {
 	using namespace basic::database::schema_generator;
 
 	Schema batch_reports("batch_reports");
@@ -582,16 +531,14 @@ ReportToDB::write_batch_reports_table(
 	batch_reports_unique.push_back(report_name);
 	batch_reports.add_constraint( new UniqueConstraint(batch_reports_unique) );
 
-	batch_reports.write(db_session);
+	batch_reports.write(db_session_);
 }
 
 void
-ReportToDB::write_linking_tables(
-	utility::sql_database::sessionOP db_session
-) const {
+ReportToDB::write_linking_tables() const {
 
 	try{
-		write_features_reporters_table(db_session);
+		write_features_reporters_table();
 	} catch(cppdb_error error){
 		stringstream err_msg;
 		err_msg
@@ -602,7 +549,7 @@ ReportToDB::write_linking_tables(
 	}
 
 	try{
-		write_batch_reports_table(db_session);
+		write_batch_reports_table();
 	} catch(cppdb_error error){
 		stringstream err_msg;
 		err_msg
@@ -616,33 +563,33 @@ ReportToDB::write_linking_tables(
 void
 ReportToDB::apply( Pose& pose ){
 
-	sessionOP db_session(initialize_database());
 	vector1<bool> relevant_residues(initialize_pose(pose));
 
-	if(use_transactions_) db_session->begin();
+	initialize_database();
 
-	set_cache_size(db_session, database_mode_, cache_size_);
+	if(use_transactions_) db_session_->begin();
 
-	std::pair<Size, Size> ids = get_protocol_and_batch_id(name_, db_session);
+	set_cache_size(db_session_, cache_size_);
+
+	std::pair<Size, Size> ids = get_protocol_and_batch_id(name_, db_session_);
 	protocol_id_ = ids.first;
 	batch_id_ = ids.second;
 
-	uuid struct_id = report_structure_features(relevant_residues,	db_session);
+	uuid struct_id = report_structure_features(relevant_residues);
 
-	report_features(pose, struct_id, relevant_residues, db_session);
+	report_features(pose, struct_id, relevant_residues);
 
-	if(use_transactions_) db_session->commit();
+	if(use_transactions_) db_session_->commit();
 }
 
 uuid
 ReportToDB::report_structure_features(
-	vector1<bool> const & relevant_residues,
-	sessionOP db_session
+	vector1<bool> const & relevant_residues
 ) const {
 	uuid struct_id;
 	try {
 		struct_id = structure_features_->report_features(
-			relevant_residues, batch_id_, db_session);
+			relevant_residues, batch_id_, db_session_);
 	} catch (cppdb_error error){
 		stringstream err_msg;
 		err_msg
@@ -660,8 +607,7 @@ void
 ReportToDB::report_features(
 	Pose const & pose,
 	uuid const struct_id,
-	utility::vector1<bool> const & relevant_residues,
-	utility::sql_database::sessionOP db_session
+	utility::vector1<bool> const & relevant_residues
 ) const {
 
 //	string batch_reports_string =
@@ -676,7 +622,7 @@ ReportToDB::report_features(
 
 		try {
 			features_reporters_[i]->report_features(
-				pose, relevant_residues, struct_id, db_session);
+				pose, relevant_residues, struct_id, db_session_);
 		} catch (cppdb_error error){
 			stringstream err_msg;
 			err_msg

@@ -52,7 +52,7 @@ public:
     DatabaseSessionManager * scm( DatabaseSessionManager::get_instance() );
 
     try {
-    	sessionOP db_session( scm->get_session("test_db_session.db3") );
+    	sessionOP db_session( scm->get_session_sqlite3("test_db_session.db3"));
 
       cppdb::statement drop_table = (*db_session) << "DROP TABLE IF EXISTS users";
     	drop_table.exec();
@@ -97,8 +97,8 @@ public:
 
     DatabaseSessionManager * scm( DatabaseSessionManager::get_instance() );
 
-    sessionOP db_session1(scm->get_session("test_db_session.db3") );
-    sessionOP db_session2(scm->get_session("test_cppdb_interface.db3"));
+    sessionOP db_session1(scm->get_session_sqlite3("test_db_session.db3"));
+    sessionOP db_session2(scm->get_session_sqlite3("test_cppdb_interface.db3"));
 
 
   }

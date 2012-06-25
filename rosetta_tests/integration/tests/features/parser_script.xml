@@ -3,11 +3,11 @@
 		<s weights=score12_w_corrections/>
 	</SCOREFXNS>
 	<TASKOPERATIONS>
-		<ReadResfileFromDB name=all db=resfiles.db3 db_mode=sqlite3 table=resfiles/>
+		<ReadResfileFromDB name=all database_name=resfiles.db3 database_mode=sqlite3 database_table=resfiles/>
 	</TASKOPERATIONS>
 	<MOVERS>
 		<SavePoseMover name=init_struct reference_name=init_struct/>
-		<ReportToDB name=features_reporter db="features_IntegrationTest.db3" sample_source="Test the whole feature generation code stack." task_operations=all>
+		<ReportToDB name=features_reporter database_name="features_IntegrationTest.db3" sample_source="Test the whole feature generation code stack." task_operations=all>
 			The following FeatureReporters are listed such that dependencies precede the FeatureReporters that depend on them.
 			<feature name=PdbDataFeatures/>
 			<feature name=PoseCommentsFeatures/>

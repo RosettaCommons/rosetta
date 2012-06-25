@@ -63,7 +63,7 @@ private:
 
 	void init();
 
-	std::string database_mode_;
+	utility::sql_database::DatabaseMode::e database_mode_;
 
 	std::string table_name_;
 	PrimaryKey primary_key_;

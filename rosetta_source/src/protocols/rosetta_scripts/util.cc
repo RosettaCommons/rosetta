@@ -35,7 +35,6 @@
 
 // Basic Headers
 #include <basic/options/option.hh>
-#include <basic/options/keys/mysql.OptionKeys.gen.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 
 
@@ -45,6 +44,7 @@
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/types.hh>
 #include <utility/vector0.hh>
 
 
@@ -333,47 +333,46 @@ parse_xyz_vector( utility::tag::TagPtr const xyz_vector_tag ){
 }
 
 ///@detail build database connection from options in a tag, this is useful make sure the fields for constructing a database connection are consistent across different tags.
-///
-///If the database options aren't specified, fall back option system
-///
-///Recognized options:
-///
-///   database_mode: ['sqlite3', 'mysql', 'postres']
-///   database_name: (string)
-///
-///   sqlite3 specific:
-///      database_separate_db_per_mpi_process: 0/1
-///      database_read_only: 0/1
-///
-///   mysql, postgre specific:
-///      database_host: (string)
-///      database_user: (string)
-///      database_password: (string)
-///      database_port: (Size)
 utility::sql_database::sessionOP
 parse_database_connection(
 	utility::tag::TagPtr const tag
 ) {
 	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace basic::options::OptionKeys::inout;
 	using utility::sql_database::DatabaseSessionManager;
 
-	std::string database_mode;
+	utility::sql_database::DatabaseMode::e database_mode;
 	if(tag->hasOption("database_mode")){
-		database_mode = tag->getOption<string>("database_mode");
+		database_mode = utility::sql_database::database_mode_from_name(
+			tag->getOption<string>("database_mode"));
 	} else {
-		database_mode = option[inout::database_mode];
+		database_mode = utility::sql_database::database_mode_from_name(
+			option[dbms::mode]);
 	}
 
 	std::string database_name;
 	if(tag->hasOption("database_name")){
 		database_name = tag->getOption<string>("database_name");
 	} else {
-	 	utility_exit_with_message("You must specify the database_name field for with tag '" + tag->getName() + "'.");
+		database_name = option[dbms::database_name];
 	}
 
+	std::string database_pq_schema;
+	if(tag->hasOption("database_pq_schema")){
+		database_pq_schema = tag->getOption<string>("database_pq_schema");
+	} else {
+		database_pq_schema = option[dbms::pq_schema];
+	}
 
-	if(database_mode.compare("sqlite3")){
+	switch(database_mode){
+
+	case utility::sql_database::DatabaseMode::mysql:
+		if(tag->hasOption("database_pq_schema")){
+			TR << "WARNING: You must specify 'database_mode=postgres' ";
+			TR << "to use the 'database_pq_schema' tag." << endl;
+		}
+		break;
+	case utility::sql_database::DatabaseMode::postgres:
 		if(tag->hasOption("database_separate_db_per_mpi_process")){
 			TR << "WARNING: You must specify 'database_mode=sqlite3' ";
 			TR << "to use the 'database_separate_db_per_mpi_process' tag." << endl;
@@ -382,9 +381,9 @@ parse_database_connection(
 			TR << "WARNING: You must specify 'database_mode=sqlite3' ";
 			TR << "to use the 'database_read_only' tag." << endl;
 		}
-	}
+		break;
 
-	if(database_mode.compare("mysql") && database_mode.compare("postgres") ){
+	case utility::sql_database::DatabaseMode::sqlite3:
 		if(tag->hasOption("database_host")){
 			TR << "WARNING: You must specify either 'database_mode=mysql' ";
 			TR << "or database_mode=postgres' to use the 'database_host' tag." << endl;
@@ -404,24 +403,33 @@ parse_database_connection(
 			TR << "WARNING: You must specify either 'database_mode=mysql' ";
 			TR << "or database_mode=postgres' to use the 'database_port' tag." << endl;
 		}
+		break;
+	default:
+		utility_exit_with_message(
+			"Unrecognized database mode: '" +
+			name_from_database_mode(database_mode) + "'");
 	}
 
-
-	if(!database_mode.compare("sqlite3")){
-		bool read_only(tag->getOption("database_read_only", false));
-		bool separate_db_per_mpi_process(
+	switch(database_mode){
+	case utility::sql_database::DatabaseMode::sqlite3:
+		return DatabaseSessionManager::get_instance()->get_db_session(
+			database_mode, database_name, "", "", "", "", 0,
+			tag->getOption("database_read_only", false),
 			tag->getOption("database_separate_db_per_mpi_process", false));
-		return DatabaseSessionManager::get_instance()->get_session(
-			database_name, read_only, separate_db_per_mpi_process);
-	} else if(!database_mode.compare("mysql") || database_mode.compare("postgres")){
-		string host(tag->getOption<string>("database_host", option[mysql::host]));
-		string user(tag->getOption<string>("database_user", option[mysql::user]));
-		string password(tag->getOption<string>(
-				"database_password", option[mysql::password]));
-		core::Size port(tag->getOption<Size>(
-				"database_port", option[mysql::port]));
-		return DatabaseSessionManager::get_instance()->get_session(
-			database_mode, host, user, password, database_name, port);
+
+	case utility::sql_database::DatabaseMode::mysql:
+	case utility::sql_database::DatabaseMode::postgres:
+		return DatabaseSessionManager::get_instance()->get_db_session(
+			database_mode, database_name, database_pq_schema,
+			tag->getOption<string>("database_host", option[dbms::host]),
+			tag->getOption<string>("database_user", option[dbms::user]),
+			tag->getOption<string>("database_password", option[dbms::password]),
+			tag->getOption<Size>("database_port", option[dbms::port]));
+
+	default:
+		utility_exit_with_message(
+			"Unrecognized database mode: '" +
+			name_from_database_mode(database_mode) + "'");
 	}
 	return 0;
 }

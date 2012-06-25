@@ -17,12 +17,14 @@
 
 // Unit Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/sql_database/util.hh>
 
 // Utility Headers
 #include <utility/exit.hh>
 #include <utility/file/FileName.hh>
 #include <utility/string_util.hh>
 #include <utility/assert.hh>
+#include <platform/types.hh>
 
 // Boost Headers
 #ifdef MULTITHREADED
@@ -42,6 +44,8 @@ using utility::file::FileName;
 using std::string;
 using std::stringstream;
 using cppdb::cppdb_error;
+using platform::Size;
+using cppdb::statement;
 
 #ifdef MULTITHREADED
 boost::thread_specific_pointer< DatabaseSessionManager > DatabaseSessionManager::instance_;
@@ -65,43 +69,72 @@ const DatabaseSessionManager &
 
 DatabaseSessionManager::~DatabaseSessionManager() {}
 
-///details@ Currently only supports SQLite3 and mysqldatabase databases
-/// if the separate_db_per_mpi_process appends "_<mpi_rank>" to the end of the database filename
-/// This is useful when writing to an sqlite database not through the job distributor where locking causes problems
 sessionOP
-DatabaseSessionManager::get_session(
-	std::string const & db_fname,
+DatabaseSessionManager::get_db_session(
+	DatabaseMode::e db_mode,
+	string const & db_name,
+	string const & pq_schema,
+	string const & host,
+	string const & user,
+	string const & password,
+	Size port,
+	bool readonly,
+	bool separate_db_per_mpi_process
+){
+
+	switch(db_mode){
+	case DatabaseMode::sqlite3:
+		return get_session_sqlite3(db_name, readonly, separate_db_per_mpi_process);
+	case DatabaseMode::mysql:
+		return get_session_mysql(db_name, host, user, password, port);
+	case DatabaseMode::postgres:
+		return get_session_postgres(
+			db_name, pq_schema, host, user, password, port);
+	default:
+		utility_exit_with_message(
+			"Unrecognized database mode: '" + name_from_database_mode(db_mode) + "'");
+	}
+}
+
+
+///details@ For SQLite3 database, the separate_db_per_mpi_process
+/// appends "_<mpi_rank>" to the end of the database filename This is
+/// useful when writing to an sqlite database not through the job
+/// distributor where locking causes problems
+sessionOP
+DatabaseSessionManager::get_session_sqlite3(
+	string const & database,
 	bool const readonly /* = false */,
 	bool const MPI_ONLY( separate_db_per_mpi_process ) /* = false */
 ){
 	sessionOP s(new session());
-
-	try {
-		string use_db_fname;
+	s->set_db_mode(DatabaseMode::sqlite3);
 
 #ifdef USEMPI
-		if(separate_db_per_mpi_process){
-			int mpi_rank(0);
-			MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
-			stringstream buf; buf << FileName(db_fname).name() << "_" << mpi_rank;
-			use_db_fname = buf.str();
-		} else {
-			use_db_fname = FileName(db_fname).name();
-		}
+	string use_database;
+	if(separate_db_per_mpi_process){
+		int mpi_rank(0);
+		MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+		stringstream buf; buf << FileName(database).name() << "_" << mpi_rank;
+		use_database = buf.str();
+	} else {
+		use_database = FileName(database).name();
+	}
 #else
-		use_db_fname = FileName(db_fname).name();
+	string const use_database(FileName(database).name());
 #endif
 
 
+	try {
 		if(readonly){
-			s->open("sqlite3:mode=readonly;db="+use_db_fname);
+			s->open("sqlite3:mode=readonly;db="+use_database);
 		} else {
-			s->open("sqlite3:db="+use_db_fname);
+			s->open("sqlite3:db="+use_database);
 		}
 	} catch (cppdb_error & e){
 		std::stringstream error_msg;
 		error_msg
-			<< "Failed to open database file '" << db_fname << "'"
+			<< "Failed to open sqlite3 database file '" << database << "'"
 			<< (readonly ? " in readonly mode:" : ":") << std::endl
 			<< "\t" << e.what();
 		utility_exit_with_message(error_msg.str());
@@ -110,47 +143,129 @@ DatabaseSessionManager::get_session(
 }
 
 sessionOP
-DatabaseSessionManager::get_session(
-	std::string const & db_mode,
-	std::string const & host,
-	std::string const & user,
-	std::string const & password,
-	std::string const & database,
-	int const & port
+DatabaseSessionManager::get_session_mysql(
+	string const & MYSQL_ONLY(database),
+	string const & MYSQL_ONLY(host),
+	string const & MYSQL_ONLY(user),
+	string const & MYSQL_ONLY(password),
+  Size MYSQL_ONLY(port)
 ){
 
+#ifndef USEMYSQL
+	utility_exit_with_message(
+		"If you want to use a mysql database, build with extras=mysql");
+	return 0;
+#else
+
 	sessionOP s(new session());
-	std::string port_string(utility::to_string<int>(port));
+	s->set_db_mode(DatabaseMode::mysql);
+
+	stringstream connection_string;
+	connection_string
+		<< "mysql:host=" << host << ";"
+		<< "user=" << user << ";"
+		<< "password=" << password << ";"
+		<< "database=" << database << ";"
+		<< "port=" << port << ";"
+		<< "opt_reconnect=1";
 
 	try {
-
-		if(db_mode == "postgres"){
-#ifndef USEPOSTGRES
-			utility_exit_with_message("If you want to use a postgres database, build with extras=postgres");
-#endif
-			s->open("postgresql:host="+host+";user="+user+";password="+password+";dbname="+database+";port="+port_string);
-		}
-		else if(db_mode == "mysql"){
-#ifndef USEMYSQL
-			utility_exit_with_message("If you want to use a mysql database, build with extras=mysql");
-#endif
-			s->open("mysql:host="+host+";user="+user+";password="+password+";database="+database+";port="+port_string+";opt_reconnect=1");
-		}
+		s->open(connection_string.str());
 	} catch (cppdb_error & e){
 		std::stringstream error_msg;
 		error_msg
-		<< "Failed to open database file '" << database << "'"
-		<<	std::endl
-		<< "\t" << e.what();
+			<< "Failed to open mysql database:"
+			<< "\thost='" << host << "'" << endl
+			<< "\tuser='" << user << "'" << endl
+			<< "\tpassword='**********'" << endl
+			<< "\tport='" << port << "'" << endl
+			<< "\tdatabase='" << database << "'" << endl
+			<< endl
+			<< "\t" << e.what();
+		utility_exit_with_message(error_msg.str());
+	}
+	return s;
+
+#endif
+}
+
+sessionOP
+DatabaseSessionManager::get_session_postgres(
+	string const & POSTGRES_ONLY(database),
+	string const & POSTGRES_ONLY(pq_schema),
+	string const & POSTGRES_ONLY(host),
+	string const & POSTGRES_ONLY(user),
+	string const & POSTGRES_ONLY(password),
+  Size POSTGRES_ONLY(port)
+){
+
+#ifndef USEPOSTGRES
+	utility_exit_with_message(
+		"If you want to use a postgres database, build with extras=postgres");
+	return 0;
+#else
+
+	sessionOP s(new session());
+	s->set_db_mode(DatabaseMode::postgres);
+
+	stringstream connection_string;
+	connection_string
+		<< "postgresql:host=" << host << ";"
+		<< "user=" << user << ";"
+		<< "password=" << password << ";"
+		<< "port=" << port << ";"
+		<< "dbname=" << database;
+
+	try {
+		s->open(connection_string.str());
+	} catch (cppdb_error & e){
+		std::stringstream error_msg;
+		error_msg
+			<< "Failed to open postgres database:"
+			<< "\thost='" << host << "'" << endl
+			<< "\tuser='" << user << "'" << endl
+			<< "\tpassword='**********'" << endl
+			<< "\tport='" << port << "'" << endl
+			<< "\tdatabase='" << database << "'" << endl
+			<< endl
+			<< "\t" << e.what();
 		utility_exit_with_message(error_msg.str());
 	}
 
+	vector1<string> schema_search_path;
+	schema_search_path.push_back(pq_schema);
+	set_postgres_schema_search_path(s, schema_search_path);
+
 	return s;
-//#else
-//		utility_exit_with_message("You shouldn't be here, also if you want to use mysql specify extras=mysql when you build");
-//		return NULL; // need to return something to compile on Windows VC++
-//#endif
+
+#endif
 }
+
+///@detail postgres does not allow queries between databases, instead
+/// it allows tables to be created in different namespaces called
+/// "schemas". By specifing the search path, statements will be
+/// executed in a specified namespace. Note setting the search path
+/// only affects this session.
+///
+/// For example, to use the schema UBQdesign_stage1_r456644_120323,
+/// set set the search path with the vector ["UBQdesign_stage1_r456644_120323"].
+/// See: http://www.postgresql.org/docs/8.1/static/ddl-schemas.html
+void
+DatabaseSessionManager::set_postgres_schema_search_path(
+	sessionOP db_session,
+	vector1< string > const & schema_search_path
+) {
+	stringstream stmt_str;
+	stmt_str << "SET search_path TO";
+	for(Size i=1; i <= schema_search_path.size(); ++i){
+		stmt_str << (i==1 ? "" : ", ") << schema_search_path[i];
+	}
+	stmt_str << ";";
+	statement stmt(db_session->prepare(stmt_str.str()));
+	stmt.exec();
+}
+
+
 
 } // namespace
 } // namespace

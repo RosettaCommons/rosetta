@@ -52,7 +52,8 @@ public: // constructors destructors
 RRReporterSQLite();
 
 	RRReporterSQLite(
-		std::string const & database_fname,
+		std::string const & database_name,
+		std::string const & database_pq_schema = "",
 		OutputLevel::e const output_level = OutputLevel::full
 	);
 
@@ -188,7 +189,8 @@ private: // data members
 	core::Size residues_considered_;
 	core::Size rotamers_recovered_;
 
-	std::string database_fname_;
+	std::string database_name_;
+	std::string database_pq_schema_;
 	utility::sql_database::sessionOP db_session_;
 
 };

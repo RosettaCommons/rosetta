@@ -47,6 +47,7 @@ public:
   typedef protocols::jd2::FileJobOutputter parent;
 
   DatabaseJobOutputter();
+
   virtual ~DatabaseJobOutputter();
 
 	static void register_options();
@@ -55,13 +56,22 @@ public:
 	void
 	load_options_from_option_system();
 
-	/// @brief Set database file name
-	void
-	set_database_fname(std::string const & database_fname);
+	 /// @brief Set database name
+	 void
+	 set_database_name(std::string const & database_name);
 
-	/// @brief Get database file name
+	 /// @brief Get database name
 	std::string
-	get_database_fname() const;
+	get_database_name() const;
+
+	/// @brief Set database postgreSQL schema
+	void
+	set_database_pq_schema(std::string const & database_pq_schema);
+
+	/// @brief Get database postgresQL schema
+	std::string
+	get_database_pq_schema() const;
+
 
 	///@brief see parent class for explanation
 	virtual void flush();
@@ -100,7 +110,8 @@ public: // accessors
 private: // members
 
 	protocols::features::ProteinSilentReportOP protein_silent_report_;
-	std::string database_fname_;
+	std::string database_name_;
+	std::string database_pq_schema_;
 
 }; // DatabaseJobOutputter
 

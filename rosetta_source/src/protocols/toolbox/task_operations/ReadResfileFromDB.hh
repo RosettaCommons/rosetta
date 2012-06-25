@@ -25,6 +25,7 @@
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/sql_database/DatabaseSessionManager.hh>
 
 #include <utility/vector1.hh>
 #include <string>
@@ -42,8 +43,7 @@ public:
 	ReadResfileFromDB();
 
 	ReadResfileFromDB(
-		std::string const & database_filename,
-		std::string const & database_mode,
+		utility::sql_database::sessionOP db_session,
 		std::string const & database_table);
 
 	ReadResfileFromDB(ReadResfileFromDB const & src);
@@ -56,11 +56,7 @@ public:
 	void
 	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
 
-	void database_filename(std::string const & database_filename);
-	std::string const & database_filename() const;
-
-	void database_mode(std::string const & database_mode );
-	std::string const & database_mode() const;
+	void db_session(utility::sql_database::sessionOP db_session);
 
 	void database_table(std::string const & database_table );
 	std::string const & database_table() const;
@@ -68,9 +64,8 @@ public:
 	virtual void parse_tag(utility::tag::TagPtr);
 
 private:
-	std::string database_filename_;
-	std::string database_mode_;
 	std::string database_table_;
+	utility::sql_database::sessionOP db_session_;
 };
 
 } //namespace task_operations

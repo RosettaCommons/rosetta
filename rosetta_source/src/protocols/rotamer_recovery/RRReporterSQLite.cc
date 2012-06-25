@@ -59,6 +59,7 @@ using basic::datacache::CacheableString;
 using basic::database::safely_prepare_statement;
 using basic::database::safely_write_to_database;
 using basic::database::write_schema_to_database;
+using basic::database::get_db_session;
 using basic::Tracer;
 using core::Size;
 using core::Real;
@@ -82,12 +83,14 @@ RRReporterSQLite::RRReporterSQLite() :
 	comparer_params_(),
 	residues_considered_( 0 ),
 	rotamers_recovered_( 0 ),
-	database_fname_("rotamer_recovery.db3"),
+	database_name_("rotamer_recovery.db3"),
+	database_pq_schema_(""),
 	db_session_()
 {}
 
 RRReporterSQLite::RRReporterSQLite(
-	string const & database_fname,
+	string const & database_name,
+	string const & database_pq_schema /* = "" */,
 	OutputLevel::e output_level /* = OutputLevel::full */
 ) :
 	output_level_( output_level ),
@@ -99,7 +102,8 @@ RRReporterSQLite::RRReporterSQLite(
 	comparer_params_(),
 	residues_considered_( 0 ),
 	rotamers_recovered_( 0 ),
-	database_fname_(database_fname),
+	database_name_(database_name),
+	database_pq_schema_(database_pq_schema),
 	db_session_()
 {}
 
@@ -116,7 +120,8 @@ RRReporterSQLite::RRReporterSQLite(
 	comparer_params_(),
 	residues_considered_( 0 ),
 	rotamers_recovered_( 0 ),
- 	database_fname_(),
+ 	database_name_(),
+ 	database_pq_schema_(),
 	db_session_( db_session )
 {}
 
@@ -133,7 +138,8 @@ RRReporterSQLite::RRReporterSQLite( RRReporterSQLite const & src ) :
 	comparer_params_( src.comparer_params_ ),
 	residues_considered_( src.residues_considered_ ),
 	rotamers_recovered_( src.rotamers_recovered_ ),
-	database_fname_( src.database_fname_ ),
+	database_name_( src.database_name_ ),
+	database_pq_schema_( src.database_pq_schema_ ),
 	db_session_( src.db_session_ )
 {}
 
@@ -345,7 +351,8 @@ sessionOP
 RRReporterSQLite::db_session(){
 	if(!db_session_){
 		db_session_ =
-			DatabaseSessionManager::get_instance()->get_session(database_fname_);
+			basic::database::get_db_session(
+				database_name_, database_pq_schema_);
 
 		write_schema_to_db(db_session_, get_output_level());
 	}

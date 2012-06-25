@@ -3,7 +3,7 @@
 # This script creates a table in a database that specifies the symmetry
 # definitions for each structure
 # 
-# To use, use the task operation <ReadResfileFromDB db_name=<resfiles_db>/>
+# To use, use the task operation <ReadResfileFromDB .../>
 #
 ##
 

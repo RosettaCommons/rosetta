@@ -29,6 +29,7 @@
 
 // Utility Headers
 #include <utility/exit.hh>
+#include <utility/sql_database/types.hh>
 
 #include <string>
 #include <stdio.h>
@@ -72,12 +73,9 @@ Schema::Schema(
 
 void
 Schema::init(){
-	if(basic::options::option[basic::options::OptionKeys::inout::database_mode].user()){
-		database_mode_=basic::options::option[basic::options::OptionKeys::inout::database_mode].value();
-	}
-	else{
-		database_mode_="sqlite3";
-	}
+	database_mode_ =
+		utility::sql_database::database_mode_from_name(
+			basic::options::option[basic::options::OptionKeys::inout::dbms::mode]);
 
 	//Add primary key columns to schema list
 	Columns key_columns = primary_key_.columns();
@@ -129,11 +127,17 @@ Schema::add_index(
 
 std::string Schema::print(){
 	stringstream schema_string;
-	if(database_mode_ == "postgres"){
+	switch(database_mode_){
+	case utility::sql_database::DatabaseMode::postgres:
 		schema_string << "CREATE TABLE " << table_name_ << "(\n\t";
-	}
-	else{
+		break;
+	case utility::sql_database::DatabaseMode::mysql:
+	case utility::sql_database::DatabaseMode::sqlite3:
 		schema_string << "CREATE TABLE IF NOT EXISTS " << table_name_ << "(\n\t";
+		break;
+	default:
+		utility_exit_with_message(
+			"Unrecognized database mode: '" + name_from_database_mode(database_mode_) + "'");
 	}
 
 	for (Columns::const_iterator it=columns_.begin(); it!=columns_.end(); it++){
@@ -147,17 +151,24 @@ std::string Schema::print(){
 		schema_string << ",\n\t" << foreign_keys_[i].print();
 	}
 
-	if(primary_key_.columns().size() > 0){
-		if(database_mode_ != "sqlite3"){
+	Columns const & keys(primary_key_.columns());
+
+	if(keys.size() > 0){
+		switch(database_mode_) {
+		case utility::sql_database::DatabaseMode::mysql:
+		case utility::sql_database::DatabaseMode::postgres:
 			schema_string << ",\n\t" << primary_key_.print();
-		}
-		else{
+			break;
+		case utility::sql_database::DatabaseMode::sqlite3:
 			//Prevent adding the primary key twice - this will happen if you have an autoincrementing primary key in sqlite3
-			Columns keys = this->primary_key_.columns();
 
 			if(!(keys.size()==1 && keys.begin()->auto_increment())){
 				schema_string << ",\n\t" << primary_key_.print();
 			}
+			break;
+		default:
+			utility_exit_with_message(
+				"Unrecognized database mode: '" + name_from_database_mode(database_mode_) + "'");
 		}
 	}
 
@@ -183,7 +194,7 @@ void Schema::write(utility::sql_database::sessionOP db_session){
 
 	try{
 		//Older versions of postgres do not support "create table if not exists"
-		if(database_mode_ == "postgres"){
+		if(database_mode_ == utility::sql_database::DatabaseMode::postgres){
 			std::string exists_string = "SELECT *\n"
 			"FROM pg_catalog.pg_tables \n"
 			"WHERE tablename = '" + table_name_ + "';";

@@ -54,7 +54,7 @@ public:
 
 	ReportToDB(
 		std::string const & name,
-		std::string const & database_fname,
+		utility::sql_database::sessionOP db_session,
 		std::string const & sample_source,
 		core::scoring::ScoreFunctionOP scfxn,
 		bool use_transactions=true,
@@ -74,11 +74,6 @@ public:
 
 	virtual std::string get_name() const { return "ReportToDB"; }
 
-
-	void
-	parse_db_tag_item(
-		utility::tag::TagPtr const tag);
-
 	void
 	parse_sample_source_tag_item(
 		utility::tag::TagPtr const tag);
@@ -96,14 +91,6 @@ public:
 	parse_first_struct_id_tag_item(
 		utility::tag::TagPtr const tag);
 	*/
-
-	void
-	parse_db_mode_tag_item(
-		utility::tag::TagPtr const tag);
-
-	void
-	parse_separate_db_per_mpi_process_tag_item(
-		utility::tag::TagPtr const tag);
 
 	void
 	parse_use_transactions_tag_item(
@@ -132,7 +119,7 @@ public:
 	void
 	initialize_reporters();
 
-	utility::sql_database::sessionOP
+	void
 	initialize_database();
 
 	///@brief initialize the pose and return the relevant residues
@@ -144,20 +131,17 @@ public:
 	///@brief Add the defined features reporters to the
 	///'features_reporters' table in the database
 	void
-	write_features_reporters_table(
-		utility::sql_database::sessionOP db_session) const;
+	write_features_reporters_table() const;
 
 	///@brief Link the defined features reporters to the batch of
 	///structures extracted with this invocation of the ReportToDB mover
 	void
-	write_batch_reports_table(
-		utility::sql_database::sessionOP db_session) const;
+	write_batch_reports_table() const;
 
 	///@brief write tables linking the batches table with the features
 	///datababase
 	void
-	write_linking_tables(
-		utility::sql_database::sessionOP db_session) const;
+	write_linking_tables() const;
 
 	void
 	apply(
@@ -165,20 +149,16 @@ public:
 
 	boost::uuids::uuid
 	report_structure_features(
-		utility::vector1<bool> const & relevant_residues,
-		utility::sql_database::sessionOP db_session) const;
+		utility::vector1<bool> const & relevant_residues) const;
 
 	void
 	report_features(
 		core::pose::Pose const & pose,
 		boost::uuids::uuid struct_id,
-		utility::vector1<bool> const & relevant_residues,
-		utility::sql_database::sessionOP db_session) const;
+		utility::vector1<bool> const & relevant_residues) const;
 
 private:
-	std::string database_fname_;
-	std::string database_mode_;
-	bool separate_db_per_mpi_process_;
+	utility::sql_database::sessionOP db_session_;
 	std::string sample_source_;
 	std::string name_;
 

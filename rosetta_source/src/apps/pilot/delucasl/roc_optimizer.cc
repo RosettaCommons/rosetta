@@ -414,11 +414,10 @@ int main(int argc, char* argv[])
 	MPI_Comm_rank( MPI_COMM_WORLD, ( int* )( &mpi_rank ) );
 #endif
 
-	std::string database_filename = basic::options::option[basic::options::OptionKeys::inout::database_filename]();
 	std::string active_list_filename = basic::options::option[basic::options::OptionKeys::roc_opt::active_list]();
 	std::string inactive_list_filename = basic::options::option[basic::options::OptionKeys::roc_opt::inactive_list]();
 
-	utility::sql_database::sessionOP db_session(basic::database::get_db_session(database_filename));
+	utility::sql_database::sessionOP db_session(basic::database::get_db_session());
 
 	if(mpi_rank == 0)
 	{

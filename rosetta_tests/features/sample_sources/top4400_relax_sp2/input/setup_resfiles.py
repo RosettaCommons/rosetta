@@ -16,8 +16,8 @@
 #
 #    <ReadResfileFromDB
 #        name=relevant_chains
-#        db=<rosetta_inputs.db3>
-#        table=resfiles/>
+#        database_name=<rosetta_inputs.db3>
+#        database_table=resfiles/>
 #
 ##
 

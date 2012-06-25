@@ -350,7 +350,8 @@ core::Size get_current_structure_count(
 	return get_something_from_database(statement, core::Size());
 }
 
-boost::uuids::uuid get_struct_id_with_nth_lowest_score_from_job_data(
+boost::uuids::uuid
+get_struct_id_with_nth_lowest_score_from_job_data(
 	utility::sql_database::sessionOP db_session,
 	std::string const & score_term,
 	core::Size const & cutoff_index,
@@ -364,9 +365,13 @@ boost::uuids::uuid get_struct_id_with_nth_lowest_score_from_job_data(
 	}catch(utility::excn::EXCN_Msg_Exception){
 		utility_exit_with_message("No nth lowest "+score_term+" with input_tag "+input_tag+ ", where n="+utility::to_string(cutoff_index));
 	}
+
+	// shouldn't get here
+	return boost::uuids::uuid();
 }
 
-boost::uuids::uuid get_struct_id_with_nth_lowest_score_from_score_data(
+boost::uuids::uuid
+get_struct_id_with_nth_lowest_score_from_score_data(
 	utility::sql_database::sessionOP db_session,
 	core::Size const & score_type_id,
 	core::Size const & cutoff_index,
@@ -380,6 +385,9 @@ boost::uuids::uuid get_struct_id_with_nth_lowest_score_from_score_data(
 	}catch(utility::excn::EXCN_Msg_Exception){
 		utility_exit_with_message("No nth lowest score_type_id: "+utility::to_string(score_type_id)+", with input_tag "+input_tag+ ", where n="+utility::to_string(cutoff_index));
 	}
+
+	// shouldn't get here
+	return boost::uuids::uuid();
 }
 
 boost::uuids::uuid get_struct_id_with_lowest_score_from_job_data(
@@ -413,6 +421,9 @@ boost::uuids::uuid get_struct_id_with_highest_score_from_job_data(
 	}catch(utility::excn::EXCN_Msg_Exception){
 		utility_exit_with_message("No "+score_term+" with input_tag "+input_tag);
 	}
+
+	// shouldn't get here
+	return boost::uuids::uuid();
 }
 
 boost::uuids::uuid get_struct_id_with_highest_score_from_score_data(
@@ -428,9 +439,13 @@ boost::uuids::uuid get_struct_id_with_highest_score_from_score_data(
 	}catch(utility::excn::EXCN_Msg_Exception){
 		utility_exit_with_message("No score_type_id: "+utility::to_string(score_type_id)+", with input_tag "+input_tag);
 	}
+
+	// shouldn't get here
+	return boost::uuids::uuid();
 }
 
-core::Real get_score_for_struct_id_and_score_term_from_job_data(
+core::Real
+get_score_for_struct_id_and_score_term_from_job_data(
 	utility::sql_database::sessionOP db_session,
 	boost::uuids::uuid const & struct_id,
 	std::string const & score_term
@@ -454,9 +469,13 @@ core::Real get_score_for_struct_id_and_score_term_from_job_data(
 	}catch(utility::excn::EXCN_Msg_Exception){
 		utility_exit_with_message("No "+score_term+" with struct_id "+to_string(struct_id));
 	}
+
+	// shouldn't get here
+	return 0;
 }
 
-core::Real get_score_for_struct_id_and_score_term_from_score_data(
+core::Real
+get_score_for_struct_id_and_score_term_from_score_data(
 	utility::sql_database::sessionOP db_session,
 	boost::uuids::uuid const & struct_id,
 	core::Size const & score_type_id)
@@ -480,6 +499,9 @@ core::Real get_score_for_struct_id_and_score_term_from_score_data(
 	}catch(utility::excn::EXCN_Msg_Exception){
 		utility_exit_with_message("No score_type_id:"+utility::to_string(score_type_id)+", with struct_id "+to_string(struct_id));
 	}
+
+	// shouldn't get here
+	return 0;
 }
 
 }

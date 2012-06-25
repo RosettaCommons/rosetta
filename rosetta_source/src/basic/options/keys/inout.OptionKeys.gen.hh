@@ -24,8 +24,16 @@ namespace OptionKeys {
 namespace inout { extern BooleanOptionKey const inout; }
 namespace inout { extern BooleanOptionKey const fold_tree_io; }
 namespace inout { extern BooleanOptionKey const dump_connect_info; }
-namespace inout { extern FileOptionKey const database_filename; }
-namespace inout { extern StringOptionKey const database_mode; }
+namespace inout { namespace dbms { extern BooleanOptionKey const dbms; } }
+namespace inout { namespace dbms { extern StringOptionKey const mode; } }
+namespace inout { namespace dbms { extern StringOptionKey const database_name; } }
+namespace inout { namespace dbms { extern StringOptionKey const pq_schema; } }
+namespace inout { namespace dbms { extern StringOptionKey const host; } }
+namespace inout { namespace dbms { extern StringOptionKey const user; } }
+namespace inout { namespace dbms { extern StringOptionKey const password; } }
+namespace inout { namespace dbms { extern IntegerOptionKey const port; } }
+namespace inout { namespace dbms { extern BooleanOptionKey const readonly; } }
+namespace inout { namespace dbms { extern BooleanOptionKey const separate_db_per_mpi_process; } }
 
 } // namespace OptionKeys
 } // namespace options

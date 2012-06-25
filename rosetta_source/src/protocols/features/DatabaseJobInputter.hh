@@ -57,13 +57,21 @@ public:
 	void
 	load_options_from_option_system();
 
-	/// @brief Set database file name
+	/// @brief Set database name
 	void
-	set_database_fname(std::string const & database_fname);
+	set_database_name(std::string const & database_name);
 
-	/// @brief Get database file name
+	/// @brief Get database name
 	std::string
-	get_database_fname() const;
+	get_database_name() const;
+
+	/// @brief Set database postreSQL schema
+	void
+	set_database_pq_schema(std::string const & database_pq_schema);
+
+	/// @brief Get database postreSQL schema
+	std::string
+	get_database_pq_schema() const;
 
 	/// @brief Get score function
 	core::scoring::ScoreFunctionOP
@@ -101,7 +109,8 @@ public:
 private:
 	core::scoring::ScoreFunctionOP scfxn_;
 	protocols::features::ProteinSilentReportOP protein_silent_report_;
-	std::string database_fname_;
+	std::string database_name_;
+	std::string database_pq_schema_;
 	core::Size input_protocol_id_;
 	std::map< std::string, boost::uuids::uuid > tag_structures_;
 	std::map< std::string, std::set< core::Size > > tag_residues_;

@@ -23,10 +23,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <basic/options/keys/mysql.OptionKeys.gen.hh>
-
-// Utility Headers
-// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 
 #include <utility/vector1.hh>
 #include <utility/excn/EXCN_Base.hh>
@@ -76,21 +72,16 @@ main( int argc, char* argv [] ) {
 	// Options for database input
 	OPT( in::use_database );
 	OPT( in::select_structures_from_database );
-	OPT( inout::database_mode );
-	// sqlite3:
-	OPT( inout::database_filename );
-	// mysql
-	// NOTE: mysql support requires compiling with 'extras=mysql'
-	OPT( mysql::mysql );
-	OPT( mysql::host );
-	OPT( mysql::user );
-	OPT( mysql::password );
-	OPT( mysql::port );
-
-
+	OPT( inout::dbms::mode );
+	OPT( inout::dbms::database_name );
+	OPT( inout::dbms::pq_schema );
+	OPT( inout::dbms::host );
+	OPT( inout::dbms::user );
+	OPT( inout::dbms::password );
+	OPT( inout::dbms::port );
 
 	////////////////////////////////////
-	//           OUTPUT OPTIONS        //
+	//           OUTPUT OPTIONS       //
 	////////////////////////////////////
 
 	// Overwrite existing output
@@ -146,12 +137,13 @@ main( int argc, char* argv [] ) {
 	cout << "      -in:file:silent_read_through_errors         Try to salvage damaged silent files" << endl;
 	cout << endl;
 	cout << "   General Database:" << endl;
-	cout << "      -inout:database_mode                        Specify database backend. default: 'sqlite3'" << endl;
-	cout << "      -inout:database_filename                    If sqlite3 the filename for the database" << endl;
-	cout << "      -mysql:host                                 Note to use mysql as a backend:" << endl;
-	cout << "      -mysql:user                                   compile with 'extras=mysql'" << endl;
-	cout << "      -mysql:password                               and use the '-input:datbase_mode mysql' flag" << endl;
-	cout << "      -mysql:port" << endl;
+	cout << "      -inout:dbms:mode                         Specify database backend. default: 'sqlite3'" << endl;
+	cout << "      -inout:dbms:database_name                If sqlite3 the filename for the database" << endl;
+	cout << "      -inout:dbms:pq_schema                    For PostgreSQL, the schema namespace in the database to use" << endl;
+	cout << "      -inout:dbms:host                         NOTE to use mysql or postgres as a backend:" << endl;
+	cout << "      -inout:dbms:user                          compile with 'extras=mysql' or 'extras=postgres' and use" << endl;
+	cout << "      -inout:dbms:password                      the '-inout:dbms:mode mysql' or" << endl;
+	cout << "      -inout:dbms:port                          the '-inout:dbms:mode postgres' flag" << endl;
 	cout << endl;
 	cout << "   Database Input:" << endl;
 	cout << "      -in:use_database                            Indicate that structures should be read from the given database" << endl;

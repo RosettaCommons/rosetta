@@ -23,6 +23,7 @@
 
 // Utility Headers
 #include <utility/exit.hh>
+#include <utility/sql_database/types.hh>
 
 //C++ Headers
 #include <string>
@@ -72,12 +73,9 @@ Index::Index(
 
 void
 Index::init_db_mode(){
-	if(basic::options::option[basic::options::OptionKeys::inout::database_mode].user()){
-		database_mode_=basic::options::option[basic::options::OptionKeys::inout::database_mode].value();
-	}
-	else{
-		database_mode_="sqlite3";
-	}
+	database_mode_ =
+		utility::sql_database::database_mode_from_name(
+			basic::options::option[basic::options::OptionKeys::inout::dbms::mode]);
 }
 
 Columns
@@ -91,7 +89,7 @@ Index::print(
 ){
 	stringstream s;
 
-	if(!database_mode_.compare("sqlite3")){
+	if(database_mode_ == utility::sql_database::DatabaseMode::sqlite3){
 		s << "CREATE ";
 		if(unique_){
 			s << "UNIQUE ";

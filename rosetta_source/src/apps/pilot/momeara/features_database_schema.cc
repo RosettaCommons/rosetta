@@ -67,7 +67,7 @@ main( int argc, char* argv [] ) {
 		devel::init( argc, argv );
 
 
-		sessionOP db_session(get_db_session(option[inout::database_filename]));
+		sessionOP db_session(get_db_session());
 		write_schema_to_db(db_session);
 
 	} catch ( utility::excn::EXCN_Base& excn ) {

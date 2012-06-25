@@ -157,18 +157,20 @@ ScoreTypeFeatures::insert_score_type_rows(
 	Size protocol_id,
 	sessionOP db_session
 ) {
-	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
-
 	std::string statement_string;
-	if(db_mode == "sqlite3")
-	{
+
+	switch(db_session->get_db_mode()){
+	case utility::sql_database::DatabaseMode::sqlite3:
 		statement_string = "INSERT OR IGNORE INTO score_types (batch_id, score_type_id, score_type_name) VALUES (?,?,?);";
-	}else if(db_mode == "mysql")
-	{
+		break;
+	case utility::sql_database::DatabaseMode::mysql:
+	case utility::sql_database::DatabaseMode::postgres:
 		statement_string = "INSERT IGNORE INTO score_types (batch_id, score_type_id, score_type_name) VALUES (?,?,?);";
-	}else
-	{
-		utility_exit_with_message("the database mode needs to be 'mysql' or 'sqlite3'");
+		break;
+	default:
+		utility_exit_with_message(
+			"Unrecognized database mode: '" +
+			name_from_database_mode(db_session->get_db_mode()) + "'");
 	}
 
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));

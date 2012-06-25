@@ -141,61 +141,6 @@ PdbDataFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session)
 
 	residue_pdb_confidence.write(db_session);
 
-//	string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
-//	if(db_mode == "sqlite3")
-//	{
-//		return
-//			"CREATE TABLE IF NOT EXISTS residue_pdb_identification (\n"
-//			"	struct_id BLOB,\n"
-//			"	residue_number INTEGER,\n"
-//			"	chain_id TEXT,\n"
-//			"	insertion_code TEXT,\n"
-//			"	pdb_residue_number INTEGER,\n"
-//			"	FOREIGN KEY (struct_id)\n"
-//			"		REFERENCES structures (struct_id)\n"
-//			"		DEFERRABLE INITIALLY DEFERRED,\n"
-//			"	PRIMARY KEY(struct_id, residue_number));\n"
-//			"\n"
-//			"CREATE TABLE IF NOT EXISTS residue_pdb_confidence (\n"
-//			"	struct_id BLOB,\n"
-//			"	residue_number INTEGER,\n"
-//			"	max_temperature REAL,\n"
-//			"	max_bb_temperature REAL,\n"
-//			"	max_sc_temperature REAL,\n"
-//			"	min_occupancy REAL,\n"
-//			"	min_bb_occupancy REAL,\n"
-//			"	min_sc_occupancy REAL,\n"
-//			"	FOREIGN KEY (struct_id)\n"
-//			"		REFERENCES structures (struct_id)\n"
-//			"		DEFERRABLE INITIALLY DEFERRED,\n"
-//			"	PRIMARY KEY(struct_id, residue_number));";
-//	}else if(db_mode=="mysql")
-//	{
-//		return
-//			"CREATE TABLE IF NOT EXISTS residue_pdb_identification (\n"
-//			"	struct_id BINARY(16),\n"
-//			"	residue_number INTEGER,\n"
-//			"	chain_id TEXT,\n"
-//			"	insertion_code TEXT,\n"
-//			"	pdb_residue_number INTEGER,\n"
-//			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"
-//			"	PRIMARY KEY (struct_id, residue_number));\n"
-//			"\n"
-//			"CREATE TABLE IF NOT EXISTS residue_pdb_confidence (\n"
-//			"	struct_id BINARY(16),\n"
-//			"	residue_number INTEGER,\n"
-//			"	max_temperature REAL,\n"
-//			"	max_bb_temperature REAL,\n"
-//			"	max_sc_temperature REAL,\n"
-//			"	min_occupancy REAL,\n"
-//			"	min_bb_occupancy REAL,\n"
-//			"	min_sc_occupancy REAL,\n"
-//			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"
-//			"	PRIMARY KEY (struct_id, residue_number));";
-//	}else
-//	{
-//		return "";
-//	}
 }
 
 utility::vector1<std::string>

@@ -35,9 +35,9 @@ option.add( basic::options::OptionKeys::in::use_stupid_foldtree_format, "use the
 option.add( basic::options::OptionKeys::in::target_residues, "which residue numbers to pass for getDistConstraints" );
 option.add( basic::options::OptionKeys::in::replonly_residues, "residue numbers regarded as repulsive-only residues" );
 option.add( basic::options::OptionKeys::in::replonly_loops, "all loops will be regarded as repulsive-only" ).def(false);
-option.add( basic::options::OptionKeys::in::use_database, "Read in structures from database.  Specify database via -inout:database_filename and wanted structures with -in:file:tags or select_structures_from_database" );
+option.add( basic::options::OptionKeys::in::use_database, "Read in structures from database.  Specify database via -inout:dbms:database_name and wanted structures with -in:file:tags or select_structures_from_database" );
 option.add( basic::options::OptionKeys::in::database_protocol, "Database to use when reading in structures" ).def(1);
-option.add( basic::options::OptionKeys::in::select_structures_from_database, "specify an SQL query to determine which structures get read in from a database specified with -inout:database_filename.  SELECT query must return structures.tag" );
+option.add( basic::options::OptionKeys::in::select_structures_from_database, "specify an SQL query to determine which structures get read in from a database specified with -inout:dbms:database_name.  SELECT query must return structures.tag" );
 option.add( basic::options::OptionKeys::in::path::path, "Paths to search for input files (checked after type-specific paths)" ).def(".");
 option.add( basic::options::OptionKeys::in::path::fragments, "Fragment file input search paths" );
 option.add( basic::options::OptionKeys::in::path::pdb, "PDB file input search paths" );
@@ -62,7 +62,8 @@ option.add( basic::options::OptionKeys::in::file::frag_sizes, "Fragment file siz
 option.add( basic::options::OptionKeys::in::file::extra_res_fa, ".params file(s) for new fullatom residue types (e.g. ligands)" );
 option.add( basic::options::OptionKeys::in::file::extra_res_mol, ".mol file(s) for new fullatom residue types (e.g. ligands)" );
 option.add( basic::options::OptionKeys::in::file::extra_res_database, "the name of a database containing fullatom residue types (e.g. ligands)" );
-option.add( basic::options::OptionKeys::in::file::extra_res_database_mode, "The type of database driver to use for -in:file:extra_res_database.  Acceptable values are 'mysql' or 'sqlite3'" ).def("sqlite3");
+option.add( basic::options::OptionKeys::in::file::extra_res_pq_schema, "the name of a postgreSQL schema in the database containing fullatom residue types (e.g. ligands)" ).def("");
+option.add( basic::options::OptionKeys::in::file::extra_res_database_mode, "The type of database driver to use for -in:file:extra_res_database." ).legal("sqlite3").legal("mysql").legal("postgres").def("sqlite3");
 option.add( basic::options::OptionKeys::in::file::extra_res_database_resname_list, "Path to a list of residue names to be read in from the residue database.  The list should have one residue name per line" );
 option.add( basic::options::OptionKeys::in::file::extra_res_cen, ".params file(s) for new centroid residue types (e.g. ligands)" );
 option.add( basic::options::OptionKeys::in::file::extra_res_path, "directories with .params files.  Only files containing 'param' will be chosen" );
@@ -129,11 +130,6 @@ option.add( basic::options::OptionKeys::in::rdf::rdf, "rdf option group" ).legal
 option.add( basic::options::OptionKeys::in::rdf::sep_bb_ss, "separate RDFs by SS for backbone atypes " ).def(true);
 option.add( basic::options::OptionKeys::MM::MM, "MM option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::MM::ignore_missing_bondangle_params, "ignore failed lookups for missing bond angle parameters" ).def(false);
-option.add( basic::options::OptionKeys::mysql::mysql, "mysql option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::mysql::host, "mySQL database hostname" );
-option.add( basic::options::OptionKeys::mysql::user, "mySQL database username" );
-option.add( basic::options::OptionKeys::mysql::password, "mySQL database password" );
-option.add( basic::options::OptionKeys::mysql::port, "mySQL database port" );
 option.add( basic::options::OptionKeys::qsar::qsar, "qsar option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::qsar::weights, "select qsar weight set to use" ).def("standard");
 option.add( basic::options::OptionKeys::qsar::grid_dir, "Directory to store grids in" );
@@ -146,8 +142,16 @@ option.add( basic::options::OptionKeys::PCS::normalization_id, "Normalize indivi
 option.add( basic::options::OptionKeys::inout::inout, "Ouput option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::inout::fold_tree_io, "Ignore 'CHECKPOINT' file and the overwrite the PDB file(s)" );
 option.add( basic::options::OptionKeys::inout::dump_connect_info, "Output CONECT info between bonded atoms that are beyond 3.0 A apart; useful for coarse-grained representations." ).def(false);
-option.add( basic::options::OptionKeys::inout::database_filename, "SQLite3 database filename (or mysql database name) to manage persistant data." );
-option.add( basic::options::OptionKeys::inout::database_mode, "Database mode for pose IO" ).def("sqlite3");
+option.add( basic::options::OptionKeys::inout::dbms::dbms, "database option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::inout::dbms::mode, "Which backend to use by default for database access. Note, usage of 'mysql' requires building with extras=mysql and usage of 'postgres' requires building with extras=postgres'" ).legal("sqlite3").legal("mysql").legal("postgres").def("sqlite3");
+option.add( basic::options::OptionKeys::inout::dbms::database_name, "name of the database. For sqlite3 databases this is a path in the file system usually with the '.db3' extension." );
+option.add( basic::options::OptionKeys::inout::dbms::pq_schema, "For posgres databases, specify the default schema with the database. For PostgreSQL database, schemas are like namespaces." ).def("");
+option.add( basic::options::OptionKeys::inout::dbms::host, "default hostname of database server" );
+option.add( basic::options::OptionKeys::inout::dbms::user, "default username for database server access" );
+option.add( basic::options::OptionKeys::inout::dbms::password, "default password for database server access" );
+option.add( basic::options::OptionKeys::inout::dbms::port, "default port for database server access" );
+option.add( basic::options::OptionKeys::inout::dbms::readonly, "open sqlite3 database in read-only mode by default" ).def(false);
+option.add( basic::options::OptionKeys::inout::dbms::separate_db_per_mpi_process, "In MPI mode,, open a separate sqlite3 database for each process with extension _<mpi_rank>" ).def(false);
 option.add( basic::options::OptionKeys::out::out, "Ouput option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::out::overwrite, "Ignore 'CHECKPOINT' file and the overwrite the PDB file(s)" );
 option.add( basic::options::OptionKeys::out::nstruct, "Number of times to process each input PDB" ).def(1);
@@ -158,7 +162,7 @@ option.add( basic::options::OptionKeys::out::no_nstruct_label, "Do not tag the f
 option.add( basic::options::OptionKeys::out::pdb_gz, "Compress (gzip) output pdbs" ).def(false);
 option.add( basic::options::OptionKeys::out::pdb, "Output PDBs" ).def(false);
 option.add( basic::options::OptionKeys::out::silent_gz, "Use gzipped compressed output (silent run level)" ).def(false);
-option.add( basic::options::OptionKeys::out::use_database, "Write out structures to database.  Specify database via -inout:database_filename and wanted structures with -in:file:tags" );
+option.add( basic::options::OptionKeys::out::use_database, "Write out structures to database.  Specify database via -inout:dbms:database_name and wanted structures with -in:file:tags" );
 option.add( basic::options::OptionKeys::out::database_protocol_id, "Manually specify a protocol ID for database output. MPI distributed jobs are the only time when you will want to use this. It is a temporary workaround to a limitation of the MPI distributor" );
 option.add( basic::options::OptionKeys::out::database_filter, "filter to use with database output. arguments for filter follow filter name" );
 option.add( basic::options::OptionKeys::out::nooutput, "Surpress outputfiles" ).def(false);
@@ -615,12 +619,12 @@ option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g.
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
 option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
-option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
-option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
-option.add( basic::options::OptionKeys::fold_cst::seq_sep_stages, "give vector with sequence_separation after stage1, stage3 and stage4" ).def(0);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::reramp_cst_cycles, "in stage2 do xxx cycles where atom_pair_constraint is ramped up" ).def(0);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
+option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
+option.add( basic::options::OptionKeys::fold_cst::seq_sep_stages, "give vector with sequence_separation after stage1, stage3 and stage4" ).def(0);
+option.add( basic::options::OptionKeys::fold_cst::reramp_cst_cycles, "in stage2 do xxx cycles where atom_pair_constraint is ramped up" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::reramp_start_cstweight, "drop cst_weight to this value and ramp to 1.0 in stage2 -- needs reramp_cst_cycles > 0" ).def(0.01);
 option.add( basic::options::OptionKeys::fold_cst::reramp_iterations, "do X loops of annealing cycles" ).def(1);
 option.add( basic::options::OptionKeys::fold_cst::skip_on_noviolation_in_stage1, "if constraints report no violations --- skip cycles" ).def(false);
@@ -1233,11 +1237,11 @@ option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
 option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
-option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
-option.add( basic::options::OptionKeys::lh::expire_after_rounds, "If set to > 0 this causes the Master to expire a structure after it has gone through this many cycles" ).def(0);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::mpi_resume, "Prefix (Ident string) for resuming a previous job!" );
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
+option.add( basic::options::OptionKeys::lh::expire_after_rounds, "If set to > 0 this causes the Master to expire a structure after it has gone through this many cycles" ).def(0);
+option.add( basic::options::OptionKeys::lh::mpi_resume, "Prefix (Ident string) for resuming a previous job!" );
 option.add( basic::options::OptionKeys::lh::mpi_feedback, "No description" ).legal("no").legal("add_n_limit").legal("add_n_replace").legal("single_replace").legal("single_replace_rounds").def("no");
 option.add( basic::options::OptionKeys::lh::mpi_batch_relax_chunks, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::mpi_batch_relax_absolute_max, "No description" ).def(300);
@@ -1851,10 +1855,10 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of har
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);
-option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of rigid-body moves" ).def("score5");
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of rigid-body moves" ).def("score5");
+option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));

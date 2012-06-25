@@ -112,8 +112,7 @@ public:
 		std::string database_filename("setup_docking_foldtree.db3");
 		utility::file::file_delete(database_filename);
 		utility::sql_database::sessionOP db_session(
-			basic::database::get_db_session(
-				database_filename, "sqlite3", false, true));
+			basic::database::get_db_session(database_filename));
 
 		std::string const schema(
 			"CREATE TABLE IF NOT EXISTS interfaces (\n"

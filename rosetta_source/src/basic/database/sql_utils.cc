@@ -8,11 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   src/basic/database/sql_utils.cc
+/// @brief Database utility functions
 /// @author Sam DeLuca
+/// @author Matthew O'Meara
 
 #include <basic/database/sql_utils.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/mysql.OptionKeys.gen.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <basic/Tracer.hh>
@@ -164,120 +165,188 @@
 
 
 using std::string;
+using std::stringstream;
 using utility::sql_database::sessionOP;
-using utility::sql_database::DatabaseSessionManager;
+using platform::Size;
+using cppdb::statement;
+using cppdb::cppdb_error;
+using cppdb::result;
+using utility::vector1;
+using namespace utility::sql_database;
 
 namespace basic {
 namespace database {
 
 static basic::Tracer TR( "basic.database.sql_utils" );
 
-std::string mode_specific_primary_key(bool auto_increment){
-	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
-	if(db_mode == "sqlite3"){
-		if(auto_increment){
-			return "INTEGER PRIMARY KEY AUTOINCREMENT";
-		}
-		else{
-			return "INTEGER PRIMARY KEY UNIQUE";
-		}
-	}
-	else if(db_mode == "mysql"){
-		if(auto_increment){
-			return "INTEGER PRIMARY KEY AUTOINCREMENT";
-		}
-		else{
-			return "INTEGER PRIMARY KEY UNIQUE";
-		}
-	}
-	else if(db_mode == "postgres"){
-		if(auto_increment){
-			return "SERIAL";
-		}
-		else{
-			return "INTEGER PRIMARY KEY";
-		}
-	}
-	else{
-		utility_exit_with_message("ERROR: Invalid database mode supplied. Please specify sqlite3, mysql, or postgres");
-	}
-	return "";
+
+
+
+
+sessionOP
+get_db_session() {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	return get_db_session(
+		option[inout::dbms::database_name],
+		option[inout::dbms::pq_schema]);
 }
 
-utility::sql_database::sessionOP get_db_session(
+
+
+sessionOP
+get_db_session(
 	string const & db_name,
-	bool const readonly /* = false */,
-	bool const separate_db_per_mpi_process /* = false */
+	string const & pq_schema
 ){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	string db_mode(option[inout::database_mode]);
-	return get_db_session(db_name, db_mode, readonly, separate_db_per_mpi_process);
+	return get_db_session(
+		database_mode_from_name(option[inout::dbms::mode]),
+		db_name,
+		pq_schema);
 }
 
-sessionOP get_db_session(
+sessionOP
+get_db_session(
+	DatabaseMode::e db_mode,
 	string const & db_name,
-	string const & db_mode,
-	bool const readonly /* = false */,
-	bool const separate_db_per_mpi_process /* = false */
-){
+	string const & pq_schema
+) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	//string db_mode(option[inout::database_mode]);
-	if(db_mode == "sqlite3"){
 
-		if(option[mysql::host].user() || option[mysql::user].user() || option[mysql::password].user() || option[mysql::port].user())
-		{
-			TR << "WARNING: You have specified both mysql and sqlite connection options.  Are you sure you meant to do this?" << std::endl;
+
+	switch(db_mode) {
+	case DatabaseMode::sqlite3:
+
+		if(
+			option[inout::dbms::host].user() ||
+			option[inout::dbms::user].user() ||
+			option[inout::dbms::password].user() ||
+			option[inout::dbms::port].user()) {
+			utility_exit_with_message(
+				"You have specified options for a client-server database "
+				"but the database mode is sqlite3. "
+				"Please specify -inout:dbms:mode <db_mode>.");
 		}
-		sessionOP db_session(DatabaseSessionManager::get_instance()->get_session(db_name, readonly, separate_db_per_mpi_process));
-		return db_session;
-	}else if(db_mode == "mysql" || db_mode == "postgres")
-	{
-		if(readonly){
-			utility_exit_with_message("Restricting access to a mysql or postgres database is done at the user level rather that the connection level. So requesting a readonly connection cannot fullfilled.");
+
+		if(pq_schema.compare("")){
+			TR.Warning
+				<< "You have specified a postgres schema but using a sqlite3 database. "
+				<< "To use postgres, please specify -inout:dbms:mode postgres"
+				<< std::endl;
 		}
 
-		if(option[mysql::host].user() && option[mysql::user].user() && option[mysql::password].user() && option[mysql::port].user())
-		{
-			string host(option[mysql::host]);
-			string user(option[mysql::user]);
-			string password(option[mysql::password]);
-			platform::Size port(option[mysql::port]);
+		return DatabaseSessionManager::get_instance()->get_session_sqlite3(
+			db_name,
+			option[inout::dbms::readonly],
+			option[inout::dbms::separate_db_per_mpi_process]);
 
+	case DatabaseMode::mysql:
 
-			sessionOP db_session(
-				DatabaseSessionManager::get_instance()->get_session(db_mode, host,user,password,db_name,port));
-			return db_session;
-		}else
-		{
-			utility_exit_with_message("You must specify the following options to use a mysql database: -mysql:host -mysql:user -mysql:password -mysql:port");
+		if(option[inout::dbms::readonly]){
+			utility_exit_with_message(
+				"Restricting access to a mysql database is done at the user level "
+				"rather that the connection level. "
+				"So requesting a readonly connection cannot fullfilled.");
 		}
-	}else
-	{
-		utility_exit_with_message("You need to specify either 'mysql', 'postgres', or 'sqlite3' as a mode with -inout:database_mode.  You specified: "+db_mode);
+
+		if(option[inout::dbms::separate_db_per_mpi_process]){
+			utility_exit_with_message(
+				"The -inout:dbms:separate_db_per_mpi_process flag "
+				"only applies to sqlite3 databases.");
+		}
+
+		if(!pq_schema.compare("")){
+			TR.Warning
+				<< "You have specified a postgres schema but using a sqlite3 database. "
+				<< "To use postgres, please specify -inout:dbms:mode postgres"
+				<< std::endl;
+		}
+
+		if( !(
+			option[inout::dbms::host].user() &&
+			option[inout::dbms::user].user() &&
+			option[inout::dbms::password].user() &&
+			option[inout::dbms::port].user())) {
+			utility_exit_with_message(
+				"To connect to a mysql database you must specify "
+				"-inout:dbms:host -inout:dbms:user -inout:dbms:password and "
+				"-inout:dbms:port");
+		}
+
+		return DatabaseSessionManager::get_instance()->get_session_mysql(
+			db_name,
+			option[inout::dbms::host],
+			option[inout::dbms::user],
+			option[inout::dbms::password],
+			option[inout::dbms::port]);
+
+
+	case DatabaseMode::postgres:
+
+		if(option[inout::dbms::readonly]){
+			utility_exit_with_message(
+				"Restricting access to a postgres database is done at the user level "
+				"rather that the connection level. So requesting a readonly connection "
+				"cannot fullfilled.");
+		}
+
+		if(option[inout::dbms::separate_db_per_mpi_process]){
+			utility_exit_with_message(
+				"The -inout:dbms:separate_db_per_mpi_process flag only applies to "
+				"sqlite3 databases.");
+		}
+
+		if( !(
+			option[inout::dbms::host].user() &&
+			option[inout::dbms::user].user() &&
+			option[inout::dbms::password].user() &&
+			option[inout::dbms::port].user())) {
+			utility_exit_with_message(
+				"To connect to a postgres database you must specify "
+				"-inout:dbms:host -inout:dbms:user -inout:dbms:password "
+				"and -inout:dbms:port");
+		}
+
+		return DatabaseSessionManager::get_instance()->get_session_postgres(
+			db_name,
+			pq_schema,
+			option[inout::dbms::host],
+			option[inout::dbms::user],
+			option[inout::dbms::password],
+			option[inout::dbms::port]);
+	default:
+		utility_exit_with_message(
+			"Unrecognized database mode: '" + name_from_database_mode(db_mode) + "'");
 	}
 	return 0;
 }
 
 
-cppdb::statement safely_prepare_statement(std::string const & statement_string, utility::sql_database::sessionOP db_session)
+statement safely_prepare_statement(
+	string const & statement_string,
+	sessionOP db_session)
 {
-	cppdb::statement stmt;
+	statement stmt;
 	try
 	{
 		stmt = db_session->prepare(statement_string);
 		return stmt;
-	}catch(cppdb::cppdb_error error)
+	}catch(cppdb_error error)
 	{
 		utility_exit_with_message(error.what());
 	}
 	return stmt; //there's no way this should happen
 }
 
-void safely_write_to_database(cppdb::statement & statement)
-{
+void
+safely_write_to_database(
+	statement & statement
+) {
 	while(true)
 	{
 		try
@@ -318,8 +387,10 @@ void safely_write_to_database(cppdb::statement & statement)
 	}
 }
 
-cppdb::result safely_read_from_database(cppdb::statement & statement)
-{
+result
+safely_read_from_database(
+	statement & statement
+) {
 	while(true)
 	{
 		try
@@ -359,15 +430,17 @@ cppdb::result safely_read_from_database(cppdb::statement & statement)
 	}
 }
 
-utility::vector1<boost::uuids::uuid>
-struct_ids_from_tag(utility::sql_database::sessionOP db_session,
-					std::string const & tag){
-	std::string statement_string = "SELECT struct_id FROM structures WHERE tag=?;";
-	cppdb::statement stmt = safely_prepare_statement(statement_string,db_session);
+vector1<boost::uuids::uuid>
+struct_ids_from_tag(
+	sessionOP db_session,
+	string const & tag
+) {
+	string statement_string = "SELECT struct_id FROM structures WHERE tag=?;";
+	statement stmt = safely_prepare_statement(statement_string,db_session);
 	stmt.bind(1,tag);
-	cppdb::result res = stmt.query();
-	
-	utility::vector1<boost::uuids::uuid> uuids;
+	result res = stmt.query();
+
+	vector1<boost::uuids::uuid> uuids;
 	while(res.next()){
 		boost::uuids::uuid uuid;
 		res >> uuid;
@@ -376,59 +449,62 @@ struct_ids_from_tag(utility::sql_database::sessionOP db_session,
 	return uuids;
 }
 
-	bool
+bool
 table_exists(
 	sessionOP db_session,
 	string const & table_name
 ) {
-	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
-	std::string db_name(basic::options::option[basic::options::OptionKeys::inout::database_filename].value_string());
 
-	cppdb::statement stmt;
-	if(db_mode == "sqlite3")
-	{
-		std::string statement_string = "SELECT name FROM sqlite_master WHERE name=?;";
+	// TODO: handle when the current database is not the one from the
+	// option system, can someone with mysql try this and see if it
+	// works?
+	// "SHOW TABLES IN database();"
+	string db_name(
+		basic::options::option[
+			basic::options::OptionKeys::inout::dbms::database_name].value_string());
+
+	string statement_string;
+	statement stmt;
+	switch(db_session->get_db_mode()){
+	case DatabaseMode::sqlite3:
+		statement_string = "SELECT name FROM sqlite_master WHERE name=?;";
 		stmt = safely_prepare_statement(statement_string,db_session);
-	}else if(db_mode == "mysql")
-	{
-		std::string statement_string = "SHOW TABLES WHERE Tables_in_"+db_name+" = ?;";
+		break;
+	case DatabaseMode::mysql:
+		statement_string = "SHOW TABLES WHERE Tables_in_"+db_name+" = ?;";
 		stmt = safely_prepare_statement(statement_string,db_session);
-	}
-	else if(db_mode == "postgres")
-	{
-		std::string statement_string=
-		"SELECT tablename \n"
-		"FROM pg_catalog.pg_tables \n"
-		"WHERE tablename = ?;";
+		break;
+	case DatabaseMode::postgres:
+		statement_string =
+			"SELECT tablename \n"
+			"FROM pg_catalog.pg_tables \n"
+			"WHERE tablename = ?;";
 		stmt = safely_prepare_statement(statement_string, db_session);
-	}
-	else
-	{
+		break;
+	default:
 		utility_exit_with_message("unknown database mode");
 	}
 
 	stmt.bind(1,table_name);
-	cppdb::result res = stmt.query();
+	result res(stmt.query());
 
-	if(res.next()){
-		return true;
-	} else {
-		return false;
-	}
+	return res.next();
 }
 
 //Simply (probably overly so) protection from SQL injection
 void
-check_statement_sanity(std::string sql){
+check_statement_sanity(
+	string sql
+) {
 	if (!boost::istarts_with(sql, "SELECT")){
 		utility_exit_with_message("ERROR: Database select statement is not safe! Only SELECT statements are allowed.");
 	}
-		
+
 	int semicolon_count=0;
 	for (size_t i = 0; i < sql.size(); i++){
 		if (sql[i] == ';'){
 			semicolon_count++;
-		} 
+		}
 	}
 	if(semicolon_count > 1){
 		utility_exit_with_message("Database select statement is not safe! Only 1 SQL statement is allowed");
@@ -438,13 +514,14 @@ check_statement_sanity(std::string sql){
 //This should ideally only be used for reference tables that have static data that needs to only be written once(ex: dssp_codes)
 void
 insert_or_ignore(
-	std::string table_name,
-	std::vector<std::string> column_names,
-	std::vector<std::string> values,
-	utility::sql_database::sessionOP db_session){
+	string table_name,
+	std::vector<string> column_names,
+	std::vector<string> values,
+	sessionOP db_session){
 
-	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
-	std::string statement_string="";
+	string db_mode(
+		basic::options::option[basic::options::OptionKeys::inout::dbms::mode]);
+	string statement_string="";
 
 	if(db_mode == "sqlite3")
 	{
@@ -464,8 +541,8 @@ insert_or_ignore(
 			}
 		}
 		statement_string+=");";
-		
-		cppdb::statement stmt = (*db_session) << statement_string;
+
+		statement stmt = (*db_session) << statement_string;
 		safely_write_to_database(stmt);
 	}else if(db_mode == "mysql")
 	{
@@ -485,14 +562,14 @@ insert_or_ignore(
 			}
 		}
 		statement_string+=");";
-		
-		cppdb::statement stmt = (*db_session) << statement_string;
+
+		statement stmt = (*db_session) << statement_string;
 		safely_write_to_database(stmt);
 	}
 	else if(db_mode == "postgres")
 	{
 		//This is a dirty postgres hack and seems to be the easiest workaround for lack of INSERT IGNORE support in postgres
-		std::string select_statement_string = "SELECT * FROM "+table_name+" WHERE ";
+		string select_statement_string = "SELECT * FROM "+table_name+" WHERE ";
 		for(size_t i=0; i<column_names.size(); i++){
 			select_statement_string+=column_names[i] + "=" + values[i];
 			if(i != column_names.size()-1){
@@ -501,9 +578,9 @@ insert_or_ignore(
 		}
 		select_statement_string+=";";
 
-		cppdb::statement select_stmt = (*db_session) << select_statement_string;
-		cppdb::result res = safely_read_from_database(select_stmt);
-		
+		statement select_stmt = (*db_session) << select_statement_string;
+		result res = safely_read_from_database(select_stmt);
+
 		if(!res.next()){
 			statement_string += "INSERT into "+table_name+"(";
 			for(size_t i=0; i<column_names.size(); i++){
@@ -521,7 +598,7 @@ insert_or_ignore(
 				}
 			}
 			statement_string+=");";
-			cppdb::statement stmt = (*db_session) << statement_string;
+			statement stmt = (*db_session) << statement_string;
 			safely_write_to_database(stmt);
 		}
 	}
@@ -549,18 +626,18 @@ insert_or_ignore(
 }
 
 void write_schema_to_database(
-	std::string schema_str,
-	utility::sql_database::sessionOP db_session)
+	string schema_str,
+	sessionOP db_session)
 {
 	boost::char_separator< char > sep(";");
 	boost::tokenizer< boost::char_separator< char > > tokens( schema_str, sep );
 	foreach( std::string const & stmt_str, tokens){
-		std::string trimmed_stmt_str(utility::trim(stmt_str, " \n\t"));
+		string trimmed_stmt_str(utility::trim(stmt_str, " \n\t"));
 		if(trimmed_stmt_str.size()){
 			try{
-				cppdb::statement stmt = (*db_session) << trimmed_stmt_str + ";";
+				statement stmt = (*db_session) << trimmed_stmt_str + ";";
 				safely_write_to_database(stmt);
-			} catch (cppdb::cppdb_error e) {
+			} catch (cppdb_error e) {
 				TR.Error
 					<< "ERROR reading schema \n"
 					<< trimmed_stmt_str << std::endl;
@@ -574,24 +651,22 @@ void write_schema_to_database(
 
 void
 set_cache_size(
-	utility::sql_database::sessionOP db_session,
-	std::string db_mode,
-	platform::Size cache_size
+	sessionOP db_session,
+	Size cache_size
 ) {
 
-	if (db_mode == "sqlite3"){
-		std::stringstream stmt_ss;
+	if(db_session->get_db_mode() == DatabaseMode::sqlite3){
+		stringstream stmt_ss;
 		stmt_ss << "PRAGMA cache_size = " << cache_size << ";";
-		cppdb::statement stmt(safely_prepare_statement(stmt_ss.str(), db_session));
+		statement stmt(safely_prepare_statement(stmt_ss.str(), db_session));
 		safely_write_to_database(stmt);
 	} else {
 		TR
 			<< "WARNING: Attempting to set database cache size "
 			<< "for a database type for which this is currently not supported: "
-			<< "'" << db_mode << "'." << std::endl;
+			<< "'" << db_session->get_db_mode() << "'." << std::endl;
 	}
 }
-
 
 }
 }

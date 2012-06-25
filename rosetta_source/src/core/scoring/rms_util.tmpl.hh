@@ -714,7 +714,7 @@ biggest_residue_deviation_no_super_subset(
 ){
 
 	core::Size const nres1 = pose1.total_residue();
-	core::Size const nres2 = pose2.total_residue();
+	ASSERT_ONLY(core::Size const nres2 = pose2.total_residue());
 	assert( nres1 == nres2 );
 
 	core::Real biggest_dev2( 0.0 );

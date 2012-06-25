@@ -113,10 +113,10 @@ string
 StructureScoresFeatures::type_name() const { return "StructureScoresFeatures"; }
 
 void
-StructureScoresFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
+StructureScoresFeatures::write_schema_to_db(
+	utility::sql_database::sessionOP db_session
+) const {
 	using namespace basic::database::schema_generator;
-	
-	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]());
 
 	//******structure_scores******//
 	Column struct_id("struct_id",DbUUID(), false);
@@ -134,9 +134,9 @@ StructureScoresFeatures::write_schema_to_db(utility::sql_database::sessionOP db_
 
 	structure_scores.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true));
 	//Crappy hack to get mysql to work properly pending more refactoring sorry :(
-	if(db_mode != "mysql")
-	{
-		structure_scores.add_foreign_key(ForeignKey(score_type_id, "score_types", "score_type_id", true));
+	if(db_session->get_db_mode() != utility::sql_database::DatabaseMode::mysql) {
+		structure_scores.add_foreign_key(
+			ForeignKey(score_type_id, "score_types", "score_type_id", true));
 	}
 	structure_scores.write(db_session);
 

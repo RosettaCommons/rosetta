@@ -37,9 +37,9 @@ void PrimaryKey::add_column(Column column){
 	columns_.push_back(column);
 }
 
-Columns
-PrimaryKey::columns(){
-	return this->columns_;
+Columns const &
+PrimaryKey::columns() const {
+	return columns_;
 }
 
 std::string PrimaryKey::print(){

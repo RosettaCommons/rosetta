@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/rotamer_recovery/RotamerRecovery.cxxtest.hh
-/// @brief  Test RotamerRecovery class
+/// @brief  Test FeaturesReporter class
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 // Test Headers
@@ -56,6 +56,7 @@
 
 // Project Headers
 #include <basic/Tracer.hh>
+#include <basic/database/sql_utils.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -134,8 +135,7 @@ public:
 
 		utility::file::file_delete(database_filename);
 
-		db_session_ = DatabaseSessionManager::get_instance()->get_session(
-			"features_reporter_tests.db3");
+    db_session_ = basic::database::get_db_session("features_reporter_tests.db3");
 	}
 
 	void test_main() {
@@ -149,8 +149,6 @@ public:
 		foreach( FeaturesReporterOP const & reporter, features_reporters_ ){
 			tr << "Writing schema for '" << reporter->type_name() << "'" << std::endl;
 			reporter->write_schema_to_db(db_session_);
-			//cppdb::statement schema = (*db_session_) << reporter->schema();
-			//schema.exec();
 		}
 	}
 

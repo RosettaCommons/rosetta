@@ -23,7 +23,10 @@
 namespace protocols{
 namespace features{
 
-std::pair<core::Size, core::Size> get_protocol_and_batch_id(std::string identifier, utility::sql_database::sessionOP db_session);
+std::pair<core::Size, core::Size>
+get_protocol_and_batch_id(
+	std::string identifier,
+	utility::sql_database::sessionOP db_session);
 
 std::pair<core::Size, core::Size> deserialize_db_listener_data(std::string data);
 

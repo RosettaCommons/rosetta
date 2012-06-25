@@ -20,10 +20,10 @@
 #include <basic/database/sql_utils.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <utility/exit.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/tag/Tag.hh>
@@ -57,33 +57,22 @@ using utility::tag::TagPtr;
 
 ReadResfileFromDB::ReadResfileFromDB() :
 	parent(),
-	database_filename_("resfiles.db3"),
-	database_mode_("sqlite3"),
-	database_table_("resfiles")
-{
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	if(option[inout::database_filename].user()){
-		database_filename_ = option[inout::database_filename].value();
-		database_mode_ = option[inout::database_mode].value();
-	}
-}
+	database_table_("resfiles"),
+	db_session_()
+{}
 
 ReadResfileFromDB::ReadResfileFromDB(
-	string const & database_filename,
-	string const & database_mode,
+	utility::sql_database::sessionOP db_session,
 	string const & database_table) :
 	parent(),
-	database_filename_(database_filename),
-	database_mode_(database_mode),
-	database_table_(database_table)
+	database_table_(database_table),
+	db_session_(db_session)
 {}
 
 ReadResfileFromDB::ReadResfileFromDB(
 	ReadResfileFromDB const & src) :
-	database_filename_(src.database_filename_),
-	database_mode_(src.database_mode_),
-	database_table_(src.database_table_)
+	database_table_(src.database_table_),
+	db_session_(src.db_session_)
 {}
 
 ReadResfileFromDB::~ReadResfileFromDB() {}
@@ -101,19 +90,16 @@ ReadResfileFromDB::apply( Pose const & pose, PackerTask & task ) const {
 
 	string tag(JobDistributor::get_instance()->current_job()->input_tag());
 
-	sessionOP db_session(
-		get_db_session(database_filename_, database_mode_, true));
-
 	stringstream sql_stmt;
 	sql_stmt
 		<< "SELECT resfile FROM " << database_table_
 		<< " WHERE tag='" << tag << "';";
-	result res = (*db_session) << sql_stmt.str();
+	result res = (*db_session_) << sql_stmt.str();
 	if(!res.next()){
 		stringstream error_message;
 		error_message
 			<< "Unable to locate resfile for job distributor input tag '"
-			<< tag << "' in database '" << database_filename_ << "'." << endl;
+			<< tag << "' in the database." << endl;
 		utility_exit_with_message(error_message.str());
 	}
 	string resfile;
@@ -131,23 +117,10 @@ ReadResfileFromDB::apply( Pose const & pose, PackerTask & task ) const {
 }
 
 void
-ReadResfileFromDB::database_filename(string const & database_filename) {
-	database_filename_ = database_filename;
-}
-
-std::string const &
-ReadResfileFromDB::database_filename() const {
-	return database_filename_;
-}
-
-void
-ReadResfileFromDB::database_mode(string const & database_mode) {
-	database_mode_ = database_mode;
-}
-
-std::string const &
-ReadResfileFromDB::database_mode() const {
-	return database_mode_;
+ReadResfileFromDB::db_session(
+	utility::sql_database::sessionOP db_session
+) {
+	db_session_ = db_session;
 }
 
 void
@@ -164,15 +137,23 @@ void
 ReadResfileFromDB::parse_tag( TagPtr tag )
 {
 	if(tag->hasOption("db")){
-		database_filename_ = tag->getOption<string>("db");
-	}
-	if(tag->hasOption("db_mode")){
-		database_mode_ = tag->getOption<string>("db_mode");
+		utility_exit_with_message(
+			"The 'db' tag has been deprecated. Please use 'database_name' instead.");
 	}
 
-	if(tag->hasOption("table")){
+	if(tag->hasOption("db_mode")){
+		utility_exit_with_message(
+			"The 'db_mode' tag has been deprecated. "
+			"Please use the 'database_mode' instead.");
+	}
+
+	if(tag->hasOption("database_table")){
+		database_table_ = tag->getOption<string>("database_table");
+	} else if(tag->hasOption("table")){
 		database_table_ = tag->getOption<string>("table");
 	}
+
+	db_session_ = protocols::rosetta_scripts::parse_database_connection(tag);
 }
 
 } //namespace task_operations

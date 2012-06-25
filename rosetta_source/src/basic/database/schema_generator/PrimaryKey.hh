@@ -39,7 +39,7 @@ public:
 
 	void add_column(Column column);
 
-	Columns columns();
+	Columns const & columns() const;
 
 	std::string print();
 

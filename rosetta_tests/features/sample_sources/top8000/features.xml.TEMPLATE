@@ -3,11 +3,11 @@
 		<s weights=score12prime/>
 	</SCOREFXNS>
 	<TASKOPERATIONS>
-		<ReadResfileFromDB name=relevant_chain db="%(sample_source_path)s/input/rosetta_inputs.db3" table="resfiles"/>
+		<ReadResfileFromDB name=relevant_chain database_name="%(sample_source_path)s/input/rosetta_inputs.db3" database_table="resfiles"/>
 	</TASKOPERATIONS>		
 	<MOVERS>
 		<SavePoseMover name=init_struct reference_name=init_struct/>
-		<ReportToDB name=features_reporter db="%(output_dir)s/%(sample_source_id)s/features_%(sample_source_id)s.db3" sample_source="%(sample_source_description)s" task_operations=relevant_chain>
+		<ReportToDB name=features_reporter database_name="%(output_dir)s/%(sample_source_id)s/features_%(sample_source_id)s.db3" sample_source="%(sample_source_description)s" task_operations=relevant_chain>
 			<feature name=ScoreTypeFeatures/>
 			<feature name=StructureScoresFeatures scorefxn=s/>
 			<feature name=PoseCommentsFeatures/>

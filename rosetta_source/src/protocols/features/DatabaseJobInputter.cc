@@ -91,9 +91,14 @@ DatabaseJobInputter::load_options_from_option_system(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if (option.has(inout::database_filename) &&
-		option[inout::database_filename].user()){
-		set_database_fname(option[inout::database_filename]);
+	if (option.has(inout::dbms::database_name) &&
+		option[inout::dbms::database_name].user()){
+		set_database_name(option[inout::dbms::database_name]);
+	}
+
+	if (option.has(inout::dbms::pq_schema) &&
+		option[inout::dbms::pq_schema].user()){
+		set_database_pq_schema(option[inout::dbms::pq_schema]);
 	}
 
 	// The in::file::tags option was created for the silent file
@@ -121,27 +126,48 @@ void
 DatabaseJobInputter::register_options(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	option.add_relevant( inout::database_filename );
+	option.add_relevant( inout::dbms::database_name );
+	option.add_relevant( inout::dbms::pq_schema );
+	option.add_relevant( inout::dbms::host );
+	option.add_relevant( inout::dbms::user );
+	option.add_relevant( inout::dbms::password );
+	option.add_relevant( inout::dbms::port );
+	option.add_relevant( inout::dbms::readonly );
+	option.add_relevant( inout::dbms::separate_db_per_mpi_process );
+
 	option.add_relevant( in::file::tags );
 }
 
 void
-DatabaseJobInputter::set_database_fname(
-	string const & database_fname
+DatabaseJobInputter::set_database_name(
+	string const & database_name
 ) {
-	database_fname_ = database_fname;
+	database_name_ = database_name;
 }
 
-std::string
-DatabaseJobInputter::get_database_fname() const {
-	if(database_fname_ == ""){
+string
+DatabaseJobInputter::get_database_name() const {
+	if(database_name_ == ""){
 		utility_exit_with_message(
 			"To use the DatabaseJobInputter, please specify the database "
-			"where thinput is data is stored, eg. via the -inout:database_filename "
-			"<database_fname> option system flag.");
+			"where thinput is data is stored, eg. via the -inout:dbms:database_name "
+			"<database_name> option system flag.");
 	}
-	return database_fname_;
+	return database_name_;
 }
+
+void
+DatabaseJobInputter::set_database_pq_schema(
+	string const & database_pq_schema
+) {
+	database_pq_schema_ = database_pq_schema;
+}
+
+string
+DatabaseJobInputter::get_database_pq_schema() const {
+	return database_pq_schema_;
+}
+
 
 /// @brief Get score function
 ScoreFunctionOP
@@ -162,12 +188,15 @@ DatabaseJobInputter::set_scorefunction(ScoreFunctionOP scorefunction ){
 /// consequently, the file output name) will be an ASCII hexadecimal representation
 /// of the struct_id (a boost UUID). If a tag column is given, then the file name will
 /// be the tag associated with the given row.
-void DatabaseJobInputter::set_struct_ids_from_sql(utility::vector1<std::string> const & sql)
+void
+DatabaseJobInputter::set_struct_ids_from_sql(
+	utility::vector1<string> const & sql)
 {
-	std::string sql_command(utility::join(sql, " "));
+	string sql_command(utility::join(sql, " "));
 	basic::database::check_statement_sanity(sql_command);
 
-	sessionOP db_session(basic::database::get_db_session(database_fname_));
+	sessionOP db_session(
+		basic::database::get_db_session(database_name_, database_pq_schema_));
 
 	result res;
 	while(true)
@@ -184,30 +213,30 @@ void DatabaseJobInputter::set_struct_ids_from_sql(utility::vector1<std::string> 
 			continue;
 		}
 	}
-	
+
 	bool res_nums_specified = false;
 	if(res.find_column("resnum") != -1){res_nums_specified=true;}
-	
+
 	bool tags_specified = false;
 	if(res.find_column("tag") != -1){tags_specified=true;}
-	
-	if(res.find_column("struct_id") != -1){	
+
+	if(res.find_column("struct_id") != -1){
 		while(res.next()){
 			boost::uuids::uuid struct_id;
 			res.fetch("struct_id", struct_id);
-			
+
 			std::string tag;
 			if(tags_specified){
 				res.fetch("tag", tag);
 				if(tag_structures_.count(tag) > 0 && tag_structures_[tag] != struct_id){
 					utility_exit_with_message("You have specified non-unque input tags which can cause ambigous output. Please make input tags unique");
-				}				
+				}
 			}
 			else{
 				tag = to_string(struct_id);
 			}
 			tag_structures_[tag] = struct_id;
-			
+
 			if(res_nums_specified){
 				core::Size resnum;
 				res.fetch("resnum", resnum);
@@ -222,15 +251,6 @@ void DatabaseJobInputter::set_struct_ids_from_sql(utility::vector1<std::string> 
 		utility_exit_with_message("Must provide an SQL SELECT command that selects the struct_id column from the structures table");
 	}
 }
-
-//void
-//DatabaseJobInputter::get_tags(
-//	vector1< string > & tags
-//) {
-//	tags = tags_;
-//}
-
-
 
 /// @details This function will first see if the pose already exists in the Job.
 /// If not, it will read it into the pose reference, and hand a COP cloned from
@@ -249,7 +269,8 @@ DatabaseJobInputter::pose_from_job(
 
 	if ( !job->inner_job()->get_pose() ) {
 		tr.Debug << "filling pose from Database (input tag = " << tag << ")" << endl;
-		sessionOP db_session(basic::database::get_db_session(database_fname_));
+		sessionOP db_session(
+			basic::database::get_db_session(database_name_, database_pq_schema_));
 
 		boost::uuids::uuid struct_id = tag_structures_[tag];
 
@@ -282,7 +303,8 @@ void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::Jobs &
 	Size const nstruct(get_nstruct());
 
 	if(!tag_structures_.size()){
-		sessionOP db_session(basic::database::get_db_session(database_fname_));
+		sessionOP db_session(
+			basic::database::get_db_session(database_name_, database_pq_schema_));
 
 		result res;
 		while(true)
@@ -325,7 +347,7 @@ void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::Jobs &
 
 	for(std::map<std::string, boost::uuids::uuid>::const_iterator iter=tag_structures_.begin(); iter!=tag_structures_.end(); ++iter){
 		inner_jobs.push_back(new protocols::jd2::InnerJob(iter->first, nstruct));
-	} 
+	}
 
 	tr.Debug
 		<< "reserve list for " << inner_jobs.size() * nstruct

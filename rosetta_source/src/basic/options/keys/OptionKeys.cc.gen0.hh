@@ -57,6 +57,7 @@ namespace in { namespace file { IntegerVectorOptionKey const frag_sizes( "in:fil
 namespace in { namespace file { FileVectorOptionKey const extra_res_fa( "in:file:extra_res_fa" );  } }
 namespace in { namespace file { FileVectorOptionKey const extra_res_mol( "in:file:extra_res_mol" );  } }
 namespace in { namespace file { StringOptionKey const extra_res_database( "in:file:extra_res_database" );  } }
+namespace in { namespace file { StringOptionKey const extra_res_pq_schema( "in:file:extra_res_pq_schema" );  } }
 namespace in { namespace file { StringOptionKey const extra_res_database_mode( "in:file:extra_res_database_mode" );  } }
 namespace in { namespace file { FileOptionKey const extra_res_database_resname_list( "in:file:extra_res_database_resname_list" );  } }
 namespace in { namespace file { FileVectorOptionKey const extra_res_cen( "in:file:extra_res_cen" );  } }
@@ -124,11 +125,6 @@ namespace in { namespace rdf { BooleanOptionKey const rdf( "in:rdf" );  } }
 namespace in { namespace rdf { BooleanOptionKey const sep_bb_ss( "in:rdf:sep_bb_ss" );  } }
 namespace MM { BooleanOptionKey const MM( "MM" );  }
 namespace MM { BooleanOptionKey const ignore_missing_bondangle_params( "MM:ignore_missing_bondangle_params" );  }
-namespace mysql { BooleanOptionKey const mysql( "mysql" );  }
-namespace mysql { StringOptionKey const host( "mysql:host" );  }
-namespace mysql { StringOptionKey const user( "mysql:user" );  }
-namespace mysql { StringOptionKey const password( "mysql:password" );  }
-namespace mysql { IntegerOptionKey const port( "mysql:port" );  }
 namespace qsar { BooleanOptionKey const qsar( "qsar" );  }
 namespace qsar { StringOptionKey const weights( "qsar:weights" );  }
 namespace qsar { StringOptionKey const grid_dir( "qsar:grid_dir" );  }
@@ -141,8 +137,16 @@ namespace PCS { IntegerOptionKey const normalization_id( "PCS:normalization_id" 
 namespace inout { BooleanOptionKey const inout( "inout" );  }
 namespace inout { BooleanOptionKey const fold_tree_io( "inout:fold_tree_io" );  }
 namespace inout { BooleanOptionKey const dump_connect_info( "inout:dump_connect_info" );  }
-namespace inout { FileOptionKey const database_filename( "inout:database_filename" );  }
-namespace inout { StringOptionKey const database_mode( "inout:database_mode" );  }
+namespace inout { namespace dbms { BooleanOptionKey const dbms( "inout:dbms" );  } }
+namespace inout { namespace dbms { StringOptionKey const mode( "inout:dbms:mode" );  } }
+namespace inout { namespace dbms { StringOptionKey const database_name( "inout:dbms:database_name" );  } }
+namespace inout { namespace dbms { StringOptionKey const pq_schema( "inout:dbms:pq_schema" );  } }
+namespace inout { namespace dbms { StringOptionKey const host( "inout:dbms:host" );  } }
+namespace inout { namespace dbms { StringOptionKey const user( "inout:dbms:user" );  } }
+namespace inout { namespace dbms { StringOptionKey const password( "inout:dbms:password" );  } }
+namespace inout { namespace dbms { IntegerOptionKey const port( "inout:dbms:port" );  } }
+namespace inout { namespace dbms { BooleanOptionKey const readonly( "inout:dbms:readonly" );  } }
+namespace inout { namespace dbms { BooleanOptionKey const separate_db_per_mpi_process( "inout:dbms:separate_db_per_mpi_process" );  } }
 namespace out { BooleanOptionKey const out( "out" );  }
 namespace out { BooleanOptionKey const overwrite( "out:overwrite" );  }
 namespace out { IntegerOptionKey const nstruct( "out:nstruct" );  }
@@ -610,6 +614,3 @@ namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constra
 namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }
 namespace fold_cst { BooleanOptionKey const keep_skipped_csts( "fold_cst:keep_skipped_csts" );  }
-namespace fold_cst { BooleanOptionKey const no_minimize( "fold_cst:no_minimize" );  }
-namespace fold_cst { BooleanOptionKey const force_minimize( "fold_cst:force_minimize" );  }
-namespace fold_cst { RealVectorOptionKey const seq_sep_stages( "fold_cst:seq_sep_stages" );  }

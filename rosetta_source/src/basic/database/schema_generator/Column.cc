@@ -22,6 +22,7 @@
 
 // Utility Headers
 #include <utility/exit.hh>
+#include <utility/sql_database/types.hh>
 
 namespace basic{
 namespace database{
@@ -67,12 +68,9 @@ Column::Column(Column const & src) :
 Column::~Column() {}
 
 void Column::init_db_mode(){
-	if(basic::options::option[basic::options::OptionKeys::inout::database_mode].user()){
-		database_mode_=basic::options::option[basic::options::OptionKeys::inout::database_mode].value();
-	}
-	else{
-		database_mode_="sqlite3";
-	}
+	database_mode_ =
+		utility::sql_database::database_mode_from_name(
+			basic::options::option[basic::options::OptionKeys::inout::dbms::mode]);
 }
 
 std::string Column::name() const{
@@ -86,19 +84,20 @@ bool Column::auto_increment() const{
 std::string Column::print() const{
 	std::string column_string = "";
 	if(auto_increment_){
-		column_string += this->name_ + " ";
-		if(this->database_mode_.compare("sqlite3") == 0){
+		column_string += name_ + " ";
+		switch(database_mode_) {
+		case utility::sql_database::DatabaseMode::sqlite3:
 			column_string += this->type_.print() + " PRIMARY KEY AUTOINCREMENT"; //only way to autoincrement in SQLite is with a primary key
 			name_ + " " + type_.print();
-		}
-		else if(this->database_mode_.compare("mysql") == 0){
+			break;
+		case utility::sql_database::DatabaseMode::mysql:
 			column_string += this->type_.print() + " AUTO_INCREMENT";
-		}
-		else if(this->database_mode_.compare("postgres") == 0){
+			break;
+		case utility::sql_database::DatabaseMode::postgres:
 			column_string += "BIGSERIAL";
-		}
-		else{
-			utility_exit_with_message("ERROR:Please specify the database mode using -inout::database_mode. Valid options are: 'sqlite3', 'mysql', or 'postgres'");
+			break;
+		default:
+			utility_exit_with_message("ERROR:Please specify the database mode using -inout::dbms::mode. Valid options are: 'sqlite3', 'mysql', or 'postgres'");
 		}
 	}
 	else{

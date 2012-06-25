@@ -15,21 +15,17 @@
 #include <protocols/features/DatabaseJobOutputter.hh>
 #include <protocols/features/DatabaseJobOutputterCreator.hh>
 #include <protocols/jd2/Job.hh>
-// AUTO-REMOVED #include <protocols/jd2/util.hh>
 
 // Project Headers
 #include <protocols/features/ProteinSilentReport.hh>
 
 // Platform Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/util.hh>
 
 ///Utility headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/database/sql_utils.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
@@ -37,7 +33,6 @@
 
 // External Headers
 #include <cppdb/frontend.h>
-// AUTO-REMOVED #include <cppdb/errors.h>
 
 // C++ Headers
 #include <string>
@@ -51,6 +46,8 @@ namespace features {
 
 using std::string;
 using core::Size;
+using core::pose::Pose;
+using protocols::jd2::JobCOP;
 using core::pose::tag_from_pose;
 using core::pose::tag_into_pose;
 using core::scoring::ScoreFunction;
@@ -58,19 +55,21 @@ using core::scoring::ScoreFunctionOP;
 using protocols::features::ProteinSilentReport;
 using utility::sql_database::DatabaseSessionManager;
 using utility::sql_database::sessionOP;
+using basic::database::get_db_session;
 using cppdb::result;
 
 
-DatabaseJobOutputter::DatabaseJobOutputter() : protocols::jd2::FileJobOutputter(),
-	protein_silent_report_(new ProteinSilentReport())
+DatabaseJobOutputter::DatabaseJobOutputter() :
+	protocols::jd2::FileJobOutputter(),
+	protein_silent_report_(new ProteinSilentReport()),
+	database_name_(),
+	database_pq_schema_()
 {
 	load_options_from_option_system();
-	sessionOP db_session(basic::database::get_db_session(database_fname_));
+	sessionOP db_session(
+		get_db_session(database_name_, database_pq_schema_));
 	protein_silent_report_->initialize(db_session);
 
-	//sessionOP db_session(basic::database::get_db_session(database_fname_));
-
-	//protein_silent_report_->write_schema_to_db(db_session);
 }
 
 DatabaseJobOutputter::~DatabaseJobOutputter() {
@@ -82,9 +81,14 @@ DatabaseJobOutputter::load_options_from_option_system(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if (option.has(inout::database_filename) &&
-		option[inout::database_filename].user()){
-		set_database_fname(option[inout::database_filename]);
+	if (option.has(inout::dbms::database_name) &&
+		option[inout::dbms::database_name].user()){
+		set_database_name(option[inout::dbms::database_name]);
+	}
+
+	if (option.has(inout::dbms::pq_schema) &&
+		option[inout::dbms::pq_schema].user()){
+		set_database_pq_schema(option[inout::dbms::pq_schema]);
 	}
 
 }
@@ -93,54 +97,81 @@ void
 DatabaseJobOutputter::register_options(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	option.add_relevant( inout::database_filename );
+	option.add_relevant( inout::dbms::database_name );
+	option.add_relevant( inout::dbms::pq_schema );
+	option.add_relevant( inout::dbms::host );
+	option.add_relevant( inout::dbms::user );
+	option.add_relevant( inout::dbms::password );
+	option.add_relevant( inout::dbms::port );
+	option.add_relevant( inout::dbms::separate_db_per_mpi_process );
+
 }
 
 void
-DatabaseJobOutputter::set_database_fname(
-	string const & database_fname
+DatabaseJobOutputter::set_database_pq_schema(
+	string const & database_pq_schema
 ) {
-	database_fname_ = database_fname;
+	database_name_ = database_pq_schema;
+}
+
+string
+DatabaseJobOutputter::get_database_pq_schema() const {
+	return database_pq_schema_;
+}
+
+void
+DatabaseJobOutputter::set_database_name(
+	string const & database_name
+) {
+	database_name_ = database_name;
 }
 
 std::string
-DatabaseJobOutputter::get_database_fname() const {
-	if(database_fname_ == ""){
+DatabaseJobOutputter::get_database_name() const {
+	if(database_name_ == ""){
 		utility_exit_with_message(
 			"To use the DatabaseJobInputter, please specify the database "
-			"where the input is data is stored, eg. via the -inout:database_filename "
-			"<database_fname> option system flag.");
+			"where the input is data is stored, eg. via the -inout:dbms:database_name "
+			"<database_name> option system flag.");
 	}
-	return database_fname_;
+	return database_name_;
 }
+
 
 void DatabaseJobOutputter::flush() {
 }
 
 void DatabaseJobOutputter::final_pose(
-	protocols::jd2::JobCOP job, core::pose::Pose const & pose
+	JobCOP job,
+	Pose const & pose
 ) {
-	sessionOP db_session(basic::database::get_db_session(database_fname_));
+
+	// If this is bottle neck, consider hanging on to the db_session
+	// rather than recreating it each time.
+
+	sessionOP db_session(get_db_session(database_name_, database_pq_schema_));
 	protein_silent_report_->apply(pose, db_session, output_name(job));
 }
 
 /// @brief this function is intended for saving mid-protocol poses; for example
 /// the final centroid structure in a combined centroid/fullatom protocol.
 void DatabaseJobOutputter::other_pose(
-	protocols::jd2::JobCOP,
-	core::pose::Pose const & pose,
-	std::string const & tag,
+	JobCOP,
+	Pose const & pose,
+	string const & tag,
 	int , /*default -1 */
 	bool /*default false*/
 ) {
 
-	sessionOP db_session(basic::database::get_db_session(database_fname_));
+	sessionOP db_session(get_db_session(database_name_, database_pq_schema_));
 	protein_silent_report_->apply(pose, db_session, tag);
 
 }
 
 /////////////////////////////////state of output functions/////////////////////////////////
-bool DatabaseJobOutputter::job_has_completed( protocols::jd2::JobCOP job ) {
+bool DatabaseJobOutputter::job_has_completed(
+	JobCOP job
+) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -148,7 +179,7 @@ bool DatabaseJobOutputter::job_has_completed( protocols::jd2::JobCOP job ) {
 	if ( job->completed() ) {
 		return true;
 	}
-	sessionOP db_session(basic::database::get_db_session(database_fname_));
+	sessionOP db_session(get_db_session(database_name_, database_pq_schema_));
 
 	//It is possible for the mpi distributor to call this function
 	//before the database has even been initialized

@@ -414,60 +414,27 @@ PoseConformationFeatures::load_jumps(
 	}
 
 	//note the Conformation object sorts the chain_endings after they are passed in.
-	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
-
-	statement stmt;
-	if(db_mode == "sqlite3")
-	{
-		std::string statement_string =
-			"SELECT\n"
-			"	jump_id,\n"
-			"	xx REAL,\n"
-			"	xy REAL,\n"
-			"	xz REAL,\n"
-			"	yx REAL,\n"
-			"	yy REAL,\n"
-			"	yz REAL,\n"
-			"	zx REAL,\n"
-			"	zy REAL,\n"
-			"	zz REAL,\n"
-			"	x REAL,\n"
-			"	y REAL,\n"
-			"	z REAL\n"
-			"FROM\n"
-			"	jumps\n"
-			"WHERE\n"
-			"	jumps.struct_id=?;";
-		stmt = basic::database::safely_prepare_statement(statement_string,db_session);
-
-	}else if(db_mode == "mysql" || db_mode == "postgres")
-	{
-
-		std::string statement_string =
-			"SELECT\n"
-			"	jump_id,\n"
-			"	xx ,\n"
-			"	xy ,\n"
-			"	xz ,\n"
-			"	yx ,\n"
-			"	yy ,\n"
-			"	yz ,\n"
-			"	zx ,\n"
-			"	zy ,\n"
-			"	zz ,\n"
-			"	x ,\n"
-			"	y ,\n"
-			"	z \n"
-			"FROM\n"
-			"	jumps\n"
-			"WHERE\n"
-			"	jumps.struct_id=?;";
-		stmt = basic::database::safely_prepare_statement(statement_string,db_session);
-
-	}else
-	{
-		utility_exit_with_message("the database mode needs to be 'mysql' or 'sqlite3'");
-	}
+	std::string statement_string =
+		"SELECT\n"
+		"	jump_id,\n"
+		"	xx,\n"
+		"	xy,\n"
+		"	xz,\n"
+		"	yx,\n"
+		"	yy,\n"
+		"	yz,\n"
+		"	zx,\n"
+		"	zy,\n"
+		"	zz,\n"
+		"	x,\n"
+		"	y,\n"
+		"	z\n"
+		"FROM\n"
+		"	jumps\n"
+		"WHERE\n"
+		"	jumps.struct_id=?;";
+	statement stmt(
+		basic::database::safely_prepare_statement(statement_string,db_session));
 
 	stmt.bind(1,struct_id);
 	result res(basic::database::safely_read_from_database(stmt));

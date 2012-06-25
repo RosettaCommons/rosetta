@@ -6,7 +6,7 @@
  -file
   -tags S_56_0001 S_73_0001 S_84_0001 S_93_0001 S_107_0001
 -inout
- -database_filename structures.db3
+ -dbms:database_name structures.db3
 -parser
  -protocol script.xml
 -mute core.conformation

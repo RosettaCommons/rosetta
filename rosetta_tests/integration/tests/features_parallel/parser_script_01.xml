@@ -3,7 +3,7 @@
 		<s weights=score12_w_corrections/>
 	</SCOREFXNS>		
 	<MOVERS>
-		<ReportToDB name=features_reporter db="features_IntegrationTest.db3_01" sample_source="first node" first_struct_id=100 protocol_id=100>
+		<ReportToDB name=features_reporter database_name="features_IntegrationTest.db3_01" sample_source="first node" first_struct_id=100 protocol_id=100>
 			<feature name=ResidueFeatures/>
                 </ReportToDB>
 	</MOVERS>
