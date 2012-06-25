@@ -58,8 +58,9 @@ void LoopsFileIO::read_stream_to_END(
 	std::istream & is,
 	std::string filename /*for error msg */,
 	bool strict_looprelax_checks,
-	std::string token )
-	{
+	std::string token
+)
+{
 	std::string line;
 	int linecount=0;
 	int errcount=50; //if we reach 0 we bail!

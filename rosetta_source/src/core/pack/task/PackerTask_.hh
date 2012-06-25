@@ -395,9 +395,6 @@ private:
 	bool operate_on_ex3_;
 	bool operate_on_ex4_;
 
-	///@details use the rotamer pre-existing in the input
-	bool use_input_sc_;
-
 	rotamer_set::RotamerOperations rotamer_operations_;
 	rotamer_set::RotSetOperationList rotsetops_;
 
@@ -433,11 +430,6 @@ public:
 
 	///@brief number of residues in the input pose, for convienience (PackerTask does not handle variable length)
 	virtual Size total_residue() const;
-
-	///@brief turn off packing at all positions
-	virtual void temporarily_fix_everything();
-	///@brief reset packer mutability arbitrarily for a given residue
-	virtual void temporarily_set_pack_residue( int resid, bool setting );
 
 	///@brief get function: can this position have a rotamer change?
 	virtual bool pack_residue( int resid ) const;
@@ -711,6 +703,25 @@ public:
 	bool
 	symmetrize_by_intersection() const;
 
+	/////////////////////////////////////
+	/// For use only inside the packer //
+	/////////////////////////////////////
+
+	///@brief turn off packing at all positions
+	/// This is only to be used to control packing from within the packing
+	/// functions rotamer_trials and rtmin.  Otherwise, this function should
+	/// not be used.  This function is not commutative and therefor using it
+	/// outside of rotamer_trials and rtmin would lead to disasterous behaviors
+	virtual void temporarily_fix_everything();
+
+	///@brief reset packer mutability arbitrarily for a given residue
+	/// This is only to be used to control packing from within the packing
+	/// functions rotamer_trials and rtmin.  Otherwise, this function should
+	/// not be used. This function is not commutative and therefor using it
+	/// outside of rotamer_trials and rtmin would lead to disasterous behaviors
+	virtual void temporarily_set_pack_residue( int resid, bool setting );
+
+
 private: // private methods
 	void
 	update_n_to_be_packed() const;
@@ -725,6 +736,9 @@ private:
 
 	///@details superficial on/off switch for repacking residues
 	/// produces no impact on contents of residue_tasks_ vector.
+	/// This is only to be used to control packing from within the packing
+	/// functions rotamer_trials and rtmin.  Otherwise, this vector should
+	/// not be used.
 	utility::vector1< bool > pack_residue_;
 
 	///@details vector of ResidueLevelTasks

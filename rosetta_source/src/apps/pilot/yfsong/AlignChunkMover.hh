@@ -99,10 +99,13 @@ AlignChunkMover(numeric::random::RandomGenerator & RG) :
 // atom_map: from mod_pose to ref_pose
 void
 get_superposition_transformation(
-								 pose::Pose const & mod_pose,
-								 pose::Pose const & ref_pose,
-								 id::AtomID_Map< id::AtomID > const & atom_map,
-								 numeric::xyzMatrix< core::Real > &R, numeric::xyzVector< core::Real > &preT, numeric::xyzVector< core::Real > &postT )
+	pose::Pose const & mod_pose,
+	pose::Pose const & ref_pose,
+	id::AtomID_Map< id::AtomID > const & atom_map,
+	numeric::xyzMatrix< core::Real > &R,
+	numeric::xyzVector< core::Real > &preT,
+	numeric::xyzVector< core::Real > &postT
+)
 {
 	// count number of atoms for the array
 	Size total_mapped_atoms(0);

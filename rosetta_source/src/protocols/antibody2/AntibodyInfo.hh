@@ -123,26 +123,26 @@ private:
 	// cdr loops
 	LoopMap loops_;
 	loops::LoopOP L1_, L2_, L3_;
-    loops::LoopOP H1_, H2_, H3_;
-    std::string L1_seq_, L2_seq_, L3_seq_;
-    std::string H1_seq_,H2_seq_,H3_seq_;
+	loops::LoopOP H1_, H2_, H3_;
+	std::string L1_seq_, L2_seq_, L3_seq_;
+	std::string H1_seq_,H2_seq_,H3_seq_;
 
 
-    CDR_Numbering_Begin_Map CDR_numbering_begin_;
-    CDR_Numbering_End_Map CDR_numbering_end_;
+	CDR_Numbering_Begin_Map CDR_numbering_begin_;
+	CDR_Numbering_End_Map CDR_numbering_end_;
 
-    
+
 	bool is_camelid_;
 	bool kinked_H3_;
 	bool extended_H3_;
-    
-    utility::vector1< char > Fv_sequence_;
- 
-    
-    utility::vector1<FrameWork> Lfr_, Hfr_, Ab_framework_ ;
-    
-    docking::DockJumps LH_dock_jumps_;
-    std::string LH_dock_partners_;
+
+	utility::vector1< char > Fv_sequence_;
+
+
+	utility::vector1<FrameWork> Lfr_, Hfr_, Ab_framework_ ;
+
+	docking::DockJumps LH_dock_jumps_;
+	std::string LH_dock_partners_;
     
 
 };

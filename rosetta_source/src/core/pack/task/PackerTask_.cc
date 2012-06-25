@@ -104,8 +104,7 @@ ResidueLevelTask_::ResidueLevelTask_(
 	operate_on_ex1_( false ),
 	operate_on_ex2_( false ),
 	operate_on_ex3_( false ),
-	operate_on_ex4_( false ),
-	use_input_sc_( false )
+	operate_on_ex4_( false )
 {
 	using namespace chemical;
 	// pb -- get the residue_set from the current residue
@@ -316,7 +315,7 @@ void ResidueLevelTask_::target_type( chemical::ResidueTypeCAP type ) {
 		assert( allowed );
 		return;
 	}
-	target_residue_type_ = type;
+	target_residue_type_ = type; /// non-commutative if multiple target residue types are set.
 }
 void ResidueLevelTask_::target_type( chemical::AA aa ) {
 	target_type( original_residue_type_->residue_type_set().aa_map( aa ).front() );
@@ -1139,7 +1138,6 @@ ResidueLevelTask_::update_union( ResidueLevelTask const & t )
 	operate_on_ex2_              |= o.operate_on_ex2_;
 	operate_on_ex3_              |= o.operate_on_ex3_;
 	operate_on_ex4_              |= o.operate_on_ex4_;
-	use_input_sc_                |= o.use_input_sc_;
 	ex1_sample_level_             = (ExtraRotSample)std::max((int)ex1_sample_level_,(int)o.ex1_sample_level_);
 	ex2_sample_level_             = (ExtraRotSample)std::max((int)ex2_sample_level_,(int)o.ex2_sample_level_);
 	ex3_sample_level_             = (ExtraRotSample)std::max((int)ex3_sample_level_,(int)o.ex3_sample_level_);
@@ -1232,7 +1230,6 @@ ResidueLevelTask_::update_intersection( ResidueLevelTask const & t )
 	operate_on_ex2_              &= o.operate_on_ex2_;
 	operate_on_ex3_              &= o.operate_on_ex3_;
 	operate_on_ex4_              &= o.operate_on_ex4_;
-	use_input_sc_                &= o.use_input_sc_;
 	ex1_sample_level_             = (ExtraRotSample)std::min((int)ex1_sample_level_,(int)o.ex1_sample_level_);
 	ex2_sample_level_             = (ExtraRotSample)std::min((int)ex2_sample_level_,(int)o.ex2_sample_level_);
 	ex3_sample_level_             = (ExtraRotSample)std::min((int)ex3_sample_level_,(int)o.ex3_sample_level_);
@@ -1254,49 +1251,86 @@ ResidueLevelTask_::update_commutative(
 
 	ResidueLevelTask_ const & o(dynamic_cast<ResidueLevelTask_ const &>(t));
 
-	include_current_              = o.include_current_;
-	adducts_                      = o.adducts_;
-	designing_                    = o.designing_;
-	repacking_                    = o.repacking_;
-	optimize_H_mode_              = o.optimize_H_mode_;
-	preserve_c_beta_              = o.preserve_c_beta_;
-	flip_HNQ_                     = o.flip_HNQ_;
-	fix_his_tautomer_             = o.fix_his_tautomer_;
-	disabled_                     = o.disabled_;
-	design_disabled_              = o.design_disabled_;
-	sample_proton_chi_            = o.sample_proton_chi_;
-	sample_rna_chi_               = o.sample_rna_chi_;
-	ex1_                          = o.ex1_;
-	ex2_                          = o.ex2_;
-	ex3_                          = o.ex3_;
-	ex4_                          = o.ex4_;
-	ex1aro_                       = o.ex1aro_;
-	ex2aro_                       = o.ex2aro_;
-	ex1aro_exposed_               = o.ex1aro_exposed_;
-	ex2aro_exposed_               = o.ex2aro_exposed_;
-	ex1_sample_level_             = o.ex1_sample_level_;
-	ex2_sample_level_             = o.ex2_sample_level_;
-	ex3_sample_level_             = o.ex3_sample_level_;
-	ex4_sample_level_             = o.ex4_sample_level_;
-	ex1aro_sample_level_          = o.ex1aro_sample_level_;
-	ex2aro_sample_level_          = o.ex2aro_sample_level_;
-	ex1aro_exposed_sample_level_  = o.ex1aro_exposed_sample_level_;
-	ex2aro_exposed_sample_level_  = o.ex2aro_exposed_sample_level_;
-	exdna_sample_level_           = o.exdna_sample_level_;
-	extrachi_cutoff_              = o.extrachi_cutoff_;
-	operate_on_ex1_               = o.operate_on_ex1_;
-	operate_on_ex2_               = o.operate_on_ex2_;
-	operate_on_ex3_               = o.operate_on_ex3_;
-	operate_on_ex4_               = o.operate_on_ex4_;
-	use_input_sc_                 = o.use_input_sc_;
+	include_current_              |= o.include_current_;
+	adducts_                      |= o.adducts_;
+	//designing_                    = o.designing_; // need to call determine_if_designing
+	//repacking_                    = o.repacking_; // need to call determine_if_repacking
+	optimize_H_mode_              |= o.optimize_H_mode_;
+	preserve_c_beta_              |= o.preserve_c_beta_;
+	flip_HNQ_                     |= o.flip_HNQ_;
+	fix_his_tautomer_             |= o.fix_his_tautomer_;
+	disabled_                     |= o.disabled_;
+	design_disabled_              |= o.design_disabled_;
+	sample_proton_chi_            = o.sample_proton_chi_; // <--- apparently sample_proton_chi is not commutatively assigned
+	sample_rna_chi_               = o.sample_rna_chi_; // <--- apparently sample_rna_chi is not commutatively assigned
+	ex1_                          |= o.ex1_;
+	ex2_                          |= o.ex2_;
+	ex3_                          |= o.ex3_;
+	ex4_                          |= o.ex4_;
+	ex1aro_                       |= o.ex1aro_;
+	ex2aro_                       |= o.ex2aro_;
+	ex1aro_exposed_               |= o.ex1aro_exposed_;
+	ex2aro_exposed_               |= o.ex2aro_exposed_;
+	ex1_sample_level_             = std::max( ex1_sample_level_, o.ex1_sample_level_ );
+	ex2_sample_level_             = std::max( ex2_sample_level_, o.ex2_sample_level_ );
+	ex3_sample_level_             = std::max( ex3_sample_level_, o.ex3_sample_level_ );
+	ex4_sample_level_             = std::max( ex4_sample_level_, o.ex4_sample_level_ );
+	ex1aro_sample_level_          = std::max( ex1aro_sample_level_, o.ex1aro_sample_level_ );
+	ex2aro_sample_level_          = std::max( ex2aro_sample_level_, o.ex2aro_sample_level_ );
+	ex1aro_exposed_sample_level_  = std::max( ex1aro_exposed_sample_level_, o.ex1aro_exposed_sample_level_ );
+	ex2aro_exposed_sample_level_  = std::max( ex2aro_exposed_sample_level_, o.ex2aro_exposed_sample_level_ );
+	exdna_sample_level_           = std::max( exdna_sample_level_, o.exdna_sample_level_ );
+	extrachi_cutoff_              = std::min( extrachi_cutoff_, o.extrachi_cutoff_ );
+	operate_on_ex1_               |= o.operate_on_ex1_;
+	operate_on_ex2_               |= o.operate_on_ex2_;
+	operate_on_ex3_               |= o.operate_on_ex3_;
+	operate_on_ex4_               |= o.operate_on_ex4_;
 
-	target_residue_type_ = o.target_residue_type_;
+	target_residue_type_ = o.target_residue_type_; // <-- there can be only one, so, this is obviously a non-commutative member
 
-	allowed_residue_types_.clear(); allowed_residue_types_.insert(allowed_residue_types_.begin(),o.allowed_residue_types_.begin(),o.allowed_residue_types_.end());
-	rotamer_operations_   .clear(); rotamer_operations_   .insert(rotamer_operations_   .begin(),o.rotamer_operations_   .begin(),o.rotamer_operations_   .end());
-	rotsetops_            .clear(); rotsetops_            .insert(rotsetops_            .begin(),o.rotsetops_            .begin(),o.rotsetops_            .end());
-	behaviors_            .clear(); behaviors_            .insert(behaviors_            .begin(),o.behaviors_            .begin(),o.behaviors_            .end());
-	mode_tokens_           .clear(); mode_tokens_           .insert(mode_tokens_           .begin(),o.mode_tokens_           .begin(),o.mode_tokens_           .end());
+	// merge the allowed residue types to find the set that overlaps
+	ResidueTypeCAPList my_allowed_residue_types( allowed_residue_types_ );
+	ResidueTypeCAPList o_allowed_residue_types( o.allowed_residue_types_ );
+	my_allowed_residue_types.sort();
+	o_allowed_residue_types.sort();
+	ResidueTypeCAPList common;
+	for ( ResidueTypeCAPListConstIter
+			myiter = my_allowed_residue_types.begin(),
+			myend = my_allowed_residue_types.end(),
+			oiter = o_allowed_residue_types.begin(),
+			oend = o_allowed_residue_types.end();
+			myiter != myend && oiter != oend; /* no increment */ ) {
+		std::cout << " myiter: " << *myiter << " " << (*myiter)->name() << " oiter: " << *oiter << " " << (*oiter)->name() << std::endl;
+		if ( *myiter == *oiter ) {
+			common.push_back( *myiter );
+			std::cout << "Common! " << (*myiter)->name() << std::endl;
+			++myiter;
+			++oiter;
+		} else if ( *myiter < *oiter ) {
+			++myiter;
+		} else {
+			++oiter;
+		}
+	}
+	// Now insert the elements of common in their original order into allowed_residue_types_
+	ResidueTypeCAPList my_allowed_residue_types2;
+	my_allowed_residue_types2.swap( allowed_residue_types_ );
+	for ( ResidueTypeCAPListConstIter
+			myiter = my_allowed_residue_types2.begin(),
+			myend = my_allowed_residue_types2.end();
+			myiter != myend; ++myiter ) {
+		if ( std::find( common.begin(), common.end(), *myiter ) != common.end() ) {
+			allowed_residue_types_.push_back( *myiter );
+		}
+	}
+	determine_if_repacking();
+	determine_if_designing();
+
+	/// Form a union of the following sets
+	rotamer_operations_.insert(rotamer_operations_.begin(),o.rotamer_operations_.begin(),o.rotamer_operations_.end());
+	rotsetops_         .insert(rotsetops_         .begin(),o.rotsetops_         .begin(),o.rotsetops_         .end());
+	behaviors_         .insert(behaviors_         .begin(),o.behaviors_         .begin(),o.behaviors_         .end());
+	mode_tokens_       .insert(mode_tokens_       .begin(),o.mode_tokens_       .begin(),o.mode_tokens_       .end());
 }
 
 void
@@ -1343,23 +1377,38 @@ PackerTask_::update_commutative(
 	PackerTask_ const & o(dynamic_cast<PackerTask_ const &>(t));
 
 	if( nres_ != o.nres_ ) utility_exit_with_message("unmatching nres_");
-	disallow_quench_ = o.disallow_quench_;
-	bump_check_ = o.bump_check_;
-	optimize_H_ = o.optimize_H_;
-	multi_cool_annealer_ = o.multi_cool_annealer_;
-	double_lazy_ig_ = o.double_lazy_ig_;
-	lazy_ig_ = o.lazy_ig_;
-	linmem_ig_ = o.linmem_ig_;
-	high_temp_ = o.high_temp_;
-	low_temp_ = o.low_temp_;
-	max_rotbump_energy_ = o.max_rotbump_energy_;
-	mca_history_size_ = o.mca_history_size_;
-	dlig_mem_limit_ = o.dlig_mem_limit_;
-	n_to_be_packed_ = o.n_to_be_packed_;
-	n_to_be_packed_up_to_date_ = o.n_to_be_packed_up_to_date_;
 
-	rotamer_couplings_ = o.rotamer_couplings_;
-	rotamer_links_ = o.rotamer_links_;
+	/// leave the state of the pack_residue array as true everywhere.  This is an array
+	/// used only inside rotamer_trials and rtmin, so this should be a good idea.
+	for(Size i = 1; i <= pack_residue_.size(); ++i) pack_residue_[i] = true;
+	
+	for(Size i = 1; i <= residue_tasks_.size(); ++i) residue_tasks_[i].update_commutative(o.residue_tasks_[i]);
+
+	n_to_be_packed_ = o.n_to_be_packed_;/// <-- this derived data will need to be updated
+	n_to_be_packed_up_to_date_ = false; /// <-- signal that n_to_be_packed will need to be updated
+
+	linmem_ig_ |= o.linmem_ig_;
+	lazy_ig_ |= o.lazy_ig_;
+
+	double_lazy_ig_ |= o.double_lazy_ig_;
+	dlig_mem_limit_ = std::min( dlig_mem_limit_, o.dlig_mem_limit_ );
+
+	multi_cool_annealer_ |= o.multi_cool_annealer_;
+	mca_history_size_ = std::max( mca_history_size_, o.mca_history_size_ );
+
+	optimize_H_ |= o.optimize_H_;
+
+	bump_check_ = o.bump_check_; /// <-- apparently bump check setting is not commutative!
+	max_rotbump_energy_ = std::min( max_rotbump_energy_, o.max_rotbump_energy_ );
+
+	rotamer_couplings_ = o.rotamer_couplings_; /// <--- apparently rotamer couplings assignment is not commutative
+
+	rotamer_links_ = o.rotamer_links_; /// <--- apparently rotamer links assignment is not commutative
+
+	low_temp_ = o.low_temp_;
+	high_temp_ = o.high_temp_;
+	disallow_quench_ = o.disallow_quench_;
+
 
 	if(o.IG_edge_reweights_) {
 		IG_edge_reweights_  = new IGEdgeReweightContainer(nres_);
@@ -1371,8 +1420,6 @@ PackerTask_::update_commutative(
 		IG_edge_reweights_ = NULL;
 	}
 
-	for(Size i = 1; i <= residue_tasks_.size(); ++i) residue_tasks_[i].update_commutative(o.residue_tasks_[i]);
-	for(Size i = 1; i <= pack_residue_.size(); ++i) pack_residue_[i] = residue_tasks_[i].being_packed();
 }
 
 void

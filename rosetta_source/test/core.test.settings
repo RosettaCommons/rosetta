@@ -90,6 +90,7 @@ sources = {
 		"min_pack",
 		"RotamerTrials",
 		"SymmetricRotamerTrials",
+		"task/PackerTask",
 		"task/ResfileReader",
 		"task/fix_his_tautomer",
                 "task/Resfile_Silent",

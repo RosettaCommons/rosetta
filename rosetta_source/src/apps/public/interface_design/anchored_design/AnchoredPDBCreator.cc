@@ -128,12 +128,12 @@ public:
 		//clone off insert_loop_end (it is passed by reference
 		core::Size loop_end(insert_loop_end);
 		core::pose::Pose combined(insert_pose_into_pose(
-																										scaffold,
-																										anchor,
-																										insert_loop_start,
-																										insert_point,
-																										loop_end,
-																										cycles));
+			scaffold,
+			anchor,
+			insert_loop_start,
+			insert_point,
+			loop_end,
+			cycles));
 
 		//check on the loop quality
 		protocols::loops::Loops loops;
