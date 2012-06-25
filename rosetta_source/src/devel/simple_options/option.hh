@@ -115,6 +115,7 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <core/types.hh>
+#include <string>
 
 namespace devel {
 namespace option {
@@ -300,7 +301,7 @@ private:
 	/* no option - prints just a comment */
 	class COPT : public base_opt {
 	public:
-		COPT(std::string comment) : base_opt(";"+comment,"","") {};
+		COPT(std::string comment) : base_opt(std::string(";")+comment, std::string(""), std::string("") ) {};
 		std::string value() const { return ""; };
 		void set_value(std::string) const {};
 	};

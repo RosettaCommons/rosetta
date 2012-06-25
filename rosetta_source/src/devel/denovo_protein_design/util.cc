@@ -172,7 +172,7 @@ void design_setup( core::pose::Pose & pose, core::pack::task::TaskFactoryOP desi
 
 		}
 
-		if( packablePositions[ii] == true and designablePositions[ii] == false ) { // position is only repackable not designable
+		if( packablePositions[ii] == true && designablePositions[ii] == false ) { // position is only repackable not designable
 
 			allowrepacking->include_residue( ii );
 
@@ -270,7 +270,7 @@ void create_nucleated_sequence_from_template_pdb( std::string & nucleated_sequen
 		KeepNativeTorsions.resize( template_pose.n_residue(), false );
 		for ( core::Size seqpos = 1; seqpos <= template_pose.total_residue(); ++seqpos ) {
 
-			if( template_pose.secstruct( seqpos ) == 'L' or template_pose.secstruct( seqpos - 1 ) == 'L' or template_pose.secstruct( seqpos + 1) == 'L' ){
+			if( template_pose.secstruct( seqpos ) == 'L' || template_pose.secstruct( seqpos - 1 ) == 'L' || template_pose.secstruct( seqpos + 1) == 'L' ){
 				KeepNativeTorsions[seqpos] = true; }
 
 		}

@@ -376,7 +376,7 @@ void output_coordCsts(const std::set< Size > caAtomsToConstrain,std::ostream & o
 	using namespace protocols;
 	using namespace relax;
 	if(caAtomsToConstrain.size() != 0){//don't output coordinate constraints if no atoms to constrain
-		std::set< Size >::iterator caAtomsToConstrain_start,caAtomsToConstrain_stop;
+		std::set< Size >::const_iterator caAtomsToConstrain_start,caAtomsToConstrain_stop;
 		int virtualRes_id = pose.total_residue();
 		numeric::xyzVector< core::Real > atomLocation(0.0,0.0,0.0);
 		caAtomsToConstrain_start = caAtomsToConstrain.begin();
@@ -398,7 +398,7 @@ void output_coordCsts(const std::set< Size > caAtomsToConstrain,std::ostream & o
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose;
-	std::set< Size >::iterator caAtomsToConstrain_start,caAtomsToConstrain_stop;
+	std::set< Size >::const_iterator caAtomsToConstrain_start,caAtomsToConstrain_stop;
 	if(caAtomsToConstrain.size() > 0){
 		if(only_res_out){
 			caAtomsToConstrain_start = caAtomsToConstrain.begin();

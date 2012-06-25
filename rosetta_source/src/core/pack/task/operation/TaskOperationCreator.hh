@@ -25,6 +25,8 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
+#include <string>
+
 
 namespace core {
 namespace pack {

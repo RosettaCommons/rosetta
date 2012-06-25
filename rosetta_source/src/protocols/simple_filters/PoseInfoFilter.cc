@@ -47,6 +47,7 @@ core::Real
 PoseInfoFilter::compute( core::pose::Pose const & pose ) const
 {
 	report(TR, pose);
+	return 1.0;
 }
 
 /// @return Print pose information and return true

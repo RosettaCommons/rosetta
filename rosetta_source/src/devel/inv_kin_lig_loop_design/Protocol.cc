@@ -11,6 +11,13 @@
 ///
 /// @brief
 /// @author
+
+#ifdef WIN32
+	#define _USE_MATH_DEFINES
+#endif
+#include <cmath>
+
+
 #include <devel/inv_kin_lig_loop_design/Protocol.hh>
 #include <devel/inv_kin_lig_loop_design/Mover.hh>
 #include <devel/inv_kin_lig_loop_design/JumpManager.hh>
@@ -296,7 +303,7 @@ namespace devel {
     }
 
     void Protocol::phase_hires() {
-      
+
       using protocols::loops::loop_closure::ccd::fast_ccd_loop_closure;
 
       // let's do this in a random order

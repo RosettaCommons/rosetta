@@ -232,11 +232,11 @@ def main(args):
     # assuming that we in rosetta/rosetta_source/src/python/bindings directory at that point
     mini_path = os.path.abspath('./../../../')
 
-    bindings_path = 'rosetta'
+    bindings_path = os.path.abspath('rosetta')
     #bindings_path += '.debug' if Options.debug else '.release'
 
     if Options.cross_compile:
-        bindings_path = 'rosetta.windows'
+        bindings_path = os.path.abspath('rosetta')
         if not os.path.isdir(bindings_path): os.makedirs(bindings_path)
         execute('Generating svn_version files...', 'cd ./../../../ && python svn_version.py')  # Now lets generate svn_version.* files and copy it to destination (so windows build could avoid running it).
         shutil.copyfile('./../../core/svn_version.cc', bindings_path + '/svn_version.cc')
@@ -246,7 +246,8 @@ def main(args):
     shutil.copyfile('src/__init__.py', bindings_path + '/__init__.py')
 
     if Platform == "windows":  # we dealing with windows native build
-        build_path = os.path.join(mini_path, 'build\windows')
+        #bindings_path = os.path.abspath('python/bindings/rosetta')
+        build_path = os.path.abspath( os.path.join(mini_path, 'build\windows') )
         if Options.debug: build_path    += '_debug'
         BuildRosettaOnWindows(build_path, bindings_path)
         sys.exit(0)
@@ -254,7 +255,7 @@ def main(args):
     #if os.path.islink('rosetta') or os.path.isdir('rosetta'): os.remove('rosetta')
     #os.symlink(bindings_path, 'rosetta')
 
-    bindings_path = os.path.abspath(bindings_path)
+    #bindings_path = os.path.abspath(bindings_path)
 
     if options.BuildMiniLibs:
         prepareMiniLibs(mini_path, bindings_path)
@@ -685,32 +686,27 @@ def getAllRosettaSourceFiles():
     obj_suffix = ''
 
     all_sources = []
-    assert False, 'Replace with dynamic scons file reading!'
-    for scons_file in ['ObjexxFCL', 'utility', 'numeric', 'basic', 'core.1', 'core.2', 'core.3', 'core.4', 'core.5',
-        'protocols.1',
-        'protocols_a.2', 'protocols_b.2',
-        'protocols.3',
-        'protocols_a.4', 'protocols_b.4', 'protocols_c.4', 'protocols_d.4', 'protocols_e.4', 'protocols_f.4', 'protocols_g.4', 'protocols_h.4',
-        'protocols_a.5', 'protocols_b.5', 'protocols_c.5', 'protocols_d.5', 'protocols_e.5', 'protocols_f.5',
-        'protocols.6', 'protocols.7', ]:
-    #for scons_file in ['ObjexxFCL', 'utility', ]:
-    #for scons_file in ['core.1',]:
-        f = file('./../../%s.src.settings' % scons_file).read();  exec(f)
+    all_scons_files = [f for f in os.listdir('./../../')
+        if f.endswith('.src.settings') and f not in ['apps.src.settings', 'pilot_apps.src.settings', 'devel.src.settings',]
+           #and not f.startswith('protocols.')
+        ]
+
+    for scons_file in all_scons_files:
+        all_sources.append([])
+
+        f = file('./../../%s' % scons_file).read();  exec(f)
         for k in sources:
             for f in sources[k]:
                 #all_sources.append( scons_file + '/' + k + '/' + f + obj_suffix)
-                if not f.endswith('.cu'): all_sources.append( k + '/' + f + '.cc')
+                if not f.endswith('.cu'): all_sources[-1].append( k + '/' + f + '.cc')
 
     extra_objs = [  # additioanal source for external libs
         'dbio/cppdb/atomic_counter.cpp', "dbio/cppdb/conn_manager.cpp", "dbio/cppdb/driver_manager.cpp", "dbio/cppdb/frontend.cpp",
         "dbio/cppdb/backend.cpp", "dbio/cppdb/mutex.cpp", "dbio/cppdb/pool.cpp", "dbio/cppdb/shared_object.cpp", "dbio/cppdb/sqlite3_backend.cpp",
         "dbio/cppdb/utils.cpp", 'dbio/sqlite3/sqlite3.c', ]
 
-    #extra_objs = []
 
-    #all_sources += [ '../external/' + x for x in extra_objs ]
-
-    all_sources.sort()
+    #all_sources.sort()
     #for i in all_sources: print i
     return extra_objs, all_sources
 
@@ -734,7 +730,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
     ''' bypassing scones and build rosetta on windows native
     '''
     # copy svn_version file from pre-generated sources
-    shutil.copyfile(Options.use_pre_generated_sources + '/svn_version.cc', './../../core/svn_version.cc')
+    shutil.copy2(Options.use_pre_generated_sources + '/svn_version.cc', './../../core/svn_version.cc')
 
     external, sources = getAllRosettaSourceFiles()
     #if 'protocols/moves/PyMolMover.cc' in sources: sources.remove('protocols/moves/PyMolMover.cc')
@@ -757,16 +753,16 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
             execute('Compiling %s' % s, 'cl /MD /GR /Gy /D "WIN32" /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /DSQLITE_DISABLE_LFS \
                     /DSQLITE_OMIT_LOAD_EXTENSION /DSQLITE_THREADSAFE=0 /DCPPDB_EXPORTS /DCPPDB_LIBRARY_SUFFIX=\\".dylib\\" \
                     /DCPPDB_LIBRARY_PREFIX=\\"lib\\" /DCPPDB_DISABLE_SHARED_OBJECT_LOADING /DCPPDB_DISABLE_THREAD_SAFETY \
-                    /DCPPDB_SOVERSION=\\"0\\" /DCPPDB_WITH_SQLITE3 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /DNDEBUG /c %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s /EHsc' % (s, obj),)
+                    /DCPPDB_SOVERSION=\\"0\\" /DCPPDB_MAJOR=0 /DCPPDB_MINOR=3 /DCPPDB_PATCH=0 /DCPPDB_VERSION=\\"0.3.0\\"  \
+                    /DCPPDB_WITH_SQLITE3 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /DNDEBUG /c %s /I. /I../external/include /I../external/boost_1_46_1 \
+                    /I../external/dbio /I../external/dbio/sqlite3 /Iplatform/windows/PyRosetta /Fo%s /EHsc' % (s, obj),)
 
         '''DNDEBUG -DCPPDB_EXPORTS -DCPPDB_LIBRARY_SUFFIX=\".dylib\" -DCPPDB_LIBRARY_PREFIX=\"lib\" -DCPPDB_DISABLE_SHARED_OBJECT_LOADING
            -DCPPDB_DISABLE_THREAD_SAFETY -DCPPDB_SOVERSION=\"0\" -DCPPDB_WITH_SQLITE3
         '''
 
     latest = None
-    for s in sources:
-        #s = s.replace('/', '\\')
-
+    for s in sum(sources, []):
         try: os.makedirs( os.path.join( build_dir, os.path.split(s)[0]) )
         except OSError: pass
 
@@ -779,28 +775,42 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
         latest = max(latest, os.path.getmtime(obj) )
 
 
+    sources = [external] + sources;  # After this moment there is no point of trating 'external' as special...
+    #sources = [ sum(sources, []) ]
+    objs_all = ' '.join( [f + '.obj' for f in sum(sources, [])] )
+    file(os.path.join(build_dir,'objs_all') , 'w').write( objs_all )
+
+
     # Now creating DLL
     dll = os.path.join(bindings_path, '..\\rosetta.dll')
-    rosetta_lib = os.path.join(build_dir, 'rosetta_lib.lib')  # we purposly name 'real' lib somewhat different to avoid confusion with rosetta.lib file that belong to DLL
-    objs = ' '.join( [ f + '.obj' for f in external] ) + ' ' + ' '.join( [f + '.obj' for f in sources] )
-    file(os.path.join(build_dir,'objs') , 'w').write( objs )
-    #execute('Creating DLL %s...' % dll, 'cd %s && link /OPT:NOREF /dll @objs ..\\..\\external\\lib\\win_pyrosetta_z.lib /out:%s' % (build_dir, dll) )
+    rosetta_lib_ = os.path.join(build_dir, 'rosetta_lib-%s.lib')  # we purposly name 'real' lib somewhat different to avoid confusion with rosetta.lib file that belong to DLL
+    rosetta_libs = [rosetta_lib_ % l for l in range(len(sources)) ]
 
-    if (not os.path.isfile(rosetta_lib))   or  os.path.getmtime(rosetta_lib) < latest:
-        # /INCREMENTAL:NO /LTCG
-        execute('Creating lib %s...' % rosetta_lib, 'cd %s && lib /LTCG @objs ..\\..\\external\\lib\\win_pyrosetta_z.lib /out:%s' % (build_dir, rosetta_lib))
-        latest = max(latest, os.path.getmtime(rosetta_lib) )
+    for i, rosetta_lib in enumerate(rosetta_libs):
+        #objs = ' '.join( [ f + '.obj' for f in external] ) + ' ' + ' '.join( [f + '.obj' for f in sources[i]] )
+        objs = ' '.join( [f + '.obj' for f in sources[i]] )
+
+        file(os.path.join(build_dir,'objs-%s' % i) , 'w').write( objs )
+        #execute('Creating DLL %s...' % dll, 'cd %s && link /OPT:NOREF /dll @objs ..\\..\\external\\lib\\win_pyrosetta_z.lib /out:%s' % (build_dir, dll) )
+
+        if (not os.path.isfile(rosetta_lib))   or  os.path.getmtime(rosetta_lib) < latest:
+            # /INCREMENTAL:NO /LTCG
+            execute('Creating lib %s...' % rosetta_lib, 'cd %s && lib @objs-%s ..\\..\\external\\lib\\win_pyrosetta_z.lib Ws2_32.lib /out:%s' % (build_dir, i, rosetta_lib))
+            latest = max(latest, os.path.getmtime(rosetta_lib) )
 
     # libcmt.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib
     #execute('Creating DLL %s...' % s, 'cd ..\\build\\windows && cl /link /DLL @objs /OUT:%s' % dll )
     '''
+    rosetta_lib = ' '.join( [ l for l in rosetta_libs] )
     pdb_test = 'apps/pilot/sergey/PDBTest.cc'
     pdb_test_exe = os.path.join(build_dir, 'PDBTest.exe')
     pdb_test_obj = os.path.join(build_dir, 'PDBTest.obj')
     if (not os.path.isfile(pdb_test_exe))   or  os.path.getmtime(pdb_test_exe) < os.path.getmtime(pdb_test)  or  os.path.getmtime(pdb_test_exe) < latest:
-        execute('Compiling test executable %s' % pdb_test, 'cl /c %s %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta %s /Fe%s /Fo%s' % (get_CL_Options(), pdb_test, rosetta_lib, pdb_test_exe, pdb_test_obj) )
-        execute('Linking test executable %s' % pdb_test, 'link %s %s /out:' % (pdb_test_obj, rosetta_lib, pdb_test_exe) )
-        '''
+        #execute('Compiling test executable %s' % pdb_test, 'cl /c %s %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta %s /Fe%s /Fo%s' % (get_CL_Options(), pdb_test, rosetta_lib, pdb_test_exe, pdb_test_obj) )
+        execute('Compiling test executable %s' % pdb_test, 'cl /c %s %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta /Fe%s /Fo%s' % (get_CL_Options(), pdb_test, pdb_test_exe, pdb_test_obj) )
+        execute('Linking test executable %s' % pdb_test, 'link %s %s /out:%s' % (pdb_test_obj, rosetta_lib, pdb_test_exe) )
+
+    '''
 
     print 'Building bindings...'
 
@@ -827,10 +837,10 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
     def_file = os.path.join(build_dir, 'rosetta_symbols.def')
     f = file(def_file, 'w'); f .write('LIBRARY rosetta\nEXPORTS\n  ' + '\n  '.join(symbols) + '\n' );  f.close()
 
-    execute('Creating DLL %s...' % dll, 'cd %s && link /OPT:NOREF /dll @objs ..\\..\\external\\lib\\win_pyrosetta_z.lib Ws2_32.lib /DEF:%s /out:%s' % (build_dir, def_file, dll) )
+    execute('Creating DLL %s...' % dll, 'cd %s && link /OPT:NOREF /dll @objs_all ..\\..\\external\\lib\\win_pyrosetta_z.lib Ws2_32.lib /DEF:%s /out:%s' % (build_dir, def_file, dll) )
 
     for dir_name, _, files in os.walk(Options.use_pre_generated_sources):
-        wn_buildOneNamespace(Options.use_pre_generated_sources, dir_name, files, bindings_path, build_dir, link=True)
+        wn_buildOneNamespace(Options.use_pre_generated_sources, dir_name, files, bindings_path, build_dir, link=True, rosetta_libs=rosetta_libs)
 
     print 'Done building PyRosetta bindings for Windows!'
 
@@ -841,7 +851,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
 
     # "public: virtual bool __thiscall ObjexxFCL::IndexRange::contains(class ObjexxFCL::IndexRange const &)const " (?contains@IndexRange@ObjexxFCL@@UBE_NABV12@@Z)
 
-def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, all_symbols=[], link=False):
+def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, all_symbols=[], link=False, rosetta_libs=[]):
     files = sorted( filter(lambda f: f.endswith('.cpp'), files) )
     sub_dir = dir_name[ len(base_dir)+1: ]
 
@@ -856,7 +866,8 @@ def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, al
 
     if files:
         latest = None
-        rosetta_lib = os.path.join(bindings_path, '..\\rosetta.lib')
+        #rosetta_lib = os.path.join(bindings_path, '..\\rosetta.lib')
+        rosetta_lib = ' '.join( [ l for l in rosetta_libs] )
 
         #if (not os.path.isfile(pyd))   or  os.path.getmtime(pyd) < max( [os.path.getmtime( os.path.join(dir_name, f) ) for f in files] ):
 

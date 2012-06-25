@@ -232,7 +232,7 @@ dump_loophash_linkers(
 
 
 Real linker_count2score(Size count){
-	return 0.8*sqrt(count)+0.2*Real(count);
+	return 0.8*sqrt(double(count))+0.2*Real(double(count));
 }
 
 

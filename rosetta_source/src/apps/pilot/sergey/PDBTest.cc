@@ -58,8 +58,8 @@
 #include <utility/stream_util.hh>
 #include <basic/Tracer.hh>
 #include <basic/basic.hh>
-//#include <devel/init.hh>
-#include <devel/init.hh>
+#include <protocols/init/init.hh>
+#include <core/init.hh>
 #include <devel/init.hh>
 #include <core/types.hh>
 
@@ -160,8 +160,9 @@ int main( int argc, char * argv [] )
 	using namespace core;
 
 	//devel::init(argc, argv);
-	devel::init(argc, argv);
-    /*
+	//protocols::init::init(argc, argv);
+	core::init(argc, argv);
+
 	{
 		core::pose::Pose pose;
 		//core::import_pose::pose_from_pdb(pose, "src/python/bindings/test/data/test_in.pdb");
@@ -174,10 +175,10 @@ int main( int argc, char * argv [] )
 		//scorefxn(pose);
 		pose.energies().residue_total_energies(1);
 		T("Scoring done!") << "---------------------" << std::endl;
-    } */
+    }
     {
 		T("Testing pose_from_sequence...") << std::endl;
-		std::string sequence(40000, 'V');
+		std::string sequence(5000, 'V');
 		core::pose::Pose pose;
 		core::pose::make_pose_from_sequence(pose, sequence, "fa_standard");
 		T("Testing pose_from_sequence... Done!") << std::endl;

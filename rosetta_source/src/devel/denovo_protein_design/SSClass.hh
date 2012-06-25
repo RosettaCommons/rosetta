@@ -24,7 +24,7 @@
 
 #include <utility/vector1_bool.hh>
 #include <ostream>
-
+#include <functional>
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace devel {

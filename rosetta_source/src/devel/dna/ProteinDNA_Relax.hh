@@ -50,7 +50,7 @@ public:
 		Real const trans_mag_in,
 		Real const rot_mag_in
 	):
-		protocols::moves::Mover::Mover( "RB_Mover" ),
+		protocols::moves::Mover( "RB_Mover" ),
 		mm_( mm_in ),
 		trans_mag_( trans_mag_in ),
 		rot_mag_( rot_mag_in ),

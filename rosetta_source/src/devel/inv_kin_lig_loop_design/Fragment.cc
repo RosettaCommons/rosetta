@@ -13,7 +13,6 @@
 /// @author
 
 #include <climits>
-#include <cmath>
 #include <iostream>
 #include <fstream>
 #include <cstdlib> //required by GCC 4.3.2
@@ -22,6 +21,11 @@
 // #include <Util/Macros.hh>
 // #include <Util/Erg.hh>
 #include <devel/inv_kin_lig_loop_design/std_extra.hh>
+
+#ifdef WIN32
+	#define _USE_MATH_DEFINES
+#endif
+#include <cmath>
 
 
 #include <basic/database/open.hh>

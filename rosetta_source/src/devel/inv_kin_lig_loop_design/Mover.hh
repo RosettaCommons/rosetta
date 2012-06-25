@@ -15,6 +15,12 @@
 #ifndef DEVEL_INVKINLIGLOOPDESIGN_MOVER_HH
 #define DEVEL_INVKINLIGLOOPDESIGN_MOVER_HH
 
+#ifdef WIN32
+	#define _USE_MATH_DEFINES
+#endif
+#include <cmath>
+
+
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
 
 #include <iosfwd>
@@ -25,6 +31,7 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
+
 
 
 namespace devel {

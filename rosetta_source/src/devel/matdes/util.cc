@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //
-/// @file 
-/// @brief 
+/// @file
+/// @brief
 /// @author Neil King ( neilking@uw.edu )
 /// @author Javier Castellanos ( javiercv@uw.edu )
 /// @author Jacob Bale (balej@uw.edu)
@@ -36,6 +36,7 @@
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 
+#include <set>
 
 static basic::Tracer TR("devel.matdes.util");
 
@@ -44,12 +45,14 @@ namespace matdes {
 
 core::pack::task::PackerTaskOP
 make_interface_design_packertask(core::pose::Pose & pose) {
+	core::pack::task::PackerTaskOP res;
+	return res;
 }
 
 void
 add_native_bias_constraints(core::pose::Pose & pose, Real cst_weight, const std::set<Size>& design_pos) {
  	utility::vector1<core::scoring::constraints::ConstraintOP> favor_native_constraints;
-	for(std::set<Size>::iterator pos = design_pos.begin(); pos != design_pos.end(); ++pos) {
+	for(std::set<Size>::const_iterator pos = design_pos.begin(); pos != design_pos.end(); ++pos) {
 		core::scoring::constraints::ConstraintOP cst = new core::scoring::constraints::ResidueTypeConstraint(pose, *pos, cst_weight);
 		favor_native_constraints.push_back(cst);
 		cst->show(TR);
@@ -59,7 +62,7 @@ add_native_bias_constraints(core::pose::Pose & pose, Real cst_weight, const std:
 
 utility::vector1<Real>
 sidechain_sasa(Pose const & pose, Real probe_radius) {
-  using core::id::AtomID; 
+  using core::id::AtomID;
   utility::vector1<Real> rsd_sasa(pose.n_residue(),0.0);
   core::id::AtomID_Map<Real> atom_sasa;
   core::id::AtomID_Map<bool> atom_mask;
@@ -69,7 +72,7 @@ sidechain_sasa(Pose const & pose, Real probe_radius) {
     for(Size j = 1; j <= pose.residue(i).nheavyatoms(); j++) {
       atom_mask[AtomID(j,i)] = true;
     }
-  } 
+  }
   core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false, atom_mask );
   utility::vector1<Real> sc_sasa(pose.n_residue(),0.0);
   for(Size i = 1; i <= pose.n_residue(); i++) {
@@ -88,7 +91,7 @@ sidechain_sasa(Pose const & pose, Real probe_radius) {
 std::set<Size>
 pick_design_position(core::pose::Pose const & pose, Size nsub_bblock, Real contact_dist, Real bblock_dist,Real probe_radius) {
 	TR.Debug << "Picking design positions" << std::endl;
-	using namespace core::scoring;	
+	using namespace core::scoring;
 	using namespace core::pose;
 	using utility::vector1;
 	using core::conformation::symmetry::SymmetryInfoCOP;
@@ -104,8 +107,8 @@ pick_design_position(core::pose::Pose const & pose, Size nsub_bblock, Real conta
 	sf->score(p);
 	// get the accesible residues
 	Pose mono(p, 1, sym_info->get_nres_subunit());
-	vector1<Real> sc_sasa = sidechain_sasa(mono,probe_radius); 
-	
+	vector1<Real> sc_sasa = sidechain_sasa(mono,probe_radius);
+
 	// get the residues in chain A that make contacts within the building block
 	std::set<Size> intra_bblock_interface;
 	std::set<Size> intra_bblock_interface_clashes;
@@ -115,11 +118,11 @@ pick_design_position(core::pose::Pose const & pose, Size nsub_bblock, Real conta
 		for (Size jr=ir+1; jr<=sym_info->num_total_residues_without_pseudo(); jr++) {
 			TR.Debug << "res_i = " << ir << "\tres_j = " << jr << std::endl;
 			// skip if residues are in same building block
-   		if ( sym_info->subunit_index(jr) > nsub_bblock or sym_info->subunit_index(jr) == 1){
+   		if ( sym_info->subunit_index(jr) > nsub_bblock || sym_info->subunit_index(jr) == 1){
 					TR.Debug << "skipping residue " << jr << ", same building block as residue " << ir << std::endl;
 					continue;
 			}
-			// loop over the atoms in the residue 
+			// loop over the atoms in the residue
 			for (Size ia = 1; ia<=p.residue(ir).nheavyatoms(); ia++) {
 				bool residue_registered = false;
 				for (Size ja = 1; ja<=p.residue(jr).nheavyatoms(); ja++) {
@@ -163,7 +166,7 @@ pick_design_position(core::pose::Pose const & pose, Size nsub_bblock, Real conta
 			// skip residue jr if it is in the same building block
    		if ( sym_info->subunit_index(jr) <= nsub_bblock ) continue;
 			std::string atom_j = (p.residue(jr).name3() == "GLY") ? "CA" : "CB";
-			// Here we are filtering the residues that are in contact 
+			// Here we are filtering the residues that are in contact
 			if (p.residue(ir).xyz(atom_i).distance_squared(p.residue(jr).xyz(atom_j)) <= contact_dist_sq) {
 				TR.Debug << "residue " << ir << " in contact with residue " << jr << std::endl;
 				TR.Debug << "\tinterface = " <<  intra_bblock_interface.count(ir) << std::endl;

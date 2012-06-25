@@ -7,7 +7,11 @@
 #include <devel/simple_options/option.hh>
 // AUTO-REMOVED #include <stdio.h>
 // AUTO-REMOVED #include <stdlib.h>
-#include <pwd.h>
+
+#ifndef WIN32
+	#include <pwd.h>
+#endif
+
 #include <cstring>
 #include <iostream>
 #include <queue>
@@ -122,6 +126,7 @@ void nice_header (FILE *out,const char *fn)
 /* called by write_options()
  it produces a header file for the output-option file */
 {
+	#ifndef WIN32
 	const char *unk = "unknown";
 	time_t clock;
 	char   *user=NULL;
@@ -141,7 +146,7 @@ void nice_header (FILE *out,const char *fn)
 	#ifndef NATCL
 	gh  = gethostname(buf,255);
 	#endif
-	
+
 	user= pw->pw_name;
 
 	fprintf (out,"%c\tBy user: %s (%d)\n",COMMENTSIGN,
@@ -151,6 +156,7 @@ void nice_header (FILE *out,const char *fn)
 
 	fprintf (out,"%c\tAt date: %s",COMMENTSIGN,ctime(&clock));
 	fprintf (out,"%c\n",COMMENTSIGN);
+	#endif
 }
 
 void OptionBackend::write_options( std::ostream& out ) {

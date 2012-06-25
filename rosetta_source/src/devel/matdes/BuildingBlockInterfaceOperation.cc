@@ -46,7 +46,7 @@ BuildingBlockInterfaceOperationCreator::create_task_operation() const
 }
 
 
-BuildingBlockInterfaceOperation::BuildingBlockInterfaceOperation( core::Size nsub_bblock /* = 1 */, 
+BuildingBlockInterfaceOperation::BuildingBlockInterfaceOperation( core::Size nsub_bblock /* = 1 */,
 		core::Real contact_dist /* = 10*/, core::Real bblock_dist /*= 5 */, core::Real fa_rep_cut /* = 3.0 */ ):
 	nsub_bblock_(nsub_bblock),
 	contact_dist_(contact_dist),
@@ -81,11 +81,11 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
     for (Size jr=ir+1; jr<=sym_info->num_total_residues_without_pseudo(); jr++) {
       TR.Debug << "res_i = " << ir << "\tres_j = " << jr << std::endl;
       // skip if residues are in same building block
-      if ( sym_info->subunit_index(jr) > nsub_bblock_ or sym_info->subunit_index(jr) == 1){
+      if ( sym_info->subunit_index(jr) > nsub_bblock_ || sym_info->subunit_index(jr) == 1){
           TR.Debug << "skipping residue " << jr << ", same building block as residue " << ir << std::endl;
           continue;
       }
-      // loop over the atoms in the residue 
+      // loop over the atoms in the residue
       for (Size ia = 1; ia<=pose.residue(ir).nheavyatoms(); ia++) {
         bool residue_registered = false;
         for (Size ja = 1; ja<=pose.residue(jr).nheavyatoms(); ja++) {
@@ -122,7 +122,7 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
       // skip residue jr if it is in the same building block
       if ( sym_info->subunit_index(jr) <= nsub_bblock_ ) continue;
       std::string atom_j = (pose.residue(jr).name3() == "GLY") ? "CA" : "CB";
-      // Here we are filtering the residues that are in contact 
+      // Here we are filtering the residues that are in contact
       if (pose.residue(ir).xyz(atom_i).distance_squared(pose.residue(jr).xyz(atom_j)) <= contact_dist_sq) {
         TR.Debug << "residue " << ir << " in contact with residue " << jr << std::endl;
         TR.Debug << "\tinterface = " <<  intra_bblock_interface.count(ir) << std::endl;
@@ -157,7 +157,7 @@ BuildingBlockInterfaceOperation::parse_tag( TagPtr tag )
 	bblock_dist_ = tag->getOption<core::Real>("bblock_dist", 5.0);
 	fa_rep_cut_ = tag->getOption<core::Real>("fa_rep_cut", 3.0);
 
-	
+
 }
 
 } //namespace matdes
