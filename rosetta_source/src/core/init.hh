@@ -33,6 +33,10 @@ namespace core {
 
 	/// @brief Initialize random generator systems (and send debug io to tracer with seed/mode info).
 	void init_random_generators(int const start_seed, numeric::random::RND_RunType run_type, std::string const & RGtype);
+
+	/// @brief Check for deprecated flags and utility exit if any deprecated flags are detected
+	void check_deprecated_flags();
+
 } // namespace core
 
 #endif // INCLUDED_core_init_HH

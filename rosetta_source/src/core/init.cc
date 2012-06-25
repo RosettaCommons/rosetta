@@ -216,6 +216,10 @@ using basic::Warning;
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/OptionKeys.hh>
+
+//option key includes for deprecated pdbs
+#include <basic/options/keys/LoopModel.OptionKeys.gen.hh>
 
 #include <core/pack/task/operation/ResFilterFactory.hh>
 #include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
@@ -549,6 +553,8 @@ void init(int argc, char * argv [])
 			basic::options::option[ in::path::path ]());
 	}
 
+	//Check for deprecated flags specified by the user and output error messages if necessary
+	check_deprecated_flags();
 
 	TR << "command:";
 	for ( int i=0; i< argc; ++i ) {
@@ -809,6 +815,33 @@ void init_random_generators(int const start_seed, RND_RunType run_type, std::str
 	RandomGenerator::initializeRandomGenerators(start_seed, run_type, RGtype);
 }
 
+
+/// @detail If you deprecate a long standing flag, add a line to this function to describe what the deprecated flag has been replaced with.
+/// If the user specifies one of these flags, Rosetta will utility exit with a helpful message directing the user towards the new functionality
+void check_deprecated_flags()
+{
+	using namespace basic::options::OptionKeys;
+
+	utility::vector1<std::string> error_messages;
+
+	//Add deprecated flags and corresponding helpful error messages here.  This is the only thing you need to do to deprecate a flag
+	if(basic::options::option[LoopModel::input_pdb].user())
+		error_messages.push_back("-LoopModel:input_pdb is no longer used.  Please use -s to input pdb files.");
+
+
+	if(error_messages.size() > 0)
+	{
+		utility::vector1<std::string>::const_iterator error_it;
+		for(error_it = error_messages.begin();error_it != error_messages.end();++error_it)
+		{
+			TR.Fatal << "ERROR: You have specified one or more deprecated flags:" <<std::endl;
+			TR.Fatal << *error_it <<std::endl;
+		}
+		std::exit(1);
+
+	}
+
+}
 
 } // namespace core
 
