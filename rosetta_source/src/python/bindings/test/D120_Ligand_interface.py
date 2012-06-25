@@ -25,9 +25,9 @@ Instructions:
 1) ensure that your PDB file is in the current directory
 2) run the script:
     from commandline                        >python D120_Ligand_interface.py
-    
+
     from within python/ipython              [1]: run D120_Ligand_interface.py
-    
+
 Author: Evan H. Baugh
     based on an original script by Sid Chaudhury
     revised and motivated by Robert Schleif
@@ -38,7 +38,7 @@ Simplified special constant seed initialization ~ Labonte
 References:
     J. J. Gray, "High-resolution protein-protein docking," Curr. Opinions in
         Struct. Bio. 16 (2) 183-193 (2006).
-        
+
 """
 
 ################################################################################
@@ -69,7 +69,7 @@ The method sample_ligand_interface:
         c. output the decoy structure
             -to PyMOL using the PyMOL_Observer.pymol.apply
             -to a PDB file using the PyJobDistributor.output_decoy
-            
+
 """
 
 import optparse    # for sorting options
@@ -169,7 +169,7 @@ def sample_ligand_interface(pdb_filename, partners,
     jd = PyJobDistributor(job_output, jobs, scorefxn)
 
     # 7. setup a PyMOL_Observer (optional)
-    # the PyMOL_Observer object owns a PyMOL_Mover and monitors pose objects for 
+    # the PyMOL_Observer object owns a PyMOL_Mover and monitors pose objects for
     #    structural changes, when changes are detected the new structure is
     #    sent to PyMOL
     # fortunately, this allows investigation of full protocols since
@@ -193,7 +193,7 @@ def sample_ligand_interface(pdb_filename, partners,
         # -change the pose name, for pretty output to PyMOL
         counter += 1
         test_pose.pdb_info().name(job_output + '_' + str(counter))
-        
+
         # b. perform docking
         docking.apply(test_pose)
 
@@ -220,7 +220,7 @@ def generate_nonstandard_residue_set(params_list):
         Residue
         ResidueType
         ResidueTypeSet
-        
+
     """
     res_set = ChemicalManager.get_instance().nonconst_residue_type_set(
         'fa_standard')
@@ -232,7 +232,7 @@ def generate_nonstandard_residue_set(params_list):
     #    of read_files
     elements = ChemicalManager.get_instance().element_set('fa_standard')
     res_set.read_files(params_list, atoms, elements, mm_atoms, orbitals)
-    
+
     return res_set
 
 ################################################################################
@@ -312,8 +312,9 @@ ligand_params = options.ligand_params.split(',')
 jobs = int(options.jobs)
 job_output = options.job_output
 
-sample_ligand_interface(pdb_filename, partners, ligand_params,
+'''sample_ligand_interface(pdb_filename, partners, ligand_params,
     jobs, job_output)
+'''
 
 ################################################################################
 # ALTERNATE SCENARIOS

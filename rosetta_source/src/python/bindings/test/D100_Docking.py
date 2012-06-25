@@ -18,9 +18,9 @@ Instructions:
 1) ensure that your PDB file is in the current directory
 2) run the script:
     from commandline                        >python D100_Docking.py
-    
+
     from within python/ipython              [1]: run D100_Docking.py
-    
+
 Author: Evan H. Baugh
     based on an original script by Sid Chaudhury
     revised and motivated by Robert Schleif
@@ -31,7 +31,7 @@ Simplified special constant seed initialization ~ Labonte
 References:
     J. J. Gray, "High-resolution protein-protein docking," Curr. Opinions in
         Struct. Bio. 16 (2) 183-193 (2006).
-        
+
 """
 
 ################################################################################
@@ -80,12 +80,15 @@ The method sample_docking:
         d. output the decoy structure
             -to PyMOL using the PyMOL_Observer.pymol
             -to a PDB file using the PyJobDistributor.output_decoy
-            
+
 """
 
 import optparse    # for sorting options
 
 from rosetta import *
+from rosetta.protocols.rigid import *
+
+
 init(extra_options = "-constant_seed")
 # normally, init() works fine
 # for this sample script, we want to ease comparison by making sure all random
@@ -110,7 +113,7 @@ def sample_docking(pdb_filename, partners,
         Angstroms and  <rotation>  degrees.  <jobs>  trajectories are performed
         with output structures named  <job_output>_(job#).pdb.
         structures are exported to a PyMOL instance.
-        
+
     """
     # 1. creates a pose from the desired PDB file
     pose = Pose()
@@ -258,7 +261,7 @@ def sample_docking(pdb_filename, partners,
         # -change the pose name, for pretty output to PyMOL
         counter += 1
         test_pose.pdb_info().name(job_output + '_' + str(counter))
-        
+
         # b. perturb the structure for this trajectory
         perturb.apply(test_pose)
 

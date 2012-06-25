@@ -19,7 +19,7 @@ Instructions:
 1) ensure that your PDB file and fragment file are in you current directory
 2) run the script:
     from commandline                        >python D080_Loop_modeling.py
-    
+
     from within python/ipython              [1]: run D080_Loop_modeling.py
 
 Author: Evan H. Baugh
@@ -34,7 +34,7 @@ References:
         alforithm for protein loop closure," Protein Sci. 12, 963-972 (2003).
     C. Wang, P. Bradley & D. Baker, "Protein-protein docking with backbone
         flexibility," J. Mol. Biol. 373, 503-519 (2007).
-        
+
 """
 
 # WARNING
@@ -109,7 +109,7 @@ The method sample_single_loop_modeling:
         f.  output the decoy structure
                 -to a PDB file using the PyJobDistributor
                 -to PyMOL using the PyMOL_Mover
-                
+
 """
 
 import optparse    # for option sorting
@@ -149,7 +149,7 @@ def sample_single_loop_modeling(pdb_filename,
         <outer_cycles>  rounds and  <inner_cycles>  steps per round decrementing
         "temperature" from  <init_temp>  to  <final_temp>  geometrically.
         Output structures are named  <job_output>_(job#).pdb.
-        
+
     """
     # 1. create a pose from the desired PDB file
     p = Pose()
@@ -277,7 +277,7 @@ def sample_single_loop_modeling(pdb_filename,
     # 14. create a PyMOL_Mover for exporting structures to PyMOL
     pymov = PyMOL_Mover()
     # uncomment the line below to load structures into successive states
-    #pymov.keep_history(True)    
+    #pymov.keep_history(True)
     scorefxn_high(starting_p)    # for exporting the scores
     pymov.apply(starting_p)
     pymov.send_energy(starting_p)
@@ -359,7 +359,7 @@ def sample_single_loop_modeling(pdb_filename,
         pack.apply(p)
         pymov.apply(p)
         p.pdb_info().name(job_output + '_' + str( counter ) + '_fa')
-        
+
         # high-resolution refinement:
         #### this section may change if you intend to use multiple loops or
         ####    alter the sampling method for high resolution refinement
@@ -426,7 +426,7 @@ will likely discard the proposed structure if it increases the score).
 parser = optparse.OptionParser()
 parser.add_option('--pdb_filename', dest = 'pdb_filename',
     default = 'test/data/demo/test_in.pdb',    # default example PDB
-    help = 'the PDB file containing the loop to remodel')    
+    help = 'the PDB file containing the loop to remodel')
 # the loop options
 parser.add_option('--loop_begin', dest = 'loop_begin',
     default = '15',    # specific to each inquiry, in this case test_in.pdb
@@ -516,7 +516,7 @@ jobs = int(options.jobs)
 job_output = options.job_output
 
 # perform the primary method of this script
-sample_single_loop_modeling(pdb_filename,
+'''sample_single_loop_modeling(pdb_filename,
     loop_begin, loop_end, loop_cutpoint,
     frag_filename, frag_length ,
     outer_cycles_low, inner_cycles_low,
@@ -524,6 +524,7 @@ sample_single_loop_modeling(pdb_filename,
     outer_cycles_high, inner_cycles_high,
     init_temp_high, final_temp_high,
     jobs, job_output)
+'''
 
 ################################################################################
 # ALTERNATE SCENARIOS
@@ -540,7 +541,7 @@ wish to model. New fragment files are obtained from the Robetta Server:
     http://robetta.bakerlab.org/fragmentsubmit.jsp
     and submit the protein sequence (ignore the Optional section unless
     you are familiar with Robetta)
-    
+
 """
 
 #################
@@ -620,7 +621,7 @@ The fullatom loop optimization algorithm, LoopMover_Refine_CCD uses its own
 ScoreFunction and is useful for loop optimization. This refinement is
 analogous to relaxation (high resolution refinement) in other Rosetta
 applications and is a combination of small torsion moves and sidechain
-packing. Although expensive, this step (or another high resolution step) 
+packing. Although expensive, this step (or another high resolution step)
 improves results significantly. Try removing this refinement and
 observe the difference in loop predictions.
 
@@ -684,7 +685,7 @@ for example:
         ft.add_jump(8, 32, 20)
         ft.add_jump(48, 62, 55)
         pose.fold_tree(ft)
-        
+
 """
 
 
