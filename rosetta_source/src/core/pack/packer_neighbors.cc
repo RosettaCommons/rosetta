@@ -20,7 +20,7 @@
 
 // Project Headers
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -74,7 +74,8 @@ create_packer_graph(
 	//GraphOP g = new Graph( pose.total_residue() );
 	GraphOP g = new Graph( total_nodes );
 
-	if ( ! task->design_any() ) {
+	if ( ! task->design_any() && ! pose.conformation().structure_moved() ) {
+	//if ( false ) {
 		g->copy_connectivity( pose.energies().energy_graph() );
 	} else {
 
@@ -104,7 +105,10 @@ create_packer_graph(
 
 				if ( jj_rad + ii_itxn_rad > 0 &&
 						iter->data().dsq() < ( jj_rad + ii_itxn_rad )*( jj_rad + ii_itxn_rad ) ) {
+					//std::cout << "packer_neighbors adding edge " << ii << " " << jj << std::endl;
 					g->add_edge( ii, jj );
+				} else {
+					//std::cout << "packer_neighbors NOT adding edge " << ii << " " << jj << std::endl;
 				}
 			}
 		}
