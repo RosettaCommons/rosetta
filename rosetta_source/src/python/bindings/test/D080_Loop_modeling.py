@@ -516,7 +516,7 @@ jobs = int(options.jobs)
 job_output = options.job_output
 
 # perform the primary method of this script
-'''sample_single_loop_modeling(pdb_filename,
+sample_single_loop_modeling(pdb_filename,
     loop_begin, loop_end, loop_cutpoint,
     frag_filename, frag_length ,
     outer_cycles_low, inner_cycles_low,
@@ -524,7 +524,7 @@ job_output = options.job_output
     outer_cycles_high, inner_cycles_high,
     init_temp_high, final_temp_high,
     jobs, job_output)
-'''
+
 
 ################################################################################
 # ALTERNATE SCENARIOS
