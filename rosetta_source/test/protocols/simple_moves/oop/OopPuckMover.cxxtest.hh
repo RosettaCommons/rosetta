@@ -37,6 +37,8 @@
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/database/open.hh>
 
+#include <numeric/xyz.functions.hh>
+
 //Auto Headers
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -54,8 +56,8 @@ using namespace scoring;
 
 ///////////////////////////////////////////////////////////////////////////
 /// @name OopPuckMoverTest
-/// @brief: test conformation switches from puck plus and puck minus 
-/// @detailed 
+/// @brief: test conformation switches from puck plus and puck minus
+/// @detailed
 ///
 /// @author Kevin Drew October 17, 2011
 ///////////////////////////////////////////////////////////////////////////
