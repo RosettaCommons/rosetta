@@ -12,7 +12,7 @@ CCD loop closure in a low resolution (centroid) simulated annealing Monte Carlo
 protocol to generate a closed loop. This loop is refined using
 high resolution (fullatom) small/shear moves to produce low-energy
 loop conformations. This script requires the input PDB file,
-"test_in.pdb", and the corresponding 3-residue fragment file, "test_in.frag3".
+"test_in.pdb", and the corresponding 3-residue fragment file, "test3_fragments".
 
 Instructions:
 
@@ -439,7 +439,7 @@ parser.add_option('--loop_cutpoint' , dest = 'loop_cutpoint',
     help = 'the cutpoint residue for the loop region')
 # the fragment file options
 parser.add_option('--frag_filename', dest = 'frag_filename',
-    default = 'test/data/demo/test_in.frag3',    # specific to each PDB (test_in.pdb here)
+    default = 'test/data/demo/test3_fragments',    # specific to each PDB (test_in.pdb here)
     help = 'the file containing fragments corresponding to the PDB')
 parser.add_option('--frag_length', dest = 'frag_length',
     default = '3',    # must match the frag_filename
