@@ -370,16 +370,16 @@ python molfile_to_params.py <MDL filename> -n <ResidueType name>
             -if using a new ligand/ResidueType:
                 -place the new .params file into (in PyRosetta main directory)
 
-/minirosetta_database/chemical/residue_type_sets/fa_standard/residue_types
+/rosetta_database/chemical/residue_type_sets/fa_standard/residue_types
 
                 -add the path to the new .params file to the file
 
-/minirosetta_database/chemical/residue_type_sets/fa_standard/residue_types.txt
+/rosetta_database/chemical/residue_type_sets/fa_standard/residue_types.txt
 
             -if the ResidueType is present, but "turned off"
                 -uncomment (or add) the path to the .params file in
 
-/minirosetta_database/chemical/residue_type_sets/fa_standard/residue_types.txt
+/rosetta_database/chemical/residue_type_sets/fa_standard/residue_types.txt
 
 
 === Obtaining Ligand Data Files ===
