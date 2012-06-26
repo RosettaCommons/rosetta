@@ -481,10 +481,12 @@ Etable::make_pairenergy_table()
 					fasol1, fasol2, dfasol, dfasol1 );
 			}
 
+		  if ( !option[ score::fa_Hatr ]) {
 			zero_hydrogen_and_water_ljatr_one_pair(
 				atype1, atype2,
 				ljrep, ljatr, dljatr,
 				fasol1, fasol2, dfasol, dfasol1 );
+			}
 
 			if ( ! slim ) {
 				assign_parameters_to_full_etables(
