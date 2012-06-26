@@ -23,7 +23,9 @@ in older and newer versions of PyRosetta.
 Instructions:
 
 1) ensure that your PDB file is in the current directory
-2) run the script:
+2) obtain ATP.params file from /test/data/demo/ 
+3) ***uncomment lines 321-322***
+4) run the script:
     from commandline                        >python D120_Ligand_interface.py
 
     from within python/ipython              [1]: run D120_Ligand_interface.py
@@ -311,6 +313,10 @@ ligand_params = options.ligand_params.split(',')
 # JobDistributor options
 jobs = int(options.jobs)
 job_output = options.job_output
+
+# uncomment the command line below to run this demo. Make sure you have already
+#      placed the ATP.params file into (in PyRosetta main directory)
+#/rosetta_database/chemical/residue_type_sets/fa_standard/residue_types
 
 '''sample_ligand_interface(pdb_filename, partners, ligand_params,
     jobs, job_output)
