@@ -116,7 +116,8 @@ FullatomCustomPairDistanceEnergy::FullatomCustomPairDistanceEnergy() :
 
 FullatomCustomPairDistanceEnergy::FullatomCustomPairDistanceEnergy( FullatomCustomPairDistanceEnergy const & src ):
 	parent( src ),
-	pair_and_func_map_( src.pair_and_func_map_ )
+	pair_and_func_map_( src.pair_and_func_map_ ),
+	max_dis_( src.max_dis_ )
 {
 }
 

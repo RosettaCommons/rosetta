@@ -47,7 +47,7 @@ public:
 	virtual ~EnergyNode();
 	virtual void copy_from( parent const * source );
 
-	virtual void print();
+	virtual void print() const;
 	virtual Size count_static_memory() const;
 	virtual Size count_dynamic_memory() const;
 

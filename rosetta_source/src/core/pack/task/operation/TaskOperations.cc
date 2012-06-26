@@ -604,7 +604,7 @@ TaskOperationOP ReadResfileAndObeyLengthEvents::clone() const
 void
 ReadResfileAndObeyLengthEvents::apply(
 	pose::Pose const & pose,
-	PackerTask & ptask )
+	PackerTask & ptask ) const
 {
 
 	//1. get the length change that the pose was exposed to

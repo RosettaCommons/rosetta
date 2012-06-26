@@ -47,7 +47,7 @@ MinimizationNode::MinimizationNode( Graph * owner, Size index ) :
 MinimizationNode::~MinimizationNode() {}
 
 
-void MinimizationNode::print()
+void MinimizationNode::print() const
 {
 	std::cout << "MinimizationNode::print() deferring to parent::print()" << std::endl;
 	parent::print();

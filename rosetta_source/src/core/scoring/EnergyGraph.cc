@@ -37,7 +37,7 @@ EnergyNode::EnergyNode( Graph * owner, Size index ) :
 EnergyNode::~EnergyNode() {}
 
 
-void EnergyNode::print()
+void EnergyNode::print() const
 {
 	std::cout << "EnergyNode::print() deferring to parent::print()" << std::endl;
 	parent::print();

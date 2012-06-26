@@ -311,7 +311,7 @@ public:
 	virtual TaskOperationOP clone() const;
 
 	void
-	apply( pose::Pose const & pose, PackerTask & ptask );
+	apply( pose::Pose const & pose, PackerTask & ptask ) const;
 
 	virtual void parse_tag( TagPtr );
 
