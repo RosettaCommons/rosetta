@@ -82,6 +82,7 @@
 #include <basic/Tracer.hh>
 //#include <utility/exit.hh>
 #include <utility/file/FileName.hh>
+#include <utility/string_util.hh>
 
 // C++ Headers
 #include <sstream>
@@ -336,7 +337,7 @@ namespace analysis{
         }
         //if multi chains with wrong constructor, work but print a warming
         else{
-            TR<< "WARNING: more than 2 chains present w/o using the right constrctor!  Values might be over the wrong jump." << std::endl;
+            TR<< "WARNING: more than 2 chains present w/o using the right constructor!  Values might be over the wrong jump." << std::endl;
             //sets up the pose for calculations
             set_pose_info( pose );
             //register calculators here if need be
@@ -1417,7 +1418,7 @@ InterfaceAnalyzerMover::compute_interface_sc( core::Size &, core::pose::Pose con
       DataMap & datamap,
       Filters_map const &,
       Movers_map const &,
-      Pose const &
+      Pose const & pose
   )
   {
     if ( tag->getName() != "InterfaceAnalyzerMover" ) {
@@ -1431,10 +1432,40 @@ InterfaceAnalyzerMover::compute_interface_sc( core::Size &, core::pose::Pose con
     set_use_resfile(tag->getOption<bool>("resfile", false ) );
     set_compute_packstat(tag->getOption<bool> ("packstat", false));
     set_pack_input(tag->getOption<bool> ("pack_input", false));
-    set_interface_jump(tag->getOption("jump", 1));
     set_tracer(tag->getOption("tracer", false));
     set_use_jobname(tag->getOption("use_jobname", false));
 
+    if (tag->hasOption("jump") && tag->hasOption("fixedchains"))
+    {
+    	utility_exit_with_message("Jump and fixedchains are mutually exclusive. Use either jump or fixedchains");
+    }
+    if (tag->hasOption("fixedchains"))
+    {
+    	set_interface_jump(0);
+    	std::string chains_string = tag->getOption<std::string>("fixedchains");
+		utility::vector1<std::string> fixed_chains_string = utility::string_split(chains_string,',');
+		//parse the fixed chains to figure out pose chain nums
+		//std::set< int > fixed_chains_ ; //This is a set of the CHAIN IDs, not residue ids
+		TR << "Fixed chains are: " ;
+		for(core::Size j = 1; j <= fixed_chains_string.size(); ++j){
+			char this_chain (fixed_chains_string[ j ][0]);
+			for (core::Size i = 1; i<=pose.total_residue(); ++i){
+				if (pose.pdb_info()->chain( i ) == this_chain){
+					fixed_chains_.insert( pose.chain(i) );
+					break; //once we know something about the chain we can skip - we just need the chain id
+				}
+			}
+			TR << this_chain << ", ";
+		}
+		TR << "these will be moved together." << std::endl;
+
+		multichain_constructor_ = true;
+		//fixed_chains_(fixed_chains)
+    }
+    else
+    {
+    	set_interface_jump(tag->getOption("jump", 1));
+    }
     //      tracer_(false), //output to tracer
     //      calcs_ready_(false), //calculators are not ready
     //      use_jobname_(false), //use the pose name

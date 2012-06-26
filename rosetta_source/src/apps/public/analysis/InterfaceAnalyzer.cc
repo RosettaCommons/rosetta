@@ -100,13 +100,13 @@ void IAMover::assign_IA_mover(core::pose::Pose & pose){
 
 		core::Size const interface_jump = basic::options::option[ jumpnum ].value();
 		IAM_ = new protocols::analysis::InterfaceAnalyzerMover(
-																														 interface_jump,
-																														 tracer,
-																														 scorefxn_,
-																														 comp_packstat,
-																														 pack_in,
-																														 pack_sep,
-																														 jobname
+			 interface_jump,
+			 tracer,
+			 scorefxn_,
+			 comp_packstat,
+			 pack_in,
+			 pack_sep,
+			 jobname
 		);
 	}
 
@@ -129,13 +129,13 @@ void IAMover::assign_IA_mover(core::pose::Pose & pose){
     TR << "these will be moved together." << std::endl;
 
     IAM_ = new protocols::analysis::InterfaceAnalyzerMover(
-																														 fixed_chains,
-																														 tracer,
-																														 scorefxn_,
-																														 comp_packstat,
-																														 pack_in,
-																														 pack_sep,
-																														 jobname
+		 fixed_chains,
+		 tracer,
+		 scorefxn_,
+		 comp_packstat,
+		 pack_in,
+		 pack_sep,
+		 jobname
 		);
   }
 
