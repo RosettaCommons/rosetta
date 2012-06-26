@@ -14,68 +14,43 @@
 // libRosetta headers
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/frag_picker/VallChunk.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/VallProvider.hh>
 
 #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <boost/cstdint.hpp>
-// AUTO-REMOVED #include <boost/unordered_map.hpp>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/RT.hh>
 #include <basic/options/option.hh>
 #include <core/import_pose/pose_stream/util.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/rms_util.hh>
 
 #include <devel/init.hh>
-// AUTO-REMOVED #include <numeric/HomogeneousTransform.hh>
-// AUTO-REMOVED #include <protocols/loops/Loop.hh>
 #include <protocols/relax/FastRelax.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 #include <protocols/match/Hit.fwd.hh>
-// AUTO-REMOVED #include <protocols/match/Hit.hh>
-// AUTO-REMOVED #include <protocols/match/SixDHasher.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/topology_broker/TopologyBroker.hh>
-// AUTO-REMOVED #include <protocols/topology_broker/util.hh>
-// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/fixedsizearray1.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
-// AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 
+#include <protocols/evaluation/EvaluatorFactory.hh>
+#include <protocols/evaluation/PoseEvaluator.hh>
+
 // C++ headers
 //#include <cstdlib>
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
 
 // option key includes
-// AUTO-REMOVED #include <basic/options/keys/broker.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/mike.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/batch_relax.OptionKeys.gen.hh>
 
@@ -86,34 +61,24 @@
 
 static basic::Tracer TR("main");
 
-using namespace protocols::moves;
-using namespace core::scoring;
-using namespace core;
-using namespace core::pose;
-using namespace conformation;
-using namespace kinematics;
-using namespace protocols::match;
-using namespace protocols::frag_picker;
-using core::io::silent::SilentStructFactory;
-using core::io::silent::SilentStructOP;
-
-
-
-
 int
 main( int argc, char * argv [] )
 {
+ 	using namespace core;
  	using namespace protocols;
  	using namespace protocols::jd2;
  	using namespace basic::options;
  	using namespace basic::options::OptionKeys;
- 	using namespace core;
  	using io::silent::SilentStructFactory;
  	using io::silent::SilentStructOP;
 
 
  	// initialize core
  	devel::init(argc, argv);
+ 	
+  evaluation::PoseEvaluatorsOP evaluators_( new protocols::evaluation::PoseEvaluators() );
+  evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluators_);
+
 
  	core::Size nstruct = option[ OptionKeys::out::nstruct ];
  	core::Size batch_size = option[ OptionKeys::batch_relax::batch_size ];
@@ -122,11 +87,8 @@ main( int argc, char * argv [] )
 
  	io::silent::SilentFileData sfd;
  	std::string silent_file_ = option[ OptionKeys::out::file::silent ]();
- 	core::pose::PoseOP native_pose;
- 	if( option[ in::file::native ].user() ){
- 		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() );
- 	}
 
+  core::Size struct_count = 0;
  	while( input.has_another_pose() )
  	{
  		// make a list of simple pointers. This should be safe since the input_structs will all remain in scope.
@@ -167,21 +129,25 @@ main( int argc, char * argv [] )
 
  			protocols::relax::FastRelax relax( scorefxn,  option[ OptionKeys::relax::sequence_file ]() );
  			TR << "BATCHSIZE: " <<  relax_structs.size() << std::endl;
-			relax.batch_apply( relax_structs );
-
+			long starttime = time(NULL);
+      relax.batch_apply( relax_structs );
+      long endtime = time(NULL);
+      TR << "TIME: " << endtime - starttime << " seconds" << std::endl;
+      
  			// Now save the resulting decoys
 
  			for( std::vector < SilentStructOP >::const_iterator it = relax_structs.begin();
  					it != relax_structs.end();
  					++ it )
  			{
- 				if( native_pose ){
+ 				if( evaluators_->size()){
  					core::pose::Pose cpose;
  					input.fill_pose( cpose, *rsd_set );
- 					core::Real rms = scoring::CA_rmsd( *native_pose, cpose );
- 					(*it)->add_energy( "rms", rms, 1.0 );
+          evaluators_->apply( cpose, "tag" , *(*it) );
  				}
- 				sfd.write_silent_struct( *(*it), silent_file_ );
+ 				
+
+        sfd.write_silent_struct( *(*it), silent_file_ );
  			}
  		} // nstruct for
  	} // while
