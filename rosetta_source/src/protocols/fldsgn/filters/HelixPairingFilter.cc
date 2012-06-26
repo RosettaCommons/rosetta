@@ -295,8 +295,8 @@ HelixPairingFilter::parse_my_tag(
 	output_id_ = tag->getOption<Size>( "output_id", 1 );
 	output_type_ = tag->getOption<String>( "output_type", "dist" );
 
-	if( output_type_ != "dist" && output_type_ != "cross_angle" && output_type_ != "align_angle" ) {
-		TR << "Invalid type for output_type, choose among dist or cross_angleor align_angle. " << std::endl;
+	if( output_type_ != "dist" && output_type_ != "cross" && output_type_ != "align" ) {
+		TR << "Invalid type for output_type, choose dist, cross or align. " << std::endl;
 	} else {
 		TR << "HelixPairing " << hpairset_->helix_pairing( output_id_ ) << ", "
 			 << output_type_ << " is used for output value. " << std::endl;
