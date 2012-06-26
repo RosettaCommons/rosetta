@@ -90,6 +90,8 @@ namespace in { namespace file { StringOptionKey const silent_struct_type( "in:fi
 namespace in { namespace file { BooleanOptionKey const silent_read_through_errors( "in:file:silent_read_through_errors" );  } }
 namespace in { namespace file { StringOptionKey const silent_score_prefix( "in:file:silent_score_prefix" );  } }
 namespace in { namespace file { IntegerOptionKey const silent_select_random( "in:file:silent_select_random" );  } }
+namespace in { namespace file { IntegerOptionKey const silent_select_range_start( "in:file:silent_select_range_start" );  } }
+namespace in { namespace file { IntegerOptionKey const silent_select_range_end( "in:file:silent_select_range_end" );  } }
 namespace in { namespace file { BooleanOptionKey const skip_failed_simulations( "in:file:skip_failed_simulations" );  } }
 namespace in { namespace file { StringVectorOptionKey const silent_scores_wanted( "in:file:silent_scores_wanted" );  } }
 namespace in { namespace file { FileVectorOptionKey const fasta( "in:file:fasta" );  } }
@@ -613,4 +615,3 @@ namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
 namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constraint_skip_rate" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }
-namespace fold_cst { BooleanOptionKey const keep_skipped_csts( "fold_cst:keep_skipped_csts" );  }

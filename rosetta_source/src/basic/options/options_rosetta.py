@@ -191,7 +191,7 @@ Options = Option_Group( '',
 			),
 			Option( 'lazy_silent', 'Boolean', default = 'false', desc = 'Activate LazySilentFileJobInputter' ),
 			Option( 'silent', 'FileVector', desc = 'silent input filename(s)'),
-			Option( 'atom_tree_diff', 'FileVector', desc= 'atom_tree_diff input filename(s)'),
+      Option( 'atom_tree_diff', 'FileVector', desc= 'atom_tree_diff input filename(s)'),
 			Option( 'zip', 'String', desc = 'zipped input file, used for BOINC database'),
 			Option( 'boinc_wu_zip', 'FileVector', desc = 'zipped input file with files for a specific BOINC workunit'),
 
@@ -220,6 +220,9 @@ Options = Option_Group( '',
 				desc='Select a random subset of this number of decoys from every silent-file read',
 				default = '0'
 			),
+			Option( 'silent_select_range_start', 'Integer', desc='Select a ranged subset of decoys from every silent-file read. start at this decoy.', default = '0'),
+			Option( 'silent_select_range_end', 'Integer', desc='Select a ranged subset of decoys from every silent-file read. start at this decoy.', default = '-1'),
+
 		  Option( 'skip_failed_simulations', 'Boolean', default = 'false', desc = 'Ignore failed simulations (prefixed by W_) during silent file input. Existing behavior is preserved by default.'),
 			Option(
 				'silent_scores_wanted', 'StringVector',

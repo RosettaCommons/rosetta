@@ -95,6 +95,8 @@ namespace in { namespace file { extern StringOptionKey const silent_struct_type;
 namespace in { namespace file { extern BooleanOptionKey const silent_read_through_errors; } }
 namespace in { namespace file { extern StringOptionKey const silent_score_prefix; } }
 namespace in { namespace file { extern IntegerOptionKey const silent_select_random; } }
+namespace in { namespace file { extern IntegerOptionKey const silent_select_range_start; } }
+namespace in { namespace file { extern IntegerOptionKey const silent_select_range_end; } }
 namespace in { namespace file { extern BooleanOptionKey const skip_failed_simulations; } }
 namespace in { namespace file { extern StringVectorOptionKey const silent_scores_wanted; } }
 namespace in { namespace file { extern FileVectorOptionKey const fasta; } }

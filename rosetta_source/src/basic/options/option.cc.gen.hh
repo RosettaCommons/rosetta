@@ -95,6 +95,8 @@ option.add( basic::options::OptionKeys::in::file::silent_struct_type, "Type of S
 option.add( basic::options::OptionKeys::in::file::silent_read_through_errors, "will ignore decoys with errors and continue reading" ).def(false);
 option.add( basic::options::OptionKeys::in::file::silent_score_prefix, "Prefix that is appended to all scores read in from a silent-file" ).def("");
 option.add( basic::options::OptionKeys::in::file::silent_select_random, "Select a random subset of this number of decoys from every silent-file read" ).def(0);
+option.add( basic::options::OptionKeys::in::file::silent_select_range_start, "Select a ranged subset of decoys from every silent-file read. start at this decoy." ).def(0);
+option.add( basic::options::OptionKeys::in::file::silent_select_range_end, "Select a ranged subset of decoys from every silent-file read. start at this decoy." ).def(-1);
 option.add( basic::options::OptionKeys::in::file::skip_failed_simulations, "Ignore failed simulations (prefixed by W_) during silent file input. Existing behavior is preserved by default." ).def(false);
 option.add( basic::options::OptionKeys::in::file::silent_scores_wanted, "Only put these silent-scores into the Pose." );
 option.add( basic::options::OptionKeys::in::file::fasta, "Fasta-formatted sequence file" );
@@ -618,10 +620,10 @@ option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option gro
 option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
-option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
+option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::seq_sep_stages, "give vector with sequence_separation after stage1, stage3 and stage4" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::reramp_cst_cycles, "in stage2 do xxx cycles where atom_pair_constraint is ramped up" ).def(0);
@@ -1855,10 +1857,10 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of har
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);
+option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of rigid-body moves" ).def("score5");
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of rigid-body moves" ).def("score5");
-option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));

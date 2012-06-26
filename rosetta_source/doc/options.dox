@@ -423,6 +423,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 0</dd><br>
 </dl>
 <dl>
+<dt><b>-silent_select_range_start</b> \<Integer\><dt>
+<dd>Select a ranged subset of decoys from every silent-file read. start at this decoy.</dd><br>
+<dd>Default: 0</dd><br>
+</dl>
+<dl>
+<dt><b>-silent_select_range_end</b> \<Integer\><dt>
+<dd>Select a ranged subset of decoys from every silent-file read. start at this decoy.</dd><br>
+<dd>Default: -1</dd><br>
+</dl>
+<dl>
 <dt><b>-skip_failed_simulations</b> \<Boolean\><dt>
 <dd>Ignore failed simulations (prefixed by W_) during silent file input. Existing behavior is preserved by default.</dd><br>
 <dd>Default: false</dd><br>
