@@ -88,6 +88,7 @@ sources = {
 		"RenderGridsToKinemage",
 	],
 	"protocols/qsar/scoring_grid": [
+		"GridInitMover",
 		"AtrGrid",
 		"SingleGrid",
 		"GridCreator",

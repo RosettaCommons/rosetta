@@ -63,7 +63,7 @@ public:
 	virtual protocols::moves::MoverOP fresh_instance() const;
 	virtual std::string get_name() const;
 
-	void parse_my_tag(
+	virtual void parse_my_tag(
 		utility::tag::TagPtr const tag,
 		protocols::moves::DataMap & data_map,
 		protocols::filters::Filters_map const &,
@@ -71,16 +71,7 @@ public:
 		core::pose::Pose const &
 	);
 
-	void apply(core::pose::Pose & pose);
-
-	//core::Size get_chain_id(core::pose::Pose const & pose);
-
-	/*
-	void add_excluded_chains(
-		std::set<core::Size>::const_iterator begin,
-		std::set<core::Size>::const_iterator end
-	);
-	*/
+	virtual void apply(core::pose::Pose & pose);
 
 private:
 	utility::vector1<std::pair<core::SSize,core::kinematics::Jump> > transform_ligand(core::pose::Pose & pose);

@@ -146,12 +146,18 @@ core::Real HbaGrid::score(core::conformation::Residue const & residue, core::Rea
 		if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
 		{
 			core::chemical::AtomType atom_type(residue.atom_type(atom_index));
-			if(atom_type.is_donor())
+			if(atom_type.is_hydrogen())
 			{
-				core::Real grid_value = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
-				score += grid_value;
+				utility::vector1<core::Size> bonded_to_hydrogen(residue.bonded_neighbor(atom_index));
+				for(core::Size index = 1; index <= bonded_to_hydrogen.size();++index)
+				{
+					if(residue.atom_type(bonded_to_hydrogen[index]).is_donor())
+					{
+						core::Real grid_value = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
+						score += grid_value;
+					}
+				}
 			}
-
 		}
 	}
 

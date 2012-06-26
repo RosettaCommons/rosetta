@@ -114,11 +114,18 @@ void HbdGrid::refresh(core::pose::Pose const & pose, core::Vector const & )
 		for(core::Size atom_index=1; atom_index <= residue.natoms();++  atom_index)
 		{
 			core::chemical::AtomType atom_type(residue.atom_type(atom_index));
-			if(atom_type.is_donor())
+			if(atom_type.is_hydrogen())
 			{
-				core::id::AtomID atom_id(atom_index,residue_index);
-				core::Vector xyz(pose.xyz(atom_id));
-				this->set_score_sphere_for_atom(lj_spline_,xyz,5.0);
+				utility::vector1<core::Size> bonded_to_hydrogen(residue.bonded_neighbor(atom_index));
+				for(core::Size index = 1; index <= bonded_to_hydrogen.size();++index)
+				{
+					if(residue.atom_type(bonded_to_hydrogen[index]).is_donor())
+					{
+						core::id::AtomID atom_id(atom_index,residue_index);
+						core::Vector xyz(pose.xyz(atom_id));
+						this->set_score_sphere_for_atom(lj_spline_,xyz,5.0);
+					}
+				}
 			}
 		}
 	}
