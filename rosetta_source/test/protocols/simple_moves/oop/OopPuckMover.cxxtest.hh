@@ -261,7 +261,7 @@ public:
 		TR<< "CZP_CYP_N_CA and CYP_CZP_N_CA: " << CZP_CYP_N_CA << ' ' << CYP_CZP_N_CA << std::endl;
 
 		// compare to the correct answer
-		float TOLERATED_ERROR = 0.01;
+		//float TOLERATED_ERROR = 0.01;
 
 		TS_ASSERT_LESS_THAN_EQUALS( phi, old_phi + ( small_angle_max / 2.0 ) );
 		TS_ASSERT_LESS_THAN_EQUALS( old_phi - ( small_angle_max / 2.0 ), phi );
