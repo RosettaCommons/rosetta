@@ -34,7 +34,7 @@
 #include <string>
 #include <stdio.h>
 #include <set>
-
+#include <algorithm>
 
 namespace basic{
 namespace database{
@@ -80,6 +80,11 @@ Schema::init(){
 	//Add primary key columns to schema list
 	Columns key_columns = primary_key_.columns();
 	this->columns_.insert( columns_.end(), key_columns.begin(), key_columns.end() );
+
+	// Table names should all be lower case
+	std::transform(
+		table_name_.begin(), table_name_.end(), table_name_.begin(),
+		(int(*)(int)) std::tolower);
 
 }
 
@@ -187,7 +192,9 @@ std::string Schema::print(){
 }
 
 //Write this schema to the database
-void Schema::write(utility::sql_database::sessionOP db_session){
+void Schema::write(
+	utility::sql_database::sessionOP db_session
+){
 	std::string stmt_string = this->print();
 
 	bool exists=false;
@@ -195,10 +202,21 @@ void Schema::write(utility::sql_database::sessionOP db_session){
 	try{
 		//Older versions of postgres do not support "create table if not exists"
 		if(database_mode_ == utility::sql_database::DatabaseMode::postgres){
-			std::string exists_string = "SELECT *\n"
-			"FROM pg_catalog.pg_tables \n"
-			"WHERE tablename = '" + table_name_ + "';";
-			cppdb::statement exists_stmt = (*db_session) << exists_string;
+			cppdb::statement exists_stmt;
+
+			if(!(db_session->get_pq_schema() == "")){
+				exists_stmt = (*db_session) << "SELECT tablename "
+					"FROM pg_catalog.pg_tables "
+					"WHERE schemaname = ? AND tablename = ?;";
+				exists_stmt.bind(1, db_session->get_pq_schema());
+				exists_stmt.bind(2, table_name_);
+			} else {
+				exists_stmt = (*db_session) << "SELECT tablename "
+					"FROM pg_catalog.pg_tables "
+					"WHERE tablename = ?;";
+				exists_stmt.bind(1, table_name_);
+			}
+
 			cppdb::result res = safely_read_from_database(exists_stmt);
 			if(res.next()){
 				exists=true;

@@ -83,8 +83,8 @@ AtomTypeDatabaseIO::write_atom_types_table_schema(
 	using namespace basic::database::schema_generator;
 
 	Column atom_type_set_name("atom_type_set_name", DbText(64));
-	Column name("name", DbText(4));
-	Column element("element", DbText(1));
+	Column name("name", DbText(32));
+	Column element("element", DbText(2));
 	Column lennard_jones_radius("lennard_jones_radius", DbReal());
 	Column lennard_jones_well_depth("lennard_jones_well_depth", DbReal());
 	Column lazaridis_karplus_lambda("lazaridis_karplus_lambda", DbReal());
@@ -189,7 +189,7 @@ AtomTypeDatabaseIO::write_atom_type_extra_parameters_table_schema(
 	using namespace basic::database::schema_generator;
 
 	Column atom_type_set_name("atom_type_set_name", DbText(64));
-	Column name("name", DbText(4));
+	Column name("name", DbText(32));
 	Column parameter("parameter", DbText(32));
 	Column value("value", DbReal());
 

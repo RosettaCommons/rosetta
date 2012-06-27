@@ -419,6 +419,27 @@ parse_database_connection(
 
 	case utility::sql_database::DatabaseMode::mysql:
 	case utility::sql_database::DatabaseMode::postgres:
+
+		if(!tag->hasOption("database_host") && !option[dbms::host].user()){
+			TR << "WARNING: To connect to a postgres or mysql database you must set ";
+			TR << "the database_host tag or specify -dbms:host on the command line." << endl;
+		}
+
+		if(tag->hasOption("database_user") && !option[dbms::user].user()){
+			TR << "WARNING: To connect to a postgres or mysql database you must set ";
+			TR << "the database_user tag or specify -dbms:user on the command line." << endl;
+		}
+
+		if(tag->hasOption("database_password") && !option[dbms::password].user()){
+			TR << "WARNING: To connect to a postgres or mysql database you must set ";
+			TR << "the database_password tag or specify -dbms:password on the command line." << endl;
+		}
+
+		if(tag->hasOption("database_port") && !option[dbms::port].user()){
+			TR << "WARNING: To connect to a postgres or mysql database you must set ";
+			TR << "the database_port tag or specify -dbms:port on the command line." << endl;
+		}
+
 		return DatabaseSessionManager::get_instance()->get_db_session(
 			database_mode, database_name, database_pq_schema,
 			tag->getOption<string>("database_host", option[dbms::host]),

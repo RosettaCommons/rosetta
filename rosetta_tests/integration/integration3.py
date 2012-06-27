@@ -117,6 +117,34 @@ rm -r ref/; ./integration.py    # create reference results using only default se
       help="Save results to specified file in YAML format. (default: None)",
     )
 
+    parser.add_option("--dbms_database_name",
+      default="rosetta_tests",
+      help="For testing relational databases: the name of the database. " +
+        "The variable 'test' is substituted into the parameter value. (default: rosetta_tests)",
+    )
+
+    parser.add_option("--dbms_pq_schema",
+      default="integration_test_%(test)s",
+      help="For testing relational databases: the name of the postgres schema. " +
+        "The variable 'test' is substituted into the parameter value. (default: integration_test_%(test)s)",
+    )
+
+    parser.add_option("--dbms_host",
+      default="",
+      help="For testing relational databases: the name of the host. (default: '')",
+    )
+
+    parser.add_option("--dbms_user",
+      default="",
+      help="For testing relational databases: the name of the user, Note the password can be set with .pgpass or .my.cnf. (default: '')",
+    )
+
+    parser.add_option("--dbms_port",
+      default="",
+      help="For testing relational databases: the name of the user. (default: '')",
+    )
+
+
     (options, args) = parser.parse_args(args=argv)
 
     options.mini_home = path.abspath( options.mini_home )
@@ -378,6 +406,11 @@ class Worker:
                         mode = self.opts.mode
                         extras = self.opts.extras
                         binext = self.opts.extras+"."+platform+compiler+mode
+                        dbms_database_name = self.opts.dbms_database_name % { 'test': test }
+                        dbms_pq_schema = self.opts.dbms_pq_schema % { 'test': test }
+                        dbms_host = self.opts.dbms_host
+                        dbms_user = self.opts.dbms_user
+                        dbms_port = self.opts.dbms_port
                         # Read the command from the file "command"
                         cmd=''
                         # A horrible hack b/c SSH doesn't honor login scripts like .bash_profile

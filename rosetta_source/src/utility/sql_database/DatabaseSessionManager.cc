@@ -42,6 +42,7 @@ namespace sql_database {
 
 using utility::file::FileName;
 using std::string;
+using std::endl;
 using std::stringstream;
 using cppdb::cppdb_error;
 using platform::Size;
@@ -94,6 +95,7 @@ DatabaseSessionManager::get_db_session(
 		utility_exit_with_message(
 			"Unrecognized database mode: '" + name_from_database_mode(db_mode) + "'");
 	}
+	return 0;
 }
 
 
@@ -221,12 +223,13 @@ DatabaseSessionManager::get_session_postgres(
 	} catch (cppdb_error & e){
 		std::stringstream error_msg;
 		error_msg
-			<< "Failed to open postgres database:"
+			<< "Failed to open postgres database:" << endl
 			<< "\thost='" << host << "'" << endl
 			<< "\tuser='" << user << "'" << endl
 			<< "\tpassword='**********'" << endl
 			<< "\tport='" << port << "'" << endl
 			<< "\tdatabase='" << database << "'" << endl
+			<< "\tpq_schema='" << pq_schema << "'" << endl
 			<< endl
 			<< "\t" << e.what();
 		utility_exit_with_message(error_msg.str());
@@ -256,7 +259,7 @@ DatabaseSessionManager::set_postgres_schema_search_path(
 	vector1< string > const & schema_search_path
 ) {
 	stringstream stmt_str;
-	stmt_str << "SET search_path TO";
+	stmt_str << "SET search_path TO ";
 	for(Size i=1; i <= schema_search_path.size(); ++i){
 		stmt_str << (i==1 ? "" : ", ") << schema_search_path[i];
 	}

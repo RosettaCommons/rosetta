@@ -664,7 +664,7 @@ set_cache_size(
 		TR
 			<< "WARNING: Attempting to set database cache size "
 			<< "for a database type for which this is currently not supported: "
-			<< "'" << db_session->get_db_mode() << "'." << std::endl;
+			<< "'" << name_from_database_mode(db_session->get_db_mode()) << "'." << std::endl;
 	}
 }
 

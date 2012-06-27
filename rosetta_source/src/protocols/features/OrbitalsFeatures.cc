@@ -249,7 +249,7 @@ OrbitalsFeatures::write_orbital_orbital_table_schema(
 	Column resNum2("resNum2", DbInteger());
 	Column resName2("resName2", DbText());
 	Column orbNum2("orbNum2", DbInteger());
-	Column orbName2("orbName2", DbInteger());
+	Column orbName2("orbName2", DbText());
 	Column orbOrbdist("orbOrbdist", DbReal());
 	Column cosAOO("cosAOO", DbReal());
 	Column cosDOO("cosDOO", DbReal());
@@ -509,12 +509,12 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 		if(OrbHdist <=10.0 && orb_haro == true){
 			orbital_Haro_statement.bind(1,struct_id);
 			orbital_Haro_statement.bind(2, resNum1);
-			orbital_Haro_statement.bind(3, resName1);
-			orbital_Haro_statement.bind(4,orbNum1 );
-			orbital_Haro_statement.bind(5, orbName1);
-			orbital_Haro_statement.bind(6, resNum2);
-			orbital_Haro_statement.bind(7, res2name);
-			orbital_Haro_statement.bind(8, hpolNum2);
+			orbital_Haro_statement.bind(3, orbName1);
+			orbital_Haro_statement.bind(4, resNum2);
+			orbital_Haro_statement.bind(5, hpolNum2);
+			orbital_Haro_statement.bind(6, resName1);
+			orbital_Haro_statement.bind(7, orbNum1);
+			orbital_Haro_statement.bind(8, res2name);
 			orbital_Haro_statement.bind(9, htype2);
 			orbital_Haro_statement.bind(10, OrbHdist);
 			orbital_Haro_statement.bind(11, cosAOH);

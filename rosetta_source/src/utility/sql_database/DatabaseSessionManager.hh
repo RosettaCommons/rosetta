@@ -48,8 +48,24 @@ public:
 	DatabaseMode::e
 	get_db_mode() const { return db_mode_; }
 
+	void
+	set_db_name(
+		std::string const & db_name) { db_name_ = db_name; }
+
+	std::string const &
+	get_db_name() const { return db_name_; }
+
+	void
+	set_pq_schema(
+		std::string const & pq_schema) { pq_schema_ = pq_schema; }
+
+	std::string const &
+	get_pq_schema() const { return pq_schema_; }
+
 private:
 	DatabaseMode::e db_mode_;
+	std::string db_name_;
+	std::string pq_schema_;
 
 };
 
