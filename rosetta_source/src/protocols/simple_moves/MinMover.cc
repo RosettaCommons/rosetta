@@ -266,6 +266,14 @@ void MinMover::parse_chi_and_bb( TagPtr const tag )
 	movemap_->set_chi( chi );
 	movemap_->set_bb( bb );
 	TR<<"Options chi, bb: "<<chi<<", "<<bb<<std::endl;
+	if ( tag->hasOption("bondangle") ) {
+		bool const value( tag->getOption<bool>("bondangle") );
+		movemap_->set( core::id::THETA, value );
+	}
+	if ( tag->hasOption("bondlength") ) {
+		bool const value( tag->getOption<bool>("bondlength") );
+		movemap_->set( core::id::D, value );
+	}
 }
 
 
