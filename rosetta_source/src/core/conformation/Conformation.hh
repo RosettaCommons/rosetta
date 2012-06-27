@@ -791,13 +791,17 @@ public:
 
 
 	/////////////
-	// @brief debugging
+	/// @brief debugging
 	void
 	debug_residue_torsions( bool verbose = false ) const;
 
-	/// @show residue connections for debugging purposes
+	/// @brief Show residue connections for debugging purposes.
 	void
 	show_residue_connections() const;
+
+	/// @brief Show residue connections for debugging purposes.
+	void
+	show_residue_connections(std::ostream &os) const;
 
 	/// @brief  This returns the AtomID of the atom in the other residue to which the "connection_index"-th
 	/// @brief  connection of residue seqpos is connected to.
@@ -1354,6 +1358,7 @@ private:
 
 };
 
+std::ostream &operator<< (std::ostream &os, Conformation const &conf);
 
 } // conformation
 } // core

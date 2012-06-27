@@ -2562,24 +2562,35 @@ Conformation::clear()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+/// @brief  Show each residue in the conformation and its connections.
 void
 Conformation::show_residue_connections() const
 {
+	show_residue_connections(TR);
+}
 
-	for ( Size i=1; i<= size(); ++i ) {
-		Residue const & rsd( *( residues_[i] ) );
-		Size const nconn( rsd.n_residue_connections() );
-		TR << "RESCON: " << i << ' ' << rsd.name() << " n-conn= " << nconn <<
-			" n-poly= " << rsd.n_polymeric_residue_connections() <<
-			" n-nonpoly= " << rsd.n_non_polymeric_residue_connections();
-		for ( Size j=1; j<= nconn; ++j ) {
-			TR << " conn# " << j << ' ' << rsd.residue_connect_atom_index( j ) << ' ' <<
-				rsd.connect_map( j ).resid() << ' ' << rsd.connect_map( j ).connid();
+
+//  This method is a rewrite of an earlier version to include an argument
+//  for desired output stream.  This is to be more consistent with typical
+//  show() methods and allows for simple << operator overloading for use in
+//  PyRosetta. ~ Labonte
+/// @brief  Show each residue in the conformation and its connections.
+void
+Conformation::show_residue_connections(std::ostream &os) const
+{
+	for (Size i = 1; i <= size(); ++i) {
+		Residue const &res(*(residues_[i]));
+		Size const nconn(res.n_residue_connections());
+		os << "RESCON: " << i << ' ' << res.name() << " n-conn= " << nconn <<
+			" n-poly= " << res.n_polymeric_residue_connections() <<
+			" n-nonpoly= " << res.n_non_polymeric_residue_connections();
+		for (Size j = 1; j <= nconn; ++j) {
+			os << " conn# " << j << ' ' << res.residue_connect_atom_index( j )
+			<< ' ' << res.connect_map(j).resid() << ' ' <<
+			res.connect_map(j).connid();
 		}
-		TR << std::endl;
+		os << std::endl;
 	}
-
-
 }
 
 
@@ -3448,6 +3459,13 @@ Conformation::downstream_jump_stub( int const jump_number ) const
     dof_moved_.fill_with( false );
     xyz_moved_.fill_with( false );
   }
+
+
+std::ostream &operator<< (std::ostream &os, Conformation const &conf)
+{
+ 	conf.show_residue_connections(os);
+    return os;
+}
 
 } // namespace kinematics
 } // namespace core
