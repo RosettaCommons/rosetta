@@ -507,6 +507,8 @@ private:
 	core::conformation::Conformation * conformation_pt_;
 };
 
+std::ostream & operator << (std::ostream & os, ConstraintSet const & set);
+
 } // constraints
 } // scoring
 } // core

@@ -975,6 +975,14 @@ ConstraintSet::is_empty() const
 	return empty;
 }
 
+
+std::ostream & operator << (std::ostream & os, ConstraintSet const & set)
+{
+	set.show(os);
+    return os;
+}
+
+
 } // constraints
 } // scoring
 } // core
