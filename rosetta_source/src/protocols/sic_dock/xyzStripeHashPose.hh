@@ -91,24 +91,27 @@ public:
 		int natom = 0;
 		for(int ir = 1; ir <= (int)p.n_residue(); ++ir) {
 			core::conformation::Residue const & r(p.residue(ir));
-			if( NBR==m ) natom++;
-			if( CB==m ) if(r.has("CB")) natom++;
-			if( BB ==m ) natom += r.has("N")+r.has("CA")+r.has("C")+r.has("O")+r.has("CB");
-			if( HVY==m ) natom += r.nheavyatoms();
-			if( ALL==m ) natom += r.natoms();
+			     if(  CA==m ) if(r.has("CA")) natom++;
+			else if(  CB==m ) if(r.has("CB")) natom++;
+			else if( NBR==m ) natom++;
+			else if( BB ==m ) natom += r.has("N")+r.has("CA")+r.has("C")+r.has("O")+r.has("CB");
+			else if( HVY==m ) natom += r.nheavyatoms();
+			else if( ALL==m ) natom += r.natoms();
 		}
 		utility::vector1<numeric::xyzVector<double> > atoms(natom);
 		utility::vector1<double>                      meta (natom);
 		platform::uint count = 0;
 		for(int ir = 1; ir <= (int)p.n_residue(); ++ir) {
 			core::conformation::Residue const & r(p.residue(ir));
-			if(NBR==m) {
+	    	if(CA==m){
+				if(r.has("CA")){ atoms[++count]=r.xyz("CA"); }
+			} else if(CB==m) {
+				if(r.has("CB")){ atoms[++count]=r.xyz("CB"); }
+			} else if(NBR==m) {
 				int ia = r.nbr_atom();
 				core::id::AtomID const aid(ia,ir);
 				atoms[++count] = p.xyz(aid);
 				meta [  count] = r.atom_type(ia).lj_radius();
-			} else if(CB==m) {
-				if(r.has("CB")){ atoms[++count]=r.xyz("CB"); }
 			} else if(BB==m) {
 				if(r.has( "N")){ atoms[++count]=r.xyz( "N"); }
 				if(r.has("CA")){ atoms[++count]=r.xyz("CA"); }

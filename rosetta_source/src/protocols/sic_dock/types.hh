@@ -21,6 +21,7 @@ typedef utility::vector1<std::pair<core::Size,Vec3> > TermInfo;
 
 enum PoseCoordPickMode {
 	NBR,
+	CA,
 	CB,
 	BB,
 	BNP,
