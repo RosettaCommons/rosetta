@@ -58,16 +58,17 @@ echo ""
 rm -f features_${run_id}.db3
 
 cmd="time $mini/bin/rosetta_scripts.$platform -database ${database} @flags"
-echo $cmd "&> ${log_fname}"
-$cmd &> ${log_fname}
+echo $cmd "> ${log_fname} 2>&1"
+$cmd > ${log_fname} 2>&1
 
 echo ""
-if [ !$? ]; then
+
+if [ "$?" -ne "0" ]; then
   echo "ERROR: Failed to create ${database_fname}. Check ${log_fname} for errors."
+  exit 1
 else
-  echo "Created ${database_fname}."
-  echo "Now either move or ${database_fname} somewhere within test/scientific/cluster/features/sample_source/"
-  echo "and run analysis scripts."
-  echo "Try running \'R CMD BATCH make_plots.R\' in test/scientific/cluster/features"
-fi 
+  echo "Created '${database_fname}'."
+fi
+
+exit 0
 ###############################
