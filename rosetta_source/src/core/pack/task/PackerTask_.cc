@@ -1300,10 +1300,10 @@ ResidueLevelTask_::update_commutative(
 			oiter = o_allowed_residue_types.begin(),
 			oend = o_allowed_residue_types.end();
 			myiter != myend && oiter != oend; /* no increment */ ) {
-		std::cout << " myiter: " << *myiter << " " << (*myiter)->name() << " oiter: " << *oiter << " " << (*oiter)->name() << std::endl;
+		//std::cout << " myiter: " << *myiter << " " << (*myiter)->name() << " oiter: " << *oiter << " " << (*oiter)->name() << std::endl;
 		if ( *myiter == *oiter ) {
 			common.push_back( *myiter );
-			std::cout << "Common! " << (*myiter)->name() << std::endl;
+			//std::cout << "Common! " << (*myiter)->name() << std::endl;
 			++myiter;
 			++oiter;
 		} else if ( *myiter < *oiter ) {
@@ -1368,11 +1368,11 @@ PackerTask_::update_commutative(
 	PackerTask const & t
 ){
 
-	for(int i = 0; i < 9; ++i){
+	/*for(int i = 0; i < 9; ++i){
 		std::cerr << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
 		std::cerr << "!!!!!!!!!!!!!!  update update_commutative temporarially is copy! !!!!!!!!!!!!!!" << std::endl;
 		std::cerr << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-	}
+		}*/
 
 	PackerTask_ const & o(dynamic_cast<PackerTask_ const &>(t));
 
@@ -1381,7 +1381,7 @@ PackerTask_::update_commutative(
 	/// leave the state of the pack_residue array as true everywhere.  This is an array
 	/// used only inside rotamer_trials and rtmin, so this should be a good idea.
 	for(Size i = 1; i <= pack_residue_.size(); ++i) pack_residue_[i] = true;
-	
+
 	for(Size i = 1; i <= residue_tasks_.size(); ++i) residue_tasks_[i].update_commutative(o.residue_tasks_[i]);
 
 	n_to_be_packed_ = o.n_to_be_packed_;/// <-- this derived data will need to be updated
