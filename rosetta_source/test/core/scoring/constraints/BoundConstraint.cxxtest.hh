@@ -233,4 +233,28 @@ public:
 		} // if(func_x_sz == func_sd1_w1_sz)
 
 	}// test_bound_func()
+
+	//at SVN 49611, this function was broken because it used setprecision() without ever *resetting* the precision.  Oops.
+	void test_show_definition(){
+
+		//Make a quick BoundConstraint
+		core::Real lb=0;
+		core::Real ub=0;
+		core::Real sd=1.0;
+		std::string type="";
+		core::Real rswitch=0.5;
+		core::scoring::constraints::BoundFuncOP func(new core::scoring::constraints::BoundFunc(lb,ub,sd,rswitch,type));
+
+		std::stringstream test_stream, compare_stream;
+
+		//these are random (well, convenience) numbers to test the precision problem in BoundFunc
+		test_stream << 4.9938572 << " 5.6732247" << std::endl;
+		func->show_definition(test_stream);
+		test_stream << 4.9938572 << " 5.6732247" << std::endl;
+		compare_stream << test_stream.str() << std::endl;
+		//std::cout << compare_stream.str();
+		//std::cout << "blank" << std::endl;
+		TS_ASSERT(compare_stream.str() == "4.99386 5.6732247\nBOUNDED       0       0   1 \n4.99386 5.6732247\n\n");
+
+	}
 }; // BoundedFunc test suite
