@@ -154,6 +154,7 @@ option.add( basic::options::OptionKeys::inout::dbms::password, "default password
 option.add( basic::options::OptionKeys::inout::dbms::port, "default port for database server access" );
 option.add( basic::options::OptionKeys::inout::dbms::readonly, "open sqlite3 database in read-only mode by default" ).def(false);
 option.add( basic::options::OptionKeys::inout::dbms::separate_db_per_mpi_process, "In MPI mode,, open a separate sqlite3 database for each process with extension _<mpi_rank>" ).def(false);
+option.add( basic::options::OptionKeys::inout::dbms::force_nonideal_structure, "Force ResidueConformationFeatures to treat the structure as nonideal.  If you know all your structures are non-ideal this decreases pose output time" ).def(true);
 option.add( basic::options::OptionKeys::out::out, "Ouput option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::out::overwrite, "Ignore 'CHECKPOINT' file and the overwrite the PDB file(s)" );
 option.add( basic::options::OptionKeys::out::nstruct, "Number of times to process each input PDB" ).def(1);
@@ -619,10 +620,10 @@ option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling 
 option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
-option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
+option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::seq_sep_stages, "give vector with sequence_separation after stage1, stage3 and stage4" ).def(0);
@@ -1238,10 +1239,10 @@ option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" )
 option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
-option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
+option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
 option.add( basic::options::OptionKeys::lh::expire_after_rounds, "If set to > 0 this causes the Master to expire a structure after it has gone through this many cycles" ).def(0);
 option.add( basic::options::OptionKeys::lh::mpi_resume, "Prefix (Ident string) for resuming a previous job!" );
 option.add( basic::options::OptionKeys::lh::mpi_feedback, "No description" ).legal("no").legal("add_n_limit").legal("add_n_replace").legal("single_replace").legal("single_replace_rounds").def("no");
@@ -1857,10 +1858,10 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of har
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);
-option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of rigid-body moves" ).def("score5");
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of rigid-body moves" ).def("score5");
+option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));

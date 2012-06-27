@@ -696,6 +696,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>In MPI mode,, open a separate sqlite3 database for each process with extension _<mpi_rank></dd><br>
 <dd>Default: false</dd><br>
 </dl>
+<dl>
+<dt><b>-force_nonideal_structure</b> \<Boolean\><dt>
+<dd>Force ResidueConformationFeatures to treat the structure as nonideal.  If you know all your structures are non-ideal this decreases pose output time</dd><br>
+<dd>Default: true</dd><br>
+</dl>
  </li>
 <li><h2>out</h2>
 <dl>

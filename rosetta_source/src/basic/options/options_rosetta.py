@@ -317,6 +317,7 @@ Options = Option_Group( '',
 		    Option('port','Integer',desc="default port for database server access"),
 		    Option('readonly','Boolean',desc="open sqlite3 database in read-only mode by default", default='false'),
 		    Option('separate_db_per_mpi_process','Boolean',desc="In MPI mode,, open a separate sqlite3 database for each process with extension _<mpi_rank>", default='false'),
+            Option('force_nonideal_structure','Boolean',desc="Force ResidueConformationFeatures to treat the structure as nonideal.  If you know all your structures are non-ideal this decreases pose output time",default='true')
 		),
 	),
 

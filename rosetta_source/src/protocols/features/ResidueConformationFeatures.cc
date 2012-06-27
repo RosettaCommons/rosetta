@@ -38,6 +38,8 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/Constraint.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/inout.OptionKeys.gen.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -228,15 +230,22 @@ ResidueConformationFeatures::report_features(
 	sessionOP db_session
 ){
 	//check to see if this structure is ideal
+
 	bool ideal = true;
-	core::conformation::Conformation const & conformation(pose.conformation());
-	for(core::Size resn=1; resn <= pose.n_residue();++resn){
-		if(!relevant_residues[resn]) continue;
-		bool residue_status(core::conformation::is_ideal_position(resn,conformation));
-		if(!residue_status){
-			ideal = false;
-			break;
+	if(!basic::options::option[basic::options::OptionKeys::inout::dbms::force_nonideal_structure]())
+	{
+		core::conformation::Conformation const & conformation(pose.conformation());
+		for(core::Size resn=1; resn <= pose.n_residue();++resn){
+			if(!relevant_residues[resn]) continue;
+			bool residue_status(core::conformation::is_ideal_position(resn,conformation));
+			if(!residue_status){
+				ideal = false;
+				break;
+			}
 		}
+	}else
+	{
+		ideal = false;
 	}
 
 	std::string conformation_string = "INSERT INTO nonprotein_residue_conformation (struct_id, seqpos, phi, psi, omega) VALUES (?,?,?,?,?)";

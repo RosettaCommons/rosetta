@@ -1,3 +1,4 @@
+namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }
 namespace fold_cst { BooleanOptionKey const keep_skipped_csts( "fold_cst:keep_skipped_csts" );  }
 namespace fold_cst { BooleanOptionKey const no_minimize( "fold_cst:no_minimize" );  }
 namespace fold_cst { BooleanOptionKey const force_minimize( "fold_cst:force_minimize" );  }
@@ -614,4 +615,3 @@ namespace lh { StringOptionKey const jobname( "lh:jobname" );  }
 namespace lh { IntegerOptionKey const max_lib_size( "lh:max_lib_size" );  }
 namespace lh { IntegerOptionKey const max_emperor_lib_size( "lh:max_emperor_lib_size" );  }
 namespace lh { IntegerOptionKey const max_emperor_lib_round( "lh:max_emperor_lib_round" );  }
-namespace lh { IntegerOptionKey const library_expiry_time( "lh:library_expiry_time" );  }

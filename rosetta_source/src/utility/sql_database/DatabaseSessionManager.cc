@@ -175,12 +175,12 @@ DatabaseSessionManager::get_session_mysql(
 		std::stringstream error_msg;
 		error_msg
 			<< "Failed to open mysql database:"
-			<< "\thost='" << host << "'" << endl
-			<< "\tuser='" << user << "'" << endl
-			<< "\tpassword='**********'" << endl
-			<< "\tport='" << port << "'" << endl
-			<< "\tdatabase='" << database << "'" << endl
-			<< endl
+			<< "\thost='" << host << "'" << std::endl
+			<< "\tuser='" << user << "'" << std::endl
+			<< "\tpassword='**********'" << std::endl
+			<< "\tport='" << port << "'" << std::endl
+			<< "\tdatabase='" << database << "'" << std::endl
+			<< std::endl
 			<< "\t" << e.what();
 		utility_exit_with_message(error_msg.str());
 	}

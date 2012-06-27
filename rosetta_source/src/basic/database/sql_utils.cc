@@ -260,7 +260,7 @@ get_db_session(
 				"only applies to sqlite3 databases.");
 		}
 
-		if(!pq_schema.compare("")){
+		if(pq_schema.compare("")){
 			TR.Warning
 				<< "You have specified a postgres schema but using a sqlite3 database. "
 				<< "To use postgres, please specify -inout:dbms:mode postgres"

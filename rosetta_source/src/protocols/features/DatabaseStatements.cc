@@ -95,13 +95,15 @@ core::Size get_score_type_id_from_score_term(
 
 	std::string statement_string =
 		"SELECT\n"
-		"	score_type_id\n"
+			"score_type_id\n"
 		"FROM\n"
-		"	score_types\n"
+			"score_types\n"
+		"INNER JOIN\n"
+			"batches ON score_types.batch_id = batches.batch_id\n"
 		"WHERE\n"
-		"	protocol_id=?\n"
+			"batches.protocol_id=?\n"
 		"AND\n"
-		"	score_type_name=?;";
+			"score_type_name=?\n";
 
 	cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
 	statement.bind(1,protocol_id);

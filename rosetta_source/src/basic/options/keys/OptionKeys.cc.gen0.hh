@@ -149,6 +149,7 @@ namespace inout { namespace dbms { StringOptionKey const password( "inout:dbms:p
 namespace inout { namespace dbms { IntegerOptionKey const port( "inout:dbms:port" );  } }
 namespace inout { namespace dbms { BooleanOptionKey const readonly( "inout:dbms:readonly" );  } }
 namespace inout { namespace dbms { BooleanOptionKey const separate_db_per_mpi_process( "inout:dbms:separate_db_per_mpi_process" );  } }
+namespace inout { namespace dbms { BooleanOptionKey const force_nonideal_structure( "inout:dbms:force_nonideal_structure" );  } }
 namespace out { BooleanOptionKey const out( "out" );  }
 namespace out { BooleanOptionKey const overwrite( "out:overwrite" );  }
 namespace out { IntegerOptionKey const nstruct( "out:nstruct" );  }
@@ -614,4 +615,3 @@ namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score
 namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
 namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constraint_skip_rate" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }
-namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }
