@@ -317,8 +317,7 @@ Options = Option_Group( '',
 		    Option('port','Integer',desc="default port for database server access"),
 		    Option('readonly','Boolean',desc="open sqlite3 database in read-only mode by default", default='false'),
 		    Option('separate_db_per_mpi_process','Boolean',desc="In MPI mode,, open a separate sqlite3 database for each process with extension _<mpi_rank>", default='false'),
-            Option('force_nonideal_structure','Boolean',desc="Force ResidueConformationFeatures to treat the structure as nonideal.  If you know all your structures are non-ideal this decreases pose output time",default='true')
-		),
+            		),
 	),
 
 	# Output options ---------------------------------------------------------
@@ -397,7 +396,9 @@ Options = Option_Group( '',
 			Option( 'residue_type_set', 'String', desc = 'ResidueTypeSet for output files', default = 'fa_standard' ),
 			Option( 'frag_prefix', 'String', desc = 'Prefix for fragment output', default = 'default.frags' ),
 			Option( 'output_torsions', 'Boolean', default = 'false', desc = 'Output phi psi and omega torsions in the PDB output if the pose is ideal'),
-		), # file
+		    Option('force_nonideal_structure','Boolean',desc="Force ResidueConformationFeatures to treat the structure as nonideal.  If you know all your structures are non-ideal this decreases pose output time",default='true')
+
+        ), # file
 
 		Option_Group( 'path',
 			Option( 'all', 'Path', desc="Default file output path", default="." ), #renamed from out:path:path  doesn't make much sense

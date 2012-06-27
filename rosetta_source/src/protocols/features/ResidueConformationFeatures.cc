@@ -39,7 +39,7 @@
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/Constraint.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -232,7 +232,7 @@ ResidueConformationFeatures::report_features(
 	//check to see if this structure is ideal
 
 	bool ideal = true;
-	if(!basic::options::option[basic::options::OptionKeys::inout::dbms::force_nonideal_structure]())
+	if(!basic::options::option[basic::options::OptionKeys::out::file::force_nonideal_structure]())
 	{
 		core::conformation::Conformation const & conformation(pose.conformation());
 		for(core::Size resn=1; resn <= pose.n_residue();++resn){

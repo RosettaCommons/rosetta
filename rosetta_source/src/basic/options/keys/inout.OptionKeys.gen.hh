@@ -34,7 +34,6 @@ namespace inout { namespace dbms { extern StringOptionKey const password; } }
 namespace inout { namespace dbms { extern IntegerOptionKey const port; } }
 namespace inout { namespace dbms { extern BooleanOptionKey const readonly; } }
 namespace inout { namespace dbms { extern BooleanOptionKey const separate_db_per_mpi_process; } }
-namespace inout { namespace dbms { extern BooleanOptionKey const force_nonideal_structure; } }
 
 } // namespace OptionKeys
 } // namespace options

@@ -154,7 +154,6 @@ option.add( basic::options::OptionKeys::inout::dbms::password, "default password
 option.add( basic::options::OptionKeys::inout::dbms::port, "default port for database server access" );
 option.add( basic::options::OptionKeys::inout::dbms::readonly, "open sqlite3 database in read-only mode by default" ).def(false);
 option.add( basic::options::OptionKeys::inout::dbms::separate_db_per_mpi_process, "In MPI mode,, open a separate sqlite3 database for each process with extension _<mpi_rank>" ).def(false);
-option.add( basic::options::OptionKeys::inout::dbms::force_nonideal_structure, "Force ResidueConformationFeatures to treat the structure as nonideal.  If you know all your structures are non-ideal this decreases pose output time" ).def(true);
 option.add( basic::options::OptionKeys::out::out, "Ouput option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::out::overwrite, "Ignore 'CHECKPOINT' file and the overwrite the PDB file(s)" );
 option.add( basic::options::OptionKeys::out::nstruct, "Number of times to process each input PDB" ).def(1);
@@ -212,6 +211,7 @@ option.add( basic::options::OptionKeys::out::file::per_chain_renumbering, "when 
 option.add( basic::options::OptionKeys::out::file::residue_type_set, "ResidueTypeSet for output files" ).def("fa_standard");
 option.add( basic::options::OptionKeys::out::file::frag_prefix, "Prefix for fragment output" ).def("default.frags");
 option.add( basic::options::OptionKeys::out::file::output_torsions, "Output phi psi and omega torsions in the PDB output if the pose is ideal" ).def(false);
+option.add( basic::options::OptionKeys::out::file::force_nonideal_structure, "Force ResidueConformationFeatures to treat the structure as nonideal.  If you know all your structures are non-ideal this decreases pose output time" ).def(true);
 option.add( basic::options::OptionKeys::out::path::all, "Default file output path" ).def(".");
 option.add( basic::options::OptionKeys::out::path::path, "Default file output path" ).def(".");
 option.add( basic::options::OptionKeys::out::path::pdb, "PDB file output path" );

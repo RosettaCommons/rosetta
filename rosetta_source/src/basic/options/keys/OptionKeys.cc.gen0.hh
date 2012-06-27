@@ -149,7 +149,6 @@ namespace inout { namespace dbms { StringOptionKey const password( "inout:dbms:p
 namespace inout { namespace dbms { IntegerOptionKey const port( "inout:dbms:port" );  } }
 namespace inout { namespace dbms { BooleanOptionKey const readonly( "inout:dbms:readonly" );  } }
 namespace inout { namespace dbms { BooleanOptionKey const separate_db_per_mpi_process( "inout:dbms:separate_db_per_mpi_process" );  } }
-namespace inout { namespace dbms { BooleanOptionKey const force_nonideal_structure( "inout:dbms:force_nonideal_structure" );  } }
 namespace out { BooleanOptionKey const out( "out" );  }
 namespace out { BooleanOptionKey const overwrite( "out:overwrite" );  }
 namespace out { IntegerOptionKey const nstruct( "out:nstruct" );  }
@@ -207,6 +206,7 @@ namespace out { namespace file { BooleanOptionKey const per_chain_renumbering( "
 namespace out { namespace file { StringOptionKey const residue_type_set( "out:file:residue_type_set" );  } }
 namespace out { namespace file { StringOptionKey const frag_prefix( "out:file:frag_prefix" );  } }
 namespace out { namespace file { BooleanOptionKey const output_torsions( "out:file:output_torsions" );  } }
+namespace out { namespace file { BooleanOptionKey const force_nonideal_structure( "out:file:force_nonideal_structure" );  } }
 namespace out { namespace path { PathOptionKey const all( "out:path:all" );  } }
 namespace out { namespace path { PathOptionKey const path( "out:path" );  } }
 namespace out { namespace path { PathOptionKey const pdb( "out:path:pdb" );  } }

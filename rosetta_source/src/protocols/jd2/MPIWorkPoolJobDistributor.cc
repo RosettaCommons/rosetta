@@ -163,10 +163,10 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 				break;
 			case REQUEST_MESSAGE_TAG:
 			{
-				TR << "Master Node: recieved a message request from the slave node, having the message listener factor create the appropriate message" << std::endl;
+				TR << "Master Node: received a message request from the slave node, having the message listener factor create the appropriate message" << std::endl;
 				message_listening::MessageListenerOP listener(message_listening::MessageListenerFactory::get_instance()->get_listener((message_listening::listener_tags)slave_data));
 
-				TR << "Master Node: recieved message data from the slave node, processing data now" << std::endl;
+				TR << "Master Node: received message data from the slave node, processing data now" << std::endl;
 				std::string message_data = utility::receive_string_from_node(status.MPI_SOURCE);
 				std::string return_info="";
 				bool request_slave_data = listener->request(message_data, return_info);
@@ -175,7 +175,7 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 				TR << "Master Node: sending the listener generated data back to the slave" << std::endl;
 				utility::send_string_to_node(status.MPI_SOURCE, return_info);
 				if(request_slave_data){
-					TR << "Master Node: recieved data from slave node" << std::endl;
+					TR << "Master Node: received data from slave node" << std::endl;
 					message_data = utility::receive_string_from_node(status.MPI_SOURCE);
 					listener->recieve(message_data);
 				}
@@ -216,10 +216,10 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 				break;
 			case REQUEST_MESSAGE_TAG:
 			{
-				TR << "Master Node: recieved a message request from the slave node, having the message listener factory create the appropriate message" << std::endl;
+				TR << "Master Node: received a message request from the slave node, having the message listener factory create the appropriate message" << std::endl;
 				message_listening::MessageListenerOP listener(message_listening::MessageListenerFactory::get_instance()->get_listener((message_listening::listener_tags)slave_data));
 
-				TR << "Master Node: recieved message data from the slave node, processing data now" << std::endl;
+				TR << "Master Node: received message data from the slave node, processing data now" << std::endl;
 				std::string message_data = utility::receive_string_from_node(status.MPI_SOURCE);
 				std::string return_info="";
 				bool request_slave_data = listener->request(message_data, return_info);
@@ -228,7 +228,7 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 				TR << "Master Node: sending the listener generated data back to the slave" << std::endl;
 				utility::send_string_to_node(status.MPI_SOURCE, return_info);
 				if(request_slave_data){
-					TR << "Master Node: recieved data from slave node" << std::endl;
+					TR << "Master Node: received data from slave node" << std::endl;
 					message_data = utility::receive_string_from_node(status.MPI_SOURCE);
 					listener->recieve(message_data);
 				}
@@ -440,7 +440,7 @@ MPIWorkPoolJobDistributor::slave_job_succeeded(core::pose::Pose & MPI_ONLY( pose
 		clock_t stoptime = clock();
 
 		// send message to master that we are done outputing
-		TR << "Slave Node " << rank_ << ": Finshed writing output in " << ((double) stoptime-starttime) / CLOCKS_PER_SEC << " seconds. Sending message to master" << std::endl;
+		TR << "Slave Node " << rank_ << ": Finished writing output in " << ((double) stoptime-starttime) / CLOCKS_PER_SEC << " seconds. Sending message to master" << std::endl;
 		MPI_Send( &empty_data, 1, MPI_INT, 0, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
 	}
 #endif

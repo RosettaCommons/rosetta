@@ -78,6 +78,7 @@ namespace out { namespace file { extern BooleanOptionKey const per_chain_renumbe
 namespace out { namespace file { extern StringOptionKey const residue_type_set; } }
 namespace out { namespace file { extern StringOptionKey const frag_prefix; } }
 namespace out { namespace file { extern BooleanOptionKey const output_torsions; } }
+namespace out { namespace file { extern BooleanOptionKey const force_nonideal_structure; } }
 namespace out { namespace path { extern PathOptionKey const all; } }
 namespace out { namespace path { extern PathOptionKey const path; } }
 namespace out { namespace path { extern PathOptionKey const pdb; } }
