@@ -94,6 +94,7 @@ BackboneMover::BackboneMover(
 //destructor
 BackboneMover::~BackboneMover() {}
 
+
 void BackboneMover::temperature( core::Real const temperature_in ) { temperature_ = temperature_in; }
 
 void BackboneMover::nmoves( core::Size const nmoves_in ) { nmoves_ = nmoves_in; }
@@ -101,6 +102,7 @@ void BackboneMover::nmoves( core::Size const nmoves_in ) { nmoves_ = nmoves_in; 
 core::kinematics::MoveMapCOP BackboneMover::movemap() { return movemap_; }
 
 void BackboneMover::movemap(core::kinematics::MoveMapOP new_movemap) { movemap_=new_movemap; }
+
 
 void BackboneMover::angle_max( core::Real const angle )
 {
@@ -112,6 +114,13 @@ void BackboneMover::angle_max( core::Real const angle )
 void BackboneMover::angle_max( char const type, core::Real const angle ) { angle_max_[ type ] = angle; }
 
 void BackboneMover::angle_max( std::map< char, core::Real > angle_max_in ) { angle_max_.swap( angle_max_in ); }
+
+core::Real
+BackboneMover::get_angle_max(char const type) const
+{
+	return angle_max_.find(type)->second;
+}
+
 
 bool
 BackboneMover::preserve_detailed_balance() const
@@ -229,6 +238,7 @@ bool BackboneMover::check_rama() {
 	return( true );
 }
 
+
 std::string
 SmallMoverCreator::keyname() const {
 	return SmallMoverCreator::mover_name();
@@ -243,6 +253,7 @@ std::string
 SmallMoverCreator::mover_name() {
 	return "Small";
 }
+
 
 //constructor
 SmallMover::SmallMover() : BackboneMover() { moves::Mover::type( "SmallMover" ); }
@@ -519,6 +530,16 @@ void protocols::simple_moves::ShearMover::test_move( core::pose::Pose & pose)
 	movemap(mmap);
 
 	apply(pose);
+}
+
+
+std::ostream &operator<< (std::ostream &os, BackboneMover const &mover)
+{
+	moves::operator<<(os, mover);
+	os << "Max angle for helices (H): " << mover.get_angle_max('H') <<
+			", Max angle for strands (E): " << mover.get_angle_max('E') <<
+			", Max angle for loops (L): " << mover.get_angle_max('L') << std::endl;
+	return os;
 }
 
 

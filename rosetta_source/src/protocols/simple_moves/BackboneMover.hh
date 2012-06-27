@@ -71,7 +71,7 @@ public:
 	//destructor
 	~BackboneMover();
 
-	/// virtual functions that get overloaded or called from the inheriting classes
+	/// virtual functions that get overridden or called from the inheriting classes
 	virtual void apply( core::pose::Pose & );
 	virtual std::string get_name() const;
 
@@ -85,7 +85,7 @@ public:
 
 	bool check_rama();
 
-/// Properties set/get functions
+	/// Properties set/get functions
 	void temperature( core::Real const temperature_in );
 	void nmoves( core::Size const nmoves_in );
 	core::kinematics::MoveMapCOP movemap();
@@ -95,28 +95,45 @@ public:
 	// function definitions in .hh files.  Break that rule only if you're able to demonstrate a
 	// genuine inlining performance boost.
 	void movemap(core::kinematics::MoveMapOP new_movemap);
-	/// @brief Sets the maximum angle of perturbation,
-	/// independent of secondary structure
+
+
+	/// @brief Sets the maximum angle of perturbation, independent of
+	/// secondary structure.
 	///
-	/// example:
+	/// Example:
 	///     bbmover.angle_max(25)
 	/// See also:
 	///     ShearMover
 	///     SmallMover
 	void angle_max( core::Real const angle );
-	/// @brief Sets the max angle of perturbation, for residues with  <type>
-	/// secondary structure (<type>  must be 'H', 'E', and 'L')
+
+	/// @brief Sets the max angle of perturbation for residues with <type>
+	/// secondary structure.  (<type> must be 'H', 'E', or 'L'.)
 	///
-	/// example:
-	///     bbmover.angle_max("H",25)
+	/// Example:
+	///     bbmover.angle_max('H', 25)
 	///
 	/// See also:
 	///     ShearMover
 	///     SmallMover
 	void angle_max( char const type, core::Real const angle );
-	// note pass in by value for one direction assignment.
-/// @brief sets the max angle of perturbation, for secondary structure 'H', 'E', and 'L'
+
+	// Note: Pass in by value for one-direction assignment.
+	/// @brief Sets the max angle of perturbation, for secondary structures
+	/// 'H', 'E', and 'L'.
 	void angle_max( std::map< char, core::Real > angle_max_in );
+
+	/// @brief Gets the max angle of perturbation for residues with <type>
+	/// secondary structure.  (<type> must be 'H', 'E', or 'L'.)
+	///
+	/// Example:
+	///     bbmover.angle_max('H')
+	///
+	/// See also:
+	///     ShearMover
+	///     SmallMover
+	core::Real get_angle_max(char const type) const;
+
 
 	core::Real new_phi();
 	core::Real new_psi();
@@ -294,6 +311,8 @@ public:
 		core::pose::Pose & pose
 	);
 };
+
+std::ostream &operator<< (std::ostream &os, BackboneMover const &mover);
 
 } // simple_moves
 } // protocols
