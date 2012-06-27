@@ -121,10 +121,11 @@ BoundFunc::show_violations( std::ostream& out, Real x, Size verbose_level, Real 
 void
 BoundFunc::show_definition( std::ostream &out ) const {
 	using namespace ObjexxFCL::fmt;
+	std::streamsize const input_precision(out.precision()); // bug #0000005; SML
 	out << "BOUNDED " << std::setprecision( 4 ) << RJ(7, lb_) << " " << RJ(7, ub_) << " " << RJ(3,sd_) << " ";
 	if ( rswitch_ != 0.5 ) out << RJ(5,rswitch_ ) << " ";
   out << type_;
-	out << "\n";
+	out << std::setprecision(input_precision) << "\n";
 }
 
 void

@@ -248,6 +248,7 @@ public:
 		std::stringstream test_stream, compare_stream;
 
 		//these are random (well, convenience) numbers to test the precision problem in BoundFunc
+		//note 4.9938572 is shortened to 4.99386 because the default precision is apparently 5
 		test_stream << 4.9938572 << " 5.6732247" << std::endl;
 		func->show_definition(test_stream);
 		test_stream << 4.9938572 << " 5.6732247" << std::endl;
