@@ -44,7 +44,7 @@ namespace devel {
 namespace matdes {
 
 core::pack::task::PackerTaskOP
-make_interface_design_packertask(core::pose::Pose & pose) {
+make_interface_design_packertask(core::pose::Pose &) {
 	core::pack::task::PackerTaskOP res;
 	return res;
 }

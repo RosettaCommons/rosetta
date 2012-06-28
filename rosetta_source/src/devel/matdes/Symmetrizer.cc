@@ -81,8 +81,8 @@ Symmetrizer::Symmetrizer(const Symmetrizer& rval) :
 	symm_file_( rval.symm_file_ ),
 	radial_disp_( rval.radial_disp_ ),
 	angle_( rval.angle_ ),
-	explore_grid_( rval.explore_grid_ ),
-	symmetry_axis_( rval.symmetry_axis_ )
+	symmetry_axis_( rval.symmetry_axis_ ),
+	explore_grid_( rval.explore_grid_ )
 { }
 
 protocols::moves::MoverOP 

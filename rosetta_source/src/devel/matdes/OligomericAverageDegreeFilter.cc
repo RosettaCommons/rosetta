@@ -179,7 +179,7 @@ OligomericAverageDegreeFilter::parse_my_tag(
 	protocols::moves::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
   TR << "OligomericAverageDegreeFilter"<<std::endl;
   task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );

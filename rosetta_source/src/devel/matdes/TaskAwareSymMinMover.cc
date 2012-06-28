@@ -68,6 +68,7 @@ TaskAwareSymMinMover::TaskAwareSymMinMover() :
 { }
 
 TaskAwareSymMinMover::TaskAwareSymMinMover(const TaskAwareSymMinMover& rval) :
+	protocols::moves::Mover(),
   scorefxn_( rval.scorefxn_ ),
   min_chi_( rval.min_chi_),
   min_bb_( rval.min_bb_),
