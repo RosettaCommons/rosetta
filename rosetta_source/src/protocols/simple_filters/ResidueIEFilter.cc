@@ -151,11 +151,13 @@ ResidueIEFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & 
 	restype_ =  tag->getOption<std::string>( "restype3", "TRP" );
 	penalty_factor_ =  tag->getOption<core::Real>( "penalty_factor", 1.0 );
 	max_penalty_ =  tag->getOption<core::Real>( "max_penalty", 1000.0 );
+
 	if(tag->hasOption("residues")) {
+		tr << " the tag residues is seen by the program" << std::endl;
 		resnums_ = core::pose::get_resnum_list(tag, "residues", pose);
 
 		if(resnums_.empty()){
-			whole_pose_=1;	
+			whole_pose_=1;
       whole_interface_=0;
 			tr<< "Failed to parse residues: " << tag->getOption<std::string> ("residues") << ". Using whole pose." << std::endl;
 		}
@@ -174,6 +176,38 @@ ResidueIEFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & 
 bool
 ResidueIEFilter::apply( core::pose::Pose const & pose ) const
 {
+	core::Real const penalty( compute( pose ) );
+	if (penalty>max_penalty_) return false;
+	return true;
+}	
+
+
+
+void
+ResidueIEFilter::report( std::ostream & out, core::pose::Pose const & pose ) const 
+{
+		core::Real const penalty( compute( pose ) );
+		out << "Total penalty for restype "<< restype_ << "is "<< penalty << std::endl;
+}
+
+
+core::Real
+ResidueIEFilter::report_sm( core::pose::Pose const & pose ) const
+{
+
+	core::Real const penalty( compute( pose ) );
+	return( penalty );
+}
+
+
+
+core::Real
+ResidueIEFilter::compute( core::pose::Pose const & pose ) const
+{
+	using namespace core::scoring;
+	using namespace core::graph;
+
+
   if ( whole_interface_)
   {
 		tr << "Detecting target resnums from interface." << std::endl;
@@ -200,7 +234,8 @@ ResidueIEFilter::apply( core::pose::Pose const & pose ) const
         resnums_.push_back( resnum );
       }
     }
-  }
+  }// whole_interface_
+
   else if ( whole_pose_ )
   {
 		tr << "Detecting target resnums from whole pose." << std::endl;
@@ -211,46 +246,18 @@ ResidueIEFilter::apply( core::pose::Pose const & pose ) const
     {
       if ( in_pose.residue(resnum).is_protein()  && (in_pose.residue_type(resnum).name3() == restype_) ) resnums_.push_back( resnum );
     }
-  }
+  }//whole_pose_
 
   std::unique( resnums_.begin(), resnums_.end() );
   tr << "The following residues will be considered for interaction energy calculation:"<< std::endl;
   foreach (core::Size const res, resnums_){
-    tr << pose.residue_type( res ).name3() << res <<"+";
+    tr << pose.residue_type( res ).name3() << res <<" + ";
     if (!(pose.residue_type( res ).name3() == restype_)) {
       tr << "Residue " << res << " in pose is of type "<< pose.residue_type( res ).name3() << ". Requested restype3 is "<< restype_<<". Skipping!"<<std::endl;
       return false;
     }
   }
-  tr<<std::endl;
-	
-	core::Real const penalty( compute( pose ) );
-	if (penalty>max_penalty_) return false;
-	return true;
-}
 
-
-void
-ResidueIEFilter::report( std::ostream & out, core::pose::Pose const & pose ) const 
-{
-		core::Real const penalty( compute( pose ) );
-		out << "Total penalty for restype "<< restype_ << "is "<< penalty << std::endl;
-}
-
-
-core::Real
-ResidueIEFilter::report_sm( core::pose::Pose const & pose ) const
-{
-	core::Real const penalty( compute( pose ) );
-	return( penalty );
-}
-
-core::Real
-ResidueIEFilter::compute( core::pose::Pose const & pose ) const
-{
-	using namespace core::scoring;
-	using namespace core::graph;
-	 
 	core::pose::Pose in_pose = pose;
 	(*scorefxn_)(in_pose);
 	core::Real penalty (0.0);
@@ -258,11 +265,14 @@ ResidueIEFilter::compute( core::pose::Pose const & pose ) const
   
 	if (resnums_.size() == 0) {
     tr << "No residues found. Skipping calculation."<< std::endl;
+
     return (0.0);
   }
 	
   foreach (core::Size const res, resnums_)
   {
+
+
 		core::Real res_intE (0.0); 
 
 		if (use_resE_)
@@ -282,6 +292,7 @@ ResidueIEFilter::compute( core::pose::Pose const & pose ) const
       {
 				EnergyEdge const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
 				res_intE += Eedge->dot( curr_weights );
+
 
         if (in_pose.chain(Eedge->get_other_ind(res)) == res_chain)
         {
