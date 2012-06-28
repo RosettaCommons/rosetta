@@ -253,8 +253,6 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	// pick loops if necessary
 	protocols::loops::LoopsOP loops = get_loops();
 	// try to load loops from command line
-	if ( loops->size() == 0 )
-		protocols::loops::LoopsOP loops = new protocols::loops::Loops( true );
 	if ( loops->size() == 0 ) {
 		TR.Debug << "picking loops by chainbreak score." << std::endl;
 		loops = protocols::comparative_modeling::pick_loops_chainbreak(
