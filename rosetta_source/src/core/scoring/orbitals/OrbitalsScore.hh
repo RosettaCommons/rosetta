@@ -182,8 +182,8 @@ public:
 	) const;
 
 	bool orb_orb_rules(
-			const core::chemical::orbitals::orbital_type_enum orb_type_name1,
-			const core::chemical::orbitals::orbital_type_enum orb_type_name2
+			const core::Size orb_type_name1,
+			const core::Size orb_type_name2
 	)const;
 
 

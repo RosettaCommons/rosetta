@@ -415,7 +415,7 @@ utility::vector1< utility::vector1< core::Real > > OrbitalsLookup::parse_files(
 void OrbitalsLookup::OrbHdist_cosDHO_energy
 (
 	const h_type h_enum,
-	const core::chemical::orbitals::orbital_type_enum orb_type_name,
+	const core::Size orb_type_name,
 	const core::Real distance,
 	const core::Real DHO_angle,
 	core::Real & energy,
@@ -432,7 +432,7 @@ void OrbitalsLookup::OrbHdist_cosDHO_energy
 	numeric::MathVector<core::Real> dist_angle_pair(numeric::MakeVector(distance, DHO_angle));
 	if(check_derivative){
 		if(h_enum == Hpol_scOrbH){
-			const numeric::interpolation::spline::BicubicSpline &spline( DHO_Hpol_scOrbH_splines_[static_cast <core::Size>(orb_type_name)]);
+			const numeric::interpolation::spline::BicubicSpline &spline( DHO_Hpol_scOrbH_splines_[orb_type_name]);
 			distance_derivative = spline.dFdx(dist_angle_pair);
 			angle_derivative = spline.dFdy(dist_angle_pair);
 			if(orb_type_name==chemical::orbitals::C_pi_sp2){
@@ -443,18 +443,18 @@ void OrbitalsLookup::OrbHdist_cosDHO_energy
 
 		}
 		if(h_enum == Haro_scOrbH){
-			const numeric::interpolation::spline::BicubicSpline &spline(DHO_Haro_scOrbH_splines_[static_cast <core::Size>(orb_type_name)]);
+			const numeric::interpolation::spline::BicubicSpline &spline(DHO_Haro_scOrbH_splines_[orb_type_name]);
 			distance_derivative = spline.dFdx(dist_angle_pair);
 			angle_derivative = spline.dFdy(dist_angle_pair);
 		}
 		if(h_enum == Hpol_bbOrbH){
-			const numeric::interpolation::spline::BicubicSpline &spline(DHO_Hpol_bbOrbH_splines_[static_cast <core::Size>(orb_type_name)]);
+			const numeric::interpolation::spline::BicubicSpline &spline(DHO_Hpol_bbOrbH_splines_[orb_type_name]);
 			distance_derivative = spline.dFdx(dist_angle_pair);
 			angle_derivative = spline.dFdy(dist_angle_pair);
 		}
 	}else{
 		if(h_enum == Hpol_scOrbH){
-			const numeric::interpolation::spline::BicubicSpline &spline(DHO_Hpol_scOrbH_splines_[static_cast <core::Size>(orb_type_name)]);
+			const numeric::interpolation::spline::BicubicSpline &spline(DHO_Hpol_scOrbH_splines_[orb_type_name]);
 			energy = spline.F(dist_angle_pair);
 			if(orb_type_name==chemical::orbitals::C_pi_sp2){
 				//this is to match the orbital orbital and orbital hpol weight. Set the weight of cation_pi interactions to that of orb orb
@@ -462,11 +462,11 @@ void OrbitalsLookup::OrbHdist_cosDHO_energy
 			}
 		}
 		if(h_enum == Haro_scOrbH){
-			const numeric::interpolation::spline::BicubicSpline &spline(DHO_Haro_scOrbH_splines_[static_cast <core::Size>(orb_type_name)]);
+			const numeric::interpolation::spline::BicubicSpline &spline(DHO_Haro_scOrbH_splines_[orb_type_name]);
 			energy = spline.F(dist_angle_pair);
 		}
 		if(h_enum == Hpol_bbOrbH){
-			const numeric::interpolation::spline::BicubicSpline &spline(DHO_Hpol_bbOrbH_splines_[static_cast <core::Size>(orb_type_name)]);
+			const numeric::interpolation::spline::BicubicSpline &spline(DHO_Hpol_bbOrbH_splines_[orb_type_name]);
 			energy = spline.F(dist_angle_pair);
 		}
 	}
@@ -476,7 +476,7 @@ void OrbitalsLookup::OrbHdist_cosDHO_energy
 void OrbitalsLookup::OrbHdist_cosAOH_energy
 (
 	const h_type h_enum,
-	const core::chemical::orbitals::orbital_type_enum orb_type_name,
+	const core::Size orb_type_name,
 	const core::Real distance,
 	const core::Real AOH_angle,
 	core::Real & energy,
@@ -493,7 +493,7 @@ void OrbitalsLookup::OrbHdist_cosAOH_energy
 	numeric::MathVector<core::Real> dist_angle_pair(numeric::MakeVector(distance, AOH_angle));
 	if(check_derivative){
 		if(h_enum == Hpol_scOrbH){
-			const numeric::interpolation::spline::BicubicSpline &spline( AOH_Hpol_scOrbH_splines_[static_cast <core::Size>(orb_type_name)]);
+			const numeric::interpolation::spline::BicubicSpline &spline( AOH_Hpol_scOrbH_splines_[orb_type_name]);
 			distance_derivative = spline.dFdx(dist_angle_pair);
 			angle_derivative = spline.dFdy(dist_angle_pair);
 			if(orb_type_name==chemical::orbitals::C_pi_sp2){
@@ -505,24 +505,24 @@ void OrbitalsLookup::OrbHdist_cosAOH_energy
 		}
 		if(h_enum == Haro_scOrbH){
 			if(ACO){
-				const numeric::interpolation::spline::BicubicSpline &spline(ACO_AOH_orb_Hpol_splines_[static_cast <core::Size>(orb_type_name)]);
+				const numeric::interpolation::spline::BicubicSpline &spline(ACO_AOH_orb_Hpol_splines_[orb_type_name]);
 				distance_derivative = spline.dFdx(dist_angle_pair);
 				angle_derivative = spline.dFdy(dist_angle_pair);
 			}else{
-				const numeric::interpolation::spline::BicubicSpline &spline(AOH_Haro_scOrbH_splines_[static_cast <core::Size>(orb_type_name)]);
+				const numeric::interpolation::spline::BicubicSpline &spline(AOH_Haro_scOrbH_splines_[orb_type_name]);
 				distance_derivative = spline.dFdx(dist_angle_pair);
 				angle_derivative = spline.dFdy(dist_angle_pair);
 			}
 
 		}
 		if(h_enum == Hpol_bbOrbH){
-			const numeric::interpolation::spline::BicubicSpline &spline(AOH_Hpol_bbOrbH_splines_[static_cast <core::Size>(orb_type_name)]);
+			const numeric::interpolation::spline::BicubicSpline &spline(AOH_Hpol_bbOrbH_splines_[orb_type_name]);
 			distance_derivative = spline.dFdx(dist_angle_pair);
 			angle_derivative = spline.dFdy(dist_angle_pair);
 		}
 	}else{
 		if(h_enum == Hpol_scOrbH){
-			const numeric::interpolation::spline::BicubicSpline &spline(AOH_Hpol_scOrbH_splines_[static_cast <core::Size>(orb_type_name)]);
+			const numeric::interpolation::spline::BicubicSpline &spline(AOH_Hpol_scOrbH_splines_[orb_type_name]);
 			energy = spline.F(dist_angle_pair);
 			if(orb_type_name==chemical::orbitals::C_pi_sp2){
 				//this is to match the orbital orbital and orbital hpol weight. Set the weight of cation_pi interactions to that of orb orb
@@ -531,23 +531,23 @@ void OrbitalsLookup::OrbHdist_cosAOH_energy
 		}
 		if(h_enum == Haro_scOrbH){
 			if(ACO){
-				const numeric::interpolation::spline::BicubicSpline &spline(ACO_AOH_orb_Hpol_splines_[static_cast <core::Size>(orb_type_name)]);
+				const numeric::interpolation::spline::BicubicSpline &spline(ACO_AOH_orb_Hpol_splines_[orb_type_name]);
 				energy = spline.F(dist_angle_pair);
 			}else{
-				const numeric::interpolation::spline::BicubicSpline &spline(AOH_Haro_scOrbH_splines_[static_cast <core::Size>(orb_type_name)]);
+				const numeric::interpolation::spline::BicubicSpline &spline(AOH_Haro_scOrbH_splines_[orb_type_name]);
 				energy = spline.F(dist_angle_pair);
 			}
 		}
 		if(h_enum == Hpol_bbOrbH){
-			const numeric::interpolation::spline::BicubicSpline &spline(AOH_Hpol_bbOrbH_splines_[static_cast <core::Size>(orb_type_name)]);
+			const numeric::interpolation::spline::BicubicSpline &spline(AOH_Hpol_bbOrbH_splines_[orb_type_name]);
 			energy = spline.F(dist_angle_pair);
 		}
 	}
 }
 
 void OrbitalsLookup::OrbOrbDist_cosAOD_energy(
-		const core::chemical::orbitals::orbital_type_enum orb_type_name1,
-		const core::chemical::orbitals::orbital_type_enum orb_type_name2,
+		const core::Size orb_type_name1,
+		const core::Size orb_type_name2,
 		const core::Real distance,
 		const core::Real AOO_angle,
 		core::Real & energy,
@@ -559,66 +559,66 @@ void OrbitalsLookup::OrbOrbDist_cosAOD_energy(
 	//if(AOO_angle > 0) energy=distance_derivative=angle_derivative=0.0;
 	numeric::MathVector<core::Real> dist_angle_pair(numeric::MakeVector(distance, AOO_angle));
 	if(check_derivative){
-		if(orb_type_name1==core::chemical::orbitals::C_pi_sp2){
-			if(orb_type_name2==core::chemical::orbitals::N_pi_sp2)
+		if(orb_type_name1==static_cast <core::Size>(core::chemical::orbitals::C_pi_sp2)){
+			if(orb_type_name2==static_cast <core::Size>(core::chemical::orbitals::N_pi_sp2))
 			{
 				const numeric::interpolation::spline::BicubicSpline &spline(AOD_orb_orb_splines_[2]);
 				distance_derivative = spline.dFdx(dist_angle_pair);
 				angle_derivative = spline.dFdy(dist_angle_pair);
 			}
-			if(orb_type_name2==core::chemical::orbitals::O_pi_sp2){
+			if(orb_type_name2==static_cast <core::Size>(core::chemical::orbitals::O_pi_sp2)){
 				const numeric::interpolation::spline::BicubicSpline &spline(AOD_orb_orb_splines_[3]);
 				distance_derivative = spline.dFdx(dist_angle_pair);
 				angle_derivative = spline.dFdy(dist_angle_pair);
 			}
-			if(orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+			if(orb_type_name2==static_cast <core::Size>(core::chemical::orbitals::C_pi_sp2)){
 				const numeric::interpolation::spline::BicubicSpline &spline(AOD_orb_orb_splines_[1]);
 				distance_derivative = spline.dFdx(dist_angle_pair);
 				angle_derivative = spline.dFdy(dist_angle_pair);
 			}
 
 		}
-		if(orb_type_name1==core::chemical::orbitals::N_pi_sp2 && orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+		if(orb_type_name1==static_cast <core::Size>(core::chemical::orbitals::N_pi_sp2) && orb_type_name2==static_cast <core::Size>(core::chemical::orbitals::C_pi_sp2)){
 			const numeric::interpolation::spline::BicubicSpline &spline(AOD_orb_orb_splines_[4]);
 			distance_derivative = spline.dFdx(dist_angle_pair);
 			angle_derivative = spline.dFdy(dist_angle_pair);
 		}
-		if(orb_type_name1==core::chemical::orbitals::O_pi_sp2 && orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+		if(orb_type_name1==static_cast <core::Size>(core::chemical::orbitals::O_pi_sp2) && orb_type_name2==static_cast <core::Size>(core::chemical::orbitals::C_pi_sp2)){
 			const numeric::interpolation::spline::BicubicSpline &spline(AOD_orb_orb_splines_[5]);
 			distance_derivative = spline.dFdx(dist_angle_pair);
 			angle_derivative = spline.dFdy(dist_angle_pair);
 		}
 
 	}else{
-		if(orb_type_name1==core::chemical::orbitals::C_pi_sp2){
+		if(orb_type_name1==static_cast <core::Size>(core::chemical::orbitals::C_pi_sp2)){
 			if(orb_type_name2==core::chemical::orbitals::N_pi_sp2)
 			{
 				const numeric::interpolation::spline::BicubicSpline &spline(AOD_orb_orb_splines_[2]);
 				energy = spline.F(dist_angle_pair);
 			}
-			if(orb_type_name2==core::chemical::orbitals::O_pi_sp2){
+			if(orb_type_name2==static_cast <core::Size>(core::chemical::orbitals::O_pi_sp2)){
 				const numeric::interpolation::spline::BicubicSpline &spline(AOD_orb_orb_splines_[3]);
 				energy = spline.F(dist_angle_pair);
 			}
-			if(orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+			if(orb_type_name2==static_cast <core::Size>(core::chemical::orbitals::C_pi_sp2)){
 				const numeric::interpolation::spline::BicubicSpline &spline(AOD_orb_orb_splines_[1]);
 				energy = spline.F(dist_angle_pair);
 			}
 
 		}
-		if(orb_type_name1==core::chemical::orbitals::N_pi_sp2 && orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+		if(orb_type_name1==static_cast <core::Size>(core::chemical::orbitals::N_pi_sp2) && orb_type_name2==static_cast <core::Size>(core::chemical::orbitals::C_pi_sp2)){
 			const numeric::interpolation::spline::BicubicSpline &spline(AOD_orb_orb_splines_[4]);
 			energy = spline.F(dist_angle_pair);
 		}
-		if(orb_type_name1==core::chemical::orbitals::O_pi_sp2 && orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+		if(orb_type_name1==static_cast <core::Size>(core::chemical::orbitals::O_pi_sp2) && orb_type_name2==static_cast <core::Size>(core::chemical::orbitals::C_pi_sp2)){
 			const numeric::interpolation::spline::BicubicSpline &spline(AOD_orb_orb_splines_[5]);
 			energy = spline.F(dist_angle_pair);
 		}
 	}
 }
 void OrbitalsLookup::OrbOrbDist_cosDOA_energy(
-		const core::chemical::orbitals::orbital_type_enum orb_type_name1,
-		const core::chemical::orbitals::orbital_type_enum orb_type_name2,
+		const core::Size orb_type_name1,
+		const core::Size orb_type_name2,
 		const core::Real distance,
 		const core::Real DOO_angle,
 		core::Real & energy,
@@ -631,58 +631,58 @@ void OrbitalsLookup::OrbOrbDist_cosDOA_energy(
 	numeric::MathVector<core::Real> dist_angle_pair(numeric::MakeVector(distance, DOO_angle));
 
 	if(check_derivative){
-		if(orb_type_name1==core::chemical::orbitals::C_pi_sp2){
+		if(orb_type_name1==static_cast <core::Size>(core::chemical::orbitals::C_pi_sp2)){
 			if(orb_type_name2==core::chemical::orbitals::N_pi_sp2)
 			{
 				const numeric::interpolation::spline::BicubicSpline &spline(DOA_orb_orb_splines_[2]);
 				distance_derivative = spline.dFdx(dist_angle_pair);
 				angle_derivative = spline.dFdy(dist_angle_pair);
 			}
-			if(orb_type_name2==core::chemical::orbitals::O_pi_sp2){
+			if(orb_type_name2==static_cast <core::Size>(core::chemical::orbitals::O_pi_sp2)){
 				const numeric::interpolation::spline::BicubicSpline &spline(DOA_orb_orb_splines_[3]);
 				distance_derivative = spline.dFdx(dist_angle_pair);
 				angle_derivative = spline.dFdy(dist_angle_pair);
 			}
-			if(orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+			if(orb_type_name2==static_cast <core::Size>(core::chemical::orbitals::C_pi_sp2)){
 				const numeric::interpolation::spline::BicubicSpline &spline(DOA_orb_orb_splines_[1]);
 				distance_derivative = spline.dFdx(dist_angle_pair);
 				angle_derivative = spline.dFdy(dist_angle_pair);
 			}
 
 		}
-		if(orb_type_name1==core::chemical::orbitals::N_pi_sp2 && orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+		if(orb_type_name1==static_cast <core::Size>(core::chemical::orbitals::N_pi_sp2) && orb_type_name2==static_cast <core::Size>(core::chemical::orbitals::C_pi_sp2)){
 			const numeric::interpolation::spline::BicubicSpline &spline(DOA_orb_orb_splines_[4]);
 			distance_derivative = spline.dFdx(dist_angle_pair);
 			angle_derivative = spline.dFdy(dist_angle_pair);
 		}
-		if(orb_type_name1==core::chemical::orbitals::O_pi_sp2 && orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+		if(orb_type_name1==static_cast <core::Size>(core::chemical::orbitals::O_pi_sp2) && orb_type_name2==static_cast <core::Size>(core::chemical::orbitals::C_pi_sp2)){
 			const numeric::interpolation::spline::BicubicSpline &spline(DOA_orb_orb_splines_[5]);
 			distance_derivative = spline.dFdx(dist_angle_pair);
 			angle_derivative = spline.dFdy(dist_angle_pair);
 		}
 
 	}else{
-		if(orb_type_name1==core::chemical::orbitals::C_pi_sp2){
+		if(orb_type_name1==static_cast <core::Size>(core::chemical::orbitals::C_pi_sp2)){
 			if(orb_type_name2==core::chemical::orbitals::N_pi_sp2)
 			{
 				const numeric::interpolation::spline::BicubicSpline &spline(DOA_orb_orb_splines_[2]);
 				energy = spline.F(dist_angle_pair);
 			}
-			if(orb_type_name2==core::chemical::orbitals::O_pi_sp2){
+			if(orb_type_name2==static_cast <core::Size>(core::chemical::orbitals::O_pi_sp2)){
 				const numeric::interpolation::spline::BicubicSpline &spline(DOA_orb_orb_splines_[3]);
 				energy = spline.F(dist_angle_pair);
 			}
-			if(orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+			if(orb_type_name2==static_cast <core::Size>(core::chemical::orbitals::C_pi_sp2)){
 				const numeric::interpolation::spline::BicubicSpline &spline(DOA_orb_orb_splines_[1]);
 				energy = spline.F(dist_angle_pair);
 			}
 
 		}
-		if(orb_type_name1==core::chemical::orbitals::N_pi_sp2 && orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+		if(orb_type_name1==static_cast <core::Size>(core::chemical::orbitals::N_pi_sp2) && orb_type_name2==static_cast <core::Size>(core::chemical::orbitals::C_pi_sp2)){
 			const numeric::interpolation::spline::BicubicSpline &spline(DOA_orb_orb_splines_[4]);
 			energy = spline.F(dist_angle_pair);
 		}
-		if(orb_type_name1==core::chemical::orbitals::O_pi_sp2 && orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+		if(orb_type_name1==static_cast <core::Size>(core::chemical::orbitals::O_pi_sp2) && orb_type_name2==static_cast <core::Size>(core::chemical::orbitals::C_pi_sp2)){
 			const numeric::interpolation::spline::BicubicSpline &spline(DOA_orb_orb_splines_[5]);
 			energy = spline.F(dist_angle_pair);
 		}

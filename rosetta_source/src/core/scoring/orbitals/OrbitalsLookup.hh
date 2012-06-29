@@ -49,7 +49,7 @@ public:
 
 	void OrbHdist_cosDHO_energy (
 		const h_type h_enum,
-		const core::chemical::orbitals::orbital_type_enum orb_type_name,
+		const core::Size orb_type_name,
 		const core::Real distance,
 		const core::Real AOH_angle,
 		core::Real & energy,
@@ -61,7 +61,7 @@ public:
 	void OrbHdist_cosAOH_energy
 	(
 		const h_type h_enum,
-		const core::chemical::orbitals::orbital_type_enum orb_type_name,
+		const core::Size orb_type_name,
 		const core::Real distance,
 		const core::Real AOH_angle,
 		core::Real & energy,
@@ -72,8 +72,8 @@ public:
 	) const;
 
 	void OrbOrbDist_cosAOD_energy(
-			const core::chemical::orbitals::orbital_type_enum orb_type_name1,
-			const core::chemical::orbitals::orbital_type_enum orb_type_name2,
+			const core::Size orb_type_name1,
+			const core::Size orb_type_name2,
 			const core::Real distance,
 			const core::Real AOO_angle,
 			core::Real & energy,
@@ -82,8 +82,8 @@ public:
 			bool check_derivative
 	)const;
 	void OrbOrbDist_cosDOA_energy(
-			const core::chemical::orbitals::orbital_type_enum orb_type_name1,
-			const core::chemical::orbitals::orbital_type_enum orb_type_name2,
+			const core::Size orb_type_name1,
+			const core::Size orb_type_name2,
 			const core::Real distance,
 			const core::Real DOO_angle,
 			core::Real & energy,

@@ -287,6 +287,12 @@ ResidueType::orbital_type(int const orbital_index)const
 
 }
 
+core::Size
+ResidueType::orbital_type_index(Size const orb_index) const
+{
+	return orbital_type_index_[orb_index];
+}
+
 /// @brief Get the chemical atom_type index number for this atom by its index number in this residue
 int
 ResidueType::atom_type_index( Size const atmno ) const
@@ -300,6 +306,7 @@ ResidueType::mm_atom_type( Size const atomno ) const
 {
 	return ( *mm_atom_types_ )[ mm_atom_type_index_[ atomno ] ];
 }
+
 
 
 /// @brief Get the MM atom_type index number for this atom by its index number in this residue

@@ -618,6 +618,9 @@ public:
 	chemical::orbitals::OrbitalType const &
 	orbital_type(int const orbital_index) const;
 
+	core::Size
+	orbital_type_index( Size const orb_index ) const;
+
 
 	/// @brief number of orbitals
 	Size

@@ -31,20 +31,17 @@ public:
 	/// @brief default constructor and set atom type number to 0 and place the
 	/// atom at the origin
 	OrbitalXYZCoords():
-		xyz_( 0.0 )
+		xyz_( 0.0 ),
+		type_(0)
 	{}
 
 	/// @brief constructor with an atom type number
 	// type is set at construction time -- atom is placed at the origin
-	OrbitalXYZCoords( ShortSize const, ShortSize const ):
-		xyz_( 0.0 )
+	OrbitalXYZCoords( Vector const & xyz_in, ShortSize const & type):
+		xyz_( xyz_in ),
+		type_(type)
 	{}
 
-	/// @brief constructor with xyz and an atom type number
-	// Atom( Vector const & xyz_in, int const type_in, Real temperature = 0.0 ):
-	OrbitalXYZCoords( Vector const & xyz_in ):
-		xyz_( xyz_in )
-	{}
 
 	/// @brief destructor
 	virtual
@@ -65,10 +62,22 @@ public:
 		xyz_ = xyz_in;
 	}
 
+	ShortSize const &
+	type() const
+	{
+		return type_;
+	}
+
+	void
+	type(ShortSize const & type_in)
+	{
+		type_ = type_in;
+	}
 
 private:
 	/// xyz coordinates
 	Vector xyz_;
+	ShortSize type_;
 
 
 

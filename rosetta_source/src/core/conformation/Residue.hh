@@ -983,6 +983,7 @@ public:
 	set_orbital_xyz( core::Size const orbital_index, Vector const & xyz_in )
 	{
 		orbitals_[ orbital_index ].xyz( xyz_in );
+		orbitals_[orbital_index].type(rsd_type_.orbital_type_index(orbital_index));
 	}
 
 
@@ -1010,6 +1011,11 @@ public:
 		return rsd_type_.orbital_type(orbital_index);
 	}
 
+	Size
+	orbital_type_index( Size const orbital_index ) const
+	{
+		return orbitals_[ orbital_index ].type();
+	}
 
 	void
 	update_orbital_coords() {

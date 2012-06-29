@@ -209,26 +209,26 @@ OrbitalsScore::version() const
 /////////////////////////////////
 
 bool OrbitalsScore::orb_orb_rules(
-		const core::chemical::orbitals::orbital_type_enum orb_type_name1,
-		const core::chemical::orbitals::orbital_type_enum orb_type_name2
+		const core::Size orb_type_name1,
+		const core::Size orb_type_name2
 )const
 {
 
-	if(orb_type_name1==core::chemical::orbitals::C_pi_sp2){
+	if(orb_type_name1==static_cast <core::Size>(core::chemical::orbitals::C_pi_sp2)){
 		if(
-				orb_type_name2==core::chemical::orbitals::N_pi_sp2 ||
-				orb_type_name2==core::chemical::orbitals::O_pi_sp2 ||
-				orb_type_name2==core::chemical::orbitals::C_pi_sp2
+				orb_type_name2==static_cast <core::Size>(core::chemical::orbitals::N_pi_sp2) ||
+				orb_type_name2==static_cast <core::Size>(core::chemical::orbitals::O_pi_sp2) ||
+				orb_type_name2==static_cast <core::Size>(core::chemical::orbitals::C_pi_sp2)
 		)
 		{
 			return true;
 		}else {return false;}
 	}
-	if(orb_type_name1==core::chemical::orbitals::N_pi_sp2 && orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+	if(orb_type_name1==static_cast <core::Size>(core::chemical::orbitals::N_pi_sp2) && static_cast <core::Size>(orb_type_name2==core::chemical::orbitals::C_pi_sp2)){
 		return true;
 
 	}
-	if(orb_type_name1==core::chemical::orbitals::O_pi_sp2 && orb_type_name2==core::chemical::orbitals::C_pi_sp2){
+	if(orb_type_name1==static_cast <core::Size>(core::chemical::orbitals::O_pi_sp2) && static_cast <core::Size>(orb_type_name2==core::chemical::orbitals::C_pi_sp2)){
 		return true;
 	}
 	return false;
@@ -322,8 +322,8 @@ void OrbitalsScore::get_orb_orb_E(
 								res2_orb_end = res2_orbs.end();
 								res2_orb != res2_orb_end; ++res2_orb
 						){
-							core::chemical::orbitals::orbital_type_enum orbital_type1 = res1.orbital_type(*res1_orb).orbital_enum();
-							core::chemical::orbitals::orbital_type_enum orbital_type2 = res2.orbital_type(*res2_orb).orbital_enum();
+							core::Size orbital_type1(res1.orbital_type_index(*res1_orb));
+							core::Size orbital_type2(res2.orbital_type_index(*res2_orb));
 							if(orb_orb_rules(orbital_type1,orbital_type2 )){
 								numeric::xyzVector< core::Real > const res2_Orbxyz(res2.orbital_xyz(*res2_orb) );
 								core::Real orb1_orb2_dist= res1_Orbxyz.distance_squared(res2_Orbxyz);
@@ -463,12 +463,12 @@ void OrbitalsScore::get_orb_H_distance_and_energy(
 		numeric::xyzVector< core::Real > const & Orbxyz(res1.orbital_xyz(*orbital_index) );
 		core::Real temp_dist_squared = Orbxyz.distance_squared( Hxyz );
 		if(temp_dist_squared < max_orbital_dist_squared_){
-			core::chemical::orbitals::orbital_type_enum orbital_type = res1.orbital_type(*orbital_index).orbital_enum();
-			if(orbital_type==core::chemical::orbitals::O_pi_sp2_bb){
-				orbital_type=core::chemical::orbitals::O_pi_sp2;
+			core::Size orbital_type= res1.orbital_type_index(*orbital_index);
+			if(orbital_type==static_cast<core::Size>(core::chemical::orbitals::O_pi_sp2_bb)){
+				orbital_type=static_cast<core::Size>(core::chemical::orbitals::O_pi_sp2);
 			}
-			if(orbital_type==core::chemical::orbitals::O_p_sp2_bb){
-				orbital_type=core::chemical::orbitals::O_p_sp2;
+			if(orbital_type==static_cast<core::Size>(core::chemical::orbitals::O_p_sp2_bb)){
+				orbital_type=static_cast<core::Size>(core::chemical::orbitals::O_p_sp2);
 			}
 			core::Real cosDHO(cos_of(Dxyz, Hxyz, Orbxyz));//Donor - Hydrogen - Orbital angle
 			core::Real cosAOH(cos_of(Axyz, Orbxyz, Hxyz));
@@ -674,8 +674,8 @@ OrbitalsScore::assign_orb_orb_derivs(
 								res2_orb_end = res2_orbs.end();
 								res2_orb != res2_orb_end; ++res2_orb
 						){
-							core::chemical::orbitals::orbital_type_enum orbital_type1 = res1.orbital_type(*res1_orb).orbital_enum();
-							core::chemical::orbitals::orbital_type_enum orbital_type2 = res2.orbital_type(*res2_orb).orbital_enum();
+							core::Size orbital_type1 = res1.orbital_type_index(*res1_orb);
+							core::Size orbital_type2 = res2.orbital_type_index(*res2_orb);
 							if(orb_orb_rules(orbital_type1,orbital_type2 )){
 								numeric::xyzVector< core::Real > const res2_Orbxyz(res2.orbital_xyz(*res2_orb) );
 								core::Real orb1_orb2_dist= res1_Orbxyz.distance_squared(res2_Orbxyz);
@@ -830,13 +830,13 @@ void OrbitalsScore::assign_orb_H_derivs(
 		numeric::xyzVector< core::Real > const Orbxyz(res1.orbital_xyz(*orbital_index) );
 		core::Real temp_dist_squared = Orbxyz.distance_squared( Hxyz );
 		if(temp_dist_squared < max_orbital_dist_squared_){
-			core::chemical::orbitals::orbital_type_enum orbital_type = res1.orbital_type(*orbital_index).orbital_enum();
+			core::Size orbital_type = res1.orbital_type_index(*orbital_index);
 
-			if(orbital_type==core::chemical::orbitals::O_pi_sp2_bb){
-				orbital_type=core::chemical::orbitals::O_pi_sp2;
+			if(orbital_type==static_cast<core::Size>(core::chemical::orbitals::O_pi_sp2_bb)){
+				orbital_type=static_cast<core::Size>(core::chemical::orbitals::O_pi_sp2);
 			}
-			if(orbital_type==core::chemical::orbitals::O_p_sp2_bb){
-				orbital_type=core::chemical::orbitals::O_p_sp2;
+			if(orbital_type==static_cast<core::Size>(core::chemical::orbitals::O_p_sp2_bb)){
+				orbital_type=static_cast<core::Size>(core::chemical::orbitals::O_p_sp2);
 			}
 
 
