@@ -18,12 +18,13 @@
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
-
+/* Undefined, commenting out to fix PyRosetta build
 class LayerOperationsOperationCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
 	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
 	virtual std::string keyname() const { return "LayerOperations"; }
 };
+*/
 
 } //namespace protocols
 } //namespace toolbox
