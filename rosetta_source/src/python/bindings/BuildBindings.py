@@ -1188,7 +1188,7 @@ class ModuleBuilder:
     def linkBindings(self):
         ''' Build early generated bindings.
         '''
-        if not self.headers: return
+        if not self.headers  or  Options.cross_compile: return
         source_list = json.load( file(self.all_at_once_json) )
 
         relink = False
