@@ -52,7 +52,7 @@ namespace scores {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer trPhiPsiSquareWell(
+static basic::Tracer tr(
 		"protocols.frag_picker.scores.PhiPsiSquareWell");
 
 	PhiPsiSquareWell::PhiPsiSquareWell(Size priority, Real lowest_acceptable_value, bool use_lowest,
@@ -92,7 +92,7 @@ static basic::Tracer trPhiPsiSquareWell(
 
 		if (!reader.has_entry(i)) {
 			existing_data_[i] = false;
-			trPhiPsiSquareWell.Warning << "Lack of data for position " << i
+			tr.Warning << "Lack of data for position " << i
 					<< std::endl;
 			continue;
 		}
@@ -101,9 +101,8 @@ static basic::Tracer trPhiPsiSquareWell(
 				 || (reader.quality(i) == "Dyn")
 				 || (reader.quality(i) == "None") ) {
 			existing_data_[i] = false;
-			trPhiPsiSquareWell.Warning
-				<< "Untrustworthy data at position " << i << " due to prediction class " << reader.quality(i)
-				<< std::endl;
+			tr.Info	<< "Untrustworthy data at position " << i << " due to prediction class " << reader.quality(i)
+							<< std::endl;
 			continue;
 		}
 
@@ -112,7 +111,7 @@ static basic::Tracer trPhiPsiSquareWell(
 		if ((reader.phi(i) > 181) || (reader.phi(i) < -181)
 				|| (reader.psi(i) > 181) || (reader.psi(i) < -181)) {
 			existing_data_[i] = false;
-			trPhiPsiSquareWell.Warning
+			tr.Warning
 					<< "Unphysical Phi/Psi observation at position " << i
 					<< std::endl;
 			continue;
@@ -297,10 +296,10 @@ FragmentScoringMethodOP MakePhiPsiSquareWell::make(Size priority,
 		if (pos != std::string::npos) {
 			core::pose::PoseOP nativePose = new core::pose::Pose;
 			core::import_pose::pose_from_pdb(*nativePose, input_file);
-			trPhiPsiSquareWell
+			tr.Info
 					<< "Reference file for Phi,Psi scoring loaded from "
 					<< input_file << std::endl;
-			trPhiPsiSquareWell.Debug << "its sequence is:\n"
+			tr.Debug << "its sequence is:\n"
 					<< nativePose->sequence() << std::endl;
 
 			return (FragmentScoringMethodOP) new PhiPsiSquareWell(priority,
@@ -308,31 +307,31 @@ FragmentScoringMethodOP MakePhiPsiSquareWell::make(Size priority,
 		}
 		pos = input_file.find(".tab");
 		if (pos != std::string::npos) {
-			trPhiPsiSquareWell
+			tr.Info
 					<< "Reference file for Phi,Psi scoring loaded from a TALOS file: "
 					<< input_file << std::endl;
 			PhiPsiTalosIO in(input_file);
-			in.write(trPhiPsiSquareWell.Debug);
+			in.write(tr.Debug);
 			return (FragmentScoringMethodOP) new PhiPsiSquareWell(priority,
 					lowest_acceptable_value, use_lowest, in);
 		}
 	}
 
 	if (option[in::file::talos_phi_psi].user()) {
-		trPhiPsiSquareWell
+		tr.Info
 				<< "Reference file for Phi,Psi scoring loaded from a TALOS file: "
 				<< input_file << std::endl;
 		PhiPsiTalosIO in(option[in::file::talos_phi_psi]());
-		in.write(trPhiPsiSquareWell.Debug);
+		in.write(tr.Debug);
 		return (FragmentScoringMethodOP) new PhiPsiSquareWell(priority,
 				lowest_acceptable_value, use_lowest, in);
 	}
 	if (option[in::file::s].user()) {
 		core::pose::PoseOP nativePose = new core::pose::Pose;
 		core::import_pose::pose_from_pdb(*nativePose, option[in::file::s]()[1]);
-		trPhiPsiSquareWell << "Reference file for Phi,Psi scoring loaded from "
+		tr.Info << "Reference file for Phi,Psi scoring loaded from "
 				<< option[in::file::s]()[1] << std::endl;
-		trPhiPsiSquareWell.Debug << "its sequence is:\n"
+		tr.Debug << "its sequence is:\n"
 				<< nativePose->sequence() << std::endl;
 
 		return (FragmentScoringMethodOP) new PhiPsiSquareWell(priority,
@@ -341,9 +340,9 @@ FragmentScoringMethodOP MakePhiPsiSquareWell::make(Size priority,
 	if (option[in::file::native].user()) {
 		core::pose::PoseOP nativePose = new core::pose::Pose;
 		core::import_pose::pose_from_pdb(*nativePose, option[in::file::native]());
-		trPhiPsiSquareWell << "Reference file for Phi,Psi scoring loaded from "
+		tr.Info << "Reference file for Phi,Psi scoring loaded from "
 				<< option[in::file::native]() << std::endl;
-		trPhiPsiSquareWell.Debug << "its sequence is:\n"
+		tr.Debug << "its sequence is:\n"
 				<< nativePose->sequence() << std::endl;
 
 		return (FragmentScoringMethodOP) new PhiPsiSquareWell(priority,

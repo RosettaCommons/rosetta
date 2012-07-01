@@ -23,7 +23,7 @@
 #include <protocols/noesy_assign/PeakCalibrator.fwd.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/chemical/AA.hh>
+#include <core/chemical/AA.hh>
 
 // Utility headers
 // AUTO-REMOVED #include <utility/exit.hh>
@@ -52,7 +52,7 @@ Resonance combines resonanceID (label), chemical shift (freq), tolerance (error)
 class Resonance {
 public:
   Resonance();
-  Resonance( core::Size label, core::Real freq, core::Real error, core::id::NamedAtomID id );
+  Resonance( core::Size label, core::Real freq, core::Real error, core::id::NamedAtomID id, core::chemical::AA );
   ~Resonance();
 
 	///@brief output
@@ -70,6 +70,7 @@ public:
   core::Real freq() const { return freq_; }
 	core::Real error() const { return error_; }
 	core::Real tolerance() const { return error_; }
+	core::chemical::AA aa() const { return aa_; }
 
 	///@brief classification for calibration... e.g., Backbone, sidechain, etc..
 	CALIBRATION_ATOM_TYPE calibration_atom_type() const { return calibration_atom_type_; }
@@ -79,6 +80,7 @@ private:
   core::Real freq_;
   core::Real error_;
   core::id::NamedAtomID atom_;
+	core::chemical::AA aa_;
 	CALIBRATION_ATOM_TYPE calibration_atom_type_;
 };
 

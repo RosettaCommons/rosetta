@@ -57,6 +57,8 @@ sources = {
 		"InterfaceAnalyzer",
 		"score",
 		"score_jd2",
+                "ensemble_analysis",
+                "fast_clustering",
 	],
 	"public/antibody": [
 		"antibody_mode",

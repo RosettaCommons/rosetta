@@ -32,7 +32,7 @@
 namespace protocols {
 namespace frag_picker {
 
-static basic::Tracer trCSTalosIO("protocols.frag_picker.TalosReader");
+static basic::Tracer tr("protocols.frag_picker.TalosReader");
 
 utility::vector1<utility::vector1<std::pair<Size, Real> > > CSTalosIO::repack_to_matrix() {
 
@@ -54,7 +54,7 @@ utility::vector1<utility::vector1<std::pair<Size, Real> > > CSTalosIO::repack_to
 void CSTalosIO::read(std::string const & file_name) {
 
 	utility::io::izstream data(file_name.c_str());
-	trCSTalosIO.Info << "read talos data from " << file_name << std::endl;
+	tr.Info << "read talos data from " << file_name << std::endl;
 	if (!data)
 		utility_exit_with_message("[ERROR] Unable to open talos file: "
 				+ file_name);
@@ -72,28 +72,21 @@ void CSTalosIO::read(std::string const & file_name) {
 		if (keyword == "DATA") {
 			line_stream >> subkeyword;
 			if (subkeyword == "SEQUENCE") {
-
-				line_stream >> entry;
-				while (!line_stream.eof()) {
+				while (line_stream >> entry) {
 					sequence_ += entry;
-					line_stream >> entry;
 				}
-				sequence_ += entry;
-
 			} else if (subkeyword == "FIRST_RESID") {
 				first_not_found = true;
 				line_stream >> first_residue_index_;
+				tr.Info << "first residue is set to " << first_residue_index_ << " by FIRST_RESID entry in chemical shift file." << std::endl;
 			} else {
-				trCSTalosIO.Warning << "Unrecognized DATA entry:" << line
+				tr.Warning << "Unrecognized DATA entry:" << line
 						<< std::endl;
 			}
 		}
 		if (keyword == "VARS") {
-
-			line_stream >> entry;
-			while (!line_stream.eof()) {
+			while (	line_stream >> entry ) {
 				column_names_.push_back(entry);
-				line_stream >> entry;
 			}
 		}
 		if (keyword == "FORMAT") {
@@ -102,13 +95,13 @@ void CSTalosIO::read(std::string const & file_name) {
 			header_done = true;
 		}
 	}
-	if (!first_not_found)
-		trCSTalosIO.Warning
-				<< "FIRST_RESID keyword didn't show up in a file header\n\tAssuming the first residue id is 1"
+	if (!first_not_found) {
+		//this is quite normal...
+		tr.Debug	<< "FIRST_RESID keyword didn't show up in a file header\n\tAssuming the first residue id is 1"
 				<< std::endl;
+	}
 
-	while (!data.eof()) {
-		getline(data, line);
+	while (getline(data, line)) {
 		if (line.length() > 7) {
 			std::istringstream line_stream(line);
 			Size ires;

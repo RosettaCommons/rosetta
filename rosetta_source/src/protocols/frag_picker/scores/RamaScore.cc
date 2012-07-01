@@ -118,8 +118,7 @@ RamaScore::SetupRamaTables()
 
 				std::string line;
 
-				getline(table_file, line);
-				while ( !table_file.eof() ) {
+				while ( getline(table_file, line) ) {
 					if ( line.length() != 0 ) {
 						std::istringstream line_stream(line);
 						Size x, y;
@@ -129,7 +128,6 @@ RamaScore::SetupRamaTables()
 						temp[i][x+1][y+1] += ss_weight[s] * count;
 						//std::cout << "HEYO " << i << " " << x << " " << y << " " << ss_weight[s] << " " << count << std::endl;
 					}
-					getline(table_file,line);
 				}
 			}
 		}

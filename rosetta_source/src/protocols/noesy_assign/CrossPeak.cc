@@ -40,7 +40,7 @@
 // #include <numeric/numeric.functions.hh>
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
-// #include <core/options/option.hh>
+#include <basic/options/option.hh>
 // #include <core/options/keys/abinitio.OptionKeys.gen.hh>
 // #include <core/options/keys/run.OptionKeys.gen.hh>
 //#include <core/options/keys/templates.OptionKeys.gen.hh>
@@ -54,9 +54,6 @@
 
 //Auto Headers
 #include <cmath>
-
-
-
 
 static basic::Tracer tr("protocols.noesy_assign.crosspeaks");
 static basic::Tracer tr_labels("protocols.noesy_assign.crosspeaks.labels");
@@ -180,15 +177,19 @@ CrossPeak::create_fa_and_cen_constraint(
 ) const {
 	using namespace core::scoring::constraints;
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
-	core::Real weight( sqrt( 1.0*normalization )/params.cst_strength_ );
+	core::Real inv_weight( sqrt( 1.0*normalization )/params.cst_strength_ );
 
 	FuncOP func( new BoundFunc(1.5,
 				distance_bound(),
-				weight,
+				inv_weight,
 			  "automatic NOE Peak "+ObjexxFCL::string_of( peak_id() )+" "+filename()+" Volume: "+ObjexxFCL::string_of( volume() )
 			)
 		);
 
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	bool const map_to_CEN( params.map_to_cen_atom_ );
+	//	tr.Debug << "MAPPING TO " << ( map_to_CEN ? "CEN-ATOM" : "C-BETA" ) << std::endl;
 	Size ct_ambiguous( 0 );
 	PeakAssignments::const_iterator first_valid = end();
 	for ( PeakAssignments::const_iterator it = begin(); it != end(); ++it ) {
@@ -210,24 +211,38 @@ CrossPeak::create_fa_and_cen_constraint(
 		//core::Real sd( 1.0/params.cst_strength_ );
 		core::Real eff_single_dist( pow( pow( distance_bound(), -6 ) / n, -1.0/6 ) ); //assuming equal contribution of all which is of course wrong
 		core::Real cum_new_distance( 0 );
-
+		core::Size max_maps=0;
 		// add individual constraints --- their potential does not matter ... it is ignored in evaluation...
 		for ( PeakAssignments::const_iterator it = first_valid; it != end(); ++it ) {
 			if ( (*it)->normalized_peak_volume() <= params.min_volume_ ) continue; //not enough contribution
 			AmbiguousNMRDistanceConstraintOP new_cst( (*it)->create_constraint( pose ) );
 			my_fa_cst->add_individual_constraint( new_cst );
+			fa_cst = my_fa_cst;
 			if ( !fa_only ) {
 				Size number_of_maps; //are 0, 1 or 2 sidechains replaced by CB
-				my_cen_cst->add_individual_constraint( new_cst->map_to_CB( pose, centroid_pose, number_of_maps ) );
-				cum_new_distance += pow( (eff_single_dist + params.centroid_mapping_distance_padding_*number_of_maps )*pow( new_cst->multiplicity(), 1.0/6 ), -6 );
+				if ( map_to_CEN ) {
+					my_cen_cst->add_individual_constraint( new_cst->map_to_CEN( pose, centroid_pose, number_of_maps, "CEN" ) );
+					max_maps = std::max( number_of_maps, max_maps );
+				} else {
+					my_cen_cst->add_individual_constraint( new_cst->map_to_CEN( pose, centroid_pose, number_of_maps, "CB" ) );
+					cum_new_distance += pow( (eff_single_dist + params.centroid_mapping_distance_padding_*number_of_maps )*pow( new_cst->multiplicity(), 1.0/6 ), -6 );
+				}
 			}
 		}
-		fa_cst = my_fa_cst;
 		if ( !fa_only ) {
+			Real mapped_upl;
+			Real mapped_inv_weight;
+			if ( map_to_CEN ) {
+				mapped_upl = distance_bound() + max_maps; //add 0, 1 or 2 A
+				mapped_inv_weight = inv_weight * pow( 2, max_maps );
+			} else {
+				mapped_upl = pow( cum_new_distance, -1.0/6 );
+				mapped_inv_weight = inv_weight;
+			}
 			cen_cst = my_cen_cst->clone( new BoundFunc( 1.5,
-					pow( cum_new_distance, -1.0/6 ),
-					weight,
-					"CB mapped automatic NOE: Peak "+ ObjexxFCL::string_of( peak_id() )
+					mapped_upl,
+					mapped_inv_weight,
+					"CEN mapped automatic NOE: Peak "+ ObjexxFCL::string_of( peak_id() )
 				) );
 		}
 	} else { // not ambiguous
@@ -239,16 +254,21 @@ CrossPeak::create_fa_and_cen_constraint(
 			core::Size n( n_assigned() );
 			core::Real eff_single_dist( pow( pow( distance_bound(), -6 ) / n, -1.0/6 ) ); //assuming equal contribution of all which is of course wrong
 			core::Real cum_new_distance( 0 );
-
-			ConstraintOP my_cen_cst = my_fa_cst->map_to_CB( pose, centroid_pose, number_of_maps );
-			cum_new_distance += pow( (eff_single_dist + params.centroid_mapping_distance_padding_*number_of_maps )*pow( my_fa_cst->multiplicity(), 1.0/6 ), -6 );
-
-			cen_cst = my_cen_cst->clone( new
-				BoundFunc( 1.5,
-					pow( cum_new_distance, -1.0/6 ),
-					weight,
-					"CB mapped automatic NOE: Peak "+ ObjexxFCL::string_of( peak_id() )
-				) );
+			ConstraintOP my_cen_cst;
+			core::Real mapped_upl;
+			core::Real mapped_inv_weight;
+			if ( map_to_CEN ) {
+				my_cen_cst= my_fa_cst->map_to_CEN( pose, centroid_pose, number_of_maps, "CEN" );
+				mapped_upl = distance_bound() + number_of_maps;
+				mapped_inv_weight = inv_weight*pow( 2, number_of_maps );
+			} else {
+				my_cen_cst= my_fa_cst->map_to_CEN( pose, centroid_pose, number_of_maps, "CB" );
+				cum_new_distance += pow( (eff_single_dist + params.centroid_mapping_distance_padding_*number_of_maps )*pow( my_fa_cst->multiplicity(), 1.0/6 ), -6 );
+				mapped_upl = pow( cum_new_distance, -1.0/6 );
+				mapped_inv_weight = inv_weight;
+			}
+			std::string const comment( "CEN mapped automatic NOE: Peak "+ ObjexxFCL::string_of( peak_id() ) );
+			cen_cst = my_cen_cst->clone( new BoundFunc( 1.5, mapped_upl, mapped_inv_weight, comment ) );
 		}
 		//	tr.Trace << "constraint for " << peak_id() << " finished " << std::endl;
 	}
@@ -261,9 +281,9 @@ CrossPeak::create_constraint( pose::Pose const& pose, core::Size normalization )
 	basic::ProfileThis doit( basic::NOESY_ASSIGN_CP_GEN_CST );
 
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
-	core::Real weight( sqrt( 1.0*normalization )/params.cst_strength_ );
+	core::Real inv_weight( sqrt( 1.0*normalization )/params.cst_strength_ );
 
-	core::scoring::constraints::FuncOP func( new core::scoring::constraints::BoundFunc( 1.5, distance_bound(), weight, "automatic NOE Peak "+ObjexxFCL::string_of( peak_id() )+" "+filename() ) );
+	core::scoring::constraints::FuncOP func( new core::scoring::constraints::BoundFunc( 1.5, distance_bound(), inv_weight, "automatic NOE Peak "+ObjexxFCL::string_of( peak_id() )+" "+filename() ) );
 
 	Size ct_ambiguous( 0 );
 	for ( PeakAssignments::const_iterator it = begin(); it != end(); ++it ) {
@@ -299,12 +319,12 @@ CrossPeak::create_centroid_constraint(
 
 
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
-	core::Real weight( sqrt( 1.0*normalization )/params.cst_strength_ );
+	core::Real inv_weight( sqrt( 1.0*normalization )/params.cst_strength_ );
 
 	//	if ( ct_ambiguous>1 ) {
 		AmbiguousNMRConstraintOP constraint =
 			new AmbiguousNMRConstraint
-			( new BoundFunc( 1.5, distance_bound(), weight, "automatic NOE Peak "+ObjexxFCL::string_of( peak_id() ) ) );
+			( new BoundFunc( 1.5, distance_bound(), inv_weight, "automatic NOE Peak "+ObjexxFCL::string_of( peak_id() ) ) );
 		core::Size n( n_assigned() );
 		core::Real sd( 1.0/params.cst_strength_ );
 		core::Real eff_single_dist( pow( pow( distance_bound(), -6 ) / n, -1.0/6 ) ); //assuming equal contribution of all which is of course wrong
@@ -313,12 +333,12 @@ CrossPeak::create_centroid_constraint(
 			if ( (*it)->normalized_peak_volume() <= params.min_volume_ ) continue; //not enough contribution
 			AmbiguousNMRDistanceConstraintOP new_cst( (*it)->create_constraint( pose ) );
 			Size number_of_maps; //are 0, 1 or 2 sidechains replaced by CB
-			constraint->add_individual_constraint( new_cst->map_to_CB( pose, centroid_pose, number_of_maps ) );
+			constraint->add_individual_constraint( new_cst->map_to_CEN( pose, centroid_pose, number_of_maps, "CB" ) );
 			cum_new_distance += pow( (eff_single_dist + params.centroid_mapping_distance_padding_*number_of_maps )*pow( new_cst->multiplicity(), 1.0/6 ), -6 );
 			sd += params.centroid_mapping_distance_padding_*( pow( new_cst->multiplicity()-1, 1.0/6 ) );
 		}
-		return constraint->clone( new BoundFunc( 1.5, pow( cum_new_distance, -1.0/6 ), weight, "CB mapped automatic NOE: Peak "+ ObjexxFCL::string_of( peak_id() ) ) );
-		/// 10/22/2010 replace sd*weight with weight... centroid csts were generally underweighted compared to fullatom...
+		return constraint->clone( new BoundFunc( 1.5, pow( cum_new_distance, -1.0/6 ), inv_weight, "CB mapped automatic NOE: Peak "+ ObjexxFCL::string_of( peak_id() ) ) );
+		/// 10/22/2010 replace sd*inv_weight with inv_weight... centroid csts were generally underinv_weighted compared to fullatom...
 // 	} else { //not ambiguous
 // 	}
 }

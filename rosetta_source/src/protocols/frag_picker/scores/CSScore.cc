@@ -126,11 +126,11 @@ void CSScore::do_caching(VallChunkOP current_chunk) {
 				VallResidueOP res = current_chunk->at(i);
 
 				if ( res->secondary_shifts().size() < q_shift_type*2 ) {
-					trCSScore.Warning << "Chunk has not enough secondary shifts to perform this query at position "
-										 << i << " " << std::endl
-										 << "pdb_id: " << current_chunk->get_pdb_id() << std::endl
-										 << "chain_id: " << current_chunk->get_chain_id() << std::endl
-										 << "sequence: " << current_chunk->get_sequence() << std::endl;
+					trCSScore.Debug << "Chunk has not enough secondary shifts to perform this query at position "
+														<< i << " " << std::endl
+														<< "pdb_id: " << current_chunk->get_pdb_id() << std::endl
+														<< "chain_id: " << current_chunk->get_chain_id() << std::endl
+														<< "sequence: " << current_chunk->get_sequence() << std::endl;
 					continue;
 				}
 
@@ -244,7 +244,7 @@ FragmentScoringMethodOP MakeCSScore::make(Size priority,
 
 	if (option[in::file::talos_cs].user()) {
 	  CSTalosIO in(option[in::file::talos_cs]());
-	  in.write(std::cerr);
+		//  in.write(std::cerr);
 	  return (FragmentScoringMethodOP) new CSScore(priority,
 	                                  lowest_acceptable_value, use_lowest,in);
 	}

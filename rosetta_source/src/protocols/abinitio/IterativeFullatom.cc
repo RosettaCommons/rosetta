@@ -169,9 +169,9 @@ void IterativeFullatom::generate_batch() {
 	//finalize
 	manager().finalize_batch( batch );
 	// don't want to reset counters too often... if we run out of steam the QUEUE EMPTY pathway will make sure that we do more runs
-	if ( proposed_since_last_batch() > 500 ) {
-		reset_accept_counter();
-	}
+	//	if ( proposed_since_last_batch() > 500 ) {
+	//		reset_accept_counter();
+	//	}
 	mem_tr << "IterativeFullatom::generated_batch " << std::endl;
 	//now it is best time to do this... JobQueue is definitely filled up....
 	reassign_noesy_data( batch );

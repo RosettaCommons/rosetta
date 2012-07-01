@@ -16,6 +16,10 @@
 /// @author Oliver Lange
 
 // Unit Headers
+#define DEFINE_OPTIONS_NOW
+#include <protocols/noesy_assign/PeakAssignmentOptionKeys.hh>
+#undef DEFINE_OPTIONS_NOW
+
 #include <protocols/noesy_assign/PeakAssignmentParameters.hh>
 
 // Package Headers
@@ -36,50 +40,6 @@
 
 #include <utility/vector1.hh>
 
-//Auto Headers
-OPT_1GRP_KEY( Real, noesy_weights, chemshift )
-//OPT_1GRP_KEY( Real, noesy_weights, network_high )
-
-OPT_1GRP_KEY( Real, noesy_weights, Vmin )
-OPT_1GRP_KEY( Real, noesy_weights, symmetry )
-OPT_1GRP_KEY( Real, noesy_weights, covalent )
-OPT_1GRP_KEY( Real, noesy_weights, decoys )
-OPT_1GRP_KEY( Real, noesy_weights, Smax )
-OPT_1GRP_KEY( Real, noesy_weights, dcut )
-OPT_1GRP_KEY( Real, noesy_weights, network_min )
-OPT_1GRP_KEY( Real, noesy_weights, network_atom_min )
-OPT_1GRP_KEY( Real, noesy_weights, dcalibrate )
-OPT_1GRP_KEY( Real, noesy_weights, calibration_target )
-
-OPT_1GRP_KEY( Boolean, noesy, atom_dependent_calibration )
-OPT_1GRP_KEY( Boolean, noesy, ignore_resonancefile_tolerances )
-
-OPT_2GRP_KEY( RealVector, noesy_weights, defaults, Vmin )
-OPT_2GRP_KEY( RealVector, noesy_weights, defaults, symmetry )
-OPT_2GRP_KEY( RealVector, noesy_weights, defaults, covalent )
-OPT_2GRP_KEY( RealVector, noesy_weights, defaults, decoys )
-OPT_2GRP_KEY( RealVector, noesy_weights, defaults, Smax )
-OPT_2GRP_KEY( RealVector, noesy_weights, defaults, dcut )
-OPT_2GRP_KEY( RealVector, noesy_weights, defaults, network_min )
-OPT_2GRP_KEY( RealVector, noesy_weights, defaults, network_atom_min )
-OPT_2GRP_KEY( RealVector, noesy_weights, defaults, dcalibrate )
-OPT_2GRP_KEY( RealVector, noesy_weights, defaults, calibration_target )
-
-
-OPT_1GRP_KEY( Real, noesy_weights, elim_dist_viol )
-OPT_1GRP_KEY( Real, noesy_weights, centroid_padding )
-
-OPT_1GRP_KEY( Real, noesy_weights, cst_strength )
-OPT_1GRP_KEY( Integer, noesy_weights, cycle )
-
-OPT_1GRP_KEY( Boolean, noesy, no_network )
-OPT_2GRP_KEY( Boolean, noesy, network, include_reverse_dir )
-OPT_2GRP_KEY( Boolean, noesy, network, allow_same_residue_connect )
-OPT_2GRP_KEY( Boolean, noesy, network, use_all_covalent_atoms )
-
-OPT_1GRP_KEY( Boolean, noesy, use_local_distviol )
-OPT_2GRP_KEY( Real, noesy, local_distviol, range )
-OPT_2GRP_KEY( Real, noesy, local_distviol, global_buffer )
 
 bool protocols::noesy_assign::PeakAssignmentParameters::options_registered_( false );
 core::Size protocols::noesy_assign::PeakAssignmentParameters::cycle_selector_( 0 );
@@ -128,7 +88,7 @@ void protocols::noesy_assign::PeakAssignmentParameters::register_options() {
 	NEW_OPT7( noesy_weights::defaults::network_min, "Threshold for acceptable lower limit of network-anchoring per residue", 1.0, 0.75, 0.5, 0.5, 0.5, 0.5, 0.5 );
   NEW_OPT7( noesy_weights::defaults::network_atom_min, "contribution of network anchoring to peak volume", 0.25, 0.25, 0.4, 0.4, 0.4, 0.4, 0.4 );
   NEW_OPT7( noesy_weights::defaults::dcalibrate, "upper limit on acceptable distance violation for structure dependent calibration (A)", -1, 1.5, 0.9, 0.6, 0.3, 0.1, 0.1 );
-  NEW_OPT7( noesy_weights::defaults::calibration_target, "target for NOE calibration > 1 -- (A) (structure independent ) <1 (%) of models violated", 5, 0.15, 0.15, 0.1, 0.1, 0.1, 0.1 );
+  NEW_OPT7( noesy_weights::defaults::calibration_target, "target for NOE calibration > 1 -- (A) (structure independent ) <1 (%) of models violated", 3.8, 0.15, 0.15, 0.1, 0.1, 0.1, 0.1 );
 
 
 	//cycle dependent
@@ -145,7 +105,7 @@ void protocols::noesy_assign::PeakAssignmentParameters::register_options() {
   NEW_OPT( noesy_weights::calibration_target, "target for NOE calibration > 1 -- (A) (structure independent ) <1 (%) of models violated", 5 );
 	NEW_OPT( noesy::atom_dependent_calibration, "individual calibration constants per atom-group: backbone, side-chain, methyl", false );
 
-
+	NEW_OPT( noesy::map_to_cen_atom,"map the centroid restraints to CEN atom", false );
 
 	NEW_OPT( noesy_weights::elim_dist_viol, "percentage of decoys that can be violated by distance constraints before it is eliminated ->set to 1 to switch this feature off", 0.5 );
 
@@ -214,6 +174,7 @@ void protocols::noesy_assign::PeakAssignmentParameters::set_options_from_cmdline
 	opt_read_out_macro( calibration_target_, calibration_target );
 
 	atom_dependent_calibration_ = option[ noesy::atom_dependent_calibration ];
+	map_to_cen_atom_ = option[ noesy::map_to_cen_atom ];
 
 	no_network_ = option[ noesy::no_network ]();
 	network_include_reverse_dir_= option[ noesy::network::include_reverse_dir ];

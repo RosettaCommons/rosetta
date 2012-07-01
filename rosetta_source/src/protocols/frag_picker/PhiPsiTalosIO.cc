@@ -39,29 +39,30 @@ namespace protocols {
 namespace frag_picker {
 
 static basic::Tracer
-		trPhiPsiTalosIO("protocols.frag_picker.PhiPsiTalosIO");
+		tr("protocols.frag_picker.PhiPsiTalosIO");
 
 void PhiPsiTalosIO::read(std::string const & file_name) {
 
 	utility::io::izstream data(file_name.c_str());
-	trPhiPsiTalosIO.Info << "read talos data from " << file_name << std::endl;
+	tr.Info << "read talos data from " << file_name << std::endl;
 	if (!data)
 		utility_exit_with_message("[ERROR] Unable to open talos file: "
 				+ file_name);
 
 	std::string line;
 	last_residue_index_ = 0;
-	first_residue_index_ = 0;
+	first_residue_index_ = 1;
 	bool first_not_found = true;
-	while (!data.eof()) {
-		getline(data, line);
+	utility::vector1< std::string > vars;
+	while (	getline(data, line) ) {
 		std::istringstream line_stream(line);
 		utility::vector1<std::string> strs;
-		while (!line_stream.eof()) {
-			std::string token;
-			line_stream >> token;
+		std::string token;
+		while (	line_stream >> token ) {
 			strs.push_back(token);
 		}
+		if ( strs.size()==0 ) continue;
+		tr.Trace << "token: " << strs.size() << " in line " << line << std::endl;
 		if (strs[1] == "DATA") {
 			if (strs[2] == "SEQUENCE") {
 				for (Size i = 3; i <= strs.size(); ++i) {
@@ -69,30 +70,49 @@ void PhiPsiTalosIO::read(std::string const & file_name) {
 				}
 			} else if (strs[2] == "FIRST_RESID") {
 				first_not_found = false;
+				line_stream >> first_residue_index_;
+				tr.Info << "FIRST_RESID entry in TALOS file. Setting first-residue to " << first_residue_index_ << std::endl;
 			} else {
-				trPhiPsiTalosIO.Warning << "Unrecognized DATA entry:" << line
+				tr.Warning << "Unrecognized DATA entry:" << line
 						<< std::endl;
 			}
 		}
 		if (strs[1] == "VARS") {
 			for (Size i = 2; i <= strs.size(); ++i) {
-				sequence_ += strs[i];
+				vars.push_back(strs[i]);
 			}
-
+			if ( ( vars.size()!=10 and vars.size()!=11 ) or vars[1]!="RESID" or vars[2]!="RESNAME" or vars[9]!="COUNT" or vars.back()!="CLASS" ) {
+				tr.Warning << "incompatible format in TALOS+ file "+file_name
+					+".\n Expected VARS  RESID RESNAME PHI PSI DPHI DPSI DIST S2 COUNT CS_COUNT CLASS\n "
+					+" or      VARS  RESID RESNAME PHI PSI DPHI DPSI DIST S2 COUNT CLASS\n "
+					+" found instead: ";
+				tr.Warning << vars.size() << " VARS: ";
+				for (Size i=1; i<=vars.size(); ++i) {
+					tr.Warning << vars[i] << " ";
+				}
+				tr.Warning << " LAST VAR: ->" << vars.back() << ":";
+				tr.Warning << std::endl;
+			}
 		}
 		if (strs[1] == "FORMAT") {
 			data_format_ = line.substr(7);
 		}
 
-		if ((strs.size() == 10) && (strs[1] != "REMARK")) {
+		if ((strs.size() == vars.size()) && (strs[1] != "REMARK")) {
 			char aa;
 			std::istringstream line_stream(line);
 			Real phi, psi, d_phi, d_psi, dist, s2;
 			Size res_id, count;
 			std::string cls;
-			line_stream >> res_id >> aa >> phi >> psi >> d_phi >> d_psi >> dist
-					>> s2 >> count >> cls;
-			sequence_ += aa;
+			if ( vars.size()==10 ) {
+				line_stream >> res_id >> aa >> phi >> psi >> d_phi >> d_psi >> dist
+										>> s2 >> count >> cls;
+			} else {
+				Size cs_count;
+				line_stream >> res_id >> aa >> phi >> psi >> d_phi >> d_psi >> dist
+										>> s2 >> count >> cs_count >> cls;
+			}
+			//this adds sequence twice		sequence_ += aa;
 
 			boost::tuple<Size, char, Real, Real, Real, Real, Real, Real, Size,
 					std::string> t(res_id, aa, phi, psi, d_phi, d_psi, dist,
@@ -105,22 +125,25 @@ void PhiPsiTalosIO::read(std::string const & file_name) {
 		}
 	}
 
-	if (first_not_found)
-		trPhiPsiTalosIO.Warning
+	if (first_not_found) {
+		tr.Warning
 				<< "FIRST_RESID keyword didn't show up in a file header\n\tAssuming the first residue id is 1"
 				<< std::endl;
+	}
 	if (sequence_.length() == 0) {
 		for (Size i = first_residue_index_; i <= last_residue_index_; ++i) {
-			if (has_entry(i))
+			if (has_entry(i)) {
 				sequence_ += entries_.find(i)->second.get<1> ();
-			else
+			} else {
 				sequence_ += 'X';
+			}
 		}
-		trPhiPsiTalosIO.Warning
-				<< "Could not find a SEQUENCE data in the input file\nSequence based on entires is:\n"
-				<< sequence_ << std::endl;
+		tr.Warning << "Could not find DATA SEQUENCE in file "<<file_name << std::endl
+														<< "Sequence based on entires is:"	<< std::endl
+														<< sequence_ << std::endl;
 	}
 }
+
 
 void PhiPsiTalosIO::write(std::ostream& out) {
 

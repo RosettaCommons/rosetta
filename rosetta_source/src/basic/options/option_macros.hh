@@ -194,12 +194,6 @@
 	}}}}
 
 
-#define EXTERN_OPT_1GRP_KEY( type, grp, key )					\
-  namespace basic { 	namespace options {	namespace OptionKeys { namespace grp { \
-			extern basic::options::type##OptionKey const key;			\
-	}}}}
-
-
 #define OPT_2GRP_KEY( type, grp1, grp2, key )				\
   namespace basic { 	namespace options {	namespace OptionKeys { namespace grp1 { namespace grp2 { \
 	    basic::options::type##OptionKey const key( #grp1":"#grp2":"#key ); \
@@ -209,5 +203,27 @@
   namespace basic { 	namespace options {	namespace OptionKeys { namespace grp1 { namespace grp2 { namespace grp3 { \
 	    basic::options::type##OptionKey const key( #grp1":"#grp2":"#grp3":"#key ); \
 	  }}}}}}
+
+
+#define  EXTERN_OPT_KEY( type, key )					       \
+  namespace basic { 	namespace options {	namespace OptionKeys {	\
+	extern basic::options::type##OptionKey const key;		\
+      }}}
+
+#define EXTERN_OPT_1GRP_KEY( type, grp, key )					\
+  namespace basic { 	namespace options {	namespace OptionKeys { namespace grp { \
+			extern basic::options::type##OptionKey const key;			\
+	}}}}
+
+#define EXTERN_OPT_2GRP_KEY( type, grp1, grp2, key )				\
+  namespace basic { 	namespace options {	namespace OptionKeys { namespace grp1 { namespace grp2 { \
+	    extern basic::options::type##OptionKey const key; \
+	  }}}}}
+
+#define EXTERN_OPT_3GRP_KEY( type, grp1, grp2, grp3, key )				\
+  namespace basic { 	namespace options {	namespace OptionKeys { namespace grp1 { namespace grp2 { namespace grp3 { \
+	    extern basic::options::type##OptionKey const key; \
+	  }}}}}}
+
 
 #endif

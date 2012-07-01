@@ -56,8 +56,7 @@ class PeakCalibrator : public utility::pointer::ReferenceCount {
 public:
 
   typedef std::bitset< MAX_TYPE > TypeCumulator;
-  PeakCalibrator( int target_sign ) : target_sign_( target_sign ) { };
-  //  PeakCalibrator( core::Real start ) : Q_backbone_( start ) { };
+  PeakCalibrator( int target_sign );
 
   virtual PeakCalibratorOP fresh_instance() = 0;
 
@@ -84,7 +83,8 @@ public:
   void do_calibration();
 
   void set_target_and_tolerance( core::Real target, core::Real tolerance );
-  static CALIBRATION_ATOM_TYPE atom_type( core::id::NamedAtomID const& atom );
+
+  static CALIBRATION_ATOM_TYPE atom_type( core::id::NamedAtomID const& atom, core::chemical::AA aa );
 
   virtual void eliminate_violated_constraints() {};
 
@@ -92,6 +92,7 @@ protected:
   utility::vector1< CrossPeakOP > const& peaks() { return peaks_; }
 
 private:
+  core::Size max_type_direct_;
   core::Real accumulated_target_[ MAX_TYPE ];
   core::Size accumulated_count_[ MAX_TYPE ];
 

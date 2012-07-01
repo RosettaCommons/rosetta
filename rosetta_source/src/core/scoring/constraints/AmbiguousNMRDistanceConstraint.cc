@@ -441,26 +441,26 @@ void AmbiguousNMRDistanceConstraint::show_def( std::ostream& out, pose::Pose con
 	else out << std::endl;
 }
 
-ConstraintOP AmbiguousNMRDistanceConstraint::map_to_CB( pose::Pose const& fa_pose, pose::Pose const& centroid, core::Size &mapped ) const {
+ConstraintOP AmbiguousNMRDistanceConstraint::map_to_CEN( pose::Pose const& fa_pose, pose::Pose const& centroid, core::Size &mapped, std::string const& map_atom ) const {
 	bool still_ambiguous( false );
 	std::string atom1,atom2;
 	basic::ProfileThis doit( basic::NOESY_ASSIGN_MAP2CB );
 	using core::id::NamedAtomID;
 	using core::pose::named_atom_id_to_atom_id;
 	mapped = 2;
-	if ( requires_CB_mapping( atoms1_, fa_pose) ) atom1 = "CB";
+	if ( requires_CB_mapping( atoms1_, fa_pose) ) atom1 = map_atom;
 	else {
 		--mapped;
 		combine_NMR_atom_string( atoms1_, atom1, fa_pose );
 		still_ambiguous |= ( atoms1_.size() > 1 );
 	}
-	if ( requires_CB_mapping( atoms2_, fa_pose) ) atom2 = "CB";
+	if ( requires_CB_mapping( atoms2_, fa_pose) ) atom2 = map_atom;
 	else {
 		--mapped;
 		combine_NMR_atom_string( atoms2_, atom2, fa_pose );
 		still_ambiguous |= ( atoms2_.size() > 1 );
 	}
-	tr.Debug << "map_to_CB:  " << atom1 << " " << resid( 1 ) << " --> " << atom2 << " " << resid( 2 ) << (still_ambiguous ? " ambiguous " : " straight ") << std::endl;
+	tr.Debug << "map_to_CEN:  " << atom1 << " " << resid( 1 ) << " --> " << atom2 << " " << resid( 2 ) << (still_ambiguous ? " ambiguous " : " straight ") << std::endl;
 	{ //scope for profile
 		basic::ProfileThis doit( basic::NOESY_ASSIGN_MAP2CB_NEW );
 		if ( still_ambiguous ) {
@@ -562,7 +562,7 @@ Size AmbiguousNMRDistanceConstraint::show_violations(
 	Size verbose_level,
 	Real threshold
 ) const {
-	
+
  	if ( verbose_level > 80 ) {
   out << "\nAmbiguousNMRDistanceConstraint ( "
 			<< pose.residue_type(atoms1_.front().rsd() ).atom_name( atoms1_.front().atomno() ) << " : "

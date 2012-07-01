@@ -247,11 +247,13 @@ MPIArchiveJobDistributor::batch_underflow() {
 		PROF_START( basic::MPI_JD2_WAITS_FOR_ARCHIVE );
 		tr.Debug << "no more batches... ask ArchiveManager if there is some more to do... wait..." << std::endl;
 		_notify_archive();
+		basic::show_time( tr,  "no more batches: send QUEUE_EMPTY to archive" );
 		master_to_archive( QUEUE_EMPTY );
 		tr.Info << "wait for answer on QUEUE-EMPTY msg... send with " << current_batch_id() << " batch_id " << std::endl;
 		eat_signal( ADD_BATCH, archive_rank() );
 		receive_batch( archive_rank() ); //how about some time-out
 		tr.Debug << "...received " << std::endl;
+		basic::show_time( tr,  "refilled queue: received new batches after QUEUE_EMPTY" );
 		PROF_STOP( basic::MPI_JD2_WAITS_FOR_ARCHIVE );
 	}
 }
@@ -389,9 +391,9 @@ MPIArchiveJobDistributor::notify_archive( core::Size batch_id ) {
 					 << " nr_processors " << number_of_processors() << std::endl;
  	//are we quickly running out of jobs? -- checking for equality to reduce number of messages -- is this safe? do we ever skip jobs?
 	if ( nr_batches() == batch_id && ( (int) current_job_id() == ( (int) get_jobs().size() - (int) number_of_processors() ) ) ) {
-		tr.Info << "jobs are low... send QUEUE_EMPTY with " << batch_id << " batch_id " << std::endl;
-		pending_notifications_.push_front( CompletionMessage( batch_id, QUEUE_EMPTY ) );
-		_notify_archive();
+		//tr.Info << "jobs are low... send QUEUE_EMPTY with " << batch_id << " batch_id " << std::endl;
+		//		pending_notifications_.push_front( CompletionMessage( batch_id, QUEUE_EMPTY ) );
+		//		_notify_archive();
 	}
 }
 

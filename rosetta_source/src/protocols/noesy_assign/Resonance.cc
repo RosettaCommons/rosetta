@@ -63,13 +63,14 @@ namespace noesy_assign {
 
 Resonance::Resonance() {}
 
-Resonance::Resonance(  core::Size label, core::Real freq, core::Real error, core::id::NamedAtomID id) :
+Resonance::Resonance(  core::Size label, core::Real freq, core::Real error, core::id::NamedAtomID id, core::chemical::AA aa) :
   label_ ( label ),
   freq_( freq ),
   error_( error ),
-  atom_( id )
+  atom_( id ),
+	aa_( aa )
 {
-	calibration_atom_type_ = PeakCalibrator::atom_type( id );
+	calibration_atom_type_ = PeakCalibrator::atom_type( id, aa );
 }
 
 Resonance::~Resonance() {}

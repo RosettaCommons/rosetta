@@ -596,9 +596,8 @@ void IterativeBase::increment_stage() {
 
 	//switch to next possible stage
 	stage_ = IterationStage( 1 + (int) stage_ );
-	while ( max_nstruct_list_[ stage_ ] < 0 && stage_ < finish_stage_ ) {
+	while ( (( max_nstruct_list_[ stage_ ] < 0 ) || ( !bDoBetaJumping_ && stage_ == NOESY_PHASEII_TOPO )) && stage_ < finish_stage_ ) {
 		stage_ = IterationStage( 1 + (int) stage_ );
-		if ( !bDoBetaJumping_ && stage_ == NOESY_PHASEII_TOPO ) stage_ = IterationStage( 1 + (int) stage_ );
 	}
 	if ( !manager_ptr() ) {
 		tr.Info << "start with stage " << stage_ << std::endl;
@@ -650,12 +649,31 @@ bool IterativeBase::add_structure( core::io::silent::SilentStructOP from_batch )
 			//                    might be that we have swapped away the original structure
 			return Parent::add_evaluated_structure( evaluated_decoy );
 		}
+
 		//improved score ?
-		if ( it != decoys().end() && select_score( evaluated_decoy ) < select_score( *it ) ) {
-			tr.Debug << "swap " << evaluated_decoy->decoy_tag() << " for " << (*it)->decoy_tag() << std::endl;
-			decoys().erase( it );
-			return Parent::add_evaluated_structure( evaluated_decoy );
-		}
+		if ( it != decoys().end() ) {
+			core::Real const new_score=select_score( evaluated_decoy );
+			core::Real const old_score=select_score( *it );
+			core::Real const check_score=(*it)->get_energy( "_archive_select_score_" );
+			if ( new_score < old_score ) {
+				core::Real const min_score=select_score( decoys().front() );
+				core::Real const max_score=select_score( decoys().back() );
+				core::Real const delta_max=max_score-min_score;
+				core::Real const delta_score=new_score-old_score;
+				tr.Debug << "swap " << evaluated_decoy->decoy_tag() << " for " << (*it)->decoy_tag()
+								 << " new-score " << new_score << " check: " << check_score
+								 << " score-improvement: " << delta_score
+								 << " at spread of " << delta_max
+								 << " ratio " << delta_score/delta_max << std::endl;
+				if ( delta_score/delta_max < -0.05 ) {
+					decoys().erase( it );
+					return Parent::add_evaluated_structure( evaluated_decoy );
+				} else {
+					tr.Debug << "swap declined because score-improvement below 5% of total spread" << std::endl;
+					return false;
+				}
+			} // new_score < old_score
+		}//improve score block
 
 		tr.Trace << "decoy " << evaluated_decoy->decoy_tag() << " with original tag " << evaluated_decoy->get_comment( "tag_in_file" )
 						 << " declined because of min_diversity: rmsd is " << rmsd_to_pool
@@ -1465,6 +1483,7 @@ void IterativeBase::reassign_noesy_data( Batch& batch ) {
 		cst->set_combine_ratio( bCombineNoesyCst_ ? 2 : 1 );
 		cst->set_fullatom( true );
 		cst->set_centroid( false );
+		cst->set_skip_redundant( option[ iterative::skip_redundant_constraints ]() );
 		cst->set_filter_weight( get_weight( "noesy_autoassign_cst" )/overall_cstfilter_weight_ );
 		add_evaluation( new topology_broker::ConstraintEvaluatorWrapper( cst->tag(), cst ), cst->filter_weight()*overall_cstfilter_weight_ );
 		rescore(); //rescore now, since we probably have more time now, when later when the decoys are arriving...
@@ -1807,9 +1826,9 @@ void IterativeBase::restore_status( std::istream& is ) {
 		cst->set_combine_ratio( bCombineNoesyCst_ ? 2 : 1 );
 		cst->set_fullatom( true );
 		cst->set_centroid( false );
+		cst->set_skip_redundant( option[ iterative::skip_redundant_constraints ]() );
 		cst->set_filter_weight( get_weight( "noesy_autoassign_cst" )/overall_cstfilter_weight_ );
 		add_evaluation( new topology_broker::ConstraintEvaluatorWrapper( cst->tag(), cst ), cst->filter_weight()*overall_cstfilter_weight_ );
-		rescore(); //rescore now, since we probably have more time now, when later when the decoys are arriving...
 	}
 	bCombineNoesyCst_ = stage() < STAGE2_RESAMPLING; //will be overwritten in next reassign NOESY... take guess until then...
 }

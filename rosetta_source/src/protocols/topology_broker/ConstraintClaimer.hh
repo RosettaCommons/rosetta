@@ -91,7 +91,7 @@ public:
 	void set_cst_file( std::string const& );
 	void set_fullatom( bool setting );
 	void set_centroid( bool setting );
-	void set_skip_redundant( bool setting );
+	void set_skip_redundant( core::Size setting );
 	void set_combine_ratio( core::Size setting );
 	void set_filter_weight( core::Real weight );
 private:

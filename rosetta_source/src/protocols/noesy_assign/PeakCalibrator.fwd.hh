@@ -30,8 +30,9 @@ class PeakCalibrator;
 
 enum CALIBRATION_ATOM_TYPE {
     BACKBONE = 1,
-    SIDECHAIN,
+		BETA_NON_METHYL,
     METHYL,
+		SIDECHAIN,
     MAX_TYPE //keep last
 };
 

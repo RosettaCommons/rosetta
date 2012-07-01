@@ -42,7 +42,7 @@ namespace frag_picker {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer trCS2ndShift("protocols.frag_picker.SecondaryShiftCalculator");
+static basic::Tracer tr("protocols.frag_picker.SecondaryShiftCalculator");
 
 CS2ndShift::CS2ndShift(CSTalosIO & input_data, bool use_sslimit) {
 	//Change to database files!
@@ -69,7 +69,7 @@ CS2ndShift::CS2ndShift(CSTalosIO & input_data, bool use_sslimit) {
 
 
 	for ( Size seqpos = 0; seqpos < sequence.length(); seqpos++ ) {
-		//trCS2ndShift << "CALC_SECONDARY " << seqpos << " ";
+		//tr << "CALC_SECONDARY " << seqpos << " ";
 		utility::vector1< std::pair< Size, Real > > res_shifts;
 
 		for ( Size st_i = 1; st_i <= shift_types.size(); st_i++ ) {
@@ -108,7 +108,7 @@ CS2ndShift::CS2ndShift(CSTalosIO & input_data, bool use_sslimit) {
 					has_shift = true;
 					//res_shifts.push_back( shift );
 
-					trCS2ndShift << "CALC_SECONDARY_G " << (seqpos+1) << " " << sequence[seqpos] << " " << input_data.get_shift(seqpos+1, HA2) + input_data.get_shift(seqpos+1,HA3) << " " << offset << " " << shift_type.second << " " << shift_value << std::endl;
+					tr.Debug << "CALC_SECONDARY_G " << (seqpos+1) << " " << sequence[seqpos] << " " << input_data.get_shift(seqpos+1, HA2) + input_data.get_shift(seqpos+1,HA3) << " " << offset << " " << shift_type.second << " " << shift_value << std::endl;
 				}
 
 			} else {
@@ -132,7 +132,7 @@ CS2ndShift::CS2ndShift(CSTalosIO & input_data, bool use_sslimit) {
 					has_shift = true;
 					//res_shifts.push_back( shift );
 
-					trCS2ndShift << "CALC_SECONDARY_A " << (seqpos+1) << " " << sequence[seqpos] << " " << input_data.get_shift(seqpos+1, shift_type.second) << " " << offset << " " << shift_type.second << " " << shift_value << std::endl;
+					tr.Debug << "CALC_SECONDARY_A " << (seqpos+1) << " " << sequence[seqpos] << " " << input_data.get_shift(seqpos+1, shift_type.second) << " " << offset << " " << shift_type.second << " " << shift_value << std::endl;
 				}
 
 			}
@@ -150,12 +150,12 @@ CS2ndShift::CS2ndShift(CSTalosIO & input_data, bool use_sslimit) {
 							shift.second = shift_value;//(input_data.get_shift(seqpos+1,HA2) + input_data.get_shift(seqpos+1,HA3))/2 - offset;
 							res_shifts.push_back( shift );
 
-							trCS2ndShift << "USING_2ND_SHIFT: " << seqpos+1 << " " << sequence[seqpos] << "_aa" << " " << shift_type.second << " " << shift.second << std::endl;
+							tr.Debug << "USING_2ND_SHIFT: " << seqpos+1 << " " << sequence[seqpos] << "_aa" << " " << shift_type.second << " " << shift.second << std::endl;
 						} else {
 							if (shift_value < min) {
-								trCS2ndShift << "SHIFT OUTLIER REMOVED: " << seqpos+1 << " " << sequence[seqpos] << " " << shift.second << " " << shift_value << " Limit: " << min << std::endl;
+								tr.Debug << "SHIFT OUTLIER REMOVED: " << seqpos+1 << " " << sequence[seqpos] << " " << shift.second << " " << shift_value << " Limit: " << min << std::endl;
 							} else {
-								trCS2ndShift << "SHIFT OUTLIER REMOVED: " << seqpos+1 << " " << sequence[seqpos] << " " << shift.second << " " << shift_value << " Limit: " << max << std::endl;
+								tr.Debug << "SHIFT OUTLIER REMOVED: " << seqpos+1 << " " << sequence[seqpos] << " " << shift.second << " " << shift_value << " Limit: " << max << std::endl;
 							}
 						}
 					}
@@ -175,7 +175,7 @@ CS2ndShift::read_adjust_table(std::string const & file_name) {
 
 
 	utility::io::izstream data(basic::database::full_name(file_name.c_str()));
-	trCS2ndShift.Info << "read CS adjustment data from " << file_name << std::endl;
+  tr.Info << "read CS adjustment data from " << file_name << std::endl;
 	if (!data)
 		utility_exit_with_message("[ERROR] Unable to open talos file: "
 															+ file_name);
@@ -245,7 +245,7 @@ CS2ndShift::read_sslimit_table(std::string const & file_name) {
 
 
 	utility::io::izstream data(basic::database::full_name(file_name.c_str()));
-	trCS2ndShift.Info << "read CS sslimit data from " << file_name << std::endl;
+	tr.Info << "read CS sslimit data from " << file_name << std::endl;
 	if (!data)
 		utility_exit_with_message("[ERROR] Unable to open talos file: "
 															+ file_name);
@@ -299,7 +299,7 @@ CS2ndShift::read_sslimit_table(std::string const & file_name) {
 			line_stream >> min >> max;
 
 			if ( (min < 1000) && (max < 1000) ) {
-				trCS2ndShift << "READ_SSLIST " << column_names_[i] << " " << aa << " " << min << " " << max << std::endl;
+				tr.Debug << "READ_SSLIST " << column_names_[i] << " " << aa << " " << min << " " << max << std::endl;
 				linemap.insert(std::make_pair(column_names_[i], std::make_pair(min,max)));
 			}
 		}

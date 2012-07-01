@@ -93,7 +93,8 @@ public:
 	virtual ConstraintOP remapped_clone( pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP map=NULL ) const;
 
 	///returns AtomPairConstraint or AmbigousNMRDistanceConstraint (e.g. for GLY HA1-HA2 ... )
-	ConstraintOP map_to_CB( pose::Pose const& src, pose::Pose const& centroid, core::Size& nr_mapped ) const;
+	ConstraintOP map_to_CEN( pose::Pose const& src, pose::Pose const& centroid, core::Size& nr_mapped, std::string const& map_atom ) const;
+
 	///
 	void
 	score( XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;

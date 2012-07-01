@@ -83,8 +83,10 @@ bool protocols::noesy_assign::NoesyModule::options_registered_( false );
 
 
 bool protocols::noesy_assign::NoesyModule::cmdline_options_activated() {
-	return basic::options::option[ basic::options::OptionKeys::noesy::in::resonances ].user()
-		&& basic::options::option[ basic::options::OptionKeys::noesy::in::peaks ].user();
+	using namespace basic::options;
+	using namespace OptionKeys;
+	return ( option[ noesy::in::resonances ].user() && option[ noesy::in::peaks ].user() )
+		|| option[ noesy::in::peak_resonance_pairs ].user();
 }
 
 void protocols::noesy_assign::NoesyModule::register_options() {

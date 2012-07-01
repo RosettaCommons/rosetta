@@ -117,8 +117,7 @@ public:
 
 		aa_order_map_ = aa_order_tmp;
 
-		while (!data.eof()) {
-			getline(data, line);
+		while (getline(data, line)) {
 			std::istringstream line_stream(line);
 			line_stream >> res1 >> ss1 >> res2 >> ss2 >> dist;
 

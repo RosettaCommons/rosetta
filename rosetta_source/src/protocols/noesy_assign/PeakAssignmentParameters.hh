@@ -90,6 +90,7 @@ public:
   bool network_use_all_covalent_atoms_;
   bool network_include_reverse_dir_;
   bool network_allow_same_residue_connect_;
+  bool map_to_cen_atom_;
 };
 
 }

@@ -248,8 +248,9 @@ void ConstraintClaimer::set_centroid( bool setting ) {
 	fa_constraints_ = NULL;
 }
 
-void ConstraintClaimer::set_skip_redundant( bool setting ) {
-	skip_redundant_ = setting;
+void ConstraintClaimer::set_skip_redundant( core::Size setting ) {
+	skip_redundant_ = setting > 0;
+	skip_redundant_width_=setting;
 	constraints_ = NULL;
 	fa_constraints_ = NULL;
 }

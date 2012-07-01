@@ -129,7 +129,7 @@ void process_last_resonances( std::deque< Resonance >& last_resonances, bool dra
 			break;
 		}
   } //now replace front of deque with the combined atom
-  last_resonances.push_front( Resonance( first_res.label(), first_res.freq(), first_res.error(), core::id::NamedAtomID( combine_name, first_res.resid() ) ) );
+  last_resonances.push_front( Resonance( first_res.label(), first_res.freq(), first_res.error(), core::id::NamedAtomID( combine_name, first_res.resid() ), first_res.aa() ) );
 }
 
 void ResonanceList::read_from_stream( std::istream& is ) {
@@ -198,7 +198,7 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 		if ( aa == aa_ile && name == "HD1" ) name = "QD1";
 
 		// before assigning to Resonance List put it in DEQUE (push_back), maybe it will get combined with next resonance...
-    last_resonances.push_back( Resonance( label, freq, error, core::id::NamedAtomID( name, resn ) ) );
+    last_resonances.push_back( Resonance( label, freq, error, core::id::NamedAtomID( name, resn ), aa ) );
     if ( freq != last_resonances.front().freq() ) { ///if we have just read a new frequency we need to finalize what is in the DEQUE
       if ( last_resonances.size() > 2 ) process_last_resonances( last_resonances ); //just 2 --> 1 old freq and 1 new freq
       map_[ last_resonances.front().label() ] = last_resonances.front(); ///assign most forward value in our DEQUE

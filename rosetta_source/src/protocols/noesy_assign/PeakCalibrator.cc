@@ -46,6 +46,8 @@ using namespace basic;
 #include <float.h>  // REQUIRED FOR WINDOWS
 #endif
 
+const char* CALIBRATOR_TYPE_NAMES[]={"NONE","BACKBONE","BETA_NON_METHYL","METHYL","SIDECHAIN" };
+
 namespace protocols {
 namespace noesy_assign {
 
@@ -86,6 +88,14 @@ void PeakCalibratorMap::eliminate_violated_constraints() {
 	}
 }
 
+PeakCalibrator::PeakCalibrator( int target_sign )
+	: max_type_direct_( BETA_NON_METHYL ),
+		target_sign_( target_sign )
+{
+
+}
+
+
 void PeakCalibrator::set_target_and_tolerance( core::Real target, core::Real tolerance ) {
 	target_ = target;
 	tolerance_ = tolerance;
@@ -101,14 +111,14 @@ void PeakCalibrator::reset_statistics() {
 
 bool PeakCalibrator::interpolate_on_statistics() {
 	bool finished = true;
-	for ( Size type = BACKBONE; type < MAX_TYPE; ++type ) {
+	for ( Size type = BACKBONE; type <= max_type_direct_; ++type ) {
 		if ( accumulated_count_[ type ] ) {
 			//			tr.Debug << " acc. target: " << accumulated_target_[ type ] << " acc. count: " << accumulated_count_[ type ] << std::endl;
 			core::Real average_target = accumulated_target_[ type ] / accumulated_count_[ type ];
 #ifdef _WIN32
 			if ( _isnan(average_target) || !_finite( average_target)) return true;  // REQUIRED FOR WINDOWS
 #else
-			if ( std::isnan(average_target) || std::isinf( average_target)) return true;
+			if ( std::isnan(average_target) || std::isinf( average_target)) continue;
 #endif
 			if ( target_sign_* ( average_target - target_) < -tolerance_ ) {
 				interpolate_too_small( type );
@@ -119,6 +129,8 @@ bool PeakCalibrator::interpolate_on_statistics() {
 			}
 		}
 	}
+	calibration_constant_[ METHYL ] = 3.0 * calibration_constant_[ BACKBONE ];
+	calibration_constant_[ SIDECHAIN ] = 1.5 * calibration_constant_[ BETA_NON_METHYL ];
 	return finished;
 }
 
@@ -159,7 +171,7 @@ void PeakCalibrator::reset_calibration_constants() {
 
 void PeakCalibrator::do_calibration() {
   bool finished = false;
-  Size max_cycles = 30;
+  Size max_cycles = 50;
 
 	init_calibrator();
 	reset_calibration_constants();
@@ -167,17 +179,26 @@ void PeakCalibrator::do_calibration() {
   tr.Info << "Calibration .... for " << peaks_.size() << " crosspeaks " << std::endl;
 
 	//	Q_backbone_ = calibration_constant_[ BACKBONE ];
-	tr.Info << "value   target   BACKBONE   SIDECHAIN  METHYL "<< std::endl;
+	tr.Info << "value   target ";
+	for ( core::Size type=BACKBONE; type< (Size) MAX_TYPE; type++ ) {
+		tr.Info << " " << CALIBRATOR_TYPE_NAMES[type];
+	}
+	tr.Info << std::endl;
   while ( !finished && max_cycles ) {
     --max_cycles;
 		reset_statistics();
 		set_new_upper_bounds(); //compute statistics about upper bounds
 		//		show_statistics( tr.Info );
-		tr.Info << accumulated_target_[ BACKBONE ]/accumulated_count_[ BACKBONE ] << " " << target_;
-		tr.Info << " " << calibration_constant_[ BACKBONE ] << " " << calibration_constant_[ SIDECHAIN ] << " " << calibration_constant_[ METHYL ] << std::endl;
-
+		tr.Info << target_;
+		tr.Info << " ";
+		for ( core::Size type=BACKBONE; type< (Size) MAX_TYPE; type++ ) {
+			if ( accumulated_count_[ type ] ) {
+				tr.Info << " " << accumulated_target_[ type ] / accumulated_count_[ type ];
+			} else tr.Info << " -1    ";
+			tr.Info << " " << calibration_constant_[ type ];
+		}
+		tr.Info << std::endl;
 		finished = interpolate_on_statistics();
-		//		Q_backbone_ = calibration_constant_[ BACKBONE ];
 	}
 }
 
@@ -205,14 +226,31 @@ void PeakCalibrator::set_new_upper_bounds() {
 }
 
 
-CALIBRATION_ATOM_TYPE PeakCalibrator::atom_type( core::id::NamedAtomID const& atom ) {
+CALIBRATION_ATOM_TYPE PeakCalibrator::atom_type( core::id::NamedAtomID const& atom, core::chemical::AA aa ) {
+	using namespace core::chemical; //for AA
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	if ( !params.atom_dependent_calibration_ ) return BACKBONE;
-	if ( atom.atom() == "HA" || atom.atom() == "H" ) {
+	std::string const& name = atom.atom();
+	if ( name == "HA" || name == "H" || name == "1H" || name == "2H" || name == "QA" || name =="1HA" || name=="2HA" ) {
 		return BACKBONE;
-	} else if ( atom.atom().find( "Q" ) != std::string::npos ) {
+	}
+	if ( name.find("B") != std::string::npos ) {
+		if ( aa==aa_ala ) return METHYL;
+		return BETA_NON_METHYL;
+	}
+	if ( name.find("G") != std::string::npos ) {
+		if ( aa==aa_val || aa==aa_thr ) return METHYL;
+	}
+	if ( name.find("G2") != std::string::npos && aa==aa_ile ) {
 		return METHYL;
-	} else return SIDECHAIN;
+	}
+	if ( name.find("D") != std::string::npos && ( aa==aa_leu || aa==aa_ile ) ) {
+		return METHYL;
+	}
+	if ( name.find("E") != std::string::npos && ( aa==aa_met ) ) {
+		return METHYL;
+	}
+	return SIDECHAIN;
 }
 
 

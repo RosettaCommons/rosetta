@@ -126,7 +126,7 @@ void fix_worst_bad_ramas( core::pose::Pose & original_pose, core::Size how_many,
 	//const core::Real limit_rama = 2.0;
 	//const core::Real limit_rama_min = 2.0;
 	const core::Real limit_rama_min = limit_rama;
-	
+
 
 	// Original RAFT set
 	//-140  153 180 0.135 B
@@ -281,15 +281,17 @@ void fix_worst_bad_ramas( core::pose::Pose & original_pose, core::Size how_many,
 	// Final RamaCheck
 	rama_scorefxn(pose); //apply score
 	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		if ( !pose.residue_type(i).is_protein() ) continue;
 		EnergyMap & emap( energies.onebody_energies( i ) );
 		TR << "CHECK: " << i << "  "
-			<< pose.phi(i) << "  "
-			<< pose.psi(i) << "  "
-			<< emap[ rama ] << std::endl;
+			 << pose.phi(i) << "  "
+			 << pose.psi(i) << "  "
+			 << emap[ rama ] << std::endl;
 	}
 
 	// save the angles
 	for( core::Size ir = 1; ir < original_pose.total_residue(); ir ++ ){
+		if ( !pose.residue_type(ir).is_protein() ) continue;
 		original_pose.set_phi(   ir, pose.phi(   ir ) );
 		original_pose.set_psi(   ir, pose.psi(   ir ) );
 		original_pose.set_omega( ir, pose.omega( ir ) );

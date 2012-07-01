@@ -501,7 +501,7 @@ void PeakFileFormat::read_assignments( std::istream& is, std::istream& rest_is, 
 		rest = false;
 		std::istringstream line_stream( line );
 		new_peak_line = line;
-		{ //test1
+		{ //test if this next cross-peak
 			std::istringstream line_stream_test_new_peak( line );
 			Size dummyI;
 			Real dummyR;
@@ -526,7 +526,7 @@ void PeakFileFormat::read_assignments( std::istream& is, std::istream& rest_is, 
     for ( Size icol=1; icol<=ncol; ++icol ) {
       Size val;
       line_stream >> val;
-      if ( !line_stream.good() ) {
+      if ( !line_stream ) {
 				if ( first ) {
 					new_peak_line = ""; //if first then it is maybe just a space at end of line...
 					return;
@@ -547,7 +547,7 @@ void PeakFileFormat::read_assignments( std::istream& is, std::istream& rest_is, 
     }
 		tr.Trace << std::endl;
     Size reorder[ 5 ];//spin1 spin2 label1 label2
-    if ( line_stream.good() && !ignore_assignments() ) {
+    if ( line_stream && !ignore_assignments() ) {
       for ( Size icol=1; icol<=ncol; ++icol ) {
 				Size val = vals[ icol ];
 				Size iproton( col2proton_[ icol ] );
