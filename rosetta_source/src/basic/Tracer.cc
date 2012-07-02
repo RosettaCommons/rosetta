@@ -98,7 +98,7 @@ void Tracer::TracerProxy::t_flush(std::string const & s)
 
 Tracer::TracerProxy::~TracerProxy()
 {
-	/// Do nothing here - contents get flushed in Tracer destructor.
+	/// Do nothing here - contents will get flushed in Tracer destructor.
 }
 
 
@@ -129,8 +129,8 @@ Tracer::Tracer(std::string const & channel, TracerPriority priority, bool muted_
 	Info(*this,    t_info, channel),
 	Debug(*this,   t_debug, channel),
 	Trace(*this,   t_trace, channel),
-	visible_(true), muted_( false ), muted_by_default_(muted_by_default), begining_of_the_line_(true),
-	visibility_calculated_(false), mute_level_(-1)
+	mute_level_(-1), visible_(true), muted_( false ), muted_by_default_(muted_by_default),
+	begining_of_the_line_(true), visibility_calculated_(false)
 {
 	channel_ = channel;
 	priority_ = priority;
@@ -315,13 +315,13 @@ bool Tracer::in(utility::vector1<std::string> const & v, std::string const ch, b
 /// -1 if no match
 bool Tracer::calculate_tracer_level(utility::vector1<std::string> const & v, std::string const ch, bool strict, int &res)
 {
-	int len = 0;
+	unsigned int len = 0;
 	bool math = false;
-
+	//std::cout << "Entring:calculate_tracer_level: v=" << v << " ch:" << ch << std::endl;
 	for(size_t i=1; i<=v.size(); i++) {
 		bool flag = false;
 		utility::vector1< std::string > spl = utility::string_split(v[i], ':');
-		//std::cout << "Split:" << spl << std::endl;
+		//std::cout << "Split:" << spl << " size:" << spl[1].size() << std::endl;
 
 		if( spl[1] == "all" && len == 0 ) flag = true;  // we can asume that 'all' is shorter then any valid core/protocol path... but we don't!
 
@@ -336,14 +336,14 @@ bool Tracer::calculate_tracer_level(utility::vector1<std::string> const & v, std
 		if(flag  && ( len < spl[1].size() ) ) {
 			math = true;
 			len = spl[1].size();
-			if( spl[2] == "fatal" )   { res = t_fatal;   break; }
-			if( spl[2] == "error" )   { res = t_error;   break; }
-			if( spl[2] == "warning" ) { res = t_warning; break; }
-			if( spl[2] == "info" )    { res = t_info;    break; }
-			if( spl[2] == "debug" )   { res = t_debug;   break; }
-			if( spl[2] == "trace" )   { res = t_trace;   break; }
-
 			res = utility::string2int(spl[2]);
+			if( spl[2] == "fatal" )   res = t_fatal;
+			if( spl[2] == "error" )   res = t_error;
+			if( spl[2] == "warning" ) res = t_warning;
+			if( spl[2] == "info" )    res = t_info;
+			if( spl[2] == "debug" )   res = t_debug;
+			if( spl[2] == "trace" )   res = t_trace;
+
 			//std::cout << "Match:" << spl << " ch:" << ch << " res:"<< res << std::endl;
 		}
 		else {
@@ -351,6 +351,7 @@ bool Tracer::calculate_tracer_level(utility::vector1<std::string> const & v, std
 		}
 
 	}
+	//std::cout << "Leaving:calculate_tracer_level: v=" << v << " ch:" << ch << " match:" << math <<" res:"<< res << std::endl;
 	return math;
 }
 
