@@ -706,7 +706,7 @@ def getAllRosettaSourceFiles():
         "dbio/cppdb/utils.cpp", 'dbio/sqlite3/sqlite3.c', ]
 
 
-    #all_sources.sort()
+    #all_sources.sort()  # for some reason sorting reduce lib size...
     #for i in all_sources: print i
     return extra_objs, all_sources
 
@@ -776,26 +776,26 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
 
 
     sources = [external] + sources;  # After this moment there is no point of trating 'external' as special...
-    #sources = [ sum(sources, []) ]
+    #sources = [ sum(sources, []) ];  sources[0].sort()
     objs_all = ' '.join( [f + '.obj' for f in sum(sources, [])] )
     file(os.path.join(build_dir,'objs_all') , 'w').write( objs_all )
 
 
     # Now creating DLL
     dll = os.path.join(bindings_path, '..\\rosetta.dll')
-    rosetta_lib_ = os.path.join(build_dir, 'rosetta_lib-%s.lib')  # we purposly name 'real' lib somewhat different to avoid confusion with rosetta.lib file that belong to DLL
+    rosetta_lib_ = os.path.join(build_dir, 'rosetta_lib-%02d.lib')  # we purposly name 'real' lib somewhat different to avoid confusion with rosetta.lib file that belong to DLL
     rosetta_libs = [rosetta_lib_ % l for l in range(len(sources)) ]
 
     for i, rosetta_lib in enumerate(rosetta_libs):
         #objs = ' '.join( [ f + '.obj' for f in external] ) + ' ' + ' '.join( [f + '.obj' for f in sources[i]] )
         objs = ' '.join( [f + '.obj' for f in sources[i]] )
 
-        file(os.path.join(build_dir,'objs-%s' % i) , 'w').write( objs )
+        file(os.path.join(build_dir,'objs-%02d' % i) , 'w').write( objs )
         #execute('Creating DLL %s...' % dll, 'cd %s && link /OPT:NOREF /dll @objs ..\\..\\external\\lib\\win_pyrosetta_z.lib /out:%s' % (build_dir, dll) )
 
         if (not os.path.isfile(rosetta_lib))   or  os.path.getmtime(rosetta_lib) < latest:
             # /INCREMENTAL:NO /LTCG
-            execute('Creating lib %s...' % rosetta_lib, 'cd %s && lib @objs-%s ..\\..\\external\\lib\\win_pyrosetta_z.lib Ws2_32.lib /out:%s' % (build_dir, i, rosetta_lib))
+            execute('Creating lib %s...' % rosetta_lib, 'cd %s && lib @objs-%02d ..\\..\\external\\lib\\win_pyrosetta_z.lib Ws2_32.lib /out:%s' % (build_dir, i, rosetta_lib))
             latest = max(latest, os.path.getmtime(rosetta_lib) )
 
     # libcmt.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib
@@ -840,7 +840,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
     execute('Creating DLL %s...' % dll, 'cd %s && link /OPT:NOREF /dll @objs_all ..\\..\\external\\lib\\win_pyrosetta_z.lib Ws2_32.lib /DEF:%s /out:%s' % (build_dir, def_file, dll) )
 
     for dir_name, _, files in os.walk(Options.use_pre_generated_sources):
-        wn_buildOneNamespace(Options.use_pre_generated_sources, dir_name, files, bindings_path, build_dir, link=True, rosetta_libs=rosetta_libs)
+        wn_buildOneNamespace(Options.use_pre_generated_sources, dir_name, files, bindings_path, build_dir, link=True)
 
     print 'Done building PyRosetta bindings for Windows!'
 
@@ -851,7 +851,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
 
     # "public: virtual bool __thiscall ObjexxFCL::IndexRange::contains(class ObjexxFCL::IndexRange const &)const " (?contains@IndexRange@ObjexxFCL@@UBE_NABV12@@Z)
 
-def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, all_symbols=[], link=False, rosetta_libs=[]):
+def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, all_symbols=[], link=False):
     files = sorted( filter(lambda f: f.endswith('.cpp'), files) )
     sub_dir = dir_name[ len(base_dir)+1: ]
 
@@ -866,8 +866,8 @@ def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, al
 
     if files:
         latest = None
-        #rosetta_lib = os.path.join(bindings_path, '..\\rosetta.lib')
-        rosetta_lib = ' '.join( [ l for l in rosetta_libs] )
+        rosetta_lib = os.path.join(bindings_path, '..\\rosetta.lib')  # this is actually link to DLL, don't get confused it with rosettta_lib-%d.lib
+        #rosetta_lib = ' '.join( [ l for l in rosetta_libs] )
 
         #if (not os.path.isfile(pyd))   or  os.path.getmtime(pyd) < max( [os.path.getmtime( os.path.join(dir_name, f) ) for f in files] ):
 
@@ -913,7 +913,7 @@ def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, al
         all_symbols.extend( file(symbols_file).read().split('\n') )
 
         if link:
-            if (not os.path.isfile(pyd))   or  os.path.getmtime(pyd) < latest:
+            if True or (not os.path.isfile(pyd))   or  os.path.getmtime(pyd) < latest:
                 execute('Creating DLL %s...' % pyd,
                         'link  /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:c:/WPyRosetta/boost_1_47_0/stage/lib  %s %s ..\\external\\lib\\win_pyrosetta_z.lib /out:%s' % (' '.join(objs), rosetta_lib, pyd) )
                 #map(os.remove, objs)
