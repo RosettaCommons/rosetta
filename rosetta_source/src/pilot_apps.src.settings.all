@@ -45,6 +45,9 @@ sources = {
 		#"convert", # /* Spencer Bliven,Documentation Location,Demo Location */
 		#"disulfide_scorer", # /* Spencer Bliven,Documentation Location,Demo Location */
 	],
+        "pilot/boon" : [
+		"test", # /* a pilot app */
+	],
 	"pilot/brunette" : [
 		"minimalCstRelax",
 		"minimalCstHomology",

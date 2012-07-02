@@ -97,7 +97,17 @@ BackboneMover::~BackboneMover() {}
 
 void BackboneMover::temperature( core::Real const temperature_in ) { temperature_ = temperature_in; }
 
+core::Real
+BackboneMover::temperature() const {
+	return temperature_;
+}
+
 void BackboneMover::nmoves( core::Size const nmoves_in ) { nmoves_ = nmoves_in; }
+
+core::Size
+BackboneMover::nmoves() const {
+	return nmoves_;
+}
 
 core::kinematics::MoveMapCOP BackboneMover::movemap() { return movemap_; }
 
@@ -538,7 +548,9 @@ std::ostream &operator<< (std::ostream &os, BackboneMover const &mover)
 	moves::operator<<(os, mover);
 	os << "Max angle for helices (H): " << mover.get_angle_max('H') <<
 			", Max angle for strands (E): " << mover.get_angle_max('E') <<
-			", Max angle for loops (L): " << mover.get_angle_max('L') << std::endl;
+			", Max angle for loops (L): " << mover.get_angle_max('L') << std::endl <<
+			"Temperature factor (kT): " << mover.temperature() <<
+			", Number of moves: " << mover.nmoves() << std::endl;
 	return os;
 }
 

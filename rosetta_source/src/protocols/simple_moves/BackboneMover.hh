@@ -87,7 +87,9 @@ public:
 
 	/// Properties set/get functions
 	void temperature( core::Real const temperature_in );
+	core::Real temperature() const;
 	void nmoves( core::Size const nmoves_in );
+	core::Size nmoves() const;
 	core::kinematics::MoveMapCOP movemap();
 
 	// Because this function is in a .hh and not a .cc, we must #include <MoveMap.hh> and
