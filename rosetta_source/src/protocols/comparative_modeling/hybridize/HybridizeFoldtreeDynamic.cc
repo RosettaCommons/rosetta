@@ -186,6 +186,7 @@ void HybridizeFoldtreeDynamic::initialize(
   using utility::vector1;
 
 	num_nonvirt_residues_ = pose.total_residue();
+	num_protein_residues_ = pose.total_residue();
 	saved_n_residue_ = pose.total_residue();
 	saved_ft_ = pose.conformation().fold_tree();
 	
@@ -196,9 +197,10 @@ void HybridizeFoldtreeDynamic::initialize(
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 		num_nonvirt_residues_ = symm_info->num_independent_residues();
+		num_protein_residues_ = symm_info->num_independent_residues();
 	}
-	while (!pose.residue(num_nonvirt_residues_).is_protein()) num_nonvirt_residues_--;
-
+	while (pose.residue_type(num_nonvirt_residues_).aa() == core::chemical::aa_vrt ) num_nonvirt_residues_--;
+	while (!pose.residue(num_protein_residues_).is_protein()) num_protein_residues_--;
 	set_core_chunks(core_chunks);
 
 	// save previous
@@ -207,15 +209,16 @@ void HybridizeFoldtreeDynamic::initialize(
 
 	// set new
 	choose_anchors();
-	utility::vector1 < core::Size > cut_positions = decide_cuts(num_nonvirt_residues_);
-	make_complete_chunks(cut_positions, num_nonvirt_residues_);
+	utility::vector1 < core::Size > cut_positions = decide_cuts(num_protein_residues_);
+	make_complete_chunks(cut_positions, num_protein_residues_);
 
-  assert(chunks_.num_loop());
+	assert(chunks_.num_loop());
 
   // Add a virtual residue at the center of mass (updates the fold tree)
 	if (!symm_info)  // pose is asymm
 	  core::pose::addVirtualResAsRoot(pose);
-  virtual_res_ = pose.total_residue();
+	
+	virtual_res_ = pose.total_residue();
 
 	// do the actual foldtree updates
 	update(pose);
@@ -235,6 +238,19 @@ void HybridizeFoldtreeDynamic::reset(
 	protocols::loops::remove_cutpoint_variants( pose );
 }
 
+// stolen from protocols::forge::methods::jumps_and_cuts_from_pose
+void HybridizeFoldtreeDynamic::jumps_and_cuts_from_pose( core::pose::Pose & pose, utility::vector1< std::pair< int, int > > & jumps, utility::vector1< int > & cuts) {
+	
+	core::kinematics::FoldTree f_orig = pose.fold_tree();
+	
+	for ( core::Size i = 1; i<= f_orig.num_jump(); ++i ) {
+		core::Size down ( f_orig.downstream_jump_residue(i) );
+		core::Size up ( f_orig.upstream_jump_residue(i) );
+		jumps.push_back( std::pair<int,int>( down, up ) );
+	}
+	cuts =  f_orig.cutpoints();
+}
+
 void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 	using core::Size;
 	using core::Real;
@@ -249,6 +265,36 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 	// Define jumps, cuts
 	vector1<int> cuts;
 	vector1<std::pair<int, int> > jumps;
+
+	// "symmetry-safe" version
+	core::kinematics::FoldTree tree = core::conformation::symmetry::get_asymm_unit_fold_tree( pose.conformation() );
+	Size jump_root = num_nonvirt_residues_+1;
+	if (use_symm) jump_root = anchor_positions_[1];
+	
+	// keep a copy of cuts and jumps, if they are in the region outside of the chunk definition
+	vector1<int> cuts_old;
+	vector1<std::pair<int, int> > jumps_old;
+	core::Size last_chunk_residue(chunks_[chunks_.num_loop()].stop());
+
+	if (!use_symm) {
+		jumps_and_cuts_from_pose(pose, jumps_old, cuts_old);
+		for (Size i = 1; i <= jumps_old.size(); ++i) {
+			if (jumps_old[i].first == jump_root) continue;
+			if (jumps_old[i].second == jump_root) continue;
+			
+			if ( jumps_old[i].first > last_chunk_residue && jumps_old[i].first <= num_nonvirt_residues_) {
+				jumps.push_back(std::make_pair(jump_root, jumps_old[i].first));
+			}
+			else if ( jumps_old[i].second > last_chunk_residue && jumps_old[i].first <= num_nonvirt_residues_) {
+				jumps.push_back(std::make_pair(jump_root, jumps_old[i].second));
+			}
+		}
+		for (Size i = 1; i <= cuts_old.size(); ++i) {
+			if ( cuts_old[i] > last_chunk_residue && cuts_old[i] < num_nonvirt_residues_) {
+				cuts.push_back(cuts_old[i]);
+			}
+		}
+	}
 	for (Size i = 1; i <= chunks_.num_loop(); ++i) {
 		const Loop& chunk = chunks_[i];
 		const Size cut_point  = chunk.stop();
@@ -276,15 +322,14 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 		ft_cuts(i) = cuts[i];
 	}
 	
-	// "symmetry-safe" version
-	core::kinematics::FoldTree tree = core::conformation::symmetry::get_asymm_unit_fold_tree( pose.conformation() );
 	bool status = tree.tree_from_jumps_and_cuts(num_nonvirt_residues_+1,   // nres_in
 												jumps.size(),   // num_jump_in
 												ft_jumps,	   // jump_point
 												ft_cuts,		// cuts
 												num_nonvirt_residues_+1);  // root
+	
 	if (!status) {
-		utility_exit_with_message("HybridizeFoldtreeBase: failed to build fold tree from cuts and jumps");
+		utility_exit_with_message("HybridizeFoldtreeDynamic: failed to build fold tree from cuts and jumps");
 	}
 
 	//std::cerr << tree;

@@ -54,6 +54,9 @@ private:
 	// set the core chunks ... where anchors must lie and cuts are forbidden
 	void set_core_chunks(const protocols::loops::Loops & chunks);
 
+	// fold tree
+	void jumps_and_cuts_from_pose( core::pose::Pose & pose, utility::vector1< std::pair<int, int > > & jumps, utility::vector1< int > & cuts);
+
 	// cutpoints selection logic
 	utility::vector1 < core::Size > decide_cuts(core::Size n_residues);
 
@@ -81,6 +84,7 @@ private:
 	/// index of the virtual residue we added to the pose in set_up()
 	int virtual_res_;
 	core::Size num_nonvirt_residues_;
+	core::Size num_protein_residues_;
 
 	// backup original info
 	core::kinematics::FoldTree saved_ft_;
