@@ -357,6 +357,7 @@ rebuild_test(){
 	generate_samples_and_cluster( pose, job_parameters, stepwise_pose_setup, input_streams,
 																moving_residues, stepwise_clusterer, silent_file );
 
+
 	////////////////////////////////////////////////////////////////////
 	// move following to its own function?
 	// Minimize...
