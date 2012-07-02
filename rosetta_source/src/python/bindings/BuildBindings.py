@@ -870,6 +870,7 @@ def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, al
 
     if files:
         rosetta_lib = os.path.join(bindings_path, '..\\rosetta.lib')  # this is actually link to DLL, don't get confused it with rosettta_lib-%d.lib
+        #rosetta_dll = os.path.join(bindings_path, '..\\rosetta.dll')
         #rosetta_lib = ' '.join( [ l for l in rosetta_libs] )
 
         #if (not os.path.isfile(pyd))   or  os.path.getmtime(pyd) < max( [os.path.getmtime( os.path.join(dir_name, f) ) for f in files] ):
