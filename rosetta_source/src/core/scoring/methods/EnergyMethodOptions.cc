@@ -24,8 +24,16 @@
 // Utility headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/database/sql_utils.hh>
+#include <basic/database/schema_generator/PrimaryKey.hh>
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
+
+#include <cppdb/frontend.h>
+
+#include <boost/lexical_cast.hpp>
 
 using std::string;
 using utility::vector1;
@@ -394,6 +402,128 @@ std::ostream& operator<<(std::ostream & out, EnergyMethodOptions const & options
 	options.show( out );
 	return out;
 }
+
+void
+EnergyMethodOptions::write_score_function_method_options_table_schema(
+	utility::sql_database::sessionOP db_session
+) {
+	using namespace basic::database::schema_generator;
+
+	Column batch_id("batch_id", DbInteger(), true);
+	Column score_function_name("score_function_name", DbText(), true);
+	Column option_key("option_key", DbText(), true);
+	Column option_value("option_value", DbText(), true);
+
+	utility::vector1<Column> pkey_cols;
+	pkey_cols.push_back(batch_id);
+	pkey_cols.push_back(score_function_name);
+	pkey_cols.push_back(option_key);
+
+	Columns foreign_key_columns;
+	foreign_key_columns.push_back(batch_id);
+	vector1< string > reference_columns;
+	reference_columns.push_back("batch_id");
+	ForeignKey foreign_key(foreign_key_columns, "batches", reference_columns, true);
+
+
+	Schema table("score_function_method_options", PrimaryKey(pkey_cols));
+	table.add_foreign_key(foreign_key);
+	table.add_column(option_value);
+
+	table.write(db_session);
+
+}
+
+
+void
+EnergyMethodOptions::insert_score_function_method_options_rows(
+	Size batch_id,
+	std::string const & score_function_name,
+	utility::sql_database::sessionOP db_session
+) const {
+
+	vector1< std::string > option_keys;
+	vector1< std::string > option_values;
+	if(etable_type_.size()){
+		option_keys.push_back("etable_type");
+		option_values.push_back(etable_type_);
+	}
+	option_keys.push_back("analytic_etable_evaluation");
+	option_values.push_back(analytic_etable_evaluation_ ? "1" : "0");
+
+	option_keys.push_back("atom_vdw_atom_type_set_name");
+	option_values.push_back(atom_vdw_atom_type_set_name_);
+
+	option_keys.push_back("unfolded_energies_type");
+	option_values.push_back(unfolded_energies_type_);
+
+	option_keys.push_back("exclude_protein_protein_hack_elec");
+	option_values.push_back(exclude_protein_protein_hack_elec_ ? "1" : "0");
+
+	option_keys.push_back("exclude_monomer_hack_elec");
+	option_values.push_back(exclude_monomer_hack_elec_ ? "1" : "0");
+
+	option_keys.push_back("hackelec_max_dis");
+	option_values.push_back(boost::lexical_cast<std::string>(hackelec_max_dis_));
+
+	option_keys.push_back("hackelec_min_dis");
+	option_values.push_back(boost::lexical_cast<std::string>(hackelec_min_dis_));
+
+	option_keys.push_back("hackelec_die");
+	option_values.push_back(boost::lexical_cast<std::string>(hackelec_die_));
+
+	option_keys.push_back("hackelec_no_dis_dep_die");
+	option_values.push_back(hackelec_no_dis_dep_die_ ? "1" : "0");
+
+	option_keys.push_back("exclude_DNA_DNA");
+	option_values.push_back(exclude_DNA_DNA_ ? "1" : "0");
+
+	option_keys.push_back("cst_max_seq_sep");
+	option_values.push_back(boost::lexical_cast<std::string>(cst_max_seq_sep_));
+
+	option_keys.push_back("cartbonded_len");
+	option_values.push_back(boost::lexical_cast<std::string>(cartbonded_len_));
+
+	option_keys.push_back("cartbonded_ang");
+	option_values.push_back(boost::lexical_cast<std::string>(cartbonded_ang_));
+
+	option_keys.push_back("cartbonded_tors");
+	option_values.push_back(boost::lexical_cast<std::string>(cartbonded_tors_));
+
+	option_keys.push_back("cartbonded_proton");
+	option_values.push_back(boost::lexical_cast<std::string>(cartbonded_proton_));
+
+	option_keys.push_back("cartbonded_linear");
+	option_values.push_back(cartbonded_linear_ ? "1" : "0");
+
+	string statement_string;
+	switch(db_session->get_db_mode()){
+	case utility::sql_database::DatabaseMode::sqlite3:
+		statement_string = "INSERT OR IGNORE INTO score_function_method_options (batch_id, score_function_name, option_key, option_value) VALUES (?,?,?,?);";
+		break;
+	case utility::sql_database::DatabaseMode::mysql:
+	case utility::sql_database::DatabaseMode::postgres:
+		statement_string = "INSERT IGNORE INTO score_function_weights (batch_id, score_function_name, option_key, option_value) VALUES (?,?,?,?);";
+		break;
+	default:
+		utility_exit_with_message(
+			"Unrecognized database mode: '" +
+			name_from_database_mode(db_session->get_db_mode()) + "'");
+	}
+
+	cppdb::statement stmt(
+		basic::database::safely_prepare_statement(statement_string, db_session));
+
+	for(Size i=1; i <= option_keys.size(); ++i){
+		stmt.bind(1, batch_id);
+		stmt.bind(2, score_function_name);
+		stmt.bind(3, option_keys[i]);
+		stmt.bind(4, option_values[i]);
+		basic::database::safely_write_to_database(stmt);
+	}
+}
+
+
 
 }
 }

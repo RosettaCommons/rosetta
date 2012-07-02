@@ -23,8 +23,6 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.fwd.hh>
 
 // C++ Headers
@@ -61,32 +59,24 @@ public:
 	utility::vector1<std::string>
 	features_reporter_dependencies() const;
 
-	///@brief collect all the feature data for the pose
-	core::Size
-	report_features(
-		core::Size protocol_id,
-		utility::sql_database::sessionOP db_session
-	);
-
-	///@brief collect all the feature data for the pose
 	core::Size
 	report_features(
 		core::pose::Pose const &,
 		utility::vector1< bool > const &,
-		boost::uuids::uuid,
-		utility::sql_database::sessionOP
-	) {
-		utility_exit_with_message(
-			"The score_type features reporter is a special feature reporter "
-			" Please use the other interface for report_features");
-		return 0;
-	}
+		boost::uuids::uuid struct_id,
+		utility::sql_database::sessionOP db_session);
+
+	core::Size
+	report_features(
+		core::Size const batch_id,
+		utility::sql_database::sessionOP db_session);
 
 	void delete_record(
 		boost::uuids::uuid struct_id,
 		utility::sql_database::sessionOP db_session
 	);
 
+private:
 	void
 	insert_score_type_rows(
 		core::Size protocol_id,

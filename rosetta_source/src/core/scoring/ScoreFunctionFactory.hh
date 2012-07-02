@@ -105,6 +105,12 @@ extern std::string const DOCK_LOW_PATCH;
 core::scoring::ScoreFunctionOP getScoreFunction( bool const is_fullatom = true );
 
 
+/// @brief use the logic of getScoreFunction to get the name.
+/// The 	name format is <weights_tag>[_<patch_tag> ... ]
+std::string
+getScoreFunctionName(
+	bool const is_fullatom = true );
+
 } // namespace scoring
 } // namespace core
 

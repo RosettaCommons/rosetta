@@ -40,6 +40,7 @@
 #include <protocols/features/ResidueConformationFeaturesCreator.hh>
 #include <protocols/features/ResidueFeaturesCreator.hh>
 #include <protocols/features/ResidueScoresFeaturesCreator.hh>
+#include <protocols/features/ResidueTotalScoresFeaturesCreator.hh>
 #include <protocols/features/ResidueSecondaryStructureFeaturesCreator.hh>
 #include <protocols/features/ResidueTypesFeaturesCreator.hh>
 #include <protocols/features/RotamerFeaturesCreator.hh>
@@ -49,6 +50,7 @@
 #include <protocols/features/ScoreTypeFeaturesCreator.hh>
 #include <protocols/features/StructureFeaturesCreator.hh>
 #include <protocols/features/StructureScoresFeaturesCreator.hh>
+#include <protocols/features/ScoreFunctionFeaturesCreator.hh>
 #include <protocols/features/BatchFeaturesCreator.hh>
 #include <protocols/features/helixAssembly/HelixBundleFeaturesCreator.hh>
 #include <protocols/features/helixAssembly/ConcurrencyTestCreator.hh>

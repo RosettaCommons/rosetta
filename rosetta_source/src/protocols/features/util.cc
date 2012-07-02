@@ -38,6 +38,9 @@
 #include <cppdb/frontend.h>
 #include <cppdb/errors.h>
 
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
+
 #include <string>
 #include <sstream>
 #include <utility>
@@ -59,6 +62,8 @@ using core::Size;
 using protocols::jd2::request_data_from_head_node;
 using protocols::jd2::send_data_to_head_node;
 using protocols::jd2::message_listening::DB_TAG;
+using cppdb::statement;
+using cppdb::result;
 
 
 // Static data for the serial case
@@ -69,6 +74,11 @@ map<string, Size> static_batch_id_map_;
 static Tracer TR("protocols.features.util");
 // End static data
 
+
+///@brief Get the protocol and batch ids or create them if they don't
+///yet exist. For MPI protocols, only allow the head node to create
+///protocol or batch ids and have the other nodes ask the head node
+///for the info.
 pair<Size, Size>
 get_protocol_and_batch_id(
 	string identifier,
@@ -78,7 +88,7 @@ get_protocol_and_batch_id(
 	int batch_id = 0;
 	ProtocolFeaturesOP protocol_features = new ProtocolFeatures();
 	BatchFeaturesOP batch_features = new BatchFeatures();
-    
+
 #ifdef USEMPI
 
 	int rank = 0;
@@ -234,6 +244,32 @@ serialize_ids(
 		utility::to_string(batch_id);
 }
 
+///@detail look up the batch id given a struct id. Note this should
+///only be used once the structure's table has been created, eg in an
+///average features reporter's report_features function.
+Size
+get_batch_id(
+	boost::uuids::uuid struct_id,
+	sessionOP db_session
+) {
+
+	std::string const stmt_str(
+		"SELECT batch_id FROM structures WHERE struct_id = ?;");
+	statement stmt(basic::database::safely_prepare_statement(stmt_str, db_session));
+	stmt.bind(1, struct_id);
+	result res(basic::database::safely_read_from_database(stmt));
+
+	if(!res.next()){
+		stringstream err_msg;
+		err_msg
+			<< "No batch_id found for struct_id '"
+			<< to_string(struct_id) << "'";
+		utility_exit_with_message(err_msg.str());
+	}
+	Size batch_id;
+	res >> batch_id;
+	return batch_id;
+}
+
 } //namespace protocols
 } //namespace features
-

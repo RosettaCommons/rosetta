@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/features/ResidueScoresFeatures.hh
-/// @brief  report residue scores to features Statistics Scientific Benchmark
-/// @author Matthew O'Meara (mattjomeara@gmail.com
+/// @file   protocols/features/ResidueTotalScoresFeatures.hh
+/// @brief  report the total per residue score to a features database
+/// @author Matthew O'Meara (mattjomeara@gmail.com)
 
-#ifndef INCLUDED_protocols_features_ResidueScoresFeatures_hh
-#define INCLUDED_protocols_features_ResidueScoresFeatures_hh
+#ifndef INCLUDED_protocols_features_ResidueTotalScoresFeatures_hh
+#define INCLUDED_protocols_features_ResidueTotalScoresFeatures_hh
 
 // Unit Headers
 #include <protocols/features/FeaturesReporter.hh>
-#include <protocols/features/ResidueScoresFeatures.fwd.hh>
+#include <protocols/features/ResidueTotalScoresFeatures.fwd.hh>
 
 //External
 #include <boost/uuid/uuid.hpp>
@@ -40,16 +40,16 @@
 namespace protocols{
 namespace features{
 
-class ResidueScoresFeatures : public protocols::features::FeaturesReporter {
+class ResidueTotalScoresFeatures : public protocols::features::FeaturesReporter {
 public:
-	ResidueScoresFeatures();
+	ResidueTotalScoresFeatures();
 
-	ResidueScoresFeatures(
+	ResidueTotalScoresFeatures(
 		core::scoring::ScoreFunctionOP scfxn);
 
-	ResidueScoresFeatures(ResidueScoresFeatures const & src);
+	ResidueTotalScoresFeatures(ResidueTotalScoresFeatures const & src);
 
-	virtual ~ResidueScoresFeatures();
+	virtual ~ResidueTotalScoresFeatures();
 
 	///@brief return string with class name
 	std::string
@@ -61,14 +61,18 @@ public:
 		utility::sql_database::sessionOP db_session) const;
 
 private:
-	///@brief generate the residue_scores_1b table schema
+	///@brief generate the residue_total_scores_1b table schema
 	void
-	write_residue_scores_1b_table_schema(
+	write_residue_total_scores_table_schema(
 		utility::sql_database::sessionOP db_session) const;
 
-	///@brief generate the residue_scores_2b table schema
+private:
+	///@brief generate the residue_total_scores_1b table schema
 	void
-	write_residue_scores_2b_table_schema(
+	insert_residue_total_scores_rows(
+		core::pose::Pose const & pose,
+		utility::vector1< bool > const & relevant_residues,
+		boost::uuids::uuid const struct_id,
 		utility::sql_database::sessionOP db_session) const;
 
 public:
@@ -93,8 +97,6 @@ public:
 		utility::vector1< bool > const & relevant_residues,
 		boost::uuids::uuid struct_id,
 		utility::sql_database::sessionOP db_session);
-
-private:
 
 	void
 	insert_residue_scores_rows(

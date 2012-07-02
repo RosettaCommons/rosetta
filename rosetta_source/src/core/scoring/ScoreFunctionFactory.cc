@@ -36,7 +36,7 @@
 // AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
-
+#include <sstream>
 
 using basic::T;
 
@@ -299,6 +299,69 @@ core::scoring::ScoreFunctionOP getScoreFunction( bool const is_fullatom /* defau
 
 	return scorefxn;
 }
+
+std::string
+getScoreFunctionName(
+	bool const is_fullatom /* default true */
+) {
+	using basic::options::option;
+	using namespace basic::options::OptionKeys;
+
+	if( option[ score::empty ]() ) return "empty";
+
+	std::string weight_set = option[ score::weights ];
+	utility::vector1< std::string > patch_tags = option[ score::patch ]();
+
+
+	if ( !option[ score::weights ].user() && !is_fullatom ){
+
+		// Defalt score of centroid is cen_wts when is_fullatom is false and user has not specified a score weights
+		weight_set = CENTROID_WTS;
+
+	}else{
+
+		/// Default score is score12 if the user has not specified a score weights file or a patch file
+		/// on the command line.  If the user has specified that they would like the standard weight set,
+		/// and has not also asked for the score12 patch, then do not apply the score12 patch to it.
+		if ( ( weight_set == "standard" && !option[ score::weights ].user() ) &&
+				 ( !option[ score::patch ].user() ) ) {
+			patch_tags.push_back( "score12" );
+			if( option[ corrections::correct ]) {
+				weight_set = "score12_w_corrections";
+				patch_tags.clear();
+			} else if ( option[ corrections::score::score12prime ] ) {
+				weight_set = "score12prime";
+				patch_tags.clear();
+			}
+		}
+	}
+
+	if ( patch_tags.size() != 0 &&
+		weight_set == STANDARD_WTS &&
+		option[ corrections::score::score12prime ] ) {
+
+		bool sc12patch = false;
+		for ( Size ii = 1; ii <= patch_tags.size(); ++ii ) {
+			if ( patch_tags[ ii ] == SCORE12_PATCH ) {
+				patch_tags[ ii ] = "NOPATCH";
+				sc12patch = true;
+			}
+		}
+		if ( sc12patch ) {
+			weight_set = "score12prime";
+		}
+	}
+
+	std::stringstream patch_string;
+	for(Size ii=1; ii <- patch_tags.size(); ++ii){
+		if( patch_tags[ii] == "NOPATCH" ) continue;
+		patch_string << "_" << patch_tags[ii];
+	}
+
+	return weight_set + patch_string.str();
+}
+
+
 
 } // namespace scoring
 } // namespace core

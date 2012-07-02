@@ -13,6 +13,7 @@
 
 // Unit Headers
 #include <protocols/features/ResidueScoresFeatures.hh>
+#include <protocols/features/util.hh>
 
 // Project Headers
 #include <core/conformation/Residue.hh>
@@ -103,29 +104,40 @@ ResidueScoresFeatures::write_residue_scores_1b_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
+	Column batch_id("batch_id", DbInteger());
 	Column struct_id("struct_id", DbUUID());
 	Column resNum("resNum", DbInteger());
-	Column score_type("score_type", DbText());
+	Column score_type_id("score_type_id", DbInteger());
 	Column score_value("score_value", DbReal());
 	Column context_dependent("context_dependent", DbInteger());
 
 	Columns primary_key_columns;
+	primary_key_columns.push_back(batch_id);
 	primary_key_columns.push_back(struct_id);
 	primary_key_columns.push_back(resNum);
-	primary_key_columns.push_back(score_type);
+	primary_key_columns.push_back(score_type_id);
 	PrimaryKey primary_key(primary_key_columns);
 
-	Columns foreign_key_columns;
-	foreign_key_columns.push_back(struct_id);
-	foreign_key_columns.push_back(resNum);
-	vector1< std::string > reference_columns;
-	reference_columns.push_back("struct_id");
-	reference_columns.push_back("resNum");
-	ForeignKey foreign_key(foreign_key_columns, "residues", reference_columns, true);
+	Columns foreign_key_columns1;
+	foreign_key_columns1.push_back(struct_id);
+	foreign_key_columns1.push_back(resNum);
+	vector1< std::string > reference_columns1;
+	reference_columns1.push_back("struct_id");
+	reference_columns1.push_back("resNum");
+	ForeignKey foreign_key1(foreign_key_columns1, "residues", reference_columns1, true);
+
+	Columns foreign_key_columns2;
+	foreign_key_columns2.push_back(batch_id);
+	foreign_key_columns2.push_back(score_type_id);
+	vector1< std::string > reference_columns2;
+	reference_columns2.push_back("batch_id");
+	reference_columns2.push_back("score_type_id");
+	ForeignKey foreign_key2(foreign_key_columns2, "score_types", reference_columns2, true);
+
 
 	Schema table("residue_scores_1b", primary_key);
-	table.add_foreign_key(foreign_key);
-	table.add_column(score_type);
+	table.add_foreign_key(foreign_key1);
+	table.add_foreign_key(foreign_key2);
 	table.add_column(score_value);
 	table.add_column(context_dependent);
 
@@ -138,18 +150,20 @@ ResidueScoresFeatures::write_residue_scores_2b_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
+	Column batch_id("batch_id", DbInteger());
 	Column struct_id("struct_id", DbUUID());
 	Column resNum1("resNum1", DbInteger());
 	Column resNum2("resNum2", DbInteger());
-	Column score_type("score_type", DbText());
+	Column score_type_id("score_type_id", DbInteger());
 	Column score_value("score_value", DbReal());
 	Column context_dependent("context_dependent", DbInteger());
 
 	Columns primary_key_columns;
+	primary_key_columns.push_back(batch_id);
 	primary_key_columns.push_back(struct_id);
 	primary_key_columns.push_back(resNum1);
 	primary_key_columns.push_back(resNum2);
-	primary_key_columns.push_back(score_type);
+	primary_key_columns.push_back(score_type_id);
 	PrimaryKey primary_key(primary_key_columns);
 
 	Columns foreign_key_columns1;
@@ -168,10 +182,19 @@ ResidueScoresFeatures::write_residue_scores_2b_table_schema(
 	reference_columns2.push_back("resNum");
 	ForeignKey foreign_key2(foreign_key_columns2, "residues", reference_columns2, true);
 
+	Columns foreign_key_columns3;
+	foreign_key_columns3.push_back(batch_id);
+	foreign_key_columns3.push_back(score_type_id);
+	vector1< std::string > reference_columns3;
+	reference_columns3.push_back("batch_id");
+	reference_columns3.push_back("score_type_id");
+	ForeignKey foreign_key3(foreign_key_columns3, "score_types", reference_columns3, true);
+
+
 	Schema table("residue_scores_2b", primary_key);
 	table.add_foreign_key(foreign_key1);
 	table.add_foreign_key(foreign_key2);
-	table.add_column(score_type);
+	table.add_foreign_key(foreign_key3);
 	table.add_column(score_value);
 	table.add_column(context_dependent);
 
@@ -182,6 +205,7 @@ utility::vector1<std::string>
 ResidueScoresFeatures::features_reporter_dependencies() const {
 	utility::vector1<std::string> dependencies;
 	dependencies.push_back("ResidueFeatures");
+	dependencies.push_back("ScoreTypeFeatures");
 	return dependencies;
 }
 
@@ -261,13 +285,15 @@ ResidueScoresFeatures::insert_residue_scores_rows(
 	Pose temp_pose = pose;
 	scfxn_->setup_for_scoring(temp_pose);
 
+	Size const batch_id(get_batch_id(struct_id, db_session));
+
 	ScoreTypes ci_1b( scfxn_->ci_1b_types() );
 	ScoreTypes cd_1b( scfxn_->cd_1b_types() );
 	ScoreTypes ci_2b( scfxn_->ci_2b_types() );
 	ScoreTypes cd_2b( scfxn_->cd_2b_types() );
 
-	std::string oneb_string = "INSERT INTO residue_scores_1b (struct_id, resNum, score_type, score_value, context_dependent) VALUES (?,?,?,?,?);";
-	std::string twob_string = "INSERT INTO residue_scores_2b (struct_id, resNum1, resNum2, score_type, score_value, context_dependent) VALUES (?,?,?,?,?,?);";
+	std::string oneb_string = "INSERT INTO residue_scores_1b (batch_id, struct_id, resNum, score_type_id, score_value, context_dependent) VALUES (?,?,?,?,?,?);";
+	std::string twob_string = "INSERT INTO residue_scores_2b (batch_id, struct_id, resNum1, resNum2, score_type_id, score_value, context_dependent) VALUES (?,?,?,?,?,?,?);";
 
 	statement oneb_stmt(basic::database::safely_prepare_statement(oneb_string,db_session));
 	statement twob_stmt(basic::database::safely_prepare_statement(twob_string,db_session));
@@ -281,14 +307,15 @@ ResidueScoresFeatures::insert_residue_scores_rows(
 			for(ScoreTypes::const_iterator st = ci_1b.begin(), ste = ci_1b.end(); st != ste; ++st){
 				if(!emap[*st]) continue;
 
-				string const score_type( ScoreTypeManager::name_from_score_type(*st) );
 				Real const score_value( emap[*st] );
+				bool const context_dependent(false);
 
-				oneb_stmt.bind(1,struct_id);
-				oneb_stmt.bind(2,resNum);
-				oneb_stmt.bind(3,score_type);
-				oneb_stmt.bind(4,score_value);
-				oneb_stmt.bind(5,false);
+				oneb_stmt.bind(1, batch_id);
+				oneb_stmt.bind(2, struct_id);
+				oneb_stmt.bind(3, resNum);
+				oneb_stmt.bind(4, *st);
+				oneb_stmt.bind(5, score_value);
+				oneb_stmt.bind(6, context_dependent);
 				basic::database::safely_write_to_database(oneb_stmt);
 			}
 		}
@@ -301,14 +328,15 @@ ResidueScoresFeatures::insert_residue_scores_rows(
 
 				if(!emap[*st]) continue;
 
-				string const score_type( ScoreTypeManager::name_from_score_type(*st) );
 				Real const score_value( emap[*st] );
+				bool const context_dependent(true);
 
-				oneb_stmt.bind(1,struct_id);
-				oneb_stmt.bind(2,resNum);
-				oneb_stmt.bind(3,score_type);
-				oneb_stmt.bind(4,score_value);
-				oneb_stmt.bind(5,true);
+				oneb_stmt.bind(1, batch_id);
+				oneb_stmt.bind(2, struct_id);
+				oneb_stmt.bind(3, resNum);
+				oneb_stmt.bind(4, *st);
+				oneb_stmt.bind(5, score_value);
+				oneb_stmt.bind(6, context_dependent);
 				basic::database::safely_write_to_database(oneb_stmt);
 
 			}
@@ -325,15 +353,16 @@ ResidueScoresFeatures::insert_residue_scores_rows(
 				for(ScoreTypes::const_iterator st = ci_2b.begin(), ste = ci_2b.end(); st != ste; ++st){
 					if(!emap[*st]) continue;
 
-					string const score_type(ScoreTypeManager::name_from_score_type(*st));
 					Real const score_value( emap[*st] );
+					bool const context_dependent(false);
 
-					twob_stmt.bind(1,struct_id);
-					twob_stmt.bind(2,resNum);
-					twob_stmt.bind(3,otherResNum);
-					twob_stmt.bind(4,score_type);
-					twob_stmt.bind(5,score_value);
-					twob_stmt.bind(6,false);
+					twob_stmt.bind(1, batch_id);
+					twob_stmt.bind(2, struct_id);
+					twob_stmt.bind(3, resNum);
+					twob_stmt.bind(4, otherResNum);
+					twob_stmt.bind(5, *st);
+					twob_stmt.bind(6, score_value);
+					twob_stmt.bind(7, context_dependent);
 					basic::database::safely_write_to_database(twob_stmt);
 
 				}
@@ -343,15 +372,17 @@ ResidueScoresFeatures::insert_residue_scores_rows(
 				scfxn_->eval_cd_2b(rsd, otherRsd, temp_pose, emap);
 				for(ScoreTypes::const_iterator st = cd_2b.begin(), ste = cd_2b.end(); st != ste; ++st){
 					if(!emap[*st]) continue;
-					string const score_type(ScoreTypeManager::name_from_score_type(*st));
-					Real const score_value( emap[*st] );
 
-					twob_stmt.bind(1,struct_id);
-					twob_stmt.bind(2,resNum);
-					twob_stmt.bind(3,otherResNum);
-					twob_stmt.bind(4,score_type);
-					twob_stmt.bind(5,score_value);
-					twob_stmt.bind(6,true);
+					Real const score_value( emap[*st] );
+					bool const context_dependent(true);
+
+					twob_stmt.bind(1, batch_id);
+					twob_stmt.bind(2, struct_id);
+					twob_stmt.bind(3, resNum);
+					twob_stmt.bind(4, otherResNum);
+					twob_stmt.bind(5, *st);
+					twob_stmt.bind(6, score_value);
+					twob_stmt.bind(7, context_dependent);
 					basic::database::safely_write_to_database(twob_stmt);
 
 				}

@@ -144,7 +144,7 @@ public:
 
     /// @brief Returns a hashmap key given a member of a bucket
     /// Don't think boost implements this, have to manually look it up
-        const boost::uint64_t return_key( core::Size bb_index );
+        boost::uint64_t return_key( core::Size bb_index );
 
     /// @brief Query the loopsize of this LoopHashMap
 		inline core::Size get_loop_size() const { return loop_size_; }

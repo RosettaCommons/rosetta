@@ -1,4 +1,3 @@
-// q
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
@@ -186,7 +185,7 @@ Symmetrizer::apply(Pose & pose) {
 
 void 
 Symmetrizer::parse_my_tag( TagPtr const tag,
-										 DataMap & data,
+										 DataMap &,
 										 Filters_map const &,
 										 Movers_map const &,
 										 Pose const & ) {

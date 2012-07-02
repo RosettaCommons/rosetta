@@ -34,6 +34,7 @@
 /// Utility headers
 // AUTO-REMOVED #include <utility/exit.hh>
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/sql_database/DatabaseSessionManager.hh>
 
 // C++ Headers
 // AUTO-REMOVED #include <string>
@@ -257,6 +258,18 @@ public:
 	///
 	void
 	show( std::ostream & out ) const;
+
+	static
+	void
+	write_score_function_method_options_table_schema(
+		utility::sql_database::sessionOP db_session
+	);
+
+	void
+	insert_score_function_method_options_rows(
+		Size batch_id,
+		std::string const & score_function_name,
+		utility::sql_database::sessionOP db_session) const;
 
 private:
 	/// expand this to a class and include ss weights inside

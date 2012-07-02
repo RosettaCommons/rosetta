@@ -80,7 +80,7 @@ ProteinSilentReport::ProteinSilentReport() :
 	protocol_id_(0),
 	structure_map_(),
 	protocol_features_( new ProtocolFeatures() ),
-    batch_features_( new BatchFeatures() ),
+	batch_features_( new BatchFeatures() ),
 	pdb_data_features_( new PdbDataFeatures()),
 	structure_features_( new StructureFeatures() ),
 	structure_scores_features_( new StructureScoresFeatures() ),
@@ -128,8 +128,8 @@ ProteinSilentReport::write_schema_to_db(
 	sessionOP db_session
 ) const {
 	protocol_features_->write_schema_to_db(db_session);
-    batch_features_->write_schema_to_db(db_session);
-    structure_features_->write_schema_to_db(db_session);
+	batch_features_->write_schema_to_db(db_session);
+	structure_features_->write_schema_to_db(db_session);
 	score_type_features_->write_schema_to_db(db_session);
 	structure_scores_features_->write_schema_to_db(db_session);
 	pdb_data_features_->write_schema_to_db(db_session);
@@ -195,18 +195,18 @@ ProteinSilentReport::load_pose(
 	protein_residue_conformation_features_->load_into_pose(db_session, struct_id, pose);
 	residue_conformation_features_->load_into_pose(db_session,struct_id,pose);
 }
-	
+
 void
 ProteinSilentReport::load_pose(
 	sessionOP db_session,
 	boost::uuids::uuid struct_id,
-	std::set<core::Size> residue_numbers,   
+	std::set<core::Size> residue_numbers,
 	Pose & pose){
-	
-	//first load in the entire pose, then delete unspecified residues. This will be slower than 
+
+	//first load in the entire pose, then delete unspecified residues. This will be slower than
 	//it needs to be but should result in the most sensible state of the fold/atom trees.
 	load_pose(db_session, struct_id, pose);
-	
+
 	int total_res=pose.total_residue();
 	int num_removed_residues=0;
 	for(int i=1; i<=total_res; ++i){
@@ -240,15 +240,15 @@ ProteinSilentReport::write_protocol_report(
 	//MYSQL innoDB tables cannot defer foreign constraint checking, so we explicitly wrap these
 	//Calls in transaction guards to make sure the protocol and type_id features are set up properly
 	cppdb::transaction protocol_transaction(*db_session);
-    
-    //initialize protocol and batch id
-    std::pair<Size, Size> ids = get_protocol_and_batch_id("db_job_outputter", db_session);
-    protocol_id_=ids.first;
-    batch_id_=ids.second;
-    protocol_transaction.commit();
+
+	//initialize protocol and batch id
+	std::pair<Size, Size> ids = get_protocol_and_batch_id("db_job_outputter", db_session);
+	protocol_id_=ids.first;
+	batch_id_=ids.second;
+	protocol_transaction.commit();
 
 	cppdb::transaction score_type_transaction(*db_session);
-	score_type_features_->report_features(protocol_id_, db_session);
+	score_type_features_->report_features(batch_id_, db_session);
 	score_type_transaction.commit();
 }
 void
@@ -263,30 +263,30 @@ ProteinSilentReport::write_full_report(
 	cppdb::transaction transact_guard(*db_session);
 	std::string input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
 
-    boost::uuids::uuid struct_id = structure_features_->report_features(
+		boost::uuids::uuid struct_id = structure_features_->report_features(
 		relevant_residues, batch_id_, db_session, tag, input_tag);
 
-    pose_conformation_features_->report_features(
-        pose, relevant_residues, struct_id, db_session);
-    
-    pdb_data_features_->report_features(
-        pose,relevant_residues,struct_id,db_session);
+		pose_conformation_features_->report_features(
+			pose, relevant_residues, struct_id, db_session);
 
-    if(pose.energies().energies_updated()){
-        structure_scores_features_->report_features(
-            pose, relevant_residues, struct_id, db_session);
-    }
+		pdb_data_features_->report_features(
+			pose,relevant_residues,struct_id,db_session);
+
+		if(pose.energies().energies_updated()){
+			structure_scores_features_->report_features(
+				pose, relevant_residues, struct_id, db_session);
+		}
 
 	pose_comments_features_->report_features(
 		pose, relevant_residues, struct_id, db_session);
-    residue_features_->report_features(
-        pose, relevant_residues, struct_id, db_session);
+	residue_features_->report_features(
+		pose, relevant_residues, struct_id, db_session);
 	protein_residue_conformation_features_->report_features(
 		pose, relevant_residues, struct_id, db_session);
-    residue_conformation_features_->report_features(
-        pose, relevant_residues, struct_id, db_session);
-    job_data_features_->report_features(
-    	pose, relevant_residues, struct_id, db_session);
+	residue_conformation_features_->report_features(
+		pose, relevant_residues, struct_id, db_session);
+	job_data_features_->report_features(
+		pose, relevant_residues, struct_id, db_session);
 
 	transact_guard.commit();
 }
@@ -309,19 +309,16 @@ void ProteinSilentReport::delete_pose(utility::sql_database::sessionOP db_sessio
 	pdb_data_features_->delete_record(struct_id,db_session);
 	pose_conformation_features_->delete_record(struct_id,db_session);
 	structure_features_->delete_record(struct_id,db_session);
-
-
-
 }
 
 core::Size ProteinSilentReport::get_protocol_id() const
 {
 	return protocol_id_;
 }
-    
+
 core::Size ProteinSilentReport::get_batch_id() const
 {
-    return batch_id_;
+		return batch_id_;
 }
 
 

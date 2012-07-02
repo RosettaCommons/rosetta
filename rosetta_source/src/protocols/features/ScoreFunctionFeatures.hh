@@ -7,28 +7,23 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/features/ResidueScoresFeatures.hh
-/// @brief  report residue scores to features Statistics Scientific Benchmark
-/// @author Matthew O'Meara (mattjomeara@gmail.com
+/// @file   protocols/features/ScoreFunctionFeatures.hh
+/// @brief  Add score function parameters to a features database
+/// @author Matthew O'Meara (mattjomeara@gmail.com)
 
-#ifndef INCLUDED_protocols_features_ResidueScoresFeatures_hh
-#define INCLUDED_protocols_features_ResidueScoresFeatures_hh
+#ifndef INCLUDED_protocols_features_ScoreFunctionFeatures_hh
+#define INCLUDED_protocols_features_ScoreFunctionFeatures_hh
 
 // Unit Headers
 #include <protocols/features/FeaturesReporter.hh>
-#include <protocols/features/ResidueScoresFeatures.fwd.hh>
+#include <protocols/features/ScoreFunctionFeatures.fwd.hh>
 
 //External
 #include <boost/uuid/uuid.hpp>
 
 // Project Headers
-#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
 #include <utility/vector1.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
 
 // C++ Headers
 #include <string>
@@ -40,35 +35,30 @@
 namespace protocols{
 namespace features{
 
-class ResidueScoresFeatures : public protocols::features::FeaturesReporter {
+class ScoreFunctionFeatures : public protocols::features::FeaturesReporter {
 public:
-	ResidueScoresFeatures();
+	ScoreFunctionFeatures();
 
-	ResidueScoresFeatures(
-		core::scoring::ScoreFunctionOP scfxn);
+	ScoreFunctionFeatures(
+		core::scoring::ScoreFunctionOP scfxn,
+		std::string const & scfxn_name);
 
-	ResidueScoresFeatures(ResidueScoresFeatures const & src);
+	ScoreFunctionFeatures( ScoreFunctionFeatures const & src );
 
-	virtual ~ResidueScoresFeatures();
+	virtual ~ScoreFunctionFeatures();
 
 	///@brief return string with class name
 	std::string
 	type_name() const;
 
 	///@brief generate the table schemas and write them to the database
-	void
-	write_schema_to_db(
-		utility::sql_database::sessionOP db_session) const;
+	virtual void
+	write_schema_to_db(utility::sql_database::sessionOP db_session) const;
 
 private:
-	///@brief generate the residue_scores_1b table schema
+	///@brief generate the score_function_weights table schema
 	void
-	write_residue_scores_1b_table_schema(
-		utility::sql_database::sessionOP db_session) const;
-
-	///@brief generate the residue_scores_2b table schema
-	void
-	write_residue_scores_2b_table_schema(
+	write_score_function_weights_table_schema(
 		utility::sql_database::sessionOP db_session) const;
 
 public:
@@ -80,11 +70,10 @@ public:
 	void
 	parse_my_tag(
 		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & data,
+		protocols::moves::DataMap & /*data*/,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/);
-
 
 	///@brief collect all the feature data for the pose
 	core::Size
@@ -94,19 +83,20 @@ public:
 		boost::uuids::uuid struct_id,
 		utility::sql_database::sessionOP db_session);
 
-private:
+	void delete_record(
+		boost::uuids::uuid struct_id,
+		utility::sql_database::sessionOP db_session
+	);
 
 	void
-	insert_residue_scores_rows(
-		core::pose::Pose const & pose,
-		utility::vector1< bool > const & relevant_residues,
-		boost::uuids::uuid const struct_id,
-		utility::sql_database::sessionOP db_session);
-
+	insert_score_function_weights_rows(
+		core::Size batch_id,
+		utility::sql_database::sessionOP db_session
+	) const;
 
 private:
-
 	core::scoring::ScoreFunctionOP scfxn_;
+	std::string scfxn_name_;
 
 };
 

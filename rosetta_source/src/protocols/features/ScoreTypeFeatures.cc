@@ -13,6 +13,7 @@
 
 // Unit Headers
 #include <protocols/features/ScoreTypeFeatures.hh>
+#include <protocols/features/util.hh>
 
 //External
 #include <boost/uuid/uuid.hpp>
@@ -137,15 +138,30 @@ ScoreTypeFeatures::features_reporter_dependencies() const {
 	return dependencies;
 }
 
+Size
+ScoreTypeFeatures::report_features(
+	Pose const &,
+	vector1< bool > const &,
+	boost::uuids::uuid const struct_id,
+	sessionOP db_session
+){
+	Size const batch_id(get_batch_id(struct_id, db_session));
+
+	insert_score_type_rows(batch_id, db_session);
+	return 0;
+}
+
 
 Size
 ScoreTypeFeatures::report_features(
-	Size protocol_id,
+	Size const batch_id,
 	sessionOP db_session
 ){
-	insert_score_type_rows(protocol_id, db_session);
+	insert_score_type_rows(batch_id, db_session);
 	return 0;
 }
+
+
 
 
 void ScoreTypeFeatures::delete_record(

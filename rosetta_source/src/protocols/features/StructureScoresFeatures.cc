@@ -8,11 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/features/StructureScoresFeatures.cc
-/// @brief  report protocol level features to features statistics scientific benchmark
+/// @brief  report structure score features to a features database
 /// @author Matthew O'Meara
 
 // Unit Headers
 #include <protocols/features/StructureScoresFeatures.hh>
+#include <protocols/features/util.hh>
 
 //External
 #include <cppdb/frontend.h>
@@ -119,25 +120,37 @@ StructureScoresFeatures::write_schema_to_db(
 	using namespace basic::database::schema_generator;
 
 	//******structure_scores******//
-	Column struct_id("struct_id",DbUUID(), false);
-	Column score_type_id("score_type_id",DbInteger(), false);
-	Column score_value("score_value",DbInteger(), false);
+	Column batch_id("batch_id", DbInteger(), false);
+	Column struct_id("struct_id", DbUUID(), false);
+	Column score_type_id("score_type_id", DbInteger(), false);
+	Column score_value("score_value", DbInteger(), false);
 
 	utility::vector1<Column> pkey_cols;
+	pkey_cols.push_back(batch_id);
 	pkey_cols.push_back(struct_id);
 	pkey_cols.push_back(score_type_id);
 
+	Columns foreign_key_columns1;
+	foreign_key_columns1.push_back(struct_id);
+	vector1< std::string > reference_columns1;
+	reference_columns1.push_back("struct_id");
+	ForeignKey foreign_key1(foreign_key_columns1, "structures", reference_columns1, true);
+
+
+	Columns foreign_key_columns2;
+	foreign_key_columns2.push_back(batch_id);
+	foreign_key_columns2.push_back(score_type_id);
+	vector1< std::string > reference_columns2;
+	reference_columns2.push_back("batch_id");
+	reference_columns2.push_back("score_type_id");
+	ForeignKey foreign_key2(foreign_key_columns2, "score_types", reference_columns2, true);
+
 	Schema structure_scores("structure_scores", PrimaryKey(pkey_cols));
-	structure_scores.add_column(struct_id);
-	structure_scores.add_column(score_type_id);
 	structure_scores.add_column(score_value);
 
-	structure_scores.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true));
-	//Crappy hack to get mysql to work properly pending more refactoring sorry :(
-	if(db_session->get_db_mode() != utility::sql_database::DatabaseMode::mysql) {
-		structure_scores.add_foreign_key(
-			ForeignKey(score_type_id, "score_types", "score_type_id", true));
-	}
+	structure_scores.add_foreign_key(foreign_key1);
+	structure_scores.add_foreign_key(foreign_key2);
+
 	structure_scores.write(db_session);
 
 }
@@ -218,22 +231,27 @@ StructureScoresFeatures::insert_structure_score_rows(
 
 	core::Real total_score= 0.0;
 
-	std::string statement_string = "INSERT INTO structure_scores (struct_id, score_type_id, score_value) VALUES (?,?,?);";
+	Size const batch_id(get_batch_id(struct_id, db_session));
+
+	std::string statement_string = "INSERT INTO structure_scores (batch_id, struct_id, score_type_id, score_value) VALUES (?,?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	for(Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id){
 		ScoreType type(static_cast<ScoreType>(score_type_id));
 		Real const score_value( energies.weights()[type] * emap[type] );
 		if(!score_value) continue;
 		total_score += score_value;
-		stmt.bind(1,struct_id);
-		stmt.bind(2,score_type_id);
-		stmt.bind(3,score_value);
+		stmt.bind(1, batch_id);
+		stmt.bind(2, struct_id);
+		stmt.bind(3, score_type_id);
+		stmt.bind(4, score_value);
 		basic::database::safely_write_to_database(stmt);
 	}
+
 	// add the total_score type
-	stmt.bind(1,struct_id);
-	stmt.bind(2,n_score_types);
-	stmt.bind(3,total_score);
+	stmt.bind(1, batch_id);
+	stmt.bind(2, struct_id);
+	stmt.bind(3, n_score_types);
+	stmt.bind(4, total_score);
 	basic::database::safely_write_to_database(stmt);
 }
 

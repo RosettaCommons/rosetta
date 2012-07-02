@@ -19,6 +19,7 @@
 
 #include <string>
 #include <map>
+#include <boost/uuid/uuid.hpp>
 
 namespace protocols{
 namespace features{
@@ -31,6 +32,12 @@ get_protocol_and_batch_id(
 std::pair<core::Size, core::Size> deserialize_db_listener_data(std::string data);
 
 std::string serialize_ids(int protocol_id, std::string identifier, core::Size batch_id);
+
+core::Size
+get_batch_id(
+	boost::uuids::uuid struct_id,
+	utility::sql_database::sessionOP db_session
+);
 
 } //features
 } //protocols

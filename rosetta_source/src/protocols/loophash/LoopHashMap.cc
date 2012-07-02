@@ -569,7 +569,7 @@ LoopHashMap::lookup(
 	}
 }
 
-const boost::uint64_t
+boost::uint64_t
 LoopHashMap::return_key( core::Size bb_index )
 {
 	LeapIndex leap_index = get_peptide( bb_index );

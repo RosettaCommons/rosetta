@@ -526,7 +526,7 @@ void get_terminal_aln_res(const SequenceAlignment aln,const Size alnIdx, Size & 
 	firstRes = 0;
 	lastRes = 0;
 	//gets the first and last residues
-	for(int ii=1; ii<=aln.length(); ii++){
+	for(Size ii=1; ii<=aln.length(); ii++){
 		if(!aln.is_gapped(ii)){
 			lastRes = aln.sequence_indices(ii)[alnIdx];
 			if (firstRes ==0)
