@@ -98,14 +98,6 @@ public:
 		boost::uuids::uuid struct_id,
 		utility::sql_database::sessionOP db_session);
 
-	void
-	insert_residue_scores_rows(
-		core::pose::Pose const & pose,
-		utility::vector1< bool > const & relevant_residues,
-		boost::uuids::uuid const struct_id,
-		utility::sql_database::sessionOP db_session);
-
-
 private:
 
 	core::scoring::ScoreFunctionOP scfxn_;
