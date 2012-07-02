@@ -821,9 +821,10 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
 
     objs = []
     symbols = []
-    latest = None  # keeping track of dates of local .def files
+    #latest = None  # keeping track of dates of local .def files
     for dir_name, _, files in os.walk(Options.use_pre_generated_sources):
-        wn_buildOneNamespace(Options.use_pre_generated_sources, dir_name, files, bindings_path, build_dir, symbols)
+        l = wn_buildOneNamespace(Options.use_pre_generated_sources, dir_name, files, bindings_path, build_dir, symbols)
+        latest = max(l, latest)
 
         py_objs = os.path.join(build_dir,'py_objs' )
         f = file(py_objs, 'w');  f.write( ' '.join(objs) );  f.close()
@@ -831,13 +832,14 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
                 #print '____ Adding %s <-- %s' % (symbols[-1], l)
 
     symbols = list( set(symbols) )
-    print '\n\nWriting final export list... %s symbols...' % len(symbols)
     #file('._all_needed_symbols_', 'w').write(res)
 
     def_file = os.path.join(build_dir, 'rosetta_symbols.def')
-    f = file(def_file, 'w'); f .write('LIBRARY rosetta\nEXPORTS\n  ' + '\n  '.join(symbols) + '\n' );  f.close()
 
-    execute('Creating DLL %s...' % dll, 'cd %s && link /OPT:NOREF /dll @objs_all ..\\..\\external\\lib\\win_pyrosetta_z.lib Ws2_32.lib /DEF:%s /out:%s' % (build_dir, def_file, dll) )
+    if (not os.path.isfile(dll))  or  os.path.getmtime(dll) < latest:
+        print '\n\nWriting final export list... %s symbols...' % len(symbols)
+        f = file(def_file, 'w'); f .write('LIBRARY rosetta\nEXPORTS\n  ' + '\n  '.join(symbols) + '\n' );  f.close()
+        execute('Creating DLL %s...' % dll, 'cd %s && link /OPT:NOREF /dll @objs_all ..\\..\\external\\lib\\win_pyrosetta_z.lib Ws2_32.lib /DEF:%s /out:%s' % (build_dir, def_file, dll) )
 
     for dir_name, _, files in os.walk(Options.use_pre_generated_sources):
         wn_buildOneNamespace(Options.use_pre_generated_sources, dir_name, files, bindings_path, build_dir, link=True)
@@ -864,8 +866,9 @@ def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, al
     pyd = os.path.join( obj_dir, '__%s_all_at_once_.pyd' % dir_name.split('\\')[-1])
     symbols_file = os.path.join( obj_dir, 'symbols')  # list of symbols needed for this DLL, one per line
 
+    latest = None
+
     if files:
-        latest = None
         rosetta_lib = os.path.join(bindings_path, '..\\rosetta.lib')  # this is actually link to DLL, don't get confused it with rosettta_lib-%d.lib
         #rosetta_lib = ' '.join( [ l for l in rosetta_libs] )
 
@@ -913,10 +916,12 @@ def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, al
         all_symbols.extend( file(symbols_file).read().split('\n') )
 
         if link:
-            if True or (not os.path.isfile(pyd))   or  os.path.getmtime(pyd) < latest:
+            if (not os.path.isfile(pyd))   or  os.path.getmtime(pyd) < latest  or  os.path.getmtime(pyd) < os.path.getmtime(rosetta_lib):
                 execute('Creating DLL %s...' % pyd,
                         'link  /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:c:/WPyRosetta/boost_1_47_0/stage/lib  %s %s ..\\external\\lib\\win_pyrosetta_z.lib /out:%s' % (' '.join(objs), rosetta_lib, pyd) )
                 #map(os.remove, objs)
+
+    return latest
 
 
 
