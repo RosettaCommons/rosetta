@@ -684,39 +684,43 @@ Energies::show( std::ostream & out, Size res ) const
 
 std::ostream & operator<<(std::ostream & out, const Energies& e )
 {
-
-	// per-residue energies
-	out << A( 4, "res" );
-	//EnergyMap const & temp_emap( e.residue_total_energies( 1 ) );
-	EnergyMap const & temp_emap( e.get_scorefxn_info().scores_present() );
-	for ( EnergyMap::const_iterator it = temp_emap.begin(),
-			it_end = temp_emap.end(); it != it_end; ++it ) {
-		if ( *it ) {
-			out << A( 15, name_from_score_type( ScoreType( it - temp_emap.begin() + 1 ) ) );
-		}
+	if (e.size() == 0) {
+		out << "The pose must be scored first to generate an energy table." << std::endl;
 	}
-	out << std::endl;
+	else {
+		// per-residue energies
+		out << A( 4, "res" );
+		//EnergyMap const & temp_emap( e.residue_total_energies( 1 ) );
+		EnergyMap const & temp_emap( e.get_scorefxn_info().scores_present() );
+		for ( EnergyMap::const_iterator it = temp_emap.begin(),
+				it_end = temp_emap.end(); it != it_end; ++it ) {
+			if ( *it ) {
+				out << A( 15, name_from_score_type( ScoreType( it - temp_emap.begin() + 1 ) ) );
+			}
+		}
+		out << std::endl;
 
-	for ( Size i=1; i <= e.size(); ++i ) {
-		out << I( 4, i );
-		EnergyMap const & emap( e.residue_total_energies( i ) );
-		for ( EnergyMap::const_iterator it = emap.begin(),
-				it_end = emap.end(); it != it_end; ++it ) {
-			if (temp_emap[ ScoreType( it - emap.begin() + 1) ]) out << F( 15, 3, *it );
+		for ( Size i=1; i <= e.size(); ++i ) {
+			out << I( 4, i );
+			EnergyMap const & emap( e.residue_total_energies( i ) );
+			for ( EnergyMap::const_iterator it = emap.begin(),
+					it_end = emap.end(); it != it_end; ++it ) {
+				if (temp_emap[ ScoreType( it - emap.begin() + 1) ]) out << F( 15, 3, *it );
+			}
+			out << std::endl;
+		}
+
+		// total energies
+		out << A( 4, "tot" );
+		for ( EnergyMap::const_iterator it = e.total_energies().begin(),
+			it_end = e.total_energies().end(); it != it_end; ++it ) {
+			if ( temp_emap[ ScoreType( it - e.total_energies().begin() + 1 ) ] )
+				 out << F(15,3,*it);
+				//out << "total_energy ";
+				//		<< ScoreType( it - e.total_energies().begin() + 1 ) << ' '
 		}
 		out << std::endl;
 	}
-
-	// total energies
-	out << A( 4, "tot" );
-	for ( EnergyMap::const_iterator it = e.total_energies().begin(),
-		it_end = e.total_energies().end(); it != it_end; ++it ) {
-		if ( temp_emap[ ScoreType( it - e.total_energies().begin() + 1 ) ] )
-			 out << F(15,3,*it);
-			//out << "total_energy ";
-			//		<< ScoreType( it - e.total_energies().begin() + 1 ) << ' '
-	}
-	out << std::endl;
 
 	return out;
 }
