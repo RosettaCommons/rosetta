@@ -139,10 +139,10 @@ public:
 	virtual void nb_list( bool nb_list_in );
 	virtual void deriv_check( bool deriv_check_in );
 
-	Real tolerance();
-	std::string min_type();
-	bool nb_list();
-	bool deriv_check();
+	Real tolerance() const;
+	std::string min_type() const;
+	bool nb_list() const;
+	bool deriv_check() const;
 
 
 	//	void threshold( Real threshold_in ) { threshold_ = threshold_in; } // TODO: can be deleted?
@@ -171,6 +171,8 @@ private:
 	Real threshold_;
 	bool cartesian_;
 };
+
+std::ostream &operator<< (std::ostream &os, MinMover const &mover);
 
 } // moves
 } // rosetta

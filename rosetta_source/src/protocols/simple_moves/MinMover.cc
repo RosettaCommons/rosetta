@@ -160,19 +160,19 @@ MinMover::score_function() const
 }
 
 void MinMover::min_type( std::string min_type_in ) { min_options_->min_type( min_type_in ); }
-std::string MinMover::min_type() { return min_options_->min_type(); }
+std::string MinMover::min_type() const { return min_options_->min_type(); }
 
 
 void MinMover::tolerance( Real tolerance_in ) { min_options_->minimize_tolerance( tolerance_in ); }
-Real MinMover::tolerance() { return min_options_->minimize_tolerance(); }
+Real MinMover::tolerance() const { return min_options_->minimize_tolerance(); }
 
 
 void MinMover::nb_list( bool nb_list_in ) { min_options_->use_nblist( nb_list_in ); }
-bool MinMover::nb_list() { return min_options_->use_nblist(); }
+bool MinMover::nb_list() const { return min_options_->use_nblist(); }
 
 
 void MinMover::deriv_check( bool deriv_check_in ) { min_options_->deriv_check( deriv_check_in ); }
-bool MinMover::deriv_check() { return min_options_->deriv_check(); }
+bool MinMover::deriv_check() const { return min_options_->deriv_check(); }
 
 void
 MinMover::apply( pose::Pose & pose_ )
@@ -274,6 +274,18 @@ void MinMover::parse_chi_and_bb( TagPtr const tag )
 		bool const value( tag->getOption<bool>("bondlength") );
 		movemap_->set( core::id::D, value );
 	}
+}
+
+
+std::ostream &operator<< (std::ostream &os, MinMover const &mover)
+{
+	moves::operator<<(os, mover);
+	os << "Minimization type: " << mover.min_type() <<
+			", Score tolerance: " << mover.tolerance() <<
+			", Nb list: " << mover.nb_list() <<
+			", Deriv check: " << mover.deriv_check() << std::endl;
+
+	return os;
 }
 
 
