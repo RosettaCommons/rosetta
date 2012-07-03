@@ -171,6 +171,7 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 		core::Size atom_map_count = 0;
 		for (Size ires_pose=seqpos_pose; ires_pose>=seqpos_start_; --ires_pose) {
 			if (sequence_alignment_.find(ires_pose+registry_shift) == sequence_alignment_.end()) break;
+			if ( !pose.residue_type(ires_pose).is_protein() ) continue;
 
 			core::Size jres_template = sequence_alignment_.find(ires_pose+registry_shift)->second;
 			if ( jres_template <= 0 || jres_template > template_pose_->total_residue() ) continue;
@@ -186,9 +187,10 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 			if (discontinued_upper(*template_pose_,jres_template)) break;
 		}
 		for (Size ires_pose=seqpos_pose+1; ires_pose<=seqpos_stop_; ++ires_pose) {
-    	if (sequence_alignment_.find(ires_pose+registry_shift) == sequence_alignment_.end()) break;
+			if (sequence_alignment_.find(ires_pose+registry_shift) == sequence_alignment_.end()) break;
+			if ( !pose.residue_type(ires_pose).is_protein() ) continue;
 
-    	core::Size jres_template = sequence_alignment_.find(ires_pose+registry_shift)->second;
+			core::Size jres_template = sequence_alignment_.find(ires_pose+registry_shift)->second;
 			if ( jres_template <= 0 || jres_template > template_pose_->total_residue() ) continue;
 			
 			if ( !template_pose_->residue_type(jres_template).is_protein() ) continue;
