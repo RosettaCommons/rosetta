@@ -128,7 +128,7 @@ SICFast::init(
 
 
 inline
-void
+double
 get_bounds_intersection(
 	vector1<Vec> const & pb,
 	vector1<Vec> const & pa,
@@ -148,7 +148,8 @@ get_bounds_intersection(
 	}
 	xmx = min(xmx,xmx1); xmn = max(xmn,xmn1);
 	ymx = min(ymx,ymx1); ymn = max(ymn,ymn1);
-	if(ymn > ymx || xmn > xmx) utility_exit_with_message("slide disjoint, maybe something wrong.");
+	if(ymn > ymx || xmn > xmx) return false; //utility_exit_with_message("slide disjoint, maybe something wrong.");
+	return true;
 }
 
 
