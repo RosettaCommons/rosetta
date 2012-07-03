@@ -85,6 +85,12 @@ namespace rna {
 		void
 		set_output_pdb( bool const setting){ output_pdb_=setting;}
 
+		void
+		set_apply_virtual_res_variant_at_dinucleotide( bool const setting){ apply_virtual_res_variant_at_dinucleotide_=setting;}
+
+		void
+		set_align_to_native( bool const setting){ align_to_native_=setting;}
+
   	private:
 
 		void
@@ -146,6 +152,8 @@ namespace rna {
 
 		bool rebuild_bulge_mode_;
 		bool output_pdb_;
+		bool apply_virtual_res_variant_at_dinucleotide_;
+		bool align_to_native_;
 
 	};
 
