@@ -40,6 +40,8 @@ namespace rna {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Keep track of RNA centroid information inside the pose.
 //// Rhiju move this to its own namespace!
+//// Also, should probably use EnergyGraph instead of FArrays -- much smaller memory footprint (!)
+////
 class RNA_RawBaseBaseInfo : public basic::datacache::CacheableData {
 
 public:
