@@ -529,6 +529,27 @@ protocols::loops::Loops split_by_resSeq(core::pose::Pose const & pose) {
 	return chunks;
 }
 
+protocols::loops::Loops find_non_protein_chunks(core::pose::Pose const & pose) {
+	Loops chunks;
+	Loop new_loop;
+	bool chunk_started = false;
+
+	for (core::Size ires = 1; ires < pose.total_residue(); ++ires) {
+		if (pose.residue_type(ires).is_protein()) continue;
+		if (!chunk_started) {
+			new_loop.set_start(ires);
+			chunk_started = true;
+		}
+
+		if (!pose.residue_type(ires).is_polymer() || pose.residue_type(ires).is_upper_terminus()) {
+			chunk_started = false;
+			new_loop.set_stop(ires);
+			chunks.add_loop(new_loop);
+		}
+	}
+	return chunks;
+}
+	
 protocols::loops::Loops split_by_resSeq(core::pose::Pose const & pose,
 										protocols::loops::Loops const & input_chunks) {
 	using protocols::loops::Loop;
@@ -542,7 +563,8 @@ protocols::loops::Loops split_by_resSeq(core::pose::Pose const & pose,
 		Loop new_loop(*it);
 		
 		for (core::Size ires = it->start(); ires < it->stop(); ++ires) {
-			if ( pose.pdb_info()->number(ires+1) - pose.pdb_info()->number(ires) != 1 ) {
+			if ( pose.pdb_info()->number(ires+1) - pose.pdb_info()->number(ires) != 1 ||
+				pose.pdb_info()->chain(ires+1) != pose.pdb_info()->chain(ires) ) {
 				new_loop.set_stop(ires);
 				chunks.add_loop(new_loop);
 				
@@ -561,7 +583,7 @@ protocols::loops::Loops split_by_ca_ca_dist(core::pose::Pose const & pose,
 											core::Real const CA_CA_distance_cutoff) {
 	using protocols::loops::Loop;
 	using protocols::loops::Loops;
-	Loops secondary_structure_chunks;
+	Loops continuous_chunks;
 	
 	Loops::LoopList::const_iterator eit, it;
 	for (  it = input_chunks.begin(), eit = input_chunks.end();
@@ -570,17 +592,28 @@ protocols::loops::Loops split_by_ca_ca_dist(core::pose::Pose const & pose,
 		Loop new_loop(*it);
 		
 		for (core::Size ires = it->start(); ires < it->stop(); ++ires) {
+			if( ! pose.residue(ires).is_protein() ) continue;
+
+			if( pose.residue(ires+1).is_protein() ) {
 			if ( pose.residue(ires).xyz("CA").distance(pose.residue(ires+1).xyz("CA")) > CA_CA_distance_cutoff ) {
 				new_loop.set_stop(ires);
-				secondary_structure_chunks.add_loop(new_loop);
+				continuous_chunks.add_loop(new_loop);
+				
+				new_loop.set_start(ires+1);
+				new_loop.set_stop(it->stop());
+			}
+			}
+			else {
+				new_loop.set_stop(ires);
+				continuous_chunks.add_loop(new_loop);
 				
 				new_loop.set_start(ires+1);
 				new_loop.set_stop(it->stop());
 			}
 		}
-		secondary_structure_chunks.add_loop( new_loop );
+		continuous_chunks.add_loop( new_loop );
 	}
-	return secondary_structure_chunks;
+	return continuous_chunks;
 }
 
 // gap_size- if two chunks are seperated by a gap of this size (or less), consider them one big chunk
@@ -656,6 +689,16 @@ protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose cons
 			secondary_structure_chunks.add_loop(*it);
 		}
 	}
+	
+	// insert non protein chunks
+	/*
+	Loops non_prot_chunks = find_non_protein_chunks(pose);
+	Loops::LoopList::const_iterator eit, it;
+	for (  it = non_prot_chunks.begin(), eit = non_prot_chunks.end();
+		 it != eit; ++it ) {
+		secondary_structure_chunks.add_loop(*it);
+	}
+	*/
 	return secondary_structure_chunks;
 }
 	

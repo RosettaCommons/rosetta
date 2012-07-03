@@ -53,7 +53,6 @@
 #include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
@@ -214,11 +213,13 @@ HybridizeProtocol::init() {
 	stage1_probability_ = option[cm::hybridize::stage1_probability]();
 	stage1_increase_cycles_ = option[cm::hybridize::stage1_increase_cycles]();
 	domain_assembly_ = false;
+	add_hetatm_ = false;
 	realign_domains_ = option[cm::hybridize::realign_domains]();
 	add_non_init_chunks_ = option[cm::hybridize::add_non_init_chunks]();
 	frag_weight_aligned_ = option[cm::hybridize::frag_weight_aligned]();
 	max_registry_shift_ = option[cm::hybridize::max_registry_shift]();
 	frag_insertion_weight_ = 0.5;
+	hetatm_cst_weight_ = 10.;
 	cartfrag_overlap_ = 1;
 
 	if (option[cm::hybridize::starting_template].user()) {
@@ -306,6 +307,7 @@ HybridizeProtocol::check_and_create_fragments( core::pose::Pose & pose ) {
 			nres_tgt = symm_info->num_independent_residues();
 		}
 		if (pose.residue(nres_tgt).aa() == core::chemical::aa_vrt) nres_tgt--;
+		while (!pose.residue(nres_tgt).is_protein()) nres_tgt--;
 	
 		// sequence
 		std::string tgt_seq = pose.sequence();
@@ -666,6 +668,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 	// number of residues in asu without VRTs
 	core::Size nres_tgt = pose.total_residue();
+	core::Size nres_protein_tgt = pose.total_residue();
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetricConformation & SymmConf (
@@ -674,6 +677,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		nres_tgt = symm_info->num_independent_residues();
 	}
 	if (pose.residue(nres_tgt).aa() == core::chemical::aa_vrt) nres_tgt--;
+	while (!pose.residue(nres_protein_tgt).is_protein()) nres_protein_tgt--;
 	
 	core::Real gdtmm = 0.0;
 	while(need_more_samples) {
@@ -693,7 +697,20 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			template_chunks_icluster, template_contigs_icluster );
 		TR << "Using initial template: " << I(4,initial_template_index) << " " << template_fn_[initial_template_index] << std::endl;
 
-		if (domain_assembly_) {
+		// Three options to rearrange the input alignments, adding hetero residues, domain assembly, or realign local domains. Currently they are mutually exclusive.
+		if (add_hetatm_) {
+			for ( Size ires=1; ires <= templates_[initial_template_index]->total_residue(); ++ires ) {
+				if (templates_[initial_template_index]->pdb_info()->number(ires) > nres_tgt) {
+					if ( templates_[initial_template_index]->residue(ires).is_polymer() && !templates_[initial_template_index]->residue(ires).is_lower_terminus() ) {
+					pose.append_residue_by_bond(templates_[initial_template_index]->residue(ires));
+				}
+				else {
+					pose.append_residue_by_jump(templates_[initial_template_index]->residue(ires), 1);
+					}
+				}
+			}
+		}
+		else if (domain_assembly_) {
 			DomainAssembly domain_assembly(templates_, domain_assembly_weights_);
 			domain_assembly.run();
 			/*
@@ -712,7 +729,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			domains_all_templ.resize( templates_.size() );
 			for (Size i_template=1; i_template<=templates_.size(); ++i_template) {
 				if (template_clusterID_[i_template] != template_clusterID_[initial_template_index]) continue;
-				domains_all_templ[i_template] = ddom.split( *templates_[i_template], nres_tgt );
+				domains_all_templ[i_template] = ddom.split( *templates_[i_template], nres_protein_tgt );
 				
 				//protocols::loops::Loops my_chunks(template_chunks_[initial_template_index_]);
 				// convert domain numbering to target pose numbering
@@ -744,7 +761,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			
 			// update chunk, contig informations
 			for (Size i_template=1; i_template<=templates_.size(); ++i_template) {
-				template_contigs_[i_template] = protocols::loops::extract_continuous_chunks(*templates_[i_template]); 
+				template_contigs_[i_template] = protocols::loops::extract_continuous_chunks(*templates_[i_template]);
 				template_chunks_[i_template] = protocols::loops::extract_secondary_structure_chunks(*templates_[i_template], "HE", 3, 6, 3, 4);
 				if (template_chunks_[i_template].num_loop() == 0)
 					template_chunks_[i_template] = template_contigs_[i_template];
@@ -785,7 +802,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 		// fold tree hybridize
 		if (RG.uniform() < stage1_probability_) {
-   		std::string cst_fn = template_cst_fn_[initial_template_index];
+			std::string cst_fn = template_cst_fn_[initial_template_index];
 	
 			FoldTreeHybridizeOP ft_hybridize(
 				new FoldTreeHybridize(
@@ -796,6 +813,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			ft_hybridize->set_increase_cycles( stage1_increase_cycles_ );
 			ft_hybridize->set_add_non_init_chunks( add_non_init_chunks_ );
 			ft_hybridize->set_domain_assembly( domain_assembly_ );
+			ft_hybridize->set_add_hetatm( add_hetatm_, hetatm_cst_weight_ );
 			ft_hybridize->set_frag_insertion_weight( frag_insertion_weight_ );
 			ft_hybridize->set_frag_weight_aligned( frag_weight_aligned_ );
 			ft_hybridize->set_max_registry_shift( max_registry_shift_ );
@@ -815,7 +833,10 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		// apply constraints
 		std::string cst_fn = template_cst_fn_[initial_template_index];
 		setup_centroid_constraints( pose, templates_, template_weights_, cst_fn );
-
+		if (add_hetatm_) {
+			add_non_protein_cst(pose, hetatm_cst_weight_);
+		}
+		
 		if (!option[cm::hybridize::skip_stage2]()) {
 			CartesianHybridizeOP cart_hybridize (
 				new CartesianHybridize(
@@ -879,7 +900,10 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			// apply fa constraints
 			std::string cst_fn = template_cst_fn_[initial_template_index];
 			setup_fullatom_constraints( pose, templates_, template_weights_, cst_fn, fa_cst_fn_ );
-
+			if (add_hetatm_) {
+				add_non_protein_cst(pose, hetatm_cst_weight_);
+			}
+			
 			if (batch_relax_ == 1) {
 				// add additional _CALPHA_ constraints
 				//fpd  generally this is unused
@@ -887,7 +911,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 				core::Size rootres = pose.fold_tree().root();
 				Real const coord_sdev( 1 ); // this should be an option perhaps
 				for ( core::Size i=1; i<pose.total_residue(); ++i ) {
-					if ( !pose.residue(i).is_polymer() ) continue;
+					if ( !pose.residue(i).is_protein() ) continue;
 					utility::vector1<core::Size> const &source_list = template_cst_reses_[ template_index_icluster[ history->get(i) ] ];
 					if ( std::find( source_list.begin(), source_list.end(), i ) != source_list.end() ) {
 						TR << "Constrain residue " << i << std::endl;
@@ -1029,6 +1053,7 @@ HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose con
 		std::list <Size> residue_list;
 		core::Size n_mapped_residues=0;
 		for (core::Size ires=1; ires<=pose.total_residue(); ++ires) {
+			if (!pose.residue_type(ires).is_protein()) continue;
 			for (core::Size iloop=1; iloop<=domains[i_domain].num_loop(); ++iloop) {
 				if ( pose.pdb_info()->number(ires) < (int)domains[i_domain][iloop].start() || pose.pdb_info()->number(ires) > (int)domains[i_domain][iloop].stop() ) continue;
 				residue_list.push_back(ires);
@@ -1107,6 +1132,10 @@ HybridizeProtocol::parse_my_tag(
 	
 	if( tag->hasOption( "stage1_probability" ) )
 		stage1_probability_ = tag->getOption< core::Real >( "stage1_probability" );
+	if( tag->hasOption( "add_hetatm" ) )
+		add_hetatm_ = tag->getOption< bool >( "add_hetatm" );
+	if( tag->hasOption( "hetatm_cst_weight" ) )
+		hetatm_cst_weight_ = tag->getOption< core::Real >( "hetatm_cst_weight" );
 	if( tag->hasOption( "domain_assembly" ) )
 		domain_assembly_ = tag->getOption< bool >( "domain_assembly" );
 	if( tag->hasOption( "realign_domains" ) )

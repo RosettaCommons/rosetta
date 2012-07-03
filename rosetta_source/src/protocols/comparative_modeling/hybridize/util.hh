@@ -58,6 +58,7 @@ void generate_fullatom_constraints(
 	utility::vector1 < core::pose::PoseCOP > templates,
 	utility::vector1 < core::Real > template_weights );
 
+void add_non_protein_cst(core::pose::Pose & pose, core::Real const cst_weight);
 
 bool discontinued_upper(core::pose::Pose const & pose, core::Size const seqpos);
 

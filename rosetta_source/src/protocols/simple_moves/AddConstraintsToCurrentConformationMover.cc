@@ -34,6 +34,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <numeric/xyzVector.hh>
 
 // utility
 #include <utility/tag/Tag.hh>
@@ -73,29 +74,87 @@ void AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose )
 	using namespace protocols::moves;
 	using namespace core::scoring;
 	
-
+	/*
 	if ( pose.residue( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
 		core::pose::addVirtualResAsRoot(pose);
 	}
+	 */
 	
-	TR << pose.fold_tree() << std::endl;
-	
-	core::pose::Pose constraint_target_pose = pose;
-	
+	// TR << pose.fold_tree() << std::endl;
 	Size nres = pose.total_residue();
+
+	// find anchor residue
+	numeric::xyzVector<core::Real> sum_xyz;
+	numeric::xyzVector<core::Real> anchor_xyz;
+	core::Real natom;
+	for ( Size ires = 1; ires <= nres; ++ires ) {
+		if ( pose.residue_type(ires).has("CA") ) {
+			Size iatom = pose.residue_type(ires).atom_index("CA");
+			sum_xyz += pose.residue(ires).xyz(iatom);
+			natom += 1.;
+		}
+		if (natom > 1e-3) {
+			anchor_xyz = sum_xyz / natom;
+		}
+	}
+	core::Real min_dist2 = 1e9;
+	Size best_anchor = 0;
+	for ( Size ires = 1; ires <= nres; ++ires ) {
+		if ( pose.residue_type(ires).has("CA") ) {
+			Size iatom = pose.residue_type(ires).atom_index("CA");
+			core::Real dist2 = pose.residue(ires).xyz(iatom).distance_squared(anchor_xyz);
+			if (dist2 < min_dist2) {
+				min_dist2 = dist2;
+				best_anchor = ires;
+			}
+		}
+	}
+	
+	if (best_anchor == 0) return;
+	Size best_anchor_atom = pose.residue_type(best_anchor).atom_index("CA");
+
 	Real const coord_sdev( option[ OptionKeys::relax::coord_cst_stdev ] );
 	for ( Size ires = 1; ires <= nres; ++ires ) {
-		if ( !pose.residue_type(ires).has("CA") ) continue;
-		Size iatom = pose.residue_type(ires).atom_index("CA");
+		Size iatom;
+		if ( pose.residue_type(ires).has("CA") ) {
+			iatom = pose.residue_type(ires).atom_index("CA");
+		}
+		else if ( pose.residue_type(ires).is_DNA() ) {
+			iatom = 0;
+		}
+		else {
+			continue;
+		}
+		
 		if (!option[ OptionKeys::relax::coord_cst_width ].user() ) {
-			pose.add_constraint( new CoordinateConstraint(
-								  AtomID(iatom,ires), AtomID(1,pose.fold_tree().root()), pose.residue(ires).xyz(iatom),
-								  new HarmonicFunc( 0.0, coord_sdev ) ) );
+			if (iatom != 0) {
+				pose.add_constraint( new CoordinateConstraint(
+															  AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
+															  new HarmonicFunc( 0.0, coord_sdev ) ) );
+				TR.Debug << "Constraint added to residue " << ires << ", atom " << iatom << std::endl;
+			}
+			else {
+				for (iatom = 1; iatom <= pose.residue_type(ires).nheavyatoms(); ++iatom) {
+					pose.add_constraint( new CoordinateConstraint(
+																  AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
+																  new HarmonicFunc( 0.0, coord_sdev ) ) );
+				}
+			}
 		} else {
 			Real const cst_width( option[ OptionKeys::relax::coord_cst_width ]() );
+			if (iatom != 0) {
 			pose.add_constraint( new CoordinateConstraint(
-								  AtomID(iatom,ires), AtomID(1,pose.fold_tree().root()), pose.residue(ires).xyz(iatom),
+								  AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
 								  new BoundFunc( 0, cst_width, coord_sdev, "xyz" )) );
+			TR << "Constraint added to residue " << ires << ", atom " << iatom << std::endl;
+			}
+			else {
+				for (iatom = 1; iatom <= pose.residue_type(ires).nheavyatoms(); ++iatom) {
+				pose.add_constraint( new CoordinateConstraint(
+															  AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
+															  new BoundFunc( 0, cst_width, coord_sdev, "xyz" )) );
+				}				
+			}
 		}
 	}
 }

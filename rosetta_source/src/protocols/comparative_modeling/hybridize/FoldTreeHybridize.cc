@@ -151,6 +151,8 @@ FoldTreeHybridize::init() {
 	max_registry_shift_ = option[cm::hybridize::max_registry_shift]();
 	frag_insertion_weight_ = 0.5;
 	domain_assembly_ = false;
+	add_hetatm_ = false;
+	hetatm_cst_weight_ = 10.;
 	// default scorefunction
 	set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score3" ) );
 }
@@ -578,7 +580,10 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	setup_foldtree(pose);
 
 	setup_centroid_constraints( pose, template_poses_, template_wts_, cst_file_ );
-	
+	if (add_hetatm_) {
+		add_non_protein_cst(pose, hetatm_cst_weight_);
+	}
+
 	// Initialize the structure
 	bool use_random_template = false;
 	ChunkTrialMover initialize_chunk_mover(template_poses_, template_chunks_, ss_chunks_pose_, use_random_template, all_chunks);

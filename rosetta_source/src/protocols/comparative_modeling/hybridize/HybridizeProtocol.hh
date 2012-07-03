@@ -99,7 +99,8 @@ private:
 	core::Real frag_insertion_weight_; // fragment insertion weight, vs. chunk insertion
 	core::Real frag_weight_aligned_; // fragment insertion to the aligned region, vs. unaligned region
 	core::Size max_registry_shift_;
-	bool domain_assembly_, realign_domains_, add_non_init_chunks_, no_global_frame_, linmin_only_;
+	bool domain_assembly_, add_hetatm_, realign_domains_, add_non_init_chunks_, no_global_frame_, linmin_only_;
+	core::Real hetatm_cst_weight_;
 	core::scoring::ScoreFunctionOP stage1_scorefxn_, stage2_scorefxn_, fa_scorefxn_;
 	std::string fa_cst_fn_;
 	std::string disulf_file_;

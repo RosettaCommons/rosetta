@@ -223,6 +223,11 @@ TorsionDatabase::lookup(
 
 	Kphi=k_torsion; // default
 	phi_step=0;
+	
+	if (!restype.is_protein()) {
+		Kphi = phi0 = 0;
+		return;
+	}
 
 	// use 'annotated sequence' to id this restype
 	std::string restag = get_restag( restype );

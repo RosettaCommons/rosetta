@@ -59,6 +59,9 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/ScalarWeightedFunc.hh>
+#include <core/scoring/constraints/SOGFunc.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -178,6 +181,7 @@ CartesianHybridize::CartesianHybridize(
 				}
 			}
 		}
+		template_contigs_[tmpl].sequential_order();
 	}
 	TR.Debug << "template_contigs:" << std::endl;
 	for (int i=1; i<= template_contigs_.size(); ++i) {
@@ -314,7 +318,7 @@ CartesianHybridize::apply_frame( core::pose::Pose & pose, core::fragment::Frame 
 		nres = symm_info->num_independent_residues();
 	}
 
-	if (pose.residue(nres).aa() == core::chemical::aa_vrt) nres--;
+	while (!pose.residue(nres).is_protein()) nres--;
 	bool nterm = (start == 1);
 	bool cterm = (start == nres-8);
 
@@ -449,7 +453,36 @@ CartesianHybridize::apply( Pose & pose ) {
 	Pose pose_in = pose;
 	core::Size nres = pose.total_residue();
 	if (pose.residue(nres).aa() == core::chemical::aa_vrt) nres--;
+	core::Size n_prot_res = pose.total_residue();
+	while (!pose.residue(n_prot_res).is_protein()) n_prot_res--;
 
+	
+	for (Size ires=n_prot_res+1; ires<=pose.total_residue(); ++ires) {
+		mm.set_bb (ires, false);
+		mm.set_chi(ires, false);
+		
+		core::Real MAXDIST = 15.0;
+		core::Real COORDDEV = 3.0;
+
+		for (Size iatom=1; iatom<=pose.residue(ires).nheavyatoms(); ++iatom) {
+			
+			for (Size jres=ires; jres<=pose.total_residue(); ++jres) {
+				for (Size jatom=1; jatom<=pose.residue(jres).nheavyatoms(); ++jatom) {
+					if ( ires == jres && iatom >= jatom) continue;
+					core::Real dist = pose.residue(ires).xyz(iatom).distance( pose.residue(jres).xyz(jatom) );
+					if ( dist <= MAXDIST ) {
+						pose.add_constraint(
+											new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires),
+																   core::id::AtomID(jatom,jres), 
+																   new core::scoring::constraints::ScalarWeightedFunc( 5., new core::scoring::constraints::SOGFunc( dist, COORDDEV )  )
+																   )
+											);
+					}
+				}
+			}
+		}
+	}
+	
 	// 10% of the time, skip moves in the global frame 
 	bool no_ns_moves = no_global_frame_; // (numeric::random::uniform() <= 0.1);
 
@@ -533,6 +566,9 @@ sampler:
 			if (action == 1 || action == 2) {
 				core::Size templ_id = numeric::random::random_range( 1, templates_.size() );
 				core::Size nfrags = template_contigs_[templ_id].num_loop();
+				// remove non-protein frags
+				while (templates_[templ_id]->pdb_info()->number(template_contigs_[templ_id][nfrags].start()) > n_prot_res) --nfrags;
+				//randomly pick frag
 				core::Size frag_id = numeric::random::random_range( 1, nfrags );
 				protocols::loops::LoopOP frag =  new protocols::loops::Loop ( template_contigs_[templ_id][frag_id] );
 
@@ -556,10 +592,10 @@ sampler:
 
 			if (action == 3) {
 				// pick an insert position based on gap
-				utility::vector1<core::Real> residuals( nres , 0.0 );
+				utility::vector1<core::Real> residuals( n_prot_res , 0.0 );
 				utility::vector1<core::Real> max_residuals(3,0);
 				utility::vector1<int> max_poses(4,-1);
-				for (int i=1; i<nres; ++i) {
+				for (int i=1; i<n_prot_res; ++i) {
 					if (pose.fold_tree().is_cutpoint(i+1)) {
 						residuals[i] = -1;
 					} else {
@@ -582,7 +618,7 @@ sampler:
 				}
 
 				// 25% chance of random position
-				max_poses[ 4 ] = numeric::random::random_range(1,nres);
+				max_poses[ 4 ] = numeric::random::random_range(1,n_prot_res);
 				int select_position = numeric::random::random_range(1,4);
 				if (select_position == 4)
 					action_string = action_string+"_rand";
@@ -590,7 +626,7 @@ sampler:
 
 				// select random pos in [i-8,i]
 				core::Size insert_pos = max_pos - numeric::random::random_range(3,5);
-				insert_pos = std::min( insert_pos, nres-8);
+				insert_pos = std::min( insert_pos, n_prot_res-8);
 				insert_pos = std::max( (int)insert_pos, 1);
 
 				if (library_.find(insert_pos) != library_.end())

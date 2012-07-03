@@ -33,6 +33,7 @@
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
+#include <protocols/simple_moves/AddConstraintsToCurrentConformationMover.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ScalarWeightedFunc.hh>
 #include <core/scoring/constraints/SOGFunc.hh>
@@ -81,7 +82,10 @@ void setup_fullatom_constraints(
 	if (fa_cst_file == "AUTO") {
 		// automatic fa constraints
 		generate_fullatom_constraints( pose, templates, template_weights );
-	}	else if (!fa_cst_file.empty() && fa_cst_file != "NONE") {
+	} else if (fa_cst_file == "SELF") {
+		protocols::simple_moves::AddConstraintsToCurrentConformationMover add_constraints;
+		add_constraints.apply(pose);
+	} else if (!fa_cst_file.empty() && fa_cst_file != "NONE") {
 		ConstraintSetOP constraint_set = ConstraintIO::get_instance()->read_constraints_new( fa_cst_file, new ConstraintSet, pose );
 		pose.constraint_set( constraint_set );  //reset constraints
 	} else if (cen_cst_file == "AUTO") {
@@ -162,7 +166,55 @@ void generate_fullatom_constraints(
 	generate_centroid_constraints( pose, templates, template_weights);
 }
 
-
+void add_non_protein_cst(core::pose::Pose & pose, core::Real const cst_weight) {
+	core::Size n_prot_res = pose.total_residue();
+	while (!pose.residue(n_prot_res).is_protein()) n_prot_res--;
+	core::Size n_nonvirt = pose.total_residue();
+	while (!pose.residue(n_prot_res).is_protein()) n_nonvirt--;
+	
+	core::Real MAXDIST = 15.0;
+	core::Real COORDDEV = 3.0;
+	// constraint between protein and substrate
+	for (Size ires=1; ires<=n_prot_res; ++ires) {
+		if ( ! pose.residue_type(ires).has("CA") ) continue;
+		core::Size iatom = pose.residue_type(ires).atom_index("CA");
+		
+		for (Size jres=n_prot_res+1; jres<=n_nonvirt; ++jres) {
+			for (Size jatom=1; jatom<=pose.residue(jres).nheavyatoms(); ++jatom) {
+				core::Real dist = pose.residue(ires).xyz(iatom).distance( pose.residue(jres).xyz(jatom) );
+				if ( dist <= MAXDIST ) {
+					pose.add_constraint(
+										new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires),
+																						   core::id::AtomID(jatom,jres), 
+																						   new core::scoring::constraints::ScalarWeightedFunc( cst_weight, new core::scoring::constraints::SOGFunc( dist, COORDDEV )  )
+																						   )
+										);
+				}
+			}
+		}
+	}
+	
+	// constraint within substrate
+	for (Size ires=n_prot_res+1; ires<=n_nonvirt; ++ires) {
+		for (Size iatom=1; iatom<=pose.residue(ires).nheavyatoms(); ++iatom) {
+			
+			for (Size jres=ires; jres<=n_nonvirt; ++jres) {
+				for (Size jatom=1; jatom<=pose.residue(jres).nheavyatoms(); ++jatom) {
+					if ( ires == jres && iatom >= jatom) continue;
+					core::Real dist = pose.residue(ires).xyz(iatom).distance( pose.residue(jres).xyz(jatom) );
+					if ( dist <= MAXDIST ) {
+						pose.add_constraint(
+											new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires),
+																							   core::id::AtomID(jatom,jres), 
+																							   new core::scoring::constraints::ScalarWeightedFunc( cst_weight, new core::scoring::constraints::SOGFunc( dist, COORDDEV )  )
+																							   )
+											);
+					}
+				}
+			}
+		}
+	}
+}
 
 bool discontinued_upper(core::pose::Pose const & pose, Size const seqpos) {
 	core::Real N_C_cutoff(2.0);

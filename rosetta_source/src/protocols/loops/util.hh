@@ -91,6 +91,8 @@ protocols::loops::Loops split_by_resSeq(core::pose::Pose const & pose);
 protocols::loops::Loops split_by_resSeq(core::pose::Pose const & pose,
 										protocols::loops::Loops const & input_chunks);
 
+protocols::loops::Loops find_non_protein_chunks(core::pose::Pose const & pose);
+
 // TODO(cmiles) deduplicate
 /// @brief Split into separate chunks if CA-CA distance is over the cutoff
 protocols::loops::Loops split_by_ca_ca_dist(core::pose::Pose const & pose,
