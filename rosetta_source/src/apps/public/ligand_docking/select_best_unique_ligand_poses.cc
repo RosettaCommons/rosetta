@@ -29,6 +29,10 @@
 #include <core/import_pose/atom_tree_diffs/atom_tree_diff.hh>
 #include <core/scoring/rms_util.hh>
 
+#include <core/pose/util.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/Energies.hh>
+
 //Utility Includes
 
 #include <utility/vector1.hh>
@@ -67,7 +71,29 @@ go_main() {
 		std::string const & tag( (*job_iter)->input_tag() );
 		tag_job_map[ tag ] = *job_iter;
 		core::import_pose::atom_tree_diffs::Scores scoremap( (*job_iter)->output_string_real_pairs_begin(), (*job_iter)->output_string_real_pairs_end() );
-		// ??? Need to add data from those tucked into the pose itself?
+		// Need to add data from those tucked into the pose itself (for binary silent file support).
+		// We're actually only interested in "ligand_is_touching", "interface_delta",  and "total_score"
+		if( scoremap.find("ligand_is_touching") == scoremap.end() || scoremap.find("interface_delta") == scoremap.end() || scoremap.find("total_score") == scoremap.end() ) {
+			core::pose::PoseCOP in_pose = (*job_iter)->get_pose();
+			runtime_assert( in_pose );
+			core::Real value;
+			if( scoremap.find("ligand_is_touching") == scoremap.end() && getPoseExtraScores( *in_pose, "ligand_is_touching", value ) ) {
+				scoremap["ligand_is_touching"] = value;
+			}
+			if( scoremap.find("interface_delta") == scoremap.end() && getPoseExtraScores( *in_pose, "interface_delta", value ) ) {
+				scoremap["interface_delta"] = value;
+			}
+			if( scoremap.find("total_score") == scoremap.end() ) {
+				if( getPoseExtraScores( *in_pose, "total_score", value ) ) {
+					scoremap["total_score"] = value;
+				} else {
+					core::scoring::EnergyMap const & emap( in_pose->energies().total_energies() );
+					scoremap["total_score"] = emap[ core::scoring::total_score ];
+				}
+			}
+
+		}
+
 		core::import_pose::atom_tree_diffs::ScoresPair pair( tag, scoremap );
 		scores_list.push_back(pair);
 	}

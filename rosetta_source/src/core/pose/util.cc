@@ -402,8 +402,8 @@ void addVirtualResAsRoot( core::pose::Pose & pose ) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 bool getPoseExtraScores(
-	core::pose::Pose & pose,
-	std::string name,
+	core::pose::Pose const & pose,
+	std::string const name,
 	core::Real & value) {
 	using basic::datacache::CacheableStringFloatMap;
 
@@ -412,9 +412,9 @@ bool getPoseExtraScores(
 		return false;
 	}
 
-	CacheableStringFloatMap *data
-		= dynamic_cast< CacheableStringFloatMap* >
-			( pose.data().get_raw_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
+	CacheableStringFloatMap const *data
+		= dynamic_cast< CacheableStringFloatMap const* >
+			( pose.data().get_raw_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
 	assert( data != NULL );
 
 	std::map< std::string, float >::const_iterator it = data->map().find( name );

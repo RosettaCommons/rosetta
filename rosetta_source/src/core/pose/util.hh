@@ -104,8 +104,8 @@ utility::vector1< char > read_psipred_ss2_file( pose::Pose const & pose );
 
 /// getters/setters for things in the Pose DataCache
 bool getPoseExtraScores(
-	core::pose::Pose & pose,
-	std::string name,
+	core::pose::Pose const & pose,
+	std::string const name,
 	core::Real & value
 );
 
