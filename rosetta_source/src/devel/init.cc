@@ -30,6 +30,7 @@
 #include <devel/matdes/SymmetrizerMoverCreator.hh>
 #include <devel/matdes/TaskAwareSymMinMoverCreator.hh>
 #include <devel/matdes/StoreTaskMoverCreator.hh>
+#include <devel/matdes/SymDofMoverCreator.hh>
 
 // Filter creators
 #include <devel/matdes/OligomericAverageDegreeFilterCreator.hh>
@@ -69,6 +70,7 @@ protocols::moves::MoverRegistrator< znhash::LoadZnCoordNumHbondCalculatorMoverCr
 static protocols::moves::MoverRegistrator< devel::matdes::SymmetrizerMoverCreator > reg_SymmetrizerMoverCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::TaskAwareSymMinMoverCreator > reg_TaskAwareSymMinMoverCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::StoreTaskMoverCreator > reg_StoreTaskMoverCreator;
+static protocols::moves::MoverRegistrator< devel::matdes::SymDofMoverCreator > reg_SymDofMoverCreator;
 
 // Task creators
 core::pack::task::operation::TaskOperationRegistrator< devel::znhash::DisableZnCoordinationResiduesTaskOpCreator > reg_DisableZnCoordinationResiduesTaskOpCreator;
