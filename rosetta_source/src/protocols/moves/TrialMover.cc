@@ -265,6 +265,17 @@ void TrialMover::parse_my_tag(
 
 }
 
+std::ostream &operator<< (std::ostream &os, TrialMover const &mover)
+{
+	//moves::operator<<(os, mover); // this line causes unexpected segmentation fault.
+	os << "Mover name: " << mover.get_name() << ", Mover type: " << mover.get_type() << ", Mover current tag: " << mover.get_current_tag() << std::endl <<
+			"Mover being tried: " << mover.mover() << std::endl <<
+			"Number of times the move was accepted: " << mover.num_accepts() << std::endl;
+	os << mover.acceptance_rate() << std::endl;
+	os << "MonteCarlo: " << std::endl << mover.mc() << std::endl;
+
+	return os;
+}
 
 }  // namespace moves
 }  // namespace protocols

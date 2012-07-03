@@ -21,7 +21,7 @@
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/moves/TrialMover.hh>
 
 int main(int argc, char *argv[])
 {
@@ -44,8 +44,8 @@ int main(int argc, char *argv[])
 
 	//std::cout << test_pose.energies() << std::endl;
 
-	protocols::simple_moves::MinMover minmover;
-	std::cout << minmover << std::endl;
+	protocols::moves::TrialMover trialmover;
+	std::cout << trialmover << std::endl;
 
 
 }

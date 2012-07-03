@@ -161,12 +161,12 @@ public:
 	void set_mc( MonteCarloOP mc_in );
 
 	/// @brief Returns the underlying Mover
-	MoverOP mover() {
+	MoverOP mover() const {
 		return mover_;
 	}
 
 	/// @brief Returns the underlying MonteCarlo object
-	MonteCarlo const& mc () {
+	MonteCarlo const& mc () const {
 		return *mc_;
 	}
 
@@ -208,6 +208,8 @@ private:
 	Real delta;
 	StatsType stats_type_;
 }; // TrialMover base class
+
+std::ostream &operator<< (std::ostream &os, TrialMover const &mover);
 
 } // moves
 } // protocols
