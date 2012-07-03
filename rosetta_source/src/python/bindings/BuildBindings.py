@@ -783,6 +783,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
 
     # Now creating DLL
     dll = os.path.join(bindings_path, '..\\rosetta.dll')
+    ''' There is no longer need for intermediate libs... but we will need it for PilotApp builds
     rosetta_lib_ = os.path.join(build_dir, 'rosetta_lib-%02d.lib')  # we purposly name 'real' lib somewhat different to avoid confusion with rosetta.lib file that belong to DLL
     rosetta_libs = [rosetta_lib_ % l for l in range(len(sources)) ]
 
@@ -797,7 +798,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
             # /INCREMENTAL:NO /LTCG
             execute('Creating lib %s...' % rosetta_lib, 'cd %s && lib @objs-%02d ..\\..\\external\\lib\\win_pyrosetta_z.lib Ws2_32.lib /out:%s' % (build_dir, i, rosetta_lib))
             latest = max(latest, os.path.getmtime(rosetta_lib) )
-
+    '''
     # libcmt.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib
     #execute('Creating DLL %s...' % s, 'cd ..\\build\\windows && cl /link /DLL @objs /OUT:%s' % dll )
     '''

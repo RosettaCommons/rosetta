@@ -81,7 +81,7 @@ void PhiPsiTalosIO::read(std::string const & file_name) {
 			for (Size i = 2; i <= strs.size(); ++i) {
 				vars.push_back(strs[i]);
 			}
-			if ( ( vars.size()!=10 and vars.size()!=11 ) or vars[1]!="RESID" or vars[2]!="RESNAME" or vars[9]!="COUNT" or vars.back()!="CLASS" ) {
+			if ( ( vars.size()!=10 && vars.size()!=11 ) || vars[1]!="RESID" || vars[2]!="RESNAME" || vars[9]!="COUNT" || vars.back()!="CLASS" ) {
 				tr.Warning << "incompatible format in TALOS+ file "+file_name
 					+".\n Expected VARS  RESID RESNAME PHI PSI DPHI DPSI DIST S2 COUNT CS_COUNT CLASS\n "
 					+" or      VARS  RESID RESNAME PHI PSI DPHI DPSI DIST S2 COUNT CLASS\n "

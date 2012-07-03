@@ -234,7 +234,7 @@ CrossPeak::create_fa_and_cen_constraint(
 			Real mapped_inv_weight;
 			if ( map_to_CEN ) {
 				mapped_upl = distance_bound() + max_maps; //add 0, 1 or 2 A
-				mapped_inv_weight = inv_weight * pow( 2, max_maps );
+				mapped_inv_weight = inv_weight * pow( 2.0, double(max_maps) );
 			} else {
 				mapped_upl = pow( cum_new_distance, -1.0/6 );
 				mapped_inv_weight = inv_weight;
@@ -260,7 +260,7 @@ CrossPeak::create_fa_and_cen_constraint(
 			if ( map_to_CEN ) {
 				my_cen_cst= my_fa_cst->map_to_CEN( pose, centroid_pose, number_of_maps, "CEN" );
 				mapped_upl = distance_bound() + number_of_maps;
-				mapped_inv_weight = inv_weight*pow( 2, number_of_maps );
+				mapped_inv_weight = inv_weight*pow( 2.0, double(number_of_maps) );
 			} else {
 				my_cen_cst= my_fa_cst->map_to_CEN( pose, centroid_pose, number_of_maps, "CB" );
 				cum_new_distance += pow( (eff_single_dist + params.centroid_mapping_distance_padding_*number_of_maps )*pow( my_fa_cst->multiplicity(), 1.0/6 ), -6 );

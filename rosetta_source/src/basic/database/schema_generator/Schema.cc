@@ -35,6 +35,7 @@
 #include <stdio.h>
 #include <set>
 #include <algorithm>
+#include <cctype>
 
 namespace basic{
 namespace database{

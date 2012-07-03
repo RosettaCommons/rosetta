@@ -41,7 +41,7 @@ namespace features{
 class Report : public utility::pointer::ReferenceCount {
 
 public:
-	typedef utility::vector1< FeaturesReporter > FeaturesReporters;
+	typedef utility::vector1< FeaturesReporterOP > FeaturesReporters;
 
 public:
 	Report();

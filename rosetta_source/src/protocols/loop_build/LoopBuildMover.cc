@@ -38,7 +38,9 @@
 
 #include <protocols/simple_filters/RmsdEvaluator.hh>
 
-
+#ifdef WIN32
+	#include <ctime>
+#endif
 
 namespace protocols{
 namespace loop_build{
