@@ -49,6 +49,7 @@ public:
 		std::string cst_fn,
 		std::string symmdef_file,
 		core::Real weight = 1.,
+	    core::Real domain_assembly_weight = 0.,
 		core::Size cluster_id = 1,
 		utility::vector1<core::Size> cst_reses = utility::vector1<core::Size>(0) );
 
@@ -98,7 +99,7 @@ private:
 	core::Real frag_insertion_weight_; // fragment insertion weight, vs. chunk insertion
 	core::Real frag_weight_aligned_; // fragment insertion to the aligned region, vs. unaligned region
 	core::Size max_registry_shift_;
-	bool realign_domains_, add_non_init_chunks_, no_global_frame_, linmin_only_;
+	bool domain_assembly_, realign_domains_, add_non_init_chunks_, no_global_frame_, linmin_only_;
 	core::scoring::ScoreFunctionOP stage1_scorefxn_, stage2_scorefxn_, fa_scorefxn_;
 	std::string fa_cst_fn_;
 	std::string disulf_file_;
@@ -125,6 +126,7 @@ private:
 	utility::vector1 < std::string > template_cst_fn_;
 	utility::vector1 < std::string > symmdef_files_;
 	utility::vector1 < core::Real > template_weights_;
+	utility::vector1 < core::Real > domain_assembly_weights_;
 	utility::vector1 < core::Size > template_clusterID_;
 	utility::vector1 < protocols::loops::Loops > template_chunks_;
 	utility::vector1 < protocols::loops::Loops > template_contigs_;

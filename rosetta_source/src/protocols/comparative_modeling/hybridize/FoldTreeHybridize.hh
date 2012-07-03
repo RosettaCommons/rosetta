@@ -97,6 +97,7 @@ public:
 	void set_constraint_file(std::string cst_file_in) { cst_file_=cst_file_in; }
 	void set_increase_cycles(core::Real increase_cycles_in) { increase_cycles_=increase_cycles_in; }
 	void set_add_non_init_chunks(bool add_non_init_chunks_in) { add_non_init_chunks_=add_non_init_chunks_in; }
+	void set_domain_assembly(bool domain_assembly_in) { domain_assembly_=domain_assembly_in; }
 	void set_frag_insertion_weight(core::Real frag_insertion_weight_in) { frag_insertion_weight_=frag_insertion_weight_in; }
 	void set_frag_weight_aligned(core::Real frag_weight_aligned_in) { frag_weight_aligned_=frag_weight_aligned_in; }
 	void set_max_registry_shift(core::Size max_registry_shift_in) { max_registry_shift_=max_registry_shift_in; }
@@ -118,6 +119,7 @@ private:
 	core::Real increase_cycles_;
 	core::Real frag_insertion_weight_; // fragment insertion weight, vs. chunk insertion
 	bool add_non_init_chunks_;
+	bool domain_assembly_;
 	core::Real frag_weight_aligned_; // fragment insertion to the aligned region, vs. unaligned region
 	core::Size max_registry_shift_;
     std::string cst_file_;

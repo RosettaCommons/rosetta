@@ -17,6 +17,19 @@ sources = {
 		"FlexPepDockingPoseMetrics",
 		"FlexPepDockingProtocol",
 	],
+	"protocols/comparative_modeling/hybridize" : [
+		"CartesianHybridize",
+		"ChunkTrialMover",
+		"DDomainParse",
+		"DomainAssembly",
+		"FoldTreeHybridize",
+		"HybridizeFoldtreeDynamic",
+		"HybridizeProtocol",
+		"InsertChunkMover",
+		"TemplateHistory",
+		"WeightedFragmentTrialMover",
+		"util",
+	],
 }
 include_path = [
 ]

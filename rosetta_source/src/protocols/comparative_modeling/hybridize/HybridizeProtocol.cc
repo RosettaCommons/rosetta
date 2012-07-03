@@ -16,6 +16,7 @@
 #include <protocols/comparative_modeling/hybridize/CartesianHybridize.hh>
 #include <protocols/comparative_modeling/hybridize/TemplateHistory.hh>
 #include <protocols/comparative_modeling/hybridize/util.hh>
+#include <protocols/comparative_modeling/hybridize/DomainAssembly.hh>
 #include <protocols/comparative_modeling/hybridize/DDomainParse.hh>
 #include <protocols/comparative_modeling/hybridize/TMalign.hh>
 
@@ -212,6 +213,7 @@ HybridizeProtocol::init() {
 
 	stage1_probability_ = option[cm::hybridize::stage1_probability]();
 	stage1_increase_cycles_ = option[cm::hybridize::stage1_increase_cycles]();
+	domain_assembly_ = false;
 	realign_domains_ = option[cm::hybridize::realign_domains]();
 	add_non_init_chunks_ = option[cm::hybridize::add_non_init_chunks]();
 	frag_weight_aligned_ = option[cm::hybridize::frag_weight_aligned]();
@@ -503,6 +505,7 @@ void HybridizeProtocol::add_template(
 	std::string cst_fn,
 	std::string symm_file,
 	core::Real weight,
+	core::Real domain_assembly_weight,
 	core::Size cluster_id,
 	utility::vector1<core::Size> cst_reses)
 {
@@ -530,6 +533,7 @@ void HybridizeProtocol::add_template(
 	template_cst_fn_.push_back(cst_fn);
 	symmdef_files_.push_back(symm_file);
 	template_weights_.push_back(weight);
+	domain_assembly_weights_.push_back(domain_assembly_weight);
 	template_clusterID_.push_back(cluster_id);
 	template_chunks_.push_back(chunks);
 	template_contigs_.push_back(contigs);
@@ -552,6 +556,7 @@ void HybridizeProtocol::read_template_structures(utility::file::FileName templat
 		std::string cst_fn;
 		core::Size cluster_id(0);
 		core::Real weight(1.);
+		core::Real domain_assembly_weight(0.);
 		if (!str_stream.eof()) {
 			str_stream >> template_fn;
 			if (template_fn.empty()) continue;
@@ -571,7 +576,7 @@ void HybridizeProtocol::read_template_structures(utility::file::FileName templat
 					cst_reses.push_back( (core::Size) std::atoi( cst_reses_parsed[i].c_str() ) );
 				}
 			}
-			add_template(template_fn, cst_fn, "", weight, cluster_id, cst_reses);
+			add_template(template_fn, cst_fn, "", weight,domain_assembly_weight, cluster_id, cst_reses);
 		}
 	}
 	f_stream.close();
@@ -688,8 +693,19 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			template_chunks_icluster, template_contigs_icluster );
 		TR << "Using initial template: " << I(4,initial_template_index) << " " << template_fn_[initial_template_index] << std::endl;
 
+		if (domain_assembly_) {
+			DomainAssembly domain_assembly(templates_, domain_assembly_weights_);
+			domain_assembly.run();
+			/*
+			for (Size i_pose=1; i_pose <= templates_.size(); ++i_pose) {
+				std::string out_fn = template_fn_[i_pose] + "_assembly.pdb";
+				templates_[i_pose]->dump_pdb(out_fn);
+			}
+			 */
+		}
 		// realign each template to the starting template by domain
-		if (realign_domains_) {
+		// does not to domain realignment if in domain assembly mode
+		else if (realign_domains_) {
 			// domain parsing
 			DDomainParse ddom(pcut_,hcut_,length_);
 			utility::vector1< utility::vector1< loops::Loops > > domains_all_templ;
@@ -779,6 +795,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			ft_hybridize->set_scorefunction( stage1_scorefxn_ );
 			ft_hybridize->set_increase_cycles( stage1_increase_cycles_ );
 			ft_hybridize->set_add_non_init_chunks( add_non_init_chunks_ );
+			ft_hybridize->set_domain_assembly( domain_assembly_ );
 			ft_hybridize->set_frag_insertion_weight( frag_insertion_weight_ );
 			ft_hybridize->set_frag_weight_aligned( frag_weight_aligned_ );
 			ft_hybridize->set_max_registry_shift( max_registry_shift_ );
@@ -1027,23 +1044,29 @@ HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose con
 		
 		TMalign tm_align;
 		string seq_pose, seq_ref, aligned;
-		tm_align.apply(pose, ref_pose, residue_list, ref_residue_list);
-		tm_align.alignment2AtomMap(pose, ref_pose, residue_list, ref_residue_list, n_mapped_residues, atom_map);
-		tm_align.alignment2strings(seq_pose, seq_ref, aligned);
-		TR << seq_pose << std::endl;
-		TR << aligned << std::endl;
-		TR << seq_ref << std::endl;
-
-		if (n_mapped_residues >= 6) {
-			utility::vector1< core::Real > aln_cutoffs;
-			aln_cutoffs.push_back(6);
-			aln_cutoffs.push_back(4);
-			aln_cutoffs.push_back(3);
-			aln_cutoffs.push_back(2);
-			aln_cutoffs.push_back(1.5);
-			aln_cutoffs.push_back(1);
-			core::Real min_coverage = 0.2;
-			partial_align(pose, ref_pose, atom_map, residue_list, true, aln_cutoffs, min_coverage); // iterate_convergence = true
+		int reval = tm_align.apply(pose, ref_pose, residue_list, ref_residue_list);
+		if (reval == 0) {
+			tm_align.alignment2AtomMap(pose, ref_pose, residue_list, ref_residue_list, n_mapped_residues, atom_map);
+			tm_align.alignment2strings(seq_pose, seq_ref, aligned);
+			
+			using namespace ObjexxFCL::fmt;
+			Size norm_length = residue_list.size() < ref_residue_list.size() ? residue_list.size():ref_residue_list.size();
+			TR << "Align domain with TMscore of " << F(8,3,tm_align.TMscore(norm_length)) << std::endl;
+			TR << seq_pose << std::endl;
+			TR << aligned << std::endl;
+			TR << seq_ref << std::endl;
+			
+			if (n_mapped_residues >= 6) {
+				utility::vector1< core::Real > aln_cutoffs;
+				aln_cutoffs.push_back(6);
+				aln_cutoffs.push_back(4);
+				aln_cutoffs.push_back(3);
+				aln_cutoffs.push_back(2);
+				aln_cutoffs.push_back(1.5);
+				aln_cutoffs.push_back(1);
+				core::Real min_coverage = 0.2;
+				partial_align(pose, ref_pose, atom_map, residue_list, true, aln_cutoffs, min_coverage); // iterate_convergence = true
+			}
 		}
 		//else {
 		//	TR << "This domain cannot be aligned: " << n_mapped_residues<< std::endl;
@@ -1084,6 +1107,8 @@ HybridizeProtocol::parse_my_tag(
 	
 	if( tag->hasOption( "stage1_probability" ) )
 		stage1_probability_ = tag->getOption< core::Real >( "stage1_probability" );
+	if( tag->hasOption( "domain_assembly" ) )
+		domain_assembly_ = tag->getOption< bool >( "domain_assembly" );
 	if( tag->hasOption( "realign_domains" ) )
 		realign_domains_ = tag->getOption< bool >( "realign_domains" );
 	if( tag->hasOption( "add_non_init_chunks" ) )
@@ -1141,6 +1166,7 @@ HybridizeProtocol::parse_my_tag(
 			std::string template_fn = (*tag_it)->getOption<std::string>( "pdb" );
 			std::string cst_fn = (*tag_it)->getOption<std::string>( "cst_file", "AUTO" );
 			core::Real weight = (*tag_it)->getOption<core::Real>( "weight", 1 );
+			core::Real domain_assembly_weight = (*tag_it)->getOption<core::Real>( "domain_assembly_weight", 0. );
 			core::Size cluster_id = (*tag_it)->getOption<core::Size>( "cluster_id", 1 );
 			utility::vector1<core::Size> cst_reses;
 			if ((*tag_it)->hasOption( "constrain_res" ))
@@ -1148,7 +1174,7 @@ HybridizeProtocol::parse_my_tag(
 
 			std::string symm_file = (*tag_it)->getOption<std::string>( "symmdef", "" );
 
-			add_template(template_fn, cst_fn, symm_file, weight, cluster_id, cst_reses);
+			add_template(template_fn, cst_fn, symm_file, weight, domain_assembly_weight, cluster_id, cst_reses);
 		}
 
 	}

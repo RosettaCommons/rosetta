@@ -142,7 +142,8 @@ void generate_centroid_constraints(
 					pose.add_constraint(
 						new AtomPairConstraint( core::id::AtomID(2,templates[i]->pdb_info()->number(j)),
 						                        core::id::AtomID(2,templates[i]->pdb_info()->number(k)), 
-							new ScalarWeightedFunc( template_weights[i], new SOGFunc( dist, COORDDEV )  )
+							new ScalarWeightedFunc( 1.0, new SOGFunc( dist, COORDDEV )  )
+							//new ScalarWeightedFunc( template_weights[i], new SOGFunc( dist, COORDDEV )  )
 						)
 					);
 				}
