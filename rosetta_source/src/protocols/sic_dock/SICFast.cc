@@ -290,7 +290,7 @@ SICFast::slide_into_contact(
 	for(vector1<Vec>::iterator ia = pb.begin(); ia != pb.end(); ++ia) *ia = rot*(*ia);
 	for(vector1<Vec>::iterator ib = pa.begin(); ib != pa.end(); ++ib) *ib = rot*(*ib);
 
-	get_bounds_intersection(pb,pa,xmx,xmn,ymx,ymn); // bounds of plane hash
+	if( ! get_bounds_intersection(pb,pa,xmx,xmn,ymx,ymn) ) return 9e9;
 
 	fill_plane_hash(pb,pa,xmx,xmn,ymx,ymn,BIN,ha,hb,xlb,ylb,xub,yub);
 
