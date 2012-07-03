@@ -141,7 +141,7 @@ ResidueIEFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & 
 {
 	using namespace core::scoring;
 	std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn", "score12" ) );
-	scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name ) ));
+	scorefxn_ = data.get< ScoreFunction * >( "scorefxns", scorefxn_name )->clone();
 	score_type_ = core::scoring::score_type_from_name( tag->getOption<std::string>( "score_type", "total_score" ) );
 	threshold_ = tag->getOption<core::Real>( "energy_cutoff", 0.0 );
 	whole_pose_ = tag->getOption<bool>( "whole_pose" , 0 );
