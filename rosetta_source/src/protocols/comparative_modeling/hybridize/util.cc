@@ -133,10 +133,10 @@ void generate_centroid_constraints(
 		}
 
 		for (core::Size j=1; j<templates[i]->total_residue(); ++j ) {
-			if (!templates[i].residue_type(j).is_protein()) continue;
+			if (!templates[i]->residue_type(j).is_protein()) continue;
 			if (!passed_gapcheck[j]) continue;
 			for (core::Size k=j+1; k<templates[i]->total_residue(); ++k ) {
-				if (!templates[i].residue_type(k).is_protein()) continue;
+				if (!templates[i]->residue_type(k).is_protein()) continue;
 				if (!passed_gapcheck[k]) continue;
 				if (templates[i]->pdb_info()->number(k) - templates[i]->pdb_info()->number(j) < (int)MINSEQSEP) continue;
 				core::Real dist = templates[i]->residue(j).xyz(2).distance( templates[i]->residue(k).xyz(2) );
