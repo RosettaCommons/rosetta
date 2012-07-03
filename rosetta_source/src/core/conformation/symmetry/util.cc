@@ -381,6 +381,16 @@ setup_symmetric_conformation(
 	 	   << show_foldtree(*symm_conf,symmdata,get_chain2range(src_conformation,src_conf2pdb_chain)) << std::endl;
 	 // }
 
+	if( symmdata.get_num_components() > 1 ){
+		// this hack makes sure all the multicomponent symmetry SUBUNITS correspond correctly
+		// otherwise one would have to construct multicomponent SYM files very carefully
+		for(Size i=1; i <= symm_conf->size(); ++i){
+			if( symm_info.bb_is_independent(i)){
+				symm_conf->replace_residue(i,symm_conf->residue(i),false);
+			}
+		}
+	}
+
 	return symm_conf;
 }
 
