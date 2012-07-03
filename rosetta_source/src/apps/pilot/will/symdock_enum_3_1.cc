@@ -505,12 +505,12 @@ struct TCDock {
 		Real CTD(basic::options::option[basic::options::OptionKeys::sicdock::contact_dis]());
 		Real CLD(basic::options::option[basic::options::OptionKeys::sicdock::clash_dis]());
 
-		protocols::sic_dock::JointScoreOP  jtscore = new protocols::sic_dock::JointScore;
+		//protocols::sic_dock::JointScoreOP  jtscore = new protocols::sic_dock::JointScore;
 		protocols::sic_dock::CBScoreCOP cbscore = new protocols::sic_dock::CBScore(cmp1in_,cmp2in_,CLD,CTD);
-		lnscore_ = new protocols::sic_dock::LinkerScore(cmp1in_,cmp2in_,option[tcdock::max_linker_len](),option[tcdock::linker_lookup_radius]());
-		jtscore->add_score(cbscore ,1.0);
-		jtscore->add_score(lnscore_,1.0);
-		rigid_sfxn_ = jtscore;
+		//lnscore_ = new protocols::sic_dock::LinkerScore(cmp1in_,cmp2in_,option[tcdock::max_linker_len](),option[tcdock::linker_lookup_radius]());
+		//jtscore->add_score(cbscore ,1.0);
+		//jtscore->add_score(lnscore_,1.0);
+		rigid_sfxn_ = cbscore;
 
 		cmp1mnpos_.resize(cmp1nangle_,0.0);
 		cmp2mnpos_.resize(cmp2nangle_,0.0);
