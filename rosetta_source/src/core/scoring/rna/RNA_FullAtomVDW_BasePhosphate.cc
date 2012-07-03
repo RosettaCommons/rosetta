@@ -46,7 +46,8 @@ namespace scoring {
 namespace rna {
 
 
-/// @details This must return a fresh instance of the RNA_SugarCloseEnergy class,
+
+/// @details This must return a fresh instance of the RNA_FullAtomVDW_BasePhosphateCreator class
 /// never an instance already in use
 methods::EnergyMethodOP
 RNA_FullAtomVDW_BasePhosphateCreator::create_energy_method(
@@ -58,6 +59,8 @@ RNA_FullAtomVDW_BasePhosphateCreator::create_energy_method(
 
 	etable::TableLookupEtableEnergy etable_energy_in( etable_in, options );
 
+	// [Note, previously created pointer to a regular object instead of OP -- energy leak.]
+	//	etable::EtableEnergy & etable_energy_in= (*(new etable::EtableEnergy( etable_in, options ) ) );
 
 	//RNA_FullAtomVDW_BasePhosphateCreator is friend of BaseEtableEnergy.hh and hence can access its private variables.
 	// No.  Don't go around declaring other classes your friends.  That's just pisses on everyone else's efforts to create
@@ -88,14 +91,14 @@ RNA_FullAtomVDW_BasePhosphate::RNA_FullAtomVDW_BasePhosphate(
 ):
 	parent( new RNA_FullAtomVDW_BasePhosphateCreator ),
 	etable_energy_( etable_energy_in), //Hacky thing, created the etable_energy_ energy_method to get access to its function.
-	//etable_energy_( *(new etable::EtableEnergy(etable_energy_in)) ), 
-	//etable_energy_( *( new etable::EtableEnergy( etable_in, opts ) ) ), 
+	//etable_energy_( *(new etable::EtableEnergy(etable_energy_in)) ),
+	//etable_energy_( *( new etable::EtableEnergy( etable_in, opts ) ) ),
 	etable_(etable_in)
 {
 
 	//etable_energy_.set_scoretypes( fa_intra_RNA_base_phos_atr, fa_intra_RNA_base_phos_rep, unfolded);
 	//	etable_energy_( *( new etable::BaseEtableEnergy< etable::EtableEnergy >(new etable::EtableEnergyCreator, etable_in, options, fa_atr, fa_rep, fa_sol ) ) ),
-	//	etable_energy_( etable::BaseEtableEnergy< etable::EtableEnergy > (new etable::EtableEnergyCreator, etable_in, options, unfolded, unfolded, unfolded ) ) 
+	//	etable_energy_( etable::BaseEtableEnergy< etable::EtableEnergy > (new etable::EtableEnergyCreator, etable_in, options, unfolded, unfolded, unfolded ) )
 	//etable_energy_( etable::EtableEnergyCreator::create_energy_method(options) )
 
 }
@@ -167,7 +170,7 @@ RNA_FullAtomVDW_BasePhosphate::residue_fast_pair_energy_attached_H(
 void
 RNA_FullAtomVDW_BasePhosphate::residue_energy(
 		conformation::Residue const & rsd,
-		EnergyMap & emap 	) const 
+		EnergyMap & emap 	) const
 {
 	using conformation::Atom;
 
@@ -193,7 +196,7 @@ RNA_FullAtomVDW_BasePhosphate::residue_energy(
 	vect rhend(   rsd.attached_H_end()   );
 
 	Size const rsdnheavyatoms = rsd.nheavyatoms();
-	
+
 	// Atom pairs
 	for ( Size i=1; i <= rsdnheavyatoms; ++i ) {
 		Atom const & atom1( rsd.atom(i) );
@@ -230,7 +233,7 @@ RNA_FullAtomVDW_BasePhosphate::residue_energy(
 					 std::cout << "chi_atoms_list[" << chi_id<< "].size()=" << chi_atoms_list[chi_id].size() << std::endl;
 					 for(Size n=1; n<=chi_atoms_list[chi_id].size(); n++){
 						 Size const atomno=chi_atoms_list[chi_id][n];
-					 	 std::cout << "rsd.atom_name(" << atomno << " )= " << rsd.atom_name(atomno) << std::endl;					
+					 	 std::cout << "rsd.atom_name(" << atomno << " )= " << rsd.atom_name(atomno) << std::endl;
 					 }
 
 				 }
@@ -239,10 +242,10 @@ RNA_FullAtomVDW_BasePhosphate::residue_energy(
 					 std::cout << "all_chi_atoms_list[" << chi_id<< "].size()=" << all_chi_atoms_list[chi_id].size() << std::endl;
 					 for(Size n=1; n<=all_chi_atoms_list[chi_id].size(); n++){
 						 Size const atomno=all_chi_atoms_list[chi_id][n];
-					 	 std::cout << "rsd.atom_name(" << atomno << " )= " << rsd.atom_name(atomno) << std::endl;					
+					 	 std::cout << "rsd.atom_name(" << atomno << " )= " << rsd.atom_name(atomno) << std::endl;
 					 }
 
-				 } 
+				 }
 
 				 utility_exit_with_message("rsd.path_distance( i, j ) < 4");
 			}
@@ -258,8 +261,8 @@ RNA_FullAtomVDW_BasePhosphate::residue_energy(
 
 				if(diff_fa_atr_E>0.001 || diff_fa_atr_E<-0.001){
 					std::cout << "At least one of the atoms in the pair " << i << "," << j << " | res= " << rsd.seqpos() << " is virtual";
-					std::cout << " but diff_fa_atr_E= " << diff_fa_atr_E << " is non-zero!" <<std::endl;  
-					utility_exit_with_message("at least one of the atom in the pair is virtual BUT diff_fa_atr_E>0.001 || diff_fa_atr_E<-0.001"); 
+					std::cout << " but diff_fa_atr_E= " << diff_fa_atr_E << " is non-zero!" <<std::endl;
+					utility_exit_with_message("at least one of the atom in the pair is virtual BUT diff_fa_atr_E>0.001 || diff_fa_atr_E<-0.001");
 				}
 
 
@@ -267,11 +270,11 @@ RNA_FullAtomVDW_BasePhosphate::residue_energy(
 				if(diff_fa_rep_E>0.001 || diff_fa_rep_E<-0.001){
 					std::cout << "At least one of the atoms in the pair " << i << "," << j << " | res= " << rsd.seqpos() << " is virtual";
 					std::cout << " but diff_fa_rep_E= " << diff_fa_rep_E << " is non-zero!" <<std::endl;
-					utility_exit_with_message("at least one of the atom in the pair is virtual BUT diff_fa_rep_E>0.001 || diff_fa_rep_E<-0.001"); 
+					utility_exit_with_message("at least one of the atom in the pair is virtual BUT diff_fa_rep_E>0.001 || diff_fa_rep_E<-0.001");
 				}
 			}
 
-			if ( dsq < Hydrogen_interaction_cutoff2 ) { 
+			if ( dsq < Hydrogen_interaction_cutoff2 ) {
 				residue_fast_pair_energy_attached_H(rsd, i, rsd, j, rhbegin[ i ], rhend[ i ], rhbegin[ j ], rhend[ j ], mock_emap);
 			}
 		}
@@ -281,8 +284,8 @@ RNA_FullAtomVDW_BasePhosphate::residue_energy(
 	emap[ fa_intra_RNA_base_phos_rep ] += mock_emap[ fa_intra_RNA_base_phos_rep ]; //Fix from = to += on Jan 10, 2012, since now emap is the total_energy, accumulated over all residues)
 
 	//Note that right now fa_intra_RNA_base_phos_sol is not include since it is not currently used in the RNA force-field. The term have also not yet been tested!//
-	//If you want to implement this term, please ensure your implementation works properly (i.e. perform numerical_derivative_check() and etc), 
-	//before committing the code to TRUNK!) 
+	//If you want to implement this term, please ensure your implementation works properly (i.e. perform numerical_derivative_check() and etc),
+	//before committing the code to TRUNK!)
 	//Parin S. (sripakpa@stanford.edu). Jan 11, 2012
 
 }
@@ -313,9 +316,9 @@ RNA_FullAtomVDW_BasePhosphate::eval_atom_derivative(
 {
 
 	if(weights[ fa_intra_RNA_base_phos_sol] != 0.0){
-		//Please refer to paragraph at the end of RNA_FullAtomVDW_BasePhosphate::residue_energy for explanation. 
-		//Again, if you want to implement this term, please ensure your implementation works properly (i.e. perform numerical_derivative_check() and etc), 
-		//before committing the code to TRUNK!) 
+		//Please refer to paragraph at the end of RNA_FullAtomVDW_BasePhosphate::residue_energy for explanation.
+		//Again, if you want to implement this term, please ensure your implementation works properly (i.e. perform numerical_derivative_check() and etc),
+		//before committing the code to TRUNK!)
 		// Parin S. (sripakpa@stanford.edu). Jan 11, 2012
 		utility_exit_with_message("weights[ fa_intra_RNA_base_phos_sol ] != 0.0, but this term is not yet implemented!");
 	}
@@ -328,7 +331,7 @@ RNA_FullAtomVDW_BasePhosphate::eval_atom_derivative(
 
 	conformation::Atom const & atom1( rsd.atom( id.atomno() ) );
 
-	Real const cp_weight=1.0;  
+	Real const cp_weight=1.0;
 
 	//std::cout << "eval_atom_deriv: seq_num=" << id.rsd() << " id.atomno()=" << id.atomno() << "[" << rsd.atom_name(id.atomno()) <<"]" << std::endl;
 
