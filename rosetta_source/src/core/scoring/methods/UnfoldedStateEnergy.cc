@@ -76,7 +76,7 @@ UnfoldedStateEnergy::UnfoldedStateEnergy( std::string const & type ) :
 	unf_state_potential_( ScoringManager::get_instance()->get_UnfoldedStatePotential( type ) ),
 	score_type_weights_( unf_state_potential_.get_unfoled_potential_file_weights() )
 {
-	TR << "instantiating class with weights: " << score_type_weights_.show_nonzero() << std::endl;
+	TR.Debug << "instantiating class with weights: " << score_type_weights_.show_nonzero() << std::endl;
 }
 
 UnfoldedStateEnergy::UnfoldedStateEnergy( std::string const & type, const EnergyMap & emap_in ):
@@ -85,7 +85,7 @@ UnfoldedStateEnergy::UnfoldedStateEnergy( std::string const & type, const Energy
 	unf_state_potential_( ScoringManager::get_instance()->get_UnfoldedStatePotential( type ) ),
 	score_type_weights_( emap_in )
 {
-	TR << "instantiating class with weights: " << score_type_weights_.show_nonzero()  << std::endl;
+	TR.Debug << "instantiating class with weights: " << score_type_weights_.show_nonzero()  << std::endl;
 }
 
 UnfoldedStateEnergy::~UnfoldedStateEnergy() {}
@@ -105,8 +105,8 @@ UnfoldedStateEnergy::residue_energy(
 
 	// the value this function returns depends on how this class was constructed. if a set of weights was
 	// passed in when the class was constructed, then this function will return a non-zero value.
-	// if no weights were passed in, the member variable energy map will be just zeros and the function 
-	// will return 0.0. that's what we want during the first phase of optE. once a weight set has been 
+	// if no weights were passed in, the member variable energy map will be just zeros and the function
+	// will return 0.0. that's what we want during the first phase of optE. once a weight set has been
 	// established, this class will get recreated with that set of weights and the function will return
 	// meaningful energies.
 
