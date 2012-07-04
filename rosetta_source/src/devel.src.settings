@@ -13,6 +13,125 @@ sources = {
 	"devel": [
 		"init",
 	],
+	"devel/cartesian_frags": [
+		"CartesianFragment",
+		"DNA_FragLib",
+		"dna_util",
+		"SafeID",
+	],
+	"devel/coupled_sidechains": [
+		"CoupledSidechainProtocol2",
+	],
+	"devel/cstEnergyBalance": [
+		"minimalCstRelaxUtil",
+	],
+	"devel/denovo_protein_design": [
+		"CreateStartingStructureMover",
+		"DesignRelaxMover",
+		"SequenceFitnessMover",
+		"SSClass",
+		"util",
+	],
+	"devel/dna": [
+		"base_movers",
+		"ProteinDNA_Relax",
+		"protocols",
+		"relax_util",
+		"MotifLoopBuild",
+		"util_motif_loop",
+		"util",
+	],
+	"devel/domain_assembly": [
+		"domain_assembly",
+		"domain_assembly_setup",
+		"DomainAssemblyReader",
+	],
+	"devel/enzdes": [
+		"DesignSilentStruct",
+		"EnzdesRemodelProtocol",
+	],
+	"devel/fold_from_loops": [
+		"FoldFromLoops_functions",
+		"FoldFromLoopsMover",
+	],
+	#"devel/integrated_loop": [
+	#	"CcdCloseMover",
+	#	"LoopManager",
+	#	"LoopModeler",
+	#],
+	"devel/inv_kin_lig_loop_design": [
+		"Cloner",
+		"Fragment",
+		"Ints",
+		"JumpManager",
+		"Loop",
+		"Mover",
+		"Protocol",
+		"ResID",
+	],
+	"devel/loop_extend": [
+		"LoopExtendMover",
+	],
+	"devel/loop_grids": [
+		"LoopGrid",
+	],
+        "devel/matdes" : [
+                "util",
+		"TaskAwareSymMinMover",
+                "Symmetrizer",
+                "SymDofMover",
+                "SymmetrizerSampler",
+                "BuildingBlockInterfaceOperation",
+                "RestrictToNonzeroSASAOperation",
+		"RestrictIdentitiesOperation",
+		"OligomericAverageDegreeFilter",
+		"SymUnsatHbondFilter",
+		"AverageInterfaceEnergyFilter",	
+		"TaskAwareAlaScan",
+		"StoreTaskMover",
+		"STMStoredTask",
+		"RetrieveStoredTaskOperation",
+		"SaveResfileToDiskFilter",
+		"TaskAwareSASAFilter",
+		"InterfacePackingFilter",
+        ],
+	"devel/metal_interface": [
+		"AddMetalSiteConstraints",
+		"DualMonteCarlo",
+		"FindClosestAtom",
+		"MatchGrafter",
+		"MetalInterfaceDesignMover",
+		"MetalSiteResidue",
+		"ParseMetalSite",
+	],
+	"devel/optest": [
+		"A",
+		"B1",
+		"B2",
+		"C1",
+		"C2",
+	],
+	"devel/residual_dipolar_coupling": [
+		"RDC_energies",
+		"RDC_main",
+	],
+	"devel/simple_options": [
+		"option",
+	],
+	#"devel/ssrbrelax": [
+	#	"SSRbClass",
+	#	"SSrbrelax",
+	#],
+	"devel/vardist_solaccess": [
+		"VarSolDRotamerDots",
+	],
+	"devel/znhash": [
+		"ZnHash",
+		"SymmZnMoversAndTaskOps",
+	],
+	#"path_rover": [
+	#	"pathrover_DOFs_manager",
+	#],
 }
 include_path = [
 ]
