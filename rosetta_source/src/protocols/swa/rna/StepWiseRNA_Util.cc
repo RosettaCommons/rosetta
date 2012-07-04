@@ -118,9 +118,9 @@ namespace rna {
 
 	bool Is_three_prime_phosphate_atom(std::string const & atom_name){ return (Is_O3star_atom(atom_name)); }
 
-	bool Is_five_prime_phosphate_atom(std::string const & atom_name){ return (Is_O5star_atom(atom_name) || Is_O1P_atom(atom_name) || Is_O2P_atom(atom_name) || Is_P_atom(atom_name)) ; } 
+	bool Is_five_prime_phosphate_atom(std::string const & atom_name){ return (Is_O5star_atom(atom_name) || Is_O1P_atom(atom_name) || Is_O2P_atom(atom_name) || Is_P_atom(atom_name)) ; }
 
-	bool Is_phosphate_atom(std::string const & atom_name){ return ( Is_three_prime_phosphate_atom(atom_name) || Is_five_prime_phosphate_atom(atom_name) ); } 
+	bool Is_phosphate_atom(std::string const & atom_name){ return ( Is_three_prime_phosphate_atom(atom_name) || Is_five_prime_phosphate_atom(atom_name) ); }
 
 
 	void
@@ -133,9 +133,9 @@ namespace rna {
 		AtomTreeMinimizer minimizer;
 
 		scoring::constraints::ConstraintSetOP save_pose_constraints = pose.constraint_set()->clone();
-	
+
 		core::scoring::constraints::add_coordinate_constraints( pose );
-	
+
 		minimizer.run( pose, mm, *(scorefxn), options );
 
 		pose.constraint_set( save_pose_constraints );
@@ -144,19 +144,19 @@ namespace rna {
 
 	bool
 	assert_can_prepend(utility::vector1< core::Size > const & seq_num_list ){
-	
+
 		for(Size n=1; n<=seq_num_list.size()-1; n++){ //[11, 12, 13]
 			if( (seq_num_list[n]+1)!=seq_num_list[n+1]) return false;
-		}		
+		}
 		return true;
 	}
 
 	bool
 	assert_can_append(utility::vector1< core::Size > const & seq_num_list ){
-	
+
 		for(Size n=1; n<=seq_num_list.size()-1; n++){ //[14, 13, 12]
 			if( (seq_num_list[n]-1)!= seq_num_list[n+1]) return false;
-		}		
+		}
 		return true;
 	}
 
@@ -170,13 +170,13 @@ namespace rna {
 
 		if(apply_check){
 			//Basically the two variant type are not compatible, VIRTUAL_RNA_RESIDUE variant type currently does not virtualize the protonated H1 atom.
-			if(pose.residue(seq_num).has_variant_type("VIRTUAL_RNA_RESIDUE")){ 
+			if(pose.residue(seq_num).has_variant_type("VIRTUAL_RNA_RESIDUE")){
 				utility_exit_with_message("Cannot apply PROTONATED_H1_ADENOSINE variant_type to seq_num: " + ObjexxFCL::string_of(seq_num) + ". This residue have a incompatible VIRTUAL_RNA_RESIDUE variant type."  );
 			}
 		}
 
 
-		if(pose.residue(seq_num).has_variant_type("PROTONATED_H1_ADENOSINE")){ 
+		if(pose.residue(seq_num).has_variant_type("PROTONATED_H1_ADENOSINE")){
 			std::cout << "WARNING pose already have PROTONATED_H1_ADENOSINE variant_type at seq_num= " << seq_num << ", early RETURN!" << std::endl;
 			return;
 			//utility_exit_with_message("pose already have PROTONATED_H1_ADENOSINE variant_type at seq_num= " + ObjexxFCL::string_of(seq_num));
@@ -187,7 +187,7 @@ namespace rna {
 		}
 
 		if(pose.residue(seq_num).aa() != core::chemical::na_rad){
-			utility_exit_with_message("working_seq_num=" + ObjexxFCL::string_of(seq_num) + " cannot have PROTONATED_H1_ADENOSINE variant type since it is not a adenosine!");						
+			utility_exit_with_message("working_seq_num=" + ObjexxFCL::string_of(seq_num) + " cannot have PROTONATED_H1_ADENOSINE variant type since it is not a adenosine!");
 		}
 
 		pose::add_variant_type_to_pose_residue( pose, "PROTONATED_H1_ADENOSINE", seq_num );
@@ -215,7 +215,7 @@ namespace rna {
 		}
 
 		//Basically the two variant type are not compatible, VIRTUAL_RNA_RESIDUE variant type currently does not virtualize the protonated H1 atom.
-		if(pose.residue(seq_num).has_variant_type("PROTONATED_H1_ADENOSINE")){ 
+		if(pose.residue(seq_num).has_variant_type("PROTONATED_H1_ADENOSINE")){
 			std::cout << "Removing PROTONATED_H1_ADENOSINE variant_type from seq_num= " << seq_num << " before adding VIRTUAL_RNA_RESIDUE variant_type since the two variant_types are not compatible!" << std::endl;
 			pose::remove_variant_type_from_pose_residue( pose, "PROTONATED_H1_ADENOSINE", seq_num );
 		}
@@ -243,15 +243,15 @@ namespace rna {
 
 
 		bool const Is_cutpoint_open=( pose.fold_tree().is_cutpoint( seq_num ) && Is_cutpoint_closed==false);
-		
+
 		if(apply_check){
 			if (Is_cutpoint_open) {
 				utility_exit_with_message( "Cannot apply VIRTUAL_RNA_RESIDUE VARIANT TYPE to seq_num: " + string_of(seq_num) + ". The residue is 5' of a OPEN cutpoint" );
-			} 
+			}
 
 			if ( pose.total_residue()==seq_num ) {
 				utility_exit_with_message( "Cannot apply VIRTUAL_RNA_RESIDUE VARIANT TYPE to seq_num: " + string_of(seq_num) + ". pose.total_residue()==seq_num" );
-			} 
+			}
 
 		}
 
@@ -280,7 +280,7 @@ namespace rna {
 		pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_RNA_RESIDUE", seq_num );
 		pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_RNA_RESIDUE_UPPER", seq_num+1 );
 
-	} 
+	}
 	//////////////////////////////////////////////////////////////////////////////////////
 	bool
 	has_virtual_rna_residue_variant_type(pose::Pose & pose, Size const & seq_num){
@@ -292,7 +292,7 @@ namespace rna {
 		if( (seq_num+1)>pose.total_residue()){ //Check in range
 			std::cout << "(seq_num+1)= " << (seq_num+1)  << std::endl;
 			utility_exit_with_message( "(seq_num+1)>pose.total_residue()!" );
-		} 
+		}
 
 		if(pose.residue(seq_num+1).has_variant_type("VIRTUAL_RNA_RESIDUE_UPPER")==false){
 			std::cout << "Problem seq_num= " << seq_num << std::endl;
@@ -308,7 +308,7 @@ namespace rna {
 	remove_all_variant_types(pose::Pose & pose){
 
 
-		for(Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) { 
+		for(Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
 
 			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 
@@ -321,7 +321,7 @@ namespace rna {
 			Size skip_variant_count=0;
 
 			for ( Size i=1; i<= target_variants.size(); i++ ) {
-				//std::cout << "seq_num=" << seq_num << " variant_type[" << i << "]=" << target_variants[i] << std::endl; 
+				//std::cout << "seq_num=" << seq_num << " variant_type[" << i << "]=" << target_variants[i] << std::endl;
 
 				if ( pose.residue(seq_num).type().has_variant_type( target_variants[i] )==false ) utility_exit_with_message("pose.residue(seq_num).type().has_variant_type( target_variants[i] )==false!");
 
@@ -332,12 +332,12 @@ namespace rna {
 				if(target_variants[i]=="UPPER_TERMINUS") skip_this_variant=true;
 
 				if(skip_this_variant){
-					skip_variant_count++;			
-					continue;	
+					skip_variant_count++;
+					continue;
 				}
-	
+
 				pose::remove_variant_type_from_pose_residue( pose, target_variants[i], seq_num );
-	
+
 			}
 
 			if(pose.residue(seq_num).type().variant_types().size()!=skip_variant_count){
@@ -386,7 +386,7 @@ namespace rna {
 
 		utility::vector1< core::Size > const & is_working_res = job_parameters->is_working_res();
 		std::map< core::Size, core::Size > const & full_to_sub = job_parameters->const_full_to_sub();
-	
+
 		return apply_full_to_sub_mapping( res_vector, is_working_res, full_to_sub);
 
 	}
@@ -396,7 +396,7 @@ namespace rna {
 
 	utility::vector1< Size >
 	apply_sub_to_full_mapping(utility::vector1< Size > const & working_res_vector, StepWiseRNA_JobParametersCOP job_parameters){
-		
+
 		std::map< core::Size, core::Size > const & sub_to_full( job_parameters->const_sub_to_full() );
 
 		utility::vector1< core::Size > full_res_vector;
@@ -424,7 +424,7 @@ namespace rna {
 		if(full_seq_num<1) utility_exit_with_message("full_seq_num (" + string_of(full_seq_num) + ") is lesser then 1");
 
 		if(full_seq_num>is_working_res.size()) utility_exit_with_message("full_seq_num (" +string_of(full_seq_num)+ ") is greater than is_working_res.size() (" +string_of(is_working_res.size()) + ")");
-	
+
 	}
 
 	//////////////////////////This should be a function of the job_parameters class/////////////////////////
@@ -485,9 +485,9 @@ namespace rna {
 		std::stringstream ss (std::stringstream::in | std::stringstream::out);
 		ss << string;
 		ss >> int_of_string;
-	
+
 	//	std::cout << "The string  " <<  string << " have the corresponding int value " << int_of_string << std::endl;
-	
+
 		return int_of_string;
 	}*/
 
@@ -542,10 +542,10 @@ namespace rna {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	utility::vector1<std::string> 
+	utility::vector1<std::string>
 	Tokenize(std::string const str, std::string delimiters){
 	  using namespace std;
-			
+
 		utility::vector1<std::string> tokens;
 
     // Skip delimiters at beginning.
@@ -607,10 +607,10 @@ namespace rna {
 		bool const method_2= ( rsd.has_variant_type("VIRTUAL_RNA_RESIDUE") || rsd.has_variant_type("BULGE") ) ? true : false;
 
 		if(method_1!=method_2){
-			Output_boolean("Is_virtual_base determination by method_1: ", method_1 ); 
-			Output_boolean("Is_virtual_base determination by method_2: ", method_2 ); 
+			Output_boolean("Is_virtual_base determination by method_1: ", method_1 );
+			Output_boolean("Is_virtual_base determination by method_2: ", method_2 );
 			std::cout << std::endl;
-			utility_exit_with_message( "Is_virtual_base determination by the two methods are not the same!" );		
+			utility_exit_with_message( "Is_virtual_base determination by the two methods are not the same!" );
 		}
 
 		return method_1;
@@ -620,7 +620,7 @@ namespace rna {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Sept 10, 2010.OK actually don't need to past in the seq_pos...since that info is avialable in the residue object. Left the old version of the code below for backward compatibility.
 	void
-	setup_suite_atom_id_map(conformation::Residue const & rsd_1, conformation::Residue const & rsd_2, id::AtomID_Map< id::AtomID > & atom_ID_map, bool const base_only){ 
+	setup_suite_atom_id_map(conformation::Residue const & rsd_1, conformation::Residue const & rsd_2, id::AtomID_Map< id::AtomID > & atom_ID_map, bool const base_only){
 
 		//std::cout << "blah blah blah " << std::endl;
 		setup_suite_atom_id_map(rsd_1, rsd_2, rsd_1.seqpos(), rsd_2.seqpos(), atom_ID_map , base_only);
@@ -634,7 +634,7 @@ namespace rna {
  													conformation::Residue const & rsd_2,
  													Size const res_num_1,
  													Size const res_num_2, //allow for the possibility that two poses have different sizes Jun 9, 2010
- 													id::AtomID_Map< id::AtomID > & atom_ID_map, 
+ 													id::AtomID_Map< id::AtomID > & atom_ID_map,
 													bool const base_only){
 
 		using namespace ObjexxFCL;
@@ -645,7 +645,7 @@ namespace rna {
 
 		Size const first_atom= (base_only) ? rsd_1.first_sidechain_atom()+1 : 1; //+1 to exclude the O2star oxygen
 
-	  	for( Size atomno_1=first_atom; atomno_1<= rsd_1.nheavyatoms(); ++atomno_1) { 
+	  	for( Size atomno_1=first_atom; atomno_1<= rsd_1.nheavyatoms(); ++atomno_1) {
 
  			std::string const atom_name_1=rsd_1.type().atom_name(atomno_1);
 
@@ -680,7 +680,7 @@ namespace rna {
  		conformation::Residue const & base_rsd_1=pose_1.residue(base_res);
  		conformation::Residue const & base_rsd_2=pose_2.residue(base_res);
 
-		setup_suite_atom_id_map(base_rsd_1, base_rsd_2, base_res, base_res, atom_ID_map, base_only); 
+		setup_suite_atom_id_map(base_rsd_1, base_rsd_2, base_res, base_res, atom_ID_map, base_only);
 
  	}
 
@@ -693,7 +693,7 @@ namespace rna {
  		conformation::Residue const & base_rsd_1=pose_1.residue(base_res_1);
  		conformation::Residue const & base_rsd_2=pose_2.residue(base_res_2);
 
-		setup_suite_atom_id_map(base_rsd_1, base_rsd_2, base_res_1, base_res_2, atom_ID_map, base_only); 
+		setup_suite_atom_id_map(base_rsd_1, base_rsd_2, base_res_1, base_res_2, atom_ID_map, base_only);
 
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -735,8 +735,8 @@ namespace rna {
 		bool found_non_virtual_base=false;
 		for(Size n=1; n<=working_best_alignment.size(); n++){
 			Size const seq_num=working_best_alignment[n];
-			if( Is_virtual_base(moving_pose.residue(seq_num) ) ==true || Is_virtual_base(static_pose.residue(seq_num) ) ==true ) continue;		
-			
+			if( Is_virtual_base(moving_pose.residue(seq_num) ) ==true || Is_virtual_base(static_pose.residue(seq_num) ) ==true ) continue;
+
 			found_non_virtual_base=true; //ok found a non-virtual base nucleotide that can be used for alignment
 			break;
 		}
@@ -746,23 +746,23 @@ namespace rna {
 				Size const seq_num=working_best_alignment[n];
 				std::cout << "seq_num= " << seq_num;
 				Output_boolean("  Is_virtual_base( " + moving_tag + " ):", Is_virtual_base(moving_pose.residue(seq_num) ) );
-				Output_boolean("  Is_virtual_base( " + static_tag + " ):", Is_virtual_base(static_pose.residue(seq_num) ) ); 
+				Output_boolean("  Is_virtual_base( " + static_tag + " ):", Is_virtual_base(static_pose.residue(seq_num) ) );
 				std::cout << std::endl;
 			}
 			std::string error_message= "Error in aligning " + moving_tag + " to " + static_tag + ". No non-virtual_base in working_best_alignment to align the poses!";
 			std::cout << error_message << std::endl;
 			utility_exit_with_message(error_message);
 		}
-		
+
 		//align current_pose to pose_output_list.
-		id::AtomID_Map< id::AtomID > const & alignment_atom_id_map = create_alignment_id_map(moving_pose , static_pose , working_best_alignment, base_only); 
-		core::scoring::superimpose_pose( moving_pose, static_pose, alignment_atom_id_map);		
+		id::AtomID_Map< id::AtomID > const & alignment_atom_id_map = create_alignment_id_map(moving_pose , static_pose , working_best_alignment, base_only);
+		core::scoring::superimpose_pose( moving_pose, static_pose, alignment_atom_id_map);
 
 //				current_pose.dump_pdb( tag+ "_current_pose_after_alignment");
 		if(check_for_messed_up_structure(moving_pose, moving_tag)==true){
 			std::string error_message= "Error in aligning " + moving_tag + " to " + static_tag + "!";
-			std::cout << error_message << std::endl;		
-			utility_exit_with_message( moving_tag + " is messed up ...this is probably an alignment problem");					
+			std::cout << error_message << std::endl;
+			utility_exit_with_message( moving_tag + " is messed up ...this is probably an alignment problem");
 		};
 	}
 
@@ -783,7 +783,7 @@ namespace rna {
 	//Sort by the first element. Low number on the top of the list
 	bool
 	pair_sort_citeria(std::pair<Size, Size> pair_one, std::pair<Size, Size> pair_two){
-		return (pair_one.first < pair_two.first); 
+		return (pair_one.first < pair_two.first);
 	}
 
 	void
@@ -851,11 +851,11 @@ namespace rna {
 		using namespace ObjexxFCL;
 		using namespace ObjexxFCL::fmt;
 
-		std::cout << std::setw(tag_spacing) << tag; 
+		std::cout << std::setw(tag_spacing) << tag;
 
 		Size spacing=4;
-//		std::cout << std::setw(30) << "Is_residue_prepend:";				
-		for(Size seq_num=1; seq_num<=max_seq_num; seq_num++){ 
+//		std::cout << std::setw(30) << "Is_residue_prepend:";
+		for(Size seq_num=1; seq_num<=max_seq_num; seq_num++){
 			char prepend_char;
 			if(my_map.find(seq_num)!=my_map.end()){
 				prepend_char = (my_map.find(seq_num)->second) ? 'P' : 'A';
@@ -866,7 +866,7 @@ namespace rna {
 		}
 		std::cout << std::endl;
 
-	}		
+	}
 
 	void
 	Output_bool_list(std::string const tag, utility::vector1<Size > const & size_list, core::Size const spacing){
@@ -1012,7 +1012,7 @@ namespace rna {
 		std::cout << std::endl;
 
 		Size title_length=title.size();
-		Size char_per_line=207;
+		Size char_per_line=80;
 		Size dash_length=char_per_line-title_length;
 
 		for(Size i=1; i<=dash_length/2; i++){
@@ -1198,7 +1198,7 @@ namespace rna {
 		}
 
 		for(Size full_seq_num=1; full_seq_num<=full_to_sub.size(); full_seq_num++){
-	
+
 
 			if(full_to_sub.count(full_seq_num)!=1){
 				utility_exit_with_message( "full_to_sub.count(" +string_of(full_seq_num) + ")!=1");
@@ -1247,11 +1247,11 @@ namespace rna {
 						utility_exit_with_message( "pose2's full_seq_num= " + string_of(full_seq_num) + "  is a virtual res but seq_num+1 is not a virtual_res_upper!" );
 					}
 				}
-			} 
+			}
 
-			if(verbose){ 
+			if(verbose){
 				std::cout << "full_seq_num= " << full_seq_num;
-				Output_boolean(" Is_prepend= ",Is_prepend); 
+				Output_boolean(" Is_prepend= ",Is_prepend);
 				Output_boolean(" both_pose_res_is_virtual= ",both_pose_res_is_virtual); std::cout << std::endl;
 			}
 
@@ -1262,9 +1262,9 @@ namespace rna {
 			suite_square_deviation(pose1, pose2, Is_prepend, full_seq_num, full_seq_num, atom_count, sum_sd, verbose, ignore_virtual_atom);
 
 			if( ( (full_seq_num+1)<=total_res) && Contain_seq_num(full_seq_num+1, residue_list)==false){
-				
+
 				if(verbose) std::cout << "Phosphate_edge_res_(full_seq_num+1)= " << full_seq_num+1 << std::endl;
-				
+
 				phosphate_square_deviation(pose1, pose2, full_seq_num+1, full_seq_num+1, atom_count, sum_sd, verbose, ignore_virtual_atom);
 			}
 
@@ -1309,7 +1309,7 @@ namespace rna {
 			}
 
 
-			if(verbose){ 
+			if(verbose){
 				std::cout << "Full_seq_num= " << full_seq_num << " partial_seq_num= " << seq_num;
 				Output_boolean(" Is_prepend= ",Is_prepend); Output_boolean(" both_pose_res_is_virtual= ",both_pose_res_is_virtual); std::cout << std::endl;
 			}
@@ -1344,7 +1344,7 @@ namespace rna {
 		utility::vector1 < core::Size > const & rmsd_res_list = job_parameters_->rmsd_res_list();
 		std::map< core::Size, core::Size > const & full_to_sub = job_parameters_->const_full_to_sub();
 		std::map< core::Size, bool > const & Is_prepend_map = job_parameters_->Is_prepend_map();
-	
+
 		return rmsd_over_residue_list( pose1, pose2, rmsd_res_list, full_to_sub, Is_prepend_map, false /*verbose*/, ignore_virtual_atom);
 
 	}
@@ -1442,14 +1442,14 @@ namespace rna {
   		chemical::AA const & res_aa2 =  pose2.residue(moving_res_2).aa();
 
 		if(res_aa!=res_aa2) utility_exit_with_message( "res_aa (" + name_from_aa(res_aa) + ")!=res_aa2 (" + name_from_aa(res_aa2) + ") " );
-		
+
   		Size const first_sidechain_atom1=pose1.residue(moving_res_1).first_sidechain_atom();
   		Size const first_sidechain_atom2=pose2.residue(moving_res_2).first_sidechain_atom();
 
 		Size const num_side_chain_atom=Get_num_side_chain_atom_from_res_name(res_aa, verbose);
- 		
+
 		if ( verbose ) std::cout << " MOVING_RES_1: " << moving_res_1 << " MOVING_RES_2: " << moving_res_2 << std::endl;
-		
+
   		//Need to use num_side_chain_atom from pose1 since a silly bug in Rosetta miscalculate num_heavy_atom by considering
 		//the virtaul O2star hydrogen to be heavy_atom when it is set to virtual in the current_pose_screen
   		for( Size n = 1; n<= num_side_chain_atom; n++){ //This INCLUDE the O2star oxygen
@@ -1486,9 +1486,9 @@ namespace rna {
   		chemical::AA const & res_aa2 =  pose2.residue(moving_res_2).aa();
 
 		if(res_aa!=res_aa2) utility_exit_with_message( "res_aa (" + name_from_aa(res_aa) + ")!=res_aa2 (" + name_from_aa(res_aa2) + ") " );
-		
+
 		if ( verbose ) std::cout << " MOVING_RES_1: " << moving_res_1 << " MOVING_RES_2: " << moving_res_2 << std::endl;
-		
+
 		for( Size atomno = 1; atomno <= 4; atomno++){
 
 			conformation::Residue const & rsd_1=pose1.residue(moving_res_1);
@@ -1499,10 +1499,10 @@ namespace rna {
 			}
 
 			if(rsd_1.atom_type(atomno).name()=="VIRT"  && rsd_2.atom_type(atomno).name()=="VIRT") continue;
-		
+
 			atom_count++;
 			sum_sd=sum_sd+atom_square_deviation(rsd_1, rsd_2, atomno, atomno, verbose);
-	
+
 		}
 
 	}
@@ -1534,14 +1534,14 @@ namespace rna {
   		chemical::AA const & res_aa2 =  pose2.residue(moving_res_2).aa();
 
 		if(res_aa!=res_aa2) utility_exit_with_message( "res_aa (" + name_from_aa(res_aa) + ")!=res_aa2 (" + name_from_aa(res_aa2) + ") " );
-		
+
   		Size const first_sidechain_atom1=pose1.residue(moving_res_1).first_sidechain_atom();
   		Size const first_sidechain_atom2=pose2.residue(moving_res_2).first_sidechain_atom();
 
 		Size const num_side_chain_atom=Get_num_side_chain_atom_from_res_name(res_aa, verbose);
- 		
+
 		if ( verbose ) std::cout << " MOVING_RES_1: " << moving_res_1 << " MOVING_RES_2: " << moving_res_2 << std::endl;
-		
+
 		Size const num_heavy_backbone_atoms=11; //RNA contain 11 heavy backbone atoms.
 
 		for( Size atomno = 1; atomno <= num_heavy_backbone_atoms; atomno++){
@@ -1561,7 +1561,7 @@ namespace rna {
 				}
 
 				if(rsd_1.atom_type(atomno).name()=="VIRT"  && rsd_2.atom_type(atomno).name()=="VIRT") continue;
-			
+
 				atom_count++;
 				sum_sd=sum_sd+atom_square_deviation(rsd_1, rsd_2, atomno, atomno, verbose);
 			}
@@ -1604,7 +1604,7 @@ namespace rna {
   		chemical::AA const & res_aa2 =  pose2.residue(moving_res_2).aa();
 
 		if(res_aa!=res_aa2) utility_exit_with_message( "res_aa (" + name_from_aa(res_aa) + ")!=res_aa2 (" + name_from_aa(res_aa2) +  ") " );
-		
+
   		Size const first_sidechain_atom1=pose1.residue(moving_res_1).first_sidechain_atom();
   		Size const first_sidechain_atom2=pose2.residue(moving_res_2).first_sidechain_atom();
 
@@ -1621,7 +1621,7 @@ namespace rna {
 		}
 
 		if ( verbose ) std::cout << " MOVING_RES_1: " << moving_res_1 << " MOVING_RES_2: " << moving_res_2 << "    PREPEND? " << prepend_res << std::endl;
-		
+
 		Size const num_heavy_backbone_atoms=11; //RNA contain 11 heavy backbone atoms.
 
 		for( Size atomno = 1; atomno <= num_heavy_backbone_atoms; atomno++){
@@ -1638,7 +1638,7 @@ namespace rna {
 				if(rsd_1.atom_type(atomno).name()=="VIRT"  || rsd_2.atom_type(atomno).name()=="VIRT") continue;
 			}
 
-			if(rsd_1.atom_type(atomno).name()=="VIRT"  && rsd_2.atom_type(atomno).name()=="VIRT") { 
+			if(rsd_1.atom_type(atomno).name()=="VIRT"  && rsd_2.atom_type(atomno).name()=="VIRT") {
 //					std::cout << "Both atoms are VIRTUAL! res_num_1= " << res_num_1 << " res_num_2= " << res_num_2 << " atomno= " << atomno << std::endl;
 				continue;
 			}
@@ -1651,7 +1651,7 @@ namespace rna {
 			//the virtaul O2star hydrogen to be heavy_atom when it is set to virtual in the current_pose_screen
   		for( Size n = 1; n<= num_side_chain_atom; n++){ //INCLUDE the O2star oxygen
 
-	
+
 			Size const atomno_1=(n-1)+first_sidechain_atom1;
 			Size const atomno_2=(n-1)+first_sidechain_atom2;
 
@@ -1691,7 +1691,7 @@ namespace rna {
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//WARNING THIS FUNCTION ASSUME THAT THE GAP RESIDUES DOESN'T EXIST!!!COULD LEAD TO SERIOUS ERROR! Sept 17, 2010
-	//This function is called when the chain_break gap_size = 0 or 1 
+	//This function is called when the chain_break gap_size = 0 or 1
 	bool
 	Check_chain_closable(pose::Pose const & pose, Size const five_prime_chain_break_res, Size const gap_size ){
 
@@ -1705,12 +1705,12 @@ namespace rna {
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	bool 
+	bool
 	Check_chain_closable(numeric::xyzVector<core::Real>  const & xyz_1, numeric::xyzVector<core::Real> const & xyz_2, core::Size const gap_size){
 
 		//Two possibilities
-		//1. xyz_1-> five_prime_O3_xyz &&  xyz_2->three_prime_C5_xyz 
-		//2. xyz_2-> five_prime_O3_xyz &&  xyz_1->three_prime_C5_xyz  
+		//1. xyz_1-> five_prime_O3_xyz &&  xyz_2->three_prime_C5_xyz
+		//2. xyz_2-> five_prime_O3_xyz &&  xyz_1->three_prime_C5_xyz
 
 		using namespace ObjexxFCL;
 
@@ -1727,7 +1727,7 @@ namespace rna {
 
 
 		}else if ( gap_size == 1 ) {
-			
+
 			//previously used 11.0138 as O3I_C5IPLUS2_MAX_DIS which is slight underestimate...TOO strict;
 
 			return ( dist_square < O3I_C5IPLUS2_MAX_DIST*O3I_C5IPLUS2_MAX_DIST );
@@ -1743,7 +1743,7 @@ namespace rna {
 			return true;
 
 		}else{
-			std::string const exit_message="Invalid gap_size= " + string_of(gap_size) + " !!"; 
+			std::string const exit_message="Invalid gap_size= " + string_of(gap_size) + " !!";
 			utility_exit_with_message( exit_message );
 		}
 
@@ -1755,7 +1755,7 @@ namespace rna {
 	//Optimization for floating_base_chain_closure
 	//Need to integrate this with standard Check_chain_closable()
 	bool
-	Check_chain_closable_floating_base(pose::Pose const & five_prime_pose, pose::Pose const & three_prime_pose, 
+	Check_chain_closable_floating_base(pose::Pose const & five_prime_pose, pose::Pose const & three_prime_pose,
 																		 Size const five_prime_chain_break_res, Size const gap_size ){
 
 		if( gap_size != 0 ){
@@ -1785,7 +1785,7 @@ namespace rna {
 		Distance C4_C3_max=0.0;
 
 		get_C4_C3_distance_range(five_prime_rsd, three_prime_rsd, C4_C3_min, C4_C3_max);
-		
+
 		Distance C4_C3_dist=(three_prime_pose.residue(three_prime_chain_break_res).xyz(" C4*") - five_prime_pose.residue(five_prime_chain_break_res).xyz(" C3*") ).length();
 
 		if( (C4_C3_dist > (C4_C3_max+leniency_dist )) || (C4_C3_dist < (C4_C3_min-leniency_dist )) ) return false;
@@ -1795,9 +1795,9 @@ namespace rna {
 	}
 
 	void
-	get_C4_C3_distance_range(conformation::Residue const & five_prime_rsd, 
-													 conformation::Residue const & three_prime_rsd, 
-												 	 Distance & C4_C3_dist_min, 
+	get_C4_C3_distance_range(conformation::Residue const & five_prime_rsd,
+													 conformation::Residue const & three_prime_rsd,
+												 	 Distance & C4_C3_dist_min,
 												 	 Distance & C4_C3_dist_max){
 
 
@@ -1962,7 +1962,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 
 		std::cout << "--------------------------------------------------------------------------------------" << std::endl;
 		std::cout << "Movemap (in term of partial_pose seq_num): " << std::endl;
-		std::cout << A(spacing,"res_num" ) << A(spacing," alpha  ") << A(spacing,"  beta  ") << A(spacing," gamma  "); 
+		std::cout << A(spacing,"res_num" ) << A(spacing," alpha  ") << A(spacing,"  beta  ") << A(spacing," gamma  ");
 		std::cout << A(spacing," delta  ") << A(spacing,"eplison ") << A(spacing,"  zeta  ") << A(spacing," chi_1  ");
 		std::cout << A(spacing,"  nu_2  ") << A(spacing,"  nu_1  ") << A(spacing,"chi_O2* ") << std::endl;
 
@@ -1984,16 +1984,16 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		std::cout << "--------------------------------------------------------------------------------------" << std::endl;
 
 
-		
+
 		std::cout << "print movemap jump_points [explicit method]: " << std::endl;
 		for (Size n = 1; n <= pose.fold_tree().num_jump(); n++ ){
 			Size const jump_pos1( pose.fold_tree().upstream_jump_residue( n ) );
 			Size const jump_pos2( pose.fold_tree().downstream_jump_residue( n ) );
 
 			std::cout << "n=" << n << " | jump_pos1= " << jump_pos1 << " | jump_pos2= " << jump_pos2;
-			std::cout << " | mm.get_jump(n) = "; Output_boolean( mm.get_jump(n) ); 
+			std::cout << " | mm.get_jump(n) = "; Output_boolean( mm.get_jump(n) );
 			std::cout << std::endl;
-			
+
 		}
 		std::cout << "--------------------------------------------------------------------------------------" << std::endl;
 
@@ -2023,7 +2023,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 
 			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 
-			core::conformation::Residue const & rsd = pose.residue(seq_num);	
+			core::conformation::Residue const & rsd = pose.residue(seq_num);
 			Size const at= rsd.first_sidechain_atom();
 
 			if(rsd.type().atom_name(at) !=" O2*") {
@@ -2037,16 +2037,16 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
 
 			if(pose.residue(seq_num).aa() == core::chemical::aa_vrt ){
-				if(verbose) std::cout << "res " << seq_num << " is core::chemical::aa_vrt! " << std::endl;		
-				Is_O2star_hydrogen_virtual_list.push_back(false); //false since not virtual O2star_hydrogen 
+				if(verbose) std::cout << "res " << seq_num << " is core::chemical::aa_vrt! " << std::endl;
+				Is_O2star_hydrogen_virtual_list.push_back(false); //false since not virtual O2star_hydrogen
 				continue;
 			}
 
-			core::conformation::Residue const & rsd = pose.residue(seq_num);	
+			core::conformation::Residue const & rsd = pose.residue(seq_num);
 			Size at=rsd.atom_index( "2HO*" );
 
 			if(rsd.atom_type(at).name()=="VIRT"){
-				if(verbose) std::cout << "res " << seq_num << " has a virtual o2star hydrogen! " << std::endl;		
+				if(verbose) std::cout << "res " << seq_num << " has a virtual o2star hydrogen! " << std::endl;
 				Is_O2star_hydrogen_virtual_list.push_back(true);
 			}else{
 				Is_O2star_hydrogen_virtual_list.push_back(false);
@@ -2058,7 +2058,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 
 		utility::vector1< core::Size > surrounding_O2star_hydrogen;
 
-		Size num_o2star_moving_res=0; 
+		Size num_o2star_moving_res=0;
 		for(Size n=1; n<=moving_res.size(); n++){
 			Size const seq_num=moving_res[n];
 
@@ -2079,11 +2079,11 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 
 			bool Is_surrounding_res=false;
 
-			core::conformation::Residue const & surrounding_rsd = pose.residue(seq_num);	
+			core::conformation::Residue const & surrounding_rsd = pose.residue(seq_num);
 			Size const surr_at= surrounding_rsd.first_sidechain_atom();
 
 			if(Is_O2star_hydrogen_virtual_list[seq_num]) continue;
-	
+
 			//3.5 Angstrom for O2star-normal
 
 			for(Size ii=1; ii<=moving_res.size(); ii++){
@@ -2094,7 +2094,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 				for(Size moving_at=1; moving_at<=moving_rsd.natoms(); moving_at++){
 
 					if( moving_rsd.atom_type(moving_at).name()=="VIRT" ) continue;
-					
+
 					Real const cutoff_dist= (moving_at==moving_rsd.first_sidechain_atom()) ? 4.5: 3.5 ;
 
 					//4.5 Angstrom interaction dist_cutoff for surrounding O2star- moving_res O2star
@@ -2114,7 +2114,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 
 
 		//layer 2+, interaction between surrounding O2star hydrogen themselves
-		Size layer_num=2;		
+		Size layer_num=2;
 		while(true){
 			bool add_new_O2star_hydrogen=false;
 
@@ -2123,13 +2123,13 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 				if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 				if(Contain_seq_num(seq_num, surrounding_O2star_hydrogen) ) continue;
 
-				core::conformation::Residue const & rsd_1 = pose.residue(seq_num);	
+				core::conformation::Residue const & rsd_1 = pose.residue(seq_num);
 				Size const at_1= rsd_1.first_sidechain_atom();
 
 				if(Is_O2star_hydrogen_virtual_list[seq_num]) continue;
 
 				for(Size ii=1; ii<=surrounding_O2star_hydrogen.size(); ii++){
-	
+
 					core::conformation::Residue const & rsd_2=pose.residue(surrounding_O2star_hydrogen[ii]);
 					Size const at_2= rsd_2.first_sidechain_atom();
 
@@ -2148,15 +2148,15 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 
 			layer_num++;
 			if(add_new_O2star_hydrogen==false) break;
-		}		
+		}
 
 		//consistency_check..
 		for(Size ii=1; ii<=surrounding_O2star_hydrogen.size(); ii++){
-	
+
 			Size const seq_num=surrounding_O2star_hydrogen[ii];
 
 			if(Is_O2star_hydrogen_virtual_list[seq_num]){
-				std::string const exit_message= "surrounding_O2star_hydrogen res " + string_of(seq_num) + " has a virtual o2star hydrogen!! ";		
+				std::string const exit_message= "surrounding_O2star_hydrogen res " + string_of(seq_num) + " has a virtual o2star hydrogen!! ";
 				utility_exit_with_message( exit_message);
 			}
 		}
@@ -2215,9 +2215,9 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 			if(Contain_seq_num(seq_num, O2star_pack_seq_num) && pose.residue(seq_num).is_RNA() ){ //pack this residue!
 
 				/*
-				NOTE: the ex4 option allows sampling of extra torsion angles ("ex") at  
-				the 2'-OH (which is torsion "4"). To pack the bases, you would have to  
-				add "ex1"; it should not happen! If you see bases getting repacked,  
+				NOTE: the ex4 option allows sampling of extra torsion angles ("ex") at
+				the 2'-OH (which is torsion "4"). To pack the bases, you would have to
+				add "ex1"; it should not happen! If you see bases getting repacked,
 				that is a bug, and please let me know. (From Rhiju email response)
 
 				ex4 (HO2star) is "on" by default | ex1 (base chi) is "off" by default
@@ -2232,7 +2232,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 			}
 		}
 
-		return o2star_pack_task;		
+		return o2star_pack_task;
 
 		/* ////Below is the version originally found in StepWiseRNA_ResidueSampler::initialize_o2star_packer_task(). ////
 		///////Integrated with this with the StepWsieRNA_Util.cc version on Jan 20, 2012/////////////////////////////////
@@ -2264,19 +2264,19 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		conformation::Residue const & suite_lower_res=pose.residue(five_prime_chainbreak);
 		std::cout << std::setw(5) << " ep= " << std::setw(15) << suite_lower_res.mainchain_torsion(5);
 		std::cout << std::setw(5) << " z= "  << std::setw(15) << suite_lower_res.mainchain_torsion(6);
-		
-		
+
+
 		Size const three_prime_chainbreak=five_prime_chainbreak+1;
 
 		if (three_prime_chainbreak <= pose.total_residue()) {
-			conformation::Residue const & suite_upper_res=pose.residue(three_prime_chainbreak);	
+			conformation::Residue const & suite_upper_res=pose.residue(three_prime_chainbreak);
 			std::cout << std::setw(5) << " a= "  << std::setw(15) << suite_upper_res.mainchain_torsion(1);
 			std::cout << std::setw(5) << " b= "  << std::setw(15) << suite_upper_res.mainchain_torsion(2);
 			std::cout << std::setw(5) << " g= "  << std::setw(15) << suite_upper_res.mainchain_torsion(3);
 		}
 
-		std::cout << std::endl;  
-	
+		std::cout << std::endl;
+
 	}
 	/////////////////////////////////////////////////////////////////////////////////////
 
@@ -2315,9 +2315,9 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 			std::cout << std::setw(50) << "Before_setting_torsion_to_A_form";
 			print_backbone_torsions(current_pose, five_prime_chainbreak+1);
 		}
-		//Actually just by prepending the residue causes the alpha torsion to automatically be set to -64.0274, 
+		//Actually just by prepending the residue causes the alpha torsion to automatically be set to -64.0274,
 		//so the manual setting below is actually not needed, May 24, 2010.. Parin S.
-		//These are the initial value of virtual upper and lower cutpoint atom. 
+		//These are the initial value of virtual upper and lower cutpoint atom.
 		//Actaully only the alpha (id::BB, 1) is important here since it set the position of O3' (LOWER) atom which in turn determines  O1P and O2P atom
 		current_pose.set_torsion( TorsionID( three_prime_chainbreak+1, id::BB, 1 ), -64.027359 );
 
@@ -2327,26 +2327,26 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		current_pose.set_torsion( TorsionID( five_prime_chainbreak+1, id::BB, 6 ), -76.4185 ); //Not Important?
 		current_pose.set_torsion( TorsionID( three_prime_chainbreak+1, id::BB, 1 ), -64.0274 );
 		*/
-		
+
 		//RAD.params
-		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5*   C5*  
+		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5*   C5*
 		//ICOOR_INTERNAL    O1P -111.509000   71.937134    1.485206   P     O5* LOWER
-		//ICOOR_INTERNAL    O2P -130.894000   71.712189    1.485010   P     O5*   O1P  
+		//ICOOR_INTERNAL    O2P -130.894000   71.712189    1.485010   P     O5*   O1P
 
 		//RCY.params
-		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5*   C5*  
+		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5*   C5*
 		//ICOOR_INTERNAL    O1P -111.509000   71.937134    1.485206   P     O5* LOWER
-		//ICOOR_INTERNAL    O2P -130.894000   71.712189    1.485010   P     O5*   O1P  
+		//ICOOR_INTERNAL    O2P -130.894000   71.712189    1.485010   P     O5*   O1P
 
 		//RGU.params
-		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5*   C5*  
+		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5*   C5*
 		//ICOOR_INTERNAL    O1P -111.509000   71.937134    1.485206   P     O5* LOWER
-		//ICOOR_INTERNAL    O2P -130.894000   71.712189    1.485010   P     O5*   O1P  
+		//ICOOR_INTERNAL    O2P -130.894000   71.712189    1.485010   P     O5*   O1P
 
 		//URA.parms
-		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5*   C5*  
+		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5*   C5*
 		//ICOOR_INTERNAL    O1P -111.509000   71.937134    1.485206   P     O5* LOWER
-		//ICOOR_INTERNAL    O2P -130.894000   71.712189    1.485010   P     O5*   O1P  
+		//ICOOR_INTERNAL    O2P -130.894000   71.712189    1.485010   P     O5*   O1P
 
 		if(verbose){
 			//dump_pdb(current_pose, "After_setting_torsion_to_A_form.pdb");
@@ -2408,7 +2408,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 				pose.set_torsion( TorsionID( seq_num, id::BB, n ), template_pose.residue(seq_num).mainchain_torsion(n) );
 
 			}
-		
+
 			//Side_chain
 			bool copy_side_chain=true;
 
@@ -2479,16 +2479,16 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 			i=moving_base;
 			j=reference_base;
 			cutpoint=moving_base;
-		}	
+		}
 
 		core::kinematics::FoldTree fold_tree = pose.fold_tree();	//HARD COPY?
 
   		if(verbose) Output_fold_tree_info(fold_tree, "Before add bulge jump point");
-		
+
 		//		fold_tree.new_jump( five_prime_seq_num, three_prime_seq_num, cut_point );
 		fold_tree.new_jump( reference_base , moving_base , cutpoint); //Choose the residue five_prime of the actual cutpoint position
 
-		if(verbose) std::cout << "after add new jump point" << std::endl;		
+		if(verbose) std::cout << "after add new jump point" << std::endl;
 
 		Residue const & rsd1( pose.residue( i ) );
 		Residue const & rsd2( pose.residue( j ) );
@@ -2496,7 +2496,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		Size jump_num=9999;
 
 		for ( Size n = 1; n <= fold_tree.num_jump(); n++ ) {
-			if (( fold_tree.upstream_jump_residue(n) == i && fold_tree.downstream_jump_residue(n) == j ) || 
+			if (( fold_tree.upstream_jump_residue(n) == i && fold_tree.downstream_jump_residue(n) == j ) ||
 				  ( fold_tree.upstream_jump_residue(n) == j && fold_tree.downstream_jump_residue(n) == i )){
 				jump_num=n;
 				break;
@@ -2515,11 +2515,11 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 	//////////////////////////////////////////////////////////////////////////
 
 
-	Size 
+	Size
 	make_cut_at_moving_suite( core::kinematics::FoldTree & fold_tree, Size const & moving_suite ){
 
 		fold_tree.new_jump( moving_suite, moving_suite+1, moving_suite );
-		
+
 		int const i( moving_suite ), j( moving_suite+1 );
 		for ( Size n = 1; n <= fold_tree.num_jump(); n++ ) {
 			if ( fold_tree.upstream_jump_residue(n) == i && fold_tree.downstream_jump_residue(n) == j ) return n;
@@ -2575,7 +2575,7 @@ principal_angle_degrees( T const & angle )
 
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
 			if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
-			conformation::Residue const & rsd(pose.residue(seq_num)); 
+			conformation::Residue const & rsd(pose.residue(seq_num));
 			Real delta = numeric::principal_angle_degrees(rsd.mainchain_torsion( DELTA ));
 			Real chi = numeric::principal_angle_degrees(rsd.chi(1));
 			Real nu_2 = numeric::principal_angle_degrees(rsd.chi(2));
@@ -2608,13 +2608,13 @@ principal_angle_degrees( T const & angle )
 
 		conformation::Residue const & rsd = pose.residue(seq_num);
 		Real const chi = numeric::principal_angle_degrees(rsd.chi( CHI - NUM_RNA_MAINCHAIN_TORSIONS ));
-		
+
 		if(chi<=CHI_CUTOFF){
 			return SYN;
 		}else{
 			return ANTI;
 		}
-	
+
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////
@@ -2639,10 +2639,10 @@ principal_angle_degrees( T const & angle )
 /////////////////////////
 			if(pose.residue(seq_num).has_variant_type("VIRTUAL_RNA_RESIDUE")){
 				std::cout << "Warning: delta angle is out of range for virtual_residue at seq_num "<< seq_num<< "!" << std::endl;
-			}else{ 	
+			}else{
 				//This part is now obsolete .... Apr 30, 2010...
 				//A possibility for a out of range delta is for imported pdbs (upper element of 1q93 for example).
-				Real principal_delta=numeric::principal_angle_degrees(delta); 
+				Real principal_delta=numeric::principal_angle_degrees(delta);
 
 				//Consistency check
 				if(delta<-180){
@@ -2650,7 +2650,7 @@ principal_angle_degrees( T const & angle )
 						utility_exit_with_message( "delta<-180 but delta+359<principal_delta )==false || (delta+361>principal_delta)==false!" );
 					}
 				}
-				
+
 				if(delta>180){
 					if(( delta-359>principal_delta )==false || (delta-361<principal_delta)==false){
 						utility_exit_with_message( "delta>180 but delta-359>principal_delta )==false || (delta-361<principal_delta)==false!" );
@@ -2684,7 +2684,7 @@ principal_angle_degrees( T const & angle )
 	}
 
 
-	void 
+	void
 	sleep(core::Size mseconds )
 	{
  	 clock_t endwait;
@@ -2698,14 +2698,14 @@ principal_angle_degrees( T const & angle )
 	setup_simple_fold_tree(core::pose::Pose & pose){
 
 //		using namespace core::chemical;
-	
+
 		Size const nres=pose.total_residue();
 
-		kinematics::FoldTree simple_fold_tree(nres); //Create a simple fold tree 
+		kinematics::FoldTree simple_fold_tree(nres); //Create a simple fold tree
 
 		simple_fold_tree.simple_tree(nres); //Just to make sure.
 
-		pose.fold_tree( simple_fold_tree); 		
+		pose.fold_tree( simple_fold_tree);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2714,7 +2714,7 @@ principal_angle_degrees( T const & angle )
 	void
 	get_atom_coordinates(utility::vector1< std::pair< id::AtomID, numeric::xyzVector<core::Real> > > & xyz_list, Size const & seq_num, core::conformation::Residue const & rsd_at_origin, core::kinematics::Stub const & moving_res_base_stub){
 
-		xyz_list.clear();		
+		xyz_list.clear();
 
 		numeric::xyzVector<core::Real> const & new_centroid=moving_res_base_stub.v;
 		numeric::xyzMatrix< core::Real > const & new_coordinate_matrix=moving_res_base_stub.M;
@@ -2722,13 +2722,13 @@ principal_angle_degrees( T const & angle )
 		for( Size at = 1; at <= rsd_at_origin.natoms(); at++){
 
 			id::AtomID const id( at, seq_num);
-	
+
 			numeric::xyzVector<core::Real> atom_pos;
 
 			atom_pos= new_coordinate_matrix * rsd_at_origin.xyz(at); //I think the order here does matter.
 			atom_pos= atom_pos + new_centroid; //I think the order here does matter.
 
-			xyz_list.push_back(std::make_pair(id, atom_pos)); 	
+			xyz_list.push_back(std::make_pair(id, atom_pos));
 		}
 
 	}
@@ -2743,7 +2743,7 @@ principal_angle_degrees( T const & angle )
 		using namespace core::conformation;
 
 		static const ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
-	
+
 		core::io::silent::SilentFileData silent_file_data;
 		silent_file_data.read_file( silent_file );
 
@@ -2758,7 +2758,7 @@ principal_angle_degrees( T const & angle )
 		if ( !found_tag ) utility_exit_with_message( "Could not find specified tag " + input_tag + " in silent file!" );
 
 		if(check_for_messed_up_structure(import_pose, input_tag)==true){
-		 	utility_exit_with_message("import_pose " + input_tag + " from silent_file " + silent_file + " is a messed up pose!"); 
+		 	utility_exit_with_message("import_pose " + input_tag + " from silent_file " + silent_file + " is a messed up pose!");
 		}
 
 	}
@@ -2774,7 +2774,7 @@ principal_angle_degrees( T const & angle )
 
 		if(found!=std::string::npos){
 			basename=full_path.substr(found+1);
-		} else { 
+		} else {
 			basename=full_path;
 		}
 
@@ -2785,7 +2785,7 @@ principal_angle_degrees( T const & angle )
 
 
 	bool
-	Is_residues_in_contact(core::Size const & res_ONE, core::pose::Pose const & pose_ONE, core::Size const & res_TWO, core::pose::Pose const & pose_TWO, core::Real const atom_atom_overlap_dist_cutoff, core::Size const num_atom_contacts_cutoff, bool const verbose){ 
+	Is_residues_in_contact(core::Size const & res_ONE, core::pose::Pose const & pose_ONE, core::Size const & res_TWO, core::pose::Pose const & pose_TWO, core::Real const atom_atom_overlap_dist_cutoff, core::Size const num_atom_contacts_cutoff, bool const verbose){
 
 		using namespace ObjexxFCL;
 
@@ -2817,7 +2817,7 @@ principal_angle_degrees( T const & angle )
 					num_atom_contacts_so_far++;
 					if(verbose){
 						std::cout << "res_ONE= " << res_ONE << " res_TWO= " << res_TWO << " num_atom_contacts_so_far= " << num_atom_contacts_so_far << "|";
-						std::cout << " VDW_radius_ONE= " << VDW_radius_ONE << " VDW_radius_TWO= " << VDW_radius_TWO; 
+						std::cout << " VDW_radius_ONE= " << VDW_radius_ONE << " VDW_radius_TWO= " << VDW_radius_TWO;
 						std::cout << " atom_atom_overlap_dist_cutoff= " << atom_atom_overlap_dist_cutoff << " cutoff_sum_VDW_radius= " << cutoff_sum_VDW_radius;
 						std::cout << " atom_atom_dist= " << (rsd_ONE.xyz(at_ONE)-rsd_TWO.xyz(at_TWO)).length();
 						std::cout << " " << rsd_ONE.atom_name(at_ONE) << " of res_ONE and " << rsd_TWO.atom_name(at_TWO) << " of res_TWO are in contact! " << std::endl;
@@ -2867,11 +2867,11 @@ principal_angle_degrees( T const & angle )
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	core::Size
-	virtualize_energetically_unfavorable_nucleotides(core::pose::Pose & input_pose, 
-																								utility::vector1< core::Size > const & allow_bulge_res_list, 
-																								core::scoring::ScoreFunctionOP const & scorefxn, 
+	virtualize_energetically_unfavorable_nucleotides(core::pose::Pose & input_pose,
+																								utility::vector1< core::Size > const & allow_bulge_res_list,
+																								core::scoring::ScoreFunctionOP const & scorefxn,
 																								std::string const & tag,
-																								bool const allow_pre_virtualize, 
+																								bool const allow_pre_virtualize,
 																								bool const allow_consecutive_bulges,
 																								bool const verbose){
 
@@ -2892,7 +2892,7 @@ principal_angle_degrees( T const & angle )
 			std::cout << "rna_bulge_bonus= " << rna_bulge_bonus << std::endl;
 			Output_boolean("allow_pre_virtualize= ",allow_pre_virtualize); std::cout << std::endl;
 			Output_boolean("allow_consecutive_bulges= ",allow_consecutive_bulges); std::cout << std::endl;
-			Output_seq_num_list("allow_bulge_res_list= ", allow_bulge_res_list, 40); 
+			Output_seq_num_list("allow_bulge_res_list= ", allow_bulge_res_list, 40);
 
 			//Testing to see if checking in apply_virtual_rna_residue_variant_type can be violated!//////////
 			pose::Pose testing_pose=input_pose;
@@ -2905,7 +2905,7 @@ principal_angle_degrees( T const & angle )
 			//////////////////////////////////////////////////////////////////////////////////////////////////
 		}
 
-		//////////////////////////////////////////////////////////////////////////////////////////////////////	
+		//////////////////////////////////////////////////////////////////////////////////////////////////////
 		if(allow_pre_virtualize==false){
 			for(Size seq_num=1; seq_num<=total_res; seq_num++){
 				if (input_pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
@@ -2917,17 +2917,17 @@ principal_angle_degrees( T const & angle )
 		//////////////////////////////////////////////////////////////////////////////////////////////////////
 		pose::Pose working_pose=input_pose;
 		Real const start_score=(*scorefxn)(working_pose);
-	
+
 
 		Size num_res_virtualized=0;
 		Size round_num=0;
 
-		while(true){	//Need multiple round, since virtualizing a particular res will reduce the energy score of neighoring res and might effect wether neighoring res should be virtualized. 	
+		while(true){	//Need multiple round, since virtualizing a particular res will reduce the energy score of neighoring res and might effect wether neighoring res should be virtualized.
 			pose::Pose base_pose=input_pose;
 			Real const base_score=(*scorefxn)(base_pose);
 
 			round_num++;
-		
+
 			Size num_res_virtualized_in_this_round=0;
 
 			for(Size seq_num=1; seq_num<=total_res; seq_num++){
@@ -2955,7 +2955,7 @@ principal_angle_degrees( T const & angle )
 						if( input_pose.residue(seq_num-1).has_variant_type("VIRTUAL_RNA_RESIDUE") ) continue;
 					}
 				}
-				
+
 
 				working_pose=base_pose;//reset working_pose to base_pose
 				apply_virtual_rna_residue_variant_type(working_pose, seq_num, true)	;
@@ -2968,15 +2968,15 @@ principal_angle_degrees( T const & angle )
 					std::cout << "tag= " << tag << " round_num= " << round_num << " seq_num= " << seq_num << ". new_score (" << new_score << ") is lesser than base_score (" << base_score << "). " << std::endl;
 
 					apply_virtual_rna_residue_variant_type(input_pose, seq_num, true)	;
-					
+
 				}
 			}
 
-			if(num_res_virtualized_in_this_round==0) break;			
+			if(num_res_virtualized_in_this_round==0) break;
 
 		}
 
-	
+
 		working_pose=input_pose;
 		Real const final_score=(*scorefxn)(working_pose);
 
@@ -3002,7 +3002,7 @@ principal_angle_degrees( T const & angle )
 		}
 */
 
-		
+
 		return num_res_virtualized;
 
 	}
@@ -3018,7 +3018,7 @@ principal_angle_degrees( T const & angle )
 
 		if(found!=std::string::npos){
 			tag = pdb_filename.substr(found+1);
-		} else { 
+		} else {
 			tag=pdb_filename;
 		}
 
@@ -3026,7 +3026,7 @@ principal_angle_degrees( T const & angle )
 
 		if(found_2!=std::string::npos){
 			tag = tag.substr(0,tag.size()-4);
-		} 
+		}
 
 		return tag;
 	}
@@ -3069,7 +3069,7 @@ principal_angle_degrees( T const & angle )
 			std::cout << "upstream_res= " << k << upstream_res << " upstream_jump_atom= " << upstream_jump_atom;
 			std::cout << " downstream_res= " << k << downstream_res << " downstream_jump_atom= " << downstream_jump_atom << std::endl;
 
-			fold_tree.set_jump_atoms( i, downstream_jump_atom, upstream_jump_atom); 
+			fold_tree.set_jump_atoms( i, downstream_jump_atom, upstream_jump_atom);
 
 		}
 	}
@@ -3090,7 +3090,7 @@ principal_angle_degrees( T const & angle )
 
 	void
 	print_JobParameters_info(StepWiseRNA_JobParametersOP const & JP, std::string const JP_name, bool const Is_simple_full_length_JP){
-	
+
 		using namespace ObjexxFCL;
 
 		Output_title_text("printing JobParameters Information for " + JP_name );
@@ -3134,7 +3134,7 @@ principal_angle_degrees( T const & angle )
 		if(JP->force_south_ribose_list().size()>0) Output_seq_num_list("force_south_ribose_list= ", JP->force_south_ribose_list() );
 		if(JP->protonated_H1_adenosine_list().size()>0) Output_seq_num_list("protonated_H1_adenosine_list ", JP->protonated_H1_adenosine_list() );
 
-		
+
 
 
 
@@ -3144,7 +3144,7 @@ principal_angle_degrees( T const & angle )
 		Output_seq_num_list("native_alignment=",  							JP->native_alignment() );
 		Output_seq_num_list("cutpoint_closed_list=", 					JP->cutpoint_closed_list() );
 
-		
+
 		std::cout << "------------working_stuff------------" << std::endl;
 
 		Output_seq_num_list("working_global_sample_res_list= ", JP->working_global_sample_res_list() );
@@ -3153,7 +3153,7 @@ principal_angle_degrees( T const & angle )
 		if(JP->force_south_ribose_list().size()>0) Output_seq_num_list("working_force_south_ribose_list= ", JP->working_force_south_ribose_list() );
 		if(JP->protonated_H1_adenosine_list().size()>0) Output_seq_num_list("working_protonated_H1_adenosine_list= ", JP->working_protonated_H1_adenosine_list() );
 
-		
+
 		Output_seq_num_list("working_fixed_res= " ,						JP->working_fixed_res() 						);
 
 		if(Is_simple_full_length_JP==false){
@@ -3166,7 +3166,7 @@ principal_angle_degrees( T const & angle )
 
 		Output_seq_num_list("working_terminal_res= ", 					JP->working_terminal_res() 					);
 		Output_seq_num_list("working_moving_partition_pos= ",  JP->working_moving_partition_pos()  );
-		
+
 		Output_seq_num_list("working_best_alignment=", 				JP->working_best_alignment() );
 		Output_seq_num_list("working_native_alignment=", 			JP->working_native_alignment() );
 
@@ -3180,7 +3180,7 @@ principal_angle_degrees( T const & angle )
 			Output_bool_list("partition_definition=", 	vector1_partition_definition );
 
 			std::cout << "root_res= " << JP->fold_tree().root() << std::endl;
-			Output_fold_tree_info(JP->fold_tree() , "fold_tree"); 
+			Output_fold_tree_info(JP->fold_tree() , "fold_tree");
 		}
 
 		Output_title_text("");
@@ -3191,7 +3191,7 @@ principal_angle_degrees( T const & angle )
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
-	void 
+	void
 	process_mem_usage(double& vm_usage, double& resident_set, core::Size count){
 		 using std::ios_base;
 		 using std::ifstream;
@@ -3227,7 +3227,7 @@ principal_angle_degrees( T const & angle )
 
 
 	 std::cout << "memory_usage= " << count << " " << pid << " " << comm << " " << state << " " << ppid << " " << pgrp << " " << session << " " << tty_nr << " " << tpgid << " " << flags << " " << minflt <<  " " <<  cminflt << " " << majflt << " " << cmajflt << " "<< utime << " " << stime << " " << cutime << " " << cstime << " " << priority << " "<< nice << " "<<  O << " "<<  itrealvalue << " "<<  starttime << " "<<  vsize << " " << rss << std::endl;
-	             
+
 	}
 */
 
@@ -3239,12 +3239,12 @@ principal_angle_degrees( T const & angle )
 		using namespace conformation;
 		using namespace scoring::rna;
 		//using namespace core::pose;
-	
+
 		utility::vector1 < core::Size > act_rmsd_res_list;
 		act_rmsd_res_list.clear();
 
 		for(Size n=1; n<=input_rmsd_res_list.size(); n++){
-		
+
 			Size const seq_num=input_rmsd_res_list[n];
 
 			if(Is_virtual_base(native_pose.residue(seq_num))) continue;
@@ -3254,7 +3254,7 @@ principal_angle_degrees( T const & angle )
 		}
 
 		utility::vector1< core::scoring::rna::Base_pair> const base_pair_list = classify_base_pairs_parin( native_pose, act_rmsd_res_list);
-		
+
 		Size native_WC( 0 ), native_NWC( 0 );
 
 		for ( Size n = 1; n <= base_pair_list.size(); n++ ) {
@@ -3291,7 +3291,7 @@ principal_angle_degrees( T const & angle )
 		act_rmsd_res_list.clear();
 
 		for(Size n=1; n<=input_rmsd_res_list.size(); n++){
-		
+
 			Size const seq_num=input_rmsd_res_list[n];
 
 			if(Is_virtual_base(native_pose.residue(seq_num))) continue;
@@ -3306,7 +3306,7 @@ principal_angle_degrees( T const & angle )
 
 		//std::cout << "BLAH" << std::endl;
 
-		Size native_WC=0; 
+		Size native_WC=0;
 		Size native_NWC=0;
 		Size recovered_WC=0;
 		Size recovered_NWC=0;
@@ -3353,16 +3353,16 @@ principal_angle_degrees( T const & angle )
 
 		using namespace core::id;
 
-		pose.set_torsion( TorsionID( seq_num, id::BB,  1 ), -68.9 ); //alpha 
-		pose.set_torsion( TorsionID( seq_num, id::BB,  2 ), 179.5 ); //beta 
-		pose.set_torsion( TorsionID( seq_num, id::BB,  3 ), 54.5 ); //gamma 
+		pose.set_torsion( TorsionID( seq_num, id::BB,  1 ), -68.9 ); //alpha
+		pose.set_torsion( TorsionID( seq_num, id::BB,  2 ), 179.5 ); //beta
+		pose.set_torsion( TorsionID( seq_num, id::BB,  3 ), 54.5 ); //gamma
 		pose.set_torsion( TorsionID( seq_num, id::BB,  5 ), -154.0 ); //epsilon
-		pose.set_torsion( TorsionID( seq_num, id::BB,  6 ), -70.8 ); //zeta 
+		pose.set_torsion( TorsionID( seq_num, id::BB,  6 ), -70.8 ); //zeta
 
-		pose.set_torsion( TorsionID( seq_num, id::BB,  4 ), 82.2 ); //delta 
-		pose.set_torsion( TorsionID( seq_num, id::CHI, 1 ), 79.2 );//chi 
-		pose.set_torsion( TorsionID( seq_num, id::CHI, 2 ), 36.9 ); //nu2 
-		pose.set_torsion( TorsionID( seq_num, id::CHI, 3 ), 94.7 ); //nu1 
+		pose.set_torsion( TorsionID( seq_num, id::BB,  4 ), 82.2 ); //delta
+		pose.set_torsion( TorsionID( seq_num, id::CHI, 1 ), 79.2 );//chi
+		pose.set_torsion( TorsionID( seq_num, id::CHI, 2 ), 36.9 ); //nu2
+		pose.set_torsion( TorsionID( seq_num, id::CHI, 3 ), 94.7 ); //nu1
 
 
 	}
@@ -3374,18 +3374,18 @@ principal_angle_degrees( T const & angle )
 		conformation::Residue const & rsd=pose.residue(seq_num); //static_pose
 
 		for(Size at=1; at<=rsd.natoms(); at++){ //I wonder if we should just consider heavy atom? (rsd_1.nheavyatoms())
-		
+
 			std::cout << "atom=" << at  << "|name=" << rsd.type().atom_name(at) << "|type=" << rsd.atom_type(at).name();
 			std::cout << "|element()=" << rsd.atom_type(at).element() << "|" << std::endl;
 
-		}		
+		}
 
 	}
 /////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	print_individual_atom_info(core::conformation::Residue const & rsd, Size const atomno, std::string const rsd_name){
 		std::cout << "individual_atom_info: rsd_name " << rsd_name;
-		
+
 		std::cout << " atom=" << atomno  << "|name=" << rsd.type().atom_name(atomno) << "|type=" << rsd.atom_type(atomno).name();
 		std::cout << "|element()=" << rsd.atom_type(atomno).element() << "|" << std::endl;
 
@@ -3395,23 +3395,23 @@ principal_angle_degrees( T const & angle )
 
 	void
 	print_base_state(std::string const tag, BaseState const base_state){
-	
+
 		std::string base_state_string="";
 
-		if(base_state==BOTH){ 				
+		if(base_state==BOTH){
 			base_state_string="BOTH";
-		}else if(base_state==ANTI){ 	
+		}else if(base_state==ANTI){
 			base_state_string="ANTI";
-		}else if(base_state==SYN){ 		
+		}else if(base_state==SYN){
 			base_state_string="SYN" ;
-		}else if(base_state==NONE){		
+		}else if(base_state==NONE){
 			base_state_string="NONE";
 		}else{
 			std::cout << "Invalid base state=" << base_state << std::endl;
 			utility_exit_with_message( "Invalid base state!" );
 		}
 
-		std::cout << tag << std::setw(4) << std::left <<  base_state_string << " ";	
+		std::cout << tag << std::setw(4) << std::left <<  base_state_string << " ";
 	}
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -3421,18 +3421,18 @@ principal_angle_degrees( T const & angle )
 
 		std::string pucker_state_string="";
 
-		if(pucker_state==NORTH){ 				
+		if(pucker_state==NORTH){
 			pucker_state_string="NORTH";
-		}else if(pucker_state==SOUTH){ 	
+		}else if(pucker_state==SOUTH){
 			pucker_state_string="SOUTH";
-		}else if(pucker_state==ALL){		
+		}else if(pucker_state==ALL){
 			pucker_state_string="ALL";
-		}else{ 	
+		}else{
 			std::cout << "Invalid pucker state=" << pucker_state << std::endl;
 			utility_exit_with_message( "Invalid pucker state!" );
 		}
 
-		std::cout << tag << std::setw(5) << std::left << pucker_state_string << " ";	
+		std::cout << tag << std::setw(5) << std::left << pucker_state_string << " ";
 
 	}
 
@@ -3466,10 +3466,10 @@ principal_angle_degrees( T const & angle )
 
 		//		sampling_scorefxn_->set_weight( rna_sugar_close, 0.0 ); (TURN IT BACK ON: RD 01/31/2010)
 
-		sampling_scorefxn_->set_weight( fa_rep, 0.12 ); 
+		sampling_scorefxn_->set_weight( fa_rep, 0.12 );
 		//Only important only if fa_rep score in weight file is not 0.12..want to make sure that changing fa_rep in weight file doesn't effect sampling process. May 23 2010 Parin S.
 
-		sampling_scorefxn_->set_weight( linear_chainbreak, 0.0); 
+		sampling_scorefxn_->set_weight( linear_chainbreak, 0.0);
 		sampling_scorefxn_->set_weight( angle_constraint, 0.0 );
 		sampling_scorefxn_->set_weight( atom_pair_constraint, 0.0 );
 		//This makes sure that there are no chain_break score involve in the full_score screening.
@@ -3509,7 +3509,7 @@ principal_angle_degrees( T const & angle )
 		o2star_pack_scorefxn_->set_weight( hbond_sr_bb_sc, sampling_scorefxn_->get_weight( hbond_sr_bb_sc ) );
 		o2star_pack_scorefxn_->set_weight( hbond_sc, sampling_scorefxn_->get_weight( hbond_sc ) );
 		///Warning, don't include hbond_intra, since hbond_intra HAVE NOT been been optimized for packing!
-		
+
 		o2star_pack_scorefxn_->set_weight( fa_sol, sampling_scorefxn_->get_weight( lk_nonpolar ) ); //// note that geom_sol is not optimized well --> replace with lk_sol for now. //IS THIS A MISTAKE???
 
 		o2star_pack_scorefxn_->set_energy_method_options( sampling_scorefxn_->energy_method_options() ); //This set NO_HB_ENV_DEP, INCLUDE_INTRA_RES_RNA_HB and etcs.
@@ -3530,10 +3530,10 @@ principal_angle_degrees( T const & angle )
 
 		for(Size seq_num=1; seq_num<=template_pose.total_residue(); seq_num++){
 			if (template_pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue;	//Fang's electron density code
-			if(std::abs( template_pose.torsion(TorsionID( seq_num, id::CHI, 4 )) - mod_pose.torsion(TorsionID( seq_num, id::CHI, 4 )) ) > 0.001 ){ 
+			if(std::abs( template_pose.torsion(TorsionID( seq_num, id::CHI, 4 )) - mod_pose.torsion(TorsionID( seq_num, id::CHI, 4 )) ) > 0.001 ){
 				//the two o2star torsions are not the same! Basically don't want to trigger refolding if need not to.
 				do_update_list[seq_num]=true;
-			}			
+			}
 		}
 
 		for(Size seq_num=1; seq_num<=template_pose.total_residue(); seq_num++){

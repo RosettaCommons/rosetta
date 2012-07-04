@@ -10,12 +10,13 @@
 // (C) 199x-2007 University of North Carolina, Chapel Hill
 // (C) 199x-2007 Vanderbilt University
 
-/// @file swa_rna_main.cc
-/// @author Parin Sripakdeevong (sripakpa@stanford.edu), Rhiju Das (rhiju@stanford.edu)
+/// @file swa_monte_Carlo.cc
+/// @author Rhiju Das (rhiju@stanford.edu)
 
 // libRosetta headers
 #include <core/types.hh>
 
+// do we need all these?
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueSelector.hh>
@@ -64,6 +65,7 @@
 #include <core/pose/PDBInfo.hh>
 
 #include <utility/vector1.hh>
+#include <utility/tools/make_vector1.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
 #include <numeric/xyzVector.hh>
@@ -125,7 +127,33 @@ using io::pdb::dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
+// SWA Monte Carlo -- July 2, 2012 -- Rhiju Das
+//
+// TO DO
+//
+//  Clean up pose setup, inherited from SWA code -- all these options and setup functions
+//    should go into their own .cc file.
+//
+//  Generalize addition/deletion code to handle ends with 3' termini -- code
+//    below only handles building back from 3' termini (for historical reasons)
+//
+//  Add screen for building new base [base atr/rep] -- like SWA
+//
+//  Set up GAAA tetraloop run [should be faster test case], with buildup
+//   from either end.
+//
+//  Set up chainbreak variants when all residues are formed.
+//
+//  Set up loop closer move (perhaps just analytical loop close move?)
+//
+//  Set up constraints  when gap is 1,2, etc.
+//
+//  encapsulate -- move into a namespace? lay out plans for others?
+//
 
+
+// A lot of these options should be placed into an 'official' namespace
+// and the SWA RNA pose setup should go to its own function
 OPT_KEY( Boolean, do_not_sample_multiple_virtual_sugar)
 OPT_KEY( Boolean, sample_ONLY_multiple_virtual_sugar)
 OPT_KEY( Boolean, skip_sampling)
@@ -224,6 +252,9 @@ OPT_KEY( Real, kT )
 OPT_KEY( Integer, n_sample )
 OPT_KEY( Boolean, skip_randomize );
 OPT_KEY( Boolean, sample_all_o2star );
+OPT_KEY( Boolean, do_add_delete );
+OPT_KEY( Boolean, presample_added_residue );
+OPT_KEY( Integer, presample_internal_cycles );
 
 
 //////////////////////////////////////////////////
@@ -363,7 +394,6 @@ get_nucleoside_torsion( pose::Pose const & pose, Size const moving_nucleoside ){
 
 	return torsion_set;
 }
-
 ///////////////////////////////////////////////////
 void
 sample_near_suite_torsion( pose::Pose & pose, Size const moving_suite, Real const sample_range){
@@ -371,7 +401,26 @@ sample_near_suite_torsion( pose::Pose & pose, Size const moving_suite, Real cons
 	sample_near_suite_torsion( torsion_set, sample_range );
 	apply_suite_torsion( torsion_set, pose, moving_suite );
 }
+///////////////////////////////////////////////////
+void
+crankshaft_alpha_gamma( pose::Pose & pose, Size const moving_suite, Real const sample_range){
 
+	using namespace id;
+
+	TorsionID alpha_torsion_id( moving_suite+1, id::BB, 1 );
+	TorsionID gamma_torsion_id( moving_suite+1, id::BB, 3 );
+
+	Real alpha = pose.torsion( alpha_torsion_id );
+	Real gamma = pose.torsion( gamma_torsion_id );
+	Real const perturb = RG.gaussian() * sample_range;
+
+	alpha += perturb;
+	gamma -= perturb;
+
+	pose.set_torsion( alpha_torsion_id, alpha );
+	pose.set_torsion( gamma_torsion_id, gamma );
+
+}
 ///////////////////////////////////////////////////
 void
 sample_near_nucleoside_torsion( pose::Pose & pose, Size const moving_res, Real const sample_range){
@@ -731,25 +780,88 @@ setup_pose_setup_class(protocols::swa::rna::StepWiseRNA_JobParametersOP & job_pa
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Following assumed that pose is already properly aligned to native pose!
 void
 output_silent_file( pose::Pose const & pose, Size const n_accept, Size const count,
 										utility::vector1< Size > working_res_list,
+										std::map< Size, Size > sub_to_full,
 										pose::Pose const & native_pose,
 										core::io::silent::SilentFileDataOP silent_file_data,
 										std::string const & silent_file ){
+
   using namespace core::io::silent;
+  using namespace core::conformation;
+
+	// useful to keep track of what's a working residue and what's not.
+	utility::vector1< bool > is_working_res;
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) is_working_res.push_back( false );
+	for ( Size n = 1; n <= working_res_list.size(); n++ ) is_working_res[ working_res_list[n] ] = true;
+
 	std::string const tag = "S_"+lead_zero_string_of(n_accept,6);
 	BinaryRNASilentStruct s( pose, tag );
 
-	///////////////////////
-	///////////////////////
-	// Must fill this in
-	///////////////////////
-	///////////////////////
+	// could initialize this once somewhere else.
+	utility::vector1< std::string > next_suite_atoms;
+	next_suite_atoms.push_back(" P  ");
+	next_suite_atoms.push_back(" O1P");
+	next_suite_atoms.push_back(" O2P");
+	next_suite_atoms.push_back(" O5*");
+
+	Real dev( 0.0 );
 	Real rmsd( 0.0 );
+	Size natoms( 0 );
+
+	for ( Size n = 1; n <= working_res_list.size(); n++ ){
+		Size const i      = working_res_list[ n ];
+		Size const i_full = sub_to_full[ i ];
+
+		Residue const & rsd        = pose.residue( i );
+		Residue const & rsd_native = native_pose.residue( i_full );
+		runtime_assert( rsd.aa() == rsd_native.aa() );
+
+		for ( Size j = 1; j <= rsd.nheavyatoms(); j++ ){
+			if ( rsd.is_virtual( j ) ) continue;  // note virtual phosphates on 5'-ends of loops.
+			std::string atom_name = rsd.atom_name( j );
+			//			std::cout << "RMSD: " << i << atom_name << std::endl;
+			if ( !rsd_native.has( atom_name ) ) continue;
+			Size const j_full = rsd_native.atom_index( atom_name );
+			dev += ( rsd_native.xyz( j_full ) - rsd.xyz( j ) ).length_squared();
+			natoms++;
+		}
+
+		// also add in atoms in next suite, if relevant (and won't be covered later in rmsd calc.)
+		if ( i < pose.total_residue() && !is_working_res[ i+1 ] &&  !pose.fold_tree().is_cutpoint(i) ){
+			Size const i_next      = i+1;
+			Size const i_next_full = sub_to_full[ i+1 ];
+			runtime_assert( i_next_full == i_full + 1 ); //better be a connection in both the pose & native pose!
+
+			Residue const & rsd_next        = pose.residue( i_next );
+			Residue const & rsd_next_native = native_pose.residue( i_next_full );
+			runtime_assert( rsd_next.aa() == rsd_next_native.aa() );
+
+			for (Size k = 1; k <= next_suite_atoms.size(); k++ ){
+				std::string atom_name = next_suite_atoms[ k ];
+				//std::cout << "RMSD: " << i+1 << atom_name << std::endl;
+				runtime_assert( rsd_next.has( atom_name ) );
+				runtime_assert( rsd_next_native.has( atom_name ) );
+				Size const j = rsd_next.atom_index( atom_name );
+				Size const j_full = rsd_next_native.atom_index( atom_name );
+				dev += ( rsd_next_native.xyz( j_full ) - rsd_next.xyz( j ) ).length_squared();
+				natoms++;
+			}
+
+		}
+
+	}
+	if ( natoms > 0 ) rmsd = std::sqrt( dev / static_cast<Real>( natoms ) );
 
 	s.add_energy( "rms",rmsd );
 	s.add_string_value( "count", ObjexxFCL::fmt::I(9,count) );
+
+	std::string built_res = "";
+	for ( Size n = 1; n <= working_res_list.size(); n++ ) built_res += string_of(working_res_list[n]);
+	s.add_string_value( "built_res", built_res);
+
 	silent_file_data->write_silent_struct( s, silent_file, true /*score_only*/ );
 }
 
@@ -787,41 +899,53 @@ random_torsion_move( pose::Pose & pose,
 	}
 
 
-	if ( moving_residue_case == CHAIN_TERMINUS_3PRIME ){
+	if ( moving_residue_case == CHAIN_TERMINUS_3PRIME  || moving_residue_case == CHAIN_TERMINUS_5PRIME ){
 
 		// an edge residue -- change both its nucleoside & suite -- can go crazy.
 		Size const nucleoside_num = i;
-		Size const suite_num = i-1;
-		sample_near_suite_torsion( pose, suite_num, sample_range);
 		sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range);
-		move_type += "-nuc" + string_of(nucleoside_num) + "-suite-" + string_of(suite_num);
 
-	} else if ( moving_residue_case == CHAIN_TERMINUS_5PRIME ){
+		Size suite_num( 0 );
+		if ( moving_residue_case == CHAIN_TERMINUS_3PRIME ) suite_num = i-1;
+		else suite_num = i;
 
-		// an edge residue -- change both its nucleoside & suite -- can go crazy.
-		Size const nucleoside_num = i;
-		Size const suite_num = i;
-		sample_near_suite_torsion( pose, suite_num, sample_range);
-		sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range);
-		move_type += "-nuc" + string_of(nucleoside_num) + "-suite-" + string_of(suite_num);
+		if ( RG.uniform() < 0.5) {
+			sample_near_suite_torsion( pose, suite_num, sample_range);
+			move_type += "-nuc-suite";
+		} else {
+			crankshaft_alpha_gamma( pose, suite_num, sample_range);
+			move_type += "-nuc-crank";
+		}
 
 	} else {
 		runtime_assert( moving_residue_case == INTERNAL ); // cannot handle floating base yet.
 
 		// don't do anything super-crazy -- either do previous suite, current nucleoside, or next suite.
 		Real const random_number = RG.uniform();
-		if ( random_number < 0.3 ){
-			Size const suite_num = i-1;
-			sample_near_suite_torsion( pose, suite_num, sample_range);
-			move_type += "-suite" + string_of(suite_num);
-		} else if ( random_number < 0.6 ){
-			Size const suite_num = i;
-			sample_near_suite_torsion( pose, suite_num, sample_range);
-			move_type += "-suite" + string_of(suite_num);
+
+		if ( random_number < 0.6 ){
+
+			Size suite_num( 0 );
+			if ( RG.uniform() < 0.5) {
+				suite_num= i-1;
+			} else {
+				suite_num= i;
+			}
+
+			if ( RG.uniform() < 0.5) {
+				sample_near_suite_torsion( pose, suite_num, sample_range);
+				//move_type += "-suite" + string_of(suite_num);
+				move_type += "-suite";
+			} else {
+				crankshaft_alpha_gamma( pose, suite_num, sample_range);
+				//move_type += "-suite" + string_of(suite_num);
+				move_type += "-crank";
+			}
 		} else {
 			Size const nucleoside_num = i;
 			sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range);
-			move_type += "-nuc" + string_of(nucleoside_num);
+			//move_type += "-nuc" + string_of(nucleoside_num);
+			move_type += "-nuc";
 		}
 
 	}
@@ -939,9 +1063,9 @@ swa_rna_sample()
   Pose pose;
 	stepwise_rna_pose_setup->apply( pose );
 	stepwise_rna_pose_setup->setup_native_pose( pose ); //NEED pose to align native_pose to pose.
-	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 800, 800 );
 
 	pose.dump_pdb( "START.pdb" );
+	job_parameters->working_native_pose()->dump_pdb( "working_native.pdb" );
 	job_parameters->working_native_pose()->dump_pdb( "working_native.pdb" );
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -957,14 +1081,19 @@ swa_rna_sample()
 	utility::vector1< Size > moving_res_list = job_parameters->working_moving_res_list();
 	std::map< Size, Size > sub_to_full = job_parameters->sub_to_full();
 	std::string full_sequence = job_parameters->full_sequence();
-
+	pose::Pose const & native_pose = *( stepwise_rna_pose_setup->get_native_pose() );
 
 	std::string const silent_file = option[ out::file::silent ]();
 	SilentFileDataOP silent_file_data = new SilentFileData;
 
 	( *scorefxn )( pose ); //score it for first silent output
-	//output_silent_file( pose, 0, 0, job_parameters, silent_file_data, silent_file );
+	output_silent_file( pose, 0, 0, moving_res_list, sub_to_full, native_pose, silent_file_data, silent_file );
 	Real const output_score_cutoff_ = option[ output_score_cutoff ]();
+	bool const do_add_delete_ = option[ do_add_delete ]();
+	bool const presample_added_residue_ = option[ presample_added_residue ]();
+	Size const internal_cycles_ = option[ presample_internal_cycles ](); // totally arbitrary
+
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 800, 800 );
 
 	std::string move_type( "" );
 	if ( ! option[ skip_randomize ]() ){
@@ -995,16 +1124,19 @@ swa_rna_sample()
 		move_type = "";
 		moving_res_list_new = moving_res_list;
 		sub_to_full_new = sub_to_full;
-		if (random_number < 0.05 ) {
+
+		if ( random_number < 0.01 && do_add_delete_ ) {
 
 			Real const random_number2 = RG.uniform();
 			if ( random_number2 < 0.5 ) {
+				///////////////////////////////////
+				// Deletion
+				///////////////////////////////////
 				// try to delete a sampled residue
 				if ( moving_res_list.size() > 1 ){
-
 					move_type = "delete";
 
-					//std::cout << "Before delete: " << (*scorefxn)( pose ) << std::endl;
+					std::cout << "Before delete: " << (*scorefxn)( pose ) << std::endl;
 					//pose.dump_pdb( "before_delete.pdb" );
 
 					//std::cout << "ATTEMPTING DELETE! " << std::endl;
@@ -1026,6 +1158,9 @@ swa_rna_sample()
 				}
 
 			} else {
+				///////////////////////////////////
+				// Addition
+				///////////////////////////////////
 				// try to add a residue that is supposed to be sampled.
 
 				Size const res_to_add = moving_res_list[1]; // for now, just build off 5' fragment.
@@ -1033,7 +1168,7 @@ swa_rna_sample()
 
 					move_type = "add";
 
-					//std::cout << "Before add: " << (*scorefxn)( pose ) << std::endl;
+					std::cout << "Before add: " << (*scorefxn)( pose ) << std::endl;
 					//pose.dump_pdb( "before_add.pdb" );
 
 					char newrestype = full_sequence[ (sub_to_full[ res_to_add ] - 1) - 1 ];
@@ -1065,8 +1200,28 @@ swa_rna_sample()
 					sample_near_suite_torsion( pose, suite_num, sample_range_large);
 					sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range_large);
 
+					///////////////////////////////////
+					// Presampling added residue
+					///////////////////////////////////
+					if ( presample_added_residue_ ){
+						std::cout << "presampling added residue! " << res_to_add << std::endl;
+						MonteCarloOP monte_carlo_internal = new MonteCarlo( pose, *scorefxn, option[ kT ]() );
+
+						for ( Size count_internal = 1; count_internal <= internal_cycles_; count_internal++ ){
+
+							sample_near_suite_torsion( pose, suite_num, sample_range_large);
+							sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range_large);
+							monte_carlo_internal->boltzmann( pose, move_type );
+							sample_near_suite_torsion( pose, suite_num, sample_range_small);
+							sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range_small);
+							monte_carlo_internal->boltzmann( pose, move_type );
+							//std::cout << "During presampling: " << (*scorefxn)( pose );
+						}
+					}
+
+
 					//std::cout << pose.annotated_sequence() << std::endl;
-					//std::cout << "After add: " << (*scorefxn)( pose ) << std::endl << std::endl;
+					std::cout << "After add: " << (*scorefxn)( pose ) << std::endl << std::endl;
 					//					pose.dump_pdb( "after_add.pdb" );
 
 				}
@@ -1093,10 +1248,12 @@ swa_rna_sample()
 			if ( o2star_res > 0 ) {
 				Real const random_number2 = RG.uniform();
 				if ( random_number2  < 0.5 ){
-					move_type = "sml-o2star"+string_of( o2star_res);
+					//move_type = "sml-o2star"+string_of( o2star_res);
+					move_type = "sml-o2star";
 					sample_near_o2star_torsion( pose, o2star_res, sample_range_small);
 				} else {
-					move_type = "lrg-o2star"+string_of( o2star_res );
+					//move_type = "lrg-o2star"+string_of( o2star_res );
+					move_type = "lrg-o2star";
 					sample_near_o2star_torsion( pose, o2star_res, sample_range_large);
 				}
 			}
@@ -1116,15 +1273,18 @@ swa_rna_sample()
 		Real const current_score = (*scorefxn)( pose );
 
 		// Need to fix following to not be dependent on job_parameters
-		//	if (accepted && current_score < output_score_cutoff_ ) output_silent_file( pose, n_accept, count, moving_res_list, silent_file_data, silent_file );
+		if (accepted && current_score < output_score_cutoff_ ) output_silent_file( pose, n_accept, count, moving_res_list, sub_to_full, native_pose, silent_file_data, silent_file );
 
 	}
+
+	output_silent_file( pose, n_accept, num_cycle, moving_res_list, sub_to_full, native_pose, silent_file_data, silent_file );
 
 	pose.dump_pdb( "FINAL.pdb" );
 	monte_carlo_->show_counters();
 	monte_carlo_->recover_low( pose );
 
 
+	output_silent_file( pose, n_accept, num_cycle+1, moving_res_list, sub_to_full, native_pose, silent_file_data, silent_file );
 	if ( option[ out::file::o].user() ) { // makes life easier on cluter.
 		pose.dump_pdb( option[ out::file::o ]() );
 	} else {
@@ -1271,6 +1431,9 @@ main( int argc, char * argv [] )
 	NEW_OPT( kT, "kT of simulation in RU", 2.0 );
 	NEW_OPT( skip_randomize, "do not randomize...", false );
 	NEW_OPT( sample_all_o2star, "do not focus o2star sampling at residue of interest...", false );
+	NEW_OPT( do_add_delete, "try add & delete moves...", false );
+	NEW_OPT( presample_added_residue, "when adding a residue, do a little monte carlo to try to get it in place", false );
+	NEW_OPT( presample_internal_cycles, "when adding a residue, number of monte carlo cycles", 100 );
 
 
 
