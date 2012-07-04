@@ -29,6 +29,7 @@
 // Numeric headers
 
 // ObjexxFCL headers
+#include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
 #include <utility/io/izstream.hh>
@@ -125,6 +126,8 @@ UnfoldedStatePotential::read_database_file( std::string const & filename ) {
 		EnergyMap emap;
 
 		l >> tlc;
+		ObjexxFCL::lpad( tlc, 3 ); // RNA codes are rA, etc. (two letters)
+
 		for ( Size i=1; i <= ntypes; ++i ) {
 			l >> val;
 			if ( l.fail() ) {
@@ -136,6 +139,7 @@ UnfoldedStatePotential::read_database_file( std::string const & filename ) {
 		// add tlc/emap pair to map
 		unfolded_energy_[ tlc ] = emap;
 	}
+
 }
 
 scoring::EnergyMap
@@ -158,7 +162,7 @@ UnfoldedStatePotential::pose_raw_unfolded_state_energymap( pose::Pose const & po
 	EnergyMap unf_total;
 
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-		if ( ! pose.residue(ii).is_protein() ) {
+		if ( ! pose.residue(ii).is_protein() && ! pose.residue(ii).is_RNA()  ) {
 			continue;
 		}
 

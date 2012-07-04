@@ -669,6 +669,8 @@ ScoringManager::get_UnfoldedStatePotential( std::string const & type ) const
 			unf_state_ = new UnfoldedStatePotential( basic::database::full_name( "scoring/score_functions/unfolded/unfolded_state_residue_energies_score12" ) );
 		} else if ( type == UNFOLDED_MM_STD ) {
 			unf_state_ = new UnfoldedStatePotential( basic::database::full_name( "scoring/score_functions/unfolded/unfolded_state_residue_energies_mm_std" ) );
+		} else if ( type == UNFOLDED_RNA ) {
+			unf_state_ = new UnfoldedStatePotential( basic::database::full_name( "scoring/score_functions/unfolded/unfolded_state_residue_energies_rna" ) );  // This will later get more elaborated
 		} else {
 			utility_exit_with_message("unrecognized unfolded type: "+type );
 		}
@@ -1163,6 +1165,7 @@ std::string const FA_STANDARD_SOFT   ( "FA_STANDARD_SOFT" );
 
 std::string const UNFOLDED_SCORE12( "UNFOLDED_SCORE12" );
 std::string const UNFOLDED_MM_STD( "UNFOLDED_MM_STD" );
+std::string const UNFOLDED_RNA( "UNFOLDED_RNA" ); // This will later get more elaborated
 
 } // namespace core
 } // namespace scoring
