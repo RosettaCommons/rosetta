@@ -174,7 +174,7 @@ utility::vector1<Size> find_uncovered_residues (core::pose::Pose const & pose,
 		if ( pose.pdb_info() != 0) {
 			bool covered(false);
 			for ( Size i=1; i<=covered_residues.size(); ++i) {
-				if ( pose.pdb_info()->number(ires) == i ) {
+				if ( pose.pdb_info()->number(ires) == covered_residues[i] ) {
 					covered = true;
 					break;
 				}
@@ -339,7 +339,6 @@ DomainAssembly::run()
 				utility::vector1<Size> uncovered_residues = find_uncovered_residues(*poses_[jpose], covered_resnum);
 				if (uncovered_residues.size() == 0) continue;
 				
-				TR << "Inserting pose" << std::endl;
 				core::pose::Pose inserted_pose(*poses_[jpose]);
 				utility::vector1<int> remaining_resnum;
 				remove_residues(inserted_pose, covered_resnum, remaining_resnum);
@@ -377,7 +376,7 @@ DomainAssembly::run()
 						Size iatom = full_length_pose->residue_type(ires).atom_index("CA");
 						Size jatom = full_length_pose->residue_type(jres).atom_index("CA");
 						
-						TR << "Adding constraints to residue " << ires << " and " << jres << std::endl;
+						TR.Debug << "Adding constraints to residue " << ires << " and " << jres << std::endl;
 						full_length_pose->add_constraint(
 														 new core::scoring::constraints::AtomPairConstraint(
 																											core::id::AtomID(iatom, ires),
