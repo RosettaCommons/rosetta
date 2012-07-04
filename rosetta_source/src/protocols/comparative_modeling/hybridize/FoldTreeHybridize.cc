@@ -356,6 +356,7 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 		if (!uncovered) continue;
 
 		core::Real selector = numeric::random::uniform();
+		if (domain_assembly_) selector = 0.; // always add additional domain if in domain assembly
 		TR << "Consider " << wted_insertions_to_consider[i].second.start() << "," << wted_insertions_to_consider[i].second.stop() << std::endl;
 		if (selector <= wted_insertions_to_consider[i].first) {
 			TR << " ====> taken!" << std::endl;
