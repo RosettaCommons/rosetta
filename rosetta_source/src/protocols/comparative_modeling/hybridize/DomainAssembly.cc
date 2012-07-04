@@ -230,25 +230,26 @@ DomainAssembly::run()
 {
 	if (poses_.size() < 2) return;
 	
-	int coverage_start = poses_[1]->pdb_info()->number(1);
-	int coverage_end   = poses_[1]->pdb_info()->number(1);
+	utility::vector1<int> coverage_start;
+	utility::vector1<int> coverage_end;
+	
+	int range_start = poses_[1]->pdb_info()->number(1);
+	int range_end   = poses_[1]->pdb_info()->number(1);
 	for (Size ires = 1; ires <= poses_[1]->total_residue(); ++ires) {
-		if (poses_[1]->pdb_info()->number(ires) < coverage_start) {
-			coverage_start = poses_[1]->pdb_info()->number(ires);
+		if (poses_[1]->pdb_info()->number(ires) < range_start) {
+			range_start = poses_[1]->pdb_info()->number(ires);
 		}
-		if (poses_[1]->pdb_info()->number(ires) > coverage_end) {
-			coverage_end = poses_[1]->pdb_info()->number(ires);
+		if (poses_[1]->pdb_info()->number(ires) > range_end) {
+			range_end = poses_[1]->pdb_info()->number(ires);
 		}
 	}
-	TR << coverage_start << std::endl;
-	TR << coverage_end << std::endl;
-	
-	int covered_size = coverage_end - coverage_start + 1;
+	coverage_start.push_back(range_start);
+	coverage_end.push_back(range_end);
 	
 	for (Size ipose = 2; ipose <= poses_.size(); ++ipose) {
 		// check if the current pose is overlapped with any previous poses
-		int range_start = poses_[ipose]->pdb_info()->number(1);
-		int range_end   = poses_[ipose]->pdb_info()->number(1);
+		range_start = poses_[ipose]->pdb_info()->number(1);
+		range_end   = poses_[ipose]->pdb_info()->number(1);
 		for (Size ires = 1; ires <= poses_[ipose]->total_residue(); ++ires) {
 			if (poses_[ipose]->pdb_info()->number(ires) < range_start) {
 				range_start = poses_[ipose]->pdb_info()->number(ires);
@@ -257,29 +258,32 @@ DomainAssembly::run()
 				range_end = poses_[ipose]->pdb_info()->number(ires);
 			}
 		}
-		int overlap_start = range_start > coverage_start ? range_start:coverage_start;
-		int overlap_end   = range_end   < coverage_end   ? range_end:coverage_end;
-		int overlap = overlap_end - overlap_start; // end could be smaller than start
+		coverage_start.push_back(range_start);
+		coverage_end.push_back(range_end);
 		
-		TR << range_start << std::endl;
-		TR << range_end << std::endl;
-
 		bool align_success(false);
-		// if overlap, use TMalign to orient poses_[ipose]
-		Size normalize_length = covered_size < poses_[ipose]->total_residue() ? covered_size:poses_[ipose]->total_residue();
-		if (overlap > 0.3 * normalize_length) {
-			std::list <Size> i_residue_list;
-			std::list <Size> full_residue_list;
-			for (Size ires = 1; ires <= poses_[ipose]->total_residue(); ++ires) {
-				full_residue_list.push_back(ires);
-				if (poses_[ipose]->pdb_info()->number(ires) >= overlap_start &&
-					poses_[ipose]->pdb_info()->number(ires) <= overlap_end) {
-					i_residue_list.push_back(ires);
-				}
+		for (Size jpose = 1; jpose < ipose; ++jpose) {
+				int covered_size = coverage_end[jpose] - coverage_start[jpose] + 1;
+				int overlap_start = range_start > coverage_start[jpose] ? range_start:coverage_start[jpose];
+				int overlap_end   = range_end   < coverage_end[jpose]   ? range_end:coverage_end[jpose];
+				int overlap = overlap_end - overlap_start; // end could be smaller than start
+				Size normalize_length = covered_size < poses_[ipose]->total_residue() ? covered_size:poses_[ipose]->total_residue();
 				
-			}
+				// if overlap, use TMalign to orient poses_[ipose]
+				if (overlap > 0.3 * normalize_length) {
+					// collect residues in ipose
+					std::list <Size> i_residue_list; // residue numbers in the overlapped region
+					std::list <Size> full_residue_list; // all residue numbers in ipose, used for transformation after alignment
+					for (Size ires = 1; ires <= poses_[ipose]->total_residue(); ++ires) {
+						full_residue_list.push_back(ires);
+						if (poses_[ipose]->pdb_info()->number(ires) >= overlap_start &&
+							poses_[ipose]->pdb_info()->number(ires) <= overlap_end) {
+							i_residue_list.push_back(ires);
+						}
+						
+					}
 			
-			for (Size jpose = 1; jpose < ipose; ++jpose) {
+				// collect residues in the pose to be aligned to
 				std::list <Size> j_residue_list;
 				for (Size jres = 1; jres <= poses_[jpose]->total_residue(); ++jres) {
 					if (poses_[jpose]->pdb_info()->number(jres) >= overlap_start &&
@@ -327,6 +331,7 @@ DomainAssembly::run()
 
 		// if not overlap, use docking to align to the largest non-overlapped region
 		if (!align_success) {
+			using namespace ObjexxFCL::fmt;
 			// construct a pose for domain assembly
 			core::pose::PoseOP full_length_pose;
 			Size first_domain_end;
@@ -351,22 +356,24 @@ DomainAssembly::run()
 					full_length_pose->pdb_info(pdb_info);
 				}
 				else {
+					Size njump = full_length_pose->fold_tree().num_jump();
 					full_length_pose->conformation().insert_conformation_by_jump( inserted_pose.conformation(),
-																				 full_length_pose->total_residue() + 1,
-																				 full_length_pose->total_residue(),
-																				 1);
+																				 full_length_pose->total_residue() + 1, njump+1,
+																				 full_length_pose->total_residue() );
 				}
+				//full_length_pose->dump_pdb("full_length_"+I(1,ipose)+"_"+I(1,jpose)+".pdb");
 			}
 
 			Size nres_domain1 = full_length_pose->total_residue();
 
 			for (Size ires=1;ires<=poses_[ipose]->total_residue();++ires) resnum.push_back(poses_[ipose]->pdb_info()->number(ires));
 			
+			Size jump_num = full_length_pose->fold_tree().num_jump()+1;
 			full_length_pose->conformation().insert_conformation_by_jump( poses_[ipose]->conformation(),
-																		 full_length_pose->total_residue() + 1,
-																		 full_length_pose->total_residue(),
-																		 1);
-
+																		 full_length_pose->total_residue() + 1, jump_num,
+																		 full_length_pose->total_residue() );
+			//TR << full_length_pose->fold_tree() << std::endl;
+			//full_length_pose->dump_pdb("full_length_"+I(1,ipose)+"before_docking.pdb");
 
 			for (Size ires=1; ires <= nres_domain1; ++ires) {
 				for (Size jres=nres_domain1+1; jres <= full_length_pose->total_residue(); ++jres) {
@@ -477,25 +484,43 @@ DomainAssembly::run()
 			scorefxn_->set_weight( core::scoring::atom_pair_constraint, 1.0 );
 
 			// randomize orientation
-			protocols::rigid::RigidBodyRandomizeMoverOP rb_mover = new protocols::rigid::RigidBodyRandomizeMover(*full_length_pose);
+			protocols::rigid::RigidBodyRandomizeMoverOP rb_mover = new protocols::rigid::RigidBodyRandomizeMover(*full_length_pose, jump_num);
 			rb_mover->apply(*full_length_pose);
 									
 			// put the two domains apart
 			core::scoring::ScoreFunctionOP simple_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( 
 																				   "score0", "" );
 
-			protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( *full_length_pose, 1) );
-			while ((*simple_scorefxn)(*full_length_pose) > 10.) {
+			protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( *full_length_pose, jump_num) );
+			translate->step_size( 1000. );
+			core::Vector translation_axis(1.0,0.0,0.0);
+			translate->trans_axis(translation_axis);
+			translate->apply( *full_length_pose );
+			
+			core::Real unbound_score = (*simple_scorefxn)(*full_length_pose);
+
+			translation_axis = core::Vector(-1.0,0.0,0.0);
+			translate->trans_axis(translation_axis);
+			translate->apply( *full_length_pose );
+
+			core::Real max_step_size(5.0);
+			core::Size counter(0);
+			while ((*simple_scorefxn)(*full_length_pose) > unbound_score+10.) {
 				//TR << "Random translation " << (*simple_scorefxn)(*full_length_pose) << std::endl;
-				translate->step_size( 5.*RG.uniform() );
-				core::Vector translation_axis(RG.uniform(),RG.uniform(),RG.uniform());
-				
+				translate->step_size( max_step_size*RG.uniform() );
+				translation_axis = core::Vector(RG.uniform(),RG.uniform(),RG.uniform());
 				translate->trans_axis(translation_axis);
 				translate->apply( *full_length_pose );
+				counter++;
+				if (counter > 100) {
+					max_step_size *= 1.5;
+					counter = 0;
+				}
 			}
+			//full_length_pose->dump_pdb("full_length_"+I(1,ipose)+"before_docking2.pdb");
 			
 			using namespace protocols::docking;
-			DockingLowResOP docking_mover = new DockingLowRes(scorefxn_, 1);
+			DockingLowResOP docking_mover = new DockingLowRes(scorefxn_, jump_num);
 			docking_mover->set_outer_cycles(20);
 			docking_mover->apply(*full_length_pose);
 			//scorefxn_->show(*full_length_pose);
@@ -521,12 +546,9 @@ DomainAssembly::run()
 
 			TMalign_poses(*poses_[ipose], *full_length_pose, residue_list1, residue_list2);
 
+			//full_length_pose->dump_pdb("full_length_"+I(1,ipose)+"after_docking.pdb");
 			//poses_[ipose]->dump_pdb("aligned_pose.pdb");
 		}
-		
-		coverage_start = range_start < coverage_start ? range_start:coverage_start;
-		coverage_end   = range_end   > coverage_end   ? range_end:coverage_end;
-
 	}
 }
 	
