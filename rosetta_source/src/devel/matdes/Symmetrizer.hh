@@ -49,7 +49,6 @@ class Symmetrizer : public protocols::moves::Mover {
 
 public:
   Symmetrizer();
-	Symmetrizer(const Symmetrizer& rval);
 
   // --- virtual functions from mover ---
   virtual std::string get_name() const { return "Symmetrizer"; }

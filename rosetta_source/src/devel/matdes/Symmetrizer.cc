@@ -70,18 +70,17 @@ SymmetrizerMoverCreator::mover_name()
 
 Symmetrizer::Symmetrizer() :
 	symm_file_(""),
-	radial_disp_(0),
-	angle_(0),
+	radial_disp_(0.0),
+	radial_disp_min_(0.0),
+	radial_disp_max_(0.0),
+	angle_(0.0),
+	angle_min_(0.0),
+	angle_max_(0.0),
+	radial_disp_delta_(0.0),
+	angle_delta_(0.0),
 	symmetry_axis_('z'),
-	explore_grid_(false)
-{ }
-
-Symmetrizer::Symmetrizer(const Symmetrizer& rval) :
-	symm_file_( rval.symm_file_ ),
-	radial_disp_( rval.radial_disp_ ),
-	angle_( rval.angle_ ),
-	symmetry_axis_( rval.symmetry_axis_ ),
-	explore_grid_( rval.explore_grid_ )
+	explore_grid_(false),
+	sampling_mode_("single_dock")
 { }
 
 protocols::moves::MoverOP 
@@ -112,7 +111,7 @@ Real
 Symmetrizer::get_radial_disp() { 
 	if(explore_grid_ || sampling_mode_ == "grid" )
 		return SymmetrizerSampler::get_instance().get_radial_disp();
-	else if(sampling_mode_ == "uniform")
+	else if(sampling_mode_ == "uniform") 
 		return radial_disp_min_ + ( radial_disp_max_ - radial_disp_min_) * RG.uniform();
 	else if(sampling_mode_ == "gaussian")
 		return radial_disp_ + radial_disp_delta_ * RG.gaussian();
@@ -127,6 +126,7 @@ Symmetrizer::apply(Pose & pose) {
 	using core::pose::Pose;
 	typedef numeric::xyzVector<Real> Vec;
 	typedef numeric::xyzMatrix<Real> Mat;
+	TR << "mode: " << sampling_mode_ << std::endl;
 	core::pose::symmetry::make_symmetric_pose(pose, symm_file_);
 	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 	std::map<Size,SymDof> dofs = sym_info->get_dofs();
@@ -178,7 +178,6 @@ Symmetrizer::apply(Pose & pose) {
 	pose.set_jump(sym_jump,j); 
 	
 	if(explore_grid_) {
-		TR << "angle = " << get_angle() << " radial_disp = " << get_radial_disp() << std::endl;
 		SymmetrizerSampler::get_instance().step();
 	}
 }
@@ -201,7 +200,8 @@ Symmetrizer::parse_my_tag( TagPtr const tag,
 	angle_max_ = tag->getOption<Real>("angle_max", 0.0);
 	radial_disp_min_ = tag->getOption<Real>("radial_disp_min", 0.0);
 	radial_disp_max_ = tag->getOption<Real>("radial_disp_max", 0.0);
-	std::string sampling_mode_= tag->getOption<std::string>("sampling_mode", "uniform");
+	sampling_mode_= tag->getOption<std::string>("sampling_mode", "uniform");
+	TR << "Setting sampling mode to " << sampling_mode_ << std::endl;
 	explore_grid_ = tag->getOption<bool>("grid", false);
 	if( sampling_mode_ == "grid" || explore_grid_) {
 		Real angle_step = tag->getOption<Real>("angle_step");
