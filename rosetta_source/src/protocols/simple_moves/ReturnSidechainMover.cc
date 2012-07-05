@@ -163,5 +163,21 @@ ReturnSidechainMover::ReturnSidechainMover(
 
 ReturnSidechainMover::~ReturnSidechainMover() {}
 
+core::Size ReturnSidechainMover::get_start_res() const {
+	return start_res_;
+}
+
+core::Size ReturnSidechainMover::get_end_res() const {
+	return end_res_;
+}
+
+std::ostream &operator<< (std::ostream &os, ReturnSidechainMover const &mover)
+{
+	moves::operator<<(os, mover);
+	os << "Range of residues:" << std::endl << "start res: " << mover.get_start_res() << ", end res: " << mover.get_end_res() << std::endl;
+
+	return os;
+}
+
 }//moves
 }//protocols

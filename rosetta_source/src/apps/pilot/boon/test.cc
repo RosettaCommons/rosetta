@@ -22,9 +22,12 @@
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
+/*
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
+*/
+#include <protocols/simple_moves/ReturnSidechainMover.hh>
 
 int main(int argc, char *argv[])
 {
@@ -57,9 +60,14 @@ int main(int argc, char *argv[])
 	std::cout << mover.get_mover(index) << std::endl;
 	std::cout << "try" << mover.get_mover(index+1) << std::endl;*/
 
-	protocols::simple_moves::SwitchResidueTypeSetMover switchmover;
+	/*protocols::simple_moves::SwitchResidueTypeSetMover switchmover;
 	std::cout << switchmover << std::endl;
 	protocols::simple_moves::SwitchResidueTypeSetMover switch2 = protocols::simple_moves::SwitchResidueTypeSetMover("centroid");
-	std::cout << switch2 << std::endl;
+	std::cout << switch2 << std::endl;*/
+
+	protocols::simple_moves::ReturnSidechainMover returnmover = protocols::simple_moves::ReturnSidechainMover(test_pose) ;
+	std::cout << returnmover << std::endl;
+	protocols::simple_moves::ReturnSidechainMover returnmover2 = protocols::simple_moves::ReturnSidechainMover(test_pose,10,20) ;
+	std::cout << returnmover2 << std::endl;
 
 }

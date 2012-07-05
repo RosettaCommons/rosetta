@@ -60,6 +60,9 @@ public:
 	bool copy_all_chi_;
 	utility::vector1<bool> allow_chi_copy_;
 
+	core::Size get_start_res() const;
+	core::Size get_end_res() const;
+
 private:
 	///@brief remembered old pose
 	core::pose::Pose const remembered_pose_;
@@ -68,6 +71,8 @@ private:
 	core::Size start_res_, end_res_;
 
 };//end ReturnSidechainMover
+
+std::ostream &operator<< (std::ostream &os, ReturnSidechainMover const &mover);
 
 }//namespace moves
 }//namespace protocols
