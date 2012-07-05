@@ -12,28 +12,35 @@
 /// @author Mike Tyka
 /// @author James Thompson
 
+/// Unit headers
 #include <protocols/loops/loop_mover/IndependentLoopMover.hh>
+
+// Package headers
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/loops/LoopsFileIO.hh>
 #include <protocols/loops/loops_main.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
+
+// Project headers
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
-#include <basic/Tracer.hh> // tracer output
-
-// AUTO-REMOVED #include <core/fragment/FragSet.hh>
-
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-
 #include <protocols/checkpoint/CheckPointer.hh>
 
-//Utility Headers
-// AUTO-REMOVED #include <numeric/random/random.hh>
+// Basic headers
+#include <basic/Tracer.hh> // tracer output
+#include <basic/options/option.hh>
+#include <basic/options/keys/loops.OptionKeys.gen.hh>
+
+// Utility headers
+#include <utility/vector1.hh>
+
+// Numeric headers
+#include <numeric/random/random.fwd.hh>
 
 /// ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>
+#include <ObjexxFCL/format.hh>
 
 // C++ Headers
 #include <iostream>
@@ -42,16 +49,6 @@
 #if defined(WIN32) || defined(__CYGWIN__)
 	#include <ctime>
 #endif
-// option key includes
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
-
-//Auto Headers
-#include <utility/vector1.hh>
-#include <numeric/random/random.fwd.hh>
-#include <ObjexxFCL/format.hh>
-#include <basic/options/option.hh>
-
-
 
 
 namespace protocols {
@@ -62,6 +59,37 @@ namespace loop_mover {
 using namespace core;
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::fmt;
+
+IndependentLoopMover::IndependentLoopMover() :
+	LoopMover()
+{
+	Mover::type("IndependentLoopMover");
+	set_defaults();
+}
+
+IndependentLoopMover::IndependentLoopMover(
+	protocols::loops::LoopsOP loops_in
+) : LoopMover( loops_in )
+{
+	Mover::type("IndependentLoopMover");
+	set_defaults();
+}
+
+IndependentLoopMover::IndependentLoopMover(
+	protocols::loops::LoopsFileData const & lfd
+) : LoopMover( lfd )
+{
+	Mover::type("IndependentLoopMover");
+	set_defaults();
+}
+
+IndependentLoopMover::IndependentLoopMover(
+	GuardedLoopsFromFileOP guarded_loops
+) : LoopMover( guarded_loops )
+{
+	Mover::type("IndependentLoopMover");
+	set_defaults();
+}
 
 // destructor
 IndependentLoopMover::~IndependentLoopMover(){}
@@ -82,6 +110,8 @@ void IndependentLoopMover::set_defaults() {
 void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+
+	resolve_loop_indices( pose );
 
  	// Select Loops to be built
 	all_loops_closed_ = true;
@@ -150,13 +180,10 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 				if ( get_checkpoints()->recover_checkpoint( pose, curr_job_tag, checkname + "_S", pose.is_fullatom(), true) ) {
 					checkpoint_recovery = true;
 					result_of_loopModel = Success;
-				}
-				else
-				if ( get_checkpoints()->recover_checkpoint( pose, curr_job_tag, checkname + "_C", pose.is_fullatom(), true) ) {
+				} else if ( get_checkpoints()->recover_checkpoint( pose, curr_job_tag, checkname + "_C", pose.is_fullatom(), true) ) {
 					checkpoint_recovery = true;
 					result_of_loopModel = CriticalFailure;
-				}else
-				if ( get_checkpoints()->recover_checkpoint( pose, curr_job_tag, checkname + "_F", pose.is_fullatom(), true) ) {
+				} else if ( get_checkpoints()->recover_checkpoint( pose, curr_job_tag, checkname + "_F", pose.is_fullatom(), true) ) {
 					checkpoint_recovery = true;
 					result_of_loopModel = Failure;
 				} else {
@@ -164,6 +191,7 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 					// some cases where loop-building is attempted with a cut
 					// of zero.
 					buildloop.auto_choose_cutpoint( pose );
+					/// Main loop modeling call here.  Derived classes override the "model_loop" function"
 					result_of_loopModel = model_loop( pose, buildloop );
 				}
 
@@ -172,10 +200,11 @@ void IndependentLoopMover::apply( core::pose::Pose & pose ) {
 					if ( ! checkpoint_recovery ){
 						get_checkpoints()->checkpoint( pose, curr_job_tag, checkname + "_S", true );
 					}
+
 					// briefly score the pose with whatever scorefunction is being used.
 					core::Real pose_score;
 					if ( scorefxn() ) pose_score = (*scorefxn())(pose);
-					else             pose_score = 0;
+					else              pose_score = 0;
 
 					get_checkpoints()->debug(  curr_job_tag, checkname, pose_score);
 

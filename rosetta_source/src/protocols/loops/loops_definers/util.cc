@@ -12,6 +12,7 @@
 /// @authors Matthew O'Meara (mattjomeara@gmail.com)
 
 #include <protocols/loops/loops_definers/LoopsDefiner.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/util.hh>
 

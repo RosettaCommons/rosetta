@@ -120,8 +120,14 @@ void RigidChunkClaimer::receive_message( ClaimerMessage& cm ) {
 	}
 }
 
-bool RigidChunkClaimer::read_tag( std::string tag, std::istream& is ) {
-	loops::LoopsFileIO loop_file_reader;
+bool RigidChunkClaimer::read_tag(
+	std::string tag,
+	std::istream& is
+)
+{
+	loops::PoseNumberedLoopFileReader reader;
+	reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
+
 	if ( tag == "pdb" || tag == "PDB" || tag == "pdb:" || tag == "PDB_FILE" ) {
 		std::string file;
 		is >> file;
@@ -130,7 +136,7 @@ bool RigidChunkClaimer::read_tag( std::string tag, std::istream& is ) {
 			file );
 		runtime_assert( input_pose_.is_fullatom() );
 	} else if ( tag == "REGION" ) {
-		loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, type(), false /*no strict checking */, "RIGID" );
+		loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file( is, type(), false /*no strict checking */ );
 		rigid_core_ = loops::Loops( loops );
 	} else if ( tag == "region_file" || tag == "REGION_FILE" ) {
 		std::string file;
@@ -140,7 +146,7 @@ bool RigidChunkClaimer::read_tag( std::string tag, std::istream& is ) {
 		if (!infile.good()) {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
 		}
-		loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( infile, file, false /*no strict checking */, "RIGID" );
+		loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file( infile, file, false /*no strict checking */ );
 		rigid_core_ = loops::Loops( loops ); // <==
 	} else if ( tag == "loop_file" || tag == "LOOP_FILE" ) {
 		std::string file;
@@ -150,7 +156,7 @@ bool RigidChunkClaimer::read_tag( std::string tag, std::istream& is ) {
 		if (!infile.good()) {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
 		}
-		loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( infile, file, false /*no strict checking */, "RIGID" );
+		loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file( infile, file, false /*no strict checking */ );
 		protocols::loops::Loops loop_defs = loops::Loops( loops ); // <==
 		loop_defs = loop_defs.invert( input_pose_.total_residue() );
 		tr << "Rigid core: " << input_pose_.total_residue() << std::endl << loop_defs << std::endl;

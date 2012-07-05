@@ -11,11 +11,15 @@
 /// @brief  loop mover base class
 /// @author Mike Tyka
 
+// Unit headers
 #include <protocols/loops/loop_mover/LoopMover.hh>
+
+// Package Headers
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/loops/LoopsFileIO.hh>
 #include <protocols/loops/loops_main.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
+
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/cacheable_observers.hh>
 #include <core/pose/datacache/ObserverCache.hh>
@@ -75,28 +79,59 @@ using namespace core;
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::fmt;
 
-LoopMover::LoopMover() : Mover()
+LoopMover::LoopMover() :
+	Mover(),
+	guarded_loops_( new GuardedLoopsFromFile )
 {
-   init( new Loops() );
+   init();
 }
 
-LoopMover::LoopMover( protocols::loops::LoopsOP loops_in ) : Mover()
+/// @details GuardedLoops constructed with a pointer to a loops object:
+/// sets the GuardedLoops object into it's "not in charge" mode; i.e.
+/// the external source of the LoopsOP is responsible for resolving loop indices
+LoopMover::LoopMover( protocols::loops::LoopsOP loops_in )
+:
+	Mover(),
+	guarded_loops_( new GuardedLoopsFromFile( loops_in ))
 {
-    init( loops_in );
+    init();
 }
 
-void LoopMover::init( protocols::loops::LoopsOP loops_in )
+/// @details GuardedLoops constructed with an unresolve-loop-indices object:
+/// sets the GuardedLoops object into it's "in charge" mode; i.e.
+/// before the loops object may be used, the loop indices must be resolved.
+LoopMover::LoopMover( protocols::loops::LoopsFileData const & loops_from_file ) :
+	Mover(),
+	guarded_loops_( new GuardedLoopsFromFile( loops_from_file ))
 {
-    Mover::type( "LoopMover" );
-    loops_from_observer_cache_ = false;
-    checkpoints_ = new checkpoint::CheckPointer( "LoopMover" );
-    false_movemap_ = new core::kinematics::MoveMap();
-    loops_ = loops_in;
+	init();
+}
 
+LoopMover::LoopMover( protocols::loops::GuardedLoopsFromFileOP guarded_loops ) :
+	Mover(),
+	guarded_loops_( guarded_loops )
+{
+	init();
+}
+
+
+void LoopMover::init()
+{
+	Mover::type( "LoopMover" );
+	loops_from_observer_cache_ = false;
+	checkpoints_ = new checkpoint::CheckPointer( "LoopMover" );
+	false_movemap_ = new core::kinematics::MoveMap();
 }
 
 // destructor
 LoopMover::~LoopMover(){}
+
+void
+LoopMover::set_guarded_loops_not_in_charge()
+{
+	guarded_loops_->in_charge( false );
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -104,23 +139,42 @@ LoopMover::~LoopMover(){}
 
 void LoopMover::set_scorefxn( const core::scoring::ScoreFunctionOP score_in )
 {
-    scorefxn_ = score_in;
+	scorefxn_ = score_in;
 }
 
 const core::scoring::ScoreFunctionOP & LoopMover::scorefxn() const
 {
-    return scorefxn_;
+	return scorefxn_;
 }
 
-void LoopMover::loops( protocols::loops::LoopsOP const l )
+void LoopMover::loops( protocols::loops::LoopsOP lptr )
 {
-    loops_ = l;
+	// pointer assignment
+	guarded_loops_->set_loops_pointer( lptr );
 }
 
-const protocols::loops::LoopsOP LoopMover::loops() const
+void LoopMover::loops( protocols::loops::LoopsFileData const & loops )
 {
-    return loops_;
+	// pointer assignment
+	guarded_loops_->loops( loops );
 }
+
+/// @brief Set the guarded_loops pointer
+void LoopMover::loops( protocols::loops::GuardedLoopsFromFileOP guarded_loops )
+{
+	guarded_loops_ = guarded_loops;
+}
+
+protocols::loops::LoopsCOP LoopMover::loops() const
+{
+	return guarded_loops_->loops();
+}
+
+protocols::loops::LoopsOP LoopMover::loops()
+{
+   return guarded_loops_->loops();
+}
+
 
 
 const utility::vector1< core::fragment::FragSetOP > & LoopMover::frag_libs() const
@@ -211,14 +265,15 @@ void
 LoopMover::set_loops_from_pose_observer_cache( core::pose::Pose const & pose ){
 
 	if( pose.observer_cache().has( core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER) ){
-		loops_->clear();
+		LoopsOP loops = new Loops();
 		utility::vector1< std::pair< core::Size, core::Size > > const & segments = utility::pointer::static_pointer_cast< core::pose::datacache::SpecialSegmentsObserver const >(pose.observer_cache().get_const_ptr( core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER ) )->segments();
 		for( core::Size i = 1; i <= segments.size(); ++i ){
 			core::Size loop_end = segments[i].second - 1; //segment convention
 			if( loop_end <= segments[i].first ) continue; //safeguard against faulty or segments of length 1
 			tr() << "Setting loop from observer cache between seqpos " << segments[i].first << " and " << loop_end << "." << std::endl;
-			loops_->add_loop( segments[i].first, loop_end, numeric::random::random_range( int(segments[i].first), int(loop_end)  ) );
+			loops->add_loop( segments[i].first, loop_end, numeric::random::random_range( int(segments[i].first), int(loop_end)  ) );
 		}
+		guarded_loops_->loops( *loops ); // <--- deep copy into the GuardedLoops existing Loops object
 	}
 	else{
 		utility_exit_with_message("trying to set loops from observer cache even though no cache was detected in the pose");
@@ -249,6 +304,7 @@ LoopMover::LoopMover( LoopMover const & rhs ) :
 LoopMover & LoopMover::operator=( LoopMover const & rhs ){
 	//abort self-assignment
 	if (this == &rhs) return *this;
+
 	Mover::operator=(rhs);
 	initForEqualOperatorAndCopyConstructor(*this, rhs);
 	return *this;
@@ -256,12 +312,17 @@ LoopMover & LoopMover::operator=( LoopMover const & rhs ){
 
 void LoopMover::initForEqualOperatorAndCopyConstructor(LoopMover & lhs, LoopMover const & rhs){
 	//going through all of member data and assigning it
-	lhs.loops_ = rhs.loops_;
-    lhs.scorefxn_ = rhs.scorefxn_;
-    lhs.frag_libs_ = rhs.frag_libs_;
-    lhs.checkpoints_ = rhs.checkpoints_;
-    lhs.loops_from_observer_cache_ = rhs.loops_from_observer_cache_;
-    lhs.false_movemap_ = rhs.false_movemap_;
+	lhs.guarded_loops_ = rhs.guarded_loops_; // shallow copy of the guarded_loops_ pointer.
+	lhs.scorefxn_ = rhs.scorefxn_;
+	lhs.frag_libs_ = rhs.frag_libs_;
+	lhs.checkpoints_ = rhs.checkpoints_;
+	lhs.loops_from_observer_cache_ = rhs.loops_from_observer_cache_;
+	lhs.false_movemap_ = rhs.false_movemap_;
+}
+
+void LoopMover::resolve_loop_indices( core::pose::Pose const & p )
+{
+	guarded_loops_->resolve_loop_indices( p );
 }
 
 } // namespace loop_mover

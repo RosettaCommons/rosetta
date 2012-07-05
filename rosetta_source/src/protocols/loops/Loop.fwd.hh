@@ -31,18 +31,12 @@ class Loop;
 typedef utility::pointer::owning_ptr< Loop > LoopOP;
 typedef utility::pointer::owning_ptr< Loop const > LoopCOP;
 
-struct SerializedLoop {
-	core::Size start;
-	core::Size stop;
-	core::Size cut;
-	core::Real skip_rate;
-	bool extended;
-};
+struct SerializedLoop;
 
 typedef utility::vector1< SerializedLoop > SerializedLoopList;
-typedef utility::pointer::owning_ptr< SerializedLoopList > SerializedLoopListOP;
-typedef utility::pointer::owning_ptr< SerializedLoopList const >
-	SerializedLoopListCOP;
+
+//typedef utility::pointer::owning_ptr< SerializedLoopList > SerializedLoopListOP;
+//typedef utility::pointer::owning_ptr< SerializedLoopList const > SerializedLoopListCOP;
 
 } //namespace loops
 } //namespace protocols

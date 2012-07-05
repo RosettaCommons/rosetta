@@ -29,6 +29,7 @@
 #include <core/fragment/FragSet.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/LoopsFileIO.hh>
 
 // ObjexxFCL Headers
@@ -226,19 +227,20 @@ void FragmentClaimer::initialize_dofs( core::pose::Pose& pose, DofClaims const& 
 }//initialize dofs
 
 bool FragmentClaimer::read_tag( std::string tag, std::istream& is ) {
-	loops::LoopsFileIO loop_file_reader;
+	loops::PoseNumberedLoopFileReader loop_file_reader;
+	loop_file_reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
 	if ( tag == "REGION" ) {
-		loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, type(), false /*no strict checking */, "RIGID" );
+		loops::SerializedLoopList loops = loop_file_reader.read_pose_numbered_loops_file( is, type(), false /*no strict checking */ );
 		region_ = loops::Loops( loops );
 	} else if ( tag == "region_file" || tag == "REGION_FILE" ) {
 		std::string file;
 		is >> file;
 		std::ifstream infile( file.c_str() );
-		
+
 		if (!infile.good()) {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
 		}
-		loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( infile, file, false /*no strict checking */, "RIGID" );
+		loops::SerializedLoopList loops = loop_file_reader.read_pose_numbered_loops_file( infile, file, false /*no strict checking */ );
 		region_ = loops::Loops( loops ); // <==
 	} else if ( tag == "SEQUENCE_REGION" ) {
 		std::string label;

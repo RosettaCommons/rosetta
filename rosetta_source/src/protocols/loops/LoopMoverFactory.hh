@@ -21,6 +21,7 @@
 // Project Headers
 #include <protocols/loops/loop_mover/LoopMover.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
+#include <protocols/loops/LoopsFileIO.fwd.hh>
 
 // Platform Headers
 #include <core/pose/Pose.fwd.hh>
@@ -52,7 +53,38 @@ public:
 
 	static LoopMoverFactory * get_instance();
 
-	loop_mover::LoopMoverOP create_loop_mover(std::string const & type_name, LoopsOP const  loops );
+	/// @brief Create a loop mover giving it a pointer to a loops object.
+	/// This loop mover will not be in charge of resolving loop indices.
+	loop_mover::LoopMoverOP
+	create_loop_mover(
+		std::string const & type_name,
+		LoopsOP const  loops
+	);
+
+	/// @brief Create a loop mover giving it a pointer to a loops object.
+	/// This loop mover WILL be in charge of resolving loop indices.
+	loop_mover::LoopMoverOP
+	create_loop_mover(
+		std::string const & type_name,
+		LoopsFileData const & loops
+	);
+
+	/// @brief Create a loop mover giving it a pointer to a GuardedLoopsFromFile object.
+	/// This loop mover WILL be in charge of resolving loop indices, unless, of course,
+	/// the GuardedLoopsFromFile object in the pointer resolves the indices through some
+	/// other Mover's call to its resolve_loop_indices function.
+	loop_mover::LoopMoverOP
+	create_loop_mover(
+		std::string const & type_name,
+		GuardedLoopsFromFileOP guarded_loops
+	);
+
+private:
+
+	loop_mover::LoopMoverOP
+	create_loop_mover(
+		std::string const & type_name
+	);
 
 private:
 

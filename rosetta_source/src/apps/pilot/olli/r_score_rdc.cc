@@ -35,6 +35,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/simple_moves/MinMover.hh>
 
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/LoopsFileIO.hh>
 
@@ -147,15 +148,17 @@ void RDCToolMover::apply( core::pose::Pose &pose ) {
 			nstruct_=0;
 		}
 		if ( option[ residue_subset ].user() ) { //filter
-			loops::LoopsFileIO loop_file_reader;
 			std::ifstream is( option[ residue_subset ]().name().c_str() );
 			
 			if (!is.good()) {
 				utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ residue_subset ]().name() + "'" );
 			}
 			
-			loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(is, option[ residue_subset ](), false, "RIGID");
+			loops::PoseNumberedLoopFileReader reader;
+			reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
+			loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file(is, option[ residue_subset ](), false );
 			loops::Loops rigid_core = loops::Loops( loops ); // <==
+
 			ResidualDipolarCoupling::RDC_lines filtered;
 			for ( ResidualDipolarCoupling::RDC_lines::const_iterator it = data.begin(); it != data.end(); ++it ) {
 				if ( rigid_core.has( it->res1() ) ) {

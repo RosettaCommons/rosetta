@@ -37,6 +37,7 @@
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/filters/BasicFilters.hh>
 #include <protocols/loops/Loop.hh>
+#include <protocols/loops/Loops.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <core/id/AtomID.hh>
 // AUTO-REMOVED #include <basic/options/option.hh>

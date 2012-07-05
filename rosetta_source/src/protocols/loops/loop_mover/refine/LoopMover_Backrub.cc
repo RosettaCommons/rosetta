@@ -122,6 +122,9 @@ void LoopMover_Refine_Backrub::apply(
 	using namespace scoring;
 	using namespace basic::options;
 
+	/// must be called once the Pose has become available.
+	resolve_loop_indices( pose );
+
 	// Note: based heavily on KIC loop refine
 
 	// scheduler

@@ -17,6 +17,11 @@
 
 #include <protocols/comparative_modeling/LoopRelaxMover.hh>
 #include <protocols/comparative_modeling/LoopRelaxMoverCreator.hh>
+
+// Package headers
+#include <protocols/loops/Loops.hh>
+#include <protocols/loops/LoopsFileIO.hh>
+
 #include <core/chemical/VariantType.hh>
 #ifdef BOINC_GRAPHICS
 #include <protocols/boinc/boinc.hh>
@@ -25,7 +30,6 @@
 #define foreach BOOST_FOREACH
 
 // Project Headers
-
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -132,7 +136,9 @@ namespace protocols {
 namespace comparative_modeling {
 
 //constructors
-LoopRelaxMover::LoopRelaxMover() {
+LoopRelaxMover::LoopRelaxMover() :
+	guarded_loops_( new loops::GuardedLoopsFromFile )
+{
 	set_defaults_();
 }
 
@@ -144,7 +150,7 @@ LoopRelaxMover::LoopRelaxMover(
 	std::string const & intermedrelax,
 	std::string const & refine,
 	std::string const & relax,
-	loops::Loops loops
+	loops::Loops const & loops
 ) :
 	cmd_line_csts_( true ),
 	copy_sidechains_( true ),
@@ -154,8 +160,87 @@ LoopRelaxMover::LoopRelaxMover(
 	intermedrelax_( intermedrelax ),
 	refine_( refine ),
 	relax_( relax ),
-	loops_( loops )
+	guarded_loops_( new loops::GuardedLoopsFromFile( loops ))
 {}
+
+// BE WARNED: THIS CONSTRUCTOR DOES NOT CALL SET_DEFAULTS().
+// AS A RESULT, THE SCORE FUNCTIONS (AMONG OTHER THINGS) WILL
+// NOT BE INITIALIZED
+LoopRelaxMover::LoopRelaxMover(
+	std::string const & remodel,
+	std::string const & intermedrelax,
+	std::string const & refine,
+	std::string const & relax,
+	loops::LoopsFileData const & loops_from_file
+) :
+	cmd_line_csts_( true ),
+	copy_sidechains_( true ),
+	n_rebuild_tries_( 3 ),
+	rebuild_filter_( 999 ),
+	remodel_( remodel ),
+	intermedrelax_( intermedrelax ),
+	refine_( refine ),
+	relax_( relax ),
+	guarded_loops_( new loops::GuardedLoopsFromFile( loops_from_file ))
+{}
+
+LoopRelaxMover::LoopRelaxMover(
+	std::string const & remodel,
+	std::string const & intermedrelax,
+	std::string const & refine,
+	std::string const & relax,
+	loops::GuardedLoopsFromFileOP guarded_loops
+) :
+	cmd_line_csts_( true ),
+	copy_sidechains_( true ),
+	n_rebuild_tries_( 3 ),
+	rebuild_filter_( 999 ),
+	remodel_( remodel ),
+	intermedrelax_( intermedrelax ),
+	refine_( refine ),
+	relax_( relax ),
+	guarded_loops_( guarded_loops ) // shallow copy
+{}
+
+/// @brief Copy-ctor; shallow copy of all data object.
+LoopRelaxMover::LoopRelaxMover( LoopRelaxMover const & src ) :
+	cmd_line_csts_( src.cmd_line_csts_ ),
+	copy_sidechains_( src.copy_sidechains_ ),
+	n_rebuild_tries_( src.n_rebuild_tries_ ),
+	rebuild_filter_( src.rebuild_filter_ ),
+	remodel_( src.remodel_ ),
+	intermedrelax_( src.intermedrelax_ ),
+	refine_( src.refine_ ),
+	relax_( src.relax_ ),
+	guarded_loops_( src.guarded_loops_ ),
+	cen_scorefxn_( src.cen_scorefxn_ ),
+	fa_scorefxn_( src.fa_scorefxn_ ),
+	frag_libs_( src.frag_libs_ ),
+	compute_rmsd_( src.compute_rmsd_ )
+{}
+
+/// @brief assignment operator; Shallow copy of all data.
+LoopRelaxMover const &
+LoopRelaxMover::operator = ( LoopRelaxMover const & rhs )
+{
+	if ( this != &rhs ) {
+		cmd_line_csts_ = rhs.cmd_line_csts_;
+		copy_sidechains_ = rhs.copy_sidechains_;
+		n_rebuild_tries_ = rhs.n_rebuild_tries_;
+		rebuild_filter_ = rhs.rebuild_filter_;
+		remodel_ = rhs.remodel_;
+		intermedrelax_ = rhs.intermedrelax_;
+		refine_ = rhs.refine_;
+		relax_ = rhs.relax_;
+		guarded_loops_ = rhs.guarded_loops_;
+		cen_scorefxn_ = rhs.cen_scorefxn_;
+		fa_scorefxn_ = rhs.fa_scorefxn_;
+		frag_libs_ = rhs.frag_libs_;
+		compute_rmsd_ = rhs.compute_rmsd_;
+	}
+	return *this;
+}
+
 
 //destructor
 LoopRelaxMover::~LoopRelaxMover() {}
@@ -251,12 +336,14 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 #endif
 
 	// pick loops if necessary
+	guarded_loops_->resolve_loop_indices( pose );
 	protocols::loops::LoopsOP loops = get_loops();
 	// try to load loops from command line
 	if ( loops->size() == 0 ) {
 		TR.Debug << "picking loops by chainbreak score." << std::endl;
-		loops = protocols::comparative_modeling::pick_loops_chainbreak(
+		protocols::loops::LoopsOP loops_picked = protocols::comparative_modeling::pick_loops_chainbreak(
 			start_pose, option[ cm::min_loop_size ]() );
+		*loops = *loops_picked; // copy the loops we just read in into the guarded_loops_ object
 
 		if ( loops->size() == 0 ) {
 			TR.Debug << "no loops found." << std::endl;
@@ -375,7 +462,10 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			quick_ccd.set_random_order_( false );
 			quick_ccd.set_build_all_loops_( true );
 			quick_ccd.set_loop_combine_rate_( 0.0 );
+
+			/// RUN quick_ccd
 			quick_ccd.apply( pose );
+
 			loops::remove_cutpoint_variants( pose );
 
 			//fpd if we care at all about the global coordinate frame
@@ -597,16 +687,16 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 				// if remodelling was done, repack the loops - otherwise leave it.
 				if ( remodel() != "no" ) {
-                    for( loops::Loops::const_iterator it=loops()->begin(), it_end=loops()->end(); it != it_end; ++it ) {
-                        if (    i >= core::Size( it->start() ) - 3
-                            && i <= core::Size( it->stop() ) + 3 ) {
+					for( loops::Loops::const_iterator it=loops()->begin(), it_end=loops()->end(); it != it_end; ++it ) {
+						if (    i >= core::Size( it->start() ) - 3
+								&& i <= core::Size( it->stop() ) + 3 ) {
 							// allow 3-residue leeway on either side for 'random_loops'
 							// this kind of sucks.
 							TR.Debug << "Repacking because in loop: " << i << std::endl;
 							needToRepack[i] = true;
 							break;
-                        }
-                    }
+						}
+					}
 				}
 
 				// if there is missing density in the sidechain, then we need to
@@ -936,14 +1026,14 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 			if ( option[ OptionKeys::loops::kic_use_linear_chainbreak ]() ){
 				setPoseExtraScores(
-													 pose, "final_chainbreak",
-													 pose.energies().total_energies()[ core::scoring::linear_chainbreak ]
-													 );
+					pose, "final_chainbreak",
+					pose.energies().total_energies()[ core::scoring::linear_chainbreak ]
+					);
 			} else {
 				setPoseExtraScores(
-													 pose, "final_chainbreak",
-													 pose.energies().total_energies()[ core::scoring::chainbreak ]
-													 );
+					pose, "final_chainbreak",
+					pose.energies().total_energies()[ core::scoring::chainbreak ]
+					);
 			}
 		}
 
@@ -1134,6 +1224,35 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	);
 
 } // LoopRelaxMover
+
+/// @brief Must be called before the Loops data can be read from.
+void LoopRelaxMover::resolve_loopfile_indices( core::pose::Pose const & pose )
+{
+	guarded_loops_->resolve_loop_indices( pose );
+}
+
+/// @details By setting the loops object directly, the requirement is relaxed that a Pose be first
+/// given to the LoopRelax object (through a call to apply() or resolve_loopfile_indices)
+/// before the get_loops() function may be called.
+void LoopRelaxMover::loops( protocols::loops::LoopsOP const val ) {
+	guarded_loops_->set_loops_pointer( val );
+}
+
+/// @brief Set the loop file data.  This will require that 
+void LoopRelaxMover::loops_file_data( loops::LoopsFileData const & loopfiledata ) {
+	guarded_loops_->loops( loopfiledata );
+}
+
+protocols::loops::LoopsCOP
+LoopRelaxMover::get_loops() const {
+	return guarded_loops_->loops();
+}
+
+protocols::loops::LoopsOP
+LoopRelaxMover::get_loops() {
+	return guarded_loops_->loops();
+}
+
 
 std::string
 LoopRelaxMover::get_name() const {

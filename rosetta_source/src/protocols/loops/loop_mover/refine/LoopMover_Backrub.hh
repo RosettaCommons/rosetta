@@ -70,7 +70,7 @@ protected:
 
 	core::pack::task::TaskFactoryOP task_factory;
 	bool redesign_loop;
-    virtual basic::Tracer & tr() const;
+	virtual basic::Tracer & tr() const;
 };
 
 } //namespace refine

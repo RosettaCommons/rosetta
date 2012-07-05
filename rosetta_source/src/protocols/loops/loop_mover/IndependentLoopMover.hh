@@ -22,7 +22,8 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <protocols/loops/Loops.hh>
+#include <protocols/loops/Loops.fwd.hh>
+#include <protocols/loops/LoopsFileIO.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -39,23 +40,13 @@ namespace loop_mover {
 // override the apply method.
 class IndependentLoopMover : public LoopMover {
 public:
-	IndependentLoopMover() :
-		LoopMover()
-	{
-		Mover::type("IndependentLoopMover");
-		set_defaults();
-	}
-
-	IndependentLoopMover(
-		protocols::loops::LoopsOP loops_in
-	) : LoopMover( loops_in )
-	{
-		Mover::type("IndependentLoopMover");
-		set_defaults();
-	}
+	IndependentLoopMover();
+	IndependentLoopMover( LoopsOP loops_in );
+	IndependentLoopMover( LoopsFileData const & lfd );
+	IndependentLoopMover( GuardedLoopsFromFileOP guarded_loops );
 	
 	//destructor
-        virtual ~IndependentLoopMover();
+	virtual ~IndependentLoopMover();
 	
 	void set_defaults();
 
@@ -65,21 +56,21 @@ public:
 
 	/// Accessors:
 
-  void set_build_attempts_( int value ) { build_attempts_ =  value; }
-  void set_grow_attempts_( int value )  { grow_attempts_ =  value; }
-  void set_accept_aborted_loops_( bool value ) {   accept_aborted_loops_ =  value; }
-  void set_strict_loops( bool value ) { strict_loops_ =  value; }
-  void set_random_order_( bool value ) { random_order_ =  value; }
-  void set_build_all_loops_( bool value ) {   build_all_loops_ =  value; }
-  void set_loop_combine_rate_( core::Real value ) {   loop_combine_rate_ =  value; }
+	void set_build_attempts_( int value ) { build_attempts_ =  value; }
+	void set_grow_attempts_( int value )  { grow_attempts_ =  value; }
+	void set_accept_aborted_loops_( bool value ) {   accept_aborted_loops_ =  value; }
+	void set_strict_loops( bool value ) { strict_loops_ =  value; }
+	void set_random_order_( bool value ) { random_order_ =  value; }
+	void set_build_all_loops_( bool value ) {   build_all_loops_ =  value; }
+	void set_loop_combine_rate_( core::Real value ) {   loop_combine_rate_ =  value; }
 
-  int  get_build_attempts() const { return build_attempts_; }
-  int  get_grow_attempts() const { return grow_attempts_; }
-  bool get_accept_aborted_loops() const { return accept_aborted_loops_; }
-  bool get_strict_loops() const { return strict_loops_; }
-  bool get_random_order() const { return random_order_; }
-  bool get_build_all_loops() const { return build_all_loops_; }
-  bool get_loop_combine_rate() const { return loop_combine_rate_; }
+	int  get_build_attempts() const { return build_attempts_; }
+	int  get_grow_attempts() const { return grow_attempts_; }
+	bool get_accept_aborted_loops() const { return accept_aborted_loops_; }
+	bool get_strict_loops() const { return strict_loops_; }
+	bool get_random_order() const { return random_order_; }
+	bool get_build_all_loops() const { return build_all_loops_; }
+	bool get_loop_combine_rate() const { return loop_combine_rate_; }
 	bool get_all_loops_closed() const {return all_loops_closed_; }
 
 private:
@@ -112,8 +103,12 @@ private:
 	core::Real loop_combine_rate_;
     
 protected:
-    virtual LoopResult model_loop(
-		core::pose::Pose & pose, protocols::loops::Loop const & loop ) = 0;
+	virtual
+	LoopResult
+	model_loop(
+		core::pose::Pose & pose,
+		protocols::loops::Loop const & loop
+	) = 0;
 
 };
 

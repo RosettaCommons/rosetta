@@ -36,7 +36,7 @@ namespace loops {
 static basic::Tracer TR( "protocols.loops.FoldTreeFromLoopsWrapper" );
 
 FoldTreeFromLoops::FoldTreeFromLoops() :
-	Mover( FoldTreeFromLoopsCreator::mover_name() ), loop_str_( "" )
+Mover( FoldTreeFromLoopsCreator::mover_name() ), loop_str_( "" )
 {
 	loops_ = new Loops;
 	loops_->clear();
@@ -47,19 +47,20 @@ FoldTreeFromLoops::~FoldTreeFromLoops() {}
 
 protocols::moves::MoverOP FoldTreeFromLoops::clone() const
 {
-		return protocols::moves::MoverOP( new FoldTreeFromLoops( *this ) );
+	return protocols::moves::MoverOP( new FoldTreeFromLoops( *this ) );
 }
 
 protocols::moves::MoverOP FoldTreeFromLoops::fresh_instance() const
 {
-		return protocols::moves::MoverOP( new FoldTreeFromLoops );
+	return protocols::moves::MoverOP( new FoldTreeFromLoops );
 }
 
 void
 FoldTreeFromLoops::apply( core::pose::Pose & pose )
 {
-	if( loops()->empty() )
+	if( loops()->empty() ) {
 		utility_exit_with_message( "No loops were specified");
+	}
 	core::kinematics::FoldTree f;
 	fold_tree_from_loops( pose, *loops(), f );
 	TR<<"old foldtree "<<pose.fold_tree()<<"\nNew foldtree ";
@@ -80,27 +81,27 @@ FoldTreeFromLoops::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & pose
 ) {
-
+	
 	loops_ = loops_definers::load_loop_definitions(tag, data, pose);
 }
 
 void FoldTreeFromLoops::loop_str( std::string const str )
 {
-		loop_str_ = str;
+	loop_str_ = str;
 }
 std::string FoldTreeFromLoops::loop_str() const
 {
-		return loop_str_;
+	return loop_str_;
 }
 
 void FoldTreeFromLoops::loops( LoopsOP const l )
 {
-		loops_ = l;
+	loops_ = l;
 }
 
 LoopsOP FoldTreeFromLoops::loops() const
 {
-		return loops_;
+	return loops_;
 }
 
 std::string

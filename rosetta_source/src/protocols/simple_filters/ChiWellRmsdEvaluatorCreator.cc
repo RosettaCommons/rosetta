@@ -22,6 +22,7 @@
 #include <protocols/evaluation/PoseEvaluator.hh>
 #include <protocols/simple_filters/ChiWellRmsdEvaluator.hh>
 
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/LoopsFileIO.hh>
 
@@ -169,8 +170,9 @@ void ChiWellRmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator 
 					utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + selection_file + "'" );
 				}
 
-				loops::LoopsFileIO loop_file_reader;
-				loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, selection_file, false /*no strict checking */, "RIGID" );
+				loops::PoseNumberedLoopFileReader reader;
+				reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
+				loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file( is, selection_file, false /*no strict checking */ );
 				loops::Loops core( loops );
 				core.get_residues( selection );
 			}

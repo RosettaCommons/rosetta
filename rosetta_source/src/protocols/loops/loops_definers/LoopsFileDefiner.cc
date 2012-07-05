@@ -14,6 +14,7 @@
 // Unit Headers
 #include <protocols/loops/loops_definers/LoopsFileDefiner.hh>
 #include <protocols/loops/LoopsFileIO.hh>
+#include <protocols/loops/Loop.hh>
 
 // Project Headers
 #include <protocols/moves/DataMap.hh>
@@ -63,7 +64,7 @@ void
 LoopsFileDefiner::parse_my_tag(
 	TagPtr const tag,
 	DataMap const &,
-	Pose const &
+	Pose const & p
 ) {
 
 	if(!tag->hasOption("name")){
@@ -83,7 +84,8 @@ LoopsFileDefiner::parse_my_tag(
 	}
 
 	LoopsFileIO loops_file_io;
-	loop_list_ = loops_file_io.read_loop_file( filename );
+	LoopsFileData lfd = loops_file_io.read_loop_file( filename );
+	loop_list_ = lfd.resolve_as_serialized_loops( p );
 }
 
 SerializedLoopList

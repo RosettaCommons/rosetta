@@ -20,6 +20,7 @@
 // Package headers
 
 // Project headers
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/LoopsFileIO.hh>
 // AUTO-REMOVED #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
@@ -226,8 +227,10 @@ extern ResidualDipolarCouplingRigidSegmentsOP retrieve_RDC_segments_from_pose(co
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + filename + "'" );
 		}
 
-		loops::LoopsFileIO loop_file_reader;
-		loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, filename, false /*no strict checking */, "RDC_SEGMENT" );
+		loops::PoseNumberedLoopFileReader reader;
+		reader.hijack_loop_reading_code_set_loop_line_begin_token( "RDC_SEGMENT" );
+		loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file(
+			is, filename, false /*no strict checking */ );
 		segment_definitions_ = loops::Loops( loops );
 	}
 

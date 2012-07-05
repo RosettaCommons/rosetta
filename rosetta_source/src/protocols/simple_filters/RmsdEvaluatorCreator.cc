@@ -22,6 +22,7 @@
 #include <protocols/evaluation/PoseEvaluator.hh>
 #include <protocols/simple_filters/RmsdEvaluator.hh>
 
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/LoopsFileIO.hh>
 
@@ -99,7 +100,6 @@ void RmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval 
 		///   selection: file or special tag: FULL
 		///   modifier: EXCLUDE ( take the inverse of the selection )
 		///                INLINE r1 r2 r3 ... rm END_INLINE   -- select residues r1, r2, r3, ..., rm
-		loops::LoopsFileIO loop_file_reader;
 		for ( RmsdVector::const_iterator it=rmsd.begin(); it!=rmsd.end(); ++it ) {
 			core::pose::PoseOP target_pose = NULL;
 			std::string fname( *it );
@@ -128,7 +128,9 @@ void RmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval 
 					if (!is.good()) {
 						utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + value + "'" );
 					}
-					loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(is, value, false, "RIGID");
+					loops::PoseNumberedLoopFileReader reader;
+					reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
+					loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file(is, value, false );
 					core = loops::Loops( loops );
 			} else {
 					utility_exit_with_message( "key not recognized: "+key+" possible keys: { heavy }" );
@@ -194,10 +196,13 @@ void RmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval 
 				}
 				loops::SerializedLoopList list_of_loops;
 				if ( loop_rms ) {
-					list_of_loops = loop_file_reader.use_custom_legacy_file_format(is, selection_file, false, "LOOP");
+					loops::PoseNumberedLoopFileReader reader;
+					list_of_loops = reader.read_pose_numbered_loops_file(is, selection_file, false );
 					loops = loops::Loops( list_of_loops );
 				} else {
-					list_of_loops = loop_file_reader.use_custom_legacy_file_format(is, selection_file, false, "RIGID");
+					loops::PoseNumberedLoopFileReader reader;
+					reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
+					list_of_loops = reader.read_pose_numbered_loops_file(is, selection_file, false );
 					loops::Loops core = loops::Loops( list_of_loops );
 					core.get_residues( selection );
 				}

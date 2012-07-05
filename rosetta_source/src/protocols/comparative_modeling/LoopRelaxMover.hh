@@ -21,7 +21,8 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
-#include <protocols/loops/Loops.hh>
+#include <protocols/loops/Loops.fwd.hh>
+#include <protocols/loops/LoopsFileIO.fwd.hh>
 #include <protocols/comparative_modeling/LoopRelaxMover.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
@@ -51,13 +52,51 @@ public:
 		std::string const & intermedrelax,
 		std::string const & refine,
 		std::string const & relax,
-		loops::Loops loops
+		loops::Loops const & loops
 	);
 
-	//destructor
-	~LoopRelaxMover();
+	/// @brief Unresolved-loop-index constructor.
+	/// BE WARNED: THIS CONSTRUCTOR DOES NOT CALL SET_DEFAULTS().
+	/// AS A RESULT, THE SCORE FUNCTIONS (AMONG OTHER THINGS) WILL
+	/// NOT BE INITIALIZED.
+	LoopRelaxMover(
+		std::string const & remodel,
+		std::string const & intermedrelax,
+		std::string const & refine,
+		std::string const & relax,
+		loops::LoopsFileData const & loops_from_file
+	);
 
-	void apply( core::pose::Pose & pose );
+	/// @brief GuardedLoopsOP constructor.  This constructor copies the pointer
+	/// to a GuardedLoops object; Loop indices must be resolved by the time
+	/// that the guarded_loops_ object is accessed, but, they need not
+	/// have been resolved at the time of this object's construction.
+	/// BE WARNED: THIS CONSTRUCTOR DOES NOT CALL SET_DEFAULTS().
+	/// AS A RESULT, THE SCORE FUNCTIONS (AMONG OTHER THINGS) WILL
+	/// NOT BE INITIALIZED.
+	LoopRelaxMover(
+		std::string const & remodel,
+		std::string const & intermedrelax,
+		std::string const & refine,
+		std::string const & relax,
+		loops::GuardedLoopsFromFileOP guarded_loops
+	);
+
+	/// @brief Copy-ctor; Shallow copy of all data.
+	LoopRelaxMover( LoopRelaxMover const & src );
+
+	/// @brief assignment operator; Shallow copy of all data.
+	LoopRelaxMover const & operator = ( LoopRelaxMover const & rhs );
+
+
+	//destructor
+	virtual ~LoopRelaxMover();
+
+	/// @brief Apply the loop-relax protocol to a Pose.  At the call to this function, the
+	/// loop indices originating from the loop file (which may list indices with PDB identifiers
+	/// i.e. res+insertioncode+chain ) will be resolved. Until this point, the Loops object
+	/// in the LoopRelaxMover cannot be used.
+	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 
 	// getters and setters
@@ -97,9 +136,16 @@ public:
 		relax_ = val;
 	}
 
-	void loops( protocols::loops::LoopsOP const val ) {
-		loops_ = val;
-	}
+	/// @brief Must be called before the Loops data can be read from.
+	void resolve_loopfile_indices( core::pose::Pose const & pose );
+
+	/// @brief set the Loops object (with resolved indices) directly.  This would override
+	/// the unresolved-indices held in the LoopsFileData if that data were set in the constructor
+	void loops( protocols::loops::LoopsOP const val );
+
+	/// @brief Set the loop file data.  This will require that a Pose be presented to
+	/// the LoopRelax object before get_loops() can be called.
+	void loops_file_data( loops::LoopsFileData const & loopfiledata );
 
 	void frag_libs( utility::vector1< core::fragment::FragSetOP > new_libs );
 
@@ -119,9 +165,13 @@ public:
 		 return rebuild_filter_;
 	}
 
-	protocols::loops::LoopsOP get_loops() const {
-		return loops_;
-	}
+	/// @brief Loops accessor.  May only be retrieved after the loop indices have been resolved
+	/// in a call to apply.
+	protocols::loops::LoopsOP get_loops();
+
+	/// @brief Loops accessor.  May only be retrieved after the loop indices have been resolved
+	/// in a call to apply.
+	protocols::loops::LoopsCOP get_loops() const;
 
 	std::string remodel () const {
 		return remodel_;
@@ -146,7 +196,14 @@ public:
 	void compute_rmsd( bool const c ){ compute_rmsd_ = c; }
 	bool compute_rmsd() const { return compute_rmsd_; }
 
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag(
+		utility::tag::TagPtr const tag,
+		protocols::moves::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
+	);
+
 //	void task_factory( core::pack::task::TaskFactoryOP tf ); /// currently taskfactory is not supported
 //	core::pack::task::TaskFactoryOP task_factory() const;
 
@@ -164,7 +221,7 @@ private:
 	std::string refine_;
 	std::string relax_;
 
-	loops::LoopsOP loops_;
+	loops::GuardedLoopsFromFileOP guarded_loops_;
 
 	core::scoring::ScoreFunctionOP cen_scorefxn_;
 	core::scoring::ScoreFunctionOP fa_scorefxn_;

@@ -27,22 +27,28 @@ class FoldTreeFromLoops : public protocols::moves::Mover
 {
 public:
 	FoldTreeFromLoops();
-    virtual ~FoldTreeFromLoops();
+	virtual ~FoldTreeFromLoops();
 
 	virtual void apply( Pose & pose );
 	virtual std::string get_name() const;
 
-    virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
-    virtual void parse_my_tag( TagPtr const tag, protocols::moves::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, Pose const & );
+	virtual void parse_my_tag(
+		TagPtr const tag,
+		protocols::moves::DataMap &,
+		Filters_map const &,
+		protocols::moves::Movers_map const &,
+		Pose const &
+	);
 
 	void loop_str( std::string const str );
 
-    std::string loop_str() const;
+	std::string loop_str() const;
 
-    void loops( LoopsOP const l );
+	void loops( LoopsOP const l );
 
-    LoopsOP loops() const;
+	LoopsOP loops() const;
 
 private:
 	std::string loop_str_; // loaded at parsetime but only realized at apply

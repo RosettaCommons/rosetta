@@ -44,6 +44,7 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/loops/LoopsFileIO.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/simple_filters/RmsdEvaluator.hh>
 
@@ -52,6 +53,8 @@
 
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
+
+#include <numeric/random/random.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 	#include <ctime>
@@ -63,6 +66,8 @@ using basic::Warning;
 
 namespace protocols {
 namespace loop_build {
+
+static numeric::random::RandomGenerator RG(431);
 
 int
 LoopBuild_main( bool  ) {
@@ -107,12 +112,16 @@ LoopBuild_main( bool  ) {
 	}
 
 	// load loopfile
-	protocols::loops::LoopsOP my_loops = new protocols::loops::Loops( true );
+	utility::vector1< std::string >  loop_files = basic::options::option[ basic::options::OptionKeys::loops::loop_file ]();
+	core::Size const which_loop_file( loop_files.size() == 1 ? 1 : core::Size( RG.random_range(1,( loop_files.size() ) )) );
+	protocols::loops::LoopsFileIO loopIO;
+	protocols::loops::LoopsFileData loops_from_file = loopIO.read_loop_file( loop_files[ which_loop_file ] );
+
 
 	//setup of looprelax_mover
 	comparative_modeling::LoopRelaxMover looprelax_mover;
 	looprelax_mover.frag_libs( frag_libs );
-	looprelax_mover.loops( my_loops );
+	looprelax_mover.loops_file_data( loops_from_file );
 	looprelax_mover.relax( relax );
 	looprelax_mover.refine( refine );
 	looprelax_mover.remodel( remodel );

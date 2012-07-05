@@ -249,6 +249,9 @@ void LoopMover_Refine_CCD::apply(
 	using namespace scoring;
 	using namespace basic::options;
 
+	/// must be called once the Pose has become available.
+	resolve_loop_indices( pose );
+
 	core::pose::Pose native_pose;
 	core::kinematics::FoldTree f_orig;
 	if ( get_native_pose() ) native_pose = *get_native_pose();

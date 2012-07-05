@@ -112,9 +112,9 @@ void LoopClosure::set_movemap( core::kinematics::MoveMapCOP mm ) { movemap_ = mm
 void LoopClosure::set_fragset( core::fragment::FragSetCOP frags ) { fragset_ = frags; }
 
 void LoopClosure::init() {
-  runtime_assert( fragset_ );
-  runtime_assert( movemap_ );
-  runtime_assert( scorefxn_ );
+	runtime_assert( fragset_ );
+	runtime_assert( movemap_ );
+	runtime_assert( scorefxn_ );
 
 	//make movemap that only allows bb moves within loop ( if master movemap allows the move, too ).
 	kinematics::MoveMapOP loop_movemap = new kinematics::MoveMap;

@@ -29,6 +29,7 @@
 #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
 #include <core/io/silent/SilentFileData.hh>
 
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/LoopsFileIO.hh>
 
@@ -460,14 +461,16 @@ using namespace basic::options::OptionKeys;
 	Real const grow_fact_lb( option[ dist_cst::grow_fact_lb ] );
 	loops::Loops rigid;
 	if ( option[ dist_cst::excl_rigid ].user() ) {
-		loops::LoopsFileIO loop_file_reader;
 		std::ifstream is( option[ dist_cst::excl_rigid ]().name().c_str() );
 
 		if (!is.good()) {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ dist_cst::excl_rigid ]().name() + "'" );
 		}
 
-		loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(is, option[ dist_cst::excl_rigid ](), false, "RIGID" );
+		loops::PoseNumberedLoopFileReader reader;
+		reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
+		loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file(
+			is, option[ dist_cst::excl_rigid ](), false );
 		rigid = loops::Loops( loops );
 	}
 	//	utility::vector1< core::Real > dist_sorted;

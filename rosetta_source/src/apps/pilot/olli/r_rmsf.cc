@@ -208,14 +208,15 @@ void run() {
 	FArray1D_double input_weights( rmsf_tool->eval_.n_atoms(), 1.0 );
 
 	if ( option[ rigid::in ].user() ) {
-			loops::LoopsFileIO loop_file_reader;
 			std::ifstream is( option[ rigid::in ]().name().c_str() );
 			
 			if (!is.good()) {
 				utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ rigid::in ]().name() + "'" );
 			}
 			
-			loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(is, option[ rigid::in ](), false, "RIGID");
+			loops::PoseNumberedLoopFileReader reader;
+			reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
+			loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file(is, option[ rigid::in ](), false );
 			loops::Loops rigid = loops::Loops( loops );
 
 			for ( Size i=1;i<=rmsf_tool->eval_.n_atoms(); ++i ) {

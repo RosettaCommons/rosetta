@@ -13,16 +13,19 @@
 
 // Unit Headers
 #include <protocols/loops/LoopMoverFactory.hh>
+
+// Package headers
+#include <protocols/loops/LoopsFileIO.hh>
 #include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/moves/MoverFactory.hh>
-
-// Package Headers
-#include <basic/Tracer.hh>
 
 // Project Headers
 #include <protocols/loops/Loops.hh>
 #include <utility/vector0.hh>
 #include <utility/exit.hh>
+
+// Basic headers
+#include <basic/Tracer.hh>
 
 
 // C++ Headers
@@ -68,8 +71,44 @@ loop_mover::LoopMoverOP
 LoopMoverFactory::create_loop_mover(
 	std::string const & type_name_in,
 	LoopsOP const loops
-) {
+)
+{
+	loop_mover::LoopMoverOP loop_mover = create_loop_mover( type_name_in );
 
+	loop_mover->set_guarded_loops_not_in_charge(); // <-- tell the loop mover someone else has already resolved the loop indices.
+	loop_mover->loops(loops);
+	return loop_mover;
+}
+
+/// @details Set the LoopsFileData for the LoopMover leaving it in an "in
+/// charge" state.  It will, upon a future call to apply, resolve the loop
+/// indices, which may have been provided as PDB indices, into Pose indices.
+loop_mover::LoopMoverOP
+LoopMoverFactory::create_loop_mover(
+	std::string const & type_name_in,
+	LoopsFileData const & loops
+) {
+	loop_mover::LoopMoverOP loop_mover = create_loop_mover( type_name_in );
+	loop_mover->loops(loops); // <-- this call leaves the loops_mover "in charge" of index resolution.
+	return loop_mover;
+}
+
+loop_mover::LoopMoverOP
+LoopMoverFactory::create_loop_mover(
+	std::string const & type_name_in,
+	GuardedLoopsFromFileOP guarded_loops
+) {
+	loop_mover::LoopMoverOP loop_mover = create_loop_mover( type_name_in );
+	loop_mover->loops(guarded_loops); // <-- this call makes a pointer assignment.
+	return loop_mover;
+}
+
+
+loop_mover::LoopMoverOP
+LoopMoverFactory::create_loop_mover(
+	std::string const & type_name_in
+)
+{
 	std::string type_name;
 	// deprecated names
 	if(type_name_in == "quick_ccd"){
@@ -97,12 +136,8 @@ LoopMoverFactory::create_loop_mover(
 			<< "register a new LoopMover in the MoverFactory" << endl;
 		utility_exit_with_message(error_msg.str());
 	}
-
-	loop_mover->loops(loops);
-
 	return loop_mover;
 }
-
 
 } // namespace
 } // namespace

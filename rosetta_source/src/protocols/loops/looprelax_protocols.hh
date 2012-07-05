@@ -161,45 +161,45 @@ private:
 
 	/// @brief Select a loop at random from the input list
 	bool select_one_loop(
-											 int nres,
-											 int & selected_loop,
-											 std::vector< int > & folded_loops,
-											 std::vector< int > & inter_res,
-											 int  & loop_begin,
-											 int  & loop_end,
-	                     int  & cutpoint,
-	                     bool & extend_this_loop,
-											 bool & are_loops_combined,
-											 int  & combine_interval,
-											 int  & loop_counter
-											 );
+		int nres,
+		int & selected_loop,
+		std::vector< int > & folded_loops,
+		std::vector< int > & inter_res,
+		int  & loop_begin,
+		int  & loop_end,
+		int  & cutpoint,
+		bool & extend_this_loop,
+		bool & are_loops_combined,
+		int  & combine_interval,
+		int  & loop_counter
+	);
 
 
 	/// @brief Extend the loop stems
 	void barcode_extend_stems(
-	                     core::pose::Pose & pose,
-	                     int & barcst_extend_begin,
-	                     int & barcst_extend_end,
-	                     int & loop_begin,
-	                     int & loop_end,
-	                     int const & old_loop_begin,
-	                     int const & old_loop_end,
-	                     int const & nres,
-	                     int const & selected_loop,
-	                     int const & total_combine,
-	                     int const & backward_combine
-	                         );
+		core::pose::Pose & pose,
+		int & barcst_extend_begin,
+		int & barcst_extend_end,
+		int & loop_begin,
+		int & loop_end,
+		int const & old_loop_begin,
+		int const & old_loop_end,
+		int const & nres,
+		int const & selected_loop,
+		int const & total_combine,
+		int const & backward_combine
+	);
 
 	/// @brief If chainbreak score is greater than the tolerance, extend the loop
 	void extend_barcode_regions_if_chain_break(
-	                     core::pose::Pose & pose,
-	                     int const & loop_begin,
-	                     int const & loop_end,
-	                     int & n_chain_break_fail,
-	                     bool & is_chain_break,
-	                     int & barcst_extend_begin, // output
-	                     int & barcst_extend_end
-	                         );
+		core::pose::Pose & pose,
+		int const & loop_begin,
+		int const & loop_end,
+		int & n_chain_break_fail,
+		bool & is_chain_break,
+		int & barcst_extend_begin, // output
+		int & barcst_extend_end
+	);
 
 	/// @brief
 	bool shorten_long_terminal_loop();
@@ -213,21 +213,21 @@ private:
 
 	/// @brief frag insertion + ccd close + minimize
 	void build_loop_with_ccd_closure(
-	                     core::pose::Pose & pose,
-	                     int const & loop_begin,
-	                     int const & loop_end,
-	                     int & cutpoint,
-	                     bool const & extend_this_loop
-	                         );
+		core::pose::Pose & pose,
+		int const & loop_begin,
+		int const & loop_end,
+		int & cutpoint,
+		bool const & extend_this_loop
+	);
 
 	/// @brief Apply ccd moves to close the specified loop
 	void fast_ccd_close_loops(
-	                     core::pose::Pose & pose,
-	                     int const & loop_begin,
-	                     int const & loop_end,
-	                     int const & cutpoint,
-	                     core::kinematics::MoveMap & mm
-	                         );
+		core::pose::Pose & pose,
+		int const & loop_begin,
+		int const & loop_end,
+		int const & cutpoint,
+		core::kinematics::MoveMap & mm
+	);
 
 	// protocol-specific data
 	core::pose::PoseOP pose_;

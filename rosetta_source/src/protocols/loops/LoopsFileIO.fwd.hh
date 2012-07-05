@@ -16,15 +16,25 @@
 #define INCLUDED_protocols_loops_LoopsFileIO_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace protocols {
 namespace loops {
 
 // Forward
+class ResidueIndexDescription;
+class LoopFromFileData;
 class LoopsFileIO;
+
+class LoopsFileData;
+
+class GuardedLoopsFromFile;
 
 typedef utility::pointer::owning_ptr< LoopsFileIO > LoopsFileIOOP;
 typedef utility::pointer::owning_ptr< LoopsFileIO const > LoopsFileIOCOP;
+
+typedef utility::pointer::owning_ptr< GuardedLoopsFromFile > GuardedLoopsFromFileOP;
+typedef utility::pointer::owning_ptr< GuardedLoopsFromFile const > GuardedLoopsFromFileCOP;
 
 } //namespace loops
 } //namespace protocols

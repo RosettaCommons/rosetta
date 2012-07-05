@@ -11,6 +11,7 @@ sources = {
         "loops" : [
           "Loop",
           "Loops",
+          "LoopsFileIO",
           "LoopsUtil",
         ],
         "nonlocal" : [

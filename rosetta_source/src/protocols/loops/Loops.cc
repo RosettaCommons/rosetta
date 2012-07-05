@@ -80,12 +80,15 @@ Loops::Loops( bool setup_loops_from_options_system )
 // destructor
 Loops::~Loops(){}
 
-void Loops::init( LoopList const & loops_in, bool const read_loop_file_from_options, std::string const & passed_in_filename )
+void Loops::init(
+	LoopList const & loops_in,
+	bool const read_loop_file_from_options,
+	std::string const & passed_in_filename
+)
 {
     loops_ = loops_in;
-    
-    if ( read_loop_file_from_options )
-    {
+
+    if ( read_loop_file_from_options ) {
         read_loops_options();
         return;
     }
@@ -264,7 +267,7 @@ Loops::add_loop( const Loops::iterator & it ) {
 		it->skip_rate(), it->is_extended() );
 }
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 Loops::push_back( Loop loop ) {
     add_loop( loop );
 }
@@ -469,13 +472,17 @@ Loops::LoopList Loops::setup_loops_from_data( SerializedLoopList const & loop_da
 	std::sort( tmp_loops.begin(), tmp_loops.end(), Loop_lt() );
 	return tmp_loops;
 }
-	
+
+/// @details Soon to be deprecated.
 void Loops::read_loop_file()
 {
 	clear();
 
-	loops_ = setup_loops_from_data( get_loop_file_reader()->read_loop_file( loop_file_name() ) );
-	
+	tr << "Loops object initializing itself from pose-numbered loop file named " << loop_file_name() << ". This functionality is soon to be deprecated." << std::endl;
+	std::ifstream loopfile( loop_file_name().c_str() );
+	PoseNumberedLoopFileReader reader;
+	loops_ = setup_loops_from_data( reader.read_pose_numbered_loops_file( loopfile, loop_file_name() ));
+
 	// TODO: Update these warnings/move them to the reader.
 	tr.Warning << "LOOP formats were recently reconciled - with *some* backwards compatibility. Please check your definition files!" << std::endl;
 	tr.Warning << "Please check that this is what you intended to read in: " << std::endl;
@@ -523,7 +530,7 @@ Loops Loops::invert(core::Size num_residues) const {
 bool Loops::has( core::Size const seqpos, int const offset ) const {
     return is_loop_residue( seqpos, offset );
 }
-    
+
 void Loops::set_extended( bool input ) {
   for( Loops::iterator it=v_begin(), it_end=v_end(); it != it_end; ++it ) {
 		it->set_extended( input );
@@ -739,7 +746,7 @@ void Loops::get_residues( utility::vector1< Size >& selection ) const {
 }
 std::string const & Loops::loop_file_name()
 {
-    return loop_filename_; 
+    return loop_filename_;
 }
 void Loops::set_loop_file_name_and_reset( std::string const & loop_filename )
 {
@@ -793,7 +800,7 @@ bool Loops::operator== ( Loops const& other ) const
 	return true;
 }
 
-bool Loops::operator!=( Loops const& other ) const 
+bool Loops::operator!=( Loops const& other ) const
 {
 	return !( *this == other);
 }

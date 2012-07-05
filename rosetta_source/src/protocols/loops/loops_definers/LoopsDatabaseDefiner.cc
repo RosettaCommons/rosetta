@@ -13,7 +13,9 @@
 
 // Unit Headers
 #include <protocols/loops/loops_definers/LoopsDatabaseDefiner.hh>
-#include <protocols/loops/Loop.fwd.hh>
+
+// Package Headers
+#include <protocols/loops/Loop.hh>
 
 // Project Headers
 #include <protocols/jd2/Job.hh>

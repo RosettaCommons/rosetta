@@ -95,7 +95,7 @@ public:
 
 		core_init();
 		//Need this to run the features reporter. Adds orbitals to residues
-		basic::options::option[ basic::options::OptionKeys::in::add_orbitals](true);
+		//basic::options::option[ basic::options::OptionKeys::in::add_orbitals](true); // apl disabling as this screws up the singleton FA_STANDARD residue type set
 		pose_1ten_ = fullatom_poseop_from_string( pdb_string_1ten() );
 		score_function_ = getScoreFunction();
 
@@ -111,7 +111,7 @@ public:
 		features_reporters_.push_back(new HBondParameterFeatures(score_function_));
 		features_reporters_.push_back(new JobDataFeatures());
 		features_reporters_.push_back(new LoopAnchorFeatures());
-		features_reporters_.push_back(new OrbitalsFeatures());
+		//features_reporters_.push_back(new OrbitalsFeatures());
 		features_reporters_.push_back(new PairFeatures());
 		features_reporters_.push_back(new PdbDataFeatures());
 		features_reporters_.push_back(new PoseCommentsFeatures());

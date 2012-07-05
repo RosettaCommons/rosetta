@@ -1170,30 +1170,6 @@ void IterativeBase::gen_resample_fragments( Batch& batch ) {
 				<< "-abinitio:number_3mer_frags 0" << std::endl
 				<< "-abinitio:number_9mer_frags 0" << std::endl;
 
-
-// 	OBSOLETE:
-//   bool rescore( false );
-// 	if ( stage_ >= STAGE2_RESAMPLING && !scored_core_initialized_
-// 		&& ( option[ OptionKeys::iterative::scored_ss_core ]() || option[ OptionKeys::iterative::force_scored_region ].user() ) ) {
-// 		if (  option[ OptionKeys::iterative::force_scored_region ].user() ) {
-// 			std::ifstream is( option[ OptionKeys::iterative::force_scored_region ]().name().c_str() );
-
-// 			if (!is.good()) {
-// 				utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ OptionKeys::iterative::force_scored_region ]().name() + "'" );
-// 			}
-// 			loops::LoopsFileIO loop_file_reader;
-// 			loops::LoopsFileIO::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, option[ OptionKeys::iterative::force_scored_region ](), false /*no strict checking */, "RIGID" );
-// 			scored_core_ = loops::Loops( loops );
-// 		} else {
-// 			tr.Debug << "use refined secondary structure information to select scored_core " << std::endl;
-// 			// obtain secondary structure from fragments
-// 			core::fragment::SecondaryStructure ss_def( frags_9mer, true /*no JustUseCentralResidue */ );
-// 			//	utility::vector1< bool > loop( ss_def.total_residue(),false );
-// 			loops::define_scorable_core_from_secondary_structure( ss_def, scored_core_ );
-// 		}
-// 		rescore = true;
-// 	}
-//	if ( rescore ) set_scored_core();
 	mem_tr << "IterativeBase::gen_resample_fragments end" << std::endl;
 }
 
@@ -1800,8 +1776,9 @@ void IterativeBase::restore_status( std::istream& is ) {
 	is >> tag;
 	if ( is.good() && tag == "SCORED_CORE:" ) {
 		//OBSOLETE TAG: read anyway for backward compatibility
-		loops::LoopsFileIO loop_file_reader;
-		loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, name()+"STATUS file", false /*no strict checking */, "RIGID" );
+		loops::PoseNumberedLoopFileReader reader;
+		reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
+		loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file( is, name()+"STATUS file", false /*no strict checking */ );
 		tr.Warning << "WARNING: found obsolete tag SCORE_CORE in status file" << std::endl;
 	}
 	is >> tag;

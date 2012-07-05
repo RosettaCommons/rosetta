@@ -154,15 +154,17 @@ void ConstraintClaimer::add_constraints( core::pose::Pose& pose ) const {
 	std::string const new_sequence ( pose.annotated_sequence( true ) );
 	if ( bCmdFlag_ && option[ OptionKeys::constraints::combine_exclude_region ].user() && combine_exclude_res_.size() == 0 && sequence_ != new_sequence ) {
 		std::string const file( option[ OptionKeys::constraints::combine_exclude_region ]() );
-		loops::LoopsFileIO loop_file_reader;
 		std::ifstream is( file.c_str() );
 
 		if (!is.good()) {
 			utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + file + "'" );
 		}
 
-		loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(is, file, false, "RIGID");
+		loops::PoseNumberedLoopFileReader reader;
+		reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
+		loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file(is, file, false );
 		loops::Loops rigid_core = loops::Loops( loops );
+
 		combine_exclude_res_.resize( pose.total_residue(), false );
 		rigid_core.transfer_to_residue_vector( combine_exclude_res_, true );
 	}

@@ -79,10 +79,11 @@ void register_options() {
 
 void read_input_weights( FArray1D_double& weights, Size natoms ) {
 	if ( !option[ rigid::in ].user() ) return;
-	loops::LoopsFileIO loop_file_reader;
+	loops::PoseNumberedLoopFileReader loop_file_reader;
+	loop_file_reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
 	std::ifstream is( option[ rigid::in ]().name().c_str() );
 	if (!is) utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + option[ rigid::in ]().name() + "'" );
-	loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format(is, option[ rigid::in ](), false, "RIGID");
+	loops::SerializedLoopList loops = loop_file_reader.read_pose_numbered_loops_file(is, option[ rigid::in ](), false );
 	loops::Loops rigid = loops::Loops( loops );
 	for ( Size i=1;i<=natoms; ++i ) {
 		if (rigid.is_loop_residue( i ) ) weights( i )=1.0;

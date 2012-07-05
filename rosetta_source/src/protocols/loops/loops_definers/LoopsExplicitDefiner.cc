@@ -13,6 +13,7 @@
 
 // Unit Headers
 #include <protocols/loops/loops_definers/LoopsExplicitDefiner.hh>
+#include <protocols/loops/Loop.hh>
 
 // Project Headers
 #include <basic/Tracer.hh>

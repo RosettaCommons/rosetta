@@ -22,6 +22,7 @@
 #include <protocols/evaluation/PoseEvaluator.hh>
 #include <protocols/simple_filters/RmsdEvaluator.hh>
 #include <protocols/simple_filters/ScoreEvaluator.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/LoopsFileIO.hh>
 
@@ -97,15 +98,15 @@ void NativeEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eva
 	if ( native_pose && option[ in::file::native ].user() ) {
 		if ( option[ in::file::native_exclude_res ].user() ) {
 			eval.add_evaluation( new SelectRmsdEvaluator(
-						native_pose,
-						core::scoring::invert_exclude_residues( native_pose->total_residue(), option[ in::file::native_exclude_res ]()),
-						"" )
+				native_pose,
+				core::scoring::invert_exclude_residues(
+				native_pose->total_residue(), option[ in::file::native_exclude_res ]()), "" )
 			);
 			if ( option[ OptionKeys::evaluation::gdtmm ]() ) {
 				eval.add_evaluation( new SelectGdtEvaluator(
-						native_pose,
-						core::scoring::invert_exclude_residues( native_pose->total_residue(), option[ in::file::native_exclude_res ]()),
-						"" )
+					native_pose,
+					core::scoring::invert_exclude_residues( native_pose->total_residue(),
+					option[ in::file::native_exclude_res ]()), "" )
 				);
 			}
 		} else if ( option[ OptionKeys::abinitio::rmsd_residues ].user() ){
@@ -115,24 +116,26 @@ void NativeEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eva
 		} else {
 			eval.add_evaluation( new SelectRmsdEvaluator( native_pose, "" ) );
 			if ( option[ OptionKeys::evaluation::gdtmm ]() ) eval.add_evaluation( new SelectGdtEvaluator( native_pose, "" ) );
-      eval.add_evaluation( new SelectMaxsubEvaluator( native_pose, "" ) );
+			eval.add_evaluation( new SelectMaxsubEvaluator( native_pose, "" ) );
 		}
 	} // if ( native_pose_ )
-
+	
 	if ( option[ OptionKeys::evaluation::rmsd_select ].user() ) {
-    utility::vector1< utility::file::FileName > const& rmsd_core( option[ OptionKeys::evaluation::rmsd_select ]() );
+		utility::vector1< utility::file::FileName > const& rmsd_core( option[ OptionKeys::evaluation::rmsd_select ]() );
 		if ( !option[ in::file::native ].user() ) utility_exit_with_message( "need to specify in:file:native together with rmsd_select " );
+		
+		for ( Size ct = 1; ct <= rmsd_core.size(); ct ++ ) {
+			std::ifstream is( rmsd_core[ ct ].name().c_str() );
+			
+			if (!is.good()) {
+				utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + rmsd_core[ ct ].name() + "'" );
+			}
+			
+			loops::PoseNumberedLoopFileReader reader;
+			reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
+			loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file( is, rmsd_core[ ct ].name(), false /*no strict checking */ );
 
-	  for ( Size ct = 1; ct <= rmsd_core.size(); ct ++ ) {
-		  std::ifstream is( rmsd_core[ ct ].name().c_str() );
-		  
-		  if (!is.good()) {
-			  utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + rmsd_core[ ct ].name() + "'" );
-		  }
-		  
-		  loops::LoopsFileIO loop_file_reader;
-		  loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, rmsd_core[ ct ].name(), false /*no strict checking */, "RIGID" );
-		  loops::Loops core( loops );
+			loops::Loops core( loops );
 			utility::vector1< Size> selection;
 			core.get_residues( selection );
 			if ( native_pose ) eval.add_evaluation( new simple_filters::SelectRmsdEvaluator( native_pose, selection, rmsd_core[ ct ].base() ) );

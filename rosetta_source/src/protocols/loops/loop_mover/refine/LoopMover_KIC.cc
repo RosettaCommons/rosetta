@@ -166,6 +166,9 @@ void LoopMover_Refine_KIC::apply(
 ){
 	static int cur_struct=0; // for movie output
 
+	/// must be called once the Pose has become available.
+	resolve_loop_indices( pose );
+
 	using namespace core;
 	using namespace optimization;
 	using namespace scoring;

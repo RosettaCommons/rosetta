@@ -19,8 +19,13 @@
 
 // Package headers
 #include <protocols/loops/Loop.fwd.hh>
+#include <protocols/loops/Loops.fwd.hh>
+
+// Project headers
+#include <core/pose/Pose.fwd.hh>
 
 // Utility headers
+#include <utility/json_spirit/json_spirit_reader.h>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
@@ -31,8 +36,217 @@
 namespace protocols {
 namespace loops {
 
+/// @brief Checks if there is a problem with the beginning and ending residues defined
+/// in a loops file.
+void
+validate_loop_start_stop(
+	bool prohibit_single_residue_loops,
+	core::Size start,
+	core::Size stop,
+	std::string const & filename,
+	core::Size linecount
+);
+
+/// @brief a class which can represent one of many ways in which to describe a
+/// particular residue in a pose, and can, when given a pose, find its index.
+/// The object should be constructed with all its needed parameters, but, one
+/// instance may be copied from another.
+class ResidueIndexDescription
+{
+public:
+	ResidueIndexDescription();
+	ResidueIndexDescription( core::Size pose_index );
+	ResidueIndexDescription(
+		char chain,
+		int resindex,
+		char insertion_code = ' ' // space character represents no insertion code
+	);
+
+	core::Size resolve_index( core::pose::Pose const & p ) const;
+
+	bool unassigned() const { return unassigned_; }
+	bool pose_numbered() const { return pose_numbered_; }
+	core::Size  pose_index() const { return pose_index_; }
+	char chain() const { return chain_; }
+	int resindex() const { return resindex_; }
+	char insertion_code() const { return insertion_code_; }
+
+private:
+	bool unassigned_;
+	bool pose_numbered_;
+	core::Size  pose_index_;
+	char chain_;   // chain character
+	int resindex_;
+	char insertion_code_;
+};
+
+class ResidueIndexDescriptionFromFile : public ResidueIndexDescription
+{
+public:
+	ResidueIndexDescriptionFromFile();
+
+	ResidueIndexDescriptionFromFile(
+		std::string fname,
+		core::Size linenum,
+		core::Size pose_index
+	);
+
+	ResidueIndexDescriptionFromFile(
+		std::string fname,
+		core::Size linenum,
+		char chain,
+		int resindex,
+		char insertion_code = ' ' // space character represents no insertion code
+	);
+
+	core::Size resolve_index( core::pose::Pose const & p ) const;
+
+	std::string const & fname() const { return fname_; }
+	core::Size linenum() const { return linenum_; }
+
+private:
+	std::string fname_; // file it was
+	core::Size linenum_;
+};
+
+
+class LoopFromFileData
+{
+public:
+	LoopFromFileData();
+
+	LoopFromFileData(
+		ResidueIndexDescriptionFromFile const & start_res,
+		ResidueIndexDescriptionFromFile const & cutpoint_res,
+		ResidueIndexDescriptionFromFile const & end_res,
+		core::Real skip_rate,
+		bool extended,
+		bool prohibit_single_residue_loops = true
+	);
+
+	/// constructed the other way around (for the the PoseNumberedLoopReader)
+	LoopFromFileData(
+		SerializedLoop const & loop,
+		std::string const & fname, // file from which this loop was created
+		bool prohibit_single_residue_loops = true
+	);
+
+	/// @brief loop-index resolution function: construct a SerializedLoopData object
+	/// by possibly retrieving data from a Pose.  This function also performs the
+	/// loop-index checks performed by the PoseNumberedLoopFileReader.
+	SerializedLoop
+	resolve_as_serialized_loop_from_pose( core::pose::Pose const & pose ) const;
+
+	ResidueIndexDescriptionFromFile const & start_res() const { return start_res_; }
+	void start_res( ResidueIndexDescriptionFromFile const & setting ) { start_res_ = setting; }
+
+	ResidueIndexDescriptionFromFile const & cutpoint_res() const { return cutpoint_res_; }
+	void cutpoint_res( ResidueIndexDescriptionFromFile const & setting ) { cutpoint_res_ = setting; }
+
+	ResidueIndexDescriptionFromFile const & end_res() const { return end_res_; }
+	void end_res( ResidueIndexDescriptionFromFile const & setting ) { end_res_ = setting; }
+
+	core::Real skip_rate() const { return skip_rate_; }
+	void skip_rate( core::Real setting ) { skip_rate_ = setting; }
+
+	bool extended() const { return extended_; }
+	void extended( bool setting ) { extended_ = setting; }
+
+	bool prohibit_single_residue_loops() const { return prohibit_single_residue_loops_; }
+	void prohibit_single_residue_loops( bool setting ) { prohibit_single_residue_loops_ = setting; }
+
+private:
+	ResidueIndexDescriptionFromFile start_res_;
+	ResidueIndexDescriptionFromFile cutpoint_res_;
+	ResidueIndexDescriptionFromFile end_res_;
+	core::Real skip_rate_;
+	bool extended_;
+	bool prohibit_single_residue_loops_;
+};
+
+class LoopsFileData : public utility::vector1< LoopFromFileData >
+{
+public:
+	LoopsOP resolve_loops( core::pose::Pose const & pose ) const;
+	SerializedLoopList resolve_as_serialized_loops( core::pose::Pose const & pose ) const;
+};
+
+/// @brief This class ensures that the Loops object that is needed to run any of the various
+/// forms of loop modeling is correctly initialized from a Pose.  If the residues specified
+/// from a loops file have not been resolved into the residue indices for a Pose, then
+/// this class will die with an assertion failure.
+class GuardedLoopsFromFile : public utility::pointer::ReferenceCount
+{
+public:
+	/// @brief default ctor; sets the object in an "in charge" state.
+	GuardedLoopsFromFile();
+
+	/// @brief constructor from a loops-file-data object: sets this object in an "in charge" state.
+	GuardedLoopsFromFile( LoopsFileData const & lfd );
+
+	/// @brief constructor from loops pointer: sets this object in a "not in charge" state.
+	GuardedLoopsFromFile( LoopsOP loops );
+
+	/// @brief constructor from a loops object: set this object in an "in charge" state.
+	GuardedLoopsFromFile( Loops const & loops );
+
+	/// @brief copy constructor; takes it's "in charge" state from src.
+	GuardedLoopsFromFile( GuardedLoopsFromFile const & src );
+
+	/// @brief copy constructor; takes it's "in charge" state from src. Set the copy as not-in-charge.
+	GuardedLoopsFromFile( GuardedLoopsFromFile const & src, bool  );
+
+	/// @brief virtual dstor
+	virtual ~GuardedLoopsFromFile();
+
+	/// @brief assignment operator; takes it's "in charge" state from rhs
+	GuardedLoopsFromFile const & operator = ( GuardedLoopsFromFile const & rhs );
+
+	/// @brief set to "in charge" state.
+	void in_charge( bool setting );
+
+	/// @brief get "in charge" state.
+	bool in_charge() const;
+
+	/// @brief Resolve the loop indices, and mark the state as resolved, so that calls to loops() will succeed.
+	/// This function will re-resolve loop indices with a new pose, which may be important if the same loop_file_data_
+	/// is being applied to a pose which has different PDB indices.  If I am not in charge, this is a no-op.
+	void resolve_loop_indices( core::pose::Pose const & );
+
+	//// @brief Resolve the loop indices if they have not yet been resolved.  If I am not in charge, this is a no-op.
+	void resolve_loop_indices_once( core::pose::Pose const & );
+
+	/// @brief request the LoopsCOP pointer; asserts that the loop indices
+	/// have been resolved or that "I am not in charge".
+	LoopsCOP loops() const;
+
+	/// @brief request the LoopsOP pointer; asserts that the loop indices
+	/// have been resolved or that "I am not in charge".
+	LoopsOP loops();
+
+	/// @brief set the loops owning pointer object directly
+	void set_loops_pointer( LoopsOP setting );
+
+	/// @brief set the loops to copy the contents of settings into the existing Loops object
+	void loops( Loops const & setting );
+
+	/// @brief set the LoopsFileData object directly
+	void loops( LoopsFileData const & setting );
+
+	/// @brief read access to the LoopsFileData
+	LoopsFileData const & loops_file_data() const;
+
+private:
+	bool in_charge_;
+	bool pose_has_resolved_loop_indices_;
+	bool rely_on_loopfile_indices_;
+	LoopsFileData loops_file_data_;
+	LoopsOP loops_;
+};
+
 ///////////////////////////////////////////////////////////////////////////
-// a list of loops
+// a class for reading a loops file where the format of that file might
+// be one of many formats
 class LoopsFileIO : public utility::pointer::ReferenceCount {
 
 public:
@@ -40,40 +254,132 @@ public:
 	//constructor
 	LoopsFileIO();
 
-		//copy constructor
+	//copy constructor
 	LoopsFileIO( const LoopsFileIO & src );
 
-
-	// assignment operator
-	LoopsFileIO & operator =( LoopsFileIO const & src );
-
-		// destructor
-		~LoopsFileIO();
+	// destructor
+	~LoopsFileIO();
 
 	friend std::ostream & operator<<( std::ostream & os, const LoopsFileIO & loops_file_io );
 
-
-	SerializedLoopList read_loop_file( std::string filename );
-
-	SerializedLoopList use_custom_legacy_file_format(
-		std::istream & is,
-		std::string filename,
-		bool strict_looprelax_checks,
-		std::string token
+	/// @brief Return an "unresolved" list of loops specified in a file
+	/// which can be turned into a "resolved" list of residue indices in
+	/// a particular Pose by giving each LoopFromFileData object access
+	/// to that Pose.
+	/// Note: prohibit_single_residue_loops used to be called "strict_looprelax_checks_"
+	/// which was decidedly opaque
+	LoopsFileData read_loop_file(
+		std::string const & filename,
+		bool prohibit_single_residue_loops = true
 	);
 
-private:
+	LoopsFileData read_loop_file_stream(
+		std::istream & loopfstream,
+		std::string const & filename,
+		bool prohibit_single_residue_loops = true
+	);
 
-	void read_stream_to_END(
-		std::istream & is,
-		std::string filename /*for error msg */,
-		bool strict_looprelax_checks = true,
-		std::string token = "LOOP" );
-
-private:
-	SerializedLoopList loops_;
 
 }; // LoopsFileIO
+
+
+/// This is the main legacy loop-reading function, which will read the pose-numbered
+/// file.  This functionality is used by a great many number of places often having
+/// nothing to do with representing a loop, so it will persist.
+class PoseNumberedLoopFileReader {
+public:
+	PoseNumberedLoopFileReader();
+
+	SerializedLoopList
+	read_pose_numbered_loops_file(
+		std::istream & is,
+		std::string const & filename,
+		bool strict_looprelax_checks = true // i.e. prohibit_single_residue_loops
+	);
+
+	/// @brief if the input stream has had some number of lines already removed from it,
+	/// indicate how many.
+	void set_linecount_offset( core::Size );
+
+	/// @brief For code that relys on reading loop-file-formatted ranges if residues
+	/// but which really ought to use
+	void hijack_loop_reading_code_set_loop_line_begin_token( std::string const & token );
+
+private:
+	std::string loop_line_begin_token_; // usually "LOOP"
+	core::Size linecount_offset_;
+
+};
+
+/// The following enumerators are used for parsing JSON formatted loop files
+enum ResidueIdentifier {
+	start=1,
+	stop,
+	cut_point,
+	number_of_residue_identifiers=cut_point
+};
+
+enum LoopConfiguration {
+	extras=number_of_residue_identifiers + 1,
+	resSeq,
+	iCode,
+	chainID,
+	skip_rate,
+	extend,
+	use_pose_numbering,
+	number_of_configuration_keywords=use_pose_numbering
+};
+
+class JSONFormattedLoopsFileReader {
+public:
+
+	/// @brief if the input stream has had some number of lines already removed from it,
+	/// indicate how many.
+	void set_linecount_offset( core::Size );
+
+	LoopsFileData
+	read_loop_file(
+		std::istream & is,
+		std::string const & filename,
+		bool prohibit_single_residue_loops
+	);
+
+private: // methods
+	LoopsFileData
+	parse_json_formatted_data(
+		utility::json_spirit::mValue & json_data,
+		bool prohibit_single_residue_loops,
+		std::string const & filename
+	);
+
+	void
+	ensure_all_fields_are_valid( utility::json_spirit::mValue & json_data, std::string const & filename );
+
+	ResidueIndexDescriptionFromFile
+	parse_json_residue_info(
+		utility::json_spirit::mValue & json_loop_data,
+		ResidueIdentifier residue_identifier,
+		std::string const & filename,
+		core::Size & approximate_linenumber
+	);
+
+	void
+	parse_configuration_options(
+		utility::json_spirit::mValue & json_loop_data,
+		LoopFromFileData & loop
+	);
+
+	void setup_residue_type_map();
+	std::string name_from_residue_identifier( ResidueIdentifier residue_identifier );
+	std::string name_from_loop_configuration( LoopConfiguration loop_configuration );
+
+private:
+	core::Size linecount_offset_;
+
+	static bool initialized_;
+	static utility::vector1< std::string > valid_loop_file_keys_;
+
+};
 
 } //namespace loops
 } //namespace protocols

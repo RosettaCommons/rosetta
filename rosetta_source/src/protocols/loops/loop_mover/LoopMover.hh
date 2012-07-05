@@ -24,6 +24,7 @@
 
 #include <protocols/loops/Loop.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
+#include <protocols/loops/LoopsFileIO.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <protocols/checkpoint/CheckPointer.fwd.hh>
 #include <utility/vector1.fwd.hh>
@@ -56,28 +57,51 @@ public:
 
 	LoopMover();
 	LoopMover( protocols::loops::LoopsOP loops_in );
+	LoopMover( protocols::loops::LoopsFileData const & loops_from_file );
+	LoopMover( protocols::loops::GuardedLoopsFromFileOP guarded_loops );
 
-    ///@brief copy ctor
+	///@brief copy ctor
 	LoopMover( LoopMover const & rhs );
 
 	///@brief assignment operator
 	LoopMover & operator=( LoopMover const & rhs );
 
-    //destructor
+	//destructor
 	virtual ~LoopMover();
 
 	virtual std::string get_name() const;
 
-    /// @brief Apply the loop-build protocol to the input pose
-	void apply( core::pose::Pose & ) {}
+	/// @brief Inform the GuardedLoopsFromFile object that it is not in charge of
+	/// updating its Loops object at the beginning of apply()
+	void set_guarded_loops_not_in_charge();
 
-    void set_scorefxn( const core::scoring::ScoreFunctionOP score_in );
-    const core::scoring::ScoreFunctionOP & scorefxn() const;
+	/// @brief Apply the loop-build protocol to the input pose
+	virtual void apply( core::pose::Pose & ) = 0;
 
-    void loops( protocols::loops::LoopsOP const l );
-    const protocols::loops::LoopsOP loops() const;
+	void set_scorefxn( const core::scoring::ScoreFunctionOP score_in );
+	const core::scoring::ScoreFunctionOP & scorefxn() const;
 
-    const utility::vector1< core::fragment::FragSetOP > & frag_libs() const;
+	/// @brief Set the loops pointer by giving the LoopMover resolved loop indices; implicity sets
+	/// the GuardedLoopsFromFile object into a "not in charge" state (since something else
+	/// must be controlling the the Loops object).  The GuardedLoopFromFile object copies the pointer,
+	/// not the data.
+	void loops( protocols::loops::LoopsOP lptr );
+
+	/// @brief Set the loops by giving the LoopMover unresolved loop indices (which cannot be resolved until apply() ).
+	void loops( LoopsFileData const & loop_file_data );
+
+	/// @brief Set the guarded_loops pointer
+	void loops( protocols::loops::GuardedLoopsFromFileOP guarded_loops );
+
+	/// @brief Accessor for the loops data.  Requires that the loop indices have been resolved; do not call this before
+	/// apply() has been called.
+	protocols::loops::LoopsCOP loops() const;
+
+	/// @brief non-const accessor for the loops data.  Requires that the loop indices have been resolved; do not call this
+	/// before apply() has been called.
+	protocols::loops::LoopsOP loops();
+
+	const utility::vector1< core::fragment::FragSetOP > & frag_libs() const;
 
 
 	/// @brief Extend a loop
@@ -96,7 +120,7 @@ public: // movemap management
 	/// @brief <b>explicit</b> False settings in this MoveMap will override any
 	///  automatically generated MoveMap settings during the loop modeling
 	///  protocol
-    MoveMapOP const & false_movemap() const;
+	MoveMapOP const & false_movemap() const;
 
 	/// @brief <b>explicit</b> False settings in this MoveMap will override any
 	///  automatically generated MoveMap settings during the loop modeling
@@ -121,27 +145,35 @@ protected: // movemap management
 	/// fly step
 	void set_loops_from_pose_observer_cache( core::pose::Pose const & pose );
 
-    bool use_loops_from_observer_cache() const;
-    void set_use_loops_from_observer_cache( bool const loops_from_observer_cache );
+	bool use_loops_from_observer_cache() const;
+	void set_use_loops_from_observer_cache( bool const loops_from_observer_cache );
 
-    virtual basic::Tracer & tr() const = 0;
+	virtual basic::Tracer & tr() const = 0;
+
+
+	/// @brief Turn the unresolved loop indices read in from disk into pose-specific
+	/// loop indices.  Must be called by derived classes at the beginning of apply.
+	void resolve_loop_indices( core::pose::Pose const & p );
+
+private:
+
+	void init();
+	void initForEqualOperatorAndCopyConstructor(LoopMover & lhs, LoopMover const & rhs);
+
 
 private: // data
 
-    protocols::loops::LoopsOP loops_;
+	GuardedLoopsFromFileOP guarded_loops_;
 
-    core::scoring::ScoreFunctionOP scorefxn_;
-    utility::vector1< core::fragment::FragSetOP > frag_libs_;
-    checkpoint::CheckPointerOP checkpoints_;
-    bool loops_from_observer_cache_;
+	core::scoring::ScoreFunctionOP scorefxn_;
+	utility::vector1< core::fragment::FragSetOP > frag_libs_;
+	checkpoint::CheckPointerOP checkpoints_;
+	bool loops_from_observer_cache_;
 
 	/// @brief <b>explicit</b> False settings in this MoveMap will override any
 	///  automatically generated MoveMap settings during the loop modeling
 	///  protocol
 	MoveMapOP false_movemap_;
-
-    void init( protocols::loops::LoopsOP loops_in );
-    void initForEqualOperatorAndCopyConstructor(LoopMover & lhs, LoopMover const & rhs);
 
 }; // class LoopMover
 

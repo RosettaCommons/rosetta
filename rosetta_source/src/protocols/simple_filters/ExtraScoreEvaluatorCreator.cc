@@ -22,6 +22,7 @@
 #include <protocols/evaluation/PoseEvaluator.hh>
 #include <protocols/simple_filters/ScoreEvaluator.hh>
 
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/LoopsFileIO.hh>
 #include <core/scoring/constraints/util.hh>
@@ -132,15 +133,16 @@ void ExtraScoreEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
 			}
 			if ( select_string != "SELECT_ALL" ) {
 				std::ifstream is( select_string.c_str() );
-				
+
 				if (!is.good()) {
 					utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + select_string + "'" );
 				}
-				
-				loops::LoopsFileIO loop_file_reader;
-				loops::SerializedLoopList loops = loop_file_reader.use_custom_legacy_file_format( is, select_string, false /*no strict checking */, "RIGID" );
+
+				loops::PoseNumberedLoopFileReader reader;
+				reader.hijack_loop_reading_code_set_loop_line_begin_token( "RIGID" );
+				loops::SerializedLoopList loops = reader.read_pose_numbered_loops_file( is, select_string, false /*no strict checking */ );
 				loops::Loops core( loops );
-				
+
 				utility::vector1< Size> selection;
 				core.get_residues( selection );
 				eval.add_evaluation( new simple_filters::TruncatedScoreEvaluator( tag, selection, scfxn ) );
