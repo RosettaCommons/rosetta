@@ -43,6 +43,8 @@ public:
 	SwitchResidueTypeSetMover();
 	SwitchResidueTypeSetMover( std::string const & );
 
+	std::string get_residue_type_set() const;
+
 	/// @brief Applies ResidueTypeSet converion on the pose
 	/// @note: a single protocols::moves::Mover only converts in ONE direction e.g. to centroid
 	virtual void apply( core::pose::Pose & pose );
@@ -63,6 +65,8 @@ public:
 private:
 	std::string type_set_tag_;
 };
+
+std::ostream &operator<< (std::ostream &os, SwitchResidueTypeSetMover const &mover);
 
 } // simple_moves
 } // protocols

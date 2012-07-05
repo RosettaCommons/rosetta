@@ -57,6 +57,8 @@ public:
 	/// @brief Adds a mover to the end of this container
 	void add_mover( MoverOP mover_in, core::Real weight_in = 1.0 );
 
+	std::string get_mover( core::Size num) const;
+
 	void clear(){ movers_.clear(); };
 
 	/// @brief Sets the input Pose for both the container
@@ -69,7 +71,7 @@ public:
 
 	virtual void apply( core::pose::Pose & pose ) = 0;
 	Size nr_moves() { return movers_.size(); };
-	Size size() { return movers_.size(); };
+	Size size() const { return movers_.size(); };
 
 	MoverOP front() { return movers_.front(); };
 

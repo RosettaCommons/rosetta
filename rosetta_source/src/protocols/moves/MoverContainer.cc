@@ -66,6 +66,11 @@ void MoverContainer::add_mover( MoverOP mover_in , Real weight_in ) // do we nee
 	weight_.push_back(weight_in);
 }
 
+std::string MoverContainer::get_mover( core::Size num ) const {
+	return movers_[num]->get_name();
+}
+
+
 // Sets the input pose for both the container and the contained movers
 // overriding this method fixes an annoying bug (barak)
 	// TODO: does it make sense to cal this also from add_mover? I think not (barak)
@@ -262,6 +267,21 @@ void CycleMover::reset_cycle_index()
 std::string
 CycleMover::get_name() const {
 	return "CycleMover";
+}
+
+std::ostream &operator<< (std::ostream &os, MoverContainer const &mover)
+{
+	moves::operator<<(os, mover);
+	os << "Mover name: " << mover.get_name() << ", Mover type: " << mover.get_type();
+	Size i = 0;
+	os << mover.get_mover(i) << std::endl;
+	os << mover.get_mover(i+1) << std::endl;
+	os << mover.get_mover(i+2) << std::endl;
+	//for ( Size i=0; i<mover.size(); ++i ) {
+	//	os << "Mover[" << i+1 << "]: " << mover.get_mover(i) << std::endl;
+	//}
+
+	return os;
 }
 
 }  // namespace moves

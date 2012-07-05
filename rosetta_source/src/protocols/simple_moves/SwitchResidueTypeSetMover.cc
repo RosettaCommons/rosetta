@@ -61,6 +61,12 @@ SwitchResidueTypeSetMover::SwitchResidueTypeSetMover( std::string const & type_s
 		type_set_tag_( type_set_tag_in )
 {}
 
+std::string
+SwitchResidueTypeSetMover::get_residue_type_set() const {
+	return type_set_tag_;
+}
+
+
 void
 SwitchResidueTypeSetMover::apply( Pose & pose )
 {
@@ -93,6 +99,14 @@ SwitchResidueTypeSetMover::parse_my_tag(
 	core::pose::Pose const & )
 {
 	if ( tag->hasOption("set") ) type_set_tag_ = tag->getOption<std::string>("set");
+}
+
+std::ostream &operator<< (std::ostream &os, SwitchResidueTypeSetMover const &mover)
+{
+	moves::operator<<(os, mover);
+	os << "Residue type set: " << mover.get_residue_type_set() << std::endl;
+
+	return os;
 }
 
 } // simple_moves
