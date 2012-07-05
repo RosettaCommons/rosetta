@@ -220,7 +220,7 @@ bool Residue::connections_match( Residue const & other ) const
 
 bool
 Residue::is_similar_rotamer( Residue const & other ) const
-	
+
 {
 
 	utility::vector1< Real > this_chi = chi_;
@@ -794,6 +794,12 @@ Residue::update_sequence_numbering( utility::vector1< Size > const & old2new )
 		Size const new_resid = old2new[ old_resid ];
 
 		connect_map_[i].resid( new_resid );
+
+		// If the partner disappears, partner atomid should be zero too. Otherwise if you add and
+		// then delete a residue to a pose, a neighboring residue does not stay invariant.
+		if( new_resid == 0 ) connect_map_[i].connid( 0 );
+
+
 // 		if ( new_resid ) {
 // 			connections_to_residues_[ new_resid ] = connections_to_residues_copy[ old_resid ];
 // 		}
