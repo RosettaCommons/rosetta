@@ -9,7 +9,7 @@
 	</TASKOPERATIONS>
 	<MOVERS>
 		<SavePoseMover name=init_struct reference_name=init_struct/>
-		<ReportToDB name=features_reporter database_name="features_IntegrationTest.db3" sample_source="Test the whole feature generation code stack." task_operations=all>
+		<ReportToDB name=features_reporter database_name="rosetta_tests" sample_source="Test the whole feature generation code stack." task_operations=all>
 			Meta
 			<feature name=PoseCommentsFeatures/>
 
