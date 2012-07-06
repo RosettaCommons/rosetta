@@ -22,12 +22,12 @@
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-/*
+
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-*/
-#include <protocols/simple_moves/ReturnSidechainMover.hh>
+
+#include <protocols/moves/RepeatMover.hh>
 
 int main(int argc, char *argv[])
 {
@@ -65,9 +65,12 @@ int main(int argc, char *argv[])
 	protocols::simple_moves::SwitchResidueTypeSetMover switch2 = protocols::simple_moves::SwitchResidueTypeSetMover("centroid");
 	std::cout << switch2 << std::endl;*/
 
-	protocols::simple_moves::ReturnSidechainMover returnmover = protocols::simple_moves::ReturnSidechainMover(test_pose) ;
-	std::cout << returnmover << std::endl;
-	protocols::simple_moves::ReturnSidechainMover returnmover2 = protocols::simple_moves::ReturnSidechainMover(test_pose,10,20) ;
-	std::cout << returnmover2 << std::endl;
+	protocols::moves::RepeatMover repeatmover;
+	std::cout << repeatmover << std::endl;
+
+	protocols::simple_moves::SmallMoverOP smallmover = new protocols::simple_moves::SmallMover;
+	int num = 2;
+	protocols::moves::RepeatMover repeatmover2 = protocols::moves::RepeatMover(smallmover, num);
+	std::cout << repeatmover2 << std::endl;
 
 }

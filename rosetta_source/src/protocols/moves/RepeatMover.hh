@@ -69,11 +69,16 @@ public:
 	///     TrialMover
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
+	core::Size get_nmoves() const;
+	std::string get_mover() const;
 
 private:
 	MoverOP mover_;
 	int nmoves_;
 };
+
+
+std::ostream &operator<< (std::ostream &os, RepeatMover const &mover);
 
 } // moves
 } // protocols
