@@ -1188,10 +1188,14 @@ def init(*args, **kargs):
     protocols.init.init(v)
 
 
-def version():
-    return "PyRosetta 2.011 [r%s] retrieved from: %s" % (rosetta.core.minirosetta_svn_version(), rosetta.core.minirosetta_svn_url()) + \
-    '\n(C) Copyright Rosetta Commons Member Institutions.\nCreated in JHU by Sergey Lyskov and PyRosetta Team.\n'
+__version__ = "r%s" % rosetta.core.minirosetta_svn_version()
 
+
+def version():
+    return "PyRosetta 2.011 [" + __version__ + \
+           "] retrieved from: %s" % rosetta.core.minirosetta_svn_url() + \
+           "\n(C) Copyright Rosetta Commons Member Institutions." + \
+           "\nCreated in JHU by Sergey Lyskov and PyRosetta Team.\n"
 
 X11Colors = {
     'black': (0, 0, 0, 0),
