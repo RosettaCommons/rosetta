@@ -1188,11 +1188,11 @@ def init(*args, **kargs):
     protocols.init.init(v)
 
 
-__version__ = "r%s" % rosetta.core.minirosetta_svn_version()
+__version__ = rosetta.core.minirosetta_svn_version()
 
 
 def version():
-    return "PyRosetta 2.011 [" + __version__ + \
+    return "PyRosetta 2.011 [r" + __version__ + \
            "] retrieved from: %s" % rosetta.core.minirosetta_svn_url() + \
            "\n(C) Copyright Rosetta Commons Member Institutions." + \
            "\nCreated in JHU by Sergey Lyskov and PyRosetta Team.\n"
