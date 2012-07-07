@@ -56,6 +56,7 @@ DONE
 #include <utility/vector1.hh>
 #include <core/scoring/methods/RG_Energy_Fast.hh>
 
+#include <numeric/xyzTransform.hh>
 
 
 // #include <time.h>
@@ -686,7 +687,7 @@ struct TCDock {
 		core::pose::Pose t2(pose);
 		rot_pose(t2,Vecf(0,0,1),180.0);
 		for(Size i = 1; i <= t2.n_residue(); ++i) if(i==1||pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t2.residue(i),1); else pose.append_residue_by_bond(t2.residue(i));
-		pose.dump_pdb("dimer.pdb");
+		// pose.dump_pdb("dimer.pdb");
 	}
 	void make_trimer(core::pose::Pose & pose) {
 		// cerr << "make_trimer" << endl;
@@ -695,7 +696,7 @@ struct TCDock {
 		rot_pose(t3,Vecf(0,0,1),240.0);
 		for(Size i = 1; i <= t2.n_residue(); ++i) if(i==1||pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t2.residue(i),1); else pose.append_residue_by_bond(t2.residue(i));
 		for(Size i = 1; i <= t3.n_residue(); ++i) if(i==1||pose.residue(i).is_lower_terminus()||pose.residue(i).is_ligand()) pose.append_residue_by_jump(t3.residue(i),1); else pose.append_residue_by_bond(t3.residue(i));
-		pose.dump_pdb("trimer.pdb");
+		// pose.dump_pdb("trimer.pdb");
 	}
 	void make_tetramer(core::pose::Pose & pose) {
 		// cerr << "make_tetramer" << endl;
@@ -855,7 +856,10 @@ struct TCDock {
 				return 0.0;
 			}
 			dori = d;
-			if(d > 0) utility_exit_with_message("ZERO!!");
+			if(d > 0){
+				std::cerr << "slide should be negative! d: " << d << std::endl;
+				utility_exit_with_message("ZERO!!");
+			}
 			double const theta=(double)iori;
 			double const gamma=numeric::conversions::radians(theta-alpha_/2.0);
 			double const sin_gamma=sin(gamma), cos_gamma=cos(gamma), x=d*sin_gamma, y=d*cos_gamma, w=x/sin_alpha_, z=x/tan_alpha_;

@@ -47,7 +47,7 @@ using namespace numeric;
 typedef numeric::xyzVector<core::Real> Vec;
 typedef numeric::xyzMatrix<core::Real> Mat;
 
-
+static basic::Tracer TR("sym_multicomp_test");
 
 bool check_coords_match(
 	vector1<Vec> const & a,
@@ -108,7 +108,7 @@ int main (int argc, char *argv[]) {
 		Pose test;
 		core::pose::symmetry::extract_asymmetric_unit(pose,test);
 		if( core::scoring::CA_rmsd(init,test) > 0.001 ) {
-			std::cout << "FAIL " << files[ifile] << " " << option[basic::options::OptionKeys::symmetry::symmetry_definition]() << std::endl;
+			TR << "FAIL " << files[ifile] << " " << option[basic::options::OptionKeys::symmetry::symmetry_definition]() << std::endl;
 			continue;
 		}
 		bool fail = false;
@@ -122,11 +122,11 @@ int main (int argc, char *argv[]) {
 			move_jump(pose,i->first);
 			vector1<Vec> postC   =     chain_coords(pose,chain,nres);
 			vector1<Vec> postNoC = non_chain_coords(pose,chain,nres);
-			if(  check_coords_match(preC  ,postC)   ) std::cerr << "FAIL: chain " << chain << " not moved" << std::endl;
-			if( !check_coords_match(preNoC,postNoC) ) std::cerr << "FAIL: not chain " << chain << " moved" << std::endl;
+			if(  check_coords_match(preC  ,postC)   ) TR.Error << "FAIL: chain " << chain << " not moved" << std::endl;
+			if( !check_coords_match(preNoC,postNoC) ) TR.Error << "FAIL: not chain " << chain << " moved" << std::endl;
 			fail != check_coords_match(preC,postC) || !check_coords_match(preNoC,postNoC);
 		}
-		if(!fail) std::cout << "WOOT " << files[ifile] << " " << option[basic::options::OptionKeys::symmetry::symmetry_definition]() << std::endl;
+		if(!fail) TR << "WOOT " << files[ifile] << " " << option[basic::options::OptionKeys::symmetry::symmetry_definition]() << std::endl;
 	}
 	return 0;
 }

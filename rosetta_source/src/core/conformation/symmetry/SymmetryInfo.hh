@@ -184,9 +184,9 @@ public:
 	void add_chi_clone( Size const base_pos, Size const clone_pos );
 	void add_jump_clone( Size const base_pos, Size const clone_jump, Real const wt );
 
-	std::map< Size, SymDof > get_dofs() const;
+	std::map< Size, SymDof > const &get_dofs() const;
 
-	void set_dofs( std::map< Size, SymDof > dofs );
+	void set_dofs( std::map< Size, SymDof > const & dofs );
 
 	Size interface_number( Size const res1, Size const res2 ) const;
 
@@ -219,6 +219,32 @@ public:
 	std::string get_jump_name(Size i) const;
 	Size get_jump_num(std::string i) const;
 	void set_jump_name(Size i, std::string);
+	char get_component_of_dof(Size j) const;
+	char get_component_of_dof(std::string const & dofname);
+	char get_component_of_residue(Size ir);
+
+	void 
+	set_multicomponent_info(
+		utility::vector1<char> const & components,
+		std::map<char,std::pair<Size,Size> > const & component_bounds,
+		std::map<std::string,char> const & name2component,
+		std::map<std::string,utility::vector1<char> > const & jname2component,
+		std::map<std::string,utility::vector1<Size> > const & jname2subunits
+	);
+
+	utility::vector1<char> const & get_components() const;
+	std::map<char,std::pair<Size,Size> > const & get_component_bounds() const;
+	std::map<std::string,char> const & get_subunit_name_to_component() const;
+	std::map<std::string,utility::vector1<char> > const & get_jump_name_to_components() const;
+	std::map<std::string,utility::vector1<Size> > const & get_jump_name_to_subunits() const;
+
+	std::pair<Size,Size> const & get_component_bounds(char c) const;
+	Size get_component_lower_bound(char c) const;
+	Size get_component_upper_bound(char c) const;
+	char get_component_of_residue(Size ir) const;
+	char get_subunit_name_to_component(std::string const & vname) const;
+	utility::vector1<char> const & get_jump_name_to_components(std::string const & jname) const;
+	utility::vector1<Size> const & get_jump_name_to_subunits  (std::string const & jname) const;
 
 private:
 
@@ -266,8 +292,17 @@ private:
 	// Slide info
 	SymSlideInfo slide_info_;
 
-	std::map<Size,std::string> jnum2name_;
-	std::map<std::string,Size> name2jnum_;	
+	std::map<Size,std::string> jnum2dofname_;
+	std::map<std::string,Size> dofname2jnum_;
+
+	utility::vector1<char> components_;
+	std::map<char,std::pair<Size,Size> > component_bounds_;
+	std::map<std::string,char> name2component_;
+	std::map<std::string,utility::vector1<char> > jname2components_;
+	std::map<std::string,utility::vector1<Size> > jname2subunits_;
+
+	utility::vector1<char> components_moved_by_jump(std::string const & jname) const;
+	utility::vector1<Size> subunits_moved_by_jump(std::string const & jname) const;
 
 }; // SymmetryInfo
 

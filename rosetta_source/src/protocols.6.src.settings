@@ -172,6 +172,7 @@ sources = {
 	"SegmentHybridizer"
 ],
 "protocols/sic_dock" : [ # sheffler
+	"Rose",
 	"SICFast",
 	"RigidScore",
 	"util",

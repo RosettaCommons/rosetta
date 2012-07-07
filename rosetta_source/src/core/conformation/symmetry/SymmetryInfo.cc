@@ -73,8 +73,8 @@ SymmetryInfo::SymmetryInfo( SymmData const & symm_data, Size const nres_subunit,
 	Size joff = njump_subunit*symm_data.get_subunits();
 	std::map<std::string,Size> const & name2num = symm_data.get_jump_string_to_jump_num();
 	for(std::map<std::string,Size>::const_iterator i = name2num.begin(); i != name2num.end(); ++i) {
-		name2jnum_[i->first] = i->second+joff;
-		jnum2name_[i->second+joff] = i->first;
+		dofname2jnum_[i->first] = i->second+joff;
+		jnum2dofname_[i->second+joff] = i->first;
 	}
 	if (  symm_data.get_jump_clones().size() > 0 ) {
 		initialize( nres_subunit, njump_subunit,
@@ -1139,14 +1139,14 @@ SymmetryInfo::add_jump_clone( Size const base_pos, Size const clone_pos, Real co
 	jump_clone_wts_[ clone_pos ] = jump_wt;
 }
 
-std::map< Size, SymDof >
+std::map< Size, SymDof > const &
 SymmetryInfo::get_dofs() const
 {
 	return dofs_;
 }
 
 void
-SymmetryInfo::set_dofs( std::map< Size, SymDof > dofs )
+SymmetryInfo::set_dofs( std::map< Size, SymDof > const & dofs )
 {
 	dofs_ = dofs;
 }
@@ -1386,25 +1386,134 @@ SymmetryInfo::subunit_index( Size const seqpos ) const {
 
 std::string
 SymmetryInfo::get_jump_name(Size jnum) const {
-	if( 0 == jnum2name_.count(jnum) ) utility_exit_with_message("bad jump num");
-	return jnum2name_.find(jnum)->second;
+	if( 0 == jnum2dofname_.count(jnum) ) utility_exit_with_message("bad jump num");
+	return jnum2dofname_.find(jnum)->second;
 }
 
 Size
 SymmetryInfo::get_jump_num(std::string jname) const {
-	if( 0 == name2jnum_.count(jname) ) utility_exit_with_message("bad jump name");
-	return name2jnum_.find(jname)->second;
+	if( 0 == dofname2jnum_.count(jname) ) utility_exit_with_message("bad jump name");
+	return dofname2jnum_.find(jname)->second;
 }
 
 void
 SymmetryInfo::set_jump_name(Size jnum, std::string jname) {
-	jnum2name_[jnum] = jname;
-	name2jnum_[jname] = jnum;
+	jnum2dofname_[jnum] = jname;
+	dofname2jnum_[jname] = jnum;
+}
+
+utility::vector1<char> const &
+SymmetryInfo::get_components() const {
+	if(components_.size()==0) utility_exit_with_message("function not for use in simgle compinent symmetry");
+	return components_;
+}
+
+std::map<char,std::pair<Size,Size> > const &
+SymmetryInfo::get_component_bounds() const { 
+	if(components_.size()==0) utility_exit_with_message("function not for use in simgle compinent symmetry");
+	return component_bounds_;
+}
+
+std::map<std::string,char> const &
+SymmetryInfo::get_subunit_name_to_component() const { 
+	if(components_.size()==0) utility_exit_with_message("function not for use in simgle compinent symmetry");
+	return name2component_;
+}
+
+std::map<std::string,utility::vector1<char> > const &
+SymmetryInfo::get_jump_name_to_components() const { 
+	if(components_.size()==0) utility_exit_with_message("function not for use in simgle compinent symmetry");
+	return jname2components_;
+}
+
+std::map<std::string,utility::vector1<Size> > const & 
+SymmetryInfo::get_jump_name_to_subunits() const {
+	if(components_.size()==0) utility_exit_with_message("function not for use in simgle compinent symmetry");
+	return jname2subunits_;
+}
+std::pair<Size,Size> const & 
+SymmetryInfo::get_component_bounds(char c) const {
+	if(components_.size()==0) utility_exit_with_message("function not for use in simgle compinent symmetry");
+	if( component_bounds_.find(c) == component_bounds_.end() ){
+		utility_exit_with_message(std::string("no symmetry component ")+c);
+	}
+	return component_bounds_.find(c)->second;
+}
+Size
+SymmetryInfo::get_component_lower_bound(char c) const {
+	if(components_.size()==0) utility_exit_with_message("function not for use in simgle compinent symmetry");
+	if( component_bounds_.find(c) == component_bounds_.end() ){
+		utility_exit_with_message(std::string("no symmetry component ")+c);
+	}
+	return component_bounds_.find(c)->second.first;
+}
+Size
+SymmetryInfo::get_component_upper_bound(char c) const {
+	if(components_.size()==0) utility_exit_with_message("function not for use in simgle compinent symmetry");
+	if( component_bounds_.find(c) == component_bounds_.end() ){
+		utility_exit_with_message(std::string("no symmetry component ")+c);
+	}
+	return component_bounds_.find(c)->second.second;
+}
+char
+SymmetryInfo::get_component_of_residue(Size ir) const {
+	if(components_.size()==0) utility_exit_with_message("function not for use in simgle compinent symmetry");
+	if( ir > num_total_residues_without_pseudo() || ir < 1 ){
+		utility_exit_with_message(std::string("no symmetry component for residue "));
+	}
+	Size irindep = (ir-1)%num_independent_residues()+1;
+	for(std::map<char,std::pair<Size,Size> >::const_iterator i = component_bounds_.begin(); i != component_bounds_.end(); ++i){
+		char component = i->first;
+		Size lower = i->second.first;
+		Size upper = i->second.second;
+		// std::cerr << component << " " << lower << " " << upper << " " << irindep << std::endl;
+		if( lower <= irindep && irindep <= upper ) return component;
+	}
+	utility_exit_with_message(std::string("no symmetry component for residue "));
+	return ' ';
+}
+char
+SymmetryInfo::get_subunit_name_to_component(std::string const & vname) const {
+	if(components_.size()==0) utility_exit_with_message("function not for use in simgle compinent symmetry");
+	if( name2component_.find(vname) == name2component_.end() ){
+		utility_exit_with_message(std::string("no symmetry component for ")+vname);
+	}
+	return name2component_.find(vname)->second;
+}
+utility::vector1<char> const & 
+SymmetryInfo::get_jump_name_to_components(std::string const & jname) const {
+	if(components_.size()==0) utility_exit_with_message("function not for use in simgle compinent symmetry");
+	if( jname2components_.find(jname) == jname2components_.end() ){
+		utility_exit_with_message(std::string("no symmetry component for ")+jname);
+	}
+	return jname2components_.find(jname)->second;
+}
+utility::vector1<Size> const & 
+SymmetryInfo::get_jump_name_to_subunits(std::string const & jname) const {
+	if(components_.size()==0) utility_exit_with_message("function not for use in simgle compinent symmetry");
+	if( jname2subunits_.find(jname) == jname2subunits_.end() ){
+		utility_exit_with_message(std::string("no symmetry component for ")+jname);
+	}
+	return jname2subunits_.find(jname)->second;
+}
+
+
+void 
+SymmetryInfo::set_multicomponent_info(
+	utility::vector1<char> const & components,
+	std::map<char,std::pair<Size,Size> > const & component_bounds,
+	std::map<std::string,char> const & name2component,
+	std::map<std::string,utility::vector1<char> > const & jname2component,
+		std::map<std::string,utility::vector1<Size> > const & jname2subunits
+){
+	components_ = components;
+	component_bounds_ = component_bounds;
+	name2component_ = name2component;
+	jname2components_ = jname2component;
+	jname2subunits_ = jname2subunits;
 }
 
 
 } // symmetry
 } // conformation
 } // core
-
-

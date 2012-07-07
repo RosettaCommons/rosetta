@@ -60,71 +60,6 @@ public:
 		meta_iterator(float4 const *p) : iter_base<meta_iterator>(p) {}
 		const T & operator*() { return *((VecandVal const *)(this->p_)); }
 	};
-	struct neighbor_iterator : public std::iterator<std::input_iterator_tag,T> {
-		neighbor_iterator( xyzStripeHashWithMeta<T> const & h ): h_(h) {}
-		neighbor_iterator( xyzStripeHashWithMeta<T> const & h, numeric::xyzVector<T> const & v_in):
-			h_(h),
-			x  (v_in.x()+h_.translation_.x()),
-			y  (v_in.y()+h_.translation_.y()),
-			z  (v_in.z()+h_.translation_.z()),
-			ix ( (x<0) ? 0 : numeric::min(h_.xdim_-1,(int)(x/h_.grid_size_)) ),
-			iy0( (y<0) ? 0 : y/h_.grid_size_ ),
-			iz0( (z<0) ? 0 : z/h_.grid_size_ ),
-			iyl( numeric::max(0,iy0-1) ),
-			izl( numeric::max(0,iz0-1) ),
-			iyu( numeric::min((int)h_.ydim_,iy0+2) ),
-			izu( numeric::min((int)h_.zdim_,(int)iz0+2) )
-		{
-			// if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return 0; // worth it iff
-			// if( x > xmx_ || y > ymx_ || z > zmx_ ) return 0;                      // worth it iff
-			iy = iyl-1;
-			iz=9999999,igu=0,i=9999999;
-			// return count;
-			++(*this);
-		}
-		neighbor_iterator & operator++() { 
-			using ObjexxFCL::fmt::I;
-			while(iy < iyu){
-				if(iz >= izu){
-					++iy;
-					iz = izl-1;
-					i=9999999,igu=0;
-				} else { 
-					if( i >= igu ){
-						++iz;
-						ig = ix+h_.xdim_*iy+h_.xdim_*h_.ydim_*iz;
-						igl = h_.grid_stripe_[ig].x;
-						igu = h_.grid_stripe_[ig].y;
-						i = igl-1;
-					} else {			
-						++i;
-						float4 const & a2 = h_.grid_atoms_[i];
-						float const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
-						if( d2 <= h_.grid_size2_ ){
-							std::cout << "iter " 
-							          << I(3,iyl) << " " << I(3,iy) << " " << I(3,iyu) << "   "
-							          << I(3,izl) << " " << I(3,iz) << " " << I(3,izu) << "   "
-							          << I(5,igl) << " " << I(5,i-1) << " " << I(5,igu) << "   "					          
-							          << std::endl;
-							return *this;
-						}
-					}
-				}
-			}
-			end();
-			return *this;
-		} 
-		const VecandVal & operator*() { return *((VecandVal const *)(grid_atoms_+i)); }
-		// neighbor_iterator & operator=(const neighbor_iterator& r) { p_ = r.p_; return *this; }
-		bool operator!=(neighbor_iterator const & r) const { return (i != r.i); }
-		bool operator==(neighbor_iterator const & r) const { return (i == r.i); }
-		void end() { i = h_.natom(); }
-	private:
-		xyzStripeHashWithMeta const & h_;
-		T x,y,z;
-		int ix,iy0,iz0,iyl,izl,iyu,izu;
-		int iy,iz,ig,igl,igu,i;
-	};
 
 public:
 
@@ -134,8 +69,8 @@ public:
 		grid_size_(grid_size),
 		grid_size2_(grid_size*grid_size),
 		grid_atoms_(NULL),
-		grid_stripe_(NULL),
-		neighbor_end_(*this)
+		grid_stripe_(NULL)//,
+		//	neighbor_end_(*this)
 	{}
 	xyzStripeHashWithMeta( T grid_size,
 	               utility::vector1<numeric::xyzVector<T> > const & atoms,
@@ -144,8 +79,8 @@ public:
 		grid_size_(grid_size),
 		grid_size2_(grid_size*grid_size),
 		grid_atoms_(NULL),
-		grid_stripe_(NULL),
-		neighbor_end_(*this)
+		grid_stripe_(NULL)//,
+		//neighbor_end_(*this)
 	{
 		init(atoms,meta);
 	}
@@ -155,13 +90,13 @@ public:
 		utility::vector1<T> const & meta
 	){
 		// if( sizeof(T) < sizeof(M) ) utility_exit_with_message("octree metadata must fit in sizeof(T)!");
-		if( atoms.size() != meta.size() ) utility_exit_with_message("must be metadata for each point!");
+		if( meta.size() > 0 && atoms.size() != meta.size() ) utility_exit_with_message("must be metadata for each point!");
 		if( atoms.size() > 65535 ) utility_exit_with_message("xyzStripeHashWithMeta con only handle < 65535 atoms!");
 
 // #define FUDGE 0.0f
 
 		natom_ = atoms.size();
-		neighbor_end_.end();
+		//neighbor_end_.end();
 
 		T xmn= 9e9,ymn= 9e9,zmn= 9e9;
 		T xmx=-9e9,ymx=-9e9,zmx=-9e9;
@@ -228,7 +163,7 @@ public:
 			gatom[ idx ].x = atoms[i].x()-xmn/*+FUDGE*/;
 			gatom[ idx ].y = atoms[i].y()-ymn/*+FUDGE*/;
 			gatom[ idx ].z = atoms[i].z()-zmn/*+FUDGE*/;
-			gatom[ idx ].w = meta[i];
+			gatom[ idx ].w = meta.size()>0 ? meta[i] : i;
 			++(gridc[ig]);
 		}
 		grid_atoms_ = gatom;
@@ -253,15 +188,15 @@ public:
 		if(grid_stripe_) delete grid_stripe_;
 	}
 
-	xyz_iterator xyz_begin(){ return xyz_iterator(grid_atoms_       ) ; }
-	xyz_iterator xyz_end()  { return xyz_iterator(grid_atoms_+natom_) ; }
-	meta_iterator meta_begin(){ return meta_iterator(grid_atoms_       ) ; }
-	meta_iterator meta_end()  { return meta_iterator(grid_atoms_+natom_) ; }
-	xyzmeta_iterator xyzmeta_begin(){ return xyzmeta_iterator(grid_atoms_       ) ; }
-	xyzmeta_iterator xyzmeta_end()  { return xyzmeta_iterator(grid_atoms_+natom_) ; }
+	    xyz_iterator     xyz_begin() const { return     xyz_iterator(grid_atoms_       ) ; }
+	    xyz_iterator     xyz_end()   const { return     xyz_iterator(grid_atoms_+natom_) ; }
+	   meta_iterator    meta_begin() const { return    meta_iterator(grid_atoms_       ) ; }
+	   meta_iterator    meta_end()   const { return    meta_iterator(grid_atoms_+natom_) ; }
+	xyzmeta_iterator xyzmeta_begin() const { return xyzmeta_iterator(grid_atoms_       ) ; }
+	xyzmeta_iterator xyzmeta_end()   const { return xyzmeta_iterator(grid_atoms_+natom_) ; }
 
-	neighbor_iterator neighbor_begin( xyzVector<T> v ) const { return neighbor_iterator(*this,v); }
-	neighbor_iterator const & neighbor_end() const { return neighbor_end_; }
+	// neighbor_iterator neighbor_begin( xyzVector<T> v ) const { return neighbor_iterator(*this,v); }
+	// neighbor_iterator const & neighbor_end() const { return neighbor_end_; }
 
 	bool sanity_check() const {
 		using namespace ObjexxFCL::fmt;
@@ -425,7 +360,7 @@ private:
 	T xmx_,ymx_,zmx_;
 	//numeric::xyzMatrix<Real> rotation_;
 	numeric::xyzVector<numeric::Real> translation_;
-	neighbor_iterator neighbor_end_;
+	// neighbor_iterator neighbor_end_;
 };
 
 
@@ -434,3 +369,70 @@ private:
 } // namespace numeric
 
 #endif
+
+
+	// struct neighbor_iterator : public std::iterator<std::input_iterator_tag,T> {
+	// 	neighbor_iterator( xyzStripeHashWithMeta<T> const & h ): h_(h) {}
+	// 	neighbor_iterator( xyzStripeHashWithMeta<T> const & h, numeric::xyzVector<T> const & v_in):
+	// 		h_(h),
+	// 		x  (v_in.x()+h_.translation_.x()),
+	// 		y  (v_in.y()+h_.translation_.y()),
+	// 		z  (v_in.z()+h_.translation_.z()),
+	// 		ix ( (x<0) ? 0 : numeric::min(h_.xdim_-1,(int)(x/h_.grid_size_)) ),
+	// 		iy0( (y<0) ? 0 : y/h_.grid_size_ ),
+	// 		iz0( (z<0) ? 0 : z/h_.grid_size_ ),
+	// 		iyl( numeric::max(0,iy0-1) ),
+	// 		izl( numeric::max(0,iz0-1) ),
+	// 		iyu( numeric::min((int)h_.ydim_,iy0+2) ),
+	// 		izu( numeric::min((int)h_.zdim_,(int)iz0+2) )
+	// 	{
+	// 		// if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return 0; // worth it iff
+	// 		// if( x > xmx_ || y > ymx_ || z > zmx_ ) return 0;                      // worth it iff
+	// 		iy = iyl-1;
+	// 		iz=9999999,igu=0,i=9999999;
+	// 		// return count;
+	// 		++(*this);
+	// 	}
+	// 	neighbor_iterator & operator++() { 
+	// 		using ObjexxFCL::fmt::I;
+	// 		while(iy < iyu){
+	// 			if(iz >= izu){
+	// 				++iy;
+	// 				iz = izl-1;
+	// 				i=9999999,igu=0;
+	// 			} else { 
+	// 				if( i >= igu ){
+	// 					++iz;
+	// 					ig = ix+h_.xdim_*iy+h_.xdim_*h_.ydim_*iz;
+	// 					igl = h_.grid_stripe_[ig].x;
+	// 					igu = h_.grid_stripe_[ig].y;
+	// 					i = igl-1;
+	// 				} else {			
+	// 					++i;
+	// 					float4 const & a2 = h_.grid_atoms_[i];
+	// 					float const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
+	// 					if( d2 <= h_.grid_size2_ ){
+	// 						std::cout << "iter " 
+	// 						          << I(3,iyl) << " " << I(3,iy) << " " << I(3,iyu) << "   "
+	// 						          << I(3,izl) << " " << I(3,iz) << " " << I(3,izu) << "   "
+	// 						          << I(5,igl) << " " << I(5,i-1) << " " << I(5,igu) << "   "					          
+	// 						          << std::endl;
+	// 						return *this;
+	// 					}
+	// 				}
+	// 			}
+	// 		}
+	// 		end();
+	// 		return *this;
+	// 	} 
+	// 	const VecandVal & operator*() { return *((VecandVal const *)(grid_atoms_+i)); }
+	// 	// neighbor_iterator & operator=(const neighbor_iterator& r) { p_ = r.p_; return *this; }
+	// 	bool operator!=(neighbor_iterator const & r) const { return (i != r.i); }
+	// 	bool operator==(neighbor_iterator const & r) const { return (i == r.i); }
+	// 	void end() { i = h_.natom(); }
+	// private:
+	// 	xyzStripeHashWithMeta const & h_;
+	// 	T x,y,z;
+	// 	int ix,iy0,iz0,iyl,izl,iyu,izu;
+	// 	int iy,iz,ig,igl,igu,i;
+	// };

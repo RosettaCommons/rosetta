@@ -141,7 +141,17 @@ utility::vector1<std::string>
 sym_dof_names(core::pose::Pose const & pose);
 
 int
-sym_dof_jump_num(core::pose::Pose const & pose, std::string jname);
+sym_dof_jump_num(core::pose::Pose const & pose, std::string const & jname);
+
+utility::vector1<Size>
+get_symdof_subunits(core::pose::Pose const &, std::string const & jname);
+
+Size get_component_lower_bound(core::pose::Pose const & pose, char c);
+Size get_component_upper_bound(core::pose::Pose const & pose, char c);
+char get_component_of_residue(core::pose::Pose const & pose, Size ir);
+char get_subunit_name_to_component(core::pose::Pose const & pose, std::string const & vname);
+utility::vector1<char> const & get_jump_name_to_components(core::pose::Pose const & pose, std::string const & jname);
+utility::vector1<Size> const & get_jump_name_to_subunits  (core::pose::Pose const & pose, std::string const & jname);
 
 } // symmetry
 } // pose

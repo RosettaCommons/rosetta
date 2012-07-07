@@ -3600,6 +3600,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-find_neighbors_stripehash</b> \<Boolean\><dt>
+<dd>should be faster than 3dgrid and use 1/8th the memory</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-seqdep_refene_fname</b> \<String\><dt>
 <dd>Filename for table containing sequence-dependent reference energies</dd><br>
 </dl>

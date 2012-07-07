@@ -20,11 +20,11 @@
 namespace protocols{
 namespace sic_dock{
 
-using core::Real;
+using platform::Real;
 using numeric::min;
 using numeric::max;
-typedef numeric::xyzVector<core::Real> Vec;
-typedef numeric::xyzMatrix<core::Real> Mat;
+typedef numeric::xyzVector<platform::Real> Vec;
+typedef numeric::xyzMatrix<platform::Real> Mat;
 
 void
 get_xform_stats(
@@ -164,8 +164,8 @@ XfoxmScore::score(
 float
 XfoxmScore::score(
 	core::pose::Pose const & pose,
-	core::Size rsd1,
-	core::Size rsd2
+	platform::Size rsd1,
+	platform::Size rsd2
 ) const {
 	if(!pose.residue(rsd1).is_protein()) return 0.0;
 	if(!pose.residue(rsd2).is_protein()) return 0.0;
@@ -193,8 +193,8 @@ XfoxmScore::score(
 		dssp.insert_ss_into_pose(pose);
 	}
 	float tot_score = 0.0;
-	for(core::Size ir = 1; ir <= pose.n_residue(); ++ir){
-		for(core::Size jr = ir+1; jr <= pose.n_residue(); ++jr){
+	for(platform::Size ir = 1; ir <= pose.n_residue(); ++ir){
+		for(platform::Size jr = ir+1; jr <= pose.n_residue(); ++jr){
 			float s1 = score(pose,ir,jr);
 			float s2 = score(pose,jr,ir);
 			// if( s1 < 0.0f ) std::cout << s1 << std::endl;
@@ -210,8 +210,8 @@ XfoxmScore::score(
 	core::pose::Pose const & pose
 ) const {
 	float tot_score = 0.0;
-	for(core::Size ir = 1; ir <= pose.n_residue(); ++ir){
-		for(core::Size jr = ir+1; jr <= pose.n_residue(); ++jr){
+	for(platform::Size ir = 1; ir <= pose.n_residue(); ++ir){
+		for(platform::Size jr = ir+1; jr <= pose.n_residue(); ++jr){
 			float s1 = score(pose,ir,jr);
 			float s2 = score(pose,jr,ir);
 			// if( s1 < 0.0f ) std::cout << s1 << std::endl;

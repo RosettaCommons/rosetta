@@ -61,7 +61,8 @@ enum Strategy {
 	NAIVE,
 	AUTOMATIC,
 	OCTREE,
-	THREEDGRID
+	THREEDGRID,
+	STRIPEHASH
 };
 
 // move the following typedef to top of file instead of

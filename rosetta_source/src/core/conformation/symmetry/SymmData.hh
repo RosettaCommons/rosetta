@@ -99,6 +99,13 @@ class SymmData : public utility::pointer::ReferenceCount
 	core::Real cell_beta_;
 	core::Real cell_gamma_;
 
+	utility::vector1<char> components_;
+	std::map<std::string,char> name2component_;
+	std::map<std::string,utility::vector1<char> > jname2components_;
+	std::map<std::string,utility::vector1<Size> > jname2subunits_;
+
+	utility::vector1<std::string> leaves_of_jump(std::string const & jname) const;
+
 	public:
 	typedef numeric::xyzVector< core::Real > Vector;
 	typedef numeric::xyzMatrix< core::Real > Matrix;
@@ -306,8 +313,21 @@ class SymmData : public utility::pointer::ReferenceCount
 	core::Real cell_beta );
 
 	void
-	get_cell_gamma(
-		core::Real cell_gamma );
+	get_cell_gamma( core::Real cell_gamma );
+
+	utility::vector1<char> const & get_components() const;
+	std::map<std::string,char> const & get_subunit_name_to_component() const;
+	std::map<std::string,utility::vector1<char> > const & get_jump_name_to_components() const;
+	std::map<std::string,utility::vector1<Size> > const & get_jump_name_to_subunits() const;
+
+	std::string const & get_parent_jump(std::string const & jname) const;
+	std::string const & get_parent_virtual(std::string const & vname) const;
+	bool is_ancestor_virtual(std::string const & ancestor, std::string const & child) const;
+	std::string const & get_least_common_ancertor_jump(std::string const & jname1, std::string const & jname2) const;
+	std::string const & get_least_common_ancertor_virtual(std::string const & vname1, std::string const & vname2) const;
+
+	utility::vector1<char> components_moved_by_jump(std::string const & jname) const;
+	utility::vector1<Size> subunits_moved_by_jump(std::string const & jname) const;
 
 };
 

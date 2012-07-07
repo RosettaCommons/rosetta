@@ -7,21 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/Ramachandran.fwd.hh
-/// @brief  Ramachandran potential class forward delcaration
-/// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
+#ifndef INCLUDED_protocols_sic_dock_Rose_FWD_hh
+#define INCLUDED_protocols_sic_dock_Rose_FWD_hh
 
-#ifndef INCLUDED_core_scoring_Ramachandran_fwd_hh
-#define INCLUDED_core_scoring_Ramachandran_fwd_hh
+#include <utility/pointer/owning_ptr.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+namespace protocols {
+namespace sic_dock {
 
-namespace core {
-namespace scoring {
-
-class Ramachandran;
-typedef utility::pointer::owning_ptr<Ramachandran       > RamachandranOP;
-typedef utility::pointer::owning_ptr<Ramachandran const > RamachandranCOP;
+class Rose;
 
 }
 }

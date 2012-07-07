@@ -43,6 +43,8 @@
 
 #include <apps/pilot/will/will_util.ihh>
 
+#include <numeric/xyzTransform.hh>
+
 typedef numeric::xyzVector<core::Real> Vec;
 typedef numeric::xyzMatrix<core::Real> Mat;
 
@@ -81,6 +83,8 @@ OPT_1GRP_KEY( FileVector, cxdock, bench4 )
 OPT_1GRP_KEY( FileVector, cxdock, bench5 )
 OPT_1GRP_KEY( FileVector, cxdock, bench6 )
 OPT_1GRP_KEY( IntegerVector, cxdock, nfold )
+
+typedef numeric::xyzTransform<core::Real> Xform;
 
 void register_options() {
 	using namespace basic::options;
@@ -214,6 +218,23 @@ make_dock_olig(
 }
 
 inline
+Xform
+get_cx_stub(Hit h){
+	Real halfside = (h.s1.v-h.s2.v).length()/2.0;
+	Real r = halfside / tan(numeric::constants::d::pi/(Real)h.sym); // tan(a/2) * edge_len/2
+	core::kinematics::Stub x(h.s1);
+	x.v = x.v + Vec(0,r,halfside);
+	{
+		Real ang = dihedral_degrees(Vec(0,0,1),Vec(0,0,0),Vec(1,0,0), x.local2global(Vec(0,0,0)) );
+		Mat R = numeric::x_rotation_matrix_degrees( -ang );
+		x.M = R * x.M;
+		x.v = R * x.v;
+	}
+	return Xform(x.M,x.v);
+}
+
+
+inline
 Real
 get_rmsd(
 	utility::vector1<Vec> const & native_ca,
@@ -310,10 +331,7 @@ dock(
 	using namespace OptionKeys;
 
 	// set up one SIC per thread
-	std::vector<protocols::sic_dock::SICFast*> sics_;
-	sics_.resize(num_threads());
-	for(int i = 0; i < num_threads(); ++i) sics_[i] = new protocols::sic_dock::SICFast;
-	for(int i = 0; i < num_threads(); ++i) sics_[i]->init(init_pose);
+	protocols::sic_dock::SICFast sic; sic.init(init_pose);
 
 	utility::vector1<Vec> init_ca;
 	for(Size ir = 1; ir <= init_pose.n_residue(); ++ir){
@@ -358,14 +376,18 @@ dock(
 				Stub const x2( Rsym[ic]*R, Vec(0,0,0) );
 				Real cbc; 
 				
-				Real t = sics_[thread_num()]->slide_into_contact(x1,x2,Vec(0,0,1),cbc);
+				Real t = sic.slide_into_contact(x1,x2,Vec(0,0,1));
 				
 				Hit h(iss,irt,cbc,syms[ic]);
 				h.s1 = x1;
 				h.s2 = x2;
 				h.s1.v += t*Vec(0,0,1);
-				h.xscore = compute_xform_score(xfs,h.s1,h.s2,stubs,ss);
-				h.rmsd = get_rmsd( native_ca, init_ca, h ); //, init_pose );
+				// h.xscore = compute_xform_score(xfs,h.s1,h.s2,stubs,ss);
+				// h.rmsd = get_rmsd( native_ca, init_ca, h ); //, init_pose );
+				Xform x = get_cx_stub(h);
+	
+				cout << "XFORM " << x.R << " " << x.t << endl;
+
 				if(cbc >= CONTACT_TH){
 					#ifdef USE_OPENMP
 					#pragma omp critical
@@ -377,12 +399,12 @@ dock(
 						// make_dock_olig(init_pose,olig,h);
 						// Real actualrmsd = core::scoring::CA_rmsd(olig,native_olig);
 						
-							std::cout << "RMSD " 
-							          // << actualrmsd << " " 
-							          << h.rmsd << " " 
-							          << h.cbc << " "
-							          << h.xscore << " " 
-							          << std::endl;
+							// std::cout << "RMSD " 
+							//           // << actualrmsd << " " 
+							//           << h.rmsd << " " 
+							//           << h.cbc << " "
+							//           << h.xscore << " " 
+							//           << std::endl;
 
 						// if( fabs(actualrmsd - h.rmsd) > 5.0 && h.rmsd < 5.0 ){
 						// 	get_rmsd_debug( native_ca, init_ca, h, init_pose );

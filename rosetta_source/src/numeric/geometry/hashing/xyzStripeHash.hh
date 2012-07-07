@@ -51,74 +51,10 @@ public:
 	protected:
 		float3 const *p_;
 	};
-	struct iterator : public iter_base<iterator> {
-		iterator(float3 const *p) : iter_base<iterator>(p) {}
-		const Vec & operator*() { return *((Vec const *)(this->p_)); }
-	};
-	struct neighbor_iterator : public std::iterator<std::input_iterator_tag,T> {
-		neighbor_iterator( xyzStripeHash<T> const & h ): h_(h) {}
-		neighbor_iterator( xyzStripeHash<T> const & h, Vec const & v_in):
-			h_(h),
-			x  (v_in.x()+h_.translation_.x()),
-			y  (v_in.y()+h_.translation_.y()),
-			z  (v_in.z()+h_.translation_.z()),
-			ix ( (x<0) ? 0 : numeric::min(h_.xdim_-1,(int)(x/h_.grid_size_)) ),
-			iy0( (y<0) ? 0 : y/h_.grid_size_ ),
-			iz0( (z<0) ? 0 : z/h_.grid_size_ ),
-			iyl( numeric::max(0,iy0-1) ),
-			izl( numeric::max(0,iz0-1) ),
-			iyu( numeric::min((int)h_.ydim_,iy0+2) ),
-			izu( numeric::min((int)h_.zdim_,(int)iz0+2) )
-		{
-			// if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return 0; // worth it iff
-			// if( x > xmx_ || y > ymx_ || z > zmx_ ) return 0;                      // worth it iff
-			iy = iyl-1;
-			iz=9999999,igu=0,i=9999999;
-			// return count;
-			++(*this);
-		}
-		neighbor_iterator & operator++() { 
-			using ObjexxFCL::fmt::I;
-			while(iy < iyu){
-				if(iz >= izu){
-					++iy;
-					iz = izl-1;
-					i=9999999,igu=0;
-				} else { 
-					if( i >= igu ){
-						++iz;
-						ig = ix+h_.xdim_*iy+h_.xdim_*h_.ydim_*iz;
-						igl = h_.grid_stripe_[ig].x;
-						igu = h_.grid_stripe_[ig].y;
-						i = igl-1;
-					} else {			
-						++i;
-						float3 const & a2 = h_.grid_atoms_[i];
-						float const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
-						if( d2 <= h_.grid_size2_ ){
-							std::cout << "iter " 
-							          << I(3,iyl) << " " << I(3,iy) << " " << I(3,iyu) << "   "
-							          << I(3,izl) << " " << I(3,iz) << " " << I(3,izu) << "   "
-							          << I(5,igl) << " " << I(5,i-1) << " " << I(5,igu) << "   "					          
-							          << std::endl;
-							return *this;
-						}
-					}
-				}
-			}
-			end();
-			return *this;
-		} 
-		const Vec & operator*() { return *((Vec const *)(grid_atoms_+i)); }
-		// neighbor_iterator & operator=(const neighbor_iterator& r) { p_ = r.p_; return *this; }
-		bool operator!=(neighbor_iterator const & r) const { return (i != r.i); }
-		bool operator==(neighbor_iterator const & r) const { return (i == r.i); }
-		void end() { i = h_.natom(); }
-	private:
-		xyzStripeHash const & h_;
-		T x,y,z;
-		int ix,iy0,iz0,iyl,izl,iyu,izu;
-		int iy,iz,ig,igl,igu,i;
+	struct const_iterator : public iter_base<const_iterator> {
+		const_iterator(float3 const *p) : iter_base<const_iterator>(p) {}
+		Vec const & operator *() { return *((Vec const *)(this->p_)); }
+		Vec const * operator->() { return  ((Vec const *)(this->p_)); }
 	};
 
 public:
@@ -129,8 +65,8 @@ public:
 		grid_size_(grid_size),
 		grid_size2_(grid_size*grid_size),
 		grid_atoms_(NULL),
-		grid_stripe_(NULL),
-		neighbor_end_(*this)
+		grid_stripe_(NULL)//,
+		// neighbor_end_(*this)
 	{}
 	xyzStripeHash( T grid_size,
 	               utility::vector1<Vec > const & atoms
@@ -138,8 +74,8 @@ public:
 		grid_size_(grid_size),
 		grid_size2_(grid_size*grid_size),
 		grid_atoms_(NULL),
-		grid_stripe_(NULL),
-		neighbor_end_(*this)
+		grid_stripe_(NULL)//,
+		// neighbor_end_(*this)
 	{
 		init(atoms);
 	}
@@ -152,7 +88,7 @@ public:
 // #define FUDGE 0.0f
 
 		natom_ = atoms.size();
-		neighbor_end_.end();
+		// neighbor_end_.end();
 
 		T xmn= 9e9,ymn= 9e9,zmn= 9e9;
 		T xmx=-9e9,ymx=-9e9,zmx=-9e9;
@@ -243,11 +179,11 @@ public:
 		if(grid_stripe_) delete grid_stripe_;
 	}
 
-	inline iterator begin(){ return iterator(grid_atoms_       ) ; }
-	inline iterator end()  { return iterator(grid_atoms_+natom_) ; }
+	inline const_iterator begin() const { return const_iterator(grid_atoms_       ) ; }
+	inline const_iterator end()   const { return const_iterator(grid_atoms_+natom_) ; }
 
-	inline neighbor_iterator neighbor_begin( Vec v ) const { return neighbor_iterator(*this,v); }
-	inline neighbor_iterator const & neighbor_end() const { return neighbor_end_; }
+	// inline neighbor_iterator neighbor_begin( Vec v ) const { return neighbor_iterator(*this,v); }
+	// inline neighbor_iterator const & neighbor_end() const { return neighbor_end_; }
 
 	bool sanity_check() const {
 		using namespace ObjexxFCL::fmt;
@@ -259,13 +195,13 @@ public:
 					ushort const igl = grid_stripe_[ig].x;
 					ushort const igu = grid_stripe_[ig].y;
 					for(int i = igl; i < igu; ++i) {
-						// float const & x(grid_atoms_[i].x);
-						float const & y(grid_atoms_[i].y);
-						float const & z(grid_atoms_[i].z);
+						// T const & x(grid_atoms_[i].x);
+						T const & y(grid_atoms_[i].y);
+						T const & z(grid_atoms_[i].z);
 					 // if(i==igl) std::cout << endl;
-						// bool xc = grid_size_*(float)ix <= x && x <= grid_size_*(float)(ix+1);
-						bool yc = grid_size_*(float)iy <= y && y <= grid_size_*(float)(iy+1);
-						bool zc = grid_size_*(float)iz <= z && z <= grid_size_*(float)(iz+1);
+						// bool xc = grid_size_*(T)ix <= x && x <= grid_size_*(T)(ix+1);
+						bool yc = grid_size_*(T)iy <= y && y <= grid_size_*(T)(iy+1);
+						bool zc = grid_size_*(T)iz <= z && z <= grid_size_*(T)(iz+1);
 						if(/*!xc||*/!yc||!zc) utility_exit_with_message("INSANE!");
 						//std::cout<<I(2,ix)<<" "<<I(2,iy)<<" "<<I(2,iz)<<" "<<F(8,3,x)<<" "<<F(8,3,y)<<" "<<F(8,3,z)<<" "<<xc<<" "<<yc<<" "<<zc<<std::endl;
 					}
@@ -303,7 +239,42 @@ public:
 				int const & igu = grid_stripe_[ig].y;
 				for(int i = igl; i < igu; ++i) {
 					float3 const a2 = grid_atoms_[i];
-					float const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
+					T const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
+					if( d2 <= grid_size2_ ) {
+						++count;
+					}
+				}
+			}
+		}
+		return count;
+	}
+
+	inline
+	int
+	nbcount_raw( Vec const & v ) const {
+		T x = v.x(); T y = v.y(); T z = v.z();
+		if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return 0; // worth it iff
+		if( x > xmx_ || y > ymx_ || z > zmx_ ) return 0;                      // worth it iff
+		int count = 0;
+		int const ix   = (x<0) ? 0 : numeric::min(xdim_-1,(int)(x/grid_size_));
+		int const iy0  = (y<0) ? 0 : y/grid_size_;
+		int const iz0  = (z<0) ? 0 : z/grid_size_;
+		int const iyl = numeric::max(0,iy0-1);
+		int const izl = numeric::max(0,iz0-1);
+		int const iyu = numeric::min((int)ydim_,iy0+2);
+		int const izu = numeric::min((int)zdim_,(int)iz0+2);
+		for(int iy = iyl; iy < iyu; ++iy) {
+			for(int iz = izl; iz < izu; ++iz) {
+				int const ig = ix+xdim_*iy+xdim_*ydim_*iz;
+				assert(ig < xdim_*ydim_*zdim_);
+				assert(ix < xdim_);
+				assert(iy < ydim_);
+				assert(iz < zdim_);
+				int const & igl = grid_stripe_[ig].x;
+				int const & igu = grid_stripe_[ig].y;
+				for(int i = igl; i < igu; ++i) {
+					float3 const a2 = grid_atoms_[i];
+					T const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
 					if( d2 <= grid_size2_ ) {
 						++count;
 					}
@@ -317,6 +288,40 @@ public:
 	bool
 	clash( Vec const & v_in ) const {
 		Vec const v = v_in+translation_;
+		T x = v.x(); T y = v.y(); T z = v.z();
+		if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return false; // worth it iff
+		if( x > xmx_        || y > ymx_        || z > zmx_        ) return false; // worth it iff
+		int const ix   = (x<0) ? 0 : numeric::min(xdim_-1,(int)(x/grid_size_));
+		int const iy0  = (y<0) ? 0 : (int)(y/grid_size_);
+		int const iz0  = (z<0) ? 0 : (int)(z/grid_size_);
+		int const iyl = numeric::max(0,iy0-1);
+		int const izl = numeric::max(0,iz0-1);
+		int const iyu = numeric::min((int)ydim_,iy0+2);
+		int const izu = numeric::min((int)zdim_,(int)iz0+2);
+		for(int iy = iyl; iy < iyu; ++iy) {
+			for(int iz = izl; iz < izu; ++iz) {
+				int const ig = ix+xdim_*iy+xdim_*ydim_*iz;
+				assert(ig < xdim_*ydim_*zdim_);
+				assert(ix < xdim_);
+				assert(iy < ydim_);
+				assert(iz < zdim_);
+				int const & igl = grid_stripe_[ig].x;
+				int const & igu = grid_stripe_[ig].y;
+				for(int i = igl; i < igu; ++i) {
+					float3 const a2 = grid_atoms_[i];
+					T const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
+					if( d2 < grid_size2_ ) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	inline
+	bool
+	clash_raw( Vec const & v ) const {
 		T x = v.x(); T y = v.y(); T z = v.z();
 		if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return false; // worth it iff
 		if( x > xmx_        || y > ymx_        || z > zmx_        ) return false; // worth it iff
@@ -338,7 +343,7 @@ public:
 				int const & igu = grid_stripe_[ig].y;
 				for(int i = igl; i < igu; ++i) {
 					float3 const a2 = grid_atoms_[i];
-					float const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
+					T const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
 					if( d2 < grid_size2_ ) {
 						return true;
 					}
@@ -373,7 +378,7 @@ public:
 				int const & igu = grid_stripe_[ig].y;
 				for(int i = igl; i < igu; ++i) {
 					Vec const & c = *((Vec*)(grid_atoms_+i));
-					float const d2 = (x-c.x())*(x-c.x()) + (y-c.y())*(y-c.y()) + (z-c.z())*(z-c.z());
+					T const d2 = (x-c.x())*(x-c.x()) + (y-c.y())*(y-c.y()) + (z-c.z())*(z-c.z());
 					if( d2 <= grid_size2_ ) {
 						visitor.visit(v,c,d2);
 					}
@@ -419,8 +424,9 @@ public:
 	inline int xdim () const { return  xdim_; }
 	inline int ydim () const { return  ydim_; }
 	inline int zdim () const { return  zdim_; }
-	inline float  grid_size() const { return  grid_size_; }
-	inline const numeric::xyzVector<numeric::Real> translation() const { return translation_; }
+	inline T  grid_size() const { return  grid_size_; }
+	inline T  grid_size2() const { return  grid_size2_; }
+	inline numeric::xyzVector<T> const & translation() const { return translation_; }
 
 private:
 	xyzStripeHash();
@@ -431,8 +437,8 @@ private:
 	int xdim_,ydim_,zdim_;
 	T xmx_,ymx_,zmx_;
 	//numeric::xyzMatrix<Real> rotation_;
-	numeric::xyzVector<numeric::Real> translation_;
-	neighbor_iterator neighbor_end_;
+	numeric::xyzVector<T> translation_;
+	// neighbor_iterator neighbor_end_;
 };
 
 
@@ -453,9 +459,9 @@ private:
 	// }
 
 	// inline 
-	// float
-	// ljenergy( float x, float y, float z ) {
-	// 	float e = 0.0f;
+	// T
+	// ljenergy( T x, T y, T z ) {
+	// 	T e = 0.0f;
 	// 	int const ix  = (x<0) ? 0u : numeric::min(xdim_-1,(int)(x/grid_size_));
 	// 	int const iy0  = (y<0) ? 0u : y/grid_size_;
 	// 	int const iz0  = (z<0) ? 0u : z/grid_size_;
@@ -474,13 +480,13 @@ private:
 	// 			int const igu = grid_stripe_[ig].y;
 	// 			for(int i = igl; i < igu; ++i) {
 	// 				float3 const a2 = grid_atoms_[i];
-	// 				float const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
+	// 				T const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
 	// 				if( d2 <= grid_size_*grid_size_ ) {
-	// 					float const r = 4.0 / sqrt(d2);
-	// 					float const r2 = r*r;
-	// 					float const r3 = r2*r;
-	// 					float const r6 = r3*r2;
-	// 					float const ljtmp = r6*r6 - r6;
+	// 					T const r = 4.0 / sqrt(d2);
+	// 					T const r2 = r*r;
+	// 					T const r3 = r2*r;
+	// 					T const r6 = r3*r2;
+	// 					T const ljtmp = r6*r6 - r6;
 	// 					if( d2 >= 4.0f ) e += ljtmp;
 	// 				}
 	// 			}
@@ -521,7 +527,7 @@ private:
 	// 				i = igl;
 	// 			} else {			
 	// 				float3 const a2 = grid_atoms_[i];
-	// 				float const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
+	// 				T const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
 	// 				if( d2 <= grid_size2_ ) {
 	// 					++count;
 	// 				}
@@ -562,7 +568,7 @@ private:
 	// 			i = igl;
 	// 			while(i < igu){
 	// 				float3 const a2 = grid_atoms_[i];
-	// 				float const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
+	// 				T const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
 	// 				if( d2 <= grid_size2_ ) {
 	// 					++count;
 	// 				}
@@ -577,3 +583,68 @@ private:
 	// }
 
 
+	// struct neighbor_iterator : public std::iterator<std::input_iterator_tag,T> {
+	// 	neighbor_iterator( xyzStripeHash<T> const & h ): h_(h) {}
+	// 	neighbor_iterator( xyzStripeHash<T> const & h, Vec const & v_in):
+	// 		h_(h),
+	// 		x  (v_in.x()+h_.translation_.x()),
+	// 		y  (v_in.y()+h_.translation_.y()),
+	// 		z  (v_in.z()+h_.translation_.z()),
+	// 		ix ( (x<0) ? 0 : numeric::min(h_.xdim_-1,(int)(x/h_.grid_size_)) ),
+	// 		iy0( (y<0) ? 0 : y/h_.grid_size_ ),
+	// 		iz0( (z<0) ? 0 : z/h_.grid_size_ ),
+	// 		iyl( numeric::max(0,iy0-1) ),
+	// 		izl( numeric::max(0,iz0-1) ),
+	// 		iyu( numeric::min((int)h_.ydim_,iy0+2) ),
+	// 		izu( numeric::min((int)h_.zdim_,(int)iz0+2) )
+	// 	{
+	// 		// if( x < -grid_size_ || y < -grid_size_ || z < -grid_size_ ) return 0; // worth it iff
+	// 		// if( x > xmx_ || y > ymx_ || z > zmx_ ) return 0;                      // worth it iff
+	// 		iy = iyl-1;
+	// 		iz=9999999,igu=0,i=9999999;
+	// 		// return count;
+	// 		++(*this);
+	// 	}
+	// 	neighbor_iterator & operator++() { 
+	// 		using ObjexxFCL::fmt::I;
+	// 		while(iy < iyu){
+	// 			if(iz >= izu){
+	// 				++iy;
+	// 				iz = izl-1;
+	// 				i=9999999,igu=0;
+	// 			} else { 
+	// 				if( i >= igu ){
+	// 					++iz;
+	// 					ig = ix+h_.xdim_*iy+h_.xdim_*h_.ydim_*iz;
+	// 					igl = h_.grid_stripe_[ig].x;
+	// 					igu = h_.grid_stripe_[ig].y;
+	// 					i = igl-1;
+	// 				} else {			
+	// 					++i;
+	// 					float3 const & a2 = h_.grid_atoms_[i];
+	// 					T const d2 = (x-a2.x)*(x-a2.x) + (y-a2.y)*(y-a2.y) + (z-a2.z)*(z-a2.z);
+	// 					if( d2 <= h_.grid_size2_ ){
+	// 						std::cout << "iter " 
+	// 						          << I(3,iyl) << " " << I(3,iy) << " " << I(3,iyu) << "   "
+	// 						          << I(3,izl) << " " << I(3,iz) << " " << I(3,izu) << "   "
+	// 						          << I(5,igl) << " " << I(5,i-1) << " " << I(5,igu) << "   "					          
+	// 						          << std::endl;
+	// 						return *this;
+	// 					}
+	// 				}
+	// 			}
+	// 		}
+	// 		end();
+	// 		return *this;
+	// 	} 
+	// 	Vec const & operator*() { return *((Vec const *)(grid_atoms_+i)); }
+	// 	// neighbor_iterator & operator=(const neighbor_iterator& r) { p_ = r.p_; return *this; }
+	// 	bool operator!=(neighbor_iterator const & r) const { return (i != r.i); }
+	// 	bool operator==(neighbor_iterator const & r) const { return (i == r.i); }
+	// 	void end() { i = h_.natom(); }
+	// private:
+	// 	xyzStripeHash const & h_;
+	// 	T x,y,z;
+	// 	int ix,iy0,iz0,iyl,izl,iyu,izu;
+	// 	int iy,iz,ig,igl,igu,i;
+	// };

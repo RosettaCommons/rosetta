@@ -82,6 +82,25 @@ VirtualCoordinate::VirtualCoordinate(
 	{
 		return axis_origin_;
 	}
+
+	// @details accessor functions
+	numeric::xyzVector< core::Real> const &
+	VirtualCoordinate::get_x() const
+	{
+		return axis_x_;
+	}
+
+	numeric::xyzVector< core::Real> const &
+	VirtualCoordinate::get_y() const
+	{
+		return axis_y_;
+	}
+
+	numeric::xyzVector< core::Real> const &
+	VirtualCoordinate::get_origin() const
+	{
+		return axis_origin_;
+	}
 // @details read the coordinates of a virtual residues from string. Start reading
 // coordinates from coord_start. The coordinates correspond to the unit vectors for
 // X, Y axis and a origin. Vectors are not automatically normalized here. Should we

@@ -141,7 +141,7 @@ get_component_contiguous_foldtree(
 	core::kinematics::FoldTree f_contig;
 	f_contig.tree_from_jumps_and_cuts(f_orig.nres(),f_orig.num_jump(),jumps,cuts);
 	for(Size i = 1; i < cutpoints.size(); ++i) {
-		f_contig.set_jump_atoms(i,"N",dnatom[i]);
+		if(dnatom[i]!="") f_contig.set_jump_atoms(i,"N",dnatom[i]);
 	}	
 	f_contig.reorder(1);
 
@@ -355,7 +355,68 @@ setup_symmetric_conformation(
 	// if(check_coords(orig_coords, conf_coords(conf,1,orig_coords.size()) )) utility_exit_with_message("error");
 
 	// now build the symmetry info object
-	conformation::symmetry::SymmetryInfo const symm_info( symmdata, nres_monomer, njump_monomer+1-symmdata.get_num_components() );
+	conformation::symmetry::SymmetryInfo symm_info_raw( symmdata, nres_monomer, njump_monomer+1-symmdata.get_num_components() );
+	std::map<char,std::pair<Size,Size> > component_bounds;
+	for(Size ic = 1; ic <= src_conformation.num_chains(); ++ic){
+		char chain = src_conf2pdb_chain[ic];
+		component_bounds[chain].first = src_conformation.chain_begin(ic);
+		component_bounds[chain].second = src_conformation.chain_end(ic);
+	}
+	symm_info_raw.set_multicomponent_info(
+		symmdata.get_components(),
+		component_bounds,
+		symmdata.get_subunit_name_to_component(),
+		symmdata.get_jump_name_to_components(),
+		symmdata.get_jump_name_to_subunits()
+	);
+	conformation::symmetry::SymmetryInfo const & symm_info(symm_info_raw);
+
+	if( symmdata.get_num_components() > 1 ){
+		for(std::map< Size, SymDof >::const_iterator j = symm_info.get_dofs().begin(); j != symm_info.get_dofs().end(); ++j){
+			std::string const & dofname( symm_info.get_jump_name(j->first) );
+			utility::vector1<char> compchild = symmdata.components_moved_by_jump(dofname);
+			utility::vector1<Size> subchild = symmdata.subunits_moved_by_jump(dofname);
+			TR << "MULTICOMPONENT " << "DOF " << dofname << std::endl;
+			TR << "MULTICOMPONENT " << " moves these components:";
+			for(utility::vector1<char>::const_iterator i = compchild.begin(); i != compchild.end(); ++i){
+				TR << " " << *i;
+			}
+			TR << std::endl;
+			TR << "MULTICOMPONENT " << " moves these subunits:";
+			for(utility::vector1<Size>::const_iterator i = subchild.begin(); i != subchild.end(); ++i){
+				TR << " " << *i;
+			}
+			TR << std::endl;
+		}
+		for(utility::vector1<char>::const_iterator i = symm_info.get_components().begin(); i != symm_info.get_components().end(); ++i){
+			TR << "MULTICOMPONENT " << *i << " " << symm_info.get_component_bounds().find(*i)->second.first << "-" << symm_info.get_component_bounds().find(*i)->second.second << std::endl;
+			TR << "MULTICOMPONENT " << " moved by dofs:";
+			for(std::map< Size, SymDof >::const_iterator j = symm_info.get_dofs().begin(); j != symm_info.get_dofs().end(); ++j){
+				std::string const & dofname( symm_info.get_jump_name(j->first) );
+				// if( symm_info.get_jump_name_to_components().find(dofname) == symm_info.get_jump_name_to_components().end() ){
+				// 	utility_exit_with_message("jump name not in component map: "+dofname);
+				// }
+				utility::vector1<char> compchild = symmdata.components_moved_by_jump(dofname);
+				if( std::find(compchild.begin(),compchild.end(),*i) == compchild.end() ) continue;
+				TR << " " << dofname;
+			}
+			TR << std::endl << "MULTICOMPONENT " << " contains virtuals:";
+			for(std::map<std::string,char>::const_iterator j = symm_info.get_subunit_name_to_component().begin(); j != symm_info.get_subunit_name_to_component().end(); ++j){
+				if(j->second != *i) continue;
+				TR << " " << j->first;
+			}
+			TR << std::endl;
+		}
+
+		// for(std::map< Size, SymDof >::const_iterator j = symm_info.get_dofs().begin(); j != symm_info.get_dofs().end(); ++j){
+		// 	std::string const & dofname( symm_info.get_jump_name(j->first) );
+		// 	if( symm_info.get_jump_name_to_components().find(dofname) == symm_info.get_jump_name_to_components().end() ){
+		// 		utility_exit_with_message("jump name not in component map: "+dofname);
+		// 	}
+		// 	if( symm_info.get_jump_name_to_components().find(dofname)->second != *i ) continue;
+		// 	TR << "MULTICOMPONENT " << dofname << std::endl;
+		// }
+	}
 
 	// now create the symmetric conformation
 	conformation::symmetry::SymmetricConformationOP symm_conf = new conformation::symmetry::SymmetricConformation( conf, symm_info );
@@ -380,16 +441,6 @@ setup_symmetric_conformation(
 	 	TR << "=================== SYM FOLD TREE, jump notation: =symfixed= *indep* #symdof# jump[=follows] ========================\n"
 	 	   << show_foldtree(*symm_conf,symmdata,get_chain2range(src_conformation,src_conf2pdb_chain)) << std::endl;
 	 // }
-
-	if( symmdata.get_num_components() > 1 ){
-		// this hack makes sure all the multicomponent symmetry SUBUNITS correspond correctly
-		// otherwise one would have to construct multicomponent SYM files very carefully
-		for(Size i=1; i <= symm_conf->size(); ++i){
-			if( symm_info.bb_is_independent(i)){
-				symm_conf->replace_residue(i,symm_conf->residue(i),false);
-			}
-		}
-	}
 
 	return symm_conf;
 }

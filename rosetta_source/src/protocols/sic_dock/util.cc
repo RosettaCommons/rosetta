@@ -16,14 +16,14 @@
 namespace protocols {
 namespace sic_dock {
 
-using core::Size;
-using core::Real;
+using platform::Size;
+using platform::Real;
 using numeric::min;
 using core::id::AtomID;
 using std::cout;
 using std::endl;
-typedef core::Real Real;
-typedef core::Size Size;
+typedef platform::Real Real;
+typedef platform::Size Size;
 typedef core::pose::Pose Pose;
 typedef core::kinematics::Stub Stub;
 typedef numeric::xyzVector<Real> Vec;
@@ -61,8 +61,8 @@ slide_into_contact_and_score(
 	protocols::sic_dock::RigidScore const & sfxn,
 	core::kinematics::Stub                & xa,
 	core::kinematics::Stub          const & xb,
-	numeric::xyzVector<core::Real>  const & ori,
-	core::Real                            & score
+	numeric::xyzVector<platform::Real>  const & ori,
+	platform::Real                            & score
 ){
 	double d = sic.slide_into_contact(xa,xb,ori);
 	xa.v += d*ori;
@@ -84,11 +84,11 @@ cb_weight_map_from_pose(
 	return amap;
 }
 
-utility::vector1<core::Real>
+utility::vector1<platform::Real>
 cb_weights_from_pose(
 	core::pose::Pose const & pose
 ){
-	utility::vector1<core::Real> wts;
+	utility::vector1<platform::Real> wts;
 	for(Size i = 1; i <= pose.n_residue(); ++i){
 		if(pose.residue(i).has("CB")) {
 			wts.push_back( cb_weight(pose,i) );
@@ -97,11 +97,11 @@ cb_weights_from_pose(
 	return wts;
 }
 
-core::Size
+platform::Size
 count_CBs(
 	core::pose::Pose const & pose
 ){
-	core::Size cbcount;
+	platform::Size cbcount;
 	for(Size ir = 1; ir <= pose.n_residue(); ++ir) cbcount += pose.residue(ir).has("CB");
 	return cbcount;
 }
@@ -123,11 +123,11 @@ pose1_has_most_CBs(
 	return count_CBs(pose1) > count_CBs(pose2);
 }
 
-utility::vector1<numeric::xyzVector<core::Real> >
+utility::vector1<numeric::xyzVector<platform::Real> >
 get_CB_Vecs(
 	core::pose::Pose const & pose
 ){
-	utility::vector1<numeric::xyzVector<core::Real> > CBs;
+	utility::vector1<numeric::xyzVector<platform::Real> > CBs;
 	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
 		if( pose.residue(ir).has("CB") ){
 			CBs.push_back( pose.residue(ir).xyz("CB") );
@@ -161,9 +161,9 @@ xform_pose_rev( core::pose::Pose & pose, core::kinematics::Stub const & s, Size 
 
 
 
-utility::vector1<core::Size> range(core::Size beg, core::Size end){
-	utility::vector1<core::Size> v;
-	for(core::Size i = beg; i < end; ++i) v.push_back(i);
+utility::vector1<platform::Size> range(platform::Size beg, platform::Size end){
+	utility::vector1<platform::Size> v;
+	for(platform::Size i = beg; i < end; ++i) v.push_back(i);
 	return v;
 }
 
@@ -212,7 +212,7 @@ int flood_fill3D(int i, int j, int k, ObjexxFCL::FArray3D<double> & grid, double
 // 	Real cang = angle_degrees(ct,Vec(0,0,0),Vec(ct.x(),ct.y(),0));
 // 	ntgood = nexpose > option[sicdock::term_min_expose]() && nang < option[sicdock::term_max_angle]();
 // 	ctgood = cexpose > option[sicdock::term_min_expose]() && cang < option[sicdock::term_max_angle]();
-// 	// core::Real nnt=0.0,nct=0.0,gnt=0.0,gct=0.0;
+// 	// platform::Real nnt=0.0,nct=0.0,gnt=0.0,gct=0.0;
 // 	// for(int ir=1; ir<=pose.n_residue(); ++ir) {
 // 	// 	for(int ia=1; ia<=5; ++ia) {
 // 	// 		Vec x = pose.residue(ir).xyz(ia);

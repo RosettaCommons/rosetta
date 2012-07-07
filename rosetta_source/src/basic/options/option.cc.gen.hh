@@ -753,6 +753,7 @@ option.add( basic::options::OptionKeys::score::rna_torsion_potential, "In RNA to
 option.add( basic::options::OptionKeys::score::rna_torsion_skip_chainbreak, "Don't score RNA torsions located at the chain_breaks (aside from the ones that will be closed)" ).def(true);
 option.add( basic::options::OptionKeys::score::include_neighbor_base_stacks, "In RNA score calculation, include stacks between i,i+1" ).def(false);
 option.add( basic::options::OptionKeys::score::find_neighbors_3dgrid, "Use a 3D lookup table for doing neighbor calculations.  For spherical, well-distributed conformations, O(N) neighbor detection instead of general O(NlgN)" ).def(false);
+option.add( basic::options::OptionKeys::score::find_neighbors_stripehash, "should be faster than 3dgrid and use 1/8th the memory" ).def(false);
 option.add( basic::options::OptionKeys::score::seqdep_refene_fname, "Filename for table containing sequence-dependent reference energies" );
 option.add( basic::options::OptionKeys::score::secondary_seqdep_refene_fname, "Additional filename for table containing sequence-dependent reference energies" );
 option.add( basic::options::OptionKeys::score::exact_occ_pairwise, "When using occ_sol_exact, compute energies subject to pairwise additivity (not recommended - intended for parameterization / evaluation purposes)" ).def(false);
@@ -1243,7 +1244,6 @@ option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No descripti
 }
 inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
 option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
-option.add( basic::options::OptionKeys::lh::expire_after_rounds, "If set to > 0 this causes the Master to expire a structure after it has gone through this many cycles" ).def(0);
 option.add( basic::options::OptionKeys::lh::mpi_resume, "Prefix (Ident string) for resuming a previous job!" );
 option.add( basic::options::OptionKeys::lh::mpi_feedback, "No description" ).legal("no").legal("add_n_limit").legal("add_n_replace").legal("single_replace").legal("single_replace_rounds").def("no");
 option.add( basic::options::OptionKeys::lh::mpi_batch_relax_chunks, "No description" ).def(100);

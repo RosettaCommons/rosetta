@@ -24,6 +24,10 @@
 
 #include <core/kinematics/Stub.hh>
 
+#include <core/conformation/AtomGraphData.hh>
+#include <core/conformation/AtomGraph.hh>
+#include <core/conformation/find_neighbors.hh>
+
 using core::Size;
 using core::id::AtomID;
 typedef numeric::xyzVector<double> Vec;
@@ -58,7 +62,48 @@ void register_options() {
 	NEW_OPT( dump_hash,"dump hash data and quit", false );
 }
 
+int slow_nbcount( protocols::sic_dock::xyzStripeHashPose const & xyzhash, core::Real DIST, Vec const & rv ){
+	Vec tmp = rv+xyzhash.translation();
+	int safe_nbcount = 0;
+	for(int j = 0; j < (int)xyzhash.natom(); ++j) {
+		double const & hx = xyzhash.grid_atoms()[j].x;
+		double const & hy = xyzhash.grid_atoms()[j].y;
+		double const & hz = xyzhash.grid_atoms()[j].z;
+		if( (hx-tmp.x())*(hx-tmp.x()) + (hy-tmp.y())*(hy-tmp.y()) + (hz-tmp.z())*(hz-tmp.z()) <= DIST*DIST ) safe_nbcount++;
+	}
+	return safe_nbcount;
+}
 
+int slow_nbcount( core::pose::Pose const & pose, core::Real DIST, Vec const & rv ){
+	int safe_nbcount = 0;
+	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+		if( rv.distance_squared(pose.residue(ir).xyz(2)) < DIST*DIST ) ++safe_nbcount;
+	}
+	return safe_nbcount;
+}
+
+bool slow_clash( core::pose::Pose const & pose, core::Real DIST, Vec const & rv ){
+	int safe_nbcount = 0;
+	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+		if( rv.distance_squared(pose.residue(ir).xyz(2)) < DIST*DIST ) return true;
+	}
+	return false;
+}
+
+
+utility::vector1<Vec>
+slow_nbget( protocols::sic_dock::xyzStripeHashPose const & xyzhash, core::Real DIST, Vec const & rv ){
+	utility::vector1<Vec> nbrs;
+	Vec tmp = rv+xyzhash.translation();
+	int safe_nbcount = 0;
+	for(int j = 0; j < (int)xyzhash.natom(); ++j) {
+		Vec const & c = *((Vec*)(xyzhash.grid_atoms()+j));
+		if( c.distance_squared(tmp) <= DIST*DIST ){
+			nbrs.push_back( c );
+		}
+	}
+	return nbrs;
+}
 
 void dump_points_pdb(utility::vector1<Vec> & p, std::string fn) {
 	using namespace ObjexxFCL::fmt;
@@ -70,6 +115,42 @@ void dump_points_pdb(utility::vector1<Vec> & p, std::string fn) {
 	o.close();
 }
 
+struct CollectNeighbors {
+	utility::vector1<Vec> nbrs;
+	void visit(Vec const &, Vec const & c, core::Real const &){
+		nbrs.push_back(c);
+	}
+};
+
+void 
+test_find_neighbors(core::pose::Pose const & p){
+	double t,to=0,tg=0,ts=0;
+	{
+		std::cout << "stripe" << std::endl;
+		core::conformation::AtomGraphOP pg = new core::conformation::AtomGraph;
+		core::conformation::atom_graph_from_conformation(p.conformation(),pg);
+		t = time_highres(); 
+		find_neighbors_stripe(pg,6.0);
+		ts += time_highres()-t;	
+	}
+	{
+		std::cout << "octree" << std::endl;
+		core::conformation::AtomGraphOP pg = new core::conformation::AtomGraph;
+		core::conformation::atom_graph_from_conformation(p.conformation(),pg);
+		t = time_highres(); 
+		find_neighbors_octree(pg,6.0,core::conformation::AUTOMATIC);
+		to += time_highres()-t;
+	}
+	{
+		std::cout << "3dgrid" << std::endl;
+		core::conformation::AtomGraphOP pg = new core::conformation::AtomGraph;
+		core::conformation::atom_graph_from_conformation(p.conformation(),pg);
+		t = time_highres(); 
+		find_neighbors_3dgrid(pg,6.0);
+		tg += time_highres()-t;
+	}
+	std::cout << "test find_neighbors " << to << " " << tg << " " << ts << std::endl;
+}
 
 int main(int argc, char *argv[]) {
 	using numeric::geometry::hashing::xyzStripeHash;
@@ -81,7 +162,7 @@ int main(int argc, char *argv[]) {
 	          << sizeof(xyzStripeHash<double>::ushort2)
 	          << std::endl;
 
-	double const DIST(3.5);
+	double const DIST(6);
 	
 	core::pose::Pose p;
 	core::import_pose::pose_from_pdb(p,basic::options::option[basic::options::OptionKeys::in::file::s]()[1]);
@@ -92,9 +173,13 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	
+	test_find_neighbors(p);
+	// utility_exit_with_message("test find_neighbors");
+
 	protocols::scoring::ImplicitFastClashCheck ifc(p,DIST);
 
-	protocols::sic_dock::xyzStripeHashPose xyzhash(DIST,p,protocols::sic_dock::HVY);
+	std::cout << "hash mode CA" << std::endl;
+	protocols::sic_dock::xyzStripeHashPose xyzhash(DIST,p,protocols::sic_dock::CA);
 	xyzhash.sanity_check();
 
 	// xyzStripeHash<double>::float4 const * j = xyzhash.grid_atoms_;
@@ -163,48 +248,68 @@ int main(int argc, char *argv[]) {
 		// dump_points_pdb(hashpts,"input_xyzhash.pdb");
 	}
 	
+	std::cout << "construct every time" << std::endl;
 	
 	double tifc=0.0,th=0.0,ts=0.0,t=0.0;
 	int tot = 0;
-	for(int i = 0; i < (int)basic::options::option[basic::options::OptionKeys::out::nstruct](); ++i) {
-		Vec rv( numeric::random::uniform(),numeric::random::uniform(),numeric::random::uniform() );
-		rv.x() = (mx.x()-mn.x()) * rv.x() + mn.x();
-		rv.y() = (mx.y()-mn.y()) * rv.y() + mn.y();
-		rv.z() = (mx.z()-mn.z()) * rv.z() + mn.z();		
-		// float const rx = rv.x();
-		// float const ry = rv.y();
-		// float const rz = rv.z();
+	for(int iter = 0; iter < (int)basic::options::option[basic::options::OptionKeys::out::nstruct](); ++iter) {
 
-		numeric::geometry::hashing::Counter<double> counter;
+		protocols::sic_dock::xyzStripeHashPose xyzhash2(DIST,p,protocols::sic_dock::CA);
 
-		int hash_nbcount;
-		t = time_highres();
-		hash_nbcount = xyzhash.nbcount(rv);
-		th += time_highres()-t;
+		for(int ip = 0; ip < 3*xyzhash2.natom(); ++ip){
 
-		Vec tmp = rv+xyzhash.translation();
-		t = time_highres();
-		int safe_nbcount = 0.0;
-		for(int j = 0; j < (int)xyzhash.natom(); ++j) {
-			double const & hx = xyzhash.grid_atoms()[j].x;
-			double const & hy = xyzhash.grid_atoms()[j].y;
-			double const & hz = xyzhash.grid_atoms()[j].z;
-			if( (hx-tmp.x())*(hx-tmp.x()) + (hy-tmp.y())*(hy-tmp.y()) + (hz-tmp.z())*(hz-tmp.z()) <= DIST*DIST ) safe_nbcount++;
-		}
-		ts += time_highres()-t;
+			Vec rv( numeric::random::uniform(),numeric::random::uniform(),numeric::random::uniform() );
+			rv.x() = (mx.x()-mn.x()) * rv.x() + mn.x();
+			rv.y() = (mx.y()-mn.y()) * rv.y() + mn.y();
+			rv.z() = (mx.z()-mn.z()) * rv.z() + mn.z();		
 
-		t = time_highres();
-		int ifc_nbcount = ifc.clash_count(rv);
-		tifc += time_highres()-t;
+			numeric::geometry::hashing::Counter<double> counter;
 
-		tot += hash_nbcount;
-		if( safe_nbcount != hash_nbcount /*|| safe_nbcount != ifc_nbcount*/ ) {
-//			if(rv.x() > 36.0) continue; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! BUG!!!!!!!!!!!!!!!!!!!!!!!!!
-			std::cout << rv << std::endl;
-			std::cout << safe_nbcount << " " << hash_nbcount << " " << ifc_nbcount << std::endl;			
-			utility_exit_with_message("FAIL after "+ObjexxFCL::fmt::I(10,i)+"!!!");
-		}
-		
+			int hash_nbcount=0,safe_nbcount=0;
+			t = time_highres();
+			hash_nbcount  = xyzhash2.clash(rv);
+			th += time_highres()-t;
+
+			t = time_highres();
+			safe_nbcount  = slow_clash(p,DIST,rv);
+			ts += time_highres()-t;
+
+			t = time_highres();
+			int ifc_nbcount = ifc.clash_count(rv);
+			tifc += time_highres()-t;
+
+			tot += hash_nbcount;
+			if( safe_nbcount != hash_nbcount /*|| safe_nbcount != ifc_nbcount*/ ) {
+				std::cout << rv << std::endl;
+				std::cout << safe_nbcount << " " << hash_nbcount << " " << ifc_nbcount << std::endl;
+
+
+
+
+				CollectNeighbors cn; xyzhash.visit(rv,cn);
+				utility::vector1<Vec> ref(slow_nbget(xyzhash,DIST,rv)), tst(cn.nbrs);
+
+				for(utility::vector1<Vec>::const_iterator i = tst.begin(); i != tst.end(); ++i){
+					bool i_in = false;
+					for(utility::vector1<Vec>::const_iterator j = ref.begin(); j != ref.end(); ++j){
+						if( i->distance_squared(*j) < 0.0001 ) i_in = true;
+					}
+					if(!i_in) std::cout << "TST NOT IN REF: " << ObjexxFCL::fmt::F(20,18,i->distance(rv+xyzhash.translation())) << " " << (*i) << std::endl;
+				}
+				for(utility::vector1<Vec>::const_iterator i = ref.begin(); i != ref.end(); ++i){
+					bool i_in = false;
+					for(utility::vector1<Vec>::const_iterator j = tst.begin(); j != tst.end(); ++j){
+						if( i->distance_squared(*j) < 0.0001 ) i_in = true;
+					}
+					if(!i_in) std::cout << "REF NOT IN TST: " << ObjexxFCL::fmt::F(20,18,i->distance(rv+xyzhash.translation())) << " " << (*i) << std::endl;
+				}
+
+
+
+
+				utility_exit_with_message("FAIL after "+ObjexxFCL::fmt::I(10,iter)+"!!!");
+			}
+		}		
 	}
 	std::cout << ObjexxFCL::fmt::I(10,basic::options::option[basic::options::OptionKeys::out::nstruct]())+" nb counts of random points match. Woot! " << tot << std::endl;
 	std::cout << "hash speedup over N^2 count: " << ts  /th << std::endl;

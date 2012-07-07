@@ -964,8 +964,49 @@ sym_dof_names(core::pose::Pose const & pose) {
 }
 
 int
-sym_dof_jump_num(core::pose::Pose const & pose, std::string jname){
+sym_dof_jump_num(core::pose::Pose const & pose, std::string const & jname){
 	return core::pose::symmetry::symmetry_info(pose)->get_jump_num(jname);
+}
+
+utility::vector1<Size>
+get_symdof_subunits(core::pose::Pose const & pose, std::string const & jname){
+	using namespace core::conformation::symmetry;
+	utility::vector1<Size> subs;
+	if (core::pose::symmetry::is_symmetric(pose)) {
+		SymmetryInfo const & sym_info = *core::pose::symmetry::symmetry_info(pose);
+		int jnum = sym_dof_jump_num(pose,jname);
+		ObjexxFCL::FArray1D_bool partition;
+		pose.fold_tree().partition_by_jump(jnum,partition);
+		for(Size i = 1; i <= sym_info.num_total_residues_without_pseudo(); i+=sym_info.get_nres_subunit()){
+			if(partition(i)){
+				subs.push_back( sym_info.subunit_index(i) );
+				std::cout << subs.back() << std::endl;
+			}
+		}
+	} else {
+		utility_exit_with_message("pose not symmetric!");		
+	}
+	return subs;
+}
+
+
+Size get_component_lower_bound(core::pose::Pose const & pose, char c){
+	return symmetry_info(pose)->get_component_lower_bound(c);
+}
+Size get_component_upper_bound(core::pose::Pose const & pose, char c){
+	return symmetry_info(pose)->get_component_upper_bound(c);
+}
+char get_component_of_residue(core::pose::Pose const & pose, Size ir){
+	return symmetry_info(pose)->get_component_of_residue(ir);
+}
+char get_subunit_name_to_component(core::pose::Pose const & pose, std::string const & vname){
+	return symmetry_info(pose)->get_subunit_name_to_component(vname);
+}
+utility::vector1<char> const & get_jump_name_to_components(core::pose::Pose const & pose, std::string const & jname){
+	return symmetry_info(pose)->get_jump_name_to_components(jname);
+}
+utility::vector1<Size> const & get_jump_name_to_subunits(core::pose::Pose const & pose, std::string const & jname){
+	return symmetry_info(pose)->get_jump_name_to_subunits(jname);
 }
 
 } // symmetry

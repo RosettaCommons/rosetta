@@ -28,7 +28,7 @@ namespace sic_dock {
 
 class SICFast : public utility::pointer::ReferenceCount {
 public:
-	typedef numeric::xyzVector<core::Real> Vec;
+	typedef numeric::xyzVector<platform::Real> Vec;
 
 	SICFast();
 
@@ -45,18 +45,17 @@ public:
 
 	void init(
 		core::pose::Pose const & pose1,
-		core::id::AtomID_Map<core::Real> const & clash_atoms1
+		core::id::AtomID_Map<platform::Real> const & clash_atoms1
 	);
 
 	void init(
 		core::pose::Pose const & pose1,
 		core::pose::Pose const & pose2,
-		core::id::AtomID_Map<core::Real> const & clash_atoms1, // currently >0 means include in clash check
-		core::id::AtomID_Map<core::Real> const & clash_atoms2  // could be nice if was clash radius
+		core::id::AtomID_Map<platform::Real> const & clash_atoms1, // currently >0 means include in clash check
+		core::id::AtomID_Map<platform::Real> const & clash_atoms2  // could be nice if was clash radius
 	);
 
 	// return distace xmob*pose1 must move along ori to contact xfix*pose2
-	// moves xmob 
 	double slide_into_contact(
 		core::kinematics::Stub const & xmob,
 		core::kinematics::Stub const & xfix,

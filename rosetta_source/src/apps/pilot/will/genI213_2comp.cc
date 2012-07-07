@@ -992,7 +992,7 @@ vector1<Hit> dock(Pose & init, string fname) {
     for(Size isg1 = 1; isg1 <= 1; ++isg1) {
       for(Size isg2 = 0; isg2 <= 1; ++isg2) {
         Vec axs(0,0,1);
-        Real ang = isg1 ? 54.7356393899 : 37.5089292277;
+        Real ang = isg1 ? 54.7356393899 : 35.264389682754654;
         if(isg2) ang = 180.0-ang;
         axs = rotation_matrix_degrees(Vec(1,0,0),      ang     ) * axs;
         axs = rotation_matrix_degrees(Vec(0,0,1),Real(iaxs)/2.0) * axs;

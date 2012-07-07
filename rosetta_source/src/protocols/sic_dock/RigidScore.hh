@@ -31,8 +31,8 @@ namespace sic_dock {
 
 class RigidScore : public utility::pointer::ReferenceCount {
 protected:
-	typedef core::Real Real;
-	typedef core::Size Size;
+	typedef platform::Real Real;
+	typedef platform::Size Size;
 	typedef core::pose::Pose Pose;
 	typedef core::kinematics::Stub Stub;
 	typedef numeric::xyzVector<Real> Vec;
@@ -47,7 +47,7 @@ public:
 	virtual ~RigidScore() {}
 
 	virtual
-	core::Real
+	platform::Real
 	score(
 		Stub const & x1,
 		Stub const & x2
@@ -66,10 +66,10 @@ public:
 		Real clash_dis,
 		Real contact_dis
 	);
-	core::Real score( Stub const & x1, Stub const & x2 ) const;
+	platform::Real score( Stub const & x1, Stub const & x2 ) const;
 //private:
 	bool const hash_pose1_;
-	core::Real const clash_dis_, contact_dis_;
+	platform::Real const clash_dis_, contact_dis_;
 	Reals const weights_;
 	Vecs const points_;
 	xyzStripeHashPoseWithMeta const xyzhash_;
@@ -86,12 +86,12 @@ public:
 		Size lookup_radius
 	);
 	virtual ~LinkerScore(){}
-	core::Real  score( Stub const & x1, Stub const & x2 ) const;
+	platform::Real  score( Stub const & x1, Stub const & x2 ) const;
 	// Undefined, commenting out to fix PyRosetta build  void dump_linkers( Stub const & x1, Stub const & x2 ) const;
 private:
 	protocols::loophash::LoopHashLibraryOP loop_hash_library_;
 	Sizes const loopsizes_;
-	core::Size lookup_radius_;
+	platform::Size lookup_radius_;
 	Pose const & pose1_,pose2_;
 	TermInfo lowers1_,uppers1_,lowers2_,uppers2_;
 	Real max_dis2_;
@@ -103,7 +103,7 @@ class EdgeStandScore : public RigidScore {
 public:
 	EdgeStandScore();
 	virtual ~EdgeStandScore(){}
-	// Undefined, commenting out to fix PyRosetta build  core::Real score( Stub const & x1, Stub const & x2 ) const;
+	// Undefined, commenting out to fix PyRosetta build  platform::Real score( Stub const & x1, Stub const & x2 ) const;
 private:
 	Vecs donors,acceptors;
 };
@@ -112,15 +112,16 @@ class HelixScore : public RigidScore {
 public:
 	HelixScore();
 	virtual ~HelixScore(){}
-	// Undefined, commenting out to fix PyRosetta build  core::Real score( Stub const & x1, Stub const & x2 ) const;
+	// Undefined, commenting out to fix PyRosetta build  platform::Real score( Stub const & x1, Stub const & x2 ) const;
 private:
 };
 
 class BuriedPolarScore : public RigidScore {
 public:
-	BuriedPolarScore();
+	BuriedPolarScore(); // c'tor should store the buriend unsat polar coords
 	virtual ~BuriedPolarScore(){}
-	// Undefined, commenting out to fix PyRosetta build  core::Real score( Stub const & x1, Stub const & x2 ) const;
+	// Undefined, commenting out to fix PyRosetta build 
+	// platform::Real score( Stub const & x1, Stub const & x2 ) const;
 private:
 	Vecs polars;
 };
@@ -136,7 +137,7 @@ public:
 	);
 	void add_score(RigidScoreCOP score, Real weight);
 	virtual ~JointScore(){}
-	core::Real score( Stub const & x1, Stub const & x2 ) const;
+	platform::Real score( Stub const & x1, Stub const & x2 ) const;
 private:
 	Scores scores_;
 	Reals weights_;
@@ -149,7 +150,7 @@ private:
 // public:
 // 	CachedScore(RigidScoreCOP score);
 // 	virtual ~CachedScore(){}
-// 	core::Real score( Stub const & x1, Stub const & x2 ) const;
+// 	platform::Real score( Stub const & x1, Stub const & x2 ) const;
 // private:
 // 	RigidScoreCOP score_;
 // 	// some kind of 6 dof hash

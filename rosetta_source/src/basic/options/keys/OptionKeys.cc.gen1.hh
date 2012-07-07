@@ -129,6 +129,7 @@ namespace score { StringOptionKey const rna_torsion_potential( "score:rna_torsio
 namespace score { BooleanOptionKey const rna_torsion_skip_chainbreak( "score:rna_torsion_skip_chainbreak" );  }
 namespace score { BooleanOptionKey const include_neighbor_base_stacks( "score:include_neighbor_base_stacks" );  }
 namespace score { BooleanOptionKey const find_neighbors_3dgrid( "score:find_neighbors_3dgrid" );  }
+namespace score { BooleanOptionKey const find_neighbors_stripehash( "score:find_neighbors_stripehash" );  }
 namespace score { StringOptionKey const seqdep_refene_fname( "score:seqdep_refene_fname" );  }
 namespace score { StringOptionKey const secondary_seqdep_refene_fname( "score:secondary_seqdep_refene_fname" );  }
 namespace score { BooleanOptionKey const exact_occ_pairwise( "score:exact_occ_pairwise" );  }

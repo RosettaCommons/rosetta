@@ -24,8 +24,8 @@
 namespace protocols {
 namespace sic_dock {
 
-using core::Size;
-using core::Real;
+using platform::Size;
+using platform::Real;
 using std::string;
 using utility::vector1;
 using ObjexxFCL::fmt::I;
@@ -36,8 +36,8 @@ using numeric::max;
 using std::cout;
 using std::cerr;
 using std::endl;
-typedef numeric::xyzVector<core::Real> Vec;
-typedef numeric::xyzMatrix<core::Real> Mat;
+typedef numeric::xyzVector<platform::Real> Vec;
+typedef numeric::xyzMatrix<platform::Real> Mat;
 
 template<typename T> inline T sqr(T x) { return x*x; }
 
@@ -87,7 +87,7 @@ SICFast::init(
 void
 SICFast::init(
 	core::pose::Pose const & pose,
-	core::id::AtomID_Map<core::Real> const & clash_atoms
+	core::id::AtomID_Map<platform::Real> const & clash_atoms
 ){
 	init(pose,pose,clash_atoms,clash_atoms);
 }
@@ -98,7 +98,7 @@ SICFast::init(
 	core::pose::Pose const & pose2
 ){
 	using core::id::AtomID;
-	core::id::AtomID_Map<core::Real> clashmap1,clashmap2;
+	core::id::AtomID_Map<platform::Real> clashmap1,clashmap2;
 	core::pose::initialize_atomid_map(  clashmap1,pose1,-1.0);
 	core::pose::initialize_atomid_map(  clashmap2,pose2,-1.0);
 	for(Size i = 1; i <= pose1.n_residue(); ++i) {
@@ -116,8 +116,8 @@ void
 SICFast::init(
 	core::pose::Pose const & pose1,
 	core::pose::Pose const & pose2,
-	core::id::AtomID_Map<core::Real> const & clash_atoms1,
-	core::id::AtomID_Map<core::Real> const & clash_atoms2
+	core::id::AtomID_Map<platform::Real> const & clash_atoms1,
+	core::id::AtomID_Map<platform::Real> const & clash_atoms2
 ){
 	using core::id::AtomID;
 	h1_->init_with_pose(pose1,clash_atoms1);
@@ -128,7 +128,7 @@ SICFast::init(
 
 
 inline
-double
+bool
 get_bounds_intersection(
 	vector1<Vec> const & pb,
 	vector1<Vec> const & pa,
@@ -279,8 +279,8 @@ SICFast::slide_into_contact(
 	// get rotated points
 	utility::vector1<Vec> pa(h1_->natom()), pb(h2_->natom());
 	utility::vector1<Vec>::iterator ipa(pa.begin()),ipb(pb.begin());
-	for(xyzStripeHashPose::iterator i = h1_->begin(); i != h1_->end(); ++i,++ipa) *ipa = xa.local2global(*i-h1_->translation());
-	for(xyzStripeHashPose::iterator i = h2_->begin(); i != h2_->end(); ++i,++ipb) *ipb = xb.local2global(*i-h2_->translation());
+	for(xyzStripeHashPose::const_iterator i = h1_->begin(); i != h1_->end(); ++i,++ipa) *ipa = xa.local2global(*i-h1_->translation());
+	for(xyzStripeHashPose::const_iterator i = h2_->begin(); i != h2_->end(); ++i,++ipb) *ipb = xb.local2global(*i-h2_->translation());
 
 	double xmx,xmn,ymx,ymn;
 	int xlb,ylb,xub,yub;

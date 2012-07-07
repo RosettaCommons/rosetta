@@ -16,8 +16,8 @@
 namespace protocols {
 namespace sic_dock {
 
-struct Vec3 { numeric::xyzVector<core::Real> a,b,c; };
-typedef utility::vector1<std::pair<core::Size,Vec3> > TermInfo;
+struct Vec3 { numeric::xyzVector<platform::Real> a,b,c; };
+typedef utility::vector1<std::pair<platform::Size,Vec3> > TermInfo;
 
 enum PoseCoordPickMode {
 	NBR,

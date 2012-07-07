@@ -7,20 +7,34 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   numeric/xyz.io.hh
-/// @brief  xyzTriple, xyzVector, and xyzMatrix i/o functions
+/// @file   numeric/xyzTransform.fwd.hh
+/// @brief  numeric::xyzTransform forward declarations
+/// @author Frank M. D'Ippolito (Objexx@objexx.com)
 /// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
 
 
-#ifndef INCLUDED_numeric_xyz_io_hh
-#define INCLUDED_numeric_xyz_io_hh
+#ifndef INCLUDED_numeric_xyzTransform_fwd_hh
+#define INCLUDED_numeric_xyzTransform_fwd_hh
+
+#include "platform/types.hh"
+
+// C++ headers
+#include <cstddef>
 
 
-// Package headers
-#include <numeric/xyzTriple.io.hh>
-#include <numeric/xyzVector.io.hh>
-#include <numeric/xyzMatrix.io.hh>
-#include <numeric/xyzTransform.io.hh>
+namespace numeric {
 
 
-#endif // INCLUDED_numeric_xyz_io_HH
+// Forward
+template< typename > class xyzTransform;
+
+
+// Types
+typedef  xyzTransform< float >               xyzTransform_float;
+typedef  xyzTransform< double >              xyzTransform_double;
+
+} // namespace numeric
+
+
+#endif // INCLUDED_numeric_xyzTransform_FWD_HH
+

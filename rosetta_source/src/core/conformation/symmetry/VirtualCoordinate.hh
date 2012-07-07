@@ -63,6 +63,15 @@ class VirtualCoordinate {
 	numeric::xyzVector< core::Real> &
 	get_origin();
 
+	numeric::xyzVector< core::Real> const &
+	get_x() const;
+
+	numeric::xyzVector< core::Real> const &
+	get_y() const;
+
+	numeric::xyzVector< core::Real> const &
+	get_origin() const;
+
 	void
 	add_coordinate_from_string(
 		utility::vector1< std::string > coords,

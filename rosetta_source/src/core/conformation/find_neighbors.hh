@@ -32,6 +32,8 @@
 #include <numeric/xyzTriple.hh>
 #include <numeric/xyzVector.hh>
 
+#include <numeric/geometry/hashing/xyzStripeHashWithMeta.hh>
+
 // ObjexxFCL headers
 //#include <ObjexxFCL/KeyFArray1D.hh>
 //#include <ObjexxFCL/KeyFArray2D.hh>
@@ -93,7 +95,9 @@ find_neighbors(
 
 	//	PROF_START( basic::TEST2 );
 
-	if ( strategy == THREEDGRID || ( strategy == AUTOMATIC && basic::options::option[ basic::options::OptionKeys::score::find_neighbors_3dgrid ] )) {
+	if ( strategy == STRIPEHASH || ( strategy == AUTOMATIC && basic::options::option[ basic::options::OptionKeys::score::find_neighbors_stripehash ]() )) {
+		find_neighbors_stripe( point_graph, neighbor_cutoff );
+	} else if ( strategy == THREEDGRID || ( strategy == AUTOMATIC && basic::options::option[ basic::options::OptionKeys::score::find_neighbors_3dgrid ]() )) {
 		find_neighbors_3dgrid( point_graph, neighbor_cutoff );
 	} else if ( strategy == NAIVE || point_graph->num_vertices() < N_POINTS_BREAK_EVEN ) {
 		find_neighbors_naive( point_graph, neighbor_cutoff );
@@ -129,6 +133,39 @@ find_neighbors_naive(
 				point_graph->add_edge( ii, jj, Edge( d_sq ) );
 			}
 		}
+	}
+}
+
+template <class Vertex, class Edge>
+struct AddEdgeVisitor{
+	graph::UpperEdgeGraph<Vertex, Edge> & point_graph;
+	AddEdgeVisitor(
+		graph::UpperEdgeGraph<Vertex, Edge> & point_graph_in
+	) : point_graph(point_graph_in) {}
+	void visit(
+		numeric::xyzVector<Real> const & /*v*/, Real  const & vm,
+		numeric::xyzVector<Real> const & /*c*/, Real  const & cm, Real const & d_sq
+	){
+		if( vm < cm ) point_graph.add_edge( vm, cm, Edge( d_sq ) );
+	}
+};
+
+template <class Vertex, class Edge>
+void
+find_neighbors_stripe(
+	utility::pointer::owning_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+	core::Real neighbor_cutoff
+){
+	core::Size const n_points( point_graph->num_vertices() );
+	if ( n_points <= 1 ) return; // Nothing to do
+	std::cout << n_points << std::endl;
+	utility::vector1<PointPosition> pts(n_points);
+	for( core::Size ii = 1; ii <= n_points; ++ii ) pts[ii] = point_graph->get_vertex(ii).data().xyz();
+	utility::vector1<core::Real> dummy;
+	numeric::geometry::hashing::xyzStripeHashWithMeta<Real> hash(neighbor_cutoff,pts,dummy);
+	AddEdgeVisitor<Vertex,Edge> visitor(*point_graph);
+	for( core::Size ii = 1; ii <= n_points; ++ii ) {
+		hash.visit(pts[ii],ii,visitor);
 	}
 }
 

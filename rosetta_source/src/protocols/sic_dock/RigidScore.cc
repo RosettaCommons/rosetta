@@ -32,14 +32,14 @@ namespace sic_dock {
 
 static basic::Tracer TR( "propocols.sic_dock.RigidScore" );
 
-using core::Size;
-using core::Real;
+using platform::Size;
+using platform::Real;
 using numeric::min;
 using core::id::AtomID;
 using std::cout;
 using std::endl;
-typedef core::Real Real;
-typedef core::Size Size;
+typedef platform::Real Real;
+typedef platform::Size Size;
 typedef core::pose::Pose Pose;
 typedef core::kinematics::Stub Stub;
 typedef numeric::xyzVector<Real> Vec;
@@ -99,7 +99,9 @@ struct CBScoreVisitor {
 		contact_dis(contact_dis_in),
 		score(0.0)
 	{}
-	void visit(
+	inline
+	void
+	visit(
 		numeric::xyzVector<Real> const & /*v*/,
 		                   Real  const & vm,
 		numeric::xyzVector<Real> const & /*c*/, 
@@ -110,7 +112,7 @@ struct CBScoreVisitor {
 	}
 };
 
-core::Real
+platform::Real
 CBScore::score(
 	Stub const & x1,
 	Stub const & x2
@@ -154,7 +156,7 @@ LinkerScore::LinkerScore(
 
 
 
-core::Real
+platform::Real
 LinkerScore::score(
 	Stub const & x1,
 	Stub const & x2
@@ -249,7 +251,7 @@ JointScore::add_score(
 	weights_.push_back(weight);
 }
 
-core::Real
+platform::Real
 JointScore::score(
 	Stub const & x1,
 	Stub const & x2

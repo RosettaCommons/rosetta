@@ -21,8 +21,8 @@ void
 get_xform_stats(
 	core::kinematics::Stub const & sir,
 	core::kinematics::Stub const & sjr,
-	core::Real& dx, core::Real& dy, core::Real& dz,
-	core::Real& ex, core::Real& ey, core::Real& ez
+	platform::Real& dx, platform::Real& dy, platform::Real& dz,
+	platform::Real& ex, platform::Real& ey, platform::Real& ez
 );
 
 struct
@@ -54,8 +54,8 @@ XfoxmScore
 	float
 	score(
 		core::pose::Pose const & pose,
-		core::Size rsd1,
-		core::Size rsd2
+		platform::Size rsd1,
+		platform::Size rsd2
 	) const;
 
 	float

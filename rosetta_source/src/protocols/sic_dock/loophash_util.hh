@@ -27,7 +27,7 @@ namespace sic_dock {
 Vec3
 get_leap_upper_stub(
 	core::pose::Pose const & pose,
-	core::Size ir
+	platform::Size ir
 );
 core::kinematics::Stub vec3_to_stub(Vec3 const & v3);
 core::kinematics::Stub vec3_to_stub(core::kinematics::Stub const & xform, Vec3 const & v3);
@@ -35,7 +35,7 @@ core::kinematics::Stub vec3_to_stub(core::kinematics::Stub const & xform, Vec3 c
 void
 get_termini_from_pose(
 	core::pose::Pose const & pose,
-	core::Size ir,
+	platform::Size ir,
 	TermInfo & lowers,
 	TermInfo & uppers
 );
@@ -50,29 +50,29 @@ get_leap_6dof(
 	core::kinematics::Stub const & lower,
 	core::kinematics::Stub const & upper
 );
-core::Size
+platform::Size
 count_linkers(
 	core::kinematics::Stub const & lower,
 	core::kinematics::Stub const & upper,
 	protocols::loophash::LoopHashLibraryOP loop_hash_library,
-	utility::vector1<core::Size> const & loopsizes,
-	core::Size radius = 0
+	utility::vector1<platform::Size> const & loopsizes,
+	platform::Size radius = 0
 );
 
-core::Size
+platform::Size
 dump_loophash_linkers(
 	core::kinematics::Stub const & lower,
 	core::kinematics::Stub const & upper,
 	// core::pose::Pose const & pose1,
 	// core::pose::Pose const & pose2,
 	protocols::loophash::LoopHashLibraryOP loop_hash_library,
-	utility::vector1<core::Size> const & loopsizes,
-	core::Size radius = 0
+	utility::vector1<platform::Size> const & loopsizes,
+	platform::Size radius = 0
 );
 
-core::Real
+platform::Real
 linker_count2score(
-	core::Size count
+	platform::Size count
 );
 
 } // sic_dock
