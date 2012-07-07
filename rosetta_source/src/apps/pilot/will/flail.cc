@@ -380,7 +380,7 @@ int main(int argv, char **argc){
 			core::Real score = bola.get_target_distance();
 			if( numeric::random::uniform() < fastexp((last_score-score)/temperature) ){
 				++bola.naccepts;
-				++hist[(int)(score+1];
+				++hist[(int)score+1];
 				last_score = score;
 			} else {
 				bola.undo_most_recent_move();
