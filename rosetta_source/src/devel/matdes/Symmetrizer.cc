@@ -210,8 +210,8 @@ Symmetrizer::parse_my_tag( TagPtr const tag,
 		SymmetrizerSampler::get_instance().set_angle_range(angle_min_, angle_max_, angle_step);
 		SymmetrizerSampler::get_instance().set_radial_disp_range(radial_disp_min_, radial_disp_max_, radial_disp_step);
 	} else if (sampling_mode_ == "gaussian") {
-		angle_delta_ = tag->getOption<Real>("angle_delta");
-		radial_disp_delta_ = tag->getOption<Real>("radial_disp_delta");
+		angle_delta_ = tag->getOption<Real>("angle_delta", 0.0);
+		radial_disp_delta_ = tag->getOption<Real>("radial_disp_delta", 0.0);
 	}
 	radial_disp_ = tag->getOption<Real>( "radial_disp" ,0.0);
 	angle_ = tag->getOption<Real>( "angle",0.0 );

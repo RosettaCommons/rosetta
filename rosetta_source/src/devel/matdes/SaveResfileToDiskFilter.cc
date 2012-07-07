@@ -54,11 +54,13 @@ namespace matdes {
 SaveResfileToDiskFilter::SaveResfileToDiskFilter() {}
 
 // @brief constructor with arguments
-SaveResfileToDiskFilter::SaveResfileToDiskFilter( core::pack::task::TaskFactoryOP task_factory, utility::vector1<core::Size> r, bool d, std::string n, std::string g ):
+SaveResfileToDiskFilter::SaveResfileToDiskFilter( core::pack::task::TaskFactoryOP task_factory, utility::vector1<core::Size> r, bool d, std::string n, std::string s, std::string p, std::string g ):
 	task_factory_( task_factory ),
 	selected_resis_( r ),
 	designable_only_( d ),
 	resfile_name_( n ),
+	resfile_suffix_( s ),
+	resfile_prefix_( p ),
 	resfile_general_property_( g )
 {}
 
@@ -69,6 +71,8 @@ SaveResfileToDiskFilter::SaveResfileToDiskFilter( SaveResfileToDiskFilter const 
 	selected_resis_( rval.selected_resis_ ),
 	designable_only_( rval.designable_only_ ),
 	resfile_name_( rval.resfile_name_ ),
+	resfile_suffix_( rval.resfile_suffix_ ),
+	resfile_prefix_( rval.resfile_prefix_ ),
 	resfile_general_property_( rval.resfile_general_property_ )
 {}
 
@@ -87,6 +91,8 @@ core::pack::task::TaskFactoryOP SaveResfileToDiskFilter::task_factory() const { 
 utility::vector1<core::Size> SaveResfileToDiskFilter::selected_resis() const { return selected_resis_; }
 bool SaveResfileToDiskFilter::designable_only() const { return designable_only_; }
 std::string SaveResfileToDiskFilter::resfile_name() const { return resfile_name_; }
+std::string SaveResfileToDiskFilter::resfile_suffix() const { return resfile_suffix_; }
+std::string SaveResfileToDiskFilter::resfile_prefix() const { return resfile_prefix_; }
 std::string SaveResfileToDiskFilter::resfile_general_property() const { return resfile_general_property_; }
 
 // @brief setters
@@ -94,6 +100,8 @@ void SaveResfileToDiskFilter::task_factory( core::pack::task::TaskFactoryOP task
 void SaveResfileToDiskFilter::selected_resis( utility::vector1<core::Size> const r ) { selected_resis_ = r; }
 void SaveResfileToDiskFilter::designable_only( bool const d ) { designable_only_ = d; }
 void SaveResfileToDiskFilter::resfile_name( std::string const n ) { resfile_name_ = n; }
+void SaveResfileToDiskFilter::resfile_suffix( std::string const s ) { resfile_suffix_ = s; }
+void SaveResfileToDiskFilter::resfile_prefix( std::string const p ) { resfile_prefix_ = p; }
 void SaveResfileToDiskFilter::resfile_general_property( std::string const g ) { resfile_general_property_ = g; }
 
 /// @brief Applies the TaskOperations specified in the xml, and then selects either
@@ -130,8 +138,12 @@ SaveResfileToDiskFilter::write_resfile( Pose const & pose, utility::vector1< cor
 {
 	std::string resfile_to_write = resfile_name();
 
-	if (resfile_to_write == "") {
+	if (resfile_suffix() == "" && resfile_prefix() == "" && resfile_to_write == "") {
 		resfile_to_write = protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".resfile";
+	}
+
+	if ((resfile_suffix() != "" || resfile_prefix() != "") && resfile_to_write == "") {
+		resfile_to_write = resfile_prefix() + protocols::jd2::JobDistributor::get_instance()->current_output_name() + resfile_suffix() + ".resfile";
 	}
 
   runtime_assert( resfile_to_write != "" );
@@ -169,6 +181,8 @@ SaveResfileToDiskFilter::parse_my_tag(
 {
   task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	designable_only( tag->getOption< bool >( "designable_only", false ) );
+	resfile_suffix( tag->getOption< std::string >( "resfile_suffix", "" ) );
+	resfile_prefix( tag->getOption< std::string >( "resfile_prefix", "" ) );
 	resfile_name( tag->getOption< std::string >( "resfile_name", "" ) );
 	resfile_general_property( tag->getOption< std::string >( "resfile_general_property", "NATAA" ) );
 }

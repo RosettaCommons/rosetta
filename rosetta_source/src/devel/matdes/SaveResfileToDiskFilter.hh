@@ -68,6 +68,8 @@ public:// constructor/destructor
 			utility::vector1<core::Size> selected_resis,
 			bool designable_only,
 			std::string resfile_name,
+			std::string resfile_suffix,
+			std::string resfile_prefix,
 			std::string resfile_general_property
 	); 
 
@@ -97,6 +99,8 @@ public:// setters
 	void selected_resis( utility::vector1<core::Size> const r );
 	void designable_only( bool const d );
 	void resfile_name( std::string const n );
+	void resfile_suffix( std::string const s );
+	void resfile_prefix( std::string const p );
 	void resfile_general_property( std::string const g );
 
 public:// getters
@@ -104,6 +108,8 @@ public:// getters
 	utility::vector1< core::Size > selected_resis() const;
 	bool designable_only() const;
 	std::string resfile_name() const;
+	std::string resfile_suffix() const;
+	std::string resfile_prefix() const;
 	std::string resfile_general_property() const;
 
 public:// parser
@@ -135,6 +141,8 @@ private:
 	utility::vector1< core::Size > selected_resis_;
 	bool designable_only_;
 	std::string resfile_name_;
+	std::string resfile_suffix_;
+	std::string resfile_prefix_;
 	std::string resfile_general_property_;
 
 };
