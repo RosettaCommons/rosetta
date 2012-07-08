@@ -255,6 +255,7 @@ OPT_KEY( Boolean, sample_all_o2star );
 OPT_KEY( Boolean, do_add_delete );
 OPT_KEY( Boolean, presample_added_residue );
 OPT_KEY( Integer, presample_internal_cycles );
+OPT_KEY( Boolean, forward_build ); //temporary -- delete this soon!
 
 
 //////////////////////////////////////////////////
@@ -990,7 +991,7 @@ reorder_after_delete( std::map<Size,Size> & sub_to_full,
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1<Size>
-reorder_after_prepend( utility::vector1<Size> & moving_res_list,
+reorder_after_insert( utility::vector1<Size> & moving_res_list,
 											 Size const & res_to_add ){
 
 	utility::vector1< Size > moving_res_list_new;
@@ -1012,7 +1013,7 @@ reorder_after_prepend( utility::vector1<Size> & moving_res_list,
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 std::map<Size,Size>
-reorder_after_prepend( std::map<Size,Size> & sub_to_full,
+reorder_after_insert( std::map<Size,Size> & sub_to_full,
 											Size const & res_to_add ){
 
 	std::map< Size, Size > sub_to_full_new;
@@ -1062,6 +1063,9 @@ swa_rna_sample()
 
   Pose pose;
 	stepwise_rna_pose_setup->apply( pose );
+
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 800, 800 );
+
 	stepwise_rna_pose_setup->setup_native_pose( pose ); //NEED pose to align native_pose to pose.
 
 	pose.dump_pdb( "START.pdb" );
@@ -1075,10 +1079,21 @@ swa_rna_sample()
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	Size const num_cycle = option[ n_sample ]();
-	Real const sample_range_small = option[ stddev_small ]();
+	Real const sample_range_small = option[ stsddev_small ]();
 	Real const sample_range_large = option[ stddev_large ]();
 
 	utility::vector1< Size > moving_res_list = job_parameters->working_moving_res_list();
+
+	// is this in the right order or what? Total hack for now.
+	if ( moving_res_list.size() > 1 && moving_res_list[2] < moving_res_list[1]){
+		utility::vector1< Size > moving_res_list_new;
+		for ( Size n = moving_res_list.size(); n >= 1; n-- ) moving_res_list_new.push_back( moving_res_list[ n ] );
+		moving_res_list = moving_res_list_new;
+	}
+	std::cout << "MOVING_RES ";
+	for (Size i = 1; i <= moving_res_list.size(); i++ ) std::cout << ' ' <<  moving_res_list[i];
+	std::cout << std::endl;
+
 	std::map< Size, Size > sub_to_full = job_parameters->sub_to_full();
 	std::string full_sequence = job_parameters->full_sequence();
 	pose::Pose const & native_pose = *( stepwise_rna_pose_setup->get_native_pose() );
@@ -1093,7 +1108,6 @@ swa_rna_sample()
 	bool const presample_added_residue_ = option[ presample_added_residue ]();
 	Size const internal_cycles_ = option[ presample_internal_cycles ](); // totally arbitrary
 
-	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 800, 800 );
 
 	std::string move_type( "" );
 	if ( ! option[ skip_randomize ]() ){
@@ -1137,24 +1151,27 @@ swa_rna_sample()
 					move_type = "delete";
 
 					std::cout << "Before delete: " << (*scorefxn)( pose ) << std::endl;
-					//pose.dump_pdb( "before_delete.pdb" );
 
-					//std::cout << "ATTEMPTING DELETE! " << std::endl;
-					Size const res_to_delete = moving_res_list[1];
-					pose.delete_polymer_residue( res_to_delete ); // only works for fragment built backward off 5' fragment
+					bool const forward_build_ = option[ forward_build ](); // later, both forward and backward will be possible -- and determined automatically
+					if ( forward_build_ ){
 
-					moving_res_list_new = reorder_after_delete( moving_res_list, res_to_delete );
-					sub_to_full_new = reorder_after_delete( sub_to_full, res_to_delete );
+						Size const res_to_delete = moving_res_list[ moving_res_list.size() ];
+						pose.delete_polymer_residue( res_to_delete ); // only works for fragment built backward off 5' fragment
+						moving_res_list_new = reorder_after_delete( moving_res_list, res_to_delete );
+						sub_to_full_new = reorder_after_delete( sub_to_full, res_to_delete );
 
-					//std::cout << "MOVING_RES ";
-					//for (Size i = 1; i <= moving_res_list.size(); i++ ) std::cout << ' ' <<  moving_res_list[i];
-					//std::cout << std::endl;
 
-					pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_delete );
+					} else {
+						Size const res_to_delete = moving_res_list[1];
+						pose.delete_polymer_residue( res_to_delete ); // only works for fragment built backward off 5' fragment
+						moving_res_list_new = reorder_after_delete( moving_res_list, res_to_delete );
+						sub_to_full_new = reorder_after_delete( sub_to_full, res_to_delete );
+						pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_delete );
 
-					//std::cout << pose.annotated_sequence() << std::endl;
+					}
+
 					std::cout << "After delete: " << (*scorefxn)( pose ) << std::endl << std::endl;
-					//					pose.dump_pdb( "after_delete.pdb" );
+
 				}
 
 			} else {
@@ -1163,38 +1180,70 @@ swa_rna_sample()
 				///////////////////////////////////
 				// try to add a residue that is supposed to be sampled.
 
-				Size const res_to_add = moving_res_list[1]; // for now, just build off 5' fragment.
-				if ( sub_to_full[ res_to_add ] > 1 ){  // again, need to fix for general case.
+				move_type = "add";
+				std::cout << "Before add: " << (*scorefxn)( pose ) << std::endl;
 
-					move_type = "add";
+				Size suite_num( 0 ), nucleoside_num( 0 ); // will record which new dofs added.
 
-					std::cout << "Before add: " << (*scorefxn)( pose ) << std::endl;
-					//pose.dump_pdb( "before_add.pdb" );
+				bool did_addition( false );
+				//pose.dump_pdb( "before_add.pdb" );
 
-					char newrestype = full_sequence[ (sub_to_full[ res_to_add ] - 1) - 1 ];
-					//std::cout << "I want to add: " << newrestype << std::endl;
+				bool const forward_build_ = option[ forward_build ](); // later, both forward and backward will be possible -- and determined automatically
+				if ( forward_build_ ){
 
-					chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
-					chemical::ResidueTypeCAPs const & rsd_type_list( rsd_set->aa_map( my_aa ) );
-					// iterate over rsd_types, pick one.
-					chemical::ResidueType const & rsd_type = *rsd_type_list[1];
-					core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
+					Size const res_to_build_off = moving_res_list[ moving_res_list.size() ]; // for now, just build off 3' fragment.
 
-					pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add ); // got to be safe.
+					if ( res_to_build_off < pose.total_residue() &&
+							 sub_to_full[ res_to_build_off ] < sub_to_full[ res_to_build_off+1 ] -1 ){  // need to fix for general case [e.g. cutpoint]
+						Size const res_to_add = res_to_build_off + 1;
 
-					pose.prepend_polymer_residue_before_seqpos( *new_rsd, res_to_add, true /*build ideal geometry*/ );
-					pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add );
+						char newrestype = full_sequence[ (sub_to_full[ res_to_build_off ] + 1) - 1 ];
+						//std::cout << "I want to add: " << newrestype << std::endl;
 
-					moving_res_list_new = reorder_after_prepend( moving_res_list, res_to_add );
-					sub_to_full_new = reorder_after_prepend( sub_to_full, res_to_add );
+						chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
+						chemical::ResidueTypeCAPs const & rsd_type_list( rsd_set->aa_map( my_aa ) );
+						// iterate over rsd_types, pick one.
+						chemical::ResidueType const & rsd_type = *rsd_type_list[1];
+						core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
 
-					//std::cout << "MOVING_RES ";
-					//for (Size i = 1; i <= moving_res_list.size(); i++ ) std::cout << ' ' << moving_res_list[i];
-					//std::cout << std::endl;
+						pose.append_polymer_residue_after_seqpos( *new_rsd, res_to_build_off, true /*build ideal geometry*/ );
 
-					// initialize with a random torsion... ( how about an A-form + perturbation ... or go to a 'reasonable' rotamer)
-					Size const suite_num = res_to_add;
-					Size const nucleoside_num = res_to_add;
+						suite_num = res_to_add-1;
+						nucleoside_num = res_to_add;
+
+						did_addition = true;
+					}
+				} else {
+					Size const res_to_add = moving_res_list[1]; // for now, just build off 5' fragment.
+					if ( sub_to_full[ res_to_add ] > 1 ){  // again, need to fix for general case.
+
+						char newrestype = full_sequence[ (sub_to_full[ res_to_add ] - 1) - 1 ];
+						//std::cout << "I want to add: " << newrestype << std::endl;
+
+						chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
+						chemical::ResidueTypeCAPs const & rsd_type_list( rsd_set->aa_map( my_aa ) );
+						// iterate over rsd_types, pick one.
+						chemical::ResidueType const & rsd_type = *rsd_type_list[1];
+						core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
+
+						pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add ); // got to be safe.
+
+						pose.prepend_polymer_residue_before_seqpos( *new_rsd, res_to_add, true /*build ideal geometry*/ );
+						pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add );
+
+						// initialize with a random torsion... ( how about an A-form + perturbation ... or go to a 'reasonable' rotamer)
+						suite_num = res_to_add;
+						nucleoside_num = res_to_add;
+
+						did_addition = true;
+					}
+				}
+
+
+				if ( did_addition ){
+					moving_res_list_new = reorder_after_insert( moving_res_list, nucleoside_num );
+					sub_to_full_new = reorder_after_insert( sub_to_full, nucleoside_num );
+
 					apply_suite_torsion_Aform( pose, suite_num );
 					apply_nucleoside_torsion_Aform( pose, nucleoside_num );
 					sample_near_suite_torsion( pose, suite_num, sample_range_large);
@@ -1204,7 +1253,7 @@ swa_rna_sample()
 					// Presampling added residue
 					///////////////////////////////////
 					if ( presample_added_residue_ ){
-						std::cout << "presampling added residue! " << res_to_add << std::endl;
+						std::cout << "presampling added residue! " << nucleoside_num << std::endl;
 						MonteCarloOP monte_carlo_internal = new MonteCarlo( pose, *scorefxn, option[ kT ]() );
 
 						for ( Size count_internal = 1; count_internal <= internal_cycles_; count_internal++ ){
@@ -1218,14 +1267,14 @@ swa_rna_sample()
 							//std::cout << "During presampling: " << (*scorefxn)( pose );
 						}
 					}
-
-
 					//std::cout << pose.annotated_sequence() << std::endl;
 					std::cout << "After add: " << (*scorefxn)( pose ) << std::endl << std::endl;
 					//					pose.dump_pdb( "after_add.pdb" );
-
+				} else {
+					move_type = ""; // no move!
 				}
 			}
+
 		} else if ( random_number  < 0.8 ){
 
 			Real const random_number2 = RG.uniform();
@@ -1284,7 +1333,7 @@ swa_rna_sample()
 	monte_carlo_->recover_low( pose );
 
 
-	output_silent_file( pose, n_accept, num_cycle+1, moving_res_list, sub_to_full, native_pose, silent_file_data, silent_file );
+	//output_silent_file( pose, n_accept, num_cycle+1, moving_res_list, sub_to_full, native_pose, silent_file_data, silent_file );
 	if ( option[ out::file::o].user() ) { // makes life easier on cluter.
 		pose.dump_pdb( option[ out::file::o ]() );
 	} else {
@@ -1434,6 +1483,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( do_add_delete, "try add & delete moves...", false );
 	NEW_OPT( presample_added_residue, "when adding a residue, do a little monte carlo to try to get it in place", false );
 	NEW_OPT( presample_internal_cycles, "when adding a residue, number of monte carlo cycles", 100 );
+	NEW_OPT( forward_build, "TEMPORARY - REMOVE THIS SOON!", false );
 
 
 
