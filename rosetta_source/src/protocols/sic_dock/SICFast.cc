@@ -63,10 +63,18 @@ inline double dist_score( double const & sqdist, double const & start, double co
 	}
 }
 
+SICFast::SICFast(core::Real clash_dis) :
+	CLD(clash_dis),
+	CLD2(sqr(CLD)),
+	BIN(CLD*basic::options::option[basic::options::OptionKeys::sicdock::hash_2D_vs_3D]()),
+	h1_(new xyzStripeHashPose(CLD+0.01)),
+	h2_(new xyzStripeHashPose(CLD+0.01))
+{}
+
 SICFast::SICFast() :
-	CTD(basic::options::option[basic::options::OptionKeys::sicdock::contact_dis]()),
 	CLD(basic::options::option[basic::options::OptionKeys::sicdock::clash_dis]()),
-	CTD2(sqr(CTD)),CLD2(sqr(CLD)),BIN(CLD*basic::options::option[basic::options::OptionKeys::sicdock::hash_2D_vs_3D]()),
+	CLD2(sqr(CLD)),
+	BIN(CLD*basic::options::option[basic::options::OptionKeys::sicdock::hash_2D_vs_3D]()),
 	h1_(new xyzStripeHashPose(CLD+0.01)),
 	h2_(new xyzStripeHashPose(CLD+0.01))
 {}

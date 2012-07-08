@@ -31,6 +31,7 @@ public:
 	typedef numeric::xyzVector<platform::Real> Vec;
 
 	SICFast();
+	SICFast(core::Real clash_dis);
 
 	virtual ~SICFast();
 

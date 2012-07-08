@@ -1,12 +1,10 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 
-#define CONTACT_D2 20.25
 #define CONTACT_TH 0
 #define NSS 1812 // 672 8192 17282
 #define MIN_HELEX_RES 20
 #define MAX_CYS_RES 3
-#define MAX_NRES 200
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -39,7 +37,9 @@
 #include <utility/io/ozstream.hh>
 #include <numeric/xyzVector.hh>
 #include <protocols/sic_dock/SICFast.hh>
-#include <protocols/sic_dock/designability_score.hh>
+#include <protocols/sic_dock/RigidScore.hh>
+#include <protocols/sic_dock/util.hh>
+// #include <protocols/sic_dock/designability_score.hh>
 
 #include <apps/pilot/will/will_util.ihh>
 
@@ -83,6 +83,9 @@ OPT_1GRP_KEY( FileVector, cxdock, bench4 )
 OPT_1GRP_KEY( FileVector, cxdock, bench5 )
 OPT_1GRP_KEY( FileVector, cxdock, bench6 )
 OPT_1GRP_KEY( IntegerVector, cxdock, nfold )
+OPT_1GRP_KEY( Integer, cxdock, max_res )
+OPT_1GRP_KEY( Real, cxdock, contact_dis )
+OPT_1GRP_KEY( Real, cxdock, clash_dis )
 
 typedef numeric::xyzTransform<core::Real> Xform;
 
@@ -95,6 +98,9 @@ void register_options() {
 	NEW_OPT( cxdock::bench5 , "benchmark penta (must be aligned-z)" , "" );
 	NEW_OPT( cxdock::bench6 , "benchmark hexa (must be aligned-z)" , "" );
 	NEW_OPT( cxdock::nfold  , "C syms to test", 1 );
+	NEW_OPT( cxdock::max_res  , "", 99999 );
+	NEW_OPT( cxdock::contact_dis  , "", 10.0 );
+	NEW_OPT( cxdock::clash_dis    , "", 3.5 );
 }
 
 #ifdef USE_OPENMP
@@ -118,66 +124,66 @@ int thread_num() {
 // info about a "hit"
 struct Hit {
 	int iss,irt,sym;
-	Real cbc,xscore,rmsd;
+	Real rscore,xscore,rmsd;
 	core::kinematics::Stub s1,s2;
-	Hit(int is, int ir, Real cb, int sm) : iss(is),irt(ir),sym(sm),cbc(cb) {}
+	Hit(int is, int ir, Real cb, int sm) : iss(is),irt(ir),sym(sm),rscore(cb) {}
 };
-bool cmpcbc (Hit i,Hit j) { return i.cbc    > j.cbc   ; }
+bool cmpcbc (Hit i,Hit j) { return i.rscore    > j.rscore   ; }
 bool cmpxsc (Hit i,Hit j) { return i.xscore > j.xscore; }
 bool cmprmsd(Hit i,Hit j) { return i.rmsd   < j.rmsd; }
 
 
-core::Real
-compute_xform_score(
-	protocols::sic_dock::XfoxmScore const & xfs,
-	core::kinematics::Stub const & x1,
-	core::kinematics::Stub const & x2,
-	utility::vector1<core::kinematics::Stub> const & stubs,
-	utility::vector1<char> const & ss
-){
-	assert(ss.size()==stubs.size());
-	core::Real score = 0.0;
-	utility::vector1<char>::const_iterator ssi = ss.begin();
-	for(utility::vector1<core::kinematics::Stub>::const_iterator i = stubs.begin(); i != stubs.end(); ++i,++ssi){
-		utility::vector1<char>::const_iterator ssj = ss.begin();
-		for(utility::vector1<core::kinematics::Stub>::const_iterator j = stubs.begin(); j != stubs.end(); ++j,++ssj){
-			Stub const a( x1.M * i->M, x1.M * i->v + x1.v );
-			Stub const b( x2.M * j->M, x2.M * j->v + x2.v );
-			if( (a.v-b.v).length_squared() > 64.0 ) continue;
-			score += xfs.score(a,b,*ssi,*ssj);
-		}
-	}
-	return score;
-}
+// core::Real
+// compute_xform_score(
+// 	protocols::sic_dock::XfoxmScore const & xfs,
+// 	core::kinematics::Stub const & x1,
+// 	core::kinematics::Stub const & x2,
+// 	utility::vector1<core::kinematics::Stub> const & stubs,
+// 	utility::vector1<char> const & ss
+// ){
+// 	assert(ss.size()==stubs.size());
+// 	core::Real score = 0.0;
+// 	utility::vector1<char>::const_iterator ssi = ss.begin();
+// 	for(utility::vector1<core::kinematics::Stub>::const_iterator i = stubs.begin(); i != stubs.end(); ++i,++ssi){
+// 		utility::vector1<char>::const_iterator ssj = ss.begin();
+// 		for(utility::vector1<core::kinematics::Stub>::const_iterator j = stubs.begin(); j != stubs.end(); ++j,++ssj){
+// 			Stub const a( x1.M * i->M, x1.M * i->v + x1.v );
+// 			Stub const b( x2.M * j->M, x2.M * j->v + x2.v );
+// 			if( (a.v-b.v).length_squared() > 64.0 ) continue;
+// 			score += xfs.score(a,b,*ssi,*ssj);
+// 		}
+// 	}
+// 	return score;
+// }
 
-core::Real
-compute_xform_score(
-	protocols::sic_dock::XfoxmScore const & xfs,
-	core::pose::Pose const & pose1,
-	core::pose::Pose const & pose2	
-){
-	float tot_score = 0.0;
-	for(core::Size ir = 1; ir <= pose1.n_residue(); ++ir){
-		if(!pose1.residue(ir).is_protein()) continue;
-		if(!pose1.residue(ir).has("CB")) continue;
-		Vec CBi = pose1.residue(ir).xyz("CB");
-		Vec CAi = pose1.residue(ir).xyz("CA");
-		Vec  Ni = pose1.residue(ir).xyz( "N");
-		core::kinematics::Stub sir(CBi,CAi,Ni);
-		for(core::Size jr = 1; jr <= pose2.n_residue(); ++jr){
-			if(!pose2.residue(jr).is_protein()) continue;
-			if(!pose2.residue(jr).has("CB")) continue;
-			Vec CBj = pose2.residue(jr).xyz("CB");
-			Vec CAj = pose2.residue(jr).xyz("CA");
-			Vec  Nj = pose2.residue(jr).xyz( "N");
-			if( CBi.distance_squared(CBj) > 64.0 ) continue;
-			core::kinematics::Stub sjr(CBj,CAj,Nj);
-			core::Real tmp = xfs.score(sir,sjr,pose1.secstruct(ir),pose2.secstruct(jr));
-			tot_score += tmp;
-		}
-	}
-	return tot_score;
-}
+// core::Real
+// compute_xform_score(
+// 	protocols::sic_dock::XfoxmScore const & xfs,
+// 	core::pose::Pose const & pose1,
+// 	core::pose::Pose const & pose2	
+// ){
+// 	float tot_score = 0.0;
+// 	for(core::Size ir = 1; ir <= pose1.n_residue(); ++ir){
+// 		if(!pose1.residue(ir).is_protein()) continue;
+// 		if(!pose1.residue(ir).has("CB")) continue;
+// 		Vec CBi = pose1.residue(ir).xyz("CB");
+// 		Vec CAi = pose1.residue(ir).xyz("CA");
+// 		Vec  Ni = pose1.residue(ir).xyz( "N");
+// 		core::kinematics::Stub sir(CBi,CAi,Ni);
+// 		for(core::Size jr = 1; jr <= pose2.n_residue(); ++jr){
+// 			if(!pose2.residue(jr).is_protein()) continue;
+// 			if(!pose2.residue(jr).has("CB")) continue;
+// 			Vec CBj = pose2.residue(jr).xyz("CB");
+// 			Vec CAj = pose2.residue(jr).xyz("CA");
+// 			Vec  Nj = pose2.residue(jr).xyz( "N");
+// 			if( CBi.distance_squared(CBj) > 64.0 ) continue;
+// 			core::kinematics::Stub sjr(CBj,CAj,Nj);
+// 			core::Real tmp = xfs.score(sir,sjr,pose1.secstruct(ir),pose2.secstruct(jr));
+// 			tot_score += tmp;
+// 		}
+// 	}
+// 	return tot_score;
+// }
 
 void
 make_native_olig(
@@ -317,21 +323,29 @@ get_rmsd_debug(
 // picks cases with most CB contacts in helices
 void
 dock(
-	protocols::sic_dock::XfoxmScore const & xfs,
 	Pose const & init_pose,
 	std::string const & fn,
 	vector1<Vec> const & ssamp,
-
-	Pose const & native_olig,
+	Pose const & /*native_olig*/,
 	int native_nfold = 1,
 	vector1<Vec> const & native_ca = vector1<Vec>()
 
 ){
+	TR << "dock " << fn << endl;
+
 	using namespace basic::options;
 	using namespace OptionKeys;
 
+	bool bench = native_nfold != 1;
+
 	// set up one SIC per thread
-	protocols::sic_dock::SICFast sic; sic.init(init_pose);
+	protocols::sic_dock::SICFast sic(option[cxdock::clash_dis]());
+	sic.init(init_pose);
+	protocols::sic_dock::JointScoreOP  rigidsfxn = new protocols::sic_dock::JointScore;
+	protocols::sic_dock::CBScoreCOP cbscore = new protocols::sic_dock::CBScore(init_pose,init_pose,option[cxdock::clash_dis](),option[cxdock::contact_dis]());
+	//lnscore_ = new protocols::sic_dock::LinkerScore(init_pose,init_pose,option[tcdock::max_linker_len](),option[tcdock::linker_lookup_radius]());
+	rigidsfxn->add_score(cbscore,1.0);
+	//rigidsfxn->add_score(lnscore_,1.0);
 
 	utility::vector1<Vec> init_ca;
 	for(Size ir = 1; ir <= init_pose.n_residue(); ++ir){
@@ -341,10 +355,10 @@ dock(
 	}
 
 	//store initial coords & angle samples 1-180 (other distribution of samps would be better...)
-	vector1<double> asamp; for(Real i = 1.0; i < 180.0; i += 5.0) asamp.push_back(i);
+	vector1<core::Real> asamp; for(Real i = 1.0; i < 180.0; i += 5.0) asamp.push_back(i);
 
 	vector1<int> syms;
-	if(native_nfold==1) syms = option[cxdock::nfold]();
+	if(!bench) syms = option[cxdock::nfold]();
 	else syms.push_back(native_nfold);
 
 	// setup rotation matricies
@@ -367,28 +381,29 @@ dock(
 	#pragma omp parallel for schedule(dynamic,1)
 	#endif
 	for(int iss = 1; iss <= (int)ssamp.size(); ++iss){
-		if(iss%1000==0) TR << iss << " of " << NSS << std::endl;
+		if(iss%1000==0) TR << iss*asamp.size() << " of " << NSS*asamp.size() << std::endl;
 		for(int irt = 1; irt <= (int)asamp.size(); ++irt) {
 			Mat R = rotation_matrix_degrees(ssamp[iss],(Real)asamp[irt]);
 			Stub const x1( R, Vec(0,0,0));
 			// loop over symmitreis to check
 			for(int ic = 1; ic <= (int)syms.size(); ic++){
 				Stub const x2( Rsym[ic]*R, Vec(0,0,0) );
-				Real cbc; 
+				// Real t = sic.slide_into_contact(x1,x2,Vec(0,0,1));
+				Real rscore = 0.0;
+				Stub tmp(x1);
+				Real const t = -slide_into_contact_and_score(sic,*rigidsfxn,tmp,x2,Vec(0,0,1),rscore);
 				
-				Real t = sic.slide_into_contact(x1,x2,Vec(0,0,1));
-				
-				Hit h(iss,irt,cbc,syms[ic]);
+				Hit h(iss,irt,rscore,syms[ic]);
 				h.s1 = x1;
 				h.s2 = x2;
 				h.s1.v += t*Vec(0,0,1);
 				// h.xscore = compute_xform_score(xfs,h.s1,h.s2,stubs,ss);
-				// h.rmsd = get_rmsd( native_ca, init_ca, h ); //, init_pose );
-				Xform x = get_cx_stub(h);
+				if(bench) h.rmsd = get_rmsd( native_ca, init_ca, h );
+				// Xform x = get_cx_stub(h);
 	
-				cout << "XFORM " << x.R << " " << x.t << endl;
+				// cout << "XFORM " << x.R << " " << x.t << endl;
 
-				if(cbc >= CONTACT_TH){
+				if(rscore >= CONTACT_TH){
 					#ifdef USE_OPENMP
 					#pragma omp critical
 					#endif
@@ -402,7 +417,7 @@ dock(
 							// std::cout << "RMSD " 
 							//           // << actualrmsd << " " 
 							//           << h.rmsd << " " 
-							//           << h.cbc << " "
+							//           << h.rscore << " "
 							//           << h.xscore << " " 
 							//           << std::endl;
 
@@ -420,39 +435,43 @@ dock(
 			}
 		}
 	}
+	TR << "found " << hits.size() << " hits" << endl;
 
 	Size nstruct = basic::options::option[basic::options::OptionKeys::out::nstruct]();
-	std::string outdir = basic::options::option[basic::options::OptionKeys::out::file::o]()+"/";
-
-	// test
-	for(int ic = 1; ic <= (int)syms.size(); ic++) {
-		std::sort(hits[ic].begin(),hits[ic].end(),cmpcbc);
-		for(int i = 1; i <= (int)hits[ic].size(); ++i) {
-			Hit & h(hits[ic][i]);
-
-			// Pose tmp1(init_pose),tmp2(init_pose);
-			// xform_pose(tmp1,h.s1);
-			// xform_pose(tmp2,h.s2);
-			// tmp1.dump_pdb("test1.pdb");
-			// tmp2.dump_pdb("test2.pdb");
-
-			// Stub const a( h.s1.M * stubs[1].M, h.s1.M * stubs[1].v + h.s1.v );
-			// Stub const b( h.s2.M * stubs[1].M, h.s2.M * stubs[1].v + h.s2.v );			
-			// std::cout << core::kinematics::Stub(tmp1.residue(1).xyz("CB"),tmp1.residue(1).xyz("CA"),tmp1.residue(1).xyz("N")) << std::endl;
-			// std::cout << a << std::endl;
-			// std::cout << core::kinematics::Stub(tmp2.residue(1).xyz("CB"),tmp2.residue(1).xyz("CA"),tmp2.residue(1).xyz("N")) << std::endl;
-			// std::cout << b << std::endl;
-
-			// std::cout << compute_xform_score(xfs,tmp1,tmp2) << " == "
-			//           << compute_xform_score(xfs,h.s1,h.s2,stubs,ss) << " " 
-			//           << h.cbc << " " << h.xscore << std::endl;;
-
-			// utility_exit_with_message("test");
-
-			// std::cout <<"SCORES " << h.cbc <<" "<< compute_xform_score(xfs,h.s1,h.s2,stubs,ss) << " " << h.xscore << std::endl;;
-
-		}
+	std::string outdir = "./";
+	if(basic::options::option[basic::options::OptionKeys::out::file::o].user()){
+		outdir = basic::options::option[basic::options::OptionKeys::out::file::o].user()+"/";
 	}
+
+	// // test
+	// for(int ic = 1; ic <= (int)syms.size(); ic++) {
+	// 	std::sort(hits[ic].begin(),hits[ic].end(),cmpcbc);
+	// 	for(int i = 1; i <= (int)hits[ic].size(); ++i) {
+	// 		Hit & h(hits[ic][i]);
+
+	// 		// Pose tmp1(init_pose),tmp2(init_pose);
+	// 		// xform_pose(tmp1,h.s1);
+	// 		// xform_pose(tmp2,h.s2);
+	// 		// tmp1.dump_pdb("test1.pdb");
+	// 		// tmp2.dump_pdb("test2.pdb");
+
+	// 		// Stub const a( h.s1.M * stubs[1].M, h.s1.M * stubs[1].v + h.s1.v );
+	// 		// Stub const b( h.s2.M * stubs[1].M, h.s2.M * stubs[1].v + h.s2.v );			
+	// 		// std::cout << core::kinematics::Stub(tmp1.residue(1).xyz("CB"),tmp1.residue(1).xyz("CA"),tmp1.residue(1).xyz("N")) << std::endl;
+	// 		// std::cout << a << std::endl;
+	// 		// std::cout << core::kinematics::Stub(tmp2.residue(1).xyz("CB"),tmp2.residue(1).xyz("CA"),tmp2.residue(1).xyz("N")) << std::endl;
+	// 		// std::cout << b << std::endl;
+
+	// 		// std::cout << compute_xform_score(xfs,tmp1,tmp2) << " == "
+	// 		//           << compute_xform_score(xfs,h.s1,h.s2,stubs,ss) << " " 
+	// 		//           << h.rscore << " " << h.xscore << std::endl;;
+
+	// 		// utility_exit_with_message("test");
+
+	// 		// std::cout <<"SCORES " << h.rscore <<" "<< compute_xform_score(xfs,h.s1,h.s2,stubs,ss) << " " << h.xscore << std::endl;;
+
+	// 	}
+	// }
 
 
 	// dump top results
@@ -464,47 +483,52 @@ dock(
 			if(tag.substr(tag.size()-3)==".gz" ) tag = tag.substr(0,tag.size()-3);
 			if(tag.substr(tag.size()-4)==".pdb") tag = tag.substr(0,tag.size()-4);			
 			tag += "_C"+ObjexxFCL::string_of(h.sym)+"_cbc"+ObjexxFCL::string_of(i)+".pdb";
-			cout << "RESULT " << h.sym << " " << h.iss << " " << NSS  << " " << h.irt << " " << h.cbc << " " << tag << endl;
+			cout << "RESULT " << h.sym << " " << h.iss << " " << NSS  << " " << h.irt << " " << h.rscore << " " << tag << endl;
 			Pose tmp;
 			make_dock_olig(init_pose,tmp,h);
-			tmp.dump_pdb( option[out::file::o]()+"/"+tag);
+			TR << "dumping top rscore to " << outdir+tag << endl;
+			tmp.dump_pdb(outdir+tag);
 			// utility_exit_with_message("test");
 		}
 	}
-	// dump top results
-	for(int ic = 1; ic <= (int)syms.size(); ic++) {
-		std::sort(hits[ic].begin(),hits[ic].end(),cmpxsc);
-		for(int i = 1; i <= (int)min(nstruct,hits[ic].size()); ++i) {
-			Hit & h(hits[ic][i]);
-			std::string tag = utility::file_basename(fn);
-			if(tag.substr(tag.size()-3)==".gz" ) tag = tag.substr(0,tag.size()-3);
-			if(tag.substr(tag.size()-4)==".pdb") tag = tag.substr(0,tag.size()-4);			
-			tag += "_C"+ObjexxFCL::string_of(h.sym)+"_xsc"+ObjexxFCL::string_of(i)+".pdb";
-			cout << "RESULT " << h.sym << " " << h.iss << " " << NSS  << " " << h.irt << " " << h.cbc << " " << tag << endl;
-			Pose tmp;
-			make_dock_olig(init_pose,tmp,h);
-			tmp.dump_pdb( option[out::file::o]()+"/"+tag);
-			// utility_exit_with_message("test");
-		}
-	}
-	// dump top results
-	for(int ic = 1; ic <= (int)syms.size(); ic++) {
-		std::sort(hits[ic].begin(),hits[ic].end(),cmprmsd);
-		for(int i = 1; i <= (int)min(nstruct,hits[ic].size()); ++i) {
-			Hit & h(hits[ic][i]);
-			std::string tag = utility::file_basename(fn);
-			if(tag.substr(tag.size()-3)==".gz" ) tag = tag.substr(0,tag.size()-3);
-			if(tag.substr(tag.size()-4)==".pdb") tag = tag.substr(0,tag.size()-4);			
-			tag += "_C"+ObjexxFCL::string_of(h.sym)+"_rmsd"+ObjexxFCL::string_of(i)+".pdb";
-			cout << "RESULT " << h.sym << " " << h.iss << " " << NSS  << " " << h.irt << " " << h.cbc << " " << tag << endl;
-			Pose tmp;
-			make_dock_olig(init_pose,tmp,h);
-			tmp.dump_pdb( option[out::file::o]()+"/"+tag);
-			// utility_exit_with_message("test");
+	// // dump top results
+	// for(int ic = 1; ic <= (int)syms.size(); ic++) {
+	// 	std::sort(hits[ic].begin(),hits[ic].end(),cmpxsc);
+	// 	for(int i = 1; i <= (int)min(nstruct,hits[ic].size()); ++i) {
+	// 		Hit & h(hits[ic][i]);
+	// 		std::string tag = utility::file_basename(fn);
+	// 		if(tag.substr(tag.size()-3)==".gz" ) tag = tag.substr(0,tag.size()-3);
+	// 		if(tag.substr(tag.size()-4)==".pdb") tag = tag.substr(0,tag.size()-4);			
+	// 		tag += "_C"+ObjexxFCL::string_of(h.sym)+"_xsc"+ObjexxFCL::string_of(i)+".pdb";
+	// 		cout << "RESULT " << h.sym << " " << h.iss << " " << NSS  << " " << h.irt << " " << h.rscore << " " << tag << endl;
+	// 		Pose tmp;
+	// 		make_dock_olig(init_pose,tmp,h);
+	// 		tmp.dump_pdb( outdir+tag);
+	// 		// utility_exit_with_message("test");
+	// 	}
+	// }
+
+	if(bench){
+		// dump top results
+		for(int ic = 1; ic <= (int)syms.size(); ic++) {
+			std::sort(hits[ic].begin(),hits[ic].end(),cmprmsd);
+			for(int i = 1; i <= (int)min(nstruct,hits[ic].size()); ++i) {
+				Hit & h(hits[ic][i]);
+				std::string tag = utility::file_basename(fn);
+				if(tag.substr(tag.size()-3)==".gz" ) tag = tag.substr(0,tag.size()-3);
+				if(tag.substr(tag.size()-4)==".pdb") tag = tag.substr(0,tag.size()-4);			
+				tag += "_C"+ObjexxFCL::string_of(h.sym)+"_rmsd"+ObjexxFCL::string_of(i)+".pdb";
+				cout << "RESULT " << h.sym << " " << h.iss << " " << NSS  << " " << h.irt << " " << h.rscore << " " << tag << endl;
+				Pose tmp;
+				make_dock_olig(init_pose,tmp,h);
+				TR << "dumping top rmsd to " << outdir+tag << endl;
+				tmp.dump_pdb(outdir+tag);
+				// utility_exit_with_message("test");
+			}
 		}
 	}
 
-	if(native_nfold != 1){ // benchmark
+	if(bench){ // benchmark
 		// Real rms_goodcbc=999.0, rms_goodxsc=999.0;
 		std::cout << "RESULT RMSD for best my contact count";
 		std::sort(hits[1].begin(),hits[1].end(),cmpcbc);
@@ -569,7 +593,7 @@ read_sphere(
 	if(!basic::database::open(is,"sampling/spheres/sphere_"+str(NSS)+".dat"))
 		utility_exit_with_message("can't open sphere data");
 	for(int i = 1; i <= NSS; ++i) {
-		double x,y,z;
+		core::Real x,y,z;
 		is >> x >> y >> z;
 		ssamp[i] = Vec(x,y,z);
 	}
@@ -621,7 +645,7 @@ int main(int argc, char *argv[]) {
 
 	vector1<Vec> ssamp(NSS); read_sphere(ssamp);
 
-	protocols::sic_dock::XfoxmScore const xfs("/Users/sheffler/project/designability_stats/results/");
+	// protocols::sic_dock::XfoxmScore const xfs("/Users/sheffler/project/designability_stats/results/");
 
 	vector1<std::pair<string,int> > tasks;
 	get_tasks_from_command_line(tasks);
@@ -649,8 +673,9 @@ int main(int argc, char *argv[]) {
 		Vec cen = center_of_geom(pnat,1,pnat.n_residue());
 		trans_pose(pnat,-Vec(0,cen.y(),cen.z()));
 
-		if( pnat.n_residue() > MAX_NRES ) continue;
-		Size cyscnt=0, nhelix=0;
+		// inpuc checks
+		if( pnat.n_residue() > (Size)option[cxdock::max_res]() ) continue;
+		// Size cyscnt=0, nhelix=0;
 		// for(Size ir = 2; ir <= pnat.n_residue()-1; ++ir) {
 		// 	if(pnat.secstruct(ir) == 'H') nhelix++;
 		// 	//if(!pnat.residue(ir).is_protein()) goto cont1;
@@ -660,7 +685,7 @@ int main(int argc, char *argv[]) {
 		// } goto done1; cont1: TR << "skipping " << fn << std::endl; continue; done1:
 		// if( nhelix < MIN_HELEX_RES ) continue;
 
-		dock(xfs,pnat,fn,ssamp,olig,nfold,native_ca);
+		dock(pnat,fn,ssamp,olig,nfold,native_ca);
 	}
 }
 
