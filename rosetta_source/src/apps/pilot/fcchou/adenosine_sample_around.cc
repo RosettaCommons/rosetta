@@ -134,7 +134,7 @@ methane_pair_score_test()
 
 	//////////////////////////////////////////////////
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
 	// Read in pose with two methane. "Z" = ligand. Note need flag:
 	//         -extra_res_fa CH4.params -s two_methane.pdb
@@ -142,12 +142,12 @@ methane_pair_score_test()
 	std::string infile  = option[ in ::file::s ][1];
 	import_pose::pose_from_pdb( pose, *rsd_set, infile );
 
+	rotate_into_nucleobase_frame( pose );
 	add_virtual_res(pose);
 	core::chemical::ResidueTypeSet const & residue_set = pose.residue_type ( 1 ).residue_type_set();
 	core::chemical::ResidueTypeCAPs const & rsd_type_list ( residue_set.name3_map ( "CCC" ) );
 	core::conformation::ResidueOP new_res ( core::conformation::ResidueFactory::create_residue ( *rsd_type_list[1] ) );
 	pose.append_residue_by_jump ( *new_res , 2 );
-	rotate_into_nucleobase_frame( pose );
 
 	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", 1 );
 
@@ -180,7 +180,7 @@ methane_pair_score_test()
 
 	//////////////////////////////////////////////////////////////////
 	// OK, how about a score function?
-	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "rna/rna_hires_07232011_with_intra_base_phosphate" );
+	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "rna_hires" );
 	//scorefxn->set_weight( hack_elec, 1.0 );
 
 	(*scorefxn)( pose );
