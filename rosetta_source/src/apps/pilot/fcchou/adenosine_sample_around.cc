@@ -32,6 +32,8 @@
 
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <utility/io/ozstream.hh>
 
 #include <protocols/idealize/idealize.hh>
 #include <protocols/swa/StepWiseUtil.cc>
@@ -274,27 +276,103 @@ methane_pair_score_test()
 	// compute scores on a plane for now.
 	using namespace core::io::silent;
 	SilentFileData silent_file_data;
-	std::string const silent_file = option[ out::file::silent  ]();
-
-	Size n( 0 );
-
-	for (Size i = -200; i <= 200; ++i) {
-		for (Size j = -200; j <= 200; ++j) {
-			Real const x = i * 0.1;
-			Real const y = j * 0.1;
+	utility::io::ozstream out;
+	out.open( "score_para_0.table" );
+	for (int i = -150; i <= 150; ++i) {
+		for (int j = -150; j <= 150; ++j) {
+			Real const x = j * 0.1;
+			Real const y = i * 0.1;
 			Real const z = 0.0;
 			jump.set_translation( Vector( x, y, z ) ) ;
 			pose.set_jump( 2, jump );
-			(*scorefxn)( pose );
-
-			n++;
-			std::string out_tag( "S_" + lead_zero_string_of(n,10) );
-			BinaryProteinSilentStruct s( pose,  out_tag);
-			s.add_energy( "x", x );
-			s.add_energy( "y", y );
-			silent_file_data.write_silent_struct( s, silent_file, true /*write score only*/ );
+			out << (*scorefxn)( pose ) << ' ' ;
 		}
+		out << std::endl;
 	}
+	out.close();
+	out.open( "score_para_1.table" );
+	for (int i = -150; i <= 150; ++i) {
+		for (int j = -150; j <= 150; ++j) {
+			Real const x = j * 0.1;
+			Real const y = i * 0.1;
+			Real const z = 1.0;
+			jump.set_translation( Vector( x, y, z ) ) ;
+			pose.set_jump( 2, jump );
+			out << (*scorefxn)( pose ) << ' ' ;
+		}
+		out << std::endl;
+	}
+	out.close();
+
+	out.open( "score_para_3.table" );
+	for (int i = -150; i <= 150; ++i) {
+		for (int j = -150; j <= 150; ++j) {
+			Real const x = j * 0.1;
+			Real const y = i * 0.1;
+			Real const z = 3.0;
+			jump.set_translation( Vector( x, y, z ) ) ;
+			pose.set_jump( 2, jump );
+			out << (*scorefxn)( pose ) << ' ' ;
+		}
+		out << std::endl;
+	}
+	out.close();
+
+	out.open( "score_para_-1.table" );
+	for (int i = -150; i <= 150; ++i) {
+		for (int j = -150; j <= 150; ++j) {
+			Real const x = j * 0.1;
+			Real const y = i * 0.1;
+			Real const z = -1.0;
+			jump.set_translation( Vector( x, y, z ) ) ;
+			pose.set_jump( 2, jump );
+			out << (*scorefxn)( pose ) << ' ' ;
+		}
+		out << std::endl;
+	}
+	out.close();
+
+	out.open( "score_para_-3.table" );
+	for (int i = -150; i <= 150; ++i) {
+		for (int j = -150; j <= 150; ++j) {
+			Real const x = j * 0.1;
+			Real const y = i * 0.1;
+			Real const z = -3.0;
+			jump.set_translation( Vector( x, y, z ) ) ;
+			pose.set_jump( 2, jump );
+			out << (*scorefxn)( pose ) << ' ' ;
+		}
+		out << std::endl;
+	}
+	out.close();
+
+	out.open( "score_xz.table" );
+	for (int i = -150; i <= 150; ++i) {
+		for (int j = -150; j <= 150; ++j) {
+			Real const x = j * 0.1;
+			Real const z = i * 0.1;
+			Real const y = 0.0;
+			jump.set_translation( Vector( x, y, z ) ) ;
+			pose.set_jump( 2, jump );
+			out << (*scorefxn)( pose ) << ' ' ;
+		}
+		out << std::endl;
+	}
+	out.close();
+
+	out.open( "score_yz.table" );
+	for (int i = -150; i <= 150; ++i) {
+		for (int j = -150; j <= 150; ++j) {
+			Real const y = j * 0.1;
+			Real const z = i * 0.1;
+			Real const x = 0.0;
+			jump.set_translation( Vector( x, y, z ) ) ;
+			pose.set_jump( 2, jump );
+			out << (*scorefxn)( pose ) << ' ' ;
+		}
+		out << std::endl;
+	}
+	out.close();
 }
 
 ///////////////////////////////////////////////////////////////
