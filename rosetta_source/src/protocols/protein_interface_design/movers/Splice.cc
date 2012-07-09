@@ -23,6 +23,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/chemical/AA.hh>
 #include <protocols/protein_interface_design/filters/TorsionFilter.hh>
+#include <protocols/protein_interface_design/util.hh>
 #include <boost/foreach.hpp>
 #include <protocols/rigid/RB_geometry.hh>
 #define foreach BOOST_FOREACH
@@ -107,7 +108,8 @@ Splice::Splice() :
 	saved_fold_tree_( NULL ),
 	design_( false ),
 	dbase_iterate_( false ),
-	first_pass_( true )
+	first_pass_( true ),
+	locked_res_( 0 )
 {
 	torsion_database_.clear();
 	delta_lengths_.clear();
@@ -132,6 +134,10 @@ copy_stretch( core::pose::Pose & target, core::pose::Pose const & source, core::
 	runtime_assert( from_nearest_on_source && to_nearest_on_source );
 // change loop length:
 	core::Size const residue_diff( to_nearest_on_source - from_nearest_on_source - (to_res - from_res ));
+	if( residue_diff == 0 ){
+		TR<<"skipping copy_stretch since loop lengths are identical"<<std::endl;
+		return;
+	}
 	protocols::protein_interface_design::movers::LoopLengthChange llc;
 	llc.loop_start( from_res );
 	llc.loop_end( to_res );
@@ -401,6 +407,12 @@ Splice::apply( core::pose::Pose & pose )
 	racaas->keep_aas( "ADEFIKLMNQRSTVWY" ); /// disallow pro/gly/cys/his
 	racaas->include_residue( 0 ); /// restrict all residues
 	tf->push_back( racaas);
+	if( locked_res() ){
+		operation::PreventRepackingOP pr = new operation::PreventRepacking;
+		pr->include_residue( locked_res() );
+		tf->push_back( pr );
+		TR<<"preventing locked residue "<<locked_res()<<" from repacking"<<std::endl;
+	}
 
 	protocols::protein_interface_design::movers::AddChainBreak acb;
 	acb.resnum( utility::to_string( cut_site + residue_diff ) );
@@ -587,7 +599,11 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 		data.add( "stopping_condition", curr_mover_name, end_dbase_subset_ );
 		TR<<"Placed stopping_condition "<<curr_mover_name<<" on the DataMap"<<std::endl;
 	}
-	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" dbase_iterate: "<<dbase_iterate()<<" randomize_cut: "<<randomize_cut()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<std::endl;
+	locked_res( core::pose::parse_resnum( tag->getOption< std::string >( "locked_residue", "0" ), pose ) );
+	if( ( locked_res() && delta_lengths_.size() > 1 ) || ( locked_res() && delta_lengths_[ 1 ] != 0 ) )
+		utility_exit_with_message( "locked_res activated, but the loop is allowed to change length through delta_lengths" );
+
+	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" dbase_iterate: "<<dbase_iterate()<<" randomize_cut: "<<randomize_cut()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<" locked_res: "<<locked_res()<<std::endl;
 }
 
 protocols::moves::MoverOP
@@ -671,21 +687,56 @@ Splice::fold_tree( core::pose::Pose & pose, core::Size const start, core::Size c
 	}
 	core::kinematics::FoldTree ft;
 	ft.clear();
-	//core::Size const first = std::min( s1, from_res );
-	//core::Size const second = std::max( s1, from_res );
-//	ft.add_edge( 1, from_res, -1 );
-//	ft.add_edge( from_res, s1, -1 );
 	ft.add_edge( 1, s1, -1 );
-	ft.add_edge( s1, cut, -1 );
-	ft.add_edge( s2, cut + 1, -1 );
 	ft.add_edge( s1, s2, 1 );
 	ft.add_edge( s2, conf.chain_end( 1 ), -1 );
-	ft.add_edge( 1, conf.chain_begin( 2 ), 2 );
-	if( !pose.residue( conf.chain_begin( 2 ) ).is_ligand() )
+	if( locked_res() > 0 ){
+		TR<<"s1,s2,locked_res: "<<s1<<','<<s2<<','<<locked_res()<<std::endl;
+		runtime_assert( locked_res() >= s1 && locked_res() <= s2 );
+		if( locked_res() < cut ){
+			ft.add_edge( s1, locked_res(), -1 );
+			ft.add_edge( locked_res(), cut, -1 );
+			ft.add_edge( s2, cut+1, -1 );
+		}
+		if( locked_res() > cut ){
+			ft.add_edge( s1, cut, -1 );
+			ft.add_edge( s2, locked_res(), -1 );
+			ft.add_edge( locked_res(), cut + 1, -1 );
+		}
+		if( locked_res() == cut ){
+			ft.add_edge( s1, cut, -1 );
+			ft.add_edge( s2, cut+1, -1 );
+		}
+		using namespace protocols::protein_interface_design;
+		std::string const from_atom( optimal_connection_point( pose.residue( locked_res() ).name3() ) );
+		core::Real min_dist( 100000 );
+		core::Size nearest_res( 0 );
+		core::Size nearest_atom( 0 );
+		for( core::Size resi = conf.chain_begin( 2 ); resi <= conf.chain_end( 2 ); ++resi ){
+			core::conformation::Residue const residue( conf.residue( resi ) );
+			if( residue.is_ligand() ) continue;
+			for( core::Size atomi = 1; atomi <= residue.natoms(); ++atomi ){
+				core::Real const dist( conf.residue( locked_res() ).xyz( from_atom ).distance( residue.xyz( atomi ) ) );
+				if( dist <= min_dist ){
+					nearest_res = resi;
+					nearest_atom = atomi;
+					min_dist = dist;
+				}
+			}
+		}
+		runtime_assert( nearest_res );
+		ft.add_edge( locked_res(), nearest_res, 2 );
+		ft.add_edge( nearest_res, conf.chain_begin( 2 ), -1 );
+		ft.add_edge( nearest_res, conf.chain_end( 2 ), -1 );
+		ft.set_jump_atoms( 2, from_atom, conf.residue( nearest_res ).atom_name( nearest_atom ) );
+	}
+	else{
+		ft.add_edge( s1, cut, -1 );
+		ft.add_edge( s2, cut + 1, -1 );
+		ft.add_edge( 1, conf.chain_begin( 2 ), 2 );
+	}
+	if( !locked_res() && !pose.residue( conf.chain_begin( 2 ) ).is_ligand() )
 		ft.add_edge( conf.chain_begin( 2 ), conf.chain_end( 2 ), -1 );
-//	ft.add_edge( from_res, to_res, 2 );
-//	ft.add_edge( to_res, conf.chain_begin( 2 ), -1 );
-//	ft.add_edge( to_res, conf.chain_end( 2 ), -1 );
 	ft.reorder(1);
 	TR<<"Previous ft: "<<pose.fold_tree()<<std::endl;
 	pose.fold_tree( ft );
@@ -701,6 +752,12 @@ Splice::dbase_begin() const{ return dbase_subset_.begin(); }
 
 utility::vector1< core::Size >::const_iterator
 Splice::dbase_end() const{ return dbase_subset_.end(); }
+
+core::Size
+Splice::locked_res() const { return locked_res_; }
+
+void
+Splice::locked_res( core::Size const r ) { locked_res_ = r; }
 
 } //movers
 } //protein_interface_design

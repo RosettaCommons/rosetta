@@ -138,6 +138,8 @@ public:
 	utility::vector1< core::Size >::const_iterator dbase_begin() const;
 	utility::vector1< core::Size >::const_iterator dbase_end() const;
 	core::Size find_dbase_entry( core::pose::Pose const & pose ); // returns a dbase entry
+	core::Size locked_res() const;
+	void locked_res( core::Size const r );
 private:
 	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
 	void retrieve_values(); // call at end of apply
@@ -165,6 +167,7 @@ private:
 	utility::vector1< core::Size > dbase_subset_; // indices to the subset of the dbase library over which multiple calls iterate
 	utility::vector1< core::Size >::const_iterator current_dbase_entry_; // used if multiple calls to splice are made to iterate through the list
 	utility::pointer::owning_ptr< protocols::moves::DataMapObj< bool > > end_dbase_subset_; // dflt false; this is a weird construct to allow placing the variable on the DataMap
+	core::Size locked_res_; // dflt 0; a residue that serves as the root for a fold tree jump to the other chain. This residue is expected to be within the loop span, and allows the loop to be refined while keeping the rigid body jump between the two chains;
 };
 
 
