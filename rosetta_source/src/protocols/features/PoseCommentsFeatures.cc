@@ -31,6 +31,7 @@
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/tools/make_vector.hh>
 
 //Basic Headers
 #include <basic/database/sql_utils.hh>
@@ -39,6 +40,8 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/Constraint.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/inout.OptionKeys.gen.hh>
 
 
 // External Headers
@@ -114,16 +117,41 @@ PoseCommentsFeatures::report_features(
 ){
 
 	typedef map< string, string >::value_type kv_pair;
-	//cppdb::transaction transact_guard(*db_session);
-	std::string statement_string = "INSERT INTO pose_comments (struct_id, comment_key, value) VALUES (?,?,?);";
-	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
-	foreach(kv_pair const & kv, get_all_comments(pose)){
-		stmt.bind(1,struct_id);
-		stmt.bind(2,kv.first);
-		stmt.bind(3,kv.second);
+
+	if(basic::options::option[basic::options::OptionKeys::inout::dbms::mode]() == "sqlite3")
+	{
+		std::string statement_string = "INSERT INTO pose_comments (struct_id, comment_key, value) VALUES (?,?,?);";
+		statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+		foreach(kv_pair const & kv, get_all_comments(pose)){
+			stmt.bind(1,struct_id);
+			stmt.bind(2,kv.first);
+			stmt.bind(3,kv.second);
+			basic::database::safely_write_to_database(stmt);
+		}
+	}else
+	{
+		map< string, string > all_comments(get_all_comments(pose));
+		core::Size comment_count(all_comments.size());
+		if(comment_count == 0)
+		{
+			return 0;
+		}
+		std::vector<std::string> column_vect(utility::tools::make_vector(
+			std::string("struct_id"),
+			std::string("comment_key"),
+			std::string("value")
+		));
+		std::string statement_string(basic::database::make_compound_statement("pose_comments",column_vect,comment_count));
+		statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+		core::Size row_count = 0;
+		core::Size column_count = column_vect.size();
+		foreach(kv_pair const & kv, all_comments){
+			stmt.bind(column_count*row_count+1,struct_id);
+			stmt.bind(column_count*row_count+2,kv.first);
+			stmt.bind(column_count*row_count+3,kv.second);
+		}
 		basic::database::safely_write_to_database(stmt);
 	}
-	//transact_guard.commit();
 	return 0;
 }
 

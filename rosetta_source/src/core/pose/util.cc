@@ -2445,5 +2445,75 @@ core::id::SequenceMapping sequence_map_from_pdbinfo( Pose const & first, Pose co
 	return retval;
 }
 
+core::Size canonical_residue_count(core::pose::Pose const & pose)
+{
+	core::Size count = 0;
+	for(core::Size i = 1; i <= pose.total_residue();++i)
+	{
+		core::conformation::Residue const & resi(pose.residue(i));
+		if(resi.aa() <= core::chemical::num_canonical_aas)
+		{
+			++count;
+		}
+	}
+	return count;
+}
+
+core::Size noncanonical_residue_count(core::pose::Pose const & pose)
+{
+	core::Size count = 0;
+	for(core::Size i = 1; i <= pose.total_residue();++i)
+	{
+		core::conformation::Residue const & resi(pose.residue(i));
+		if(resi.aa() > core::chemical::num_canonical_aas)
+		{
+			++count;
+		}
+	}
+	return count;
+}
+
+core::Size canonical_atom_count(core::pose::Pose const & pose)
+{
+	core::Size count = 0;
+	for(core::Size i = 1; i <= pose.total_residue();++i)
+	{
+		core::conformation::Residue const & resi(pose.residue(i));
+		if(resi.aa() <= core::chemical::num_canonical_aas)
+		{
+			count += resi.natoms();
+		}
+	}
+	return count;
+}
+
+core::Size noncanonical_atom_count(core::pose::Pose const & pose)
+{
+	core::Size count = 0;
+	for(core::Size i = 1; i <= pose.total_residue();++i)
+	{
+		core::conformation::Residue const & resi(pose.residue(i));
+		if(resi.aa() > core::chemical::num_canonical_aas)
+		{
+			count += resi.natoms();
+		}
+	}
+	return count;
+}
+
+core::Size noncanonical_chi_count(core::pose::Pose const & pose)
+{
+	core::Size count = 0;
+	for(core::Size i = 1; i <= pose.total_residue();++i)
+	{
+		core::conformation::Residue const & resi(pose.residue(i));
+		if(resi.aa() > core::chemical::num_canonical_aas)
+		{
+			count += resi.nchi();
+		}
+	}
+	return count;
+}
+
 } // pose
 } // core

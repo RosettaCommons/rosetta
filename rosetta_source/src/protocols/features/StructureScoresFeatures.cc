@@ -44,6 +44,7 @@
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/database/sql_utils.hh>
+#include <utility/tools/make_vector.hh>
 
 // C++ Headers
 #include <sstream>
@@ -230,24 +231,53 @@ StructureScoresFeatures::insert_structure_score_rows(
 	scfxn_->get_sub_score(pose, relevant_residues, emap);
 
 	core::Real total_score= 0.0;
-
 	Size const batch_id(get_batch_id(struct_id, db_session));
+	if(basic::options::option[basic::options::OptionKeys::inout::dbms::mode]() == "sqlite3")
+	{
+		std::string statement_string = "INSERT INTO structure_scores (batch_id, struct_id, score_type_id, score_value) VALUES (?,?,?,?);";
+		statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+		for(Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id){
+			ScoreType type(static_cast<ScoreType>(score_type_id));
+			Real const score_value( energies.weights()[type] * emap[type] );
+			if(!score_value) continue;
+			total_score += score_value;
+			stmt.bind(1, batch_id);
+			stmt.bind(2, struct_id);
+			stmt.bind(3, score_type_id);
+			stmt.bind(4, score_value);
+			basic::database::safely_write_to_database(stmt);
+		}
+	}else
+	{
+		std::vector<std::string> column_vect(utility::tools::make_vector(
+			std::string("batch_id"),
+			std::string("struct_id"),
+			std::string("score_type_id"),
+			std::string("score_value")
+		));
+		std::string statement_string(basic::database::make_compound_statement("structure_scores",column_vect,n_score_types));
+		statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
-	std::string statement_string = "INSERT INTO structure_scores (batch_id, struct_id, score_type_id, score_value) VALUES (?,?,?,?);";
-	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
-	for(Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id){
-		ScoreType type(static_cast<ScoreType>(score_type_id));
-		Real const score_value( energies.weights()[type] * emap[type] );
-		if(!score_value) continue;
-		total_score += score_value;
-		stmt.bind(1, batch_id);
-		stmt.bind(2, struct_id);
-		stmt.bind(3, score_type_id);
-		stmt.bind(4, score_value);
+		core::Size row_index = 0;
+		core::Size column_count = column_vect.size();
+		for(Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id){
+			ScoreType type(static_cast<ScoreType>(score_type_id));
+			Real const score_value( energies.weights()[type] * emap[type] );
+			if(!score_value) continue;
+			total_score += score_value;
+			stmt.bind(column_count*row_index+1,batch_id);
+			stmt.bind(column_count*row_index+2,struct_id);
+			stmt.bind(column_count*row_index+3,score_type_id);
+			stmt.bind(column_count*row_index+4,score_value);
+			++row_index;
+		}
 		basic::database::safely_write_to_database(stmt);
 	}
 
 	// add the total_score type
+
+	std::string statement_string = "INSERT INTO structure_scores (batch_id,struct_id, score_type_id, score_value) VALUES (?,?,?,?);";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1, batch_id);
 	stmt.bind(2, struct_id);
 	stmt.bind(3, n_score_types);

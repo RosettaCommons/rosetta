@@ -51,6 +51,7 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/tools/make_vector.hh>
 
 // Boost Headers
 #include <boost/foreach.hpp>
@@ -195,61 +196,172 @@ PoseConformationFeatures::report_features_implementation(
 	//assume non-trivial fold_tree only if more than one edge, i.e., EDGE 1 <nres> -1
 	//cppdb::transaction transact_guard(*db_session);
 
-	std::string fold_tree_string = "INSERT INTO fold_trees (struct_id, start_res, start_atom, stop_res, stop_atom, label, keep_stub_in_residue) VALUES (?,?,?,?,?,?,?);";
-	statement fold_tree_statement(basic::database::safely_prepare_statement(fold_tree_string,db_session));
-	for (FoldTree::const_iterator
-			it = fold_tree.begin(), it_end = fold_tree.end(); it != it_end; ++it) {
-		int start_res(it->start()), stop_res(it->stop()), label(it->label());
-		string start_atom(it->start_atom()), stop_atom(it->stop_atom());
-		bool keep_stub_in_residue(it->keep_stub_in_residue());
+	if(basic::options::option[basic::options::OptionKeys::inout::dbms::mode]() == "sqlite3")
+	{
+		std::string fold_tree_string = "INSERT INTO fold_trees (struct_id, start_res, start_atom, stop_res, stop_atom, label, keep_stub_in_residue) VALUES (?,?,?,?,?,?,?);";
+		statement fold_tree_statement(basic::database::safely_prepare_statement(fold_tree_string,db_session));
+		for (FoldTree::const_iterator
+				it = fold_tree.begin(), it_end = fold_tree.end(); it != it_end; ++it) {
+			int start_res(it->start()), stop_res(it->stop()), label(it->label());
+			string start_atom(it->start_atom()), stop_atom(it->stop_atom());
+			bool keep_stub_in_residue(it->keep_stub_in_residue());
 
-		fold_tree_statement.bind(1,struct_id);
-		fold_tree_statement.bind(2,start_res);
-		fold_tree_statement.bind(3,start_atom);
-		fold_tree_statement.bind(4,stop_res);
-		fold_tree_statement.bind(5,stop_atom);
-		fold_tree_statement.bind(6,label);
-		fold_tree_statement.bind(7,keep_stub_in_residue);
-		basic::database::safely_write_to_database(fold_tree_statement);
+			fold_tree_statement.bind(1,struct_id);
+			fold_tree_statement.bind(2,start_res);
+			fold_tree_statement.bind(3,start_atom);
+			fold_tree_statement.bind(4,stop_res);
+			fold_tree_statement.bind(5,stop_atom);
+			fold_tree_statement.bind(6,label);
+			fold_tree_statement.bind(7,keep_stub_in_residue);
+			basic::database::safely_write_to_database(fold_tree_statement);
 
-	}
+		}
 
-	std::string jump_string = "INSERT INTO jumps (struct_id, jump_id, xx, xy, xz, yx, yy, yz, zx, zy, zz, x, y, z) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
-	statement jump_statement(basic::database::safely_prepare_statement(jump_string,db_session));
-	for (Size nr = 1; nr <= fold_tree.num_jump(); nr++)  {
-		Jump const & jump(pose.jump(nr));
-		xyzMatrix< Real > const & r(jump.get_rotation());
-		Real xx(r.xx()), xy(r.xy()), xz(r.xz());
-		Real yx(r.yx()), yy(r.yy()), yz(r.yz());
-		Real zx(r.zx()), zy(r.zy()), zz(r.zz());
-		Vector const & t(jump.get_translation());
-		Real x(t.x()), y(t.y()), z(t.z());
+		std::string jump_string = "INSERT INTO jumps (struct_id, jump_id, xx, xy, xz, yx, yy, yz, zx, zy, zz, x, y, z) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+		statement jump_statement(basic::database::safely_prepare_statement(jump_string,db_session));
+		for (Size nr = 1; nr <= fold_tree.num_jump(); nr++)  {
+			Jump const & jump(pose.jump(nr));
+			xyzMatrix< Real > const & r(jump.get_rotation());
+			Real xx(r.xx()), xy(r.xy()), xz(r.xz());
+			Real yx(r.yx()), yy(r.yy()), yz(r.yz());
+			Real zx(r.zx()), zy(r.zy()), zz(r.zz());
+			Vector const & t(jump.get_translation());
+			Real x(t.x()), y(t.y()), z(t.z());
 
-		jump_statement.bind(1,struct_id);
-		jump_statement.bind(2,nr);
-		jump_statement.bind(3,xx);
-		jump_statement.bind(4,xy);
-		jump_statement.bind(5,xz);
-		jump_statement.bind(6,yx);
-		jump_statement.bind(7,yy);
-		jump_statement.bind(8,yz);
-		jump_statement.bind(9,zx);
-		jump_statement.bind(10,zy);
-		jump_statement.bind(11,zz);
-		jump_statement.bind(12,x);
-		jump_statement.bind(13,y);
-		jump_statement.bind(14,z);
-		basic::database::safely_write_to_database(jump_statement);
-	}
+			jump_statement.bind(1,struct_id);
+			jump_statement.bind(2,nr);
+			jump_statement.bind(3,xx);
+			jump_statement.bind(4,xy);
+			jump_statement.bind(5,xz);
+			jump_statement.bind(6,yx);
+			jump_statement.bind(7,yy);
+			jump_statement.bind(8,yz);
+			jump_statement.bind(9,zx);
+			jump_statement.bind(10,zy);
+			jump_statement.bind(11,zz);
+			jump_statement.bind(12,x);
+			jump_statement.bind(13,y);
+			jump_statement.bind(14,z);
+			basic::database::safely_write_to_database(jump_statement);
+		}
 
-	std::string chain_ending_string = "INSERT INTO chain_endings (struct_id, end_pos) VALUES (?,?);";
-	statement chain_ending_statement(basic::database::safely_prepare_statement(chain_ending_string,db_session));
-	foreach(Size end_pos, pose.conformation().chain_endings()){
+		std::string chain_ending_string = "INSERT INTO chain_endings (struct_id, end_pos) VALUES (?,?);";
+		statement chain_ending_statement(basic::database::safely_prepare_statement(chain_ending_string,db_session));
+		foreach(Size end_pos, pose.conformation().chain_endings()){
 
-		chain_ending_statement.bind(1,struct_id);
-		chain_ending_statement.bind(2,end_pos);
-		basic::database::safely_write_to_database(chain_ending_statement);
+			chain_ending_statement.bind(1,struct_id);
+			chain_ending_statement.bind(2,end_pos);
+			basic::database::safely_write_to_database(chain_ending_statement);
 
+		}
+	}else
+	{
+
+		{
+			core::Size fold_tree_count = fold_tree.size();
+			std::vector<std::string> column_vect(utility::tools::make_vector(
+				std::string("struct_id"),
+				std::string("start_res"),
+				std::string("start_atom"),
+				std::string("stop_res"),
+				std::string("stop_atom"),
+				std::string("label"),
+				std::string("keep_stub_in_residue")
+			));
+			std::string fold_tree_string(basic::database::make_compound_statement("fold_trees",column_vect,fold_tree_count));
+			statement fold_tree_statement(basic::database::safely_prepare_statement(fold_tree_string,db_session));
+			core::Size column_count = column_vect.size();
+			core::Size row_index = 0;
+			for (FoldTree::const_iterator
+					it = fold_tree.begin(), it_end = fold_tree.end(); it != it_end; ++it) {
+				int start_res(it->start()), stop_res(it->stop()), label(it->label());
+				string start_atom(it->start_atom()), stop_atom(it->stop_atom());
+				bool keep_stub_in_residue(it->keep_stub_in_residue());
+
+				fold_tree_statement.bind(column_count*row_index+1,struct_id);
+				fold_tree_statement.bind(column_count*row_index+2,start_res);
+				fold_tree_statement.bind(column_count*row_index+3,start_atom);
+				fold_tree_statement.bind(column_count*row_index+4,stop_res);
+				fold_tree_statement.bind(column_count*row_index+5,stop_atom);
+				fold_tree_statement.bind(column_count*row_index+6,label);
+				fold_tree_statement.bind(column_count*row_index+7,keep_stub_in_residue);
+				++row_index;
+
+			}
+			basic::database::safely_write_to_database(fold_tree_statement);
+		}
+
+		{
+			core::Size jump_count = fold_tree.num_jump();
+			std::vector<std::string> column_vect(utility::tools::make_vector(
+				std::string("struct_id"),
+				std::string("jump_id"),
+				std::string("xx"),
+				std::string("xy"),
+				std::string("xz"),
+				std::string("yx"),
+				std::string("yy"),
+				std::string("yz"),
+				std::string("zx"),
+				std::string("zy"),
+				std::string("zz"),
+				std::string("x"),std::string("y"),
+				std::string("z")
+			));
+			std::string jump_string(basic::database::make_compound_statement("jumps",column_vect,jump_count));
+			statement jump_statement(basic::database::safely_prepare_statement(jump_string,db_session));
+
+			core::Size column_count = column_vect.size();
+			core::Size row_index = 0;
+			for (Size nr = 1; nr <= fold_tree.num_jump(); nr++)  {
+				Jump const & jump(pose.jump(nr));
+				xyzMatrix< Real > const & r(jump.get_rotation());
+				Real xx(r.xx()), xy(r.xy()), xz(r.xz());
+				Real yx(r.yx()), yy(r.yy()), yz(r.yz());
+				Real zx(r.zx()), zy(r.zy()), zz(r.zz());
+				Vector const & t(jump.get_translation());
+				Real x(t.x()), y(t.y()), z(t.z());
+
+				jump_statement.bind(column_count*row_index+1,struct_id);
+				jump_statement.bind(column_count*row_index+2,nr);
+				jump_statement.bind(column_count*row_index+3,xx);
+				jump_statement.bind(column_count*row_index+4,xy);
+				jump_statement.bind(column_count*row_index+5,xz);
+				jump_statement.bind(column_count*row_index+6,yx);
+				jump_statement.bind(column_count*row_index+7,yy);
+				jump_statement.bind(column_count*row_index+8,yz);
+				jump_statement.bind(column_count*row_index+9,zx);
+				jump_statement.bind(column_count*row_index+10,zy);
+				jump_statement.bind(column_count*row_index+11,zz);
+				jump_statement.bind(column_count*row_index+12,x);
+				jump_statement.bind(column_count*row_index+13,y);
+				jump_statement.bind(column_count*row_index+14,z);
+				++row_index;
+			}
+			basic::database::safely_write_to_database(jump_statement);
+
+		}
+
+		{
+
+			core::Size chain_ending_count = pose.conformation().chain_endings().size();
+			std::vector<std::string> column_vect(utility::tools::make_vector(
+				std::string("struct_id"),
+				std::string("end_pos")
+			));
+			std::string chain_ending_string(basic::database::make_compound_statement("chain_endings",column_vect,chain_ending_count));
+			statement chain_ending_statement(basic::database::safely_prepare_statement(chain_ending_string,db_session));
+
+			core::Size row_index = 0;
+			core::Size column_count = column_vect.size();
+			foreach(Size end_pos, pose.conformation().chain_endings()){
+
+				chain_ending_statement.bind(column_count*row_index+1,struct_id);
+				chain_ending_statement.bind(column_count*row_index+2,end_pos);
+				++row_index;
+			}
+			basic::database::safely_write_to_database(chain_ending_statement);
+		}
 	}
 
 //	bool ideal = true;

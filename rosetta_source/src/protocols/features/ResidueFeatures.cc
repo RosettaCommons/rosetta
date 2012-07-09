@@ -33,10 +33,13 @@
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/Constraint.hh>
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/inout.OptionKeys.gen.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/tools/make_vector.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -124,22 +127,57 @@ ResidueFeatures::insert_residue_rows(
 	sessionOP db_session
 ){
 
-	std::string statement_string = "INSERT INTO residues (struct_id, resNum, name3, res_type) VALUES (?,?,?,?);";
-	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	if(basic::options::option[basic::options::OptionKeys::inout::dbms::mode]() == "sqlite3")
+	{
+		std::string statement_string = "INSERT INTO residues (struct_id, resNum, name3, res_type) VALUES (?,?,?,?);";
+		statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
-	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
-		if(!relevant_residues[resNum]) continue;
-		Residue res = pose.residue(resNum);
+		for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
+			if(!relevant_residues[resNum]) continue;
+			Residue res = pose.residue(resNum);
 
-		string const name3( res.name3() );
-		string const res_type( res.name() );
+			string const name3( res.name3() );
+			string const res_type( res.name() );
 
-		//TR << "residues binding - " << to_string(struct_id) << " " << resNum << " " << name3 << " " << res_type << std::endl;
+			//TR << "residues binding - " << to_string(struct_id) << " " << resNum << " " << name3 << " " << res_type << std::endl;
 
-		stmt.bind(1,struct_id);
-		stmt.bind(2,resNum);
-		stmt.bind(3,name3);
-		stmt.bind(4,res_type);
+			stmt.bind(1,struct_id);
+			stmt.bind(2,resNum);
+			stmt.bind(3,name3);
+			stmt.bind(4,res_type);
+			basic::database::safely_write_to_database(stmt);
+		}
+	}else
+	{
+
+		core::Size residue_count(pose.total_residue());
+		std::vector<std::string> column_vect(utility::tools::make_vector(
+			std::string("struct_id"),
+			std::string("resNum"),
+			std::string("name3"),
+			std::string("res_type")
+		));
+
+		std::string statement_string(basic::database::make_compound_statement("residues",column_vect,residue_count));
+		statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+
+		core::Size row_count = 0;
+		core::Size column_count = column_vect.size();
+		for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
+			if(!relevant_residues[resNum]) continue;
+			Residue res = pose.residue(resNum);
+
+			string const name3( res.name3() );
+			string const res_type( res.name() );
+
+			//TR << "residues binding - " << to_string(struct_id) << " " << resNum << " " << name3 << " " << res_type << std::endl;
+
+			stmt.bind(column_count*row_count+1,struct_id);
+			stmt.bind(column_count*row_count+2,resNum);
+			stmt.bind(column_count*row_count+3,name3);
+			stmt.bind(column_count*row_count+4,res_type);
+			++row_count;
+		}
 		basic::database::safely_write_to_database(stmt);
 	}
 }
