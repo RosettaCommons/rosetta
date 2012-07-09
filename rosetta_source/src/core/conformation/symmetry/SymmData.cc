@@ -1127,10 +1127,10 @@ SymmData::read_symmetry_data_from_stream(
 			Mat const R( Mat::cols( vc.get_x().normalized(), vc.get_y().normalized(), vc.get_x().cross(vc.get_y()).normalized() ) );
 			Xform toframe(R,vc.get_origin());
 			// TR << "MULTICOMPONENT " << virt_id << " " << chain << " " << subnum << endl << toframe << endl;
-			if( vc.get_origin()             .distance(toframe*Vec(0,0,0)) > 0.0000000001 ||
-			    vc.get_x()                  .distance(toframe*Vec(1,0,0)) > 0.0000000001 ||
-			    vc.get_y()                  .distance(toframe*Vec(0,1,0)) > 0.0000000001 ||
-			    vc.get_x().cross(vc.get_y()).distance(toframe*Vec(0,0,1)) > 0.0000000001 )
+			if( vc.get_origin()                          .distance(toframe*Vec(0,0,0)             ) > 0.0000000001 ||
+			    vc.get_x()                  .normalized().distance(toframe*Vec(1,0,0).normalized()) > 0.0000000001 ||
+			    vc.get_y()                  .normalized().distance(toframe*Vec(0,1,0).normalized()) > 0.0000000001 ||
+			    vc.get_x().cross(vc.get_y()).normalized().distance(toframe*Vec(0,0,1).normalized()) > 0.0000000001 )
 			{
 				std::cerr << virt_id << " " << chain << " " << subnum << " " << "orig  " << vc.get_origin()              << endl;
 				std::cerr << virt_id << " " << chain << " " << subnum << " " << "xform " << toframe*Vec(0,0,0)           << endl;

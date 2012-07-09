@@ -362,7 +362,6 @@ dock(
 	Pose const & /*native_olig*/,
 	int native_nfold = 1,
 	vector1<Vec> const & native_ca = vector1<Vec>()
-
 ){
 	TR << "dock " << fn << endl;
 
@@ -374,7 +373,8 @@ dock(
 	// set up one SIC per thread
 	protocols::sic_dock::SICFast sic(option[cxdock::clash_dis]());
 	sic.init(init_pose);
-	protocols::sic_dock::JointScoreOP  rigidsfxn = new protocols::sic_dock::JointScore;
+
+	protocols::sic_dock::JointScoreOP rigidsfxn = new protocols::sic_dock::JointScore;
 	protocols::sic_dock::CBScoreCOP cbscore = new protocols::sic_dock::CBScore(init_pose,init_pose,option[cxdock::clash_dis](),option[cxdock::contact_dis]());
 	//lnscore_ = new protocols::sic_dock::LinkerScore(init_pose,init_pose,option[tcdock::max_linker_len](),option[tcdock::linker_lookup_radius]());
 	rigidsfxn->add_score(cbscore,1.0);
@@ -400,15 +400,15 @@ dock(
 	for(int ic = 1; ic <= (int)syms.size(); ic++) Rsym[ic] = rotation_matrix_degrees(Vec(1,0,0),360.0/Real(syms[ic]));
 	vector1<vector1<Hit> > hits(syms.size());
 
-	utility::vector1<core::kinematics::Stub> stubs;
-	utility::vector1<char> ss;
-	for(Size ir = 1; ir <= init_pose.n_residue(); ++ir){
-		if( !init_pose.residue(ir).is_protein() ) continue;
-		if( !init_pose.residue(ir).has("CB") ) continue;
-		if( init_pose.secstruct(ir) == 'L' ) continue;
-		stubs.push_back( core::kinematics::Stub(init_pose.residue(ir).xyz("CB"),init_pose.residue(ir).xyz("CA"),init_pose.residue(ir).xyz("N")));
-		ss.push_back(init_pose.secstruct(ir));
-	}
+	// utility::vector1<core::kinematics::Stub> stubs;
+	// utility::vector1<char> ss;
+	// for(Size ir = 1; ir <= init_pose.n_residue(); ++ir){
+	// 	if( !init_pose.residue(ir).is_protein() ) continue;
+	// 	if( !init_pose.residue(ir).has("CB") ) continue;
+	// 	if( init_pose.secstruct(ir) == 'L' ) continue;
+	// 	stubs.push_back( core::kinematics::Stub(init_pose.residue(ir).xyz("CB"),init_pose.residue(ir).xyz("CA"),init_pose.residue(ir).xyz("N")));
+	// 	ss.push_back(init_pose.secstruct(ir));
+	// }
 
 	Size totsamp = ssamp.size()*asamp.size();
 	Size outinterval = min((Size)50000,totsamp/10);

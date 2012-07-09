@@ -6,11 +6,12 @@
 #include <core/init.hh>
 #include <core/pose/Pose.hh>
 #include <numeric/random/random.hh>
-#include <numeric/xyzTransform.io.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/sic_dock/Rose.hh>
 #include <sstream>
+#include <numeric/xyzTransform.hh>
+#include <numeric/xyzTransform.io.hh>
 
 using std::string;
 using utility::vector1;
@@ -43,8 +44,8 @@ int main(int argv, char **argc){
 
 	for(core::Size i = 1; i <= 100000; ++i){
 		X I,x;
-		std::istringstream iss("1 -9 0\n 0 1 3\n 0 0 1\n 1 2 3\n");
-		iss >> x;
+		// std::istringstream iss("1 -9 0\n 0 1 3\n 0 0 1\n 1 2 3\n");
+		// iss >> x;
 	
 		x   = X( rotation_matrix(V(gaussian(),gaussian(),gaussian()),gaussian()), V(gaussian(),gaussian(),gaussian()) );
 		X y = X( rotation_matrix(V(gaussian(),gaussian(),gaussian()),gaussian()), V(gaussian(),gaussian(),gaussian()) );
