@@ -728,6 +728,9 @@ setup_rna_job_parameters(){
 	stepwise_rna_job_parameters_setup.set_output_extra_RMSDs( option[ output_extra_RMSDs ]() );
 	stepwise_rna_job_parameters_setup.set_add_virt_res_as_root( option[ add_virt_root]() );
 
+
+	stepwise_rna_job_parameters_setup.set_skip_complicated_stuff( true ); // new by Rhiju.
+
 	stepwise_rna_job_parameters_setup.apply();
 
 	return stepwise_rna_job_parameters_setup.job_parameters();
@@ -1079,7 +1082,7 @@ swa_rna_sample()
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	Size const num_cycle = option[ n_sample ]();
-	Real const sample_range_small = option[ stsddev_small ]();
+	Real const sample_range_small = option[ stddev_small ]();
 	Real const sample_range_large = option[ stddev_large ]();
 
 	utility::vector1< Size > moving_res_list = job_parameters->working_moving_res_list();
