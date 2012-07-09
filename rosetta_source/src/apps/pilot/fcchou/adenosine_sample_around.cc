@@ -219,10 +219,11 @@ do_scoring( pose::Pose & pose,
 						Size const probe_jump_num ){
 
 	if ( sample_water_ ){
-		sample_all_rotations_at_jump( pose, probe_jump_num, scorefxn );
-	} else {
-		(*scorefxn)( pose );
+		return sample_all_rotations_at_jump( pose, probe_jump_num, scorefxn );
 	}
+
+	return (*scorefxn)( pose );
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////
