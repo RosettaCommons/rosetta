@@ -20,11 +20,15 @@
 #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 
+#include <core/id/NamedAtomID.hh>
+#include <core/id/AtomID.hh>
+
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 
 #include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Stub.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
 
@@ -43,6 +47,7 @@
 #include <utility/io/izstream.hh>
 
 #include <numeric/xyzVector.hh>
+#include <numeric/xyzVector.string.hh>
 #include <numeric/conversions.hh>
 
 #include <ObjexxFCL/format.hh>
@@ -111,6 +116,7 @@ rotate_into_nucleobase_frame( core::pose::Pose & pose ){
 	using namespace core::conformation;
 	using namespace core::scoring::rna;
 	using namespace core::id;
+	using namespace core::kinematics;
 
 	// assuming pose has an RNA at residue 1 -- will rotate just that residue.
 	Size const base_pos( 1 );
@@ -118,11 +124,15 @@ rotate_into_nucleobase_frame( core::pose::Pose & pose ){
 
 	Vector centroid = get_rna_base_centroid( rsd, true /*verbose*/ );
 	Matrix M = get_rna_base_coordinate_system( rsd, centroid );
+	Stub stub( M, centroid );
 
 	for (Size i = 1; i <= rsd.natoms(); i++ ){
-		Vector xyz_new = M * ( rsd.xyz( i ) - centroid ); // it is either this or M-inverse.
+		//		Vector xyz_new = M.transpose() * ( rsd.xyz( i ) - centroid ); // it is either M or its transpose
+		Vector xyz_new = stub.global2local( rsd.xyz(i) );
 		pose.set_xyz( AtomID( i, base_pos ), xyz_new );
 	}
+
+	//	std::cout << pose.xyz( NamedAtomID( " N1 ", base_pos ) ) << std::endl;
 
 }
 
@@ -136,7 +146,7 @@ methane_pair_score_test()
 
 	//////////////////////////////////////////////////
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
 	// Read in pose with two methane. "Z" = ligand. Note need flag:
 	//         -extra_res_fa CH4.params -s two_methane.pdb
@@ -145,6 +155,7 @@ methane_pair_score_test()
 	import_pose::pose_from_pdb( pose, *rsd_set, infile );
 
 	rotate_into_nucleobase_frame( pose );
+	pose.dump_pdb( "a_rotated.pdb" );
 
 	add_virtual_res(pose);
 	core::chemical::ResidueTypeSet const & residue_set = pose.residue_type ( 1 ).residue_type_set();
