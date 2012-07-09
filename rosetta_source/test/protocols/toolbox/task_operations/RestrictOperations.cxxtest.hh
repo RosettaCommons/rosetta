@@ -22,6 +22,7 @@
 #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
 #include <protocols/toolbox/task_operations/RestrictByCalculatorsOperation.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceVectorOperation.hh>
+#include <protocols/toolbox/task_operations/RestrictInterGroupVectorOperation.hh>
 
 
 // project headers
@@ -43,7 +44,7 @@
 
 
 // C++ headers
-//#include <set>
+#include <set>
 
 // --------------- Test Class --------------- //
 
@@ -164,5 +165,40 @@ public:
 		UT_RTIVO2 << *(RTIVO_factory.create_task_and_apply_taskoperations( pose )) << std::endl;
 
 	}//end test_RestrictToInterfaceVectorOperation
+
+	void test_RestrictInterGroupVectorOperation(){
+		//set up test
+		using namespace core::pack::task;
+		using protocols::toolbox::task_operations::RestrictInterGroupVectorOperation;
+		TaskFactory RIGV_factory;
+		test::UTracer UT_RIGV("protocols/toolbox/task_operations/RestrictInterGroupVector.u");
+		//make a few groups
+		std::set< core::Size > side1, side2, partA, partB;
+		//std::pair< std::set< core::Size >, std::set< core::Size > > interface, otherparts;
+		utility::vector1< std::pair< std::set< core::Size >, std::set< core::Size > > > full_vec;
+		//for loops to add residues to sets
+		for(core::Size ii=1 ; ii<= 245; ++ii){
+			side1.insert(ii);	}
+		for(core::Size ii=246 ; ii<= 301; ++ii){
+			side2.insert(ii);	}
+		//make other parts by hand
+		partA.insert(105);
+		partA.insert(107);
+		partB.insert(245);
+		partB.insert(166);
+		//residues 105, 107, and 245 should be included in design, 166 should not.
+		std::pair< std::set< core::Size >, std::set< core::Size > > interface( side1, side2 );
+		std::pair< std::set< core::Size >, std::set< core::Size > > otherparts( partA, partB );
+		full_vec.push_back(interface);
+		full_vec.push_back(otherparts);
+		//now make the task
+		RIGV_factory.push_back( new RestrictInterGroupVectorOperation( full_vec,10,5.5,75,9.0 ) );
+		//output
+		//std::cout <<"RestrictInterGroupVectorOperation \n "
+		//<< *(RIGV_factory.create_task_and_apply_taskoperations( pose )) << std::endl;
+		UT_RIGV << *(RIGV_factory.create_task_and_apply_taskoperations( pose )) << std::endl;
+
+
+	}//end RestrictInterGroupVectorOperation
 
 };//end class

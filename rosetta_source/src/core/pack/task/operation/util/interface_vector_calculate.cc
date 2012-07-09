@@ -45,6 +45,7 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/HomogeneousTransform.hh>
 #include <cmath>
+#include <set>
 //#include <core/pose/PDBInfo.hh> //debugging only
 
 //#include <cassert>
@@ -180,13 +181,70 @@ calc_interface_vector( core::pose::Pose const & pose, int const interface_jump )
 																nearby_atom_cutoff,	vector_angle_cutoff, vector_dist_cutoff );
 }
 
+///@details calc_interacting_vector does the same thing except does not need interface separation
+/// I
+utility::vector1_bool calc_interacting_vector(
+	core::pose::Pose const & pose,
+	std::set< core::Size > & part1res,
+	std::set< core::Size > & part2res,
+	core::Real const CB_dist_cutoff,
+	core::Real const nearby_atom_cutoff,
+	core::Real const vector_angle_cutoff,
+	core::Real const vector_dist_cutoff )
+{
+	//set all residues in pose to false
+	utility::vector1_bool at_interface(pose.total_residue(), false);
+	//first find all the neighbors within some Cbeta cutoff distance from eachother
+	InterfacePair CB_pairs_list;
+
+	//setup
+	std::set<core::Size> side1_within_cutoff, side2_within_cutoff;
+ 	//use neighbor atoms from point graph
+	conformation::PointGraphOP pg( new conformation::PointGraph );
+	core::conformation::residue_point_graph_from_conformation( pose.conformation(), *pg);
+	core::conformation::find_neighbors<core::conformation::PointGraphVertexData,core::conformation::PointGraphEdgeData>( pg, CB_dist_cutoff );
+
+	// for all nodes in chain1 == for all residues in chain 1
+	// all this is setup by verify_chain_setup in InterfaceDefinitionBase
+	utility::vector1< Size > chain1_interface, chain2_interface;
+	for ( std::set<Size>::const_iterator side1_it = part1res.begin(); side1_it != part1res.end(); ++side1_it ) {
+		for ( conformation::PointGraph::UpperEdgeListConstIter edge_iter = pg->get_vertex( *side1_it ).upper_edge_list_begin(),
+						edge_end_iter = pg->get_vertex( *side1_it ).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
+			// get node on other edge of that node == 2nd residue index
+			Size const edge_res = edge_iter->upper_vertex();
+			// if that node(residue) is in the second set of residues
+			if ( part2res.count( edge_res ) ) {
+				side1_within_cutoff.insert( *side1_it );	// add partner1 residue
+				side2_within_cutoff.insert( edge_res );	// add partner2 residue
+			}
+			else continue;
+		} // end - for all edges of node
+	}	// end - for all nodes in chain1
+
+	//return the pair of interface side sets
+	CB_pairs_list = std::make_pair( side1_within_cutoff, side2_within_cutoff );
+
+	//Now that we have the pairs list we can get the residues that are in proximity
+	find_interface_pointing_residues_from_neighbs( pose, CB_pairs_list, nearby_atom_cutoff,
+																								 vector_angle_cutoff, vector_dist_cutoff, at_interface );
+	// //debugging
+	// for(core::Size ii = 1; ii<= at_interface.size(); ++ii)
+	// 	std::cout << "Residue number: " << ii << " at_interface value: " << at_interface[ii] << std::endl;
+
+	return at_interface;
+
+}
+
 ///@details does the real work, looks at the big set and figures out what is actually pointing towards the interface
 ///sets a vector bool value to true if a residue is at the interface
-void find_interface_pointing_residues_from_neighbs(core::pose::Pose const & pose, InterfacePair const & interface_pairs,
-																									 core::Real const nearby_atom_cutoff,
-																									 core::Real const vector_angle_cutoff,
-																									 core::Real const vector_dist_cutoff,
-																									 utility::vector1_bool & interface_residues ){
+void find_interface_pointing_residues_from_neighbs(
+	core::pose::Pose const & pose,
+	InterfacePair const & interface_pairs,
+	core::Real const nearby_atom_cutoff,
+	core::Real const vector_angle_cutoff,
+	core::Real const vector_dist_cutoff,
+	utility::vector1_bool & interface_residues ){
+
 	using namespace utility;
 	using namespace core;
 	//itterate over pairs

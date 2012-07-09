@@ -153,15 +153,17 @@ RestrictToInterfaceVectorOperation::apply( core::pose::Pose const & pose, core::
 	//if the jump constructor then itterate through jumps, make union
 	if(jump_active_){
 		utility::vector1_bool repack_full(pose.total_residue(), false);
-		for( utility::vector1_int::const_iterator jj = movable_jumps().begin() ; jj != movable_jumps().end() ; ++jj ){ //itterator fails here
+		for( utility::vector1_int::const_iterator jj = movable_jumps().begin() ; jj != movable_jumps().end() ; ++jj ){
 			//std::cout << "Calculating interface for jump: " <<*jj << std::endl;
 			//run detection based on jump
 			utility::vector1_bool repack =
-				core::pack::task::operation::util::calc_interface_vector( pose, *jj,
-				CB_dist_cutoff_,
-				nearby_atom_cutoff_,
-				vector_angle_cutoff_,
-				vector_dist_cutoff_ );
+				core::pack::task::operation::util::calc_interface_vector(
+					pose,
+					*jj,
+					CB_dist_cutoff_,
+					nearby_atom_cutoff_,
+					vector_angle_cutoff_,
+					vector_dist_cutoff_ );
 			//add repack true setting to repack_full
 			for(core::Size ii = 1; ii <= repack.size(); ++ii){
 				if(repack[ii])
@@ -173,35 +175,34 @@ RestrictToInterfaceVectorOperation::apply( core::pose::Pose const & pose, core::
 
  	else{ // if using only the two chain case
 		//vector for filling packertask
-
  		utility::vector1_bool repack_full(pose.total_residue(),false);
 
  		for(utility::vector1<core::Size>::const_iterator lower_chain_it = lower_chains_.begin();
- 			lower_chain_it != lower_chains_.end(); ++lower_chain_it)
- 		{
- 			core::Size current_lower_chain = *lower_chain_it;
+				lower_chain_it != lower_chains_.end(); ++lower_chain_it)
+			{
+				core::Size current_lower_chain = *lower_chain_it;
 
- 	 		for(utility::vector1<core::Size>::const_iterator upper_chain_it = upper_chains_.begin();
- 	 			upper_chain_it != upper_chains_.end(); ++upper_chain_it)
- 	 		{
- 	 			core::Size current_upper_chain = *upper_chain_it;
- 	 			TR.Debug << "calculating_interface between: " << current_lower_chain << " " << current_upper_chain <<std::endl;
- 	 				utility::vector1_bool repack =
- 	 				core::pack::task::operation::util::calc_interface_vector( pose,
- 	 				current_lower_chain, current_upper_chain,
- 	 				CB_dist_cutoff_,
- 	 				nearby_atom_cutoff_,
- 	 				vector_angle_cutoff_,
- 	 				vector_dist_cutoff_ );
- 	 			for(core::Size ii = 1; ii <=repack.size(); ++ii)
- 	 			{
- 	 				if(repack[ii])
- 	 				{
- 	 					repack_full[ii] = true;
- 	 				}
- 	 			}
- 	 		}
- 		}
+				for(utility::vector1<core::Size>::const_iterator upper_chain_it = upper_chains_.begin();
+						upper_chain_it != upper_chains_.end(); ++upper_chain_it)
+					{
+						core::Size current_upper_chain = *upper_chain_it;
+						TR.Debug << "calculating_interface between: " << current_lower_chain << " " << current_upper_chain <<std::endl;
+						utility::vector1_bool repack =
+							core::pack::task::operation::util::calc_interface_vector( pose,
+								current_lower_chain, current_upper_chain,
+								CB_dist_cutoff_,
+								nearby_atom_cutoff_,
+								vector_angle_cutoff_,
+								vector_dist_cutoff_ );
+						for(core::Size ii = 1; ii <=repack.size(); ++ii)
+							{
+								if(repack[ii])
+									{
+										repack_full[ii] = true;
+									}
+							}
+					}
+			}
 
 		task.restrict_to_residues(repack_full);
 	}

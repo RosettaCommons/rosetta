@@ -26,7 +26,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <core/pack/task/TaskFactory.hh>
-
+#include <core/kinematics/FoldTree.hh>
 #include <core/pose/PDBInfo.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -109,7 +109,6 @@ XMLprinterMover::XMLprinterMover(){
 core::pack::task::TaskFactoryOP
 XMLprinterMover::setup_tf( core::pack::task::TaskFactoryOP task_factory ) {
  using namespace core::pack::task::operation;
-
  if ( option[ optE::parse_tagfile ].user() ) {
    std::string tagfile_name( option[ optE::parse_tagfile ]() );
    TaskOperationFactory::TaskOperationOPs tops;
@@ -203,6 +202,7 @@ void XMLprinterMover::apply (pose::Pose& pose ) {
   // setup what residues we are going to look at...
   setup_tf( task_factory );
   //debugging
+	TR<< pose.pdb_info()->name() << " foldtree: "<< pose.fold_tree() << std::endl;
   //task_factory->push_back( new protocols::toolbox::task_operations::RestrictToInterfaceVectorOperation);
   std::set< Size > design_set;
   design_set = fill_designable_set( pose, task_factory );
@@ -231,7 +231,7 @@ main( int argc, char * argv [] )
   using namespace basic::options::OptionKeys;
 
   option.add( XMLprinter::make_individual_files, "Make indivdiual files for output").def(false);
-	option.add( XMLprinter::print_pymol_selection, "Tracer output of pymol selection").def(false);
+	option.add( XMLprinter::print_pymol_selection, "Tracer output of pymol selection").def(true);
   // initialize core
   devel::init(argc, argv);
   protocols::jd2::JobDistributor::get_instance()->go( new XMLprinterMover );

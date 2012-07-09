@@ -66,6 +66,7 @@ public:
 																			core::Real vector_angle_cutoff,
 																			core::Real vector_dist_cutoff);
 
+
 	// //if you want to use chain characters this is probably the best way, define the calculator separately
 	// RestrictToInterfaceVectorOperation( std::string const & calculator );
 

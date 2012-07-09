@@ -43,6 +43,7 @@ static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictCh
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictConservedLowDdgOperationCreator > RestrictConservedLowDdgOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictNonSurfaceToRepackingOperationCreator > RestrictNonSurfaceToRepackingOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictResiduesToRepackingOperationCreator > RestrictResiduesToRepackingOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictInterGroupVectorOperationCreator > RestrictInterGroupVectorOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToAlignedSegmentsOperationCreator > RestrictToAlignedSegmentsCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToCDRH3LoopCreator > RestrictToCDRH3LoopCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToTerminiOperationCreator > RestrictToTerminiOperationCreator_registrator;

@@ -20,7 +20,7 @@
 #include <core/types.hh>
 //#include <numeric/xyzVector.fwd.hh>
 //#include <numeric/HomogeneousTransform.hh>
-//#include <set>
+#include <set>
 
 #include <utility/vector1.hh>
 
@@ -47,23 +47,36 @@ calc_interface_vector( core::pose::Pose const & pose, core::Size const chain1_nu
 
 ///@details full runner that takes all of the inputs for chains
 utility::vector1_bool
-calc_interface_vector( core::pose::Pose const & pose,
-											 core::Size const chain1_number, core::Size const chain2_number,
-											 core::Real const CB_dist_cutoff, core::Real const nearby_atom_cutoff,
-											 core::Real const vector_angle_cutoff, core::Real const vector_dist_cutoff );
+calc_interface_vector(
+	core::pose::Pose const & pose,
+	core::Size const chain1_number, core::Size const chain2_number,
+	core::Real const CB_dist_cutoff, core::Real const nearby_atom_cutoff,
+	core::Real const vector_angle_cutoff, core::Real const vector_dist_cutoff );
 
 ///@details full runner that takes the jump
 utility::vector1_bool
-calc_interface_vector( core::pose::Pose const & pose,
-											 int const interface_jump,
-											 core::Real const CB_dist_cutoff,
-											 core::Real const nearby_atom_cutoff,
-											 core::Real const vector_angle_cutoff,
-											 core::Real const vector_dist_cutoff );
+calc_interface_vector(
+	core::pose::Pose const & pose,
+	int const interface_jump,
+	core::Real const CB_dist_cutoff,
+	core::Real const nearby_atom_cutoff,
+	core::Real const vector_angle_cutoff,
+	core::Real const vector_dist_cutoff );
 
 ///@details minimal jump runner
 utility::vector1_bool
 calc_interface_vector( core::pose::Pose const & pose, int const interface_jump );
+
+///@brief calculate the same thing but don't require an interface
+utility::vector1_bool
+calc_interacting_vector(
+	core::pose::Pose const & pose,
+	std::set< core::Size > & part1res,
+	std::set< core::Size > & part2res,
+	core::Real const CB_dist_cutoff,
+	core::Real const nearby_atom_cutoff,
+	core::Real const vector_angle_cutoff,
+	core::Real const vector_dist_cutoff );
 
 }//end namespace util
 }//operation
