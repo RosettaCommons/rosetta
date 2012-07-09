@@ -247,6 +247,27 @@ void dump_points_pdb(utility::vector1<Vecf> const & p, Vec t, std::string fn) {
 // 	}
 // 	o.close();
 // }
+
+void xform_pose( core::pose::Pose & pose, core::kinematics::Stub const & s, Size sres=1, Size eres=0 ) {
+  if(eres==0) eres = pose.n_residue();
+  for(Size ir = sres; ir <= eres; ++ir) {
+    for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
+      core::id::AtomID const aid(core::id::AtomID(ia,ir));
+      pose.set_xyz( aid, s.local2global(pose.xyz(aid)) );
+    }
+  }
+}
+void xform_pose_rev( core::pose::Pose & pose, core::kinematics::Stub const & s ) {
+  for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+    for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
+      core::id::AtomID const aid(core::id::AtomID(ia,ir));
+      pose.set_xyz( aid, s.global2local(pose.xyz(aid)) );
+    }
+  }
+}
+
+
+
 void trans_pose( Pose & pose, Vecf const & trans, Size start=1, Size end=0 ) {
 	if(0==end) end = pose.n_residue();
 	for(Size ir = start; ir <= end; ++ir) {
@@ -855,11 +876,13 @@ struct TCDock {
 				gradii(icmp2+1,icmp1+1,iori+1) = 9e9;
 				return 0.0;
 			}
-			dori = d;
 			if(d > 0){
-				std::cerr << "slide should be negative! d: " << d << std::endl;
-				utility_exit_with_message("ZERO!!");
+				// TR << "WARNING slide in wrong direction!" << std::endl;
+				gscore(icmp2+1,icmp1+1,iori+1) = 0.0;
+				gradii(icmp2+1,icmp1+1,iori+1) = 9e9;
+				return 0.0;
 			}
+			dori = d;
 			double const theta=(double)iori;
 			double const gamma=numeric::conversions::radians(theta-alpha_/2.0);
 			double const sin_gamma=sin(gamma), cos_gamma=cos(gamma), x=d*sin_gamma, y=d*cos_gamma, w=x/sin_alpha_, z=x/tan_alpha_;
