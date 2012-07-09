@@ -819,8 +819,12 @@ output_silent_file( pose::Pose const & pose, Size const n_accept, Size const cou
 		Size const i      = working_res_list[ n ];
 		Size const i_full = sub_to_full[ i ];
 
+		//		std::cout << "NATIVE CHECK: " <<  i << ' ' << i_full << std::endl;
+
 		Residue const & rsd        = pose.residue( i );
 		Residue const & rsd_native = native_pose.residue( i_full );
+
+		if ( rsd.aa() != rsd_native.aa() )			std::cout << "mismatch:   pose " << i << ' ' << rsd.aa() << "   native " << i_full << rsd_native.aa() << std::endl;
 		runtime_assert( rsd.aa() == rsd_native.aa() );
 
 		for ( Size j = 1; j <= rsd.nheavyatoms(); j++ ){
@@ -874,22 +878,15 @@ output_silent_file( pose::Pose const & pose, Size const n_accept, Size const cou
 // can go into a namespace later...
 enum MovingResidueCase { NONE=0, CHAIN_TERMINUS_5PRIME, CHAIN_TERMINUS_3PRIME, INTERNAL, FLOATING_BASE };
 
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void
-random_torsion_move( pose::Pose & pose,
-										 utility::vector1< Size > const & moving_res_list,
-										 std::string & move_type,
-										 Real const & sample_range ){
+MovingResidueCase
+get_moving_residue_case( pose::Pose const & pose, Size const i ) {
 
-	using namespace ObjexxFCL::fmt;
-
-	Size const random_idx = int( RG.uniform() * moving_res_list.size() ) + 1;
-	Size const i = moving_res_list[ random_idx ];
+	MovingResidueCase moving_residue_case( NONE );
 
 	Size const & nres( pose.total_residue() );
 	kinematics::FoldTree const & fold_tree( pose.fold_tree() );
-
-	MovingResidueCase moving_residue_case;
 	if ( i == nres || fold_tree.is_cutpoint( i ) ){ // could be a 5' chain terminus
 		if ( i == 1 || fold_tree.is_cutpoint( i-1 ) ){
 			moving_residue_case = FLOATING_BASE; // don't know how to handle this yet.
@@ -902,6 +899,22 @@ random_torsion_move( pose::Pose & pose,
 		moving_residue_case = INTERNAL;
 	}
 
+	return moving_residue_case;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+random_torsion_move( pose::Pose & pose,
+										 utility::vector1< Size > const & moving_res_list,
+										 std::string & move_type,
+										 Real const & sample_range ){
+
+	using namespace ObjexxFCL::fmt;
+
+	Size const random_idx = int( RG.uniform() * moving_res_list.size() ) + 1;
+	Size const i = moving_res_list[ random_idx ];
+
+	MovingResidueCase moving_residue_case = get_moving_residue_case( pose, i );
 
 	if ( moving_residue_case == CHAIN_TERMINUS_3PRIME  || moving_residue_case == CHAIN_TERMINUS_5PRIME ){
 
@@ -1016,7 +1029,7 @@ reorder_after_insert( utility::vector1<Size> & moving_res_list,
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 std::map<Size,Size>
-reorder_after_insert( std::map<Size,Size> & sub_to_full,
+reorder_after_prepend( std::map<Size,Size> & sub_to_full,
 											Size const & res_to_add ){
 
 	std::map< Size, Size > sub_to_full_new;
@@ -1033,6 +1046,50 @@ reorder_after_insert( std::map<Size,Size> & sub_to_full,
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+std::map<Size,Size>
+reorder_after_append( std::map<Size,Size> & sub_to_full,
+											Size const & res_to_add ){
+
+	std::map< Size, Size > sub_to_full_new;
+
+	for ( std::map< Size, Size >::const_iterator it = sub_to_full.begin(); it != sub_to_full.end(); ++it ) {
+		Size const n = it->first;
+		Size const m = it->second;
+		if ( n < res_to_add )  sub_to_full_new[ n ] = m;
+		if ( n >= res_to_add ) sub_to_full_new[ n+1 ] = m;
+	}
+	sub_to_full_new[ res_to_add ] = sub_to_full[ res_to_add-1 ]+1;
+
+	return  sub_to_full_new;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+get_random_residue_at_chain_terminus( pose::Pose const & pose,
+															 utility::vector1< Size > const & moving_res_list,
+															 Size & residue_at_chain_terminus,
+															 MovingResidueCase & moving_residue_case  ) {
+
+	utility::vector1< Size > possible_res;
+	utility::vector1< MovingResidueCase > moving_residue_cases;
+
+	for (Size i = 1; i <= moving_res_list.size(); i++ ){
+		Size const n = moving_res_list[ i ];
+		MovingResidueCase const moving_residue_case = get_moving_residue_case( pose, n );
+		moving_residue_cases.push_back( moving_residue_case );
+		if ( moving_residue_case == CHAIN_TERMINUS_3PRIME || moving_residue_case == CHAIN_TERMINUS_5PRIME ) possible_res.push_back( i );
+	}
+
+	Size const res_idx =  int( RG.uniform() * possible_res.size() ) + 1;
+	Size const moving_res_idx = possible_res[ res_idx ];
+
+	residue_at_chain_terminus = moving_res_list[ moving_res_idx ];
+	moving_residue_case       = moving_residue_cases[ moving_res_idx ];
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 swa_rna_sample()
 {
@@ -1044,8 +1101,6 @@ swa_rna_sample()
   using namespace core::io::silent;
 	using namespace protocols::swa::rna;
 	using namespace protocols::moves;
-
-	Output_title_text("Enter swa_rna_sample()");
 
 	clock_t const time_start( clock() );
 
@@ -1072,7 +1127,6 @@ swa_rna_sample()
 	stepwise_rna_pose_setup->setup_native_pose( pose ); //NEED pose to align native_pose to pose.
 
 	pose.dump_pdb( "START.pdb" );
-	job_parameters->working_native_pose()->dump_pdb( "working_native.pdb" );
 	job_parameters->working_native_pose()->dump_pdb( "working_native.pdb" );
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1110,7 +1164,6 @@ swa_rna_sample()
 	bool const do_add_delete_ = option[ do_add_delete ]();
 	bool const presample_added_residue_ = option[ presample_added_residue ]();
 	Size const internal_cycles_ = option[ presample_internal_cycles ](); // totally arbitrary
-
 
 	std::string move_type( "" );
 	if ( ! option[ skip_randomize ]() ){
@@ -1155,24 +1208,21 @@ swa_rna_sample()
 
 					std::cout << "Before delete: " << (*scorefxn)( pose ) << std::endl;
 
-					bool const forward_build_ = option[ forward_build ](); // later, both forward and backward will be possible -- and determined automatically
-					if ( forward_build_ ){
+					//Scan through the moving residues -- which residues are delete-able? [maybe this should be higher up -- before delete/add decision.
+					Size res_to_delete;
+					MovingResidueCase moving_residue_case;
+					get_random_residue_at_chain_terminus( pose, moving_res_list, res_to_delete, moving_residue_case  );
 
-						Size const res_to_delete = moving_res_list[ moving_res_list.size() ];
-						pose.delete_polymer_residue( res_to_delete ); // only works for fragment built backward off 5' fragment
-						moving_res_list_new = reorder_after_delete( moving_res_list, res_to_delete );
-						sub_to_full_new = reorder_after_delete( sub_to_full, res_to_delete );
+					pose.delete_polymer_residue( res_to_delete );
 
-
-					} else {
-						Size const res_to_delete = moving_res_list[1];
-						pose.delete_polymer_residue( res_to_delete ); // only works for fragment built backward off 5' fragment
-						moving_res_list_new = reorder_after_delete( moving_res_list, res_to_delete );
-						sub_to_full_new = reorder_after_delete( sub_to_full, res_to_delete );
+					if ( moving_residue_case == CHAIN_TERMINUS_5PRIME ){
 						pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_delete );
-
 					}
 
+					moving_res_list_new = reorder_after_delete( moving_res_list, res_to_delete );
+					sub_to_full_new     = reorder_after_delete( sub_to_full, res_to_delete );
+
+					std::cout << pose.annotated_sequence() << std::endl;
 					std::cout << "After delete: " << (*scorefxn)( pose ) << std::endl << std::endl;
 
 				}
@@ -1188,13 +1238,17 @@ swa_rna_sample()
 
 				Size suite_num( 0 ), nucleoside_num( 0 ); // will record which new dofs added.
 
+				Size res_to_build_off;
+				MovingResidueCase moving_residue_case;
+				// following could be smarter -- could try to avoid residues at ends...
+				get_random_residue_at_chain_terminus( pose, moving_res_list, res_to_build_off, moving_residue_case  );
+
 				bool did_addition( false );
 				//pose.dump_pdb( "before_add.pdb" );
 
-				bool const forward_build_ = option[ forward_build ](); // later, both forward and backward will be possible -- and determined automatically
-				if ( forward_build_ ){
+				if ( moving_residue_case == CHAIN_TERMINUS_3PRIME ){
 
-					Size const res_to_build_off = moving_res_list[ moving_res_list.size() ]; // for now, just build off 3' fragment.
+					//					Size const res_to_build_off = moving_res_list[ moving_res_list.size() ]; // for now, just build off 3' fragment.
 
 					if ( res_to_build_off < pose.total_residue() &&
 							 sub_to_full[ res_to_build_off ] < sub_to_full[ res_to_build_off+1 ] -1 ){  // need to fix for general case [e.g. cutpoint]
@@ -1211,13 +1265,19 @@ swa_rna_sample()
 
 						pose.append_polymer_residue_after_seqpos( *new_rsd, res_to_build_off, true /*build ideal geometry*/ );
 
+						moving_res_list_new = reorder_after_insert( moving_res_list, res_to_add );
+						sub_to_full_new = reorder_after_append( sub_to_full, res_to_add );
+
 						suite_num = res_to_add-1;
 						nucleoside_num = res_to_add;
 
 						did_addition = true;
 					}
 				} else {
-					Size const res_to_add = moving_res_list[1]; // for now, just build off 5' fragment.
+
+					//Size const res_to_add = moving_res_list[1]; // for now, just build off 5' fragment.
+					Size const res_to_add = res_to_build_off;
+
 					if ( sub_to_full[ res_to_add ] > 1 ){  // again, need to fix for general case.
 
 						char newrestype = full_sequence[ (sub_to_full[ res_to_add ] - 1) - 1 ];
@@ -1234,6 +1294,9 @@ swa_rna_sample()
 						pose.prepend_polymer_residue_before_seqpos( *new_rsd, res_to_add, true /*build ideal geometry*/ );
 						pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add );
 
+						moving_res_list_new = reorder_after_insert( moving_res_list, res_to_add );
+						sub_to_full_new = reorder_after_prepend( sub_to_full, res_to_add );
+
 						// initialize with a random torsion... ( how about an A-form + perturbation ... or go to a 'reasonable' rotamer)
 						suite_num = res_to_add;
 						nucleoside_num = res_to_add;
@@ -1244,9 +1307,6 @@ swa_rna_sample()
 
 
 				if ( did_addition ){
-					moving_res_list_new = reorder_after_insert( moving_res_list, nucleoside_num );
-					sub_to_full_new = reorder_after_insert( sub_to_full, nucleoside_num );
-
 					apply_suite_torsion_Aform( pose, suite_num );
 					apply_nucleoside_torsion_Aform( pose, nucleoside_num );
 					sample_near_suite_torsion( pose, suite_num, sample_range_large);
@@ -1270,9 +1330,10 @@ swa_rna_sample()
 							//std::cout << "During presampling: " << (*scorefxn)( pose );
 						}
 					}
-					//std::cout << pose.annotated_sequence() << std::endl;
+
+					std::cout << pose.annotated_sequence() << std::endl;
 					std::cout << "After add: " << (*scorefxn)( pose ) << std::endl << std::endl;
-					//					pose.dump_pdb( "after_add.pdb" );
+					//pose.dump_pdb( "after_add.pdb" );
 				} else {
 					move_type = ""; // no move!
 				}
@@ -1324,19 +1385,25 @@ swa_rna_sample()
 		//std::cout << "Score: " << (*scorefxn)( pose ) << std::endl;
 		Real const current_score = (*scorefxn)( pose );
 
+		//std::cout << "MOVING_RES ";
+		//		for (Size i = 1; i <= moving_res_list.size(); i++ ) std::cout << ' ' <<  moving_res_list[i];
+		//		std::cout << std::endl;
+
+		runtime_assert( moving_res_list[1] > 0 );
+
 		// Need to fix following to not be dependent on job_parameters
 		if (accepted && current_score < output_score_cutoff_ ) output_silent_file( pose, n_accept, count, moving_res_list, sub_to_full, native_pose, silent_file_data, silent_file );
 
 	}
 
-	output_silent_file( pose, n_accept, num_cycle, moving_res_list, sub_to_full, native_pose, silent_file_data, silent_file );
+	//	output_silent_file( pose, n_accept, num_cycle, moving_res_list, sub_to_full, native_pose, silent_file_data, silent_file );
 
 	pose.dump_pdb( "FINAL.pdb" );
 	monte_carlo_->show_counters();
 	monte_carlo_->recover_low( pose );
 
-
 	//output_silent_file( pose, n_accept, num_cycle+1, moving_res_list, sub_to_full, native_pose, silent_file_data, silent_file );
+
 	if ( option[ out::file::o].user() ) { // makes life easier on cluter.
 		pose.dump_pdb( option[ out::file::o ]() );
 	} else {
