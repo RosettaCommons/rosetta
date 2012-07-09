@@ -16,6 +16,7 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 
@@ -29,6 +30,8 @@
 
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinaryProteinSilentStruct.hh>
+
+#include <core/scoring/rna/RNA_Util.hh>
 
 #include <protocols/idealize/idealize.hh>
 
@@ -99,6 +102,30 @@ add_virtual_res ( core::pose::Pose & pose, bool set_res_as_root = true ) {
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// Rhiju -- rotate to my favorite frame. Base centroid is now at origin.
+//         X points to N1 atom. Z points normal to base. Y is orthonormal and points towards Hoogsteen edge, I think.
+void
+rotate_into_nucleobase_frame( core::pose::Pose & pose ){
+
+	using namespace core::conformation;
+	using namespace core::scoring::rna;
+	using namespace core::id;
+
+	// assuming pose has an RNA at residue 1 -- will rotate just that residue.
+	Size const base_pos( 1 );
+	Residue const & rsd = pose.residue( base_pos );
+
+	Vector centroid = get_rna_base_centroid( rsd, true /*verbose*/ );
+	Matrix M = get_rna_base_coordinate_system( rsd, centroid );
+
+	for (Size i = 1; i <= rsd.natoms(); i++ ){
+		Vector xyz_new = M * ( rsd.xyz( i ) - centroid ); // it is either this or M-inverse.
+		pose.set_xyz( AtomID( i, base_pos ), xyz_new );
+	}
+
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 void
 methane_pair_score_test()
@@ -116,7 +143,10 @@ methane_pair_score_test()
 	pose::Pose pose;
 	std::string infile  = option[ in ::file::s ][1];
 	import_pose::pose_from_pdb( pose, *rsd_set, infile );
-	add_virt_res(pose);
+
+	rotate_into_nucleobase_frame( pose );
+
+	add_virtual_res(pose);
 	core::chemical::ResidueTypeSet const & residue_set = pose.residue_type ( 1 ).residue_type_set();
 	core::chemical::ResidueTypeCAPs const & rsd_type_list ( residue_set.name3_map ( "CCC" ) );
 	core::conformation::ResidueOP new_res ( core::conformation::ResidueFactory::create_residue ( *rsd_type_list[1] ) );
@@ -167,7 +197,7 @@ methane_pair_score_test()
 
 			jump.set_translation( Vector( x, y, z ) ) ;
 			pose.set_jump( 1, jump );
- 
+
 			(*scorefxn)( pose );
 
 			n++;
