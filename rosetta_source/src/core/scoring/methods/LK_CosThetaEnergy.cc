@@ -199,7 +199,12 @@ LK_CosThetaEnergy::get_base_vector( conformation::Residue const & rsd1, Size con
 		}
 	}
 
-	base_pseudo_atom /= non_H_neighbors;
+	if (non_H_neighbors > 0 ) 	base_pseudo_atom /= non_H_neighbors;
+
+	// Note -- probably should have a big WARNING show up
+	// if we're trying to compute this scorefunction for water or something
+	// where there is no base atom.  That's where non_H_neighbors is 0.
+
 	Vector res1_base_vector =  rsd1.xyz(i) - base_pseudo_atom;
 	Vector res1_base_vector_norm = (res1_base_vector).normalized();
 	return res1_base_vector_norm;
