@@ -57,6 +57,8 @@
 #include <core/scoring/EnergyMap.fwd.hh> //for EnergyMap
 #include <core/import_pose/import_pose.hh>
 
+#include <protocols/viewer/viewers.hh>
+
 // option key includes
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
@@ -79,6 +81,9 @@ using utility::vector1;
 typedef  numeric::xyzMatrix< Real > Matrix;
 
 OPT_KEY( Boolean, sample_water )
+OPT_KEY( Real, alpha_increment )
+OPT_KEY( Real, cosbeta_increment )
+OPT_KEY( Real, gamma_increment )
 
 /////////////////////////////////////////////////////////////////////////////
 //FCC: Adding Virtual res
@@ -134,18 +139,20 @@ rotate_into_nucleobase_frame( core::pose::Pose & pose ){
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // This is imported from protocols/swa/RigidBodySampler.cco
-void
-sample_all_rotations_at_jump( pose::Pose & pose, Size const num_jump ){
+Real
+sample_all_rotations_at_jump( pose::Pose & pose, Size const num_jump, scoring::ScoreFunctionOP scorefxn = 0 ){
 
-	Real alpha_, alpha_min_( 0 ), alpha_max_( 180.0 ), alpha_increment_( 60.0 );
-	Real beta_, cosbeta_min_( -1.0 ), cosbeta_max_( 1.0 ), cosbeta_increment_( 0.5 );
-	Real gamma_, gamma_min_( 0 ), gamma_max_( 180.0 ), gamma_increment_( 60.0 );
+	Real alpha_, alpha_min_( 0 ), alpha_max_( 180.0 ), alpha_increment_( option[ alpha_increment ]() );
+	Real beta_, cosbeta_min_( -1.0 ), cosbeta_max_( 1.0 ), cosbeta_increment_( option[ cosbeta_increment ]()  );
+	Real gamma_, gamma_min_( 0 ), gamma_max_( 180.0 ), gamma_increment_( option[ gamma_increment ]() );
 
 	Matrix M;
 	Vector axis1( 1.0, 0.0, 0.0 ), axis2( 0.0, 1.0, 0.0 ), axis3( 0.0, 0.0, 1.0 );
 
-
 	Size  count( 0 );
+	Real  score_min( 0.0 );
+	kinematics::Jump  best_jump;
+
 	for ( alpha_ = alpha_min_; alpha_ <= alpha_max_;  alpha_ += alpha_increment_ ){
 
 		//std::cout << i++ << " out of " << N_SAMPLE_ALPHA << ". Current count: " << count_total_ <<
@@ -160,7 +167,7 @@ sample_all_rotations_at_jump( pose::Pose & pose, Size const num_jump ){
 				beta_ = degrees( std::acos( cosbeta ) );
 			}
 
-			std::cout << "BETA: " << beta_ << std::endl;
+			//std::cout << "BETA: " << beta_ << std::endl;
 
 			// Try to avoid singularity at pole.
 			Real gamma_min_local = gamma_min_;
@@ -180,13 +187,42 @@ sample_all_rotations_at_jump( pose::Pose & pose, Size const num_jump ){
 				jump.set_rotation( M );
 				pose.set_jump( num_jump, jump );
 
-				pose.dump_pdb( "S_" + ObjexxFCL::string_of( count++ ) + ".pdb" );
+				if ( scorefxn ) {
+					Real const score = (*scorefxn)( pose );
+					if ( score < score_min || count == 0 ) {
+						score_min = score;
+						best_jump = jump;
+					}
+				} else {
+					// this is a test
+					pose.dump_pdb( "S_" + ObjexxFCL::string_of( count ) + ".pdb" );
+				}
+
+				count++;
 
 			} // gamma
 		} // beta
 	}// alpha
 
+	pose.set_jump( num_jump, best_jump );
 
+	return score_min;
+
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////
+Real
+do_scoring( pose::Pose & pose,
+						scoring::ScoreFunctionOP scorefxn,
+						bool const & sample_water_,
+						Size const probe_jump_num ){
+
+	if ( sample_water_ ){
+		sample_all_rotations_at_jump( pose, probe_jump_num, scorefxn );
+	} else {
+		(*scorefxn)( pose );
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -227,10 +263,9 @@ methane_pair_score_test()
 	pose.append_residue_by_jump ( *new_res , 2 );
 
 	pose.dump_pdb( "START.pdb" );
-
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 800, 800 );
 
 	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", 1 );
-
 
 	//////////////////////////////////////////////////
 	// Set up fold tree -- "chain break" between two ligands, right?
@@ -244,25 +279,24 @@ methane_pair_score_test()
 	// displace in z by 2.0 A... just checking coordinate system
 	//This jump should code for no translation or rotation -- two_benzenes.pdb
 	// has the two benzenes perfectly superimposed.
-	kinematics::Jump jump( pose.jump( 2 ) );
+	Size const probe_jump_num( 2 );
+	kinematics::Jump jump( pose.jump( probe_jump_num ) );
 
 	jump.set_translation( Vector( 5.0, 0.0, 0.0 ) );
-	pose.set_jump( 2, jump );
+	pose.set_jump( probe_jump_num, jump );
 	pose.dump_pdb( "shift_x.pdb" );
 
 	jump.set_translation( Vector( 0.0, 5.0, 0.0 ) );
-	pose.set_jump( 2, jump );
+	pose.set_jump( probe_jump_num, jump );
 	pose.dump_pdb( "shift_y.pdb" );
 
 	jump.set_translation( Vector( 0.0, 0.0, 5.0 ) );
-	pose.set_jump( 2, jump );
+	pose.set_jump( probe_jump_num, jump );
 	pose.dump_pdb( "shift_z.pdb" );
 
 	/// This is a code snippet to test if we are sampling water rotations properly -- could make this a little class,
 	//  and then include within translation scan.
-	if ( sample_water_ ) {
-		sample_all_rotations_at_jump( pose, 2 );
-	}
+	//	if ( sample_water_ )		sample_all_rotations_at_jump( pose, probe_jump_num );
 
 	//////////////////////////////////////////////////////////////////
 	// OK, how about a score function?
@@ -274,113 +308,123 @@ methane_pair_score_test()
 
 	//////////////////////////////////////////////////////////////////
 	// compute scores on a plane for now.
+
+	Real const box_size = 15.0;
+	Real const translation_increment( 1.0 );
+	int box_bins = int( box_size/translation_increment );
+
 	using namespace core::io::silent;
 	SilentFileData silent_file_data;
 	utility::io::ozstream out;
 	out.open( "score_para_0.table" );
-	for (int i = -150; i <= 150; ++i) {
-		for (int j = -150; j <= 150; ++j) {
-			Real const x = j * 0.1;
-			Real const y = i * 0.1;
+	for (int i = -box_bins; i <= box_bins; ++i) {
+		for (int j = -box_bins; j <= box_bins; ++j) {
+			Real const x = j * translation_increment;
+			Real const y = i * translation_increment;
 			Real const z = 0.0;
 			jump.set_translation( Vector( x, y, z ) ) ;
-			pose.set_jump( 2, jump );
-			out << (*scorefxn)( pose ) << ' ' ;
+			pose.set_jump( probe_jump_num, jump );
+			out << do_scoring( pose, scorefxn, sample_water_, probe_jump_num ) << ' ' ;
 		}
 		out << std::endl;
 	}
 	out.close();
 	out.open( "score_para_1.table" );
-	for (int i = -150; i <= 150; ++i) {
-		for (int j = -150; j <= 150; ++j) {
-			Real const x = j * 0.1;
-			Real const y = i * 0.1;
+	for (int i = -box_bins; i <= box_bins; ++i) {
+		for (int j = -box_bins; j <= box_bins; ++j) {
+			Real const x = j * translation_increment;
+			Real const y = i * translation_increment;
 			Real const z = 1.0;
 			jump.set_translation( Vector( x, y, z ) ) ;
-			pose.set_jump( 2, jump );
-			out << (*scorefxn)( pose ) << ' ' ;
+			pose.set_jump( probe_jump_num, jump );
+			out << do_scoring( pose, scorefxn, sample_water_, probe_jump_num ) << ' ' ;
 		}
 		out << std::endl;
 	}
 	out.close();
 
 	out.open( "score_para_3.table" );
-	for (int i = -150; i <= 150; ++i) {
-		for (int j = -150; j <= 150; ++j) {
-			Real const x = j * 0.1;
-			Real const y = i * 0.1;
+	for (int i = -box_bins; i <= box_bins; ++i) {
+		for (int j = -box_bins; j <= box_bins; ++j) {
+			Real const x = j * translation_increment;
+			Real const y = i * translation_increment;
 			Real const z = 3.0;
 			jump.set_translation( Vector( x, y, z ) ) ;
-			pose.set_jump( 2, jump );
-			out << (*scorefxn)( pose ) << ' ' ;
+			pose.set_jump( probe_jump_num, jump );
+			out << do_scoring( pose, scorefxn, sample_water_, probe_jump_num ) << ' ' ;
 		}
 		out << std::endl;
 	}
 	out.close();
 
 	out.open( "score_para_-1.table" );
-	for (int i = -150; i <= 150; ++i) {
-		for (int j = -150; j <= 150; ++j) {
-			Real const x = j * 0.1;
-			Real const y = i * 0.1;
+	for (int i = -box_bins; i <= box_bins; ++i) {
+		for (int j = -box_bins; j <= box_bins; ++j) {
+			Real const x = i * translation_increment;
+			Real const y = j * translation_increment;
 			Real const z = -1.0;
 			jump.set_translation( Vector( x, y, z ) ) ;
-			pose.set_jump( 2, jump );
-			out << (*scorefxn)( pose ) << ' ' ;
+			pose.set_jump( probe_jump_num, jump );
+			out << do_scoring( pose, scorefxn, sample_water_, probe_jump_num ) << ' ' ;
+
 		}
 		out << std::endl;
 	}
 	out.close();
 
+
 	out.open( "score_para_-3.table" );
-	for (int i = -150; i <= 150; ++i) {
-		for (int j = -150; j <= 150; ++j) {
-			Real const x = j * 0.1;
-			Real const y = i * 0.1;
+	for (int i = -box_bins; i <= box_bins; ++i) {
+		for (int j = -box_bins; j <= box_bins; ++j) {
+			Real const x = j * translation_increment;
+			Real const y = i * translation_increment;
 			Real const z = -3.0;
 			jump.set_translation( Vector( x, y, z ) ) ;
-			pose.set_jump( 2, jump );
-			out << (*scorefxn)( pose ) << ' ' ;
+			pose.set_jump( probe_jump_num, jump );
+			out << do_scoring( pose, scorefxn, sample_water_, probe_jump_num ) << ' ' ;
 		}
 		out << std::endl;
 	}
 	out.close();
 
 	out.open( "score_xz.table" );
-	for (int i = -150; i <= 150; ++i) {
-		for (int j = -150; j <= 150; ++j) {
-			Real const x = j * 0.1;
-			Real const z = i * 0.1;
+	for (int i = -box_bins; i <= box_bins; ++i) {
+		for (int j = -box_bins; j <= box_bins; ++j) {
+			Real const x = j * translation_increment;
+			Real const z = i * translation_increment;
 			Real const y = 0.0;
 			jump.set_translation( Vector( x, y, z ) ) ;
-			pose.set_jump( 2, jump );
-			out << (*scorefxn)( pose ) << ' ' ;
+			pose.set_jump( probe_jump_num, jump );
+			out << do_scoring( pose, scorefxn, sample_water_, probe_jump_num ) << ' ' ;
 		}
 		out << std::endl;
 	}
 	out.close();
 
 	out.open( "score_yz.table" );
-	for (int i = -150; i <= 150; ++i) {
-		for (int j = -150; j <= 150; ++j) {
-			Real const y = j * 0.1;
-			Real const z = i * 0.1;
+	for (int i = -box_bins; i <= box_bins; ++i) {
+		for (int j = -box_bins; j <= box_bins; ++j) {
+			Real const y = j * translation_increment;
+			Real const z = i * translation_increment;
 			Real const x = 0.0;
 			jump.set_translation( Vector( x, y, z ) ) ;
-			pose.set_jump( 2, jump );
-			out << (*scorefxn)( pose ) << ' ' ;
+			pose.set_jump( probe_jump_num, jump );
+			out << do_scoring( pose, scorefxn, sample_water_, probe_jump_num ) << ' ' ;
 		}
 		out << std::endl;
 	}
 	out.close();
+
 }
 
 ///////////////////////////////////////////////////////////////
-void
-my_main()
+void*
+my_main( void* )
 {
 
 	methane_pair_score_test();
+
+	protocols::viewer::clear_conformation_viewers();
 
 	exit( 0 );
 
@@ -393,10 +437,15 @@ main( int argc, char * argv [] )
 {
 
 	NEW_OPT( sample_water, "use a water probe instead of carbon", false );
+	NEW_OPT( alpha_increment, "input parameter", 40.0 );
+	NEW_OPT( cosbeta_increment, "input parameter", 0.25 );
+	NEW_OPT( gamma_increment, "input parameter", 40.0 );
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup
 	////////////////////////////////////////////////////////////////////////////
 	core::init(argc, argv);
-	my_main();
+
+  protocols::viewer::viewer_main( my_main );
+
 }
