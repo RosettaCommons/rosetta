@@ -2,7 +2,6 @@
 // vi: set ts=2 noet:
 
 #define CONTACT_TH 0
-#define NSS 1812 // 672 8192 17282
 #define MIN_HELEX_RES 20
 #define MAX_CYS_RES 3
 
@@ -86,6 +85,7 @@ OPT_1GRP_KEY( IntegerVector, cxdock, nfold )
 OPT_1GRP_KEY( Integer, cxdock, max_res )
 OPT_1GRP_KEY( Real, cxdock, contact_dis )
 OPT_1GRP_KEY( Real, cxdock, clash_dis )
+OPT_1GRP_KEY( Real, cxdock, sample )
 
 typedef numeric::xyzTransform<core::Real> Xform;
 
@@ -99,8 +99,9 @@ void register_options() {
 	NEW_OPT( cxdock::bench6 , "benchmark hexa (must be aligned-z)" , "" );
 	NEW_OPT( cxdock::nfold  , "C syms to test", 1 );
 	NEW_OPT( cxdock::max_res  , "", 99999 );
-	NEW_OPT( cxdock::contact_dis  , "", 10.0 );
-	NEW_OPT( cxdock::clash_dis    , "", 3.5 );
+	NEW_OPT( cxdock::contact_dis , "", 10.0 );
+	NEW_OPT( cxdock::clash_dis   , "",  4.0 );
+	NEW_OPT( cxdock::sample      , "",  5.0 );
 }
 
 #ifdef USE_OPENMP
@@ -205,38 +206,70 @@ make_native_olig(
 	}
 }
 
+// inline
+// Xform
+// get_cx_stub(Hit h){
+// 	Real halfside = (h.s1.v-h.s2.v).length()/2.0;
+// 	Real r = halfside / tan(numeric::constants::d::pi/(Real)h.sym); // tan(a/2) * edge_len/2
+// 	core::kinematics::Stub x(h.s1);
+// 	x.v = x.v + Vec(0,r,halfside);
+// 	{
+// 		Real ang = dihedral_degrees(Vec(0,0,1),Vec(0,0,0),Vec(1,0,0), x.local2global(Vec(0,0,0)) );
+// 		Mat R = numeric::x_rotation_matrix_degrees( -ang );
+// 		x.M = R * x.M;
+// 		x.v = R * x.v;
+// 	}
+// 	return Xform(x.M,x.v);
+// }
+
+inline Vec get_rot_center(Xform const & xsym, int sym){
+	Vec cen(0,0,0),pt(0,0,0);
+	for(int i = 1; i <= sym; ++i){ cen += pt; pt = xsym*pt; }
+	cen /= Real(sym);
+	return cen;
+}
+inline Vec get_rot_center(Xform const & x1, Xform const & x2, int sym){
+	return get_rot_center( x2 * ~x1, sym );
+}
+
+inline
+Xform
+get_cx_xform(Hit const & h){
+	Real halfside = (h.s1.v-h.s2.v).length()/2.0;
+	Real r = halfside / tan(numeric::constants::d::pi/(Real)h.sym); // tan(a/2) * edge_len/2
+	// cout << halfside << " " << r << endl;
+	// core::kinematics::Stub x(h.s2);
+	// x.v = x.v + Vec(0,r,halfside);
+	// Mat R = rotation_matrix_degrees(Vec(1,0,1),180.0);
+	// return Xform( R*x.M, R*x.v );
+	Xform x1(h.s1.M,h.s1.v),x2(h.s2.M,h.s2.v);
+	Vec cen = get_rot_center(x1,x2, h.sym);
+	// cout << cen << endl;
+	return Xform( h.s2.M, -cen );
+}
+
 void
 make_dock_olig(
 	core::pose::Pose const & pose,
 	core::pose::Pose       & olig,
 	Hit h
 ){
-	Pose tmp1(pose);
-	Real halfside = (h.s1.v-h.s2.v).length()/2.0;
-	Real r = halfside / tan(numeric::constants::d::pi/(Real)h.sym); // tan(a/2) * edge_len/2
-	xform_pose(tmp1,h.s1);
-	trans_pose(tmp1,Vec(0,0,halfside));
-	trans_pose(tmp1,Vec(0,r,0));
-	rot_pose(tmp1,Vec(1,0,1),180.0);
-	olig = tmp1;
+	// Pose tmp1(pose);
+	// Real halfside = (h.s1.v-h.s2.v).length()/2.0;
+	// Real r = halfside / tan(numeric::constants::d::pi/(Real)h.sym); // tan(a/2) * edge_len/2
+	// xform_pose(tmp1,h.s1);
+	// trans_pose(tmp1,Vec(0,0,halfside));
+	// trans_pose(tmp1,Vec(0,r,0));
+	// rot_pose(tmp1,Vec(1,0,1),180.0);
+	// olig = tmp1;
 	// tmp1.dump_pdb(outdir+tag);
 	// make_native_olig(tmp1,olig,h.sym);
-}
 
-inline
-Xform
-get_cx_stub(Hit h){
-	Real halfside = (h.s1.v-h.s2.v).length()/2.0;
-	Real r = halfside / tan(numeric::constants::d::pi/(Real)h.sym); // tan(a/2) * edge_len/2
-	core::kinematics::Stub x(h.s1);
-	x.v = x.v + Vec(0,r,halfside);
-	{
-		Real ang = dihedral_degrees(Vec(0,0,1),Vec(0,0,0),Vec(1,0,0), x.local2global(Vec(0,0,0)) );
-		Mat R = numeric::x_rotation_matrix_degrees( -ang );
-		x.M = R * x.M;
-		x.v = R * x.v;
-	}
-	return Xform(x.M,x.v);
+	Xform x = get_cx_xform(h);
+	Mat swapXZ = rotation_matrix_degrees(Vec(1,0,1),180.0); // swap axis
+	x = swapXZ * x;
+	olig = pose;
+	xform_pose(olig,Stub(x.R,x.t));
 }
 
 
@@ -355,7 +388,8 @@ dock(
 	}
 
 	//store initial coords & angle samples 1-180 (other distribution of samps would be better...)
-	vector1<core::Real> asamp; for(Real i = 1.0; i < 180.0; i += 5.0) asamp.push_back(i);
+	Real sampang = option[cxdock::sample]();
+	vector1<core::Real> asamp; for(Real i = sampang/2.0; i < 180.0; i += sampang) asamp.push_back(i);
 
 	vector1<int> syms;
 	if(!bench) syms = option[cxdock::nfold]();
@@ -376,13 +410,16 @@ dock(
 		ss.push_back(init_pose.secstruct(ir));
 	}
 
+	Size totsamp = ssamp.size()*asamp.size();
+	Size outinterval = min((Size)50000,totsamp/10);
 	// loop over axes on sphere points & rotaton amounts 1-180
 	#ifdef USE_OPENMP
 	#pragma omp parallel for schedule(dynamic,1)
 	#endif
 	for(int iss = 1; iss <= (int)ssamp.size(); ++iss){
-		if(iss%1000==0) TR << iss*asamp.size() << " of " << NSS*asamp.size() << std::endl;
 		for(int irt = 1; irt <= (int)asamp.size(); ++irt) {
+			Size progress = (iss-1)*asamp.size()+irt;
+			if(progress%outinterval==0) TR << progress << " of " << totsamp << std::endl;
 			Mat R = rotation_matrix_degrees(ssamp[iss],(Real)asamp[irt]);
 			Stub const x1( R, Vec(0,0,0));
 			// loop over symmitreis to check
@@ -391,7 +428,7 @@ dock(
 				// Real t = sic.slide_into_contact(x1,x2,Vec(0,0,1));
 				Real rscore = 0.0;
 				Stub tmp(x1);
-				Real const t = -slide_into_contact_and_score(sic,*rigidsfxn,tmp,x2,Vec(0,0,1),rscore);
+				Real const t = slide_into_contact_and_score(sic,*rigidsfxn,tmp,x2,Vec(0,0,1),rscore);
 				
 				Hit h(iss,irt,rscore,syms[ic]);
 				h.s1 = x1;
@@ -435,7 +472,6 @@ dock(
 			}
 		}
 	}
-	TR << "found " << hits.size() << " hits" << endl;
 
 	Size nstruct = basic::options::option[basic::options::OptionKeys::out::nstruct]();
 	std::string outdir = "./";
@@ -476,14 +512,23 @@ dock(
 
 	// dump top results
 	for(int ic = 1; ic <= (int)syms.size(); ic++) {
+		TR << "for sym C" << syms[ic] << " found " << hits[ic].size() << " hits" << endl;
 		std::sort(hits[ic].begin(),hits[ic].end(),cmpcbc);
 		for(int i = 1; i <= (int)min(nstruct,hits[ic].size()); ++i) {
 			Hit & h(hits[ic][i]);
+
+			// Pose tmp1(init_pose),tmp2(init_pose);
+			// xform_pose(tmp1,h.s1);
+			// xform_pose(tmp2,h.s2);
+			// tmp1.dump_pdb("tmp1.pdb");
+			// tmp2.dump_pdb("tmp2.pdb");			
+			// utility_exit_with_message("test");
+
 			std::string tag = utility::file_basename(fn);
 			if(tag.substr(tag.size()-3)==".gz" ) tag = tag.substr(0,tag.size()-3);
 			if(tag.substr(tag.size()-4)==".pdb") tag = tag.substr(0,tag.size()-4);			
 			tag += "_C"+ObjexxFCL::string_of(h.sym)+"_cbc"+ObjexxFCL::string_of(i)+".pdb";
-			cout << "RESULT " << h.sym << " " << h.iss << " " << NSS  << " " << h.irt << " " << h.rscore << " " << tag << endl;
+			cout << "RESULT " << h.sym << " " << h.iss << " " << ssamp.size()  << " " << h.irt << " " << h.rscore << " " << tag << endl;
 			Pose tmp;
 			make_dock_olig(init_pose,tmp,h);
 			TR << "dumping top rscore to " << outdir+tag << endl;
@@ -500,7 +545,7 @@ dock(
 	// 		if(tag.substr(tag.size()-3)==".gz" ) tag = tag.substr(0,tag.size()-3);
 	// 		if(tag.substr(tag.size()-4)==".pdb") tag = tag.substr(0,tag.size()-4);			
 	// 		tag += "_C"+ObjexxFCL::string_of(h.sym)+"_xsc"+ObjexxFCL::string_of(i)+".pdb";
-	// 		cout << "RESULT " << h.sym << " " << h.iss << " " << NSS  << " " << h.irt << " " << h.rscore << " " << tag << endl;
+	// 		cout << "RESULT " << h.sym << " " << h.iss << " " << ssamp.size()  << " " << h.irt << " " << h.rscore << " " << tag << endl;
 	// 		Pose tmp;
 	// 		make_dock_olig(init_pose,tmp,h);
 	// 		tmp.dump_pdb( outdir+tag);
@@ -518,7 +563,7 @@ dock(
 				if(tag.substr(tag.size()-3)==".gz" ) tag = tag.substr(0,tag.size()-3);
 				if(tag.substr(tag.size()-4)==".pdb") tag = tag.substr(0,tag.size()-4);			
 				tag += "_C"+ObjexxFCL::string_of(h.sym)+"_rmsd"+ObjexxFCL::string_of(i)+".pdb";
-				cout << "RESULT " << h.sym << " " << h.iss << " " << NSS  << " " << h.irt << " " << h.rscore << " " << tag << endl;
+				cout << "RESULT " << h.sym << " " << h.iss << " " << ssamp.size()  << " " << h.irt << " " << h.rscore << " " << tag << endl;
 				Pose tmp;
 				make_dock_olig(init_pose,tmp,h);
 				TR << "dumping top rmsd to " << outdir+tag << endl;
@@ -589,10 +634,27 @@ void
 read_sphere(
 	vector1<Vec> & ssamp
 ){
+	// 5.0°       sphere_672.dat.gz
+	// 4.0°       sphere_1032.dat.gz
+	// 3.0°       sphere_1812.dat.gz
+	// 2.0°       sphere_4092.dat.gz
+	// 1.4°       sphere_8192.dat.gz
+	// 1.0°       sphere_17282.dat.gz
+	Real ang = min(5.0,max(1.0,round(basic::options::option[basic::options::OptionKeys::cxdock::sample]())));
+	Size nss = 672;
+	if(     4.5 <= ang && ang < 5.5 ){ ang=5.0; nss =   672; }
+	else if(3.5 <= ang && ang < 4.5 ){ ang=4.0; nss =  1032; }
+	else if(2.5 <= ang && ang < 3.5 ){ ang=3.0; nss =  1812; }
+	else if(1.7 <= ang && ang < 2.5 ){ ang=2.0; nss =  4092; }
+	else if(1.2 <= ang && ang < 1.7 ){ ang=1.4; nss =  8192; }
+	else if(0.8 <= ang && ang < 1.2 ){ ang=1.0; nss = 17282; }
+	else utility_exit_with_message("sampling level unsupported, 1.0 - 5.0 degrees ( currently 1.0, 1.4, 2.0, 3.0, 4.0, 5.0 )");
+	TR << "sphere sampling resolution: " << ang << std::endl;
+	ssamp.resize(nss);
 	izstream is;
-	if(!basic::database::open(is,"sampling/spheres/sphere_"+str(NSS)+".dat"))
+	if(!basic::database::open(is,"sampling/spheres/sphere_"+str(nss)+".dat"))
 		utility_exit_with_message("can't open sphere data");
-	for(int i = 1; i <= NSS; ++i) {
+	for(Size i = 1; i <= nss; ++i) {
 		core::Real x,y,z;
 		is >> x >> y >> z;
 		ssamp[i] = Vec(x,y,z);
@@ -643,7 +705,7 @@ int main(int argc, char *argv[]) {
 	devel::init(argc,argv);
 	using namespace basic::options::OptionKeys;
 
-	vector1<Vec> ssamp(NSS); read_sphere(ssamp);
+	vector1<Vec> ssamp; read_sphere(ssamp);
 
 	// protocols::sic_dock::XfoxmScore const xfs("/Users/sheffler/project/designability_stats/results/");
 
