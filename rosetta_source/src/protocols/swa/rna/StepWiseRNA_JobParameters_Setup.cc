@@ -84,7 +84,8 @@ namespace rna {
 		filter_user_alignment_res_(true), //Generally want to keep this true!
 		allow_chain_boundary_jump_partner_right_at_fixed_BP_(false), //hacky, just to get the Square RNA working..Nov 6, 2010
 		allow_fixed_res_at_moving_res_(false), //hacky, just to get the Hermann Duplex RNA working..Nov 15, 2010
-		simple_append_map_(false)
+		simple_append_map_(false),
+		skip_complicated_stuff_(false)
   {
 		Output_title_text("Enter StepWiseRNA_JobParameters_Setup::constructor");
 		///////////////////////////////////////////////////////
@@ -954,6 +955,7 @@ namespace rna {
 		if( Contain_seq_num(sub_to_full[working_seq_num], input_res_vectors[2]) ) return 2;
 
 		std::cout << "working_seq_num= " << working_seq_num << " full_seq_num= " << sub_to_full[working_seq_num] << std::endl;
+		std::cout << "ADASDasd" << std::endl;
 		utility_exit_with_message( "seq_num is not part of both input_res_vectors[1] or input_res_vectors[2]" );
 		return 0; //Just to prevent compiler warning...
 
@@ -990,8 +992,8 @@ namespace rna {
 			fake_working_moving_suite = first_working_moving_res - 1;
 		} else { //Internal case...problematic/complicate case....
 
-			bool const can_append=assert_can_append(working_moving_res_list); //[14, 13, 12]
-			bool const can_prepend=assert_can_prepend(working_moving_res_list); //[12, 13, 14]
+			bool const can_append  = assert_can_append(working_moving_res_list); //[14, 13, 12]
+			bool const can_prepend = assert_can_prepend(working_moving_res_list); //[12, 13, 14]
 
 			Output_boolean("can_prepend= ", can_prepend ); Output_boolean(" can_append= ", can_append ); std::cout << std::endl;
 
@@ -1043,7 +1045,9 @@ namespace rna {
 				utility_exit_with_message( "found_possible_working_res!=1" );
 			}
 
-			if( input_struct_definition( possible_working_res_1) == input_struct_definition( possible_working_res_2) ){
+			// RHIJU is disabling this temporarily for swa monte carlo stuff -- need to cleanup this entire
+			//    script soon with Parin. 8 July, 2012
+			if( !skip_complicated_stuff_ && input_struct_definition( possible_working_res_1) == input_struct_definition( possible_working_res_2) ){
 				utility_exit_with_message( "input_struct_definition( possible_working_res_1) == input_struct_definition( possible_working_res_2)" );
 			}
 
@@ -1287,7 +1291,12 @@ namespace rna {
 		Size const nres = job_parameters_->working_sequence().size();
 		Size const fake_working_moving_suite=internal_params.fake_working_moving_suite;
 
-		bool Is_prepend, Is_internal;
+		bool Is_prepend( true ), Is_internal( false );
+
+		// some defaults
+		job_parameters_->set_Is_prepend( Is_prepend );
+		job_parameters_->set_Is_internal( Is_internal );
+		if (skip_complicated_stuff_) return;
 
 		if ( working_moving_res == 1 || fold_tree.is_cutpoint( working_moving_res - 1 ) ) {
 			Is_prepend = true;
