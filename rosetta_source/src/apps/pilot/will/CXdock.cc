@@ -15,7 +15,6 @@
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
@@ -71,7 +70,6 @@ using utility::io::ozstream;
 using utility::vector1;
 using std::endl;
 using core::import_pose::pose_from_pdb;
-using core::kinematics::Stub;
 
 static basic::Tracer TR("CXdock");
 static core::io::silent::SilentFileData sfd;
@@ -86,6 +84,8 @@ OPT_1GRP_KEY( Integer, cxdock, max_res )
 OPT_1GRP_KEY( Real, cxdock, contact_dis )
 OPT_1GRP_KEY( Real, cxdock, clash_dis )
 OPT_1GRP_KEY( Real, cxdock, sample )
+OPT_1GRP_KEY( Real, cxdock, redundancy_angle_cut )
+OPT_1GRP_KEY( Real, cxdock, redundancy_dist_cut )
 
 typedef numeric::xyzTransform<core::Real> Xform;
 
@@ -102,6 +102,8 @@ void register_options() {
 	NEW_OPT( cxdock::contact_dis , "", 10.0 );
 	NEW_OPT( cxdock::clash_dis   , "",  4.0 );
 	NEW_OPT( cxdock::sample      , "",  5.0 );
+	NEW_OPT( cxdock::redundancy_angle_cut, "", 10.0 );
+	NEW_OPT( cxdock::redundancy_dist_cut, "",   4.0 );
 }
 
 #ifdef USE_OPENMP
@@ -125,32 +127,31 @@ int thread_num() {
 // info about a "hit"
 struct Hit {
 	int iss,irt,sym;
-	Real rscore,xscore,rmsd;
-	core::kinematics::Stub s1,s2;
+	Real rscore,rmsd;
+	Xform x1,x2;
 	Hit(int is, int ir, Real cb, int sm) : iss(is),irt(ir),sym(sm),rscore(cb) {}
 };
-bool cmpcbc (Hit i,Hit j) { return i.rscore    > j.rscore   ; }
-bool cmpxsc (Hit i,Hit j) { return i.xscore > j.xscore; }
+bool cmpscore (Hit i,Hit j) { return i.rscore    > j.rscore   ; }
 bool cmprmsd(Hit i,Hit j) { return i.rmsd   < j.rmsd; }
 
 
 // core::Real
 // compute_xform_score(
 // 	protocols::sic_dock::XfoxmScore const & xfs,
-// 	core::kinematics::Stub const & x1,
-// 	core::kinematics::Stub const & x2,
-// 	utility::vector1<core::kinematics::Stub> const & stubs,
+// 	Xform const & x1,
+// 	Xform const & x2,
+// 	utility::vector1<Xform> const & stubs,
 // 	utility::vector1<char> const & ss
 // ){
 // 	assert(ss.size()==stubs.size());
 // 	core::Real score = 0.0;
 // 	utility::vector1<char>::const_iterator ssi = ss.begin();
-// 	for(utility::vector1<core::kinematics::Stub>::const_iterator i = stubs.begin(); i != stubs.end(); ++i,++ssi){
+// 	for(utility::vector1<Xform>::const_iterator i = stubs.begin(); i != stubs.end(); ++i,++ssi){
 // 		utility::vector1<char>::const_iterator ssj = ss.begin();
-// 		for(utility::vector1<core::kinematics::Stub>::const_iterator j = stubs.begin(); j != stubs.end(); ++j,++ssj){
-// 			Stub const a( x1.M * i->M, x1.M * i->v + x1.v );
-// 			Stub const b( x2.M * j->M, x2.M * j->v + x2.v );
-// 			if( (a.v-b.v).length_squared() > 64.0 ) continue;
+// 		for(utility::vector1<Xform>::const_iterator j = stubs.begin(); j != stubs.end(); ++j,++ssj){
+// 			Xform const a( x1.R * i->M, x1.R * i->v + x1.t );
+// 			Xform const b( x2.R * j->M, x2.R * j->v + x2.t );
+// 			if( (a.t-b.t).length_squared() > 64.0 ) continue;
 // 			score += xfs.score(a,b,*ssi,*ssj);
 // 		}
 // 	}
@@ -170,7 +171,7 @@ bool cmprmsd(Hit i,Hit j) { return i.rmsd   < j.rmsd; }
 // 		Vec CBi = pose1.residue(ir).xyz("CB");
 // 		Vec CAi = pose1.residue(ir).xyz("CA");
 // 		Vec  Ni = pose1.residue(ir).xyz( "N");
-// 		core::kinematics::Stub sir(CBi,CAi,Ni);
+// 		Xform sir(CBi,CAi,Ni);
 // 		for(core::Size jr = 1; jr <= pose2.n_residue(); ++jr){
 // 			if(!pose2.residue(jr).is_protein()) continue;
 // 			if(!pose2.residue(jr).has("CB")) continue;
@@ -178,7 +179,7 @@ bool cmprmsd(Hit i,Hit j) { return i.rmsd   < j.rmsd; }
 // 			Vec CAj = pose2.residue(jr).xyz("CA");
 // 			Vec  Nj = pose2.residue(jr).xyz( "N");
 // 			if( CBi.distance_squared(CBj) > 64.0 ) continue;
-// 			core::kinematics::Stub sjr(CBj,CAj,Nj);
+// 			Xform sjr(CBj,CAj,Nj);
 // 			core::Real tmp = xfs.score(sir,sjr,pose1.secstruct(ir),pose2.secstruct(jr));
 // 			tot_score += tmp;
 // 		}
@@ -209,17 +210,17 @@ make_native_olig(
 // inline
 // Xform
 // get_cx_stub(Hit h){
-// 	Real halfside = (h.s1.v-h.s2.v).length()/2.0;
+// 	Real halfside = (h.x1.t-h.x2.t).length()/2.0;
 // 	Real r = halfside / tan(numeric::constants::d::pi/(Real)h.sym); // tan(a/2) * edge_len/2
-// 	core::kinematics::Stub x(h.s1);
-// 	x.v = x.v + Vec(0,r,halfside);
+// 	Xform x(h.x1);
+// 	x.t = x.t + Vec(0,r,halfside);
 // 	{
-// 		Real ang = dihedral_degrees(Vec(0,0,1),Vec(0,0,0),Vec(1,0,0), x.local2global(Vec(0,0,0)) );
+// 		Real ang = dihedral_degrees(Vec(0,0,1),Vec(0,0,0),Vec(1,0,0), x*(Vec(0,0,0)) );
 // 		Mat R = numeric::x_rotation_matrix_degrees( -ang );
-// 		x.M = R * x.M;
-// 		x.v = R * x.v;
+// 		x.R = R * x.R;
+// 		x.t = R * x.t;
 // 	}
-// 	return Xform(x.M,x.v);
+// 	return Xform(x.R,x.t);
 // }
 
 inline Vec get_rot_center(Xform const & xsym, int sym){
@@ -235,17 +236,17 @@ inline Vec get_rot_center(Xform const & x1, Xform const & x2, int sym){
 inline
 Xform
 get_cx_xform(Hit const & h){
-	Real halfside = (h.s1.v-h.s2.v).length()/2.0;
-	Real r = halfside / tan(numeric::constants::d::pi/(Real)h.sym); // tan(a/2) * edge_len/2
+	// Real halfside = (h.x1.t-h.x2.t).length()/2.0;
+	// Real r = halfside / tan(numeric::constants::d::pi/(Real)h.sym); // tan(a/2) * edge_len/2
 	// cout << halfside << " " << r << endl;
-	// core::kinematics::Stub x(h.s2);
-	// x.v = x.v + Vec(0,r,halfside);
+	// Xform x(h.x2);
+	// x.t = x.t + Vec(0,r,halfside);
 	// Mat R = rotation_matrix_degrees(Vec(1,0,1),180.0);
-	// return Xform( R*x.M, R*x.v );
-	Xform x1(h.s1.M,h.s1.v),x2(h.s2.M,h.s2.v);
+	// return Xform( R*x.R, R*x.t );
+	Xform x1(h.x1.R,h.x1.t),x2(h.x2.R,h.x2.t);
 	Vec cen = get_rot_center(x1,x2, h.sym);
 	// cout << cen << endl;
-	return Xform( h.s2.M, -cen );
+	return Xform( h.x2.R, -cen );
 }
 
 void
@@ -255,9 +256,9 @@ make_dock_olig(
 	Hit h
 ){
 	// Pose tmp1(pose);
-	// Real halfside = (h.s1.v-h.s2.v).length()/2.0;
+	// Real halfside = (h.x1.t-h.x2.t).length()/2.0;
 	// Real r = halfside / tan(numeric::constants::d::pi/(Real)h.sym); // tan(a/2) * edge_len/2
-	// xform_pose(tmp1,h.s1);
+	// xform_pose(tmp1,h.x1);
 	// trans_pose(tmp1,Vec(0,0,halfside));
 	// trans_pose(tmp1,Vec(0,r,0));
 	// rot_pose(tmp1,Vec(1,0,1),180.0);
@@ -269,7 +270,7 @@ make_dock_olig(
 	Mat swapXZ = rotation_matrix_degrees(Vec(1,0,1),180.0); // swap axis
 	x = swapXZ * x;
 	olig = pose;
-	xform_pose(olig,Stub(x.R,x.t));
+	xform_pose(olig,x);
 }
 
 
@@ -281,22 +282,22 @@ get_rmsd(
 	Hit const & h//,
 	// Pose pose
 ){
-	Real halfside = (h.s1.v-h.s2.v).length()/2.0;
+	Real halfside = (h.x1.t-h.x2.t).length()/2.0;
 	Real r = halfside / tan(numeric::constants::d::pi/(Real)h.sym); // tan(a/2) * edge_len/2
-	core::kinematics::Stub x(h.s1);
-	x.v = x.v + Vec(0,r,halfside);
+	Xform x(h.x1);
+	x.t = x.t + Vec(0,r,halfside);
 	{
-		Real ang = dihedral_degrees(Vec(0,0,1),Vec(0,0,0),Vec(1,0,0), x.local2global(Vec(0,0,0)) );
+		Real ang = dihedral_degrees(Vec(0,0,1),Vec(0,0,0),Vec(1,0,0), x*Vec(0,0,0) );
 		Mat R = numeric::x_rotation_matrix_degrees( -ang );
-		x.M = R * x.M;
-		x.v = R * x.v;
+		x.R = R * x.R;
+		x.t = R * x.t;
 	}
 
 	Mat Rz = numeric::z_rotation_matrix_degrees(180.0);
 	Real rmsd=0.0, rev_rmsd=0.0;
 	utility::vector1<Vec>::const_iterator i=native_ca.begin(), j=init_ca.begin();
 	for(; i != native_ca.end(); ++i,++j){
-		Vec v = x.local2global(*j);
+		Vec v = x*(*j);
 		rmsd     += i->distance_squared(      v );
 		rev_rmsd += i->distance_squared( Rz * v );
 	}
@@ -316,15 +317,15 @@ get_rmsd_debug(
 	Hit const & h,
 	Pose pose
 ){
-	Real halfside = (h.s1.v-h.s2.v).length()/2.0;
+	Real halfside = (h.x1.t-h.x2.t).length()/2.0;
 	Real r = halfside / tan(numeric::constants::d::pi/(Real)h.sym); // tan(a/2) * edge_len/2
-	core::kinematics::Stub x(h.s1);
-	x.v = x.v + Vec(0,r,halfside);
+	Xform x(h.x1);
+	x.t = x.t + Vec(0,r,halfside);
 	{
-		Real ang = dihedral_degrees(Vec(0,0,1),Vec(0,0,0),Vec(1,0,0), x.local2global(Vec(0,0,0)) );
+		Real ang = dihedral_degrees(Vec(0,0,1),Vec(0,0,0),Vec(1,0,0), x*(Vec(0,0,0)) );
 		Mat R = numeric::x_rotation_matrix_degrees( -ang );
-		x.M = R * x.M;
-		x.v = R * x.v;
+		x.R = R * x.R;
+		x.t = R * x.t;
 	}
 
 	xform_pose(pose,x);
@@ -333,7 +334,7 @@ get_rmsd_debug(
 	Real rmsd=0.0, rev_rmsd=0.0;
 	utility::vector1<Vec>::const_iterator i=native_ca.begin(), j=init_ca.begin();
 	for(; i != native_ca.end(); ++i,++j){
-		Vec v = x.local2global(*j);
+		Vec v = x*(*j);
 		rmsd     += i->distance_squared(      v );
 		rev_rmsd += i->distance_squared( Rz * v );
 	}
@@ -400,13 +401,13 @@ dock(
 	for(int ic = 1; ic <= (int)syms.size(); ic++) Rsym[ic] = rotation_matrix_degrees(Vec(1,0,0),360.0/Real(syms[ic]));
 	vector1<vector1<Hit> > hits(syms.size());
 
-	// utility::vector1<core::kinematics::Stub> stubs;
+	// utility::vector1<Xform> stubs;
 	// utility::vector1<char> ss;
 	// for(Size ir = 1; ir <= init_pose.n_residue(); ++ir){
 	// 	if( !init_pose.residue(ir).is_protein() ) continue;
 	// 	if( !init_pose.residue(ir).has("CB") ) continue;
 	// 	if( init_pose.secstruct(ir) == 'L' ) continue;
-	// 	stubs.push_back( core::kinematics::Stub(init_pose.residue(ir).xyz("CB"),init_pose.residue(ir).xyz("CA"),init_pose.residue(ir).xyz("N")));
+	// 	stubs.push_back( Xform(init_pose.residue(ir).xyz("CB"),init_pose.residue(ir).xyz("CA"),init_pose.residue(ir).xyz("N")));
 	// 	ss.push_back(init_pose.secstruct(ir));
 	// }
 
@@ -421,20 +422,20 @@ dock(
 			Size progress = (iss-1)*asamp.size()+irt;
 			if(progress%outinterval==0) TR << progress << " of " << totsamp << std::endl;
 			Mat R = rotation_matrix_degrees(ssamp[iss],(Real)asamp[irt]);
-			Stub const x1( R, Vec(0,0,0));
+			Xform const x1( R, Vec(0,0,0));
 			// loop over symmitreis to check
 			for(int ic = 1; ic <= (int)syms.size(); ic++){
-				Stub const x2( Rsym[ic]*R, Vec(0,0,0) );
+				Xform const x2( Rsym[ic]*R, Vec(0,0,0) );
 				// Real t = sic.slide_into_contact(x1,x2,Vec(0,0,1));
 				Real rscore = 0.0;
-				Stub tmp(x1);
+				Xform tmp(x1);
 				Real const t = slide_into_contact_and_score(sic,*rigidsfxn,tmp,x2,Vec(0,0,1),rscore);
 				
 				Hit h(iss,irt,rscore,syms[ic]);
-				h.s1 = x1;
-				h.s2 = x2;
-				h.s1.v += t*Vec(0,0,1);
-				// h.xscore = compute_xform_score(xfs,h.s1,h.s2,stubs,ss);
+				h.x1 = x1;
+				h.x2 = x2;
+				h.x1.t += t*Vec(0,0,1);
+				// h.xscore = compute_xform_score(xfs,h.x1,h.x2,stubs,ss);
 				if(bench) h.rmsd = get_rmsd( native_ca, init_ca, h );
 				// Xform x = get_cx_stub(h);
 	
@@ -481,58 +482,88 @@ dock(
 
 	// // test
 	// for(int ic = 1; ic <= (int)syms.size(); ic++) {
-	// 	std::sort(hits[ic].begin(),hits[ic].end(),cmpcbc);
+	// 	std::sort(hits[ic].begin(),hits[ic].end(),cmpscore);
 	// 	for(int i = 1; i <= (int)hits[ic].size(); ++i) {
 	// 		Hit & h(hits[ic][i]);
 
 	// 		// Pose tmp1(init_pose),tmp2(init_pose);
-	// 		// xform_pose(tmp1,h.s1);
-	// 		// xform_pose(tmp2,h.s2);
+	// 		// xform_pose(tmp1,h.x1);
+	// 		// xform_pose(tmp2,h.x2);
 	// 		// tmp1.dump_pdb("test1.pdb");
 	// 		// tmp2.dump_pdb("test2.pdb");
 
-	// 		// Stub const a( h.s1.M * stubs[1].M, h.s1.M * stubs[1].v + h.s1.v );
-	// 		// Stub const b( h.s2.M * stubs[1].M, h.s2.M * stubs[1].v + h.s2.v );			
-	// 		// std::cout << core::kinematics::Stub(tmp1.residue(1).xyz("CB"),tmp1.residue(1).xyz("CA"),tmp1.residue(1).xyz("N")) << std::endl;
+	// 		// Xform const a( h.x1.R * stubs[1].R, h.x1.R * stubs[1].t + h.x1.t );
+	// 		// Xform const b( h.x2.R * stubs[1].R, h.x2.R * stubs[1].t + h.x2.t );			
+	// 		// std::cout << Xform(tmp1.residue(1).xyz("CB"),tmp1.residue(1).xyz("CA"),tmp1.residue(1).xyz("N")) << std::endl;
 	// 		// std::cout << a << std::endl;
-	// 		// std::cout << core::kinematics::Stub(tmp2.residue(1).xyz("CB"),tmp2.residue(1).xyz("CA"),tmp2.residue(1).xyz("N")) << std::endl;
+	// 		// std::cout << Xform(tmp2.residue(1).xyz("CB"),tmp2.residue(1).xyz("CA"),tmp2.residue(1).xyz("N")) << std::endl;
 	// 		// std::cout << b << std::endl;
 
 	// 		// std::cout << compute_xform_score(xfs,tmp1,tmp2) << " == "
-	// 		//           << compute_xform_score(xfs,h.s1,h.s2,stubs,ss) << " " 
+	// 		//           << compute_xform_score(xfs,h.x1,h.x2,stubs,ss) << " " 
 	// 		//           << h.rscore << " " << h.xscore << std::endl;;
 
 	// 		// utility_exit_with_message("test");
 
-	// 		// std::cout <<"SCORES " << h.rscore <<" "<< compute_xform_score(xfs,h.s1,h.s2,stubs,ss) << " " << h.xscore << std::endl;;
+	// 		// std::cout <<"SCORES " << h.rscore <<" "<< compute_xform_score(xfs,h.x1,h.x2,stubs,ss) << " " << h.xscore << std::endl;;
 
 	// 	}
 	// }
 
 
 	// dump top results
+	vector1<Hit> dumpedit;
 	for(int ic = 1; ic <= (int)syms.size(); ic++) {
 		TR << "for sym C" << syms[ic] << " found " << hits[ic].size() << " hits" << endl;
-		std::sort(hits[ic].begin(),hits[ic].end(),cmpcbc);
-		for(int i = 1; i <= (int)min(nstruct,hits[ic].size()); ++i) {
+		std::sort(hits[ic].begin(),hits[ic].end(),cmpscore);
+		Size nout=0,i=0;
+		while( nout < nstruct && ++i <= hits[ic].size() ){
+		// for( i = 1; i <= min(nstruct,); ++i) {
 			Hit & h(hits[ic][i]);
 
+			// for debugging
 			// Pose tmp1(init_pose),tmp2(init_pose);
-			// xform_pose(tmp1,h.s1);
-			// xform_pose(tmp2,h.s2);
+			// xform_pose(tmp1,h.x1);
+			// xform_pose(tmp2,h.x2);
 			// tmp1.dump_pdb("tmp1.pdb");
 			// tmp2.dump_pdb("tmp2.pdb");			
 			// utility_exit_with_message("test");
 
+			// redundency check
+			bool toosimilar = false;
+			for(vector1<Hit>::const_iterator j = dumpedit.begin(); j != dumpedit.end(); ++j){
+				Xform xrel = h.x1 * ~(j->x1);
+				Real ang=0.0;
+				numeric::rotation_axis(xrel.R,ang);
+				ang = numeric::conversions::degrees(ang);
+				Real dis = xrel.t.length();
+				if( ang < option[cxdock::redundancy_angle_cut]() || dis < option[cxdock::redundancy_dist_cut]() ){
+					toosimilar = true;
+					// debug
+					// std::cerr << dis << " " << ang << std::endl;
+					// if( 1 ){
+					// 	Pose tmp1,tmp2;
+					// 	make_dock_olig(init_pose,tmp1, h);
+					// 	make_dock_olig(init_pose,tmp2,*j);
+					// 	tmp1.dump_pdb("tosim1.pdb");
+					// 	tmp2.dump_pdb("tosim2.pdb");					
+					// 	utility_exit_with_message("redundancy_cut test");
+					// }
+				}
+			}	
+			if(toosimilar) continue;
+			dumpedit.push_back(h);
+
 			std::string tag = utility::file_basename(fn);
 			if(tag.substr(tag.size()-3)==".gz" ) tag = tag.substr(0,tag.size()-3);
 			if(tag.substr(tag.size()-4)==".pdb") tag = tag.substr(0,tag.size()-4);			
-			tag += "_C"+ObjexxFCL::string_of(h.sym)+"_cbc"+ObjexxFCL::string_of(i)+".pdb";
+			tag += "_C"+ObjexxFCL::string_of(h.sym)+"_score"+ObjexxFCL::string_of(i)+".pdb";
 			cout << "RESULT " << h.sym << " " << h.iss << " " << ssamp.size()  << " " << h.irt << " " << h.rscore << " " << tag << endl;
 			Pose tmp;
 			make_dock_olig(init_pose,tmp,h);
-			TR << "dumping top rscore to " << outdir+tag << endl;
+			// TR << "dumping top rscore to " << outdir+tag << endl;
 			tmp.dump_pdb(outdir+tag);
+			++nout;
 			// utility_exit_with_message("test");
 		}
 	}
@@ -574,28 +605,28 @@ dock(
 	}
 
 	if(bench){ // benchmark
-		// Real rms_goodcbc=999.0, rms_goodxsc=999.0;
-		std::cout << "RESULT RMSD for best my contact count";
-		std::sort(hits[1].begin(),hits[1].end(),cmpcbc);
+		// Real rms_goodscore=999.0, rms_goodxsc=999.0;
+		std::cout << "RESULT RMSD for best by score";
+		std::sort(hits[1].begin(),hits[1].end(),cmpscore);
 		for(int i = 1; i <= (int)min(20ul,hits[1].size()); ++i) std::cout << " " << hits[1][i].rmsd;
 		std::cout << endl;
 
-		std::cout << "RESULT RMSD for best my xform score  ";
-		std::sort(hits[1].begin(),hits[1].end(),cmpxsc);
-		for(int i = 1; i <= (int)min(20ul,hits[1].size()); ++i) std::cout << " " << hits[1][i].rmsd;
-		std::cout << endl;
+		// std::cout << "RESULT RMSD for best by xform score  ";
+		// std::sort(hits[1].begin(),hits[1].end(),cmpxsc);
+		// for(int i = 1; i <= (int)min(20ul,hits[1].size()); ++i) std::cout << " " << hits[1][i].rmsd;
+		// std::cout << endl;
 
-		Real rms_goodcbc=999.0, rms_goodxsc=999.0;
-		std::sort(hits[1].begin(),hits[1].end(),cmpcbc);
-		for(int i = 1; i <= (int)min(20ul,hits[1].size()); ++i) rms_goodcbc = min(rms_goodcbc,hits[1][i].rmsd);
-		Real best_cbc = hits[1][1].rmsd;
-		std::sort(hits[1].begin(),hits[1].end(),cmpxsc);
-		for(int i = 1; i <= (int)min(20ul,hits[1].size()); ++i) rms_goodxsc = min(rms_goodxsc,hits[1][i].rmsd);
-		Real best_xsc = hits[1][1].rmsd;
-		// rms_goodcbc /= 10.0;
+		Real rms_goodscore=999.0; //, rms_goodxsc=999.0;
+		std::sort(hits[1].begin(),hits[1].end(),cmpscore);
+		for(int i = 1; i <= (int)min(20ul,hits[1].size()); ++i) rms_goodscore = min(rms_goodscore,hits[1][i].rmsd);
+		Real best_score = hits[1][1].rmsd;
+		// std::sort(hits[1].begin(),hits[1].end(),cmpxsc);
+		// for(int i = 1; i <= (int)min(20ul,hits[1].size()); ++i) rms_goodxsc = min(rms_goodxsc,hits[1][i].rmsd);
+		// Real best_xsc = hits[1][1].rmsd;
+		// rms_goodscore /= 10.0;
 		// rms_goodxsc /= 10.0;
-		std::cout << "Best RMSD in top 20 by num. contacts: " << rms_goodcbc << " top " << best_cbc << std::endl;
-		std::cout << "Best RMSD in top 20 by xform score:   " << rms_goodxsc << " top " << best_xsc << std::endl;		
+		std::cout << "Best RMSD in top 20 by num. contacts: " << rms_goodscore << " top " << best_score << std::endl;
+		// std::cout << "Best RMSD in top 20 by xform score:   " << rms_goodxsc << " top " << best_xsc << std::endl;		
 
 	}
 
@@ -653,7 +684,7 @@ read_sphere(
 	ssamp.resize(nss);
 	izstream is;
 	if(!basic::database::open(is,"sampling/spheres/sphere_"+str(nss)+".dat"))
-		utility_exit_with_message("can't open sphere data");
+		utility_exit_with_message("can't open sphere data: sampling/spheres/sphere_"+str(nss)+".dat");
 	for(Size i = 1; i <= nss; ++i) {
 		core::Real x,y,z;
 		is >> x >> y >> z;
@@ -730,7 +761,7 @@ int main(int argc, char *argv[]) {
 		// sym axis now along X, rotated around X so CA com in XZ plane,
 		// this makes computing the RMSD of docked states easier
 		vector1<Vec> native_ca = align_native_state(pnat,nfold); // align CA com
-		pnat.dump_pdb("native_align.pdb");
+		// pnat.dump_pdb("native_align.pdb");
 
 		Vec cen = center_of_geom(pnat,1,pnat.n_residue());
 		trans_pose(pnat,-Vec(0,cen.y(),cen.z()));

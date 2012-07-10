@@ -1135,7 +1135,7 @@ struct TCDock {
 
 			cout << "main loop 1 over icmp2, icmp1, iori every 3 degrees" << endl;
 			double max_score = 0;
-			int max_i1,max_i2,max_io;
+			int max_i1=0,max_i2=0,max_io=0;
 			if(option[tcdock::fast_stage_one]()){
 				for(int icmp1 = 0; icmp1 < cmp1nangle_; icmp1+=3) {
 					if(icmp1%15==0 && icmp1!=0){
@@ -1169,7 +1169,9 @@ struct TCDock {
 							#ifdef USE_OPENMP
 							#pragma omp critical
 							#endif
-							if(score > max_score) max_score = score;
+							{
+								if(score > max_score) max_score = score;
+							}
 						}
 					}
 				}

@@ -7,6 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
+#include <protocols/sic_dock/util.hh>
 #include <protocols/sic_dock/RigidScore.hh>
 #include <protocols/sic_dock/SICFast.hh>
 #include <core/pose/util.hh>
@@ -35,7 +36,7 @@ typedef utility::vector1<Stub> Stubs;
 typedef utility::vector1<RigidScoreCOP> Scores;
 
 
-int neighbor_count(core::pose::Pose const &pose, int ires, double distance_threshold=10.0) {
+int neighbor_count(core::pose::Pose const &pose, int ires, double distance_threshold) {
 	core::conformation::Residue const resi( pose.residue( ires ) );
 	Size resi_neighbors( 0 );
 	for(Size jres = 1; jres <= pose.n_residue(); ++jres) {
@@ -49,10 +50,27 @@ int neighbor_count(core::pose::Pose const &pose, int ires, double distance_thres
 }
 
 Real
-cb_weight(core::pose::Pose const &pose, int ires, double distance_threshold=10.0) {
+cb_weight(core::pose::Pose const &pose, Size ires, Real distance_threshold) {
 	Real wt = numeric::min(1.0,(double)neighbor_count(pose,ires,distance_threshold)/20.0);
 	if(pose.secstruct(ires)=='L') wt = wt / 3.0; //TODO make option somehow
 	return wt;
+}
+
+double
+slide_into_contact_and_score(
+	protocols::sic_dock::SICFast    const & sic,
+	protocols::sic_dock::RigidScore const & sfxn,
+	numeric::xyzTransform<core::Real>         & xa,
+	numeric::xyzTransform<core::Real>   const & xb,
+	numeric::xyzVector<platform::Real>  const & ori,
+	platform::Real                            & score
+){
+	Stub sa(xa.R,xa.t), sb(xb.R,xb.t);
+	double d = sic.slide_into_contact(sa,sb,ori);
+	sa.v += d*ori;
+	xa.t += d*ori;
+	if(score != -12345.0) score = sfxn.score( sa, sb );
+	return d;	
 }
 
 double
@@ -137,7 +155,7 @@ get_CB_Vecs(
 }
 
 void
-xform_pose( core::pose::Pose & pose, core::kinematics::Stub const & s, Size sres=1, Size eres=0 ) {
+xform_pose( core::pose::Pose & pose, core::kinematics::Stub const & s, Size sres, Size eres ) {
   if(eres==0) eres = pose.n_residue();
   for(Size ir = sres; ir <= eres; ++ir) {
     for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
@@ -148,7 +166,7 @@ xform_pose( core::pose::Pose & pose, core::kinematics::Stub const & s, Size sres
 }
 
 void
-xform_pose_rev( core::pose::Pose & pose, core::kinematics::Stub const & s, Size sres=1, Size eres=0 ) {
+xform_pose_rev( core::pose::Pose & pose, core::kinematics::Stub const & s, Size sres, Size eres ) {
   if(eres==0) eres = pose.n_residue();
   for(Size ir = sres; ir <= eres; ++ir) {
     for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
@@ -158,6 +176,23 @@ xform_pose_rev( core::pose::Pose & pose, core::kinematics::Stub const & s, Size 
   }
 }
 
+void xform_pose( core::pose::Pose & pose, numeric::xyzTransform<core::Real> const & s, Size sres, Size eres ) {
+  if(eres==0) eres = pose.n_residue();
+  for(Size ir = sres; ir <= eres; ++ir) {
+    for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
+      core::id::AtomID const aid(core::id::AtomID(ia,ir));
+      pose.set_xyz( aid, s*pose.xyz(aid) );
+    }
+  }
+}
+void xform_pose_rev( core::pose::Pose & pose, numeric::xyzTransform<core::Real> const & s ) {
+  for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+    for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
+      core::id::AtomID const aid(core::id::AtomID(ia,ir));
+      pose.set_xyz( aid, ~s * pose.xyz(aid) );
+    }
+  }
+}
 
 
 

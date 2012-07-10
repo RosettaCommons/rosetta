@@ -6,7 +6,7 @@
 #define NSS 672 // 1812 8192 17282
 #define MIN_HELEX_RES 20
 #define MAX_CYS_RES 3
-#define MAX_NRES 200
+#define MAX_NRES 99999
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -140,8 +140,8 @@ inline Vec get_rot_center(Xform const & x1, Xform const & x2, int sym){
 inline
 Xform
 get_cx_xform(Hit const & h){
-	Real halfside = (h.s1.v-h.s2.v).length()/2.0;
-	Real r = halfside / tan(numeric::constants::d::pi/(Real)h.sym); // tan(a/2) * edge_len/2
+	// Real halfside = (h.s1.v-h.s2.v).length()/2.0;
+	// Real r = halfside / tan(numeric::constants::d::pi/(Real)h.sym); // tan(a/2) * edge_len/2
 	// cout << halfside << " " << r << endl;
 	// core::kinematics::Stub x(h.s2);
 	// x.v = x.v + Vec(0,r,halfside);
@@ -208,8 +208,8 @@ dock(
 		// 	Mat R = rotation_matrix_degrees(ssamp[iss],(Real)asamp[irt]);
 
 
-	int S1 = 2;
-	int S2 = 3;
+	int S1 = 3;
+	int S2 = 2;
 	Vec A1 = Ux;
 	Vec A2 = Uy;	
 	Mat swapXZ = rotation_matrix_degrees(Vec(1,0,1),180.0); // swap axis
@@ -237,14 +237,14 @@ dock(
 
 		Xform x = get_cx_xform(h);
 
-		// Pose tmp0(init_pose),tmp1(init_pose),tmp2(init_pose);
-		// xform_pose(tmp0,Stub(swapXZ*x.R,swapXZ*x.t));
-		// xform_pose(tmp1,h.s1);
-		// xform_pose(tmp2,h.s2);
-		// tmp0.dump_pdb("tmp0.pdb");
-		// tmp1.dump_pdb("tmp1.pdb");
-		// tmp2.dump_pdb("tmp2.pdb");
-		// utility_exit_with_message("test c2");
+		Pose tmp0(init_pose),tmp1(init_pose),tmp2(init_pose);
+		xform_pose(tmp0,Stub(swapXZ*x.R,swapXZ*x.t));
+		xform_pose(tmp1,h.s1);
+		xform_pose(tmp2,h.s2);
+		tmp0.dump_pdb("tmp0.pdb");
+		tmp1.dump_pdb("tmp1.pdb");
+		tmp2.dump_pdb("tmp2.pdb");
+		utility_exit_with_message("test c2");
 		
 		for(Real dx = 0; dx < ANG1; dx += 5.0){
 			Real t = 0.0;

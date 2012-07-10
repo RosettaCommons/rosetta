@@ -19,6 +19,7 @@
 #include <numeric/geometry/hashing/SixDHasher.fwd.hh>
 //#include <numeric/xyzVector.fwd.hh>
 #include <ObjexxFCL/FArray3D.fwd.hh>
+#include <numeric/xyzTransform.hh>
 
 
 namespace protocols {
@@ -31,12 +32,29 @@ neighbor_count(
 	double distance_threshold=10.0
 );
 
+core::Real
+cb_weight(
+	core::pose::Pose const &pose,
+	core::Size ires,
+	core::Real distance_threshold=10.0
+);
+
 double
 slide_into_contact_and_score(
 	protocols::sic_dock::SICFast    const & sic,
 	protocols::sic_dock::RigidScore const & sfxn,
 	core::kinematics::Stub                & xa,
 	core::kinematics::Stub          const & xb,
+	numeric::xyzVector<platform::Real>  const & ori,
+	platform::Real                            & score
+);
+
+double
+slide_into_contact_and_score(
+	protocols::sic_dock::SICFast    const & sic,
+	protocols::sic_dock::RigidScore const & sfxn,
+	numeric::xyzTransform<core::Real>         & xa,
+	numeric::xyzTransform<core::Real>   const & xb,
 	numeric::xyzVector<platform::Real>  const & ori,
 	platform::Real                            & score
 );
@@ -59,6 +77,21 @@ void
 xform_pose_rev(
 	core::pose::Pose & pose,
 	core::kinematics::Stub const & s,
+	platform::Size sres=1,
+	platform::Size eres=0
+);
+
+void
+xform_pose(
+	core::pose::Pose & pose,
+	numeric::xyzTransform<core::Real> const & x,
+	platform::Size sres=1,
+	platform::Size eres=0
+);
+void
+xform_pose_rev(
+	core::pose::Pose & pose,
+	numeric::xyzTransform<core::Real> const & x,
 	platform::Size sres=1,
 	platform::Size eres=0
 );
