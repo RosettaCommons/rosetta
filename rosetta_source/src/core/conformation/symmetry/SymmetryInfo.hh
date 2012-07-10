@@ -219,11 +219,11 @@ public:
 	std::string get_jump_name(Size i) const;
 	Size get_jump_num(std::string i) const;
 	void set_jump_name(Size i, std::string);
-	char get_component_of_dof(Size j) const;
-	char get_component_of_dof(std::string const & dofname);
-	char get_component_of_residue(Size ir);
+	// Undefined, commenting out to fix PyRosetta build  char get_component_of_dof(Size j) const;
+	// Undefined, commenting out to fix PyRosetta build  char get_component_of_dof(std::string const & dofname);
+	// Undefined, commenting out to fix PyRosetta build  char get_component_of_residue(Size ir);
 
-	void 
+	void
 	set_multicomponent_info(
 		utility::vector1<char> const & components,
 		std::map<char,std::pair<Size,Size> > const & component_bounds,
