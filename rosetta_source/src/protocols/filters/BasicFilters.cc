@@ -177,16 +177,33 @@ CompoundFilter::compute( Pose const & pose ) const
 	bool value( true );
 
 	for( CompoundStatement::const_iterator it=compound_statement_.begin(); it!=compound_statement_.end(); ++it ) {
-		if( it - compound_statement_.begin() == 0 ){ // ignore first logical operation
+		if( it - compound_statement_.begin() == 0 ){
+			// first logical op may only be NOT
+			// ANDNOT and ORNOT are also treated as NOT (with a warning)
 			value = it->first->apply( pose );
-			continue;
-		}
-		switch( it->second  ) {
-			case ( AND ) : value = value && it->first->apply( pose ); break;
-			case ( OR  ) : value = value || it->first->apply( pose ); break;
-			case ( XOR ) : value = value ^ it->first->apply( pose ); break;
-			case ( NOR ) : value = value || !it->first->apply( pose ); break;
-			case (NAND ) : value = value && !it->first->apply( pose ); break;
+			if (it->second == NOT) value = !value;
+			if (it->second == ORNOT) {
+				TR << "WARNING: CompoundFilter treating operator ORNOT as NOT" << std::endl;
+				value = !value;
+			}
+			if (it->second == ANDNOT) {
+				TR << "WARNING: CompoundFilter treating operator ANDNOT as NOT" << std::endl;
+				value = !value;
+			}
+		} else {
+			switch( it->second  ) {
+				case ( AND ) : value = value && it->first->apply( pose ); break;
+				case ( OR  ) : value = value || it->first->apply( pose ); break;
+				case ( XOR ) : value = value ^ it->first->apply( pose ); break;
+				case ( ORNOT ) : value = value || !it->first->apply( pose ); break;
+				case ( ANDNOT ) : value = value && !it->first->apply( pose ); break;
+				case ( NOR ) : value = !( value || it->first->apply( pose ) ); break;
+				case (NAND ) : value = !( value && it->first->apply( pose ) ); break;
+				case (NOT ) : 
+					TR << "WARNING: CompoundFilter treating operator NOT as ANDNOT" << std::endl;
+					value = value && !it->first->apply( pose );
+					break;
+			}
 		}
 	}
 	return( value );
@@ -246,7 +263,10 @@ CompoundFilter::parse_my_tag(
 		else if( operation == "OR" ) filter_pair.second = OR;
 		else if( operation == "XOR" ) filter_pair.second = XOR;
 		else if( operation == "NOR" ) filter_pair.second = NOR;
-		else if( operation =="NAND" ) filter_pair.second = NAND;
+		else if( operation == "NAND" ) filter_pair.second = NAND;
+		else if( operation == "ORNOT" ) filter_pair.second = ORNOT;
+		else if( operation == "ANDNOT" ) filter_pair.second = ANDNOT;
+		else if( operation == "NOT" ) filter_pair.second = NOT;
 		else {
 			utility_exit_with_message( "Error: Boolean operation in tag is undefined." );
 		}

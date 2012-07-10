@@ -47,7 +47,10 @@ enum boolean_operations {
 	OR,
 	XOR,
 	NOR,
-	NAND
+	NAND,
+  ORNOT,
+	ANDNOT,
+	NOT
 };
 
 
