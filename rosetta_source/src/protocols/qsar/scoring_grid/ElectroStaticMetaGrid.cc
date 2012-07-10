@@ -84,7 +84,7 @@ utility::json_spirit::Value ElectroStaticMetaGrid::serialize()
 	std::vector<Value> charge_data;
 	for(utility::vector1<core::Real>::iterator it = charges_.begin();it != charges_.end();++it)
 	{
-		charge_data.push_back(Value(charge_data));
+		charge_data.push_back(Value(*it));
 	}
 
 	Pair charge_record("charge",charge_data);
