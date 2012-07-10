@@ -105,13 +105,14 @@ private:
 	//chain ids of the interface lower=chain1 upper=chain2 for most purposes.
 	utility::vector1<core::Size> lower_chains_;
 	utility::vector1<core::Size> upper_chains_;
+	bool jump_active_; //is the jump deffinition being used
+
 	//cutoffs for various restrictions
 	core::Real CB_dist_cutoff_; //distance for big CB cutoffs
 	core::Real nearby_atom_cutoff_; // used for finding atoms that are close
 	core::Real vector_angle_cutoff_; // used for cutoff for res1 CB to res2 CB angle cutoff
 	core::Real vector_dist_cutoff_; // used for distance between CBs for vector
 	//char upper_chain_char_, lower_chain_char;
-	bool jump_active_; //is the jump deffinition being used
 	//int jump_vector_; //what jump is the interface across
 };
 

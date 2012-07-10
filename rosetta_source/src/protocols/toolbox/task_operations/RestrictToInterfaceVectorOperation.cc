@@ -148,7 +148,6 @@ core::pack::task::operation::TaskOperationOP RestrictToInterfaceVectorOperation:
 void
 RestrictToInterfaceVectorOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {
-	//using namespace core::pack::task::operation::util;
 
 	//if the jump constructor then itterate through jumps, make union
 	if(jump_active_){
@@ -242,12 +241,7 @@ void RestrictToInterfaceVectorOperation::lower_chain(utility::vector1<core::Size
 	jump_active_ = false;
 }
 
-// void
-// RestrictToInterfaceVectorOperation::jump_num( int jump_num ){
-// 	add_movable_jump( jump_num );
-// 	jump_active_ = true;
-// }
-//if you want this function use parent class function:
+//if you want to change the jump use parent class function:
 //add_movable_jump( int const additional_jump );
 
 void
