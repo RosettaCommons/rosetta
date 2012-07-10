@@ -255,23 +255,37 @@ StructureScoresFeatures::insert_structure_score_rows(
 			std::string("score_type_id"),
 			std::string("score_value")
 		));
-		std::string statement_string(basic::database::make_compound_statement("structure_scores",column_vect,n_score_types));
-		statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
-
-		core::Size row_index = 0;
-		core::Size column_count = column_vect.size();
-		for(Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id){
-			ScoreType type(static_cast<ScoreType>(score_type_id));
+		
+		core::Size active_score_count = 0;
+		for(core::Size i = 1; i <= n_score_types; ++i)
+		{
+			ScoreType type(static_cast<ScoreType>(i));
 			Real const score_value( energies.weights()[type] * emap[type] );
-			if(!score_value) continue;
-			total_score += score_value;
-			stmt.bind(column_count*row_index+1,batch_id);
-			stmt.bind(column_count*row_index+2,struct_id);
-			stmt.bind(column_count*row_index+3,score_type_id);
-			stmt.bind(column_count*row_index+4,score_value);
-			++row_index;
+			if(score_value)
+			{
+				active_score_count++;
+			}
 		}
-		basic::database::safely_write_to_database(stmt);
+		if(active_score_count)
+		{
+			std::string statement_string(basic::database::make_compound_statement("structure_scores",column_vect,active_score_count));
+			statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+
+			core::Size row_index = 0;
+			core::Size column_count = column_vect.size();
+			for(Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id){
+				ScoreType type(static_cast<ScoreType>(score_type_id));
+				Real const score_value( energies.weights()[type] * emap[type] );
+				if(!score_value) continue;
+				total_score += score_value;
+				stmt.bind(column_count*row_index+1,batch_id);
+				stmt.bind(column_count*row_index+2,struct_id);
+				stmt.bind(column_count*row_index+3,score_type_id);
+				stmt.bind(column_count*row_index+4,score_value);
+				++row_index;
+			}
+			basic::database::safely_write_to_database(stmt);
+		}
 	}
 
 	// add the total_score type
