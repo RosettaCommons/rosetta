@@ -24,6 +24,7 @@
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/cacheable_observers.hh>
@@ -596,7 +597,9 @@ TaskOperationOP ReadResfileAndObeyLengthEvents::clone() const
 }
 
 
-/// @details not quite certain on the ideal approach yet. it's prolly best
+/// @details IMPORTANT: only use this if any length changes are
+/// not reflected in the pose's pdb info, such as seems to be the case after vlb
+/// not quite certain on the ideal approach yet. it's prolly best
 /// to parse the resfile, and then apply the ResfileCommands to the
 /// remapped residues. this necessitates getting the ResfileContents.
 /// the code under 2. here is some duplication of ResfileReader::parse_resfile/parse_resfile_string,
@@ -608,13 +611,11 @@ ReadResfileAndObeyLengthEvents::apply(
 {
 
 	//1. get the length change that the pose was exposed to
-
 	//safeguard
 	if( !pose.observer_cache().has( pose::datacache::CacheableObserverType::LENGTH_EVENT_COLLECTOR ) ){
 		parent::apply( pose, ptask );
 		return;
 	}
-
 	pose::datacache::CacheableObserverCOP len_obs = pose.observer_cache().get_const_ptr( pose::datacache::CacheableObserverType::LENGTH_EVENT_COLLECTOR );
 	pose::datacache::LengthEventCollectorCOP lencollect( utility::pointer::static_pointer_cast< pose::datacache::LengthEventCollector const >( len_obs ) );
 
