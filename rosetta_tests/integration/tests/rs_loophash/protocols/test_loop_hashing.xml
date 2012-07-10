@@ -20,7 +20,7 @@ This protocol finds loop conformations that are compatible with binding the doub
 			<Ddg name=low_binding threshold=-10/>
 			<CompoundStatement name=unfavorable_binding>
 				<AND filter_name=true_filter/>
-				<NAND filter_name=low_binding/>
+				<ANDNOT filter_name=low_binding/>
 			</CompoundStatement>
     </FILTERS>
     <MOVERS>

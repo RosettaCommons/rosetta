@@ -35,7 +35,7 @@ This protocol first places one hot-spot residue by the place-scaffold approach a
 		</CompoundStatement>
 		<CompoundStatement name=not_hbond_ddg_sasa>
 			<AND filter_name=true_filter/>
-			<NAND filter_name=hbond_ddg_sasa/>
+			<ANDNOT filter_name=hbond_ddg_sasa/>
 		</CompoundStatement>
 		<AtomicContact name=at1 residue1=199A distance=6.5/> the following two interact with F216 in protA
 		<AtomicContact name=at2 residue1=17A distance=6.5/>
