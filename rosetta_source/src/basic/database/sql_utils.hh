@@ -104,11 +104,6 @@ void write_schema_to_database(
 	std::string schema,
 	utility::sql_database::sessionOP db_session);
 
-std::string make_compound_statement(
-	std::string const & table_name,
-	std::vector<std::string> const & column_names,
-	platform::Size const & row_count);
-
 
 }
 }

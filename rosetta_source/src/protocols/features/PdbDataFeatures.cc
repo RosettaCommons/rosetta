@@ -28,13 +28,10 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/Constraint.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 
 //Utility Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
-#include <utility/tools/make_vector.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -246,52 +243,20 @@ void PdbDataFeatures::insert_residue_pdb_identification_rows(
 	sessionOP db_session,
 	Pose const & pose)
 {
-	if(basic::options::option[basic::options::OptionKeys::inout::dbms::mode]() == "sqlite3")
+	Size res_num(pose.n_residue());
+	std::string statement_string = "INSERT INTO residue_pdb_identification (struct_id, residue_number, chain_id, insertion_code, pdb_residue_number) VALUES (?,?,?,?,?);";
+	statement stmt(safely_prepare_statement(statement_string,db_session));
+	for(Size index =1 ; index <= res_num; ++index)
 	{
-		Size res_num(pose.n_residue());
-		std::string statement_string = "INSERT INTO residue_pdb_identification (struct_id, residue_number, chain_id, insertion_code, pdb_residue_number) VALUES (?,?,?,?,?);";
-		statement stmt(safely_prepare_statement(statement_string,db_session));
-		for(Size index =1 ; index <= res_num; ++index)
-		{
-			string chain_id(& pose.pdb_info()->chain(index),1);
-			string insertion_code(&pose.pdb_info()->icode(index),1);
-			int pdb_residue_number = pose.pdb_info()->number(index);
+		string chain_id(& pose.pdb_info()->chain(index),1);
+		string insertion_code(&pose.pdb_info()->icode(index),1);
+		int pdb_residue_number = pose.pdb_info()->number(index);
 
-			stmt.bind(1,struct_id);
-			stmt.bind(2,index);
-			stmt.bind(3,chain_id);
-			stmt.bind(4,insertion_code);
-			stmt.bind(5,pdb_residue_number);
-			safely_write_to_database(stmt);
-		}
-	}else
-	{
-		Size res_num(pose.n_residue());
-		std::vector<std::string> column_vect(utility::tools::make_vector(
-			std::string("struct_id"),
-			std::string("residue_number"),
-			std::string("chain_id"),
-			std::string("insertion_code"),
-			std::string("pdb_residue_number")
-		));
-		std::string statement_string(basic::database::make_compound_statement("residue_pdb_identification",column_vect,res_num));
-		statement stmt(safely_prepare_statement(statement_string,db_session));
-		core::Size column_count = column_vect.size();
-		core::Size row_index = 0;
-		for(Size index =1 ; index <= res_num; ++index)
-		{
-			string chain_id(& pose.pdb_info()->chain(index),1);
-			string insertion_code(&pose.pdb_info()->icode(index),1);
-			int pdb_residue_number = pose.pdb_info()->number(index);
-
-			stmt.bind(column_count*row_index+1,struct_id);
-			stmt.bind(column_count*row_index+2,index);
-			stmt.bind(column_count*row_index+3,chain_id);
-			stmt.bind(column_count*row_index+4,insertion_code);
-			stmt.bind(column_count*row_index+5,pdb_residue_number);
-			++row_index;
-
-		}
+		stmt.bind(1,struct_id);
+		stmt.bind(2,index);
+		stmt.bind(3,chain_id);
+		stmt.bind(4,insertion_code);
+		stmt.bind(5,pdb_residue_number);
 		safely_write_to_database(stmt);
 	}
 }
@@ -373,88 +338,35 @@ void PdbDataFeatures::insert_residue_pdb_confidence_rows(
 	PDBInfoCOP pdb_info(pose.pdb_info());
 	if(!pdb_info) return;
 
-	if(basic::options::option[basic::options::OptionKeys::inout::dbms::mode]() == "sqlite3")
-	{
-		std::string statement_string = "INSERT INTO residue_pdb_confidence (struct_id, residue_number, max_temperature, max_bb_temperature, max_sc_temperature, min_occupancy, min_bb_occupancy, min_sc_occupancy) VALUES (?,?,?,?,?,?,?,?);";
-		statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
-		for(Size ri=1; ri <= pose.n_residue(); ++ri) {
-			Residue const & r(pose.residue(ri));
-			Real max_bb_temperature(-1), max_sc_temperature(-1);
-			Real min_bb_occupancy(numeric_limits<Real>::max());
-			Real min_sc_occupancy(numeric_limits<Real>::max());
-			Size const n_bb(r.n_mainchain_atoms());
-			Size const n_sc(r.nheavyatoms() - r.n_mainchain_atoms());
-			for(Size ai=1; ai <= n_bb; ++ai){
-				max_bb_temperature = max(max_bb_temperature, pdb_info->temperature(ri, ai));
-				min_bb_occupancy = min(min_bb_occupancy, pdb_info->occupancy(ri, ai));
-			}
-			for(Size ai=1; ai <= n_sc; ++ai){
-				max_sc_temperature = max(max_sc_temperature, pdb_info->temperature(ri, ai));
-				min_sc_occupancy = min(min_sc_occupancy, pdb_info->occupancy(ri, ai));
-			}
-			Real const max_temperature = max(max_bb_temperature, max_sc_temperature);
-			Real const min_occupancy = min(min_bb_occupancy, min_sc_occupancy);
-
-			stmt.bind(1,struct_id);
-			stmt.bind(2,ri);
-			stmt.bind(3,max_temperature);
-			stmt.bind(4,max_bb_temperature);
-			stmt.bind(5,max_sc_temperature);
-			stmt.bind(6,min_occupancy);
-			stmt.bind(7,min_bb_occupancy);
-			stmt.bind(8,min_sc_occupancy);
-			basic::database::safely_write_to_database(stmt);
+	std::string statement_string = "INSERT INTO residue_pdb_confidence (struct_id, residue_number, max_temperature, max_bb_temperature, max_sc_temperature, min_occupancy, min_bb_occupancy, min_sc_occupancy) VALUES (?,?,?,?,?,?,?,?);";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	for(Size ri=1; ri <= pose.n_residue(); ++ri) {
+		Residue const & r(pose.residue(ri));
+		Real max_bb_temperature(-1), max_sc_temperature(-1);
+		Real min_bb_occupancy(numeric_limits<Real>::max());
+		Real min_sc_occupancy(numeric_limits<Real>::max());
+		Size const n_bb(r.n_mainchain_atoms());
+		Size const n_sc(r.nheavyatoms() - r.n_mainchain_atoms());
+		for(Size ai=1; ai <= n_bb; ++ai){
+			max_bb_temperature = max(max_bb_temperature, pdb_info->temperature(ri, ai));
+			min_bb_occupancy = min(min_bb_occupancy, pdb_info->occupancy(ri, ai));
 		}
-	}else
-	{
-		core::Size row_count = pose.n_residue();
-		std::vector<std::string> column_vect(utility::tools::make_vector(
-			std::string("struct_id"),
-			std::string("residue_number"),
-			std::string("max_temperature"),
-			std::string("max_bb_temperature"),
-			std::string("max_sc_temperature"),
-			std::string("min_occupancy"),
-			std::string("min_bb_occupancy"),
-			std::string("min_sc_occupancy")
-		));
-
-		std::string statement_string(basic::database::make_compound_statement("residue_pdb_confidence",column_vect,row_count));
-		statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
-
-		core::Size column_count = column_vect.size();
-		core::Size row_index = 0;
-		for(Size ri=1; ri <= pose.n_residue(); ++ri) {
-			Residue const & r(pose.residue(ri));
-			Real max_bb_temperature(-1), max_sc_temperature(-1);
-			Real min_bb_occupancy(numeric_limits<Real>::max());
-			Real min_sc_occupancy(numeric_limits<Real>::max());
-			Size const n_bb(r.n_mainchain_atoms());
-			Size const n_sc(r.nheavyatoms() - r.n_mainchain_atoms());
-			for(Size ai=1; ai <= n_bb; ++ai){
-				max_bb_temperature = max(max_bb_temperature, pdb_info->temperature(ri, ai));
-				min_bb_occupancy = min(min_bb_occupancy, pdb_info->occupancy(ri, ai));
-			}
-			for(Size ai=1; ai <= n_sc; ++ai){
-				max_sc_temperature = max(max_sc_temperature, pdb_info->temperature(ri, ai));
-				min_sc_occupancy = min(min_sc_occupancy, pdb_info->occupancy(ri, ai));
-			}
-			Real const max_temperature = max(max_bb_temperature, max_sc_temperature);
-			Real const min_occupancy = min(min_bb_occupancy, min_sc_occupancy);
-
-			stmt.bind(column_count*row_index+1,struct_id);
-			stmt.bind(column_count*row_index+2,ri);
-			stmt.bind(column_count*row_index+3,max_temperature);
-			stmt.bind(column_count*row_index+4,max_bb_temperature);
-			stmt.bind(column_count*row_index+5,max_sc_temperature);
-			stmt.bind(column_count*row_index+6,min_occupancy);
-			stmt.bind(column_count*row_index+7,min_bb_occupancy);
-			stmt.bind(column_count*row_index+8,min_sc_occupancy);
-			++row_index;
-
+		for(Size ai=1; ai <= n_sc; ++ai){
+			max_sc_temperature = max(max_sc_temperature, pdb_info->temperature(ri, ai));
+			min_sc_occupancy = min(min_sc_occupancy, pdb_info->occupancy(ri, ai));
 		}
+		Real const max_temperature = max(max_bb_temperature, max_sc_temperature);
+		Real const min_occupancy = min(min_bb_occupancy, min_sc_occupancy);
+
+		stmt.bind(1,struct_id);
+		stmt.bind(2,ri);
+		stmt.bind(3,max_temperature);
+		stmt.bind(4,max_bb_temperature);
+		stmt.bind(5,max_sc_temperature);
+		stmt.bind(6,min_occupancy);
+		stmt.bind(7,min_bb_occupancy);
+		stmt.bind(8,min_sc_occupancy);
 		basic::database::safely_write_to_database(stmt);
-
 	}
 }
 

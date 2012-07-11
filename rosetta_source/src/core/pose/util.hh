@@ -649,22 +649,6 @@ std::string extract_tag_from_pose( core::pose::Pose &pose );
 ///    If the PDBInfo of either Pose is missing or invalid, do a simple sequence alignment matching.
 core::id::SequenceMapping sequence_map_from_pdbinfo( Pose const & first, Pose const & second );
 
-
-/// @brief count the number of canonical residues in the pose
-core::Size canonical_residue_count(core::pose::Pose const & pose);
-
-/// @brief count the number of non-canonical residues in the pose
-core::Size noncanonical_residue_count(core::pose::Pose const & pose);
-
-/// @brief count the number of canonical amino acid atoms in the pose
-core::Size canonical_atom_count(core::pose::Pose const & pose);
-
-/// @brief count the number of non-canonical amino acids in thepose
-core::Size noncanonical_atom_count(core::pose::Pose const & pose);
-
-/// @brief count the number of non-canonical chi angles in the pose
-core::Size noncanonical_chi_count(core::pose::Pose const & pose);
-
 } // pose
 } // core
 

@@ -24,9 +24,6 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/Constraint.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 
 //External
 #include <boost/uuid/uuid.hpp>

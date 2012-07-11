@@ -668,32 +668,5 @@ set_cache_size(
 	}
 }
 
-std::string make_compound_statement(
-	std::string const & table_name,
-	std::vector<std::string> const & column_names,
-	platform::Size const & row_count)
-{
-	std::string table_definition = table_name + " (" + utility::join(column_names,",") + ")";
-	std::string value_list;
-	platform::Size column_count = column_names.size();
-	for(int i = 0; i < row_count;++i)
-	{
-		std::string row_block= "(?";
-		for(int j = 1; j < column_count; ++j)
-		{
-			row_block += ",?";
-		}
-		row_block += ")";
-
-		value_list += row_block;
-		if(i != row_count-1)
-		{
-			value_list += ", ";
-		}
-	}
-
-	return "INSERT INTO "+table_definition+ " VALUES " + value_list +";";
-}
-
 }
 }

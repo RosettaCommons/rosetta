@@ -23,7 +23,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
 
@@ -32,7 +31,6 @@
 #include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/string_util.hh>
-#include <utility/tools/make_vector.hh>
 
 //Basic Headers
 #include <basic/database/sql_utils.hh>
@@ -44,7 +42,6 @@
 #include <basic/database/schema_generator/Constraint.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -180,179 +177,73 @@ ProteinResidueConformationFeatures::report_features(
 		ideal = false;
 	}
 
-	if(basic::options::option[basic::options::OptionKeys::inout::dbms::mode]() == "sqlite3")
-	{
+	//cppdb::transaction transact_guard(*db_session);
+	std::string conformation_string = "INSERT INTO protein_residue_conformation (struct_id, seqpos, secstruct, phi, psi, omega, chi1, chi2, chi3, chi4) VALUES (?,?,?,?,?,?,?,?,?,?)";
+	std::string atom_string = "INSERT INTO residue_atom_coords (struct_id, seqpos, atomno, x, y, z) VALUES(?,?,?,?,?,?)";
 
-		//cppdb::transaction transact_guard(*db_session);
-		std::string conformation_string = "INSERT INTO protein_residue_conformation (struct_id, seqpos, secstruct, phi, psi, omega, chi1, chi2, chi3, chi4) VALUES (?,?,?,?,?,?,?,?,?,?)";
-		std::string atom_string = "INSERT INTO residue_atom_coords (struct_id, seqpos, atomno, x, y, z) VALUES(?,?,?,?,?,?)";
+	statement conformation_statement(basic::database::safely_prepare_statement(conformation_string,db_session));
+	statement atom_statement(basic::database::safely_prepare_statement(atom_string,db_session));
 
-		statement conformation_statement(basic::database::safely_prepare_statement(conformation_string,db_session));
-		statement atom_statement(basic::database::safely_prepare_statement(atom_string,db_session));
-
-		for (Size i = 1; i <= pose.total_residue(); ++i) {
-			if(!relevant_residues[i]) continue;
-			Residue const & resi = pose.residue(i);
-			if(resi.aa() > num_canonical_aas)
-			{
-				continue;
-			}
-			std::string secstruct = utility::to_string<char>(pose.secstruct(i));
-
-			Real phi = 0.0;
-			Real psi = 0.0;
-			Real omega = 0.0;
-
-			//If you have a non ideal structure, and you store both cartesian coordinates and backbone
-			//chi angles and read them into a pose, most of the backbone oxygens will be placed in correctly
-			//I currently have absolutely no idea why this is, but this fixes it.
-			//It is worth noting that the current implementation of Binary protein silent files does the same thing
-
-			if(ideal)
-			{
-				 phi = resi.mainchain_torsion(1);
-				 psi = resi.mainchain_torsion(2);
-				 omega = resi.mainchain_torsion(3);
-			}
-			Real chi1 = fullatom && resi.nchi() >= 1 ? resi.chi(1) : 0.0;
-			Real chi2 = fullatom && resi.nchi() >= 2 ? resi.chi(2) : 0.0;
-			Real chi3 = fullatom && resi.nchi() >= 3 ? resi.chi(3) : 0.0;
-			Real chi4 = fullatom && resi.nchi() >= 4 ? resi.chi(4) : 0.0;
-
-
-			//std::string struct_id_string(to_string(struct_id));
-			conformation_statement.bind(1,struct_id);
-			conformation_statement.bind(2,i);
-			conformation_statement.bind(3,secstruct);
-			conformation_statement.bind(4,phi);
-			conformation_statement.bind(5,psi);
-			conformation_statement.bind(6,omega);
-			conformation_statement.bind(7,chi1);
-			conformation_statement.bind(8,chi2);
-			conformation_statement.bind(9,chi3);
-			conformation_statement.bind(10,chi4);
-			basic::database::safely_write_to_database(conformation_statement);
-
-			if(!ideal)
-			{
-				for(Size atom = 1; atom <= resi.natoms(); ++atom)
-				{
-					core::Vector coords = resi.xyz(atom);
-
-					atom_statement.bind(1,struct_id);
-					atom_statement.bind(2,i);
-					atom_statement.bind(3,atom);
-					atom_statement.bind(4,coords.x());
-					atom_statement.bind(5,coords.y());
-					atom_statement.bind(6,coords.z());
-						//std::cout <<"*" << i << " " << resi.atom_name(atom) << " " << coords.x() << " " << coords.y() << " "<< coords.z() <<std::endl;
-					basic::database::safely_write_to_database(atom_statement);
-
-				}
-			}
+	for (Size i = 1; i <= pose.total_residue(); ++i) {
+		if(!relevant_residues[i]) continue;
+		Residue const & resi = pose.residue(i);
+		if(resi.aa() > num_canonical_aas)
+		{
+			continue;
 		}
-	}else
-	{
+		std::string secstruct = utility::to_string<char>(pose.secstruct(i));
 
-		core::Size conformation_count(core::pose::canonical_residue_count(pose));
-		core::Size atom_count(core::pose::canonical_atom_count(pose));
+		Real phi = 0.0;
+		Real psi = 0.0;
+		Real omega = 0.0;
 
-		std::vector<std::string> conformation_column_vect(utility::tools::make_vector(
-			std::string("struct_id"),
-			std::string("seqpos"),
-			std::string("secstruct"),
-			std::string("phi"),
-			std::string("psi"),
-			std::string("omega"),
-			std::string("chi1"),
-			std::string("chi2"),
-			std::string("chi3"),
-			std::string("chi4")
-		));
+		//If you have a non ideal structure, and you store both cartesian coordinates and backbone
+		//chi angles and read them into a pose, most of the backbone oxygens will be placed in correctly
+		//I currently have absolutely no idea why this is, but this fixes it.
+		//It is worth noting that the current implementation of Binary protein silent files does the same thing
 
-		std::vector<std::string> atom_column_vect(utility::tools::make_vector(
-			std::string("struct_id"),
-			std::string("seqpos"),
-			std::string("atomno"),
-			std::string("x"),
-			std::string("y"),
-			std::string("z")
-		));
-
-		std::string conformation_string(basic::database::make_compound_statement("protein_residue_conformation",conformation_column_vect,conformation_count));
-		std::string atom_string(basic::database::make_compound_statement("residue_atom_coords",atom_column_vect,atom_count));
-
-		statement conformation_statement(basic::database::safely_prepare_statement(conformation_string,db_session));
-		statement atom_statement(basic::database::safely_prepare_statement(atom_string,db_session));
-
-		core::Size conformation_row_count = 0;
-		core::Size atom_row_count = 0;
-
-		core::Size conformation_column_count = conformation_column_vect.size();
-		core::Size atom_column_count = atom_column_vect.size();
-
-		for (Size i = 1; i <= pose.total_residue(); ++i) {
-			if(!relevant_residues[i]) continue;
-			Residue const & resi = pose.residue(i);
-			if(resi.aa() > num_canonical_aas)
-			{
-				continue;
-			}
-			std::string secstruct = utility::to_string<char>(pose.secstruct(i));
-
-			Real phi = 0.0;
-			Real psi = 0.0;
-			Real omega = 0.0;
-
-			//If you have a non ideal structure, and you store both cartesian coordinates and backbone
-			//chi angles and read them into a pose, most of the backbone oxygens will be placed in correctly
-			//I currently have absolutely no idea why this is, but this fixes it.
-			//It is worth noting that the current implementation of Binary protein silent files does the same thing
-
-			if(ideal)
-			{
-				 phi = resi.mainchain_torsion(1);
-				 psi = resi.mainchain_torsion(2);
-				 omega = resi.mainchain_torsion(3);
-			}
-			Real chi1 = fullatom && resi.nchi() >= 1 ? resi.chi(1) : 0.0;
-			Real chi2 = fullatom && resi.nchi() >= 2 ? resi.chi(2) : 0.0;
-			Real chi3 = fullatom && resi.nchi() >= 3 ? resi.chi(3) : 0.0;
-			Real chi4 = fullatom && resi.nchi() >= 4 ? resi.chi(4) : 0.0;
-
-
-			//std::string struct_id_string(to_string(struct_id));
-			conformation_statement.bind(conformation_column_count*conformation_row_count+1,struct_id);
-			conformation_statement.bind(conformation_column_count*conformation_row_count+2,i);
-			conformation_statement.bind(conformation_column_count*conformation_row_count+3,secstruct);
-			conformation_statement.bind(conformation_column_count*conformation_row_count+4,phi);
-			conformation_statement.bind(conformation_column_count*conformation_row_count+5,psi);
-			conformation_statement.bind(conformation_column_count*conformation_row_count+6,omega);
-			conformation_statement.bind(conformation_column_count*conformation_row_count+7,chi1);
-			conformation_statement.bind(conformation_column_count*conformation_row_count+8,chi2);
-			conformation_statement.bind(conformation_column_count*conformation_row_count+9,chi3);
-			conformation_statement.bind(conformation_column_count*conformation_row_count+10,chi4);
-			++conformation_row_count;
-
-
-			if(!ideal)
-			{
-				for(Size atom = 1; atom <= resi.natoms(); ++atom)
-				{
-					core::Vector coords = resi.xyz(atom);
-
-					atom_statement.bind(atom_column_count*atom_row_count+1,struct_id);
-					atom_statement.bind(atom_column_count*atom_row_count+2,i);
-					atom_statement.bind(atom_column_count*atom_row_count+3,atom);
-					atom_statement.bind(atom_column_count*atom_row_count+4,coords.x());
-					atom_statement.bind(atom_column_count*atom_row_count+5,coords.y());
-					atom_statement.bind(atom_column_count*atom_row_count+6,coords.z());
-					++atom_row_count;
-				}
-			}
+		if(ideal)
+		{
+			 phi = resi.mainchain_torsion(1);
+			 psi = resi.mainchain_torsion(2);
+			 omega = resi.mainchain_torsion(3);
 		}
+		Real chi1 = fullatom && resi.nchi() >= 1 ? resi.chi(1) : 0.0;
+		Real chi2 = fullatom && resi.nchi() >= 2 ? resi.chi(2) : 0.0;
+		Real chi3 = fullatom && resi.nchi() >= 3 ? resi.chi(3) : 0.0;
+		Real chi4 = fullatom && resi.nchi() >= 4 ? resi.chi(4) : 0.0;
+
+
+		//std::string struct_id_string(to_string(struct_id));
+		conformation_statement.bind(1,struct_id);
+		conformation_statement.bind(2,i);
+		conformation_statement.bind(3,secstruct);
+		conformation_statement.bind(4,phi);
+		conformation_statement.bind(5,psi);
+		conformation_statement.bind(6,omega);
+		conformation_statement.bind(7,chi1);
+		conformation_statement.bind(8,chi2);
+		conformation_statement.bind(9,chi3);
+		conformation_statement.bind(10,chi4);
 		basic::database::safely_write_to_database(conformation_statement);
-		basic::database::safely_write_to_database(atom_statement);
+
+		if(!ideal)
+		{
+			for(Size atom = 1; atom <= resi.natoms(); ++atom)
+			{
+				core::Vector coords = resi.xyz(atom);
+
+				atom_statement.bind(1,struct_id);
+				atom_statement.bind(2,i);
+				atom_statement.bind(3,atom);
+				atom_statement.bind(4,coords.x());
+				atom_statement.bind(5,coords.y());
+				atom_statement.bind(6,coords.z());
+					//std::cout <<"*" << i << " " << resi.atom_name(atom) << " " << coords.x() << " " << coords.y() << " "<< coords.z() <<std::endl;
+				basic::database::safely_write_to_database(atom_statement);
+
+			}
+		}
 	}
 	//transact_guard.commit();
 

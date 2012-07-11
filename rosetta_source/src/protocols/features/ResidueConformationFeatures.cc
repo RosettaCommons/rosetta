@@ -23,7 +23,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
 
@@ -31,7 +30,6 @@
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
-#include <utility/tools/make_vector.hh>
 
 //Basic Headers
 #include <basic/database/sql_utils.hh>
@@ -42,7 +40,6 @@
 #include <basic/database/schema_generator/Constraint.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -250,169 +247,65 @@ ResidueConformationFeatures::report_features(
 	{
 		ideal = false;
 	}
-	if(basic::options::option[basic::options::OptionKeys::inout::dbms::mode]() == "sqlite3")
-	{
-		std::string conformation_string = "INSERT INTO nonprotein_residue_conformation (struct_id, seqpos, phi, psi, omega) VALUES (?,?,?,?,?)";
-		std::string angle_string = "INSERT INTO nonprotein_residue_angles (struct_id, seqpos, chinum, chiangle) VALUES (?,?,?,?)";
-		std::string coords_string = "INSERT INTO residue_atom_coords (struct_id, seqpos, atomno, x, y, z) VALUES (?,?,?,?,?,?)";
 
-		statement conformation_stmt(basic::database::safely_prepare_statement(conformation_string,db_session));
-		statement angle_stmt(basic::database::safely_prepare_statement(angle_string,db_session));
-		statement coords_stmt(basic::database::safely_prepare_statement(coords_string,db_session));
+	std::string conformation_string = "INSERT INTO nonprotein_residue_conformation (struct_id, seqpos, phi, psi, omega) VALUES (?,?,?,?,?)";
+	std::string angle_string = "INSERT INTO nonprotein_residue_angles (struct_id, seqpos, chinum, chiangle) VALUES (?,?,?,?)";
+	std::string coords_string = "INSERT INTO residue_atom_coords (struct_id, seqpos, atomno, x, y, z) VALUES (?,?,?,?,?,?)";
+
+	statement conformation_stmt(basic::database::safely_prepare_statement(conformation_string,db_session));
+	statement angle_stmt(basic::database::safely_prepare_statement(angle_string,db_session));
+	statement coords_stmt(basic::database::safely_prepare_statement(coords_string,db_session));
 
 
-		//cppdb::transaction transact_guard(*db_session);
-		for (Size i = 1; i <= pose.total_residue(); ++i) {
-			if(!relevant_residues[i]) continue;
+	//cppdb::transaction transact_guard(*db_session);
+	for (Size i = 1; i <= pose.total_residue(); ++i) {
+		if(!relevant_residues[i]) continue;
 
-			Residue const & resi = pose.residue(i);
-			if(resi.aa() <= num_canonical_aas){
-				continue;
-			}
-			//runtime_assert(resi.aa() <= num_canonical_aas);
-			Real phi  (0.0);
-			Real psi  (0.0);
-			Real omega(0.0);
-			if(!resi.is_ligand()){
-				phi  = resi.mainchain_torsion(1);
-				psi  = resi.mainchain_torsion(2);
-				omega= resi.mainchain_torsion(3);
-			}
-
-			conformation_stmt.bind(1,struct_id);
-			conformation_stmt.bind(2,i);
-			conformation_stmt.bind(3,phi);
-			conformation_stmt.bind(4,psi);
-			conformation_stmt.bind(5,omega);
-			basic::database::safely_write_to_database(conformation_stmt);
-
-			for(core::Size chi_num = 1; chi_num <= resi.nchi();++chi_num){
-				core::Real chi_angle = resi.chi(chi_num);
-
-				angle_stmt.bind(1,struct_id);
-				angle_stmt.bind(2,i);
-				angle_stmt.bind(3,chi_num);
-				angle_stmt.bind(4,chi_angle);
-				basic::database::safely_write_to_database(angle_stmt);
-
-			}
-			if(!ideal || resi.is_ligand()){ // always store coords for a ligand
-				for(Size atom = 1; atom <= resi.natoms(); ++atom){
-					core::Vector coords = resi.xyz(atom);
-
-					coords_stmt.bind(1,struct_id);
-					coords_stmt.bind(2,i);
-					coords_stmt.bind(3,atom);
-					coords_stmt.bind(4,coords.x());
-					coords_stmt.bind(5,coords.y());
-					coords_stmt.bind(6,coords.z());
-					basic::database::safely_write_to_database(coords_stmt);
-
-				}
-			}
+		Residue const & resi = pose.residue(i);
+		if(resi.aa() <= num_canonical_aas){
+			continue;
 		}
-	}else
-	{
-		core::Size conformation_count(core::pose::noncanonical_residue_count(pose));
-		core::Size angle_count(core::pose::noncanonical_chi_count(pose));
-		core::Size atom_count(core::pose::noncanonical_atom_count(pose));
-
-		std::vector<std::string> conformation_column_vect(utility::tools::make_vector(
-			std::string("struct_id"),
-			std::string("seqpos"),
-			std::string("phi"),
-			std::string("psi"),
-			std::string("omega")
-		));
-
-		std::vector<std::string> angle_column_vect(utility::tools::make_vector(
-			std::string("struct_id"),
-			std::string("seqpos"),
-			std::string("chinum"),
-			std::string("chiangle")
-		));
-
-		std::vector<std::string> atom_column_vect(utility::tools::make_vector(
-			std::string("struct_id"),
-			std::string("seqpos"),
-			std::string("atomno"),
-			std::string("x"),
-			std::string("y"),
-			std::string("z")
-		));
-
-		std::string conformation_string(basic::database::make_compound_statement("nonprotein_residue_conformation",conformation_column_vect,conformation_count));
-		std::string angle_string(basic::database::make_compound_statement("nonprotein_residue_angles",angle_column_vect,angle_count));
-		std::string coords_string(basic::database::make_compound_statement("residue_atom_coords",atom_column_vect,atom_count));
-
-		statement conformation_stmt(basic::database::safely_prepare_statement(conformation_string,db_session));
-		statement angle_stmt(basic::database::safely_prepare_statement(angle_string,db_session));
-		statement coords_stmt(basic::database::safely_prepare_statement(coords_string,db_session));
-
-		core::Size conformation_row_count = 0;
-		core::Size angle_row_count = 0;
-		core::Size atom_row_count = 0;
-
-		core::Size conformation_column_count = conformation_column_vect.size();
-		core::Size angle_column_count = angle_column_vect.size();
-		core::Size atom_column_count = atom_column_vect.size();
-
-		//cppdb::transaction transact_guard(*db_session);
-		for (Size i = 1; i <= pose.total_residue(); ++i) {
-			if(!relevant_residues[i]) continue;
-
-			Residue const & resi = pose.residue(i);
-			if(resi.aa() <= num_canonical_aas){
-				continue;
-			}
-			//runtime_assert(resi.aa() <= num_canonical_aas);
-			Real phi  (0.0);
-			Real psi  (0.0);
-			Real omega(0.0);
-			if(!resi.is_ligand()){
-				phi  = resi.mainchain_torsion(1);
-				psi  = resi.mainchain_torsion(2);
-				omega= resi.mainchain_torsion(3);
-			}
-
-			conformation_stmt.bind(conformation_row_count*conformation_column_count+1,struct_id);
-			conformation_stmt.bind(conformation_row_count*conformation_column_count+2,i);
-			conformation_stmt.bind(conformation_row_count*conformation_column_count+3,phi);
-			conformation_stmt.bind(conformation_row_count*conformation_column_count+4,psi);
-			conformation_stmt.bind(conformation_row_count*conformation_column_count+5,omega);
-			++conformation_row_count;
-
-
-			for(core::Size chi_num = 1; chi_num <= resi.nchi();++chi_num){
-				core::Real chi_angle = resi.chi(chi_num);
-
-				angle_stmt.bind(angle_row_count*angle_column_count+1,struct_id);
-				angle_stmt.bind(angle_row_count*angle_column_count+2,i);
-				angle_stmt.bind(angle_row_count*angle_column_count+3,chi_num);
-				angle_stmt.bind(angle_row_count*angle_column_count+4,chi_angle);
-				++angle_row_count;
-
-
-			}
-			if(!ideal || resi.is_ligand()){ // always store coords for a ligand
-				for(Size atom = 1; atom <= resi.natoms(); ++atom){
-					core::Vector coords = resi.xyz(atom);
-
-					coords_stmt.bind(atom_row_count*atom_column_count+1,struct_id);
-					coords_stmt.bind(atom_row_count*atom_column_count+2,i);
-					coords_stmt.bind(atom_row_count*atom_column_count+3,atom);
-					coords_stmt.bind(atom_row_count*atom_column_count+4,coords.x());
-					coords_stmt.bind(atom_row_count*atom_column_count+5,coords.y());
-					coords_stmt.bind(atom_row_count*atom_column_count+6,coords.z());
-					++atom_row_count;
-
-				}
-			}
+		//runtime_assert(resi.aa() <= num_canonical_aas);
+		Real phi  (0.0);
+		Real psi  (0.0);
+		Real omega(0.0);
+		if(!resi.is_ligand()){
+			phi  = resi.mainchain_torsion(1);
+			psi  = resi.mainchain_torsion(2);
+			omega= resi.mainchain_torsion(3);
 		}
+
+		conformation_stmt.bind(1,struct_id);
+		conformation_stmt.bind(2,i);
+		conformation_stmt.bind(3,phi);
+		conformation_stmt.bind(4,psi);
+		conformation_stmt.bind(5,omega);
 		basic::database::safely_write_to_database(conformation_stmt);
-		basic::database::safely_write_to_database(angle_stmt);
-		basic::database::safely_write_to_database(coords_stmt);
 
+		for(core::Size chi_num = 1; chi_num <= resi.nchi();++chi_num){
+			core::Real chi_angle = resi.chi(chi_num);
+
+			angle_stmt.bind(1,struct_id);
+			angle_stmt.bind(2,i);
+			angle_stmt.bind(3,chi_num);
+			angle_stmt.bind(4,chi_angle);
+			basic::database::safely_write_to_database(angle_stmt);
+
+		}
+		if(!ideal || resi.is_ligand()){ // always store coords for a ligand
+			for(Size atom = 1; atom <= resi.natoms(); ++atom){
+				core::Vector coords = resi.xyz(atom);
+
+				coords_stmt.bind(1,struct_id);
+				coords_stmt.bind(2,i);
+				coords_stmt.bind(3,atom);
+				coords_stmt.bind(4,coords.x());
+				coords_stmt.bind(5,coords.y());
+				coords_stmt.bind(6,coords.z());
+				basic::database::safely_write_to_database(coords_stmt);
+
+			}
+		}
 	}
 	//transact_guard.commit();
 	return 0;
