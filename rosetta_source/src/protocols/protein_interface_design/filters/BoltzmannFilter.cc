@@ -137,7 +137,7 @@ BoltzmannFilter::compute( core::pose::Pose const & pose ) const{
 	using protocols::filters::FilterCOP;
 
 	core::Real positive_sum( 0.0 ), negative_sum( 0.0 );
-	core::Size negative_counter( 0.0 );
+	core::Size negative_counter( 0 );
 	std::string s = "BOLTZ: ";
 	for( core::Size index = 1; index <= get_positive_filters().size(); ++index ){
 		core::Real const filter_val( get_positive_filters()[ index ]->report_sm( pose ));
@@ -159,17 +159,18 @@ BoltzmannFilter::compute( core::pose::Pose const & pose ) const{
 	}
 	TR << s << -positive_sum/(positive_sum+negative_sum) <<std::endl;
 			if ( norm_neg() ){
-				TR<<"Counter: "<< negative_counter <<std::endl;
+				TR<<"Negative counter: "<< negative_counter <<std::endl;
+				// if there are no negative states then set a value that will definitely return fail in compute
 				if( !negative_counter ){
-					TR<<"Normalized fitness: 0 "<<std::endl;
-					return 0;
+					TR<<"Normalized fitness: 9999 "<<std::endl;
+					return 9999;
 				}
-				TR<<"Normalized fitness: " << ((-positive_sum / ( positive_sum + negative_sum )) / ( get_positive_filters().size()/(get_positive_filters().size()+negative_counter)))<<std::endl;
+				TR<<"Normalized fitness: " << (( -(core::Real)positive_sum / ( positive_sum + negative_sum )) / ((core::Real) get_positive_filters().size()/(get_positive_filters().size()+negative_counter)))<<std::endl;
 				TR<<"Number of positive states: " << get_positive_filters().size() << std::endl;
-				return ( (-positive_sum / ( positive_sum + negative_sum )) / ( get_positive_filters().size()/(get_positive_filters().size()+negative_counter)) );
+				return ( ( -(core::Real)positive_sum / ( positive_sum + negative_sum )) / ((core::Real) get_positive_filters().size()/(get_positive_filters().size()+negative_counter) ) );
 			}
-	TR<<"Fitness: " << ( -positive_sum / ( positive_sum + negative_sum )) << std::endl;
-	return( -positive_sum / ( positive_sum + negative_sum ));
+	TR<<"Fitness: " << ( -(core::Real)positive_sum / ( positive_sum + negative_sum )) << std::endl;
+	return( -(core::Real)positive_sum / ( positive_sum + negative_sum ));
 }
 
 core::Real
