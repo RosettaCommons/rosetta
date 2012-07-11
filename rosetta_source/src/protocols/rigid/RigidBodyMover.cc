@@ -565,6 +565,12 @@ RigidBodySpinMover::get_name() const {
 	return "RigidBodySpinMover";
 }
 
+std::ostream &operator<< ( std::ostream &os, RigidBodySpinMover const &spinmover )
+{
+	moves::operator<<(os, spinmover);
+	os << "Jump num: " << spinmover.rb_jump() << std::endl;
+	return os;
+}
 
 RigidBodyTransMover::RigidBodyTransMover() : RigidBodyMover()
 {

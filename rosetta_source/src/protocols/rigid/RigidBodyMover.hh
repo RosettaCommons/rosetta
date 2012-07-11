@@ -193,6 +193,7 @@ public:
 
 	/// @brief Manual override of rotation center.
 	void rot_center( core::Vector const /*rot_center_in*/ ); // recreate unless freeze is specified.
+
 	friend std::ostream &operator<< ( std::ostream &os, RigidBodyPerturbMover const &mover );
 
 protected:
@@ -321,6 +322,7 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
+	friend std::ostream &operator<< ( std::ostream &os, RigidBodySpinMover const &spinmover );
 
 private:
 	core::Vector spin_axis_;
