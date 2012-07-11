@@ -27,7 +27,15 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
-#include <protocols/moves/RepeatMover.hh>
+#include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/scoring/ScoreType.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/pack/task/PackerTask.hh>
 
 int main(int argc, char *argv[])
 {
@@ -65,12 +73,43 @@ int main(int argc, char *argv[])
 	protocols::simple_moves::SwitchResidueTypeSetMover switch2 = protocols::simple_moves::SwitchResidueTypeSetMover("centroid");
 	std::cout << switch2 << std::endl;*/
 
-	protocols::moves::RepeatMover repeatmover;
-	std::cout << repeatmover << std::endl;
+/*	// create a custom scorefxn
+	core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction;
+	core::Real num = 1.0;
+	scorefxn->set_weight("fa_rep", num);
+	scorefxn->set_weight("fa_atr", num);
 
-	protocols::simple_moves::SmallMoverOP smallmover = new protocols::simple_moves::SmallMover;
-	int num = 2;
-	protocols::moves::RepeatMover repeatmover2 = protocols::moves::RepeatMover(smallmover, num);
-	std::cout << repeatmover2 << std::endl;
+	// create an empty loops object
+	protocols::loops::LoopsOP emptyloops = new protocols::loops::Loops;
 
+	// create and print a loopmover
+	protocols::loops::loop_mover::refine::LoopMover_Refine_CCD loopmover = protocols::loops::loop_mover::refine::LoopMover_Refine_CCD(emptyloops);
+	std::cout << loopmover << std::endl;
+
+	// now set the scorefxn to our custom scorefxn
+	protocols::loops::loop_mover::refine::LoopMover_Refine_CCD loopmover2 = protocols::loops::loop_mover::refine::LoopMover_Refine_CCD(emptyloops);
+	loopmover2.set_scorefxn(scorefxn);
+	std::cout << loopmover2 << std::endl;*/
+
+/*	For packRotamersMover// print empty packmover
+	protocols::simple_moves::PackRotamersMover packmover;
+	std::cout << packmover << std::endl;
+
+	// create a custom scorefxn
+	core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction;
+	scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
+
+	// create a standard packer task
+	core::pack::task::PackerTaskOP fine_task ( core::pack::task::TaskFactory::create_packer_task( test_pose ));
+	fine_task->initialize_from_command_line().restrict_to_repacking().or_include_current( true );
+
+	// define nloop
+	core::Size nloop = 1;
+
+	// print packmover
+	protocols::simple_moves::PackRotamersMover packmover2 = protocols::simple_moves::PackRotamersMover(scorefxn, fine_task, nloop);
+	std::cout << packmover2 << std::endl;*/
+
+	protocols::rigid::RigidBodyPerturbMover mover;
+	std::cout << mover << std::endl;
 }

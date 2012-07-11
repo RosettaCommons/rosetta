@@ -188,9 +188,12 @@ public:
 	void rot_magnitude( core::Real const magnitude ) { rot_mag_ = magnitude; }
 
 	void trans_magnitude( core::Real const magnitude ) { trans_mag_ = magnitude; }
+	core::Size get_trans_mag() const;
+	core::Size get_rot_mag() const;
 
 	/// @brief Manual override of rotation center.
 	void rot_center( core::Vector const /*rot_center_in*/ ); // recreate unless freeze is specified.
+	friend std::ostream &operator<< ( std::ostream &os, RigidBodyPerturbMover const &mover );
 
 protected:
 	/// perturbation magnitudes (rotational and translational)

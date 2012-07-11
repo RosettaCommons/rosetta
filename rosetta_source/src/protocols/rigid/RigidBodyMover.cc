@@ -265,9 +265,27 @@ RigidBodyPerturbMover::get_name() const {
 	return "RigidBodyPerturbMover";
 }
 
+core::Size
+RigidBodyPerturbMover::get_trans_mag() const {
+	return trans_mag_;
+}
+
+core::Size
+RigidBodyPerturbMover::get_rot_mag() const {
+	return rot_mag_;
+}
+
 void RigidBodyPerturbMover::rot_center( core::Vector const /*rot_center_in*/ )
 {
 	utility_exit_with_message("Rotation point is automatically determined ONLY");
+}
+
+std::ostream &operator<< ( std::ostream &os, RigidBodyPerturbMover const &mover )
+{
+	moves::operator<<(os, mover);
+	os << "Magnitude of translational movement: " << mover.get_trans_mag() << std::endl << "Magnitude of rotational movement: " << mover.get_rot_mag() << std::endl;
+	os << "Jump num: " << mover.rb_jump() << std::endl;
+	return os;
 }
 
 void
