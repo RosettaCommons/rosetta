@@ -608,7 +608,7 @@ dock(
 		// Real rms_goodscore=999.0, rms_goodxsc=999.0;
 		std::cout << "RESULT RMSD for best by score";
 		std::sort(hits[1].begin(),hits[1].end(),cmpscore);
-		for(int i = 1; i <= (int)min(20ul,hits[1].size()); ++i) std::cout << " " << hits[1][i].rmsd;
+		for(int i = 1; i <= (int)min(20, int(hits[1].size()) ); ++i) std::cout << " " << hits[1][i].rmsd;
 		std::cout << endl;
 
 		// std::cout << "RESULT RMSD for best by xform score  ";
@@ -618,7 +618,7 @@ dock(
 
 		Real rms_goodscore=999.0; //, rms_goodxsc=999.0;
 		std::sort(hits[1].begin(),hits[1].end(),cmpscore);
-		for(int i = 1; i <= (int)min(20ul,hits[1].size()); ++i) rms_goodscore = min(rms_goodscore,hits[1][i].rmsd);
+		for(int i = 1; i <= (int)min(20, int(hits[1].size()) ); ++i) rms_goodscore = min(rms_goodscore,hits[1][i].rmsd);
 		Real best_score = hits[1][1].rmsd;
 		// std::sort(hits[1].begin(),hits[1].end(),cmpxsc);
 		// for(int i = 1; i <= (int)min(20ul,hits[1].size()); ++i) rms_goodxsc = min(rms_goodxsc,hits[1][i].rmsd);
