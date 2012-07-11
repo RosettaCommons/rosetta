@@ -110,7 +110,6 @@ int main(int argc, char *argv[])
 	protocols::simple_moves::PackRotamersMover packmover2 = protocols::simple_moves::PackRotamersMover(scorefxn, fine_task, nloop);
 	std::cout << packmover2 << std::endl;*/
 
-	int jump_num = 1;
-	protocols::rigid::RigidBodySpinMover mover = protocols::rigid::RigidBodySpinMover(jump_num);
+	protocols::rigid::RigidBodyRandomizeMover mover;
 	std::cout << mover << std::endl;
 }

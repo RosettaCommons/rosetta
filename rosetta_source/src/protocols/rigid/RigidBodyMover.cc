@@ -491,6 +491,23 @@ RigidBodyRandomizeMover::get_name() const {
 	return "RigidBodyRandomizeMover";
 }
 
+core::Size
+RigidBodyRandomizeMover::get_phi() const {
+	return phi_angle_;
+}
+
+core::Size
+RigidBodyRandomizeMover::get_psi() const {
+	return psi_angle_;
+}
+
+std::ostream &operator<< ( std::ostream &os, RigidBodyRandomizeMover const &randommover )
+{
+	moves::operator<<(os, randommover);
+	os << "Jump num: " << randommover.rb_jump() << ", Phi angle: " << randommover.get_phi() << ", Psi angle: " << randommover.get_psi() << std::endl;
+	return os;
+}
+
 RigidBodySpinMover::RigidBodySpinMover() : parent(), spin_axis_( 0.0 )
 {
 	moves::Mover::type( "RigidBodySpin" );

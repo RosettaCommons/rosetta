@@ -291,6 +291,9 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
+	core::Size get_phi() const;
+	core::Size get_psi() const;
+	friend std::ostream &operator<< ( std::ostream &os, RigidBodyRandomizeMover const &randommover );
 
 private:
 	Partner partner_; // which partner gets randomized
