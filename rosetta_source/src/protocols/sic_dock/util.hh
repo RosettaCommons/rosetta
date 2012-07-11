@@ -88,13 +88,14 @@ xform_pose(
 	platform::Size sres=1,
 	platform::Size eres=0
 );
-void
+
+/* Undefinded, commenting out to fix PyRosetta build  void
 xform_pose_rev(
 	core::pose::Pose & pose,
 	numeric::xyzTransform<core::Real> const & x,
 	platform::Size sres=1,
 	platform::Size eres=0
-);
+); */
 
 utility::vector1<platform::Size> range(platform::Size beg, platform::Size end);
 Vec3
