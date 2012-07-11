@@ -22,6 +22,7 @@
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoringManager.hh>
 
 #include <core/scoring/rna/RNA_Util.hh>
 
@@ -64,6 +65,7 @@
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // C++ headers
 //#include <cstdlib>
@@ -81,9 +83,12 @@ using utility::vector1;
 typedef  numeric::xyzMatrix< Real > Matrix;
 
 OPT_KEY( Boolean, sample_water )
+OPT_KEY( Boolean, sample_another_adenosine )
 OPT_KEY( Real, alpha_increment )
 OPT_KEY( Real, cosbeta_increment )
 OPT_KEY( Real, gamma_increment )
+OPT_KEY( Real, xyz_increment )
+OPT_KEY( Real, xyz_size )
 
 /////////////////////////////////////////////////////////////////////////////
 //FCC: Adding Virtual res
@@ -226,9 +231,37 @@ do_scoring( pose::Pose & pose,
 
 }
 
+//////////////////////////////////////////////////////////
+void
+do_xy_scan( pose::Pose & pose,
+						scoring::ScoreFunctionOP scorefxn,
+						std::string const outfile,
+						Real const z,
+						Size const probe_jump_num,
+						Real const box_bins,
+						Real const translation_increment,
+						bool const sample_water_ ){
+
+	kinematics::Jump jump = pose.jump( probe_jump_num );
+
+	utility::io::ozstream out;
+	out.open( outfile );
+	for (int i = -box_bins; i <= box_bins; ++i) {
+		for (int j = -box_bins; j <= box_bins; ++j) {
+			Real const x = j * translation_increment;
+			Real const y = i * translation_increment;
+			jump.set_translation( Vector( x, y, z ) ) ;
+			pose.set_jump( probe_jump_num, jump );
+			out << do_scoring( pose, scorefxn, sample_water_, probe_jump_num ) << ' ' ;
+		}
+		out << std::endl;
+	}
+	out.close();
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 void
-methane_pair_score_test()
+adenine_probe_score_test()
 {
 	using namespace core::chemical;
 	using namespace core::conformation;
@@ -244,6 +277,9 @@ methane_pair_score_test()
 	std::string infile  = option[ in ::file::s ][1];
 	import_pose::pose_from_pdb( pose, *rsd_set, infile );
 
+	//	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", 1 );
+	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_BACKBONE_NUCLEOBASE_ALONE", 1 );
+
 	rotate_into_nucleobase_frame( pose );
 	pose.dump_pdb( "a_rotated.pdb" );
 
@@ -253,10 +289,13 @@ methane_pair_score_test()
 	core::conformation::ResidueOP new_res;
 
 	bool const sample_water_ = option[ sample_water ]();
+	bool const sample_another_adenosine_ = option[ sample_another_adenosine ]();
 
 	if ( sample_water_ ) {
 		core::chemical::ResidueTypeCAPs const & rsd_type_list ( residue_set.name3_map ( "TP3" ) );
 		new_res = ( core::conformation::ResidueFactory::create_residue ( *rsd_type_list[1] ) );
+	} else if ( sample_another_adenosine_ ){
+		new_res = pose.residue(1).clone();
 	} else {
 		core::chemical::ResidueTypeCAPs const & rsd_type_list ( residue_set.name3_map ( "CCC" ) );
 		new_res = ( core::conformation::ResidueFactory::create_residue ( *rsd_type_list[1] ) );
@@ -266,7 +305,6 @@ methane_pair_score_test()
 	pose.dump_pdb( "START.pdb" );
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 800, 800 );
 
-	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", 1 );
 
 	//////////////////////////////////////////////////
 	// Set up fold tree -- "chain break" between two ligands, right?
@@ -301,8 +339,13 @@ methane_pair_score_test()
 
 	//////////////////////////////////////////////////////////////////
 	// OK, how about a score function?
-	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "rna_hires" );
-	//scorefxn->set_weight( hack_elec, 1.0 );
+	ScoreFunctionOP scorefxn;
+	if ( option[ score::weights ].user() ){
+		scorefxn = scoring::getScoreFunction();
+	} else {
+		scorefxn = ScoreFunctionFactory::create_score_function( "rna_hires" );
+		scorefxn->set_weight( rna_sugar_close, 0.0 ); //still computed with virtual sugar? weird.
+	}
 
 	(*scorefxn)( pose );
 	scorefxn->show( std::cout, pose );
@@ -310,84 +353,32 @@ methane_pair_score_test()
 	//////////////////////////////////////////////////////////////////
 	// compute scores on a plane for now.
 
-	Real const box_size = 15.0;
-	Real const translation_increment( 1.0 );
+	Real const box_size = option[ xyz_size ]();
+	Real const translation_increment = option[ xyz_increment ]();
 	int box_bins = int( box_size/translation_increment );
 
 	using namespace core::io::silent;
 	SilentFileData silent_file_data;
 	utility::io::ozstream out;
-	out.open( "score_para_0.table" );
-	for (int i = -box_bins; i <= box_bins; ++i) {
-		for (int j = -box_bins; j <= box_bins; ++j) {
-			Real const x = j * translation_increment;
-			Real const y = i * translation_increment;
-			Real const z = 0.0;
-			jump.set_translation( Vector( x, y, z ) ) ;
-			pose.set_jump( probe_jump_num, jump );
-			out << do_scoring( pose, scorefxn, sample_water_, probe_jump_num ) << ' ' ;
-		}
-		out << std::endl;
-	}
-	out.close();
-	out.open( "score_para_1.table" );
-	for (int i = -box_bins; i <= box_bins; ++i) {
-		for (int j = -box_bins; j <= box_bins; ++j) {
-			Real const x = j * translation_increment;
-			Real const y = i * translation_increment;
-			Real const z = 1.0;
-			jump.set_translation( Vector( x, y, z ) ) ;
-			pose.set_jump( probe_jump_num, jump );
-			out << do_scoring( pose, scorefxn, sample_water_, probe_jump_num ) << ' ' ;
-		}
-		out << std::endl;
-	}
-	out.close();
 
-	out.open( "score_para_3.table" );
-	for (int i = -box_bins; i <= box_bins; ++i) {
-		for (int j = -box_bins; j <= box_bins; ++j) {
-			Real const x = j * translation_increment;
-			Real const y = i * translation_increment;
-			Real const z = 3.0;
-			jump.set_translation( Vector( x, y, z ) ) ;
-			pose.set_jump( probe_jump_num, jump );
-			out << do_scoring( pose, scorefxn, sample_water_, probe_jump_num ) << ' ' ;
-		}
-		out << std::endl;
-	}
-	out.close();
+	std::cout << "Doing XY scan... Z =  0.0" << std::endl;
+	do_xy_scan( pose, scorefxn, "score_xy_0.table", 0.0, probe_jump_num, box_bins, translation_increment, sample_water_ );
 
-	out.open( "score_para_-1.table" );
-	for (int i = -box_bins; i <= box_bins; ++i) {
-		for (int j = -box_bins; j <= box_bins; ++j) {
-			Real const x = i * translation_increment;
-			Real const y = j * translation_increment;
-			Real const z = -1.0;
-			jump.set_translation( Vector( x, y, z ) ) ;
-			pose.set_jump( probe_jump_num, jump );
-			out << do_scoring( pose, scorefxn, sample_water_, probe_jump_num ) << ' ' ;
+	std::cout << "Doing XY scan... Z = +1.0" << std::endl;
+	do_xy_scan( pose, scorefxn, "score_xy_1.table", 1.0, probe_jump_num, box_bins, translation_increment, sample_water_ );
 
-		}
-		out << std::endl;
-	}
-	out.close();
+	std::cout << "Doing XY scan... Z = +3.0" << std::endl;
+	do_xy_scan( pose, scorefxn, "score_xy_3.table", 3.0, probe_jump_num, box_bins, translation_increment, sample_water_ );
+
+	// Following are exactly the same as +1.0 and +3.0 when modeling nucleobase.
+	//std::cout << "Doing XY scan... Z = -1.0" << std::endl;
+	//	do_xy_scan( pose, scorefxn, "score_para_0_table", 1.0, probe_jump_num, box_bins, translation_increment, sample_water_ );
+
+	//	std::cout << "Doing XY scan... Z = -3.0" << std::endl;
+	//	do_xy_scan( pose, scorefxn, "score_para_0_table", 3.0, probe_jump_num, box_bins, translation_increment, sample_water_ );
 
 
-	out.open( "score_para_-3.table" );
-	for (int i = -box_bins; i <= box_bins; ++i) {
-		for (int j = -box_bins; j <= box_bins; ++j) {
-			Real const x = j * translation_increment;
-			Real const y = i * translation_increment;
-			Real const z = -3.0;
-			jump.set_translation( Vector( x, y, z ) ) ;
-			pose.set_jump( probe_jump_num, jump );
-			out << do_scoring( pose, scorefxn, sample_water_, probe_jump_num ) << ' ' ;
-		}
-		out << std::endl;
-	}
-	out.close();
-
+	std::cout << "Doing XZ scan..." << std::endl;
 	out.open( "score_xz.table" );
 	for (int i = -box_bins; i <= box_bins; ++i) {
 		for (int j = -box_bins; j <= box_bins; ++j) {
@@ -402,6 +393,7 @@ methane_pair_score_test()
 	}
 	out.close();
 
+	std::cout << "Doing YZ scan..." << std::endl;
 	out.open( "score_yz.table" );
 	for (int i = -box_bins; i <= box_bins; ++i) {
 		for (int j = -box_bins; j <= box_bins; ++j) {
@@ -418,12 +410,15 @@ methane_pair_score_test()
 
 }
 
+
+
+
 ///////////////////////////////////////////////////////////////
 void*
 my_main( void* )
 {
 
-	methane_pair_score_test();
+	adenine_probe_score_test();
 
 	protocols::viewer::clear_conformation_viewers();
 
@@ -438,9 +433,12 @@ main( int argc, char * argv [] )
 {
 
 	NEW_OPT( sample_water, "use a water probe instead of carbon", false );
+	NEW_OPT( sample_another_adenosine, "sample another adenosine as the 'probe'", false );
 	NEW_OPT( alpha_increment, "input parameter", 40.0 );
 	NEW_OPT( cosbeta_increment, "input parameter", 0.25 );
 	NEW_OPT( gamma_increment, "input parameter", 40.0 );
+	NEW_OPT( xyz_increment, "input parameter", 1.0 );
+	NEW_OPT( xyz_size, "input parameter", 10.0 );
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup
