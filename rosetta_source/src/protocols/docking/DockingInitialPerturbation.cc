@@ -336,6 +336,13 @@ DockingSlideIntoContact::get_name() const {
 	return "DockingSlideIntoContact";
 }
 
+std::ostream &operator<< ( std::ostream &os, DockingSlideIntoContact const &mover )
+{
+	moves::operator<<(os, mover);
+	os << "Jump num: " << mover.get_jump_num() << std::endl;
+	return os;
+}
+
 ////////////////////////////////////////// FaDockingSlideIntoContact ////////////////////////////////
 
 // default constructor
@@ -447,6 +454,13 @@ void FaDockingSlideIntoContact::apply( core::pose::Pose & pose )
 std::string
 FaDockingSlideIntoContact::get_name() const {
 	return "FaDockingSlideTogether";
+}
+
+std::ostream &operator<< ( std::ostream &os, FaDockingSlideIntoContact const &fadock )
+{
+	moves::operator<<(os, fadock);
+	os << "Jump num: " << fadock.get_jump_num() << ", Tolerance: " << fadock.get_tolerance() << std::endl;
+	return os;
 }
 
 } // namespace docking

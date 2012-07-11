@@ -128,6 +128,8 @@ public:
 	// protocol functions
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
+	core::Size get_jump_num() const { return rb_jump_; }
+	friend std::ostream &operator<< ( std::ostream &os, DockingSlideIntoContact const &mover );
 
 private:
 	core::scoring::ScoreFunctionOP scorefxn_;
@@ -152,6 +154,9 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
+	core::Size get_jump_num() const { return rb_jump_; }
+	core::Real get_tolerance() const { return tolerance_; }
+	friend std::ostream &operator<< ( std::ostream &os, FaDockingSlideIntoContact const &fadock );
 
 private:
 	core::Size rb_jump_; // use this or rb_jumps_, not both

@@ -29,7 +29,7 @@
 
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
+#include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreType.hh>
@@ -110,6 +110,9 @@ int main(int argc, char *argv[])
 	protocols::simple_moves::PackRotamersMover packmover2 = protocols::simple_moves::PackRotamersMover(scorefxn, fine_task, nloop);
 	std::cout << packmover2 << std::endl;*/
 
-	protocols::rigid::RigidBodyRandomizeMover mover;
+	protocols::docking::DockingSlideIntoContact mover ( protocols::docking::DockingSlideIntoContact(2) );
 	std::cout << mover << std::endl;
+
+	protocols::docking::FaDockingSlideIntoContact famover ( protocols::docking::FaDockingSlideIntoContact(1) );
+	std::cout << famover << std::endl;
 }
