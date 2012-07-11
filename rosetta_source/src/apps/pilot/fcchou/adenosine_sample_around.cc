@@ -10,6 +10,8 @@
 /// @brief
 
 
+
+
 // libRosetta headers
 #include <core/scoring/rms_util.hh>
 #include <core/types.hh>
@@ -84,11 +86,27 @@ typedef  numeric::xyzMatrix< Real > Matrix;
 
 OPT_KEY( Boolean, sample_water )
 OPT_KEY( Boolean, sample_another_adenosine )
+OPT_KEY( String, copy_adenosine_adenosine_file )
 OPT_KEY( Real, alpha_increment )
 OPT_KEY( Real, cosbeta_increment )
 OPT_KEY( Real, gamma_increment )
 OPT_KEY( Real, xyz_increment )
 OPT_KEY( Real, xyz_size )
+
+//
+// To sample a 'carbon' probe atom:
+// adenosine_sample_around.macosgccrelease  -database ~/rosetta_database/ -s a_RNA.pdb
+//
+// To sample a water
+// adenosine_sample_around.macosgccrelease  -database ~/rosetta_database/ -s a_RNA.pdb  -sample_water
+//
+// To sample an adenosine
+// adenosine_sample_around.macosgccrelease  -database ~/rosetta_database/ -s a_RNA.pdb  -sample_another_adenosine   -copy_adenosine_adenosine_file double_A_ready_set.pdb
+//
+// To sample an adenosine, reading in a starting adenosine-adenosine pairing conformation.
+// adenosine_sample_around.macosgccrelease  -database ~/rosetta_database/ -s a_RNA.pdb  -sample_another_adenosine   -copy_adenosine_adenosine_file double_A_ready_set.pdb
+//
+
 
 /////////////////////////////////////////////////////////////////////////////
 //FCC: Adding Virtual res
@@ -116,6 +134,19 @@ add_virtual_res ( core::pose::Pose & pose, bool set_res_as_root = true ) {
 		pose.fold_tree ( newF );
 	}
 }
+
+void
+add_another_virtual_res ( core::pose::Pose & pose ) {
+	int nres = pose.total_residue();
+	// attach virt res there
+	bool fullatom = pose.is_fullatom();
+	core::chemical::ResidueTypeSet const & residue_set = pose.residue_type ( 1 ).residue_type_set();
+	core::chemical::ResidueTypeCAPs const & rsd_type_list ( residue_set.name3_map ( "VRT" ) );
+	core::conformation::ResidueOP new_res ( core::conformation::ResidueFactory::create_residue ( *rsd_type_list[1] ) );
+	pose.append_residue_by_jump ( *new_res , pose.total_residue() );
+}
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Rhiju -- rotate to my favorite frame. Base centroid is now at origin.
 //         X points to N1 atom. Z points normal to base. Y is orthonormal and points towards Hoogsteen edge, I think.
@@ -134,9 +165,11 @@ rotate_into_nucleobase_frame( core::pose::Pose & pose ){
 	Matrix M = get_rna_base_coordinate_system( rsd, centroid );
 	kinematics::Stub stub( M, centroid );
 
-	for (Size i = 1; i <= rsd.natoms(); i++ ){
-		Vector xyz_new = stub.global2local( rsd.xyz( i ) ); // it is either this or M-inverse.
-		pose.set_xyz( AtomID( i, base_pos ), xyz_new );
+	for ( Size n = 1; n <= pose.total_residue(); n++ ){
+		for (Size i = 1; i <= pose.residue(n).natoms(); i++ ){
+			Vector xyz_new = stub.global2local( pose.residue(n).xyz( i ) ); // it is either this or M-inverse.
+			pose.set_xyz( AtomID( i, n ), xyz_new );
+		}
 	}
 
 }
@@ -266,6 +299,7 @@ adenine_probe_score_test()
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::scoring;
+	using namespace core::id;
 
 	//////////////////////////////////////////////////
 	ResidueTypeSetCAP rsd_set;
@@ -276,6 +310,9 @@ adenine_probe_score_test()
 	pose::Pose pose;
 	std::string infile  = option[ in ::file::s ][1];
 	import_pose::pose_from_pdb( pose, *rsd_set, infile );
+
+	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", 1 );
+	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", 1 );
 
 	rotate_into_nucleobase_frame( pose );
 	pose.dump_pdb( "a_rotated.pdb" );
@@ -288,6 +325,8 @@ adenine_probe_score_test()
 	bool const sample_water_ = option[ sample_water ]();
 	bool const sample_another_adenosine_ = option[ sample_another_adenosine ]();
 
+	if ( sample_another_adenosine_ ) add_another_virtual_res(pose); // this is the coordinate system for the next base.
+
 	if ( sample_water_ ) {
 		core::chemical::ResidueTypeCAPs const & rsd_type_list ( residue_set.name3_map ( "TP3" ) );
 		new_res = ( core::conformation::ResidueFactory::create_residue ( *rsd_type_list[1] ) );
@@ -297,10 +336,7 @@ adenine_probe_score_test()
 		core::chemical::ResidueTypeCAPs const & rsd_type_list ( residue_set.name3_map ( "CCC" ) );
 		new_res = ( core::conformation::ResidueFactory::create_residue ( *rsd_type_list[1] ) );
 	}
-	pose.append_residue_by_jump ( *new_res , 2 );
-
-	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", 1 );
-	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", 1 );
+	pose.append_residue_by_jump ( *new_res ,  pose.total_residue() );
 
 	pose.dump_pdb( "START.pdb" );
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 800, 800 );
@@ -308,11 +344,30 @@ adenine_probe_score_test()
 
 	//////////////////////////////////////////////////
 	// Set up fold tree -- "chain break" between two ligands, right?
-	// Uh, why not?
 	kinematics::FoldTree f ( pose.fold_tree() );
-	std::string probe_atom_name = sample_water_ ? " O  " : " C1 ";
+	std::string probe_atom_name = " C1 ";
+	if (sample_water_) probe_atom_name = " O  ";
+	if (sample_another_adenosine_) probe_atom_name = "ORIG"; // tricky -- the jump is from one coordinate system to the next one!
 	f.set_jump_atoms( 2,"ORIG",probe_atom_name);
 	pose.fold_tree( f );
+
+	std::cout << pose.annotated_sequence() << std::endl;
+
+	if ( option[ copy_adenosine_adenosine_file ].user() ){
+		pose::Pose pose_reference;
+		import_pose::pose_from_pdb( pose_reference, *rsd_set, option[copy_adenosine_adenosine_file]() );
+		rotate_into_nucleobase_frame( pose_reference );
+
+		// copy over coordinates.
+		Residue const & rsd_ref = pose_reference.residue( 2 );
+		Size pos2( 4 ); // the sequence of the working pose is... adenine-virtual-virtual-adenine
+
+		for( Size i_ref = 1; i_ref <= rsd_ref.natoms(); i_ref++ ){
+			Size i = pose.residue( pos2 ).atom_index(   rsd_ref.atom_name( i_ref ) );
+			pose.set_xyz( AtomID( i, pos2 ),  rsd_ref.xyz( i_ref ) );
+		}
+	}
+
 
 	//////////////////////////////////////////////////////////////////
 	// displace in z by 2.0 A... just checking coordinate system
@@ -361,12 +416,30 @@ adenine_probe_score_test()
 	SilentFileData silent_file_data;
 	utility::io::ozstream out;
 
+	//////////////////////////////////////////////
+	std::cout << "Doing Z scan..." << std::endl;
+	out.open( "score_z.table" );
+	for (int i = -box_bins; i <= box_bins; ++i) {
+		Real const x = 0.0;
+		Real const y = 0.0;
+		Real const z = i * translation_increment;
+		jump.set_translation( Vector( x, y, z ) ) ;
+		pose.set_jump( probe_jump_num, jump );
+		out << z << ' ' << do_scoring( pose, scorefxn, sample_water_, probe_jump_num );
+		out << std::endl;
+	}
+	out.close();
+
+
+	//////////////////////////////////////////////
 	std::cout << "Doing XY scan... Z =  0.0" << std::endl;
 	do_xy_scan( pose, scorefxn, "score_xy_0.table", 0.0, probe_jump_num, box_bins, translation_increment, sample_water_ );
 
+	//////////////////////////////////////////////
 	std::cout << "Doing XY scan... Z = +1.0" << std::endl;
 	do_xy_scan( pose, scorefxn, "score_xy_1.table", 1.0, probe_jump_num, box_bins, translation_increment, sample_water_ );
 
+	//////////////////////////////////////////////
 	std::cout << "Doing XY scan... Z = +3.0" << std::endl;
 	do_xy_scan( pose, scorefxn, "score_xy_3.table", 3.0, probe_jump_num, box_bins, translation_increment, sample_water_ );
 
@@ -379,6 +452,7 @@ adenine_probe_score_test()
 	//	std::cout << "Doing XY scan... Z = -3.0" << std::endl;
 	//	do_xy_scan( pose, scorefxn, "score_para_0_table", 3.0, probe_jump_num, box_bins, translation_increment, sample_water_ );
 
+	//////////////////////////////////////////////
 	std::cout << "Doing XZ scan..." << std::endl;
 	out.open( "score_xz.table" );
 	for (int i = -box_bins; i <= box_bins; ++i) {
@@ -394,6 +468,7 @@ adenine_probe_score_test()
 	}
 	out.close();
 
+	//////////////////////////////////////////////
 	std::cout << "Doing YZ scan..." << std::endl;
 	out.open( "score_yz.table" );
 	for (int i = -box_bins; i <= box_bins; ++i) {
@@ -408,6 +483,7 @@ adenine_probe_score_test()
 		out << std::endl;
 	}
 	out.close();
+
 
 }
 
@@ -435,10 +511,11 @@ main( int argc, char * argv [] )
 
 	NEW_OPT( sample_water, "use a water probe instead of carbon", false );
 	NEW_OPT( sample_another_adenosine, "sample another adenosine as the 'probe'", false );
+	NEW_OPT( copy_adenosine_adenosine_file, "get rigid body relation between two adenosines from file", "" );
 	NEW_OPT( alpha_increment, "input parameter", 40.0 );
 	NEW_OPT( cosbeta_increment, "input parameter", 0.25 );
 	NEW_OPT( gamma_increment, "input parameter", 40.0 );
-	NEW_OPT( xyz_increment, "input parameter", 1.0 );
+	NEW_OPT( xyz_increment, "input parameter", 0.2 );
 	NEW_OPT( xyz_size, "input parameter", 10.0 );
 
 	////////////////////////////////////////////////////////////////////////////
