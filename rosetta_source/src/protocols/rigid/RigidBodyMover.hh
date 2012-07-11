@@ -354,6 +354,7 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
+	friend std::ostream &operator<< ( std::ostream &os, RigidBodyTransMover const &mover );
 
 private:
 	core::Real step_size_;

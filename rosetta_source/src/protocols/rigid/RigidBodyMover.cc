@@ -19,9 +19,10 @@
 #include <protocols/rigid/RigidBodyMoverCreator.hh>
 // Package headers
 #include <protocols/rigid/RB_geometry.hh>
-
+#include <core/pose/PDBInfo.hh>
 // Rosetta Headers
 #include <core/pose/Pose.hh>
+
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 // AUTO-REMOVED #include <core/scoring/Ramachandran.hh>
@@ -608,6 +609,12 @@ RigidBodyTransMover::get_name() const {
 	return "RigidBodyTransMover";
 }
 
+std::ostream &operator<< ( std::ostream &os, RigidBodyTransMover const &mover )
+{
+	moves::operator<<(os, mover);
+	os << "Jump num: " << mover.rb_jump() << std::endl;
+	return os;
+}
 
 UniformSphereTransMover::UniformSphereTransMover() : parent(), step_size_(1), random_step_(0), trans_axis_()
 {

@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 	Pose test_pose;
 
 	// import a test pose
-	pose_from_pdb(test_pose, "/home/boon/data/test.pdb");
+	pose_from_pdb(test_pose, "/home/boon/data/1YY9.pdb");
 
 	std::cout << "Hello, Rosetta World!" << std::endl;
 	std::cout << "I just imported my first pose into Rosetta." << std::endl;
@@ -110,6 +110,7 @@ int main(int argc, char *argv[])
 	protocols::simple_moves::PackRotamersMover packmover2 = protocols::simple_moves::PackRotamersMover(scorefxn, fine_task, nloop);
 	std::cout << packmover2 << std::endl;*/
 
-	protocols::rigid::RigidBodyPerturbMover mover;
-	std::cout << mover << std::endl;
+	int jump_num = 2;
+	protocols::rigid::RigidBodyTransMover mover2 ( protocols::rigid::RigidBodyTransMover(test_pose, jump_num));
+	std::cout << mover2 << std::endl;
 }
