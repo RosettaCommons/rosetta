@@ -150,11 +150,9 @@ ResidueTypeSet::ResidueTypeSet(
 //XRW_E_T1
 			} else {
 				std::string const filename( directory + line );
+
 				ResidueTypeOP rsd_type( read_topology_file( filename, atom_types, elements, mm_atom_types, orbital_types, this ) ); //, csd_atom_types ) );
-				if(basic::options::option[ basic::options::OptionKeys::in::add_orbitals]){
-					orbitals::AssignOrbitals add_orbitals_to_residue(rsd_type);
-					add_orbitals_to_residue.assign_orbitals();
-				}
+
 				//kwk commenting out csd_atom_types until they have been fully implemented
 				residue_types_.push_back( rsd_type );
 			}
@@ -226,6 +224,14 @@ ResidueTypeSet::ResidueTypeSet(
 
 	// Generate combinations of adducts as specified by the user
 	place_adducts();
+
+	if(basic::options::option[ basic::options::OptionKeys::in::add_orbitals]){
+		for( Size ii = 1 ; ii <= residue_types_.size() ; ++ii ) {
+			orbitals::AssignOrbitals add_orbitals_to_residue(residue_types_[ii]);
+			add_orbitals_to_residue.assign_orbitals();
+		}
+	}
+
 
 //	for( Size ii = 1 ; ii <= residue_types_.size() ; ++ii ) {
 //		residue_types_[ii]->debug_dump_icoor();
