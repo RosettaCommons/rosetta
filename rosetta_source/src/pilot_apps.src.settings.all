@@ -401,6 +401,9 @@ sources = {
 	"pilot/opt_e" : [
 		#"optE_simple", # /* Andrew Leaver-Fay,Documentation Location,Demo Location */
 	],
+        "pilot/rpache" : [
+		#"calibrate_pdb",
+	],
 	"pilot/possu" : [
 		#"remodel",
 	],
