@@ -18,7 +18,6 @@
 #define INCLUDED_core_scoring_rms_util_HH
 
 // C/C++ headers
-// AUTO-REMOVED #include <iostream>
 #include <list>
 #include <map>
 #include <string>
@@ -57,6 +56,27 @@ ResidueSelection invert_exclude_residues( core::Size nres, utility::vector1<int>
 extern core::Real native_CA_rmsd( const core::pose::Pose &native_pose ,  const core::pose::Pose &pose );
 
 extern core::Real native_CA_gdtmm( const core::pose::Pose &native_pose ,  const core::pose::Pose &pose );
+
+/// @brief Returns a single, Global Distance Test-like value that measures the
+/// extent to which the functional ends of a model's sidechains agree with their
+/// counterparts in a given reference structure.
+///
+/// @detail Instead of comparing residue positions on the basis of CAs, gdtsc
+/// uses a characteristic atom near the end of each sidechain type for the
+/// evaluation of residue-residue distance deviations.
+///
+/// The traditional GDT score is a weighted sum of the fraction of residues
+/// superimposed within limits of 1, 2, 4, and 8Å. For gdtsc, the backbone
+/// superposition is used to calculate fractions of corresponding model-ref
+/// sidechain atom pairs that fit under 10 distance-limit values from 0.5A
+/// to 5A. Ambiguity in Asp or Glu terminal oxygen naming is not currently
+/// considered.
+///
+/// Reference:
+/// Keedy, DA. The other 90% of the protein. Proteins. 2009; 77 Suppl 9:29-49.
+core::Real gdtsc(const core::pose::Pose& ref,
+                 const core::pose::Pose& model,
+                 const utility::vector1<core::Size>& residues);
 
 /// @brief Computes the RMSD of the jump residues between <model> and <native>,
 /// storing the results in a map keyed by jump_id.

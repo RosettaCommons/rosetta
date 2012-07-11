@@ -9,6 +9,7 @@
 
 /// @file   core/scoring/rms_util.cc
 /// @brief  RMS stuff from rosetta++
+/// @author Christopher Miles (cmiles@uw.edu)
 /// @author James Thompson
 /// @author Ian Davis
 /// @date   Wed Aug 22 12:10:37 2007
@@ -19,11 +20,15 @@
 #include <core/scoring/rms_util.tmpl.hh>
 
 // C/C++ headers
+#include <algorithm>
+#include <iomanip>
+#include <iostream>
+#include <map>
 #include <string>
 #include <utility>
-#include <algorithm>
 
 // External headers
+#include <boost/assign.hpp>
 #include <boost/unordered/unordered_map.hpp>
 
 // Project headers
@@ -40,13 +45,13 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 // Utility headers
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <numeric/util.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/model_quality/maxsub.hh>
 #include <numeric/model_quality/rms.hh>
@@ -65,6 +70,96 @@ namespace core {
 namespace scoring {
 
 static basic::Tracer tr("core.scoring.rms_util");
+
+core::Real gdtsc(const core::pose::Pose& ref,
+                 const core::pose::Pose& mod,
+                 const utility::vector1<core::Size>& residues) {
+  using core::Real;
+  using core::Size;
+  using core::id::NamedAtomID;
+  using numeric::xyzVector;
+  using std::string;
+
+  static std::map<std::string, std::string> gdtsc_atom = boost::assign::map_list_of
+      ("A",  "CA")
+      ("C",  "SG")
+      ("D", "OD2")
+      ("E", "OE2")
+      ("F",  "CZ")
+      ("G",  "CA")
+      ("H", "NE2")
+      ("I", "CD1")
+      ("K",  "NZ")
+      ("L", "CD1")
+      ("M",  "CE")
+      ("N", "OD1")
+      ("P",  "CG")
+      ("Q", "OE1")
+      ("R", "NH2")
+      ("S",  "OG")
+      ("T", "OG1")
+      ("V", "CG1")
+      ("W", "CH2")
+      ("Y",  "OH");
+
+  if (!ref.is_fullatom() || !mod.is_fullatom()) {
+    tr.Warning << "Reference and model must be fullatom for gdtsc()" << std::endl;
+    return -1;
+  }
+
+  if (ref.sequence() != mod.sequence()) {
+    tr.Warning << "Reference and model must have identical sequences for gdtsc()" << std::endl;
+    return -1;
+  }
+
+  // Retrieve ref, mod coordinates
+  int num_atoms = residues.size();
+  FArray2D<Real> coords_ref(3, num_atoms);
+  FArray2D<Real> coords_mod(3, num_atoms);
+  const string sequence = ref.sequence();
+
+  for (Size i = 1; i <= residues.size(); ++i) {
+    const Size res = residues[i];
+    const string res_name = sequence.substr(res - 1, 1);  // 0-indexed string
+    const string& atom_name = gdtsc_atom[res_name];
+    const NamedAtomID atom_id(atom_name, res);
+
+    const xyzVector<Real>& xyz_ref = ref.xyz(atom_id);
+    coords_ref(1, i) = xyz_ref.x();
+    coords_ref(2, i) = xyz_ref.y();
+    coords_ref(3, i) = xyz_ref.z();
+
+    const xyzVector<Real>& xyz_mod = mod.xyz(atom_id);
+    coords_mod(1, i) = xyz_mod.x();
+    coords_mod(2, i) = xyz_mod.y();
+    coords_mod(3, i) = xyz_mod.z();
+  }
+
+  // Calculate maxsub over several distance thresholds
+  Real sum = 0;
+  Size num_dists = 10;
+
+  for (Size i = 1; i <= num_dists; ++i) {
+    Real dist_threshold = 0.5 * i;  // 0.5, 1.0, ...
+
+    int nali;
+    double mxrms, mxpsi, mxzscore, mxscore, mxeval;
+    numeric::model_quality::maxsub(
+        num_atoms, coords_ref, coords_mod,
+        mxrms, mxpsi, nali, mxzscore, mxeval, mxscore,
+        dist_threshold, dist_threshold);
+
+    Real fraction_residues = static_cast<Real>(nali) / static_cast<Real>(num_atoms);
+    sum += fraction_residues;
+
+    tr.Debug
+        << std::fixed << std::setprecision(2)
+        << "Fraction of sidechains under "  << dist_threshold
+        << " A: " << fraction_residues << std::endl;
+  }
+
+  return sum / num_dists;
+}
 
 void invert_exclude_residues( Size nres, utility::vector1<int> const& exclude_list, ResidueSelection& residue_selection ) {
 	residue_selection.clear();
