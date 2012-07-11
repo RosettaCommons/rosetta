@@ -747,27 +747,35 @@ Vector get_atom_color(
 					utility::vector1< core::conformation::ResidueCOP > const & residues,
 					int const & r,
 					int const & i ) {
+
 	float red,green,blue;
 	static std::map<std::string, Vector> sidechain_color_rhiju = get_sidechain_color_rhiju();
+
 	switch ( gs.Color_mode ) {
+
 	  case CPK_COLOR:
 			return atom_color_by_element( residues[r]->atom_type(i).element());
+
 		case RAINBOW_COLOR:
 			rainbow_color( float(r)/ float(residues.size()), red, green, blue, true /*mute_color*/);
 			return Vector(red, green, blue);
+
 		case RESIDUE_COLOR:
 			if (sidechain_color_rhiju.find(residues[r]->name3()) != sidechain_color_rhiju.end() )
 				return sidechain_color_rhiju[residues[r]->name3()];
 			return Vector( 1.0, 0.5, 0.0); //orange
+
    	case CHAIN_COLOR:
 			chain_color( residues[r]->chain(), red, green, blue );
 			return Vector(red, green, blue);
+
 		case RAINBOW_CPK_COLOR:
 			if ( !residues[r]->atom_is_backbone(i)  ) { //non carbon atoms
 				return atom_color_by_element( residues[r]->atom_type(i).element());
 			}
 			rainbow_color( float(r)/ float(residues.size()), red, green, blue, true /*mute_color*/);
 			return Vector(red, green, blue);
+
 		case RESIDUE_CPK_COLOR:
 			if ( !residues[r]->atom_is_backbone(i)  ) { //non carbon atoms
 				return atom_color_by_element( residues[r]->atom_type(i).element());
@@ -775,8 +783,11 @@ Vector get_atom_color(
 			if (sidechain_color_rhiju.find(residues[r]->name3()) != sidechain_color_rhiju.end() )
 				return sidechain_color_rhiju[residues[r]->name3()];
 			return Vector( 1.0, 1.0, 1.0);
+
 	  case RHIJU_COLOR:
-			if ( residues[r]->atom_is_backbone(i)  ) {
+			if ( residues[r]->is_virtual(i) ){
+				return Vector( 1.0, 1.0, 1.0 );
+			} else if ( residues[r]->atom_is_backbone(i)  ) {
 				rainbow_color( float(r)/ float(residues.size()), red, green, blue, false /*mute_color*/);
 				return Vector(red, green, blue);
 			}	else if ( sidechain_color_rhiju.find(residues[r]->name3()) != sidechain_color_rhiju.end() ) {
@@ -873,7 +884,7 @@ display_residues_wireframe(
 				if ( width.length_squared() ) width.normalize();
 				width *= graphics::protein_wireframeScale;
 
-				if ( rsd.atom_type(m).is_hydrogen() ) width *= 0.5;
+				if ( rsd.atom_type(m).is_hydrogen() || rsd.atom_type(n).is_hydrogen() || rsd.is_virtual(m) || rsd.is_virtual(n) ) width *= 0.5;
 
 				glColor3fxyz( color1 );
 
@@ -1507,6 +1518,8 @@ draw_sidechains( GraphicsState & gs, utility::vector1< core::conformation::Resid
 				Vector width( cross( bond, z ) );
 				if ( width.length_squared() ) width.normalize();
 				width *= xwidth;
+
+				if ( residues[r]->atom_type(j).is_hydrogen() ) width *= 0.5;
 
 				glColor3fxyz( color1 );
 
