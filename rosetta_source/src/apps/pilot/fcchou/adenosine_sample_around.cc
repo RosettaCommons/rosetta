@@ -277,9 +277,6 @@ adenine_probe_score_test()
 	std::string infile  = option[ in ::file::s ][1];
 	import_pose::pose_from_pdb( pose, *rsd_set, infile );
 
-	//	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", 1 );
-	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_BACKBONE_NUCLEOBASE_ALONE", 1 );
-
 	rotate_into_nucleobase_frame( pose );
 	pose.dump_pdb( "a_rotated.pdb" );
 
@@ -301,6 +298,9 @@ adenine_probe_score_test()
 		new_res = ( core::conformation::ResidueFactory::create_residue ( *rsd_type_list[1] ) );
 	}
 	pose.append_residue_by_jump ( *new_res , 2 );
+
+	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", 1 );
+	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", 1 );
 
 	pose.dump_pdb( "START.pdb" );
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 800, 800 );
@@ -370,13 +370,14 @@ adenine_probe_score_test()
 	std::cout << "Doing XY scan... Z = +3.0" << std::endl;
 	do_xy_scan( pose, scorefxn, "score_xy_3.table", 3.0, probe_jump_num, box_bins, translation_increment, sample_water_ );
 
+	std::cout << "Doing XY scan... Z = +4.0" << std::endl;
+	do_xy_scan( pose, scorefxn, "score_xy_4.table", 4.0, probe_jump_num, box_bins, translation_increment, sample_water_ );
 	// Following are exactly the same as +1.0 and +3.0 when modeling nucleobase.
 	//std::cout << "Doing XY scan... Z = -1.0" << std::endl;
 	//	do_xy_scan( pose, scorefxn, "score_para_0_table", 1.0, probe_jump_num, box_bins, translation_increment, sample_water_ );
 
 	//	std::cout << "Doing XY scan... Z = -3.0" << std::endl;
 	//	do_xy_scan( pose, scorefxn, "score_para_0_table", 3.0, probe_jump_num, box_bins, translation_increment, sample_water_ );
-
 
 	std::cout << "Doing XZ scan..." << std::endl;
 	out.open( "score_xz.table" );
