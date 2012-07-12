@@ -150,20 +150,25 @@ namespace rna {
 		setup_fold_tree();
 
 		////////////////Change the order that these functions are called on May 3, 2010 Parin S./////////////////////////////////////
+		Size root_res( 1 );
+		if ( !skip_complicated_stuff_ ){
+			InternalWorkingResidueParameter const internal_params=figure_out_partition_definition();
 
-		InternalWorkingResidueParameter const internal_params=figure_out_partition_definition();
+			root_res = reroot_fold_tree(internal_params.fake_working_moving_suite);
 
-		Size const root_res=reroot_fold_tree(internal_params.fake_working_moving_suite);
+			//need the final rerooted fold_tree, WARNING: this function resets the working_moving_res_list annd working_moving_res for the internal case...
+			//Warning this leaves is_working_res NOT updated...
+			figure_out_Prepend_Internal(root_res, internal_params);
 
-		//need the final rerooted fold_tree, WARNING: this function resets the working_moving_res_list annd working_moving_res for the internal case...
-		//Warning this leaves is_working_res NOT updated...
-		figure_out_Prepend_Internal(root_res, internal_params);
+			figure_out_gap_size_and_five_prime_chain_break_res(); //Need partition definition to be initialized...
 
-		figure_out_gap_size_and_five_prime_chain_break_res(); //Need partition definition to be initialized...
+			///////////////////////////////////////////////////////////////////////
 
-		///////////////////////////////////////////////////////////////////////
-
-		figure_out_Is_prepend_map(); //Need fold_tree and fixed_res to be initialized
+			figure_out_Is_prepend_map(); //Need fold_tree and fixed_res to be initialized
+		} else {
+			root_res = reroot_fold_tree_simple();
+			filter_user_alignment_res_ = false;
+		}
 
 		utility::vector1< core::Size > const working_best_alignment=get_user_input_alignment_res_list(root_res);
 		if(working_best_alignment.size()>0){
@@ -189,7 +194,6 @@ namespace rna {
 		}
 
 		utility::vector1< std::string > const & alignment_res_string_list=alignment_res_string_list_;
-		ObjexxFCL::FArray1D< bool > const & partition_definition = job_parameters_->partition_definition();
 
 		if(alignment_res_string_list.size()==0){
 			std::cout << "WARNING: alignment_res_string_list.size()==0. EARLY RETURN AN EMPTY LIST" << std::endl;
@@ -227,6 +231,7 @@ namespace rna {
 
 				working_alignment=apply_full_to_sub_mapping(actual_alignment_res, job_parameters_);
 
+				ObjexxFCL::FArray1D< bool > const & partition_definition = job_parameters_->partition_definition();
 				bool contain_non_root_partition_seq_num=false;
 				for(Size ii=1; ii<working_alignment.size(); ii++){
 					if( partition_definition( working_alignment[ii] ) != partition_definition( root_res ) ) contain_non_root_partition_seq_num=true;
@@ -937,6 +942,7 @@ namespace rna {
 		job_parameters_->set_fold_tree( fold_tree );
 
 		Output_title_text("");
+
 	}
 
 
@@ -1053,6 +1059,11 @@ namespace rna {
 
 			fake_working_moving_suite = possible_working_res_1; //This is kinda adhoc...can choose any res between possible_working_res_1 and (possible_working_res_2-1)
 
+			// rhiju -- found boundary case -- this whole setup stuff needs to be cleaned up.
+			std::cout << "POSSIBLE_WORKING_RES1 " << possible_working_res_1 << " POSSIBLE_WORKING_RES2 " << possible_working_res_2 << std::endl;
+			while ( fold_tree.is_cutpoint( fake_working_moving_suite ) && fake_working_moving_suite < possible_working_res_2 ) fake_working_moving_suite++;
+
+
 			internal_working_res_params.possible_working_res_1=possible_working_res_1;
 			internal_working_res_params.possible_working_res_2=possible_working_res_2;
 		}
@@ -1062,11 +1073,14 @@ namespace rna {
 
 		core::kinematics::FoldTree fold_tree_with_cut_at_moving_suite = fold_tree;
 
+		std::cout << "FAKE_WORKING_MOVING_SUITE " << fake_working_moving_suite << std::endl;
+
 		Size const jump_at_moving_suite = make_cut_at_moving_suite( fold_tree_with_cut_at_moving_suite, fake_working_moving_suite );
 
 		fold_tree_with_cut_at_moving_suite.partition_by_jump( jump_at_moving_suite, partition_definition );
 
 		job_parameters_->set_partition_definition( partition_definition ); //this is a useful decomposition.
+
 
 		return internal_working_res_params;
 	}
@@ -1082,6 +1096,30 @@ namespace rna {
 		if ( f.is_cutpoint( n ) ) return true;
 		if ( f.is_cutpoint( n-1 ) ) return true;
 		return false;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Figure out a good root residue -- ideally in a fixed segment!
+	core::Size
+	StepWiseRNA_JobParameters_Setup::reroot_fold_tree_simple(){
+
+		core::kinematics::FoldTree const & fold_tree = job_parameters_->fold_tree();
+
+		utility::vector1< core::Size > working_fixed_res( job_parameters_->working_fixed_res() );
+
+		for ( Size i = 1; i <= working_fixed_res.size(); i++ ){
+			Size const n = working_fixed_res[i];
+			if ( possible_root( fold_tree, n )  ){
+				core::kinematics::FoldTree rerooted_fold_tree = fold_tree;
+				bool reorder_went_OK = rerooted_fold_tree.reorder( n );
+				if ( reorder_went_OK ) {
+					job_parameters_->set_fold_tree( rerooted_fold_tree );
+					return n;
+				}
+			}
+		}
+
+		return 1;
 	}
 
 	// Figure out a good root residue -- which partition of the pose has the fewest residues to move around?

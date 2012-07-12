@@ -171,6 +171,9 @@ namespace rna {
 		core::Size
 		reroot_fold_tree(core::Size const fake_working_moving_suite);
 
+		core::Size
+		reroot_fold_tree_simple();
+
 //		void
 //		reset_Is_prepend(core::Size const root_res);
 
