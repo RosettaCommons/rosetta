@@ -830,8 +830,8 @@ display_residues_wireframe(
 			int const atom1( prev_rsd.mainchain_atoms()[ prev_rsd.n_mainchain_atoms() ] );
 			int const atom2( rsd.mainchain_atoms()[ 1 ] );
 
-			Vector const color1( get_atom_color( gs, residues, i,   atom1 ) );
-			Vector const color2( get_atom_color( gs, residues, i-1, atom2 ) );
+			Vector const color1( get_atom_color( gs, residues, i-1,   atom1 ) );
+			Vector const color2( get_atom_color( gs, residues, i  , atom2 ) );
 
 			Vector const xyz1( prev_rsd.xyz( atom1 ) - center );
 			Vector const xyz2(      rsd.xyz( atom2 ) - center );
