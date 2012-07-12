@@ -194,7 +194,12 @@ ParallelTempering::finalize_simulation(
 		tr.setf(std::ios_base::fixed);
 		for (core::Size i=0; i<n_temp_levels()-1; ++i) {
 			std::pair<int, int> elem(i, i+1);
-			core::Real frequency(core::Real(exchange_accepts_[elem])/core::Real(exchange_attempts_[elem]));
+			//Original code (line below) fails on some versions of GCC (4.4.3 and 4.3.4 reported by users)
+			//core::Real frequency(core::Real(exchange_accepts_[elem])/core::Real(exchange_attempts_[elem]));
+			//this replacement code is reported to work for those compilers
+			double a = exchange_accepts_[elem];
+      double b = exchange_attempts_[elem];
+      core::Real frequency(core::Real(a)/core::Real(b));
 			tr << temperature(i+1) << " <-> " << temperature(i+2) << ": " << frequency
 				 << " (" << exchange_accepts_[elem] << " of " << exchange_attempts_[elem] << ")" << std::endl;
 		}
