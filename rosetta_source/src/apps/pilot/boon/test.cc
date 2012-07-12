@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
 	//protocols::docking::ConformerSwitchMover mover2 ( protocols::docking::ConformerSwitchMover("True", 1.0) );
 	//std::cout << mover2 << std::endl;
 
-	// create a loops object
+/*	// create a loops object
 	core::Size start = 15;
 	core::Size stop = 24;
 	core::Size cutpoint = 19;
@@ -128,5 +128,12 @@ int main(int argc, char *argv[])
 
 	// create a CcdLoopClosureMover object
 	protocols::loops::loop_closure::ccd::CcdLoopClosureMover ccdmover ( protocols::loops::loop_closure::ccd::CcdLoopClosureMover(loop, mm) );
-	std::cout << ccdmover << std::endl;
+	std::cout << ccdmover << std::endl;*/
+
+	// create an empty loops object
+	//protocols::loops::LoopsOP emptyloops ( new protocols::loops::Loops );
+
+	// create and print a loopmover
+	protocols::loops::loop_mover::refine::LoopMover_Refine_CCD loopmover; //= protocols::loops::loop_mover::refine::LoopMover_Refine_CCD();
+	std::cout << loopmover << std::endl;
 }
