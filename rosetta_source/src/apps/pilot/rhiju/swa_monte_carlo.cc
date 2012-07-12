@@ -47,6 +47,8 @@
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/init.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
+#include <basic/datacache/BasicDataCache.hh>
 
 //////////////////////////////////////////////////
 #include <basic/options/keys/score.OptionKeys.gen.hh>
@@ -91,6 +93,7 @@
 #include <protocols/swa/rna/StepWiseRNA_PoseSetup.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters_Setup.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
+#include <protocols/swa/monte_carlo/SubToFullInfo.hh>
 #include <numeric/random/random.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
@@ -222,7 +225,6 @@ OPT_KEY( Boolean, sampler_native_rmsd_screen )
 OPT_KEY( Real, sampler_native_screen_rmsd_cutoff )
 OPT_KEY( Real, score_diff_cut )
 OPT_KEY( Boolean, clusterer_perform_score_diff_cut )
-OPT_KEY( String, 	algorithm)
 OPT_KEY( Integer, sampler_num_pose_kept)
 OPT_KEY( Integer, clusterer_num_pose_kept)
 OPT_KEY( Boolean, recreate_silent_struct )
@@ -252,12 +254,12 @@ OPT_KEY( Real, kT )
 OPT_KEY( Real, unfolded_weight )
 OPT_KEY( Integer, n_sample )
 OPT_KEY( Integer, output_period )
-OPT_KEY( Boolean, skip_randomize );
-OPT_KEY( Boolean, sample_all_o2star );
-OPT_KEY( Boolean, do_add_delete );
-OPT_KEY( Boolean, presample_added_residue );
-OPT_KEY( Integer, presample_internal_cycles );
-OPT_KEY( Boolean, forward_build ); //temporary -- delete this soon!
+OPT_KEY( Boolean, skip_randomize )
+OPT_KEY( Boolean, sample_all_o2star )
+OPT_KEY( Boolean, do_add_delete )
+OPT_KEY( Boolean, presample_added_residue )
+OPT_KEY( Integer, presample_internal_cycles )
+OPT_KEY( Boolean, start_added_residue_in_aform )
 
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -872,15 +874,18 @@ get_random_o2star_residue_near_moving_residue( pose::Pose & pose, utility::vecto
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Following assumed that pose is already properly aligned to native pose!
 void
-output_silent_file( pose::Pose const & pose, Size const count,
-										utility::vector1< Size > working_res_list,
-										std::map< Size, Size > sub_to_full,
+output_silent_file( pose::Pose & pose, Size const count,
 										pose::Pose const & native_pose,
 										core::io::silent::SilentFileDataOP silent_file_data,
 										std::string const & silent_file ){
 
   using namespace core::io::silent;
   using namespace core::conformation;
+  using namespace protocols::swa::monte_carlo;
+
+	SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
+	utility::vector1< Size > working_res_list = sub_to_full_info.moving_res_list();
+	std::map< Size, Size > sub_to_full = sub_to_full_info.sub_to_full();
 
 	// useful to keep track of what's a working residue and what's not.
 	utility::vector1< bool > is_working_res;
@@ -1063,7 +1068,7 @@ random_torsion_move( pose::Pose & pose,
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1<Size>
-reorder_after_delete( utility::vector1<Size> & moving_res_list,
+reorder_after_delete( utility::vector1<Size>  moving_res_list,
 											Size const & res_to_delete ){
 
 	utility::vector1< Size > moving_res_list_new;
@@ -1080,7 +1085,7 @@ reorder_after_delete( utility::vector1<Size> & moving_res_list,
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 std::map<Size,Size>
-reorder_after_delete( std::map<Size,Size> & sub_to_full,
+reorder_after_delete( std::map<Size,Size>  sub_to_full,
 											Size const & res_to_delete ){
 
 	std::map< Size, Size > sub_to_full_new;
@@ -1098,7 +1103,7 @@ reorder_after_delete( std::map<Size,Size> & sub_to_full,
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1<Size>
-reorder_after_insert( utility::vector1<Size> & moving_res_list,
+reorder_after_insert( utility::vector1<Size>  moving_res_list,
 											 Size const & res_to_add ){
 
 	utility::vector1< Size > moving_res_list_new;
@@ -1120,7 +1125,7 @@ reorder_after_insert( utility::vector1<Size> & moving_res_list,
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 std::map<Size,Size>
-reorder_after_prepend( std::map<Size,Size> & sub_to_full,
+reorder_after_prepend( std::map<Size,Size>  sub_to_full,
 											Size const & res_to_add ){
 
 	std::map< Size, Size > sub_to_full_new;
@@ -1138,7 +1143,7 @@ reorder_after_prepend( std::map<Size,Size> & sub_to_full,
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 std::map<Size,Size>
-reorder_after_append( std::map<Size,Size> & sub_to_full,
+reorder_after_append( std::map<Size,Size>  sub_to_full,
 											Size const & res_to_add ){
 
 	std::map< Size, Size > sub_to_full_new;
@@ -1155,42 +1160,61 @@ reorder_after_append( std::map<Size,Size> & sub_to_full,
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//void
-//get_random_residue_at_chain_terminus( pose::Pose const & pose,
-//																			utility::vector1< Size > const & moving_res_list,
-//																			Size & residue_at_chain_terminus,
-//																			MovingResidueCase & moving_residue_case,
-//																			AddOrDeleteChoice add_or_delete) {
-//
-//	utility::vector1< Size > possible_res;
-//	utility::vector1< MovingResidueCase > moving_residue_cases;
-//
-//	for (Size i = 1; i <= moving_res_list.size(); i++ ){
-//		Size const n = moving_res_list[ i ];
-//		MovingResidueCase const moving_residue_case = get_moving_residue_case( pose, n );
-//		moving_residue_cases.push_back( moving_residue_case );
-//		if ( moving_residue_case == CHAIN_TERMINUS_3PRIME || moving_residue_case == CHAIN_TERMINUS_5PRIME ) possible_res.push_back( i );
-//	}
-//
-//	Size const res_idx =  int( RG.uniform() * possible_res.size() ) + 1;
-//	Size const moving_res_idx = possible_res[ res_idx ];
-//
-//	residue_at_chain_terminus = moving_res_list[ moving_res_idx ];
-//	moving_residue_case       = moving_residue_cases[ moving_res_idx ];
-//}
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-get_random_residue_at_chain_terminus( pose::Pose const & pose,
-																			utility::vector1< Size > const & moving_res_list,
-																			std::map< Size, Size > & sub_to_full,
-																			Size const & nres_full,
-																			utility::vector1< Size > cutpoints_in_full_pose,
+reorder_sub_to_full_info_after_delete( pose::Pose & pose, Size const res_to_delete ){
+	using namespace protocols::swa::monte_carlo;
+	SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
+
+	std::map< Size, Size > sub_to_full_new = reorder_after_delete( sub_to_full_info.sub_to_full(), res_to_delete );
+	utility::vector1< Size > moving_res_list_new = reorder_after_delete( sub_to_full_info.moving_res_list(), res_to_delete );
+
+	sub_to_full_info.set_sub_to_full( sub_to_full_new );
+	sub_to_full_info.set_moving_res_list( moving_res_list_new );
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+reorder_sub_to_full_info_after_append( pose::Pose & pose, Size const res_to_add ){
+	using namespace protocols::swa::monte_carlo;
+	SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
+
+	std::map< Size, Size > sub_to_full_new = reorder_after_append( sub_to_full_info.sub_to_full(), res_to_add );
+	utility::vector1< Size > moving_res_list_new = reorder_after_insert( sub_to_full_info.moving_res_list(), res_to_add );
+
+	sub_to_full_info.set_sub_to_full( sub_to_full_new );
+	sub_to_full_info.set_moving_res_list( moving_res_list_new );
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+reorder_sub_to_full_info_after_prepend( pose::Pose & pose, Size const res_to_add ){
+	using namespace protocols::swa::monte_carlo;
+	SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
+
+	std::map< Size, Size > sub_to_full_new = reorder_after_prepend( sub_to_full_info.sub_to_full(), res_to_add );
+	utility::vector1< Size > moving_res_list_new = reorder_after_insert( sub_to_full_info.moving_res_list(), res_to_add );
+
+	sub_to_full_info.set_sub_to_full( sub_to_full_new );
+	sub_to_full_info.set_moving_res_list( moving_res_list_new );
+
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+get_random_residue_at_chain_terminus( pose::Pose & pose,
 																			Size & residue_at_chain_terminus,
 																			MovingResidueCase & moving_residue_case,
-																			AddOrDeleteChoice & add_or_delete_choice) {
+																			AddOrDeleteChoice & add_or_delete_choice,
+																			bool const disallow_delete ) {
+
+	using namespace protocols::swa::monte_carlo;
 
 	// potential delete residues
 	Size const & nres( pose.total_residue() );
@@ -1200,24 +1224,32 @@ get_random_residue_at_chain_terminus( pose::Pose const & pose,
 	utility::vector1< MovingResidueCase > moving_residue_cases;
 	utility::vector1< AddOrDeleteChoice > add_or_delete_choices;
 
-	for ( Size n = 1; n <= moving_res_list.size(); n++ ){
+	SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
+	utility::vector1< Size > const & moving_res_list = sub_to_full_info.moving_res_list();
+	std::map< Size, Size > sub_to_full = sub_to_full_info.sub_to_full();
+	utility::vector1< Size > cutpoints_in_full_pose = sub_to_full_info.cutpoints_in_full_pose();
+	Size nres_full = sub_to_full_info.full_sequence().size();
 
-		Size const i = moving_res_list[ n ];
+	if ( !disallow_delete ){
+		for ( Size n = 1; n <= moving_res_list.size(); n++ ){
 
-		if ( i == nres || fold_tree.is_cutpoint( i ) ){ // could be a 3' chain terminus
+			Size const i = moving_res_list[ n ];
 
-			possible_res.push_back( i );
-			moving_residue_cases.push_back( CHAIN_TERMINUS_3PRIME );
-			add_or_delete_choices.push_back( DELETE );
+			if ( i == nres || fold_tree.is_cutpoint( i ) ){ // could be a 3' chain terminus
 
-		} else if ( i == 1 || fold_tree.is_cutpoint( i-1 ) ) {
+				possible_res.push_back( i );
+				moving_residue_cases.push_back( CHAIN_TERMINUS_3PRIME );
+				add_or_delete_choices.push_back( DELETE );
 
-			possible_res.push_back( i );
-			moving_residue_cases.push_back( CHAIN_TERMINUS_5PRIME );
-			add_or_delete_choices.push_back( DELETE );
+			} else if ( i == 1 || fold_tree.is_cutpoint( i-1 ) ) {
+
+				possible_res.push_back( i );
+				moving_residue_cases.push_back( CHAIN_TERMINUS_5PRIME );
+				add_or_delete_choices.push_back( DELETE );
+
+			}
 
 		}
-
 	}
 
 
@@ -1275,108 +1307,108 @@ swa_rna_sample()
   using namespace core::scoring;
   using namespace core::io::silent;
 	using namespace protocols::swa::rna;
+	using namespace protocols::swa::monte_carlo;
 	using namespace protocols::moves;
 
 	clock_t const time_start( clock() );
 
-	// pose_setup stuff copied from swa_rna_main
-	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
-
-	std::cout << "Total time to setup ResidueTypeSet: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
-
-	core::scoring::ScoreFunctionOP scorefxn=create_scorefxn();
-	if ( option[ unfolded_weight ].user() ) scorefxn->set_weight( unfolded,  option[ unfolded_weight ]() );
-
-
-	///////////////////////////////
-	//StepWiseRNA_JobParametersOP	job_parameters = setup_simple_full_length_rna_job_parameters();
-	StepWiseRNA_JobParametersOP	job_parameters = setup_rna_job_parameters();
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// This is for RNA, for now.
+	ResidueTypeSetCAP rsd_set  = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Scorefunction is by default rna_hires.
+	core::scoring::ScoreFunctionOP scorefxn;
+	if ( option[ score::weights ].user() ) scorefxn = getScoreFunction();
+	else scorefxn = ScoreFunctionFactory::create_score_function( "rna/rna_hires_07232011_with_intra_base_phosphate.wts" ); // Parin's latest weights.
+
+	// must have unfolded term!
+	if ( !scorefxn->has_nonzero_weight( unfolded ) ) {
+		std::cout << "Putting 'unfolded' term into scorefunction! Use -unfolded_weight to reduce weight or turn off." << std::endl;
+		scorefxn->set_weight( unfolded, 1.0 );
+	}
+	if ( option[ unfolded_weight ].user() ) scorefxn->set_weight( unfolded,  option[ unfolded_weight ]());
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//  Pose setup -- shared with SWA stuff, for now. Gets native_pose, sample_res, etc.
+	StepWiseRNA_JobParametersOP	job_parameters = setup_rna_job_parameters(); // note -- hacked this to include option skip_complicated_stuff
 	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = setup_pose_setup_class(job_parameters);
+	stepwise_rna_pose_setup->set_align_to_native( true );
 
   Pose pose;
 	stepwise_rna_pose_setup->apply( pose );
 	stepwise_rna_pose_setup->setup_native_pose( pose ); //NEED pose to align native_pose to pose.
 
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// graphics!
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 800, 800 );
-	pose.dump_pdb( "START.pdb" );
-	job_parameters->working_native_pose()->dump_pdb( "working_native.pdb" );
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Monte Carlo machinery
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Try Fang's Monte Carlo machinery
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	Size const num_cycle = option[ n_sample ]();
 	Real const sample_range_small = option[ stddev_small ]();
 	Real const sample_range_large = option[ stddev_large ]();
 
-	utility::vector1< Size > moving_res_list = job_parameters->working_moving_res_list();
+	// should stuff this into its own SubToFullInfo class, cached inside pose.
+	std::string const & full_sequence = job_parameters->full_sequence();
+	utility::vector1< Size > const start_moving_res_list = job_parameters->working_moving_res_list();
+	SubToFullInfoOP sub_to_full_info_op =
+		new SubToFullInfo(  job_parameters->sub_to_full(),
+												start_moving_res_list,
+												full_sequence,
+												option[ cutpoint_open ]() );
+	pose.data().set( core::pose::datacache::CacheableDataType::SUB_TO_FULL_INFO, sub_to_full_info_op );
 
-	// is this in the right order or what? Total hack for now.
-	if ( moving_res_list.size() > 1 && moving_res_list[2] < moving_res_list[1]){
-		utility::vector1< Size > moving_res_list_new;
-		for ( Size n = moving_res_list.size(); n >= 1; n-- ) moving_res_list_new.push_back( moving_res_list[ n ] );
-		moving_res_list = moving_res_list_new;
-	}
-	std::cout << "MOVING_RES ";
-	for (Size i = 1; i <= moving_res_list.size(); i++ ) std::cout << ' ' <<  moving_res_list[i];
-	std::cout << std::endl;
-
-	std::map< Size, Size > sub_to_full = job_parameters->sub_to_full();
-	std::string full_sequence = job_parameters->full_sequence();
-	Size const nres_full = full_sequence.size(); // needed to make sure we don't add residues beyond the boundary of the pose.
-	utility::vector1< Size > cutpoints_in_full_pose = option[ cutpoint_open ]();
+	// should stuff this into a SWA_MonteCarlo mover.
 	pose::Pose const & native_pose = *( stepwise_rna_pose_setup->get_native_pose() );
-
 	std::string const silent_file = option[ out::file::silent ]();
 	SilentFileDataOP silent_file_data = new SilentFileData;
 
-	( *scorefxn )( pose ); //score it for first silent output
 	//	output_silent_file( pose, 0, moving_res_list, sub_to_full, native_pose, silent_file_data, silent_file );
 	Real const output_score_cutoff_ = option[ output_score_cutoff ]();
 	bool const do_add_delete_ = option[ do_add_delete ]();
 	bool const presample_added_residue_ = option[ presample_added_residue ]();
 	Size const internal_cycles_ = option[ presample_internal_cycles ](); // totally arbitrary
+	bool const start_added_residue_in_aform_ = option[ start_added_residue_in_aform ](); // totally arbitrary
 
+	// instead of this, how about just deleting all new residues?
 	std::string move_type( "" );
 	if ( ! option[ skip_randomize ]() ){
 		std::cout << "randomizing... ";
 		for (Size count = 1; count <= 1000; count++) {
 			move_type = "lrg";
-			random_torsion_move( pose, moving_res_list, move_type, sample_range_large );
+			random_torsion_move( pose, start_moving_res_list, move_type, sample_range_large );
 		}
 		std::cout << " done. " << std::endl;
 	}
 
+	// should stuff into SWA_MonteCarloMover
 	MonteCarloOP monte_carlo_ = new MonteCarlo( pose, *scorefxn, option[ kT ]() );
 
 	bool accepted( true );
 	Size n_accept( 0 );
 	Size o2star_res( 0 );
-	std::map< Size, Size > sub_to_full_new;
-	utility::vector1< Size > moving_res_list_new;
 	Size const output_period_ = option[ output_period ]();
+
 	for (Size count = 1; count <= num_cycle; count++) {
 
 		Real const random_number = RG.uniform();
 
 		move_type = "";
-		moving_res_list_new = moving_res_list;
-		sub_to_full_new = sub_to_full;
+
+		utility::vector1< Size > moving_res_list = nonconst_sub_to_full_info_from_pose( pose ).moving_res_list();
 
 		if ( (random_number < 0.01 && do_add_delete_) || moving_res_list.size() == 0 /*got to add something!*/ ) {
 
+			// should stuff into AddOrDeleteMover
 			Size res_at_terminus;
 			MovingResidueCase moving_residue_case;
 			AddOrDeleteChoice add_or_delete_choice;
-			get_random_residue_at_chain_terminus( pose, moving_res_list, sub_to_full, nres_full, cutpoints_in_full_pose,
-																						res_at_terminus, moving_residue_case, add_or_delete_choice  );
+			bool disallow_delete  = ( moving_res_list.size() <= 1 ); //always have something in play!
+			get_random_residue_at_chain_terminus( pose, res_at_terminus, moving_residue_case, add_or_delete_choice, disallow_delete  );
 
-			std::cout << "ADD/DELETE move ==> " << res_at_terminus << " " << moving_residue_case << " " << add_or_delete_choice << std::endl;
+			// std::cout << "ADD/DELETE move ==> " << res_at_terminus << " " << moving_residue_case << " " << add_or_delete_choice << std::endl;
 
 			if ( add_or_delete_choice == DELETE ) {
 
@@ -1384,6 +1416,7 @@ swa_rna_sample()
 				// Deletion
 				///////////////////////////////////
 
+				// should stuff into DeleteMover
 				move_type = "delete";
 				std::cout << "Before delete: " << (*scorefxn)( pose ) << std::endl;
 
@@ -1392,14 +1425,15 @@ swa_rna_sample()
 
 				if ( moving_residue_case == CHAIN_TERMINUS_5PRIME )	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_delete );
 
-				moving_res_list_new = reorder_after_delete( moving_res_list, res_to_delete );
-				sub_to_full_new     = reorder_after_delete( sub_to_full, res_to_delete );
+				// important book-keeping.
+				reorder_sub_to_full_info_after_delete( pose, res_to_delete );
 
 				std::cout << pose.annotated_sequence() << std::endl;
 				std::cout << "After delete: " << (*scorefxn)( pose ) << std::endl << std::endl;
 
 			} else {
 
+				// should stuff into AddMover
 				runtime_assert( add_or_delete_choice == ADD );
 
 				///////////////////////////////////
@@ -1416,9 +1450,12 @@ swa_rna_sample()
 				bool did_addition( false );
 				//pose.dump_pdb( "before_add.pdb" );
 
+				SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
+				std::string const  full_sequence  = sub_to_full_info.full_sequence();
+				std::map< Size, Size > sub_to_full = sub_to_full_info.sub_to_full();
+
 				if ( moving_residue_case == CHAIN_TERMINUS_3PRIME ){
 
-					//					Size const res_to_build_off = moving_res_list[ moving_res_list.size() ]; // for now, just build off 3' fragment.
 					runtime_assert( res_to_build_off < pose.total_residue() ); // wait is this necessary?
 					runtime_assert( sub_to_full[ res_to_build_off ] < sub_to_full[ res_to_build_off+1 ] -1 );
 
@@ -1435,8 +1472,7 @@ swa_rna_sample()
 
 					pose.append_polymer_residue_after_seqpos( *new_rsd, res_to_build_off, true /*build ideal geometry*/ );
 
-					moving_res_list_new = reorder_after_insert( moving_res_list, res_to_add );
-					sub_to_full_new = reorder_after_append( sub_to_full, res_to_add );
+					reorder_sub_to_full_info_after_append( pose, res_to_add );
 
 					suite_num = res_to_add-1;
 					nucleoside_num = res_to_add;
@@ -1463,8 +1499,7 @@ swa_rna_sample()
 					pose.prepend_polymer_residue_before_seqpos( *new_rsd, res_to_add, true /*build ideal geometry*/ );
 					pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add );
 
-					moving_res_list_new = reorder_after_insert( moving_res_list, res_to_add );
-					sub_to_full_new = reorder_after_prepend( sub_to_full, res_to_add );
+					reorder_sub_to_full_info_after_prepend( pose, res_to_add );
 
 					// initialize with a random torsion... ( how about an A-form + perturbation ... or go to a 'reasonable' rotamer)
 					suite_num = res_to_add;
@@ -1477,11 +1512,13 @@ swa_rna_sample()
 
 				if ( did_addition ){
 
-					//apply_suite_torsion_Aform( pose, suite_num );
-					//apply_nucleoside_torsion_Aform( pose, nucleoside_num );
-
-					apply_random_nucleoside_torsion( pose, nucleoside_num );
-					apply_random_suite_torsion( pose, suite_num );
+					if ( start_added_residue_in_aform_ ){
+						apply_suite_torsion_Aform( pose, suite_num );
+						apply_nucleoside_torsion_Aform( pose, nucleoside_num );
+					} else {
+						apply_random_nucleoside_torsion( pose, nucleoside_num );
+						apply_random_suite_torsion( pose, suite_num );
+					}
 
 					sample_near_suite_torsion( pose, suite_num, sample_range_large);
 					sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range_large);
@@ -1512,9 +1549,11 @@ swa_rna_sample()
 					move_type = ""; // no move!
 				}
 			}
+		}
 
-		} else if ( random_number  < 0.8 ){
+		if ( move_type.size() == 0 /*no move yet!*/ && random_number  < 0.8 ){
 
+			// should stuff into RandomTorsionMover, which itself calls RandomSuiteMover, RandomNucleosideMover.
 			Real const random_number2 = RG.uniform();
 			if ( random_number2  < 0.5 ){
 				move_type = "sml";
@@ -1524,12 +1563,15 @@ swa_rna_sample()
 				random_torsion_move( pose, moving_res_list, move_type, sample_range_large );
 			}
 		} else{
+
+			// should stuff into RandomO2starMover
 			// perhaps should also move 2'-OH torsions?
 			if ( option[ sample_all_o2star ]() ){
 				o2star_res = get_random_o2star_residue( pose );
 			} else {
 				// warning -- following might lead to weird 'hysteresis' effects since it picks
 				// o2star to sample based on what's near moving residue.
+				( *scorefxn )( pose ); //score it first to get energy graph.
 				o2star_res = get_random_o2star_residue_near_moving_residue( pose, moving_res_list );
 			}
 			if ( o2star_res > 0 ) {
@@ -1546,35 +1588,28 @@ swa_rna_sample()
 			}
 		}
 
-		if ( move_type.size() == 0 ){
-			count--; continue; // slight hack -- try monte carlo cycle again. dangerous -- might cause infinite loop
-		}
-
 		accepted = monte_carlo_->boltzmann( pose, move_type );
 
-		if ( accepted ) { //slight pain in the ass. Maybe we should keep these cached in the pose somewhere
-			moving_res_list = moving_res_list_new;
-			sub_to_full     = sub_to_full_new;
-		}
+		//if ( accepted ) { //slight pain in the ass. Maybe we should keep these cached in the pose somewhere
+		//			moving_res_list = moving_res_list_new;
+		//			sub_to_full     = sub_to_full_new;
+		//		}
 		//std::cout << "Score: " << (*scorefxn)( pose ) << std::endl;
 		Real const current_score = (*scorefxn)( pose );
 
 		if ( count % output_period_ == 0  || count == num_cycle ) {
 			std::cout << "On " << count << " of " << num_cycle << " trials." << std::endl;
-			output_silent_file( pose, count, moving_res_list, sub_to_full, native_pose, silent_file_data, silent_file );
+			output_silent_file( pose, count, native_pose, silent_file_data, silent_file );
 		}
 
 	}
-
-	//	output_silent_file( pose, n_accept, num_cycle, moving_res_list, sub_to_full, native_pose, silent_file_data, silent_file );
 
 	pose.dump_pdb( "FINAL.pdb" );
 	monte_carlo_->show_counters();
 	monte_carlo_->recover_low( pose );
 
-	//output_silent_file( pose, n_accept, num_cycle+1, moving_res_list, sub_to_full, native_pose, silent_file_data, silent_file );
-
-	if ( option[ out::file::o].user() ) { // makes life easier on cluter.
+	// This is not necessary anymore but could access it by a 'dump' option.
+	if ( option[ out::file::o].user() ) { // makes life easier on cluster.
 		pose.dump_pdb( option[ out::file::o ]() );
 	} else {
 		pose.dump_pdb( "LOW.pdb" );
@@ -1593,17 +1628,11 @@ my_main( void* )
 
 	clock_t const my_main_time_start( clock() );
 
-  using namespace basic::options;
-
-	std::string algorithm_input = option[algorithm];
-
 	swa_rna_sample();
 
 	protocols::viewer::clear_conformation_viewers();
 
-	std::cout << "Total time took to run algorithm (" << algorithm_input << "): " << static_cast<Real>( clock() - my_main_time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
-
-	std::cout << "JOB_SUCCESSFULLY_COMPLETED" << std::endl;
+	std::cout << "Total time to run " << static_cast<Real>( clock() - my_main_time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
 
   exit( 0 );
 
@@ -1619,12 +1648,17 @@ main( int argc, char * argv [] )
 	utility::vector1< Size > blank_size_vector;
 	utility::vector1< std::string > blank_string_vector;
 
+	////////////////////////////////////////////////////
+	// should be able to get rid of all the following,
+	// once job setup is in its own .cc file, shared by
+	// swa, swa_monte_carlo.
+	////////////////////////////////////////////////////
+
 	//////////////General/////////////////////////////
 	NEW_OPT( graphic, "Turn graphic on/off", true);
 	NEW_OPT( Real_parameter_one, "free_variable for testing purposes ", 0.0);
 	NEW_OPT( distinguish_pucker, "distinguish pucker when cluster:both in sampler and clusterer", true);
 	NEW_OPT( output_pdb, "output_pdb: If true, then will dump the pose into a PDB file at different stages of the stepwise assembly process.", false); //Sept 24, 2011
-	NEW_OPT( algorithm, "Specify algorithm to execute", "");
 
 	//////////////Job_Parameters///////////
 	NEW_OPT( sample_res, "residues to build, the first element is the actual sample res while the other are the bulge residues", blank_size_vector );
@@ -1633,7 +1667,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( missing_res, "Residues missing in starting pose_1, alternative to input_res", blank_size_vector );
 	NEW_OPT( missing_res2, "Residues missing in starting pose_2, alternative to input_res2", blank_size_vector );
 	NEW_OPT( rmsd_res, "residues that will be use to calculate rmsd (for clustering as well as RMSD to native_pdb if specified)", blank_size_vector );
-	NEW_OPT( alignment_res , "align_res_list", blank_string_vector );
+	NEW_OPT( alignment_res , "align_res_list", blank_string_vector ); // can this be a size vector now?
 	NEW_OPT( global_sample_res_list, "A list of all the nucleotide to be build/sample over the entire dag.", blank_size_vector); //March 20, 2011
 
 	NEW_OPT( cutpoint_open, "optional: chainbreak in full sequence", blank_size_vector );
@@ -1722,11 +1756,10 @@ main( int argc, char * argv [] )
 	NEW_OPT( unfolded_weight, "weight on unfolded term", 1.0 );
 	NEW_OPT( skip_randomize, "do not randomize...", false );
 	NEW_OPT( sample_all_o2star, "do not focus o2star sampling at residue of interest...", false );
+	NEW_OPT( start_added_residue_in_aform, "on add move, take starting configuration to be A-form, not random", false );
 	NEW_OPT( do_add_delete, "try add & delete moves...", false );
 	NEW_OPT( presample_added_residue, "when adding a residue, do a little monte carlo to try to get it in place", false );
 	NEW_OPT( presample_internal_cycles, "when adding a residue, number of monte carlo cycles", 100 );
-	NEW_OPT( forward_build, "TEMPORARY - REMOVE THIS SOON!", false );
-
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

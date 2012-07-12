@@ -73,13 +73,14 @@ enum Enum {
 	POSITION_CONSERVED_RESIDUES,
 	LK_BALL_POSE_INFO,
 	STRUCTURAL_CONSERVATION,
-    SURFACE_PARAMS,
+	SURFACE_PARAMS,
+	SUB_TO_FULL_INFO, // protocols/swa/monte_carlo/SubToFullInfo.cc
 
 	// *** IMPORTANT ***
 	// The 'num_cacheable_data_types' below must be the last enum, and must
 	// always be set equal to the (last-1) enum.  If you append a new enum
 	// to the list, remember to change the value below!
-  num_cacheable_data_types = SURFACE_PARAMS
+  num_cacheable_data_types = SUB_TO_FULL_INFO
 };
 
 static std::string get_name( CacheableDataType::Enum datatype);

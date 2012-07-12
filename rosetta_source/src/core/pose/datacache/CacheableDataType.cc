@@ -78,6 +78,7 @@ CacheableDataType::initialize_name_map() {
 	name2enum_["LK_BALL_POSE_INFO"] = LK_BALL_POSE_INFO;
 	name2enum_["STRUCTURAL_CONSERVATION"] = STRUCTURAL_CONSERVATION;
   name2enum_["SURFACE_PARAMS"] = SURFACE_PARAMS;
+  name2enum_["SUB_TO_FULL_INFO"] = SUB_TO_FULL_INFO;
 
 	assert( name2enum_.size() == CacheableDataType::num_cacheable_data_types );
 
