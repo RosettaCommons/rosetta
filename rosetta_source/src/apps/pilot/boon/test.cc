@@ -29,13 +29,14 @@
 
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/docking/DockingInitialPerturbation.hh>
+#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pack/task/PackerTask.hh>
+#include <core/kinematics/MoveMap.hh>
 
 int main(int argc, char *argv[])
 {
@@ -50,7 +51,7 @@ int main(int argc, char *argv[])
 	Pose test_pose;
 
 	// import a test pose
-	pose_from_pdb(test_pose, "/home/boon/data/1YY9.pdb");
+	pose_from_pdb(test_pose, "/home/boon/data/test.pdb");
 
 	std::cout << "Hello, Rosetta World!" << std::endl;
 	std::cout << "I just imported my first pose into Rosetta." << std::endl;
@@ -110,9 +111,22 @@ int main(int argc, char *argv[])
 	protocols::simple_moves::PackRotamersMover packmover2 = protocols::simple_moves::PackRotamersMover(scorefxn, fine_task, nloop);
 	std::cout << packmover2 << std::endl;*/
 
-	protocols::docking::DockingSlideIntoContact mover ( protocols::docking::DockingSlideIntoContact(2) );
-	std::cout << mover << std::endl;
+	//protocols::docking::ConformerSwitchMover mover;
+	//std::cout << "HOLA" << std::endl;
 
-	protocols::docking::FaDockingSlideIntoContact famover ( protocols::docking::FaDockingSlideIntoContact(1) );
-	std::cout << famover << std::endl;
+	//protocols::docking::ConformerSwitchMover mover2 ( protocols::docking::ConformerSwitchMover("True", 1.0) );
+	//std::cout << mover2 << std::endl;
+
+	// create a loops object
+	core::Size start = 15;
+	core::Size stop = 24;
+	core::Size cutpoint = 19;
+	protocols::loops::Loop loop ( protocols::loops::Loop(start, stop, cutpoint) );
+
+	// create a movemap object
+	core::kinematics::MoveMapCOP mm;
+
+	// create a CcdLoopClosureMover object
+	protocols::loops::loop_closure::ccd::CcdLoopClosureMover ccdmover ( protocols::loops::loop_closure::ccd::CcdLoopClosureMover(loop, mm) );
+	std::cout << ccdmover << std::endl;
 }

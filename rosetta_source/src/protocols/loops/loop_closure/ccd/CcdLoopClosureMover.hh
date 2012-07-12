@@ -93,6 +93,14 @@ public:
 		return ( forward_deviation() < tolerance_ ) && ( backward_deviation() < tolerance_ );
 	}
 
+	Loop get_loop() const { return loop_ ;}
+	core::Real get_max_rama_score_increase() const;
+	core::Real get_tolerance() const;
+	core::Real get_max_total_delta( std::string secstr ) const;
+	core::Size get_ccd_cycles() const { return ccd_cycles_; }
+	bool bRama_check() const { return bRama_check_; }
+	friend std::ostream &operator<< ( std::ostream &os, CcdLoopClosureMover const &mover );
+
 private:
   Loop loop_;
   core::kinematics::MoveMapCOP movemap_;

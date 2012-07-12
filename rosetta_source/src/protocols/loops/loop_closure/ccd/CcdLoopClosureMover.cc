@@ -125,6 +125,35 @@ CcdLoopClosureMover::get_name() const {
 	return "CcdLoopClosureMover";
 }
 
+core::Real
+CcdLoopClosureMover::get_max_rama_score_increase() const {
+	return max_rama_score_increase_;
+}
+
+core::Real
+CcdLoopClosureMover::get_tolerance() const {
+	return tolerance_;
+}
+
+core::Real
+CcdLoopClosureMover::get_max_total_delta( std::string secstr ) const {
+	if (secstr == "H")
+		return max_total_delta_helix_;
+	else if (secstr == "E")
+		return max_total_delta_strand_;
+	else if (secstr == "L")
+		return max_total_delta_loop_;
+}
+
+std::ostream &operator<< ( std::ostream &os, CcdLoopClosureMover const &mover )
+{
+	moves::operator<<(os, mover);
+	//os << "LOOP start: " << mover.get_loop().start() << ", stop: " << mover.get_loop().stop() << ", cut: " << mover.get_loop().cut() << ", size: " << mover.get_loop().size << ", skip rate: " <<
+			//mover.get_loop().skip_rate() << ", is extended?: " << mover.get_loop().is_extended() <<  std::endl;
+	os << "Max rama score increase: " << mover.get_max_rama_score_increase() << ", CCD cycles: " << mover.get_ccd_cycles() << ", Tolerance: " << mover.get_tolerance() << ", bRama check: " << mover.bRama_check() << std::endl;
+	os << "Max total delta helix: " << mover.get_max_total_delta("H") << ", ~strand: " << mover.get_max_total_delta("E") << ", ~loop: " << mover.get_max_total_delta("L") << std::endl;
+	return os;
+}
 
 CcdMover::CcdMover(
 	Loop const& loop_def,
