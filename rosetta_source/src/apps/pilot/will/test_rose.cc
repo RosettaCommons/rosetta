@@ -11,7 +11,6 @@
 #include <protocols/sic_dock/Rose.hh>
 #include <sstream>
 #include <numeric/xyzTransform.hh>
-#include <numeric/xyzTransform.io.hh>
 
 using std::string;
 using utility::vector1;
