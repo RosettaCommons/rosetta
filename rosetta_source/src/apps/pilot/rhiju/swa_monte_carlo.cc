@@ -249,7 +249,9 @@ OPT_KEY( Real, stddev_small )
 OPT_KEY( Real, stddev_large )
 OPT_KEY( Real, output_score_cutoff )
 OPT_KEY( Real, kT )
+OPT_KEY( Real, unfolded_weight )
 OPT_KEY( Integer, n_sample )
+OPT_KEY( Integer, output_period )
 OPT_KEY( Boolean, skip_randomize );
 OPT_KEY( Boolean, sample_all_o2star );
 OPT_KEY( Boolean, do_add_delete );
@@ -258,6 +260,304 @@ OPT_KEY( Integer, presample_internal_cycles );
 OPT_KEY( Boolean, forward_build ); //temporary -- delete this soon!
 
 
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+// Copied from swa_rna_main
+utility::vector1< core::Size >
+get_fixed_res(core::Size const nres){
+
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace protocols::swa::rna;
+
+	utility::vector1< Size > actual_fixed_res_list;
+	actual_fixed_res_list.clear();
+
+	utility::vector1< core::Size > const fixed_res_list = option[ fixed_res  ]();
+	utility::vector1< core::Size > const minimize_res_list= option[ minimize_res ]();
+
+	if(fixed_res_list.size()!=0 && minimize_res_list.size()!=0 ){
+		utility_exit_with_message( "User Cannot specify both  fixed_res and minimize_res!" );
+	}
+
+
+	if( fixed_res_list.size()!=0  ){
+		actual_fixed_res_list=fixed_res_list;
+
+	}else if( minimize_res_list.size()!=0){
+
+		for(Size seq_num=1; seq_num<=nres; seq_num++){
+			if( Contain_seq_num( seq_num, minimize_res_list) ) continue;
+			actual_fixed_res_list.push_back(seq_num);
+		}
+
+	}else{ //here I am being a little stringent and require user specify one of these option. Could just return empty list...
+		utility_exit_with_message( "User did not specify both fixed res and minimize_res!" );
+	}
+
+	return actual_fixed_res_list;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+// Copied from swa_rna_main
+utility::vector1< core::Size >
+get_input_res(core::Size const nres , std::string const pose_num){
+
+
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace protocols::swa::rna;
+
+	utility::vector1< core::Size > input_res_list;
+	utility::vector1< core::Size > missing_res_list;
+
+	if(pose_num=="1"){
+		input_res_list= option[ input_res ]();
+		missing_res_list= option[ missing_res ]();
+	}else if(pose_num=="2"){
+		input_res_list= option[ input_res2 ]();
+		missing_res_list= option[ missing_res2 ]();
+	}else{
+		utility_exit_with_message( "Invalid pose_num " + pose_num + ", must by either 1 or 2 !" );
+	}
+
+
+	if( input_res_list.size()!=0 && missing_res_list.size()!=0 ){
+		utility_exit_with_message( "User Cannot specify both input_res" + pose_num + " and missing_res" + pose_num + "!" );
+	}
+
+	utility::vector1< core::Size > actual_input_res_list;
+	actual_input_res_list.clear();
+
+	if( input_res_list.size()!=0){
+		actual_input_res_list=input_res_list;
+
+	}else if( missing_res_list.size()!=0){
+
+		for(Size seq_num=1; seq_num<=nres; seq_num++){
+			if( Contain_seq_num( seq_num, missing_res_list) ) continue;
+			actual_input_res_list.push_back(seq_num);
+		}
+
+	}else{ //did not specify both input_res and missing_res, return empty list
+		std::cout << "user did not specify both input_res" << pose_num << " and missing_res" << pose_num << std::endl;
+	}
+
+	return actual_input_res_list;
+
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+// Copied from swa_rna_main
+core::scoring::ScoreFunctionOP
+create_scorefxn(){
+
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace core::scoring;
+
+
+	std::string score_weight_file;
+
+	Size num_score_weight_file=0;
+
+	if ( option[ basic::options::OptionKeys::score::weights ].user() ) {
+		score_weight_file= option[ basic::options::OptionKeys::score::weights ]();
+		std::cout << "User passed in score:weight option: " << score_weight_file << std::endl;
+		num_score_weight_file++;
+	}
+
+
+	if(num_score_weight_file==0){
+		//rna_loop_hires_04092010.wts is same as 5X_linear_quarter_fa_stack_and_adjust_bulge_ss_benchmark.wts
+		//change default from single_strand_benchmark to 5X_linear_chainbreak_single_strand_benchmark on May 24, 2010
+		//change default to 5X_linear_quarter_fa_stack_and_adjust_bulge_ss_benchmark.wts" on April 9th, 2011
+		//score_weight_file="rna_loop_hires_04092010.wts";
+		utility_exit_with_message("User to need to pass in score:weights"); //Remove the default weight on Sept 28, 2011 Parin S.
+	}
+
+	if(num_score_weight_file>1){
+		std::cout << "num_score_weight_file (inputted by user)=" << num_score_weight_file << std::endl;
+		utility_exit_with_message("num_score_weight_file>1");
+	}
+
+	core::scoring::ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( score_weight_file );
+
+
+	std::cout << "---------score function weights----------" << std::endl;
+	scorefxn->show(std::cout);
+	std::cout << "-----------------------------------------" << std::endl;
+
+
+	return scorefxn;
+}
+
+
+void
+setup_copy_DOF_input(protocols::swa::rna::StepWiseRNA_PoseSetupOP & stepwise_rna_pose_setup){
+
+	/////////////////////////////////////////////////////////////////////////////////////////
+	// StepWisePoseSetup should create the starting pose.
+	// This class might eventually be united with the protein StepWisePoseSetup.
+	utility::vector1< std::string > input_tags;
+	utility::vector1< std::string > silent_files_in;
+
+	if ( option[ in::file::s ].user() ) {
+		// Then any pdbs that need to be read in from disk.
+		utility::vector1< std::string > const	pdb_tags_from_disk( option[ in::file::s ]() );
+		for ( Size n = 1; n <= pdb_tags_from_disk.size(); n++ ) {
+			input_tags.push_back( pdb_tags_from_disk[ n ] );
+		}
+	}
+
+	if(input_tags.size() > 2 ){
+		utility_exit_with_message( "input_tags.size() > 2!!" );
+	}
+
+	std::cout << "Input structures for COPY DOF" << std::endl;
+	for(Size n=1; n<=input_tags.size(); n++){
+		if(n<=silent_files_in.size()){
+			std::cout << "silent_file tag= " << input_tags[n] << " silent_file= " << silent_files_in[n] << std::endl;
+		}else{
+			std::cout << "input_tag= " << input_tags[n] << std::endl;
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////
+	stepwise_rna_pose_setup->set_input_tags( input_tags);
+	stepwise_rna_pose_setup->set_silent_files_in( silent_files_in);
+
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+// Copied from swa_rna_main -- removed stuff to check silent files.
+// probably don't need to set all these options... anyway.
+//
+protocols::swa::rna::StepWiseRNA_JobParametersOP
+setup_rna_job_parameters(){
+
+	using namespace protocols::swa::rna;
+	using namespace ObjexxFCL;
+	///////////////////////////////
+	// Read in sequence.
+	if ( !option[ in::file::fasta ].user() ) utility_exit_with_message( "Must supply in::file::fasta!" );
+	std::string const fasta_file = option[ in::file::fasta ]()[1];
+	core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( fasta_file )[1];
+	std::string const full_sequence = fasta_sequence->sequence();
+	core::Size const nres=full_sequence.length();
+
+	if ( !option[ sample_res ].user() ) utility_exit_with_message( "Must supply sample_res!" );
+
+
+	/////////////////////////////////////////////////////
+
+	StepWiseRNA_JobParameters_Setup stepwise_rna_job_parameters_setup( option[ sample_res ](), /*the first element of moving_res_list is the sampling_res*/
+																								 										 full_sequence,
+																								 										 get_input_res(nres, "1" ),
+																								 										 get_input_res(nres, "2" ),
+																								 										 option[ cutpoint_open ](),
+																								 										 option[ cutpoint_closed ]() );
+	stepwise_rna_job_parameters_setup.set_simple_append_map( option[ simple_append_map]() );
+	stepwise_rna_job_parameters_setup.set_allow_fixed_res_at_moving_res( option[ allow_fixed_res_at_moving_res ]() ); //Hacky just to get Hermann Duplex working. Need to called before set_fixed_res
+
+	utility::vector1< Size > fixed_res_ = get_fixed_res(nres);
+	stepwise_rna_job_parameters_setup.set_fixed_res( fixed_res_ );
+	stepwise_rna_job_parameters_setup.set_terminal_res( option[ terminal_res ]() );
+	stepwise_rna_job_parameters_setup.set_rmsd_res_list( option[ rmsd_res ]() );
+	stepwise_rna_job_parameters_setup.set_jump_point_pair_list( option[ jump_point_pairs ]() ); //Important!: Need to be called after set_fixed_res
+	stepwise_rna_job_parameters_setup.set_filter_user_alignment_res( option[ filter_user_alignment_res ]() );
+
+	utility::vector1< std::string > alignment_res_; //why is this a string vector?????
+	if ( option[ alignment_res ].user() ) {
+		alignment_res_ = option[ alignment_res ]();
+	} else {
+		for ( Size n = 1; n <= fixed_res_.size(); n++ ) alignment_res_.push_back( string_of( fixed_res_[n] ) );
+	}
+	stepwise_rna_job_parameters_setup.set_alignment_res( alignment_res_ );
+
+	if ( option[ native_alignment_res ].user() ) {
+		stepwise_rna_job_parameters_setup.set_native_alignment_res( option[ native_alignment_res ]() );
+	} else {
+		stepwise_rna_job_parameters_setup.set_native_alignment_res( fixed_res_ );
+	}
+
+	stepwise_rna_job_parameters_setup.set_global_sample_res_list( option[ global_sample_res_list ]() ); //March 20, 2011
+
+	stepwise_rna_job_parameters_setup.set_force_syn_chi_res_list( option[ force_syn_chi_res_list]() ); //April 29, 2011
+	stepwise_rna_job_parameters_setup.set_force_north_ribose_list( option[ force_north_ribose_list ]() ); //April 29, 2011
+	stepwise_rna_job_parameters_setup.set_force_south_ribose_list( option[ force_south_ribose_list ]() ); //April 29, 2011
+	stepwise_rna_job_parameters_setup.set_protonated_H1_adenosine_list( option[ protonated_H1_adenosine_list ]() ); //May 02, 2011
+
+	stepwise_rna_job_parameters_setup.set_allow_chain_boundary_jump_partner_right_at_fixed_BP( option[ allow_chain_boundary_jump_partner_right_at_fixed_BP ]() ); //Hacky just to get Square RNA working.
+
+	stepwise_rna_job_parameters_setup.set_output_extra_RMSDs( option[ output_extra_RMSDs ]() );
+	stepwise_rna_job_parameters_setup.set_add_virt_res_as_root( option[ add_virt_root]() );
+
+
+	stepwise_rna_job_parameters_setup.set_skip_complicated_stuff( true ); // new by Rhiju.
+
+	stepwise_rna_job_parameters_setup.apply();
+
+	return stepwise_rna_job_parameters_setup.job_parameters();
+
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// Copied from swa_rna_main
+protocols::swa::rna::StepWiseRNA_PoseSetupOP
+setup_pose_setup_class(protocols::swa::rna::StepWiseRNA_JobParametersOP & job_parameters, bool const copy_DOF=true){
+
+  using namespace core::pose;
+  using namespace core::chemical;
+  using namespace core::kinematics;
+  using namespace core::scoring;
+	using namespace protocols::swa::rna;
+
+	ResidueTypeSetCAP rsd_set;
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+
+	// Read in native_pose.
+	PoseOP native_pose;
+	if (option[ in::file::native ].user() ) {
+		native_pose = PoseOP( new Pose );
+		import_pose::pose_from_pdb( *native_pose, *rsd_set, option[ in::file::native ]() );
+		std::cout << "native_pose->fold_tree(): " << native_pose->fold_tree();
+		std::cout << "native_pose->annotated_sequence(true): " << native_pose->annotated_sequence( true ) << std::endl;
+		protocols::rna::make_phosphate_nomenclature_matches_mini( *native_pose);
+	}
+
+	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = new StepWiseRNA_PoseSetup( job_parameters);
+	stepwise_rna_pose_setup->set_copy_DOF(copy_DOF);
+
+	if(copy_DOF==true){
+		setup_copy_DOF_input(stepwise_rna_pose_setup);
+	}
+
+
+	stepwise_rna_pose_setup->set_virtual_res( option[ virtual_res ]() );
+	stepwise_rna_pose_setup->set_bulge_res( option[ bulge_res ]() );
+	stepwise_rna_pose_setup->set_native_pose( native_pose );
+	stepwise_rna_pose_setup->set_native_virtual_res( option[ native_virtual_res]() );
+	stepwise_rna_pose_setup->set_rebuild_bulge_mode( option[rebuild_bulge_mode]() );
+	stepwise_rna_pose_setup->set_output_pdb( option[ output_pdb ]() );
+	stepwise_rna_pose_setup->set_apply_virtual_res_variant_at_dinucleotide( false );
+	stepwise_rna_pose_setup->set_align_to_native( true );
+
+	return stepwise_rna_pose_setup;
+}
+
+
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
 //////////////////////////////////////////////////
 // copied from fang's turner_test_one_chain.cc
 static const scoring::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
@@ -342,6 +642,67 @@ apply_suite_torsion( utility::vector1< Real > const & torsion_set,
 
 //////////////////////////////////
 void
+apply_random_nucleoside_torsion( pose::Pose & pose,
+																 Size const moving_res ){
+
+	utility::vector1< Real > torsion_set;
+
+	bool north_pucker = (RG.uniform() < 0.5) ? true : false;
+
+	Size chi_rotamer = 1;
+	// could be syn if purine.
+	if ( scoring::rna::is_purine( pose.residue( moving_res ) ) && RG.uniform() < 0.5 ) chi_rotamer = 2;
+
+	if ( north_pucker ){
+		torsion_set.push_back( rna_fitted_torsion_info.ideal_delta_north() );
+		torsion_set.push_back( rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[chi_rotamer].center );
+	} else {
+		torsion_set.push_back( rna_fitted_torsion_info.ideal_delta_south() );
+		torsion_set.push_back( rna_fitted_torsion_info.gaussian_parameter_set_chi_south()[chi_rotamer].center );
+	}
+
+	apply_nucleoside_torsion( torsion_set, pose, moving_res );
+}
+
+
+//////////////////////////////////
+void
+apply_random_suite_torsion( pose::Pose & pose,
+														Size const moving_suite ){
+
+	utility::vector1< Real > torsion_set;
+
+	bool north_pucker = ( pose.delta( moving_suite ) < 115 );
+	Real const epsilon =  ( north_pucker ) ? rna_fitted_torsion_info.gaussian_parameter_set_epsilon_north()[1].center : rna_fitted_torsion_info.gaussian_parameter_set_epsilon_south()[1].center;
+	torsion_set.push_back( epsilon );
+
+	Size const alpha_rotamer = int( 3 * RG.uniform() ) + 1;
+	Real const alpha = rna_fitted_torsion_info.gaussian_parameter_set_alpha()[ alpha_rotamer ].center;
+
+	Size const zeta_rotamer = int( 2 * RG.uniform() ) + 1;
+	Real zeta;
+	if ( alpha_rotamer == 1 ){
+		zeta = rna_fitted_torsion_info.gaussian_parameter_set_zeta_alpha_sc_minus()[ zeta_rotamer ].center;
+	} else if ( alpha_rotamer == 2 ){
+		zeta = rna_fitted_torsion_info.gaussian_parameter_set_zeta_alpha_sc_plus()[ zeta_rotamer ].center;
+	} else {
+		zeta = rna_fitted_torsion_info.gaussian_parameter_set_zeta_alpha_ap()[ zeta_rotamer ].center;
+	}
+
+	torsion_set.push_back( zeta );
+	torsion_set.push_back( alpha );
+	torsion_set.push_back( rna_fitted_torsion_info.gaussian_parameter_set_beta()[1].center );
+
+	Size const gamma_rotamer = int( 3 * RG.uniform() ) + 1;
+	torsion_set.push_back( rna_fitted_torsion_info.gaussian_parameter_set_gamma()[gamma_rotamer].center );
+
+	apply_suite_torsion( torsion_set, pose, moving_suite );
+
+}
+
+
+//////////////////////////////////
+void
 apply_nucleoside_torsion_Aform(
 													pose::Pose & pose,
 													Size const moving_res ){
@@ -351,6 +712,8 @@ apply_nucleoside_torsion_Aform(
 	ideal_A_form_torsions.push_back( rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[1].center );
 	apply_nucleoside_torsion( ideal_A_form_torsions, pose, moving_res );
 }
+
+
 //////////////////////////////////
 void
 apply_suite_torsion_Aform(
@@ -506,287 +869,10 @@ get_random_o2star_residue_near_moving_residue( pose::Pose & pose, utility::vecto
 	return o2star_num;
 }
 
-
-//////////////////////////////////////////////////////////////////////////////////////
-// Copied from swa_rna_main
-utility::vector1< core::Size >
-get_fixed_res(core::Size const nres){
-
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace protocols::swa::rna;
-
-	utility::vector1< Size > actual_fixed_res_list;
-	actual_fixed_res_list.clear();
-
-	utility::vector1< core::Size > const fixed_res_list = option[ fixed_res  ]();
-	utility::vector1< core::Size > const minimize_res_list= option[ minimize_res ]();
-
-	if(fixed_res_list.size()!=0 && minimize_res_list.size()!=0 ){
-		utility_exit_with_message( "User Cannot specify both  fixed_res and minimize_res!" );
-	}
-
-
-	if( fixed_res_list.size()!=0  ){
-		actual_fixed_res_list=fixed_res_list;
-
-	}else if( minimize_res_list.size()!=0){
-
-		for(Size seq_num=1; seq_num<=nres; seq_num++){
-			if( Contain_seq_num( seq_num, minimize_res_list) ) continue;
-			actual_fixed_res_list.push_back(seq_num);
-		}
-
-	}else{ //here I am being a little stringent and require user specify one of these option. Could just return empty list...
-		utility_exit_with_message( "User did not specify both fixed res and minimize_res!" );
-	}
-
-	return actual_fixed_res_list;
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////
-// Copied from swa_rna_main
-utility::vector1< core::Size >
-get_input_res(core::Size const nres , std::string const pose_num){
-
-
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace protocols::swa::rna;
-
-	utility::vector1< core::Size > input_res_list;
-	utility::vector1< core::Size > missing_res_list;
-
-	if(pose_num=="1"){
-		input_res_list= option[ input_res ]();
-		missing_res_list= option[ missing_res ]();
-	}else if(pose_num=="2"){
-		input_res_list= option[ input_res2 ]();
-		missing_res_list= option[ missing_res2 ]();
-	}else{
-		utility_exit_with_message( "Invalid pose_num " + pose_num + ", must by either 1 or 2 !" );
-	}
-
-
-	if( input_res_list.size()!=0 && missing_res_list.size()!=0 ){
-		utility_exit_with_message( "User Cannot specify both input_res" + pose_num + " and missing_res" + pose_num + "!" );
-	}
-
-	utility::vector1< core::Size > actual_input_res_list;
-	actual_input_res_list.clear();
-
-	if( input_res_list.size()!=0){
-		actual_input_res_list=input_res_list;
-
-	}else if( missing_res_list.size()!=0){
-
-		for(Size seq_num=1; seq_num<=nres; seq_num++){
-			if( Contain_seq_num( seq_num, missing_res_list) ) continue;
-			actual_input_res_list.push_back(seq_num);
-		}
-
-	}else{ //did not specify both input_res and missing_res, return empty list
-		std::cout << "user did not specify both input_res" << pose_num << " and missing_res" << pose_num << std::endl;
-	}
-
-	return actual_input_res_list;
-
-}
-
-///////////////////////////////////////////////////////////////////////////
-// Copied from swa_rna_main
-core::scoring::ScoreFunctionOP
-create_scorefxn(){
-
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::scoring;
-
-
-	std::string score_weight_file;
-
-	Size num_score_weight_file=0;
-
-	if ( option[ basic::options::OptionKeys::score::weights ].user() ) {
-		score_weight_file= option[ basic::options::OptionKeys::score::weights ]();
-		std::cout << "User passed in score:weight option: " << score_weight_file << std::endl;
-		num_score_weight_file++;
-	}
-
-
-	if(num_score_weight_file==0){
-		//rna_loop_hires_04092010.wts is same as 5X_linear_quarter_fa_stack_and_adjust_bulge_ss_benchmark.wts
-		//change default from single_strand_benchmark to 5X_linear_chainbreak_single_strand_benchmark on May 24, 2010
-		//change default to 5X_linear_quarter_fa_stack_and_adjust_bulge_ss_benchmark.wts" on April 9th, 2011
-		//score_weight_file="rna_loop_hires_04092010.wts";
-		utility_exit_with_message("User to need to pass in score:weights"); //Remove the default weight on Sept 28, 2011 Parin S.
-	}
-
-	if(num_score_weight_file>1){
-		std::cout << "num_score_weight_file (inputted by user)=" << num_score_weight_file << std::endl;
-		utility_exit_with_message("num_score_weight_file>1");
-	}
-
-	core::scoring::ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( score_weight_file );
-
-
-	std::cout << "---------score function weights----------" << std::endl;
-	scorefxn->show(std::cout);
-	std::cout << "-----------------------------------------" << std::endl;
-
-
-	return scorefxn;
-}
-
-
-void
-setup_copy_DOF_input(protocols::swa::rna::StepWiseRNA_PoseSetupOP & stepwise_rna_pose_setup){
-
-	/////////////////////////////////////////////////////////////////////////////////////////
-	// StepWisePoseSetup should create the starting pose.
-	// This class might eventually be united with the protein StepWisePoseSetup.
-	utility::vector1< std::string > input_tags;
-	utility::vector1< std::string > silent_files_in;
-
-	if ( option[ in::file::s ].user() ) {
-		// Then any pdbs that need to be read in from disk.
-		utility::vector1< std::string > const	pdb_tags_from_disk( option[ in::file::s ]() );
-		for ( Size n = 1; n <= pdb_tags_from_disk.size(); n++ ) {
-			input_tags.push_back( pdb_tags_from_disk[ n ] );
-		}
-	}
-
-	if(input_tags.size() > 2 ){
-		utility_exit_with_message( "input_tags.size() > 2!!" );
-	}
-
-	std::cout << "Input structures for COPY DOF" << std::endl;
-	for(Size n=1; n<=input_tags.size(); n++){
-		if(n<=silent_files_in.size()){
-			std::cout << "silent_file tag= " << input_tags[n] << " silent_file= " << silent_files_in[n] << std::endl;
-		}else{
-			std::cout << "input_tag= " << input_tags[n] << std::endl;
-		}
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////
-	stepwise_rna_pose_setup->set_input_tags( input_tags);
-	stepwise_rna_pose_setup->set_silent_files_in( silent_files_in);
-
-
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////
-// Copied from swa_rna_main -- removed stuff to check silent files.
-// probably don't need to set all these options... anyway.
-//
-protocols::swa::rna::StepWiseRNA_JobParametersOP
-setup_rna_job_parameters(){
-
-	using namespace protocols::swa::rna;
-	using namespace ObjexxFCL;
-	///////////////////////////////
-	// Read in sequence.
-	if ( !option[ in::file::fasta ].user() ) utility_exit_with_message( "Must supply in::file::fasta!" );
-	std::string const fasta_file = option[ in::file::fasta ]()[1];
-	core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( fasta_file )[1];
-	std::string const full_sequence = fasta_sequence->sequence();
-	core::Size const nres=full_sequence.length();
-
-	if ( !option[ sample_res ].user() ) utility_exit_with_message( "Must supply sample_res!" );
-
-
-	/////////////////////////////////////////////////////
-
-	StepWiseRNA_JobParameters_Setup stepwise_rna_job_parameters_setup( option[ sample_res ](), /*the first element of moving_res_list is the sampling_res*/
-																								 										 full_sequence,
-																								 										 get_input_res(nres, "1" ),
-																								 										 get_input_res(nres, "2" ),
-																								 										 option[ cutpoint_open ](),
-																								 										 option[ cutpoint_closed ]() );
-	stepwise_rna_job_parameters_setup.set_simple_append_map( option[ simple_append_map]() );
-	stepwise_rna_job_parameters_setup.set_allow_fixed_res_at_moving_res( option[ allow_fixed_res_at_moving_res ]() ); //Hacky just to get Hermann Duplex working. Need to called before set_fixed_res
-	stepwise_rna_job_parameters_setup.set_fixed_res( get_fixed_res(nres) );
-	stepwise_rna_job_parameters_setup.set_terminal_res( option[ terminal_res ]() );
-	stepwise_rna_job_parameters_setup.set_rmsd_res_list( option[ rmsd_res ]() );
-	stepwise_rna_job_parameters_setup.set_jump_point_pair_list( option[ jump_point_pairs ]() ); //Important!: Need to be called after set_fixed_res
-	stepwise_rna_job_parameters_setup.set_alignment_res( option[ alignment_res ]() );
-	stepwise_rna_job_parameters_setup.set_filter_user_alignment_res( option[ filter_user_alignment_res ]() );
-	stepwise_rna_job_parameters_setup.set_native_alignment_res( option[ native_alignment_res ]() );
-
-	stepwise_rna_job_parameters_setup.set_global_sample_res_list( option[ global_sample_res_list ]() ); //March 20, 2011
-
-	stepwise_rna_job_parameters_setup.set_force_syn_chi_res_list( option[ force_syn_chi_res_list]() ); //April 29, 2011
-	stepwise_rna_job_parameters_setup.set_force_north_ribose_list( option[ force_north_ribose_list ]() ); //April 29, 2011
-	stepwise_rna_job_parameters_setup.set_force_south_ribose_list( option[ force_south_ribose_list ]() ); //April 29, 2011
-	stepwise_rna_job_parameters_setup.set_protonated_H1_adenosine_list( option[ protonated_H1_adenosine_list ]() ); //May 02, 2011
-
-	stepwise_rna_job_parameters_setup.set_allow_chain_boundary_jump_partner_right_at_fixed_BP( option[ allow_chain_boundary_jump_partner_right_at_fixed_BP ]() ); //Hacky just to get Square RNA working.
-
-	stepwise_rna_job_parameters_setup.set_output_extra_RMSDs( option[ output_extra_RMSDs ]() );
-	stepwise_rna_job_parameters_setup.set_add_virt_res_as_root( option[ add_virt_root]() );
-
-
-	stepwise_rna_job_parameters_setup.set_skip_complicated_stuff( true ); // new by Rhiju.
-
-	stepwise_rna_job_parameters_setup.apply();
-
-	return stepwise_rna_job_parameters_setup.job_parameters();
-
-}
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////
-// Copied from swa_rna_main
-protocols::swa::rna::StepWiseRNA_PoseSetupOP
-setup_pose_setup_class(protocols::swa::rna::StepWiseRNA_JobParametersOP & job_parameters, bool const copy_DOF=true){
-
-  using namespace core::pose;
-  using namespace core::chemical;
-  using namespace core::kinematics;
-  using namespace core::scoring;
-	using namespace protocols::swa::rna;
-
-	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
-
-	// Read in native_pose.
-	PoseOP native_pose;
-	if (option[ in::file::native ].user() ) {
-		native_pose = PoseOP( new Pose );
-		import_pose::pose_from_pdb( *native_pose, *rsd_set, option[ in::file::native ]() );
-		std::cout << "native_pose->fold_tree(): " << native_pose->fold_tree();
-		std::cout << "native_pose->annotated_sequence(true): " << native_pose->annotated_sequence( true ) << std::endl;
-		protocols::rna::make_phosphate_nomenclature_matches_mini( *native_pose);
-	}
-
-	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = new StepWiseRNA_PoseSetup( job_parameters);
-	stepwise_rna_pose_setup->set_copy_DOF(copy_DOF);
-
-	if(copy_DOF==true){
-		setup_copy_DOF_input(stepwise_rna_pose_setup);
-	}
-
-
-	stepwise_rna_pose_setup->set_virtual_res( option[ virtual_res ]() );
-	stepwise_rna_pose_setup->set_bulge_res( option[ bulge_res ]() );
-	stepwise_rna_pose_setup->set_native_pose( native_pose );
-	stepwise_rna_pose_setup->set_native_virtual_res( option[ native_virtual_res]() );
-	stepwise_rna_pose_setup->set_rebuild_bulge_mode( option[rebuild_bulge_mode]() );
-	stepwise_rna_pose_setup->set_output_pdb( option[ output_pdb ]() );
-	stepwise_rna_pose_setup->set_apply_virtual_res_variant_at_dinucleotide( false );
-	stepwise_rna_pose_setup->set_align_to_native( true );
-
-	return stepwise_rna_pose_setup;
-}
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Following assumed that pose is already properly aligned to native pose!
 void
-output_silent_file( pose::Pose const & pose, Size const n_accept, Size const count,
+output_silent_file( pose::Pose const & pose, Size const count,
 										utility::vector1< Size > working_res_list,
 										std::map< Size, Size > sub_to_full,
 										pose::Pose const & native_pose,
@@ -801,7 +887,7 @@ output_silent_file( pose::Pose const & pose, Size const n_accept, Size const cou
 	for ( Size i = 1; i <= pose.total_residue(); i++ ) is_working_res.push_back( false );
 	for ( Size n = 1; n <= working_res_list.size(); n++ ) is_working_res[ working_res_list[n] ] = true;
 
-	std::string const tag = "S_"+lead_zero_string_of(n_accept,6);
+	std::string const tag = "S_"+lead_zero_string_of(count,6);
 	BinaryRNASilentStruct s( pose, tag );
 
 	// could initialize this once somewhere else.
@@ -867,23 +953,28 @@ output_silent_file( pose::Pose const & pose, Size const n_accept, Size const cou
 	s.add_string_value( "count", ObjexxFCL::fmt::I(9,count) );
 
 	std::string built_res = "";
-	for ( Size n = 1; n <= working_res_list.size(); n++ ) built_res += string_of(working_res_list[n]);
+	if ( working_res_list.size() == 0 ) {
+		built_res = "-";
+	} else {
+		built_res += string_of( working_res_list[1] );
+		for ( Size n = 2; n <= working_res_list.size(); n++ ) built_res += "-"+string_of( sub_to_full[ working_res_list[n] ] );
+	}
 	s.add_string_value( "built_res", built_res);
 
-	silent_file_data->write_silent_struct( s, silent_file, true /*score_only*/ );
+	silent_file_data->write_silent_struct( s, silent_file, false /*score_only*/ );
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // can go into a namespace later...
-enum MovingResidueCase { NONE=0, CHAIN_TERMINUS_5PRIME, CHAIN_TERMINUS_3PRIME, INTERNAL, FLOATING_BASE };
-
+enum MovingResidueCase { NO_CASE=0, CHAIN_TERMINUS_5PRIME, CHAIN_TERMINUS_3PRIME, INTERNAL, FLOATING_BASE };
+enum AddOrDeleteChoice{ NO_ADD_OR_DELETE=0, ADD, DELETE };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 MovingResidueCase
 get_moving_residue_case( pose::Pose const & pose, Size const i ) {
 
-	MovingResidueCase moving_residue_case( NONE );
+	MovingResidueCase moving_residue_case( NO_CASE );
 
 	Size const & nres( pose.total_residue() );
 	kinematics::FoldTree const & fold_tree( pose.fold_tree() );
@@ -1065,27 +1156,111 @@ reorder_after_append( std::map<Size,Size> & sub_to_full,
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//void
+//get_random_residue_at_chain_terminus( pose::Pose const & pose,
+//																			utility::vector1< Size > const & moving_res_list,
+//																			Size & residue_at_chain_terminus,
+//																			MovingResidueCase & moving_residue_case,
+//																			AddOrDeleteChoice add_or_delete) {
+//
+//	utility::vector1< Size > possible_res;
+//	utility::vector1< MovingResidueCase > moving_residue_cases;
+//
+//	for (Size i = 1; i <= moving_res_list.size(); i++ ){
+//		Size const n = moving_res_list[ i ];
+//		MovingResidueCase const moving_residue_case = get_moving_residue_case( pose, n );
+//		moving_residue_cases.push_back( moving_residue_case );
+//		if ( moving_residue_case == CHAIN_TERMINUS_3PRIME || moving_residue_case == CHAIN_TERMINUS_5PRIME ) possible_res.push_back( i );
+//	}
+//
+//	Size const res_idx =  int( RG.uniform() * possible_res.size() ) + 1;
+//	Size const moving_res_idx = possible_res[ res_idx ];
+//
+//	residue_at_chain_terminus = moving_res_list[ moving_res_idx ];
+//	moving_residue_case       = moving_residue_cases[ moving_res_idx ];
+//}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 get_random_residue_at_chain_terminus( pose::Pose const & pose,
-															 utility::vector1< Size > const & moving_res_list,
-															 Size & residue_at_chain_terminus,
-															 MovingResidueCase & moving_residue_case  ) {
+																			utility::vector1< Size > const & moving_res_list,
+																			std::map< Size, Size > & sub_to_full,
+																			Size const & nres_full,
+																			utility::vector1< Size > cutpoints_in_full_pose,
+																			Size & residue_at_chain_terminus,
+																			MovingResidueCase & moving_residue_case,
+																			AddOrDeleteChoice & add_or_delete_choice) {
 
-	utility::vector1< Size > possible_res;
+	// potential delete residues
+	Size const & nres( pose.total_residue() );
+	kinematics::FoldTree const & fold_tree( pose.fold_tree() );
+
+	utility::vector1< Size >  possible_res;
 	utility::vector1< MovingResidueCase > moving_residue_cases;
+	utility::vector1< AddOrDeleteChoice > add_or_delete_choices;
 
-	for (Size i = 1; i <= moving_res_list.size(); i++ ){
-		Size const n = moving_res_list[ i ];
-		MovingResidueCase const moving_residue_case = get_moving_residue_case( pose, n );
-		moving_residue_cases.push_back( moving_residue_case );
-		if ( moving_residue_case == CHAIN_TERMINUS_3PRIME || moving_residue_case == CHAIN_TERMINUS_5PRIME ) possible_res.push_back( i );
+	for ( Size n = 1; n <= moving_res_list.size(); n++ ){
+
+		Size const i = moving_res_list[ n ];
+
+		if ( i == nres || fold_tree.is_cutpoint( i ) ){ // could be a 3' chain terminus
+
+			possible_res.push_back( i );
+			moving_residue_cases.push_back( CHAIN_TERMINUS_3PRIME );
+			add_or_delete_choices.push_back( DELETE );
+
+		} else if ( i == 1 || fold_tree.is_cutpoint( i-1 ) ) {
+
+			possible_res.push_back( i );
+			moving_residue_cases.push_back( CHAIN_TERMINUS_5PRIME );
+			add_or_delete_choices.push_back( DELETE );
+
+		}
+
+	}
+
+
+	utility::vector1< bool > is_cutpoint_in_full_pose;
+	for ( Size i = 1; i <= nres_full; i++ ) is_cutpoint_in_full_pose.push_back( false );
+	for ( Size n = 1; n <= cutpoints_in_full_pose.size(); n++ ) is_cutpoint_in_full_pose[ cutpoints_in_full_pose[n] ] = true;
+
+	for ( Size i = 1; i <= nres; i++ ){
+
+		if ( ( i == nres ) ||
+				 ( fold_tree.is_cutpoint( i ) && (sub_to_full[ i ]+1 < sub_to_full[ i+1 ]) ) ) { // could be a 3' chain terminus
+
+			Size const i_full = sub_to_full[ i ] ;
+			if ( !is_cutpoint_in_full_pose[ i_full ] && i_full < nres_full ){ // good, there's still a gap!
+
+				possible_res.push_back( i );
+				moving_residue_cases.push_back( CHAIN_TERMINUS_3PRIME );
+				add_or_delete_choices.push_back( ADD );
+
+			}
+		}
+	}
+
+	for ( Size i = 1; i <= nres; i++ ){
+
+		if ( ( i == 1 ) ||
+				 ( fold_tree.is_cutpoint( i-1 ) && (sub_to_full[ i ]-1 > sub_to_full[ i-1 ]) ) ) { // could be a 5' chain terminus
+
+			Size const i_full = sub_to_full[ i ];
+			if ( i_full > 1 && !is_cutpoint_in_full_pose[ i_full-1 ] ) { // good, there's still a gap!
+
+				possible_res.push_back( i );
+				moving_residue_cases.push_back( CHAIN_TERMINUS_5PRIME );
+				add_or_delete_choices.push_back( ADD );
+			}
+		}
 	}
 
 	Size const res_idx =  int( RG.uniform() * possible_res.size() ) + 1;
-	Size const moving_res_idx = possible_res[ res_idx ];
 
-	residue_at_chain_terminus = moving_res_list[ moving_res_idx ];
-	moving_residue_case       = moving_residue_cases[ moving_res_idx ];
+	residue_at_chain_terminus = possible_res[ res_idx ];
+	moving_residue_case       = moving_residue_cases[ res_idx ];
+	add_or_delete_choice      = add_or_delete_choices[ res_idx ];
 }
 
 
@@ -1111,21 +1286,21 @@ swa_rna_sample()
 	std::cout << "Total time to setup ResidueTypeSet: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
 
 	core::scoring::ScoreFunctionOP scorefxn=create_scorefxn();
+	if ( option[ unfolded_weight ].user() ) scorefxn->set_weight( unfolded,  option[ unfolded_weight ]() );
+
 
 	///////////////////////////////
+	//StepWiseRNA_JobParametersOP	job_parameters = setup_simple_full_length_rna_job_parameters();
 	StepWiseRNA_JobParametersOP	job_parameters = setup_rna_job_parameters();
-	StepWiseRNA_JobParametersCOP job_parameters_COP( job_parameters );
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = setup_pose_setup_class(job_parameters);
 
   Pose pose;
 	stepwise_rna_pose_setup->apply( pose );
-
-	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 800, 800 );
-
 	stepwise_rna_pose_setup->setup_native_pose( pose ); //NEED pose to align native_pose to pose.
 
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 800, 800 );
 	pose.dump_pdb( "START.pdb" );
 	job_parameters->working_native_pose()->dump_pdb( "working_native.pdb" );
 
@@ -1153,13 +1328,15 @@ swa_rna_sample()
 
 	std::map< Size, Size > sub_to_full = job_parameters->sub_to_full();
 	std::string full_sequence = job_parameters->full_sequence();
+	Size const nres_full = full_sequence.size(); // needed to make sure we don't add residues beyond the boundary of the pose.
+	utility::vector1< Size > cutpoints_in_full_pose = option[ cutpoint_open ]();
 	pose::Pose const & native_pose = *( stepwise_rna_pose_setup->get_native_pose() );
 
 	std::string const silent_file = option[ out::file::silent ]();
 	SilentFileDataOP silent_file_data = new SilentFileData;
 
 	( *scorefxn )( pose ); //score it for first silent output
-	output_silent_file( pose, 0, 0, moving_res_list, sub_to_full, native_pose, silent_file_data, silent_file );
+	//	output_silent_file( pose, 0, moving_res_list, sub_to_full, native_pose, silent_file_data, silent_file );
 	Real const output_score_cutoff_ = option[ output_score_cutoff ]();
 	bool const do_add_delete_ = option[ do_add_delete ]();
 	bool const presample_added_residue_ = option[ presample_added_residue ]();
@@ -1182,12 +1359,8 @@ swa_rna_sample()
 	Size o2star_res( 0 );
 	std::map< Size, Size > sub_to_full_new;
 	utility::vector1< Size > moving_res_list_new;
-
+	Size const output_period_ = option[ output_period ]();
 	for (Size count = 1; count <= num_cycle; count++) {
-
-		if ( count % 1000 == 0 ) {
-			std::cout << "On " << count << " of " << num_cycle << " trials." << std::endl;
-		}
 
 		Real const random_number = RG.uniform();
 
@@ -1195,120 +1368,121 @@ swa_rna_sample()
 		moving_res_list_new = moving_res_list;
 		sub_to_full_new = sub_to_full;
 
-		if ( random_number < 0.01 && do_add_delete_ ) {
+		if ( (random_number < 0.01 && do_add_delete_) || moving_res_list.size() == 0 /*got to add something!*/ ) {
 
-			Real const random_number2 = RG.uniform();
-			if ( random_number2 < 0.5 ) {
+			Size res_at_terminus;
+			MovingResidueCase moving_residue_case;
+			AddOrDeleteChoice add_or_delete_choice;
+			get_random_residue_at_chain_terminus( pose, moving_res_list, sub_to_full, nres_full, cutpoints_in_full_pose,
+																						res_at_terminus, moving_residue_case, add_or_delete_choice  );
+
+			std::cout << "ADD/DELETE move ==> " << res_at_terminus << " " << moving_residue_case << " " << add_or_delete_choice << std::endl;
+
+			if ( add_or_delete_choice == DELETE ) {
+
 				///////////////////////////////////
 				// Deletion
 				///////////////////////////////////
-				// try to delete a sampled residue
-				if ( moving_res_list.size() > 1 ){
-					move_type = "delete";
 
-					std::cout << "Before delete: " << (*scorefxn)( pose ) << std::endl;
+				move_type = "delete";
+				std::cout << "Before delete: " << (*scorefxn)( pose ) << std::endl;
 
-					//Scan through the moving residues -- which residues are delete-able? [maybe this should be higher up -- before delete/add decision.
-					Size res_to_delete;
-					MovingResidueCase moving_residue_case;
-					get_random_residue_at_chain_terminus( pose, moving_res_list, res_to_delete, moving_residue_case  );
+				Size const res_to_delete = res_at_terminus;
+				pose.delete_polymer_residue( res_to_delete );
 
-					pose.delete_polymer_residue( res_to_delete );
+				if ( moving_residue_case == CHAIN_TERMINUS_5PRIME )	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_delete );
 
-					if ( moving_residue_case == CHAIN_TERMINUS_5PRIME ){
-						pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_delete );
-					}
+				moving_res_list_new = reorder_after_delete( moving_res_list, res_to_delete );
+				sub_to_full_new     = reorder_after_delete( sub_to_full, res_to_delete );
 
-					moving_res_list_new = reorder_after_delete( moving_res_list, res_to_delete );
-					sub_to_full_new     = reorder_after_delete( sub_to_full, res_to_delete );
-
-					std::cout << pose.annotated_sequence() << std::endl;
-					std::cout << "After delete: " << (*scorefxn)( pose ) << std::endl << std::endl;
-
-				}
+				std::cout << pose.annotated_sequence() << std::endl;
+				std::cout << "After delete: " << (*scorefxn)( pose ) << std::endl << std::endl;
 
 			} else {
+
+				runtime_assert( add_or_delete_choice == ADD );
+
 				///////////////////////////////////
 				// Addition
 				///////////////////////////////////
 				// try to add a residue that is supposed to be sampled.
 
 				move_type = "add";
-				std::cout << "Before add: " << (*scorefxn)( pose ) << std::endl;
+				std::cout << "Before adding onto " << res_at_terminus << " : " << (*scorefxn)( pose ) << std::endl;
 
 				Size suite_num( 0 ), nucleoside_num( 0 ); // will record which new dofs added.
 
-				Size res_to_build_off;
-				MovingResidueCase moving_residue_case;
-				// following could be smarter -- could try to avoid residues at ends...
-				get_random_residue_at_chain_terminus( pose, moving_res_list, res_to_build_off, moving_residue_case  );
-
+				Size res_to_build_off = res_at_terminus;
 				bool did_addition( false );
 				//pose.dump_pdb( "before_add.pdb" );
 
 				if ( moving_residue_case == CHAIN_TERMINUS_3PRIME ){
 
 					//					Size const res_to_build_off = moving_res_list[ moving_res_list.size() ]; // for now, just build off 3' fragment.
+					runtime_assert( res_to_build_off < pose.total_residue() ); // wait is this necessary?
+					runtime_assert( sub_to_full[ res_to_build_off ] < sub_to_full[ res_to_build_off+1 ] -1 );
 
-					if ( res_to_build_off < pose.total_residue() &&
-							 sub_to_full[ res_to_build_off ] < sub_to_full[ res_to_build_off+1 ] -1 ){  // need to fix for general case [e.g. cutpoint]
-						Size const res_to_add = res_to_build_off + 1;
+					Size const res_to_add = res_to_build_off + 1;
 
-						char newrestype = full_sequence[ (sub_to_full[ res_to_build_off ] + 1) - 1 ];
+					char newrestype = full_sequence[ (sub_to_full[ res_to_build_off ] + 1) - 1 ];
 						//std::cout << "I want to add: " << newrestype << std::endl;
 
-						chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
-						chemical::ResidueTypeCAPs const & rsd_type_list( rsd_set->aa_map( my_aa ) );
-						// iterate over rsd_types, pick one.
-						chemical::ResidueType const & rsd_type = *rsd_type_list[1];
-						core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
+					chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
+					chemical::ResidueTypeCAPs const & rsd_type_list( rsd_set->aa_map( my_aa ) );
+					// iterate over rsd_types, pick one.
+					chemical::ResidueType const & rsd_type = *rsd_type_list[1];
+					core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
 
-						pose.append_polymer_residue_after_seqpos( *new_rsd, res_to_build_off, true /*build ideal geometry*/ );
+					pose.append_polymer_residue_after_seqpos( *new_rsd, res_to_build_off, true /*build ideal geometry*/ );
 
-						moving_res_list_new = reorder_after_insert( moving_res_list, res_to_add );
-						sub_to_full_new = reorder_after_append( sub_to_full, res_to_add );
+					moving_res_list_new = reorder_after_insert( moving_res_list, res_to_add );
+					sub_to_full_new = reorder_after_append( sub_to_full, res_to_add );
 
-						suite_num = res_to_add-1;
-						nucleoside_num = res_to_add;
+					suite_num = res_to_add-1;
+					nucleoside_num = res_to_add;
 
-						did_addition = true;
-					}
+					did_addition = true;
 				} else {
 
 					//Size const res_to_add = moving_res_list[1]; // for now, just build off 5' fragment.
 					Size const res_to_add = res_to_build_off;
 
-					if ( sub_to_full[ res_to_add ] > 1 ){  // again, need to fix for general case.
+					runtime_assert( sub_to_full[ res_to_add ] > 1 );
 
-						char newrestype = full_sequence[ (sub_to_full[ res_to_add ] - 1) - 1 ];
-						//std::cout << "I want to add: " << newrestype << std::endl;
+					char newrestype = full_sequence[ (sub_to_full[ res_to_add ] - 1) - 1 ];
+					//std::cout << "I want to add: " << newrestype << std::endl;
 
-						chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
-						chemical::ResidueTypeCAPs const & rsd_type_list( rsd_set->aa_map( my_aa ) );
-						// iterate over rsd_types, pick one.
-						chemical::ResidueType const & rsd_type = *rsd_type_list[1];
-						core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
+					chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
+					chemical::ResidueTypeCAPs const & rsd_type_list( rsd_set->aa_map( my_aa ) );
+					// iterate over rsd_types, pick one.
+					chemical::ResidueType const & rsd_type = *rsd_type_list[1];
+					core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
 
-						pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add ); // got to be safe.
+					pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add ); // got to be safe.
 
-						pose.prepend_polymer_residue_before_seqpos( *new_rsd, res_to_add, true /*build ideal geometry*/ );
-						pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add );
+					pose.prepend_polymer_residue_before_seqpos( *new_rsd, res_to_add, true /*build ideal geometry*/ );
+					pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add );
 
-						moving_res_list_new = reorder_after_insert( moving_res_list, res_to_add );
-						sub_to_full_new = reorder_after_prepend( sub_to_full, res_to_add );
+					moving_res_list_new = reorder_after_insert( moving_res_list, res_to_add );
+					sub_to_full_new = reorder_after_prepend( sub_to_full, res_to_add );
 
-						// initialize with a random torsion... ( how about an A-form + perturbation ... or go to a 'reasonable' rotamer)
-						suite_num = res_to_add;
-						nucleoside_num = res_to_add;
+					// initialize with a random torsion... ( how about an A-form + perturbation ... or go to a 'reasonable' rotamer)
+					suite_num = res_to_add;
+					nucleoside_num = res_to_add;
 
-						did_addition = true;
-					}
+					did_addition = true;
 				}
 
+				runtime_assert( did_addition );
 
 				if ( did_addition ){
-					apply_suite_torsion_Aform( pose, suite_num );
-					apply_nucleoside_torsion_Aform( pose, nucleoside_num );
+
+					//apply_suite_torsion_Aform( pose, suite_num );
+					//apply_nucleoside_torsion_Aform( pose, nucleoside_num );
+
+					apply_random_nucleoside_torsion( pose, nucleoside_num );
+					apply_random_suite_torsion( pose, suite_num );
+
 					sample_near_suite_torsion( pose, suite_num, sample_range_large);
 					sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range_large);
 
@@ -1385,14 +1559,10 @@ swa_rna_sample()
 		//std::cout << "Score: " << (*scorefxn)( pose ) << std::endl;
 		Real const current_score = (*scorefxn)( pose );
 
-		//std::cout << "MOVING_RES ";
-		//		for (Size i = 1; i <= moving_res_list.size(); i++ ) std::cout << ' ' <<  moving_res_list[i];
-		//		std::cout << std::endl;
-
-		runtime_assert( moving_res_list[1] > 0 );
-
-		// Need to fix following to not be dependent on job_parameters
-		if (accepted && current_score < output_score_cutoff_ ) output_silent_file( pose, n_accept, count, moving_res_list, sub_to_full, native_pose, silent_file_data, silent_file );
+		if ( count % output_period_ == 0  || count == num_cycle ) {
+			std::cout << "On " << count << " of " << num_cycle << " trials." << std::endl;
+			output_silent_file( pose, count, moving_res_list, sub_to_full, native_pose, silent_file_data, silent_file );
+		}
 
 	}
 
@@ -1544,10 +1714,12 @@ main( int argc, char * argv [] )
 
 	NEW_OPT( add_lead_zero_to_tag, "Add lead zero to clusterer output tag ", false);
 	NEW_OPT( n_sample, "Sample number for Random sampling", 0 );
+	NEW_OPT( output_period, "How often to output structure", 1000 );
 	NEW_OPT( stddev_small, "Sampling standard deviation in degree", 5.0 );
 	NEW_OPT( stddev_large, "Sampling standard deviation in degree", 40.0 );
 	NEW_OPT( output_score_cutoff, "Score cutoff for output to disk", 0.0 );
 	NEW_OPT( kT, "kT of simulation in RU", 2.0 );
+	NEW_OPT( unfolded_weight, "weight on unfolded term", 1.0 );
 	NEW_OPT( skip_randomize, "do not randomize...", false );
 	NEW_OPT( sample_all_o2star, "do not focus o2star sampling at residue of interest...", false );
 	NEW_OPT( do_add_delete, "try add & delete moves...", false );
