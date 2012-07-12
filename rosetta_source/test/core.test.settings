@@ -266,6 +266,8 @@ testinputfiles = [
 	"io/test_in_idealized.pdb",
         "kinematics/test.pdb",
         "scoring/2GB3.pdb",
+	"scoring/4dO8B.pdb",
+	"scoring/model-5.pdb",
 	"scoring/mm/MMBondAngleScoreTests.u",
 	"scoring/mm/mm_torsion_params.txt",
 	"scoring/mm/par_all27_prot_na.prm",
