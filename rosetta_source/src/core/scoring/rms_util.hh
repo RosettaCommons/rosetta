@@ -78,6 +78,12 @@ core::Real gdtsc(const core::pose::Pose& ref,
                  const core::pose::Pose& model,
                  const std::map<core::Size, core::Size>& residues);
 
+/// @brief Returns the average fraction of residues superimposable under a
+/// series of distance thresholds-- 0.5, 1.0, 2.0, and 4.0 Angstroms.
+core::Real gdtha(const core::pose::Pose& ref,
+                 const core::pose::Pose& model,
+                 const std::map<core::Size, core::Size>& residues);
+
 /// @brief Computes the RMSD of the jump residues between <model> and <native>,
 /// storing the results in a map keyed by jump_id.
 void compute_jump_rmsd(const core::pose::Pose& reference,

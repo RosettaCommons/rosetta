@@ -29,6 +29,7 @@
 
 // External headers
 #include <boost/assign.hpp>
+#include <boost/assign/std/vector.hpp>
 #include <boost/unordered/unordered_map.hpp>
 
 // Project headers
@@ -160,6 +161,69 @@ core::Real gdtsc(const core::pose::Pose& ref,
         << std::fixed << std::setprecision(2)
         << "Fraction of sidechains under "  << dist_threshold
         << " A: " << fraction_residues << std::endl;
+  }
+
+  return sum / num_dists;
+}
+
+core::Real gdtha(const core::pose::Pose& ref,
+                 const core::pose::Pose& mod,
+                 const std::map<core::Size, core::Size>& residues) {
+  using core::Real;
+  using core::Size;
+  using core::id::NamedAtomID;
+  using numeric::xyzVector;
+  using std::map;
+  using std::string;
+
+  // Retrieve ref, mod coordinates
+  int num_atoms = residues.size();
+  FArray2D<Real> coords_ref(3, num_atoms);
+  FArray2D<Real> coords_mod(3, num_atoms);
+  const string ref_sequence = ref.sequence();
+  const string mod_sequence = mod.sequence();
+
+  int count = 1;
+  for (map<Size, Size>::const_iterator i = residues.begin(); i != residues.end(); ++i, ++count) {
+    const Size ref_idx = i->first;
+    const Size mod_idx = i->second;
+    const string ref_residue = ref_sequence.substr(ref_idx - 1, 1);  // 0-indexed string
+    const string mod_residue = mod_sequence.substr(mod_idx - 1, 1);
+    if (ref_residue != mod_residue) {
+      tr.Warning << "Reference and model must have identical sequences for gdtsc()" << std::endl;
+      return -1;
+    }
+
+    const NamedAtomID ref_atom("CA", ref_idx);
+    const xyzVector<Real>& xyz_ref = ref.xyz(ref_atom);
+    coords_ref(1, count) = xyz_ref.x();
+    coords_ref(2, count) = xyz_ref.y();
+    coords_ref(3, count) = xyz_ref.z();
+
+    const NamedAtomID mod_atom("CA", mod_idx);
+    const xyzVector<Real>& xyz_mod = mod.xyz(mod_atom);
+    coords_mod(1, count) = xyz_mod.x();
+    coords_mod(2, count) = xyz_mod.y();
+    coords_mod(3, count) = xyz_mod.z();
+  }
+
+  // Calculate maxsub over several distance thresholds
+  Real dists[] = {0.5, 1.0, 2.0, 4.0};
+  Size num_dists = 4;
+  Real sum = 0;
+
+  for (Size i = 0; i < num_dists; ++i) {
+    Real dist_threshold = dists[i];
+
+    int nali;
+    double mxrms, mxpsi, mxzscore, mxscore, mxeval;
+    numeric::model_quality::maxsub(
+        num_atoms, coords_ref, coords_mod,
+        mxrms, mxpsi, nali, mxzscore, mxeval, mxscore,
+        dist_threshold, dist_threshold);
+
+    Real fraction_residues = static_cast<Real>(nali) / static_cast<Real>(num_atoms);
+    sum += fraction_residues;
   }
 
   return sum / num_dists;
