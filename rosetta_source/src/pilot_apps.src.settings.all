@@ -404,7 +404,7 @@ sources = {
 		#"optE_simple", # /* Andrew Leaver-Fay,Documentation Location,Demo Location */
 	],
         "pilot/rpache" : [
-		#"calibrate_pdb",
+		#"calibrate_pdb_via_sidechain_optimization",
 	],
 	"pilot/possu" : [
 		#"remodel",
