@@ -772,6 +772,8 @@ namespace rna {
 
 		utility::vector1< core::Size > const & working_terminal_res = job_parameters_->working_terminal_res();
 
+		if ( working_terminal_res.size() == 0 ) return;
+
 
 		/////////////////////////////////////////////////
 		Size const nres( pose.total_residue() );
