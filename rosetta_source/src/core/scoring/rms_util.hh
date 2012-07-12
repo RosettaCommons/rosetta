@@ -76,7 +76,7 @@ extern core::Real native_CA_gdtmm( const core::pose::Pose &native_pose ,  const 
 /// Keedy, DA. The other 90% of the protein. Proteins. 2009; 77 Suppl 9:29-49.
 core::Real gdtsc(const core::pose::Pose& ref,
                  const core::pose::Pose& model,
-                 const utility::vector1<core::Size>& residues);
+                 const std::map<core::Size, core::Size>& residues);
 
 /// @brief Computes the RMSD of the jump residues between <model> and <native>,
 /// storing the results in a map keyed by jump_id.

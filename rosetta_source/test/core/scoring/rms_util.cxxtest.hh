@@ -32,6 +32,7 @@ using core::Real;
 using core::Size;
 using core::pose::Pose;
 using core::pose::PoseOP;
+using std::map;
 
 class RmsUtilTest : public CxxTest::TestSuite {
  public:
@@ -69,40 +70,40 @@ class RmsUtilTest : public CxxTest::TestSuite {
     UT << "  with superposition, with automorphisms: " << automorphic_rmsd(pose1.residue(1), pose2.residue(1), true /*superimpose*/) << "\n";
   }
 
-	void test_gdtsc() {
-		PoseOP ref = core::import_pose::pose_from_pdb("core/scoring/4dO8B.pdb");
-		PoseOP mod = core::import_pose::pose_from_pdb("core/scoring/model-5.pdb");
+  void test_gdtsc() {
+    PoseOP ref = core::import_pose::pose_from_pdb("core/scoring/4dO8B.pdb");
+    PoseOP mod = core::import_pose::pose_from_pdb("core/scoring/model-5.pdb");
 
-		utility::vector1<Size> all_residues;
-		for (Size i = 1; i <= ref->total_residue(); ++i) {
-			all_residues.push_back(i);
-		}
+    map<Size, Size> all_residues;
+    for (Size i = 1; i <= ref->total_residue(); ++i) {
+      all_residues[i] = i;
+    }
 
-		TS_ASSERT_DELTA(0.745, core::scoring::gdtsc(*ref, *mod, all_residues), 0.01);
-	}
+    TS_ASSERT_DELTA(0.745, core::scoring::gdtsc(*ref, *mod, all_residues), 0.01);
+  }
 
-	void test_gdtsc_self() {
-		PoseOP mod = core::import_pose::pose_from_pdb("core/scoring/model-5.pdb");
+  void test_gdtsc_self() {
+    PoseOP mod = core::import_pose::pose_from_pdb("core/scoring/model-5.pdb");
 
-		utility::vector1<Size> all_residues;
-		for (Size i = 1; i <= mod->total_residue(); ++i) {
-			all_residues.push_back(i);
-		}
+    map<Size, Size> all_residues;
+    for (Size i = 1; i <= mod->total_residue(); ++i) {
+      all_residues[i] = i;
+    }
 
-		TS_ASSERT_DELTA(1.0, core::scoring::gdtsc(*mod, *mod, all_residues), 0.0001);
-	}
+    TS_ASSERT_DELTA(1.0, core::scoring::gdtsc(*mod, *mod, all_residues), 0.0001);
+  }
 
-	void test_gdtsc_mismatch_seq() {
-		PoseOP ref = core::import_pose::pose_from_pdb("core/scoring/4dO8B.pdb");
-		PoseOP mod = core::import_pose::pose_from_pdb("core/scoring/2GB3.pdb");
+  void test_gdtsc_mismatch_seq() {
+    PoseOP ref = core::import_pose::pose_from_pdb("core/scoring/4dO8B.pdb");
+    PoseOP mod = core::import_pose::pose_from_pdb("core/scoring/2GB3.pdb");
 
-		utility::vector1<Size> all_residues;
-		for (Size i = 1; i <= ref->total_residue(); ++i) {
-			all_residues.push_back(i);
-		}
+    map<Size, Size> all_residues;
+    for (Size i = 1; i <= ref->total_residue(); ++i) {
+      all_residues[i] = i;
+    }
 
-		TS_ASSERT_DELTA(-1, core::scoring::gdtsc(*ref, *mod, all_residues), 0.0001);
-	}
+    TS_ASSERT_DELTA(-1, core::scoring::gdtsc(*ref, *mod, all_residues), 0.0001);
+  }
 
   void test_superimpose_self() {
     Pose pose = *core::import_pose::pose_from_pdb("core/scoring/2GB3.pdb");

@@ -73,14 +73,15 @@ static basic::Tracer tr("core.scoring.rms_util");
 
 core::Real gdtsc(const core::pose::Pose& ref,
                  const core::pose::Pose& mod,
-                 const utility::vector1<core::Size>& residues) {
+                 const std::map<core::Size, core::Size>& residues) {
   using core::Real;
   using core::Size;
   using core::id::NamedAtomID;
   using numeric::xyzVector;
+  using std::map;
   using std::string;
 
-  static std::map<std::string, std::string> gdtsc_atom = boost::assign::map_list_of
+  static map<string, string> gdtsc_atom = boost::assign::map_list_of
       ("A",  "CA")
       ("C",  "SG")
       ("D", "OD2")
@@ -107,32 +108,35 @@ core::Real gdtsc(const core::pose::Pose& ref,
     return -1;
   }
 
-  if (ref.sequence() != mod.sequence()) {
-    tr.Warning << "Reference and model must have identical sequences for gdtsc()" << std::endl;
-    return -1;
-  }
-
   // Retrieve ref, mod coordinates
   int num_atoms = residues.size();
   FArray2D<Real> coords_ref(3, num_atoms);
   FArray2D<Real> coords_mod(3, num_atoms);
-  const string sequence = ref.sequence();
+  const string ref_sequence = ref.sequence();
+  const string mod_sequence = mod.sequence();
 
-  for (Size i = 1; i <= residues.size(); ++i) {
-    const Size res = residues[i];
-    const string res_name = sequence.substr(res - 1, 1);  // 0-indexed string
-    const string& atom_name = gdtsc_atom[res_name];
-    const NamedAtomID atom_id(atom_name, res);
+  int count = 1;
+  for (map<Size, Size>::const_iterator i = residues.begin(); i != residues.end(); ++i, ++count) {
+    const Size ref_idx = i->first;
+    const Size mod_idx = i->second;
+    const string ref_residue = ref_sequence.substr(ref_idx - 1, 1);  // 0-indexed string
+    const string mod_residue = mod_sequence.substr(mod_idx - 1, 1);
+    if (ref_residue != mod_residue) {
+      tr.Warning << "Reference and model must have identical sequences for gdtsc()" << std::endl;
+      return -1;
+    }
 
-    const xyzVector<Real>& xyz_ref = ref.xyz(atom_id);
-    coords_ref(1, i) = xyz_ref.x();
-    coords_ref(2, i) = xyz_ref.y();
-    coords_ref(3, i) = xyz_ref.z();
+    const NamedAtomID ref_atom(gdtsc_atom[ref_residue], ref_idx);
+    const xyzVector<Real>& xyz_ref = ref.xyz(ref_atom);
+    coords_ref(1, count) = xyz_ref.x();
+    coords_ref(2, count) = xyz_ref.y();
+    coords_ref(3, count) = xyz_ref.z();
 
-    const xyzVector<Real>& xyz_mod = mod.xyz(atom_id);
-    coords_mod(1, i) = xyz_mod.x();
-    coords_mod(2, i) = xyz_mod.y();
-    coords_mod(3, i) = xyz_mod.z();
+    const NamedAtomID mod_atom(gdtsc_atom[mod_residue], mod_idx);
+    const xyzVector<Real>& xyz_mod = mod.xyz(mod_atom);
+    coords_mod(1, count) = xyz_mod.x();
+    coords_mod(2, count) = xyz_mod.y();
+    coords_mod(3, count) = xyz_mod.z();
   }
 
   // Calculate maxsub over several distance thresholds
