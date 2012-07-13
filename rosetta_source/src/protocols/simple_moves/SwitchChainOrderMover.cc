@@ -73,7 +73,6 @@ SwitchChainOrderMover::apply( Pose & pose )
 		core::Size const chain( chaini - '0' );
 		core::Size const chain_begin( conf.chain_begin( chain ) );
 		core::Size const chain_end(   conf.chain_end(   chain ) );
-//		new_pose.copy_segment( chain_end - chain_begin + 1, pose, new_pose.total_residue() + 1, pose.conformation().chain_begin( chain ) );
 
 		core::Size const new_chain_begin( positions_in_new_pose.size() + 1 );
 		for( core::Size i = chain_begin; i<=chain_end; ++i )
@@ -91,8 +90,6 @@ SwitchChainOrderMover::apply( Pose & pose )
 		chain_count++;
 	}
 	new_ft.reorder( 1 );
-//	new_pose.fold_tree( new_ft );
-//	pose = new_pose;
 	core::pose::create_subpose( pose, positions_in_new_pose, new_ft, new_pose );
 	new_pose.update_residue_neighbors();
 	pose.clear();
@@ -132,7 +129,7 @@ SwitchChainOrderMover::parse_my_tag(
 	protocols::moves::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose )
+	core::pose::Pose const & )
 {
 	chain_order( tag->getOption< std::string >( "chain_order" ) );
 	std::string const residue_numbers_setter( tag->getOption< std::string >( "residue_numbers_setter", "" ) );
