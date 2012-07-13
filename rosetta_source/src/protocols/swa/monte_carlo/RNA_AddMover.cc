@@ -155,7 +155,7 @@ namespace monte_carlo {
 		// Presampling added residue
 		///////////////////////////////////
 		if ( presample_added_residue_ ){
-			std::cout << "presampling added residue! " << nucleoside_num << " over " << internal_cycles_ << " cycles " << std::endl;
+			TR.Debug << "presampling added residue! " << nucleoside_num << " over " << internal_cycles_ << " cycles " << std::endl;
 			MonteCarloOP monte_carlo_internal = new MonteCarlo( pose, *scorefxn_, kT_ );
 
 			std::string move_type( "" );

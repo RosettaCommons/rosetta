@@ -57,10 +57,10 @@ private:
 	void
 	sample_near_o2star_torsion( core::pose::Pose & pose, Size const moving_res, core::Real const sample_range);
 
-	Size const
+	Size
 	get_random_o2star_residue( core::pose::Pose & pose );
 
-	Size const
+	Size
 	get_random_o2star_residue_near_moving_residue( core::pose::Pose & pose, utility::vector1< Size > const moving_res_list );
 
 private:

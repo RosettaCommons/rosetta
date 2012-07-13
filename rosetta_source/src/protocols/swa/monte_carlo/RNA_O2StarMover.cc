@@ -120,7 +120,7 @@ namespace monte_carlo {
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////
-	Size const
+	Size
 	RNA_O2StarMover::get_random_o2star_residue( pose::Pose & pose ){
 		// pick at random from whole pose -- a quick initial stab.
 		Size const o2star_num = int( pose.total_residue() * RG.uniform() ) + 1;
@@ -129,7 +129,7 @@ namespace monte_carlo {
 
 	//////////////////////////////////////////////////////////////////////////////////////
 	// This could be made smarter -- could go over nucleoside *and* suite.
-	Size const
+	Size
 	RNA_O2StarMover::get_random_o2star_residue_near_moving_residue( pose::Pose & pose, utility::vector1< Size > const moving_res_list ){
 
 		// should be better -- actually look at o2star's that might be engaged in interactions with moving nucleoside
