@@ -219,6 +219,7 @@ sources = {
 		# "fix_bb_monomer_ddg",
 		#"score_ddgs",
 		#"minimize_with_constraints", # /* Liz Kellogg,Documentation Location,Demo Location */
+                "monomer_ddg",
 	],
 	"pilot/tseng" : [
 		#"tseng_minimize", # /* ????,Documentation Location,Demo Location */
@@ -629,6 +630,7 @@ sources = {
 		#"local_rmsd", # /* Nobuyasu,Documentation Location,Demo Location */
 		#"ncontact", # /* Nobuyasu,Documentation Location,Demo Location */
 		"make_blueprint", # /* Nobuyasu,Documentation Location,Demo Location */
+         	"rama", # /* Nobuyasu,Documentation Location,Demo Location */
 	],
 	"pilot/aroop" : [
 		#"antibody_mode", # /* Aroop,Documentation Location,Demo Location */

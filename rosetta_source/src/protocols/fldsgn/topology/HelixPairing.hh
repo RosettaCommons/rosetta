@@ -34,46 +34,41 @@ namespace topology {
 class HelixPairing : public utility::pointer::ReferenceCount {
 public:
 
-	typedef std::string String;
-	typedef core::Size Size;
-	typedef core::Real Real;
+  typedef std::string String;
+  typedef core::Size Size;
+  typedef core::Real Real;
 	typedef core::Vector Vector;
 	typedef protocols::fldsgn::topology::SS_Info2_COP SS_Info2_COP;
 
 public:// construct/destruct
 
 
-	/// @brief default constructor
-	HelixPairing();
+  /// @brief default constructor
+  HelixPairing();
 
-	/// @brief value constructor
-	HelixPairing(
-		Size const h1,
-		Size const h2,
-		char const o
-	);
-	
-	/// @brief value constructor
-	HelixPairing(
-		Size const h1,
-		Size const h2
-  );
-	
-  /// @brief copy constructor
+  /// @brief value constructor
+  HelixPairing(
+     Size const h1,
+     Size const h2,
+     char const o
+								);
+
+
+	/// @brief copy constructor
   HelixPairing( String const & hp );
 
-  /// @brief copy constructor
+	/// @brief copy constructor
   HelixPairing( HelixPairing const & hp );
 
   /// @brief default destructor
   ~HelixPairing();
 
-  /// @brief clone this object
-  HelixPairingOP clone();
+	/// @brief clone this object
+	HelixPairingOP clone();
 
   /// @brief return strand pairing
-  friend
-  std::ostream & operator<<(std::ostream & out, const HelixPairing &hp);
+	friend
+	std::ostream & operator<<(std::ostream & out, const HelixPairing &hp);
 
 
 public: //accessors
@@ -217,6 +212,7 @@ public:
 
 	/// @brief the name of HelixPairingSet is expressed by the combination of helix pairings
 	String name() const;
+
 
 
 private:

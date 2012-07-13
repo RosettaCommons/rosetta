@@ -149,44 +149,6 @@ BetaAlphaBetaMotif::helix_cycle_as_string() const
 	return name.str();
 }
 
-/// @brief
-Real
-BetaAlphaBetaMotif::loopdirect_angle_on_pleat( SS_Info2_COP const ssinfo, Size const resi, char const NC ) const
-{
-	using core::Vector;
-	using protocols::fldsgn::topology::BB_Pos;
-	
-	BB_Pos bb_pos( ssinfo->bb_pos() );
-	
-	Vector pleat = ( bb_pos.CB( resi ) - bb_pos.CA( resi ) ).normalized();
-	Vector loopdirection;
-	if( NC == 'N' ) {
-		loopdirection = ( ssinfo->helix( helix() )->Nend_pos() - bb_pos.CA( resi ) ).normalized();
-	} else if( NC == 'C' ) {
-		loopdirection = ( ssinfo->helix( helix() )->Cend_pos() - bb_pos.CA( resi ) ).normalized();
-	} else {
-		utility_exit_with_message( "the value of NC is strange." );
-	}
-	
-	Real angle = numeric::conversions::degrees( angle_of( pleat, loopdirection ) );
-	return angle;
-	
-}
-	
-	
-/// @brief whether the pleat of CB->CA vector points in the same direction of loop
-/// 1: same, 2: opposite
-core::Size
-BetaAlphaBetaMotif::loopdirect_on_pleat( SS_Info2_COP const ssinfo, Size const resi, char const NC ) const
-{
-	Real angle = loopdirect_angle_on_pleat( ssinfo, resi, NC );
-	if( angle < 90 ) {
-		return 1;
-	} else {
-		return 2;
-	}
-}	
-	
 /// @brief whether the CB->CA vector of the C-term residue of 1st strand is pointing inward or outward
 /// 1: inward, 2: outward
 core::Size
@@ -224,7 +186,7 @@ BetaAlphaBetaMotif::calc_inout( SS_Info2_COP const ssinfo, Size const resi ) con
 	}
 	return 2;
 }
-	
+
 /// @brief
 bool compare( std::map< Size, Real >::const_iterator a, std::map< Size, Real >::const_iterator b )
 {

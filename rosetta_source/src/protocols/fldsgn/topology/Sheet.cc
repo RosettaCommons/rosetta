@@ -446,7 +446,6 @@ SheetSet::initialize( SS_Info2_COP const ssinfo, StrandPairingSetCOP const spair
 				ibarrel = false;
 			} else if( spairset_.neighbor_strands( s ).size() > 2 ) {
 				TR.Error << "Error, num of neighbor strands > 2 " << std::endl;
-				TR.Error << s << " " << spairset_.neighbor_strands( s ).size() << std::endl;
 				runtime_assert( false );
 			}
 		}

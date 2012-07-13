@@ -15,7 +15,6 @@
 
 // unit header
 #include <protocols/fldsgn/topology/StrandPairing.fwd.hh>
-#include <protocols/fldsgn/topology/HelixPairing.fwd.hh>
 #include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
 #include <core/scoring/hbonds/HBondSet.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/dssp/Dssp.hh>
@@ -48,47 +47,21 @@ calc_delta_sasa(
 	core::Real const pore_radius
 );
 
-/// @brief calculate chirality of three secondary structure elements
-char
-calc_chirality_sstriplet(
-	SS_BaseCOP ss1,
-	SS_BaseCOP ss2,
-	SS_BaseCOP ss3
-);
-							 							 	
+
 /// @brief check kink of helix, return number of loosen hydrogen
 core::Size
 check_kink_helix(
 	 core::pose::Pose const & pose,
 	 core::Size const begin,
-	 core::Size const end 
-);
+	 core::Size const end );
 
 
-/// @brief count number of internally made hydrogen bonds given a region
-core::Size
-count_internal_hbonds(
+utility::vector1< core::scoring::hbonds::HBond >
+check_internal_hbonds(
 	core::pose::Pose const & pose,
-	core::Size const begin,
-	core::Size const end
-);
+    core::Size const begin,
+    core::Size const end );
 
-/// @brief count number of related hydrogen bonds given a region
-core::Size
-count_related_hbonds(
-	core::pose::Pose const & pose,
-	core::Size const begin,
-	core::Size const end
-);
-	
-/// @brief get helix pairings
-protocols::fldsgn::topology::HelixPairingSet	
-calc_hpairset( 
-   protocols::fldsgn::topology::SS_Info2_COP const ssinfo,
-   core::Real distance = 15.0,
-   core::Real angle = 45.0
-);
-	
 } // namespace topology
 } // namespace fldsgn
 } // namespace protocols

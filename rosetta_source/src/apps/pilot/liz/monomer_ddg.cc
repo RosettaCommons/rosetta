@@ -20,12 +20,14 @@
 #include <core/chemical/ResidueSelector.hh>
 #include <core/conformation/ResidueFactory.hh>
 
+#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/operation/TaskOperation.hh>
 
 #include <core/kinematics/MoveMap.hh>
 
@@ -50,6 +52,7 @@
 #include <ios>
 #include <utility/io/izstream.hh>
 #include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/FArray2D.hh>
 
 // C++ headers
 #include <cstdlib>
@@ -162,6 +165,7 @@ main( int argc, char * argv [] )
 	using namespace basic::options::OptionKeys;
 	using namespace core::pack::task;
 
+	using namespace ObjexxFCL::fmt;
 
 	// setup random numbers and options
 	devel::init(argc, argv);
@@ -212,7 +216,7 @@ main( int argc, char * argv [] )
 	pack::task::PackerTaskOP storage_task(pack::task::TaskFactory::create_packer_task(pose));
 
 	storage_task->initialize_from_command_line();
-	parse_resfile(pose, *task);
+	parse_resfile(pose, *storage_task);
 	storage_task->or_include_current(true);
 
 	//write out information to repack_native logfile
@@ -422,7 +426,7 @@ main( int argc, char * argv [] )
 
 				utility::vector1<double> free_energy_mutants(num_iterations,-999.999);
 				//storage for energy components of each of 20 repacks
-				FArray2D<double> mutant_energy_components = FArray2D<double>();
+				ObjexxFCL::FArray2D<double> mutant_energy_components = ObjexxFCL::FArray2D<double>();
 
 				for(int k = 1; k <= num_iterations; k++){ //do this for 20 cycles
 					//restrict the amino acids as specified by PIKAA
