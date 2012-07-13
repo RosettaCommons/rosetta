@@ -353,6 +353,13 @@ DockMCMProtocol::get_name() const {
 	return "DockMCMProtocol";
 }
 
+std::ostream & operator<<(std::ostream& out, const DockMCMProtocol & dmp )
+{
+	// Display the state of the filters (on or off)
+	out << " High Resolution Filter: " << ( ( dmp.filter_ ) ? ( " on " ) : ( "off " ) ) << std::endl;
+
+	return out;
+}
 
 } // namespace docking
 } // namespace protocols

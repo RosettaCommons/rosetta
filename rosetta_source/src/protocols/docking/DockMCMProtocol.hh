@@ -89,6 +89,7 @@ public:
 	virtual std::string get_name() const;
     
     void set_move_map(core::kinematics::MoveMapOP movemap );
+    friend std::ostream & operator<<(std::ostream& out, const DockMCMProtocol & dmp );
 
 private:
 	DockingHighResFilterOP filter_;

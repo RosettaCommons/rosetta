@@ -27,9 +27,9 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
-#include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
+#include <protocols/loops/loop_mover/perturb/LoopMover_CCD.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
+#include <protocols/docking/DockMCMProtocol.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreType.hh>
@@ -56,6 +56,9 @@ int main(int argc, char *argv[])
 	std::cout << "Hello, Rosetta World!" << std::endl;
 	std::cout << "I just imported my first pose into Rosetta." << std::endl;
 	std::cout << "It has " << test_pose.total_residue() << " total residues." << std::endl;
+
+	protocols::docking::DockMCMProtocol dmp;
+	std::cout << dmp << std::endl;
 
 	//std::cout << test_pose.energies() << std::endl;
 /*	protocols::simple_moves::SmallMoverOP smallmover = new protocols::simple_moves::SmallMover;
@@ -134,6 +137,6 @@ int main(int argc, char *argv[])
 	//protocols::loops::LoopsOP emptyloops ( new protocols::loops::Loops );
 
 	// create and print a loopmover
-	protocols::loops::loop_mover::refine::LoopMover_Refine_CCD loopmover; //= protocols::loops::loop_mover::refine::LoopMover_Refine_CCD();
-	std::cout << loopmover << std::endl;
+	//protocols::loops::loop_mover::refine::LoopMover_Perturb_CCD loopmover;
+	//std::cout << loopmover << std::endl;
 }
