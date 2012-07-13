@@ -186,11 +186,11 @@ HelixPairingFilter::apply( Pose const & pose ) const
 		if( filter == false ) break;
 	}
 
-	TR << "Filter condition: " << std::endl;
-	TR << " bend_angle ( intra helix ) <= " << bend_angle_ << std::endl;
+	TR << " Filter condition: " << std::endl;
+	TR << " bend ( intra helix ) <= " << bend_angle_ << std::endl;
 	TR << " dist <= " << dist_cutoff_  << std::endl;
-	TR << " cross_angle <= " << cross_angle_  << std::endl;
-	TR << " align_angle <= " << align_angle_	<< std::endl;
+	TR << " cross <= " << cross_angle_  << std::endl;
+	TR << " align <= " << align_angle_	<< std::endl;
 
 	TR << hpairset;
 
@@ -238,12 +238,12 @@ HelixPairingFilter::compute( Pose const & pose ) const
 	Real value( 0.0 );
 	if ( output_type_ == "dist" ) {
 		value = hpairset.helix_pairing( output_id_ )->dist();
-	} else if ( output_type_ == "cross_angle" ) {
+	} else if ( output_type_ == "cross" ) {
 		value = hpairset.helix_pairing( output_id_ )->cross_angle();
-	} else if ( output_type_ == "align_angle" ) {
+	} else if ( output_type_ == "align" ) {
 		value = hpairset.helix_pairing( output_id_ )->align_angle();
 	} else {
-		TR << "Invalid type for output_type, choose either dist or angle. " << std::endl;
+		TR << "Invalid type for output_type, choose either dist or cross or align. " << std::endl;
 		runtime_assert( false );
 	}
 
@@ -263,7 +263,7 @@ HelixPairingFilter::parse_my_tag(
 	using protocols::jd2::parser::BluePrint;
 
 	// set filtered helix_pairings
-  String const hpairs = tag->getOption<String>( "helix_pairings", "" );
+	String const hpairs = tag->getOption<String>( "helix_pairings", "" );
 	if( hpairs != ""  ) helix_pairings( hpairs );
 
 	// Blueprint is for giving secondary structure information, otherwise dssp will run for ss definition
@@ -296,9 +296,9 @@ HelixPairingFilter::parse_my_tag(
 	output_type_ = tag->getOption<String>( "output_type", "dist" );
 
 	if( output_type_ != "dist" && output_type_ != "cross" && output_type_ != "align" ) {
-		TR << "Invalid type for output_type, choose dist, cross or align. " << std::endl;
+		TR << "Invalid type for output_type, choose among dist or cross or align. " << std::endl;
 	} else {
-		TR << "HelixPairing " << hpairset_->helix_pairing( output_id_ ) << ", "
+		TR << "HelixPairing " << *hpairset_->helix_pairing( output_id_ ) << ", "
 			 << output_type_ << " is used for output value. " << std::endl;
 	}
 
