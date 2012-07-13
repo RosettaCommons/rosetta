@@ -86,6 +86,15 @@ sub_to_full_info_from_pose( core::pose::Pose const & pose );
 SubToFullInfo &
 nonconst_sub_to_full_info_from_pose( core::pose::Pose & pose );
 
+void
+reorder_sub_to_full_info_after_delete( core::pose::Pose & pose, core::Size const res_to_delete );
+
+void
+reorder_sub_to_full_info_after_append( core::pose::Pose & pose, core::Size const res_to_add );
+
+void
+reorder_sub_to_full_info_after_prepend( core::pose::Pose & pose, core::Size const res_to_add );
+
 
 }
 }

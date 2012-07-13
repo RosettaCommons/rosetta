@@ -94,6 +94,11 @@
 #include <protocols/swa/rna/StepWiseRNA_JobParameters_Setup.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/monte_carlo/SubToFullInfo.hh>
+#include <protocols/swa/monte_carlo/RNA_DeleteMover.hh>
+#include <protocols/swa/monte_carlo/RNA_AddMover.hh>
+#include <protocols/swa/monte_carlo/RNA_TorsionMover.hh>
+#include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloUtil.hh>
+#include <protocols/swa/monte_carlo/types.hh>
 #include <numeric/random/random.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
@@ -130,15 +135,12 @@ using io::pdb::dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
-// SWA Monte Carlo -- July 2, 2012 -- Rhiju Das
+// SWA Monte Carlo -- July 12, 2012 -- Rhiju Das
 //
 // TO DO
 //
 //  Clean up pose setup, inherited from SWA code -- all these options and setup functions
 //    should go into their own .cc file.
-//
-//  Generalize addition/deletion code to handle ends with 3' termini -- code
-//    below only handles building back from 3' termini (for historical reasons)
 //
 //  Add screen for building new base [base atr/rep] -- like SWA
 //
@@ -149,10 +151,12 @@ typedef  numeric::xyzMatrix< Real > Matrix;
 //
 //  Set up loop closer move (perhaps just analytical loop close move?)
 //
-//  Set up constraints  when gap is 1,2, etc.
+//  Set up constraints when gap is 1,2, etc.
 //
 //  encapsulate -- move into a namespace? lay out plans for others?
 //
+
+static numeric::random::RandomGenerator RG(2391121);  // <- Magic number, do not change it!
 
 
 // A lot of these options should be placed into an 'official' namespace
@@ -260,6 +264,8 @@ OPT_KEY( Boolean, do_add_delete )
 OPT_KEY( Boolean, presample_added_residue )
 OPT_KEY( Integer, presample_internal_cycles )
 OPT_KEY( Boolean, start_added_residue_in_aform )
+
+using namespace protocols::swa::monte_carlo;
 
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -562,240 +568,10 @@ setup_pose_setup_class(protocols::swa::rna::StepWiseRNA_JobParametersOP & job_pa
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
 // copied from fang's turner_test_one_chain.cc
-static const scoring::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
-static numeric::random::RandomGenerator RG(245099);  // <- Magic number, do not change it!
-
-void
-sample_near_suite_torsion(utility::vector1< Real > & torsion_list, Real const stddev) {
-	static const Real delta_north = rna_fitted_torsion_info.ideal_delta_north();
-	static const Real delta_south = rna_fitted_torsion_info.ideal_delta_south();
-
-	torsion_list[1] += RG.gaussian() * stddev;
-	torsion_list[2] += RG.gaussian() * stddev;
-	torsion_list[3] += RG.gaussian() * stddev;
-	torsion_list[4] += RG.gaussian() * stddev;
-	torsion_list[5] += RG.gaussian() * stddev;
-
-}
-
-
-//////////////////////////////////////////////////
-// copied from fang's turner_test_one_chain.cc
-void
-sample_near_nucleoside_torsion(utility::vector1< Real > & torsion_list, Real const stddev) {
-	static const Real delta_north = rna_fitted_torsion_info.ideal_delta_north();
-	static const Real delta_south = rna_fitted_torsion_info.ideal_delta_south();
-
-	if (RG.uniform() < 0.2) {
-		torsion_list[1]  = (RG.uniform() < 0.5) ? delta_south : delta_north;
-	}
-
-	torsion_list[2] += RG.gaussian() * stddev;
-	if (torsion_list[2] > 360) {
-		torsion_list[2] -= 360;
-	} else if (torsion_list[2] <=  0) {
-		torsion_list[2] += 360;
-	}
-
-}
-//////////////////////////////////
-void
-apply_nucleoside_torsion( utility::vector1< Real > const & torsion_set,
-													pose::Pose & pose,
-													Size const moving_res){
-
-	using namespace id;
-	using namespace scoring::rna;
-
-	Real delta, nu2, nu1;
-	if (torsion_set[1] < 115) { //North pucker, [6] is delta angle (only pick one of the two states)
-		delta = rna_fitted_torsion_info.ideal_delta_north();
-		nu2 = rna_fitted_torsion_info.ideal_nu2_north();
-		nu1 = rna_fitted_torsion_info.ideal_nu1_north();
-	} else { //South pucker
-		delta = rna_fitted_torsion_info.ideal_delta_south();
-		nu2 = rna_fitted_torsion_info.ideal_nu2_south();
-		nu1 = rna_fitted_torsion_info.ideal_nu1_south();
-	}
-
-	pose.set_torsion( TorsionID( moving_res, id::BB,  4 ), delta );
-	pose.set_torsion( TorsionID( moving_res, id::CHI, 2 ), nu2 );
-	pose.set_torsion( TorsionID( moving_res, id::CHI, 3 ), nu1 );
-	pose.set_torsion( TorsionID( moving_res, id::CHI, 1 ), torsion_set[2] );
-}
-
-//////////////////////////////////
-void
-apply_suite_torsion( utility::vector1< Real > const & torsion_set,
-										 pose::Pose & pose,
-										 Size const moving_suite ){
-
-	using namespace id;
-	using namespace scoring::rna;
-
-	pose.set_torsion( TorsionID( moving_suite, id::BB, 5 ), torsion_set[1] );   //epsilon
-	pose.set_torsion( TorsionID( moving_suite, id::BB, 6 ), torsion_set[2] );   //zeta
-	pose.set_torsion( TorsionID( moving_suite+1, id::BB, 1 ), torsion_set[3] ); //alpha
-	pose.set_torsion( TorsionID( moving_suite+1, id::BB, 2 ), torsion_set[4] ); //beta
-	pose.set_torsion( TorsionID( moving_suite+1, id::BB, 3 ), torsion_set[5] ); //gamma
-
-}
-
-
-//////////////////////////////////
-void
-apply_random_nucleoside_torsion( pose::Pose & pose,
-																 Size const moving_res ){
-
-	utility::vector1< Real > torsion_set;
-
-	bool north_pucker = (RG.uniform() < 0.5) ? true : false;
-
-	Size chi_rotamer = 1;
-	// could be syn if purine.
-	if ( scoring::rna::is_purine( pose.residue( moving_res ) ) && RG.uniform() < 0.5 ) chi_rotamer = 2;
-
-	if ( north_pucker ){
-		torsion_set.push_back( rna_fitted_torsion_info.ideal_delta_north() );
-		torsion_set.push_back( rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[chi_rotamer].center );
-	} else {
-		torsion_set.push_back( rna_fitted_torsion_info.ideal_delta_south() );
-		torsion_set.push_back( rna_fitted_torsion_info.gaussian_parameter_set_chi_south()[chi_rotamer].center );
-	}
-
-	apply_nucleoside_torsion( torsion_set, pose, moving_res );
-}
-
-
-//////////////////////////////////
-void
-apply_random_suite_torsion( pose::Pose & pose,
-														Size const moving_suite ){
-
-	utility::vector1< Real > torsion_set;
-
-	bool north_pucker = ( pose.delta( moving_suite ) < 115 );
-	Real const epsilon =  ( north_pucker ) ? rna_fitted_torsion_info.gaussian_parameter_set_epsilon_north()[1].center : rna_fitted_torsion_info.gaussian_parameter_set_epsilon_south()[1].center;
-	torsion_set.push_back( epsilon );
-
-	Size const alpha_rotamer = int( 3 * RG.uniform() ) + 1;
-	Real const alpha = rna_fitted_torsion_info.gaussian_parameter_set_alpha()[ alpha_rotamer ].center;
-
-	Size const zeta_rotamer = int( 2 * RG.uniform() ) + 1;
-	Real zeta;
-	if ( alpha_rotamer == 1 ){
-		zeta = rna_fitted_torsion_info.gaussian_parameter_set_zeta_alpha_sc_minus()[ zeta_rotamer ].center;
-	} else if ( alpha_rotamer == 2 ){
-		zeta = rna_fitted_torsion_info.gaussian_parameter_set_zeta_alpha_sc_plus()[ zeta_rotamer ].center;
-	} else {
-		zeta = rna_fitted_torsion_info.gaussian_parameter_set_zeta_alpha_ap()[ zeta_rotamer ].center;
-	}
-
-	torsion_set.push_back( zeta );
-	torsion_set.push_back( alpha );
-	torsion_set.push_back( rna_fitted_torsion_info.gaussian_parameter_set_beta()[1].center );
-
-	Size const gamma_rotamer = int( 3 * RG.uniform() ) + 1;
-	torsion_set.push_back( rna_fitted_torsion_info.gaussian_parameter_set_gamma()[gamma_rotamer].center );
-
-	apply_suite_torsion( torsion_set, pose, moving_suite );
-
-}
-
-
-//////////////////////////////////
-void
-apply_nucleoside_torsion_Aform(
-													pose::Pose & pose,
-													Size const moving_res ){
-
-	utility::vector1< Real > ideal_A_form_torsions;
-	ideal_A_form_torsions.push_back( rna_fitted_torsion_info.ideal_delta_north() );
-	ideal_A_form_torsions.push_back( rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[1].center );
-	apply_nucleoside_torsion( ideal_A_form_torsions, pose, moving_res );
-}
-
-
-//////////////////////////////////
-void
-apply_suite_torsion_Aform(
-													pose::Pose & pose,
-													Size const moving_suite ){
-
-	utility::vector1< Real > ideal_A_form_torsions;
-	ideal_A_form_torsions.push_back( rna_fitted_torsion_info.gaussian_parameter_set_epsilon_north()[1].center );
-	ideal_A_form_torsions.push_back( rna_fitted_torsion_info.gaussian_parameter_set_zeta_alpha_sc_minus()[1].center );
-	ideal_A_form_torsions.push_back( rna_fitted_torsion_info.gaussian_parameter_set_alpha()[1].center );
-	ideal_A_form_torsions.push_back( rna_fitted_torsion_info.gaussian_parameter_set_beta()[1].center );
-	ideal_A_form_torsions.push_back( rna_fitted_torsion_info.gaussian_parameter_set_gamma()[1].center );
-	apply_suite_torsion( ideal_A_form_torsions, pose, moving_suite );
-}
 
 
 ///////////////////////////////////////////////////
-utility::vector1< Real>
-get_suite_torsion( pose::Pose const & pose, Size const moving_suite ){
-
-	using namespace id;
-
-	utility::vector1< Real > torsion_set;
-	torsion_set.push_back(	pose.torsion( TorsionID( moving_suite, id::BB, 5 ) ) );   //epsilon
-	torsion_set.push_back(	pose.torsion( TorsionID( moving_suite, id::BB, 6 ) ) );   //zeta
-	torsion_set.push_back(	pose.torsion( TorsionID( moving_suite+1, id::BB, 1 ) ) ); //alpha
-	torsion_set.push_back(	pose.torsion( TorsionID( moving_suite+1, id::BB, 2 ) ) ); //beta
-	torsion_set.push_back(	pose.torsion( TorsionID( moving_suite+1, id::BB, 3 ) ) ); //gamma
-
-	return torsion_set;
-}
-
-///////////////////////////////////////////////////
-utility::vector1< Real>
-get_nucleoside_torsion( pose::Pose const & pose, Size const moving_nucleoside ){
-
-	using namespace id;
-
-	utility::vector1< Real > torsion_set;
-	torsion_set.push_back(	pose.torsion( TorsionID( moving_nucleoside, id::BB, 4 ) ) );  //delta
-	torsion_set.push_back(	pose.torsion( TorsionID( moving_nucleoside, id::CHI, 1 ) ) ); //chi
-
-	return torsion_set;
-}
-///////////////////////////////////////////////////
-void
-sample_near_suite_torsion( pose::Pose & pose, Size const moving_suite, Real const sample_range){
-	utility::vector1< Real> torsion_set = get_suite_torsion( pose, moving_suite );
-	sample_near_suite_torsion( torsion_set, sample_range );
-	apply_suite_torsion( torsion_set, pose, moving_suite );
-}
-///////////////////////////////////////////////////
-void
-crankshaft_alpha_gamma( pose::Pose & pose, Size const moving_suite, Real const sample_range){
-
-	using namespace id;
-
-	TorsionID alpha_torsion_id( moving_suite+1, id::BB, 1 );
-	TorsionID gamma_torsion_id( moving_suite+1, id::BB, 3 );
-
-	Real alpha = pose.torsion( alpha_torsion_id );
-	Real gamma = pose.torsion( gamma_torsion_id );
-	Real const perturb = RG.gaussian() * sample_range;
-
-	alpha += perturb;
-	gamma -= perturb;
-
-	pose.set_torsion( alpha_torsion_id, alpha );
-	pose.set_torsion( gamma_torsion_id, gamma );
-
-}
-///////////////////////////////////////////////////
-void
-sample_near_nucleoside_torsion( pose::Pose & pose, Size const moving_res, Real const sample_range){
-	utility::vector1< Real> torsion_set = get_nucleoside_torsion( pose, moving_res );
-	sample_near_nucleoside_torsion( torsion_set, sample_range);
-	apply_nucleoside_torsion( torsion_set, pose, moving_res );
-}
-
-///////////////////////////////////////////////////
+// Put following in RNA_O2star_Mover
 void
 sample_near_o2star_torsion( pose::Pose & pose, Size const moving_res, Real const sample_range){
 	id::TorsionID o2star_torsion_id( moving_res, id::CHI, 4 );
@@ -873,6 +649,7 @@ get_random_o2star_residue_near_moving_residue( pose::Pose & pose, utility::vecto
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Following assumed that pose is already properly aligned to native pose!
+// stuff into RNA_SWA_MonteCarloMover.
 void
 output_silent_file( pose::Pose & pose, Size const count,
 										pose::Pose const & native_pose,
@@ -881,7 +658,6 @@ output_silent_file( pose::Pose & pose, Size const count,
 
   using namespace core::io::silent;
   using namespace core::conformation;
-  using namespace protocols::swa::monte_carlo;
 
 	SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
 	utility::vector1< Size > working_res_list = sub_to_full_info.moving_res_list();
@@ -970,331 +746,6 @@ output_silent_file( pose::Pose & pose, Size const count,
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// can go into a namespace later...
-enum MovingResidueCase { NO_CASE=0, CHAIN_TERMINUS_5PRIME, CHAIN_TERMINUS_3PRIME, INTERNAL, FLOATING_BASE };
-enum AddOrDeleteChoice{ NO_ADD_OR_DELETE=0, ADD, DELETE };
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-MovingResidueCase
-get_moving_residue_case( pose::Pose const & pose, Size const i ) {
-
-	MovingResidueCase moving_residue_case( NO_CASE );
-
-	Size const & nres( pose.total_residue() );
-	kinematics::FoldTree const & fold_tree( pose.fold_tree() );
-	if ( i == nres || fold_tree.is_cutpoint( i ) ){ // could be a 5' chain terminus
-		if ( i == 1 || fold_tree.is_cutpoint( i-1 ) ){
-			moving_residue_case = FLOATING_BASE; // don't know how to handle this yet.
-		} else {
-			moving_residue_case = CHAIN_TERMINUS_3PRIME;
-		}
-	} else if ( i == 1 || fold_tree.is_cutpoint( i-1 ) ){
-		moving_residue_case = CHAIN_TERMINUS_5PRIME;
-	} else {
-		moving_residue_case = INTERNAL;
-	}
-
-	return moving_residue_case;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void
-random_torsion_move( pose::Pose & pose,
-										 utility::vector1< Size > const & moving_res_list,
-										 std::string & move_type,
-										 Real const & sample_range ){
-
-	using namespace ObjexxFCL::fmt;
-
-	Size const random_idx = int( RG.uniform() * moving_res_list.size() ) + 1;
-	Size const i = moving_res_list[ random_idx ];
-
-	MovingResidueCase moving_residue_case = get_moving_residue_case( pose, i );
-
-	if ( moving_residue_case == CHAIN_TERMINUS_3PRIME  || moving_residue_case == CHAIN_TERMINUS_5PRIME ){
-
-		// an edge residue -- change both its nucleoside & suite -- can go crazy.
-		Size const nucleoside_num = i;
-		sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range);
-
-		Size suite_num( 0 );
-		if ( moving_residue_case == CHAIN_TERMINUS_3PRIME ) suite_num = i-1;
-		else suite_num = i;
-
-		if ( RG.uniform() < 0.5) {
-			sample_near_suite_torsion( pose, suite_num, sample_range);
-			move_type += "-nuc-suite";
-		} else {
-			crankshaft_alpha_gamma( pose, suite_num, sample_range);
-			move_type += "-nuc-crank";
-		}
-
-	} else {
-		runtime_assert( moving_residue_case == INTERNAL ); // cannot handle floating base yet.
-
-		// don't do anything super-crazy -- either do previous suite, current nucleoside, or next suite.
-		Real const random_number = RG.uniform();
-
-		if ( random_number < 0.6 ){
-
-			Size suite_num( 0 );
-			if ( RG.uniform() < 0.5) {
-				suite_num= i-1;
-			} else {
-				suite_num= i;
-			}
-
-			if ( RG.uniform() < 0.5) {
-				sample_near_suite_torsion( pose, suite_num, sample_range);
-				//move_type += "-suite" + string_of(suite_num);
-				move_type += "-suite";
-			} else {
-				crankshaft_alpha_gamma( pose, suite_num, sample_range);
-				//move_type += "-suite" + string_of(suite_num);
-				move_type += "-crank";
-			}
-		} else {
-			Size const nucleoside_num = i;
-			sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range);
-			//move_type += "-nuc" + string_of(nucleoside_num);
-			move_type += "-nuc";
-		}
-
-	}
-
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-utility::vector1<Size>
-reorder_after_delete( utility::vector1<Size>  moving_res_list,
-											Size const & res_to_delete ){
-
-	utility::vector1< Size > moving_res_list_new;
-
-	for (Size i = 1; i <= moving_res_list.size(); i++ ){
-		Size const n = moving_res_list[ i ];
-		if ( n < res_to_delete ) moving_res_list_new.push_back( n );
-		else if (n > res_to_delete ) moving_res_list_new.push_back( n-1 );
-	}
-
-	return moving_res_list_new;
-
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-std::map<Size,Size>
-reorder_after_delete( std::map<Size,Size>  sub_to_full,
-											Size const & res_to_delete ){
-
-	std::map< Size, Size > sub_to_full_new;
-
-	for ( std::map< Size, Size >::const_iterator it = sub_to_full.begin(); it != sub_to_full.end(); ++it ) {
-		Size const n = it->first;
-		Size const m = it->second;
-		if ( n < res_to_delete ) sub_to_full_new[ n ] = m;
-		else if ( n > res_to_delete ) sub_to_full_new[ n-1 ] = m;
-	}
-
-	return sub_to_full_new;
-
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-utility::vector1<Size>
-reorder_after_insert( utility::vector1<Size>  moving_res_list,
-											 Size const & res_to_add ){
-
-	utility::vector1< Size > moving_res_list_new;
-
-	for (Size i = 1; i <= moving_res_list.size(); i++ ){
-		Size const n = moving_res_list[ i ];
-		if ( n < res_to_add ) moving_res_list_new.push_back( n );
-	}
-	moving_res_list_new.push_back( res_to_add );
-	for (Size i = 1; i <= moving_res_list.size(); i++ ){
-		Size const n = moving_res_list[ i ];
-		if ( n >= res_to_add ) moving_res_list_new.push_back( n+1 );
-	}
-
-	return moving_res_list_new;
-
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-std::map<Size,Size>
-reorder_after_prepend( std::map<Size,Size>  sub_to_full,
-											Size const & res_to_add ){
-
-	std::map< Size, Size > sub_to_full_new;
-
-	for ( std::map< Size, Size >::const_iterator it = sub_to_full.begin(); it != sub_to_full.end(); ++it ) {
-		Size const n = it->first;
-		Size const m = it->second;
-		if ( n < res_to_add )  sub_to_full_new[ n ] = m;
-		if ( n >= res_to_add ) sub_to_full_new[ n+1 ] = m;
-	}
-	sub_to_full_new[ res_to_add ] = sub_to_full[ res_to_add ]-1;
-
-	return  sub_to_full_new;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-std::map<Size,Size>
-reorder_after_append( std::map<Size,Size>  sub_to_full,
-											Size const & res_to_add ){
-
-	std::map< Size, Size > sub_to_full_new;
-
-	for ( std::map< Size, Size >::const_iterator it = sub_to_full.begin(); it != sub_to_full.end(); ++it ) {
-		Size const n = it->first;
-		Size const m = it->second;
-		if ( n < res_to_add )  sub_to_full_new[ n ] = m;
-		if ( n >= res_to_add ) sub_to_full_new[ n+1 ] = m;
-	}
-	sub_to_full_new[ res_to_add ] = sub_to_full[ res_to_add-1 ]+1;
-
-	return  sub_to_full_new;
-}
-
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void
-reorder_sub_to_full_info_after_delete( pose::Pose & pose, Size const res_to_delete ){
-	using namespace protocols::swa::monte_carlo;
-	SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
-
-	std::map< Size, Size > sub_to_full_new = reorder_after_delete( sub_to_full_info.sub_to_full(), res_to_delete );
-	utility::vector1< Size > moving_res_list_new = reorder_after_delete( sub_to_full_info.moving_res_list(), res_to_delete );
-
-	sub_to_full_info.set_sub_to_full( sub_to_full_new );
-	sub_to_full_info.set_moving_res_list( moving_res_list_new );
-
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void
-reorder_sub_to_full_info_after_append( pose::Pose & pose, Size const res_to_add ){
-	using namespace protocols::swa::monte_carlo;
-	SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
-
-	std::map< Size, Size > sub_to_full_new = reorder_after_append( sub_to_full_info.sub_to_full(), res_to_add );
-	utility::vector1< Size > moving_res_list_new = reorder_after_insert( sub_to_full_info.moving_res_list(), res_to_add );
-
-	sub_to_full_info.set_sub_to_full( sub_to_full_new );
-	sub_to_full_info.set_moving_res_list( moving_res_list_new );
-
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void
-reorder_sub_to_full_info_after_prepend( pose::Pose & pose, Size const res_to_add ){
-	using namespace protocols::swa::monte_carlo;
-	SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
-
-	std::map< Size, Size > sub_to_full_new = reorder_after_prepend( sub_to_full_info.sub_to_full(), res_to_add );
-	utility::vector1< Size > moving_res_list_new = reorder_after_insert( sub_to_full_info.moving_res_list(), res_to_add );
-
-	sub_to_full_info.set_sub_to_full( sub_to_full_new );
-	sub_to_full_info.set_moving_res_list( moving_res_list_new );
-
-}
-
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void
-get_random_residue_at_chain_terminus( pose::Pose & pose,
-																			Size & residue_at_chain_terminus,
-																			MovingResidueCase & moving_residue_case,
-																			AddOrDeleteChoice & add_or_delete_choice,
-																			bool const disallow_delete ) {
-
-	using namespace protocols::swa::monte_carlo;
-
-	// potential delete residues
-	Size const & nres( pose.total_residue() );
-	kinematics::FoldTree const & fold_tree( pose.fold_tree() );
-
-	utility::vector1< Size >  possible_res;
-	utility::vector1< MovingResidueCase > moving_residue_cases;
-	utility::vector1< AddOrDeleteChoice > add_or_delete_choices;
-
-	SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
-	utility::vector1< Size > const & moving_res_list = sub_to_full_info.moving_res_list();
-	std::map< Size, Size > sub_to_full = sub_to_full_info.sub_to_full();
-	utility::vector1< Size > cutpoints_in_full_pose = sub_to_full_info.cutpoints_in_full_pose();
-	Size nres_full = sub_to_full_info.full_sequence().size();
-
-	if ( !disallow_delete ){
-		for ( Size n = 1; n <= moving_res_list.size(); n++ ){
-
-			Size const i = moving_res_list[ n ];
-
-			if ( i == nres || fold_tree.is_cutpoint( i ) ){ // could be a 3' chain terminus
-
-				possible_res.push_back( i );
-				moving_residue_cases.push_back( CHAIN_TERMINUS_3PRIME );
-				add_or_delete_choices.push_back( DELETE );
-
-			} else if ( i == 1 || fold_tree.is_cutpoint( i-1 ) ) {
-
-				possible_res.push_back( i );
-				moving_residue_cases.push_back( CHAIN_TERMINUS_5PRIME );
-				add_or_delete_choices.push_back( DELETE );
-
-			}
-
-		}
-	}
-
-
-	utility::vector1< bool > is_cutpoint_in_full_pose;
-	for ( Size i = 1; i <= nres_full; i++ ) is_cutpoint_in_full_pose.push_back( false );
-	for ( Size n = 1; n <= cutpoints_in_full_pose.size(); n++ ) is_cutpoint_in_full_pose[ cutpoints_in_full_pose[n] ] = true;
-
-	for ( Size i = 1; i <= nres; i++ ){
-
-		if ( ( i == nres ) ||
-				 ( fold_tree.is_cutpoint( i ) && (sub_to_full[ i ]+1 < sub_to_full[ i+1 ]) ) ) { // could be a 3' chain terminus
-
-			Size const i_full = sub_to_full[ i ] ;
-			if ( !is_cutpoint_in_full_pose[ i_full ] && i_full < nres_full ){ // good, there's still a gap!
-
-				possible_res.push_back( i );
-				moving_residue_cases.push_back( CHAIN_TERMINUS_3PRIME );
-				add_or_delete_choices.push_back( ADD );
-
-			}
-		}
-	}
-
-	for ( Size i = 1; i <= nres; i++ ){
-
-		if ( ( i == 1 ) ||
-				 ( fold_tree.is_cutpoint( i-1 ) && (sub_to_full[ i ]-1 > sub_to_full[ i-1 ]) ) ) { // could be a 5' chain terminus
-
-			Size const i_full = sub_to_full[ i ];
-			if ( i_full > 1 && !is_cutpoint_in_full_pose[ i_full-1 ] ) { // good, there's still a gap!
-
-				possible_res.push_back( i );
-				moving_residue_cases.push_back( CHAIN_TERMINUS_5PRIME );
-				add_or_delete_choices.push_back( ADD );
-			}
-		}
-	}
-
-	Size const res_idx =  int( RG.uniform() * possible_res.size() ) + 1;
-
-	residue_at_chain_terminus = possible_res[ res_idx ];
-	moving_residue_case       = moving_residue_cases[ res_idx ];
-	add_or_delete_choice      = add_or_delete_choices[ res_idx ];
-}
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -1307,7 +758,6 @@ swa_rna_sample()
   using namespace core::scoring;
   using namespace core::io::silent;
 	using namespace protocols::swa::rna;
-	using namespace protocols::swa::monte_carlo;
 	using namespace protocols::moves;
 
 	clock_t const time_start( clock() );
@@ -1366,11 +816,20 @@ swa_rna_sample()
 	SilentFileDataOP silent_file_data = new SilentFileData;
 
 	//	output_silent_file( pose, 0, moving_res_list, sub_to_full, native_pose, silent_file_data, silent_file );
-	Real const output_score_cutoff_ = option[ output_score_cutoff ]();
+
 	bool const do_add_delete_ = option[ do_add_delete ]();
-	bool const presample_added_residue_ = option[ presample_added_residue ]();
-	Size const internal_cycles_ = option[ presample_internal_cycles ](); // totally arbitrary
-	bool const start_added_residue_in_aform_ = option[ start_added_residue_in_aform ](); // totally arbitrary
+
+	Real const kT_ = option[ kT ]();
+
+	RNA_TorsionMoverOP rna_torsion_mover = new RNA_TorsionMover;
+	RNA_DeleteMover rna_delete_mover;
+	RNA_AddMover rna_add_mover( rsd_set, scorefxn );
+	rna_add_mover.set_start_added_residue_in_aform( option[ start_added_residue_in_aform ]() );
+	rna_add_mover.set_presample_added_residue(  option[ presample_added_residue ]() );
+	rna_add_mover.set_internal_cycles( option[ presample_internal_cycles ]() );
+	rna_add_mover.set_sample_range_small( sample_range_small );
+	rna_add_mover.set_sample_range_large( sample_range_large );
+	rna_add_mover.set_kT( kT_ );
 
 	// instead of this, how about just deleting all new residues?
 	std::string move_type( "" );
@@ -1378,18 +837,19 @@ swa_rna_sample()
 		std::cout << "randomizing... ";
 		for (Size count = 1; count <= 1000; count++) {
 			move_type = "lrg";
-			random_torsion_move( pose, start_moving_res_list, move_type, sample_range_large );
+			rna_torsion_mover->random_torsion_move( pose, start_moving_res_list, move_type, sample_range_large );
 		}
 		std::cout << " done. " << std::endl;
 	}
 
 	// should stuff into SWA_MonteCarloMover
-	MonteCarloOP monte_carlo_ = new MonteCarlo( pose, *scorefxn, option[ kT ]() );
+	MonteCarloOP monte_carlo_ = new MonteCarlo( pose, *scorefxn, kT_ );
 
 	bool accepted( true );
 	Size n_accept( 0 );
 	Size o2star_res( 0 );
 	Size const output_period_ = option[ output_period ]();
+
 
 	for (Size count = 1; count <= num_cycle; count++) {
 
@@ -1405,149 +865,26 @@ swa_rna_sample()
 			Size res_at_terminus;
 			MovingResidueCase moving_residue_case;
 			AddOrDeleteChoice add_or_delete_choice;
-			bool disallow_delete  = ( moving_res_list.size() <= 1 ); //always have something in play!
+			bool disallow_delete  = ( moving_res_list.size() <= 1 ); //always have something in play!!?? Or permit removal??!! need to check this carefully.
 			get_random_residue_at_chain_terminus( pose, res_at_terminus, moving_residue_case, add_or_delete_choice, disallow_delete  );
 
 			// std::cout << "ADD/DELETE move ==> " << res_at_terminus << " " << moving_residue_case << " " << add_or_delete_choice << std::endl;
 
 			if ( add_or_delete_choice == DELETE ) {
-
-				///////////////////////////////////
-				// Deletion
-				///////////////////////////////////
-
-				// should stuff into DeleteMover
 				move_type = "delete";
-				std::cout << "Before delete: " << (*scorefxn)( pose ) << std::endl;
-
-				Size const res_to_delete = res_at_terminus;
-				pose.delete_polymer_residue( res_to_delete );
-
-				if ( moving_residue_case == CHAIN_TERMINUS_5PRIME )	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_delete );
-
-				// important book-keeping.
-				reorder_sub_to_full_info_after_delete( pose, res_to_delete );
-
-				std::cout << pose.annotated_sequence() << std::endl;
-				std::cout << "After delete: " << (*scorefxn)( pose ) << std::endl << std::endl;
-
+				//std::cout << "Before delete: " << (*scorefxn)( pose ) << std::endl;
+				rna_delete_mover.apply( pose, res_at_terminus, moving_residue_case );
+				//std::cout << pose.annotated_sequence() << std::endl;
+				//std::cout << "After delete: " << (*scorefxn)( pose ) << std::endl << std::endl;
 			} else {
-
-				// should stuff into AddMover
 				runtime_assert( add_or_delete_choice == ADD );
-
-				///////////////////////////////////
-				// Addition
-				///////////////////////////////////
 				// try to add a residue that is supposed to be sampled.
-
 				move_type = "add";
-				std::cout << "Before adding onto " << res_at_terminus << " : " << (*scorefxn)( pose ) << std::endl;
-
-				Size suite_num( 0 ), nucleoside_num( 0 ); // will record which new dofs added.
-
-				Size res_to_build_off = res_at_terminus;
-				bool did_addition( false );
-				//pose.dump_pdb( "before_add.pdb" );
-
-				SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
-				std::string const  full_sequence  = sub_to_full_info.full_sequence();
-				std::map< Size, Size > sub_to_full = sub_to_full_info.sub_to_full();
-
-				if ( moving_residue_case == CHAIN_TERMINUS_3PRIME ){
-
-					runtime_assert( res_to_build_off < pose.total_residue() ); // wait is this necessary?
-					runtime_assert( sub_to_full[ res_to_build_off ] < sub_to_full[ res_to_build_off+1 ] -1 );
-
-					Size const res_to_add = res_to_build_off + 1;
-
-					char newrestype = full_sequence[ (sub_to_full[ res_to_build_off ] + 1) - 1 ];
-						//std::cout << "I want to add: " << newrestype << std::endl;
-
-					chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
-					chemical::ResidueTypeCAPs const & rsd_type_list( rsd_set->aa_map( my_aa ) );
-					// iterate over rsd_types, pick one.
-					chemical::ResidueType const & rsd_type = *rsd_type_list[1];
-					core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
-
-					pose.append_polymer_residue_after_seqpos( *new_rsd, res_to_build_off, true /*build ideal geometry*/ );
-
-					reorder_sub_to_full_info_after_append( pose, res_to_add );
-
-					suite_num = res_to_add-1;
-					nucleoside_num = res_to_add;
-
-					did_addition = true;
-				} else {
-
-					//Size const res_to_add = moving_res_list[1]; // for now, just build off 5' fragment.
-					Size const res_to_add = res_to_build_off;
-
-					runtime_assert( sub_to_full[ res_to_add ] > 1 );
-
-					char newrestype = full_sequence[ (sub_to_full[ res_to_add ] - 1) - 1 ];
-					//std::cout << "I want to add: " << newrestype << std::endl;
-
-					chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
-					chemical::ResidueTypeCAPs const & rsd_type_list( rsd_set->aa_map( my_aa ) );
-					// iterate over rsd_types, pick one.
-					chemical::ResidueType const & rsd_type = *rsd_type_list[1];
-					core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
-
-					pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add ); // got to be safe.
-
-					pose.prepend_polymer_residue_before_seqpos( *new_rsd, res_to_add, true /*build ideal geometry*/ );
-					pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add );
-
-					reorder_sub_to_full_info_after_prepend( pose, res_to_add );
-
-					// initialize with a random torsion... ( how about an A-form + perturbation ... or go to a 'reasonable' rotamer)
-					suite_num = res_to_add;
-					nucleoside_num = res_to_add;
-
-					did_addition = true;
-				}
-
-				runtime_assert( did_addition );
-
-				if ( did_addition ){
-
-					if ( start_added_residue_in_aform_ ){
-						apply_suite_torsion_Aform( pose, suite_num );
-						apply_nucleoside_torsion_Aform( pose, nucleoside_num );
-					} else {
-						apply_random_nucleoside_torsion( pose, nucleoside_num );
-						apply_random_suite_torsion( pose, suite_num );
-					}
-
-					sample_near_suite_torsion( pose, suite_num, sample_range_large);
-					sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range_large);
-
-					///////////////////////////////////
-					// Presampling added residue
-					///////////////////////////////////
-					if ( presample_added_residue_ ){
-						std::cout << "presampling added residue! " << nucleoside_num << std::endl;
-						MonteCarloOP monte_carlo_internal = new MonteCarlo( pose, *scorefxn, option[ kT ]() );
-
-						for ( Size count_internal = 1; count_internal <= internal_cycles_; count_internal++ ){
-
-							sample_near_suite_torsion( pose, suite_num, sample_range_large);
-							sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range_large);
-							monte_carlo_internal->boltzmann( pose, move_type );
-							sample_near_suite_torsion( pose, suite_num, sample_range_small);
-							sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range_small);
-							monte_carlo_internal->boltzmann( pose, move_type );
-							//std::cout << "During presampling: " << (*scorefxn)( pose );
-						}
-					}
-
-					std::cout << pose.annotated_sequence() << std::endl;
-					std::cout << "After add: " << (*scorefxn)( pose ) << std::endl << std::endl;
-					//pose.dump_pdb( "after_add.pdb" );
-				} else {
-					move_type = ""; // no move!
-				}
+				//				std::cout << "Before adding onto " << res_at_terminus << " : " << (*scorefxn)( pose ) << std::endl;
+				rna_add_mover.apply( pose, res_at_terminus, moving_residue_case );
+				//std::cout << pose.annotated_sequence() << std::endl;
+				//std::cout << "After add: " << (*scorefxn)( pose ) << std::endl << std::endl;
+				//pose.dump_pdb( "after_add.pdb" );
 			}
 		}
 
@@ -1557,10 +894,10 @@ swa_rna_sample()
 			Real const random_number2 = RG.uniform();
 			if ( random_number2  < 0.5 ){
 				move_type = "sml";
-				random_torsion_move( pose, moving_res_list, move_type, sample_range_small );
+				rna_torsion_mover->random_torsion_move( pose, moving_res_list, move_type, sample_range_small );
 			} else {
 				move_type = "lrg";
-				random_torsion_move( pose, moving_res_list, move_type, sample_range_large );
+				rna_torsion_mover->random_torsion_move( pose, moving_res_list, move_type, sample_range_large );
 			}
 		} else{
 

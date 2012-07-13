@@ -48,6 +48,10 @@ sources = {
 	],
 	"protocols/swa/monte_carlo": [
 		"SubToFullInfo",
+		"RNA_AddMover",
+		"RNA_DeleteMover",
+		"RNA_TorsionMover",
+		"RNA_SWA_MonteCarloUtil",
 	],
 	"protocols/swa/protein": [
 		"MainChainTorsionSet",
