@@ -55,6 +55,7 @@ StrandPairing::StrandPairing():
 	rgstr_shift_( 99 ),
 	orient_( 'N' ),
 	has_bulge_( false ),
+	finalized_( false ),
 	name_( "" )
 {}
 
@@ -77,12 +78,15 @@ StrandPairing::StrandPairing(
 	end2_( b2 ),
 	rgstr_shift_( rs ),
 	orient_( o ),
-	has_bulge_( false )
+	has_bulge_( false ),
+	finalized_( false )
 {
 	runtime_assert( s1 < s2 );
 	runtime_assert( b1 < b2 );
 	pleats1_.push_back( p );
 	pleats2_.push_back( p );
+	residue_pair_vec1_.push_back( b1 );
+	residue_pair_vec2_.push_back( b2 );
 	residue_pair_.insert( std::map< Size, Size >::value_type( b1, b2 ) );
 	residue_pair_.insert( std::map< Size, Size >::value_type( b2, b1 ) );
 	initialize();
@@ -104,7 +108,8 @@ StrandPairing::StrandPairing(
 	end2_( 0 ),
 	rgstr_shift_( rs ),
 	orient_( o ),
-	has_bulge_( false )
+	has_bulge_( false ),
+	finalized_( false )
 {
 	runtime_assert( s1 < s2 );
 	initialize();
@@ -117,7 +122,8 @@ StrandPairing::StrandPairing( String const & spair ):
 	end1_( 0 ),
 	begin2_( 0 ),
 	end2_( 0 ),
-	has_bulge_( false )
+	has_bulge_( false ),
+	finalized_( false )
 {
 	utility::vector1< String > parts( utility::string_split( spair, '.' ) );
 	runtime_assert( parts.size() == 3 );
@@ -159,7 +165,12 @@ StrandPairing::StrandPairing( StrandPairing const & sp ) :
 	orient_( sp.orient_ ),
 	has_bulge_( sp.has_bulge_ ),
 	name_( sp.name_ ),
-	residue_pair_( sp.residue_pair_ )
+	residue_pair_( sp.residue_pair_ ),
+	residue_pair_vec1_( sp.residue_pair_vec1_ ),
+	residue_pair_vec2_( sp.residue_pair_vec2_ ),
+	bulges1_( sp.bulges1_ ),
+	bulges2_( sp.bulges2_ ),
+	finalized_( sp.finalized_ )
 {}
 
 
@@ -178,8 +189,27 @@ StrandPairing::clone()
 /// @brief return name
 std::ostream & operator<<( std::ostream & out, const StrandPairing &sp )
 {
+	runtime_assert( sp.finalized() );
+
 	out << sp.name();
-	out << ": " << sp.begin1() << "-" << sp.end1() << "." << sp.begin2() << "-" << sp.end2();
+	out << ": " << sp.begin1() << "-" << sp.end1() << "." << sp.begin2() << "-" << sp.end2() << " ";
+
+	utility::vector1< Size > bulges1( sp.bulges1() );
+	if( bulges1.size() > 0 ) {
+		for( Size ii=1; ii<=bulges1.size()-1; ii++ ) {
+			out << bulges1[ ii ] << ",";
+		}
+		out << bulges1.back();
+	}
+
+	out << " ";
+	utility::vector1< Size > bulges2( sp.bulges2() );
+	if( bulges2.size() > 0 ) {
+		for( Size ii=1; ii<=bulges2.size()-1; ii++ ) {
+			out << bulges2[ ii ] << ",";
+		}
+		out << bulges2.back();
+	}
 	return out;
 }
 
@@ -189,10 +219,13 @@ bool
 StrandPairing::elongate( Size const r1, Size const r2, Size const p1, Size const p2 )
 {
 	runtime_assert( r2 > r1 );
+	finalized_ = false;
 
 	// set residue pair
 	residue_pair_.insert( std::map< Size, Size >::value_type( r1, r2 ) );
 	residue_pair_.insert( std::map< Size, Size >::value_type( r2, r1 ) );
+
+	//std::cout << "elongate " << r1 << " " << r2 << " " << p1 << " " << p2 << std::endl;
 
 	if ( begin1_ == 0 && begin2_ == 0 ) {
 		begin1_ = r1;
@@ -201,6 +234,10 @@ StrandPairing::elongate( Size const r1, Size const r2, Size const p1, Size const
 		end2_ = r2;
 		pleats1_.push_back( p1 );
 		pleats2_.push_back( p2 );
+		residue_pair_vec1_.clear();
+		residue_pair_vec2_.clear();
+		residue_pair_vec1_.push_back( r1 );
+		residue_pair_vec2_.push_back( r2 );
 		return true;
 	}
 
@@ -211,16 +248,12 @@ StrandPairing::elongate( Size const r1, Size const r2, Size const p1, Size const
 		return false;
 	}
 
-	// runtime_assert( r1 > end1_ );
-
-	// 	if( orient_  ==  'P' ){
-	// runtime_assert( r2 > end2_ );
-	// }else{
-	// runtime_assert( r2 < end2_ );
-	// }
-
 	end1_ = r1;
 	end2_ = r2;
+	pleats1_.push_back( p1 );
+	pleats2_.push_back( p2 );
+	residue_pair_vec1_.push_back( r1 );
+	residue_pair_vec2_.push_back( r2 );
 
 	if( size1() != size2() ){
 		has_bulge_ = true;
@@ -235,6 +268,7 @@ bool
 StrandPairing::add_pair( Size const r1, Size const r2, char const orient, Real const rgstr )
 {
 	runtime_assert( r2 > r1 );
+	finalized_ = false;
 
 	if( orient_ != orient ) return false;
 
@@ -246,6 +280,10 @@ StrandPairing::add_pair( Size const r1, Size const r2, char const orient, Real c
 		begin2_ = r2;
 		end1_ = r1;
 		end2_ = r2;
+		residue_pair_vec1_.clear();
+		residue_pair_vec2_.clear();		
+		residue_pair_vec1_.push_back( r1 );
+		residue_pair_vec2_.push_back( r2 );
 		return true;
 	}
 
@@ -263,6 +301,9 @@ StrandPairing::add_pair( Size const r1, Size const r2, char const orient, Real c
 		end2_ = r2;
 	}
 
+	residue_pair_vec1_.push_back( r1 );
+	residue_pair_vec2_.push_back( r2 );
+
 	if( size1() != size2() ){
 		has_bulge_ = true;
 	}
@@ -274,7 +315,7 @@ StrandPairing::add_pair( Size const r1, Size const r2, char const orient, Real c
 Size
 StrandPairing::size1() const
 {
-	return end1_ - begin1_ + 1;
+	return abs( end1_ - begin1_ ) + 1;
 }
 
 
@@ -282,13 +323,14 @@ StrandPairing::size1() const
 Size
 StrandPairing::size2() const
 {
-	return end2_ - begin2_ + 1;
+	return abs( end2_ - begin2_ ) + 1;
 }
 
 
 /// @brief return length of 2nd strand
 bool
-StrandPairing::is_parallel() const {
+StrandPairing::is_parallel() const
+{
 	if( orient_ == 'P' ) {
 		return true;
 	}else{
@@ -298,8 +340,8 @@ StrandPairing::is_parallel() const {
 
 /// @brief whether input residue is included in this StrandPairinge or not
 bool
-StrandPairing::is_member( Size const res ) {
-
+StrandPairing::is_member( Size const res ) const
+{
 	if ( begin1_ <= end1_ ) {
 		if( begin1_ <= res && res <= end1_ ) return true;
 	} else {
@@ -311,17 +353,105 @@ StrandPairing::is_member( Size const res ) {
 	} else {
 		if( end2_ <= res && res <= begin2_ ) return true;
 	}
-
+	
 	return false;
-
 }
 
 /// @brief return residue pairing
 Size
-StrandPairing::residue_pair( Size const res )
+StrandPairing::residue_pair( Size const res ) const
 {
-	runtime_assert( begin1_ <= res && res <= end1_ || begin2_ <= res && res <= end2_ );
+	runtime_assert( is_member( res ) );
 	return residue_pair_[ res ];
+}
+
+/// @brief check bulge or not in 1st strand
+bool 
+StrandPairing::is_bulge1( Size const res ) const
+{
+	if( ! is_member( res ) ) {
+		TR << "Residue " << res << " is not member of this strand pair." << std::endl;
+		utility_exit();
+	}	
+	return bulges1_[ res - begin1_ + 1 ];
+}
+
+/// @brief check bulge or not in 1st strand
+bool
+StrandPairing::is_bulge2( Size const res ) const
+{
+	if( ! is_member( res ) ) {
+		TR << "Residue " << res << " is not member of this strand pair." << std::endl;
+		utility_exit();
+	}	
+	return bulges2_[ abs( res - begin2_ ) + 1 ];
+}
+
+/// @brief
+utility::vector1< Size >
+StrandPairing::bulges1() const
+{
+	runtime_assert( finalized_ );
+	
+	utility::vector1< Size > bulges;
+	runtime_assert( begin1_ <= end1_ );
+	for( Size ii=begin1_; ii<=end1_; ++ii ) {
+		if( is_bulge1( ii ) ) {
+			bulges.push_back( ii );
+		}
+	}
+	return bulges;	
+}
+	
+/// @brief
+utility::vector1< Size >
+StrandPairing::bulges2() const
+{
+	runtime_assert( finalized_ );
+	
+	utility::vector1< Size > bulges;
+	Size ini( begin2_ );
+	Size end( end2_ );
+	if( begin2_ > end2_ ) {
+		ini = end2_;
+		end = begin2_;
+	}
+	for( Size ii=ini; ii<=end; ++ii ) {
+		if( is_bulge2( ii ) ) {
+			bulges.push_back( ii );
+		}
+	}
+	return bulges;	
+}
+	
+/// @brief check pair information
+void
+StrandPairing::finalize()
+{
+	if( finalized() ) return;
+
+	bulges1_.resize( size1() );
+	bulges2_.resize( size2() );
+
+	for( Size ii=1; ii<=size1(); ++ii ) {
+		bulges1_[ ii ] = true;
+	}
+	for( Size ii=1; ii<=size2(); ++ii ) {
+		bulges2_[ ii ] = true;
+	}
+
+	for( Size ii=1; ii<=residue_pair_vec1().size(); ++ii ) {
+		Size num( residue_pair_vec1()[ ii ] - begin1_ + 1 );
+		runtime_assert( num <= size1() );
+		bulges1_[ num ] = false;
+	}
+
+	for( Size ii=1; ii<=residue_pair_vec2().size(); ++ii ) {
+		Size num( abs( residue_pair_vec2()[ ii ] - begin2_ ) + 1 );
+		runtime_assert( num <= size2() );
+		bulges2_[ num ] = false;
+	}
+	finalized_ = true;
 }
 
 /// @brief reset begin1_, end1_, begin2_, end2_ based on ssinfo
@@ -638,20 +768,48 @@ StrandPairingSet::finalize()
 	// sort strand_parings_ by name_ of StrandPairingOP
 	std::sort( strand_pairings_.begin(), strand_pairings_.end(), pointer_sorter );
 
-	//
-	for ( StrandPairings::const_iterator it=strand_pairings_.begin(),	ite=strand_pairings_.end(); it != ite; ++it ) {
+	// get num_strands_ at first
+	for ( StrandPairings::const_iterator it=strand_pairings_.begin(),	ite=strand_pairings_.end(); it != ite; ++it ) {		
+		StrandPairingOP spair(*it);
+		if(	spair->s2() > num_strands_ ){
+			num_strands_ = spair->s2();
+		}
+	}
 
-		StrandPairing spair(**it);
+	// Make strand pairings clean in case that a same strand pair is defiened more than twice. Ex. 1-2.P;1-2.A
+	StrandPairings drop_spairs;
+	utility::vector1< utility::vector1< StrandPairingOP > > pairmap( num_strands_, utility::vector1< StrandPairingOP >( num_strands_, empty_ ) );
+	for ( StrandPairings::const_iterator it=strand_pairings_.begin(),	ite=strand_pairings_.end(); it != ite; ++it ) {
+		StrandPairingOP const spair( *it );
+		spair->finalize();		
+		if( pairmap[ spair->s1() ][ spair->s2() ] != empty_ ) {
+			drop_spairs.push_back( spair );
+			drop_spairs.push_back( pairmap[ spair->s1() ][ spair->s2() ] );
+		}
+		pairmap[ spair->s1() ][ spair->s2() ] = spair;
+		pairmap[ spair->s2() ][ spair->s1() ] = spair;
+	}
+
+	if( drop_spairs.size() > 0 ) {
+		drop_strand_pairs( drop_spairs  );
+	}
+
+	// Set spairset_name_ and get num_stands again
+	for ( StrandPairings::const_iterator it=strand_pairings_.begin(),	ite=strand_pairings_.end(); it != ite; ++it ) {
+		StrandPairingOP spair(*it);
+		
+		// finalize strand pair
+		// spair->finalize();
 
 		// set spairset_name_
 		if( spairset_name_ == "" ){
-			spairset_name_ = spair.name();
+			spairset_name_ = spair->name();
 		}else{
-			spairset_name_ += ';' + spair.name();
+			spairset_name_ += ';' + spair->name();
 		}
 		// find max number of strands
-		if(	spair.s2() > num_strands_ ){
-			num_strands_ = spair.s2();
+		if(	spair->s2() > num_strands_ ){
+			num_strands_ = spair->s2();
 		}
 	}
 
@@ -671,6 +829,11 @@ StrandPairingSet::finalize()
 
 	for ( StrandPairings::const_iterator it=strand_pairings_.begin(),	ite=strand_pairings_.end(); it != ite; ++it ) {
 		StrandPairingOP const spair( *it );
+		
+		if( map_strand_pairings_[ spair->s1() ][ spair->s2() ] != empty_ ) {
+			TR << "[WARRNING] This strand pair " << spair->name() << " is already defined before. Something weired in the structure. Make sure !! " << std::endl;
+		}
+		
 		// define map_strand_pairings_
 		map_strand_pairings_[ spair->s1() ][ spair->s2() ] = spair;
 		map_strand_pairings_[ spair->s2() ][ spair->s1() ] = spair;
@@ -762,7 +925,7 @@ StrandPairingSet::make_strand_neighbor_two()
 
 }
 
-/// @brief initialize StrandPairingSet based on dimer_pairs ( under developed )
+/// @brief initialize StrandPairingSet based on dimer_pairs ( under developing )
 void
 StrandPairingSet::initialize_by_dimer_pairs( SS_Info2 const & ssinfo, DimerPairings const & dimer_pairs )
 {

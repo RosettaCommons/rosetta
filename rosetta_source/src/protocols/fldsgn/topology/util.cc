@@ -13,6 +13,7 @@
 // unit header
 #include <protocols/fldsgn/topology/util.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
+#include <protocols/fldsgn/topology/HelixPairing.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/forge/build/Interval.hh>
 
@@ -56,9 +57,9 @@ namespace topology {
 /// @brief convert StrandParingSet of dssp to fldsgn::topology::StrandPairingSet
 protocols::fldsgn::topology::StrandPairingSet
 calc_strand_pairing_set(
-						core::pose::Pose const & pose,
-						protocols::fldsgn::topology::SS_Info2_COP const ssinfo,
-						core::Size minimum_pair_length )
+	core::pose::Pose const & pose,
+	protocols::fldsgn::topology::SS_Info2_COP const ssinfo,
+	core::Size minimum_pair_length )
 {
 	using core::Size;
 	typedef protocols::fldsgn::topology::StrandPairing StrandParing;
@@ -127,6 +128,9 @@ calc_strand_pairing_set(
 	std::map<String, StrandPairingOP>::iterator it( newpairs.begin() );
 	while( it != newpairs.end() ){
 
+		// finalize newpairs
+		(*it).second->finalize();
+		
 		// skip if pair length < minimum_pair_length
 		if( (*it).second->size1() < minimum_pair_length || (*it).second->size2() < minimum_pair_length ) {
 			++it;
@@ -140,7 +144,6 @@ calc_strand_pairing_set(
 		spairset_new.push_back( (*it).second );
 		++it;
 	}
-
 	spairset_new.finalize();
 
 	return spairset_new;
@@ -242,13 +245,31 @@ calc_delta_sasa(
 
 } // calc_delta_sasa
 
+/// @brief calculate chirality of three secondary structure elements
+char
+calc_chirality_sstriplet(
+	SS_BaseCOP ss1,
+	SS_BaseCOP ss2,
+  SS_BaseCOP ss3 )
+{
+	Vector v21 = ss2->mid_pos() - ss1->mid_pos();
+	Vector v31 = ss3->mid_pos() - ss1->mid_pos();
+	Vector v1xv21 =	ss1->orient().cross( v21 );
+	
+	if ( v1xv21.dot( v31 ) >= 0 ) {
+		return 'R';		
+	} else {
+		return 'L';
+	}	
+} // calc_chirality_sstriplet
+	
 
 /// @brief check kink of helix, return number of loosen hydrogen
 core::Size
 check_kink_helix(
-	 core::pose::Pose const & pose,
-     core::Size const begin,
-	 core::Size const end )
+	core::pose::Pose const & pose,
+  core::Size const begin,
+	core::Size const end )
 {
 	using core::scoring::EnergiesCacheableDataType::HBOND_SET;
 	using core::scoring::hbonds::HBondSet;
@@ -269,9 +290,9 @@ check_kink_helix(
 }
 
 
-/// @brief check kink of helix, return number of loosen hydrogen
-utility::vector1< core::scoring::hbonds::HBond >
-check_internal_hbonds(
+/// @brief count number of internally made hydrogen bonds
+Size
+count_internal_hbonds(
 	 core::pose::Pose const & pose,
      core::Size const begin,
 	 core::Size const end )
@@ -283,21 +304,70 @@ check_internal_hbonds(
 	core::pose::Pose copy_pose( pose );
 	HBondSet const & hbond_set( static_cast< HBondSet const & > ( copy_pose.energies().data().get( HBOND_SET )) );
 
-	utility::vector1< HBond > hbonds;
+	Size num( 0 );
 	for ( core::Size i=1; i<=(core::Size)hbond_set.nhbonds(); ++i ) {
 		Size don_pos = hbond_set.hbond((int)i).don_res();
 		Size acc_pos = hbond_set.hbond((int)i).acc_res();
 		if( don_pos >= begin && don_pos <= end &&
 		    acc_pos >= begin && acc_pos <= end ) {
-			hbonds.push_back( hbond_set.hbond((int)i) );
+			num ++;
 		}
 	}
-
-	return hbonds;
-
+	return num;
 }
 
+	
+/// @brief count number of internally made hydrogen bonds
+Size
+count_related_hbonds(
+	core::pose::Pose const & pose,
+	core::Size const begin,
+	core::Size const end )
+{
+	using core::scoring::EnergiesCacheableDataType::HBOND_SET;
+	using core::scoring::hbonds::HBondSet;
+	using core::scoring::hbonds::HBond;
+		
+	core::pose::Pose copy_pose( pose );
+	HBondSet const & hbond_set( static_cast< HBondSet const & > ( copy_pose.energies().data().get( HBOND_SET )) );
 
+	Size num( 0 );
+	for ( core::Size i=1; i<=(core::Size)hbond_set.nhbonds(); ++i ) {
+		Size don_pos = hbond_set.hbond((int)i).don_res();
+		Size acc_pos = hbond_set.hbond((int)i).acc_res();
+		if ( (don_pos >= begin && don_pos <= end) || (acc_pos >= begin && acc_pos <= end) ) {
+			num ++;
+		}
+	}
+	return num;
+}	
+
+/// @brief get helix pairings
+protocols::fldsgn::topology::HelixPairingSet
+calc_hpairset( 
+				   protocols::fldsgn::topology::SS_Info2_COP const ssinfo,
+				   core::Real distance,
+				   core::Real angle
+)
+{
+	using protocols::fldsgn::topology::HelixPairingOP;
+	using protocols::fldsgn::topology::HelixPairing;
+
+	protocols::fldsgn::topology::HelixPairingSet hpairset;
+	for( Size i=1; i<=ssinfo->helices().size() - 1; ++i ) {
+		for( Size j=i+1; j<=ssinfo->helices().size(); ++j ) {
+			HelixPairingOP hpair = new HelixPairing( i, j );
+			hpair->calc_geometry( ssinfo );
+			if( hpair->cross_angle() <= angle && hpair->dist() <= distance ) {
+				hpairset.push_back( hpair );				
+			}
+		}
+	}
+	return hpairset;
+}
+	
+	
+	
 // /// @brief
 // utility::vector1< Size >
 // split_into_ss_chunk(

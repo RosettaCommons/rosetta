@@ -57,11 +57,29 @@ HelixPairing::HelixPairing():
 	loop_length_( 6 )
 {}
 
+/// @Brief default constructor
+HelixPairing::HelixPairing(
+  Size const h1,
+  Size const h2
+):
+	h1_( h1 ),
+	h2_( h2 ),
+	orient_( 'N' ),
+	name_( "" ),
+	dist_( 0.0 ),
+	cross_angle_( 0.0 ),
+	align_angle_( -99.0 ),
+	loop_length_( 6 )
+{
+	runtime_assert( h1 < h2 );
+	initialize();
+}	
+	
 /// @brief value constructor
 HelixPairing::HelixPairing(
   Size const h1,
-	Size const h2,
-	char const o
+  Size const h2,
+  char const o
 ):
 	h1_( h1 ),
 	h2_( h2 ),
@@ -83,15 +101,21 @@ HelixPairing::HelixPairing( String const & hp ):
 	loop_length_( 6 )
 {
 	utility::vector1< String > parts( utility::string_split( hp, '.' ) );
-	runtime_assert( parts.size() == 2 );
+	if( parts.size() != 2 ) {
+		utility_exit_with_message("HHPAIR must be described with helix-pairing and its orientation separated by dot, Ex. 1-2.A");
+	}
 
 	utility::vector1< String > helices( utility::string_split( parts[1], '-' ) );
 	h1_ = boost::lexical_cast<Size>( helices[1] );
 	h2_ = boost::lexical_cast<Size>( helices[2] );
-	runtime_assert( h1_ < h2_ );
+	if( h1_ > h2_ ) {
+		utility_exit_with_message("1st helix number must be less than 2nd helix number in HHPAIR.");
+	}
 
 	char para = parts[2][0];
-	runtime_assert( para == 'P' || para == 'A' );
+	if( para != 'P' && para != 'A' && para != 'N' ) {
+		utility_exit_with_message("Orientaion of HHPAIR must be P, A, or N.");
+	}
 	orient_ = parts[3][0];
 
 	name_ = hp;
@@ -168,7 +192,21 @@ HelixPairing::calc_geometry( SS_Info2_COP const ss_info )
 
 	dist_ = midvec.length();
 	cross_angle_ = numeric::conversions::degrees( angle_of( hx1.orient(), flip*hx2.orient() ) );
+	
+	if( orient() == 'N' ) {
+		if( cross_angle_ > 90 ) {
+			orient_ = 'A';
+			cross_angle_ = 180 - cross_angle_;
+		} else {
+			orient_ = 'P';
+		}
+		initialize();
+	}
+	
+	 
+	
 
+	// calc align angle; angle between helix pairing projected onto beta sheet	
 	int r1 = int( hx1.begin() ) - int( loop_length_ );
 	int r2 = int( hx2.begin() ) - int( loop_length_ );
 	if( r1 < 1 || r2 < 1 ) return;
@@ -197,7 +235,7 @@ HelixPairing::calc_geometry( SS_Info2_COP const ss_info )
 	Vector const v4 = h4 - h3;
 
 	align_angle_ = numeric::conversions::degrees( angle_of( v3, flip*v4 ) );
-
+	
 	// TR.Debug << h1() << " " << h2() << " " << dist_ << " " << cross_angle_ << " " << align_angle_ << std::endl;
 }
 

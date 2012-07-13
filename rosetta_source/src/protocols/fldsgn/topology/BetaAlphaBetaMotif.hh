@@ -112,7 +112,13 @@ public:
 
 
 	Size calc_inout( SS_Info2_COP const ssinfo, Size const resi ) const;
+	
+	Real loopdirect_angle_on_pleat( SS_Info2_COP const ssinfo, Size const resi, char const NC ) const;
+	
+	Size loopdirect_on_pleat( SS_Info2_COP const ssinfo, Size const resi, char const NC ) const;
 
+	Size calc_pleat( SS_Info2_COP const ssinfo, Size const resi ) const;
+	
 	void calc_geometry( SS_Info2_COP const ssinfo,  SheetSetCOP const sheet_set );
 
 

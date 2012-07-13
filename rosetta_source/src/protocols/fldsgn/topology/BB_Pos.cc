@@ -16,8 +16,13 @@
 
 /// Package headers
 #include <core/conformation/Residue.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.hh>
-
+#include <numeric/xyz.functions.hh>
+#include <numeric/xyzVector.io.hh>
 #include <utility/vector1.hh>
 
 
@@ -25,6 +30,18 @@ namespace protocols {
 namespace fldsgn {
 namespace topology {
 
+	
+/// @detail
+BB_Pos::BB_Pos()
+{
+	core::chemical::ResidueTypeSetCAP restype_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );
+  core::chemical::ResidueType ala = restype_set->name_map( "ALA" );
+	Size icb( ala.atom_index( "CB" ) );
+	ala_phi_   = ala.icoor( icb ).phi();
+	ala_theta_ = ala.icoor( icb ).theta();
+	ala_dist_  = ala.icoor( icb ).d();	
+}
+	
 /// @details.  After a change in size, the residue types and the integer indices are all wrong.
 /// Erase the old information.
 void
@@ -87,7 +104,9 @@ BB_Pos::take_coordinates_from_pose( Pose const & pose )
 			C_ [i] = rsd.xyz( C_index_[ i ]  );
 			O_ [i] = rsd.xyz( O_index_[ i ]  );
 			if ( rsd.aa() == core::chemical::aa_gly ) {
-				CB_[i] = 0.0;
+				// Coordinate for CB at gly is calculated, assuming ALA
+				core::kinematics::Stub const stub( CA_[i], N_[i], C_[i] );
+				CB_[i] = stub.spherical( ala_phi_, ala_theta_, ala_dist_ );
 			} else {
 				CB_[i] = rsd.xyz( CB_index_[ i ] );
 			}

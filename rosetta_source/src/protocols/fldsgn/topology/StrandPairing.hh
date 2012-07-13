@@ -37,9 +37,9 @@ namespace topology {
 class StrandPairing : public utility::pointer::ReferenceCount {
 public:
 
-  typedef std::string String;
-  typedef core::Size Size;
-  typedef core::Real Real;
+	typedef std::string String;
+	typedef core::Size Size;
+	typedef core::Real Real;
 	typedef protocols::fldsgn::topology::SS_Info2_OP SS_Info2_OP;
 	typedef protocols::fldsgn::topology::SS_Info2_COP SS_Info2_COP;
 
@@ -69,18 +69,18 @@ public:// construct/destruct
 								);
 
 	/// @brief copy constructor
-  StrandPairing( String const & spair);
+	StrandPairing( String const & spair);
 
 	/// @brief copy constructor
-  StrandPairing( StrandPairing const & sp );
+	StrandPairing( StrandPairing const & sp );
 
-  /// @brief default destructor
-  ~StrandPairing();
+	/// @brief default destructor
+	~StrandPairing();
 
 	/// @brief clone this object
 	StrandPairingOP clone();
 
-  /// @brief return strand pairing
+	/// @brief return strand pairing
 	friend
 	std::ostream & operator<<(std::ostream & out, const StrandPairing &sp);
 
@@ -89,10 +89,10 @@ public: //accessors
 
 
 	/// @brief the strand number of the 1st strand in strand pairing
-	inline Size s1() const	{	return s1_;	}
+	inline Size s1() const { return s1_;	}
 
 	/// @brief the strand number of the 2nd strand in strand pairing
-	inline Size s2() const	{	return s2_; }
+	inline Size s2() const { return s2_; }
 
 	/// @brief the residue number of the beginning of 1st strand
 	inline Size begin1() const { return begin1_; }
@@ -126,9 +126,30 @@ public: //accessors
 	inline String name() const { return name_; }
 
 	/// @brief residue pair
-	Size residue_pair( Size const res );
+	Size residue_pair( Size const res ) const;
 
+	/// @brief residues in this pair, which belongs to first strand
+	inline utility::vector1< Size > residue_pair_vec1() const { return residue_pair_vec1_; }
+	
+	/// @brief residues in this pair, which belongs to second strand 
+	inline utility::vector1< Size > residue_pair_vec2() const { return residue_pair_vec2_; }
+	
+	/// @brief check bulge or not in 1st strand
+	bool is_bulge1( Size const res ) const;
 
+	/// @brief check bulge or not in 2nd strand
+	bool is_bulge2( Size const res ) const;
+	
+	/// @brief
+	utility::vector1< Size > bulges1() const;
+
+	/// @brief
+	utility::vector1< Size > bulges2() const;
+	
+	/// @brief
+	inline bool finalized() const { return finalized_; }
+
+	
 public:
 
 
@@ -148,39 +169,45 @@ public:
 	bool is_parallel() const;
 
 	/// @brief whether input residue is included in this StrandPairinge or not
-	bool is_member( Size const res );
+	bool is_member( Size const res ) const;
 
 	/// @brief reset begin1_, begin2_, and end1_, end2_ based on ssinfo
 	void redefine_begin_end( SS_Info2_COP const ss_info );
+	
 
+private: //
 
-private: // initialize
-
-
+	/// @brief initialize
 	void initialize();
+	
+	
+public: //	
+
+	/// @brief finalize
+	void finalize();
 
 
 private:  // data
 
 
-  /// @brief Strand number of first strand in the strand pair
-  Size s1_;
+	/// @brief Strand number of first strand in the strand pair
+	Size s1_;
 
-  /// @brief Strand number of second strand in the strand pair
-  Size s2_;
+	/// @brief Strand number of second strand in the strand pair
+	Size s2_;
 
 	/// @brief end resides of first and second strands
 	Size begin1_, end1_, begin2_, end2_;
 
 	/// @brief pleats of end residues
 	utility::vector1< Size > pleats1_, pleats2_;
+	
+		/// @brief register shift between two strands
+	Real rgstr_shift_;
 
-  /// @brief register shift between two strands
-  Real rgstr_shift_;
-
-  /// @brief two strands make a sheet by parallel, "P", anti parallel, "A", and
-  /// if not defined, "N"
-  char orient_;
+	/// @brief two strands make a sheet by parallel, "P", anti parallel, "A", and
+	/// if not defined, "N"
+	char orient_;
 
 	/// @brief
 	bool has_bulge_;
@@ -189,7 +216,16 @@ private:  // data
 	String name_;
 
 	/// @brief residue pair
-	std::map< Size, Size > residue_pair_;
+	mutable std::map< Size, Size > residue_pair_;
+
+	/// @brief
+	utility::vector1< Size > residue_pair_vec1_, residue_pair_vec2_;
+	
+	/// @brief
+	utility::vector1< bool > bulges1_, bulges2_;
+	
+	/// @brief
+	bool finalized_;
 
 
 };
@@ -216,13 +252,13 @@ public:// construct/destruct
   StrandPairingSet();
 
   /// @brief value constructor
-  StrandPairingSet( StrandPairings const & strand_pairings );
+  StrandPairingSet( StrandPairings const &	pairings );
 
   /// @brief value constructor
-	StrandPairingSet( SS_Info2 const & ssinfo, DimerPairings const & dimer_pairs );
+  StrandPairingSet( SS_Info2 const & ssinfo, DimerPairings const & dimer_pairs );
 
   /// @brief value constructor
-	StrandPairingSet( String const & spairstring, SS_Info2_COP const ssinfo = NULL );
+  StrandPairingSet( String const & spairstring, SS_Info2_COP const ssinfo = NULL );
 
 	/// @brief copy constructor
   StrandPairingSet( StrandPairingSet const & s );

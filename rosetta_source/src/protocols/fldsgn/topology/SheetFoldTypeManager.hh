@@ -57,10 +57,12 @@ enum SheetFoldType {
 	/// 4strands
 	// parallel
 	Rsmn2x2, /// rossmann2x2
+	Ploop2x2, /// ploop2x2
 	Rsmn3x3_Half, /// Half structure of Rossmann3x3
 	BABx3,  // repeat beta-aplpha-beta motif 3 times
 
 	// mixture
+  BAB_HPN_BAB,
 	PG_like,
 	Thioredoxin,
 	//L30E_like,

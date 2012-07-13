@@ -66,6 +66,7 @@ SheetFoldTypeManager::setup_foldtype_names()
 	// 4strands
 	// parallel
 	name2foldtype_[ "Rsmn2x2" ] = Rsmn2x2;
+	name2foldtype_[ "Ploop2x2" ] = Ploop2x2;
 	name2foldtype_[ "Rsmn3x3_Half" ] = Rsmn3x3_Half;
 	name2foldtype_[ "BABx3" ] =BABx3;
 
@@ -168,8 +169,12 @@ SheetFoldTypeManager::setup_foldtype_strand_pairings()
 
 	// 4strands
 	spairs2foldtype_[ "1-2.P;1-3.P;3-4.P" ] = Rsmn2x2;
+	spairs2foldtype_[ "1-3.P;1-4.P;2-3.P" ] = Ploop2x2;
+
 	spairs2foldtype_[ "1-2.P;1-4.P;2-3.P" ] = Rsmn3x3_Half;
 	spairs2foldtype_[ "1-2.P;2-3.P;3-4.P" ] = BABx3;
+
+	spairs2foldtype_[ "1-2.P;2-3.A;3-4.P" ] = BAB_HPN_BAB;
 
 	spairs2foldtype_[ "1-2.A;1-4.P;3-4.A" ] = PG_like;
 	spairs2foldtype_[ "1-2.P;1-3.A;3-4.A" ] = Thioredoxin;

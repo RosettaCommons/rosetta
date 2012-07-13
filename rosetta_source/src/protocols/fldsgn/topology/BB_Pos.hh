@@ -40,9 +40,16 @@ class BB_Pos {
 
 
 	typedef core::Size Size;
+	typedef core::Real Real;
 	typedef core::Vector Vector;
 	typedef core::pose::Pose Pose;
 
+public:
+	
+	
+	/// @brief default constructor
+	BB_Pos();
+	
 
 public:
 
@@ -91,6 +98,14 @@ public:
 		return O_[i];
 	}
 
+	
+	/// @details return residue type
+	core::chemical::ResidueType const *
+	residue_type( Size const i ) const
+	{
+		return residue_types_[ i ];
+	}
+	
 	/// @
 	Size size() const
 	{
@@ -102,6 +117,16 @@ private:
 	bool bbindices_up_to_date( Pose const & pose ) const;
 	void update_indices( Pose const & pose );
 
+private: // store phi, theta, d icoordinate of creating CB for gly positions
+	
+
+	Real ala_phi_;
+
+	Real ala_theta_;
+
+	Real ala_dist_;
+
+	
 private: // DATA
 
 	utility::vector1< Vector > N_;
@@ -118,7 +143,7 @@ private: // DATA
 	utility::vector1< Size > CB_index_;
 	utility::vector1< Size > C_index_;
 	utility::vector1< Size > O_index_;
-
+		
 };
 
 } // ns topology

@@ -19,6 +19,7 @@
 
 /// Package headers
 #include <protocols/fldsgn/topology/BB_Pos.hh>
+#include <protocols/fldsgn/topology/StrandPairing.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -29,7 +30,7 @@
 
 // C++ headers
 #include <string>
-
+#include <map>
 #include <utility/vector1.hh>
 
 
@@ -53,8 +54,11 @@ public:// construct/destruct
 	/// @brief default constructor
 	SS_Base();
 
+	/// @brief default constructor
+	SS_Base( char const & name );
+	
 	/// @brief value constructor
-	SS_Base( Size const & begin, Size const & end );
+	SS_Base( char const & name, Size const & begin, Size const & end );
 
 	/// @brief value constructor
 	// SS_Base( Size const & begin, Size const & end, Vector const & v );
@@ -68,7 +72,8 @@ public:// construct/destruct
 
 public:// accessors
 
-
+	inline char name() const { return name_; }
+	
 	inline Size begin() const {	return begin_; }
 
 	inline Size end() const {	return end_; }
@@ -86,6 +91,8 @@ public:// accessors
 	inline Vector Cend_pos() const { return Cend_pos_; }
 
 	inline Vector mid_pos() const { return mid_pos_; }
+	
+	bool is_member( Size const s ) const;
 
 
 public:// accessors
@@ -95,7 +102,7 @@ public:// accessors
 
 
 protected: // setters
-
+	
 
 	/// @brief set vector from Ca of Nterminal to Ca of Cterminal
 	void orient( Vector const & v ) { orient_ = v; }
@@ -121,7 +128,9 @@ protected: // setters
 
 private: ///data
 
-
+	/// @brief character description of this secondary structure, H, E, L
+	char name_;
+	
 	/// @brief begintial residue of strand
 	Size begin_;
 
@@ -175,11 +184,31 @@ public:// construct/destruct
 	friend std::ostream & operator<<(std::ostream & out, const Strand & st );
 
 
+public: // accessor
+	
+	
+	// @brief strand has bulge ?
+	bool has_bulge() const;
+	
+	// @brief return reidue numbers of bulges
+	inline utility::vector1< Size > bulges() const { return bulges_; }
+	
+	// @brief
+	bool set_bulge( Size const & s );
+
+	
 public:
 
 
-	// @brief
-	void calc_geometry( BB_Pos const & bbpos );
+	// @brief calculate geometry of strand
+	void calc_geometry( BB_Pos const & bbpos );	
+	
+
+private:
+
+	/// bulges_ are initialized by set_bulges of SS_Info2 based on StrandPairingSet
+	/// @brief residue numbers of bulge
+	utility::vector1< Size > bulges_;
 
 
 };
@@ -276,7 +305,9 @@ class SS_Info2 : public basic::datacache::CacheableData {
 	typedef core::pose::Pose Pose;
 	typedef std::string String;
 	typedef protocols::fldsgn::topology::BB_Pos BB_Pos;
-
+	typedef protocols::fldsgn::topology::StrandPairingSetOP StrandPairingSetOP;
+	typedef protocols::fldsgn::topology::StrandPairingOP StrandPairingOP;
+	
 
 public: // constructor/destructor
 
@@ -313,8 +344,16 @@ public:
 	/// @brief initialize parameters of this class
 	void initialize( Pose const & pose, String const & secstruct = "" );
 
-
-public:
+	/// @brief redifine this with abego information
+	/// Currently, this extends strand definition to N-terminal side 
+	/// if the abego of loop region is 2 consecutive beta value, B, Z, Y, P, S
+	void redefine_with_abego();
+	
+	/// @brief set bulge in Strand
+	void set_bulge( StrandPairingSetCOP const spairset );
+	
+	
+public: //accessor
 
 
 	/// @brief get flag for telling whether bb_pos_ was initiliazed by pose or not
@@ -332,12 +371,29 @@ public:
 	{
 		return secstruct_;
 	}
-
+	
+	/// @brief
 	inline
 	char
 	secstruct( Size ii ) const
 	{
-		return secstruct_.at( ii-1 );
+		return secstruct_.at( ii-1 );		
+	}
+	
+	/// @brief
+	inline
+	utility::vector1< String > 
+	abego() const
+	{
+		return abego_;		
+	}
+
+	/// @brief get string of abego given a residue number
+	inline
+	String
+	abego( Size const ii ) const
+	{
+		return abego_[ ii ];
 	}
 
 	/// @brief get xyz-coordinates of backbone structure
@@ -371,9 +427,17 @@ public:
 	{
 		return loops_;
 	}
+	
+	/// @brief return HE_elements
+	inline
+	utility::vector1<Size> const &
+	HE_elements() const
+	{
+		return HE_elements_;				
+	}
 
 	/// @brief return owning pointer of strand given an index of strands
-	StrandCOP const
+	StrandOP const
 	strand( Size is ) const
 	{
 		runtime_assert( is <= strands_.size() );
@@ -381,7 +445,7 @@ public:
 	}
 
 	/// @brief return owning pointer of helix given an index of helices
-	HelixCOP const
+	HelixOP const
 	helix( Size ih ) const
 	{
 		runtime_assert( ih <= helices_.size() );
@@ -389,7 +453,7 @@ public:
 	}
 
 	/// @brief return owning pointer of loop given an index of loops
-	LoopCOP const
+	LoopOP const
 	loop( Size il ) const
 	{
 		runtime_assert( il <= loops_.size() );
@@ -425,23 +489,77 @@ public:
 	Size
 	ss_element_id( Size const nres ) const
 	{
-		return ss_element_id_[ nres ];
+		return ss_element_id_[ nres ];					
 	}
+	
+	/// @brief return ss element OP given a ss element id
+	SS_BaseCOP const
+	ss_element_id2op( Size const id )
+	{
+		runtime_assert( ss_element_id_.back() >= id );
+		return ss_element_id2op_[ id ];
+	}
+	
+	/// @brief get bulges for given a strand id
+	utility::vector1< Size > const bulges( Size const id ) const;
 
+	/// @brief get SS_element id from helix, strand, or loop index
+	Size get_ssid_by_hleid( char const & ss, Size const & index );
+	
+	/// @brief get helix, strand, or loop index from SS_element id
+	String get_hleid_by_ssid( Size const & index );
+	
+	/// @brief get chirality for consecutive 3 secondary structur elements given a first ss element id
+	char
+	get_chiral( Size const id ) const;
+	
+	/// @brief get chirality for consecutive 3 secondary structur elements given a first ss element described H, E, or L w/ its index
+	char
+	get_chiral( char const & ss, Size const & index );
+
+	
+public: // mutator
+	
+	
+	/// @brief set minimum lengtht of helix ( default 0 )
+	void set_min_helix_length( Size const s ) { min_helix_length_ = s; }
+	
+	/// @brief set minimum lengtht of strand ( default 0 )
+	void set_min_strand_length( Size const s ) { min_strand_length_ = s; }
+
+	/// @brief set secondary structure
+	void secstruct( Size const ii, char const & aa  );
+	
+	/// @brief set abego
+	void abego( Size const ii, String const & aa );
 
 
 public:
 
 
+	/// @brief make string of HE elements
+	String make_string_HE_elements() const;
+	
+	/// @brief make string of chiralities
+	String make_string_chiralities() const;	
+	
 	/// @brief set orientation vector of secondary structures given a pose
 	void set_SSorient( Pose const & pose );
 
 	/// @brief set orientation vector of secondary structures given a pose which is defined in the constructor
 	void set_SSorient();
 
+	///	@brief set chirality of consecutive secondary structure elements
+	void set_chiral_consecutive_sstriplets();
+		
 	/// @brief clear data
 	void clear_data();
-
+	
+	
+public: // utility
+	
+	/// @brief set secondary structure information into pose
+	void set_ss_into_pose( Pose & pose );
 
 private:
 
@@ -452,8 +570,24 @@ private:
 
 	/// @brief identify secondary structures
 	void identify_ss( String const & secstruct );
+	
+	/// @brief modify secstruct based on the length of ss elements, depending on min_helix_length_ and min_strand_length_
+	void reduce_secstruct();
+	
+	/// @brief set orientation vector of helix
+	void set_SSorient_helix();
 
+	/// @brief set orientation vector of strand
+	void set_SSorient_strand();
 
+	
+private: // helper function
+	
+
+	/// @brief relate helix, strand, loop index to sselement id
+	void set_hleid_ssid( char const & ss, Size const & index, Size const & id );
+
+												
 private: //data
 
 
@@ -462,6 +596,15 @@ private: //data
 
 	/// @brief string of secondary structure elements
 	String secstruct_;
+	
+	/// @brief minimum length of helix (default 0)
+	Size min_helix_length_;
+
+	/// @brief minimum length of strand (default 0)
+	Size min_strand_length_;
+
+	/// @brief string of abego
+	utility::vector1< std::string > abego_;
 
 	/// @brief xyz-coordinates of backbone
 	BB_Pos bb_pos_;
@@ -482,9 +625,27 @@ private: //data
 	Loops loops_;
 	utility::vector1< Size > loop_id_;
 
-	/// @brief vector for storing index of secondary structure element for each residue position
+	/// @brief vector for SS element id for each residue position
 	utility::vector1< Size > ss_element_id_;
-
+	
+	/// @brief map from SS element id to SS element OPs
+	mutable std::map< Size, SS_BaseOP > ss_element_id2op_;
+	
+	/// @brief map from helix, strand, or loop id to SS element id
+	std::map< String, Size > hleid_to_ssid_;
+	
+	/// @brief map from helix, strand, or loop id to SS element id
+	std::map< Size, String > ssid_to_hleid_;
+ 
+	/// @brief vector for secondary structure elelement ids without loop elements
+	utility::vector1< Size > HE_elements_;
+	
+	/// will be removed !!!! 
+	/// @brief chirality of consecutive secondary structure elements
+	utility::vector1< char > chiral_sstriplet_;
+	
+	/// @brief
+	bool initialized_by_spairset_;
 
 };
 
