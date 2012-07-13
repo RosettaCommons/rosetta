@@ -24,6 +24,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/swa/monte_carlo/types.hh>
 #include <protocols/swa/monte_carlo/RNA_TorsionMover.fwd.hh>
+#include <protocols/swa/monte_carlo/RNA_AddMover.fwd.hh>
 
 
 namespace protocols {

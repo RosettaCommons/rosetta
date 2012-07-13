@@ -97,6 +97,7 @@
 #include <protocols/swa/monte_carlo/SubToFullInfo.hh>
 #include <protocols/swa/monte_carlo/RNA_AddMover.hh>
 #include <protocols/swa/monte_carlo/RNA_DeleteMover.hh>
+#include <protocols/swa/monte_carlo/RNA_AddOrDeleteMover.hh>
 #include <protocols/swa/monte_carlo/RNA_O2StarMover.hh>
 #include <protocols/swa/monte_carlo/RNA_TorsionMover.hh>
 #include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloUtil.hh>
@@ -751,15 +752,16 @@ swa_rna_sample()
 	Real const sample_range_large = option[ stddev_large ]();
 
 	RNA_TorsionMoverOP rna_torsion_mover = new RNA_TorsionMover;
-	RNA_DeleteMover rna_delete_mover;
-	RNA_AddMover rna_add_mover( rsd_set, scorefxn );
-	rna_add_mover.set_start_added_residue_in_aform( option[ start_added_residue_in_aform ]() );
-	rna_add_mover.set_presample_added_residue(  option[ presample_added_residue ]() );
-	rna_add_mover.set_internal_cycles( option[ presample_internal_cycles ]() );
-	rna_add_mover.set_sample_range_small( sample_range_small );
-	rna_add_mover.set_sample_range_large( sample_range_large );
-	rna_add_mover.set_kT( kT_ );
-	RNA_O2StarMover rna_o2star_mover( scorefxn, option[ sample_all_o2star ](), sample_range_small, sample_range_large );
+	RNA_DeleteMoverOP rna_delete_mover = new RNA_DeleteMover;
+	RNA_AddMoverOP rna_add_mover = new RNA_AddMover( rsd_set, scorefxn );
+	rna_add_mover->set_start_added_residue_in_aform( option[ start_added_residue_in_aform ]() );
+	rna_add_mover->set_presample_added_residue(  option[ presample_added_residue ]() );
+	rna_add_mover->set_internal_cycles( option[ presample_internal_cycles ]() );
+	rna_add_mover->set_sample_range_small( sample_range_small );
+	rna_add_mover->set_sample_range_large( sample_range_large );
+	rna_add_mover->set_kT( kT_ );
+	RNA_AddOrDeleteMoverOP rna_add_or_delete_mover = new RNA_AddOrDeleteMover( rna_add_mover, rna_delete_mover );
+	RNA_O2StarMoverOP rna_o2star_mover = new RNA_O2StarMover( scorefxn, option[ sample_all_o2star ](), sample_range_small, sample_range_large );
 
 	// instead of this, how about just deleting all new residues?
 	std::string move_type( "" );
@@ -789,32 +791,7 @@ swa_rna_sample()
 		utility::vector1< Size > moving_res_list = nonconst_sub_to_full_info_from_pose( pose ).moving_res_list();
 
 		if ( (random_number < 0.01 && do_add_delete_) || moving_res_list.size() == 0 /*got to add something!*/ ) {
-
-			// should stuff into AddOrDeleteMover
-			Size res_at_terminus;
-			MovingResidueCase moving_residue_case;
-			AddOrDeleteChoice add_or_delete_choice;
-			bool disallow_delete  = ( moving_res_list.size() <= 1 ); //always have something in play!!?? Or permit removal??!! need to check this carefully.
-			get_random_residue_at_chain_terminus( pose, res_at_terminus, moving_residue_case, add_or_delete_choice, disallow_delete  );
-
-			// std::cout << "ADD/DELETE move ==> " << res_at_terminus << " " << moving_residue_case << " " << add_or_delete_choice << std::endl;
-
-			if ( add_or_delete_choice == DELETE ) {
-				move_type = "delete";
-				//std::cout << "Before delete: " << (*scorefxn)( pose ) << std::endl;
-				rna_delete_mover.apply( pose, res_at_terminus, moving_residue_case );
-				//std::cout << pose.annotated_sequence() << std::endl;
-				//std::cout << "After delete: " << (*scorefxn)( pose ) << std::endl << std::endl;
-			} else {
-				runtime_assert( add_or_delete_choice == ADD );
-				// try to add a residue that is supposed to be sampled.
-				move_type = "add";
-				std::cout << "Before adding onto " << res_at_terminus << " : " << (*scorefxn)( pose ) << std::endl;
-				rna_add_mover.apply( pose, res_at_terminus, moving_residue_case );
-				std::cout << pose.annotated_sequence() << std::endl;
-				std::cout << "After add: " << (*scorefxn)( pose ) << std::endl << std::endl;
-				//pose.dump_pdb( "after_add.pdb" );
-			}
+			rna_add_or_delete_mover->apply( pose );
 		}
 
 		if ( move_type.size() == 0 /*no move yet!*/ && random_number  < 0.8 ){
@@ -823,13 +800,13 @@ swa_rna_sample()
 			Real const random_number2 = RG.uniform();
 			if ( random_number2  < 0.5 ){
 				move_type = "sml";
-				rna_torsion_mover->random_torsion_move( pose, moving_res_list, move_type, sample_range_small );
+				rna_torsion_mover->apply( pose, move_type, sample_range_small );
 			} else {
 				move_type = "lrg";
-				rna_torsion_mover->random_torsion_move( pose, moving_res_list, move_type, sample_range_large );
+				rna_torsion_mover->apply( pose, move_type, sample_range_large );
 			}
 		} else{
-			rna_o2star_mover.apply( pose, move_type );
+			rna_o2star_mover->apply( pose, move_type );
 		}
 
 		accepted = monte_carlo_->boltzmann( pose, move_type );

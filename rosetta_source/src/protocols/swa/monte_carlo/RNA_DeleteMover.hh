@@ -21,6 +21,7 @@
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/swa/monte_carlo/types.hh>
+#include <protocols/swa/monte_carlo/RNA_DeleteMover.fwd.hh>
 
 
 namespace protocols {

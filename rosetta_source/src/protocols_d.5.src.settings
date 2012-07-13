@@ -49,6 +49,7 @@ sources = {
 	"protocols/swa/monte_carlo": [
 		"RNA_AddMover",
 		"RNA_DeleteMover",
+		"RNA_AddOrDeleteMover",
 		"RNA_O2StarMover",
 		"RNA_TorsionMover",
 		"RNA_SWA_MonteCarloUtil",
