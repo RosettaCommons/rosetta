@@ -24,9 +24,10 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/simple_moves/BackboneMover.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
+#include <core/fragment/ConstantLengthFragSet.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_CCD.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
@@ -57,8 +58,17 @@ int main(int argc, char *argv[])
 	std::cout << "I just imported my first pose into Rosetta." << std::endl;
 	std::cout << "It has " << test_pose.total_residue() << " total residues." << std::endl;
 
-	protocols::docking::DockMCMProtocol dmp;
-	std::cout << dmp << std::endl;
+	// create a score3 scorefxn
+	core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction;
+	scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
+	// read name
+	std::cout << "Name: " << scorefxn->get_name() << std::endl;
+
+/*	using namespace fragment;
+	ConstantLengthFragSetOP fragset = new ConstantLengthFragSet( 3 );
+	fragset->read_fragment_file( "home/boon/data/mfr_aa2GB3_03_05.200_v1_3" );
+	protocols::simple_moves::ClassicFragmentMover cfmover = protocols::simple_moves::ClassicFragmentMover(fragset);
+	std::cout << cfmover << std::endl;*/
 
 	//std::cout << test_pose.energies() << std::endl;
 /*	protocols::simple_moves::SmallMoverOP smallmover = new protocols::simple_moves::SmallMover;

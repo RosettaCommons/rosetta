@@ -681,6 +681,10 @@ public:
 	/// independent one body energies for  <pose>  Residue  <rsd>  into
 	/// EnergyMap  <emap>
 	/// @note: EnergyMap is an EMapVector
+
+	void name( std::string const & weights_tag ) { name_ = weights_tag; }
+	std::string get_name() const { return name_; }
+
 	void
 	eval_ci_1b(
 		conformation::Residue const & rsd,
@@ -1009,6 +1013,9 @@ private:
 	// data
 	/////////////////////////////////////////////////////////////////////////////
 private:
+
+	/// the scorefxn name
+	std::string name_;
 
 	/// the scorefxn weights
 	EnergyMap weights_;

@@ -18,6 +18,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
+#include <string>
 
 #ifdef WIN32 //VC++ needs full class declaration
 #include <core/scoring/ScoreFunction.hh> // WIN32 INCLUDE
@@ -70,6 +71,7 @@ public:
 	create_score_function( std::string weights_tag, utility::vector1< std::string > patch_tags );
 
 private:
+
 	/// @brief Applies user defined re-weighting from the options system. Reweights are applied as a
 	/// factor of the original, so -rg_reweight 0.5 would result in half of the previously defined
 	/// rg weight.
@@ -103,7 +105,6 @@ extern std::string const DOCK_LOW_PATCH;
 /// By default it returns weights=standard and patch=score12 for fullatom,
 /// and weights=cen_std and patch="" for centroid
 core::scoring::ScoreFunctionOP getScoreFunction( bool const is_fullatom = true );
-
 
 /// @brief use the logic of getScoreFunction to get the name.
 /// The 	name format is <weights_tag>[_<patch_tag> ... ]

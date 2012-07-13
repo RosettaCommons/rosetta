@@ -116,7 +116,7 @@ ScoreFunctionFactory::create_score_function( std::string weights_tag, utility::v
 	if ( basic::options::option[ basic::options::OptionKeys::score::docking_interface_score ]() ) {
 		scorefxn = new DockingScoreFunction( scorefxn );
 	}
-
+	scorefxn->name( weights_tag );
 	return scorefxn;
 }
 
