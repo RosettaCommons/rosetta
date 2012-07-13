@@ -93,12 +93,15 @@
 #include <protocols/swa/rna/StepWiseRNA_PoseSetup.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters_Setup.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
+
 #include <protocols/swa/monte_carlo/SubToFullInfo.hh>
-#include <protocols/swa/monte_carlo/RNA_DeleteMover.hh>
 #include <protocols/swa/monte_carlo/RNA_AddMover.hh>
+#include <protocols/swa/monte_carlo/RNA_DeleteMover.hh>
+#include <protocols/swa/monte_carlo/RNA_O2StarMover.hh>
 #include <protocols/swa/monte_carlo/RNA_TorsionMover.hh>
 #include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloUtil.hh>
 #include <protocols/swa/monte_carlo/types.hh>
+
 #include <numeric/random/random.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
@@ -572,80 +575,6 @@ setup_pose_setup_class(protocols::swa::rna::StepWiseRNA_JobParametersOP & job_pa
 
 ///////////////////////////////////////////////////
 // Put following in RNA_O2star_Mover
-void
-sample_near_o2star_torsion( pose::Pose & pose, Size const moving_res, Real const sample_range){
-	id::TorsionID o2star_torsion_id( moving_res, id::CHI, 4 );
-	Real o2star_torsion = pose.torsion( o2star_torsion_id ); //get
-	o2star_torsion += RG.gaussian() * sample_range; //sample_near
-	pose.set_torsion( o2star_torsion_id, o2star_torsion ); // apply
-}
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////
-Size const
-get_random_o2star_residue( pose::Pose & pose ){
-	// pick at random from whole pose -- a quick initial stab.
-	Size const o2star_num = int( pose.total_residue() * RG.uniform() ) + 1;
-	return o2star_num;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////
-// This could be made smarter -- could go over nucleoside *and* suite.
-Size const
-get_random_o2star_residue_near_moving_residue( pose::Pose & pose, utility::vector1< Size > const moving_res_list ){
-
-	// should be better -- actually look at o2star's that might be engaged in interactions with moving nucleoside
-	utility::vector1< bool > residues_allowed_to_be_packed( pose.total_residue(), false );
-	scoring::EnergyGraph const & energy_graph( pose.energies().energy_graph() );
-
-	Distance DIST_CUTOFF( 4.0 );
-
-	for (Size k = 1; k <= moving_res_list.size(); k++ ){
-		Size const i = moving_res_list[ k ];
-
-		for( graph::Graph::EdgeListConstIter
-					 iter = energy_graph.get_node( i )->const_edge_list_begin();
-				 iter != energy_graph.get_node( i )->const_edge_list_end();
-				 ++iter ){
-
-			Size j( (*iter)->get_other_ind( i ) );
-
-			// check for potential interaction of o2* of this new residue and any atom in moving residue.
-			Vector const & o2star_other = pose.residue( j ).xyz( " O2*" );
-			for ( Size n = 1; n <= pose.residue( i ).natoms(); n++ ){
-				if ( ( pose.residue( i ).xyz( n ) - o2star_other ).length() < DIST_CUTOFF ) {
-					residues_allowed_to_be_packed[ j ] = true;
-					break;
-				}
-			}
-
-			// check for potential interaction of o2* of moving residue and any atom in this new residue
-			if (residues_allowed_to_be_packed[ i ]) continue;
-
-			Vector const & o2star_i = pose.residue( i ).xyz( " O2*" );
-			for ( Size n = 1; n <= pose.residue( j ).natoms(); n++ ){
-				if ( ( pose.residue( j ).xyz( n ) - o2star_i ).length() < DIST_CUTOFF ) {
-					residues_allowed_to_be_packed[ i ] = true;
-					break;
-				}
-			}
-
-		}
-	}
-
-	utility::vector1< Size > res_list;
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
-		if ( residues_allowed_to_be_packed[ n ] ) {
-			res_list.push_back( n );
-		}
-	}
-	if (res_list.size()==0) return 0; //nothing to move!
-
-	Size const o2star_idx_within_res_list = int(  res_list.size() * RG.uniform() ) + 1;
-	Size const o2star_num = res_list[ o2star_idx_within_res_list ];
-	return o2star_num;
-}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Following assumed that pose is already properly aligned to native pose!
@@ -796,10 +725,6 @@ swa_rna_sample()
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Monte Carlo machinery
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-	Size const num_cycle = option[ n_sample ]();
-	Real const sample_range_small = option[ stddev_small ]();
-	Real const sample_range_large = option[ stddev_large ]();
-
 	// should stuff this into its own SubToFullInfo class, cached inside pose.
 	std::string const & full_sequence = job_parameters->full_sequence();
 	utility::vector1< Size > const start_moving_res_list = job_parameters->working_moving_res_list();
@@ -821,6 +746,10 @@ swa_rna_sample()
 
 	Real const kT_ = option[ kT ]();
 
+	Size const num_cycle = option[ n_sample ]();
+	Real const sample_range_small = option[ stddev_small ]();
+	Real const sample_range_large = option[ stddev_large ]();
+
 	RNA_TorsionMoverOP rna_torsion_mover = new RNA_TorsionMover;
 	RNA_DeleteMover rna_delete_mover;
 	RNA_AddMover rna_add_mover( rsd_set, scorefxn );
@@ -830,6 +759,7 @@ swa_rna_sample()
 	rna_add_mover.set_sample_range_small( sample_range_small );
 	rna_add_mover.set_sample_range_large( sample_range_large );
 	rna_add_mover.set_kT( kT_ );
+	RNA_O2StarMover rna_o2star_mover( scorefxn, option[ sample_all_o2star ](), sample_range_small, sample_range_large );
 
 	// instead of this, how about just deleting all new residues?
 	std::string move_type( "" );
@@ -849,7 +779,6 @@ swa_rna_sample()
 	Size n_accept( 0 );
 	Size o2star_res( 0 );
 	Size const output_period_ = option[ output_period ]();
-
 
 	for (Size count = 1; count <= num_cycle; count++) {
 
@@ -880,10 +809,10 @@ swa_rna_sample()
 				runtime_assert( add_or_delete_choice == ADD );
 				// try to add a residue that is supposed to be sampled.
 				move_type = "add";
-				//				std::cout << "Before adding onto " << res_at_terminus << " : " << (*scorefxn)( pose ) << std::endl;
+				std::cout << "Before adding onto " << res_at_terminus << " : " << (*scorefxn)( pose ) << std::endl;
 				rna_add_mover.apply( pose, res_at_terminus, moving_residue_case );
-				//std::cout << pose.annotated_sequence() << std::endl;
-				//std::cout << "After add: " << (*scorefxn)( pose ) << std::endl << std::endl;
+				std::cout << pose.annotated_sequence() << std::endl;
+				std::cout << "After add: " << (*scorefxn)( pose ) << std::endl << std::endl;
 				//pose.dump_pdb( "after_add.pdb" );
 			}
 		}
@@ -900,29 +829,7 @@ swa_rna_sample()
 				rna_torsion_mover->random_torsion_move( pose, moving_res_list, move_type, sample_range_large );
 			}
 		} else{
-
-			// should stuff into RandomO2starMover
-			// perhaps should also move 2'-OH torsions?
-			if ( option[ sample_all_o2star ]() ){
-				o2star_res = get_random_o2star_residue( pose );
-			} else {
-				// warning -- following might lead to weird 'hysteresis' effects since it picks
-				// o2star to sample based on what's near moving residue.
-				( *scorefxn )( pose ); //score it first to get energy graph.
-				o2star_res = get_random_o2star_residue_near_moving_residue( pose, moving_res_list );
-			}
-			if ( o2star_res > 0 ) {
-				Real const random_number2 = RG.uniform();
-				if ( random_number2  < 0.5 ){
-					//move_type = "sml-o2star"+string_of( o2star_res);
-					move_type = "sml-o2star";
-					sample_near_o2star_torsion( pose, o2star_res, sample_range_small);
-				} else {
-					//move_type = "lrg-o2star"+string_of( o2star_res );
-					move_type = "lrg-o2star";
-					sample_near_o2star_torsion( pose, o2star_res, sample_range_large);
-				}
-			}
+			rna_o2star_mover.apply( pose, move_type );
 		}
 
 		accepted = monte_carlo_->boltzmann( pose, move_type );

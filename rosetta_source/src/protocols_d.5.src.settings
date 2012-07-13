@@ -47,11 +47,12 @@ sources = {
 		"StepWiseUtil",
 	],
 	"protocols/swa/monte_carlo": [
-		"SubToFullInfo",
 		"RNA_AddMover",
 		"RNA_DeleteMover",
+		"RNA_O2StarMover",
 		"RNA_TorsionMover",
 		"RNA_SWA_MonteCarloUtil",
+		"SubToFullInfo",
 	],
 	"protocols/swa/protein": [
 		"MainChainTorsionSet",
