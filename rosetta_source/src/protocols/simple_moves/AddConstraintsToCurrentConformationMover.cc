@@ -27,8 +27,11 @@
 
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
+#include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/constraints/SOGFunc.hh>
+#include <core/scoring/constraints/ScalarWeightedFunc.hh>
 
 // task operation
 #include <core/pack/task/TaskFactory.hh>
@@ -57,7 +60,13 @@ using namespace operation;
 using namespace scoring;
 using namespace constraints;
 	
-AddConstraintsToCurrentConformationMover::AddConstraintsToCurrentConformationMover(){}
+AddConstraintsToCurrentConformationMover::AddConstraintsToCurrentConformationMover(){
+	use_distance_cst_ = false;
+	max_distance_ = 12.0;
+	coord_dev_ = 1.0;
+	bound_width_ = 0.;
+	min_seq_sep_ = 8;
+}
 
 AddConstraintsToCurrentConformationMover::~AddConstraintsToCurrentConformationMover(){}
 		
@@ -74,11 +83,13 @@ void AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose )
 	using namespace protocols::moves;
 	using namespace core::scoring;
 	
-	/*
-	if ( pose.residue( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
-		core::pose::addVirtualResAsRoot(pose);
-	}
-	 */
+	if (!use_distance_cst_) {
+		// this is not quite right without adding a virtual residue
+		/*
+		if ( pose.residue( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
+			core::pose::addVirtualResAsRoot(pose);
+		}
+		 */
 	
 	// TR << pose.fold_tree() << std::endl;
 	Size nres = pose.total_residue();
@@ -113,7 +124,7 @@ void AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose )
 	if (best_anchor == 0) return;
 	Size best_anchor_atom = pose.residue_type(best_anchor).atom_index("CA");
 
-	Real const coord_sdev( option[ OptionKeys::relax::coord_cst_stdev ] );
+	//Real const coord_sdev( option[ OptionKeys::relax::coord_cst_stdev ] );
 	for ( Size ires = 1; ires <= nres; ++ires ) {
 		Size iatom;
 		if ( pose.residue_type(ires).has("CA") ) {
@@ -126,36 +137,60 @@ void AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose )
 			continue;
 		}
 		
-		if (!option[ OptionKeys::relax::coord_cst_width ].user() ) {
+		if ( bound_width_ < 1e-3 ) {
 			if (iatom != 0) {
 				pose.add_constraint( new CoordinateConstraint(
 															  AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
-															  new HarmonicFunc( 0.0, coord_sdev ) ) );
+															  new HarmonicFunc( 0.0, coord_dev_ ) ) );
 				TR.Debug << "Constraint added to residue " << ires << ", atom " << iatom << std::endl;
 			}
 			else {
 				for (iatom = 1; iatom <= pose.residue_type(ires).nheavyatoms(); ++iatom) {
 					pose.add_constraint( new CoordinateConstraint(
 																  AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
-																  new HarmonicFunc( 0.0, coord_sdev ) ) );
+																  new HarmonicFunc( 0.0, coord_dev_ ) ) );
 				}
 			}
 		} else {
-			Real const cst_width( option[ OptionKeys::relax::coord_cst_width ]() );
+			//Real const cst_width( option[ OptionKeys::relax::coord_cst_width ]() );
 			if (iatom != 0) {
 			pose.add_constraint( new CoordinateConstraint(
 								  AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
-								  new BoundFunc( 0, cst_width, coord_sdev, "xyz" )) );
+								  new BoundFunc( 0, bound_width_, coord_dev_, "xyz" )) );
 			TR << "Constraint added to residue " << ires << ", atom " << iatom << std::endl;
 			}
 			else {
 				for (iatom = 1; iatom <= pose.residue_type(ires).nheavyatoms(); ++iatom) {
 				pose.add_constraint( new CoordinateConstraint(
 															  AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
-															  new BoundFunc( 0, cst_width, coord_sdev, "xyz" )) );
+															  new BoundFunc( 0, bound_width_, coord_dev_, "xyz" )) );
 				}				
 			}
 		}
+	}
+	}
+	else {
+		// distance constraints
+		for (Size ires=1; ires<=pose.total_residue(); ++ires) {
+			if ( ! pose.residue_type(ires).has("CA") ) continue;
+			core::Size iatom = pose.residue_type(ires).atom_index("CA");
+			
+			for (Size jres=ires+min_seq_sep_; jres<=pose.total_residue(); ++jres) {
+				if ( ! pose.residue_type(jres).has("CA") ) continue;
+				core::Size jatom = pose.residue_type(jres).atom_index("CA");
+				
+				core::Real dist = pose.residue(ires).xyz(iatom).distance( pose.residue(jres).xyz(jatom) );
+				if ( dist <= max_distance_ ) {
+					pose.add_constraint(
+										new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires),
+																						   core::id::AtomID(jatom,jres), 
+																						   new core::scoring::constraints::ScalarWeightedFunc( cst_weight_, new core::scoring::constraints::SOGFunc( dist, coord_dev_ )  )
+																						   )
+										);
+				}
+			}
+		}
+
 	}
 }
 
@@ -169,12 +204,22 @@ AddConstraintsToCurrentConformationMover::parse_my_tag(
 								Pose const & pose
 								)
 {
-	if ( tag->hasOption("cst_width") ) {
-		cst_width_ = tag->getOption<core::Real>("cst_width");
+	if ( tag->hasOption("use_distance_cst") ) {
+		use_distance_cst_ = tag->getOption<bool>("use_distance_cst");
 	}
-	if ( tag->hasOption("cst_stdev") ) {
-		cst_stdev_ = tag->getOption<core::Real>("cst_stdev");
+	if ( tag->hasOption("max_distance") ) {
+		max_distance_ = tag->getOption<core::Real>("max_distance");
 	}
+	if ( tag->hasOption("coord_dev") ) {
+		coord_dev_ = tag->getOption<core::Real>("coord_dev");
+	}
+	if ( tag->hasOption("bound_width") ) {
+		bound_width_ = tag->getOption<core::Real>("bound_width");
+	}
+	if ( tag->hasOption("min_seq_sep") ) {
+		min_seq_sep_ = tag->getOption<core::Size>("min_seq_sep");
+	}
+
 	parse_task_operations( tag, datamap, filters, movers, pose );
 }
 
@@ -225,4 +270,3 @@ AddConstraintsToCurrentConformationMover::get_name() const {
 	
 } // moves
 } // protocols
-

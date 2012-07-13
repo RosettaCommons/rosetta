@@ -52,8 +52,13 @@ private:
 	// pointers to data that are passed in
 	TaskFactoryCOP task_factory_;
 
-	core::Real cst_width_;
-	core::Real cst_stdev_;
+	bool use_distance_cst_;
+	core::Real cst_weight_;
+	core::Real max_distance_;
+	core::Real coord_dev_;
+	core::Real bound_width_;
+	core::Size min_seq_sep_;
+
 };
 
 } // moves
