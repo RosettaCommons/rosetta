@@ -245,7 +245,11 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 	for (int i=1; i<=nres; ++i) {
 		if ( !pose.residue_type(i).is_protein() ) continue;
 		cas_pose.push_back( pose.residue(i).atom(" CA ").xyz() );
+		cas_pose.push_back( pose.residue(i).atom(" C  ").xyz() );
+		cas_pose.push_back( pose.residue(i).atom(" N  ").xyz() );
+		cas_pose.push_back( pose.residue(i).atom(" O  ").xyz() );
 	}
+	core::Size nres_prot = cas_pose.size() / 4;
 
 	//  1) find backbone segments satisfying each motif
 	utility::vector1< utility::vector1< int > > motif_hits1(1), motif_hits2(1);
@@ -276,20 +280,23 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 
 			for (int k=1; k<=prev_Is.size(); ++k) {
 				utility::vector1< numeric::xyzVector< core::Real > > prevCAs;
-				utility::vector1< bool > elim(cas_pose.size(), false);
+				utility::vector1< bool > elim(nres_prot, false);
 
 				// load prev hits' CA coords
 				for (int j_prev = 2; j_prev<j; ++j_prev) {
 					core::Size segstart_x = prev_Is[k][j_prev-1];
 					core::Size seglen_x   = motif_cuts_i[j_prev] - motif_cuts_i[j_prev-1] - 1;
 					for (int l=segstart_x; l<=segstart_x+seglen_x; ++l) {
-						prevCAs.push_back( cas_pose[l] );
+						prevCAs.push_back( cas_pose[4*l-3] );
+						prevCAs.push_back( cas_pose[4*l-2] );
+						prevCAs.push_back( cas_pose[4*l-1] );
+						prevCAs.push_back( cas_pose[4*l] );
 						elim[l] = true;
 					}
 				}
 
 				// scan through all possible placements of this motif
-				int lstart=1, lstop=cas_pose.size();
+				int lstart=1, lstop=nres_prot;
 				if (!noforce && forced_pos_[segmentCounter]!=-1) {
 					lstart=lstop=forced_pos_[segmentCounter];
 				}
@@ -298,15 +305,19 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 					core::Size segstart_l = l;
 					core::Size seglen_l   = motif_cuts_i[j] - motif_cuts_i[j-1] - 1;
 					bool overlap=false;
-					if (segstart_l+seglen_l > cas_pose.size()) continue;
+					if (segstart_l+seglen_l > nres_prot) continue;
 					for (int m=segstart_l; m<=segstart_l+seglen_l && !overlap; ++m) {
 						overlap |= elim[m];
 					}
 					if (overlap) continue;
 
 					utility::vector1< numeric::xyzVector< core::Real > > ca_chunk_pose = prevCAs;
-					for (int m=segstart_l; m<=segstart_l+seglen_l; ++m)
-						ca_chunk_pose.push_back( cas_pose[m] );
+					for (int m=segstart_l; m<=segstart_l+seglen_l; ++m) {
+						ca_chunk_pose.push_back( cas_pose[4*m-3] );
+						ca_chunk_pose.push_back( cas_pose[4*m-2] );
+						ca_chunk_pose.push_back( cas_pose[4*m-1] );
+						ca_chunk_pose.push_back( cas_pose[4*m  ] );
+					}
 
 					// align pose CAs to tgt
 					numeric::xyzVector< core::Real > preT, postT;
@@ -341,7 +352,7 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 	for (int i=1; i<=motif_hits1.size(); ++i) {
 		for (int j=1; j<=motif_hits2.size(); ++j) {
 			// a) check for overlap
-			utility::vector1< bool > elim(cas_pose.size(), false);
+			utility::vector1< bool > elim(nres_prot, false);
 			for (int x=1; x<=motif_hits1[i].size(); ++x) {
 				core::Size segstart_x = motif_hits1[i][x];
 				core::Size seglen_x = motif_cuts[1][x+1] - motif_cuts[1][x] - 1;
@@ -415,10 +426,10 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 			bool clashcheck = false;
 			int nclashes = 0;
 			int CUTOFF2 = 3*3;
-			for (int x=1; x<=cas_pose.size() && !clashcheck; ++x) {
-				for (int y=1; y<=cas_pose.size() && !clashcheck; ++y) {
-					numeric::xyzVector< core::Real > x_x = R1A*(cas_pose[x]-postTs1[i]) + com1A;
-					numeric::xyzVector< core::Real > x_y = R1B*(cas_pose[y]-postTs1[i]) + com1B;
+			for (int x=1; x<=nres_prot && !clashcheck; ++x) {
+				for (int y=1; y<=nres_prot && !clashcheck; ++y) {
+					numeric::xyzVector< core::Real > x_x = R1A*(cas_pose[4*x-3]-postTs1[i]) + com1A;  // just check CA
+					numeric::xyzVector< core::Real > x_y = R1B*(cas_pose[4*y-3]-postTs1[i]) + com1B;  // just check CA
 					if (x_x.distance_squared(x_y) < CUTOFF2) {
 						nclashes++;
 						clashcheck = (nclashes>clash_thresh_);
@@ -427,8 +438,8 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 			}
 			for (int x=1; x<=cas_pose.size() && !clashcheck; ++x) {
 				for (int y=1; y<=cas_pose.size() && !clashcheck; ++y) {
-					numeric::xyzVector< core::Real > x_x = R2A*(cas_pose[x]-postTs2[j]) + com2A;
-					numeric::xyzVector< core::Real > x_y = R2B*(cas_pose[y]-postTs2[j]) + com2B;
+					numeric::xyzVector< core::Real > x_x = R2A*(cas_pose[4*x]-postTs2[j]) + com2A;
+					numeric::xyzVector< core::Real > x_y = R2B*(cas_pose[4*y]-postTs2[j]) + com2B;
 					if (x_x.distance_squared(x_y) < CUTOFF2) {
 						nclashes++;
 						clashcheck = (nclashes>clash_thresh_);
@@ -484,6 +495,9 @@ SymmetricMotifFilter::process_motifs() {
 		for (int j=1; j<=motif_i->total_residue(); ++j) {
 			if (motif_i->pdb_info()->chain(j) == 'A') {
 				cas_chainA[i].push_back( motif_i->residue(j).atom(" CA ").xyz() );
+				cas_chainA[i].push_back( motif_i->residue(j).atom(" C  ").xyz() );
+				cas_chainA[i].push_back( motif_i->residue(j).atom(" N  ").xyz() );
+				cas_chainA[i].push_back( motif_i->residue(j).atom(" O  ").xyz() );
 
 				if (j>1 && (motif_i->pdb_info()->number(j) != motif_i->pdb_info()->number(j-1)+1) ) {
 					motif_cuts[i].push_back( j-1 );
@@ -491,10 +505,13 @@ SymmetricMotifFilter::process_motifs() {
 				}
 			} else {
 				cas_chainB[i].push_back( motif_i->residue(j).atom(" CA ").xyz() );
+				cas_chainB[i].push_back( motif_i->residue(j).atom(" C  ").xyz() );
+				cas_chainB[i].push_back( motif_i->residue(j).atom(" N  ").xyz() );
+				cas_chainB[i].push_back( motif_i->residue(j).atom(" O  ").xyz() );
 			}
 		}
 		runtime_assert( cas_chainA[i].size() == cas_chainB[i].size() ); // both chains should be same length
-		motif_cuts[i].push_back( cas_chainA[i].size() );
+		motif_cuts[i].push_back( cas_chainA[i].size()/4 );
 		nsegs_ += (motif_cuts[i].size() - 1);
 	}
 
