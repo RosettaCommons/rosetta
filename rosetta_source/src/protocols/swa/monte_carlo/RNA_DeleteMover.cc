@@ -49,7 +49,7 @@ namespace monte_carlo {
 
   //////////////////////////////////////////////////////////////////////////
   void
-  RNA_DeleteMover::apply( core::pose::Pose & pose )
+  RNA_DeleteMover::apply( core::pose::Pose &  )
 	{
 		std::cout << "not defined yet" << std::endl;
 	}

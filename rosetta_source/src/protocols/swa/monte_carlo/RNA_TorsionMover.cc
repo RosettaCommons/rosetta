@@ -29,11 +29,12 @@
 
 #include <protocols/moves/MonteCarlo.hh>
 
+#include <numeric/random/random.hh>
+
 #include <basic/Tracer.hh>
 
 #include <map>
 
-#include <numeric/random/random.hh>
 
 static numeric::random::RandomGenerator RG(245099111);  // <- Magic number, do not change it!
 
@@ -158,8 +159,8 @@ namespace monte_carlo {
 //////////////////////////////////////////////////
 void
 RNA_TorsionMover::sample_near_suite_torsion(utility::vector1< Real > & torsion_list, Real const stddev) {
-	static const Real delta_north = rna_fitted_torsion_info_.ideal_delta_north();
-	static const Real delta_south = rna_fitted_torsion_info_.ideal_delta_south();
+	//	static const Real delta_north = rna_fitted_torsion_info_.ideal_delta_north();
+	//	static const Real delta_south = rna_fitted_torsion_info_.ideal_delta_south();
 
 	torsion_list[1] += RG.gaussian() * stddev;
 	torsion_list[2] += RG.gaussian() * stddev;

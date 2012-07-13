@@ -69,7 +69,7 @@ namespace monte_carlo {
 
   //////////////////////////////////////////////////////////////////////////
   void
-  RNA_AddMover::apply( core::pose::Pose & pose )
+  RNA_AddMover::apply( core::pose::Pose &  )
 	{
 		std::cout << "not defined yet" << std::endl;
 	}
@@ -140,8 +140,6 @@ namespace monte_carlo {
 
 		}
 
-
-
 		if ( start_added_residue_in_aform_ ){
 			rna_torsion_mover_->apply_suite_torsion_Aform( pose, suite_num );
 			rna_torsion_mover_->apply_nucleoside_torsion_Aform( pose, nucleoside_num );
@@ -157,7 +155,7 @@ namespace monte_carlo {
 		// Presampling added residue
 		///////////////////////////////////
 		if ( presample_added_residue_ ){
-			std::cout << "presampling added residue! " << nucleoside_num << std::endl;
+			std::cout << "presampling added residue! " << nucleoside_num << " over " << internal_cycles_ << " cycles " << std::endl;
 			MonteCarloOP monte_carlo_internal = new MonteCarlo( pose, *scorefxn_, kT_ );
 
 			std::string move_type( "" );

@@ -63,11 +63,11 @@ public:
 private:
 
 	core::chemical::ResidueTypeSetCAP rsd_set_;
+	core::scoring::ScoreFunctionOP scorefxn_;
 	bool presample_added_residue_;
 	bool start_added_residue_in_aform_;
 	Size internal_cycles_;
 	RNA_TorsionMoverOP rna_torsion_mover_;
-	core::scoring::ScoreFunctionOP scorefxn_;
 	core::Real sample_range_small_, sample_range_large_, kT_;
 
 };
