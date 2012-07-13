@@ -210,6 +210,7 @@
 #include <protocols/simple_moves/SuperimposeMoverCreator.hh>
 #include <protocols/simple_moves/PDBReloadMoverCreator.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMoverCreator.hh>
+#include <protocols/simple_moves/SwitchChainOrderMoverCreator.hh>
 #include <protocols/simple_moves/TaskAwareMinMoverCreator.hh>
 
 #include <protocols/simple_moves/sidechain_moves/SidechainMCMoverCreator.hh>
