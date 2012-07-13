@@ -57,13 +57,14 @@ Options specific to relax
    Advanced Options:
    -relax:script <file>      Do custom script relax (you can supply a custom script file)
 
-   Constraints:
+   Constraints: If you want constraints on for the entire relax run, set ramp_constraints to false (below) along with the other constraint flags. Built in options include backbone coordinate constraints, sidechain coordinate constraints and sidechain pairwise constraints. 
    -constraints:cst_fa_file  <filename>      Add constraints from the constraint file(*)
    -relax:constrain_relax_to_start_coords    Add coordinate constraints to backbone heavy atoms, based on the input structure.
    -relax:constrain_relax_to_native_coords   Add coordinate constraints to backbone heavy atoms, based on the structure passed to -in:file:native.
    -relax:coord_constrain_sidechains         Also add coordinate constraints to sidechain heavy atoms (requires one of previous two options)
    -relax:coord_cst_stdev    <stdev>         Set the strength of coordinate constraints (smaller=tighter)
    -relax:coord_cst_width    <width>         If set, use flat-bottomed constraints instead of harmonic constraints, with a bottom width of <width>
+   -relax:sc_cst_maxdist   <dist>            Add pairwise atom constraints to sidechain atoms up to dist apart from one another.
    -relax:ramp_constraints   false           When explicitly set to false, do not ramp down constraints (does not affect ramping in custom scripts)
 
    Deprecated Modes (don't use):
