@@ -100,6 +100,7 @@
 #include <protocols/swa/monte_carlo/RNA_AddOrDeleteMover.hh>
 #include <protocols/swa/monte_carlo/RNA_O2StarMover.hh>
 #include <protocols/swa/monte_carlo/RNA_TorsionMover.hh>
+#include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloMover.hh>
 #include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloUtil.hh>
 #include <protocols/swa/monte_carlo/types.hh>
 
@@ -567,116 +568,6 @@ setup_pose_setup_class(protocols::swa::rna::StepWiseRNA_JobParametersOP & job_pa
 
 
 
-
-//////////////////////////////////////////////////
-//////////////////////////////////////////////////
-//////////////////////////////////////////////////
-// copied from fang's turner_test_one_chain.cc
-
-
-///////////////////////////////////////////////////
-// Put following in RNA_O2star_Mover
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Following assumed that pose is already properly aligned to native pose!
-// stuff into RNA_SWA_MonteCarloMover.
-void
-output_silent_file( pose::Pose & pose, Size const count,
-										pose::Pose const & native_pose,
-										core::io::silent::SilentFileDataOP silent_file_data,
-										std::string const & silent_file ){
-
-  using namespace core::io::silent;
-  using namespace core::conformation;
-
-	SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
-	utility::vector1< Size > working_res_list = sub_to_full_info.moving_res_list();
-	std::map< Size, Size > sub_to_full = sub_to_full_info.sub_to_full();
-
-	// useful to keep track of what's a working residue and what's not.
-	utility::vector1< bool > is_working_res;
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) is_working_res.push_back( false );
-	for ( Size n = 1; n <= working_res_list.size(); n++ ) is_working_res[ working_res_list[n] ] = true;
-
-	std::string const tag = "S_"+lead_zero_string_of(count,6);
-	BinaryRNASilentStruct s( pose, tag );
-
-	// could initialize this once somewhere else.
-	utility::vector1< std::string > next_suite_atoms;
-	next_suite_atoms.push_back(" P  ");
-	next_suite_atoms.push_back(" O1P");
-	next_suite_atoms.push_back(" O2P");
-	next_suite_atoms.push_back(" O5*");
-
-	Real dev( 0.0 );
-	Real rmsd( 0.0 );
-	Size natoms( 0 );
-
-	for ( Size n = 1; n <= working_res_list.size(); n++ ){
-		Size const i      = working_res_list[ n ];
-		Size const i_full = sub_to_full[ i ];
-
-		//		std::cout << "NATIVE CHECK: " <<  i << ' ' << i_full << std::endl;
-
-		Residue const & rsd        = pose.residue( i );
-		Residue const & rsd_native = native_pose.residue( i_full );
-
-		if ( rsd.aa() != rsd_native.aa() )			std::cout << "mismatch:   pose " << i << ' ' << rsd.aa() << "   native " << i_full << rsd_native.aa() << std::endl;
-		runtime_assert( rsd.aa() == rsd_native.aa() );
-
-		for ( Size j = 1; j <= rsd.nheavyatoms(); j++ ){
-			if ( rsd.is_virtual( j ) ) continue;  // note virtual phosphates on 5'-ends of loops.
-			std::string atom_name = rsd.atom_name( j );
-			//			std::cout << "RMSD: " << i << atom_name << std::endl;
-			if ( !rsd_native.has( atom_name ) ) continue;
-			Size const j_full = rsd_native.atom_index( atom_name );
-			dev += ( rsd_native.xyz( j_full ) - rsd.xyz( j ) ).length_squared();
-			natoms++;
-		}
-
-		// also add in atoms in next suite, if relevant (and won't be covered later in rmsd calc.)
-		if ( i < pose.total_residue() && !is_working_res[ i+1 ] &&  !pose.fold_tree().is_cutpoint(i) ){
-			Size const i_next      = i+1;
-			Size const i_next_full = sub_to_full[ i+1 ];
-			runtime_assert( i_next_full == i_full + 1 ); //better be a connection in both the pose & native pose!
-
-			Residue const & rsd_next        = pose.residue( i_next );
-			Residue const & rsd_next_native = native_pose.residue( i_next_full );
-			runtime_assert( rsd_next.aa() == rsd_next_native.aa() );
-
-			for (Size k = 1; k <= next_suite_atoms.size(); k++ ){
-				std::string atom_name = next_suite_atoms[ k ];
-				//std::cout << "RMSD: " << i+1 << atom_name << std::endl;
-				runtime_assert( rsd_next.has( atom_name ) );
-				runtime_assert( rsd_next_native.has( atom_name ) );
-				Size const j = rsd_next.atom_index( atom_name );
-				Size const j_full = rsd_next_native.atom_index( atom_name );
-				dev += ( rsd_next_native.xyz( j_full ) - rsd_next.xyz( j ) ).length_squared();
-				natoms++;
-			}
-
-		}
-
-	}
-	if ( natoms > 0 ) rmsd = std::sqrt( dev / static_cast<Real>( natoms ) );
-
-	s.add_energy( "rms",rmsd );
-	s.add_string_value( "count", ObjexxFCL::fmt::I(9,count) );
-
-	std::string built_res = "";
-	if ( working_res_list.size() == 0 ) {
-		built_res = "-";
-	} else {
-		built_res += string_of( working_res_list[1] );
-		for ( Size n = 2; n <= working_res_list.size(); n++ ) built_res += "-"+string_of( sub_to_full[ working_res_list[n] ] );
-	}
-	s.add_string_value( "built_res", built_res);
-
-	silent_file_data->write_silent_struct( s, silent_file, false /*score_only*/ );
-}
-
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 swa_rna_sample()
@@ -697,20 +588,19 @@ swa_rna_sample()
 	ResidueTypeSetCAP rsd_set  = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Scorefunction is by default rna_hires.
+	// Scorefunction -- choose a default. Put into its own setup function?
 	core::scoring::ScoreFunctionOP scorefxn;
 	if ( option[ score::weights ].user() ) scorefxn = getScoreFunction();
 	else scorefxn = ScoreFunctionFactory::create_score_function( "rna/rna_hires_07232011_with_intra_base_phosphate.wts" ); // Parin's latest weights.
 
-	// must have unfolded term!
-	if ( !scorefxn->has_nonzero_weight( unfolded ) ) {
+	if ( !scorefxn->has_nonzero_weight( unfolded ) ) { 	// must have unfolded term!
 		std::cout << "Putting 'unfolded' term into scorefunction! Use -unfolded_weight to reduce weight or turn off." << std::endl;
 		scorefxn->set_weight( unfolded, 1.0 );
 	}
 	if ( option[ unfolded_weight ].user() ) scorefxn->set_weight( unfolded,  option[ unfolded_weight ]());
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//  Pose setup -- shared with SWA stuff, for now. Gets native_pose, sample_res, etc.
+	//  Pose setup -- shared with SWA stuff, for now. Gets native_pose, sample_res, etc. -- put into its own little function?
 	StepWiseRNA_JobParametersOP	job_parameters = setup_rna_job_parameters(); // note -- hacked this to include option skip_complicated_stuff
 	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = setup_pose_setup_class(job_parameters);
 	stepwise_rna_pose_setup->set_align_to_native( true );
@@ -726,7 +616,7 @@ swa_rna_sample()
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Monte Carlo machinery
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// should stuff this into its own SubToFullInfo class, cached inside pose.
+	// put this into its own little function?
 	std::string const & full_sequence = job_parameters->full_sequence();
 	utility::vector1< Size > const start_moving_res_list = job_parameters->working_moving_res_list();
 	SubToFullInfoOP sub_to_full_info_op =
@@ -736,23 +626,16 @@ swa_rna_sample()
 												option[ cutpoint_open ]() );
 	pose.data().set( core::pose::datacache::CacheableDataType::SUB_TO_FULL_INFO, sub_to_full_info_op );
 
-	// should stuff this into a SWA_MonteCarlo mover.
-	pose::Pose const & native_pose = *( stepwise_rna_pose_setup->get_native_pose() );
-	std::string const silent_file = option[ out::file::silent ]();
-	SilentFileDataOP silent_file_data = new SilentFileData;
-
-	//	output_silent_file( pose, 0, moving_res_list, sub_to_full, native_pose, silent_file_data, silent_file );
-
-	bool const do_add_delete_ = option[ do_add_delete ]();
-
+	// put this into its own little function?
+	// Set up Movers that go into Main Loop (RNA_SWA_MonteCarloMover). This could also go into RNA_SWA_MonteCarloMover. Hmm.
 	Real const kT_ = option[ kT ]();
-
-	Size const num_cycle = option[ n_sample ]();
 	Real const sample_range_small = option[ stddev_small ]();
 	Real const sample_range_large = option[ stddev_large ]();
 
 	RNA_TorsionMoverOP rna_torsion_mover = new RNA_TorsionMover;
+
 	RNA_DeleteMoverOP rna_delete_mover = new RNA_DeleteMover;
+
 	RNA_AddMoverOP rna_add_mover = new RNA_AddMover( rsd_set, scorefxn );
 	rna_add_mover->set_start_added_residue_in_aform( option[ start_added_residue_in_aform ]() );
 	rna_add_mover->set_presample_added_residue(  option[ presample_added_residue ]() );
@@ -760,9 +643,19 @@ swa_rna_sample()
 	rna_add_mover->set_sample_range_small( sample_range_small );
 	rna_add_mover->set_sample_range_large( sample_range_large );
 	rna_add_mover->set_kT( kT_ );
+
 	RNA_AddOrDeleteMoverOP rna_add_or_delete_mover = new RNA_AddOrDeleteMover( rna_add_mover, rna_delete_mover );
+
 	RNA_O2StarMoverOP rna_o2star_mover = new RNA_O2StarMover( scorefxn, option[ sample_all_o2star ](), sample_range_small, sample_range_large );
 
+	RNA_SWA_MonteCarloMoverOP rna_swa_montecarlo_mover = new RNA_SWA_MonteCarloMover(  rna_add_or_delete_mover, rna_torsion_mover, rna_o2star_mover, scorefxn );
+	rna_swa_montecarlo_mover->set_native_pose( stepwise_rna_pose_setup->get_native_pose() );
+	rna_swa_montecarlo_mover->set_silent_file( option[ out::file::silent ]() );
+	rna_swa_montecarlo_mover->set_output_period( option[ output_period ]() );
+	rna_swa_montecarlo_mover->set_num_cycles( option[ n_sample ]() );
+	rna_swa_montecarlo_mover->set_do_add_delete( option[ do_add_delete ]() );
+
+	// put into its own function?
 	// instead of this, how about just deleting all new residues?
 	std::string move_type( "" );
 	if ( ! option[ skip_randomize ]() ){
@@ -774,67 +667,10 @@ swa_rna_sample()
 		std::cout << " done. " << std::endl;
 	}
 
-	// should stuff into SWA_MonteCarloMover
-	MonteCarloOP monte_carlo_ = new MonteCarlo( pose, *scorefxn, kT_ );
+	rna_swa_montecarlo_mover->apply( pose );
 
-	bool accepted( true );
-	Size n_accept( 0 );
-	Size o2star_res( 0 );
-	Size const output_period_ = option[ output_period ]();
+	if ( option[ out::file::o].user()	) pose.dump_pdb( option[ out::file::o ]() );
 
-	for (Size count = 1; count <= num_cycle; count++) {
-
-		Real const random_number = RG.uniform();
-
-		move_type = "";
-
-		utility::vector1< Size > moving_res_list = nonconst_sub_to_full_info_from_pose( pose ).moving_res_list();
-
-		if ( (random_number < 0.01 && do_add_delete_) || moving_res_list.size() == 0 /*got to add something!*/ ) {
-			rna_add_or_delete_mover->apply( pose );
-		}
-
-		if ( move_type.size() == 0 /*no move yet!*/ && random_number  < 0.8 ){
-
-			// should stuff into RandomTorsionMover, which itself calls RandomSuiteMover, RandomNucleosideMover.
-			Real const random_number2 = RG.uniform();
-			if ( random_number2  < 0.5 ){
-				move_type = "sml";
-				rna_torsion_mover->apply( pose, move_type, sample_range_small );
-			} else {
-				move_type = "lrg";
-				rna_torsion_mover->apply( pose, move_type, sample_range_large );
-			}
-		} else{
-			rna_o2star_mover->apply( pose, move_type );
-		}
-
-		accepted = monte_carlo_->boltzmann( pose, move_type );
-
-		//if ( accepted ) { //slight pain in the ass. Maybe we should keep these cached in the pose somewhere
-		//			moving_res_list = moving_res_list_new;
-		//			sub_to_full     = sub_to_full_new;
-		//		}
-		//std::cout << "Score: " << (*scorefxn)( pose ) << std::endl;
-		Real const current_score = (*scorefxn)( pose );
-
-		if ( count % output_period_ == 0  || count == num_cycle ) {
-			std::cout << "On " << count << " of " << num_cycle << " trials." << std::endl;
-			output_silent_file( pose, count, native_pose, silent_file_data, silent_file );
-		}
-
-	}
-
-	pose.dump_pdb( "FINAL.pdb" );
-	monte_carlo_->show_counters();
-	monte_carlo_->recover_low( pose );
-
-	// This is not necessary anymore but could access it by a 'dump' option.
-	if ( option[ out::file::o].user() ) { // makes life easier on cluster.
-		pose.dump_pdb( option[ out::file::o ]() );
-	} else {
-		pose.dump_pdb( "LOW.pdb" );
-	}
 	std::cout << "Total time for monte carlo: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
 
 
@@ -969,7 +805,7 @@ main( int argc, char * argv [] )
 
 	NEW_OPT( add_lead_zero_to_tag, "Add lead zero to clusterer output tag ", false);
 	NEW_OPT( n_sample, "Sample number for Random sampling", 0 );
-	NEW_OPT( output_period, "How often to output structure", 1000 );
+	NEW_OPT( output_period, "How often to output structure", 5000 );
 	NEW_OPT( stddev_small, "Sampling standard deviation in degree", 5.0 );
 	NEW_OPT( stddev_large, "Sampling standard deviation in degree", 40.0 );
 	NEW_OPT( output_score_cutoff, "Score cutoff for output to disk", 0.0 );

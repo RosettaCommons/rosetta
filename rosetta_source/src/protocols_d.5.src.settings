@@ -51,6 +51,7 @@ sources = {
 		"RNA_DeleteMover",
 		"RNA_AddOrDeleteMover",
 		"RNA_O2StarMover",
+		"RNA_SWA_MonteCarloMover",
 		"RNA_TorsionMover",
 		"RNA_SWA_MonteCarloUtil",
 		"SubToFullInfo",
