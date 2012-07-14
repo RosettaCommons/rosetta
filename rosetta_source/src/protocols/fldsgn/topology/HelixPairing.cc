@@ -92,7 +92,7 @@ HelixPairing::HelixPairing( String const & hp ):
 
 	char para = parts[2][0];
 	runtime_assert( para == 'P' || para == 'A' );
-	orient_ = parts[3][0];
+	orient_ = parts[2][0];
 
 	name_ = hp;
 }
