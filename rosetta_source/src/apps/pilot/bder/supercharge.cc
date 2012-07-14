@@ -1,4 +1,4 @@
-// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+ // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
@@ -9,13 +9,12 @@
 
 /// @file    apps/pilot/bder/supercharge.cc
 /// @brief   This protocol supercharges the surface of an input pdb with either positive or negatively charged residues.
-/// @details The user must specifiy if Arg, Lys, or Asp, Glu are desired, and what the reference weights are.  This program identifies surface residues, creates a resfile that allows the charged residue and the native amino acid, changes the reference weights of the allowed charged residues, designs the surface (commandline should indicate ex1, ex2, minimize_sidechains), and outputs the designed pose with a name that contains information about the residues allowed and their reference weights for that design run.  Note: In this version, nstruct > 1 will not work because of output naming and calculator registry.
+/// @details The user must specifiy if Arg, Lys, or Asp, Glu are desired, and what the reference weights are.  This program identifies surface residues, creates a resfile that allows the charged residue and the native amino acid, changes the reference weights of the allowed charged residues, designs the surface (commandline should indicate ex1, ex2, minimize_sidechains), and outputs the designed pose with a name that contains information about the residues allowed and their reference weights for that design run.
 /// @author Bryan Der
 
 #include <devel/init.hh>
 
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -31,8 +30,8 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/option.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
@@ -72,6 +71,7 @@ basic::options::BooleanOptionKey const dont_mutate_glyprocys("dont_mutate_glypro
 basic::options::BooleanOptionKey const dont_mutate_correct_charge("dont_mutate_correct_charge"); // true by default
 basic::options::BooleanOptionKey const dont_mutate_hbonded_sidechains("dont_mutate_hbonded_sidechains"); // true by default
 basic::options::BooleanOptionKey const pre_minimize_input_structure("pre_minimize_input_structure"); // false by default
+basic::options::IntegerOptionKey const nstruct("nstruct"); // custom nstruct 
 
 
 }//local
@@ -101,8 +101,8 @@ public:
 
 		set_surface( pose );
 		set_resfile( pose ); // default=NATRO, same-charge=NATAA, allow native+desired charge
-		design_supercharge( pose ); // sets reference energies, designs the surface, outputs with an informative name
-		print_netcharge_and_mutations(starting_pose, pose );
+		design_supercharge( starting_pose, pose ); // sets reference energies, designs the surface, outputs with an informative name
+
 
 		return;
   }
@@ -160,7 +160,7 @@ public:
 			pose.metric( calcname.str(), "num_neighbors", num_n);
 			calcname.str("");
 
-			TR << "residue " << i << " num_neighbors " << num_n.value() << std::endl;
+			//TR << "residue " << i << " num_neighbors " << num_n.value() << std::endl;
 
 			if( num_n.value() <= core::Size(basic::options::option[local::neighbor_cutoff].value())) {
 				TR << "adding " << i << " to surface set" << std::endl;
@@ -304,13 +304,20 @@ public:
 	}
 
 	void
-	design_supercharge( Pose & pose ){
+	design_supercharge( Pose const & starting_pose, Pose & pose ){
 
 		using namespace core::pack::task;
 		using namespace basic::options;
 		TaskFactoryOP task_factory = new TaskFactory();
 		task_factory->push_back(new operation::InitializeFromCommandline()); //ex1, ex1, minimize sidechains, use_input_sc
-		task_factory->push_back( new operation::ReadResfile( "resfile_output" ) ); // reads the resfile previously created
+
+		// first, read in user resfile.  Intended to specify additional residues to not mutate. NATAA and NATRO work, but PIKAA doesn't.  MUST have ALLAA as default!!
+		if ( option[ OptionKeys::packing::resfile ].user() ) {
+			task_factory->push_back( new operation::ReadResfile );
+			TR << "Reading resfile from user input... make sure ALLAA is set as the default in your resfile!!" << std::endl;
+		}
+
+		task_factory->push_back( new operation::ReadResfile( "resfile_output" ) ); // reads the resfile previously created, adds to the user resfile (if provided)
 
 		using namespace core::scoring;
 		ScoreFunctionOP customref_scorefxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
@@ -322,8 +329,6 @@ public:
 		packrot_mover->score_function( customref_scorefxn );
 		packrot_mover->task_factory( task_factory );
 
-		TR << "Supercharging the protein surface..." << std::endl;
-		packrot_mover->apply( pose );
 
 		/////////////// rename pdb for output ////////////////////////////////////////
 
@@ -369,10 +374,34 @@ public:
 			weights_RKDE = weights_RKDE + s + "_";
 		}
 
-		outputname_ = input_namebase + include_RKDE + weights_RKDE + ".pdb";
-		TR << "NEW NAME FOR SUPERCHARGED OUTPUT: " << outputname_ << std::endl;
 
-		pose.dump_scored_pdb( outputname_, *customref_scorefxn );
+		std::stringstream ss_i;
+		std::string i_string;
+
+		Size nstruct = (Size) basic::options::option[local::nstruct].value();
+		for( Size i=1; i <= nstruct; ++i ) {
+			ss_i << i;
+			if(i < 10) { i_string = "000" + ss_i.str(); }
+			else if (i < 100) { i_string = "00" + ss_i.str(); }
+			else if (i < 1000) { i_string = "0" + ss_i.str(); }
+			else { i_string = ss_i.str(); }
+			ss_i.str(""); // clear stringstream
+
+			//////////////////////////////////////////////////////////////////////////////
+			/////////////////////////////  DESIGN STEP  //////////////////////////////////
+			//////////////////////////////////////////////////////////////////////////////
+
+			TR << "Supercharging the protein surface... nstruct = " << i << std::endl;
+			packrot_mover->apply( pose );
+
+			outputname_ = input_namebase + include_RKDE + weights_RKDE + i_string + ".pdb";
+			TR << "NEW NAME FOR SUPERCHARGED OUTPUT: " << outputname_ << std::endl;
+
+			pose.dump_scored_pdb( outputname_, *customref_scorefxn );
+
+			print_netcharge_and_mutations(starting_pose, pose );
+		}
+
 
 	}
 
@@ -443,6 +472,7 @@ int main( int argc, char* argv[] )
 	option.add( local::dont_mutate_correct_charge, "don't mutate correct charge").def(true);
 	option.add( local::dont_mutate_hbonded_sidechains, "don't mutate hbonded sidechains").def(true);
 	option.add( local::pre_minimize_input_structure, "pre-minimize input structure").def(false);
+	option.add( local::nstruct, "local nstruct").def(1);
 
 	devel::init(argc, argv);
 
