@@ -212,7 +212,7 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 		}
 	}
 
-	TR << "Failing to get aligned: " << sequence_alignment_local_ << std::endl;
+	//TR << "Failing to get aligned: " << sequence_alignment_local_ << std::endl;
 	sequence_alignment_local_.clear();
 	return false;
 }

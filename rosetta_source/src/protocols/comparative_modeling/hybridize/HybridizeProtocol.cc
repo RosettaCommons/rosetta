@@ -317,27 +317,27 @@ HybridizeProtocol::check_and_create_fragments( core::pose::Pose & pose ) {
 		for (core::Size i=1; i<=templates_.size(); ++i) {
 			for (core::Size j=1; j<=templates_[i]->total_residue(); ++j ) {
 				core::Size tgt_pos = templates_[i]->pdb_info()->number(j);
+
+				TR << tgt_pos << " " << nres_tgt << std::endl;
+				runtime_assert( tgt_pos<=nres_tgt );
 				char tgt_ss_j = templates_[i]->secstruct(j);
 
-				if (tgt_ss[tgt_pos] == '0') {
-					tgt_ss[tgt_pos] = tgt_ss_j;
-				} else if (tgt_ss[tgt_pos] != tgt_ss_j) {
-					tgt_ss[tgt_pos] = 'D'; // templates disagree
+				if (tgt_ss[tgt_pos-1] == '0') {
+					tgt_ss[tgt_pos-1] = tgt_ss_j;
+				} else if (tgt_ss[tgt_pos-1] != tgt_ss_j) {
+					tgt_ss[tgt_pos-1] = 'D'; // templates disagree
 				}
 			}
 		}
 		for ( core::Size j=1; j<=nres_tgt; ++j ) {
-			if (tgt_ss[j] == '0') tgt_ss[j] = 'D';
+			if (tgt_ss[j-1] == '0') tgt_ss[j-1] = 'D';
 		}
 
 		// pick from vall based on template SS + target sequence
 		for ( core::Size j=1; j<=nres_tgt-8; ++j ) {
-			std::string ss_sub = tgt_ss.substr( j-1, 9 );
-			std::string aa_sub = tgt_seq.substr( j-1, 9 );
-
 			core::fragment::FrameOP frame = new core::fragment::Frame( j, 9 );
 			frame->add_fragment( 
-				core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa( ss_sub, aa_sub, 25, true, core::fragment::IndependentBBTorsionSRFD() ) );
+				core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa( tgt_ss.substr( j-1, 9 ), tgt_seq.substr( j-1, 9 ), 25, true, core::fragment::IndependentBBTorsionSRFD() ) );
 			fragments9_->add( frame );
 		}
 	}
