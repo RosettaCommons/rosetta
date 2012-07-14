@@ -66,48 +66,56 @@ namespace monte_carlo {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	get_random_residue_at_chain_terminus( pose::Pose & pose,
-																				Size & residue_at_chain_terminus,
-																				MovingResidueCase & moving_residue_case,
-																				AddOrDeleteChoice & add_or_delete_choice,
-																				bool const disallow_delete ) {
+	get_potential_delete_residues( pose::Pose & pose,
+																 utility::vector1< Size > & possible_res,
+																 utility::vector1< MovingResidueCase > & moving_residue_cases,
+																 utility::vector1< AddOrDeleteChoice > & add_or_delete_choices ) {
 
-		// potential delete residues
+
 		Size const & nres( pose.total_residue() );
 		kinematics::FoldTree const & fold_tree( pose.fold_tree() );
 
-		utility::vector1< Size >  possible_res;
-		utility::vector1< MovingResidueCase > moving_residue_cases;
-		utility::vector1< AddOrDeleteChoice > add_or_delete_choices;
+		SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
+		utility::vector1< Size > const & moving_res_list = sub_to_full_info.moving_res_list();
+
+		for ( Size n = 1; n <= moving_res_list.size(); n++ ){
+
+			Size const i = moving_res_list[ n ];
+
+			if ( i == nres || fold_tree.is_cutpoint( i ) ){ // could be a 3' chain terminus
+
+				possible_res.push_back( i );
+				moving_residue_cases.push_back( CHAIN_TERMINUS_3PRIME );
+				add_or_delete_choices.push_back( DELETE );
+
+			} else if ( i == 1 || fold_tree.is_cutpoint( i-1 ) ) {
+
+				possible_res.push_back( i );
+				moving_residue_cases.push_back( CHAIN_TERMINUS_5PRIME );
+				add_or_delete_choices.push_back( DELETE );
+
+			}
+
+
+		}
+
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	get_potential_add_residues( pose::Pose & pose,
+															utility::vector1< Size > & possible_res,
+															utility::vector1< MovingResidueCase > & moving_residue_cases,
+															utility::vector1< AddOrDeleteChoice > & add_or_delete_choices ) {
+
+		Size const & nres( pose.total_residue() );
+		kinematics::FoldTree const & fold_tree( pose.fold_tree() );
 
 		SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
 		utility::vector1< Size > const & moving_res_list = sub_to_full_info.moving_res_list();
 		std::map< Size, Size > sub_to_full = sub_to_full_info.sub_to_full();
 		utility::vector1< Size > cutpoints_in_full_pose = sub_to_full_info.cutpoints_in_full_pose();
 		Size nres_full = sub_to_full_info.full_sequence().size();
-
-		if ( !disallow_delete ){
-			for ( Size n = 1; n <= moving_res_list.size(); n++ ){
-
-				Size const i = moving_res_list[ n ];
-
-				if ( i == nres || fold_tree.is_cutpoint( i ) ){ // could be a 3' chain terminus
-
-					possible_res.push_back( i );
-					moving_residue_cases.push_back( CHAIN_TERMINUS_3PRIME );
-					add_or_delete_choices.push_back( DELETE );
-
-				} else if ( i == 1 || fold_tree.is_cutpoint( i-1 ) ) {
-
-					possible_res.push_back( i );
-					moving_residue_cases.push_back( CHAIN_TERMINUS_5PRIME );
-					add_or_delete_choices.push_back( DELETE );
-
-				}
-
-			}
-		}
-
 
 		utility::vector1< bool > is_cutpoint_in_full_pose;
 		for ( Size i = 1; i <= nres_full; i++ ) is_cutpoint_in_full_pose.push_back( false );
@@ -144,11 +152,33 @@ namespace monte_carlo {
 			}
 		}
 
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	get_random_residue_at_chain_terminus( pose::Pose & pose,
+																				Size & residue_at_chain_terminus,
+																				MovingResidueCase & moving_residue_case,
+																				AddOrDeleteChoice & add_or_delete_choice,
+																				bool const disallow_delete ) {
+
+
+		utility::vector1< Size >  possible_res;
+		utility::vector1< MovingResidueCase > moving_residue_cases;
+		utility::vector1< AddOrDeleteChoice > add_or_delete_choices;
+
+		if ( !disallow_delete ){
+			get_potential_delete_residues( pose,  possible_res, moving_residue_cases, add_or_delete_choices );
+		}
+
+		get_potential_add_residues( pose, possible_res, moving_residue_cases, add_or_delete_choices );
+
 		Size const res_idx =  int( RG.uniform() * possible_res.size() ) + 1;
 
 		residue_at_chain_terminus = possible_res[ res_idx ];
 		moving_residue_case       = moving_residue_cases[ res_idx ];
 		add_or_delete_choice      = add_or_delete_choices[ res_idx ];
+
 	}
 
 

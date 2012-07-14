@@ -31,6 +31,18 @@ namespace monte_carlo {
 	get_moving_residue_case( pose::Pose const & pose, Size const i );
 
 	void
+	get_potential_delete_residues( pose::Pose & pose,
+																 utility::vector1< Size > & possible_res,
+																 utility::vector1< MovingResidueCase > & moving_residue_cases,
+																 utility::vector1< AddOrDeleteChoice > & add_or_delete_choices );
+
+	void
+	get_potential_add_residues( pose::Pose & pose,
+															utility::vector1< Size > & possible_res,
+															utility::vector1< MovingResidueCase > & moving_residue_cases,
+															utility::vector1< AddOrDeleteChoice > & add_or_delete_choices );
+
+	void
 	get_random_residue_at_chain_terminus( pose::Pose & pose,
 																				Size & residue_at_chain_terminus,
 																				MovingResidueCase & moving_residue_case,

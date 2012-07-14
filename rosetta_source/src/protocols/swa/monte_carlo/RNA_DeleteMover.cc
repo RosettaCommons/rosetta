@@ -13,6 +13,7 @@
 /// @author Rhiju Das
 
 #include <protocols/swa/monte_carlo/RNA_DeleteMover.hh>
+#include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloUtil.hh>
 #include <protocols/swa/monte_carlo/SubToFullInfo.hh>
 
 // libRosetta headers
@@ -66,6 +67,28 @@ namespace monte_carlo {
 		reorder_sub_to_full_info_after_delete( pose, res_to_delete );
 	}
 
+
+	//////////////////////////////////////////////////////////////////////
+	void
+	RNA_DeleteMover::wipe_out_moving_residues( pose::Pose & pose ){
+
+		utility::vector1< Size >  possible_res;
+		utility::vector1< MovingResidueCase > moving_residue_cases;
+		utility::vector1< AddOrDeleteChoice > add_or_delete_choices;
+
+		get_potential_delete_residues( pose,
+																	 possible_res,
+																	 moving_residue_cases,
+																	 add_or_delete_choices );
+
+		if ( possible_res.size() > 0 ){ // recursively delete all residues.
+			apply( pose, possible_res[1], moving_residue_cases[1] );
+			wipe_out_moving_residues( pose );
+		}
+
+	}
+
+	//////////////////////////////////////////////////////////////////////
 	std::string
 	RNA_DeleteMover::get_name() const {
 		return "RNA_DeleteMover";

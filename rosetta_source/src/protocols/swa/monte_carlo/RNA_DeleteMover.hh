@@ -44,6 +44,9 @@ public:
 	virtual void apply( core::pose::Pose & pose_to_visualize );
 	virtual std::string get_name() const;
 
+	void
+	wipe_out_moving_residues( core::pose::Pose & pose );
+
 private:
 
 };

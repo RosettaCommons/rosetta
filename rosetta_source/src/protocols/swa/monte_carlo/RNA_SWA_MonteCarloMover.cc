@@ -97,8 +97,6 @@ namespace monte_carlo {
 		MonteCarloOP monte_carlo = new MonteCarlo( pose, *scorefxn_, kT_ );
 
 		bool accepted( true );
-		Size n_accept( 0 );
-		Size o2star_res( 0 );
 		std::string move_type;
 
 		for (Size count = 1; count <= num_cycles_; count++) {
@@ -129,7 +127,7 @@ namespace monte_carlo {
 
 			accepted = monte_carlo->boltzmann( pose, move_type );
 
-			Real const current_score = (*scorefxn_)( pose );
+			//Real const current_score = (*scorefxn_)( pose );
 
 			if ( count % output_period_ == 0  || count == num_cycles_ ) {
 				std::cout << "On " << count << " of " << num_cycles_ << " trials." << std::endl;

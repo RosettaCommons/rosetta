@@ -269,6 +269,7 @@ OPT_KEY( Boolean, do_add_delete )
 OPT_KEY( Boolean, presample_added_residue )
 OPT_KEY( Integer, presample_internal_cycles )
 OPT_KEY( Boolean, start_added_residue_in_aform )
+OPT_KEY( Boolean, skip_delete )
 
 using namespace protocols::swa::monte_carlo;
 
@@ -656,16 +657,7 @@ swa_rna_sample()
 	rna_swa_montecarlo_mover->set_do_add_delete( option[ do_add_delete ]() );
 
 	// put into its own function?
-	// instead of this, how about just deleting all new residues?
-	std::string move_type( "" );
-	if ( ! option[ skip_randomize ]() ){
-		std::cout << "randomizing... ";
-		for (Size count = 1; count <= 1000; count++) {
-			move_type = "lrg";
-			rna_torsion_mover->random_torsion_move( pose, start_moving_res_list, move_type, sample_range_large );
-		}
-		std::cout << " done. " << std::endl;
-	}
+	if ( ! option[ skip_delete ]() && option[ do_add_delete ]() ) rna_delete_mover->wipe_out_moving_residues( pose );
 
 	rna_swa_montecarlo_mover->apply( pose );
 
@@ -817,6 +809,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( do_add_delete, "try add & delete moves...", false );
 	NEW_OPT( presample_added_residue, "when adding a residue, do a little monte carlo to try to get it in place", false );
 	NEW_OPT( presample_internal_cycles, "when adding a residue, number of monte carlo cycles", 100 );
+	NEW_OPT( skip_delete, "normally wipe out all residues before building", false );
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
