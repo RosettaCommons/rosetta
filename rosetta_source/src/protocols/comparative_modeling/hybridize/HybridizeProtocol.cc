@@ -318,7 +318,6 @@ HybridizeProtocol::check_and_create_fragments( core::pose::Pose & pose ) {
 			for (core::Size j=1; j<=templates_[i]->total_residue(); ++j ) {
 				core::Size tgt_pos = templates_[i]->pdb_info()->number(j);
 
-				TR << tgt_pos << " " << nres_tgt << std::endl;
 				runtime_assert( tgt_pos<=nres_tgt );
 				char tgt_ss_j = templates_[i]->secstruct(j);
 
