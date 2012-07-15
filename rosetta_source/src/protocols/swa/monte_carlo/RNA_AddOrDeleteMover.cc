@@ -46,7 +46,8 @@ namespace monte_carlo {
 	RNA_AddOrDeleteMover::RNA_AddOrDeleteMover( RNA_AddMoverOP rna_add_mover,
 																							RNA_DeleteMoverOP rna_delete_mover ) :
 		rna_add_mover_( rna_add_mover ),
-		rna_delete_mover_( rna_delete_mover )
+		rna_delete_mover_( rna_delete_mover ),
+		allow_deletion_of_last_residue_( false )
 	{}
 
   //////////////////////////////////////////////////////////////////////////
@@ -73,7 +74,9 @@ namespace monte_carlo {
 		SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
 		utility::vector1< Size > const & moving_res_list = sub_to_full_info.moving_res_list();
 
-		bool disallow_delete  = ( moving_res_list.size() <= 1 ); //always have something in play!!?? Or permit removal??!! need to check this carefully.
+		//always have something in play!!?? Or permit removal??!! need to check this carefully.
+		bool disallow_delete  = allow_deletion_of_last_residue_ && ( moving_res_list.size() <= 1 );
+
 		get_random_residue_at_chain_terminus( pose, res_at_terminus, moving_residue_case, add_or_delete_choice, disallow_delete  );
 
 		TR.Debug << "ADD/DELETE move ==> res: " << res_at_terminus << "  case: " << moving_residue_case << "  add/delete: " << add_or_delete_choice << std::endl;

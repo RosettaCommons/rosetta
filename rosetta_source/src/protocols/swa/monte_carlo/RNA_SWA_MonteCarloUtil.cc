@@ -112,7 +112,6 @@ namespace monte_carlo {
 		kinematics::FoldTree const & fold_tree( pose.fold_tree() );
 
 		SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
-		utility::vector1< Size > const & moving_res_list = sub_to_full_info.moving_res_list();
 		std::map< Size, Size > sub_to_full = sub_to_full_info.sub_to_full();
 		utility::vector1< Size > cutpoints_in_full_pose = sub_to_full_info.cutpoints_in_full_pose();
 		Size nres_full = sub_to_full_info.full_sequence().size();

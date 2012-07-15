@@ -49,10 +49,13 @@ public:
 	virtual void apply( core::pose::Pose & pose_to_visualize );
 	virtual std::string get_name() const;
 
+	void set_allow_deletion_of_last_residue( bool const setting ){ allow_deletion_of_last_residue_ = setting; }
+
 private:
 
 	RNA_AddMoverOP rna_add_mover_;
 	RNA_DeleteMoverOP rna_delete_mover_;
+	bool allow_deletion_of_last_residue_;
 
 };
 

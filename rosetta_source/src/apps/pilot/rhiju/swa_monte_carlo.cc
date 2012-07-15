@@ -270,6 +270,7 @@ OPT_KEY( Boolean, presample_added_residue )
 OPT_KEY( Integer, presample_internal_cycles )
 OPT_KEY( Boolean, start_added_residue_in_aform )
 OPT_KEY( Boolean, skip_delete )
+OPT_KEY( Boolean, allow_deletion_of_last_residue )
 
 using namespace protocols::swa::monte_carlo;
 
@@ -646,6 +647,7 @@ swa_rna_sample()
 	rna_add_mover->set_kT( kT_ );
 
 	RNA_AddOrDeleteMoverOP rna_add_or_delete_mover = new RNA_AddOrDeleteMover( rna_add_mover, rna_delete_mover );
+	rna_add_or_delete_mover->set_allow_deletion_of_last_residue( option[ allow_deletion_of_last_residue ]() );
 
 	RNA_O2StarMoverOP rna_o2star_mover = new RNA_O2StarMover( scorefxn, option[ sample_all_o2star ](), sample_range_small, sample_range_large );
 
@@ -810,6 +812,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( presample_added_residue, "when adding a residue, do a little monte carlo to try to get it in place", false );
 	NEW_OPT( presample_internal_cycles, "when adding a residue, number of monte carlo cycles", 100 );
 	NEW_OPT( skip_delete, "normally wipe out all residues before building", false );
+	NEW_OPT( allow_deletion_of_last_residue, "in add/delete allow complete erasure of moving residues during sampling", false );
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
