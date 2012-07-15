@@ -1,3 +1,5 @@
+namespace lh { IntegerOptionKey const max_emperor_lib_size( "lh:max_emperor_lib_size" );  }
+namespace lh { IntegerOptionKey const max_emperor_lib_round( "lh:max_emperor_lib_round" );  }
 namespace lh { IntegerOptionKey const library_expiry_time( "lh:library_expiry_time" );  }
 namespace lh { StringOptionKey const objective_function( "lh:objective_function" );  }
 namespace lh { IntegerOptionKey const expire_after_rounds( "lh:expire_after_rounds" );  }
@@ -613,5 +615,3 @@ namespace RBSegmentRelax { FileOptionKey const rb_file( "RBSegmentRelax:rb_file"
 namespace RBSegmentRelax { RealOptionKey const cst_wt( "RBSegmentRelax:cst_wt" );  }
 namespace RBSegmentRelax { RealOptionKey const cst_width( "RBSegmentRelax:cst_width" );  }
 namespace RBSegmentRelax { StringOptionKey const cst_pdb( "RBSegmentRelax:cst_pdb" );  }
-namespace RBSegmentRelax { IntegerOptionKey const nrbmoves( "RBSegmentRelax:nrbmoves" );  }
-namespace RBSegmentRelax { IntegerOptionKey const nrboutercycles( "RBSegmentRelax:nrboutercycles" );  }

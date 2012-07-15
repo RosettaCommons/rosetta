@@ -59,6 +59,7 @@ namespace in { namespace file { extern StringVectorOptionKey const user_tags; } 
 namespace in { namespace file { extern FileOptionKey const tagfile; } }
 namespace in { namespace file { extern FileVectorOptionKey const frag_files; } }
 namespace in { namespace file { extern IntegerVectorOptionKey const frag_sizes; } }
+namespace in { namespace file { extern FileVectorOptionKey const extra_res; } }
 namespace in { namespace file { extern FileVectorOptionKey const extra_res_fa; } }
 namespace in { namespace file { extern FileVectorOptionKey const extra_res_mol; } }
 namespace in { namespace file { extern StringOptionKey const extra_res_database; } }

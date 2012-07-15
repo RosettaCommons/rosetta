@@ -1,3 +1,4 @@
+namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }
 namespace fold_cst { BooleanOptionKey const keep_skipped_csts( "fold_cst:keep_skipped_csts" );  }
 namespace fold_cst { BooleanOptionKey const no_minimize( "fold_cst:no_minimize" );  }
@@ -148,6 +149,7 @@ namespace score { BooleanOptionKey const bonded_params_CHARMM_angle( "score:bond
 namespace score { BooleanOptionKey const bonded_params_CHARMM_length( "score:bonded_params_CHARMM_length" );  }
 namespace score { RealOptionKey const pro_close_planar_constraint( "score:pro_close_planar_constraint" );  }
 namespace score { BooleanOptionKey const linear_bonded_potential( "score:linear_bonded_potential" );  }
+namespace score { BooleanOptionKey const geom_sol_correct_acceptor_base( "score:geom_sol_correct_acceptor_base" );  }
 namespace score { namespace saxs { BooleanOptionKey const saxs( "score:saxs" );  } }
 namespace score { namespace saxs { RealOptionKey const min_score( "score:saxs:min_score" );  } }
 namespace score { namespace saxs { StringOptionKey const custom_ff( "score:saxs:custom_ff" );  } }
@@ -614,5 +616,3 @@ namespace lh { IntegerOptionKey const skim_size( "lh:skim_size" );  }
 namespace lh { IntegerOptionKey const rounds( "lh:rounds" );  }
 namespace lh { StringOptionKey const jobname( "lh:jobname" );  }
 namespace lh { IntegerOptionKey const max_lib_size( "lh:max_lib_size" );  }
-namespace lh { IntegerOptionKey const max_emperor_lib_size( "lh:max_emperor_lib_size" );  }
-namespace lh { IntegerOptionKey const max_emperor_lib_round( "lh:max_emperor_lib_round" );  }

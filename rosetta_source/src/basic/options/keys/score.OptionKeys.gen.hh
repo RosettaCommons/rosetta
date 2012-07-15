@@ -73,6 +73,7 @@ namespace score { extern BooleanOptionKey const bonded_params_CHARMM_angle; }
 namespace score { extern BooleanOptionKey const bonded_params_CHARMM_length; }
 namespace score { extern RealOptionKey const pro_close_planar_constraint; }
 namespace score { extern BooleanOptionKey const linear_bonded_potential; }
+namespace score { extern BooleanOptionKey const geom_sol_correct_acceptor_base; }
 namespace score { namespace saxs { extern BooleanOptionKey const saxs; } }
 namespace score { namespace saxs { extern RealOptionKey const min_score; } }
 namespace score { namespace saxs { extern StringOptionKey const custom_ff; } }
