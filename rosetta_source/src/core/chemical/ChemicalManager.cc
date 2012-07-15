@@ -185,6 +185,7 @@ ChemicalManager::residue_type_set( std::string const & tag )
 		std::vector< std::string > extra_params_files;
 		std::vector< std::string > extra_patch_files;
 		std::vector<core::chemical::ResidueTypeOP> extra_residues;
+
 		if(tag == FA_STANDARD) {
 			utility::options::FileVectorOption & fvec
 				= basic::options::option[ basic::options::OptionKeys::in::file::extra_res_fa ];
@@ -301,6 +302,16 @@ ChemicalManager::residue_type_set( std::string const & tag )
 				extra_patch_files.push_back( pfvec[i].name());
 			}
 		}
+
+		// generically specify extra res (not necessarily part of fa_standard) -- will get added to
+		//  any and every residue_type_set instantiated.
+		utility::options::FileVectorOption & fvec
+			= basic::options::option[ basic::options::OptionKeys::in::file::extra_res ];
+		for(Size i = 1, e = fvec.size(); i <= e; ++i) {
+			utility::file::FileName fname = fvec[i];
+			extra_params_files.push_back(fname.name());
+		}
+
 		// read from file
 		tr.Debug << "CHEMICAL_MANAGER: read residue types: " << tag << std::endl;
 		// redirecting to new icoor folder
@@ -311,7 +322,6 @@ ChemicalManager::residue_type_set( std::string const & tag )
 			}
 		}
 		temp_str += "/";
-
 
 
 		std::string const directory( temp_str );
