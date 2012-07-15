@@ -249,6 +249,10 @@ private:
 		conformation::Residue const & rsd,
 		pose::Pose const & pose ) const;
 
+	Vector
+	get_acceptor_base_atm_xyz( conformation::Residue const & acc_rsd, Size const & acc_atm ) const;
+
+
 private:
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -260,7 +264,7 @@ private:
 	hbonds::HBondDatabaseCOP hb_database_;
 	Real const dist_cut2_;
 	Real const geometric_sol_scale_;
-
+	bool const correct_geom_sol_acceptor_base_;
 	bool const verbose_;
 virtual
 core::Size version() const;
