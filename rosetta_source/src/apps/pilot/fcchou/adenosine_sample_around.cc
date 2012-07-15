@@ -9,9 +9,6 @@
 /// @file
 /// @brief
 
-
-
-
 // libRosetta headers
 #include <core/scoring/rms_util.hh>
 #include <core/types.hh>
@@ -25,7 +22,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoringManager.hh>
-
 #include <core/scoring/rna/RNA_Util.hh>
 
 #include <core/kinematics/FoldTree.hh>
@@ -34,12 +30,8 @@
 #include <core/kinematics/Stub.hh>
 
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
 #include <utility/io/ozstream.hh>
-
-#include <protocols/idealize/idealize.hh>
-#include <protocols/swa/StepWiseUtil.cc>
 
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
@@ -51,14 +43,12 @@
 
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
-
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/EnergyMap.hh> //for EnergyMap
-#include <core/scoring/EnergyMap.fwd.hh> //for EnergyMap
 #include <core/import_pose/import_pose.hh>
+
+
+#include <protocols/swa/StepWiseUtil.hh> //has euler angle stuff.
 
 #include <protocols/viewer/viewers.hh>
 
@@ -70,7 +60,6 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // C++ headers
-//#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -83,9 +72,13 @@ using namespace basic::options;
 using utility::vector1;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
+using namespace numeric::conversions;
+using namespace protocols::swa;
 
 OPT_KEY( Boolean, sample_water )
 OPT_KEY( Boolean, sample_another_adenosine )
+OPT_KEY( Boolean, just_xy )
+OPT_KEY( Boolean, quick_score )
 OPT_KEY( String, copy_adenosine_adenosine_file )
 OPT_KEY( Real, alpha_increment )
 OPT_KEY( Real, cosbeta_increment )
@@ -105,6 +98,10 @@ OPT_KEY( Real, xyz_size )
 //
 // To sample an adenosine, reading in a starting adenosine-adenosine pairing conformation.
 // adenosine_sample_around.macosgccrelease  -database ~/rosetta_database/ -s a_RNA.pdb  -sample_another_adenosine   -copy_adenosine_adenosine_file double_A_ready_set.pdb
+//
+//
+//  NOTE! May need to add flags:
+//   -extra_res ~/rosetta_database/chemical/residue_type_sets/fa_standard/residue_types/water/TP3.params    /Users/rhiju/rosetta_database/chemical/residue_type_sets/rna/residue_types/extra/C.params
 //
 
 
@@ -279,17 +276,34 @@ do_xy_scan( pose::Pose & pose,
 
 	utility::io::ozstream out;
 	out.open( outfile );
+
+	Size count( 0 );
+	Real best_score( 0.0 );
+	Vector best_translation( 0.0, 0.0, 0.0 );
+
 	for (int i = -box_bins; i <= box_bins; ++i) {
 		for (int j = -box_bins; j <= box_bins; ++j) {
 			Real const x = j * translation_increment;
 			Real const y = i * translation_increment;
 			jump.set_translation( Vector( x, y, z ) ) ;
 			pose.set_jump( probe_jump_num, jump );
-			out << do_scoring( pose, scorefxn, sample_water_, probe_jump_num ) << ' ' ;
+			Real score = do_scoring( pose, scorefxn, sample_water_, probe_jump_num );
+			out << score << ' ' ;
+
+			if (score < best_score || count++ == 0 ){
+				best_translation = Vector( x, y, z );
+				best_score = score;
+			}
+
 		}
 		out << std::endl;
 	}
 	out.close();
+
+	// return pose in lowest energy configuration that was found in scan.
+	jump.set_translation( best_translation );
+	pose.set_jump( probe_jump_num, jump );
+	do_scoring( pose, scorefxn, sample_water_, probe_jump_num );
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -333,9 +347,23 @@ adenine_probe_score_test()
 	} else if ( sample_another_adenosine_ ){
 		new_res = pose.residue(1).clone();
 	} else {
-		core::chemical::ResidueTypeCAPs const & rsd_type_list ( residue_set.name3_map ( "CCC" ) );
+		core::chemical::ResidueTypeCAPs const & rsd_type_list ( residue_set.name3_map ( "  C" ) ); // just a carbon atom.
 		new_res = ( core::conformation::ResidueFactory::create_residue ( *rsd_type_list[1] ) );
 	}
+
+	// doing some checks for hbonds & geom_sol are being calculated -- or not calculated.
+	if ( sample_water_ || sample_another_adenosine_ ){
+
+		for (Size n = 1; n <= new_res->natoms(); n++ ){
+
+			std::cout << "PROBE ATOM:  " << n << ' ' << new_res->atom_name( n ); // << ' ' << new_res->atom_base( n ) << ' ' << new_res->abase2( n ) << std::endl;
+			if ( new_res->atom_base( n ) > 0 ) std::cout << "   base: " << new_res->atom_name( new_res->atom_base( n ) );
+			if ( new_res->abase2(n) > 0 ) std::cout << "   base2: " <<  new_res->atom_name( new_res->abase2( n ) );
+			std::cout << std::endl;
+
+		}
+	}
+
 	pose.append_residue_by_jump ( *new_res ,  pose.total_residue() );
 
 	pose.dump_pdb( "START.pdb" );
@@ -435,6 +463,10 @@ adenine_probe_score_test()
 	std::cout << "Doing XY scan... Z =  0.0" << std::endl;
 	do_xy_scan( pose, scorefxn, "score_xy_0.table", 0.0, probe_jump_num, box_bins, translation_increment, sample_water_ );
 
+	pose.dump_pdb( "best_xy.pdb");
+	if ( option[ just_xy ]() ) return;
+
+
 	//////////////////////////////////////////////
 	std::cout << "Doing XY scan... Z = +1.0" << std::endl;
 	do_xy_scan( pose, scorefxn, "score_xy_1.table", 1.0, probe_jump_num, box_bins, translation_increment, sample_water_ );
@@ -487,15 +519,55 @@ adenine_probe_score_test()
 
 }
 
+///////////////////////////////////////////////////////////////
+void
+quick_score_test(){
 
+	using namespace core::chemical;
+	using namespace core::conformation;
+	using namespace core::scoring;
+	using namespace core::id;
 
+	//////////////////////////////////////////////////
+	ResidueTypeSetCAP rsd_set;
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+
+	// Read in pose with two methane. "Z" = ligand. Note need flag:
+	//         -extra_res_fa CH4.params -s two_methane.pdb
+	pose::Pose pose;
+	std::string infile  = option[ in ::file::s ][1];
+	import_pose::pose_from_pdb( pose, *rsd_set, infile );
+
+	for ( Size i = 1; i <= pose.total_residue(); i++ ){
+		if (pose.residue(i).is_RNA() ){
+			pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", i );
+			pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", i );
+		}
+	}
+
+	ScoreFunctionOP scorefxn;
+	if ( option[ score::weights ].user() ){
+		scorefxn = scoring::getScoreFunction();
+	} else {
+		scorefxn = ScoreFunctionFactory::create_score_function( "rna_hires" );
+		scorefxn->set_weight( rna_sugar_close, 0.0 ); //still computed with virtual sugar? weird.
+	}
+
+	(*scorefxn)( pose );
+	scorefxn->show( std::cout, pose );
+
+}
 
 ///////////////////////////////////////////////////////////////
 void*
 my_main( void* )
 {
 
-	adenine_probe_score_test();
+	if ( option[quick_score]() ){
+		quick_score_test();
+	} else {
+		adenine_probe_score_test();
+	}
 
 	protocols::viewer::clear_conformation_viewers();
 
@@ -511,6 +583,8 @@ main( int argc, char * argv [] )
 
 	NEW_OPT( sample_water, "use a water probe instead of carbon", false );
 	NEW_OPT( sample_another_adenosine, "sample another adenosine as the 'probe'", false );
+	NEW_OPT( just_xy, "Just scan x, y at z=0", false );
+	NEW_OPT( quick_score, "alternative mode for checking geom_sol, etc.", false );
 	NEW_OPT( copy_adenosine_adenosine_file, "get rigid body relation between two adenosines from file", "" );
 	NEW_OPT( alpha_increment, "input parameter", 40.0 );
 	NEW_OPT( cosbeta_increment, "input parameter", 0.25 );
