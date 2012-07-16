@@ -2,9 +2,7 @@
 # URL: http://cppcms.svn.sourceforge.net/svnroot/cppcms/cppdb/trunk/CMakeLists.txt
 # at revision -r1700
 
-set(CPPDB_VERSION 0.1.0)
 set(CPPDB_SOVERSION 0)
-
 
 # General settings
 
