@@ -29,3 +29,8 @@ If you want to see the actual g++ commands the make issues (good for debugging)
 issue the command like this
 
 make VERBOSE=1
+
+
+
+If you want to go even faster (especially for rebuilding after only changing one file), 
+use ninja instead of make... instructions in README_ninja.

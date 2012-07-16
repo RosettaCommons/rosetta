@@ -1,0 +1,39 @@
+How to use ninja to compile much faster.
+
+1. Download the latest version of cmake. Edit the line in CMakeCache.txt:
+
+ CMAKE_ENABLE_NINJA:BOOL=FALSE
+
+to be
+
+ CMAKE_ENABLE_NINJA:BOOL=TRUE
+
+[you may not need to do this in the future if the cmake developers turn ninja on by default.]
+
+  Then compile and install cmake. Run 
+ 
+python bootstrap.py  
+make
+sudo make install
+
+2. Download ninja via github:
+
+ git clone https://github.com/martine/ninja.git
+
+ and run 
+
+   python bootstrap.py
+
+
+3. Then, in cmake, replace make with ninja as follows:
+
+./make_project.py all
+cd build_release
+cmake -G Ninja
+ninja
+
+  Or use:
+
+ninja -v
+
+  to see all the g++ or clang commands.
