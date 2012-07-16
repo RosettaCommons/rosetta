@@ -14,34 +14,27 @@
 #include <protocols/comparative_modeling/Align_RmsdEvaluator.hh>
 
 // Package Headers
+#include <protocols/comparative_modeling/coord_util.hh>
 
 // Project Headers
+#include <core/id/SequenceMapping.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/pose/Pose.hh>
+#include <core/scoring/rms_util.hh>
+#include <core/sequence/Sequence.hh>
+#include <core/sequence/SequenceAlignment.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <core/scoring/rms_util.hh>
-// AUTO-REMOVED #include <core/sequence/util.hh>
-#include <core/sequence/Sequence.hh>
-#include <core/id/SequenceMapping.hh>
-#include <core/sequence/SequenceAlignment.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-
-#include <protocols/comparative_modeling/coord_util.hh>
-
-#include <ObjexxFCL/FArray2D.hh>
-
 #include <numeric/xyzVector.hh>
+#include <numeric/model_quality/maxsub.hh>
 #include <numeric/model_quality/rms.hh>
-
-// option key includes
-
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
-
+#include <ObjexxFCL/FArray2D.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
+#include <map>
+#include <string>
 
 static basic::Tracer tr("protocols.comparative_modeling.Align_RmsdEvaluator");
 
@@ -106,6 +99,21 @@ Align_RmsdEvaluator::apply(
 			ss.add_energy( "m43", m_4_3 );
 			ss.add_energy( "m74", m_7_4 );
 		}
+
+		// high-accuracy statistics
+		core::id::SequenceMapping mapping = get_alignment(pose)->sequence_mapping(1, 2);
+		std::map<Size, Size> residues;
+		for (Size idx_mod = 1; idx_mod <= mapping.size1(); ++idx_mod) {
+			Size idx_ref = mapping[idx_mod];
+			if (idx_ref > 0) {
+				residues[idx_ref] = idx_mod;
+			}
+		}
+
+		tr.Debug << "computing high-accuracy statistics for " << tag() << std::endl;
+		ss.add_energy("gdtha_" + tag(), core::scoring::gdtha(*native_pose(), pose, residues));
+		ss.add_energy("gdtsc_" + tag(), core::scoring::gdtsc(*native_pose(), pose, residues));
+
 		tr.Debug << "computing maxsub for " << tag() << std::endl;
 		ss.add_energy( "maxsub_" + tag(), core::scoring::xyz_maxsub( p1a, p2a, n_atoms ) );
 	}

@@ -79,30 +79,30 @@ core::Real gdtsc(const core::pose::Pose& ref,
   using core::Size;
   using core::id::NamedAtomID;
   using numeric::xyzVector;
-  using std::map;
-  using std::string;
+	using std::map;
+	using std::string;
 
-  static map<string, string> gdtsc_atom = boost::assign::map_list_of
-      ("A",  "CA")
-      ("C",  "SG")
-      ("D", "OD2")
-      ("E", "OE2")
-      ("F",  "CZ")
-      ("G",  "CA")
-      ("H", "NE2")
-      ("I", "CD1")
-      ("K",  "NZ")
-      ("L", "CD1")
-      ("M",  "CE")
-      ("N", "OD1")
-      ("P",  "CG")
-      ("Q", "OE1")
-      ("R", "NH2")
-      ("S",  "OG")
-      ("T", "OG1")
-      ("V", "CG1")
-      ("W", "CH2")
-      ("Y",  "OH");
+  static map<char, string> gdtsc_atom = boost::assign::map_list_of
+      ('A',  "CA")
+      ('C',  "SG")
+      ('D', "OD2")
+      ('E', "OE2")
+      ('F',  "CZ")
+      ('G',  "CA")
+      ('H', "NE2")
+      ('I', "CD1")
+      ('K',  "NZ")
+      ('L', "CD1")
+      ('M',  "CE")
+      ('N', "OD1")
+      ('P',  "CG")
+      ('Q', "OE1")
+      ('R', "NH2")
+      ('S',  "OG")
+      ('T', "OG1")
+      ('V', "CG1")
+      ('W', "CH2")
+      ('Y',  "OH");
 
   if (!ref.is_fullatom() || !mod.is_fullatom()) {
     tr.Warning << "Reference and model must be fullatom for gdtsc()" << std::endl;
@@ -113,19 +113,19 @@ core::Real gdtsc(const core::pose::Pose& ref,
   int num_atoms = residues.size();
   FArray2D<Real> coords_ref(3, num_atoms);
   FArray2D<Real> coords_mod(3, num_atoms);
-  const string ref_sequence = ref.sequence();
-  const string mod_sequence = mod.sequence();
 
   int count = 1;
   for (map<Size, Size>::const_iterator i = residues.begin(); i != residues.end(); ++i, ++count) {
     const Size ref_idx = i->first;
     const Size mod_idx = i->second;
-    const string ref_residue = ref_sequence.substr(ref_idx - 1, 1);  // 0-indexed string
-    const string mod_residue = mod_sequence.substr(mod_idx - 1, 1);
-    if (ref_residue != mod_residue) {
-      tr.Warning << "Reference and model must have identical sequences for gdtsc()" << std::endl;
-      return -1;
-    }
+    const char ref_residue = ref.residue(ref_idx).name1();
+		const char mod_residue = mod.residue(mod_idx).name1();
+
+		if (ref_residue != mod_residue) {
+			tr.Warning << "Reference and model must have identical sequences for gdtha-- "
+								 << ref_residue << " != " << mod_residue << std::endl;
+			return -1;
+		}
 
     const NamedAtomID ref_atom(gdtsc_atom[ref_residue], ref_idx);
     const xyzVector<Real>& xyz_ref = ref.xyz(ref_atom);
@@ -173,24 +173,22 @@ core::Real gdtha(const core::pose::Pose& ref,
   using core::Size;
   using core::id::NamedAtomID;
   using numeric::xyzVector;
-  using std::map;
-  using std::string;
 
   // Retrieve ref, mod coordinates
   int num_atoms = residues.size();
   FArray2D<Real> coords_ref(3, num_atoms);
   FArray2D<Real> coords_mod(3, num_atoms);
-  const string ref_sequence = ref.sequence();
-  const string mod_sequence = mod.sequence();
 
   int count = 1;
-  for (map<Size, Size>::const_iterator i = residues.begin(); i != residues.end(); ++i, ++count) {
+  for (std::map<Size, Size>::const_iterator i = residues.begin(); i != residues.end(); ++i, ++count) {
     const Size ref_idx = i->first;
     const Size mod_idx = i->second;
-    const string ref_residue = ref_sequence.substr(ref_idx - 1, 1);  // 0-indexed string
-    const string mod_residue = mod_sequence.substr(mod_idx - 1, 1);
-    if (ref_residue != mod_residue) {
-      tr.Warning << "Reference and model must have identical sequences for gdtsc()" << std::endl;
+		const char ref_residue = ref.residue(ref_idx).name1();
+		const char mod_residue = mod.residue(mod_idx).name1();
+
+		if (ref_residue != mod_residue) {
+			tr.Warning << "Reference and model must have identical sequences for gdtha-- "
+								 << ref_residue << " != " << mod_residue << std::endl;
       return -1;
     }
 
