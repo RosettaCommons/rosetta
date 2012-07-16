@@ -86,6 +86,7 @@ sources = {
 		"mpi_msd",
 		"pmut_scan_parallel",
 		"sequence_recovery",
+		"beta_peptide_modeling",
 	],
 	"public/docking": [
 		"docking_prepack_protocol",
