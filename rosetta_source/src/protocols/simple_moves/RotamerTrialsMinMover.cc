@@ -151,6 +151,17 @@ RotamerTrialsMinMover::clone() const
 	return new protocols::simple_moves::RotamerTrialsMinMover( *this );
 }
 
+std::ostream &operator<< (std::ostream &os, RotamerTrialsMinMover const &mover)
+{
+	moves::operator<<(os, mover);
+	if ( mover.scorefxn() != 0 ) {
+		os << "Score function: " << mover.scorefxn()->get_name() << std::endl;
+	}
+	else { os << "Score function: none" << std::endl; }
+
+	return os;
+}
+
 std::string
 RotamerTrialsMinMoverCreator::keyname() const
 {

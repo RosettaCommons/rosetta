@@ -100,6 +100,7 @@ public:
 	virtual protocols::moves::MoverOP fresh_instance() const;
 	///@brief Return a copy of this mover instance (for RosettaScripts)
 	virtual protocols::moves::MoverOP clone() const;
+	friend std::ostream &operator<< (std::ostream &os, RotamerTrialsMinMover const &mover);
 
 protected:
 

@@ -31,7 +31,7 @@
 #include <protocols/loops/loop_mover/perturb/LoopMover_CCD.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -105,8 +105,8 @@ int main(int argc, char *argv[])
 	loopmover2.set_scorefxn(scorefxn);
 	std::cout << loopmover2 << std::endl;*/
 
-	// print empty packmover
-	protocols::simple_moves::RotamerTrialsMover rtmover;
+	// print empty rtmover
+	protocols::simple_moves::RotamerTrialsMinMover rtmover;
 	std::cout << rtmover << std::endl;
 
 	// create a custom scorefxn
@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
 	//core::Size nloop = 1;
 
 	// print rtmover2
-	protocols::simple_moves::RotamerTrialsMover rtmover2 = protocols::simple_moves::RotamerTrialsMover(scorefxn, *fine_task);
+	protocols::simple_moves::RotamerTrialsMinMover rtmover2 = protocols::simple_moves::RotamerTrialsMinMover(scorefxn, *fine_task);
 	std::cout << rtmover2 << std::endl;
 
 	//protocols::docking::ConformerSwitchMover mover;
