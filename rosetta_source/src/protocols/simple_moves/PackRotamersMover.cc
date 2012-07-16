@@ -322,6 +322,18 @@ PackerTaskCOP PackRotamersMover::task() const { return task_; }
 TaskFactoryCOP PackRotamersMover::task_factory() const { return task_factory_; }
 rotamer_set::RotamerSetsCOP PackRotamersMover::rotamer_sets() const { return rotamer_sets_; }
 interaction_graph::InteractionGraphBaseCOP PackRotamersMover::ig() const { return ig_; }
+
+std::ostream &operator<< (std::ostream &os, PackRotamersMover const &mover)
+{
+	moves::operator<<(os, mover);
+	if ( mover.score_function() != 0 ) {
+		os << "Score function: " << mover.score_function()->get_name() << std::endl;
+	}
+	else { os << "Score function: none" << std::endl; }
+
+	return os;
+}
+
 } // moves
 } // protocols
 

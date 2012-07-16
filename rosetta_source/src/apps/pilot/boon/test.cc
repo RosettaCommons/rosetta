@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 
 	// create a score3 scorefxn
 	core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction;
-	scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
+	scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "standard" );
 	// read name
 	std::cout << "Name: " << scorefxn->get_name() << std::endl;
 
@@ -105,13 +105,13 @@ int main(int argc, char *argv[])
 	loopmover2.set_scorefxn(scorefxn);
 	std::cout << loopmover2 << std::endl;*/
 
-/*	For packRotamersMover// print empty packmover
+	// print empty packmover
 	protocols::simple_moves::PackRotamersMover packmover;
 	std::cout << packmover << std::endl;
 
 	// create a custom scorefxn
-	core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction;
-	scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
+	//core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction;
+	//scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
 
 	// create a standard packer task
 	core::pack::task::PackerTaskOP fine_task ( core::pack::task::TaskFactory::create_packer_task( test_pose ));
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
 
 	// print packmover
 	protocols::simple_moves::PackRotamersMover packmover2 = protocols::simple_moves::PackRotamersMover(scorefxn, fine_task, nloop);
-	std::cout << packmover2 << std::endl;*/
+	std::cout << packmover2 << std::endl;
 
 	//protocols::docking::ConformerSwitchMover mover;
 	//std::cout << "HOLA" << std::endl;

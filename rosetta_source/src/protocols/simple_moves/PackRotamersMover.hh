@@ -189,6 +189,7 @@ public:
 	TaskFactoryCOP task_factory() const;
 	RotamerSetsCOP rotamer_sets() const;
 	InteractionGraphBaseCOP ig() const;
+	friend std::ostream &operator<< (std::ostream &os, PackRotamersMover const &mover);
 
 protected:
 	///@brief get rotamers, energies. Also performs lazy initialization of ScoreFunction, PackerTask.
