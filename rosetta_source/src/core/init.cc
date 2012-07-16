@@ -60,6 +60,7 @@
 #include <core/scoring/methods/RamachandranEnergy2BCreator.hh>
 #include <core/scoring/methods/RamachandranEnergyCreator.hh>
 #include <core/scoring/methods/ReferenceEnergyCreator.hh>
+#include <core/scoring/methods/ReferenceEnergyNoncanonicalCreator.hh>
 #include <core/scoring/methods/SecondaryStructureEnergyCreator.hh>
 #include <core/scoring/methods/VDW_EnergyCreator.hh>
 #include <core/scoring/methods/dfire/DFIRE_EnergyCreator.hh>
@@ -273,6 +274,7 @@ static EnergyMethodRegistrator< scoring::methods::RMS_EnergyCreator > RMS_Energy
 static EnergyMethodRegistrator< scoring::methods::RamachandranEnergy2BCreator > RamachandranEnergy2BCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::RamachandranEnergyCreator > RamachandranEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ReferenceEnergyCreator > ReferenceEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::ReferenceEnergyNoncanonicalCreator > ReferenceEnergyNoncanonicalCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SecondaryStructureEnergyCreator > SecondaryStructureEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::VDW_EnergyCreator > VDW_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::dfire::DFIRE_EnergyCreator > DFIRE_EnergyCreator_registrator;

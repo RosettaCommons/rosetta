@@ -368,6 +368,7 @@ sources = {
 		"RamachandranEnergy",
 		"RamachandranEnergy2B",
 		"ReferenceEnergy",
+		"ReferenceEnergyNoncanonical",
 		"ResidualDipolarCouplingEnergy",
 		"ResidualDipolarCouplingEnergy_Rohl",
 		"ChemicalShiftAnisotropyEnergy",

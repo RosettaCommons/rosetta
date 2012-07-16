@@ -507,7 +507,8 @@ RotamericSingleResidueDunbrackLibrary< T >::eval_rotameric_energy_deriv(
 	//Real phi( get_phi_from_rsd( rsd ) );
 	//Real psi( get_psi_from_rsd( rsd ) );
 
-	assert( nbb == 3 && chi.size() == nchi );
+	//Fang-Chieh Chou: Turning the assertion off so the code can be applied to beta-3-amino acids
+	//assert( nbb == 3 && chi.size() == nchi );
 
 	Real4 & chimean( scratch.chimean() );
 	Real4 & chisd(   scratch.chisd()   );

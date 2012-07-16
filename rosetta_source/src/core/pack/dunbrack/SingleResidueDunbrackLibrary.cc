@@ -360,6 +360,7 @@ Size
 SingleResidueDunbrackLibrary::rotno_2_packed_rotno( Size const rotno ) const
 {
 	assert( packed_rotno_conversion_data_current_ );
+	if (rotno < 1 || rotno > rotno_2_packed_rotno_.size() ) return 0;
 	return rotno_2_packed_rotno_[ rotno ];
 }
 

@@ -268,6 +268,7 @@ enum ScoreType {
 	yhh_planarity,
 	h2o_intra,
 	ref,
+	ref_nc,
 	seqdep_ref,
   nmer_ref,
   nmer_pssm,

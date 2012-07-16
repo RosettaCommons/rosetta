@@ -226,7 +226,7 @@ Residue::is_similar_rotamer( Residue const & other ) const
 	utility::vector1< Real > this_chi = chi_;
 	utility::vector1< Real > other_chi = other.chi();
 	bool match = true;
-	if (chi_.size() != other_chi.size() || rsd_type_.aa() != other.aa()){
+	if (chi_.size() != other_chi.size() || rsd_type_.aa() != other.aa() || rsd_type_.name3() != other.name3() ){
 		return false;
 	}
 	else {

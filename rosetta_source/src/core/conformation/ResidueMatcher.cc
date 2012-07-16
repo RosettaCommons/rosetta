@@ -45,6 +45,11 @@ WatsonCrickResidueMatcher::operator()( Residue const & rsd1, Residue const & rsd
 	}
 }
 
+bool
+ExactResidueMatcher::operator()( Residue const & rsd1, Residue const & rsd2 ) const
+{
+	return ( rsd1.name3() == rsd2.name3() );
+}
 
 } // namespace conformation
 } // namespace core

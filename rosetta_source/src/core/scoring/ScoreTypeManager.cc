@@ -197,6 +197,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "yhh_planarity" ] = yhh_planarity;
 	name2score_type_[ "h2o_intra" ] =  h2o_intra;
 	name2score_type_[ "ref" ] = ref;
+	name2score_type_[ "ref_nc" ] = ref_nc;
 	name2score_type_[ "seqdep_ref" ] = seqdep_ref;
   name2score_type_[ "nmer_ref" ] = nmer_ref;
   name2score_type_[ "nmer_pssm" ] = nmer_pssm;

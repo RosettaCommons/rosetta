@@ -47,6 +47,13 @@ public:
 	operator()( Residue const & rsd1, Residue const & rsd2 ) const;
 };
 
+class ExactResidueMatcher : public ResidueMatcher {
+public:
+	virtual
+	bool
+	operator()( Residue const & rsd1, Residue const & rsd2 ) const;
+};
+
 
 } // namespace conformation
 } // namespace core
