@@ -31,7 +31,7 @@
 #include <protocols/loops/loop_mover/perturb/LoopMover_CCD.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 	std::cout << "It has " << test_pose.total_residue() << " total residues." << std::endl;
 
 	// create a score3 scorefxn
-	core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction;
+	core::scoring::ScoreFunctionCOP scorefxn = new core::scoring::ScoreFunction;
 	scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "standard" );
 	// read name
 	std::cout << "Name: " << scorefxn->get_name() << std::endl;
@@ -106,8 +106,8 @@ int main(int argc, char *argv[])
 	std::cout << loopmover2 << std::endl;*/
 
 	// print empty packmover
-	protocols::simple_moves::PackRotamersMover packmover;
-	std::cout << packmover << std::endl;
+	protocols::simple_moves::RotamerTrialsMover rtmover;
+	std::cout << rtmover << std::endl;
 
 	// create a custom scorefxn
 	//core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction;
@@ -118,11 +118,11 @@ int main(int argc, char *argv[])
 	fine_task->initialize_from_command_line().restrict_to_repacking().or_include_current( true );
 
 	// define nloop
-	core::Size nloop = 1;
+	//core::Size nloop = 1;
 
-	// print packmover
-	protocols::simple_moves::PackRotamersMover packmover2 = protocols::simple_moves::PackRotamersMover(scorefxn, fine_task, nloop);
-	std::cout << packmover2 << std::endl;
+	// print rtmover2
+	protocols::simple_moves::RotamerTrialsMover rtmover2 = protocols::simple_moves::RotamerTrialsMover(scorefxn, *fine_task);
+	std::cout << rtmover2 << std::endl;
 
 	//protocols::docking::ConformerSwitchMover mover;
 	//std::cout << "HOLA" << std::endl;

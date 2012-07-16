@@ -91,6 +91,7 @@ public:
 	// setters
 	void score_function( core::scoring::ScoreFunctionCOP sf );
 	void task_factory( core::pack::task::TaskFactoryCOP tf );
+	friend std::ostream &operator<< (std::ostream &os, RotamerTrialsMover const &mover);
 
 public:
 

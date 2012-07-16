@@ -182,6 +182,17 @@ RotamerTrialsMover::parse_my_tag(
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 }
 
+std::ostream &operator<< (std::ostream &os, RotamerTrialsMover const &mover)
+{
+	moves::operator<<(os, mover);
+	if ( mover.scorefxn() != 0 ) {
+		os << "Score function: " << mover.scorefxn()->get_name() << std::endl;
+	}
+	else { os << "Score function: none" << std::endl; }
+
+	return os;
+}
+
 // default constructor
 EnergyCutRotamerTrialsMover::EnergyCutRotamerTrialsMover() :
 	protocols::simple_moves::RotamerTrialsMover()
