@@ -194,6 +194,7 @@ public:
 		Movers_map const & movers,
 		Pose const &
 	);
+	friend std::ostream &operator<< (std::ostream &os, TrialMover const &mover);
 
 protected:
 
@@ -208,8 +209,6 @@ private:
 	Real delta;
 	StatsType stats_type_;
 }; // TrialMover base class
-
-std::ostream &operator<< (std::ostream &os, TrialMover const &mover);
 
 } // moves
 } // protocols

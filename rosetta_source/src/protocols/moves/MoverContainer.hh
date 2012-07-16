@@ -57,7 +57,7 @@ public:
 	/// @brief Adds a mover to the end of this container
 	void add_mover( MoverOP mover_in, core::Real weight_in = 1.0 );
 
-	std::string get_mover( core::Size num) const;
+	std::string get_mover( core::Size index) const;
 
 	void clear(){ movers_.clear(); };
 
@@ -83,6 +83,7 @@ public:
 		return movers_;
 	}
 
+	friend std::ostream &operator<< (std::ostream &os, MoverContainer const &mover);
 
 protected:
 	// the weight is only used for RandomMover to pick which one is used, can this be changed?

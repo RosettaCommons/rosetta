@@ -23,8 +23,8 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <protocols/moves/PyMolMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/moves/MoverContainer.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 #include <core/fragment/ConstantLengthFragSet.hh>
@@ -58,9 +58,6 @@ int main(int argc, char *argv[])
 	std::cout << "I just imported my first pose into Rosetta." << std::endl;
 	std::cout << "It has " << test_pose.total_residue() << " total residues." << std::endl;
 	
-	protocols::simple_moves::MinMover minmover;
-	std::cout << minmover << std::endl;
-	
 /*	// create a PyMOL mover
 	protocols::moves::PyMolMover pmm;
 	std::cout << pmm << std::endl;
@@ -84,16 +81,21 @@ int main(int argc, char *argv[])
 	std::cout << cfmover << std::endl;*/
 
 	//std::cout << test_pose.energies() << std::endl;
-/*	protocols::simple_moves::SmallMoverOP smallmover = new protocols::simple_moves::SmallMover;
+
+	protocols::simple_moves::SmallMoverOP smallmover = new protocols::simple_moves::SmallMover;
 	protocols::simple_moves::ShearMoverOP shearmover = new protocols::simple_moves::ShearMover;
-	protocols::moves::SequenceMover mover;
-	core::Real num = 1.0;
-	mover.add_mover(smallmover, num);
-	mover.add_mover(shearmover, num);
-	std::cout << mover << std::endl;
-	core::Size index = 0;
-	std::cout << mover.get_mover(index) << std::endl;
-	std::cout << "try" << mover.get_mover(index+1) << std::endl;*/
+	protocols::moves::SequenceMover seqmover;
+	core::Real num1 = 1.0;
+	core::Real num2 = 2.0;
+	seqmover.add_mover(smallmover, num1);
+	seqmover.add_mover(shearmover, num1);
+	std::cout << seqmover << std::endl;
+
+	protocols::moves::RandomMover ranmover;
+	ranmover.add_mover(shearmover, num1);
+	ranmover.add_mover(smallmover, num1);
+	ranmover.add_mover(shearmover, num1);
+	std::cout << ranmover << std::endl;
 
 	/*protocols::simple_moves::SwitchResidueTypeSetMover switchmover;
 	std::cout << switchmover << std::endl;

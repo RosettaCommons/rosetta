@@ -66,8 +66,8 @@ void MoverContainer::add_mover( MoverOP mover_in , Real weight_in ) // do we nee
 	weight_.push_back(weight_in);
 }
 
-std::string MoverContainer::get_mover( core::Size num ) const {
-	return movers_[num]->get_name();
+std::string MoverContainer::get_mover( core::Size index ) const {
+	return movers_[index]->get_name();
 }
 
 
@@ -271,15 +271,12 @@ CycleMover::get_name() const {
 
 std::ostream &operator<< (std::ostream &os, MoverContainer const &mover)
 {
-	moves::operator<<(os, mover);
-	os << "Mover name: " << mover.get_name() << ", Mover type: " << mover.get_type();
-	Size i = 0;
-	os << mover.get_mover(i) << std::endl;
-	os << mover.get_mover(i+1) << std::endl;
-	os << mover.get_mover(i+2) << std::endl;
-	//for ( Size i=0; i<mover.size(); ++i ) {
-	//	os << "Mover[" << i+1 << "]: " << mover.get_mover(i) << std::endl;
-	//}
+	//moves::operator<<(os, mover);
+	os << "Mover name: " << mover.get_name() << ", Mover type: " << mover.get_type() << ", Mover current tag: " << mover.get_current_tag() << std::endl;
+	os << mover.size() << " movers are contained in the following order:" << std::endl;
+	for ( Size i=0; i<mover.size(); ++i ) {
+		os << "   Mover[" << i+1 << "]: " << mover.get_mover(i) << std::endl;
+	}
 
 	return os;
 }
