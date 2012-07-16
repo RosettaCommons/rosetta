@@ -645,7 +645,7 @@ const int Boinc::destroy_semaphore() {
 
 #endif // USE_SYSV_SEMAPHORE
 
-const int Boinc::create_semaphore() {
+int Boinc::create_semaphore() {
 
 #ifdef _WIN32
   // Windows semaphore
@@ -835,7 +835,7 @@ Cleanup:
 
 }
 
-const int Boinc::get_semaphore() {
+int Boinc::get_semaphore() {
 
 #ifdef _WIN32
 	// already opened
@@ -894,7 +894,7 @@ const int Boinc::get_semaphore() {
 #endif // _WIN32
 }
 
-const int Boinc::wait_semaphore() {
+int Boinc::wait_semaphore() {
 #ifdef _WIN32
 	if (WaitForSingleObject(sem_des_, INFINITE) == WAIT_OBJECT_0) return 0;
 	return 1;
@@ -910,7 +910,7 @@ const int Boinc::wait_semaphore() {
 #endif // _WIN32
 }
 
-const int Boinc::trywait_semaphore() {
+int Boinc::trywait_semaphore() {
 #ifdef _WIN32
 	if (WaitForSingleObject(sem_des_, 0) == WAIT_OBJECT_0) return 0;
 	return 1;
@@ -926,7 +926,7 @@ const int Boinc::trywait_semaphore() {
 #endif // _WIN32
 }
 
-const int Boinc::unlock_semaphore() {
+int Boinc::unlock_semaphore() {
 #ifdef _WIN32
 	// returns non-zero on success
 	if (ReleaseSemaphore(sem_des_, 1, NULL)) return 0;

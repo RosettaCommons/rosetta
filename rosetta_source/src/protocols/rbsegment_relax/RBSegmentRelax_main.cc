@@ -14,11 +14,8 @@
 
 //#include <protocols/jobdist/JobDistributors.hh>
 //#include <protocols/jobdist/Jobs.hh>
-// AUTO-REMOVED #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <core/types.hh>
-
-// AUTO-REMOVED #include <core/init.hh>
 
 #include <core/kinematics/Jump.hh>
 #include <core/fragment/FragSet.hh>
@@ -36,21 +33,16 @@
 #include <protocols/rbsegment_relax/RBSegmentRelax.hh>
 #include <protocols/rbsegment_relax/RBSegmentRelax_main.hh>
 
-
 #include <core/io/silent/SilentStructFactory.hh>
 
+#include <protocols/boinc/boinc.hh>  // required for boinc build
 
 // C++ headers
-//#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <string>
-// AUTO-REMOVED #include <ctime>
-
-//silly using/typedef
 
 // option key includes
-
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/RBSegmentRelax.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -58,7 +50,6 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
-//Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
@@ -124,8 +115,8 @@ void RBSegmentRelaxImpl::apply( core::pose::Pose & pose ){
 		protocols::loops::read_loop_fragments( frag_libs );
 
 #ifdef BOINC_GRAPHICS
-	 attach boinc graphics pose observer
-		protocols::boinc::Boinc::attach_graphics_current_pose_observer( pose );
+	// attach boinc graphics pose observer
+	protocols::boinc::Boinc::attach_graphics_current_pose_observer( pose );
 #endif
 
 	rbsegment_relax::RBSegmentRelax shaker( scorefxn_rb_, rbsegs, loops );
