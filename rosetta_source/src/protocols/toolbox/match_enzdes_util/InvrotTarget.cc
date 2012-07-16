@@ -22,6 +22,7 @@
 #include <protocols/toolbox/match_enzdes_util/InvrotTreeNode.hh>
 
 //project headers
+#include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/constraints/MultiConstraint.hh>
 

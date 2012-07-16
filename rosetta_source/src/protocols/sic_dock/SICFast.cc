@@ -19,6 +19,7 @@
 #include <utility/string_util.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/scoring/sasa.hh>
+#include <core/scoring/constraints/Func.hh>
 #include <core/pose/util.hh>
 
 namespace protocols {
@@ -81,11 +82,11 @@ SICFast::SICFast() :
 
 SICFast::~SICFast(){
 	if(h1_) delete h1_;
-	if(h2_) delete h2_;		
+	if(h2_) delete h2_;
 }
 
 
-void 
+void
 SICFast::init(
 	core::pose::Pose const & pose
 ) {
@@ -100,7 +101,7 @@ SICFast::init(
 	init(pose,pose,clash_atoms,clash_atoms);
 }
 
-void 
+void
 SICFast::init(
 	core::pose::Pose const & pose1,
 	core::pose::Pose const & pose2

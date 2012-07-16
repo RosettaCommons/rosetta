@@ -38,6 +38,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/scoring/constraints/Func.hh>
 
 #include <basic/Tracer.hh>
 

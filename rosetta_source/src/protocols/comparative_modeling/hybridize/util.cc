@@ -18,6 +18,7 @@
 #include <core/pose/util.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
+#include <core/pack/task/PackerTask.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
@@ -52,12 +53,12 @@
 namespace protocols {
 namespace comparative_modeling {
 namespace hybridize {
-		
+
 using namespace core;
 using namespace kinematics;
 using namespace core::scoring::constraints;
 
-void setup_centroid_constraints( 
+void setup_centroid_constraints(
 		core::pose::Pose &pose,
 		utility::vector1 < core::pose::PoseCOP > templates,
 		utility::vector1 < core::Real > template_weights,
@@ -97,7 +98,7 @@ void setup_fullatom_constraints(
 	}
 }
 
-void generate_centroid_constraints( 
+void generate_centroid_constraints(
 		core::pose::Pose &pose,
 		utility::vector1 < core::pose::PoseCOP > templates,
 		utility::vector1 < core::Real > template_weights )
@@ -147,7 +148,7 @@ void generate_centroid_constraints(
 				if ( dist <= MAXDIST ) {
 					pose.add_constraint(
 						new AtomPairConstraint( core::id::AtomID(2,templates[i]->pdb_info()->number(j)),
-						                        core::id::AtomID(2,templates[i]->pdb_info()->number(k)), 
+						                        core::id::AtomID(2,templates[i]->pdb_info()->number(k)),
 							new ScalarWeightedFunc( 1.0, new SOGFunc( dist, COORDDEV )  )
 							//new ScalarWeightedFunc( template_weights[i], new SOGFunc( dist, COORDDEV )  )
 						)
@@ -218,7 +219,7 @@ void add_non_protein_cst(core::pose::Pose & pose, core::Real const cst_weight) {
 
 bool discontinued_upper(core::pose::Pose const & pose, Size const seqpos) {
 	core::Real N_C_cutoff(2.0);
-	
+
 	if (seqpos == 1) return true;
 	if (!pose.residue_type(seqpos).is_polymer()) return true;
 	if (!pose.residue_type(seqpos-1).is_polymer()) return true;
@@ -232,7 +233,7 @@ bool discontinued_upper(core::pose::Pose const & pose, Size const seqpos) {
 
 bool discontinued_lower(core::pose::Pose const & pose, Size const seqpos) {
 	core::Real N_C_cutoff(2.0);
-	
+
 	if (seqpos == pose.total_residue()) return true;
 	if (!pose.residue_type(seqpos).is_polymer()) return true;
 	if (!pose.residue_type(seqpos+1).is_polymer()) return true;
@@ -265,7 +266,7 @@ downstream_residues_from_jump(core::pose::Pose const & pose, Size const jump_num
 	residue_list.unique();
 	return residue_list;
 }
-	
+
 void
 partial_align(
 		core::pose::Pose & pose,
@@ -350,7 +351,7 @@ update_atom_map(
 		for ( Size iatom=1; iatom<= pose.residue(ires).natoms(); ++iatom ) {
 			core::id::AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
 			if (!aid.valid()) continue;
-			
+
 			if (pose.xyz(id::AtomID( iatom,ires )).distance_squared( ref_pose.xyz(aid) ) < distance_squared_threshold)
 				updated_atom_map[ id::AtomID( iatom,ires ) ] = aid;
 		}
@@ -371,16 +372,16 @@ natom_aligned(
 		for ( Size iatom=1; iatom<= pose.residue(ires).natoms(); ++iatom ) {
 			core::id::AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
 			if (!aid.valid()) continue;
-			
+
 			if (pose.xyz(id::AtomID( iatom,ires )).distance_squared( ref_pose.xyz(aid) ) < distance_squared_threshold) {
 				++n_align;
 			}
 		}
 	}
 	return n_align;
-	
+
 }
-	
+
 // atom_map: from mod_pose to ref_pose
 void
 get_superposition_transformation(
@@ -397,18 +398,18 @@ get_superposition_transformation(
 		for ( Size iatom=1; iatom<= mod_pose.residue(ires).natoms(); ++iatom ) {
 			AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
 			if (!aid.valid()) continue;
-			
+
 			++total_mapped_atoms;
 		}
 	}
-	
+
 	preT = postT = numeric::xyzVector< core::Real >(0,0,0);
 	if (total_mapped_atoms <= 2) {
 		R.xx() = R.yy() = R.zz() = 1;
 		R.xy() = R.yx() = R.zx() = R.zy() = R.yz() = R.xz() = 0;
 		return;
 	}
-	
+
 	ObjexxFCL::FArray2D< core::Real > final_coords( 3, total_mapped_atoms );
 	ObjexxFCL::FArray2D< core::Real > init_coords( 3, total_mapped_atoms );
 	preT = postT = numeric::xyzVector< core::Real >(0,0,0);
@@ -418,19 +419,19 @@ get_superposition_transformation(
 			AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
 			if (!aid.valid()) continue;
 			++atomno;
-			
+
 			numeric::xyzVector< core::Real > x_i = mod_pose.residue(ires).atom(iatom).xyz();
 			preT += x_i;
 			numeric::xyzVector< core::Real > y_i = ref_pose.xyz( aid );
 			postT += y_i;
-			
+
 			for (int j=0; j<3; ++j) {
 				init_coords(j+1,atomno) = x_i[j];
 				final_coords(j+1,atomno) = y_i[j];
 			}
 		}
 	}
-	
+
 	preT /= (float) total_mapped_atoms;
 	postT /= (float) total_mapped_atoms;
 	for (int i=1; i<=(int)total_mapped_atoms; ++i) {
@@ -439,13 +440,13 @@ get_superposition_transformation(
 			final_coords(j+1,i) -= postT[j];
 		}
 	}
-	
+
 	// get optimal superposition
 	// rotate >init< to >final<
 	ObjexxFCL::FArray1D< numeric::Real > ww( total_mapped_atoms, 1.0 );
 	ObjexxFCL::FArray2D< numeric::Real > uu( 3, 3, 0.0 );
 	numeric::Real ctx;
-	
+
 	numeric::model_quality::findUU( init_coords, final_coords, ww, total_mapped_atoms, uu, ctx );
 	R.xx( uu(1,1) ); R.xy( uu(2,1) ); R.xz( uu(3,1) );
 	R.yx( uu(1,2) ); R.yy( uu(2,2) ); R.yz( uu(3,2) );
@@ -462,7 +463,7 @@ apply_transformation(
 	// translate xx2 by COM and fill in the new ref_pose coordinates
 	utility::vector1< core::id::AtomID > ids;
 	utility::vector1< numeric::xyzVector<core::Real> > positions;
-	
+
 	for (std::list<Size>::const_iterator it = residue_list.begin();
 		 it != residue_list.end();
 		 ++it) {
@@ -475,7 +476,7 @@ apply_transformation(
 	mod_pose.batch_set_xyz(ids,positions);
 }
 
-    
-} // hybridize 
-} // comparative_modeling 
+
+} // hybridize
+} // comparative_modeling
 } // protocols

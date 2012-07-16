@@ -55,6 +55,7 @@
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/pack/task/PackerTask.hh>
 
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -102,7 +103,7 @@ using namespace numeric::model_quality;
 using namespace id;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
-	
+
 
 FoldTreeHybridize::FoldTreeHybridize() :
 foldtree_mover_()
@@ -139,7 +140,7 @@ FoldTreeHybridize::FoldTreeHybridize (
 	frag_libs_.push_back(fragments3_in);
 	frag_libs_.push_back(fragments9_in);
 }
-	
+
 void
 FoldTreeHybridize::init() {
 	using namespace basic::options;
@@ -161,10 +162,10 @@ void
 FoldTreeHybridize::set_loops_to_virt_ala(core::pose::Pose & pose, Loops loops)
 {
 	chemical::ResidueTypeSet const& restype_set( pose.residue(1).residue_type_set() );
-	
+
 	for (Size iloop=1; iloop<=loops.num_loop(); ++iloop) {
 		for (Size ires=loops[iloop].start(); ires<=loops[iloop].stop(); ++ires) {
-			
+
 			// Create the new residue and replace it
 			conformation::ResidueOP new_res = conformation::ResidueFactory::create_residue(
 																						   restype_set.name_map("VBB"), pose.residue(ires),
@@ -183,7 +184,7 @@ FoldTreeHybridize::revert_loops_to_original(core::pose::Pose & pose, Loops loops
 {
 	std::string sequence = core::sequence::read_fasta_file( option[ in::file::fasta ]()[1] )[1]->sequence();
 	chemical::ResidueTypeSet const& restype_set( pose.residue(1).residue_type_set() );
-	
+
 	for (Size iloop=1; iloop<=loops.num_loop(); ++iloop) {
 		for (Size ires=loops[iloop].start(); ires<=loops[iloop].stop(); ++ires) {
 			utility::vector1< VariantType > variant_types = pose.residue_type(ires).variant_types();
@@ -209,7 +210,7 @@ FoldTreeHybridize::gap_distance(Size Seq_gap)
 	core::Real gap_torr_6(24.5);
 	core::Real gap_torr_7(27.5);
 	core::Real gap_torr_8(31.0);
-	
+
 	switch (Seq_gap) {
 		case 0:
 			return gap_torr_0; break;
@@ -248,7 +249,7 @@ void FoldTreeHybridize::add_gap_constraints_to_pose(core::pose::Pose & pose, Loo
 		if (!pose.residue_type(gap_stop ).is_protein()) continue;
 		Size iatom = pose.residue_type(gap_start).atom_index("CA");
 		Size jatom = pose.residue_type(gap_stop ).atom_index("CA");
-		
+
 		TR << "Add constraint to residue " << I(4,gap_start) << " and residue " << I(4,gap_stop) << std::endl;
 		pose.add_constraint(
 							new core::scoring::constraints::AtomPairConstraint(
@@ -256,7 +257,7 @@ void FoldTreeHybridize::add_gap_constraints_to_pose(core::pose::Pose & pose, Loo
 																			   core::id::AtomID(jatom,gap_stop),
 																			   new core::scoring::constraints::BoundFunc( 0, gap_distance(gap_size), stdev, "gap" ) )
 							);
-		
+
 	}
 }
 
@@ -270,7 +271,7 @@ protocols::loops::Loops FoldTreeHybridize::renumber_template_chunks(
 		Size seqpos_start_templ = template_chunk[ichunk].start();
 		Size seqpos_start_target = template_pose->pdb_info()->number(seqpos_start_templ);
 		renumbered_template_chunks[ichunk].set_start( seqpos_start_target );
-		
+
 		Size seqpos_stop_templ = template_chunk[ichunk].stop();
 		Size seqpos_stop_target = template_pose->pdb_info()->number(seqpos_stop_templ);
 		renumbered_template_chunks[ichunk].set_stop( seqpos_stop_target );
@@ -331,7 +332,7 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 			Size seqpos_stop_target = template_poses_[itempl]->pdb_info()->number(template_chunks_[itempl][icontig].stop());
 
 			bool uncovered = true;
-			for (Size j=seqpos_start_target; j<=seqpos_stop_target && uncovered ; ++j) 
+			for (Size j=seqpos_start_target; j<=seqpos_stop_target && uncovered ; ++j)
 				uncovered &= !template_mask[j];
 
 			if (uncovered) {
@@ -350,7 +351,7 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 	for (int i=1; i<=wted_insertions_to_consider.size(); ++i) {
 		// ensure the insert is still valid
 		bool uncovered = true;
-		for (Size j=wted_insertions_to_consider[i].second.start(); j<=wted_insertions_to_consider[i].second.stop() && uncovered ; ++j) 
+		for (Size j=wted_insertions_to_consider[i].second.start(); j<=wted_insertions_to_consider[i].second.stop() && uncovered ; ++j)
 			uncovered &= !template_mask[j];
 
 		if (!uncovered) continue;
@@ -365,7 +366,7 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 		}
 	}
 	}
-	
+
 	my_chunks.sequential_order();
 	TR << "Chunks used for foldtree setup: " << std::endl;
 	TR << my_chunks << std::endl;
@@ -382,7 +383,7 @@ FoldTreeHybridize::center_of_mass(core::pose::Pose const & pose) {
 	for ( int i=1; i<= nres; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
 		if (rsd.aa() == core::chemical::aa_vrt) continue;
-		
+
 		for ( Size j=1; j<= rsd.nheavyatoms(); ++j ) {
 			conformation::Atom const & atom( rsd.atom(j) );
 			massSum += atom.xyz();
@@ -399,11 +400,11 @@ FoldTreeHybridize::translate_virt_to_CoM(core::pose::Pose & pose) {
 	CoM = center_of_mass(pose);
 	numeric::xyzVector<Real> curr_pos = pose.residue(pose.total_residue()).xyz(1);
 	numeric::xyzVector<Real> translation = CoM - curr_pos;
-	
+
 	basic::Tracer TR("pilot.yfsong.util");
 	using namespace ObjexxFCL::fmt;
 	TR.Debug << F(8,3,translation.x()) << F(8,3,translation.y()) << F(8,3,translation.z()) << std::endl;
-	
+
 	// apply transformation
 	utility::vector1< core::id::AtomID > ids;
 	utility::vector1< numeric::xyzVector<core::Real> > positions;
@@ -441,7 +442,7 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_from_loops
 			protocols::loops::Loops renumbered_template_chunks
 			= renumber_template_chunks(
 									   template_contigs_[initial_template_index_], template_poses_[initial_template_index_]);
-			
+
 			if (! renumbered_template_chunks.has(ires) ) {
 				residue_weights[ires] = 1.0;
 				TR.Debug << " " << ires;
@@ -464,7 +465,7 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_from_loops
 				coverage_end = template_poses_[i_template]->pdb_info()->number(ires);
 			}
 		}
-		
+
 		for (int shift = -5; shift<=5; ++shift) {
 			int ires = coverage_start + shift;
 			if (ires >= 1 && ires <= pose.total_residue()) {
@@ -501,7 +502,7 @@ void FoldTreeHybridize::restore_original_foldtree(core::pose::Pose & pose) {
 }
 
 void
-FoldTreeHybridize::setup_scorefunctions( 
+FoldTreeHybridize::setup_scorefunctions(
 		core::scoring::ScoreFunctionOP score0,
 		core::scoring::ScoreFunctionOP score1,
 		core::scoring::ScoreFunctionOP score2,
@@ -510,7 +511,7 @@ FoldTreeHybridize::setup_scorefunctions(
 	core::Real lincb_orig = scorefxn_->get_weight( core::scoring::linear_chainbreak );
 	core::Real cb_orig = scorefxn_->get_weight( core::scoring::chainbreak );
 	core::Real cst_orig = scorefxn_->get_weight( core::scoring::atom_pair_constraint );
-	
+
 	score0->reset();
 	score0->set_weight( core::scoring::vdw, 0.1*scorefxn_->get_weight( core::scoring::vdw ) );
 
@@ -529,7 +530,7 @@ FoldTreeHybridize::setup_scorefunctions(
 	core::scoring::methods::EnergyMethodOptions score1_options(score1->energy_method_options());
 	score1_options.set_strand_strand_weights(1,11);
 	score1->set_energy_method_options(score1_options);
-	
+
 
 	score2->reset();
 	score2->set_weight( core::scoring::linear_chainbreak, 0.25*lincb_orig );
@@ -581,6 +582,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	setup_foldtree(pose);
 
 	setup_centroid_constraints( pose, template_poses_, template_wts_, cst_file_ );
+
 	if (add_hetatm_) {
 		add_non_protein_cst(pose, hetatm_cst_weight_);
 	}
@@ -591,7 +593,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	initialize_chunk_mover.set_template(initial_template_index_);
 	initialize_chunk_mover.apply(pose);
 	translate_virt_to_CoM(pose);
-	
+
 	use_random_template = true;
 	Size max_registry_shift = max_registry_shift_;
 	ChunkTrialMoverOP random_sample_chunk_mover(
@@ -623,7 +625,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 			stage0mover->add_mover(fragment_trial_mover, frag_insertion_weight_);
 		}
 	}
-	
+
 	// stage 1
  	protocols::moves::MonteCarloOP mc1 = new protocols::moves::MonteCarlo( pose, *score0, 2.0 );
  	for (int i=1; i<=2000*increase_cycles_; ++i) {
@@ -697,7 +699,7 @@ std::string FoldTreeHybridize::get_name() const
 	return "FoldTreeHybridize";
 }
 
-} // hybridize 
-} // comparative_modeling 
+} // hybridize
+} // comparative_modeling
 } // protocols
 

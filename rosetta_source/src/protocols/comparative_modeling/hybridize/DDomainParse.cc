@@ -37,6 +37,7 @@
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/pack/task/PackerTask.hh>
 
 #include <list>
 
@@ -303,7 +304,7 @@ DDomainParse::split( core::pose::Pose const &templ, core::Size nres ) {
 			distance(ist, ilast, xs, dij);
 			ddomain_pot(pw, ist, ilast, dij, resect);
 			pulldomain(isize0, ist, ilast, resect, imid);
-	
+
 			if (imid > ist && imid < ilast) {
 				idom++;
 				if (idom > mdom) {
@@ -314,7 +315,7 @@ DDomainParse::split( core::pose::Pose const &templ, core::Size nres ) {
 				ipdd++;
 				ipdom[ipdd] = imid;
 				ifg_dom = 1;
-	
+
 				for (int i=1; i<=2; ++i) {
 					findpos2(ist, ilast, imid, i, istx, ilastx);
 					if (ilastx - istx >= isize0) {
@@ -336,7 +337,7 @@ DDomainParse::split( core::pose::Pose const &templ, core::Size nres ) {
 				}
 			}
 		}
-	
+
 		if (ifg_dom == 1) {
 			ndom = idom;
 			ifg_dom = 0;
@@ -373,6 +374,6 @@ DDomainParse::split( core::pose::Pose const &templ, core::Size nres ) {
 	return retval;
 }
 
-} // hybridize 
-} // comparative_modeling 
+} // hybridize
+} // comparative_modeling
 } // protocols

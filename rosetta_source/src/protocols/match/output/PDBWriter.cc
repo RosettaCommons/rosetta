@@ -29,6 +29,7 @@
 #include <core/pose/Remarks.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/scoring/constraints/Func.hh>
 #include <basic/Tracer.hh>
 
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
