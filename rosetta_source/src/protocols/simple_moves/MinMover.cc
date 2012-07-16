@@ -280,10 +280,12 @@ void MinMover::parse_chi_and_bb( TagPtr const tag )
 std::ostream &operator<< (std::ostream &os, MinMover const &mover)
 {
 	moves::operator<<(os, mover);
-	os << "Minimization type: " << mover.min_type() <<
-			", Score tolerance: " << mover.tolerance() <<
-			", Nb list: " << mover.nb_list() <<
-			", Deriv check: " << mover.deriv_check() << std::endl;
+	os << "Minimization type: " << mover.min_type() << ", Score function: ";
+	if ( mover.score_function() != 0 ) {
+		os << mover.score_function()->get_name() << std::endl;
+	}
+	else { os << "none" << std::endl; }
+	os << "Score tolerance: " << mover.tolerance() << ", Nb list: " << mover.nb_list() << ", Deriv check: " << mover.deriv_check() << std::endl;
 
 	return os;
 }

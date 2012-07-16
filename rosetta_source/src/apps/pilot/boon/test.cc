@@ -24,7 +24,7 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <protocols/moves/PyMolMover.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 #include <core/fragment/ConstantLengthFragSet.hh>
@@ -58,7 +58,10 @@ int main(int argc, char *argv[])
 	std::cout << "I just imported my first pose into Rosetta." << std::endl;
 	std::cout << "It has " << test_pose.total_residue() << " total residues." << std::endl;
 	
-	// create a PyMOL mover
+	protocols::simple_moves::MinMover minmover;
+	std::cout << minmover << std::endl;
+	
+/*	// create a PyMOL mover
 	protocols::moves::PyMolMover pmm;
 	std::cout << pmm << std::endl;
 	
@@ -66,7 +69,7 @@ int main(int argc, char *argv[])
 	protocols::moves::PyMolMover pmm2;
 	pmm2.update_energy(true);
 	pmm2.keep_history(true);
-	std::cout << pmm2 << std::endl;
+	std::cout << pmm2 << std::endl;*/
 
 /*	// create a score3 scorefxn
 	core::scoring::ScoreFunctionCOP scorefxn = new core::scoring::ScoreFunction;
