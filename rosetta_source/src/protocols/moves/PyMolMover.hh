@@ -323,6 +323,17 @@ public:
 
 	/// @brief  Return current update interval.
 	core::Real update_interval() { return update_interval_; };
+	
+	friend std::ostream &operator<< (std::ostream &os, PyMolMover const &mover)
+	{
+		moves::operator<<(os, mover);
+		os << "Keep history: " << ( ( mover.keep_history_ ) ? ("true") : ("false") ) << std::endl; 
+		os << "Update energy: " << ( ( mover.update_energy_ ) ? ("true") : ("false") ) << std::endl; 
+		os << "Last packet sent time: " << mover.last_packet_sent_time_ << std::endl;
+		os << "Update interval: " << mover.update_interval_ << std::endl; 
+
+		return os;
+	}
 
 private:
 	//void send_message(std::string const & message_type, bool keep_history, std::string const & name, std::string const &message);

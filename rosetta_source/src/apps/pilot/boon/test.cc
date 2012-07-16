@@ -23,7 +23,7 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <protocols/moves/MoverContainer.hh>
+#include <protocols/moves/PyMolMover.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
@@ -57,12 +57,22 @@ int main(int argc, char *argv[])
 	std::cout << "Hello, Rosetta World!" << std::endl;
 	std::cout << "I just imported my first pose into Rosetta." << std::endl;
 	std::cout << "It has " << test_pose.total_residue() << " total residues." << std::endl;
+	
+	// create a PyMOL mover
+	protocols::moves::PyMolMover pmm;
+	std::cout << pmm << std::endl;
+	
+	// create another PyMOL mover
+	protocols::moves::PyMolMover pmm2;
+	pmm2.update_energy(true);
+	pmm2.keep_history(true);
+	std::cout << pmm2 << std::endl;
 
-	// create a score3 scorefxn
+/*	// create a score3 scorefxn
 	core::scoring::ScoreFunctionCOP scorefxn = new core::scoring::ScoreFunction;
 	scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "standard" );
 	// read name
-	std::cout << "Name: " << scorefxn->get_name() << std::endl;
+	std::cout << "Name: " << scorefxn->get_name() << std::endl;*/
 
 /*	using namespace fragment;
 	ConstantLengthFragSetOP fragset = new ConstantLengthFragSet( 3 );
@@ -105,7 +115,7 @@ int main(int argc, char *argv[])
 	loopmover2.set_scorefxn(scorefxn);
 	std::cout << loopmover2 << std::endl;*/
 
-	// print empty rtmover
+/*	// print empty rtmover
 	protocols::simple_moves::RotamerTrialsMinMover rtmover;
 	std::cout << rtmover << std::endl;
 
@@ -122,7 +132,7 @@ int main(int argc, char *argv[])
 
 	// print rtmover2
 	protocols::simple_moves::RotamerTrialsMinMover rtmover2 = protocols::simple_moves::RotamerTrialsMinMover(scorefxn, *fine_task);
-	std::cout << rtmover2 << std::endl;
+	std::cout << rtmover2 << std::endl;*/
 
 	//protocols::docking::ConformerSwitchMover mover;
 	//std::cout << "HOLA" << std::endl;
