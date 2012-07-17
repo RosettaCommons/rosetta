@@ -184,6 +184,8 @@ sample_all_rotations_at_jump( pose::Pose & pose, Size const num_jump, scoring::S
 	Matrix M;
 	Vector axis1( 1.0, 0.0, 0.0 ), axis2( 0.0, 1.0, 0.0 ), axis3( 0.0, 0.0, 1.0 );
 
+	Real const kT = 0.5;
+	Real partition_function = 0;
 	Size  count( 0 );
 	Real  score_min( 0.0 );
 	kinematics::Jump  best_jump;
@@ -224,6 +226,7 @@ sample_all_rotations_at_jump( pose::Pose & pose, Size const num_jump, scoring::S
 
 				if ( scorefxn ) {
 					Real const score = (*scorefxn)( pose );
+					partition_function += exp( - score / kT );
 					if ( score < score_min || count == 0 ) {
 						score_min = score;
 						best_jump = jump;
@@ -241,7 +244,11 @@ sample_all_rotations_at_jump( pose::Pose & pose, Size const num_jump, scoring::S
 
 	pose.set_jump( num_jump, best_jump );
 
-	return score_min;
+	Real const free_E = - log( partition_function / count );
+
+//	std::cout << "Energies: " << free_E << ' ' << score_min << std::endl;
+//	return score_min;
+	return free_E;
 
 }
 
@@ -430,7 +437,12 @@ adenine_probe_score_test()
 		scorefxn->set_weight( rna_sugar_close, 0.0 ); //still computed with virtual sugar? weird.
 	}
 
-	(*scorefxn)( pose );
+//	jump.set_translation( Vector( 3.75, 1.75, 1.5 ) );
+//	pose.set_jump( probe_jump_num, jump );
+//	sample_all_rotations_at_jump( pose, probe_jump_num, scorefxn );
+//	pose.dump_pdb( "test.pdb" );
+//	exit(0);
+ 	(*scorefxn)( pose );
 	scorefxn->show( std::cout, pose );
 
 	//////////////////////////////////////////////////////////////////
@@ -468,10 +480,9 @@ adenine_probe_score_test()
 
 
 	//////////////////////////////////////////////
-	std::cout << "Doing XY scan... Z = +1.0" << std::endl;
-	do_xy_scan( pose, scorefxn, "score_xy_1.table", 1.0, probe_jump_num, box_bins, translation_increment, sample_water_ );
-
-	//////////////////////////////////////////////
+	std::cout << "Doing XY scan... Z = +1.5" << std::endl;
+	do_xy_scan( pose, scorefxn, "score_xy_1.5.table", 1.5, probe_jump_num, box_bins, translation_increment, sample_water_ );
+	
 	std::cout << "Doing XY scan... Z = +3.0" << std::endl;
 	do_xy_scan( pose, scorefxn, "score_xy_3.table", 3.0, probe_jump_num, box_bins, translation_increment, sample_water_ );
 
