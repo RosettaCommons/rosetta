@@ -348,7 +348,7 @@ JD2ResourceManagerJobInputter::read_Option_subtag_for_job(
 					RealVectorOptionKey const & rvectopt( static_cast< RealVectorOptionKey const & > (opt) );
 					read_RealVectorOption_subtag_for_job( rvectopt, optname, val, vals, job_options );
 				} else if ( dynamic_cast< StringVectorOptionKey const * > (&opt) ) {
-					StringVectorOptionKey const & stvectopt( static_cast< StringOptionKey const & > (opt) );
+					StringVectorOptionKey const & stvectopt( static_cast< StringVectorOptionKey const & > (opt) );
 					read_StringVectorOption_subtag_for_job( stvectopt, optname, val, vals, job_options );
 				}
 			}

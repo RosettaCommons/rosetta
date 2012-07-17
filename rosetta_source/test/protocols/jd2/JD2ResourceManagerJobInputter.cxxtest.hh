@@ -79,7 +79,8 @@ public:
 			std::string expected_error =
 				"Failed to find a data description (desc) amongst the options pairs listed reading a 'Data' tag in a Job tag.\n"
 				" A desc option must always be given\n"
-				"Error:  'pdb' tag given for a non-'startstruct' option in the 'Data' tag of a Job tagOptions given:\n"
+				"Error:  'pdb' tag given for a non-'startstruct' option in the 'Data' tag of a Job tagProblem encounteredfor job named 'firstjob'.\n"
+				"Options given:\n"
 				"(pdb,1ten.pdb)\n"
 				"Thrown from protocols::jd2::JD2ResourceManagerJobInputter::parse_job_tag\n";
 			TS_ASSERT( e.msg() == expected_error );
@@ -109,6 +110,7 @@ public:
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::string expected_error =
 				"Failed to find a resource name or a pdb name reading a 'Data' tag in a Job tag.  Either a 'resource' or a 'pdb' option must be provided.\n"
+				"Problem encounteredfor job named 'firstjob'.\n"
 				"Options given:\n"
 				"(desc,startstruct)\n"
 				"Thrown from protocols::jd2::JD2ResourceManagerJobInputter::parse_job_tag\n";
@@ -137,7 +139,8 @@ public:
 			TS_ASSERT( false ); // should throw an exception
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::string expected_error =
-				"Error: Both a 'resource' and a 'pdb' tag were found for a 'Data' tag in the Job tagOptions given:\n"
+				"Error: Both a 'resource' and a 'pdb' tag were found for a 'Data' tag in the Job tagProblem encounteredfor job named 'firstjob'.\n"
+				"Options given:\n"
 				"(desc,startstruct)\n"
 				"(pdb,1ten.pdb)\n"
 				"(resource,1ten_native)\n"
@@ -168,7 +171,8 @@ public:
 			TS_ASSERT( false ); // should throw an exception
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::string expected_error =
-				"Error:  'pdb' tag given for a non-'startstruct' option in the 'Data' tag of a Job tagOptions given:\n"
+				"Error:  'pdb' tag given for a non-'startstruct' option in the 'Data' tag of a Job tagProblem encounteredfor job named 'firstjob'.\n"
+				"Options given:\n"
 				"(desc,whatever)\n"
 				"(pdb,1ten.pdb)\n"
 				"Thrown from protocols::jd2::JD2ResourceManagerJobInputter::parse_job_tag\n";
