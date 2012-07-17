@@ -80,6 +80,7 @@ sources = {
 		"TaskAwareSymMinMover",
                 "Symmetrizer",
                 "SymDofMover",
+                "SymDofMoverSampler",
                 "SymmetrizerSampler",
                 "BuildingBlockInterfaceOperation",
                 "RestrictToNonzeroSASAOperation",

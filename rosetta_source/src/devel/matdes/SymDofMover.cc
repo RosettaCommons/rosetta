@@ -15,6 +15,9 @@
 #include <devel/matdes/SymDofMover.hh>
 #include <devel/matdes/SymDofMoverCreator.hh>
 
+// Package headers
+#include <devel/matdes/SymDofMoverSampler.hh>
+
 // project headers
 #include <protocols/moves/Mover.hh>
 #include <core/id/AtomID_Map.hh>
@@ -35,8 +38,11 @@
 #include <utility/exit.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
+#include <utility/vector1.hh>
 
 static basic::Tracer TR("devel.matdes.SymDofMover");
+
+static numeric::random::RandomGenerator RG(832156);
 
 namespace devel {
 namespace matdes {
@@ -71,16 +77,27 @@ SymDofMover::SymDofMover() :
 	symm_file_(),
 	sym_dof_names_(),
 	radial_disps_(),
-	angles_()
+	angles_(),
+	sampling_mode_( "single_dock" )
 { }
 
-SymDofMover::SymDofMover(const SymDofMover& rval) :
+/*SymDofMover::SymDofMover(const SymDofMover& rval) :
 	symm_file_( rval.symm_file_ ),
 	sym_dof_names_( rval.sym_dof_names_ ),
 	radial_disps_( rval.radial_disps_ ),
-	angles_( rval.angles_ )
-{ }
+	angles_( rval.angles_ ),
+	radial_disps_range_min_( rval.radial_disps_range_min_ ),
+	radial_disps_range_max_( rval.radial_disps_range_max_ ),
+	angles_range_min_( rval.angles_range_min_ ),
+	angles_range_max_( rval.angles_range_max_ ),
+	radial_disp_steps_( rval.radial_disp_steps_ ),
+	angle_steps_( rval.angle_steps_ ),
+	radial_disp_deltas_( rval.radial_disp_deltas_ ),
+	angle_deltas_( rval.angle_deltas_ ),
+	sampling_mode_( rval.sampling_mode_ )
 
+{ }
+*/
 protocols::moves::MoverOP 
 SymDofMover::clone() const {
 	return new SymDofMover( *this );
@@ -98,12 +115,50 @@ SymDofMover::get_sym_dof_names() {
 
 utility::vector1<Real>
 SymDofMover::get_angles() { 
-	return angles_;
+	utility::vector1< std::string > sym_dof_names = get_sym_dof_names();
+	utility::vector1<Real> angles;
+	if(sampling_mode_ == "grid" ) {
+		utility::vector1<Real> angle_diffs = SymDofMoverSampler::get_instance().get_angles();
+		for (int i = 1; i <= sym_dof_names.size(); i++) {
+			angles.push_back(angles_[i] + angle_diffs[i]);
+		}
+	}
+	else {
+		for (int i = 1; i <= sym_dof_names.size(); i++) {
+			if(sampling_mode_ == "uniform") {
+				angles.push_back(angles_[i] + angles_range_min_[i] + ( angles_range_max_[i] - angles_range_min_[i]) * RG.uniform());
+			} else if(sampling_mode_ == "gaussian") {
+				angles.push_back(angles_[i] + angle_deltas_[i] * RG.gaussian());
+			} else {
+				angles.push_back(angles_[i]);
+			}
+		}
+	}
+	return angles;
 }
 
 utility::vector1<Real>
 SymDofMover::get_radial_disps() { 
-	return radial_disps_;
+	utility::vector1< std::string > sym_dof_names = get_sym_dof_names();
+	utility::vector1<Real> radial_disps;
+	if(sampling_mode_ == "grid" ) {
+		utility::vector1<Real> radial_diffs = SymDofMoverSampler::get_instance().get_radial_disps();
+		for (int i = 1; i <= sym_dof_names.size(); i++) {
+			radial_disps.push_back(radial_disps_[i] + radial_diffs[i]);
+		}
+	}
+	else {
+		for (int i = 1; i <= sym_dof_names.size(); i++) {
+			if(sampling_mode_ == "uniform") {
+				radial_disps.push_back(radial_disps_[i] + radial_disps_range_min_[i] + ( radial_disps_range_max_[i] - radial_disps_range_min_[i]) * RG.uniform());
+			} else if(sampling_mode_ == "gaussian") {
+				radial_disps.push_back(radial_disps_[i] + radial_disp_deltas_[i] * RG.gaussian());
+			} else {
+				radial_disps.push_back(radial_disps_[i]);
+			}
+		}
+	}
+	return radial_disps;
 }
 
 // pose manipulation. Consider moving to util.cc ? //
@@ -153,9 +208,9 @@ SymDofMover::apply(Pose & pose) {
 
 // Read in user info //
 
+	utility::vector1< std::string > sym_dof_names = get_sym_dof_names();
 	utility::vector1<Real> radial_disps = get_radial_disps();
 	utility::vector1<Real> angles = get_angles();
-	utility::vector1< std::string > sym_dof_names = get_sym_dof_names();
 	std::string symm_file = symm_file_;
 
 // Read in symmetry info from symmetry definition file //
@@ -178,7 +233,7 @@ SymDofMover::apply(Pose & pose) {
 
 // read in the axes for each subunit //
 		std::string tag (virt_connects.find( sym_dof_names[i])->second.first );
-		TR << sym_dof_names[i] << tag << std::endl;
+		TR << sym_dof_names[i] << " -> " << tag << std::endl;
 		conformation::symmetry::VirtualCoordinate virt_coord( coords.find( tag )->second );
 
 // align the z-axis of each subunit with the appropriate axis of the symdof jump from the symmetry definition file //
@@ -189,8 +244,13 @@ SymDofMover::apply(Pose & pose) {
 
 	core::pose::symmetry::make_symmetric_pose(pose, symmdata);
 
+	if( sampling_mode_ == "grid" ) {
+		SymDofMoverSampler::get_instance().step();
+	}
+
 }
 
+// Parse info from xml //
 void 
 SymDofMover::parse_my_tag( TagPtr const tag,
 										 DataMap & data,
@@ -204,23 +264,118 @@ SymDofMover::parse_my_tag( TagPtr const tag,
 	using std::string;
 	symm_file_ = tag->getOption<string>( "symm_file" );
 	sym_dof_names_ = utility::string_split( tag->getOption< std::string >( "sym_dof_names" ), ',' );
-	utility::vector1< std::string > radial_disps_strings = utility::string_split( tag->getOption< std::string >( "radial_disps" ), ',' );
+
+	sampling_mode_ = tag->getOption<std::string>("sampling_mode", "single_dock");
+	TR << "Setting sampling mode to " << sampling_mode_ << std::endl;
+
+	utility::vector1< std::string > radial_disp_strings = utility::string_split( tag->getOption< std::string >( "radial_disps" ), ',' );
 	utility::vector1<Real> radial_disps;
 	Real real_disp;
-	for(Size i = 1; i <= radial_disps_strings.size(); i++) {
-		real_disp = std::atof( radial_disps_strings[i].c_str() );
+	for(Size i = 1; i <= radial_disp_strings.size(); i++) {
+		real_disp = std::atof( radial_disp_strings[i].c_str() );
 		radial_disps.push_back( real_disp );
 	}
 	radial_disps_ = radial_disps;
-	utility::vector1< std::string > angles_strings = utility::string_split( tag->getOption< std::string >( "angles" ), ',' );
+
+	utility::vector1< std::string > angle_strings = utility::string_split( tag->getOption< std::string >( "angles" ), ',' );
 	utility::vector1<Real> angles;
 	Real real_angle;
-	for(Size i = 1; i <= angles_strings.size(); i++) {
-		real_angle = std::atof( angles_strings[i].c_str() );
+	for(Size i = 1; i <= angle_strings.size(); i++) {
+		real_angle = std::atof( angle_strings[i].c_str() );
 		angles.push_back( real_angle );
 	}
 	angles_ = angles;
+
+	if( sampling_mode_ == "grid" || sampling_mode_ == "uniform") {
+
+		utility::vector1< std::string > radial_disp_range_min_strings = utility::string_split( tag->getOption< std::string >( "radial_disps_range_min" ), ',' );
+		utility::vector1<Real> radial_disps_range_min;
+		Real real_disps_range_min;
+		for(Size i = 1; i <= radial_disp_range_min_strings.size(); i++) {
+			real_disps_range_min = std::atof( radial_disp_range_min_strings[i].c_str() );
+			radial_disps_range_min.push_back( real_disps_range_min );
+		}
+		radial_disps_range_min_ = radial_disps_range_min;
+
+		utility::vector1< std::string > radial_disp_range_max_strings = utility::string_split( tag->getOption< std::string >( "radial_disps_range_max" ), ',' );
+		utility::vector1<Real> radial_disps_range_max;
+		Real real_disps_range_max;
+		for(Size i = 1; i <= radial_disp_range_max_strings.size(); i++) {
+			real_disps_range_max = std::atof( radial_disp_range_max_strings[i].c_str() );
+			radial_disps_range_max.push_back( real_disps_range_max );
+		}
+		radial_disps_range_max_ = radial_disps_range_max;
+
+		utility::vector1< std::string > angle_range_min_strings = utility::string_split( tag->getOption< std::string >( "angles_range_min" ), ',' );
+		utility::vector1<Real> angles_range_min;
+		Real real_angles_range_min;
+		for(Size i = 1; i <= angle_range_min_strings.size(); i++) {
+			real_angles_range_min = std::atof( angle_range_min_strings[i].c_str() );
+			angles_range_min.push_back( real_angles_range_min );
+		}
+		angles_range_min_ = angles_range_min;
+
+		utility::vector1< std::string > angle_range_max_strings = utility::string_split( tag->getOption< std::string >( "angles_range_max" ), ',' );
+		utility::vector1<Real> angles_range_max;
+		Real real_angles_range_max;
+		for(Size i = 1; i <= angle_range_max_strings.size(); i++) {
+			real_angles_range_max = std::atof( angle_range_max_strings[i].c_str() );
+			angles_range_max.push_back( real_angles_range_max );
+		}
+		angles_range_max_ = angles_range_max;
+
 	}
+
+	if( sampling_mode_ == "grid" ) {
+
+		utility::vector1< std::string > angle_step_strings = utility::string_split( tag->getOption< std::string >( "angle_steps" ), ',' );
+		utility::vector1<Real> angle_steps;
+		Real real_angle_steps;
+		for(Size i = 1; i <= angle_step_strings.size(); i++) {
+			real_angle_steps = std::atof( angle_step_strings[i].c_str() );
+			angle_steps.push_back( real_angle_steps );
+		}
+		angle_steps_ = angle_steps;
+
+		utility::vector1< std::string > radial_disp_step_strings = utility::string_split( tag->getOption< std::string >( "radial_disp_steps" ), ',' );
+		utility::vector1<Real> radial_disp_steps;
+		Real real_radial_disp_steps;
+		for(Size i = 1; i <= radial_disp_step_strings.size(); i++) {
+			real_radial_disp_steps = std::atof( radial_disp_step_strings[i].c_str() );
+			radial_disp_steps.push_back( real_radial_disp_steps );
+		}
+		radial_disp_steps_ = radial_disp_steps;
+
+		TR << "Setting the exploration grid." << std::endl;
+	
+		SymDofMoverSampler::get_instance().set_angle_ranges(angles_range_min_, angles_range_max_, angle_steps);
+
+		SymDofMoverSampler::get_instance().set_radial_disp_ranges(radial_disps_range_min_, radial_disps_range_max_, radial_disp_steps);
+
+	} 
+
+	if ( sampling_mode_ == "gaussian" ) {
+
+		utility::vector1< std::string > angle_delta_strings = utility::string_split( tag->getOption< std::string >( "angle_deltas" ), ',' );
+		utility::vector1<Real> angle_deltas;
+		Real real_angle_delta;
+		for(Size i = 1; i <= angle_delta_strings.size(); i++) {
+			real_angle_delta = std::atof( angle_delta_strings[i].c_str() );
+			angle_deltas.push_back( real_angle_delta );
+		}
+		angle_deltas_ = angle_deltas;
+	
+		utility::vector1< std::string > radial_disp_delta_strings = utility::string_split( tag->getOption< std::string >( "radial_disp_deltas" ), ',' );
+		utility::vector1<Real> radial_disp_deltas;
+		Real real_radial_disp_delta;
+		for(Size i = 1; i <= radial_disp_delta_strings.size(); i++) {
+			real_radial_disp_delta = std::atof( radial_disp_delta_strings[i].c_str() );
+			radial_disp_deltas.push_back( real_radial_disp_delta );
+		}
+		radial_disp_deltas_ = radial_disp_deltas;
+
+	}
+}
 
 } // matdes
 } // devel

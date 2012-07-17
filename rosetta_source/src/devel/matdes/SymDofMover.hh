@@ -30,6 +30,7 @@
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/vector1.hh>
 
 namespace devel {
 namespace matdes {
@@ -49,7 +50,7 @@ class SymDofMover : public protocols::moves::Mover {
 
 public:
   SymDofMover();
-	SymDofMover(const SymDofMover& rval);
+	//SymDofMover(const SymDofMover& rval);
 
   // --- virtual functions from mover ---
   virtual std::string get_name() const { return "SymDofMover"; }
@@ -74,17 +75,26 @@ public:
 														 Filters_map const &,
 														 Movers_map const &,
 														 Pose const & );
+
 private:
+	utility::vector1<std::string> get_sym_dof_names();
 	utility::vector1<Real> get_radial_disps();
 	utility::vector1<Real> get_angles();
-	utility::vector1<std::string> get_sym_dof_names();
-	std::string symm_file();
-	
+
 private:
+	std::string symm_file_;
+	utility::vector1<std::string> sym_dof_names_;
 	utility::vector1<Real> radial_disps_;
 	utility::vector1<Real> angles_;
-	utility::vector1<std::string> sym_dof_names_;
-	std::string symm_file_;
+	utility::vector1<Real> radial_disps_range_min_;
+	utility::vector1<Real> radial_disps_range_max_;
+	utility::vector1<Real> angles_range_min_;
+	utility::vector1<Real> angles_range_max_;
+	utility::vector1<Real> radial_disp_steps_;
+	utility::vector1<Real> angle_steps_;
+	utility::vector1<Real> radial_disp_deltas_;
+	utility::vector1<Real> angle_deltas_;
+	std::string sampling_mode_;
 	
 };
 

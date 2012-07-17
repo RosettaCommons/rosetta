@@ -167,6 +167,11 @@ core::Size ShapeComplementarityFilter::compute( Pose const & pose ) const
 /// @brief
 core::Real ShapeComplementarityFilter::report_sm( Pose const & pose ) const
 {
+	scc_.Reset(); // Unfortunately, this line had to be added. While reducing
+								// efficiency in normal use cases by forcing recalculation of
+								// presumably the same value, it is necessary for greedy
+								// optimization using the GreedyOptMutationMover, which calls
+								// the report_sm() function of filters directly. -Neil King
 	if(compute( pose )) {
 		if ( write_int_area_ ) {
 			protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
