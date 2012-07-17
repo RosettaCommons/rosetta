@@ -497,7 +497,7 @@ More information on common Rosetta flags can be found in the <A href="https://ww
 
 \verbatim
  FlexPepDocking.{ext}
--database ${rosetta_db} -s input.pdb -native native.pdb -flexpep_prepack
+-database ${rosetta_db} -s start.pdb -native native.pdb -flexpep_prepack
  -ex1 -ex2aro [-unboundrot unbound.pdb]
 \endverbatim
 
@@ -505,7 +505,7 @@ More information on common Rosetta flags can be found in the <A href="https://ww
 
 \verbatim
 FlexPepDocking.{ext}
--database ${rosetta_db} -s start.pdb -native native.pdb
+-database ${rosetta_db} -s start_0001.pdb -native native.pdb
 -out:file:silent decoys.silent -out:file:silent_struct_type binary
 -pep_refine -ex1 -ex2aro -use_input_sc
 -nstruct 100 -unboundrot unbound_receptor.pdb [ -lowres_preoptimize ]
