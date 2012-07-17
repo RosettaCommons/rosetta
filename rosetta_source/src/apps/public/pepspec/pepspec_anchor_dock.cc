@@ -584,8 +584,8 @@ run_pep_prep()
 	FoldTree f( pose.total_residue() );
 
 	//gen fold tree
-	if( prot_begin != 1 ) f.new_jump( prot_anchor, 1, 1 );
-	if( prot_end != pose.total_residue() ) f.new_jump( prot_anchor, prot_end + 1, prot_end );
+//	if( prot_begin != 1 ) f.new_jump( prot_anchor, 1, 1 );
+//	if( prot_end != pose.total_residue() ) f.new_jump( prot_anchor, prot_end + 1, prot_end );
 
 	core::scoring::ScoreFunctionOP scorefxn(  ScoreFunctionFactory::create_score_function( option[ score::weights ] ) );
 	core::scoring::ScoreFunctionOP soft_scorefxn(  ScoreFunctionFactory::create_score_function( option[ pepspec::soft_wts ] ) );
@@ -649,9 +649,10 @@ run_pep_prep()
 		// add anchor in random pos
 		std::string const anchor_type( option[ pepspec::anchor_type ] );
 		ResidueOP pep_anchor_res( ResidueFactory::create_residue( rsd_set.name_map( anchor_type ) ) );
-		pose.append_residue_by_jump( *pep_anchor_res, prot_anchor, "CA", "CA", true );
+		pose.append_residue_by_jump( *pep_anchor_res, prot_anchor, prot_anchor_stub2, pep_anchor_stub1, true );
 		Size pep_anchor( pose.total_residue() );
-		Size pep_jump( 1 );
+		Size pep_chain( pose.chain( pep_anchor ) );
+		Size pep_jump( pose.num_jump() );
 		Pose start_pose( pose );
 		/*
 		   if( anchor_type == "PRO" ){
@@ -659,20 +660,37 @@ run_pep_prep()
 		   pep_anchor_stub3 = "O";
 		   }
 		 */
-		FoldTree f_jump( pose.total_residue() );
+//		FoldTree f_jump( pose.total_residue() );
+		FoldTree f_jump( pose.fold_tree() );
 		FoldTree f_orient( pose.total_residue() );
+		f_orient.new_chemical_bond( prot_anchor, pep_anchor, prot_anchor_stub2, pep_anchor_stub1 , prot_end );
 
+/*
 		f_jump.new_jump( prot_anchor, pep_anchor, prot_end );
 		if( prot_end != pose.total_residue() - 1 ){
 			f_jump.new_jump( prot_anchor, prot_end + 1, prot_end );
 			f_orient.new_jump( prot_anchor, prot_end + 1, prot_end );
 		}
-
-		f_orient.new_chemical_bond( prot_anchor, pep_anchor, prot_anchor_stub2, pep_anchor_stub1 , prot_end );
-
 		f_jump.reorder( prot_anchor );
-		f_jump.set_jump_atoms( 1, prot_anchor_stub2, pep_anchor_stub1  );
+		f_jump.set_jump_atoms( pep_jump, prot_anchor_stub2, pep_anchor_stub1  );
+*/
 
+//chrisk 6/28/201
+/*2
+    if( prot_chain < pep_chain ){
+      pep_jump = f_jump.new_jump( prot_anchor, pep_anchor, pep_anchor - 1 );
+			f_jump.set_jump_atoms( pep_jump, prot_anchor_stub2, pep_anchor_stub1  );
+ #     if( pep_anchor != pose.total_residue() ) f_jump.new_jump( prot_anchor, pep_anchor + 1, pep_anchor );
+      if( prot_end + 1 != pep_anchor ) f_jump.new_jump( prot_anchor, prot_end + 1, prot_end );
+    }
+    else{
+      pep_jump = f_jump.new_jump( pep_anchor, prot_anchor, prot_begin - 1 );
+      f_jump.set_jump_atoms( pep_jump, pep_anchor_stub1, prot_anchor_stub2 );
+#      if( prot_end != pose.total_residue() ) f_jump.new_jump( prot_anchor, prot_end + 1, prot_end );
+      if( pep_anchor + 1 != prot_begin ) f_jump.new_jump( pep_anchor, pep_anchor + 1, pep_anchor );
+    }
+*/
+    f_jump.reorder( prot_anchor );
 
 		//homol_csts
 		//calc vect sum, then normalize to avgs, then reiter over refs to get max distance
@@ -702,6 +720,7 @@ run_pep_prep()
 			import_pose::pose_from_pdb( ref_pose, ref_input_name );
 
 			Size const ref_pep_anchor( ref_pose.pdb_info()->pdb2pose( ref_pep_chain_in[0], ref_pep_anchor_int ) );
+			if( ref_pep_anchor == 0 ) utility_exit_with_message( "ERROR: Residue " + string_of( ref_pep_anchor_int ) + " not found in " + ref_input_name + "\n" );
 			//if gly, just change to ala, orient and calc data, then change back
 			//can we just use one of the Halphas?
 			//if( ref_pose.residue( ref_pep_anchor ).name3() == "GLY" ) utility_exit_with_message( "Cannot yet handle GLY anchors\n" );

@@ -59,6 +59,10 @@ std::set< std::string > split_to_set(std::string const & s);
 utility::vector1< std::string >
 string_split( std::string const & in, char splitchar = ' ' );
 
+/// @details split to vector< std::string > using any of arbitrary split characters
+utility::vector1< std::string >
+string_split_multi_delim( std::string const & in, std::string splitchars = " \t" );
+
 /// @brief convert a string to a float
 float string2float( std::string st );
 

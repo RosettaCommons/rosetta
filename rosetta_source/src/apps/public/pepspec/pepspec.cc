@@ -105,7 +105,7 @@
 
  #include <basic/database/open.hh>
 
-#include <devel/init.hh>
+#include <protocols/init/init.hh>
 
  #include <utility/vector1.hh>
  #include <utility/file/file_sys_util.hh>
@@ -570,7 +570,7 @@ has_clash(
 			EnergyMap const & emap( edge->fill_energy_map());
 			Real const clash( emap[ fa_rep ] );
 			if ( clash > clash_threshold ){
-//				TR<< "fa_rep: " << string_of( clash ) << " at " << pose.residue( j ).name1() << string_of( j ) << "-" << pose.residue( seqpos ).name1() << string_of( seqpos ) << std::endl;
+//TR<< "fa_rep: " << string_of( clash ) << " at " << pose.residue( j ).name1() << string_of( j ) << "-" << pose.residue( seqpos ).name1() << string_of( seqpos ) << std::endl;
 				is_clash = true;
 				break;
 			}
@@ -589,7 +589,7 @@ has_clash(
 			EnergyMap const & emap( edge->fill_energy_map());
 			Real const clash( emap[ fa_rep ] );
 			if ( clash > clash_threshold ){
-//				TR<< "fa_rep: " << string_of( clash ) << " at " << pose.residue( j ).name1() << string_of( j ) << "-" << pose.residue( seqpos ).name1() << string_of( seqpos ) << std::endl;
+//TR<< "fa_rep: " << string_of( clash ) << " at " << pose.residue( j ).name1() << string_of( j ) << "-" << pose.residue( seqpos ).name1() << string_of( seqpos ) << std::endl;
 				is_clash = true;
 				break;
 			}
@@ -1066,12 +1066,13 @@ gen_pep_bb_sequential(
 	using namespace scoring::etable::count_pair;
 
 	Size n_build_loop( option[ pepspec::n_build_loop ] );
-	Real clash_cutoff( option[ pepspec::clash_cutoff ] );
 	Size n_prepend( option[ pepspec::n_prepend ] );
 	Size n_append( option[ pepspec::n_append ] );
 
 	( *cen_scorefxn )( pose );
 	Real min_score( pose.energies().total_energies()[ vdw ] );
+	Real clash_cutoff( option[ pepspec::clash_cutoff ] );
+	clash_cutoff = std::max( clash_cutoff, pose.energies().total_energies()[ fa_rep ] );
 
 	Pose replace_res_pose( pose );
 	ResidueTypeSet const & rsd_set( pose.residue(1).residue_type_set() );
@@ -1080,6 +1081,7 @@ gen_pep_bb_sequential(
 	Size break_loop( 0 );
 	Size n_prepended( 0 );
 	Size n_appended( 0 );
+	Size iqq( 1 );
 	while( ( n_prepended < n_prepend || n_appended < n_append ) ){
 		Size this_prepend( n_prepend );
 		Size this_append( n_append );
@@ -1088,6 +1090,7 @@ gen_pep_bb_sequential(
 			this_append = static_cast< int >( RG.uniform() * ( n_append - n_appended + 1 ) );
 		}
 		if( this_prepend + this_append == 0 ) continue;
+	//std::cout << "Prepending/Appending " + string_of( this_prepend ) + " / " + string_of( this_append ) << std::endl;
 
 		std::string this_input_seq( input_seq );
 		for( Size ii = 1; ii <= this_prepend; ++ii ){
@@ -1162,7 +1165,7 @@ gen_pep_bb_sequential(
 		if( !option[ pepspec::use_input_bb ] && n_build_loop > 0 ){
 //			Size this_build_loop( static_cast< int >( n_build_loop * std::max( this_prepend, this_append ) / std::max( n_prepend, n_append ) ) );
 			//do at least 10 frags/phipsi
-			Size this_build_loop( std::min(
+			Size this_build_loop( std::max(
 					Size( 10 ),
 					Size( n_build_loop * std::max( this_prepend, this_append ) / std::max( n_prepend, n_append ) ) ) );
 
@@ -1186,8 +1189,8 @@ gen_pep_bb_sequential(
 //				pose.set_phi( insert_seqpos, pose.phi( insert_seqpos ) + 1 * ( 2 * RG.uniform() - 1 ) ); 
 //				pose.set_psi( insert_seqpos, pose.psi( insert_seqpos ) + 1 * ( 2 * RG.uniform() - 1 ) ); 
 
+				Real test_score( pose.energies().total_energies().dot( cen_scorefxn->weights() ) );
 				if( mc_frag->boltzmann( pose ) ){
-					Real test_score( pose.energies().total_energies().dot( cen_scorefxn->weights() ) );
 					//need to do my own eval for <= because MC mover is < only
 					if( test_score <= best_score ){
 						best_score = test_score;
@@ -1273,6 +1276,7 @@ gen_pep_bb_sequential(
 		//if gen clash, step back a step
 		if( break_loop < 5 && this_has_clash ){
 			++break_loop;
+	//std::cout << "Removing " + string_of( this_prepend ) + " / " + string_of( this_append ) << std::endl;
 			for( Size ii = 1; ii <= this_prepend; ++ii ){
 				pose.conformation().delete_residue_slow( pep_begin );
 				pep_anchor = pep_anchor - 1;
@@ -2002,7 +2006,7 @@ main( int argc, char * argv [] )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	devel::init(argc, argv);
+	protocols::init::init(argc, argv);
 
 	protocols::viewer::viewer_main( my_main );
 	TR.flush();

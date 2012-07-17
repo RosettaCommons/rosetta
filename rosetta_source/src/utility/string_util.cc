@@ -153,6 +153,24 @@ string_split( std::string const & in, char splitchar /* = ' ' */ )
 	return parts;
 }
 
+//overloaded to split on any of an array of chars, useful to split on any whitespace
+utility::vector1< std::string >
+string_split_multi_delim( std::string const & in, std::string splitchars )
+{
+	utility::vector1< std::string > parts;
+	size_t i(0), j(0);
+	while ( j != std::string::npos ) {
+		//find first instance of any of the splitchars
+		for( platform::Size ichar = 1; ichar <= splitchars.size(); ++ichar ){
+			char splitchar( splitchars[ ichar ] );
+			j = std::min( j, in.find( splitchar, i ) );
+		}
+		parts.push_back( in.substr(i,j-i) );
+		i = j+1;
+	}
+	return parts;
+}
+
 
 /// @details convert a string to a float
 float string2float( std::string st ){

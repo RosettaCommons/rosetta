@@ -145,7 +145,7 @@ void NMerPSSMEnergy::read_nmer_energy_table( std::string const pssm_fname ) {
 	std::map< chemical::AA, utility::vector1< core::Real > > nmer_pssm;
 	std::string line;
 	while( getline( in_stream, line) ) {
-		utility::vector1< std::string > const tokens( utility::split( line ) );
+		utility::vector1< std::string > const tokens( utility::string_split_multi_delim( line, " \t" ) );
 		//skip comments
 		if( tokens[ 1 ][ 0 ] == '#' ) continue;
 		char const char_aa( tokens[ 1 ][ 0 ] );
