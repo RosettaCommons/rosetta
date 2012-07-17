@@ -33,7 +33,7 @@ namespace matdes {
 
 class RestrictToNonzeroSASAOperation : public core::pack::task::operation::TaskOperation {
 public:
-	RestrictToNonzeroSASAOperation( core::Real probe_radius = 2.2 );
+	RestrictToNonzeroSASAOperation( core::Real probe_radius = 2.2 , core::Size ncomp = 1 );
 
 	virtual ~RestrictToNonzeroSASAOperation();
 
@@ -48,6 +48,7 @@ public:
 private:
 
  	core::Real probe_radius_; 
+	core::Size ncomp_;
 
 };
 

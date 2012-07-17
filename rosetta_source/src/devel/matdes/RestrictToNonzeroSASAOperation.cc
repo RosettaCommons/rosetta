@@ -17,6 +17,7 @@
 
 // Project Headers
 #include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pack/make_symmetric_task.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
@@ -43,8 +44,9 @@ RestrictToNonzeroSASAOperationCreator::create_task_operation() const
 }
 
 
-RestrictToNonzeroSASAOperation::RestrictToNonzeroSASAOperation( core::Real probe_radius /* = 2.2 */):
-	probe_radius_(probe_radius)
+RestrictToNonzeroSASAOperation::RestrictToNonzeroSASAOperation( core::Real probe_radius /* = 2.2 */, core::Size ncomp /* = 1 */ ):
+	probe_radius_(probe_radius),
+	ncomp_(ncomp)
 {}
 
 RestrictToNonzeroSASAOperation::~RestrictToNonzeroSASAOperation() {}
@@ -60,17 +62,22 @@ RestrictToNonzeroSASAOperation::apply( core::pose::Pose const & pose, core::pack
 
   // Get the SASA for each residue in the monomeric state
 	core::conformation::symmetry::SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
-  core::pose::Pose mono(pose, 1, sym_info->get_nres_subunit());
-  utility::vector1<Real> sc_sasa = devel::matdes::sidechain_sasa(mono, probe_radius_);
+	core::Size res_count = 0;	
 
-	// If the residue is totally buried, prevent_repacking
-	for (core::Size ir = 1; ir <= sym_info->get_nres_subunit(); ir++) {
-		if (sc_sasa[ir] <= 0.0) {
-			//TR << "resi " << ir << " will not be repacked because it is buried." << std::endl;
-			task.nonconst_residue_task(ir).prevent_repacking();
+	for (core::Size i = 1; i <= ncomp_; i++) {
+		core::pose::Pose mono = pose.split_by_chain(i); // Extract monomer from each component
+  	utility::vector1<Real> sc_sasa = devel::matdes::sidechain_sasa(mono, probe_radius_);
+		//mono.dump_pdb("mono.pdb");
+		// If the residue is totally buried, prevent_repacking
+		for (core::Size ir = 1; ir <= mono.n_residue(); ir++) {
+			if( !mono.residue( ir ).is_protein() ) continue;
+			res_count++;
+			if (sc_sasa[ir] <= 0.0) {
+				TR << "resi " << res_count << " will not be repacked because it is buried." << std::endl;
+				task.nonconst_residue_task(res_count).prevent_repacking();
+			}
 		}
 	}
-
 }
 
 void
@@ -78,6 +85,7 @@ RestrictToNonzeroSASAOperation::parse_tag( TagPtr tag )
 {
 
   probe_radius_ = tag->getOption<core::Real>("probe_radius", 2.2);
+  ncomp_ = tag->getOption<core::Size>("ncomp", 1);
 	
 }
 
