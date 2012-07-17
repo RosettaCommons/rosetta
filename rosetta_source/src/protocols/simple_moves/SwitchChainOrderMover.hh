@@ -33,7 +33,7 @@ namespace simple_moves {
 class SwitchChainOrderMover : public moves::Mover {
 public:
 	SwitchChainOrderMover();
-	SwitchChainOrderMover( std::string const & );
+	// Undefinded, commenting out to fix PyRosetta build  SwitchChainOrderMover( std::string const & );
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;

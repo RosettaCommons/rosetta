@@ -80,8 +80,7 @@ private:
 
 };
 
-SubToFullInfo const &
-sub_to_full_info_from_pose( core::pose::Pose const & pose );
+// Undefinded, commenting out to fix PyRosetta build  SubToFullInfo const & sub_to_full_info_from_pose( core::pose::Pose const & pose );
 
 SubToFullInfo &
 nonconst_sub_to_full_info_from_pose( core::pose::Pose & pose );

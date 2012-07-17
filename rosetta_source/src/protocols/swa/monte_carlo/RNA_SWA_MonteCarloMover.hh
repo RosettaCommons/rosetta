@@ -47,8 +47,7 @@ RNA_SWA_MonteCarloMover(  RNA_AddOrDeleteMoverOP rna_add_or_delete_mover,
 	//destructor -- necessary? -- YES destructors are necessary.
 	~RNA_SWA_MonteCarloMover();
 
-  void
-	apply( core::pose::Pose & pose, Size const res_to_delete, protocols::swa::monte_carlo::MovingResidueCase const moving_residue_case  );
+	// Undefinded, commenting out to fix PyRosetta build  void apply( core::pose::Pose & pose, Size const res_to_delete, protocols::swa::monte_carlo::MovingResidueCase const moving_residue_case  );
 
 	/// @brief Apply the minimizer to one pose
 	virtual void apply( core::pose::Pose & pose_to_visualize );

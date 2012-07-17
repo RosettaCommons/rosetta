@@ -12,7 +12,7 @@
 /// @author Fang-Chieh Chou (fcchou@stanford.edu)
 
 #ifndef INCLUDED_core_scoring_methods_ReferenceEnergyNoncanonicalCreator_hh
-#define INCLUDED_core_scoring_methods_peptide_ReferenceEnergyNoncanonicalCreator_hh
+#define INCLUDED_core_scoring_methods_ReferenceEnergyNoncanonicalCreator_hh
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 

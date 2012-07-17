@@ -39,8 +39,7 @@ public:
 	//destructor
 	~RNA_TorsionMover();
 
-  void
-	apply( core::pose::Pose & pose, Size const res_to_torsion, protocols::swa::monte_carlo::MovingResidueCase const moving_residue_case  );
+	// Undefinded, commenting out to fix PyRosetta build  void apply( core::pose::Pose & pose, Size const res_to_torsion, protocols::swa::monte_carlo::MovingResidueCase const moving_residue_case  );
 
 	/// @brief Apply the minimizer to one pose
 	virtual void apply( core::pose::Pose & pose_to_visualize );
