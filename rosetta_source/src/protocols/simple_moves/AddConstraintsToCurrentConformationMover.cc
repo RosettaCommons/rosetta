@@ -66,6 +66,7 @@ AddConstraintsToCurrentConformationMover::AddConstraintsToCurrentConformationMov
 	coord_dev_ = 1.0;
 	bound_width_ = 0.;
 	min_seq_sep_ = 8;
+	cst_weight_ = 1.0;
 }
 
 AddConstraintsToCurrentConformationMover::~AddConstraintsToCurrentConformationMover(){}
@@ -181,6 +182,8 @@ void AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose )
 				
 				core::Real dist = pose.residue(ires).xyz(iatom).distance( pose.residue(jres).xyz(jatom) );
 				if ( dist <= max_distance_ ) {
+					TR.Debug << "Constraint added to residue " << ires << ", atom " << iatom << " and residue " << jres << ", atom " << jatom << " with weight " << cst_weight_ << std::endl;
+
 					pose.add_constraint(
 										new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires),
 																						   core::id::AtomID(jatom,jres), 
@@ -218,6 +221,9 @@ AddConstraintsToCurrentConformationMover::parse_my_tag(
 	}
 	if ( tag->hasOption("min_seq_sep") ) {
 		min_seq_sep_ = tag->getOption<core::Size>("min_seq_sep");
+	}
+	if ( tag->hasOption("cst_weight") ) {
+		cst_weight_ = tag->getOption<core::Real>("cst_weight");
 	}
 
 	parse_task_operations( tag, datamap, filters, movers, pose );
