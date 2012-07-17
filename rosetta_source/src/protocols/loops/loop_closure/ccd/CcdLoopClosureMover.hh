@@ -94,11 +94,17 @@ public:
 	}
 
 	Loop get_loop() const { return loop_ ;}
+	core::Size get_loop_start() const { return loop_.start(); }
+	core::Size get_loop_stop() const { return loop_.stop(); }
+	core::Size get_loop_cut() const { return loop_.cut(); }
+	core::Size get_loop_size() const { return loop_.size(); }
+	core::Real get_loop_skip_rate() const { return loop_.skip_rate(); }
+	std::string get_loop_extended() const { return ( (loop_.is_extended()) ? ("true") : ("false") );}
 	core::Real get_max_rama_score_increase() const;
 	core::Real get_tolerance() const;
 	core::Real get_max_total_delta( std::string secstr ) const;
 	core::Size get_ccd_cycles() const { return ccd_cycles_; }
-	bool bRama_check() const { return bRama_check_; }
+	std::string bRama_check() const { return ( (bRama_check_) ? ("true") : ("false") ); }
 	friend std::ostream &operator<< ( std::ostream &os, CcdLoopClosureMover const &mover );
 
 private:

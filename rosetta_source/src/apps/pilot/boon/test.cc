@@ -27,15 +27,20 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
+#include <core/types.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_CCD.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <protocols/loops/Loop.hh>
+#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
 #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <core/pack/task/TaskFactory.hh>
+
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+
 #include <core/pack/task/PackerTask.hh>
 #include <core/kinematics/MoveMap.hh>
 
@@ -68,11 +73,25 @@ int main(int argc, char *argv[])
 	pmm2.keep_history(true);
 	std::cout << pmm2 << std::endl;*/
 
-/*	// create a score3 scorefxn
-	core::scoring::ScoreFunctionCOP scorefxn = new core::scoring::ScoreFunction;
+/*	// create a score12 scorefxn
+	core::scoring::ScoreFunctionOP scorefxn0 = new core::scoring::ScoreFunction;
+	scorefxn0 = core::scoring::ScoreFunctionFactory::create_score_function( "score12" );
+	std::cout << "Score function 0's name: " << scorefxn0->get_name() << std::endl;
+
+	// create a standard scorefxn and read fa_sol weight
+	core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction;
 	scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "standard" );
+	enum core::scoring::ScoreType fa_sol = core::scoring::score_type_from_name("fa_sol");
+	std::cout << "fa_sol standard weight = " << scorefxn->get_weight(fa_sol) << std::endl;
 	// read name
-	std::cout << "Name: " << scorefxn->get_name() << std::endl;*/
+	//std::cout << "Score function's name: " << scorefxn->get_name() << std::endl;
+
+	// now change fa_sol weight
+	core::Real num = 1.40;
+	scorefxn->set_weight(fa_sol, num);
+	std::cout << "fa_sol new weight = " << scorefxn->get_weight(fa_sol) << std::endl;
+	// read name again
+	std::cout << "Score function's new name: " << scorefxn->get_name() << std::endl;*/
 
 /*	using namespace fragment;
 	ConstantLengthFragSetOP fragset = new ConstantLengthFragSet( 3 );
@@ -82,7 +101,7 @@ int main(int argc, char *argv[])
 
 	//std::cout << test_pose.energies() << std::endl;
 
-	protocols::simple_moves::SmallMoverOP smallmover = new protocols::simple_moves::SmallMover;
+/*	protocols::simple_moves::SmallMoverOP smallmover = new protocols::simple_moves::SmallMover;
 	protocols::simple_moves::ShearMoverOP shearmover = new protocols::simple_moves::ShearMover;
 	protocols::moves::SequenceMover seqmover;
 	core::Real num1 = 1.0;
@@ -95,7 +114,7 @@ int main(int argc, char *argv[])
 	ranmover.add_mover(shearmover, num1);
 	ranmover.add_mover(smallmover, num1);
 	ranmover.add_mover(shearmover, num1);
-	std::cout << ranmover << std::endl;
+	std::cout << ranmover << std::endl;*/
 
 	/*protocols::simple_moves::SwitchResidueTypeSetMover switchmover;
 	std::cout << switchmover << std::endl;
@@ -145,7 +164,7 @@ int main(int argc, char *argv[])
 	//protocols::docking::ConformerSwitchMover mover2 ( protocols::docking::ConformerSwitchMover("True", 1.0) );
 	//std::cout << mover2 << std::endl;
 
-/*	// create a loops object
+	// create a loops object
 	core::Size start = 15;
 	core::Size stop = 24;
 	core::Size cutpoint = 19;
@@ -156,7 +175,7 @@ int main(int argc, char *argv[])
 
 	// create a CcdLoopClosureMover object
 	protocols::loops::loop_closure::ccd::CcdLoopClosureMover ccdmover ( protocols::loops::loop_closure::ccd::CcdLoopClosureMover(loop, mm) );
-	std::cout << ccdmover << std::endl;*/
+	std::cout << ccdmover << std::endl;
 
 	// create an empty loops object
 	//protocols::loops::LoopsOP emptyloops ( new protocols::loops::Loops );
