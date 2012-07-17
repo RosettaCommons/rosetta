@@ -124,6 +124,7 @@ void AntibodyModelerProtocol::set_default()
 	benchmark_ = false;
 	camelid_   = false;
 	camelid_constraints_ = false;
+    use_csts_ = false;
     cst_weight_ = 0.0;
     cen_cst_ = 10.0;
     high_cst_ = 100.0; // if changed here, please change at the end of AntibodyModeler as well
@@ -136,6 +137,8 @@ void AntibodyModelerProtocol::set_default()
     
     h3_perturb_type_ = "legacy_perturb_ccd"; // legacy_perturb_ccd, kic, ccd
     h3_refine_type_  = "legacy_refine_ccd"; // legacy_refine, kic, ccd
+    
+    cdr_constraint_ = NULL;
 }
 
     
@@ -150,6 +153,7 @@ void AntibodyModelerProtocol::register_options()
 	option.add_relevant( OptionKeys::antibody::camelid_constraints );
     option.add_relevant( OptionKeys::run::benchmark );
 	option.add_relevant( OptionKeys::constraints::cst_weight );
+    option.add_relevant( OptionKeys::constraints::cst_file );
 	option.add_relevant( OptionKeys::in::file::native );
     option.add_relevant( OptionKeys::antibody::refine_h3 );
     option.add_relevant( OptionKeys::antibody::h3_filter );
@@ -203,6 +207,9 @@ void AntibodyModelerProtocol::init_from_options()
     if ( option[ OptionKeys::constraints::cst_weight ].user() ) {
 		set_cst_weight( option[ OptionKeys::constraints::cst_weight ]() );
 	}
+    if ( option[ OptionKeys::constraints::cst_file].user() ){
+        set_use_constraints( option[ OptionKeys::constraints::cst_file ].user() ); // .user here??
+    }
     if ( option[ OptionKeys::antibody::sc_min ].user() ) {
         set_sc_min( option[ OptionKeys::antibody::sc_min ]() );
 	}
@@ -243,6 +250,9 @@ AntibodyModelerProtocol::setup_objects() {
     
 	sync_objects_with_flags();
 
+    if(use_csts_){
+        if ( cst_weight_ == 0.0 ) cst_weight_ = 1.0;
+    }
 
     // setup all the scoring functions
     pack_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("standard" );
@@ -251,11 +261,12 @@ AntibodyModelerProtocol::setup_objects() {
         dock_scorefxn_highres_->set_weight( core::scoring::overlap_chainbreak, 10./3. );
     loop_scorefxn_centroid_ = scoring::ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );
         loop_scorefxn_centroid_->set_weight( scoring::chainbreak, 10./3. );
-        loop_scorefxn_centroid_->set_weight( scoring::atom_pair_constraint, cen_cst_ );
+        //loop_scorefxn_centroid_->set_weight( scoring::atom_pair_constraint, cen_cst_ );
     loop_scorefxn_highres_ = scoring::ScoreFunctionFactory::create_score_function("standard", "score12" );
         loop_scorefxn_highres_->set_weight( scoring::chainbreak, 1.0 );
         loop_scorefxn_highres_->set_weight( scoring::overlap_chainbreak, 10./3. );
-        loop_scorefxn_highres_->set_weight( scoring::atom_pair_constraint, high_cst_ );
+        //loop_scorefxn_highres_->set_weight( scoring::atom_pair_constraint, high_cst_ );
+        loop_scorefxn_highres_->set_weight(scoring::dihedral_constraint, 1.0);
     
     
     // miscellaneous
@@ -283,8 +294,8 @@ void AntibodyModelerProtocol::finalize_setup( pose::Pose & pose )
 {
 	TR<<"AAAAAAAA     cst_weight: "<<cst_weight_<<std::endl;
 	if(  cst_weight_ != 0.00  ) {
-		simple_moves::ConstraintSetMoverOP cdr_constraint = new simple_moves::ConstraintSetMover();
-		cdr_constraint->apply( pose );
+		cdr_constraint_ = new simple_moves::ConstraintSetMover();
+		cdr_constraint_->apply( pose );
 	}
 
 	// check for native and input pose
@@ -342,10 +353,10 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
        sync_objects_with_flags(); 
     }
     
-    if ( first_apply_with_current_setup_ ){ 
+    //if ( first_apply_with_current_setup_ ){ 
         finalize_setup(pose);  
         first_apply_with_current_setup_=false; 
-    }
+    //}
 
 
 

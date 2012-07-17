@@ -27,6 +27,7 @@
 #include <core/scoring/constraints/CountViolFunc.hh>
 #include <core/scoring/constraints/SkipViolFunc.hh>
 #include <core/scoring/constraints/SquareWellFunc.hh>
+#include <core/scoring/constraints/SquareWell2Func.hh>
 #include <core/scoring/constraints/GaussianFunc.hh>
 #include <core/scoring/constraints/ConstantFunc.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
@@ -89,6 +90,7 @@ FuncFactory::FuncFactory(void) {
 	FuncFactory::add_type( "SOEDINGFUNC", new SoedingFunc() );
 	FuncFactory::add_type( "SPLINE", new SplineFunc() );
 	FuncFactory::add_type( "SQUARE_WELL", new SquareWellFunc(0,0) );
+	FuncFactory::add_type( "SQUARE_WELL2", new SquareWell2Func(0,0,0) );
 	FuncFactory::add_type( "FADE", new FadeFunc(0,0,0) );
 	FuncFactory::add_type( "LINEAR_PENALTY", new LinearPenaltyFunction(0,0,0,0) );
   FuncFactory::add_type( "KARPLUS", new KarplusFunc(6.98,-1.38,1.72,-1.05,0,0,0));

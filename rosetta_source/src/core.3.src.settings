@@ -191,6 +191,7 @@ sources = {
 		"SOGFunc_Impl",
 		"SplineFunc",
 		"SquareWellFunc",
+		"SquareWell2Func",
 		"SumFunc",
 		"TopOutFunc",
 		"util",

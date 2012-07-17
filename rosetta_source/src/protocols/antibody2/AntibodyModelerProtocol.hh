@@ -28,7 +28,7 @@
 #include <protocols/moves/PyMolMover.fwd.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/AntibodyModelerProtocol.fwd.hh>
-
+#include <protocols/simple_moves/ConstraintSetMover.fwd.hh>
 
 
 
@@ -100,6 +100,9 @@ public:
     void set_cst_weight ( core::Real const cst_weight){
         cst_weight_ = cst_weight;
     }
+    void set_use_constraints(bool const use_csts){
+        use_csts_ = use_csts;
+    }
     void set_flank_residue_size(core::Real const flank_residue_size) {
         flank_residue_size_ = flank_residue_size;
     }
@@ -138,6 +141,7 @@ private:
     moves::PyMolMoverOP pymol_;
     bool use_pymol_diy_;
     bool bad_nter_;
+    bool use_csts_;
     
 	// Benchmark mode for shorter_cycles
 	bool benchmark_;
@@ -157,6 +161,9 @@ private:
     core::scoring::ScoreFunctionOP loop_scorefxn_centroid_;
     core::scoring::ScoreFunctionOP dock_scorefxn_highres_;
     core::scoring::ScoreFunctionOP pack_scorefxn_;
+    
+    // constraint set mover
+	protocols::simple_moves::ConstraintSetMoverOP cdr_constraint_;
     
 	// external objects
 	AntibodyInfoOP ab_info_;
