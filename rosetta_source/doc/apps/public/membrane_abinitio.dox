@@ -13,8 +13,8 @@
 @page membrane_abinitio Documentation for membrane ab initio modeling application
 
 @section metadata Metadata
-This document was last updated on June 2, 2010 by Vladimir Yarov-Yarovoy <yarovoy@uw.edu>.  The PI is David Baker <dabaker@uw.edu>.
-The membrane ab initio application was developed by:
+This document was last updated on July 17, 2012 by Vladimir Yarov-Yarovoy <yarovoy@ucdavis.edu>.
+The membrane ab initio application was developed in David Baker's <dabaker@uw.edu> group by:
 
 @li Jack Schonbrun
 @li Vladimir Yarov-Yarovoy
@@ -23,7 +23,7 @@ The membrane ab initio application was developed by:
 
 @section code_demos Code and Demo
 The membrane ab initio executable is in src/apps/public/membrane_abinitio/membrane_abinitio2.cc.
-See test/integration/tests/membrane_abinitio directory for an example membrane ab initio run and input files.
+See /rosetta/rosetta_tests/integration/tests/membrane_abinitio directory for an example membrane ab initio run and input files.
 
 @section refs references
 @li Barth P, Wallner B, Baker D. (2009 Feb 3) Prediction of membrane protein structures with complex topologies using limited constraints. Proc Natl Acad Sci U S A. 106(5):1409-14.
@@ -38,15 +38,19 @@ This protocol will only generate low-resolution centroid models.  The protocol i
 
 @section inputs Input Files
 
-Membrane ab initio protocol specific input files (BRD4.span and BRD4.lips4 in the above example) are generated using octopus2span.pl, run_lips.pl, and alignblast.pl scripts located in path/to/rosetta/rosetta_source/src/apps/public/membrane_abinitio/ .
-Note that blastpgp and nr database are necessary to run run_lips.pl script.
+1. Generate structure fragments:
 
-@li BRD4.span - transmembrane topology prediction file generated using octopus2span.pl script as follows:
+Programs needed to run:
+fragment generation - info at http://www.rosettacommons.org/manuals/archive/rosetta3.4_user_guide/d4/d3f/file_fragments.html
+
+Note - use only SAM secondary structure prediction file (*.rdb) - jufo and psipred predict transmembrane helical regions poorly.
+
+Example command:
 @verbatim
-octopus2span.pl <OCTOPUS topology file>
-
-example: <path to rosetta>/rosetta_source/src/apps/public/membrane_abinitio/octopus2span.pl BRD4.octopus
+make_fragments.pl -verbose -id BRD4 BRD4_.fasta -nojufo -nopsipred
 @endverbatim
+
+2. Genarate transmembrane regions (OCTOPUS) file:
 
 Input OCTOPUS topology file is generated at http://octopus.cbr.su.se/ using protein sequence as input.
 
@@ -57,7 +61,6 @@ OCTOPUS result file
 Generated from http://octopus.cbr.su.se/ at 2008-09-18 21:06:32
 Total request time: 6.69 seconds.
 ##############################################################################
-
 
 Sequence name: BRD4
 Sequence length: 123 aa.
@@ -72,7 +75,16 @@ MMMMMMMMMMMMMMMMMMiiiiiiiiiiiiiiiiiiiiiMMMMMMMMMMMMMMMMMMMMM
 ooo
 @endverbatim
 
-Sample span file:
+3. Convert OCTOPUS file to .span file format:
+
+BRD4.span - transmembrane topology prediction file generated using octopus2span.pl script as follows:
+
+octopus2span.pl <OCTOPUS topology file>
+
+Example command:
+<path to rosetta>/rosetta/rosetta_source/src/apps/public/membrane_abinitio/octopus2span.pl BRD4.octopus
+Sample .span file:
+
 @verbatim
 TM region prediction for BRD4 predicted using OCTOPUS
 4 123
@@ -89,14 +101,18 @@ n2c
 3rd line shows predicted topology of transmembrane helices in the membrane (currently only antiparallel topology is implemented).
 4th line and all lines below show start and end residue numbers of each of the predicted transmembrane helices (current format repeats these numbers twice).
 
-@li BRD4.lips4 - lipophilicity prediction file created using run_lips.pl script as follows:
+4. Generate .lips4 file.
+@verbatim
+BRD4.lips4 - lipophilicity prediction file created using run_lips.pl script as follows (note that blastpgp and nr database are necessary to run run_lips.pl script
+
 @verbatim
 run_lips.pl <fasta file> <span file> <path to blastpgp> <path to nr database> <path to alignblast.pl script>
 
-example: <path to rosetta>/rosetta_source/src/apps/public/membrane_abinitio/run_lips.pl BRD4.fasta BRD4.span /work/bjornw/Apps/blast/bin/blastpgp /scratch/shared/genomes/nr ~bjornw/rosetta/rosetta_source/src/apps/public/membrane_abinitio/alignblast.pl
-@endverbatim
+Example command: <path to mini>/mini/src/apps/public/membrane_abinitio/run_lips.pl BRD4.fasta BRD4.span /work/bjornw/Apps/blast/bin/blastpgp /scratch/shared/genomes/nr ~bjornw/mini/src/apps/public/membrane_abinitio/alignblast.pl
+@verbatim
 
 Sample lips4 file:
+
 @verbatim
 Lipid exposed data: resnum mean-lipo lipophil entropy
       6  -1.000   3.004   1.211
@@ -107,11 +123,8 @@ Lipid exposed data: resnum mean-lipo lipophil entropy
 ...
 @endverbatim
 
-@li Fragment files
-Generate structural fragments only using SAM secondary structure prediction file (*.rdb) - jufo and psipred predict transmembrane helical regions poorly.
-
 @section ft_options Options
-You can run membrane ab initio application with the following flags:
+Run membrane ab initio application with the following flags:
 
 @verbatim
 ./bin/membrane_abinitio2.linuxgccrelease
@@ -134,18 +147,17 @@ You can run membrane ab initio application with the following flags:
 -nstruct 1                                Number of output structures
 @endverbatim
 
-There are several optional settings used for Monte Carlo based membrane normal and center search protocol:
+You have a choice to use either Monte Carlo (default) or descrete search of membrane normal and membrane center.
+
+Optional settings used for Monte Carlo based membrane normal and center search protocol:
+
 @verbatim
 -membrane:normal_cycles (default=100)     Total number of membrane normal cycles
--membrane:normal_mag (default=5)          Magnitude of membrane normal angle search (degrees)
--membrane:center_mag (default=1)          Magnitude of membrane center search (Angstroms)
+-membrane:normal_mag (default=5)          Magnitude of membrane normal angle search step size (degrees)
+-membrane:center_mag (default=1)          Magnitude of membrane center search step size (Angstroms)
 @endverbatim
 
-For more information about membrane ab initio modeling flags, please check the @ref full_options_list "full options list"
-
-@section tips Tips
-
-Use the following settings to speedup Monte Carlo based membrane normal and center search:
+Tip - to speedup Monte Carlo based membrane normal and center search use the following settings:
 
 @verbatim
 -membrane:normal_cycles 40
@@ -153,9 +165,40 @@ Use the following settings to speedup Monte Carlo based membrane normal and cent
 -membrane:center_mag 2
 @endverbatim
 
+Optional settings for alternative - descrete search of membrane normal and membrane center:
+
+@verbatim
+-membrane:center_search (default= false) - perform membrane center search within "center_max_delta" deviation (see below).
+-membrane:normal_search (default= false) - perform membrane normal search with normal_start_angle, normal_delta_angle, and normal_max_angle values (see below).
+-membrane:center_max_delta (default= 5 A) - magnitude of maximum membrane width deviation during membrane center search (Angstroms).
+-membrane:normal_start_angle (default= 10 degrees) - magnitude of starting angle during membrane normal search (degrees).
+-membrane:normal_delta_angle (default= 10 degrees) - magnitude of angle deviation during membrane normal search (degrees).
+-membrane:normal_max_angle (default= 40 degrees) - magnitude of maximum angle deviation during membrane normal search (degrees).
+@endverbatim
+
 @section outputs Expected Outputs
-Protocol generates pdb files and an energy file.
-Membrane ab initio application specific score outputs in the energy file are:
+
+Convert silent file output into pdb file using score application as follows:
+
+@verbatim
+~bin/score.macosgccrelease \
+-in:file:native BRD4.pdb \
+-in:file:centroid_rosetta_inputs/ \
+-in:file:silent BRD4_silent.out \
+-in:file:silent_struct_type binary \
+-in:file:spanfile BRD4.span \
+-in:file:lipofile BRD4.lips4 \
+-membrane:no_interpolate_Mpair \
+-membrane:Menv_penalties \
+-score:find_neighbors_3dgrid \
+-score:weights score_membrane.wts \
+-out:nstruct 1 \
+-database ~rosetta_database \
+-out:output \
+-nstruct 1
+@endverbatim
+
+Membrane ab initio application specific score outputs in the output score file are:
 
 @verbatim
 Mpair                         membrane pairwise residue interaction energy
@@ -169,21 +212,8 @@ Menv_tm_proj                  transmembrane helix projection penalty
 
 @section postprocess Post Processing
 
-We recommend to generate 10,000 models and then use rosetta Cluster application to identify most frequently sampled conformations.  In general case, at least one of top 5-10 clusters will have models with the lowest rmsd to the native structure.
+Generate at least 10,000 models and then use rosetta Cluster application to identify most frequently sampled conformations.  In general case, at least one of top 5-10 clusters will have models with the lowest rmsd to the native structure.
 
-@section new_stuff_3p2 New Features In Rosetta3.2
-
-Rosetta 3.2 includes new options for exhaustive membrane normal and center search:
-
-@verbatim
--membrane:center_search (default= false) - perform membrane center search within "center_max_delta" deviation (see below).
--membrane:normal_search (default= false) - perform membrane normal search with normal_start_angle, normal_delta_angle, and normal_max_angle values (see below).
--membrane:center_max_delta (default= 5 A) - magnitude of maximum membrane width deviation during membrane center search (Angstroms).
--membrane:normal_start_angle (default= 10 degrees) - magnitude of starting angle during membrane normal search (degrees).
--membrane:normal_delta_angle (default= 10 degrees) - magnitude of angle deviation during membrane normal search (degrees).
--membrane:normal_max_angle (default= 40 degrees) - magnitude of maximum angle deviation during membrane normal search (degrees).
-@endverbatim
-
-Note that by default membrane abinitio, membrane score, and membrane relax protocols will still use Monte Carlo based protocol to search membrane center and normal.
+Good luck :)!
 
 */
