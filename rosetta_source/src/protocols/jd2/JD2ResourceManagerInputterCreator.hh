@@ -18,16 +18,16 @@
 
 namespace protocols {
 namespace jd2 {
-
+/*
 class JD2ResourceManagerInputterCreator : public protocols::jd2::JobInputterCreator {
 public:
 	virtual JobInputterOP create_JobInputter() const;
 	virtual std::string keyname() const;
 
 };
+*/
 
 } //jd2
 } //protocols
 
 #endif //INCLUDED_protocols_jd2_JD2ResourceManagerInputterCreator_hh
-

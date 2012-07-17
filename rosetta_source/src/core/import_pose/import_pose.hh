@@ -191,20 +191,20 @@ poses_from_pdbs(
   bool read_fold_tree
 );
 
-utility::vector1< core::pose::Pose >
+/* utility::vector1< core::pose::Pose >
 poses_from_pdbs(
 	chemical::ResidueTypeSet const & residue_set,
 	utility::vector1< std::string > const & filenames,
 	ImportPoseOptions const & options,
 	bool read_fold_tree = false
-);
+); */
 
-utility::vector1< core::pose::PoseOP >
+/* utility::vector1< core::pose::PoseOP >
 poseOPs_from_pdbs(
 	chemical::ResidueTypeSet const & residue_set,
 	utility::vector1< std::string > const & filenames,
 	bool read_fold_tree = false
-);
+); */
 
 // FA_STANDARD residue set
 
