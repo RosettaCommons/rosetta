@@ -232,6 +232,18 @@ settings = {
             "defines"       : [ "NDEBUG", "PYROSETTA" ],
         },
     },
+    "gcc, 4.4, pyrosetta" : {
+        "removes" : {
+            "flags" : {
+                "compile"   : [ "finline-limit=20000" ],
+            },
+        },
+        "appends" : {
+            "flags" : {
+                "compile"   : [ "finline-limit=487" ], # Bug in gcc4.4 which has not yet been fixed requries that this inline limit is removed
+            },
+        },
+    },
 
     "gcc, pyrosetta_debug" : {
         "appends" : {
