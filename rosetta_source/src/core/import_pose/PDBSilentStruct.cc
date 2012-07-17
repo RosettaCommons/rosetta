@@ -87,6 +87,7 @@ void PDBSilentStruct::fill_struct(
 	if ( tag == "empty_tag" ) set_tag_from_pose( pose );
 
 	energies_from_pose( pose );
+	
 	fd_.init_from_pose( pose );
 
 	sequence( pose.sequence() );

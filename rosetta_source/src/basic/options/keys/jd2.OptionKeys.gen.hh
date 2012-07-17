@@ -38,6 +38,7 @@ namespace jd2 { extern BooleanOptionKey const enzdes_out; }
 namespace jd2 { extern IntegerOptionKey const buffer_silent_output; }
 namespace jd2 { extern RealOptionKey const buffer_flush_frequency; }
 namespace jd2 { extern BooleanOptionKey const delete_old_poses; }
+namespace jd2 { extern FileVectorOptionKey const resource_definition_files; }
 
 } // namespace OptionKeys
 } // namespace options

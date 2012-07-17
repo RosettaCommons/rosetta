@@ -1,0 +1,328 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   basic/resource_manager/resource_manager/LazyResourceManager.cc
+/// @brief
+/// @author
+
+//unit headers
+#include <basic/resource_manager/LazyResourceManager.hh>
+#include <basic/resource_manager/ResourceLocator.hh>
+#include <basic/resource_manager/ResourceLocatorFactory.hh>
+#include <basic/resource_manager/ResourceLoader.hh>
+#include <basic/resource_manager/ResourceLoaderFactory.hh>
+#include <basic/resource_manager/ResourceOptions.hh>
+
+// Project Headers
+#include <basic/Tracer.hh>
+#include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
+
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
+//C++ headers
+#include <string>
+#include <sstream>
+
+namespace basic {
+namespace resource_manager {
+
+using std::stringstream;
+using std::string;
+using std::endl;
+using basic::Tracer;
+using utility::vector1;
+
+static Tracer TR("basic.resource_manager.LazyResourceManager");
+
+LazyResourceManager::LazyResourceManager() {
+	resource_locators_[""] = ResourceLocatorFactory::get_instance()->create_resource_locator( "FileSystemResourceLocator", 0 );
+}
+
+LazyResourceManager::~LazyResourceManager() {}
+
+void
+LazyResourceManager::clear()
+{
+	resource_tags_.clear();
+	job_options_.clear();
+	resource_configurations_.clear();
+	resource_locators_.clear();
+	resource_options_.clear();
+}
+
+///////////////////////////////////////////////////
+///// ResourceDescription + JobTag interface //////
+///////////////////////////////////////////////////
+
+ResourceOP
+LazyResourceManager::create_resource_by_job_tag(
+	ResourceDescription const & resource_description,
+	JobTag const & job_tag
+) const {
+	ResourceTag resource_tag(find_resource_tag_by_job_tag(
+			resource_description, job_tag));
+	return create_resource(resource_tag);
+}
+
+void
+LazyResourceManager::add_resource_tag_by_job_tag(
+	ResourceDescription const & resource_description,
+	JobTag const & job_tag,
+	ResourceTag const & resource_tag
+)
+{
+	resource_tags_[make_pair(resource_description, job_tag)] = resource_tag;
+}
+
+bool
+LazyResourceManager::has_resource_tag_by_job_tag(
+	ResourceDescription const & resource_description,
+	JobTag const & job_tag
+) const {
+	ResourceTagsMap::const_iterator resource_tag(
+		resource_tags_.find(make_pair(resource_description, job_tag)));
+	return resource_tag != resource_tags_.end();
+}
+
+ResourceTag
+LazyResourceManager::find_resource_tag_by_job_tag(
+	ResourceDescription const & resource_description,
+	JobTag const & job_tag
+) const {
+	ResourceTagsMap::const_iterator resource_tag(
+		resource_tags_.find(make_pair(resource_description, job_tag)));
+	if(resource_tag == resource_tags_.end()){
+		stringstream err_msg;
+		err_msg
+			<< "Unable to find resource tag for the resource description '"
+			<< resource_description << "' "
+			<< "and job tag '" << job_tag << "'" << endl;
+		utility_exit_with_message(err_msg.str());
+	}
+	return resource_tag->second;
+}
+
+ResourceOP
+LazyResourceManager::get_resource_by_job_tag(
+	ResourceDescription const & resource_description,
+	JobTag const & job_tag
+) {
+	ResourceTag resource_tag(find_resource_tag_by_job_tag(
+			resource_description, job_tag));
+
+	if(has_resource(resource_tag)){
+		return find_resource(resource_tag);
+	} else {
+		ResourceOP new_resource(create_resource(resource_tag));
+		add_resource(resource_tag, new_resource);
+		return new_resource;
+	}
+}
+
+void
+LazyResourceManager::free_resource_by_job_tag(
+	ResourceDescription const & resource_description,
+	JobTag const & job_tag
+) {
+	ResourceTag resource_tag(find_resource_tag_by_job_tag(
+			resource_description, job_tag));
+	free_resource(resource_tag);
+}
+
+///////////////////////////////////////////////////////////
+///// Options ResourceDescription + JobTag interface //////
+///////////////////////////////////////////////////////////
+
+void
+LazyResourceManager::add_job_options(
+	JobTag const & job_tag,
+	JobOptionsOP job_options
+) {
+	job_options_[job_tag] = job_options;
+}
+
+bool
+LazyResourceManager::has_job_options(
+	JobTag const & job_tag
+) const {
+	JobOptionsMap::const_iterator job_options(
+		job_options_.find(job_tag));
+	return job_options != job_options_.end();
+}
+
+JobOptionsOP
+LazyResourceManager::get_job_options(
+	JobTag const & job_tag
+) const {
+	JobOptionsMap::const_iterator job_options(
+		job_options_.find(job_tag));
+	if(job_options == job_options_.end()){
+		stringstream err_msg;
+		err_msg
+			<< "Unable to find job options for the resource description '"
+			<< "' for the job with tag '" << job_tag << "'" << endl;
+		utility_exit_with_message(err_msg.str());
+	}
+	return job_options->second;
+}
+
+//////////////////////////////////////////////
+///// Resource Configuration interface  //////
+//////////////////////////////////////////////
+
+void
+LazyResourceManager::add_resource_configuration(
+	ResourceTag const & resource_tag,
+	ResourceConfiguration const & resource_configuration
+) {
+	ResourceConfigurationMap::const_iterator config( resource_configurations_.find( resource_tag ));
+	if( config != resource_configurations_.end() ){
+		throw utility::excn::EXCN_Msg_Exception("Attempting to add multiple resource configurations with the resource tag '" + resource_tag + "'.");
+	}
+	resource_configurations_[ resource_tag ] = resource_configuration;
+}
+
+void
+LazyResourceManager::add_resource_locator(
+	LocatorTag const & locator_tag,
+	ResourceLocatorOP resource_locator
+) {
+	ResourceLocatorsMap::const_iterator locator( resource_locators_.find( locator_tag ));
+	if( locator != resource_locators_.end() ){
+		throw utility::excn::EXCN_Msg_Exception("Attempting to add multiple resource locators with the locator tag '" + locator_tag + "'.");
+	}
+	resource_locators_[ locator_tag ] = resource_locator;
+}
+
+
+void
+LazyResourceManager::add_resource_options(
+	ResourceOptionsTag const & resource_options_tag,
+	ResourceOptionsOP resource_options
+) {
+	ResourceOptionsMap::const_iterator options( resource_options_.find( resource_options_tag ));
+	if( options != resource_options_.end() ){
+		throw utility::excn::EXCN_Msg_Exception("Attempting to add multiple resource options with the resource optiosn tag '" + resource_options_tag + "'.");
+	}
+	resource_options_[ resource_options_tag ] = resource_options;
+}
+
+
+/////////////////////////////////////////////////////////
+///// helper functions for resource configurations //////
+/////////////////////////////////////////////////////////
+
+ResourceConfiguration const &
+LazyResourceManager::find_resource_configuration(
+	ResourceTag const & resource_tag
+) const {
+	ResourceConfigurationMap::const_iterator config(
+		resource_configurations_.find(resource_tag));
+	if( config == resource_configurations_.end() ){
+		throw utility::excn::EXCN_Msg_Exception( "Unable to find resource configuration for the resource tag '" + resource_tag + "'.");
+	}
+	return config->second;
+}
+
+ResourceLocatorOP
+LazyResourceManager::find_resource_locator(
+	LocatorTag const & locator_tag
+) const {
+	ResourceLocatorsMap::const_iterator resource_locator(
+		resource_locators_.find(locator_tag));
+	if(resource_locator == resource_locators_.end()){
+		throw utility::excn::EXCN_Msg_Exception("Unable to find resource locator for the locator tag '" + locator_tag + "'.");
+	}
+	return resource_locator->second;
+}
+
+ResourceOptionsOP
+LazyResourceManager::find_resource_options(
+	ResourceOptionsTag const & options_tag
+) const {
+	ResourceOptionsMap::const_iterator resource_options(
+		resource_options_.find(options_tag));
+	if(resource_options == resource_options_.end()){
+		throw utility::excn::EXCN_Msg_Exception("Unable to find resource options for the resource options tag '" + options_tag + "'.");
+	}
+	return resource_options->second;
+}
+
+ResourceOP
+LazyResourceManager::create_resource(
+	LocatorTag const & resource_tag
+) const {
+
+	ResourceConfiguration const & config(
+		find_resource_configuration(resource_tag));
+
+	ResourceLocatorOP locator(
+		find_resource_locator(config.locator_tag));
+
+	ResourceStreamOP stream(
+		locator->locate_resource_stream(config.locator_id));
+
+	ResourceLoaderOP loader(
+		ResourceLoaderFactory::get_instance()->create_resource_loader(
+			config.loader_type));
+
+	ResourceOptionsOP resource_options;
+	if ( config.resource_options_tag != "" ) {
+		resource_options = find_resource_options(config.resource_options_tag);
+	} else {
+		resource_options = loader->default_options();
+	}
+
+	ResourceOP resource(
+		loader->create_resource(
+			*resource_options,
+			config.locator_id,
+			stream->stream()));
+
+	return resource;
+}
+
+void
+LazyResourceManager::create_resources(
+	JobTag const &
+) {
+	utility_exit_with_message("This is meant to be overwritten in the the derived class.");
+}
+
+ResourceOP
+LazyResourceManager::get_resource(
+  ResourceDescription const &
+) {
+  utility_exit_with_message("This is meant to be overwritten in the the derived class.");
+  return 0; // appease compiler
+}
+
+bool
+LazyResourceManager::has_resource_configuration( ResourceTag const & resource_tag ) const
+{
+	return resource_configurations_.find( resource_tag ) != resource_configurations_.end();
+}
+
+bool
+LazyResourceManager::has_resource_locator( LocatorTag const & locator_tag ) const
+{
+	return resource_locators_.find( locator_tag ) != resource_locators_.end();
+}
+bool
+LazyResourceManager::has_resource_options( ResourceOptionsTag const & resource_options_tag ) const
+{
+	return resource_options_.find( resource_options_tag ) != resource_options_.end();
+}
+
+
+} // namespace
+} // namespace

@@ -19,7 +19,7 @@
 
 // Unit headers
 #include <core/io/pdb/file_data.fwd.hh>
-
+#include <core/io/pdb/pdb_dynamic_reader_options.fwd.hh>
 
 // Utility headers
 #include <utility/Show.hh>
@@ -102,14 +102,18 @@ public:
 	static std::vector<Record> parse(const String &);
 
 
-	/// @brief create File data sturcture from array of Records.
-	static FileData createFileData(std::vector<Record> & );
+	/// @brief create File data sturcture from array of Records. 
+	static FileData createFileData(std::vector<Record> &);
 
+	/// @brief create File data sturcture from array of Records and a set of options. 
+	static FileData createFileData(std::vector<Record> &, PDB_DReaderOptions const & options);
 
 	/// @brief create File data sturcture from string containing PDB information.
 	static FileData createFileData(const String & data);
 
-
+	/// @brief create File data sturcture from string containing PDB information and a set of options.
+	static FileData createFileData(const String & data, PDB_DReaderOptions const & options);
+	
 	/// @brief create PDB-like string to represent given FileData object
 	static String createPDBData(FileData const &fd);
 

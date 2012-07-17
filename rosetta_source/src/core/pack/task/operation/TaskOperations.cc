@@ -40,6 +40,9 @@
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 
+// basic headers
+#include <basic/resource_manager/ResourceManager.hh>
+
 // option key includes
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
@@ -518,9 +521,9 @@ ReadResfile::ReadResfile() : parent()
 {
 }
 
-ReadResfile::ReadResfile( std::string const & filename )
-	: parent(),
-		resfile_filename_( filename )
+ReadResfile::ReadResfile( std::string const & filename ) :
+	parent(),
+	resfile_filename_( filename )
 {}
 
 ReadResfile::~ReadResfile() {}
@@ -538,20 +541,33 @@ TaskOperationOP ReadResfile::clone() const
 void
 ReadResfile::apply( pose::Pose const & pose, PackerTask & task ) const
 {
+	using namespace basic::resource_manager;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	if ( resfile_filename_.empty() ) {
-		parse_resfile(pose, task, option[ packing::resfile].value().at(1) );
+		/// only apply the read-resfile command if a resfile has been supplied, either through the
+		/// resource manager, or through the command line
+		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() ) {
+			parse_resfile(pose, task, ResourceManager::get_instance()->get_option( packing::resfile )[ 1 ] );
+		} /// else -- do not change the input PackerTask at all. Noop.
 	} else {
 		parse_resfile(pose, task, resfile_filename_ );
 	}
 }
 
+/// @brief Assign the filename from the ResourceManager, if a resfile has been assigned for the
+/// current job, and fall back on the options system, if a resfile has not been assigned.
 void
 ReadResfile::default_filename()
 {
-	///.value().at(1) gets the value of the first resfile in the FileVector (like [1])
-	resfile_filename_ = basic::options::option[ basic::options::OptionKeys::packing::resfile].value().at(1);
+	using namespace basic::resource_manager;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() ) {
+		resfile_filename_ = ResourceManager::get_instance()->get_option( packing::resfile )[ 1 ];
+	} else {
+		resfile_filename_ = "";
+	}
 }
 
 void
@@ -569,7 +585,11 @@ void
 ReadResfile::parse_tag( TagPtr tag )
 {
 	if ( tag->hasOption("filename") ) resfile_filename_ = tag->getOption<std::string>("filename");
-	// special case: if "COMMANDLINE" string specified, use commandline option setting
+	// special case: if "COMMANDLINE" string specified, use commandline option setting.
+	// This is wholy unneccessary of course.  In the absence of a specified filename, the command line
+	// will be read from, anyways.
+	// if no filename is given, then the ReadResfile command will read either from the ResourceManager
+	// or from the packing::resfile option on the command line.
 	if ( resfile_filename_ == "COMMANDLINE" ) default_filename();
 }
 

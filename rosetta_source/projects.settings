@@ -44,6 +44,7 @@ projects = {
 		"numeric",
 		"utility",
 		"ObjexxFCL",
+		"basic",
 		"core",
 		"protocols",
 		"apps",

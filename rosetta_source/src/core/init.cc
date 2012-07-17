@@ -219,6 +219,12 @@ using basic::Warning;
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
+// ResourceManager includes
+#include <basic/resource_manager/ResourceLoaderRegistrator.hh>
+#include <core/import_pose/PoseFromPDBLoaderCreator.hh>
+#include <core/scoring/electron_density/ElectronDensityLoaderCreator.hh>
+
+
 //option key includes for deprecated pdbs
 #include <basic/options/keys/LoopModel.OptionKeys.gen.hh>
 
@@ -451,6 +457,11 @@ static ResFilterRegistrator< ResiduePDBIndexIsCreator > ResiduePDBIndexIsCreator
 static ResFilterRegistrator< ResiduePDBIndexIsntCreator > ResiduePDBIndexIsntCreator_registrator;
 static ResFilterRegistrator< ChainIsCreator > ChainIsCreator_registrator;
 static ResFilterRegistrator< ChainIsntCreator > ChainIsntCreator_registrator;
+
+using basic::resource_manager::ResourceLoaderRegistrator;
+static ResourceLoaderRegistrator< core::import_pose::PoseFromPDBLoaderCreator > PoseFromPDBLoaderCreator_registrator;
+static ResourceLoaderRegistrator< core::scoring::electron_density::ElectronDensityLoaderCreator > ElectronDensityLoaderCreator_registrator;
+
 #endif
 
 static basic::Tracer TR("core.init");

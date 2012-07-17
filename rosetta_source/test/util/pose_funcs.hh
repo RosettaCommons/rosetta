@@ -19,6 +19,7 @@
 
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/pdb/pdb_dynamic_reader.hh>
+#include <core/io/pdb/pdb_dynamic_reader_options.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <core/io/pdb/file_data.hh>
@@ -53,7 +54,8 @@ fullatom_pose_from_string(
 	using namespace core::pose;
 
 	Pose pose;
-	core::io::pdb::FileData fd = core::io::pdb::PDB_DReader::createFileData( pdbstring );
+	core::io::pdb::PDB_DReaderOptions options;
+	core::io::pdb::FileData fd = core::io::pdb::PDB_DReader::createFileData( pdbstring, options );
 	ResidueTypeSetCAP residue_set
 		( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 	core::import_pose::build_pose( fd, pose, *residue_set);
@@ -71,7 +73,8 @@ fullatom_poseop_from_string(
 	using namespace core::pose;
 
 	PoseOP pose = new Pose;
-	core::io::pdb::FileData fd = core::io::pdb::PDB_DReader::createFileData( pdbstring );
+	core::io::pdb::PDB_DReaderOptions options;
+	core::io::pdb::FileData fd = core::io::pdb::PDB_DReader::createFileData( pdbstring, options );
 	ResidueTypeSetCAP residue_set
 		( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 	core::import_pose::build_pose( fd,*pose, *residue_set);

@@ -178,11 +178,33 @@ void JobDistributor::init_jd()
 	}
 	else
 	{ //no batches...
-		job_inputter_ = JobDistributorFactory::create_job_inputter();
+		try{
+			job_inputter_ = JobDistributorFactory::create_job_inputter();
+		} catch (utility::excn::EXCN_Base & excn) {
+			basic::Error()
+				<< "ERROR: Exception caught by JobDistributor while trying to initialize the JobInputter of type '"
+				<< JobInputter::job_inputter_input_source_to_string(
+					job_inputter_->input_source())
+				<< "'" << std::endl;
+			basic::Error()
+				<< excn << std::endl;
+			utility_exit();
+		}
 	}
 
 	// get jobs
-	job_inputter_->fill_jobs(jobs_);
+	try {
+		job_inputter_->fill_jobs(jobs_);
+	} catch (utility::excn::EXCN_Base & excn) {
+			basic::Error()
+				<< "ERROR: Exception caught by JobDistributor while trying to fill the input jobs with JobInputter of type type '"
+				<< JobInputter::job_inputter_input_source_to_string(
+					job_inputter_->input_source())
+				<< "'" << std::endl;
+			basic::Error()
+				<< excn << std::endl;
+			utility_exit();
+		}
 
 	// have to initialize these AFTER BatchJobInputter->fill_jobs since a new batch might change options
 	job_outputter_ = JobDistributorFactory::create_job_outputter();

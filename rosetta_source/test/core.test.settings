@@ -47,6 +47,9 @@ sources = {
 	"grid" : [
 		"CartGrid",
 	],
+	"import_pose" : [
+		"PoseFromPDBResourceLoader",
+	],
 	"io" : [
 		"PDB_IO",
 	],
@@ -152,6 +155,9 @@ sources = {
 	],
 	"scoring/dunbrack" : [
 		"Dunbrack",
+	],
+	"scoring/electron_density" : [
+		"ElectronDensityLoader",
 	],
         "scoring/geometric_solvation" : [
                 "GeometricSolEnergy",
@@ -316,6 +322,7 @@ testinputfiles = [
 	"scoring/dunbrack/best_rotamer_energy.u",
 	"scoring/dunbrack/test_in.pdb",
 	"scoring/dunbrack/test_in_rotamers.dat",
+	"scoring/electron_density/1onc_8A.mrc",
 	"scoring/test.wts",
 	"scoring/test.wts_patch",
 	"scoring/fa_atr.data",

@@ -19,6 +19,12 @@
 
 // Unit headers
 #include <core/io/pdb/file_data.fwd.hh>
+
+// Package headers
+#include <core/io/pdb/file_data_options.fwd.hh>
+#include <core/io/pdb/pdb_dynamic_reader_options.fwd.hh>
+
+// Project headers
 #include <core/id/AtomID_Mask.fwd.hh>
 #include <core/pose/Remarks.hh>
 
@@ -169,9 +175,12 @@ public:
 	pose::RemarksOP remarks;
 	std::string filename;
 	std::string modeltag;
-
+	
 	/// @brief Fill FileData structure using information from given pose object.
 	void init_from_pose(core::pose::Pose const & pose);
+	
+	/// @brief Fill FileData structure using information from given pose object and a set of options.
+	void init_from_pose(core::pose::Pose const & pose, FileDataOptions const & options);
 
 	/// @brief Fill FileData structure using information from given pose object,
 	/// for a specified subset of residues
@@ -218,10 +227,16 @@ public:
 	typedef std::map< std::string, Vector > ResidueCoords;
 	typedef std::map< std::string, ResidueCoords > Coords;
 	typedef utility::vector1< std::string > Strings;
-
-	/// @brief Convert FileData in to set of residues, sequences, coordinats etc.
+	
+	/// @brief Convert FileData into set of residues, sequences, coordinates etc.
 	void create_working_data(
 		utility::vector1< ResidueInformation > & rinfo
+	);
+	
+	/// @brief Convert FileData into set of residues, sequences, coordinates etc. using a set of options
+	void create_working_data(
+		utility::vector1< ResidueInformation > & rinfo,
+		FileDataOptions const & options
 	);
 
 	///@brief appends pdb information for a single residue
@@ -230,7 +245,6 @@ public:
 		core::Size & atom_index,
 		core::pose::Pose const & pose
 	);
-
 };
 
 void
@@ -249,6 +263,15 @@ build_pose_from_pdb_as_is(
 	std::string const & filename
 );
 
+/// @brief Builds a pose into  <pose>, without repacking or optimizing
+/// hydrogens; using the fullatom ResidueTypeSet and a set of options.
+void
+build_pose_from_pdb_as_is(
+	pose::Pose & pose,
+	std::string const & filename,
+	PDB_DReaderOptions const & pdr_options
+);
+
 void
 build_pose_from_pdb_as_is(
 	pose::Pose & pose,
@@ -257,11 +280,28 @@ build_pose_from_pdb_as_is(
 );
 
 void
+build_pose_from_pdb_as_is(
+	pose::Pose & pose,
+	chemical::ResidueTypeSet const & residue_set,
+	std::string const & filename,
+	PDB_DReaderOptions const & pdr_options
+);
+
+//void
+//build_pose_as_is1(
+//	io::pdb::FileData & fd,
+//	pose::Pose & pose,
+//	chemical::ResidueTypeSet const & residue_set,
+//	id::AtomID_Mask & missing
+//);
+
+void
 build_pose_as_is1(
 	io::pdb::FileData & fd,
 	pose::Pose & pose,
 	chemical::ResidueTypeSet const & residue_set,
-	id::AtomID_Mask & missing
+	id::AtomID_Mask & missing,
+	FileDataOptions const & options
 );
 
 bool
@@ -277,6 +317,20 @@ is_residue_type_recognized(
 	utility::vector1<numeric::xyzVector<Real> > & UA_coords,
 	utility::vector1<core::Real> & UA_temps);
 
+bool
+is_residue_type_recognized(
+	Size const pdb_residue_index,
+	std::string const & pdb_name,
+	core::chemical::ResidueTypeCAPs const & rsd_type_list,
+	std::map< std::string, Vector > const & xyz,
+	std::map< std::string, double > const & rtemp,
+	utility::vector1<Size> & UA_res_nums,
+	utility::vector1<std::string> & UA_res_names,
+	utility::vector1<std::string> & UA_atom_names,
+	utility::vector1<numeric::xyzVector<Real> > & UA_coords,
+	utility::vector1<core::Real> & UA_temps,
+	FileDataOptions const & options);
+
 
 void
 pose_from_pose(
@@ -289,8 +343,25 @@ void
 pose_from_pose(
 	pose::Pose & new_pose,
 	pose::Pose const & old_pose,
+	utility::vector1< core::Size > const & residue_indices,
+	FileDataOptions const & options
+);
+
+void
+pose_from_pose(
+	pose::Pose & new_pose,
+	pose::Pose const & old_pose,
 	chemical::ResidueTypeSet const & residue_set,
 	utility::vector1< core::Size > const & residue_indices
+);
+
+void
+pose_from_pose(
+	pose::Pose & new_pose,
+	pose::Pose const & old_pose,
+	chemical::ResidueTypeSet const & residue_set,
+	utility::vector1< core::Size > const & residue_indices,
+	FileDataOptions const & options
 );
 
 

@@ -59,5 +59,25 @@ core::Size JobInputter::get_nstruct( ) const {
 	}
 }
 
+std::string
+JobInputter::job_inputter_input_source_to_string(
+	JobInputterInputSource::Enum source
+) {
+	switch(source) {
+	case JobInputterInputSource::NONE: return "None";
+	case JobInputterInputSource::UNKNOWN: return "Uknown";
+	case JobInputterInputSource::POSE: return "Pose";
+	case JobInputterInputSource::SILENT_FILE: return "SilentFile";
+	case JobInputterInputSource::PDB_FILE: return "PdbFile";
+	case JobInputterInputSource::ATOM_TREE_FILE: return "AtomTreeFile";
+	case JobInputterInputSource::DATABASE: return "Database";
+	case JobInputterInputSource::RESOURCE_MANAGED_JOB: return "ResourceManagerJob";
+	default:
+		utility_exit_with_message("Unrecognized JobInputterInputSource");
+	}
+}
+
+
+
 } // jd2
 } // protocols

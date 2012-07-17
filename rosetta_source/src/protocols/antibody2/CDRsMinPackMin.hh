@@ -48,57 +48,58 @@ class CDRsMinPackMin: public moves::Mover {
 public:
 
 	// default constructor
-    CDRsMinPackMin();
-    
+	CDRsMinPackMin();
+
 	CDRsMinPackMin(AntibodyInfoOP antibody_info);
-    
-    CDRsMinPackMin(AntibodyInfoOP antibody_info, 
-                   core::scoring::ScoreFunctionOP scorefxn,
-                   pack::task::TaskFactoryOP tf,
-                   kinematics::MoveMapOP movemap
-                   );
+
+	CDRsMinPackMin(
+		AntibodyInfoOP antibody_info, 
+		core::scoring::ScoreFunctionOP scorefxn,
+		pack::task::TaskFactoryOP tf,
+		kinematics::MoveMapOP movemap
+	);
 
 	// default destructor
 	~CDRsMinPackMin();
 
 	virtual void apply( pose::Pose & pose );
 	virtual std::string get_name() const;
-    
-    void set_task_factory(pack::task::TaskFactoryCOP tf);
-    void set_move_map(kinematics::MoveMapCOP movemap);
-    
+
+	void set_task_factory(pack::task::TaskFactoryCOP tf);
+	void set_move_map(kinematics::MoveMapCOP movemap);
+
 	// simple inline setters
-    void set_sc_min (bool scmin) {sc_min_ = scmin ;}
-    void set_rt_min (bool rtmin) {rt_min_ = rtmin ;}
-        
-    void show( std::ostream & out=std::cout );
-    friend std::ostream & operator<<(std::ostream& out, const CDRsMinPackMin & ab_m_2 );
+	void set_sc_min (bool scmin) {sc_min_ = scmin ;}
+	void set_rt_min (bool rtmin) {rt_min_ = rtmin ;}
+
+	void show( std::ostream & out=std::cout );
+	friend std::ostream & operator<<(std::ostream& out, const CDRsMinPackMin & ab_m_2 );
     
 
 private:
-    bool sc_min_;
+	bool sc_min_;
 	bool rt_min_;
-    
-    /// @brief refine H3 only
-    core::Real cen_cst_, high_cst_;
-    moves::PyMolMoverOP pymol_;
-    bool use_pymol_diy_;
-    
+
+	/// @brief refine H3 only
+	core::Real cen_cst_, high_cst_;
+	moves::PyMolMoverOP pymol_;
+	bool use_pymol_diy_;
+
 	// Benchmark mode for shorter_cycles
 	bool benchmark_;
 
 	void finalize_setup( core::pose::Pose & pose );
-    void init();   
-    bool user_defined_; // for constructor options passed to init
+	void init();   
+	bool user_defined_; // for constructor options passed to init
 
-    AntibodyInfoOP ab_info_;
-    core::scoring::ScoreFunctionOP loop_scorefxn_highres_;
-    protocols::moves::SequenceMoverOP cdr_sequence_move_ ;
-    kinematics::MoveMapOP allcdr_map_;
-    pack::task::TaskFactoryOP tf_;
-    std::string min_type_;
-    Real Temperature_;
-    Real min_tolerance_;
+	AntibodyInfoOP ab_info_;
+	core::scoring::ScoreFunctionOP loop_scorefxn_highres_;
+	protocols::moves::SequenceMoverOP cdr_sequence_move_ ;
+	kinematics::MoveMapOP allcdr_map_;
+	pack::task::TaskFactoryOP tf_;
+	std::string min_type_;
+	Real Temperature_;
+	Real min_tolerance_;
     
 
 

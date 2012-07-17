@@ -21,7 +21,7 @@ from optparse import OptionParser
 
 import yaml
 
-UnitTestExecutable = ["protocols.test", "core.test", "ObjexxFCL.test", "numeric.test", "utility.test", "apps.test", "devel.test"]
+UnitTestExecutable = ["protocols.test", "core.test", "basic.test", "ObjexxFCL.test", "numeric.test", "utility.test", "apps.test", "devel.test"]
 #UnitTestExecutable = ["numeric.test", "utility.test"]
 
 # Output info class, simple wrapper for named collection of fields.

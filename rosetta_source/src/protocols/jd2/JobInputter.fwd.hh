@@ -30,16 +30,18 @@ typedef utility::pointer::owning_ptr< JobInputter const > JobInputterCOP;
 // namespace pollution
 namespace JobInputterInputSource {
 
-	/// @enum describes the type of input source that the JobInputter is using
-	enum Enum {
-		NONE,
-		UNKNOWN,
-		POSE,
-		SILENT_FILE,
-		PDB_FILE,
-		ATOM_TREE_FILE,
-		DATABASE
-	};
+/// @enum describes the type of input source that the JobInputter is using
+/// Also please add the lookup in job_inputter_input_source_to_string()
+enum Enum {
+	NONE,
+	UNKNOWN,
+	POSE,
+	SILENT_FILE,
+	PDB_FILE,
+	ATOM_TREE_FILE,
+	DATABASE,
+	RESOURCE_MANAGED_JOB
+};
 
 }
 

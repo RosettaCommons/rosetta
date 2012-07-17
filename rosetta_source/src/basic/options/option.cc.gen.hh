@@ -425,6 +425,7 @@ option.add( basic::options::OptionKeys::jd2::enzdes_out, "causes an enzdes-style
 option.add( basic::options::OptionKeys::jd2::buffer_silent_output, "write structures to silent-files in blocks of N structures to" ).def(1);
 option.add( basic::options::OptionKeys::jd2::buffer_flush_frequency, "when N structures (buffer_silent_output) are collected dump to file with probability X" ).def(1.0);
 option.add( basic::options::OptionKeys::jd2::delete_old_poses, "Delete poses after they have been processed.  For jobs that process a large number of structures, the memory consumed by old poses is wasteful." ).def(false);
+option.add( basic::options::OptionKeys::jd2::resource_definition_files, "Specify all the jobs and all of their resources to the new JD2ResourceManager system" );
 option.add( basic::options::OptionKeys::evaluation::evaluation, "evaluation option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::evaluation::rmsd_target, "[vector] determine rmsd against this/these structure(s)" );
 option.add( basic::options::OptionKeys::evaluation::rmsd_column, "[vector] use xxx as column name: rms_xxx" );
@@ -1246,6 +1247,7 @@ inline void add_rosetta_options_2( utility::options::OptionCollection &option ) 
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
 option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
 option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
+option.add( basic::options::OptionKeys::lh::expire_after_rounds, "If set to > 0 this causes the Master to expire a structure after it has gone through this many cycles" ).def(0);
 option.add( basic::options::OptionKeys::lh::mpi_resume, "Prefix (Ident string) for resuming a previous job!" );
 option.add( basic::options::OptionKeys::lh::mpi_feedback, "No description" ).legal("no").legal("add_n_limit").legal("add_n_replace").legal("single_replace").legal("single_replace_rounds").def("no");
 option.add( basic::options::OptionKeys::lh::mpi_batch_relax_chunks, "No description" ).def(100);

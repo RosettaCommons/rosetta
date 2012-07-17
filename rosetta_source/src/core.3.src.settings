@@ -15,7 +15,9 @@ sources = {
 	],
 	"core/io/pdb": [
 		"file_data",
+		"file_data_options",
 		"pdb_dynamic_reader",
+		"pdb_dynamic_reader_options",
 		"pose_io",
 	],
 	"core/io/raw_data": [
@@ -228,6 +230,8 @@ sources = {
 		"ElecDensCenEnergy",
 		"ElecDensEnergy",
 		"ElectronDensity",
+		"ElectronDensityLoader",
+		"ElectronDensityOptions",
 		"FastDensEnergy",
 		"PattersonCorrEnergy",
 		"SplineInterp",

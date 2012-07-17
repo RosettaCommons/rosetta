@@ -35,6 +35,7 @@
 
 #include <core/kinematics/RT.hh>
 #include <utility/vector1.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 
 namespace core {
@@ -45,7 +46,7 @@ const core::Real MAX_FLT = 1e37;
 
 float pos_mod(float x,float y);
 
-class ElectronDensity {
+class ElectronDensity : public utility::pointer::ReferenceCount {
 public:
 	/// @brief constructor
 	ElectronDensity();
@@ -85,7 +86,18 @@ public:
 	}
 
 	/// @brief Load an MRC (="new-CCP4") density map
-	bool readMRCandResize(std::string mapfile, core::Real reso=5.0, core::Real gridSpacing=0.0);
+	bool
+	readMRCandResize(
+		std::string mapfile,
+		core::Real reso=5.0,
+		core::Real gridSpacing=0.0);
+
+	/// @brief Load an MRC (="new-CCP4") density map
+	bool readMRCandResize(
+		std::istream & mapin,
+		std::string mapfile, // just used as information about the map
+		core::Real reso=5.0,
+		core::Real gridSpacing=0.0);
 
 	/// @brief (debugging) Write MRC mapfile
 	bool writeMRC(std::string mapfilestem);
@@ -464,6 +476,10 @@ private:
 
 /// @brief The EDM instance
 ElectronDensity& getDensityMap();
+
+/// @brief The EDM instance
+ElectronDensity& getDensityMap_legacy();
+
 
 // x mod y, returns z in [0,y-1]
 inline int pos_mod(int x,int y) {

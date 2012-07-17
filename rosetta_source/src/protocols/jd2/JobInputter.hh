@@ -50,6 +50,15 @@ public:
 	///  using
 	virtual JobInputterInputSource::Enum input_source() const = 0;
 
+
+	///@brief call this with input_source() to get the input source of a
+	///particular job inputter
+	static
+	std::string
+	job_inputter_input_source_to_string(
+		JobInputterInputSource::Enum source);
+
+
 protected:
 	///@brief this function modifies the InnerJob's pose.  Access to that pose is via friendship.
 	void load_pose_into_job( core::pose::Pose const & pose, JobOP job );
@@ -60,6 +69,8 @@ protected:
 	virtual core::Size get_nstruct() const;
 
 }; // JobInputter
+
+
 
 } // namespace jd2
 } // namespace protocols

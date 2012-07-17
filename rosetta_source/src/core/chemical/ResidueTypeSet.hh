@@ -267,18 +267,6 @@ public:
 		return residue_types_const_;
 	}
 
-	//XRW_B_T1
-	/*
-	//convenience function to access coarsifier
-	/// @brief returns false and a copy of fine_pose,  if no coarsifier is present
-	bool
-	coarsify(
-		pose::Pose &coarse_pose,
-		pose::Pose const& fine_pose
-	) const;
-	*/
-	//XRW_E_T1
-
 	/// @brief accessor for database_directory
 	std::string const&
 	database_directory() const

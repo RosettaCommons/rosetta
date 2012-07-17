@@ -16,6 +16,7 @@
 
 // Unit headers
 #include <core/io/pdb/pdb_dynamic_reader.hh>
+#include <core/io/pdb/pdb_dynamic_reader_options.hh>
 
 //
 #include <core/io/pdb/file_data.hh>
@@ -28,8 +29,6 @@
 #include <ObjexxFCL/string.functions.hh>
 // AUTO-REMOVED #include <utility/vector0.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // C++ headers
 #include <cstdlib>
@@ -222,6 +221,13 @@ std::vector<Record> PDB_DReader::parse(const String &pdb)
 /// @details Create FileData object from a given vector of Recrods.
 FileData PDB_DReader::createFileData(std::vector<Record> & VR)
 {
+	PDB_DReaderOptions options;
+	return createFileData( VR, options );
+}
+
+/// @details Create FileData object from a given vector of Recrods.
+FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOptions const & options)
+{
 	FileData fd;
 
 	typedef std::map<char, AtomChain> ChainMap;
@@ -245,7 +251,7 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR)
 			// store the serial number as the filename, which will become the PDBInfo name of the pose
 			std::string temp_model = ObjexxFCL::strip_whitespace( VR[i]["serial"].value ) ;
 			fd.modeltag = temp_model.c_str();
-			if( basic::options::option[basic::options::OptionKeys::in::file::new_chain_order]() ) {
+			if( options.new_chain_order() ) {
 				if(modeltags_present) {
 					// second model... all chains should be present...
 					for(Size model_idx=2;model_idx*chain_to_idx.size()<chainletters.size();++model_idx) {
@@ -271,7 +277,7 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR)
 			ai.resName = R["resName"].value;
 
 			ai.chainID = 0;	if( R["chainID"].value.size() > 0 ) ai.chainID = R["chainID"].value[0];
-			if( basic::options::option[basic::options::OptionKeys::in::file::new_chain_order]() ) {
+			if( options.new_chain_order() ) {
 				if( R["chainID"].value.size() > 0 ) {
 					char chainid = R["chainID"].value[0];
 					if( chain_to_idx.find(chainid) == chain_to_idx.end() ) {
@@ -308,7 +314,7 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR)
 		} else if( VR[i]["type"].value == "TER   " || VR[i]["type"].value == "END   ")  {
 			terCount++;
 		} else if( (VR[i]["type"].value == "ENDMDL") &&
-							 (basic::options::option[basic::options::OptionKeys::in::file::obey_ENDMDL].value()) )  {
+							 (options.obey_ENDMDL()) )  {
 		 	TR.Warning << "hit ENDMDL, not reading anything further" << std::endl;
 			break;
 		} else if( VR[i]["type"].value == "REMARK")  {
@@ -333,8 +339,14 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR)
 /// @details Create FileData from a given PDB data (represented as a string).
 FileData PDB_DReader::createFileData(const String & data)
 {
+	PDB_DReaderOptions options;
+	return createFileData( data, options );
+}
+
+FileData PDB_DReader::createFileData(const String & data, PDB_DReaderOptions const & options)
+{
 		std::vector<Record> VR( parse(data) );
-		return createFileData(VR);
+		return createFileData(VR, options);
 }
 
 /// @details create PDB string from Record data.

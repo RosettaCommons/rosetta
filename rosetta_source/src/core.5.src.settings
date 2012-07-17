@@ -58,8 +58,10 @@ sources = {
 	],
 	"core/import_pose": [
 		"import_pose",
+		"import_pose_options",
 		"PDBSilentStruct",
 		"PDBSilentStructCreator",
+		"PoseFromPDBLoader",
 	],
 	"core/import_pose/atom_tree_diffs": [
 		"atom_tree_diff",

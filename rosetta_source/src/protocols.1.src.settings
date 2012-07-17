@@ -44,6 +44,8 @@ sources = {
 		"FileSystemJobDistributor",
 		"InnerJob",
 		"InnerMultiThreadingJob",
+		"JD2ResourceManager",
+		"JD2ResourceManagerJobInputter",
 		"Job",
 		"JobDistributor",
 		"JobDistributorFactory",

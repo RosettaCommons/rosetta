@@ -12,6 +12,8 @@ sources = {
           "Loop",
           "Loops",
           "LoopsFileIO",
+          "LoopsFileLoader",
+          "LoopsFileOptions",
           "LoopsUtil",
         ],
         "nonlocal" : [
@@ -86,6 +88,10 @@ sources = {
 
 	"jobdist" : [
 		"PlainSilentFileJobDistributor",
+	],
+	"jd2" : [
+		"JD2ResourceManager",
+		"JD2ResourceManagerJobInputter",
 	],
 
 	"jumping" : [
@@ -324,6 +330,7 @@ testinputfiles = [
 	"toolbox/task_operations/ProteinInterfaceDesignOperation_all.u",
     	"toolbox/task_operations/RestrictInterGroupVector.u",
 	"util/aHo_antibody.pdb",
+        "util/demo_loopfile.loops",
 	"util/test_in.pdb",
 	"scoring/Interface.u",
 	"scoring/dock_in.pdb",

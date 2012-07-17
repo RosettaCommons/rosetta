@@ -256,8 +256,8 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
 
 // this is in protocols so that it can be caled from the boinc main function
 int loophash_main(){
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace protocols::loophash;
 
 	utility::vector1 < core::Size > loop_sizes = option[lh::loopsizes]();

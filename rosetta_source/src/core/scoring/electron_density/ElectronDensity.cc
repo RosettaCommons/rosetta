@@ -49,6 +49,9 @@
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/patterson.OptionKeys.gen.hh>
 
+#include <basic/resource_manager/ResourceManager.hh>
+#include <basic/resource_manager/util.hh>
+
 // Utility headers
 #include <utility/string_util.hh>
 
@@ -60,6 +63,7 @@
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 //Auto Headers
 #include <core/scoring/EnergyGraph.hh>
@@ -137,8 +141,22 @@ static void swap4_aligned(void *v, long ndata) {
 ///////////////////////////////  ///////////////////////////////
 ///////////////////////////////  ///////////////////////////////
 
-//
 ElectronDensity &getDensityMap() {
+	if(basic::resource_manager::ResourceManager::get_instance()->
+		has_resource_with_description("electron_density")){
+
+		ElectronDensityOP electron_density(
+			basic::resource_manager::get_resource< ElectronDensity >(
+				"electron_density"));
+
+		return *electron_density;
+	} else {
+		return getDensityMap_legacy();
+	}
+}
+
+//
+ElectronDensity &getDensityMap_legacy() {
 	static ElectronDensity theDensityMap;
 
 #ifdef GL_GRAPHICS
@@ -175,11 +193,6 @@ ElectronDensity &getDensityMap() {
 
 	return theDensityMap;
 }
-
-
-///////////////////////////////  ///////////////////////////////
-///////////////////////////////  ///////////////////////////////
-///////////////////////////////  ///////////////////////////////
 
 
 /// null constructor
@@ -3279,8 +3292,29 @@ void ElectronDensity::dCCdx_pat( int atmid, int resid,
 /////////////////////////////////////
 // ElectronDensity::readMRC(std::string mapfile)
 //      read an MRC/CCP4 density map
-bool ElectronDensity::readMRCandResize( std::string mapfile, core::Real reso , core::Real gridSpacing ) {
-	std::fstream mapin(mapfile.c_str() , std::ios::binary | std::ios::in );
+bool
+ElectronDensity::readMRCandResize(
+	std::string mapfile,
+	core::Real reso,
+	core::Real gridSpacing
+) {
+	std::ifstream mapin(mapfile.c_str() , std::ios::binary | std::ios::in );
+	bool isLoaded(readMRCandResize(mapin, mapfile, reso, gridSpacing));
+	mapin.close();
+
+	return isLoaded;
+}
+
+/////////////////////////////////////
+// ElectronDensity::readMRC(std::istream mapfile)
+//      read an MRC/CCP4 density map
+bool
+ElectronDensity::readMRCandResize(
+	std::istream & mapin,
+	std::string mapfile,
+	core::Real reso,
+	core::Real gridSpacing
+) {
 
 	// set map resolution
 	this->reso = reso;
@@ -3485,8 +3519,6 @@ bool ElectronDensity::readMRCandResize( std::string mapfile, core::Real reso , c
 	if (swap == 1)
 		swap4_aligned( &density[0], vol_xySize * vol_zsize);
 	delete [] rowdata;
-
- 	mapin.close();
 
 	this->origin[0] = origin[xyz2crs[0]];
 	this->origin[1] = origin[xyz2crs[1]];

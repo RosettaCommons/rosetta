@@ -2014,6 +2014,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Delete poses after they have been processed.  For jobs that process a large number of structures, the memory consumed by old poses is wasteful.</dd><br>
 <dd>Default: false</dd><br>
 </dl>
+<dl>
+<dt><b>-resource_definition_files</b> \<FileVector\><dt>
+<dd>Specify all the jobs and all of their resources to the new JD2ResourceManager system</dd><br>
+</dl>
  </li>
 <li><h2>evaluation</h2>
 <dl>

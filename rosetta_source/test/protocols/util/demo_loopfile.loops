@@ -1,0 +1,8 @@
+# FORMAT JSON
+{"LoopSet" : [{
+        "start" : { "resSeq" : 50, "iCode" : "A", "chainID" : "A" },
+        "stop" : { "resSeq" : 60, "iCode" : "A", "chainID" : "A" },
+        "cut" : { "resSeq" : 55, "iCode" : "A", "chainID" : "A" },
+        "extras" : { "skip_rate" : 0.5, "extend" : true },
+    }]
+}

@@ -107,7 +107,7 @@ SAXSEnergy::SAXSEnergy(std::string & config_file,core::chemical::ResidueTypeSetC
 	    core::pose::Pose reference_pose;
 	    trSAXSEnergy << "Using "<<basic::options::option[in::file::native]()<<" as a reference for SAXS energy"<<std::endl;
 	    //core::import_pose::pose_from_pdb(reference_pose, *rsd_set,basic::options::option[in::file::native]());
-		 core::io::pdb::build_pose_from_pdb_as_is(reference_pose, *rsd_set, basic::options::option[in::file::native]() );
+		 core::io::pdb::build_pose_from_pdb_as_is(reference_pose, *rsd_set, basic::options::option[in::file::native]());
 	    compute_intensities(reference_pose,reference_intensities_);
 	    trSAXSEnergy << "Calculated reference spectrum from a native: "
 		    << basic::options::option[in::file::native]() << std::endl;

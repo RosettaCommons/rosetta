@@ -93,6 +93,10 @@ JobInputterFactory::get_new_JobInputter()
 		return get_JobInputter_from_string( "PoseInputStreamJobInputter" );
 	}
 
+	if( basic::options::option[ basic::options::OptionKeys::jd2::resource_definition_files ].user() ){
+		return get_JobInputter_from_string("JD2ResourceManagerJobInputter" );
+	}
+
 	//PDB input block
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::s ].user() || basic::options::option[ basic::options::OptionKeys::in::file::l ].user() || basic::options::option[ basic::options::OptionKeys::in::file::list ].user() ) {
 		if ( basic::options::option[ basic::options::OptionKeys::enzdes::parser_read_cloud_pdb ].user() ){

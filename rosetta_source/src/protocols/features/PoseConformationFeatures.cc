@@ -181,7 +181,7 @@ PoseConformationFeatures::report_features(
 	}
 	// else...
 	Pose pose;
-	pose_from_pose( pose, pose_orig, residue_indices);
+	pose_from_pose( pose, pose_orig, residue_indices );
 	return report_features_implementation(pose, struct_id, db_session);
 }
 

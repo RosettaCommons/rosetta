@@ -59,19 +59,6 @@ operator <<( std::ostream & stream, xyzMatrix< T > const & m )
 }
 
 
-/// @brief stream >> xyzMatrix input operator
-/// @note Reads row-ordered matrix elements from one or multiple lines
-template< typename T >
-std::istream &
-operator >>( std::istream & stream, xyzMatrix< T > & m )
-{
-	read_row( stream, m.xx(), m.xy(), m.xz() );
-	read_row( stream, m.yx(), m.yy(), m.yz() );
-	read_row( stream, m.zx(), m.zy(), m.zz() );
-	return stream;
-}
-
-
 /// @brief Read an xyzMatrix row from a stream
 /// @note Supports whitespace-separated values with optional commas between values as
 ///       long as whitespace is also present
@@ -171,6 +158,17 @@ read_row( std::istream & stream, T & x, T & y, T & z )
 	return stream;
 }
 
+/// @brief stream >> xyzMatrix input operator
+/// @note Reads row-ordered matrix elements from one or multiple lines
+template< typename T >
+std::istream &
+operator >>( std::istream & stream, xyzMatrix< T > & m )
+{
+	read_row( stream, m.xx(), m.xy(), m.xz() );
+	read_row( stream, m.yx(), m.yy(), m.yz() );
+	read_row( stream, m.zx(), m.zy(), m.zz() );
+	return stream;
+}
 
 } // namespace numeric
 

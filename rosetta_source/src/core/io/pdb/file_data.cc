@@ -19,7 +19,9 @@
 #include <core/io/pdb/pose_io.hh>
 #include <core/types.hh>
 
+#include <core/io/pdb/file_data_options.hh>
 #include <core/io/pdb/pdb_dynamic_reader.hh>
+#include <core/io/pdb/pdb_dynamic_reader_options.hh>
 #include <core/pose/PDBInfo.hh>
 
 #include <core/chemical/AA.hh>
@@ -57,11 +59,11 @@
 
 // option key includes
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+//#include <basic/options/keys/run.OptionKeys.gen.hh> BDW
+//#include <basic/options/keys/in.OptionKeys.gen.hh> BDW
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
-#include <basic/options/keys/pH.OptionKeys.gen.hh>
+//#include <basic/options/keys/pH.OptionKeys.gen.hh> BDW
 
 #include <core/pose/util.hh>
 #include <utility/vector1.hh>
@@ -192,12 +194,21 @@ FileData::append_residue(
 
 	}
 }
-
 /// @details
 /// init FileData structure from pose object.
 /// read atoms/residue information from Pose object and put it in FileData object.
 ///
 void FileData::init_from_pose(core::pose::Pose const & pose)
+{
+	FileDataOptions options;
+	init_from_pose( pose, options );
+}
+
+/// @details
+/// init FileData structure from pose object.
+/// read atoms/residue information from Pose object and put it in FileData object using options defined in FileDataOptions.
+///
+void FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions const & options)
 {
 	using namespace core;
 	core::Size const nres( pose.total_residue() );
@@ -205,7 +216,7 @@ void FileData::init_from_pose(core::pose::Pose const & pose)
 
 	//get OP to PDBInfo object for remarks header
 	using core::pose::PDBInfo;
-	if( basic::options::option[ basic::options::OptionKeys::run::preserve_header ].value() == true && pose.pdb_info() ) {
+	if( options.preserve_header() == true && pose.pdb_info() ) {
 		*remarks = pose.pdb_info()->remarks();
 	}
 
@@ -371,7 +382,6 @@ convert_atom_name( std::string const & res_name, std::string atom_name )
 	return atom_name;
 }
 
-
 ///
 /// @details Convert FileData in to set of residues, sequences, coordinats.
 /// this is a convenience function, no magic done here.
@@ -379,6 +389,20 @@ convert_atom_name( std::string const & res_name, std::string atom_name )
 ///
 void FileData::create_working_data(
 	utility::vector1< ResidueInformation > & rinfo
+)
+{
+	FileDataOptions options;
+	create_working_data( rinfo, options );
+}
+
+///
+/// @details Convert FileData in to set of residues, sequences, coordinats.
+/// this is a convenience function, no magic done here.
+/// Well, maybe a little.
+///
+void FileData::create_working_data(
+	utility::vector1< ResidueInformation > & rinfo,
+	FileDataOptions const & options
 )
 {
 	using namespace basic::options;
@@ -402,9 +426,9 @@ void FileData::create_working_data(
 
 			//chu modify the logic how atoms are treated with zero or negative occupancy field.
 			if ( ai.occupancy == 0.0 ) {
-				if( option[ run::randomize_missing_coords ]() ) {
+				if( options.randomize_missing_coords() ) {
 					randomize_missing_coords( ai );
-				} else if ( !option[ run::ignore_zero_occupancy ]() ) {
+				} else if ( !options.ignore_zero_occupancy() ) {
 					// do nothing and keep this atom as it is
 				} else {
 					//When flag default changes from true to false, change to TR.Debug and remove second line
@@ -538,8 +562,19 @@ build_pose_from_pdb_as_is(
 	std::string const & filename
 )
 {
+	PDB_DReaderOptions options;
+	build_pose_from_pdb_as_is( pose, filename, options );
+}
+
+void
+build_pose_from_pdb_as_is(
+	pose::Pose & pose,
+	std::string const & filename,
+	PDB_DReaderOptions const & pdr_options
+)
+{
 	using namespace chemical;
-	build_pose_from_pdb_as_is( pose, * ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ), filename );
+	build_pose_from_pdb_as_is( pose, * ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ), filename, pdr_options );
 }
 
 void
@@ -547,6 +582,17 @@ build_pose_from_pdb_as_is(
 	pose::Pose & pose,
 	chemical::ResidueTypeSet const & residue_set,
 	std::string const & filename
+)
+{
+	PDB_DReaderOptions options;
+	build_pose_from_pdb_as_is( pose, residue_set, filename, options );
+}
+void
+build_pose_from_pdb_as_is(
+	pose::Pose & pose,
+	chemical::ResidueTypeSet const & residue_set,
+	std::string const & filename,
+	PDB_DReaderOptions const & pdr_options
 )
 {
 	std::string all_lines, sub_lines;
@@ -560,25 +606,36 @@ build_pose_from_pdb_as_is(
 	}
 
 	utility::slurp( file, all_lines );
-	FileData fd = PDB_DReader::createFileData( all_lines );
+	FileData fd = PDB_DReader::createFileData( all_lines, pdr_options );
 	if ( fd.filename == "" ) {
 		fd.filename = filename;
 	}
 	id::AtomID_Mask missing( false );
-	build_pose_as_is1( fd, pose, residue_set, missing);
+	build_pose_as_is1( fd, pose, residue_set, missing, pdr_options);
 
 }
 
-
-
 //void
 //build_pose_as_is1( io::pdb::FileData & fd, pose::Pose & pose, chemical::ResidueTypeSet const & residue_set, id::AtomID_Mask & missing )
+//void
+//build_pose_as_is1(
+//	io::pdb::FileData & fd,
+//	pose::Pose & pose,
+//	chemical::ResidueTypeSet const & residue_set,
+//	id::AtomID_Mask & missing
+//)
+//{
+//	FileDataOptions options;
+//	build_pose_as_is1(fd, pose, residue_set, missing, options );
+//}
+
 void
 build_pose_as_is1(
 	io::pdb::FileData & fd,
 	pose::Pose & pose,
 	chemical::ResidueTypeSet const & residue_set,
-	id::AtomID_Mask & missing
+	id::AtomID_Mask & missing,
+	FileDataOptions const & options
 )
 {
 
@@ -600,7 +657,7 @@ build_pose_as_is1(
 	// Map pose residue numbers to indices into rinfos.
 	// Some residues in the input file may be discarded (missing atoms, unrecognized, etc)
 	utility::vector1< Size > pose_to_rinfo;
-	fd.create_working_data( rinfos );
+	fd.create_working_data( rinfos, options );
 	//Temps temps;
 	//Coords coords;
 	//Strings resids, sequence,
@@ -614,8 +671,7 @@ build_pose_as_is1(
 	utility::vector1<numeric::xyzVector<Real> > UA_coords;
 	utility::vector1<core::Real> UA_temps;
 
-	std::string chains_whose_residues_are_separate_chemical_entities =
-			basic::options::option[ basic::options::OptionKeys::in::file::treat_residues_in_these_chains_as_separate_chemical_entities].user_or("");
+	std::string chains_whose_residues_are_separate_chemical_entities = options.chains_whose_residues_are_separate_chemical_entities();
 	std::string::const_iterator const entities_begin = chains_whose_residues_are_separate_chemical_entities.begin();
 	std::string::const_iterator const entities_end = chains_whose_residues_are_separate_chemical_entities.end();
 
@@ -642,7 +698,7 @@ build_pose_as_is1(
 		ResidueTypeCAPs const & rsd_type_list( residue_set.name3_map( pdb_name ) );
 		if(!is_residue_type_recognized(
 				i, pdb_name, rsd_type_list, xyz, rtemp,
-				UA_res_nums, UA_res_names, UA_atom_names, UA_coords, UA_temps)) {
+				UA_res_nums, UA_res_names, UA_atom_names, UA_coords, UA_temps, options)) {
 			last_residue_was_recognized = false;
 			continue;
 		}
@@ -666,7 +722,7 @@ build_pose_as_is1(
 			if ( rsd_type.aa() == aa_cys && rsd_type.has_variant_type( DISULFIDE ) && pdb_name != "CYD" ) {
 				continue;
 			}
-			if ( !basic::options::option[ basic::options::OptionKeys::pH::keep_input_protonation_state ]() &&
+			if ( !options.keep_input_protonation_state() &&
 				( rsd_type.has_variant_type( PROTONATED ) || rsd_type.has_variant_type( DEPROTONATED ) )){
 				continue;
 			}
@@ -729,7 +785,7 @@ build_pose_as_is1(
 							TR << "missing: " << rsd_type.atom_name( mainchain[k] ) << std::endl;
 						}
 					}
-					if( basic::options::option[ basic::options::OptionKeys::run::exit_if_missing_heavy_atoms ].value() == true ) {
+					if( options.exit_if_missing_heavy_atoms() == true ) {
 						utility_exit_with_message("quitting due to missing heavy atoms");
 					}
 					continue;
@@ -784,7 +840,7 @@ build_pose_as_is1(
 
 	} // i=1,nres_pdb
 
-	if( basic::options::option[ basic::options::OptionKeys::in::termini ].value() == true ) { // check termini status of pose residues
+	if( options.check_if_residues_are_termini() == true ) { // check termini status of pose residues
 		Size const nres( pose.total_residue() );
 		for ( Size i=1; i<= nres; ++i ) {
 			//Residue const & rsd( pose.residue( i ) ); // THIS WAS A BAD BUG
@@ -870,7 +926,7 @@ build_pose_as_is1(
 		pdb_info->modeltag( fd.modeltag );
 	}
 
-	if( basic::options::option[ basic::options::OptionKeys::run::preserve_header ].value() == true ) {
+	if( options.preserve_header() == true ) {
 		pdb_info->remarks( *fd.remarks );
 	}
 
@@ -959,27 +1015,54 @@ bool is_residue_type_recognized(
 	utility::vector1<std::string> & UA_atom_names,
 	utility::vector1<numeric::xyzVector<Real> > & UA_coords,
 	utility::vector1<core::Real> & UA_temps){
+	
+	FileDataOptions options;
+	return is_residue_type_recognized( pdb_residue_index, pdb_name, rsd_type_list, xyz, rtemp, UA_res_nums, UA_res_names, UA_atom_names, UA_coords, UA_temps, options );
+}
+
+///@detail The input rsd_type_list are all the residue types that have
+///the same 3 letter code as pdb_name. Return true if the list is
+///non-empty and false otherwise.  If no residue types match, then
+///either exit, ignore or remember the residue based on the following
+///options in a FileDataOptions instance:
+///
+/// -ignore_waters
+/// -ignore_unrecognized_res
+/// -remember_unrecognized_waters
+/// -remember_unrecognized_res
+bool is_residue_type_recognized(
+	Size const pdb_residue_index,
+	std::string const & pdb_name,
+	core::chemical::ResidueTypeCAPs const & rsd_type_list,
+	std::map< std::string, Vector > const & xyz,
+	std::map< std::string, double > const & rtemp,
+	utility::vector1<Size> & UA_res_nums,
+	utility::vector1<std::string> & UA_res_names,
+	utility::vector1<std::string> & UA_atom_names,
+	utility::vector1<numeric::xyzVector<Real> > & UA_coords,
+	utility::vector1<core::Real> & UA_temps,
+	FileDataOptions const & options){
 
 	if(!rsd_type_list.empty()){
 		return true;
 	}
 
 	using namespace basic::options;
-	if( !(option[ OptionKeys::in::ignore_unrecognized_res ]() ||
-			option[ OptionKeys::in::remember_unrecognized_res ]() ||
-			(pdb_name == "HOH" && option[OptionKeys::in::ignore_waters ]())) ) {
+	if( !(options.ignore_unrecognized_res() ||
+			options.remember_unrecognized_res() ||
+			(pdb_name == "HOH" && options.ignore_waters())) ) {
 		// We should fail fast on unrecognized input rather than produce bad results!
 		utility_exit_with_message(" unrecognized aa " + pdb_name );
 	}
 
-	if( !option[ OptionKeys::in::remember_unrecognized_water ]() ) {
+	if( !options.remember_unrecognized_water() ) {
 		// don't bother with water
 		if( pdb_name == "HOH" ){
 			return false;
 		}
 	}
 
-	if( option[ OptionKeys::in::remember_unrecognized_res ] ) {
+	if( options.remember_unrecognized_res() ) {
 		for(std::map<std::string, Vector>::const_iterator iter=xyz.begin(), iter_end=xyz.end(); iter!= iter_end; ++iter ) {
 			if( UA_res_nums.size() > 5000 ) {
 				utility_exit_with_message("can't handle more than 5000 atoms worth of unknown residues\n");
@@ -1002,11 +1085,22 @@ pose_from_pose(
 	pose::Pose const & old_pose,
 	utility::vector1< core::Size > const & residue_indices
 ){
+	FileDataOptions options;
+	pose_from_pose( new_pose, old_pose, residue_indices, options );
+}
+
+void
+pose_from_pose(
+	pose::Pose & new_pose,
+	pose::Pose const & old_pose,
+	utility::vector1< core::Size > const & residue_indices,
+	FileDataOptions const & options
+){
 	using namespace chemical;
 	ResidueTypeSetCAP residue_set(
 		ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )
 	);
-	pose_from_pose( new_pose, old_pose, *residue_set,  residue_indices);
+	pose_from_pose( new_pose, old_pose, *residue_set,  residue_indices, options);
 }
 
 void
@@ -1016,11 +1110,23 @@ pose_from_pose(
 	chemical::ResidueTypeSet const & residue_set,
 	utility::vector1< core::Size > const & residue_indices
 ){
+	FileDataOptions options;
+	pose_from_pose( new_pose, old_pose, residue_set, residue_indices, options );
+}
+
+void
+pose_from_pose(
+	pose::Pose & new_pose,
+	pose::Pose const & old_pose,
+	chemical::ResidueTypeSet const & residue_set,
+	utility::vector1< core::Size > const & residue_indices,
+	FileDataOptions const & options
+){
 	FileData fd;
 	std::string data;
 	fd.init_from_pose( old_pose, residue_indices );
 	id::AtomID_Mask missing( false );
-	build_pose_as_is1( fd, new_pose, residue_set, missing );
+	build_pose_as_is1( fd, new_pose, residue_set, missing, options );
 }
 
 

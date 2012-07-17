@@ -14,8 +14,6 @@
 #ifndef INCLUDED_core_scoring_electron_density_ElectronDensity_fwd_hh
 #define INCLUDED_core_scoring_electron_density_ElectronDensity_fwd_hh
 
-#ifdef ELEC_DENS
-
 //Utility headers
 //too bad we can't use owning_ptr.fwd.hh
 #include <utility/pointer/owning_ptr.hh>
@@ -25,12 +23,11 @@ namespace scoring {
 namespace electron_density {
 
 class ElectronDensity;
-//typedef utility::pointer::owning_ptr< ElectronDensity > ElectronDensityOP;
+typedef utility::pointer::owning_ptr< ElectronDensity > ElectronDensityOP;
+typedef utility::pointer::owning_ptr< ElectronDensity const > ElectronDensityCOP;
 
 } // namespace electron_density
 } //namespace scoring
 } //namespace core
-
-#endif
 
 #endif

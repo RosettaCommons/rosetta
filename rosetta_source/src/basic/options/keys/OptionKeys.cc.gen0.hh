@@ -420,6 +420,7 @@ namespace jd2 { BooleanOptionKey const enzdes_out( "jd2:enzdes_out" );  }
 namespace jd2 { IntegerOptionKey const buffer_silent_output( "jd2:buffer_silent_output" );  }
 namespace jd2 { RealOptionKey const buffer_flush_frequency( "jd2:buffer_flush_frequency" );  }
 namespace jd2 { BooleanOptionKey const delete_old_poses( "jd2:delete_old_poses" );  }
+namespace jd2 { FileVectorOptionKey const resource_definition_files( "jd2:resource_definition_files" );  }
 namespace evaluation { BooleanOptionKey const evaluation( "evaluation" );  }
 namespace evaluation { FileVectorOptionKey const rmsd_target( "evaluation:rmsd_target" );  }
 namespace evaluation { StringVectorOptionKey const rmsd_column( "evaluation:rmsd_column" );  }

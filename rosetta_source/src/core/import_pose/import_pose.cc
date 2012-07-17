@@ -16,6 +16,8 @@
 // Unit headers
 #include <core/import_pose/import_pose.hh>
 
+#include <core/import_pose/import_pose_options.hh>
+
 #include <core/types.hh>
 
 #include <core/pose/Pose.hh>
@@ -34,14 +36,6 @@
 
 // AUTO-REMOVED #include <core/scoring/Energies.hh>
 
-// option key includes
-#include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
-
-
 // AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
 // AUTO-REMOVED #include <core/id/AtomID_Mask.hh>
 
@@ -54,15 +48,13 @@
 #include <core/pose/PDBInfo.hh>
 
 #include <core/io/pdb/pdb_dynamic_reader.hh>
+#include <core/io/pdb/pdb_dynamic_reader_options.hh>
 #include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/file_data_options.hh>
 
 #include <basic/Tracer.hh>
 
 #include <ObjexxFCL/string.functions.hh>
-
-// option key includes
-
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -105,8 +97,19 @@ read_additional_pdb_data(
 	bool read_fold_tree
 )
 {
+	ImportPoseOptions options;
+	read_additional_pdb_data( s, pose, options, read_fold_tree );
+}
+void
+read_additional_pdb_data(
+	std::string const & s,
+	pose::Pose & pose,
+	ImportPoseOptions const & options,
+	bool read_fold_tree
+)
+{
 
-	if ( (!read_fold_tree) && (!basic::options::option[ basic::options::OptionKeys::inout::fold_tree_io ].user()) ) return;
+	if ( (!read_fold_tree) && (!options.fold_tree_io()) ) return;
 
 	// split on newlines
 	utility::vector1< std::string > lines;
@@ -163,7 +166,6 @@ pose::PoseOP pose_from_pdb(chemical::ResidueTypeSet const & residue_set, std::st
 	return pose;
 }
 
-
 void
 pose_from_pdb(
 	pose::Pose & pose,
@@ -172,8 +174,20 @@ pose_from_pdb(
 	bool read_fold_tree
 )
 {
-	utility::vector1<std::string> filenames= utility::split(filenames_string);
+	ImportPoseOptions options;
+	pose_from_pdb(pose, residue_set, filenames_string, options, read_fold_tree);
+}
 
+void
+pose_from_pdb(
+	pose::Pose & pose,
+	chemical::ResidueTypeSet const & residue_set,
+	std::string const & filenames_string,
+	ImportPoseOptions const & options,
+	bool read_fold_tree
+)
+{
+	utility::vector1<std::string> filenames = utility::split(filenames_string);
 
 	std::string res;
 
@@ -193,11 +207,11 @@ pose_from_pdb(
 		pose.set_new_conformation( new conformation::Conformation() );
 	}
 
-	io::pdb::FileData fd = core::import_pose::PDB_DReader::createFileData(res);
+	io::pdb::FileData fd = core::import_pose::PDB_DReader::createFileData(res, options);
 	if ( fd.filename == "" ) {
 		fd.filename = utility::join(filenames, "_");
 	}
-	build_pose(fd, pose, residue_set);
+	build_pose(fd, pose, residue_set, options);
 
 	// set secondary structure for centroid PDBs
 	if ( residue_set.name() == core::chemical::CENTROID ) {
@@ -205,7 +219,7 @@ pose_from_pdb(
 	}
 
 	// check for foldtree info
-	core::import_pose::read_additional_pdb_data( res, pose, fd, read_fold_tree);
+	read_additional_pdb_data( res, pose, options, read_fold_tree );
 }
 
 void
@@ -214,58 +228,57 @@ pose_from_pdb(
 	std::string const & filename,
 	bool read_fold_tree
 ) {
-	using basic::options::option;
+	ImportPoseOptions options;
+	pose_from_pdb( pose, filename, options, read_fold_tree );
+}
+
+void
+pose_from_pdb(
+	pose::Pose & pose,
+	std::string const & filename,
+	ImportPoseOptions const & options,
+	bool read_fold_tree
+) {
 	using namespace chemical;
-	using namespace basic::options::OptionKeys;
 
-	bool want_centroid( option[ in::file::centroid_input ]()
-		|| option[ in::file::centroid ]()
-		|| ( option[ in::file::fullatom ].user() && !option[ in::file::fullatom ]() )
-		|| ( option[ in::file::residue_type_set ].user() && option[ in::file::residue_type_set ]() == "centroid" ) );
-
-	if ( want_centroid &&
-		( option[ in::file::fullatom ]()
-			|| ( option[ in::file::residue_type_set ].user() && option[ in::file::residue_type_set ]() == "fa_standard" ) ) ) {
-		TR.Warning << "conflicting command line flags for centroid/full-atom input. Choosing fullatom!" << std::endl;
-		want_centroid = false;
-	}
-	ResidueTypeSetCAP residue_set( want_centroid ?
+	ResidueTypeSetCAP residue_set( options.centroid() ?
 		ChemicalManager::get_instance()->residue_type_set( CENTROID ) :
 		ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )
 	);
 
-	if ( option[ in::file::residue_type_set ].user() && option[ in::file::residue_type_set]()  == "rna" ) residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	if ( options.rna() ) residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
-	core::import_pose::pose_from_pdb( pose, *residue_set, filename, read_fold_tree );
+	core::import_pose::pose_from_pdb( pose, *residue_set, filename, options, read_fold_tree );
 }
 
-utility::vector1< core::pose::PoseOP > poseOPs_from_pdbs(
+utility::vector1< core::pose::PoseOP >
+poseOPs_from_pdbs(
 	utility::vector1< std::string > const & filenames,
 	bool read_fold_tree
 ) {
-	using basic::options::option;
-	using namespace chemical;
-	using namespace basic::options::OptionKeys;
+	ImportPoseOptions options;
+	return poseOPs_from_pdbs( filenames, options, read_fold_tree );
+}
 
-	bool want_centroid( option[ in::file::centroid_input ]()
-		|| option[ in::file::centroid ]()
-		|| ( option[ in::file::fullatom ].user() && !option[ in::file::fullatom ]() )
-		|| ( option[ in::file::residue_type_set ].user() && option[ in::file::residue_type_set ]() == "centroid" ) );
-	if ( want_centroid &&
-		( option[ in::file::fullatom ]()
-			|| ( option[ in::file::residue_type_set ].user() && option[ in::file::residue_type_set ]() == "fa_standard" ) ) ) {
-		TR.Warning << "conflicting command line flags for centroid/full-atom input. Choosing fullatom!" << std::endl;
-		want_centroid = false;
-	}
-	ResidueTypeSetCAP residue_set( want_centroid ?
+utility::vector1< core::pose::PoseOP >
+poseOPs_from_pdbs(
+	utility::vector1< std::string > const & filenames,
+	ImportPoseOptions const & options,
+	bool read_fold_tree
+) {
+	using namespace chemical;
+
+	ResidueTypeSetCAP residue_set( options.centroid() ?
 		ChemicalManager::get_instance()->residue_type_set( CENTROID ) :
 		ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )
 	);
 
-	return core::import_pose::poseOPs_from_pdbs( *residue_set, filenames, read_fold_tree );
+	return core::import_pose::poseOPs_from_pdbs( *residue_set, filenames, options, read_fold_tree );
 }
 
-utility::vector1< core::pose::Pose > poses_from_pdbs(
+/// @details Only returns fullatom poses
+utility::vector1< core::pose::Pose >
+poses_from_pdbs(
 	utility::vector1< std::string > const & filenames,
 	bool read_fold_tree
 ) {
@@ -276,7 +289,8 @@ utility::vector1< core::pose::Pose > poses_from_pdbs(
 	return core::import_pose::poses_from_pdbs( *residue_set, filenames, read_fold_tree );
 }
 
-utility::vector1< core::pose::Pose > poses_from_pdbs(
+utility::vector1< core::pose::Pose >
+poses_from_pdbs(
 	chemical::ResidueTypeSet const & residue_set,
 	utility::vector1< std::string > const & filenames,
 	bool read_fold_tree
@@ -287,11 +301,13 @@ utility::vector1< core::pose::Pose > poses_from_pdbs(
 	using utility::vector1;
 	using core::pose::Pose;
 
+	ImportPoseOptions options;
+
 	vector1< Pose > poses;
 	typedef vector1< string >::const_iterator vec_it;
 	for ( vec_it it = filenames.begin(), end = filenames.end(); it != end; ++it ) {
 		Pose pose;
-		core::import_pose::pose_from_pdb( pose, residue_set, *it, read_fold_tree );
+		core::import_pose::pose_from_pdb( pose, residue_set, *it, options, read_fold_tree );
 		poses.push_back( pose );
 	}
 
@@ -299,8 +315,11 @@ utility::vector1< core::pose::Pose > poses_from_pdbs(
 }
 
 void
-read_all_poses(const utility::vector1<std::string>& filenames,
-							 utility::vector1<core::pose::Pose>* poses) {
+read_all_poses(
+	const utility::vector1<std::string>& filenames,
+	utility::vector1<core::pose::Pose>* poses
+)
+{
 	using core::pose::Pose;
 	using std::string;
 	using utility::vector1;
@@ -313,9 +332,11 @@ read_all_poses(const utility::vector1<std::string>& filenames,
 	}
 }
 
-utility::vector1< core::pose::PoseOP > poseOPs_from_pdbs(
+utility::vector1< core::pose::PoseOP >
+poseOPs_from_pdbs(
 	chemical::ResidueTypeSet const & residue_set,
 	utility::vector1< std::string > const & filenames,
+	ImportPoseOptions const & options,
 	bool read_fold_tree
 ) {
 	using namespace chemical;
@@ -328,7 +349,7 @@ utility::vector1< core::pose::PoseOP > poseOPs_from_pdbs(
 	typedef vector1< string >::const_iterator vec_it;
 	for ( vec_it it = filenames.begin(), end = filenames.end(); it != end; ++it ) {
 		pose::PoseOP pose = new pose::Pose;
-		core::import_pose::pose_from_pdb( *pose, residue_set, *it, read_fold_tree );
+		core::import_pose::pose_from_pdb( *pose, residue_set, *it, options, read_fold_tree );
 		poses.push_back( pose );
 	}
 
@@ -356,6 +377,19 @@ pose_from_pdb(
 	utility::vector1< pose::Pose > & poses,
 	chemical::ResidueTypeSet const & residue_set,
 	std::string const & filename,
+	bool read_fold_tree
+)
+{
+	ImportPoseOptions options;
+	pose_from_pdb( poses, residue_set, filename, options, read_fold_tree );
+}
+
+void
+pose_from_pdb(
+	utility::vector1< pose::Pose > & poses,
+	chemical::ResidueTypeSet const & residue_set,
+	std::string const & filename,
+	ImportPoseOptions const & options,
 	bool read_fold_tree
 )
 {
@@ -398,6 +432,7 @@ pose_from_pdb(
 	pos1 = 0;
 
 	pos1 = all_lines.find( "\nMODEL ", pos1 );
+
 	if ( pos1 != std::string::npos ) {
 		pos2 = 0;
 		while( pos2 != std::string::npos ) {
@@ -409,24 +444,40 @@ pose_from_pdb(
 			sub_lines = all_lines.substr( pos1, pos2-pos1 ) ;
 			pos1 = pos2;
 
-			io::pdb::FileData fd = core::import_pose::PDB_DReader::createFileData( sub_lines );
+			io::pdb::FileData fd = core::import_pose::PDB_DReader::createFileData( sub_lines, options );
 			fd.filename = filename;
-			build_pose( fd, pose, residue_set);
+			build_pose( fd, pose, residue_set, options );
 
 			// check for foldtree info
-			core::import_pose::read_additional_pdb_data( sub_lines, pose, fd, read_fold_tree);
+			core::import_pose::read_additional_pdb_data( sub_lines, pose, options, read_fold_tree);
 			poses.push_back( pose );
 		}
 	} else {
-		FileData fd = core::import_pose::PDB_DReader::createFileData( all_lines );
+		FileData fd = core::import_pose::PDB_DReader::createFileData( all_lines, options );
 		if ( fd.filename == "" ) {
 			fd.filename = filename;
 		}
-		core::import_pose::build_pose( fd, pose, residue_set);
+		core::import_pose::build_pose( fd, pose, residue_set, options );
 		// check for foldtree info
-		core::import_pose::read_additional_pdb_data( all_lines, pose, fd, read_fold_tree);
+		core::import_pose::read_additional_pdb_data( all_lines, pose, options, read_fold_tree);
 		poses.push_back( pose );
 	}
+}
+
+void
+pose_from_pdbstring(
+	pose::Pose & pose,
+	std::string const & pdbcontents,
+	ImportPoseOptions const & options,
+	std::string const & filename
+)
+{
+	io::pdb::FileData fd = import_pose::PDB_DReader::createFileData( pdbcontents, options );
+	fd.filename = filename;
+	chemical::ResidueTypeSetCAP residue_set
+		( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) );
+	core::import_pose::build_pose( fd, pose, *residue_set, options );
+
 }
 
 void
@@ -436,12 +487,8 @@ pose_from_pdbstring(
 	std::string const & filename
 )
 {
-	io::pdb::FileData fd = import_pose::PDB_DReader::createFileData( pdbcontents );
-	fd.filename = filename;
-	chemical::ResidueTypeSetCAP residue_set
-		( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) );
-	core::import_pose::build_pose( fd, pose, *residue_set);
-
+	ImportPoseOptions options;
+	pose_from_pdbstring( pose, pdbcontents, options, filename );
 }
 
 
@@ -452,11 +499,36 @@ pose_from_pdbstring(
 	chemical::ResidueTypeSet const & residue_set,
 	std::string const & filename
 ){
-	io::pdb::FileData fd = import_pose::PDB_DReader::createFileData( pdbcontents );
-	fd.filename = filename;
-	core::import_pose::build_pose( fd, pose, residue_set);
+	ImportPoseOptions options;
+	pose_from_pdbstring( pose, pdbcontents, residue_set, options, filename );
 }
 
+void
+pose_from_pdbstring(
+	pose::Pose & pose,
+	std::string const & pdbcontents,
+	chemical::ResidueTypeSet const & residue_set,
+	ImportPoseOptions const & options,
+	std::string const & filename
+){
+	io::pdb::FileData fd = import_pose::PDB_DReader::createFileData( pdbcontents, options );
+	fd.filename = filename;
+	core::import_pose::build_pose( fd, pose, residue_set, options);
+}
+
+void pose_from_pdb_stream(
+	pose::Pose & pose,
+	std::istream & pdb_stream,
+	std::string const & filename,
+	ImportPoseOptions const & options
+){
+	std::string pdb_file_contents;
+	utility::slurp( pdb_stream, pdb_file_contents );
+
+	chemical::ResidueTypeSetCAP residue_set( chemical::ChemicalManager::get_instance()->residue_type_set( options.residue_type_set()) );
+	pose_from_pdbstring( pose, pdb_file_contents, *residue_set, options, filename);
+	read_additional_pdb_data( pdb_file_contents, pose, options, options.read_fold_tree() );
+}
 
 void
 centroid_pose_from_pdb(
@@ -472,21 +544,32 @@ centroid_pose_from_pdb(
 	core::import_pose::pose_from_pdb( pose, *residue_set, filename, read_fold_tree);
 }
 
+void build_pose(
+	io::pdb::FileData & fd,
+	pose::Pose & pose,
+	chemical::ResidueTypeSet const & residue_set
+)
+{
+	ImportPoseOptions options; // read from the command line
+	build_pose( fd, pose, residue_set, options);
+}
+
 ///
 /// @details Build mini Rosetta pose object from FileData.
 ///
-void build_pose(io::pdb::FileData & fd, pose::Pose & pose, chemical::ResidueTypeSet const & residue_set)
+void build_pose(
+	io::pdb::FileData & fd,
+	pose::Pose & pose,
+	chemical::ResidueTypeSet const & residue_set,
+	ImportPoseOptions const & options
+)
 {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
 	TR.Debug << "build_pose..." << std::endl;
-	build_pose_as_is( fd, pose, residue_set);
+	build_pose_as_is( fd, pose, residue_set, options);
 	TR.Debug << "build_pose... Ok." << std::endl;
 }
 
-//void build_pose_as_is1( io::pdb::FileData & fd, pose::Pose & pose, chemical::ResidueTypeSet const & residue_set, id::AtomID_Mask & missing );
-void build_pose_as_is2( io::pdb::FileData & fd, pose::Pose & pose, chemical::ResidueTypeSet const & residue_set, id::AtomID_Mask & missing );
+void build_pose_as_is2( io::pdb::FileData & fd, pose::Pose & pose, chemical::ResidueTypeSet const & residue_set, id::AtomID_Mask & missing, ImportPoseOptions const & options );
 
 /// @details
 /// trying to Build pose object from pdb 'as-is'. PDB file must be _really_ clean.
@@ -494,15 +577,26 @@ void build_pose_as_is2( io::pdb::FileData & fd, pose::Pose & pose, chemical::Res
 ///////////////////////////////////////////////////////////////////////////////
 // "super-simple" (C) by Phil
 //
-void build_pose_as_is( io::pdb::FileData & fd, pose::Pose & pose, chemical::ResidueTypeSet const & residue_set)
+void build_pose_as_is(
+	io::pdb::FileData & fd,
+	pose::Pose & pose,
+	chemical::ResidueTypeSet const & residue_set,
+	ImportPoseOptions const & options
+)
 {
 	id::AtomID_Mask missing( false );
 
-	io::pdb::build_pose_as_is1( fd, pose, residue_set, missing );
-	build_pose_as_is2( fd, pose, residue_set, missing );
+	io::pdb::build_pose_as_is1( fd, pose, residue_set, missing, options );
+	build_pose_as_is2( fd, pose, residue_set, missing, options );
 }
 
-void build_pose_as_is2( io::pdb::FileData & /*fd*/, pose::Pose & pose, chemical::ResidueTypeSet const & residue_set, id::AtomID_Mask & missing )
+void build_pose_as_is2(
+	io::pdb::FileData & /*fd*/,
+	pose::Pose & pose,
+	chemical::ResidueTypeSet const & residue_set,
+	id::AtomID_Mask & missing,
+	ImportPoseOptions const & options
+)
 {
 	using namespace chemical;
 	using namespace conformation;
@@ -514,18 +608,18 @@ void build_pose_as_is2( io::pdb::FileData & /*fd*/, pose::Pose & pose, chemical:
 
 	core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo(*pose.pdb_info()) );
 
-	if ( !(basic::options::option[ basic::options::OptionKeys::run::skip_set_reasonable_fold_tree ].value()) ) {
+	if ( !options.skip_set_reasonable_fold_tree() ) {
 		set_reasonable_fold_tree( pose );
 	}
 
 	/// optimize H if using a fullatom residue type set, and no_optH is not specified
 	if ( residue_set.name() == FA_STANDARD ) {
 		//if pack_missing_density specified, repack residues w/ missing density
-		if( basic::options::option[ basic::options::OptionKeys::packing::pack_missing_sidechains ].value() ) {
+		if( options.pack_missing_sidechains() ) {
 			pack::pack_missing_sidechains( pose, missing );
 		}
 		/// optimize H if using a fullatom residue type set, and no_optH is not specified
-		if( !basic::options::option[ basic::options::OptionKeys::packing::no_optH ]() ) {
+		if( !options.no_optH() ) {
 			pack::optimize_H_and_notify( pose, missing );
 		}
 	}

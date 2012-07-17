@@ -22,6 +22,7 @@
 #include <basic/options/option.hh>
 #include <utility/options/keys/OptionKey.hh>
 #include <core/io/pdb/file_data.hh>
+
 //utilities
 #include <protocols/jd2/JobDistributor.hh>
 #include <devel/init.hh>
@@ -41,9 +42,12 @@ main( int argc, char * argv [] )
 	devel::init(argc, argv);
 
 	core::pose::Pose in_pose;
-        core::io::pdb::build_pose_from_pdb_as_is( in_pose, option[ OptionKeys::in::file::s ]().vector().front() );
-        core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score12_full" );
-        protocols::simple_moves::ScoreMover scoreme = protocols::simple_moves::ScoreMover( scorefxn );
+	core::io::pdb::build_pose_from_pdb_as_is(
+		in_pose,
+		option[ OptionKeys::in::file::s ]().vector().front());
+
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score12_full" );
+	protocols::simple_moves::ScoreMover scoreme = protocols::simple_moves::ScoreMover( scorefxn );
 
 	bool iterate = true;
 	core::Size it = 1;

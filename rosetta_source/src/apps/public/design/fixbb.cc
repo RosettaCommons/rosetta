@@ -46,6 +46,7 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 //local options
@@ -59,6 +60,8 @@ basic::options::BooleanOptionKey const stochastic_pack("stochastic_pack");
 int
 main( int argc, char * argv [] )
 {
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -79,9 +82,13 @@ main( int argc, char * argv [] )
 	//create a task factory: this will create a new PackerTask for each input pose
 	core::pack::task::TaskFactoryOP main_task_factory = new core::pack::task::TaskFactory;
 	main_task_factory->push_back( new core::pack::task::operation::InitializeFromCommandline );
-	if ( option[ packing::resfile ].user() ) {
-		main_task_factory->push_back( new core::pack::task::operation::ReadResfile );
-	}
+
+	/// As of 2010/07/16, the ReadResfile operation is a no-op unless a resfile has been
+	/// supplied on the command line, through the ResourceManager, or programmatically.
+	/// Therefore, it is safe to add it without first checking to see if something has been
+	/// provided on the command line.  If that check were here, then a resfile provided
+	/// through the ResourceManager would not get read.
+	main_task_factory->push_back( new core::pack::task::operation::ReadResfile );
 
 	//create a ScoreFunction from commandline options (default is score12)
 	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
@@ -141,4 +148,7 @@ main( int argc, char * argv [] )
 	} // end optional side chain minimization
 
 	protocols::jd2::JobDistributor::get_instance()->go(seq_mover);
+	} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }

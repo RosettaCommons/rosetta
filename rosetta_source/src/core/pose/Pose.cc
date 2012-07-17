@@ -147,7 +147,6 @@ Pose::Pose( Pose const & src, Size begin, Size const end):
 	for(; begin <= end; ++begin){
 		residue_indices.push_back(begin);
 	}
-
 	core::io::pdb::pose_from_pose(*this, src, residue_indices);
 }
 

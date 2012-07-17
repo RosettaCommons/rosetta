@@ -16,6 +16,9 @@
 #ifndef INCLUDED_core_import_pose_import_pose_hh
 #define INCLUDED_core_import_pose_import_pose_hh
 
+// Package headers
+#include <core/import_pose/import_pose_options.fwd.hh>
+
 // C++ headers
 #include <iosfwd>
 // AUTO-REMOVED #include <iostream>
@@ -31,6 +34,7 @@
 // AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
 // AUTO-REMOVED #include <core/id/AtomID_Mask.fwd.hh>
 #include <core/io/pdb/file_data.fwd.hh>
+#include <core/io/pdb/pdb_dynamic_reader_options.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -52,6 +56,14 @@ read_additional_pdb_data(
 	std::string const & file,
 	pose::Pose & pose,
 	io::pdb::FileData const & fd,
+	bool read_fold_tree = false
+);
+
+void
+read_additional_pdb_data(
+	std::string const & file,
+	pose::Pose & pose,
+	ImportPoseOptions const & options,
 	bool read_fold_tree = false
 );
 
@@ -78,6 +90,15 @@ pose::PoseOP pose_from_pdb(
 pose::PoseOP pose_from_pdb(
 	chemical::ResidueTypeSet const & residue_set,
 	std::string const & filename,
+	bool read_fold_tree = false
+);
+
+void
+pose_from_pdb(
+	pose::Pose & pose,
+	chemical::ResidueTypeSet const & residue_set,
+	std::string const & filename,
+	ImportPoseOptions const & options,
 	bool read_fold_tree = false
 );
 
@@ -108,6 +129,14 @@ pose_from_pdb(
 	bool read_fold_tree = false
 );
 
+void
+pose_from_pdb(
+	pose::Pose & pose,
+	std::string const & filename,
+	ImportPoseOptions const & options,
+	bool read_fold_tree = false
+);
+
 /// @brief Reads data from an input PDB containing multiple models named
 /// <filename>  and stores it in a vector of Pose objects named  <poses>  using
 /// ResidueTypeSet  <residue_set>
@@ -119,12 +148,36 @@ pose_from_pdb(
 	bool read_fold_tree = false
 );
 
+void
+pose_from_pdb(
+	utility::vector1< pose::Pose > & poses,
+	chemical::ResidueTypeSet const & residue_set,
+	std::string const & filename,
+	ImportPoseOptions const & options,
+	bool read_fold_tree = false
+);
+
 utility::vector1< core::pose::PoseOP >
 poseOPs_from_pdbs(
 	utility::vector1< std::string > const & filenames,
 	bool read_fold_tree = false
 );
 
+utility::vector1< core::pose::PoseOP >
+poseOPs_from_pdbs(
+	utility::vector1< std::string > const & filenames,
+	ImportPoseOptions const & options,
+	bool read_fold_tree = false
+);
+
+utility::vector1< core::pose::PoseOP >
+poseOPs_from_pdbs(
+  chemical::ResidueTypeSet const & residue_set,
+  utility::vector1< std::string > const & filenames,
+  ImportPoseOptions const & options,
+  bool read_fold_tree
+);
+
 utility::vector1< core::pose::Pose >
 poses_from_pdbs(
 	utility::vector1< std::string > const & filenames,
@@ -133,8 +186,16 @@ poses_from_pdbs(
 
 utility::vector1< core::pose::Pose >
 poses_from_pdbs(
+  chemical::ResidueTypeSet const & residue_set,
+  utility::vector1< std::string > const & filenames,
+  bool read_fold_tree
+);
+
+utility::vector1< core::pose::Pose >
+poses_from_pdbs(
 	chemical::ResidueTypeSet const & residue_set,
 	utility::vector1< std::string > const & filenames,
+	ImportPoseOptions const & options,
 	bool read_fold_tree = false
 );
 
@@ -168,8 +229,32 @@ void
 pose_from_pdbstring(
 	pose::Pose & pose,
 	std::string const & pdbcontents,
+	ImportPoseOptions const & options,
+	std::string const & filename = ""
+);
+
+void
+pose_from_pdbstring(
+	pose::Pose & pose,
+	std::string const & pdbcontents,
 	chemical::ResidueTypeSet const & residue_set,
 	std::string const & filename
+);
+
+void
+pose_from_pdbstring(
+	pose::Pose & pose,
+	std::string const & pdbcontents,
+	chemical::ResidueTypeSet const & residue_set,
+	ImportPoseOptions const & options,
+	std::string const & filename
+);
+
+void pose_from_pdb_stream(
+	pose::Pose & pose,
+	std::istream & pdb_stream,
+	std::string const & filename,
+	ImportPoseOptions const & options
 );
 
 /// uses the CENTROID residue_set
@@ -188,7 +273,8 @@ typedef std::string String;
 void set_reasonable_fold_tree( core::pose::Pose & pose );
 
 /// @brief Create pose object, using given FileData object.
-/// If PDB cleanin specified - it will be applied first
+/// If PDB cleanin specified - it will be applied first.
+/// Constructs a ImportPoseOptions object from the command line
 void build_pose(
 	io::pdb::FileData & fd, // const?  naaaaah
 	pose::Pose & pose,
@@ -196,11 +282,21 @@ void build_pose(
 );
 
 /// @brief Create pose object, using given FileData object.
+/// If PDB cleanin specified - it will be applied first
+void build_pose(
+	io::pdb::FileData & fd, // const?  naaaaah
+	pose::Pose & pose,
+	chemical::ResidueTypeSet const & residue_set,
+	ImportPoseOptions const & options
+);
+
+/// @brief Create pose object, using given FileData object.
 /// No PDB cleanin will be appliend.
 void build_pose_as_is(
 	io::pdb::FileData & fd, // const?  naaaaah
 	pose::Pose & pose,
-	chemical::ResidueTypeSet const & residue_set
+	chemical::ResidueTypeSet const & residue_set,
+	ImportPoseOptions const & options
 );
 
 } // namespace import_pose

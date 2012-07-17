@@ -25,7 +25,6 @@
 #include <utility/string_util.hh>
 #include <core/io/pdb/file_data.hh>
 #include <core/pose/PDBInfo.hh>
-
 #include <basic/Tracer.hh>
 static basic::Tracer TR("VIP");
 
@@ -48,7 +47,10 @@ main( int argc, char * argv [] )
 	devel::init(argc, argv);
 
 	core::pose::Pose in_pose;
-	core::io::pdb::build_pose_from_pdb_as_is( in_pose, option[ OptionKeys::in::file::s ]().vector().front() );
+	core::io::pdb::build_pose_from_pdb_as_is(
+		in_pose,
+		option[ OptionKeys::in::file::s ]().vector().front());
+
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score12_full" );
 	protocols::simple_moves::ScoreMover scoreme = protocols::simple_moves::ScoreMover( scorefxn );
 
