@@ -141,6 +141,9 @@ sources = {
 		"SavePoseMover",
 		"util",
 	],
+        "protocols/sasa_scores": [
+                "sasapack",
+        ],
 	"protocols/viewer": [
 		"ConformationViewer",
 		"marchingCubes",

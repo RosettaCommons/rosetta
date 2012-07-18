@@ -481,10 +481,19 @@ calc_per_atom_sasa( pose::Pose const & pose, id::AtomID_Map< Real > & atom_sasa,
 
 
 Real
-calc_per_atom_sasa( pose::Pose const & pose, id::AtomID_Map< Real > & atom_sasa, utility::vector1< Real > & rsd_sasa,
-	Real const probe_radius, bool const use_big_polar_H, id::AtomID_Map< bool > & atom_subset,
-	bool const use_naccess_sasa_radii /* =false */,
-	bool const expand_polar_radii /* =false */, Real const polar_expansion_radius /* =1.0 */) {
+calc_per_atom_sasa(
+									 pose::Pose const & pose,
+									 id::AtomID_Map< Real > & atom_sasa,
+									 utility::vector1< Real > & rsd_sasa,
+									 Real const probe_radius,
+									 bool const use_big_polar_H,
+									 id::AtomID_Map< bool > & atom_subset,
+									 bool const use_naccess_sasa_radii /* =false */,
+									 bool const expand_polar_radii /* =false */,
+									 Real const polar_expansion_radius /* =1.0 */,
+									 bool const include_probe_radius_in_atom_radii, /* = true; used in calc of final sasas */
+									 bool const use_lj_radii /* = false */
+									 ) {
 
 	using core::conformation::Residue;
 	using core::conformation::Atom;
@@ -514,6 +523,14 @@ calc_per_atom_sasa( pose::Pose const & pose, id::AtomID_Map< Real > & atom_sasa,
 
 	for ( core::Size ii=1; ii <= radii.size(); ++ii ) {
 		core::chemical::AtomType const & at( atom_type_set[ii] );
+
+		if ( use_lj_radii ) {
+			radii[ii] = atom_type_set[ii].lj_radius();
+// 			std::cout << "Using LJ radius  "<< radii[ii] << " instead of " << atom_type_set[ii].extra_parameter( SASA_RADIUS_INDEX ) <<
+// 				" for " << atom_type_set[ii].name() << std::endl;
+			continue; // note continue, no other checks applied
+		}
+
 		radii[ii] = atom_type_set[ii].extra_parameter( SASA_RADIUS_INDEX );
 
 		if ( use_big_polar_H && at.is_polar_hydrogen() && big_polar_H_radius > radii[ii] ) {
@@ -598,7 +615,8 @@ calc_per_atom_sasa( pose::Pose const & pose, id::AtomID_Map< Real > & atom_sasa,
 			if ( ! atom_subset[ id ] )
 				continue; // jk skip this atom if not part of the subset
 
-			Real const iia_rad = radii[ rsd.atom(iia).type() ] + probe_radius;
+			Real iia_rad = radii[ rsd.atom(iia).type() ];
+			if ( include_probe_radius_in_atom_radii ) iia_rad += probe_radius; // this is the default, not used for sasapack
 
 			//j to get SASA:
 			//j - count the number of 1's

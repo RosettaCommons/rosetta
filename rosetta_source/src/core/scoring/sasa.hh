@@ -48,9 +48,20 @@ Real calc_per_atom_sasa( pose::Pose const & pose, id::AtomID_Map< Real > & atom_
 //calc_per_atom_sasa( pose::Pose const & pose, id::AtomID_Map< Real > & atom_sasa, utility::vector1< Real > & rsd_sasa,
 //	Real const probe_radius, bool const use_big_polar_H, id::AtomID_Map< bool > & atom_subset );
 
-Real calc_per_atom_sasa( pose::Pose const & pose, id::AtomID_Map< Real > & atom_sasa, utility::vector1< Real > & rsd_sasa,
-	Real const probe_radius, bool const use_big_polar_H, id::AtomID_Map< bool > & atom_subset,
-	bool const use_naccess_sasa_radii = false, bool const expand_polar_radii = false, Real const polar_expansion_radius = 1.0 );
+Real
+calc_per_atom_sasa(
+	pose::Pose const & pose,
+	id::AtomID_Map< Real > & atom_sasa,
+	utility::vector1< Real > & rsd_sasa,
+	Real const probe_radius,
+	bool const use_big_polar_H,
+	id::AtomID_Map< bool > & atom_subset,
+	bool const use_naccess_sasa_radii = false,
+	bool const expand_polar_radii = false,
+	Real const polar_expansion_radius = 1.0,
+	bool const include_probe_radius_in_atom_radii = true,
+	bool const use_lj_radii = false
+);
 
 	void
 	calc_atom_masks(
