@@ -2010,7 +2010,7 @@ Conformation::add_pseudobond(
 	new_pb.nbonds( 2 + nbonds );
 	new_pbs->push_back( new_pb );
 	residues_[ lr ]->set_pseudobonds_to_residue( ur, new_pbs );
-	residues_[ ur ]->set_pseudobonds_to_residue( ur, new_pbs );
+	residues_[ ur ]->set_pseudobonds_to_residue( lr, new_pbs );
 }
 
 
