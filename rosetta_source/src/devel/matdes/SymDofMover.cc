@@ -119,12 +119,12 @@ SymDofMover::get_angles() {
 	utility::vector1<Real> angles;
 	if(sampling_mode_ == "grid" ) {
 		utility::vector1<Real> angle_diffs = SymDofMoverSampler::get_instance().get_angles();
-		for (int i = 1; i <= sym_dof_names.size(); i++) {
+		for (Size i = 1; i <= sym_dof_names.size(); i++) {
 			angles.push_back(angles_[i] + angle_diffs[i]);
 		}
 	}
 	else {
-		for (int i = 1; i <= sym_dof_names.size(); i++) {
+		for (Size i = 1; i <= sym_dof_names.size(); i++) {
 			if(sampling_mode_ == "uniform") {
 				angles.push_back(angles_[i] + angles_range_min_[i] + ( angles_range_max_[i] - angles_range_min_[i]) * RG.uniform());
 			} else if(sampling_mode_ == "gaussian") {
@@ -143,12 +143,12 @@ SymDofMover::get_radial_disps() {
 	utility::vector1<Real> radial_disps;
 	if(sampling_mode_ == "grid" ) {
 		utility::vector1<Real> radial_diffs = SymDofMoverSampler::get_instance().get_radial_disps();
-		for (int i = 1; i <= sym_dof_names.size(); i++) {
+		for (Size i = 1; i <= sym_dof_names.size(); i++) {
 			radial_disps.push_back(radial_disps_[i] + radial_diffs[i]);
 		}
 	}
 	else {
-		for (int i = 1; i <= sym_dof_names.size(); i++) {
+		for (Size i = 1; i <= sym_dof_names.size(); i++) {
 			if(sampling_mode_ == "uniform") {
 				radial_disps.push_back(radial_disps_[i] + radial_disps_range_min_[i] + ( radial_disps_range_max_[i] - radial_disps_range_min_[i]) * RG.uniform());
 			} else if(sampling_mode_ == "gaussian") {
@@ -220,7 +220,7 @@ SymDofMover::apply(Pose & pose) {
 	std::map< std::string, core::conformation::symmetry::VirtualCoordinate > coords = symmdata.get_virtual_coordinates();
 	std::map< std::string, std::pair< std::string, std::string > > virt_connects = symmdata.get_virtual_connects();
 
-	for (int i = 1; i <= sym_dof_names.size(); i++) {
+	for (Size i = 1; i <= sym_dof_names.size(); i++) {
 
 		core::Size sub_start= pose.conformation().chain_begin(i);
 		core::Size sub_end= pose.conformation().chain_end(i);
@@ -253,7 +253,7 @@ SymDofMover::apply(Pose & pose) {
 // Parse info from xml //
 void 
 SymDofMover::parse_my_tag( TagPtr const tag,
-										 DataMap & data,
+										 DataMap &,
 										 Filters_map const &,
 										 Movers_map const &,
 										 Pose const & ) {

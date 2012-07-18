@@ -71,7 +71,7 @@ public:
 
 
 	virtual void parse_my_tag( TagPtr const tag,
-														 DataMap & data,
+														 DataMap &,
 														 Filters_map const &,
 														 Movers_map const &,
 														 Pose const & );
