@@ -72,10 +72,13 @@ class TorsionDatabase  : public utility::pointer::ReferenceCount {
 public:
 	TorsionDatabase(Real k_tors, Real k_tors_prot);
 
-	// lookup ideal bondangle; insert in DB if not there
+	// lookup ideal torsion; insert in DB if not there
 	void													
 	lookup( core::chemical::ResidueType const & restype,
 	        int atm1, int atm2, int atm3, int atm4, Real &Kphi, Real &phi0, Real &phi_step );
+
+	Real
+	ktors() { return k_torsion; }
 
 private:
 	//fpd involves a string comparison (restype) .. could be faster
@@ -172,6 +175,39 @@ public:
 
 	virtual	bool
 	defines_intrares_energy( EnergyMap const & /*weights*/ ) const ;
+
+	// helper functions to handle improper torsions
+	// intra-res impropers
+	void
+	eval_improper_torsions(
+	  conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		ScoreFunction const & sfxn,
+		EnergyMap & emap
+	) const;
+
+	// inter-res impropers
+	void
+	eval_improper_torsions(
+	  conformation::Residue const & rsd1,
+	  conformation::Residue const & rsd2,
+		pose::Pose const & pose,
+		ScoreFunction const & sfxn,
+		EnergyMap & emap
+	) const;
+
+	// deriv impropers
+ 	virtual	void
+ 	eval_improper_torsions_derivative(
+ 		id::AtomID const & id,
+ 		pose::Pose const & pose,
+		kinematics::DomainMap const & domain_map,
+ 		ScoreFunction const & sfxn,
+ 		EnergyMap const & emap,
+ 		Vector & F1,
+		Vector & F2
+ 	) const;
+
 
 	virtual	void
 	eval_intrares_energy(
