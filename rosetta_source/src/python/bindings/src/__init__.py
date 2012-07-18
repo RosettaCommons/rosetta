@@ -25,6 +25,7 @@ import numeric
 
 import basic
 import basic.datacache
+import basic.resource_manager
 
 import core
 import core.graph
@@ -44,6 +45,7 @@ import protocols.moves
 import protocols.canonical_sampling
 import protocols.simple_moves
 import protocols.jumping
+import protocols.jd2
 import protocols.jd2.archive
 import protocols.abinitio
 
@@ -53,6 +55,7 @@ import protocols.init
 
 import rosetta.utility.file
 import rosetta.core.chemical
+import rosetta.core.graph
 import rosetta.core.conformation
 import rosetta.core.id
 import rosetta.core.io
