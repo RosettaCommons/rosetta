@@ -24,6 +24,7 @@ namespace matdes {
 class SymDofMoverSampler 
 {
 	typedef core::Real Real;
+	typedef core::Size Size;
 
 public:
 	static SymDofMoverSampler& get_instance();
