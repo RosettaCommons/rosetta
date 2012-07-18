@@ -395,7 +395,7 @@ PDBInfo::tighten_memory()
 PDBInfo::String
 PDBInfo::pose2pdb( Size const res ) const
 {
-	PyAssert( (res>0) && (res<residue_rec_.size()), "PDBInfo::pose2pdb( Size const res ): res is not in this PDBInfo!" );
+	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDBInfo::pose2pdb( Size const res ): res is not in this PDBInfo!" );
 	std::stringstream pdb_num, pdb_chain;
 	pdb_num << residue_rec_[res].chainID;
 	pdb_chain << residue_rec_[res].resSeq;
@@ -411,7 +411,7 @@ PDBInfo::chain(
 	char const chain_id
 )
 {
-	PyAssert( (res>0) && (res<residue_rec_.size()), "PDBInfo::chain( Size const res, char const chain_id ): res is not in this PDBInfo!" );
+	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDBInfo::chain( Size const res, char const chain_id ): res is not in this PDBInfo!" );
 	ResidueRecord & rr = residue_rec_[ res ];
 
 	// sync map
@@ -429,7 +429,7 @@ PDBInfo::number(
 	int const pdb_res
 )
 {
-	PyAssert( (res>0) && (res<residue_rec_.size()), "PDBInfo::number( Size const res, int const pdb_res ): res is not in this PDBInfo!" );
+	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDBInfo::number( Size const res, int const pdb_res ): res is not in this PDBInfo!" );
 	ResidueRecord & rr = residue_rec_[ res ];
 
 	// sync map
@@ -447,7 +447,7 @@ PDBInfo::icode(
 	char const ins_code
 )
 {
-	PyAssert( (res>0) && (res<residue_rec_.size()), "PDBInfo::icode( Size const res, ins_code ): res is not in this PDBInfo!" );
+	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDBInfo::icode( Size const res, ins_code ): res is not in this PDBInfo!" );
 	ResidueRecord & rr = residue_rec_[ res ];
 
 	// sync map
