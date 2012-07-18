@@ -95,6 +95,7 @@ sources = {
 		"SaveResfileToDiskFilter",
 		"TaskAwareSASAFilter",
 		"InterfacePackingFilter",
+		"ClashCheckFilter",
         ],
 	"devel/metal_interface": [
 		"AddMetalSiteConstraints",

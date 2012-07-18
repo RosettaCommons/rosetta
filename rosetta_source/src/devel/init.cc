@@ -40,6 +40,7 @@
 #include <devel/matdes/SaveResfileToDiskFilterCreator.hh>
 #include <devel/matdes/TaskAwareSASAFilterCreator.hh>
 #include <devel/matdes/InterfacePackingFilterCreator.hh>
+#include <devel/matdes/ClashCheckFilterCreator.hh>
 
 // dataloader creators
 //#include <devel/constrained_sequence_design/SequenceConstraintLoaderCreator.hh>
@@ -87,6 +88,7 @@ static protocols::filters::FilterRegistrator< devel::matdes::TaskAwareAlaScanCre
 static protocols::filters::FilterRegistrator< devel::matdes::SaveResfileToDiskFilterCreator > SaveResfileToDiskFilterCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::matdes::TaskAwareSASAFilterCreator > TaskAwareSASAFilterCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::matdes::InterfacePackingFilterCreator > InterfacePackingFilterCreator_registrator;
+static protocols::filters::FilterRegistrator< devel::matdes::ClashCheckFilterCreator > ClashCheckFilterCreator_registrator;
 
 void init( int argc, char * argv [] )
 {
