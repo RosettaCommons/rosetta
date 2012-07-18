@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   devel/matdes/BuildingBlockInterfaceOperation.hh
+/// @file   devel/matdes/BuildingBlockInterfaceOperation2.0.hh
 /// @brief  Restrict design to only residues at inter-building block interfaces
-/// @author Neil King (neilking@uw.edu) Rocco Moretti (rmoretti@u.washington.edu)
+/// @author Will Sheffler (willsheffler@gmail.com) Jacob Bale (balej@uw.edu)
 
 #ifndef INCLUDED_devel_matdes_BuildingBlockInterfaceOperation_hh
 #define INCLUDED_devel_matdes_BuildingBlockInterfaceOperation_hh
@@ -34,7 +34,7 @@ namespace matdes {
 
 class BuildingBlockInterfaceOperation : public core::pack::task::operation::TaskOperation {
 public:
-	BuildingBlockInterfaceOperation( core::Size nsub_bblock = 1, core::Real contact_dist = 10, core::Real bblock_dist = 5, core::Real fa_rep_cut = 3.0 );
+	BuildingBlockInterfaceOperation( core::Size nsub_bblock = 1, std::string sym_dof_names  = "blank", core::Real contact_dist = 10, core::Real bblock_dist = 5, core::Real fa_rep_cut = 3.0 );
 
 	virtual ~BuildingBlockInterfaceOperation();
 
@@ -49,6 +49,7 @@ public:
 private:
 
 	core::Size nsub_bblock_;
+	std::string sym_dof_names_;
  	core::Real contact_dist_; 
 	core::Real bblock_dist_; 
 	core::Real fa_rep_cut_;

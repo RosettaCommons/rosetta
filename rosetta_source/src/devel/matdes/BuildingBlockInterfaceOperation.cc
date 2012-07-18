@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   devel/matdes/BuildingBlockInterfaceOperation.cc
+/// @file   devel/matdes/BuildingBlockInterfaceOperation2.0.hh
 /// @brief  Restrict design to only residues at inter-building block interfaces
-/// @author Neil King (neilking@uw.edu) Rocco Moretti (rmoretti@u.washington.edu)
+/// @author Will Sheffler (willsheffler@gmail.com) Jacob Bale (balej@uw.edu)
 
 // Unit Headers
 #include <devel/matdes/BuildingBlockInterfaceOperation.hh>
@@ -31,6 +31,7 @@
 #include <ObjexxFCL/format.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/vector1.hh>
 
 // C++ Headers
 
@@ -46,9 +47,9 @@ BuildingBlockInterfaceOperationCreator::create_task_operation() const
 }
 
 
-BuildingBlockInterfaceOperation::BuildingBlockInterfaceOperation( core::Size nsub_bblock /* = 1 */,
-		core::Real contact_dist /* = 10*/, core::Real bblock_dist /*= 5 */, core::Real fa_rep_cut /* = 3.0 */ ):
+BuildingBlockInterfaceOperation::BuildingBlockInterfaceOperation( core::Size nsub_bblock, std::string sym_dof_names, core::Real contact_dist /* = 10*/, core::Real bblock_dist /*= 5 */, core::Real fa_rep_cut /* = 3.0 */ ):
 	nsub_bblock_(nsub_bblock),
+	sym_dof_names_(sym_dof_names),
 	contact_dist_(contact_dist),
 	bblock_dist_(bblock_dist),
 	fa_rep_cut_(fa_rep_cut)
@@ -64,81 +65,105 @@ core::pack::task::operation::TaskOperationOP BuildingBlockInterfaceOperation::cl
 void
 BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {
-	core::pose::Pose scored_pose( pose );
-	core::scoring::ScoreFunctionFactory::create_score_function( "standard", "score12" )->score(scored_pose);
 
-	core::conformation::symmetry::SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
-	utility::vector1<bool> indy_resis = sym_info->independent_residues();
-	core::Real bblock_dist_sq = bblock_dist_ * bblock_dist_;
-	core::Real const contact_dist_sq = contact_dist_ * contact_dist_;
-	std::set<Size> design_pos;
-  std::set<Size> intra_bblock_interface;
+	using namespace core;
+	using namespace basic;
+	using namespace pose;
+	using namespace core::conformation::symmetry;
+	using namespace core::pose::symmetry;
+	using namespace scoring;
+	using namespace utility;
+	typedef vector1<Size> Sizes;
 
-  // get the residues in chain A that make contacts within the building block
-  TR.Debug << "Looking for the residues in the interface or that are clashing" << std::endl;
-  for (Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++) {
-		if (!indy_resis[ir]) continue;
-    for (Size jr=ir+1; jr<=sym_info->num_total_residues_without_pseudo(); jr++) {
-      TR.Debug << "res_i = " << ir << "\tres_j = " << jr << std::endl;
-      // skip if residues are in same building block
-      if ( sym_info->subunit_index(jr) > nsub_bblock_ || sym_info->subunit_index(jr) == 1){
-          TR.Debug << "skipping residue " << jr << ", same building block as residue " << ir << std::endl;
-          continue;
-      }
-      // loop over the atoms in the residue
-      for (Size ia = 1; ia<=pose.residue(ir).nheavyatoms(); ia++) {
-        bool residue_registered = false;
-        for (Size ja = 1; ja<=pose.residue(jr).nheavyatoms(); ja++) {
-          if (pose.residue(ir).xyz(ia).distance_squared(pose.residue(jr).xyz(ja)) <= bblock_dist_sq)  {
-            // However, if the residue in question is clashing badly (usually with a
-            // residue from another building block), it needs to be designed.
-            core::scoring::EnergyMap em = scored_pose.energies().residue_total_energies(ir);
-            core::Real resi_fa_rep = em[core::scoring::fa_rep];
-            if (resi_fa_rep > 3.0) {
-              TR.Debug << "residue " << ir << " is clashing with residue " <<jr << std::endl;
-              residue_registered = true;
-              break;
-            } else {
-              TR.Debug << "residue " << ir << " is in the interface." << std::endl;
-              intra_bblock_interface.insert(ir);
-              residue_registered = true;
-              break;
-            }
-          }
-        }
-        if(residue_registered) break;
-      }
-    }
-  }
+	utility::vector1<std::string> sym_dof_name_list = utility::string_split( sym_dof_names_ , ',' );
 
-//  TR.Debug  << "intra-building block interface residues: " << stringify_iterable(intra_bblock_interface) << std::endl;
+	Sizes intra_subs1, intra_subs2;
 
-	// Now get the resides that are at the inter-building block interface
-  TR.Debug << "filtering residues that are in contact with other residues on the interface (distance less than "<< contact_dist_ <<")" << std::endl;
-  for (Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++) {
-    if (!indy_resis[ir]) continue;
-    std::string atom_i = (pose.residue(ir).name3() == "GLY") ? "CA" : "CB";
-    for (Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++) {
-      // skip residue jr if it is in the same building block
-      if ( sym_info->subunit_index(jr) <= nsub_bblock_ ) continue;
-      std::string atom_j = (pose.residue(jr).name3() == "GLY") ? "CA" : "CB";
-      // Here we are filtering the residues that are in contact
-      if (pose.residue(ir).xyz(atom_i).distance_squared(pose.residue(jr).xyz(atom_j)) <= contact_dist_sq) {
-        TR.Debug << "residue " << ir << " in contact with residue " << jr << std::endl;
-        TR.Debug << "\tinterface = " <<  intra_bblock_interface.count(ir) << std::endl;
-        design_pos.insert(ir);
-        break;
-      }
-    }
-  }
+	if( sym_dof_name_list.size() == 2) {
+	intra_subs1 = get_jump_name_to_subunits(pose,sym_dof_name_list[1]);
+	intra_subs2 = get_jump_name_to_subunits(pose,sym_dof_name_list[2]);
+	}
 
-	// Now combine the above two filters, and prevent_repacking at all positions that are either:
-	// a) not at the inter-building block interface, or
-	// b) are, but also make intra-building block contacts and are not clashing
+	// Find out which positions are near the inter-subunit interfaces
+	// These will be further screened below, then passed to design()
+	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
+	vector1<bool> indy_resis = sym_info->independent_residues();
+	Real const contact_dist_sq = contact_dist_ * contact_dist_;
+	Sizes design_pos;
+	std::string select_interface_pos("select interface_pos, resi ");
+	for(Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++) {
+		if(sym_info->subunit_index(ir) != 1) continue;
+		std::string atom_i = (pose.residue(ir).name3() == "GLY") ? "CA" : "CB";
+		for(Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++) {
+			std::string atom_j = (pose.residue(jr).name3() == "GLY") ? "CA" : "CB";
+			//If one component, then check for clashes between all residues in primary subunit and subunits with indices > nsub_bb
+			if( sym_dof_names_ == "" ) {
+      	if ( sym_info->subunit_index(jr) <= nsub_bblock_ ) continue;
+			}
+			//If two component, then check for clashes between all residues in primary subunitA and other building blocks, and all resis in primary subB and other building blocks. 
+			else if( sym_dof_name_list.size() == 2 ) {
+				Sizes const & isubs( get_component_of_residue(pose,ir)=='A'?intra_subs1:intra_subs2);
+				if(get_component_of_residue(pose,ir)==get_component_of_residue(pose,jr)&&find(isubs.begin(),isubs.end(),sym_info->subunit_index(jr))!=isubs.end()) continue;
+			} else {
+				utility_exit_with_message("BBi currently only works for 1 or 2 component symmetries");
+			}
+			if(pose.residue(ir).xyz(atom_i).distance_squared(pose.residue(jr).xyz(atom_j)) <= contact_dist_sq) {
+				design_pos.push_back(ir);
+				TR << ir << std::endl;
+				select_interface_pos.append(ObjexxFCL::string_of(ir) + "+");   
+				break;
+			}
+		}
+	}
+	TR << select_interface_pos << std::endl;
+
+	// Here we filter the residues that we are selecting for design
+	// to get rid of those that make intra-building block interactions
+	Pose scored_pose( pose );
+	ScoreFunctionFactory::create_score_function( "standard", "score12" )->score(scored_pose);
+	Real bblock_dist_sq = bblock_dist_ * bblock_dist_;
+	std::set<Size> filtered_design_pos;
+	std::string select_filtered_interface_pos("select filtered_interface_pos, resi ");
+
+	for(Size iip=1; iip<=design_pos.size(); iip++) {
+		Size ir = design_pos[iip];
+		Sizes const & intra_subs(get_component_of_residue(pose,ir)=='A'?intra_subs1:intra_subs2);
+		bool contact = true;
+		for(Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++) {
+			if( sym_dof_names_ == "" ) {
+				if(sym_info->subunit_index(ir) > nsub_bblock_ || sym_info->subunit_index(jr) > nsub_bblock_) continue;
+			}
+			else if( sym_dof_name_list.size() == 2 ) {
+				if(get_component_of_residue(pose,ir)!=get_component_of_residue(pose,jr)) continue;
+				if(find(intra_subs.begin(), intra_subs.end(), sym_info->subunit_index(jr)) == intra_subs.end()) continue;
+			}
+			if(sym_info->subunit_index(jr) == 1) continue;
+			for(Size ia = 1; ia<=pose.residue(ir).nheavyatoms(); ia++) {
+				for(Size ja = 1; ja<=pose.residue(jr).nheavyatoms(); ja++) {
+					if(pose.residue(ir).xyz(ia).distance_squared(pose.residue(jr).xyz(ja)) <= bblock_dist_sq)	{
+						// However, if the residue in question is clashing badly (usually with a
+						// residue from another building block), it needs to be designed.
+						core::scoring::EnergyMap em1 = scored_pose.energies().residue_total_energies(ir);
+						Real resi_fa_rep = em1[core::scoring::fa_rep];
+						if(resi_fa_rep < fa_rep_cut_) { contact = false; break; }
+						// contact = true; break;
+					}
+				}
+				if(contact == false) break;
+			}
+			if(contact == false) break;
+		}
+		if(contact) {
+			filtered_design_pos.insert(ir);
+			select_filtered_interface_pos.append(ObjexxFCL::string_of(ir) + "+");
+		}
+	}
+	TR << select_filtered_interface_pos << std::endl;
+
+	// Now prevent_repacking at all positions that are not defined filtered design positions:
 	std::string output = "design_pos ";
 	for (Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++) {
-    if (!indy_resis[ir]) continue;
-		if ((design_pos.find(ir) != design_pos.end()) && (intra_bblock_interface.find(ir) == intra_bblock_interface.end())) {
+		if (filtered_design_pos.find(ir) != filtered_design_pos.end()) {
 			output += ObjexxFCL::string_of(ir)+"+";
 		} else {
 			TR.Debug << "resi " << ir << " will not be designed" << std::endl;
@@ -146,18 +171,17 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 		}
 	}
 	TR.Debug << output << std::endl;
-
+	//core::pack::make_symmetric_PackerTask_by_truncation(pose, task); // Does this need to be fixed or omitted?
 }
 
 void
 BuildingBlockInterfaceOperation::parse_tag( TagPtr tag )
 {
   nsub_bblock_ = tag->getOption<core::Size>("nsub_bblock", 1);
+	sym_dof_names_ = tag->getOption< std::string >( "sym_dof_names" );
 	contact_dist_ = tag->getOption<core::Real>("contact_dist", 10.0);
 	bblock_dist_ = tag->getOption<core::Real>("bblock_dist", 5.0);
 	fa_rep_cut_ = tag->getOption<core::Real>("fa_rep_cut", 3.0);
-
-
 }
 
 } //namespace matdes
