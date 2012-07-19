@@ -89,7 +89,7 @@ TaskAwareMinMover::TaskAwareMinMover(
 		factory_(factory_in),
 		chi_(true),
 		bb_(false),
-		jump_(true)
+		jump_(false)
 {
 	protocols::moves::Mover::type( "TaskAwareMinMover" );
 }
@@ -169,7 +169,7 @@ TaskAwareMinMover::parse_my_tag(
 	}
 	if ( tag->hasOption("chi") ) chi_ = tag->getOption<bool>("chi");
 	if ( tag->hasOption("bb") ) bb_ = tag->getOption<bool>("bb");
-	jump_ = tag->getOption< bool >( "jump", true );
+	jump_ = tag->getOption< bool >( "jump", false );
 	minmover_ = new MinMover;
 	// call to MinMover::parse_my_tag avoided here to prevent collision of chi and bb tag options
 	minmover_->parse_opts( tag, datamap, filters, movers, pose );
