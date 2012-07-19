@@ -60,6 +60,7 @@ RestrictToAlignedSegmentsOperation::RestrictToAlignedSegmentsOperation()
 	start_res_.clear();
 	stop_res_.clear();
 	repack_outside_ = true;
+	chain_ = 1;
 }
 
 RestrictToAlignedSegmentsOperation::~RestrictToAlignedSegmentsOperation() {}
@@ -83,8 +84,8 @@ RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::
 	std::set< core::Size > designable;
 	designable.clear();
 	for( core::Size count = 1; count <= source_pose_.size(); ++count ){
-		core::Size const nearest_to_from = find_nearest_res( pose, *source_pose_[ count ], start_res_[ count ] );
-		core::Size const nearest_to_to = find_nearest_res( pose, *source_pose_[ count ], std::min( stop_res_[ count ], source_pose_[ count ]->total_residue() ) );
+		core::Size const nearest_to_from = find_nearest_res( pose, *source_pose_[ count ], start_res_[ count ], chain() );
+		core::Size const nearest_to_to = find_nearest_res( pose, *source_pose_[ count ], std::min( stop_res_[ count ], source_pose_[ count ]->total_residue() ), chain() );
 
 		if( nearest_to_from == 0 || nearest_to_to == 0 ){
 			TR<<"nearest_to_from: "<<nearest_to_from<<" nearest_to_to: "<<nearest_to_to<<". Failing"<<std::endl;
@@ -132,6 +133,7 @@ RestrictToAlignedSegmentsOperation::parse_tag( TagPtr tag )
 	if( tag->hasOption( "stop_res" ) )
 		stop_res.push_back( tag->getOption< std::string >( "stop_res" ) );
 
+	chain( tag->getOption< core::Size >( "chain", 1 ) );
 	if( tag->hasOption( "source_pdb" ) || tag->hasOption( "start_res" ) || tag->hasOption( "stop_res" ) ){
 		runtime_assert( tag->hasOption( "source_pdb" ) && tag->hasOption( "start_res" ) && tag->hasOption( "stop_res" ) );
 	}
