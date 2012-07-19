@@ -30,6 +30,9 @@ static basic::Tracer TR("protocols.simple_moves.SwitchChainOrderMover");
 #define foreach BOOST_FOREACH
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
+#include <protocols/rosetta_scripts/util.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/scoring/ScoreFunction.hh>
 
 namespace protocols {
 namespace simple_moves {
@@ -80,7 +83,7 @@ SwitchChainOrderMover::apply( Pose & pose )
 		core::Size const new_chain_end( positions_in_new_pose.size() );
 		if( residue_numbers_() != NULL ){
 			foreach( core::Size const residue_number, residue_numbers_->obj ){
-				if( residue_number <= chain_begin && residue_number >= chain_end )
+				if( residue_number >= chain_begin && residue_number <= chain_end )
 					new_residue_numbers.push_back( residue_number - ( chain_begin - new_chain_begin ) );
 			}
 		}
@@ -92,9 +95,11 @@ SwitchChainOrderMover::apply( Pose & pose )
 	new_ft.reorder( 1 );
 	core::pose::create_subpose( pose, positions_in_new_pose, new_ft, new_pose );
 	new_pose.update_residue_neighbors();
+	new_pose.pdb_info( new core::pose::PDBInfo( new_pose, true ) ); //reinitialize the PDBInfo
 	pose.clear();
 	pose = new_pose;
 	pose.conformation().detect_disulfides();
+	( *scorefxn() ) ( pose );
 	pose.update_residue_neighbors();
 	TR<<"New pose's foldtree "<<pose.fold_tree()<<std::endl;
 	if( residue_numbers_() != NULL ){
@@ -133,10 +138,10 @@ SwitchChainOrderMover::parse_my_tag(
 {
 	chain_order( tag->getOption< std::string >( "chain_order" ) );
 	std::string const residue_numbers_setter( tag->getOption< std::string >( "residue_numbers_setter", "" ) );
-	if( data.has( "residue_number_list", residue_numbers_setter ) ){
-		residue_numbers_ = data.get< protocols::moves::DataMapObj< utility::vector1< core::Size > > * >( "residue_numbers", "" );
-		TR<<"SwitchChainOrderMover will change the residue numbers listed under "<<residue_numbers_setter<<std::endl;
-	}
+	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data, "score12" ) );
+	if( residue_numbers_setter != "" )
+		residue_numbers_ = protocols::moves::get_set_from_datamap< protocols::moves::DataMapObj< utility::vector1< core::Size > > >( "residue_numbers", residue_numbers_setter, data );
+
 }
 
 void
@@ -149,6 +154,12 @@ SwitchChainOrderMover::chain_order() const
 {
 	return chain_order_;
 }
+
+void
+SwitchChainOrderMover::scorefxn( core::scoring::ScoreFunctionOP s ) { scorefxn_ = s; }
+
+core::scoring::ScoreFunctionOP
+SwitchChainOrderMover::scorefxn() const { return scorefxn_; }
 
 } // simple_moves
 } // protocols
