@@ -243,7 +243,7 @@ SilentStruct::print_scores( std::ostream & out ) const {
 	) {
 		if ( it->string_value() == "" ){
 			core::Real weight = 1.0;
-			if ( option[ out::file::weight_silent_scores ]() ) {
+			if ( option[ out::file::weight_silent_scores ]() ) { //default true
 				weight = it->weight();
 			}
 			out << " " << F( it->width(), precision(), it->value() * weight );
