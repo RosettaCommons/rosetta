@@ -176,10 +176,14 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 		tf->push_back( new InitializeFromCommandline );
 		core::pack::task::PackerTaskOP pack = tf->create_task_and_apply_taskoperations( *pose() );
 		for( core::Size i = 1; i<=pose()->total_residue(); ++i ){
-			if( !pack->nonconst_residue_task( i ).being_designed() ) // prevent repacking on all non-designable residues
+			if( !pack->nonconst_residue_task( i ).being_designed() ){ // prevent repacking on all non-designable residues
 				pack->nonconst_residue_task( i ).prevent_repacking();
-			else if( std::find( diffs.begin(), diffs.end(), i ) == diffs.end() )
+				TR<<"prevent repacking: "<<i<<std::endl;
+			}
+			else if( std::find( diffs.begin(), diffs.end(), i ) == diffs.end() ){
 				pack->nonconst_residue_task( i ).restrict_to_repacking();
+				TR<<"restrict to repacking: "<<i<<std::endl;
+			}
 			else{//design!
 				utility::vector1< bool > allowed_aas( num_canonical_aas, false );
 				if( thread() )
@@ -187,6 +191,7 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 				else
 					allowed_aas[ pose()->residue( i ).aa() ] = true;
 				pack->nonconst_residue_task( i ).restrict_absent_canonical_aas( allowed_aas );
+				TR<<"design: "<<i<<std::endl;
 			}
 		}//for i=1->total_residue
 		using namespace protocols::simple_moves;
