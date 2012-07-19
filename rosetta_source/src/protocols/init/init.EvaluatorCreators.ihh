@@ -16,7 +16,8 @@
 
 #include <protocols/comparative_modeling/AlignRmsdTargetEvaluatorCreator.hh>
 
-#include <protocols/constraints_additional/CombinedConstraintEvaluatorCreator.hh>
+/// include <protocols/constraints_additional/CombinedConstraintEvaluatorCreator.hh>
+#include <protocols/topology_broker/ConstraintEvaluatorWrapperCreator.hh>
 #include <protocols/constraints_additional/ConstraintEvaluatorCreator.hh>
 
 #include <protocols/simple_filters/CamShiftEvaluatorCreator.hh>

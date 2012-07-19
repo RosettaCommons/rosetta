@@ -101,6 +101,7 @@ sources = {
 		"ClaimerMessage",
 		"ConstraintClaimer",
 		"ConstraintEvaluatorWrapper",
+                 "ConstraintEvaluatorWrapperCreator",
 		"CoordConstraintClaimer",
 		"CutBiasClaimer",
 		"DensityScoringClaimer",

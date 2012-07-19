@@ -31,8 +31,10 @@ static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::Rd
 static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::RdcSelectEvaluatorCreator> RdcSelectEvaluatorCreator_registrator;
 static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::RdcEvaluatorCreator> RdcEvaluatorCreator_registrator;
 static protocols::evaluation::EvaluatorRegistrator<protocols::constraints_additional::ConstraintEvaluatorCreator> ConstraintEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::constraints_additional::CombinedConstraintEvaluatorCreator> CombinedConstraintEvaluatorCreator_registrator;
-	static protocols::evaluation::EvaluatorRegistrator<protocols::sparta::ChemicalShiftEvaluatorCreator> ChemicalShiftEvaluatorCreator_registrator;
+//static protocols::evaluation::EvaluatorRegistrator<protocols::constraints_additional::CombinedConstraintEvaluatorCreator> CombinedConstraintEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::topology_broker::ConstraintEvaluatorWrapperCreator> CombinedConstraintEvaluatorCreator_registrator;
+
+static protocols::evaluation::EvaluatorRegistrator<protocols::sparta::ChemicalShiftEvaluatorCreator> ChemicalShiftEvaluatorCreator_registrator;
 static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::CamShiftEvaluatorCreator> CamShiftEvaluatorCreator_registrator;
 static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::PalesEvaluatorCreator> PalesEvaluatorCreator_registrator;
 static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::ExtraScoreEvaluatorCreator> ExtraScoreEvaluatorCreator_registrator;
