@@ -21,7 +21,7 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/types.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <protocols/moves/DataMap.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -36,10 +36,12 @@
 #include <set>
 
 #include <utility/vector1.hh>
-
+#include <basic/Tracer.hh>
 
 namespace protocols {
 namespace rosetta_scripts {
+
+static basic::Tracer TR("protocols.rosetta_scripts.util.hh");
 
 utility::vector1< core::pack::task::operation::TaskOperationOP >
 get_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap const & data );
@@ -81,9 +83,9 @@ parse_database_connection(
 	utility::tag::TagPtr const tag);
 
 
-/// @brief find source residue that is nearest to res on source. If distance is greater than 2.0A, return 0
+/// @brief find source residue that is nearest to res on source. If distance is greater than 2.0A, return 0. chain=0, search all chains, chain=1,2,3 etc. search only that chain
 core::Size
-find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res );
+find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res, core::Size const chain = 0 );
 
 /// @brief returns a vector containing all the residues with a given packer state according to the TF
 utility::vector1< core::Size >
