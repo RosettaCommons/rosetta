@@ -1,0 +1,69 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   basic/resource_manager/FallbackConfigurationFactory.cc
+/// @brief
+/// @author Brian D. Weitzner brian.weitzner@gmail.com
+
+//unit headers
+#include <basic/resource_manager/FallbackConfigurationFactory.hh>
+
+// package headers
+#include <basic/resource_manager/FallbackConfiguration.hh>
+#include <basic/resource_manager/FallbackConfigurationCreator.hh>
+
+// utility headers
+#include <utility/excn/Exceptions.hh>
+
+namespace basic {
+namespace resource_manager {
+
+FallbackConfigurationFactory * FallbackConfigurationFactory::instance_( 0 );
+
+FallbackConfigurationFactory::FallbackConfigurationFactory() {}
+
+FallbackConfigurationOP
+FallbackConfigurationFactory::create_fallback_configuration( std::string const & resource_description	) const
+{
+	FallbackConfigurationCreatorsMap::const_iterator iter = creators_map_.find( resource_description );
+	if ( iter == creators_map_.end() ) {
+		throw utility::excn::EXCN_Msg_Exception( "No FallbackConfigurationCreator resposible for the FallbackConfiguration named " + resource_description + " was found in the FallbackConfigurationFactory.  Was it correctly registered?" );
+	}
+	return iter->second->create_fallback_configuration();
+}
+
+FallbackConfigurationFactory *
+FallbackConfigurationFactory::get_instance() {
+	if ( instance_ == 0 ) {
+		instance_ = new FallbackConfigurationFactory;
+	}
+	return instance_;
+}
+
+void
+FallbackConfigurationFactory::factory_register( FallbackConfigurationCreatorOP creator )
+{
+	std::string resource_description = creator->resource_description();
+	FallbackConfigurationCreatorsMap::const_iterator iter = creators_map_.find( resource_description );
+	if ( iter != creators_map_.end() ) {
+		throw utility::excn::EXCN_Msg_Exception( "Double registration of a FallbackConfigurationCreator in the FallbackConfigurationFactory, named " + resource_description + ". Are there two registrators for this FallbackConfigurationCreator, or have you chosen a previously assigned name to a new FallbackConfigurationCreator?" );
+	}
+	creators_map_[ resource_description ] = creator;
+}
+
+bool
+FallbackConfigurationFactory::has_fallback_for_resource( std::string const & desc ) const
+{
+	FallbackConfigurationCreatorsMap::const_iterator resources( creators_map_.find( desc ));
+	return (resources != creators_map_.end());
+}
+
+} // namespace resource_manager
+} // namespace basic
+

@@ -21,6 +21,7 @@
 // Package headers
 #include <protocols/jd2/JD2ResourceManager.fwd.hh>
 #include <basic/resource_manager/LazyResourceManager.hh>
+#include <basic/resource_manager/FallbackConfiguration.fwd.hh>
 #include <basic/resource_manager/types.hh>
 
 //C++ headers
@@ -194,6 +195,13 @@ public: // options access
 	bool
 	has_option(
 		utility::options::StringVectorOptionKey key ) const;
+
+private:
+	basic::resource_manager::ResourceConfiguration
+	create_resource_configuration_from_fallback(
+		basic::resource_manager::FallbackConfigurationCOP fallback,
+		basic::resource_manager::ResourceDescription const & resource_description
+	);
 
 };
 

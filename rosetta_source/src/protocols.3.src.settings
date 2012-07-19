@@ -85,6 +85,7 @@ sources = {
 		"looprelax_protocols",
 		"Loops",
 		"loops_main",
+		"LoopsFileFallbackConfiguration",
 		"LoopsFileIO",
 		"LoopsFileOptions",
 		"LoopsFileLoader",

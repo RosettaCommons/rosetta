@@ -29,6 +29,9 @@ public:
 
 private:
 	protocols::comparative_modeling::LoopRelaxMover loop_relax_mover_;
+
+private:
+	void setup_loop_definition();
 };
 
 

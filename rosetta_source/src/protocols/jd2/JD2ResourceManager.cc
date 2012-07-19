@@ -17,6 +17,8 @@
 #include <protocols/jd2/JD2ResourceManager.hh>
 #include <protocols/jd2/JD2ResourceManagerCreator.hh>
 #include <basic/resource_manager/types.hh>
+#include <basic/resource_manager/FallbackConfiguration.hh>
+#include <basic/resource_manager/FallbackConfigurationFactory.hh>
 #include <basic/resource_manager/JobOptions.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -307,9 +309,26 @@ bool
 JD2ResourceManager::has_resource_with_description(
 	ResourceDescription const & resource_description
 ) {
-	return has_resource_tag_by_job_tag(
+	using basic::resource_manager::FallbackConfigurationFactory;
+	using basic::resource_manager::FallbackConfigurationOP;
+	using basic::resource_manager::ResourceTag;
+	
+	if ( has_resource_tag_by_job_tag(
 		resource_description,
-		JobDistributor::get_instance()->current_job()->input_tag());
+		JobDistributor::get_instance()->current_job()->input_tag()) )
+	{
+		return true;
+	}
+	
+	if ( FallbackConfigurationFactory::get_instance()->has_fallback_for_resource( resource_description ))
+	{
+		FallbackConfigurationOP fallback = FallbackConfigurationFactory::get_instance()->create_fallback_configuration( resource_description );
+		ResourceTag resource_tag = fallback->get_resource_tag_from_description( resource_description );
+		add_resource_configuration( resource_tag, create_resource_configuration_from_fallback( fallback, resource_description ));
+		add_resource_tag_by_job_tag( resource_description, JobDistributor::get_instance()->current_job()->input_tag(), resource_tag );
+		return true;
+	}
+	return false;
 }
 
 ResourceOP
@@ -611,6 +630,21 @@ JD2ResourceManager::has_option(
 	return job_option->has_option(key);
 }
 
+basic::resource_manager::ResourceConfiguration
+JD2ResourceManager::create_resource_configuration_from_fallback(
+	basic::resource_manager::FallbackConfigurationCOP fallback,
+	ResourceDescription const & resource_description
+)
+{
+	using basic::resource_manager::ResourceConfiguration;
+	ResourceConfiguration resource_configuration;
+	resource_configuration.resource_tag = fallback->get_resource_tag_from_description( resource_description );
+	resource_configuration.locator_tag = fallback->get_locator_tag_from_description( resource_description );
+	resource_configuration.locator_id = fallback->get_locator_id_from_description( resource_description );
+	resource_configuration.loader_type = fallback->get_loader_type_from_description( resource_description );
+	resource_configuration.resource_options_tag = fallback->get_resource_options_tag_from_description( resource_description );
+	return resource_configuration;
+}
 
 } // namespace
 } // namespace

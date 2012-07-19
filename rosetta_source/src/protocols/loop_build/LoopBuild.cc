@@ -17,12 +17,15 @@
 #include <protocols/loop_build/LoopBuild.hh>
 #include <protocols/loop_build/LoopBuildMover.hh>
 
+// basic headers
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
+
 #include <basic/Tracer.hh>
+
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/fragment/FragSet.hh>
@@ -67,8 +70,6 @@ using basic::Warning;
 namespace protocols {
 namespace loop_build {
 
-static numeric::random::RandomGenerator RG(431);
-
 int
 LoopBuild_main( bool  ) {
 	basic::Tracer TR("protocols.loop_build.LoopBuild");
@@ -80,6 +81,8 @@ LoopBuild_main( bool  ) {
 	using namespace core::chemical;
 	using namespace core::id;
 	using namespace jobdist;
+	
+	//using namespace basic::resource_manager;
 
 	std::string remodel            ( option[ OptionKeys::loops::remodel ]() );
 	std::string const intermedrelax( option[ OptionKeys::loops::intermedrelax ]() );
@@ -111,17 +114,9 @@ LoopBuild_main( bool  ) {
 		loops::read_loop_fragments( frag_libs );
 	}
 
-	// load loopfile
-	utility::vector1< std::string >  loop_files = basic::options::option[ basic::options::OptionKeys::loops::loop_file ]();
-	core::Size const which_loop_file( loop_files.size() == 1 ? 1 : core::Size( RG.random_range(1,( loop_files.size() ) )) );
-	protocols::loops::LoopsFileIO loopIO;
-	protocols::loops::LoopsFileData loops_from_file = loopIO.read_loop_file( loop_files[ which_loop_file ] );
-
-
 	//setup of looprelax_mover
 	comparative_modeling::LoopRelaxMover looprelax_mover;
 	looprelax_mover.frag_libs( frag_libs );
-	looprelax_mover.loops_file_data( loops_from_file );
 	looprelax_mover.relax( relax );
 	looprelax_mover.refine( refine );
 	looprelax_mover.remodel( remodel );

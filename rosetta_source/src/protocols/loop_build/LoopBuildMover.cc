@@ -23,6 +23,9 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
+#include <basic/resource_manager/ResourceManager.hh>
+#include <basic/resource_manager/util.hh>
+
 #include <protocols/comparative_modeling/LoopRelaxMover.hh>
 
 #include <core/import_pose/import_pose.hh>
@@ -32,6 +35,7 @@
 
 #include <protocols/loops/util.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/loops/LoopsFileIO.hh>
 
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
@@ -52,7 +56,8 @@ LoopBuildMover::LoopBuildMover(protocols::comparative_modeling::LoopRelaxMover l
 
 
 void LoopBuildMover::apply(core::pose::Pose & pose){
-
+	
+	setup_loop_definition();
 	bool psipred_ss2_ok = loops::set_secstruct_from_psipred_ss2( pose );
 	if ( !psipred_ss2_ok ) {
 		std::string dssp_name( basic::options::option[ basic::options::OptionKeys::in::file::dssp ]().name() );
@@ -190,6 +195,17 @@ void LoopBuildMover::apply(core::pose::Pose & pose){
 std::string LoopBuildMover::get_name() const
 {
 	return "LoopBuildMover";
+}
+void LoopBuildMover::setup_loop_definition()
+{
+	using namespace basic::resource_manager;
+  // load loopfile
+	if ( ! ResourceManager::get_instance()->has_resource_with_description( "LoopsFile" ) )
+	{
+		throw utility::excn::EXCN_Msg_Exception( "AHH IT'S THE END OF DAYS. RUN FOR YOUR LIVES" );
+	}
+	protocols::loops::LoopsFileData loops_from_file = get_non_OP_resource< protocols::loops::LoopsFileData >( "LoopsFile" );
+	loop_relax_mover_.loops_file_data( loops_from_file );
 }
 
 }//loop_build

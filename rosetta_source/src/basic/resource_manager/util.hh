@@ -24,6 +24,9 @@
 //utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
+// numeric headers
+#include <numeric/kdtree/WrappedPrimitive.hh>
+
 //C++ headers
 #include <sstream>
 
@@ -32,6 +35,7 @@ namespace resource_manager {
 
 using std::stringstream;
 using utility::pointer::owning_ptr;
+using numeric::kdtree::WrappedPrimitive;
 
 template< class ResourceType >
 owning_ptr< ResourceType >
@@ -51,6 +55,26 @@ get_resource(
 	}
 	return resource;
 }
+
+template< class ResourceType >
+ResourceType
+get_non_OP_resource(
+	ResourceDescription const & resource_description
+) {
+	WrappedPrimitive< ResourceType > * resource(
+		dynamic_cast< WrappedPrimitive< ResourceType > * >(
+			ResourceManager::get_instance()->get_resource(resource_description)() ));
+
+	if(! resource){
+		stringstream err_msg;
+		err_msg
+			<< "The '" << resource_description << "' "
+			<< "cannot be cast to the given type.";
+		throw utility::excn::EXCN_Msg_Exception(err_msg.str());
+	}
+	return resource->val();
+}
+
 
 } // namespace resource_manager
 } // namespace basic

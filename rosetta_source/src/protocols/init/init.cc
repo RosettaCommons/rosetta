@@ -24,6 +24,9 @@
 #include <protocols/init/init.EnergyMethodCreators.ihh>
 #include <protocols/init/init.EnergyMethodRegistrators.ihh>
 
+#include <protocols/init/init.FallbackConfigurationCreators.ihh>
+#include <protocols/init/init.FallbackConfigurationRegistrators.ihh>
+
 #include <protocols/init/init.ResourceLoaderCreators.ihh>
 #include <protocols/init/init.ResourceLoaderRegistrators.ihh>
 
