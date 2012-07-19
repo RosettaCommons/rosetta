@@ -27,7 +27,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -86,10 +85,10 @@ LoopLengthChange::apply( core::pose::Pose & pose )
     for( core::Size leng(1); leng<=(core::Size) delta(); ++leng ){
       pose.conformation().safely_append_polymer_residue_after_seqpos( *new_res, loop_end() + leng - 1, true/*build_ideal
 _geometry*/ );
-      pose.set_omega(loop_end()+leng-1,180.0);
+//      pose.set_omega(loop_end()+leng-1,180.0);
     }
   }
-  pose.update_residue_neighbors();
+//  pose.update_residue_neighbors();
 }
 
 std::string
