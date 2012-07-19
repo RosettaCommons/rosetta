@@ -14,18 +14,8 @@
 #ifndef INCLUDED_protocols_moves_DataMap_hh
 #define INCLUDED_protocols_moves_DataMap_hh
 
-// Unit Headers
-// AUTO-REMOVED #include <protocols/moves/Mover.fwd.hh>
-
-// Package headers
-// AUTO-REMOVED #include <protocols/moves/MoverStatistics.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverStatus.hh>
-
 // Project headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <utility/tag/Tag.fwd.hh>
-// AUTO-REMOVED #include <utility/exit.hh>
 #include <sstream>
 // ObjexxFCL Headers
 
@@ -38,9 +28,12 @@
 
 #include <utility/exit.hh>
 #include <string>
+#include <basic/Tracer.hh>
 
 namespace protocols {
 namespace moves {
+
+static basic::Tracer TR_hh( "protocols.moves.DataMap_hh" );
 
 /// @brief general-purpose store for any reference-count derived object
 
@@ -83,14 +76,14 @@ Ty
 DataMap::get( std::string const type, std::string const name ) const {
 	using namespace utility::pointer;
 	Ty ret( 0 );
-	
+
 	if( !has( type, name ) ){
 		std::stringstream error_message;
 		error_message << "ERROR: Could not find "<<type<<" and name "<<name<<" in Datamap\n";
-		
+
 		utility_exit_with_message( error_message.str() );
 	}
-	
+
 	std::map< std::string, utility::pointer::ReferenceCountOP > const dm( data_map_.find( type )->second );
 	for( std::map< std::string, ReferenceCountOP >::const_iterator it=dm.begin(); it!=dm.end(); ++it ) {
 		if( it->first == name ) {
@@ -101,10 +94,30 @@ DataMap::get( std::string const type, std::string const name ) const {
 	if( ret==0 ) {
 		std::stringstream error_message;
 		error_message << "ERROR: Dynamic_cast failed for type "<<type<<" and name "<<name<<'\n';
-		
+
 		utility_exit_with_message( error_message.str() );
 	}
 	return( ret );
+}
+
+
+/// @brief templated function for adding or getting an item from the datamap. Automatically checks whether an item
+/// of the requested type and name exists on the datamap. If so, returns the OP for that item, if not, instantiates
+/// that item on the datamap and returns the OP for it.
+template < class Ty >
+Ty *
+get_set_from_datamap( std::string const type, std::string const name, protocols::moves::DataMap & data ){
+	Ty *obj;
+	if( data.has( type, name ) ){
+		obj = data.get< Ty * >( type, name );
+		TR_hh<<"Getting object-type, name "<<type<<' '<<name<<" from datamap"<<std::endl;
+	}
+	else{
+		obj = new Ty;
+		data.add( type, name, obj );
+		TR_hh<<"Adding object-type, name "<<type<<' '<<name<<" to datamap"<<std::endl;
+	}
+	return obj;
 }
 
 } // moves
