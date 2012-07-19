@@ -19,6 +19,7 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
+#include <protocols/moves/DataMapObj.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -140,6 +141,8 @@ public:
 	core::Size find_dbase_entry( core::pose::Pose const & pose ); // returns a dbase entry
 	core::Size locked_res() const;
 	void locked_res( core::Size const r );
+	void locked_res_id( char const c );
+	char locked_res_id() const;
 private:
 	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
 	void retrieve_values(); // call at end of apply
@@ -167,7 +170,8 @@ private:
 	utility::vector1< core::Size > dbase_subset_; // indices to the subset of the dbase library over which multiple calls iterate
 	utility::vector1< core::Size >::const_iterator current_dbase_entry_; // used if multiple calls to splice are made to iterate through the list
 	utility::pointer::owning_ptr< protocols::moves::DataMapObj< bool > > end_dbase_subset_; // dflt false; this is a weird construct to allow placing the variable on the DataMap
-	core::Size locked_res_; // dflt 0; a residue that serves as the root for a fold tree jump to the other chain. This residue is expected to be within the loop span, and allows the loop to be refined while keeping the rigid body jump between the two chains;
+	utility::pointer::owning_ptr< protocols::moves::DataMapObj < utility::vector1< core::Size > > > locked_res_; // dflt NULL; a residue that serves as the root for a fold tree jump to the other chain. This residue is expected to be within the loop span, and allows the loop to be refined while keeping the rigid body jump between the two chains; it's a only ostensibly a vector, as it has to be compatible with placestub, but it only looks at the first element of that vector
+	char locked_res_id_; // dflt ''; the one-letter code for the locked residue
 };
 
 

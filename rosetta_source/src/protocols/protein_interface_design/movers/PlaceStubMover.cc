@@ -14,6 +14,8 @@
 // Unit headers
 #include <protocols/protein_interface_design/movers/PlaceStubMover.hh>
 #include <protocols/protein_interface_design/movers/PlaceStubMoverCreator.hh>
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 // Project Headers
 #include <utility/tag/Tag.hh>
@@ -25,6 +27,7 @@
 #include <numeric/xyzVector.hh>
 #include <protocols/protein_interface_design/movers/PlaceUtils.hh>
 #include <protocols/moves/DataMap.hh>
+#include <protocols/moves/DataMapObj.hh>
 #include <protocols/moves/ResId.hh>
 
 #include <core/scoring/constraints/BackboneStubConstraint.hh>
@@ -130,7 +133,8 @@ PlaceStubMover::PlaceStubMover() :
 	hurry_( true ),
 	triage_positions_( true ),
 	stub_energy_threshold_( 1.0 ),
-	residue_level_tasks_for_placed_hotspots_( NULL )
+	residue_level_tasks_for_placed_hotspots_( NULL ),
+	residue_numbers_( NULL )
 {
 	coord_cst_std_.clear();
 	disallowed_host_pos_.clear();
@@ -615,8 +619,15 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 	std::random_shuffle( stub_set_->begin(), stub_set_->end() );// randomly shuffling stubs so that the selection doesn't repeat the same stub order each time
 	HotspotStubSet::Hs_vec::iterator stub_it( stub_set_->begin() );
 	std::vector< core::Size > host_positions;
-	for( core::Size i=host_chain_begin+1; i<=host_chain_end-1; ++i ) // avoid placements on chain termini
-		host_positions.push_back( i );
+	if( task_factory() ){
+		utility::vector1< core::Size > const designable( protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, false/*packable*/ ) );
+		foreach( core::Size const d, designable )
+			host_positions.push_back( d );
+	}
+	else{
+		for( core::Size i=host_chain_begin+1; i<=host_chain_end-1; ++i ) // avoid placements on chain termini
+			host_positions.push_back( i );
+	}
 
 	do { // for each two sided trial
 		//select a stub
@@ -755,6 +766,11 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 					bool subsequent_stub_placement_failure( false );
 					TR<<"redesigning remainder of interface with user defined design movers\n";
 					prevent_repacking_.push_back( res );
+					if( residue_numbers_ ){
+						TR<<"Pushing residue number "<<res<<" to residue_numbers_ object"<<std::endl;
+						residue_numbers_->obj.clear();
+						residue_numbers_->obj.push_back( res ); // in principle should push the number to the stack, but that keeps memory of past placements. Need to find a better way to deal with that.
+					}
 					utility::vector1< core::Size > empty;
 					runtime_assert( coord_cst_std_.size() == design_movers_.size() );
 					utility::vector1< core::Real >::const_iterator it_sdev( coord_cst_std_.begin() );
@@ -962,8 +978,12 @@ PlaceStubMover::parse_my_tag( TagPtr const tag,
 {
 	using namespace protocols::hotspot_hashing;
 
-
 	TR<<"Parsing PlaceStubMover----"<<std::endl;
+
+	if( tag->hasOption( "residue_numbers_setter" ) ){
+		std::string const residue_numbers_name( tag->getOption( "residue_numbers", tag->getOption< std::string >( "residue_numbers_setter" ) ) );
+		residue_numbers_ = protocols::moves::get_set_from_datamap< protocols::moves::DataMapObj< utility::vector1< core::Size > > >( "residue_numbers", residue_numbers_name, data );
+	}
 
 	if( tag->hasOption( "task_operations" ) ){
 		if( task_factory() )

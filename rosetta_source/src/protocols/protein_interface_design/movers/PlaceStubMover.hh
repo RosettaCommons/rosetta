@@ -23,11 +23,8 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/scoring/constraints/HarmonicFunc.fwd.hh>
-// AUTO-REMOVED #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
-
+#include <protocols/moves/DataMapObj.hh>
 // C++ headers
 
 // Unit headers
@@ -169,6 +166,7 @@ private: // data members
 	/// should not be changed to design movers down stream. Note that this is a different implementation than
 	/// the one used in PlaceSimultaneously.
 	core::pack::task::TaskFactoryOP residue_level_tasks_for_placed_hotspots_;
+  utility::pointer::owning_ptr< protocols::moves::DataMapObj< utility::vector1< core::Size > > > residue_numbers_; /// dflt NULL; a vector of residue numbers placed on the DataMap which specifies all the placed residues. Useful to communicate between movers and filters, without the pesky NotifyMovers strategy
 };
 
 } //movers
