@@ -73,15 +73,17 @@ public:
 
 	void chi( bool val ) { chi_ = val; }
 	void bb( bool val ) { bb_ = val; }
+	void jump( bool const j ){ jump_ = j; }
 	bool chi() const { return chi_; }
 	bool bb() const { return bb_; }
+	bool jump() const{ return jump_;}
 
 private:
 	///@brief OP for MinMover
 	protocols::simple_moves::MinMoverOP minmover_;
 	///@brief OP for constant task factory for nonconstant tasks, if present
 	core::pack::task::TaskFactoryCOP factory_;
-	bool chi_, bb_;
+	bool chi_, bb_, jump_;
 
 };//end TaskAwareMinMover
 

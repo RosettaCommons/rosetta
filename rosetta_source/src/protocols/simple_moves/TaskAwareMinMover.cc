@@ -30,6 +30,7 @@
 #include <protocols/simple_moves/MinMover.hh>
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/scoring/ScoreFunction.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -87,7 +88,8 @@ TaskAwareMinMover::TaskAwareMinMover(
 		minmover_(minmover_in),
 		factory_(factory_in),
 		chi_(true),
-		bb_(false)
+		bb_(false),
+		jump_(true)
 {
 	protocols::moves::Mover::type( "TaskAwareMinMover" );
 }
@@ -117,12 +119,16 @@ void TaskAwareMinMover::apply( core::pose::Pose & pose ){
 //  core::kinematics::modify_movemap_from_packertask( *mm, *task );
 	Size const nres( task->total_residue() );
 
+	mm->set_jump( jump_ );
 	for ( Size i(1); i <= nres; ++i ) {
-		if ( task->pack_residue( i ) ) {
+		if ( task->design_residue( i ) ) {
 			// the MoveMap initializes to false for all degrees of freedom
 			// this class only turns on minimization at packable dofs, it does not turn them off
 			if ( chi_ ) mm->set_chi( i, chi_ );
 			if ( bb_ ) mm->set_bb( i, bb_ );
+		}
+		else if( task->pack_residue( i ) ) {
+			if( chi_ ) mm->set_chi( i, chi_ );
 		}
 	}
 
@@ -163,10 +169,12 @@ TaskAwareMinMover::parse_my_tag(
 	}
 	if ( tag->hasOption("chi") ) chi_ = tag->getOption<bool>("chi");
 	if ( tag->hasOption("bb") ) bb_ = tag->getOption<bool>("bb");
+	jump_ = tag->getOption< bool >( "jump", true );
 	minmover_ = new MinMover;
 	// call to MinMover::parse_my_tag avoided here to prevent collision of chi and bb tag options
 	minmover_->parse_opts( tag, datamap, filters, movers, pose );
 	parse_task_operations( tag, datamap, filters, movers, pose );
+	minmover_->score_function( protocols::rosetta_scripts::parse_score_function( tag, datamap, "score12" ) );
 }
 
 ///@brief parse "task_operations" XML option (can be employed virtually by derived Packing movers)
