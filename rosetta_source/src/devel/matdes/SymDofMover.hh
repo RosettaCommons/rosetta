@@ -82,6 +82,8 @@ private:
 	utility::vector1<Real> get_angles();
 
 private:
+	std::string axis_;
+	bool align_axis_;
 	std::string symm_file_;
 	utility::vector1<std::string> sym_dof_names_;
 	utility::vector1<Real> radial_disps_;

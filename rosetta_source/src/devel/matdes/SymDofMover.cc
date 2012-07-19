@@ -74,30 +74,10 @@ SymDofMoverCreator::mover_name()
 // -------------  Mover Creator -------------
 
 SymDofMover::SymDofMover() :
-	symm_file_(),
-	sym_dof_names_(),
-	radial_disps_(),
-	angles_(),
-	sampling_mode_( "single_dock" )
+	axis_("z"),
+	align_axis_(true)
 { }
 
-/*SymDofMover::SymDofMover(const SymDofMover& rval) :
-	symm_file_( rval.symm_file_ ),
-	sym_dof_names_( rval.sym_dof_names_ ),
-	radial_disps_( rval.radial_disps_ ),
-	angles_( rval.angles_ ),
-	radial_disps_range_min_( rval.radial_disps_range_min_ ),
-	radial_disps_range_max_( rval.radial_disps_range_max_ ),
-	angles_range_min_( rval.angles_range_min_ ),
-	angles_range_max_( rval.angles_range_max_ ),
-	radial_disp_steps_( rval.radial_disp_steps_ ),
-	angle_steps_( rval.angle_steps_ ),
-	radial_disp_deltas_( rval.radial_disp_deltas_ ),
-	angle_deltas_( rval.angle_deltas_ ),
-	sampling_mode_( rval.sampling_mode_ )
-
-{ }
-*/
 protocols::moves::MoverOP 
 SymDofMover::clone() const {
 	return new SymDofMover( *this );
@@ -205,6 +185,7 @@ void SymDofMover::alignaxis(core::pose::Pose & pose, Vec newaxis, Vec oldaxis, V
 void
 SymDofMover::apply(Pose & pose) {
 	using core::pose::Pose;
+	using namespace core::pose::symmetry;
 
 // Read in user info //
 
@@ -212,6 +193,8 @@ SymDofMover::apply(Pose & pose) {
 	utility::vector1<Real> radial_disps = get_radial_disps();
 	utility::vector1<Real> angles = get_angles();
 	std::string symm_file = symm_file_;
+	std::string axis = axis_;
+	bool align_axis = align_axis_;
 
 // Read in symmetry info from symmetry definition file //
 	
@@ -225,19 +208,29 @@ SymDofMover::apply(Pose & pose) {
 		core::Size sub_start= pose.conformation().chain_begin(i);
 		core::Size sub_end= pose.conformation().chain_end(i);
 	
-// translate each subunit along the z-axis by user defined values //
-		trans_pose(pose,Vec(0,0,radial_disps[i]),sub_start,sub_end);
+// translate each subunit along the specified axis by user defined values //
+		if ( axis == "z") trans_pose(pose,Vec(0,0,radial_disps[i]),sub_start,sub_end);
+		else if ( axis == "x") trans_pose(pose,Vec(radial_disps[i],0,0),sub_start,sub_end);
+		else if ( axis == "y") trans_pose(pose,Vec(0,radial_disps[i],0),sub_start,sub_end);
+		else utility_exit_with_message("Specified axis does not match with either x, y, or z");
 
-// rotate each subunit along the z-axis by user defined values //
-		rot_pose(pose,Vec(0,0,1),angles[i],sub_start,sub_end);
+// rotate each subunit along the specified axis by user defined values //
+		if (axis == "z" ) rot_pose(pose,Vec(0,0,1),angles[i],sub_start,sub_end);
+		else if (axis == "x" ) rot_pose(pose,Vec(1,0,0),angles[i],sub_start,sub_end);
+		else rot_pose(pose,Vec(0,1,0),angles[i],sub_start,sub_end);
 
 // read in the axes for each subunit //
 		std::string tag (virt_connects.find( sym_dof_names[i])->second.first );
 		TR << sym_dof_names[i] << " -> " << tag << std::endl;
 		conformation::symmetry::VirtualCoordinate virt_coord( coords.find( tag )->second );
 
-// align the z-axis of each subunit with the appropriate axis of the symdof jump from the symmetry definition file //
-		alignaxis(pose,virt_coord.get_x(),Vec(0,0,1),Vec(0,0,0),sub_start,sub_end);
+// align the specified axis of each subunit with the appropriate axis of the symdof jump from the symmetry definition file //
+		if ( align_axis ) { 
+			TR << "aligned_axis" << std::endl;
+			if ( axis == "z" ) alignaxis(pose,virt_coord.get_x(),Vec(0,0,1),Vec(0,0,0),sub_start,sub_end);
+			else if ( axis == "x" ) alignaxis(pose,virt_coord.get_x(),Vec(1,0,0),Vec(0,0,0),sub_start,sub_end);
+			else alignaxis(pose,virt_coord.get_x(),Vec(0,1,0),Vec(0,0,0),sub_start,sub_end);
+		}
 	}
 
 // symmetrize pose //
@@ -262,6 +255,8 @@ SymDofMover::parse_my_tag( TagPtr const tag,
 	basic::options::option[basic::options::OptionKeys::symmetry::symmetry_definition].value( "dummy" );
 
 	using std::string;
+	axis_ = tag->getOption<string>( "axis", "z" );
+	align_axis_ = tag->getOption<bool>( "align_axis", true );
 	symm_file_ = tag->getOption<string>( "symm_file" );
 	sym_dof_names_ = utility::string_split( tag->getOption< std::string >( "sym_dof_names" ), ',' );
 
