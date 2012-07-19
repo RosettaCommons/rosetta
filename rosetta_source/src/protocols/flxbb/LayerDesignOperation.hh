@@ -109,6 +109,9 @@ public:
 	/// @brief set verbose
 	void set_verbose( bool const  b ) { verbose_ = b; }
 
+	/// @brief set restrict_restypes
+	void set_restrict_restypes( bool const  b ) { restrict_restypes_ = b; }
+
 	/// @brief use original sequence for not designed layer
 	void use_original_seq()
 	{
@@ -140,6 +143,9 @@ private:
 
 	/// @brief
 	bool verbose_;
+
+	/// @brief
+	bool restrict_restypes_;
 
 	// define the layer each residue belong to
 	toolbox::SelectResiduesByLayerOP srbl_;

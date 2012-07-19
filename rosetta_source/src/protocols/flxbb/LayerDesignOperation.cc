@@ -87,6 +87,7 @@ LayerDesignOperation::LayerDesignOperation():
 	add_helix_capping_( true ),
 	use_original_( true ),
 	verbose_( false ),
+	restrict_restypes_( true ),
 	srbl_( new toolbox::SelectResiduesByLayer )
 {}
 
@@ -97,6 +98,7 @@ LayerDesignOperation::LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, 
 	add_helix_capping_( true ),
 	use_original_( true ),
 	verbose_( false ),
+	restrict_restypes_( true ),
 	srbl_( new toolbox::SelectResiduesByLayer )
 {
 	design_layer( dsgn_core, dsgn_boundary, dsgn_surface );
@@ -192,129 +194,132 @@ LayerDesignOperation::apply( Pose const & pose, PackerTask & task ) const
 
 		if( srbl_->layer( i ) == "core" ) {
 
-			if( helix_capping[ i ] == true && add_helix_capping_ ) {
-				utility::vector1<bool> restrict_to_aa( chemical::num_canonical_aas, false );
-				restrict_to_aa[chemical::aa_from_name( "ASP" )] = true;
-				restrict_to_aa[chemical::aa_from_name( "ASN" )] = true;
-				restrict_to_aa[chemical::aa_from_name( "THR" )] = true;
-				restrict_to_aa[chemical::aa_from_name( "SER" )] = true;
-				task.nonconst_residue_task( i ).restrict_absent_canonical_aas( restrict_to_aa );
-				if( verbose_ ) {
-					TR << " ,Helix Capping " << std::endl;
-				}
-			} else {
-				utility::vector1<bool> restrict_to_aa( chemical::num_canonical_aas, false );
-				restrict_to_aa[chemical::aa_from_name( "TRP" )] = true;
-				restrict_to_aa[chemical::aa_from_name( "PHE" )] = true;
-				restrict_to_aa[chemical::aa_from_name( "ILE" )] = true;
-				restrict_to_aa[chemical::aa_from_name( "LEU" )] = true;
-				restrict_to_aa[chemical::aa_from_name( "VAL" )] = true;
-				restrict_to_aa[chemical::aa_from_name( "TYR" )] = true;
-				restrict_to_aa[chemical::aa_from_name( "MET" )] = true;
-
-				if( ss == 'E' ) {
-
-				} else if( ss == 'H' ) {
-					restrict_to_aa[chemical::aa_from_name( "ALA" )] = true;
-					if( initial_helix[ i ] ) {
-						restrict_to_aa[chemical::aa_from_name( "PRO" )] = true;
+			if( restrict_restypes_ ){
+				if( helix_capping[ i ] == true && add_helix_capping_ ) {
+					utility::vector1<bool> restrict_to_aa( chemical::num_canonical_aas, false );
+					restrict_to_aa[chemical::aa_from_name( "ASP" )] = true;
+					restrict_to_aa[chemical::aa_from_name( "ASN" )] = true;
+					restrict_to_aa[chemical::aa_from_name( "THR" )] = true;
+					restrict_to_aa[chemical::aa_from_name( "SER" )] = true;
+					task.nonconst_residue_task( i ).restrict_absent_canonical_aas( restrict_to_aa );
+					if( verbose_ ) {
+						TR << " ,Helix Capping " << std::endl;
 					}
 				} else {
-					restrict_to_aa[chemical::aa_from_name( "ALA" )] = true;
-					restrict_to_aa[chemical::aa_from_name( "PRO" )] = true;
-				}
-				task.nonconst_residue_task( i ).restrict_absent_canonical_aas( restrict_to_aa );
-				if( verbose_ ) {
-					TR << " " << srbl_->layer( i ) << std::endl;
+					utility::vector1<bool> restrict_to_aa( chemical::num_canonical_aas, false );
+					restrict_to_aa[chemical::aa_from_name( "TRP" )] = true;
+					restrict_to_aa[chemical::aa_from_name( "PHE" )] = true;
+					restrict_to_aa[chemical::aa_from_name( "ILE" )] = true;
+					restrict_to_aa[chemical::aa_from_name( "LEU" )] = true;
+					restrict_to_aa[chemical::aa_from_name( "VAL" )] = true;
+					restrict_to_aa[chemical::aa_from_name( "TYR" )] = true;
+					restrict_to_aa[chemical::aa_from_name( "MET" )] = true;
+
+					if( ss == 'E' ) {
+
+					} else if( ss == 'H' ) {
+						restrict_to_aa[chemical::aa_from_name( "ALA" )] = true;
+						if( initial_helix[ i ] ) {
+							restrict_to_aa[chemical::aa_from_name( "PRO" )] = true;
+						}
+					} else {
+						restrict_to_aa[chemical::aa_from_name( "ALA" )] = true;
+						restrict_to_aa[chemical::aa_from_name( "PRO" )] = true;
+					}
+					task.nonconst_residue_task( i ).restrict_absent_canonical_aas( restrict_to_aa );
+					if( verbose_ ) {
+						TR << " " << srbl_->layer( i ) << std::endl;
+					}
 				}
 			}
-
 		} else if ( srbl_->layer( i ) == "boundary" ) {
 
-			if( helix_capping[ i ] == true && add_helix_capping_ ) {
-				utility::vector1<bool> restrict_to_aa( chemical::num_canonical_aas, false );
-				restrict_to_aa[chemical::aa_from_name( "ASP" )] = true;
-				restrict_to_aa[chemical::aa_from_name( "ASN" )] = true;
-				restrict_to_aa[chemical::aa_from_name( "THR" )] = true;
-				restrict_to_aa[chemical::aa_from_name( "SER" )] = true;
-				task.nonconst_residue_task( i ).restrict_absent_canonical_aas( restrict_to_aa );
-				if( verbose_ ) {
-					TR << " ,Helix Capping " << std::endl;
-				}
-			} else {
-
-				utility::vector1<bool> restrict_to_aa( chemical::num_canonical_aas, true );
-				if( ss == 'E' || ss == 'L' ) {
-
-					restrict_to_aa[chemical::aa_from_name( "CYS" )] = false;
-					restrict_to_aa[chemical::aa_from_name( "MET" )] = false;
-					restrict_to_aa[chemical::aa_from_name( "HIS" )] = false;
-
+			if( restrict_restypes_ ){
+				if( helix_capping[ i ] == true && add_helix_capping_ ) {
+					utility::vector1<bool> restrict_to_aa( chemical::num_canonical_aas, false );
+					restrict_to_aa[chemical::aa_from_name( "ASP" )] = true;
+					restrict_to_aa[chemical::aa_from_name( "ASN" )] = true;
+					restrict_to_aa[chemical::aa_from_name( "THR" )] = true;
+					restrict_to_aa[chemical::aa_from_name( "SER" )] = true;
+					task.nonconst_residue_task( i ).restrict_absent_canonical_aas( restrict_to_aa );
+					if( verbose_ ) {
+						TR << " ,Helix Capping " << std::endl;
+					}
 				} else {
 
-					restrict_to_aa[chemical::aa_from_name( "CYS" )] = false;
-					restrict_to_aa[chemical::aa_from_name( "PHE" )] = false;
-					restrict_to_aa[chemical::aa_from_name( "MET" )] = false;
-					restrict_to_aa[chemical::aa_from_name( "HIS" )] = false;
+					utility::vector1<bool> restrict_to_aa( chemical::num_canonical_aas, true );
+					if( ss == 'E' || ss == 'L' ) {
 
-				}
+						restrict_to_aa[chemical::aa_from_name( "CYS" )] = false;
+						restrict_to_aa[chemical::aa_from_name( "MET" )] = false;
+						restrict_to_aa[chemical::aa_from_name( "HIS" )] = false;
 
-				if( ss == 'E' ){
-					restrict_to_aa[chemical::aa_from_name( "GLY" )] = false;
-					restrict_to_aa[chemical::aa_from_name( "ALA" )] = false;
-					restrict_to_aa[chemical::aa_from_name( "PRO" )] = false;
-				} else if( ss == 'H' ) {
-					if( ! initial_helix[ i ] ) {
-						restrict_to_aa[chemical::aa_from_name( "PRO" )] = false;
+					} else {
+
+						restrict_to_aa[chemical::aa_from_name( "CYS" )] = false;
+						restrict_to_aa[chemical::aa_from_name( "PHE" )] = false;
+						restrict_to_aa[chemical::aa_from_name( "MET" )] = false;
+						restrict_to_aa[chemical::aa_from_name( "HIS" )] = false;
+
 					}
-					restrict_to_aa[chemical::aa_from_name( "GLY" )] = false;
-				}
-				task.nonconst_residue_task( i ).restrict_absent_canonical_aas( restrict_to_aa );
-				if( verbose_ ) {
-					TR << " " << srbl_->layer( i ) << std::endl;
+
+					if( ss == 'E' ){
+						restrict_to_aa[chemical::aa_from_name( "GLY" )] = false;
+						restrict_to_aa[chemical::aa_from_name( "ALA" )] = false;
+						restrict_to_aa[chemical::aa_from_name( "PRO" )] = false;
+					} else if( ss == 'H' ) {
+						if( ! initial_helix[ i ] ) {
+							restrict_to_aa[chemical::aa_from_name( "PRO" )] = false;
+						}
+						restrict_to_aa[chemical::aa_from_name( "GLY" )] = false;
+					}
+					task.nonconst_residue_task( i ).restrict_absent_canonical_aas( restrict_to_aa );
+					if( verbose_ ) {
+						TR << " " << srbl_->layer( i ) << std::endl;
+					}
 				}
 			}
-
 		} else if ( srbl_->layer( i ) == "surface" ) {
 
-			if( helix_capping[ i ] == true && add_helix_capping_ ) {
-				utility::vector1<bool> restrict_to_aa( chemical::num_canonical_aas, false );
-				restrict_to_aa[chemical::aa_from_name( "ASP" )] = true;
-				restrict_to_aa[chemical::aa_from_name( "ASN" )] = true;
-				restrict_to_aa[chemical::aa_from_name( "THR" )] = true;
-				restrict_to_aa[chemical::aa_from_name( "SER" )] = true;
-				task.nonconst_residue_task( i ).restrict_absent_canonical_aas( restrict_to_aa );
-				if( verbose_ ) {
-					TR << " ,Helix Capping " << std::endl;
-				}
-			} else {
-
-				utility::vector1<bool> restrict_to_aa( chemical::num_canonical_aas, false );
-				restrict_to_aa[chemical::aa_from_name( "GLU" )] = true;
-				restrict_to_aa[chemical::aa_from_name( "ARG" )] = true;
-				restrict_to_aa[chemical::aa_from_name( "ASP" )] = true;
-				restrict_to_aa[chemical::aa_from_name( "LYS" )] = true;
-				restrict_to_aa[chemical::aa_from_name( "HIS" )] = true;
-				restrict_to_aa[chemical::aa_from_name( "ASN" )] = true;
-				restrict_to_aa[chemical::aa_from_name( "GLN" )] = true;
-				restrict_to_aa[chemical::aa_from_name( "SER" )] = true;
-				restrict_to_aa[chemical::aa_from_name( "THR" )] = true;
-
-				if( ss == 'E' ) {
-				} else if ( ss == 'H' ) {
-					if( initial_helix[ i ] == true ){
-						restrict_to_aa[chemical::aa_from_name( "PRO" )] = true;
+			if( restrict_restypes_ ){
+				if( helix_capping[ i ] == true && add_helix_capping_ ) {
+					utility::vector1<bool> restrict_to_aa( chemical::num_canonical_aas, false );
+					restrict_to_aa[chemical::aa_from_name( "ASP" )] = true;
+					restrict_to_aa[chemical::aa_from_name( "ASN" )] = true;
+					restrict_to_aa[chemical::aa_from_name( "THR" )] = true;
+					restrict_to_aa[chemical::aa_from_name( "SER" )] = true;
+					task.nonconst_residue_task( i ).restrict_absent_canonical_aas( restrict_to_aa );
+					if( verbose_ ) {
+						TR << " ,Helix Capping " << std::endl;
 					}
 				} else {
-					restrict_to_aa[chemical::aa_from_name( "GLY" )] = true;
-				}
 
-				task.nonconst_residue_task( i ).restrict_absent_canonical_aas( restrict_to_aa );
-				if( verbose_ ) {
-					TR << " " << srbl_->layer( i ) << std::endl;
+					utility::vector1<bool> restrict_to_aa( chemical::num_canonical_aas, false );
+					restrict_to_aa[chemical::aa_from_name( "GLU" )] = true;
+					restrict_to_aa[chemical::aa_from_name( "ARG" )] = true;
+					restrict_to_aa[chemical::aa_from_name( "ASP" )] = true;
+					restrict_to_aa[chemical::aa_from_name( "LYS" )] = true;
+					restrict_to_aa[chemical::aa_from_name( "HIS" )] = true;
+					restrict_to_aa[chemical::aa_from_name( "ASN" )] = true;
+					restrict_to_aa[chemical::aa_from_name( "GLN" )] = true;
+					restrict_to_aa[chemical::aa_from_name( "SER" )] = true;
+					restrict_to_aa[chemical::aa_from_name( "THR" )] = true;
+
+					if( ss == 'E' ) {
+					} else if ( ss == 'H' ) {
+						if( initial_helix[ i ] == true ){
+							restrict_to_aa[chemical::aa_from_name( "PRO" )] = true;
+						}
+					} else {
+						restrict_to_aa[chemical::aa_from_name( "GLY" )] = true;
+					}
+
+					task.nonconst_residue_task( i ).restrict_absent_canonical_aas( restrict_to_aa );
+					if( verbose_ ) {
+						TR << " " << srbl_->layer( i ) << std::endl;
+					}
 				}
 			}
-
 		} else {
 
 			if( use_original_ ){
@@ -403,6 +408,7 @@ LayerDesignOperation::parse_tag( TagPtr tag )
 	}
 
 	set_verbose( tag->getOption< bool >( "verbose", false ) );
+	set_restrict_restypes( tag->getOption< bool >( "restrict_restypes", true ) );
 
 
 }
