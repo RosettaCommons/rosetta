@@ -567,6 +567,11 @@ class CppClass:
         self.file_      = refSection.Files[node.getAttribute('file')]
         self.line       = node.getAttribute('line')
 
+        # work-around GCC bug when templates put in to wrong files...
+        #if self.name == 'UpperEdgeGraph<core::conformation::PointGraphVertexData,core::conformation::PointGraphEdgeData>':
+        #    print '~~~~~~~~~~ ', self.file_
+        #    self.file_ = 'core/conformation/PointGraph.hh'
+
         for ch in node.childNodes:
             #if ch.nodeName == '#text': continue  # why on earth this node type is everywhere???
             if ch.nodeName == 'Base':
@@ -1190,11 +1195,19 @@ def wrapModule(name, name_spaces, context, relevant_files_list, max_funcion_size
     '''
     #print 'by_hand_beginning=%s, by_hand_ending=%s' % (by_hand_beginning, by_hand_ending)
 
+    #print '------ name_spaces:', name_spaces
+    #print '------ context:', context
 
     objects = []
     for n in name_spaces:
         if n in context:
             objects.extend( context[n] )
+
+    if name_spaces == ['::core::conformation::']:  # work-aroung for GCCXML template-misplace-bug
+        for o in context['::core::graph::']:
+            if o.name == 'UpperEdgeGraph<core::conformation::PointGraphVertexData,core::conformation::PointGraphEdgeData>':
+                objects.append( o );
+                #print '######################## ', o
 
     sortObjects( objects )
 
@@ -1208,7 +1221,10 @@ def wrapModule(name, name_spaces, context, relevant_files_list, max_funcion_size
     includes = []
     prefix_code = ''
     for i in objects:
-        if i.file_ in relevant_files_list:
+        force = i.name == 'UpperEdgeGraph<core::conformation::PointGraphVertexData,core::conformation::PointGraphEdgeData>'
+        #if force: print '--- yay: ', i.name
+
+        if i.file_ in relevant_files_list  or force:
             s += i.wrap('  ')
             prefix_code += i.wrap_prefix_code()
 

@@ -16,6 +16,11 @@
 #ifndef INCLUDED_core_conformation_PointGraph_hh
 #define INCLUDED_core_conformation_PointGraph_hh
 
+#ifdef PYROSETTA
+	#include <core/graph/UpperEdgeGraph.hh>
+	#include <utility/vector1.hh>
+#endif
+
 // Unit Headers
 #include <core/conformation/PointGraph.fwd.hh>
 
@@ -38,6 +43,22 @@ residue_point_graph_from_conformation(
 	Conformation const & conformation,
 	PointGraph & pg
 );
+
+#ifdef PYROSETTA
+	class PointGraphPy : public PointGraph {};
+
+	/*template <class T1, class T2  >
+	class UpperEdgeGraphPy : public graph::UpperEdgeGraph < T1, T2 > {   };
+
+	typedef UpperEdgeGraphPy< PointGraphVertexData, PointGraphEdgeData > PointGraph_;
+
+	class PointGraphPy_ : public PointGraph_ {}; */
+
+	//typedef UpperEdgeGraphPy< PointGraphVertexData, PointGraphEdgeData > PointGraph_;
+
+	//class PointGraphPy : public UpperEdgeGraphPy< PointGraphVertexData, PointGraphEdgeData > {};  // for PyRosetta
+#endif
+
 
 } // namespace conformation
 } // namespace core

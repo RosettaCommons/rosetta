@@ -272,7 +272,7 @@ def main(args):
     if options.one:
         print 'Building just following namespaces:', options.one
         for n in options.one:
-            print 'n=', n
+            #print 'namespace =', n
             buildModule(n, bindings_path, include_paths=options.I, libpaths=options.L, runtime_libpaths=options.L, gccxml_path=options.gccxml)
 
     else:
