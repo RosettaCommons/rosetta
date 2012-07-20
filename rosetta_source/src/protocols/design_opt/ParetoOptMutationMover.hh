@@ -46,6 +46,7 @@ public:
 		utility::vector1< protocols::filters::FilterOP > filters,
 		utility::vector1< std::string > sample_types,
 		bool dump_pdb = false,
+		bool dump_table = false,
 		core::Size diversify_lvl = core::Size( 1 ), 
 		protocols::filters::FilterOP stopping_condition = protocols::filters::FilterOP( NULL )
 	);
@@ -54,6 +55,7 @@ public:
 	void filter_seqpos_pareto_opt_ptmuts();
 	void clear_cached_data();
 	void calc_pfront_poses_filter_ranks();
+	void dump_scoring_table( std::string filename, core::pose::Pose const & ref_pose ) const;
 	void apply( Pose & pose );
 	protocols::moves::MoverOP clone() const;
 	virtual std::string get_name() const;
@@ -74,7 +76,9 @@ public:
 	protocols::moves::MoverOP relax_mover() const;
 	void relax_mover( protocols::moves::MoverOP relax_mover );
 	bool dump_pdb() const;
+	bool dump_table() const;
 	void dump_pdb( bool const dump_pdb );
+	void dump_table( bool const dump_table );
 	utility::vector1< std::string > sample_types() const;
 	void sample_types( utility::vector1< std::string > const sample_types );
 	core::Size diversify_lvl() const;
@@ -89,6 +93,7 @@ private:
 	utility::vector1< std::string > sample_types_;
 	core::Size diversify_lvl_;
 	bool dump_pdb_;
+	bool dump_table_;
 	protocols::filters::FilterOP stopping_condition_; // dflt NULL ; if defined, stops greedy optimization when the filter's apply evaluates to true;
 	utility::vector1< std::pair< core::Size, utility::vector1<
 			std::pair< core::chemical::AA, utility::vector1< core::Real > > > > > seqpos_aa_vals_vec_;

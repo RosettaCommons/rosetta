@@ -48,6 +48,7 @@
 #include <utility/vector0.hh>
 #include <core/pose/symmetry/util.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <utility/io/ozstream.hh>
 
 //Auto Headers
 #include <basic/options/keys/OptionKeys.hh>
@@ -71,6 +72,7 @@ ParetoOptMutationMover::ParetoOptMutationMover() :
 	relax_mover_( NULL ),
 	diversify_lvl_( 1 ),
 	dump_pdb_( false ),
+	dump_table_( false ),
 	stopping_condition_( NULL ),
 	nstruct_iter_( 1 )
 {}
@@ -83,6 +85,7 @@ ParetoOptMutationMover::ParetoOptMutationMover(
 	vector1< protocols::filters::FilterOP > filters,
 	vector1< std::string > sample_types,
 	bool dump_pdb,
+	bool dump_table,
 	core::Size diversify_lvl,
 	protocols::filters::FilterOP stopping_condition
 ) :
@@ -95,6 +98,7 @@ ParetoOptMutationMover::ParetoOptMutationMover(
 	sample_types_ = sample_types;
 	diversify_lvl_ = diversify_lvl;
 	dump_pdb_ = dump_pdb;
+	dump_table_ = dump_table;
 	stopping_condition_ = stopping_condition;
 	nstruct_iter_ = 1;
 }
@@ -175,6 +179,17 @@ ParetoOptMutationMover::dump_pdb( bool const dump_pdb ){
 bool
 ParetoOptMutationMover::dump_pdb() const{
   return dump_pdb_;
+}
+
+void
+ParetoOptMutationMover::dump_table( bool const dump_table ){
+  dump_table_ = dump_table;
+	clear_cached_data();
+}
+
+bool
+ParetoOptMutationMover::dump_table() const{
+  return dump_table_;
 }
 
 void
@@ -369,6 +384,35 @@ filter_pareto_opt_poses(
 }
 
 void
+ParetoOptMutationMover::dump_scoring_table( std::string filename, core::pose::Pose const & ref_pose ) const{
+  utility::io::ozstream outtable(filename, std::ios::out | std::ios::app ); // Append if logfile already exists.
+  if( outtable ){
+    for( core::Size ii(1); ii <= seqpos_aa_vals_vec_.size(); ++ii) {
+      core::Size pos( seqpos_aa_vals_vec_[ii].first );
+      utility::vector1< std::pair< core::chemical::AA, utility::vector1< core::Real > > > const & aa_pairs( seqpos_aa_vals_vec_[ii].second );
+      outtable << pos ;
+      if( ref_pose.pdb_info() ) { 
+        outtable << " (" << ref_pose.pdb_info()->pose2pdb(pos) << ")";
+      }   
+      outtable << '\t';
+      for( core::Size jj(1); jj <= aa_pairs.size(); ++jj ) { 
+        outtable << aa_pairs[jj].first << ((ref_pose.aa(pos) == aa_pairs[jj].first)?"*:":":");
+				for( core::Size kk( 1 ); kk <= aa_pairs[ jj ].second.size(); ++kk ){
+					outtable << aa_pairs[jj].second[ kk ] << ":";
+				}
+        outtable << " ";
+      }   
+      outtable << std::endl;
+    }   
+    outtable << std::endl; // Blank line at end to seperate.
+  } else {
+    TR.Warning << "WARNING: Unable to open file " << filename << " for writing ParetoOptMutationMover table output." << std::endl;
+  }
+  outtable.close();
+}
+
+
+void
 ParetoOptMutationMover::apply( core::pose::Pose & pose )
 {
 	using namespace core::pack::task;
@@ -412,6 +456,16 @@ ParetoOptMutationMover::apply( core::pose::Pose & pose )
 
 		//this part gets rid of ptmuts that are not pareto opt
 		filter_seqpos_pareto_opt_ptmuts();
+
+    //finally, dump table to file, if requested.
+    if( dump_table() ){
+      std::string fname( "ParetoOptTable" );
+      if( protocols::jd2::jd2_used() ){
+        fname += "_" + protocols::jd2::current_output_name();
+      }   
+      fname += ".tab";
+      dump_scoring_table( fname, start_pose );
+    }   
 
 		TR<<"Combining independently pareto optimal mutations… " << std::endl;
 
@@ -519,6 +573,8 @@ ParetoOptMutationMover::parse_my_tag( utility::tag::TagPtr const tag,
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	//load dump_pdb
 	dump_pdb( tag->getOption< bool >( "dump_pdb", false ) );
+	//load dump_table
+	dump_table( tag->getOption< bool >( "dump_table", false ) );
 	if( tag->hasOption( "stopping_condition" ) ){
 		std::string const stopping_filter_name( tag->getOption< std::string >( "stopping_condition" ) );
 		stopping_condition( protocols::rosetta_scripts::parse_filter( stopping_filter_name, filters ) );
