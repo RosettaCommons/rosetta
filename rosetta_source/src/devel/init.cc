@@ -31,6 +31,7 @@
 #include <devel/matdes/TaskAwareSymMinMoverCreator.hh>
 #include <devel/matdes/StoreTaskMoverCreator.hh>
 #include <devel/matdes/SymDofMoverCreator.hh>
+#include <devel/matdes/ExtractSubpose.hh>
 
 // Filter creators
 #include <devel/matdes/OligomericAverageDegreeFilterCreator.hh>
@@ -72,6 +73,7 @@ static protocols::moves::MoverRegistrator< devel::matdes::SymmetrizerMoverCreato
 static protocols::moves::MoverRegistrator< devel::matdes::TaskAwareSymMinMoverCreator > reg_TaskAwareSymMinMoverCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::StoreTaskMoverCreator > reg_StoreTaskMoverCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::SymDofMoverCreator > reg_SymDofMoverCreator;
+static protocols::moves::MoverRegistrator< devel::matdes::ExtractSubposeCreator > reg_ExtractSubposeCreator;
 
 // Task creators
 core::pack::task::operation::TaskOperationRegistrator< devel::znhash::DisableZnCoordinationResiduesTaskOpCreator > reg_DisableZnCoordinationResiduesTaskOpCreator;

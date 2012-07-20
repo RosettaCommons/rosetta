@@ -96,6 +96,7 @@ sources = {
 		"TaskAwareSASAFilter",
 		"InterfacePackingFilter",
 		"ClashCheckFilter",
+		"ExtractSubpose",
         ],
 	"devel/metal_interface": [
 		"AddMetalSiteConstraints",
