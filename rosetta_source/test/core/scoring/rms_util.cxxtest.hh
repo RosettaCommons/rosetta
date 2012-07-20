@@ -93,18 +93,6 @@ class RmsUtilTest : public CxxTest::TestSuite {
     TS_ASSERT_DELTA(1.0, core::scoring::gdtsc(*mod, *mod, all_residues), 0.0001);
   }
 
-  void test_gdtsc_mismatch_seq() {
-    PoseOP ref = core::import_pose::pose_from_pdb("core/scoring/4dO8B.pdb");
-    PoseOP mod = core::import_pose::pose_from_pdb("core/scoring/2GB3.pdb");
-
-    map<Size, Size> all_residues;
-    for (Size i = 1; i <= ref->total_residue(); ++i) {
-      all_residues[i] = i;
-    }
-
-    TS_ASSERT_DELTA(-1, core::scoring::gdtsc(*ref, *mod, all_residues), 0.0001);
-  }
-
   void test_superimpose_self() {
     Pose pose = *core::import_pose::pose_from_pdb("core/scoring/2GB3.pdb");
     Real rmsd = core::scoring::CA_rmsd(pose, pose);
