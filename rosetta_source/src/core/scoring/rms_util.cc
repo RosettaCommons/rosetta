@@ -79,8 +79,8 @@ core::Real gdtsc(const core::pose::Pose& ref,
   using core::Size;
   using core::id::NamedAtomID;
   using numeric::xyzVector;
-	using std::map;
-	using std::string;
+  using std::map;
+  using std::string;
 
   static map<char, string> gdtsc_atom = boost::assign::map_list_of
       ('A',  "CA")
@@ -110,23 +110,25 @@ core::Real gdtsc(const core::pose::Pose& ref,
   }
 
   // Retrieve ref, mod coordinates
-  int num_atoms = residues.size();
-  FArray2D<Real> coords_ref(3, num_atoms);
-  FArray2D<Real> coords_mod(3, num_atoms);
+  int expected_num_atoms = residues.size();
+  int actual_num_atoms = 0;
+  FArray2D<Real> coords_ref(3, expected_num_atoms);
+  FArray2D<Real> coords_mod(3, expected_num_atoms);
 
   int count = 1;
   for (map<Size, Size>::const_iterator i = residues.begin(); i != residues.end(); ++i, ++count) {
     const Size ref_idx = i->first;
     const Size mod_idx = i->second;
     const char ref_residue = ref.residue(ref_idx).name1();
-		const char mod_residue = mod.residue(mod_idx).name1();
+    const char mod_residue = mod.residue(mod_idx).name1();
 
-		if (ref_residue != mod_residue) {
-			tr.Warning << "Reference and model must have identical sequences for gdtha-- "
-								 << ref_residue << " != " << mod_residue << std::endl;
-			return -1;
-		}
+    if (ref_residue != mod_residue) {
+      tr.Warning << "Reference and model must have identical sequences for gdtha-- "
+                 << ref_residue << " != " << mod_residue << std::endl;
+      continue;
+    }
 
+    ++actual_num_atoms;
     const NamedAtomID ref_atom(gdtsc_atom[ref_residue], ref_idx);
     const xyzVector<Real>& xyz_ref = ref.xyz(ref_atom);
     coords_ref(1, count) = xyz_ref.x();
@@ -150,17 +152,12 @@ core::Real gdtsc(const core::pose::Pose& ref,
     int nali;
     double mxrms, mxpsi, mxzscore, mxscore, mxeval;
     numeric::model_quality::maxsub(
-        num_atoms, coords_ref, coords_mod,
+        actual_num_atoms, coords_ref, coords_mod,
         mxrms, mxpsi, nali, mxzscore, mxeval, mxscore,
         dist_threshold, dist_threshold);
 
-    Real fraction_residues = static_cast<Real>(nali) / static_cast<Real>(num_atoms);
-    sum += fraction_residues;
-
-    tr.Debug
-        << std::fixed << std::setprecision(2)
-        << "Fraction of sidechains under "  << dist_threshold
-        << " A: " << fraction_residues << std::endl;
+    Real pct_residues = static_cast<Real>(nali) / static_cast<Real>(actual_num_atoms);
+    sum += pct_residues;
   }
 
   return sum / num_dists;
@@ -175,23 +172,25 @@ core::Real gdtha(const core::pose::Pose& ref,
   using numeric::xyzVector;
 
   // Retrieve ref, mod coordinates
-  int num_atoms = residues.size();
-  FArray2D<Real> coords_ref(3, num_atoms);
-  FArray2D<Real> coords_mod(3, num_atoms);
+  int expected_num_atoms = residues.size();
+  int actual_num_atoms = 0;
+  FArray2D<Real> coords_ref(3, expected_num_atoms);
+  FArray2D<Real> coords_mod(3, expected_num_atoms);
 
   int count = 1;
   for (std::map<Size, Size>::const_iterator i = residues.begin(); i != residues.end(); ++i, ++count) {
     const Size ref_idx = i->first;
     const Size mod_idx = i->second;
-		const char ref_residue = ref.residue(ref_idx).name1();
-		const char mod_residue = mod.residue(mod_idx).name1();
+    const char ref_residue = ref.residue(ref_idx).name1();
+    const char mod_residue = mod.residue(mod_idx).name1();
 
-		if (ref_residue != mod_residue) {
-			tr.Warning << "Reference and model must have identical sequences for gdtha-- "
-								 << ref_residue << " != " << mod_residue << std::endl;
-      return -1;
+    if (ref_residue != mod_residue) {
+      tr.Warning << "Reference and model must have identical sequences for gdtha-- "
+                 << ref_residue << " != " << mod_residue << std::endl;
+      continue;
     }
 
+    ++actual_num_atoms;
     const NamedAtomID ref_atom("CA", ref_idx);
     const xyzVector<Real>& xyz_ref = ref.xyz(ref_atom);
     coords_ref(1, count) = xyz_ref.x();
@@ -216,12 +215,12 @@ core::Real gdtha(const core::pose::Pose& ref,
     int nali;
     double mxrms, mxpsi, mxzscore, mxscore, mxeval;
     numeric::model_quality::maxsub(
-        num_atoms, coords_ref, coords_mod,
+        actual_num_atoms, coords_ref, coords_mod,
         mxrms, mxpsi, nali, mxzscore, mxeval, mxscore,
         dist_threshold, dist_threshold);
 
-    Real fraction_residues = static_cast<Real>(nali) / static_cast<Real>(num_atoms);
-    sum += fraction_residues;
+    Real pct_residues = static_cast<Real>(nali) / static_cast<Real>(actual_num_atoms);
+    sum += pct_residues;
   }
 
   return sum / num_dists;
