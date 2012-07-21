@@ -86,8 +86,46 @@ using namespace basic::options;
 OPT_KEY( String, algorithm )
 OPT_KEY( String, force_field )
 OPT_KEY( Boolean, apply_dihedral_cst )
+OPT_KEY( Boolean, no_symmetry )
+OPT_KEY( IntegerVector, repack_res )
+OPT_KEY( Integer, n_repeat )
+OPT_KEY( Integer, repeat_size )
 
 ///////////////////////////////////////////////////////////////////////////////
+
+void
+figure_out_fold_tree( pose::Pose & pose )
+{
+	using namespace core::conformation;
+
+	//Look for chainbreaks in PDB.
+	Size const nres = pose.total_residue();
+	kinematics::FoldTree f( nres );
+	Real const dist2_cutoff = 1.7 * 1.7;
+
+	Size m( 0 );
+
+	for (Size i=1; i < nres; ++i) {
+
+		Residue const & current_rsd( pose.residue( i   ) ) ;
+		Residue const &    next_rsd( pose.residue( i+1 ) ) ;
+		Size atom_C = current_rsd.atom_index( " C  " );
+		Size atom_N =    next_rsd.atom_index( " N  " );
+		Real const dist2 =
+			( current_rsd.atom( atom_C ).xyz() - next_rsd.atom( atom_N ).xyz() ).length_squared();
+
+		if ( dist2 > dist2_cutoff ){
+			std::cout << "Jump from " << i << " to " << i+1 << std::endl;
+			f.new_jump( i, i+1, i );
+			m++;
+		}
+
+	}
+
+	pose.fold_tree( f );
+}
+///////////////////////////////////////////////////////////////////
+
 void
 minimize_test()
 {
@@ -115,6 +153,7 @@ minimize_test()
 
 	////////////////////////////////
 	// Personal fold tree.
+/*
 	Size const nres = pose.total_residue();
 
 	int my_anchor = 20;
@@ -155,6 +194,12 @@ minimize_test()
 	f.tree_from_jumps_and_cuts( nres, num_jump_in, jump_point, cuts );
 	f.reorder( my_anchor );
 	pose.fold_tree( f );
+*/
+
+
+	Size const nres = pose.total_residue();
+	Size const my_anchor = 1;
+	figure_out_fold_tree( pose );
 
 	////////////////////////////////////////////
 	//Need to set up coordinate constraints
@@ -310,7 +355,41 @@ repack_test () {
 	Size const nres = pose.total_residue();
 	std::cout << "NRES  = " << nres << std::endl;
 
+	//Read in pack_residue file and setup symmetry links
+	bool const is_no_symmetry = option[no_symmetry]();
+	utility::vector1< core::Size > const repack_res_list = option[repack_res]();
+	Size const repeats = option[n_repeat]();
+	Size const repeat_unit = option[repeat_size]();
 	
+	utility::vector1< bool > residues_to_repack( nres, false );
+	rotamer_set::RotamerLinksOP links( new rotamer_set::RotamerLinks() );
+	links->resize( nres );
+	std::cout << "residue rebuilding:" << std::endl;
+
+	for (Size i = 1; i <= repack_res_list.size(); ++i) {
+		Size const first_res = repack_res_list[i];
+		utility::vector1< Size > linked_res;
+		for (Size j = 0; j < repeats; ++j) {
+			Size const curr_res = first_res + repeat_unit * j;
+			if (curr_res > nres) {
+				std::cerr << "ERROR!!! Residue " << curr_res << " outside the pose total residues!!!" << std::endl;
+				exit(1);
+			}
+			std::cout << curr_res << ' ';
+			residues_to_repack[ curr_res ] = true;
+			for (Size k = 1; k <= linked_res.size(); ++k) {
+				links->set_equiv(linked_res[k], curr_res);
+				links->set_equiv(curr_res, linked_res[k]);
+			}
+			linked_res.push_back( curr_res );
+		}
+		std::cout << std::endl;
+	}
+	designtask->restrict_to_residues( residues_to_repack );
+	if (repeats > 1 && (! is_no_symmetry)) designtask->rotamer_links( links );
+
+/*
+
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Only repack core residues -- in Schepartz designs these are all beta3_leucine.
 	// This is totally hacky, of course, but waiting for Andrew Leaver-Fay ResFile reader...
@@ -353,7 +432,7 @@ repack_test () {
 	}
 	
 	designtask->rotamer_links( links );
-
+*/
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	Energy score_orig = (*scorefxn)( pose );
 
@@ -387,10 +466,15 @@ main( int argc, char * argv [] )
 {
 
 	using namespace basic::options;
+	utility::vector1< Size > blank_size_vector;
 
 	NEW_OPT ( algorithm, "", "" );
 	NEW_OPT ( force_field, "score_file", "" );
 	NEW_OPT ( apply_dihedral_cst, "", true );
+	NEW_OPT ( no_symmetry, "", false );
+	NEW_OPT ( repack_res, "", blank_size_vector );
+	NEW_OPT ( n_repeat, "", 1 );
+	NEW_OPT ( repeat_size, "", 0 );
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup
