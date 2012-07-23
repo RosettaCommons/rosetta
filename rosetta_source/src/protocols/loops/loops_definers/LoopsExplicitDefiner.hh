@@ -17,7 +17,12 @@
 // Unit Headers
 #include <protocols/loops/loops_definers/LoopsDefiner.hh>
 #include <protocols/loops/loops_definers/LoopsExplicitDefiner.fwd.hh>
+
+#ifdef WIN32
+#include <protocols/loops/Loop.hh>
+#else
 #include <protocols/loops/Loop.fwd.hh>
+#endif
 
 // Platform Headers
 #include <core/pose/Pose.fwd.hh>

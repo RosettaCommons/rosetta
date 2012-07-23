@@ -17,7 +17,13 @@
 // Unit Headers
 #include <protocols/loops/loops_definers/LoopsDefiner.hh>
 #include <protocols/loops/loops_definers/LoopsFileDefiner.fwd.hh>
+
+#ifdef WIN32
+#include <protocols/loops/Loop.hh>
+#else
 #include <protocols/loops/Loop.fwd.hh>
+#endif
+
 #include <protocols/loops/LoopsFileIO.hh>
 
 // Platform Headers
