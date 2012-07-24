@@ -1048,6 +1048,8 @@ namespace rna {
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//April 15, 2012: Umm should switch to utility::file::file_exists( full_filename )!
+
 	bool
 	file_exists(std::string const & file_name){
 
@@ -2735,7 +2737,6 @@ principal_angle_degrees( T const & angle )
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 	void
 	import_pose_from_silent_file(core::pose::Pose & import_pose, std::string const & silent_file  , std::string const & input_tag){
 
@@ -2747,15 +2748,17 @@ principal_angle_degrees( T const & angle )
 		core::io::silent::SilentFileData silent_file_data;
 		silent_file_data.read_file( silent_file );
 
-		bool found_tag( false );
+		Size num_matching_tag=0;
+
 		for ( core::io::silent::SilentFileData::iterator iter = silent_file_data.begin(), end = silent_file_data.end(); iter != end; ++iter ){
 			if ( iter->decoy_tag() != input_tag ) continue;
-			found_tag = true;
+			num_matching_tag += 1;
 			iter->fill_pose( import_pose, *rsd_set );
-			break;
 		}
 
-		if ( !found_tag ) utility_exit_with_message( "Could not find specified tag " + input_tag + " in silent file!" );
+		if( num_matching_tag!=1 ){ 
+			utility_exit_with_message( "num_matching_tag=(" + ObjexxFCL::string_of(num_matching_tag) + ")!=1 for tag " + input_tag + " in silent file (" + silent_file + ")!" );
+		}
 
 		if(check_for_messed_up_structure(import_pose, input_tag)==true){
 		 	utility_exit_with_message("import_pose " + input_tag + " from silent_file " + silent_file + " is a messed up pose!");

@@ -350,6 +350,11 @@ namespace rna {
 
 		make_pose_from_sequence( pose, working_sequence, *rsd_set_, false /*auto_termini*/);
 
+		if(output_pdb_){
+			std::cout << "outputting extended_chain.pdb" << std::endl;
+			pose.dump_pdb( "extended_chain.pdb" );
+		}
+
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////

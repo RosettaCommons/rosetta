@@ -127,6 +127,7 @@ namespace rna {
 		fast_( false ),
 		medium_fast_( false ),
 		integration_test_mode_( false ), //March 16, 2012
+		floating_base_( false ), //July 02, 2012 
 		centroid_screen_(true),
 		allow_base_pair_only_centroid_screen_(false), //allow for possibility of conformation that base_pair but does not base_stack
 		VDW_atr_rep_screen_(true),
@@ -151,7 +152,8 @@ namespace rna {
 		do_not_sample_multiple_virtual_sugar_(false), //Nov 13, 2010, optimize the chain closure step speed
 		sample_ONLY_multiple_virtual_sugar_(false), //Nov 13, 2010, optimize the chain closure step speed
 		assert_no_virt_ribose_sampling_(false), //July 28 2011
-		output_pdb_(false) //Sept 24, 2011
+		output_pdb_(false), //Sept 24, 2011
+		build_pose_from_scratch_(false) //July 03, 2012. This was previously uninitialized in floating_base_sampling mode! lead to early return from cluster_pose_data_list() function on some compiler/machine! [Specifically on the Biox2-cluster RUNS after converted to qsub (~April 2012)
   {
 		set_native_pose( job_parameters_->working_native_pose() );
 
@@ -213,6 +215,7 @@ namespace rna {
 		Output_boolean("do_not_sample_multiple_virtual_sugar_ = ", do_not_sample_multiple_virtual_sugar_ ); std::cout << std::endl;
 		Output_boolean("sample_ONLY_multiple_virtual_sugar_ = ", sample_ONLY_multiple_virtual_sugar_ ); std::cout << std::endl; 
 		Output_boolean("assert_no_virt_ribose_sampling_ =" , assert_no_virt_ribose_sampling_ ); std::cout << std::endl;
+		Output_boolean("distinguish_pucker_ ", distinguish_pucker_); std::cout << std::endl;
 		std::cout << "--------------------------------" << std::endl;
 
 
@@ -453,6 +456,7 @@ namespace rna {
 		Output_boolean(" INTERNAL ", Is_internal); std::cout << std::endl;
 		std::cout << " REFERENCE_RES " << reference_res << std::endl;
 		std::cout << " FLOATING_BASE_FIVE_PRIME_CHAIN_BREAK " << floating_base_five_prime_chain_break << std::endl;
+		Output_boolean(" build_pose_from_scratch_= ", build_pose_from_scratch_); std::cout << std::endl;
 
 		if(Is_dinucleotide==true && Is_internal==true) utility_exit_with_message( "Is_dinucleotide==true && Is_internal==true)!!" );
 		if(num_nucleotides!=1 && num_nucleotides!=2) utility_exit_with_message( "num_nucleotides!=1 and num_nucleotides!=2" );
@@ -1215,7 +1219,7 @@ namespace rna {
 		Output_boolean(" PREPEND ", Is_prepend ); std::cout << std::endl;
 		Output_boolean(" INTERNAL ", Is_internal); std::cout << std::endl;
 		Output_boolean(" allow_bulge_at_chainbreak_ ", allow_bulge_at_chainbreak_); std::cout << std::endl;
-		Output_boolean(" distinguish_pucker_ ", distinguish_pucker_); std::cout << std::endl;
+		Output_boolean(" build_pose_from_scratch_= ", build_pose_from_scratch_); std::cout << std::endl;
 
 		//for combine_long_loop_mode_
 		Size const last_append_res=(Is_prepend) ? moving_res-1: moving_res;

@@ -398,6 +398,7 @@ get_atom_coordinates(utility::vector1< std::pair< core::id::AtomID, numeric::xyz
 void
 import_pose_from_silent_file(core::pose::Pose & import_pose, std::string const & silent_file  , std::string const & input_tag);
 
+
 std::string
 path_basename(std::string const full_path);
 

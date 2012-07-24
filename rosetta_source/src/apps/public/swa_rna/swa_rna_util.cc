@@ -86,6 +86,8 @@
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
+#include <utility/file/file_sys_util.hh> //Parin April 15, 2012
+
 
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
@@ -163,6 +165,7 @@ OPT_KEY( IntegerVector, virtual_res)
 OPT_KEY( IntegerVector, virtual_ribose)
 OPT_KEY( Boolean, align_only_over_base_atoms )
 OPT_KEY( IntegerVector, additional_slice_res)
+OPT_KEY( IntegerVector, native_virtual_res)
 OPT_KEY( String, native_tag_name ) 
 OPT_KEY( StringVector, decoy_tag_name ) 
 OPT_KEY( Boolean, dump ) 
@@ -489,6 +492,9 @@ align_pdbs(){
 
 	utility::vector1< std::string > const alignment_res_string_pair_list = option[ alignment_res_pairs ]();	
 
+	utility::vector1< core::Size > const native_virtual_res_list = option[ native_virtual_res ]();
+
+	Output_seq_num_list("native_virtual_res_list= ", native_virtual_res_list);
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	if(alignment_res_string_pair_list.size()==0) utility_exit_with_message( "alignment_res_string_pair_list.size()==0" );
@@ -527,6 +533,14 @@ align_pdbs(){
 
 	pose::Pose static_pose;
 	import_pose::pose_from_pdb( static_pose, *rsd_set, static_pdb_tag );
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	///By applying the virtual_res, align_pose_general()/setup_suite_atom_id_map() will skip over the virtual_atoms///
+	///Only need to apply to static/native pdb pose since only need virtual atoms in one of the two structures being aligned.
+	for(Size virtual_res_ID=1; virtual_res_ID<=native_virtual_res_list.size(); virtual_res_ID++){
+		apply_virtual_rna_residue_variant_type( static_pose, native_virtual_res_list[virtual_res_ID] , true /*apply_check*/);
+	}
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	std::string const static_tag_name= get_tag_from_pdb_filename(static_pdb_tag);
 
@@ -700,16 +714,28 @@ import_and_dump_pdb(){
 	using namespace protocols::swa::rna;
 	using namespace core::id;  
 
+	if ( option[ in::file::s ].user()==false ) utility_exit_with_message( "User must supply in::file::s!" );
+
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
+	utility::vector1< std::string > const pdb_file_list= option[ in::file::s ]();	
 
-	std::string const pdb_file=   option[ in::file::s ]()[1];	
+	for(Size pdb_ID=1; pdb_ID<=pdb_file_list.size(); pdb_ID++){
 
-	pose::Pose pose;
-	import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+		std::string const pdb_file=pdb_file_list[pdb_ID];
 
-	dump_pdb( pose, "rosetta_" + pdb_file );		
+		pose::Pose pose;
+		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+
+		std::string const output_pdb_file="rosetta_" + pdb_file;
+
+		if(utility::file::file_exists( output_pdb_file )){
+			utility_exit_with_message("output_pdb_file (" + output_pdb_file+ ") already exist!");
+		}
+
+		dump_pdb( pose, output_pdb_file );		
+	}
 
 }
 
@@ -1580,6 +1606,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( virtual_ribose , " virtual_ribose ", blank_size_vector );
 	NEW_OPT( align_only_over_base_atoms , "align_only_over_base_atoms", true);
 	NEW_OPT( additional_slice_res , "additional_slice_res", blank_size_vector);
+	NEW_OPT( native_virtual_res , " native_virtual_res (use in align_pdbs() function )", blank_size_vector );
 	NEW_OPT( native_tag_name, "native tag from a silent_file", "" );
 	NEW_OPT( decoy_tag_name, "decoy tag from a silent_file", blank_string_vector);
 	NEW_OPT( dump, "dump pdb", false);
