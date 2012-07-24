@@ -28,6 +28,7 @@
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
+#include <numeric/constants.hh>
 #include <numeric/fourier/FFT.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
@@ -713,7 +714,7 @@ ElectronDensityAtomwise::xyz2index_in_cell ( numeric::xyzVector< core::Real > co
 //generate 1d gaussian function and store it.
 void
 ElectronDensityAtomwise::generate_gaussian_1d ( core::Real const & sigma ) {
-	const Real PI = 3.1415926;
+	const Real PI = numeric::constants::f::pi;
 	//Calculate up to 4*sigma
 	gaussian_max_d = 4 * sigma;
 	//Using interval of 0.01 Angstong

@@ -150,6 +150,7 @@ namespace score { BooleanOptionKey const bonded_params_CHARMM_length( "score:bon
 namespace score { RealOptionKey const pro_close_planar_constraint( "score:pro_close_planar_constraint" );  }
 namespace score { BooleanOptionKey const linear_bonded_potential( "score:linear_bonded_potential" );  }
 namespace score { BooleanOptionKey const geom_sol_correct_acceptor_base( "score:geom_sol_correct_acceptor_base" );  }
+namespace score { BooleanOptionKey const use_phenix_sugar_close( "score:use_phenix_sugar_close" );  }
 namespace score { namespace saxs { BooleanOptionKey const saxs( "score:saxs" );  } }
 namespace score { namespace saxs { RealOptionKey const min_score( "score:saxs:min_score" );  } }
 namespace score { namespace saxs { StringOptionKey const custom_ff( "score:saxs:custom_ff" );  } }
@@ -615,4 +616,3 @@ namespace lh { RealOptionKey const grid_angle_multiplier( "lh:grid_angle_multipl
 namespace lh { IntegerOptionKey const skim_size( "lh:skim_size" );  }
 namespace lh { IntegerOptionKey const rounds( "lh:rounds" );  }
 namespace lh { StringOptionKey const jobname( "lh:jobname" );  }
-namespace lh { IntegerOptionKey const max_lib_size( "lh:max_lib_size" );  }

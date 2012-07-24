@@ -262,6 +262,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Fragment file sizes</dd><br>
 </dl>
 <dl>
+<dt><b>-extra_res</b> \<FileVector\><dt>
+<dd>.params file(s) for new residue types (e.g. ligands)</dd><br>
+</dl>
+<dl>
 <dt><b>-extra_res_fa</b> \<FileVector\><dt>
 <dd>.params file(s) for new fullatom residue types (e.g. ligands)</dd><br>
 </dl>
@@ -3690,6 +3694,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-linear_bonded_potential</b> \<Boolean\><dt>
 <dd>use linear (instead of quadratic) bonded potential</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-geom_sol_correct_acceptor_base</b> \<Boolean\><dt>
+<dd>Fixed definition of base atom for acceptors to match hbonds_geom</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-use_phenix_sugar_close</b> \<Boolean\><dt>
+<dd>Use PHENIX-based RNA sugar close energy</dd><br>
 <dd>Default: false</dd><br>
 </dl>
  </li>

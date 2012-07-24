@@ -22,6 +22,7 @@
 #include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/HarmonicFunc.fwd.hh>
+#include <core/scoring/constraints/FadeFunc.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -123,6 +124,20 @@ private:
 	constraints::HarmonicFuncOP o4star_c1star_first_base_angle_harm_func_;
 	Real const c4star_o4star_c1star_bond_angle_;
 	constraints::HarmonicFuncOP c4star_o4star_c1star_angle_harm_func_;
+
+	//phenix-based constraint
+	bool const use_phenix_sugar_close_;
+	Distance const o4star_c1star_bond_north_;
+	Distance const o4star_c1star_bond_south_;
+	Distance const bond_sd_;
+	Real const o4star_c1star_c2star_angle_north_;
+	Real const o4star_c1star_c2star_angle_south_;
+	Real const o4star_c1star_n1_9_angle_north_;
+	Real const o4star_c1star_n1_9_angle_south_;
+	Real const c4star_o4star_c1star_angle_north_;
+	Real const c4star_o4star_c1star_angle_south_;
+	Real const angle_sd1_, angle_sd2_;
+	core::scoring::constraints::FuncOP fade_delta_north_, fade_delta_south_;
 
 	mutable constraints::ConstraintSetOP rna_sugar_close_constraints_;
 
