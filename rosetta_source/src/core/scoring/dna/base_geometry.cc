@@ -164,7 +164,7 @@ get_y_axis_atoms(
 )
 {
 	using namespace chemical;
-	if ( rsd_type.aa() == na_ade || rsd_type.aa() == na_gua ) {
+	if ( rsd_type.aa() == na_ade || rsd_type.aa() == na_gua || rsd_type.aa() == na_rgu || rsd_type.aa() == na_rad ) {
 		if ( strand == 1 ) {
 			a1 = "N1";
 			a2 = "C4";
@@ -172,7 +172,7 @@ get_y_axis_atoms(
 			a1 = "C4";
 			a2 = "N1";
 		}
-	} else if ( rsd_type.aa() == na_cyt || rsd_type.aa() == na_thy ) {
+	} else if ( rsd_type.aa() == na_cyt || rsd_type.aa() == na_thy || rsd_type.aa() == na_rcy || rsd_type.aa() == na_ura ) {
 		if ( strand == 1 ) {
 			a1 = "N3";
 			a2 = "C6";
@@ -206,10 +206,10 @@ get_base_pair_y_axis_atom_xyz(
 )
 {
 	using namespace chemical;
-	if ( rsd.aa() == na_ade || rsd.aa() == na_gua ) {
+	if ( rsd.aa() == na_ade || rsd.aa() == na_gua || rsd.aa() == na_rgu || rsd.aa() == na_rad ) {
 		return rsd.xyz("C8");
 
-	} else if ( rsd.aa() == na_thy || rsd.aa() == na_cyt ) {
+	} else if ( rsd.aa() == na_thy || rsd.aa() == na_cyt || rsd.aa() == na_rcy || rsd.aa() == na_ura ) {
 		return rsd.xyz("C6");
 
 	}
@@ -227,11 +227,11 @@ get_z_axis(
 )
 {
 	using namespace chemical;
-	assert( rsd.is_DNA() );
+	assert( rsd.is_DNA() || rsd.is_RNA() );
 	Vector xx(0); // approximate x-axis direction
-	if ( rsd.aa() == na_ade || rsd.aa() == na_gua ) {
+	if ( rsd.aa() == na_ade || rsd.aa() == na_gua || rsd.aa() == na_rgu || rsd.aa() == na_rad ) {
 		xx = rsd.xyz("C5") + rsd.xyz("C6") - rsd.xyz("N3") - rsd.xyz("C2");
-	} else if ( rsd.aa() == na_thy || rsd.aa() == na_cyt ) {
+	} else if ( rsd.aa() == na_thy || rsd.aa() == na_cyt || rsd.aa() == na_rcy || rsd.aa() == na_ura ) {
 		xx = rsd.xyz("C5") + rsd.xyz("C4") - rsd.xyz("N1") - rsd.xyz("C2");
 	} else {
 		utility_exit_with_message("get_z_axis: bad aa");
@@ -401,12 +401,23 @@ get_base_pair_stub_slow(
 					rsd2.atom_is_backbone( rsd2.chi_atoms(1)[2] ) && !rsd2.atom_is_backbone( rsd2.chi_atoms(1)[3] ) );
 
 	utility::vector1< Vector > basepair_atoms;
-	for ( Size i=rsd1.first_sidechain_atom(); i<= rsd1.nheavyatoms(); ++i ) {
+
+	Size first_base_sidechain_atom = rsd1.first_sidechain_atom();
+	if ( rsd1.is_RNA() ) {
+		++first_base_sidechain_atom;
+	}
+	for ( Size i = first_base_sidechain_atom; i<= rsd1.nheavyatoms(); ++i ) {
 		basepair_atoms.push_back( rsd1.xyz(i) );
 	}
-	for ( Size i=rsd2.first_sidechain_atom(); i<= rsd2.nheavyatoms(); ++i ) {
+
+	first_base_sidechain_atom = rsd2.first_sidechain_atom();
+	if ( rsd1.is_RNA() ) {
+		++first_base_sidechain_atom;
+	}	
+	for ( Size i = first_base_sidechain_atom; i<= rsd2.nheavyatoms(); ++i ) {
 		basepair_atoms.push_back( rsd2.xyz(i) );
 	}
+
 	Vector z_axis( lsf_normal( basepair_atoms ) );
 	z_axis = ( z_axis - y_axis.dot( z_axis ) * y_axis ).normalized();
 	assert( z_axis.is_normalized( 1e-3 ) && z_axis.dot( y_axis ) < 1e-3 );
@@ -553,6 +564,10 @@ get_stub_stub_params(
 	if ( dot( M1.col_z(), M2.col_z() ) < 0.0 ) {
 		base_flipped = true;
 		basic::T("core.scoring.base_geometry") << "get_stub_stub_params: base flip!!!\n";
+		for (Size i = 1; i <= 6; ++i) {
+			params[i] = -9999;
+		}
+		return;
 		//utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 	}
 
@@ -731,8 +746,8 @@ seqpos_is_base_step_anchor(
 	BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
 	conformation::Residue const & rsd( pose.residue( seqpos ) );
 
-	return ( seqpos < pose.total_residue() && rsd.is_DNA() && !rsd.is_lower_terminus() && partner[ seqpos ] && partner[ seqpos+1 ] &&
-					 partner[seqpos] == partner[seqpos+1]+1 && partner[seqpos] != seqpos+1 );
+	return ( seqpos < pose.total_residue() && ( rsd.is_DNA()  || rsd.is_RNA() )&& !rsd.is_lower_terminus() && partner[ seqpos ] && 
+	partner[ seqpos+1 ] && partner[seqpos] == partner[seqpos+1]+1 && partner[seqpos] != seqpos+1 );
 }
 
 
@@ -861,7 +876,7 @@ show_dna_geometry(
 
 	for ( Size i=1; i<= nres; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
-		if ( !rsd.is_DNA() ) continue;
+		if ( !rsd.is_DNA() || rsd.is_RNA() ) continue;
 		std::pair< std::string, int > pucker;
 		get_base_pucker( rsd, pucker );
 
@@ -936,7 +951,12 @@ lsf_normal(
 	// The solution to the cubic eqn. is obtained through neglecting the
 	// lambda**3 term (lambda is small for nearly planar atom sets):
 	// WARNING: bound to fail for REALLY nonplanar atom sets!
-	Real lambda = (-b - std::sqrt(b*b - 4*a*g) )/(2*a);
+	Real lambda;
+	if (b*b - 4*a*g > 0) {
+		lambda = (-b - std::sqrt(b*b - 4*a*g) )/(2*a);
+	} else {
+		lambda = 0;
+	}
 
 	// debug
 	//std::cout << "lambda = " << lambda << std::endl;

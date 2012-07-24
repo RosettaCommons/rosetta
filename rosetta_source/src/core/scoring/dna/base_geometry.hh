@@ -107,6 +107,15 @@ show_new_base_step_params(
 void
 show_dna_geometry( pose::Pose const & pose, std::ostream & out );
 
+void
+get_base_step_params(
+	conformation::Residue const & rsd11, // pair1 strand I
+	conformation::Residue const & rsd12, // pair1 strand II
+	conformation::Residue const & rsd21, // pair2 strand I
+	conformation::Residue const & rsd22, // pair2 strand II
+	utility::vector1< Real > & params // output
+);
+
 
 } // namespace dna
 }} // scoring core
