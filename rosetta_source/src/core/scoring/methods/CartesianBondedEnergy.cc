@@ -63,7 +63,7 @@
 #include <utility/vector1.hh>
 
 #include <core/pose/PDBInfo.hh>
-#define CUTOFF 0 
+#define CUTOFF 10 
 
 namespace boost {
 namespace tuples {
@@ -672,33 +672,63 @@ CartesianBondedEnergy::eval_improper_torsions(
 	conformation::Residue const &res_low = (rsd1.seqpos() < rsd2.seqpos())? rsd1 : rsd2;
 	conformation::Residue const &res_high = (rsd1.seqpos() < rsd2.seqpos())? rsd2 : rsd1;
 
-	if (res_high.aa() == aa_pro || !res_low.is_protein()) return;
+	core::Real energy_torsion = 0.0;
 
-	core::Size atm1 = res_low.atom_index(" C  ");
-	core::Size atm2 = res_high.atom_index(" N  ");
-	core::Size atm3 = res_high.atom_index(" CA ");
-	core::Size atm4 = res_high.atom_index(" H  ");
+	if (!res_low.is_protein() || !res_high.is_protein()) return;
 
-	Real Kphi=db_torsion_->ktors(), phi0=numeric::constants::f::pi, phi_step=numeric::constants::f::pi;
+	if (res_high.aa() != aa_pro) {
+		core::Size atm1 = res_high.atom_index(" CA ");
+		core::Size atm2 = res_low.atom_index(" C  ");
+		core::Size atm3 = res_high.atom_index(" N  ");
+		core::Size atm4 = res_high.atom_index(" H  ");
 
-	Real angle = numeric::dihedral_radians
-		( res_low.atom( atm1 ).xyz(), res_high.atom( atm2 ).xyz(), res_high.atom( atm3 ).xyz(), res_high.atom( atm4 ).xyz() );
-	Real del_phi = basic::subtract_radian_angles(angle, phi0);
-	del_phi = basic::periodic_range( del_phi, phi_step );
+		Real Kphi=db_torsion_->ktors(), phi0=numeric::constants::f::pi, phi_step=numeric::constants::f::pi;
 
-	if (pose.pdb_info() && 0.5*Kphi*del_phi*del_phi > CUTOFF) {
-		TR.Debug << pose.pdb_info()->name() << " seqpos: " << res_low.seqpos() << " pdbpos: " << pose.pdb_info()->number(res_low.seqpos()) << " improper torsion: " <<
-			res_low.name() << " : " <<
-			res_low.atom_name( atm1 ) << " , " << res_high.atom_name( atm2 ) << " , " <<
-			res_high.atom_name( atm3 ) << " , " << res_high.atom_name( atm4 ) << "   " <<
-			Kphi << " " << 0.5*Kphi*del_phi*del_phi << std::endl;
+		Real angle = numeric::dihedral_radians
+			( res_high.atom( atm1 ).xyz(), res_low.atom( atm2 ).xyz(), res_high.atom( atm3 ).xyz(), res_high.atom( atm4 ).xyz() );
+		Real del_phi = basic::subtract_radian_angles(angle, phi0);
+		del_phi = basic::periodic_range( del_phi, phi_step );
+
+		if (pose.pdb_info() && 0.5*Kphi*del_phi*del_phi > CUTOFF) {
+			TR.Debug << pose.pdb_info()->name() << " seqpos: " << res_low.seqpos() << " pdbpos: " << pose.pdb_info()->number(res_low.seqpos()) << " improper torsion: " <<
+				res_low.name() << " : " <<
+				res_low.atom_name( atm1 ) << " , " << res_high.atom_name( atm2 ) << " , " <<
+				res_high.atom_name( atm3 ) << " , " << res_high.atom_name( atm4 ) << "   " <<
+				Kphi << " " << 0.5*Kphi*del_phi*del_phi << std::endl;
+		}
+
+		if (linear_bonded_potential_ && std::fabs(del_phi)>1) 
+			energy_torsion += 0.5*Kphi*std::fabs(del_phi);
+		else 
+			energy_torsion += 0.5*Kphi*del_phi*del_phi;
 	}
 
-	core::Real energy_torsion;
-	if (linear_bonded_potential_ && std::fabs(del_phi)>1) 
-		energy_torsion = 0.5*Kphi*std::fabs(del_phi);
-	else 
-		energy_torsion = 0.5*Kphi*del_phi*del_phi;
+	{
+		core::Size atm1 = res_low.atom_index(" CA ");
+		core::Size atm2 = res_high.atom_index(" N  ");
+		core::Size atm3 = res_low.atom_index(" C  ");
+		core::Size atm4 = res_low.atom_index(" O  ");
+
+		Real Kphi=db_torsion_->ktors(), phi0=numeric::constants::f::pi, phi_step=numeric::constants::f::pi;
+
+		Real angle = numeric::dihedral_radians
+			( res_low.atom( atm1 ).xyz(), res_high.atom( atm2 ).xyz(), res_low.atom( atm3 ).xyz(), res_low.atom( atm4 ).xyz() );
+		Real del_phi = basic::subtract_radian_angles(angle, phi0);
+		del_phi = basic::periodic_range( del_phi, phi_step );
+
+		if (pose.pdb_info() && 0.5*Kphi*del_phi*del_phi > CUTOFF) {
+			TR.Debug << pose.pdb_info()->name() << " seqpos: " << res_low.seqpos() << " pdbpos: " << pose.pdb_info()->number(res_low.seqpos()) << " improper torsion: " <<
+				res_low.name() << " : " <<
+				res_low.atom_name( atm1 ) << " , " << res_high.atom_name( atm2 ) << " , " <<
+				res_high.atom_name( atm3 ) << " , " << res_high.atom_name( atm4 ) << "   " <<
+				Kphi << " " << 0.5*Kphi*del_phi*del_phi << std::endl;
+		}
+
+		if (linear_bonded_potential_ && std::fabs(del_phi)>1) 
+			energy_torsion += 0.5*Kphi*std::fabs(del_phi);
+		else 
+			energy_torsion += 0.5*Kphi*del_phi*del_phi;
+	}
 
 	emap[ cart_bonded_torsion ] += energy_torsion;
 	emap[ cart_bonded ] += energy_torsion; // potential double counting
@@ -790,28 +820,99 @@ CartesianBondedEnergy::eval_improper_torsions_derivative(
 	core::Size atm1, atm2, atm3, atm4;
 	numeric::xyzVector< core::Real > atm1xyz, atm2xyz, atm3xyz, atm4xyz;
 
-	// inter-residue
-	if ( atm_name == " C  " || atm_name == " N  " || atm_name == " CA " || atm_name == " H  ") {
-		if (atm_name == " C  ") {
-			if (id.rsd() == pose.total_residue() || !pose.residue( id.rsd()+1 ).is_protein() )
-				return;
-		} else {
-			if (id.rsd() == 1 || !pose.residue( id.rsd()-1 ).is_protein() )
-				return;
-		}
-		core::conformation::Residue const & res_low = (atm_name == " C  ")? res : pose.residue( id.rsd()-1 );
-		core::conformation::Residue const & res_high = (atm_name == " C  ")? pose.residue( id.rsd()+1 ) : res;
-		if (res_high.aa() == aa_pro) return;
+	Vector f1(0.0), f2(0.0);
+	Real phi(0.0);
+	Real dE_dphi;
 
-		atm1 = res_low.atom_index(" C  ");
-		atm2 = res_high.atom_index(" N  ");
-		atm3 = res_high.atom_index(" CA ");
-		atm4 = res_high.atom_index(" H  ");
-		atm1xyz = res_low.xyz( atm1 );
-		atm2xyz = res_high.xyz( atm2 );
-		atm3xyz = res_high.xyz( atm3 );
-		atm4xyz = res_high.xyz( atm4 );
-	} else {
+	// INTER-RES
+	{
+		if ( atm_name == " C  " || atm_name == " N  " || atm_name == " CA " || atm_name == " H  ") {
+			bool applyThis = true;
+			if (atm_name == " C  " && (id.rsd() == pose.total_residue() || !pose.residue( id.rsd()+1 ).is_protein()) )
+				applyThis=false;
+			if (atm_name != " C  " && (id.rsd() == 1 || !pose.residue( id.rsd()-1 ).is_protein()) )
+				applyThis=false;
+
+			if (applyThis) {
+				core::conformation::Residue const & res_low = (atm_name == " C  ")? res : pose.residue( id.rsd()-1 );
+				core::conformation::Residue const & res_high = (atm_name == " C  ")? pose.residue( id.rsd()+1 ) : res;
+				if (res_high.aa() != aa_pro) {
+					atm1 = res_high.atom_index(" CA ");
+					atm2 = res_low.atom_index(" C  "); 
+					atm3 = res_high.atom_index(" N  ");
+					atm4 = res_high.atom_index(" H  ");
+					atm1xyz = res_high.xyz( atm1 ); atm2xyz = res_low.xyz( atm2 ); atm3xyz = res_high.xyz( atm3 ); atm4xyz = res_high.xyz( atm4 );
+
+					if ( atm1 == atomno ) {
+						numeric::deriv::dihedral_p1_cosine_deriv( atm1xyz, atm2xyz, atm3xyz, atm4xyz, phi, f1, f2 );
+					} else if ( atm2 == atomno ) {
+						numeric::deriv::dihedral_p2_cosine_deriv( atm1xyz, atm2xyz, atm3xyz, atm4xyz, phi, f1, f2 );
+					} else if ( atm3 == atomno ) {
+						numeric::deriv::dihedral_p2_cosine_deriv( atm4xyz, atm3xyz, atm2xyz, atm1xyz, phi, f1, f2 );
+					} else if ( atm4 == atomno ) {
+						numeric::deriv::dihedral_p1_cosine_deriv( atm4xyz, atm3xyz, atm2xyz, atm1xyz, phi, f1, f2 );
+					}
+
+					Real Kphi=db_torsion_->ktors(), phi0=numeric::constants::f::pi, phi_step=numeric::constants::f::pi;
+					Real del_phi = basic::subtract_radian_angles(phi, phi0);
+					del_phi = basic::periodic_range( del_phi, phi_step );
+					if (linear_bonded_potential_ && std::fabs(del_phi)>1) {
+						dE_dphi = weights[ cart_bonded_torsion ] * Kphi * (del_phi>0? 1 : -1);
+						dE_dphi += weights[ cart_bonded ] * Kphi * (del_phi>0? 1 : -1);
+					} else {
+						dE_dphi = weights[ cart_bonded_torsion ] * Kphi * del_phi;
+						dE_dphi += weights[ cart_bonded ] * Kphi * del_phi;
+					}
+					F1 += dE_dphi * f1;
+					F2 += dE_dphi * f2;
+				} 
+			}
+		}
+
+		if ( atm_name == " C  " || atm_name == " N  " || atm_name == " CA " || atm_name == " O  ") {
+			bool applyThis = true;
+			if (atm_name != " N  " && (id.rsd() == pose.total_residue() || !pose.residue( id.rsd()+1 ).is_protein()) )
+				applyThis=false;
+			if (atm_name == " N  " && (id.rsd() == 1 || !pose.residue( id.rsd()-1 ).is_protein()) )
+				applyThis=false;
+
+			if (applyThis) {
+				core::conformation::Residue const & res_low = (atm_name != " N  ")? res : pose.residue( id.rsd()-1 );
+				core::conformation::Residue const & res_high = (atm_name != " N  ")? pose.residue( id.rsd()+1 ) : res;
+				atm1 = res_low.atom_index(" CA ");
+				atm2 = res_high.atom_index(" N  ");
+				atm3 = res_low.atom_index(" C  ");
+				atm4 = res_low.atom_index(" O  ");
+				atm1xyz = res_low.xyz( atm1 ); atm2xyz = res_high.xyz( atm2 ); atm3xyz = res_low.xyz( atm3 ); atm4xyz = res_low.xyz( atm4 );
+
+				if ( atm1 == atomno ) {
+					numeric::deriv::dihedral_p1_cosine_deriv( atm1xyz, atm2xyz, atm3xyz, atm4xyz, phi, f1, f2 );
+				} else if ( atm2 == atomno ) {
+					numeric::deriv::dihedral_p2_cosine_deriv( atm1xyz, atm2xyz, atm3xyz, atm4xyz, phi, f1, f2 );
+				} else if ( atm3 == atomno ) {
+					numeric::deriv::dihedral_p2_cosine_deriv( atm4xyz, atm3xyz, atm2xyz, atm1xyz, phi, f1, f2 );
+				} else if ( atm4 == atomno ) {
+					numeric::deriv::dihedral_p1_cosine_deriv( atm4xyz, atm3xyz, atm2xyz, atm1xyz, phi, f1, f2 );
+				}
+
+				Real Kphi=db_torsion_->ktors(), phi0=numeric::constants::f::pi, phi_step=numeric::constants::f::pi;
+				Real del_phi = basic::subtract_radian_angles(phi, phi0);
+				del_phi = basic::periodic_range( del_phi, phi_step );
+				if (linear_bonded_potential_ && std::fabs(del_phi)>1) {
+					dE_dphi = weights[ cart_bonded_torsion ] * Kphi * (del_phi>0? 1 : -1);
+					dE_dphi += weights[ cart_bonded ] * Kphi * (del_phi>0? 1 : -1);
+				} else {
+					dE_dphi = weights[ cart_bonded_torsion ] * Kphi * del_phi;
+					dE_dphi += weights[ cart_bonded ] * Kphi * del_phi;
+				}
+				F1 += dE_dphi * f1;
+				F2 += dE_dphi * f2;
+			} 
+		}
+	}
+
+	// INTRA-RES
+	{
 		if (res.aa() == aa_asp) {
 			// asp CB-CG-OD1-OD2
 			atm1 = res.atom_index(" CB ");
@@ -843,46 +944,36 @@ CartesianBondedEnergy::eval_improper_torsions_derivative(
 		atm2xyz = res.xyz( atm2 );
 		atm3xyz = res.xyz( atm3 );
 		atm4xyz = res.xyz( atm4 );
+	
+		bool applyThis = true;
+		if ( atm1 == atomno ) {
+			numeric::deriv::dihedral_p1_cosine_deriv( atm1xyz, atm2xyz, atm3xyz, atm4xyz, phi, f1, f2 );
+		} else if ( atm2 == atomno ) {
+			numeric::deriv::dihedral_p2_cosine_deriv( atm1xyz, atm2xyz, atm3xyz, atm4xyz, phi, f1, f2 );
+		} else if ( atm3 == atomno ) {
+			numeric::deriv::dihedral_p2_cosine_deriv( atm4xyz, atm3xyz, atm2xyz, atm1xyz, phi, f1, f2 );
+		} else if ( atm4 == atomno ) {
+			numeric::deriv::dihedral_p1_cosine_deriv( atm4xyz, atm3xyz, atm2xyz, atm1xyz, phi, f1, f2 );
+		} else {
+			applyThis = false;
+		}
+
+		if (applyThis) {
+			Real Kphi=db_torsion_->ktors(), phi0=numeric::constants::f::pi, phi_step=numeric::constants::f::pi;
+			Real del_phi = basic::subtract_radian_angles(phi, phi0);
+			del_phi = basic::periodic_range( del_phi, phi_step );
+			if (linear_bonded_potential_ && std::fabs(del_phi)>1) {
+				dE_dphi = weights[ cart_bonded_torsion ] * Kphi * (del_phi>0? 1 : -1);
+				dE_dphi += weights[ cart_bonded ] * Kphi * (del_phi>0? 1 : -1);
+			} else {
+				dE_dphi = weights[ cart_bonded_torsion ] * Kphi * del_phi;
+				dE_dphi += weights[ cart_bonded ] * Kphi * del_phi;
+			}
+		}
+
+		F1 += dE_dphi * f1;
+		F2 += dE_dphi * f2;
 	}
-
-	Vector f1(0.0), f2(0.0);
-	Real phi(0.0);
-	if ( atm1 == atomno ) {
-		numeric::deriv::dihedral_p1_cosine_deriv(
-			atm1xyz, atm2xyz, atm3xyz, atm4xyz,
-			phi, f1, f2 );
-	} else if ( atm2 == atomno ) {
-		numeric::deriv::dihedral_p2_cosine_deriv(
-			atm1xyz, atm2xyz, atm3xyz, atm4xyz,
-			phi, f1, f2 );
-	} else if ( atm3 == atomno ) {
-		numeric::deriv::dihedral_p2_cosine_deriv(
-			atm4xyz, atm3xyz, atm2xyz, atm1xyz,
-			phi, f1, f2 );
-	} else if ( atm4 == atomno ) {
-		numeric::deriv::dihedral_p1_cosine_deriv(
-			atm4xyz, atm3xyz, atm2xyz, atm1xyz,
-			phi, f1, f2 );
-	} else {
-		return;
-	}
-
-	Real Kphi=db_torsion_->ktors(), phi0=numeric::constants::f::pi, phi_step=numeric::constants::f::pi;
-
-	Real del_phi = basic::subtract_radian_angles(phi, phi0);
-	del_phi = basic::periodic_range( del_phi, phi_step );
-	Real dE_dphi;
-
-	if (linear_bonded_potential_ && std::fabs(del_phi)>1) {
-		dE_dphi = weights[ cart_bonded_torsion ] * Kphi * (del_phi>0? 1 : -1);
-		dE_dphi += weights[ cart_bonded ] * Kphi * (del_phi>0? 1 : -1);
-	} else {
-		dE_dphi = weights[ cart_bonded_torsion ] * Kphi * del_phi;
-		dE_dphi += weights[ cart_bonded ] * Kphi * del_phi;
-	}
-
-	F1 += dE_dphi * f1;
-	F2 += dE_dphi * f2;
 }
 
 
