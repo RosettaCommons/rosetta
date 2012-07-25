@@ -112,10 +112,10 @@ ProteinBondGeometryFeatures::write_bond_intrares_angles_table_schema(
 	Column cenAtmName("cenAtmName", DbText(), false);
 	Column outAtm1Name("outAtm1Name", DbText(), false);
 	Column outAtm2Name("outAtm2Name", DbText(), false);
-	Column ideal("ideal", DbReal(), false);
-	Column observed("observed", DbReal(), false);
-	Column difference("difference", DbReal(), false);
-	Column energy("energy", DbReal(), false);
+	Column ideal("ideal", DbReal());
+	Column observed("observed", DbReal());
+	Column difference("difference", DbReal());
+	Column energy("energy", DbReal());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -161,10 +161,10 @@ ProteinBondGeometryFeatures::write_bond_interres_angles_table_schema(
 	Column cenAtmName("cenAtmName", DbText(), false);
 	Column outAtmCenName("outAtmCenName", DbText(), false);
 	Column outAtmConnName("outAtmConnName", DbText(), false);
-	Column ideal("ideal", DbReal(), false);
-	Column observed("observed", DbReal(), false);
-	Column difference("difference", DbReal(), false);
-	Column energy("energy", DbReal(), false);
+	Column ideal("ideal", DbReal());
+	Column observed("observed", DbReal());
+	Column difference("difference", DbReal());
+	Column energy("energy", DbReal());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -208,10 +208,10 @@ ProteinBondGeometryFeatures::write_bond_intrares_lengths_table_schema(
 	Column atm2Num("atm2Num", DbInteger(), false);
 	Column atm1Name("atm1Name", DbText(), false);
 	Column atm2Name("atm2Name", DbText(), false);
-	Column ideal("ideal", DbReal(), false);
-	Column observed("observed", DbReal(), false);
-	Column difference("difference", DbReal(), false);
-	Column energy("energy", DbReal(), false);
+	Column ideal("ideal", DbReal());
+	Column observed("observed", DbReal());
+	Column difference("difference", DbReal());
+	Column energy("energy", DbReal());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -253,10 +253,10 @@ ProteinBondGeometryFeatures::write_bond_interres_lengths_table_schema(
 	Column atm2Num("atm2Num", DbInteger(), false);
 	Column atm1Name("atm1Name", DbText(), false);
 	Column atm2Name("atm2Name", DbText(), false);
-	Column ideal("ideal", DbReal(), false);
-	Column observed("observed", DbReal(), false);
-	Column difference("difference", DbReal(), false);
-	Column energy("energy", DbReal(), false);
+	Column ideal("ideal", DbReal());
+	Column observed("observed", DbReal());
+	Column difference("difference", DbReal());
+	Column energy("energy", DbReal());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
