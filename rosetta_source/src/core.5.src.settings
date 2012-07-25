@@ -75,6 +75,9 @@ sources = {
 		"SilentFilePoseInputStream",
 		"util",
 	],
+	"core/scoring/rna": [
+		"RNA_IdealCoord",
+	],
 }
 include_path = [
 ]

@@ -43,7 +43,12 @@ public:
 	RNA_IdealCoord();
 	~RNA_IdealCoord();
 
-	void apply( Pose & pose, Size const seqpos, bool const is_north = true ) const;
+	//Apply ideal coords to one residue. Keep the backbone torsion values by default
+	void apply( Pose & pose, Size const seqpos, bool const is_north = true, bool const keep_backbone_torsion = true ) const;
+
+	//Apply ideal coords to whole pose.
+	//pucker_conformations: 0 for skipping, 1 for North, 2 for South
+	void apply( Pose & pose, utility::vector1 < Size > const & pucker_conformations, bool const keep_backbone_torsion = true ) const;
 
 private:
 	void init();

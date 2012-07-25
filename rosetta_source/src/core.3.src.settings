@@ -458,7 +458,6 @@ sources = {
 		"RNA_FilteredBaseBaseInfo",
 		"RNA_FittedTorsionInfo",
 		"RNA_FullAtomStackingEnergy",
-		"RNA_IdealCoord",
 		"RNA_LJ_BaseEnergy",
 		"RNA_LowResolutionPotential",
 		"RNA_PairwiseLowResolutionEnergy",

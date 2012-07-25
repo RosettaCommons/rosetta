@@ -81,7 +81,7 @@ void RNA_IdealCoord::init() {
 }
 
 /////////////////////////////////////////////////////
-void RNA_IdealCoord::apply( Pose & pose, Size const seqpos, bool const is_north ) const {
+void RNA_IdealCoord::apply( Pose & pose, Size const seqpos, bool const is_north, bool const keep_backbone_torsion ) const {
 
 	using namespace core::id;
 	using namespace core::chemical;
@@ -104,23 +104,25 @@ void RNA_IdealCoord::apply( Pose & pose, Size const seqpos, bool const is_north 
 	if (! is_north) ++res_class;
 
 	//Record the torsions in starting pose
-	utility::vector1 < TorsionID > saved_torsion_id;		
-	utility::vector1 < Real > saved_torsions;		
-	saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  ALPHA   ) );
-	saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  BETA    ) );
-	saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  GAMMA   ) );
-	saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  EPSILON ) );
-	saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  ZETA    ) );
-	saved_torsion_id.push_back( TorsionID( seqpos,   id::CHI, 1       ) );
-	saved_torsion_id.push_back( TorsionID( seqpos,   id::CHI, 4       ) );
-	saved_torsion_id.push_back( TorsionID( seqpos-1, id::BB,  ZETA    ) );
-	saved_torsion_id.push_back( TorsionID( seqpos+1, id::BB,  ALPHA   ) );
-	for (Size i = 1; i <= saved_torsion_id.size(); ++i) {
-		bool const is_exists = is_torsion_exists( pose, saved_torsion_id[i] );
-		if (is_exists) {
-			saved_torsions.push_back( pose.torsion( saved_torsion_id[i] ) );
-		} else {
-			saved_torsions.push_back( -9999 );
+	utility::vector1 < TorsionID > saved_torsion_id;
+	utility::vector1 < Real > saved_torsions;	
+	if (keep_backbone_torsion) {
+		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  ALPHA   ) );
+		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  BETA    ) );
+		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  GAMMA   ) );
+		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  EPSILON ) );
+		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  ZETA    ) );
+		saved_torsion_id.push_back( TorsionID( seqpos,   id::CHI, 1       ) );
+		saved_torsion_id.push_back( TorsionID( seqpos,   id::CHI, 4       ) );
+		saved_torsion_id.push_back( TorsionID( seqpos-1, id::BB,  ZETA    ) );
+		saved_torsion_id.push_back( TorsionID( seqpos+1, id::BB,  ALPHA   ) );
+		for (Size i = 1; i <= saved_torsion_id.size(); ++i) {
+			bool const is_exists = is_torsion_exists( pose, saved_torsion_id[i] );
+			if (is_exists) {
+				saved_torsions.push_back( pose.torsion( saved_torsion_id[i] ) );
+			} else {
+				saved_torsions.push_back( -9999 );
+			}
 		}
 	}
 
@@ -131,12 +133,37 @@ void RNA_IdealCoord::apply( Pose & pose, Size const seqpos, bool const is_north 
 	copy_dofs(pose, ref_pose, res_map);
 
 	//Copy back the original torsions
-	for (Size i = 1; i <= saved_torsion_id.size(); ++i) {
-		if (saved_torsions[i] > -1000) {
-			pose.set_torsion( saved_torsion_id[i], saved_torsions[i] );
+	if (keep_backbone_torsion) {
+		for (Size i = 1; i <= saved_torsion_id.size(); ++i) {
+			if (saved_torsions[i] > -1000) {
+				pose.set_torsion( saved_torsion_id[i], saved_torsions[i] );
+			}
 		}
 	}
 }
+/////////////////////////////////////////////////////
+//Apply ideal coords to whole pose.
+//pucker_conformations: 0 for skipping, 1 for North, 2 for South
+void RNA_IdealCoord::apply( Pose & pose, utility::vector1 < Size > const & pucker_conformations, bool const keep_backbone_torsion ) const {
+	if ( pose.total_residue() != pucker_conformations.size() ) {
+		utility_exit_with_message("RNA_IdealCoord::apply--pose.total_resdiue() != pucker_conformations.size() !!!!");
+	}
+	for (Size i = 1; i <= pose.total_residue(); ++i) {
+		switch ( pucker_conformations[i] ) {
+			case 0: //Skip
+				break; 
+			case 1: //North
+				apply(pose, i, true, keep_backbone_torsion);
+				break;
+			case 2: //South
+				apply(pose, i, false, keep_backbone_torsion);
+				break;
+			default :
+				utility_exit_with_message("RNA_IdealCoord::apply--Invalid value for pucker_conformations!!!!");
+		}
+	}
+}
+/////////////////////////////////////////////////
 
 }
 }
