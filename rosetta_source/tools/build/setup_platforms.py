@@ -140,6 +140,8 @@ def select_os_version(supported, os, requested):
             actual = "10.6"
         elif actual.startswith("11."):
             actual = "10.7"
+        elif actual.startswith("12."):
+            actual = "10.8"
     if requested != "*" and requested != actual:
         raise ValueError, "Actual operating system version '%s' does not match requested version '%s'" % (actual, requested)
 
