@@ -289,7 +289,7 @@ MPIFileBufJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 	jobs_assigned_ = 0;
 	jobs_returned_ = 0;
 	bad_jobs_ = 0;
-
+	tr.Info << "Starting JobDistribution with " << n_worker() << " worker processes " << std::endl;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	n_nodes_left_to_spin_down_ = option[ OptionKeys::jd2::mpi_nowait_for_remaining_jobs ]() ? 0 : ( n_worker() );

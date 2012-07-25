@@ -183,12 +183,12 @@ EvaluatedArchive::evaluate_silent_struct( core::io::silent::SilentStructOP iss )
 
 	tr.Trace << "evaluate local for " << iss->decoy_tag() << std::endl;
 	core::io::silent::SilentStructOP pss = iss->clone();
-
-	//	pss->clear_energies(); //need to get rid of e.g., _archive_select_score_
+	using namespace core::io::silent;
+	utility::vector1< SilentEnergy > old_energies( iss->energies() );
+	pss->clear_energies(); //need to get rid of e.g., _archive_select_score_ // is actually also done implicitly in evaluate_pose, when it calls 'energies_from_pose'
 		//note: clear_energies should not kill the comments (TAG_IN_FILE, SOURCE_FILE ) should still be present...
 	//need to keep prefa_centroid_score...
-	using namespace core::io::silent;
-	utility::vector1< SilentEnergy > old_energies( pss->energies() );
+
 	//	runtime_assert( pss->has_energy( "chem_shifts" ) );
 	//make pose for scoring and evaluation purposes
 	PROF_START( basic::ARCHIVE_FILL_POSE );
@@ -319,7 +319,13 @@ void EvaluatedArchive::sort() {
 ///@detail rescore and sort archive
 void EvaluatedArchive::rescore() {
 	tr.Debug << "rescore " << name() << " decoys " << std::endl;
-
+	tr.Info << "structures are rescored with the following weights: " << std::endl;
+	WeightMap const& variations( score_variations() );
+	for ( WeightMap::const_iterator it=select_weights_.begin(); it != select_weights_.end(); ++it ) {
+		std::string const& name( it->first );
+		core::Real const& weight( it->second );
+		tr.Info << name << " " << weight << " " << weight / variations.find( name )->second << std::endl;
+	}
 	//rescore all decoys
 	for ( SilentStructs::iterator iss = decoys().begin(); iss != decoys().end(); ++iss ) {
 		*iss = evaluate_silent_struct( *iss ); //_archive_select_score_ will be removed here

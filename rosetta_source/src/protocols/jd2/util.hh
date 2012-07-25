@@ -52,6 +52,8 @@ std::string current_output_name();
 ///@brief call the 'filename' accessor of the current job-distributor with the current job
 std::string current_output_filename();
 
+std::string current_batch();
+
 ///@brief is this application running with jd2 --- used for some code that yields backward compatability with old JobDistributor
 bool jd2_used();
 
@@ -63,6 +65,8 @@ void register_options();
 
 JobOP get_current_job();
 
+
+
 void set_native_in_mover( protocols::moves::Mover &mover );
 
 void
@@ -72,14 +76,14 @@ write_score_tracer( core::pose::Pose const& pose_in, std::string tag );
 ///@brief returns communicator defined by the JobDistributor or MPI_COMM_WORLD
 MPI_Comm const& current_mpi_comm();
 #endif
-    
+
 ///@brief send mpi message to head node in order to request data. The data sent back will be a string
 /// formatted by the listener specified in the listener_tags enum of MessageListenerFactory
 std::string request_data_from_head_node(message_listening::listener_tags listener_tag, std::string data);
-    
+
 
 void send_data_to_head_node(message_listening::listener_tags listener_tag, std::string data);
-    
+
 ///@brief returns 0 if no replicas (i.e., multiple processes per job )
 /// otherwise it returns the sub-rank of the process within the job starting at 1
 core::Size current_replica();

@@ -103,6 +103,14 @@ std::string current_output_name() {
 	} else return "NoTag";
 }
 
+std::string current_batch() {
+	JobDistributor* jd
+  	= JobDistributor::get_instance();
+	if ( jd ) {
+		return jd->get_current_batch();
+	} else return "NoJD2";
+}
+
 bool jd2_used() {
 	JobDistributor* jd
   	= JobDistributor::get_instance();
@@ -242,15 +250,15 @@ MPI_Comm const& current_mpi_comm() {
 //The type of data returned is based on the type of listener created based on the listener_tags of the MessageListenerFactory
 std::string request_data_from_head_node(message_listening::listener_tags MPI_ONLY( listener_tag ), std::string MPI_ONLY( data ) ){
     #ifdef USEMPI
-    
+
     //send a message to the head node that tells jd2 to create a message listener
     TR << "Requesting data from head node" << std::endl;
     MPI_Send( &listener_tag, 1, MPI_INT, 0/*head node*/, REQUEST_MESSAGE_TAG, MPI_COMM_WORLD );
-    
+
     //send a string to be processed by the listener
     TR << "Sending " << data << " to head node" << std::endl;
     utility::send_string_to_node(0/*head node*/, data);
-    
+
     //recieve a response from the head node listener
     return utility::receive_string_from_node(0/*head node*/);
     #endif
@@ -260,12 +268,12 @@ std::string request_data_from_head_node(message_listening::listener_tags MPI_ONL
 
 	return "";  // required for compilation on Windows
 }
-    
+
 void send_data_to_head_node(message_listening::listener_tags MPI_ONLY( listener_tag ), std::string MPI_ONLY( data ) ){
 #ifdef USEMPI
     //send a message to the head node that tells jd2 to create a message listener
     MPI_Send( &listener_tag, 1, MPI_INT, 0/*head node*/, RECIEVE_MESSAGE_TAG, MPI_COMM_WORLD );
-    
+
     //send a string to be processed by the listener
     utility::send_string_to_node(0/*head node*/, data);
 #endif
@@ -273,7 +281,7 @@ void send_data_to_head_node(message_listening::listener_tags MPI_ONLY( listener_
         utility_exit_with_message("ERROR: You have tried to send a message to the head node but you are not in mpi mode (compile with extras=mpi)");
 #endif
     }
-    
+
 core::Size current_replica() {
 	JobDistributor* jd
 		= JobDistributor::get_instance();
