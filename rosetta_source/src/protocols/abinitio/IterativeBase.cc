@@ -1123,7 +1123,9 @@ void IterativeBase::gen_resample_stage2( jd2::archive::Batch& batch ) {
 
 		//skip stage 1
 		utility::io::ozstream flags( batch.flag_file(), std::ios::app );
-		flags << "-abinitio::skip_stages 1 " << std::endl;
+		flags << "-abinitio:skip_stages 1 " << std::endl;
+		flags << "-out:no_nstruct_label" << std::endl;
+		flags << "-out:suffix " << "_b" << std::setfill('0') << std::setw(4) << batch.id() << std::endl;
 	} else {
 		tr.Warning << "[WARNING] no stage2 decoys found ! " << std::endl;
 	}
@@ -1545,6 +1547,7 @@ void IterativeBase::replace_noesy_filter_constraints() {
 		cst->set_combine_ratio( 2 );
 		cst->set_fullatom( true );
 		cst->set_centroid( false );
+		cst->set_skip_redundant( option[ OptionKeys::iterative::skip_redundant_constraints ]() );
 		cst->set_filter_weight( weight );
 		add_evaluation( new topology_broker::ConstraintEvaluatorWrapper( cst->tag(), cst ), cst->filter_weight()*overall_cstfilter_weight_ );
 	}
@@ -1932,7 +1935,13 @@ void IterativeBase::collect_alternative_decoys( SilentStructs primary_decoys, st
 			if ( sfd.size() > it->second.size() ) {
 				tr.Warning << "[WARNING] multiple decoys with same tag detected in file " << it->first << std::endl;
 			}
-			copy( sfd.begin(), sfd.end(), std::back_inserter( output_decoys ) );
+			//copy( sfd.begin(), sfd.end(), std::back_inserter( output_decoys ) );
+			for ( core::io::silent::SilentFileData::iterator sit = sfd.begin(); sit != sfd.end(); ++sit ) {
+				std::string batch_prefix( it->first );
+			  batch_prefix='f'+batch_prefix.substr(9,3);
+				sit->set_decoy_tag( batch_prefix+"_"+sit->decoy_tag() );
+				output_decoys.push_back( *sit );
+			}
 			ct_read += sfd.size();
 		} catch ( utility::excn::EXCN_IO& excn ) { //ERROR
 			tr.Warning << "[WARNING] Problem reading silent-file " << it->first << " for " << it->second.size() << " structures " << std::endl;
