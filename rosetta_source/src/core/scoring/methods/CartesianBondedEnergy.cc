@@ -676,7 +676,7 @@ CartesianBondedEnergy::eval_improper_torsions(
 
 	if (!res_low.is_protein() || !res_high.is_protein()) return;
 
-	if (res_high.aa() != aa_pro) {
+	if (res_high.aa() != aa_pro && res_high.has(" H  ") ) {  // check for terminal variants
 		core::Size atm1 = res_high.atom_index(" CA ");
 		core::Size atm2 = res_low.atom_index(" C  ");
 		core::Size atm3 = res_high.atom_index(" N  ");
@@ -836,7 +836,7 @@ CartesianBondedEnergy::eval_improper_torsions_derivative(
 			if (applyThis) {
 				core::conformation::Residue const & res_low = (atm_name == " C  ")? res : pose.residue( id.rsd()-1 );
 				core::conformation::Residue const & res_high = (atm_name == " C  ")? pose.residue( id.rsd()+1 ) : res;
-				if (res_high.aa() != aa_pro) {
+				if (res_high.aa() != aa_pro && res_low.is_bonded(res_high) && res_high.has(" H  ")) {
 					atm1 = res_high.atom_index(" CA ");
 					atm2 = res_low.atom_index(" C  "); 
 					atm3 = res_high.atom_index(" N  ");
@@ -879,34 +879,36 @@ CartesianBondedEnergy::eval_improper_torsions_derivative(
 			if (applyThis) {
 				core::conformation::Residue const & res_low = (atm_name != " N  ")? res : pose.residue( id.rsd()-1 );
 				core::conformation::Residue const & res_high = (atm_name != " N  ")? pose.residue( id.rsd()+1 ) : res;
-				atm1 = res_low.atom_index(" CA ");
-				atm2 = res_high.atom_index(" N  ");
-				atm3 = res_low.atom_index(" C  ");
-				atm4 = res_low.atom_index(" O  ");
-				atm1xyz = res_low.xyz( atm1 ); atm2xyz = res_high.xyz( atm2 ); atm3xyz = res_low.xyz( atm3 ); atm4xyz = res_low.xyz( atm4 );
+				if (res_low.is_bonded(res_high)) {
+					atm1 = res_low.atom_index(" CA ");
+					atm2 = res_high.atom_index(" N  ");
+					atm3 = res_low.atom_index(" C  ");
+					atm4 = res_low.atom_index(" O  ");
+					atm1xyz = res_low.xyz( atm1 ); atm2xyz = res_high.xyz( atm2 ); atm3xyz = res_low.xyz( atm3 ); atm4xyz = res_low.xyz( atm4 );
 
-				if ( atm1 == atomno ) {
-					numeric::deriv::dihedral_p1_cosine_deriv( atm1xyz, atm2xyz, atm3xyz, atm4xyz, phi, f1, f2 );
-				} else if ( atm2 == atomno ) {
-					numeric::deriv::dihedral_p2_cosine_deriv( atm1xyz, atm2xyz, atm3xyz, atm4xyz, phi, f1, f2 );
-				} else if ( atm3 == atomno ) {
-					numeric::deriv::dihedral_p2_cosine_deriv( atm4xyz, atm3xyz, atm2xyz, atm1xyz, phi, f1, f2 );
-				} else if ( atm4 == atomno ) {
-					numeric::deriv::dihedral_p1_cosine_deriv( atm4xyz, atm3xyz, atm2xyz, atm1xyz, phi, f1, f2 );
-				}
+					if ( atm1 == atomno ) {
+						numeric::deriv::dihedral_p1_cosine_deriv( atm1xyz, atm2xyz, atm3xyz, atm4xyz, phi, f1, f2 );
+					} else if ( atm2 == atomno ) {
+						numeric::deriv::dihedral_p2_cosine_deriv( atm1xyz, atm2xyz, atm3xyz, atm4xyz, phi, f1, f2 );
+					} else if ( atm3 == atomno ) {
+						numeric::deriv::dihedral_p2_cosine_deriv( atm4xyz, atm3xyz, atm2xyz, atm1xyz, phi, f1, f2 );
+					} else if ( atm4 == atomno ) {
+						numeric::deriv::dihedral_p1_cosine_deriv( atm4xyz, atm3xyz, atm2xyz, atm1xyz, phi, f1, f2 );
+					}
 
-				Real Kphi=db_torsion_->ktors(), phi0=numeric::constants::f::pi, phi_step=numeric::constants::f::pi;
-				Real del_phi = basic::subtract_radian_angles(phi, phi0);
-				del_phi = basic::periodic_range( del_phi, phi_step );
-				if (linear_bonded_potential_ && std::fabs(del_phi)>1) {
-					dE_dphi = weights[ cart_bonded_torsion ] * Kphi * (del_phi>0? 1 : -1);
-					dE_dphi += weights[ cart_bonded ] * Kphi * (del_phi>0? 1 : -1);
-				} else {
-					dE_dphi = weights[ cart_bonded_torsion ] * Kphi * del_phi;
-					dE_dphi += weights[ cart_bonded ] * Kphi * del_phi;
+					Real Kphi=db_torsion_->ktors(), phi0=numeric::constants::f::pi, phi_step=numeric::constants::f::pi;
+					Real del_phi = basic::subtract_radian_angles(phi, phi0);
+					del_phi = basic::periodic_range( del_phi, phi_step );
+					if (linear_bonded_potential_ && std::fabs(del_phi)>1) {
+						dE_dphi = weights[ cart_bonded_torsion ] * Kphi * (del_phi>0? 1 : -1);
+						dE_dphi += weights[ cart_bonded ] * Kphi * (del_phi>0? 1 : -1);
+					} else {
+						dE_dphi = weights[ cart_bonded_torsion ] * Kphi * del_phi;
+						dE_dphi += weights[ cart_bonded ] * Kphi * del_phi;
+					}
+					F1 += dE_dphi * f1;
+					F2 += dE_dphi * f2;
 				}
-				F1 += dE_dphi * f1;
-				F2 += dE_dphi * f2;
 			} 
 		}
 	}
