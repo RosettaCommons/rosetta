@@ -217,6 +217,7 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 
 	tr.Info << "AbrelaxMover: " << get_current_tag() << std::endl;
 	basic::mem_tr << "AbrelaxMover::apply" << std::endl;
+	basic::show_time( tr,  "AbrelaxMover: start..."+jd2::current_batch()+" "+jd2::current_output_name() );
 
 	// kidnap sampling_protocols's checkpointer - this could ultimately be a singleton i guess
 	checkpoint::CheckPointer &checkpoints = sampling_protocol()->get_checkpoints();
