@@ -78,8 +78,8 @@ int Tracer::mpi_rank_( 0 );
 bool Tracer::TracerProxy::visible() const
 {
 	if( !visibility_calculated_ ) {
-		bool visible, muted;  int mute_level;
-		calculate_visibility(channel_, priority_, visible, muted, mute_level, tracer_.muted_by_default_);
+		bool muted;  int mute_level;
+		calculate_visibility(channel_, priority_, visible_, muted, mute_level, tracer_.muted_by_default_);
 	}
 	return visible_;
 }
@@ -389,13 +389,13 @@ void Tracer::t_flush(std::string const &str)
 
 	if( ios_hook_ && ios_hook_.get()!=this &&
 			( in(monitoring_list_, channel_, false) || in(monitoring_list_, AllChannels, true ) ) ) {
-		if (ios_hook_raw_ || visible_){
+		if (ios_hook_raw_ || visible() ){
 			prepend_channel_name<otstream>( *ios_hook_, str );
 			ios_hook_->flush();
 		}
 	}
 
-	if ( !super_mute_ && visible_ ){
+	if ( !super_mute_ && visible() ){
 		prepend_channel_name<std::ostream>( *final_channel, str );
 	}
 }
