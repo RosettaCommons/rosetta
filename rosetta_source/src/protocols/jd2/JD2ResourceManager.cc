@@ -26,9 +26,13 @@
 // Project Headers
 #include <basic/options/option.hh>
 
+// Numeric headers
+#include <numeric/random/random.hh>
+
 // basic Headers
 #include <basic/Tracer.hh>
 #include <basic/resource_manager/types.hh>
+#include <basic/resource_manager/ResourceLoader.hh>
 #include <basic/resource_manager/ResourceLoaderFactory.hh>
 #include <basic/resource_manager/ResourceLocator.hh>
 #include <basic/resource_manager/ResourceLocatorFactory.hh>
@@ -40,6 +44,7 @@
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
+#include <utility/string_util.hh>
 
 // Boost Headers
 #include <boost/foreach.hpp>
@@ -312,21 +317,40 @@ JD2ResourceManager::has_resource_with_description(
 	using basic::resource_manager::FallbackConfigurationFactory;
 	using basic::resource_manager::FallbackConfigurationOP;
 	using basic::resource_manager::ResourceTag;
-	
+
 	if ( has_resource_tag_by_job_tag(
 		resource_description,
-		JobDistributor::get_instance()->current_job()->input_tag()) )
-	{
+		JobDistributor::get_instance()->current_job()->input_tag()) ) {
 		return true;
 	}
-	
-	if ( FallbackConfigurationFactory::get_instance()->has_fallback_for_resource( resource_description ))
-	{
-		FallbackConfigurationOP fallback = FallbackConfigurationFactory::get_instance()->create_fallback_configuration( resource_description );
-		ResourceTag resource_tag = fallback->get_resource_tag_from_description( resource_description );
-		add_resource_configuration( resource_tag, create_resource_configuration_from_fallback( fallback, resource_description ));
-		add_resource_tag_by_job_tag( resource_description, JobDistributor::get_instance()->current_job()->input_tag(), resource_tag );
+
+	/// check, have we already created a fallback resource description?
+	if ( fallback_resource_descriptions_created_.find( resource_description )
+			!= fallback_resource_descriptions_created_.end() ) {
 		return true;
+	}
+
+	if ( FallbackConfigurationFactory::get_instance()->has_fallback_for_resource( resource_description )) {
+		FallbackConfigurationOP fallback = FallbackConfigurationFactory::get_instance()->create_fallback_configuration( resource_description );
+		if ( fallback->fallback_specified( resource_description ) ) {
+			ResourceOP fallbackresource = create_resource_from_fallback( fallback, resource_description );
+			// now make sure that the resource is saved for later; create a pheax uuid for this
+			std::string fallbackname = "fallback_" + resource_description;
+			for ( core::Size ii = 1; ii <= 10000; ++ii ) {
+				if ( ! has_resource_configuration( fallbackname )) break;
+				fallbackname = "fallback_" + resource_description + "_" + utility::to_string( numeric::random::random_range(1,4000000) );
+			}
+			if ( has_resource_configuration( fallbackname ) ) {
+				throw utility::excn::EXCN_Msg_Exception( "Could not name the fallback resource after 10000 attempts.  Try not to name your resources"
+					" beginning with the prefix 'fallback_'." );
+			}
+			basic::resource_manager::ResourceConfiguration fake_configuration;
+			fake_configuration.resource_tag = fallbackname;
+			add_resource_configuration( fallbackname, fake_configuration );
+			fallback_resource_descriptions_created_[ resource_description ] = fallbackname;
+			add_resource( fallbackname, fallbackresource );
+			return true;
+		}
 	}
 	return false;
 }
@@ -335,9 +359,41 @@ ResourceOP
 JD2ResourceManager::get_resource(
 	ResourceDescription const & resource_description
 ) {
-	return get_resource_by_job_tag(
-		resource_description,
-		JobDistributor::get_instance()->current_job()->input_tag());
+	std::string const & jobtag = JobDistributor::get_instance()->current_job()->input_tag();
+
+	if ( has_resource_tag_by_job_tag( resource_description, jobtag ) ) {
+		return get_resource_by_job_tag( resource_description, jobtag);
+	}
+
+	std::map< std::string, std::string >::const_iterator fallbackname_iterator
+		= fallback_resource_descriptions_created_.find( resource_description );
+
+	if ( fallbackname_iterator !=  fallback_resource_descriptions_created_.end() ) {
+		return find_resource( fallbackname_iterator->second );
+	} else {
+		using basic::resource_manager::FallbackConfigurationFactory;
+		using basic::resource_manager::FallbackConfigurationOP;
+
+		std::ostringstream errmsg;
+		errmsg << "JD2ResourceManager does not have a resource "
+			"corresponding to the resource description '" + resource_description + ".' for job '" +
+			jobtag + "'.\n";
+		errmsg << "Resources may be specified on the command line or through the JD2ResourceManagerJobInputter resource-declaration file.\n";
+
+		if ( FallbackConfigurationFactory::get_instance()->has_fallback_for_resource( resource_description ) ) {
+			// i.e. this is a valid resource description, but the command line options required for this resource description
+			// were not provided.
+			errmsg << "The FallbackConfiguration for this resource description gives this error:\n";
+			FallbackConfigurationOP fallback = FallbackConfigurationFactory::get_instance()->create_fallback_configuration( resource_description );
+			errmsg << fallback->could_not_create_resource_error_message( resource_description ) << "\n";
+		} else {
+			errmsg << "This resource description does not have a FallbackConfiguration defined.\n";
+		}
+
+		errmsg << "Thrown from JD2ResourceManager::get_resource\n";
+		throw  utility::excn::EXCN_Msg_Exception( errmsg.str() );
+	}
+	return 0; // appease compiler
 }
 
 bool
@@ -512,7 +568,7 @@ bool
 JD2ResourceManager::has_option(
 	utility::options::BooleanOptionKey key
 ) const {
-	
+
 	if ( ! has_job_options( JobDistributor::get_instance()->current_job()->input_tag() )) return false;
 	JobOptionsOP job_option(
 		get_job_options(
@@ -630,20 +686,30 @@ JD2ResourceManager::has_option(
 	return job_option->has_option(key);
 }
 
-basic::resource_manager::ResourceConfiguration
-JD2ResourceManager::create_resource_configuration_from_fallback(
+basic::resource_manager::ResourceOP
+JD2ResourceManager::create_resource_from_fallback(
 	basic::resource_manager::FallbackConfigurationCOP fallback,
 	ResourceDescription const & resource_description
 )
 {
-	using basic::resource_manager::ResourceConfiguration;
-	ResourceConfiguration resource_configuration;
-	resource_configuration.resource_tag = fallback->get_resource_tag_from_description( resource_description );
-	resource_configuration.locator_tag = fallback->get_locator_tag_from_description( resource_description );
-	resource_configuration.locator_id = fallback->get_locator_id_from_description( resource_description );
-	resource_configuration.loader_type = fallback->get_loader_type_from_description( resource_description );
-	resource_configuration.resource_options_tag = fallback->get_resource_options_tag_from_description( resource_description );
-	return resource_configuration;
+	using namespace basic::resource_manager;
+
+	/// APL: Fix this.  For now, always use the FileSystemResourceLocator
+	ResourceLocatorOP locator(find_resource_locator(""));
+
+	ResourceStreamOP stream( locator->locate_resource_stream(
+		fallback->get_locator_id(resource_description) ));
+
+	ResourceLoaderOP loader(
+		ResourceLoaderFactory::get_instance()->create_resource_loader(
+			fallback->get_resource_loader( resource_description )));
+
+	ResourceOptionsOP resource_options = fallback->get_resource_options( resource_description );
+	if ( resource_options == 0 ) {
+		resource_options = loader->default_options();
+	}
+
+	return loader->create_resource( *resource_options, fallback->get_locator_id( resource_description ), stream->stream());
 }
 
 } // namespace

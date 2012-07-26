@@ -50,6 +50,57 @@ void FileDataOptions::parse_my_tag( utility::tag::TagPtr tag )
 		tag->getOption< std::string >( "treat_residues_in_these_chains_as_separate_chemical_entities", " " ));
 }
 
+std::string FileDataOptions::type() const { return "file_data_options"; }
+
+
+// accessors
+bool FileDataOptions::check_if_residues_are_termini() const { return check_if_residues_are_termini_; }
+bool FileDataOptions::exit_if_missing_heavy_atoms() const { return exit_if_missing_heavy_atoms_; }
+bool FileDataOptions::ignore_unrecognized_res() const { return ignore_unrecognized_res_; }
+bool FileDataOptions::ignore_waters() const { return ignore_waters_; }
+bool FileDataOptions::ignore_zero_occupancy() const { return ignore_zero_occupancy_; }
+bool FileDataOptions::keep_input_protonation_state() const { return keep_input_protonation_state_; }
+bool FileDataOptions::preserve_header() const { return preserve_header_; }
+bool FileDataOptions::randomize_missing_coords() const { return randomize_missing_coords_; }
+bool FileDataOptions::remember_unrecognized_res() const { return remember_unrecognized_res_; }
+bool FileDataOptions::remember_unrecognized_water() const { return remember_unrecognized_water_; }
+std::string const & FileDataOptions::chains_whose_residues_are_separate_chemical_entities() const { return chains_whose_residues_are_separate_chemical_entities_; }
+
+// mutators
+void FileDataOptions::set_check_if_residues_are_termini( bool check_if_residues_are_termini )
+{ check_if_residues_are_termini_ = check_if_residues_are_termini; }
+
+void FileDataOptions::set_exit_if_missing_heavy_atoms( bool exit_if_missing_heavy_atoms )
+{ exit_if_missing_heavy_atoms_ = exit_if_missing_heavy_atoms; }
+
+void FileDataOptions::set_ignore_unrecognized_res( bool ignore_unrecognized_res )
+{ ignore_unrecognized_res_ = ignore_unrecognized_res; }
+
+void FileDataOptions::set_ignore_waters( bool ignore_waters )
+{ ignore_waters_ = ignore_waters; }
+
+void FileDataOptions::set_ignore_zero_occupancy( bool ignore_zero_occupancy )
+{ ignore_zero_occupancy_ = ignore_zero_occupancy; }
+
+void FileDataOptions::set_keep_input_protonation_state( bool keep_input_protonation_state )
+{ keep_input_protonation_state_ = keep_input_protonation_state; }
+
+void FileDataOptions::set_preserve_header( bool preserve_header )
+{ preserve_header_ = preserve_header; }
+
+void FileDataOptions::set_randomize_missing_coords( bool randomize_missing_coords )
+{ randomize_missing_coords_ = randomize_missing_coords; }
+
+void FileDataOptions::set_remember_unrecognized_res( bool remember_unrecognized_res )
+{ remember_unrecognized_res_ = remember_unrecognized_res; }
+
+void FileDataOptions::set_remember_unrecognized_water( bool remember_unrecognized_water )
+{ remember_unrecognized_water_ = remember_unrecognized_water; }
+
+void FileDataOptions::set_chains_whose_residues_are_separate_chemical_entities( std::string const & chains_whose_residues_are_separate_chemical_entities )
+{ chains_whose_residues_are_separate_chemical_entities_ = chains_whose_residues_are_separate_chemical_entities; }
+
+
 void FileDataOptions::init_from_options()
 {
 	using namespace basic::options;

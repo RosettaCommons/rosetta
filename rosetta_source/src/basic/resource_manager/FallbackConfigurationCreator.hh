@@ -29,6 +29,12 @@
 namespace basic {
 namespace resource_manager {
 
+/// @brief Each class derived from this class will instantiate a single
+/// FallbackConfiguration and act to pair a string, a resource description,
+/// with that FallbackConfiguration.  For example "LoopFile" as a resource
+/// description will be paired by the LoopFileFallbackConfigurationCreator
+/// with the LoopFileFallbackConfiguration.  Multiple resource descriptions
+/// can be paired with a single FallbackConfiguration.
 class FallbackConfigurationCreator : public utility::pointer::ReferenceCount
 {
 public:

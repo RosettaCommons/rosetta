@@ -31,6 +31,24 @@
 namespace basic {
 namespace resource_manager {
 
+/// @brief The FallbackConfigurationFactory is a singleton factory with which
+/// FallbackConfigurationCreators may (should) be registered.  This factory
+/// serves as a mechanism for preserving command-line functionality even
+/// while switching more protocols from requesting Resources from the
+/// ResourceManager rather than reading directly from the command line.
+///
+/// When a resource with a particular resource-description string is requested
+/// from the ResourceManager, and the ResourceManager ddoes not have any instructions
+/// on how to load a resource matching that description, then the ResourceManager
+/// will then ask the FallbackConfigurationFactory for help.  The
+/// FallbackConfigurationFactory can first answer "does this resource description
+/// match any resource descriptions for which you have a registered 
+/// FallbackConfigurationCreator?" and if the answer is "yes", then the
+/// ResourceManager can request that FallbackConfigurationCreator and ask,
+/// first, if it is able to construct a resource (FallbackConfigurations
+/// often read from the command line, and it's possible that the required
+/// flags have not been put on the command line), and if so, then request data
+/// from the FallbackConfiguration needed to contruct that resource.
 class FallbackConfigurationFactory {
 private:
 	FallbackConfigurationFactory(); // singleton, private constructor
@@ -48,10 +66,17 @@ public:
 	bool
 	has_fallback_for_resource( std::string const & desc ) const;
 
+	/// @brief Only useful for unit testing.  Since factory registration happens (sometimes) at
+	/// load time, there may be no one to catch a thrown exception in the event of a name collision
+	/// two FallbackConfigurationCreators that register for the same 
+	void
+	set_throw_on_double_registration();
+
 private:
 	static FallbackConfigurationFactory * instance_;
 
 	typedef std::map< std::string, FallbackConfigurationCreatorOP > FallbackConfigurationCreatorsMap;
+	bool throw_on_double_registration_;
 	FallbackConfigurationCreatorsMap creators_map_;
 
 };

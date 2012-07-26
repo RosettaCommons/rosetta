@@ -45,6 +45,12 @@ public:
 	void
 	factory_register( ResourceLocatorCreatorOP creator );
 
+	/// @brief Only useful for unit testing.  Since factory registration happens (sometimes) at
+	/// load time, there may be no one to catch a thrown exception in the event of a name collision
+	/// between two ResourceLocatorCreators that register for the same name. 
+	void
+	set_throw_on_double_registration();
+
 private:
 
 	/// singleton has a private constructor
@@ -53,6 +59,7 @@ private:
 private:
 	static ResourceLocatorFactory * instance_;
 
+	bool throw_on_double_registration_;
 	std::map< std::string, ResourceLocatorCreatorOP > creator_map_;
 
 };

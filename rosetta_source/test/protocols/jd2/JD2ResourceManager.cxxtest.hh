@@ -21,6 +21,9 @@
 #include <protocols/loops/LoopsFileOptions.hh>
 
 // Package headers
+#include <basic/resource_manager/FallbackConfiguration.hh>
+#include <basic/resource_manager/FallbackConfigurationCreator.hh>
+#include <basic/resource_manager/FallbackConfigurationFactory.hh>
 #include <basic/resource_manager/LazyResourceManager.hh>
 #include <basic/resource_manager/ResourceManagerFactory.hh>
 #include <basic/resource_manager/ResourceOptions.hh>
@@ -38,6 +41,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/exit.hh>
 
 // Numberic headers
 #include <numeric/kdtree/WrappedPrimitive.hh>
@@ -48,15 +52,20 @@
 using namespace basic::resource_manager;
 using namespace protocols::jd2;
 
+class DummyResource : public utility::pointer::ReferenceCount
+{
+public:
+	int somevar_;
+};
 
 class DummyResourceOptions : public ResourceOptions {
 public:
 	DummyResourceOptions() : somevar_( 1 ) {}
+	DummyResourceOptions(int somevar) : somevar_( somevar ) {}
+
 	virtual
 	void
-	parse_my_tag(
-		utility::tag::TagPtr tag
-	)
+	parse_my_tag( utility::tag::TagPtr tag )
 	{
 		somevar_ = tag->getOption< int >( "somevar", 1 );
 	}
@@ -85,17 +94,23 @@ public:
 	virtual
 	utility::pointer::ReferenceCountOP
 	create_resource(
-		ResourceOptions const & ,
+		ResourceOptions const & opts,
 		std::string const & ,
 		std::istream &
 	) const {
-		return 0;
+		DummyResourceOptions const * dopts = dynamic_cast< DummyResourceOptions const * > ( &opts );
+		if ( ! dopts ) {
+			utility_exit_with_message( "Bad unit test" );
+		}
+		DummyResource * dummy_ptr = new DummyResource;
+		dummy_ptr->somevar_ = dopts->somevar_;
+		return dummy_ptr;
 	}
 
 	virtual
 	ResourceOptionsOP
 	default_options() const {
-		return 0;
+		return new DummyResourceOptions;
 	}
 
 };
@@ -113,6 +128,16 @@ public:
 
 };
 
+class DummyResourceStream : public ResourceStream
+{
+public:
+	virtual
+	std::istream &
+	stream() { return stringstream_;}
+
+	std::stringstream stringstream_;
+};
+
 class DummyResourceLocator : public ResourceLocator
 {
 public:
@@ -125,7 +150,7 @@ public:
 	locate_resource_stream(
 		std::string const &
 	) const{
-		return 0;
+		return new DummyResourceStream;
 	}
 
 	virtual
@@ -156,7 +181,61 @@ public:
 };
 
 
+class DummyResourceFallbackConfigurationBase : public FallbackConfiguration
+{
+public:
+
+	virtual
+	LoaderType
+	get_resource_loader( ResourceDescription const & ) const { return "DummyResource"; }
+
+	virtual
+	LocatorID
+	get_locator_id( ResourceDescription const & ) const { return "DummyResourceLocator"; }
+
+	virtual
+	ResourceOptionsOP
+	get_resource_options( ResourceDescription const & ) const { return new DummyResourceOptions(2); }
+
+};
+
+class DummyResourceFallbackConfiguration1 : public DummyResourceFallbackConfigurationBase
+{
+public:
+	virtual bool fallback_specified( ResourceDescription const & ) const { return true; }
+	virtual std::string could_not_create_resource_error_message( ResourceDescription const & ) const { return ""; }
+
+};
+
+class DummyResourceFallbackConfiguration2 : public DummyResourceFallbackConfigurationBase
+{
+public:
+	virtual bool fallback_specified( ResourceDescription const & ) const { return false; }
+	virtual std::string could_not_create_resource_error_message( ResourceDescription const & desc ) const { return "test error message"; }
+};
+
+
+class DummyResourceFallbackConfiguration1Creator : public FallbackConfigurationCreator
+{
+public:
+	virtual FallbackConfigurationOP create_fallback_configuration() const { return new DummyResourceFallbackConfiguration1; }
+	virtual std::string resource_description() const { return "DummyResource1"; }
+};
+
+class DummyResourceFallbackConfiguration2Creator : public FallbackConfigurationCreator
+{
+public:
+	virtual FallbackConfigurationOP create_fallback_configuration() const { return new DummyResourceFallbackConfiguration2; }
+	virtual std::string resource_description() const { return "DummyResource2"; }
+};
+
+
+
 class JD2ResourceManagerTests : public CxxTest::TestSuite {
+
+private:
+	basic::resource_manager::FallbackConfigurationRegistrator< DummyResourceFallbackConfiguration1Creator > reg_fallback_dummy1;
+	basic::resource_manager::FallbackConfigurationRegistrator< DummyResourceFallbackConfiguration2Creator > reg_fallback_dummy2;
 
 public:
 
@@ -633,8 +712,86 @@ public:
 
 	}
 
+	/// Try to instantiate a resource that has not been provided to the JD2ResourceManager
+	/// but for which a FallbackConfiguration has been registered with the FallbackConfigurationFactory.
+	/// The DummyResource1 resource description can be instantiated, illustrating a case
+	/// where the correct set of command line options have been given for a desired resource
+	void test_JD2ResourceManager_fallback_1() {
+		JD2ResourceManager * jd2rm = JD2ResourceManager::get_jd2_resource_manager_instance();
+		jd2rm->clear();
 
-//		ResourceLoaderFactory * factory = ResourceLoaderFactory::get_instance();
-//		factory->factory_register( new DummyResourceLoaderCreator );
+		// This call will fall back on the resource
+		TS_ASSERT( jd2rm->has_resource_with_description( "DummyResource1" ));
+		ResourceOP dummy;
+		try {
+			dummy = jd2rm->get_resource( "DummyResource1" );
+		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+			std::cerr  << "Raised exception " << e.msg() << std::endl;
+			TS_ASSERT( false );
+		}
+		TS_ASSERT( dummy );
+		DummyResource * dummy_downcasted = dynamic_cast< DummyResource * > ( dummy() );
+		TS_ASSERT( dummy_downcasted );
+		// make sure the ResourceOptions specified by the FallbackConfiguration was used to
+		// construct this resource
+		TS_ASSERT( dummy_downcasted->somevar_ == 2 );
+	}
+
+	/// Try to instantiate a resource that has not been provided to the JD2ResourceManager
+	/// but for which a FallbackConfiguration has been registered with the FallbackConfigurationFactory.
+	/// The DummyResource2 resource description cannot be instantiated, illustrating a case
+	/// where the correct set of command line options have NOT been given for a desired resource
+	void test_JD2ResourceManager_fallback_2() {
+		JD2ResourceManager * jd2rm = JD2ResourceManager::get_jd2_resource_manager_instance();
+		jd2rm->clear();
+
+		// This call will fall back on the DummyResourceFallbackConfiguration2
+		TS_ASSERT( ! jd2rm->has_resource_with_description( "DummyResource2" ));
+		ResourceOP dummy;
+		try {
+			dummy = jd2rm->get_resource( "DummyResource2" );
+			TS_ASSERT( false );
+		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+			std::string expected_error =
+				"JD2ResourceManager does not have a resource corresponding to the resource description 'DummyResource2.' for job 'EMPTY_JOB_use_jd2'.\n"
+				"Resources may be specified on the command line or through the JD2ResourceManagerJobInputter resource-declaration file.\n"
+				"The FallbackConfiguration for this resource description gives this error:\n"
+				"test error message\n"
+				"Thrown from JD2ResourceManager::get_resource\n";
+			TS_ASSERT( e.msg() == expected_error );
+			if ( e.msg() != expected_error ) {
+				std::cout  << e.msg() << std::endl;
+			}
+		}
+	}
+
+	/// Try to instantiate a resource that has not been provided to the JD2ResourceManager
+	/// and for which no FallbackConfiguration has been registered with the FallbackConfigurationFactory.
+	/// This illustrates a case in which the protocol has requested a resource which either
+	/// the protocol contains a typo and is requesting one resource when it means another,
+	/// or when a resource to be used must be provided through the JD2ResourceManagerJobInputter.
+	void test_JD2ResourceManager_fallback_3() {
+		JD2ResourceManager * jd2rm = JD2ResourceManager::get_jd2_resource_manager_instance();
+		jd2rm->clear();
+
+		// There is no fallback for dummy resource 3
+		TS_ASSERT( ! jd2rm->has_resource_with_description( "DummyResource3" ));
+		ResourceOP dummy;
+		try {
+			dummy = jd2rm->get_resource( "DummyResource3" );
+			TS_ASSERT( false );
+		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
+			std::string expected_error =
+				"JD2ResourceManager does not have a resource corresponding to the resource description 'DummyResource3.' for job 'EMPTY_JOB_use_jd2'.\n"
+				"Resources may be specified on the command line or through the JD2ResourceManagerJobInputter resource-declaration file.\n"
+				"This resource description does not have a FallbackConfiguration defined.\n"
+				"Thrown from JD2ResourceManager::get_resource\n";
+			TS_ASSERT( e.msg() == expected_error );
+			if ( e.msg() != expected_error ) {
+				std::cout  << e.msg() << std::endl;
+			}
+		}
+	}
+
 
 };

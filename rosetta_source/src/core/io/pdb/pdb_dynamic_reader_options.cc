@@ -41,6 +41,17 @@ void PDB_DReaderOptions::parse_my_tag( utility::tag::TagPtr tag )
 	set_obey_ENDMDL(  tag->getOption< bool >( "obey_ENDMDL", 0 ));
 }
 
+std::string PDB_DReaderOptions::type() const { return "pdb_dynamic_reader_options"; }
+
+// accessors
+bool PDB_DReaderOptions::new_chain_order() const { return new_chain_order_; }
+bool PDB_DReaderOptions::obey_ENDMDL() const { return obey_ENDMDL_; }
+
+// mutators
+void PDB_DReaderOptions::set_new_chain_order( bool new_chain_order ) { new_chain_order_ = new_chain_order; }
+void PDB_DReaderOptions::set_obey_ENDMDL( bool obey_ENDMDL ) { obey_ENDMDL_ = obey_ENDMDL; }
+
+
 void PDB_DReaderOptions::init_from_options()
 {
 	using namespace basic::options;

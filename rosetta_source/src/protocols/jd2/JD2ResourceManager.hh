@@ -197,11 +197,15 @@ public: // options access
 		utility::options::StringVectorOptionKey key ) const;
 
 private:
-	basic::resource_manager::ResourceConfiguration
-	create_resource_configuration_from_fallback(
+
+	basic::resource_manager::ResourceOP
+	create_resource_from_fallback(
 		basic::resource_manager::FallbackConfigurationCOP fallback,
 		basic::resource_manager::ResourceDescription const & resource_description
 	);
+
+private:
+	std::map< std::string, std::string > fallback_resource_descriptions_created_;
 
 };
 

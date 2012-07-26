@@ -29,6 +29,10 @@
 namespace basic {
 namespace resource_manager {
 
+/// @brief Derived classes will be used by the ResourceManagerFactory to decide which
+/// of the various ResourceManagers should be instantiated.  The ResourceManager
+/// is a singleton, but, different ResourceManagers can be instantiated in different
+/// contexts.
 class ResourceManagerCreator : public utility::pointer::ReferenceCount {
 public:
 	friend class ResourceManagerFactory;

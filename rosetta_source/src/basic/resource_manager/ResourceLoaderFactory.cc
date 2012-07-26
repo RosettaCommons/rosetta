@@ -19,6 +19,7 @@
 #include <basic/resource_manager/ResourceLoaderCreator.hh>
 
 // utility headers
+#include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
 
 
@@ -74,13 +75,21 @@ ResourceLoaderFactory::factory_register( ResourceLoaderCreatorOP creator )
 	std::string loader_type = creator->loader_type();
 	std::map< std::string, ResourceLoaderCreatorOP >::const_iterator iter = creator_map_.find( loader_type );
 	if ( iter != creator_map_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Double registration of a ResourceLoaderCreator in the ResourceLoaderFactory, named " + loader_type + ". Are there two registrators for this options object, or have you chosen a previously assigned name to a new resource option?" );
+		std::string errmsg("Double registration of a ResourceLoaderCreator in the ResourceLoaderFactory, named " + loader_type + ". Are there two registrators for this options object, or have you chosen a previously assigned name to a new resource option?" );
+		if ( throw_on_double_registration_ ) {
+			throw utility::excn::EXCN_Msg_Exception( errmsg );
+		} else {
+			utility_exit_with_message( errmsg );
+		}
 	}
 	creator_map_[ loader_type ] = creator;
 }
 
+void
+ResourceLoaderFactory::set_throw_on_double_registration() { throw_on_double_registration_ = true; }
+
 /// singleton has a private constructor
-ResourceLoaderFactory::ResourceLoaderFactory() {}
+ResourceLoaderFactory::ResourceLoaderFactory() : throw_on_double_registration_( false ) {}
 
 
 } // namespace resource_manager

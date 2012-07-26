@@ -30,28 +30,53 @@
 namespace basic {
 namespace resource_manager {
 
+/// @brief Instantiates ResourceLoaders.  Creators may be registered with
+/// the Factory at any point, though it is recommended they be registered
+/// at load time.  If two Creators are registered and they both give the
+/// same name for the ResourceLoader they say they will instantiate, then
+/// the Factory will exit with an error message.
 class ResourceLoaderFactory : public utility::pointer::ReferenceCount
 {
 public:
+	/// @brief Instantiates a resource loader ofa  given type; throws
+	/// an exception if no loader with this type has been previously
+	/// registered.
 	ResourceLoaderOP
 	create_resource_loader(
 		std::string const & loader_type
 	) const;
 
+	/// @brief Returns true if a resource loader of the given type has been
+	/// registered with the factory
 	bool
 	has_resource_loader(
 		std::string const & loader_type
 	) const;
 
+	/// @brief Return a list of all the resource loaders available
 	std::list< std::string >
 	available_resource_loaders() const;
 
+	/// @brief Singleton accessor: ask for the one global instance of the
+	/// ResourceLoaderFactory.
 	static
 	ResourceLoaderFactory *
 	get_instance();
 
+	/// @brief Register a ResourceLoaderCreator with the factory.  The factory
+	/// asks the Creator for the name of the ResourceLoader that it will create;
+	/// if another Creator has already registered with the factory that proports
+	/// to instantiate another ResourceLoader with the same name, then it will
+	/// exit with an error message, or, if set_throw_on_double_registration()
+	/// has previously been called, throw an exception.
 	void
 	factory_register( ResourceLoaderCreatorOP creator );
+
+	/// @brief Only useful for unit testing.  Since factory registration happens (sometimes) at
+	/// load time, there may be no one to catch a thrown exception in the event of a name collision
+	/// two FallbackConfigurationCreators that register for the same 
+	void
+	set_throw_on_double_registration();
 
 private:
 
@@ -61,6 +86,7 @@ private:
 private:
 	static ResourceLoaderFactory * instance_;
 
+	bool throw_on_double_registration_;
 	std::map< std::string, ResourceLoaderCreatorOP > creator_map_;
 
 };

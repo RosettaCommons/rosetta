@@ -44,7 +44,7 @@ using utility::vector1;
 static Tracer TR("basic.resource_manager.LazyResourceManager");
 
 LazyResourceManager::LazyResourceManager() {
-	resource_locators_[""] = ResourceLocatorFactory::get_instance()->create_resource_locator( "FileSystemResourceLocator", 0 );
+	add_default_resource_locator();
 }
 
 LazyResourceManager::~LazyResourceManager() {}
@@ -57,7 +57,17 @@ LazyResourceManager::clear()
 	resource_configurations_.clear();
 	resource_locators_.clear();
 	resource_options_.clear();
+
+	add_default_resource_locator();
+
 }
+
+void
+LazyResourceManager::add_default_resource_locator()
+{
+	resource_locators_[""] = ResourceLocatorFactory::get_instance()->create_resource_locator( "FileSystemResourceLocator", 0 );
+}
+
 
 ///////////////////////////////////////////////////
 ///// ResourceDescription + JobTag interface //////
@@ -296,14 +306,6 @@ LazyResourceManager::create_resources(
 	JobTag const &
 ) {
 	utility_exit_with_message("This is meant to be overwritten in the the derived class.");
-}
-
-ResourceOP
-LazyResourceManager::get_resource(
-  ResourceDescription const &
-) {
-  utility_exit_with_message("This is meant to be overwritten in the the derived class.");
-  return 0; // appease compiler
 }
 
 bool

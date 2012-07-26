@@ -14,21 +14,23 @@
 #include <protocols/loops/LoopsFileFallbackConfiguration.hh>
 #include <protocols/loops/LoopsFileFallbackConfigurationCreator.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
 
 // Platform Headers
 #include <core/types.hh>
 #include <utility/vector1.hh>
 
-//utility headers
-#include <utility/excn/Exceptions.hh>
-#include <utility/file/FileName.hh>
-#include <utility/file/PathName.hh>
+// basic headers
+#include <basic/resource_manager/ResourceOptions.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/loops.OptionKeys.gen.hh>
 
 // numeric headers
 #include <numeric/random/random.hh>
 
+//utility headers
+#include <utility/excn/Exceptions.hh>
+#include <utility/file/FileName.hh>
+#include <utility/file/PathName.hh>
 
 //C++ Headers
 #include <string>
@@ -47,53 +49,40 @@ using basic::resource_manager::ResourceOptionsTag;
 
 static numeric::random::RandomGenerator RG(1337);
 
-LoaderType LoopsFileFallbackConfiguration::loader_type_;
-LocatorID LoopsFileFallbackConfiguration::locator_id_;
-LocatorTag LoopsFileFallbackConfiguration::locator_tag_;
-ResourceTag LoopsFileFallbackConfiguration::resource_tag_;
-ResourceOptionsTag LoopsFileFallbackConfiguration::resource_options_tag_;
-
 
 LoopsFileFallbackConfiguration::LoopsFileFallbackConfiguration()
-{
-	loader_type_ = "LoopsFile";
-	locator_id_ = get_loops_filename_from_options();
-	locator_tag_ = "";
-	resource_tag_ = "LoopsFile_FallbackConfiguration";
-	resource_options_tag_ = "";
+{}
 
+bool
+LoopsFileFallbackConfiguration::fallback_specified( ResourceDescription const & ) const
+{
+	return basic::options::option[ basic::options::OptionKeys::loops::loop_file ].user();
 }
 
-ResourceTag const &
-LoopsFileFallbackConfiguration::get_resource_tag_from_description( ResourceDescription const & ) const
+basic::resource_manager::LoaderType
+LoopsFileFallbackConfiguration::get_resource_loader( ResourceDescription const & ) const
 {
-	return resource_tag_;
+	return "LoopsFile";
 }
 
-LocatorTag const &
-LoopsFileFallbackConfiguration::get_locator_tag_from_description( ResourceDescription const & ) const
+basic::resource_manager::LocatorID
+LoopsFileFallbackConfiguration::get_locator_id( ResourceDescription const & ) const
 {
-	return locator_tag_;
+	return get_loops_filename_from_options();
 }
 
-LocatorID const &
-LoopsFileFallbackConfiguration::get_locator_id_from_description( ResourceDescription const &) const
+basic::resource_manager::ResourceOptionsOP
+LoopsFileFallbackConfiguration::get_resource_options( ResourceDescription const & ) const
 {
-	return locator_id_;
+	// use the default loops file options.
+	return 0;
 }
 
-LoaderType const &
-LoopsFileFallbackConfiguration::get_loader_type_from_description( ResourceDescription const & ) const
+std::string
+LoopsFileFallbackConfiguration::could_not_create_resource_error_message( ResourceDescription const & ) const
 {
-	return loader_type_;
+	return "The LoopsFileFallbackConfiguration requires that the flag '-loops:loop_file' be set on the command line.";
 }
-
-ResourceOptionsTag const &
-LoopsFileFallbackConfiguration::get_resource_options_tag_from_description( ResourceDescription const & ) const
-{
-	return resource_options_tag_;
-}
-	
 
 basic::resource_manager::LocatorID
 LoopsFileFallbackConfiguration::get_loops_filename_from_options() const

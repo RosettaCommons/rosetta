@@ -30,13 +30,19 @@
 namespace basic {
 namespace resource_manager {
 
+/// @brief The ResourceLoader is responsible for instantiating a Resource object
+/// and initializing it.  In order to do so, the ResourceLoader is given an input
+/// stream and a ResourceOptions object.  Note that the ResourceOptions object has
+/// to be of the right type, or the ResourceLoader will not be able to read the
+/// data that it needs out of it.  If the ResourceLoader is given the wrong kind
+/// of ResourceOptions object, it will throw an exception.
 class ResourceLoader : public utility::pointer::ReferenceCount
 {
 public:
 	virtual ~ResourceLoader();
 
 	/// @brief Create a resource, held in an owning pointer, of any type
-	/// which will be stored and whose lifetime will be governed by the\
+	/// which will be stored and whose lifetime will be governed by the
 	/// ResourceManager
 	virtual
 	ResourceOP

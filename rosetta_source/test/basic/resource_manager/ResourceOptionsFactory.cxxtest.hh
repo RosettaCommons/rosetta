@@ -74,6 +74,7 @@ public:
 		utility::tag::TagPtr tag = utility::tag::Tag::create( doptstream );
 
 		ResourceOptionsFactory * factory = ResourceOptionsFactory::get_instance();
+		factory->set_throw_on_double_registration();
 		factory->factory_register( new DummyResourceOptionsCreator );
 		ResourceOptionsOP resource = factory->create_resource_options( "DummyResourceOptions", tag );
 		TS_ASSERT( resource() ); // make sure we got back a non-null pointer
@@ -84,6 +85,7 @@ public:
 	void test_register_one_creator_twice_with_ResourceOptionsFactory() {
 		try {
 			ResourceOptionsFactory * factory = ResourceOptionsFactory::get_instance();
+			factory->set_throw_on_double_registration();
 			factory->factory_register( new DummyResourceOptionsCreator );
 			TS_ASSERT( false );
 		} catch ( utility::excn::EXCN_Msg_Exception & e ) {

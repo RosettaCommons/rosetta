@@ -39,6 +39,8 @@ ImportPoseOptions::ImportPoseOptions() { init_from_options(); }
 
 ImportPoseOptions::~ImportPoseOptions() {}
 
+std::string ImportPoseOptions::type() const { return "ImportPoseOptions"; }
+
 void ImportPoseOptions::parse_my_tag( utility::tag::TagPtr tag )
 {
 	PDB_DReaderOptions::parse_my_tag( tag );
@@ -52,6 +54,29 @@ void ImportPoseOptions::parse_my_tag( utility::tag::TagPtr tag )
 	set_skip_set_reasonable_fold_tree_( tag->getOption< bool >( "skip_set_reasonable_fold_tree", 0 ));
 	set_residue_type_set( tag->getOption< std::string >( "residue_type_set", "fa_standard" ));
 }
+
+// accessors
+bool ImportPoseOptions::centroid() const { return centroid_; }
+bool ImportPoseOptions::fold_tree_io() const { return fold_tree_io_; }
+bool ImportPoseOptions::no_optH() const { return no_optH_; }
+bool ImportPoseOptions::pack_missing_sidechains() const { return pack_missing_sidechains_; }
+bool ImportPoseOptions::read_fold_tree() const { return read_fold_tree_; }
+bool ImportPoseOptions::rna() const { return rna_; }
+bool ImportPoseOptions::skip_set_reasonable_fold_tree() const { return skip_set_reasonable_fold_tree_; }
+
+std::string const & ImportPoseOptions::residue_type_set() const { return residue_type_set_; }
+
+// mutators
+void ImportPoseOptions::set_centroid( bool centroid ) { centroid_ = centroid; }
+void ImportPoseOptions::set_fold_tree_io( bool fold_tree_io ) { fold_tree_io_ = fold_tree_io; }
+void ImportPoseOptions::set_no_optH( bool no_optH ) { no_optH_ = no_optH; }
+void ImportPoseOptions::set_pack_missing_sidechains( bool pack_missing_sidechains ) { pack_missing_sidechains_ = pack_missing_sidechains; }
+void ImportPoseOptions::set_read_fold_tree( bool read_fold_tree ) { read_fold_tree_ = read_fold_tree; }
+void ImportPoseOptions::set_rna( bool rna ) { rna_ = rna; }
+void ImportPoseOptions::set_skip_set_reasonable_fold_tree_( bool skip_set_reasonable_fold_tree ) { skip_set_reasonable_fold_tree_ = skip_set_reasonable_fold_tree; }
+
+void ImportPoseOptions::set_residue_type_set( std::string const & residue_type_set ) { residue_type_set_ = residue_type_set; }
+
 
 void ImportPoseOptions::init_from_options()
 {

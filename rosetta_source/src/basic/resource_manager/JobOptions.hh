@@ -44,6 +44,11 @@
 namespace basic {
 namespace resource_manager {
 
+/// @brief This class will hold job-specific options.  It can be used
+/// by a ResourceManager to hold options for a particular job, so that
+/// the ResourceManager can retrieve those options as needed.
+/// It is basically a bag for 12 OptionKey/OptionKeyValue maps, one
+/// for every kind of OptionKey.
 class JobOptions : public utility::pointer::ReferenceCount {
 
 public:

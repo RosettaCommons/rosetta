@@ -30,6 +30,11 @@
 namespace basic {
 namespace resource_manager {
 
+/// @brief A factory class for managing the instantiation of the singleton
+/// ResourceManager: only one of the various derived classes will be instantiated.
+/// Currently, it asks for the JD2ResourceManager; in the future, this should be
+/// fixed so that it reads from the options system to figure out which ResourceManager
+/// to instantiate.
 class ResourceManagerFactory {
 private:
 	ResourceManagerFactory(); // singleton, private constructor

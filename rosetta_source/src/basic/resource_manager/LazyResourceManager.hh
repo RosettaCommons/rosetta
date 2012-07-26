@@ -29,6 +29,8 @@
 namespace basic {
 namespace resource_manager {
 
+/// @brief The set of strings necessary to describe how a resource
+/// should be constructed.
 struct ResourceConfiguration {
 	ResourceTag resource_tag;
 	LocatorTag locator_tag;
@@ -37,9 +39,20 @@ struct ResourceConfiguration {
 	ResourceOptionsTag resource_options_tag;
 };
 
+/// @brief This is a mule class, meant to be derived from.  It's job
+/// is to hold ResourceOptions and ResourceLocator objects by name (tag)
+/// as well as the ResourceConfigurations which serve as complete
+/// descriptions for how to construct a Resource.  It should be thought
+/// of as a mule by classes that derive from it:  it won't do anything
+/// on its own, but it can be directed to do things.  The point of the
+/// class is to ake it easier to create ResourceManagers besides the
+/// JD2ResourceManager, which, at the time of this documentation,
+/// is the only class that derives from the LazyResourceManager.
 class LazyResourceManager : public ResourceManager
 {
 protected:
+	/// @brief Singleton construction scheme; must be protected (and not private)
+	/// so that derived classes can call this constructor.
 	LazyResourceManager();
 
 public:
@@ -47,12 +60,14 @@ public:
 
 
 public: // work with resources by ResourceDescription + JobTag
+
 	virtual
 	ResourceOP
 	create_resource_by_job_tag(
 		ResourceDescription const & resource_description,
 		JobTag const & job_tag) const;
 
+public:
 	virtual
 	void
 	add_resource_tag_by_job_tag(
@@ -149,6 +164,9 @@ public: // helper functions relating to resource configuration and creation
 	create_resource(
 		ResourceTag const & resource_tag) const;
 
+private:
+	void add_default_resource_locator();
+
 public: // Interface to for creating and accessing resources
 
 	/// @brief Create all the resources for a particular job; this should be implemented by the derived
@@ -157,12 +175,11 @@ public: // Interface to for creating and accessing resources
 	void
 	create_resources( JobTag const & );
 
-	///@brief called by the protocol, return initialized resource; this should be implemented by the
-	/// derived class.  The implementation in this class calls utility::exit
-	virtual
-	ResourceOP
-	get_resource( ResourceDescription const & );
+	//virtual
+	//ResourceOP
+	//get_resource( ResourceDescription const & );
 
+public:
 	/// @brief has a ResourceConfiguration been provided to the LazyResourceManager for a Resource with a particular ResourceTag?
 	bool has_resource_configuration( ResourceTag const & resource_tag ) const;
 	/// @brief has a ResourceLocator object been provided to the LazyResourceManager which has a particular LocatorTag?
@@ -172,23 +189,19 @@ public: // Interface to for creating and accessing resources
 
 private: // Data members
 
-	typedef std::map< std::pair< ResourceDescription, JobTag >,	ResourceTag >
-		ResourceTagsMap;
+	typedef std::map< std::pair< ResourceDescription, JobTag >,	ResourceTag > ResourceTagsMap;
 	ResourceTagsMap resource_tags_;
 
-	typedef std::map< ResourceTag, JobOptionsOP >
-		JobOptionsMap;
+	typedef std::map< ResourceTag, JobOptionsOP > JobOptionsMap;
 	JobOptionsMap job_options_;
 
-	typedef std::map< ResourceTag, ResourceConfiguration >
-		ResourceConfigurationMap;
+	typedef std::map< ResourceTag, ResourceConfiguration > ResourceConfigurationMap;
 	ResourceConfigurationMap resource_configurations_;
 
 	typedef std::map< LocatorTag, ResourceLocatorOP > ResourceLocatorsMap;
 	ResourceLocatorsMap resource_locators_;
 
-	typedef std::map< ResourceOptionsTag, ResourceOptionsOP >
-		ResourceOptionsMap;
+	typedef std::map< ResourceOptionsTag, ResourceOptionsOP > ResourceOptionsMap;
 	ResourceOptionsMap resource_options_;
 
 };

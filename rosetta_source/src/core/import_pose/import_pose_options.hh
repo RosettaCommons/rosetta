@@ -28,6 +28,9 @@
 namespace core {
 namespace import_pose {
 
+/// @brief This class contains all of the data which is used in
+/// the process of reading a PDB into a Pose.  There is actually
+/// a substantial amount of data!
 class ImportPoseOptions : public io::pdb::PDB_DReaderOptions
 {
 public:
@@ -39,29 +42,27 @@ public:
 	void parse_my_tag( utility::tag::TagPtr tag );
 	
 	virtual
-	std::string type() const { return "import_pose_options"; }
+	std::string type() const;
 	
 	// accessors
-	bool centroid() const { return centroid_; }
-	bool fold_tree_io() const { return fold_tree_io_; }
-	bool no_optH() const { return no_optH_; }
-	bool pack_missing_sidechains() const { return pack_missing_sidechains_; }
-	bool read_fold_tree() const { return read_fold_tree_; }
-	bool rna() const { return rna_; }
-	bool skip_set_reasonable_fold_tree() const { return skip_set_reasonable_fold_tree_; }
-	
-	std::string const & residue_type_set() const { return residue_type_set_; }
+	bool centroid() const;
+	bool fold_tree_io() const;
+	bool no_optH() const;
+	bool pack_missing_sidechains() const;
+	bool read_fold_tree() const;
+	bool rna() const;
+	bool skip_set_reasonable_fold_tree() const;
+	std::string const & residue_type_set() const;
 
 	// mutators
-	void set_centroid( bool centroid ) { centroid_ = centroid; }
-	void set_fold_tree_io( bool fold_tree_io ) { fold_tree_io_ = fold_tree_io; }
-	void set_no_optH( bool no_optH ) { no_optH_ = no_optH; }
-	void set_pack_missing_sidechains( bool pack_missing_sidechains ) { pack_missing_sidechains_ = pack_missing_sidechains; }
-	void set_read_fold_tree( bool read_fold_tree ) { read_fold_tree_ = read_fold_tree; }
-	void set_rna( bool rna ) { rna_ = rna; }
-	void set_skip_set_reasonable_fold_tree_( bool skip_set_reasonable_fold_tree ) { skip_set_reasonable_fold_tree_ = skip_set_reasonable_fold_tree; }
-	
-	void set_residue_type_set( std::string const & residue_type_set ) { residue_type_set_ = residue_type_set; }
+	void set_centroid( bool centroid );
+	void set_fold_tree_io( bool fold_tree_io );
+	void set_no_optH( bool no_optH );
+	void set_pack_missing_sidechains( bool pack_missing_sidechains );
+	void set_read_fold_tree( bool read_fold_tree );
+	void set_rna( bool rna );
+	void set_skip_set_reasonable_fold_tree_( bool skip_set_reasonable_fold_tree );
+	void set_residue_type_set( std::string const & residue_type_set );
 
 private:
 	/// @brief Assigns user specified values to primitive members using command line options

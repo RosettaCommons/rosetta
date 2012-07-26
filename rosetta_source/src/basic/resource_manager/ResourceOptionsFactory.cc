@@ -63,12 +63,22 @@ ResourceOptionsFactory::factory_register( ResourceOptionsCreatorOP creator )
 	std::string options_type = creator->options_type();
 	std::map< std::string, ResourceOptionsCreatorOP >::const_iterator iter = creator_map_.find( options_type );
 	if ( iter != creator_map_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Double registration of a ResourceOptionsCreator in the ResourceOptionsFactory, named " + options_type + ". Are there two registrators for this options object, or have you chosen a previously assigned name to a new resource option?" );
+		std::string errmsg( "Double registration of a ResourceOptionsCreator in the ResourceOptionsFactory, named " + options_type + ". Are there two registrators for this options object, or have you chosen a previously assigned name to a new resource option?" );
+		if ( throw_on_double_registration_ ) {
+			throw utility::excn::EXCN_Msg_Exception( errmsg );
+		} else {
+			utility_exit_with_message( errmsg );
+		}
 	}
 	creator_map_[ options_type ] = creator;
 }
 
-ResourceOptionsFactory::ResourceOptionsFactory() {}
+void
+ResourceOptionsFactory::set_throw_on_double_registration() { throw_on_double_registration_ = true; }
+
+ResourceOptionsFactory::ResourceOptionsFactory() :
+	throw_on_double_registration_( false )
+{}
 
 
 } // namespace resource_manager

@@ -28,17 +28,26 @@
 namespace basic {
 namespace resource_manager {
 
+/// @brief This class is responsible for describing the data requried
+/// for instanting a particular resource, except for the data stream
+/// (i.e. the file) that contains the data for the resource.  For example,
+/// when reading in a PDB file, there are 30 different options for
+/// how that PDB file should be turned into a Pose.  That data is held in
+/// a ImportPoseOptions object.
 class ResourceOptions : public utility::pointer::ReferenceCount
 {
 public:
 	ResourceOptions();
 
+	/// @brief Assign a name to an instance of the resource options object.
+	/// Usefull for identifying flaws in input files defining ResourceOptions.
 	ResourceOptions(
 		std::string const & name
 	);
 
 	virtual ~ResourceOptions();
 
+	/// @brief Initialize from the recursive "tag" structure.
 	virtual
 	void
 	parse_my_tag(
@@ -46,16 +55,17 @@ public:
 	) = 0;
 
 	/// @brief The class name for a particular ResourceOptions instance.
-	/// This function allows for better error message delivery
+	/// This function allows for better error message delivery.
 	virtual
 	std::string
 	type() const = 0;
 
 	/// @brief A name given to a particular ResourceOptions instance.
-	/// This function allows for better error message delivery
+	/// This function allows for better error message delivery.
 	std::string
 	name() const;
 
+	/// @brief Set the name for a given ResourceOption object
 	void name( std::string const & setting );
 
 private:

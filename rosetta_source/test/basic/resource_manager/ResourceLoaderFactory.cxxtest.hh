@@ -79,6 +79,7 @@ public:
 	void test_register_one_creator_with_ResourceLoaderFactory() {
 
 		ResourceLoaderFactory * factory = ResourceLoaderFactory::get_instance();
+		factory->set_throw_on_double_registration();
 		factory->factory_register( new DummyResourceLoaderCreator );
 		ResourceLoaderOP loader = factory->create_resource_loader( "DummyResource" );
 		TS_ASSERT( loader() ); // make sure we got back a non-null pointer
@@ -89,6 +90,7 @@ public:
 	void test_register_one_creator_twice_with_ResourceLoaderFactory() {
 		try {
 			ResourceLoaderFactory * factory = ResourceLoaderFactory::get_instance();
+			factory->set_throw_on_double_registration();
 			factory->factory_register( new DummyResourceLoaderCreator );
 			TS_ASSERT( false );
 		} catch ( utility::excn::EXCN_Msg_Exception & e ) {

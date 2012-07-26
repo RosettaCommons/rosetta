@@ -19,6 +19,7 @@
 #include <basic/resource_manager/FallbackConfigurationCreator.hh>
 
 // utility headers
+#include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
 
 namespace basic {
@@ -26,7 +27,9 @@ namespace resource_manager {
 
 FallbackConfigurationFactory * FallbackConfigurationFactory::instance_( 0 );
 
-FallbackConfigurationFactory::FallbackConfigurationFactory() {}
+FallbackConfigurationFactory::FallbackConfigurationFactory() :
+	throw_on_double_registration_( false )
+{}
 
 FallbackConfigurationOP
 FallbackConfigurationFactory::create_fallback_configuration( std::string const & resource_description	) const
@@ -52,10 +55,19 @@ FallbackConfigurationFactory::factory_register( FallbackConfigurationCreatorOP c
 	std::string resource_description = creator->resource_description();
 	FallbackConfigurationCreatorsMap::const_iterator iter = creators_map_.find( resource_description );
 	if ( iter != creators_map_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Double registration of a FallbackConfigurationCreator in the FallbackConfigurationFactory, named " + resource_description + ". Are there two registrators for this FallbackConfigurationCreator, or have you chosen a previously assigned name to a new FallbackConfigurationCreator?" );
+		std::string errmsg( "Double registration of a FallbackConfigurationCreator in the FallbackConfigurationFactory, named " + resource_description + ". Are there two registrators for this FallbackConfigurationCreator, or have you chosen a previously assigned name to a new FallbackConfigurationCreator?" );
+
+		if ( throw_on_double_registration_ ) {
+			throw utility::excn::EXCN_Msg_Exception( errmsg );
+		} else {
+			utility_exit_with_message( errmsg );
+		}
 	}
 	creators_map_[ resource_description ] = creator;
 }
+
+void
+FallbackConfigurationFactory::set_throw_on_double_registration() { throw_on_double_registration_ = true; }
 
 bool
 FallbackConfigurationFactory::has_fallback_for_resource( std::string const & desc ) const

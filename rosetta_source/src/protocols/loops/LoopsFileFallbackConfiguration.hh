@@ -22,45 +22,35 @@ namespace protocols {
 namespace loops {
 
 class LoopsFileFallbackConfiguration : public basic::resource_manager::FallbackConfiguration {
-
+public:
+	typedef basic::resource_manager::ResourceDescription ResourceDescription;
 public:
 	LoopsFileFallbackConfiguration();
-	
+
 	virtual
-	basic::resource_manager::ResourceTag const & get_resource_tag_from_description(
-		basic::resource_manager::ResourceDescription const & desc
-	) const;
-	
+	bool
+	fallback_specified( ResourceDescription const & desc ) const;
+
 	virtual
-	basic::resource_manager::LocatorTag const & get_locator_tag_from_description(
-		basic::resource_manager::ResourceDescription const & desc
-	) const;
-	
+	basic::resource_manager::LoaderType
+	get_resource_loader( ResourceDescription const & desc ) const;
+
 	virtual
-	basic::resource_manager::LocatorID const & get_locator_id_from_description(
-		basic::resource_manager::ResourceDescription const & desc
-	) const;
-	
+	basic::resource_manager::LocatorID
+	get_locator_id( ResourceDescription const & desc ) const;
+
 	virtual
-	basic::resource_manager::LoaderType const & get_loader_type_from_description(
-		basic::resource_manager::ResourceDescription const & desc
-	) const;
-	
+	basic::resource_manager::ResourceOptionsOP
+	get_resource_options( ResourceDescription const & desc ) const;
+
 	virtual
-	basic::resource_manager::ResourceOptionsTag const & get_resource_options_tag_from_description(
-		basic::resource_manager::ResourceDescription const & desc
-	) const;
+	std::string
+	could_not_create_resource_error_message( ResourceDescription const & desc ) const;
 
 private:
-	static basic::resource_manager::LoaderType loader_type_;
-	static basic::resource_manager::LocatorID locator_id_;
-	static basic::resource_manager::LocatorTag locator_tag_;
-	static basic::resource_manager::ResourceTag resource_tag_;
-	static basic::resource_manager::ResourceOptionsTag resource_options_tag_;
-	
-private:
+
 	basic::resource_manager::LocatorID get_loops_filename_from_options() const;
-	
+
 };
 
 } // namespace loops

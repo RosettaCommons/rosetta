@@ -40,15 +40,15 @@ public:
 	void parse_my_tag( utility::tag::TagPtr tag );
 	
 	virtual
-	std::string type() const { return "pdb_dynamic_reader_options"; }
+	std::string type() const;
 	
 	// accessors
-	bool new_chain_order() const { return new_chain_order_; }
-	bool obey_ENDMDL() const { return obey_ENDMDL_; }
+	bool new_chain_order() const;
+	bool obey_ENDMDL() const;
 	
 	// mutators
-	void set_new_chain_order( bool new_chain_order ) { new_chain_order_ = new_chain_order; }
-	void set_obey_ENDMDL( bool obey_ENDMDL ) { obey_ENDMDL_ = obey_ENDMDL; }
+	void set_new_chain_order( bool new_chain_order );
+	void set_obey_ENDMDL( bool obey_ENDMDL );
 
 private:
 	/// @brief Assigns user specified values to primitive members using command line options

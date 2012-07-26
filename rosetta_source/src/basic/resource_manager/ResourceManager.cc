@@ -85,6 +85,13 @@ ResourceManager::find_resource(
 }
 
 void
+ResourceManager::clear()
+{
+	resources_.clear();
+}
+
+
+void
 ResourceManager::free_resource(
 	ResourceTag const & resource_tag
 ) {

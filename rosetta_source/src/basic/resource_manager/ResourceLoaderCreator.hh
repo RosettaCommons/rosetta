@@ -28,16 +28,21 @@
 namespace basic {
 namespace resource_manager {
 
+/// @brief Instantiates a ResourceLoader as part of the ResourceLoaderFactory scheme.
+/// Derived classes should be registered with the ResourceLoaderFactory in one of
+/// the library init.cc files with a ResourceLoaderRegistrator
 class ResourceLoaderCreator : public utility::pointer::ReferenceCount
 {
 public:
 	virtual
 	~ResourceLoaderCreator();
 
+	/// @brief Instantiate a ResourceLoader
 	virtual
 	ResourceLoaderOP
 	create_resource_loader() const = 0;
 
+	/// @brief Give the name of the ResourceLoader that this Creator will instantiate.
 	virtual
 	std::string loader_type() const = 0;
 

@@ -58,13 +58,22 @@ ResourceLocatorFactory::factory_register( ResourceLocatorCreatorOP creator )
 	std::string locator_type = creator->locator_type();
 	std::map< std::string, ResourceLocatorCreatorOP >::const_iterator iter = creator_map_.find( locator_type );
 	if ( iter != creator_map_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Double registration of a ResourceLocatorCreator in the ResourceLocatorFactory, named " + locator_type + ". Are there two registrators for this options object, or have you chosen a previously assigned name to a new resource option?" );
+		std::string errmsg( "Double registration of a ResourceLocatorCreator in the ResourceLocatorFactory, named " + locator_type + ". Are there two registrators for this options object, or have you chosen a previously assigned name to a new resource option?" );
+		if ( throw_on_double_registration_ ) {
+			throw utility::excn::EXCN_Msg_Exception( errmsg );
+		} else {
+			utility_exit_with_message( errmsg );
+		}
 	}
 	creator_map_[ locator_type ] = creator;
 }
 
+void
+ResourceLocatorFactory::set_throw_on_double_registration() { throw_on_double_registration_ = true; }
+
+
 /// singleton has a private constructor
-ResourceLocatorFactory::ResourceLocatorFactory() {}
+ResourceLocatorFactory::ResourceLocatorFactory() : throw_on_double_registration_( false ) {}
 
 
 } // namespace resource_manager
