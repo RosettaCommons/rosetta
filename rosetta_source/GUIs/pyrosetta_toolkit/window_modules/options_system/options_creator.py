@@ -41,8 +41,8 @@ class Option_System_Manager:
         self.common_options = [
             'Custom:',
             '-dun10',
-            '-dun08',
             '-ex2',
+            '-use_bicubic_interpolation',
             '-ignore_unrecognized_res',
             '-out:file:silent'
         ]
