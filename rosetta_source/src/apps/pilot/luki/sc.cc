@@ -23,13 +23,6 @@
 
 //utilities
 #include <devel/init.hh>
-
-// option key includes
-// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
-
-// option key includes
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
-
 #include <utility/vector1.hh>
 
 
@@ -44,9 +37,6 @@ basic::options::RealOptionKey const rp("sc:rp");
 basic::options::RealOptionKey const sep("sc:sec");
 basic::options::RealOptionKey const trim("sc:trim");
 basic::options::RealOptionKey const weight("sc:weight");
-#ifdef USECUDA
-basic::options::RealOptionKey const gpu("sc:gpu");
-#endif
 }}}}//basic::options::OptionKeys::sc
 
 using namespace std;
@@ -73,9 +63,6 @@ main( int argc, char * argv [] )
 	option.add(basic::options::OptionKeys::sc::verbose, "Show verbose output").def(false);
 	option.add(basic::options::OptionKeys::sc::weight, "Weight factor using in sc calculation").def(0.5);
 
-#ifdef USECUDA
-	option.add(basic::options::OptionKeys::sc::gpu, "Define GPU to use (0 to disable)").def(-1);
-#endif
 	// initialize core
 	devel::init(argc, argv);
 
@@ -98,11 +85,8 @@ main( int argc, char * argv [] )
 	std::cout << "                  -sc:rp <float>                        Probe radius (A)" << std::endl;
 	std::cout << "                  -sc:sep <float>                       Interface separation threshold (A)" << std::endl;
 	std::cout << "                  -sc:weight <float>                    Distance weighting factor" << std::endl;
-#ifdef USECUDA
-        std::cout << "                  -sc:gpu <n>                           Use GPU #n" << std::endl;
-#endif
 	std::cout << " Example: " << std::endl;
-	std::cout << "   sc -database ~/minirosetta_database -sc:verbose -s 2g38.pdb" << std::endl;
+	std::cout << "   sc -database ~/rosetta_database -sc:verbose -s 2g38.pdb" << std::endl;
 	std::cout << std::endl;
 	std::cout << std::endl;
 	std::cout << std::endl;
@@ -125,10 +109,6 @@ main( int argc, char * argv [] )
 	sc.settings.band = option[ basic::options::OptionKeys::sc::trim ];
 	sc.settings.verbose = option[ basic::options::OptionKeys::sc::verbose ];
 	sc.settings.weight = option[ basic::options::OptionKeys::sc::weight ];
-
-#ifdef USECUDA
-	sc.settings.gpu = option[ basic::options::OptionKeys::sc::gpu ];
-#endif
 
 	if(option[ basic::options::OptionKeys::sc::quick ])
 		sc.settings.density = 5.0;

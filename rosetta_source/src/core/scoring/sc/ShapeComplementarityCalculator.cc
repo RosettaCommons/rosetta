@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file     core/scoring/sc/ShapeComplementarityCalculator.fwd.hh
+/// @file     core/scoring/sc/ShapeComplementarityCalculator.cc
 /// @brief    Headers for the Shape Complementarity Calculator
 /// @detailed Lawrence & Coleman shape complementarity calculator (based on CCP4's sc)
 /// @author   Luki Goldschmidt <luki@mbi.ucla.edu>
@@ -17,10 +17,10 @@
 /// Copyright Michael Lawrence, Biomolecular Research Institute
 /// 343 Royal Parade Parkville Victoria Australia
 ///
-/// This version contains support for GPU-acceleration by CUDA-capable devices,
-/// which provides a 10-25x speed up over the CPU-only code using a regular desktop
-/// video card with 4 processors (32 cores). Define USECUDA and compile with
-/// NVIDIA's nvcc. Also see ShapeComplementarityCalculator.hh.
+/// This version contains support for GPU-acceleration OpenCL-
+/// capable devices, which provides a 10-25x speed up over the CPU-only code
+/// using a regular desktop video card with 4 processors (32 cores).
+/// Build with scons option extras=opencl to enable GPU support.
 
 #ifndef INCLUDED_core_scoring_sc_ShapeComplementarityCalculator_cc
 #define INCLUDED_core_scoring_sc_ShapeComplementarityCalculator_cc
@@ -28,9 +28,9 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Jump.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.functions.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.fwd.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator_Private.hh>
@@ -38,10 +38,11 @@
 #include <numeric/NumericTraits.hh>
 
 // Utility headers
-#include <basic/Tracer.hh>
-#include <utility/io/izstream.hh>
-#include <basic/database/open.hh>
+#include <utility/vector1.hh>
 #include <utility/exit.hh>
+#include <utility/io/izstream.hh>
+#include <basic/Tracer.hh>
+#include <basic/database/open.hh>
 
 // C headers
 #include <stdio.h>
@@ -53,26 +54,10 @@
 #include <vector>
 #include <map>
 #include <string>
-// AUTO-REMOVED #include <math.h>
-
-#include <utility/vector1.hh>
-
-//Auto Headers
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
-
-
-
-// Cuda headers
-#ifdef USECUDA
-#include <cuda.h>
-#endif
-
 
 static basic::Tracer tr("core.scoring.sc.ShapeComplementarityCalculator");
 
 using namespace core;
-using namespace core::scoring::sc;
 
 namespace core {
 namespace scoring {
@@ -102,9 +87,6 @@ ShapeComplementarityCalculator::ShapeComplementarityCalculator()
 	settings.binwidth_norm = 0.02;
 
 	run_.results.valid = 0;
-#ifdef USECUDA
-	settings.gpu = -1;
-#endif
 }
 
 /// @begin ShapeComplementarityCalculator::Init()
@@ -222,8 +204,8 @@ int ShapeComplementarityCalculator::Calc(core::pose::Pose const & pose, core::Si
 
 int ShapeComplementarityCalculator::Calc()
 {
-#ifdef USECUDA
-	GPUInit();
+#ifdef USEOPENCL
+	gpuInit();
 #endif
 
 	try {
@@ -1344,9 +1326,9 @@ ShapeComplementarityCalculator::ScValue ShapeComplementarityCalculator::TrimPeri
 	if(sdots.empty())
 		return 0.0;
 
-#ifdef USECUDA
+#ifdef USEOPENCL
 	if(settings.gpu) {
-		area = CudaTrimPeripheralBand(sdots, trimmed_dots);
+		area = gpuTrimPeripheralBand(sdots, trimmed_dots);
 	} else {
 #endif
 
@@ -1362,7 +1344,7 @@ ShapeComplementarityCalculator::ScValue ShapeComplementarityCalculator::TrimPeri
 		}
 	}
 
-#ifdef USECUDA
+#ifdef USEOPENCL
 	}
 #endif
 
@@ -1418,12 +1400,12 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 		total += (*idot)->area;
 	}
 
-#ifdef USECUDA
+#ifdef USEOPENCL
 	std::vector<DOT const*> neighbors;
 	std::vector<DOT const*>::const_iterator iNeighbor;
 
 	if(settings.gpu) {
-		CudaFindClosestNeighbors(my_dots, their_dots, neighbors);
+		gpuFindClosestNeighbors(my_dots, their_dots, neighbors);
 		iNeighbor = neighbors.begin();
 	}
 #endif
@@ -1435,7 +1417,7 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 		ScValue distmin, r;
 		DOT const *neighbor = NULL;
 
-#ifdef USECUDA
+#ifdef USEOPENCL
 		if(settings.gpu)
 			neighbor = *iNeighbor++;
 		else
@@ -1572,15 +1554,17 @@ DOT const *ShapeComplementarityCalculator::CalcNeighborDistanceFindClosestNeighb
 	return neighbor;
 }
 
-#ifdef USECUDA
+////////////////////////////////////////////////////////////////////////
+// GPU SUPPORT FUNCTIONS
 
-#define cudaAssert(err) cudaThrowException(err, __FILE__, __LINE__)
-#define UPPER_MULTIPLE(n,d) (((n)%(d)) ? (((n)/(d)+1)*(d)) : (n))
+#ifdef USEOPENCL
 
-void ShapeComplementarityCalculator::cudaThrowException(int err, char const *fn, int line)
+#define gpuAssert(err) gpuThrowException(err, __FILE__, __LINE__)
+
+void ShapeComplementarityCalculator::gpuThrowException(int err, char const *fn, int line)
 {
-	if (cudaSuccess != err)
-		throw ShapeComplementarityCalculatorException("CUDA Exception at %s:%d: %s", fn, line, cudaGetErrorString((cudaError_t)err));
+	if (err != CL_SUCCESS)
+		throw ShapeComplementarityCalculatorException("GPU Exception at %s:%d (error %d): %s", fn, line, err, utility::GPU::errstr(err));
 }
 
 core::Real inline ShapeComplementarityCalculator::GetTimerMs(clock_t &start)
@@ -1590,89 +1574,44 @@ core::Real inline ShapeComplementarityCalculator::GetTimerMs(clock_t &start)
 	return d;
 }
 
-void ShapeComplementarityCalculator::GPUInit()
+void ShapeComplementarityCalculator::gpuInit()
 {
-	if(!settings.gpu)
-		return;
+	if(gpu.use() && gpu.Init())
+		settings.gpu = 1;
+	if(settings.gpu_threads < 32)
+		settings.gpu_threads = gpu.device().threads;
 
-	try {
-		cudaDeviceProp deviceProp;
-
-		// TODO: Can we cache this between instances? private static?
-		// This is likely a per-physical host setting, not per thread of even
-		// process.
-
-		if(settings.gpu < 0) {
-			// Detect GPU and available threads
-			int dev, deviceCount;
-			if (cudaGetDeviceCount(&deviceCount) == cudaSuccess) {
-				for (dev = 0; dev < deviceCount; ++dev) {
-					cudaGetDeviceProperties(&deviceProp, dev);
-					if(deviceProp.maxThreadsPerBlock*deviceProp.multiProcessorCount >
-						settings.gpu_threads*settings.gpu_proc) {
-						settings.gpu_proc = deviceProp.multiProcessorCount;
-						settings.gpu_threads = settings.gpu_threads ?
-							MIN(settings.gpu_threads, deviceProp.maxThreadsPerBlock) :
-							deviceProp.maxThreadsPerBlock;
-						settings.gpu = dev + 1;
-					}
-				}
-			}
-		} else if(settings.gpu > 0) {
-			// Detect GPU and available threads
-			cudaAssert( cudaGetDeviceProperties(&deviceProp, settings.gpu -1) );
-			settings.gpu_proc = deviceProp.multiProcessorCount;
-			settings.gpu_threads = settings.gpu_threads ?
-				MIN(settings.gpu_threads, deviceProp.maxThreadsPerBlock) :
-				deviceProp.maxThreadsPerBlock;
-		}
-
-		if(!settings.gpu_threads) {
-			if(settings.gpu < 0)
-				tr << "No GPU available. GPU acceleration disabled." << std::endl;
-			settings.gpu = 0;
-		} else {
-			VERBOSE("GPU support enabled: " << deviceProp.name <<
-					" [" << (deviceProp.clockRate/1000) << " MHz, capability " <<
-					deviceProp.major << "." << deviceProp.minor << "] with " <<
-					deviceProp.multiProcessorCount << " multi processors, " <<
-					settings.gpu_threads <<" threads." <<
-					std::endl);
-		}
-
-	} catch(ShapeComplementarityCalculatorException e) {
-		tr << e.error << std::endl;
-		settings.gpu = 0;
-	}
+	gpu.RegisterProgram("gpu/sc.cl");
 }
 
-ShapeComplementarityCalculator::ScValue ShapeComplementarityCalculator::CudaTrimPeripheralBand(
+ShapeComplementarityCalculator::ScValue ShapeComplementarityCalculator::gpuTrimPeripheralBand(
 		std::vector<DOT> const &dots,
 		std::vector<DOT const*> &trimmed_dots)
 {
+	using namespace utility;
+
 	int n, nBur, nAcc;
 	int threads;
 	ScValue area = 0;
 	clock_t timer;
 
-	threads = MIN(1024, settings.gpu_threads);
+	threads = MIN(512, settings.gpu_threads);
 	n = dots.size();
 	timer = clock();
 
 	// Host and device (GPU) memory pointers for dot coordinates and results
-	float3 *hAccDotCoords, *phAccDotCoords;
-	float3 *hBurDotCoords, *phBurDotCoords;
-	float3 *dAccDotCoords;
-	float3 *dBurDotCoords;
+	float4 *hAccDotCoords, *phAccDotCoords;
+	float4 *hBurDotCoords, *phBurDotCoords;
 	char *hDotColl;
-	char *dDotColl;
 
-	// Allocate host memory
-	// Use cudaHostAlloc for DMA zero-copy
-	cudaAssert( cudaHostAlloc((void**)&hAccDotCoords, n * sizeof(*hAccDotCoords), cudaHostAllocDefault) );
-	cudaAssert( cudaHostAlloc((void**)&hBurDotCoords, n * sizeof(*hBurDotCoords), cudaHostAllocDefault) );
+	hAccDotCoords = new float4[UPPER_MULTIPLE(n, threads)];
+	hBurDotCoords = new float4[UPPER_MULTIPLE(n, threads)];
+	hDotColl = new char[UPPER_MULTIPLE(n, threads)];
 
-	// Make CUDA copy of (x, y, z) buried and accessible coordinates
+	if(!hAccDotCoords || !hBurDotCoords || !hDotColl)
+		throw ShapeComplementarityCalculatorException("Out of host memory!");
+
+	// Make GPU copy of (x, y, z) buried and accessible coordinates
 	phAccDotCoords = hAccDotCoords;
 	phBurDotCoords = hBurDotCoords;
 	for(std::vector<DOT>::const_iterator idot = dots.begin();
@@ -1692,36 +1631,25 @@ ShapeComplementarityCalculator::ScValue ShapeComplementarityCalculator::CudaTrim
 #else
 		// Quick copy
 		if(idot->buried)
-			*phBurDotCoords++ = *((float3*)&idot->coor.x());
+			*phBurDotCoords++ = *((float4*)&idot->coor.x());
 		else
-			*phAccDotCoords++ = *((float3*)&idot->coor.x());
+			*phAccDotCoords++ = *((float4*)&idot->coor.x());
 #endif
 	}
 	nBur = phBurDotCoords - hBurDotCoords;
 	nAcc = phAccDotCoords - hAccDotCoords;
 
-	// Allocate host memory for results (detected collisions)
-	cudaAssert( cudaHostAlloc((void**)&hDotColl, nBur * sizeof(*hDotColl), cudaHostAllocDefault) );
-
-	// Allocate GPU memory
-	cudaAssert( cudaMalloc((void **)&dBurDotCoords, UPPER_MULTIPLE(nBur, threads) * sizeof(*dBurDotCoords)) );
-	cudaAssert( cudaMalloc((void **)&dAccDotCoords, nAcc * sizeof(*dAccDotCoords)) );
-	cudaAssert( cudaMalloc((void **)&dDotColl, UPPER_MULTIPLE(nBur, threads) * sizeof(*dDotColl)) );
-
-	// Copy data from host to GPU
-	cudaAssert( cudaMemcpy(dBurDotCoords, hBurDotCoords, nBur * sizeof(*dBurDotCoords), cudaMemcpyHostToDevice) );
-	cudaAssert( cudaMemcpy(dAccDotCoords, hAccDotCoords, nAcc * sizeof(*dAccDotCoords), cudaMemcpyHostToDevice) );
-
-	// Run kernel in multi-threaded blocks on GPU
-	::_cuda_sccalc_TrimPeripheralBand(UPPER_MULTIPLE(nBur, threads)/threads, threads,
-				dAccDotCoords, nAcc,
-				dBurDotCoords,
-				dDotColl, pow(settings.band, 2));
-
-	// Wait for threads to finish and copy back memory from GPU to host
-	cudaAssert( cudaThreadSynchronize() );
-	cudaAssert( cudaMemcpy(hDotColl, dDotColl,
-			nBur * sizeof(*dDotColl), cudaMemcpyDeviceToHost) );
+	// Run kernel on GPU
+	float r2 = pow(settings.band, 2);
+	if(!gpu.ExecuteKernel("TrimPeripheralBand", nBur, threads, 32,
+		GPU_IN, UPPER_MULTIPLE(nAcc, threads) * sizeof(*hAccDotCoords), hAccDotCoords,
+		GPU_INT, nAcc,
+		GPU_IN, UPPER_MULTIPLE(nBur, threads) * sizeof(*hBurDotCoords), hBurDotCoords,
+		GPU_OUT, UPPER_MULTIPLE(nBur, threads) * sizeof(*hDotColl), hDotColl,
+		GPU_FLOAT, r2,
+		NULL)) {
+		throw ShapeComplementarityCalculatorException("Failed to launch GPU kernel TrimPeripheralBand!");
+	}
 
 	// Make a new list of dots that have no collisions
 	char *p = hDotColl;
@@ -1736,25 +1664,21 @@ ShapeComplementarityCalculator::ScValue ShapeComplementarityCalculator::CudaTrim
 		}
 	}
 
-	// Free GPU and host memory
-	cudaAssert( cudaFree(dBurDotCoords) );
-	cudaAssert( cudaFree(dAccDotCoords) );
-	cudaAssert( cudaFree(dDotColl) );
-
-	cudaAssert( cudaFreeHost(hBurDotCoords) );
-	cudaAssert( cudaFreeHost(hAccDotCoords) );
-	cudaAssert( cudaFreeHost(hDotColl) );
-
-	VERBOSE("Peripheral trimming GPU processing time: " << GetTimerMs(timer) << " ms" << std::endl);
+	delete hAccDotCoords;
+	delete hBurDotCoords;
+	delete hDotColl;
+	VERBOSE("Peripheral trimming GPU processing time: " << gpu.lastKernelRuntime() << " ms kernel, " << GetTimerMs(timer) << " ms total" << std::endl);
 
 	return area;
 }
 
-int ShapeComplementarityCalculator::CudaFindClosestNeighbors(
+int ShapeComplementarityCalculator::gpuFindClosestNeighbors(
 	std::vector<DOT const*> const &my_dots,
 	std::vector<DOT const*> const &their_dots,
 	std::vector<DOT const*> &neighbors)
 {
+	using namespace utility;
+
 	int nMyDots, nTheirDots, nNeighbors;
 	int threads;
 	clock_t timer;
@@ -1763,99 +1687,75 @@ int ShapeComplementarityCalculator::CudaFindClosestNeighbors(
 	threads = MIN(512, settings.gpu_threads);
 
 	// Memory pointers for my and their dot coordinate arrays, CPU and GPU
-	float3 *hMyDotCoords, *phMyDotCoords;
-	float3 *hTheirDotCoords, *phTheirDotCoords;
-	float3 *dMyDotCoords, *dTheirDotCoords;
+	float4 *hMyDotCoords, *phMyDotCoords;
+	float4 *hTheirDotCoords, *phTheirDotCoords;
 
 	// Dot point pointer map
 	DOT const **hTheirDots, **phTheirDots;
 
 	// Neighbor ID memory pointers
 	::uint *hNeighbors;
-	::uint *dNeighbors;
 
 	nMyDots = my_dots.size();
 	nTheirDots = their_dots.size();
 	nNeighbors = nMyDots;
 
-	// Allocate host memory
-	cudaAssert( cudaHostAlloc((void**)&hMyDotCoords, nMyDots * sizeof(*hMyDotCoords), cudaHostAllocDefault) );
-	cudaAssert( cudaHostAlloc((void**)&hTheirDotCoords, nTheirDots * sizeof(*hTheirDotCoords), cudaHostAllocDefault) );
-	cudaAssert( cudaHostAlloc((void**)&hTheirDots, nTheirDots * sizeof(*hTheirDots), cudaHostAllocDefault) );
-	cudaAssert( cudaHostAlloc((void**)&hNeighbors, nNeighbors * sizeof(*hNeighbors), cudaHostAllocDefault) );
+	hMyDotCoords = new float4 [UPPER_MULTIPLE(nMyDots, threads)];
+	hTheirDotCoords = new float4 [UPPER_MULTIPLE(nTheirDots, threads)];
+	hTheirDots = new DOT const * [UPPER_MULTIPLE(nTheirDots, threads)];
+	hNeighbors = new ::uint[UPPER_MULTIPLE(nNeighbors, threads)];
 
-	// Make CUDA copy of (x, y, z) dot coordinates for my dots
+	// Make GPU copy of (x, y, z) dot coordinates for my dots
 	phMyDotCoords = hMyDotCoords;
 	for(std::vector<DOT const*>::const_iterator idot = my_dots.begin(); idot < my_dots.end(); ++idot) {
-#ifdef SC_PRECISION_REAL
 		phMyDotCoords->x = (*idot)->coor.x();
 		phMyDotCoords->y = (*idot)->coor.y();
 		phMyDotCoords->z = (*idot)->coor.z();
 		++phMyDotCoords;
-#else
-		// Quick copy
-		*phMyDotCoords++ = *((float3*)&(*idot)->coor);
-#endif
 	}
 	nMyDots = phMyDotCoords - hMyDotCoords;
 
-	// Make CUDA copy of (x, y, z) dot coordinates for their dots and keep a map
+	// Make GPU copy of (x, y, z) dot coordinates for their dots and keep a map
 	phTheirDotCoords = hTheirDotCoords;
 	phTheirDots = hTheirDots;
 	for(std::vector<DOT const*>::const_iterator idot = their_dots.begin(); idot < their_dots.end(); ++idot) {
 		if(!(*idot)->buried)
 			continue;
-#ifdef SC_PRECISION_REAL
-		phTheirDotCoords->x = *(*idot)->coor.x();
-		phTheirDotCoords->y = *(*idot)->coor.y();
-		phTheirDotCoords->z = *(*idot)->coor.z();
+		phTheirDotCoords->x = (*idot)->coor.x();
+		phTheirDotCoords->y = (*idot)->coor.y();
+		phTheirDotCoords->z = (*idot)->coor.z();
 		++phTheirDotCoords;
-#else
-		// Quick copy
-		*phTheirDotCoords++ = *((float3*)&(*idot)->coor);
-#endif
 		*phTheirDots++ = *idot;
 	}
 	nTheirDots = phTheirDotCoords - hTheirDotCoords;
 
-	// Allocate GPU memory and copy data there
-	cudaAssert( cudaMalloc((void **)&dMyDotCoords, UPPER_MULTIPLE(nMyDots, threads) * sizeof(*dMyDotCoords)) );
-	cudaAssert( cudaMalloc((void **)&dTheirDotCoords, nTheirDots * sizeof(*dTheirDotCoords)) );
-	cudaAssert( cudaMalloc((void **)&dNeighbors, UPPER_MULTIPLE(nNeighbors, threads) * sizeof(*dNeighbors)) );
-	cudaAssert( cudaMemcpy(dMyDotCoords, hMyDotCoords, nMyDots * sizeof(*dMyDotCoords), cudaMemcpyHostToDevice) );
-	cudaAssert( cudaMemcpy(dTheirDotCoords, hTheirDotCoords, nTheirDots * sizeof(*dTheirDotCoords), cudaMemcpyHostToDevice) );
-
-	// Run kernel in multi-threaded blocks on GPU
-	::_cuda_sccalc_FindClosestNeighbor(UPPER_MULTIPLE(nMyDots, threads)/threads, threads,
-				dMyDotCoords,
-				dTheirDotCoords, nTheirDots,
-				dNeighbors);
-
-	// Wait for threads to finish and copy back memory from GPU to host
-	cudaAssert( cudaThreadSynchronize() );
-	cudaAssert( cudaMemcpy(hNeighbors, dNeighbors, nMyDots * sizeof(*hNeighbors), cudaMemcpyDeviceToHost) );
+	// Run kernel on GPU
+	if(!gpu.ExecuteKernel("FindClosestNeighbor", nMyDots, threads, 32,
+		GPU_IN, UPPER_MULTIPLE(nMyDots, threads) * sizeof(*hMyDotCoords), hMyDotCoords,
+		GPU_IN, UPPER_MULTIPLE(nTheirDots, threads) * sizeof(*hTheirDotCoords), hTheirDotCoords,
+		GPU_INT, nTheirDots,
+		GPU_OUT, UPPER_MULTIPLE(nNeighbors, threads) * sizeof(*hNeighbors), hNeighbors,
+		NULL)) {
+		throw ShapeComplementarityCalculatorException("Failed to launch GPU kernel FindClosestNeighbor!");
+	}
 
 	for(int i = 0; i < nNeighbors; ++i)
 		neighbors.push_back( hTheirDots[hNeighbors[i]] );
 
-	// Free memory
-	cudaAssert( cudaFree(dMyDotCoords) );
-	cudaAssert( cudaFree(dTheirDotCoords) );
-	cudaAssert( cudaFree(dNeighbors) );
+	delete hMyDotCoords;
+	delete hTheirDotCoords;
+	delete hTheirDots;
+	delete hNeighbors;
 
-	cudaAssert( cudaFreeHost(hMyDotCoords) );
-	cudaAssert( cudaFreeHost(hTheirDotCoords) );
-	cudaAssert( cudaFreeHost(hTheirDots) );
-	cudaAssert( cudaFreeHost(hNeighbors) );
-
-	VERBOSE("Find Neighbors GPU processing time: " << GetTimerMs(timer) << " ms" << std::endl);
+	VERBOSE("Find Neighbors GPU processing time: " << gpu.lastKernelRuntime() << " ms kernel, " << GetTimerMs(timer) << " ms total" << std::endl);
 
 	return 1;
 }
 
-#endif // GPU
+#endif // USEOPENCL
 
-////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
 // Private helpers
 ////////////////////////////////////////////////////////////////////////////
 
@@ -1882,6 +1782,6 @@ Atom::~Atom() {}
 } // namespace scoring
 } // namespace core
 
-#endif
+#endif // INCLUDED_core_scoring_sc_ShapeComplementarityCalculator_cc
 
 // END //

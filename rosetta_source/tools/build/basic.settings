@@ -672,19 +672,27 @@ settings = {
         },
     },
 
-    "gcc, cuda" : {
+    "gcc, opencl" : {
         "appends" : {
             "include_path"  : [ "/usr/local/cuda/include", ],
-            "libraries"     : [ "cudart" ],
+            "libraries"     : [ "OpenCL" ],
             "library_path"  : [ "/usr/local/cuda/lib64", "/usr/local/cuda/lib", ],
-            "defines"       : [ "USECUDA" ],
+            "defines"       : [ "USEOPENCL" ],
         },
     },
 
-    "gcc, macos, cuda" : {
+    "gcc, macos, opencl" : {
         "appends" : {
-                "include_path"  : [ "/Developer/CUDA/common/inc" ],
-                "library_path" : [ "/Developer/CUDA/lib" ],
+            "defines"       : [ "USEOPENCL", "MACOPENCL" ],
+            "flags" : {
+                "link":       [ "framework OpenCL" ],
+                "shlink":     [ "framework OpenCL" ],
+            }
+        },
+        "removed" : {
+            "include_path"  : [ "/usr/local/cuda/include", ],
+            "libraries"     : [ "OpenCL" ],
+            "library_path"  : [ "/usr/local/cuda/lib64", "/usr/local/cuda/lib", ],
         }
     },
 
@@ -1214,12 +1222,12 @@ settings = {
             "cxx"           : "mpiCC",
         },
     },
-    "clang, cuda" : {
+    "clang, opencl" : {
         "appends" : {
             "include_path"  : [ "/usr/local/cuda/include", ],
-            "libraries"     : [ "cudart" ],
+            "libraries"     : [ "OpenCL" ],
             "library_path"  : [ "/usr/local/cuda/lib64", "/usr/local/cuda/lib", ],
-            "defines"       : [ "USECUDA" ],
+            "defines"       : [ "USEOPENCL" ],
         },
     },
     "clang, linux" : {

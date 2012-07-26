@@ -484,7 +484,6 @@ sources = {
 	],
 	"core/scoring/sc": [
 		"ShapeComplementarityCalculator",
-		"ShapeComplementarityCalculator_GPUKernels.cu",
 	],
 	"core/scoring/sym_e": [
 		"symE",

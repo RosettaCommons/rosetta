@@ -115,6 +115,11 @@ options = {
         # Build with CUDA
         "cuda",
 
+        # Build with OpenCL
+        "opencl",
+
+        # Build boost MPI and serialization dependent code (requires these libraries to be installed in /usr/local/lib)
+
         # Build boost MPI and serialization dependent code (requires these libraries to be installed in /usr/local/lib)
         "boost_mpi",
 

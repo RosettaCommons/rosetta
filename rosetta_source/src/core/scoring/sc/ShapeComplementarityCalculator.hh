@@ -14,14 +14,8 @@
 #ifndef INCLUDED_core_scoring_sc_ShapeComplementarityCalculator_hh
 #define INCLUDED_core_scoring_sc_ShapeComplementarityCalculator_hh
 
-// This code contains support for GPU acceleration using CUDA.
-// Basic steps to enable GPU acceleration support:
-//  1) define USECUDA (-DUSECUDA)
-//  2) compile ShapeComplementarityCalculator_GPUKernels.cu with nvcc
-//  3) link libcore.3.so file against libcudart.so (-lcudart)
-// You will see a line like this when GPU is utilized:
-//  core.scoring.sc.ShapeComplementarityCalculator: GPU support enabled:
-//  GeForce GTX 580 [1594 MHz, capability 2.0] with 16 multi processors, 1024 threads.
+// This code contains support for GPU acceleration using OpenCL.
+// Build with scons option extras=opencl to enable GPU support.
 //
 // Note: Original Fotran code used floats rather than doubles. This code works
 // correctly with either floats or core::Real, though core::Real is about 50%
@@ -29,7 +23,7 @@
 // precision floats by defining SC_PRECISION_REAL.
 
 // #define SC_PRECISION_REAL
-// #define USECUDA
+// #define USEOPENCL
 
 // Core Headers
 #include <core/types.hh>
@@ -40,14 +34,12 @@
 
 //// C++ headers
 #include <vector>
-// AUTO-REMOVED #include <map>
 #include <string>
-
 #include <utility/vector1.hh>
 
-
-#ifdef USECUDA
-#include <time.h>
+// OpenCL headers
+#ifdef USEOPENCL
+#include <utility/GPU.hh>
 #endif
 
 namespace core {
@@ -86,7 +78,7 @@ typedef struct _RESULTS {
 		core::Size concave;          // Number of concace surface dots
 		core::Size toroidal;         // NUmber of toroidal surfac dots
 	} dots;				// True if computed results are valid
-	int valid;			
+	int valid;
 } RESULTS;
 
 // Atom radius definition
@@ -200,7 +192,7 @@ public:
 
 		core::Size verbose;
 
-#ifdef USECUDA
+#ifdef USEOPENCL
 		core::SSize gpu;
 		core::Size gpu_threads;
 		core::Size gpu_proc;
@@ -277,19 +269,19 @@ private:
 	int CalcNeighborDistance(int const molecule, std::vector<const DOT*> const &my_dots, std::vector<const DOT*> const &their_dots);
 	DOT const *CalcNeighborDistanceFindClosestNeighbor(DOT const &dot1, std::vector<const DOT*> const &their_dots);
 
-  // Sort callback
+	// Sort callback
 	static int _atom_distance_cb(void *a1, void *a2);
 
-#ifdef USECUDA
-public:
-	void GPUInit();
-
-private:
-	void cudaThrowException(int err, char const *fn, int line);
-	ScValue CudaTrimPeripheralBand(std::vector<DOT> const &dots, std::vector<DOT const *> &trimmed_dots);
-	int CudaFindClosestNeighbors(std::vector<const DOT*> const &my_dots, std::vector<const DOT*> const &their_dots, std::vector<DOT const*> &neighbors);
+#ifdef USEOPENCL
+	protected:
+	utility::GPU gpu;
+	void gpuThrowException(int err, const char *fn, int line);
+	float gpuTrimPeripheralBand(const std::vector<DOT> &dots, std::vector<const DOT*> &trimmed_dots);
+	int gpuFindClosestNeighbors(const std::vector<const DOT*> &my_dots, const std::vector<const DOT*> &their_dots, std::vector<const DOT*> &neighbors);
 	core::Real GetTimerMs(clock_t &start);
 
+	public:
+	void gpuInit();
 #endif
 
 };

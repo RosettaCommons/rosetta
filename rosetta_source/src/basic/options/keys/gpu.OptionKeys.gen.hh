@@ -22,7 +22,8 @@ namespace options {
 namespace OptionKeys {
 
 namespace gpu { extern BooleanOptionKey const gpu; }
-namespace gpu { extern FileOptionKey const kernel; }
+namespace gpu { extern IntegerOptionKey const device; }
+namespace gpu { extern IntegerOptionKey const threads; }
 
 } // namespace OptionKeys
 } // namespace options

@@ -613,4 +613,5 @@ namespace matdes { namespace mutalyze { BooleanOptionKey const ala_scan( "matdes
 namespace matdes { namespace mutalyze { BooleanOptionKey const revert_scan( "matdes:mutalyze:revert_scan" );  } }
 namespace matdes { namespace mutalyze { BooleanOptionKey const min_rb( "matdes:mutalyze:min_rb" );  } }
 namespace gpu { BooleanOptionKey const gpu( "gpu" );  }
-namespace gpu { FileOptionKey const kernel( "gpu:kernel" );  }
+namespace gpu { IntegerOptionKey const device( "gpu:device" );  }
+namespace gpu { IntegerOptionKey const threads( "gpu:threads" );  }

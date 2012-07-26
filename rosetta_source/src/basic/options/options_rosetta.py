@@ -4788,10 +4788,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 	), # matdes
 
-	Option_Group( 'gpu',
-		Option('kernel', 'File', desc='kernel src'),
-	), # gpu
-
+        Option_Group( 'gpu',
+                Option('gpu', 'Boolean', desc='Enable/Disable GPU support', default ='true'),
+                Option('device', 'Integer', desc='GPU device to use', default = '1'),
+                Option('threads', 'Integer', desc='Max GPU threads to use', default = '2048'),
+        ), # gpu
 
 
 ) # end options

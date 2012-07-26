@@ -14,6 +14,7 @@ sources = {
 		"basic_sys_util",
 		"Binary_Util",
 		"exit",
+                "GPU",
 		"heap",
 		"inline_file_provider",
 		"integer_mapping",

@@ -692,6 +692,7 @@ sources = {
 	],
 	"pilot/luki" : [
 		"sc",
+		#"gpu_demo",     ### also include "rt" in subprojects below (Linux)
 	],
 	"pilot/lior" : [ "feature_schema_generator"
 	],
@@ -738,6 +739,7 @@ subprojects  = [  "devel",
 	"numeric",
 	"utility",
 	"ObjexxFCL",
+        #"rt",
 	"z",
 	"cppdb",
 	"sqlite3"]

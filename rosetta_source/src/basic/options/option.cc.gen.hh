@@ -2477,8 +2477,9 @@ option.add( basic::options::OptionKeys::matdes::mutalyze::calc_rot_boltz, "Speci
 option.add( basic::options::OptionKeys::matdes::mutalyze::ala_scan, "Specify whether to calculate ddGs for alanine-scanning mutants at the designed interface" ).def(1);
 option.add( basic::options::OptionKeys::matdes::mutalyze::revert_scan, "Specify whether to calculate ddGs for reversion mutants at the designed interface" ).def(1);
 option.add( basic::options::OptionKeys::matdes::mutalyze::min_rb, "Specify whether to minimize the rigid body DOFs" ).def(1);
-option.add( basic::options::OptionKeys::gpu::gpu, "gpu option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::gpu::kernel, "kernel src" );
+option.add( basic::options::OptionKeys::gpu::gpu, "Enable/Disable GPU support" ).def(true);
+option.add( basic::options::OptionKeys::gpu::device, "GPU device to use" ).def(1);
+option.add( basic::options::OptionKeys::gpu::threads, "Max GPU threads to use" ).def(2048);
 
 }
 

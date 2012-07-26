@@ -11997,11 +11997,18 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <li><h2>gpu</h2>
 <dl>
 <dt><b>-gpu</b> \<Boolean\><dt>
-<dd>gpu option group</dd><br>
+<dd>Enable/Disable GPU support</dd><br>
+<dd>Default: true</dd><br>
 </dl>
 <dl>
-<dt><b>-kernel</b> \<File\><dt>
-<dd>kernel src</dd><br>
+<dt><b>-device</b> \<Integer\><dt>
+<dd>GPU device to use</dd><br>
+<dd>Default: 1</dd><br>
+</dl>
+<dl>
+<dt><b>-threads</b> \<Integer\><dt>
+<dd>Max GPU threads to use</dd><br>
+<dd>Default: 2048</dd><br>
 </dl>
 </ul>
  */
