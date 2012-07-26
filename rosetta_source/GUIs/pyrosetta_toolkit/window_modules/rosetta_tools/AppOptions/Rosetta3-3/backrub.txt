@@ -1,0 +1,24 @@
+-s==Name(s) of single PDB file(s) to process
+-l==File(s) containing list(s) of PDB files to process
+-ignore_unrecognized_res==Ignore unrecognized atom times found in PDB
+-resfile==Use Resfile to specify which residues can be repacked
+-nstruct==# of structures to output
+-backrub:ntrials 10000==number of Monte Carlo trials to run (default 1000, 10000 recommended, 10,000 for production runs)
+-mc_kt 0.6==value of kT for Monte Carlo (default 0.6, 0.3-0.4 recommended for > 100,000 step simulations)
+-mm_bend_weight 1==weight of mm_bend bond angle energy term (default 1)
+-cst_fa_weight 1==weight of the fullatom constraint terms (defualt 1)
+-cst_fa_file==constraints filename(s) for fullatom. When multiple files are given a *random* one will be picked.
+-initial_pack ==force a repack/minimization at the beginning regardless of whether mutations are set in the resfile
+-minimize_movemap==MoveMap specifying degrees of freedom to be minimized after initial packing, occurs in three stages:1. CHI only  2. CHI+BB  3. CHI+BB+Jump
+-pivot_residues==residues for which contiguous stretches can contain segments, in absolute residue numbers (defaults to all residues)
+-pivot_atoms CA==main chain atoms usable as pivots (default CA)
+-min_atoms 3==minimum backrub segment size in atoms (default 3)
+-max_atoms 34==maximum backrub segment size in atoms (default 34)
+-sc_prob 0.25==probability of making a side chain move (default 0.25)
+-sc_prob_uniform 0.1==probability of uniformly sampling chi angles (defualt 0.1)
+-sc_prob_withinrot 0.0==probability of sampling within the current rotamer (default 0.0)(For Off-rotamer searches)
+-movemap==MoveMap file specifying flexible torsions (You can create this using the toolkit)
+-sm_prob 0==probability of making a small move (default 0)
+-backrub:trajectory==record a trajectory
+-backrub:trajectory_gz==gzip the trajectory
+-backrub:trajectory_stride==write out a trajectory frame every N steps

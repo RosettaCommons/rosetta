@@ -1,0 +1,30 @@
+-packing:ex1==Use extra chi1 sub-rotamers for all residues that pass the extrachi_cutoff. [Boolean]
+-packing:ex1:level==Use extra chi1 sub-rotamers for all residues that pass the extrachi_cutoff. [Integer]
+-packing:ex1:operate==Apply special operations (see RotamerOperation class) on ex1 rotamers. [Boolean]
+-packing:ex2==Use extra chi2 sub-rotamers for all residues that pass the extrachi_cutoff.
+-packing:ex2:level==Use extra chi2 sub-rotamers for all residues that pass the extrachi_cutoff.
+-packing:ex1:operate==Apply special operations (see RotamerOperation class) on ex2 rotamers. [Boolean]
+-packing:ex3==Use extra chi3 sub-rotamers for all residues that pass the extrachi_cutoff.
+-packing:ex3:level== Use extra chi3 sub-rotamers for all residues that pass the extrachi_cutoff.
+-packing:ex3:operate==Apply special operations (see RotamerOperation class) on ex3 rotamers. [Boolean]
+-packing:ex4==Use extra chi4 sub-rotamers for all residues that pass the extrachi_cutoff.
+-packing:ex4:level==Use extra chi4 sub-rotamers for all residues that pass the extrachi_cutoff.
+-packing:ex4:operate==Apply special operations (see RotamerOperation class) on ex4 rotamers. [Boolean]
+-packing:extrachi_cutoff==Number of neighbors a residue must have before extra rotamers are used. default: 18 [Integerx]
+-packing:ex1aro==Use extra chi1 sub-rotamers for aromatic residues that pass the extrachi_cutoff. [Boolean]
+-packing:ex1aro:level==Use extra chi1 sub-rotamers for all residues that pass the extrachi_cutoff.
+-packing:ex2aro==Use extra chi2 sub-rotamers for aromatic residues that pass the extrachi_cutoff.
+-packing:ex2aro:level==Use extra chi2 sub-rotamers for all residues that pass the extrachi_cutoff.
+-packing:ex1aro_exposed==Use extra chi1 sub-rotamers for all aromatic residues. [Boolean]
+-packing:ex1aro_exposed:level==Use extra chi1 sub-rotamers for all aromatic residues that pass the extrachi_cutoff.
+-packing:ex2aro_exposed==Use extra chi2 sub-rotamers for all aromatic residues. [Boolean]
+-packing:ex2xaro_exposed:level==Use extra chi2 sub-rotamers for all aromatic residues that pass the extrachi_cutoff.
+-packing:resfile==Resfile filename(s).  Most protocols use only the first and will ignore the rest; it does not track against -s or -l automatically. Default='resfile' [FileVector]
+-packing:no_optH== =Do not optimize hydrogen placement at the time of a PDB load. default="true" [Boolean]
+-packing:pack_missing_sidechains==Run packer to fix residues with missing sidechain density at PDB load. default="true"' [Boolean]
+-packing:fix_his_tautomer==Seqpos numbers of his residus whose tautomer should be fixed during repacking. [IntegerVecter]
+-packing:use_input_sc==Use rotamers from input structure in packing. By default, input sidechain coords are NOTincluded in rotamer set but are discarded before the initial pack; with this flag, the inputrotamers will NOT be discarded. Note that once the starting rotamers are replaced by any mechanism, they are no longer included in the rotamer set. (rotamers included by coordinates)
+-packing:linmem_ig== =Force the packer to use the linear memory interaction graph; each RPE may be computed more than once,but recently-computed RPEs are reused.  The integer parameter specifies the number of recent rotamers to store RPEs for.  10 is the recommended size. Memory use scales linearly with the number of rotamers at about 200 bytes per rotamer per recent rotamers to store RPEs for(~4 KB per rotamer by default). default='10' [Integer]
+-packing:no_his_his_pairE==Set pair term for His-His to zero. [Boolean]
+-packing:solvate==Add explicit water, but don't try to place water such that it bridges Hbonds, just put it on every available Hbond donor/acceptor where there's no clash (implies explicit_h2o). [Boolean]
+-packing:multi_cool_annealer==Alternate annealer for packing.  Runs multiple quence cycles in a first cooling stage, and tracks the N best network states it observes. It then runs low-temperature rotamer substitutions with repeated quenching starting from each of these N best network states. 10 is recommended.

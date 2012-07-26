@@ -1,0 +1,1 @@
+DEFAULTDIR==/Users/jadolfbr/Desktop/Lab_Primary/modeling/rosetta/rosetta3.3/rosetta_database

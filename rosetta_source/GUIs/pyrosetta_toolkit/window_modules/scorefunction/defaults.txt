@@ -1,0 +1,2 @@
+SCORE=standard
+PATCH=score12

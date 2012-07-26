@@ -1,0 +1,9 @@
+AUTHOR==Andrew Leaver-Fay and Elizabeth Kellogg
+METADATA==Documentation created by Andrew Leaver-Fay, with some extra stuff from me.
+DESCRIPTION==Used to minimize structure before ddg_monomer.  Use default options.
+EXAMPLES==See Tips
+TIPS==Run with these options: -in:file:l lst  -in:file:fullatom -ignore_unrecognized_res -fa_max_dis 9.0 -database /path/to/minirosetta_database/ -ddg::harmonic_ca_tether 0.5 -score:weights standard -ddg::constraint_weight 1.0 -ddg::out_pdb_prefix min_cst_0.5 -ddg::sc_min_only false -score:patch minirosetta_database/scoring/weights/score12.wts_patch > mincst.log
+INPUTS==Will only take a LIST of pdbs.  If you run this app within the toolkit and have a directory for input specified, the program will create a list of PDBs and run that.
+OUTPUTS==Need the Log file, and the minimized structures for ddg_monomer.
+LIMITATIONS==Only known use (by me) is for ddg_monomer
+ANALYSIS==None that I know of.

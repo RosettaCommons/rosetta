@@ -1,0 +1,11 @@
+-in:file:s==Input pdb file(s)
+-in:file:silent==Input silent file
+-in:file:fullatom==Read as fullatom input structure
+-score:weights==Supply a different weights file (default is standard) (Scoretypes can be found in the FineControl Menu)
+-score:patch==Supply a different patch file (default is score12)
+-run:shuffle==Use shuffle mode, treat structures in random order
+-nstruct==Make how many decoys per input structure ?
+-relax:fast==Do a simple, small cycle number (5)  fast relax (DEFAULT)
+-relax:thorough==Do a preset, large cycle number (15) fast relax
+-relax:script==Do custom script relax (you can supply a custom script file) (Use the Relax Script builder in the GUI)
+-relax:classic==Do an old old deprecated "classic" relax mode (slow and poor performance)

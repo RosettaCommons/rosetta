@@ -1,0 +1,20 @@
+-in:file:native==Native structure (optional)
+-in:file:fasta==Protein sequence in fasta format (required if native structure is not provided)
+-in:file:frag3==3-residue fragments
+-in:file:frag9==9-residue fragments
+-abinitio:relax true==Do a relax after abinitio (abrelax protocol), default=false.
+-relax::fast==Do a fast relax instead of classic
+-nstruct==# of output structures
+-out:file:silent==Use silent file output, use filename after this flag, default=default.out
+-out:pdb true==Output PDB, default=False
+-out:path==Output Path
+-use_filters true==Use radius of gyration (RG), contact-order, and sheet filters. This option conserves computing by not continuing with refinement if a filter fails. A caveat is that for some sequences, a large  percentage of models may fail a filter. The filters are meant to identify models with non-protein like features. The names of models that fail filters start with F_.
+-psipred_ss2==psipred_ss2 secondary structure definition file (required for -use_filters)
+-abinitio::increase_cycles 10==# to increase the number of cycles at each stage by this factor (Recommended).
+-abinitio::rg_reweight 0.5==# to Reweight contribution of radius of gyration to total score by this scale factor (Recommended).
+-abinitio::rsd_wt_helix 0.5==# to Reweight env,pair,cb for helix residues by this factor (Recommended).
+-abinitio::rsd_wt_loop 0.5==# to Reweight env,pair,cb for loop residues by this factor (Recommended).
+-kill_hairpins==Setup hairpin killing in score (kill hairpin file or psipred file). This option is useful for all-beta or alpha-beta proteins with predicted strands adjacent in sequence since hairpins are often sampled too frequently.
+-constant_seed==Use a constant seed (1111111 unless specified with -jran)
+-jran==Specify seed. Should be unique among jobs (requires -constant_seed)
+-seed_offset 10==This value will be added to the random number seed. Useful when using time as seed and submitting many jobs to a cluster.  If jobs are started in the same second they will still have different initial seeds when using a unique offset."

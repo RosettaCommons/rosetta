@@ -1,0 +1,27 @@
+-s==A list of one or more pdbs to run <code>fixbb</code> upon.
+-l==A file that lists one or more pdbs to run <code>fixbb</code> upon.
+-resfile==The resfile that is to be used for this job
+-nstruct==The number of iterations to perform per input structure; e.g. with 10 input structures and an -nstruct of 10, 100 trajectories will be performed. Interaction Graph (Default is to precompute all rotamer pair energies)
+-linmem_ig==Activate the linear-memory interaction graph [Leaver-Fay et al. 2008]
+-lazy_ig==Activate the lazy interaction graph Rotamers
+-ex1==Increase chi1 rotamer sampling for buried* residues +/- 1 standard deviation
+-ex1aro==Increase chi1 rotamer sampling for buried* aromatic** residues +/- 1 standard deviation
+-ex2==Increase chi2 rotamer sampling for buried* residues +/- 1 standard deviation
+-ex2aro==Increase chi2 rotamer sampling for buried* aromatic** residues +/- 1 standard deviation
+-ex3==Increase chi3 rotamer sampling for buried* residues +/- 1 standard deviation
+-ex4==Increase chi4 rotamer sampling for buried* residues +/- 1 standard deviation
+-ex1:level==Increase chi1 sampling for buried* residues to the given sampling level
+-ex1aro:level==Increase chi1 sampling for buried* aromatic residues to the given sampling level
+-ex2:level==Increase chi1 sampling for buried* residues to the given sampling level
+-ex2aro:level==Increase chi1 sampling for buried* aromatic residues to the given sampling level
+-ex3:level==Increase chi1 sampling for buried* residues to the given sampling level
+-ex4:level==Increase chi1 sampling for buried* residues to the given sampling level
+-preserve_input_cb==Do not idealize the CA-CB bond vector -- instead, use the CB coordinates of the input pdb.
+-use_input_sc==Include the side chain from the input pdb.  False by default.  Including the input sidechain is "cheating" if your goal is to measure sequence recovery, but a good idea if your goal is to redesign the input sequence for eventual synthesis. Buried residues are those with #CBeta-neighbors >= threshold (default 18) within 10 Angstroms. This threshold can be controlled by the -extrachi_cutoff flag.
+-extrachi_cutoff==Set the number of cbeta neighbors (counting its own) at which a residue is considered buried.  A value of "1" will mean that all residues are considered buried for the purpose of rotamer building.
+-multi_cool_annealer==Use an alternate annealer that spends more time at low temperatures.  This annealer produces consistently lower energies than the standard annealer.
+-overwrite==Overwrite the output files, even if they already exist.
+-minimize_sidechains==Follow the packing phase with gradient-based minimization of the sidechains for residues that were either repacked or designed in the packing phase.
+-min_type==When combined with the -minimize_sidechains flag, specifies the line-search algorithm to use in the gradient-based minimization . "dfpmin" by default.
+-score:weights==Set the weights file to be used.
+-score:weights_patch==Set the weights patch file to be used.

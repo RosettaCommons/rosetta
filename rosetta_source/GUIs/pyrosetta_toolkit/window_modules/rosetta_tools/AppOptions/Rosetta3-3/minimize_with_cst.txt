@@ -1,0 +1,11 @@
+-in:file:l==Application only takes a list of PDB structures...
+-in:file:fullatom==Should be fullatom representation - use this
+-ignore_unrecognized_res==Use this to keep from crashing
+-fa_max_dis 9.0==Use 9.0
+-ddg::harmonic_ca_tether 0.5==Use .5
+-score:weights standard==Use standard
+-ddg::constraint_weight 1.0==Use 1.0
+-ddg::out_pdb_prefix==Prefix for out structures: Use min_cst_0.5
+-ddg::sc_min_only false==Use false
+-score:patch==Use minirosetta_database/scoring/weights/score12.wts_patch
+>ddgLog.log==Use this to obtain a log file.  Use log file with ./convert_to_cst_file.sh to obtain constraints for crystal structure for DDG Monomer!'

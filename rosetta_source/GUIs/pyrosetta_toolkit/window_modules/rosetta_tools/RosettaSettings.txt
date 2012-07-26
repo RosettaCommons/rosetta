@@ -1,0 +1,3 @@
+ROSETTA_SOURCE	/home/mark/Documents/Modeling/Rosetta/Program/rosetta_source
+DATABASE	/home/mark/Documents/Modeling/Rosetta/Program/rosetta_database
+APPLICATIONS	/home/mark/Documents/Modeling/Rosetta/Program/rosetta_source/bin

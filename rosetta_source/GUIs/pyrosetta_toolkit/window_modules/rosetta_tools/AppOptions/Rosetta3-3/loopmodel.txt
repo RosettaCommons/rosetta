@@ -1,0 +1,34 @@
+-in::file::fullatom==Full Atom (Use this or else loop modeling will discard the input sidechains and repack!!!!)
+-loops::input_pdb==You can do most of this within the main GUI (Note that this is not -s or -l like normal)
+-loops::loop_file==(You can create this using the export menu in the PyRosetta GUI)
+-loops::frag_sizes==9 3 or 1 (Create using Fragment Window...)
+-loops::frag_files== Frag files 9, 3, 1
+-loops::ccd_closure==Do CCD clusure on loops?
+-loops::random_loop==Randomize loop?
+-out::prefix==Set prefix for output
+-loops::remodel==perturb_ccd (Use This!), perturb_alc, quick_ccd, old_loop_relax, perturb_kic
+-loops::refine==refine_ccd, refine_alc, refine_kic (default=no)
+-loops::relax==fullrelax, shortrelax, fastrelax'
+-loops:fix_natsc==Don't repack, rotamer trial, or minimize loop residue neighbors. default = 'false'. [Bolean]
+-ex1==Include extra chi1 rotamers (or also chi2, chi3, chi4). Using -ex1 -ex2 improves benchmark performance.
+-ex2==Include extra chi2 rotamers (or also chi2, chi3, chi4). Using -ex1 -ex2 improves benchmark performance.
+-extrachi_cutoff 0==Set to 0 to include extra rotamers regardless of number of neighbors
+-extra_res_cen==Path to centroid parameters file for non-protein atoms or ligands
+-extra_res_fa==Path to all-atom parameters file for non-protein atoms or ligands
+-out:pdb_gz==Create compressed output PDB files (using gzip), which saves a lot of space. These files can still be visualized normally with software such as Pymol.
+-loops:neighbor_dist==(Expert) Only optimize side-chains with C-beta atoms within this many angstroms of any loop C-beta atom. default = '10.0'. To speed up runs, try '6.0'. [Float]
+-loops:vicinity_sampling==(Expert) Sample non-pivot torsions within a vicinity of their input values. default = 'false'. For a description of pivot and non-pivot torsions, please see Purpose, above. [Boolean]
+-loops:vicinity_degree==(Expert) Number of degrees allowed to deviate from current non-pivot torsions when using vicinty sampling (smaller number makes tighter sampling). default = '1.0'. [Float]
+-loops:kic_max_seglen==(Expert) Maximum number of residues in a KIC move segment. default = '12'. [Integer]
+-loops:remodel_init_temp==(Expert) Initial temperature for simulated annealing in 'perturb_kic'. default = '2.0'. [Float]
+-loops:remodel_final_temp==(Expert) Final temperature for simulated annealing in 'perturb_kic'. default = '1.0'. [Float]
+-loops:refine_init_temp==(Expert) Initial temperature for simulated annealing in 'refine_kic'. default = '1.5'. [Float]
+-loops:refine_final_temp==(Expert) Final temperature for simulated annealing in 'refine_kic'. default = '0.5'. [Float]
+-loops:max_kic_build_attempts==(Expert) Number of times to attempt initial closure in 'perturb_kic' protocol. Try increasing to 10000 if initial closure is failing. default = 100. [Integer]
+-loops:outer_cycles==(Expert) Number of outer cycles for Monte Carlo (described above in Protocol). default = '3'. [Integer]
+-loops:max_inner_cycles==(Expert) Maximum number of inner cycles for Monte Carlo (default described above in Protocol). [Integer]
+-loops:kic_recover_last==(Expert) Keep the last sampled conformation at the end of each outer cycle instead of the lowest energy conformation sampled so far. default = 'false'. [Boolean]
+-loops:optimize_only_kic_region_sidechains_after_move==(Expert) Should rotamer trials and minimization be performed after every KIC move but only within the loops:neighbor_dist of the residues in the moved KIC segment. Speeds up execution when using very large loop definitions (such as when whole chains are used for ensemble generation). default = 'false'. [Boolean]
+-loops:fast==(Expert) Signifcantly reduces the number of inner cycles. For quick testing, not production runs. default = 'false'. [Boolean]
+-run:test_cycles==(Expert) Sets the number of outer cycles and inner cycles to 3. For extremely quick testing and sanity checks, not for production runs. default = 'false'. [Boolean]
+

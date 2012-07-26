@@ -1,0 +1,17 @@
+-in:file:s==Input pdb file(s)  
+-in:file:silent==Input silent file
+-in:file:fullatom==Read as fullatom input structure
+-out:file:silent==Output silent structures instead of PDBs 
+-score:weights==Supply a different weights file (default is score12)
+-score:patch==Supply a different patch file (default is score12)
+-run:shuffle==Use shuffle mode
+-nstruct==Make how many decoys per input structure ?
+-cluster:radius==<float>Cluster radius in A (for RMS clustering) or in inverse GDT_TS for GDT clustering. Use "-1" to trigger automatic radius detection
+-cluster:gdtmm==Cluster by gdtmm instead of rms (Better for loops?)
+-cluster:input_score_filter==<float>Ignore structures above certain energy 
+-cluster:exclude_res==<int> [<int> <int> ..]Exclude residue numbers from structural comparisons              
+-cluster:radius==<float>Cluster radius
+-cluster:limit_cluster_size==<int>Maximal cluster size
+-cluster:limit_clusters==<int>Maximal number of clusters
+-cluster:limit_total_structures==<int>Maximal number of structures in total
+-cluster:sort_groups_by_energy==Sort clusters by energy.
