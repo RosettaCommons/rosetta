@@ -1,7 +1,7 @@
 patches/LowerRNA.txt
 patches/UpperRNA.txt
-patches/rna_cutpoint_lower.txt
-patches/rna_cutpoint_upper.txt
+patches/rna_cutpoint_lower_phenix.txt
+patches/rna_cutpoint_upper_phenix.txt
 patches/Virtual_Phosphate.txt
 patches/Virtual_O2star_hydrogen.txt
 patches/BulgeRNA.txt
