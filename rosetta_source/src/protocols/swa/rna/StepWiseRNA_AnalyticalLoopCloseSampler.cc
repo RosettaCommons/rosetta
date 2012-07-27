@@ -44,6 +44,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
+#include <core/scoring/rna/RNA_IdealCoord.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
@@ -122,7 +123,8 @@ StepWiseRNA_AnalyticalLoopCloseSampler::StepWiseRNA_AnalyticalLoopCloseSampler (
 	finer_sampling_at_chain_closure_ ( false ), //New option Jun 10 2010
 	PBP_clustering_at_chain_closure_ ( false ), //New option Aug 15 2010
 	extra_anti_chi_rotamer_(false), //Split to syn and anti on June 16, 2011
-	extra_syn_chi_rotamer_(false) //Split to syn and anti on June 16, 2011	
+	extra_syn_chi_rotamer_(false), //Split to syn and anti on June 16, 2011	
+	use_phenix_geo_(false) //The standard geo from PHENIX
 
 {
 	set_native_pose ( job_parameters_->working_native_pose() );
@@ -256,23 +258,32 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 	Size pucker_id;
 	Size total_count = 0;
 	std::cout << "Start Generating Rotamer ..." << std::endl;
+	core::scoring::rna::RNA_IdealCoord const ideal_coord;
 
 	for ( pucker_id = 0; pucker_id < 2; pucker_id ++ ) {
 		std::cout << "pucker_id = " << pucker_id << std::endl;
 
-		if ( pucker_id == 0 ) { //Sample North Pucker
-			delta_pucker = rna_fitted_torsion_info.ideal_delta_north();
-			nu2_pucker = rna_fitted_torsion_info.ideal_nu2_north();
-			nu1_pucker = rna_fitted_torsion_info.ideal_nu1_north();
-		} else { //Sample South Pucker
-			delta_pucker = rna_fitted_torsion_info.ideal_delta_south();
-			nu2_pucker = rna_fitted_torsion_info.ideal_nu2_south();
-			nu1_pucker = rna_fitted_torsion_info.ideal_nu1_south();
-		}
+		if (use_phenix_geo_) {
+			if ( pucker_id == 0 ) { //Sample North Pucker
+				ideal_coord.apply( screening_pose, moving_res, true);
+			} else { //Sample South Pucker
+				ideal_coord.apply( screening_pose, moving_res, false);
+			}
+		} else {
+			if ( pucker_id == 0 ) { //Sample North Pucker
+				delta_pucker = rna_fitted_torsion_info.ideal_delta_north();
+				nu2_pucker = rna_fitted_torsion_info.ideal_nu2_north();
+				nu1_pucker = rna_fitted_torsion_info.ideal_nu1_north();
+			} else { //Sample South Pucker
+				delta_pucker = rna_fitted_torsion_info.ideal_delta_south();
+				nu2_pucker = rna_fitted_torsion_info.ideal_nu2_south();
+				nu1_pucker = rna_fitted_torsion_info.ideal_nu1_south();
+			}
 
-		screening_pose.set_torsion ( TorsionID ( moving_res , id::BB, 4 ) , delta_pucker );
-		screening_pose.set_torsion ( TorsionID ( moving_res , id::CHI, 2 ) , nu2_pucker );
-		screening_pose.set_torsion ( TorsionID ( moving_res , id::CHI, 3 ) , nu1_pucker );
+			screening_pose.set_torsion ( TorsionID ( moving_res , id::BB, 4 ) , delta_pucker );
+			screening_pose.set_torsion ( TorsionID ( moving_res , id::CHI, 2 ) , nu2_pucker );
+			screening_pose.set_torsion ( TorsionID ( moving_res , id::CHI, 3 ) , nu1_pucker );
+		}
 
 		//Loop Closure
 		std::cout << "Entering Analytical Loop Closing" << std::endl;

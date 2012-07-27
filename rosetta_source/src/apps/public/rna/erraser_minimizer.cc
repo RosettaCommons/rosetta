@@ -53,6 +53,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/rna/RNA_TorsionPotential.hh>
+#include <core/scoring/rna/RNA_IdealCoord.hh>
 #include <core/scoring/rna/RNA_Util.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -121,6 +122,7 @@ using utility::vector1;
 
 OPT_KEY ( String, out_pdb )
 OPT_KEY ( Boolean, vary_geometry )
+OPT_KEY ( Boolean, use_phenix_geo )
 OPT_KEY ( Boolean, constrain_P )
 OPT_KEY ( Boolean, ready_set_only )
 OPT_KEY ( IntegerVector, fixed_res )
@@ -178,19 +180,28 @@ check_in_bond_angle_list ( core::id::AtomID const & atom_id1,
 }
 //////////////////////////////////////////////////////////////////////////////////////////////
 void
-apply_ideal_coordinates_for_alternative_pucker ( pose::Pose const & pose, pose::Pose & pose_reference ) {
+apply_ideal_coordinates ( pose::Pose const & pose, pose::Pose & pose_reference ) {
 	using namespace core::scoring::rna;
 	RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 	Real const DELTA_CUTOFF ( rna_fitted_torsion_info.delta_cutoff() );
+	bool const is_use_phenix_geo = option[ use_phenix_geo ];
+	utility::vector1 <Size> pucker_conformation (pose_reference.total_residue(), 0);
 
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
 		if ( pose.residue ( n ).aa() == core::chemical::aa_vrt ) continue; //FCC
 
 		Real const delta = pose.residue ( n ).mainchain_torsion ( DELTA );
 
-		if ( delta > DELTA_CUTOFF ) {
+		if ( delta > DELTA_CUTOFF ) { //south
 			apply_ideal_c2endo_sugar_coords ( pose_reference, n );
+			pucker_conformation[n] = 2; 
+		} else { //north
+			pucker_conformation[n] = 1;
 		}
+	}
+	if (is_use_phenix_geo) {
+		core::scoring::rna::RNA_IdealCoord ideal_coord;
+		ideal_coord.apply(pose_reference, pucker_conformation, false /*donot keep torsions*/);
 	}
 }
 ////////////////////////////////////////////////////////////////
@@ -342,7 +353,7 @@ create_pose_reference (
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set ( "rna" );
 	make_pose_from_sequence ( pose_reference, pose.sequence(),	*rsd_set );
-	apply_ideal_coordinates_for_alternative_pucker ( pose, pose_reference );
+	apply_ideal_coordinates ( pose, pose_reference );
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -851,6 +862,7 @@ main ( int argc, char * argv [] ) {
 	utility::vector1< std::string > blank_string_vector;
 	NEW_OPT ( out_pdb, "name of output pdb file", "" );
 	NEW_OPT ( vary_geometry, "vary geometry", false );
+	NEW_OPT ( use_phenix_geo, "use phenix_geometry in vary geometry", false );
 	NEW_OPT ( constrain_P, "constrain phosphate", false );
 	NEW_OPT ( fixed_res, "optional: residues to be held fixed in minimizer", blank_size_vector );
 	NEW_OPT ( cutpoint_open, "optional: chainbreak in full sequence", blank_size_vector );

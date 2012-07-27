@@ -160,6 +160,7 @@ OPT_KEY( Boolean, minimize_and_score_sugar)
 OPT_KEY( Boolean, debug_eplison_south_sugar_mode)
 OPT_KEY( Boolean, rebuild_bulge_mode)
 OPT_KEY( Boolean, sampler_include_torsion_value_in_tag)
+OPT_KEY( Boolean, use_phenix_geo)
 OPT_KEY( Boolean, sampler_extra_anti_chi_rotamer)
 OPT_KEY( Boolean, sampler_extra_syn_chi_rotamer)
 OPT_KEY( Boolean, sampler_extra_beta_rotamer)
@@ -1820,6 +1821,9 @@ main( int argc, char * argv [] )
 	NEW_OPT( filterer_undercount_ribose_rotamers, "Undercount all ribose_rotamers as 1 count", false); //July 29, 2011
 	NEW_OPT( exclude_alpha_beta_gamma_sampling, "Speed up the debug eplison south sugar mode", false);
 	NEW_OPT( debug_eplison_south_sugar_mode, "Check why when eplison is roughly -160 and pucker is south, energy is not favorable", false);
+	// FCC: Not doing anythin now... Just for consistency with swa_analytical_closure
+	NEW_OPT( use_phenix_geo, "Use phenix ideal RNA geometry", false);
+	/////////
 	NEW_OPT( sampler_extra_anti_chi_rotamer, "Samplerer: extra_anti_chi_rotamer", false);
 	NEW_OPT( sampler_extra_syn_chi_rotamer, "Samplerer: extra_syn_chi_rotamer", false);
 	NEW_OPT( sampler_extra_beta_rotamer, "Samplerer: extra_beta_rotamer", false);

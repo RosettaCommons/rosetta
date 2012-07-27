@@ -17,6 +17,7 @@
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueMatcher.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -64,12 +65,15 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
+#include <core/scoring/constraints/CharmmPeriodicFunc.hh>
+#include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
 
 #include <numeric/xyzVector.hh>
+#include <numeric/constants.hh>
 #include <numeric/conversions.hh>
 
 
@@ -151,6 +155,7 @@ OPT_KEY ( String, filter_output_filename )
 OPT_KEY ( Boolean, filter_for_previous_contact )
 OPT_KEY ( Boolean, filter_for_previous_clash )
 OPT_KEY ( Boolean, minimize_and_score_sugar )
+OPT_KEY ( Boolean, use_phenix_geo )
 OPT_KEY ( Boolean, sampler_extra_anti_chi_rotamer )
 OPT_KEY ( Boolean, sampler_extra_syn_chi_rotamer )
 OPT_KEY ( Boolean, PBP_clustering_at_chain_closure )
@@ -211,6 +216,34 @@ OPT_KEY ( Boolean, allow_chain_boundary_jump_partner_right_at_fixed_BP )
 OPT_KEY ( Boolean, allow_fixed_res_at_moving_res )
 OPT_KEY( Real, sampler_cluster_rmsd )
 OPT_KEY( Boolean,  output_pdb )
+OPT_KEY ( Boolean, constraint_purine_chi )
+
+//////////////////////////////////////////////////////////////////////////////////////
+//Apply chi angle constraint to the purines
+void apply_chi_cst(core::pose::Pose & pose, core::pose::Pose const & ref_pose) {
+	using namespace core::conformation;
+	using namespace core::id;
+	using namespace core::scoring;
+	using namespace core::scoring::rna;
+	using namespace core::scoring::constraints;
+	using namespace core::chemical;
+
+	Size const nres = pose.total_residue();
+	ConstraintSetOP cst_set = new ConstraintSet;
+	for (Size i = 1; i <= nres; ++i) {
+		Residue const & res = pose.residue(i);
+		if ( res.is_RNA() && (res.aa() == na_rad || res.aa() == na_rgu)) {
+			Real const chi = numeric::conversions::radians( ref_pose.torsion( TorsionID( i, id::CHI, 1 ) ) );
+			FuncOP chi_cst_func ( new CharmmPeriodicFunc( chi, 1.0, 1.0 ) );
+			AtomID const atom1 (res.atom_index("C2*"), i);
+			AtomID const atom2 (res.atom_index("C1*"), i);
+			AtomID const atom3 (res.atom_index("N9"), i);
+			AtomID const atom4 (res.atom_index("C4"), i);
+			cst_set->add_constraint( new DihedralConstraint( atom1, atom2, atom3, atom4, chi_cst_func ) );
+		}
+	}
+	pose.constraint_set ( cst_set );
+}
 
 //////////////////////////////////////////////////////////////////////////////////////
 std::string
@@ -636,6 +669,12 @@ rna_resample_test() {
 		protocols::viewer::add_conformation_viewer ( pose.conformation(), current_directory_string, 400, 400 );
 	}
 
+	//Constrain chi angles of purines
+	bool const chi_constraint = option[ constraint_purine_chi ];
+	if (chi_constraint) {
+		apply_chi_cst( pose, *job_parameters_COP->working_native_pose() );
+	}
+
 	StepWiseRNA_AnalyticalLoopCloseSampler stepwise_rna_residue_sampler ( job_parameters_COP );
 	std::string const silent_file = option[ out::file::silent  ]();
 	stepwise_rna_residue_sampler.set_silent_file ( silent_file + "_sampling" );
@@ -653,6 +692,7 @@ rna_resample_test() {
 	stepwise_rna_residue_sampler.set_PBP_clustering_at_chain_closure ( option[ PBP_clustering_at_chain_closure]() );
 	stepwise_rna_residue_sampler.set_extra_syn_chi_rotamer ( option[ sampler_extra_syn_chi_rotamer]() );
 	stepwise_rna_residue_sampler.set_extra_anti_chi_rotamer ( option[ sampler_extra_anti_chi_rotamer]() );
+	stepwise_rna_residue_sampler.set_use_phenix_geo ( option[ use_phenix_geo]() );
 	stepwise_rna_residue_sampler.set_centroid_screen ( option[ centroid_screen ]() );
 	stepwise_rna_residue_sampler.set_VDW_atr_rep_screen ( option[ VDW_atr_rep_screen ]() );
 	stepwise_rna_residue_sampler.set_base_centroid_screener ( base_centroid_screener );
@@ -721,6 +761,7 @@ main ( int argc, char * argv [] ) {
 	NEW_OPT ( minimize_and_score_sugar, "minimize and sugar torsion+angle? and include the rna_sugar_close_score_term ", true ); //Sept 15, 2010
 	NEW_OPT ( sampler_extra_syn_chi_rotamer, "Samplerer: extra_chi_rotamer", false );
 	NEW_OPT ( sampler_extra_anti_chi_rotamer, "Samplerer: extra_chi_rotamer", false );
+	NEW_OPT ( use_phenix_geo, "use phenix ideal geometry", false );
 	NEW_OPT ( PBP_clustering_at_chain_closure, "Samplerer: PBP_clustering_at_chain_closure", false );
 	NEW_OPT ( clusterer_two_stage_clustering, "Cluster is two stage..using triangle inequaility to speed up clustering", true ); //Change to true on Oct 10, 2010
 	NEW_OPT ( clusterer_keep_pose_in_memory, "reduce memory usage for the clusterer", true ); //Aug 6, 2010
@@ -783,6 +824,7 @@ main ( int argc, char * argv [] ) {
 	NEW_OPT ( allow_fixed_res_at_moving_res, "allow_fixed_res_at_moving_res, mainly just to get Hermann Duplex working", false ); //Nov 15, 2010
 	NEW_OPT( sampler_cluster_rmsd, " Clustering rmsd of conformations in the sampler", 0.5); //DO NOT CHANGE THIS!
 	NEW_OPT( output_pdb, "output_pdb: If true, then will dump the pose into a PDB file at different stages of the stepwise assembly process.", false); //Sept 24, 2011
+	NEW_OPT ( constraint_purine_chi, "Constrain the purine chi angles", false );
 	////////////////////////////////////////////////////////////////////////////
 	// setup
 	////////////////////////////////////////////////////////////////////////////

@@ -150,6 +150,10 @@ public:
 		extra_anti_chi_rotamer_ = setting;
 	}
 
+	void
+	set_use_phenix_geo ( bool const & setting ) {
+		use_phenix_geo_ = setting;
+	}
 private:
 
 	void
@@ -259,6 +263,7 @@ private:
 	bool PBP_clustering_at_chain_closure_;
 	bool extra_anti_chi_rotamer_;
 	bool extra_syn_chi_rotamer_;
+	bool use_phenix_geo_;
 
 	StepWiseRNA_VDW_Bin_ScreenerOP user_input_VDW_bin_screener_;
 
