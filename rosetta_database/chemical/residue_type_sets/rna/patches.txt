@@ -1,0 +1,15 @@
+patches/LowerRNA.txt
+patches/UpperRNA.txt
+patches/rna_cutpoint_lower.txt
+patches/rna_cutpoint_upper.txt
+patches/Virtual_Phosphate.txt
+patches/Virtual_O2star_hydrogen.txt
+patches/BulgeRNA.txt
+patches/Virtual_RNA_Residue.txt
+patches/Virtual_RNA_Residue_Upper.txt
+patches/Virtual_Ribose.txt
+patches/Protonated_H1_Adenosine.txt
+patches/Virtual_Backbone_Except_C1star.txt
+patches/3prime_end_OH.txt
+patches/5prime_end_OH.txt
+patches/5prime_end_phosphate.txt
