@@ -692,7 +692,7 @@ CartesianBondedEnergy::eval_improper_torsions(
 		if (pose.pdb_info() && 0.5*Kphi*del_phi*del_phi > CUTOFF) {
 			TR.Debug << pose.pdb_info()->name() << " seqpos: " << res_low.seqpos() << " pdbpos: " << pose.pdb_info()->number(res_low.seqpos()) << " improper torsion: " <<
 				res_low.name() << " : " <<
-				res_low.atom_name( atm1 ) << " , " << res_high.atom_name( atm2 ) << " , " <<
+				res_high.atom_name( atm1 ) << " , " << res_low.atom_name( atm2 ) << " , " <<
 				res_high.atom_name( atm3 ) << " , " << res_high.atom_name( atm4 ) << "   " <<
 				Kphi << " " << 0.5*Kphi*del_phi*del_phi << std::endl;
 		}
@@ -720,7 +720,7 @@ CartesianBondedEnergy::eval_improper_torsions(
 			TR.Debug << pose.pdb_info()->name() << " seqpos: " << res_low.seqpos() << " pdbpos: " << pose.pdb_info()->number(res_low.seqpos()) << " improper torsion: " <<
 				res_low.name() << " : " <<
 				res_low.atom_name( atm1 ) << " , " << res_high.atom_name( atm2 ) << " , " <<
-				res_high.atom_name( atm3 ) << " , " << res_high.atom_name( atm4 ) << "   " <<
+				res_low.atom_name( atm3 ) << " , " << res_low.atom_name( atm4 ) << "   " <<
 				Kphi << " " << 0.5*Kphi*del_phi*del_phi << std::endl;
 		}
 
@@ -915,6 +915,7 @@ CartesianBondedEnergy::eval_improper_torsions_derivative(
 
 	// INTRA-RES
 	{
+		bool applyThis = true;
 		if (res.aa() == aa_asp) {
 			// asp CB-CG-OD1-OD2
 			atm1 = res.atom_index(" CB ");
@@ -940,24 +941,26 @@ CartesianBondedEnergy::eval_improper_torsions_derivative(
 			atm3 = res.atom_index(" OE1");
 			atm4 = res.atom_index(" NE2");
 		} else {
-			return;
-		}
-		atm1xyz = res.xyz( atm1 );
-		atm2xyz = res.xyz( atm2 );
-		atm3xyz = res.xyz( atm3 );
-		atm4xyz = res.xyz( atm4 );
-	
-		bool applyThis = true;
-		if ( atm1 == atomno ) {
-			numeric::deriv::dihedral_p1_cosine_deriv( atm1xyz, atm2xyz, atm3xyz, atm4xyz, phi, f1, f2 );
-		} else if ( atm2 == atomno ) {
-			numeric::deriv::dihedral_p2_cosine_deriv( atm1xyz, atm2xyz, atm3xyz, atm4xyz, phi, f1, f2 );
-		} else if ( atm3 == atomno ) {
-			numeric::deriv::dihedral_p2_cosine_deriv( atm4xyz, atm3xyz, atm2xyz, atm1xyz, phi, f1, f2 );
-		} else if ( atm4 == atomno ) {
-			numeric::deriv::dihedral_p1_cosine_deriv( atm4xyz, atm3xyz, atm2xyz, atm1xyz, phi, f1, f2 );
-		} else {
 			applyThis = false;
+		}
+
+		if (applyThis) {
+			atm1xyz = res.xyz( atm1 );
+			atm2xyz = res.xyz( atm2 );
+			atm3xyz = res.xyz( atm3 );
+			atm4xyz = res.xyz( atm4 );
+		
+			if ( atm1 == atomno ) {
+				numeric::deriv::dihedral_p1_cosine_deriv( atm1xyz, atm2xyz, atm3xyz, atm4xyz, phi, f1, f2 );
+			} else if ( atm2 == atomno ) {
+				numeric::deriv::dihedral_p2_cosine_deriv( atm1xyz, atm2xyz, atm3xyz, atm4xyz, phi, f1, f2 );
+			} else if ( atm3 == atomno ) {
+				numeric::deriv::dihedral_p2_cosine_deriv( atm4xyz, atm3xyz, atm2xyz, atm1xyz, phi, f1, f2 );
+			} else if ( atm4 == atomno ) {
+				numeric::deriv::dihedral_p1_cosine_deriv( atm4xyz, atm3xyz, atm2xyz, atm1xyz, phi, f1, f2 );
+			} else {
+				applyThis = false;
+			}
 		}
 
 		if (applyThis) {
@@ -971,10 +974,10 @@ CartesianBondedEnergy::eval_improper_torsions_derivative(
 				dE_dphi = weights[ cart_bonded_torsion ] * Kphi * del_phi;
 				dE_dphi += weights[ cart_bonded ] * Kphi * del_phi;
 			}
-		}
 
-		F1 += dE_dphi * f1;
-		F2 += dE_dphi * f2;
+			F1 += dE_dphi * f1;
+			F2 += dE_dphi * f2;
+		}
 	}
 }
 
