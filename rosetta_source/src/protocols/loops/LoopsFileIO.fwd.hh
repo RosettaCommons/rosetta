@@ -27,6 +27,8 @@ class LoopFromFileData;
 class LoopsFileIO;
 
 class LoopsFileData;
+typedef utility::pointer::owning_ptr< LoopsFileData > LoopsFileDataOP;
+typedef utility::pointer::owning_ptr< LoopsFileData const > LoopsFileDataCOP;
 
 class GuardedLoopsFromFile;
 

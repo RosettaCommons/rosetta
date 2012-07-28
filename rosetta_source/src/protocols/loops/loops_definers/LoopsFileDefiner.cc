@@ -84,8 +84,8 @@ LoopsFileDefiner::parse_my_tag(
 	}
 
 	LoopsFileIO loops_file_io;
-	LoopsFileData lfd = loops_file_io.read_loop_file( filename );
-	loop_list_ = lfd.resolve_as_serialized_loops( p );
+	LoopsFileDataOP lfd = loops_file_io.read_loop_file( filename );
+	loop_list_ = lfd->resolve_as_serialized_loops( p );
 }
 
 SerializedLoopList

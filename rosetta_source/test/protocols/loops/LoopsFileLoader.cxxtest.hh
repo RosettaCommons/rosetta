@@ -24,7 +24,6 @@
 #include <utility/tag/Tag.hh>
 
 // Numeric headers
-#include <numeric/kdtree/WrappedPrimitive.hh>
 
 // C++ headers
 #include <string>
@@ -48,10 +47,10 @@ public:
 		utility::pointer::ReferenceCountOP resource = loader.create_resource( opts, "unit_test", lstream );
 		TS_ASSERT( resource ); // make sure a resource was returned
 
-		numeric::kdtree::WrappedPrimitive< LoopsFileData > * lfdptr = dynamic_cast< numeric::kdtree::WrappedPrimitive< LoopsFileData > * > ( resource() );
+		LoopsFileDataOP lfdptr = dynamic_cast< LoopsFileData * > ( resource() );
 		TS_ASSERT( lfdptr ); // make sure we're actually returned the correct type
 
-		LoopsFileData const & lfd( lfdptr->val() );
+		LoopsFileData const & lfd( *lfdptr() );
 		TS_ASSERT( lfd.size() == 2 );
 		TS_ASSERT( lfd[ 1 ].start_res().pose_index() == 1 );
 		TS_ASSERT( lfd[ 1 ].end_res().pose_index() == 4 );

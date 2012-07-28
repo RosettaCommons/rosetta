@@ -34,6 +34,7 @@
 		02821A0438A49631C74647AE /* MPIBPool_ConvergenceCheck.cc in Sources */ = {isa = PBXBuildFile; fileRef = 521EA56078C8FAF23B0A78F9 /* MPIBPool_ConvergenceCheck.cc */; };
 		028632B64CC01F21C5084E1E /* util.cc in Sources */ = {isa = PBXBuildFile; fileRef = A1C733AFF911454FFE448D17 /* util.cc */; };
 		02A4B0BFA2AA8CB0CA51C1ED /* SAXSEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 063C7A4DA7106A5C47997AA8 /* SAXSEnergy.cc */; };
+		02C180EF8880C0F7C6761C34 /* ExtractSubpose.cc in Sources */ = {isa = PBXBuildFile; fileRef = B106AF6E48261442C480D81C /* ExtractSubpose.cc */; };
 		02F43ECDFDFDFA795784CE88 /* CenHBPotential.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3B8BFFB37F0C7945EA4CE110 /* CenHBPotential.cc */; };
 		037B607E9F9BC69493998E08 /* GunnCost.cc in Sources */ = {isa = PBXBuildFile; fileRef = DF1B893BE4A727CC3FE4629E /* GunnCost.cc */; };
 		03866E46497A3F4B3F1D2DAD /* FragmentSampler.cc in Sources */ = {isa = PBXBuildFile; fileRef = 05BEE001CC0E79C2E9579B67 /* FragmentSampler.cc */; };
@@ -150,6 +151,7 @@
 		11BF187D32AC022AD4D35CCB /* marchingCubes.cc in Sources */ = {isa = PBXBuildFile; fileRef = 020D282AAEFD1CFA219696A9 /* marchingCubes.cc */; };
 		11C016AEA68BF6371F60EF5C /* VallResidue.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7FE06BD936A238C81CA4748C /* VallResidue.cc */; };
 		11C0F8A327463DB910229EC1 /* FoldTree.cc in Sources */ = {isa = PBXBuildFile; fileRef = F65E45A8269C423E9A046072 /* FoldTree.cc */; };
+		11D709D0C02632AA9D0D238A /* RNA_IdealCoord.cc in Sources */ = {isa = PBXBuildFile; fileRef = D2840740BFE1D3AA329D4A5A /* RNA_IdealCoord.cc */; };
 		11FD6077D3E6524C9B08B0EF /* Arithmetic.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0D65896D7B9B1A028345D599 /* Arithmetic.cc */; };
 		1213C3136B22B0703930F38E /* RNA_ScoringInfo.cc in Sources */ = {isa = PBXBuildFile; fileRef = 97368D8B5F28D84FE3C9EB1E /* RNA_ScoringInfo.cc */; };
 		12157332885801C1B4AA4C99 /* ElecDensAllAtomCenEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8664B50E28F5056EB042EAFC /* ElecDensAllAtomCenEnergy.cc */; };
@@ -740,6 +742,7 @@
 		4592B087A46261B56B73CBD0 /* DimensionExpressionRef.cc in Sources */ = {isa = PBXBuildFile; fileRef = FA9DC3B2FEFFFB39F516956A /* DimensionExpressionRef.cc */; };
 		45A56A5166FCC30FC2267DBC /* option.cc in Sources */ = {isa = PBXBuildFile; fileRef = D30919B87C092312A15D12C9 /* option.cc */; };
 		45FEE124D9E2FC1789603DB2 /* util.cc in Sources */ = {isa = PBXBuildFile; fileRef = C814DF9707A240A9D3848B9F /* util.cc */; };
+		4606AFA30DCCE088B87F5C68 /* ClashCheckFilter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 272CF4EFF2CB98A7E609CBDA /* ClashCheckFilter.cc */; };
 		460707137D9C665B6A63332A /* PoseConformationFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = 19CF470906AA531332A7DA00 /* PoseConformationFeatures.cc */; };
 		461265681990131AE9D78D9A /* MolarMassFilter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 24A7790FB3FF8C4236949C48 /* MolarMassFilter.cc */; };
 		461A4E2F3BCAE910FA9BCBA2 /* VoxelSetIterator.cc in Sources */ = {isa = PBXBuildFile; fileRef = D264ED796226E2BAA9FE5E76 /* VoxelSetIterator.cc */; };
@@ -1250,6 +1253,7 @@
 		7F4FC38C81E65F9758D49569 /* ccd_closure.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4DFAAE5292AFFF8C08AD8248 /* ccd_closure.cc */; };
 		7F6EC7F31D31C0E05D8C26BB /* ABEGOManager.cc in Sources */ = {isa = PBXBuildFile; fileRef = 399EAD661DC671400FCF1D76 /* ABEGOManager.cc */; };
 		7FF9EF58267D7F358D7407DF /* IfMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = E04D41DDE5872D3DA114B903 /* IfMover.cc */; };
+		80115DA66D97272B5B464109 /* sasapack.cc in Sources */ = {isa = PBXBuildFile; fileRef = BA904995BC601EAEFED836CC /* sasapack.cc */; };
 		802A6790EC40E231AC251CBB /* SilentStructFactory.cc in Sources */ = {isa = PBXBuildFile; fileRef = B6CCC9679D250C4FB1FCFB38 /* SilentStructFactory.cc */; };
 		8073FC9BA0D17458AE390230 /* constants.cc in Sources */ = {isa = PBXBuildFile; fileRef = A33B35CF35571E0484257FBD /* constants.cc */; };
 		807BE8A87ECD453C3D08D18C /* CPDataCorrespondence.cc in Sources */ = {isa = PBXBuildFile; fileRef = AF00FA7020C58C9B8500D898 /* CPDataCorrespondence.cc */; };
@@ -1479,6 +1483,7 @@
 		98B1670783406E3C8989A2CF /* ScoreEValuator.cc in Sources */ = {isa = PBXBuildFile; fileRef = CF21AE56582A4F552B29F746 /* ScoreEValuator.cc */; };
 		98BB32C6AC165250DDF8686B /* RigidBodyMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = E3985199F37910DFCE0580E3 /* RigidBodyMover.cc */; };
 		98D851E6DBB0049F53EFF374 /* vs_test.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0525524B23DFEF82A0864880 /* vs_test.cc */; };
+		98DE451C7E3602A0DD3438FC /* SymDofMoverSampler.cc in Sources */ = {isa = PBXBuildFile; fileRef = F18FFE6F6DDADC4E146384DC /* SymDofMoverSampler.cc */; };
 		991A0E54E41CCD59BD91CBB1 /* ModelCDRH3.cc in Sources */ = {isa = PBXBuildFile; fileRef = 56FAFCAEF866E6CD7E7C3A6A /* ModelCDRH3.cc */; };
 		991FFE3258831DBFF0268AD9 /* LoopRelaxMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 336F197EDA6183528A1E7B11 /* LoopRelaxMover.cc */; };
 		994D51D0820562B2EB1F313A /* Ramachandran.cc in Sources */ = {isa = PBXBuildFile; fileRef = 36AD42AE4AA8F488A4AED207 /* Ramachandran.cc */; };
@@ -1544,6 +1549,7 @@
 		A0C727E10E9E6D4868E21F68 /* RNA_PairwiseLowResolutionEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6D60E709008D69AEC7879493 /* RNA_PairwiseLowResolutionEnergy.cc */; };
 		A0E9F3890C44BA3F79C89CC2 /* MultiCoolAnnealer.cc in Sources */ = {isa = PBXBuildFile; fileRef = C3C51FA8A4763D1F4032F7A9 /* MultiCoolAnnealer.cc */; };
 		A0F3C82B07151E0A27AE14D1 /* PNatLigPoseOptEData.cc in Sources */ = {isa = PBXBuildFile; fileRef = 743A7CC13D4370D0302926AC /* PNatLigPoseOptEData.cc */; };
+		A1CB8B0A0D93FA3137AF5D56 /* ConstraintEvaluatorWrapperCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2DC841A09A7B8FED8AA52441 /* ConstraintEvaluatorWrapperCreator.cc */; };
 		A1CFDD70E29FE939C59EDB03 /* ExtraThreadingMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 70D4F62D3BF65FBB3EB3FB2E /* ExtraThreadingMover.cc */; };
 		A1DAEA6000953DDCF8C8B8B2 /* init.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4C13621DD5E8E96E4F71E2D3 /* init.cc */; };
 		A1EAB0C36BD0FE250E35D432 /* FixbbCoupledRotamerSimAnnealer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 872528E7FEA1E851A795BFCE /* FixbbCoupledRotamerSimAnnealer.cc */; };
@@ -2272,6 +2278,7 @@
 		EDE3D04FA6D7C54862588621 /* PredictedBurialFnEvaluatorCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5FEE2354C704A0FEBCB96EB3 /* PredictedBurialFnEvaluatorCreator.cc */; };
 		EDE3FB710F687DD912E20626 /* KinematicPerturber.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7E875B61EFF81F0B768F06BD /* KinematicPerturber.cc */; };
 		EDF630F95DD306DB94509233 /* RampingMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = E915DB2C908A35C7622ACE46 /* RampingMover.cc */; };
+		EE14B5B8EB9741A08DB7A2BB /* GPU.cc in Sources */ = {isa = PBXBuildFile; fileRef = 944ABC68EEDD8E77DD2A14C7 /* GPU.cc */; };
 		EE5114CAB6FA30033019ED46 /* SplineGenerator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8BD7FEBDA1518EC9B348E62C /* SplineGenerator.cc */; };
 		EE58E40E9219A39AE483B027 /* PoolEvaluatorCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5EB9019C40F1284378B6D9B2 /* PoolEvaluatorCreator.cc */; };
 		EE5CD582FF7E9A25E76DE700 /* HelixKinkFilter.cc in Sources */ = {isa = PBXBuildFile; fileRef = D6E716DE9FAEE965064D99CB /* HelixKinkFilter.cc */; };
@@ -6832,6 +6839,7 @@
 		01A24699AD828E03B8696241 /* RBSegment.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RBSegment.hh; path = ../src/protocols/rbsegment_relax/RBSegment.hh; sourceTree = SOURCE_ROOT; };
 		01BB051C4F54224DCE45AA3F /* ResidueMatcher.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ResidueMatcher.cc; path = ../src/core/conformation/ResidueMatcher.cc; sourceTree = SOURCE_ROOT; };
 		01C975ABE7D564CDADF0AD94 /* PeptideStapleMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PeptideStapleMover.fwd.hh; path = ../src/protocols/simple_moves/PeptideStapleMover.fwd.hh; sourceTree = SOURCE_ROOT; };
+		01CB9AE69EB36C0EAC14B175 /* ClashCheckFilter.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ClashCheckFilter.fwd.hh; path = ../src/devel/matdes/ClashCheckFilter.fwd.hh; sourceTree = SOURCE_ROOT; };
 		01CBBCC075533A8E49347E90 /* SameChiBinComboGrouper.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SameChiBinComboGrouper.cc; path = ../src/protocols/match/output/SameChiBinComboGrouper.cc; sourceTree = SOURCE_ROOT; };
 		01CD389E8CF8B0F22DC13AC1 /* SurfaceEnergies.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SurfaceEnergies.fwd.hh; path = ../src/core/scoring/solid_surface/SurfaceEnergies.fwd.hh; sourceTree = SOURCE_ROOT; };
 		01D1A8ED84C15052309C28EC /* DisulfideFile.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DisulfideFile.cc; path = ../src/core/io/raw_data/DisulfideFile.cc; sourceTree = SOURCE_ROOT; };
@@ -6867,6 +6875,7 @@
 		02E601D37F527FE5117B1FE6 /* RelativeSegmentFilterCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RelativeSegmentFilterCreator.hh; path = ../src/protocols/protein_interface_design/filters/RelativeSegmentFilterCreator.hh; sourceTree = SOURCE_ROOT; };
 		02EAB905E7283FD5AEC460B3 /* Fragment.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Fragment.cc; path = ../src/devel/inv_kin_lig_loop_design/Fragment.cc; sourceTree = SOURCE_ROOT; };
 		02F285C5862B7252D90648F6 /* AntibodyModeler.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AntibodyModeler.cc; path = ../src/protocols/antibody/AntibodyModeler.cc; sourceTree = SOURCE_ROOT; };
+		02F4595D8151FF43F3B736B4 /* RNA_DataInfo.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_DataInfo.fwd.hh; path = ../src/core/scoring/rna/RNA_DataInfo.fwd.hh; sourceTree = SOURCE_ROOT; };
 		02F86526F6336A828692DB54 /* ShortLoopClosure.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ShortLoopClosure.fwd.hh; path = ../src/protocols/loops/loop_closure/ccd/ShortLoopClosure.fwd.hh; sourceTree = SOURCE_ROOT; };
 		02FB7FA7323DEC04D4412100 /* FragID_Iterator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FragID_Iterator.hh; path = ../src/core/fragment/FragID_Iterator.hh; sourceTree = SOURCE_ROOT; };
 		02FC22187ADE9212EA4ED044 /* RNAHackElecEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNAHackElecEnergy.fwd.hh; path = ../src/core/scoring/hackelec/RNAHackElecEnergy.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -6983,6 +6992,7 @@
 		067A9F634D3433A344AEDC6F /* GeometricSolvationFeaturesCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = GeometricSolvationFeaturesCreator.cc; path = ../src/protocols/features/GeometricSolvationFeaturesCreator.cc; sourceTree = SOURCE_ROOT; };
 		067DEBA5C3523F311153B89A /* SequenceMapping.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SequenceMapping.cc; path = ../src/core/id/SequenceMapping.cc; sourceTree = SOURCE_ROOT; };
 		0686D1EEFA43A8A9B0A4F31F /* JumpSample.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = JumpSample.hh; path = ../src/protocols/jumping/JumpSample.hh; sourceTree = SOURCE_ROOT; };
+		06896726A03D457F8B972E25 /* RNA_ScoringInfo.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_ScoringInfo.hh; path = ../src/core/scoring/rna/RNA_ScoringInfo.hh; sourceTree = SOURCE_ROOT; };
 		068A51961F6B744A6E9D603C /* ForeignKey.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ForeignKey.hh; path = ../src/basic/database/schema_generator/ForeignKey.hh; sourceTree = SOURCE_ROOT; };
 		069171544ABC02AC15EC2E2F /* MotifDnaPacker.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MotifDnaPacker.hh; path = ../src/protocols/motifs/MotifDnaPacker.hh; sourceTree = SOURCE_ROOT; };
 		0696BE57B04D9E57072AD104 /* ConstraintsEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ConstraintsEnergy.cc; path = ../src/core/scoring/constraints/ConstraintsEnergy.cc; sourceTree = SOURCE_ROOT; };
@@ -6992,6 +7002,7 @@
 		06C250007BDA65761B1C4392 /* SymShakeStructureMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SymShakeStructureMover.hh; path = ../src/protocols/simple_moves/symmetry/SymShakeStructureMover.hh; sourceTree = SOURCE_ROOT; };
 		06CF85961E4B926A1E64AE5C /* ChemicalShiftAnisotropyEnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ChemicalShiftAnisotropyEnergyCreator.hh; path = ../src/core/scoring/methods/ChemicalShiftAnisotropyEnergyCreator.hh; sourceTree = SOURCE_ROOT; };
 		06D5345463F993FB288C1BA4 /* TaskOperationCreators.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TaskOperationCreators.hh; path = ../src/core/pack/task/operation/TaskOperationCreators.hh; sourceTree = SOURCE_ROOT; };
+		06D7557F2B60D06A3FCF6B3B /* SymDofMoverSampler.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SymDofMoverSampler.hh; path = ../src/devel/matdes/SymDofMoverSampler.hh; sourceTree = SOURCE_ROOT; };
 		06E1A88868FD7CD52F153038 /* RamachandranEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RamachandranEnergy.fwd.hh; path = ../src/core/scoring/methods/RamachandranEnergy.fwd.hh; sourceTree = SOURCE_ROOT; };
 		07009C2C16ADE33D22D892C3 /* H3PerturbCCD.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = H3PerturbCCD.cc; path = ../src/protocols/antibody2/H3PerturbCCD.cc; sourceTree = SOURCE_ROOT; };
 		0736AC29167164FDEA48CC52 /* RotamerSetFactory.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RotamerSetFactory.fwd.hh; path = ../src/core/pack/rotamer_set/RotamerSetFactory.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -7380,6 +7391,7 @@
 		14FB5A42B742607ADA0D9409 /* CombinedConstraintEvaluatorCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CombinedConstraintEvaluatorCreator.hh; path = ../src/protocols/constraints_additional/CombinedConstraintEvaluatorCreator.hh; sourceTree = SOURCE_ROOT; };
 		14FC999D7EAD4FA0A38FB046 /* Fa_MbenvEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Fa_MbenvEnergy.hh; path = ../src/core/scoring/methods/Fa_MbenvEnergy.hh; sourceTree = SOURCE_ROOT; };
 		150117F0D8F555114E72E07E /* SymPackRotamersMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SymPackRotamersMover.hh; path = ../src/protocols/simple_moves/symmetry/SymPackRotamersMover.hh; sourceTree = SOURCE_ROOT; };
+		1505C77B85C1DBC8927147E5 /* RNA_IdealCoord.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_IdealCoord.fwd.hh; path = ../src/core/scoring/rna/RNA_IdealCoord.fwd.hh; sourceTree = SOURCE_ROOT; };
 		1507B685C48389115A4390D7 /* RNA_SWA_MonteCarloUtil.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_SWA_MonteCarloUtil.hh; path = ../src/protocols/swa/monte_carlo/RNA_SWA_MonteCarloUtil.hh; sourceTree = SOURCE_ROOT; };
 		1507C1CD3A85ECF711F8CD86 /* optE.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = optE.OptionKeys.gen.hh; path = ../src/basic/options/keys/optE.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
 		150B09862694A9C03A0DCA1F /* RotamerRecoveryFeaturesCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RotamerRecoveryFeaturesCreator.hh; path = ../src/protocols/features/RotamerRecoveryFeaturesCreator.hh; sourceTree = SOURCE_ROOT; };
@@ -7455,6 +7467,7 @@
 		1734D3E03C9331AC8AB0E6C3 /* JD2ResourceManagerCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = JD2ResourceManagerCreator.hh; path = ../src/protocols/jd2/JD2ResourceManagerCreator.hh; sourceTree = SOURCE_ROOT; };
 		1736F8A610B819E5351D7676 /* ResidueBurialFilterCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ResidueBurialFilterCreator.hh; path = ../src/protocols/simple_filters/ResidueBurialFilterCreator.hh; sourceTree = SOURCE_ROOT; };
 		173B0D0F7085E2B6D78C9DBD /* DerivVectorPair.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DerivVectorPair.hh; path = ../src/core/scoring/DerivVectorPair.hh; sourceTree = SOURCE_ROOT; };
+		173E897FAD928CE52A778516 /* ExtractSubposeCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ExtractSubposeCreator.hh; path = ../src/devel/matdes/ExtractSubposeCreator.hh; sourceTree = SOURCE_ROOT; };
 		1744C4A1AD1683E0CA06F7D4 /* SilentFilePoseInputStream.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SilentFilePoseInputStream.hh; path = ../src/core/import_pose/pose_stream/SilentFilePoseInputStream.hh; sourceTree = SOURCE_ROOT; };
 		174F0A0B314CF1879AB07298 /* AtomicDistanceFilter.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtomicDistanceFilter.hh; path = ../src/protocols/simple_filters/AtomicDistanceFilter.hh; sourceTree = SOURCE_ROOT; };
 		1751E01A7C66E0B8D3B7B6F9 /* SaltBridgeFeaturesCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SaltBridgeFeaturesCreator.hh; path = ../src/protocols/features/SaltBridgeFeaturesCreator.hh; sourceTree = SOURCE_ROOT; };
@@ -7524,6 +7537,7 @@
 		19C2D4058061C0C1811896AF /* OriginalScaffoldBuildPoint.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = OriginalScaffoldBuildPoint.fwd.hh; path = ../src/protocols/match/upstream/OriginalScaffoldBuildPoint.fwd.hh; sourceTree = SOURCE_ROOT; };
 		19C955EDD1E94BEB84EC5963 /* Arithmetic.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Arithmetic.hh; path = ../src/numeric/expression_parser/Arithmetic.hh; sourceTree = SOURCE_ROOT; };
 		19CF470906AA531332A7DA00 /* PoseConformationFeatures.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PoseConformationFeatures.cc; path = ../src/protocols/features/PoseConformationFeatures.cc; sourceTree = SOURCE_ROOT; };
+		19D6412E582CE5A3C7AC38F1 /* RNA_BulgeEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_BulgeEnergy.fwd.hh; path = ../src/core/scoring/rna/RNA_BulgeEnergy.fwd.hh; sourceTree = SOURCE_ROOT; };
 		19DB567ED50B59914420DD9B /* DsspMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DsspMover.cc; path = ../src/protocols/moves/DsspMover.cc; sourceTree = SOURCE_ROOT; };
 		19DF6FA7309B899AE16130EA /* out.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = out.OptionKeys.gen.hh; path = ../src/basic/options/keys/out.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
 		19F05725F6A4CE7D542310BF /* PackRotamersMoverPartGreedyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PackRotamersMoverPartGreedyCreator.hh; path = ../src/protocols/enzdes/PackRotamersMoverPartGreedyCreator.hh; sourceTree = SOURCE_ROOT; };
@@ -7764,6 +7778,7 @@
 		2268D5A367C3C5554649BD88 /* PseudocontactShiftEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PseudocontactShiftEnergy.hh; path = ../src/protocols/scoring/methods/pcs/PseudocontactShiftEnergy.hh; sourceTree = SOURCE_ROOT; };
 		226F2EC073FC2F7207BE981B /* SeedFoldTree.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SeedFoldTree.cc; path = ../src/protocols/seeded_abinitio/SeedFoldTree.cc; sourceTree = SOURCE_ROOT; };
 		2278173D4B400A11A8DB8B56 /* Binary_Util.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Binary_Util.cc; path = "../src/utility//Binary_Util.cc"; sourceTree = SOURCE_ROOT; };
+		2279089DA22CF12EFE09AC14 /* RNA_BaseBaseEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_BaseBaseEnergy.hh; path = ../src/core/scoring/rna/RNA_BaseBaseEnergy.hh; sourceTree = SOURCE_ROOT; };
 		228745E3D44698692FBBFE00 /* HBondParameterFeatures.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HBondParameterFeatures.fwd.hh; path = ../src/protocols/features/HBondParameterFeatures.fwd.hh; sourceTree = SOURCE_ROOT; };
 		228A31B8B5358EDD6A5BA572 /* PyEnergyMethodRegisterer.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PyEnergyMethodRegisterer.hh; path = ../src/core/scoring/methods/PyEnergyMethodRegisterer.hh; sourceTree = SOURCE_ROOT; };
 		228D6C9DF37D0A74BC0F21C5 /* EnergyEval.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = EnergyEval.fwd.hh; path = ../src/core/fragment/picking_old/vall/eval/EnergyEval.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -7882,12 +7897,14 @@
 		26E38865607EB2C959884DF3 /* RNA_DataBackboneEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_DataBackboneEnergy.hh; path = ../src/core/scoring/rna/RNA_DataBackboneEnergy.hh; sourceTree = SOURCE_ROOT; };
 		26EB6C846BF0B3C73C5722A2 /* SAXSEnergyFA.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SAXSEnergyFA.hh; path = ../src/core/scoring/saxs/SAXSEnergyFA.hh; sourceTree = SOURCE_ROOT; };
 		26F010AF2F288777EF913C7C /* RemodelData.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RemodelData.cc; path = ../src/protocols/forge/remodel/RemodelData.cc; sourceTree = SOURCE_ROOT; };
+		26F1F2C31298FD4A082B6975 /* RNA_ScoringInfo.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_ScoringInfo.fwd.hh; path = ../src/core/scoring/rna/RNA_ScoringInfo.fwd.hh; sourceTree = SOURCE_ROOT; };
 		26F1FFD80ED7BA2A791AA58E /* TryRotamersCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TryRotamersCreator.hh; path = ../src/protocols/protein_interface_design/movers/TryRotamersCreator.hh; sourceTree = SOURCE_ROOT; };
 		26F38B7575F58A0EDB9FFD0B /* TrieCountPair1BC3.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TrieCountPair1BC3.fwd.hh; path = ../src/core/scoring/etable/etrie/TrieCountPair1BC3.fwd.hh; sourceTree = SOURCE_ROOT; };
 		26F6912D82FB161F6F9F8C6E /* boinc_util.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = boinc_util.cc; path = ../src/utility/boinc/boinc_util.cc; sourceTree = SOURCE_ROOT; };
 		27006D91B5EF406B215B3812 /* TaskOperationLoader.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = TaskOperationLoader.cc; path = ../src/protocols/jd2/parser/TaskOperationLoader.cc; sourceTree = SOURCE_ROOT; };
 		270C0BB1A002AB7B92C35019 /* corrections.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = corrections.OptionKeys.gen.hh; path = ../src/basic/options/keys/corrections.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
 		270DDFF855D91E376E8279F9 /* AsymFoldandDockRbTrialMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AsymFoldandDockRbTrialMover.cc; path = ../src/protocols/simple_moves/asym_fold_and_dock/AsymFoldandDockRbTrialMover.cc; sourceTree = SOURCE_ROOT; };
+		272CF4EFF2CB98A7E609CBDA /* ClashCheckFilter.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ClashCheckFilter.cc; path = ../src/devel/matdes/ClashCheckFilter.cc; sourceTree = SOURCE_ROOT; };
 		2746CA0F43504757D0967186 /* CompositeFragmentSelector.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CompositeFragmentSelector.hh; path = ../src/protocols/frag_picker/CompositeFragmentSelector.hh; sourceTree = SOURCE_ROOT; };
 		2754E22C06BD20A57D2BAE90 /* FlexbbRotamerSets.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FlexbbRotamerSets.fwd.hh; path = ../src/protocols/flexpack/rotamer_set/FlexbbRotamerSets.fwd.hh; sourceTree = SOURCE_ROOT; };
 		2757AF849187A2D00A60231C /* PatchOperation.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PatchOperation.hh; path = ../src/core/chemical/PatchOperation.hh; sourceTree = SOURCE_ROOT; };
@@ -7919,6 +7936,7 @@
 		2871096259C29633E9529B09 /* FeaturesReporterFactory.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FeaturesReporterFactory.hh; path = ../src/protocols/features/FeaturesReporterFactory.hh; sourceTree = SOURCE_ROOT; };
 		2878D34E831A3918FBD171C6 /* CountPair1B.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CountPair1B.hh; path = ../src/core/scoring/etable/count_pair/CountPair1B.hh; sourceTree = SOURCE_ROOT; };
 		2881CEE5A8D79662B7C94199 /* JumpEvaluator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JumpEvaluator.cc; path = ../src/protocols/simple_filters/JumpEvaluator.cc; sourceTree = SOURCE_ROOT; };
+		2881F683413EDB9B451A24B7 /* RNA_VDW_Energy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_VDW_Energy.hh; path = ../src/core/scoring/rna/RNA_VDW_Energy.hh; sourceTree = SOURCE_ROOT; };
 		28830E28E020B6D60AA57D61 /* NoRepackDisulfidesCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = NoRepackDisulfidesCreator.hh; path = ../src/core/pack/task/operation/NoRepackDisulfidesCreator.hh; sourceTree = SOURCE_ROOT; };
 		289111B7D2E98150A171BFF7 /* StepWiseBetaAntiParallelUtil.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StepWiseBetaAntiParallelUtil.cc; path = ../src/protocols/swa/protein/StepWiseBetaAntiParallelUtil.cc; sourceTree = SOURCE_ROOT; };
 		28950CED5EC07EA5B2A88FAC /* RollMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RollMover.hh; path = ../src/protocols/rigid/RollMover.hh; sourceTree = SOURCE_ROOT; };
@@ -8004,6 +8022,7 @@
 		2BB0FFCD4F0F6818A5304488 /* boinc.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = boinc.OptionKeys.gen.hh; path = ../src/basic/options/keys/boinc.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
 		2BB1B73996678A80E5AA72D2 /* NeighborTypeFilter.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = NeighborTypeFilter.fwd.hh; path = ../src/protocols/simple_filters/NeighborTypeFilter.fwd.hh; sourceTree = SOURCE_ROOT; };
 		2BB814B48467548C6AEAB7CD /* MakePolyXMoverCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MakePolyXMoverCreator.hh; path = ../src/protocols/simple_moves/MakePolyXMoverCreator.hh; sourceTree = SOURCE_ROOT; };
+		2BBC338AAE9AD30286D3E8CC /* RNA_RawBaseBaseInfo.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_RawBaseBaseInfo.fwd.hh; path = ../src/core/scoring/rna/RNA_RawBaseBaseInfo.fwd.hh; sourceTree = SOURCE_ROOT; };
 		2BD6743B9E8A13F762AF1B85 /* SeedSetupMoverCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SeedSetupMoverCreator.hh; path = ../src/protocols/seeded_abinitio/SeedSetupMoverCreator.hh; sourceTree = SOURCE_ROOT; };
 		2BDD2E353F00861FF094360C /* base_movers.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = base_movers.hh; path = ../src/devel/dna/base_movers.hh; sourceTree = SOURCE_ROOT; };
 		2BE72EE937003E71E5EE7262 /* MultistateFitnessFunction.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MultistateFitnessFunction.hh; path = ../src/protocols/pack_daemon/MultistateFitnessFunction.hh; sourceTree = SOURCE_ROOT; };
@@ -8057,6 +8076,7 @@
 		2DAF51D1A3483B7E797B00CB /* JobDistributor.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = JobDistributor.fwd.hh; path = ../src/protocols/jd2/JobDistributor.fwd.hh; sourceTree = SOURCE_ROOT; };
 		2DBDD5A7ABDAD76F800A2455 /* CenHBPotential.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CenHBPotential.hh; path = ../src/core/scoring/CenHBPotential.hh; sourceTree = SOURCE_ROOT; };
 		2DC0840208CD524C1A7F1A8A /* BuildPosition.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = BuildPosition.cc; path = ../src/protocols/motifs/BuildPosition.cc; sourceTree = SOURCE_ROOT; };
+		2DC841A09A7B8FED8AA52441 /* ConstraintEvaluatorWrapperCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ConstraintEvaluatorWrapperCreator.cc; path = ../src/protocols/topology_broker/ConstraintEvaluatorWrapperCreator.cc; sourceTree = SOURCE_ROOT; };
 		2DCAD3518F15F115FFE1CF94 /* ResidualDipolarCouplingEnergy_Rohl.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ResidualDipolarCouplingEnergy_Rohl.cc; path = ../src/core/scoring/methods/ResidualDipolarCouplingEnergy_Rohl.cc; sourceTree = SOURCE_ROOT; };
 		2DD2AB571540541245DCE6F1 /* LK_CosThetaEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LK_CosThetaEnergy.fwd.hh; path = ../src/core/scoring/methods/LK_CosThetaEnergy.fwd.hh; sourceTree = SOURCE_ROOT; };
 		2DD78CF75388CDFAE7F870C2 /* RNA_AddOrDeleteMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_AddOrDeleteMover.hh; path = ../src/protocols/swa/monte_carlo/RNA_AddOrDeleteMover.hh; sourceTree = SOURCE_ROOT; };
@@ -8106,6 +8126,7 @@
 		2F1449EF96446985F791872E /* CountPairCrossover3.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CountPairCrossover3.hh; path = ../src/core/scoring/etable/count_pair/CountPairCrossover3.hh; sourceTree = SOURCE_ROOT; };
 		2F16343C1DD7078C0D566C30 /* RemodelLoopMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RemodelLoopMover.cc; path = ../src/protocols/forge/remodel/RemodelLoopMover.cc; sourceTree = SOURCE_ROOT; };
 		2F1A159B30DFB0B487BC3A88 /* PDBSilentStructCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PDBSilentStructCreator.cc; path = ../src/core/import_pose/PDBSilentStructCreator.cc; sourceTree = SOURCE_ROOT; };
+		2F298B0984DCFDC04EEA4828 /* RNA_FittedTorsionInfo.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FittedTorsionInfo.hh; path = ../src/core/scoring/rna/RNA_FittedTorsionInfo.hh; sourceTree = SOURCE_ROOT; };
 		2F2E44E8F2F5587CBB3571DE /* BoltzmannFilter.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BoltzmannFilter.hh; path = ../src/protocols/protein_interface_design/filters/BoltzmannFilter.hh; sourceTree = SOURCE_ROOT; };
 		2F328572DECFE6B82EF665B2 /* AtomPairConstraint.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AtomPairConstraint.cc; path = ../src/core/scoring/constraints/AtomPairConstraint.cc; sourceTree = SOURCE_ROOT; };
 		2F3EE714D94AAC855A4FCB56 /* EntityCorrespondence.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = EntityCorrespondence.fwd.hh; path = ../src/protocols/pack_daemon/EntityCorrespondence.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -8181,6 +8202,7 @@
 		30DBBF65A93D32F9689C538C /* DnaChains.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DnaChains.hh; path = ../src/protocols/dna/DnaChains.hh; sourceTree = SOURCE_ROOT; };
 		30DF34A0ED110DA07F727953 /* FoldTreeHybridize.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FoldTreeHybridize.cc; path = ../src/protocols/comparative_modeling/hybridize/FoldTreeHybridize.cc; sourceTree = SOURCE_ROOT; };
 		30E3189CA0098901DBC90648 /* ElecDensAtomwiseEnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ElecDensAtomwiseEnergyCreator.hh; path = ../src/core/scoring/electron_density_atomwise/ElecDensAtomwiseEnergyCreator.hh; sourceTree = SOURCE_ROOT; };
+		30ECC0641471E147B5AC2F25 /* RNA_SugarCloseEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_SugarCloseEnergy.fwd.hh; path = ../src/core/scoring/rna/RNA_SugarCloseEnergy.fwd.hh; sourceTree = SOURCE_ROOT; };
 		30F5F82E9CEBC5DC78EEC147 /* SymPackRotamersMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SymPackRotamersMover.fwd.hh; path = ../src/protocols/simple_moves/symmetry/SymPackRotamersMover.fwd.hh; sourceTree = SOURCE_ROOT; };
 		3104429B56099CCDC809D275 /* RRReporterSQLite.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RRReporterSQLite.cc; path = ../src/protocols/rotamer_recovery/RRReporterSQLite.cc; sourceTree = SOURCE_ROOT; };
 		3106DB76EC265BAA9E8082FF /* pose_io.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = pose_io.cc; path = ../src/core/io/pdb/pose_io.cc; sourceTree = SOURCE_ROOT; };
@@ -8883,6 +8905,7 @@
 		488583B05EAFA820C3F75010 /* FormFactorManager.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FormFactorManager.fwd.hh; path = ../src/core/scoring/saxs/FormFactorManager.fwd.hh; sourceTree = SOURCE_ROOT; };
 		4889218CA8072B818CB1F0DA /* MembraneLipo.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = MembraneLipo.cc; path = ../src/core/scoring/methods/MembraneLipo.cc; sourceTree = SOURCE_ROOT; };
 		48906FBBBD3FD74405EAB22A /* TenANeighborGraph.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TenANeighborGraph.fwd.hh; path = ../src/core/scoring/TenANeighborGraph.fwd.hh; sourceTree = SOURCE_ROOT; };
+		489E39612901670620BB1C65 /* RNA_Util.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_Util.hh; path = ../src/core/scoring/rna/RNA_Util.hh; sourceTree = SOURCE_ROOT; };
 		48A75C3F770BB2B5FC2E7BAA /* TrieCountPairAll.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = TrieCountPairAll.cc; path = ../src/core/scoring/etable/etrie/TrieCountPairAll.cc; sourceTree = SOURCE_ROOT; };
 		48B93F6DC7C9D5712066BA2F /* FArray2D.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FArray2D.hh; path = "../src/ObjexxFCL//FArray2D.hh"; sourceTree = SOURCE_ROOT; };
 		48C064D484C9054F2D53263D /* InterlockAroma.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = InterlockAroma.hh; path = ../src/protocols/flxbb/InterlockAroma.hh; sourceTree = SOURCE_ROOT; };
@@ -9037,6 +9060,7 @@
 		4DCFB35A2267F1A86528CEF2 /* JobDistributorFactory.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JobDistributorFactory.cc; path = ../src/protocols/jd2/JobDistributorFactory.cc; sourceTree = SOURCE_ROOT; };
 		4DD3C61BE84CD5C9C6ABB5DB /* MultiConstraint.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MultiConstraint.fwd.hh; path = ../src/core/scoring/constraints/MultiConstraint.fwd.hh; sourceTree = SOURCE_ROOT; };
 		4DD8C455311E96E05DD1AA25 /* MatchEvaluator.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MatchEvaluator.fwd.hh; path = ../src/protocols/match/output/MatchEvaluator.fwd.hh; sourceTree = SOURCE_ROOT; };
+		4DD8D42A831D4DE43B591E0F /* RNA_RawBaseBaseInfo.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_RawBaseBaseInfo.hh; path = ../src/core/scoring/rna/RNA_RawBaseBaseInfo.hh; sourceTree = SOURCE_ROOT; };
 		4DDC7CAC617E3F2B020B5294 /* RmsData.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RmsData.cc; path = ../src/numeric/model_quality/RmsData.cc; sourceTree = SOURCE_ROOT; };
 		4DE456371F04A9786417205E /* open.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = open.cc; path = ../src/basic/database/open.cc; sourceTree = SOURCE_ROOT; };
 		4DE4B08D627B94E122CBF464 /* util.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = util.hh; path = ../src/core/sequence/util.hh; sourceTree = SOURCE_ROOT; };
@@ -9105,6 +9129,7 @@
 		502D3BF3B90537F57D0F516C /* DensityScoringClaimer.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DensityScoringClaimer.cc; path = ../src/protocols/topology_broker/DensityScoringClaimer.cc; sourceTree = SOURCE_ROOT; };
 		5032DE767B2E24719C9251AD /* PoseInputStreamJobInputter.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PoseInputStreamJobInputter.fwd.hh; path = ../src/protocols/jd2/PoseInputStreamJobInputter.fwd.hh; sourceTree = SOURCE_ROOT; };
 		503448203212E7F4222C77E9 /* EntityRandomizer.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = EntityRandomizer.cc; path = ../src/protocols/genetic_algorithm/EntityRandomizer.cc; sourceTree = SOURCE_ROOT; };
+		50501B23F28A049821F15853 /* RNA_IdealCoord.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_IdealCoord.hh; path = ../src/core/scoring/rna/RNA_IdealCoord.hh; sourceTree = SOURCE_ROOT; };
 		505A68400EB23396B3BE024F /* ScoreCutoffFilterCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ScoreCutoffFilterCreator.hh; path = ../src/protocols/simple_filters/ScoreCutoffFilterCreator.hh; sourceTree = SOURCE_ROOT; };
 		50657841228B7F3CC57123E3 /* Ubiquitin_E2C_Modeler.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ubiquitin_E2C_Modeler.hh; path = ../src/protocols/antibody/Ubiquitin_E2C_Modeler.hh; sourceTree = SOURCE_ROOT; };
 		5077C1E7062206BA801B5BB8 /* util.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = util.hh; path = ../src/core/fragment/picking_old/vall/util.hh; sourceTree = SOURCE_ROOT; };
@@ -9126,6 +9151,7 @@
 		50F680E8A9816DA7A57FA067 /* LoopsExplicitDefinerCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopsExplicitDefinerCreator.cc; path = ../src/protocols/loops/loops_definers/LoopsExplicitDefinerCreator.cc; sourceTree = SOURCE_ROOT; };
 		50F90B48FEC481C24B730117 /* MolecularMassFilter.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MolecularMassFilter.hh; path = ../src/protocols/ligand_docking/MolecularMassFilter.hh; sourceTree = SOURCE_ROOT; };
 		510ECB2758A274AAABB3C9CA /* HyperRectangle.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = HyperRectangle.cc; path = ../src/numeric/kdtree/HyperRectangle.cc; sourceTree = SOURCE_ROOT; };
+		5123A8D276DFFEA911407D0E /* RNA_FullAtomStackingEnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FullAtomStackingEnergyCreator.hh; path = ../src/core/scoring/rna/RNA_FullAtomStackingEnergyCreator.hh; sourceTree = SOURCE_ROOT; };
 		512DF777A27E50F38F9FEA63 /* MakeRotLib.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MakeRotLib.hh; path = ../src/protocols/make_rot_lib/MakeRotLib.hh; sourceTree = SOURCE_ROOT; };
 		5131D7910B2E4FD6874B1938 /* FArray6P.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FArray6P.hh; path = "../src/ObjexxFCL//FArray6P.hh"; sourceTree = SOURCE_ROOT; };
 		51345E24FA3587AF58D1CBD7 /* JumpingFrame.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = JumpingFrame.hh; path = ../src/core/fragment/JumpingFrame.hh; sourceTree = SOURCE_ROOT; };
@@ -9235,6 +9261,7 @@
 		545AC0D11AFD880ECDC178CA /* IdealBondLengthSet.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = IdealBondLengthSet.fwd.hh; path = ../src/core/chemical/IdealBondLengthSet.fwd.hh; sourceTree = SOURCE_ROOT; };
 		545F68FBB6B342E7C26DAECB /* util.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = util.hh; path = ../src/protocols/loops/util.hh; sourceTree = SOURCE_ROOT; };
 		546451DFA978B7F821D9F38C /* ConstrainToIdealMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ConstrainToIdealMover.cc; path = ../src/protocols/simple_moves/ConstrainToIdealMover.cc; sourceTree = SOURCE_ROOT; };
+		5481E607CB228EEFBBC2512E /* RG_Energy_RNA.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RG_Energy_RNA.hh; path = ../src/core/scoring/rna/RG_Energy_RNA.hh; sourceTree = SOURCE_ROOT; };
 		5486F920D3C0E092D8C81706 /* VIP_Utils.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = VIP_Utils.cc; path = ../src/protocols/vip/VIP_Utils.cc; sourceTree = SOURCE_ROOT; };
 		54896CEF1C61022F54BE2F93 /* MatchConsolidator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MatchConsolidator.hh; path = ../src/protocols/match/output/MatchConsolidator.hh; sourceTree = SOURCE_ROOT; };
 		548DEDEE4E27DC230E60CCE3 /* KofNConstraint.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = KofNConstraint.hh; path = ../src/core/scoring/constraints/KofNConstraint.hh; sourceTree = SOURCE_ROOT; };
@@ -9281,6 +9308,7 @@
 		56052D2606083D7062A960AD /* UnboundRotamersOperation.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = UnboundRotamersOperation.fwd.hh; path = ../src/core/pack/rotamer_set/UnboundRotamersOperation.fwd.hh; sourceTree = SOURCE_ROOT; };
 		5605F34EA6CDF12708870306 /* WriteUpstreamCoordinateKineamge.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = WriteUpstreamCoordinateKineamge.hh; path = ../src/protocols/match/output/WriteUpstreamCoordinateKineamge.hh; sourceTree = SOURCE_ROOT; };
 		560A91B93496F49FAEBB8A37 /* SS_Info.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SS_Info.fwd.hh; path = ../src/core/scoring/SS_Info.fwd.hh; sourceTree = SOURCE_ROOT; };
+		560B53D03AC6B326733BE6A0 /* ClashCheckFilter.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ClashCheckFilter.hh; path = ../src/devel/matdes/ClashCheckFilter.hh; sourceTree = SOURCE_ROOT; };
 		562177E63BA9FC0CA2CEE8D2 /* CentroidRelaxMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CentroidRelaxMover.fwd.hh; path = ../src/protocols/surface_docking/CentroidRelaxMover.fwd.hh; sourceTree = SOURCE_ROOT; };
 		5631D2CDC485F52493B184DF /* HamiltonianExchange.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HamiltonianExchange.fwd.hh; path = ../src/protocols/canonical_sampling/HamiltonianExchange.fwd.hh; sourceTree = SOURCE_ROOT; };
 		5636C5B96EDDD9089ECEE294 /* SetTorsion.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SetTorsion.fwd.hh; path = ../src/protocols/simple_moves/SetTorsion.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -9310,6 +9338,7 @@
 		571823572BEA754A738C1F80 /* DisulfPairingsList.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DisulfPairingsList.cc; path = ../src/protocols/jumping/DisulfPairingsList.cc; sourceTree = SOURCE_ROOT; };
 		5718C3B0D87F0802C68F9E2E /* LoopHashMap.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopHashMap.hh; path = ../src/protocols/loophash/LoopHashMap.hh; sourceTree = SOURCE_ROOT; };
 		571A4D136DF95912C3B66E2E /* DbDataType.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DbDataType.cc; path = ../src/basic/database/schema_generator/DbDataType.cc; sourceTree = SOURCE_ROOT; };
+		57382AE8D28C76BFF3020F15 /* ExtractSubpose.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ExtractSubpose.fwd.hh; path = ../src/devel/matdes/ExtractSubpose.fwd.hh; sourceTree = SOURCE_ROOT; };
 		573BCC6A8A5CCE13B763CCE5 /* RepackSidechainsMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RepackSidechainsMover.hh; path = ../src/protocols/simple_moves/RepackSidechainsMover.hh; sourceTree = SOURCE_ROOT; };
 		573BE8DEE2BCD0164DF299C7 /* RemodelRotamerLinks.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RemodelRotamerLinks.hh; path = ../src/protocols/forge/remodel/RemodelRotamerLinks.hh; sourceTree = SOURCE_ROOT; };
 		57400BC34C49FE84E0C51801 /* PoseBallsLite.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PoseBallsLite.hh; path = ../src/core/scoring/packing/PoseBallsLite.hh; sourceTree = SOURCE_ROOT; };
@@ -9321,6 +9350,7 @@
 		577477D686B5E16FAB29A479 /* SymmetricFragmentMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SymmetricFragmentMover.hh; path = ../src/protocols/simple_moves/SymmetricFragmentMover.hh; sourceTree = SOURCE_ROOT; };
 		5788806ED85A94A7E275AEE4 /* SCMinMultifunc.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SCMinMultifunc.fwd.hh; path = ../src/core/pack/scmin/SCMinMultifunc.fwd.hh; sourceTree = SOURCE_ROOT; };
 		5799166516852A7AF791A423 /* OrderedTuple.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = OrderedTuple.hh; path = "../src/utility//OrderedTuple.hh"; sourceTree = SOURCE_ROOT; };
+		57A817B8AF54A2D000B3B02F /* RNA_LJ_BaseEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_LJ_BaseEnergy.fwd.hh; path = ../src/core/scoring/rna/RNA_LJ_BaseEnergy.fwd.hh; sourceTree = SOURCE_ROOT; };
 		57ADC61181A55D82C0DA11C4 /* MembEtable.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MembEtable.fwd.hh; path = ../src/core/scoring/etable/MembEtable.fwd.hh; sourceTree = SOURCE_ROOT; };
 		57AF8B493D52FA905F6BA6FF /* ParserJobInputter.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ParserJobInputter.fwd.hh; path = ../src/protocols/protein_interface_design/ParserJobInputter.fwd.hh; sourceTree = SOURCE_ROOT; };
 		57BE6EDE95CFB44E430F576B /* SymDockingHiRes.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SymDockingHiRes.fwd.hh; path = ../src/protocols/symmetric_docking/SymDockingHiRes.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -9455,6 +9485,7 @@
 		5CD8B0F06C769732EBF618FC /* MatrixScoringScheme.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MatrixScoringScheme.hh; path = ../src/core/sequence/MatrixScoringScheme.hh; sourceTree = SOURCE_ROOT; };
 		5CDA8144402C579F2728BCCF /* PartialSecondarySimilarity.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PartialSecondarySimilarity.cc; path = ../src/protocols/frag_picker/scores/PartialSecondarySimilarity.cc; sourceTree = SOURCE_ROOT; };
 		5CDEECF64F640D9250168AC9 /* MonteCarlo.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MonteCarlo.fwd.hh; path = ../src/protocols/moves/MonteCarlo.fwd.hh; sourceTree = SOURCE_ROOT; };
+		5CE6C0CDC48D1B1942E1CD4B /* RNA_PairwiseLowResolutionEnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_PairwiseLowResolutionEnergyCreator.hh; path = ../src/core/scoring/rna/RNA_PairwiseLowResolutionEnergyCreator.hh; sourceTree = SOURCE_ROOT; };
 		5CE7095CAAFACB85E7C69232 /* PrecomputedPairEnergiesInteractionGraph.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PrecomputedPairEnergiesInteractionGraph.hh; path = ../src/core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh; sourceTree = SOURCE_ROOT; };
 		5CE7BF3C8D4F044678D779B9 /* FinalMinimizer.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FinalMinimizer.cc; path = ../src/protocols/ligand_docking/FinalMinimizer.cc; sourceTree = SOURCE_ROOT; };
 		5CEB64A568689E9B56EE1F69 /* UnfoldedStateEnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = UnfoldedStateEnergyCreator.hh; path = ../src/core/scoring/methods/UnfoldedStateEnergyCreator.hh; sourceTree = SOURCE_ROOT; };
@@ -9488,6 +9519,7 @@
 		5E28149DC61A0299BA74D54F /* BindingSiteConstraint.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BindingSiteConstraint.hh; path = ../src/protocols/constraints_additional/BindingSiteConstraint.hh; sourceTree = SOURCE_ROOT; };
 		5E46CAFCE9037961340FC722 /* ProteinSilentReport.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ProteinSilentReport.hh; path = ../src/protocols/features/ProteinSilentReport.hh; sourceTree = SOURCE_ROOT; };
 		5E5CCE14338767E094938228 /* TorsionID.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = TorsionID.cc; path = ../src/core/id/TorsionID.cc; sourceTree = SOURCE_ROOT; };
+		5E60508531662A44E8C6C1D4 /* RNA_DataBackboneEnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_DataBackboneEnergyCreator.hh; path = ../src/core/scoring/rna/RNA_DataBackboneEnergyCreator.hh; sourceTree = SOURCE_ROOT; };
 		5E65010B05B1EA57DCCAD45A /* trie.functions.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = trie.functions.hh; path = ../src/core/scoring/trie/trie.functions.hh; sourceTree = SOURCE_ROOT; };
 		5E68D395145870E7CFD23FAE /* RNA_LJ_BaseEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_LJ_BaseEnergy.hh; path = ../src/core/scoring/rna/RNA_LJ_BaseEnergy.hh; sourceTree = SOURCE_ROOT; };
 		5E69F303F952968E690C9793 /* EnzdesSeqRecoveryCache.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = EnzdesSeqRecoveryCache.fwd.hh; path = ../src/protocols/toolbox/match_enzdes_util/EnzdesSeqRecoveryCache.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -9812,6 +9844,7 @@
 		6904FF4F1DCE32A1A5F6C795 /* ContactTypes.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ContactTypes.hh; path = ../src/protocols/frag_picker/ContactTypes.hh; sourceTree = SOURCE_ROOT; };
 		69125C2E98182871C4006557 /* SwitchResidueTypeSet.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SwitchResidueTypeSet.hh; path = ../src/core/util/SwitchResidueTypeSet.hh; sourceTree = SOURCE_ROOT; };
 		691E2FC1307B956CC977F08A /* DnaInterfacePacker.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DnaInterfacePacker.fwd.hh; path = ../src/protocols/dna/DnaInterfacePacker.fwd.hh; sourceTree = SOURCE_ROOT; };
+		6934CCD62FD1311AF2A35324 /* RNA_FullAtomVDW_BasePhosphate.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FullAtomVDW_BasePhosphate.hh; path = ../src/core/scoring/rna/RNA_FullAtomVDW_BasePhosphate.hh; sourceTree = SOURCE_ROOT; };
 		6936E5C46C81B5A3EE33348A /* ContextGraph.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ContextGraph.cc; path = ../src/core/scoring/ContextGraph.cc; sourceTree = SOURCE_ROOT; };
 		6938356A2656AB7FBC0CB185 /* Chunk.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Chunk.hh; path = "../src/ObjexxFCL//Chunk.hh"; sourceTree = SOURCE_ROOT; };
 		6949FF3DC3CF79156A01D5AC /* PackRotamersMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PackRotamersMover.fwd.hh; path = ../src/protocols/simple_moves/PackRotamersMover.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -9853,6 +9886,7 @@
 		6A685E557E693BEC6E1ECEC9 /* MinMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MinMover.fwd.hh; path = ../src/protocols/simple_moves/MinMover.fwd.hh; sourceTree = SOURCE_ROOT; };
 		6A7481E9B84A81C5C1EF42B3 /* PrimaryKey.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PrimaryKey.cc; path = ../src/basic/database/schema_generator/PrimaryKey.cc; sourceTree = SOURCE_ROOT; };
 		6A9D5B2919BA6D248035EFDC /* DesignProteinBackboneAroundDNA.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DesignProteinBackboneAroundDNA.cc; path = ../src/protocols/dna/DesignProteinBackboneAroundDNA.cc; sourceTree = SOURCE_ROOT; };
+		6AA3758E816525B30F96BEFE /* RNA_AtomVDW.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_AtomVDW.hh; path = ../src/core/scoring/rna/RNA_AtomVDW.hh; sourceTree = SOURCE_ROOT; };
 		6AA3A300782BAA17D631D185 /* LinearChainbreakEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LinearChainbreakEnergy.hh; path = ../src/core/scoring/methods/LinearChainbreakEnergy.hh; sourceTree = SOURCE_ROOT; };
 		6AAB95C1B13E2021801138C3 /* ProfileScoreDistWeight.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ProfileScoreDistWeight.hh; path = ../src/protocols/frag_picker/scores/ProfileScoreDistWeight.hh; sourceTree = SOURCE_ROOT; };
 		6AADB42A188EC6F66D5119D7 /* VallChunkFilter.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = VallChunkFilter.hh; path = ../src/protocols/frag_picker/VallChunkFilter.hh; sourceTree = SOURCE_ROOT; };
@@ -9876,6 +9910,7 @@
 		6B59719DEDF93241260BFFC6 /* CoarseRotamer.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CoarseRotamer.hh; path = ../src/core/pack/dunbrack/CoarseRotamer.hh; sourceTree = SOURCE_ROOT; };
 		6B5B48E3A1A50B5C437007F2 /* OopMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = OopMover.fwd.hh; path = ../src/protocols/simple_moves/oop/OopMover.fwd.hh; sourceTree = SOURCE_ROOT; };
 		6B5C0C9CF4974A2CC576AEDD /* RestrictIdentitiesOperation.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RestrictIdentitiesOperation.cc; path = ../src/devel/matdes/RestrictIdentitiesOperation.cc; sourceTree = SOURCE_ROOT; };
+		6B5DCEAF421F513B14E01A3D /* RNA_CentroidInfo.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_CentroidInfo.hh; path = ../src/core/scoring/rna/RNA_CentroidInfo.hh; sourceTree = SOURCE_ROOT; };
 		6B666162A2D4F6C5AF243BE7 /* PDDFEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PDDFEnergy.cc; path = ../src/protocols/scoring/methods/saxs/PDDFEnergy.cc; sourceTree = SOURCE_ROOT; };
 		6B748B1D9458FF775BE3EEF8 /* packstat.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = packstat.OptionKeys.gen.hh; path = ../src/basic/options/keys/packstat.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
 		6B82095185758D1D42BB50C0 /* SetAtomTree.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SetAtomTree.cc; path = ../src/protocols/protein_interface_design/movers/SetAtomTree.cc; sourceTree = SOURCE_ROOT; };
@@ -9929,6 +9964,7 @@
 		6D00CC952058CA3BBB2ABC38 /* BBGaussianMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BBGaussianMover.fwd.hh; path = ../src/protocols/simple_moves/BBGaussianMover.fwd.hh; sourceTree = SOURCE_ROOT; };
 		6D0A9ABB6C49E3037416E3A5 /* LHRepulsiveRampLegacy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LHRepulsiveRampLegacy.hh; path = ../src/protocols/antibody2/LHRepulsiveRampLegacy.hh; sourceTree = SOURCE_ROOT; };
 		6D118E62D19408E13444CEA7 /* OopPuckMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = OopPuckMover.hh; path = ../src/protocols/simple_moves/oop/OopPuckMover.hh; sourceTree = SOURCE_ROOT; };
+		6D20AB3278426EB6A8881C2E /* RNA_FullAtomStackingEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FullAtomStackingEnergy.fwd.hh; path = ../src/core/scoring/rna/RNA_FullAtomStackingEnergy.fwd.hh; sourceTree = SOURCE_ROOT; };
 		6D258A328EB2946318B5D4AA /* MinMultiHarmonicFunc.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MinMultiHarmonicFunc.fwd.hh; path = ../src/core/scoring/constraints/MinMultiHarmonicFunc.fwd.hh; sourceTree = SOURCE_ROOT; };
 		6D2C71152BB303E0B3D2A1DB /* util.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = util.cc; path = ../src/core/scoring/dssp/util.cc; sourceTree = SOURCE_ROOT; };
 		6D2D4D291EFAB5C5E882AC89 /* LK_CosThetaEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LK_CosThetaEnergy.hh; path = ../src/core/scoring/methods/LK_CosThetaEnergy.hh; sourceTree = SOURCE_ROOT; };
@@ -10044,6 +10080,7 @@
 		706FD745F3B45EB97A0F8B0D /* OrbitalsFeaturesCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = OrbitalsFeaturesCreator.hh; path = ../src/protocols/features/OrbitalsFeaturesCreator.hh; sourceTree = SOURCE_ROOT; };
 		707C5A6218C35EE6A2E84C77 /* SameStrand.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SameStrand.cc; path = ../src/protocols/jumping/SameStrand.cc; sourceTree = SOURCE_ROOT; };
 		707EBB5C28270596EE1F82B8 /* PoseCommentsFeaturesCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PoseCommentsFeaturesCreator.cc; path = ../src/protocols/features/PoseCommentsFeaturesCreator.cc; sourceTree = SOURCE_ROOT; };
+		708E79868123B465C56B13DF /* RNA_SugarCloseEnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_SugarCloseEnergyCreator.hh; path = ../src/core/scoring/rna/RNA_SugarCloseEnergyCreator.hh; sourceTree = SOURCE_ROOT; };
 		7091F96A071ACAF5FE599CAA /* setup.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = setup.hh; path = ../src/core/scoring/dna/setup.hh; sourceTree = SOURCE_ROOT; };
 		70923A2170E3EDD35E9CC1F8 /* LoopsExplicitDefiner.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopsExplicitDefiner.cc; path = ../src/protocols/loops/loops_definers/LoopsExplicitDefiner.cc; sourceTree = SOURCE_ROOT; };
 		70A87F7E2A421FBCEA2DA544 /* MatchPositionModifiers.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = MatchPositionModifiers.cc; path = ../src/protocols/match/MatchPositionModifiers.cc; sourceTree = SOURCE_ROOT; };
@@ -10052,6 +10089,7 @@
 		70B2A284EA59A27D83133D59 /* orstream.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = orstream.fwd.hh; path = ../src/utility/io/orstream.fwd.hh; sourceTree = SOURCE_ROOT; };
 		70B9006650619C71369447C6 /* DesignableResiduesFilter.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DesignableResiduesFilter.cc; path = ../src/protocols/protein_interface_design/filters/DesignableResiduesFilter.cc; sourceTree = SOURCE_ROOT; };
 		70C5FDEF9660896A22ED42B2 /* RNA_ChunkLibrary.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_ChunkLibrary.fwd.hh; path = ../src/protocols/rna/RNA_ChunkLibrary.fwd.hh; sourceTree = SOURCE_ROOT; };
+		70CD3EA3AB84853523EFEF6E /* RNA_TorsionEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_TorsionEnergy.fwd.hh; path = ../src/core/scoring/rna/RNA_TorsionEnergy.fwd.hh; sourceTree = SOURCE_ROOT; };
 		70D261677D18DB6AC49D79ED /* Matcher.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Matcher.hh; path = ../src/protocols/match/Matcher.hh; sourceTree = SOURCE_ROOT; };
 		70D4F62D3BF65FBB3EB3FB2E /* ExtraThreadingMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ExtraThreadingMover.cc; path = ../src/protocols/comparative_modeling/ExtraThreadingMover.cc; sourceTree = SOURCE_ROOT; };
 		70DA36CF6747E0FC2535F152 /* ChainbreakEnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ChainbreakEnergyCreator.hh; path = ../src/core/scoring/methods/ChainbreakEnergyCreator.hh; sourceTree = SOURCE_ROOT; };
@@ -10078,6 +10116,7 @@
 		716A14E49F8E053E71C64F2F /* StubScoreFilter.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StubScoreFilter.fwd.hh; path = ../src/protocols/protein_interface_design/filters/StubScoreFilter.fwd.hh; sourceTree = SOURCE_ROOT; };
 		71773367BF7A14FF95E84F11 /* LoopsDefiner.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopsDefiner.fwd.hh; path = ../src/protocols/loops/loops_definers/LoopsDefiner.fwd.hh; sourceTree = SOURCE_ROOT; };
 		717D4FAE5BA11AD838E79F09 /* OptCysHG.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = OptCysHG.hh; path = ../src/core/pack/task/operation/OptCysHG.hh; sourceTree = SOURCE_ROOT; };
+		71883C7C16D23E3433A886B6 /* RNA_LowResolutionPotential.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_LowResolutionPotential.hh; path = ../src/core/scoring/rna/RNA_LowResolutionPotential.hh; sourceTree = SOURCE_ROOT; };
 		718C929D8762201539823586 /* DistanceChainbreakEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DistanceChainbreakEnergy.hh; path = ../src/core/scoring/methods/DistanceChainbreakEnergy.hh; sourceTree = SOURCE_ROOT; };
 		718D59C2C060DCFEBDA2EF28 /* GenericJobInputter.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = GenericJobInputter.cc; path = ../src/protocols/comparative_modeling/GenericJobInputter.cc; sourceTree = SOURCE_ROOT; };
 		7193AD9F2D066332B23A1EAC /* DecoyFileData.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DecoyFileData.hh; path = ../src/core/io/raw_data/DecoyFileData.hh; sourceTree = SOURCE_ROOT; };
@@ -10089,9 +10128,11 @@
 		71C39821E657B24EB3A11030 /* SWAligner.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SWAligner.fwd.hh; path = ../src/core/sequence/SWAligner.fwd.hh; sourceTree = SOURCE_ROOT; };
 		71CC28DF42800E23E88A85D0 /* JumpClaimer.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JumpClaimer.cc; path = ../src/protocols/topology_broker/JumpClaimer.cc; sourceTree = SOURCE_ROOT; };
 		71CCD5C30197A29AEC8DCCD3 /* SuckerEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SuckerEnergy.hh; path = ../src/core/scoring/methods/SuckerEnergy.hh; sourceTree = SOURCE_ROOT; };
+		71E7A997E293170F8C96947F /* ExtractSubpose.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ExtractSubpose.hh; path = ../src/devel/matdes/ExtractSubpose.hh; sourceTree = SOURCE_ROOT; };
 		71EBAE0B0CC8166B4ED6B1AB /* SetIGTypeOperationCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SetIGTypeOperationCreator.hh; path = ../src/protocols/toolbox/task_operations/SetIGTypeOperationCreator.hh; sourceTree = SOURCE_ROOT; };
 		71EE3A02802C185FF90B5025 /* FullatomDisulfideEnergyContainer.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FullatomDisulfideEnergyContainer.hh; path = ../src/core/scoring/disulfides/FullatomDisulfideEnergyContainer.hh; sourceTree = SOURCE_ROOT; };
 		71F3E48C1C340BE8C489E6DF /* EnzdesRemodelProtocol.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = EnzdesRemodelProtocol.hh; path = ../src/devel/enzdes/EnzdesRemodelProtocol.hh; sourceTree = SOURCE_ROOT; };
+		71F62ECC5F70721F210A4682 /* RNA_DataInfo.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_DataInfo.hh; path = ../src/core/scoring/rna/RNA_DataInfo.hh; sourceTree = SOURCE_ROOT; };
 		71FB26957CE0393CE628003D /* CountPairFunction.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CountPairFunction.hh; path = ../src/core/scoring/etable/count_pair/CountPairFunction.hh; sourceTree = SOURCE_ROOT; };
 		72024C07446280572A59AFA9 /* FragmentDME.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FragmentDME.hh; path = ../src/protocols/frag_picker/scores/FragmentDME.hh; sourceTree = SOURCE_ROOT; };
 		72294D1DF51D437FE3D9BD76 /* RNA_LJ_BaseEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RNA_LJ_BaseEnergy.cc; path = ../src/core/scoring/rna/RNA_LJ_BaseEnergy.cc; sourceTree = SOURCE_ROOT; };
@@ -10387,6 +10428,7 @@
 		7C9367023D8C797C65CD9407 /* array.iterator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = array.iterator.hh; path = "../src/ObjexxFCL//array.iterator.hh"; sourceTree = SOURCE_ROOT; };
 		7C946E86A86F314FD2880B08 /* FullatomDisulfidePotential.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FullatomDisulfidePotential.cc; path = ../src/core/scoring/disulfides/FullatomDisulfidePotential.cc; sourceTree = SOURCE_ROOT; };
 		7C9E5EA25947AA27D6D1198E /* RBSegmentMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RBSegmentMover.cc; path = ../src/protocols/rbsegment_relax/RBSegmentMover.cc; sourceTree = SOURCE_ROOT; };
+		7C9FA0A118D8D70933EE61C7 /* RNA_AtomVDW.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_AtomVDW.fwd.hh; path = ../src/core/scoring/rna/RNA_AtomVDW.fwd.hh; sourceTree = SOURCE_ROOT; };
 		7CAAA36ADB25DF3022DBE3AF /* RNA_CentroidInfo.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RNA_CentroidInfo.cc; path = ../src/core/scoring/rna/RNA_CentroidInfo.cc; sourceTree = SOURCE_ROOT; };
 		7CAFEFCA4E3A6D829E201664 /* BatchFeatures.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BatchFeatures.hh; path = ../src/protocols/features/BatchFeatures.hh; sourceTree = SOURCE_ROOT; };
 		7CB326A76506FF23FD66C11B /* Constraints.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Constraints.fwd.hh; path = ../src/core/scoring/constraints/Constraints.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -10447,6 +10489,7 @@
 		7EDE4CDB38FB82862F3EBAE2 /* ScoringGridLoader.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ScoringGridLoader.fwd.hh; path = ../src/protocols/qsar/scoring_grid/ScoringGridLoader.fwd.hh; sourceTree = SOURCE_ROOT; };
 		7EE29E157FB892CFBDA39EC8 /* CartesianFragment.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CartesianFragment.cc; path = ../src/devel/cartesian_frags/CartesianFragment.cc; sourceTree = SOURCE_ROOT; };
 		7EF5A961FB640132071C6B7D /* AdditionalConstraintCreators.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AdditionalConstraintCreators.cc; path = ../src/protocols/constraints_additional/AdditionalConstraintCreators.cc; sourceTree = SOURCE_ROOT; };
+		7EF7B3CE5E5FAE5C34C3693F /* RNA_IdealCoord.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_IdealCoord.hh; path = ../src/core/scoring/rna/RNA_IdealCoord.hh; sourceTree = SOURCE_ROOT; };
 		7EF89AA08F9BBB4A150052E2 /* PeakCalibrator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PeakCalibrator.hh; path = ../src/protocols/noesy_assign/PeakCalibrator.hh; sourceTree = SOURCE_ROOT; };
 		7EFE81C9FF490D5B1DE6705E /* BuriedUnsatisfiedPolarsCalculator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = BuriedUnsatisfiedPolarsCalculator.cc; path = ../src/protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.cc; sourceTree = SOURCE_ROOT; };
 		7F0147E4D64BD08CE0583C12 /* MetalloPlacementEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MetalloPlacementEnergy.hh; path = ../src/core/scoring/methods/MetalloPlacementEnergy.hh; sourceTree = SOURCE_ROOT; };
@@ -10557,6 +10600,7 @@
 		828DE882574D89E69630FC20 /* TorsionID_Range.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TorsionID_Range.hh; path = ../src/core/id/TorsionID_Range.hh; sourceTree = SOURCE_ROOT; };
 		829853A1B734119E8E95D144 /* RandomMutation.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RandomMutation.cc; path = ../src/protocols/protein_interface_design/movers/RandomMutation.cc; sourceTree = SOURCE_ROOT; };
 		82C2BA7F2B13CF7A631115F6 /* ShapeComplementarityCalculator_Private.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ShapeComplementarityCalculator_Private.hh; path = ../src/core/scoring/sc/ShapeComplementarityCalculator_Private.hh; sourceTree = SOURCE_ROOT; };
+		82D11ACBBAA48FA0B179F2C8 /* RNA_DataBackboneEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_DataBackboneEnergy.hh; path = ../src/core/scoring/rna/RNA_DataBackboneEnergy.hh; sourceTree = SOURCE_ROOT; };
 		82D6F0EF10E19A2BF79C9B5D /* TaskFactory.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TaskFactory.fwd.hh; path = ../src/core/pack/task/TaskFactory.fwd.hh; sourceTree = SOURCE_ROOT; };
 		82E09C40B60517D4C5D550C7 /* AlignmentClustering.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AlignmentClustering.cc; path = ../src/protocols/comparative_modeling/AlignmentClustering.cc; sourceTree = SOURCE_ROOT; };
 		82E401E5632B4FCF00BC6AFF /* IndexRange.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = IndexRange.hh; path = "../src/ObjexxFCL//IndexRange.hh"; sourceTree = SOURCE_ROOT; };
@@ -10604,6 +10648,7 @@
 		84742D9604FA88FBA5EE3133 /* SaltBridgeFeatures.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SaltBridgeFeatures.hh; path = ../src/protocols/features/SaltBridgeFeatures.hh; sourceTree = SOURCE_ROOT; };
 		84A35BC9C952BDC1F5554DF5 /* EnergyMap.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = EnergyMap.fwd.hh; path = ../src/core/scoring/EnergyMap.fwd.hh; sourceTree = SOURCE_ROOT; };
 		84A57BCCB58A2AB036C9F4C7 /* AntibodyClass.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AntibodyClass.hh; path = ../src/protocols/antibody/AntibodyClass.hh; sourceTree = SOURCE_ROOT; };
+		84B06C4FC1AE4A75D778BF03 /* RNA_FullAtomVDW_BasePhosphateCreator.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FullAtomVDW_BasePhosphateCreator.fwd.hh; path = ../src/core/scoring/rna/RNA_FullAtomVDW_BasePhosphateCreator.fwd.hh; sourceTree = SOURCE_ROOT; };
 		84B259B5F8D222C75F0F456F /* StubScoreLoopsFilter.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StubScoreLoopsFilter.cc; path = ../src/protocols/protein_interface_design/filters/StubScoreLoopsFilter.cc; sourceTree = SOURCE_ROOT; };
 		84C545A751F97D2E1EB36FDB /* RNA_ResidueType.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_ResidueType.hh; path = ../src/core/chemical/rna/RNA_ResidueType.hh; sourceTree = SOURCE_ROOT; };
 		84C624F3259B6757ACA8B12B /* rms_util.tmpl.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = rms_util.tmpl.hh; path = ../src/core/scoring/rms_util.tmpl.hh; sourceTree = SOURCE_ROOT; };
@@ -10628,6 +10673,7 @@
 		85212DD7D500A7E9CE2549DF /* StepWiseRNA_RotamerGenerator_Wrapper.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StepWiseRNA_RotamerGenerator_Wrapper.cc; path = ../src/protocols/swa/rna/StepWiseRNA_RotamerGenerator_Wrapper.cc; sourceTree = SOURCE_ROOT; };
 		852430219D74420DA1127A9C /* PcsTensor.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PcsTensor.hh; path = ../src/protocols/scoring/methods/pcs2/PcsTensor.hh; sourceTree = SOURCE_ROOT; };
 		85282DBF38A15D6A368E0516 /* StepWisePoseCombineSampleGenerator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWisePoseCombineSampleGenerator.hh; path = ../src/protocols/swa/StepWisePoseCombineSampleGenerator.hh; sourceTree = SOURCE_ROOT; };
+		85292E12B9C457EDB65B478D /* RNA_IdealCoord.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_IdealCoord.fwd.hh; path = ../src/core/scoring/rna/RNA_IdealCoord.fwd.hh; sourceTree = SOURCE_ROOT; };
 		852C99267620660D687639F7 /* HierarchicalLevel.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HierarchicalLevel.fwd.hh; path = ../src/protocols/canonical_sampling/mc_convergence_checks/HierarchicalLevel.fwd.hh; sourceTree = SOURCE_ROOT; };
 		8530F8AFCD8DBB9687D8A0CF /* RRComparer.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RRComparer.cc; path = ../src/protocols/rotamer_recovery/RRComparer.cc; sourceTree = SOURCE_ROOT; };
 		853F79BCF76DB94F2B0C47A4 /* SimpleInterpolator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SimpleInterpolator.hh; path = ../src/numeric/interpolation/spline/SimpleInterpolator.hh; sourceTree = SOURCE_ROOT; };
@@ -10715,6 +10761,7 @@
 		87F178EAF4D34911E3C6C98C /* CoarseEtableEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CoarseEtableEnergy.hh; path = ../src/core/scoring/etable/CoarseEtableEnergy.hh; sourceTree = SOURCE_ROOT; };
 		87FDA68ABCCB1AB843DDF5A7 /* SymDockBaseProtocol.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SymDockBaseProtocol.cc; path = ../src/protocols/symmetric_docking/SymDockBaseProtocol.cc; sourceTree = SOURCE_ROOT; };
 		880233584213AA87627E2A8C /* PairScoringScheme.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PairScoringScheme.fwd.hh; path = ../src/core/sequence/PairScoringScheme.fwd.hh; sourceTree = SOURCE_ROOT; };
+		8807255633F3DEB6D0BC5A6B /* RNA_DataBackboneEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_DataBackboneEnergy.fwd.hh; path = ../src/core/scoring/rna/RNA_DataBackboneEnergy.fwd.hh; sourceTree = SOURCE_ROOT; };
 		880CDC14819C48F838A26A89 /* HPatchEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = HPatchEnergy.cc; path = ../src/core/pack/interaction_graph/HPatchEnergy.cc; sourceTree = SOURCE_ROOT; };
 		881B0EE5E3AC468D100F789A /* TaskAwareSASAFilter.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TaskAwareSASAFilter.fwd.hh; path = ../src/devel/matdes/TaskAwareSASAFilter.fwd.hh; sourceTree = SOURCE_ROOT; };
 		882009DD316FC133F827ECBF /* LoopsDefinerFactory.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopsDefinerFactory.cc; path = ../src/protocols/loops/loops_definers/LoopsDefinerFactory.cc; sourceTree = SOURCE_ROOT; };
@@ -10803,6 +10850,7 @@
 		8B559EB9E09670E2F6B3A2C2 /* PCA.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PCA.hh; path = ../src/protocols/evaluation/PCA.hh; sourceTree = SOURCE_ROOT; };
 		8B64C5244ACD076E5BA75492 /* RamaScore.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RamaScore.cc; path = ../src/protocols/frag_picker/scores/RamaScore.cc; sourceTree = SOURCE_ROOT; };
 		8B6B34721A173E1735DF5BDA /* ConstraintGraph.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ConstraintGraph.cc; path = ../src/core/scoring/constraints/ConstraintGraph.cc; sourceTree = SOURCE_ROOT; };
+		8B76B37A8A7F7FDB25975F23 /* RNA_Torsion.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_Torsion.fwd.hh; path = ../src/core/scoring/rna/RNA_Torsion.fwd.hh; sourceTree = SOURCE_ROOT; };
 		8B76C0BBE2A956D2953F4A24 /* LoopsExplicitDefiner.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopsExplicitDefiner.hh; path = ../src/protocols/loops/loops_definers/LoopsExplicitDefiner.hh; sourceTree = SOURCE_ROOT; };
 		8B7AB08994924CA07C3B9F57 /* CoordConstraintClaimer.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CoordConstraintClaimer.hh; path = ../src/protocols/topology_broker/CoordConstraintClaimer.hh; sourceTree = SOURCE_ROOT; };
 		8B7F7EA77736B395F11E7E03 /* FoldConstraints.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FoldConstraints.cc; path = ../src/protocols/abinitio/FoldConstraints.cc; sourceTree = SOURCE_ROOT; };
@@ -10990,6 +11038,7 @@
 		9215FEFA6BFE2DE8AAF3AAD4 /* AmbiguousMultiConstraint.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AmbiguousMultiConstraint.hh; path = ../src/protocols/constraints_additional/AmbiguousMultiConstraint.hh; sourceTree = SOURCE_ROOT; };
 		92196CD9C8A264A573542CE3 /* GaussianFunc.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = GaussianFunc.hh; path = ../src/core/scoring/constraints/GaussianFunc.hh; sourceTree = SOURCE_ROOT; };
 		923C8C8E7D63052A334220ED /* pose_mod.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = pose_mod.hh; path = ../src/protocols/forge/methods/pose_mod.hh; sourceTree = SOURCE_ROOT; };
+		923DB6D1A3B6876ABA44850A /* RNA_VDW_EnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_VDW_EnergyCreator.hh; path = ../src/core/scoring/rna/RNA_VDW_EnergyCreator.hh; sourceTree = SOURCE_ROOT; };
 		924816BDF6C62FBE0A88D87C /* CArray.io.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CArray.io.hh; path = "../src/ObjexxFCL//CArray.io.hh"; sourceTree = SOURCE_ROOT; };
 		924FE5BC517A17E41342FA85 /* SingleResidueDunbrackLibrary.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SingleResidueDunbrackLibrary.fwd.hh; path = ../src/core/pack/dunbrack/SingleResidueDunbrackLibrary.fwd.hh; sourceTree = SOURCE_ROOT; };
 		9251D099CA2D7F68A0BA77E6 /* cst_util.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = cst_util.cc; path = ../src/protocols/relax/cst_util.cc; sourceTree = SOURCE_ROOT; };
@@ -11046,6 +11095,7 @@
 		943B012EC8152D06719D3DD6 /* MinimalistFlexbbInteractionGraph.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MinimalistFlexbbInteractionGraph.hh; path = ../src/protocols/flexpack/interaction_graph/MinimalistFlexbbInteractionGraph.hh; sourceTree = SOURCE_ROOT; };
 		943F700293E43CAAB5E11E7F /* LoopHashLibrary.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopHashLibrary.fwd.hh; path = ../src/protocols/loophash/LoopHashLibrary.fwd.hh; sourceTree = SOURCE_ROOT; };
 		9443B3F5D169B1B906678673 /* MiniPose.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MiniPose.hh; path = ../src/core/pose/MiniPose.hh; sourceTree = SOURCE_ROOT; };
+		944ABC68EEDD8E77DD2A14C7 /* GPU.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = GPU.cc; path = "../src/utility//GPU.cc"; sourceTree = SOURCE_ROOT; };
 		94573E45B9531D00CF2A816B /* P_AA.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = P_AA.cc; path = ../src/core/scoring/P_AA.cc; sourceTree = SOURCE_ROOT; };
 		945A977A9BB414211F9BFDD8 /* SymFoldandDockMoveRbJumpMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SymFoldandDockMoveRbJumpMover.cc; path = ../src/protocols/symmetric_docking/SymFoldandDockMoveRbJumpMover.cc; sourceTree = SOURCE_ROOT; };
 		94699339B8EE4651D5488FE0 /* FrameListIterator_.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FrameListIterator_.hh; path = ../src/core/fragment/FrameListIterator_.hh; sourceTree = SOURCE_ROOT; };
@@ -11122,6 +11172,7 @@
 		97042F8910A19B35361D5CBB /* TrieCollection.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TrieCollection.fwd.hh; path = ../src/core/scoring/trie/TrieCollection.fwd.hh; sourceTree = SOURCE_ROOT; };
 		970E26D35C9C82699E13F2F0 /* ScoringSchemeFactory.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScoringSchemeFactory.cc; path = ../src/core/sequence/ScoringSchemeFactory.cc; sourceTree = SOURCE_ROOT; };
 		971128EDB3D8C5E51DC90D44 /* evaluation.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = evaluation.OptionKeys.gen.hh; path = ../src/basic/options/keys/evaluation.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
+		9717AE433E71E4D1C9C1444C /* GPU.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = GPU.hh; path = "../src/utility//GPU.hh"; sourceTree = SOURCE_ROOT; };
 		971D42C6C2102B9482CD2878 /* RotamerTrialsMinMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RotamerTrialsMinMover.cc; path = ../src/protocols/simple_moves/RotamerTrialsMinMover.cc; sourceTree = SOURCE_ROOT; };
 		971F484DC98F2E44DF680EE6 /* ContextGraphFactory.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ContextGraphFactory.cc; path = ../src/core/scoring/ContextGraphFactory.cc; sourceTree = SOURCE_ROOT; };
 		9729F5C76A9D3ECE35FF6689 /* SemiRotamericSingleResidueDunbrackLibrary.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SemiRotamericSingleResidueDunbrackLibrary.fwd.hh; path = ../src/core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -11226,6 +11277,7 @@
 		9AA7BAE4B7B6C73D7F0AF0DB /* MainChainTorsionSet.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MainChainTorsionSet.hh; path = ../src/protocols/swa/protein/MainChainTorsionSet.hh; sourceTree = SOURCE_ROOT; };
 		9AA981928667F0702D8A4A50 /* Motif.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Motif.cc; path = ../src/protocols/motifs/Motif.cc; sourceTree = SOURCE_ROOT; };
 		9AB8E08742CEB27B717A79F1 /* util.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = util.hh; path = ../src/core/scoring/packstat/util.hh; sourceTree = SOURCE_ROOT; };
+		9ABED96798879BB952BAB0DD /* RNA_BulgeEnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_BulgeEnergyCreator.hh; path = ../src/core/scoring/rna/RNA_BulgeEnergyCreator.hh; sourceTree = SOURCE_ROOT; };
 		9AC2D999333721ECF5A28B2C /* ProteinInterfaceMultiStateDesignMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ProteinInterfaceMultiStateDesignMover.fwd.hh; path = ../src/protocols/protein_interface_design/movers/ProteinInterfaceMultiStateDesignMover.fwd.hh; sourceTree = SOURCE_ROOT; };
 		9AC43DAAFA88DB6877C9B225 /* ScoringSecMatchRPE.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ScoringSecMatchRPE.hh; path = ../src/protocols/match/downstream/ScoringSecMatchRPE.hh; sourceTree = SOURCE_ROOT; };
 		9AD83C1928CF94EEF4B60ED4 /* ConstraintIO.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ConstraintIO.cc; path = ../src/core/scoring/constraints/ConstraintIO.cc; sourceTree = SOURCE_ROOT; };
@@ -11332,6 +11384,7 @@
 		9E5F1F7A396532879190AB46 /* SumFunc.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SumFunc.hh; path = ../src/core/scoring/constraints/SumFunc.hh; sourceTree = SOURCE_ROOT; };
 		9E63C4447E165B042AFB2937 /* BetaTurnDetectionFeaturesCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BetaTurnDetectionFeaturesCreator.hh; path = ../src/protocols/features/BetaTurnDetectionFeaturesCreator.hh; sourceTree = SOURCE_ROOT; };
 		9E642F8E3E1293E2460965C3 /* PeakAssignment.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PeakAssignment.hh; path = ../src/protocols/noesy_assign/PeakAssignment.hh; sourceTree = SOURCE_ROOT; };
+		9E6B7D12BFF7AF7C82AF1634 /* RNA_CentroidInfo.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_CentroidInfo.fwd.hh; path = ../src/core/scoring/rna/RNA_CentroidInfo.fwd.hh; sourceTree = SOURCE_ROOT; };
 		9E70EAAE8A37113B3DCCC0EE /* RotamerBoltzmannWeightFeatures.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RotamerBoltzmannWeightFeatures.fwd.hh; path = ../src/protocols/features/RotamerBoltzmannWeightFeatures.fwd.hh; sourceTree = SOURCE_ROOT; };
 		9E718C046F5A5C8C891FBF93 /* Symmetrizer.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Symmetrizer.fwd.hh; path = ../src/devel/matdes/Symmetrizer.fwd.hh; sourceTree = SOURCE_ROOT; };
 		9E7214D059EBD44219F26D11 /* EnergyPerResidueFilter.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = EnergyPerResidueFilter.hh; path = ../src/protocols/simple_filters/EnergyPerResidueFilter.hh; sourceTree = SOURCE_ROOT; };
@@ -11390,6 +11443,7 @@
 		A06819045D7F302AE494A951 /* InvrotTarget.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = InvrotTarget.hh; path = ../src/protocols/toolbox/match_enzdes_util/InvrotTarget.hh; sourceTree = SOURCE_ROOT; };
 		A07260A959D49B666DA4A282 /* KinematicAbinitio.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = KinematicAbinitio.cc; path = ../src/protocols/abinitio/KinematicAbinitio.cc; sourceTree = SOURCE_ROOT; };
 		A075A31280FA8E99DAAD7219 /* RelativeSequencePosition.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RelativeSequencePosition.hh; path = ../src/protocols/forge/build/RelativeSequencePosition.hh; sourceTree = SOURCE_ROOT; };
+		A075EB62FB4169FAA3F5EF91 /* sasapack.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = sasapack.hh; path = ../src/protocols/sasa_scores/sasapack.hh; sourceTree = SOURCE_ROOT; };
 		A07A68FDA4224EAA13A73CBF /* JumpClaimer.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = JumpClaimer.hh; path = ../src/protocols/topology_broker/JumpClaimer.hh; sourceTree = SOURCE_ROOT; };
 		A089FDC1E061F5A5AC3AD31B /* atom_pair_energy_inline.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = atom_pair_energy_inline.hh; path = ../src/core/scoring/etable/atom_pair_energy_inline.hh; sourceTree = SOURCE_ROOT; };
 		A08F8A4E5EF51F7D6D748B33 /* inline_file_provider.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = inline_file_provider.hh; path = "../src/utility//inline_file_provider.hh"; sourceTree = SOURCE_ROOT; };
@@ -11430,6 +11484,7 @@
 		A1A08474F8A5A70E06388D00 /* RestrictToInterfaceVectorOperation.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RestrictToInterfaceVectorOperation.cc; path = ../src/protocols/toolbox/task_operations/RestrictToInterfaceVectorOperation.cc; sourceTree = SOURCE_ROOT; };
 		A1A2E382AD2D4DB89206F8DE /* ChiWellRmsdEvaluatorCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ChiWellRmsdEvaluatorCreator.hh; path = ../src/protocols/simple_filters/ChiWellRmsdEvaluatorCreator.hh; sourceTree = SOURCE_ROOT; };
 		A1A67826D081A4997E05F2F9 /* FastDensEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FastDensEnergy.cc; path = ../src/core/scoring/electron_density/FastDensEnergy.cc; sourceTree = SOURCE_ROOT; };
+		A1B002E0D7A84CF5DCEEF8C6 /* RNA_FullAtomVDW_BasePhosphateCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FullAtomVDW_BasePhosphateCreator.hh; path = ../src/core/scoring/rna/RNA_FullAtomVDW_BasePhosphateCreator.hh; sourceTree = SOURCE_ROOT; };
 		A1B29F207371B5BCC84A1099 /* domain_assembly.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = domain_assembly.cc; path = ../src/devel/domain_assembly/domain_assembly.cc; sourceTree = SOURCE_ROOT; };
 		A1B811C55119B4A00580D0F4 /* InterGroupNeighborsCalculator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = InterGroupNeighborsCalculator.cc; path = ../src/protocols/toolbox/pose_metric_calculators/InterGroupNeighborsCalculator.cc; sourceTree = SOURCE_ROOT; };
 		A1B8B213E349BFC8EAA6EB57 /* types.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = types.hh; path = ../src/core/kinematics/types.hh; sourceTree = SOURCE_ROOT; };
@@ -11607,6 +11662,7 @@
 		A7E76FAE3494A1D1F44CD133 /* RNA_ResidueType.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RNA_ResidueType.cc; path = ../src/core/chemical/rna/RNA_ResidueType.cc; sourceTree = SOURCE_ROOT; };
 		A7F66F4B3489161C5E10940F /* MultiStateEntity.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MultiStateEntity.hh; path = ../src/protocols/multistate_design/MultiStateEntity.hh; sourceTree = SOURCE_ROOT; };
 		A7F8C167357A1A3EB281C479 /* MultiThreadingJob.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MultiThreadingJob.hh; path = ../src/protocols/jd2/MultiThreadingJob.hh; sourceTree = SOURCE_ROOT; };
+		A7FC9C41E40D62DA16B802F8 /* RNA_LJ_BaseEnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_LJ_BaseEnergyCreator.hh; path = ../src/core/scoring/rna/RNA_LJ_BaseEnergyCreator.hh; sourceTree = SOURCE_ROOT; };
 		A7FD1936C77A0A114462F8F0 /* SidechainMoverCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SidechainMoverCreator.hh; path = ../src/protocols/simple_moves/sidechain_moves/SidechainMoverCreator.hh; sourceTree = SOURCE_ROOT; };
 		A80087C4A5AFE5923E5B6DCF /* Index.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Index.hh; path = ../src/basic/database/schema_generator/Index.hh; sourceTree = SOURCE_ROOT; };
 		A803554DFFEB3878D2EC3738 /* RRProtocolPackRotamers.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RRProtocolPackRotamers.fwd.hh; path = ../src/protocols/rotamer_recovery/RRProtocolPackRotamers.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -11813,6 +11869,8 @@
 		AF5BD7EC8C560A12F6EE58DB /* FormFactorManager.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FormFactorManager.hh; path = ../src/core/scoring/saxs/FormFactorManager.hh; sourceTree = SOURCE_ROOT; };
 		AF5E42B4CB7C20E79D06566F /* sphericalVector.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = sphericalVector.fwd.hh; path = "../src/numeric//sphericalVector.fwd.hh"; sourceTree = SOURCE_ROOT; };
 		AF725FA530C5A6CF43D54E18 /* CountPairData_1_3.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CountPairData_1_3.fwd.hh; path = ../src/core/scoring/etable/etrie/CountPairData_1_3.fwd.hh; sourceTree = SOURCE_ROOT; };
+		AF99B4E43750F663FCACAF99 /* RNA_LJ_BaseEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_LJ_BaseEnergy.hh; path = ../src/core/scoring/rna/RNA_LJ_BaseEnergy.hh; sourceTree = SOURCE_ROOT; };
+		AFA76FD59231BF569E89D905 /* ClashCheckFilterCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ClashCheckFilterCreator.hh; path = ../src/devel/matdes/ClashCheckFilterCreator.hh; sourceTree = SOURCE_ROOT; };
 		AFB1545CD7B6BB3DEF87C34B /* DomainAssembly.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DomainAssembly.OptionKeys.gen.hh; path = ../src/basic/options/keys/DomainAssembly.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
 		AFBC7B5ADC1140D0CB0CE062 /* Element.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Element.fwd.hh; path = ../src/core/chemical/Element.fwd.hh; sourceTree = SOURCE_ROOT; };
 		AFBF45E169329922F0E9DA5B /* GeometricSolEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = GeometricSolEnergy.cc; path = ../src/core/scoring/geometric_solvation/GeometricSolEnergy.cc; sourceTree = SOURCE_ROOT; };
@@ -11851,6 +11909,7 @@
 		B0F081A6F876194AF4D51BBD /* SA_Energy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SA_Energy.cc; path = ../src/core/scoring/methods/SA_Energy.cc; sourceTree = SOURCE_ROOT; };
 		B0F26252486AE42CD5E78CFA /* ResidueConformationFeaturesCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ResidueConformationFeaturesCreator.cc; path = ../src/protocols/features/ResidueConformationFeaturesCreator.cc; sourceTree = SOURCE_ROOT; };
 		B103BECAE92F992D3A3AD444 /* SecondaryStructurePool.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SecondaryStructurePool.hh; path = ../src/protocols/frag_picker/quota/SecondaryStructurePool.hh; sourceTree = SOURCE_ROOT; };
+		B106AF6E48261442C480D81C /* ExtractSubpose.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ExtractSubpose.cc; path = ../src/devel/matdes/ExtractSubpose.cc; sourceTree = SOURCE_ROOT; };
 		B10A1D193CEF9C63D64703A2 /* RRProtocolMinPack.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RRProtocolMinPack.hh; path = ../src/protocols/rotamer_recovery/RRProtocolMinPack.hh; sourceTree = SOURCE_ROOT; };
 		B116377E9A1B02EABDAE4C82 /* GridCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = GridCreator.hh; path = ../src/protocols/qsar/scoring_grid/GridCreator.hh; sourceTree = SOURCE_ROOT; };
 		B11D9959976B54D18B870416 /* GaussianFunc.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = GaussianFunc.fwd.hh; path = ../src/core/scoring/constraints/GaussianFunc.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -12004,6 +12063,7 @@
 		B615B0D1905E9CF305DB2050 /* ProClosureEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ProClosureEnergy.fwd.hh; path = ../src/core/scoring/methods/ProClosureEnergy.fwd.hh; sourceTree = SOURCE_ROOT; };
 		B616D315933E50EE91EDD79C /* ctab_base.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ctab_base.hh; path = ../src/core/chemical/sdf/ctab_base.hh; sourceTree = SOURCE_ROOT; };
 		B61B0DFFEBAF5C55B1FB37C8 /* ConstraintIO.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ConstraintIO.hh; path = ../src/core/scoring/constraints/ConstraintIO.hh; sourceTree = SOURCE_ROOT; };
+		B61C9ED98DCFFE6F0079669F /* RNA_TorsionPotential.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_TorsionPotential.hh; path = ../src/core/scoring/rna/RNA_TorsionPotential.hh; sourceTree = SOURCE_ROOT; };
 		B61D3C6EEA439989FFF06672 /* JumpOutMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = JumpOutMover.fwd.hh; path = ../src/protocols/moves/JumpOutMover.fwd.hh; sourceTree = SOURCE_ROOT; };
 		B621EC68A862852BD3C54186 /* types.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = types.hh; path = "../src/core//types.hh"; sourceTree = SOURCE_ROOT; };
 		B63335AFDD752DBAE9B9C483 /* ConstraintScoreCutoffFilter.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ConstraintScoreCutoffFilter.cc; path = ../src/protocols/simple_filters/ConstraintScoreCutoffFilter.cc; sourceTree = SOURCE_ROOT; };
@@ -12117,6 +12177,7 @@
 		BA88266A47F4063DD6BA2431 /* LoopGrid.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopGrid.cc; path = ../src/devel/loop_grids/LoopGrid.cc; sourceTree = SOURCE_ROOT; };
 		BA8F740D6CD7C9F235F093D6 /* SaneMinMoverCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SaneMinMoverCreator.hh; path = ../src/protocols/simple_moves/SaneMinMoverCreator.hh; sourceTree = SOURCE_ROOT; };
 		BA8FEE77AAD968BB0EFA6C17 /* SameSequenceGrouper.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SameSequenceGrouper.hh; path = ../src/protocols/match/output/SameSequenceGrouper.hh; sourceTree = SOURCE_ROOT; };
+		BA904995BC601EAEFED836CC /* sasapack.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = sasapack.cc; path = ../src/protocols/sasa_scores/sasapack.cc; sourceTree = SOURCE_ROOT; };
 		BA94E2929FCB06771356C3CB /* BackrubDDMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BackrubDDMover.hh; path = ../src/protocols/protein_interface_design/movers/BackrubDDMover.hh; sourceTree = SOURCE_ROOT; };
 		BA973BD9CFAF8F6FB8FA88EA /* run.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = run.OptionKeys.gen.hh; path = ../src/basic/options/keys/run.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
 		BA9BA367742AC556829F1EA9 /* AmbiguousMultiConstraint.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AmbiguousMultiConstraint.cc; path = ../src/protocols/constraints_additional/AmbiguousMultiConstraint.cc; sourceTree = SOURCE_ROOT; };
@@ -12342,6 +12403,7 @@
 		C10249DD5FF62D2BE43F08D8 /* ResidualDipolarCouplingEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ResidualDipolarCouplingEnergy.hh; path = ../src/core/scoring/methods/ResidualDipolarCouplingEnergy.hh; sourceTree = SOURCE_ROOT; };
 		C10623C45009BA2CE4E1DBFB /* FArray2.io.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FArray2.io.hh; path = "../src/ObjexxFCL//FArray2.io.hh"; sourceTree = SOURCE_ROOT; };
 		C10A67B757149503DDE09705 /* FeaturesReporter.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FeaturesReporter.fwd.hh; path = ../src/protocols/features/FeaturesReporter.fwd.hh; sourceTree = SOURCE_ROOT; };
+		C10E77F58167459C326BECFC /* RNA_LowResolutionPotential.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_LowResolutionPotential.fwd.hh; path = ../src/core/scoring/rna/RNA_LowResolutionPotential.fwd.hh; sourceTree = SOURCE_ROOT; };
 		C12B47F651410FD96C2CD917 /* RDCScore_Gront.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RDCScore_Gront.fwd.hh; path = ../src/protocols/frag_picker/scores/RDCScore_Gront.fwd.hh; sourceTree = SOURCE_ROOT; };
 		C13D911F76DE483F6478CC73 /* SimpleTreeBuilder.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SimpleTreeBuilder.hh; path = ../src/protocols/nonlocal/SimpleTreeBuilder.hh; sourceTree = SOURCE_ROOT; };
 		C1490384FEC7F4A785DD4C0C /* spline_functions.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = spline_functions.hh; path = ../src/numeric/interpolation/spline/spline_functions.hh; sourceTree = SOURCE_ROOT; };
@@ -12356,6 +12418,7 @@
 		C1AD5123A924E17C738D0E06 /* JumpAtom.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JumpAtom.cc; path = ../src/core/kinematics/tree/JumpAtom.cc; sourceTree = SOURCE_ROOT; };
 		C1AD5EC2082275768471EB47 /* SAXSScoreFilter.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SAXSScoreFilter.hh; path = ../src/protocols/simple_filters/SAXSScoreFilter.hh; sourceTree = SOURCE_ROOT; };
 		C1B5F55917A764C796D59C3A /* Ab_TemplateInfo.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Ab_TemplateInfo.fwd.hh; path = ../src/protocols/antibody2/Ab_TemplateInfo.fwd.hh; sourceTree = SOURCE_ROOT; };
+		C1BAA919017497F2512AEC34 /* RNA_FilteredBaseBaseInfo.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FilteredBaseBaseInfo.fwd.hh; path = ../src/core/scoring/rna/RNA_FilteredBaseBaseInfo.fwd.hh; sourceTree = SOURCE_ROOT; };
 		C1C6167B2E4939233403ECC3 /* InterfaceBindingEnergyDensityFilter.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = InterfaceBindingEnergyDensityFilter.fwd.hh; path = ../src/protocols/simple_filters/InterfaceBindingEnergyDensityFilter.fwd.hh; sourceTree = SOURCE_ROOT; };
 		C1D74794CD7AA4A0D3BC0FF7 /* StepWiseProteinMainChainSampleGenerator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseProteinMainChainSampleGenerator.hh; path = ../src/protocols/swa/protein/StepWiseProteinMainChainSampleGenerator.hh; sourceTree = SOURCE_ROOT; };
 		C1E23A0884ADC221CFF2BB40 /* CacheableAtomID_MapVector.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CacheableAtomID_MapVector.hh; path = ../src/core/id/CacheableAtomID_MapVector.hh; sourceTree = SOURCE_ROOT; };
@@ -12833,6 +12896,7 @@
 		D264ED796226E2BAA9FE5E76 /* VoxelSetIterator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = VoxelSetIterator.cc; path = ../src/protocols/match/VoxelSetIterator.cc; sourceTree = SOURCE_ROOT; };
 		D27B4648960DEC8CEC44D974 /* DockingHighRes.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DockingHighRes.hh; path = ../src/protocols/docking/DockingHighRes.hh; sourceTree = SOURCE_ROOT; };
 		D27B8278E9388E15ADFDE1F6 /* B2.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = B2.fwd.hh; path = ../src/devel/optest/B2.fwd.hh; sourceTree = SOURCE_ROOT; };
+		D2840740BFE1D3AA329D4A5A /* RNA_IdealCoord.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RNA_IdealCoord.cc; path = ../src/core/scoring/rna/RNA_IdealCoord.cc; sourceTree = SOURCE_ROOT; };
 		D28ED47582536F0F85467186 /* SequenceCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SequenceCreator.cc; path = ../src/core/sequence/SequenceCreator.cc; sourceTree = SOURCE_ROOT; };
 		D2930160D15F805A2EF59898 /* DerivVectorPair.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DerivVectorPair.fwd.hh; path = ../src/core/scoring/DerivVectorPair.fwd.hh; sourceTree = SOURCE_ROOT; };
 		D2A9135ABC3996EF9415316D /* PcsEnergyParameterManager.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PcsEnergyParameterManager.cc; path = ../src/protocols/scoring/methods/pcs2/PcsEnergyParameterManager.cc; sourceTree = SOURCE_ROOT; };
@@ -12936,6 +13000,7 @@
 		D5A29AB899DB8C9AA0C078D5 /* DbMoverMessageListener.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DbMoverMessageListener.hh; path = ../src/protocols/jd2/message_listening/DbMoverMessageListener.hh; sourceTree = SOURCE_ROOT; };
 		D5B68742953E2DAE6D6444D0 /* OneBodyEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = OneBodyEnergy.cc; path = ../src/core/scoring/methods/OneBodyEnergy.cc; sourceTree = SOURCE_ROOT; };
 		D5C39E7C59BE80BD64B15F95 /* AntibodyInfo.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AntibodyInfo.hh; path = ../src/protocols/antibody2/AntibodyInfo.hh; sourceTree = SOURCE_ROOT; };
+		D5CE7649A3386FB2116D69F8 /* ConstraintEvaluatorWrapperCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ConstraintEvaluatorWrapperCreator.hh; path = ../src/protocols/topology_broker/ConstraintEvaluatorWrapperCreator.hh; sourceTree = SOURCE_ROOT; };
 		D5CF40430DC3344A539276EF /* MMLJEnergyInter.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MMLJEnergyInter.fwd.hh; path = ../src/core/scoring/methods/MMLJEnergyInter.fwd.hh; sourceTree = SOURCE_ROOT; };
 		D5EFD80EC544E96965E86B15 /* SilentFileJobInputterCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SilentFileJobInputterCreator.hh; path = ../src/protocols/jd2/SilentFileJobInputterCreator.hh; sourceTree = SOURCE_ROOT; };
 		D5F5C9A0832872A310E7E062 /* DensePDInteractionGraph.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DensePDInteractionGraph.cc; path = ../src/core/pack/interaction_graph/DensePDInteractionGraph.cc; sourceTree = SOURCE_ROOT; };
@@ -12947,6 +13012,7 @@
 		D61677762650CEE50B0BBC77 /* VallLibrarian.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = VallLibrarian.hh; path = ../src/core/fragment/picking_old/vall/VallLibrarian.hh; sourceTree = SOURCE_ROOT; };
 		D618BF275C24CC4B853B0131 /* ResourceLocatorRegistrator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ResourceLocatorRegistrator.hh; path = ../src/basic/resource_manager/ResourceLocatorRegistrator.hh; sourceTree = SOURCE_ROOT; };
 		D61F615C7DCF568C40907A56 /* Rotates.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Rotates.hh; path = ../src/protocols/ligand_docking/Rotates.hh; sourceTree = SOURCE_ROOT; };
+		D620B7851CA73A9A0C153A60 /* RNA_BulgeEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_BulgeEnergy.hh; path = ../src/core/scoring/rna/RNA_BulgeEnergy.hh; sourceTree = SOURCE_ROOT; };
 		D630CDA009838AA86E4588CF /* heap.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = heap.cc; path = ../src/protocols/frags/heap.cc; sourceTree = SOURCE_ROOT; };
 		D6352B265BC534EBA8B5A4C1 /* SymmetricRotamerSet_.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SymmetricRotamerSet_.fwd.hh; path = ../src/core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.fwd.hh; sourceTree = SOURCE_ROOT; };
 		D635A36D1CB38FBE338C101D /* RotamerDNAHBondFilter.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RotamerDNAHBondFilter.fwd.hh; path = ../src/protocols/dna/RotamerDNAHBondFilter.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -12977,6 +13043,7 @@
 		D70B2916CE771E8FB35C74E2 /* ResLvlTaskOperation.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ResLvlTaskOperation.hh; path = ../src/core/pack/task/operation/ResLvlTaskOperation.hh; sourceTree = SOURCE_ROOT; };
 		D71186CBDFFAF1068781D67B /* RenderGridsToKinemage.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RenderGridsToKinemage.hh; path = ../src/protocols/qsar/RenderGridsToKinemage.hh; sourceTree = SOURCE_ROOT; };
 		D71278A99D0B2203AC8D0D17 /* WorkUnit_BatchRelax.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = WorkUnit_BatchRelax.hh; path = ../src/protocols/relax/WorkUnit_BatchRelax.hh; sourceTree = SOURCE_ROOT; };
+		D7199901150F7626EFA9F6FC /* RNA_VDW_Energy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_VDW_Energy.fwd.hh; path = ../src/core/scoring/rna/RNA_VDW_Energy.fwd.hh; sourceTree = SOURCE_ROOT; };
 		D725BACF17F8A5933A0E85D1 /* PackStatFilter.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PackStatFilter.hh; path = ../src/protocols/simple_filters/PackStatFilter.hh; sourceTree = SOURCE_ROOT; };
 		D72E95578AA78510F60DA30C /* BackboneMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BackboneMover.hh; path = ../src/protocols/simple_moves/BackboneMover.hh; sourceTree = SOURCE_ROOT; };
 		D73603D96836542E2A75F74E /* TaskAwareSASAFilter.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = TaskAwareSASAFilter.cc; path = ../src/devel/matdes/TaskAwareSASAFilter.cc; sourceTree = SOURCE_ROOT; };
@@ -13047,6 +13114,7 @@
 		D96ABF16CA24F5C4F072D6DD /* PlacementMinimizationMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PlacementMinimizationMover.cc; path = ../src/protocols/protein_interface_design/movers/PlacementMinimizationMover.cc; sourceTree = SOURCE_ROOT; };
 		D96ECFD8B09C9F79F0354E62 /* RealVectorOption.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RealVectorOption.fwd.hh; path = ../src/utility/options/RealVectorOption.fwd.hh; sourceTree = SOURCE_ROOT; };
 		D970209BB38565235E275CBC /* CPDataCorrespondence.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CPDataCorrespondence.hh; path = ../src/core/scoring/trie/CPDataCorrespondence.hh; sourceTree = SOURCE_ROOT; };
+		D9775A1A012DE482ED608AF1 /* RNA_PairwiseLowResolutionEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_PairwiseLowResolutionEnergy.hh; path = ../src/core/scoring/rna/RNA_PairwiseLowResolutionEnergy.hh; sourceTree = SOURCE_ROOT; };
 		D97A21D47159DEDA109918C1 /* ParallelBetaPairingPreferenceFilterCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ParallelBetaPairingPreferenceFilterCreator.hh; path = ../src/protocols/fldsgn/filters/ParallelBetaPairingPreferenceFilterCreator.hh; sourceTree = SOURCE_ROOT; };
 		D983C012037FAAC1F86A9F5B /* PathVectorOptionKey.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PathVectorOptionKey.fwd.hh; path = ../src/utility/options/keys/PathVectorOptionKey.fwd.hh; sourceTree = SOURCE_ROOT; };
 		D98FA057649955739039C53B /* ConsensusDesignMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ConsensusDesignMover.fwd.hh; path = ../src/protocols/simple_moves/ConsensusDesignMover.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -13240,6 +13308,7 @@
 		E01DFE30524E7AF94789E91E /* SAXSEnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SAXSEnergyCreator.hh; path = ../src/core/scoring/saxs/SAXSEnergyCreator.hh; sourceTree = SOURCE_ROOT; };
 		E026A9300883DE8D6F47BEFF /* Chunk.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Chunk.fwd.hh; path = ../src/protocols/nonlocal/Chunk.fwd.hh; sourceTree = SOURCE_ROOT; };
 		E030B487F83A51213928D43D /* VarianceStatisticsArchive.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = VarianceStatisticsArchive.cc; path = ../src/protocols/jd2/archive/VarianceStatisticsArchive.cc; sourceTree = SOURCE_ROOT; };
+		E035088C78EA6D39BC0E363F /* RNA_TorsionPotential.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_TorsionPotential.fwd.hh; path = ../src/core/scoring/rna/RNA_TorsionPotential.fwd.hh; sourceTree = SOURCE_ROOT; };
 		E0393F7966F95F857C215784 /* PackStatMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PackStatMover.cc; path = ../src/protocols/analysis/PackStatMover.cc; sourceTree = SOURCE_ROOT; };
 		E04C8389B1BBDB41922B4B1A /* Observer.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Observer.cc; path = "../src/ObjexxFCL//Observer.cc"; sourceTree = SOURCE_ROOT; };
 		E04D41DDE5872D3DA114B903 /* IfMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = IfMover.cc; path = ../src/protocols/moves/IfMover.cc; sourceTree = SOURCE_ROOT; };
@@ -13278,6 +13347,7 @@
 		E197473CF1F2DD617CAFFE31 /* DisulfideDistance.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DisulfideDistance.cc; path = ../src/protocols/frag_picker/scores/DisulfideDistance.cc; sourceTree = SOURCE_ROOT; };
 		E19E6F603A440DE6059F2FE5 /* StringOptionKey.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StringOptionKey.hh; path = ../src/utility/options/keys/StringOptionKey.hh; sourceTree = SOURCE_ROOT; };
 		E1A693ACE1681D59E1471DCE /* NVscoreCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = NVscoreCreator.hh; path = ../src/core/scoring/nv/NVscoreCreator.hh; sourceTree = SOURCE_ROOT; };
+		E1A9E45DE1071BCF40CFE334 /* RNA_TorsionEnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_TorsionEnergyCreator.hh; path = ../src/core/scoring/rna/RNA_TorsionEnergyCreator.hh; sourceTree = SOURCE_ROOT; };
 		E1AAF31FCE79BD73F02B05E4 /* CDRsMinPackMin.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CDRsMinPackMin.fwd.hh; path = ../src/protocols/antibody2/CDRsMinPackMin.fwd.hh; sourceTree = SOURCE_ROOT; };
 		E1AD4A1FFBD59DDEA4399167 /* MakeRotLib.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = MakeRotLib.cc; path = ../src/protocols/make_rot_lib/MakeRotLib.cc; sourceTree = SOURCE_ROOT; };
 		E1B681D3ED48BD67DAF83B80 /* OptionKeys.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = OptionKeys.hh; path = ../src/basic/options/keys/OptionKeys.hh; sourceTree = SOURCE_ROOT; };
@@ -13311,6 +13381,7 @@
 		E28ED094EE407667CA3E8F57 /* JumpingFoldConstraints.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = JumpingFoldConstraints.hh; path = ../src/protocols/abinitio/JumpingFoldConstraints.hh; sourceTree = SOURCE_ROOT; };
 		E299F64EB82521374016C857 /* TrajectoryRecorder.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TrajectoryRecorder.fwd.hh; path = ../src/protocols/canonical_sampling/TrajectoryRecorder.fwd.hh; sourceTree = SOURCE_ROOT; };
 		E2A147A3CCCA4E75A804EA62 /* SmoothFragmentMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SmoothFragmentMover.cc; path = ../src/protocols/simple_moves/SmoothFragmentMover.cc; sourceTree = SOURCE_ROOT; };
+		E2AEDD6B7CEA4EB4773A0AA5 /* RNA_FA_Stack.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FA_Stack.hh; path = ../src/core/scoring/rna/RNA_FA_Stack.hh; sourceTree = SOURCE_ROOT; };
 		E2B9E819DA9645761E4E3C9C /* ZnHash.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ZnHash.cc; path = ../src/devel/znhash/ZnHash.cc; sourceTree = SOURCE_ROOT; };
 		E2BF53FBE680C14A3B8CD251 /* EnvEnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = EnvEnergyCreator.hh; path = ../src/core/scoring/methods/EnvEnergyCreator.hh; sourceTree = SOURCE_ROOT; };
 		E2C1F1E2EABF9664D7E55621 /* RNA_FilteredBaseBaseInfo.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FilteredBaseBaseInfo.hh; path = ../src/core/scoring/rna/RNA_FilteredBaseBaseInfo.hh; sourceTree = SOURCE_ROOT; };
@@ -13368,6 +13439,7 @@
 		E4810E96C31E809F9988CF57 /* LoopMover_QuickCCD.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover_QuickCCD.hh; path = ../src/protocols/loops/loop_mover/perturb/LoopMover_QuickCCD.hh; sourceTree = SOURCE_ROOT; };
 		E49F77A4282842D51F129AC4 /* FragSet.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FragSet.hh; path = ../src/core/fragment/FragSet.hh; sourceTree = SOURCE_ROOT; };
 		E4B5BA5D440B96F42132877D /* ResourceLoader.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ResourceLoader.hh; path = ../src/basic/resource_manager/ResourceLoader.hh; sourceTree = SOURCE_ROOT; };
+		E4C4FC8612C08B18BDB2DF4A /* RNA_SugarCloseEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_SugarCloseEnergy.hh; path = ../src/core/scoring/rna/RNA_SugarCloseEnergy.hh; sourceTree = SOURCE_ROOT; };
 		E4CC4CCD52C3932A33715D10 /* BiasedFragmentMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = BiasedFragmentMover.cc; path = ../src/protocols/nonlocal/BiasedFragmentMover.cc; sourceTree = SOURCE_ROOT; };
 		E4D477CB156920226DD2CFC5 /* EnzRepackMinimize.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = EnzRepackMinimize.cc; path = ../src/protocols/enzdes/EnzRepackMinimize.cc; sourceTree = SOURCE_ROOT; };
 		E4D56F30E279B2828D3A1A44 /* GeometricSolEnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = GeometricSolEnergyCreator.hh; path = ../src/core/scoring/geometric_solvation/GeometricSolEnergyCreator.hh; sourceTree = SOURCE_ROOT; };
@@ -13468,6 +13540,7 @@
 		E7C018481364015BB10C4E05 /* ContextIndependentTwoBodyEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ContextIndependentTwoBodyEnergy.fwd.hh; path = ../src/core/scoring/methods/ContextIndependentTwoBodyEnergy.fwd.hh; sourceTree = SOURCE_ROOT; };
 		E7C3C6D145D53F7E4F92BCD5 /* PartialSecondarySimilarity.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PartialSecondarySimilarity.hh; path = ../src/protocols/frag_picker/scores/PartialSecondarySimilarity.hh; sourceTree = SOURCE_ROOT; };
 		E7C6D1ABE858F278843E603F /* GridFactory.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = GridFactory.fwd.hh; path = ../src/protocols/qsar/scoring_grid/GridFactory.fwd.hh; sourceTree = SOURCE_ROOT; };
+		E7D82A3F90B1E7A1A6F99281 /* RNA_BaseBaseEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_BaseBaseEnergy.fwd.hh; path = ../src/core/scoring/rna/RNA_BaseBaseEnergy.fwd.hh; sourceTree = SOURCE_ROOT; };
 		E7DB4C38FAD8D28F04D94DF1 /* RNA_BaseBaseEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_BaseBaseEnergy.hh; path = ../src/core/scoring/rna/RNA_BaseBaseEnergy.hh; sourceTree = SOURCE_ROOT; };
 		E7DBAA473E8A745CEC074618 /* PackRotamersMoverPartGreedy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PackRotamersMoverPartGreedy.hh; path = ../src/protocols/enzdes/PackRotamersMoverPartGreedy.hh; sourceTree = SOURCE_ROOT; };
 		E7ED602D07B1AD4EBA302084 /* Energies.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Energies.fwd.hh; path = ../src/core/scoring/Energies.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -13609,6 +13682,7 @@
 		ECE814D4939BB71DEC6501D7 /* RNA_PairwiseLowResolutionEnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_PairwiseLowResolutionEnergyCreator.hh; path = ../src/core/scoring/rna/RNA_PairwiseLowResolutionEnergyCreator.hh; sourceTree = SOURCE_ROOT; };
 		ECEA1AD8985AF245D4890C19 /* LigandArea.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LigandArea.fwd.hh; path = ../src/protocols/ligand_docking/LigandArea.fwd.hh; sourceTree = SOURCE_ROOT; };
 		ECF2BE6D202DEFEA6CB57BA6 /* SCMinMinimizerMap.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SCMinMinimizerMap.cc; path = ../src/core/pack/scmin/SCMinMinimizerMap.cc; sourceTree = SOURCE_ROOT; };
+		ECF33F2C62BBC0333D0B274B /* RNA_FullAtomVDW_BasePhosphate.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FullAtomVDW_BasePhosphate.fwd.hh; path = ../src/core/scoring/rna/RNA_FullAtomVDW_BasePhosphate.fwd.hh; sourceTree = SOURCE_ROOT; };
 		ECFA04E4075F94A49B16692C /* Atom_.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Atom_.hh; path = ../src/core/kinematics/tree/Atom_.hh; sourceTree = SOURCE_ROOT; };
 		ED04F33E50D4B9597241AB22 /* CPDataCorrespondence.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CPDataCorrespondence.fwd.hh; path = ../src/core/scoring/trie/CPDataCorrespondence.fwd.hh; sourceTree = SOURCE_ROOT; };
 		ED134D060644BE3DCAD80AA9 /* PcsDataCenterManagerSingleton.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PcsDataCenterManagerSingleton.fwd.hh; path = ../src/protocols/scoring/methods/pcs2/PcsDataCenterManagerSingleton.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -13618,6 +13692,7 @@
 		ED1C92E927FB2807C48112B5 /* DataLoader.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DataLoader.hh; path = ../src/protocols/jd2/parser/DataLoader.hh; sourceTree = SOURCE_ROOT; };
 		ED201DD68AFA627E9BCB6BE4 /* AtrGrid.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtrGrid.hh; path = ../src/protocols/qsar/scoring_grid/AtrGrid.hh; sourceTree = SOURCE_ROOT; };
 		ED2490C73A82A3F33DB819A0 /* util.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = util.cc; path = ../src/devel/denovo_protein_design/util.cc; sourceTree = SOURCE_ROOT; };
+		ED3388D9547684C6445BFD98 /* RNA_FullAtomStackingEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FullAtomStackingEnergy.hh; path = ../src/core/scoring/rna/RNA_FullAtomStackingEnergy.hh; sourceTree = SOURCE_ROOT; };
 		ED34E745065466F4F2B7AC25 /* ForceDisulfidesMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ForceDisulfidesMover.cc; path = ../src/protocols/simple_moves/ForceDisulfidesMover.cc; sourceTree = SOURCE_ROOT; };
 		ED3E78225C67041DE68C40FC /* ConstraintEvaluatorCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ConstraintEvaluatorCreator.cc; path = ../src/protocols/constraints_additional/ConstraintEvaluatorCreator.cc; sourceTree = SOURCE_ROOT; };
 		ED3F38A27D85A014879B130C /* AtomPairConstraint.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtomPairConstraint.fwd.hh; path = ../src/core/scoring/constraints/AtomPairConstraint.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -13755,6 +13830,7 @@
 		F1788642EDAE4EB454184698 /* SSFeature.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SSFeature.cc; path = ../src/protocols/comparative_modeling/features/SSFeature.cc; sourceTree = SOURCE_ROOT; };
 		F17A9CC4146B109288CD7216 /* AddLigandMotifRotamersOperationCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AddLigandMotifRotamersOperationCreator.hh; path = ../src/protocols/enzdes/AddLigandMotifRotamersOperationCreator.hh; sourceTree = SOURCE_ROOT; };
 		F18A2C50E1A55803E66EF741 /* AtomNode.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtomNode.hh; path = ../src/core/optimization/AtomNode.hh; sourceTree = SOURCE_ROOT; };
+		F18FFE6F6DDADC4E146384DC /* SymDofMoverSampler.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SymDofMoverSampler.cc; path = ../src/devel/matdes/SymDofMoverSampler.cc; sourceTree = SOURCE_ROOT; };
 		F1AC4DF5404AA43D03EBF715 /* SetupForSymmetryMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SetupForSymmetryMover.hh; path = ../src/protocols/simple_moves/symmetry/SetupForSymmetryMover.hh; sourceTree = SOURCE_ROOT; };
 		F1AF07156D79E8CC6AE3F33B /* SymmetryInfo.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SymmetryInfo.cc; path = ../src/core/conformation/symmetry/SymmetryInfo.cc; sourceTree = SOURCE_ROOT; };
 		F1E3DA22583D5871D05C2719 /* ProteinRMSDFeatures.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ProteinRMSDFeatures.cc; path = ../src/protocols/features/ProteinRMSDFeatures.cc; sourceTree = SOURCE_ROOT; };
@@ -13834,6 +13910,7 @@
 		F53D3C8BDF7BDE416425D25D /* ScoreTypeFeatures.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ScoreTypeFeatures.fwd.hh; path = ../src/protocols/features/ScoreTypeFeatures.fwd.hh; sourceTree = SOURCE_ROOT; };
 		F543D2569BF6D9B862DA04BD /* OrbitalsScoreCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = OrbitalsScoreCreator.hh; path = ../src/core/scoring/orbitals/OrbitalsScoreCreator.hh; sourceTree = SOURCE_ROOT; };
 		F54A95CBB44C2A65AD0A084D /* enzdes_util.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = enzdes_util.cc; path = ../src/protocols/enzdes/enzdes_util.cc; sourceTree = SOURCE_ROOT; };
+		F54F945262AD79036F23EB43 /* RNA_FilteredBaseBaseInfo.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FilteredBaseBaseInfo.hh; path = ../src/core/scoring/rna/RNA_FilteredBaseBaseInfo.hh; sourceTree = SOURCE_ROOT; };
 		F5697DA9DB6B84DDE91699E7 /* SimulatedTemperingCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SimulatedTemperingCreator.hh; path = ../src/protocols/canonical_sampling/SimulatedTemperingCreator.hh; sourceTree = SOURCE_ROOT; };
 		F5833E1003F70F84E393659F /* Time_Date.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Time_Date.hh; path = "../src/ObjexxFCL//Time_Date.hh"; sourceTree = SOURCE_ROOT; };
 		F5882594BFD5967DFB3BD807 /* VarSolDRotamerDots.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = VarSolDRotamerDots.cc; path = ../src/devel/vardist_solaccess/VarSolDRotamerDots.cc; sourceTree = SOURCE_ROOT; };
@@ -13886,6 +13963,7 @@
 		F6DA65D98D293ABD27D98C52 /* UnconstrainedTorsionsMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = UnconstrainedTorsionsMover.cc; path = ../src/protocols/ligand_docking/UnconstrainedTorsionsMover.cc; sourceTree = SOURCE_ROOT; };
 		F6E2BD66ADF5F75F70D24243 /* MoverStatistics.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = MoverStatistics.cc; path = ../src/protocols/moves/MoverStatistics.cc; sourceTree = SOURCE_ROOT; };
 		F6E5F63F7B57CA234873628E /* edensity.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = edensity.OptionKeys.gen.hh; path = ../src/basic/options/keys/edensity.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
+		F6FF77C45581962B52050873 /* RG_Energy_RNACreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RG_Energy_RNACreator.hh; path = ../src/core/scoring/rna/RG_Energy_RNACreator.hh; sourceTree = SOURCE_ROOT; };
 		F7014E7C1F0D0DFCCD2F6D71 /* ConstraintFileRCG.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ConstraintFileRCG.cc; path = ../src/protocols/forge/constraints/ConstraintFileRCG.cc; sourceTree = SOURCE_ROOT; };
 		F718526339430ED8B34AC27A /* CartesianHybridize.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CartesianHybridize.cc; path = ../src/protocols/comparative_modeling/hybridize/CartesianHybridize.cc; sourceTree = SOURCE_ROOT; };
 		F7228BA3630E94F0DC2E2AB8 /* PeakAssignmentOptionKeys.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PeakAssignmentOptionKeys.hh; path = ../src/protocols/noesy_assign/PeakAssignmentOptionKeys.hh; sourceTree = SOURCE_ROOT; };
@@ -13903,6 +13981,7 @@
 		F7BC980F3291EE504777603D /* RenderGridsToKinemage.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RenderGridsToKinemage.cc; path = ../src/protocols/qsar/RenderGridsToKinemage.cc; sourceTree = SOURCE_ROOT; };
 		F7C152857AA4633C9476EFFD /* RotamerBoltzmannWeight.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RotamerBoltzmannWeight.cc; path = ../src/protocols/simple_filters/RotamerBoltzmannWeight.cc; sourceTree = SOURCE_ROOT; };
 		F7CD3B485395AF037ADBBB37 /* AnyVectorOptionKey.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AnyVectorOptionKey.fwd.hh; path = ../src/utility/options/keys/AnyVectorOptionKey.fwd.hh; sourceTree = SOURCE_ROOT; };
+		F7CEF6DA0D022DA364F15991 /* RNA_PairwiseLowResolutionEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_PairwiseLowResolutionEnergy.fwd.hh; path = ../src/core/scoring/rna/RNA_PairwiseLowResolutionEnergy.fwd.hh; sourceTree = SOURCE_ROOT; };
 		F7DA10BD8EBF3B03499B1E3C /* PackRotamersMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PackRotamersMover.hh; path = ../src/protocols/simple_moves/PackRotamersMover.hh; sourceTree = SOURCE_ROOT; };
 		F7DCF9CA05C65BFB9D386664 /* PredictedBurialEvaluator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PredictedBurialEvaluator.cc; path = ../src/protocols/simple_filters/PredictedBurialEvaluator.cc; sourceTree = SOURCE_ROOT; };
 		F7DDD17440CF0E9652E2C2FB /* RotamerSampleOptions.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RotamerSampleOptions.cc; path = ../src/core/pack/task/RotamerSampleOptions.cc; sourceTree = SOURCE_ROOT; };
@@ -14056,8 +14135,10 @@
 		FD3959F5301273872896AB39 /* RNA_TorsionEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_TorsionEnergy.hh; path = ../src/core/scoring/rna/RNA_TorsionEnergy.hh; sourceTree = SOURCE_ROOT; };
 		FD39DE0AE7E15F7A17CC9B01 /* EnergyMap.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = EnergyMap.hh; path = ../src/core/scoring/EnergyMap.hh; sourceTree = SOURCE_ROOT; };
 		FD415B52370D6EA389654ED4 /* GenericJobInputterCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = GenericJobInputterCreator.hh; path = ../src/protocols/comparative_modeling/GenericJobInputterCreator.hh; sourceTree = SOURCE_ROOT; };
+		FD66A0A283001D6774A67031 /* RNA_BaseDoubletClasses.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_BaseDoubletClasses.hh; path = ../src/core/scoring/rna/RNA_BaseDoubletClasses.hh; sourceTree = SOURCE_ROOT; };
 		FD6CC2312D3DCF002C938003 /* FArray4P.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FArray4P.fwd.hh; path = "../src/ObjexxFCL//FArray4P.fwd.hh"; sourceTree = SOURCE_ROOT; };
 		FD6DE8DFD441AD10DA8C65E4 /* ChunkTrialMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ChunkTrialMover.fwd.hh; path = ../src/protocols/comparative_modeling/hybridize/ChunkTrialMover.fwd.hh; sourceTree = SOURCE_ROOT; };
+		FD83B706F8D4E352AD424662 /* RNA_TorsionEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_TorsionEnergy.hh; path = ../src/core/scoring/rna/RNA_TorsionEnergy.hh; sourceTree = SOURCE_ROOT; };
 		FD83ECF59EDF4836A69973B9 /* AtomTreeDiffJobOutputter.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AtomTreeDiffJobOutputter.hh; path = ../src/protocols/jd2/AtomTreeDiffJobOutputter.hh; sourceTree = SOURCE_ROOT; };
 		FD99D660855731571C010ADA /* HBondSet.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HBondSet.hh; path = ../src/core/scoring/hbonds/HBondSet.hh; sourceTree = SOURCE_ROOT; };
 		FDA82E88C70E049F065667B7 /* AtomTypeDatabaseIO.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AtomTypeDatabaseIO.cc; path = ../src/core/chemical/AtomTypeDatabaseIO.cc; sourceTree = SOURCE_ROOT; };
@@ -16000,6 +16081,8 @@
 				5B5C691F988478F7A7B545A2 /* ConstraintEvaluatorWrapper.cc */,
 				F33F267431EC7A7812010039 /* ConstraintEvaluatorWrapper.fwd.hh */,
 				50A579FFB9A4FCE19EF3BCF0 /* ConstraintEvaluatorWrapper.hh */,
+				2DC841A09A7B8FED8AA52441 /* ConstraintEvaluatorWrapperCreator.cc */,
+				D5CE7649A3386FB2116D69F8 /* ConstraintEvaluatorWrapperCreator.hh */,
 				309435387B6366AE140FE1AC /* CoordConstraintClaimer.cc */,
 				A91086C4256B98B8026DD654 /* CoordConstraintClaimer.fwd.hh */,
 				8B7AB08994924CA07C3B9F57 /* CoordConstraintClaimer.hh */,
@@ -16982,6 +17065,7 @@
 				FE37A3F0741286809EA59749 /* jobdist */,
 				61182C352821F00BA6542B10 /* moves */,
 				98B65D2E78E5628DC65E3242 /* rosetta_scripts */,
+				579D017A5A790FBB4D4E3A1B /* sasa_scores */,
 				0E69288A629F3F02CCC1D4DE /* viewer */,
 			);
 			name = protocols.1;
@@ -18082,6 +18166,16 @@
 			path = ../src/devel/coupled_sidechains/;
 			sourceTree = SOURCE_ROOT;
 		};
+		579D017A5A790FBB4D4E3A1B /* sasa_scores */ = {
+			isa = PBXGroup;
+			children = (
+				BA904995BC601EAEFED836CC /* sasapack.cc */,
+				A075EB62FB4169FAA3F5EF91 /* sasapack.hh */,
+			);
+			name = sasa_scores;
+			path = ../src/protocols/sasa_scores/;
+			sourceTree = SOURCE_ROOT;
+		};
 		5850B51959826B76CF6ACCB0 /* rna */ = {
 			isa = PBXGroup;
 			children = (
@@ -18123,6 +18217,8 @@
 				FDB8D8732228A9AFEA3171B3 /* RNA_FullAtomVDW_BasePhosphate.hh */,
 				27DA7A0D3BB428117CA6A456 /* RNA_FullAtomVDW_BasePhosphateCreator.fwd.hh */,
 				C688B5B3C0B3F1A156BECB04 /* RNA_FullAtomVDW_BasePhosphateCreator.hh */,
+				85292E12B9C457EDB65B478D /* RNA_IdealCoord.fwd.hh */,
+				50501B23F28A049821F15853 /* RNA_IdealCoord.hh */,
 				72294D1DF51D437FE3D9BD76 /* RNA_LJ_BaseEnergy.cc */,
 				A66981257F23BD4633D86221 /* RNA_LJ_BaseEnergy.fwd.hh */,
 				5E68D395145870E7CFD23FAE /* RNA_LJ_BaseEnergy.hh */,
@@ -19450,6 +19546,70 @@
 			);
 			name = scoring;
 			path = ../src/core/scoring/;
+			sourceTree = SOURCE_ROOT;
+		};
+		7E42B206460569AF9291533B /* rna */ = {
+			isa = PBXGroup;
+			children = (
+				5481E607CB228EEFBBC2512E /* RG_Energy_RNA.hh */,
+				F6FF77C45581962B52050873 /* RG_Energy_RNACreator.hh */,
+				7C9FA0A118D8D70933EE61C7 /* RNA_AtomVDW.fwd.hh */,
+				6AA3758E816525B30F96BEFE /* RNA_AtomVDW.hh */,
+				E7D82A3F90B1E7A1A6F99281 /* RNA_BaseBaseEnergy.fwd.hh */,
+				2279089DA22CF12EFE09AC14 /* RNA_BaseBaseEnergy.hh */,
+				FD66A0A283001D6774A67031 /* RNA_BaseDoubletClasses.hh */,
+				19D6412E582CE5A3C7AC38F1 /* RNA_BulgeEnergy.fwd.hh */,
+				D620B7851CA73A9A0C153A60 /* RNA_BulgeEnergy.hh */,
+				9ABED96798879BB952BAB0DD /* RNA_BulgeEnergyCreator.hh */,
+				9E6B7D12BFF7AF7C82AF1634 /* RNA_CentroidInfo.fwd.hh */,
+				6B5DCEAF421F513B14E01A3D /* RNA_CentroidInfo.hh */,
+				8807255633F3DEB6D0BC5A6B /* RNA_DataBackboneEnergy.fwd.hh */,
+				82D11ACBBAA48FA0B179F2C8 /* RNA_DataBackboneEnergy.hh */,
+				5E60508531662A44E8C6C1D4 /* RNA_DataBackboneEnergyCreator.hh */,
+				02F4595D8151FF43F3B736B4 /* RNA_DataInfo.fwd.hh */,
+				71F62ECC5F70721F210A4682 /* RNA_DataInfo.hh */,
+				E2AEDD6B7CEA4EB4773A0AA5 /* RNA_FA_Stack.hh */,
+				C1BAA919017497F2512AEC34 /* RNA_FilteredBaseBaseInfo.fwd.hh */,
+				F54F945262AD79036F23EB43 /* RNA_FilteredBaseBaseInfo.hh */,
+				2F298B0984DCFDC04EEA4828 /* RNA_FittedTorsionInfo.hh */,
+				6D20AB3278426EB6A8881C2E /* RNA_FullAtomStackingEnergy.fwd.hh */,
+				ED3388D9547684C6445BFD98 /* RNA_FullAtomStackingEnergy.hh */,
+				5123A8D276DFFEA911407D0E /* RNA_FullAtomStackingEnergyCreator.hh */,
+				ECF33F2C62BBC0333D0B274B /* RNA_FullAtomVDW_BasePhosphate.fwd.hh */,
+				6934CCD62FD1311AF2A35324 /* RNA_FullAtomVDW_BasePhosphate.hh */,
+				84B06C4FC1AE4A75D778BF03 /* RNA_FullAtomVDW_BasePhosphateCreator.fwd.hh */,
+				A1B002E0D7A84CF5DCEEF8C6 /* RNA_FullAtomVDW_BasePhosphateCreator.hh */,
+				D2840740BFE1D3AA329D4A5A /* RNA_IdealCoord.cc */,
+				1505C77B85C1DBC8927147E5 /* RNA_IdealCoord.fwd.hh */,
+				7EF7B3CE5E5FAE5C34C3693F /* RNA_IdealCoord.hh */,
+				57A817B8AF54A2D000B3B02F /* RNA_LJ_BaseEnergy.fwd.hh */,
+				AF99B4E43750F663FCACAF99 /* RNA_LJ_BaseEnergy.hh */,
+				A7FC9C41E40D62DA16B802F8 /* RNA_LJ_BaseEnergyCreator.hh */,
+				C10E77F58167459C326BECFC /* RNA_LowResolutionPotential.fwd.hh */,
+				71883C7C16D23E3433A886B6 /* RNA_LowResolutionPotential.hh */,
+				F7CEF6DA0D022DA364F15991 /* RNA_PairwiseLowResolutionEnergy.fwd.hh */,
+				D9775A1A012DE482ED608AF1 /* RNA_PairwiseLowResolutionEnergy.hh */,
+				5CE6C0CDC48D1B1942E1CD4B /* RNA_PairwiseLowResolutionEnergyCreator.hh */,
+				2BBC338AAE9AD30286D3E8CC /* RNA_RawBaseBaseInfo.fwd.hh */,
+				4DD8D42A831D4DE43B591E0F /* RNA_RawBaseBaseInfo.hh */,
+				26F1F2C31298FD4A082B6975 /* RNA_ScoringInfo.fwd.hh */,
+				06896726A03D457F8B972E25 /* RNA_ScoringInfo.hh */,
+				30ECC0641471E147B5AC2F25 /* RNA_SugarCloseEnergy.fwd.hh */,
+				E4C4FC8612C08B18BDB2DF4A /* RNA_SugarCloseEnergy.hh */,
+				708E79868123B465C56B13DF /* RNA_SugarCloseEnergyCreator.hh */,
+				8B76B37A8A7F7FDB25975F23 /* RNA_Torsion.fwd.hh */,
+				70CD3EA3AB84853523EFEF6E /* RNA_TorsionEnergy.fwd.hh */,
+				FD83B706F8D4E352AD424662 /* RNA_TorsionEnergy.hh */,
+				E1A9E45DE1071BCF40CFE334 /* RNA_TorsionEnergyCreator.hh */,
+				E035088C78EA6D39BC0E363F /* RNA_TorsionPotential.fwd.hh */,
+				B61C9ED98DCFFE6F0079669F /* RNA_TorsionPotential.hh */,
+				489E39612901670620BB1C65 /* RNA_Util.hh */,
+				D7199901150F7626EFA9F6FC /* RNA_VDW_Energy.fwd.hh */,
+				2881F683413EDB9B451A24B7 /* RNA_VDW_Energy.hh */,
+				923DB6D1A3B6876ABA44850A /* RNA_VDW_EnergyCreator.hh */,
+			);
+			name = rna;
+			path = ../src/core/scoring/rna/;
 			sourceTree = SOURCE_ROOT;
 		};
 		80BEFA2D43525F2963284D94 /* rbsegment_relax */ = {
@@ -21108,6 +21268,15 @@
 			path = ../src/protocols/jd2/parser/;
 			sourceTree = SOURCE_ROOT;
 		};
+		A756ED5D01B5106BDC27E316 /* scoring */ = {
+			isa = PBXGroup;
+			children = (
+				7E42B206460569AF9291533B /* rna */,
+			);
+			name = scoring;
+			path = ../src/core/scoring/;
+			sourceTree = SOURCE_ROOT;
+		};
 		A77B73A1B4BCF947194880A9 /* json_spirit */ = {
 			isa = PBXGroup;
 			children = (
@@ -21362,6 +21531,14 @@
 				1D43D4160141EF50E1EC2793 /* BuildingBlockInterfaceOperation.fwd.hh */,
 				ED14ED0EFF92EFD46926D0CF /* BuildingBlockInterfaceOperation.hh */,
 				8D94921A01C17C847DD1D278 /* BuildingBlockInterfaceOperationCreator.hh */,
+				272CF4EFF2CB98A7E609CBDA /* ClashCheckFilter.cc */,
+				01CB9AE69EB36C0EAC14B175 /* ClashCheckFilter.fwd.hh */,
+				560B53D03AC6B326733BE6A0 /* ClashCheckFilter.hh */,
+				AFA76FD59231BF569E89D905 /* ClashCheckFilterCreator.hh */,
+				B106AF6E48261442C480D81C /* ExtractSubpose.cc */,
+				57382AE8D28C76BFF3020F15 /* ExtractSubpose.fwd.hh */,
+				71E7A997E293170F8C96947F /* ExtractSubpose.hh */,
+				173E897FAD928CE52A778516 /* ExtractSubposeCreator.hh */,
 				7BAB90689BC0358A27F5A3CD /* InterfacePackingFilter.cc */,
 				7A86DD68D527FF0CB00DE5DA /* InterfacePackingFilter.fwd.hh */,
 				58B470970617714763FD1F34 /* InterfacePackingFilter.hh */,
@@ -21400,6 +21577,8 @@
 				011BCC8B7D24C05E93453B73 /* SymDofMover.fwd.hh */,
 				6A4457E7E8B67D68BC8CCE1E /* SymDofMover.hh */,
 				C9B541CA866FA6AEA3405D37 /* SymDofMoverCreator.hh */,
+				F18FFE6F6DDADC4E146384DC /* SymDofMoverSampler.cc */,
+				06D7557F2B60D06A3FCF6B3B /* SymDofMoverSampler.hh */,
 				F816BD0CB1BC4098278B618C /* SymUnsatHbondFilter.cc */,
 				38C88478E3EBED9DF0B1374E /* SymUnsatHbondFilter.fwd.hh */,
 				33BFBB3162B17E66DDB70713 /* SymUnsatHbondFilter.hh */,
@@ -22251,6 +22430,8 @@
 				C9899C611656595DA4B7CABB /* FixedSizeLexicographicalIterator.fwd.hh */,
 				6C200C22C572D8537C877023 /* FixedSizeLexicographicalIterator.hh */,
 				B40C8A1EC23D11FFF1BA555E /* FixedSizeLexicographicalIterator.tmpl.hh */,
+				944ABC68EEDD8E77DD2A14C7 /* GPU.cc */,
+				9717AE433E71E4D1C9C1444C /* GPU.hh */,
 				7BE65A52A1289F3D63248497 /* IndirectSorter.hh */,
 				96B4D813FC9D2038DB2F07CE /* LexicographicalIterator.cc */,
 				36CCC9D8C717C1898AEEC55B /* LexicographicalIterator.fwd.hh */,
@@ -22941,6 +23122,7 @@
 			children = (
 				B4CA8344B83A9E5A73E68BED /* fragment */,
 				AC40E7F3CD8D8FCF613EFB86 /* import_pose */,
+				A756ED5D01B5106BDC27E316 /* scoring */,
 				AA869E170E66F2DDAF9AB66E /* init.cc */,
 				03C37346C1BBFD49E484CEAD /* init.hh */,
 				3F4D1265C4D4F35327326E7F /* svn_version.hh */,
@@ -26105,7 +26287,7 @@
 		BE8A16ED0CA833BF00D67A6F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0440;
 			};
 			buildConfigurationList = BE8A16EE0CA833BF00D67A6F /* Build configuration list for PBXProject "Rosetta" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -27079,6 +27261,7 @@
 				150FE26B97A0B9E36691DAA9 /* ClaimerMessage.cc in Sources */,
 				B8F6ED05D1C8BD007164CF17 /* ConstraintClaimer.cc in Sources */,
 				D3C133952E8C1AA89D20E73B /* ConstraintEvaluatorWrapper.cc in Sources */,
+				A1CB8B0A0D93FA3137AF5D56 /* ConstraintEvaluatorWrapperCreator.cc in Sources */,
 				E761C0A171C373B66134B410 /* CoordConstraintClaimer.cc in Sources */,
 				AC6833DB67A1A36D3E1C3E7B /* CutBiasClaimer.cc in Sources */,
 				44CB6BBEAC4DC65D6ECE1BAF /* DensityScoringClaimer.cc in Sources */,
@@ -27664,6 +27847,8 @@
 				821A12AB26341B14DBFB9C92 /* LoopGrid.cc in Sources */,
 				68D8B90BBADBE5EEE36A3612 /* AverageInterfaceEnergyFilter.cc in Sources */,
 				B5D56D0B4690F3D5A1695805 /* BuildingBlockInterfaceOperation.cc in Sources */,
+				4606AFA30DCCE088B87F5C68 /* ClashCheckFilter.cc in Sources */,
+				02C180EF8880C0F7C6761C34 /* ExtractSubpose.cc in Sources */,
 				FD501E1E134F61D1988EB983 /* InterfacePackingFilter.cc in Sources */,
 				E5AE5F8F1873C0758E049C30 /* OligomericAverageDegreeFilter.cc in Sources */,
 				B88842D3E9B5A097E4BD177A /* RestrictIdentitiesOperation.cc in Sources */,
@@ -27673,6 +27858,7 @@
 				DEACC9811E0105858B0DD048 /* SaveResfileToDiskFilter.cc in Sources */,
 				70F7220E9AE291A9CFB5CE2B /* StoreTaskMover.cc in Sources */,
 				6416558AFC80B2B0C6834D8D /* SymDofMover.cc in Sources */,
+				98DE451C7E3602A0DD3438FC /* SymDofMoverSampler.cc in Sources */,
 				C764CE5EB53EDF1D57132929 /* SymUnsatHbondFilter.cc in Sources */,
 				4709CBFD8B3528232544C80A /* Symmetrizer.cc in Sources */,
 				E6D1129C80CCEE57DB446DDF /* SymmetrizerSampler.cc in Sources */,
@@ -27737,6 +27923,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3D57BC62D940FB5AA65BB872 /* Binary_Util.cc in Sources */,
+				EE14B5B8EB9741A08DB7A2BB /* GPU.cc in Sources */,
 				F4EDAF0227B004F53A371EF9 /* LexicographicalIterator.cc in Sources */,
 				4C85F62054BE86701D3EFA85 /* PyExitCallback.cc in Sources */,
 				8A7164DF4F3E068D28D3EF24 /* basic_sys_util.cc in Sources */,
@@ -28556,6 +28743,7 @@
 				78B1B77CA6EE15D841160F67 /* PoseInputStream.cc in Sources */,
 				6C46E6D93ED290FE45AA00D8 /* SilentFilePoseInputStream.cc in Sources */,
 				9C62DAA54F8C5ACE44AFA4F3 /* util.cc in Sources */,
+				11D709D0C02632AA9D0D238A /* RNA_IdealCoord.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -28725,6 +28913,7 @@
 				770A9B3BE8EF58F4C4505A23 /* ParsedProtocol.cc in Sources */,
 				4BF8DE80C631C168D804DBC3 /* SavePoseMover.cc in Sources */,
 				E4F0C213BB6E3EAC23A9A79F /* util.cc in Sources */,
+				80115DA66D97272B5B464109 /* sasapack.cc in Sources */,
 				8BC85ED9BE6EF3650D15F62F /* ConformationViewer.cc in Sources */,
 				FF79FD3A2D347992B7EEC198 /* SilentObserver.cc in Sources */,
 				11BF187D32AC022AD4D35CCB /* marchingCubes.cc in Sources */,
@@ -31830,6 +32019,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -31922,6 +32112,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -32048,6 +32239,7 @@
 		3B94610D148C9D5200C2FBE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -32066,6 +32258,7 @@
 		3B94610E148C9D5200C2FBE5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -32082,6 +32275,7 @@
 		3B946198148CA62A00C2FBE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -32100,6 +32294,7 @@
 		3B946199148CA62A00C2FBE5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -32116,6 +32311,7 @@
 		3B9462F8148CB2B700C2FBE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -32134,6 +32330,7 @@
 		3B9462F9148CB2B700C2FBE5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -32150,6 +32347,7 @@
 		3B946356148CBAD200C2FBE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -32168,6 +32366,7 @@
 		3B946357148CBAD200C2FBE5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -32184,6 +32383,7 @@
 		3B9463A1148CBAD400C2FBE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -32202,6 +32402,7 @@
 		3B9463A2148CBAD400C2FBE5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -32218,6 +32419,7 @@
 		3B9463EB148CBAD600C2FBE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -32236,6 +32438,7 @@
 		3B9463EC148CBAD600C2FBE5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -32252,6 +32455,7 @@
 		3B946435148CBB3F00C2FBE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -32270,6 +32474,7 @@
 		3B946436148CBB3F00C2FBE5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -32286,6 +32491,7 @@
 		3B94647F148CBB4200C2FBE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -32304,6 +32510,7 @@
 		3B946480148CBB4200C2FBE5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -32320,6 +32527,7 @@
 		3B9464B8148CBD9D00C2FBE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -32338,6 +32546,7 @@
 		3B9464B9148CBD9D00C2FBE5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -32354,6 +32563,7 @@
 		3B946500148CBE0A00C2FBE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -32372,6 +32582,7 @@
 		3B946501148CBE0A00C2FBE5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -32388,6 +32599,7 @@
 		3B94653B148CBE0C00C2FBE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -32406,6 +32618,7 @@
 		3B94653C148CBE0C00C2FBE5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -32422,6 +32635,7 @@
 		3B946576148CBF6800C2FBE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -32440,6 +32654,7 @@
 		3B946577148CBF6800C2FBE5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -32456,6 +32671,7 @@
 		3B9465A8148CBF6E00C2FBE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -32474,6 +32690,7 @@
 		3B9465A9148CBF6E00C2FBE5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -32490,6 +32707,7 @@
 		3B9465D9148CBF7000C2FBE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -32508,6 +32726,7 @@
 		3B9465DA148CBF7000C2FBE5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -32524,6 +32743,7 @@
 		3B946622148CBFBF00C2FBE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -32542,6 +32762,7 @@
 		3B946623148CBFBF00C2FBE5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -32600,6 +32821,7 @@
 		3D5BA06D1492D94500524FBB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -32618,6 +32840,7 @@
 		3D5BA06E1492D94500524FBB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -32634,6 +32857,7 @@
 		3D5BA0891492D95800524FBB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -32652,6 +32876,7 @@
 		3D5BA08A1492D95800524FBB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -32668,6 +32893,7 @@
 		3D5BA0A91492D96800524FBB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -32686,6 +32912,7 @@
 		3D5BA0AA1492D96800524FBB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -32702,6 +32929,7 @@
 		3D5BA0C91492D97300524FBB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -32720,6 +32948,7 @@
 		3D5BA0CA1492D97300524FBB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -32820,6 +33049,7 @@
 		3DDF66C113EE13B800401374 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -32838,6 +33068,7 @@
 		3DDF66C213EE13B800401374 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -32962,6 +33193,7 @@
 		BEDC3FB20CA84E59000FAD97 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -32980,6 +33212,7 @@
 		BEDC3FB30CA84E59000FAD97 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -32996,6 +33229,7 @@
 		BEDC3FD10CA84F94000FAD97 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -33014,6 +33248,7 @@
 		BEDC3FD20CA84F94000FAD97 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -33030,6 +33265,7 @@
 		BEDC40C80CA85270000FAD97 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -33050,6 +33286,7 @@
 		BEDC40C90CA85270000FAD97 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -33068,6 +33305,7 @@
 		BEDC40F50CA8598C000FAD97 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -33086,6 +33324,7 @@
 		BEDC40F60CA8598C000FAD97 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -33102,6 +33341,7 @@
 		D1121014136B62F3000B9DB5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -33147,6 +33387,7 @@
 		D1121015136B62F3000B9DB5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -33190,6 +33431,7 @@
 		D139B7D413687DEE0030829C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -33210,6 +33452,7 @@
 		D139B7D513687DEE0030829C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -33228,6 +33471,7 @@
 		D139BA0713687E0F0030829C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -33248,6 +33492,7 @@
 		D139BA0813687E0F0030829C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -33266,6 +33511,7 @@
 		D139BC2F13687E180030829C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -33286,6 +33532,7 @@
 		D139BC3013687E180030829C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -33304,6 +33551,7 @@
 		D139BE5713687E200030829C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -33324,6 +33572,7 @@
 		D139BE5813687E200030829C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -33342,6 +33591,7 @@
 		D1FC4A0C13687F42006C102D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -33360,6 +33610,7 @@
 		D1FC4A0D13687F42006C102D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -33376,6 +33627,7 @@
 		D1FD03710E2851B800B3C702 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
@@ -33394,6 +33646,7 @@
 		D1FD03720E2851B800B3C702 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_SYMBOL_SEPARATION = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;

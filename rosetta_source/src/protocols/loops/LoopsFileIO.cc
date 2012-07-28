@@ -251,6 +251,32 @@ LoopsFileData::resolve_as_serialized_loops(
 	return sloops;
 }
 
+core::Size LoopsFileData::size() const
+{
+	return loops_file_data_.size();
+}
+
+void LoopsFileData::resize( core::Size new_size )
+{
+	loops_file_data_.resize( new_size );
+}
+
+void LoopsFileData::push_back( LoopFromFileData const & loop )
+{
+	loops_file_data_.push_back( loop );
+}
+
+void LoopsFileData::insert_loop_at_index( LoopFromFileData const & loop, core::Size i )
+{
+	loops_file_data_[ i ] = loop;
+}
+
+LoopFromFileData const & LoopsFileData::operator [] ( core::Size const i ) const
+{
+	return loops_file_data_[ i ];
+}
+
+
 /// @details default constructor: set state to not expect a pose, but to return an empty Loops object
 GuardedLoopsFromFile::GuardedLoopsFromFile() :
 	in_charge_( true ),
@@ -437,7 +463,7 @@ std::ostream & operator<< ( std::ostream & os, const LoopsFileIO & /*loops*/ ) {
 }
 
 
-LoopsFileData
+LoopsFileDataOP
 LoopsFileIO::read_loop_file(
 	std::string const & filename,
 	bool prohibit_single_residue_loops
@@ -451,7 +477,7 @@ LoopsFileIO::read_loop_file(
 	return read_loop_file_stream( infile, filename, prohibit_single_residue_loops );
 }
 
-LoopsFileData
+LoopsFileDataOP
 LoopsFileIO::read_loop_file_stream(
 	std::istream & loopfstream,
 	std::string const & filename,
@@ -471,7 +497,7 @@ LoopsFileIO::read_loop_file_stream(
 			if ( tokens[3] == "JSON" ) {
 				JSONFormattedLoopsFileReader reader;
 				reader.set_linecount_offset( lines_pre_read );
-				LoopsFileData loops = reader.read_loop_file( loopfstream, filename, prohibit_single_residue_loops );
+				LoopsFileDataOP loops = reader.read_loop_file( loopfstream, filename, prohibit_single_residue_loops );
 				return loops;
 			}
 		}
@@ -481,10 +507,10 @@ LoopsFileIO::read_loop_file_stream(
 	PoseNumberedLoopFileReader reader;
 	reader.set_linecount_offset( lines_pre_read );
 	SerializedLoopList sloops = reader.read_pose_numbered_loops_file( loopfstream, filename, prohibit_single_residue_loops );
-	LoopsFileData loops;
-	loops.resize( sloops.size() );
+	LoopsFileDataOP loops = new LoopsFileData;
+	loops->resize( sloops.size() );
 	for ( core::Size ii = 1; ii <= sloops.size(); ++ii ) {
-		loops[ ii ] = LoopFromFileData( sloops[ ii ], filename, prohibit_single_residue_loops );
+		loops->insert_loop_at_index( LoopFromFileData( sloops[ ii ], filename, prohibit_single_residue_loops ), ii );
 	}
 	return loops;
 }
@@ -612,7 +638,7 @@ PoseNumberedLoopFileReader::hijack_loop_reading_code_set_loop_line_begin_token(
 
 
 
-LoopsFileData
+LoopsFileDataOP
 JSONFormattedLoopsFileReader::read_loop_file(
 	std::istream & is,
 	std::string const & filename,
@@ -627,7 +653,7 @@ JSONFormattedLoopsFileReader::read_loop_file(
 	return parse_json_formatted_data( mapped_json, prohibit_single_residue_loops, filename );
 }
 
-LoopsFileData
+LoopsFileDataOP
 JSONFormattedLoopsFileReader::parse_json_formatted_data(
 	utility::json_spirit::mValue & json_data,
 	bool prohibit_single_residue_loops,
@@ -638,7 +664,7 @@ JSONFormattedLoopsFileReader::parse_json_formatted_data(
 	utility::json_spirit::mArray & array = json_data.get_obj()[LoopSetKey].get_array();
 	if ( ! array.size() ) utility_exit_with_message( "The LoopList appears to be empty.  Please check your input file, '" + filename + "'." );
 
-	LoopsFileData loops = LoopsFileData();
+	LoopsFileDataOP loops = new LoopsFileData;
 	core::Size count_lines_approximate = linecount_offset_;
 	for ( core::Size i=0; i < array.size(); ++i )
 	{
@@ -651,7 +677,7 @@ JSONFormattedLoopsFileReader::parse_json_formatted_data(
 		current_loop.prohibit_single_residue_loops( prohibit_single_residue_loops );
 
 		parse_configuration_options( array[ i ], current_loop );
-		loops.push_back( current_loop );
+		loops->push_back( current_loop );
 	}
 	return loops;
 }

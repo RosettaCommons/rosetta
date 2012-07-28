@@ -136,8 +136,8 @@ public:
 		std::string loopfile( "LOOP 2 10\nLOOP 12 18\n" );
 		std::istringstream loopfstream( loopfile );
 		protocols::loops::LoopsFileIO reader;
-		protocols::loops::LoopsFileData lfd = reader.read_loop_file_stream( loopfstream, "bogus" );
-
+		protocols::loops::LoopsFileData lfd = *reader.read_loop_file_stream( loopfstream, "bogus" );
+		
 		TS_ASSERT( lfd.size() == 2 );
 		TS_ASSERT( lfd[ 1 ].start_res().unassigned() == false );
 		TS_ASSERT( lfd[ 1 ].start_res().pose_numbered() == true );
@@ -189,7 +189,7 @@ public:
 		std::string loopfile( "LOOP 2 10 8\nLOOP 12 18\n" );
 		std::istringstream loopfstream( loopfile );
 		protocols::loops::LoopsFileIO reader;
-		protocols::loops::LoopsFileData lfd = reader.read_loop_file_stream( loopfstream, "bogus" );
+		protocols::loops::LoopsFileData lfd = *reader.read_loop_file_stream( loopfstream, "bogus" );
 
 		TS_ASSERT( lfd.size() == 2 );
 		TS_ASSERT( lfd[ 1 ].start_res().unassigned() == false );
@@ -242,7 +242,7 @@ public:
 		std::string loopfile( "LOOP 2 10 8 0.3\nLOOP 12 18\n" );
 		std::istringstream loopfstream( loopfile );
 		protocols::loops::LoopsFileIO reader;
-		protocols::loops::LoopsFileData lfd = reader.read_loop_file_stream( loopfstream, "bogus" );
+		protocols::loops::LoopsFileData lfd = *reader.read_loop_file_stream( loopfstream, "bogus" );
 
 		TS_ASSERT( lfd.size() == 2 );
 		TS_ASSERT( lfd[ 1 ].start_res().unassigned() == false );
@@ -294,7 +294,7 @@ public:
 		std::string loopfile( "LOOP 2 10 8 0.3 1\nLOOP 12 18\n" );
 		std::istringstream loopfstream( loopfile );
 		protocols::loops::LoopsFileIO reader;
-		protocols::loops::LoopsFileData lfd = reader.read_loop_file_stream( loopfstream, "bogus" );
+		protocols::loops::LoopsFileData lfd = *reader.read_loop_file_stream( loopfstream, "bogus" );
 
 		TS_ASSERT( lfd.size() == 2 );
 		TS_ASSERT( lfd[ 1 ].start_res().unassigned() == false );
@@ -357,7 +357,7 @@ public:
 			"}\n";
 		std::istringstream loopfstream( json_loopfile );
 		protocols::loops::LoopsFileIO reader;
-		protocols::loops::LoopsFileData lfd = reader.read_loop_file_stream( loopfstream, "bogus" );
+		protocols::loops::LoopsFileData lfd = *reader.read_loop_file_stream( loopfstream, "bogus" );
 		TS_ASSERT( lfd.size() == 1 );
 		TS_ASSERT( lfd[ 1 ].start_res().unassigned() == false );
 		TS_ASSERT( lfd[ 1 ].start_res().pose_numbered() == false );

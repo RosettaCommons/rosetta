@@ -164,11 +164,20 @@ private:
 	bool prohibit_single_residue_loops_;
 };
 
-class LoopsFileData : public utility::vector1< LoopFromFileData >
+class LoopsFileData : public utility::pointer::ReferenceCount
 {
 public:
 	LoopsOP resolve_loops( core::pose::Pose const & pose ) const;
 	SerializedLoopList resolve_as_serialized_loops( core::pose::Pose const & pose ) const;
+	core::Size size() const;
+	void resize( core::Size new_size );
+	void push_back( LoopFromFileData const & loop );
+	void insert_loop_at_index( LoopFromFileData const & loop, core::Size i );
+	
+	LoopFromFileData const & operator[] ( core::Size const i ) const;
+
+private:
+	utility::vector1< LoopFromFileData > loops_file_data_;
 };
 
 /// @brief This class ensures that the Loops object that is needed to run any of the various
@@ -268,12 +277,12 @@ public:
 	/// to that Pose.
 	/// Note: prohibit_single_residue_loops used to be called "strict_looprelax_checks_"
 	/// which was decidedly opaque
-	LoopsFileData read_loop_file(
+	LoopsFileDataOP read_loop_file(
 		std::string const & filename,
 		bool prohibit_single_residue_loops = true
 	);
 
-	LoopsFileData read_loop_file_stream(
+	LoopsFileDataOP read_loop_file_stream(
 		std::istream & loopfstream,
 		std::string const & filename,
 		bool prohibit_single_residue_loops = true
@@ -337,7 +346,7 @@ public:
 	/// indicate how many.
 	void set_linecount_offset( core::Size );
 
-	LoopsFileData
+	LoopsFileDataOP
 	read_loop_file(
 		std::istream & is,
 		std::string const & filename,
@@ -345,7 +354,7 @@ public:
 	);
 
 private: // methods
-	LoopsFileData
+	LoopsFileDataOP
 	parse_json_formatted_data(
 		utility::json_spirit::mValue & json_data,
 		bool prohibit_single_residue_loops,

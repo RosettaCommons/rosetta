@@ -44,7 +44,6 @@
 #include <utility/exit.hh>
 
 // Numberic headers
-#include <numeric/kdtree/WrappedPrimitive.hh>
 
 // C++ headers
 #include <string>
@@ -264,12 +263,11 @@ public:
 		lazy_resource_manager->add_resource_tag_by_job_tag( rDesc, jTag, rTag );
 		lazy_resource_manager->add_resource_configuration( rTag, my_config );
 		ResourceOP my_resource = lazy_resource_manager->get_resource_by_job_tag( rDesc, jTag );
-		numeric::kdtree::WrappedPrimitive< protocols::loops::LoopsFileData > const * wrapped_loops
-			= dynamic_cast< numeric::kdtree::WrappedPrimitive< protocols::loops::LoopsFileData > const * > ( my_resource() );
+		protocols::loops::LoopsFileDataCOP my_loops = dynamic_cast< protocols::loops::LoopsFileData const * >( my_resource() );
 
-		TS_ASSERT( wrapped_loops ); // make sure we got back the right resource type
+		TS_ASSERT( my_loops ); // make sure we got back the right resource type
 
-		protocols::loops::LoopsFileData lfd = wrapped_loops->val();
+		protocols::loops::LoopsFileData lfd = *my_loops;
 		TS_ASSERT( lfd.size() == 1 );
 		TS_ASSERT( lfd[1].start_res().resindex() == 50 );
 		TS_ASSERT( lfd[1].start_res().chain() == 'A' );
@@ -310,12 +308,11 @@ public:
 		lazy_resource_manager->add_resource_configuration( rTag, my_config );
 		lazy_resource_manager->add_resource_options( resource_options_tag, lfo );
 		ResourceOP my_resource = lazy_resource_manager->get_resource_by_job_tag( rDesc, jTag );
-		numeric::kdtree::WrappedPrimitive< protocols::loops::LoopsFileData > const * wrapped_loops
-			= dynamic_cast< numeric::kdtree::WrappedPrimitive< protocols::loops::LoopsFileData > const * > ( my_resource() );
+		protocols::loops::LoopsFileDataCOP my_loops = dynamic_cast< protocols::loops::LoopsFileData const * >( my_resource() );
 
-		TS_ASSERT( wrapped_loops ); // make sure we got back the right resource type
+		TS_ASSERT( my_loops ); // make sure we got back the right resource type
 
-		protocols::loops::LoopsFileData lfd = wrapped_loops->val();
+		protocols::loops::LoopsFileData lfd = *my_loops;
 		TS_ASSERT( lfd.size() == 1 );
 		TS_ASSERT( lfd[1].start_res().resindex() == 50 );
 		TS_ASSERT( lfd[1].start_res().chain() == 'A' );
@@ -357,12 +354,11 @@ public:
 		lazy_resource_manager->add_resource_configuration( rTag, my_config );
 		lazy_resource_manager->add_resource_options( resource_options_tag, lfo );
 		ResourceOP my_resource = lazy_resource_manager->get_resource_by_job_tag( rDesc, jTag );
-		numeric::kdtree::WrappedPrimitive< protocols::loops::LoopsFileData > const * wrapped_loops
-		= dynamic_cast< numeric::kdtree::WrappedPrimitive< protocols::loops::LoopsFileData > const * > ( my_resource() );
+		protocols::loops::LoopsFileDataCOP my_loops = dynamic_cast< protocols::loops::LoopsFileData const * >( my_resource() );
 
-		TS_ASSERT( wrapped_loops ); // make sure we got back the right resource type
+		TS_ASSERT( my_loops ); // make sure we got back the right resource type
 
-		protocols::loops::LoopsFileData lfd = wrapped_loops->val();
+		protocols::loops::LoopsFileData lfd = *my_loops;
 		TS_ASSERT( lfd.size() == 1 );
 		TS_ASSERT( lfd[1].start_res().resindex() == 50 );
 		TS_ASSERT( lfd[1].start_res().chain() == 'A' );

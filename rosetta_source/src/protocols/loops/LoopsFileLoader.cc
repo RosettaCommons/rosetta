@@ -23,7 +23,6 @@
 #include <utility/excn/Exceptions.hh>
 
 // numeric headers
-#include <numeric/kdtree/WrappedPrimitive.hh>
 
 //C++ headers
 #include <istream>
@@ -47,8 +46,8 @@ LoopsFileLoader::create_resource(
 			"but was given a non-LoopsFileOptions object of type '" + options.type() + "', which has the name '" + options.name() + "'." );
 	}
 	LoopsFileIO lfio;
-	LoopsFileData lfd = lfio.read_loop_file_stream( istream, locator_id, loops_opts_ptr->prohibit_single_residue_loops() );
-	return new numeric::kdtree::WrappedPrimitive< LoopsFileData >( lfd );
+	LoopsFileDataOP lfd = lfio.read_loop_file_stream( istream, locator_id, loops_opts_ptr->prohibit_single_residue_loops() );
+	return lfd;
 }
 
 basic::resource_manager::ResourceOptionsOP

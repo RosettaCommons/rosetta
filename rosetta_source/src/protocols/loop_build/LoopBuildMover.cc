@@ -204,8 +204,8 @@ void LoopBuildMover::setup_loop_definition()
 	{
 		throw utility::excn::EXCN_Msg_Exception( "AHH IT'S THE END OF DAYS. RUN FOR YOUR LIVES" );
 	}
-	protocols::loops::LoopsFileData loops_from_file = get_non_OP_resource< protocols::loops::LoopsFileData >( "LoopsFile" );
-	loop_relax_mover_.loops_file_data( loops_from_file );
+	protocols::loops::LoopsFileDataOP loops_from_file = get_resource< protocols::loops::LoopsFileData >( "LoopsFile" );
+	loop_relax_mover_.loops_file_data( *loops_from_file );
 }
 
 }//loop_build
