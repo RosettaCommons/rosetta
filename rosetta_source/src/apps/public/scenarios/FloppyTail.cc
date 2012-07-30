@@ -226,11 +226,11 @@ public:
 				}
 			}
 		} else if ( //these options are incompatible with movemap use; the movemap determines flexible regions
-							 option[flexible_chain].user() ||
-							 option[flexible_stop_resnum].user() ||
-							 option[flexible_chain].user() ||
-							 option[short_tail_fraction].user() ||
-							 option[short_tail_off].user() ) {
+			option[flexible_chain].user() ||
+			option[flexible_stop_resnum].user() ||
+			option[flexible_chain].user() ||
+			option[short_tail_fraction].user() ||
+			option[short_tail_off].user() ) {
 			utility_exit_with_message("option in::file::movemap not compatible with options flexible_chain, flexible_stop_resnum, flexible_chain, short_tail_fraction, or short_tail off.  This is because a manually-defined movemap overrides these options.");
 		} else {
 			//handle user-defined movemap from file; reverse-convert into start_ and stop_
@@ -429,11 +429,11 @@ public:
 		using protocols::simple_moves::MinMoverOP;
 		using protocols::simple_moves::MinMover;
 		protocols::simple_moves::MinMoverOP min_mover_cen = new protocols::simple_moves::MinMover(
-																						movemap_,
-																						centroid_scorefunction_,
-																						basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
-																						0.01,
-																						true /*use_nblist*/ );
+			movemap_,
+			centroid_scorefunction_,
+			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
+			0.01,
+			true /*use_nblist*/ );
 
 		/////////////////////////Monte Carlo//////////////////////////////////////////////////////////
 		//make the monte carlo object
@@ -510,11 +510,11 @@ public:
 		pack_mover->score_function( fullatom_scorefunction_ );
 
 		protocols::simple_moves::MinMoverOP min_mover_fa = new protocols::simple_moves::MinMover(
-																					 movemap_,
-																					 fullatom_scorefunction_,
-																					 basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
-																					 0.01,
-																					 true /*use_nblist*/ );
+			movemap_,
+			fullatom_scorefunction_,
+			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
+			0.01,
+			true /*use_nblist*/ );
 
 		//definitely want sidechain minimization here
 		using protocols::simple_moves::TaskAwareMinMoverOP;
@@ -551,10 +551,10 @@ public:
 		using protocols::simple_moves::RotamerTrialsMoverOP;
 		using protocols::simple_moves::EnergyCutRotamerTrialsMover;
 		protocols::simple_moves::RotamerTrialsMoverOP rt_mover(new protocols::simple_moves::EnergyCutRotamerTrialsMover(
-																																	fullatom_scorefunction_,
-																																	task_factory_,
-																																	mc_fa,
-																																	0.01 /*energycut*/ ) );
+				fullatom_scorefunction_,
+				task_factory_,
+				mc_fa,
+				0.01 /*energycut*/ ) );
 
 		/////////////////////////////////////////refine loop///////////////////////////////////////////
 		core::Size const refine_applies = option[ refine_cycles ].value(); //default 5
