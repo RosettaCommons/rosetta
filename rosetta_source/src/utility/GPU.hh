@@ -11,6 +11,8 @@
 /// @brief  OpenCL-based GPU scheduler class
 /// @author Luki Goldschmidt (luki@mbi.ucla.edu)
 
+#ifdef USEOPENCL
+
 #ifndef INCLUDED_utility_GPU_hh
 #define INCLUDED_utility_GPU_hh
 
@@ -57,7 +59,7 @@ typedef struct {
 	size_t threads;
 	cl_uint clockRate;
 	cl_uint multiProcessorCount;
-	
+
 	int initialized;
 	int usage;
 
@@ -102,7 +104,7 @@ private:
 public:
 	GPU(int ndevice =0);
 	~GPU();
-	
+
 	int use();
 
 	static const char *errstr(int errorCode);
@@ -141,3 +143,5 @@ protected:
 } // utility
 
 #endif // INCLUDED_utility_GPU_hh
+
+#endif // USEOPENCL
