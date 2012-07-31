@@ -28,10 +28,16 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/Constraint.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/inout.OptionKeys.gen.hh>
+
+#include <basic/database/insert_statement_generator/InsertGenerator.hh>
+#include <basic/database/insert_statement_generator/RowData.hh>
 
 //Utility Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
+#include <utility/tools/make_vector.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -62,6 +68,10 @@ using cppdb::statement;
 using core::pose::PDBInfo;
 using core::pose::PDBInfoOP;
 using core::pose::PDBInfoCOP;
+using basic::database::insert_statement_generator::InsertGenerator;
+using basic::database::insert_statement_generator::RowData;
+using basic::database::insert_statement_generator::RowDataBaseOP;
+
 
 PdbDataFeatures::PdbDataFeatures()
 {
@@ -243,22 +253,33 @@ void PdbDataFeatures::insert_residue_pdb_identification_rows(
 	sessionOP db_session,
 	Pose const & pose)
 {
+
+	InsertGenerator pdb_ident_insert("residue_pdb_identification");
+	pdb_ident_insert.add_column("struct_id");
+	pdb_ident_insert.add_column("residue_number");
+	pdb_ident_insert.add_column("chain_id");
+	pdb_ident_insert.add_column("insertion_code");
+	pdb_ident_insert.add_column("pdb_residue_number");
+
+	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
+
 	Size res_num(pose.n_residue());
-	std::string statement_string = "INSERT INTO residue_pdb_identification (struct_id, residue_number, chain_id, insertion_code, pdb_residue_number) VALUES (?,?,?,?,?);";
-	statement stmt(safely_prepare_statement(statement_string,db_session));
-	for(Size index =1 ; index <= res_num; ++index)
+	for(Size index = 1; index <= res_num; ++index)
 	{
 		string chain_id(& pose.pdb_info()->chain(index),1);
 		string insertion_code(&pose.pdb_info()->icode(index),1);
 		int pdb_residue_number = pose.pdb_info()->number(index);
 
-		stmt.bind(1,struct_id);
-		stmt.bind(2,index);
-		stmt.bind(3,chain_id);
-		stmt.bind(4,insertion_code);
-		stmt.bind(5,pdb_residue_number);
-		safely_write_to_database(stmt);
+		RowDataBaseOP index_data = new RowData<Size>("residue_number",index);
+		RowDataBaseOP chain_id_data = new RowData<string>("chain_id",chain_id);
+		RowDataBaseOP insertion_code_data = new RowData<string>("insertion_code",insertion_code);
+		RowDataBaseOP pdb_resnum_data = new RowData<int>("pdb_residue_number",pdb_residue_number	);
+		pdb_ident_insert.add_row(
+			utility::tools::make_vector(struct_id_data,index_data,chain_id_data,insertion_code_data,pdb_resnum_data));
+
+
 	}
+	pdb_ident_insert.write_to_database(db_session);
 }
 
 
@@ -338,8 +359,20 @@ void PdbDataFeatures::insert_residue_pdb_confidence_rows(
 	PDBInfoCOP pdb_info(pose.pdb_info());
 	if(!pdb_info) return;
 
-	std::string statement_string = "INSERT INTO residue_pdb_confidence (struct_id, residue_number, max_temperature, max_bb_temperature, max_sc_temperature, min_occupancy, min_bb_occupancy, min_sc_occupancy) VALUES (?,?,?,?,?,?,?,?);";
-	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+
+	InsertGenerator confidence_insert("residue_pdb_confidence");
+	confidence_insert.add_column("struct_id");
+	confidence_insert.add_column("residue_number");
+	confidence_insert.add_column("max_temperature");
+	confidence_insert.add_column("max_bb_temperature");
+	confidence_insert.add_column("max_sc_temperature");
+	confidence_insert.add_column("min_occupancy");
+	confidence_insert.add_column("min_bb_occupancy");
+	confidence_insert.add_column("min_sc_occupancy");
+
+
+	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
+
 	for(Size ri=1; ri <= pose.n_residue(); ++ri) {
 		Residue const & r(pose.residue(ri));
 		Real max_bb_temperature(-1), max_sc_temperature(-1);
@@ -358,16 +391,23 @@ void PdbDataFeatures::insert_residue_pdb_confidence_rows(
 		Real const max_temperature = max(max_bb_temperature, max_sc_temperature);
 		Real const min_occupancy = min(min_bb_occupancy, min_sc_occupancy);
 
-		stmt.bind(1,struct_id);
-		stmt.bind(2,ri);
-		stmt.bind(3,max_temperature);
-		stmt.bind(4,max_bb_temperature);
-		stmt.bind(5,max_sc_temperature);
-		stmt.bind(6,min_occupancy);
-		stmt.bind(7,min_bb_occupancy);
-		stmt.bind(8,min_sc_occupancy);
-		basic::database::safely_write_to_database(stmt);
+		RowDataBaseOP residue_number_data = new RowData<Size>("residue_number",ri);
+		RowDataBaseOP max_temp_data = new RowData<Real>("max_temperature",max_temperature);
+		RowDataBaseOP max_bb_temp_data = new RowData<Real>("max_bb_temperature",max_bb_temperature);
+		RowDataBaseOP max_sc_temp_data = new RowData<Real>("max_sc_temperature",max_sc_temperature);
+		RowDataBaseOP min_occupancy_data  = new RowData<Real>("min_occupancy",min_occupancy);
+		RowDataBaseOP min_bb_occupancy_data = new RowData<Real>("min_bb_occupancy",min_bb_occupancy);
+		RowDataBaseOP min_sc_occupancy_data = new RowData<Real>("min_sc_occupancy",min_sc_occupancy);
+
+		confidence_insert.add_row(
+			utility::tools::make_vector(struct_id_data,residue_number_data,max_temp_data,max_bb_temp_data,max_sc_temp_data,
+				min_occupancy_data,min_bb_occupancy_data,min_sc_occupancy_data)
+			);
+
 	}
+
+	confidence_insert.write_to_database(db_session);
+
 }
 
 

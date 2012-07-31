@@ -31,6 +31,7 @@
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/tools/make_vector.hh>
 
 //Basic Headers
 #include <basic/database/sql_utils.hh>
@@ -39,7 +40,12 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/Constraint.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/inout.OptionKeys.gen.hh>
 
+
+#include <basic/database/insert_statement_generator/InsertGenerator.hh>
+#include <basic/database/insert_statement_generator/RowData.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -70,6 +76,9 @@ using utility::sql_database::sessionOP;
 using utility::vector1;
 using cppdb::statement;
 using cppdb::result;
+using basic::database::insert_statement_generator::InsertGenerator;
+using basic::database::insert_statement_generator::RowDataBaseOP;
+using basic::database::insert_statement_generator::RowData;
 
 string
 PoseCommentsFeatures::type_name() const { return "PoseCommentsFeatures"; }
@@ -113,17 +122,26 @@ PoseCommentsFeatures::report_features(
 	sessionOP db_session
 ){
 
+	InsertGenerator pose_comments_insert("pose_comments");
+	pose_comments_insert.add_column("struct_id");
+	pose_comments_insert.add_column("comment_key");
+	pose_comments_insert.add_column("value");
+
+
 	typedef map< string, string >::value_type kv_pair;
-	//cppdb::transaction transact_guard(*db_session);
-	std::string statement_string = "INSERT INTO pose_comments (struct_id, comment_key, value) VALUES (?,?,?);";
-	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+
+	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
+
 	foreach(kv_pair const & kv, get_all_comments(pose)){
-		stmt.bind(1,struct_id);
-		stmt.bind(2,kv.first);
-		stmt.bind(3,kv.second);
-		basic::database::safely_write_to_database(stmt);
+
+		RowDataBaseOP comment_key_data =new RowData<string>("comment_key",kv.first);
+		RowDataBaseOP value_data = new RowData<string>("value",kv.second);
+
+		pose_comments_insert.add_row(utility::tools::make_vector(struct_id_data,comment_key_data,value_data));
 	}
-	//transact_guard.commit();
+
+	pose_comments_insert.write_to_database(db_session);
+
 	return 0;
 }
 

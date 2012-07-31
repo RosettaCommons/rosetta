@@ -24,6 +24,12 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/Constraint.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/inout.OptionKeys.gen.hh>
+#include <basic/database/insert_statement_generator/InsertGenerator.hh>
+#include <basic/database/insert_statement_generator/RowData.hh>
+
 
 //External
 #include <boost/uuid/uuid.hpp>
@@ -36,12 +42,16 @@
 
 #include <protocols/jd2/Job.hh>
 #include <utility/vector1.hh>
+#include <utility/tools/make_vector.hh>
 
 
 namespace protocols {
 namespace features {
 
 using basic::database::table_exists;
+using basic::database::insert_statement_generator::InsertGenerator;
+using basic::database::insert_statement_generator::RowDataBaseOP;
+using basic::database::insert_statement_generator::RowData;
 
 JobDataFeatures::JobDataFeatures() {}
 
@@ -144,16 +154,24 @@ void JobDataFeatures::delete_record(
 
 void JobDataFeatures::insert_string_rows(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
 {
-	protocols::jd2::Job::Strings::const_iterator it(job->output_strings_begin());
-	std::string statement_string = "INSERT INTO job_string_data (struct_id, data_key) VALUES (?,?);";
-	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
+	InsertGenerator string_insert("job_string_data");
+	string_insert.add_column("struct_id");
+	string_insert.add_column("data_key");
+
+	protocols::jd2::Job::Strings::const_iterator it(job->output_strings_begin());
+
+	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
 	for(; it != job->output_strings_end(); ++it)
 	{
-		stmt.bind(1,struct_id);
-		stmt.bind(2,*it);
-		basic::database::safely_write_to_database(stmt);
+
+		RowDataBaseOP string_data = new RowData<std::string>("data_key",*it);
+
+		string_insert.add_row(utility::tools::make_vector(struct_id_data,string_data));
 	}
+
+	string_insert.write_to_database(db_session);
+
 }
 
 void
@@ -185,17 +203,27 @@ JobDataFeatures::load_string_data(
 
 void JobDataFeatures::insert_string_string_rows(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
 {
+
+	InsertGenerator string_string_insert("job_string_string_data");
+	string_string_insert.add_column("struct_id");
+	string_string_insert.add_column("data_key");
+	string_string_insert.add_column("data_value");
+
 	protocols::jd2::Job::StringStringPairs::const_iterator it(job->output_string_string_pairs_begin());
-	std::string statement_string = "INSERT INTO job_string_string_data (struct_id, data_key, data_value) VALUES (?,?,?);";
-	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+
+	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
 
 	for(; it != job->output_string_string_pairs_end();++it)
 	{
-		stmt.bind(1,struct_id);
-		stmt.bind(2,it->first);
-		stmt.bind(3,it->second);
-		basic::database::safely_write_to_database(stmt);
+
+		RowDataBaseOP key_data = new RowData<std::string>("data_key",it->first);
+		RowDataBaseOP value_data = new RowData<std::string>("data_value",it->second);
+
+		string_string_insert.add_row(utility::tools::make_vector(struct_id_data,key_data,value_data));
 	}
+
+	string_string_insert.write_to_database(db_session);
+
 }
 
 void
@@ -227,19 +255,26 @@ JobDataFeatures::load_string_string_data(
 
 void JobDataFeatures::insert_string_real_rows(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
 {
-	protocols::jd2::Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin());
-	std::string statement_string = "INSERT INTO job_string_real_data (struct_id, data_key, data_value) VALUES (?,?,?);";
-	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
+	InsertGenerator string_real_insert("job_string_real_data");
+	string_real_insert.add_column("struct_id");
+	string_real_insert.add_column("data_key");
+	string_real_insert.add_column("data_value");
+
+	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
+
+	protocols::jd2::Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin());
 
 	for(; it != job->output_string_real_pairs_end();++it)
 	{
-		stmt.bind(1,struct_id);
-		stmt.bind(2,it->first);
-		stmt.bind(3,it->second);
-		basic::database::safely_write_to_database(stmt);
 
+		RowDataBaseOP key_data = new RowData<std::string>("data_key",it->first);
+		RowDataBaseOP value_data = new RowData<core::Real>("data_value",it->second);
+
+		string_real_insert.add_row(utility::tools::make_vector(struct_id_data,key_data,value_data));
 	}
+
+	string_real_insert.write_to_database(db_session);
 }
 
 void

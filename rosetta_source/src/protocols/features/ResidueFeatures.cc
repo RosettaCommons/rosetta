@@ -33,10 +33,16 @@
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/Constraint.hh>
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/inout.OptionKeys.gen.hh>
+
+#include <basic/database/insert_statement_generator/InsertGenerator.hh>
+#include <basic/database/insert_statement_generator/RowData.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/tools/make_vector.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -57,7 +63,9 @@ using core::conformation::Residue;
 using utility::vector1;
 using utility::sql_database::sessionOP;
 using cppdb::statement;
-
+using basic::database::insert_statement_generator::InsertGenerator;
+using basic::database::insert_statement_generator::RowDataBaseOP;
+using basic::database::insert_statement_generator::RowData;
 
 ResidueFeatures::ResidueFeatures() {}
 
@@ -124,8 +132,14 @@ ResidueFeatures::insert_residue_rows(
 	sessionOP db_session
 ){
 
-	std::string statement_string = "INSERT INTO residues (struct_id, resNum, name3, res_type) VALUES (?,?,?,?);";
-	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+
+	InsertGenerator residues_insert("residues");
+	residues_insert.add_column("struct_id");
+	residues_insert.add_column("resNum");
+	residues_insert.add_column("name3");
+	residues_insert.add_column("res_type");
+
+	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
 
 	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
 		if(!relevant_residues[resNum]) continue;
@@ -134,14 +148,15 @@ ResidueFeatures::insert_residue_rows(
 		string const name3( res.name3() );
 		string const res_type( res.name() );
 
-		//TR << "residues binding - " << to_string(struct_id) << " " << resNum << " " << name3 << " " << res_type << std::endl;
+		RowDataBaseOP resnum_data = new RowData<Size>("resNum",resNum);
+		RowDataBaseOP name3_data = new RowData<string>("name3",name3);
+		RowDataBaseOP res_type_data = new RowData<string>("res_type",res_type);
 
-		stmt.bind(1,struct_id);
-		stmt.bind(2,resNum);
-		stmt.bind(3,name3);
-		stmt.bind(4,res_type);
-		basic::database::safely_write_to_database(stmt);
+		residues_insert.add_row(utility::tools::make_vector(struct_id_data,resnum_data,name3_data,res_type_data));
+
 	}
+
+	residues_insert.write_to_database(db_session);
 }
 
 void

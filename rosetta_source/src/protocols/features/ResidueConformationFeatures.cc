@@ -23,6 +23,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
 
@@ -30,6 +31,7 @@
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/tools/make_vector.hh>
 
 //Basic Headers
 #include <basic/database/sql_utils.hh>
@@ -40,7 +42,9 @@
 #include <basic/database/schema_generator/Constraint.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-
+#include <basic/options/keys/inout.OptionKeys.gen.hh>
+#include <basic/database/insert_statement_generator/InsertGenerator.hh>
+#include <basic/database/insert_statement_generator/RowData.hh>
 // External Headers
 #include <cppdb/frontend.h>
 #include <boost/uuid/uuid_io.hpp>
@@ -63,6 +67,9 @@ using utility::vector1;
 using utility::sql_database::sessionOP;
 using cppdb::statement;
 using cppdb::result;
+using basic::database::insert_statement_generator::InsertGenerator;
+using basic::database::insert_statement_generator::RowDataBaseOP;
+using basic::database::insert_statement_generator::RowData;
 
 string
 ResidueConformationFeatures::type_name() const {
@@ -144,75 +151,6 @@ ResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP
 
 	residue_atom_coords.write(db_session);
 
-//	if(db_mode == "sqlite3")
-//	{
-//		return
-//			"CREATE TABLE IF NOT EXISTS nonprotein_residue_conformation (\n"
-//			"	struct_id BLOB,\n"
-//			"	seqpos INTEGER,\n"
-//			"	phi REAL,\n"
-//			"	psi REAL,\n"
-//			"	omega REAL,\n"
-//			"	FOREIGN KEY (struct_id, seqpos)\n"
-//			"		REFERENCES residues (struct_id, resNum)\n"
-//			"		DEFERRABLE INITIALLY DEFERRED,\n"
-//			"	PRIMARY KEY (struct_id, seqpos));\n"
-//			"\n"
-//			"CREATE TABLE IF NOT EXISTS nonprotein_residue_angles (\n"
-//			"	struct_id BLOB,\n"
-//			"	seqpos INTEGER,\n"
-//			"	chinum INTEGER,\n"
-//			"	chiangle REAL,\n"
-//			"	FOREIGN KEY (struct_id, seqpos)\n"
-//			"		REFERENCES residues (struct_id, resNum)\n"
-//			"		DEFERRABLE INITIALLY DEFERRED,\n"
-//			"	PRIMARY KEY (struct_id, seqpos, chinum));\n"
-//			"\n"
-//			"CREATE TABLE IF NOT EXISTS residue_atom_coords (\n"
-//			"	struct_id BLOB,\n"
-//			"	seqpos INTEGER,\n"
-//			"	atomno INTEGER,\n"
-//			"	x REAL,\n"
-//			"	y REAL,\n"
-//			"	z REAL,\n"
-//			"	FOREIGN KEY (struct_id, seqpos)\n"
-//			"		REFERENCES residues (struct_id, resNum)\n"
-//			"		DEFERRABLE INITIALLY DEFERRED,\n"
-//			"	PRIMARY KEY (struct_id, seqpos, atomno));\n";
-//	}else if(db_mode == "mysql")
-//	{
-//		return
-//			"CREATE TABLE IF NOT EXISTS nonprotein_residue_conformation (\n"
-//			"	struct_id BINARY(16),\n"
-//			"	seqpos INTEGER,\n"
-//			"	phi DOUBLE,\n"
-//			"	psi DOUBLE,\n"
-//			"	omega DOUBLE,\n"
-//			"	FOREIGN KEY (struct_id, seqpos) REFERENCES residues (struct_id, resNum),"
-//			"	PRIMARY KEY (struct_id, seqpos));\n"
-//			"\n"
-//			"CREATE TABLE IF NOT EXISTS nonprotein_residue_angles (\n"
-//			"	struct_id BINARY(16),\n"
-//			"	seqpos INTEGER,\n"
-//			"	chinum INTEGER,\n"
-//			"	chiangle DOUBLE,\n"
-//			"	FOREIGN KEY (struct_id, seqpos) REFERENCES residues (struct_id, resNum),"
-//			"	PRIMARY KEY (struct_id, seqpos, chinum));\n"
-//			"\n"
-//			"CREATE TABLE IF NOT EXISTS residue_atom_coords (\n"
-//			"	struct_id BINARY(16),\n"
-//			"	seqpos INTEGER,\n"
-//			"	atomno INTEGER,\n"
-//			"	x DOUBLE,\n"
-//			"	y DOUBLE,\n"
-//			"	z DOUBLE,\n"
-//			"	FOREIGN KEY (struct_id, seqpos) REFERENCES residues (struct_id, resNum),"
-//			"	PRIMARY KEY (struct_id, seqpos, atomno));";
-//	}else
-//	{
-//		return "";
-//	}
-
 }
 
 utility::vector1<std::string>
@@ -248,16 +186,29 @@ ResidueConformationFeatures::report_features(
 		ideal = false;
 	}
 
-	std::string conformation_string = "INSERT INTO nonprotein_residue_conformation (struct_id, seqpos, phi, psi, omega) VALUES (?,?,?,?,?)";
-	std::string angle_string = "INSERT INTO nonprotein_residue_angles (struct_id, seqpos, chinum, chiangle) VALUES (?,?,?,?)";
-	std::string coords_string = "INSERT INTO residue_atom_coords (struct_id, seqpos, atomno, x, y, z) VALUES (?,?,?,?,?,?)";
+	InsertGenerator conformation_insert("nonprotein_residue_conformation");
+	conformation_insert.add_column("struct_id");
+	conformation_insert.add_column("seqpos");
+	conformation_insert.add_column("phi");
+	conformation_insert.add_column("psi");
+	conformation_insert.add_column("omega");
 
-	statement conformation_stmt(basic::database::safely_prepare_statement(conformation_string,db_session));
-	statement angle_stmt(basic::database::safely_prepare_statement(angle_string,db_session));
-	statement coords_stmt(basic::database::safely_prepare_statement(coords_string,db_session));
+	InsertGenerator angle_insert("nonprotein_residue_angles");
+	angle_insert.add_column("struct_id");
+	angle_insert.add_column("seqpos");
+	angle_insert.add_column("chinum");
+	angle_insert.add_column("chiangle");
+
+	InsertGenerator atom_insert("residue_atom_coords");
+	atom_insert.add_column("struct_id");
+	atom_insert.add_column("seqpos");
+	atom_insert.add_column("atomno");
+	atom_insert.add_column("x");
+	atom_insert.add_column("y");
+	atom_insert.add_column("z");
 
 
-	//cppdb::transaction transact_guard(*db_session);
+	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
 	for (Size i = 1; i <= pose.total_residue(); ++i) {
 		if(!relevant_residues[i]) continue;
 
@@ -275,39 +226,46 @@ ResidueConformationFeatures::report_features(
 			omega= resi.mainchain_torsion(3);
 		}
 
-		conformation_stmt.bind(1,struct_id);
-		conformation_stmt.bind(2,i);
-		conformation_stmt.bind(3,phi);
-		conformation_stmt.bind(4,psi);
-		conformation_stmt.bind(5,omega);
-		basic::database::safely_write_to_database(conformation_stmt);
+		RowDataBaseOP seqpos_data = new RowData<Size>("seqpos",i);
+		RowDataBaseOP phi_data = new RowData<Real>("phi",phi);
+		RowDataBaseOP psi_data = new RowData<Real>("psi",psi);
+		RowDataBaseOP omega_data = new RowData<Real>("omega",omega);
+
+		conformation_insert.add_row(
+			utility::tools::make_vector(struct_id_data,seqpos_data,phi_data,psi_data,omega_data));
+
+
 
 		for(core::Size chi_num = 1; chi_num <= resi.nchi();++chi_num){
 			core::Real chi_angle = resi.chi(chi_num);
 
-			angle_stmt.bind(1,struct_id);
-			angle_stmt.bind(2,i);
-			angle_stmt.bind(3,chi_num);
-			angle_stmt.bind(4,chi_angle);
-			basic::database::safely_write_to_database(angle_stmt);
+			RowDataBaseOP chinum_data = new RowData<Size>("chinum",chi_num);
+			RowDataBaseOP chiangle_data = new RowData<Real>("chiangle",chi_angle);
+			angle_insert.add_row(utility::tools::make_vector(
+				struct_id_data,seqpos_data,chinum_data,chiangle_data));
 
 		}
 		if(!ideal || resi.is_ligand()){ // always store coords for a ligand
 			for(Size atom = 1; atom <= resi.natoms(); ++atom){
 				core::Vector coords = resi.xyz(atom);
 
-				coords_stmt.bind(1,struct_id);
-				coords_stmt.bind(2,i);
-				coords_stmt.bind(3,atom);
-				coords_stmt.bind(4,coords.x());
-				coords_stmt.bind(5,coords.y());
-				coords_stmt.bind(6,coords.z());
-				basic::database::safely_write_to_database(coords_stmt);
+				RowDataBaseOP atom_data = new RowData<Size>("atomno",atom);
+				RowDataBaseOP x_data = new RowData<Real>("x",coords.x());
+				RowDataBaseOP y_data = new RowData<Real>("y",coords.y());
+				RowDataBaseOP z_data = new RowData<Real>("z",coords.z());
+
+				atom_insert.add_row(utility::tools::make_vector(
+					struct_id_data,seqpos_data,atom_data,x_data,y_data,z_data));
+
 
 			}
 		}
 	}
-	//transact_guard.commit();
+
+	conformation_insert.write_to_database(db_session);
+	angle_insert.write_to_database(db_session);
+	atom_insert.write_to_database(db_session);
+
 	return 0;
 }
 

@@ -44,6 +44,10 @@
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/database/sql_utils.hh>
+#include <utility/tools/make_vector.hh>
+
+#include <basic/database/insert_statement_generator/InsertGenerator.hh>
+#include <basic/database/insert_statement_generator/RowData.hh>
 
 // C++ Headers
 #include <sstream>
@@ -86,6 +90,9 @@ using utility::sql_database::sessionOP;
 using utility::tag::TagPtr;
 using cppdb::statement;
 using cppdb::result;
+using basic::database::insert_statement_generator::InsertGenerator;
+using basic::database::insert_statement_generator::RowDataBaseOP;
+using basic::database::insert_statement_generator::RowData;
 
 StructureScoresFeatures::StructureScoresFeatures() :
 	scfxn_(getScoreFunction())
@@ -225,35 +232,43 @@ StructureScoresFeatures::insert_structure_score_rows(
 	sessionOP db_session
 ) const {
 
+	InsertGenerator structure_scores_insert("structure_scores");
+	structure_scores_insert.add_column("batch_id");
+	structure_scores_insert.add_column("struct_id");
+	structure_scores_insert.add_column("score_type_id");
+	structure_scores_insert.add_column("score_value");
+
 	Energies const & energies(pose.energies());
 	EnergyMap emap;
 	scfxn_->get_sub_score(pose, relevant_residues, emap);
 
 	core::Real total_score= 0.0;
-
 	Size const batch_id(get_batch_id(struct_id, db_session));
+	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
+	RowDataBaseOP batch_id_data = new RowData<Size>("batch_id",batch_id);
 
-	std::string statement_string = "INSERT INTO structure_scores (batch_id, struct_id, score_type_id, score_value) VALUES (?,?,?,?);";
-	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	for(Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id){
 		ScoreType type(static_cast<ScoreType>(score_type_id));
 		Real const score_value( energies.weights()[type] * emap[type] );
 		if(!score_value) continue;
 		total_score += score_value;
-		stmt.bind(1, batch_id);
-		stmt.bind(2, struct_id);
-		stmt.bind(3, score_type_id);
-		stmt.bind(4, score_value);
-		basic::database::safely_write_to_database(stmt);
+
+		RowDataBaseOP score_type_id_data = new RowData<Size>("score_type_id",score_type_id);
+		RowDataBaseOP score_value_data = new RowData<Real>("score_value",score_value);
+
+		structure_scores_insert.add_row(
+			utility::tools::make_vector(batch_id_data,struct_id_data,score_type_id_data,score_value_data));
+		
 	}
 
 	// add the total_score type
-	stmt.bind(1, batch_id);
-	stmt.bind(2, struct_id);
-	stmt.bind(3, n_score_types);
-	stmt.bind(4, total_score);
-	basic::database::safely_write_to_database(stmt);
-}
+	RowDataBaseOP total_id_data = new RowData<Size>("score_type_id",n_score_types);
+	RowDataBaseOP total_score_data = new RowData<Real>("score_value",total_score);
+
+	structure_scores_insert.add_row(
+		utility::tools::make_vector(batch_id_data,struct_id_data,total_id_data,total_score_data));
+	structure_scores_insert.write_to_database(db_session);
+	}
 
 } // namesapce
 } // namespace

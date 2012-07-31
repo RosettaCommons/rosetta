@@ -36,6 +36,8 @@
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/Constraint.hh>
 
+#include <basic/database/insert_statement_generator/InsertGenerator.hh>
+#include <basic/database/insert_statement_generator/RowData.hh>
 
 // Basic Headers
 #include <basic/options/option.hh>
@@ -51,6 +53,7 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/tools/make_vector.hh>
 
 // Boost Headers
 #include <boost/foreach.hpp>
@@ -96,6 +99,9 @@ using utility::sql_database::DatabaseSessionManager;
 using utility::sql_database::sessionOP;
 using cppdb::statement;
 using cppdb::result;
+using basic::database::insert_statement_generator::InsertGenerator;
+using basic::database::insert_statement_generator::RowDataBaseOP;
+using basic::database::insert_statement_generator::RowData;
 
 string
 PoseConformationFeatures::type_name() const { return "PoseConformationFeatures"; }
@@ -195,28 +201,56 @@ PoseConformationFeatures::report_features_implementation(
 	//assume non-trivial fold_tree only if more than one edge, i.e., EDGE 1 <nres> -1
 	//cppdb::transaction transact_guard(*db_session);
 
-	std::string fold_tree_string = "INSERT INTO fold_trees (struct_id, start_res, start_atom, stop_res, stop_atom, label, keep_stub_in_residue) VALUES (?,?,?,?,?,?,?);";
-	statement fold_tree_statement(basic::database::safely_prepare_statement(fold_tree_string,db_session));
+	InsertGenerator fold_tree_insert("fold_trees");
+	fold_tree_insert.add_column("struct_id");
+	fold_tree_insert.add_column("start_res");
+	fold_tree_insert.add_column("start_atom");
+	fold_tree_insert.add_column("stop_res");
+	fold_tree_insert.add_column("stop_atom");
+	fold_tree_insert.add_column("label");
+	fold_tree_insert.add_column("keep_stub_in_residue");
+
+	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
+
 	for (FoldTree::const_iterator
 			it = fold_tree.begin(), it_end = fold_tree.end(); it != it_end; ++it) {
+
 		int start_res(it->start()), stop_res(it->stop()), label(it->label());
 		string start_atom(it->start_atom()), stop_atom(it->stop_atom());
 		bool keep_stub_in_residue(it->keep_stub_in_residue());
 
-		fold_tree_statement.bind(1,struct_id);
-		fold_tree_statement.bind(2,start_res);
-		fold_tree_statement.bind(3,start_atom);
-		fold_tree_statement.bind(4,stop_res);
-		fold_tree_statement.bind(5,stop_atom);
-		fold_tree_statement.bind(6,label);
-		fold_tree_statement.bind(7,keep_stub_in_residue);
-		basic::database::safely_write_to_database(fold_tree_statement);
 
+		RowDataBaseOP start_res_data = new RowData<int>("start_res",start_res);
+		RowDataBaseOP start_atom_data = new RowData<string>("start_atom",start_atom);
+		RowDataBaseOP stop_res_data = new RowData<int>("stop_res",stop_res);
+		RowDataBaseOP stop_atom_data = new RowData<string>("stop_atom",stop_atom);
+		RowDataBaseOP label_data = new RowData<int>("label",label);
+		RowDataBaseOP keep_stub_data = new RowData<bool>("keep_stub_in_residue",keep_stub_in_residue);
+
+		fold_tree_insert.add_row(
+			utility::tools::make_vector(struct_id_data,start_res_data,start_atom_data,stop_res_data,stop_atom_data,label_data,keep_stub_data));
 	}
 
-	std::string jump_string = "INSERT INTO jumps (struct_id, jump_id, xx, xy, xz, yx, yy, yz, zx, zy, zz, x, y, z) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
-	statement jump_statement(basic::database::safely_prepare_statement(jump_string,db_session));
-	for (Size nr = 1; nr <= fold_tree.num_jump(); nr++)  {
+	fold_tree_insert.write_to_database(db_session);
+
+	InsertGenerator jump_insert("jumps");
+	jump_insert.add_column("struct_id");
+	jump_insert.add_column("jump_id");
+	jump_insert.add_column("xx");
+	jump_insert.add_column("xy");
+	jump_insert.add_column("xz");
+	jump_insert.add_column("yx");
+	jump_insert.add_column("yy");
+	jump_insert.add_column("yz");
+	jump_insert.add_column("zx");
+	jump_insert.add_column("zy");
+	jump_insert.add_column("zz");
+	jump_insert.add_column("x");
+	jump_insert.add_column("y");
+	jump_insert.add_column("z");
+
+	for (Size nr = 1; nr <= fold_tree.num_jump(); nr++)
+	{
 		Jump const & jump(pose.jump(nr));
 		xyzMatrix< Real > const & r(jump.get_rotation());
 		Real xx(r.xx()), xy(r.xy()), xz(r.xz());
@@ -225,58 +259,53 @@ PoseConformationFeatures::report_features_implementation(
 		Vector const & t(jump.get_translation());
 		Real x(t.x()), y(t.y()), z(t.z());
 
-		jump_statement.bind(1,struct_id);
-		jump_statement.bind(2,nr);
-		jump_statement.bind(3,xx);
-		jump_statement.bind(4,xy);
-		jump_statement.bind(5,xz);
-		jump_statement.bind(6,yx);
-		jump_statement.bind(7,yy);
-		jump_statement.bind(8,yz);
-		jump_statement.bind(9,zx);
-		jump_statement.bind(10,zy);
-		jump_statement.bind(11,zz);
-		jump_statement.bind(12,x);
-		jump_statement.bind(13,y);
-		jump_statement.bind(14,z);
-		basic::database::safely_write_to_database(jump_statement);
+		RowDataBaseOP jump_id_data = new RowData<Size>("jump_id",nr);
+		RowDataBaseOP xx_data = new RowData<Real>("xx",xx);
+		RowDataBaseOP xy_data = new RowData<Real>("xy",xy);
+		RowDataBaseOP xz_data = new RowData<Real>("xz",xz);
+		RowDataBaseOP yx_data = new RowData<Real>("yx",yx);
+		RowDataBaseOP yy_data = new RowData<Real>("yy",yy);
+		RowDataBaseOP yz_data = new RowData<Real>("yz",yz);
+		RowDataBaseOP zx_data = new RowData<Real>("zx",zx);
+		RowDataBaseOP zy_data = new RowData<Real>("zy",zy);
+		RowDataBaseOP zz_data = new RowData<Real>("zz",zz);
+		RowDataBaseOP x_data = new RowData<Real>("x",x);
+		RowDataBaseOP y_data = new RowData<Real>("y",y);
+		RowDataBaseOP z_data = new RowData<Real>("z",z);
+		jump_insert.add_row(
+			utility::tools::make_vector(struct_id_data,jump_id_data,xx_data,xy_data,xz_data,yx_data,yy_data,yz_data,zx_data,zy_data,zz_data,x_data,y_data,z_data));
 	}
+	jump_insert.write_to_database(db_session);
 
-	std::string chain_ending_string = "INSERT INTO chain_endings (struct_id, end_pos) VALUES (?,?);";
-	statement chain_ending_statement(basic::database::safely_prepare_statement(chain_ending_string,db_session));
-	foreach(Size end_pos, pose.conformation().chain_endings()){
+	InsertGenerator chain_ending_insert("chain_endings");
+	chain_ending_insert.add_column("struct_id");
+	chain_ending_insert.add_column("end_pos");
+	foreach(Size end_pos, pose.conformation().chain_endings())
+	{
+		RowDataBaseOP end_pos_data = new RowData<Size>("end_pos",end_pos);
 
-		chain_ending_statement.bind(1,struct_id);
-		chain_ending_statement.bind(2,end_pos);
-		basic::database::safely_write_to_database(chain_ending_statement);
-
+		chain_ending_insert.add_row(
+			utility::tools::make_vector(struct_id_data,end_pos_data));
 	}
-
-//	bool ideal = true;
-//	core::conformation::Conformation const & conformation(pose->conformation());
-//	for(core::Size resn = 1; resn <= pose->n_residue();++resn)
-//	{
-//		bool residue_status(core::conformation::is_ideal_position(resn,conformation));
-//		if(!residue_status)
-//		{
-//			ideal = false;
-//			break;
-//		}
-//	}
+	chain_ending_insert.write_to_database(db_session);
 
 	string annotated_sequence(pose.annotated_sequence(true));
 
-	std::string pose_conformation_string = "INSERT INTO pose_conformations (struct_id, annotated_sequence, total_residue, fullatom) VALUES (?,?,?,?);";
-	statement pose_conformation_statement(basic::database::safely_prepare_statement(pose_conformation_string,db_session));
 
-	pose_conformation_statement.bind(1,struct_id);
-	pose_conformation_statement.bind(2,annotated_sequence);
-	pose_conformation_statement.bind(3,pose.total_residue());
-	pose_conformation_statement.bind(4,pose.is_fullatom());
+	InsertGenerator pose_conformation_insert("pose_conformations");
+	pose_conformation_insert.add_column("struct_id");
+	pose_conformation_insert.add_column("annotated_sequence");
+	pose_conformation_insert.add_column("total_residue");
+	pose_conformation_insert.add_column("fullatom");
 
-	basic::database::safely_write_to_database(pose_conformation_statement);
+	RowDataBaseOP annotated_sequence_data = new RowData<string>("annotated_sequence",annotated_sequence);
+	RowDataBaseOP total_residue_data = new RowData<Size>("total_residue",pose.total_residue());
+	RowDataBaseOP fullatom_data = new RowData<bool>("fullatom",pose.is_fullatom());
 
-	//transact_guard.commit();
+	pose_conformation_insert.add_row(
+		utility::tools::make_vector(struct_id_data,annotated_sequence_data,total_residue_data,fullatom_data));
+
+	pose_conformation_insert.write_to_database(db_session);
 	return 0;
 }
 

@@ -23,6 +23,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
 
@@ -31,6 +32,7 @@
 #include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/string_util.hh>
+#include <utility/tools/make_vector.hh>
 
 //Basic Headers
 #include <basic/database/sql_utils.hh>
@@ -42,6 +44,10 @@
 #include <basic/database/schema_generator/Constraint.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/inout.OptionKeys.gen.hh>
+#include <basic/database/insert_statement_generator/InsertGenerator.hh>
+#include <basic/database/insert_statement_generator/RowData.hh>
+
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -67,6 +73,9 @@ using utility::sql_database::sessionOP;
 using utility::vector1;
 using cppdb::statement;
 using cppdb::result;
+using basic::database::insert_statement_generator::InsertGenerator;
+using basic::database::insert_statement_generator::RowDataBaseOP;
+using basic::database::insert_statement_generator::RowData;
 
 string
 ProteinResidueConformationFeatures::type_name() const {
@@ -177,12 +186,27 @@ ProteinResidueConformationFeatures::report_features(
 		ideal = false;
 	}
 
-	//cppdb::transaction transact_guard(*db_session);
-	std::string conformation_string = "INSERT INTO protein_residue_conformation (struct_id, seqpos, secstruct, phi, psi, omega, chi1, chi2, chi3, chi4) VALUES (?,?,?,?,?,?,?,?,?,?)";
-	std::string atom_string = "INSERT INTO residue_atom_coords (struct_id, seqpos, atomno, x, y, z) VALUES(?,?,?,?,?,?)";
+	InsertGenerator conformation_insert("protein_residue_conformation");
+	conformation_insert.add_column("struct_id");
+	conformation_insert.add_column("seqpos");
+	conformation_insert.add_column("secstruct");
+	conformation_insert.add_column("phi");
+	conformation_insert.add_column("psi");
+	conformation_insert.add_column("omega");
+	conformation_insert.add_column("chi1");
+	conformation_insert.add_column("chi2");
+	conformation_insert.add_column("chi3");
+	conformation_insert.add_column("chi4");
 
-	statement conformation_statement(basic::database::safely_prepare_statement(conformation_string,db_session));
-	statement atom_statement(basic::database::safely_prepare_statement(atom_string,db_session));
+	InsertGenerator atom_insert("residue_atom_coords");
+	atom_insert.add_column("struct_id");
+	atom_insert.add_column("seqpos");
+	atom_insert.add_column("atomno");
+	atom_insert.add_column("x");
+	atom_insert.add_column("y");
+	atom_insert.add_column("z");
+
+	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
 
 	for (Size i = 1; i <= pose.total_residue(); ++i) {
 		if(!relevant_residues[i]) continue;
@@ -213,19 +237,20 @@ ProteinResidueConformationFeatures::report_features(
 		Real chi3 = fullatom && resi.nchi() >= 3 ? resi.chi(3) : 0.0;
 		Real chi4 = fullatom && resi.nchi() >= 4 ? resi.chi(4) : 0.0;
 
+		RowDataBaseOP seqpos_data = new RowData<Size>("seqpos",i);
+		RowDataBaseOP secstruct_data = new RowData<std::string>("secstruct",secstruct);
+		RowDataBaseOP phi_data = new RowData<Real>("phi",phi);
+		RowDataBaseOP psi_data = new RowData<Real>("psi",psi);
+		RowDataBaseOP omega_data = new RowData<Real>("omega",omega);
+		RowDataBaseOP chi1_data = new RowData<Real>("chi1",chi1);
+		RowDataBaseOP chi2_data = new RowData<Real>("chi2",chi2);
+		RowDataBaseOP chi3_data = new RowData<Real>("chi3",chi3);
+		RowDataBaseOP chi4_data = new RowData<Real>("chi4",chi4);
 
-		//std::string struct_id_string(to_string(struct_id));
-		conformation_statement.bind(1,struct_id);
-		conformation_statement.bind(2,i);
-		conformation_statement.bind(3,secstruct);
-		conformation_statement.bind(4,phi);
-		conformation_statement.bind(5,psi);
-		conformation_statement.bind(6,omega);
-		conformation_statement.bind(7,chi1);
-		conformation_statement.bind(8,chi2);
-		conformation_statement.bind(9,chi3);
-		conformation_statement.bind(10,chi4);
-		basic::database::safely_write_to_database(conformation_statement);
+
+		conformation_insert.add_row(utility::tools::make_vector(
+			struct_id_data,seqpos_data,secstruct_data,phi_data,
+			psi_data,omega_data,chi1_data,chi2_data,chi3_data,chi4_data));
 
 		if(!ideal)
 		{
@@ -233,19 +258,20 @@ ProteinResidueConformationFeatures::report_features(
 			{
 				core::Vector coords = resi.xyz(atom);
 
-				atom_statement.bind(1,struct_id);
-				atom_statement.bind(2,i);
-				atom_statement.bind(3,atom);
-				atom_statement.bind(4,coords.x());
-				atom_statement.bind(5,coords.y());
-				atom_statement.bind(6,coords.z());
-					//std::cout <<"*" << i << " " << resi.atom_name(atom) << " " << coords.x() << " " << coords.y() << " "<< coords.z() <<std::endl;
-				basic::database::safely_write_to_database(atom_statement);
+				RowDataBaseOP atomno_data = new RowData<Size>("atomno",atom);
+				RowDataBaseOP x_data = new RowData<Real>("x",coords.x());
+				RowDataBaseOP y_data = new RowData<Real>("y",coords.y());
+				RowDataBaseOP z_data = new RowData<Real>("z",coords.z());
+
+				atom_insert.add_row(utility::tools::make_vector(
+					struct_id_data,seqpos_data,atomno_data,x_data,y_data,z_data));
 
 			}
 		}
 	}
-	//transact_guard.commit();
+
+	conformation_insert.write_to_database(db_session);
+	atom_insert.write_to_database(db_session);
 
 	return 0;
 }

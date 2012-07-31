@@ -34,6 +34,10 @@ sources = {
 		"PrimaryKey",
 		"Schema",
 	],
+	"basic/database/insert_statement_generator": [
+		"InsertGenerator",
+		"RowData",
+	],
 	"basic/datacache": [
 		"BasicDataCache",
 	],

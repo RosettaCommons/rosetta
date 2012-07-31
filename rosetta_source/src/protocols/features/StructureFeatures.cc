@@ -22,6 +22,7 @@
 #include <utility/exit.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
+#include <utility/tools/make_vector.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -32,6 +33,9 @@
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
+
+#include <basic/database/insert_statement_generator/InsertGenerator.hh>
+#include <basic/database/insert_statement_generator/RowData.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -49,6 +53,8 @@
 
 //Basic Headers
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/inout.OptionKeys.gen.hh>
 
 static basic::Tracer TR("protocols.features.StructureFeatures");
 
@@ -69,6 +75,9 @@ using utility::vector1;
 using utility::sql_database::sessionOP;
 using cppdb::statement;
 using cppdb::result;
+using basic::database::insert_statement_generator::InsertGenerator;
+using basic::database::insert_statement_generator::RowData;
+using basic::database::insert_statement_generator::RowDataBaseOP;
 
 StructureFeatures::StructureFeatures(){}
 
@@ -149,54 +158,26 @@ StructureFeatures::report_features(
 	string const & tag,
 	string const & input_tag
 ){
-	string statement_string = "INSERT INTO structures (struct_id, batch_id, tag, input_tag) VALUES (?,?,?,?);";
-	statement structure_stmt(safely_prepare_statement(statement_string,db_session));
 
 	boost::uuids::basic_random_generator<numeric::random::RandomGenerator>
 		uuids_rng(numeric::random::RG);
 	boost::uuids::uuid struct_id = uuids_rng();
 
-	structure_stmt.bind(1,struct_id);
-	structure_stmt.bind(2, batch_id);
-	structure_stmt.bind(3, tag);
-	structure_stmt.bind(4, input_tag);
+	InsertGenerator structures_insert("structures");
+	structures_insert.add_column("struct_id");
+	structures_insert.add_column("batch_id");
+	structures_insert.add_column("tag");
+	structures_insert.add_column("input_tag");
 
-	basic::database::safely_write_to_database(structure_stmt);
+	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
+	RowDataBaseOP batch_id_data = new RowData<Size>("batch_id",batch_id);
+	RowDataBaseOP tag_data = new RowData<string>("tag",tag);
+	RowDataBaseOP input_tag_data = new RowData<string>("input_tag",input_tag);
+
+	structures_insert.add_row(utility::tools::make_vector(struct_id_data,batch_id_data,tag_data,input_tag_data));
+	structures_insert.write_to_database(db_session);
 
 	return struct_id;
-
-//	BinaryProteinSilentStruct silent_struct(pose, "");
-//	stringstream pose_string;
-//	silent_struct.print_conformation(pose_string);
-//	boost::uuids::uuid const struct_id = hash_value(pose_string.str());
-//
-//	//Check to see if we've reported this structure before
-//	std::string select_string =
-//	"SELECT *\n"
-//	"FROM\n"
-//	"	structures\n"
-//	"WHERE\n"
-//	"   struct_id = ?;";
-//	cppdb::statement select_stmt(basic::database::safely_prepare_statement(select_string,db_session));
-//	select_stmt.bind(1, to_string(struct_id);
-//
-//	cppdb::result res(basic::database::safely_read_from_database(select_stmt));
-//	if(!res.next()) {
-//		TR << "No existing structure found, adding the new one" << endl;
-//
-//		structure_stmt.bind(1, to_string(struct_id);
-//		structure_stmt.bind(2, tag);
-//		structure_stmt.bind(3, input_tag);
-//
-//		TR << "struct id: " << struct_id << "\nbatch_id: " << batch_id << "\ntag: " << tag << "\ninputtag: " << input_tag << endl;
-//		basic::database::safely_write_to_database(structure_stmt);
-//	}
-//
-//	std::string batch_structures_string = "INSERT INTO batch_structures (struct_id, batch_id) VALUES (?,?);";
-//	statement batch_structures_stmt(safely_prepare_statement(batch_structures_string, db_session));
-//	batch_structures_stmt.bind(1, to_string(struct_id);
-//	batch_structures_stmt.bind(2, batch_id);
-//	basic::database::safely_write_to_database(batch_structures_stmt);
 }
 
 void StructureFeatures::mark_structure_as_sampled(
@@ -205,12 +186,18 @@ void StructureFeatures::mark_structure_as_sampled(
 	std::string const & input_tag,
 	utility::sql_database::sessionOP db_session
 ){
-	std::string insert_deleted_structure_string = "INSERT INTO sampled_structures (batch_id, tag, input_tag) VALUES (?,?,?);";
-	statement insert_statement(safely_prepare_statement(insert_deleted_structure_string,db_session));
-	insert_statement.bind(1,batch_id);
-	insert_statement.bind(2,tag);
-	insert_statement.bind(3,input_tag);
-	basic::database::safely_write_to_database(insert_statement);
+
+	InsertGenerator sampled_insert("sampled_structures");
+	sampled_insert.add_column("batch_id");
+	sampled_insert.add_column("tag");
+	sampled_insert.add_column("input_tag");
+
+	RowDataBaseOP batch_id_data = new RowData<Size>("batch_id",batch_id);
+	RowDataBaseOP tag_data = new RowData<string>("tag",tag);
+	RowDataBaseOP input_tag_data = new RowData<string>("input_tag",input_tag);
+
+	sampled_insert.add_row(utility::tools::make_vector(batch_id_data,tag_data,input_tag_data));
+	sampled_insert.write_to_database(db_session);
 }
 
 void StructureFeatures::delete_record(
