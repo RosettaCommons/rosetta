@@ -69,6 +69,8 @@ AntibodyInfo::AntibodyInfo( core::pose::Pose & pose, bool is_camelid ) {
 /// constructor with one cdr loop arguments
 AntibodyInfo::AntibodyInfo( core::pose::Pose & pose, std::string cdr_name )
 {
+    is_camelid_=false;
+
     if(is_camelid_){
         if (cdr_name == "l1" || cdr_name == "l2" ||cdr_name == "l3") {
             utility_exit_with_message("This is Camelid antibody, No Light Chain !!!");
