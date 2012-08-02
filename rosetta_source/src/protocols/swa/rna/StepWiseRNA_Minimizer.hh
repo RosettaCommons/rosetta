@@ -89,6 +89,9 @@ namespace rna {
 		set_output_before_o2star_pack(bool const setting){output_before_o2star_pack_=setting;} //For testing purposes.
 
 		void
+		set_rm_virt_phosphate(bool const setting){rm_virt_phosphate_=setting;}
+
+		void
 		set_perform_minimize(bool const setting){perform_minimize_=setting;}
 
 		void
@@ -149,7 +152,7 @@ namespace rna {
 		bool native_screen_;
 		core::Real native_screen_rmsd_cutoff_;
 
-		bool perform_electron_density_screen_; //Fang's electron density code
+		bool perform_electron_density_screen_, rm_virt_phosphate_; //Fang's electron density code
 		core::Real native_edensity_score_cutoff_; //Fang's electron density code
 
 		bool centroid_screen_; //for testing purposes

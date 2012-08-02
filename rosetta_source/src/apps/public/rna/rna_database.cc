@@ -97,6 +97,7 @@ typedef  numeric::xyzMatrix< Real > Matrix;
 // to have them in a namespace use OPT_1GRP_KEY( Type, grp, key ) --> OptionKey::grp::key
 OPT_KEY( Boolean, jump_database )
 OPT_KEY( Boolean, vall_torsions )
+OPT_KEY( IntegerVector, exclude_res )
 
 ///////////////////////////////////////////////////////////////////////////////
 void
@@ -111,6 +112,7 @@ create_rna_vall_torsions_test( ){
 
 	utility::vector1 < std::string >  infiles  = option[ in::file::s ]();
 	std::string outfile  = option[ out::file::o ];
+	utility::vector1< core::Size > const exclude_res_list = option[exclude_res]();
 
 	utility::io::ozstream torsions_out( outfile );
 
@@ -119,10 +121,10 @@ create_rna_vall_torsions_test( ){
 	  pose::Pose pose;
 		core::import_pose::pose_from_pdb( pose, *rsd_set, infiles[n] );
 	  /////////////////////////////////////////
-	  protocols::rna::ensure_phosphate_nomenclature_matches_mini( pose );
+	  protocols::rna::make_phosphate_nomenclature_matches_mini( pose );
 	  /////////////////////////////////////////
 
-		protocols::rna::create_rna_vall_torsions( pose, torsions_out );
+		protocols::rna::create_rna_vall_torsions( pose, torsions_out, exclude_res_list );
 
 		std::cout << "***********************************************************" << std::endl;
 		std::cout << "Put torsions from PDB file " <<  infiles[n] << " into " << outfile << std::endl;
@@ -284,6 +286,9 @@ create_bp_jump_database_test( ){
 	using namespace core::scoring::rna;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	using namespace protocols::rna;
+
+	utility::vector1< core::Size > const exclude_res_list = option[exclude_res]();
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
@@ -293,7 +298,7 @@ create_bp_jump_database_test( ){
 
 	pose::Pose pose;
 	core::import_pose::pose_from_pdb( pose, *rsd_set, infile );
-	protocols::rna::ensure_phosphate_nomenclature_matches_mini( pose );
+	make_phosphate_nomenclature_matches_mini( pose );
 
 	//	figure_out_reasonable_rna_fold_tree( pose );
 
@@ -319,6 +324,10 @@ create_bp_jump_database_test( ){
 
 		int const j = base_pair.res2;
 		int const m = base_pair.edge2;
+
+		if ( is_num_in_list(i, exclude_res_list) || is_num_in_list(j, exclude_res_list) ) {
+			continue;
+		}
 
 		char const orientation = ( base_pair.orientation == 1) ? 'A' : 'P';
 
@@ -359,6 +368,11 @@ create_bp_jump_database_test( ){
 					iru != irue; ++iru ) {
 			EnergyEdge const * edge( static_cast< EnergyEdge const *> ( *iru ) );
 			Size const j( edge->get_other_ind(i) );
+
+			if ( is_num_in_list(i, exclude_res_list) || is_num_in_list(j, exclude_res_list) ) {
+				continue;
+			}
+
 			//			EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
 			check_for_contacts_and_output_jump_o2star( pose, i, j, dataout );
@@ -405,10 +419,13 @@ int
 main( int argc, char * argv [] )
 {
 	using namespace basic::options;
+	utility::vector1< Size > blank_size_vector;
 
 	//Uh, options? MOVE THESE TO OPTIONS NAMESPACE INSIDE CORE/OPTIONS.
 	NEW_OPT( vall_torsions, "Generate a torsions file from a big RNA file", false );
 	NEW_OPT( jump_database, "Generate a database of jumps extracted from base pairings from a big RNA file", false );
+	NEW_OPT( exclude_res, "Residues exlcuded for database creation (works for one file only)", blank_size_vector );
+
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup

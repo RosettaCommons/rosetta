@@ -14,6 +14,7 @@
 -PBP_clustering_at_chain_closure true  
 -allow_chain_boundary_jump_partner_right_at_fixed_BP true  
 -add_virt_root true   
+-rm_virt_phosphate true   
 -sample_res 2  
 -cutpoint_closed 2   
 -input_res 1 3 4  

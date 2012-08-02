@@ -294,7 +294,9 @@ figure_out_secstruct( pose::Pose & pose ){
 
 ///////////////////////////////////////////////////////////////////////////////
 void
-create_rna_vall_torsions( pose::Pose & pose, utility::io::ozstream & torsions_out)
+create_rna_vall_torsions( pose::Pose & pose, 
+												  utility::io::ozstream & torsions_out,
+													utility::vector1 <Size> const & exclude_res_list )
 {
 
 	using namespace core::chemical;
@@ -321,6 +323,7 @@ create_rna_vall_torsions( pose::Pose & pose, utility::io::ozstream & torsions_ou
 	initialize_non_main_chain_sugar_atoms();
 
 	for (Size i=1; i <= total_residue; ++i) {
+		if ( is_num_in_list(i, exclude_res_list) ) continue;
 
 		torsions_out << pose.residue( i ).name1() << " " ;
 
@@ -392,7 +395,13 @@ create_rna_vall_torsions( pose::Pose & pose, utility::io::ozstream & torsions_ou
 			edge_is_base_pairing( 2 ) << " " <<
 			edge_is_base_pairing( 3 ) << " ";
 
-		torsions_out << pose.fold_tree().is_cutpoint( i ) << I(6, i)  << std::endl;
+		bool is_cutpoint = false;
+		if ( pose.fold_tree().is_cutpoint( i ) || 
+				 is_num_in_list(i + 1, exclude_res_list) ) {
+			is_cutpoint = true;
+		}
+
+		torsions_out << is_cutpoint << I(6, i)  << std::endl;
 	}
 
 
@@ -400,10 +409,12 @@ create_rna_vall_torsions( pose::Pose & pose, utility::io::ozstream & torsions_ou
 
 ///////////////////////////////////////////////////////////////////////////////
 void
-create_rna_vall_torsions( pose::Pose & pose, std::string const outfile )
+create_rna_vall_torsions( pose::Pose & pose,
+													std::string const outfile,
+													utility::vector1 <Size> const & exclude_res_list )
 {
 	utility::io::ozstream torsions_out ( outfile );
-	create_rna_vall_torsions( pose, torsions_out );
+	create_rna_vall_torsions( pose, torsions_out, exclude_res_list );
 
 }
 

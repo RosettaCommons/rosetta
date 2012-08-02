@@ -37,6 +37,8 @@
 #include <core/scoring/EnergyMap.hh> 
 #include <core/scoring/EnergyMap.fwd.hh> 
 #include <core/scoring/rms_util.hh> 
+#include <core/scoring/constraints/CharmmPeriodicFunc.hh>
+#include <core/scoring/constraints/DihedralConstraint.hh>
 
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
@@ -257,6 +259,34 @@ OPT_KEY( Real, sampler_cluster_rmsd )
 OPT_KEY( Boolean, 	output_extra_RMSDs)
 OPT_KEY( Boolean, 	integration_test)
 OPT_KEY( Boolean, 	add_virt_root ) //For Fang's electron density code.
+OPT_KEY ( Boolean, constraint_purine_chi )
+OPT_KEY ( Boolean, rm_virt_phosphate )
+//////////////////////////////////////////////////////////////////////////////////////
+//Apply chi angle constraint to the purines
+void apply_chi_cst(core::pose::Pose & pose, core::pose::Pose const & ref_pose) {
+	using namespace core::conformation;
+	using namespace core::id;
+	using namespace core::scoring;
+	using namespace core::scoring::rna;
+	using namespace core::scoring::constraints;
+	using namespace core::chemical;
+
+	Size const nres = pose.total_residue();
+	ConstraintSetOP cst_set = new ConstraintSet;
+	for (Size i = 1; i <= nres; ++i) {
+		Residue const & res = pose.residue(i);
+		if ( res.is_RNA() && (res.aa() == na_rad || res.aa() == na_rgu)) {
+			Real const chi = numeric::conversions::radians( ref_pose.torsion( TorsionID( i, id::CHI, 1 ) ) );
+			FuncOP chi_cst_func ( new CharmmPeriodicFunc( chi, 1.0, 1.0 ) );
+			AtomID const atom1 (res.atom_index("C2*"), i);
+			AtomID const atom2 (res.atom_index("C1*"), i);
+			AtomID const atom3 (res.atom_index("N9"), i);
+			AtomID const atom4 (res.atom_index("C4"), i);
+			cst_set->add_constraint( new DihedralConstraint( atom1, atom2, atom3, atom4, chi_cst_func ) );
+		}
+	}
+	pose.constraint_set ( cst_set );
+}
 
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -1109,6 +1139,12 @@ swa_rna_sample()
 		//int delete_file_return_value=utility::file::file_delete( silent_file_test ); #DO NOT USE THIS SINCE ITS RETURN VALUE IS 0 regardless of whether the deletion was successful or not!
 	}
 	////////////////////////////////////////////////////////////////////////////////
+	//Constrain chi angles of purines
+	bool const chi_constraint = option[ constraint_purine_chi ];
+	if (chi_constraint) {
+		apply_chi_cst( pose, *job_parameters_COP->working_native_pose() );
+	}
+	
 	StepWiseRNA_ResidueSampler stepwise_rna_residue_sampler( job_parameters_COP );
 
 	stepwise_rna_residue_sampler.set_silent_file( silent_file + "_sampling" );
@@ -1188,7 +1224,7 @@ swa_rna_sample()
 	stepwise_rna_minimizer.set_native_rmsd_screen( option[ sampler_native_rmsd_screen ]()); 
 	stepwise_rna_minimizer.set_native_screen_rmsd_cutoff( option[ sampler_native_screen_rmsd_cutoff ]() + 1 ); //+1 for leniency Sept 20, 2010
 	stepwise_rna_minimizer.set_native_edensity_score_cutoff( option[ native_edensity_score_cutoff ]()); 
-
+	stepwise_rna_minimizer.set_rm_virt_phosphate ( option[rm_virt_phosphate]() );
 	stepwise_rna_minimizer.set_perform_o2star_pack( option[ minimizer_perform_o2star_pack ]() );
 	stepwise_rna_minimizer.set_output_before_o2star_pack( option[ minimizer_output_before_o2star_pack ]() );
 	stepwise_rna_minimizer.set_rename_tag( option[ minimizer_rename_tag ]() );
@@ -1876,7 +1912,8 @@ main( int argc, char * argv [] )
 	NEW_OPT( skip_clustering, "keep every pose, no clustering", false );
 	NEW_OPT( clusterer_rename_tags , "clusterer_rename_tags", true);
 	NEW_OPT( whole_struct_cluster_radius , " whole_struct_cluster_radius ", 0.5); //IMPORTANT DO NOT CHANGE
-
+	NEW_OPT ( constraint_purine_chi, "Constrain the purine chi angles", false );
+	NEW_OPT ( rm_virt_phosphate, "Remove virtual phosphate patches during minimization", false );
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

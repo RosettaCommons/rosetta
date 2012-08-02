@@ -841,7 +841,8 @@ pdb_minimizer() {
 		if (score > score_before + 5 || edens_score > edens_score_before * 0.9) {
 			std::cout << "current_score = " << score << ", start_score = " << score_before << std::endl;
 			std::cout << "current_edens_score = " << edens_score << ", start_edens_score = " << edens_score_before << std::endl;
-			utility_exit_with_message("The minimization went wild!!!");
+			pose = start_pose;
+			std::cout << "The minimization went wild again!!! Skip the minimization!!!!!" << std::endl;
 		}
 	}
 

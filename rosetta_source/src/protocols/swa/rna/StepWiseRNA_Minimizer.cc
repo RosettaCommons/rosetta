@@ -100,6 +100,7 @@ namespace rna {
 		native_screen_(false),
 		native_screen_rmsd_cutoff_(3.0),
 		perform_electron_density_screen_(false),
+		rm_virt_phosphate_(false),
 		native_edensity_score_cutoff_(-1.0),
 		centroid_screen_(true),
 		perform_o2star_pack_(true), 
@@ -147,6 +148,7 @@ namespace rna {
 		Output_boolean(" native_screen_=", native_screen_ ); std::cout << std::endl;
 		std::cout << " native_screen_rmsd_cutoff_=" << native_screen_rmsd_cutoff_ << std::endl;
 		Output_boolean(" perform_electron_density_screen_=", perform_electron_density_screen_ ); std::cout << std::endl;	
+		Output_boolean(" rm_virt_phosphate_=", rm_virt_phosphate_ ); std::cout << std::endl;	
 		std::cout << " native_edensity_score_cutoff_=" << native_edensity_score_cutoff_ << std::endl;
 		Output_boolean(" centroid_screen_=", centroid_screen_ ); std::cout << std::endl;
 		Output_boolean(" perform_o2star_pack_=", perform_o2star_pack_); std::cout << std::endl;
@@ -232,7 +234,7 @@ namespace rna {
 
 			Size const five_prime_chain_break_res = figure_out_actual_five_prime_chain_break_res(pose);
 
-			if(perform_electron_density_screen_){ //Fang's electron density code
+			if(rm_virt_phosphate_){ //Fang's electron density code
 				for (Size ii = 1; ii <= pose.total_residue(); ++ii) {
 					pose::remove_variant_type_from_pose_residue(pose, "VIRTUAL_PHOSPHATE", ii);
 				}

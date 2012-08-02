@@ -217,6 +217,7 @@ OPT_KEY ( Boolean, allow_fixed_res_at_moving_res )
 OPT_KEY( Real, sampler_cluster_rmsd )
 OPT_KEY( Boolean,  output_pdb )
 OPT_KEY ( Boolean, constraint_purine_chi )
+OPT_KEY ( Boolean, rm_virt_phosphate )
 
 //////////////////////////////////////////////////////////////////////////////////////
 //Apply chi angle constraint to the purines
@@ -727,6 +728,7 @@ rna_resample_test() {
 	stepwise_rna_minimizer.set_perform_minimize( option[ minimizer_perform_minimize ]() );
 	stepwise_rna_minimizer.set_native_rmsd_screen ( option[ sampler_native_rmsd_screen ]() );
 	stepwise_rna_minimizer.set_native_edensity_score_cutoff ( option[native_edensity_score_cutoff]() );
+	stepwise_rna_minimizer.set_rm_virt_phosphate ( option[rm_virt_phosphate]() );
 	stepwise_rna_minimizer.set_native_screen_rmsd_cutoff ( option[ sampler_native_screen_rmsd_cutoff ]() + 1 ); //+1 for leniency Sept 20, 2010
 
 	if ( option[num_pose_minimize].user() ) 	stepwise_rna_minimizer.set_num_pose_minimize ( option[ num_pose_minimize ]() );
@@ -825,6 +827,7 @@ main ( int argc, char * argv [] ) {
 	NEW_OPT( sampler_cluster_rmsd, " Clustering rmsd of conformations in the sampler", 0.5); //DO NOT CHANGE THIS!
 	NEW_OPT( output_pdb, "output_pdb: If true, then will dump the pose into a PDB file at different stages of the stepwise assembly process.", false); //Sept 24, 2011
 	NEW_OPT ( constraint_purine_chi, "Constrain the purine chi angles", false );
+	NEW_OPT ( rm_virt_phosphate, "Remove virtual phosphate patches during minimization", false );
 	////////////////////////////////////////////////////////////////////////////
 	// setup
 	////////////////////////////////////////////////////////////////////////////

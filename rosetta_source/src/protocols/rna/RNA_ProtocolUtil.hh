@@ -62,10 +62,14 @@ get_base_pairing_list( core::pose::Pose & pose,
 											 utility::vector1< std::pair< core::Size, core::Size> > & base_pairing_list );
 
 void
-create_rna_vall_torsions( core::pose::Pose & pose, utility::io::ozstream & torsions_out);
+create_rna_vall_torsions( core::pose::Pose & pose, 
+													utility::io::ozstream & torsions_out,
+													utility::vector1 <core::Size> const & exclude_res_list );
 
 void
-create_rna_vall_torsions( core::pose::Pose & pose, std::string const outfile );
+create_rna_vall_torsions( core::pose::Pose & pose,
+													std::string const outfile,
+													utility::vector1 <core::Size> const & exclude_res_list );
 
 core::Real
 get_o1p_o2p_sign( core::pose::Pose const & pose );
@@ -127,6 +131,12 @@ remove_cutpoint_closed( core::pose::Pose & pose, core::Size const i );
 
 void
 remove_cutpoints_closed( core::pose::Pose & pose );
+
+inline bool is_num_in_list ( core::Size const i, 
+														 utility::vector1 <core::Size> const & list ) 
+{
+	return std::find(list.begin(), list.end(), i)!=list.end();
+}
 
 } //rna
 } // protocols

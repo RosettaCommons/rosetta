@@ -348,6 +348,13 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 
 				//Copy the Torsion angles of screen_pose to pose
 				copy_suite_torsion ( pose, screening_pose, moving_res );
+				if (use_phenix_geo_) {
+					if ( pucker_id == 0 ) { //Sample North Pucker
+						ideal_coord.apply( pose, moving_res, true);
+					} else { //Sample South Pucker
+						ideal_coord.apply( pose, moving_res, false);
+					}
+				}
 				////////////////Add pose to pose_data_list if pose have good score/////
 
 				if ( o2star_screen_ ) sample_o2star_hydrogen ( pose , pose_with_original_HO2star_torsion );
