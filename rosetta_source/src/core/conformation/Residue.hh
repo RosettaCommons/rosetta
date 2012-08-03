@@ -230,7 +230,7 @@ public:
 	Size
 	n_hbond_donors() const
 	{
-		return rsd_type_.n_hbond_acceptors();
+		return rsd_type_.n_hbond_donors();
 	}
 
 	/// @brief Returns the number of heavyatoms in this residue
