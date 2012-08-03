@@ -429,6 +429,13 @@ settings = {
             "cxx"           : "llvm-g++-4.2",
         },
     },
+    
+    "gcc, 4.2, macos, 10.8" : {
+        "overrides" : {
+            "cc"            : "llvm-gcc-4.2",
+            "cxx"           : "llvm-g++-4.2",
+        },
+    },
 
     "gcc, x86, 32" : {
         "appends" : {
