@@ -294,10 +294,10 @@ def assign_rosetta_types(atoms): #{{{
         elif "ZN" == a.elem: a.ros_type = "Zn2p"
         else: raise ValueError("Unknown element '%s'" % a.elem)
 #}}}
-def assign_mm_types(atoms): #{{{
+def assign_mm_types(atoms,mm_as_virt): #{{{
     '''For now, just fills in dummy values.'''
     for a in atoms:
-        if a.is_virtual:
+        if a.is_virtual or mm_as_virt:
             a.mm_type = "VIRT"
         else:
             a.mm_type = " X  " # this at least seems to be a legal MM atom type
@@ -1251,6 +1251,13 @@ and for visualizing exactly what was done to the ligand.
         help="read additional M control lines from FILE",
         metavar="FILE"
     )
+    parser.add_option("--mm-as-virt",
+        default=False,
+        dest="mm_as_virt",
+        help="assign mm atom types as VIRT, rather than X",
+        action="store_true"
+    )
+    
     (options, args) = parser.parse_args(args=argv)
     if options.pdb is None: options.pdb = options.name
     if options.amino_acid is not None: options.keep_names = True
@@ -1297,7 +1304,7 @@ and for visualizing exactly what was done to the ligand.
         for molfile in molfiles:
             molfile.footer.extend(footer)
     m = molfiles[0]
-    # Only d oing ring detection for the first entry (the only one that needs it)
+    # Only doing ring detection for the first entry (the only one that needs it)
     # saves a LOT of compute time (~90%) for large input files.
     find_rings(m.bonds)
     # If -center not given, default is to center like first entry
@@ -1316,7 +1323,7 @@ and for visualizing exactly what was done to the ligand.
     check_bond_count(m.atoms)
     check_aromaticity(m.bonds)
     assign_rosetta_types(m.atoms)
-    assign_mm_types(m.atoms)
+    assign_mm_types(m.atoms,options.mm_as_virt)
     assign_centroid_types(m.atoms)
     if options.amino_acid is not None: setup_amino_acid(m.atoms, molfiles)
     net_charge = 0.0

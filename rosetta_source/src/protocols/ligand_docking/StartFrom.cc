@@ -174,6 +174,11 @@ void StartFrom::apply(core::pose::Pose & pose){
 	assert(!starting_points_.empty() || !potential_starting_positions_.empty());
 	int const starting_point_index= numeric::random::RG.random_range(1, starting_points_.size());
 
+	if(!core::pose::has_chain(chain_,pose))
+	{
+		utility_exit_with_message("StartFrom mover cannot find the chain " +chain_+ " in the current pose.");
+	}
+
 	if(!starting_points_.empty())
 	{
 		std::string input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());

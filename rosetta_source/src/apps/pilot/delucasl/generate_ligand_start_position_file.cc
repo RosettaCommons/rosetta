@@ -48,6 +48,10 @@ int main(int argc, char*argv[])
 		core::pose::PoseOP current_pose(core::import_pose::pose_from_pdb(*file_it,false));
 
 		std::string protein_hash = core::pose::get_sha1_hash_excluding_chain(ligand_id,*current_pose);
+		if(!core::pose::has_chain(ligand_id,*current_pose))
+		{
+			utility_exit_with_message(*file_it + " does not contain chain "+ ligand_id);
+		}
 		core::Size ligand_chain_id = core::pose::get_chain_id_from_chain(ligand_id,*current_pose);
 		core::conformation::ResidueCOPs ligand_residues(core::pose::get_chain_residues(*current_pose,ligand_chain_id));
 		std::cout << *file_it <<std::endl;
