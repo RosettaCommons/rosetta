@@ -33,6 +33,7 @@
 #include <protocols/rna/RNA_ChunkLibrary.hh>
 #include <protocols/rna/RNA_ChunkLibrary.fwd.hh>
 #include <protocols/swa/StepWiseUtil.hh> //move this to toolbox/
+#include <protocols/swa/rna/StepWiseRNA_Util.hh>
 
 // Project headers
 #include <protocols/moves/MonteCarlo.hh>
@@ -67,6 +68,11 @@
 
 #include <numeric/random/random.hh>
 // AUTO-REMOVED #include <numeric/conversions.hh>
+
+// option key includes
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
 
 // External library headers
 
@@ -105,7 +111,8 @@ RNA_DeNovoProtocol::RNA_DeNovoProtocol(
 	 std::string const silent_file,
 	 bool const heat_structure /*= true*/,
 	 bool const minimize_structure /*= false*/,
-	 bool const relax_structure /*=false*/):
+	 bool const relax_structure /*=false*/,
+	 bool const allow_bulge /*=false*/):
     Mover(),
 		nstruct_( nstruct ),
 		monte_carlo_cycles_( monte_carlo_cycles ),
@@ -135,7 +142,9 @@ RNA_DeNovoProtocol::RNA_DeNovoProtocol(
 		jump_change_frequency_( 0.1 ),
 		lores_scorefxn_( "rna_lores.wts" ),
 		chunk_coverage_( 0.0 ),
-		staged_constraints_( false )
+		staged_constraints_( false ),
+		allow_bulge_( allow_bulge ),
+		allow_consecutive_bulges_( false )
 {
 	Mover::type("RNA_DeNovoProtocol");
 	rna_loop_closer_ = protocols::rna::RNA_LoopCloserOP( new protocols::rna::RNA_LoopCloser );
@@ -176,6 +185,14 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 	denovo_scorefxn_ = ScoreFunctionFactory::create_score_function( lores_scorefxn_ );
 	initialize_constraints( pose );
 	initial_denovo_scorefxn_ = denovo_scorefxn_->clone();
+
+	// RNA high-resolution score function.
+	if ( basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
+		hires_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( 
+				basic::options::option[ basic::options::OptionKeys::score::weights ]() );
+	} else {
+		hires_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::RNA_HIRES_WTS );
+	}
 
 	//Keep a copy for resetting after each decoy.
 	Pose start_pose = pose;
@@ -281,6 +298,26 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 		}
 
 		if (relax_structure_)	rna_relaxer_->apply( pose );
+
+		if (allow_bulge_) {
+			//Apply bulges
+			Size const num_res_virtualized = 
+				protocols::swa::rna::virtualize_energetically_unfavorable_nucleotides( pose, 
+																																							 allowed_bulge_res_, 
+																																							 hires_scorefxn_, 
+																																							 out_file_tag, 
+																																							 true /*allow_pre_virtualize*/,
+																																							 allow_consecutive_bulges_, 
+																																							 false /*verbose*/ );
+			//Minimize again.
+			if (minimize_structure_ && num_res_virtualized != 0){
+				rna_minimizer_->apply( pose );
+				if (close_loops_) {
+					rna_loop_closer_->apply( pose, rna_structure_parameters_->connections() );
+				}
+			}
+			if (relax_structure_ && num_res_virtualized != 0)	rna_relaxer_->apply( pose );
+		}
 
 		std::string const out_file_name = out_file_tag + ".pdb";
 		if (dump_pdb_)	 dump_pdb( pose,  out_file_name );

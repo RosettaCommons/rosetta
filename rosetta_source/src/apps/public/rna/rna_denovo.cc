@@ -87,7 +87,10 @@ OPT_KEY( String,  jump_library_file )
 OPT_KEY( String,  params_file )
 OPT_KEY( String,  data_file )
 OPT_KEY( String,  cst_file )
-OPT_KEY( IntegerVector,  chunk_res )
+OPT_KEY( IntegerVector, chunk_res )
+OPT_KEY( Boolean, allow_bulge )
+OPT_KEY( Boolean, allow_consecutive_bulges )
+OPT_KEY( IntegerVector, allowed_bulge_res )
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -175,12 +178,14 @@ rna_denovo_test()
 	bool const heat_structure( !input_pose || option[ heat ] );
 	bool const minimize_structure = option[ minimize_rna ];
 	bool const relax_structure = option[ relax_rna ];
+	bool const is_allow_bulge = option[ allow_bulge ];
 
 	protocols::rna::RNA_DeNovoProtocol rna_de_novo_protocol( nstruct, monte_carlo_cycles,
 																													 silent_file,
 																													 heat_structure,
 																													 minimize_structure,
-																													 relax_structure );
+																													 relax_structure,
+																													 is_allow_bulge );
 
 	if (native_exists) rna_de_novo_protocol.set_native_pose( native_pose_OP );
 
@@ -208,6 +213,8 @@ rna_denovo_test()
 		rna_de_novo_protocol.set_chunk_silent_files( option[ in::file::silent ]() );
 	}
 	rna_de_novo_protocol.set_chunk_res( option[ chunk_res ]() ) ;
+	rna_de_novo_protocol.set_allow_consecutive_bulges( option[ allow_consecutive_bulges ]() ) ;
+	rna_de_novo_protocol.set_allowed_bulge_res( option[ allowed_bulge_res ]() ) ;
 
 		//Constraints?
 	if ( option[ cst_file ].user() ) {
@@ -267,7 +274,9 @@ main( int argc, char * argv [] )
 	NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );
 	NEW_OPT( chunk_res, "Input residues for chunk libraries (specified by -in:file:silent)", blank_size_vector );
 	NEW_OPT( use_1jj2_torsions, "Use original (ribosome) fragments, 1JJ2", false );
-
+  NEW_OPT( allow_bulge , "Automatically virtualize residues that are not energetically stable", false );
+  NEW_OPT( allowed_bulge_res, "Use with allow_bulge, allowable pos for virtualization", blank_size_vector  ); 
+  NEW_OPT( allow_consecutive_bulges, "allow_consecutive_bulges", false );  
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup

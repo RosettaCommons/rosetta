@@ -62,7 +62,8 @@ public:
 										 std::string const silent_file,
 										 bool const heat_structure = true,
 										 bool const minimize_structure = false,
-										 bool const relax_structure = false );
+										 bool const relax_structure = false,
+										 bool const allow_bulge = false );
 
 	~RNA_DeNovoProtocol();
 
@@ -160,6 +161,12 @@ public:
 
 	void
 	set_staged_constraints( bool const setting ){ staged_constraints_ = setting; }
+	
+	void
+	set_allow_consecutive_bulges( bool const setting ){ allow_consecutive_bulges_ = setting; };
+
+	void
+	set_allowed_bulge_res( utility::vector1< core::Size > const & setting ){ allowed_bulge_res_ = setting; };
 
 private:
 
@@ -236,6 +243,7 @@ private:
 	bool close_loops_;
 	bool close_loops_after_each_move_;
 	bool simple_rmsd_cutoff_relax_;
+	bool allow_bulge_, allow_consecutive_bulges_;
 
 	// parameters
 	core::Real m_Temperature_; // default temperature for monte carlo
@@ -269,12 +277,13 @@ private:
 	std::map< std::string, bool > tag_is_done_;
 
 	std::string lores_scorefxn_;
-	core::scoring::ScoreFunctionOP denovo_scorefxn_;
+	core::scoring::ScoreFunctionOP denovo_scorefxn_, hires_scorefxn_;
 	core::scoring::ScoreFunctionOP initial_denovo_scorefxn_;
 	core::scoring::rna::RNA_LowResolutionPotential local_rna_low_resolution_potential_;
 
 	utility::vector1< std::string > chunk_silent_files_;
 	utility::vector1< core::Size > chunk_res_;
+	utility::vector1< core::Size > allowed_bulge_res_;
 	core::Real chunk_coverage_;
 
 	bool staged_constraints_;
