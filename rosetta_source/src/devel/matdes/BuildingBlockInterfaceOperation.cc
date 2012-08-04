@@ -20,6 +20,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -75,10 +76,14 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 	using namespace utility;
 	typedef vector1<Size> Sizes;
 
-	utility::vector1<std::string> sym_dof_name_list = utility::string_split( sym_dof_names_ , ',' );
+	utility::vector1<std::string> sym_dof_name_list;
+	if( sym_dof_names_ == "" ) {
+		sym_dof_name_list = sym_dof_names( pose );
+	} else {
+		sym_dof_name_list = utility::string_split( sym_dof_names_ , ',' );
+	}
 
 	Sizes intra_subs1, intra_subs2;
-
 	if( sym_dof_name_list.size() == 2) {
 	intra_subs1 = get_jump_name_to_subunits(pose,sym_dof_name_list[1]);
 	intra_subs2 = get_jump_name_to_subunits(pose,sym_dof_name_list[2]);
@@ -97,7 +102,7 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 		for(Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++) {
 			std::string atom_j = (pose.residue(jr).name3() == "GLY") ? "CA" : "CB";
 			//If one component, then check for clashes between all residues in primary subunit and subunits with indices > nsub_bb
-			if( sym_dof_names_ == "" ) {
+			if( sym_dof_name_list.size() == 1 ) {
       	if ( sym_info->subunit_index(jr) <= nsub_bblock_ ) continue;
 			}
 			//If two component, then check for clashes between all residues in primary subunitA and other building blocks, and all resis in primary subB and other building blocks. 
@@ -127,13 +132,13 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 
 	for(Size iip=1; iip<=design_pos.size(); iip++) {
 		Size ir = design_pos[iip];
-		Sizes const & intra_subs(get_component_of_residue(pose,ir)=='A'?intra_subs1:intra_subs2);
 		bool contact = true;
 		for(Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++) {
-			if( sym_dof_names_ == "" ) {
+			if( sym_dof_name_list.size() == 1 ) {
 				if(sym_info->subunit_index(ir) > nsub_bblock_ || sym_info->subunit_index(jr) > nsub_bblock_) continue;
 			}
 			else if( sym_dof_name_list.size() == 2 ) {
+				Sizes const & intra_subs(get_component_of_residue(pose,ir)=='A'?intra_subs1:intra_subs2);
 				if(get_component_of_residue(pose,ir)!=get_component_of_residue(pose,jr)) continue;
 				if(find(intra_subs.begin(), intra_subs.end(), sym_info->subunit_index(jr)) == intra_subs.end()) continue;
 			}
@@ -178,7 +183,7 @@ void
 BuildingBlockInterfaceOperation::parse_tag( TagPtr tag )
 {
   nsub_bblock_ = tag->getOption<core::Size>("nsub_bblock", 1);
-	sym_dof_names_ = tag->getOption< std::string >( "sym_dof_names" );
+	sym_dof_names_ = tag->getOption< std::string >( "sym_dof_names", "" );
 	contact_dist_ = tag->getOption<core::Real>("contact_dist", 10.0);
 	bblock_dist_ = tag->getOption<core::Real>("bblock_dist", 5.0);
 	fa_rep_cut_ = tag->getOption<core::Real>("fa_rep_cut", 3.0);

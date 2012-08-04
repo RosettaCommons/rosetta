@@ -34,7 +34,7 @@ namespace matdes {
 
 class BuildingBlockInterfaceOperation : public core::pack::task::operation::TaskOperation {
 public:
-	BuildingBlockInterfaceOperation( core::Size nsub_bblock = 1, std::string sym_dof_names  = "blank", core::Real contact_dist = 10, core::Real bblock_dist = 5, core::Real fa_rep_cut = 3.0 );
+	BuildingBlockInterfaceOperation( core::Size nsub_bblock = 1, std::string sym_dof_names  = "", core::Real contact_dist = 10, core::Real bblock_dist = 5, core::Real fa_rep_cut = 3.0 );
 
 	virtual ~BuildingBlockInterfaceOperation();
 
