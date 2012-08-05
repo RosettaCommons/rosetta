@@ -714,10 +714,10 @@ ProteinBondGeometryFeatures::report_interres_lengths(
 				stmt.bind(5,resconn_atomno2);
 				stmt.bind(6, rsd1.atom_type( resconn_atomno1 ).name());
 				stmt.bind(7, rsd2.atom_type( resconn_atomno2 ).name());
-				stmt.bind(7,d0);
-				stmt.bind(8,length);
-				stmt.bind(9,length-d0);
-				stmt.bind(10,energy_length);
+				stmt.bind(8,d0);
+				stmt.bind(9,length);
+				stmt.bind(10,length-d0);
+				stmt.bind(11,energy_length);
 				basic::database::safely_write_to_database(stmt);
 			}
 		}
