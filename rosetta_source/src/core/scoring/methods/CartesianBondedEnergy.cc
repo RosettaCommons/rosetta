@@ -743,6 +743,8 @@ CartesianBondedEnergy::eval_improper_torsions(
 ) const {
 	using namespace core::chemical;
 
+	if (!pose.is_fullatom()) return;
+
 	core::Size atm1, atm2, atm3, atm4;
 	// asp CB-CG-OD1-OD2
 	if (rsd.aa() == aa_asp) {
@@ -916,6 +918,8 @@ CartesianBondedEnergy::eval_improper_torsions_derivative(
 	// INTRA-RES
 	{
 		bool applyThis = true;
+		if (!pose.is_fullatom()) return;
+
 		if (res.aa() == aa_asp) {
 			// asp CB-CG-OD1-OD2
 			atm1 = res.atom_index(" CB ");
