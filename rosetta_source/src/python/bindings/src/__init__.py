@@ -98,6 +98,8 @@ from rosetta.protocols.relax import *
 #from rosetta.protocols.rigid import *
 from rosetta.protocols.simple_moves import *
 
+# PyRosetta toolbox.
+from rosetta.toolbox import *
 
 class CD:
     ''' Class to represent named tuples '''
@@ -252,189 +254,15 @@ def add_extra_options():
     rosetta.protocols.abinitio.IterativeAbrelax.register_options()
     rosetta.protocols.abinitio.register_options_broker()
 
-################################################################################
-# TOOLBOX
-# these methods are useful in PyRosetta and intended to demonstrate
-# proper syntax for various common activities
-# for those interested, Rosetta hag a Surface Area calculator and a Radius of
-# Gyration calculator, they are EnergyMethods sa and rg respectively,
-# create an empty ScoreFunction and use ScoreFunction.set_weight to use
-# these calculations
-# other common geometry calculators are CA_rmsd and all_atom_rmsd
 
-# EVAN CHECK THIS
-def generate_resfile_from_pose( pose , resfilename , input_sc = True ):
-    """
-    Writes a resfile for  <pose>  named  <resfilename> , optionally allowing
-    input side chains to be used in packing
-
-    example:
-        generate_resfile_from_pose(pose,'1YY8.resfile')
-    See also:
-        Pose
-        PackRotamersMover
-        TaskFactory
-    """
-    f = open(resfilename, 'w')
-    id = "NATRO"
-    start = ''
-    if input_sc:
-        start = 'USE_INPUT_SC\n'
-    f.write(start+'start\n')
-    info = pose.pdb_info()
-    # pose_from_sequence returns empty PDBInfo, Pose() makes NULL
-    if info and info.nres():
-        for i in range (1,pose.total_residue()+1):
-            num = pose.pdb_info().number(i)
-            chain = pose.pdb_info().chain(i)
-            f.write(str(num).rjust(4) + str(chain).rjust(3) + str(id).rjust(7) + '  \n')
-    else:
-        for i in range (1,pose.total_residue()+1):
-            num = i
-            chain = ' '
-            f.write(str(num).rjust(4) + str(chain).rjust(3) + str(id).rjust(7) + '  \n')
-    f.close()
-
-def generate_resfile_from_pdb( pdbfilename , resfilename , input_sc = True ):
-	"""
-	Writes a resfile for PDB file  <pdbfilename>  named  <resfilename> ,
-	optionally allowing input side chains to be used in packing
-
-	example:
-	    generate_resfile_from_pdb('1YY8.pdb','1YY8.resfile')
-	See also:
-	    Pose
-	    PackRotamersMover
-	    TaskFactory
-	"""
-	p = pose_from_pdb(pdbfilename)
-	generate_resfile_from_pose(p,resfilename,input_sc)
-
-# replaces the residue at  <resid>  in  <pose>  with  <new_res>
-def mutate_residue(pose, resid, new_res):
-	"""
-	Replaces the residue at  <resid>  in  <pose>  with  <new_res>
-	note: <new_res>  is the single letter name for the desired ResidueType
-
-	example:
-	    mutate_residue(pose,30,A)
-	See also:
-	    Pose
-	    PackRotamersMover
-	"""
-	if (pose.is_fullatom() == False):
-		IOError("mutate_residue only works with fullatom poses")
-
-	scorefxn = create_score_function('standard')
-	pack_task = TaskFactory.create_packer_task(pose)
-	pack_task.initialize_from_command_line()
-
-	v1 = rosetta.utility.vector1_bool()
-	mut_res = aa_from_oneletter_code(new_res)
-
-	for i in range(1,21):
-		if (i == mut_res):
-			v1.append(True)
-		else:
-			v1.append(False)
-
-	for i in range(1,pose.total_residue()+1):
-		if (i != resid):
-			pack_task.nonconst_residue_task(i).prevent_repacking()
-
-	pack_task.nonconst_residue_task(resid).restrict_absent_canonical_aas( v1 )
-
-	packer = protocols.simple_moves.PackRotamersMover(scorefxn, pack_task)
-	packer.apply(pose)
-	return pose
-
-import urllib
-
-# removes non ATOM lines from  <pdb_file>  and writes to  <pdb_file>.clean.pdb
-def cleanATOM( pdb_file , edit = -4 ):
-    """
-    Writes a PDB file from  <pdb_file> with all lines not beginning with
-    ATOM removed tp  <pdb_file>.clean.pdb
-    note: the second argument, <edit>, if for PDB files not ending in .pdb
-
-    example:
-        cleanATOM('1YY9.pdb')
-    See also:
-        Pose
-        Pose.dump_pdb
-        pose_from_pdb
-        pose_from_rcsb
-        cleanCRYS
-    """
-    if not edit:
-        edit = 255
-    # why is it pdb_file[:-4] the whole way?
-    if os.path.exists( os.getcwd() + '/' + pdb_file ):
-        print 'if the file',pdb_file[:edit]+'.clean.pdb already exists, it will be overwritten'
-#        os.system("grep \"ATOM\" %s.pdb > %s.clean.pdb"%(pdb_file[:edit],pdb_file[:edit]))
-        fid = open(pdb_file,'r')
-        data = fid.readlines()
-        fid.close()
-        good = []
-        for i in data:
-            if i[:5] == 'ATOM ':
-                # maybe rules for ligands and DNA and/or water...?
-                good.append(i)
-        fid = open(pdb_file[:edit]+'.clean.pdb','w')
-        fid.writelines(good)
-        fid.close()
-        print 'PDB',pdb_file,'successfully cleaned, non-ATOM lines removed\nclean data written to',pdb_file[:edit]+'.clean.pdb'
-    else:
-        raise IOError('No such file or directory named '+pdb_file)
-
-# removes redundant crystal contacts, isolate monomer
-def cleanCRYS( pdb_file , olig = 2 ):
-    """
-    Writes a PDB file for a monomer of  <pdb_file>  if it is a  <olig>-mer
-    to  <pdb_file>.mono
-    note: this is a simple sequence comparison
-
-    example:
-        cleanCRYS('1YY8.pdb',2)
-    See also:
-        Pose
-        Pose.dump_pdb
-        pose_from_pdb
-        pose_from_rcsb
-        cleanATOM
-    """
-    if os.path.exists( os.getcwd() + '/' + pdb_file ):
-        print 'if the file',pdb_file[:-4]+'.mono.pdb already exists, it will be overwritten'
-        pose = pose_from_pdb(pdb_file)
-        tot = pose.total_residue()
-        seq = pose.sequence()
-        frags = ['']*olig
-        match = [False]*(olig-1)
-        olig = float(olig)
-        frac = int(round(tot/olig))
-        for f in range(int(olig)):
-            frags[f] = seq[:frac]
-            seq = seq[frac:]
-        for f in range(int(olig-1)):
-            match[f] = (frags[0]==frags[f+1])
-        if sum(match)==(olig-1):
-           for i in range(frac*int(olig-1)):
-               pose.delete_polymer_residue(frac+1)
-           pose.dump_pdb(pdb_file[:-4]+'.mono.pdb')
-           print 'PDB',pdb_file,'successfully cleaned, redundant monomers removed\nmonomer data written to',pdb_file[:-4]+'.mono.pdb'
-        else:
-            print pdb_file,'is not a '+str(olig)+'-mer'
-    else:
-        raise IOError('No such file or directory named '+pdb_file)
-
-# Return a pose made from seq, with all phi/psi/omega angles set to 180.
 def pose_from_sequence(seq, res_type = "fa_standard", auto_termini = True):
-    ''' Returns a pose generated from a single-letter sequence of amino acid
-        residues in <seq> using the <res_type> ResidueType and creates N- and C-
-        termini if <auto_termini> is set to True.
+    """
+    Returns a pose generated from a single-letter sequence of amino acid
+    residues in <seq> using the <res_type> ResidueType and creates N- and C-
+    termini if <auto_termini> is set to True.
 
-        Unlike make_pose_from_sequence(), this method generates a default PDBInfo
-        and sets all torsion angles to 180 degrees.
+    Unlike make_pose_from_sequence(), this method generates a default PDBInfo
+    and sets all torsion angles to 180 degrees.
 
     Example:
         pose = pose_from_sequence("THANKSEVAN")
@@ -443,7 +271,7 @@ def pose_from_sequence(seq, res_type = "fa_standard", auto_termini = True):
         make_pose_from_sequence
         pose_from_pdb
         pose_from_rcsb
-    '''
+    """
 
     pose = Pose()
     make_pose_from_sequence(pose, seq, res_type, auto_termini)
@@ -459,132 +287,6 @@ def pose_from_sequence(seq, res_type = "fa_standard", auto_termini = True):
     pose.pdb_info().name(seq[:8])
     #print pose
     return pose
-
-
-# retreives pdbData from rcsb for  <pdb_code>
-# ADD NAMING OPTION
-def load_from_rcsb( pdb_code ):
-    """
-    Writes PDB data for RCSB data for  <pdb_code>  into the file  <pdb_code>.pdb
-
-    example:
-        load_from_rcsb('1YY8')
-    See also:
-        Pose
-        pose_from_pdb
-        pose_from_rcsb
-        pose_from_sequence
-        cleanATOM
-        cleanCRYS
-    """
-    if pdb_code:    # if something input...
-        pdb_code = pdb_code.upper()
-        try:
-            filename = urllib.urlretrieve('http://www.rcsb.org/pdb/files/' + pdb_code + '.pdb')[0]
-        except:
-            raise IOError('Cannot access the PDB database, please check your Internet access')
-        else:
-            if (os.path.getsize(filename) > 1500):    # arbitrary 1500...then pdb_code was invalid
-                pdb_file = open(filename)
-                pdb_data = pdb_file.readlines()
-                pdb_file.close()
-
-                pdb_code = pdb_code + '.pdb'
-                if os.path.exists( os.getcwd() + '/' + pdb_code ):
-                    print 'the file',pdb_code,'already exists, this file will be overwritten'
-                #if input('Do you want to overwrite ' + pdbCode + '.pdb')
-                pdb_file = open(pdb_code,'w')
-                pdb_file.writelines(pdb_data)
-                pdb_file.close()
-
-                print 'PDB',pdb_code[:-4],'successfully loaded from rcsb into',pdb_code
-#                if auto_clean:
-#                    cleanATOM(pdb_code)
-            else:
-                raise IOError('Invalid PDB code')
-        os.remove(filename)    # remove temp file
-
-# packaged my method to fit naming
-def pose_from_rcsb( pdb_code , ATOM = True , CRYS = True ):
-    """
-    Returns a pose for RCSB PDB  <pdb_code> , also writes this data to
-    <pdb_code>.pdb, optionally calls cleanATOM and cleanCYRS
-
-    example:
-        pose=pose_from_rcsb('1YY8')
-    See also:
-        Pose
-        pose_from_pdb
-        pose_from_sequence
-        load_from_rcsb
-        cleanATOM
-        cleanCRYS
-    """
-    load_from_rcsb(pdb_code)
-    if ATOM:
-        cleanATOM(pdb_code+'.pdb')
-        pdb_code = pdb_code+'.clean'
-    if CRYS:
-        cleanCRYS(pdb_code+'.pdb')
-        pdb_code = pdb_code+'.mono'
-    pose = pose_from_pdb(pdb_code+'.pdb')
-    return pose
-
-# fills secstruct into pose...some wierd stuff, DSSP
-def get_secstruct( pose , space = 8 , page = 80 ):
-    """
-    Predicts the secondary structure of  <pose> , loading this data into
-    the pose's secstruct information and printing the prediction to screen
-
-    example:
-        get_secstruct(pose)
-    See also:
-        Pose
-        Pose.secstruct
-        Pose.sequence
-        pose_from_pdb
-        pose_from_sequence
-        pose_from_rcsb
-    """
-    dssp = rosetta.protocols.jumping.Dssp(pose)
-    dssp.insert_ss_into_pose(pose)
-    seq = pose.sequence()
-    sec = pose.secstruct()
-    count = 0
-    while len(seq):
-        count += 1
-        num = ''
-        for i in range(page*(count-1)+1,page*count,space):
-            num += str(i).ljust(space)
-        print num+'\n'+seq[:page]+'\n'+sec[:page]+'\n'
-        seq = seq[page:]
-        sec = sec[page:]
-
-# returns an HBondSet filled with the hbonding info
-def get_hbonds( pose ):
-    """
-    Returns a HBondSet of the hydrogen bonding in  <pose>
-    note: more info in rosetta.core.scoring.hbonds
-
-    example:
-        hbset=get_hbonds(pose)
-        hbset.hbond(1).acc_res()
-    See also:
-        Pose
-        Energies
-        HBondSet
-        ScoreFunction
-        create_score_function
-    """
-    if not pose.energies().energies_updated():
-        raise IOError('Energy is not updated, please score the pose first!')
-    hbset = rosetta.core.scoring.hbonds.HBondSet()
-    rosetta.core.scoring.hbonds.fill_hbond_set(pose,False,hbset)
-    return hbset
-
-
-# end of TOOLBOX
-################################################################################
 
 
 # PyMOL link code ----------------------------------------------------------------------------------

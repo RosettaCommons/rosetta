@@ -1,5 +1,5 @@
 #! /usr/bin/python
-# List of commands used in PyRosetts Workshop #2
+# List of commands used in PyRosetts Workshop #6
 
 from rosetta import *
 init()
@@ -37,6 +37,8 @@ generate_resfile_from_pose(pose, YY8_resfile2)
 
 task_design = TaskFactory.create_packer_task(pose)
 parse_resfile(pose, task_design, YY8_resfile2)
+
+mutate_residue(pose, 49, 'E')
 
 #os.remove(YY8_resfile1)
 #os.remove(YY8_resfile2)

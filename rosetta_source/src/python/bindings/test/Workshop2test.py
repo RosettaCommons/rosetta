@@ -8,6 +8,7 @@ from rosetta import *
 init()
 
 pose = pose_from_pdb("test/data/workshops/1YY8.clean.pdb")
+pose2 = pose_from_rcsb("1YY8")
 
 print pose
 print pose.sequence()
@@ -20,6 +21,8 @@ print pose.pdb_info().number(500)
 print pose.pdb_info().pdb2pose("A", 100)
 
 print pose.pdb_info().pose2pdb(25)
+
+get_secstruct(pose)
 
 # Protein Geometry
 print pose.phi(5)

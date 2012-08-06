@@ -1,5 +1,5 @@
 #! /usr/bin/python
-# List of commands used in PyRosetts Workshop #2
+# List of commands used in PyRosetts Workshop #3
 
 from math import *
 
@@ -23,10 +23,14 @@ scorefxn.show(ras)
 
 print ras.energies().show(24)
 
+hset = get_hbonds(ras)
+hset.show(ras)
+hset.show(ras, 24)
+
 pose = pose_from_pdb("test/data/workshops/1YY9.clean.pdb")
 
-rsd1_num = pose.pdb_info().pdb2pose("D", 102)
-rsd2_num = pose.pdb_info().pdb2pose("A", 408)
+rsd1_num = pose.pdb_info().pdb2pose('D', 102)
+rsd2_num = pose.pdb_info().pdb2pose('A', 408)
 
 rsd1 = pose.residue(rsd1_num)
 rsd2 = pose.residue(rsd2_num)
