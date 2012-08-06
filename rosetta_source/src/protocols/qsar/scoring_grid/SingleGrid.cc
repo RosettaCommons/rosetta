@@ -258,6 +258,20 @@ void SingleGrid::grid_to_kin(utility::io::ozstream & out, core::Real min_val, co
 		}
 	}
 }
+    
+
+bool SingleGrid::is_in_grid(core::conformation::Residue const & residue)
+{
+    for(core::Size atom_index = 1; atom_index <= residue.natoms();++atom_index)
+    {
+        core::Vector atom_coords = residue.xyz(atom_index);
+        if(!grid_.is_in_grid(atom_coords.x(), atom_coords.y(), atom_coords.z()))
+        {
+            return false;
+        }
+    }
+    return true;
+}
 
 
 void SingleGrid::fill_with_value(core::Real value)

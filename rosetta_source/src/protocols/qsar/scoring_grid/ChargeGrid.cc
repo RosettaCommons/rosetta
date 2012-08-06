@@ -81,8 +81,7 @@ ChargeGrid::ChargeGrid() :
 	zeta_(4.0),
 	epsilon_(80.0),
 	indirect_numerator_( (4.0 - 80.0) / (4.0 + 80.0) ),
-	epsilon_0_(8.854187817E-12),
-	charge_(0.0)
+	epsilon_0_(8.854187817E-12)
 {
 	//
 }
@@ -92,8 +91,7 @@ ChargeGrid::ChargeGrid(core::Real charge,core::Real weight) :
 	zeta_(4.0),
 	epsilon_(80),
 	indirect_numerator_( (4.0 - 80.0) / (4.0 + 80.0) ),
-	epsilon_0_(8.854187817E-12),
-	charge_(charge)
+	epsilon_0_(8.854187817E-12)
 {
 	//
 }
@@ -103,8 +101,7 @@ ChargeGrid::ChargeGrid(core::Real weight) :
 	zeta_(4.0),
 	epsilon_(80),
 	indirect_numerator_( (4.0 - 80.0) / (4.0 + 80.0) ),
-	epsilon_0_(8.854187817E-12),
-	charge_(0.0)
+	epsilon_0_(8.854187817E-12)
 {
 	//
 }
@@ -113,8 +110,7 @@ utility::json_spirit::Value ChargeGrid::serialize()
 {
 	using utility::json_spirit::Value;
 	using utility::json_spirit::Pair;
-
-	Pair charge_record("charge",Value(charge_));
+    
 	Pair base_data("base_data",SingleGrid::serialize());
 
 	std::vector<Value> charge_atom_data;
@@ -124,13 +120,12 @@ utility::json_spirit::Value ChargeGrid::serialize()
 	}
 
 	Pair charge_atom_record("atoms",charge_atom_data);
-	return Value(utility::tools::make_vector(charge_record,charge_atom_record,base_data));
+	return Value(utility::tools::make_vector(charge_atom_record,base_data));
 
 }
 
 void ChargeGrid::deserialize(utility::json_spirit::mObject data)
 {
-	charge_ = data["charge"].get_real();
 
 	charge_atom_list_.clear();
 	utility::json_spirit::mArray charge_atom_data(data["atoms"].get_array());
@@ -148,21 +143,14 @@ void ChargeGrid::deserialize(utility::json_spirit::mObject data)
 void ChargeGrid::refresh(core::pose::Pose const & pose, core::Vector const & )
 {
 
-	//if charge is zero we can save a lot of time
-	if(charge_ == 0.0)
-	{
-		fill_with_value(0.0);
-		return;
-	}
-
 	setup_charge_atoms(pose);
 
 	numeric::xyzVector<core::Size> dimensions = get_dimensions();
-	for(int x_index =0; x_index < dimensions.x(); ++x_index)
+	for(core::Size x_index =0; x_index < dimensions.x(); ++x_index)
 	{
-		for(int y_index = 0; y_index < dimensions.y(); ++y_index)
+		for(core::Size y_index = 0; y_index < dimensions.y(); ++y_index)
 		{
-			for(int z_index = 0; z_index < dimensions.z(); ++z_index)
+			for(core::Size z_index = 0; z_index < dimensions.z(); ++z_index)
 			{
 
 				core::Vector pdb_coords(get_pdb_coords(x_index,y_index,z_index));
@@ -182,7 +170,9 @@ void ChargeGrid::refresh(core::pose::Pose const & pose, core::Vector const & )
 					}
 				}
 
-				ChargeAtom grid_charge_atom(pdb_coords,charge_,neighbor_count);
+                //dummy charge value is ignored on the grid atom side during
+                //el calculations.  fix this later
+				ChargeAtom grid_charge_atom(pdb_coords,0.0,neighbor_count);
 
 				//second loop through the charge atoms to calculate charge
 				protein_charge_atom_it = charge_atom_list_.begin();
@@ -218,11 +208,23 @@ void ChargeGrid::parse_my_tag(utility::tag::TagPtr const tag)
 	}
 	set_weight(tag->getOption<core::Real>("weight"));
 }
-
-
-void ChargeGrid::set_charge(core::Real charge)
+    
+core::Real ChargeGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map)
 {
-	charge_ = charge;
+    core::Real score = 0.0;
+    for(core::Size atom_index = 1; atom_index <= residue.natoms() && score < max_score; ++atom_index )
+	{
+		core::Vector const & atom_coord(residue.xyz(atom_index));
+		if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
+		{
+            core::Real protein_charge = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
+
+            
+            
+			score += protein_charge*residue.atomic_charge(atom_index);
+		}
+	}
+	return score;
 }
 
 core::Real ChargeGrid::nominal_depth(core::Size const & n_atoms) const
@@ -269,7 +271,7 @@ core::Real ChargeGrid::charge_charge_electrostatic(core::pose::Pose const & pose
 	assert(s_p >= 0);
 	assert(s_q >= 0);
 
-	core::Real direct_term =  ((atom_p.charge*atom_q.charge)/(4*boost::math::constants::pi<core::Real>()*epsilon_0_*distance) *zeta_);
+	core::Real direct_term =  ((atom_q.charge)/(4*boost::math::constants::pi<core::Real>()*epsilon_0_*distance) *zeta_);
 	core::Real indirect_term = (1.0/distance) + (indirect_numerator_ / std::sqrt(distance*distance + 4*s_p*s_q));
 	return direct_term*indirect_term;
 

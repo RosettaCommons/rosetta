@@ -96,6 +96,8 @@ public:
 	virtual core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map);
 	void grid_to_kin(utility::io::ozstream & out, core::Real min_val, core::Real max_val, core::Size stride);
 	//void grid_rotamer_trials(core::pose::Pose &  pose, core::Size residue_id, int const min_score);
+    /// @brief check to see if residue is in grid
+    virtual bool is_in_grid(core::conformation::Residue const & residue);
 
 	std::list<std::pair<core::Vector, core::Real> > get_point_value_list_within_range(core::Real lower_bound, core::Real upper_bound,core::Size stride);
 

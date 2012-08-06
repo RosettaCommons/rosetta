@@ -23,6 +23,7 @@ It will also report the binding energy (ddg) and buried-surface area (sasa) in t
 		<hbd grid_type="HbdGrid" weight="1.0"/>
 		<vdw grid_type="VdwGrid" weight="1.0"/>
 		<classic grid_type="ClassicGrid" weight="1.0"/>
+		<charge grid_type="ChargeGrid" weight="1.0"/>
 		
 	</SCORINGGRIDS>
 	<LIGAND_AREAS>

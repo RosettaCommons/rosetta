@@ -20,4 +20,4 @@
 #include <protocols/qsar/scoring_grid/HbaGridCreator.hh>
 #include <protocols/qsar/scoring_grid/polarizGridCreator.hh>
 #include <protocols/qsar/scoring_grid/VdwGridCreator.hh>
-#include <protocols/qsar/scoring_grid/ElectroStaticMetaGridCreator.hh>
+#include <protocols/qsar/scoring_grid/ChargeGridCreator.hh>

@@ -96,7 +96,6 @@ sources = {
 		"GridManager",
         "ClassicGrid",
 		"ChargeGrid",
-		"ElectroStaticMetaGrid",
 		"HbaGrid",
 		"HbdGrid",
 		"polarizGrid",

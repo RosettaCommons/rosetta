@@ -424,6 +424,20 @@ void GridManager::deserialize(utility::json_spirit::mArray data)
 		grid_map_[grid_name] = grid;
 	}
 }
+    
+bool GridManager::is_in_grid(core::conformation::Residue const & residue)
+{
+    std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
+    for(;map_iterator != grid_map_.end();++map_iterator)
+    {
+        GridBaseOP current_grid(*map_iterator->second);
+        if(!current_grid->is_in_grid(residue))
+        {
+            return false;
+        }
+    }
+    return true;
+}
 
 }
 }

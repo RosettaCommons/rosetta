@@ -62,9 +62,7 @@ public:
 	/// @brief deserialize a json_spirit object to a SingleGrid
 	virtual void deserialize(utility::json_spirit::mObject data);
 	void parse_my_tag(utility::tag::TagPtr const tag);
-
-	void set_charge(core::Real charge);
-
+    virtual core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map);
 private:
 
 	/// @brief calculate nominal depth based on atom count within 4 Angstroms. See
@@ -81,8 +79,6 @@ private:
 	core::Real epsilon_;
 	core::Real indirect_numerator_; // (zeta - epsilon) / (zeta + epsilon)
 	core::Real epsilon_0_;
-
-	core::Real charge_;
 	std::list<ChargeAtom> charge_atom_list_;
 
 };
