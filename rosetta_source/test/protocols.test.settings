@@ -94,6 +94,9 @@ sources = {
 		"JD2ResourceManager",
 		"JD2ResourceManagerJobInputter",
 	],
+       	"jd2/parser" : [
+            "BluePrint",
+	],
 
 	"jumping" : [
 		"JumpSetup",
@@ -272,6 +275,7 @@ testinputfiles = [
 	"frag_picker/t286_.6.csts",
 	"frag_picker/1a32A-H1.vall",
 	"frag_picker/1a32A-H1.9mers",
+        "jd2/parser/test.bbskel",
 	"jobdist/PlainSilentFileJobDistributor_test.out",
 	"jumping/jump_test.pdb",
 	"jumping/gb3_secondary_structure.dat",

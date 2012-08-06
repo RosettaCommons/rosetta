@@ -69,6 +69,9 @@ public: // accessor
 	/// @brief total residue number defined in blueprint file
 	Size total_residue() const;
 
+	/// @brief total residue number without ligand defined in blueprint file
+	Size total_residue_wolig() const;
+	
 	/// @brief sequence defined in blueprint file
 	String sequence() const;
 
@@ -138,6 +141,9 @@ private: // data
 
 	/// @brief total residue number defined in blueprint
 	Size total_residue_;
+	
+	/// @brief total residue without ligand
+	Size total_residue_wolig_;
 
 	/// @brief sequence defined in blueprint
 	String sequence_;

@@ -16,9 +16,7 @@
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 #include <cmath>
-
 #include <utility/vector1.hh>
-
 
 static basic::Tracer TR( "core.util.ABEGOManager" );
 
@@ -100,8 +98,9 @@ ABEGOManager::initialize()
 	ABEGO P( "P", -180.0,   0.0,  100.0, 195.0, false );
 	P.add_line( -1.6, 4, true  );	
 	
-	ABEGO D( "D", -180.0,   0.0, 195.0, 285.5, false );
-	ABEGO Z( "Z", -100.0,   0.0,  50.0, 100.0, false );
+	ABEGO D( "D", -180.0,    0.0, 195.0, 285.5, false );
+	ABEGO Z( "Z", -180.0, -100.0,  50.0, 100.0, false );
+	ABEGO Y( "Y", -100.0,    0.0,  50.0, 100.0, false );
 	
 	ABEGO M( "M", -180.0,  -90.0,  -75.0,  50.0, false );
 	ABEGO N( "N",  -90.0,    0.0,  -75.0,  50.0, false );
@@ -115,8 +114,9 @@ ABEGOManager::initialize()
 	name2abego_[ 7 ] = P;
 	name2abego_[ 8 ] = D;
 	name2abego_[ 9 ] = Z;
-	name2abego_[ 10 ] = M;
-	name2abego_[ 11 ] = N;
+	name2abego_[ 10 ] = Y;
+	name2abego_[ 11 ] = M;
+	name2abego_[ 12 ] = N;
 
 }
 
@@ -149,7 +149,7 @@ ABEGOManager::torsion2index_level1( Real const phi, Real const psi, Real const o
       if ( -75.0 <= psi && psi < 50.0 ) {
          return 1; // helical
       } else {
-				return 2; // beta
+		return 2; // beta
       }
    }
    return 0;
@@ -166,6 +166,8 @@ ABEGOManager::torsion2index( Real const phi, Real const psi, Real const omega, S
 		return torsion2index_level2( phi, psi, omega );
 	case 3:
 		return torsion2index_level3( phi, psi, omega );
+	case 4:
+		return torsion2index_level4( phi, psi, omega );
 	default :
 		TR << " [ERROR] Unrecognized level  " << level << std::endl;
 		runtime_assert( false );
@@ -178,45 +180,82 @@ Size
 ABEGOManager::torsion2index_level2( Real const phi, Real const psi, Real const omega )
 {
 	if ( fabs( omega ) < 90.0 ) {
-      return 5; // cis-omega
-   } else if ( phi >= 0.0 ) {
-      if ( -100.0 <= psi && psi < 100.0 ) {
-         return 4; // alpha-L
-      } else {
-         return 3; // E
-      }
-   } else {
-	   
-      if ( -75.0 <= psi && psi < 50.0 ) {
-		  return 1; //helical
-      } else if ( 50.0 <= psi && psi < 100.0 ) {
-		  return 9;	// Z
-	  } else {
-		Real ppsi;
-		if( psi < -75.0 ) {
-			ppsi = psi + 360.0;
+		return 5; // cis-omega
+	} else if ( phi >= 0.0 ) {
+		if ( -100.0 <= psi && psi < 100.0 ) {
+			return 4; // alpha-L
 		} else {
-			ppsi = psi;
+			return 3; // E
 		}
-		  
-		if( ppsi >= 195.0 ) {
-			return 8; // D
+	} else {
+		
+		if ( -75.0 <= psi && psi < 50.0 ) {
+			return 1; //helical
 		} else {
-			Real sign( ppsi - ( -1.6*phi + 4.0 ) );			
-			if( sign >= 0 ) {
-				return 7; // P
+			Real ppsi;
+			if( psi < -75.0 ) {
+				ppsi = psi + 360.0;
 			} else {
-				return 6; // S			
-			} 
-		} 
-	  }
-   }
-   return 0;
+				ppsi = psi;
+			}
+			
+			if ( 100.0 <= psi && psi < 195.0 && ( ppsi + 1.6*phi - 4.0 ) >= 0 ) {
+				return 7;	// P
+			} else {
+				// Nobu, i know this is really tricky setup, well, what should i do ?
+				return 6;   // S+, S+ = S  + D + Z 
+			}
+		}
+	}
+	return 0;
+}
+	
+/// @brief get abego index from torsion angles
+Size
+ABEGOManager::torsion2index_level3( Real const phi, Real const psi, Real const omega )
+{
+	if ( fabs( omega ) < 90.0 ) {
+      return 5; // cis-omega
+	} else if ( phi >= 0.0 ) {
+		if ( -100.0 <= psi && psi < 100.0 ) {
+			return 4; // alpha-L
+		} else {
+			return 3; // E
+		}
+	} else {
+		if ( -75.0 <= psi && psi < 50.0 ) {
+			return 1; //helical
+		} else if ( 50.0 <= psi && psi < 100.0 ) {
+			if( phi >= -100 ) {
+				return 10; // Y
+			} else {
+				return 9;	// Z
+			}
+		} else {
+				Real ppsi;
+				if( psi < -75.0 ) {
+					ppsi = psi + 360.0;
+				} else {
+					ppsi = psi;
+				}
+				if( ppsi >= 195.0 ) {
+					return 8; // D
+				} else {
+					Real sign( ppsi - ( -1.6*phi + 4.0 ) );
+					if( sign >= 0 ) {
+						return 7; // P
+					} else {
+						return 6; // S
+					}
+				}
+			}
+	}
+	return 0;
 }
 
 /// @brief get abego index from torsion angles
 Size
-ABEGOManager::torsion2index_level3( Real const phi, Real const psi, Real const omega )
+ABEGOManager::torsion2index_level4( Real const phi, Real const psi, Real const omega )
 {
 	if ( fabs( omega ) < 90.0 ) {
       return 5; // cis-omega
@@ -229,12 +268,16 @@ ABEGOManager::torsion2index_level3( Real const phi, Real const psi, Real const o
    } else {
 	   if ( -75.0 <= psi && psi < 50.0 ) {
 		   if( phi >= -90.0 ) {
-			   return 11; // N
+			   return 12; // N
 		   } else {
-			   return 10; // M
+			   return 11; // M
 		   }
 	   } else if ( 50.0 <= psi && psi < 100.0 ) {
-		   return 9; // Z
+			 if( phi >= -100 ) {
+				 return 10; // Y
+			 } else {
+				 return 9;	// Z
+			 }
 	   } else {
 		   Real ppsi;
 		   if( psi < -75.0 ) {
@@ -242,17 +285,17 @@ ABEGOManager::torsion2index_level3( Real const phi, Real const psi, Real const o
 		   } else {
 			   ppsi = psi;
 		   }
-		   
+
 		   if( ppsi >= 195.0 ) {
 			   return 8; // D
 		   } else {
-			   Real sign( ppsi - ( -1.6*phi + 4.0 ) );			
+			   Real sign( ppsi - ( -1.6*phi + 4.0 ) );
 			   if( sign >= 0 ) {
 				   return 7; // P
 			   } else {
 				   return 6; // S
-			   } 
-		   } 
+			   }
+		   }
 	   }
    }
    return 0;
@@ -282,8 +325,10 @@ ABEGOManager::index2symbol( Size const & idx )
 	case 9:
 		return "Z";
 	case 10:
-		return "M";
+		return "Y";
 	case 11:
+		return "M";
+	case 12:
 		return "N";
 	case 99:
 		return "X";
@@ -327,12 +372,15 @@ ABEGOManager::symbol2index( char const & symbol )
 	case 'Z' :
 	case 'z' :
 		return 9;
+	case 'Y' :
+	case 'y' :
+		return 10;
 	case 'M' :
 	case 'm' :
-		return 10;
+		return 11;
 	case 'N' :
 	case 'n' :
-		return 11;
+		return 12;
 	case 'X' :
 	case 'x' :
 		return 99;

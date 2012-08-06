@@ -42,6 +42,7 @@ namespace parser {
 /// @brief default constructor
 BluePrint::BluePrint() :
 			total_residue_( 0 ),
+			total_residue_wolig_( 0 ),
 			sequence_( "" ),
 			secstruct_( "" ),
 			strand_pairings_( "" ),
@@ -53,6 +54,7 @@ BluePrint::BluePrint() :
 /// @brief value constructor
 BluePrint::BluePrint( std::string const & filename ):
 			total_residue_( 0 ),
+			total_residue_wolig_( 0 ),
 			sequence_( "" ),
 			secstruct_( "" ),
 			strand_pairings_( "" ),
@@ -75,6 +77,7 @@ BluePrint::~BluePrint()
 BluePrint::BluePrint( BluePrint const & src ):
 			ReferenceCount(),
 			total_residue_( src.total_residue_ ),
+			total_residue_wolig_( src.total_residue_wolig_ ),
 			sequence_( src.sequence_ ),
 			secstruct_( src.secstruct_ ),
 			resnum_( src.resnum_ ),
@@ -97,6 +100,14 @@ BluePrint::total_residue() const
 }
 
 
+/// @brief total residue number defined in blueprint file
+BluePrint::Size
+BluePrint::total_residue_wolig() const
+{
+	return total_residue_wolig_;
+}
+
+	
 /// @brief sequence defined in blueprint file
 BluePrint::String
 BluePrint::sequence() const
@@ -314,7 +325,7 @@ BluePrint::read_blueprint( std::string const & filename )
 
 				char build( tokens[4][0] );
 				if( build != '.' && build != 'R' && build != 'I' && build != 'X' &&
-						build != 'F' && build != 'P' && build != 'C' ) {
+						build != 'F' && build != 'P' && build != 'C' && build != 'W' ) {
 					TR.Error << "unrecognized build char : " << build << " at lines "	<< linecount << " in " << filename << std::endl;
 					return false;
 				}
@@ -341,6 +352,12 @@ BluePrint::read_blueprint( std::string const & filename )
 	assert( resname_.size() == sstype_.size() );
 	total_residue_ = sstype_.size();
 	assert( total_residue_ > 0 );
+
+	total_residue_wolig_ = 0;
+	for( Size ii=1; ii<=total_residue(); ii++ ) {
+		if(	extra( ii ) == "LIGAND" ) continue;
+		total_residue_wolig_ ++;
+	}
 
 	for( utility::vector1< char >::const_iterator iter = sstype_.begin(); iter != sstype_.end() ; ++iter) {
 		secstruct_ += *iter;
@@ -373,15 +390,15 @@ BluePrint::set_movemap( MoveMapOP & movemap )
 		} else if ( buildtype( i ) == 'P' ) {
 			movemap->set_bb( i, false );
 			movemap->set_chi( i, true );
-			TR << "At residue " << i << ", Backbone is freezed." << std::endl;
+			TR.Debug << "At residue " << i << ", Backbone is freezed." << std::endl;
 		} else if ( buildtype( i ) == 'W' ) {
 			movemap->set_bb( i, true );
 			movemap->set_chi( i, false );
-			TR << "At residue " << i << ", Rotamer is freezed." << std::endl;
+			TR.Debug << "At residue " << i << ", Rotamer is freezed." << std::endl;
 		} else if ( buildtype( i ) == 'F' ){
 			movemap->set_bb( i, false );
 			movemap->set_chi( i, false );
-			TR << "At residue " << i << ", both backbone and rotamer are freezed. " << std::endl;
+			TR.Debug << "At residue " << i << ", both backbone and rotamer are freezed. " << std::endl;
 		} else {
 			movemap->set_bb( i, true );
 			movemap->set_chi( i, true );

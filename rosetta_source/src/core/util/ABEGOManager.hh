@@ -28,7 +28,6 @@
 
 // C++ headers
 #include <string>
-// AUTO-REMOVED #include <utility>
 #include <map>
 
 namespace core {
@@ -205,6 +204,9 @@ public:
 	/// @brief get abego index from torsion angles at level 3
 	Size torsion2index_level3( Real const phi, Real const psi, Real const omega );
 
+	/// @brief get abego index from torsion angles at level 3
+	Size torsion2index_level4( Real const phi, Real const psi, Real const omega );
+	
 	/// @brief all output level in current setup
 	Size alllevel() { return 3; }
 
