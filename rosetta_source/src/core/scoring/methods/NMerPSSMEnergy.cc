@@ -62,30 +62,43 @@ NMerPSSMEnergyCreator::score_types_for_method() const {
 }
 
 void
-NMerPSSMEnergy::initialize()
+NMerPSSMEnergy::nmer_length( Size const nmer_length ){
+	nmer_length_ = nmer_length;
+  //nmer residue energy is attributed to position 1
+	nmer_cterm_ = nmer_length_ - 1 ;
+}
+
+void
+NMerPSSMEnergy::gate_pssm_scores( bool const gate_pssm_scores ){
+	gate_pssm_scores_ = gate_pssm_scores;
+}
+
+void
+NMerPSSMEnergy::nmer_pssm_scorecut( Real const nmer_pssm_scorecut ){
+	nmer_pssm_scorecut_ = nmer_pssm_scorecut;
+}
+
+void
+NMerPSSMEnergy::initialize_from_options()
 {
 	using namespace basic::options;
-	nmer_length_ = option[ OptionKeys::score::nmer_ref_seq_length ](); 
-  //nmer residue energy is attributed to position 1
-//  nmer_nterm_ = static_cast< Size >( ( nmer_length_ - 1 ) / 2 );
-  nmer_nterm_ = 0;
-	nmer_cterm_ = nmer_length_ - 1 - nmer_nterm_;
-	gate_pssm_scores_ = option[ OptionKeys::score::nmer_pssm_scorecut ].user(); 
-	nmer_pssm_scorecut_ = option[ OptionKeys::score::nmer_pssm_scorecut ](); 
+	NMerPSSMEnergy::nmer_length( option[ OptionKeys::score::nmer_ref_seq_length ]() ); 
+	NMerPSSMEnergy::gate_pssm_scores( option[ OptionKeys::score::nmer_pssm_scorecut ].user() ); 
+	NMerPSSMEnergy::nmer_pssm_scorecut( option[ OptionKeys::score::nmer_pssm_scorecut ]() ); 
 }
 
 NMerPSSMEnergy::NMerPSSMEnergy() :
 	parent( new NMerPSSMEnergyCreator )
 {
-	NMerPSSMEnergy::initialize();
-	read_all_nmer_energy_tables();
+	NMerPSSMEnergy::initialize_from_options();
+	read_nmer_pssms_from_options();
 }
 
 NMerPSSMEnergy::NMerPSSMEnergy( utility::vector1< std::map< chemical::AA, utility::vector1< core::Real > > > const & all_nmer_pssms_in ):
 	parent( new NMerPSSMEnergyCreator )
 {
 	//TODO: make this an argument of the function call
-	NMerPSSMEnergy::initialize();
+	NMerPSSMEnergy::initialize_from_options();
 
 	all_nmer_pssms_.clear();
 	for( Size ipssm = 1; ipssm <= all_nmer_pssms_in.size(); ++ipssm ){
@@ -102,7 +115,7 @@ NMerPSSMEnergy::NMerPSSMEnergy( utility::vector1< std::map< chemical::AA, utilit
 
 NMerPSSMEnergy::~NMerPSSMEnergy() {}
 
-void NMerPSSMEnergy::read_all_nmer_energy_tables() {
+void NMerPSSMEnergy::read_nmer_pssms_from_options() {
 
 	using namespace basic::options;
 
@@ -111,30 +124,35 @@ void NMerPSSMEnergy::read_all_nmer_energy_tables() {
 	//check for pssm list file
 	if ( option[ OptionKeys::score::nmer_pssm_list ].user() ) {
 		std::string const pssm_list_fname( option[ OptionKeys::score::nmer_pssm_list ] );
-		TR << "reading NMerPSSMEnergy list from " << pssm_list_fname << std::endl;
-		utility::io::izstream in_stream( pssm_list_fname );
-		if (!in_stream.good()) {
-			utility_exit_with_message( "[ERROR] Error opening NMerPSSMEnergy list file" );
-		}
-		//now loop over all names in list
-		std::string pssm_fname;
-		while( getline( in_stream, pssm_fname ) ){
-			utility::vector1< std::string > const tokens( utility::split( pssm_fname ) );
-			//skip comments
-			if( tokens[ 1 ][ 0 ] == '#' ) continue;
-			NMerPSSMEnergy::read_nmer_energy_table( pssm_fname );
-		}
+		NMerPSSMEnergy::read_nmer_pssm_list( pssm_list_fname );
 	}
-	//else use single pssm file
-	else if( option[ OptionKeys::score::nmer_pssm ].user() ){
+	//use single pssm file
+	if( option[ OptionKeys::score::nmer_pssm ].user() ){
 		std::string const pssm_fname( option[ OptionKeys::score::nmer_pssm ] );
-		NMerPSSMEnergy::read_nmer_energy_table( pssm_fname );
+		NMerPSSMEnergy::read_nmer_pssm( pssm_fname );
+	}
+}
+
+//read energy table list
+void NMerPSSMEnergy::read_nmer_pssm_list( std::string const pssm_list_fname ) {
+	TR << "reading NMerPSSMEnergy list from " << pssm_list_fname << std::endl;
+	utility::io::izstream in_stream( pssm_list_fname );
+	if (!in_stream.good()) {
+		utility_exit_with_message( "[ERROR] Error opening NMerPSSMEnergy list file" );
+	}
+	//now loop over all names in list
+	std::string pssm_fname;
+	while( getline( in_stream, pssm_fname ) ){
+		utility::vector1< std::string > const tokens( utility::split( pssm_fname ) );
+		//skip comments
+		if( tokens[ 1 ][ 0 ] == '#' ) continue;
+		NMerPSSMEnergy::read_nmer_pssm( pssm_fname );
 	}
 }
 
 //load PSSM with AA x seqpos scores
 // PSSM format is 1 AA per line w/ nmer_length_ score vals
-void NMerPSSMEnergy::read_nmer_energy_table( std::string const pssm_fname ) {
+void NMerPSSMEnergy::read_nmer_pssm( std::string const pssm_fname ) {
 
 	TR << "reading NMerPSSMEnergy scores from " << pssm_fname << std::endl;
 	utility::io::izstream in_stream( pssm_fname );
@@ -154,7 +172,7 @@ void NMerPSSMEnergy::read_nmer_energy_table( std::string const pssm_fname ) {
 				+ pssm_fname + " has double entry for aa " + char_aa );
 		if( tokens.size() != nmer_length_ + 1 ) utility_exit_with_message( "[ERROR] NMer PSSM database file "
 				+ pssm_fname + " has wrong number entries at line " + line
-				+ "\n\tfound: " + utility::to_string( tokens.size() ) + " expected: " + utility::to_string( Size( nmer_length_ + 1 ) ) + "\nNote: Space delimited! No tabs!" );
+				+ "\n\tfound: " + utility::to_string( tokens.size() ) + " expected: " + utility::to_string( Size( nmer_length_ + 1 ) ) + "\nNote: Whitespace delimited!" );
 		utility::vector1< Real > seqpos_scores( nmer_length_, 0.0 );
 		for( Size ival = 2; ival <= tokens.size(); ++ival ){
 			Real const score( atof( tokens[ ival ].c_str() ) );
@@ -188,9 +206,6 @@ NMerPSSMEnergy::residue_energy(
 
 	if( all_nmer_pssms_.empty() ) return;
 	Size const seqpos( rsd.seqpos() );
-   //skip if not in protein 
-//	if( seqpos < nmer_nterm_ + 1 || seqpos > pose.total_residue() - nmer_cterm_ ) return;
-
 	//over each pssm
 	Size const n_pssms( all_nmer_pssms_.size() );
 	for( Size ipssm = 1; ipssm <= n_pssms; ++ipssm ){
@@ -205,12 +220,10 @@ NMerPSSMEnergy::residue_energy(
 		Size chain_begin( pose.conformation().chain_begin( pose.chain( seqpos ) ) );
 		Size chain_end( pose.conformation().chain_end( pose.chain( seqpos ) ) );
 		Size p1_seqpos_begin( seqpos - nmer_length_ + 1 < chain_begin ? chain_begin : seqpos - nmer_length_ + 1 );
-//		Size p1_seqpos_end( seqpos + nmer_length_ - 1 > chain_end ? chain_end : seqpos + nmer_length_ - 1 );
 		//will we run off end if we start p1 at seqpos?
 		Size p1_seqpos_end( seqpos + nmer_length_ - 1 > chain_end ? chain_end - nmer_length_ + 1 : seqpos );
 		//loop over each frame beginning
 		for( Size p1_seqpos = p1_seqpos_begin; p1_seqpos <= p1_seqpos_end; ++p1_seqpos ){
-			Real energy( 0.0 );
 			//get pssm index of seqpos in this p1 frame
 			Size rsd_iseq_nmer( seqpos - p1_seqpos + 1 );
 			//now go ahead and get pssm energy from this_nmer_pssm
@@ -218,8 +231,9 @@ NMerPSSMEnergy::residue_energy(
 
 			//skip this part if not doing gating
 			if( gate_pssm_scores_ ){
+				Real energy( 0.0 );
 				for( Size iseq_nmer = 1; iseq_nmer <= nmer_length_; ++iseq_nmer ){
-					Size iseq_pose( iseq_nmer + p1_seqpos - nmer_nterm_ - 1 );
+					Size iseq_pose( iseq_nmer + p1_seqpos - 1 );
 					//bail if we fall off end of chain
 					if( iseq_pose > chain_end ) break;
 					chemical::AA const aa( pose.residue( iseq_pose ).aa() );
@@ -228,9 +242,6 @@ NMerPSSMEnergy::residue_energy(
 					Real this_rsd_energy( this_nmer_pssm.find( aa )->second[ iseq_nmer ] );
 					energy += this_rsd_energy;
 				}
-				//normalize energy by pssm length
-				//otherwise we'd need diff score weighting for every diff length
-				energy /= nmer_length_;
 				//gate energy at pssm_scorecut, thus ignoring low-scoring nmers
 				//skip rsd_energy accumulation if total pssm score is low enough
 				if( energy < nmer_pssm_scorecut_ ) continue;

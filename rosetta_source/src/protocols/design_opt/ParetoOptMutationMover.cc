@@ -439,7 +439,9 @@ ParetoOptMutationMover::apply( core::pose::Pose & pose )
 
 		//get the point mut values
 		ptmut_calc->calc_point_mut_filters( start_pose, seqpos_aa_vals_vec_ );
-
+		if( seqpos_aa_vals_vec_.size() < 1 ){
+			utility_exit_with_message( "ERROR: No acceptable mutations found. All possible mutations failed at least one filter!" );
+		}
 		//this part sorts the seqpos/aa/val data so that we init with something good (1st)
 		//first over each seqpos by aa val, then over all seqpos by best aa val
 		for( Size ivec = 1; ivec <= seqpos_aa_vals_vec_.size(); ++ivec ){
@@ -509,6 +511,12 @@ ParetoOptMutationMover::apply( core::pose::Pose & pose )
 			}
 //			TR << "Generated " << new_poses.size() << " new poses from mutations at residue "
 //					<< resi << ". Filtering... " << std::endl;
+			//only update pfront poses if we found any new ones, else just skip this position,
+			//	because we know our current pose does pass all the filters
+			if( new_poses.size() < 1 ){
+				TR << "Unable to generate any new poses that pass all filters at position " << iseq << std::endl;
+				continue;
+			}
 			//filter new_poses for the pareto opt set
 			filter_pareto_opt_poses( new_poses, new_poses_filter_vals );
 			//and reset poses

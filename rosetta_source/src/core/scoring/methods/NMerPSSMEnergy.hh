@@ -91,18 +91,21 @@ public:
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
 
+	void read_nmer_pssm_list( std::string const );
+	void read_nmer_pssm( std::string const );
+	void nmer_length( core::Size const );
+	void gate_pssm_scores( bool const );
+	void nmer_pssm_scorecut( core::Real const );
 
 private:
 	utility::vector1< std::map< core::chemical::AA, utility::vector1< core::Real > > > all_nmer_pssms_;
 	core::Size nmer_length_;
-	core::Size nmer_nterm_;
 	core::Size nmer_cterm_;
 	bool gate_pssm_scores_;
 	core::Real nmer_pssm_scorecut_;
 
-	void read_nmer_energy_table( std::string const );
-	void read_all_nmer_energy_tables();
-	void initialize();
+	void read_nmer_pssms_from_options();
+	void initialize_from_options();
 	virtual
 	core::Size version() const;
 };

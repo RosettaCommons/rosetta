@@ -161,10 +161,7 @@ string_split_multi_delim( std::string const & in, std::string splitchars )
 	size_t i(0), j(0);
 	while ( j != std::string::npos ) {
 		//find first instance of any of the splitchars
-		for( platform::Size ichar = 1; ichar <= splitchars.size(); ++ichar ){
-			char splitchar( splitchars[ ichar ] );
-			j = std::min( j, in.find( splitchar, i ) );
-		}
+		j = in.find_first_of( splitchars, i );
 		parts.push_back( in.substr(i,j-i) );
 		i = j+1;
 	}

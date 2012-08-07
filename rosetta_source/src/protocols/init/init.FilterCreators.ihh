@@ -70,6 +70,7 @@
 #include <protocols/simple_filters/InterfaceSasaFilterCreator.hh>
 #include <protocols/simple_filters/InterfaceBindingEnergyDensityFilterCreator.hh>
 #include <protocols/simple_filters/NeighborTypeFilterCreator.hh>
+#include <protocols/simple_filters/NMerPSSMEnergyFilterCreator.hh>
 #include <protocols/simple_filters/PackStatFilterCreator.hh>
 #include <protocols/simple_filters/PoseInfoFilterCreator.hh>
 #include <protocols/simple_filters/RangeFilterCreator.hh>

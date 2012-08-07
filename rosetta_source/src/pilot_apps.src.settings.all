@@ -674,7 +674,7 @@ sources = {
 		#"metropolis_hastings"
 	],
 	"pilot/wendao" : [
-		#"test_bbmc",
+		"test_bbmc",
 	],
 	"pilot/chrisk" : [
 		#"rotamer_repack",

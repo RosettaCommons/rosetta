@@ -225,6 +225,7 @@ sources = {
 		"JumpNrEvaluatorCreator",
 		"NativeEvaluatorCreator",
 		"NeighborTypeFilter",
+		"NMerPSSMEnergyFilter",
 		"PackerNeighborGraphFilter",
 		"PackStatFilter",
 		"PalesEvaluator",

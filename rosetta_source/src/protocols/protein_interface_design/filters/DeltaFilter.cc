@@ -19,6 +19,7 @@
 #include <protocols/moves/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/import_pose/import_pose.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -39,6 +40,7 @@ DeltaFilter::DeltaFilter() :
 	lower_( false ),
 	upper_( true ),
 	unbound_( false ),
+	relax_unbound_( false ),
 	jump_( 0 ),
 	reference_pose_(NULL),
 	ref_baseline_( 1234567890.0 ) // unlikely "uninitialized" sentinel value
@@ -52,6 +54,16 @@ DeltaFilter::unbound() const{
 void
 DeltaFilter::unbound( bool const u ){
 	unbound_ = u;
+}
+
+bool
+DeltaFilter::relax_unbound() const{
+	return relax_unbound_;
+}
+
+void
+DeltaFilter::relax_unbound( bool const u ){
+	relax_unbound_ = u;
 }
 
 core::Size
@@ -146,6 +158,7 @@ DeltaFilter::unbind( core::pose::Pose & pose ) const{
 	protocols::rigid::RigidBodyTransMover rbtm( pose, jump() );
 	rbtm.step_size( 10000.0 );
 	rbtm.apply( pose );
+	if( relax_unbound() ) relax_mover()->apply( pose );
 }
 
 core::Real
@@ -186,11 +199,17 @@ DeltaFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ), filters ) );
 	relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover", "null" ), movers ) );
 	unbound( tag->getOption< bool >( "unbound", false ) );
+	relax_unbound( tag->getOption< bool >( "relax_unbound", false ) );
 	if( unbound() )
 		jump( tag->getOption< core::Size >( "jump", 1 ) );
 	// need to score the pose before packing...
 	if( tag->hasOption("reference_name") ){
 		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data );
+		TR << "baseline will be caculated once, when first needed..." << std::endl;
+	}
+	else if( tag->hasOption("reference_pdb") ){
+		std::string reference_pdb_filename( tag->getOption< std::string >( "reference_pdb", "" ) );
+		reference_pose_ = core::import_pose::pose_from_pdb( reference_pdb_filename );
 		TR << "baseline will be caculated once, when first needed..." << std::endl;
 	}
 	else{

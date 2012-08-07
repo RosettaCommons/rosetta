@@ -358,13 +358,14 @@ PointMutationCalculator::eval_filters(
 	vals.clear();
 	for( Size ifilt = 1; ifilt <= filters_.size(); ++ifilt ){
 		//check if this filter passes, AND it with current value of pass/fail
-		filter_pass = filter_pass && ( filters_[ ifilt ] )->apply( pose );
+		bool this_filter_pass( ( filters_[ ifilt ] )->apply( pose ) );
+		filter_pass = filter_pass && this_filter_pass;
 		//val sign is switched if type is high
 		Real const flip_sign( sample_types_[ ifilt ] == "high" ? -1 : 1 );
 		Real const val( flip_sign * ( filters_[ ifilt ] )->report_sm( pose ) );
 		//TODO: option to bail at first fail??
 		TR<< " :: Filter " << ifilt;
-		if( !filter_pass ) TR << " fail, ";
+		if( !this_filter_pass ) TR << " fail, ";
 		else TR << " pass, ";
 		TR << " value "<< val << " ::";
 		vals.push_back( val );
