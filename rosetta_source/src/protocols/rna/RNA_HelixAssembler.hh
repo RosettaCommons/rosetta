@@ -21,7 +21,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/rna/RNA_IdealCoord.fwd.hh>
 #include <core/scoring/rna/RNA_IdealCoord.hh>
 
 #include <core/types.hh>
