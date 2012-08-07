@@ -200,6 +200,7 @@ RNA_HelixAssembler::set_Aform_torsions( pose::Pose & pose, Size const & n )
 
 	if (use_phenix_geo_) {
 		ideal_coord_.apply(pose, n);
+		pose.set_torsion( TorsionID( n, CHI, 1),  CHI_A_FORM);
 	} else {
 		pose.set_torsion( TorsionID( n, CHI, 1),  CHI_A_FORM);
 		pose.set_torsion( TorsionID( n, CHI, 2),  NU2_A_FORM);
