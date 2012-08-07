@@ -1,6 +1,3 @@
-namespace RBSegmentRelax { IntegerOptionKey const nrbmoves( "RBSegmentRelax:nrbmoves" );  }
-namespace RBSegmentRelax { IntegerOptionKey const nrboutercycles( "RBSegmentRelax:nrboutercycles" );  }
-namespace RBSegmentRelax { StringOptionKey const rb_scorefxn( "RBSegmentRelax:rb_scorefxn" );  }
 namespace RBSegmentRelax { BooleanOptionKey const skip_fragment_moves( "RBSegmentRelax:skip_fragment_moves" );  }
 namespace RBSegmentRelax { BooleanOptionKey const skip_seqshift_moves( "RBSegmentRelax:skip_seqshift_moves" );  }
 namespace RBSegmentRelax { BooleanOptionKey const skip_rb_moves( "RBSegmentRelax:skip_rb_moves" );  }
@@ -461,6 +458,10 @@ namespace optimization { BooleanOptionKey const optimization( "optimization" ); 
 namespace optimization { IntegerOptionKey const default_max_cycles( "optimization:default_max_cycles" );  }
 namespace optimization { RealOptionKey const armijo_min_stepsize( "optimization:armijo_min_stepsize" );  }
 namespace optimization { IntegerOptionKey const lbfgs_M( "optimization:lbfgs_M" );  }
+namespace optimization { RealOptionKey const scale_d( "optimization:scale_d" );  }
+namespace optimization { RealOptionKey const scale_theta( "optimization:scale_theta" );  }
+namespace optimization { RealOptionKey const scale_rb( "optimization:scale_rb" );  }
+namespace optimization { RealOptionKey const scale_rbangle( "optimization:scale_rbangle" );  }
 namespace swa { BooleanOptionKey const swa( "swa" );  }
 namespace swa { StringVectorOptionKey const s1( "swa:s1" );  }
 namespace swa { StringVectorOptionKey const s2( "swa:s2" );  }

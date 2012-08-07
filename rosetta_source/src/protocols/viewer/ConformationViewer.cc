@@ -26,14 +26,16 @@
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/tree/Atom.hh>
 
+#include <core/scoring/electron_density/ElectronDensity.hh>
+
 #include <core/types.hh>
 
 // Project headers
 #include <utility/pointer/access_ptr.hh>
 #include <utility/vector1.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
+//#include <basic/options/option.hh>
+//#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 	// using -edensity::mapfile option to determine whether to try to display density contours or not
 
 // C++ Headers
@@ -116,11 +118,13 @@ ConformationViewer::display_func()
 	pthread_mutex_lock( &residues_mut_ );
 
 	//display_residues( residues_, anchor_id_ ); // in viewer.cc
-	if ( basic::options::option[ basic::options::OptionKeys::edensity::mapfile ].user() )
+	const core::scoring::electron_density::ElectronDensity& edm = core::scoring::electron_density::getDensityMap();
+	if ( edm.isMapLoaded() )
 		draw_conformation_and_density( residues_, secstruct_, triangles_ , current_gs_,
-																	 residues_[ anchor_id_.rsd() ]->xyz( anchor_id_.atomno() ));
+			residues_[ anchor_id_.rsd() ]->xyz( anchor_id_.atomno() ));
 	else
-		draw_conformation( residues_, secstruct_, current_gs_, residues_[ anchor_id_.rsd() ]->xyz( anchor_id_.atomno() ) ); // in viewer.cc
+		draw_conformation( residues_, secstruct_, current_gs_, 
+			residues_[ anchor_id_.rsd() ]->xyz(anchor_id_.atomno() ) ); // in viewer.cc
 
 
 	pthread_mutex_unlock( &residues_mut_ );

@@ -11272,6 +11272,26 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>number of corrections to approximate the inverse hessian matrix.</dd><br>
 <dd>Default: 64</dd><br>
 </dl>
+<dl>
+<dt><b>-scale_d</b> \<Real\><dt>
+<dd>max cycles for MinimizerOptions</dd><br>
+<dd>Default: 100</dd><br>
+</dl>
+<dl>
+<dt><b>-scale_theta</b> \<Real\><dt>
+<dd>max cycles for MinimizerOptions</dd><br>
+<dd>Default: 10</dd><br>
+</dl>
+<dl>
+<dt><b>-scale_rb</b> \<Real\><dt>
+<dd>max cycles for MinimizerOptions</dd><br>
+<dd>Default: 1</dd><br>
+</dl>
+<dl>
+<dt><b>-scale_rbangle</b> \<Real\><dt>
+<dd>max cycles for MinimizerOptions</dd><br>
+<dd>Default: 10</dd><br>
+</dl>
  </li>
 <li><h2>swa</h2>
 <dl>

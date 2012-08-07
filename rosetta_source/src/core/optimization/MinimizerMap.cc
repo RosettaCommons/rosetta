@@ -40,6 +40,9 @@
 // #include <utility/exit.hh>
 // #include <utility/io/orstream.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/optimization.OptionKeys.gen.hh>
+
 // C++ headers
 #include <cstdlib>
 
@@ -164,20 +167,20 @@ MinimizerMap::torsion_scale_factor(
 		factor = rad2deg;
 	} else if ( type == id::THETA ) {
 		// bond angle
-		factor = rad2deg * 10.0;
+		factor = rad2deg * basic::options::option[ basic::options::OptionKeys::optimization::scale_theta ]();
 	} else if ( type == id::D ) {
 		// bond length
-		factor = 100.0;
+		factor = basic::options::option[ basic::options::OptionKeys::optimization::scale_d ]();
 	} else if ( type == id::RB4 ||
 			type == id::RB5 ||
 			type == id::RB6 ) {
 		// the jump_rb_delta's are stored in degrees!!!
-		factor = 1.0;
+		factor = basic::options::option[ basic::options::OptionKeys::optimization::scale_rbangle ]();
 	} else if ( type == id::RB1 ||
 			type == id::RB2 ||
 			type == id::RB3 ) {
 		// rigid body translation
-		factor = 10.0;
+		factor = basic::options::option[ basic::options::OptionKeys::optimization::scale_rb ]();
 	}
 	return factor;
 }
