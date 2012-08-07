@@ -76,6 +76,7 @@ RNA_HelixAssembler::RNA_HelixAssembler():
 	verbose_( true ),
 	random_perturbation_( false ),
 	minimize_all_( false ),
+	use_phenix_geo_( false ),
 	ideal_jump( "RT -0.994805 -0.0315594 0.0967856 -0.0422993 0.992919 -0.111004 -0.092597 -0.114522 -0.989096 6.34696 -0.449942 0.334582 " ),
 	rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA ) ),
 	ALPHA_A_FORM( -64.11),
@@ -118,6 +119,15 @@ RNA_HelixAssembler::get_name() const {
 	return "RNA_HelixAssembler";
 }
 
+void RNA_HelixAssembler::use_phenix_geo( bool const setting )
+{
+	use_phenix_geo_ = setting;
+	if (setting) {
+		core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna_phenix" );
+	} else {
+		core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA );
+	}
+}
 ////////////////////////////////////////////////////////////////////////////////
 void RNA_HelixAssembler::apply( core::pose::Pose & pose, std::string const & full_sequence )
 {
@@ -188,9 +198,13 @@ RNA_HelixAssembler::set_Aform_torsions( pose::Pose & pose, Size const & n )
 	pose.set_torsion( TorsionID( n, BB, 5),  EPSILON_A_FORM);
 	pose.set_torsion( TorsionID( n, BB, 6),  ZETA_A_FORM);
 
-	pose.set_torsion( TorsionID( n, CHI, 1),  CHI_A_FORM);
-	pose.set_torsion( TorsionID( n, CHI, 2),  NU2_A_FORM);
-	pose.set_torsion( TorsionID( n, CHI, 3),  NU1_A_FORM);
+	if (use_phenix_geo_) {
+		ideal_coord_.apply(pose, n);
+	} else {
+		pose.set_torsion( TorsionID( n, CHI, 1),  CHI_A_FORM);
+		pose.set_torsion( TorsionID( n, CHI, 2),  NU2_A_FORM);
+		pose.set_torsion( TorsionID( n, CHI, 3),  NU1_A_FORM);
+	}
 }
 
 /////////////////////////////////////////////////
@@ -220,9 +234,6 @@ RNA_HelixAssembler::build_on_base_pair( pose::Pose & pose, Size const & n, char 
 	pose.set_torsion( TorsionID( n, BB, 4),  DELTA_A_FORM);
 	pose.set_torsion( TorsionID( n, BB, 5),  EPSILON_A_FORM);
 	pose.set_torsion( TorsionID( n, BB, 6),  ZETA_A_FORM);
-	pose.set_torsion( TorsionID( n, CHI, 1),  CHI_A_FORM);
-	pose.set_torsion( TorsionID( n, CHI, 2),  NU2_A_FORM);
-	pose.set_torsion( TorsionID( n, CHI, 3),  NU1_A_FORM);
 
 	pose.set_torsion( TorsionID( n+1, BB, 1),  ALPHA_A_FORM);
 	pose.set_torsion( TorsionID( n+1, BB, 2),   BETA_A_FORM);
@@ -230,12 +241,20 @@ RNA_HelixAssembler::build_on_base_pair( pose::Pose & pose, Size const & n, char 
 	pose.set_torsion( TorsionID( n+1, BB, 4),  DELTA_A_FORM);
 	pose.set_torsion( TorsionID( n+1, BB, 5),  EPSILON_A_FORM);
 	pose.set_torsion( TorsionID( n+1, BB, 6),  ZETA_A_FORM);
-	pose.set_torsion( TorsionID( n+1, CHI, 1),  CHI_A_FORM);
-	pose.set_torsion( TorsionID( n+1, CHI, 2),  NU2_A_FORM);
-	pose.set_torsion( TorsionID( n+1, CHI, 3),  NU1_A_FORM);
 
 	pose.set_torsion( TorsionID( n+2, BB, 1),  ALPHA_A_FORM);
 
+	if (use_phenix_geo_) {
+		ideal_coord_.apply(pose, n);
+		ideal_coord_.apply(pose, n+1);
+	} else {
+		pose.set_torsion( TorsionID( n, CHI, 1),  CHI_A_FORM);
+		pose.set_torsion( TorsionID( n, CHI, 2),  NU2_A_FORM);
+		pose.set_torsion( TorsionID( n, CHI, 3),  NU1_A_FORM);
+		pose.set_torsion( TorsionID( n+1, CHI, 1),  CHI_A_FORM);
+		pose.set_torsion( TorsionID( n+1, CHI, 2),  NU2_A_FORM);
+		pose.set_torsion( TorsionID( n+1, CHI, 3),  NU1_A_FORM);
+	}
 
 	// perturb all torsion angles except those at sugar puckers (DELTA, NU1, NU2 )
 	if ( random_perturbation_ ) {

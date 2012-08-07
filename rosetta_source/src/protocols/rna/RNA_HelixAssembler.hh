@@ -22,6 +22,7 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/rna/RNA_IdealCoord.hh>
 
 #include <core/types.hh>
 
@@ -59,6 +60,12 @@ public:
 	void
 	set_minimize_all( bool const & setting ) { minimize_all_ = setting; }
 
+	void
+	set_scorefxn( core::scoring::ScoreFunctionOP setting ) { scorefxn = setting; }
+
+	void
+	use_phenix_geo( bool const setting );
+
 private:
 
 	void
@@ -79,6 +86,7 @@ private:
 	bool verbose_;
 	bool random_perturbation_;
 	bool minimize_all_;
+	bool use_phenix_geo_;
 	std::string const ideal_jump;
 
 	core::chemical::ResidueTypeSetCAP rsd_set;
@@ -96,6 +104,8 @@ private:
 	core::Real perturb_amplitude_;
 
 	core::scoring::ScoreFunctionOP scorefxn;
+
+	core::scoring::rna::RNA_IdealCoord ideal_coord_;
 
 }; // class RNA_HelixAssembler
 

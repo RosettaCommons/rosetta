@@ -27,7 +27,7 @@
 
 // AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
@@ -72,6 +72,7 @@
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 //Auto Headers
 using namespace core;
@@ -88,6 +89,7 @@ using io::pdb::dump_pdb;
 // to have them in a namespace use OPT_1GRP_KEY( Type, grp, key ) --> OptionKey::grp::key
 OPT_KEY( String,  seq )
 OPT_KEY( Boolean,  minimize_all )
+OPT_KEY( Boolean,  use_phenix_geo )
 
 /////////////////////////////////////////////////
 void
@@ -121,8 +123,13 @@ rna_build_helix_test(){
 	}
 	SilentFileData silent_file_data;
 
+	bool const is_use_phenix_geo = option[ use_phenix_geo] ();
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	if (is_use_phenix_geo) {
+		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna_phenix" );
+	} else {
+		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	}		
 
 	pose::Pose pose;
 	pose::make_pose_from_sequence( pose, full_sequence,	*rsd_set );
@@ -130,6 +137,13 @@ rna_build_helix_test(){
 	RNA_HelixAssembler rna_helix_assembler;
 	//rna_helix_assembler.random_perturbation( true );
 	rna_helix_assembler.set_minimize_all( option[ minimize_all ]() );
+	rna_helix_assembler.use_phenix_geo( is_use_phenix_geo );
+	if ( option[ basic::options::OptionKeys::score::weights ].user() ) {
+		std::string score_weight_file= option[ basic::options::OptionKeys::score::weights ]();
+		core::scoring::ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( score_weight_file );
+		rna_helix_assembler.set_scorefxn ( scorefxn );
+	}
+
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
 	Size const nstruct = option[ out::nstruct ];
@@ -170,6 +184,7 @@ main( int argc, char * argv [] )
 
 	NEW_OPT( seq, "Input sequence", "" );
 	NEW_OPT( minimize_all, "minimize all torsions in respone to each base pair addition", false );
+	NEW_OPT( use_phenix_geo, "Use ideal geometry from phenix", false );
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup
