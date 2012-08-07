@@ -247,6 +247,8 @@ RNA_HelixAssembler::build_on_base_pair( pose::Pose & pose, Size const & n, char 
 	if (use_phenix_geo_) {
 		ideal_coord_.apply(pose, n);
 		ideal_coord_.apply(pose, n+1);
+		pose.set_torsion( TorsionID( n, CHI, 1),  CHI_A_FORM);
+		pose.set_torsion( TorsionID( n+1, CHI, 1),  CHI_A_FORM);
 	} else {
 		pose.set_torsion( TorsionID( n, CHI, 1),  CHI_A_FORM);
 		pose.set_torsion( TorsionID( n, CHI, 2),  NU2_A_FORM);
