@@ -108,6 +108,7 @@ basic::options::BooleanOptionKey const publication("publication");
 basic::options::IntegerOptionKey const n_tail_res("n_tail_res");
 basic::options::BooleanOptionKey const two_ubiquitins("two_ubiquitins");
 basic::options::FileVectorOptionKey const extra_bodies( "extra_bodies" );
+basic::options::IntegerOptionKey const UB_lys("UB_lys");
 
 //I know this is illegal; this is included here to be after the option key definitions, so that extra_bodies will be in scope for the code in this header
 #include <apps/public/scenarios/chemically_conjugated_docking/Gp_extra_bodies.hh>
@@ -285,25 +286,26 @@ public:
 		atomIDs[8] = core::id::AtomID( ubq_rsd_type.atom_index("C" ), complexlength-1 );
 
 		if(two_ubiquitins_) {
-			//now add in the second ubiquitin - link to thioester C=O from lys48
-			complex.conformation().append_residue_by_jump(UBQ_second->residue(48), complexlength, "C", "NZ", true);
-			for( core::Size i(49); i <= UBQlength; ++i) complex.conformation().append_polymer_residue_after_seqpos(UBQ_second->residue(i), complex.total_residue(), false);
-			for( core::Size i(47); i >= 1; --i) complex.conformation().prepend_polymer_residue_before_seqpos(UBQ_second->residue(i), complexlength+1, false);
+			//now add in the second ubiquitin - link to thioester C=O from UB_lys
+			core::Size const ub_lys_pos(basic::options::option[UB_lys].value());
+			complex.conformation().append_residue_by_jump(UBQ_second->residue(ub_lys_pos), complexlength, "C", "NZ", true);
+			for( core::Size i(ub_lys_pos+1); i <= UBQlength; ++i) complex.conformation().append_polymer_residue_after_seqpos(UBQ_second->residue(i), complex.total_residue(), false);
+			for( core::Size i(ub_lys_pos-1); i >= 1; --i) complex.conformation().prepend_polymer_residue_before_seqpos(UBQ_second->residue(i), complexlength+1, false);
 
 			//check it!
 			TR << complex.fold_tree() << std::endl;
 
 			//continue paking atomIDs vector
 			core::chemical::ResidueType const & lys_rsd_type( fa_standard->name_map("LYS") );
-			//atomIDs[LYS_2HZ] = core::id::AtomID( lys_rsd_type.atom_index("2HZ"), complexlength + 48);
-			//atomIDs[LYS_NZ]  = core::id::AtomID( lys_rsd_type.atom_index("NZ" ), complexlength + 48);
-			//atomIDs[LYS_CE]  = core::id::AtomID( lys_rsd_type.atom_index("CE" ), complexlength + 48);
-			//atomIDs[LYS_CD]  = core::id::AtomID( lys_rsd_type.atom_index("CD" ), complexlength + 48);
+			//atomIDs[LYS_2HZ] = core::id::AtomID( lys_rsd_type.atom_index("2HZ"), complexlength + ub_lys_pos);
+			//atomIDs[LYS_NZ]  = core::id::AtomID( lys_rsd_type.atom_index("NZ" ), complexlength + ub_lys_pos);
+			//atomIDs[LYS_CE]  = core::id::AtomID( lys_rsd_type.atom_index("CE" ), complexlength + ub_lys_pos);
+			//atomIDs[LYS_CD]  = core::id::AtomID( lys_rsd_type.atom_index("CD" ), complexlength + ub_lys_pos);
 
-			atomIDs.push_back(core::id::AtomID( lys_rsd_type.atom_index("2HZ"), complexlength + 48));
-			atomIDs.push_back(core::id::AtomID( lys_rsd_type.atom_index("NZ" ), complexlength + 48));
-			atomIDs.push_back(core::id::AtomID( lys_rsd_type.atom_index("CE" ), complexlength + 48));
-			atomIDs.push_back(core::id::AtomID( lys_rsd_type.atom_index("CD" ), complexlength + 48));
+			atomIDs.push_back(core::id::AtomID( lys_rsd_type.atom_index("2HZ"), complexlength + ub_lys_pos));
+			atomIDs.push_back(core::id::AtomID( lys_rsd_type.atom_index("NZ" ), complexlength + ub_lys_pos));
+			atomIDs.push_back(core::id::AtomID( lys_rsd_type.atom_index("CE" ), complexlength + ub_lys_pos));
+			atomIDs.push_back(core::id::AtomID( lys_rsd_type.atom_index("CD" ), complexlength + ub_lys_pos));
 
 			//ok, jump is in place (numbered 1) - now we have to make a statement about where to put it
 			//relevant atoms for placing NZ
@@ -311,21 +313,21 @@ public:
 			core::Vector const & O_xyz(complex.residue(complexlength).atom("O").xyz());
 			//TR << "C " << C_xyz << " O " << O_xyz << std::endl;
 			core::Vector newpos(C_xyz+(3*(C_xyz-O_xyz)/O_xyz.distance(C_xyz)));
-			core::Vector oldpos(complex.residue(complexlength+48).atom("NZ").xyz());
+			core::Vector oldpos(complex.residue(complexlength+ub_lys_pos).atom("NZ").xyz());
 
-			//core::Vector oldposC(complex.residue(complexlength+48).atom("CE").xyz());
+			//core::Vector oldposC(complex.residue(complexlength+ub_lys_pos).atom("CE").xyz());
 			//core::Vector newposC(newpos+(oldpos-oldposC));
 
 			//force NZ (alone) to proper position - this breaks the lysine
-			complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("NZ"), complexlength+48), newpos);
-			//	complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("CE"), complexlength+48), newposC);
+			complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("NZ"), complexlength+ub_lys_pos), newpos);
+			//	complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("CE"), complexlength+ub_lys_pos), newposC);
 
 			//get a copy of that jump
-			core::kinematics::Jump newjump(complex.atom_tree().jump(core::id::AtomID(lys_rsd_type.atom_index("NZ"), complexlength+48)));
+			core::kinematics::Jump newjump(complex.atom_tree().jump(core::id::AtomID(lys_rsd_type.atom_index("NZ"), complexlength+ub_lys_pos)));
 
 			//reset NZ position to fix the lysine
-			complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("NZ"), complexlength+48), oldpos);
-			//	complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("CE"), complexlength+48), oldposC);
+			complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("NZ"), complexlength+ub_lys_pos), oldpos);
+			//	complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("CE"), complexlength+ub_lys_pos), oldposC);
 
 			//reapply the properly-calculated jump
 			complex.conformation().set_jump_now(1, newjump);
@@ -387,6 +389,11 @@ public:
 		//prevent repacking at linkage cysteine!
 		PreventRepackingOP prevent(new PreventRepacking);
 		prevent->include_residue(E2_cys);
+		if(two_ubiquitins_) {                                                        	
+			//prevent repacking at the lysine!	   
+			core::Size const ub_lys_pos(basic::options::option[UB_lys].value());
+			prevent->include_residue(ub_lys_pos);
+ 		}
 		task_factory_->push_back(prevent);
 
 		//old way - this is not wrong, but it is inferior to the method below
@@ -860,7 +867,7 @@ int main( int argc, char* argv[] )
 	option.add( n_tail_res, "Number of c-terminal \"tail\" residues to make flexible (terminus inclusive)").def(3);
 	option.add( two_ubiquitins, "Mind-blowing - use two ubiquitins (assembled for a K48 linkage) to try to examine the transition state.  Don't use this option unless trying to reproduce publication XXXX").def(false);
 	option.add( extra_bodies, "extra structures to add before modeling.  Should be in the coordinate frame of the non-moving partner.  Will not move during modeling.  Will be detected as part of the nonmoving body for repacking purposes.").def("");
-
+	option.add( UB_lys, "which Lys on the second UB will be conjugated").def(48);
 	//initialize options
 	devel::init(argc, argv);
 	basic::prof_reset();
