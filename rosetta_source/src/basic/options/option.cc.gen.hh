@@ -2328,8 +2328,8 @@ option.add( basic::options::OptionKeys::optimization::armijo_min_stepsize, "min 
 option.add( basic::options::OptionKeys::optimization::lbfgs_M, "number of corrections to approximate the inverse hessian matrix." ).def(64);
 option.add( basic::options::OptionKeys::optimization::scale_d, "max cycles for MinimizerOptions" ).def(100);
 option.add( basic::options::OptionKeys::optimization::scale_theta, "max cycles for MinimizerOptions" ).def(10);
-option.add( basic::options::OptionKeys::optimization::scale_rb, "max cycles for MinimizerOptions" ).def(1);
-option.add( basic::options::OptionKeys::optimization::scale_rbangle, "max cycles for MinimizerOptions" ).def(10);
+option.add( basic::options::OptionKeys::optimization::scale_rb, "max cycles for MinimizerOptions" ).def(10);
+option.add( basic::options::OptionKeys::optimization::scale_rbangle, "max cycles for MinimizerOptions" ).def(1);
 option.add( basic::options::OptionKeys::swa::swa, "swa option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::swa::s1, "input file(s)" );
 option.add( basic::options::OptionKeys::swa::s2, "input file(s)" );
