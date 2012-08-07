@@ -117,7 +117,7 @@ NMerPSSMEnergyFilter::compute_residue(
 	core::pose::Pose const & pose,
 	core::Size const seqpos
 ) const {
-	assert( seqpos <= in_pose.total_residue() );
+	assert( seqpos <= pose.total_residue() );
 	//TR<< "Calculating nmer_pssm energies at seqpos: " << seqpos << std::endl;
 	using namespace core::scoring;
 	EnergyMap emap; //we need to zero out the emap each time!
