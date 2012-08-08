@@ -462,7 +462,7 @@ OnTheFlyInteractionGraph::initialize(
 void
 OnTheFlyInteractionGraph::set_score_function( ScoreFunction const & sfxn )
 {
-	score_function_ = new scoring::ScoreFunction( sfxn );
+	score_function_ = sfxn.clone();
 	if ( pose_ ) (*score_function_)(*pose_); // rescore the pose with the input score function
 }
 
