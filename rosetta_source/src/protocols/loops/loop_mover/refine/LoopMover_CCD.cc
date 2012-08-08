@@ -304,12 +304,12 @@ void LoopMover_Refine_CCD::apply(
 		std::min( max_inner_cycles_, fast ? loops()->loop_size() : Size(10)*loops()->loop_size() ) );
 
 	// scorefxn
-	scoring::ScoreFunctionOP scorefxn;
-	if ( scorefxn() != 0 ) scorefxn = scorefxn()->clone();
-	else scorefxn = get_fa_scorefxn();
+	scoring::ScoreFunctionOP local_scorefxn;
+	if ( scorefxn() != 0 ) local_scorefxn = scorefxn()->clone();
+	else local_scorefxn = get_fa_scorefxn();
 
 	// confirm that chainbreak weight is set
-	scorefxn->set_weight( chainbreak, 1. * 10. / 3. );
+	local_scorefxn->set_weight( chainbreak, 1. * 10. / 3. );
 
 	// monte carlo
 	Real const gamma(
@@ -317,9 +317,9 @@ void LoopMover_Refine_CCD::apply(
 
 	Real temperature( temp_initial_ );
 	// need to make sure we have scored before we ask for a tenA graph later...
-	(*scorefxn)(pose);
+	(*local_scorefxn)(pose);
 
-	protocols::moves::MonteCarlo mc( pose, *scorefxn, temperature );
+	protocols::moves::MonteCarlo mc( pose, *local_scorefxn, temperature );
 	// minimizer
 	AtomTreeMinimizerOP minimizer;
 	MinimizerOptions options( "dfpmin", 0.001, true /*use_nblist*/, false /*deriv_check*/ );
@@ -367,7 +367,7 @@ void LoopMover_Refine_CCD::apply(
 		             // does nothing if pose is not symm
 		this_packer_task->restrict_to_residues( allow_repacked );
 	}
-	pack::pack_rotamers( pose, *scorefxn, this_packer_task );
+	pack::pack_rotamers( pose, *local_scorefxn, this_packer_task );
 	std::string move_type = "repack";
 	mc.boltzmann( pose, move_type );
 	mc.show_scores();
@@ -375,8 +375,8 @@ void LoopMover_Refine_CCD::apply(
 	if (local_debug) {
 		pose.dump_pdb("tmp_fa_repack.pdb");
 		std::ofstream out("score.tmp_repack_fa");
-		out << "scoring for repack_fa " << (*scorefxn)(pose) << std::endl;
-		scorefxn->show( out );
+		out << "scoring for repack_fa " << (*local_scorefxn)(pose) << std::endl;
+		local_scorefxn->show( out );
 		out << pose.energies();
 	}
 
@@ -399,12 +399,12 @@ void LoopMover_Refine_CCD::apply(
 
 	for (Size i=1; i<=outer_cycles_; ++i) {
 		// increase CHAINBREAK weight and update monte carlo
-		scorefxn->set_weight( chainbreak, Real(i)*10.0/3.0 );
-		mc.score_function( *scorefxn );
+		local_scorefxn->set_weight( chainbreak, Real(i)*10.0/3.0 );
+		mc.score_function( *local_scorefxn );
 		// recover low
 		mc.recover_low( pose );
 		// score info
-		if ( verbose ) tr() << "cycle: " << i << "  " << (*scorefxn)(pose) << std::endl;
+		if ( verbose ) tr() << "cycle: " << i << "  " << (*local_scorefxn)(pose) << std::endl;
 		for ( Size j=1; j<=inner_cycles; ++j ) {
 			temperature *= gamma;
 			mc.set_temperature( temperature );
@@ -421,8 +421,8 @@ void LoopMover_Refine_CCD::apply(
 				setup_movemap( pose, one_loop, allow_repacked, mm_one_loop );
 
 				if (local_debug) {
-					tr() << "chutmp-debug small_move-0: " << "  " << (*scorefxn)(pose) << std::endl;
-					tr() << "small_move-0: " << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
+					tr() << "chutmp-debug small_move-0: " << "  " << (*local_scorefxn)(pose) << std::endl;
+					tr() << "small_move-0: " << pose.energies().total_energies().weighted_string_of( local_scorefxn->weights() )
 										<< " rmsd: " << F(9,3,loop_rmsd( pose, native_pose, *loops() )) << std::endl;
 					pose.dump_pdb("small_move-0.pdb");
 				}
@@ -431,45 +431,45 @@ void LoopMover_Refine_CCD::apply(
 				small_moves.apply( pose );
 
 				if (local_debug) {
-					tr() << "chutmp-debug small_move-1: " << "  " << (*scorefxn)(pose) << std::endl;
-					tr() << "small_move-1: " << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
+					tr() << "chutmp-debug small_move-1: " << "  " << (*local_scorefxn)(pose) << std::endl;
+					tr() << "small_move-1: " << pose.energies().total_energies().weighted_string_of( local_scorefxn->weights() )
 										<< " rmsd: " << F(9,3,loop_rmsd( pose, native_pose, *loops() )) << std::endl;
 					pose.dump_pdb("small_move-1.pdb");
 					std::ofstream out("score.small_move_1");
-					out << "scoring of input_pose " << (*scorefxn)(pose) << std::endl;
-					scorefxn->show( out );
+					out << "scoring of input_pose " << (*local_scorefxn)(pose) << std::endl;
+					local_scorefxn->show( out );
 					out << pose.energies();
 				}
 
 				if (! it->is_terminal( pose ) ) ccd_close_loops( pose, one_loop, *mm_one_loop);
 
 				if (local_debug) {
-					tr() << "chutmp-debug small_move-2: " << "  " << (*scorefxn)(pose) << std::endl;
-					tr() << "small_move-2: " << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
+					tr() << "chutmp-debug small_move-2: " << "  " << (*local_scorefxn)(pose) << std::endl;
+					tr() << "small_move-2: " << pose.energies().total_energies().weighted_string_of( local_scorefxn->weights() )
 										<< " rmsd: " << F(9,3,loop_rmsd( pose, native_pose, *loops() )) << std::endl;
 					pose.dump_pdb("small_move-2.pdb");
 					std::ofstream out("score.small_move_2");
-					out << "scoring of input_pose " << (*scorefxn)(pose) << std::endl;
-					scorefxn->show( out );
+					out << "scoring of input_pose " << (*local_scorefxn)(pose) << std::endl;
+					local_scorefxn->show( out );
 					out << pose.energies();
 				}
 
-				pack::rotamer_trials( pose, *scorefxn, this_packer_task );
+				pack::rotamer_trials( pose, *local_scorefxn, this_packer_task );
 
 				if (local_debug) {
-					tr() << "chutmp-debug small_move-3: " << "  " << (*scorefxn)(pose) << std::endl;
-					tr() << "small_move-3: " << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
+					tr() << "chutmp-debug small_move-3: " << "  " << (*local_scorefxn)(pose) << std::endl;
+					tr() << "small_move-3: " << pose.energies().total_energies().weighted_string_of( local_scorefxn->weights() )
 										<< " rmsd: " << F(9,3,loop_rmsd( pose, native_pose, *loops() )) << std::endl;
 					pose.dump_pdb("small_move-3.pdb");
 				}
 
 				setup_movemap( pose, *loops(), allow_repacked, mm_all_loops );
 				if(flank_residue_min_){add_loop_flank_residues_bb_to_movemap(*loops(), *mm_all_loops); } // added by JQX
-				minimizer->run( pose, *mm_all_loops, *scorefxn, options );
+				minimizer->run( pose, *mm_all_loops, *local_scorefxn, options );
 
 				if (local_debug) {
-					tr() << "chutmp-debug small_move-4: " << "  " << (*scorefxn)(pose) << std::endl;
-					tr() << "small_move-4: " << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
+					tr() << "chutmp-debug small_move-4: " << "  " << (*local_scorefxn)(pose) << std::endl;
+					tr() << "small_move-4: " << pose.energies().total_energies().weighted_string_of( local_scorefxn->weights() )
 										<< " rmsd: " << F(9,3,loop_rmsd( pose, native_pose, *loops() )) << std::endl;
 					pose.dump_pdb("small_move-4.pdb");
 				}
@@ -478,8 +478,8 @@ void LoopMover_Refine_CCD::apply(
 				mc.boltzmann( pose, move_type );
 
 				if (local_debug) {
-					tr() << "chutmp-debug small_move-5: " << "  " << (*scorefxn)(pose) << std::endl;
-					tr() << "small_move-5: " << pose.energies().total_energies().weighted_string_of( scorefxn->weights() )
+					tr() << "chutmp-debug small_move-5: " << "  " << (*local_scorefxn)(pose) << std::endl;
+					tr() << "small_move-5: " << pose.energies().total_energies().weighted_string_of( local_scorefxn->weights() )
 										<< " rmsd: " << F(9,3,loop_rmsd( pose, native_pose, *loops() )) << std::endl;
 					pose.dump_pdb("small_move-5.pdb");
 				}
@@ -496,11 +496,11 @@ void LoopMover_Refine_CCD::apply(
 				protocols::simple_moves::ShearMover shear_moves( mm_one_loop, temperature, nmoves );
 				shear_moves.apply( pose );
 				if (! it->is_terminal( pose ) ) ccd_close_loops( pose, one_loop, *mm_one_loop);
-				pack::rotamer_trials( pose, *scorefxn, this_packer_task );
-				(*scorefxn)(pose); // update 10A nbr graph, silly way to do this
+				pack::rotamer_trials( pose, *local_scorefxn, this_packer_task );
+				(*local_scorefxn)(pose); // update 10A nbr graph, silly way to do this
 				setup_movemap( pose, *loops(), allow_repacked, mm_all_loops );
 				if(flank_residue_min_){add_loop_flank_residues_bb_to_movemap(*loops(), *mm_all_loops); } // added by JQX
-				minimizer->run( pose, *mm_all_loops, *scorefxn, options );
+				minimizer->run( pose, *mm_all_loops, *local_scorefxn, options );
 				std::string move_type = "shear_ccd_min";
 				mc.boltzmann( pose, move_type );
 				mc.show_scores();
@@ -514,7 +514,7 @@ void LoopMover_Refine_CCD::apply(
 					}
 					core::pose::symmetry::make_residue_mask_symmetric( pose, allow_repacked );  //fpd symmetrize res mask -- does nothing if pose is not symm
 					this_packer_task->restrict_to_residues( allow_repacked );
-					pack::pack_rotamers( pose, *scorefxn, this_packer_task );
+					pack::pack_rotamers( pose, *local_scorefxn, this_packer_task );
 					std::string move_type = "repack";
 					mc.boltzmann( pose, move_type );
 					mc.show_scores();
@@ -530,7 +530,7 @@ void LoopMover_Refine_CCD::apply(
 	if( set_fold_tree_from_loops_ ){ //if requested, put back old foldtree
 		loops::remove_cutpoint_variants( pose );
 		pose.fold_tree( f_orig );
-		(*scorefxn)(pose);
+		(*local_scorefxn)(pose);
 	}
 }
 
