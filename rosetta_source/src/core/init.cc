@@ -193,6 +193,11 @@
 	#include <platform/types.hh>
 #endif
 
+#ifdef MAC
+#include <mach-o/dyld.h> // for _NSGetExecutablePath
+#endif
+
+
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <cstring>
 
@@ -777,14 +782,35 @@ void init(int argc, char * argv [])
 	std::cerr << "Initialization complete. " << std::endl;
 #endif
 
+
 	if ( !basic::options::option[ basic::options::OptionKeys::in::path::database ].user() ) {
+		std::string database_path;
 		char * descr = getenv("ROSETTA3_DB");
-		if (descr) {
+		if ( descr ) {
 			TR << "found database environment variable ROSETTA3_DB: "<< descr << std::endl;
-			basic::options::option[ basic::options::OptionKeys::in::path::database ].value( descr );
+			database_path = std::string( descr );
+		} else {
+#ifdef MAC
+			char path[1024];
+			uint32_t size = sizeof(path);
+			if (_NSGetExecutablePath(path, &size) == 0)
+				printf("executable path is %s\n", path);
+			else
+				printf("buffer too small; need size %u\n", size);
+			std::string path_string( path );
+			Size found = path_string.find_last_of("/\\");
+			std::string rosetta_exe_dir = path_string.substr(0,found);
+			database_path = rosetta_exe_dir + "/../../rosetta_database/";
+			TR << "looking for database based on location of executable: " << database_path << std::endl;
+#endif
+		}
+
+		if ( database_path.size() > 0 ){
+			basic::options::option[ basic::options::OptionKeys::in::path::database ].value( database_path );
 		} else {
 			TR << "ROSETTA3_DB not defined" << std::endl;
 		}
+
 	}
 
 	basic::prof_reset(); //reads option run::profile -- starts clock TOTAL
