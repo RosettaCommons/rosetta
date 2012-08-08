@@ -50,6 +50,7 @@
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/protein_interface_design/filters/DeltaFilter.hh>
 #include <utility/string_util.hh>
+#include <ObjexxFCL/format.hh>
 
 //Auto Headers
 #include <basic/options/keys/OptionKeys.hh>
@@ -352,13 +353,14 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 		std::ofstream scorefile;
 		scorefile.open( score_log_file().c_str(), std::ios::out );
 
+		using namespace ObjexxFCL::fmt;
 		for( std::map< std::pair< core::Size, AA >, std::pair< core::Real, bool > >::const_iterator pair = residue_id_val_map.begin(); pair != residue_id_val_map.end(); ++pair ){
 			core::conformation::Residue const native_res( pose.conformation().residue( pair->first.first ) );
 			scorefile
 			<< pair->first.first << '\t'
-			<< pose.residue( pair->first.first ).name1() <<'\t'
+			<< p.residue( pair->first.first ).name1() <<'\t'
 			<< oneletter_code_from_aa( pair->first.second )<<'\t'
-			<< ( pair->second.first ) <<std::endl;
+			<< F(9,6, pair->second.first) <<std::endl;
 		}
 		scorefile.close();
 	} // fi score_log_file()
