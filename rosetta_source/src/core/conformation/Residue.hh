@@ -1012,7 +1012,7 @@ public:
 	}
 
 	Size
-	orbital_type_index( Size const orbital_index ) const &
+	orbital_type_index( Size const orbital_index ) const 
 	{
 		return orbitals_[ orbital_index ].type();
 	}
