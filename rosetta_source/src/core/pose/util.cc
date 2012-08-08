@@ -18,7 +18,6 @@
 // C/C++ headers
 #include <cmath>
 #include <iostream>
-
 // Utility headers
 #include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.hh>

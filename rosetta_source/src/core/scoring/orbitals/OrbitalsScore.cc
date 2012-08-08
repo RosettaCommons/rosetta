@@ -146,7 +146,7 @@ void OrbitalsScore::eval_intrares_energy(
 
 /// This is very wrong.
 core::Distance OrbitalsScore::atomic_interaction_cutoff() const{
-	return  6.0;
+	return  7.0;
 }
 
 
@@ -314,7 +314,7 @@ void OrbitalsScore::get_orb_orb_E(
 							res1_orb_end = res1_orbs.end();
 							res1_orb != res1_orb_end; ++res1_orb
 					){
-						numeric::xyzVector< core::Real > const res1_Orbxyz(res1.orbital_xyz(*res1_orb) );
+
 						utility::vector1< core::Size > const & res2_orbs(res2.bonded_orbitals(*Dindex));
 						for(
 								utility::vector1< core::Size >::const_iterator
@@ -322,17 +322,18 @@ void OrbitalsScore::get_orb_orb_E(
 								res2_orb_end = res2_orbs.end();
 								res2_orb != res2_orb_end; ++res2_orb
 						){
-							core::Size orbital_type1(res1.orbital_type_index(*res1_orb));
-							core::Size orbital_type2(res2.orbital_type_index(*res2_orb));
+							core::Size const & orbital_type1(res1.orbital_type_index(*res1_orb));
+							core::Size const & orbital_type2(res2.orbital_type_index(*res2_orb));
 							if(orb_orb_rules(orbital_type1,orbital_type2 )){
-								numeric::xyzVector< core::Real > const res2_Orbxyz(res2.orbital_xyz(*res2_orb) );
-								core::Real orb1_orb2_dist= res1_Orbxyz.distance_squared(res2_Orbxyz);
+								numeric::xyzVector< core::Real > const & res1_Orbxyz(res1.orbital_xyz(*res1_orb) );
+								numeric::xyzVector< core::Real > const & res2_Orbxyz(res2.orbital_xyz(*res2_orb) );
+								core::Real const orb1_orb2_dist= res1_Orbxyz.distance_squared(res2_Orbxyz);
 								if(orb1_orb2_dist < 16){
-									core::Real dist(std::sqrt(orb1_orb2_dist));
-									numeric::xyzVector< core::Real > const Axyz(res1.xyz(*Aindex));
-									numeric::xyzVector< core::Real > const Dxyz(res2.xyz(*Dindex));
-									core::Real cosAOD(cos_of(Axyz, res1_Orbxyz, Dxyz));
-									core::Real cosDOA(cos_of(Dxyz, res2_Orbxyz, Axyz));
+									core::Real const dist(std::sqrt(orb1_orb2_dist));
+									numeric::xyzVector< core::Real > const & Axyz(res1.xyz(*Aindex));
+									numeric::xyzVector< core::Real > const & Dxyz(res2.xyz(*Dindex));
+									core::Real const cosAOD(cos_of(Axyz, res1_Orbxyz, Dxyz));
+									core::Real const cosDOA(cos_of(Dxyz, res2_Orbxyz, Axyz));
 									core::Real d_deriv(0.0);
 									core::Real a_deriv(0.0);
 									lookup_table_.OrbOrbDist_cosAOD_energy(orbital_type1, orbital_type2, dist, cosAOD, orb_orb_E, d_deriv, a_deriv, false);

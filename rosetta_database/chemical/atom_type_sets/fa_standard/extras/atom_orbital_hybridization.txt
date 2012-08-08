@@ -13,13 +13,13 @@ Narg    2                         1              0.65
 Npro    0                         0              0
 OH      3                         3              0.6
 Oaro    2                         0              0.6
-ONH2    2                         4              0.6
-OOC     2                         4              0.6
+ONH2    2                         2              0.6
+OOC     2                         2              0.6
 S       0                         0              0
 Nbb     2                         1              0.65
 CAbb    0                         0              0
 CObb    2                         1              0.7 
-OCbb    2                         4              0.6
+OCbb    2                         2              0.6
 Phos    0                         0              0
 Hpol    0                         0              0
 Hapo    0                         0              0

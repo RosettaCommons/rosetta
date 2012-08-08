@@ -159,7 +159,8 @@ Residue::Residue(
 		utility::vector1<core::Size> const & orbital_indices(rsd_type_.bonded_orbitals(atom_with_orbitals));
 		foreach(core::Size orbital_index, orbital_indices){
 			Vector orb_xyz(this->build_orbital_xyz(orbital_index));
-			orbitals_.push_back(orbitals::OrbitalXYZCoords(orb_xyz, rsd_type_.orbital_type_index(orbital_index)));
+			core::Size type = rsd_type_.orbital_type_index(orbital_index);
+			orbitals_.push_back(orbitals::OrbitalXYZCoords(orb_xyz, type));
 		}
 	}
 
@@ -666,6 +667,8 @@ Residue::fill_missing_atoms(
 			}
 		}
 	}
+
+
 }
 
 
