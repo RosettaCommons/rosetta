@@ -575,8 +575,11 @@ classify_base_pairs(
 	ObjexxFCL::FArray1D < bool > is_base_paired( pose.total_residue(), false );
 
 	// Get hydrogen bond list.
-	ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( core::scoring::RNA_HIRES_WTS ) );
+	//ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( core::scoring::RNA_HIRES_WTS ) );
+	ScoreFunctionOP score_fxn = new ScoreFunction;
+	score_fxn->set_weight( hbond_sc, 1.0);
 	(*score_fxn)(pose);
+
 	hbonds::HBondOptionsOP hbond_options( new hbonds::HBondOptions() );
 	hbond_options->use_hb_env_dep( false );
 	hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( hbond_options ));
