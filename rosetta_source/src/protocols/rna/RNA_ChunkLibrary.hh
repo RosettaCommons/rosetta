@@ -84,6 +84,11 @@ namespace rna{
 		Size
 		num_chunks() const{ return mini_pose_list_.size(); };
 
+		std::map< core::id::AtomID, core::id::AtomID >
+		get_atom_id_map(  core::pose::Pose & pose, protocols::toolbox::AllowInsertOP const & allow_insert ) const;
+
+		core::pose::MiniPoseOP const mini_pose( Size const idx ) const;
+
 	private:
 
 		void filter_atom_id_map_with_mask( std::map< core::id::AtomID, core::id::AtomID > & atom_id_map ) const;
@@ -230,6 +235,9 @@ namespace rna{
 										 std::map< core::Size, core::Size > const & connections_in_big_pose,
 										 core::pose::ResMap const & res_map,
 										 utility::vector1< Size > const & chain_id ) const;
+
+		void
+		align_to_chunk( core::pose::Pose & pose, ChunkSet const & chunk_set, core::Size const chunk_index ) const;
 
 	private:
 

@@ -25,6 +25,7 @@
 #include <core/id/AtomID.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/scoring/rms_util.hh>
 // AUTO-REMOVED #include <core/chemical/AtomType.hh>
 // AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <numeric/random/random.hh>
@@ -120,14 +121,24 @@ namespace rna{
 
 		//		TR << "SCRATCH_POSE " << scratch_pose.sequence() << ' ' << scratch_pose.fold_tree() << std::endl;
 
-		std::map< AtomID, AtomID > atom_id_map;
-		allow_insert->calculate_atom_id_map( pose, res_map_, scratch_pose.fold_tree(), atom_id_map );
+		std::map< AtomID, AtomID > atom_id_map = get_atom_id_map( pose, allow_insert );
+
+		copy_dofs( pose, scratch_pose, atom_id_map  );
+
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	std::map< id::AtomID, id::AtomID >
+	ChunkSet::get_atom_id_map(  core::pose::Pose & pose, toolbox::AllowInsertOP const & allow_insert ) const{
+
+		std::map< id::AtomID, id::AtomID > atom_id_map;
+
+		allow_insert->calculate_atom_id_map( pose, res_map_, mini_pose_list_[1]->fold_tree(), atom_id_map );
 
 		// This should prevent copying dofs for virtual phosphates, if they are tagged as such in the input silent files.
 		filter_atom_id_map_with_mask( atom_id_map );
 
-		copy_dofs( pose, scratch_pose, atom_id_map  );
-
+		return atom_id_map;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
@@ -153,6 +164,13 @@ namespace rna{
 
 		atom_id_map = atom_id_map_new;
 
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	core::pose::MiniPoseOP const
+	ChunkSet::mini_pose( Size const idx ) const {
+		return mini_pose_list_[ idx ];
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
@@ -253,7 +271,7 @@ namespace rna{
 				if ( sequence_of_big_pose[ input_res[ count ] -1 ] != scratch_pose.sequence()[ i - 1 ] ){
 					std::cout << "mismatch in sequence   in  big pose: " << sequence_of_big_pose[ input_res[ count ] -1 ] << input_res[count] <<
 						"  in input pose: " << scratch_pose.sequence()[ i - 1 ]  << i << std::endl;
-					//utility_exit_with_message( "mismatch in input_res sequence" );
+					utility_exit_with_message( "mismatch in input_res sequence" );
 				}
 				res_map[ input_res[count ] ] = i;
 			}
@@ -330,18 +348,15 @@ namespace rna{
 
 		// connected doesn't do anything anymore...
 		FArray1D< bool > connected( pose.total_residue(), false );
-
 		covered_by_chunk_ = false;
 
 		for ( ResMap::const_iterator
 						it=res_map.begin(), it_end = res_map.end(); it != it_end; ++it ) {
 
 			Size const i = it->first; //Index in big pose.
-			Size const i_scratch = it->second; //Index in big pose.
+			Size const i_scratch = it->second; //Index in scratch pose (chunk).
 
 			covered_by_chunk_( i ) = true;
-		// connected doesn't do anything anymore...
-			if ( connected( i ) ) continue;
 
 			Residue const & rsd_i = pose.residue(i);
 			for ( Size j = 1; j <= rsd_i.natoms(); j++ ){
@@ -358,7 +373,8 @@ namespace rna{
 			}
 
 			//We don't trust phosphates at the beginning of chains!
-			//if ( i_scratch == 1 || scratch_pose.fold_tree().is_cutpoint( i_scratch - 1 ) ) allow_insert_->set_phosphate( i, pose, true );
+			// MAKE THIS AN OPTION?
+			//			if ( i_scratch == 1 || scratch_pose.fold_tree().is_cutpoint( i_scratch - 1 ) ) allow_insert_->set_phosphate( i, pose, true );
 
 		}
 
@@ -839,6 +855,8 @@ namespace rna{
 				*pose_op = coarse_pose;
 			}
 
+			virtualize_5prime_phosphates( *pose_op );
+
 			pose_list.push_back( pose_op );
 		}
 
@@ -863,6 +881,11 @@ namespace rna{
 			//TR << "NUM_CHUNKS " << chunk_index << " " << chunk_set.num_chunks() << std::endl;
 			chunk_set.insert_chunk_into_pose( pose, chunk_index, allow_insert_ );
 
+
+			// useful for tracking homology modeling: perhaps we can align to first chunk as well -- 3D alignment of Rosetta poses are
+			// arbitrarily set to origin (except in special cases with virtual residues...)
+			if ( n==1  /*&&  pose.residue( pose.total_residue() ).name3() != "VRT"*/ ) align_to_chunk( pose, chunk_set, chunk_index  );
+
 			if ( dump_pdb ) pose.dump_pdb( "start_"+string_of(n)+".pdb" );
 
 		}
@@ -870,6 +893,25 @@ namespace rna{
 		//exit( 0 );
 
 	}
+
+	///////////////////////////////////////////////////////////////////////
+	void
+	RNA_ChunkLibrary::align_to_chunk( pose::Pose & pose, ChunkSet const & chunk_set, Size const chunk_index ) const{
+
+		using namespace core::id;
+
+		std::map< AtomID, AtomID > atom_id_map = chunk_set.get_atom_id_map( pose, allow_insert_ );
+
+		id::AtomID_Map< id::AtomID >  alignment_atom_id_map; // weird alternative format needed for superimpose_pose
+		core::pose::initialize_atomid_map( alignment_atom_id_map, pose, id::BOGUS_ATOM_ID );
+		for ( std::map< AtomID, AtomID >::const_iterator
+						it=atom_id_map.begin(), it_end = atom_id_map.end(); it != it_end; ++it ) {
+			alignment_atom_id_map.set( it->first, it->second );
+		}
+
+		core::scoring::superimpose_pose( pose, *(chunk_set.mini_pose( chunk_index )), alignment_atom_id_map );
+	}
+
 
 
 	////////////////////////////////////////////////////////////////
