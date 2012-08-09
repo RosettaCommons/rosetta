@@ -328,9 +328,9 @@ namespace swa {
 
 		std::map< core::Size, core::Size > res_map;
 
- 		if( ref_pose.sequence()!=mod_pose.sequence() ){
- 			utility_exit_with_message( "ref_pose.sequence()!=mod_pose.sequence()");
- 		}
+		// 		if( ref_pose.sequence()!=mod_pose.sequence() ){
+		// 			utility_exit_with_message( "ref_pose.sequence()!=mod_pose.sequence()");
+		// 		}
 
  		for ( Size seq_num = 1; seq_num <= mod_pose.total_residue(); ++seq_num ) {
 			if ( !Contain_seq_num(seq_num, superimpose_res ) ) continue;
@@ -752,6 +752,7 @@ rotate( pose::Pose & pose, Matrix const M,
 	translate_and_rotate_residue_to_origin( pose::Pose & pose, Size const i ){
 		translate_and_rotate_residue_to_origin( pose, i, utility::tools::make_vector1( i ) );
 	}
+
 
 
 }
