@@ -196,6 +196,8 @@ namespace toolbox{
 			set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( " O1P", i ), pose ) ), setting );
 			set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( " O2P", i ), pose ) ), setting );
 			set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( " O5*", i ), pose ) ), setting );
+			set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( "1H5*", i ), pose ) ), setting );
+			set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( "2H5*", i ), pose ) ), setting );
 		}
 	}
 
