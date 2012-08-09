@@ -3701,11 +3701,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Fixed definition of base atom for acceptors to match hbonds_geom</dd><br>
 <dd>Default: false</dd><br>
 </dl>
-<dl>
-<dt><b>-use_phenix_sugar_close</b> \<Boolean\><dt>
-<dd>Use PHENIX-based RNA sugar close energy</dd><br>
-<dd>Default: false</dd><br>
-</dl>
  </li>
 <li><h2>score:saxs</h2>
 <dl>
@@ -3964,19 +3959,14 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-hb_sp2_BAH180_rise</b> \<Real\><dt>
+<dd>The rise from -0.5 for the BAH=180 value for the additive chi/BAH sp2 potential</dd><br>
+<dd>Default: 0.75</dd><br>
+</dl>
+<dl>
 <dt><b>-hb_sp2_chipen</b> \<Boolean\><dt>
 <dd>Experimental term for hydrogen bonds to sp2 acceptors: penalizes out-of-plane geometry by 67%</dd><br>
 <dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-hb_sp2_amp</b> \<Real\><dt>
-<dd>Experimental term for hydrogen bonds to sp2 acceptors: sets the amplitude of the sp2 hydrogen bond (greater than 1 upweights sp2 hydrogen bonds)</dd><br>
-<dd>Default: 2.0</dd><br>
-</dl>
-<dl>
-<dt><b>-hb_sp2_peak_heigh_above_trough</b> \<Real\><dt>
-<dd>Experimental term for hydrogen bonds to sp2 acceptors: sets the dynamic range between the most potent sp2 hydrogen bonds and the least potent</dd><br>
-<dd>Default: 3.0</dd><br>
 </dl>
 <dl>
 <dt><b>-hbond_measure_sp3acc_BAH_from_hvy</b> \<Boolean\><dt>
@@ -7637,6 +7627,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>The number of rounds of minimization.</dd><br>
 <dd>Default: 2</dd><br>
 </dl>
+<dl>
+<dt><b>-corrected_geo</b> \<Boolean\><dt>
+<dd>Use PHENIX-based RNA sugar close energy and params files</dd><br>
+<dd>Default: false</dd><br>
+</dl>
  </li>
 <li><h2>cm</h2>
 <dl>
@@ -11285,12 +11280,12 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-scale_rb</b> \<Real\><dt>
 <dd>max cycles for MinimizerOptions</dd><br>
-<dd>Default: 1</dd><br>
+<dd>Default: 10</dd><br>
 </dl>
 <dl>
 <dt><b>-scale_rbangle</b> \<Real\><dt>
 <dd>max cycles for MinimizerOptions</dd><br>
-<dd>Default: 10</dd><br>
+<dd>Default: 1</dd><br>
 </dl>
  </li>
 <li><h2>swa</h2>

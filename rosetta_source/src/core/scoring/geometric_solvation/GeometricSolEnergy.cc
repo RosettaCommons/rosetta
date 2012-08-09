@@ -613,11 +613,13 @@ GeometricSolEnergy::get_acceptor_base_atm_xyz( conformation::Residue const & acc
 		//  but at least the hbonds and geom_sol match up.
 		Vector dummy;
 		chemical::Hybridization acc_hybrid( acc_rsd.atom_type( acc_atm ).hybridization());
-		make_hbBasetoAcc_unitvector(  acc_hybrid,
-																	acc_rsd.atom( acc_atm ).xyz(),
-																	acc_rsd.xyz( acc_rsd.atom_base( acc_atm ) ),
-																	acc_rsd.xyz( acc_rsd.abase2( acc_atm ) ),
-																	base_atm_xyz, dummy );
+		make_hbBasetoAcc_unitvector(
+			options_->hbond_options(),
+			acc_hybrid,
+			acc_rsd.atom( acc_atm ).xyz(),
+			acc_rsd.xyz( acc_rsd.atom_base( acc_atm ) ),
+			acc_rsd.xyz( acc_rsd.abase2( acc_atm ) ),
+			base_atm_xyz, dummy );
 	} else {
 		base_atm_xyz = acc_rsd.atom( acc_rsd.atom_base( acc_atm ) ).xyz();
 	}

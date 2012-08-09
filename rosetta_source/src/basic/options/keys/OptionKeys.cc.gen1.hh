@@ -203,9 +203,8 @@ namespace corrections { namespace score { IntegerVectorOptionKey const PB_revamp
 namespace corrections { namespace score { RealOptionKey const PB_potential_cap( "corrections:score:PB_potential_cap" );  } }
 namespace corrections { namespace score { RealOptionKey const lj_hbond_OH_donor_dis( "corrections:score:lj_hbond_OH_donor_dis" );  } }
 namespace corrections { namespace score { BooleanOptionKey const score12prime( "corrections:score:score12prime" );  } }
+namespace corrections { namespace score { RealOptionKey const hb_sp2_BAH180_rise( "corrections:score:hb_sp2_BAH180_rise" );  } }
 namespace corrections { namespace score { BooleanOptionKey const hb_sp2_chipen( "corrections:score:hb_sp2_chipen" );  } }
-namespace corrections { namespace score { RealOptionKey const hb_sp2_amp( "corrections:score:hb_sp2_amp" );  } }
-namespace corrections { namespace score { RealOptionKey const hb_sp2_peak_heigh_above_trough( "corrections:score:hb_sp2_peak_heigh_above_trough" );  } }
 namespace corrections { namespace score { BooleanOptionKey const hbond_measure_sp3acc_BAH_from_hvy( "corrections:score:hbond_measure_sp3acc_BAH_from_hvy" );  } }
 namespace corrections { namespace score { BooleanOptionKey const use_bicubic_interpolation( "corrections:score:use_bicubic_interpolation" );  } }
 namespace corrections { namespace score { BooleanOptionKey const dun_normsd( "corrections:score:dun_normsd" );  } }
@@ -617,3 +616,4 @@ namespace lh { StringOptionKey const jobname( "lh:jobname" );  }
 namespace lh { IntegerOptionKey const max_lib_size( "lh:max_lib_size" );  }
 namespace lh { IntegerOptionKey const max_emperor_lib_size( "lh:max_emperor_lib_size" );  }
 namespace lh { IntegerOptionKey const max_emperor_lib_round( "lh:max_emperor_lib_round" );  }
+namespace lh { IntegerOptionKey const library_expiry_time( "lh:library_expiry_time" );  }

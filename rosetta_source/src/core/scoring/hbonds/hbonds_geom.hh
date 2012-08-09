@@ -178,6 +178,7 @@ hb_energy_deriv(
 
 Vector
 create_acc_orientation_vector(
+	HBondOptions const & hbondoptions,
 	conformation::Residue const & residue,
 	int atom_id
 );
@@ -194,6 +195,7 @@ create_don_orientation_vector(
 
 void
 make_hbBasetoAcc_unitvector(
+	HBondOptions const & hbondoptions,
 	chemical::Hybridization const & acc_hybrid,
 	Vector const & Axyz,
 	Vector const & Bxyz,
@@ -204,6 +206,7 @@ make_hbBasetoAcc_unitvector(
 
 void
 assign_abase_derivs(
+	HBondOptions const & hbondoptions,
 	conformation::Residue const & acc_rsd,
 	Size acc_atom,
 	HBEvalTuple const hbe_type,

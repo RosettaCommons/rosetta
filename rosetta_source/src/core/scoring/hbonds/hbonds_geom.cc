@@ -548,14 +548,14 @@ hbond_compute_energy(
 	Real & dE_dr,
 	Real & dE_dxD,
 	Real & dE_dxH,
-	Real & dchipen_dBAH, // the change in the energy wrt the chi penalty for the BAH angle
-	Real & dchipen_dchi  // the change in the energy wrt the chi penalty for the chi dihedral
+	Real & dE_dBAH, // the change in the energy wrt the BAH angle
+	Real & dE_dchi  // the change in the energy wrt the chi dihedral
 )
 {
 	HBEvalType hbe = hbt.eval_type();
 	energy = MAX_HB_ENERGY + 1.0f;
 	apply_chi_torsion_penalty = false;
-	dE_dr = dE_dxD = dE_dxH = dchipen_dBAH = dchipen_dchi = 0.0;
+	dE_dr = dE_dxD = dE_dxH = dE_dBAH = dE_dchi = 0.0;
 
 	// These should throw an exection if fail_on_bad_hbond is true
 	if ( std::abs(xD) > 1.0 || std::abs(xH) > 1.0 ) {
@@ -573,8 +573,8 @@ hbond_compute_energy(
 	// The function takes in single precision and computes in double
 	// precision To help numeric stability
 	double const dAHdis = static_cast<double>(AHdis);
-	double const dxD = static_cast<double>(xD);
-	double const dxH = static_cast<double>(xH);
+	double const dxD    = static_cast<double>(xD);
+	double const dxH    = static_cast<double>(xH);
 	double  Pr(0.0),  PSxD(0.0),  PSxH(0.0),  PLxD(0.0),  PLxH(0.0); // values of polynomials
 	double dPr(0.0), dPSxD(0.0), dPSxH(0.0), dPLxD(0.0), dPLxH(0.0); // derivatives of polynomials
 	double  FSr(0.0),  FLr(0.0),  FxD(0.0),  FxH(0.0); // values of fading intervals
@@ -605,7 +605,7 @@ hbond_compute_energy(
 
 	// add these checks, of course, to the hbeval reading
 	assert( database.cosAHD_short_poly_lookup(hbe)->geometric_dimension() == database.cosAHD_long_poly_lookup(hbe)->geometric_dimension() );
-	bool use_cosAHD = database.cosAHD_short_poly_lookup(hbe)->geometric_dimension() == hbgd_cosAHD;
+	bool const use_cosAHD = database.cosAHD_short_poly_lookup(hbe)->geometric_dimension() == hbgd_cosAHD;
 	AHD_geometric_dimension = use_cosAHD ? hbgd_cosAHD : hbgd_AHD;
 	assert( use_cosAHD || database.cosAHD_short_poly_lookup(hbe)->geometric_dimension() == hbgd_AHD );
 
@@ -653,13 +653,14 @@ hbond_compute_energy(
 	//	std::cout << "eval type: " << hbe << std::endl;
 	//}
 
-	Real const peak_height = basic::options::option[ basic::options::OptionKeys::corrections::score::hb_sp2_peak_heigh_above_trough ];
-	Real const chi_amp = basic::options::option[ basic::options::OptionKeys::corrections::score::hb_sp2_amp ];
+	//Real const peak_height = basic::options::option[ basic::options::OptionKeys::corrections::score::hb_sp2_peak_heigh_above_trough ];
+	//Real const chi_amp = basic::options::option[ basic::options::OptionKeys::corrections::score::hb_sp2_amp ];
+	Real const bah180_rise = hbondoptions.sp2_BAH180_rise();
 
-	Real chi_penalty( 1.0 );
-	Real chi_penalty_via_chi( 1.0 ); // for derivatives
+	//Real chi_penalty( 1.0 );
+	//Real chi_penalty_via_chi( 1.0 ); // for derivatives
 	Real angleBAH(0.0);
-	Real half_cos_piminus3BAH_plus_1(1.0);
+	//Real half_cos_piminus3BAH_plus_1(1.0);
 	bool apply_chi_torsion_penalty_sp2 = false;
 	bool apply_chi_torsion_penalty_sp3 = false;
 	if ( hbondoptions.use_sp2_chi_penalty() &&
@@ -685,22 +686,54 @@ hbond_compute_energy(
 		/// Version #7: (11/12/19) restoring v7 after determining that sp2 potential should be used for
 		/// all bb/bb contacts.
 
-		chi_penalty = std::cos( 2 * chi ) + 1;
-		chi_penalty *= (peak_height - 1)/ 2;
-		chi_penalty += 1;
-		chi_penalty_via_chi = chi_penalty;
+		//chi_penalty = std::cos( 2 * chi ) + 1;
+		//chi_penalty *= (peak_height - 1)/ 2;
+		//chi_penalty += 1;
+		//chi_penalty_via_chi = chi_penalty;
+		//
+		//angleBAH = numeric::constants::d::pi - acos( xH );
+		//Real cospiminus3BAH = cos( numeric::constants::d::pi - 3 * angleBAH );
+		//half_cos_piminus3BAH_plus_1 = ( cospiminus3BAH + 1 ) * 0.5;
+		//
+		//chi_penalty *= 1 - half_cos_piminus3BAH_plus_1;
+		//chi_penalty += half_cos_piminus3BAH_plus_1;
+		//
+		//chi_penalty *= chi_amp / peak_height;
 
-		angleBAH = numeric::constants::d::pi - acos( xH );
-		Real cospiminus3BAH = cos( numeric::constants::d::pi - 3 * angleBAH );
-		half_cos_piminus3BAH_plus_1 = ( cospiminus3BAH + 1 ) * 0.5;
+		/// New Formula #9 additive chi/BAH score
+		/// with the "rise" taken as a constant, d, marking the distance between the minimum value of -0.5 at chi=180 (or 0)
+		/// BAH at 120 (which has a value then of -0.5 + d)
+		/// the energy is given by this function:
+		///       h*f + (1-h)*g
+		/// where the "h" interpolation function is given by (cos(2*chi)+1)/2
+		/// and f and g reflect either peaky or flat energy landscapes
+		/// f = d/2*cos(3*(pi-BAH)) + (d/2-0.5)   for 180 > BAH > 120
+		///   = 3/4*cos(3*(pi-BAH)) + (3/4 - 0.5) for 120 > BAH > 60
+		///   = 1                                 for  60 > BAH
+		///
+		/// g = -0.5 + d                          for 180 > BAH > 120
+		///   = (1.5-d)/2*cos(3*(pi-BAH)) + ((1.5-d)/2 - 0.5 + d )for 120 > BAH > 60
+		///   = 1                                  for 60 > BAH
 
-		chi_penalty *= 1 - half_cos_piminus3BAH_plus_1;
-		chi_penalty += half_cos_piminus3BAH_plus_1;
+		Real g(0), f(0);
+		Real h = (std::cos(2*chi)+1) * 0.5;
+		Real const acos_xH = acos( xH );
+		angleBAH = numeric::constants::d::pi - acos_xH;
+		if ( angleBAH >= numeric::constants::d::pi * 2/3 ) {
+			f = bah180_rise/2*std::cos( 3 * acos_xH ) + (bah180_rise / 2 - 0.5 );
+			g = -0.5 + bah180_rise;
+		} else if ( angleBAH >= numeric::constants::d::pi * 1/3 ) {
+			f = std::cos(3*acos_xH)*0.75 + 0.25;
+			g = (1.5-bah180_rise)*0.5*std::cos(3*acos_xH) + (0.25 + bah180_rise/2 );
+		} else {
+			f = 1;
+			g = 1;
+		}
+		//std::cout << "angleBAH " << 180/numeric::constants::d::pi*angleBAH << " chi " << 180/numeric::constants::d::pi*chi << " " << f << " " << g << std::endl;
+		energy += h*f + (1-h)*g;
 
-		chi_penalty *= chi_amp / peak_height;
-
-	} else if ( basic::options::option[ basic::options::OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy ] &&
-			( hbt.acc_type() == hbacc_AHX || hbt.acc_type() == hbacc_HXL )) {
+	} else if ( hbondoptions.measure_sp3acc_BAH_from_hvy()
+			&& ( hbt.acc_type() == hbacc_AHX || hbt.acc_type() == hbacc_HXL )) {
 		apply_chi_torsion_penalty = true;
 		apply_chi_torsion_penalty_sp3 = true;
 
@@ -714,7 +747,7 @@ hbond_compute_energy(
 
 	// NOTE: if any deriv parameter omitted, we don't compute derivatives.
 	if (&dE_dxH == &DUMMY_DERIV) {
-		energy *= chi_penalty; // multiply the chi penalty into the energy now.
+		//energy *= chi_penalty; // multiply the chi penalty into the energy now.
 		return;
 	}
 
@@ -732,9 +765,9 @@ hbond_compute_energy(
 	dE_dxH = dFxH*(Pr*FxD + FLr*PLxD + FSr*PSxD) + FxD*(FSr*dPSxH + FLr*dPLxH);
 
 	if ( apply_chi_torsion_penalty_sp2 ) {
-		dE_dr  *= chi_penalty;
-		dE_dxD *= chi_penalty;
-		dE_dxH *= chi_penalty;
+		//dE_dr  *= chi_penalty;
+		//dE_dxD *= chi_penalty;
+		//dE_dxH *= chi_penalty;
 
 		// Formula #6
 		// p = chi_penalty_via_chi (not divided by k), k = peak_height
@@ -743,17 +776,64 @@ hbond_compute_energy(
 		// dE / dBAH = a /k * ( - p * 3 * sin(pi-3BAH) / 2 + 3 * sin(pi-3BAH) / 2) * E(d,a1,a2)
 		// dE / dBAH = a / k * 3/2 * ( -p * sin(pi-3BAH) + sin(pi-3BAH) ) * E(d,a1,a2)
 		// dE / dBAH = a/k * ( 1 - p ) * sin(pi-3BAH) * E(d,a1,a2)
-		dchipen_dBAH = energy * chi_amp / peak_height * 1.5  * ( 1 - chi_penalty_via_chi ) * sin( numeric::constants::d::pi - 3*angleBAH );
-		dchipen_dchi = -energy * chi_amp * sin( 2*chi ) * ( peak_height - 1 ) / peak_height * ( 1 - half_cos_piminus3BAH_plus_1 );
+		//dchipen_dBAH = energy * chi_amp / peak_height * 1.5  * ( 1 - chi_penalty_via_chi ) * sin( numeric::constants::d::pi - 3*angleBAH );
+		//dchipen_dchi = -energy * chi_amp * sin( 2*chi ) * ( peak_height - 1 ) / peak_height * ( 1 - half_cos_piminus3BAH_plus_1 );
 
 		/// wait until the above calculations have completed, then scale the energy by the chi penalty
-		energy *= chi_penalty;
+		// energy *= chi_penalty;
+
+
+		/// New Formula #9 additive chi/BAH score
+		/// with the "rise" taken as a constant, d, marking the distance between the minimum value of -0.5 at chi=180 (or 0)
+		/// BAH at 120 (which has a value then of -0.5 + d)
+		/// the energy is given by this function:
+		///       h*f + (1-h)*g
+		/// where the "h" interpolation function is given by (cos(2*chi)+1)/2
+		/// and f and g reflect either peaky or flat energy landscapes
+		/// f = d/2*cos(3*(pi-BAH)) + (d/2-0.5)   for 180 > BAH > 120
+		///   = 3/4*cos(3*(pi-BAH)) + (3/4 - 0.5) for 120 > BAH > 60
+		///   = 1                                 for  60 > BAH
+		///
+		/// g = -0.5 + d                          for 180 > BAH > 120
+		///   = (1.5-d)/2*cos(3*(pi-BAH)) + ((1.5-d)/2 - 0.5 + d )for 120 > BAH > 60
+		///   = 1                                  for 60 > BAH
+		/// therefore
+		/// dE/dchi = dh/dchi*f - dh/dchi*g
+		/// dE/dBAH = h*df/dBAH + (1-h)*dg/dBAH
+		///   and
+		///   df/dBAH = 3*d/2*sin(3*(pi-BAH)) for 180 > BAH > 120
+		///           = 9/4  *sin(3*(pi-BAH)) for 120 > BAH > 60
+		///           = 0                     for  60 > BAH
+		///   dg/dBAH = 0                           for 180 > BAH > 120
+		///           = 3*(1.5-d)/2*sin(3*(pi-BAH)) for 120 > BAH > 60
+		///           = 0                           for  60 > BAH
+
+		Real g(0), f(0), dfdBAH(0), dgdBAH(0);
+		Real h = (std::cos(2*chi)+1) * 0.5;
+		Real dhdchi = -std::sin(2*chi);
+		Real const acos_xH = numeric::constants::d::pi - angleBAH; // since the arccos has already been computed
+		if ( angleBAH >= numeric::constants::d::pi * 2/3 ) {
+			f = bah180_rise/2*std::cos( 3 * acos_xH ) + (bah180_rise / 2 - 0.5 );
+			g = -0.5 + bah180_rise;
+			dfdBAH = 3*bah180_rise/2*sin(3*acos_xH);
+		} else if ( angleBAH >= numeric::constants::d::pi * 1/3 ) {
+			f = 0.75*cos(3*acos_xH) + 0.25;
+			g = (1.5-bah180_rise)*0.5*cos(3*acos_xH) + (0.25 + bah180_rise/2 );
+			dfdBAH = 9.0/4.0*sin(3*acos_xH);
+			dgdBAH = 3*(1.5-bah180_rise)/2*sin(3*acos_xH);
+		} else {
+			f = 1;
+			g = 1;
+		}
+		dE_dchi = f*dhdchi - g*dhdchi;
+		dE_dBAH = h*dfdBAH + (1-h)*dgdBAH;
+		//std::cout << "angleBAH " << 180/numeric::constants::d::pi*angleBAH << " chi " << 180/numeric::constants::d::pi*chi << f << " " << g << " deriv: " << dfdBAH << " " << dgdBAH << std::endl;
 
 	} else if ( apply_chi_torsion_penalty_sp3 ) {
 		Real const max_penalty = 0.25;
 		//std::cout << "applying dchipen_dchi" << std::endl;
 		Real minussin2ChiShifted = -1 * max_penalty * std::sin(chi)/2;
-		dchipen_dchi = minussin2ChiShifted;
+		dE_dchi = minussin2ChiShifted;
 	}
 
 }
@@ -893,7 +973,7 @@ hb_energy_deriv_u2(
 			get_hbe_acc_hybrid( hbt.eval_type() ) == chemical::SP2_HYBRID &&
 			B2xyz != Vector(-1.0, -1.0, -1.0) ) {
 		chi = numeric::dihedral_radians( Hxyz, Axyz, Bxyz, B2xyz );
-	} else if ( basic::options::option[ basic::options::OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy ] &&
+	} else if ( hbondoptions.measure_sp3acc_BAH_from_hvy() &&
 			( hbt.acc_type() == hbacc_AHX || hbt.acc_type() == hbacc_HXL ) ) {
 		/// Bxyz really is the heavy atom base and B2xyz really is the hydroxyl hydrogen
 		/// this is guaranteed by the hbond_measure_sp3acc_BAH_from_hvy flag.
@@ -914,7 +994,7 @@ hb_energy_deriv_u2(
 	}
 
 	//JSS the rest happens only if we want deriviative information
-	Real dE_dxH, dE_dxD, dE_dr, dchipen_dBAH, dchipen_dchi;
+	Real dE_dxH, dE_dxD, dE_dr, dE_dBAH, dE_dchi;
 	bool apply_chi_torsion_penalty( false );
 	HBGeoDimType AHD_geometric_dimension;
 
@@ -932,8 +1012,8 @@ hb_energy_deriv_u2(
 		dE_dr,
 		dE_dxD,
 		dE_dxH,
-		dchipen_dBAH,
-		dchipen_dchi);
+		dE_dBAH,
+		dE_dchi);
 
 	if (energy >= MAX_HB_ENERGY) return;
 
@@ -1021,12 +1101,12 @@ hb_energy_deriv_u2(
 		deriv.acc_deriv.f1() += dE_dxH_sin_phi * f1a;
 		deriv.acc_deriv.f2() += dE_dxH_sin_phi * f2a;
 		if ( apply_chi_torsion_penalty ) {
-			deriv.acc_deriv.f1()   += dchipen_dBAH * f1a;
-			deriv.acc_deriv.f2()   += dchipen_dBAH * f2a;
-			deriv.abase_deriv.f1() += dchipen_dBAH * f1b;
-			deriv.abase_deriv.f2() += dchipen_dBAH * f2b;
-			deriv.h_deriv.f1()     += dchipen_dBAH * f1h;
-			deriv.h_deriv.f2()     += dchipen_dBAH * f2h;
+			deriv.acc_deriv.f1()   += dE_dBAH * f1a;
+			deriv.acc_deriv.f2()   += dE_dBAH * f2a;
+			deriv.abase_deriv.f1() += dE_dBAH * f1b;
+			deriv.abase_deriv.f2() += dE_dBAH * f2b;
+			deriv.h_deriv.f1()     += dE_dBAH * f1h;
+			deriv.h_deriv.f2()     += dE_dBAH * f2h;
 		}
 		}
 
@@ -1046,17 +1126,17 @@ hb_energy_deriv_u2(
 			dihedral_p2_cosine_deriv( B2xyz, Bxyz, Axyz, Hxyz,  chi, chi_ab_f1, chi_ab_f2 );
 			dihedral_p1_cosine_deriv( B2xyz, Bxyz, Axyz, Hxyz,  chi, chi_ab2_f1, chi_ab2_f2 );
 
-			deriv.h_deriv.f1() += dchipen_dchi * chi_h_f1;
-			deriv.h_deriv.f2() += dchipen_dchi * chi_h_f2;
+			deriv.h_deriv.f1() += dE_dchi * chi_h_f1;
+			deriv.h_deriv.f2() += dE_dchi * chi_h_f2;
 
-			deriv.acc_deriv.f1() += dchipen_dchi * chi_a_f1;
-			deriv.acc_deriv.f2() += dchipen_dchi * chi_a_f2;
+			deriv.acc_deriv.f1() += dE_dchi * chi_a_f1;
+			deriv.acc_deriv.f2() += dE_dchi * chi_a_f2;
 
-			deriv.abase_deriv.f1() += dchipen_dchi * chi_ab_f1;
-			deriv.abase_deriv.f2() += dchipen_dchi * chi_ab_f2;
+			deriv.abase_deriv.f1() += dE_dchi * chi_ab_f1;
+			deriv.abase_deriv.f2() += dE_dchi * chi_ab_f2;
 
-			deriv.abase2_deriv.f1() += dchipen_dchi * chi_ab2_f1;
-			deriv.abase2_deriv.f2() += dchipen_dchi * chi_ab2_f2;
+			deriv.abase2_deriv.f1() += dE_dchi * chi_ab2_f1;
+			deriv.abase2_deriv.f2() += dE_dchi * chi_ab2_f2;
 
 		}
 
@@ -1262,13 +1342,14 @@ hb_energy_deriv(
 	// the pseudo-base xyz coordinate
 	Vector PBxyz;
 	chemical::Hybridization acc_hybrid( get_hbe_acc_hybrid( hbt.eval_type() ) );
-	make_hbBasetoAcc_unitvector(acc_hybrid, Axyz, Bxyz, B2xyz, PBxyz, BAunit);
+	make_hbBasetoAcc_unitvector(hbondoptions, acc_hybrid, Axyz, Bxyz, B2xyz, PBxyz, BAunit);
 	hb_energy_deriv_u2(database, hbondoptions, hbt, deriv_type, Hxyz, Dxyz, HDunit, Axyz, PBxyz, BAunit, B2xyz, energy, deriv );
 }
 
 
 Vector
 create_acc_orientation_vector(
+	HBondOptions const & hbondoptions,
 	conformation::Residue const & residue,
 	int atom_id
 )
@@ -1276,7 +1357,9 @@ create_acc_orientation_vector(
 	assert( residue.atom_type_set()[ residue.atom(atom_id).type() ].is_acceptor() );
 	chemical::Hybridization acc_hybrid(residue.atom_type(atom_id).hybridization());
 	Vector ovect, dummy;
-	make_hbBasetoAcc_unitvector(acc_hybrid,
+	make_hbBasetoAcc_unitvector(
+		hbondoptions,
+		acc_hybrid,
 		residue.atom( atom_id ).xyz(),
 		residue.atom( residue.atom_base( atom_id ) ).xyz(),
 		residue.atom( residue.abase2( atom_id ) ).xyz(),
@@ -1294,6 +1377,7 @@ create_acc_orientation_vector(
 //
 void
 make_hbBasetoAcc_unitvector(
+	HBondOptions const & hbondoptions,
 	chemical::Hybridization const & acc_hybrid,
 	Vector const & Axyz,
 	Vector const & Bxyz,
@@ -1306,7 +1390,10 @@ make_hbBasetoAcc_unitvector(
 	switch(acc_hybrid){
 	case SP2_HYBRID:  PBxyz = Bxyz; break;
 	case SP3_HYBRID:
-		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy ] ) {
+		/// If the heavy-atom base of an sp3 hybridized acceptor is to be used
+		/// to compute the BAH angle (i.e. CB on Ser/Thr), then give it Bxyz;
+		/// else, git it B2xyz (i.e. HG on Ser/Thr).
+		if ( hbondoptions.measure_sp3acc_BAH_from_hvy() ) {
 			PBxyz = Bxyz;
 		} else {
 			PBxyz = B2xyz;
@@ -1329,6 +1416,7 @@ make_hbBasetoAcc_unitvector(
 /// in the make_hbBasetoAcc_unitvector code above.
 void
 assign_abase_derivs(
+	HBondOptions const & hbondoptions,
 	conformation::Residue const & acc_rsd,
 	Size acc_atom,
 	HBEvalTuple const hbt,
@@ -1345,7 +1433,7 @@ assign_abase_derivs(
 			acc_atom_derivs[ acc_rsd.atom_base( acc_atom ) ].f2() += weighted_energy * abase_deriv.f2(); break;
 		}
 		case SP3_HYBRID:  {
-			if ( ! basic::options::option[ basic::options::OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy ] ) {
+			if ( ! hbondoptions.measure_sp3acc_BAH_from_hvy() ) {
 				acc_atom_derivs[ acc_rsd.abase2( acc_atom ) ].f1() += weighted_energy * abase_deriv.f1();
 				acc_atom_derivs[ acc_rsd.abase2( acc_atom ) ].f2() += weighted_energy * abase_deriv.f2();
 			} else {

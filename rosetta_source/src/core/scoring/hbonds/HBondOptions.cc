@@ -55,6 +55,8 @@ HBondOptions::HBondOptions( std::string params_db_tag ):
 	params_database_tag_(params_db_tag),
 	use_incorrect_deriv_( true ),
 	use_sp2_chi_penalty_( false ),
+	sp2_BAH180_rise_( 0.75 ),
+	measure_sp3acc_BAH_from_hvy_( false ),
 	Mbhbond_( false ) //pba
 {
 	using namespace basic::options;
@@ -65,6 +67,8 @@ HBondOptions::HBondOptions( std::string params_db_tag ):
 	use_incorrect_deriv_ = option[OptionKeys::corrections::score::use_incorrect_hbond_deriv];
 	use_sp2_chi_penalty_ = option[OptionKeys::corrections::score::hb_sp2_chipen ];
 	bb_donor_acceptor_check_ = ! option[ OptionKeys::score::hbond_disable_bbsc_exclusion_rule ];
+	sp2_BAH180_rise_ = option[ OptionKeys::corrections::score::hb_sp2_BAH180_rise ];
+	measure_sp3acc_BAH_from_hvy_ = option[ OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy ];
 }
 
 
@@ -81,6 +85,8 @@ HBondOptions::HBondOptions():
 	params_database_tag_("standard_params"),
 	use_incorrect_deriv_( false ),
 	use_sp2_chi_penalty_( false ),
+	sp2_BAH180_rise_( 0.75 ),
+	measure_sp3acc_BAH_from_hvy_( false ),
 	Mbhbond_( false ) //pba
 {
 	using namespace basic::options;
@@ -95,6 +101,8 @@ HBondOptions::HBondOptions():
 	use_incorrect_deriv_ = option[OptionKeys::corrections::score::use_incorrect_hbond_deriv];
 	use_sp2_chi_penalty_ = option[OptionKeys::corrections::score::hb_sp2_chipen ];
 	bb_donor_acceptor_check_ = ! option[ OptionKeys::score::hbond_disable_bbsc_exclusion_rule ];
+	sp2_BAH180_rise_ = option[ OptionKeys::corrections::score::hb_sp2_BAH180_rise ];
+	measure_sp3acc_BAH_from_hvy_ = option[ OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy ];
 }
 
 /// copy constructor
@@ -121,6 +129,8 @@ HBondOptions::operator=( HBondOptions const & src )
 	params_database_tag_ = src.params_database_tag_;
 	use_incorrect_deriv_ = src.use_incorrect_deriv_;
 	use_sp2_chi_penalty_ = src.use_sp2_chi_penalty_;
+	sp2_BAH180_rise_ = src.sp2_BAH180_rise_;
+	measure_sp3acc_BAH_from_hvy_ = src.measure_sp3acc_BAH_from_hvy_;
 	Mbhbond_ = src.Mbhbond_; //pba
 	return *this;
 }
@@ -150,7 +160,7 @@ HBondOptions::include_intra_res_RNA() const
 void
 HBondOptions::include_intra_res_RNA( bool const setting )
 {
-	include_intra_res_RNA_ = setting; 
+	include_intra_res_RNA_ = setting;
 }
 
 ///
@@ -292,6 +302,12 @@ void HBondOptions::use_sp2_chi_penalty( bool setting )
 	use_sp2_chi_penalty_ = setting;
 }
 
+Real HBondOptions::sp2_BAH180_rise() const { return sp2_BAH180_rise_; }
+void HBondOptions::sp2_BAH180_rise( Real setting ) { sp2_BAH180_rise_ = setting; }
+
+bool HBondOptions::measure_sp3acc_BAH_from_hvy() const { return measure_sp3acc_BAH_from_hvy_; }
+void HBondOptions::measure_sp3acc_BAH_from_hvy( bool setting ) { measure_sp3acc_BAH_from_hvy_ = setting; }
+
 
 bool
 operator==( HBondOptions const & a, HBondOptions const & b )
@@ -307,6 +323,8 @@ operator==( HBondOptions const & a, HBondOptions const & b )
 		( a.params_database_tag_ == b.params_database_tag_ ) &&
 		( a.use_incorrect_deriv_ == b.use_incorrect_deriv_ ) &&
 		( a.use_sp2_chi_penalty_ == b.use_sp2_chi_penalty_ ) &&
+		( a.sp2_BAH180_rise_ == b.sp2_BAH180_rise_ ) &&
+		( a.measure_sp3acc_BAH_from_hvy_ == b.measure_sp3acc_BAH_from_hvy_ ) &&
 		( a.Mbhbond_ == b.Mbhbond_ ) ); //pba
 }
 
@@ -348,6 +366,10 @@ HBondOptions::show( std::ostream & out ) const
 		<<( use_incorrect_deriv_ ? "true" : "false" ) << std::endl;
 	out <<"HBondOptions::show: use_sp2_chi_penalty_: "
 		<<( use_sp2_chi_penalty_ ? "true" : "false" ) << std::endl;
+	out <<"HBondOptions::show: sp2_BAH180_rise_: "
+		<< sp2_BAH180_rise_ << std::endl;
+	out <<"HBondOptions::show: measure_sp3acc_BAH_from_hvy_: "
+		<<( measure_sp3acc_BAH_from_hvy_ ? "true" : "false" ) << std::endl;
 	out <<"HBondOptions::show: Mbhbond: "
 		<<( Mbhbond_ ? "true" : "false " ) << std::endl; //pba
 }

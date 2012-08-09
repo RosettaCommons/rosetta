@@ -335,7 +335,7 @@ public:
 		chemical::Hybridization acc_hybrid( get_hbe_acc_hybrid( hbond.eval_type() ) );
 		Vector BAunit;
 		Vector PBxyz;
-		make_hbBasetoAcc_unitvector( acc_hybrid, Axyz, Bxyz, B2xyz, PBxyz, BAunit );
+		make_hbBasetoAcc_unitvector( hbond_options, acc_hybrid, Axyz, Bxyz, B2xyz, PBxyz, BAunit );
 
 
 		// compute hbond geometric dimensions

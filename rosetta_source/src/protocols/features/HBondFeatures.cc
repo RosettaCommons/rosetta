@@ -109,6 +109,7 @@ using core::scoring::TenANeighborGraph;
 using core::scoring::etable::TableLookupEtableEnergy;
 using core::scoring::hbonds::HBDonChemType;
 using core::scoring::hbonds::HBAccChemType;
+using core::scoring::hbonds::HBondOptions;
 using core::scoring::hbonds::HBondTypeManager;
 using core::scoring::hbonds::get_hb_don_chem_type;
 using core::scoring::hbonds::get_hb_acc_chem_type;
@@ -733,7 +734,7 @@ HBondFeatures::report_features(
 		  !relevant_residues[hbond.acc_res()]) continue;
 
 		insert_hbond_row(hbond, struct_id, hbond_id, site_ids, site_partners, db_session);
-		insert_hbond_geom_coords(pose, hbond, struct_id, hbond_id, db_session);
+		insert_hbond_geom_coords(pose, hbond_set.hbond_options(), hbond, struct_id, hbond_id, db_session);
 		insert_hbond_lennard_jones_row(pose, hbond, struct_id, hbond_id, db_session);
 		insert_hbond_dehydron_row(pose, hbond, struct_id, hbond_id, db_session);
 	}
@@ -982,6 +983,7 @@ HBondFeatures::insert_hbond_row(
 void
 HBondFeatures::insert_hbond_geom_coords(
 	Pose const & pose,
+	HBondOptions const & hbond_options,
 	HBond const & hbond,
 	boost::uuids::uuid struct_id,
 	Size hbond_id,
@@ -1004,7 +1006,7 @@ HBondFeatures::insert_hbond_geom_coords(
 	Vector BAunit;
 	Vector PBxyz; // pseudo base atom
 	Hybridization acc_hybrid( get_hbe_acc_hybrid( hbond.eval_type() ) );
-	make_hbBasetoAcc_unitvector(acc_hybrid, Axyz, Bxyz, B2xyz, PBxyz, BAunit);
+	make_hbBasetoAcc_unitvector(hbond_options, acc_hybrid, Axyz, Bxyz, B2xyz, PBxyz, BAunit);
 
 	// Paraphrase hb_energy_deriv (when called with coords/vectors)
 	Vector AH = Hxyz - Axyz;

@@ -692,13 +692,9 @@ HBondEnergy::hbond_derivs_1way(
 	bool is_intra_res=(don_rsd.seqpos()==acc_rsd.seqpos());
 
 	if(is_intra_res){
-
 		if(don_rsd.is_RNA()==false) return;
-
 		if(don_rsd.is_RNA()!=acc_rsd.is_RNA()) utility_exit_with_message("don_rsd.is_RNA()!=acc_rsd.is_RNA()");
-
 		if(hbond_set.hbond_options().include_intra_res_RNA()==false) return;
-
 	}
 
 	// <f1,f2> -- derivative vectors
@@ -779,7 +775,7 @@ HBondEnergy::hbond_derivs_1way(
 			acc_atom_derivs[ aatm ].f2() += weighted_energy * deriv.acc_deriv.f2();
 
 			// ring-acceptor derivative assignment logic is tricky
-			assign_abase_derivs( acc_rsd, aatm, hbe_type, deriv.abase_deriv, weighted_energy, acc_atom_derivs );
+			assign_abase_derivs( *options_, acc_rsd, aatm, hbe_type, deriv.abase_deriv, weighted_energy, acc_atom_derivs );
 
 
 			acc_atom_derivs[ base2 ].f1() += weighted_energy * deriv.abase2_deriv.f1();

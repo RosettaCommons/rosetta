@@ -27,6 +27,9 @@
 // Unit headers
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
 
+// Package headers
+#include <core/types.hh>
+
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -72,13 +75,13 @@ public:
 	void
 	exclude_DNA_DNA( bool const setting );
 
-  ///
-  bool
-  include_intra_res_RNA() const;
+	///
+	bool
+	include_intra_res_RNA() const;
 
-  ///
-  void
-  include_intra_res_RNA( bool const setting );
+	///
+	void
+	include_intra_res_RNA( bool const setting );
 
 	///
 	bool
@@ -149,9 +152,18 @@ public:
 	use_incorrect_deriv( bool const setting );
 
 	bool use_sp2_chi_penalty() const;
-
 	void use_sp2_chi_penalty( bool setting );
 
+	/// @brief Parameter for the sp2 potential that dictates how much worse a head-on hydrogen bond is
+	/// relative to one at a BAH angle of 120 degrees.  Controlled by the command-line flag 
+	/// -corrections:score:hb_sp2_BAH180_rise.  Default of 0.75.
+	Real sp2_BAH180_rise() const;
+	void sp2_BAH180_rise( Real setting );
+
+	/// When calculating the BAH angle for sp3 hybridized acceptors: true: the angle should be measured
+	/// from the heavy-atom base (CB for S/T); false: from the base-2 atom (HG for S/T).
+	bool measure_sp3acc_BAH_from_hvy() const;
+	void measure_sp3acc_BAH_from_hvy( bool setting );
 
 	friend
 	bool
@@ -182,6 +194,8 @@ private:
 	std::string params_database_tag_;
 	bool use_incorrect_deriv_;
 	bool use_sp2_chi_penalty_;
+	Real sp2_BAH180_rise_;
+	bool measure_sp3acc_BAH_from_hvy_;
 	bool Mbhbond_; //pba
 };
 

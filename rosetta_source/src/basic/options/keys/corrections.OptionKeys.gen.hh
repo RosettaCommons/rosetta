@@ -48,9 +48,8 @@ namespace corrections { namespace score { extern IntegerVectorOptionKey const PB
 namespace corrections { namespace score { extern RealOptionKey const PB_potential_cap; } }
 namespace corrections { namespace score { extern RealOptionKey const lj_hbond_OH_donor_dis; } }
 namespace corrections { namespace score { extern BooleanOptionKey const score12prime; } }
+namespace corrections { namespace score { extern RealOptionKey const hb_sp2_BAH180_rise; } }
 namespace corrections { namespace score { extern BooleanOptionKey const hb_sp2_chipen; } }
-namespace corrections { namespace score { extern RealOptionKey const hb_sp2_amp; } }
-namespace corrections { namespace score { extern RealOptionKey const hb_sp2_peak_heigh_above_trough; } }
 namespace corrections { namespace score { extern BooleanOptionKey const hbond_measure_sp3acc_BAH_from_hvy; } }
 namespace corrections { namespace score { extern BooleanOptionKey const use_bicubic_interpolation; } }
 namespace corrections { namespace score { extern BooleanOptionKey const dun_normsd; } }

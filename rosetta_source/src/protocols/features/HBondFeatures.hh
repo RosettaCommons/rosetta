@@ -28,8 +28,10 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
+
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/hbonds/HBondSet.fwd.hh>
+#include <core/scoring/hbonds/HBondOptions.fwd.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -203,6 +205,7 @@ public:
 	void
 	insert_hbond_geom_coords(
 		core::pose::Pose const & pose,
+		core::scoring::hbonds::HBondOptions const & hbond_options,
 		core::scoring::hbonds::HBond const & hbond,
 		boost::uuids::uuid struct_id,
 		core::Size hbond_id,
