@@ -667,7 +667,7 @@ get_rna_base_centroid( conformation::Residue const & rsd , bool verbose){
 	}
 
 	if(verbose)  std::cout << "Base atoms" << std::endl;
-		
+
 	for ( Size i=rsd.first_sidechain_atom()+1; i<= rsd.nheavyatoms(); ++i ) { //rsd.first_sidechain_atom()+1 to not include the O2star oxygen.
 
 		if(verbose) std::cout << "atom " << i  << " " << 	"name= " << rsd.type().atom_name(i) << " type= " << rsd.atom_type(i).name()  << " " << rsd.atom_type_index(i) << " " << rsd.atomic_charge(i);
@@ -749,9 +749,9 @@ bool
 Is_base_phosphate_atom_pair( conformation::Residue const & rsd_1, conformation::Residue const & rsd_2, Size const atomno_1, Size const atomno_2){
 
 	bool Is_base_phosphate_atom_pair=false;
-			
-	if( ( rsd_1.RNA_type().atom_is_phosphate( atomno_1 ) && (rsd_2.RNA_type().is_RNA_base_atom( atomno_2 ) ) ) ) Is_base_phosphate_atom_pair=true; 
-	if( ( rsd_2.RNA_type().atom_is_phosphate( atomno_2 ) && (rsd_1.RNA_type().is_RNA_base_atom( atomno_1 ) ) ) ) Is_base_phosphate_atom_pair=true; 
+
+	if( ( rsd_1.RNA_type().atom_is_phosphate( atomno_1 ) && (rsd_2.RNA_type().is_RNA_base_atom( atomno_2 ) ) ) ) Is_base_phosphate_atom_pair=true;
+	if( ( rsd_2.RNA_type().atom_is_phosphate( atomno_2 ) && (rsd_1.RNA_type().is_RNA_base_atom( atomno_1 ) ) ) ) Is_base_phosphate_atom_pair=true;
 
 	if(Is_base_phosphate_atom_pair){ //This Assume that rsd_1 and rsd_2 are the same!!!
 		if( rsd_1.seqpos()==rsd_2.seqpos() && (rsd_1.path_distance( atomno_1, atomno_2 ) < 4) ){ //consistency check!

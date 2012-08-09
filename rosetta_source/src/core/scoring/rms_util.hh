@@ -37,6 +37,7 @@
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID_Map.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/MiniPose.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -462,6 +463,15 @@ Real
 superimpose_pose(
 	pose::Pose & mod_pose,
 	pose::Pose const & ref_pose,
+	id::AtomID_Map< id::AtomID > const & atom_map // from mod_pose to ref_pose
+);
+
+/// @brief  Superimpose mod_pose onto ref_pose using the mapping of atoms from
+/// mod_pose to ref_pose given by atom_map
+Real
+superimpose_pose(
+	pose::Pose & mod_pose,
+	pose::MiniPose const & ref_pose,
 	id::AtomID_Map< id::AtomID > const & atom_map // from mod_pose to ref_pose
 );
 

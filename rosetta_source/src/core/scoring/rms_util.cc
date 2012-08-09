@@ -35,6 +35,7 @@
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/MiniPose.hh>
 #include <core/pose/util.hh>
 #include <core/id/types.hh>
 #include <core/chemical/automorphism.hh>
@@ -992,6 +993,17 @@ superimpose_pose(
 	id::AtomID_Map< id::AtomID > const & atom_map // from mod_pose to ref_pose
 )
 {
+	pose::MiniPose mini_ref_pose( ref_pose );  //minipose is a lightweight pose with just xyz positions (& fold tree)
+	return superimpose_pose(mod_pose, mini_ref_pose, atom_map );
+}
+
+Real
+superimpose_pose(
+	pose::Pose & mod_pose,
+	pose::MiniPose const & ref_pose,
+	id::AtomID_Map< id::AtomID > const & atom_map // from mod_pose to ref_pose
+)
+{
 	using namespace numeric::model_quality;
 	using namespace id;
 
@@ -1042,7 +1054,7 @@ superimpose_pose(
 		runtime_assert( std::abs(tmp1) + std::abs(tmp2) + std::abs(tmp3) < 1e-3 );
 	}
 
-	{ // translate xx2 by COM and fill in the new ref_pose coordinates
+	{ // translate xx2 by COM and fill in the new mod_pose coordinates
 		Size atomno(0);
 		Vector x2;
 		for ( Size i=1; i<= mod_pose.total_residue(); ++i ) {
