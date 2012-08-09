@@ -1,7 +1,6 @@
 Generated HBond parameters by Matthew O'Meara and Andrew Leaver-Fay in 2011-2012 
 
-
-This is the 8b parameter set.
+This is the 9a parameter set.
 
 README.txt: this file
 schema.sql: sql schema definition for tables
