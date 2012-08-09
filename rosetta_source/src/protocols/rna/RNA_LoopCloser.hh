@@ -97,6 +97,12 @@ private:
 											utility::vector1< core::Vector > & downstream_xyzs
 											) const;
 
+	core::Real
+	get_gap_distance( core::pose::Pose & pose,
+								Size const cutpoint
+								) const;
+
+
 	utility::vector1< Size >
 	get_extra_cutpoints( core::pose::Pose const & pose ) const;
 
@@ -120,6 +126,7 @@ private:
 	core::Real ccd_tolerance_;
 	core::Real absolute_ccd_tolerance_;
 	core::Real attempt_closure_cutoff_;
+	core::Real gap_distance_cutoff_;
 	bool fast_scan_;
 }; // class RNA_LoopCloser
 

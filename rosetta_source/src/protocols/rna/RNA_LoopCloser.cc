@@ -89,6 +89,7 @@ RNA_LoopCloser::RNA_LoopCloser():
 	ccd_tolerance_( 0.000001 ),
 	absolute_ccd_tolerance_( 0.01 ),
 	attempt_closure_cutoff_( 20.0 ),
+	gap_distance_cutoff_( 8.0 ),
 	fast_scan_( false )
 {
 	Mover::type("RNA_LoopCloser");
@@ -186,6 +187,13 @@ RNA_LoopCloser::passes_fast_scan( core::pose::Pose & pose, Size const i ) const
 	//Don't bother if chain is really bad...
 	if ( current_dist_err > attempt_closure_cutoff_ )		{
 		if (verbose_) TR << "Cutpoint " << i << " will be tough to close: " << current_dist_err << std::endl;
+		return false;
+	}
+
+	Real const current_gap_distance =   get_gap_distance( pose, i );
+	//Don't bother if chain is really bad...
+	if ( current_gap_distance > gap_distance_cutoff_ )		{
+		if (verbose_) TR << "Cutpoint " << i << " will be tough to close since gap is : " << current_gap_distance << std::endl;
 		return false;
 	}
 
@@ -445,6 +453,15 @@ RNA_LoopCloser::get_chainbreak_xyz( pose::Pose & pose,
 	mean_dist_err /= upstream_xyzs.size();
 
 	return mean_dist_err;
+}
+
+///////////////////////////////////////////////////////////////
+Real
+RNA_LoopCloser::get_gap_distance( pose::Pose & pose,
+										Size const cutpoint
+										) const
+{
+	return ( pose.residue(cutpoint).xyz( " O3*" ) - pose.residue(cutpoint).xyz(" C5*" ) ).length();
 }
 
 ///////////////////////////////////////////////////////////////////////////
