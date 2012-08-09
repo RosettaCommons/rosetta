@@ -75,24 +75,22 @@ public:
 		boost::uuids::uuid struct_id,
 		utility::sql_database::sessionOP db_session);
 private:
-	static void setup_conformation_to_turn_type_map();
+	static std::map< std::string, std::string > const & get_conformation_to_turn_type_map();
 
-		bool all_turn_residues_are_on_the_same_chain( core::pose::Pose const & pose, Size first_residue ) const;
+    bool all_turn_residues_are_on_the_same_chain( core::pose::Pose const & pose, Size first_residue ) const;
 
-		bool residue_range_is_relevant( utility::vector1< bool > const & relevant_residues, Size range_begin, Size range_end ) const;
+    bool residue_range_is_relevant( utility::vector1< bool > const & relevant_residues, Size range_begin, Size range_end ) const;
 
-		bool residue_range_is_protein( core::pose::Pose const & pose, Size range_begin, Size range_end ) const;
+    bool residue_range_is_protein( core::pose::Pose const & pose, Size range_begin, Size range_end ) const;
 
-		bool beta_turn_present( core::pose::Pose const & pose, Size first_residue ) const;
+    bool beta_turn_present( core::pose::Pose const & pose, Size first_residue ) const;
 
-		std::string const & beta_turn_type( core::pose::Pose const & pose, Size first_residue ) const;
+    std::string const & beta_turn_type( core::pose::Pose const & pose, Size first_residue ) const;
 	std::string determine_ramachandran_hash( core::Real phi, core::Real psi, core::Real omega ) const;
 
 private:
-		static bool initialized_;
-	static Size const beta_turn_length;
-		static core::Real const beta_turn_distance_cutoff;
-		static std::map< std::string, std::string > conformation_to_turn_type_;
+	Size const beta_turn_length;
+	core::Real const beta_turn_distance_cutoff;
 
 };
 

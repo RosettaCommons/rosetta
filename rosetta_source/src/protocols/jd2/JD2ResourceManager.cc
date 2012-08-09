@@ -332,25 +332,7 @@ JD2ResourceManager::has_resource_with_description(
 
 	if ( FallbackConfigurationFactory::get_instance()->has_fallback_for_resource( resource_description )) {
 		FallbackConfigurationOP fallback = FallbackConfigurationFactory::get_instance()->create_fallback_configuration( resource_description );
-		if ( fallback->fallback_specified( resource_description ) ) {
-			ResourceOP fallbackresource = create_resource_from_fallback( fallback, resource_description );
-			// now make sure that the resource is saved for later; create a pheax uuid for this
-			std::string fallbackname = "fallback_" + resource_description;
-			for ( core::Size ii = 1; ii <= 10000; ++ii ) {
-				if ( ! has_resource_configuration( fallbackname )) break;
-				fallbackname = "fallback_" + resource_description + "_" + utility::to_string( numeric::random::random_range(1,4000000) );
-			}
-			if ( has_resource_configuration( fallbackname ) ) {
-				throw utility::excn::EXCN_Msg_Exception( "Could not name the fallback resource after 10000 attempts.  Try not to name your resources"
-					" beginning with the prefix 'fallback_'." );
-			}
-			basic::resource_manager::ResourceConfiguration fake_configuration;
-			fake_configuration.resource_tag = fallbackname;
-			add_resource_configuration( fallbackname, fake_configuration );
-			fallback_resource_descriptions_created_[ resource_description ] = fallbackname;
-			add_resource( fallbackname, fallbackresource );
-			return true;
-		}
+		return fallback->fallback_specified( resource_description );
 	}
 	return false;
 }
@@ -373,7 +355,30 @@ JD2ResourceManager::get_resource(
 	} else {
 		using basic::resource_manager::FallbackConfigurationFactory;
 		using basic::resource_manager::FallbackConfigurationOP;
-
+        
+        if ( FallbackConfigurationFactory::get_instance()->has_fallback_for_resource( resource_description )) {
+            FallbackConfigurationOP fallback = FallbackConfigurationFactory::get_instance()->create_fallback_configuration( resource_description );
+            if ( fallback->fallback_specified( resource_description ) ) {
+                ResourceOP fallbackresource = create_resource_from_fallback( fallback, resource_description );
+                // now make sure that the resource is saved for later; create a pheax uuid for this
+                std::string fallbackname = "fallback_" + resource_description;
+                for ( core::Size ii = 1; ii <= 10000; ++ii ) {
+                    if ( ! has_resource_configuration( fallbackname )) break;
+                    fallbackname = "fallback_" + resource_description + "_" + utility::to_string( numeric::random::random_range(1,4000000) );
+                }
+                if ( has_resource_configuration( fallbackname ) ) {
+                    throw utility::excn::EXCN_Msg_Exception( "Could not name the fallback resource after 10000 attempts.  Try not to name your resources"
+                        " beginning with the prefix 'fallback_'." );
+                }
+                basic::resource_manager::ResourceConfiguration fake_configuration;
+                fake_configuration.resource_tag = fallbackname;
+                add_resource_configuration( fallbackname, fake_configuration );
+                fallback_resource_descriptions_created_[ resource_description ] = fallbackname;
+                add_resource( fallbackname, fallbackresource );
+                return fallbackresource;
+            }
+        }
+        
 		std::ostringstream errmsg;
 		errmsg << "JD2ResourceManager does not have a resource "
 			"corresponding to the resource description '" + resource_description + ".' for job '" +

@@ -85,22 +85,13 @@ using utility::tag::TagPtr;
 using cppdb::statement;
 using cppdb::result;
 
-bool BetaTurnDetectionFeatures::initialized_( false );
-Size const BetaTurnDetectionFeatures::beta_turn_length = 3;
-core::Real const BetaTurnDetectionFeatures::beta_turn_distance_cutoff = 7.0;
-map< string, string > BetaTurnDetectionFeatures::conformation_to_turn_type_;
-
 BetaTurnDetectionFeatures::BetaTurnDetectionFeatures() :
-	FeaturesReporter()
-{
-	setup_conformation_to_turn_type_map();
-}
+	FeaturesReporter(), beta_turn_length( 3 ), beta_turn_distance_cutoff( 7.0 )
+{}
 
 BetaTurnDetectionFeatures::BetaTurnDetectionFeatures( BetaTurnDetectionFeatures const & ) :
-	FeaturesReporter()
-{
-	setup_conformation_to_turn_type_map();
-}
+	FeaturesReporter(), beta_turn_length( 3 ), beta_turn_distance_cutoff( 7.0 )
+{}
 
 BetaTurnDetectionFeatures::~BetaTurnDetectionFeatures() {}
 
@@ -183,33 +174,38 @@ BetaTurnDetectionFeatures::report_features(
 	return 0;
 }
 
-void BetaTurnDetectionFeatures::setup_conformation_to_turn_type_map()
+std::map< std::string, std::string > const & BetaTurnDetectionFeatures::get_conformation_to_turn_type_map()
 {
-		if ( initialized_ ) return;
-		initialized_ = true;
+    // It pisses me off that C++ works this way, but it does. Sergey promises that this line will only ever be executed once.
+    static std::map< std::string, std::string > * conformation_to_turn_type_ = 0;
+    
+    if ( conformation_to_turn_type_ == 0 )
+    {
+        conformation_to_turn_type_ = new std::map< std::string, std::string >;
+				// These turn types are well characterized
+        ( *conformation_to_turn_type_ )[ "AA" ] = "I";
+        ( *conformation_to_turn_type_ )[ "LL" ] = "I'";
+        ( *conformation_to_turn_type_ )[ "BL" ] = "II";
+        ( *conformation_to_turn_type_ )[ "EA" ] = "II'";
+        ( *conformation_to_turn_type_ )[ "AB" ] = "VIII";
 
-	// These turn types are well characterized
-	conformation_to_turn_type_[ "AA" ] = "I";
-	conformation_to_turn_type_[ "LL" ] = "I'";
-	conformation_to_turn_type_[ "BL" ] = "II";
-	conformation_to_turn_type_[ "EA" ] = "II'";
-	conformation_to_turn_type_[ "AB" ] = "VIII";
+        // Type IV is essentially "other"
+        ( *conformation_to_turn_type_ )[ "XX" ] = "IV";
 
-	// Type IV is essentially "other"
-	conformation_to_turn_type_[ "XX" ] = "IV";
+        // These types are the working names for some new turn types
+        ( *conformation_to_turn_type_ )[ "LE" ] = "VIII'";
+        ( *conformation_to_turn_type_ )[ "AL" ] = "IX";
+        ( *conformation_to_turn_type_ )[ "LA" ] = "IX'";
 
-	// These types are the working names for some new turn types
-	conformation_to_turn_type_[ "LE" ] = "VIII'";
-	conformation_to_turn_type_[ "AL" ] = "IX";
-	conformation_to_turn_type_[ "LA" ] = "IX'";
-
-	// These turns have a CisProline at position three
-	/* My current binning of Ramachandran space is too coarse to differentiate these types, so I will just make a Type VI turn type
-	conformation_to_turn_type_[ "BACis" ] = "VIa1";
-	conformation_to_turn_type_[ "BACis" ] = "VIa2";
-	conformation_to_turn_type_[ "BACis" ] = "VIb";
-	*/
-	conformation_to_turn_type_[ "BACis" ] = "VI";
+        // These turns have a CisProline at position three
+        /* My current binning of Ramachandran space is too coarse to differentiate these types, so I will just make a Type VI turn type
+        ( *conformation_to_turn_type_ )[ "BACis" ] = "VIa1";
+        ( *conformation_to_turn_type_ )[ "BACis" ] = "VIa2";
+        ( *conformation_to_turn_type_ )[ "BACis" ] = "VIb";
+        */
+        ( *conformation_to_turn_type_ )[ "BACis" ] = "VI";
+    }
+    return *conformation_to_turn_type_;
 }
 
 bool BetaTurnDetectionFeatures::all_turn_residues_are_on_the_same_chain( Pose const & pose, Size first_residue ) const
@@ -271,12 +267,12 @@ string const & BetaTurnDetectionFeatures::beta_turn_type( Pose const & pose, Siz
 		}
 	}
 
-	if (!conformation_to_turn_type_.count( rama_hash ) )
+	if (!get_conformation_to_turn_type_map().count( rama_hash ) )
 	{
 		rama_hash = "XX";
 	}
 
-	return conformation_to_turn_type_[ rama_hash ];
+	return get_conformation_to_turn_type_map().find(  rama_hash )->second;
 }
 
 string BetaTurnDetectionFeatures::determine_ramachandran_hash( Real phi, Real psi, Real omega ) const

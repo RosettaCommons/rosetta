@@ -1468,6 +1468,7 @@
 		449F5E76D35BCB94175A9868 /* JScoreEvaluatorCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 22FC8A56A93606D76D86106F /* JScoreEvaluatorCreator.cc */; };
 		0CD404B96851593D0CDAAA6E /* JumpEvaluator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2881CEE5A8D79662B7C94199 /* JumpEvaluator.cc */; };
 		F61D86558A7303EA1CEFC939 /* JumpNrEvaluatorCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9105D433CEC21E7869D1D656 /* JumpNrEvaluatorCreator.cc */; };
+		9B16987D85E2C85664AC8F18 /* NMerPSSMEnergyFilter.cc in Sources */ = {isa = PBXBuildFile; fileRef = EB8EBB51C2DAA2FE186FF9FF /* NMerPSSMEnergyFilter.cc */; };
 		E9477A41CB9D82E7A601B574 /* NativeEvaluatorCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 46CF59C45667A133A2B08E23 /* NativeEvaluatorCreator.cc */; };
 		32CD9E368C2EACD42463A210 /* NeighborTypeFilter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 956CB0DABA2E68E79EDECCB3 /* NeighborTypeFilter.cc */; };
 		F8E2303F9475AF88E9BFBAE3 /* PDDFScoreFilter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0D0D18787EA3E3532D497148 /* PDDFScoreFilter.cc */; };
@@ -11331,6 +11332,10 @@
 		9105D433CEC21E7869D1D656 /* JumpNrEvaluatorCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JumpNrEvaluatorCreator.cc; path = ../src/protocols/simple_filters/JumpNrEvaluatorCreator.cc; sourceTree = SOURCE_ROOT; };
 		72B6783DB16475620F6F25CA /* JumpNrEvaluatorCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = JumpNrEvaluatorCreator.hh; path = ../src/protocols/simple_filters/JumpNrEvaluatorCreator.hh; sourceTree = SOURCE_ROOT; };
 		97D9FCD36F92B7C772EF4A48 /* MinValueEvaluator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MinValueEvaluator.hh; path = ../src/protocols/simple_filters/MinValueEvaluator.hh; sourceTree = SOURCE_ROOT; };
+		EB8EBB51C2DAA2FE186FF9FF /* NMerPSSMEnergyFilter.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = NMerPSSMEnergyFilter.cc; path = ../src/protocols/simple_filters/NMerPSSMEnergyFilter.cc; sourceTree = SOURCE_ROOT; };
+		DFB1516ACD99C01CC3CB9CAA /* NMerPSSMEnergyFilter.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = NMerPSSMEnergyFilter.fwd.hh; path = ../src/protocols/simple_filters/NMerPSSMEnergyFilter.fwd.hh; sourceTree = SOURCE_ROOT; };
+		CFB1CCA5B8CA5A0C88A1DB85 /* NMerPSSMEnergyFilter.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = NMerPSSMEnergyFilter.hh; path = ../src/protocols/simple_filters/NMerPSSMEnergyFilter.hh; sourceTree = SOURCE_ROOT; };
+		05E7DBC4B8FA10CCA7E4A94F /* NMerPSSMEnergyFilterCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = NMerPSSMEnergyFilterCreator.hh; path = ../src/protocols/simple_filters/NMerPSSMEnergyFilterCreator.hh; sourceTree = SOURCE_ROOT; };
 		46CF59C45667A133A2B08E23 /* NativeEvaluatorCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = NativeEvaluatorCreator.cc; path = ../src/protocols/simple_filters/NativeEvaluatorCreator.cc; sourceTree = SOURCE_ROOT; };
 		8E75A3D7945130CE5BE07FD0 /* NativeEvaluatorCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = NativeEvaluatorCreator.hh; path = ../src/protocols/simple_filters/NativeEvaluatorCreator.hh; sourceTree = SOURCE_ROOT; };
 		956CB0DABA2E68E79EDECCB3 /* NeighborTypeFilter.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = NeighborTypeFilter.cc; path = ../src/protocols/simple_filters/NeighborTypeFilter.cc; sourceTree = SOURCE_ROOT; };
@@ -20967,6 +20972,10 @@
 				9105D433CEC21E7869D1D656 /* JumpNrEvaluatorCreator.cc */,
 				72B6783DB16475620F6F25CA /* JumpNrEvaluatorCreator.hh */,
 				97D9FCD36F92B7C772EF4A48 /* MinValueEvaluator.hh */,
+				EB8EBB51C2DAA2FE186FF9FF /* NMerPSSMEnergyFilter.cc */,
+				DFB1516ACD99C01CC3CB9CAA /* NMerPSSMEnergyFilter.fwd.hh */,
+				CFB1CCA5B8CA5A0C88A1DB85 /* NMerPSSMEnergyFilter.hh */,
+				05E7DBC4B8FA10CCA7E4A94F /* NMerPSSMEnergyFilterCreator.hh */,
 				46CF59C45667A133A2B08E23 /* NativeEvaluatorCreator.cc */,
 				8E75A3D7945130CE5BE07FD0 /* NativeEvaluatorCreator.hh */,
 				956CB0DABA2E68E79EDECCB3 /* NeighborTypeFilter.cc */,
@@ -26700,6 +26709,7 @@
 				449F5E76D35BCB94175A9868 /* JScoreEvaluatorCreator.cc in Sources */,
 				0CD404B96851593D0CDAAA6E /* JumpEvaluator.cc in Sources */,
 				F61D86558A7303EA1CEFC939 /* JumpNrEvaluatorCreator.cc in Sources */,
+				9B16987D85E2C85664AC8F18 /* NMerPSSMEnergyFilter.cc in Sources */,
 				E9477A41CB9D82E7A601B574 /* NativeEvaluatorCreator.cc in Sources */,
 				32CD9E368C2EACD42463A210 /* NeighborTypeFilter.cc in Sources */,
 				F8E2303F9475AF88E9BFBAE3 /* PDDFScoreFilter.cc in Sources */,
