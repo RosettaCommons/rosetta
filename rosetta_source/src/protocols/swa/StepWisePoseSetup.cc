@@ -21,6 +21,7 @@
 #include <protocols/swa/StepWiseJobParameters.hh>
 #include <protocols/swa/StepWiseJobParameters.fwd.hh>
 #include <protocols/swa/protein/StepWiseProteinUtil.hh>
+#include <protocols/rna/RNA_ProtocolUtil.hh>
 
 //////////////////////////////////
 // AUTO-REMOVED #include <core/chemical/util.hh>
@@ -75,6 +76,7 @@
 #include <utility/vector1.hh>
 using namespace core;
 using core::Real;
+using protocols::rna::possible_root; /*not the best place for this...*/
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -841,17 +843,6 @@ return "StepWisePoseSetup";
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	// Apparently can only reroot the tree at a "vertex", i.e. beginning or end of an "edge".
-	bool
-	possible_root( core::kinematics::FoldTree const & f, Size const & n ){
-		if ( n == 1 ) return true;
-		if ( n == f.nres() ) return true;
-		if ( f.is_cutpoint( n ) ) return true;
-		if ( f.is_cutpoint( n-1 ) ) return true;
-		return false;
-	}
-
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Figure out a good root residue -- which partition of the pose has the fewest residues to move around?
 	void
