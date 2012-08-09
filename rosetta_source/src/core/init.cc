@@ -790,19 +790,27 @@ void init(int argc, char * argv [])
 			TR << "found database environment variable ROSETTA3_DB: "<< descr << std::endl;
 			database_path = std::string( descr );
 		} else {
-#ifdef MAC
 			char path[1024];
 			uint32_t size = sizeof(path);
+#ifdef MAC
 			if (_NSGetExecutablePath(path, &size) == 0)
 				printf("executable path is %s\n", path);
 			else
 				printf("buffer too small; need size %u\n", size);
-			std::string path_string( path );
-			Size found = path_string.find_last_of("/\\");
-			std::string rosetta_exe_dir = path_string.substr(0,found);
-			database_path = rosetta_exe_dir + "/../../rosetta_database/";
-			TR << "looking for database based on location of executable: " << database_path << std::endl;
 #endif
+#ifdef LINUX
+			readlink( "/proc/self/exe", path, size ); // This works on plain Linux, but not FreeBSD or Solaris.
+#endif
+#ifdef WIN32
+			TR << "There is someway to automatically figure out the path to rosetta_database with GetModuleFileName in Windows. This is already set up for linux and mac, its probably just one line to change in core/init.cc" << std::endl;
+#endif
+			if ( path ){
+				std::string path_string( path );
+				Size found = path_string.find("rosetta_source/"); //This better be in the path -- now part of the standard rosetta3 directory structure!
+				std::string rosetta_exe_dir = path_string.substr(0,found);
+				database_path = rosetta_exe_dir + "rosetta_database/";
+				TR << "looking for database based on location of executable: " << database_path << std::endl;
+			}
 		}
 
 		if ( database_path.size() > 0 ){
