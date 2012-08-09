@@ -135,7 +135,8 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 		//		if ( !rna_fragments_->is_fullatom() ){
 		frame_ok = false;
 		for (Size offset = 1; offset <= frag_size_; offset++ ){
-			if ( allow_insert_->get( i + offset - 1 ) ) { //sucka!
+			Size const n = i + offset - 1;
+			if ( allow_insert_->get( n ) ) { //sucka!
 				frame_ok = true;
 				break;
 			}
@@ -155,6 +156,14 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 
 		if ( !frame_ok ) continue;
 
+		// Must make sure the whole frame is RNA, of course.
+
+		for (Size offset = 1; offset <= frag_size_; offset++ ){
+			if ( !pose.residue_type( i + offset - 1 ).is_RNA() ){
+				frame_ok = false; break;
+			}
+		}
+
 		// Check for cutpoints that interrupt frame. Wait. why?
 		//		for (Size offset = 1; offset <= frag_size_; offset++ ){
 		//			if ( offset < frag_size_ &&
@@ -165,7 +174,14 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 		//			}
 		//		}
 
-		if ( !frame_ok ) continue;
+		if ( !frame_ok ) continue;		//		for (Size offset = 1; offset <= frag_size_; offset++ ){
+		//			if ( offset < frag_size_ &&
+		//					 pose.fold_tree().is_cutpoint( i + offset - 1) &&
+		//					 !( pose.residue_type( i+offset-1).has_variant_type( chemical::CUTPOINT_LOWER ) &&
+		//							pose.residue_type( i+offset  ).has_variant_type( chemical::CUTPOINT_UPPER ) ) ) {
+		//				frame_ok = false; break;
+		//			}
+
 
 		num_insertable_residues_++;
 		insert_map_[ num_insertable_residues_ ] = i;
