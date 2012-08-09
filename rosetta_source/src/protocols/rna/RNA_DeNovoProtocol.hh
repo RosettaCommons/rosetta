@@ -22,9 +22,9 @@
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/rna/RNA_DataReader.fwd.hh>
 #include <protocols/rna/RNA_Fragments.fwd.hh>
-// AUTO-REMOVED #include <protocols/rna/RNA_StructureParameters.fwd.hh>
 #include <protocols/rna/RNA_StructureParameters.hh>
 #include <protocols/rna/RNA_LoopCloser.fwd.hh>
+#include <protocols/rigid/RigidBodyMover.fwd.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <protocols/rna/RNA_FragmentMover.fwd.hh>
@@ -161,9 +161,15 @@ public:
 
 	void
 	set_staged_constraints( bool const setting ){ staged_constraints_ = setting; }
-	
+
 	void
 	set_allow_consecutive_bulges( bool const setting ){ allow_consecutive_bulges_ = setting; };
+
+	void
+	set_chainbreak_weight( core::Real setting ){ chainbreak_weight_ = setting; }
+
+	void
+	set_linear_chainbreak_weight( core::Real setting ){ linear_chainbreak_weight_ = setting; }
 
 	void
 	set_allowed_bulge_res( utility::vector1< core::Size > const & setting ){ allowed_bulge_res_ = setting; };
@@ -180,7 +186,13 @@ private:
 	initialize_constraints( core::pose::Pose & pose );
 
 	void
+	initialize_scorefxn( core::pose::Pose & pose );
+
+	void
 	initialize_tag_is_done();
+
+	void
+	setup_rigid_body_mover( core::pose::Pose const & pose, core::Size const r, core::Size const rounds );
 
 
 	void
@@ -227,6 +239,7 @@ private:
 	void
 	calc_rmsds( core::io::silent::SilentStruct & s, core::pose::Pose & pose, std::string const & out_file_tag ) const;
 
+
 private:
 
 	// protocol-specific data ... need to be specified as input.
@@ -257,6 +270,7 @@ private:
 	protocols::rna::RNA_ChunkLibraryOP rna_chunk_library_;
 	protocols::rna::RNA_MinimizerOP rna_minimizer_;
 	protocols::rna::RNA_RelaxerOP rna_relaxer_;
+	protocols::rigid::RigidBodyPerturbMoverOP rigid_body_mover_;
 
 	std::string rna_params_file_;
 	std::string rna_data_file_;
@@ -287,6 +301,9 @@ private:
 	core::Real chunk_coverage_;
 
 	bool staged_constraints_;
+
+	core::Real chainbreak_weight_;
+	core::Real linear_chainbreak_weight_;
 
 }; // class RNA_DeNovoProtocol
 

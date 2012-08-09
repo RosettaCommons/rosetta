@@ -45,13 +45,13 @@
 
 
 // option key includes
-
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/sequence/Sequence.hh>
+#include <utility/file/file_sys_util.hh>
 
 
 
@@ -71,6 +71,7 @@ OPT_KEY( Boolean, simple_relax )
 OPT_KEY( Boolean, close_loops )
 OPT_KEY( Boolean, close_loops_after_each_move )
 OPT_KEY( Boolean, output_lores_silent_file )
+OPT_KEY( Boolean, binary_output )
 OPT_KEY( Boolean, ignore_secstruct )
 OPT_KEY( Boolean, filter_lores_base_pairs )
 OPT_KEY( Boolean, use_1jj2_torsions )
@@ -80,6 +81,8 @@ OPT_KEY( Boolean, heat )
 OPT_KEY( Boolean, dump )
 OPT_KEY( Boolean, staged_constraints )
 OPT_KEY( Real, temperature )
+OPT_KEY( Real, rna_lores_linear_chainbreak_weight )
+OPT_KEY( Real, rna_lores_chainbreak_weight )
 OPT_KEY( Integer, cycles )
 OPT_KEY( Real, jump_change_frequency )
 OPT_KEY( String,  vall_torsions )
@@ -190,11 +193,18 @@ rna_denovo_test()
 	if (native_exists) rna_de_novo_protocol.set_native_pose( native_pose_OP );
 
 	if ( option[ jump_library_file ].user() )	rna_de_novo_protocol.set_jump_library_file( in_path + option[ jump_library_file] );
- 	if ( option[ vall_torsions ].user() )	 rna_de_novo_protocol.set_vall_torsions_file( in_path + option[ vall_torsions ] );
+ 	if ( option[ vall_torsions ].user() )	{
+		// check in database first
+		std::string vall_torsions_file = basic::database::full_name("/chemical/rna/" + option[ vall_torsions ]() );
+		if (!utility::file::file_exists( vall_torsions_file ) && !utility::file::file_exists( vall_torsions_file + ".gz" ) )  vall_torsions_file = in_path + option[ vall_torsions ]();
+		rna_de_novo_protocol.set_vall_torsions_file( vall_torsions_file );
+	}
 	if ( option[ use_1jj2_torsions ]() ) rna_de_novo_protocol.set_vall_torsions_file( basic::database::full_name("chemical/rna/1jj2.torsions") );
 	if ( option[params_file].user() )	rna_de_novo_protocol.set_rna_params_file( in_path + option[ params_file ] );
 	if ( option[data_file].user() )	rna_de_novo_protocol.set_rna_data_file( in_path + option[ data_file ] );
 	if ( option[lores_scorefxn].user() )	rna_de_novo_protocol.set_lores_scorefxn( option[ lores_scorefxn ] );
+	if ( option[ rna_lores_linear_chainbreak_weight ].user() ) rna_de_novo_protocol.set_linear_chainbreak_weight( option[ rna_lores_linear_chainbreak_weight ]() );
+	if ( option[ rna_lores_chainbreak_weight ].user() ) rna_de_novo_protocol.set_chainbreak_weight( option[ rna_lores_chainbreak_weight ]() );
 
 	rna_de_novo_protocol.ignore_secstruct( option[ ignore_secstruct ] );
 	rna_de_novo_protocol.jump_change_frequency( option[ jump_change_frequency ] );
@@ -205,13 +215,10 @@ rna_denovo_test()
 	rna_de_novo_protocol.set_staged_constraints( option[ staged_constraints ] ) ;
 	rna_de_novo_protocol.set_filter_lores_base_pairs(  option[ filter_lores_base_pairs] );
 	rna_de_novo_protocol.set_vary_bond_geometry(  option[ vary_geometry ] );
-	if ( option[ in::file::silent_struct_type ]() == "binary_rna" ) {
-		rna_de_novo_protocol.set_binary_rna_output( true );
-	}
+	if ( option[ in::file::silent_struct_type ]() == "binary_rna"  || option[ binary_output ]() )	rna_de_novo_protocol.set_binary_rna_output( true );
+
 	rna_de_novo_protocol.simple_rmsd_cutoff_relax( option[ simple_relax ] );
-	if ( option[ in::file::silent ].user()	) {
-		rna_de_novo_protocol.set_chunk_silent_files( option[ in::file::silent ]() );
-	}
+	if ( option[ in::file::silent ].user()	) 	rna_de_novo_protocol.set_chunk_silent_files( option[ in::file::silent ]() );
 	rna_de_novo_protocol.set_chunk_res( option[ chunk_res ]() ) ;
 	rna_de_novo_protocol.set_allow_consecutive_bulges( option[ allow_consecutive_bulges ]() ) ;
 	rna_de_novo_protocol.set_allowed_bulge_res( option[ allowed_bulge_res ]() ) ;
@@ -274,9 +281,12 @@ main( int argc, char * argv [] )
 	NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );
 	NEW_OPT( chunk_res, "Input residues for chunk libraries (specified by -in:file:silent)", blank_size_vector );
 	NEW_OPT( use_1jj2_torsions, "Use original (ribosome) fragments, 1JJ2", false );
+	NEW_OPT( rna_lores_chainbreak_weight, "chainbreak weight for lo res sampling", 0.0 );
+	NEW_OPT( rna_lores_linear_chainbreak_weight, "linear chainbreak weight for lo res sampling", 0.0 );
   NEW_OPT( allow_bulge , "Automatically virtualize residues that are not energetically stable", false );
-  NEW_OPT( allowed_bulge_res, "Use with allow_bulge, allowable pos for virtualization", blank_size_vector  ); 
-  NEW_OPT( allow_consecutive_bulges, "allow_consecutive_bulges", false );  
+  NEW_OPT( allowed_bulge_res, "Use with allow_bulge, allowable pos for virtualization", blank_size_vector  );
+  NEW_OPT( allow_consecutive_bulges, "allow_consecutive_bulges", false );
+  NEW_OPT( binary_output, "force output to binary rna silentstruct", false );
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup
