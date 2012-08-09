@@ -123,6 +123,9 @@ toolbox::AllowInsertOP
 	setup_virtual_phosphate_variants( core::pose::Pose & pose );
 
 	void
+	setup_virtual_phosphate_variants_OLD( core::pose::Pose & pose ); //remove this by end of 2012
+
+	void
 	set_jump_library( RNA_JumpLibraryOP rna_jump_library );
 
 	std::string const
@@ -172,8 +175,8 @@ private:
 
 	bool add_virtual_anchor_;
 
-	utility::vector1 < std::pair< core::Size, core::Size > > allow_insert_segments_;
-toolbox::AllowInsertOP allow_insert_;
+	utility::vector1 < core::Size  > allow_insert_res_;
+	toolbox::AllowInsertOP allow_insert_;
 
 };
 

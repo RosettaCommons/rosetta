@@ -19,6 +19,7 @@
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 #include <protocols/rna/RNA_SecStructInfo.hh>
 #include <protocols/toolbox/AllowInsert.hh>
+#include <protocols/swa/rna/StepWiseRNA_Util.hh> // for  Correctly_position_cutpoint_phosphate_torsions
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/RNA_DataInfo.hh>
 
@@ -103,9 +104,14 @@ RNA_StructureParameters::initialize(
 	}
 
 	initialize_allow_insert( pose );
+
 	initialize_secstruct( pose );
+
 	if  ( ignore_secstruct ) override_secstruct( pose );
 
+	if ( virtual_anchor_attachment_points_.size() > 0 ) append_virtual_anchor( pose );
+
+	setup_virtual_phosphate_variants( pose );
 
 }
 
@@ -123,12 +129,16 @@ RNA_StructureParameters::append_virtual_anchor( pose::Pose & pose )
 
 	if ( virtual_anchor_attachment_points_.size() == 0 ) return;
 
+	std::cout << "Current last residue is type: " << pose.residue( pose.total_residue() ).name3()  << std::endl;
+	std::cout << pose.annotated_sequence() << std::endl;
+	if ( pose.residue( pose.total_residue() ).name3() == "XXX" ) return; //already did virtual residue attachment.
+
 	// Fix up the pose.
 	core::chemical::ResidueTypeSet const & residue_set = pose.residue_type(1).residue_type_set();
 
-	std::cout << " CHECK XXX " << residue_set.name3_map("XXX").size() << std::endl;
-	std::cout << " CHECK YYY " << residue_set.name3_map("YYY").size() << std::endl;
-	std::cout << " CHECK VRT " << residue_set.name3_map("VRT").size() << std::endl;
+	//	std::cout << " CHECK XXX " << residue_set.name3_map("XXX").size() << std::endl;
+	//	std::cout << " CHECK YYY " << residue_set.name3_map("YYY").size() << std::endl;
+	//	std::cout << " CHECK VRT " << residue_set.name3_map("VRT").size() << std::endl;
 
 	core::chemical::ResidueTypeCAPs const & rsd_type_list( residue_set.name3_map("XXX") );
 	core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type_list[1] ) );
@@ -223,24 +233,27 @@ RNA_StructureParameters::initialize_allow_insert( core::pose::Pose & pose  )
 
  	allow_insert_ = new toolbox::AllowInsert( pose );
 
- 	if (allow_insert_segments_.size() > 0 ) {
+ 	if (allow_insert_res_.size() > 0 ) {
  		allow_insert_->set( false );
- 		for (Size n = 1; n <= allow_insert_segments_.size(); n++ ) {
- 			for (Size i = allow_insert_segments_[n].first;
- 					 i <= allow_insert_segments_[n].second;
- 					 i++ ){
- 				allow_insert_->set( i, true );
- 			}
+ 		for (Size n = 1; n <= allow_insert_res_.size(); n++ ) {
+			Size const i = allow_insert_res_[ n ];
+			allow_insert_->set( i, true );
+			// new -- make sure loops are moveable (& closeable!) at the 3'-endpoint
+			if ( i < pose.total_residue() ) allow_insert_->set_phosphate( i+1, pose, true );
  		}
  	} else {
  		allow_insert_->set( true );
  	}
 
-	// 	//We don't trust phosphates at the beginning of chains!
- 	allow_insert_->set_phosphate( 1, pose, false );
- 	for ( Size i = 1; i <= cutpoints_open_.size(); i++ ) {
- 		allow_insert_->set_phosphate( cutpoints_open_[i]+1, pose, false );
- 	}
+	//	std::cout << "ALLOW_INSERT after INITIALIZE " << std::endl;
+	//	allow_insert_->show();
+
+	// We don't trust phosphates at the beginning of chains!
+	// Wait, this it total nonsense... captured by virtual phosphate stuff later on!
+	// 	allow_insert_->set_phosphate( 1, pose, false );
+	//	for ( Size i = 1; i <= cutpoints_open_.size(); i++ ) {
+	//		allow_insert_->set_phosphate( cutpoints_open_[i]+1, pose, false );
+	//	}
 
 	// std::cout << "ALLOW_INSERT! ALLOW_INSERT! ALLOW_INSERT!" << std::endl;
 	// for (Size i = 1; i <= pose.total_residue(); i++ ){
@@ -405,11 +418,21 @@ RNA_StructureParameters::read_parameters_from_file( std::string const & filename
 			get_pairings_from_line( line_stream, false /*obligate jump*/ );
 
 		} else if (tag == "ALLOW_INSERT" ) {
-
+			// deprecated!!! switch to ALLOW_INSERT_RES!!
 			Size pos1, pos2;
 			while ( !line_stream.fail() ) {
 				line_stream >> pos1 >> pos2;
-				allow_insert_segments_.push_back( std::make_pair( pos1, pos2 ) );
+				runtime_assert( pos2 >= pos1 );
+				for (Size i = pos1; i <= pos2; i++ ) allow_insert_res_.push_back( i );
+			}
+			//utility_exit_with_message( "No longer reading in ALLOW_INSERT from command line. Try using -s <pdb> instead." );
+
+		} else if (tag == "ALLOW_INSERT_RES" ) {
+
+			Size pos;
+			while ( !line_stream.fail() ) {
+				line_stream >> pos;
+				allow_insert_res_.push_back( pos );
 			}
 			//utility_exit_with_message( "No longer reading in ALLOW_INSERT from command line. Try using -s <pdb> instead." );
 
@@ -683,14 +706,10 @@ RNA_StructureParameters::insert_base_pair_jumps( pose::Pose & pose, bool & succe
 void
 RNA_StructureParameters::setup_fold_tree_and_jumps_and_variants( pose::Pose & pose )
 {
-	//	std::cout << "ABOUT TO APPEND VIRTUAL ANCHOR " << std::endl;
-	if ( virtual_anchor_attachment_points_.size() > 0 ) append_virtual_anchor( pose );
 	//	std::cout << "ABOUT TO SET UP JUMPS " << std::endl;
 	setup_jumps( pose );
 	//	std::cout << "ABOUT TO SET UP CHAINBREAKS " << std::endl;
 	setup_chainbreak_variants( pose );
-	//	std::cout << "ABOUT TO SET UP PHOSPHATES " << std::endl;
-	setup_virtual_phosphate_variants( pose );
 }
 
 ///////////////////////////////////////////////////////////////
@@ -730,7 +749,7 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 	std::vector< int > obligate_cut_points; //switch this to utility::vector1?
 	for (Size n = 1; n<= num_cuts_closed; n++ ) 	  obligate_cut_points.push_back( cutpoints_closed_[ n ] );
 	for (Size n = 1; n<= num_cuts_open  ; n++ ) 		obligate_cut_points.push_back( cutpoints_open_[n] );
-	//	for (Size n = 1; n <= num_cuts_total; n++ ) std::cout << "CUT " << obligate_cut_points[ n-1 ]  << std::endl;
+	// for (Size n = 1; n <= num_cuts_total; n++ ) std::cout << "CUT " << obligate_cut_points[ n-1 ]  << std::endl;
 
 
 	//////////////////////////////////////////////////////////////////////
@@ -746,8 +765,11 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 				 !allow_insert_->get( core::id::AtomID( named_atom_id_to_atom_id( core::id::NamedAtomID( " P  ", i+1 ), pose )  ) ) ){
 			cut_bias( i ) = 0.0;
 		}
-		//		std::cout << "CUT_BIAS " << i << " " << cut_bias( i ) << std::endl;
+		//std::cout << "CUT_BIAS " << i << " " << cut_bias( i ) << std::endl;
 	}
+
+	//std::cout << "ALLOW INSERT IN CHECKING CUT_BIAS" << std::endl;
+	//	allow_insert_->show();
 
 	//////////////////////////////////////////////////////////////////////
 	// Jump residues.
@@ -783,7 +805,7 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 			jump_points(2, count) = res_list2[ pairing_index_in_list2 ];
 			//			std::cout << "JUMPS2 " <<  jump_points(1,count) << ' ' << jump_points(2,count ) << std::endl;
 		}
-		std::cout << std::endl;
+		//		std::cout << std::endl;
 
 		// Then, to fill out pairings, look at remaining possible pairing sets (these
 		// should typically be Watson-Crick stems, but this setup is general )
@@ -846,7 +868,17 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 		f.reorder( pose.total_residue() ); //reroot so that virtual residue is fixed.
 	}
 
+	// also useful -- if 5' terminus is moving but 3' terminus is fixed, can anchor to 3' terminus. Could also just always use a virtual residue...
+	if ( pose.fold_tree().root() == 1 && allow_insert_->get( 1 ) ){
+		for (Size n = pose.total_residue(); n >= 1; n-- ){
+			if ( !allow_insert_->get( n ) && possible_root(f,n) ) {
+				f.reorder( pose.total_residue() );
+				break;
+			}
+		}
+	}
 
+	//	std::cout << f << std::endl;
 	pose.fold_tree( f );
 
 	bool const random_jumps( true ); // For now this is true... perhaps should also have a more deterministic procedure.
@@ -896,6 +928,9 @@ RNA_StructureParameters::setup_chainbreak_variants( pose::Pose & pose )
 
 		std::cout << "Adding chainbreak variants to " << cutpos << std::endl;
 
+		// important! Taken from SWA code.
+		protocols::swa::rna::Correctly_position_cutpoint_phosphate_torsions( pose, cutpos, false /*verbose*/ );
+
 		pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cutpos   );
 		pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cutpos+1 );
 
@@ -912,19 +947,12 @@ RNA_StructureParameters::setup_chainbreak_variants( pose::Pose & pose )
 
 	allow_insert_->renumber_after_variant_changes( pose );
 
-	//	std::cout << "AFTER VARIANT CHANGES ==>" << std::endl;
-	//	std::cout << "ALLOW_INSERT! ALLOW_INSERT! ALLOW_INSERT!" << std::endl;
-	//	for (Size i = 1; i <= pose.total_residue(); i++ ){
-	//		std::cout << allow_insert_->get( i );
-	//	}
-	//	std::cout << std::endl;
-	//	std::cout << "ALLOW_INSERT! ALLOW_INSERT! ALLOW_INSERT!"<< std::endl;
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
+// remove this by end of 2012.
 void
-RNA_StructureParameters::setup_virtual_phosphate_variants( pose::Pose & pose )
+RNA_StructureParameters::setup_virtual_phosphate_variants_OLD( pose::Pose & pose )
 {
 
 	if ( pose.residue( 1 ).is_RNA() ) {
@@ -946,6 +974,44 @@ RNA_StructureParameters::setup_virtual_phosphate_variants( pose::Pose & pose )
 
 			allow_insert_->set_phosphate( n+1, pose, false );
 
+		}
+
+	}
+
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+void
+RNA_StructureParameters::setup_virtual_phosphate_variants( pose::Pose & pose )
+{
+	using namespace id;
+
+	if ( pose.residue( 1 ).is_RNA() ) {
+		pose::add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_PHOSPHATE, 1  );
+		allow_insert_->set_phosphate( 1, pose, false );
+	}
+
+	for ( Size i = 1; i <= cutpoints_open_.size(); i++ ){
+
+		Size n = cutpoints_open_[ i ];
+
+		if ( n == pose.total_residue() ){
+			utility_exit_with_message( "Do not specify cutpoint_open at last residue of model" );
+		}
+
+		if ( pose.residue_type( n   ).has_variant_type( chemical::CUTPOINT_LOWER ) ||
+				 pose.residue_type( n+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ){
+			utility_exit_with_message( "conflicting cutpoint_open & cutpoint_closed" );
+		}
+
+		if ( pose.residue_type( n+1 ).is_RNA() ){
+			pose::add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_PHOSPHATE, n+1  );
+			allow_insert_->set_phosphate( n+1, pose, false );
+			// make sure no fragments are wasted on moving this phosphate around...
+			// perhaps this should go into set_phosphate itself
+			// allow_insert_->set( named_atom_id_to_atom_id( NamedAtomID( "1H5*", n+1 ), pose ), false );
+			// allow_insert_->set( named_atom_id_to_atom_id( NamedAtomID( "2H5*", n+1 ), pose ), false );
 		}
 
 	}
