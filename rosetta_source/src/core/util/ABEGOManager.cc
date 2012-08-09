@@ -48,6 +48,10 @@ ABEGO::check_rama2( Real const & phi, Real const & psi )
 bool
 ABEGO::check_rama( Real const & phi, Real const & psi, Real const & omega )
 {
+	if( name() == 'X' ) {
+		return true;
+	}
+	
 	if ( cis_omega_ ) {
 
 		return ( fabs( omega ) < 90.0 );
@@ -82,29 +86,38 @@ ABEGOManager::ABEGOManager()
 	initialize();
 }
 
+/// @brief copy constructor	
+ABEGOManager::ABEGOManager( ABEGOManager const & rval ):
+	totnum_abego_( rval.totnum_abego_ ),
+	name2abego_( rval.name2abego_ )
+{}
+
 /// @brief intialize ABEGOManager
 void
 ABEGOManager::initialize()
 {
-	ABEGO A( "A", -180.0,   0.0,  -75.0,  50.0, false );
-	ABEGO B( "B", -180.0,   0.0,   50.0, 285.5, false );
-	ABEGO E( "E",    0.0, 180.5,  100.0, 260.5, false );
-	ABEGO G( "G",    0.0, 180.5, -100.0, 100.0, false );
-	ABEGO O( "O",    0.0,   0.0,   0.0,    0.0,  true );
+	ABEGO A( 'A', -180.0,   0.0,  -75.0,  50.0, false );
+	ABEGO B( 'B', -180.0,   0.0,   50.0, 285.5, false );
+	ABEGO E( 'E',    0.0, 180.5,  100.0, 260.5, false );
+	ABEGO G( 'G',    0.0, 180.5, -100.0, 100.0, false );
+	ABEGO O( 'O',    0.0,   0.0,   0.0,    0.0,  true );
 
-	ABEGO S( "S", -180.0,   0.0,  100.0, 195.0, false );
+	ABEGO S( 'S', -180.0,   0.0,  100.0, 195.0, false );
 	S.add_line( -1.6, 4, false );
 	
-	ABEGO P( "P", -180.0,   0.0,  100.0, 195.0, false );
+	ABEGO P( 'P', -180.0,   0.0,  100.0, 195.0, false );
 	P.add_line( -1.6, 4, true  );	
 	
-	ABEGO D( "D", -180.0,    0.0, 195.0, 285.5, false );
-	ABEGO Z( "Z", -180.0, -100.0,  50.0, 100.0, false );
-	ABEGO Y( "Y", -100.0,    0.0,  50.0, 100.0, false );
+	ABEGO D( 'D', -180.0,    0.0, 195.0, 285.5, false );
+	ABEGO Z( 'Z', -180.0, -100.0,  50.0, 100.0, false );
+	ABEGO Y( 'Y', -100.0,    0.0,  50.0, 100.0, false );
 	
-	ABEGO M( "M", -180.0,  -90.0,  -75.0,  50.0, false );
-	ABEGO N( "N",  -90.0,    0.0,  -75.0,  50.0, false );
+	ABEGO M( 'M', -180.0,  -90.0,  -75.0,  50.0, false );
+	ABEGO N( 'N',  -90.0,    0.0,  -75.0,  50.0, false );
 
+	// X represents all torsion space ( the following parameters are no meaning. )
+	ABEGO X( 'X', 0.0, 0.0, 0.0, 0.0, false );
+	
 	name2abego_[ 1 ] = A;
 	name2abego_[ 2 ] = B;
 	name2abego_[ 3 ] = E;
@@ -117,6 +130,9 @@ ABEGOManager::initialize()
 	name2abego_[ 10 ] = Y;
 	name2abego_[ 11 ] = M;
 	name2abego_[ 12 ] = N;
+	name2abego_[ 13 ] = X;
+	
+	totnum_abego_ = 13;
 
 }
 
@@ -125,35 +141,9 @@ bool
 ABEGOManager::check_rama( char const & symbol, Real const & phi, Real const & psi, Real const & omega )
 {
 	Size idx = symbol2index( symbol );
-	if( idx == 99 ) {
-		return true;
-	} else {
-		return name2abego_[ idx ].check_rama( phi, psi, omega );
-	}
+	return name2abego_[ idx ].check_rama( phi, psi, omega );
 }
 
-
-/// @brief get abege+ index from torsion angles
-Size
-ABEGOManager::torsion2index_level1( Real const phi, Real const psi, Real const omega )
-{
-	if ( fabs( omega ) < 90.0 ) {
-      return 5; // cis-omega
-   } else if ( phi >= 0.0 ) {
-      if ( -100.0 <= psi && psi < 100.0 ) {
-         return 4; // alpha-L
-      } else {
-         return 3; // E
-      }
-   } else {
-      if ( -75.0 <= psi && psi < 50.0 ) {
-         return 1; // helical
-      } else {
-		return 2; // beta
-      }
-   }
-   return 0;
-}
 
 /// @brief get abego
 Size
@@ -174,8 +164,32 @@ ABEGOManager::torsion2index( Real const phi, Real const psi, Real const omega, S
 		return 0;
 	}
 }
+	
 
-/// @brief get abego index from torsion angles
+/// @brief get abegeo index from torsion angles: ABEGO
+Size
+ABEGOManager::torsion2index_level1( Real const phi, Real const psi, Real const omega )
+{
+	if ( fabs( omega ) < 90.0 ) {
+		return 5; 	 // cis-omega
+	} else if ( phi >= 0.0 ) {
+		if ( -100.0 <= psi && psi < 100.0 ) {
+			return 4; // alpha-L
+		} else {
+			return 3; // E
+		}
+	} else {
+		if ( -75.0 <= psi && psi < 50.0 ) {
+			return 1; // helical
+		} else {
+			return 2;	// beta
+		}
+	}
+	return 0;
+}
+
+
+/// @brief get abego index from torsion angles: ABEGOD
 Size
 ABEGOManager::torsion2index_level2( Real const phi, Real const psi, Real const omega )
 {
@@ -192,25 +206,26 @@ ABEGOManager::torsion2index_level2( Real const phi, Real const psi, Real const o
 		if ( -75.0 <= psi && psi < 50.0 ) {
 			return 1; //helical
 		} else {
+			
 			Real ppsi;
 			if( psi < -75.0 ) {
 				ppsi = psi + 360.0;
 			} else {
 				ppsi = psi;
 			}
-			
-			if ( 100.0 <= psi && psi < 195.0 && ( ppsi + 1.6*phi - 4.0 ) >= 0 ) {
-				return 7;	// P
+			if( ppsi >= 195.0 ) {
+				return 8; // D
 			} else {
-				// Nobu, i know this is really tricky setup, well, what should i do ?
-				return 6;   // S+, S+ = S  + D + Z 
+				return 2; // B
 			}
+			
 		}
+		
 	}
 	return 0;
 }
 	
-/// @brief get abego index from torsion angles
+/// @brief get abego index from torsion angles: ASPZYD
 Size
 ABEGOManager::torsion2index_level3( Real const phi, Real const psi, Real const omega )
 {
@@ -253,7 +268,7 @@ ABEGOManager::torsion2index_level3( Real const phi, Real const psi, Real const o
 	return 0;
 }
 
-/// @brief get abego index from torsion angles
+/// @brief get abego index from torsion angles: MNSPZYD
 Size
 ABEGOManager::torsion2index_level4( Real const phi, Real const psi, Real const omega )
 {
@@ -302,36 +317,36 @@ ABEGOManager::torsion2index_level4( Real const phi, Real const psi, Real const o
 }
 	
 /// @brief transform abego index to symbol
-std::string
+char
 ABEGOManager::index2symbol( Size const & idx )
 {
 	switch( idx ) {
 	case 1:
-		return "A";
+		return 'A';
 	case 2:
-		return "B";
+		return 'B';
 	case 3:
-		return "E";
+		return 'E';
 	case 4:
-		return "G";
+		return 'G';
 	case 5:
-		return "O";
+		return 'O';
 	case 6:
-		return "S";
+		return 'S';
 	case 7:
-		return "P";
+		return 'P';
 	case 8:
-		return "D";
+		return 'D';
 	case 9:
-		return "Z";
+		return 'Z';
 	case 10:
-		return "Y";
+		return 'Y';
 	case 11:
-		return "M";
+		return 'M';
 	case 12:
-		return "N";
-	case 99:
-		return "X";
+		return 'N';
+	case 13:
+		return 'X';
 	default :
 		TR << " [ERROR] Unrecognized abego index: " << idx << std::endl;
 		runtime_assert( false );
@@ -383,7 +398,7 @@ ABEGOManager::symbol2index( char const & symbol )
 		return 12;
 	case 'X' :
 	case 'x' :
-		return 99;
+		return 13;
 	default :
 		TR << " [ERROR] Unrecognized abego index: " << symbol << std::endl;
 		runtime_assert( false );
@@ -401,7 +416,9 @@ ABEGOManager::get_symbols( Pose const & pose, Size const begin, Size const end, 
 	utility::vector1< String > symbols;
 	for( Size i=begin; i<=end; i++ ) {
 		Size idx = torsion2index( pose.phi( i ), pose.psi( i ), pose.omega( i ), level );
-		symbols.push_back( String( index2symbol( idx ) ) );
+		std::ostringstream symbol;
+		symbol << index2symbol( idx );
+		symbols.push_back( symbol.str() );
 	}
 	return symbols;
 }

@@ -113,7 +113,7 @@ public:
 	{}
 
 	/// @brief value constructor
-	ABEGO( String const & name,
+	ABEGO( char const & name,
 				 Real phi_min,
 				 Real phi_max,
 				 Real psi_min,
@@ -135,6 +135,7 @@ public:
 
 public: // accessor
 
+	inline char name()    { return name_; }
 	inline Real phi_max() { return phi_max_; }
 	inline Real phi_min() { return phi_min_; }
 	inline Real psi_max() { return psi_max_; }
@@ -153,7 +154,7 @@ public: //
 
 private: // data
 
-	String name_;
+	char name_;
 	Real phi_min_;
 	Real phi_max_;
 	Real psi_min_;
@@ -183,15 +184,26 @@ public:
 	/// @brief value constructor
 	~ABEGOManager() {}
 
+	/// @brief copy constructor
+	ABEGOManager( ABEGOManager const & rval );
+
 
 public:
 
+
+	/// @brief total number of abego definition
+	Size total_number_abego() { return totnum_abego_; }
+	
+	
+public:
+	
+	
 	/// @brief initialize
 	void initialize();
 
 	/// @brief check input torsion angle are in a given abego region
 	bool check_rama( char const & symbol, Real const & phi, Real const & psi, Real const & omega );
-
+	
 	/// @brief get abego index from torsion angles
 	Size torsion2index( Real const phi, Real const psi, Real const omega, Size const level=1 );
 
@@ -214,7 +226,7 @@ public:
 	Size symbol2index( char const & symbol );
 
 	/// @brief transform abego index to symbol
-	String index2symbol( Size const & idx );
+	char index2symbol( Size const & idx );
 
 	/// @brief get abego sequence from pose
 	utility::vector1< String > get_symbols( Pose const & pose, Size const level=1 );
@@ -228,7 +240,10 @@ public:
 
 private: // data
 
+	/// @brief total number of abego symbols
+	Size totnum_abego_;
 
+	/// @brief map relating the index to ABEGO class
 	std::map< Size, ABEGO > name2abego_;
 
 
