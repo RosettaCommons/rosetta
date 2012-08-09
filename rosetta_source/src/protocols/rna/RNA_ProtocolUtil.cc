@@ -294,7 +294,7 @@ figure_out_secstruct( pose::Pose & pose ){
 
 ///////////////////////////////////////////////////////////////////////////////
 void
-create_rna_vall_torsions( pose::Pose & pose, 
+create_rna_vall_torsions( pose::Pose & pose,
 												  utility::io::ozstream & torsions_out,
 													utility::vector1 <Size> const & exclude_res_list )
 {
@@ -396,7 +396,7 @@ create_rna_vall_torsions( pose::Pose & pose,
 			edge_is_base_pairing( 3 ) << " ";
 
 		bool is_cutpoint = false;
-		if ( pose.fold_tree().is_cutpoint( i ) || 
+		if ( pose.fold_tree().is_cutpoint( i ) ||
 				 is_num_in_list(i + 1, exclude_res_list) ) {
 			is_cutpoint = true;
 		}
@@ -1080,6 +1080,23 @@ remove_cutpoints_closed( pose::Pose & pose ){
 
 }
 
+////////////////////////////////////////////////////////
+void
+virtualize_5prime_phosphates( pose::Pose & pose ){
+
+	for ( Size i = 1; i < pose.total_residue(); i++ ) {
+
+		if ( i==1 || pose.fold_tree().is_cutpoint( i-1 ) &&
+				 !pose.residue( i-1 ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
+				 !pose.residue( i   ).has_variant_type( chemical::CUTPOINT_UPPER ) &&
+				 pose.residue(i).is_RNA() ){
+			pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", i );
+		}
+
+	}
+
+}
+
 ///////////////////////////////////////////////////////////////////////
 // One of these days I'll put in residue 1 as well.
 void
@@ -1162,9 +1179,20 @@ print_internal_coords( core::pose::Pose const & pose ) {
 // 		}
 
 	}
-
-
 }
+
+
+////////////////////////////////////////////////////////////////////////////////////
+// Apparently can only reroot the tree at a "vertex", i.e. beginning or end of an "edge".
+bool
+possible_root( core::kinematics::FoldTree const & f, core::Size const & n ){
+	if ( n == 1 ) return true;
+	if ( n == f.nres() ) return true;
+	if ( f.is_cutpoint( n ) ) return true;
+		if ( f.is_cutpoint( n-1 ) ) return true;
+		return false;
+}
+
 
 } // namespace rna
 } // namespace protocols

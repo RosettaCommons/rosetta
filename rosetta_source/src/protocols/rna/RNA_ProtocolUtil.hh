@@ -20,6 +20,7 @@
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 // AUTO-REMOVED #include <protocols/rna/RNA_MatchType.hh>
 #include <utility/vector1.fwd.hh>
@@ -62,7 +63,7 @@ get_base_pairing_list( core::pose::Pose & pose,
 											 utility::vector1< std::pair< core::Size, core::Size> > & base_pairing_list );
 
 void
-create_rna_vall_torsions( core::pose::Pose & pose, 
+create_rna_vall_torsions( core::pose::Pose & pose,
 													utility::io::ozstream & torsions_out,
 													utility::vector1 <core::Size> const & exclude_res_list );
 
@@ -132,8 +133,14 @@ remove_cutpoint_closed( core::pose::Pose & pose, core::Size const i );
 void
 remove_cutpoints_closed( core::pose::Pose & pose );
 
-inline bool is_num_in_list ( core::Size const i, 
-														 utility::vector1 <core::Size> const & list ) 
+void
+virtualize_5prime_phosphates( core::pose::Pose & pose );
+
+bool
+possible_root( core::kinematics::FoldTree const & f, core::Size const & n );
+
+inline bool is_num_in_list ( core::Size const i,
+														 utility::vector1 <core::Size> const & list )
 {
 	return std::find(list.begin(), list.end(), i)!=list.end();
 }
