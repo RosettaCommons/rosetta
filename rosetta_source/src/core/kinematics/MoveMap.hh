@@ -549,6 +549,11 @@ public: // status
 	void
 	show( Size i) const { show(std::cout, i);};
 
+	void
+	show( std::ostream & out) const;
+	void
+	show() const { show(std::cout);};
+
 private: // movemap-movemap functionality
 
 	/// @brief import settings from another MoveMap
@@ -585,6 +590,14 @@ private: // movemap-movemap functionality
 
 	JumpID_Map jump_id_map_;
 };  // MoveMap
+
+inline
+std::ostream &
+operator <<( std::ostream & out, MoveMap const & mm )
+{
+	mm.show( out );
+	return out;
+}
 
 }  // namespace kinematics
 }  // namespace core

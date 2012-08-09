@@ -125,18 +125,23 @@ int main(int argc, char *argv[])
 	core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction;
 	core::Real num = 1.0;
 	scorefxn->set_weight("fa_rep", num);
-	scorefxn->set_weight("fa_atr", num);
+	scorefxn->set_weight("fa_atr", num);*/
 
-	// create an empty loops object
+/*	// create an empty loops object
 	protocols::loops::LoopsOP emptyloops = new protocols::loops::Loops;
 
 	// create and print a loopmover
 	protocols::loops::loop_mover::refine::LoopMover_Refine_CCD loopmover = protocols::loops::loop_mover::refine::LoopMover_Refine_CCD(emptyloops);
 	std::cout << loopmover << std::endl;
 
+	// create a loops object
+	core::Size start = 15;
+	core::Size stop = 24;
+	core::Size cutpoint = 19;
+	protocols::loops::LoopsOP loops ( protocols::loops::Loops(start, stop, cutpoint) );
+
 	// now set the scorefxn to our custom scorefxn
-	protocols::loops::loop_mover::refine::LoopMover_Refine_CCD loopmover2 = protocols::loops::loop_mover::refine::LoopMover_Refine_CCD(emptyloops);
-	loopmover2.set_scorefxn(scorefxn);
+	protocols::loops::loop_mover::refine::LoopMover_Refine_CCD loopmover2 = protocols::loops::loop_mover::refine::LoopMover_Refine_CCD(loops);
 	std::cout << loopmover2 << std::endl;*/
 
 /*	// print empty rtmover
@@ -164,18 +169,29 @@ int main(int argc, char *argv[])
 	//protocols::docking::ConformerSwitchMover mover2 ( protocols::docking::ConformerSwitchMover("True", 1.0) );
 	//std::cout << mover2 << std::endl;
 
-	// create a loops object
+/*// create a loops object
 	core::Size start = 15;
 	core::Size stop = 24;
 	core::Size cutpoint = 19;
-	protocols::loops::Loop loop ( protocols::loops::Loop(start, stop, cutpoint) );
+	protocols::loops::Loop loop ( protocols::loops::Loop(start, stop, cutpoint) );*/
 
-	// create a movemap object
-	core::kinematics::MoveMapCOP mm;
+	// setup a movemap object
+	core::kinematics::MoveMap mm;
+	std::cout << "print empty movemap" << std::endl;
+	Size bb_begin = 3, bb_end = 6, chi_begin = 5, chi_end = 7, begin2 = 101, end2 = 12;
+	mm.set_bb_true_range(bb_begin, bb_end);
+	mm.set_chi_true_range(chi_begin, chi_end);
+	mm.set_chi(begin2, true);
+  mm.set_bb(begin2, true);
+	mm.set_jump(2, true);
+	mm.set_jump(5, true);
+	std::cout << "movemap.show(102)" << std::endl;
+	mm.show(end2);
+	std::cout << "print movemap" << std::endl << mm << std::endl;
 
 	// create a CcdLoopClosureMover object
-	protocols::loops::loop_closure::ccd::CcdLoopClosureMover ccdmover ( protocols::loops::loop_closure::ccd::CcdLoopClosureMover(loop, mm) );
-	std::cout << ccdmover << std::endl;
+	//protocols::loops::loop_closure::ccd::CcdLoopClosureMover ccdmover ( protocols::loops::loop_closure::ccd::CcdLoopClosureMover(loop, mm) );
+	//std::cout << ccdmover << std::endl;
 
 	// create an empty loops object
 	//protocols::loops::LoopsOP emptyloops ( new protocols::loops::Loops );

@@ -517,6 +517,41 @@ MoveMap::show( std::ostream & out, Size total_residue) const
 		}
 	}
 
+void
+MoveMap::show( std::ostream & out ) const
+{
+	out <<A(8,"resnum")<<' '<<A(8,"BB ") <<' '<<A(8,"CHI ")<<std::endl;
+	Size i = 1;
+	Size tot = 0;
+	bool break_twice = false;
+	bool break_from_jump = false;
+	for (MoveMapTorsionID_Map::const_iterator it = movemap_torsion_id_begin(), it_end = movemap_torsion_id_end(); it != it_end; ++it){		
+		while (true) {
+			if (break_from_jump) {break_from_jump = false; break;}
+			if (break_twice) {break_twice = false; break;}
+
+			if (get_jump(i)) {++tot; break_from_jump = true;}
+			if (get_bb(i)) {
+				if (get_chi(i)) {out <<I(8,3,i)<<' '<<A(8, "TRUE")<<' '<<A(8, "TRUE")<<'\n'; ++i; break_twice = true; break;}
+				else {out << I(8,3,i) << ' '<<A(8, "TRUE")<<' ' <<A(8, "FALSE")<<'\n'; ++i; break;}
+			}
+			else {
+				if (get_chi(i)) {out << I(8,3,i) << ' '<<A(8, "FALSE")<<' ' <<A(8, "TRUE")<<'\n'; ++i; break;}
+				else {++i;}
+			}
+	  }
+	}
+	out <<A(8,"jumpnum")<<' '<<A(8,"JUMP")<<std::endl;
+	Size j = 1;
+	for ( Size jump = 0; jump != tot; ++jump){
+		while (true) {
+			if (get_jump(j)) { out << I(8,2,j) << ' '<<A(8, "TRUE")<<'\n'; ++j; break;}
+			else {++j;}
+		}
+	}
+	out << " Everything else is set to FALSE." << std::endl;
+}
+
 /// @brief import settings from another MoveMap
 /// @param[in] rval The MoveMap to import settings from.
 /// @param[in] import_true_settings Import True settings?
