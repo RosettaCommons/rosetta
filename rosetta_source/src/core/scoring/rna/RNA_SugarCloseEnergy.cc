@@ -27,6 +27,8 @@
 #include <core/scoring/constraints/FadeFunc.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
+
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -83,7 +85,7 @@ RNA_SugarCloseEnergy::RNA_SugarCloseEnergy() :
 	c4star_o4star_c1star_angle_harm_func_(
 																				new constraints::HarmonicFunc( c4star_o4star_c1star_bond_angle_, scale_rna_torsion_sd_ * angle_sd_ ) ),
 	//phenix_based_sugar_close params
-	use_phenix_sugar_close_( basic::options::option[ basic::options::OptionKeys::score::use_phenix_sugar_close ]() ),
+	use_phenix_sugar_close_( basic::options::option[ basic::options::OptionKeys::rna::corrected_geo ]() ),
 	o4star_c1star_bond_north_(1.412),
 	o4star_c1star_bond_south_(1.415),
 	bond_sd_(0.015),

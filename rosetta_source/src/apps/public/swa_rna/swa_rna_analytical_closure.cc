@@ -47,6 +47,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/option_macros.hh>
@@ -155,7 +156,6 @@ OPT_KEY ( String, filter_output_filename )
 OPT_KEY ( Boolean, filter_for_previous_contact )
 OPT_KEY ( Boolean, filter_for_previous_clash )
 OPT_KEY ( Boolean, minimize_and_score_sugar )
-OPT_KEY ( Boolean, use_phenix_geo )
 OPT_KEY ( Boolean, sampler_extra_anti_chi_rotamer )
 OPT_KEY ( Boolean, sampler_extra_syn_chi_rotamer )
 OPT_KEY ( Boolean, PBP_clustering_at_chain_closure )
@@ -693,7 +693,7 @@ rna_resample_test() {
 	stepwise_rna_residue_sampler.set_PBP_clustering_at_chain_closure ( option[ PBP_clustering_at_chain_closure]() );
 	stepwise_rna_residue_sampler.set_extra_syn_chi_rotamer ( option[ sampler_extra_syn_chi_rotamer]() );
 	stepwise_rna_residue_sampler.set_extra_anti_chi_rotamer ( option[ sampler_extra_anti_chi_rotamer]() );
-	stepwise_rna_residue_sampler.set_use_phenix_geo ( option[ use_phenix_geo]() );
+	stepwise_rna_residue_sampler.set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
 	stepwise_rna_residue_sampler.set_centroid_screen ( option[ centroid_screen ]() );
 	stepwise_rna_residue_sampler.set_VDW_atr_rep_screen ( option[ VDW_atr_rep_screen ]() );
 	stepwise_rna_residue_sampler.set_base_centroid_screener ( base_centroid_screener );
@@ -763,7 +763,6 @@ main ( int argc, char * argv [] ) {
 	NEW_OPT ( minimize_and_score_sugar, "minimize and sugar torsion+angle? and include the rna_sugar_close_score_term ", true ); //Sept 15, 2010
 	NEW_OPT ( sampler_extra_syn_chi_rotamer, "Samplerer: extra_chi_rotamer", false );
 	NEW_OPT ( sampler_extra_anti_chi_rotamer, "Samplerer: extra_chi_rotamer", false );
-	NEW_OPT ( use_phenix_geo, "use phenix ideal geometry", false );
 	NEW_OPT ( PBP_clustering_at_chain_closure, "Samplerer: PBP_clustering_at_chain_closure", false );
 	NEW_OPT ( clusterer_two_stage_clustering, "Cluster is two stage..using triangle inequaility to speed up clustering", true ); //Change to true on Oct 10, 2010
 	NEW_OPT ( clusterer_keep_pose_in_memory, "reduce memory usage for the clusterer", true ); //Aug 6, 2010

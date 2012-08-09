@@ -63,6 +63,7 @@
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
 
 #include <core/chemical/ResidueType.hh>
 
@@ -174,10 +175,15 @@ ChemicalManager::mm_atom_type_set( std::string const & tag )
 ///@ details if the tag is not in the map, input it from a database file and add it
 ///to the map for future look-up.
 ResidueTypeSetCAP
-ChemicalManager::residue_type_set( std::string const & tag )
+ChemicalManager::residue_type_set( std::string tag )
 {
 
 	using namespace basic;
+
+	bool const use_corrected_rna_geo = basic::options::option[ basic::options::OptionKeys::rna::corrected_geo ];
+	if (use_corrected_rna_geo && tag == "rna") {
+		tag = "rna_phenix";
+	}
 
 	ResidueTypeSets::const_iterator iter( residue_type_sets_.find( tag ) );
 	if ( iter == residue_type_sets_.end() ) {
@@ -381,7 +387,7 @@ std::string const COARSE_TWO_BEAD( "coarse_two_bead" );
 /// @brief tag name for querying hybrid fullatom+centroid chemical type set.
 std::string const HYBRID_FA_STANDARD_CENTROID( "hybrid_fa_standard_centroid" );
 /// @brief tag name for querying RNA chemical type set.
-std::string const RNA( "rna" );
+std::string const RNA = "rna";
 /// @brief tag name for querying COARSE_RNA chemical type set.
 std::string const COARSE_RNA( "coarse_rna" );
 

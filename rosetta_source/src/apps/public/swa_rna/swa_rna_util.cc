@@ -474,7 +474,7 @@ align_pdbs(){
 	using namespace protocols::swa::rna;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 
 	if ( !option[ in::file::native ].user() ) utility_exit_with_message( "User must supply in::file::native!" );
 	if ( !option[ in::file::s ].user() ) utility_exit_with_message( "User must supply in::file::s!" );
@@ -599,7 +599,7 @@ calculate_pairwise_RMSD(){
 
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 
 	if ( !option[ in::file::native ].user() ) utility_exit_with_message( "User must supply in::file::native!" );
 	if ( !option[ in::file::s ].user() ) utility_exit_with_message( "User must supply in::file::s!" );
@@ -717,7 +717,7 @@ import_and_dump_pdb(){
 	if ( option[ in::file::s ].user()==false ) utility_exit_with_message( "User must supply in::file::s!" );
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 
 	utility::vector1< std::string > const pdb_file_list= option[ in::file::s ]();	
 
@@ -754,7 +754,7 @@ o2star_packer(){
 	using namespace core::id;  
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 
 //	core::scoring::ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "single_strand_benchmark" );
 
@@ -818,7 +818,7 @@ mutate_residue(pose::Pose & pose, Size const seq_num, std::string const res_name
 //	using namespace protocols::rna;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 
 	pose::Pose start_pose=pose;
 
@@ -855,7 +855,7 @@ mutate_residues_wrapper()
 	using namespace protocols::rna;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 
 	pose::Pose pose;
 	std::string pdb_file  = option[ in::file::s ][1];

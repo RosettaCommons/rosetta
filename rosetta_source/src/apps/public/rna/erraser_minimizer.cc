@@ -95,7 +95,8 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/edensity.OptionKeys.gen.hh> //FCC:12/13/10
+#include <basic/options/keys/edensity.OptionKeys.gen.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
 ///////////////////////////////////////////////////
 
 #include <core/pose/PDBInfo.hh>
@@ -122,7 +123,6 @@ using utility::vector1;
 
 OPT_KEY ( String, out_pdb )
 OPT_KEY ( Boolean, vary_geometry )
-OPT_KEY ( Boolean, use_phenix_geo )
 OPT_KEY ( Boolean, constrain_P )
 OPT_KEY ( Boolean, ready_set_only )
 OPT_KEY ( IntegerVector, fixed_res )
@@ -184,7 +184,7 @@ apply_ideal_coordinates ( pose::Pose const & pose, pose::Pose & pose_reference )
 	using namespace core::scoring::rna;
 	RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 	Real const DELTA_CUTOFF ( rna_fitted_torsion_info.delta_cutoff() );
-	bool const is_use_phenix_geo = option[ use_phenix_geo ];
+	bool const is_use_phenix_geo = option[ basic::options::OptionKeys::rna::corrected_geo ];
 	utility::vector1 <Size> pucker_conformation (pose_reference.total_residue(), 0);
 
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
@@ -351,7 +351,7 @@ create_pose_reference (
   pose::Pose & pose_reference ) {
 	using namespace core::chemical;
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set ( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set ( RNA );
 	make_pose_from_sequence ( pose_reference, pose.sequence(),	*rsd_set );
 	apply_ideal_coordinates ( pose, pose_reference );
 }
@@ -610,7 +610,7 @@ pdb_minimizer() {
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->
-	          residue_type_set ( "rna" );
+	          residue_type_set ( RNA );
 	bool vary_bond_geometry_ =  option[ vary_geometry ];
 	bool constrain_phosphate =  option[ constrain_P ];
 	bool ready_set_only_ =  option[ ready_set_only ];
@@ -863,7 +863,6 @@ main ( int argc, char * argv [] ) {
 	utility::vector1< std::string > blank_string_vector;
 	NEW_OPT ( out_pdb, "name of output pdb file", "" );
 	NEW_OPT ( vary_geometry, "vary geometry", false );
-	NEW_OPT ( use_phenix_geo, "use phenix_geometry in vary geometry", false );
 	NEW_OPT ( constrain_P, "constrain phosphate", false );
 	NEW_OPT ( fixed_res, "optional: residues to be held fixed in minimizer", blank_size_vector );
 	NEW_OPT ( cutpoint_open, "optional: chainbreak in full sequence", blank_size_vector );

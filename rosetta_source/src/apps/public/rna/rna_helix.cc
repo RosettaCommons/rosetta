@@ -73,6 +73,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
 
 //Auto Headers
 using namespace core;
@@ -89,7 +90,6 @@ using io::pdb::dump_pdb;
 // to have them in a namespace use OPT_1GRP_KEY( Type, grp, key ) --> OptionKey::grp::key
 OPT_KEY( String,  seq )
 OPT_KEY( Boolean,  minimize_all )
-OPT_KEY( Boolean,  use_phenix_geo )
 
 /////////////////////////////////////////////////
 void
@@ -123,13 +123,9 @@ rna_build_helix_test(){
 	}
 	SilentFileData silent_file_data;
 
-	bool const is_use_phenix_geo = option[ use_phenix_geo] ();
+	bool const is_use_phenix_geo = option[ basic::options::OptionKeys::rna::corrected_geo] ();
 	ResidueTypeSetCAP rsd_set;
-	if (is_use_phenix_geo) {
-		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna_phenix" );
-	} else {
-		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
-	}		
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 
 	pose::Pose pose;
 	pose::make_pose_from_sequence( pose, full_sequence,	*rsd_set );
@@ -184,7 +180,6 @@ main( int argc, char * argv [] )
 
 	NEW_OPT( seq, "Input sequence", "" );
 	NEW_OPT( minimize_all, "minimize all torsions in respone to each base pair addition", false );
-	NEW_OPT( use_phenix_geo, "Use ideal geometry from phenix", false );
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup

@@ -23,6 +23,7 @@ namespace OptionKeys {
 
 namespace rna { extern BooleanOptionKey const rna; }
 namespace rna { extern IntegerOptionKey const minimize_rounds; }
+namespace rna { extern BooleanOptionKey const corrected_geo; }
 
 } // namespace OptionKeys
 } // namespace options

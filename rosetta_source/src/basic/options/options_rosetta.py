@@ -1754,7 +1754,6 @@ Options = Option_Group( '',
 		Option( 'pro_close_planar_constraint', 'Real', desc="stdev of CD,N,CA,prevC trigonal planar constraint in pro_close energy method", default='0.1' ),
 		Option( 'linear_bonded_potential', 'Boolean', desc="use linear (instead of quadratic) bonded potential", default='false'),
 		Option( 'geom_sol_correct_acceptor_base', 'Boolean', desc="Fixed definition of base atom for acceptors to match hbonds_geom", default='false'),
-		Option( 'use_phenix_sugar_close', 'Boolean', desc="Use PHENIX-based RNA sugar close energy", default='false'),
 		Option_Group( 'saxs',
 			Option('min_score', 'Real', desc="minimum value of saxs score; the parameter is used to flatten the energy funnel around its minimum", default='-5' ),
 			Option( 'custom_ff', 'String',desc="Name of config file providing extra from factors",default=""),
@@ -3189,6 +3188,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 	Option_Group( 'rna',
 		Option( 'minimize_rounds', 'Integer', desc='The number of rounds of minimization.', default = '2' ),
+		Option( 'corrected_geo', 'Boolean', desc="Use PHENIX-based RNA sugar close energy and params files", default='false'),
 	),
 	Option_Group( 'cm', # comparative modeling
     Option_Group('sanitize',

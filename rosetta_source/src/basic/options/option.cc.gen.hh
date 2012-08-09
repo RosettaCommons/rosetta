@@ -775,7 +775,6 @@ option.add( basic::options::OptionKeys::score::bonded_params_CHARMM_length, "use
 option.add( basic::options::OptionKeys::score::pro_close_planar_constraint, "stdev of CD,N,CA,prevC trigonal planar constraint in pro_close energy method" ).def(0.1);
 option.add( basic::options::OptionKeys::score::linear_bonded_potential, "use linear (instead of quadratic) bonded potential" ).def(false);
 option.add( basic::options::OptionKeys::score::geom_sol_correct_acceptor_base, "Fixed definition of base atom for acceptors to match hbonds_geom" ).def(false);
-option.add( basic::options::OptionKeys::score::use_phenix_sugar_close, "Use PHENIX-based RNA sugar close energy" ).def(false);
 option.add( basic::options::OptionKeys::score::saxs::saxs, "saxs option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::score::saxs::min_score, "minimum value of saxs score; the parameter is used to flatten the energy funnel around its minimum" ).def(-5);
 option.add( basic::options::OptionKeys::score::saxs::custom_ff, "Name of config file providing extra from factors" ).def("");
@@ -1243,10 +1242,10 @@ option.add( basic::options::OptionKeys::lh::rounds, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" ).def("default");
 option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
+option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
-option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
 option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
 option.add( basic::options::OptionKeys::lh::expire_after_rounds, "If set to > 0 this causes the Master to expire a structure after it has gone through this many cycles" ).def(0);
 option.add( basic::options::OptionKeys::lh::mpi_resume, "Prefix (Ident string) for resuming a previous job!" );
@@ -1579,6 +1578,7 @@ option.add( basic::options::OptionKeys::fldsgn::fullatom_sfx_patch, "filename of
 option.add( basic::options::OptionKeys::fldsgn::run_flxbb, "run flxbb at the given stage" );
 option.add( basic::options::OptionKeys::rna::rna, "rna option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::rna::minimize_rounds, "The number of rounds of minimization." ).def(2);
+option.add( basic::options::OptionKeys::rna::corrected_geo, "Use PHENIX-based RNA sugar close energy and params files" ).def(false);
 option.add( basic::options::OptionKeys::cm::cm, "cm option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cm::sanitize::sanitize, "sanitize option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cm::sanitize::bound_delta, "Distance in Angstroms from aligned position before a penalty is incurred" ).def(0.5);

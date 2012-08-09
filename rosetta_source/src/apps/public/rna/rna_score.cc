@@ -71,7 +71,7 @@ rna_score_test()
 	using namespace core::import_pose::pose_stream;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 
 	// input stream
 	PoseInputStreamOP input;

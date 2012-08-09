@@ -189,7 +189,7 @@ rna_design_test()
 	using namespace core::scoring;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 
 	pose::Pose pose;
 	std::string pdb_file  = option[ in::file::s ][1];
@@ -279,7 +279,7 @@ ss_ds_ts_assign_test()
 	using namespace core::scoring;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 
 	pose::PoseOP pose_op( new pose::Pose );
 	utility::vector1 < std::string > pdb_files  = option[ in::file::s ]();

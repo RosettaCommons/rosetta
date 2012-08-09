@@ -2293,7 +2293,8 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		using namespace core::id;
 		using namespace core::io::pdb;
 
-		static const ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+		static const ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance() -> 
+			residue_type_set(	core::chemical::RNA );
 
 		if(verbose) Output_title_text("ENTER Correctly_position_cutpoint_phosphate_torsions function");
 
@@ -2743,7 +2744,8 @@ principal_angle_degrees( T const & angle )
 		using namespace core::chemical;
 		using namespace core::conformation;
 
-		static const ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+		static const ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance() -> 
+			residue_type_set( core::chemical::RNA );
 
 		core::io::silent::SilentFileData silent_file_data;
 		silent_file_data.read_file( silent_file );

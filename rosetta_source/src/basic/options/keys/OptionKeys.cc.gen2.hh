@@ -1,4 +1,3 @@
-namespace lh { IntegerOptionKey const max_emperor_lib_round( "lh:max_emperor_lib_round" );  }
 namespace lh { IntegerOptionKey const library_expiry_time( "lh:library_expiry_time" );  }
 namespace lh { StringOptionKey const objective_function( "lh:objective_function" );  }
 namespace lh { IntegerOptionKey const expire_after_rounds( "lh:expire_after_rounds" );  }
@@ -332,6 +331,7 @@ namespace fldsgn { StringOptionKey const fullatom_sfx_patch( "fldsgn:fullatom_sf
 namespace fldsgn { IntegerOptionKey const run_flxbb( "fldsgn:run_flxbb" );  }
 namespace rna { BooleanOptionKey const rna( "rna" );  }
 namespace rna { IntegerOptionKey const minimize_rounds( "rna:minimize_rounds" );  }
+namespace rna { BooleanOptionKey const corrected_geo( "rna:corrected_geo" );  }
 namespace cm { BooleanOptionKey const cm( "cm" );  }
 namespace cm { namespace sanitize { BooleanOptionKey const sanitize( "cm:sanitize" );  } }
 namespace cm { namespace sanitize { RealOptionKey const bound_delta( "cm:sanitize:bound_delta" );  } }

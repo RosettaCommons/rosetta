@@ -76,7 +76,7 @@ namespace rna {
   //////////////////////////////////////////////////////////////////////////
   //constructor!
 	StepWiseRNA_PoseSetup::StepWiseRNA_PoseSetup( StepWiseRNA_JobParametersOP & job_parameters):
-		rsd_set_( core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" ) ),
+		rsd_set_( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA ) ),
 		job_parameters_( job_parameters ),
 		copy_DOF_(false),
 		verbose_( true ),

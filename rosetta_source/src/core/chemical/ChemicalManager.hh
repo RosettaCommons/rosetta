@@ -96,7 +96,7 @@ public:
 
 	/// @brief query residue_type_set by a name tag
 	ResidueTypeSetCAP
-	residue_type_set( std::string const & tag );
+	residue_type_set( std::string tag );
 
 	/// @brief query residue_type_set by a name tag
 	ResidueTypeSet &
