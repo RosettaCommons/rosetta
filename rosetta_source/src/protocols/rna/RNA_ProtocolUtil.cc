@@ -699,10 +699,10 @@ setup_base_pair_constraints(
 		if ( !pose.residue(i).is_coarse() ) { //fullatom
 			Size const atom1 = pose.residue(i).type().atom_index( " C1*" ) ;
 			Size const atom2 = pose.residue(j).type().atom_index( " C1*" ) ;
-			//			pose.add_constraint( new AtomPairConstraint(
-			//																									id::AtomID(atom1,i),
-			//																									id::AtomID(atom2,j),
-			//																									C1star_distance_func ) );
+			pose.add_constraint( new AtomPairConstraint(
+																									id::AtomID(atom1,i),
+																									id::AtomID(atom2,j),
+																									C1star_distance_func ) );
 
 			utility::vector1< std::string > atom_ids1, atom_ids2;
 			get_watson_crick_base_pair_atoms( pose.residue(i).aa(), pose.residue(j).aa(), atom_ids1, atom_ids2 );
