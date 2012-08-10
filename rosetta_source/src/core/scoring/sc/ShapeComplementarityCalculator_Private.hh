@@ -40,7 +40,6 @@ enum __ATTEN_ENUM__ {
 #endif
 
 #define ABS(a) (((a) < 0) ? (-a) : (a))
-#define VERBOSE(x) if(settings.verbose) tr << x;
 
 #define PI numeric::NumericTraits< core::Real >::pi()
 

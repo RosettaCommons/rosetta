@@ -41,6 +41,10 @@ sources = {
 	"basic/datacache": [
 		"BasicDataCache",
 	],
+	"basic/gpu": [
+		"GPU",
+		"Timer",
+	],
 	"basic/options": [
 		"after_opts",
 		"option",

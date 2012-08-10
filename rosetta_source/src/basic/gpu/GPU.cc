@@ -8,13 +8,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   utility/GPU.cc
+/// @file   basic/gpu/GPU.cc
 /// @brief  OpenCL-based GPU scheduler class
 /// @author Luki Goldschmidt (luki@mbi.ucla.edu)
 
 #ifdef USEOPENCL
-#ifndef INCLUDED_utility_GPU_cc
-#define INCLUDED_utility_GPU_cc
+#ifndef INCLUDED_basic_gpu_GPU_cc
+#define INCLUDED_basic_gpu_GPU_cc
 
 #include <iostream>
 #include <string>
@@ -25,18 +25,21 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#include <utility/GPU.hh>
+#include <basic/gpu/GPU.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/gpu.OptionKeys.gen.hh>
 
-static basic::Tracer TR("utility.gpu");
+#define UPPER_MULTIPLE(n,d) (((n)%(d)) ? (((n)/(d)+1)*(d)) : (n))
+
+static basic::Tracer TR("basic.gpu");
 
 using namespace std;
 
-namespace utility {
+namespace basic {
+namespace gpu {
 
 GPU_DEV GPU::devices_[8];
 cl_context GPU::context_ = NULL;
@@ -382,35 +385,58 @@ int GPU::Free()
 	return 1;
 }
 
-int GPU::RegisterProgram(string filename)
+int GPU::RegisterProgram(const char *filename)
+{
+	std::string file(filename);
+	return RegisterProgram(file);
+}
+
+int GPU::RegisterProgram(string& filename)
+{
+	std::vector<std::string> files;
+	files.push_back(filename);
+	return RegisterProgram(files);
+}
+
+int GPU::RegisterProgram(std::vector<std::string> & files)
 {
 	cl_program program;
 
 	if(!Init()) return 0;
+	if(!files.size()) return 0;
 
+	std::string & filename(files[0]);
 	if(programs_[filename])
 		return 1;
 
-	// Try location provided location first
-	ifstream kernelFile(filename.c_str(), ios::in);
+	std::vector<std::string> sources;
 
-	// Next try to find the file in the database
-	if (!kernelFile.is_open()) {
-		std::string database_fn = basic::database::full_name(filename);
-		kernelFile.open(database_fn.c_str(), ios::in);
+	for(std::vector<std::string>::const_iterator file = files.begin();
+		file < files.end();
+		++file) {
+
+		// Try location provided location first
+		ifstream kernelFile(file->c_str(), ios::in);
+
+		// Next try to find the file in the database
+		if (!kernelFile.is_open()) {
+			std::string database_fn = basic::database::full_name(file->c_str());
+			kernelFile.open(database_fn.c_str(), ios::in);
+		}
+
+		if (!kernelFile.is_open()) {
+			TR.Error << "Failed to open kernel file " << *file << endl;
+			return 0;
+		}
+
+		ostringstream oss;
+		oss << kernelFile.rdbuf();
+		string srcStdStr = oss.str();
+		sources.push_back(srcStdStr);
 	}
 
-	if (!kernelFile.is_open()) {
-		TR.Error << "Failed to open kernel file " << filename << endl;
-		return 0;
-	}
-
-	ostringstream oss;
-	oss << kernelFile.rdbuf();
-	string srcStdStr = oss.str();
-
-	const char *srcStr = srcStdStr.c_str();
-	program = clCreateProgramWithSource(context_, 1, (const char**)&srcStr, NULL, &errNum_);
+	const char **psources = (const char**) &(*sources.begin());
+	program = clCreateProgramWithSource(context_, sources.size(), psources, NULL, &errNum_);
 	if(!program) {
 		TR.Error << "Failed to create CL program from " << filename << ": " << errstr(errNum_) << endl;
 		return 0;
@@ -422,13 +448,14 @@ int GPU::RegisterProgram(string filename)
 		// Determine the reason for the error
 		char buildLog[16384];
 		clGetProgramBuildInfo(program, this_device().device, CL_PROGRAM_BUILD_LOG, sizeof(buildLog), buildLog, NULL);
-		TR.Error << "TR.Error in kernel: " << endl;
+		TR.Error << "Error in kernel: " << endl;
 		TR.Error << buildLog;
 		clReleaseProgram(program);
 		return 0;
 	}
 
 	programs_[filename] = program;
+	TR.Trace << "OpenCL program " << filename << " loaded" << std::endl;
 	return 1;
 }
 
@@ -472,6 +499,13 @@ cl_mem GPU::AllocateMemory(unsigned int size, void *data, int flags, const char 
 	}
 
 	if(r) {
+		TR.Trace << "Allocated " << size << " bytes = 0x" << hex << r << dec;
+		if(name)
+			TR.Trace << ", with shared name " << name;
+		if(data)
+			TR.Trace << ", initialized with data 0x" << hex << data << dec;
+		TR.Trace << std::endl;
+
 		if(name)
 			sharedMemoryObjects_[name] = r;
 		else
@@ -519,16 +553,19 @@ void GPU::Free(cl_mem h)
 	}
 
 	clReleaseMemObject(h);
+	TR.Trace << "Released memory 0x" << hex << h << dec << std::endl;
 }
 
 // Execute kernel on GPU
-int GPU::_ExecuteKernel(const char *kernel_name, int total_threads, int max_conc_threads_high, int max_conc_threads_low, GPU_KERNEL_ARG *args)
+int GPU::_ExecuteKernel(const char *kernel_name, int total_threads, int max_conc_threads_high, int max_conc_threads_low, GPU_KERNEL_ARG *args, int async)
 {
 	cl_kernel kernel = BuildKernel(kernel_name);
 	if(!kernel) {
 		TR.Error << "Unknown kernel " << kernel_name << ": " << errstr(errNum_) << endl;
 		return 0;
 	}
+
+	TR.Trace << "Execute kernel " << kernel_name << ": " << total_threads << " total, " << max_conc_threads_high << " concurrent threads" << std::endl;
 
 	if(args) {
 		for(int i =0; args[i].type; ++i) {
@@ -576,6 +613,9 @@ int GPU::_ExecuteKernel(const char *kernel_name, int total_threads, int max_conc
 		return 0;
 	}
 
+	if(async)
+		return 1;
+
 	clFinish(this_device().commandQueue);
 
 	if( profiling_) {
@@ -619,8 +659,8 @@ int GPU::ExecuteKernel(const char *kernel_name, int total_threads, int max_conc_
 				arg.k_p = (void*)arg.i;
 				break;
 			case GPU_FLOAT:
+				// warning: float is promoted to double when passed through ... (so you should pass double not float to va_arg)
 			case GPU_DOUBLE:
-				// warning: ‘float’ is promoted to ‘double’ when passed through ‘...’ (so you should pass ‘double’ not ‘float’ to ‘va_arg’)
 				// Direct numeric float argument
 				arg.f = va_arg(vl, double);
 				arg.k_size = sizeof(arg.f);
@@ -676,9 +716,10 @@ int GPU::ReadData(void *dst, cl_mem src, unsigned int size, int blocking)
 {
 	errNum_ = clEnqueueReadBuffer(this_device().commandQueue, src, blocking, 0, size, dst, 0, NULL, NULL);
 	if(errNum_ != CL_SUCCESS) {
-		TR.Error << "Failed to read data from GPU: " << errstr(errNum_) << endl;
+		TR.Error << "Failed to read data from GPU (" << size << " bytes, 0x" << hex << src << " -> 0x" << dst << dec << "): " << errstr(errNum_) << endl;
 		return 0;
-	}
+	} else
+		TR.Trace << "Read data from GPU: " << size << " bytes, 0x" << hex << src << " -> 0x" << dst << dec << endl;
 	return 1;
 }
 
@@ -686,9 +727,10 @@ int GPU::WriteData(cl_mem dst, void *src, unsigned int size, int blocking)
 {
 	errNum_ = clEnqueueWriteBuffer(this_device().commandQueue, dst, blocking, 0, size, src, 0, NULL, NULL);
 	if(errNum_ != CL_SUCCESS) {
-		TR.Error << "Failed to write data from GPU: " << errstr(errNum_) << endl;
+		TR.Error << "Failed to write data to GPU (" << size << " bytes, 0x" << hex << src << " -> 0x" << dst << dec << "): " << errstr(errNum_) << endl;
 		return 0;
-	}
+	} else
+		TR.Trace << "Wrote data to GPU: " << size << " bytes, 0x" << hex << src << " -> 0x" << dst << dec << endl;
 	return 1;
 }
 
@@ -703,7 +745,8 @@ int GPU::setKernelArg(cl_kernel kernel, cl_uint i, size_t size, const void *p)
 	return 1;
 }
 
-} // utility
+} // gpu
+} // basic
 
-#endif // INCLUDED_utility_GPU_cc
+#endif // INCLUDED_basic_gpu_GPU_cc
 #endif // USEOPENCL

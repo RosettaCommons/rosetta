@@ -55,7 +55,9 @@
 #include <map>
 #include <string>
 
-static basic::Tracer tr("core.scoring.sc.ShapeComplementarityCalculator");
+#define UPPER_MULTIPLE(n,d) (((n)%(d)) ? (((n)/(d)+1)*(d)) : (n))
+
+static basic::Tracer TR("core.scoring.sc.ShapeComplementarityCalculator");
 
 using namespace core;
 
@@ -177,7 +179,7 @@ int ShapeComplementarityCalculator::Calc(core::pose::Pose const & pose, core::Si
 		return 0;
 
 	if( jump_id > pose.num_jump() ) {
-		tr << "Jump ID out of bounds (pose has " << pose.num_jump() << " jumps)" << std::endl;
+		TR.Error << "Jump ID out of bounds (pose has " << pose.num_jump() << " jumps)" << std::endl;
 		return 0;
 	}
 
@@ -210,6 +212,8 @@ int ShapeComplementarityCalculator::Calc()
 
 	try {
 
+	basic::gpu::Timer timer(TR.Debug);
+
 	run_.results.valid = 0;
 
 	if(run_.atoms.empty())
@@ -223,21 +227,23 @@ int ShapeComplementarityCalculator::Calc()
 	AssignAttentionNumbers(run_.atoms);
 
 	// Now compute the surface for the atoms in the interface and its neighbours
-	VERBOSE("Generating molecular surface, " << settings.density << " dots/A^2" << std::endl);
+	TR.Debug << "Generating molecular surface, " << settings.density << " dots/A^2" << std::endl;
 	CalcDotsForAllAtoms(run_.atoms);
 
 	if(!run_.dots[0].size() || !run_.dots[1].size())
 		  throw ShapeComplementarityCalculatorException("No molecular dots generated!");
 
-	VERBOSE("           Convex dots: " << run_.results.dots.convex << std::endl);
-	VERBOSE("         Toroidal dots: " << run_.results.dots.toroidal << std::endl);
-	VERBOSE("          Concave dots: " << run_.results.dots.concave << std::endl);
-	VERBOSE("Total surface dots (1): " << run_.dots[0].size() << std::endl);
-	VERBOSE("Total surface dots (2): " << run_.dots[1].size() << std::endl);
-	VERBOSE("    Total surface dots: " << (run_.dots[0].size()+run_.dots[1].size()) << std::endl);
+	if(TR.Debug.visible()) {
+		TR.Debug << "           Convex dots: " << run_.results.dots.convex << std::endl;
+		TR.Debug << "         Toroidal dots: " << run_.results.dots.toroidal << std::endl;
+		TR.Debug << "          Concave dots: " << run_.results.dots.concave << std::endl;
+		TR.Debug << "Total surface dots (1): " << run_.dots[0].size() << std::endl;
+		TR.Debug << "Total surface dots (2): " << run_.dots[1].size() << std::endl;
+		TR.Debug << "    Total surface dots: " << (run_.dots[0].size()+run_.dots[1].size()) << std::endl;
+	}
 
 	// Cut away the periphery of each surface
-	VERBOSE("Trimming peripheral band, " << settings.band << "A range" << std::endl);
+	TR.Debug << "Trimming peripheral band, " << settings.band << "A range" << std::endl;
 
 	std::vector<DOT const *> trimmed_dots[2];
 	for(int i = 0; i < 2; ++i) {
@@ -249,7 +255,7 @@ int ShapeComplementarityCalculator::Calc()
 	}
 
 	// Compute distance arrays and histograms for each surface
-	VERBOSE("Computing surface separation and vectors" << std::endl);
+	TR.Debug << "Computing surface separation and vectors" << std::endl;
 
 	CalcNeighborDistance(0, trimmed_dots[0], trimmed_dots[1]);
 	CalcNeighborDistance(1, trimmed_dots[1], trimmed_dots[0]);
@@ -276,7 +282,7 @@ int ShapeComplementarityCalculator::Calc()
 	return 1;
 
 	} catch(ShapeComplementarityCalculatorException e) {
-		tr << "Failed: " << e.error << std::endl;
+		TR.Error << "Failed: " << e.error << std::endl;
 	}
 
 	return 0;
@@ -296,7 +302,7 @@ int ShapeComplementarityCalculator::ReadScRadii()
 	utility::io::izstream in;
 
 	if(!basic::database::open(in, fn)) {
-		tr << "Failed to read " << fn << std::endl;
+		TR.Error << "Failed to read " << fn << std::endl;
 		return 0;
 	}
 
@@ -305,12 +311,12 @@ int ShapeComplementarityCalculator::ReadScRadii()
 	while( in.good() ) {
 		memset(&radius, 0, sizeof(radius));
 		in >> radius.residue >> radius.atom >> radius.radius;
-		//VERBOSE("Atom Radius: " << radius.residue << ", " << radius.atom << ", " << radius.radius << std::endl);
+		TR.Trace << "Atom Radius: " << radius.residue << ", " << radius.atom << ", " << radius.radius << std::endl;
 		if(*radius.residue && *radius.atom && radius.radius > 0)
 			radii_.push_back(radius);
 	}
 
-	VERBOSE("Atom radii read: " << radii_.size() << std::endl);
+	TR.Trace << "Atom radii read: " << radii_.size() << std::endl;
 
 	return !radii_.empty();
 }
@@ -390,7 +396,7 @@ int ShapeComplementarityCalculator::add_atom(
 		return 1;
 
 	} else {
-		tr << "Failed to assign atom radius for residue "
+		TR.Warning << "Failed to assign atom radius for residue "
 			<< atom.residue << ":" << atom.atom
 			<< ". Skipping atom!" << std::endl;
 	}
@@ -1461,9 +1467,9 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 	ScValue rleft =0, rmedian =0;
 	std::map<int,int>::const_iterator it;
 
-	VERBOSE(std::endl);
-	VERBOSE("Distance between surfaces D(" << (molecule+1) << "->" << (molecule+1)%2+1 << "):" << std::endl);
-	VERBOSE("From - To\tArea\tCum. Area\t%\tCum. %" << std::endl);
+	TR.Trace << std::endl;
+	TR.Trace << "Distance between surfaces D(" << (molecule+1) << "->" << (molecule+1)%2+1 << "):" << std::endl;
+	TR.Trace << "From - To\tArea\tCum. Area\t%\tCum. %" << std::endl;
 
 	for(it = dbins.begin(); it != dbins.end(); ++it) {
 		abin = total * (it->second) / my_dots.size();
@@ -1477,7 +1483,7 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 		cumperc = c;
 
 		#ifndef WIN32
-			if(settings.verbose) {
+			if(TR.Trace.visible()) {
 				char buf[128];
 
 				snprintf(buf, sizeof(buf),
@@ -1487,7 +1493,7 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 					abin, cumarea,
 					perc, cumperc);
 
-				tr << buf << std::endl;
+				TR.Trace << buf << std::endl;
 			}
 		#endif
 	}
@@ -1495,9 +1501,9 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 	run_.results.surface[molecule].d_mean = distmin_sum / my_dots.size();
 	run_.results.surface[molecule].d_median = rmedian;
 
-	VERBOSE(std::endl);
-	VERBOSE("Surface complementarity S(" << (molecule+1) << "->" << (molecule+1)%2+1 << "):" << std::endl);
-	VERBOSE("From - To\tNumber\t%\tCumm. %" << std::endl);
+	TR.Trace << std::endl;
+	TR.Trace << "Surface complementarity S(" << (molecule+1) << "->" << (molecule+1)%2+1 << "):" << std::endl;
+	TR.Trace << "From - To\tNumber\t%\tCumm. %" << std::endl;
 
 	cumperc = 0;
 	for(it = sbins.begin(); it != sbins.end(); ++it) {
@@ -1510,14 +1516,14 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 		cumperc = c;
 
 		#ifndef WIN32
-			if(settings.verbose) {
+			if(TR.Trace.visible()) {
 				char buf[128];
 				snprintf(buf, sizeof(buf),
 					"%.2f - %.2f\t%d\t%.1f\t%.1f",
 					(ScValue)-it->first * settings.binwidth_norm - settings.binwidth_norm,
 					(ScValue)-it->first * settings.binwidth_norm,
 					it->second, perc, cumperc);
-				tr << buf << std::endl;
+				TR.Trace << buf << std::endl;
 			}
 		#endif
 	}
@@ -1559,14 +1565,6 @@ DOT const *ShapeComplementarityCalculator::CalcNeighborDistanceFindClosestNeighb
 
 #ifdef USEOPENCL
 
-#define gpuAssert(err) gpuThrowException(err, __FILE__, __LINE__)
-
-void ShapeComplementarityCalculator::gpuThrowException(int err, char const *fn, int line)
-{
-	if (err != CL_SUCCESS)
-		throw ShapeComplementarityCalculatorException("GPU Exception at %s:%d (error %d): %s", fn, line, err, utility::GPU::errstr(err));
-}
-
 core::Real inline ShapeComplementarityCalculator::GetTimerMs(clock_t &start)
 {
 	clock_t now = clock();
@@ -1576,11 +1574,14 @@ core::Real inline ShapeComplementarityCalculator::GetTimerMs(clock_t &start)
 
 void ShapeComplementarityCalculator::gpuInit()
 {
-	if(gpu.use() && gpu.Init())
-		settings.gpu = 1;
+	if(gpu.use()) {
+	  if(TR.Debug.visible())
+		  gpu.profiling(1);
+		if(gpu.Init())
+			settings.gpu = 1;
+	}
 	if(settings.gpu_threads < 32)
 		settings.gpu_threads = gpu.device().threads;
-
 	gpu.RegisterProgram("gpu/sc.cl");
 }
 
@@ -1588,7 +1589,7 @@ ShapeComplementarityCalculator::ScValue ShapeComplementarityCalculator::gpuTrimP
 		std::vector<DOT> const &dots,
 		std::vector<DOT const*> &trimmed_dots)
 {
-	using namespace utility;
+	using namespace basic::gpu;
 
 	int n, nBur, nAcc;
 	int threads;
@@ -1667,7 +1668,8 @@ ShapeComplementarityCalculator::ScValue ShapeComplementarityCalculator::gpuTrimP
 	delete hAccDotCoords;
 	delete hBurDotCoords;
 	delete hDotColl;
-	VERBOSE("Peripheral trimming GPU processing time: " << gpu.lastKernelRuntime() << " ms kernel, " << GetTimerMs(timer) << " ms total" << std::endl);
+
+	TR.Debug << "Peripheral trimming GPU processing time: " << gpu.lastKernelRuntime() << " ms kernel, " << GetTimerMs(timer) << " ms total" << std::endl;
 
 	return area;
 }
@@ -1677,7 +1679,7 @@ int ShapeComplementarityCalculator::gpuFindClosestNeighbors(
 	std::vector<DOT const*> const &their_dots,
 	std::vector<DOT const*> &neighbors)
 {
-	using namespace utility;
+	using namespace basic::gpu;
 
 	int nMyDots, nTheirDots, nNeighbors;
 	int threads;
@@ -1747,7 +1749,7 @@ int ShapeComplementarityCalculator::gpuFindClosestNeighbors(
 	delete hTheirDots;
 	delete hNeighbors;
 
-	VERBOSE("Find Neighbors GPU processing time: " << gpu.lastKernelRuntime() << " ms kernel, " << GetTimerMs(timer) << " ms total" << std::endl);
+	TR.Debug << "Find Neighbors GPU processing time: " << gpu.lastKernelRuntime() << " ms kernel, " << GetTimerMs(timer) << " ms total" << std::endl;
 
 	return 1;
 }

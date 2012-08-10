@@ -38,8 +38,9 @@
 #include <utility/vector1.hh>
 
 // OpenCL headers
+#include <basic/gpu/Timer.hh>
 #ifdef USEOPENCL
-#include <utility/GPU.hh>
+#include <basic/gpu/GPU.hh>
 #endif
 
 namespace core {
@@ -190,12 +191,9 @@ public:
 		core::Real binwidth_dist;
 		core::Real binwidth_norm;
 
-		core::Size verbose;
-
 #ifdef USEOPENCL
 		core::SSize gpu;
 		core::Size gpu_threads;
-		core::Size gpu_proc;
 #endif
 	} settings;
 
@@ -274,8 +272,7 @@ private:
 
 #ifdef USEOPENCL
 	protected:
-	utility::GPU gpu;
-	void gpuThrowException(int err, const char *fn, int line);
+	basic::gpu::GPU gpu;
 	float gpuTrimPeripheralBand(const std::vector<DOT> &dots, std::vector<const DOT*> &trimmed_dots);
 	int gpuFindClosestNeighbors(const std::vector<const DOT*> &my_dots, const std::vector<const DOT*> &their_dots, std::vector<const DOT*> &neighbors);
 	core::Real GetTimerMs(clock_t &start);

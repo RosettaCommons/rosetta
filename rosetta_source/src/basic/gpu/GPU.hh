@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   utility/GPU.hh
+/// @file   basic/gpu/GPU.hh
 /// @brief  OpenCL-based GPU scheduler class
 /// @author Luki Goldschmidt (luki@mbi.ucla.edu)
 
 #ifdef USEOPENCL
 
-#ifndef INCLUDED_utility_GPU_hh
-#define INCLUDED_utility_GPU_hh
+#ifndef INCLUDED_basic_gpu_GPU_hh
+#define INCLUDED_basic_gpu_GPU_hh
 
 #include <string>
 #include <map>
@@ -31,7 +31,8 @@
 #endif
 
 
-namespace utility {
+namespace basic {
+namespace gpu {
 
 typedef struct
 {
@@ -50,8 +51,6 @@ typedef struct
 #define GPU_INT 0x0200
 #define GPU_FLOAT 0x0300
 #define GPU_DOUBLE 0x0400
-
-#define UPPER_MULTIPLE(n,d) (((n)%(d)) ? (((n)/(d)+1)*(d)) : (n))
 
 typedef struct {
 	int ndevice;
@@ -113,7 +112,10 @@ public:
 	int Release();
 	static int Free();
 
-	int RegisterProgram(std::string filename);
+	int RegisterProgram(const char *filename);
+	int RegisterProgram(std::string& filename);
+	int RegisterProgram(std::vector<std::string> & files);
+
 	cl_kernel BuildKernel(const char *kernel_name);
 
 	cl_mem AllocateMemory(unsigned int size, void *data =NULL, int flags =0, const char *name =NULL);
@@ -137,11 +139,12 @@ public:
 
 protected:
 	GPU_DEV &this_device() { return devices_[ndevice_]; }
-	int _ExecuteKernel(const char *kernel_name, int total_threads, int max_conc_threads_high, int max_conc_threads_low, GPU_KERNEL_ARG *args);
+	int _ExecuteKernel(const char *kernel_name, int total_threads, int max_conc_threads_high, int max_conc_threads_low, GPU_KERNEL_ARG *args, int async =0);
 };
 
-} // utility
+} // gpu
+} // basic
 
-#endif // INCLUDED_utility_GPU_hh
+#endif // INCLUDED_basic_gpu_GPU_hh
 
 #endif // USEOPENCL

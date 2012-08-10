@@ -16,7 +16,6 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-// AUTO-REMOVED #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
@@ -41,7 +40,7 @@ basic::options::RealOptionKey const weight("sc:weight");
 
 using namespace std;
 
-int process_pose(core::pose::Pose &pose, core::scoring::sc::ShapeComplementarityCalculator &sc, std::string &molecule_1, std::string &molecule_2);
+int process_pose(core::pose::Pose &pose, core::scoring::sc::ShapeComplementarityCalculator &sc, std::string &molecule_1, std::string &molecule_2, int verbose);
 
 ///////////////////////////////////////////////////////////////////////////////
 int
@@ -107,7 +106,6 @@ main( int argc, char * argv [] )
 	sc.settings.rp = option[ basic::options::OptionKeys::sc::rp ];
 	sc.settings.sep = option[ basic::options::OptionKeys::sc::sep ];
 	sc.settings.band = option[ basic::options::OptionKeys::sc::trim ];
-	sc.settings.verbose = option[ basic::options::OptionKeys::sc::verbose ];
 	sc.settings.weight = option[ basic::options::OptionKeys::sc::weight ];
 
 	if(option[ basic::options::OptionKeys::sc::quick ])
@@ -131,7 +129,7 @@ main( int argc, char * argv [] )
 		core::pose::Pose pose;
 		input.fill_pose( pose, *rsd_set );
 
-		if(process_pose(pose, sc, molecule_1, molecule_2))
+		if(process_pose(pose, sc, molecule_1, molecule_2, option[ basic::options::OptionKeys::sc::verbose ]))
 			count++;
 	}
 
@@ -145,7 +143,8 @@ int process_pose(
 	core::pose::Pose &pose,
 	core::scoring::sc::ShapeComplementarityCalculator &sc,
 	std::string &molecule_1,
-	std::string &molecule_2
+	std::string &molecule_2,
+	int verbose
 )
 {
 	sc.Reset();
@@ -166,7 +165,7 @@ int process_pose(
 
 	core::scoring::sc::RESULTS const &r = sc.GetResults();
 
-	if(sc.settings.verbose) {
+	if(verbose) {
 
 		// Verbose view
 		std::cout << "==================================================" << endl;
