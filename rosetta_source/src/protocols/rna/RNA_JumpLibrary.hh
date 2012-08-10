@@ -50,20 +50,25 @@ namespace rna {
 		bool operator < (BasePairType const & lhs, BasePairType const & rhs )
 		{
 			//There must be a more elegant way to do this...
-			if( lhs.aa1 < rhs.aa1 )
+			if( lhs.aa1 < rhs.aa1 ) {
 				return true;
-			else if ( lhs.aa1 == rhs.aa1 )
-				if ( lhs.aa2 < rhs.aa2 )
+			} else if ( lhs.aa1 == rhs.aa1 ) {
+				if ( lhs.aa2 < rhs.aa2 ) {
 					return true;
-				else if ( lhs.aa2 == rhs.aa2 )
-					if ( lhs.edge1 < rhs.edge1 )
+				} else if ( lhs.aa2 == rhs.aa2 ) {
+					if ( lhs.edge1 < rhs.edge1 ) {
 						return true;
-					else if ( lhs.edge1 == rhs.edge1 )
-						if ( lhs.edge2 < rhs.edge2 )
+					} else if ( lhs.edge1 == rhs.edge1 ) {
+						if ( lhs.edge2 < rhs.edge2 ) {
 							return true;
-						else
-							if ( lhs.edge2 == rhs.edge2)
+						} else {
+							if ( lhs.edge2 == rhs.edge2) {
 								return ( lhs.orientation < rhs.orientation);
+							}
+						}
+					}
+				}
+			}
 			return false;
 		}
 
