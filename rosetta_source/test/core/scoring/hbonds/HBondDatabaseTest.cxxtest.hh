@@ -299,10 +299,10 @@ public:
 			TS_ASSERT_EQUALS(p->geometric_dimension(), hbgd_cosBAH);
 			(*p)(x, value, deriv);
 			p = hb_db->cosAHD_short_poly_lookup(hbe);
-			TS_ASSERT_EQUALS(p->geometric_dimension(), hbgd_cosAHD);
+			TS_ASSERT(p->geometric_dimension() == hbgd_cosAHD || p->geometric_dimension() == hbgd_AHD );
 			(*p)(x, value, deriv);
 			p = hb_db->cosAHD_long_poly_lookup(hbe);
-			TS_ASSERT_EQUALS(p->geometric_dimension(), hbgd_cosAHD);
+			TS_ASSERT(p->geometric_dimension() == hbgd_cosAHD || p->geometric_dimension() == hbgd_AHD );
 			(*p)(x, value, deriv);
 		}
 	}
