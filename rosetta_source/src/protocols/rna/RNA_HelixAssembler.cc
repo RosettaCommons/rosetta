@@ -180,6 +180,7 @@ void RNA_HelixAssembler::apply( core::pose::Pose & pose, std::string const & ful
 		put_constraints_on_base_step( pose, n );
 
 		minimize_base_step( pose, n );
+
 		//		pose.dump_pdb( "helix_min"+string_of(n)+".pdb" );
 	}
 
@@ -290,9 +291,11 @@ RNA_HelixAssembler::minimize_base_step( pose::Pose & pose, Size const n ){
 	using namespace core::scoring;
 	using namespace core::optimization;
 
+	runtime_assert( scorefxn->get_weight( atom_pair_constraint ) > 0.0 );
+
 	AtomTreeMinimizer minimizer;
 	float const dummy_tol( 0.0000025);
-	bool const use_nblist( true );
+	bool const use_nblist( false );
 	MinimizerOptions options( "dfpmin", dummy_tol, use_nblist, false, false );
 	options.nblist_auto_update( true );
 
@@ -315,6 +318,8 @@ RNA_HelixAssembler::minimize_base_step( pose::Pose & pose, Size const n ){
 
 	minimizer.run( pose, mm, *scorefxn, options );
 	(*scorefxn)( pose );
+
+	//	scorefxn->show( pose );
 
 }
 
