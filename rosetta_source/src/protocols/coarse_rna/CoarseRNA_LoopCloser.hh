@@ -77,7 +77,7 @@ public:
 
 	protocols::toolbox::AllowInsertOP  allow_insert();
 
-	Size const nsol(){ return nsol_; }
+	Size nsol(){ return nsol_; }
 
 	utility::vector1< core::Size > const & cutpos_list(){ return cutpos_list_; }
 

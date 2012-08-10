@@ -109,7 +109,7 @@ RNA_LoopCloseSampler::apply ( core::pose::Pose & pose ) {
 	// 	solve for the other 6 by chain closure:
 	//     beta1, gamma1;               epsilon2, zeta2, beta2, gamma2
 	// This should probably be encapsulated into a PoseSampleGenerator or something similar
-	int const bins1_ = 360 / bin_size_ ; //This is total bins, default is 18
+	//	int const bins1_ = 360 / bin_size_ ; //This is total bins, default is 18
 	//	int const bins2_ = bins1_ / 2; //This is total bins divided by 2; default is 9
 	PuckerState pucker_state1 = Get_residue_pucker_state ( pose, moving_suite_ );
 	// following is only used if we are estimating jacobians (numerically).

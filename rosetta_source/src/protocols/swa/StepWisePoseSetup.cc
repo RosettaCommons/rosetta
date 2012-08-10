@@ -531,7 +531,7 @@ return "StepWisePoseSetup";
 		using namespace core::scoring::constraints;
 
 		//std::string const working_sequence = job_parameters_->working_sequence();
-		std::map< core::Size, core::Size > & full_to_sub( job_parameters_->full_to_sub() );
+		//		std::map< core::Size, core::Size > & full_to_sub( job_parameters_->full_to_sub() );
 
 		make_full_pose( pose );
 
@@ -852,7 +852,7 @@ return "StepWisePoseSetup";
 		if ( moving_res_list.size() < 1 ) return; // might be setting up for a prepack -- root is irrelevant.
 
 		ObjexxFCL::FArray1D< bool > const & partition_definition = job_parameters_->partition_definition();
- 		std::map< core::Size, core::Size > & full_to_sub( job_parameters_->full_to_sub() );
+		// 		std::map< core::Size, core::Size > & full_to_sub( job_parameters_->full_to_sub() );
 		Size const nres = pose.total_residue();
 
 		Size num_partition_0( 0 ), num_partition_1( 0 );
@@ -1169,7 +1169,6 @@ return "StepWisePoseSetup";
 
 		ObjexxFCL::FArray1D< Size > const & is_working_res( job_parameters_->is_working_res() );
 		std::string const & working_sequence( job_parameters_->working_sequence() );
-		utility::vector1< core::Size > const & working_moving_res_list(job_parameters_->working_moving_res_list());
 
 		// Need a simple fold tree for following to work...
 		Pose full_pose_copy = pose;
@@ -1302,7 +1301,7 @@ return "StepWisePoseSetup";
 		Size const first_working_moving_res  = working_moving_res_list[ 1 ];
 		Size const last_working_moving_res   = working_moving_res_list[ working_moving_res_list.size() ];
 
-		Size moving_suite( 0 );
+		//		Size moving_suite( 0 );
 		utility::vector1< core::Size > working_moving_suite_list;
 
 		bool moving_res_attached_at_start = true;
@@ -1325,7 +1324,7 @@ return "StepWisePoseSetup";
 		// Or perhaps we should just get rid of these booleans -- what about the more complex
 		// case in which the N-terminus and C-terminus are being sampled?
 		//
-		bool const Is_prepend = moving_res_attached_at_end;
+		//		bool const Is_prepend = moving_res_attached_at_end;
 		bool const Is_internal = ( moving_res_attached_at_end && moving_res_attached_at_start );
 
 		//////////////////////////////////////////////////////

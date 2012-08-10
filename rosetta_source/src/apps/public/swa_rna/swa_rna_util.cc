@@ -522,7 +522,6 @@ align_pdbs(){
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	bool output_pdb=true;
 	Real const alignment_RMSD_cutoff=option[ alignment_RMSD_CUTOFF ]();
 
 	std::cout << "alignment_RMSD_cutoff= " << alignment_RMSD_cutoff << std::endl;

@@ -107,10 +107,10 @@ namespace swa {
 
 		core::pose::PoseCOP	working_native_pose() const;
 
-		utility::vector1< Size > const
+		utility::vector1< Size >
 		apply_full_to_sub_mapping( utility::vector1< Size > const & res_vector);
 
-		Size const
+		Size
 		apply_full_to_sub_mapping( Size const res ) const;
 
 	private:

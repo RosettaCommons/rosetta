@@ -218,7 +218,7 @@ get_base_pairing_list( pose::Pose & pose,
 	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
 	Energy_base_pair_list const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
 
-	bool forms_canonical_base_pair( false ), forms_base_pair( false );
+	//	bool forms_canonical_base_pair( false );
 
 	Size k( 0 ), m( 0 );
 
@@ -699,10 +699,10 @@ setup_base_pair_constraints(
 		if ( !pose.residue(i).is_coarse() ) { //fullatom
 			Size const atom1 = pose.residue(i).type().atom_index( " C1*" ) ;
 			Size const atom2 = pose.residue(j).type().atom_index( " C1*" ) ;
-			pose.add_constraint( new AtomPairConstraint(
-																									id::AtomID(atom1,i),
-																									id::AtomID(atom2,j),
-																									C1star_distance_func ) );
+			//			pose.add_constraint( new AtomPairConstraint(
+			//																									id::AtomID(atom1,i),
+			//																									id::AtomID(atom2,j),
+			//																									C1star_distance_func ) );
 
 			utility::vector1< std::string > atom_ids1, atom_ids2;
 			get_watson_crick_base_pair_atoms( pose.residue(i).aa(), pose.residue(j).aa(), atom_ids1, atom_ids2 );
@@ -1086,9 +1086,9 @@ virtualize_5prime_phosphates( pose::Pose & pose ){
 
 	for ( Size i = 1; i < pose.total_residue(); i++ ) {
 
-		if ( i==1 || pose.fold_tree().is_cutpoint( i-1 ) &&
-				 !pose.residue( i-1 ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
-				 !pose.residue( i   ).has_variant_type( chemical::CUTPOINT_UPPER ) &&
+		if ( i==1 || ( pose.fold_tree().is_cutpoint( i-1 ) &&
+									 !pose.residue( i-1 ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
+									 !pose.residue( i   ).has_variant_type( chemical::CUTPOINT_UPPER ) ) &&
 				 pose.residue(i).is_RNA() ){
 			pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", i );
 		}

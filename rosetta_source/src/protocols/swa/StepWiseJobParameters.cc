@@ -289,7 +289,7 @@ namespace swa {
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
-	utility::vector1< Size > const
+	utility::vector1< Size >
 	StepWiseJobParameters::apply_full_to_sub_mapping( utility::vector1< Size > const & res_vector){
 
 		utility::vector1< core::Size > working_res_vector;
@@ -302,7 +302,7 @@ namespace swa {
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
-	Size const
+	Size
 	StepWiseJobParameters::apply_full_to_sub_mapping( Size const res ) const {
 
 		std::map<Size,Size>::const_iterator iter = full_to_sub_.find( res );

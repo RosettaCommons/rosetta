@@ -791,27 +791,29 @@ void init(int argc, char * argv [])
 			database_path = std::string( descr );
 		} else {
 
-			uint32_t size( 1024 );
-			char path[size];
+			char path[1024];
+			uint32_t path_size = sizeof( path );
 
 #ifdef MAC
-			_NSGetExecutablePath(path, &size);
+			_NSGetExecutablePath(path, &path_size );
 #endif
 #ifdef LINUX
-			readlink( "/proc/self/exe", path, size ); // This works on plain Linux, but not FreeBSD or Solaris.
+			readlink( "/proc/self/exe", path, path_size ); // This works on plain Linux, but not FreeBSD or Solaris.
 #endif
 #ifdef WIN32
-			TR << "There is someway to automatically figure out the path to rosetta_database with GetModuleFileName in Windows. This is already set up for linux and mac, its probably just one line to change in core/init.cc" << std::endl;
+			TR << "There is some way to automatically figure out the path to rosetta_database with GetModuleFileName in Windows. This is already set up for linux and mac, its probably just one line to change in core/init.cc" << std::endl;
+			// I think its this -- can someone comment out and compile on Windows?
+			// GetModuleFileName( NULL, path, path_size );
 #endif
 
 			std::string path_string( path );
 			Size found = path_string.find("rosetta_source/"); //This better be in the path -- now part of the standard rosetta3 directory structure!
-			if ( found != std::string::npos ){
+			if ( found != std::string::npos && path_size > 0){
 				std::string rosetta_exe_dir = path_string.substr(0,found);
 				database_path = rosetta_exe_dir + "rosetta_database/";
 				TR << "Looking for database based on location of executable: " << database_path << std::endl;
 			} else {
-				TR << "Could not determine location of executable: " << std::endl;
+				TR << "Could not determine location of executable." << std::endl;
 			}
 
 		}
@@ -819,7 +821,7 @@ void init(int argc, char * argv [])
 		if ( database_path.size() > 0 ){
 			basic::options::option[ basic::options::OptionKeys::in::path::database ].value( database_path );
 		} else {
-			TR << "ROSETTA3_DB not defined" << std::endl;
+			TR << "Could not find database. Either specify -database or set environment variable ROSETTA3_DB." << std::endl;
 		}
 
 	}

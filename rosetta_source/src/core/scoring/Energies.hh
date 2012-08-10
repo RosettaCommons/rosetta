@@ -230,14 +230,14 @@ public:
 	///     Pose
 	///     ScoreFunction
 	///     ScoreFunction.show
-	///     create_score_function	
+	///     create_score_function
 	///     EMapVector
 	EnergyMap const &
 	residue_total_energies( int const seqpos ) const
 	{
 		assert( !use_nblist() && energies_updated() );
 //		PyAssert( (!use_nblist()) && (energies_updated()), "Energies::residue_total_energies(): the Energies object isn't ready! Has it been scored?" );
-		PyAssert( (seqpos>0) && (seqpos<=size()), "Energies::residue_total_energies( int const seqpos ): variable seqpos is out of range!" );
+		PyAssert( (seqpos>0) && (seqpos<=int(size())), "Energies::residue_total_energies( int const seqpos ): variable seqpos is out of range!" );
 		if ( ! residue_total_energies_uptodate_ ) accumulate_residue_total_energies();
 		return residue_total_energies_[ seqpos ];
 	}
@@ -252,13 +252,13 @@ public:
 	///     Pose
 	///     ScoreFunction
 	///     ScoreFunction.show
-	///     create_score_function	
+	///     create_score_function
 	Real
 	residue_total_energy( int const seqpos ) const
 	{
 		assert( !use_nblist() && energies_updated() );
 //		PyAssert( (!use_nblist()) && (energies_updated()), "Energies::residue_total_energy(): the Energies object isn't ready! Has it been scored?" );
-		PyAssert( (seqpos>0) && (seqpos<=size()), "Energies::residue_total_energy( int const seqpos ): variable seqpos is out of range!" );
+		PyAssert( (seqpos>0) && (seqpos<=int(size())), "Energies::residue_total_energy( int const seqpos ): variable seqpos is out of range!" );
 		if ( ! residue_total_energy_uptodate_ ) accumulate_residue_total_energy();
 		return residue_total_energy_[ seqpos ];
 	}
@@ -353,7 +353,7 @@ public:
 	///     Pose
 	///     ScoreFunction
 	///     ScoreFunction.show
-	///     create_score_function	
+	///     create_score_function
 	bool
 	energies_updated() const
 	{
@@ -386,7 +386,7 @@ public:
 	///     Pose
 	///     ScoreFunction
 	///     ScoreFunction.show
-	///     create_score_function	
+	///     create_score_function
 	inline
 	Size
 	size() const
@@ -425,7 +425,7 @@ public:
 	///     Pose
 	///     ScoreFunction
 	///     ScoreFunction.show
-	///     create_score_function	
+	///     create_score_function
 	void
 	show(Size res) const {show(std::cout, res);};
 
