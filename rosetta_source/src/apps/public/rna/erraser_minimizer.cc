@@ -186,7 +186,8 @@ apply_ideal_coordinates ( pose::Pose const & pose, pose::Pose & pose_reference )
 	Real const DELTA_CUTOFF ( rna_fitted_torsion_info.delta_cutoff() );
 	bool const is_use_phenix_geo = option[ basic::options::OptionKeys::rna::corrected_geo ];
 	utility::vector1 <Size> pucker_conformation (pose_reference.total_residue(), 0);
-
+		
+	core::scoring::rna::RNA_IdealCoord ideal_coord;
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
 		if ( pose.residue ( n ).aa() == core::chemical::aa_vrt ) continue; //FCC
 
@@ -200,7 +201,6 @@ apply_ideal_coordinates ( pose::Pose const & pose, pose::Pose & pose_reference )
 		}
 	}
 	if (is_use_phenix_geo) {
-		core::scoring::rna::RNA_IdealCoord ideal_coord;
 		ideal_coord.apply(pose_reference, pucker_conformation, false /*donot keep torsions*/);
 	}
 }

@@ -722,6 +722,7 @@ option.add( basic::options::OptionKeys::abrelax::fail_unclosed, "structures whic
 option.add( basic::options::OptionKeys::chemical::chemical, "chemical option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::chemical::exclude_patches, "Names of the residue-type-set patches which should not be applied; if you know which patches you do not need for a particular run, this flag can reduce your memory use" );
 option.add( basic::options::OptionKeys::chemical::include_patches, "Names of the residue-type-set patches which should be applied even if excluded/commented out in patches.txt; useful for testing non-default patches" );
+option.add( basic::options::OptionKeys::chemical::enlarge_H_lj, "Use larger LJ_WDEPTH for Hs to avoid RNA clashes" ).def(false);
 option.add( basic::options::OptionKeys::score::score_pose_cutpoint_variants, "Include cutpoint variants in the pose during linear chainbreak" ).def(false);
 option.add( basic::options::OptionKeys::score::score, "scorefunction option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::score::weights, "Name of weights file (without extension .wts)" ).def("standard");
@@ -1242,10 +1243,10 @@ option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" )
 option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
-option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
+option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
 option.add( basic::options::OptionKeys::lh::expire_after_rounds, "If set to > 0 this causes the Master to expire a structure after it has gone through this many cycles" ).def(0);
 option.add( basic::options::OptionKeys::lh::mpi_resume, "Prefix (Ident string) for resuming a previous job!" );
 option.add( basic::options::OptionKeys::lh::mpi_feedback, "No description" ).legal("no").legal("add_n_limit").legal("add_n_replace").legal("single_replace").legal("single_replace_rounds").def("no");
@@ -1863,10 +1864,10 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from 
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of rigid-body moves" ).def("score5");
-option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
+option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));

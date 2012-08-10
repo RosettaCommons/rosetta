@@ -130,7 +130,7 @@ void RNA_IdealCoord::apply( Pose & pose, Size const seqpos, bool const is_north,
 	std::map <Size, Size> res_map;
 	res_map.insert( std::pair <Size, Size> (seqpos, 2) ); //Only the center res (#2) matters in ref_pose
 	Pose const & ref_pose = ref_pose_list_[res_class];
-	copy_dofs(pose, ref_pose, res_map);
+	copy_dofs_match_atom_names(pose, ref_pose, res_map);
 
 	//Copy back the original torsions
 	if (keep_backbone_torsion) {

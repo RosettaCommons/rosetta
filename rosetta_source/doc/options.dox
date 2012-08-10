@@ -3451,6 +3451,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-include_patches</b> \<StringVector\><dt>
 <dd>Names of the residue-type-set patches which should be applied even if excluded/commented out in patches.txt; useful for testing non-default patches</dd><br>
 </dl>
+<dl>
+<dt><b>-enlarge_H_lj</b> \<Boolean\><dt>
+<dd>Use larger LJ_WDEPTH for Hs to avoid RNA clashes</dd><br>
+<dd>Default: false</dd><br>
+</dl>
  </li>
 <li><h2>score</h2>
 <dl>
