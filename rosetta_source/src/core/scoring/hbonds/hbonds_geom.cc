@@ -588,7 +588,7 @@ hbond_compute_energy(
 	if ( FSr == Real(0.0) && FLr == Real(0.0) ) {
 		// is dAHdis out of range for both its fade function and its polynnomials?  Then set energy > MAX_HB_ENERGY.
 		if ( dAHdis < database.AHdist_poly_lookup( hbe )->xmin() ||
-			dAHdis < database.AHdist_poly_lookup( hbe )->xmax() ) {
+			dAHdis > database.AHdist_poly_lookup( hbe )->xmax() ) {
 			energy = MAX_HB_ENERGY + Real(1.0);
 			return;
 		}
