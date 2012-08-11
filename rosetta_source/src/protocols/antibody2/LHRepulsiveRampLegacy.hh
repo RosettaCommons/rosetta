@@ -34,11 +34,7 @@
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/moves/RepeatMover.fwd.hh>
-#include <protocols/moves/PyMolMover.fwd.hh>
 
-#ifdef PYROSETTA
-#include <protocols/moves/PyMolMover.hh>
-#endif
 
 
 using namespace core;
@@ -93,10 +89,7 @@ public:
     core::Real set_rot_mag  (core::Real rot_mag)  {return rot_mag_  =rot_mag;  }
     core::Real set_trans_mag(core::Real trans_mag){return trans_mag_=trans_mag;}
     
-    void turn_on_and_pass_the_pymol(moves::PyMolMoverOP pymol){
-        use_pymol_diy_ = true;
-        pymol_ = pymol;
-    }
+
     
 private:
 
@@ -116,8 +109,6 @@ private:
     core::Real min_threshold_;
     core::Size num_repeats_;
 
-    moves::PyMolMoverOP pymol_;
-    bool use_pymol_diy_;
     
     scoring::ScoreFunctionOP dock_scorefxn_;
     scoring::ScoreFunctionOP pack_scorefxn_;

@@ -20,7 +20,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
-#include <protocols/moves/PyMolMover.hh>
 #include <protocols/antibody2/RefineBetaBarrel.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/AntibodyUtil.hh>
@@ -80,7 +79,6 @@ void RefineBetaBarrel::init( ){
     }
 
     repulsive_ramp_ = true;
-    use_pymol_diy_  = false;
     sc_min_ = false;
     rt_min_ = false;
 
@@ -184,7 +182,6 @@ void RefineBetaBarrel::apply( pose::Pose & pose ) {
             lh_repulsive_ramp_ -> set_task_factory(tf_);
             if(sc_min_) lh_repulsive_ramp_ -> set_sc_min(true);
             if(rt_min_) lh_repulsive_ramp_ -> set_rt_min(true);
-            if(use_pymol_diy_) lh_repulsive_ramp_ -> turn_on_and_pass_the_pymol (pymol_);
         lh_repulsive_ramp_->apply(pose);
         TR<<"   finish repulsive ramping !"<<std::endl;
     }
@@ -196,7 +193,6 @@ void RefineBetaBarrel::apply( pose::Pose & pose ) {
         if(sc_min_) dock_mcm_protocol_ -> set_sc_min(true);
         if(rt_min_) dock_mcm_protocol_ -> set_rt_min(true);
     dock_mcm_protocol_ -> apply(pose);
-    if(use_pymol_diy_) pymol_ -> apply(pose);
 
     TR<<"   finish L_H Docking !"<<std::endl;
     TR<<"FINISH BETA BARREL REFINEMENT STEP !! "<<std::endl;

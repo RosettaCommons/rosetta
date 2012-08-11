@@ -27,11 +27,7 @@
 #include <protocols/antibody2/LHRepulsiveRamp.fwd.hh>
 #include <protocols/antibody2/LHSnugFitLegacy.fwd.hh>
 #include <protocols/docking/DockMCMProtocol.fwd.hh>
-#include <protocols/moves/PyMolMover.fwd.hh>
 
-#ifdef PYROSETTA
-#include <protocols/moves/PyMolMover.hh>
-#endif
 
 
 using namespace core;
@@ -74,10 +70,7 @@ public:
         repulsive_ramp_ = false;
     }
     
-    void turn_on_and_pass_the_pymol(moves::PyMolMoverOP pymol){
-        use_pymol_diy_ = true;
-        pymol_ = pymol;
-    }
+
     
     void set_sc_min(bool sc_min){
         sc_min_ = sc_min;
@@ -94,9 +87,7 @@ private:
     bool repulsive_ramp_;
     AntibodyInfoOP ab_info_;
     pack::task::TaskFactoryOP tf_;
-    
-    moves::PyMolMoverOP pymol_;
-    bool use_pymol_diy_;
+
         
     void init( );
     void finalize_setup(core::pose::Pose & pose_in );

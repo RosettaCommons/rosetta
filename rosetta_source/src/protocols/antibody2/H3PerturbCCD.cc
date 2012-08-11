@@ -58,7 +58,6 @@
 #include <protocols/antibody2/AntibodyUtil.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
 
-#include <protocols/moves/PyMolMover.hh>
 
 
 static numeric::random::RandomGenerator RG(21141980);
@@ -123,9 +122,6 @@ void H3PerturbCCD::init( )
 {
     set_default();
         
-    pymol_ = new protocols::moves::PyMolMover;
-    pymol_->keep_history(true);
-        
 }
     
 
@@ -144,7 +140,6 @@ void H3PerturbCCD::set_default(){
     is_camelid_         = false;
 	current_loop_is_H3_ = true;
     H3_filter_          = true;
-    use_pymol_diy_      = false;
     
     
     
@@ -285,7 +280,6 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
             cfm->apply( pose_in );
         }
         
-        if(use_pymol_diy_) pymol_->apply(pose_in);
 
         if( total_cycles == 1 ) {
             mc_->reset( pose_in );
@@ -301,7 +295,6 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
             cfm->set_check_ss( false );
             cfm->enable_end_bias_check( false );
             cfm->apply( pose_in );
-            if(use_pymol_diy_) pymol_->apply(pose_in);
 
             
             
@@ -350,7 +343,6 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
                 }
                 mc_->boltzmann( pose_in );
             }
-            if(use_pymol_diy_) pymol_->apply(pose_in);
         }// finish cycles2
         
         
@@ -386,7 +378,6 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
             loop_found = true;
         }
         else if( H3_filter_ ){h3_attempts++;}
-        if(use_pymol_diy_) pymol_->apply(pose_in);
 
     }// finish cycles1
     

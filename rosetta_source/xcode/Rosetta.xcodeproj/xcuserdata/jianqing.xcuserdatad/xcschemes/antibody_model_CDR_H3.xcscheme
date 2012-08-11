@@ -14,17 +14,17 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3D9A16011492EAC2004F3648"
-               BuildableName = "antibody2"
-               BlueprintName = "antibody2"
-               ReferencedContainer = "container:../../../../../../../scratch/weitzner/rosetta/rosetta_source/xcode/Rosetta.xcodeproj">
+               BlueprintIdentifier = "EC5D958B15D6C9F700EAE42D"
+               BuildableName = "antibody_model_CDR_H3"
+               BlueprintName = "antibody_model_CDR_H3"
+               ReferencedContainer = "container:Rosetta.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
-      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.GDB"
-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.GDB"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
       buildConfiguration = "Debug">
       <Testables>
@@ -32,16 +32,16 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3D9A16011492EAC2004F3648"
-            BuildableName = "antibody2"
-            BlueprintName = "antibody2"
-            ReferencedContainer = "container:../../../../../../../scratch/weitzner/rosetta/rosetta_source/xcode/Rosetta.xcodeproj">
+            BlueprintIdentifier = "EC5D958B15D6C9F700EAE42D"
+            BuildableName = "antibody_model_CDR_H3"
+            BlueprintName = "antibody_model_CDR_H3"
+            ReferencedContainer = "container:Rosetta.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
    <LaunchAction
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.GDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       buildConfiguration = "Debug"
@@ -51,19 +51,12 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3D9A16011492EAC2004F3648"
-            BuildableName = "antibody2"
-            BlueprintName = "antibody2"
-            ReferencedContainer = "container:../../../../../../../scratch/weitzner/rosetta/rosetta_source/xcode/Rosetta.xcodeproj">
+            BlueprintIdentifier = "EC5D958B15D6C9F700EAE42D"
+            BuildableName = "antibody_model_CDR_H3"
+            BlueprintName = "antibody_model_CDR_H3"
+            ReferencedContainer = "container:Rosetta.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <EnvironmentVariables>
-         <EnvironmentVariable
-            key = "ROSETTA3_DB"
-            value = "/scratch/weitzner/rosetta/rosetta_database"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-      </EnvironmentVariables>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -76,10 +69,10 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3D9A16011492EAC2004F3648"
-            BuildableName = "antibody2"
-            BlueprintName = "antibody2"
-            ReferencedContainer = "container:../../../../../../../scratch/weitzner/rosetta/rosetta_source/xcode/Rosetta.xcodeproj">
+            BlueprintIdentifier = "EC5D958B15D6C9F700EAE42D"
+            BuildableName = "antibody_model_CDR_H3"
+            BlueprintName = "antibody_model_CDR_H3"
+            ReferencedContainer = "container:Rosetta.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

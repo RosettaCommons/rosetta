@@ -39,7 +39,6 @@
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/H3CterInsert.hh>
 #include <protocols/antibody2/RefineCDRH1Centroid.hh>
-#include <protocols/moves/PyMolMover.hh>
 
 
 static basic::Tracer TR("protocols.antibody2.ModelCDRH3");
@@ -100,7 +99,6 @@ void ModelCDRH3::set_default()
     do_cter_insert_     = true;
     loops_flag_         = true;
     dle_flag_           = true;
-    use_pymol_diy_      = false;
     bad_nter_           = true;
     
     remodel_            = "legacy_perturb_ccd";
@@ -136,12 +134,6 @@ void ModelCDRH3::turn_off_H3_filter(){
     h3_perturb_ccd_build_->turn_off_H3_filter();
 }    
 
-void ModelCDRH3::turn_on_and_pass_the_pymol(moves::PyMolMoverOP pymol){        
-    use_pymol_diy_ = true;
-    pymol_ = pymol;
-    h3_cter_insert_mover_->turn_on_and_pass_the_pymol(pymol);
-    h3_perturb_ccd_build_->turn_on_and_pass_the_pymol(pymol);
-}
     
 
 void ModelCDRH3::apply( pose::Pose & pose_in )

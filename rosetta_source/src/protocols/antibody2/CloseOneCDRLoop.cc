@@ -18,7 +18,6 @@
 
 #include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <protocols/moves/PyMolMover.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
 //#include <protocols/loops/LoopMover.fwd.hh>
@@ -73,7 +72,6 @@ void CloseOneCDRLoop::set_default()
 	movemap_ = new kinematics::MoveMap();
 	movemap_->set_chi( false );
 	movemap_->set_bb( false );
-	pymol_ = new protocols::moves::PyMolMover();
 } // CloseOneCDRLoop::set_default
 
     
@@ -83,11 +81,6 @@ std::string
 CloseOneCDRLoop::get_name() const { return "CloseOneCDRLoop"; }
 
     
-    
-void CloseOneCDRLoop::set_pymol( protocols::moves::PyMolMoverOP pymol )
-{
-    pymol_ = pymol;
-}
 
     
     
@@ -131,14 +124,12 @@ void CloseOneCDRLoop::apply( pose::Pose & pose_in )
 	movemap_->set_bb( allow_bb_move );
 	movemap_->set_jump( 1, false );
 
-	pymol_->apply( pose_in );
 
 	if( nter_separation > allowed_separation_ ) {
 		loops::Loop one_loop( loop_start_, cdr_loop_start_, cdr_loop_start_-1, 0, false );
 		simple_one_loop_fold_tree( pose_in, one_loop );
 		CcdMoverOP ccd_moves = new CcdMover( one_loop, movemap_ );
 		ccd_moves->apply( pose_in );
-		pymol_->apply( pose_in );
 	}
 
 	if( cter_separation > allowed_separation_ ) {
@@ -146,7 +137,6 @@ void CloseOneCDRLoop::apply( pose::Pose & pose_in )
 		simple_one_loop_fold_tree( pose_in, one_loop );
 		CcdMoverOP ccd_moves = new CcdMover( one_loop, movemap_ );
 		ccd_moves->apply( pose_in );
-		pymol_->apply( pose_in );
 	}
 
 	Real separation = 0.00;
@@ -160,7 +150,6 @@ void CloseOneCDRLoop::apply( pose::Pose & pose_in )
 			loops::Loop one_loop( loop_start_, loop_end_, cutpoint, 0, false );
 			CcdMoverOP ccd_moves = new CcdMover( one_loop, movemap_ );
 			ccd_moves->apply( pose_in );
-			pymol_->apply( pose_in );
 		}
 	}
 

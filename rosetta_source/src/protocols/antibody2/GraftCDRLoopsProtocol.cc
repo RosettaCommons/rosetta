@@ -40,7 +40,6 @@
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/PyMolMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -218,7 +217,6 @@ void GraftCDRLoopsProtocol::setup_objects() {
     ab_t_info_ = NULL;
     
     graft_sequence_ = NULL;
-    pymol_=NULL;
     
     // score functions
     scorefxn_pack_ = core::scoring::ScoreFunctionFactory::create_score_function( "standard","score12");
@@ -280,7 +278,6 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
                                       graft_h1_, graft_h2_, graft_h3_, camelid_);
     
     graft_sequence_ = new moves::SequenceMover();
-    pymol_ = new moves::PyMolMover();
     
     
     TR<<" Checking AntibodyInfo object: "<<std::endl<<*ab_info_<<std::endl<<std::endl;
@@ -295,16 +292,13 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
             GraftOneCDRLoopOP graft_one_cdr = new GraftOneCDRLoop( it->first, ab_info_, ab_t_info_, scorefxn_pack_) ;
             graft_one_cdr->enable_benchmark_mode( benchmark_ );
             graft_sequence_->add_mover( graft_one_cdr);
-            //              graft_sequence_->add_mover( pymol_ );
             
             
             /*
              CloseOneCDRLoopOP closeone( new CloseOneCDRLoop( ab_info.get_loop(it->first)->start(),
              ab_info.get_loop(it->first)->stop()   )     );
              closeone->enable_benchmark_mode( benchmark_ );
-             closeone->set_pymol( pymol_ );
              graft_sequence_->add_mover( closeone );
-             graft_sequence_->add_mover( pymol_ );
              */
         }
     }
@@ -346,8 +340,7 @@ void GraftCDRLoopsProtocol::apply( pose::Pose & frame_pose ) {
     TR<<" in the apply function "<<std::endl;
     
     
-    protocols::moves::PyMolMover pymol;
-    if ( !flags_and_objects_are_in_sync_ ){ 
+    if ( !flags_and_objects_are_in_sync_ ){
        sync_objects_with_flags(); 
     }
     
@@ -364,9 +357,6 @@ void GraftCDRLoopsProtocol::apply( pose::Pose & frame_pose ) {
 
 	pose::set_ss_from_phipsi( frame_pose );
     
-	pymol.apply( frame_pose );
-	pymol.send_energy( frame_pose );
-
 	// display constraints and return
 	if( camelid_constraints_ ) {
 		display_constraint_residues( frame_pose );

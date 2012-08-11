@@ -58,7 +58,6 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/PyMolMover.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -123,7 +122,6 @@ void RefineCDRH1Centroid::set_default(){
     antibody_refine_    = true;
     snug_fit_           = true;
     refine_input_loop_  = true;
-    use_pymol_diy_      = false;
     
     TR << "Finished Setting Defaults" << std::endl;
 

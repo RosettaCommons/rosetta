@@ -26,13 +26,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/loops/Loops.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/moves/PyMolMover.fwd.hh>
 #include <protocols/docking/types.hh>
-
-
-#ifdef PYROSETTA
-#include <protocols/moves/PyMolMover.hh>
-#endif
 
 
 using namespace core;
@@ -79,10 +73,6 @@ public:
     Real set_rot_mag  (core::Real rot_mag)  {return rot_mag_  =rot_mag;  }
     Real set_trans_mag(core::Real trans_mag){return trans_mag_=trans_mag;}
     
-    void turn_on_and_pass_the_pymol(moves::PyMolMoverOP pymol){
-        use_pymol_diy_ = true;
-        pymol_ = pymol;
-    }
     
     void set_sc_min(bool sc_min){
         sc_min_ = sc_min;
@@ -101,9 +91,6 @@ private:
     core::Real rot_mag_;
     core::Real trans_mag_;
     core::Size num_repeats_;
-
-    moves::PyMolMoverOP pymol_;
-    bool use_pymol_diy_;
     
     scoring::ScoreFunctionOP dock_scorefxn_;
     scoring::ScoreFunctionOP pack_scorefxn_;

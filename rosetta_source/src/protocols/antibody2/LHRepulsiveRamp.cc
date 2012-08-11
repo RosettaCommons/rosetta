@@ -28,7 +28,6 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/moves/PyMolMover.hh>
 #include <protocols/docking/DockMCMCycle.hh>
 
 
@@ -84,7 +83,6 @@ void LHRepulsiveRamp::init( )
     
 void LHRepulsiveRamp::set_default(){
     benchmark_       = false;
-    use_pymol_diy_   = false;
     sc_min_ =false;
     rt_min_ =false;
     
@@ -167,7 +165,6 @@ void LHRepulsiveRamp::apply( pose::Pose & pose ) {
         for (Size j=1; j<=num_repeats_; j++) {
             dockmcm_cyclemover -> apply(pose);
             TR<<"       doing rb_mover_min_trial in the DockMCMCycle  ...   "<<j<<std::endl;
-            if(use_pymol_diy_) pymol_->apply(pose);
         }
         dockmcm_cyclemover -> reset_cycle_index(); //JQX: only do the rb_mover_min_trial (index<7)
         dockmcm_cyclemover -> get_mc()->recover_low( pose ); //chose the pose having the lowest score

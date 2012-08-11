@@ -25,7 +25,6 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/PyMolMover.fwd.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/AntibodyModelerProtocol.fwd.hh>
 #include <protocols/simple_moves/ConstraintSetMover.fwd.hh>
@@ -138,8 +137,6 @@ private:
     std::string h3_perturb_type_;
     std::string h3_refine_type_;
     core::Real cen_cst_, high_cst_;
-    moves::PyMolMoverOP pymol_;
-    bool use_pymol_diy_;
     bool bad_nter_;
     bool use_csts_;
     

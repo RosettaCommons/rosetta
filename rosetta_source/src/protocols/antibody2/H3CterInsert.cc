@@ -32,7 +32,6 @@
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/AntibodyUtil.hh>
-#include <protocols/moves/PyMolMover.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 
 
@@ -98,7 +97,6 @@ void H3CterInsert::init(AntibodyInfoOP antibody_info, bool camelid, bool benchma
 void H3CterInsert::set_default(){
     is_camelid_ = false;
     benchmark_ = false;
-    use_pymol_diy_ = false;
 }
         
         
@@ -164,7 +162,6 @@ void H3CterInsert::apply(pose::Pose & pose)
         
         }
 
-        if(use_pymol_diy_) pymol_->apply(pose);
         //JQX: it seems movemap is not required..... kind of weird, but it works! maybe there's a default movemap
         
     

@@ -27,11 +27,7 @@
 #include <protocols/antibody2/AntibodyInfo.fwd.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/PyMolMover.fwd.hh>
 
-#ifdef PYROSETTA
-	#include <protocols/moves/PyMolMover.hh>
-#endif
 
 
 using namespace core;
@@ -66,10 +62,6 @@ public:
     // read CDR H3 C-terminal fragments (size: 4)
     void read_H3_cter_fragment( bool is_camelid);
 
-    void turn_on_and_pass_the_pymol(moves::PyMolMoverOP pymol){
-        use_pymol_diy_ = true;
-        pymol_ = pymol;
-    }
 
 private:
 
@@ -79,9 +71,6 @@ private:
     AntibodyInfoOP ab_info_;
 
     bool user_defined_;
-
-    bool use_pymol_diy_;
-    moves::PyMolMoverOP pymol_;
 
     /// @brief benchmark flag
 	bool benchmark_;

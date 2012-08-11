@@ -54,7 +54,6 @@
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
-#include <protocols/moves/PyMolMover.hh>
 #include <protocols/antibody2/AntibodyUtil.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/AntibodyModelerProtocol.hh>
@@ -130,7 +129,6 @@ void AntibodyModelerProtocol::set_default()
     high_cst_ = 100.0; // if changed here, please change at the end of AntibodyModeler as well
     flank_residue_size_ = 2;
     h3_filter_tolerance_ = 20;
-    use_pymol_diy_ = false;
     
     sc_min_ = false;
     rt_min_ = false;
@@ -268,10 +266,6 @@ AntibodyModelerProtocol::setup_objects() {
         //loop_scorefxn_highres_->set_weight( scoring::atom_pair_constraint, high_cst_ );
         loop_scorefxn_highres_->set_weight(scoring::dihedral_constraint, 1.0);
     
-    
-    // miscellaneous
-    pymol_ = new protocols::moves::PyMolMover;
-    pymol_->keep_history(true);
 }
     
 void AntibodyModelerProtocol::sync_objects_with_flags() 
@@ -376,14 +370,12 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
     
     // Step 1: model the cdr h3 in centroid mode
     // JQX notes: pay attention to the way it treats the stems when extending the loop
-    if(use_pymol_diy_) pymol_->apply(pose);
     if(model_h3_){ 
         ModelCDRH3OP model_cdrh3  = new ModelCDRH3( ab_info_, loop_scorefxn_centroid_);
             model_cdrh3->set_perturb_type(h3_perturb_type_); //legacy_perturb_ccd, ccd, kic
             if(cter_insert_ ==false) { model_cdrh3->turn_off_cter_insert(); }
             if(h3_filter_   ==false) { model_cdrh3->turn_off_H3_filter();   }
             model_cdrh3->set_bad_nter(bad_nter_); 
-            if(use_pymol_diy_) model_cdrh3->turn_on_and_pass_the_pymol(pymol_);
         model_cdrh3->apply( pose );
         //pose.dump_pdb("1st_finish_model_h3.pdb");
 
@@ -405,7 +397,6 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
             if (!LH_repulsive_ramp_) {refine_beta_barrel-> turn_off_repulsive_ramp();}
             if(sc_min_)              { refine_beta_barrel->set_sc_min(true); }
             if(rt_min_)              { refine_beta_barrel->set_rt_min(true); }
-            if (use_pymol_diy_) {refine_beta_barrel -> turn_on_and_pass_the_pymol(pymol_);}
         refine_beta_barrel->apply(pose);
         //pose.dump_pdb("2nd_finish_snugfit.pdb");
 	}

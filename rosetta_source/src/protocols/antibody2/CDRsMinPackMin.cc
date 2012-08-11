@@ -37,7 +37,6 @@
 #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/moves/PyMolMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/docking/SidechainMinMover.hh>
 #include <protocols/antibody2/AntibodyUtil.hh>
@@ -67,7 +66,6 @@ CDRsMinPackMin::CDRsMinPackMin() :
 	rt_min_( false ),
 	cen_cst_( 0.0 ),
 	high_cst_( 0.0 ),
-	use_pymol_diy_( false ),
 	benchmark_( false ),
 	min_type_( "" ),
 	Temperature_( 0.0 ),
@@ -111,7 +109,6 @@ CDRsMinPackMin::~CDRsMinPackMin() {}
 
 void CDRsMinPackMin::init(){
 
-	use_pymol_diy_ = false;
 	benchmark_ = false;
 	sc_min_ = false;
 	rt_min_ = false;
@@ -133,8 +130,6 @@ void CDRsMinPackMin::init(){
 
 	cdr_sequence_move_ = new moves::SequenceMover();
 
-	pymol_ = new protocols::moves::PyMolMover;
-	pymol_->keep_history(true);
 
 }
 

@@ -335,11 +335,11 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ){
     // put everything into a sequence mover
     wiggle_cdr_h3_ = new SequenceMover() ;
     wiggle_cdr_h3_->add_mover( change_FT_to_simpleloop_ );
-    wiggle_cdr_h3_->add_mover( small_mover );     //if(use_pymol_diy_) wiggle_cdr_h3_->add_mover(pymol_);
-    wiggle_cdr_h3_->add_mover( shear_mover );     //if(use_pymol_diy_) wiggle_cdr_h3_->add_mover(pymol_);
-    wiggle_cdr_h3_->add_mover( ccd_cycle );       //if(use_pymol_diy_) wiggle_cdr_h3_->add_mover(pymol_);
+    wiggle_cdr_h3_->add_mover( small_mover );     
+    wiggle_cdr_h3_->add_mover( shear_mover );     
+    wiggle_cdr_h3_->add_mover( ccd_cycle );       
     wiggle_cdr_h3_->add_mover( change_FT_to_flankloop_ );
-    wiggle_cdr_h3_->add_mover( loop_min_mover_ ); //if(use_pymol_diy_) wiggle_cdr_h3_->add_mover(pymol_);
+    wiggle_cdr_h3_->add_mover( loop_min_mover_ ); 
 
 }
     

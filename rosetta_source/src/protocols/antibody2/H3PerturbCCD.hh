@@ -32,13 +32,6 @@
 #include <protocols/antibody2/AntibodyInfo.fwd.hh>
 #include <protocols/antibody2/H3PerturbCCD.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/moves/PyMolMover.fwd.hh>
-
-
-
-#ifdef PYROSETTA
-	#include <protocols/moves/PyMolMover.hh>
-#endif
 
 
 using namespace core;
@@ -80,14 +73,6 @@ public:
 
     void read_and_store_fragments( core::pose::Pose & pose );
 
-    void turn_on_and_pass_the_pymol(moves::PyMolMoverOP pymol){
-        use_pymol_diy_ = true;
-        pymol_ = pymol;
-    }
-
-    void turn_on_pymol_diy(){
-        use_pymol_diy_ = true;
-    }
 
     void pass_the_loop(loops::Loop & input_loop){
         input_loop_ = input_loop;
@@ -110,9 +95,7 @@ private:
 
     bool user_defined_;
     bool is_camelid_;
-    bool use_pymol_diy_;
 
-    protocols::moves::PyMolMoverOP pymol_;
 
 
     void set_default();

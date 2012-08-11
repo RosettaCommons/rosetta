@@ -28,7 +28,6 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
-#include <protocols/moves/PyMolMover.fwd.hh>
 
 #include <protocols/antibody2/ModelCDRH3.fwd.hh>
 #include <protocols/antibody2/AntibodyInfo.hh>
@@ -82,8 +81,6 @@ private:
 
 	/// @brief refine H3 only
 	core::Real cen_cst_, high_cst_;
-	moves::PyMolMoverOP pymol_;
-	bool use_pymol_diy_;
 
 	// Benchmark mode for shorter_cycles
 	bool benchmark_;

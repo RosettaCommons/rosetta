@@ -31,7 +31,6 @@
 #include <protocols/antibody2/AntibodyInfo.fwd.hh>
 #include <protocols/antibody2/H3PerturbCCD.fwd.hh>
 #include <protocols/antibody2/H3CterInsert.fwd.hh>
-#include <protocols/moves/PyMolMover.fwd.hh>
 #include <basic/Tracer.hh>
 #include <protocols/loops/loop_mover/IndependentLoopMover.fwd.hh>
 
@@ -87,9 +86,7 @@ public:
     void turn_off_cter_insert(){
         do_cter_insert_ = false;
     }
-    
-    void turn_on_and_pass_the_pymol(moves::PyMolMoverOP pymol);
-    
+        
 
     void set_perturb_type(std::string setting){
         remodel_ = setting;
@@ -115,8 +112,6 @@ private:
     
     Size max_cycle_;
     
-    bool use_pymol_diy_;
-    moves::PyMolMoverOP pymol_;
 
 	// score functions
     core::scoring::ScoreFunctionOP lowres_scorefxn_;

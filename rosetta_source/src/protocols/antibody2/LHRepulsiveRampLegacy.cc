@@ -69,7 +69,6 @@ using namespace ObjexxFCL::fmt;
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/antibody2/AntibodyUtil.hh>
-#include <protocols/moves/PyMolMover.hh>
 
 
 
@@ -168,7 +167,6 @@ void LHRepulsiveRampLegacy::init(loops::Loops loops_in, bool camelid )
     
 void LHRepulsiveRampLegacy::set_default(){
     benchmark_       = false;
-    use_pymol_diy_   = false;
 
     rep_ramp_cycles_ = 3 ;
     rot_mag_         = 2.0 ;
@@ -315,7 +313,6 @@ void LHRepulsiveRampLegacy::apply( pose::Pose & pose ) {
         temp_scorefxn->set_weight( core::scoring::fa_rep, rep_weight );
         
         snugfit_MC_min(pose, temp_scorefxn);   
-        if(use_pymol_diy_) pymol_->apply(pose);
 
     }
 

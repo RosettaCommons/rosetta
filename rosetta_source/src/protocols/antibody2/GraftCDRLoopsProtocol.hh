@@ -33,7 +33,6 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
-#include <protocols/moves/PyMolMover.fwd.hh>
 #include <protocols/simple_moves/PackRotamersMover.fwd.hh>
 
 #include <iostream>
@@ -138,7 +137,6 @@ private:
     
     // movers
     protocols::moves::SequenceMoverOP graft_sequence_ ;
-    protocols::moves::PyMolMoverOP pymol_ ;
 
 
 	/// @brief Performs the portion of setup of non-primitive members that requires a pose - called on apply

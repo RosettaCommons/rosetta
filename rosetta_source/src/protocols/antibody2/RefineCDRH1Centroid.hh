@@ -33,16 +33,13 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
-#include <protocols/moves/PyMolMover.fwd.hh>
 #include <protocols/moves/ChangeFoldTreeMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/RefineCDRH1Centroid.fwd.hh>
 
-#ifdef PYROSETTA
-	#include <protocols/moves/PyMolMover.hh>
-#endif
+
 
 using namespace core;
 namespace protocols {
@@ -93,7 +90,6 @@ private:
     /// @brief just refine input loop
 	bool refine_input_loop_;
     
-    bool use_pymol_diy_;
 
 };
 

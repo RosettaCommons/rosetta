@@ -20,7 +20,6 @@
 #include <core/pose/Pose.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <protocols/moves/PyMolMover.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 
 namespace protocols {
@@ -42,7 +41,6 @@ namespace antibody2 {
 		virtual void apply( core::pose::Pose & pose_in );
 		virtual std::string get_name() const;
 
-		void set_pymol( protocols::moves::PyMolMoverOP pymol );
 
 		/// @brief enable benchmark mode
 		inline void enable_benchmark_mode( bool setting ) {
@@ -60,7 +58,6 @@ namespace antibody2 {
 		bool benchmark_;
 
 		core::kinematics::MoveMapOP movemap_;
-		protocols::moves::PyMolMoverOP pymol_;
 
 	}; // class CloseOneCDRLoop
 
