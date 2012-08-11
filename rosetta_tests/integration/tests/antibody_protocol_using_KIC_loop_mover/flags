@@ -1,0 +1,17 @@
+-s ./inputs/FR02.pdb
+-in:file:native ./inputs/LH_renumbered.pdb
+-out:file:scorefile 3QOS.fasc
+-ex1
+-ex2
+-overwrite
+-constraints:cst_file ./inputs/cter_constraint
+-loops:fast
+-loops:max_kic_build_attempts 20
+-antibody::remodel              perturb_kic
+-antibody::snugfit              true
+-antibody::refine               refine_kic
+-antibody::cter_insert          true
+-antibody::flank_residue_min    true
+-antibody::bad_nter             true
+-antibody::h3_filter            true
+-antibody::h3_filter_tolerance  20
