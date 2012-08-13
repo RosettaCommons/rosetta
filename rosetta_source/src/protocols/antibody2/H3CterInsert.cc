@@ -165,7 +165,7 @@ void H3CterInsert::apply(pose::Pose & pose)
         //JQX: it seems movemap is not required..... kind of weird, but it works! maybe there's a default movemap
         
     
-        success = CDR_H3_filter(pose, *(ab_info_->get_CDR_loop("h3")), false);
+        success = CDR_H3_cter_filter(pose, ab_info_);
         //JQX: this seems ridiculous, right? You are inserting a kinked or extended structure, why you want 
         //     to check again? The reason is that ... the H3_CTERM files is wrong! It is supposed to be 
         //     phi-psi-omega, but the info there is omega-phi-psi, in another word, it is using a wrong omega.

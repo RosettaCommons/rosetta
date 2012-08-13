@@ -220,7 +220,7 @@ namespace antibody2{
     //JQX:
     //work with Daisuke to put the L89 creteria into the code
     
-    bool CDR_H3_filter(const pose::Pose & pose_in, loops::Loop & input_loop, bool is_camelid)
+    bool CDR_H3_filter_legacy_code_with_old_rule(const pose::Pose & pose_in, loops::Loop & input_loop, bool is_camelid)
     {
 
         
@@ -408,6 +408,83 @@ namespace antibody2{
     } // CDR_H3_filter
     
     
+bool CDR_H3_cter_filter(const pose::Pose & pose_in, AntibodyInfoOP ab_info)
+{
+    
+    TR <<  "Utility: Checking Kink/Extended CDR H3 Base Angle" << std::endl;
+    
+    if(ab_info->is_camelid() ){ return( true ); }
+    
+    // Values read from plot in reference paper. Fig 1 on Page 3
+    // Values adjusted to match data from antibody training set
+    Real const kink_lower_bound = -10.00; // Shirai: 0
+    Real const kink_upper_bound = 70.00; // Shirai: 70
+    Real const extended_lower_bound = 125.00; // Shirai: ~180
+    Real const extended_upper_bound = 185.00; // Shirai: ~180
+    
+    // Hydrogen Bond maximum value is 3.9 Angstroms - not used
+    //	Real const h_bond(3.9);
+    // Salt Bridge maximum value is 2.0 Angstroms - not used
+    //	Real const s_bridge(4.0);
+    
+    // chop out the loop: 
+    //JQX: 2 residues before h3, one residue after h3. Matched Rosetta2!
+    Size start(  ab_info->get_CDR_loop("h3")->start()  -  2 );
+    Size stop(  ab_info->get_CDR_loop("h3")->stop()  +  1  );
+    
+    
+    bool matched_kinked( false );
+    bool matched_extended( false );
+    
+    
+    // extract 3 letter residue codes for the chopped loop
+    std::vector <std::string> aa_name; // loop residue 3 letter codes
+    //JQX: pay attention here!! It is vector, not vector1! too painful to compare to R2 code
+    //     just make vector, so it can match R2 code easily
+    for(Size ii=start; ii<=stop;ii++){
+        aa_name.push_back(pose_in.residue(ii).name3() );
+        //            TR<<pose_in.residue(ii).name1()<<std::endl;
+    }
+    
+    Size const CA(2);   // CA atom position in full_coord array
+    // base dihedral angle to determine kinked/extended conformation
+    
+    Real base_dihedral( numeric::dihedral_degrees(
+                                                  pose_in.residue( stop ).xyz( CA ),
+                                                  pose_in.residue( stop - 1).xyz( CA ),
+                                                  pose_in.residue( stop - 2).xyz( CA ),
+                                                  pose_in.residue( stop - 3).xyz( CA ) ) ); 
+    
+    //pose_in.dump_pdb("check_cter_dihedral.pdb");
+    
+    TR << "Base Dihedral: " << base_dihedral << std::endl;
+    
+    // setting up pseudo-periodic range used in extended base computation
+    if( base_dihedral < kink_lower_bound ){
+        base_dihedral = base_dihedral + 360.00;
+    }
+    
+    
+    if( (base_dihedral > kink_lower_bound ) && (base_dihedral < kink_upper_bound ) ) {
+        if(ab_info->is_kinked()) {matched_kinked = true;}
+    }
+    if( (base_dihedral > extended_lower_bound ) && (base_dihedral < extended_upper_bound ) ) {
+        if(ab_info->is_extended()) {matched_extended = true;}
+    }
+    
+    
+    bool passed;
+    if (matched_kinked || matched_extended){
+        passed=true;
+    }
+    else{
+        passed=false;
+    }
+    
+    TR <<  "Utility: Finished Checking Kink/Extended CDR H3 Base Angle: " << passed << std::endl;
+
+    return passed;
+}
     
     
     

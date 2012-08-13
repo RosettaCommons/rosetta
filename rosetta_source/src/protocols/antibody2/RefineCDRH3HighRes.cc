@@ -195,7 +195,7 @@ void RefineCDRH3HighRes::apply(core::pose::Pose &pose){
                 pose.dump_pdb("after_refine_"+str_num+".pdb");
                 
                 if(H3_filter_){ 
-                        if( CDR_H3_filter(pose, *h3_loop, false) ) { break;} 
+                        if( CDR_H3_cter_filter(pose, ab_info_) ) { break;} 
                         else{
                                 if(  pose.energies().total_energy() <= best_score ){
                                     best_score = pose.energies().total_energy();
@@ -224,7 +224,7 @@ void RefineCDRH3HighRes::apply(core::pose::Pose &pose){
                 pose.dump_pdb("after_refine_"+str_num+".pdb");
                 
                 if(H3_filter_){ 
-                        if( CDR_H3_filter(pose, *h3_loop, false) ) { break;} 
+                        if( CDR_H3_cter_filter(pose, ab_info_) ) { break;} 
                         else{
                             if(  pose.energies().total_energy() <= best_score ){
                                 best_score = pose.energies().total_energy();

@@ -277,7 +277,8 @@ void AntibodyInfo::detect_and_set_CDR_H3_stem_type( core::pose::Pose & pose ) {
 	if( is_camelid_ )
 		detect_and_set_camelid_CDR_H3_stem_type();
 	else
-		detect_and_set_regular_CDR_H3_stem_type( pose );
+		//detect_and_set_regular_CDR_H3_stem_type( pose );
+        detect_and_set_regular_CDR_H3_stem_type_new_rule( pose );
 	return;
 } // detect_CDR_H3_stem_type
 
@@ -328,7 +329,7 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type( core::pose::Pose & p
 
 	// extract single letter aa codes for the chopped loop residues
 	utility::vector1< char > cdr_h3_sequence;
-	for( core::Size ii = H3_->start() - 2; ii <= (H3_->stop() ); ++ii )
+	for( core::Size ii = H3_->start() - 2; ii <= (H3_->stop()+1 ); ++ii )
 		cdr_h3_sequence.push_back( Fv_sequence_[ii] );
 
 	// Rule 1a for standard kink
@@ -402,16 +403,108 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type( core::pose::Pose & p
 	TR << "AC Finished Detecting Regular CDR H3 Stem Type: "
 		 << "Kink: " << kinked_H3_ << " Extended: " << extended_H3_ << std::endl;
 } // detect_regular_CDR_H3_stem_type()
-
-
-
-
-
-
-
-
-
-
+    
+    
+    
+    
+void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( core::pose::Pose & pose ) {
+    TR << "AC Detecting Regular CDR H3 Stem Type" << std::endl;
+        
+    bool is_H3( false );	// "is_H3" is no longer used. 06/18/12
+        
+    // extract single letter aa codes for the chopped loop residues
+    utility::vector1< char > cdr_h3_sequence;
+    for( core::Size ii = H3_->start() - 2; ii <= (H3_->stop() + 1); ++ii )
+        cdr_h3_sequence.push_back( Fv_sequence_[ii] );
+        
+    /// @authors DK 06/18/2012
+    ///
+    /// @last_modified 06/18/2012
+    ///
+    /// @reference Kuroda et al. Proteins. 2008 Nov 15;73(3):608-20.
+    ///			   Koliansnikov et al. J Bioinform Comput Biol. 2006 Apr;4(2):415-24.
+        
+    // This is only for rule 1b
+    bool is_basic( false ); // Special basic residue exception flag
+    if( !is_basic ) {
+            core::Size L49_pose_number = pose.pdb_info()->pdb2pose( 'L', 49 );
+            char aa_code_L49 = pose.residue( L49_pose_number ).name1();
+            if( aa_code_L49 == 'R' || aa_code_L49 == 'K')
+                is_basic = true;
+        }
+        
+        /// START H3-RULE 2007
+        if( ( cdr_h3_sequence[ cdr_h3_sequence.size() - 2 ] == 'D') &&
+           ( ( cdr_h3_sequence[ 2 ] == 'K') || (cdr_h3_sequence[2] == 'R') ) &&
+           ( ( cdr_h3_sequence[ 1 ] == 'K') || (cdr_h3_sequence[1] == 'R') ) ) {
+            // Rule 1d for extened form with salt bridge
+            extended_H3_ = true;
+        }else if( ( cdr_h3_sequence[ cdr_h3_sequence.size() - 2 ] == 'D') &&
+                 ( ( cdr_h3_sequence[ 2 ] == 'K') || ( cdr_h3_sequence[ 2 ] == 'R') ) &&
+                 ( ( cdr_h3_sequence[ 1 ] != 'K') && ( cdr_h3_sequence[ 1 ] != 'R') ) ) {
+            // Rule 1c for kinked form with salt bridge with/without Notable signal (L46)
+            // Special basic residue exception flag
+            core::Size L46_pose_number = pose.pdb_info()->pdb2pose( 'L', 46 );
+            char aa_code_L46 = pose.residue( L46_pose_number ).name1();
+            
+            // Special Tyr residue exception flag
+            core::Size L36_pose_number = pose.pdb_info()->pdb2pose( 'L', 36 );
+            char aa_code_L36 = pose.residue( L36_pose_number ).name1();
+            
+            if( ( aa_code_L46 == 'R' || aa_code_L46 == 'K') && aa_code_L36 != 'Y' ){
+                extended_H3_ = true;
+            }else{
+                kinked_H3_   = true;
+            }
+        }else if( ( cdr_h3_sequence[ cdr_h3_sequence.size() - 2 ] == 'D' ) &&
+                 ( cdr_h3_sequence[ 2 ] != 'K' ) && ( cdr_h3_sequence[ 2 ] != 'R' ) &&
+                 ( is_basic == true ) ) {
+            // Rule 1b for standard extended form with Notable signal (L49)
+            kinked_H3_   = true;
+        }else if( ( ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'F' ) &&
+                   ( cdr_h3_sequence[ cdr_h3_sequence.size() - 4 ] == 'A' ) ) || 
+                 ( ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'F' ) &&
+                  ( cdr_h3_sequence[ cdr_h3_sequence.size() - 4 ] == 'G' ) ) ||
+                 ( ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'M' ) &&
+                  ( cdr_h3_sequence[ cdr_h3_sequence.size() - 4 ] == 'A' ) ) ||
+                 ( ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'M' ) &&
+                  ( cdr_h3_sequence[ cdr_h3_sequence.size() - 4 ] == 'G' ) ) ) {
+                     // This is new feature
+                     kinked_H3_   = true;
+                 }else if( ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'R' ) ||
+                          ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'K' ) ||
+                          ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'D' ) ||
+                          ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'N' ) ){
+                     // This is new feature
+                     extended_H3_ = true;
+                 }else if( ( ( cdr_h3_sequence[ 3 ] == 'Y' ) &&
+                            ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'F' ) ) ||
+                          ( (cdr_h3_sequence[ 3 ] == 'Y' ) &&
+                           (cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'M') ) ){ 
+                              // This is new feature
+                              extended_H3_ = true;
+                          }else if( cdr_h3_sequence.size() - 3  == 7 ) {
+                              // This is new feature
+                              extended_H3_ = true;
+                          }else if( cdr_h3_sequence[ cdr_h3_sequence.size() - 2 ] == 'D' ) {
+                              // Rule 1b for standard extended form without Notable signal (L49)
+                              extended_H3_ = true;
+                          }else if( cdr_h3_sequence[ cdr_h3_sequence.size() - 2 ] != 'D' ) {
+                              // Rule 1a for standard kink. i.e. No sequence feature...
+                              kinked_H3_ = true;
+                          }
+        // END H3-RULE 2007
+        
+        
+        
+        TR << "AC Finished Detecting Regular CDR H3 Stem Type: "
+        << "Kink: " << kinked_H3_ << " Extended: " << extended_H3_ << std::endl;
+    } // detect_regular_CDR_H3_stem_type()
+    
+    
+    
+    
+    
 void AntibodyInfo::all_cdr_fold_tree( core::pose::Pose & pose ) {
 	using namespace core::kinematics;
 

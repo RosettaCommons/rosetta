@@ -101,6 +101,7 @@ public:
     void detect_and_set_CDR_H3_stem_type( core::pose::Pose & pose );
 	void detect_and_set_camelid_CDR_H3_stem_type();
 	void detect_and_set_regular_CDR_H3_stem_type( core::pose::Pose & pose );
+    void detect_and_set_regular_CDR_H3_stem_type_new_rule( core::pose::Pose & pose );
     
     void get_CDRs_numbering();
     utility::vector1<FrameWork> get_ab_framework(){return Ab_framework_;}

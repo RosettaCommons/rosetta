@@ -397,7 +397,7 @@ void H3RefineCCD::apply( pose::Pose & pose ) {
         
             bool relaxed_H3_found_ever( false );
             if( H3_filter_){
-                relaxed_H3_found_ever = CDR_H3_filter( pose,the_loop_, is_camelid_);
+                relaxed_H3_found_ever = CDR_H3_cter_filter( pose,ab_info_);
             }
         
             // outer cycle
@@ -423,7 +423,7 @@ void H3RefineCCD::apply( pose::Pose & pose ) {
                     // H3 filter check
                     if(H3_filter_ && (h3_attempts <= inner_cycles_)) {
                         h3_attempts++;
-                        relaxed_H3_found_current = CDR_H3_filter(pose, the_loop_, is_camelid_);
+                        relaxed_H3_found_current = CDR_H3_cter_filter( pose,ab_info_);
                     
                         if( !relaxed_H3_found_ever && !relaxed_H3_found_current) {
                             mc_->boltzmann( pose );
@@ -443,7 +443,7 @@ void H3RefineCCD::apply( pose::Pose & pose ) {
                     else {
                         if( H3_filter_ ) {
                             bool relaxed_H3_found_current(false);
-                            relaxed_H3_found_current = CDR_H3_filter(pose,the_loop_, is_camelid_);
+                            relaxed_H3_found_current = CDR_H3_cter_filter( pose,ab_info_);
                             if( !relaxed_H3_found_ever && !relaxed_H3_found_current) {
                                 mc_->boltzmann( pose );
                             }

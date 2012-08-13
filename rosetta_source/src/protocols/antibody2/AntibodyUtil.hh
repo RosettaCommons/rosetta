@@ -57,11 +57,14 @@ void setup_simple_fold_tree(
 
     
     
-bool CDR_H3_filter(
+bool CDR_H3_filter_legacy_code_with_old_rule(
                        const core::pose::Pose & pose_in,
                        loops::Loop & input_loop,
                        bool is_camelid);
     
+bool CDR_H3_cter_filter(
+                       const core::pose::Pose & pose_in,
+                       AntibodyInfoOP ab_info);
     
 core::pack::task::TaskFactoryOP setup_packer_task( core::pose::Pose & pose_in);
 

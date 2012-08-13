@@ -300,7 +300,7 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
             
             bool H3_found_current(false);
             if( current_loop_is_H3_ && H3_filter_ && ( local_h3_attempts++ < (50 * num_cycles2) ) ) {
-                H3_found_current = CDR_H3_filter(pose_in, *(ab_info_->get_CDR_loop("h3")), is_camelid_);
+                H3_found_current = CDR_H3_cter_filter(pose_in, ab_info_);
                 if( !H3_found_ever && !H3_found_current) {
                     --c2;
                     mc_->boltzmann( pose_in );
@@ -368,9 +368,7 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
             // introduce enough diversity
             outer_mc_->boltzmann( pose_in );
             if( current_loop_is_H3_ && H3_filter_ && (current_h3_prob < h3_fraction_) && (h3_attempts++<50) ){
-                if( !CDR_H3_filter(pose_in, 
-                                   *(ab_info_->get_CDR_loop("h3")),
-                                   is_camelid_)    )
+                if(   !CDR_H3_cter_filter(pose_in, ab_info_)    )
                 {
                     continue; 
                 }
