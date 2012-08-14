@@ -98,8 +98,8 @@ option.add( basic::options::OptionKeys::in::file::silent_struct_type, "Type of S
 option.add( basic::options::OptionKeys::in::file::silent_read_through_errors, "will ignore decoys with errors and continue reading" ).def(false);
 option.add( basic::options::OptionKeys::in::file::silent_score_prefix, "Prefix that is appended to all scores read in from a silent-file" ).def("");
 option.add( basic::options::OptionKeys::in::file::silent_select_random, "Select a random subset of this number of decoys from every silent-file read" ).def(0);
-option.add( basic::options::OptionKeys::in::file::silent_select_range_start, "Select a ranged subset of decoys from every silent-file read. start at this decoy." ).def(0);
-option.add( basic::options::OptionKeys::in::file::silent_select_range_end, "Select a ranged subset of decoys from every silent-file read. start at this decoy." ).def(-1);
+option.add( basic::options::OptionKeys::in::file::silent_select_range_start, "Select a ranged subset of decoys from every silent-file read. start at this decoy." ).def(-1);
+option.add( basic::options::OptionKeys::in::file::silent_select_range_len, "Select a ranged subset of decoys from every silent-file read. start at this decoy." ).def(1);
 option.add( basic::options::OptionKeys::in::file::skip_failed_simulations, "Ignore failed simulations (prefixed by W_) during silent file input. Existing behavior is preserved by default." ).def(false);
 option.add( basic::options::OptionKeys::in::file::silent_scores_wanted, "Only put these silent-scores into the Pose." );
 option.add( basic::options::OptionKeys::in::file::fasta, "Fasta-formatted sequence file" );

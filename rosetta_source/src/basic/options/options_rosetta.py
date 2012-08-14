@@ -224,8 +224,8 @@ Options = Option_Group( '',
 				desc='Select a random subset of this number of decoys from every silent-file read',
 				default = '0'
 			),
-			Option( 'silent_select_range_start', 'Integer', desc='Select a ranged subset of decoys from every silent-file read. start at this decoy.', default = '0'),
-			Option( 'silent_select_range_end', 'Integer', desc='Select a ranged subset of decoys from every silent-file read. start at this decoy.', default = '-1'),
+			Option( 'silent_select_range_start', 'Integer', desc='Select a ranged subset of decoys from every silent-file read. start at this decoy.', default = '-1'),
+			Option( 'silent_select_range_len', 'Integer', desc='Select a ranged subset of decoys from every silent-file read. start at this decoy.', default = '1'),
 
 		  Option( 'skip_failed_simulations', 'Boolean', default = 'false', desc = 'Ignore failed simulations (prefixed by W_) during silent file input. Existing behavior is preserved by default.'),
 			Option(

@@ -441,12 +441,12 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-silent_select_range_start</b> \<Integer\><dt>
 <dd>Select a ranged subset of decoys from every silent-file read. start at this decoy.</dd><br>
-<dd>Default: 0</dd><br>
+<dd>Default: -1</dd><br>
 </dl>
 <dl>
-<dt><b>-silent_select_range_end</b> \<Integer\><dt>
+<dt><b>-silent_select_range_len</b> \<Integer\><dt>
 <dd>Select a ranged subset of decoys from every silent-file read. start at this decoy.</dd><br>
-<dd>Default: -1</dd><br>
+<dd>Default: 1</dd><br>
 </dl>
 <dl>
 <dt><b>-skip_failed_simulations</b> \<Boolean\><dt>
