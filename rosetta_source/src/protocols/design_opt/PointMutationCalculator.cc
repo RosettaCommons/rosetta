@@ -33,6 +33,8 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/chemical/ResidueType.hh>
 #include <utility/vector1.hh>
+#include <utility/vector0.hh>
+#include <utility/string_util.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/jd2/util.hh>
 #include <boost/foreach.hpp>
@@ -42,13 +44,20 @@
 #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/GreenPacker.hh>
-#include <utility/vector0.hh>
 #include <core/pose/symmetry/util.hh>
 
 //Auto Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+
+#ifdef USEMPI
+#include <mpi.h>
+#include <protocols/jd2/MPIWorkPoolJobDistributor.hh>
+#include <protocols/jd2/MPIFileBufJobDistributor.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
+#endif
 
 namespace protocols {
 namespace design_opt {
@@ -58,6 +67,7 @@ static numeric::random::RandomGenerator RG( 54 );
 using namespace core;
 using namespace chemical;
 using utility::vector1;
+using utility::vector0;
 using std::pair;
 
 ///@brief default ctor
@@ -244,6 +254,88 @@ cmp_pair_vec_by_first_vec_val(
 }
 */
 
+#ifdef USEMPI
+Size
+get_nstruct(){
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+
+  if ( option[ run::shuffle ]() ) { 
+    return option[ out::shuffle_nstruct ]();
+  } else {
+    return option[ out::nstruct ]();
+  }
+}
+
+void
+mpi_send_int( int const & destination, int to_send )
+{ 
+  int tag( 1 );
+	MPI_Send( &to_send, 1, MPI_INT, destination, tag, MPI_COMM_WORLD );
+}
+int
+mpi_receive_int( int const & source )
+{ 
+  int tag( 1 );
+  MPI_Status stat;
+	int to_receive;
+	MPI_Recv( &to_receive, 1, MPI_INT, source, tag, MPI_COMM_WORLD, & stat );
+	return to_receive;
+}
+void
+mpi_send_real( int const & destination, core::Real to_send )
+{ 
+  int tag( 1 );
+	MPI_Send( &to_send, 1, MPI_FLOAT, destination, tag, MPI_COMM_WORLD );
+}
+core::Real
+mpi_receive_real( int const & source )
+{ 
+  int tag( 1 );
+  MPI_Status stat;
+	core::Real to_receive;
+	MPI_Recv( &to_receive, 1, MPI_FLOAT, source, tag, MPI_COMM_WORLD, & stat );
+	return to_receive;
+}
+void
+mpi_send_char( int const & destination, char to_send )
+{ 
+  int tag( 1 );
+	MPI_Send( &to_send, 1, MPI_CHAR, destination, tag, MPI_COMM_WORLD );
+}
+char
+mpi_receive_char( int const & source )
+{ 
+  int tag( 1 );
+  MPI_Status stat;
+	char to_receive;
+	MPI_Recv( &to_receive, 1, MPI_CHAR, source, tag, MPI_COMM_WORLD, & stat );
+	return to_receive;
+}
+void
+mpi_send_string( int const & destination, std::string const & to_send )
+{ 
+  int tag( 1 );
+  int len( to_send.size() );
+  MPI_Send( &len, 1, MPI_INT, destination, tag, MPI_COMM_WORLD );
+  MPI_Send( const_cast< char * > (to_send.c_str()), len, MPI_CHAR, destination, tag, MPI_COMM_WORLD );
+}
+std::string
+mpi_receive_string( int const & source )
+{ 
+  int len( 0 );
+  int tag( 1 );
+  MPI_Status stat;
+  MPI_Recv( &len, 1, MPI_INT, source, tag, MPI_COMM_WORLD, & stat );
+  char * str = new char[ len + 1 ];
+  str[ len ] = '\0'; // ? do I need null terminated strings?
+  MPI_Recv( str, len, MPI_CHAR, source, tag, MPI_COMM_WORLD, & stat );
+  std::string to_receive( str, len );
+  delete [] str;
+  return to_receive;
+}
+#endif
+
 void
 PointMutationCalculator::mutate_and_relax(
 	pose::Pose & pose,
@@ -373,6 +465,46 @@ PointMutationCalculator::eval_filters(
 	TR << std::endl;
 }
 
+void
+insert_point_mut_filter_vals(
+	Size const seqpos,
+	chemical::AA const aa,
+	vector1< Real > const vals,
+	vector1< pair< Size, vector1< pair< AA, vector1< Real > > > > > & seqpos_aa_vals_vec
+)
+{
+	using namespace core::chemical;
+	//create the aa,vals pair
+	pair< AA, vector1< Real > > aa_vals_pair( pair< AA, vector1< Real > >( aa, vals ) );
+	//first check if we've assigned anything for seqpos
+	//if we have, just append this aa,vals pair onto that seqpos' data
+	bool inserted( false );
+	for( Size iseq = 1; iseq <= seqpos_aa_vals_vec.size(); ++iseq ){
+		if( seqpos == seqpos_aa_vals_vec[ iseq ].first ){
+			bool replaced( false );
+			//we need to check if we already have vals for this seqpos,aa in our data
+			for( core::Size iaa = 1; iaa <= seqpos_aa_vals_vec[ iseq ].second.size(); ++iaa ){ 
+				char this_aa_char( chemical::oneletter_code_from_aa( seqpos_aa_vals_vec[ iseq ].second[ iaa ].first ) );
+				if( this_aa_char == chemical::oneletter_code_from_aa( aa ) ){
+					seqpos_aa_vals_vec[ iseq ].second[ iaa ].second = vals;
+					replaced = true;
+				}
+			}
+			//dont append new data if we're just replacing
+			if( replaced ) break;
+			seqpos_aa_vals_vec[ iseq ].second.push_back( aa_vals_pair );
+			inserted = true;
+			break;
+		}
+	}
+	//if this is the first instance of data at seqpos,
+	//create a 1-element vector and add to the ptmut data
+	if( !inserted ){
+		vector1< pair< AA, vector1< Real > > > aa_vals_vec( 1, aa_vals_pair );
+		seqpos_aa_vals_vec.push_back( pair< Size, vector1< pair< AA, vector1< Real > > > >( seqpos, aa_vals_vec ) );
+	}
+}
+
 //backcompatibility; overloaded interface that allows the same data struct but wth one val/aa instead of a vector
 void
 PointMutationCalculator::calc_point_mut_filters(
@@ -464,52 +596,204 @@ PointMutationCalculator::calc_point_mut_filters(
 	green_packer->set_scorefunction( *scorefxn() );
 	green_packer->set_reference_round_task_factory( task_factory() );
 
-	//for each seqpos in being_designed vector
-	foreach( core::Size const resi, being_designed ){
+  int mpi_rank( 0 ), mpi_nprocs( 1 ), mpi_rank_low( 0 );
+#ifdef USEMPI
+  MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &mpi_nprocs);
+	//Get the lowest rank proc that's running this mover
+	if( dynamic_cast< protocols::jd2::MPIWorkPoolJobDistributor* >( protocols::jd2::JobDistributor::get_instance() ) ){
+		//!!WARNING!! We're assuming we have one head node (0) and nprocs-1 workers !!WARNING!!
+		TR << "Detected jd2::MPIWorkPoolJobDistributor... excluding proc 0 from calculations" << std::endl;
+		mpi_rank_low = 1;
+		//We must have one job( nstruct ) for each worker in pool or we'll freeze later because nodes w/ no job will get killed by jd2
+		if( get_nstruct() < mpi_nprocs - mpi_rank_low ) utility_exit_with_message(
+				"You must specify nstruct >= " + utility::to_string( mpi_nprocs - mpi_rank_low ) +
+				" when using " + utility::to_string( mpi_nprocs ) + " processors for MPI PointMutationCalculator" +
+				" when called from rosetta_scripts or any other app using jd2::MPIWorkPoolJobDistributor!" );
+	}
+	else if( dynamic_cast< protocols::jd2::MPIFileBufJobDistributor* >(protocols::jd2::JobDistributor::get_instance() ) ){
+		protocols::jd2::MPIFileBufJobDistributor* jd2 =
+				dynamic_cast< protocols::jd2::MPIFileBufJobDistributor* >( protocols::jd2::JobDistributor::get_instance() );
+		mpi_rank_low = jd2->min_client_rank();
+		TR << "Detected jd2::MPIFileBufJobDistributor... excluding procs 0-" << ( mpi_rank_low - 1 ) << " from calculations" << std::endl;
+		//We must have one job( nstruct ) for each worker in pool or we'll freeze later because nodes w/ no job will get killed by jd2
+		if( get_nstruct() < mpi_nprocs - mpi_rank_low ) utility_exit_with_message(
+				"You must specify nstruct >= " + utility::to_string( mpi_nprocs - mpi_rank_low ) +
+				" when using " + utility::to_string( mpi_nprocs ) + " processors for MPI PointMutationCalculator" +
+				" when called from rosetta_scripts or any other app using jd2::MPIFileBufJobDistributor!" );
+	}
+/*
+	//create a group of worker nodes and then a communicator
+	MPI_Group mpi_pool_group, mpi_all_group;
+	MPI_Comm MPI_COMM_POOL;
+	int returnval;
+	//create mpi_all_group group
+	returnval = MPI_Comm_group( MPI_COMM_WORLD, &mpi_all_group);
+	if ( returnval != MPI_SUCCESS ) utility_exit_with_message("failed in creating a new communicator!");
+	//create the pool group
+	// ranks is node ranks to include in your new group
+	int const mpi_pool_nprocs( mpi_nprocs - mpi_rank_low );
+	int ranks[ mpi_pool_nprocs ];
+	for( int irank = 0; irank < mpi_pool_nprocs; ++irank ){
+		ranks[ irank ] = mpi_rank_low + irank;
+TR << "MPI group incl Proc " << mpi_rank_low + irank << std::endl;
+	}
+TR << "Creating pool group..." << std::endl;
+	returnval = MPI_Group_incl( mpi_all_group, mpi_pool_nprocs, ranks, &mpi_pool_group );
+	if ( returnval != MPI_SUCCESS ) utility_exit_with_message("failed in creating a new communicator!");
+TR << "Creating comm group..." << std::endl;
+	returnval = MPI_Comm_create( MPI_COMM_WORLD, mpi_pool_group, &MPI_COMM_POOL );
+	if ( returnval != MPI_SUCCESS ) utility_exit_with_message("failed in creating a new communicator!");
+TR << "MPI Comm created!" << std::endl;
+*/
+#endif
+
+	//TODO make a single list of seqpos,aa pairs and split that up
+	vector1< pair< Size, AA > > all_muts;
+	for( Size iresi = 1; iresi <= being_designed.size(); ++iresi ){
+		Size const resi( being_designed[ iresi ] );
 		//create vector< AA > of allowed residue types at seqpos
 		typedef std::list< ResidueTypeCAP > ResidueTypeCAPList;
 		ResidueTypeCAPList const & allowed( task->residue_task( resi ).allowed_residue_types() );
 		vector1< AA > allow_temp;
-		allow_temp.clear();
 		foreach( ResidueTypeCAP const t, allowed ){
 			if(std::find(allow_temp.begin(),allow_temp.end(),t->aa())!=allow_temp.end()) continue;
 			allow_temp.push_back( t->aa() );
 		}
-		//temp store vector of aa/val pairs
-		vector1< pair< AA, vector1< Real > > > aa_vals;
 		//for each allowed AA
 		foreach( AA const target_aa, allow_temp ){
-			//make copy of original
-			pose::Pose pose( start_pose );
-			//make the mutation and relax
-			//then check if passes input filter, bail out if it doesn't
-			//TODO: if no filter defined, just use total_score
-			bool filter_pass;
-			vector1< Real > vals;
-			if( use_precomp_rot_pair_nrgs ) mutate_and_relax( pose, resi, target_aa, green_packer );
-			else mutate_and_relax( pose, resi, target_aa );
-//			mutate_and_relax( pose, resi, target_aa );
-			eval_filters( pose, filter_pass, vals );
-
-			//don't store this aa/val if any filter failed
-			if( !filter_pass ) continue;
-			assert( !vals.empty() );
-			//store aa/val pair in seqpos_aa_vals_vec
-			aa_vals.push_back( pair< AA, vector1< Real > >( target_aa, vals ) );
-			//dump pdb? (only if filter passes)
-			if( dump_pdb() ){
-				std::stringstream fname;
-				fname << protocols::jd2::current_output_name() << start_pose.residue( resi ).name3() << resi << pose.residue( resi ).name3()<<".pdb";
-				TR<<"Saving pose "<<fname.str() << std::endl;
-				pose.dump_scored_pdb( fname.str(), *scorefxn() );
-			}
-			TR.flush();
-		}//foreach target_aa
-		//store the aa/vals for this seqpos in the big struct if there are any
-		if( !aa_vals.empty() ){
-			seqpos_aa_vals_vec.push_back( pair< Size, vector1< pair< AA, vector1< Real > > > >( resi, aa_vals ) );
+			all_muts.push_back( pair< Size, AA >( resi, target_aa ) );
 		}
-	}//foreach resi
+	}
+
+	vector1< pair< Size, AA > > my_muts( all_muts );
+#ifdef USEMPI
+	//split up my_muts into smaller sublists for diff procs
+	my_muts.clear();
+	//asign muts to each proc
+	for( Size imut = 1; imut <= all_muts.size(); ++imut ){
+		//e.g. for 4 procs, hand out muts like 1,2,3,1,2,3,etc (nothing given to proc 0)
+		Size this_mpi_rank( ( imut - 1 ) % ( mpi_nprocs - mpi_rank_low ) + mpi_rank_low );
+		if( this_mpi_rank == mpi_rank ){
+			my_muts.push_back( all_muts[ imut ] );
+		}
+	}
+	//TR << "Proc " << mpi_rank << " takes mutations: ";
+	//for( Size imut = 1; imut <= my_muts.size(); ++imut ) TR << my_muts[ imut ].first << my_muts[ imut ].second << " ";
+	//TR << std::endl;
+#endif
+
+	for( Size imut = 1; imut <= my_muts.size(); ++imut ){
+		Size seqpos( my_muts[ imut ].first );
+		AA target_aa( my_muts[ imut ].second );
+		//make copy of original
+		pose::Pose pose( start_pose );
+		//make the mutation and relax
+		//then check if passes input filter, bail out if it doesn't
+		bool filter_pass;
+		vector1< Real > vals;
+		if( use_precomp_rot_pair_nrgs ) mutate_and_relax( pose, seqpos, target_aa, green_packer );
+		else mutate_and_relax( pose, seqpos, target_aa );
+//			mutate_and_relax( pose, seqpos, target_aa );
+		eval_filters( pose, filter_pass, vals );
+
+		//don't store this aa/val if any filter failed
+		if( !filter_pass ) continue;
+		assert( !vals.empty() );
+		//dump pdb? (only if filter passes)
+		if( dump_pdb() ){
+			std::stringstream fname;
+			fname << protocols::jd2::current_output_name() << start_pose.residue( seqpos ).name3() << seqpos << pose.residue( seqpos ).name3()<<".pdb";
+			TR<<"Saving pose "<<fname.str() << std::endl;
+			pose.dump_scored_pdb( fname.str(), *scorefxn() );
+		}
+		TR.flush();
+		insert_point_mut_filter_vals( seqpos, target_aa, vals, seqpos_aa_vals_vec );
+	}//for mut
+
+#ifdef USEMPI
+//	MPI_Barrier( MPI_COMM_POOL );
+	//sync everybody's mutation filter data
+	//worker sends ptmut data to pool leader
+	if( mpi_rank > mpi_rank_low ){
+		mpi_send_int( mpi_rank_low, seqpos_aa_vals_vec.size() );	//send int
+		for( Size iseq = 1; iseq <= seqpos_aa_vals_vec.size(); ++iseq ){
+			mpi_send_int( mpi_rank_low, seqpos_aa_vals_vec[ iseq ].first );	//send int
+			utility::vector1< std::pair< core::chemical::AA, vector1< core::Real > > > const & aa_pairs( seqpos_aa_vals_vec[ iseq ].second );
+			mpi_send_int( mpi_rank_low, aa_pairs.size() );	//send int
+			for( core::Size iaa = 1; iaa <= aa_pairs.size(); ++iaa ){ 
+				mpi_send_char( mpi_rank_low, chemical::oneletter_code_from_aa( aa_pairs[ iaa ].first ) );	//send char
+				//TR << "Proc " << mpi_rank << " sending seqpos,aa: " << seqpos_aa_vals_vec[ iseq ].first << aa_pairs[ iaa ].first << std::endl;
+				for( Size ival = 1; ival <= ( filters() ).size(); ++ival ){
+					mpi_send_real( mpi_rank_low, aa_pairs[ iaa ].second[ ival ] );	//send Real
+				}
+			}
+		}
+	}
+	//pool leader receives ptmut data from workers and combines with its own
+	else if( mpi_rank == mpi_rank_low ){
+		for( Size iproc = mpi_rank_low + 1; iproc < mpi_nprocs; ++iproc ){
+			//get data for one mut (seqpos, AA, and filter vals )
+			//need to know how many seqpos
+			Size n_seqpos( mpi_receive_int( iproc ) ); //rec int
+			for( Size imut = 1; imut <= n_seqpos; ++imut ){
+				Size seqpos( mpi_receive_int( iproc ) ); //rec int
+				//need to know how many muts at this seqpos
+				Size n_aas( mpi_receive_int( iproc ) );	//rec int
+				for( Size iaa = 1; iaa <= n_aas; ++iaa ){
+					char aa_char( mpi_receive_char( iproc ) );	//rec char
+					chemical::AA aa( chemical::aa_from_oneletter_code( aa_char ) );
+					//TR << "Proc " << mpi_rank << " received seqpos,aa: " << seqpos << aa << std::endl;
+					vector1< Real > vals( ( filters() ).size(), 0. );
+					for( Size ival = 1; ival <= vals.size(); ++ival ){
+						vals[ ival ] = mpi_receive_real( iproc );	//rec Real
+					}
+					insert_point_mut_filter_vals( seqpos, aa, vals, seqpos_aa_vals_vec );
+				}
+			}
+		}
+	}
+//	MPI_Barrier( MPI_COMM_POOL );
+	//then pool leader sends combined ptmut data back to workers
+	if( mpi_rank == mpi_rank_low ){
+		for( Size iproc = mpi_rank_low + 1; iproc < mpi_nprocs; ++iproc ){
+			mpi_send_int( iproc, seqpos_aa_vals_vec.size() );	//send int
+			for( Size iseq = 1; iseq <= seqpos_aa_vals_vec.size(); ++iseq ){
+				mpi_send_int( iproc, seqpos_aa_vals_vec[ iseq ].first );	//send int
+				utility::vector1< std::pair< core::chemical::AA, vector1< core::Real > > > const & aa_pairs( seqpos_aa_vals_vec[ iseq ].second );
+				mpi_send_int( iproc, aa_pairs.size() );	//send int
+				for( core::Size iaa = 1; iaa <= aa_pairs.size(); ++iaa ){ 
+					mpi_send_char( iproc, chemical::oneletter_code_from_aa( aa_pairs[ iaa ].first ) );	//send char
+					//TR << "Proc " << mpi_rank << " sending seqpos,aa: " << seqpos_aa_vals_vec[ iseq ].first << aa_pairs[ iaa ].first << std::endl;
+					for( Size ival = 1; ival <= ( filters() ).size(); ++ival ){
+						mpi_send_real( iproc, aa_pairs[ iaa ].second[ ival ] );	//send Real
+					}
+				}
+			}
+		}
+	}
+	//workers receive combined ptmut data from pool leader
+	else if( mpi_rank > mpi_rank_low ){
+		//need to know how many seqpos
+		Size n_seqpos( mpi_receive_int( mpi_rank_low ) ); //rec int
+		for( Size imut = 1; imut <= n_seqpos; ++imut ){
+			Size seqpos( mpi_receive_int( mpi_rank_low ) ); //rec int
+			//need to know how many muts at this seqpos
+			Size n_aas( mpi_receive_int( mpi_rank_low ) );	//rec int
+			for( Size iaa = 1; iaa <= n_aas; ++iaa ){
+				char aa_char( mpi_receive_char( mpi_rank_low ) );	//rec char
+				chemical::AA aa( chemical::aa_from_oneletter_code( aa_char ) );
+				//TR << "Proc " << mpi_rank << " received seqpos,aa: " << seqpos << aa << std::endl;
+				vector1< Real > vals( ( filters() ).size(), 0. );
+				for( Size ival = 1; ival <= vals.size(); ++ival ){
+					vals[ ival ] = mpi_receive_real( mpi_rank_low );	//rec Real
+				}
+				insert_point_mut_filter_vals( seqpos, aa, vals, seqpos_aa_vals_vec );
+			}
+		}
+	}
+	//	MPI_Finalize();
+#endif
 
 /*
 	//this part sorts the seqpos/aa/val data
