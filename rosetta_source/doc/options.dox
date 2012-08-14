@@ -161,6 +161,18 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-use_database</b> \<Boolean\><dt>
 <dd>Read in structures from database.  Specify database via -inout:dbms:database_name and wanted structures with -in:file:tags or select_structures_from_database</dd><br>
 </dl>
+ </li>
+<li><h2>in:dbms</h2>
+<dl>
+<dt><b>-dbms</b> \<Boolean\><dt>
+<dd>dbms option group</dd><br>
+</dl>
+<dl>
+<dt><b>-struct_ids</b> \<StringVector\><dt>
+<dd>List of struct_ids (hex representation) to be used by the database job inputter</dd><br>
+</dl>
+ </li>
+<li><h2>in</h2>
 <dl>
 <dt><b>-database_protocol</b> \<Integer\><dt>
 <dd>Database to use when reading in structures</dd><br>

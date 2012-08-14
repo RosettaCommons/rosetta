@@ -81,6 +81,11 @@ public:
 	void
 	set_scorefunction(core::scoring::ScoreFunctionOP scorefunction );
 
+	/// @brief set struct_ids from a list of strings of hex-uuid representations
+	void
+	set_struct_ids_from_strings(
+	utility::vector1<std::string> const & struct_id_strings);
+
 	/// @brief set input tags using a database SELECT command
 	void
 	set_struct_ids_from_sql(utility::vector1<std::string> const & sql);

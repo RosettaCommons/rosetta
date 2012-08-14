@@ -105,12 +105,11 @@ DatabaseJobInputter::load_options_from_option_system(){
 	// system--but using it makes sense here because, it serves the same
 	// purpose: specify which structures to use from the data source.
 
-	//TODO allow list of struct ids (it's not immediately clear how to do this with SQLite due to the fact that there is no simple "unhex" functionality
-//	if (option.has(in::file::tags) && option[in::file::tags].user()){
-//		set_tags(option[in::file::tags]);
-//	}
-	if(option[in::file::tags].user() && option[in::select_structures_from_database].user()) {
-		utility_exit_with_message("you cannot use -in:file:tags and -in:select_structures_from_database simultaniously");
+	if (option.has(in::dbms::struct_ids) && option[in::dbms::struct_ids].user()){
+		set_struct_ids_from_strings(option[in::dbms::struct_ids]);
+	}
+	if(option[in::dbms::struct_ids].user() && option[in::select_structures_from_database].user()) {
+		utility_exit_with_message("you cannot use -in:dbms:struct_ids and -in:select_structures_from_database simultaniously");
 	}
 
 	if (option[in::select_structures_from_database].user()) {
@@ -181,6 +180,22 @@ DatabaseJobInputter::set_scorefunction(ScoreFunctionOP scorefunction ){
 	scfxn_ = scorefunction;
 }
 
+void
+DatabaseJobInputter::set_struct_ids_from_strings(
+utility::vector1<string> const & struct_id_strings){
+
+	for(core::Size i=1; i<=struct_id_strings.size(); ++i){
+		boost::uuids::string_generator gen;
+		try{
+			boost::uuids::uuid struct_id = gen(struct_id_strings[i]);
+			tag_structures_[struct_id_strings[i]] = struct_id;
+		}
+		catch(...){
+			utility_exit_with_message("Invalid struct_id provided");
+		}
+	}
+		
+}
 
 /// @details The specified struct_ids indicate which structures should be
 /// used.  If no ids are specified, then all will be used.  Unless a tag column

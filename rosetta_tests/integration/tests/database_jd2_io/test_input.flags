@@ -3,8 +3,8 @@
 -correct
 -in
  -use_database
- -file
-  -tags S_56_0001 S_73_0001 S_84_0001 S_93_0001 S_107_0001
+ -dbms 
+  -struct_ids	2c757dd9-380b-42e6-ac3c-ef8f51d2e6dc 6eac5561-7c5c-4897-8feb-96a0df8b42b3 90eedb5b-8bee-49e2-bf7b-641e699cd9da c7ef33bb-d36d-4b82-a1c7-d8413397ba2f
 -inout
  -dbms:database_name structures.db3
 -parser

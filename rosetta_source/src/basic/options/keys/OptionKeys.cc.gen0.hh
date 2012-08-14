@@ -31,6 +31,8 @@ namespace in { IntegerVectorOptionKey const target_residues( "in:target_residues
 namespace in { IntegerVectorOptionKey const replonly_residues( "in:replonly_residues" );  }
 namespace in { BooleanOptionKey const replonly_loops( "in:replonly_loops" );  }
 namespace in { BooleanOptionKey const use_database( "in:use_database" );  }
+namespace in { namespace dbms { BooleanOptionKey const dbms( "in:dbms" );  } }
+namespace in { namespace dbms { StringVectorOptionKey const struct_ids( "in:dbms:struct_ids" );  } }
 namespace in { IntegerOptionKey const database_protocol( "in:database_protocol" );  }
 namespace in { StringVectorOptionKey const select_structures_from_database( "in:select_structures_from_database" );  }
 namespace in { namespace path { PathVectorOptionKey const path( "in:path" );  } }
@@ -616,5 +618,3 @@ namespace abinitio { FileOptionKey const sheet_edge_pred( "abinitio:sheet_edge_p
 namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score_scalling" );  }
 namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
 namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constraint_skip_rate" );  }
-namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }
-namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }
