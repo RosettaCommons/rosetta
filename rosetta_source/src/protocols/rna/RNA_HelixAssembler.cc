@@ -291,7 +291,8 @@ RNA_HelixAssembler::minimize_base_step( pose::Pose & pose, Size const n ){
 	using namespace core::scoring;
 	using namespace core::optimization;
 
-	runtime_assert( scorefxn->get_weight( atom_pair_constraint ) > 0.0 );
+	Real const cst_weight = scorefxn->get_weight( atom_pair_constraint );
+	runtime_assert( cst_weight != 0 );
 
 	AtomTreeMinimizer minimizer;
 	float const dummy_tol( 0.0000025);
@@ -317,6 +318,11 @@ RNA_HelixAssembler::minimize_base_step( pose::Pose & pose, Size const n ){
 	}
 
 	minimizer.run( pose, mm, *scorefxn, options );
+
+	scorefxn->set_weight( atom_pair_constraint, 0.0 );
+	minimizer.run( pose, mm, *scorefxn, options );
+	scorefxn->set_weight( atom_pair_constraint, cst_weight );
+
 	(*scorefxn)( pose );
 
 	//	scorefxn->show( pose );
