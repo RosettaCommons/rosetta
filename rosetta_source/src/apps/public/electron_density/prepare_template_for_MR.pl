@@ -57,8 +57,53 @@ my @targetstarts;
 ##############
 ## PARSE HHR FILE
 ##############
+my $grishin_format = -1;
 while ( my $line = <HHR> ) {
-	if (defined $line && $line =~ /^>(\w\w\w\w)_(\w)/) {
+	if ($grishin_format == -1) {
+		if ($line =~ /^##/) {
+			$grishin_format = 1;
+		} else {
+			$grishin_format = 0;
+		}
+	}
+
+	if ($grishin_format == 1 && $line =~ /^## +[^\s]+ +([^\s]+)/) {
+print "1\n";
+		my $tag = $1;
+		my $pdbid = substr( $tag,0,4);	
+		my $chainid = substr( $tag,4,1);	
+		my $altpdbs="";
+
+		# skip 2 lines
+		<HHR>;
+		<HHR>;
+
+		my $buff = <HHR>;
+		my @fields_tgt = split ' ', $buff;
+		my $targetseq = $fields_tgt[1];
+		my $targetstart = $fields_tgt[0];
+		$buff = <HHR>;
+		my @fields_templ = split ' ', $buff;
+		my $templseq = $fields_templ[1];
+		my $templstart = $fields_templ[0];
+
+		## sanity check
+		if ( length($targetseq) != length($templseq) ) { die "Sequence length mismatch."; }
+
+		# done!  now push onto the arrays
+		push @altpdbs, $altpdbs;
+		push @pdbids, $pdbid;
+		push @chainids, $chainid;
+		push @templates, $templseq;
+		push @targets, $targetseq;
+		push @templatestarts, $templstart;
+		push @targetstarts, $targetstart;
+
+		#skip last line
+		<HHR>;
+	}
+
+	if ($grishin_format == 0 && defined $line && $line =~ /^>(\w\w\w\w)_(\w)/) {
 		my $pdbid = $1;
 		my $chainid = $2;
 		my $templseq = '';

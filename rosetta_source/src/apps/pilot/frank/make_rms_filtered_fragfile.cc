@@ -66,6 +66,9 @@
 #include <core/import_pose/import_pose.hh>
 
 
+OPT_1GRP_KEY(Real, fpd, oversample)
+OPT_1GRP_KEY(Boolean, fpd, skip3)
+
 
 int main(int argc, char **argv) {
 	using namespace core::fragment;
@@ -76,10 +79,14 @@ int main(int argc, char **argv) {
 	using core::Size;
 	using std::string;
 
+	NEW_OPT(fpd::oversample, "oversample rate; default=inf (slow!!!)", -1);
+	NEW_OPT(fpd::skip3, "oversample rate; default=inf (slow!!!)", false);
+
 	std::cout << "USAGE:  \n";
 	std::cout << "USAGE: " << argv[0] << "\n";
 	std::cout << "               -in::file::native <CA-trace>\n";
 	std::cout << "               -loops::vall_file <vall>\n";
+	std::cout << "               -fpd::oversample <vall>\n";
 	std::cout << "             [ -out::file::frag_prefix <prefix> ]\n";
 	std::cout << "USAGE:  \n";
 	devel::init( argc,argv );
@@ -93,15 +100,18 @@ int main(int argc, char **argv) {
 	protocols::frags::RMSVallData rms_vall( option[ OptionKeys::loops::vall_file ] );
 	ConstantLengthFragSet frags3(3),frags9(9);
 
-	// for each 3 mer get a frame
-	for (int i =  1; i <= nres - 2; ++i) {
-		FrameOP frame3_i = new core::fragment::Frame( i, 3 );
-		utility::vector1< numeric::xyzVector< core::Real> > cas( 3 );
-		for (int k=0; k<3; ++k)
-			cas[k+1] = native_pose.residue(i+k).atom("CA").xyz();
-		std::string frag_seq = input_seq.substr( i-1, 3 );
-		rms_vall.get_frags( 200, cas, frag_seq, '-', frame3_i, 0.0, -1.0 );
-		frags3.add( frame3_i );
+	if (!option[ OptionKeys::fpd::skip3 ]()) {
+		// for each 3 mer get a frame
+		for (int i =  1; i <= nres - 2; ++i) {
+			FrameOP frame3_i = new core::fragment::Frame( i, 3 );
+			utility::vector1< numeric::xyzVector< core::Real> > cas( 3 );
+			for (int k=0; k<3; ++k)
+				cas[k+1] = native_pose.residue(i+k).atom("CA").xyz();
+			std::string frag_seq = input_seq.substr( i-1, 3 );
+			rms_vall.get_frags( 200, cas, frag_seq, '-', frame3_i, 0.0, option[ OptionKeys::fpd::oversample ]() );
+			frags3.add( frame3_i );
+		}
+	FragmentIO().write_data( option[ OptionKeys::out::file::frag_prefix ]()+"3", frags3 );
 	}
 
 	// for each 9 mer get a frame
@@ -111,12 +121,9 @@ int main(int argc, char **argv) {
 		for (int k=0; k<9; ++k)
 			cas[k+1] = native_pose.residue(i+k).atom("CA").xyz();
 		std::string frag_seq = input_seq.substr( i-1, 9 );
-		rms_vall.get_frags( 200, cas, frag_seq, '-', frame9_i, 0.0, -1.0 );
+		rms_vall.get_frags( 200, cas, frag_seq, '-', frame9_i, 0.0, option[ OptionKeys::fpd::oversample ]() );
 		frags9.add( frame9_i );
 	}
-
-	// dump frame sets
-	FragmentIO().write_data( option[ OptionKeys::out::file::frag_prefix ]()+"3", frags3 );
 	FragmentIO().write_data( option[ OptionKeys::out::file::frag_prefix ]()+"9", frags9 );
 
 	return 0;

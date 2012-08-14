@@ -45,6 +45,7 @@ if ($#ARGV < 0) {
 	print STDERR "    -g <real>x3 : perturb the unit cell parameters (A,B,C only) in the PDB with these values\n";
 	print STDERR "    -s <string> : override the spacegroup in the PDB with these values\n";
 	print STDERR "    -k <real>   : (EXPERIMENTAL) Approximate the protein as a ball of this radius (only if no '-p'!)\n";
+	print STDERR "    -h          : [default false] dont restrict translational motion along axes that do not change the system\n";
 	print STDERR "\n";
 	print STDERR "HELIX-specific options: \n";
 	print STDERR "    -a <char>   : [default A] the chain ID of the main chain\n";
@@ -82,6 +83,7 @@ my $nturns = 4;
 my $perp_chain = '';
 my $nperp_repeats = 1;
 my $quietMode = 0;
+my $restrictCrystTrans = 0;
 
 
 ## parse options (do this by hand since Getopt does not handle this well)
@@ -111,6 +113,9 @@ for ( my $i=0; $i<=$#suboptions; $i++ ) {
 	}
 	elsif ($suboptions[$i] =~ /^-o/ ) {
 		$fndCompatible = 1;
+	}
+	elsif ($suboptions[$i] =~ /^-h/ ) {
+		$restrictCrystTrans = 1;
 	}
 	# cryst
 	elsif ($suboptions[$i] eq "-k " && defined $suboptions[$i+1] && $suboptions[$i+1] !~ /^-[a-z|A-Z]/) {
@@ -684,7 +689,8 @@ if ($ncs_mode == 1) {
 		print " + ".$energy_counter{$complex}."*(VRT".$syminterfaces[0]."_base".":VRT".$complex."_base".")";
 	}
 	print "\n";
-	print "anchor_residue $minRes\n";
+	print "anchor_residue COM\n";
+	#print "anchor_residue 1\n";
 
 	# virtual_coordinates_start
 	# xyz VRT1 -1,0,0 0,1,0 0,0,0
@@ -1030,7 +1036,8 @@ if ($cryst_mode == 1) {
 		print $estring;
 	}
 	print "\n";
-	print "anchor_residue $minRes\n";
+	#print "anchor_residue COM\n";
+	print "anchor_residue 1\n";
 
 	# virtual_coordinates_start
 	# xyz VRT1 -1,0,0 0,1,0 0,0,0
@@ -1123,12 +1130,16 @@ if ($cryst_mode == 1) {
 		$id =~ s/_-(\d)/_n\1/g;
 		print "connect_virtual JUMP_".$id." VRT_0_0_0_0 VRT_".$id."\n";
 	}
-	if ($cheshire->[0][0] != $cheshire->[0][1] || $cheshire->[1][0] != $cheshire->[1][1] || $cheshire->[2][0] != $cheshire->[2][1] ) {
-		print "set_dof JUMP_$syminterfaces_all[0]"."_to_com";
-		if ($cheshire->[0][0] != $cheshire->[0][1]) { print " x"; }
-		if ($cheshire->[1][0] != $cheshire->[1][1]) { print " y"; }
-		if ($cheshire->[2][0] != $cheshire->[2][1]) { print " z"; }
-		print "\n";
+	if ($restrictCrystTrans == 1) {
+		print "set_dof JUMP_$syminterfaces_all[0]"."_to_com x y z\n";
+	} else {
+		if ($cheshire->[0][0] != $cheshire->[0][1] || $cheshire->[1][0] != $cheshire->[1][1] || $cheshire->[2][0] != $cheshire->[2][1] ) {
+			print "set_dof JUMP_$syminterfaces_all[0]"."_to_com";
+			if ($cheshire->[0][0] != $cheshire->[0][1]) { print " x"; }
+			if ($cheshire->[1][0] != $cheshire->[1][1]) { print " y"; }
+			if ($cheshire->[2][0] != $cheshire->[2][1]) { print " z"; }
+			print "\n";
+		}
 	}
 	print "set_dof JUMP_$syminterfaces_all[0]"."_to_subunit angle_x angle_y angle_z\n";
 
@@ -1619,7 +1630,7 @@ if ($helix_mode == 1) {
 		#}
 	}
 	print "\n";
-	print "anchor_residue $minRes\n";
+	print "anchor_residue COM\n";
 
 	# virtual_coordinates_start
 	# xyz VRT1 -1,0,0 0,1,0 0,0,0
@@ -2152,7 +2163,7 @@ if ($pseudo_mode == 1) {
 		print $estring;
 	}
 	print "\n";
-	print "anchor_residue $minRes\n";
+	print "anchor_residue COM\n";
 
 	# virtual_coordinates_start
 	# xyz VRT1 -1,0,0 0,1,0 0,0,0
