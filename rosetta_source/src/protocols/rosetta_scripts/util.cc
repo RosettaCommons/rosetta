@@ -31,6 +31,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/Mover.hh>
+#include <core/id/types.hh>
 
 
 // Basic Headers
@@ -218,6 +219,16 @@ foreach_movemap_tag( utility::tag::TagPtr const in_tag, core::pose::Pose const &
 				mm->set_chi( i, chi );
 				mm->set_bb( i, bb );
 			}
+			bool const bondangle( tag->getOption< bool >( "bondangle", false ) );
+			bool const bondlength( tag->getOption< bool >( "bondlength", false ) );
+			if (bondangle || bondlength) {
+				for( core::Size i( chain_begin ); i <= chain_end; ++i ){
+					for( core::Size j=1; j<=pose.residue_type(i).natoms(); ++j ){
+						mm->set( core::id::DOF_ID(core::id::AtomID(j,i), core::id::THETA ), bondangle );
+						mm->set( core::id::DOF_ID(core::id::AtomID(j,i), core::id::D ), bondlength );
+					}
+				}
+			}
 		}
 		if( name == "Span" ){
 			core::Size const begin( tag->getOption< core::Size >( "begin" ) );
@@ -228,6 +239,16 @@ foreach_movemap_tag( utility::tag::TagPtr const in_tag, core::pose::Pose const &
 			for( core::Size i( begin ); i <= end; ++i ){
 				mm->set_chi( i, chi );
 				mm->set_bb( i, bb );
+			}
+			bool const bondangle( tag->getOption< bool >( "bondangle", false ) );
+			bool const bondlength( tag->getOption< bool >( "bondlength", false ) );
+			if (bondangle || bondlength) {
+				for( core::Size i( begin ); i <= end; ++i ){
+					for( core::Size j=1; j<=pose.residue_type(i).natoms(); ++j ){
+						mm->set( core::id::DOF_ID(core::id::AtomID(j,i), core::id::THETA ), bondangle );
+						mm->set( core::id::DOF_ID(core::id::AtomID(j,i), core::id::D ), bondlength );
+					}
+				}
 			}
 		}
 	}//foreach tag
