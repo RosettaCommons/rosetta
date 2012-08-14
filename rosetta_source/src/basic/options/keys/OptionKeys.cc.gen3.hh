@@ -1,6 +1,3 @@
-namespace RBSegmentRelax { BooleanOptionKey const skip_fragment_moves( "RBSegmentRelax:skip_fragment_moves" );  }
-namespace RBSegmentRelax { BooleanOptionKey const skip_seqshift_moves( "RBSegmentRelax:skip_seqshift_moves" );  }
-namespace RBSegmentRelax { BooleanOptionKey const skip_rb_moves( "RBSegmentRelax:skip_rb_moves" );  }
 namespace RBSegmentRelax { RealVectorOptionKey const helical_movement_params( "RBSegmentRelax:helical_movement_params" );  }
 namespace RBSegmentRelax { RealVectorOptionKey const strand_movement_params( "RBSegmentRelax:strand_movement_params" );  }
 namespace RBSegmentRelax { RealVectorOptionKey const default_movement_params( "RBSegmentRelax:default_movement_params" );  }
@@ -12,6 +9,7 @@ namespace edensity { RealOptionKey const mapreso( "edensity:mapreso" );  }
 namespace edensity { RealOptionKey const grid_spacing( "edensity:grid_spacing" );  }
 namespace edensity { RealOptionKey const centroid_density_mass( "edensity:centroid_density_mass" );  }
 namespace edensity { IntegerOptionKey const sliding_window( "edensity:sliding_window" );  }
+namespace edensity { RealOptionKey const force_apix( "edensity:force_apix" );  }
 namespace edensity { RealOptionKey const fastdens_wt( "edensity:fastdens_wt" );  }
 namespace edensity { RealOptionKey const sliding_window_wt( "edensity:sliding_window_wt" );  }
 namespace edensity { BooleanOptionKey const score_sliding_window_context( "edensity:score_sliding_window_context" );  }

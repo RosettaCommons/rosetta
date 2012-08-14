@@ -3529,13 +3529,25 @@ ElectronDensity::readMRCandResize(
 	this->grid[1] = grid[1];
 	this->grid[2] = grid[2];
 
+	// advanced: force the apix value different than what is provided
+	core::Real force_apix = basic::options::option[ basic::options::OptionKeys::edensity::force_apix ]();
+	numeric::xyzVector< core::Real > ori_scale;
+	if (force_apix > 0) {
+		ori_scale[0] = (force_apix * this->grid[0]) / cellDimensions[0];
+		ori_scale[1] = (force_apix * this->grid[0]) / cellDimensions[1];
+		ori_scale[2] = (force_apix * this->grid[0]) / cellDimensions[2];
+		cellDimensions[0] = force_apix * this->grid[0];
+		cellDimensions[1] = force_apix * this->grid[1];
+		cellDimensions[2] = force_apix * this->grid[2];
+		TR << "Forcing apix to " << force_apix << std::endl;
+	}
+
 	///////////////////////////////////
 	/// POST PROCESSING
 	// expand to unit cell
 	this->computeCrystParams();
- 	//if ( origin[0]==0 && origin[1]==0 && origin[2]==0 &&
 
-	//fpd  change this so if the alt origin is non-zero use it
+	// mrc format maps occasionally specify a real-valued origin in a different spot in the header
  	if (  altorigin[0]!=0 &&  altorigin[0]!=0 &&  altorigin[0]!=0 &&
  	     ( altorigin[0] > -10000 && altorigin[0] < 10000) &&
  	     ( altorigin[1] > -10000 && altorigin[1] < 10000) &&
@@ -3550,6 +3562,18 @@ ElectronDensity::readMRCandResize(
  		TR << "Using ALTERNATE origin\n";
  		TR << "     origin =" << this->origin[0] << " x " << this->origin[1] << " x " << this->origin[2] << std::endl;
  	}
+
+	// if we force the apix, adjust the origin accordingly
+	if (force_apix > 0) {
+		this->origin = numeric::xyzVector<core::Real>(
+			this->origin[0]*ori_scale[0] ,
+			this->origin[1]*ori_scale[1] ,
+			this->origin[2]*ori_scale[2] );
+
+ 		TR << "Force apix repositioning the origin:\n";
+ 		TR << "     origin =" << this->origin[0] << " x " << this->origin[1] << " x " << this->origin[2] << std::endl;
+	}
+
 	this->efforigin = this->origin;
 	this->expandToUnitCell();
 
@@ -3584,9 +3608,6 @@ ElectronDensity::readMRCandResize(
 
 	// fft
 	numeric::fourier::fft3(density, Fdensity);
-	//F2density = density;
-	//for (int i=0; i< density.u1()*density.u2()*density.u3() ; ++i)
-	//	F2density[i] = std::norm(Fdensity[i]);
 
 	// post-processing
 	this->computeStats();

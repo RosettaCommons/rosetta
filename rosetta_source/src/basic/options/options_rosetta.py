@@ -3816,6 +3816,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
                 Option( 'grid_spacing', 'Real', default = '0.0'),
                 Option( 'centroid_density_mass', 'Real', default = '0.0'),
                 Option( 'sliding_window', 'Integer', default = '1'),
+                Option( 'force_apix', 'Real', default = '0.0', desc='force pixel spacing to take a particular value'),
                 Option( 'fastdens_wt', 'Real', default = '0.0', desc='wt of fast edens score'),
                 Option( 'sliding_window_wt', 'Real', default = '0.0', desc='wt of edens sliding-window score'),
                 Option( 'score_sliding_window_context', 'Boolean', default = 'false', desc='when using sl. win. density fit, include neighbor atoms (slows trajectory)'),

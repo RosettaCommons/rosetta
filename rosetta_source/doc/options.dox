@@ -9130,6 +9130,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 1</dd><br>
 </dl>
 <dl>
+<dt><b>-force_apix</b> \<Real\><dt>
+<dd>force pixel spacing to take a particular value</dd><br>
+<dd>Default: 0.0</dd><br>
+</dl>
+<dl>
 <dt><b>-fastdens_wt</b> \<Real\><dt>
 <dd>wt of fast edens score</dd><br>
 <dd>Default: 0.0</dd><br>
