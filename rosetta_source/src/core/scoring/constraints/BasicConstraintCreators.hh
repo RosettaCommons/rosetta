@@ -165,6 +165,17 @@ public:
     virtual std::string keyname() const;
 };
 
+/// @brief Mover creator for the SiteConstraintResidues constraint
+class SiteConstraintResiduesCreator : public ConstraintCreator
+{
+public:
+    SiteConstraintResiduesCreator();
+    virtual ~SiteConstraintResiduesCreator();
+
+    virtual ConstraintOP create_constraint() const;
+    virtual std::string keyname() const;
+};
+
 } //namespace constraints
 } //namespace scoring
 } //namespace core

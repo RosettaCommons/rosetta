@@ -31,7 +31,6 @@
 #include <core/scoring/disulfides/DisulfideAtomIndices.hh>
 #include <utility/vector1.hh>
 
-
 namespace core {
 namespace scoring {
 namespace disulfides {
@@ -347,7 +346,7 @@ ResidueNeighborConstIteratorOP
 FullatomDisulfideEnergyContainer::const_neighbor_iterator_begin( int resid ) const
 {
 	assert( !empty() );
-	if ( resid_2_disulfide_index_[ resid ] != NO_DISULFIDE ) {
+  if ( resid <= (int) resid_2_disulfide_index_.size() && resid_2_disulfide_index_[ resid ] != NO_DISULFIDE ) {
 		return new DisulfResNeighbConstIterator( this, resid, resid_2_disulfide_index_[ resid ]  );
 	}
 	else {

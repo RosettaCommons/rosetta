@@ -398,6 +398,7 @@ static ConstraintRegistrator< core::scoring::constraints::MultiConstraintCreator
 
 static ConstraintRegistrator< core::pack::dunbrack::DunbrackConstraintCreator > DunbrackConstraintCreator_registrator;
 static ConstraintRegistrator< core::scoring::constraints::SiteConstraintCreator > SiteConstraintCreator_registrator;
+static ConstraintRegistrator< core::scoring::constraints::SiteConstraintResiduesCreator > SiteConstraintResiduesCreator_registrator;
 static ConstraintRegistrator< core::scoring::constraints::SequenceProfileConstraintCreator > SequenceProfileConstraintCreator_registrator;
 
 // SilentStruct registrators

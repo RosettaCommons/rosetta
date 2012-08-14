@@ -29,6 +29,7 @@
 #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
 #include <core/scoring/constraints/MultiConstraint.hh>
 #include <core/scoring/constraints/SiteConstraint.hh>
+#include <core/scoring/constraints/SiteConstraintResidues.hh>
 
 #include <utility/vector1.hh>
 
@@ -196,6 +197,19 @@ std::string SiteConstraintCreator::keyname() const
 {
     return "SiteConstraint";
 }
+
+SiteConstraintResiduesCreator::SiteConstraintResiduesCreator() {}
+SiteConstraintResiduesCreator::~SiteConstraintResiduesCreator() {}
+
+ConstraintOP SiteConstraintResiduesCreator::create_constraint() const {
+    return new SiteConstraintResidues;
+}
+
+std::string SiteConstraintResiduesCreator::keyname() const
+{
+    return "SiteConstraintResidues";
+}
+
 } //namespace constraints
 } //namespace scoring
 } //namespace core

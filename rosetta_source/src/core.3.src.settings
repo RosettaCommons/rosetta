@@ -185,6 +185,7 @@ sources = {
 		"SequenceProfileConstraint",
 		"SigmoidFunc",
 		"SiteConstraint",
+		"SiteConstraintResidues",
 		"SkipViolFunc",
 		"SoedingFunc",
 		"SOGFunc",

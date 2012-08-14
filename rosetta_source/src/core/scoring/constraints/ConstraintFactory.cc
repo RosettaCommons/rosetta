@@ -29,6 +29,7 @@
 //#include <core/scoring/constraints/BigBinConstraint.hh>
 //#include <core/scoring/constraints/DihedralConstraint.hh>
 //#include <core/scoring/constraints/BindingSiteConstraint.hh>
+//#include <core/scoring/constraints/BindingSiteConstraintResidues.hh>
 //#include <core/scoring/constraints/CoordinateConstraint.hh>
 //#include <core/scoring/constraints/MultiConstraint.hh>
 //#include <core/scoring/constraints/LocalCoordinateConstraint.hh>
@@ -154,6 +155,7 @@ ConstraintFactory::get_creator( std::string const & type_name )
 	add_type( new DihedralConstraint( id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(), NULL ) );
 	add_type( new InterfaceConstraint( id::AtomID(), NULL ) );
 	add_type( new BindingSiteConstraint() );
+	add_type( new BindingSiteConstraintResidues() );
 	add_type( new BigBinConstraint() );
 	add_type( new MultiConstraint() );
 	add_type( new AmbiguousConstraint() );
@@ -172,6 +174,7 @@ ConstraintFactory::get_creator( std::string const & type_name )
 	add_type( new AtomPairConstraint( id::AtomID(), id::AtomID(), NULL ) );
 	add_type( new BigBinConstraint() );
 	add_type( new BindingSiteConstraint() );
+	add_type( new BindingSiteConstraintResidues() );
 	add_type( new CoordinateConstraint() );
 	add_type( new DihedralConstraint( id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(), NULL ) );
 	add_type( new DunbrackConstraint() );

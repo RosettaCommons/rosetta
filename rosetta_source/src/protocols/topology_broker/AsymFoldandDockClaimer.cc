@@ -118,7 +118,7 @@ bool AsymFoldandDockClaimer::read_tag( std::string tag, std::istream& is ) {
 		loops::SerializedLoopList loops = loop_file_reader.read_pose_numbered_loops_file(infile, file, false );
 		loops::Loops loop_defs = loops::Loops( loops ); // <==
 //		loop_defs = loop_defs.invert( input_pose_.total_residue() );
-		tr << "Flexible residues: " << input_pose_.total_residue() << std::endl << loop_defs << std::endl;
+		tr << "Flexible residues: " << loop_defs << std::endl;
 		moving_res_ = loop_defs;
 	} else if (tag == "CHAIN_BREAK_ASSYM_FND"  || tag == "chain_break_assym_fnd" ) {
 		is >> chain_break_res_;
@@ -191,6 +191,7 @@ void AsymFoldandDockClaimer::initialize_dofs(
 			(*it)->toggle( *movemap, true );
 		}
 	}
+
 }
 
 void AsymFoldandDockClaimer::generate_claims( DofClaims& new_claims ) {
