@@ -26,6 +26,7 @@
 
 #include <core/init.hh>
 #include <core/types.hh>
+#include <core/chemical/AA.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.hh>
@@ -239,6 +240,7 @@ namespace vip {
 		for( core::Size i = 1; i <= void_neighbors.size(); i+=2 ){
 			if( (initial_pose.residue(void_neighbors[i]).is_surface() == false) &&
 					(initial_pose.residue(void_neighbors[i]).is_polar() == false) &&
+					(initial_pose.residue(void_neighbors[i]).aa() < core::chemical::num_canonical_aas ) && // Don't try amino acid if APOLAR will choke on it
 					(initial_pose.residue(void_neighbors[i]).atom_is_backbone(void_neighbors[i+1]) == false ) ){
 				mutatable_residues.push_back(void_neighbors[i]);
 			}
@@ -364,6 +366,10 @@ namespace vip {
 			}
 		}
 
+		if( favorable_positions.size() == 0 || favorable_residues.size() == 0 ) { // Avoid segmentation fault
+			TR.Warning << "WARNING: No favorable positions found." << std::endl;
+			return;
+		}
 		final_pose = initial_pose;
 		final_pose.replace_residue( favorable_positions[bestP], *(favorable_residues[bestP]), true );
 
