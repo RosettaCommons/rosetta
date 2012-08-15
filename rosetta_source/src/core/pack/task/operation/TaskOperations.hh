@@ -189,6 +189,7 @@ public:
 	apply( pose::Pose const &, PackerTask & ) const;
 
 	virtual void parse_tag( TagPtr ); //parses nothing
+	virtual void parse_def( utility::lua::LuaObject const & def);
 };
 
 class InitializeExtraRotsFromCommandline : public TaskOperation

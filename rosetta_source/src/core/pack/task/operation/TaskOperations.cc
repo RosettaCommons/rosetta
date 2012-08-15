@@ -390,6 +390,9 @@ InitializeFromCommandline::parse_tag( TagPtr )
 {
 }
 
+void
+InitializeFromCommandline::parse_def( utility::lua::LuaObject const & def) {}
+
 /// BEGIN InitializeFromCommandline
 
 InitializeExtraRotsFromCommandline::~InitializeExtraRotsFromCommandline() {}
