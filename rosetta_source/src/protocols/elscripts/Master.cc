@@ -50,6 +50,7 @@ void lregister_Master( lua_State * lstate ) {
 		[
 			luabind::class_<Master, BaseRole>("Master")
 					.def("make_wu_until_limit", &Master::make_wu_until_limit)
+					.def("make_wu", &Master::make_wu)
 					.def("interpreter", &Master::interpreter)
 					.def("end_traj", &Master::end_traj)
 		]
@@ -225,6 +226,29 @@ void Master::request_pool_structure( int traj_idx ) {
   protocols::wum2::WorkUnitSP request_struct_wu( new protocols::wum2::WorkUnit_RequestStruct() );
   pool_comm_.push_back( request_struct_wu );
 }*/
+
+void Master::make_wu( std::string const & wuname, int traj_idx, core::pose::Pose * p) {
+	using namespace core::io::serialization;
+	PipeMapSP pmap( new PipeMap() );
+	PipeSP pipe ( new Pipe() ); 
+	pipe->push_back( core::pose::PoseSP(p) );
+	(*pmap)["input"] = pipe;
+	protocols::moves::SerializableStateSP state( new protocols::moves::SerializableState() );
+
+	protocols::wum2::WorkUnitSP tmp (new protocols::wum2::WorkUnit_ElScripts(
+				world_.rank(), traj_idx, pmap, state, wuname
+				));
+
+	slave_comm_->outq_pushback( tmp );
+	if( wumade_.find( wuname ) == wumade_.end() ) {
+		std::vector<int> tmp;
+		for( int j = 0; j < num_trajectories_; j++ ){
+			tmp.push_back(0);
+		}
+		wumade_[wuname] = tmp;
+	}
+	wumade_[wuname][traj_idx]++;
+}
 
 void Master::make_wu_until_limit( std::string const & wuname, int num ) {
 	using namespace core::io::serialization;
