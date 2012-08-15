@@ -89,6 +89,7 @@ SET(LINK_ALL_LIBS ${LINK_STATIC_LIBS} ${LINK_DYNAMIC_LIBS} ${TRAILING_STATIC})
 ##### Top level binaries
 SET(BINARIES
     ../../src/apps/pilot/kenjung/pose_serialize_test.cc
+    ../../src/apps/pilot/kenjung/lua_test.cc
 )
 
 FOREACH(BINARY ${BINARIES})
