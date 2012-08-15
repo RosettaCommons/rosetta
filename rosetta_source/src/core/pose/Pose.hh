@@ -111,6 +111,8 @@
 	#include <core/id/AtomID.hh>
 #endif
 
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/scoring/symmetry/SymmetricEnergies.hh>
 
 // C++ Headers
 // #include <cassert>
@@ -1477,6 +1479,13 @@ private:
 	void save(Archive & ar, const unsigned int version) const {
 		using namespace basic::datacache;
 		using namespace core::pose::datacache;
+			conformation::symmetry::SymmetricConformation * m = dynamic_cast< conformation::symmetry::SymmetricConformation * >( conformation_.get() );
+			bool is_symmetric = m;
+			ar & is_symmetric;
+			if( is_symmetric ) {
+				conformation::symmetry::SymmetryInfoOP r = m->Symmetry_Info();
+				ar & r;
+			} 
 			ar & conformation_;
 			ar & pdb_info_;
 			ar & * energies_;
@@ -1503,6 +1512,17 @@ private:
 	void load(Archive & ar, const unsigned int version) {
 		using namespace basic::datacache;
 		using namespace core::pose::datacache;
+			bool is_symmetric;
+			ar & is_symmetric;
+			if( is_symmetric ) {
+				conformation::symmetry::SymmetricConformationOP symm_conf ( new core::conformation::symmetry::SymmetricConformation() );
+				conformation::symmetry::SymmetryInfoOP r = symm_conf->Symmetry_Info();
+				ar & r;
+				conformation_ = symm_conf;
+				scoring::symmetry::SymmetricEnergiesOP symm_energy( new scoring::symmetry::SymmetricEnergies() );
+				energies_ = symm_energy;
+				energies_->set_owner( this );
+			}
 			ar & conformation_;
 			ar & pdb_info_;
 			ar & * energies_;
