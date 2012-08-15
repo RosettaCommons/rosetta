@@ -48,5 +48,8 @@ typedef  xyzVector< signed char >         xyzVector_schar;
 
 } // namespace numeric
 
+#ifdef USEBOOSTSERIALIZE
+#include <boost/serialization/access.hpp>
+#endif
 
 #endif // INCLUDED_numeric_xyzVector_FWD_HH
