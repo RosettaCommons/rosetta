@@ -15,6 +15,7 @@
 #include <utility/Factory.hh>
 #include <protocols/outputter/PDBOutputter.hh>
 #include <protocols/outputter/SilentFileOutputter.hh>
+#include <protocols/outputter/ResFileOutputter.hh>
 
 namespace protocols {
 
@@ -25,6 +26,7 @@ template<> utility::Factory<Outputter>::FactorySCP utility::Factory<Outputter>::
 
 static FactoryRegister< Outputter, outputter::PDBOutputter > reg_PDBOutputter;
 static FactoryRegister< Outputter, outputter::SilentFileOutputter > reg_SilentFileOutputter;
+static FactoryRegister< Outputter, outputter::ResFileOutputter > reg_ResFileOutputter;
 
 } //namespace protocols
 

@@ -44,6 +44,7 @@ sources = {
 		"Outputter",
 		"FormatStringOutputter",
 		"PDBOutputter",
+		"ResFileOutputter",
 		"SilentFileOutputter",
 	],
 	"protocols/jd2": [
