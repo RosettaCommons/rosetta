@@ -34,6 +34,9 @@ sources = {
 		"idealize",
 		"IdealizeMover",
 	],
+	"protocols/inputter": [
+    "Inputter",
+  ],
 	"protocols/outputter": [
 		"Outputter",
 		"FormatStringOutputter",
