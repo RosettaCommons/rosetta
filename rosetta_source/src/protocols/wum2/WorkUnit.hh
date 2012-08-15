@@ -27,8 +27,19 @@
 #include <boost/serialization/base_object.hpp>
 #endif
 
+#ifdef USELUA
+#include <lua.hpp>
+#include <luabind/luabind.hpp>
+#endif
+
 namespace protocols {
 namespace wum2 {
+
+#ifdef USELUA
+void lregister_WorkUnit( lua_State * lstate );
+void lregister_WorkUnit_Wait( lua_State * lstate );
+void lregister_WorkUnit_ElScripts( lua_State * lstate );
+#endif
 
 /// @brief  The base class for all work units, this is abstract
 

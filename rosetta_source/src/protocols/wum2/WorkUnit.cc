@@ -27,6 +27,36 @@ namespace wum2 {
 
 static basic::Tracer TR("protocols.wum2.WorkUnit");
 
+#ifdef USELUA
+void lregister_WorkUnit( lua_State * lstate ) {
+	luabind::module(lstate, "protocols")
+	[
+		luabind::namespace_("wum2")
+		[
+			luabind::class_<WorkUnit>("WorkUnit")
+		]
+	];
+}
+void lregister_WorkUnit_Wait( lua_State * lstate ) {
+	luabind::module(lstate, "protocols")
+	[
+		luabind::namespace_("wum2")
+		[
+			luabind::class_<WorkUnit_Wait>("WorkUnit_Wait")
+		]
+	];
+}
+void lregister_WorkUnit_ElScripts( lua_State * lstate ) {
+	luabind::module(lstate, "protocols")
+	[
+		luabind::namespace_("wum2")
+		[
+			luabind::class_<WorkUnit_ElScripts>("WorkUnit_ElScripts")
+		]
+	];
+}
+#endif
+
 // ---------- WorkUnit --------------
 WorkUnit::WorkUnit
 ( core::Size master,
