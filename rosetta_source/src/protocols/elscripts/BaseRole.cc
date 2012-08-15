@@ -68,6 +68,7 @@ void lregister_BaseRole( lua_State * lstate ) {
 		luabind::namespace_("elscripts")
 		[
 			luabind::class_<BaseRole>("BaseRole")
+					.def("reparse_def", &BaseRole::reparse_def)
 		]
 	];
 }
@@ -417,6 +418,20 @@ void BaseRole::register_calculators() {
   	PoseMetricCalculatorOP lig_interf_E_calc = new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator( "ligneigh" );
   	CalculatorFactory::Instance().register_calculator( "liginterfE", lig_interf_E_calc );
 	}
+}
+
+void BaseRole::reparse_def( std::string const & type, std::string const & name ) {
+	using namespace utility::lua;
+  if( type == "tasks" ) {
+    using namespace core::pack::task::operation;
+    LuaObject dtasks( luabind::globals(lstate_)["elscripts"]["dtasks"]);
+    for (LuaIterator i=dtasks.begin(), end; i != end; ++i) {
+      if( i.skey() == name ) {
+        tasks_[ i.skey() ].to<TaskOperationSP>()->parse_def( (*i) );
+        break;
+      }
+    }
+  }
 }
 
 } //elscripts

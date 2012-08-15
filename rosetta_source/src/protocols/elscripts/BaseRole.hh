@@ -58,6 +58,7 @@ class BaseRole {
 		// memory free after setting some aside for buffer (reserved*multiplier)
     virtual boost::uint64_t available_mem() = 0;
 
+		void reparse_def( std::string const & type, std::string const & name );
 
   protected:
 
@@ -79,6 +80,8 @@ class BaseRole {
 		void instantiate_tasks();
 		void register_calculators();
 
+
+	protected:
 		lua_State * lstate_;
     boost::uint64_t mem_limit_;
     boost::uint64_t reserved_mem_;
