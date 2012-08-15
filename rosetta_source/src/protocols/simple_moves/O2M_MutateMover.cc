@@ -21,10 +21,8 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/chemical/ResidueType.hh>
-
-#include <core/pose/symmetry/util.hh>
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <core/conformation/ResidueFactory.hh>
+#include <core/conformation/util.hh>
 
 #include <protocols/elscripts/util.hh>
 
@@ -44,6 +42,7 @@ void O2M_MutateMover::apply( core::io::serialization::PipeMap & pmap)
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 	using namespace core::chemical;
+	using namespace core::conformation;
 
 	if( ! task_factory_) {
 		TR << "Task factory not initialized" << std::endl;
@@ -55,31 +54,28 @@ void O2M_MutateMover::apply( core::io::serialization::PipeMap & pmap)
 	}
 
 	PoseSP starting_pose = (*pmap["input"])[0];
+	core::pose::add_comment( *starting_pose, "mut_pos", "AA0" );
 	PackerTaskCOP starting_task = task_factory_->create_task_and_apply_taskoperations( *starting_pose );
 
-  utility::vector1< bool > allowed_aas;
-  allowed_aas.assign( num_canonical_aas, false );
 	for( core::Size resi = 1; resi <= starting_pose->total_residue(); ++resi ){
 		if( starting_task->residue_task( resi ).being_designed() && starting_pose->residue(resi).is_protein() ) {
 			std::list<ResidueTypeCAP> const & allowed( starting_task->residue_task( resi ).allowed_residue_types() );
 			for( std::list<ResidueTypeCAP>::const_iterator itr=allowed.begin(); itr != allowed.end(); itr++ ){
 				if( (*itr)->aa() != starting_pose->residue( resi ).aa() ) {
-					allowed_aas[ (*itr)->aa() ] = true;
-					PackerTaskOP mutate_task( starting_task->clone() );
-					for( core::Size resj = 1; resj <= starting_pose->total_residue(); ++resj ){
-						if( resj != resi )
-							mutate_task->nonconst_residue_task( resj ).restrict_to_repacking();
-						else
-							mutate_task->nonconst_residue_task( resj ).restrict_absent_canonical_aas( allowed_aas );
-					}
-					protocols::simple_moves::PackRotamersMoverOP pack;
-					if( core::pose::symmetry::is_symmetric( *starting_pose ) )
-						pack =  new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn_, mutate_task );
-					else
-						pack = new protocols::simple_moves::PackRotamersMover( scorefxn_, mutate_task );
-
 					PoseSP working_pose( new Pose( *starting_pose) );
-					pack->apply( *working_pose );
+
+					PackerTaskOP mutate_task( starting_task->clone() );
+
+					// Create the new residue and replace it
+					ResidueOP new_res = ResidueFactory::create_residue(
+						**itr, working_pose->residue(resi),
+						working_pose->conformation());
+					// Make sure we retain as much info from the previous res as possible
+					copy_residue_coordinates_and_rebuild_missing_atoms( working_pose->residue(resi),
+						*new_res, working_pose->conformation() );
+					working_pose->replace_residue(resi, *new_res, false );
+
+
 					TR << "Mutated pos " << resi << " from " << starting_pose->residue( resi ).name3() << " to " << working_pose->residue( resi ).name3() << std::endl;
 					// although normal mutation notation is A20Q, by doing AQ20 we can use index to get residue type easily
 					std::string mut_pos;
@@ -88,7 +84,6 @@ void O2M_MutateMover::apply( core::io::serialization::PipeMap & pmap)
 					mut_pos += utility::to_string(resi);
 					core::pose::add_comment( *working_pose, "mut_pos", mut_pos );
 					pmap["input"]->push_back( working_pose );	
-					allowed_aas[ (*itr)->aa() ] = false;
 				}
 			}
 		}
