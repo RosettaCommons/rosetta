@@ -18,6 +18,7 @@
 #include <protocols/wum2/WorkUnit.fwd.hh>
 #include <boost/cstdint.hpp>
 #include <deque>
+#include <vector>
 
 namespace protocols {
 namespace wum2 {
@@ -36,7 +37,9 @@ class WUQueue {
 
     void push_front( WorkUnitSP wu );
     void push_back( WorkUnitSP wu );
+    void push_back( std::vector<WorkUnitSP> wulist );
     WorkUnitSP pop_front();
+		std::vector<WorkUnitSP> pop_all();
     bool empty() { return deque_.empty(); }
     void clear() { deque_.clear(); }
 

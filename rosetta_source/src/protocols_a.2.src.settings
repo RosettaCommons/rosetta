@@ -20,6 +20,7 @@ sources = {
 		"Master",
 		"MPI_Master",
 		"MPI_Slave",
+    "SingleNode",
 		"Slave",
     "util",
   ],

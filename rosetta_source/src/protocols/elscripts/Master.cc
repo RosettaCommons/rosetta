@@ -11,7 +11,7 @@
 /// @brief  The Master role in elscripts, handles trajectories, generating workunits, processing of results
 /// @author Ken Jung
 
-#if defined (USEBOOSTMPI) && defined (USELUA)
+#ifdef USELUA
 #include <protocols/elscripts/Master.hh>
 
 #include <boost/bind.hpp>

@@ -11,7 +11,7 @@
 /// @author Ken Jung
 
 
-#if defined (USEBOOSTMPI) && defined (USELUA)
+#ifdef USELUA
 #include <protocols/elscripts/BaseRole.hh>
 
 #ifdef USEBOOSTSERIALIZE

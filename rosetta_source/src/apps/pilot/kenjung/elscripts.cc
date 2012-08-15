@@ -12,8 +12,11 @@
 
 #include <devel/init.hh>
 
+#include <protocols/elscripts/SingleNode.hh>
+#ifdef USEBOOSTMPI
 #include <protocols/elscripts/MPI_Master.hh>
 #include <protocols/elscripts/MPI_Slave.hh>
+#endif
 
 #include <utility/lua/LuaObject.hh>
 #include <utility/lua/LuaIterator.hh>
@@ -116,8 +119,8 @@ main( int argc, char * argv [] )
 		(option[OptionKeys::els::num_traj]() / option[OptionKeys::els::traj_per_master]() ) +
 		(!( option[OptionKeys::els::num_traj]() % option[OptionKeys::els::traj_per_master]() == 0 )) ;
 
-#ifdef USEBOOSTMPI
 	using namespace protocols::elscripts;
+#ifdef USEBOOSTMPI
 
 	// rank 0 is the pool if enabled, otherwise masters start at 0
 	// rank 0 to num_masters-1 are all masters
@@ -125,9 +128,8 @@ main( int argc, char * argv [] )
 	
 	if( world.size() == 1 ) {
 		// single node version
-		// but dont have it, placeholder for now
-		// SingleNode role();
-		TR << "start single node" << std::endl;
+		SingleNode role;
+		role.go();
 	} else { 
 
 		if( pool && world.rank() == 0 ) {
@@ -154,10 +156,9 @@ main( int argc, char * argv [] )
 
 	}
 #else
-// single node version
-// but dont have it, placeholder for now
-// SingleNode role();
-TR << "start single node" << std::endl;
+	// single node version
+	SingleNode role;
+	role.go();
 #endif
 }
 
