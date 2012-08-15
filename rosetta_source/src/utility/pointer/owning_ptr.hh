@@ -269,6 +269,13 @@ public: // Methods
 		}
 	}
 
+	/// @brief Release ownership but leave pointed memory alone
+	inline
+	void
+	relinquish_ownership()
+	{
+		p_ = 0;
+	}
 
 	/// @brief Swap
 	inline
