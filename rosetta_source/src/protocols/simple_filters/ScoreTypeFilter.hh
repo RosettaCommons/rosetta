@@ -52,6 +52,9 @@ public:
 	core::Real compute( core::pose::Pose const &pose ) const;
 	virtual ~ScoreTypeFilter();
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_def( utility::lua::LuaObject const & def,
+					utility::lua::LuaObject const & score_fxns,
+					utility::lua::LuaObject const & tasks );
 private:
 	core::Real score_type_threshold_;
 	core::scoring::ScoreType score_type_;
