@@ -37,5 +37,9 @@ typedef  utility::pointer::owning_ptr< Edge >  EdgeOP;
 } // namespace kinematics
 } // namespace core
 
+#ifdef USEBOOSTSERIALIZE
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/string.hpp>
+#endif
 
 #endif // INCLUDED_core_kinematics_Edge_FWD_HH
