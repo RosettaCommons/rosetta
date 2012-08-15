@@ -81,7 +81,12 @@ void O2M_MutateMover::apply( core::io::serialization::PipeMap & pmap)
 					PoseSP working_pose( new Pose( *starting_pose) );
 					pack->apply( *working_pose );
 					TR << "Mutated pos " << resi << " from " << starting_pose->residue( resi ).name3() << " to " << working_pose->residue( resi ).name3() << std::endl;
-					core::pose::setPoseExtraScores( *working_pose, "mut_pos", resi );
+					// although normal mutation notation is A20Q, by doing AQ20 we can use index to get residue type easily
+					std::string mut_pos;
+					mut_pos += starting_pose->residue( resi ).name1();
+					mut_pos += working_pose->residue(resi).name1();
+					mut_pos += utility::to_string(resi);
+					core::pose::add_comment( *working_pose, "mut_pos", mut_pos );
 					pmap["input"]->push_back( working_pose );	
 					allowed_aas[ (*itr)->aa() ] = false;
 				}
