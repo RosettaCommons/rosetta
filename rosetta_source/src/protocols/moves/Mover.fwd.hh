@@ -29,6 +29,7 @@ namespace moves {
 class Mover;
 typedef utility::pointer::owning_ptr< Mover > MoverOP;
 typedef utility::pointer::owning_ptr< Mover const > MoverCOP;
+typedef boost::shared_ptr< Mover> MoverSP;
 
 typedef std::map< std::string const, MoverOP > Movers_map;
 

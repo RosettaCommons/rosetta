@@ -52,6 +52,10 @@
 #include <luabind/luabind.hpp>
 #endif
 
+#include <core/io/serialization/PipeMap.fwd.hh>
+#include <utility/lua/LuaObject.hh>
+#include <utility/lua/LuaIterator.hh>
+
 namespace protocols {
 namespace moves {
 
@@ -87,6 +91,18 @@ public:
 public:
 	Mover();
 	virtual ~Mover();
+	// elscripts functions
+	virtual void apply( core::io::serialization::PipeMap & pmap);
+
+	// called right before mover is used , allowing mover to set settings based on state
+	virtual void parse_state( SerializableState const & state );	
+	// called once, when mover is instantiated
+	virtual void parse_def( utility::lua::LuaObject const & def,
+					utility::lua::LuaObject const & score_fxns,
+					utility::lua::LuaObject const & tasks,
+					MoverCacheSP cache );
+
+	virtual void save_state( SerializableState & state );	
 
 	/// @brief sets the type for a mover; name_ has been removed (2010/05/14)
 	Mover( std::string const & type_name );

@@ -133,6 +133,30 @@ Mover::get_native_pose() const { return native_pose_; }
 void
 Mover::set_native_pose( PoseCOP pose ) { native_pose_ = pose; }
 
+// elscripts functions
+void Mover::apply( core::io::serialization::PipeMap & pmap ) {
+	for( core::io::serialization::Pipe::iterator itr = pmap["input"]->begin(); itr != pmap["input"]->end(); itr++ ) {
+		apply( **itr );
+	}
+}
+
+// called right before mover is used , allowing mover to set settings based on state
+void Mover::parse_state( SerializableState const & state ) {
+	utility_exit_with_message("This Mover has not implemented parse_state()");
+}
+// state is not an argument because it doesn't exist at this point
+void Mover::parse_def( utility::lua::LuaObject const & def,
+				utility::lua::LuaObject const & score_fxns,
+				utility::lua::LuaObject const & tasks,
+				MoverCacheSP cache ) {
+	utility_exit_with_message("This Mover has not implemented parse_def()");
+}
+
+void Mover::save_state( SerializableState & state ) {
+	utility_exit_with_message("This Mover has not implemented save_state()");
+}
+
+// end mpr support
 ///@details Some movers need not be parsed, so we shouldn't stop executions. This, however, calls attention to the lack of this method, which could be due to something as silly as a wrong parameters definition.
 void Mover::parse_my_tag(
 	TagPtr const,
