@@ -67,6 +67,8 @@ public:
 #ifdef USELUA
 	virtual void lregister( lua_State * lstate){ lregister_TaskOperation( lstate ); }
 #endif
+
+	virtual void parse_def( utility::lua::LuaObject const & def );
 };
 
 // do not add any derived classes to this file, unless they are generalized abstract base classes and do not actually 'do any work'
