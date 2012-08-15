@@ -36,7 +36,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Package headers
-#include <core/pose/PDBInfo.fwd.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/ObserverCache.fwd.hh>
 #include <core/pose/metrics/PoseMetricContainer.fwd.hh>
 
@@ -1473,11 +1473,13 @@ private:
 	template<class Archive>
 	void save(Archive & ar, const unsigned int version) const {
 			ar & conformation_;
+			ar & pdb_info_;
 	}
 
 	template<class Archive>
 	void load(Archive & ar, const unsigned int version) {
 			ar & conformation_;
+			ar & pdb_info_;
 	}
 	BOOST_SERIALIZATION_SPLIT_MEMBER()
 #endif
