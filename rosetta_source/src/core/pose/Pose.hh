@@ -63,8 +63,9 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
+#include <core/scoring/constraints/ConstraintIO.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/Constraints.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableStringMap.hh>
@@ -120,7 +121,8 @@
 // #include <cassert>
 // #include <cmath>
 // #include <cstdlib>
-// #include <iostream>
+#include <iostream>
+#include <sstream>
 // #include <map>
 // #include <string>
 
@@ -1481,6 +1483,7 @@ private:
 	void save(Archive & ar, const unsigned int version) const {
 		using namespace basic::datacache;
 		using namespace core::pose::datacache;
+		using namespace core::scoring::constraints;
 			conformation::symmetry::SymmetricConformation * m = dynamic_cast< conformation::symmetry::SymmetricConformation * >( conformation_.get() );
 			bool is_symmetric = m;
 			ar & is_symmetric;
@@ -1493,6 +1496,14 @@ private:
 				ar & energies_;
 			}
 			ar & pdb_info_;
+
+			// constraintset, using write io because it's easier
+			std::stringstream tmpss;
+			tmpss.str("");
+			if( constraint_set_ )
+				ConstraintIO::get_instance()->write_constraints( tmpss, *constraint_set_,*this );
+			std::string tmpstring = tmpss.str();
+			ar & tmpstring;
 
 			// datacache
 			// only stringmap,floatmap for now
@@ -1517,12 +1528,14 @@ private:
 						( data_cache_->get_raw_ptr(CacheableDataType::STM_STORED_TASKS) );
 				ar & *tasks_map;
 			}
+
 	}
 
 	template<class Archive>
 	void load(Archive & ar, const unsigned int version) {
 		using namespace basic::datacache;
 		using namespace core::pose::datacache;
+		using namespace core::scoring::constraints;
 			bool is_symmetric;
 			ar & is_symmetric;
 			if( is_symmetric ) {
@@ -1539,6 +1552,15 @@ private:
 			energies_->set_owner( this );
 			ar & pdb_info_;
 
+			std::string tmpstring;
+			ar & tmpstring;
+			if( tmpstring != "" ) {
+				std::stringstream tmpss(tmpstring);
+				ConstraintSetOP tmpcstset = ConstraintSetOP( new ConstraintSet() );
+				ConstraintSetOP tmp2 = ConstraintIO::get_instance()->read_constraints( tmpss, tmpcstset, *this );
+				constraint_set( tmp2 );
+			}
+			
 			bool has_string_map;
 			ar & has_string_map;
 			if( has_string_map) {
