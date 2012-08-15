@@ -17,8 +17,9 @@ sources = {
 	],
 	"protocols/elscripts": [
 		"BaseRole",
-		"Slave",
 		"Master",
+		"Slave",
+    "util",
   ],
 	"protocols/frag_picker": [
 		"BestTotalScoreSelector",
