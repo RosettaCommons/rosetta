@@ -45,7 +45,7 @@
 #include <core/chemical/AA.hh>
 
 #include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/signals/XYZEvent.fwd.hh>
 
 // AUTO-REMOVED #include <core/id/AtomID.hh>
@@ -55,7 +55,7 @@
 #include <core/id/TorsionID.fwd.hh>
 
 #include <core/kinematics/AtomTree.fwd.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
 
@@ -1465,7 +1465,22 @@ private: // Pose as-an-observer methods
 	void
 	on_conf_xyz_change( core::conformation::signals::XYZEvent const & event );
 
+private:
+#ifdef USEBOOSTSERIALIZE
+	friend class boost::serialization::access;
 
+	// convert vector of poses to vector of silent structures
+	template<class Archive>
+	void save(Archive & ar, const unsigned int version) const {
+			ar & conformation_;
+	}
+
+	template<class Archive>
+	void load(Archive & ar, const unsigned int version) {
+			ar & conformation_;
+	}
+	BOOST_SERIALIZATION_SPLIT_MEMBER()
+#endif
 private:
 
 
