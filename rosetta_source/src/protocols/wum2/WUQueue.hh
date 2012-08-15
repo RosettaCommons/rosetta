@@ -42,6 +42,7 @@ class WUQueue {
 		std::vector<WorkUnitSP> pop_all();
     bool empty() { return deque_.empty(); }
     void clear() { deque_.clear(); }
+    int size() { return deque_.size(); }
 
   private:
     boost::uint64_t serialized_size( WorkUnitSP wu );

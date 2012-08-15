@@ -200,13 +200,18 @@ void MPI_EndPoint::send_wus( int rank, uint64_t mem_size ) {
 		// only implement limit for master send for now
 		// putting this in here is bad, should be one level up in master/slave/baserole
 
+		int num_masters = 
+		(option[OptionKeys::els::num_traj]() / option[OptionKeys::els::traj_per_master]() ) +
+		(!( option[OptionKeys::els::num_traj]() % option[OptionKeys::els::traj_per_master]() == 0 )) ;
+		int num_slaves = (world_.size() - num_masters)/num_masters;
     while( outq_.size_front() && current_size + outq_.size_front() <= mem_size ) {
 			current_size += outq_.size_front();
       tmp.push_back( outq_.pop_front() ); 
 
 			if( rank > mpi_rank() ) 
 				counter++;
-			if( counter >= option[OptionKeys::els::master_wu_per_send]()) break;
+			if( outq_.size() < num_slaves || counter >= 2 ) break;
+
     }
     WUQueueBuffer::riterator itr = outbuf_.allocate_buffer( current_size );
     itr->get<2>()->insert( itr->get<2>()->end(), tmp.begin(), tmp.end() );
