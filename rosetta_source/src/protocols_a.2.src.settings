@@ -18,6 +18,7 @@ sources = {
 	"protocols/elscripts": [
 		"BaseRole",
 		"Master",
+		"MPI_Master",
 		"Slave",
     "util",
   ],

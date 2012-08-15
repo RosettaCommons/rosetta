@@ -12,7 +12,7 @@
 
 #include <devel/init.hh>
 
-#include <protocols/elscripts/Master.hh>
+#include <protocols/elscripts/MPI_Master.hh>
 #include <protocols/elscripts/Slave.hh>
 
 #include <utility/lua/LuaObject.hh>
@@ -143,7 +143,7 @@ main( int argc, char * argv [] )
 				if( (i - pool ) % num_masters == world.rank() + pool )
 					slaves.push_back(i);
 			}
-			Master role( world, slaves );
+			MPI_Master role( world, slaves );
 			role.go();
 		} else {
 			// i am a slave

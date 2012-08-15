@@ -9,15 +9,18 @@
 
 /// @file   protocols/elscripts/Master.hh
 /// @brief  The Master role in elscripts, handles trajectories, generating workunits, processing of results
+/// This is the non MPI version of the master, which is used by the Single Node Role
+///  Splitting this from MPI_Master so Single Node can be compiled without MPI
 /// @author Ken Jung
 
 #ifndef INCLUDED_protocols_elscripts_Master_hh
 #define INCLUDED_protocols_elscripts_Master_hh
-#if defined (USEBOOSTMPI) && defined (USELUA)
-// this is useless without mpi and lua
+#ifdef USELUA
 #include <protocols/elscripts/Master.fwd.hh>
-#include <protocols/wum2/MPI_EndPoint.hh>
+#include <protocols/wum2/EndPoint.hh>
 #include <protocols/elscripts/BaseRole.hh>
+
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 
 namespace protocols {
 namespace elscripts {
@@ -28,13 +31,13 @@ class Master : public BaseRole {
   public:
     // default memory limit is 1GB
     // default reserved mem size is 100MB as recommended by fpd
-    Master( boost::mpi::communicator world, std::vector<int> slaves, int num_trajectories = 10, boost::uint64_t mem_limit=2147483648, boost::uint64_t reserved_mem=104857600, boost::uint64_t reserved_mem_multiplier=5 );
+    Master( int num_trajectories = 1, boost::uint64_t mem_limit=2147483648, boost::uint64_t reserved_mem=104857600, boost::uint64_t reserved_mem_multiplier=5 );
     ~Master(){}
-    void go();
+
+    virtual void go();
 
     boost::uint64_t available_mem() {
       boost::uint64_t buff_mem = 
-        pool_comm_->current_mem() +
         slave_comm_->current_mem() +
 				reserved_mem_ * reserved_mem_multiplier_ +
         trajectories_mem();
@@ -51,40 +54,37 @@ class Master : public BaseRole {
 
 		void interpreter();
 
-  private:
+  protected:
     boost::uint64_t current_mem() {
       return slave_comm_->current_mem() +
-        pool_comm_->current_mem() +
         trajectories_mem(); // slaves_ memory trivial
     }
 
-		int inputter_rank() {
+		virtual int inputter_rank() {
 			// handles if there is or is not pool logic, needed for inputter offset
 			// doesnt do anything now
-			return world_.rank() + 1;
+			return 1;
 		}
 
     // use Inputters to fill trajectory pipe up to limit
     // if inputters have no more decoys, then ask pool for structures
     void fill_trajectories();
 
-    //void request_pool_structures( std::vector< int > needs_replace );
-    //void request_pool_structure( int trajectory_idx );
-		
     void update_trajectories_mem();
     boost::uint64_t trajectories_mem() { return trajectories_mem_; }
 
-  private:
-		boost::mpi::communicator world_;
+  protected:
     protocols::wum2::EndPointSP slave_comm_;
-    protocols::wum2::EndPointSP pool_comm_;
 
     int num_trajectories_;
-    std::vector< int > slaves_;
     core::io::serialization::PipeSP trajectories_;
     boost::uint64_t trajectories_mem_; 
 
 		int num_trajectories_finished_;
+
+		int mpicounter_; // simple counter to avoid calling into lua too often
+
+		boost::posix_time::ptime last_generate_initial_wu_time_;
 };
 
 } //elscripts

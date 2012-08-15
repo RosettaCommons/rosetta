@@ -16,7 +16,6 @@
 
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
-#include <boost/date_time/posix_time/posix_time_types.hpp>
 
 #ifdef USEBOOSTSERIALIZE
 #include <boost/archive/binary_oarchive.hpp>
@@ -57,12 +56,12 @@ void lregister_Master( lua_State * lstate ) {
 	];
 }
 
-Master::Master( boost::mpi::communicator world, std::vector<int> slaves, int num_trajectories, boost::uint64_t mem_limit, boost::uint64_t reserved_mem, boost::uint64_t reserved_mem_multiplier) :
-	world_(world),
+Master::Master( int num_trajectories, boost::uint64_t mem_limit, boost::uint64_t reserved_mem, boost::uint64_t reserved_mem_multiplier) :
   num_trajectories_(num_trajectories),
-  slaves_( slaves ),
 	trajectories_mem_(0),
   num_trajectories_finished_(0),
+	mpicounter_(10000000),
+	last_generate_initial_wu_time_( boost::posix_time::microsec_clock::universal_time() - boost::posix_time::minutes(100)),
 	BaseRole( mem_limit, reserved_mem, reserved_mem_multiplier) {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
@@ -70,8 +69,7 @@ Master::Master( boost::mpi::communicator world, std::vector<int> slaves, int num
 		// endpoint uses this function to get role-wide memory usage
     boost::function< boost::uint64_t ()> ref_available_mem = boost::bind( &protocols::elscripts::Master::available_mem, this );
 
-    slave_comm_ = protocols::wum2::EndPointSP( new protocols::wum2::MPI_EndPoint( world, ref_available_mem ));
-    pool_comm_ = protocols::wum2::EndPointSP( new protocols::wum2::MPI_EndPoint( world, ref_available_mem ));
+    slave_comm_ = protocols::wum2::EndPointSP( new protocols::wum2::EndPoint( ref_available_mem ));
 
 		// initializing trajectories
     trajectories_ = core::io::serialization::PipeSP( new core::io::serialization::Pipe() );
@@ -83,8 +81,7 @@ Master::Master( boost::mpi::communicator world, std::vector<int> slaves, int num
 		inputterstream_.reset ( new protocols::inputter::InputterStream (
 					inputter_rank(),
 					// num of masters
-					(option[OptionKeys::els::num_traj]() / option[OptionKeys::els::traj_per_master]() ) + 
-					(!( option[OptionKeys::els::num_traj]() % option[OptionKeys::els::traj_per_master]() == 0 ))
+					1
 					) );
 
 		lua_init();
@@ -113,71 +110,35 @@ void Master::interpreter() {
 void Master::go(){
 	using namespace utility::lua;
 
-	// create functors to call back functions for automated endpoint processing
-  boost::function<void ( protocols::wum2::StatusResponse, int )> ref_slave_listen_wu_sendrecv = boost::bind(  &protocols::wum2::EndPoint::listen_wu_sendrecv, slave_comm_, _1, _2);
-  boost::function<bool ( protocols::wum2::StatusResponse )> ref_slave_initiate_wu_sendrecv = boost::bind(  &protocols::wum2::EndPoint::initiate_wu_sendrecv, slave_comm_, _1);
-  boost::function<void ( protocols::wum2::StatusResponse, int )> ref_pool_listen_wu_sendrecv = boost::bind(  &protocols::wum2::EndPoint::listen_wu_sendrecv, pool_comm_, _1, _2);
-  boost::function<bool ( protocols::wum2::StatusResponse )> ref_pool_initiate_wu_sendrecv = boost::bind(  &protocols::wum2::EndPoint::initiate_wu_sendrecv, pool_comm_, _1);
+	// no while loop since Single Node will be switching between Master::go() and Slave::go() 
 
-	// setting intial sweep time such that the first sweep will always occur immediately
-	boost::posix_time::ptime last_status_sweep_time( boost::posix_time::microsec_clock::universal_time() - boost::posix_time::minutes(100));
+	mpicounter_++;
 
-	boost::posix_time::ptime last_generate_initial_wu_time( boost::posix_time::microsec_clock::universal_time() - boost::posix_time::minutes(100));
+	fill_trajectories();
 
+	// dunno if this is needed, int check faster than boost time check?
+	if( mpicounter_ >= 10000000 ) {
+		// hardcoded, only try and generate initial workunits every 60 seconds
+		if ( ( boost::posix_time::microsec_clock::universal_time() - last_generate_initial_wu_time_) > boost::posix_time::seconds( 60 )){
 
-	// this is to avoid calling the slow (1000x!) lua vm every loop
-	int mpicounter = 10000000;
-
-	// entering main loop
-  while( 1 ) {
-		mpicounter++;
-
-   // pool_comm_->check_and_act_clearcommand();
-    //pool_comm_->check_and_act_status_request( f );
-
-		// only send status requests as often as the shortest_wu would take
-    if ( ( boost::posix_time::microsec_clock::universal_time() - last_status_sweep_time) > boost::posix_time::seconds(basic::options::option[basic::options::OptionKeys::els::shortest_wu]())){
-      for( int i = 0; i < slaves_.size(); i++ ) {
-				if( ! slave_comm_->has_open_status( slaves_[i] ) ) {
-					// only send status requests to slaves that have responded
-					// if they havent responded yet, spamming them with more messages won't help
-					// probably should retry a few times after a timeout
-					// removing slave from slave list is unecessary, but we do lose workunits sent there
-					slave_comm_->send_status_request( slaves_[i] );
-				}
-      }
-			last_status_sweep_time = boost::posix_time::microsec_clock::universal_time();
-    }
-
-    fill_trajectories();
-
-		if( mpicounter >= 10000000 ) {
-			// hardcoded, only try and generate initial workunits every 60 seconds
-			if ( ( boost::posix_time::microsec_clock::universal_time() - last_generate_initial_wu_time) > boost::posix_time::seconds( 60 )){
-
-				// generate initial wu
-				// user must be aware of memory limits if they use their own function
-				int m = luaL_dostring ( lstate_, "generate_initial_wus()" );
-				if( m == 1) {
-					TR << "calling lua function generate_initial_wus() failed. Error is:" << std::endl;
-					TR << lua_tostring(lstate_, -1) << std::endl;
-					std::exit(9);
-				}
-				last_generate_initial_wu_time = boost::posix_time::microsec_clock::universal_time();
+			// generate initial wu
+			// user must be aware of memory limits if they use their own function
+			int m = luaL_dostring ( lstate_, "generate_initial_wus()" );
+			if( m == 1) {
+				TR << "calling lua function generate_initial_wus() failed. Error is:" << std::endl;
+				TR << lua_tostring(lstate_, -1) << std::endl;
+				std::exit(9);
 			}
-			mpicounter = 0;
+			last_generate_initial_wu_time_ = boost::posix_time::microsec_clock::universal_time();
 		}
+		mpicounter_ = 0;
+	}
 
-    //  send/recv WU from slaves
-    slave_comm_->act_on_status_response( ref_slave_initiate_wu_sendrecv );
-
-    //  send/recv WU from pool
-    //pool_comm_->check_and_act_status_request( ref_pool_listen_wu_sendrecv );
-
-    // process slave results
-    protocols::wum2::WorkUnitSP wu = slave_comm_->inq().pop_front(); 
-    protocols::wum2::WorkUnit_ElScriptsSP castattempt = boost::dynamic_pointer_cast<protocols::wum2::WorkUnit_ElScripts> (wu);
-    if( castattempt != 0 ) {
+	// process slave results
+	if( ! slave_comm_->inq().empty() ) {
+		protocols::wum2::WorkUnitSP wu = slave_comm_->inq().pop_front(); 
+		protocols::wum2::WorkUnit_ElScriptsSP castattempt = boost::dynamic_pointer_cast<protocols::wum2::WorkUnit_ElScripts> (wu);
+		if( castattempt != 0 ) {
 			if( wufinished_.find( castattempt->name() ) == wufinished_.end() ) {
 				std::vector<int> tmp;
 				for( int j = 0; j < num_trajectories_; j++ ){
@@ -194,38 +155,16 @@ void Master::go(){
 			try { 
 				luabind::call_function<void>( dworkunits[ castattempt->name() ]["proceed"].raw() );
 			} catch (std::exception & e) {
-        TR << "calling lua function for workunit " << castattempt->name() << " proceed fxn failed failed. Vague error is:" << std::endl;
-        TR << e.what() << std::endl;
+				TR << "calling lua function for workunit " << castattempt->name() << " proceed fxn failed failed. Vague error is:" << std::endl;
+				TR << e.what() << std::endl;
 				TR << lua_tostring(lstate_, -1) << std::endl;
 				lua_pop(lstate_, 1);
 				std::exit(9);
 			}
-    }
+		}
+	}
 
-    // process pool results
-    /*WorkUnitSP wu = pool_comm_->inq_popfront(); 
-    WorkUnit_RequestStructSP castattempt = boost::dynamic_pointer_cast<WorkUnit_RequestStruct> (wu);
-    if( castattempt != 0 ) {
-      trajectories[cast_attempt->traj_idx()] = cast_attempt->replacement_pose();
-    }
-    */
-
-		// cleans up any completed mpi::reqs and their buffers
-    slave_comm_->cleanup_reqs();
-    pool_comm_->cleanup_reqs();
-  }
 }
-
-/*void Master::request_pool_structures( std::vector < int > needs_replace ) {
-  for( int i = 0; i < needs_replace.size(); i++ ) {
-    request_pool_structure( i );
-  }
-}
-
-void Master::request_pool_structure( int traj_idx ) {
-  protocols::wum2::WorkUnitSP request_struct_wu( new protocols::wum2::WorkUnit_RequestStruct() );
-  pool_comm_.push_back( request_struct_wu );
-}*/
 
 void Master::make_wu( std::string const & wuname, int traj_idx, core::pose::Pose * p) {
 	using namespace core::io::serialization;
@@ -236,7 +175,7 @@ void Master::make_wu( std::string const & wuname, int traj_idx, core::pose::Pose
 	protocols::moves::SerializableStateSP state( new protocols::moves::SerializableState() );
 
 	protocols::wum2::WorkUnitSP tmp (new protocols::wum2::WorkUnit_ElScripts(
-				world_.rank(), traj_idx, pmap, state, wuname
+				1, traj_idx, pmap, state, wuname
 				));
 
 	slave_comm_->outq().push_back( tmp );
@@ -270,7 +209,7 @@ void Master::make_wu_until_limit( std::string const & wuname, int num ) {
 				protocols::moves::SerializableStateSP state( new protocols::moves::SerializableState() );
 
 				protocols::wum2::WorkUnitSP tmp (new protocols::wum2::WorkUnit_ElScripts(
-							world_.rank(), i, pmap, state, wuname
+							1, i, pmap, state, wuname
 							));
 				slave_comm_->outq().push_back( tmp );
 				wumade_[wuname][i]++;
@@ -300,7 +239,7 @@ void Master::fill_trajectories() {
   }
   //request_pool_structures( needs_replace );
   if( needs_replace.size() == num_trajectories_ ) {
-		TR << "Job finished successfully" << std::endl;
+		TR << "Elscripts finished successfully" << std::endl;
     exit(9);
 	}
 }
