@@ -70,6 +70,12 @@ TaskFactory::push_back( TaskOperationCOP taskop )
 	operations_.push_back( taskop->clone() );
 }
 
+void
+TaskFactory::push_back( TaskOperationSP taskop )
+{
+	operations_.push_back( taskop->clone() );
+}
+
 TaskFactory::const_iterator
 TaskFactory::begin() const
 {
