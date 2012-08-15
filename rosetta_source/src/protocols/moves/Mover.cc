@@ -51,6 +51,7 @@ void lregister_Mover( lua_State * lstate ) {
 		[
 			luabind::class_<Mover>("Mover")
 				.def("apply", ( void (Mover::*)( core::io::serialization::PipeMap & )) &Mover::apply)
+				.def("apply", ( void (Mover::*)( core::pose::Pose & )) &Mover::apply)
 				.def("parse_state", &Mover::parse_state)
 				.def("save_state", &Mover::save_state)
 		]
