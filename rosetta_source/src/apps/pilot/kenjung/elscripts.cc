@@ -126,7 +126,7 @@ main( int argc, char * argv [] )
 	// rank 0 to num_masters-1 are all masters
 	// slaves are everything after that, % num_masters to give assignments
 	
-	if( world.size() == 1 ) {
+	if( world.size() == 1 || option[OptionKeys::els::singlenode]() ) {
 		// single node version
 		SingleNode role;
 		role.go();

@@ -598,6 +598,7 @@ namespace els { IntegerOptionKey const num_traj( "els:num_traj" );  }
 namespace els { IntegerOptionKey const traj_per_master( "els:traj_per_master" );  }
 namespace els { IntegerOptionKey const shortest_wu( "els:shortest_wu" );  }
 namespace els { BooleanOptionKey const pool( "els:pool" );  }
+namespace els { BooleanOptionKey const singlenode( "els:singlenode" );  }
 namespace lh { BooleanOptionKey const lh( "lh" );  }
 namespace lh { StringOptionKey const db_prefix( "lh:db_prefix" );  }
 namespace lh { IntegerVectorOptionKey const loopsizes( "lh:loopsizes" );  }
@@ -619,4 +620,3 @@ namespace lh { IntegerOptionKey const max_struct_per_radius( "lh:max_struct_per_
 namespace lh { RealOptionKey const grid_space_multiplier( "lh:grid_space_multiplier" );  }
 namespace lh { RealOptionKey const grid_angle_multiplier( "lh:grid_angle_multiplier" );  }
 namespace lh { IntegerOptionKey const skim_size( "lh:skim_size" );  }
-namespace lh { IntegerOptionKey const rounds( "lh:rounds" );  }

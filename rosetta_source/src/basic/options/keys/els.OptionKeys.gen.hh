@@ -29,6 +29,7 @@ namespace els { extern IntegerOptionKey const num_traj; }
 namespace els { extern IntegerOptionKey const traj_per_master; }
 namespace els { extern IntegerOptionKey const shortest_wu; }
 namespace els { extern BooleanOptionKey const pool; }
+namespace els { extern BooleanOptionKey const singlenode; }
 
 } // namespace OptionKeys
 } // namespace options

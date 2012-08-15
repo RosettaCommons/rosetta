@@ -2746,6 +2746,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
       Option( 'traj_per_master', 'Integer', desc = 'Number of trajectories per master node' ),
       Option( 'shortest_wu', 'Integer', default='60', desc = 'Length of time of shortest wu in seconds, used for determining status request resend period.  Err on the side of smaller times' ),
       Option( 'pool', 'Boolean', default='false', desc = 'Using pool node?' ),
+      Option( 'singlenode', 'Boolean', default='false', desc = 'Using singlenode role with mpi?' ),
 	), #wum
 
 	Option_Group( 'lh',

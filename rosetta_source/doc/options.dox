@@ -5920,6 +5920,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Using pool node?</dd><br>
 <dd>Default: false</dd><br>
 </dl>
+<dl>
+<dt><b>-singlenode</b> \<Boolean\><dt>
+<dd>Using singlenode role with mpi?</dd><br>
+<dd>Default: false</dd><br>
+</dl>
  </li>
 <li><h2>lh</h2>
 <dl>
