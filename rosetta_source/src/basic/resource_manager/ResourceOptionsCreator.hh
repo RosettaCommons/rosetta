@@ -23,6 +23,11 @@
 //utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
+// C++ headers
+#ifdef WIN32
+#include <string>
+#endif
+
 namespace basic {
 namespace resource_manager {
 
