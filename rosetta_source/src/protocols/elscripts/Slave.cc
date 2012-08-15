@@ -49,6 +49,7 @@ Slave::Slave( int master, boost::uint64_t mem_limit, boost::uint64_t reserved_me
 		lua_init();
 		lregister_Slave(lstate_);
 		luabind::globals(lstate_)["slave"] = this;
+		luabind::globals(lstate_)["rank"] = 0;
 
 		register_calculators();
 		instantiate_tasks();
