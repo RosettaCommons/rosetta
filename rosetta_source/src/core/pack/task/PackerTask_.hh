@@ -33,6 +33,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 
+#include <protocols/toolbox/task_operations/LimitAromaChi2Operation.fwd.hh>
 // Utility Headers
 // AUTO-REMOVED #include <utility/vector1.hh>
 
@@ -386,8 +387,17 @@ private: // private methods
 		ar & operate_on_ex3_;
 		ar & operate_on_ex4_;
 		ar & use_input_sc_;
-		ar & rotamer_operations_;
-		ar & rotsetops_;
+		// can't serialize these
+		//ar & rotamer_operations_;
+		//ar & rotsetops_;
+		// special case, only support LimitAro because its the only one used?
+		std::vector < protocols::toolbox::task_operations::LimitAromaChi2_RotamerSetOperation *> tt;
+		for( rotamer_set::RotSetOperationListIterator i = rotsetops_.begin(); i != rotsetops_.end(); i++ ) {
+			protocols::toolbox::task_operations::LimitAromaChi2_RotamerSetOperation * cast_attempt = dynamic_cast<protocols::toolbox::task_operations::LimitAromaChi2_RotamerSetOperation *> (i->get());
+			if( cast_attempt != NULL )
+				tt.push_back( cast_attempt );
+		}
+		ar & tt;
 		ar & mode_tokens_;
 
 	}
@@ -449,8 +459,14 @@ private: // private methods
 		ar & operate_on_ex3_;
 		ar & operate_on_ex4_;
 		ar & use_input_sc_;
-		ar & rotamer_operations_;
-		ar & rotsetops_;
+		// can't serialize these
+		//ar & rotamer_operations_;
+		// special case, only support LimitAro because its the only one used?
+		std::vector < protocols::toolbox::task_operations::LimitAromaChi2_RotamerSetOperation * > tt;
+		ar & tt;
+		for( int i = 0; i < tt.size(); i++ ) {
+			rotsetops_.push_back( rotamer_set::RotamerSetOperationOP ( tt[i] ) );
+		}
 		ar & mode_tokens_;
 	}
 	BOOST_SERIALIZATION_SPLIT_MEMBER()
