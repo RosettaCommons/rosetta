@@ -5,9 +5,14 @@ INCLUDE(../build/external.static.cmake)
 
 ADD_DEFINITIONS(-DNDEBUG)
 ADD_DEFINITIONS(-DUSEBOOSTSERIALIZE)
+ADD_DEFINITIONS(-DUSELUA)
 
 # because we're using more libs
 LINK_DIRECTORIES(../../external/lib/linux/amd64)
+
+# and more includes
+INCLUDE_DIRECTORIES(../../external/include/lua)
+INCLUDE_DIRECTORIES(../../external/include/luabind)
 
 SET(COMPILE_FLAGS "-pipe -w -O2")
 
@@ -61,6 +66,9 @@ SET(LINK_STATIC_LIBS
     ${CMAKE_CURRENT_SOURCE_DIR}/libcppdb-static.a  
     -lz
     -lboost_serialization
+    -lluabind
+    -llua
+    -ldl #libdl needed by liblua
     ) 
 ### libc must be linked dynamically if using static ompi libs
 ## SET(LINK_DYNAMIC_LIBS "-Wl,-Bdynamic -l c")
