@@ -17,7 +17,6 @@
 /// @author Ken Jung
 
 
-#ifdef USELUA
 #include <utility/lua/LuaIterator.hh>
 #include <utility/lua/LuaObject.hh>
 
@@ -26,29 +25,48 @@ namespace utility {
 namespace lua {
 
 LuaObject::operator bool() {
+#ifdef USELUA
 		return object_.is_valid() && luabind::type( object_ ) != LUA_TNIL;
+#else
+		std::cerr << "Can't use LuaObject without compiling with USELUA flag" << std::endl;
+		std::exit(9);
+		return false;
+#endif
 }
 
 LuaIterator LuaObject::begin() const {
+#ifdef USELUA
 		if( luabind::type( object_ ) == LUA_TTABLE ) {
 				return LuaIterator( luabind::iterator(object_) );
 		}
 		std::cerr << "----------ERROR---------------"  << std::endl
 		<< "Attempted to access index of non-table lua object" << std::endl;
 		exit(9);
+#else
+		std::cerr << "Can't use LuaObject without compiling with USELUA flag" << std::endl;
+		std::exit(9);
+		return LuaIterator();
+#endif
 }
 
 LuaObject LuaObject::operator[] ( const std::string & str ) const {
+#ifdef USELUA
 		if( luabind::type( object_ ) == LUA_TTABLE ) {
 				return LuaObject( luabind::object(object_[ str ]) );
 		}
 		std::cerr << "----------ERROR---------------"  << std::endl
 		<< "Attempted to access index of non-table lua object" << std::endl;
 		exit(9);
+#else
+		std::cerr << "Can't use LuaObject without compiling with USELUA flag" << std::endl;
+		std::exit(9);
+		return LuaObject();
+#endif
 }
 
 // look into luaL_getn
 int LuaObject::size() const {
+#ifdef USELUA
 		if( luabind::type( object_ ) == LUA_TTABLE ) {
 				int counter = 0;
 				for(luabind::iterator i(object_), end; i != end; i++ ){
@@ -59,28 +77,44 @@ int LuaObject::size() const {
 		std::cerr << "----------ERROR---------------"  << std::endl
 		<< "Attempted to access index of non-table lua object" << std::endl;
 		exit(9);
+#else
+		std::cerr << "Can't use LuaObject without compiling with USELUA flag" << std::endl;
+		std::exit(9);
+		return 0;
+#endif
 }
 
 LuaObject LuaObject::operator[] ( const char * str ) const {
+#ifdef USELUA
 		if( luabind::type( object_ ) == LUA_TTABLE ) {
 				return LuaObject( luabind::object(object_[ str ]) );
 		}
 		std::cerr << "----------ERROR---------------"  << std::endl
 		<< "Attempted to access index of non-table lua object" << std::endl;
 		exit(9);
+#else
+		std::cerr << "Can't use LuaObject without compiling with USELUA flag" << std::endl;
+		std::exit(9);
+		return LuaObject();
+#endif
 }
 
 LuaObject LuaObject::operator[] ( int i ) const {
+#ifdef USELUA
 		if( luabind::type( object_ ) == LUA_TTABLE ) {
 				return LuaObject( luabind::object(object_[ i ]) );
 		}
 		std::cerr << "----------ERROR---------------"  << std::endl
 		<< "Attempted to access index of non-table lua object" << std::endl;
 		exit(9);
+#else
+		std::cerr << "Can't use LuaObject without compiling with USELUA flag" << std::endl;
+		std::exit(9);
+		return LuaObject();
+#endif
 }
 
 
 
 } //lua
 } //utility
-#endif

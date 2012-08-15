@@ -24,6 +24,7 @@
 #ifdef USELUA
 #include <lua.hpp>
 #include <luabind/luabind.hpp>
+#endif 
 #include <core/types.hh>
 
 #include <iostream>
@@ -36,16 +37,9 @@ namespace lua {
 class LuaObject {
 
 		public:
+#ifdef USELUA
     LuaObject( luabind::object object) :
 						object_(object) {}
-
-    LuaObject(){}
-
-				~LuaObject(){}
-
-				operator bool();
-
-				LuaIterator begin() const;
 
 				luabind::object raw() const {
 						return object_;
@@ -54,6 +48,16 @@ class LuaObject {
 				void raw(luabind::object object) {
 						object_ = object;
 				}
+
+#endif
+
+    LuaObject(){}
+
+				~LuaObject(){}
+
+				operator bool();
+
+				LuaIterator begin() const;
 
 				int size() const;
 
@@ -64,6 +68,7 @@ class LuaObject {
 				LuaObject operator[] ( int i ) const;
 
 				template <class T> T to() const {
+#ifdef USELUA
 						if( ! object_.is_valid() ) {
 								std::cerr << "------Error in casting LuaObject to C++ type!-------" << std::endl
 										<< "\tThis LuaObject does not refer to a real Lua object." << std::endl
@@ -119,14 +124,21 @@ class LuaObject {
 								std::exit(9);
 						}
 						std::exit(9);
+#else
+						std::cerr << "Can't use LuaObject without compiling with USELUA flag" << std::endl;
+						std::exit(9);
+						T t;
+						return t;
+#endif
 				}
 
 		private:
+#ifdef USELUA
 				luabind::object object_;
+#endif
 
 };
 
 } //lua
 } //utility
-#endif
 #endif
