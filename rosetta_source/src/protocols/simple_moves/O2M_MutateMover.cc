@@ -105,7 +105,11 @@ void O2M_MutateMover::parse_def( utility::lua::LuaObject const & def,
 	} else {
 		scorefxn_ = score_fxns["score12"].to<core::scoring::ScoreFunctionSP>()->clone();
 	}
-	task_factory_ = protocols::elscripts::sp_parse_taskdef( def["tasks"], tasks );
+	if( def["tasks"] ) {
+		task_factory_ = protocols::elscripts::sp_parse_taskdef( def["tasks"], tasks );
+	} else {
+		task_factory_ = core::pack::task::TaskFactorySP( new core::pack::task::TaskFactory );
+	}
 }
 
 }//simple_moves
