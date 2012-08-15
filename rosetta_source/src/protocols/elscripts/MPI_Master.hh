@@ -29,7 +29,7 @@ class MPI_Master : public Master {
   public:
     // default memory limit is 1GB
     // default reserved mem size is 100MB as recommended by fpd
-    MPI_Master( boost::mpi::communicator world, std::vector<int> slaves, int num_trajectories = 10, boost::uint64_t mem_limit=2147483648, boost::uint64_t reserved_mem=104857600, boost::uint64_t reserved_mem_multiplier=5 );
+    MPI_Master( boost::mpi::communicator world, std::vector<int> slaves, int num_trajectories = 1, boost::uint64_t mem_limit=2147483648, boost::uint64_t reserved_mem=104857600, boost::uint64_t reserved_mem_multiplier=5 );
     ~MPI_Master(){}
     void go();
 

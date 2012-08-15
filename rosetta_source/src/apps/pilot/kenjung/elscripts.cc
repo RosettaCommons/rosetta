@@ -145,7 +145,7 @@ main( int argc, char * argv [] )
 				if( (i - pool ) % num_masters == world.rank() + pool )
 					slaves.push_back(i);
 			}
-			MPI_Master role( world, slaves );
+			MPI_Master role( world, slaves, option[OptionKeys::els::num_traj]() );
 			role.go();
 		} else {
 			// i am a slave
