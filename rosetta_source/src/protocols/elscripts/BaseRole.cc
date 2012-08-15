@@ -347,6 +347,12 @@ void BaseRole::instantiate_input() {
 	for (LuaIterator i=dinputterstream.begin(), end; i != end; ++i) {
 		inputterstream_->add_inputter( inputters_[ (*i).to<std::string>() ].to<InputterSP>() );
 	}
+  if( inputterstream_->size() == 0 ) {
+    // inputterstream wasn't defined, so add all inputters to it
+    for (LuaIterator i=dinputters.begin(), end; i != end; ++i) {
+      inputterstream_->add_inputter( inputters_[ i.skey() ].to<InputterSP>() );
+    }
+  }
 	TR << "----------Finished adding Inputters to InputterStream----------" << std::endl;
 }
 

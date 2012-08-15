@@ -46,6 +46,7 @@ class InputterStream {
 		virtual core::pose::PoseSP get_pose();
 		virtual void add_inputter( InputterSP inputter );
 		virtual void parse_def( utility::lua::LuaObject const & def );
+		virtual int size() { return inputters_.size(); }
 
 	private:
 		std::list< InputterSP > inputters_;
