@@ -28,6 +28,9 @@
 #include <iostream>
 #include <sstream>
 
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunction.hh>
+
 #include <basic/Tracer.hh>
 
 static basic::Tracer trmain("test");
@@ -45,13 +48,16 @@ main( int argc, char * argv [] )
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		using namespace core::pose;
+		using namespace core::scoring;
 
 		core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 		PoseSP tmppose(new Pose());
 		core::import_pose::pose_from_pdb( *tmppose, *residue_set, option[ m::file]().name() );
 		tmppose->dump_pdb(option[ m::file]().name()+".dump");
-
+		
+		ScoreFunctionOP scorefxn = getScoreFunction();
 		PoseSP out;
+		(*scorefxn)(*tmppose);
 		std::stringstream s;
 		boost::archive::binary_oarchive oa(s);
 		boost::archive::binary_iarchive ia(s);
@@ -64,6 +70,7 @@ main( int argc, char * argv [] )
 		trmain << "after out" << std::endl;
 		trmain << "pose size=" << out->total_residue() << std::endl;
 		trmain << "pdb res num = " << out->pdb_info()->number(3) << std::endl;
+		(*scorefxn)(*out);
 		trmain << "dumping" << std::endl;
 		out->dump_pdb(option[ m::file]().name()+".redump");
 		return 0;
