@@ -41,7 +41,7 @@ typedef boost::weak_ptr< PipeMap > PipeMapWP;
 #ifdef USELUA
 void lregister_PipeMap( lua_State * lstate );
 #endif
-void insert( PipeMapSP p, std::string const & pipename, core::pose::PoseSP p );
+void insert( PipeMapSP p, std::string const & pipename, core::pose::PoseSP pose );
 PipeSP at( PipeMapSP p, std::string const & pipename );
 PipeMapSP clone( PipeMapSP p);
 PipeMapSP inputPipeMap( core::pose::PoseSP p );
