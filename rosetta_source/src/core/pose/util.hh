@@ -52,6 +52,12 @@
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.fwd.hh>
 
+#ifdef USELUA
+#include <lua.hpp>
+#include <luabind/luabind.hpp>
+#include <luabind/out_value_policy.hpp>
+#endif
+
 namespace core {
 namespace pose {
 
@@ -389,6 +395,10 @@ core::Real energy_from_pose(
 	core::pose::Pose & pose, core::scoring::ScoreType const & sc_type
 );
 
+core::Real energy_from_pose(
+	core::pose::Pose & pose, std::string const & sc_type
+);
+
 void
 transfer_phi_psi( const core::pose::Pose& srcpose, core::pose::Pose& tgtpose, core::Size ir, core::Size jr );
 
@@ -648,6 +658,9 @@ std::string extract_tag_from_pose( core::pose::Pose &pose );
 /// @brief Create a sequence map of first pose onto the second, matching the PDBInfo
 ///    If the PDBInfo of either Pose is missing or invalid, do a simple sequence alignment matching.
 core::id::SequenceMapping sequence_map_from_pdbinfo( Pose const & first, Pose const & second );
+#ifdef USELUA
+void lregister_util( lua_State * lstate );
+#endif
 
 
 /// @brief count the number of canonical residues in the pose
