@@ -44,6 +44,13 @@
 #include <utility/lua/LuaObject.hh>
 #include <utility/lua/LuaIterator.hh>
 
+// start elscripts support
+#include <core/io/serialization/PipeMap.fwd.hh>
+#include <boost/unordered_map.hpp>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/pack/task/operation/TaskOperation.hh>
+// end elscripts support
+
 namespace protocols {
 namespace filters {
 
@@ -83,9 +90,16 @@ public:
 
 	/// @brief Returns true if the given pose passes the filter, false otherwise.
 	virtual bool apply( core::pose::Pose const & pose ) const = 0;
+	// start elscripts support
+	virtual void apply( core::io::serialization::PipeMap & pmap);
+	virtual void score( core::io::serialization::PipeMap & pmap);
+	virtual void parse_def( utility::lua::LuaObject const & def,
+					utility::lua::LuaObject const & score_fxns,
+					utility::lua::LuaObject const & tasks );
 #ifdef USELUA
 	virtual void lregister( lua_State * lstate ){ lregister_Filter(lstate);}
 #endif
+	// end elscripts support
 
 	virtual
 	std::string name() const { return "BaseFilter"; };

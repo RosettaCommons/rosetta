@@ -105,5 +105,31 @@ Filter::parse_my_tag(
 	core::pose::Pose const & )
 {}
 
+// start mpr support
+void Filter::apply( core::io::serialization::PipeMap & pmap ) {
+	core::io::serialization::Pipe::iterator itr = pmap["input"]->begin();
+	while( itr != pmap["input"]->end() ) {
+		if( !apply ( **itr ) ) {
+			itr = pmap["input"]->erase( itr );	
+		} else {
+			itr++;
+		}
+		clear();
+	}
+}
+void Filter::score( core::io::serialization::PipeMap & pmap ) {
+	for( core::io::serialization::Pipe::iterator itr = pmap["input"]->begin(); itr != pmap["input"]->end(); itr++ ) {
+		core::Real score = report_sm( **itr );
+		core::pose::setPoseExtraScores( **itr, scorename_, score );
+		clear();
+	}
+}
+void Filter::parse_def( utility::lua::LuaObject const & def,
+				utility::lua::LuaObject const & score_fxns,
+				utility::lua::LuaObject const & tasks ){
+	utility_exit_with_message("This Filter has not implemented parse_def()");
+}
+// end mpr support
+
 } // filters
 } // protocols
