@@ -155,6 +155,7 @@ void MPI_Master::go(){
 			// export new variables to lua for use in the lua fxn
 			luabind::globals(lstate_)["traj_idx"] = traj_idx_;
 			luabind::globals(lstate_)["pipemap"] = castattempt->pipemap().lock();
+				luabind::globals(lstate_)["state"] = castattempt->state().lock();
 			luabind::globals(lstate_)["wufinished"] = wufinished_[traj_idx_].raw();
 			luabind::globals(lstate_)["wumade"] = wumade_[traj_idx_].raw();
 
@@ -172,6 +173,7 @@ void MPI_Master::go(){
 			luabind::globals(lstate_)["wufinished"] = luabind::nil;
 			luabind::globals(lstate_)["wumade"] = luabind::nil;
 			luabind::globals(lstate_)["pipemap"] = luabind::nil;
+				luabind::globals(lstate_)["state"] = luabind::nil;
 			lua_gc(lstate_, LUA_GCCOLLECT, 0);
     }
 

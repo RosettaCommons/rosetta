@@ -85,6 +85,7 @@ void MPI_Slave::go(){
 				LuaObject dworkunits( luabind::globals(lstate_)["elscripts"]["dworkunits"]);
 
 				luabind::globals(lstate_)["pipemap"] = castattempt->pipemap().lock();
+				luabind::globals(lstate_)["state"] = castattempt->state().lock();
 				try { 
 					luabind::call_function<void>( dworkunits[ castattempt->name() ]["run"].raw() );
 				} catch (std::exception & e) {
@@ -94,6 +95,7 @@ void MPI_Slave::go(){
 					std::exit(9);
 				}
 				luabind::globals(lstate_)["pipemap"] = luabind::nil;
+				luabind::globals(lstate_)["state"] = luabind::nil;
 				lua_gc(lstate_, LUA_GCCOLLECT, 0);
 				// shallow copy! works fine for my purposes
 				protocols::wum2::WorkUnitSP result_wu( new protocols::wum2::WorkUnit_ElScripts( *castattempt ) );
