@@ -41,8 +41,15 @@
 	#include <utility/tag/Tag.hh>
 #endif
 
+#include <utility/lua/LuaObject.hh>
+#include <utility/lua/LuaIterator.hh>
+
 namespace protocols {
 namespace filters {
+
+#ifdef USELUA
+void lregister_Filter( lua_State * lstate );
+#endif
 
 class Filter : public utility::pointer::ReferenceCount {
 public:
@@ -76,6 +83,9 @@ public:
 
 	/// @brief Returns true if the given pose passes the filter, false otherwise.
 	virtual bool apply( core::pose::Pose const & pose ) const = 0;
+#ifdef USELUA
+	virtual void lregister( lua_State * lstate ){ lregister_Filter(lstate);}
+#endif
 
 	virtual
 	std::string name() const { return "BaseFilter"; };
@@ -83,6 +93,8 @@ public:
 private:
 	std::string const type_;
 	std::string user_defined_name_;
+protected:
+	std::string scorename_;
 };
 
 

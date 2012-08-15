@@ -27,6 +27,7 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <core/pose/util.hh>
 
 #define foreach BOOST_FOREACH
 
@@ -35,6 +36,20 @@ static basic::Tracer TR("protocols.filters.Filter");
 
 namespace protocols {
 namespace filters {
+
+#ifdef USELUA
+void lregister_Filter( lua_State * lstate ) {
+	luabind::module(lstate, "protocols")
+	[
+		luabind::namespace_("filters")
+		[
+			luabind::class_<Filter>("Filter")
+				.def("apply", ( void (Filter::*)( core::io::serialization::PipeMap & )) &Filter::apply)
+				.def("score", &Filter::score)
+		]
+	];
+}
+#endif
 
 using namespace core;
 typedef std::pair< std::string const, FilterCOP > StringFilter_pair;
@@ -62,17 +77,20 @@ FilterCollection::report( std::ostream & out, core::pose::Pose const & pose ) co
 
 Filter::Filter()
 	: utility::pointer::ReferenceCount(),
-		type_( "UNDEFINED TYPE" )
+		type_( "UNDEFINED TYPE" ),
+		scorename_("defaultscorename")
 {}
 
 Filter::Filter( std::string const & type )
 	: utility::pointer::ReferenceCount(),
-		type_( type )
+		type_( type ),
+		scorename_("defaultscorename")
 {}
 
 Filter::Filter( Filter const & init )
 	:	utility::pointer::ReferenceCount(),
 		type_( init.type_ ),
+		scorename_("defaultscorename"),
 		user_defined_name_( init.user_defined_name_ )
 {}
 
