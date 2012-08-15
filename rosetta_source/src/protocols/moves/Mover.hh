@@ -63,6 +63,7 @@ namespace moves {
 void lregister_Mover( lua_State * lstate );
 void lregister_SerializableState( lua_State * lstate );
 void SerializableState_set( SerializableStateSP state, std::string key, std::string val );
+void SerializableState_set( SerializableStateSP state, std::string key, core::Real val );
 std::string SerializableState_get( SerializableStateSP state, std::string key );
 #endif
 

@@ -65,7 +65,8 @@ void lregister_SerializableState( lua_State * lstate ){
 		luabind::namespace_( "moves" )
 		[
 			luabind::class_<SerializableState>("SerializableState")
-				.def("set", &SerializableState_set )
+				.def("set", ( void (*) ( SerializableStateSP, std::string, std::string )) &SerializableState_set )
+				.def("set", ( void (*) ( SerializableStateSP, std::string, core::Real )) &SerializableState_set )
 				.def("get", &SerializableState_get )
 		]
 	];
@@ -240,6 +241,9 @@ void SerializableState_set( SerializableStateSP state, std::string key, std::str
 	(*state)[key] = val;
 }
 
+void SerializableState_set( SerializableStateSP state, std::string key, core::Real val ) {
+	(*state)[key] = utility::to_string(val);
+}
 std::string SerializableState_get( SerializableStateSP state, std::string key ) {
 	if( state->find( key ) != state->end() ) {
 		return (*state)[key];
