@@ -45,7 +45,8 @@ void lregister_Filter( lua_State * lstate ) {
 		[
 			luabind::class_<Filter>("Filter")
 				.def("apply", ( void (Filter::*)( core::io::serialization::PipeMap & )) &Filter::apply)
-				.def("score", &Filter::score)
+				.def("score", ( void (Filter::*)( core::io::serialization::PipeMap & )) &Filter::score)
+				.def("score", ( core::Real (Filter::*)( core::pose::Pose & )) &Filter::score)
 		]
 	];
 }
@@ -117,10 +118,14 @@ void Filter::apply( core::io::serialization::PipeMap & pmap ) {
 		clear();
 	}
 }
+core::Real Filter::score( core::pose::Pose & pose ) {
+	core::Real score = report_sm( pose );
+	core::pose::setPoseExtraScores( pose, scorename_, score );
+	return score;
+}
 void Filter::score( core::io::serialization::PipeMap & pmap ) {
 	for( core::io::serialization::Pipe::iterator itr = pmap["input"]->begin(); itr != pmap["input"]->end(); itr++ ) {
-		core::Real score = report_sm( **itr );
-		core::pose::setPoseExtraScores( **itr, scorename_, score );
+		score( **itr );
 		clear();
 	}
 }

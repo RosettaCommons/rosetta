@@ -93,6 +93,7 @@ public:
 	// start elscripts support
 	virtual void apply( core::io::serialization::PipeMap & pmap);
 	virtual void score( core::io::serialization::PipeMap & pmap);
+	virtual core::Real score( core::pose::Pose & pose);
 	virtual void parse_def( utility::lua::LuaObject const & def,
 					utility::lua::LuaObject const & score_fxns,
 					utility::lua::LuaObject const & tasks );
