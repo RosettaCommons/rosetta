@@ -60,6 +60,7 @@ public:
 	apply( pose::Pose const & pose, PackerTask & task ) const;
 
 	virtual void parse_tag( TagPtr );
+	virtual void parse_def( utility::lua::LuaObject const & def);
 
 };
 

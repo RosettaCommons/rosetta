@@ -86,6 +86,9 @@ void
 RestrictToRepacking::parse_tag( TagPtr )
 {}
 
+void
+RestrictToRepacking::parse_def( utility::lua::LuaObject const & def) {}
+
 /// BEGIN RestrictResidueToRepacking
 RestrictResidueToRepacking::~RestrictResidueToRepacking() {}
 
