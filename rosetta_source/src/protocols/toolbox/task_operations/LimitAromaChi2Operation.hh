@@ -169,6 +169,7 @@ public:
 
 
 	void parse_tag( TagPtr tag );
+	void parse_def( utility::lua::LuaObject const & def );
 
 
 private: // data
