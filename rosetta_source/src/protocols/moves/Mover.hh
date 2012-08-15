@@ -91,6 +91,12 @@ public:
 public:
 	Mover();
 	virtual ~Mover();
+	// Factory<Mover> functions
+	// this really should be pure
+	virtual MoverSP create();
+	static std::string name() {
+		return "UNDEFINED NAME";
+	}
 	// elscripts functions
 	virtual void apply( core::io::serialization::PipeMap & pmap);
 

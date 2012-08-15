@@ -133,6 +133,13 @@ Mover::get_native_pose() const { return native_pose_; }
 void
 Mover::set_native_pose( PoseCOP pose ) { native_pose_ = pose; }
 
+// Factory<Mover> functions
+MoverSP Mover::create() {
+	MoverOP a = fresh_instance();
+	MoverSP tmpsp (a.get());
+	a.relinquish_ownership();
+	return tmpsp;
+}
 // elscripts functions
 void Mover::apply( core::io::serialization::PipeMap & pmap ) {
 	for( core::io::serialization::Pipe::iterator itr = pmap["input"]->begin(); itr != pmap["input"]->end(); itr++ ) {
