@@ -28,4 +28,8 @@ typedef EMapVector EnergyMap;
 } // namespace scoring
 } // namespace core
 
+#ifdef USEBOOSTSERIALIZE
+#include <boost/serialization/access.hpp>
+#endif
+
 #endif // INCLUDED_core_scoring_EnergyMap_FWD_HH
