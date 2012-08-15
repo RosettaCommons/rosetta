@@ -72,6 +72,8 @@
 #include <protocols/init/init.MoverCreators.ihh>
 #include <protocols/init/init.MoverRegistrators.ihh>
 
+#include <protocols/init/init.OutputterFactory.ihh>
+
 namespace protocols {
 namespace init {
 void init( int argc, char * argv [] )
