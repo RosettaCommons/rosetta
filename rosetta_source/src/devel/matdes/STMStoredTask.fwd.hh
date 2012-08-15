@@ -26,4 +26,9 @@ typedef utility::pointer::owning_ptr< STMStoredTask const > STMStoredTaskCOP;
 } // matdes
 } // devel
 
+#ifdef USEBOOSTSERIALIZE
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/map.hpp>
+#endif
+
 #endif

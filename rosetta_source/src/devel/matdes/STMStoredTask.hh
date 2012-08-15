@@ -41,6 +41,15 @@ public:
 	bool has_task( std::string const task_name ) const;
 
 private:
+#ifdef USEBOOSTSERIALIZE
+	friend class boost::serialization::access;
+
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+			ar & tasks_;
+	}
+#endif
+
 	std::map< std::string, core::pack::task::PackerTaskOP > tasks_;
 
 };
