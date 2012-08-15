@@ -59,6 +59,7 @@ class Inputter {
 		// not a huge fan of this, but implementing it correctly and more extensibly will be a lot more work
 		// and fpd doesn't think there will be much customizing requested in inputters
 		virtual void parse_def( utility::lua::LuaObject const & def,
+						utility::lua::LuaObject const & tasks,
 						utility::lua::LuaObject & inputters ) = 0;	
 		virtual void lregister( lua_State * lstate )=0;
 #endif

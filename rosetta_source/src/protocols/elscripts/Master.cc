@@ -83,12 +83,12 @@ Master::Master( int num_trajectories, boost::uint64_t mem_limit, boost::uint64_t
 		lua_init();
 		lregister_Master(lstate_);
 		luabind::globals(lstate_)["master"] = this;
+		instantiate_tasks();
 		instantiate_inputters();
 		instantiate_inputterstream();
 		instantiate_output();
 
 		register_calculators();
-		instantiate_tasks();
 		instantiate_scorefxns();
 		instantiate_filters();
 		instantiate_movers();

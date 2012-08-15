@@ -354,7 +354,7 @@ void BaseRole::instantiate_inputters() {
 		TR << "Instantiating inputter " << (*i)["class"].to<std::string>() << " named " << i.skey() << std::endl;
 		InputterSP inputter ( inputterfactory->from_string( (*i)["class"].to<std::string>() ) ); 
     inputter->lregister( lstate_ );
-		inputter->parse_def( (*i), inputters_ );
+		inputter->parse_def( (*i), tasks_, inputters_ );
     luabind::globals(lstate_)["elscripts"]["inputters"][ i.skey() ] = inputter;
 	}
 
@@ -428,6 +428,16 @@ void BaseRole::reparse_def( std::string const & type, std::string const & name )
     for (LuaIterator i=dtasks.begin(), end; i != end; ++i) {
       if( i.skey() == name ) {
         tasks_[ i.skey() ].to<TaskOperationSP>()->parse_def( (*i) );
+        break;
+      }
+    }
+  }
+  if( type == "movers" ) {
+    using namespace protocols::moves;
+    LuaObject dmovers( luabind::globals(lstate_)["elscripts"]["dmovers"]);
+    for (LuaIterator i=dmovers.begin(), end; i != end; ++i) {
+      if( i.skey() == name ) {
+        movers_[ i.skey() ].to<MoverSP>()->parse_def( (*i), scorefxns_, tasks_, mover_cache_ );
         break;
       }
     }

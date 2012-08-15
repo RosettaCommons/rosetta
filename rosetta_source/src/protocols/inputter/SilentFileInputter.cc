@@ -103,6 +103,7 @@ InputterSP SilentFileInputter::create() {
 
 #ifdef USELUA
 void SilentFileInputter::parse_def( utility::lua::LuaObject const & def,
+				utility::lua::LuaObject const & tasks,
 				utility::lua::LuaObject & inputters ) {
 	if( def["multiplier"] ) multiplier_ = def["multiplier"].to<int>();	
 	if( def["multiply_over_all"] ) multiply_over_all_ = def["multiply_over_all"].to<bool>();	
