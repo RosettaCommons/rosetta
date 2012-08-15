@@ -15,6 +15,9 @@ sources = {
 		"BoincPoseObserver",
 		"watchdog",
 	],
+	"protocols/elscripts": [
+		"BaseRole",
+  ],
 	"protocols/frag_picker": [
 		"BestTotalScoreSelector",
 		"CompositeFragmentSelector",
