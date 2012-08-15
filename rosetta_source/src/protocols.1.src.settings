@@ -38,6 +38,7 @@ sources = {
 		"Outputter",
 		"FormatStringOutputter",
 		"PDBOutputter",
+		"SilentFileOutputter",
 	],
 	"protocols/jd2": [
 		"AtomTreeDiffJobInputter",
