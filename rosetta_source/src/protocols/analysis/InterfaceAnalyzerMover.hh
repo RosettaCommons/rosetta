@@ -19,7 +19,7 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreFunction.hh> //This non-obviously needs to be the full header because the constructors have NULL default values for their ScoreFunctionCOP arguments.  If you try to use the default ctor with no arguments, it looks like you don't need ScoreFunction.hh, but gcc insists on it anyway.  Putting it here is the cleanest and most documentable solution.
 #include <protocols/moves/Mover.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 
