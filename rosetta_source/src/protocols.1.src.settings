@@ -36,6 +36,7 @@ sources = {
 	],
 	"protocols/inputter": [
     "Inputter",
+    "InputterStream",
   ],
 	"protocols/outputter": [
 		"Outputter",
