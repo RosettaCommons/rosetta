@@ -29,6 +29,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <protocols/elscripts/util.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 // AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
@@ -483,6 +484,42 @@ RotamerBoltzmannWeight::parse_my_tag( utility::tag::TagPtr const tag,
 
 	skip_ala_scan( tag->getOption< bool >( "skip_ala_scan", 0 ) );
 	write2pdb( tag->getOption< bool >( "write2pdb", 0 ) );
+	TR<<"with options repacking radius: "<<repacking_radius()<<" and jump "<<rb_jump()<<" unbound "<<unbound()<<" ddG threshold "<<ddG_threshold()<<" temperature "<<temperature()<<" energy reduction factr "<<energy_reduction_factor()<<" entropy_reduction "<<compute_entropy_reduction()<<" repack "<<repack()<<" skip_ala_scan "<<skip_ala_scan()<<std::endl;
+}
+void RotamerBoltzmannWeight::parse_def( utility::lua::LuaObject const & def,
+				utility::lua::LuaObject const & score_fxns,
+				utility::lua::LuaObject const & tasks ) {
+	TR << "RotamerBoltzmannWeightFilter"<<std::endl;
+	task_factory( protocols::elscripts::parse_taskdef( def["tasks"], tasks ));
+	repacking_radius(def["radius"] ? def["radius"].to<core::Real>() : 6.0);
+	type_ = def["type"] ? def["type"].to<std::string>() : "";
+	rb_jump(def["jump"] ? def["jump"].to<core::Size>() : 1);
+	unbound(def["unbound"] ? def["unbound"].to<bool>() : true);
+	ddG_threshold(def["ddG_threshold"] ? def["ddG_threshold"].to<core::Real>() : 1.5);
+	temperature(def["temperature"] ? def["temperature"].to<core::Real>() : 0.8);
+	if( def["scorefxn"] ) {
+		scorefxn_ = protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns );
+	} else {
+		scorefxn_ = score_fxns["score12"].to<core::scoring::ScoreFunctionSP>()->clone();
+	}
+	energy_reduction_factor(def["energy_reduction_factor"] ? def["energy_reduction_factor"].to<core::Real>() : 0.5);
+	compute_entropy_reduction(def["compute_entropy_reduction"] ? def["compute_entropy_reduction"].to<bool>() : false);
+	repack(def["repack"] ? def["repack"].to<bool>() : true);
+
+	if( def["per_aa_threshold"] ) {
+		for (utility::lua::LuaIterator i=def["per_aa_threshold"].begin(), end; i != end; ++i) {
+			core::chemical::AA const aa( core::chemical::aa_from_name( i.skey() ) );
+			threshold_probability( aa, (*i).to<core::Real>() );
+		}
+	}
+
+	target_residues_ = def["target_residues"] ? def["target_residues"].to<std::string>() : "";
+
+	fast_calc_ = def["fast_calc"] ? def["fast_calc"].to<bool>() : false;
+	no_modified_ddG_ = def["no_modified_ddG"] ? def["no_modified_ddG"].to<bool>() : false;
+
+	skip_ala_scan( def["skip_ala_scan"] ? def["skip_ala_scan"].to<bool>() : false );
+	write2pdb( def["write2pdb"] ? def["write2pdb"].to<bool>() : false );
 	TR<<"with options repacking radius: "<<repacking_radius()<<" and jump "<<rb_jump()<<" unbound "<<unbound()<<" ddG threshold "<<ddG_threshold()<<" temperature "<<temperature()<<" energy reduction factr "<<energy_reduction_factor()<<" entropy_reduction "<<compute_entropy_reduction()<<" repack "<<repack()<<" skip_ala_scan "<<skip_ala_scan()<<std::endl;
 }
 
