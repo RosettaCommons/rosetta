@@ -33,6 +33,7 @@ sources = {
 		"DesignContrast",
 	],
 	"core/io/serialization": [
+    "Pipe",
 		"serialize_pose",
 	],
 	"core/io/silent": [
