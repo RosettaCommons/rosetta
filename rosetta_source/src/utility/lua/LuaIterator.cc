@@ -14,34 +14,57 @@
 // this is really just a convenience class
 /// @author Ken Jung
 
-#ifdef USELUA
 #include <utility/lua/LuaIterator.hh>
 #include <utility/lua/LuaObject.hh>
-
-#include <boost/mpl/assert.hpp>
 
 namespace utility {
 namespace lua {
 
 // skey and ikey go through LuaObject because it has more verbose error handling of failed cast
 std::string LuaIterator::skey() {
+#ifdef USELUA
 		return LuaObject( iterator_.key() ).to<std::string>();
+#else
+		std::cerr << "Can't use LuaIterator without compiling with USELUA flag" << std::endl;
+		std::exit(9);
+		return std::string();
+#endif
 }
 
 int LuaIterator::ikey() {
+#ifdef USELUA
 		return LuaObject( iterator_.key() ).to<int>();
+#else
+		std::cerr << "Can't use LuaIterator without compiling with USELUA flag" << std::endl;
+		std::exit(9);
+		return 0;
+#endif
 }
 
+#ifdef USELUA
 luabind::iterator LuaIterator::raw() {
 		return iterator_;
 }
+#endif
 
 bool LuaIterator::operator==(LuaIterator & other) {
+#ifdef USELUA
 		return iterator_ == other.raw();
+#else
+		std::cerr << "Can't use LuaIterator without compiling with USELUA flag" << std::endl;
+		std::exit(9);
+		return false;
+#endif
 }
 
 bool LuaIterator::operator!=(LuaIterator & other) {
+#ifdef USELUA
 		return iterator_ != other.raw();
+#else
+		std::cerr << "Can't use LuaIterator without compiling with USELUA flag" << std::endl;
+		std::exit(9);
+		return false;
+#endif
 }
 
 LuaObject *  LuaIterator::operator -> () {
@@ -54,22 +77,39 @@ LuaObject *  LuaIterator::operator -> () {
 		return tmp;
 }
 LuaObject LuaIterator::operator * () {
+#ifdef USELUA
 		return LuaObject(*iterator_);
+#else
+		std::cerr << "Can't use LuaIterator without compiling with USELUA flag" << std::endl;
+		std::exit(9);
+		return LuaObject();
+#endif
 }
 
 LuaIterator LuaIterator::operator++(int) {
+#ifdef USELUA
 		LuaIterator tmp( iterator_ );
 		iterator_++;
 		return tmp;
+#else
+		std::cerr << "Can't use LuaIterator without compiling with USELUA flag" << std::endl;
+		std::exit(9);
+		return LuaIterator();
+#endif
 }
 
 LuaIterator & LuaIterator::operator++() {
+#ifdef USELUA
 		iterator_++;
 		return *this;
+#else
+		std::cerr << "Can't use LuaIterator without compiling with USELUA flag" << std::endl;
+		std::exit(9);
+		return *this;
+#endif
 }
 
 
 
 } //lua
 } //utility
-#endif

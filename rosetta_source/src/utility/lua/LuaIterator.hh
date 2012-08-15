@@ -19,11 +19,11 @@
 
 #include <utility/lua/LuaIterator.fwd.hh>
 #include <utility/lua/LuaObject.fwd.hh>
+#include <string>
 #ifdef USELUA
 #include <lua.hpp>
 #include <luabind/luabind.hpp>
-
-#include <boost/mpl/assert.hpp>
+#endif
 
 namespace utility {
 namespace lua {
@@ -31,8 +31,11 @@ namespace lua {
 class LuaIterator {
 
 		public:
+
+#ifdef USELUA
     LuaIterator( luabind::iterator iterator) : 
 						iterator_ (iterator) {}
+#endif
 
     LuaIterator(){}
 
@@ -42,7 +45,9 @@ class LuaIterator {
 
 				int ikey();
 
+#ifdef USELUA
 				luabind::iterator raw();
+#endif
 
 				bool operator==(LuaIterator & other);
 
@@ -56,11 +61,12 @@ class LuaIterator {
 				LuaIterator & operator++();
 
 		private:
+#ifdef USELUA
 				luabind::iterator iterator_;
+#endif
 
 };
 
 } //lua
 } //utility
-#endif
 #endif
