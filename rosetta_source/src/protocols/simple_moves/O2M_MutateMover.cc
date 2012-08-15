@@ -24,6 +24,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/util.hh>
 
+#include <utility/string_util.hh>
 #include <protocols/elscripts/util.hh>
 
 
