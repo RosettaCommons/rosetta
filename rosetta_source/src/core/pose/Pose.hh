@@ -1556,9 +1556,11 @@ private:
 						( data_cache_->get_raw_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA) );
 				ar & *float_map;
 			}
-			bool has_tasks_map = data_cache_->has( CacheableDataType::STM_STORED_TASKS );
+			bool has_tasks_map;
 			ar & has_tasks_map;
 			if( has_tasks_map ) {
+				devel::matdes::STMStoredTaskOP blank_tasks = new devel::matdes::STMStoredTask();
+				data_cache_->set( CacheableDataType::STM_STORED_TASKS, blank_tasks);
 				devel::matdes::STMStoredTask *tasks_map = dynamic_cast< devel::matdes::STMStoredTask * >
 						( data_cache_->get_raw_ptr(CacheableDataType::STM_STORED_TASKS) );
 				ar & *tasks_map;

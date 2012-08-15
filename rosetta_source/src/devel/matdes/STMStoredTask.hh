@@ -16,7 +16,7 @@
 
 #include <devel/matdes/STMStoredTask.fwd.hh>
 #include <basic/datacache/CacheableData.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask_.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <map>
@@ -45,9 +45,30 @@ private:
 	friend class boost::serialization::access;
 
 	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version) {
-			ar & tasks_;
+	void save(Archive & ar, const unsigned int version) const {
+			// manually do this because we don't support OP of abstract class
+			int size = tasks_.size();
+			ar & size;
+			for( std::map< std::string, core::pack::task::PackerTaskOP >::const_iterator itr = tasks_.begin(); itr != tasks_.end(); itr++ ) {
+				ar & itr->first;
+				core::pack::task::PackerTask_ * tmp = static_cast<core::pack::task::PackerTask_ *> (itr->second.get());
+				ar & tmp;
+			}
 	}
+	template<class Archive>
+	void load(Archive & ar, const unsigned int version) {
+			int size;
+			ar & size; //tasks_.size();
+			for( int i = 0; i < size; i++ ) {
+				std::string tmp_string;
+				core::pack::task::PackerTask_ * tmpptr;
+				ar & tmp_string;
+				ar & tmpptr;
+				core::pack::task::PackerTaskOP tmpop(tmpptr);
+				tasks_[tmp_string] = tmpop;
+			}
+	}
+	BOOST_SERIALIZATION_SPLIT_MEMBER()
 #endif
 
 	std::map< std::string, core::pack::task::PackerTaskOP > tasks_;

@@ -28,7 +28,8 @@ typedef utility::pointer::owning_ptr< STMStoredTask const > STMStoredTaskCOP;
 
 #ifdef USEBOOSTSERIALIZE
 #include <boost/serialization/access.hpp>
-#include <boost/serialization/map.hpp>
+#include <boost/serialization/string.hpp>
+#include <boost/serialization/split_member.hpp>
 #endif
 
 #endif

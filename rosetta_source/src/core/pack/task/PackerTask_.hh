@@ -33,7 +33,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 
-#include <protocols/toolbox/task_operations/LimitAromaChi2Operation.fwd.hh>
+#include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
 // Utility Headers
 // AUTO-REMOVED #include <utility/vector1.hh>
 
@@ -343,7 +343,6 @@ private: // private methods
 
 		ar & original_residue_type_->residue_type_set().name();
 		ar & original_residue_type_->name(); 
-		ar & target_residue_type_->name();
 
 		int tmp = allowed_residue_types_.size();
 		ar & tmp;
@@ -416,8 +415,6 @@ private: // private methods
 		ResidueTypeSetCAP restype_set = ChemicalManager::get_instance()->residue_type_set( tmp );
 		ar & tmp; //original_residue_type_->name(); 
 		original_residue_type_ = utility::pointer::access_ptr< ResidueType const > ( restype_set->name_map(tmp) );
-		ar & tmp; //target_residue_type_->name();
-		target_residue_type_ = utility::pointer::access_ptr< ResidueType const > ( restype_set->name_map( tmp ) );
 
 		int numaa;
 		ar & numaa; //allowed_residue_types_.size();
@@ -465,7 +462,8 @@ private: // private methods
 		std::vector < protocols::toolbox::task_operations::LimitAromaChi2_RotamerSetOperation * > tt;
 		ar & tt;
 		for( int i = 0; i < tt.size(); i++ ) {
-			rotsetops_.push_back( rotamer_set::RotamerSetOperationOP ( tt[i] ) );
+			rotamer_set::RotamerSetOperationOP tmp( reinterpret_cast<rotamer_set::RotamerSetOperation * > (tt[i]) );
+			rotsetops_.push_back( tmp );
 		}
 		ar & mode_tokens_;
 	}
@@ -562,6 +560,7 @@ class PackerTask_ : public PackerTask
 {
 public:
 	///@brief constructor; the PackerTask will always need a pose!
+	PackerTask_();
 	PackerTask_( pose::Pose const & pose );
 
 	///@brief dtor
