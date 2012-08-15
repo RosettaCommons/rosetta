@@ -26,6 +26,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <protocols/elscripts/util.hh>
 #include <core/pack/make_symmetric_task.hh>
 #include <devel/matdes/STMStoredTask.hh>
 #include <basic/Tracer.hh>
@@ -79,6 +80,15 @@ StoreTaskMover::parse_my_tag( TagPtr const tag, protocols::moves::DataMap & data
 	task_name_ = tag->getOption< std::string >( "task_name" );
 	overwrite_ = tag->getOption< bool >( "overwrite", false );
 
+}
+
+void StoreTaskMover::parse_def( utility::lua::LuaObject const & def,
+		utility::lua::LuaObject const & score_fxns,
+		utility::lua::LuaObject const & tasks,
+		protocols::moves::MoverCacheSP cache ) {
+	task_factory_ =  protocols::elscripts::parse_taskdef( def["tasks"], tasks );
+	task_name_ = def["task_name"].to<std::string>();
+	overwrite_ = def["overwrite"] ? def["overwrite"].to<bool>() : false;
 }
 
 // @brief Identification
