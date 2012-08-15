@@ -12,10 +12,40 @@
 /// @author Ken Jung
 
 #include <core/io/serialization/Pipe.fwd.hh>
+#include <core/pose/Pose.hh>
+
+#ifdef USELUA
+#include <luabind/iterator_policy.hpp>
+#endif
 
 namespace core {
 namespace io {
 namespace serialization {
+// this is a crutch function, luabind needs a wrapper to a stl to return a stl itr
+Pipe & each( Pipe * p ) {
+	return *p;
+}
+
+core::pose::PoseSP at( Pipe * p, int idx ){
+	return (*p)[idx];
+}
+#ifdef USELUA
+void lregister_Pipe( lua_State * lstate ) {
+	luabind::module(lstate, "core")
+	[
+		luabind::namespace_("io")
+		[
+			luabind::namespace_("serialization")
+			[
+				luabind::class_<Pipe>("Pipe")
+					.def("each", (Pipe & (*) (Pipe *) ) &each, luabind::return_stl_iterator)
+					.def("at", (core::pose::PoseSP (*) (Pipe *, int idx) ) &at )
+					.def("size", &Pipe::size)
+			]
+		]
+	];
+}
+#endif
 } //serialization
 } //io
 } //core

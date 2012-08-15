@@ -14,6 +14,11 @@
 #ifndef INCLUDED_core_io_serialization_Pipe_fwd_hh
 #define INCLUDED_core_io_serialization_Pipe_fwd_hh
 
+#ifdef USELUA
+#include <lua.hpp>
+#include <luabind/luabind.hpp>
+#endif
+
 #include <boost/shared_ptr.hpp>
 #include <core/pose/Pose.fwd.hh>
 #include <vector>
@@ -29,6 +34,13 @@ namespace serialization {
 
 typedef std::vector< core::pose::PoseSP > Pipe;
 typedef boost::shared_ptr< Pipe > PipeSP;
+
+#ifdef USELUA
+void lregister_Pipe( lua_State * lstate );
+#endif
+
+int size( Pipe * p );
+core::pose::PoseSP at( Pipe * p, int idx );
 
 } //serialization
 } //io
