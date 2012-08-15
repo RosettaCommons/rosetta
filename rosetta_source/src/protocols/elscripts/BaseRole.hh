@@ -63,12 +63,6 @@ class BaseRole {
 		// real memory free, ignoring buffer
     virtual boost::uint64_t current_mem()=0;
 
-		int inputter_rank() {
-			// handles if there is or is not pool logic, needed for inputter offset
-			// doesnt do anything now
-			return world_.rank() + 1;
-		}
-
     boost::uint64_t mover_cache_mem() { return mover_cache_mem_; }
 
     void update_mover_cache_mem();
