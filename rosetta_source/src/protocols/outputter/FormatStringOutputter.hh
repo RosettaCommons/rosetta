@@ -48,7 +48,8 @@ class FormatStringOutputter : public Outputter {
 
 		void parse_format_string( boost::unordered_map< std::string, std::string> & filenameparts, std::string const & format_string, std::string & filename );
 #ifdef USELUA
-		virtual void parse_def( utility::lua::LuaObject const & def );
+		virtual void parse_def( utility::lua::LuaObject const & def,
+						utility::lua::LuaObject const & tasks );
 		virtual void lregister( lua_State * lstate );
 #endif
 

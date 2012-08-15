@@ -334,7 +334,7 @@ void BaseRole::instantiate_output() {
 		TR << "Instantiating outputter " << (*i)["class"].to<std::string>() << " named " << i.skey() << std::endl;
 		OutputterSP outputter ( outputterfactory->from_string( (*i)["class"].to<std::string>() ) ); 
     outputter->lregister( lstate_ );
-		outputter->parse_def( (*i) );
+		outputter->parse_def( (*i), tasks_ );
     luabind::globals(lstate_)["elscripts"]["outputters"][ i.skey() ] = outputter;
 	}
 	TR << "----------Finished Instantiating Outputters----------" << std::endl;

@@ -109,7 +109,8 @@ void FormatStringOutputter::parse_format_string( boost::unordered_map< std::stri
 
 
 #ifdef USELUA
-void FormatStringOutputter::parse_def( utility::lua::LuaObject const & def ) {
+void FormatStringOutputter::parse_def( utility::lua::LuaObject const & def,
+		utility::lua::LuaObject const & tasks ) {
 	format_string_ = def["format_string"] ? def["format_string"].to<std::string>() : "%filebasename_%filemultiplier.pdb";
 }
 

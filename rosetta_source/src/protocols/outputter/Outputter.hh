@@ -45,7 +45,8 @@ class Outputter {
 		virtual void write( Pose & p )=0;
 
 #ifdef USELUA
-		virtual void parse_def( utility::lua::LuaObject const & def ) = 0;
+		virtual void parse_def( utility::lua::LuaObject const & def,
+						utility::lua::LuaObject const & tasks ) = 0;
 		virtual void lregister( lua_State * lstate )=0;
 #endif
 

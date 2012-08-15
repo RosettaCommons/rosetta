@@ -63,8 +63,9 @@ void SilentFileOutputter::write( Pose & p ) {
 }
 
 #ifdef USELUA
-void SilentFileOutputter::parse_def( utility::lua::LuaObject const & def ) {
-	FormatStringOutputter::parse_def( def );
+void SilentFileOutputter::parse_def( utility::lua::LuaObject const & def,
+		utility::lua::LuaObject const & tasks ) {
+	FormatStringOutputter::parse_def( def, tasks );
 	score_only_= def["score_only"] ? def["score_only"].to<bool>() : false;
 	binary_ = def["binary"] ? def["binary"].to<bool>() : true;
 	tag_format_string_ = def["tag_format_string"] ? def["tag_format_string"].to<std::string>() : "%filebasename_%filemultiplier";

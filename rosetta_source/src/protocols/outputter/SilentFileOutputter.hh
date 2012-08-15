@@ -45,7 +45,8 @@ class SilentFileOutputter : public FormatStringOutputter {
 		void tag_format_string( std::string s ) { tag_format_string_ = s; }
 
 #ifdef USELUA
-		void parse_def( utility::lua::LuaObject const & def );
+		void parse_def( utility::lua::LuaObject const & def,
+						utility::lua::LuaObject const & tasks );
 		virtual void lregister( lua_State * lstate );
 #endif
 
