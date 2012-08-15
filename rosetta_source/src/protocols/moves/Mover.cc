@@ -43,6 +43,31 @@
 namespace protocols {
 namespace moves {
 
+#ifdef USELUA
+void lregister_Mover( lua_State * lstate ) {
+	luabind::module(lstate, "protocols")
+	[
+		luabind::namespace_( "moves" )
+		[
+			luabind::class_<Mover>("Mover")
+				.def("apply", ( void (Mover::*)( core::io::serialization::PipeMap & )) &Mover::apply)
+				.def("parse_state", &Mover::parse_state)
+				.def("save_state", &Mover::save_state)
+		]
+	];
+}
+
+void lregister_SerializableState( lua_State * lstate ){
+	luabind::module(lstate, "protocols")
+	[
+		luabind::namespace_( "moves" )
+		[
+			luabind::class_<SerializableState>("SerializableState")
+		]
+	];
+}
+#endif
+
 using namespace core;
 	using namespace pose;
 

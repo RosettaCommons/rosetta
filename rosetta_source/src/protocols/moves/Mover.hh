@@ -47,9 +47,18 @@
 	#include <utility/tag/Tag.hh>
 #endif
 
+#ifdef USELUA
+#include <lua.hpp>
+#include <luabind/luabind.hpp>
+#endif
 
 namespace protocols {
 namespace moves {
+
+#ifdef USELUA
+void lregister_Mover( lua_State * lstate );
+void lregister_SerializableState( lua_State * lstate );
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief:
