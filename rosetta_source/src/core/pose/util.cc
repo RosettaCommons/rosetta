@@ -2527,6 +2527,8 @@ void lregister_util( lua_State * lstate ) {
 		[
 			luabind::def("getExtraScore", &getPoseExtraScores, luabind::pure_out_value(_3)),
 			luabind::def("setExtraScore", &setPoseExtraScores),
+			luabind::def("get_comment", &get_comment, luabind::pure_out_value(_3)),
+			luabind::def("add_comment", &add_comment),
 			luabind::def("getScore", (core::Real (*) (core::pose::Pose &, std::string const & ) ) &energy_from_pose)
 		]
 	];
