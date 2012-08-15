@@ -618,3 +618,4 @@ namespace RBSegmentRelax { IntegerOptionKey const nrbmoves( "RBSegmentRelax:nrbm
 namespace RBSegmentRelax { IntegerOptionKey const nrboutercycles( "RBSegmentRelax:nrboutercycles" );  }
 namespace RBSegmentRelax { StringOptionKey const rb_scorefxn( "RBSegmentRelax:rb_scorefxn" );  }
 namespace RBSegmentRelax { BooleanOptionKey const skip_fragment_moves( "RBSegmentRelax:skip_fragment_moves" );  }
+namespace RBSegmentRelax { BooleanOptionKey const skip_seqshift_moves( "RBSegmentRelax:skip_seqshift_moves" );  }

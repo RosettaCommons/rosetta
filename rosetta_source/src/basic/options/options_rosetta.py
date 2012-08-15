@@ -2738,6 +2738,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'trim_proportion', 'Real', default='0.0' ),
 
 	), #wum
+	Option_Group( 'els',
+      Option( 'master_wu_per_send', 'Integer', default='1' , desc = 'How many wu to send in one isend from master.  Set to ~ (WU generated: slaves per master) ratio' ),
+	), #wum
 
 	Option_Group( 'lh',
 		Option( 'db_prefix', 'String', default = 'loopdb', desc='stem for loop database' ),

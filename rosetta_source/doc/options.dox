@@ -5882,6 +5882,17 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 0.0</dd><br>
 </dl>
  </li>
+<li><h2>els</h2>
+<dl>
+<dt><b>-els</b> \<Boolean\><dt>
+<dd>els option group</dd><br>
+</dl>
+<dl>
+<dt><b>-master_wu_per_send</b> \<Integer\><dt>
+<dd>How many wu to send in one isend from master.  Set to ~ (WU generated: slaves per master) ratio</dd><br>
+<dd>Default: 1</dd><br>
+</dl>
+ </li>
 <li><h2>lh</h2>
 <dl>
 <dt><b>-lh</b> \<Boolean\><dt>

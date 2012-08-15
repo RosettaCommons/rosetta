@@ -119,6 +119,7 @@ sources = {
 		"WorkUnitManager",
 	],
 	"protocols/wum2": [
+		"EndPoint",
 		"WorkUnit",
 		"WUQueue",
 		"WUQueueBuffer",

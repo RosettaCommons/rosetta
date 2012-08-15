@@ -1,4 +1,3 @@
-namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }
 namespace fold_cst { BooleanOptionKey const keep_skipped_csts( "fold_cst:keep_skipped_csts" );  }
 namespace fold_cst { BooleanOptionKey const no_minimize( "fold_cst:no_minimize" );  }
@@ -592,6 +591,8 @@ namespace wum { StringOptionKey const extra_scorefxn( "wum:extra_scorefxn" );  }
 namespace wum { FileOptionKey const extra_scorefxn_ref_structure( "wum:extra_scorefxn_ref_structure" );  }
 namespace wum { IntegerOptionKey const extra_scorefxn_relax( "wum:extra_scorefxn_relax" );  }
 namespace wum { RealOptionKey const trim_proportion( "wum:trim_proportion" );  }
+namespace els { BooleanOptionKey const els( "els" );  }
+namespace els { IntegerOptionKey const master_wu_per_send( "els:master_wu_per_send" );  }
 namespace lh { BooleanOptionKey const lh( "lh" );  }
 namespace lh { StringOptionKey const db_prefix( "lh:db_prefix" );  }
 namespace lh { IntegerVectorOptionKey const loopsizes( "lh:loopsizes" );  }
