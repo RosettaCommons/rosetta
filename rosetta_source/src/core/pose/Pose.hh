@@ -68,6 +68,7 @@
 
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableStringMap.hh>
+#include <basic/datacache/CacheableStringFloatMap.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/MetricValue.fwd.hh>
 
@@ -1480,13 +1481,20 @@ private:
 			ar & pdb_info_;
 
 			// datacache
-			// only stringmap for now
+			// only stringmap,floatmap for now
 			bool has_string_map = data_cache_->has( CacheableDataType::STRING_MAP );
 			ar & has_string_map;
 			if( has_string_map ) {
 				CacheableStringMap *string_map = dynamic_cast< CacheableStringMap* >
 						( data_cache_->get_raw_ptr(CacheableDataType::STRING_MAP) );
 				ar & *string_map;
+			}
+			bool has_float_map = data_cache_->has( CacheableDataType::ARBITRARY_FLOAT_DATA );
+			ar & has_float_map;
+			if( has_float_map ) {
+				CacheableStringFloatMap *float_map = dynamic_cast< CacheableStringFloatMap* >
+						( data_cache_->get_raw_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA) );
+				ar & *float_map;
 			}
 	}
 
@@ -1504,6 +1512,15 @@ private:
 				CacheableStringMap *string_map = dynamic_cast< CacheableStringMap* >
 						( data_cache_->get_raw_ptr(CacheableDataType::STRING_MAP) );
 				ar & *string_map;
+			}
+
+			bool has_float_map;
+			ar & has_float_map;
+			if( has_float_map) {
+				data_cache_->set( CacheableDataType::ARBITRARY_FLOAT_DATA, new CacheableStringFloatMap() );
+				CacheableStringFloatMap *float_map = dynamic_cast< CacheableStringFloatMap* >
+						( data_cache_->get_raw_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA) );
+				ar & *float_map;
 			}
 	}
 	BOOST_SERIALIZATION_SPLIT_MEMBER()
