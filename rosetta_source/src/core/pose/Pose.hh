@@ -114,6 +114,7 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/scoring/symmetry/SymmetricEnergies.hh>
 
+
 // C++ Headers
 // #include <cassert>
 // #include <cmath>

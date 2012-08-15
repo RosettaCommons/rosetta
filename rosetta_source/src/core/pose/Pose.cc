@@ -1394,6 +1394,18 @@ std::ostream & operator << ( std::ostream & os, Pose const & pose)
 	return os;
 }
 
+#ifdef USELUA
+void lregister_Pose( lua_State * lstate ) {
+	luabind::module(lstate, "core")
+	[
+		luabind::namespace_("pose")
+		[
+			luabind::class_<Pose>("Pose")
+				.def("total_residue", &Pose::total_residue)
+		]
+	];
+}
+#endif
 
 } // pose
 } // core
