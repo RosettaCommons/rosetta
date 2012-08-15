@@ -86,6 +86,12 @@ Master::Master( int num_trajectories, boost::uint64_t mem_limit, boost::uint64_t
 		instantiate_inputterstream();
 		instantiate_output();
 
+		register_calculators();
+		instantiate_tasks();
+		instantiate_scorefxns();
+		instantiate_filters();
+		instantiate_movers();
+
 		// initializing trajectories and wu counters
     trajectories_ = core::io::serialization::PipeSP( new core::io::serialization::Pipe() );
 		luabind::globals(lstate_)["elscripts"]["wumade"] = luabind::newtable( lstate_ );
