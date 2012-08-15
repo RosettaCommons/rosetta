@@ -35,6 +35,9 @@ typedef utility::pointer::owning_ptr< Conformation const > ConformationCOP;
 } // conformation
 } // core
 
+#ifdef USEBOOSTSERIALIZE
+#include <boost/serialization/access.hpp>
+#endif
 
 
 #endif

@@ -2002,7 +2002,7 @@ inline void load_construct_data(
 
 	std::string restypeset_name;
 	ar >> restypeset_name;
-	utility::pointer::access_ptr< ResidueTypeSet > restype_set = ChemicalManager::get_instance()->nonconst_residue_type_set( restypeset_name );
+	utility::pointer::access_ptr< ResidueTypeSet > restype_set = & ChemicalManager::get_instance()->nonconst_residue_type_set( restypeset_name );
 
 	std::string this_restype_name;
 	ar & this_restype_name;
