@@ -23,6 +23,12 @@ namespace OptionKeys {
 
 namespace els { extern BooleanOptionKey const els; }
 namespace els { extern IntegerOptionKey const master_wu_per_send; }
+namespace els { extern StringOptionKey const vars; }
+namespace els { extern FileOptionKey const script; }
+namespace els { extern IntegerOptionKey const num_traj; }
+namespace els { extern IntegerOptionKey const traj_per_master; }
+namespace els { extern IntegerOptionKey const shortest_wu; }
+namespace els { extern BooleanOptionKey const pool; }
 
 } // namespace OptionKeys
 } // namespace options
