@@ -1402,6 +1402,7 @@ void lregister_Pose( lua_State * lstate ) {
 		[
 			luabind::class_<Pose>("Pose")
 				.def("total_residue", &Pose::total_residue)
+				.def("sequence", &Pose::sequence)
 		]
 	];
 }
