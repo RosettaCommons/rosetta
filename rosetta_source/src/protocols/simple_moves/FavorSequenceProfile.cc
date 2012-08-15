@@ -24,7 +24,6 @@
 #include <core/sequence/SequenceProfile.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
-#include <protocols/mpr/util.hh>
 
 #include <protocols/moves/DataMap.hh>
 #include <utility/tag/Tag.hh>
@@ -223,23 +222,12 @@ FavorSequenceProfile::parse_my_tag( utility::tag::TagPtr const tag, protocols::m
 	}
 }
 
-void FavorSequenceProfile::parse_def( utility::LuaObject const & def,
-		boost::unordered_map< std::string, core::scoring::ScoreFunctionOP > const & score_fxns,
-		boost::unordered_map< std::string, core::pack::task::operation::TaskOperationOP > const & tasks,
-		protocols::moves::MoverCacheSP cache ){
+void FavorSequenceProfile::parse_def( utility::lua::LuaObject const & def,
+		utility::lua::LuaObject const & score_fxns,
+		utility::lua::LuaObject const & tasks,
+		protocols::moves::MoverCacheSP cache ) {
 
 	weight_ = def["weight"] ? def["weight"].to<core::Real>() : 1;
-
-	// THIS IS TERRIBLE WHY WOULD YOU MODIFY THE SCOREFXNS IN PLACE
-	if( def["scorefxns"] ) {
-		for (utility::LuaIterator i=def["scorefxns"].begin(), end; i != end; ++i) {
-			ScoreFunctionOP scorefxn = protocols::mpr::parse_scoredef( (*i), score_fxns );
-			if( scorefxn->get_weight( res_type_constraint ) == 0.0 ){
-				scorefxn->set_weight( res_type_constraint, 1 );
-				TR<<"Turning on res_type_constraint weight in scorefxn "<< (*i).to<std::string>() <<std::endl;
-			}
-		}
-	}
 
 	core::Size num_struct(0);
 	if( def["use_native"] && def["use_native"].to<bool>() ) ++num_struct;
