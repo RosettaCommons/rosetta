@@ -145,6 +145,7 @@ public:
 	void restrict_to_residue( core::Size const & resid);
 	void restrict_to_residue( utility::vector1< core::Size > const & residues);
 	virtual void parse_tag( TagPtr );
+	virtual void parse_def( utility::lua::LuaObject const & def);
 
 
 private:

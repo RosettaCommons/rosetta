@@ -305,6 +305,10 @@ void DisallowIfNonnative::parse_tag( TagPtr tag )
 	restrict_to_residue( tag->getOption< core::Size >( "resnum", 0 ) );
 	disallow_aas( tag->getOption< std::string >( "disallow_aas" ) );
 }
+void DisallowIfNonnative::parse_def( utility::lua::LuaObject const & def) {
+	restrict_to_residue( def["resnum"] ? def["resnum"].to<core::Size>() : 0 );
+	disallow_aas( def["disallow_aas"].to<std::string>());
+}
 
 //BEGIN RotamerExplosion
 RotamerExplosion::RotamerExplosion(){}
