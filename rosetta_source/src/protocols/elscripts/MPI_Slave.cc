@@ -49,6 +49,7 @@ MPI_Slave::MPI_Slave( boost::mpi::communicator world, int master, boost::uint64_
 
 		lregister_MPI_Slave(lstate_);
 		luabind::globals(lstate_)["slave"] = this;
+		luabind::globals(lstate_)["rank"] = world_.rank();
 }
 
 void MPI_Slave::go(){

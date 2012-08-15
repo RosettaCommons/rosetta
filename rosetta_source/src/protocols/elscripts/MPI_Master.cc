@@ -80,6 +80,7 @@ MPI_Master::MPI_Master( boost::mpi::communicator world, std::vector<int> slaves,
 
 		lregister_MPI_Master(lstate_);
 		luabind::globals(lstate_)["master"] = this;
+		luabind::globals(lstate_)["rank"] = world_.rank();
 
 		// - 1 because we already instantiated the first traj in Master constructor
     for( int i = 0; i < num_trajectories_ - 1 ; i++ ) {
