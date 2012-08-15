@@ -27,5 +27,9 @@ template< typename T > class owning_ptr;
 } // namespace pointer
 } // namespace utility
 
+#ifdef USEBOOSTSERIALIZE
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/split_member.hpp>
+#endif
 
 #endif // INCLUDED_utility_pointer_owning_ptr_FWD_HH
