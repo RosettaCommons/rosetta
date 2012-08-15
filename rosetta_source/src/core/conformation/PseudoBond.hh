@@ -93,6 +93,17 @@ private:
 
 	Size nbonds_;
 
+#ifdef USEBOOSTSERIALIZE
+	friend class boost::serialization::access;
+
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+			ar & lr_conn_;
+			ar & ur_conn_;
+			ar & nbonds_;
+	}
+#endif
+
 };
 
 
@@ -124,6 +135,15 @@ public:
 private:
 
 	utility::vector1< PseudoBond > pseudo_bonds_;
+
+#ifdef USEBOOSTSERIALIZE
+	friend class boost::serialization::access;
+
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+			ar & pseudo_bonds_;
+	}
+#endif
 };
 
 
