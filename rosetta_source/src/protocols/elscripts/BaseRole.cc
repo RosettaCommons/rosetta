@@ -29,6 +29,7 @@
 #include <utility/Factory.hh>
 #include <protocols/inputter/InputterStream.hh>
 #include <protocols/inputter/Inputter.hh>
+#include <protocols/moves/Mover.hh>
 #include <protocols/outputter/Outputter.hh>
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/filters/FilterFactory.hh>
@@ -253,6 +254,7 @@ void BaseRole::instantiate_tasks() {
 }
 
 void BaseRole::instantiate_movers() {
+	using namespace utility;
 	using namespace utility::lua;
 	using namespace protocols::moves;
 
@@ -262,15 +264,20 @@ void BaseRole::instantiate_movers() {
   movers_.raw( luabind::globals(lstate_)["elscripts"]["movers"] );
 
 	LuaObject dmovers( luabind::globals(lstate_)["elscripts"]["dmovers"]);
-	//Factory<MMover> * mmoverfactory = Factory<MMover>::get_instance();
+	Factory<Mover> * moverfactory = Factory<Mover>::get_instance();
 	for (LuaIterator i=dmovers.begin(), end; i != end; ++i) {
-		TR << "Instantiating mover " << (*i)["class"].to<std::string>() << " named " << i.skey() << std::endl;
-		MoverOP mover( MoverFactory::get_instance()->newMover( (*i)["class"].to<std::string>() ) );
-		//MMoverSP mmover ( mmoverfactory->from_string( (*i)["class"].to<std::string>() ) ); 
-		mover->parse_def( (*i), scorefxns_, tasks_, mover_cache_ );
-    MoverSP tmpsp( mover.get() ); 
-    mover.relinquish_ownership();
-    luabind::globals(lstate_)["elscripts"]["movers"][ i.skey() ] = tmpsp;
+    TR << "Instantiating mover " << (*i)["class"].to<std::string>() << " named " << i.skey() << std::endl;
+    if( moverfactory->has_string( (*i)["class"].to<std::string>() ) ) {
+      MoverSP mover = moverfactory->from_string( (*i)["class"].to<std::string>() ); 
+      mover->parse_def( (*i), scorefxns_, tasks_, mover_cache_ );
+      luabind::globals(lstate_)["elscripts"]["movers"][ i.skey() ] = mover;
+    } else {
+      MoverOP mover( MoverFactory::get_instance()->newMover( (*i)["class"].to<std::string>() ) );
+      mover->parse_def( (*i), scorefxns_, tasks_, mover_cache_ );
+      MoverSP tmpsp( mover.get() ); 
+      mover.relinquish_ownership();
+      luabind::globals(lstate_)["elscripts"]["movers"][ i.skey() ] = tmpsp;
+    }
 	}
 	TR << "----------Finished Instantiating Movers----------" << std::endl;
 }
