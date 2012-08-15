@@ -28,7 +28,7 @@ boost::uint64_t WUQueue::serialized_size( WorkUnitSP wu ) {
   oa << wu;
   return s.str().length();
 #else
-  TR << "Memory usage tracked only if compiled against boost::serialize" << std::endl;
+	std::cerr << "Memory usage tracked only if compiled against boost::serialize" << std::endl;
   return 0;
 #endif
 }
