@@ -104,6 +104,8 @@ Master::Master( int num_trajectories, boost::uint64_t mem_limit, boost::uint64_t
 			luabind::globals(lstate_)["elscripts"]["wumade"][i] = luabind::newtable( lstate_ );
 			luabind::globals(lstate_)["elscripts"]["wufinished"][i] = luabind::newtable( lstate_ );
     }
+
+		luabind::globals(lstate_)["trajectories"] = trajectories_;
 }
 
 void Master::interpreter() {
