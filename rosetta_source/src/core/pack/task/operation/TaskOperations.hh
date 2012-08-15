@@ -221,6 +221,7 @@ public:
 	virtual
 	void
 	apply( pose::Pose const &, PackerTask & ) const;
+	virtual void parse_def( utility::lua::LuaObject const & def);
 
 };
 

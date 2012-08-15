@@ -434,6 +434,9 @@ IncludeCurrent::apply( pose::Pose const &, PackerTask & task ) const
 	task.or_include_current(true);
 }
 
+void
+IncludeCurrent::parse_def( utility::lua::LuaObject const & def) {}
+
 /// BEGIN ExtraRotamersGeneric
 
 ExtraRotamersGeneric::ExtraRotamersGeneric() :
