@@ -34,6 +34,8 @@
 #include <core/scoring/constraints/XYZ_Func.hh>
 #include <utility/vector1.hh>
 
+#include <boost/lexical_cast.hpp>
+
 
 namespace core {
 namespace scoring {
@@ -98,45 +100,70 @@ SequenceProfileConstraint::read_def(
 	FuncFactory const &
 )
 {
-	Size residue_index(0);
-	std::string profile_filename;
 
+	int version = 0;
 //	note: is >> "SequenceProfile" has already occured
-	is >> residue_index >> profile_filename;
-
-	TR(t_debug) << "reading: " << residue_index << " " << profile_filename << std::endl;
-	if ( residue_index < 1 || residue_index > pose.total_residue() ) {
-		std::cerr << "no such residue index " << residue_index << " in pose!)" << std::endl;
-		utility_exit();
-	}
-
-	seqpos_ = residue_index;
-
-	// figure out sequence profile filename
-	using namespace utility::file;
-	// if specified, verify file exists
-	if ( profile_filename != "none" ) {
-		if ( ! file_exists( profile_filename ) ) {
-			utility_exit_with_message( "no such file " + profile_filename );
+	is >> version;
+	if( version == -1 ) {
+		std::string tmp;
+		std::getline( is, tmp );
+		std::stringstream tmpss(tmp);
+		Size residue_index, aa_count;
+		tmpss >> residue_index >> aa_count;
+		utility::vector1<Real> aa_scores;
+		TR(t_debug) << "Loading seqprof constraint for resi " << residue_index << " with aa_count " << aa_count << std::endl;
+		for( int i = 1; i <= aa_count; i++ ) {
+			Real tmp;
+			tmpss >> tmp;
+			aa_scores.push_back( tmp );
 		}
-	// if filename not specified, load from commandline option -pssm only if sequence_profile_ is NULL
-	} else if ( !sequence_profile_ && option[ OptionKeys::in::file::pssm ].user() ) {
-	  profile_filename = option[ OptionKeys::in::file::pssm ]().front();
-		// ps. don't name your file "none"
-		if ( profile_filename == "none" ) {
-			utility_exit_with_message("\"none\" is not a valid value for -pssm in this context!");
+		if( ! sequence_profile_ )  {
+			SequenceProfileOP newseqprof( new SequenceProfile );
+			sequence_profile_ = newseqprof;
+			mapping_ = NULL;
 		}
-	}
+		seqpos_ = residue_index;
+		const_cast<SequenceProfile * >(sequence_profile_.get())->prof_row( aa_scores, residue_index );
+	} else {
+		Size residue_index(boost::lexical_cast<Size>(version));
+		std::string profile_filename;
 
-	// if filename is not "none" by this point, read it even if sequence_profile_ is not currently NULL
-	if ( profile_filename != "none" ) {
-		SequenceProfileOP newseqprof( new SequenceProfile );
-		newseqprof->read_from_checkpoint( FileName(profile_filename) );
-		sequence_profile_ = newseqprof;
-		mapping_ = NULL; // Reset mapping
-	}
+		is >> profile_filename;
 
-	// if sequence_profile_ is still NULL by this point, it is assumed that the user intended so
+		TR(t_debug) << "reading: " << residue_index << " " << profile_filename << std::endl;
+		if ( residue_index < 1 || residue_index > pose.total_residue() ) {
+			std::cerr << "no such residue index " << residue_index << " in pose!)" << std::endl;
+			utility_exit();
+		}
+
+		seqpos_ = residue_index;
+
+		// figure out sequence profile filename
+		using namespace utility::file;
+		// if specified, verify file exists
+		if ( profile_filename != "none" ) {
+			if ( ! file_exists( profile_filename ) ) {
+				utility_exit_with_message( "no such file " + profile_filename );
+			}
+			// if filename not specified, load from commandline option -pssm only if sequence_profile_ is NULL
+		} else if ( !sequence_profile_ && option[ OptionKeys::in::file::pssm ].user() ) {
+			profile_filename = option[ OptionKeys::in::file::pssm ]().front();
+			// ps. don't name your file "none"
+			if ( profile_filename == "none" ) {
+				utility_exit_with_message("\"none\" is not a valid value for -pssm in this context!");
+			}
+		}
+
+		// if filename is not "none" by this point, read it even if sequence_profile_ is not currently NULL
+		if ( profile_filename != "none" ) {
+			SequenceProfileOP newseqprof( new SequenceProfile );
+			newseqprof->read_from_checkpoint( FileName(profile_filename) );
+			sequence_profile_ = newseqprof;
+			mapping_ = NULL; // Reset mapping
+		}
+
+		// if sequence_profile_ is still NULL by this point, it is assumed that the user intended so
+	}
 
 } // read_def
 
@@ -148,17 +175,26 @@ SequenceProfileConstraint::show_def( std::ostream & os, Pose const & ) const
 
 void
 SequenceProfileConstraint::show( std::ostream & os ) const {
-	os << "SequenceProfileConstraint at seqpos " << seqpos_ << ": ";
-	if ( ! sequence_profile_ ) os << "(uninitialized sequence profile)";
-//	else {
-//		typedef utility::vector1<Real> RealVec;
-//		RealVec const & aa_scores( sequence_profile_->prof_row( seqpos_ ) );
-//		runtime_assert( aa_scores.size() >= num_canonical_aas );
-//		for ( Size aa(1); aa <= num_canonical_aas; ++aa ) {
-//			os << aa_scores[aa] << " ";
-//		}
-//	}
-	os << '\n';
+	if ( sequence_profile_ )  {
+		core::Size profile_pos( seqpos_ );
+		if( mapping_ ) {
+			profile_pos = (*mapping_)[seqpos_];
+			if( profile_pos == 0 ) return; // safety/relevance check
+		}
+		typedef utility::vector1<Real> RealVec;
+		//if( profile_pos == 1 ) 
+//			os << "SequenceProfile start" << std::endl;
+		
+		if( profile_pos <= sequence_profile_->size() ) {
+			RealVec const & aa_scores( sequence_profile_->prof_row( profile_pos ) );
+			os << "SequenceProfile -1 " << profile_pos << " " << aa_scores.size() << " ";
+			for ( Size aa(1); aa <= aa_scores.size(); ++aa ) {
+				os << aa_scores[aa] << " ";
+			}
+			if( profile_pos != sequence_profile_->size() )
+				os << '\n';
+		}
+	}
 }
 
 void
