@@ -120,7 +120,8 @@ sources = {
 	],
 	"protocols/wum2": [
 		"WorkUnit",
-		"WUQueue"
+		"WUQueue",
+		"WUQueueBuffer",
 	],
 }
 include_path = [
