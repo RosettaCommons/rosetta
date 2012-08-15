@@ -13,7 +13,7 @@
 #include <devel/init.hh>
 
 #include <protocols/elscripts/MPI_Master.hh>
-#include <protocols/elscripts/Slave.hh>
+#include <protocols/elscripts/MPI_Slave.hh>
 
 #include <utility/lua/LuaObject.hh>
 #include <utility/lua/LuaIterator.hh>
@@ -134,7 +134,7 @@ main( int argc, char * argv [] )
 			// i am the pool!
 			// but i dont have pool, so placeholder slave for now
 			// Pool role( world );
-			Slave role( world, 0 );
+			MPI_Slave role( world, 0 );
 			role.go();
 		} else if ( world.rank() <= num_masters - !pool ) {
 			// i am a master
@@ -148,7 +148,7 @@ main( int argc, char * argv [] )
 		} else {
 			// i am a slave
 			int master = ( (world.rank() - pool) % num_masters ) + pool;
-			Slave role( world, master );
+			MPI_Slave role( world, master );
 			role.go();
 		}
 

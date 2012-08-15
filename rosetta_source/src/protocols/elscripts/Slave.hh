@@ -8,15 +8,16 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/elscripts/Slave.hh
-/// @brief  the slave role of elscripts
+/// @brief  the non_mpi slave role of elscripts
+/// used by single node, shares fxns with MPI_Slave
 /// @author Ken Jung
 
 #ifndef INCLUDED_protocols_elscripts_Slave_hh
 #define INCLUDED_protocols_elscripts_Slave_hh
-#if defined (USEBOOSTMPI) && defined (USELUA)
-// this is useless without mpi and lua
+
+#ifdef USELUA
 #include <protocols/elscripts/Slave.fwd.hh>
-#include <protocols/wum2/MPI_EndPoint.hh>
+#include <protocols/wum2/EndPoint.hh>
 #include <protocols/elscripts/BaseRole.hh>
 
 namespace protocols {
@@ -28,7 +29,7 @@ class Slave : public BaseRole {
   public:
     // default memory limit is 2GB
     // default reserved mem size is 100MB as recommended by fpd
-    Slave( boost::mpi::communicator world, int master, boost::uint64_t mem_limit=2147483648, boost::uint64_t reserved_mem=104857600, boost::uint64_t reserved_mem_multiplier=10 );
+    Slave( int master = 1, boost::uint64_t mem_limit=2147483648, boost::uint64_t reserved_mem=104857600, boost::uint64_t reserved_mem_multiplier=10 );
     ~Slave(){}
     void go();
 
@@ -44,13 +45,12 @@ class Slave : public BaseRole {
       }
     }
 
-  private: 
+  protected: 
     boost::uint64_t current_mem() {
       return master_comm_->current_mem() + mover_cache_mem();
     }
 
-  private:
-	  boost::mpi::communicator world_;
+  protected:
     protocols::wum2::EndPointSP master_comm_;
 
     int master_;

@@ -19,6 +19,7 @@ sources = {
 		"BaseRole",
 		"Master",
 		"MPI_Master",
+		"MPI_Slave",
 		"Slave",
     "util",
   ],

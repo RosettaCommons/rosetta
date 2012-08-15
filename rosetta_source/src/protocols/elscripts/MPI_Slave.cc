@@ -7,12 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/elscripts/Slave.cc
+/// @file   protocols/elscripts/MPI_Slave.cc
 /// @brief  the slave role of elscripts
 /// @author Ken Jung
 
-#ifdef USELUA
-#include <protocols/elscripts/Slave.hh>
+#if defined (USEBOOSTMPI) && defined (USELUA)
+// this is useless without mpi
+#include <protocols/elscripts/MPI_Slave.hh>
 
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
@@ -24,30 +25,30 @@
 namespace protocols {
 namespace elscripts {
 
-void lregister_Slave( lua_State * lstate ) {
-	lregister_BaseRole( lstate );
+void lregister_MPI_Slave( lua_State * lstate ) {
+	lregister_Slave( lstate );
 	luabind::module(lstate, "protocols")
 	[
 		luabind::namespace_("elscripts")
 		[
-			luabind::class_<Slave, BaseRole>("Slave")
+			luabind::class_<MPI_Slave, Slave>("MPI_Slave")
 		]
 	];
 }
 
-static basic::Tracer TR("protocols.elscripts.Slave");
+static basic::Tracer TR("protocols.elscripts.MPI_Slave");
 
-Slave::Slave( int master, boost::uint64_t mem_limit, boost::uint64_t reserved_mem, boost::uint64_t reserved_mem_multiplier) :
-	master_(master),
-	BaseRole( mem_limit, reserved_mem, reserved_mem_multiplier) {
+MPI_Slave::MPI_Slave( boost::mpi::communicator world, int master, boost::uint64_t mem_limit, boost::uint64_t reserved_mem, boost::uint64_t reserved_mem_multiplier) :
+	world_(world),
+	Slave( master, mem_limit, reserved_mem, reserved_mem_multiplier) {
 
 		// endpoint uses this function to get role-wide memory usage
-    boost::function< boost::uint64_t ()> ref_available_mem = boost::bind( &protocols::elscripts::Slave::available_mem, this );
+    boost::function< boost::uint64_t ()> ref_available_mem = boost::bind( &protocols::elscripts::MPI_Slave::available_mem, this );
 
-    master_comm_ = protocols::wum2::EndPointSP( new protocols::wum2::EndPoint( ref_available_mem ) );
+    master_comm_ = protocols::wum2::EndPointSP( new protocols::wum2::MPI_EndPoint( world, ref_available_mem ) );
 
 		lua_init();
-		lregister_Slave(lstate_);
+		lregister_MPI_Slave(lstate_);
 		luabind::globals(lstate_)["slave"] = this;
 
 		register_calculators();
@@ -58,11 +59,31 @@ Slave::Slave( int master, boost::uint64_t mem_limit, boost::uint64_t reserved_me
 		instantiate_output();
 }
 
-void Slave::go(){
+void MPI_Slave::go(){
 	using namespace utility::lua;
 
+	// create functors to call back functions for automated endpoint processing
+  boost::function<void ( protocols::wum2::StatusResponse, int )> ref_listen_wu_sendrecv = boost::bind(  &protocols::wum2::EndPoint::listen_wu_sendrecv, master_comm_, _1, _2);
+
+	// entering main loop
+  while( 1 ) {
+    master_comm_->check_and_act_clearcommand();
+    master_comm_->check_and_act_status_request( ref_listen_wu_sendrecv );
+
+    // check if slave doesn't have enough free memory to run WU
+    // (because wu will generate objects that take memory)
+    while( mem_limit_ - current_mem() < 2 * reserved_mem_ ) {
+      // can't run another WU, otherwise we have to throw away WU from inbuf
+      // and we should guarantee all WU sent to slave are run
+      
+      // only way to free mem is to get rid of outbound stuff
+      master_comm_->check_and_act_status_request( ref_listen_wu_sendrecv );
+      master_comm_->cleanup_reqs();
+
+      // hopefully we rarely get to here
+    }
+
     // run the first wu in the queue
-	if( ! master_comm_->inq().empty() ) {
     protocols::wum2::WorkUnitSP wu = master_comm_->inq().pop_front(); 
 		// try dynamic casts to WorkUnit_elscriptsState
 		if( wu ) {
@@ -86,7 +107,11 @@ void Slave::go(){
 				wu->run();
 			}
 		}
-	}
+
+    // moves inbuf to inq
+    // cleans up outbuf
+    master_comm_->cleanup_reqs();
+  }
 }
 
 
