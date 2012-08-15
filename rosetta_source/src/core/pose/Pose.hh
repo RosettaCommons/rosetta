@@ -36,7 +36,6 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Package headers
-#include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/ObserverCache.fwd.hh>
 #include <core/pose/metrics/PoseMetricContainer.fwd.hh>
 
@@ -45,7 +44,6 @@
 #include <core/chemical/AA.hh>
 
 #include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/signals/XYZEvent.fwd.hh>
 
 // AUTO-REMOVED #include <core/id/AtomID.hh>
@@ -55,24 +53,39 @@
 #include <core/id/TorsionID.fwd.hh>
 
 #include <core/kinematics/AtomTree.fwd.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
 
+#ifdef USEBOOSTSERIALIZE
+#include <core/pose/PDBInfo.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.fwd.hh>
-#include <core/scoring/constraints/Constraint.fwd.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/Constraints.fwd.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-
+#include <core/scoring/constraints/ConstraintIO.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableStringMap.hh>
 #include <basic/datacache/CacheableStringFloatMap.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/MetricValue.fwd.hh>
 #include <devel/matdes/STMStoredTask.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/scoring/symmetry/SymmetricEnergies.hh>
+#else
+#include <core/pose/PDBInfo.fwd.hh>
+#include <core/conformation/Conformation.fwd.hh>
+#include <core/scoring/Energies.fwd.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
+#include <basic/datacache/BasicDataCache.fwd.hh>
+#endif
+
+
+#include <core/scoring/ScoreFunction.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.fwd.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Constraints.fwd.hh>
+
+#include <basic/MetricValue.fwd.hh>
 
 // //#include "cst_set.h"
 // #include "jump_classes.h"
@@ -113,8 +126,6 @@
 	#include <core/id/AtomID.hh>
 #endif
 
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/scoring/symmetry/SymmetricEnergies.hh>
 
 
 // C++ Headers
