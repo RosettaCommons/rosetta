@@ -48,7 +48,7 @@ class Master : public BaseRole {
       }
     }
 
-		void make_wu( std::string const & wuname, core::pose::Pose * p);
+		void make_wu( std::string const & wuname, core::pose::PoseSP p);
 		void make_wu_until_limit( std::string const & wuname, int num);
 		void end_traj();
 

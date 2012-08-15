@@ -175,6 +175,11 @@ void MPI_Master::go(){
 				lua_pop(lstate_, 1);
 				std::exit(9);
 			}
+			luabind::globals(lstate_)["traj_idx"] = luabind::nil;
+			luabind::globals(lstate_)["wufinished"] = luabind::nil;
+			luabind::globals(lstate_)["wumade"] = luabind::nil;
+			luabind::globals(lstate_)["pipemap"] = luabind::nil;
+			lua_gc(lstate_, LUA_GCCOLLECT, 0);
     }
 
     // process pool results

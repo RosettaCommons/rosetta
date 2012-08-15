@@ -176,6 +176,11 @@ void Master::go(){
 				lua_pop(lstate_, 1);
 				std::exit(9);
 			}
+			luabind::globals(lstate_)["traj_idx"] = luabind::nil;
+			luabind::globals(lstate_)["wufinished"] = luabind::nil;
+			luabind::globals(lstate_)["wumade"] = luabind::nil;
+			luabind::globals(lstate_)["pipemap"] = luabind::nil;
+			lua_gc(lstate_, LUA_GCCOLLECT, 0);
 		}
 	}
 
@@ -184,7 +189,7 @@ void Master::go(){
 // this uses the "global" traj_idx_
 // traj_idx is set before this fxn is called
 // this gets rid of traj_idx in lua script
-void Master::make_wu( std::string const & wuname, core::pose::Pose * p) {
+void Master::make_wu( std::string const & wuname, core::pose::PoseSP p) {
 	using namespace core::io::serialization;
 	PipeMapSP pmap( new PipeMap() );
 	PipeSP pipe ( new Pipe() ); 

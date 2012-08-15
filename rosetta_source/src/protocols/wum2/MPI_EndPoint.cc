@@ -226,9 +226,9 @@ void MPI_EndPoint::check_and_act_clearcommand() {
   // 2) "security issue" anyone can send a clear command to a node -> who cares about security
   if ( clearcommand_channel_.get<0>().test().is_initialized() ) {
     inq_.clear();
+		// refresh clearcommand channel
+		clearcommand_channel_.get<0>() = world_.irecv( mpi::any_source, CLEARCOMMAND, clearcommand_channel_.get<1>() );
   }
-  // refresh clearcommand channel
-  clearcommand_channel_.get<0>() = world_.irecv( mpi::any_source, CLEARCOMMAND, clearcommand_channel_.get<1>() );
 }
 
 } // wum2

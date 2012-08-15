@@ -93,6 +93,8 @@ void MPI_Slave::go(){
 					TR << lua_tostring(lstate_, -1) << std::endl;
 					std::exit(9);
 				}
+				luabind::globals(lstate_)["pipemap"] = luabind::nil;
+				lua_gc(lstate_, LUA_GCCOLLECT, 0);
 				// shallow copy! works fine for my purposes
 				protocols::wum2::WorkUnitSP result_wu( new protocols::wum2::WorkUnit_ElScripts( *castattempt ) );
 				master_comm_->outq().push_back( result_wu );
