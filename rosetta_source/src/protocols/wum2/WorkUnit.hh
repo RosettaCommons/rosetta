@@ -23,6 +23,10 @@
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
+#ifdef USEBOOSTSERIALIZE
+#include <boost/serialization/base_object.hpp>
+#endif
+
 namespace protocols {
 namespace wum2 {
 
@@ -71,6 +75,21 @@ class WorkUnit {
 		// cache is not seralized nor transferred with WU
 		void link_cache( protocols::moves::MoverCacheSP cache) { cache_ = cache; }
 
+private:
+#ifdef USEBOOSTSERIALIZE
+		friend class boost::serialization::access;
+
+		template<class Archive>
+		void serialize(Archive & ar, const unsigned int version) {
+				ar & prioritize_;
+				ar & id_;
+				ar & master_;
+				ar & trajectory_idx_;
+				ar & unixtime_creation_;
+				ar & unixtime_start_;
+				ar & unixtime_stop_;
+		}
+#endif
 
 protected:
 
@@ -115,6 +134,16 @@ class WorkUnit_Wait: public WorkUnit {
 		long wait_time() { return wait_time_; }
 
 private:
+#ifdef USEBOOSTSERIALIZE
+		friend class boost::serialization::access;
+
+		template<class Archive>
+		void serialize(Archive & ar, const unsigned int version) {
+				ar & boost::serialization::base_object<WorkUnit>(*this);
+				ar & wait_time_;
+		}
+#endif
+
 		// in seconds
 		long wait_time_;
 };
@@ -154,6 +183,17 @@ class WorkUnit_ElScripts : public WorkUnit {
 		std::string name() { return name_; }
 		void name( std::string name ) { name_ = name; }
 
+#ifdef USEBOOSTSERIALIZE
+		friend class boost::serialization::access;
+
+		template<class Archive>
+		void serialize(Archive & ar, const unsigned int version) {
+				ar & boost::serialization::base_object<WorkUnit>(*this);
+				ar & pipemap_;
+				ar & state_;
+				ar & name_;
+		}
+#endif
 	protected:
 
 		// makes sense to put name here instead of at base class, as this WU is used as the result WU

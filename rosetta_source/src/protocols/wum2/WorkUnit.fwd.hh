@@ -32,5 +32,11 @@ typedef boost::shared_ptr< WorkUnit_ElScripts > WorkUnit_ElScriptsSP;
 } //namespace wum2
 } //namespace protocols
 
+#ifdef USEBOOSTSERIALIZE
+#include <boost/serialization/shared_ptr.hpp>
+#include <boost/serialization/assume_abstract.hpp>
+BOOST_SERIALIZATION_ASSUME_ABSTRACT(protocols::wum2::WorkUnit)
+#endif
+
 #endif
 
