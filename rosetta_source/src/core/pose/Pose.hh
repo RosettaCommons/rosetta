@@ -71,6 +71,7 @@
 #include <basic/datacache/CacheableStringFloatMap.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/MetricValue.fwd.hh>
+#include <devel/matdes/STMStoredTask.hh>
 
 // //#include "cst_set.h"
 // #include "jump_classes.h"
@@ -1509,6 +1510,13 @@ private:
 						( data_cache_->get_raw_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA) );
 				ar & *float_map;
 			}
+			bool has_tasks_map = data_cache_->has( CacheableDataType::STM_STORED_TASKS );
+			ar & has_tasks_map;
+			if( has_tasks_map ) {
+				devel::matdes::STMStoredTask *tasks_map = dynamic_cast< devel::matdes::STMStoredTask * >
+						( data_cache_->get_raw_ptr(CacheableDataType::STM_STORED_TASKS) );
+				ar & *tasks_map;
+			}
 	}
 
 	template<class Archive>
@@ -1547,6 +1555,13 @@ private:
 				CacheableStringFloatMap *float_map = dynamic_cast< CacheableStringFloatMap* >
 						( data_cache_->get_raw_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA) );
 				ar & *float_map;
+			}
+			bool has_tasks_map = data_cache_->has( CacheableDataType::STM_STORED_TASKS );
+			ar & has_tasks_map;
+			if( has_tasks_map ) {
+				devel::matdes::STMStoredTask *tasks_map = dynamic_cast< devel::matdes::STMStoredTask * >
+						( data_cache_->get_raw_ptr(CacheableDataType::STM_STORED_TASKS) );
+				ar & *tasks_map;
 			}
 	}
 	BOOST_SERIALIZATION_SPLIT_MEMBER()
