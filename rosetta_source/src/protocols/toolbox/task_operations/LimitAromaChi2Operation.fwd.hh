@@ -36,6 +36,10 @@ typedef utility::pointer::owning_ptr< LimitAromaChi2Operation const > LimitAroma
 }
 }
 
+#ifdef USEBOOSTSERIALIZE
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/base_object.hpp>
+#endif
 
 
 #endif
