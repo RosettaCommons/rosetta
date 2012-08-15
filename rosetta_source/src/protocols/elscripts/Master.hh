@@ -48,9 +48,9 @@ class Master : public BaseRole {
       }
     }
 
-		void make_wu( std::string const & wuname, int traj_idx, core::pose::Pose * p);
+		void make_wu( std::string const & wuname, core::pose::Pose * p);
 		void make_wu_until_limit( std::string const & wuname, int num);
-		void end_traj( int traj_idx );
+		void end_traj();
 
 		void interpreter();
 
@@ -87,6 +87,10 @@ class Master : public BaseRole {
 		int num_trajectories_finished_;
 
 		int mpicounter_; // simple counter to avoid calling into lua too often
+
+		int traj_idx_; // used as a global
+		// traj_idx is set before fxns make_wu are called
+		// this gets rid of traj_idx in lua script
 
 		boost::posix_time::ptime last_generate_initial_wu_time_;
 };

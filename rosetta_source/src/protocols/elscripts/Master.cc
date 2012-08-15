@@ -147,6 +147,7 @@ void Master::go(){
 				wufinished_[ castattempt->name() ] = tmp;
 			}
 			wufinished_[ castattempt->name() ][ castattempt->trajectory_idx() ]++;
+			traj_idx_ = castattempt->trajectory_idx();
 			// export new variables to lua for use in the lua fxn
 			luabind::globals(lstate_)["traj_idx"] = castattempt->trajectory_idx();
 			luabind::globals(lstate_)["pipemap"] = castattempt->pipemap().lock();
@@ -166,7 +167,10 @@ void Master::go(){
 
 }
 
-void Master::make_wu( std::string const & wuname, int traj_idx, core::pose::Pose * p) {
+// this uses the "global" traj_idx_
+// traj_idx is set before this fxn is called
+// this gets rid of traj_idx in lua script
+void Master::make_wu( std::string const & wuname, core::pose::Pose * p) {
 	using namespace core::io::serialization;
 	PipeMapSP pmap( new PipeMap() );
 	PipeSP pipe ( new Pipe() ); 
@@ -175,7 +179,7 @@ void Master::make_wu( std::string const & wuname, int traj_idx, core::pose::Pose
 	protocols::moves::SerializableStateSP state( new protocols::moves::SerializableState() );
 
 	protocols::wum2::WorkUnitSP tmp (new protocols::wum2::WorkUnit_ElScripts(
-				1, traj_idx, pmap, state, wuname
+				1, traj_idx_, pmap, state, wuname
 				));
 
 	slave_comm_->outq().push_back( tmp );
@@ -186,7 +190,7 @@ void Master::make_wu( std::string const & wuname, int traj_idx, core::pose::Pose
 		}
 		wumade_[wuname] = tmp;
 	}
-	wumade_[wuname][traj_idx]++;
+	wumade_[wuname][traj_idx_]++;
 }
 
 void Master::make_wu_until_limit( std::string const & wuname, int num ) {
@@ -220,8 +224,8 @@ void Master::make_wu_until_limit( std::string const & wuname, int num ) {
 	}
 }
 
-void Master::end_traj( int traj_idx ) {
-	(*trajectories_)[traj_idx].reset();
+void Master::end_traj() {
+	(*trajectories_)[traj_idx_].reset();
 	num_trajectories_finished_++;
 	TR << "Finished " << num_trajectories_finished_ << " trajectories." << std::endl;
 }
