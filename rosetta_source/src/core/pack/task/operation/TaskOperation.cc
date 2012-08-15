@@ -31,6 +31,24 @@ namespace pack {
 namespace task {
 namespace operation {
 
+#ifdef USELUA
+void lregister_TaskOperation( lua_State * lstate ) {
+	luabind::module(lstate, "core")
+	[
+		luabind::namespace_("pack")
+		[
+			luabind::namespace_("task")
+			[
+				luabind::namespace_("operation")
+				[
+					luabind::class_<TaskOperation>("TaskOperation")
+				]
+			]
+		]
+	];
+}
+#endif
+
 static basic::Tracer TR("core.pack.task.operation.TaskOperation");
 
 TaskOperation::~TaskOperation() {}

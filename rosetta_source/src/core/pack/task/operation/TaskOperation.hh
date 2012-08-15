@@ -33,11 +33,17 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
+#include <utility/lua/LuaObject.hh>
+#include <utility/lua/LuaIterator.hh>
 
 namespace core {
 namespace pack {
 namespace task {
 namespace operation {
+
+#ifdef USELUA
+void lregister_TaskOperation( lua_State * lstate );
+#endif
 
 class TaskOperation : public utility::pointer::ReferenceCount
 {
@@ -58,6 +64,9 @@ public:
 
 	/// @brief Used to parse an xml-like tag to load parameters and properties.
 	virtual void parse_tag( TagPtr );
+#ifdef USELUA
+	virtual void lregister( lua_State * lstate){ lregister_TaskOperation( lstate ); }
+#endif
 };
 
 // do not add any derived classes to this file, unless they are generalized abstract base classes and do not actually 'do any work'
