@@ -89,6 +89,25 @@ InterfaceSasaFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMa
 		interface_sasa_filter_tracer<<"Only reporting polar sasa\n";
 	interface_sasa_filter_tracer.flush();
 }
+void InterfaceSasaFilter::parse_def( utility::lua::LuaObject const & def,
+				utility::lua::LuaObject const & score_fxns,
+				utility::lua::LuaObject const & tasks ) {
+	lower_threshold_ = def["threshold"] ? def["threshold"].to<core::Real>() : 800;
+	upper_threshold_ = def["upper_threshold"] ? def["upper_threshold"].to<core::Real>() : 1000000;
+	jump( def["jump"] ? def["jump"].to<core::Size>() : 1 );
+	hydrophobic_ = def["hydrophobic"] ? def["hydrophobic"].to<bool>() : false;
+	polar_ = def["polar"] ? def["polar"].to<bool>() : false;
+	runtime_assert( !hydrophobic_ || !polar_ );
+	if( jump() != 1 && ( polar_ || hydrophobic_ ) )
+		utility_exit_with_message( "ERROR: presently, only total sasa is supported across a jump other than 1. Remove polar and hydrophobic flags and try again." );
+
+	interface_sasa_filter_tracer<<"SasaFilter with lower threshold of "<<lower_threshold_<<" Ang^2 and jump "<<jump()<<'\n';
+	if( hydrophobic_ )
+		interface_sasa_filter_tracer<<"Only reporting hydrophobic sasa\n";
+	if( polar_ )
+		interface_sasa_filter_tracer<<"Only reporting polar sasa\n";
+	interface_sasa_filter_tracer.flush();
+}
 
 bool
 InterfaceSasaFilter::apply( core::pose::Pose const & pose ) const {
