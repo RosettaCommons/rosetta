@@ -59,7 +59,7 @@
 #include <core/kinematics/Jump.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
 
-#include <core/scoring/Energies.fwd.hh>
+#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
@@ -1479,6 +1479,7 @@ private:
 		using namespace core::pose::datacache;
 			ar & conformation_;
 			ar & pdb_info_;
+			ar & * energies_;
 
 			// datacache
 			// only stringmap,floatmap for now
@@ -1504,6 +1505,7 @@ private:
 		using namespace core::pose::datacache;
 			ar & conformation_;
 			ar & pdb_info_;
+			ar & * energies_;
 
 			bool has_string_map;
 			ar & has_string_map;
