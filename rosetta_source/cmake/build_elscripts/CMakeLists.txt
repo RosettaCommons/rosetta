@@ -5,6 +5,7 @@ INCLUDE(../build/external.static.cmake)
 
 ADD_DEFINITIONS(-DNDEBUG)
 ADD_DEFINITIONS(-DUSEBOOSTSERIALIZE)
+ADD_DEFINITIONS(-DUSEMPI) # only reason i enable this is for mpi rank on the tracer :)
 ADD_DEFINITIONS(-DUSEBOOSTMPI)
 ADD_DEFINITIONS(-DUSELUA)
 
@@ -67,15 +68,16 @@ SET(LINK_STATIC_LIBS
     ${CMAKE_CURRENT_SOURCE_DIR}/libcppdb-static.a  
     -lz
     -lboost_serialization
+    -lboost_mpi
     -lluabind
     -llua
     -ldl #libdl needed by liblua
     ) 
 ### libc must be linked dynamically if using static ompi libs
-## SET(LINK_DYNAMIC_LIBS "-Wl,-Bdynamic -l c")
+SET(LINK_DYNAMIC_LIBS "-Wl,-Bdynamic -l c")
 
 # trailing static needed so mpicc actually uses static ompi libs
-#SET(TRAILING_STATIC "-Wl,-Bstatic")
+SET(TRAILING_STATIC "-Wl,-Bstatic")
 
 ### Put all the libraries together
 ### ORDER IS IMPORTANT, do not change unless you understand -Wl,-Bstatic
@@ -83,7 +85,7 @@ SET(LINK_ALL_LIBS ${LINK_STATIC_LIBS} ${LINK_DYNAMIC_LIBS} ${TRAILING_STATIC})
 
 ### Change dynamic linker from default /lib/ld64.so.1 to /lib64/ld-2.5.so,
 ### since that file doesn't exist and path is hardcoded
-##SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--dynamic-linker /lib64/ld-2.5.so")
+SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--dynamic-linker /lib64/ld-2.5.so")
 
 
 
