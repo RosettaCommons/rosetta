@@ -19,6 +19,7 @@
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
@@ -89,13 +90,16 @@ main( int argc, char * argv [] )
 	using namespace core::pose;
 	luabind::open(lstate_);
 	core::pose::lregister_Pose(lstate_);
+	core::pose::lregister_util(lstate_);
 	core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 	PoseSP pose_sp(new Pose());
 	core::import_pose::pose_from_pdb( *pose_sp, *residue_set, option[ m::file]().name() );
 	luabind::globals(lstate_)["p"] = pose_sp;
 	somelua =
 		"print('Printing pose info from lua');"
-		"print(p:total_residue()); ";
+		"print(p:total_residue());"
+		"core.pose.setExtraScore(p, 'test', 10.0);"
+		"print(core.pose.getExtraScore(p, 'test'));";
 	err = luaL_dostring ( lstate_, somelua.c_str() );
 	if( err == 1) {
 		trmain << "Lua interpreting of string failed. Error is:" << std::endl;
