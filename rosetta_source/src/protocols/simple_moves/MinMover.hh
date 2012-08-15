@@ -1,7 +1,5 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
-//
-// (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
@@ -102,6 +100,16 @@ public:
 		Pose const & );
 
 	void parse_chi_and_bb( TagPtr const );
+
+  virtual void parse_def_opts( utility::lua::LuaObject const & def,
+		utility::lua::LuaObject const & score_fxns,
+		utility::lua::LuaObject const & tasks,
+		protocols::moves::MoverCacheSP cache );
+
+  virtual void parse_def( utility::lua::LuaObject const & def,
+		utility::lua::LuaObject const & score_fxns,
+		utility::lua::LuaObject const & tasks,
+		protocols::moves::MoverCacheSP cache );
 
 	/// @brief allow non-const access to the internal minimizer options object
 	virtual MinimizerOptionsOP min_options();
