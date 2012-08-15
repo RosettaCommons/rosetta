@@ -26,6 +26,7 @@
 // AUTO-REMOVED #include <utility/tag/Tag.hh>  // REQUIRED FOR WINDOWS
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/jobdist/Jobs.hh>
+#include <utility/string_util.hh>
 
 // tracer
 #include <basic/Tracer.hh>
