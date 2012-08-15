@@ -77,6 +77,19 @@ class SymSlideInfo {
 	std::vector<core::Size> get_slide_order() const;
 
 	private:
+
+#ifdef USEBOOSTSERIALIZE
+	friend class boost::serialization::access;
+
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version){
+		ar & slide_type_;
+		ar & score_criteria_;
+		ar & SlideCriteriaVal_;
+		ar & slide_order_;
+	}
+#endif
+
 		SlideType slide_type_;
 		SlideCriteriaType score_criteria_;
 		std::string SlideCriteriaVal_;
