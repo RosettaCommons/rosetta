@@ -15,6 +15,7 @@
 
 
 #include <utility/Factory.hh>
+#include <protocols/simple_moves/O2M_MutateMover.hh>
 
 namespace protocols {
 
@@ -23,7 +24,7 @@ using moves::Mover;
 
 template<> utility::Factory<Mover>::FactorySCP utility::Factory<Mover>::factory_(0);
 
-//static FactoryRegister< Mover, simple_moves::M_MutationMover > reg_M_MutationMover;
+static FactoryRegister< Mover, simple_moves::O2M_MutateMover > reg_O2M_MutateMover;
 
 } //namespace protocols
 

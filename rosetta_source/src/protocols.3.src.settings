@@ -302,6 +302,7 @@ sources = {
 		"ReturnSidechainMover",
 		"RotamerTrialsMinMover",
 		"RotamerTrialsMover",
+		"O2M_MutateMover",
 		"SaneMinMover",
 		"ScoreMover",
 		"SequenceProfileMover",
