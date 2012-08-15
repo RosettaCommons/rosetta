@@ -39,8 +39,8 @@ typedef boost::shared_ptr< Pipe > PipeSP;
 void lregister_Pipe( lua_State * lstate );
 #endif
 
-int size( Pipe * p );
-core::pose::PoseSP at( Pipe * p, int idx );
+int size( PipeSP p );
+core::pose::PoseSP at( PipeSP p, int idx );
 
 } //serialization
 } //io

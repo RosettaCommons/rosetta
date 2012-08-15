@@ -22,11 +22,11 @@ namespace core {
 namespace io {
 namespace serialization {
 // this is a crutch function, luabind needs a wrapper to a stl to return a stl itr
-Pipe & each( Pipe * p ) {
+Pipe & each( PipeSP p ) {
 	return *p;
 }
 
-core::pose::PoseSP at( Pipe * p, int idx ){
+core::pose::PoseSP at( PipeSP p, int idx ){
 	return (*p)[idx];
 }
 #ifdef USELUA
@@ -38,8 +38,8 @@ void lregister_Pipe( lua_State * lstate ) {
 			luabind::namespace_("serialization")
 			[
 				luabind::class_<Pipe>("Pipe")
-					.def("each", (Pipe & (*) (Pipe *) ) &each, luabind::return_stl_iterator)
-					.def("at", (core::pose::PoseSP (*) (Pipe *, int idx) ) &at )
+					.def("each", (Pipe & (*) (PipeSP) ) &each, luabind::return_stl_iterator)
+					.def("at", (core::pose::PoseSP (*) (PipeSP, int idx) ) &at )
 					.def("size", &Pipe::size)
 			]
 		]

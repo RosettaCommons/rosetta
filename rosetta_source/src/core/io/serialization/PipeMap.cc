@@ -27,25 +27,26 @@ void lregister_PipeMap( lua_State * lstate ) {
 			[
 				luabind::class_<PipeMap, PipeMapSP>("PipeMap")
 					.def(luabind::constructor<>())
-					.def("at", (PipeSP (*) ( PipeMap *, std::string const & )) &at)
+					.def("at", (PipeSP (*) ( PipeMapSP, std::string const & )) &at)
 					.def("insert", &insert)
-					.def("clone", (PipeMapSP (*) ( PipeMap *)) &clone)
+					.def("clone", (PipeMapSP (*) ( PipeMapSP)) &clone),
+				luabind::def("inputPipeMap", &inputPipeMap )
 			]
 		]
 	];
 }
 
-void insert( PipeMap * p, std::string const & pipename, core::pose::Pose * pose ) {
+void insert( PipeMapSP p, std::string const & pipename, core::pose::PoseSP pose ) {
 	if (p->find( pipename ) == p->end() )
 		(*p)[ pipename ] = PipeSP( new Pipe );
-	(*p)[pipename]->push_back( core::pose::PoseSP(pose) );
+	(*p)[pipename]->push_back( pose );
 }
 
-PipeSP at( PipeMap * p, std::string const & pipename ) {
+PipeSP at( PipeMapSP p, std::string const & pipename ) {
 	return (*p)[pipename];
 }
 // this is a deep copy, every PoseSP is dereferenced and copied
-PipeMapSP clone( PipeMap * p ) {
+PipeMapSP clone( PipeMapSP p ) {
 	PipeMapSP newpipemap = PipeMapSP( new PipeMap);
 	for( PipeMap::iterator itr = p->begin(); itr != p->end(); itr ++ ) {
 		(*newpipemap)[itr->first] = PipeSP( new Pipe );
@@ -54,6 +55,13 @@ PipeMapSP clone( PipeMap * p ) {
 		}
 	}
 	return newpipemap;
+}
+
+PipeMapSP inputPipeMap( core::pose::PoseSP p ) {
+	PipeMapSP pmap = PipeMapSP( new PipeMap);
+	(*pmap)["input"] = PipeSP( new Pipe );
+	(*pmap)["input"]->push_back(p);
+	return pmap;
 }
 #endif
 } //serialization
