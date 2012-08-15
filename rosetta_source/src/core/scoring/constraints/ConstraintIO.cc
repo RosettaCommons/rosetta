@@ -464,6 +464,7 @@ ConstraintSetOP cset,
 pose::Pose const& pose
 ) {
 	std::string line;
+	std::streampos original_pos = data.tellg();
 	getline(data,line); // header line
 	std::string section = get_section_name ( line );
 	std::string pre_read;
@@ -480,6 +481,7 @@ pose::Pose const& pose
 		} else if ( section == "NO_SECTION" ) {
 			tr.Info << " no section header [ xxx ] found, try reading line-based format... DON'T MIX"
 							<< std::endl;
+			data.seekg( original_pos );
 			return read_constraints_new( data, cset, pose );
 		} else { //section header, but unknown name
 			utility_exit_with_message(
