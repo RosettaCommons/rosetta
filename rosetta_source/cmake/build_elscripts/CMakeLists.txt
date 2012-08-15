@@ -93,6 +93,7 @@ SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--dynamic-linker /lib64/ld-2.5.so")
 SET(BINARIES
     ../../src/apps/pilot/kenjung/pose_serialize_test.cc
     ../../src/apps/pilot/kenjung/lua_test.cc
+    ../../src/apps/pilot/kenjung/elscripts.cc
 )
 
 FOREACH(BINARY ${BINARIES})
