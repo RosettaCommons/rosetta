@@ -66,7 +66,9 @@
 // AUTO-REMOVED #include <core/scoring/constraints/Constraints.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
-#include <basic/datacache/BasicDataCache.fwd.hh>
+#include <basic/datacache/BasicDataCache.hh>
+#include <basic/datacache/CacheableStringMap.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/MetricValue.fwd.hh>
 
 // //#include "cst_set.h"
@@ -1472,14 +1474,37 @@ private:
 	// convert vector of poses to vector of silent structures
 	template<class Archive>
 	void save(Archive & ar, const unsigned int version) const {
+		using namespace basic::datacache;
+		using namespace core::pose::datacache;
 			ar & conformation_;
 			ar & pdb_info_;
+
+			// datacache
+			// only stringmap for now
+			bool has_string_map = data_cache_->has( CacheableDataType::STRING_MAP );
+			ar & has_string_map;
+			if( has_string_map ) {
+				CacheableStringMap *string_map = dynamic_cast< CacheableStringMap* >
+						( data_cache_->get_raw_ptr(CacheableDataType::STRING_MAP) );
+				ar & *string_map;
+			}
 	}
 
 	template<class Archive>
 	void load(Archive & ar, const unsigned int version) {
+		using namespace basic::datacache;
+		using namespace core::pose::datacache;
 			ar & conformation_;
 			ar & pdb_info_;
+
+			bool has_string_map;
+			ar & has_string_map;
+			if( has_string_map) {
+				data_cache_->set( CacheableDataType::STRING_MAP, new CacheableStringMap() );
+				CacheableStringMap *string_map = dynamic_cast< CacheableStringMap* >
+						( data_cache_->get_raw_ptr(CacheableDataType::STRING_MAP) );
+				ar & *string_map;
+			}
 	}
 	BOOST_SERIALIZATION_SPLIT_MEMBER()
 #endif
