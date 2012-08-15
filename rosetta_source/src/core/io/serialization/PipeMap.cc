@@ -12,10 +12,50 @@
 /// @author Ken Jung
 
 #include <core/io/serialization/PipeMap.fwd.hh>
+#include <core/pose/Pose.hh>
 
 namespace core {
 namespace io {
 namespace serialization {
+#ifdef USELUA
+void lregister_PipeMap( lua_State * lstate ) {
+	luabind::module(lstate, "core")
+	[
+		luabind::namespace_("io")
+		[
+			luabind::namespace_("serialization")
+			[
+				luabind::class_<PipeMap, PipeMapSP>("PipeMap")
+					.def(luabind::constructor<>())
+					.def("at", (PipeSP (*) ( PipeMap *, std::string const & )) &at)
+					.def("insert", &insert)
+					.def("clone", (PipeMapSP (*) ( PipeMap *)) &clone)
+			]
+		]
+	];
+}
+
+void insert( PipeMap * p, std::string const & pipename, core::pose::Pose * pose ) {
+	if (p->find( pipename ) == p->end() )
+		(*p)[ pipename ] = PipeSP( new Pipe );
+	(*p)[pipename]->push_back( core::pose::PoseSP(pose) );
+}
+
+PipeSP at( PipeMap * p, std::string const & pipename ) {
+	return (*p)[pipename];
+}
+// this is a deep copy, every PoseSP is dereferenced and copied
+PipeMapSP clone( PipeMap * p ) {
+	PipeMapSP newpipemap = PipeMapSP( new PipeMap);
+	for( PipeMap::iterator itr = p->begin(); itr != p->end(); itr ++ ) {
+		(*newpipemap)[itr->first] = PipeSP( new Pipe );
+		for( Pipe::iterator jtr = (*itr->second).begin(); jtr != (*itr->second).end(); jtr++ ){
+			(*(*newpipemap)[itr->first]).push_back( core::pose::PoseSP( new core::pose::Pose( **jtr ) ) );
+		}
+	}
+	return newpipemap;
+}
+#endif
 } //serialization
 } //io
 } //core

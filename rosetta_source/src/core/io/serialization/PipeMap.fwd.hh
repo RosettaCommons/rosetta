@@ -14,6 +14,12 @@
 #ifndef INCLUDED_core_io_serialization_PipeMap_fwd_hh
 #define INCLUDED_core_io_serialization_PipeMap_fwd_hh
 
+#ifdef USELUA
+#include <lua.hpp>
+#include <luabind/luabind.hpp>
+#endif
+
+#include <core/pose/Pose.fwd.hh>
 #include <core/io/serialization/Pipe.fwd.hh>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
@@ -31,6 +37,13 @@ namespace serialization {
 typedef std::map< std::string, PipeSP > PipeMap;
 typedef boost::shared_ptr< PipeMap > PipeMapSP;
 typedef boost::weak_ptr< PipeMap > PipeMapWP;
+
+#ifdef USELUA
+void lregister_PipeMap( lua_State * lstate );
+#endif
+void insert( PipeMap * p, std::string const & pipename, core::pose::Pose * p );
+PipeSP at( PipeMap * p, std::string const & pipename );
+PipeMapSP clone( PipeMap * p);
 
 } //serialization
 } //io
