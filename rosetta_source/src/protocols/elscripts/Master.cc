@@ -61,6 +61,7 @@ Master::Master( int num_trajectories, boost::uint64_t mem_limit, boost::uint64_t
 	trajectories_mem_(0),
   num_trajectories_finished_(0),
 	mpicounter_(10000000),
+	traj_idx_(0),
 	last_generate_initial_wu_time_( boost::posix_time::microsec_clock::universal_time() - boost::posix_time::minutes(100)),
 	BaseRole( mem_limit, reserved_mem, reserved_mem_multiplier) {
 		using namespace basic::options;
