@@ -37,6 +37,7 @@ sources = {
 	"protocols/inputter": [
     "Inputter",
     "InputterStream",
+    "PDBInputter",
   ],
 	"protocols/outputter": [
 		"Outputter",
