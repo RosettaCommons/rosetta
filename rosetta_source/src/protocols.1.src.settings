@@ -36,6 +36,7 @@ sources = {
 	],
 	"protocols/outputter": [
 		"Outputter",
+		"FormatStringOutputter",
 	],
 	"protocols/jd2": [
 		"AtomTreeDiffJobInputter",
