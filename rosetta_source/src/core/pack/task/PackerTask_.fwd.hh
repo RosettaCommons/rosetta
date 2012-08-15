@@ -33,4 +33,9 @@ typedef utility::pointer::owning_ptr< PackerTask_ const > PackerTask_COP;
 } //namespace pack
 } //namespace core
 
+#ifdef USEBOOSTSERIALIZE
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/split_member.hpp>
+#endif
+
 #endif
