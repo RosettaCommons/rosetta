@@ -135,6 +135,22 @@ void BaseRole::lua_init(){
         TR << lua_tostring(lstate_, -1) << std::endl;
         std::exit(9);
       }
+
+      // if no wu defined, then define default_wu
+      if( utility::lua::LuaObject(luabind::globals(lstate_)["elscripts"]["dworkunits"] ).size() == 0) {
+        // if proceed isnt defined, define it
+        lua_getglobal(lstate_,"proceed");
+        if( !lua_isfunction(lstate_,lua_gettop(lstate_)) ) {
+          luaL_dostring ( lstate_, "function proceed();master:end_traj();end;" );
+        }
+        luaL_dostring ( lstate_, " elscripts['dworkunits']['default'] = { run=run, proceed=proceed }" );
+      }
+
+      // if generate_initial_wus() isn't defined, define it
+      lua_getglobal(lstate_,"generate_initial_wus");
+      if( !lua_isfunction(lstate_,lua_gettop(lstate_)) ) {
+        luaL_dostring ( lstate_, "function generate_initial_wus();master:make_wu_until_limit( 'default', 1 );end;" );
+      }
     }
 
 }
