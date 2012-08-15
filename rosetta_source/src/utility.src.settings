@@ -42,6 +42,10 @@ sources = {
 		"ozstream",
 	],
 
+  "utility/lua": [
+    "LuaIterator",
+    "LuaObject"
+  ],
 	"utility/json_spirit": [
 		"json_spirit_reader",
 		"json_spirit_value",
