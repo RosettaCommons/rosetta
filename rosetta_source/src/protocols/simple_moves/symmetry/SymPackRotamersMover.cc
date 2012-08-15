@@ -200,6 +200,12 @@ SymPackRotamersMover::parse_my_tag(
 	PackRotamersMover::parse_my_tag( tag,data,fm,mm,pose );
 }
 
+void SymPackRotamersMover::parse_def( utility::lua::LuaObject const & def,
+		utility::lua::LuaObject const & score_fxns,
+		utility::lua::LuaObject const & tasks,
+		protocols::moves::MoverCacheSP cache ){
+	PackRotamersMover::parse_def( def, score_fxns, tasks, cache);
+}
 
 }
 } // moves
