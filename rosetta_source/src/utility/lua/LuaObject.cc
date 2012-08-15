@@ -71,11 +71,6 @@ LuaObject LuaObject::operator[] ( const char * str ) const {
 }
 
 LuaObject LuaObject::operator[] ( int i ) const {
-		if (i == 0 ) {
-				std::cerr << "----------ERROR---------------"  << std::endl
-				<< "Lua tables start indexing from 1, 0 will always return nil" << std::endl;
-				exit(9);
-		}
 		if( luabind::type( object_ ) == LUA_TTABLE ) {
 				return LuaObject( luabind::object(object_[ i ]) );
 		}
