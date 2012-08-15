@@ -23,8 +23,11 @@
 
 #include <boost/serialization/export.hpp>
 
+#include <core/pack/task/PackerTask_.hh>
+BOOST_CLASS_EXPORT_GUID(core::pack::task::PackerTask_, "core::pack::task::PackerTask_")
+
 #include <protocols/wum2/WorkUnit.hh> 
 
-BOOST_CLASS_EXPORT_GUID(protocols::wum2::WorkUnit_Wait, "WorkUnit_Wait")
-BOOST_CLASS_EXPORT_GUID(protocols::wum2::WorkUnit_ElScripts, "WorkUnit_ElScripts")
+BOOST_CLASS_EXPORT_GUID(protocols::wum2::WorkUnit_Wait, "protocols::wum2::WorkUnit_Wait")
+BOOST_CLASS_EXPORT_GUID(protocols::wum2::WorkUnit_ElScripts, "protocols::wum2::WorkUnit_ElScripts")
 #endif

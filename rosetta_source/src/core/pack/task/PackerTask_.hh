@@ -880,6 +880,7 @@ private: // private methods
 
 	template<class Archive>
 	void serialize(Archive & ar, const unsigned int version) {
+			ar & boost::serialization::base_object<PackerTask>(*this);
 			ar & nres_;
 			ar & pack_residue_;
 			ar & residue_tasks_;
