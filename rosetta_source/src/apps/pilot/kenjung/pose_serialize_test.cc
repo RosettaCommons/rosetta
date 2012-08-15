@@ -63,7 +63,7 @@ main( int argc, char * argv [] )
 		ia >> out;
 		trmain << "after out" << std::endl;
 		trmain << "pose size=" << out->total_residue() << std::endl;
-//trmain << "pdb res num = " << out->pdb_info()->number(3) << std::endl;
+		trmain << "pdb res num = " << out->pdb_info()->number(3) << std::endl;
 		trmain << "dumping" << std::endl;
 		out->dump_pdb(option[ m::file]().name()+".redump");
 		return 0;
