@@ -17,6 +17,8 @@
 #include <protocols/elscripts/util.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/conformation/Residue.hh>
+#include <core/pose/PDBInfo.hh>
 #include <iostream>
 #include <fstream>
 
@@ -51,7 +53,7 @@ OutputterSP ResFileOutputter::create() {
 void ResFileOutputter::write( Pose & p ) {
 	utility::vector1< core::Size > selected_residues;
 	// Prepare the PackerTask
-	runtime_assert( task_factory_ );
+	assert( task_factory_ );
   core::pack::task::PackerTaskCOP task( task_factory_->create_task_and_apply_taskoperations( p ) );
 	// Find out which residues are packable or designable
 	for( core::Size resi = 1; resi <= p.total_residue(); ++resi ) {
@@ -69,7 +71,7 @@ void ResFileOutputter::write( Pose & p ) {
 	// write to disk
 	std::string outfilename;
 	parse_format_string( filenameparts_, format_string_, outfilename );
-  runtime_assert( outfilename != "" );
+  assert( outfilename != "" );
 	std::ofstream resfile;
   resfile.open( outfilename.c_str(), std::ios::out );
   resfile << resfile_general_property_ << "\nstart\n";
