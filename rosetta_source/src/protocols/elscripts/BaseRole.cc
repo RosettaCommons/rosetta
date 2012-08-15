@@ -338,7 +338,7 @@ void BaseRole::instantiate_output() {
 	}
 	TR << "----------Finished Instantiating Outputters----------" << std::endl;
 }
-void BaseRole::instantiate_input() {
+void BaseRole::instantiate_inputters() {
 	using namespace utility::lua;
 	using namespace protocols::inputter;
 
@@ -358,12 +358,18 @@ void BaseRole::instantiate_input() {
 	}
 
 	TR << "----------Finished Instantiating Inputters----------" << std::endl;
+}
+
+void BaseRole::instantiate_inputterstream() {
+	using namespace utility::lua;
+	using namespace protocols::inputter;
 	TR << "----------Adding Inputters to InputterStream----------" << std::endl;
 	LuaObject dinputterstream( luabind::globals(lstate_)["elscripts"]["dinputterstream"]);
 	for (LuaIterator i=dinputterstream.begin(), end; i != end; ++i) {
 		inputterstream_->add_inputter( inputters_[ (*i).to<std::string>() ].to<InputterSP>() );
 	}
   if( inputterstream_->size() == 0 ) {
+    LuaObject dinputters( luabind::globals(lstate_)["elscripts"]["dinputters"] );
     // inputterstream wasn't defined, so add all inputters to it
     for (LuaIterator i=dinputters.begin(), end; i != end; ++i) {
       inputterstream_->add_inputter( inputters_[ i.skey() ].to<InputterSP>() );

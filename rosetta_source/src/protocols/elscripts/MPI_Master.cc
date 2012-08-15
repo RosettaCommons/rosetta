@@ -70,12 +70,6 @@ MPI_Master::MPI_Master( boost::mpi::communicator world, std::vector<int> slaves,
 
     slave_comm_ = protocols::wum2::EndPointSP( new protocols::wum2::MPI_EndPoint( world, ref_available_mem ));
 
-		// initializing trajectories
-    trajectories_ = core::io::serialization::PipeSP( new core::io::serialization::Pipe() );
-    for( int i = 0; i < num_trajectories_; i++ ) {
-      trajectories_->push_back( core::pose::PoseSP() );
-    }
-
 		// initializing inputterstream
 		inputterstream_.reset ( new protocols::inputter::InputterStream (
 					inputter_rank(),
@@ -84,12 +78,17 @@ MPI_Master::MPI_Master( boost::mpi::communicator world, std::vector<int> slaves,
 					(!( option[OptionKeys::els::num_traj]() % option[OptionKeys::els::traj_per_master]() == 0 ))
 					) );
 
-		lua_init();
 		lregister_MPI_Master(lstate_);
 		luabind::globals(lstate_)["master"] = this;
-		instantiate_input();
-		instantiate_output();
 
+		// - 1 because we already instantiated the first traj in Master constructor
+    for( int i = 0; i < num_trajectories_ - 1 ; i++ ) {
+      trajectories_->push_back( core::pose::PoseSP() );
+			luabind::globals(lstate_)["elscripts"]["wumade"][i] = luabind::newtable( lstate_ );
+			luabind::globals(lstate_)["elscripts"]["wufinished"][i] = luabind::newtable( lstate_ );
+    }
+
+		instantiate_inputterstream();
 }
 
 void MPI_Master::go(){
@@ -153,23 +152,23 @@ void MPI_Master::go(){
     protocols::wum2::WorkUnitSP wu = slave_comm_->inq().pop_front(); 
     protocols::wum2::WorkUnit_ElScriptsSP castattempt = boost::dynamic_pointer_cast<protocols::wum2::WorkUnit_ElScripts> (wu);
     if( castattempt != 0 ) {
-			if( wufinished_.find( castattempt->name() ) == wufinished_.end() ) {
-				std::vector<int> tmp;
-				for( int j = 0; j < num_trajectories_; j++ ){
-					tmp.push_back(0);
-				}
-				wufinished_[ castattempt->name() ] = tmp;
+			traj_idx_ = castattempt->trajectory_idx();
+			std::string wuname = castattempt->name();
+			if( ! wufinished_[traj_idx_][wuname] ) {
+				luabind::globals(lstate_)["elscripts"]["wufinished"][traj_idx_][wuname] = 0;
 			}
-			wufinished_[ castattempt->name() ][ castattempt->trajectory_idx() ]++;
+			luabind::globals(lstate_)["elscripts"]["wufinished"][traj_idx_][wuname] = wufinished_[traj_idx_][wuname].to<int>() + 1;
 			// export new variables to lua for use in the lua fxn
-			luabind::globals(lstate_)["traj_idx"] = castattempt->trajectory_idx();
+			luabind::globals(lstate_)["traj_idx"] = traj_idx_;
 			luabind::globals(lstate_)["pipemap"] = castattempt->pipemap().lock();
+			luabind::globals(lstate_)["wufinished"] = wufinished_[traj_idx_].raw();
+			luabind::globals(lstate_)["wumade"] = wumade_[traj_idx_].raw();
 
 			LuaObject dworkunits( luabind::globals(lstate_)["elscripts"]["dworkunits"]);
 			try { 
-				luabind::call_function<void>( dworkunits[ castattempt->name() ]["proceed"].raw() );
+				luabind::call_function<void>( dworkunits[wuname]["proceed"].raw() );
 			} catch (std::exception & e) {
-        TR << "calling lua function for workunit " << castattempt->name() << " proceed fxn failed failed. Vague error is:" << std::endl;
+        TR << "calling lua function for workunit " << wuname << " proceed fxn failed failed. Vague error is:" << std::endl;
         TR << e.what() << std::endl;
 				TR << lua_tostring(lstate_, -1) << std::endl;
 				lua_pop(lstate_, 1);

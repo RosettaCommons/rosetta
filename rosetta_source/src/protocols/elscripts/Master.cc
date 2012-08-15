@@ -71,11 +71,6 @@ Master::Master( int num_trajectories, boost::uint64_t mem_limit, boost::uint64_t
 
     slave_comm_ = protocols::wum2::EndPointSP( new protocols::wum2::EndPoint( ref_available_mem ));
 
-		// initializing trajectories
-    trajectories_ = core::io::serialization::PipeSP( new core::io::serialization::Pipe() );
-    for( int i = 0; i < num_trajectories_; i++ ) {
-      trajectories_->push_back( core::pose::PoseSP() );
-    }
 
 		// initializing inputterstream
 		inputterstream_.reset ( new protocols::inputter::InputterStream (
@@ -87,8 +82,22 @@ Master::Master( int num_trajectories, boost::uint64_t mem_limit, boost::uint64_t
 		lua_init();
 		lregister_Master(lstate_);
 		luabind::globals(lstate_)["master"] = this;
-		instantiate_input();
+		instantiate_inputters();
+		instantiate_inputterstream();
 		instantiate_output();
+
+		// initializing trajectories and wu counters
+    trajectories_ = core::io::serialization::PipeSP( new core::io::serialization::Pipe() );
+		luabind::globals(lstate_)["elscripts"]["wumade"] = luabind::newtable( lstate_ );
+		luabind::globals(lstate_)["elscripts"]["wumade"] = luabind::newtable( lstate_ );
+		luabind::globals(lstate_)["elscripts"]["wufinished"] = luabind::newtable( lstate_ );
+		wumade_.raw( luabind::globals(lstate_)["elscripts"]["wumade"] );
+		wufinished_.raw( luabind::globals(lstate_)["elscripts"]["wufinished"] );
+    for( int i = 0; i < num_trajectories_; i++ ) {
+      trajectories_->push_back( core::pose::PoseSP() );
+			luabind::globals(lstate_)["elscripts"]["wumade"][i] = luabind::newtable( lstate_ );
+			luabind::globals(lstate_)["elscripts"]["wufinished"][i] = luabind::newtable( lstate_ );
+    }
 }
 
 void Master::interpreter() {
@@ -139,24 +148,23 @@ void Master::go(){
 		protocols::wum2::WorkUnitSP wu = slave_comm_->inq().pop_front(); 
 		protocols::wum2::WorkUnit_ElScriptsSP castattempt = boost::dynamic_pointer_cast<protocols::wum2::WorkUnit_ElScripts> (wu);
 		if( castattempt != 0 ) {
-			if( wufinished_.find( castattempt->name() ) == wufinished_.end() ) {
-				std::vector<int> tmp;
-				for( int j = 0; j < num_trajectories_; j++ ){
-					tmp.push_back(0);
-				}
-				wufinished_[ castattempt->name() ] = tmp;
-			}
-			wufinished_[ castattempt->name() ][ castattempt->trajectory_idx() ]++;
 			traj_idx_ = castattempt->trajectory_idx();
+			std::string wuname = castattempt->name();
+			if( ! wufinished_[traj_idx_][wuname] ) {
+				luabind::globals(lstate_)["elscripts"]["wufinished"][traj_idx_][wuname] = 0;
+			}
+			luabind::globals(lstate_)["elscripts"]["wufinished"][traj_idx_][wuname] = wufinished_[traj_idx_][wuname].to<int>() + 1;
 			// export new variables to lua for use in the lua fxn
-			luabind::globals(lstate_)["traj_idx"] = castattempt->trajectory_idx();
+			luabind::globals(lstate_)["traj_idx"] = traj_idx_;
 			luabind::globals(lstate_)["pipemap"] = castattempt->pipemap().lock();
+			luabind::globals(lstate_)["wufinished"] = wufinished_[traj_idx_].raw();
+			luabind::globals(lstate_)["wumade"] = wumade_[traj_idx_].raw();
 
 			LuaObject dworkunits( luabind::globals(lstate_)["elscripts"]["dworkunits"]);
 			try { 
-				luabind::call_function<void>( dworkunits[ castattempt->name() ]["proceed"].raw() );
+				luabind::call_function<void>( dworkunits[ wuname]["proceed"].raw() );
 			} catch (std::exception & e) {
-				TR << "calling lua function for workunit " << castattempt->name() << " proceed fxn failed failed. Vague error is:" << std::endl;
+				TR << "calling lua function for workunit " << wuname << " proceed fxn failed failed. Vague error is:" << std::endl;
 				TR << e.what() << std::endl;
 				TR << lua_tostring(lstate_, -1) << std::endl;
 				lua_pop(lstate_, 1);
@@ -183,28 +191,20 @@ void Master::make_wu( std::string const & wuname, core::pose::Pose * p) {
 				));
 
 	slave_comm_->outq().push_back( tmp );
-	if( wumade_.find( wuname ) == wumade_.end() ) {
-		std::vector<int> tmp;
-		for( int j = 0; j < num_trajectories_; j++ ){
-			tmp.push_back(0);
-		}
-		wumade_[wuname] = tmp;
+	if( ! wumade_[traj_idx_][wuname] ) {
+		luabind::globals(lstate_)["elscripts"]["wumade"][traj_idx_][wuname] = 0;
 	}
-	wumade_[wuname][traj_idx_]++;
+	luabind::globals(lstate_)["elscripts"]["wumade"][traj_idx_][wuname] = wumade_[traj_idx_][wuname].to<int>() + 1;
 }
 
 void Master::make_wu_until_limit( std::string const & wuname, int num ) {
 	using namespace core::io::serialization;
   for( int i = 0; i < num_trajectories_; i++ ){
 		if( ! (*trajectories_)[i] ) continue; 
-		if( wumade_.find( wuname ) == wumade_.end() ) {
-			std::vector<int> tmp;
-			for( int j = 0; j < num_trajectories_; j++ ){
-				tmp.push_back(0);
-			}
-			wumade_[wuname] = tmp;
+		if( ! wumade_[i][wuname] ) {
+			luabind::globals(lstate_)["elscripts"]["wumade"][i][wuname] = 0;
 		}
-		while( wumade_[ wuname ][i] < num ) {
+		while( wumade_[i][ wuname ].to<int>() < num ) {
 			if( mem_limit_ - current_mem() > 2 * reserved_mem_ ) {
 				PipeMapSP pmap( new PipeMap() );
 				PipeSP pipe ( new Pipe() ); 
@@ -216,7 +216,7 @@ void Master::make_wu_until_limit( std::string const & wuname, int num ) {
 							1, i, pmap, state, wuname
 							));
 				slave_comm_->outq().push_back( tmp );
-				wumade_[wuname][i]++;
+				luabind::globals(lstate_)["elscripts"]["wumade"][i][wuname] = wumade_[i][wuname].to<int>() + 1;
 			} else {
 				return;
 			}
@@ -228,6 +228,9 @@ void Master::end_traj() {
 	(*trajectories_)[traj_idx_].reset();
 	num_trajectories_finished_++;
 	TR << "Finished " << num_trajectories_finished_ << " trajectories." << std::endl;
+
+	luabind::globals(lstate_)["elscripts"]["wumade"][traj_idx_] = luabind::newtable( lstate_ );
+	luabind::globals(lstate_)["elscripts"]["wufinished"][traj_idx_] = luabind::newtable( lstate_ );
 }
 
 void Master::fill_trajectories() {

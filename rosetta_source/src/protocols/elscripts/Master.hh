@@ -93,6 +93,9 @@ class Master : public BaseRole {
 		// this gets rid of traj_idx in lua script
 
 		boost::posix_time::ptime last_generate_initial_wu_time_;
+
+		utility::lua::LuaObject wumade_;
+		utility::lua::LuaObject wufinished_;
 };
 
 } //elscripts

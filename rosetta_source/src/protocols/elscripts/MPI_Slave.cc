@@ -47,16 +47,8 @@ MPI_Slave::MPI_Slave( boost::mpi::communicator world, int master, boost::uint64_
 
     master_comm_ = protocols::wum2::EndPointSP( new protocols::wum2::MPI_EndPoint( world, ref_available_mem ) );
 
-		lua_init();
 		lregister_MPI_Slave(lstate_);
 		luabind::globals(lstate_)["slave"] = this;
-
-		register_calculators();
-		instantiate_tasks();
-		instantiate_scorefxns();
-		instantiate_filters();
-		instantiate_movers();
-		instantiate_output();
 }
 
 void MPI_Slave::go(){

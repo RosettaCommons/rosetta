@@ -70,7 +70,8 @@ class BaseRole {
 
 		// opens new lua state, exports definition tables, registers classes
 		void lua_init();
-		void instantiate_input();
+		void instantiate_inputters();
+		void instantiate_inputterstream();
 		void instantiate_output();
 		void instantiate_movers();
 		void instantiate_filters();
@@ -104,9 +105,6 @@ class BaseRole {
 		utility::lua::LuaObject outputters_;
 		utility::lua::LuaObject scorefxns_;
 		utility::lua::LuaObject tasks_;
-
-		boost::unordered_map< std::string , std::vector<int> > wumade_;
-		boost::unordered_map< std::string , std::vector<int> > wufinished_;
 };
 
 } //elscripts
