@@ -289,6 +289,7 @@ public:
 	std::string const & filename() const;
 
 	virtual void parse_tag( TagPtr );
+	virtual void parse_def( utility::lua::LuaObject const & def);
 
 private:
 	std::string resfile_filename_;

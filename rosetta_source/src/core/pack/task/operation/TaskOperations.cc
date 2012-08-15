@@ -602,6 +602,13 @@ ReadResfile::parse_tag( TagPtr tag )
 	if ( resfile_filename_ == "COMMANDLINE" ) default_filename();
 }
 
+void
+ReadResfile::parse_def( utility::lua::LuaObject const & def) {
+	if( def["filename"] ) resfile_filename_ = def["filename"].to<std::string>();
+	// special case: if "COMMANDLINE" string specified, use commandline option setting
+	if ( resfile_filename_ == "COMMANDLINE" ) default_filename();
+}
+
 /// BEGIN ReadResfileAndObeyLengthEvents
 ReadResfileAndObeyLengthEvents::ReadResfileAndObeyLengthEvents() :
 	parent(),
