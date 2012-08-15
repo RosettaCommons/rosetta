@@ -118,6 +118,9 @@ sources = {
 		"WorkUnitList",
 		"WorkUnitManager",
 	],
+	"protocols/wum2": [
+		"WorkUnit",
+	],
 }
 include_path = [
 ]
