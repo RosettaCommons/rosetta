@@ -43,6 +43,7 @@
 namespace protocols {
 namespace moves {
 
+
 #ifdef USELUA
 void lregister_Mover( lua_State * lstate ) {
 	luabind::module(lstate, "protocols")
@@ -64,6 +65,8 @@ void lregister_SerializableState( lua_State * lstate ){
 		luabind::namespace_( "moves" )
 		[
 			luabind::class_<SerializableState>("SerializableState")
+				.def("set", &SerializableState_set )
+				.def("get", &SerializableState_get )
 		]
 	];
 }
@@ -231,6 +234,20 @@ std::ostream & operator << ( std::ostream & os, Mover const & mover)
 	os << "Mover name: " << mover.get_name() << ", Mover type: " << mover.get_type() << ", Mover current tag:" << mover.get_current_tag() << std::endl;
 	return os;
 }
+
+/// serializable set helper functions
+void SerializableState_set( SerializableStateSP state, std::string key, std::string val ) {
+	(*state)[key] = val;
+}
+
+std::string SerializableState_get( SerializableStateSP state, std::string key ) {
+	if( state->find( key ) != state->end() ) {
+		return (*state)[key];
+	} else {
+		return "";
+	}
+}
+
 
 } // moves
 } // protocols

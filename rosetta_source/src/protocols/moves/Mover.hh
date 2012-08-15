@@ -62,6 +62,8 @@ namespace moves {
 #ifdef USELUA
 void lregister_Mover( lua_State * lstate );
 void lregister_SerializableState( lua_State * lstate );
+void SerializableState_set( SerializableStateSP state, std::string key, std::string val );
+std::string SerializableState_get( SerializableStateSP state, std::string key );
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -245,7 +247,6 @@ private:
 
 /// @brief Test IO operator for debug and Python bindings
 std::ostream & operator << ( std::ostream & os, Mover const & mover);
-
 
 } // moves
 } // protocols
