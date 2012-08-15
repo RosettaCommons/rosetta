@@ -38,6 +38,7 @@ sources = {
     "Inputter",
     "InputterStream",
     "PDBInputter",
+    "SilentFileInputter",
   ],
 	"protocols/outputter": [
 		"Outputter",
