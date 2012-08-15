@@ -34,6 +34,9 @@ sources = {
 		"idealize",
 		"IdealizeMover",
 	],
+	"protocols/outputter": [
+		"Outputter",
+	],
 	"protocols/jd2": [
 		"AtomTreeDiffJobInputter",
 		"AtomTreeDiffJobOutputter",
