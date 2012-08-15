@@ -126,6 +126,7 @@ sources = {
 	],
 	"protocols/wum2": [
 		"EndPoint",
+		"MPI_EndPoint",
 		"WorkUnit",
 		"WUQueue",
 		"WUQueueBuffer",

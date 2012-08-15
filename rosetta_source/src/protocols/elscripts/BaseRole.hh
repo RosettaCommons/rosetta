@@ -43,9 +43,10 @@ void lregister_BaseRole( lua_State * lstate );
 
 class BaseRole {
   public:
-		BaseRole( boost::uint64_t mem_limit, boost::uint64_t reserved_mem):
+		BaseRole( boost::uint64_t mem_limit, boost::uint64_t reserved_mem, boost::uint64_t reserved_mem_multiplier):
 			mem_limit_(mem_limit),
 			reserved_mem_(reserved_mem),
+			reserved_mem_multiplier_(reserved_mem_multiplier),
 			mover_cache_mem_(0),
 			mover_cache_length_(0)
 			{
@@ -80,6 +81,7 @@ class BaseRole {
 		lua_State * lstate_;
     boost::uint64_t mem_limit_;
     boost::uint64_t reserved_mem_;
+    boost::uint64_t reserved_mem_multiplier_;
 
     protocols::inputter::InputterStreamSP inputterstream_;
 

@@ -16,7 +16,7 @@
 #if defined (USEBOOSTMPI) && defined (USELUA)
 // this is useless without mpi and lua
 #include <protocols/elscripts/Master.fwd.hh>
-#include <protocols/wum2/EndPoint.hh>
+#include <protocols/wum2/MPI_EndPoint.hh>
 #include <protocols/elscripts/BaseRole.hh>
 
 namespace protocols {
@@ -34,8 +34,9 @@ class Master : public BaseRole {
 
     boost::uint64_t available_mem() {
       boost::uint64_t buff_mem = 
-        pool_comm_->buffered_current_mem() +
-        slave_comm_->buffered_current_mem() +
+        pool_comm_->current_mem() +
+        slave_comm_->current_mem() +
+				reserved_mem_ * reserved_mem_multiplier_ +
         trajectories_mem();
       if( buff_mem >= mem_limit_ ) {
         return 0;

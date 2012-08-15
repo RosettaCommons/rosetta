@@ -41,12 +41,12 @@ static basic::Tracer TR("protocols.elscripts.Slave");
 Slave::Slave( boost::mpi::communicator world, int master, boost::uint64_t mem_limit, boost::uint64_t reserved_mem, boost::uint64_t reserved_mem_multiplier) :
 	world_(world),
   master_( master),
-	BaseRole( mem_limit, reserved_mem) {
+	BaseRole( mem_limit, reserved_mem, reserved_mem_multiplier) {
 
 		// endpoint uses this function to get role-wide memory usage
     boost::function< boost::uint64_t ()> ref_available_mem = boost::bind( &protocols::elscripts::Slave::available_mem, this );
 
-    master_comm_ = protocols::wum2::EndPointSP( new protocols::wum2::EndPoint( world, reserved_mem, reserved_mem_multiplier, ref_available_mem ) );
+    master_comm_ = protocols::wum2::EndPointSP( new protocols::wum2::MPI_EndPoint( world, ref_available_mem ) );
 
 		lua_init();
 		lregister_Slave(lstate_);
@@ -85,7 +85,7 @@ void Slave::go(){
     }
 
     // run the first wu in the queue
-    protocols::wum2::WorkUnitSP wu = master_comm_->inq_popfront(); 
+    protocols::wum2::WorkUnitSP wu = master_comm_->inq().pop_front(); 
 		// try dynamic casts to WorkUnit_elscriptsState
 		if( wu ) {
 			protocols::wum2::WorkUnit_ElScriptsSP castattempt = boost::dynamic_pointer_cast<protocols::wum2::WorkUnit_ElScripts> (wu);
@@ -103,7 +103,7 @@ void Slave::go(){
 				}
 				// shallow copy! works fine for my purposes
 				protocols::wum2::WorkUnitSP result_wu( new protocols::wum2::WorkUnit_ElScripts( *castattempt ) );
-				master_comm_->outq_pushback( result_wu );
+				master_comm_->outq().push_back( result_wu );
 			} else {
 				wu->run();
 			}

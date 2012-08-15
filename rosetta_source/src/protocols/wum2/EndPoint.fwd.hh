@@ -8,15 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/wum2/EndPoint.fwd.hh
-/// @brief  Handles communication between different roles in mpi
-// Every role in mpi needs one of these for each different role it communicates with
-// for example, slave only communicates with master so slave needs one
-// master communicates with slave and pool, so master needs two
-
-// role_available_mem is a functor to the role's available memory function
-//
-// this allows a role with multiple endpoints have its endpoints be aware of 
-// other endpoint memory usage and act accordingly
+/// @brief  Non MPI version of EndPoint
+///  This class is required because SingleNode role needs to use an EndPoint that is not MPI dependent (ie just a wrapper for 2 queues)
 /// @author Ken Jung
 
 #ifndef INCLUDED_protocols_wum2_EndPoint_fwd_hh

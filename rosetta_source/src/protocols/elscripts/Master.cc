@@ -63,15 +63,15 @@ Master::Master( boost::mpi::communicator world, std::vector<int> slaves, int num
   slaves_( slaves ),
 	trajectories_mem_(0),
   num_trajectories_finished_(0),
-	BaseRole( mem_limit, reserved_mem) {
+	BaseRole( mem_limit, reserved_mem, reserved_mem_multiplier) {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 
 		// endpoint uses this function to get role-wide memory usage
     boost::function< boost::uint64_t ()> ref_available_mem = boost::bind( &protocols::elscripts::Master::available_mem, this );
 
-    slave_comm_ = protocols::wum2::EndPointSP( new protocols::wum2::EndPoint( world, reserved_mem, reserved_mem_multiplier, ref_available_mem ));
-    pool_comm_ = protocols::wum2::EndPointSP( new protocols::wum2::EndPoint( world, reserved_mem, reserved_mem_multiplier, ref_available_mem ));
+    slave_comm_ = protocols::wum2::EndPointSP( new protocols::wum2::MPI_EndPoint( world, ref_available_mem ));
+    pool_comm_ = protocols::wum2::EndPointSP( new protocols::wum2::MPI_EndPoint( world, ref_available_mem ));
 
 		// initializing trajectories
     trajectories_ = core::io::serialization::PipeSP( new core::io::serialization::Pipe() );
@@ -175,7 +175,7 @@ void Master::go(){
     //pool_comm_->check_and_act_status_request( ref_pool_listen_wu_sendrecv );
 
     // process slave results
-    protocols::wum2::WorkUnitSP wu = slave_comm_->inq_popfront(); 
+    protocols::wum2::WorkUnitSP wu = slave_comm_->inq().pop_front(); 
     protocols::wum2::WorkUnit_ElScriptsSP castattempt = boost::dynamic_pointer_cast<protocols::wum2::WorkUnit_ElScripts> (wu);
     if( castattempt != 0 ) {
 			if( wufinished_.find( castattempt->name() ) == wufinished_.end() ) {
@@ -239,7 +239,7 @@ void Master::make_wu( std::string const & wuname, int traj_idx, core::pose::Pose
 				world_.rank(), traj_idx, pmap, state, wuname
 				));
 
-	slave_comm_->outq_pushback( tmp );
+	slave_comm_->outq().push_back( tmp );
 	if( wumade_.find( wuname ) == wumade_.end() ) {
 		std::vector<int> tmp;
 		for( int j = 0; j < num_trajectories_; j++ ){
@@ -272,8 +272,7 @@ void Master::make_wu_until_limit( std::string const & wuname, int num ) {
 				protocols::wum2::WorkUnitSP tmp (new protocols::wum2::WorkUnit_ElScripts(
 							world_.rank(), i, pmap, state, wuname
 							));
-
-				slave_comm_->outq_pushback( tmp );
+				slave_comm_->outq().push_back( tmp );
 				wumade_[wuname][i]++;
 			} else {
 				return;
