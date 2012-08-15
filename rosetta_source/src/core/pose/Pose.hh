@@ -1484,12 +1484,14 @@ private:
 			bool is_symmetric = m;
 			ar & is_symmetric;
 			if( is_symmetric ) {
-				conformation::symmetry::SymmetryInfoOP r = m->Symmetry_Info();
-				ar & r;
-			} 
-			ar & conformation_;
+				ar & * m; 
+				core::scoring::symmetry::SymmetricEnergies * mm = dynamic_cast< core::scoring::symmetry::SymmetricEnergies * >( energies_.get() );
+				ar & *mm;
+			} else {
+				ar & conformation_;
+				ar & energies_;
+			}
 			ar & pdb_info_;
-			ar & * energies_;
 
 			// datacache
 			// only stringmap,floatmap for now
@@ -1516,17 +1518,18 @@ private:
 			bool is_symmetric;
 			ar & is_symmetric;
 			if( is_symmetric ) {
-				conformation::symmetry::SymmetricConformationOP symm_conf ( new core::conformation::symmetry::SymmetricConformation() );
-				conformation::symmetry::SymmetryInfoOP r = symm_conf->Symmetry_Info();
-				ar & r;
-				conformation_ = symm_conf;
-				scoring::symmetry::SymmetricEnergiesOP symm_energy( new scoring::symmetry::SymmetricEnergies() );
-				energies_ = symm_energy;
-				energies_->set_owner( this );
+				conformation::symmetry::SymmetricConformation * symm_conf = new core::conformation::symmetry::SymmetricConformation();
+				ar & *symm_conf;
+				conformation_ = ConformationOP( symm_conf );
+				scoring::symmetry::SymmetricEnergies * symm_energy = new scoring::symmetry::SymmetricEnergies();
+				ar & * symm_energy;
+				energies_ = scoring::EnergiesOP( symm_energy);
+			} else {
+				ar & conformation_;
+				ar & energies_;
 			}
-			ar & conformation_;
+			energies_->set_owner( this );
 			ar & pdb_info_;
-			ar & * energies_;
 
 			bool has_string_map;
 			ar & has_string_map;

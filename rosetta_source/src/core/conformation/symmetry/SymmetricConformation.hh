@@ -246,7 +246,7 @@ private:
 	template<class Archive>
 	void serialize(Archive & ar, const unsigned int version){
 		ar & boost::serialization::base_object<Conformation>(*this);
-		ar & *symm_info_;
+		ar & symm_info_;
 	}
 
 #endif
