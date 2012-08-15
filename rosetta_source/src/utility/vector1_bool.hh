@@ -235,6 +235,15 @@ public: // Assignment
 		return *this;
 	}
 
+#ifdef USEBOOSTSERIALIZE
+	friend class boost::serialization::access;
+
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+			ar & super::vector();
+	}
+#endif
+
 
 }; // vector1
 
