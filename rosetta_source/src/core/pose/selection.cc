@@ -25,8 +25,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
-#include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/TaskFactory.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
