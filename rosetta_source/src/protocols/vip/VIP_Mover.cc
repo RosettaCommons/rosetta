@@ -10,75 +10,32 @@
 /// and attempts to fill these using fixed backbone packing and the GOE energy
 /// @author ben bborgo@genetics.wustl.edu
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/relax/MiniRelax.hh>
-#include <protocols/relax/FastRelax.hh>
-#include <protocols/relax/ClassicRelax.hh>
-#include <protocols/simple_moves/ScoreMover.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <protocols/jd2/JobDistributor.hh>
-
-#include <core/scoring/Energies.hh>
-
-#include <core/init.hh>
-#include <core/types.hh>
-#include <core/chemical/AA.hh>
-#include <core/chemical/util.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/scoring/packstat/types.hh>
-#include <core/scoring/packstat/compute_sasa.hh>
-#include <core/scoring/packstat/packing_score_params.hh>
-#include <core/scoring/packstat/AtomRadiusMap.hh>
-#include <core/scoring/packstat/SimplePDB.hh>
-#include <utility/io/izstream.hh>
-#include <utility/string_util.hh>
-#include <core/conformation/Residue.hh>
-#include <numeric/all.hh>
-#include <utility/all.hh>
-
-#include <basic/Tracer.hh>
-
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <protocols/moves/MoverContainer.hh>
-#include <core/pack/task/ResfileReader.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-
-#include <core/pose/Pose.hh>
-#include <core/kinematics/MoveMap.hh>
-//#include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/cp.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <utility/options/keys/OptionKey.hh>
-#include <protocols/simple_moves/AddCavitiesMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <iostream>
-#include <vector>
-#include <fstream>
-#include <string>
-#include <sstream>
-#include <utility/io/izstream.hh>
-#include <ObjexxFCL/format.hh>
-#include <utility/string_util.hh>
-
 #include <protocols/vip/VIP_Mover.hh>
 #include <protocols/vip/VIP_Report.hh>
 #include <protocols/vip/VIP_Utils.hh>
 
-#include <cmath>
-#include <algorithm>
+#include "basic/Tracer.hh"
+#include <basic/options/option.hh>
+#include <basic/options/keys/cp.OptionKeys.gen.hh>
+
+#include <core/conformation/Residue.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/ResfileReader.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
+
+#include <protocols/relax/FastRelax.hh>
+#include <protocols/relax/MiniRelax.hh>
+#include <protocols/relax/ClassicRelax.hh>
+
+#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/AddCavitiesMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/ScoreMover.hh>
 
 
 core::Size num_stored_poses( 0 );

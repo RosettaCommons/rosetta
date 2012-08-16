@@ -10,44 +10,14 @@
 /// @file protocols/vip/VIP_Utils.cc
 /// @brief Utility functions for VIP mover
 
-
-
-#include "core/scoring/Energies.hh"
-#include "core/scoring/packstat/types.hh"
-#include "core/scoring/packstat/SimplePDB_Atom.hh"
-#include "core/scoring/packstat/SimplePDB.hh"
-#include "core/scoring/packstat/AtomRadiusMap.hh"
-#include "core/scoring/packstat/compute_sasa.hh"
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/TenANeighborGraph.hh>
-
-#include "core/kinematics/MoveMap.hh"
-
-#include "core/pose/Pose.hh"
-
-#include <protocols/analysis/PackStatMover.hh>
-
-#include <protocols/simple_filters/PackStatFilter.hh>
-
-//#include <devel/init.hh>
 #include "core/types.hh"
+#include "core/kinematics/MoveMap.hh"
+#include "core/scoring/Energies.hh"
+#include <core/scoring/EnergyGraph.hh>
+#include "core/scoring/packstat/types.hh"
+#include "core/pose/Pose.hh"
+#include <protocols/simple_filters/PackStatFilter.hh>
 #include <basic/options/option.hh>
-
-#include "utility/vector1.hh"
-#include "utility/file/FileName.hh"
-#include "utility/io/izstream.hh"
-#include "utility/io/ozstream.hh"
-#include "numeric/random/random.hh"
-
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/packstat.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-
-#include <ObjexxFCL/format.hh>
 
 namespace protocols {
 namespace vip {
@@ -79,7 +49,7 @@ core::Real output_packstat( core::pose::Pose & pose ) {
 	using namespace basic;
 	using namespace options;
 	using namespace OptionKeys;
-	using namespace ObjexxFCL::fmt;
+//	using namespace ObjexxFCL::fmt;
 	using namespace numeric;
 	using namespace utility;
 /*

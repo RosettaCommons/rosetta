@@ -7,38 +7,20 @@
 /// @file protocols/vip/VIP_Report.cc
 /// @brief Prints information about changes implemented in vip mover
 
-
-#include <protocols/simple_moves/ScoreMover.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Energies.hh>
-#include <core/init.hh>
-#include <core/types.hh>
-#include <core/chemical/util.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/scoring/packstat/types.hh>
-#include <core/scoring/packstat/compute_sasa.hh>
-#include <core/scoring/packstat/packing_score_params.hh>
-#include <core/scoring/packstat/AtomRadiusMap.hh>
-#include <core/scoring/packstat/SimplePDB.hh>
-#include <utility/io/izstream.hh>
-#include <utility/string_util.hh>
-#include <core/conformation/Residue.hh>
-#include <numeric/all.hh>
-#include <utility/all.hh>
-#include <core/pose/Pose.hh>
-//#include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/cp.OptionKeys.gen.hh>
-#include <utility/options/keys/OptionKey.hh>
-#include <fstream>
-#include <iostream>
 #include <protocols/vip/VIP_Utils.hh>
 #include <protocols/vip/VIP_Report.hh>
+
+#include <basic/options/option.hh>
+#include <basic/options/keys/cp.OptionKeys.gen.hh>
+
+#include <core/scoring/Energies.hh>
+#include <core/conformation/Residue.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+
+#include <protocols/simple_moves/ScoreMover.hh>
+
+#include <fstream>
 
 namespace protocols {
 namespace vip {

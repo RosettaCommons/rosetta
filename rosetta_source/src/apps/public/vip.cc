@@ -15,16 +15,24 @@
 
 
 #include <basic/options/option.hh>
+#include <basic/options/keys/cp.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+
 #include <core/chemical/AA.hh>
+#include <core/conformation/Residue.hh>
+#include <core/io/pdb/file_data.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 
 //protocols library (Movers)
 #include <protocols/vip/VIP_Mover.hh>
-#include <basic/options/keys/cp.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
 #include <utility/options/keys/OptionKey.hh>
 #include <utility/string_util.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/pose/PDBInfo.hh>
+#include <protocols/simple_moves/ScoreMover.hh>
+
 #include <basic/Tracer.hh>
 static basic::Tracer TR("VIP");
 
@@ -54,7 +62,7 @@ main( int argc, char * argv [] )
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score12_full" );
 	protocols::simple_moves::ScoreMover scoreme = protocols::simple_moves::ScoreMover( scorefxn );
 
-	bool iterate = true;
+//	bool iterate = true;
 	core::Size it = 1;
 	core::Size const ncycles = option[ cp::ncycles ];
 

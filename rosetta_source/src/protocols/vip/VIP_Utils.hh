@@ -13,36 +13,11 @@
 #ifndef INCLUDED_protocols_vip_VIP_Utils_HH
 #define INCLUDED_protocols_vip_VIP_Utils_HH
 
-#include "core/scoring/packstat/types.hh"
-#include "core/scoring/packstat/SimplePDB_Atom.hh"
-#include "core/scoring/packstat/SimplePDB.hh"
-#include "core/scoring/packstat/AtomRadiusMap.hh"
-#include "core/scoring/packstat/compute_sasa.hh"
-
 #include "core/kinematics/MoveMap.fwd.hh"
-
-#include <protocols/analysis/PackStatMover.hh>
-
-//#include <devel/init.hh>
 #include "core/types.hh"
-#include <basic/options/option.hh>
-#include "basic/Tracer.hh"
-
-#include "utility/vector1.hh"
-#include "utility/file/FileName.hh"
-#include "utility/io/izstream.hh"
-#include "utility/io/ozstream.hh"
-#include "numeric/random/random.hh"
-
-#include <iostream>
-#include <fstream>
-#include <sstream>
+#include "core/pose/Pose.hh"
+#include "core/scoring/packstat/types.hh"
 #include <string>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/packstat.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-
-#include <ObjexxFCL/format.hh>
 
 namespace protocols {
 namespace vip {
