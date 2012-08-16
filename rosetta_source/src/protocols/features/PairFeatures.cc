@@ -174,7 +174,7 @@ PairFeatures::report_residue_pairs(
 
 	for(Size resNum1=1; resNum1 <= pose.total_residue(); ++resNum1){
 		if(!relevant_residues[resNum1]) continue;
-		Residue res1( pose.residue(resNum1) );
+		Residue const & res1( pose.residue(resNum1) );
 
 		Size res1_10A_neighbors(
 			tenA.get_node(resNum1)->num_neighbors_counting_self_static());
@@ -182,7 +182,7 @@ PairFeatures::report_residue_pairs(
 		// TODO: just iterate over the neighbors of res1
 		for(Size resNum2=resNum1+1; resNum2 <= pose.total_residue(); ++resNum2){
 			if(!relevant_residues[resNum2]) continue;
-			Residue res2( pose.residue(resNum2) );
+			Residue const & res2( pose.residue(resNum2) );
 
 			Distance const actcoord_dist( res1.actcoord().distance( res2.actcoord() ) );
 

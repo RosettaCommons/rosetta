@@ -353,7 +353,7 @@ getScoreFunctionName(
 	}
 
 	std::stringstream patch_string;
-	for(Size ii=1; ii <- patch_tags.size(); ++ii){
+	for(Size ii=1; ii <= patch_tags.size(); ++ii){
 		if( patch_tags[ii] == "NOPATCH" ) continue;
 		patch_string << "_" << patch_tags[ii];
 	}

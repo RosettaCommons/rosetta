@@ -52,6 +52,7 @@
 #include <protocols/features/SaltBridgeFeatures.hh>
 #include <protocols/features/StructureFeatures.hh>
 #include <protocols/features/StructureScoresFeatures.hh>
+#include <protocols/features/UnrecognizedAtomFeatures.hh>
 
 
 // Project Headers
@@ -132,6 +133,7 @@ public:
 		features_reporters_.push_back(new SaltBridgeFeatures());
 		features_reporters_.push_back(new StructureFeatures());
 		features_reporters_.push_back(new StructureScoresFeatures(score_function_));
+		features_reporters_.push_back(new UnrecognizedAtomFeatures());
 
 		utility::file::file_delete(database_filename);
 

@@ -96,6 +96,8 @@ sources = {
 		"StructureFeaturesCreator",
 		"StructureScoresFeatures",
 		"StructureScoresFeaturesCreator",
+		"UnrecognizedAtomFeatures",
+		"UnrecognizedAtomFeaturesCreator",
 		"util",
 	],
 	"protocols/features/helixAssembly": [
