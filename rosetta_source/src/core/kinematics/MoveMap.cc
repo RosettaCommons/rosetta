@@ -520,36 +520,42 @@ MoveMap::show( std::ostream & out, Size total_residue) const
 void
 MoveMap::show( std::ostream & out ) const
 {
-	out <<A(8,"resnum")<<' '<<A(8,"BB ") <<' '<<A(8,"CHI ")<<std::endl;
-	Size i = 1;
-	Size tot = 0;
-	bool break_twice = false;
-	bool break_from_jump = false;
+	out << "-------------------------------\n";	
+	out <<A(8,"resnum")<<' '<<A(8,"Type") <<' '<<A(12,"TRUE/FALSE ")<<std::endl;
+	out << "-------------------------------\n";
+	Size prev_resnum;
+	utility::vector1< bool > jumpbool;
+	utility::vector1< Size > jumpnum;
 	for (MoveMapTorsionID_Map::const_iterator it = movemap_torsion_id_begin(), it_end = movemap_torsion_id_end(); it != it_end; ++it){		
-		while (true) {
-			if (break_from_jump) {break_from_jump = false; break;}
-			if (break_twice) {break_twice = false; break;}
+		MoveMapTorsionID mmtorsionID = it->first;
+		bool boolean = it->second;
+		Size res = mmtorsionID.first;
+		TorsionType torsiontype = mmtorsionID.second;
 
-			if (get_jump(i)) {++tot; break_from_jump = true;}
-			if (get_bb(i)) {
-				if (get_chi(i)) {out <<I(8,3,i)<<' '<<A(8, "TRUE")<<' '<<A(8, "TRUE")<<'\n'; ++i; break_twice = true; break;}
-				else {out << I(8,3,i) << ' '<<A(8, "TRUE")<<' ' <<A(8, "FALSE")<<'\n'; ++i; break;}
-			}
-			else {
-				if (get_chi(i)) {out << I(8,3,i) << ' '<<A(8, "FALSE")<<' ' <<A(8, "TRUE")<<'\n'; ++i; break;}
-				else {++i;}
-			}
-	  }
-	}
-	out <<A(8,"jumpnum")<<' '<<A(8,"JUMP")<<std::endl;
-	Size j = 1;
-	for ( Size jump = 0; jump != tot; ++jump){
-		while (true) {
-			if (get_jump(j)) { out << I(8,2,j) << ' '<<A(8, "TRUE")<<'\n'; ++j; break;}
-			else {++j;}
+		// convert enum to string output
+		std::string type;
+		if (torsiontype == 1) {type = "BB ";}
+		else if (torsiontype == 2) {type = "SC ";}
+		else if (torsiontype == 3) {
+			type = "JUMP"; jumpbool.push_back(boolean); jumpnum.push_back(res);}
+
+		// Only show each residue/jump number once (and only if torsion type is either BB or SC)
+		if ((prev_resnum == mmtorsionID.first) && (type != "JUMP")) {
+			out << A(8,' ') <<' '<< A(8,type) <<' '<< A(8,(boolean ? "TRUE":"FALSE"))<< "\n";
 		}
+		else if ((prev_resnum != mmtorsionID.first) && (type != "JUMP")) {
+			out << I(8,3,res) <<' '<< A(8,type) <<' '<< A(8,(boolean ? "TRUE":"FALSE"))<< "\n";
+		}
+
+		// Remember the previous residue/jump number
+		prev_resnum = res;
 	}
-	out << " Everything else is set to FALSE." << std::endl;
+	out << "-------------------------------\n";	
+	out <<A(8,"jumpnum")<<' '<<A(8,"Type") <<' '<<A(12,"TRUE/FALSE ")<<std::endl;
+	out << "-------------------------------\n";
+	for (Size i = 1; i <= jumpnum.size(); ++i) {
+		out << I(8,3,jumpnum[i])<<' '<< A(8,"JUMP") <<' '<< A(8,(jumpbool[i] ? "TRUE":"FALSE"))<< "\n";
+	}
 }
 
 /// @brief import settings from another MoveMap

@@ -22,6 +22,7 @@
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/pose/annotated_sequence.hh>
 
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
@@ -55,12 +56,13 @@ int main(int argc, char *argv[])
 
 	// declare variables
 	Pose test_pose;
-
+	std::string sequence = "ASDFG";
+	core::pose::make_pose_from_sequence(test_pose, sequence, "fa_standard", true);
 	// import a test pose
-	pose_from_pdb(test_pose, "/home/boon/data/test.pdb");
+	//pose_from_pdb(test_pose, "/home/boon/data/test.pdb");
 
-	std::cout << "Hello, Rosetta World!" << std::endl;
-	std::cout << "I just imported my first pose into Rosetta." << std::endl;
+	//std::cout << "Hello, Rosetta World!" << std::endl;
+	//std::cout << "I just imported my first pose into Rosetta." << std::endl;
 	std::cout << "It has " << test_pose.total_residue() << " total residues." << std::endl;
 	
 /*	// create a PyMOL mover
@@ -150,13 +152,19 @@ int main(int argc, char *argv[])
 
 	// create a custom scorefxn
 	//core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction;
-	//scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
+	//scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );*/
 
-	// create a standard packer task
-	core::pack::task::PackerTaskOP fine_task ( core::pack::task::TaskFactory::create_packer_task( test_pose ));
-	fine_task->initialize_from_command_line().restrict_to_repacking().or_include_current( true );
+/*	// setup a packer task
+	core::pack::task::PackerTaskOP task ( core::pack::task::TaskFactory::create_packer_task( test_pose ));
+	task->initialize_from_command_line().or_include_current( true );
+	Size resid = 2;
+	std::cout << "show residue task for resid 2:" << std::endl;
+	task->show_residue_task(resid);
+	std::cout << "show all residue tasks" << std::endl;
+	task->show_all_residue_tasks();
+	std::cout << "print packer task" << std::endl << *task << std::endl;	*/
 
-	// define nloop
+/*	// define nloop
 	//core::Size nloop = 1;
 
 	// print rtmover2
@@ -175,18 +183,15 @@ int main(int argc, char *argv[])
 	core::Size cutpoint = 19;
 	protocols::loops::Loop loop ( protocols::loops::Loop(start, stop, cutpoint) );*/
 
-	// setup a movemap object
+// setup a movemap object
 	core::kinematics::MoveMap mm;
-	std::cout << "print empty movemap" << std::endl;
-	Size bb_begin = 3, bb_end = 6, chi_begin = 5, chi_end = 7, begin2 = 101, end2 = 12;
+	Size bb_begin = 3, bb_end = 6, chi_begin = 5, chi_end = 7, begin2 = 101;
 	mm.set_bb_true_range(bb_begin, bb_end);
 	mm.set_chi_true_range(chi_begin, chi_end);
 	mm.set_chi(begin2, true);
-  mm.set_bb(begin2, true);
+  mm.set_bb(begin2, false);
 	mm.set_jump(2, true);
-	mm.set_jump(5, true);
-	std::cout << "movemap.show(102)" << std::endl;
-	mm.show(end2);
+	mm.set_jump(5, false);
 	std::cout << "print movemap" << std::endl << mm << std::endl;
 
 	// create a CcdLoopClosureMover object
