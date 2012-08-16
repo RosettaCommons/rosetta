@@ -36,10 +36,12 @@
 #include <utility/file/FileName.fwd.hh>
 #include <utility/file/PathName.fwd.hh>
 
+// Platform Headers
+#include <platform/types.hh>
+
 //C++ Headers
 #include <string>
 #include <map>
-#include <core/types.hh>
 
 namespace basic {
 namespace resource_manager {
@@ -167,13 +169,13 @@ public:
 	void
 	add_option(
 		utility::options::RealOptionKey key,
-		core::Real val);
+		platform::Real val);
 
 	bool
 	has_option(
 		utility::options::RealOptionKey key) const;
 
-	core::Real
+	platform::Real
 	get_option(
 		utility::options::RealOptionKey key) const;
 
@@ -181,13 +183,13 @@ public:
 	void
 	add_option(
 		utility::options::RealVectorOptionKey key,
-		utility::vector1< core::Real > const & val);
+		utility::vector1< platform::Real > const & val);
 
 	bool
 	has_option(
 		utility::options::RealVectorOptionKey key) const;
 
-	utility::vector1< core::Real > const &
+	utility::vector1< platform::Real > const &
 	get_option(
 		utility::options::RealVectorOptionKey key) const;
 
@@ -240,9 +242,9 @@ private:
 	std::map< utility::options::PathVectorOptionKey, utility::vector1< utility::file::PathName > >
 		path_vector_options_;
 
-	std::map< utility::options::RealOptionKey, core::Real >
+	std::map< utility::options::RealOptionKey, platform::Real >
 		real_options_;
-	std::map< utility::options::RealVectorOptionKey, utility::vector1< core::Real > >
+	std::map< utility::options::RealVectorOptionKey, utility::vector1< platform::Real > >
 		real_vector_options_;
 
 	std::map< utility::options::StringOptionKey, std::string >

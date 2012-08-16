@@ -15,7 +15,7 @@
 #include <basic/database/schema_generator/Constraint.hh>
 #include <basic/database/schema_generator/Column.hh>
 
-#include <core/types.hh>
+#include <platform/types.hh>
 
 #include <string>
 #include <sstream>

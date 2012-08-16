@@ -14,7 +14,7 @@
 #include <basic/resource_manager/JobOptions.hh>
 
 // Platform Headers
-#include <core/types.hh>
+#include <platform/types.hh>
 #include <utility/vector1.hh>
 
 //utility headers
@@ -33,7 +33,7 @@
 namespace basic {
 namespace resource_manager {
 
-using core::Real;
+using platform::Real;
 using utility::options::BooleanOptionKey;
 using utility::options::BooleanVectorOptionKey;
 using utility::options::FileOptionKey;

@@ -19,7 +19,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-#include <core/types.hh>
+#include <platform/types.hh>
 
 // Utility Headers
 #include <utility/exit.hh>
@@ -35,7 +35,7 @@ namespace basic{
 namespace database{
 namespace schema_generator{
 
-using core::Size;
+using platform::Size;
 using std::string;
 using std::stringstream;
 using utility::vector1;
