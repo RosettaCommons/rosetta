@@ -21,6 +21,7 @@
 
 #include <utility/lua/LuaIterator.fwd.hh>
 #include <utility/lua/LuaObject.fwd.hh>
+#include <utility/exit.hh>
 #ifdef USELUA
 #include <lua.hpp>
 #include <luabind/luabind.hpp>
@@ -74,7 +75,7 @@ class LuaObject {
 										<< "\tThis LuaObject does not refer to a real Lua object." << std::endl
 										<< "\tLuaObject must be constructed with an initialized luabind::object." << std::endl
 										<< "\tDefault empty constructor for luabind::object is NOT initialized." << std::endl;
-								std::exit(9);
+								utility_exit_with_message("");
 						}
 						try {
 								return luabind::object_cast<T>(object_);
@@ -121,12 +122,11 @@ class LuaObject {
 								std::cerr << "------Error in casting LuaObject to C++ type!-------" << std::endl
 										<< "\tCast from Lua type '" << luatypename
 										<< "' to C++ type '" << cpptypename <<  "' failed!" << std::endl;
-								std::exit(9);
+								utility_exit_with_message("");
 						}
-						std::exit(9);
+						utility_exit_with_message("");
 #else
-						std::cerr << "Can't use LuaObject without compiling with USELUA flag" << std::endl;
-						std::exit(9);
+						utility_exit_with_message("Can't use LuaObject without compiling with USELUA flag" );
 						T t;
 						return t;
 #endif
