@@ -163,11 +163,15 @@ start
 3 A PIKAA ACDEFGH EX 1 EX ARO 2
 @endverbatim
 
-In this entity resfile, there are 16 residues declared in the entity protein (and 16 positions for
-each entity the genetic algorithm will consider) and all but residue 3 in this protein has the behavior
-"ALLAAxc" (all amino acids allowed, except for cysteine) and the rotamer-building instructions of
-"EX 1 EX 2 ARO" which builds extra rotamers at chi1 for all amino acids, and extra rotamers at
-chi 2 for aromatic amino acids (FHWY).
+In this entity resfile, there are 16 residues declared in the entity protein (and 16 positions
+for each entity the genetic algorithm will consider) and all but residue 3 (entity element #3)
+in this protein has the behavior "ALLAAxc" (all amino acids allowed, except for cysteine) and
+the rotamer-building instructions of "EX 1 EX 2 ARO" which builds extra rotamers at chi1 for
+all amino acids, and extra rotamers at chi 2 for aromatic amino acids (FHWY).
+
+Do not use NATRO or NATAA commands with entity resfiles.  Internally, there is a temporary
+entity reference pose constructed while considering entity elements; the "native" for
+NATRO/NATAA will be drawn from this polyalanine reference and bad things will happen.
 
 If residue 15 on chain A in a particular state is declared to correspond to entity element 10,
 then when that state goes to build rotamers for residue 15 on chain A, it will use the
