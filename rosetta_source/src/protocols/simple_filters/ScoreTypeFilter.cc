@@ -35,7 +35,6 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 //Auto Headers
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
-#include <protocols/elscripts/util.hh>
 
 
 namespace protocols{
@@ -73,23 +72,6 @@ ScoreTypeFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & 
 	score_type_ = core::scoring::score_type_from_name( tag->getOption<std::string>( "score_type", "total_score" ) );
 	if( ! tag->hasOption( "threshold" ) ) utility_exit_with_message("Must specify 'threshold' for ScoreTypeFilter.");
 	score_type_threshold_ = tag->getOption<core::Real>( "threshold" );
-
-	score_type_filter_tracer<<"ScoreType filter for score_type "<<score_type_<<" with threshold "<<score_type_threshold_<<std::endl;
-}
-void ScoreTypeFilter::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & score_fxns,
-				utility::lua::LuaObject const & tasks ) {
-	using namespace core::scoring;
-
-	if( def["scorefxn"] ) {
-		scorefxn_ = protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns );
-	} else {
-		scorefxn_ = score_fxns["score12"].to<ScoreFunctionSP>()->clone();
-	}
-
-	score_type_ = core::scoring::score_type_from_name( def["score_type"] ? def["score_type"].to<std::string>() : "total_score" );
-	if( ! def["threshold"] ) utility_exit_with_message("Must specify 'threshold' for ScoreTypeFilter.");
-	score_type_threshold_ = def["threshold"].to<core::Real>();
 
 	score_type_filter_tracer<<"ScoreType filter for score_type "<<score_type_<<" with threshold "<<score_type_threshold_<<std::endl;
 }

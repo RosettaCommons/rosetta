@@ -54,7 +54,6 @@ public:
 
 	virtual void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 	virtual void parse_tag( TagPtr );
-	void parse_def( utility::lua::LuaObject const & def );
 
 private:
 	std::string unparsed_identities_;

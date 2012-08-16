@@ -161,11 +161,7 @@ ResidueType::ResidueType(
 	lower_connect_id_( 0 ),
 	upper_connect_id_( 0 ),
 	n_non_polymeric_residue_connections_( 0 ),
-	n_polymeric_residue_connections_( 0 ),
-	nondefault_(false),
-	base_restype_name_(""),
-	serialized_(false)
-
+	n_polymeric_residue_connections_( 0 )
 
 {}
 

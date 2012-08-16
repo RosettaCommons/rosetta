@@ -30,13 +30,7 @@ namespace core {
 namespace chemical {
 
 class AtomICoor;
-
-
 }
 }
-
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/access.hpp>
-#endif
 
 #endif

@@ -34,19 +34,6 @@ sources = {
 		"idealize",
 		"IdealizeMover",
 	],
-	"protocols/inputter": [
-    "Inputter",
-    "InputterStream",
-    "PDBInputter",
-    "SilentFileInputter",
-  ],
-	"protocols/outputter": [
-		"Outputter",
-		"FormatStringOutputter",
-		"PDBOutputter",
-		"ResFileOutputter",
-		"SilentFileOutputter",
-	],
 	"protocols/jd2": [
 		"AtomTreeDiffJobInputter",
 		"AtomTreeDiffJobOutputter",

@@ -42,9 +42,5 @@ typedef utility::pointer::access_ptr< CacheableStringMap const > CacheableString
 } // namespace datacache
 } // namespace basic
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/map.hpp>
-#include <boost/serialization/string.hpp>
-#endif
 
 #endif /* INCLUDED_basic_datacache_CacheableStringMap_FWD_HH */

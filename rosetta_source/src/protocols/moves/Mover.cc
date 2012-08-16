@@ -26,7 +26,6 @@
 // AUTO-REMOVED #include <utility/tag/Tag.hh>  // REQUIRED FOR WINDOWS
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/jobdist/Jobs.hh>
-#include <utility/string_util.hh>
 
 // tracer
 #include <basic/Tracer.hh>
@@ -43,36 +42,6 @@
 
 namespace protocols {
 namespace moves {
-
-
-#ifdef USELUA
-void lregister_Mover( lua_State * lstate ) {
-	luabind::module(lstate, "protocols")
-	[
-		luabind::namespace_( "moves" )
-		[
-			luabind::class_<Mover>("Mover")
-				.def("apply", ( void (Mover::*)( core::io::serialization::PipeMap & )) &Mover::apply)
-				.def("apply", ( void (Mover::*)( core::pose::Pose & )) &Mover::apply)
-				.def("parse_state", &Mover::parse_state)
-				.def("save_state", &Mover::save_state)
-		]
-	];
-}
-
-void lregister_SerializableState( lua_State * lstate ){
-	luabind::module(lstate, "protocols")
-	[
-		luabind::namespace_( "moves" )
-		[
-			luabind::class_<SerializableState>("SerializableState")
-				.def("set", ( void (*) ( SerializableStateSP, std::string, std::string )) &SerializableState_set )
-				.def("set", ( void (*) ( SerializableStateSP, std::string, core::Real )) &SerializableState_set )
-				.def("get", &SerializableState_get )
-		]
-	];
-}
-#endif
 
 using namespace core;
 	using namespace pose;
@@ -139,37 +108,6 @@ Mover::get_native_pose() const { return native_pose_; }
 void
 Mover::set_native_pose( PoseCOP pose ) { native_pose_ = pose; }
 
-// Factory<Mover> functions
-MoverSP Mover::create() {
-	MoverOP a = fresh_instance();
-	MoverSP tmpsp (a.get());
-	a.relinquish_ownership();
-	return tmpsp;
-}
-// elscripts functions
-void Mover::apply( core::io::serialization::PipeMap & pmap ) {
-	for( core::io::serialization::Pipe::iterator itr = pmap["input"]->begin(); itr != pmap["input"]->end(); itr++ ) {
-		apply( **itr );
-	}
-}
-
-// called right before mover is used , allowing mover to set settings based on state
-void Mover::parse_state( SerializableState const & state ) {
-	utility_exit_with_message("This Mover has not implemented parse_state()");
-}
-// state is not an argument because it doesn't exist at this point
-void Mover::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & score_fxns,
-				utility::lua::LuaObject const & tasks,
-				MoverCacheSP cache ) {
-	utility_exit_with_message("This Mover has not implemented parse_def()");
-}
-
-void Mover::save_state( SerializableState & state ) {
-	utility_exit_with_message("This Mover has not implemented save_state()");
-}
-
-// end mpr support
 ///@details Some movers need not be parsed, so we shouldn't stop executions. This, however, calls attention to the lack of this method, which could be due to something as silly as a wrong parameters definition.
 void Mover::parse_my_tag(
 	TagPtr const,
@@ -236,23 +174,6 @@ std::ostream & operator << ( std::ostream & os, Mover const & mover)
 	os << "Mover name: " << mover.get_name() << ", Mover type: " << mover.get_type() << ", Mover current tag:" << mover.get_current_tag() << std::endl;
 	return os;
 }
-
-/// serializable set helper functions
-void SerializableState_set( SerializableStateSP state, std::string key, std::string val ) {
-	(*state)[key] = val;
-}
-
-void SerializableState_set( SerializableStateSP state, std::string key, core::Real val ) {
-	(*state)[key] = utility::to_string(val);
-}
-std::string SerializableState_get( SerializableStateSP state, std::string key ) {
-	if( state->find( key ) != state->end() ) {
-		return (*state)[key];
-	} else {
-		return "";
-	}
-}
-
 
 } // moves
 } // protocols

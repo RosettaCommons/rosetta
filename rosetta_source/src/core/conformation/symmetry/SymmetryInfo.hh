@@ -17,7 +17,7 @@
 
 // Unit Headers
 #include <core/conformation/symmetry/SymmData.fwd.hh>
-#include <core/conformation/symmetry/SymDof.hh>
+#include <core/conformation/symmetry/SymDof.fwd.hh>
 #include <core/conformation/symmetry/SymSlideInfo.hh>
 
 //core
@@ -247,37 +247,6 @@ public:
 	utility::vector1<Size> const & get_jump_name_to_subunits  (std::string const & jname) const;
 
 private:
-
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version){
-		ar & bb_clones_;
-		ar & chi_clones_;
-		ar & jump_clones_;
-		ar & jump_clone_wts_;
-		ar & bb_follows_;
-		ar & chi_follows_;
-		ar & jump_follows_;
-		ar & empty_list;
-		ar & nres_monomer_;
-		ar & scoring_subunit_;
-		ar & npseudo_;
-		ar & njump_monomer_;
-		ar & type_;
-		ar &  interfaces_;
-		ar & score_multiply_;
-		ar & score_multiply_factor_;
-		ar & dofs_;
-		ar & use_symmetry_;
-		ar & cp_weighting_during_minimization_;
-		ar & slide_info_;
-		ar & jnum2name_;
-		ar & name2jnum_;	
-
-	}
-#endif
 
 	// mapping from each primary jump to it's clones
 	std::map< Size, Clones >   bb_clones_;

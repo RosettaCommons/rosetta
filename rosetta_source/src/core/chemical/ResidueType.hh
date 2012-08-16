@@ -96,6 +96,7 @@
 #include <core/chemical/VariantType.fwd.hh>
 #include <utility/vector1.hh>
 
+
 namespace core {
 namespace chemical {
 
@@ -1588,8 +1589,6 @@ public:
 	}
 	*/
 	//XRW_E_T1
-	//
-	
 
 	////////////////////////////////////////////////////////////////////////////
 	/// dihedral methods
@@ -2195,26 +2194,6 @@ private:
 
 	// may (?) also want: cp_atom_num, ta
 	// angle_neighbor, dihe_neighbor, water properties
-	//
-	
-
-	// boost serialize stuff
-#ifdef USEBOOSTSERIALIZE
-	template<class Archive> friend void core::conformation::save_construct_data( Archive & ar, const core::conformation::Residue * t, const unsigned int file_version);
-	template<class Archive> friend void core::conformation::load_construct_data( Archive & ar, core::conformation::Residue * t, const unsigned int file_version);
-#endif
-
-	bool nondefault_;
-	std::string base_restype_name_;
-public:
-	void nondefault(bool in) { nondefault_ = in;}
-	void base_restype_name(std::string const & in) { base_restype_name_ = in;}
-	std::string base_restype_name() const {return base_restype_name_;}
-
-	// this is a total hack, im tired
-	mutable bool serialized_;
-private:
-	// end hack?
 };
 
 

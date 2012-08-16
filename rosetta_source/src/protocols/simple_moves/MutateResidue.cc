@@ -167,23 +167,6 @@ void MutateResidue::parse_my_tag( utility::tag::TagPtr const tag,
 	res_name_ = tag->getOption<string>("new_res");
 }
 
-void MutateResidue::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & score_fxns,
-				utility::lua::LuaObject const & tasks,
-				protocols::moves::MoverCacheSP cache ) {
-	// Set target to the residue specified by "target_pdb_num" or "target_res_num"
-	if( !def["target"] ) {
-		TR.Error << "Error: no 'target' parameter specified." << std::endl;
-		utility_exit();
-	}
-	target_ = def["target"].to<core::Size>();
-
-	if( !def["target"] ) {
-		TR.Error << "Error: no 'new_res' parameter specified." << std::endl;
-		utility_exit();
-	}
-	res_name_ = def["new_res"].to<std::string>();
-}
 
 } // moves
 } // protocols

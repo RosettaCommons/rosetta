@@ -158,13 +158,6 @@ LimitAromaChi2Operation::parse_tag( TagPtr tag )
 	chi2min( tag->getOption< Real >( "chi2min", 70.0 ) );
 }
 
-void
-LimitAromaChi2Operation::parse_def( utility::lua::LuaObject const & def)
-{
-	chi2max( def["chi2max"] ? def["chi2max"].to<Real>() : 110.0 );
-	chi2min( def["chi2min"] ? def["chi2min"].to<Real>() : 70.0 );
-}
-
 
 
 } // TaskOperations

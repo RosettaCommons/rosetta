@@ -70,10 +70,6 @@ public:
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );
 
-  virtual void parse_def( utility::lua::LuaObject const & def,
-		utility::lua::LuaObject const & score_fxns,
-		utility::lua::LuaObject const & tasks,
-		protocols::moves::MoverCacheSP cache );
 private:
 	core::Size rb_jump_;
 	core::Size target_;

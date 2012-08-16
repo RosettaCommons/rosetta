@@ -21,7 +21,6 @@
 #include <basic/Tracer.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/elscripts/util.hh>
 #include <protocols/scoring/Interface.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -57,9 +56,7 @@ DdgFilter::DdgFilter() :
 	symmetry_(false),
 	repack_( true ),
 	relax_mover_( NULL )
-{
-	scorename_ = "ddg";
-}
+{}
 
 DdgFilter::~DdgFilter() {}
 
@@ -109,39 +106,6 @@ DdgFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, 
 		TR<<"ddg filter with threshold "<< ddg_threshold_<<" repeats="<<repeats()<<" and scorefxn "<<scorefxn_name<<" with symmetry " <<std::endl;
 	else
 		TR<<"ddg filter with threshold "<< ddg_threshold_<<" repeats="<<repeats()<<" and scorefxn "<<scorefxn_name<<" over jump "<<rb_jump_<<" and repack "<<repack()<<std::endl;
-}
-
-void DdgFilter::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & score_fxns,
-				utility::lua::LuaObject const & tasks ) {
-	using namespace core::scoring;
-	if( def["scorename"] )
-		scorename_ = def["scorename"].to<std::string>();
-	if( def["scorefxn"] ) {
-		scorefxn_ = protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns );
-	} else {
-		scorefxn_ = score_fxns["score12"].to<ScoreFunctionSP>()->clone();
-	}
-	ddg_threshold_ = def["threshold"] ? def["threshold"].to<core::Real>() : -15;
-	rb_jump_ = def["jump"] ? def["jump"].to<core::Size>() : 1;
-	repeats( def["repeats"] ? def["repeats"].to<core::Size>() : 1 );
-	repack( def["repack"] ? def["repack"].to<bool>() : true );
-	symmetry_ = def["symmetry"] ? def["symmetry"].to<bool>() : false;
-	// ignoring relax_mover option
-	if( def["chain_num"] ) {
-		chain_ids_.clear();
-		for (utility::lua::LuaIterator i=def["chain_num"].begin(), end; i != end; ++i) {
-			chain_ids_.push_back( (*i).to<core::Size>() );
-		}
-	}
-
-	if( repeats() > 1 && !repack() )
-		utility_exit_with_message( "ERROR: it doesn't make sense to have repeats if repack is false, since the values converge very well." );
-
-	if ( symmetry_ )
-		TR<<"ddg filter with threshold "<< ddg_threshold_<<" repeats="<<repeats()<<" with symmetry " <<std::endl;
-	else
-		TR<<"ddg filter with threshold "<< ddg_threshold_<<" repeats="<<repeats()<<" over jump "<<rb_jump_<<" and repack "<<repack()<<std::endl;
 }
 
 bool

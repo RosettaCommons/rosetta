@@ -33,10 +33,6 @@ class ResidueConnection;
 } // chemical
 } // core
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/access.hpp>
-#endif
-
 
 
 #endif

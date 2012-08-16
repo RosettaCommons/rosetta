@@ -39,7 +39,6 @@
 #include <cassert>
 #include <iosfwd>
 
-#include <boost/type_traits/remove_const.hpp> 
 
 namespace utility {
 namespace pointer {
@@ -269,13 +268,6 @@ public: // Methods
 		}
 	}
 
-	/// @brief Release ownership but leave pointed memory alone
-	inline
-	void
-	relinquish_ownership()
-	{
-		p_ = 0;
-	}
 
 	/// @brief Swap
 	inline
@@ -289,35 +281,6 @@ public: // Methods
 
 
 private: // Fields
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void save(Archive & ar, const unsigned int version) const {
-			bool a = true;
-			if( p_ != 0 ) {
-				ar << a;
-				ar << *p_;
-			} else {
-				a = false;
-				ar << a;
-			}
-
-	}
-
-	template<class Archive>
-	void load(Archive & ar, const unsigned int version) {
-			bool test;
-			ar >> test;
-			if( test ) {
-				pointer a = new T;
-				ar >> *( const_cast< typename boost::remove_const<T>::type * > (a) );
-				p_ = a;
-				owning_ptr_acquire( a );
-			}
-	}
-	BOOST_SERIALIZATION_SPLIT_MEMBER()
-#endif
 
 
 	/// @brief Pointer to object

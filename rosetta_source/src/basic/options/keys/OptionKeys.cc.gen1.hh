@@ -1,3 +1,5 @@
+namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }
+namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }
 namespace fold_cst { BooleanOptionKey const keep_skipped_csts( "fold_cst:keep_skipped_csts" );  }
 namespace fold_cst { BooleanOptionKey const no_minimize( "fold_cst:no_minimize" );  }
 namespace fold_cst { BooleanOptionKey const force_minimize( "fold_cst:force_minimize" );  }
@@ -590,15 +592,6 @@ namespace wum { StringOptionKey const extra_scorefxn( "wum:extra_scorefxn" );  }
 namespace wum { FileOptionKey const extra_scorefxn_ref_structure( "wum:extra_scorefxn_ref_structure" );  }
 namespace wum { IntegerOptionKey const extra_scorefxn_relax( "wum:extra_scorefxn_relax" );  }
 namespace wum { RealOptionKey const trim_proportion( "wum:trim_proportion" );  }
-namespace els { BooleanOptionKey const els( "els" );  }
-namespace els { IntegerOptionKey const master_wu_per_send( "els:master_wu_per_send" );  }
-namespace els { StringOptionKey const vars( "els:vars" );  }
-namespace els { FileOptionKey const script( "els:script" );  }
-namespace els { IntegerOptionKey const num_traj( "els:num_traj" );  }
-namespace els { IntegerOptionKey const traj_per_master( "els:traj_per_master" );  }
-namespace els { IntegerOptionKey const shortest_wu( "els:shortest_wu" );  }
-namespace els { BooleanOptionKey const pool( "els:pool" );  }
-namespace els { BooleanOptionKey const singlenode( "els:singlenode" );  }
 namespace lh { BooleanOptionKey const lh( "lh" );  }
 namespace lh { StringOptionKey const db_prefix( "lh:db_prefix" );  }
 namespace lh { IntegerVectorOptionKey const loopsizes( "lh:loopsizes" );  }
@@ -620,3 +613,8 @@ namespace lh { IntegerOptionKey const max_struct_per_radius( "lh:max_struct_per_
 namespace lh { RealOptionKey const grid_space_multiplier( "lh:grid_space_multiplier" );  }
 namespace lh { RealOptionKey const grid_angle_multiplier( "lh:grid_angle_multiplier" );  }
 namespace lh { IntegerOptionKey const skim_size( "lh:skim_size" );  }
+namespace lh { IntegerOptionKey const rounds( "lh:rounds" );  }
+namespace lh { StringOptionKey const jobname( "lh:jobname" );  }
+namespace lh { IntegerOptionKey const max_lib_size( "lh:max_lib_size" );  }
+namespace lh { IntegerOptionKey const max_emperor_lib_size( "lh:max_emperor_lib_size" );  }
+namespace lh { IntegerOptionKey const max_emperor_lib_round( "lh:max_emperor_lib_round" );  }

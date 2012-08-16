@@ -27,9 +27,5 @@ typedef utility::pointer::owning_ptr< SymDof const > SymDofCOP;
 } // conformation
 } // core
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/access.hpp>
-#endif
-
 #endif
 

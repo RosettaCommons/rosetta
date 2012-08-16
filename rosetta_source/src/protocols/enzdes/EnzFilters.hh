@@ -129,9 +129,6 @@ LigInterfaceEnergyFilter() : Filter( "LigInterfaceEnergy" ) {}
 	core::Real constraint_energy( core::pose::Pose const & pose, int which_res ) const;
 	virtual ~LigInterfaceEnergyFilter();
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
-	virtual void parse_def( utility::lua::LuaObject const & def,
-					utility::lua::LuaObject const & score_fxns,
-					utility::lua::LuaObject const & tasks );
 private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 	core::Real threshold_;

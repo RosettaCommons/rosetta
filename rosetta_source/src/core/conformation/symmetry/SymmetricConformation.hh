@@ -19,7 +19,7 @@
 
 // Unit headers
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
 #include <core/conformation/Conformation.hh>
 
@@ -239,17 +239,6 @@ private:
 	// force recomputation of Tsymm_'s from the current conformation
 	void
 	recalculate_transforms( );
-
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version){
-		ar & boost::serialization::base_object<Conformation>(*this);
-		ar & symm_info_;
-	}
-
-#endif
 
 
 private:

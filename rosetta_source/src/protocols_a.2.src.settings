@@ -15,15 +15,6 @@ sources = {
 		"BoincPoseObserver",
 		"watchdog",
 	],
-	"protocols/elscripts": [
-		"BaseRole",
-		"Master",
-		"MPI_Master",
-		"MPI_Slave",
-    "SingleNode",
-		"Slave",
-    "util",
-  ],
 	"protocols/frag_picker": [
 		"BestTotalScoreSelector",
 		"CompositeFragmentSelector",
@@ -126,13 +117,6 @@ sources = {
 		"WorkUnitBase",
 		"WorkUnitList",
 		"WorkUnitManager",
-	],
-	"protocols/wum2": [
-		"EndPoint",
-		"MPI_EndPoint",
-		"WorkUnit",
-		"WUQueue",
-		"WUQueueBuffer",
 	],
 }
 include_path = [

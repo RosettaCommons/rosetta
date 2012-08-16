@@ -15,8 +15,6 @@
 #define INCLUDED_protocols_moves_Mover_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
 
 // AUTO-REMOVED #include <string>
 #include <map>
@@ -29,18 +27,8 @@ namespace moves {
 class Mover;
 typedef utility::pointer::owning_ptr< Mover > MoverOP;
 typedef utility::pointer::owning_ptr< Mover const > MoverCOP;
-typedef boost::shared_ptr< Mover> MoverSP;
 
 typedef std::map< std::string const, MoverOP > Movers_map;
-
-typedef std::map< std::string, std::string > SerializableState;
-typedef boost::shared_ptr< SerializableState > SerializableStateSP;
-typedef boost::shared_ptr< const SerializableState > SerializableStateCSP;
-typedef boost::weak_ptr< SerializableState > SerializableStateWP;
-typedef boost::weak_ptr< const SerializableState > SerializableStateCWP;
-
-typedef std::map< std::string, std::string > MoverCache;
-typedef boost::shared_ptr< MoverCache > MoverCacheSP;
 
 } // moves
 } // protocols

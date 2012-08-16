@@ -1452,29 +1452,6 @@ PackerTask_::symmetrize_by_intersection() const {
 	return symmetry_status_ == REQUEST_SYMMETRIZE_BY_INTERSECTION;
 }
 
-PackerTask_::PackerTask_(
-)
-:
-	nres_(0 ),
-	pack_residue_( nres_, true ),
-	n_to_be_packed_( nres_ ),
-	n_to_be_packed_up_to_date_( true ),
-	linmem_ig_( false ),
-	lazy_ig_( false ),
-	double_lazy_ig_( false ),
-	dlig_mem_limit_( 0 ),
-	multi_cool_annealer_( false ),
-	mca_history_size_( 1 ),
-	optimize_H_( false ),
-	bump_check_( true ),
-	max_rotbump_energy_( 5.0 ),
-	low_temp_( -1.0 ), //default --> let annealer pick
-	high_temp_( -1.0 ), //default --> let annealer pick
-	disallow_quench_( false ),
-	symmetry_status_(NO_SYMMETRIZATION_REQUEST)
-{
-	IG_edge_reweights_ = NULL; //default stays empty, no reweighting
-}
 
 ///@details constructor requires a pose.  most settings are in ResidueLevelTask
 ///nres_ is copied from the pose, all residues are set to be packable by default, and bump_check is true

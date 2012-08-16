@@ -458,13 +458,20 @@ ConstraintIO::read_cst_bindingsites(
 	next_section_name = "";
 }
 
-ConstraintSetOP ConstraintIO::read_constraints(
-std::istream & data,
-ConstraintSetOP cset,
-pose::Pose const& pose
+
+ConstraintSetOP
+ConstraintIO::read_constraints(
+	std::string const & fname,
+	ConstraintSetOP cset,
+	pose::Pose const & pose
 ) {
+	utility::io::izstream data( fname.c_str() );
+	tr.Info << "read constraints from " << fname << std::endl;
+	if ( !data ) {
+		utility_exit_with_message( "[ERROR] Unable to open constraints file: "+ fname );
+	}
+
 	std::string line;
-	std::streampos original_pos = data.tellg();
 	getline(data,line); // header line
 	std::string section = get_section_name ( line );
 	std::string pre_read;
@@ -481,11 +488,10 @@ pose::Pose const& pose
 		} else if ( section == "NO_SECTION" ) {
 			tr.Info << " no section header [ xxx ] found, try reading line-based format... DON'T MIX"
 							<< std::endl;
-			data.seekg( original_pos );
-			return read_constraints_new( data, cset, pose );
+			return read_constraints_new( fname, cset, pose );
 		} else { //section header, but unknown name
 			utility_exit_with_message(
-				"constraint-file: section " + section + " not recognized!"
+				"constraint-file: " + fname + " section " + section + " not recognized!"
 			);
 		}
 		tr.Trace << "pre_read: " << pre_read << std::endl;
@@ -493,20 +499,6 @@ pose::Pose const& pose
 	}
 //	pose.constraint_set( cset );
 	return cset;
-}
-
-ConstraintSetOP
-ConstraintIO::read_constraints(
-	std::string const & fname,
-	ConstraintSetOP cset,
-	pose::Pose const & pose
-) {
-	utility::io::izstream data( fname.c_str() );
-	tr.Info << "read constraints from " << fname << std::endl;
-	if ( !data ) {
-		utility_exit_with_message( "[ERROR] Unable to open constraints file: "+ fname );
-	}
-	return read_constraints( data, cset, pose );
 } // read_constraints
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -522,14 +514,7 @@ ConstraintIO::read_constraints_new(
 	if ( !data ) {
 		utility_exit_with_message("[ERROR] Unable to open constraints file: " + fname );
 	}
-	read_constraints_new( data, cset, pose );
-}
-ConstraintSetOP
-ConstraintIO::read_constraints_new(
-	std::istream & data,
-	ConstraintSetOP cset,
-	pose::Pose const & pose
-) {
+
 	while( data.good() ) { // check if we reach the end of file or not
 		// read in each constraint and add it constraint_set
 		ConstraintOP cst_op;
@@ -537,7 +522,7 @@ ConstraintIO::read_constraints_new(
 		if ( cst_op ) {
 			cset->add_constraint( cst_op );
 		} else if ( ! data.eof() ) { // not end of line
-			tr.Error << "ERROR: reading constraints from file" << std::endl;
+			tr.Error << "ERROR: reading constraints from file" << fname << std::endl;
 			break;
 		}
 	} // while

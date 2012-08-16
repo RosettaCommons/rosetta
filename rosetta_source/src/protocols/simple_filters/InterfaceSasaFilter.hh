@@ -42,9 +42,6 @@ public:
 	void jump( core::Size const jump );
 	core::Size jump() const;
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
-	void parse_def( utility::lua::LuaObject const & def,
-					utility::lua::LuaObject const & score_fxns,
-					utility::lua::LuaObject const & tasks );
 private:
 	core::Real lower_threshold_;
 	core::Real upper_threshold_;

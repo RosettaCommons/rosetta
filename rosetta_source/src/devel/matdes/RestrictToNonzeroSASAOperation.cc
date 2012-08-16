@@ -89,9 +89,5 @@ RestrictToNonzeroSASAOperation::parse_tag( TagPtr tag )
 	
 }
 
-void
-RestrictToNonzeroSASAOperation::parse_def( utility::lua::LuaObject const & def) {
-	probe_radius_ = def["probe_radius"] ? def["probe_radius"].to<core::Real>() : 2.2;
-}
 } //namespace matdes
 } //namespace devel

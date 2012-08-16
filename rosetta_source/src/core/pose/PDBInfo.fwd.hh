@@ -31,4 +31,5 @@ typedef utility::pointer::owning_ptr< PDBInfo const > PDBInfoCOP;
 } // namespace pose
 } // namespace core
 
+
 #endif

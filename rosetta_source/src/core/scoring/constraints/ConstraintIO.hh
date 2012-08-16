@@ -47,11 +47,6 @@ public:
 		ConstraintSetOP cst_set,
 		pose::Pose const& pose
 	);
-	static ConstraintSetOP read_constraints(
-		std::istream & data,
-		ConstraintSetOP cst_set,
-		pose::Pose const& pose
-	);
 
 	static void write_constraints( std::ostream&, ConstraintSet const& cst_set, core::pose::Pose const& );
 	static void write_constraints( std::string const& filename, ConstraintSet const& cst_set, core::pose::Pose const& );
@@ -66,12 +61,6 @@ public:
 
 	static ConstraintSetOP read_constraints_new(
 		std::string const & fname,
-		ConstraintSetOP cset,
-		pose::Pose const & pose
-	);
-
-	static ConstraintSetOP read_constraints_new(
-		std::istream & data,
 		ConstraintSetOP cset,
 		pose::Pose const & pose
 	);

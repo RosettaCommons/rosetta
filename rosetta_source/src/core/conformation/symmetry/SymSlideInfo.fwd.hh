@@ -27,10 +27,5 @@ typedef utility::pointer::owning_ptr< SymSlideInfo const > SymSlideInfoCOP;
 } // conformation
 } // core
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/string.hpp>
-#include <boost/serialization/vector.hpp>
-#endif
-
 #endif
 

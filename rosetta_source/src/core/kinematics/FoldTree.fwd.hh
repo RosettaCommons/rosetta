@@ -38,8 +38,5 @@ typedef  utility::pointer::owning_ptr< FoldTree const >  FoldTreeCOP;
 } // namespace kinematics
 } // namespace core
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/access.hpp>
-#endif
 
 #endif // INCLUDED_core_kinematics_FoldTree_FWD_HH

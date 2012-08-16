@@ -47,7 +47,6 @@
 #include <protocols/moves/DataMap.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/elscripts/util.hh>
 #include <protocols/scoring/Interface.hh>
 #include <protocols/simple_filters/DdgFilter.hh>
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
@@ -156,27 +155,6 @@ TaskAwareAlaScan::parse_my_tag(
         exempt_identities_.insert( id );
     }
   }
-}
-void TaskAwareAlaScan::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & score_fxns,
-				utility::lua::LuaObject const & tasks ) {
-	task_factory( protocols::elscripts::parse_taskdef( def["tasks"], tasks ));
-	jump( def["jump"] ? def["jump"].to<core::Size>() : 1 );
-	repeats( def["repeats"] ? def["repeats"].to<core::Size>() : 1 );
-	if( def["scorefxn"] ) {
-		scorefxn_ = protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns );
-	} else {
-		scorefxn_ = score_fxns["score12"].to<core::scoring::ScoreFunctionSP>()->clone();
-	}
-	repack( def["repack"] ? def["repack"].to<bool>() : 1 );
-	report_diffs( def["report_diffs"] ? def["report_diffs"].to<bool>() : 1 );
-	write2pdb( def["write2pdb"] ? def["write2pdb"].to<bool>() : 0 );
-	if( def["exempt_identites"] ) {
-    exempt_identities_.clear();
-		for (utility::lua::LuaIterator i=def["exempt_identities"].begin(), end; i != end; ++i) {
-			exempt_identities_.insert( (*i).to<std::string>() );
-		}
-	}
 }
 
 // @brief Calculate the ddG for an alanine mutation at the specified position

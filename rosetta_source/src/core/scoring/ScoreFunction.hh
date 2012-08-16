@@ -72,17 +72,8 @@
 #include <core/scoring/methods/WholeStructureEnergy.hh> // WIN32 INCLUDE
 #endif
 
-#ifdef USELUA
-#include <lua.hpp>
-#include <luabind/luabind.hpp>
-#endif
-
 namespace core {
 namespace scoring {
-
-#ifdef USELUA
-void lregister_ScoreFunction( lua_State * lstate );
-#endif
 
 /// @brief This object defines a ScoreFunction, it contains methods for
 /// calculating the various scoring components (called ScoreType's) used in

@@ -55,10 +55,6 @@ public:
 
 	virtual void
 	parse_my_tag( TagPtr const, protocols::moves::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, Pose const & );
-  virtual void parse_def( utility::lua::LuaObject const & def,
-		utility::lua::LuaObject const & score_fxns,
-		utility::lua::LuaObject const & tasks,
-		protocols::moves::MoverCacheSP cache );
 
 private:
 	ConstraintSetOP constraint_set_low_res_;

@@ -22,7 +22,6 @@
 #include <string>
 #include <map>
 // AUTO-REMOVED #include <utility/vector1.hh>
-#include <boost/shared_ptr.hpp>
 
 #include <utility/vector1.fwd.hh>
 
@@ -37,7 +36,6 @@ class FilterCollection;
 // Types
 typedef utility::pointer::owning_ptr< Filter >  FilterOP;
 typedef utility::pointer::owning_ptr< Filter const >  FilterCOP;
-typedef boost::shared_ptr < Filter > FilterSP;
 
 typedef utility::pointer::owning_ptr< FilterCollection >  FilterCollectionOP;
 typedef utility::pointer::owning_ptr< FilterCollection const >  FilterCollectionCOP;

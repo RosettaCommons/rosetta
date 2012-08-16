@@ -5882,50 +5882,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 0.0</dd><br>
 </dl>
  </li>
-<li><h2>els</h2>
-<dl>
-<dt><b>-els</b> \<Boolean\><dt>
-<dd>els option group</dd><br>
-</dl>
-<dl>
-<dt><b>-master_wu_per_send</b> \<Integer\><dt>
-<dd>How many wu to send in one isend from master.  Set to ~ (WU generated: slaves per master) ratio</dd><br>
-<dd>Default: 1</dd><br>
-</dl>
-<dl>
-<dt><b>-vars</b> \<String\><dt>
-<dd>Any variables you want to pass to lua, semi colon separated, in the form: myvar=5</dd><br>
-<dd>Default: ""</dd><br>
-</dl>
-<dl>
-<dt><b>-script</b> \<File\><dt>
-<dd>Path to the ElScript</dd><br>
-<dd>Default: ""</dd><br>
-</dl>
-<dl>
-<dt><b>-num_traj</b> \<Integer\><dt>
-<dd>Number of trajectories</dd><br>
-</dl>
-<dl>
-<dt><b>-traj_per_master</b> \<Integer\><dt>
-<dd>Number of trajectories per master node</dd><br>
-</dl>
-<dl>
-<dt><b>-shortest_wu</b> \<Integer\><dt>
-<dd>Length of time of shortest wu in seconds, used for determining status request resend period.  Err on the side of smaller times</dd><br>
-<dd>Default: 60</dd><br>
-</dl>
-<dl>
-<dt><b>-pool</b> \<Boolean\><dt>
-<dd>Using pool node?</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-singlenode</b> \<Boolean\><dt>
-<dd>Using singlenode role with mpi?</dd><br>
-<dd>Default: false</dd><br>
-</dl>
- </li>
 <li><h2>lh</h2>
 <dl>
 <dt><b>-lh</b> \<Boolean\><dt>
