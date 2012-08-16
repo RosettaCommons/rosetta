@@ -16,6 +16,7 @@
 
 #include <utility/lua/LuaIterator.hh>
 #include <utility/lua/LuaObject.hh>
+#include <utility/exit.hh>
 
 namespace utility {
 namespace lua {
@@ -25,8 +26,7 @@ std::string LuaIterator::skey() {
 #ifdef USELUA
 		return LuaObject( iterator_.key() ).to<std::string>();
 #else
-		std::cerr << "Can't use LuaIterator without compiling with USELUA flag" << std::endl;
-		std::exit(9);
+		utility_exit_with_message("Can't use LuaIterator without compiling with USELUA flag" );
 		return std::string();
 #endif
 }
@@ -35,8 +35,7 @@ int LuaIterator::ikey() {
 #ifdef USELUA
 		return LuaObject( iterator_.key() ).to<int>();
 #else
-		std::cerr << "Can't use LuaIterator without compiling with USELUA flag" << std::endl;
-		std::exit(9);
+		utility_exit_with_message("Can't use LuaIterator without compiling with USELUA flag" );
 		return 0;
 #endif
 }
@@ -51,8 +50,7 @@ bool LuaIterator::operator==(LuaIterator & other) {
 #ifdef USELUA
 		return iterator_ == other.raw();
 #else
-		std::cerr << "Can't use LuaIterator without compiling with USELUA flag" << std::endl;
-		std::exit(9);
+		utility_exit_with_message("Can't use LuaIterator without compiling with USELUA flag" );
 		return false;
 #endif
 }
@@ -61,17 +59,15 @@ bool LuaIterator::operator!=(LuaIterator & other) {
 #ifdef USELUA
 		return iterator_ != other.raw();
 #else
-		std::cerr << "Can't use LuaIterator without compiling with USELUA flag" << std::endl;
-		std::exit(9);
+		utility_exit_with_message("Can't use LuaIterator without compiling with USELUA flag" );
 		return false;
 #endif
 }
 
 LuaObject *  LuaIterator::operator -> () {
 		// wish i could somehow detect -> usage at compile time
-		std::cerr << "-------- ERROR ---------" << std::endl
-				<< "\t -> not supported by LuaIterator, use (*itr). instead" << std::endl;
-		exit(9);
+		std::cerr << "-------- ERROR ---------" << std::endl;
+		utility_exit_with_message("\t -> not supported by LuaIterator, use (*itr). instead" );
 		// will never get past here
 		LuaObject * tmp = new LuaObject();
 		return tmp;
@@ -80,8 +76,7 @@ LuaObject LuaIterator::operator * () {
 #ifdef USELUA
 		return LuaObject(*iterator_);
 #else
-		std::cerr << "Can't use LuaIterator without compiling with USELUA flag" << std::endl;
-		std::exit(9);
+		utility_exit_with_message("Can't use LuaIterator without compiling with USELUA flag" );
 		return LuaObject();
 #endif
 }
@@ -92,8 +87,7 @@ LuaIterator LuaIterator::operator++(int) {
 		iterator_++;
 		return tmp;
 #else
-		std::cerr << "Can't use LuaIterator without compiling with USELUA flag" << std::endl;
-		std::exit(9);
+		utility_exit_with_message("Can't use LuaIterator without compiling with USELUA flag" );
 		return LuaIterator();
 #endif
 }
@@ -103,8 +97,7 @@ LuaIterator & LuaIterator::operator++() {
 		iterator_++;
 		return *this;
 #else
-		std::cerr << "Can't use LuaIterator without compiling with USELUA flag" << std::endl;
-		std::exit(9);
+		utility_exit_with_message("Can't use LuaIterator without compiling with USELUA flag" );
 		return *this;
 #endif
 }

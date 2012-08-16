@@ -19,6 +19,7 @@
 
 #include <utility/lua/LuaIterator.hh>
 #include <utility/lua/LuaObject.hh>
+#include <utility/exit.hh>
 
 
 namespace utility {
@@ -28,8 +29,7 @@ LuaObject::operator bool() {
 #ifdef USELUA
 		return object_.is_valid() && luabind::type( object_ ) != LUA_TNIL;
 #else
-		std::cerr << "Can't use LuaObject without compiling with USELUA flag" << std::endl;
-		std::exit(9);
+		utility_exit_with_message("Can't use LuaObject without compiling with USELUA flag" );
 		return false;
 #endif
 }
@@ -43,8 +43,7 @@ LuaIterator LuaObject::begin() const {
 		<< "Attempted to access index of non-table lua object" << std::endl;
 		exit(9);
 #else
-		std::cerr << "Can't use LuaObject without compiling with USELUA flag" << std::endl;
-		std::exit(9);
+		utility_exit_with_message("Can't use LuaObject without compiling with USELUA flag" );
 		return LuaIterator();
 #endif
 }
@@ -58,8 +57,7 @@ LuaObject LuaObject::operator[] ( const std::string & str ) const {
 		<< "Attempted to access index of non-table lua object" << std::endl;
 		exit(9);
 #else
-		std::cerr << "Can't use LuaObject without compiling with USELUA flag" << std::endl;
-		std::exit(9);
+		utility_exit_with_message("Can't use LuaObject without compiling with USELUA flag" );
 		return LuaObject();
 #endif
 }
@@ -74,12 +72,10 @@ int LuaObject::size() const {
 				}
 				return counter;
 		}
-		std::cerr << "----------ERROR---------------"  << std::endl
-		<< "Attempted to access index of non-table lua object" << std::endl;
-		exit(9);
+		std::cerr << "----------ERROR---------------"  << std::endl;
+		utility_exit_with_message("Attempted to access index of non-table lua object" );
 #else
-		std::cerr << "Can't use LuaObject without compiling with USELUA flag" << std::endl;
-		std::exit(9);
+		utility_exit_with_message("Can't use LuaObject without compiling with USELUA flag" );
 		return 0;
 #endif
 }
@@ -89,12 +85,10 @@ LuaObject LuaObject::operator[] ( const char * str ) const {
 		if( luabind::type( object_ ) == LUA_TTABLE ) {
 				return LuaObject( luabind::object(object_[ str ]) );
 		}
-		std::cerr << "----------ERROR---------------"  << std::endl
-		<< "Attempted to access index of non-table lua object" << std::endl;
-		exit(9);
+		std::cerr << "----------ERROR---------------"  << std::endl;
+		utility_exit_with_message("Attempted to access index of non-table lua object" );
 #else
-		std::cerr << "Can't use LuaObject without compiling with USELUA flag" << std::endl;
-		std::exit(9);
+		utility_exit_with_message("Can't use LuaObject without compiling with USELUA flag" );
 		return LuaObject();
 #endif
 }
@@ -108,8 +102,7 @@ LuaObject LuaObject::operator[] ( int i ) const {
 		<< "Attempted to access index of non-table lua object" << std::endl;
 		exit(9);
 #else
-		std::cerr << "Can't use LuaObject without compiling with USELUA flag" << std::endl;
-		std::exit(9);
+		utility_exit_with_message("Can't use LuaObject without compiling with USELUA flag" );
 		return LuaObject();
 #endif
 }
