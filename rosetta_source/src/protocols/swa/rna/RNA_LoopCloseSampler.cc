@@ -331,14 +331,17 @@ RNA_LoopCloseSampler::torsion_angles_within_cutoffs ( pose::Pose const & pose,
 	using namespace id;
 	using namespace core::scoring::rna;
 	using namespace protocols::swa::rna;
-	// Quick check on range of epsilon, beta, gamma. Other torsion angles span full 360.0 range.
+
 	static Size const epsilonmin_n = 155, epsilonmax_n = 310;
 	static Size const epsilonmin_s = 175, epsilonmax_s = 310;
 	static Size const gammapmin  =  20, gammapmax  =  95;
 	static Size const gammatmin  = 140, gammatmax  = 215;
 	static Size const gammammin  = 260, gammammax  = 335;
 	static Size const betamin    =  50, betamax    = 290;
+	static Size const alphamin   =  25, alphamax   = 335;
+	static Size const zetamin    =  25, zetamax    = 335;
 
+	//Beta
 	Real beta1 = numeric::principal_angle_degrees ( pose.torsion ( TorsionID ( moving_suite + 1, id::BB, BETA ) ) );
 	if (beta1 < 0) beta1 += 360;
 	if ( beta1 < betamin || beta1 > betamax ) return false;
@@ -347,15 +350,7 @@ RNA_LoopCloseSampler::torsion_angles_within_cutoffs ( pose::Pose const & pose,
 	if (beta2 < 0) beta2 += 360;
 	if ( beta2 < betamin || beta2 > betamax ) return false;
 
-	PuckerState pucker_state2 = Get_residue_pucker_state ( pose, chainbreak_suite );
-	Real epsilon2 = numeric::principal_angle_degrees ( pose.torsion ( TorsionID ( chainbreak_suite, id::BB, EPSILON ) ) );
-	if (epsilon2 < 0) epsilon2 += 360;
-	if (pucker_state2 == NORTH) {
-		if ( epsilon2 < epsilonmin_n || epsilon2 > epsilonmax_n ) return false;
-	} else {
-		if ( epsilon2 < epsilonmin_s || epsilon2 > epsilonmax_s ) return false;
-	}
-
+	//Gamma
 	Real gamma1 = numeric::principal_angle_degrees ( pose.torsion ( TorsionID ( moving_suite + 1, id::BB, GAMMA ) ) );
 	if (gamma1 < 0) gamma1 += 360;
 	if ( ( gamma1 < gammapmin || gamma1 > gammapmax ) &&
@@ -371,6 +366,43 @@ RNA_LoopCloseSampler::torsion_angles_within_cutoffs ( pose::Pose const & pose,
 			 ( gamma2 < gammammin || gamma2 > gammammax ) ) {	
 		return false;
 	}
+
+	//Epsilon
+	PuckerState pucker_state1 = Get_residue_pucker_state ( pose, chainbreak_suite );
+	Real epsilon1 = numeric::principal_angle_degrees ( pose.torsion ( TorsionID ( moving_suite, id::BB, EPSILON ) ) );
+	if (epsilon1 < 0) epsilon1 += 360;
+	if (pucker_state1 == NORTH) {
+		if ( epsilon1 < epsilonmin_n || epsilon1 > epsilonmax_n ) return false;
+	} else {
+		if ( epsilon1 < epsilonmin_s || epsilon1 > epsilonmax_s ) return false;
+	}
+
+	PuckerState pucker_state2 = Get_residue_pucker_state ( pose, chainbreak_suite );
+	Real epsilon2 = numeric::principal_angle_degrees ( pose.torsion ( TorsionID ( chainbreak_suite, id::BB, EPSILON ) ) );
+	if (epsilon2 < 0) epsilon2 += 360;
+	if (pucker_state2 == NORTH) {
+		if ( epsilon2 < epsilonmin_n || epsilon2 > epsilonmax_n ) return false;
+	} else {
+		if ( epsilon2 < epsilonmin_s || epsilon2 > epsilonmax_s ) return false;
+	}
+
+	//Zeta
+	Real zeta1 = numeric::principal_angle_degrees ( pose.torsion ( TorsionID ( moving_suite, id::BB, ZETA ) ) );
+	if (zeta1 < 0) zeta1 += 360;
+	if ( zeta1 < zetamin || zeta1 > zetamax ) return false;
+
+	Real zeta2 = numeric::principal_angle_degrees ( pose.torsion ( TorsionID ( chainbreak_suite, id::BB, ZETA ) ) );
+	if (zeta2 < 0) zeta2 += 360;
+	if ( zeta2 < zetamin || zeta1 > zetamax ) return false;
+
+	//Alpha
+	Real alpha1 = numeric::principal_angle_degrees ( pose.torsion ( TorsionID ( moving_suite + 1, id::BB, ALPHA ) ) );
+	if (alpha1 < 0) alpha1 += 360;
+	if ( alpha1 < alphamin || alpha1 > alphamax ) return false;
+
+	Real alpha2 = numeric::principal_angle_degrees ( pose.torsion ( TorsionID ( chainbreak_suite + 1, id::BB, ALPHA ) ) );
+	if (alpha2 < 0) alpha2 += 360;
+	if ( alpha2 < alphamin || alpha2 > alphamax ) return false;
 
 	return true;
 }
