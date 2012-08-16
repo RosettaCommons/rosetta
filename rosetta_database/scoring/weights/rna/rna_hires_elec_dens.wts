@@ -12,8 +12,8 @@ ch_bond        			   0.42
 lk_nonpolar     		   0.32
 hack_elec_rna_phos_phos    1.05
 fa_stack        		   1.0
-elec_dens_atomwise         6.0
-rna_bond_geometry          20.0
+elec_dens_atomwise         5.5
+rna_bond_geometry          16.0
 angle_constraint 		   1.0
 dihedral_constraint 	   50.0
 atom_pair_constraint       1.0
