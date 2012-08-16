@@ -50,6 +50,7 @@
 
 // C++ headers
 #include <string>
+#include <sstream>
 
 static basic::Tracer tr("protocols.features.DatabaseJobInputter");
 
@@ -57,6 +58,8 @@ namespace protocols {
 namespace features {
 
 using std::string;
+using std::stringstream;
+using std::map;
 using std::endl;
 using core::Size;
 using core::pose::initialize_disulfide_bonds;
@@ -70,6 +73,7 @@ using utility::file::FileName;
 using utility::vector1;
 using utility::sql_database::DatabaseSessionManager;
 using utility::sql_database::sessionOP;
+using boost::uuids::uuid;
 using cppdb::result;
 
 
@@ -191,10 +195,13 @@ utility::vector1<string> const & struct_id_strings){
 			tag_structures_[struct_id_strings[i]] = struct_id;
 		}
 		catch(...){
-			utility_exit_with_message("Invalid struct_id provided");
+			stringstream err_msg;
+			err_msg
+				<< "Unable to convert the struct_id '" << struct_id_strings[i]
+				<< "' to a valid uuid, it should be of the form XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX or XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX where each 'X' is in [0..9a..f]" << endl;
+			utility_exit_with_message(err_msg.str());
 		}
 	}
-		
 }
 
 /// @details The specified struct_ids indicate which structures should be
@@ -318,6 +325,9 @@ void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::Jobs &
 	Size const nstruct(get_nstruct());
 
 	if(!tag_structures_.size()){
+
+		tr << "Reading all struct_ids from database ... ";
+
 		sessionOP db_session(
 			basic::database::get_db_session(database_name_, database_pq_schema_));
 
@@ -341,7 +351,7 @@ void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::Jobs &
 			res >> struct_id;
 			tag_structures_[to_string(struct_id)]=struct_id;
 		}
-
+		tr << tag_structures_.size() << " struct_ids found." << endl;
 	}
 
 	vector1< protocols::jd2::InnerJobOP > inner_jobs;
