@@ -84,6 +84,10 @@ public:
 		sample_only_ = setting;
 	}
 
+	void set_sample_native_torsion ( bool const setting ) {
+		sample_native_torsion_ = setting;
+	}
+
 	void set_rbs_new_pair ( utility::vector1< Real > const & rbs_new_pair ) {
 		rbs_new_pair_ = rbs_new_pair;
 	}
