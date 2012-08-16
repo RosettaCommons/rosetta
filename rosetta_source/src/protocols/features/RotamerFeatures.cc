@@ -214,7 +214,7 @@ RotamerFeatures::report_features(
   }
 
 	string insert_sql(
-		"INSERT INTO residue_rotamers (struct_id, residue_number, rotamer_bin, nchi, semi_rotameric, chi1_mean, chi2_mean, chi3_mean, chi4_mean, chi1_standard_deviation, chi2_standard_deviation, chi3_standard_deviation, chi4_standard_deviation, chi1_deviation, chi2_deviation, chi3_deviation, chi4_deviation, rotamer_bin_probability) ("
+		"INSERT INTO residue_rotamers ("
 		"	struct_id,"
 		"	residue_number,"
 		"	rotamer_bin,"
