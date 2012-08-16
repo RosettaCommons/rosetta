@@ -45,7 +45,7 @@
 			<feature name=RotamerRecoveryFeatures scorefxn=s protocol=RRProtocolRTMin comparer=RRComparerAutomorphicRMSD/>
 
 			Energy-Function
-			<feature name=HBondParameterFeatures scorefxn=s/>
+			feature name=HBondParameterFeatures scorefxn=s/>       //Currently Broken in Postgres
 			feature name=ScoreTypeFeatures/>                       //commented out to reduce integration test noise
 			feature name=ResidueScoresFeatures scorefxn=s/>        //commented out to reduce integration test noise
 			feature name=ResidueTotalScoresFeatures scorefxn=s/>   //commented out to reduce integration test noise

@@ -2,3 +2,6 @@
 
 # for the OrbitalsFeatures reporter
 -add_orbitals
+
+# for the UnrecognizedAtomFeatures
+-remember_unrecognized_res
