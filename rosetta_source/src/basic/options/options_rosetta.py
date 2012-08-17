@@ -4680,6 +4680,18 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
         Option('min_helix_size','Integer', desc="Minimum size of a helix in a bundle"),
 	),
 
+  ## In development strand assembly options
+	Option_Group( 'strand_assembly',
+		Option('min_strand_size','Integer', desc="Minimum size of a helix in a bundle, default=4"),
+		Option('max_strand_size','Integer', desc="Maximum size of a helix in a bundle, default=15"),
+		Option('min_O_N_dis','Real', desc="Minimum distance between backbone oxygen and backbone nitrogen"),
+		Option('max_O_N_dis','Real', desc="Maximum distance between backbone oxygen and backbone nitrogen"),
+		Option('min_sheet_dis','Real', desc="Minimum distance between sheets (CA and CA"),
+		Option('max_sheet_dis','Real', desc="Maximum distance between sheets (CA and CA"),
+		Option('min_sheet_torsion','Real', desc="Minimum torsion between sheets (CA and CA"),
+		Option('max_sheet_torsion','Real', desc="Maximum torsion between sheets (CA and CA"),
+	),
+
 	###############################################################################
 	## peptide specificity / flexible backbone design options (chrisk)
 	Option_Group( 'pepspec',

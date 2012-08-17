@@ -1,6 +1,3 @@
-namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }
-namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }
-namespace fold_cst { BooleanOptionKey const keep_skipped_csts( "fold_cst:keep_skipped_csts" );  }
 namespace fold_cst { BooleanOptionKey const no_minimize( "fold_cst:no_minimize" );  }
 namespace fold_cst { BooleanOptionKey const force_minimize( "fold_cst:force_minimize" );  }
 namespace fold_cst { RealVectorOptionKey const seq_sep_stages( "fold_cst:seq_sep_stages" );  }
@@ -618,3 +615,9 @@ namespace lh { StringOptionKey const jobname( "lh:jobname" );  }
 namespace lh { IntegerOptionKey const max_lib_size( "lh:max_lib_size" );  }
 namespace lh { IntegerOptionKey const max_emperor_lib_size( "lh:max_emperor_lib_size" );  }
 namespace lh { IntegerOptionKey const max_emperor_lib_round( "lh:max_emperor_lib_round" );  }
+namespace lh { IntegerOptionKey const library_expiry_time( "lh:library_expiry_time" );  }
+namespace lh { StringOptionKey const objective_function( "lh:objective_function" );  }
+namespace lh { IntegerOptionKey const expire_after_rounds( "lh:expire_after_rounds" );  }
+namespace lh { StringOptionKey const mpi_resume( "lh:mpi_resume" );  }
+namespace lh { StringOptionKey const mpi_feedback( "lh:mpi_feedback" );  }
+namespace lh { IntegerOptionKey const mpi_batch_relax_chunks( "lh:mpi_batch_relax_chunks" );  }

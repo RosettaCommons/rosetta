@@ -11593,6 +11593,44 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Minimum size of a helix in a bundle</dd><br>
 </dl>
  </li>
+<li><h2>strand_assembly</h2>
+<dl>
+<dt><b>-strand_assembly</b> \<Boolean\><dt>
+<dd>strand_assembly option group</dd><br>
+</dl>
+<dl>
+<dt><b>-min_strand_size</b> \<Integer\><dt>
+<dd>Minimum size of a helix in a bundle, default=4</dd><br>
+</dl>
+<dl>
+<dt><b>-max_strand_size</b> \<Integer\><dt>
+<dd>Maximum size of a helix in a bundle, default=15</dd><br>
+</dl>
+<dl>
+<dt><b>-min_O_N_dis</b> \<Real\><dt>
+<dd>Minimum distance between backbone oxygen and backbone nitrogen</dd><br>
+</dl>
+<dl>
+<dt><b>-max_O_N_dis</b> \<Real\><dt>
+<dd>Maximum distance between backbone oxygen and backbone nitrogen</dd><br>
+</dl>
+<dl>
+<dt><b>-min_sheet_dis</b> \<Real\><dt>
+<dd>Minimum distance between sheets (CA and CA</dd><br>
+</dl>
+<dl>
+<dt><b>-max_sheet_dis</b> \<Real\><dt>
+<dd>Maximum distance between sheets (CA and CA</dd><br>
+</dl>
+<dl>
+<dt><b>-min_sheet_torsion</b> \<Real\><dt>
+<dd>Minimum torsion between sheets (CA and CA</dd><br>
+</dl>
+<dl>
+<dt><b>-max_sheet_torsion</b> \<Real\><dt>
+<dd>Maximum torsion between sheets (CA and CA</dd><br>
+</dl>
+ </li>
 <li><h2>pepspec</h2>
 <dl>
 <dt><b>-pepspec</b> \<Boolean\><dt>

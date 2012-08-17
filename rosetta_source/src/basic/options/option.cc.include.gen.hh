@@ -72,6 +72,7 @@
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 #include <basic/options/keys/murphp.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
+#include <basic/options/keys/strand_assembly.OptionKeys.gen.hh>
 #include <basic/options/keys/RBSegmentRelax.OptionKeys.gen.hh>
 #include <basic/options/keys/krassk.OptionKeys.gen.hh>
 #include <basic/options/keys/threadsc.OptionKeys.gen.hh>
