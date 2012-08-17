@@ -34,7 +34,7 @@
 // #include <core/scoring/ScoreFunction.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/pack/rotamer_set/WaterPackingInfo.hh>
+//#include <core/pack/rotamer_set/WaterPackingInfo.hh>
 
 
 #include <core/io/pdb/pose_io.hh> // HACK
@@ -55,9 +55,9 @@
 
 // #include <utility/vector1.functions.hh> // HACK
 
-#ifdef WIN32
-#include <core/pack/rotamer_set/WaterAnchorInfo.hh>
-#endif
+//#ifdef WIN32
+//#include <core/pack/rotamer_set/WaterAnchorInfo.hh>
+//#endif
 
 namespace core {
 namespace scoring {

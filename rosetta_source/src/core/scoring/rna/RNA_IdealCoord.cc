@@ -42,8 +42,8 @@ namespace rna {
 //////////////////////////////////////////////////////
 RNA_IdealCoord::RNA_IdealCoord():
 	path_( basic::database::full_name("chemical/rna/ideal_geometry/") )
-{ 
-	init(); 
+{
+	init();
 }
 
 RNA_IdealCoord::~RNA_IdealCoord() {}
@@ -105,7 +105,7 @@ void RNA_IdealCoord::apply( Pose & pose, Size const seqpos, bool const is_north,
 
 	//Record the torsions in starting pose
 	utility::vector1 < TorsionID > saved_torsion_id;
-	utility::vector1 < Real > saved_torsions;	
+	utility::vector1 < Real > saved_torsions;
 	if (keep_backbone_torsion) {
 		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  ALPHA   ) );
 		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  BETA    ) );
@@ -151,7 +151,7 @@ void RNA_IdealCoord::apply( Pose & pose, utility::vector1 < Size > const & pucke
 	for (Size i = 1; i <= pose.total_residue(); ++i) {
 		switch ( pucker_conformations[i] ) {
 			case 0: //Skip
-				break; 
+				break;
 			case 1: //North
 				apply(pose, i, true, keep_backbone_torsion);
 				break;

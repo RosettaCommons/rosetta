@@ -128,9 +128,6 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <boost/foreach.hpp>
-#include <devel/init.hh>
-
-
 
 
 namespace protocols {

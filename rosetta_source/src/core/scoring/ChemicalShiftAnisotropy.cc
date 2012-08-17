@@ -13,7 +13,6 @@
 
 //Unit headers
 #include <core/scoring/ChemicalShiftAnisotropy.hh>
-#include <protocols/scoring/Interface.hh>
 
 // Package headers
 
@@ -30,8 +29,6 @@
 #include <core/pose/util.hh>
 
 #include <basic/Tracer.hh>
-
-//#include <protocols/loops/Loops.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/format.hh>

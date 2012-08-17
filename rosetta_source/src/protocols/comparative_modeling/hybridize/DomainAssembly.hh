@@ -28,8 +28,6 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/CompositionMover.hh>
 
-#include <devel/init.hh>
-
 // C++ headers
 #include <iostream>
 #include <string>

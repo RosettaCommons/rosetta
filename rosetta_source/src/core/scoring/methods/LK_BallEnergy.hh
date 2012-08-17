@@ -28,6 +28,7 @@
 
 // Package headers
 #include <core/conformation/Atom.fwd.hh>
+#include <core/conformation/RotamerSetBase.fwd.hh>
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/etable/Etable.fwd.hh>
@@ -36,8 +37,7 @@
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
+//#include <core/pack/task/PackerTask.fwd.hh>
 
 // Utility headers
 #include <ObjexxFCL/FArray3D.hh>

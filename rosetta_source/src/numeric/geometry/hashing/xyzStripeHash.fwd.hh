@@ -11,7 +11,7 @@
 #define INCLUDED_protocols_sic_dock_xyzStripeHash_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <core/types.hh>
+#include <numeric/types.hh>
 
 namespace numeric {
 namespace geometry {
@@ -19,8 +19,8 @@ namespace hashing {
 
 template<typename T>
 class xyzStripeHash;
-typedef utility::pointer::owning_ptr< xyzStripeHash<core::Real> > xyzStripeHashRealOP;
-typedef utility::pointer::owning_ptr< xyzStripeHash<core::Real> const > xyzStripeHashRealCOP;
+typedef utility::pointer::owning_ptr< xyzStripeHash<numeric::Real> > xyzStripeHashRealOP;
+typedef utility::pointer::owning_ptr< xyzStripeHash<numeric::Real> const > xyzStripeHashRealCOP;
 typedef utility::pointer::owning_ptr< xyzStripeHash<float> > xyzStripeHashFloatOP;
 typedef utility::pointer::owning_ptr< xyzStripeHash<float> const > xyzStripeHashFloatCOP;
 

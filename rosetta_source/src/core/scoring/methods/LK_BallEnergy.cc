@@ -38,8 +38,8 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/rotamer_set/WaterPackingInfo.hh>
+//#include <core/pack/rotamer_set/RotamerSet.hh>
+//#include <core/pack/rotamer_set/WaterPackingInfo.hh>
 #include <core/conformation/RotamerSetBase.hh>
 #include <core/conformation/RotamerSetCacheableDataType.hh>
 #include <core/chemical/AtomType.hh>

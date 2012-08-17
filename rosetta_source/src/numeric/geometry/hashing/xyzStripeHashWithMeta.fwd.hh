@@ -11,7 +11,7 @@
 #define INCLUDED_protocols_sic_dock_xyzStripeHashWithMeta_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <core/types.hh>
+#include <numeric/types.hh>
 
 namespace numeric {
 namespace geometry {
@@ -19,8 +19,8 @@ namespace hashing {
 
 template<typename T>
 class xyzStripeHashWithMeta;
-typedef utility::pointer::owning_ptr< xyzStripeHashWithMeta<core::Real> > xyzStripeHashWithMetaRealOP;
-typedef utility::pointer::owning_ptr< xyzStripeHashWithMeta<core::Real> const > xyzStripeHashWithMetaRealCOP;
+typedef utility::pointer::owning_ptr< xyzStripeHashWithMeta<numeric::Real> > xyzStripeHashWithMetaRealOP;
+typedef utility::pointer::owning_ptr< xyzStripeHashWithMeta<numeric::Real> const > xyzStripeHashWithMetaRealCOP;
 typedef utility::pointer::owning_ptr< xyzStripeHashWithMeta<float> > xyzStripeHashWithMetaFloatOP;
 typedef utility::pointer::owning_ptr< xyzStripeHashWithMeta<float> const > xyzStripeHashWithMetaFloatCOP;
 

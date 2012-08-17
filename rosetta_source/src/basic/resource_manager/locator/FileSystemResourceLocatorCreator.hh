@@ -18,7 +18,6 @@
 #include <basic/resource_manager/locator/FileSystemResourceLocator.fwd.hh>
 #include <basic/resource_manager/ResourceLocatorCreator.hh>
 
-#include <core/types.hh>
 #include <utility/vector1.hh>
 #include <string>
 
