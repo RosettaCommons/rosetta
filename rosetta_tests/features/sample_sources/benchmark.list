@@ -19,7 +19,7 @@
 #top4400_sp2
 
 # The top8000 chains dataset
-#top8000
+top8000
 
 # The top8000 chains dataset with the O'Meara Leaver-Fay score function corrections
 #top8000_sp2

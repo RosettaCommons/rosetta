@@ -23,7 +23,7 @@ prepare_feature_instances <- function(
 	feature_atoms,
 	output_dir){
 
-	required_fields <- c("sample_source", "tag", "id", "chain", "resNum", "atom")
+	required_fields <- c("sample_source", "struct_id", "id", "chain", "resNum", "atom")
 	if(!(all(required_fields %in% names(feature_atoms)))){
 		stop(paste("\n",
 			"For feature_instances_id: ", feature_instances_id, "\n",
@@ -36,8 +36,8 @@ prepare_feature_instances <- function(
 			"		-the sample source id parsed from the name of the feature database:\n",
 			"		    feature_<sample_source_id>.db3\n",
 			"\n",
-			"	tag:\n",
-			"		-use structures.tag\n",
+			"	struct_id:\n",
+			"		-use structures.struct_id\n",
 			"		-See https://wiki.rosettacommons.org/index.php/FeaturesDatabaseSchema#StructureFeatures\n",
 			"\n",
 			"	id:\n",
@@ -70,7 +70,7 @@ prepare_feature_instances <- function(
 		cat("extracting pdb structures from sample source '", as.character(ss_id), "'\n", sep="")
 		db_fname <- sample_sources[as.character(sample_sources$sample_source) == as.character(ss_id), "fname"]
 		extract_structures_to_pdbs(
-			db_fname, unique(df$tag), file.path(full_instances_dir, ss_id))
+			db_fname, unique(df$struct_id), file.path(full_instances_dir, ss_id))
 	})
 
 	print("done extracting pdbs")
@@ -80,7 +80,7 @@ prepare_feature_instances <- function(
 
 	cat(
 		"Generated ", length(unique(feature_atoms$id)), " feature instances in ",
-		length(unique(feature_atoms$tag)), " structures.\n",
+		length(unique(feature_atoms$struct_id)), " structures.\n",
 		"To run:\n",
 		"\n",
 		"    cd ", full_instances_dir, "\n",
@@ -89,7 +89,7 @@ prepare_feature_instances <- function(
 
 extract_structures_to_pdbs <- function(
 	features_database_filename,
-	tags,
+	struct_ids,
 	output_dir) {
 
 	if(!file.exists(file.path(features_database_filename))){
@@ -102,19 +102,20 @@ extract_structures_to_pdbs <- function(
 		dir.create(file.path(output_dir), recursive=T)
 	}
 
-	if(length(tags) < 1){
+	if(length(struct_ids) < 1){
 		stop(
 			paste("Unable to extract structures from database '",
-				features_database_filename, "', becasue no structures were supplied.",
+				features_database_filename, "', becasue no structures identifiers were supplied.",
 				sep=""))
 	}
 
 	# Assume usage of rosetta_database is stored in $ROSETTA3_DB
 	command <-paste(
 		locate_rosetta_application("format_converter"),
-	  "-in:use_database",
-		"-inout:database_filename ", as.character(features_database_filename),
-		"-tags", paste(tags, collapse=" "),
+		"-database /home/momeara/rosetta/rosetta/rosetta_database",
+		"-in:use_database",
+		"-dbms:database_name ", as.character(features_database_filename),
+		"-in:dbms:struct_ids", paste(struct_ids, collapse=" "),
 		"-out:path:pdb", output_dir,
 		"-out:no_nstruct_label",
 		"-out:suffix ''",
@@ -122,6 +123,7 @@ extract_structures_to_pdbs <- function(
 		"-ignore_unrecognized_res",
 		"-run:no_scorefile")
 	cat(command, file=file.path(output_dir, "extract_pdbs.log"), sep="\n")
+	cat(command, sep="\n")
 	log <- system(command, intern=T)
 	cat(log, file=file.path(output_dir, "extract_pdbs.log"), sep="\n", append=TRUE)
 }
@@ -154,8 +156,8 @@ generate_pymol_script <- function(
 
 	d_ply(feature_atoms, .(id), function(df){
 
-		struct_fname <- paste(file.path(df$sample_source[1], df$tag[1]),".pdb", sep="")
-		obj_id <- paste(df$tag[1], df$id[1], sep="_")
+		struct_fname <- paste(file.path(df$sample_source[1], df$struct_id[1]),".pdb", sep="")
+		obj_id <- paste(df$struct_id[1], df$id[1], sep="_")
 		inst_id <- paste("inst", df$id[1], sep="_")
 		atoms_sele <- with(df,
 			paste("", obj_id, "", chain, resNum, atom, sep="/", collapse=" or "))

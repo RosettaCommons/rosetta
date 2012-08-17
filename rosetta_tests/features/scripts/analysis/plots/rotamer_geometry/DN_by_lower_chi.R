@@ -42,18 +42,19 @@ f$res_type <- factor(f$res_type,
  	labels=c("ASN", "ASP"))
 
 dens <- estimate_density_1d_wrap(
-	f, c("sample_source", "res_type", "chi1_bin"), "chi_angle", xlim=c(-180, 180), adjust=.5)
+	f, c("sample_source", "res_type", "chi1_bin"), "chi_angle", xlim=c(-180, 180), adjust=.3)
 
 
 plot_id <-"rotamer_dn_chi2_by_chi1"
 p <- ggplot(data=dens) +
 	theme_bw() +
-	geom_line(aes(x=x, y=y, colour=sample_source)) +
+	geom_line(aes(x=x, y=y, colour=sample_source), size=1.4) +
 	geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)) +
 	facet_grid(chi1_bin ~ res_type) +
 #	opts(title=paste("ASN/ASP chi2 by chi1, BFact < 30", sep="")) +
 	scale_x_continuous("Dihedral Angle") +
-	scale_y_continuous("FeatureDensity", limits=c(0,.07))
+	scale_y_continuous("FeatureDensity", limits=c(0,.07)) +
+	scale_colour_grey("Batch", start=0, end=.7)
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }

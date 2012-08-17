@@ -25,8 +25,11 @@ libraries <- c(
 	"optparse",
 	"ggplot2",
 	"RSQLite",
-	"polynom",
-	"rbenchmark")
+	"inline",
+	"plyr",
+	"Rcpp",
+	"polynom")
+#	"rbenchmark")
 load_packages(libraries)
 
 includes <- c(
@@ -89,6 +92,7 @@ cosBAH_fade <- evaluate_fade_interval(
 cosAHD_fade <- evaluate_fade_interval(
   fade_params[4,], poly_params[4,2], poly_params[2,3], "cosAHD_fade")
 
+if(opt$debug) cat("Begin generating plots ... \n")
 #########  Describe the plot that is going to be made ############
 output_fname <- paste(
 	opt$output_prefix, opt$parameter_set, "_",
@@ -137,7 +141,7 @@ if(opt$debug){
 p <- ggplot(evaluation_function) + theme_bw() +
 	geom_hline(yintercept=0, size=.5) +
 	geom_line(aes(x, y, size=type)) +
-	geom_indicator(aes(indicator=name)) +
+	geom_indicator(aes(indicator=name), group=1) +
 	facet_grid(term ~ geo_dim, scales="free_x") +
 	opts(title=paste("Hydrogen Bond Evaluation Function: ", opt$don_chem_type, ", ", opt$acc_chem_type, ", ", opt$separation, "
 1) evaluate each cell  2) multiply across  3) add results", sep="")) +

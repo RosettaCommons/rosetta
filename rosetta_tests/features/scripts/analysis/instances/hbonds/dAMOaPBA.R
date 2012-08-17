@@ -17,8 +17,12 @@ run=function(self, sample_sources, output_dir, output_formats){
 
 sele <-"
 SELECT DISTINCT
+	geom.chi,
+	geom.cosBAH,
+	substr('00000000000000000000000000000000000' || lower(hex(struct.struct_id)), -32, 32) AS struct_id,
+	hb.hbond_id,
 	struct.tag,
-	struct.struct_id || '_' || acc.resNum || '_' || don.resNum AS id,
+	lower(hex(struct.struct_id)) || '_' || acc.resNum || '_' || don.resNum AS id,
 	'' AS chain,
 	'NZ' AS don_atom1, 'CE' AS don_atom2, 'CD' AS don_atom3,
 	don.resNum AS don_resNum,
@@ -27,8 +31,10 @@ SELECT DISTINCT
 FROM
 	structures as struct,
 	hbonds AS hb,
+	hbond_geom_coords AS geom,
 	hbond_sites AS don, hbond_sites AS acc,
-	hbond_sites_pdb AS don_pdb, hbond_sites_pdb AS acc_pdb
+	hbond_sites_pdb AS don_pdb, hbond_sites_pdb AS acc_pdb,
+	resolutions AS resolution
 WHERE
 	hb.struct_id = struct.struct_id AND
 	don.struct_id = struct.struct_id AND don.site_id = hb.don_id AND
@@ -38,11 +44,21 @@ WHERE
 	acc_pdb.struct_id = hb.struct_id AND acc_pdb.site_id = hb.acc_id AND
 	acc_pdb.heavy_atom_temperature < 30 AND
 	acc.HBChemType == 'hbacc_PBA' AND don.HBChemType == 'hbdon_AMO' AND
-	ABS(don.resNum - acc.resNum) > 10
-ORDER BY RANDOM()
-LIMIT 15;"
+	geom.struct_id = hb.struct_id AND geom.hbond_id = hb.hbond_id AND
+	resolution.struct_id = hb.struct_id AND
+	resolution.resolution < 1.2 AND
+	ABS(don.resNum - acc.resNum) > 10;"
 
 f <- query_sample_sources(sample_sources, sele)
+
+print(summary(f))
+
+cat("Filter for 45 < chi < 60 and 30 < BAH < 60:\n")
+
+f <- f[f$chi < pi/180 * 60 & f$chi > pi/180 * 45 & acos(f$cosBAH) < pi/180 * 60 & acos(f$cosBAH) > pi/180 * 30,]
+
+print(summary(f))
+print(f)
 
 if(nrow(f) == 0){
 	cat("WARNING: Query returned no rows. Skipping rest of features analysis.\n")
@@ -55,14 +71,14 @@ ss_ids <- as.character(unique(f$sample_source))
 
 # f:
 #
-#           sample_source, tag, id, chain, CA, C, O, acc_resNum, don_resNum
+#           sample_source, struct_id, id, chain, CA, C, O, acc_resNum, don_resNum
 # instance1
 #   ...
 #
 
 # instance_atoms:
 #
-#                  sample_source, tag, id, chain, atom
+#                  sample_source, struct_id, id, chain, atom
 # instance1, atom1
 # instance1, atom2
 #   ...
@@ -71,7 +87,7 @@ ss_ids <- as.character(unique(f$sample_source))
 
 don_atoms <-
 	melt(f,
-		id.vars=c("id", "sample_source", "tag", "chain", "don_resNum"),
+		id.vars=c("id", "sample_source", "struct_id", "chain", "don_resNum"),
 		measure.vars=c("don_atom1", "don_atom2", "don_atom3"),
 		variable_name = "atom_name")
 names(don_atoms)[5] <- "resNum"
@@ -79,7 +95,7 @@ names(don_atoms)[7] <- "atom"
 
 acc_atoms <-
 	melt(f,
-		id.vars=c("id", "sample_source", "tag", "chain", "acc_resNum"),
+		id.vars=c("id", "sample_source", "struct_id", "chain", "acc_resNum"),
 		measure.vars=c("acc_atom1", "acc_atom2", "acc_atom3"),
 		variable_name = "atom_name")
 names(acc_atoms)[5] <- "resNum"
@@ -88,6 +104,9 @@ names(acc_atoms)[7] <- "atom"
 instance_atoms <- rbind(don_atoms, acc_atoms)
 
 instances_id <- "hbond_dAMOaPBA"
+
+print(summary(instance_atoms))
+
 prepare_feature_instances(instances_id, sample_sources, instance_atoms, output_dir)
 
 })) # end FeaturesAnalysis

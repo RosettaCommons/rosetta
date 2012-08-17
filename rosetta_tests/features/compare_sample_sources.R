@@ -181,6 +181,7 @@ initialize_method_scripts <- function(base_dir) {
 		"scripts/methods/sample_sources.R",
 		"scripts/methods/methods.R",
 		"scripts/methods/density_estimation.R",
+		"scripts/methods/primary_modes.R",
 		"scripts/methods/features_analysis.R",
 		"scripts/methods/ggplot2_geom_indicator.R",
 		"scripts/methods/ggplot2_scales.R",

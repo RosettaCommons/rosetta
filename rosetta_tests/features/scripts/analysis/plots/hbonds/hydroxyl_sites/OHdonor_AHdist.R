@@ -134,12 +134,12 @@ generate_plot <- function(
 		geom_line(data=model, aes(x=x, y=y, colour=model), size=1) +
 		geom_line(data=new_dens, aes(x=x, y=y, colour=model), size=2) +
 		geom_indicator(data=facet_labels, aes(indicator=label),
-			group=1, color="black", xpos=.03, ypos=.97, size=20) +
+			group=1, color="black", xpos=.03, ypos=.97, size=12) +
 		facet_wrap(~sample_source, ncol=2) +
 		scale_y_continuous("Feature Density") +
 		scale_x_continuous(
 			expression(paste('Acceptor -- Hydrogen Distance (', ring(A), ')'))) +
-		scale_colour_discrete("HBond Potential") +
+		scale_colour_grey("HBond Potential", start=.4, end=.7) +
 		theme_bw() +
 		opts(legend.position = c(.36, .85))
 

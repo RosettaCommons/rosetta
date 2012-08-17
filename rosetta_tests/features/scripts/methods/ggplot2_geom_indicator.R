@@ -92,7 +92,7 @@ GeomIndicator <- proto(ggplot2:::Geom, {
 			textGrob(indicator_display_value,
 						 unit(xpos, "npc"), unit(ypos, "npc") - unit(level, "line"),
 						 just=c(xjust, yjust),
-						 gp=gpar(col=colour, fontsize=size, cex=.75))
+						 gp=gpar(col=colour, fontsize=size*12/5, cex=.75))
 		}
 	}
 	desc_params <- list()
@@ -100,8 +100,8 @@ GeomIndicator <- proto(ggplot2:::Geom, {
 	icon <- function(.) textGrob("text", gp=gpar(cex=.75))
 	desc <- "Count Instances"
 	required_aes <- c("indicator")
-	default_aes <- function(.) aes(colour="black", xpos="right", ypos="top", xjust=NULL, yjust=NULL, size=12, group=1)
-	guide_geom <- function(x) "text"
+	default_aes <- function(.) aes(colour="black", xpos="right", ypos="top", xjust=NULL, yjust=NULL, size=5, group=1)
+	guide_geom <- function(x) "blank"
 	example <- function(.){
 		data <- rbind(
 			data.frame(x= c(rnorm(200)+5,rnorm(170)+2),strata=factor(1),slice =factor(1)),

@@ -184,8 +184,8 @@ locate_rosetta_application <- function(
 	app_name,
 	rosetta_base_path = NULL,
 	platform=NULL,
-	extras="default",
-	compiler="gcc",
+	extras="postgres",
+	compiler="clang",
 	mode="release") {
 
 	# find application is located at

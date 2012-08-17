@@ -132,6 +132,9 @@ display_polynomials <- function(parameter_set_path, polynomials){
 }
 
 evaluate_polynomial <- function(params, name){
+	print(params)
+	print(class(params))
+
 	poly <- params[params$name == name,]
 	x <- seq(poly$xmin, poly$xmax, length.out=100)
 	p <- get_1d_polynomial(params, name)
@@ -212,7 +215,10 @@ fade_function <- function(fade_interval_knots, x, smooth=FALSE){
 
 evaluate_fade_interval <- function(params, xmin, xmax, name){
   x <- seq(xmin, xmax, length.out=100)
-  data.frame(name=name, x=x, y=aaply(x, 1, eval_fade, params))
+	cat("evaluating fade interval for ", name,"\n")
+	print(params)
+	p <- data.matrix(params[,c("smooth", "min0", "fmin", "fmax", "max0")])
+  data.frame(name=name, x=x, y=aaply(x, 1, eval_fade, p))
 }
 
 #################  HBond Parameter Functions  ###################
@@ -233,16 +239,16 @@ WHERE
   e.acc_chem_type='", acc_chem_type, "' AND
 	e.separation='", separation, "' AND
   e.", which_poly, "= p.name;", sep=""))
-		p$which_poly <- which_poly
+		p$name <- which_poly
 		p
 	}
 
-	params <- data.matrix(rbind(
+	params <- rbind(
 		poly_params("AHdist"),
 		poly_params("cosBAH_short"),
 		poly_params("cosBAH_long"),
 		poly_params("cosAHD_short"),
-		poly_params("cosAHD_long")))
+		poly_params("cosAHD_long"))
 	dbDisconnect(con)
 	params
 }
@@ -267,11 +273,11 @@ WHERE
 		f$which_fade = which_fade
 		f
 	}
-	params <- data.matrix(rbind(
+	params <- rbind(
 		fade_params("AHdist_short_fade"),
 		fade_params("AHdist_long_fade"),
 		fade_params("cosBAH_fade"),
-		fade_params("cosAHD_fade")))
+		fade_params("cosAHD_fade"))
 	dbDisconnect(con)
 	params
 }
