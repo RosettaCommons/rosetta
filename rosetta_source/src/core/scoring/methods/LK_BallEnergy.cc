@@ -70,7 +70,7 @@
 #endif
 
 /// LAZY using
-using core::pack::rotamer_set::RotamerSet;
+//using core::pack::rotamer_set::RotamerSet;
 
 namespace core {
 namespace scoring {
@@ -236,7 +236,7 @@ compute_and_store_pose_waters(
 															)
 {
 	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
-	using namespace pack::rotamer_set; // WaterPackingInfo
+//	using namespace core::pack::rotamer_set; // WaterPackingInfo
 	LKB_PoseInfoOP info( new LKB_PoseInfo() );
 	for ( Size i=1; i<= pose.total_residue(); ++i ) info->append( new LKB_ResidueInfo( pose, pose.residue(i) ) );
 	pose.data().set( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO, info );
@@ -285,7 +285,7 @@ LK_BallEnergy::prepare_rotamers_for_packing(
 	conformation::RotamerSetBase & rotamer_set
 ) const
 {
-	using namespace pack::rotamer_set;
+//	using namespace pack::rotamer_set;
 	//TR.Trace << "prepare_rotamers_for_packing: " << rotamer_set.num_rotamers() << std::endl;
 
 	/// create a rotamer set info object
