@@ -321,7 +321,7 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
             per_residue_values = self._scale_list(per_residue_values)
         
         # Check if the PDBInfo exists.
-        if info and info.nres():
+        if info is not None and info.nres() != 0:
             # The PDBInfo is defined.
             for i in xrange(len(per_residue_values)):
                 chain = info.chain(i + 1)[0]
@@ -347,7 +347,7 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
                          'Energy is not updated; please score the pose first!')
 
         # Get the proper score type.
-        if type(energy_type) == str:
+        if isinstance(energy_type, str):
             score_type = rosetta.score_type_from_name(energy_type)
         else:
             raise TypeError('Score type must be a string.')
@@ -381,7 +381,7 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
         to_send = str(size)
         info = pose.pdb_info()
         for i in xrange(1, pose.total_residue() + 1):
-            if info and info.nres():
+            if info is not None and info.nres() != 0:
                 pdb = (str(info.number(i)) + info.icode(i) +
                                                         info.chain(i)).rjust(6)
             else:
@@ -514,7 +514,7 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
         energy_list = [hbset.hbond(i + 1).energy() 
                                               for i in xrange(hbset.nhbonds())]
         
-        if energy_list != []:
+        if energy_list:
 
             max_e = max(energy_list)
             min_e = min(energy_list)
@@ -525,7 +525,7 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
                 donatm = pose.residue(hb.don_res()).atom_name(hb.don_hatm())
                 
                 # Each H-bond is 6 + 4 + 6 + 4 + 2 = 22 chars.
-                if info and info.nres():
+                if info is not None and info.nres() != 0:
                     acc_res = str(info.number(hb.acc_res()))
                     acc_icode = info.icode(hb.acc_res())
                     acc_chain = info.chain(hb.acc_res())
@@ -665,7 +665,7 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
         """
         Draws a 3-D fold tree diagram in the PyMOL viewer window.
         
-        Protein chains are indicated with a straight line and colored by chain.
+        Chains are indicated with a straight line and colored by chain.
         Jumps are represented by "bridges" in unique colors that connect to the
         start and stop jump points on the line, and the bridge is labeled with
         start and stop residues and the jump number.
@@ -688,7 +688,6 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
         to_send += str(pose.total_residue()).rjust(4)
         
         # First, send the chain info.
-        # (Put this elsewhere?)
         # Get the unique chains and indices.
         chain_string = ''.join([pose.pdb_info().chain(i + 1)
                                       for i in xrange(pose.pdb_info().nres())])

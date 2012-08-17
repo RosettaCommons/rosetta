@@ -266,7 +266,7 @@ def new_vector1_init(self, arg1=None, arg2=False):
     self.__old_init()
     if hasattr(arg1, "__iter__"):
         self.extend(arg1)
-    elif type(arg1) is type(1):
+    elif isinstance(arg1, type(1)):
         for i in xrange(arg1):
             self.append(arg2)
 
@@ -278,15 +278,15 @@ def replace_init(cls, init):
 
 def Vector1(list_in):
     """Creates a Vector1 object, deducing type from the given list."""
-    if all([type(x) == int for x in list_in]):
+    if all([isinstance(x, int) for x in list_in]):
         t = utility.vector1_int
-    elif all([type(x) == float or type(x) == int for x in list_in]):
+    elif all([isinstance(x, float) or isinstance(x, int) for x in list_in]):
         t = utility.vector1_double
-    elif all([type(x) == str for x in list_in]):
+    elif all([isinstance(x, str) for x in list_in]):
         t = utility.vector1_string
-    elif all([type(x) == bool for x in list_in]):
+    elif all([isinstance(x, bool) for x in list_in]):
         t = utility.vector1_bool
-    elif all([type(x) == core.id.AtomID for x in list_in]):
+    elif all([isinstance(x, core.id.AtomID) for x in list_in]):
         t = utility.vector1_AtomID
     else:
         raise Exception('Vector1: attemting to create vector of unknow type ' +
@@ -425,7 +425,7 @@ class PyJobDistributor:
 		self.current_name = " "		      # Current decoy name
 		self.job_complete = False	      # Job status
 		self.scorefxn = scorefxn	      # Used for final score calculation
-		self.native_pose = 0		      # Used for rmsd calculation
+		self.native_pose = None		      # Used for rmsd calculation
 		self.additional_decoy_info = ' '  # Used for any additional decoy
 		                                  # information you want stored
 		self.start_decoy()		          # Initializes the job distributor
@@ -472,9 +472,11 @@ class PyJobDistributor:
 		                                               self.scorefxn.weights())
 		output_line = "filename: " + self.current_name + " total_score: " + \
 		                                                   str(round(score, 2))
-		if self.native_pose != 0:  # Calculates rmsd if native pose is defined.
+        # Calculates rmsd if native pose is defined.
+		if self.native_pose is not None:
 			rmsd = CA_rmsd(self.native_pose, pose)
 			output_line = output_line + " rmsd: " + str(round(rmsd, 2))
+			
 		with open(scorefile, 'a') as f:
 		    f.write(output_line + ' ' + score_line +
 		               self.additional_decoy_info + '\n')  # Outputs scorefile.
@@ -556,9 +558,9 @@ class EnergyMethod:
     def __call__(self, original_class):
         self.scoreName = self.scoreName or original_class.__name__
         # Try to automatically determine first avaliable scoreType.
-        if self.scoreType is None:
+        if not self.scoreType:
             for s in _ScoreTypesRegistryByType_:
-                if s.base is None or issubclass(original_class, s.base):
+                if not s.base or issubclass(original_class, s.base):
                     self.scoreType = max(s.methods.keys() or [s.first - 1]) + 1
                     if self.scoreType > s.last:
                         err_msg = 'Cannot find free ScoreType to create' + \
