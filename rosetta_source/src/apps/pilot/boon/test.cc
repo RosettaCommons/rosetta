@@ -26,6 +26,8 @@
 
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
+#include <core/optimization/MinimizerOptions.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 #include <core/types.hh>
@@ -65,6 +67,52 @@ int main(int argc, char *argv[])
 	//std::cout << "I just imported my first pose into Rosetta." << std::endl;
 	std::cout << "It has " << test_pose.total_residue() << " total residues." << std::endl;
 	
+/*	// setup a movemap object
+	core::kinematics::MoveMapOP mm ( new core::kinematics::MoveMap );
+	Size bb_begin = 3, bb_end = 6, chi_begin = 5, chi_end = 7, begin2 = 101;
+	mm->set_bb_true_range(bb_begin, bb_end);
+	mm->set_chi_true_range(chi_begin, chi_end);
+	mm->set_chi(begin2, true);
+  mm->set_bb(begin2, false);
+	mm->set_jump(2, true);
+	mm->set_jump(5, false);
+	// create a standard scorefxn 
+	core::scoring::ScoreFunctionCOP scorefxn = new core::scoring::ScoreFunction;
+	scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "standard" );
+	// setup other inputs
+	std::string const min_type_in = "linmin";
+	Real tolerance_in = 0.01;
+	bool use_nb_list_in = true;
+	bool deriv_check_in = false;
+	bool deriv_check_verbose_in = false;
+	// create a MinMover
+	protocols::simple_moves::MinMover minmover = protocols::simple_moves::MinMover(mm, scorefxn, min_type_in, tolerance_in, true, false, false) ;
+	// print
+	std::cout << "print MinMover:" << std::endl << minmover << std::endl;*/
+
+	// setup a movemap object
+	core::kinematics::MoveMapOP mm ( new core::kinematics::MoveMap );
+	Size bb_begin = 3, bb_end = 6, chi_begin = 5, chi_end = 7, begin2 = 101;
+	mm->set_bb_true_range(bb_begin, bb_end);
+	mm->set_chi_true_range(chi_begin, chi_end);
+	mm->set_chi(begin2, true);
+	mm->set_bb(begin2, false);
+	mm->set_jump(2, true);
+	mm->set_jump(5, false);
+	// setup kT and nmoves
+	Real kT = 1.0;
+	Size nmoves = 5;
+	// create a ShearMover
+	protocols::simple_moves::ShearMover shearmover ( protocols::simple_moves::ShearMover(mm, kT, nmoves) );
+	// print
+	std::cout << "print ShearMover:" << std::endl << shearmover << std::endl;
+
+	// create a SmallMover
+	protocols::simple_moves::SmallMover smallmover ( protocols::simple_moves::SmallMover(mm, kT, nmoves) );
+	// print
+	std::cout << "print SmallMover:" << std::endl << smallmover << std::endl;
+
+
 /*	// create a PyMOL mover
 	protocols::moves::PyMolMover pmm;
 	std::cout << pmm << std::endl;
@@ -183,7 +231,7 @@ int main(int argc, char *argv[])
 	core::Size cutpoint = 19;
 	protocols::loops::Loop loop ( protocols::loops::Loop(start, stop, cutpoint) );*/
 
-// setup a movemap object
+/*// setup a movemap object
 	core::kinematics::MoveMap mm;
 	Size bb_begin = 3, bb_end = 6, chi_begin = 5, chi_end = 7, begin2 = 101;
 	mm.set_bb_true_range(bb_begin, bb_end);
@@ -192,7 +240,7 @@ int main(int argc, char *argv[])
   mm.set_bb(begin2, false);
 	mm.set_jump(2, true);
 	mm.set_jump(5, false);
-	std::cout << "print movemap" << std::endl << mm << std::endl;
+	std::cout << "print movemap" << std::endl << mm << std::endl;*/
 
 	// create a CcdLoopClosureMover object
 	//protocols::loops::loop_closure::ccd::CcdLoopClosureMover ccdmover ( protocols::loops::loop_closure::ccd::CcdLoopClosureMover(loop, mm) );

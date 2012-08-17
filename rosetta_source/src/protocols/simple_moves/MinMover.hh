@@ -119,7 +119,7 @@ public:
 	///     MinMover.score_function
 	///     MoveMap
 	virtual void movemap( core::kinematics::MoveMapCOP movemap_in );
-	virtual core::kinematics::MoveMapCOP movemap();
+	virtual core::kinematics::MoveMapCOP movemap() const;
 	/// @brief Sets the ScoreFunction to  <scorefxn_in>
 	/// determines which function to minimize
 	///

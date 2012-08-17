@@ -135,7 +135,7 @@ MinMover::movemap( MoveMapCOP movemap_in )
 }
 
 MoveMapCOP
-MinMover::movemap()
+MinMover::movemap() const
 {
 	return movemap_;
 }
@@ -280,13 +280,16 @@ void MinMover::parse_chi_and_bb( TagPtr const tag )
 std::ostream &operator<< (std::ostream &os, MinMover const &mover)
 {
 	moves::operator<<(os, mover);
-	os << "Minimization type: " << mover.min_type() << ", Score function: ";
+	os << "Minimization type:\t" << mover.min_type() << "\nScorefunction:\t\t";
 	if ( mover.score_function() != 0 ) {
-		os << mover.score_function()->get_name() << std::endl;
+		os  << mover.score_function()->get_name() << std::endl;
 	}
 	else { os << "none" << std::endl; }
-	os << "Score tolerance: " << mover.tolerance() << ", Nb list: " << mover.nb_list() << ", Deriv check: " << mover.deriv_check() << std::endl;
-
+	os << "Score tolerance:\t" << mover.tolerance() << "\nNb list:\t\t" << (mover.nb_list() ? "True" : "False") << 
+			"\nDeriv check:\t\t" << (mover.deriv_check() ? "True" : "False") << std::endl << "Movemap:" << std::endl;
+	if (mover.movemap() != 0) {
+		mover.movemap()->show();
+	}
 	return os;
 }
 

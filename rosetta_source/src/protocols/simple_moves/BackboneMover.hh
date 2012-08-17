@@ -90,8 +90,7 @@ public:
 	core::Real temperature() const;
 	void nmoves( core::Size const nmoves_in );
 	core::Size nmoves() const;
-	core::kinematics::MoveMapCOP movemap();
-
+	core::kinematics::MoveMapCOP movemap() const;
 	// Because this function is in a .hh and not a .cc, we must #include <MoveMap.hh> and
 	// are not able to #include <MoveMap.fwd.hh> alone.  As a general rule, do not put
 	// function definitions in .hh files.  Break that rule only if you're able to demonstrate a
