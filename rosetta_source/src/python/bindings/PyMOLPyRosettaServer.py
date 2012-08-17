@@ -1,561 +1,51 @@
 #!/usr/bin/env python
 # :noTabs=true:
+"""
+(c) Copyright Rosetta Commons Member Institutions.
+(c) This file is part of the Rosetta software suite and is made available under
+(c) license.
+(c) The Rosetta software is developed by the contributing members of the
+(c) Rosetta Commons.
+(c) For more information, see http://www.rosettacommons.org.
+(c) Questions about this can be addressed to University of Washington UW
+(c) TechTransfer, email: license@u.washington.edu.
 
+@file    PyMOLPyRosettaServer.py
 
-# (c) Copyright Rosetta Commons Member Institutions.
-# (c) This file is part of the Rosetta software suite and is made available under license.
-# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
-# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+@brief   Establishes a link between PyMOL and PyRosetta
 
-## @file   PyMOLPyRosettaServer.py
-## @brief
-## @author Sergey Lyskov, Johns Hopkins University
+@author  Sergey Lyskov, Johns Hopkins University
 
+@edits   Evan Baugh & Jason Labonte
 
-# This is the script to run to let you want Rosetta runs inside PyMOL.  To run it:
-# 1) Open pymol
-# 2) run /path/to/this/script/PyMOLPyRosettaServer.py
-# 3) Start a Rosetta run with the flag -show_simulation_in_pymol X, where X is how many seconds pass between PyMOL updates.  5 is default; low values may overload your computer.
+@details This is the script to run to let you view PyRosetta runs inside PyMOL.
+         To run it:
+             1) Open PyMOL
+             2) run /path/to/this/script/PyMOLPyRosettaServer.py
+             3) Instantiate a PyMOL_Mover in your Python code.
+             4) Call PyMOL_Mover.apply(pose)
+         See http://www.pyrosetta.org/pymol_mover-tutorial for more info.
+"""
 
-import time, socket, gzip, bz2, threading
+# Imports.
+import math
+import time
+import socket
+import gzip
+import bz2
+import threading
 from cStringIO import StringIO
 from array import array
-
 
 import pymol
 
 #from NetLink import PR_UDPServer
-# ^^^ this does not work on CygWin PyMOL so we just add our code here...
+# ^^^ This does not work on CygWin PyMOL, so we just add our code here....
 
-class PR_UDPServer:
-    def __init__(self, udp_ip = '127.0.0.1', udp_port=65000):
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        try:
-            self.socket.bind( (udp_ip, udp_port) )
-        except:
-            print 'FAILED TO START PyRosetta-PyMOL server, do you already have another instance of it running?'
-            raise 'FAILED TO START PyRosetta-PyMOL server, do you already have another instance of it running?'
-        self.buf = {}
-        self.last_cleanup_time = time.time()
 
-
-
-    def listen(self):
-        data, addr = self.socket.recvfrom(1024*64)  # 64k buffer
-        #print 'Got Message from %s' % str(addr), len(data)
-
-        packet_id = data[:16+2]
-        counts = array('H', data[18:22])  # should be 2 short integer
-
-        #print 'Packet count info:', counts
-        if counts[1] == 1:  # only one messgage in pack...
-            return array('c', data[22:]) #bz2.decompress(data[22:])
-        else:
-            if packet_id not in self.buf: self.buf[packet_id] = [0., {}]
-
-            c, d = self.buf[packet_id]
-            d[counts[0]] = data[22:]
-            self.buf[packet_id][0] = time.time()
-
-            # now, lets check if we can find all the pieces of this message...
-            if len(d) == counts[1]:  # yes, they all here...
-                #print 'Asseblinbg messge from %s pieces...' % counts[1]
-                m = array('c')
-                for i in range(counts[1]):
-                    m.extend( array('c', d[i]) )
-                del self.buf[packet_id]
-
-                #print 'Messge is:', len(m), m, d
-                #print 'leftover buffer len:', len(self.buf)
-                return m #bz2.decompress(m)
-
-            else:
-                # there is no ready-to-return packets... however lets check if buffer can be cleaned up...
-                # anything older then 10second should be discarded...
-                current_time = time.time()
-                if current_time - self.last_cleanup_time > 2.: # cleaning up every 2s
-
-                    for k in self.buf.keys():
-                        if current_time - self.buf[k][0] > 10.0 :
-                            print 'Buffer clean up: %s' % repr(k)
-                            del self.buf[k]
-
-                return None
-
-
-
-class PR_PyMOLServer:
-
-    def color_model(self, name, etype, s):
-        if etype == 'X11Colors': palette = 'X'
-        else: palette = 'R'
-
-        for i in range(0, len(s), 7):
-            pymol.cmd.color( palette +  ('%s' % s[i+5:i+7]), '%s and chain %s and resi %s' % (name, s[i], s[i+1:i+5]))
-
-
-    def processPacket(self, msg):
-        ''' Format description:
-            bytes 0:8   - packet type
-            byte  8     - flags
-            byte  9     - len(name)
-            bytes 10:... - name
-            bytes ...:... - mesage its self
-        '''
-        ptype = msg[:8].tostring()
-        flags = ord(msg[8])
-        name_len = ord(msg[9])
-        #print 'name_len:', name_len
-        name = msg[10: 10+name_len].tostring()
-        data = msg[10+name_len:]  #.tostring()
-        #print 'Decoy type: %s, name: %s' % (ptype, name)
-
-        if ptype == 'PDB     ':   # string is just a pdb file, no compression
-            #print 'Getting PDB packet "%s"...' % name
-            #print 'Processing pdb...'
-            #pymol.cmd.delete(name)
-            pymol.cmd.read_pdbstr(data, name, 1)
-            #pymol.cmd.show("cartoon", name)
-            #pymol.cmd.forward()
-            #pymol.cmd.refresh()
-
-        if ptype == 'Text    ':   # string is just text string that we need to print
-            print data.tostring()
-
-        elif ptype == 'PDB.gzip':   # string is just a pdb file, gzip compression
-            #print 'Getting PDB.gzip packet "%s"...' % name
-            pymol.cmd.read_pdbstr(gzip.GzipFile('', 'r', 0, StringIO(data)).read(), name, flags ^ 1)
-            if flags: pymol.cmd.frame( pymol.cmd.count_frames() )
-
-
-        elif ptype == 'PDB.bz2 ':   # string is just a pdb file, bz2 compression
-            pymol.cmd.read_pdbstr(bz2.decompress(data), name, flags ^ 1)
-            if flags: pymol.cmd.frame( pymol.cmd.count_frames() )
-
-
-        elif ptype == 'Ener.bz2':   # energies info, bz2 compression
-            #print 'Getting Ene2.bz2 packet...'
-            e_type_len = ord(data[0])
-            e_type = data[1: 1 + e_type_len].tostring()
-            s = bz2.decompress( data[1+e_type_len:] )
-            #print 'Compression stats: %s-->%s' % (len(data[1+e_type_len:]), len(s) )
-            try:
-                #for i in range(0, len(s), 7):
-                #    pymol.cmd.color('R%s' % s[i+5:i+7], '%s and chain %s and resi %s' % (name, s[i], s[i+1:i+5]))
-                self.color_model(name, e_type, s)
-
-            except pymol.parsing.QuietException:
-                print 'Coloring failed... did you forget to send geometry first?'
-
-
-        elif ptype == 'Ene.gzip':   # energies info, gzip compression
-            #print 'Getting Ene.gzip packet "%s"...' % name
-            e_type_len = ord(data[0])
-            e_type = data[1: 1 + e_type_len].tostring()
-            s = gzip.GzipFile('', 'r', 0, StringIO(data[1+e_type_len:])).read()
-            #print 'etype=%s  msg=%s' % (e_type, s)
-            #print 'Compression stats: %s-->%s' % (len(data[1+e_type_len:]), len(s) )
-            try:
-                #for i in range(0, len(s), 7):
-                #    pymol.cmd.color('R%s' % s[i+5:i+7], '%s and chain %s and resi %s' % (name, s[i], s[i+1:i+5]))
-                self.color_model(name, e_type, s)
-
-            except pymol.parsing.QuietException:
-                print 'Coloring failed... did you forget to send geometry first?'
-
-#############################################################################################
-#################################
-
-        # color by polar resi bool
-        elif ptype == 'pol.bz2 ':
-            data = bz2.decompress(data)
-            size = int(data[0])
-            data = data[1:]
-            try:
-                for i in range(0,len(data),size+6):
-                    dat = data[i+6:i+6+size]
-                    sel = '%s and chain %s and resi %s' % (name,data[i+5],data[i:i+5].strip())
-                    color = 'blue'
-                    if int(dat):
-                        color = 'red'
-                    pymol.cmd.color(color , sel)
-            except pymol.parsing.QuietException:
-                print 'Coloring failed... did you forget to send the geometry?'
-
-
-        # color by movemap dof
-        elif ptype == 'mm1.bz2 ':
-            data = bz2.decompress(data)
-            size = int(data[0])
-            data = data[1:]
-            try:
-                cmd.remove('hydro')
-                bb = '(name N or name CA or name C or name O)'
-                for i in range(0,len(data),size+6):
-                    dat = data[i+6:i+6+size]
-                    sel = '%s and chain %s and resi %s' % (name,data[i+5],data[i:i+5].strip())
-                    # bb
-                    color = 'blue'
-                    if int(dat[0])-1:
-                        color = 'red'
-                    pymol.cmd.color(color , sel+' and '+bb)
-                    # sc
-                    color = 'blue'
-                    if int(dat[1])-1:
-                        color = 'red'
-                    pymol.cmd.color(color , sel+' and not '+bb)
-            except pymol.parsing.QuietException:
-                print 'Coloring failed... did you forget to send the geometry?'
-
-        # color by foldtree edges
-        elif ptype == 'ft1.bz2 ':
-            data = bz2.decompress(data)
-            size = int(data[0])
-            data = data[1:]
-            try:
-                for i in range(0,len(data),size+6):
-                    dat = data[i+6:i+6+size]
-                    sel = '%s and chain %s and resi %s' % (name,data[i+5],data[i:i+5].strip())
-                    # color based on int sent...
-                    pymol.cmd.color(str(int(dat)*100+2000),sel)
-            except pymol.parsing.QuietException:
-                print 'Commands failed... did you forget to send the geometry?'
-
-
-        # foldtree diagram
-        elif ptype == 'ftd.bz2 ':
-            data = bz2.decompress(data)
-            # the number of jumps
-            njump = int(data[:2])
-            data = data[2:]
-            # delete previous foldtrees and jumps, later make simultaneous viewing
-            pymol.cmd.delete('jumps_'+name+' or foldtree_'+name)
-            # use for size
-            scale = .1    # arbitrary, get into viewing window easily
-            jumps = []    # jumps assigned to index jump-1 with start(0) and stop(1)
-            for j in range( 0 , njump ):
-                # store jump start,stop,cut
-                jumps.append([int(data[:3].strip()),int(data[3:6].strip()),int(data[6:9].strip())])
-                data = data[9:]
-            # add edges, color cutpoints red
-            for i in range( 0 , len(data) ):
-                if not int(data[i]):
-                    connect = 'red'
-                else:
-                    # color by chain
-                    connect = str(25+int(data[i]))    # magic number for coloring
-                add_point( 'foldtree_'+name , [i*scale,0,0] , connect )
-            # hacky string for selecting all jumps
-            jumpsall = 'None'    # jumpsall will be used to select all the jumps
-            r = 3    # arbitrary, distance jumps away, may want inside loop, different r per loop
-            for j in range( 1 , njump + 1 ):
-                # change color later
-                connect = str(7+j)    # magic number for coloring
-                # used frequently below
-                th = 2*math.pi/njump*(j-1)
-                cylx = r*math.cos(th)*scale
-                cyly = r*math.sin(th)*scale
-                start = (jumps[j-1][0]-1)*scale
-                stop = (jumps[j-1][1]-1)*scale
-                cut = (jumps[j-1][2]-1)*scale
-
-                jump = 'jump_'+str(j)+'_'+name
-                jumpsall = jumpsall + ' or ' +jump
-                add_point( jump , [start,0,0] , connect )    # start bridge
-                add_point( jump , [start,cylx,cyly] , connect ,False,False,'',0,str(jumps[j-1][0]))    # up one r
-                add_point( jump , [(start+stop)/2,cylx,cyly] , connect ,False,False,'',0,'j'+str(j))    # name the jump
-                add_point( jump , [stop,cylx,cyly] , connect ,False,False,'',0,str(jumps[j-1][1]))    # up one r
-                add_point( jump , [stop,0,0] , connect )    # stop bridge
-                add_point( jump , [cut,cylx,cyly] , '',False,False,'',0,str(jumps[j-1][2]))
-                add_point( jump , [cut,0,0] , 'red' )
-            # group all jumps, view centered on them
-            if njump:
-                pymol.cmd.group('jumps_'+name,jumpsall)
-                pymol.cmd.label('jumps_'+name,'resn')
-                pymol.cmd.center('jumps_'+name)
-
-
-        # display hydrogen bonds
-        elif ptype == 'hbd.bz2 ':
-            data = bz2.decompress(data)
-            # first 5 char is # of hbonds
-            nhbonds = data[:5]
-            data = data[5:] # 22 char per hbond 6+4 + 6+4 + 2
-            try:
-                pymol.cmd.delete(name+'_hbonds')
-                for i in range(0,int(nhbonds)):
-                    c = 22*i
-                    # acceptor atom
-                    acc_res = data[c:c+5].strip()
-                    acc_chain = data[c+5]
-                    acc_name = data[c+6:c+10].strip()
-                    # donor atom
-                    don_res = data[c+10:c+15].strip()
-                    don_chain = data[c+15]
-                    don_name = data[c+16:c+20].strip()
-                    # make selection
-                    hbname = 'hb_'+ acc_res+acc_chain+acc_name + '_' + don_res+don_chain+don_name + '_' + name
-                    pymol.cmd.distance( hbname , name+' and chain '+acc_chain+' and res '+acc_res+' and name '+acc_name , name+' and chain '+don_chain+' and res '+don_res+' and name '+don_name )
-                    pymol.cmd.color('Hb%s' % data[c+20:c+22], hbname)
-                pymol.cmd.hide('labels','hb_*_'+name)
-                pymol.cmd.group(name+'_hbonds','hb_*_'+name)
-            except:
-                print 'Commands failed... did you forget to send the geometry?'
-
-
-        # generate a graph from data sent
-        elif ptype == 'grp1.bz2':
-            data = bz2.decompress(data)
-            # first 21 data char are options
-
-            options =data[:21]
-            data = data[21:]
-            connect = options[:7].strip()
-            scale = bool(int(options[7:8]))
-            axis_color = options[8:15].strip()
-            num = int(options[15:])
-
-            x_array = [0]*(len(data)/27)
-            y_array = [0]*(len(data)/27)
-            z_array = [0]*(len(data)/27)
-            for i in range(0,len(data),27):
-                x_array[i/27] = float(data[i:i+9].strip())
-                y_array[i/27] = float(data[i+9:i+18].strip())
-                z_array[i/27] = float(data[i+18:i+27].strip())
-            plot3d(name,x_array,y_array,z_array,connect,scale,axis_color,num)
-
-
-
-        # add a point to graph data
-        elif ptype == 'pnt.bz2 ':
-            data = bz2.decompress(data)
-            # first 27 are data...last 22+ are options and banner
-            add_point(name,[float(data[0:9].strip()),float(data[9:18].strip()),float(data[18:27].strip())],data[27:34].strip(),bool(int(data[34:35])),bool(int(data[35:36])),data[36:43].strip(),int(data[43:49]),data[49:])
-
-
-        # label energy per residue
-        elif ptype == 'lbE1.bz2':
-            data = bz2.decompress(data)
-            size = int(data[0])    # this int must be single digit, the size of data pieces
-            data = data[1:]
-            try:
-                for i in range(0,len(data),size+6):
-                    dat = data[i+6:i+6+size]
-                    sel = '%s and name ca and chain %s and resi %s' % (name,data[i+5],data[i:i+5].strip())    # keep it for protein now
-                    # dat dependent commands on sel
-                    pymol.cmd.label(sel,dat)
-            except pymol.parsing.QuietException:
-                print 'Commands failed... did you forget to send the geometry?'
-
-
-
-
-        # template
-        elif ptype == 'temp.bz2':    # ptype must be the same on both sides
-            data = bz2.decompress(data)
-            size = int(data[0])    # this int must be single digit, the size of data pieces
-            data = data[1:]
-            try:
-                for i in range(0,len(data),size+6):
-                    dat = data[i+6:i+6+size]
-                    sel = '%s and chain %s and resi %s' % (name,data[i+5],data[i:i+5].strip())
-                    # dat dependent commands on sel
-            except pymol.parsing.QuietException:
-                print 'Commands failed... did you forget to send the geometry?'
-
-
-
-#################################
-#############################################################################################
-
-        else:
-            print 'Unknow packet type: %s, - ignoring...' % ptype
-
-
-
-#############################################################################################
-#################################
-# graphs
-
-
-def make_axis( name , ends , dr , scale = False , axis_color = '' , num = 0 ):
-# make an axis 'name' from 'ends[0]' to 'ends[1]' on the 'dr' (direction)
-#    'scale' bool tells to label axis or not, 'axis_color' determines the axis color
-#    'num' allows intermediate scale points
-
-    # quit if bad data was fed
-    if ends[0]==ends[1]:
-        return
-
-    # ends must be [max,min]
-    d_max = ends[0]
-    d_min = ends[1]
-
-    # create or alter axis object
-    if name in pymol.cmd.get_names():
-        pymol.cmd.remove(name)
-    else:
-        pymol.cmd.create(name,None)
-
-    # add max and min points, connect them
-    pymol.cmd.pseudoatom(name,
-        name='max',
-        resn=str(d_max)[:5],
-        pos=[dr[0]*d_max,dr[1]*d_max,dr[2]*d_max],
-        color=axis_color)
-    pymol.cmd.pseudoatom(name,
-        name='min',
-        resn=str(d_min)[:5],
-        pos=[dr[0]*d_min,dr[1]*d_min,dr[2]*d_min],
-        color=axis_color)
-    pymol.cmd.bond(name+' and name max',name+' and name min')
-
-
-    # add num intermediate atoms
-    for i in range( 1 , num + 1 ):
-        val = (d_max - d_min)*float(i)/(num+1) + d_min
-        pymol.cmd.pseudoatom(name,
-            name=str(i),
-            resn=str(val)[:5],
-            pos=[dr[0]*val,dr[1]*val,dr[2]*val],
-            color=axis_color)
-
-    if scale:
-        scale_axes(name)
-
-
-# label the selection name
-#    used here for convenience, axis point value str in resn
-def scale_axes( name = 'x_axis or y_axis or z_axis' ):
-    pymol.cmd.hide('label',name)
-    pymol.cmd.label(name,'resn')
-pymol.cmd.extend('scale_axes',scale_axes)
-
-
-# determine the ends for axes from list
-#    defaults to min, max but if not pos/neg
-#    determines based on closest point
-#    this is silly...
-def get_ends( data ):
-    d_max = max(data)
-    if d_max > 0:
-        d_max = d_max*1.1
-    else:
-        d_max = abs(d_max*.1)
-    d_min = min(data)
-    if d_min < 0:
-        d_min = d_min*1.1
-    else:
-        d_min = -abs(d_min*.1)
-    return [d_max,d_min]
-
-
-# returns the coords of a data container as three arrays
-def extract_coords( name ):
-    data = pymol.cmd.get_model(name)
-    size = pymol.cmd.count_atoms(name)
-    x_array = [0]*size
-    y_array = [0]*size
-    z_array = [0]*size
-    for atom in data.atom:
-        i = atom.index-1
-        x_array[i] = atom.coord[0]
-        y_array[i] = atom.coord[1]
-        z_array[i] = atom.coord[2]
-    return x_array,y_array,z_array
-pymol.cmd.extend('extract_coords',extract_coords)
-
-
-# generate a data object from three arrays
-def make_data( name , x_array , y_array , z_array , data_color = 'red' ):
-    # erase old name, create new
-    pymol.cmd.delete(name)
-    pymol.cmd.create(name,None)
-
-    # produce points
-    for i in range( 0 , len(x_array) ):
-        pymol.cmd.pseudoatom(name,
-            name=str(i+1),
-            pos=[x_array[i],y_array[i],z_array[i]],
-            color=data_color)
-pymol.cmd.extend('make_data',make_data)
-
-
-# adds a point to existing data, reconnects points optionally
-def add_point( name , point , connect = '' , rescale = False , scale = False , axis_color = '' , num = 0 , banner = '' ):
-    # adds 'point' to 'name' and connects it with color 'connect' (empty for no connect)
-    #    'rescale' will rescale the axes, 'scale' will label the scales,
-    #    'axis_color' determines the axis color, 'num' intermediate scales,
-    #    'banner' is a resn name at 'point'
-    # if 'name' doesn't exist, create it!
-    created = False
-    if not name in pymol.cmd.get_names():
-        pymol.cmd.create(name,None)
-        created = True
-    ind = pymol.cmd.count_atoms(name) + 1
-    pymol.cmd.pseudoatom(name,
-        name=str(ind),
-        resn=banner,
-        pos=point,
-        color=connect)
-
-    if connect:
-        pymol.cmd.bond(name+' and name '+str(ind),name+' and name '+str(ind-1))
-
-    if rescale:
-        rescale_cartesian(name,scale,axis_color,num)
-
-    if created and rescale:
-        pymol.cmd.group(name+'_data',name+' or axes_'+name)
-pymol.cmd.extend('add_point',add_point)
-
-
-# creates axes (x,y,z) based on data
-def rescale_cartesian( data , scale , axis_color , num ):
-    # rescales the 'data' axes based on 'data' data,
-    #    'num','axis_color', 'scale'
-    x_array,y_array,z_array = extract_coords(data)
-    make_axis('x_axis_'+str(data),get_ends(x_array),[1,0,0],scale,axis_color,num)
-    make_axis('y_axis_'+str(data),get_ends(y_array),[0,1,0],scale,axis_color,num)
-    make_axis('z_axis_'+str(data),get_ends(z_array),[0,0,1],scale,axis_color,num)
-    pymol.cmd.group('axes_'+str(data),'x_axis_'+str(data)+' or y_axis_'+str(data)+' or z_axis_'+str(data))
-    pymol.cmd.reset()
-
-
-# draws colored lines between consecutive points
-def connect_points( name , color = 'red' ):
-    for i in range( 2 , pymol.cmd.count_atoms(name) + 1 ):
-        pymol.cmd.bond(name+' and name '+str(i),name+' and name '+str(i-1))
-    pymol.cmd.color(color,name)
-
-
-# default plotting tool, optional z points, connection, axis color
-def plot3d( name , x_array , y_array , z_array = [] , connect = 'red' , scale = True , axis_color = 'blue' , num = 0 ):
-    if not z_array:
-        z_array = [0]*len(x_array)
-    if not len(x_array) == len(y_array) == len(z_array):
-        raise IOError('FAIL: arrays not the same length')
-
-    # make the data
-    make_data(name,x_array,y_array,z_array,connect)
-
-    # make axes
-    rescale_cartesian(name,scale,axis_color,num)
-
-    pymol.cmd.group(name+'_data',name+' or axes_'+name)
-
-    if connect:
-        connect_points(name,connect)
-pymol.cmd.extend('plot3d',plot3d)
-
-
-# end of graphs
-#################################
-#############################################################################################
-
-
-color_lib={
+###############################################################################
+# Constants.
+COLOR_LIB = {
 'white':[1,1,1],
 'yellow':[1,1,0],
 'magenta':[1,0,1],
@@ -565,8 +55,7 @@ color_lib={
 'green':[0,1,0],
 'black':[0,0,0]}
 
-
-X11Colors = {
+X11_COLORS = {
     'AliceBlue': (100, 240, 248, 255),
     'AntiqueWhite': (1, 250, 235, 215),
     'BlanchedAlmond': (2, 255, 235, 205),
@@ -739,31 +228,674 @@ X11Colors = {
     'yellow': (169, 255, 255, 0),
 }
 
-# Creating our own color spectrum
-for i in range(256): pymol.cmd.set_color('R%02x' % i, [i/255., 0, 1-i/255.])
-for j in range(256): pymol.cmd.set_color('Hb%02x' % j, [j/255., 1, 0])
 
-for i in X11Colors: pymol.cmd.set_color('X%02x' % X11Colors[i][0], X11Colors[i][1:])
+###############################################################################
+# Exceptions.
+class StartUpError(Exception):
+    """Exception class for server start-up failures."""
+    def __str__(self):
+        return "FAILED TO START PyRosetta-PyMOL server." + \
+               "\nDo you already have another instance of it running?"
 
-# sets the energy coloring spectrumusing the above color_lib
-def set_spectrum( low = 'blue' , high = 'red' ):
-    print 'new spectrum:',low,'==>',high
-    low = color_lib[low]
-    high = color_lib[high]
-    cust = [0]*3
-    for j in range(0,3):
-        cust[j]=high[j]-low[j]
-    x=lambda i,el:cust[el]*( i - 255*(cust[el]<0) )/255.
+
+# Other classes.
+class PR_UDPServer:
+    def __init__(self, udp_ip='127.0.0.1', udp_port=65000):
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            self.socket.bind((udp_ip, udp_port))
+        except:
+            raise StartUpError()
+        self.buf = {}
+        self.last_cleanup_time = time.time()
+
+    def listen(self):
+        data, addr = self.socket.recvfrom(1024 * 64)  # 64k buffer
+        #print 'Got Message from %s' % str(addr), len(data)
+
+        packet_id = data[:(16 + 2)]
+        counts = array('H', data[18:22])  # should be 2 short integers
+
+        #print 'Packet count info:', counts
+        if counts[1] == 1:  # only one messgage in pack...
+            return array('c', data[22:])  #bz2.decompress(data[22:])
+        else:
+            if packet_id not in self.buf:
+                self.buf[packet_id] = [0., {}]
+
+            c, d = self.buf[packet_id]
+            d[counts[0]] = data[22:]
+            self.buf[packet_id][0] = time.time()
+
+            # Now, let's check if we can find all the pieces of the message....
+            if len(d) == counts[1]:  # Yes, they are all here....
+                #print 'Assembling message from %s pieces....' % counts[1]
+                m = array('c')
+                for i in range(counts[1]):
+                    m.extend(array('c', d[i]))
+                del self.buf[packet_id]
+
+                #print 'Message is:', len(m), m, d
+                #print 'Leftover buffer len:', len(self.buf)
+                return m  #bz2.decompress(m)
+
+            else:
+                # There are no ready-to-return packets...; However, let's check
+                # if the buffer can be cleaned up....
+                # Anything older than 10 seconds should be discarded....
+                current_time = time.time()
+                if current_time - self.last_cleanup_time > 2.:
+                    # Cleaning up every 2 s
+                    for k in self.buf.keys():
+                        if current_time - self.buf[k][0] > 10.0:
+                            print 'Buffer clean up: %s' % repr(k)
+                            del self.buf[k]
+
+                return None
+
+
+class PR_PyMOLServer:
+    def _color_model(self, name, etype, s):
+        if etype == 'X11Colors':
+            palette = 'X'
+        else:
+            palette = 'R'
+
+        for i in xrange(0, len(s), 8):
+            score = ('%s' % s[(i + 6):(i + 8)])
+            color = palette + score
+            target = '%s and chain %s and resi %s' % (name, s[i],
+                                                      s[(i + 1):(i + 6)])
+            pymol.cmd.color(color, target)
+
+    # Code for processing commands from PyRosetta goes here within the if
+    # statement blocks below.
+    def process_packet(self, msg):
+        """ Format description:
+            bytes 0:8     - packet type
+            byte  8       - flags
+            byte  9       - len(name)
+            bytes 10:...  - name
+            bytes ...:... - message itself
+        """
+        ptype = msg[:8].tostring()
+        flags = ord(msg[8])
+        name_len = ord(msg[9])
+        #print 'name_len:', name_len
+        name = msg[10:(10 + name_len)].tostring()
+        data = msg[10 + name_len:]  #.tostring()
+        #print 'Decoy type: %s, name: %s' % (ptype, name)
+
+
+        # String is just text that we need to print.
+        if ptype == 'Text    ': 
+            print data.tostring()
+
+
+        #######################################################################
+        # PDB data.
+        # String is just a pdb file, no compression.
+        elif ptype == 'PDB     ':
+            #print 'Getting PDB packet "%s"...' % name
+            #print 'Processing pdb...'
+            #pymol.cmd.delete(name)
+            pymol.cmd.read_pdbstr(data, name, 1)
+            #pymol.cmd.show("cartoon", name)
+            #pymol.cmd.forward()
+            #pymol.cmd.refresh()
+
+        # String is a pdb file with compression.
+        elif ptype.startswith('PDB.'):
+            #print 'Getting PDB packet "%s"...' % name
+            
+            # Decompress.
+            if ptype.endswith('.gzip'):
+                s = gzip.GzipFile('', 'r', 0, StringIO(data)).read()
+            elif ptype.endswith('.bz2 '):
+                s = bz2.decompress(data)
+            
+            pymol.cmd.read_pdbstr(s, name, flags ^ 1)
+            if flags:  # Go to the new frame.
+                pymol.cmd.frame(pymol.cmd.count_frames())
+
+
+        #######################################################################
+        # Energy data.
+        elif ptype.startswith('Ene'):
+            #print 'Getting energy packet "%s"...' % name
+            e_type_len = ord(data[0])
+            e_type = data[1:(1 + e_type_len)].tostring()
+            #print 'etype=%s  msg=%s' % (e_type, s)
+            
+            # Decompress.            
+            if ptype.endswith('.gzip'):
+                s = gzip.GzipFile('', 'r', 0,
+                                  StringIO(data[(1 + e_type_len):])).read()
+            elif ptype.endswith('.bz2'):
+                s = bz2.decompress(data[(1 + e_type_len):])
+            #print 'Compression stats: %s-->%s' % (len(data[(1 + e_type_len):]),
+            #                                      len(s) )
+
+            try:
+                #for i in range(0, len(s), 7):
+                #    pymol.cmd.color('R%s' % s[(i + 5):(i + 7)],
+                #                    '%s and chain %s and resi %s' % (name,
+                #                                    s[i], s[(i + 1):(i + 5)]))
+                self._color_model(name, e_type, s)
+            except pymol.parsing.QuietException:
+                print "Coloring failed..."
+                print "Did you forget to send the pose geometry first?"
+
+        # Label energy per residue.
+        elif ptype == 'lbE1.bz2':
+            data = bz2.decompress(data)
+            # This int must be a single digit, the size of data pieces.
+            size = int(data[0])
+            data = data[1:]
+            try:
+                for i in range(0, len(data), size + 6):
+                    dat = data[(i + 6):(i + 6 + size)]
+                    sel = '%s and name ca and chain %s and resi %s' % (name, 
+                                          data[i + 5], data[i:(i + 5)].strip())
+                    pymol.cmd.label(sel, dat)
+            except pymol.parsing.QuietException:
+                print "Commands failed..."
+                print "Did you forget to send the pose geometry first?"
+
+
+        #######################################################################
+        # Display hydrogen bonds.
+        elif ptype == 'hbd.bz2 ':
+            data = bz2.decompress(data)
+            # First 5 characters are the # of H-bonds.
+            nhbonds = data[:5]
+            data = data[5:]  # 22 char per H-bond: 6+4 + 6+4 + 2
+            try:
+                pymol.cmd.delete(name + '_hbonds')
+                for i in xrange(int(nhbonds)):
+                    c = 22 * i
+                    # Acceptor atom
+                    acc_res = data[c:(c + 5)].strip()
+                    acc_chain = data[c + 5]
+                    acc_name = data[(c + 6):(c + 10)].strip()
+                    # Donor atom
+                    don_res = data[(c + 10):(c + 15)].strip()
+                    don_chain = data[c + 15]
+                    don_name = data[(c + 16):(c + 20)].strip()
+                    
+                    # Make selection.
+                    hbname = 'hb_' + acc_res + acc_chain + acc_name + '_' + \
+                                    don_res + don_chain + don_name + '_' + name
+                    pymol.cmd.distance(hbname,
+                                       name + ' and chain ' + acc_chain +
+                                       ' and res ' + acc_res + ' and name ' +
+                                       acc_name,
+                                       name + ' and chain ' + don_chain +
+                                       ' and res ' + don_res + ' and name ' + 
+                                       don_name)
+                    pymol.cmd.color('Hb%s' % data[(c + 20):(c + 22)], hbname)
+                pymol.cmd.sync()  # Ensures above is complete before continuing.
+                pymol.cmd.hide('labels', 'hb_*_' + name)
+                pymol.cmd.group(name + '_hbonds', 'hb_*_' + name)
+            except pymol.parsing.QuietException:
+                print "Commands failed..."
+                print "Did you forget to send the pose geometry first?"
+
+
+        #######################################################################
+        # Update display of secondary structure.
+        elif ptype == ' ss.bz2 ':
+            data = bz2.decompress(data)
+            size = int(data[0])
+            data = data[1:]
+            ss_map = {'H':'H', 'E':'S', 'L':'L'}
+            try:
+                for i in xrange(0, len(data), size + 6):
+                    dat = ss_map[data[(i + 6):(i + 6 + size)]]
+                    sel = '%s and chain %s and resi %s' % (name, data[i + 5],
+                                                       data[i:(i + 5)].strip())
+                    pymol.cmd.alter(sel, 'ss=\'' + dat + '\'')
+                    pymol.cmd.show('cartoon', name)
+            except pymol.parsing.QuietException:
+                print "Commands failed..."
+                print "Did you forget to send the pose geometry first?"
+
+
+        #######################################################################
+        # Color by a boolean value for polar residues.
+        elif ptype == 'pol.bz2 ':
+            data = bz2.decompress(data)
+            size = int(data[0])
+            data = data[1:]
+            try:
+                for i in range(0, len(data), size + 6):
+                    dat = data[(i + 6):(i + 6 + size)]
+                    sel = '%s and chain %s and resi %s' % (name, data[i + 5], 
+                                                       data[i:(i + 5)].strip())
+                    color = 'blue'
+                    if int(dat):
+                        color = 'red'
+                    pymol.cmd.color(color, sel)
+            except pymol.parsing.QuietException:
+                print "Commands failed..."
+                print "Did you forget to send the pose geometry first?"
+
+
+        #######################################################################
+        # Color by MoveMap DOF.
+        elif ptype == 'mm1.bz2 ':
+            data = bz2.decompress(data)
+            size = int(data[0])
+            data = data[1:]
+            try:
+                pymol.cmd.remove('hydro')
+                bb = '(name N or name CA or name C or name O)'
+                for i in range(0, len(data), size + 6):
+                    dat = data[(i + 6):(i + 6 + size)]
+                    sel = '%s and chain %s and resi %s' % (name, data[i + 5],
+                                                       data[i:(i + 5)].strip())
+                    # First digit is for bb, second for sc.
+                    # 1 = off, 2 = on
+                    # bb
+                    color = 'red'
+                    if int(dat[0]) - 1:
+                        color = 'green'
+                    pymol.cmd.color(color, sel + ' and ' + bb)
+                    # sc
+                    color = 'red'
+                    if int(dat[1]) - 1:
+                        color = 'green'
+                    pymol.cmd.color(color, sel + ' and not ' + bb)
+            except pymol.parsing.QuietException:
+                print "Commands failed..."
+                print "Did you forget to send the pose geometry first?"
+
+
+        #######################################################################
+        # Color by foldtree edges.
+        elif ptype == 'ft1.bz2 ':
+            data = bz2.decompress(data)
+            size = int(data[0])
+            data = data[1:]
+            try:
+                for i in range(0, len(data), size + 6):
+                    dat = data[(i + 6):(i + 6 + size)]
+                    sel = '%s and chain %s and resi %s' % (name, data[i + 5],
+                                                       data[i:(i + 5)].strip())
+                    # Color is based on int sent.
+                    #     Cutpoint residue = 0; color = 2000 (red)
+                    #     Jump point residue = 1; color = 2100 (orange)
+                    #     Normal edge residue = 2; color = 2200 (gray)
+                    #     Residue in a loop = >2; color >= 2300 (varies)
+                    pymol.cmd.color(str(int(dat) * 100 + 2000), sel)
+            except pymol.parsing.QuietException:
+                print "Commands failed..."
+                print "Did you forget to send the pose geometry first?"
+                
+
+        #######################################################################
+        # Foldtree diagram.
+        elif ptype == 'ftd.bz2 ':
+            data = bz2.decompress(data)
+
+            # Delete previous fold trees and jumps.
+            # (Later, make simultaneous viewing.)
+            pymol.cmd.delete('jumps_' + name + ' or foldtree_' + name)
+
+            # Get the scale.
+            scale = int(data[:2])
+            r = int(data[2])
+            data = data[3:]
+
+            # Process the chains.
+            total = float(data[:4])
+            data = data[4:]
+            
+            # Get the start points.
+            nchains = int(data[:2])
+            data = data[2:]
+            chains = []
+            for i in xrange(nchains):
+                chains.append(int(data[:4]))
+                data = data[4:]
+            
+            # Visualize the chains.
+            chains.append(total)
+            for i in xrange(len(chains) - 1):
+                connect = str(25 + i)
+                add_point('foldtree_' + name,
+                          [chains[i] / total * scale, 0, 0], connect)
+                add_point('foldtree_' + name,
+                          [chains[i + 1] / total * scale, 0, 0], connect)
+
+            # The number of jumps
+            njump = int(data[:2])
+            data = data[2:]
+
+            # Use for size
+            jumps = []
+            for j in xrange(njump):
+                # Store jump start, stop, and cut.
+                jumps.append([int(data[:3]), int(data[3:6]), int(data[6:9])])
+                data = data[9:]
+
+            # Visualize the jumps and cuts.
+            for j in range(njump):
+                # Change colors later.
+                connect = str(8 + j)  # Magic number for coloring
+
+                # Used frequently below.
+                th = 2 * math.pi/njump * j
+                cylx = r * math.cos(th)
+                cyly = r * math.sin(th)
+                start = jumps[j][0] - 1
+                stop = jumps[j][1] - 1
+                cut = jumps[j][2] - 1
+
+                jump = 'jump_' + str(j + 1) + '_' + name
+                
+                # Draw the jump as a bridge.
+                # Start bridge at jump point.
+                add_point(jump, [start/total * scale, 0, 0], connect)
+                # Up one r.
+                add_point(jump, [start/total * scale, cylx, cyly], connect,
+                          False, False, '', 0, str(jumps[j][0]))
+                # Over to center of bridge and name the jump.
+                add_point(jump, [(start + stop)/total / 2 * scale, cylx, cyly],
+                          connect, False, False, '', 0, 'j' + str(j + 1))
+                # Over to connecting jump point.
+                add_point(jump, [stop/total * scale, cylx, cyly], connect,
+                          False, False, '', 0, str(jumps[j][1]))
+                # Down one r to stop bridge.
+                add_point(jump, [stop/total * scale, 0, 0], connect)
+                
+                # Draw the cutpoint.
+                # Up 1/2 r from cutpoint.
+                add_point(jump, [cut/total * scale, cylx/2, cyly/2], '', False,
+                          False, '', 0, str(jumps[j][2]))
+                # Down 1 r.
+                add_point(jump, [cut/total * scale, -cylx/2, -cyly/2], 'red')
+
+            # Group all jumps, view centered on them.
+            if njump:
+                pymol.cmd.group('jumps_' + name, 'jump_*_' + name)
+                pymol.cmd.label('jumps_' + name, 'resn')
+                pymol.cmd.center('jumps_' + name)
+
+
+        #######################################################################
+        # Generate a graph from data sent.
+        elif ptype == 'grp1.bz2':
+            data = bz2.decompress(data)
+            # First 21 data char are options.
+            options = data[:21]
+            data = data[21:]
+            connect = options[:7].strip()
+            scale = bool(int(options[7:8]))
+            axis_color = options[8:15].strip()
+            num = int(options[15:])
+
+            x_array = [0] * (len(data)/27)
+            y_array = [0] * (len(data)/27)
+            z_array = [0] * (len(data)/27)
+            for i in range(0,len(data),27):
+                x_array[i/27] = float(data[i:(i + 9)].strip())
+                y_array[i/27] = float(data[(i + 9):(i + 18)].strip())
+                z_array[i/27] = float(data[(i + 18):(i + 27)].strip())
+            plot3d(name, x_array, y_array, z_array, connect, scale,
+                   axis_color, num)
+
+        # Add a point to graph data.
+        elif ptype == 'pnt.bz2 ':
+            data = bz2.decompress(data)
+            # First 27 are data; last 22+ are options and banner.
+            add_point(name,
+                      [float(data[0:9].strip()), float(data[9:18].strip()),
+                       float(data[18:27].strip())],
+                      data[27:34].strip(), bool(int(data[34:35])),
+                      bool(int(data[35:36])), data[36:43].strip(),
+                      int(data[43:49]),data[49:])
+
+
+        #######################################################################
+        # Template for translating new packers
+        # ptype tags the data with how it is to be interpreted here.
+        # ptype MUST be the same on both sides -- the same here as in
+        # the PyMOL_Mover code.
+        # size sets the length of data units.  size MUST be a single digit!
+        # All data[i] MUST be at least size long!
+        elif ptype == 'temp.bz2':
+            data = bz2.decompress(data)
+            size = int(data[0])
+            data = data[1:]
+            try:
+                for i in range(0, len(data), size + 6):
+                    dat = data[(i + 6):(i + 6 + size)]
+                    sel = '%s and chain %s and resi %s' % (name, data[i + 5],
+                                                       data[i:(i + 5)].strip())
+                    # dat-dependent commands to be performed on sel go here.
+            except pymol.parsing.QuietException:
+                print "Commands failed..."
+                print "Did you forget to send the pose geometry first?"
+
+
+        #######################################################################
+        else:
+            print 'Unknown packet type: %s, - ignoring...' % ptype
+
+
+###############################################################################
+# Graphing methods.
+def make_axis(name, ends, dr, scale=False, axis_color='', num=0):
+    """
+    Make an axis 'name' from 'ends[0]' to 'ends[1]' on the 'dr' (direction).
+    
+    'scale' bool tells to label axis or not; 'axis_color' determines the axis
+    color; 'num' allows intermediate scale points.
+    """
+    # Quit if bad data was fed.
+    if ends[0] == ends[1]:
+        return
+
+    # Ends must be [max, min].
+    d_max = ends[0]
+    d_min = ends[1]
+
+    # Create or alter axis object.
+    if name in pymol.cmd.get_names():
+        pymol.cmd.remove(name)
+    else:
+        pymol.cmd.create(name, None)
+
+    # Add max and min points; connect them.
+    pymol.cmd.pseudoatom(name,
+                         name='max',
+                         resn=str(d_max)[:5],
+                         pos=[dr[0]*d_max, dr[1]*d_max, dr[2]*d_max],
+                         color=axis_color)
+    pymol.cmd.pseudoatom(name,
+                         name='min',
+                         resn=str(d_min)[:5],
+                         pos=[dr[0]*d_min, dr[1]*d_min, dr[2]*d_min],
+                         color=axis_color)
+    pymol.cmd.bond(name + ' and name max', name + ' and name min')
+
+    # Add number of intermediate atoms.
+    for i in range(1, num + 1):
+        val = (d_max - d_min)*float(i)/(num+1) + d_min
+        pymol.cmd.pseudoatom(name,
+                             name=str(i),
+                             resn=str(val)[:5],
+                             pos=[dr[0]*val, dr[1]*val, dr[2]*val],
+                             color=axis_color)
+
+    if scale:
+        scale_axes(name)
+
+
+def scale_axes(name='x_axis or y_axis or z_axis'):
+    """
+    Labels the selection name.
+    
+    Used here for convenience: axis point value str in resn.
+    """
+    pymol.cmd.hide('label', name)
+    pymol.cmd.label(name, 'resn')
+
+
+def get_ends(data):
+    """
+    Determines the ends for axes from list.
+    
+    Defaults to min, max, but if not pos/neg.
+    Determines based on closest point.
+    """
+    d_max = max(data)
+    if d_max > 0:
+        d_max = d_max * 1.1
+    else:
+        d_max = abs(d_max * .1)
+    d_min = min(data)
+    if d_min < 0:
+        d_min = d_min * 1.1
+    else:
+        d_min = -abs(d_min * .1)
+    return [d_max, d_min]
+
+
+def extract_coords(name):
+    """Returns the coords of a data container as three arrays."""
+    data = pymol.cmd.get_model(name)
+    size = pymol.cmd.count_atoms(name)
+    x_array = [0] * size
+    y_array = [0] * size
+    z_array = [0] * size
+    for atom in data.atom:
+        i = atom.index - 1
+        x_array[i] = atom.coord[0]
+        y_array[i] = atom.coord[1]
+        z_array[i] = atom.coord[2]
+    return x_array, y_array, z_array
+
+
+def make_data(name, x_array, y_array, z_array, data_color='red'):
+    """Generate a data object from three arrays."""
+    # Erase old name, create new.
+    pymol.cmd.delete(name)
+    pymol.cmd.create(name, None)
+
+    # Produce points.
+    for i in range(0, len(x_array)):
+        pymol.cmd.pseudoatom(name,
+                             name=str(i + 1),
+                             pos=[x_array[i], y_array[i], z_array[i]],
+                             color=data_color)
+
+
+def add_point(name, point, connect='', rescale=False, scale=False,
+              axis_color='', num=0, banner=''):
+    """
+    Adds a point to existing data, reconnecting points optionally.
+    
+    Adds 'point' to 'name' and connects it with color 'connect' (empty for no
+    connection).
+    'rescale' will rescale the axes; 'scale' will label the scales;
+    'axis_color' determines the axis color; 'num' the intermediate scales,
+    'banner' is a resn name at 'point'.
+    """
+    #If 'name' doesn't exist, create it!
+    created = False
+    if not name in pymol.cmd.get_names():
+        pymol.cmd.create(name, None)
+        created = True
+    ind = pymol.cmd.count_atoms(name) + 1
+    pymol.cmd.pseudoatom(name,
+                         name=str(ind),
+                         resn=banner,
+                         pos=point,
+                         color=connect)
+
+    if connect:
+        pymol.cmd.bond(name + ' and name ' + str(ind),
+                       name + ' and name ' + str(ind - 1))
+
+    if rescale:
+        rescale_cartesian(name, scale, axis_color, num)
+
+    if created and rescale:
+        pymol.cmd.group(name + '_data', name + ' or axes_' + name)
+
+
+def rescale_cartesian( data , scale , axis_color , num ):
+    """
+    Rescales the 'data' axes (x, y, z) based on 'data' data:
+        'num', 'axis_color', 'scale'
+    """
+    x_array, y_array, z_array = extract_coords(data)
+    make_axis('x_axis_' + str(data), get_ends(x_array), [1, 0, 0], scale,
+              axis_color, num)
+    make_axis('y_axis_' + str(data), get_ends(y_array), [0, 1, 0], scale,
+              axis_color, num)
+    make_axis('z_axis_' + str(data), get_ends(z_array), [0, 0, 1], scale,
+              axis_color, num)
+    pymol.cmd.group('axes_' + str(data), 'x_axis_' +str(data) + ' or y_axis_' +
+                                         str(data) + ' or z_axis_' + str(data))
+    pymol.cmd.reset()
+
+
+def connect_points(name, color='red'):
+    """Draws colored lines between consecutive points."""
+    for i in range(2, pymol.cmd.count_atoms(name) + 1):
+        pymol.cmd.bond(name + ' and name ' + str(i),
+                       name + ' and name ' + str(i - 1))
+    pymol.cmd.color(color,name)
+
+
+def plot3d(name, x_array, y_array, z_array=[], connect='red', scale=True, 
+           axis_color='blue', num=0):
+    """
+    Default plotting tool with optional z points, connection, and axis color.
+    """
+    if not z_array:
+        z_array = [0] * len(x_array)
+    if not len(x_array) == len(y_array) == len(z_array):
+        raise IOError('FAIL: Arrays not the same length.')
+
+    # Make the data.
+    make_data(name, x_array, y_array, z_array, connect)
+
+    # Make axes.
+    rescale_cartesian(name, scale, axis_color, num)
+
+    pymol.cmd.group(name + '_data', name + ' or axes_' + name)
+
+    if connect:
+        connect_points(name, connect)
+
+
+###############################################################################
+# PyMOL spectrum coloring.
+def set_spectrum(low='blue', high='red'):
+    """
+    Sets the energy coloring spectrum using the above COLOR_LIB dictionary.
+    """
+    print 'New spectrum:', low, '==>', high
+    low = COLOR_LIB[low]
+    high = COLOR_LIB[high]
+    #cust = [0] * 3
+    #for j in range(0, 3):
+    #    cust[j] = high[j] - low[j]
+    cust = [high[j] - low[j] for j in range(3)]
+    x = lambda i, el: cust[el] * (i - 255*(cust[el] < 0))/255.
     for i in range(256):
-        pymol.cmd.set_color('R%02x' % i, [x(i,0), x(i,1), x(i,2)])
-
-pymol.cmd.extend('set_spectrum',set_spectrum)
+        pymol.cmd.set_color('R%02x' % i, [x(i, 0), x(i, 1), x(i, 2)])
 
 
-
+###############################################################################
+# Main PyMOLPyRosettaServer.py routines.
 def main(ip, port):
     print 'PyMOL <---> PyRosetta link started!'
-    print 'at',ip,'port',port
+    print 'at', ip, 'port', port
 
     udp_serv = PR_UDPServer(ip, port)
     PS = PR_PyMOLServer()
@@ -771,7 +903,7 @@ def main(ip, port):
         r = udp_serv.listen()
         if r:
             #print len(r)
-            PS.processPacket(r)
+            PS.process_packet(r)
 
     s.close()
 
@@ -780,16 +912,38 @@ def start_rosetta_server(ip='', port=65000):
    if not ip:
        ip = socket.gethostbyname(socket.gethostname())
        if ip == '127.0.0.1':
-           print "Unable to automatically determine your IP address.  Please specify it manually. e.g. start_rosetta_server 192.168.0.1"
+           print "Unable to automatically determine your IP address. ",
+           print "Please specify it manually. ",
+           print "e.g., start_rosetta_server 192.168.0.1"
            return
 
-   thread = threading.Thread(target=main, args=[ip,port])
+   thread = threading.Thread(target=main, args=[ip, port])
    thread.setDaemon(1)
    thread.start()
 
+
+###############################################################################
+# Create our own color spectrum for PyMOL.
+for i in range(256):
+    pymol.cmd.set_color('R%02x' % i, [i/255., 0, 1 - i/255.])
+for j in range(256):
+    pymol.cmd.set_color('Hb%02x' % j, [j/255., 1, 0])
+for i in X11_COLORS:
+    pymol.cmd.set_color('X%02x' % X11_COLORS[i][0], X11_COLORS[i][1:])
+
+# Add commands to PyMOL.
+pymol.cmd.extend('scale_axes', scale_axes)
+pymol.cmd.extend('extract_coords', extract_coords)
+pymol.cmd.extend('make_data', make_data)
+pymol.cmd.extend('add_point', add_point)
+pymol.cmd.extend('plot3d', plot3d)
+
+pymol.cmd.extend('set_spectrum', set_spectrum)
 pymol.cmd.extend('start_rosetta_server', start_rosetta_server)
 
+# Begin server connection.
 start_rosetta_server('127.0.0.1', 65000)
 
-#### To use PyMOLPyRosettaServer over a network, uncomment the line below and set the first argument to your IP address
+# To use PyMOLPyRosettaServer.py over a network, uncomment the line below and
+# set the first argument to your IP address:
 #start_rosetta_server('192.168.0.1', 65000)

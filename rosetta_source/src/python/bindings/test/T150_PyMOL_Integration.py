@@ -15,13 +15,26 @@ scorefxn = rosetta.create_score_function('standard')
 scorefxn(pose)
 
 pymol.send_energy(pose)
+pymol.send_energy(pose, label=True)
 
-pymol.send_colors(pose, {}, default_color=rosetta.protocols.moves.XC_orange)
+pymol.send_colors(pose, {}, default_color="orange")
+colors = {2: "red", 5: "white"}
+pymol.send_colors(pose, colors, default_color="blue")
 
-colors = { 2 : rosetta.protocols.moves.XC_red, 5 : rosetta.protocols.moves.XC_white}
+pymol.label_energy(pose, "fa_atr")
 
-pymol.send_colors(pose, colors, default_color=rosetta.protocols.moves.XC_blue)
+pymol.send_hbonds(pose)
+pymol.send_ss(pose)
+pymol.send_polars(pose)
 
+mm = rosetta.MoveMap()
+pymol.send_movemap(pose, mm)
+
+pymol.send_foldtree(pose)
+pymol.view_foldtree_diagram(pose)
+
+pymol.plot_graph("Line", "white", [0, 1, 2, 3, 4], [0, 2, 4, 6, 8])
+pymol.send_point("Line", "white", 5, 10)
 
 observer = rosetta.AddPyMolObserver(pose)
 pose.set_psi(3, 10)
