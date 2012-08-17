@@ -5,17 +5,16 @@
 -relax:constrain_relax_to_native_coords 
 -relax:coord_constrain_sidechains 
 -relax:ramp_constraints false
--ex1
--ex2
+
+## Enable for production runs
+#-ex1
+#-ex2
+#-no_optH false
+#-flip_HNQ
+#-linmem_ig 10
+
 -use_input_sc
 -no_his_his_pairE
--no_optH false
--flip_HNQ
 -ignore_unrecognized_res
--chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer
- VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals
-pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated
-thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated
-lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated
-cys_acetylated tyr_diiodinated N_acetylated C_methylamidated
-MethylatedProteinCterm
+
+-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm
