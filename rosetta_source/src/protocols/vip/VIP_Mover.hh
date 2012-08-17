@@ -34,6 +34,8 @@ class VIP_Mover
 		utility::vector1<core::Size> void_mutatables;
 		core::Real final_energy;
 
+		utility::vector1<core::Size> excluded_positions;
+
 	public:
 		VIP_Mover();
 		VIP_Mover(
@@ -73,6 +75,8 @@ class VIP_Mover
 		void print_relax_report();
 		void nook_finder();
 		void cranny_packer();
+
+		void set_excluded_positions();
 
 		core::Real get_final_energy(){
 			return final_energy;}

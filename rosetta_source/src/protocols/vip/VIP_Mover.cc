@@ -27,6 +27,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pose/PDBInfo.hh>
 
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/MiniRelax.hh>
@@ -37,6 +38,9 @@
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/ScoreMover.hh>
 
+#include <iostream>
+#include <fstream>
+#include <algorithm>
 
 core::Size num_stored_poses( 0 );
 
@@ -84,8 +88,8 @@ namespace vip {
 	VIP_Mover::~VIP_Mover(){}
 
 	void VIP_Mover::set_initial_pose( core::pose::Pose pose ){
-		using namespace basic::options;
-		using namespace basic::options::OptionKeys;
+//		using namespace basic::options;
+//		using namespace basic::options::OptionKeys;
 //			core::pose::Pose pose;
 //			core::io::pdb::build_pose_from_pdb_as_is( pose, option[ OptionKeys::in::file::s ]().vector().front() );
 		initial_pose = pose;
@@ -197,6 +201,7 @@ namespace vip {
 		for( core::Size i = 1; i <= void_neighbors.size(); i+=2 ){
 			if( (initial_pose.residue(void_neighbors[i]).is_surface() == false) &&
 					(initial_pose.residue(void_neighbors[i]).is_polar() == false) &&
+					(std::find( excluded_positions.begin(), excluded_positions.end(), void_neighbors[i]) == excluded_positions.end() ) &&
 					(initial_pose.residue(void_neighbors[i]).aa() < core::chemical::num_canonical_aas ) && // Don't try amino acid if APOLAR will choke on it
 					(initial_pose.residue(void_neighbors[i]).atom_is_backbone(void_neighbors[i+1]) == false ) ){
 				mutatable_residues.push_back(void_neighbors[i]);
@@ -429,8 +434,50 @@ namespace vip {
 	}
 
 	void VIP_Mover::apply(){
+		set_excluded_positions();
 		nook_finder();
 		cranny_packer();
+	}
+
+	void
+	VIP_Mover::set_excluded_positions() {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+
+		excluded_positions.clear();
+
+		if( option[ cp::exclude_file ].active() ){
+			std::string exclude_file_name( option[ cp::exclude_file ] );
+
+			// Probe for file
+			std::ifstream exc_file( exclude_file_name.c_str() );
+
+			if( !exc_file ) {
+				TR << "Exclude_file " << exclude_file_name << " not found." << std::endl;
+				TR << "No positions will be excluded." << std::endl;
+				return;
+			}
+
+			// Process one at a time
+
+			core::Size exc_pos;
+			char exc_chain;
+
+			exc_file >> exc_pos;
+			while( !exc_file.eof() ) {
+				exc_file >> exc_chain;
+				TR << "Adding position " << exc_pos << " chain " << exc_chain << " to exclude list." << std::endl;
+				excluded_positions.push_back( initial_pose.pdb_info()->pdb2pose( exc_chain, exc_pos ) );
+				exc_file >> exc_pos;
+			}
+
+			TR << "Found " << excluded_positions.size() << " positions excluded from mutation" << std::endl;
+			exc_file.close();
+			return;
+		}
+
+		TR << "No positions will be excluded." << std::endl;
+		return;
 	}
 
 	bool
@@ -442,7 +489,6 @@ namespace vip {
 		}
 		return false;
 	}
-
 
 
 }}

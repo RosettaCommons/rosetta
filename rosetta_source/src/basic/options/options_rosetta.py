@@ -4562,6 +4562,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
                         Option( 'ncycles', 'Integer', desc="how many cycles to run refinement for",default='0'),
                         Option( 'print_reports', 'Boolean', desc="print reports to text file?",default='false' ),
                         Option( 'vipReportFile', 'String', desc="File to print reports to", default='reports.txt' ),
+                        Option( 'exclude_file', 'String', desc="Optional input file to specify positions that should not be mutated", default='cp_excludes' ),
                         Option( 'relax_mover', 'String', desc="relax w/o constraints=relax, w constraints=cst_relax", default='relax'),
 			Option( 'skip_relax','Boolean',desc="Skip relax step... may reduce accurate identification of mutations",default='false'),
 			Option( 'local_relax','Boolean',desc="Limit relax step to neighbors",default='false'),
