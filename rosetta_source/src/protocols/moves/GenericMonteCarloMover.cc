@@ -19,6 +19,7 @@
 #include <protocols/moves/GenericMonteCarloMover.hh>
 #include <protocols/moves/GenericMonteCarloMoverCreator.hh>
 #include <protocols/moves/DataMapObj.hh>
+#include <protocols/moves/DataMap.hh>
 
 // C/C++ headers
 #include <iostream>
@@ -100,7 +101,8 @@ GenericMonteCarloMover::GenericMonteCarloMover():
 	stopping_condition_( NULL ),
 	mover_stopping_condition_( NULL ),
 	adaptive_movers_( false ),
-	adaptation_period_( 0 )
+	adaptation_period_( 0 ),
+	saved_accept_file_name_( "" )
 {
   initialize();
 }
@@ -127,7 +129,8 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	rank_by_filter_(1),
 	boltz_rank_( false ),
 	last_accepted_pose_( NULL ),
-	lowest_score_pose_( NULL )
+	lowest_score_pose_( NULL ),
+	saved_accept_file_name_( "" )
 {
   initialize();
 }
@@ -154,7 +157,8 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	preapply_( true ),
   recover_low_( true ),
 	rank_by_filter_(1),
-	boltz_rank_( false )
+	boltz_rank_( false ),
+	saved_accept_file_name_( "" )
 {
   initialize();
 }
@@ -495,7 +499,7 @@ GenericMonteCarloMover::boltzmann( Pose & pose )
 			}
     }//for index
     if( accept ){
-      TR.Debug <<"Accept"<<std::endl;
+      TR<<"Accept"<<std::endl;
       mc_accepted_ = MCA_accepted_thermally;
       copy( provisional_scores.begin(), provisional_scores.end(), last_accepted_scores_.begin() );
       ++accept_counter_;
@@ -512,6 +516,10 @@ GenericMonteCarloMover::boltzmann( Pose & pose )
         *lowest_score_pose_ = pose;
         lowest_score_ = ranking_score;
         mc_accepted_ = MCA_accepted_score_beat_low; //3;
+				if( saved_accept_file_name_ != "" ){
+					TR<<"Dumping accepted file to disk as: "<<saved_accept_file_name_<<std::endl;
+					pose.dump_pdb( saved_accept_file_name_ );
+				}
       }
       return( true );
     }// fi accept
@@ -811,6 +819,7 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, DataMap & data, Filters_
     TR << "Pose that have higher score is sampled." << sfxn << std::endl;
   }
 
+	saved_accept_file_name_ = tag->getOption< std::string >( "saved_accept_file_name", "" );
   initialize();
 }
 
@@ -876,6 +885,16 @@ GenericMonteCarloMover::stopping_condition( protocols::filters::FilterOP f ){
 protocols::filters::FilterOP
 GenericMonteCarloMover::stopping_condition() const{
 	return stopping_condition_;
+}
+
+std::string
+GenericMonteCarloMover::saved_accept_file_name() const{
+	return saved_accept_file_name_;
+}
+
+void
+GenericMonteCarloMover::saved_accept_file_name( std::string const s ){
+	saved_accept_file_name_ = s;
 }
 
 } // ns moves

@@ -267,6 +267,8 @@ public:
 	bool adaptive_movers() const{ return adaptive_movers_; }
 	void adaptation_period( core::Size const a ) { adaptation_period_ = a; }
 	core::Size adaptation_period() const{ return adaptation_period_; }
+	std::string saved_accept_file_name() const;
+	void saved_accept_file_name( std::string const );
 private:
 	/// @brief evalute pose by ScoreFunctionOP or FilterOP
 	Real scoring( Pose & pose );
@@ -379,6 +381,7 @@ private:
 	utility::pointer::owning_ptr< DataMapObj< bool > > mover_stopping_condition_; // dflt NULL; if the mover defined a stopping condition on the datamap then this assumes the mover's value. In this way, the Mover can tell GenericMC to stop execution, e.g., if it has iterated over all internal possibilities
 	bool adaptive_movers_; //dflt false; change the mover probabilities according to the accept rates?; only works if the mover is a ParsedProtocol type with mode=single_random
 	core::Size adaptation_period_; /// dflt max( 10, trials/10 ); only works with adaptive; how often should the run probabilities be adapted?
+	std::string saved_accept_file_name_; // dflt ""; if a file name is specified, after each accept a pdb file is dumped to disk. This is useful for checkpointing
 };
 
 } // namespace moves
