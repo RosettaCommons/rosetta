@@ -11233,6 +11233,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: "reports.txt"</dd><br>
 </dl>
 <dl>
+<dt><b>-exclude_file</b> \<String\><dt>
+<dd>Optional input file to specify positions that should not be mutated</dd><br>
+<dd>Default: "cp_excludes"</dd><br>
+</dl>
+<dl>
 <dt><b>-relax_mover</b> \<String\><dt>
 <dd>relax w/o constraints=relax, w constraints=cst_relax</dd><br>
 <dd>Default: "relax"</dd><br>

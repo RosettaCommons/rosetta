@@ -2318,6 +2318,7 @@ option.add( basic::options::OptionKeys::cp::output, "file where we want to dump 
 option.add( basic::options::OptionKeys::cp::ncycles, "how many cycles to run refinement for" ).def(0);
 option.add( basic::options::OptionKeys::cp::print_reports, "print reports to text file?" ).def(false);
 option.add( basic::options::OptionKeys::cp::vipReportFile, "File to print reports to" ).def("reports.txt");
+option.add( basic::options::OptionKeys::cp::exclude_file, "Optional input file to specify positions that should not be mutated" ).def("cp_excludes");
 option.add( basic::options::OptionKeys::cp::relax_mover, "relax w/o constraints=relax, w constraints=cst_relax" ).def("relax");
 option.add( basic::options::OptionKeys::cp::skip_relax, "Skip relax step... may reduce accurate identification of mutations" ).def(false);
 option.add( basic::options::OptionKeys::cp::local_relax, "Limit relax step to neighbors" ).def(false);

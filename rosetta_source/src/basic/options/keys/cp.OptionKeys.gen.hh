@@ -32,6 +32,7 @@ namespace cp { extern StringOptionKey const output; }
 namespace cp { extern IntegerOptionKey const ncycles; }
 namespace cp { extern BooleanOptionKey const print_reports; }
 namespace cp { extern StringOptionKey const vipReportFile; }
+namespace cp { extern StringOptionKey const exclude_file; }
 namespace cp { extern StringOptionKey const relax_mover; }
 namespace cp { extern BooleanOptionKey const skip_relax; }
 namespace cp { extern BooleanOptionKey const local_relax; }

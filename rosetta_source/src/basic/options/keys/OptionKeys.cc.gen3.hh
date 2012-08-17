@@ -447,6 +447,7 @@ namespace cp { StringOptionKey const output( "cp:output" );  }
 namespace cp { IntegerOptionKey const ncycles( "cp:ncycles" );  }
 namespace cp { BooleanOptionKey const print_reports( "cp:print_reports" );  }
 namespace cp { StringOptionKey const vipReportFile( "cp:vipReportFile" );  }
+namespace cp { StringOptionKey const exclude_file( "cp:exclude_file" );  }
 namespace cp { StringOptionKey const relax_mover( "cp:relax_mover" );  }
 namespace cp { BooleanOptionKey const skip_relax( "cp:skip_relax" );  }
 namespace cp { BooleanOptionKey const local_relax( "cp:local_relax" );  }
