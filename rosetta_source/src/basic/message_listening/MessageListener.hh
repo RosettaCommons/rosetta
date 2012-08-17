@@ -13,16 +13,15 @@
 /// @author Tim Jacobs
 
 
-#ifndef INCLUDED_protocols_jd2_message_listening_MessageListener_HH
-#define INCLUDED_protocols_jd2_message_listening_MessageListener_HH
+#ifndef INCLUDED_basic_message_listening_MessageListener_HH
+#define INCLUDED_basic_message_listening_MessageListener_HH
 
-#include <protocols/jd2/message_listening/MessageListener.fwd.hh>
+#include <basic/message_listening/MessageListener.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <string>
 
-namespace protocols {
-namespace jd2 {
+namespace basic {
 namespace message_listening {
 
 class MessageListener : public utility::pointer::ReferenceCount
@@ -30,18 +29,17 @@ class MessageListener : public utility::pointer::ReferenceCount
 
 public:
 	//recieve data from a slave node
-	virtual void recieve(std::string data)=0;
+	virtual void receive(std::string const & data)=0;
 
 	//Given the identifier for a slave node, fill the return data to be sent
 	//back and specify whether the slave should give more data. The use case for
 	//this would be when you have some logic in the slave that you want executed
 	//only once, or only once for each unique identifier.
-	virtual bool request(std::string identifier, std::string & return_data)=0;
+	virtual bool request(std::string const & identifier, std::string & return_data)=0;
 
 };
 
-} //namespace message_listening
-} //namespace jd2
-} //namespace protocols
+} //namespace
+} //namespace
 
 #endif

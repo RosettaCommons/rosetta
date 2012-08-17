@@ -12,18 +12,17 @@
 /// @brief
 /// @author Tim Jacobs
 
-#ifndef INCLUDED_protocols_jd2_message_listening_DbMoverMessageListener_hh
-#define INCLUDED_protocols_jd2_message_listening_DbMoverMessageListener_hh
+#ifndef INCLUDED_basic_message_listening_DbMoverMessageListener_hh
+#define INCLUDED_basic_message_listening_DbMoverMessageListener_hh
 
-#include <protocols/jd2/message_listening/MessageListener.hh>
+#include <basic/message_listening/MessageListener.hh>
 
 #include <core/types.hh>
 
 #include <string>
 #include <map>
 
-namespace protocols {
-namespace jd2 {
+namespace basic {
 namespace message_listening {
 
 class DbMoverMessageListener : public MessageListener{
@@ -31,15 +30,24 @@ class DbMoverMessageListener : public MessageListener{
 public:
 	DbMoverMessageListener();
 
-	//recieve the protocol id and batch id from the slave
-	virtual void recieve(std::string data);
+	///@brief receive the protocol id and batch id from the slave
+	virtual
+	void
+	receive(
+		std::string const & data);
 
-	//check to see if we have a protocol id and batch id. If we have them
-	//then tell them to the slave. If we don't have them then tell the slave
-	//to make them
-	virtual bool request(std::string identifier, std::string & return_data);
+	///@brief check to see if we have a protocol id and batch id. If we
+	///have them then tell them to the slave. If we don't have them then
+	///tell the slave to make them
+	virtual
+	bool
+	request(
+		std::string const & identifier,
+		std::string & return_data);
 
-	void deserialize_data(std::string data);
+	void
+	deserialize_data(
+		std::string const & data);
 
 private:
 
@@ -48,7 +56,6 @@ private:
 
 };
 
-} //namespace message_listening
-} //namespace jd2
-} //namespace protocols
+} //namespace
+} //namespace
 #endif

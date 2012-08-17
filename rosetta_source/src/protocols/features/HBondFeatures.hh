@@ -193,7 +193,7 @@ public:
 		core::Size site_id,
 		utility::sql_database::sessionOP db_session);
 
-	core::Size
+	void
 	insert_hbond_row(
 		core::scoring::hbonds::HBond const & hbond,
 		boost::uuids::uuid struct_id,

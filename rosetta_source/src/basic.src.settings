@@ -45,6 +45,12 @@ sources = {
 		"GPU",
 		"Timer",
 	],
+	"basic/message_listening": [
+		"DbMoverMessageListener",
+		"DatabaseSchemaGeneratorListener",
+		"MessageListenerFactory",
+		"util",
+	],
 	"basic/options": [
 		"after_opts",
 		"option",

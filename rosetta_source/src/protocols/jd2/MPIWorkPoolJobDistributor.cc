@@ -22,8 +22,8 @@
 // Package headers
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
-#include <protocols/jd2/message_listening/MessageListenerFactory.hh>
-#include <protocols/jd2/message_listening/MessageListener.hh>
+#include <basic/message_listening/MessageListenerFactory.hh>
+#include <basic/message_listening/MessageListener.hh>
 
 
 #include <protocols/moves/Mover.hh>
@@ -128,9 +128,6 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 	// set first job to assign
 	master_get_new_job_id();
 
-	// create a factory for listening
-	//message_listening::MessageListenerFactory factory;
-
 	// Job Distribution Loop
 	while ( next_job_to_assign_ != 0 ) {
 		TR << "Master Node: Waiting for job requests..." << std::endl;
@@ -164,7 +161,9 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 			case REQUEST_MESSAGE_TAG:
 			{
 				TR << "Master Node: received a message request from the slave node, having the message listener factor create the appropriate message" << std::endl;
-				message_listening::MessageListenerOP listener(message_listening::MessageListenerFactory::get_instance()->get_listener((message_listening::listener_tags)slave_data));
+				basic::message_listening::MessageListenerOP listener(
+					basic::message_listening::MessageListenerFactory::get_instance()->get_listener(
+						(basic::message_listening::listener_tags)slave_data));
 
 				TR << "Master Node: received message data from the slave node, processing data now" << std::endl;
 				std::string message_data = utility::receive_string_from_node(status.MPI_SOURCE);
@@ -177,7 +176,7 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 				if(request_slave_data){
 					TR << "Master Node: received data from slave node" << std::endl;
 					message_data = utility::receive_string_from_node(status.MPI_SOURCE);
-					listener->recieve(message_data);
+					listener->receive(message_data);
 				}
 
 				break;
@@ -217,7 +216,9 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 			case REQUEST_MESSAGE_TAG:
 			{
 				TR << "Master Node: received a message request from the slave node, having the message listener factory create the appropriate message" << std::endl;
-				message_listening::MessageListenerOP listener(message_listening::MessageListenerFactory::get_instance()->get_listener((message_listening::listener_tags)slave_data));
+				basic::message_listening::MessageListenerOP listener(
+					basic::message_listening::MessageListenerFactory::get_instance()->get_listener(
+						(basic::message_listening::listener_tags)slave_data));
 
 				TR << "Master Node: received message data from the slave node, processing data now" << std::endl;
 				std::string message_data = utility::receive_string_from_node(status.MPI_SOURCE);
@@ -230,7 +231,7 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 				if(request_slave_data){
 					TR << "Master Node: received data from slave node" << std::endl;
 					message_data = utility::receive_string_from_node(status.MPI_SOURCE);
-					listener->recieve(message_data);
+					listener->receive(message_data);
 				}
 
 				break;

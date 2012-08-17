@@ -111,6 +111,7 @@ DatabaseSessionManager::get_session_sqlite3(
 ){
 	sessionOP s(new session());
 	s->set_db_mode(DatabaseMode::sqlite3);
+	s->set_db_name(database);
 
 #ifdef USEMPI
 	string use_database;
@@ -161,6 +162,7 @@ DatabaseSessionManager::get_session_mysql(
 
 	sessionOP s(new session());
 	s->set_db_mode(DatabaseMode::mysql);
+	s->set_db_name(database);
 
 	stringstream connection_string;
 	connection_string
@@ -209,6 +211,9 @@ DatabaseSessionManager::get_session_postgres(
 
 	sessionOP s(new session());
 	s->set_db_mode(DatabaseMode::postgres);
+	s->set_db_name(database);
+	s->set_pq_schema(pq_schema);
+
 
 	stringstream connection_string;
 	connection_string

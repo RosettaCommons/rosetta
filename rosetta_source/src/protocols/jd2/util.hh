@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/jd2/JobDistributor.cc
+/// @file   protocols/jd2/util.hh
 /// @brief  August 2008 job distributor as planned at RosettaCon08 - Base class
 /// @author Andrew Leaver-Fay
 /// @author Steven Lewis smlewi@gmail.com
@@ -24,8 +24,6 @@
 #include <core/types.hh>
 #include <protocols/jd2/Job.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-
-#include <protocols/jd2/message_listening/MessageListenerFactory.hh>
 
 #include <utility/vector1.hh>
 
@@ -76,13 +74,6 @@ write_score_tracer( core::pose::Pose const& pose_in, std::string tag );
 ///@brief returns communicator defined by the JobDistributor or MPI_COMM_WORLD
 MPI_Comm const& current_mpi_comm();
 #endif
-
-///@brief send mpi message to head node in order to request data. The data sent back will be a string
-/// formatted by the listener specified in the listener_tags enum of MessageListenerFactory
-std::string request_data_from_head_node(message_listening::listener_tags listener_tag, std::string data);
-
-
-void send_data_to_head_node(message_listening::listener_tags listener_tag, std::string data);
 
 ///@brief returns 0 if no replicas (i.e., multiple processes per job )
 /// otherwise it returns the sub-rank of the process within the job starting at 1

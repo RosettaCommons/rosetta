@@ -81,9 +81,9 @@ ResidueDatabaseIO::write_residue_type_table_schema(
 	Column residue_type_set_name("residue_type_set_name", DbText(255));
 	Column version("version", DbText());
 	Column name("name", DbText(255));
-	Column name3("name3", DbText(2));
-	Column name1("name1", DbText(1));
-	Column aa("aa", DbText(1));
+	Column name3("name3", DbText(3));
+	Column name1("name1", DbText(2)); // TODO Fix ccpdb to allow putting in just a single character rather then a one character string.
+	Column aa("aa", DbInteger());
 	Column lower_connect("lower_connect", DbInteger());
 	Column upper_connect("upper_connect", DbInteger());
 	Column nbr_atom("nbr_atom", DbInteger());

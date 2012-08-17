@@ -376,8 +376,8 @@ void PdbDataFeatures::insert_residue_pdb_confidence_rows(
 	for(Size ri=1; ri <= pose.n_residue(); ++ri) {
 		Residue const & r(pose.residue(ri));
 		Real max_bb_temperature(-1), max_sc_temperature(-1);
-		Real min_bb_occupancy(numeric_limits<Real>::max());
-		Real min_sc_occupancy(numeric_limits<Real>::max());
+		Real min_bb_occupancy(9999999);
+		Real min_sc_occupancy(9999999);
 		Size const n_bb(r.n_mainchain_atoms());
 		Size const n_sc(r.nheavyatoms() - r.n_mainchain_atoms());
 		for(Size ai=1; ai <= n_bb; ++ai){

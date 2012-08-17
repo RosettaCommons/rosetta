@@ -24,8 +24,9 @@
 #include <protocols/features/ProtocolFeatures.hh>
 #include <protocols/features/BatchFeatures.hh>
 #include <protocols/jd2/util.hh>
-#include <protocols/jd2/message_listening/MessageListenerFactory.hh>
-#include <protocols/jd2/message_listening/MessageListener.hh>
+#include <basic/message_listening/MessageListenerFactory.hh>
+#include <basic/message_listening/MessageListener.hh>
+#include <basic/message_listening/util.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/database/sql_utils.hh>
@@ -59,9 +60,9 @@ using cppdb::cppdb_error;
 using utility::sql_database::sessionOP;
 using basic::Tracer;
 using core::Size;
-using protocols::jd2::request_data_from_head_node;
-using protocols::jd2::send_data_to_head_node;
-using protocols::jd2::message_listening::DB_TAG;
+using basic::message_listening::request_data_from_head_node;
+using basic::message_listening::send_data_to_head_node;
+using basic::message_listening::DATABASE_PROTOCOL_AND_BATCH_ID_TAG;
 using cppdb::statement;
 using cppdb::result;
 
@@ -84,6 +85,8 @@ get_protocol_and_batch_id(
 	string identifier,
 	sessionOP db_session
 ) {
+	using namespace basic::message_listening;
+
 	int protocol_id = 0;
 	int batch_id = 0;
 	ProtocolFeaturesOP protocol_features = new ProtocolFeatures();
@@ -103,13 +106,14 @@ get_protocol_and_batch_id(
 
 	string listener_data="";
 
-	if(rank != 0)
-	{
-		listener_data = request_data_from_head_node(DB_TAG, identifier);
+	if(rank != 0) {
+		listener_data = request_data_from_head_node(
+			DATABASE_PROTOCOL_AND_BATCH_ID_TAG, identifier);
 		TR << "Received data from head node: " << listener_data << endl;
-	}else
-	{
-		protocols::jd2::message_listening::MessageListenerOP listener(protocols::jd2::message_listening::MessageListenerFactory::get_instance()->get_listener(DB_TAG));
+	} else {
+		MessageListenerOP listener(
+			MessageListenerFactory::get_instance()->get_listener(
+				DATABASE_PROTOCOL_AND_BATCH_ID_TAG));
 		listener->request(identifier,listener_data);
 		//listener->recieve(listener_data);
 		TR << "Received data from message listener: " << listener_data << endl;
@@ -147,14 +151,15 @@ get_protocol_and_batch_id(
 		}
 
 
-		if(rank != 0)
-		{
+		if(rank != 0) {
 			send_data_to_head_node(
-				DB_TAG, serialize_ids(protocol_id, identifier, batch_id));
-		}else
-		{
-			protocols::jd2::message_listening::MessageListenerOP listener(protocols::jd2::message_listening::MessageListenerFactory::get_instance()->get_listener(DB_TAG));
-			listener->recieve(serialize_ids(protocol_id, identifier, batch_id));
+				DATABASE_PROTOCOL_AND_BATCH_ID_TAG,
+				serialize_ids(protocol_id, identifier, batch_id));
+		} else {
+			MessageListenerOP listener(
+				MessageListenerFactory::get_instance()->get_listener(
+					DATABASE_PROTOCOL_AND_BATCH_ID_TAG));
+			listener->receive(serialize_ids(protocol_id, identifier, batch_id));
 		}
 
 	}
@@ -164,14 +169,15 @@ get_protocol_and_batch_id(
 		batch_id = batch_features->report_features(
 			protocol_id, identifier, "", db_session);
 
-		if(rank != 0)
-		{
+		if(rank != 0){
 			send_data_to_head_node(
-				DB_TAG, serialize_ids(protocol_id, identifier, batch_id));
-		}else
-		{
-			protocols::jd2::message_listening::MessageListenerOP listener(protocols::jd2::message_listening::MessageListenerFactory::get_instance()->get_listener(DB_TAG));
-			listener->recieve(serialize_ids(protocol_id, identifier, batch_id));
+				DATABASE_PROTOCOL_AND_BATCH_ID_TAG,
+				serialize_ids(protocol_id, identifier, batch_id));
+		} else {
+			MessageListenerOP listener(
+				MessageListenerFactory::get_instance()->get_listener(
+					DATABASE_PROTOCOL_AND_BATCH_ID_TAG));
+			listener->receive(serialize_ids(protocol_id, identifier, batch_id));
 		}
 
 	}

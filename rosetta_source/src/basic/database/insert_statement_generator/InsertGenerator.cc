@@ -14,11 +14,9 @@
 
 #include <basic/database/insert_statement_generator/InsertGenerator.hh>
 #include <basic/database/sql_utils.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
 
 #include <utility/string_util.hh>
-
+#include <utility/sql_database/types.hh>
 #include <cppdb/frontend.h>
 
 #include <boost/uuid/uuid.hpp>
@@ -46,21 +44,24 @@ void InsertGenerator::add_row(std::vector<RowDataBaseOP> const & row)
 	row_list_.push_back(row);
 }
 
-void InsertGenerator::write_to_database(utility::sql_database::sessionOP db_session)
-{
-	std::string db_mode = basic::options::option[basic::options::OptionKeys::inout::dbms::mode]();
-	if(db_mode == "sqlite3")
-	{
+void
+InsertGenerator::write_to_database(
+	utility::sql_database::sessionOP db_session
+) {
+	switch(db_session->get_db_mode()){
+	case utility::sql_database::DatabaseMode::sqlite3:
 		write_to_database_sqlite(db_session);
-	}else if(db_mode == "mysql")
-	{
+		break;
+	case utility::sql_database::DatabaseMode::mysql:
 		write_to_database_mysql(db_session);
-	}else if(db_mode == "postgre")
-	{
-		write_to_database_postgre(db_session);
-	}else
-	{
-		utility_exit_with_message("only sqlite3, mysql and postgre are supported with -inout:dbms:mode");
+		break;
+	case utility::sql_database::DatabaseMode::postgres:
+		write_to_database_postgres(db_session);
+		break;
+	default:
+		utility_exit_with_message(
+			"Unrecognized database mode: '" +
+			name_from_database_mode(db_session->get_db_mode()) + "'");
 	}
 }
 
@@ -68,7 +69,7 @@ void InsertGenerator::write_to_database_sqlite(utility::sql_database::sessionOP 
 {
 	std::string columns = make_column_list();
 	std::string placeholder_block =  "(?";
-	for(int j = 2; j <= column_index_map_.size(); ++j)
+	for(platform::Size j = 2; j <= column_index_map_.size(); ++j)
 	{
 		placeholder_block += ",?";
 	}
@@ -94,8 +95,11 @@ void InsertGenerator::write_to_database_sqlite(utility::sql_database::sessionOP 
 }
 
 
-void InsertGenerator::write_to_database_mysql(utility::sql_database::sessionOP db_session)
-{
+void
+InsertGenerator::write_to_database_mysql(
+	utility::sql_database::sessionOP db_session,
+	platform::Size chunk_size
+) {
 	std::vector<std::string> column_names;
 	for(platform::Size i = 1; i <= index_column_map_.size();++i)
 	{
@@ -110,9 +114,9 @@ void InsertGenerator::write_to_database_mysql(utility::sql_database::sessionOP d
 	while(remaining_rows > 0)
 	{
 		platform::Size chunk = 0;
-		if(remaining_rows > 5000)
+		if(remaining_rows > chunk_size)
 		{
-			chunk = 5000;
+			chunk = chunk_size;
 		}else
 		{
 			chunk = remaining_rows;
@@ -133,7 +137,7 @@ void InsertGenerator::write_to_database_mysql(utility::sql_database::sessionOP d
 					utility_exit_with_message(table_name_ + " does not contain column " + (*column_it)->get_column_name() + " check for typos in your features reporter");
 				}
 				platform::Size base_column_index = it->second;
-				platform::Size column_index = column_count*i+base_column_index;
+				platform::Size column_index = column_count*(i-row_start_index)+base_column_index;
 				(*column_it)->bind_data(column_index,statement);
 			}
 		}
@@ -143,9 +147,12 @@ void InsertGenerator::write_to_database_mysql(utility::sql_database::sessionOP d
 	}
 }
 
-void InsertGenerator::write_to_database_postgre(utility::sql_database::sessionOP db_session)
-{
-	write_to_database_mysql(db_session);
+void
+InsertGenerator::write_to_database_postgres(
+	utility::sql_database::sessionOP db_session,
+	platform::Size chunk_size
+) {
+	write_to_database_mysql(db_session, chunk_size);
 }
 
 std::string InsertGenerator::make_column_list() const

@@ -41,8 +41,18 @@ public:
 
 private:
 	void write_to_database_sqlite(utility::sql_database::sessionOP db_session);
-	void write_to_database_mysql(utility::sql_database::sessionOP db_session);
-	void write_to_database_postgre(utility::sql_database::sessionOP db_session);
+
+	void
+	write_to_database_mysql(
+		utility::sql_database::sessionOP db_session,
+		platform::Size chunk_size = 5000
+	);
+
+	void
+	write_to_database_postgres(
+		utility::sql_database::sessionOP db_session,
+		platform::Size chunk_size = 300
+	);
 
 	std::string make_column_list() const;
 

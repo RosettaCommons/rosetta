@@ -14,20 +14,15 @@
 
 
 
-#ifndef INCLUDED_protocols_jd2_message_listening_MessageListenerFactory_HH
-#define INCLUDED_protocols_jd2_message_listening_MessageListenerFactory_HH
+#ifndef INCLUDED_basic_message_listening_MessageListenerFactory_HH
+#define INCLUDED_basic_message_listening_MessageListenerFactory_HH
 
-#include <protocols/jd2/message_listening/MessageListener.fwd.hh>
+#include <basic/message_listening/MessageListener.fwd.hh>
 
 #include <map>
 
-namespace protocols {
-namespace jd2 {
+namespace basic {
 namespace message_listening {
-
-enum listener_tags {
-	DB_TAG = 42
-};
 
 class MessageListenerFactory {
 
@@ -46,7 +41,6 @@ private:
 
 };
 
-} //namespace message_listening
-} //namespace jd2
-} //namespace protocols
+} //namespace
+} //namespace
 #endif

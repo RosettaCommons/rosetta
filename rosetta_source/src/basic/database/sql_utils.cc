@@ -338,6 +338,10 @@ statement safely_prepare_statement(
 		return stmt;
 	}catch(cppdb_error error)
 	{
+		TR.Error << " Failed to safely prepare the following statement: " << std::endl;
+		TR.Error << statement_string << std::endl;
+		TR.Error << error.what() << std::endl;
+
 		utility_exit_with_message(error.what());
 	}
 	return stmt; //there's no way this should happen
@@ -465,6 +469,7 @@ table_exists(
 
 	string statement_string;
 	statement stmt;
+	Size i(1);
 	switch(db_session->get_db_mode()){
 	case DatabaseMode::sqlite3:
 		statement_string = "SELECT name FROM sqlite_master WHERE name=?;";
@@ -475,17 +480,26 @@ table_exists(
 		stmt = safely_prepare_statement(statement_string,db_session);
 		break;
 	case DatabaseMode::postgres:
-		statement_string =
-			"SELECT tablename \n"
-			"FROM pg_catalog.pg_tables \n"
-			"WHERE tablename = ?;";
-		stmt = safely_prepare_statement(statement_string, db_session);
+		if(db_session->get_pq_schema() == ""){
+			statement_string =
+				"SELECT tablename \n"
+				"FROM pg_catalog.pg_tables \n"
+				"WHERE tablename = ?;";
+			stmt = safely_prepare_statement(statement_string, db_session);
+		} else {
+			statement_string =
+				"SELECT tablename FROM pg_catalog.pg_tables \n"
+				"WHERE schemaname = ? AND tablename = ?;";
+			stmt = safely_prepare_statement(statement_string, db_session);
+			stmt.bind(i, db_session->get_pq_schema());
+			i++;
+		}
 		break;
 	default:
 		utility_exit_with_message("unknown database mode");
 	}
 
-	stmt.bind(1,table_name);
+	stmt.bind(i, table_name);
 	result res(stmt.query());
 
 	return res.next();

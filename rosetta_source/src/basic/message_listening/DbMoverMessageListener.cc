@@ -12,7 +12,7 @@
 /// @brief
 /// @author Tim Jacobs
 
-#include <protocols/jd2/message_listening/DbMoverMessageListener.hh>
+#include <basic/message_listening/DbMoverMessageListener.hh>
 
 #include <utility/string_util.hh>
 
@@ -21,11 +21,10 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 
-namespace protocols {
-namespace jd2 {
+namespace basic {
 namespace message_listening {
 
-static basic::Tracer TR("protocols.jd2.message_listening.DbMoverMessageListener");
+static basic::Tracer TR("basic.message_listening.DbMoverMessageListener");
 
 DbMoverMessageListener::DbMoverMessageListener():
 protocol_id_(0)
@@ -35,7 +34,10 @@ protocol_id_(0)
 	}
 }
 
-bool DbMoverMessageListener::request(std::string identifier, std::string & return_data) {
+bool
+DbMoverMessageListener::request(
+	std::string const & identifier,
+	std::string & return_data) {
 
 	TR << "slave request with identifier: " << identifier << std::endl;
 
@@ -53,14 +55,16 @@ bool DbMoverMessageListener::request(std::string identifier, std::string & retur
 	return need_slave_data;
 }
 
-void DbMoverMessageListener::recieve(std::string data) {
+void DbMoverMessageListener::receive(std::string const & data) {
 
 	TR << "Received this message from slave: " << data << std::endl;
 
 	deserialize_data(data);
 }
 
-void DbMoverMessageListener::deserialize_data(std::string data){
+void
+DbMoverMessageListener::deserialize_data(
+	std::string const & data){
 	utility::vector1< std::string > tokens = utility::split(data);
 	if(tokens.size() != 3){
 		utility_exit_with_message("failed to deserialize the database message from slave node.");
@@ -70,6 +74,5 @@ void DbMoverMessageListener::deserialize_data(std::string data){
 }
 
 
-} //namespace message_listening
-} //namespace jd2
-} //namespace protocols
+} //namespace
+} //namespace

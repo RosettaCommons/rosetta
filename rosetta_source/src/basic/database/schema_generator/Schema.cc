@@ -21,6 +21,10 @@
 
 #include <basic/database/sql_utils.hh>
 
+#include <basic/message_listening/MessageListenerFactory.hh>
+#include <basic/message_listening/DatabaseSchemaGeneratorListener.hh>
+#include <basic/message_listening/util.hh>
+#include <protocols/jd2/util.hh>
 // Basic Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
@@ -29,6 +33,7 @@
 
 // Utility Headers
 #include <utility/exit.hh>
+#include <utility/mpi_util.hh>
 #include <utility/sql_database/types.hh>
 
 #include <string>
@@ -43,7 +48,18 @@ namespace schema_generator{
 
 using platform::Size;
 using std::string;
+using std::endl;
 using std::stringstream;
+using utility::sql_database::sessionOP;
+using basic::message_listening::MessageListenerOP;
+using basic::message_listening::MessageListenerFactory;
+using basic::message_listening::TABLE_EXISTS;
+using basic::message_listening::DATABASE_SCHEMA_GENERATOR_TAG;
+using basic::message_listening::request_data_from_head_node;
+using basic::message_listening::send_data_to_head_node;
+using basic::database::table_exists;
+using utility::mpi_rank;
+using cppdb::statement;
 
 static basic::Tracer TR("basic.database.schema_generator.Schema");
 
@@ -192,49 +208,93 @@ std::string Schema::print(){
 	return schema_string.str();
 }
 
-//Write this schema to the database
-void Schema::write(
-	utility::sql_database::sessionOP db_session
-){
-	std::string stmt_string = this->print();
+#ifdef USEMPI
+//@details To prevent a race condition, only try to create the
+//database when the head node says it hasn't been created yet.
+void
+Schema::write(
+	sessionOP db_session
+) {
+	// Ask the head node if the table has been created
+	string table_exists_tag;
+	if(mpi_rank() !=0){
+		table_exists_tag = request_data_from_head_node(
+			DATABASE_SCHEMA_GENERATOR_TAG, table_name_);
+	} else {
+		MessageListenerOP listener(
+			MessageListenerFactory::get_instance()->get_listener(
+				DATABASE_SCHEMA_GENERATOR_TAG));
+		listener->request(table_name_, table_exists_tag);
+	}
 
-	bool exists=false;
+	if(table_exists_tag == TABLE_EXISTS){
+		return;
+	}
+
+	// Since the table hasn't been created, see if it already exists
+	// and if it doesn't y to create it
+	if(!table_exists(db_session, table_name_)){
+		try{
+			statement stmt = (*db_session) << print();
+			safely_write_to_database(stmt);
+			TR.Debug << "Writing table " << table_name_ << ": " << print() << std::endl;
+			TR.Debug.flush();
+		} catch (cppdb::cppdb_error e) {
+			TR.Error
+				<< "ERROR reading schema \n"
+				<< print() << std::endl;
+			TR.Error << e.what() << std::endl;
+			TR.flush();
+			std::cerr
+				<< "ERROR2 reading schema \n"
+				<< print() << std::endl;
+			utility_exit();
+		}
+	} else {
+		TR << "Table " << table_name_ << " exists, so I'm not creating it." << std::endl;
+	}
+
+	// Either the database already existed or it was just created--so
+	// let the head node that the table has been created
+	if(mpi_rank() != 0){
+		std::cout.flush();
+		send_data_to_head_node(
+			DATABASE_SCHEMA_GENERATOR_TAG,
+			table_name_);
+	} else {
+		MessageListenerOP listener(
+			MessageListenerFactory::get_instance()->get_listener(
+				DATABASE_SCHEMA_GENERATOR_TAG));
+		listener->receive(table_name_);
+	}
+}
+#endif
+
+#ifndef USEMPI
+//Write this schema to the database
+void
+Schema::write(
+	sessionOP db_session
+){
+
+	// Older versions of postgres don't have "create table if not exists"
+	if(database_mode_ == utility::sql_database::DatabaseMode::postgres &&
+		table_exists(db_session, table_name_)){
+		return;
+	}
 
 	try{
-		//Older versions of postgres do not support "create table if not exists"
-		if(database_mode_ == utility::sql_database::DatabaseMode::postgres){
-			cppdb::statement exists_stmt;
-
-			if(!(db_session->get_pq_schema() == "")){
-				exists_stmt = (*db_session) << "SELECT tablename "
-					"FROM pg_catalog.pg_tables "
-					"WHERE schemaname = ? AND tablename = ?;";
-				exists_stmt.bind(1, db_session->get_pq_schema());
-				exists_stmt.bind(2, table_name_);
-			} else {
-				exists_stmt = (*db_session) << "SELECT tablename "
-					"FROM pg_catalog.pg_tables "
-					"WHERE tablename = ?;";
-				exists_stmt.bind(1, table_name_);
-			}
-
-			cppdb::result res = safely_read_from_database(exists_stmt);
-			if(res.next()){
-				exists=true;
-			}
-		}
-		if(!exists){
-			cppdb::statement stmt = (*db_session) << stmt_string;
-			safely_write_to_database(stmt);
-		}
+		statement stmt = (*db_session) << print();
+		safely_write_to_database(stmt);
 	} catch (cppdb::cppdb_error e) {
 		TR.Error
 		<< "ERROR reading schema \n"
-		<< stmt_string << std::endl;
+		<< print() << std::endl;
 		TR.Error << e.what() << std::endl;
 		utility_exit();
 	}
 }
+#endif
 
 } // schema_generator
 } // namespace database

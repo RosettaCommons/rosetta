@@ -14,9 +14,10 @@
 
 #include <core/types.hh>
 
-#include <protocols/jd2/message_listening/MessageListener.fwd.hh>
-#include <protocols/jd2/message_listening/DbMoverMessageListener.hh>
-#include <protocols/jd2/message_listening/MessageListenerFactory.hh>
+#include <basic/message_listening/MessageListener.fwd.hh>
+#include <basic/message_listening/DbMoverMessageListener.hh>
+#include <basic/message_listening/DatabaseSchemaGeneratorListener.hh>
+#include <basic/message_listening/MessageListenerFactory.hh>
 
 #include <utility/exit.hh>
 
@@ -24,11 +25,10 @@
 
 #include <map>
 
-namespace protocols{
-namespace jd2{
+namespace basic{
 namespace message_listening{
 
-static basic::Tracer TR("protocols.jd2.message_listening.MessageListenerFactory");
+static basic::Tracer TR("basic.message_listening.MessageListenerFactory");
 
 MessageListenerFactory* MessageListenerFactory::instance_(0);
 
@@ -46,19 +46,27 @@ MessageListenerFactory::MessageListenerFactory()
 	listeners_.clear();
 }
 
-MessageListenerOP MessageListenerFactory::get_listener(listener_tags tag){
+MessageListenerOP
+MessageListenerFactory::get_listener(
+	listener_tags tag
+){
 
 	//if we already made this listener then return it, otherwise create a new one
 	if(listeners_.count( tag )){
-		TR << "Found existing listener for tag, returning it" << std::endl;
+		TR.Debug << "Found existing listener for tag, returning it" << std::endl;
 		return listeners_[tag];
 	}
 
 	MessageListenerOP listener;
 	switch ( tag ) {
-		case DB_TAG:
-			TR << "Creating a new DbMoverMessageListener" << std::endl;
+		case DATABASE_PROTOCOL_AND_BATCH_ID_TAG:
+			TR.Debug << "Creating a new DbMoverMessageListener" << std::endl;
 			listener = new DbMoverMessageListener();
+			break;
+
+		case DATABASE_SCHEMA_GENERATOR_TAG:
+			TR.Debug << "Creating a new DatabaseSchemaGeneratorListener" << std::endl;
+			listener = new DatabaseSchemaGeneratorListener();
 			break;
 
 		default:
@@ -69,7 +77,6 @@ MessageListenerOP MessageListenerFactory::get_listener(listener_tags tag){
 	return listener;
 }
 
-} //namespace message_listening
-} //namespace jd2
-} //namespace protocols
+} //namespace
+} //namespace
 

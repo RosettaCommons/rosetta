@@ -800,7 +800,7 @@ HBondFeatures::insert_site_pdb_row(
 	if(!pose.pdb_info()) return; //eg if this is a silent file structure
 
 	string const pdb_chain(1,pose.pdb_info()->chain(resNum));
-	Size const pdb_resNum( pose.pdb_info()->number(resNum) );
+	int const pdb_resNum( pose.pdb_info()->number(resNum) );
 	string const pdb_iCode(1,pose.pdb_info()->icode(resNum));
 	Real const pdb_heavy_atom_temperature(
 		pose.pdb_info()->temperature(resNum,heavy_atmNum) );
@@ -909,7 +909,7 @@ HBondFeatures::insert_site_atoms_row(
 
 }
 
-Size
+void
 HBondFeatures::insert_hbond_row(
 	HBond const & hbond,
 	boost::uuids::uuid struct_id,
@@ -977,7 +977,6 @@ HBondFeatures::insert_hbond_row(
 		<< donRank
 		<< accRank;
 	basic::database::safely_write_to_database(stmt);
-	return stmt.last_insert_id();
 }
 
 void

@@ -14,22 +14,26 @@
 
 
 
-#ifndef INCLUDED_protocols_jd2_message_listening_MessageListener_FWD_HH
-#define INCLUDED_protocols_jd2_message_listening_MessageListener_FWD_HH
+#ifndef INCLUDED_basic_message_listening_MessageListener_FWD_HH
+#define INCLUDED_basic_message_listening_MessageListener_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols {
-namespace jd2 {
+namespace basic {
 namespace message_listening {
+
+enum listener_tags {
+	DATABASE_PROTOCOL_AND_BATCH_ID_TAG = 42,
+	DATABASE_SCHEMA_GENERATOR_TAG = 52
+};
+
 
 class MessageListener;
 typedef utility::pointer::owning_ptr< MessageListener > MessageListenerOP;
 typedef utility::pointer::owning_ptr< MessageListener const > MessageListenerCOP;
 
-} //namespace message_listening
-} //namespace jd2
-} //namespace protocols
+} //namespace
+} //namespace
 #endif
 
 

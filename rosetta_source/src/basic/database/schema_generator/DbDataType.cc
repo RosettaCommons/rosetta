@@ -133,7 +133,21 @@ DbBigInt::DbBigInt() :
 DbReal::DbReal():
 DbDataType()
 {
-	type_string_ = "REAL";
+	switch(database_mode_){
+	case utility::sql_database::DatabaseMode::sqlite3:
+		type_string_ = "REAL";
+		break;
+	case utility::sql_database::DatabaseMode::postgres:
+		type_string_ = "DOUBLE PRECISION";
+		break;
+	case utility::sql_database::DatabaseMode::mysql:
+		//I can't figure out how to write the 16byte UUID into a varbinary(16). I don't like mysql.
+		type_string_ = "REAL";
+		break;
+	default:
+		utility_exit_with_message(
+			"Unrecognized database mode: '" + name_from_database_mode(database_mode_) + "'");
+	}
 }
 
 DbDouble::DbDouble():
