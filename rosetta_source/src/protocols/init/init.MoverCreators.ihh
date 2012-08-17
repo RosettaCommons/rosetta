@@ -194,6 +194,7 @@
 #include <protocols/simple_moves/ExtendedPoseMoverCreator.hh>
 #include <protocols/simple_moves/FavorSequenceProfileCreator.hh>
 #include <protocols/simple_moves/ForceDisulfidesMoverCreator.hh>
+#include <protocols/simple_moves/LoadPDBMoverCreator.hh>
 #include <protocols/simple_moves/LoadUnboundRotMoverCreator.hh>
 #include <protocols/simple_moves/MakePolyXMoverCreator.hh>
 #include <protocols/simple_moves/MembraneTopologyCreator.hh>
