@@ -73,6 +73,27 @@ send_string_to_node( int MPI_ONLY( destination ), std::string const & MPI_ONLY( 
 }
 
 
+char
+receive_char_from_node( int MPI_ONLY( source ) )
+{
+	char return_val;
+#ifdef USEMPI
+	int tag( 1 );
+	MPI_Status stat;
+	MPI_Recv( &return_val, 1, MPI_CHAR, source, tag, MPI_COMM_WORLD, & stat );
+#endif
+	return return_val;
+}
+
+void
+send_char_to_node( int MPI_ONLY( destination ), char MPI_ONLY( message ) )
+{
+#ifdef USEMPI
+	int tag( 1 );
+	MPI_Send( &message, 1, MPI_CHAR, destination, tag, MPI_COMM_WORLD );
+#endif
+}
+
 int
 receive_integer_from_node( int MPI_ONLY( source ) )
 {

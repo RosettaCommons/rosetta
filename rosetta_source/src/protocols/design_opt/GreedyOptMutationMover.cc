@@ -75,7 +75,8 @@ GreedyOptMutationMover::GreedyOptMutationMover() :
 	dump_table_( false ),
 	diversify_lvl_( 1 ),
 	stopping_condition_( NULL ),
-	rtmin_( false )
+	rtmin_( false ),
+	parallel_( false )
 {
 	if( sample_type_ == "high" ){
 		flip_sign_ = Real( -1 );
@@ -100,6 +101,9 @@ GreedyOptMutationMover::GreedyOptMutationMover(
 	core::Real filter_delta,
 	std::string sample_type,
 	bool dump_pdb,
+	bool dump_table,
+	bool rtmin,
+	bool parallel,
 	core::Size diversify_lvl,
 	protocols::filters::FilterOP stopping_condition
 ) :
@@ -113,7 +117,9 @@ GreedyOptMutationMover::GreedyOptMutationMover(
 	sample_type_ = sample_type;
 	diversify_lvl_ = diversify_lvl;
 	dump_pdb_ = dump_pdb;
-	dump_table_ = false;
+	dump_table_ = dump_table;
+	rtmin_ = rtmin;
+	parallel_ = parallel;
 	stopping_condition_ = stopping_condition;
 
 	if( sample_type_ == "high" ){
@@ -259,6 +265,22 @@ GreedyOptMutationMover::scorefxn() const{
 }
 
 void
+GreedyOptMutationMover::rtmin( bool const b ){
+	rtmin_ = b;
+}
+
+bool
+GreedyOptMutationMover::rtmin() const{ return rtmin_; }
+
+void
+GreedyOptMutationMover::parallel( bool const b ){
+	parallel_ = b;
+}
+
+bool
+GreedyOptMutationMover::parallel() const{ return parallel_; }
+
+void
 GreedyOptMutationMover::dump_scoring_table( std::string filename, core::pose::Pose const & ref_pose ) const{
   utility::io::ozstream outtable(filename, std::ios::out | std::ios::app ); // Append if logfile already exists.
 	if( outtable ){
@@ -337,8 +359,7 @@ GreedyOptMutationMover::apply(core::pose::Pose & pose )
 	//store input pose
 	core::pose::Pose start_pose( pose );
 	design_opt::PointMutationCalculatorOP ptmut_calc( new design_opt::PointMutationCalculator(
-				task_factory(), scorefxn(), relax_mover(), filter(), sample_type(), dump_pdb() ) );
-	ptmut_calc->rtmin( rtmin() );
+				task_factory(), scorefxn(), relax_mover(), filter(), sample_type(), dump_pdb(), rtmin(), parallel() ) );
 	ptmut_calc->set_design_shell( design_shell_ );
 	ptmut_calc->set_repack_shell( repack_shell_ );
 
@@ -487,20 +508,13 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagPtr const tag,
 	//load dump_table
 	dump_table( tag->getOption< bool >( "dump_table", false ) );
 	rtmin( tag->getOption< bool >( "rtmin", false ) );
+	parallel( tag->getOption< bool >( "parallel", false ) );
 	if( tag->hasOption( "stopping_condition" ) ){
 		std::string const stopping_filter_name( tag->getOption< std::string >( "stopping_condition" ) );
 		stopping_condition( protocols::rosetta_scripts::parse_filter( stopping_filter_name, filters ) );
 		TR<<"Defined stopping condition "<<stopping_filter_name<<std::endl;
 	}
 }
-
-void
-GreedyOptMutationMover::rtmin( bool const b ){
-	rtmin_ = b;
-}
-
-bool
-GreedyOptMutationMover::rtmin() const{ return rtmin_; }
 
 } // moves
 } // protocols

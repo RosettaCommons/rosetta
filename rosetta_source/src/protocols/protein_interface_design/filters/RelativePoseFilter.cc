@@ -186,9 +186,12 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 			}
 			else{//design!
 				utility::vector1< bool > allowed_aas( num_canonical_aas, false );
-				if( thread() )
-					allowed_aas[ p.residue( i ).aa() ] = true;
-				else
+				if( thread() ){
+					//allow the aa at the corresonding position in the alignment with the disk pose p
+					//we can't use the alignment_ map's [] operator because it can add new elements and this is a const function!
+					allowed_aas[ p.residue( alignment_.find( i )->second ).aa() ] = true;
+				} else
+					//or allow the original aa in the current pose
 					allowed_aas[ pose()->residue( i ).aa() ] = true;
 				pack->nonconst_residue_task( i ).restrict_absent_canonical_aas( allowed_aas );
 				TR<<"design: "<<i<<std::endl;

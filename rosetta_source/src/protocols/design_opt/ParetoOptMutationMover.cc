@@ -73,6 +73,7 @@ ParetoOptMutationMover::ParetoOptMutationMover() :
 	diversify_lvl_( 1 ),
 	dump_pdb_( false ),
 	dump_table_( false ),
+	parallel_( false ),
 	stopping_condition_( NULL ),
 	nstruct_iter_( 1 )
 {}
@@ -86,6 +87,7 @@ ParetoOptMutationMover::ParetoOptMutationMover(
 	vector1< std::string > sample_types,
 	bool dump_pdb,
 	bool dump_table,
+	bool parallel,
 	core::Size diversify_lvl,
 	protocols::filters::FilterOP stopping_condition
 ) :
@@ -99,6 +101,7 @@ ParetoOptMutationMover::ParetoOptMutationMover(
 	diversify_lvl_ = diversify_lvl;
 	dump_pdb_ = dump_pdb;
 	dump_table_ = dump_table;
+	parallel_ = parallel;
 	stopping_condition_ = stopping_condition;
 	nstruct_iter_ = 1;
 }
@@ -222,6 +225,16 @@ ParetoOptMutationMover::scorefxn( core::scoring::ScoreFunctionOP scorefxn ){
 core::scoring::ScoreFunctionOP
 ParetoOptMutationMover::scorefxn() const{
 	return scorefxn_;
+}
+
+void
+ParetoOptMutationMover::parallel( bool const parallel ){
+  parallel_ = parallel;
+}
+
+bool
+ParetoOptMutationMover::parallel() const{
+  return parallel_;
 }
 
 //utility funxns for comparing values in sort
@@ -422,7 +435,7 @@ ParetoOptMutationMover::apply( core::pose::Pose & pose )
 	//store input pose
 	core::pose::Pose start_pose( pose );
 	design_opt::PointMutationCalculatorOP ptmut_calc( new design_opt::PointMutationCalculator(
-				task_factory(), scorefxn(), relax_mover(), filters(), sample_types(), dump_pdb() ) );
+				task_factory(), scorefxn(), relax_mover(), filters(), sample_types(), dump_pdb(), false, parallel() ) );
 
 	//create vec of pairs of seqpos, vector of AA/val pairs that pass input filter
 	//then combine them into a pareto opt pose set
@@ -583,6 +596,7 @@ ParetoOptMutationMover::parse_my_tag( utility::tag::TagPtr const tag,
 	dump_pdb( tag->getOption< bool >( "dump_pdb", false ) );
 	//load dump_table
 	dump_table( tag->getOption< bool >( "dump_table", false ) );
+	parallel( tag->getOption< bool >( "parallel", false ) );
 	if( tag->hasOption( "stopping_condition" ) ){
 		std::string const stopping_filter_name( tag->getOption< std::string >( "stopping_condition" ) );
 		stopping_condition( protocols::rosetta_scripts::parse_filter( stopping_filter_name, filters ) );

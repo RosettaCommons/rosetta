@@ -47,6 +47,9 @@ public:
 		core::Real filter_delta = 0,
 		std::string sample_type = "low",
 		bool dump_pdb = false,
+		bool dump_table = false,
+		bool rtmin = false,
+		bool parallel = false,
 		core::Size diversify_lvl = core::Size( 1 ),
 		protocols::filters::FilterOP stopping_condition = protocols::filters::FilterOP( NULL )
 	);
@@ -84,6 +87,8 @@ public:
 	protocols::filters::FilterOP stopping_condition() const{ return stopping_condition_; }
 	bool rtmin() const;
 	void rtmin( bool const b );
+	bool parallel() const;
+	void parallel( bool const b );
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::scoring::ScoreFunctionOP scorefxn_;
@@ -99,6 +104,7 @@ private:
 	utility::vector1< std::pair< core::Size, utility::vector1< std::pair< core::chemical::AA, core::Real > > > > seqpos_aa_val_vec_;
 	core::pose::Pose ref_pose_;
 	bool rtmin_; //dflt false; should we rtmin after packing?
+	bool parallel_; //parallelize pointmut calc with MPI?
 	core::Real design_shell_;//dflt -1 to only allow pointmutations, higher allows suroundings to be designed as well
 	core::Real repack_shell_;
 };

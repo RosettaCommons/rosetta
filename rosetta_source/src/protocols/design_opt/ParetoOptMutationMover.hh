@@ -47,6 +47,7 @@ public:
 		utility::vector1< std::string > sample_types,
 		bool dump_pdb = false,
 		bool dump_table = false,
+		bool parallel = false,
 		core::Size diversify_lvl = core::Size( 1 ), 
 		protocols::filters::FilterOP stopping_condition = protocols::filters::FilterOP( NULL )
 	);
@@ -77,8 +78,10 @@ public:
 	void relax_mover( protocols::moves::MoverOP relax_mover );
 	bool dump_pdb() const;
 	bool dump_table() const;
+	bool parallel() const;
 	void dump_pdb( bool const dump_pdb );
 	void dump_table( bool const dump_table );
+	void parallel( bool const parallel );
 	utility::vector1< std::string > sample_types() const;
 	void sample_types( utility::vector1< std::string > const sample_types );
 	core::Size diversify_lvl() const;
@@ -94,6 +97,7 @@ private:
 	core::Size diversify_lvl_;
 	bool dump_pdb_;
 	bool dump_table_;
+	bool parallel_;
 	protocols::filters::FilterOP stopping_condition_; // dflt NULL ; if defined, stops greedy optimization when the filter's apply evaluates to true;
 	utility::vector1< std::pair< core::Size, utility::vector1<
 			std::pair< core::chemical::AA, utility::vector1< core::Real > > > > > seqpos_aa_vals_vec_;

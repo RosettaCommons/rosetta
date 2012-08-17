@@ -41,6 +41,13 @@ receive_string_from_node( int source );
 void
 send_string_to_node( int source, std::string const & message );
 
+/// @brief Use MPI to receive a single char from a particular node.
+char
+receive_char_from_node( int source );
+
+void
+send_char_to_node( int destination, char message );
+
 /// @brief Use MPI to receive a single integer from a particular node.
 int
 receive_integer_from_node( int source );
