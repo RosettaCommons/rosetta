@@ -45,6 +45,7 @@
 #include <core/pose/selection.hh>
 #include <protocols/protein_interface_design/movers/AddChainBreak.hh>
 #include <utility/io/izstream.hh>
+#include <utility/io/ozstream.hh>
 #include <iostream>
 #include <sstream>
 #include <algorithm>
@@ -63,6 +64,8 @@
 #include <numeric/random/random.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 
+#include <fstream>
+#include <ctime>
 namespace protocols {
 namespace protein_interface_design {
 namespace movers {
@@ -111,15 +114,17 @@ Splice::Splice() :
 	dbase_iterate_( false ),
 	first_pass_( true ),
 	locked_res_id_( ' ' ),
-	locked_res_( NULL )
+	locked_res_( NULL ),
+	checkpointing_file_ ( "" )
 {
 	torsion_database_.clear();
 	delta_lengths_.clear();
 	dbase_subset_.clear();
 	end_dbase_subset_ = new protocols::moves::DataMapObj< bool >;
 	end_dbase_subset_->obj = false;
+	using namespace std;
+	srand( time( NULL ) ); /// for random_shuffle
 }
-
 
 Splice::~Splice() {}
 
@@ -157,6 +162,65 @@ copy_stretch( core::pose::Pose & target, core::pose::Pose const & source, core::
 //	target.update_residue_neighbors();
 }
 
+/// The checkpointing file has the following structure: the first line contains an ordered list of the dbase_subset_ for splice to iterate over the loop database. The second line contains the last element tested (the loop-entry number in the database; not the iterator to it!) and the third line contains the best element tested (again, the loop number from the database, not the iterator!).
+/// To recover from a checkpoint the following reads the dbase_subset_ then, if this is a first_pass_ the best entry becomes current, and if it is not a first_pass then the current entry is current.
+void
+Splice::load_from_checkpoint()
+{
+	using namespace std;
+
+	if( checkpointing_file_ == "" ) return;
+  utility::io::izstream data( checkpointing_file_ );
+  if ( !data ) return;
+	TR<<"Loading from checkpoint"<<std::endl;
+/// first read the dbase_subset from the checkpointing file
+  {
+  	string line;
+		getline( data, line );
+  	istringstream line_stream( line );
+		dbase_subset_.clear();
+		while( !line_stream.eof() ){
+			core::Size entry;
+			line_stream >> entry;
+			dbase_subset_.push_back( entry );
+		}
+	}
+	TR<<"dbase subset order loaded from checkpoint is: ";
+	foreach( core::Size const i, dbase_subset_ ){
+		TR<<i<<' ';
+	}
+
+	{
+		std::string line;
+		getline( data, line );
+		istringstream line_stream( line );
+		core::Size entry;
+		line_stream >> entry;
+		current_dbase_entry_ = std::find( dbase_subset_.begin(), dbase_subset_.end(), entry );
+	}
+	TR << "current dbase entry loaded from checkpoint is: " << *current_dbase_entry_ << std::endl;
+}
+
+void
+Splice::save_to_checkpoint() const{
+	if( checkpointing_file_ == "" )
+		return;
+	TR<<"Splice checkpointing to file: "<<checkpointing_file_<<std::endl;
+	std::ofstream data;
+	data.open( checkpointing_file_.c_str(), std::ios::out );
+	if( !data.good() )
+		utility_exit_with_message( "Unable to open splice checkpointing file for writing: " + checkpointing_file_ + "\n" );
+	foreach( core::Size const dbase_entry, dbase_subset_ ){
+		TR<<' '<<dbase_entry;
+		data << ' ' << dbase_entry;
+	}
+	if( current_dbase_entry_ == dbase_subset_.end() )
+		data<<'\n'<<99999<<std::endl;
+	else
+		data<<'\n'<<*current_dbase_entry_<<std::endl;
+	data.close();
+}
+
 ///@brief controls which dbase entry will be used. Three options: 1. specific one according to user instruction; 2. randomized out of a subset of the dbase with fitting sequence lengths (if user specified 0); 3. iterating over dbase subset
 core::Size
 Splice::find_dbase_entry( core::pose::Pose const & pose )
@@ -188,12 +252,15 @@ Splice::find_dbase_entry( core::pose::Pose const & pose )
 		TR<<"Found "<<dbase_subset_.size()<<" entries in the torsion dbase that match the length criteria"<<std::endl;
 		std::random_shuffle( dbase_subset_.begin(), dbase_subset_.end() );
 		current_dbase_entry_ = dbase_subset_.begin();
+		load_from_checkpoint();
 	}
 	if( dbase_iterate() ){
+		load_from_checkpoint();
 		if( current_dbase_entry_ == dbase_end() )
 			utility_exit_with_message( "Request to read past end of the dbase denied." );
 		dbase_entry = *current_dbase_entry_;
-		current_dbase_entry_++;
+		if( !first_pass_ )
+			current_dbase_entry_++;
 		if( current_dbase_entry_ == dbase_end() ){
 			TR<<"Reached last dbase entry"<<std::endl;
 			end_dbase_subset_->obj = true;
@@ -550,6 +617,7 @@ Splice::retrieve_values(){
 	from_res( saved_from_res_ );
 	to_res( saved_to_res_ );
 	first_pass_ = false;
+	save_to_checkpoint();
 }
 
 std::string
@@ -640,7 +708,8 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 		locked_res_id( pose.residue( locked_res() ).name1() );
 		TR<<"locking residue "<<locked_res()<<" of identity "<<locked_res_id()<<std::endl;
 	}
-	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" dbase_iterate: "<<dbase_iterate()<<" randomize_cut: "<<randomize_cut()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<std::endl;
+	checkpointing_file( tag->getOption< std::string > ( "checkpointing_file", "" ) );
+	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" dbase_iterate: "<<dbase_iterate()<<" randomize_cut: "<<randomize_cut()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<" checkpointing_file: "<<checkpointing_file_<<std::endl;
 }
 
 protocols::moves::MoverOP
@@ -810,6 +879,12 @@ Splice::locked_res_id( char const c ){ locked_res_id_ = c ; }
 
 char
 Splice::locked_res_id() const{ return locked_res_id_; }
+
+std::string
+Splice::checkpointing_file() const { return checkpointing_file_; }
+
+void
+Splice::checkpointing_file( std::string const cf ){ checkpointing_file_ = cf; }
 
 } //movers
 } //protein_interface_design
