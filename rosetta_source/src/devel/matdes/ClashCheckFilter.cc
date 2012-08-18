@@ -79,7 +79,7 @@ ClashCheckFilter::ClashCheckFilter( ClashCheckFilter const & rval ):
 {}
 
 // @brief destructor
-ClashCheckFilter::ClashCheckFilter() {}
+ClashCheckFilter::~ClashCheckFilter() {}
 
 protocols::filters::FilterOP
 ClashCheckFilter::fresh_instance() const{

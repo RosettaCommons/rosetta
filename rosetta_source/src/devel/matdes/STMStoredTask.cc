@@ -32,7 +32,8 @@ STMStoredTask::STMStoredTask() {}
 
 // @brief copy constructor
 STMStoredTask::STMStoredTask(const STMStoredTask & rval) :
-  tasks_( rval.tasks_)
+	basic::datacache::CacheableData( rval ),
+	tasks_( rval.tasks_)
 { }
 
 // @brief setter
