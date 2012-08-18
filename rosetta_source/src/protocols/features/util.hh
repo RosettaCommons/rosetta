@@ -17,6 +17,8 @@
 
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
+#include <core/types.hh>
+
 #include <string>
 #include <map>
 #include <boost/uuid/uuid.hpp>

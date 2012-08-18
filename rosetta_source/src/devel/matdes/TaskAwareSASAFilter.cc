@@ -81,6 +81,9 @@ TaskAwareSASAFilter::TaskAwareSASAFilter( TaskAwareSASAFilter const & rval ):
 	jump_id_( rval.jump_id_ )
 {}
 
+// @brief destructor
+TaskAwareSASAFilter::~TaskAwareSASAFilter() {}
+
 protocols::filters::FilterOP
 TaskAwareSASAFilter::fresh_instance() const{
   return new TaskAwareSASAFilter();

@@ -1,3 +1,4 @@
+#include <core/types.hh>
 #include <basic/database/open.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
@@ -9,12 +10,12 @@
 class SphereNode {
 private:
 	int const level_;
-	numeric::xyzVector<numeric::Real> const axis_;
+	numeric::xyzVector<core::Real> const axis_;
 	utility::vector1<SphereNode const *> parents_;
 	utility::vector1<SphereNode const *> children_;
 	utility::vector1<SphereNode const *> neighbors_;
 public:
-	SphereNode(int level, numeric::xyzVector<numeric::Real> axis)
+	SphereNode(int level, numeric::xyzVector<core::Real> axis)
 		:	level_(level), axis_(axis)
 	{
 		neighbors_.reserve(6);
@@ -23,16 +24,16 @@ public:
 	void add_child   (SphereNode const * c) { children_.push_back(c); }
 	void add_neighbor(SphereNode const * n) { neighbors_.push_back(n); }
 	void add_parent  (SphereNode const * p) { parents_.push_back(p); }
-	numeric::Size num_children()    const { return children_.size(); }
-	numeric::Size num_neighbor() const { return neighbors_.size(); }
-	numeric::Size num_parents()  const { return parents_.size(); }	
-	SphereNode const & child   (numeric::Size i) const { return *(children_[i]); }
-	SphereNode const & neighbor(numeric::Size i) const { return *(neighbors_[i]); }
-	SphereNode const & parent  (numeric::Size i) const { return *(parents_[i]); }
-	// SphereNode const * child_ptr   (numeric::Size i) const { return children_[i]; }
-	// SphereNode const * neighbor_ptr(numeric::Size i) const { return neighbors_[i]; }
+	core::Size num_children()    const { return children_.size(); }
+	core::Size num_neighbor() const { return neighbors_.size(); }
+	core::Size num_parents()  const { return parents_.size(); }	
+	SphereNode const & child   (core::Size i) const { return *(children_[i]); }
+	SphereNode const & neighbor(core::Size i) const { return *(neighbors_[i]); }
+	SphereNode const & parent  (core::Size i) const { return *(parents_[i]); }
+	// SphereNode const * child_ptr   (core::Size i) const { return children_[i]; }
+	// SphereNode const * neighbor_ptr(core::Size i) const { return neighbors_[i]; }
 	int level() const { return level_; }
-	numeric::xyzVector<numeric::Real> const & axis() const { return axis_; }
+	numeric::xyzVector<core::Real> const & axis() const { return axis_; }
 };
 
 class SphereSample {
@@ -58,7 +59,7 @@ public:
 		utility::vector1<utility::vector1<int> > children(40974,utility::vector1<int>(0)),neighbors(40974);
 		for(int i = 1; i <= 40974; ++i) {
 			int l,p;
-			numeric::xyzVector<numeric::Real> a;
+			numeric::xyzVector<core::Real> a;
 			if(!(in >> l >> p >> a.x() >> a.y() >> a.z())) utility_exit_with_message("problem with sampling/spheres/sphere_hierarchy.dat.gz");
 			assert(1 <= l && l <= 7);
 			assert(fabs(a.length()-1.0) < 0.00001);
@@ -94,7 +95,7 @@ public:
 		}		
 	}
 
-	inline numeric::Real covering_radius_degrees(int level) {
+	inline core::Real covering_radius_degrees(int level) {
 		switch(level) {
 			case 1: return 37.378;
 			case 2: return 21.0; // probably a little lower
@@ -111,9 +112,9 @@ public:
 		using namespace ObjexxFCL::fmt;
 		utility::io::ozstream out(fname);
 		int count = 0;
-		for(numeric::Size i = 1; i <= num_sample(level); ++i) {
+		for(core::Size i = 1; i <= num_sample(level); ++i) {
 			SphereNode const & n( sample(level,i) );
-			numeric::xyzVector<numeric::Real> const & p(n.axis());
+			numeric::xyzVector<core::Real> const & p(n.axis());
 			out<<"HETATM"<<I(5,++count)<<' '<<"NODE"<<' '<<"SPH"<<' '<<"A"<<I(4,1)<<"    ";
 			out<<F(8,3,100.0*p.x())<<F(8,3,100.0*p.y())<<F(8,3,100.0*p.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 		}
@@ -132,36 +133,36 @@ public:
 			}
 			assert( n.num_neighbor() == 5 || n.num_neighbor() == 6);
 			n5 += n.num_neighbor()==5;
-			for(numeric::Size in = 1; in <= n.num_neighbor(); ++in) {
+			for(core::Size in = 1; in <= n.num_neighbor(); ++in) {
 				SphereNode const & b(n.neighbor(in));				
 				assert(n.level()==b.level());
 				bool is_neighbor = false;
-				for(numeric::Size ib = 1; ib <= b.num_neighbor(); ++ib) {
+				for(core::Size ib = 1; ib <= b.num_neighbor(); ++ib) {
 					is_neighbor |= &b.neighbor(ib) == &n;
 				}
 				assert(is_neighbor);
 			}
-			for(numeric::Size ic = 1; ic <= n.num_children(); ++ic) {
+			for(core::Size ic = 1; ic <= n.num_children(); ++ic) {
 				SphereNode const & c(n.child(ic));							
 				assert(n.level()+1==c.level());
 				bool is_parent = false;
-				for(numeric::Size ip = 1; ip <= c.num_parents(); ++ip) {
+				for(core::Size ip = 1; ip <= c.num_parents(); ++ip) {
 					is_parent |= &c.parent(ip) == &n;
 				}
 				assert(is_parent);
 			}
-			for(numeric::Size ip = 1; ip <= n.num_parents(); ++ip) {
+			for(core::Size ip = 1; ip <= n.num_parents(); ++ip) {
 				SphereNode const & p(n.parent(ip));
 				assert(n.level()-1==p.level());
 				bool is_child = false;
-				for(numeric::Size ic = 1; ic <= p.num_children(); ++ic) {
+				for(core::Size ic = 1; ic <= p.num_children(); ++ic) {
 					is_child |= &p.child(ic) == &n;
 				}
 				assert(is_child);
 			}
 		}
-		for(numeric::Size l = 1; l <= 7; ++l) {
-			for(numeric::Size i = 1; i <= num_sample(l); ++i) {
+		for(core::Size l = 1; l <= 7; ++l) {
+			for(core::Size i = 1; i <= num_sample(l); ++i) {
 				assert( sample(l,i).level() == l);
 			}
 		}
@@ -170,7 +171,7 @@ public:
 		return true;
 	}
 
-	inline numeric::Size num_sample(int level) const {
+	inline core::Size num_sample(int level) const {
 		switch(level) {
 			case 1: return    12;
 			case 2: return    32;
@@ -184,7 +185,7 @@ public:
 		return 0; // never
 	}
 	inline SphereNode const & sample(int l, int i) const { return *allnodes_[i+sample_offset(l)]; }
-	numeric::Size sample_offset(int level) const {
+	core::Size sample_offset(int level) const {
 		switch(level) {
 			case 1: return     0;
 			case 2: return    12;

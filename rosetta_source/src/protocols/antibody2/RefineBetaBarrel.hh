@@ -28,7 +28,7 @@
 #include <protocols/antibody2/LHSnugFitLegacy.fwd.hh>
 #include <protocols/docking/DockMCMProtocol.fwd.hh>
 
-
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 using namespace core;
 namespace protocols {
@@ -45,7 +45,7 @@ public:
         
     /// @brief default destructor
     ~RefineBetaBarrel();
-        
+	
     RefineBetaBarrel(AntibodyInfoOP antibody_info);
     
     RefineBetaBarrel(AntibodyInfoOP antibody_info,
@@ -58,13 +58,9 @@ public:
     void set_task_factory(core::pack::task::TaskFactoryCOP tf);
     
     
-    void set_dock_score_func(core::scoring::ScoreFunctionCOP dock_scorefxn ){
-        dock_scorefxn_ = new core::scoring::ScoreFunction(*dock_scorefxn);
-    }
+    void set_dock_score_func(core::scoring::ScoreFunctionCOP dock_scorefxn );
     
-    void set_pack_score_func(core::scoring::ScoreFunctionCOP pack_scorefxn){
-        pack_scorefxn_ = new core::scoring::ScoreFunction(*pack_scorefxn);
-    }
+    void set_pack_score_func(core::scoring::ScoreFunctionCOP pack_scorefxn);
     
     void turn_off_repulsive_ramp(){
         repulsive_ramp_ = false;

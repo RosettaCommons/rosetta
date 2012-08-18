@@ -70,7 +70,7 @@ public:// constructor/destructor
 	// @brief copy constructor
 	TaskAwareSASAFilter( TaskAwareSASAFilter const & rval );
 
-	virtual ~TaskAwareSASAFilter(){}
+	virtual ~TaskAwareSASAFilter();
 
 
 public:// virtual constructor

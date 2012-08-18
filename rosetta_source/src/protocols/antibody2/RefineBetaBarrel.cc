@@ -207,6 +207,14 @@ std::string RefineBetaBarrel::get_name() const {
 void RefineBetaBarrel::set_task_factory(core::pack::task::TaskFactoryCOP tf){
     tf_ = new pack::task::TaskFactory(*tf);
 }
+
+void RefineBetaBarrel::set_dock_score_func(core::scoring::ScoreFunctionCOP dock_scorefxn ){
+	dock_scorefxn_ = new core::scoring::ScoreFunction(*dock_scorefxn);
+}
+
+void RefineBetaBarrel::set_pack_score_func(core::scoring::ScoreFunctionCOP pack_scorefxn){
+	pack_scorefxn_ = new core::scoring::ScoreFunction(*pack_scorefxn);
+}
     
     
     

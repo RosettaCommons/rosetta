@@ -76,7 +76,7 @@ public:// constructor/destructor
 	// @brief copy constructor
 	SaveResfileToDiskFilter( SaveResfileToDiskFilter const & rval );
 
-	virtual ~SaveResfileToDiskFilter(){}
+	virtual ~SaveResfileToDiskFilter();
 
 
 public:// virtual constructor

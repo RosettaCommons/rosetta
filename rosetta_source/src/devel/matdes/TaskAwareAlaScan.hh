@@ -19,6 +19,7 @@
 
 // Project Headers
 #include <core/scoring/ScoreFunction.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
@@ -29,6 +30,8 @@
 //#include <utility/exit.hh>
 
 //#include <utility/vector1.hh>
+
+#include <set>
 
 namespace devel {
 namespace matdes {
@@ -42,7 +45,7 @@ public :
 	TaskAwareAlaScan( TaskAwareAlaScan const & rval );
 	virtual protocols::filters::FilterOP clone() const;
 	virtual protocols::filters::FilterOP fresh_instance() const;
-	virtual ~TaskAwareAlaScan(){}
+	virtual ~TaskAwareAlaScan();
 
   // @brief get name of this filter
   virtual std::string name() const { return "TaskAwareAlaScan"; }

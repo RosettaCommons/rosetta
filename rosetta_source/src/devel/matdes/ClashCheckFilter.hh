@@ -64,7 +64,7 @@ public:// constructor/destructor
 	// @brief copy constructor
 	ClashCheckFilter( ClashCheckFilter const & rval );
 
-	virtual ~ClashCheckFilter(){}
+	virtual ~ClashCheckFilter();
 
 
 public:// virtual constructor

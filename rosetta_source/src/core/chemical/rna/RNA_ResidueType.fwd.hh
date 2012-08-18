@@ -10,9 +10,11 @@
 /// @file src/core/chemical/rna/RNA_ResidueType.fwd.hh
 /// @author Parin Sripakdeevong (sripakpa@stanford.edu)
 
-
 #ifndef INCLUDED_core_chemical_rna_RNA_ResidueType_fwd_hh
 #define INCLUDED_core_chemical_rna_RNA_ResidueType_fwd_hh
+
+#include <utility/pointer/access_ptr.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace chemical {

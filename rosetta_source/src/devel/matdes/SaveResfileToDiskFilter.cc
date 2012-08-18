@@ -76,6 +76,9 @@ SaveResfileToDiskFilter::SaveResfileToDiskFilter( SaveResfileToDiskFilter const 
 	resfile_general_property_( rval.resfile_general_property_ )
 {}
 
+// @brief destructor
+SaveResfileToDiskFilter::~SaveResfileToDiskFilter() {}
+
 protocols::filters::FilterOP
 SaveResfileToDiskFilter::fresh_instance() const{
   return new SaveResfileToDiskFilter();

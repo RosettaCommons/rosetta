@@ -107,6 +107,9 @@ TaskAwareAlaScan::TaskAwareAlaScan( TaskAwareAlaScan const & rval ):
 		report_diffs_( rval.report_diffs_ )
 {}
 
+// @brief destructor
+TaskAwareAlaScan::~TaskAwareAlaScan() {}
+
 protocols::filters::FilterOP TaskAwareAlaScan::clone() const { return new TaskAwareAlaScan( *this ); }
 protocols::filters::FilterOP TaskAwareAlaScan::fresh_instance() const { return new TaskAwareAlaScan(); }
 

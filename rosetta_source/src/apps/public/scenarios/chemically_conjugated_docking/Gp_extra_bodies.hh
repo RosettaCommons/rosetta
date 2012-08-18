@@ -30,6 +30,7 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
 #include <utility/vector1.hh>
 
 #include <string>
@@ -48,6 +49,8 @@ utility::vector1< core::Size > add_extra_bodies( core::pose::Pose & pose, basic:
 
 	utility::vector1< core::Size > extra_bodies_chains;
 
+	/*  THE OPTION extra_bodies DOES NOT EXIST, WHICH PREVENTS THIS HEADER FROM COMPILING.
+	I'M COMMENTING OUT THIS WHOLE BLOCK BECAUSE IT CAN ONLY CAUSE TROUBLE.
 	//double check if extra bodies exist
 	if (basic::options::option[extra_bodies].user() == true) {
 
@@ -76,6 +79,7 @@ utility::vector1< core::Size > add_extra_bodies( core::pose::Pose & pose, basic:
 		}
 
 	}
+	*/
 		TR << "add_extra_bodies added chains:";
 
 		for (core::Size bodies(1); bodies <= extra_bodies_chains.size(); ++bodies){

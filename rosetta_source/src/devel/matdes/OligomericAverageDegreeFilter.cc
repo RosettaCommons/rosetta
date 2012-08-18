@@ -76,6 +76,9 @@ OligomericAverageDegreeFilter::OligomericAverageDegreeFilter( OligomericAverageD
 	jump_id_( rval.jump_id_ )
 {}
 
+// @brief destructor
+OligomericAverageDegreeFilter::~OligomericAverageDegreeFilter() {}
+
 protocols::filters::FilterOP
 OligomericAverageDegreeFilter::fresh_instance() const{
   return new OligomericAverageDegreeFilter();

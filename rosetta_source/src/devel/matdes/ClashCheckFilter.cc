@@ -78,6 +78,9 @@ ClashCheckFilter::ClashCheckFilter( ClashCheckFilter const & rval ):
 	nsub_bblock_( rval.nsub_bblock_ )
 {}
 
+// @brief destructor
+ClashCheckFilter::ClashCheckFilter() {}
+
 protocols::filters::FilterOP
 ClashCheckFilter::fresh_instance() const{
   return new ClashCheckFilter();

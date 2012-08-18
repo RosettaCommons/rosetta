@@ -25,10 +25,7 @@
 
 #include <utility/vector1.hh>
 
-#ifdef PYROSETTA
-	#include <protocols/filters/Filter.hh>
-#endif
-
+#include <protocols/filters/Filter.hh>
 
 namespace protocols {
 namespace design_opt{

@@ -14,6 +14,7 @@
 #ifndef INCLUDED_devel_matdes_TaskAwareAlaScan_fwd_hh
 #define INCLUDED_devel_matdes_TaskAwareAlaScan_fwd_hh
 
+#include <utility/pointer/owning_ptr.hh>
 
 namespace devel {
 namespace matdes {

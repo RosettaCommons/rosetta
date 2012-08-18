@@ -70,7 +70,7 @@ public:// constructor/destructor
 	// @brief copy constructor
 	OligomericAverageDegreeFilter( OligomericAverageDegreeFilter const & rval );
 
-	virtual ~OligomericAverageDegreeFilter(){}
+	virtual ~OligomericAverageDegreeFilter();
 
 
 public:// virtual constructor
