@@ -392,6 +392,7 @@ bool ParsedProtocol::apply_filter(Pose & pose, mover_filter_pair const & mover_p
 			protocols::moves::Mover::set_last_move_status( status );
 		} else {
 			TR << "Filter " << filter_name << " reports failure!" << std::endl;
+      protocols::moves::Mover::set_last_move_status( protocols::moves::FAIL_RETRY );
 		}
 		return false;
 	}

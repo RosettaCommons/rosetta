@@ -601,9 +601,20 @@ GenericMonteCarloMover::apply( Pose & pose )
 	}
 	TR << "The number of trials for this run is: " << maxtrials_ << std::endl;
 
+	bool const stop_at_start( ( mover_stopping_condition_() != NULL && mover_stopping_condition_->obj ) || stopping_condition()->apply( pose ) );
+	if( stop_at_start ){
+		TR<<"MC stopping condition met at the start, so failing without retrying "<<std::endl;
+		set_last_move_status( FAIL_DO_NOT_RETRY );
+		return;
+	}
+
   //fpd
   if (mover_->get_additional_output())
       utility_exit_with_message("Movers returning multiple poses are unsupported by GenericMontoCarloMover.");
+	if( saved_accept_file_name_ != "" ){
+		TR<<"Saving initial pose entering the MC trajectory, for use in checkpoint recovery. Checkpointing filename: "<<saved_accept_file_name_<<std::endl;
+		pose.dump_pdb( saved_accept_file_name_ );
+	}
 
   PoseOP initial_pose = new Pose( pose );
 	reset( pose ); //(re)initialize MC statistics
