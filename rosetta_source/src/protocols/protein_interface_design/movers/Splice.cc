@@ -256,8 +256,10 @@ Splice::find_dbase_entry( core::pose::Pose const & pose )
 	}
 	if( dbase_iterate() ){
 		load_from_checkpoint();
-		if( current_dbase_entry_ == dbase_end() )
-			utility_exit_with_message( "Request to read past end of the dbase denied." );
+		if( current_dbase_entry_ == dbase_end() ){
+			TR<<"Request to read past end of dbase. Splice returns without doing anything."<<std::endl;
+			return 0;
+		}
 		dbase_entry = *current_dbase_entry_;
 		if( !first_pass_ )
 			current_dbase_entry_++;
@@ -354,6 +356,8 @@ Splice::apply( core::pose::Pose & pose )
 	}// fi torsion_database_fname==NULL
 	else{/// read from dbase
 		core::Size const dbase_entry( find_dbase_entry( pose ) );
+		if( dbase_entry == 0 )// failed to read entry
+			return;
 		dofs = torsion_database_[ dbase_entry ];
 		foreach( BBDofs & resdofs, dofs ){/// transform 3-letter code to 1-letter code
 			using namespace core::chemical;
