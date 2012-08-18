@@ -473,130 +473,174 @@ static ResourceLoaderRegistrator< core::scoring::electron_density::ElectronDensi
 static basic::Tracer TR("core.init");
 
 using namespace numeric::random;
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
 
-/// @brief Init basic core systems: options system, random system.
-void init(int argc, char * argv [])
-{
-	using namespace basic::options::OptionKeys;
 
+void
+init_mpi() {
 #ifdef USEMPI
-	{ // scope
 	int already_initialized( 0 );
 	MPI_Initialized( & already_initialized );
 	if ( already_initialized == 0 ) MPI_Init(&argc, &argv);
-	}
 #endif
+}
 
+void
+init_options(int argc, char * argv []) {
 #ifdef BOINC
 	std::cerr << "Initializing options.... ok " << std::endl;std::cerr.flush();
 #endif
 
 	// initialize options
-	basic::options::initialize().load( argc, argv, false /* no "free" cmd line args (just discarded anyway) */ );
+	initialize().load( argc, argv, false /* no "free" cmd line args (just discarded anyway) */ );
 #ifdef BOINC
 	std::cerr << "Loaded options.... ok " << std::endl;std::cerr.flush();
 #endif
-	basic::options::process();
+	process();
 #ifdef BOINC
 	std::cerr << "Processed options.... ok " << std::endl; std::cerr.flush();
 #endif
 
 	// Set option system global
-	basic::options::OptionCollection::set_show_accessed_options_flag( basic::options::option[ out::show_accessed_options ].value() );
+	OptionCollection::set_show_accessed_options_flag( option[ out::show_accessed_options ].value() );
+}
 
+void
+init_tracers(){
 	// set Tracer options
 	basic::TracerOptions & TO( basic::Tracer::tracer_options() );
 
-	if( basic::options::option[ out::mute ].active() )   TO.muted = basic::options::option[ out::mute ]();
+	if( option[ out::mute ].active() )   TO.muted = option[ out::mute ]();
 
-	if( basic::options::option[ out::unmute ].active() ) TO.unmuted = basic::options::option[ out::unmute ]();
-	if( basic::options::option[ out::level  ].active() ) TO.level   = basic::options::option[ out::level ]();
-	if( basic::options::option[ out::levels ].active() ) TO.levels  = basic::options::option[ out::levels ]();
-	if( basic::options::option[ out::chname ].active() ) TO.print_channel_name = basic::options::option[ out::chname ]();
+	if( option[ out::unmute ].active() ) TO.unmuted = option[ out::unmute ]();
+	if( option[ out::level  ].active() ) TO.level   = option[ out::level ]();
+	if( option[ out::levels ].active() ) TO.levels  = option[ out::levels ]();
+	if( option[ out::chname ].active() ) TO.print_channel_name = option[ out::chname ]();
 
 	// Adding Tracer::flush_all_tracers to list of exit-callbacks so all tracer output got flush out when utility_exit is used.
 	utility::add_exit_callback(basic::Tracer::flush_all_tracers);
+}
+
+void
+init_score_function_corrections(){
 
 	// set default corrections
-	if( basic::options::option[basic::options::OptionKeys::corrections::correct]) {
+	if( option[corrections::correct]) {
 		// Pair energy
-		if ( ! basic::options::option[ basic::options::OptionKeys::corrections::score::no_his_his_pairE ].user() ) {
-			basic::options::option[basic::options::OptionKeys::corrections::score::no_his_his_pairE].value( true );
+		if ( ! option[ corrections::score::no_his_his_pairE ].user() ) {
+			option[corrections::score::no_his_his_pairE].value( true );
 		}
 
 		// p_aa_pp
-		if ( ! basic::options::option[ basic::options::OptionKeys::corrections::score::p_aa_pp ].user() ) {
-			basic::options::option[basic::options::OptionKeys::corrections::score::p_aa_pp].value( "scoring/score_functions/P_AA_pp/P_AA_pp_08.2009" );
+		if ( ! option[ corrections::score::p_aa_pp ].user() ) {
+			option[corrections::score::p_aa_pp].value( "scoring/score_functions/P_AA_pp/P_AA_pp_08.2009" );
 		}
-		if ( ! basic::options::option[ basic::options::OptionKeys::corrections::score::p_aa_pp_nogridshift ].user() ) {
-			basic::options::option[basic::options::OptionKeys::corrections::score::p_aa_pp_nogridshift].value( true );
+		if ( ! option[ corrections::score::p_aa_pp_nogridshift ].user() ) {
+			option[corrections::score::p_aa_pp_nogridshift].value( true );
 		}
 
 		//Ramachandran
-		if ( ! basic::options::option[ basic::options::OptionKeys::corrections::score::rama_not_squared ].user() ) {
-			basic::options::option[basic::options::OptionKeys::corrections::score::rama_not_squared].value( true );
+		if ( ! option[ corrections::score::rama_not_squared ].user() ) {
+			option[corrections::score::rama_not_squared].value( true );
 		}
-		if ( ! basic::options::option[ basic::options::OptionKeys::corrections::score::rama_map ].user() ) {
-			basic::options::option[ basic::options::OptionKeys::corrections::score::rama_map ].value("scoring/score_functions/rama/Rama09_noEH_kernel25_it08.dat");
+		if ( ! option[ corrections::score::rama_map ].user() ) {
+			option[ corrections::score::rama_map ].value("scoring/score_functions/rama/Rama09_noEH_kernel25_it08.dat");
 		}
 		//rotamer library
-		//if ( ! basic::options::option[ basic::options::OptionKeys::corrections::score::dun08 ].user() ) {
-		//	basic::options::option[basic::options::OptionKeys::corrections::score::dun08].value( true );
+		//if ( ! option[ corrections::score::dun08 ].user() ) {
+		//	option[corrections::score::dun08].value( true );
 		//}
-		if ( ! basic::options::option[ basic::options::OptionKeys::corrections::score::dun08_dir ].user() ) {
-			basic::options::option[basic::options::OptionKeys::corrections::score::dun08_dir].value( "rotamer/dun08_12.2009_it10" );
+		if ( ! option[ corrections::score::dun08_dir ].user() ) {
+			option[corrections::score::dun08_dir].value( "rotamer/dun08_12.2009_it10" );
 		}
-	    if ( ! basic::options::option[ basic::options::OptionKeys::corrections::score::dun02_file ].user() ) {
-	      basic::options::option[basic::options::OptionKeys::corrections::score::dun02_file].value( "rotamer/bbdep02.May.sortlib-correct.12.2010" );
-	    }
+		if ( ! option[ corrections::score::dun02_file ].user() ) {
+			option[corrections::score::dun02_file].value( "rotamer/bbdep02.May.sortlib-correct.12.2010" );
+		}
 
 		//icoor
-		if ( ! basic::options::option[ basic::options::OptionKeys::corrections::chemical::icoor_05_2009 ].user() ) {
-			basic::options::option[basic::options::OptionKeys::corrections::chemical::icoor_05_2009].value( true );
+		if ( ! option[ corrections::chemical::icoor_05_2009 ].user() ) {
+			option[corrections::chemical::icoor_05_2009].value( true );
 		}
-		if ( ! basic::options::option[ basic::options::OptionKeys::score::hbond_params ].user() ) {
-			basic::options::option[basic::options::OptionKeys::score::hbond_params].value( "correct_params" );
+		if ( ! option[ score::hbond_params ].user() ) {
+			option[score::hbond_params].value( "correct_params" );
 		}
 
-		if ( ! basic::options::option[ basic::options::OptionKeys::corrections::score::ch_o_bond_potential ].user() ) {
-			basic::options::option[ basic::options::OptionKeys::corrections::score::ch_o_bond_potential ].value("scoring/score_functions/carbon_hbond/ch_o_bond_potential_near_min_yf.dat");
+		if ( ! option[ corrections::score::ch_o_bond_potential ].user() ) {
+			option[ corrections::score::ch_o_bond_potential ].value("scoring/score_functions/carbon_hbond/ch_o_bond_potential_near_min_yf.dat");
 		}
 	}
+}
 
-	if( basic::options::option[ run::version ]() ) {
+void
+init_source_revision(){
+	if( option[ run::version ]() ) {
 		TR << "Mini-Rosetta version " << core::minirosetta_svn_version() << " from " << core::minirosetta_svn_url() << std::endl;
 	}
+}
 
-	if( basic::options::option[ in::path::path ].user() ){
+void
+init_paths(){
+	if( option[ in::path::path ].user() ){
 		utility::io::izstream::set_alternative_search_paths(
-			basic::options::option[ in::path::path ]());
+			option[ in::path::path ]());
+	}
+}
+
+/// @detail If you deprecate a long standing flag, add a line to this function to describe what the deprecated flag has been replaced with.
+/// If the user specifies one of these flags, Rosetta will utility exit with a helpful message directing the user towards the new functionality
+void check_deprecated_flags(){
+
+	utility::vector1<std::string> error_messages;
+
+	//Add deprecated flags and corresponding helpful error messages here.  This is the only thing you need to do to deprecate a flag
+	if(option[LoopModel::input_pdb].user())
+		error_messages.push_back("-LoopModel:input_pdb is no longer used.  Please use -s to input pdb files.");
+
+
+	if(error_messages.size() > 0)
+	{
+		utility::vector1<std::string>::const_iterator error_it;
+		for(error_it = error_messages.begin();error_it != error_messages.end();++error_it)
+		{
+			TR.Fatal << "ERROR: You have specified one or more deprecated flags:" <<std::endl;
+			TR.Fatal << *error_it <<std::endl;
+		}
+		std::exit(1);
+
 	}
 
-	//Check for deprecated flags specified by the user and output error messages if necessary
-	check_deprecated_flags();
+}
 
+void
+report_application_command(int argc, char * argv []){
 	TR << "command:";
 	for ( int i=0; i< argc; ++i ) {
 		TR << ' ' <<  argv[i];
 	}
 	TR << std::endl;
+}
+
+void
+init_random_number_generators(){
+	using namespace numeric::random;
 
 	int seed = 1111111;
 	int seed_offset = 0;
 	bool const_seed = false;
 	bool use_time_as_seed = false;
-	if( basic::options::option[ run::constant_seed ].active() )  const_seed = basic::options::option[ run::constant_seed ]();
-	if( basic::options::option[ run::jran ].active() )  seed = basic::options::option[ run::jran ]();
-	if( basic::options::option[ run::seed_offset ].active() )  seed_offset = basic::options::option[ run::seed_offset ]();
-	if( basic::options::option[ run::use_time_as_seed ].active() )  use_time_as_seed = basic::options::option[ run::use_time_as_seed ]();
+	if( option[ run::constant_seed ].active() )  const_seed = option[ run::constant_seed ]();
+	if( option[ run::jran ].active() )  seed = option[ run::jran ]();
+	if( option[ run::seed_offset ].active() )  seed_offset = option[ run::seed_offset ]();
+	if( option[ run::use_time_as_seed ].active() )  use_time_as_seed = option[ run::use_time_as_seed ]();
 
 #ifdef USEMPI
-	if( basic::options::option[ out::mpi_tracer_to_file ].user() ){
+	if( option[ out::mpi_tracer_to_file ].user() ){
 		int mpi_rank( 0 );
 		MPI_Comm_rank( MPI_COMM_WORLD, &mpi_rank );
 
 		std::stringstream outfilename;
-		outfilename << basic::options::option[ out::mpi_tracer_to_file ]() << "_" << mpi_rank;
+		outfilename << option[ out::mpi_tracer_to_file ]() << "_" << mpi_rank;
 		basic::otstreamOP redirect_tracer = new basic::TracerToFile( outfilename.str() );
 		basic::Tracer::set_ios_hook( redirect_tracer, basic::Tracer::AllChannels, false );
 		basic::Tracer::super_mute( true );
@@ -605,7 +649,7 @@ void init(int argc, char * argv [])
 #endif
 
 
-	std::string random_device_name( basic::options::option[ run::rng_seed_device ]() ); // typically /dev/urandom or /dev/random
+	std::string random_device_name( option[ run::rng_seed_device ]() ); // typically /dev/urandom or /dev/random
 
 	int real_seed;
 
@@ -741,34 +785,47 @@ void init(int argc, char * argv [])
 
 	}
 
-
-
-
-
 	/*numeric::random::RandomGenerator::initializeRandomGenerators(
 		 real_seed, numeric::random::_RND_ConstantSeed_,
-		 basic::options::option[ run::rng ]  );
+		 option[ run::rng ]  );
 	 */
 #ifdef BOINC
 	std::cerr << "Initializing random generators... ok " << std::endl;std::cerr.flush();
 #endif
+	init_random_generators(real_seed, _RND_NormalRun_, option[ run::rng ]);
+}
 
-	init_random_generators(real_seed, _RND_NormalRun_, basic::options::option[ run::rng ]);
+/// @brief Initialize random generator systems (and send debug io to tracer with seed/mode info).
+void init_random_generators(int const start_seed, RND_RunType run_type, std::string const & RGtype)
+{
+	if( run_type == _RND_TestRun_ ) {
+		T("core.init.random") << "RandomGenerator:init: _RND_TestRun_ mode, seed=" << start_seed <<
+			" RG_type=" << RGtype << std::endl;
+	}
+	else {
+		T("core.init.random") << "RandomGenerator:init: Normal mode, seed=" << start_seed <<
+			" RG_type=" << RGtype << std::endl;
+	}
 
+	RandomGenerator::initializeRandomGenerators(start_seed, run_type, RGtype);
+}
+
+
+void
+random_delay(){
 	// no silly waiting in DEBUG or BOINC builds
-
 #ifdef NDEBUG
 #ifndef BOINC
-	if( !basic::options::option[ run::nodelay ]() ){
-		if( basic::options::option[ run::delay ]() > 0 ) {
-			int waittime = basic::options::option[ run::delay ]();
+	if( !option[ run::nodelay ]() ){
+		if( option[ run::delay ]() > 0 ) {
+			int waittime = option[ run::delay ]();
 			TR << "Delaying start of mini for " << waittime << " seconds due to -delay option" << std::endl;
 			utility::sys_sleep( waittime );
 		} else
-		if( basic::options::option[ run::random_delay ]() > 0 ) {
-			int waittime = (int) ( (Real)basic::options::option[ run::random_delay ]() * numeric::random::uniform() );
+		if( option[ run::random_delay ]() > 0 ) {
+			int waittime = (int) ( (Real)option[ run::random_delay ]() * numeric::random::uniform() );
 			TR << "Delaying of mini for " << waittime << " seconds (maximum = "
-			   <<  basic::options::option[ run::random_delay ]()
+			   <<  option[ run::random_delay ]()
 				 << " )" << std::endl
 				 << "This prevents extreme IO levels when multiple jobs start simultaneously on" << std::endl
 				 << "large computer clusters  and is default now. To prevent this add the option -nodelay" << std::endl
@@ -778,13 +835,11 @@ void init(int argc, char * argv [])
 	}
 #endif
 #endif
+}
 
-#ifdef BOINC
-	std::cerr << "Initialization complete. " << std::endl;
-#endif
-
-
-	if ( !basic::options::option[ basic::options::OptionKeys::in::path::database ].user() ) {
+void
+locate_rosetta_database(){
+	if ( !option[ in::path::database ].user() ) {
 		std::string database_path;
 		char * descr = getenv("ROSETTA3_DB");
 		if ( descr ) {
@@ -820,14 +875,61 @@ void init(int argc, char * argv [])
 		}
 
 		if ( database_path.size() > 0 ){
-			basic::options::option[ basic::options::OptionKeys::in::path::database ].value( database_path );
+			option[ in::path::database ].value( database_path );
 		} else {
 			TR << "Could not find database. Either specify -database or set environment variable ROSETTA3_DB." << std::endl;
 		}
 
 	}
+}
 
+void
+init_profiling(){
 	basic::prof_reset(); //reads option run::profile -- starts clock TOTAL
+}
+
+/// @brief Init basic core systems: options system, random system.
+void init(int argc, char * argv [])
+{
+	//Initialize MPI
+	init_mpi();
+
+	//The options system manages command line options
+	init_options(argc, argv);
+
+	//Tracers control output to std::cout and std::cerr
+	init_tracers();
+
+	//Initialize the latest and greatest score function parameters
+	init_score_function_corrections();
+
+	//Choose to output source version control information?
+	init_source_revision();
+
+	//Setup basic search paths
+	init_paths();
+
+	//Check for deprecated flags specified by the user and output error messages if necessary
+	check_deprecated_flags();
+
+	//Describe the application execution command
+	report_application_command(argc, argv);
+
+	//Initalize random number generators
+	init_random_number_generators();
+
+	//Choose to randomly delay execution to desyncronize parallel execution
+	random_delay();
+
+	//Locate rosetta_database
+	locate_rosetta_database();
+
+#ifdef BOINC
+	std::cerr << "Initialization complete. " << std::endl;
+#endif
+
+	//Profiling measures execution performance
+	init_profiling();
 }
 
 
@@ -851,49 +953,6 @@ void init( utility::vector1<std::string> const & args )
 		delete[] argv[ ii ];
 	}
 	delete[] argv;
-}
-
-/// @brief Initialize random generator systems (and send debug io to tracer with seed/mode info).
-void init_random_generators(int const start_seed, RND_RunType run_type, std::string const & RGtype)
-{
-	if( run_type == _RND_TestRun_ ) {
-		T("core.init.random") << "RandomGenerator:init: _RND_TestRun_ mode, seed=" << start_seed <<
-			" RG_type=" << RGtype << std::endl;
-	}
-	else {
-		T("core.init.random") << "RandomGenerator:init: Normal mode, seed=" << start_seed <<
-			" RG_type=" << RGtype << std::endl;
-	}
-
-	RandomGenerator::initializeRandomGenerators(start_seed, run_type, RGtype);
-}
-
-
-/// @detail If you deprecate a long standing flag, add a line to this function to describe what the deprecated flag has been replaced with.
-/// If the user specifies one of these flags, Rosetta will utility exit with a helpful message directing the user towards the new functionality
-void check_deprecated_flags()
-{
-	using namespace basic::options::OptionKeys;
-
-	utility::vector1<std::string> error_messages;
-
-	//Add deprecated flags and corresponding helpful error messages here.  This is the only thing you need to do to deprecate a flag
-	if(basic::options::option[LoopModel::input_pdb].user())
-		error_messages.push_back("-LoopModel:input_pdb is no longer used.  Please use -s to input pdb files.");
-
-
-	if(error_messages.size() > 0)
-	{
-		utility::vector1<std::string>::const_iterator error_it;
-		for(error_it = error_messages.begin();error_it != error_messages.end();++error_it)
-		{
-			TR.Fatal << "ERROR: You have specified one or more deprecated flags:" <<std::endl;
-			TR.Fatal << *error_it <<std::endl;
-		}
-		std::exit(1);
-
-	}
-
 }
 
 } // namespace core

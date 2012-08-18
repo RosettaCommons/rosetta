@@ -25,6 +25,42 @@
 
 namespace core {
 
+	/// @brief Initialize MPI (message passing interface) for parallel applications
+	void init_mpi();
+
+	/// @brief Initialize the option system, which manages command line options
+	void init_options(int argc, char * argv []);
+
+	/// @brief Tracers control output to std::cout and std::cerr
+	void init_tracers();
+
+	/// @brief Initialize the latest and greatest score function parameters
+	void init_score_function_corrections();
+
+	/// @brief Choose to output source version control information?
+	void init_source_revision();
+
+	/// @brief Setup basic search paths
+	void init_paths();
+
+	/// @brief Check for deprecated flags specified by the user and output error messages if necessary
+	void check_deprecated_flags();
+
+	/// @brief Describe the application execution command
+	void report_application_command(int argc, char * argv []);
+
+	/// @brief Initalize random number generators
+	void init_random_number_generators();
+
+	/// @brief Choose to randomly delay execution to desyncronize parallel execution
+	void random_delay();
+
+	/// @brief Locate rosetta_database
+	void locate_rosetta_database();
+
+	/// @brief Profiling measures execution performance
+	void init_profiling();
+
 	/// @brief Init basic core systems: options system, random system.
 	void init(int argc, char * argv []);
 
