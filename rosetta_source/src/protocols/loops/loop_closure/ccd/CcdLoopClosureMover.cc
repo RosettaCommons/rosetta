@@ -148,17 +148,10 @@ CcdLoopClosureMover::get_max_total_delta( std::string secstr ) const {
 std::ostream &operator<< ( std::ostream &os, CcdLoopClosureMover const &mover )
 {
 	moves::operator<<(os, mover);
-	os << "LOOP start: " << mover.get_loop_start() << "  stop: " << mover.get_loop_stop()<< "  cut: " << mover.get_loop_cut() << 
-			"  size: " << mover.get_loop_size() << "  skip rate: " << mover.get_loop_skip_rate() << "  extended?: " << 
-			mover.get_loop_extended() <<  std::endl;
-	os <<   "Max rama score increase: " << mover.get_max_rama_score_increase() << 
-				"\nNumber of CCD cycles:    " << mover.get_ccd_cycles() << 
-				"\nTolerance:               " << mover.get_tolerance() << 
-				"\nbRama check:             " << mover.bRama_check() <<
-				"\nMax total delta helix:   " << mover.get_max_total_delta("H") << 
-				"\nMax total delta strand:  " << mover.get_max_total_delta("E") << 
-				"\nMax total delta loop:    " << mover.get_max_total_delta("L") << "\nMovemap:" << std::endl;
-	mover.movemap()->show();
+	os << "LOOP start: " << mover.get_loop_start() << ", stop: " << mover.get_loop_stop()<< ", cut: " << mover.get_loop_cut() << ", size: " << mover.get_loop_size() << ", skip rate: " <<
+			mover.get_loop_skip_rate() << ", is extended?: " << mover.get_loop_extended() <<  std::endl;
+	os << "Max rama score increase: " << mover.get_max_rama_score_increase() << ", CCD cycles: " << mover.get_ccd_cycles() << ", Tolerance: " << mover.get_tolerance() << ", bRama check: " << mover.bRama_check() << std::endl;
+	os << "Max total delta helix: " << mover.get_max_total_delta("H") << ", ~strand: " << mover.get_max_total_delta("E") << ", ~loop: " << mover.get_max_total_delta("L") << std::endl;
 	return os;
 }
 

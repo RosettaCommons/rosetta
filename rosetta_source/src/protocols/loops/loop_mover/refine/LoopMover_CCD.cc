@@ -575,6 +575,7 @@ std::string LoopMover_Refine_CCDCreator::keyname() const {
   return "LoopMover_Refine_CCD";
 }
 
+
 } // namespace refine
 } // namespace loop_mover
 } // namespace loops

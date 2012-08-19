@@ -160,9 +160,9 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 inline std::ostream & operator<<( std::ostream & os, const Loop & loop ) {
-	os << "LOOP\t" << loop.start_ << "\t" << loop.stop_ << "\t"
-	<< loop.cut_ << "\t" << loop.skip_rate_ << "\t" << 
-	(loop.extended_ ? "True" : "False");
+	os << "LOOP " << loop.start_ << " " << loop.stop_ << " "
+	<< loop.cut_ << " "
+	<< loop.skip_rate_ << " " << loop.extended_;
 	return os;
 }
 	

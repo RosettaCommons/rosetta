@@ -356,8 +356,12 @@ DockMCMProtocol::get_name() const {
 std::ostream & operator<<(std::ostream& out, const DockMCMProtocol & dmp )
 {
 	// Display the state of the filters (on or off)
-	out << " High Resolution Filter: " << ( ( dmp.filter_ ) ? ( " on " ) : ( "off " ) ) << std::endl;
-
+	out << "High Resolution Filter: " << ( (dmp.filter_) ? "on" : "off" ) << std::endl;
+	//out << "Docking Scorefunction:  " << dmp.scorefxn_docking()->get_name() << std::endl; 
+	//out << "Packing Scorefunction:  " << dmp.scorefxn_packing()->get_name() << std::endl; 
+	//out << "Movemap: "; 
+	//if (dmp.movemap_ != 0) { out << std::endl; dmp.movemap_->show(); }
+	//else { out << "none"; } 
 	return out;
 }
 

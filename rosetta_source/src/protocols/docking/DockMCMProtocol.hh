@@ -88,8 +88,10 @@ public:
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
     
-    void set_move_map(core::kinematics::MoveMapOP movemap );
-    friend std::ostream & operator<<(std::ostream& out, const DockMCMProtocol & dmp );
+  void set_move_map(core::kinematics::MoveMapOP movemap );
+	//core::scoring::ScoreFunctionCOP scorefxn_docking() const { return scorefxn(); }
+	//core::scoring::ScoreFunctionCOP scorefxn_packing() const { return scorefxn_pack(); }
+  friend std::ostream & operator<<(std::ostream& out, const DockMCMProtocol & dmp );
 
 private:
 	DockingHighResFilterOP filter_;

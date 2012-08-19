@@ -89,17 +89,14 @@ public:
 	void check_move_map_in(bool mm_in) {move_map_in_ = mm_in;}
 	void set_flank_residue_min(bool value) {flank_residue_min_ = value;} // by JQX
 	friend std::ostream &operator<< ( std::ostream &os, LoopMover_Refine_CCD const &mover )
-{
-	moves::operator<<(os, mover);
-	os << "Loops:\n" << *mover.get_loops();
-	os <<   "Outer cycles:        " << mover.outer_cycles_ << "\nMax inner cycles:    " << mover.max_inner_cycles_ << 
-				"\nRepack period:       " << mover.repack_period_ << "\nInitial temperature: " << mover.temp_initial_ << 
-				"\nFinal temperature:   " << mover.temp_final_ <<  "\nSet fold tree from loop?: " << 
-				(mover.set_fold_tree_from_loops_ ? "True" : "False") << "\nMovemap: ";
-	if (!mover.move_map_in_) {os << "none" << std::endl;}
-	else {os << std::endl; mover.move_map()->show();}
-	return os;
-}
+	{
+		moves::operator<<(os, mover);
+		// fixing 
+		os << "Outer cycles: " << mover.outer_cycles_ << ",  Max inner cycles: " << mover.max_inner_cycles_ << ",  Repack period: " << mover.repack_period_ << std::endl <<
+				"Initial temperature: " << mover.temp_initial_ << ",  Final temperature: " << mover.temp_final_ << std::endl <<
+				"Set fold tree from loop?: " << mover.set_fold_tree_from_loops_ << std::endl;
+		return os;
+	}
 
 protected:
 	void read_options();
