@@ -162,7 +162,7 @@ Loops::switch_movemap(
 
 //////////////////////////////////////////////////////////////////////
 std::ostream & operator<< ( std::ostream & os, const Loops & loops ) {
-	os << "LOOP  begin  end  cut  skip_rate  extended" << std::endl;
+	os << "LOOP\tbegin\tend\tcut  skip_rate  extended" << std::endl;
 	for ( Loops::const_iterator it = loops.begin(), it_end = loops.end();
 			 it != it_end; ++it ) {
 		os << *it << std::endl;

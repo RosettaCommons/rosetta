@@ -34,7 +34,9 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_CCD.hh>
+#include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 #include <protocols/loops/Loop.hh>
+#include <protocols/loops/Loops.hh>
 #include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
 #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
@@ -90,7 +92,7 @@ int main(int argc, char *argv[])
 	// print
 	std::cout << "print MinMover:" << std::endl << minmover << std::endl;*/
 
-	// setup a movemap object
+// setup a movemap object
 	core::kinematics::MoveMapOP mm ( new core::kinematics::MoveMap );
 	Size bb_begin = 3, bb_end = 6, chi_begin = 5, chi_end = 7, begin2 = 101;
 	mm->set_bb_true_range(bb_begin, bb_end);
@@ -99,7 +101,8 @@ int main(int argc, char *argv[])
 	mm->set_bb(begin2, false);
 	mm->set_jump(2, true);
 	mm->set_jump(5, false);
-	// setup kT and nmoves
+
+/*	// setup kT and nmoves
 	Real kT = 1.0;
 	Size nmoves = 5;
 	// create a ShearMover
@@ -110,7 +113,7 @@ int main(int argc, char *argv[])
 	// create a SmallMover
 	protocols::simple_moves::SmallMover smallmover ( protocols::simple_moves::SmallMover(mm, kT, nmoves) );
 	// print
-	std::cout << "print SmallMover:" << std::endl << smallmover << std::endl;
+	std::cout << "print SmallMover:" << std::endl << smallmover << std::endl;*/
 
 
 /*	// create a PyMOL mover
@@ -177,7 +180,7 @@ int main(int argc, char *argv[])
 	scorefxn->set_weight("fa_rep", num);
 	scorefxn->set_weight("fa_atr", num);*/
 
-/*	// create an empty loops object
+	// create an empty loops object
 	protocols::loops::LoopsOP emptyloops = new protocols::loops::Loops;
 
 	// create and print a loopmover
@@ -185,14 +188,19 @@ int main(int argc, char *argv[])
 	std::cout << loopmover << std::endl;
 
 	// create a loops object
-	core::Size start = 15;
-	core::Size stop = 24;
-	core::Size cutpoint = 19;
-	protocols::loops::LoopsOP loops ( protocols::loops::Loops(start, stop, cutpoint) );
+	core::Size start = 15, start2 = 51;
+	core::Size stop = 24, stop2 = 60;
+	core::Size cutpoint = 19; 
+	protocols::loops::Loop loop ( protocols::loops::Loop(start, stop, cutpoint) );
+	protocols::loops::Loop loop2 ( protocols::loops::Loop(start2, stop2) );
+	protocols::loops::LoopsOP loops = new protocols::loops::Loops;
+	loops->add_loop(loop);
+	loops->add_loop(loop2);	
 
-	// now set the scorefxn to our custom scorefxn
+	// create an print the new loopmover
 	protocols::loops::loop_mover::refine::LoopMover_Refine_CCD loopmover2 = protocols::loops::loop_mover::refine::LoopMover_Refine_CCD(loops);
-	std::cout << loopmover2 << std::endl;*/
+	loopmover2.move_map(mm);
+	std::cout << loopmover2 << std::endl;
 
 /*	// print empty rtmover
 	protocols::simple_moves::RotamerTrialsMinMover rtmover;
@@ -225,29 +233,25 @@ int main(int argc, char *argv[])
 	//protocols::docking::ConformerSwitchMover mover2 ( protocols::docking::ConformerSwitchMover("True", 1.0) );
 	//std::cout << mover2 << std::endl;
 
-/*// create a loops object
+  /*// create a loops object
 	core::Size start = 15;
 	core::Size stop = 24;
 	core::Size cutpoint = 19;
-	protocols::loops::Loop loop ( protocols::loops::Loop(start, stop, cutpoint) );*/
+	protocols::loops::Loop loop ( protocols::loops::Loop(start, stop, cutpoint) );
 
-/*// setup a movemap object
-	core::kinematics::MoveMap mm;
-	Size bb_begin = 3, bb_end = 6, chi_begin = 5, chi_end = 7, begin2 = 101;
-	mm.set_bb_true_range(bb_begin, bb_end);
-	mm.set_chi_true_range(chi_begin, chi_end);
-	mm.set_chi(begin2, true);
-  mm.set_bb(begin2, false);
-	mm.set_jump(2, true);
-	mm.set_jump(5, false);
-	std::cout << "print movemap" << std::endl << mm << std::endl;*/
+  // setup a movemap object
+	core::kinematics::MoveMapOP mm (new core::kinematics::MoveMap );
+	Size bb_begin = 3, bb_end = 6, chi_begin = 5, chi_end = 7;
+	mm->set_bb_true_range(bb_begin, bb_end);
+	mm->set_chi_true_range(chi_begin, chi_end);
+	mm->set_jump(2, true);
 
 	// create a CcdLoopClosureMover object
-	//protocols::loops::loop_closure::ccd::CcdLoopClosureMover ccdmover ( protocols::loops::loop_closure::ccd::CcdLoopClosureMover(loop, mm) );
-	//std::cout << ccdmover << std::endl;
+	protocols::loops::loop_closure::ccd::CcdLoopClosureMover ccdmover ( protocols::loops::loop_closure::ccd::CcdLoopClosureMover(loop, mm) );
+	std::cout << ccdmover << std::endl;*/
 
 	// create an empty loops object
-	//protocols::loops::LoopsOP emptyloops ( new protocols::loops::Loops );
+	// protocols::loops::LoopsOP emptyloops ( new protocols::loops::Loops );
 
 	// create and print a loopmover
 	//protocols::loops::loop_mover::refine::LoopMover_Perturb_CCD loopmover;
