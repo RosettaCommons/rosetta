@@ -72,6 +72,11 @@ RNA_AnalyticLoopCloser::RNA_AnalyticLoopCloser ( Size const moving_suite, Size c
 	Mover::type ( "RNA_AnalyticLoopCloser" );
 }
 
+/// @brief Clone this object
+protocols::moves::MoverOP RNA_AnalyticLoopCloser::clone() const {
+	return new RNA_AnalyticLoopCloser ( *this );
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details  Apply the RNA Loop Closer -- set up for Full Atom Representation.
 ///

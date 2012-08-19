@@ -52,7 +52,7 @@ public:
 
 	bool apply( core::pose::Pose const & pose ) const;
 
-	void add_motif( core::pose::PoseOP motif ) { ref_motifs_.push_back( motif ); };
+	void add_motif( core::pose::PoseOP motif );
 	void set_symm( std::string symm_type_in ) { symm_type_ = symm_type_in; };
 
 	void set_thresholds( core::Real angle_thresh_in, core::Real trans_thresh_in, core::Real rmsd_thresh_in, core::Size clash_thresh_in ) { 

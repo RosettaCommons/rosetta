@@ -47,6 +47,18 @@ InvrotTarget::InvrotTarget()
 
 InvrotTarget::~InvrotTarget(){}
 
+core::conformation::ResidueCOP
+InvrotTarget::target_res_for_geom_cst( core::Size geom_cst ) const
+{
+	return representative_target_res_for_geom_cst_[ geom_cst ];
+}
+
+std::list< core::conformation::ResidueCOP >
+InvrotTarget::all_target_res() const
+{
+	return all_target_res_;
+}
+
 core::scoring::constraints::ConstraintCOP
 InvrotTarget::generate_constraints(
     core::pose::Pose const & pose,

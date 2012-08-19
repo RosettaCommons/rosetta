@@ -136,9 +136,7 @@ public:
 	}
 
 	void
-	set_user_input_VDW_bin_screener ( StepWiseRNA_VDW_Bin_ScreenerOP const & user_input_VDW_bin_screener ) {
-		user_input_VDW_bin_screener_ = user_input_VDW_bin_screener;
-	}
+	set_user_input_VDW_bin_screener ( StepWiseRNA_VDW_Bin_ScreenerOP const & user_input_VDW_bin_screener );
 
 	void
 	set_extra_syn_chi_rotamer ( bool const & setting ) {

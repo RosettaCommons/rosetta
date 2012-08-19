@@ -53,12 +53,10 @@ public:
 	~InvrotTarget();
 
 	core::conformation::ResidueCOP
-	target_res_for_geom_cst( core::Size geom_cst ) const {
-		return representative_target_res_for_geom_cst_[ geom_cst ]; }
+	target_res_for_geom_cst( core::Size geom_cst ) const;
 
 		std::list< core::conformation::ResidueCOP >
-		all_target_res() const {
-			return all_target_res_; }
+		all_target_res() const;
 
 	/// @brief generate constraints against a certain pose
   core::scoring::constraints::ConstraintCOP

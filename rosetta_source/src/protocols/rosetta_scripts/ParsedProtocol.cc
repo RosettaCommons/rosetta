@@ -232,7 +232,7 @@ ParsedProtocol::iterator
 ParsedProtocol::end(){
 	return movers_.end();
 }
-ParsedProtocol::~ParsedProtocol() {};
+ParsedProtocol::~ParsedProtocol() {}
 
 ParsedProtocol::const_iterator
 ParsedProtocol::end() const{

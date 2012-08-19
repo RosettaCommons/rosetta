@@ -45,9 +45,7 @@ public:
 	RNA_AnalyticLoopCloser ( Size const moving_suite, Size const chainbreak_suite );
 
 	/// @brief Clone this object
-	virtual protocols::moves::MoverOP clone() const {
-		return new RNA_AnalyticLoopCloser ( *this );
-	}
+	virtual protocols::moves::MoverOP clone() const;
 
 	/// @brief Each derived class must specify its name.  The class name.
 	virtual std::string get_name() const {

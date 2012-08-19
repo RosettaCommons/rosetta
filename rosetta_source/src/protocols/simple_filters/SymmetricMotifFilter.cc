@@ -186,6 +186,11 @@ SymmetricMotifFilter::apply( core::pose::Pose const & pose ) const {
 	return( found_motif );
 }
 
+void SymmetricMotifFilter::add_motif( core::pose::PoseOP motif )
+{
+	ref_motifs_.push_back( motif );
+}
+
 void
 SymmetricMotifFilter::report( std::ostream & out, core::pose::Pose const & pose ) const {
 	core::Real bestscore;

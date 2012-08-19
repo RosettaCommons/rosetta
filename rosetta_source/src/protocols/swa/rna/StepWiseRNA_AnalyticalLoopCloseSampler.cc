@@ -1005,6 +1005,13 @@ StepWiseRNA_AnalyticalLoopCloseSampler::set_base_centroid_screener ( StepWiseRNA
 
 //////////////////////////////////////////////////////////////////
 void
+StepWiseRNA_AnalyticalLoopCloseSampler::set_user_input_VDW_bin_screener ( StepWiseRNA_VDW_Bin_ScreenerOP const & user_input_VDW_bin_screener )
+{
+	user_input_VDW_bin_screener_ = user_input_VDW_bin_screener;
+}
+
+
+void
 StepWiseRNA_AnalyticalLoopCloseSampler::set_cluster_rmsd ( Real const & setting ) {
 	cluster_rmsd_ = setting;
 	std::cout << "Set cluster_rmsd to " << cluster_rmsd_ << std::endl;
