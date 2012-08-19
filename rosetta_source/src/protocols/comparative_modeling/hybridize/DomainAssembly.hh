@@ -9,6 +9,9 @@
 
 /// @brief
 
+#ifndef INCLUDED_protocols_comparative_modeling_hybridize_DomainAssembly_hh
+#define INCLUDED_protocols_comparative_modeling_hybridize_DomainAssembly_hh
+
 // libRosetta headers
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/loops/loops_main.hh>
@@ -43,11 +46,7 @@
 
 #include <core/kinematics/Jump.hh>
 #include <numeric/random/random.hh>
-#include <protocols/docking/DockingLowRes.hh>
 #include <core/scoring/ScoreFunction.hh>
-
-#ifndef INCLUDED_protocols_comparative_modeling_hybridize_DomainAssembly_hh
-#define INCLUDED_protocols_comparative_modeling_hybridize_DomainAssembly_hh
 
 namespace protocols {
 namespace comparative_modeling {

@@ -12,8 +12,6 @@
 /// @brief A factory for lazily initializing message listeners. This should be used in conjunction the the MPIWorkPoolJobDistributor's message listening functionality
 /// @author Tim Jacobs
 
-#include <core/types.hh>
-
 #include <basic/message_listening/MessageListener.fwd.hh>
 #include <basic/message_listening/DbMoverMessageListener.hh>
 #include <basic/message_listening/DatabaseSchemaGeneratorListener.hh>

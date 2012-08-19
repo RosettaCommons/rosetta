@@ -17,7 +17,7 @@
 
 #include <basic/message_listening/MessageListener.hh>
 
-#include <core/types.hh>
+#include <numeric/types.hh>
 
 #include <string>
 #include <map>
@@ -51,8 +51,8 @@ public:
 
 private:
 
-	core::Size protocol_id_;
-	std::map<std::string, core::Size> batch_ids_;
+	numeric::Size protocol_id_;
+	std::map<std::string, numeric::Size> batch_ids_;
 
 };
 

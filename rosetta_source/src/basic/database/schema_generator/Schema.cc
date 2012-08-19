@@ -24,7 +24,7 @@
 #include <basic/message_listening/MessageListenerFactory.hh>
 #include <basic/message_listening/DatabaseSchemaGeneratorListener.hh>
 #include <basic/message_listening/util.hh>
-#include <protocols/jd2/util.hh>
+
 // Basic Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
