@@ -17,8 +17,7 @@
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.fwd.hh>
 #include <protocols/loops/loop_mover/IndependentLoopMover.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/loops/Loops.hh>
-#include <core/kinematics/MoveMap.hh>
+
 #include <core/types.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -85,8 +84,6 @@ public:
 	bool set_fold_tree_from_loops() const{ return set_fold_tree_from_loops_; }
 	core::kinematics::MoveMapOP move_map() const;
 	void move_map( core::kinematics::MoveMapOP mm );
-	protocols::loops::LoopsCOP get_loops() const {return loops();}
-	void check_move_map_in(bool mm_in) {move_map_in_ = mm_in;}
 	void set_flank_residue_min(bool value) {flank_residue_min_ = value;} // by JQX
 	friend std::ostream &operator<< ( std::ostream &os, LoopMover_Refine_CCD const &mover )
 	{
@@ -127,7 +124,6 @@ private:
 	bool set_fold_tree_from_loops_;
 	core::kinematics::MoveMapOP move_map_;
 	bool flank_residue_min_; //JQX
-	bool move_map_in_;
 
 }; // LoopMover_Refine_CCD
 

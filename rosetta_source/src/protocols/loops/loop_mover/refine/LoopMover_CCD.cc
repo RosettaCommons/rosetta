@@ -175,7 +175,6 @@ loop_mover::LoopMover::MoveMapOP LoopMover_Refine_CCD::move_map() const
 void LoopMover_Refine_CCD::move_map( LoopMover::MoveMapOP mm )
 {
     move_map_ = mm;
-		check_move_map_in(true); // for operator<<
 }
 
 void

@@ -92,7 +92,7 @@ public:
 	bool success() const {
 		return ( forward_deviation() < tolerance_ ) && ( backward_deviation() < tolerance_ );
 	}
-	core::kinematics::MoveMapCOP movemap() const { return movemap_; }
+
 	Loop get_loop() const { return loop_ ;}
 	core::Size get_loop_start() const { return loop_.start(); }
 	core::Size get_loop_stop() const { return loop_.stop(); }
@@ -105,7 +105,7 @@ public:
 	core::Real get_max_total_delta( std::string secstr ) const;
 	core::Size get_ccd_cycles() const { return ccd_cycles_; }
 	std::string bRama_check() const { return ( (bRama_check_) ? ("True") : ("False") ); }
-	friend std::ostream &operator<< ( std::ostream &os, CcdLoopClosureMover const &mover ); // to add movemap int data
+	friend std::ostream &operator<< ( std::ostream &os, CcdLoopClosureMover const &mover ); 
 
 private:
   Loop loop_;
