@@ -44,13 +44,15 @@ namespace task_operations {
 LimitAromaChi2_RotamerSetOperation::LimitAromaChi2_RotamerSetOperation() :
 	RotamerSetOperation(),
 	chi2max_( 110 ),
-	chi2min_(  70 )
+	chi2min_(  70 ),
+	include_trp_( false )
 {}
 
 LimitAromaChi2_RotamerSetOperation::LimitAromaChi2_RotamerSetOperation( Real const chi2max, Real const chi2min ) :
 	RotamerSetOperation(),
 	chi2max_( chi2max ),
-	chi2min_( chi2min )
+	chi2min_( chi2min ),
+	include_trp_( false )
 {}
 
 LimitAromaChi2_RotamerSetOperation::~LimitAromaChi2_RotamerSetOperation() {}
@@ -82,7 +84,9 @@ LimitAromaChi2_RotamerSetOperation::alter_rotamer_set(
 		core::conformation::ResidueOP rop ( *it );
 		if( rop->aa() == core::chemical::aa_tyr ||
 				rop->aa() == core::chemical::aa_phe ||
-				rop->aa() == core::chemical::aa_his ) {
+				rop->aa() == core::chemical::aa_his ||
+			 (rop->aa() == core::chemical::aa_trp && include_trp_) )
+		{
 
 			runtime_assert( rop->nchi() >= 2 );
 			utility::vector1< Real > chi( rop->chi() );
@@ -130,7 +134,8 @@ LimitAromaChi2OperationCreator::create_task_operation() const
 LimitAromaChi2Operation::LimitAromaChi2Operation():
 	TaskOperation(),
 	chi2max_( 110 ),
-	chi2min_(  70 )
+	chi2min_(  70 ),
+	include_trp_( false )
 {}
 
 /// @brief destructor
@@ -148,6 +153,7 @@ void
 LimitAromaChi2Operation::apply( Pose const & /*pose*/, PackerTask & task ) const
 {
 	LimitAromaChi2_RotamerSetOperationOP rso = new LimitAromaChi2_RotamerSetOperation( chi2max_, chi2min_ );
+	rso->include_trp( include_trp_ );
 	task.append_rotamerset_operation( rso );
 }
 
@@ -156,6 +162,7 @@ LimitAromaChi2Operation::parse_tag( TagPtr tag )
 {
 	chi2max( tag->getOption< Real >( "chi2max", 110.0 ) );
 	chi2min( tag->getOption< Real >( "chi2min", 70.0 ) );
+	chi2min( tag->getOption< bool >( "include_trp", 0 ) );
 }
 
 
