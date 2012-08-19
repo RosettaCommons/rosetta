@@ -47,6 +47,8 @@ StubScoreLoopsFilter::StubScoreLoopsFilter() :
 	set_score_type( core::scoring::backbone_stub_constraint );
 }
 
+StubScoreLoopsFilter::~StubScoreLoopsFilter() {}
+
 void
 StubScoreLoopsFilter::parse_my_tag( utility::tag::TagPtr const tag,
 		protocols::moves::DataMap &,

@@ -11,6 +11,7 @@
 
 #include <core/types.hh>
 #include <core/kinematics/Stub.hh>
+#include <numeric/geometry/hashing/SixDHasher.fwd.hh>
 #include <protocols/sic_dock/types.hh>
 #include <protocols/sic_dock/RigidScore.fwd.hh>
 #include <protocols/sic_dock/SICFast.fwd.hh>

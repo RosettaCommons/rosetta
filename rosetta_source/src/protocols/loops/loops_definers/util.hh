@@ -16,6 +16,7 @@
 
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
+#include <protocols/loops/Loops.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 namespace protocols {

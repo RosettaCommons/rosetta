@@ -254,6 +254,9 @@ FilterScanFilter::single_substitution( core::pose::Pose & pose, core::Size const
 	}
 }
 
+utility::vector1< DeltaFilterOP > FilterScanFilter::delta_filters() const { return delta_filters_; }
+void FilterScanFilter::delta_filters( utility::vector1< DeltaFilterOP > const d ){ delta_filters_ = d; }
+
 bool
 FilterScanFilter::apply(core::pose::Pose const & p ) const
 {

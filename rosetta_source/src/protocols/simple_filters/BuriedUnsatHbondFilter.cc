@@ -42,6 +42,8 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter( core::Size const upper_threshold
 	jump_num_( jump_num )
 { }
 
+BuriedUnsatHbondFilter::BuriedUnsatHbondFilter() : filters::Filter( "BuriedUnsatHbonds" ) {}
+
 BuriedUnsatHbondFilter::~BuriedUnsatHbondFilter(){}
 
 void
@@ -133,5 +135,14 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 
 	return( unsat_hbonds );
 }
+
+filters::FilterOP BuriedUnsatHbondFilter::clone() const {
+	return new BuriedUnsatHbondFilter( *this );
+}
+
+filters::FilterOP BuriedUnsatHbondFilter::fresh_instance() const{
+	return new BuriedUnsatHbondFilter();
+}
+
 }
 }

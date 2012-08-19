@@ -31,18 +31,14 @@ namespace simple_filters {
 class BuriedUnsatHbondFilter : public filters::Filter
 {
 public:
-	BuriedUnsatHbondFilter() : filters::Filter( "BuriedUnsatHbonds" ) {}
+	BuriedUnsatHbondFilter();
 	BuriedUnsatHbondFilter( core::Size const upper_threshold, core::Size const jump_num );
 	bool apply( core::pose::Pose const & pose ) const;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Real compute( core::pose::Pose const & pose ) const;
-	filters::FilterOP clone() const {
-		return new BuriedUnsatHbondFilter( *this );
-	}
-	filters::FilterOP fresh_instance() const{
-		return new BuriedUnsatHbondFilter();
-	}
+	filters::FilterOP clone() const;
+	filters::FilterOP fresh_instance() const;
 
 	virtual ~BuriedUnsatHbondFilter();
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );

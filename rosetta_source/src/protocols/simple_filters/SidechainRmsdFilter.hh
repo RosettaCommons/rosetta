@@ -29,19 +29,14 @@ namespace simple_filters {
 class SidechainRmsdFilter : public filters::Filter
 {
 public:
-	SidechainRmsdFilter() : filters::Filter( "SidechainRmsd"  ) {}
-	SidechainRmsdFilter( core::Size const res1, core::Size const res2, core::Real const rmsd_threshold ) :
-		Filter( "SidechainRmsd" ), res1_( res1 ), res2_( res2 ), rmsd_threshold_( rmsd_threshold ) {}
+	SidechainRmsdFilter();
+	SidechainRmsdFilter( core::Size const res1, core::Size const res2, core::Real const rmsd_threshold );
 	bool apply( core::pose::Pose const & pose ) const;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Real compute( core::pose::Pose const & pose ) const;
-	filters::FilterOP clone() const {
-		return new SidechainRmsdFilter( *this );
-	}
-	filters::FilterOP fresh_instance() const{
-		return new SidechainRmsdFilter();
-	}
+	filters::FilterOP clone() const;
+	filters::FilterOP fresh_instance() const;
 
 	virtual ~SidechainRmsdFilter();
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &);

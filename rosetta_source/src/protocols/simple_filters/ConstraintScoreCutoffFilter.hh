@@ -19,11 +19,7 @@
 // Unit Headers
 #include <protocols/simple_filters/ConstraintScoreCutoffFilter.fwd.hh>
 #include <protocols/filters/Filter.hh>
-#include <core/scoring/constraints/Constraint.fwd.hh>
-
-#ifdef PYROSETTA
-	#include <core/scoring/constraints/Constraint.hh>
-#endif
+#include <core/scoring/constraints/Constraint.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>

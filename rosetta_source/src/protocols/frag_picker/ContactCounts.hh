@@ -19,6 +19,8 @@
 
 #include <protocols/frag_picker/ContactTypes.hh>
 
+#include <utility/pointer/ReferenceCount.hh>
+
 #include <string>
 #include <map>
 
@@ -27,7 +29,7 @@
 namespace protocols {
 namespace frag_picker {
 
-class ContactCounts: public utility::pointer::ReferenceCount {
+class ContactCounts : public utility::pointer::ReferenceCount {
 public:
 
   ContactCounts() {}

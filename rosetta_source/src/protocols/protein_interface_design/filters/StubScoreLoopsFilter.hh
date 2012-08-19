@@ -46,6 +46,8 @@ public:
 	/// @brief default ctor
 	StubScoreLoopsFilter();
 
+	virtual ~StubScoreLoopsFilter();
+	
 	virtual protocols::filters::FilterOP clone() const;
 	virtual protocols::filters::FilterOP fresh_instance() const;
 

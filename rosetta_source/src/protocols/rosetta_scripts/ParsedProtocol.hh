@@ -35,11 +35,6 @@
 
 #include <utility/vector1.hh>
 
-
-#ifdef PYROSETTA
-	#include <core/scoring/ScoreFunction.hh>
-#endif
-
 namespace protocols {
 namespace rosetta_scripts {
 
@@ -53,12 +48,7 @@ public:
 	typedef MoverFilterVector::iterator iterator;
 	typedef MoverFilterVector::const_iterator const_iterator;
 public:
-	ParsedProtocol() :
-		protocols::moves::Mover( "ParsedProtocol" ),
-		final_scorefxn_( 0 ), // By default, don't rescore with any scorefunction.
-		mode_("sequence"),
-		last_attempted_mover_idx_( 0 )
-	{}
+	ParsedProtocol();
 	virtual void apply( Pose & pose );
 	virtual core::pose::PoseOP get_additional_output( );
 	virtual std::string get_name() const;
@@ -66,14 +56,9 @@ public:
 	/// state information. Filters are safe and are therefore merely registered.
 	/// Under this state of affairs, a mover or filter may be called many times in the protocol, and it will be
 	/// guaranteed to have no state accumulation.
-	void add_mover( protocols::moves::MoverCOP mover, protocols::filters::FilterOP filter ) {
-		protocols::moves::MoverOP mover_p = mover->clone();
-		protocols::filters::FilterOP filter_p = filter;
-		mover_filter_pair p( mover_p, filter_p );
-		movers_.push_back( p );
-	}
-	void final_scorefxn( core::scoring::ScoreFunctionCOP scorefxn ) { final_scorefxn_ = scorefxn; }
-	core::scoring::ScoreFunctionCOP final_scorefxn() const { return final_scorefxn_; }
+	void add_mover( protocols::moves::MoverCOP mover, protocols::filters::FilterOP filter );
+	void final_scorefxn( core::scoring::ScoreFunctionCOP scorefxn );
+	core::scoring::ScoreFunctionCOP final_scorefxn() const;
 	void final_score(core::pose::Pose & pose) const;
 	void report_all( Pose const & pose ) const; // cycles over all filter->report methods to output their values to a common stream.
 	void report_filters_to_job( Pose const & pose ) const;  // as above but reports to job object
@@ -83,7 +68,7 @@ public:
 		return( movers_[ mover_number ].first );
 	}
 	void set_resid( core::Size const resid );
-	protocols::moves::MoverOP clone() const { return protocols::moves::MoverOP( new protocols::rosetta_scripts::ParsedProtocol( *this ) ); }
+	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new ParsedProtocol ); }
 	virtual void parse_my_tag( utility::tag::TagPtr const, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ); // this is defined as public here, b/c I need to circumvent the name-check, since this is called both by the Movers section (as ParsedProtocol) and the PROTOCOLS section.
 	void clear() { movers_.clear(); }
@@ -92,7 +77,7 @@ public:
 	const_iterator begin() const;
 	iterator end();
 	const_iterator end() const;
-	virtual ~ParsedProtocol(){};
+	virtual ~ParsedProtocol();
 	void apply_probability( utility::vector1< core::Real > const a );
 	utility::vector1< core::Real > apply_probability();
 	core::Size size() { return movers_.size(); }

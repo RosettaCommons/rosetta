@@ -89,6 +89,13 @@ ParsedProtocolCreator::mover_name()
 	return "ParsedProtocol";
 }
 
+ParsedProtocol::ParsedProtocol() :
+	protocols::moves::Mover( "ParsedProtocol" ),
+	final_scorefxn_( 0 ), // By default, don't rescore with any scorefunction.
+	mode_("sequence"),
+	last_attempted_mover_idx_( 0 )
+{}
+
 /// @detailed Takes care of the docking, design and filtering moves. pre_cycle and pose_cycle can
 /// be setup in derived classes to setup variables before and after these cycles.
 void
@@ -143,6 +150,27 @@ ParsedProtocol::apply( Pose & pose )
 std::string
 ParsedProtocol::get_name() const {
 	return ParsedProtocolCreator::mover_name();
+}
+
+/// Tricky! movers are cloned into the protocol b/c their apply functions (which are nonconst) could accumulate
+/// state information. Filters are safe and are therefore merely registered.
+/// Under this state of affairs, a mover or filter may be called many times in the protocol, and it will be
+/// guaranteed to have no state accumulation.
+void ParsedProtocol::add_mover( protocols::moves::MoverCOP mover, protocols::filters::FilterOP filter ) {
+	protocols::moves::MoverOP mover_p = mover->clone();
+	protocols::filters::FilterOP filter_p = filter;
+	mover_filter_pair p( mover_p, filter_p );
+	movers_.push_back( p );
+}
+
+void ParsedProtocol::final_scorefxn( core::scoring::ScoreFunctionCOP scorefxn )
+{
+	final_scorefxn_ = scorefxn;
+}
+
+core::scoring::ScoreFunctionCOP ParsedProtocol::final_scorefxn() const
+{
+	return final_scorefxn_;
 }
 
 void
@@ -204,6 +232,7 @@ ParsedProtocol::iterator
 ParsedProtocol::end(){
 	return movers_.end();
 }
+ParsedProtocol::~ParsedProtocol() {};
 
 ParsedProtocol::const_iterator
 ParsedProtocol::end() const{
@@ -218,6 +247,11 @@ ParsedProtocol::set_resid( core::Size const resid ){
 		modify_ResId_based_object( it->first, resid );
 		modify_ResId_based_object( it->second, resid );
 	}
+}
+
+protocols::moves::MoverOP ParsedProtocol::clone() const
+{
+	return protocols::moves::MoverOP( new protocols::rosetta_scripts::ParsedProtocol( *this ) );
 }
 
 void

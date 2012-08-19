@@ -11,7 +11,8 @@
 #define INCLUDED_protocols_rbsegment_relax_RBSegmentRelax_main_hh
 
 // AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <protocols/moves/Mover.hh>
 
 namespace protocols {
 //namespace rbsegment_relax {

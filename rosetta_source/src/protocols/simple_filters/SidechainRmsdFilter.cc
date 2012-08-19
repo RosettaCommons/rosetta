@@ -46,6 +46,11 @@ SidechainRmsdFilterCreator::create_filter() const { return new SidechainRmsdFilt
 std::string
 SidechainRmsdFilterCreator::keyname() const { return "SidechainRmsd"; }
 
+SidechainRmsdFilter::SidechainRmsdFilter() : filters::Filter( "SidechainRmsd"  ) {}
+
+SidechainRmsdFilter::SidechainRmsdFilter( core::Size const res1, core::Size const res2, core::Real const rmsd_threshold ) :
+		Filter( "SidechainRmsd" ), res1_( res1 ), res2_( res2 ), rmsd_threshold_( rmsd_threshold ) {}
+
 SidechainRmsdFilter::~SidechainRmsdFilter(){}
 
 void
@@ -121,6 +126,14 @@ SidechainRmsdFilter::compute( core::pose::Pose const & pose ) const {
 	}
 
 	return( rmsd );
+}
+
+filters::FilterOP SidechainRmsdFilter::clone() const {
+	return new SidechainRmsdFilter( *this );
+}
+
+filters::FilterOP SidechainRmsdFilter::fresh_instance() const{
+	return new SidechainRmsdFilter();
 }
 
 }

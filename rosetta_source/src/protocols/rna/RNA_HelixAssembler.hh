@@ -44,9 +44,7 @@ public:
 	RNA_HelixAssembler();
 
 	/// @brief Clone this object
-	virtual protocols::moves::MoverOP clone() const {
-		return new RNA_HelixAssembler(*this);
-	}
+	virtual protocols::moves::MoverOP clone() const;
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
 	void apply( core::pose::Pose & pose );
@@ -61,7 +59,7 @@ public:
 	set_minimize_all( bool const & setting ) { minimize_all_ = setting; }
 
 	void
-	set_scorefxn( core::scoring::ScoreFunctionOP setting ) { scorefxn = setting; }
+	set_scorefxn( core::scoring::ScoreFunctionOP setting );
 
 	void
 	use_phenix_geo( bool const setting );

@@ -104,7 +104,10 @@ RNA_HelixAssembler::RNA_HelixAssembler():
 
 }
 
-
+protocols::moves::MoverOP RNA_HelixAssembler::clone() const
+{
+	return new RNA_HelixAssembler(*this);
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details  Apply the RNA HelixAssembler
@@ -118,6 +121,12 @@ std::string
 RNA_HelixAssembler::get_name() const {
 	return "RNA_HelixAssembler";
 }
+
+void RNA_HelixAssembler::set_scorefxn( core::scoring::ScoreFunctionOP setting )
+{
+	scorefxn = setting;
+}
+
 
 void RNA_HelixAssembler::use_phenix_geo( bool const setting )
 {

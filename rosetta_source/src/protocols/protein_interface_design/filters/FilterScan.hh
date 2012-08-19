@@ -86,8 +86,8 @@ public:
 	bool rtmin() const{ return rtmin_; }
 	void rtmin( bool const r ){ rtmin_ = r; }
 	void single_substitution( core::pose::Pose & pose, core::Size const resi, core::chemical::AA const target_aa ) const;
-	utility::vector1< DeltaFilterOP > delta_filters() const { return delta_filters_; }
-	void delta_filters( utility::vector1< DeltaFilterOP > const d ){ delta_filters_ = d; }
+	utility::vector1< DeltaFilterOP > delta_filters() const;
+	void delta_filters( utility::vector1< DeltaFilterOP > const d );
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	protocols::filters::FilterOP triage_filter_;//dflt null; mutations that are categorically rejected, no matter what
