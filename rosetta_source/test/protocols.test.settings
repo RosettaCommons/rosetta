@@ -182,7 +182,6 @@ sources = {
 	],
 
 	"toolbox/task_operations" : [
-                "LimitAromaChi2Operation",
 		"RestrictOperations",
 		"RestrictNonSurfaceToRepackingOperation",
 		"RestrictToCDRH3Loop",
@@ -194,9 +193,9 @@ sources = {
 	],
 
 	"scoring" : [
-               "InterchainEnvEnergy",
-               "InterchainPairEnergy",
-               "Interface",
+    "InterchainEnvEnergy",
+    "InterchainPairEnergy",
+		"Interface",
 	],
 
 }
