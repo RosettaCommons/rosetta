@@ -71,7 +71,7 @@ namespace CxxTest
 			if( run_type == _OneTest_ )	{
 				bool found = false;
 
-				for(int i=0; i<sd.numTests(); ++i) {
+				for(unsigned int i=0; i<sd.numTests(); ++i) {
 					TestDescription const & td( sd.testDescription(i) );
 					if( std::string(real_command_line_argv[1]) == std::string(td.suiteName()) + ":" + td.testName() ) {
 						found = true;
