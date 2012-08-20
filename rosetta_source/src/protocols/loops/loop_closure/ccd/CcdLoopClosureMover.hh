@@ -105,6 +105,7 @@ public:
 	core::Real get_max_total_delta( std::string secstr ) const;
 	core::Size get_ccd_cycles() const { return ccd_cycles_; }
 	std::string bRama_check() const { return ( (bRama_check_) ? ("True") : ("False") ); }
+	core::kinematics::MoveMap movemap() const;
 	friend std::ostream &operator<< ( std::ostream &os, CcdLoopClosureMover const &mover ); 
 
 private:

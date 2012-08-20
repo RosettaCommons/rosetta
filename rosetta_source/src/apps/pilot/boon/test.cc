@@ -146,22 +146,22 @@ int main(int argc, char *argv[])
 	// print
 	std::cout << "print MinMover:" << std::endl << minmover << std::endl;*/
 
- // setup a movemap object
+/* // setup a movemap object
 	core::kinematics::MoveMapOP mm ( new core::kinematics::MoveMap );
 	Size bb_begin = 3, bb_end = 6, chi_begin = 5, chi_end = 7, begin2 = 101;
 	mm->set_bb_true_range(bb_begin, bb_end);
 	mm->set_chi_true_range(chi_begin, chi_end);
 	mm->set_chi(begin2, true);
-	mm->set_jump(2, true);
+	mm->set_jump(2, true);*/
 
 
-// DockMCMProtocol
+/*// DockMCMProtocol
 	protocols::docking::DockMCMProtocol dmp;
 	std::cout << dmp << std::endl;
 
 	protocols::docking::DockMCMProtocol dmp2;
 	dmp2.set_move_map(mm);
-	std::cout << dmp2 << std::endl;
+	std::cout << dmp2 << std::endl;*/
 
 /*	// setup kT and nmoves
 	Real kT = 1.0;
@@ -241,14 +241,14 @@ int main(int argc, char *argv[])
 	scorefxn->set_weight("fa_rep", num);
 	scorefxn->set_weight("fa_atr", num);*/
 
-  // create an empty loops object
+/*  // create an empty loops object
 	protocols::loops::LoopsOP emptyloops = new protocols::loops::Loops;
 
 	// create and print a loopmover
 	protocols::loops::loop_mover::refine::LoopMover_Refine_CCD loopmover = protocols::loops::loop_mover::refine::LoopMover_Refine_CCD(emptyloops);
-	std::cout << loopmover << std::endl;
+	std::cout << loopmover << std::endl;*/
 
-	// create a loops object
+/*	// create a loops object
 	core::Size start = 15, start2 = 51;
 	core::Size stop = 24, stop2 = 60;
 	core::Size cutpoint = 19; 
@@ -261,7 +261,7 @@ int main(int argc, char *argv[])
 	// create an print the new loopmover
 	protocols::loops::loop_mover::refine::LoopMover_Refine_CCD loopmover2 = protocols::loops::loop_mover::refine::LoopMover_Refine_CCD(loops);
 	loopmover2.move_map(mm);
-	std::cout << loopmover2 << std::endl;
+	std::cout << loopmover2 << std::endl;*/
 
 /*	// print empty rtmover
 	protocols::simple_moves::RotamerTrialsMinMover rtmover;
@@ -294,7 +294,7 @@ int main(int argc, char *argv[])
 	//protocols::docking::ConformerSwitchMover mover2 ( protocols::docking::ConformerSwitchMover("True", 1.0) );
 	//std::cout << mover2 << std::endl;
 
-  /*// create a loops object
+  // create a loops object
 	core::Size start = 15;
 	core::Size stop = 24;
 	core::Size cutpoint = 19;
@@ -309,7 +309,7 @@ int main(int argc, char *argv[])
 
 	// create a CcdLoopClosureMover object
 	protocols::loops::loop_closure::ccd::CcdLoopClosureMover ccdmover ( protocols::loops::loop_closure::ccd::CcdLoopClosureMover(loop, mm) );
-	std::cout << ccdmover << std::endl;*/
+	std::cout << ccdmover << std::endl;
 
 	// create an empty loops object
 	// protocols::loops::LoopsOP emptyloops ( new protocols::loops::Loops );
