@@ -29,18 +29,9 @@ Constraint_Type2 Constraint_Def2
 ...
 @endverbatim
 
-Constraint types and constraint definitions are defined in the next section. The section-based format is:
+Generally speaking, the Constraint_Type will contain a type, defining what sort of value to be constrained (distance, angle, dihedral, etc), and a series of atom and/or residue labels defining a specific quality to be constrained.  Residue numbers are assumed to be in Rosetta numbering (from 1, no gaps), not PDB numbering.  If you want PDB numbering, pass the chain letter immediately after the residue number (no spaces), residue 30 of chain A would be "30A", even if it is the first residue in the PDB (Rosetta numbering "1").  
 
-@verbatim
-[ atompairs ]
-...
-[ angles ]
-...
-[ bindingsites ]
-...
-@endverbatim
-
-The section-based format is not yet documented here. It is not possible to mix both formats in the same file.
+The Constraint_Def will define function by which the constraint is constrained, to answer the question: what should the score of the constraint be when the constrained value has a deviation of X units?
 
 @section constraint_type Constraint Types
 
@@ -56,7 +47,7 @@ Angle between Atom2->Atom1 vector and Atom2->Atom3 vector; the angle (passed as 
 
 @li @ref DihedralConstraint "Dihedral":
 <tt>Atom1_Name Atom1_ResNum Atom2_Name Atom2_ResNum Atom3_Name Atom3_ResNum Atom4_Name Atom4_ResNum Func_Type Func_Def</tt><br>
-Dihedral angle of Atom1->Atom2->Atom3->Atom4
+Dihedral angle of Atom1->Atom2->Atom3->Atom4.  Dihedral is measured in radians on -pi -> pi.
 
 @li @ref BigBinConstraint "BigBin":
 <tt>ResNum Bin</tt>
