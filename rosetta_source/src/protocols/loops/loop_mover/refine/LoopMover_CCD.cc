@@ -177,6 +177,23 @@ void LoopMover_Refine_CCD::move_map( LoopMover::MoveMapOP mm )
     move_map_ = mm;
 }
 
+protocols::loops::LoopsCOP LoopMover_Refine_CCD::get_loops() const {
+	return loops();
+}
+
+std::ostream &operator<< ( std::ostream &os, LoopMover_Refine_CCD const &mover )
+{
+	moves::operator<<(os, mover);
+	os << "Loops:\n" << *mover.get_loops();
+	os <<   "Outer cycles:        " << mover.outer_cycles_ << "\nMax inner cycles:    " << mover.max_inner_cycles_ << 
+				"\nRepack period:       " << mover.repack_period_ << "\nInitial temperature: " << mover.temp_initial_ << 
+				"\nFinal temperature:   " << mover.temp_final_ <<  "\nSet fold tree from loop?: " << 
+				(mover.set_fold_tree_from_loops_ ? "True" : "False") << "\nMovemap:  ";
+	if (mover.move_map() != 0) {os << std::endl; mover.move_map()->show();}
+	else {os << "none" << std::endl;}
+	return os;
+}
+
 void
 LoopMover_Refine_CCD::read_options()
 {

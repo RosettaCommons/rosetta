@@ -55,7 +55,7 @@
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/docking/DockingInitialPerturbation.hh>
+#include <protocols/docking/DockMCMProtocol.hh>
 
 int main(int argc, char *argv[])
 {
@@ -77,7 +77,9 @@ int main(int argc, char *argv[])
 	//std::cout << "I just imported my first pose into Rosetta." << std::endl;
 	std::cout << "It has " << test_pose.total_residue() << " total residues." << std::endl;
 
-	//Reformatting
+	// 
+
+/*	//Reformatting
 		
 	// PyMOL mover
 	protocols::moves::PyMolMover pmm;
@@ -116,7 +118,7 @@ int main(int argc, char *argv[])
 
 	// FaDockingSlideIntoContact
 	protocols::docking::FaDockingSlideIntoContact famover (protocols::docking::FaDockingSlideIntoContact(1) );
-	std::cout << famover << std::endl;
+	std::cout << famover << std::endl;*/
 
 /*	protocols::docking::ConformerSwitchMover mover;
 	std::cout << mover << std::endl;*/
@@ -144,7 +146,7 @@ int main(int argc, char *argv[])
 	// print
 	std::cout << "print MinMover:" << std::endl << minmover << std::endl;*/
 
-/*// setup a movemap object
+ // setup a movemap object
 	core::kinematics::MoveMapOP mm ( new core::kinematics::MoveMap );
 	Size bb_begin = 3, bb_end = 6, chi_begin = 5, chi_end = 7, begin2 = 101;
 	mm->set_bb_true_range(bb_begin, bb_end);
@@ -159,7 +161,7 @@ int main(int argc, char *argv[])
 
 	protocols::docking::DockMCMProtocol dmp2;
 	dmp2.set_move_map(mm);
-	std::cout << dmp2 << std::endl;*/
+	std::cout << dmp2 << std::endl;
 
 /*	// setup kT and nmoves
 	Real kT = 1.0;
@@ -239,7 +241,7 @@ int main(int argc, char *argv[])
 	scorefxn->set_weight("fa_rep", num);
 	scorefxn->set_weight("fa_atr", num);*/
 
-/*	// create an empty loops object
+  // create an empty loops object
 	protocols::loops::LoopsOP emptyloops = new protocols::loops::Loops;
 
 	// create and print a loopmover
@@ -259,7 +261,7 @@ int main(int argc, char *argv[])
 	// create an print the new loopmover
 	protocols::loops::loop_mover::refine::LoopMover_Refine_CCD loopmover2 = protocols::loops::loop_mover::refine::LoopMover_Refine_CCD(loops);
 	loopmover2.move_map(mm);
-	std::cout << loopmover2 << std::endl;*/
+	std::cout << loopmover2 << std::endl;
 
 /*	// print empty rtmover
 	protocols::simple_moves::RotamerTrialsMinMover rtmover;

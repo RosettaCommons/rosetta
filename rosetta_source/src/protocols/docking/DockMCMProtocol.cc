@@ -339,14 +339,13 @@ void DockMCMProtocol::set_move_map(core::kinematics::MoveMapOP movemap){
     movemap_ = movemap;
 }
 
+core::scoring::ScoreFunctionCOP DockMCMProtocol::scorefxn_docking() const { 
+	return scorefxn(); 
+}
 
-
-
-
-
-
-
-
+core::scoring::ScoreFunctionCOP DockMCMProtocol::scorefxn_packing() const { 
+	return scorefxn_pack(); 
+}
 
 std::string
 DockMCMProtocol::get_name() const {

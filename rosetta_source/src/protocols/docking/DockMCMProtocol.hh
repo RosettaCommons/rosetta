@@ -89,8 +89,8 @@ public:
 	virtual std::string get_name() const;
     
   void set_move_map(core::kinematics::MoveMapOP movemap );
-	core::scoring::ScoreFunctionCOP scorefxn_docking() const { return scorefxn(); }
-	core::scoring::ScoreFunctionCOP scorefxn_packing() const { return scorefxn_pack(); }
+	core::scoring::ScoreFunctionCOP scorefxn_docking() const;
+	core::scoring::ScoreFunctionCOP scorefxn_packing() const;
   friend std::ostream & operator<<(std::ostream& out, const DockMCMProtocol & dmp );
 
 private:
