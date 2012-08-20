@@ -55,7 +55,8 @@ DdgFilter::DdgFilter() :
 	repeats_( 1 ),
 	symmetry_(false),
 	repack_( true ),
-	relax_mover_( NULL )
+	relax_mover_( NULL ),
+	use_custom_task_(false)
 {}
 
 DdgFilter::~DdgFilter() {}
@@ -91,6 +92,8 @@ DdgFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, 
 	repeats( tag->getOption< core::Size >( "repeats", 1 ) );
 	repack( tag->getOption< bool >( "repack", 1 ) );
 	symmetry_ = tag->getOption<bool>( "symmetry", 0 );
+	use_custom_task( tag->hasOption("task_operations") );
+  task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	if( tag->hasOption( "relax_mover" ) )
 		relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover" ), movers ) );
 
@@ -150,6 +153,10 @@ core::Real
 DdgFilter::compute( core::pose::Pose const & pose ) const {
 	if( repack() ){
 		protocols::simple_moves::ddG ddg( scorefxn_, rb_jump_, chain_ids_, symmetry_ );
+		if ( use_custom_task() ) {
+			ddg.use_custom_task( use_custom_task() );
+			ddg.task_factory( task_factory() );
+		}
 		ddg.relax_mover( relax_mover() );
 		core::Real average( 0.0 );
 		for( core::Size i = 1; i<=repeats_; ++i ){
@@ -197,7 +204,8 @@ DdgFilter::compute( core::pose::Pose const & pose ) const {
 DdgFilter::DdgFilter( core::Real const ddg_threshold, core::scoring::ScoreFunctionCOP scorefxn, core::Size const rb_jump/*=1*/, core::Size const repeats/*=1*/, bool const symmetry /*=false*/ ) :
 	Filter("Ddg" ),
 	repack_( true ),
-	relax_mover_( NULL )
+	relax_mover_( NULL ),
+	use_custom_task_( false )
 {
 	ddg_threshold_ = ddg_threshold;
 	scorefxn_ = scorefxn->clone();

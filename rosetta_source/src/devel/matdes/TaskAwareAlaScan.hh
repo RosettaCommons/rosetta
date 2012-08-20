@@ -11,8 +11,8 @@
 /// @brief definition of filter class TaskAwareAlaScan.
 /// @author Neil King (neilking@uw.edu)
 
-#ifndef INCLUDED_protocols_simple_filters_TaskAwareAlaScan_hh
-#define INCLUDED_protocols_simple_filters_TaskAwareAlaScan_hh
+#ifndef INCLUDED_devel_matdes_TaskAwareAlaScan_hh
+#define INCLUDED_devel_matdes_TaskAwareAlaScan_hh
 
 #include <devel/matdes/TaskAwareAlaScan.fwd.hh>
 
@@ -27,6 +27,7 @@
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/scoring/ScoreType.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 //#include <utility/exit.hh>
 
 //#include <utility/vector1.hh>
@@ -41,7 +42,16 @@ class TaskAwareAlaScan : public protocols::filters::Filter
 public :
 	// Constructors, destructor, virtual constructors
 	TaskAwareAlaScan();
-	TaskAwareAlaScan( core::pack::task::TaskFactoryOP task_factory, core::Size const jump, core::Size const repeats, core::scoring::ScoreFunctionCOP scorefxn, bool repack, bool report_diffs );
+	TaskAwareAlaScan(
+			core::pack::task::TaskFactoryOP task_factory,
+			core::pack::task::TaskFactoryOP ddG_task_factory,
+			bool use_custom_task,
+			core::Size const jump,
+			std::string const sym_dof_name,
+			core::Size const repeats,
+			core::scoring::ScoreFunctionCOP scorefxn,
+			bool repack,
+			bool report_diffs );
 	TaskAwareAlaScan( TaskAwareAlaScan const & rval );
 	virtual protocols::filters::FilterOP clone() const;
 	virtual protocols::filters::FilterOP fresh_instance() const;
@@ -52,7 +62,10 @@ public :
 
 	// Setters
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );
+	void ddG_task_factory( core::pack::task::TaskFactoryOP ddG_task_factory );
+	void use_custom_task( bool const uct );
 	void jump( core::Size const j );
+	void sym_dof_name( std::string const j );
 	void repeats( core::Size const r );
 	void scorefxn( core::scoring::ScoreFunctionOP const scorefxn );
 	void repack( bool const repack );
@@ -61,7 +74,10 @@ public :
 
 	// Getters
 	core::pack::task::TaskFactoryOP task_factory() const;
+	core::pack::task::TaskFactoryOP ddG_task_factory() const;
+	bool use_custom_task() const;
 	core::Size jump() const;
+	std::string sym_dof_name() const;
 	core::Size repeats() const;
 	bool repack() const;
 	bool report_diffs() const;
@@ -72,6 +88,7 @@ public :
 
 	// Parse xml
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_ddG_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap const & data );
 
 	// Effector functions
 	core::Real ddG_for_single_residue( core::pose::Pose const & const_pose, core::Size const resi ) const;
@@ -81,7 +98,10 @@ public :
 private:
 
 	core::pack::task::TaskFactoryOP task_factory_;
+	core::pack::task::TaskFactoryOP ddG_task_factory_;
+	bool use_custom_task_;
 	core::Size jump_;
+	std::string sym_dof_name_;
 	core::Size repeats_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 	bool repack_;

@@ -1404,36 +1404,36 @@ SymmetryInfo::set_jump_name(Size jnum, std::string jname) {
 
 utility::vector1<char> const &
 SymmetryInfo::get_components() const {
-	if(components_.size()==0) utility_exit_with_message("function not for use in simgle compinent symmetry");
+	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
 	return components_;
 }
 
 std::map<char,std::pair<Size,Size> > const &
 SymmetryInfo::get_component_bounds() const { 
-	if(components_.size()==0) utility_exit_with_message("function not for use in simgle compinent symmetry");
+	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
 	return component_bounds_;
 }
 
 std::map<std::string,char> const &
 SymmetryInfo::get_subunit_name_to_component() const { 
-	if(components_.size()==0) utility_exit_with_message("function not for use in simgle compinent symmetry");
+	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
 	return name2component_;
 }
 
 std::map<std::string,utility::vector1<char> > const &
 SymmetryInfo::get_jump_name_to_components() const { 
-	if(components_.size()==0) utility_exit_with_message("function not for use in simgle compinent symmetry");
+	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
 	return jname2components_;
 }
 
 std::map<std::string,utility::vector1<Size> > const & 
 SymmetryInfo::get_jump_name_to_subunits() const {
-	if(components_.size()==0) utility_exit_with_message("function not for use in simgle compinent symmetry");
+	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
 	return jname2subunits_;
 }
 std::pair<Size,Size> const & 
 SymmetryInfo::get_component_bounds(char c) const {
-	if(components_.size()==0) utility_exit_with_message("function not for use in simgle compinent symmetry");
+	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
 	if( component_bounds_.find(c) == component_bounds_.end() ){
 		utility_exit_with_message(std::string("no symmetry component ")+c);
 	}
@@ -1441,7 +1441,7 @@ SymmetryInfo::get_component_bounds(char c) const {
 }
 Size
 SymmetryInfo::get_component_lower_bound(char c) const {
-	if(components_.size()==0) utility_exit_with_message("function not for use in simgle compinent symmetry");
+	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
 	if( component_bounds_.find(c) == component_bounds_.end() ){
 		utility_exit_with_message(std::string("no symmetry component ")+c);
 	}
@@ -1449,7 +1449,7 @@ SymmetryInfo::get_component_lower_bound(char c) const {
 }
 Size
 SymmetryInfo::get_component_upper_bound(char c) const {
-	if(components_.size()==0) utility_exit_with_message("function not for use in simgle compinent symmetry");
+	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
 	if( component_bounds_.find(c) == component_bounds_.end() ){
 		utility_exit_with_message(std::string("no symmetry component ")+c);
 	}
@@ -1457,7 +1457,7 @@ SymmetryInfo::get_component_upper_bound(char c) const {
 }
 char
 SymmetryInfo::get_component_of_residue(Size ir) const {
-	if(components_.size()==0) utility_exit_with_message("function not for use in simgle compinent symmetry");
+	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
 	if( ir > num_total_residues_without_pseudo() || ir < 1 ){
 		utility_exit_with_message(std::string("no symmetry component for residue "));
 	}
@@ -1474,7 +1474,7 @@ SymmetryInfo::get_component_of_residue(Size ir) const {
 }
 char
 SymmetryInfo::get_subunit_name_to_component(std::string const & vname) const {
-	if(components_.size()==0) utility_exit_with_message("function not for use in simgle compinent symmetry");
+	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
 	if( name2component_.find(vname) == name2component_.end() ){
 		utility_exit_with_message(std::string("no symmetry component for ")+vname);
 	}
@@ -1482,7 +1482,7 @@ SymmetryInfo::get_subunit_name_to_component(std::string const & vname) const {
 }
 utility::vector1<char> const & 
 SymmetryInfo::get_jump_name_to_components(std::string const & jname) const {
-	if(components_.size()==0) utility_exit_with_message("function not for use in simgle compinent symmetry");
+	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
 	if( jname2components_.find(jname) == jname2components_.end() ){
 		utility_exit_with_message(std::string("no symmetry component for ")+jname);
 	}
@@ -1490,7 +1490,7 @@ SymmetryInfo::get_jump_name_to_components(std::string const & jname) const {
 }
 utility::vector1<Size> const & 
 SymmetryInfo::get_jump_name_to_subunits(std::string const & jname) const {
-	if(components_.size()==0) utility_exit_with_message("function not for use in simgle compinent symmetry");
+	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
 	if( jname2subunits_.find(jname) == jname2subunits_.end() ){
 		utility_exit_with_message(std::string("no symmetry component for ")+jname);
 	}

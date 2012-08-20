@@ -99,6 +99,9 @@ public:// mutator
 	void verbose( Size const & verbose );
 	//Undefinded, commenting out to fix PyRosetta build void residues1( std::string const & str );
 	//Undefinded, commenting out to fix PyRosetta build void residues2( std::string const & str );
+	void sym_dof_name( std::string const & sym_dof_name );
+
+	std::string sym_dof_name() const;
 
 public:// parser
 
@@ -135,6 +138,7 @@ private:
 	utility::vector1<core::Size> residues1_;
 	utility::vector1<core::Size> residues2_;
 	bool write_int_area_;
+	std::string sym_dof_name_;
 
 };
 

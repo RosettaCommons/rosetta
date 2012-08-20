@@ -54,7 +54,8 @@ ShapeComplementarityFilter::ShapeComplementarityFilter():
 	quick_( false ),
 	verbose_( false ),
 	residues1_( ),
-	residues2_( )
+	residues2_( ),
+	sym_dof_name_("")
 {}
 
 
@@ -68,7 +69,8 @@ ShapeComplementarityFilter::ShapeComplementarityFilter( Real const & filtered_sc
 	quick_( quick ),
 	verbose_( verbose ),
 	residues1_( ),
-	residues2_( )
+	residues2_( ),
+	sym_dof_name_("")
 {}
 
 // @brief copy constructor
@@ -80,7 +82,8 @@ ShapeComplementarityFilter::ShapeComplementarityFilter( ShapeComplementarityFilt
 	quick_( rval.quick_ ),
 	verbose_( rval.verbose_ ),
 	residues1_( rval.residues1_ ),
-	residues2_( rval.residues2_ )
+	residues2_( rval.residues2_ ),
+	sym_dof_name_( rval.sym_dof_name_ )
 {}
 
 void ShapeComplementarityFilter::filtered_sc( Real const & filtered_sc ) { filtered_sc_ = filtered_sc; }
@@ -88,6 +91,8 @@ void ShapeComplementarityFilter::filtered_area( Real const & filtered_area ) { f
 void ShapeComplementarityFilter::jump_id( Size const & jump_id ) { jump_id_ = jump_id; }
 void ShapeComplementarityFilter::quick( Size const & quick ) { quick_ = quick; }
 void ShapeComplementarityFilter::verbose( Size const & verbose ) { verbose_ = verbose; }
+void ShapeComplementarityFilter::sym_dof_name( std::string const & sym_dof_name ) { sym_dof_name_ = sym_dof_name; }
+std::string ShapeComplementarityFilter::sym_dof_name() const { return sym_dof_name_; }
 
 /// @brief
 core::Size ShapeComplementarityFilter::compute( Pose const & pose ) const
@@ -114,7 +119,13 @@ core::Size ShapeComplementarityFilter::compute( Pose const & pose ) const
 			return 0;
 
 	} else {
-		int sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num(pose, jump_id_);
+		int sym_aware_jump_id = 0;
+		if ( sym_dof_name() != "" ) {
+			sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name() );
+		} else {
+			sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num( pose, jump_id_ );
+		}
+		tr << "Using jump_id " << sym_aware_jump_id << " to partition pose" << std::endl;
 		if(!scc_.Calc( pose, sym_aware_jump_id ))
 			return 0;
 	}
@@ -228,6 +239,7 @@ ShapeComplementarityFilter::parse_my_tag(
 	quick_ = tag->getOption<Size>( "quick", false );
 	jump_id_ = tag->getOption<Size>( "jump", 1 );
 	write_int_area_ = tag->getOption<bool>( "write_int_area", false );
+	sym_dof_name(tag->getOption<std::string>( "sym_dof_name", "" ));
 
 	if(tag->hasOption("residues1")) {
 		residues1_ = core::pose::get_resnum_list(tag, "residues1", pose);

@@ -8,7 +8,10 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   devel/matdes/RetrieveStoredTaskOperation.cc
-/// @brief	Restricts specified residue types to only repack, no design.
+/// @brief	Retrieves a stored task from the pose's CacheableData. Must be used in
+///         conjunction with the StoredTaskMover. Allows storage/retrieval of a task
+///         so that particular sets of residues can be stably addressed throughout
+///         the entirety of a RosettaScripts protocol.
 /// @author Neil King (neilking@uw.edu)
 
 // Unit Headers

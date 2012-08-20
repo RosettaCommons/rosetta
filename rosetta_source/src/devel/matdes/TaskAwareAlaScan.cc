@@ -28,6 +28,7 @@
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
@@ -72,7 +73,10 @@ namespace matdes {
 // @brief default constructor
 TaskAwareAlaScan::TaskAwareAlaScan():
   task_factory_( NULL ),
+  ddG_task_factory_( NULL ),
+	use_custom_task_( false ),
   jump_( 1 ),
+  sym_dof_name_( "" ),
   repeats_( 3 ),
   scorefxn_( NULL ),
 	repack_( 1 ),
@@ -82,7 +86,10 @@ TaskAwareAlaScan::TaskAwareAlaScan():
 // @brief constructor with arguments
 TaskAwareAlaScan::TaskAwareAlaScan(
 	core::pack::task::TaskFactoryOP task_factory,
+	core::pack::task::TaskFactoryOP ddG_task_factory,
+	bool use_custom_task,
 	core::Size jump,
+	std::string sym_dof_name,
 	core::Size const repeats,
 	core::scoring::ScoreFunctionCOP /*scorefxn*/,
 	bool repack,
@@ -90,7 +97,10 @@ TaskAwareAlaScan::TaskAwareAlaScan(
 ):
 		Filter( "TaskAwareAlaScan" ),
 		task_factory_( task_factory ),
+		ddG_task_factory_( ddG_task_factory ),
+		use_custom_task_( use_custom_task ),
 		jump_( jump ),
+		sym_dof_name_( sym_dof_name ),
 		repeats_( repeats ),
 		repack_( repack ),
 		report_diffs_( report_diffs )
@@ -100,7 +110,10 @@ TaskAwareAlaScan::TaskAwareAlaScan(
 TaskAwareAlaScan::TaskAwareAlaScan( TaskAwareAlaScan const & rval ):
 		Filter( rval ),
 		task_factory_( rval.task_factory_ ),
+		ddG_task_factory_( rval.ddG_task_factory_ ),
+		use_custom_task_( rval.use_custom_task_ ),
 		jump_( rval.jump_ ),
+		sym_dof_name_( rval.sym_dof_name_ ),
 		repeats_( rval.repeats_ ),
 		scorefxn_( rval.scorefxn_ ),
 		repack_( rval.repack_ ),
@@ -115,7 +128,10 @@ protocols::filters::FilterOP TaskAwareAlaScan::fresh_instance() const { return n
 
 // @brief setters
 void TaskAwareAlaScan::task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
+void TaskAwareAlaScan::ddG_task_factory( core::pack::task::TaskFactoryOP ddG_task_factory ) { ddG_task_factory_ = ddG_task_factory; }
+void TaskAwareAlaScan::use_custom_task( bool const uct ) { use_custom_task_ = uct; }
 void TaskAwareAlaScan::jump( core::Size const j ) { jump_ = j; }
+void TaskAwareAlaScan::sym_dof_name( std::string const j ) { sym_dof_name_ = j; }
 void TaskAwareAlaScan::repeats( core::Size const r ) { repeats_ = r; }
 void TaskAwareAlaScan::scorefxn( core::scoring::ScoreFunctionOP const scorefxn ) { scorefxn_ = scorefxn; }
 void TaskAwareAlaScan::repack( bool const repack ) { repack_ = repack; }
@@ -124,7 +140,10 @@ void TaskAwareAlaScan::write2pdb( bool const write ) { write2pdb_ = write; }
 
 // @brief getters
 core::pack::task::TaskFactoryOP TaskAwareAlaScan::task_factory() const { return task_factory_; }
+core::pack::task::TaskFactoryOP TaskAwareAlaScan::ddG_task_factory() const { return ddG_task_factory_; }
+bool TaskAwareAlaScan::use_custom_task() const { return use_custom_task_; }
 core::Size TaskAwareAlaScan::jump() const { return jump_; }
+std::string TaskAwareAlaScan::sym_dof_name() const { return sym_dof_name_; }
 core::Size TaskAwareAlaScan::repeats() const { return repeats_; }
 bool TaskAwareAlaScan::repack() const { return repack_; }
 bool TaskAwareAlaScan::report_diffs() const { return report_diffs_; }
@@ -141,23 +160,31 @@ TaskAwareAlaScan::parse_my_tag(
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & /*pose*/
-){
+)
+{
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	jump( tag->getOption< Size >( "jump", 1 ) );
+	sym_dof_name( tag->getOption< std::string >( "sym_dof_name", "" ) );
 	repeats( tag->getOption< core::Size >( "repeats", 1 ) );
 	std::string const scorefxn_name( tag->getOption< std::string >( "scorefxn", "score12" ));
 	repack( tag->getOption< bool >( "repack", 1 ) );
 	report_diffs( tag->getOption< bool >("report_diffs", 1) );
 	write2pdb( tag->getOption< bool >("write2pdb", 0) );
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data, scorefxn_name );
-  std::string unparsed_exempt_identities = tag->getOption< std::string >( "exempt_identities" );
-  if( unparsed_exempt_identities != "" ){
+	// Handle exempt identities
+  std::string unparsed_exempt_identities = tag->getOption< std::string >( "exempt_identities", "" );
+  if( unparsed_exempt_identities != "" ) {
     utility::vector1< std::string > const ids( utility::string_split( unparsed_exempt_identities , ',' ) );
     exempt_identities_.clear();
-    foreach( std::string const id, ids ){
+    foreach( std::string const id, ids ) {
         exempt_identities_.insert( id );
     }
   }
+	// Handle task_operations for ddG repacking
+	use_custom_task( tag->hasOption("ddG_task_operations") );
+	if ( use_custom_task() ) {
+  	parse_ddG_task_operations( tag, data );
+	}
 }
 
 // @brief Calculate the ddG for an alanine mutation at the specified position
@@ -168,8 +195,13 @@ TaskAwareAlaScan::ddG_for_single_residue( core::pose::Pose const & const_pose, c
     TR<<"WARNING: Non-protein residue "<< resi<<" was requested for ala-scan. Returning 0"<<std::endl;
     return 0.0;
   }
-  core::Size const rb_jump( jump_ );
   core::pose::Pose pose( const_pose );
+  core::Size sym_aware_jump_id = 0;
+  if ( sym_dof_name() != "" ) {
+    sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name() );
+  } else {
+    sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num( pose, jump() );
+  }
 
 	// First, mutate the residue in question to alanine
   utility::vector1< bool > allowed_aas;
@@ -197,20 +229,19 @@ TaskAwareAlaScan::ddG_for_single_residue( core::pose::Pose const & const_pose, c
 	}
   core::pack::pack_rotamers( pose, *scorefxn_, task );
 
-	// Create DdgFilter and ScoreTypeFilter
-  protocols::simple_filters::DdgFilter ddg_filter( 10000, scorefxn_, rb_jump, 1, symmetric );
-  if( repack() )
-    TR << "Energy calculations are carried out with repacking in the bound and unbound states" << std::endl;
-  else
-    TR << "Energy calculations are carried out without repacking in the bound and unbound states" << std::endl;
-  ddg_filter.repack( repack() );
-  protocols::simple_filters::ScoreTypeFilter const energy_filter( scorefxn_, core::scoring::total_score, 0 );
-
-	// Calculate either ddG or total score and return value
-  core::Real accumulate_ddg = 0;
-  for( core::Size r=1; r<=repeats_; ++r )
-    accumulate_ddg += (rb_jump==0 ? energy_filter.compute( pose ) : ddg_filter.compute( pose ) );
-  core::Real const mut_ddg( accumulate_ddg / repeats_ );
+	// Create ddG mover, calculate, and return value
+  protocols::simple_moves::ddG ddG( scorefxn_, sym_aware_jump_id, symmetric );
+  if ( use_custom_task() ) {
+    ddG.use_custom_task( use_custom_task() );
+    ddG.task_factory( ddG_task_factory() );
+  }
+  core::Real average( 0.0 );
+  for( core::Size i=1; i<=repeats(); ++i ) {
+    ddG.calculate( pose );
+    average += ddG.sum_ddG();
+    ddG.report_ddG( TR );
+  }
+  core::Real const mut_ddg( average / (core::Real)repeats() );
 
 	TR << protocols::jd2::current_output_name() << " ala scan ddG for mutation " << const_pose.residue( resi ).name3() << resi << mut_name << " = " << mut_ddg << std::endl;
 
@@ -223,21 +254,32 @@ void
 TaskAwareAlaScan::report( std::ostream & out, core::pose::Pose const & const_pose ) const
 {
 
-	core::Size const rb_jump( jump_ );
+	// Set up, get data
 	core::pose::Pose pose( const_pose );
 	bool symmetric = 0;
-  if (core::pose::symmetry::is_symmetric(pose)) { symmetric = 1; }
+  if ( core::pose::symmetry::is_symmetric(pose) ) symmetric = 1;
+	core::Size sym_aware_jump_id = 0;
+	if ( sym_dof_name() != "" ) {
+		sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name() );
+	} else {
+		sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num( pose, jump() );
+	}
 
-	protocols::simple_filters::DdgFilter const ddg_filter( 10000, scorefxn_, rb_jump, 1, symmetric );
-  protocols::simple_filters::ScoreTypeFilter const energy_filter( scorefxn_, core::scoring::total_score, 0 );
+	// Calculate the ddG of the input pose
+	protocols::simple_moves::ddG ddG( scorefxn_, sym_aware_jump_id, symmetric );
+	if ( use_custom_task() ) {
+		ddG.use_custom_task( use_custom_task() );
+		ddG.task_factory( ddG_task_factory() );
+	}
+	core::Real average( 0.0 );
+	for( core::Size i=1; i<=repeats(); ++i ) {
+		ddG.calculate( pose );
+		average += ddG.sum_ddG();
+		ddG.report_ddG( TR );
+	}
+	core::Real const wt_ddg( average / (core::Real)repeats() );
 
-	// Get the baseline energy/ddG of the input structure
-	core::Real accumulate_ddg( 0 );
-	for( core::Size r=1; r<=repeats_; ++r )
-		accumulate_ddg += (rb_jump==0 ? energy_filter.compute( const_pose ) : ddg_filter.compute( const_pose ) );
-	core::Real const wt_ddg( accumulate_ddg / repeats_ );
-
-	// Apply TaskOperations from xml
+	// Apply TaskOperations from xml to pick which residues you'll be alanine scanning
   core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
   if ( task_factory_ != 0 ) {
     task = task_factory_->create_task_and_apply_taskoperations( pose );
@@ -279,6 +321,34 @@ void TaskAwareAlaScan::write_to_pdb( core::Size const & residue, std::string con
   std::string output_string = filter_name + " " + user_name + ": " + residue_name + ObjexxFCL::string_of(residue) + mut_name + " = " + ObjexxFCL::fmt::F (9,4,ddG);
   job->add_string(output_string);
 
+}
+
+// Adapted from protocols/rosetta_scripts/util.cc
+// Since RosettaScripts can only return one TaskFactory from one set of task_operations,
+// a separate function is needed to provide an auxiliary TaskFactory that can be
+// passed along to the ddG mover to control repacking during ddG calculations.
+/// NOTE -- Do NOT use STMStoredTasks generated by the StoreTaskMover as ddG_task_operations.
+/// These will prevent mutation of the residue in question to alanine.
+void
+TaskAwareAlaScan::parse_ddG_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap const & data )
+{
+
+  core::pack::task::TaskFactoryOP new_task_factory = new core::pack::task::TaskFactory;
+  std::string const t_o_val( tag->getOption<std::string>("ddG_task_operations") );
+  typedef utility::vector1< std::string > StringVec;
+  StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
+  TR<<"Passing the following task operations to ddG mover from "<<tag->getName()<<" called "<<tag->getOption<std::string>( "name", "no_name" )<<":\n";
+  for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
+        t_o_key != end; ++t_o_key ) {
+    if ( data.has( "task_operations", *t_o_key ) ) {
+      new_task_factory->push_back( data.get< core::pack::task::operation::TaskOperation * >( "task_operations", *t_o_key ) );
+      TR<<*t_o_key<<' ';
+    } else {
+      utility_exit_with_message("TaskOperation " + *t_o_key + " not found in DataMap.");
+    }
+  }
+  TR<<std::endl;
+	ddG_task_factory( new_task_factory );
 }
 
 protocols::filters::FilterOP

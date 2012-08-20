@@ -85,8 +85,8 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 
 	Sizes intra_subs1, intra_subs2;
 	if( sym_dof_name_list.size() == 2) {
-	intra_subs1 = get_jump_name_to_subunits(pose,sym_dof_name_list[1]);
-	intra_subs2 = get_jump_name_to_subunits(pose,sym_dof_name_list[2]);
+		intra_subs1 = get_jump_name_to_subunits(pose,sym_dof_name_list[1]);
+		intra_subs2 = get_jump_name_to_subunits(pose,sym_dof_name_list[2]);
 	}
 
 	// Find out which positions are near the inter-subunit interfaces
@@ -95,7 +95,10 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 	vector1<bool> indy_resis = sym_info->independent_residues();
 	Real const contact_dist_sq = contact_dist_ * contact_dist_;
 	Sizes design_pos;
+	vector1<Size> comp_chains;
 	std::string select_interface_pos("select interface_pos, resi ");
+	std::string select_comp1_chains("select comp1_chains, chain ");
+	std::string select_comp2_chains("select comp2_chains, chain ");
 	for(Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++) {
 		if(sym_info->subunit_index(ir) != 1) continue;
 		std::string atom_i = (pose.residue(ir).name3() == "GLY") ? "CA" : "CB";
@@ -108,6 +111,16 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 			//If two component, then check for clashes between all residues in primary subunitA and other building blocks, and all resis in primary subB and other building blocks. 
 			else if( sym_dof_name_list.size() == 2 ) {
 				Sizes const & isubs( get_component_of_residue(pose,ir)=='A'?intra_subs1:intra_subs2);
+				if (find(comp_chains.begin(),comp_chains.end(),pose.chain(jr))==comp_chains.end()) {
+					if (get_component_of_residue(pose,jr)=='A') {
+						select_comp1_chains.append(pose.pdb_info()->chain( jr ) + "+");
+						comp_chains.push_back(pose.chain(jr));
+					} else if (get_component_of_residue(pose,jr)!='A') {
+						TR << pose.pdb_info()->chain( jr ) << "+" ;
+						select_comp2_chains.append(pose.pdb_info()->chain( jr ) + "+");
+						comp_chains.push_back(pose.chain(jr));
+					}
+				}	
 				if(get_component_of_residue(pose,ir)==get_component_of_residue(pose,jr)&&find(isubs.begin(),isubs.end(),sym_info->subunit_index(jr))!=isubs.end()) continue;
 			} else {
 				utility_exit_with_message("BBi currently only works for 1 or 2 component symmetries");
@@ -121,6 +134,8 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 		}
 	}
 	TR << select_interface_pos << std::endl;
+	TR << select_comp1_chains << std::endl;
+	TR << select_comp2_chains << std::endl;
 
 	// Here we filter the residues that we are selecting for design
 	// to get rid of those that make intra-building block interactions

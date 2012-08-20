@@ -597,7 +597,9 @@ void
 			// Repack and minimize using score12
 			// repack(pose, score12, mutalyze_pos);
 			bool min_rb = option[matdes::mutalyze::min_rb]();
-			minimize(pose, score12, mutalyze_pos, false, true, min_rb);
+			//minimize(pose, score12, mutalyze_pos, false, true, min_rb);
+			//repack(pose, score12, mutalyze_pos);
+			//minimize(pose, score12, mutalyze_pos, false, true, min_rb);
 			score12->score(pose);
 
 			// Write the pdb file of the design

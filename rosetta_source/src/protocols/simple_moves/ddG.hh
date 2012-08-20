@@ -26,6 +26,7 @@
 #include <string>
 
 #include <utility/vector1.hh>
+#include <core/pack/task/TaskFactory.hh>
 
 //Auto Headers
 #include <protocols/simple_moves/DesignRepackMover.hh>
@@ -64,6 +65,11 @@ public :
 	protocols::moves::MoverOP relax_mover() const{ return relax_mover_; }
 	void relax_mover( protocols::moves::MoverOP m ){ relax_mover_ = m; }
 
+	void task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
+	core::pack::task::TaskFactoryOP task_factory() const { return task_factory_; }
+	void use_custom_task( bool uct ) { use_custom_task_ = uct; }
+	bool use_custom_task() const { return use_custom_task_; }
+
 private :
 	std::map< ScoreType, Real > bound_energies_;
 	std::map< ScoreType, Real > unbound_energies_;
@@ -83,6 +89,10 @@ private :
 	bool per_residue_ddg_;
 	bool repack_;
 	protocols::moves::MoverOP relax_mover_; //dflt NULL; in the unbound state, relax before taking the energy
+
+	core::pack::task::TaskFactoryOP task_factory_;
+	bool use_custom_task_;
+
 };
 
 } // movers

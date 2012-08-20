@@ -22,6 +22,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/pack/task/TaskFactory.hh>
 
 
 
@@ -41,6 +42,10 @@ public:
 	bool repack() const;
 	void repeats( core::Size const repeats );
 	core::Size repeats() const;
+  void task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
+  core::pack::task::TaskFactoryOP task_factory() const { return task_factory_; }
+  void use_custom_task( bool uct ) { use_custom_task_ = uct; }
+  bool use_custom_task() const { return use_custom_task_; }
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Real compute( core::pose::Pose const & pose ) const;
@@ -52,6 +57,8 @@ private:
 	core::Real ddg_threshold_; //dflt -15
 	core::scoring::ScoreFunctionOP scorefxn_; //dflt NULL/score12 in cstrctr/rosettascripts
 	core::Size rb_jump_; // dflt 1
+  core::pack::task::TaskFactoryOP task_factory_;
+  bool use_custom_task_;
 	utility::vector1<core::Size> chain_ids_;
 	core::Size repeats_;//average of how many repeats? defaults to 1
 	bool symmetry_; //dflt false

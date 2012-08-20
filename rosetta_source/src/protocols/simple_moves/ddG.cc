@@ -42,6 +42,7 @@
 #include <protocols/simple_moves/ddGCreator.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 
 #include <protocols/moves/DataMap.hh>
@@ -102,7 +103,8 @@ ddG::ddG() :
 		symmetry_(false),
 		per_residue_ddg_(false),
 		repack_(false),
-		relax_mover_( NULL )
+		relax_mover_( NULL ),
+		use_custom_task_(false)
 {
 	bound_energies_.clear();
 	unbound_energies_.clear();
@@ -119,7 +121,8 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump/*=1
 		symmetry_(false),
 		per_residue_ddg_(false),
 		repack_(false),
-		relax_mover_( NULL )
+		relax_mover_( NULL ),
+		use_custom_task_(false)
 {
 	scorefxn_ = new core::scoring::ScoreFunction( *scorefxn_in );
 	rb_jump_ = jump;
@@ -143,7 +146,8 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump/*=1
 		symmetry_(false),
 		per_residue_ddg_(false),
 		repack_(false),
-		relax_mover_( NULL )
+		relax_mover_( NULL ),
+		use_custom_task_(false)
 {
 	scorefxn_ = new core::scoring::ScoreFunction( *scorefxn_in );
 	rb_jump_ = jump;
@@ -170,6 +174,8 @@ void ddG::parse_my_tag(
 	per_residue_ddg_ = tag->getOption<bool>("per_residue_ddg",0);
 	repack_ = tag->getOption<bool>("repack",0);
 	repeats_ = tag->getOption<Size>("repeats",1);
+	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
+	use_custom_task( tag->hasOption("task_operations") );
 
 	if(tag->hasOption("chains") && symmetry_)
 	{
@@ -427,7 +433,6 @@ ddG::symm_ddG( pose::Pose const & pose_in )
 	using namespace pack;
 	using namespace protocols::moves;
 
-
 	pose::Pose pose = pose_in;
 
 	assert( core::pose::symmetry::is_symmetric( pose ));
@@ -436,18 +441,24 @@ ddG::symm_ddG( pose::Pose const & pose_in )
 
   std::map< Size, core::conformation::symmetry::SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
 
-	// convert to symetric scorefunction
+	// convert to symmetric scorefunction
 	scorefxn_ = new scoring::symmetry::SymmetricScoreFunction( scorefxn_ );
 
 	//setup_packer_and_movemap( pose );
 	task_ = core::pack::task::TaskFactory::create_packer_task( pose );
-	task_->initialize_from_command_line().or_include_current( true );
-	core::pack::task::operation::RestrictToRepacking rpk;
-	rpk.apply( pose, *task_ );
-	core::pack::task::operation::NoRepackDisulfides nodisulf;
-	nodisulf.apply( pose, *task_ );
-	protocols::toolbox::task_operations::RestrictToInterface rti( rb_jump_, 8.0 /*interface_distance_cutoff_*/ );
-	rti.apply( pose, *task_ );
+	if ( use_custom_task() ) {
+		// Allows the user to define custom tasks that specify which residues
+		// are allowed to repack if RestrictToInterface doesn't work for them.
+		task_ = task_factory_->create_task_and_apply_taskoperations( pose );
+	} else {
+		task_->initialize_from_command_line().or_include_current( true );
+		core::pack::task::operation::RestrictToRepacking rpk;
+		rpk.apply( pose, *task_ );
+		core::pack::task::operation::NoRepackDisulfides nodisulf;
+		nodisulf.apply( pose, *task_ );
+		protocols::toolbox::task_operations::RestrictToInterface rti( rb_jump_, 8.0 /*interface_distance_cutoff_*/ );
+		rti.apply( pose, *task_ );
+	}
 
 	pack::symmetric_pack_rotamers( pose, *scorefxn_, task_ );
 	(*scorefxn_)( pose );
