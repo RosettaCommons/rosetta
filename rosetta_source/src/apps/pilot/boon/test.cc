@@ -98,9 +98,16 @@ int main(int argc, char *argv[])
 	mm->set_bb_true_range(bb_begin, bb_end);
 	mm->set_chi_true_range(chi_begin, chi_end);
 	mm->set_chi(begin2, true);
-	mm->set_bb(begin2, false);
 	mm->set_jump(2, true);
-	mm->set_jump(5, false);
+
+
+// DockMCMProtocol
+	protocols::docking::DockMCMProtocol dmp;
+	std::cout << dmp << std::endl;
+
+	protocols::docking::DockMCMProtocol dmp2;
+	dmp2.set_move_map(mm);
+	std::cout << dmp2 << std::endl;
 
 /*	// setup kT and nmoves
 	Real kT = 1.0;
@@ -180,7 +187,7 @@ int main(int argc, char *argv[])
 	scorefxn->set_weight("fa_rep", num);
 	scorefxn->set_weight("fa_atr", num);*/
 
-	// create an empty loops object
+/*	// create an empty loops object
 	protocols::loops::LoopsOP emptyloops = new protocols::loops::Loops;
 
 	// create and print a loopmover
@@ -200,7 +207,7 @@ int main(int argc, char *argv[])
 	// create an print the new loopmover
 	protocols::loops::loop_mover::refine::LoopMover_Refine_CCD loopmover2 = protocols::loops::loop_mover::refine::LoopMover_Refine_CCD(loops);
 	loopmover2.move_map(mm);
-	std::cout << loopmover2 << std::endl;
+	std::cout << loopmover2 << std::endl;*/
 
 /*	// print empty rtmover
 	protocols::simple_moves::RotamerTrialsMinMover rtmover;

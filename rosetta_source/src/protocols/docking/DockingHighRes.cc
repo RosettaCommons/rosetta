@@ -195,12 +195,12 @@ utility::vector1< core::pack::task::operation::TaskOperationOP > DockingHighRes:
     return tf2_->get_additional_task_operarations();
 }
 
-core::scoring::ScoreFunctionCOP DockingHighRes::scorefxn()
+core::scoring::ScoreFunctionCOP DockingHighRes::scorefxn() const
 {
 	return scorefxn_;
 }
 
-core::scoring::ScoreFunctionCOP DockingHighRes::scorefxn_pack()
+core::scoring::ScoreFunctionCOP DockingHighRes::scorefxn_pack() const
 {
 	return scorefxn_pack_;
 }

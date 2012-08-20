@@ -118,8 +118,8 @@ public:
 	bool rt_min() { return rt_min_; }
 	std::string partners() { return partners_; }
 
-	core::scoring::ScoreFunctionCOP scorefxn();
-	core::scoring::ScoreFunctionCOP scorefxn_pack();
+	core::scoring::ScoreFunctionCOP scorefxn() const;
+	core::scoring::ScoreFunctionCOP scorefxn_pack() const;
 
 protected:
 	protocols::docking::DockTaskFactoryOP tf2();  //JQX: change COP to OP
