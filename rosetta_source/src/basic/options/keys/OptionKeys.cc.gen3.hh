@@ -1,3 +1,8 @@
+namespace RBSegmentRelax { RealVectorOptionKey const default_movement_params( "RBSegmentRelax:default_movement_params" );  }
+namespace RBSegmentRelax { IntegerOptionKey const cst_seqwidth( "RBSegmentRelax:cst_seqwidth" );  }
+namespace edensity { BooleanOptionKey const edensity( "edensity" );  }
+namespace edensity { BooleanOptionKey const debug( "edensity:debug" );  }
+namespace edensity { StringOptionKey const mapfile( "edensity:mapfile" );  }
 namespace edensity { RealOptionKey const mapreso( "edensity:mapreso" );  }
 namespace edensity { RealOptionKey const grid_spacing( "edensity:grid_spacing" );  }
 namespace edensity { RealOptionKey const centroid_density_mass( "edensity:centroid_density_mass" );  }

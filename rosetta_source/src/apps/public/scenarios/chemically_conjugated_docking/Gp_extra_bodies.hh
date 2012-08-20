@@ -31,6 +31,7 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
+#include <basic/options/keys/chemically_conjugated_docking.OptionKeys.gen.hh>
 #include <utility/vector1.hh>
 
 #include <string>
@@ -49,15 +50,13 @@ utility::vector1< core::Size > add_extra_bodies( core::pose::Pose & pose, basic:
 
 	utility::vector1< core::Size > extra_bodies_chains;
 
-	/*  THE OPTION extra_bodies DOES NOT EXIST, WHICH PREVENTS THIS HEADER FROM COMPILING.
-	I'M COMMENTING OUT THIS WHOLE BLOCK BECAUSE IT CAN ONLY CAUSE TROUBLE.
 	//double check if extra bodies exist
-	if (basic::options::option[extra_bodies].user() == true) {
+	if (basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::extra_bodies].user() == true) {
 
 		core::Size const atom_tree_root(pose.fold_tree().root());
 
 		//load in each body into a pose vector
-		utility::vector1< std::string > const extra_bodies_files( basic::options::option[extra_bodies]() );
+		utility::vector1< std::string > const extra_bodies_files( basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::extra_bodies]() );
 		typedef utility::vector1< core::pose::Pose > posevec;
 		posevec extra_bodies_vec(core::import_pose::poses_from_pdbs(extra_bodies_files));
 
@@ -79,15 +78,15 @@ utility::vector1< core::Size > add_extra_bodies( core::pose::Pose & pose, basic:
 		}
 
 	}
-	*/
-		TR << "add_extra_bodies added chains:";
 
-		for (core::Size bodies(1); bodies <= extra_bodies_chains.size(); ++bodies){
-			TR << " " << extra_bodies_chains[bodies];
-		}
-		TR << std::endl;
+	TR << "add_extra_bodies added chains:";
 
-		return extra_bodies_chains;
+	for (core::Size bodies(1); bodies <= extra_bodies_chains.size(); ++bodies){
+		TR << " " << extra_bodies_chains[bodies];
+	}
+	TR << std::endl;
+
+	return extra_bodies_chains;
 }
 
 void pack_extra_bodies(

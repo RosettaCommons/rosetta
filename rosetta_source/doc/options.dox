@@ -8964,6 +8964,77 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
  </li>
+<li><h2>chemically_conjugated_docking</h2>
+<dl>
+<dt><b>-chemically_conjugated_docking</b> \<Boolean\><dt>
+<dd>chemically_conjugated_docking option group</dd><br>
+</dl>
+<dl>
+<dt><b>-UBQpdb</b> \<File\><dt>
+<dd>ubiquitin structure, or the structure for the attached thing that is moving</dd><br>
+<dd>Default: "1UBQ.pdb"</dd><br>
+</dl>
+<dl>
+<dt><b>-E2pdb</b> \<File\><dt>
+<dd>E2 structure, or the structure of the thing that is attached to (has cysteine) and does not move; should be one chain</dd><br>
+<dd>Default: "2OB4.pdb"</dd><br>
+</dl>
+<dl>
+<dt><b>-E2_residue</b> \<Integer\><dt>
+<dd>E2 catalytic cysteine (PDB numbering) (where the ubiquitin gets attached; assumed to be on the first chain of E2pdb</dd><br>
+<dd>Default: 85</dd><br>
+</dl>
+<dl>
+<dt><b>-SASAfilter</b> \<Real\><dt>
+<dd>filter out structures with interface dSASA less than this</dd><br>
+<dd>Default: 1000</dd><br>
+</dl>
+<dl>
+<dt><b>-scorefilter</b> \<Real\><dt>
+<dd>filter out structures with total score greater than this</dd><br>
+<dd>Default: 10</dd><br>
+</dl>
+<dl>
+<dt><b>-publication</b> \<Boolean\><dt>
+<dd>output statistics used in publication.  TURN OFF if not running (original Saha et al.) publication demo.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-n_tail_res</b> \<Integer\><dt>
+<dd>Number of c-terminal ~tail~ residues to make flexible (terminus inclusive)</dd><br>
+<dd>Default: 3</dd><br>
+</dl>
+<dl>
+<dt><b>-two_ubiquitins</b> \<Boolean\><dt>
+<dd>Mind-blowing - use two ubiquitins (assembled for a K48 linkage) to try to examine the transition state.  Don't use this option unless trying to reproduce publication XXXX</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-extra_bodies</b> \<FileVector\><dt>
+<dd>extra structures to add before modeling.  Should be in the coordinate frame of the non-moving partner.  Will not move during modeling.  Will be detected as part of the nonmoving body for repacking purposes.</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-UB_lys</b> \<Integer\><dt>
+<dd>which Lys on the second UB will be conjugated</dd><br>
+<dd>Default: 48</dd><br>
+</dl>
+<dl>
+<dt><b>-pdz</b> \<Boolean\><dt>
+<dd>For the UBQ_Gp_LYX-Cterm executable, if -publication is already on, switch to the PDZ center of mass instead of ubiquitin center of mass for the extra statistics calculations.  Don't use this option unless trying to reproduce publication XXXX</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-GTPasepdb</b> \<File\><dt>
+<dd>GTPase structure, or the structure of the thing that is attached to (has cysteine) and does not move; should be one chain</dd><br>
+<dd>Default: "2OB4.pdb"</dd><br>
+</dl>
+<dl>
+<dt><b>-GTPase_residue</b> \<Integer\><dt>
+<dd>GTPase lysine (PDB numbering) (where the ubiquitin gets attached; assumed to be on the first chain of GTPase_pdb</dd><br>
+<dd>Default: 85</dd><br>
+</dl>
+ </li>
 <li><h2>DenovoProteinDesign</h2>
 <dl>
 <dt><b>-DenovoProteinDesign</b> \<Boolean\><dt>

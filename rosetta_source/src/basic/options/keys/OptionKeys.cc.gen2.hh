@@ -1,9 +1,3 @@
-namespace lh { IntegerOptionKey const mpi_batch_relax_absolute_max( "lh:mpi_batch_relax_absolute_max" );  }
-namespace lh { IntegerOptionKey const mpi_outbound_wu_buffer_size( "lh:mpi_outbound_wu_buffer_size" );  }
-namespace lh { IntegerOptionKey const mpi_loophash_split_size    ( "lh:mpi_loophash_split_size    " );  }
-namespace lh { RealOptionKey const mpi_metropolis_temp( "lh:mpi_metropolis_temp" );  }
-namespace lh { IntegerOptionKey const mpi_save_state_interval( "lh:mpi_save_state_interval" );  }
-namespace lh { BooleanOptionKey const mpi_master_save_score_only( "lh:mpi_master_save_score_only" );  }
 namespace lh { IntegerOptionKey const max_loophash_per_structure( "lh:max_loophash_per_structure" );  }
 namespace lh { RealOptionKey const rms_limit( "lh:rms_limit" );  }
 namespace lh { BooleanOptionKey const centroid_only( "lh:centroid_only" );  }
@@ -589,6 +583,20 @@ namespace AnchoredDesign { namespace testing { BooleanOptionKey const anchor_via
 namespace AnchoredDesign { namespace testing { BooleanOptionKey const delete_interface_native_sidechains( "AnchoredDesign:testing:delete_interface_native_sidechains" );  } }
 namespace AnchoredDesign { namespace testing { FileOptionKey const RMSD_only_this( "AnchoredDesign:testing:RMSD_only_this" );  } }
 namespace AnchoredDesign { namespace testing { BooleanOptionKey const anchor_noise_constraints_mode( "AnchoredDesign:testing:anchor_noise_constraints_mode" );  } }
+namespace chemically_conjugated_docking { BooleanOptionKey const chemically_conjugated_docking( "chemically_conjugated_docking" );  }
+namespace chemically_conjugated_docking { FileOptionKey const UBQpdb( "chemically_conjugated_docking:UBQpdb" );  }
+namespace chemically_conjugated_docking { FileOptionKey const E2pdb( "chemically_conjugated_docking:E2pdb" );  }
+namespace chemically_conjugated_docking { IntegerOptionKey const E2_residue( "chemically_conjugated_docking:E2_residue" );  }
+namespace chemically_conjugated_docking { RealOptionKey const SASAfilter( "chemically_conjugated_docking:SASAfilter" );  }
+namespace chemically_conjugated_docking { RealOptionKey const scorefilter( "chemically_conjugated_docking:scorefilter" );  }
+namespace chemically_conjugated_docking { BooleanOptionKey const publication( "chemically_conjugated_docking:publication" );  }
+namespace chemically_conjugated_docking { IntegerOptionKey const n_tail_res( "chemically_conjugated_docking:n_tail_res" );  }
+namespace chemically_conjugated_docking { BooleanOptionKey const two_ubiquitins( "chemically_conjugated_docking:two_ubiquitins" );  }
+namespace chemically_conjugated_docking { FileVectorOptionKey const extra_bodies( "chemically_conjugated_docking:extra_bodies" );  }
+namespace chemically_conjugated_docking { IntegerOptionKey const UB_lys( "chemically_conjugated_docking:UB_lys" );  }
+namespace chemically_conjugated_docking { BooleanOptionKey const pdz( "chemically_conjugated_docking:pdz" );  }
+namespace chemically_conjugated_docking { FileOptionKey const GTPasepdb( "chemically_conjugated_docking:GTPasepdb" );  }
+namespace chemically_conjugated_docking { IntegerOptionKey const GTPase_residue( "chemically_conjugated_docking:GTPase_residue" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const DenovoProteinDesign( "DenovoProteinDesign" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const redesign_core( "DenovoProteinDesign:redesign_core" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const redesign_loops( "DenovoProteinDesign:redesign_loops" );  }
@@ -616,8 +624,3 @@ namespace RBSegmentRelax { BooleanOptionKey const skip_seqshift_moves( "RBSegmen
 namespace RBSegmentRelax { BooleanOptionKey const skip_rb_moves( "RBSegmentRelax:skip_rb_moves" );  }
 namespace RBSegmentRelax { RealVectorOptionKey const helical_movement_params( "RBSegmentRelax:helical_movement_params" );  }
 namespace RBSegmentRelax { RealVectorOptionKey const strand_movement_params( "RBSegmentRelax:strand_movement_params" );  }
-namespace RBSegmentRelax { RealVectorOptionKey const default_movement_params( "RBSegmentRelax:default_movement_params" );  }
-namespace RBSegmentRelax { IntegerOptionKey const cst_seqwidth( "RBSegmentRelax:cst_seqwidth" );  }
-namespace edensity { BooleanOptionKey const edensity( "edensity" );  }
-namespace edensity { BooleanOptionKey const debug( "edensity:debug" );  }
-namespace edensity { StringOptionKey const mapfile( "edensity:mapfile" );  }

@@ -12,6 +12,7 @@
 /// @author Steven Lewis
 
 // Unit Headers
+#include <apps/public/scenarios/chemically_conjugated_docking/Gp_extra_bodies.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -97,21 +98,7 @@
 #include <basic/options/keys/AnchoredDesign.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
-
-//local options
-basic::options::FileOptionKey const UBQpdb("UBQpdb");
-basic::options::FileOptionKey const E2pdb("E2pdb");
-basic::options::IntegerOptionKey const E2_residue("E2_residue");
-basic::options::RealOptionKey const SASAfilter("SASAfilter");
-basic::options::RealOptionKey const scorefilter("scorefilter");
-basic::options::BooleanOptionKey const publication("publication");
-basic::options::IntegerOptionKey const n_tail_res("n_tail_res");
-basic::options::BooleanOptionKey const two_ubiquitins("two_ubiquitins");
-basic::options::FileVectorOptionKey const extra_bodies( "extra_bodies" );
-basic::options::IntegerOptionKey const UB_lys("UB_lys");
-
-//I know this is illegal; this is included here to be after the option key definitions, so that extra_bodies will be in scope for the code in this header
-#include <apps/public/scenarios/chemically_conjugated_docking/Gp_extra_bodies.hh>
+#include <basic/options/keys/chemically_conjugated_docking.OptionKeys.gen.hh>
 
 //tracers
 using basic::Error;
@@ -165,7 +152,7 @@ public:
 
 		IAM_->set_use_centroid_dG(false);
 
-		two_ubiquitins_ = basic::options::option[ two_ubiquitins ].value();
+		two_ubiquitins_ = basic::options::option[ basic::options::OptionKeys::chemically_conjugated_docking::two_ubiquitins ].value();
 	}
 
 	///@brief init_on_new_input system allows for initializing these details the first time apply() is called.  the job distributor will reinitialize the whole mover when the input changes (a freshly constructed mover, which will re-run this on first apply().
@@ -185,11 +172,11 @@ public:
 
 		//read poses
 		core::pose::Pose E2;
-		core::import_pose::pose_from_pdb( E2, basic::options::option[E2pdb].value() );
+		core::import_pose::pose_from_pdb( E2, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::E2pdb].value() );
 		core::Size const E2length = E2.total_residue();
 
 		core::pose::Pose UBQ;
-		core::import_pose::pose_from_pdb( UBQ, basic::options::option[UBQpdb].value() );
+		core::import_pose::pose_from_pdb( UBQ, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UBQpdb].value() );
 		core::Size const UBQlength = UBQ.total_residue();
 		core::pose::PoseOP UBQ_second;
 		if(two_ubiquitins_) UBQ_second = new core::pose::Pose(UBQ);
@@ -197,7 +184,7 @@ public:
 		//determine cysteine target
 		runtime_assert(E2.conformation().num_chains() == 1);
 		char const E2chain(E2.pdb_info()->chain(1));
-		core::Size const E2_cys(E2.pdb_info()->pdb2pose(E2chain, basic::options::option[E2_residue].value()));
+		core::Size const E2_cys(E2.pdb_info()->pdb2pose(E2chain, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::E2_residue].value()));
 		runtime_assert(E2.residue_type(E2_cys).aa() == core::chemical::aa_cys);
 
 		//determine c_term target on UBQ
@@ -287,7 +274,7 @@ public:
 
 		if(two_ubiquitins_) {
 			//now add in the second ubiquitin - link to thioester C=O from UB_lys
-			core::Size const ub_lys_pos(basic::options::option[UB_lys].value());
+			core::Size const ub_lys_pos(basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UB_lys].value());
 			complex.conformation().append_residue_by_jump(UBQ_second->residue(ub_lys_pos), complexlength, "C", "NZ", true);
 			for( core::Size i(ub_lys_pos+1); i <= UBQlength; ++i) complex.conformation().append_polymer_residue_after_seqpos(UBQ_second->residue(i), complex.total_residue(), false);
 			for( core::Size i(ub_lys_pos-1); i >= 1; --i) complex.conformation().prepend_polymer_residue_before_seqpos(UBQ_second->residue(i), complexlength+1, false);
@@ -339,7 +326,7 @@ public:
 		//occlude ras
 
 		//check if extra bodies exist
-		if (basic::options::option[extra_bodies].user() == true) {
+		if (basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::extra_bodies].user() == true) {
 			extra_bodies_chains_ = apps::public1::scenarios::chemically_conjugated_docking::add_extra_bodies(complex, TR);
 		}
 
@@ -355,7 +342,7 @@ public:
 		//setup MoveMaps
 		//small/shear behave improperly @ the last residue - psi is considered nonexistent and the wrong phis apply.
 		thioester_mm_ = new core::kinematics::MoveMap;
-		for( core::Size i(1), ntailres(basic::options::option[n_tail_res]); i<ntailres; ++i){ //slightly irregular < comparison because C-terminus is functionally zero-indexed
+		for( core::Size i(1), ntailres(basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::n_tail_res]); i<ntailres; ++i){ //slightly irregular < comparison because C-terminus is functionally zero-indexed
 			thioester_mm_->set_bb((complexlength-i), true);
 		}
 		//thioester_mm_->set_bb(complexlength, true);
@@ -389,15 +376,15 @@ public:
 		//prevent repacking at linkage cysteine!
 		PreventRepackingOP prevent(new PreventRepacking);
 		prevent->include_residue(E2_cys);
-		if(two_ubiquitins_) {                                                        	
-			//prevent repacking at the lysine!	   
-			core::Size const ub_lys_pos(basic::options::option[UB_lys].value());
+		if(two_ubiquitins_) {
+			//prevent repacking at the lysine!
+			core::Size const ub_lys_pos(basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UB_lys].value());
 			prevent->include_residue(ub_lys_pos);
  		}
 		task_factory_->push_back(prevent);
 
 		//old way - this is not wrong, but it is inferior to the method below
-		if(basic::options::option[publication].value()){
+		if(basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::publication].value()){
 			std::string const interface_calc("UBQE2_InterfaceNeighborDefinitionCalculator");
 			std::string const neighborhood_calc("UBQE2_NeighborhoodByDistanceCalculator");
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc, new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(2)) );
@@ -429,7 +416,7 @@ public:
 
 			//ubiquitin tail
 			//complexlength = end of ubiquitin in ubq+e2 pose
-			core::Size const tail_begin(complexlength-basic::options::option[n_tail_res]+1); //odd construction accounts for functional zero-indexing of the tail
+			core::Size const tail_begin(complexlength-basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::n_tail_res]+1); //odd construction accounts for functional zero-indexing of the tail
 			regions.push_back(empty); //insert a new set to work with
 			core::Size const tail_index(2);
 			for(core::Size i(complexlength); i>=tail_begin; --i) {
@@ -462,7 +449,7 @@ public:
 			}
 
 			//if extra bodies exist, we are adding them to the first chain set
-			if (basic::options::option[extra_bodies].user() == true) {
+			if (basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::extra_bodies].user() == true) {
 				apps::public1::scenarios::chemically_conjugated_docking::pack_extra_bodies(extra_bodies_chains_, complex, regions[E2_index], TR);
 			}
 
@@ -487,7 +474,7 @@ public:
 
 				TR << "IGNC will compare group " << onestart << "-" << onestop << " with " << twostart << "-" << twostop << std::endl;
 
-				// if (basic::options::option[extra_bodies].user() == true) {
+				// if (basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::extra_bodies].user() == true) {
 				// 	TR.Error << "upcoming debug me non-contiguous set errors are not really errors if using extra bodies" << std::endl;
 				// }
 
@@ -504,7 +491,7 @@ public:
 
 			}
 
-			if (basic::options::option[extra_bodies].user() == true) {
+			if (basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::extra_bodies].user() == true) {
 				TR << "Those group labels do not take the piling of extra bodies into the first nonmoving group into account" << std::endl;
 			}
 
@@ -525,7 +512,7 @@ public:
 		}
 
 		//calculator for number of neighbors for I44
-		if ( basic::options::option[publication].value() ) {
+		if ( basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::publication].value() ) {
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( "I44neighbors", new protocols::toolbox::pose_metric_calculators::NeighborsByDistanceCalculator( 198 ) );
 		}
 
@@ -748,14 +735,14 @@ public:
 
 		//Filter on total score
 		core::Real const score((*fullatom_scorefunction_)(pose));
-		if( score > basic::options::option[scorefilter].value() ){
+		if( score > basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::scorefilter].value() ){
 			set_last_move_status(protocols::moves::FAIL_RETRY);
 			TR << "total score filter failed; score " << score << std::endl;
 			return;
 		}
 
 		//these interface analyses are less interpretable in the three-body case
-		if(!two_ubiquitins_ && !basic::options::option[extra_bodies].user()) {
+		if(!two_ubiquitins_ && !basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::extra_bodies].user()) {
 
 			//filter on interface SASA - requires some hacking to break up thioester
 			core::pose::Pose copy(pose);
@@ -774,7 +761,7 @@ public:
 			//Filter on SASA
 			basic::MetricValue< core::Real > mv_delta_sasa;
 			copy.metric(InterfaceSasaDefinition_, "delta_sasa", mv_delta_sasa);
-			if(mv_delta_sasa.value() < basic::options::option[SASAfilter].value()){
+			if(mv_delta_sasa.value() < basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::SASAfilter].value()){
 				set_last_move_status(protocols::moves::FAIL_RETRY);
 				TR << "interface SASA filter failed; SASA " << mv_delta_sasa.value() << std::endl;
 				return;
@@ -794,7 +781,7 @@ public:
 		job_me->add_string_real_pair("Cterm_psi_SG-C-CA-N", degrees(pose.atom_tree().torsion_angle(atomIDs[4], atomIDs[5], atomIDs[6], atomIDs[7])));
 		job_me->add_string_real_pair("Cterm_phi_C-CA-N-C", degrees(pose.atom_tree().torsion_angle(atomIDs[5], atomIDs[6], atomIDs[7], atomIDs[8])));
 
-		if ( basic::options::option[ publication ].value()) {
+		if ( basic::options::option[ basic::options::OptionKeys::chemically_conjugated_docking::publication ].value()) {
 			//I44 neighbors
 			basic::MetricValue< core::Size > I44numn;
 			pose.metric("I44neighbors", "num_neighbors", I44numn);
@@ -856,18 +843,6 @@ typedef utility::pointer::owning_ptr< UBQ_E2Mover > UBQ_E2MoverOP;
 int main( int argc, char* argv[] )
 {
 
-	using basic::options::option;
-	using namespace basic::options::OptionKeys;
- 	option.add( UBQpdb, "ubiquitin structure" ).def("1UBQ.pdb");
- 	option.add( E2pdb, "E2 structure" ).def("2OB4.pdb");
- 	option.add( E2_residue, "E2 catalytic cysteine (PDB numbering)").def(85);
-	option.add( SASAfilter, "filter out interface dSASA less than this").def(1000);
-	option.add( scorefilter, "filter out total score greater than this").def(10);
-	option.add( publication, "output statistics used in publication.  TURN OFF if not running (original Saha et al.) publication demo.").def(false);
-	option.add( n_tail_res, "Number of c-terminal \"tail\" residues to make flexible (terminus inclusive)").def(3);
-	option.add( two_ubiquitins, "Mind-blowing - use two ubiquitins (assembled for a K48 linkage) to try to examine the transition state.  Don't use this option unless trying to reproduce publication XXXX").def(false);
-	option.add( extra_bodies, "extra structures to add before modeling.  Should be in the coordinate frame of the non-moving partner.  Will not move during modeling.  Will be detected as part of the nonmoving body for repacking purposes.").def("");
-	option.add( UB_lys, "which Lys on the second UB will be conjugated").def(48);
 	//initialize options
 	devel::init(argc, argv);
 	basic::prof_reset();
@@ -875,7 +850,7 @@ int main( int argc, char* argv[] )
 	if(basic::options::option[ basic::options::OptionKeys::in::file::s ].active()
 		|| basic::options::option[ basic::options::OptionKeys::in::file::l ].active()
 		|| basic::options::option[ basic::options::OptionKeys::in::file::silent ].active())
-		utility_exit_with_message("do not use an input PDB with UBQ_E2 (program uses internally)");
+		utility_exit_with_message("do not use an input PDB with this protocol (program uses internally); use -UBQpdb and -E2pdb instead");
 
 	protocols::jd2::JobDistributor::get_instance()->go(new UBQ_E2Mover);
 

@@ -1,20 +1,22 @@
-#you will define your own database path of course
-#-database /ifs1/home/smlewis/minirosetta_database/
+#-database /home/smlewis/git_from_andrew/rosetta/rosetta_database 
+#-extra_res_fa /home/smlewis/git_from_andrew/rosetta/rosetta_database/chemical/residue_type_sets/fa_standard/residue_types/sidechain_conjugation/CYX.params
 
-#extra_res_fa for CYX residue critical, or else CYX residue type will not be present and cysteine linkage is impossible.  This is needed for UBQ_E2_thioester and UBQ_Gp_CYX-Cterm.  The LYX residue is needed for UBQ_Gp_LYX-Cterm.  Of course the actual paths here will vary based on where your database is...  
-#-extra_res_fa /scratch/smlewis/minirosetta_database/chemical/residue_type_sets/fa_standard/residue_types/sidechain_conjugation/CYX.params /scratch/smlewis/minirosetta_database/chemical/residue_type_sets/fa_standard/residue_types/sidechain_conjugation/LYX.params
+#-mpi_tracer_to_file proc
+#-mpi_work_partition_job_distributor
+
+-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer protein_cutpoint_upper protein_cutpoint_lower VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm
+
+-corrections::score::score12prime
 
 #this is the structure whose C-terminus (or C-terminal cysteine) will be attached to the other structure; this is the one that moves
--chemically_conjugated_docking:UBQpdb 1UBQ.pdb.gz
+-chemically_conjugated_docking:UBQpdb 1UBQ_repacked.pdb.gz
 #this is the structrue which will have the other structure attached to it mid-chain via a sidechain
--chemically_conjugated_docking:E2pdb 2OB4_trimmed.pdb.gz
+-chemically_conjugated_docking:E2pdb cdc34_hopefulloop.pdb.gz
 #this is the resid (rosetta numbering from 1, not PDB numbering) of the position which gets altered to accept a bond from the added second protein
 -chemically_conjugated_docking:E2_residue 85
 
--nstruct 1
-
 #in production runs, set GOOD values.  Here, it is set to bad values, because it won't find a good conformation in a reasonable amount of time for the integration test.
--chemically_conjugated_docking:scorefilter 5000
+-chemically_conjugated_docking:scorefilter 2000
 -chemically_conjugated_docking:SASAfilter 0
 
 #plausible good values.  Ideally run a test of 100 structures and set these equal to the best of those 100
@@ -24,10 +26,6 @@
 #used in production runs
 #-AnchoredDesign::refine_repack_cycles 100
 #-AnchoredDesign::refine_cycles 20000
-
-#short cycles for the test
--AnchoredDesign::refine_repack_cycles 50
--AnchoredDesign::refine_cycles 100
 
 #minimizer type.  I don't know which is best
 -run::min_type dfpmin_armijo
@@ -59,14 +57,19 @@
 #muted tracers - ignore if you please
 -mute core.pack.task protocols.toolbox.PoseMetricCalculators.NeighborsByDistanceCalculator core.util.prof
 
--cst_fa_file publication.cst
--cst_fa_weight 50
+#-cst_fa_file constraints.cst.gz
+#-cst_fa_weight 50
 
 #activate only for the publication case
--chemically_conjugated_docking:publication true
+-chemically_conjugated_docking:publication false
 
 #activate only for two-ubiquitins (catalytic model)
--chemically_conjugated_docking:two_ubiquitins false
+-chemically_conjugated_docking:two_ubiquitins true
 
-#number of moving C-terminal tail residues on attached protein (ubiquitin)
--chemically_conjugated_docking:n_tail_res 3
+#-loops::loop_file loop_file
+
+#short cycles for the test
+-AnchoredDesign::refine_repack_cycles 50
+-AnchoredDesign::refine_cycles 10
+-nstruct 1
+-chemically_conjugated_docking:scorefilter 10000000

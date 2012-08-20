@@ -3779,7 +3779,25 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 								 Option( 'RMSD_only_this', 'File', desc='Perform only RMSD calculations without modifying input.  Only used for re-running metrics during benchmarking/debugging.'),
 								 Option( 'anchor_noise_constraints_mode', 'Boolean', desc='Hold the anchor loosely (via constraints), not rigidly.  Automatically generate the constraints from the starting pose.  Mildly randomize the anchor\'s placement before modeling (up to 1 angstrom in x,y,z from initial placement.)  Only compatible with single-residue anchors.  Used to meet a reviewer\'s commentary.', default = 'false'),
 							 ),
-  ),
+  ), #closes option group AnchoredDesign
+ Option_Group( 'chemically_conjugated_docking',
+							 #UBQ_E2_thioester AND shared group
+							 Option( 'UBQpdb', 'File', desc='ubiquitin structure, or the structure for the attached thing that is moving', default='1UBQ.pdb'),
+							 Option( 'E2pdb', 'File', desc='E2 structure, or the structure of the thing that is attached to (has cysteine) and does not move; should be one chain', default='2OB4.pdb'),
+							 Option( 'E2_residue', 'Integer', desc='E2 catalytic cysteine (PDB numbering) (where the ubiquitin gets attached; assumed to be on the first chain of E2pdb', default='85'),
+							 Option( 'SASAfilter', 'Real', desc='filter out structures with interface dSASA less than this', default='1000'),
+							 Option( 'scorefilter', 'Real', desc='filter out structures with total score greater than this', default='10'),
+							 Option( 'publication', 'Boolean', desc='output statistics used in publication.  TURN OFF if not running (original Saha et al.) publication demo.', default='false'),
+							 Option( 'n_tail_res', 'Integer', desc='Number of c-terminal ~tail~ residues to make flexible (terminus inclusive)', default='3'),
+							 Option( 'two_ubiquitins', 'Boolean', desc='Mind-blowing - use two ubiquitins (assembled for a K48 linkage) to try to examine the transition state.  Don\'t use this option unless trying to reproduce publication XXXX', default='false'),
+							 Option( 'extra_bodies', 'FileVector', desc='extra structures to add before modeling.  Should be in the coordinate frame of the non-moving partner.  Will not move during modeling.  Will be detected as part of the nonmoving body for repacking purposes.', default=''),
+							 Option( 'UB_lys', 'Integer', desc='which Lys on the second UB will be conjugated', default='48'),
+							 #UBQ_Gp_LYX-Cterm and UBQ_Gp_CYD-CYD group
+							 Option( 'pdz', 'Boolean', desc='For the UBQ_Gp_LYX-Cterm executable, if -publication is already on, switch to the PDZ center of mass instead of ubiquitin center of mass for the extra statistics calculations.  Don\'t use this option unless trying to reproduce publication XXXX', default='false'),
+							 Option( 'GTPasepdb', 'File', desc='GTPase structure, or the structure of the thing that is attached to (has cysteine) and does not move; should be one chain', default='2OB4.pdb'),
+							 Option( 'GTPase_residue', 'Integer', desc='GTPase lysine (PDB numbering) (where the ubiquitin gets attached; assumed to be on the first chain of GTPase_pdb', default='85'),
+							 ), #closes option group chemically_conjugated_docking
+
  Option_Group( 'DenovoProteinDesign',
                 Option( 'redesign_core', 'Boolean', desc='redesign core of pdb', default='false'),
 								Option( 'redesign_loops', 'Boolean', desc='redesign loops of pdb', default='false'),

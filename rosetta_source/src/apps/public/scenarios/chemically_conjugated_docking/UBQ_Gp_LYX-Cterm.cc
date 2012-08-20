@@ -13,6 +13,7 @@
 
 // Unit Headers
 #include <apps/public/scenarios/chemically_conjugated_docking/Gp_quantification_metrics.hh>
+#include <apps/public/scenarios/chemically_conjugated_docking/Gp_extra_bodies.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -102,20 +103,6 @@
 //Auto Headers
 #include <core/kinematics/AtomTree.hh>
 
-//local options
-basic::options::FileOptionKey const UBQpdb("UBQpdb");
-basic::options::FileOptionKey const GTPasepdb("GTPasepdb");
-basic::options::IntegerOptionKey const GTPase_residue("GTPase_residue");
-basic::options::RealOptionKey const SASAfilter("SASAfilter");
-basic::options::RealOptionKey const scorefilter("scorefilter");
-basic::options::IntegerOptionKey const n_tail_res("n_tail_res");
-basic::options::BooleanOptionKey const publication("publication");
-basic::options::FileVectorOptionKey const extra_bodies( "extra_bodies" );
-basic::options::BooleanOptionKey const pdz("pdz");
-
-//I know this is illegal; this is included here to be after the option key definitions, so that extra_bodies will be in scope for the code in this header
-#include <apps/public/scenarios/chemically_conjugated_docking/Gp_extra_bodies.hh>
-
 //tracers
 using basic::Error;
 using basic::Warning;
@@ -168,17 +155,17 @@ public:
 
 		//read poses
 		core::pose::Pose GTPase;
-		core::import_pose::pose_from_pdb( GTPase, basic::options::option[GTPasepdb].value() );
+		core::import_pose::pose_from_pdb( GTPase, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::GTPasepdb].value() );
 		core::Size const GTPaselength = GTPase.total_residue();
 
 		core::pose::Pose UBQ;
-		core::import_pose::pose_from_pdb( UBQ, basic::options::option[UBQpdb].value() );
+		core::import_pose::pose_from_pdb( UBQ, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UBQpdb].value() );
 		core::Size const UBQlength = UBQ.total_residue();
 
 		//determine cysteine target
 		runtime_assert(GTPase.conformation().num_chains() == 1);
 		char const GTPasechain(GTPase.pdb_info()->chain(1));
-		GTPase_lys_ = GTPase.pdb_info()->pdb2pose(GTPasechain, basic::options::option[GTPase_residue].value());
+		GTPase_lys_ = GTPase.pdb_info()->pdb2pose(GTPasechain, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::GTPase_residue].value());
 		//runtime_assert(GTPase.residue_type(GTPase_lys_).aa() == core::chemical::aa_lys);
 
 		//determine c_term target on UBQ
@@ -272,7 +259,7 @@ public:
 		//occlude ras
 
 		//check if extra bodies exist
-		if (basic::options::option[extra_bodies].user() == true) {
+		if (basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::extra_bodies].user() == true) {
 			extra_bodies_chains_ = apps::public1::scenarios::chemically_conjugated_docking::add_extra_bodies(complex, TR);
 		}
 
@@ -288,7 +275,7 @@ public:
 		//setup MoveMaps
 		//small/shear behave improperly @ the last residue - psi is considered nonexistent and the wrong phis apply.
 		amide_mm_ = new core::kinematics::MoveMap;
-		for( core::Size i(1), ntailres(basic::options::option[n_tail_res]); i<ntailres; ++i){ //slightly irregular < comparison because C-terminus is functionally zero-indexed
+		for( core::Size i(1), ntailres(basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::n_tail_res]); i<ntailres; ++i){ //slightly irregular < comparison because C-terminus is functionally zero-indexed
 			amide_mm_->set_bb((complexlength-i), true);
 		}
 		//amide_mm_->set_bb(complexlength, true);
@@ -356,7 +343,7 @@ public:
 
 			//ubiquitin tail
 			//complexlength = end of ubiquitin in ubq+e2 pose
-			core::Size const tail_begin(complexlength-basic::options::option[n_tail_res]+1); //odd construction accounts for functional zero-indexing of the tail
+			core::Size const tail_begin(complexlength-basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::n_tail_res]+1); //odd construction accounts for functional zero-indexing of the tail
 			regions.push_back(empty); //insert a new set to work with
 			core::Size const tail_index(2);
 			for(core::Size i(complexlength); i>=tail_begin; --i) {
@@ -377,7 +364,7 @@ public:
 			}
 
 			//if extra bodies exist, we are adding them to the first chain set
-			if (basic::options::option[extra_bodies].user() == true) {
+			if (basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::extra_bodies].user() == true) {
 				apps::public1::scenarios::chemically_conjugated_docking::pack_extra_bodies(extra_bodies_chains_, complex, regions[E2_index], TR);
 			}
 
@@ -402,7 +389,7 @@ public:
 
 				TR << "IGNC will compare group " << onestart << "-" << onestop << " with " << twostart << "-" << twostop << std::endl;
 
-				// if (basic::options::option[extra_bodies].user() == true) {
+				// if (basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::extra_bodies].user() == true) {
 				// 	TR.Error << "upcoming debug me non-contiguous set errors are not really errors if using extra bodies" << std::endl;
 				// }
 
@@ -419,7 +406,7 @@ public:
 
 			}
 
-			if (basic::options::option[extra_bodies].user() == true) {
+			if (basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::extra_bodies].user() == true) {
 				TR << "Those group labels do not take the piling of extra bodies into the first nonmoving group into account" << std::endl;
 			}
 
@@ -632,14 +619,14 @@ public:
 
 		//Filter on total score
 		core::Real const score((*fullatom_scorefunction_)(pose));
-		if( score > basic::options::option[scorefilter].value() ){
+		if( score > basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::scorefilter].value() ){
 			set_last_move_status(protocols::moves::FAIL_RETRY);
 			TR << "total score filter failed; score " << score << std::endl;
 			return;
 		}
 
 		//these interface analyses are less interpretable in the three-body case
-		if(!basic::options::option[extra_bodies].user()) {
+		if(!basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::extra_bodies].user()) {
 
 			//filter on interface SASA - requires some hacking to break up isopeptide
 			core::pose::Pose copy(pose);
@@ -658,7 +645,7 @@ public:
 			//Filter on SASA
 			basic::MetricValue< core::Real > mv_delta_sasa;
 			copy.metric(InterfaceSasaDefinition_, "delta_sasa", mv_delta_sasa);
-			if(mv_delta_sasa.value() < basic::options::option[SASAfilter].value()){
+			if(mv_delta_sasa.value() < basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::SASAfilter].value()){
 				set_last_move_status(protocols::moves::FAIL_RETRY);
 				TR << "interface SASA filter failed; SASA " << mv_delta_sasa.value() << std::endl;
 				return;
@@ -678,8 +665,8 @@ public:
 		job_me->add_string_real_pair("glycine_phi_C-CA-N-C", degrees(pose.atom_tree().torsion_angle(atomIDs[5], atomIDs[6], atomIDs[7], atomIDs[8])));
 
 		set_last_move_status(protocols::moves::MS_SUCCESS);
-		if(basic::options::option[publication].value()){
-			apps::public1::scenarios::chemically_conjugated_docking::create_extra_output(pose, TR, !basic::options::option[pdz].value(), GTPase_lys_);
+		if(basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::publication].value()){
+			apps::public1::scenarios::chemically_conjugated_docking::create_extra_output(pose, TR, !basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::pdz].value(), GTPase_lys_);
 		}
 		return;
 	}
@@ -732,19 +719,6 @@ typedef utility::pointer::owning_ptr< UBQ_GTPaseMover > UBQ_GTPaseMoverOP;
 
 int main( int argc, char* argv[] )
 {
-
-	using basic::options::option;
-	using namespace basic::options::OptionKeys;
- 	option.add( UBQpdb, "ubiquitin structure" ).def("1UBQ.pdb");
- 	option.add( GTPasepdb, "GTPase structure" ).def("2OB4.pdb");
- 	option.add( GTPase_residue, "GTPase lysine (PDB numbering)").def(85);
-	option.add( SASAfilter, "filter out interface dSASA less than this").def(10);
-	option.add( scorefilter, "filter out total score greater than this").def(1000);
-	option.add( n_tail_res, "Number of c-terminal \"tail\" residues to make flexible (terminus inclusive)").def(3);
-	option.add( publication, "output statistics used in publication.  TURN OFF if not running publication demo.").def(false);
-	option.add( extra_bodies, "extra structures to add before modeling.  Should be in the coordinate frame of the non-moving partner.  Will not move during modeling.  Will be detected as part of the nonmoving body for repacking purposes.").def("");
-	option.add( pdz, "use PDZ center of mass, not ubiquitin center of mass").def(false);
-
 	//initialize options
 	devel::init(argc, argv);
 	basic::prof_reset();
@@ -752,7 +726,7 @@ int main( int argc, char* argv[] )
 	if(basic::options::option[ basic::options::OptionKeys::in::file::s ].active()
 		|| basic::options::option[ basic::options::OptionKeys::in::file::l ].active()
 		|| basic::options::option[ basic::options::OptionKeys::in::file::silent ].active())
-		utility_exit_with_message("do not use an input PDB with UBQ_GTPase (program uses internally)");
+		utility_exit_with_message("do not use an input PDB with this protocol (program uses internally); use -UBQpdb and -GTPase_pdb instead");
 
 	protocols::jd2::JobDistributor::get_instance()->go(new UBQ_GTPaseMover);
 

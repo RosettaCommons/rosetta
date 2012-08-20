@@ -68,6 +68,7 @@
 #include <basic/options/keys/flxbb.OptionKeys.gen.hh>
 #include <basic/options/keys/rescore.OptionKeys.gen.hh>
 #include <basic/options/keys/sicdock.OptionKeys.gen.hh>
+#include <basic/options/keys/chemically_conjugated_docking.OptionKeys.gen.hh>
 #include <basic/options/keys/gpu.OptionKeys.gen.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 #include <basic/options/keys/murphp.OptionKeys.gen.hh>

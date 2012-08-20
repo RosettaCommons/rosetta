@@ -626,12 +626,12 @@ option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g.
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
 option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
-
-}
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
+option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::seq_sep_stages, "give vector with sequence_separation after stage1, stage3 and stage4" ).def(0);
-option.add( basic::options::OptionKeys::fold_cst::reramp_cst_cycles, "in stage2 do xxx cycles where atom_pair_constraint is ramped up" ).def(0);
+
+}
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::reramp_cst_cycles, "in stage2 do xxx cycles where atom_pair_constraint is ramped up" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::reramp_start_cstweight, "drop cst_weight to this value and ramp to 1.0 in stage2 -- needs reramp_cst_cycles > 0" ).def(0.01);
 option.add( basic::options::OptionKeys::fold_cst::reramp_iterations, "do X loops of annealing cycles" ).def(1);
 option.add( basic::options::OptionKeys::fold_cst::skip_on_noviolation_in_stage1, "if constraints report no violations --- skip cycles" ).def(false);
@@ -1251,15 +1251,15 @@ option.add( basic::options::OptionKeys::lh::expire_after_rounds, "If set to > 0 
 option.add( basic::options::OptionKeys::lh::mpi_resume, "Prefix (Ident string) for resuming a previous job!" );
 option.add( basic::options::OptionKeys::lh::mpi_feedback, "No description" ).legal("no").legal("add_n_limit").legal("add_n_replace").legal("single_replace").legal("single_replace_rounds").def("no");
 option.add( basic::options::OptionKeys::lh::mpi_batch_relax_chunks, "No description" ).def(100);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::mpi_batch_relax_absolute_max, "No description" ).def(300);
+option.add( basic::options::OptionKeys::lh::mpi_batch_relax_absolute_max, "No description" ).def(300);
 option.add( basic::options::OptionKeys::lh::mpi_outbound_wu_buffer_size, "No description" ).def(60);
 option.add( basic::options::OptionKeys::lh::mpi_loophash_split_size    , "No description" ).def(50);
 option.add( basic::options::OptionKeys::lh::mpi_metropolis_temp, "No description" ).def(1000000.0);
 option.add( basic::options::OptionKeys::lh::mpi_save_state_interval, "No description" ).def(1200);
 option.add( basic::options::OptionKeys::lh::mpi_master_save_score_only, "No description" ).def(true);
-option.add( basic::options::OptionKeys::lh::max_loophash_per_structure, "No description" ).def(1);
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_loophash_per_structure, "No description" ).def(1);
 option.add( basic::options::OptionKeys::lh::rms_limit, "How to deal with returned relaxed structures" ).def(2.0);
 option.add( basic::options::OptionKeys::lh::centroid_only, "false" ).def(false);
 option.add( basic::options::OptionKeys::lh::write_centroid_structs, "Output raw loophashed decoys as well as relaxed ones" ).def(false);
@@ -1844,6 +1844,20 @@ option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_via_cons
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::delete_interface_native_sidechains, "benchmarking option.  delete input sidechains as prepacking step before running centroid or fullatom phases.  use if also using use_input_sc and doing benchmarking.  use_input_sc is used because of sidechain minimization, not to maintain input sidechains." );
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::RMSD_only_this, "Perform only RMSD calculations without modifying input.  Only used for re-running metrics during benchmarking/debugging." );
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_noise_constraints_mode, "Hold the anchor loosely (via constraints), not rigidly.  Automatically generate the constraints from the starting pose.  Mildly randomize the anchor's placement before modeling (up to 1 angstrom in x,y,z from initial placement.)  Only compatible with single-residue anchors.  Used to meet a reviewer's commentary." ).def(false);
+option.add( basic::options::OptionKeys::chemically_conjugated_docking::chemically_conjugated_docking, "chemically_conjugated_docking option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::chemically_conjugated_docking::UBQpdb, "ubiquitin structure, or the structure for the attached thing that is moving" ).def("1UBQ.pdb");
+option.add( basic::options::OptionKeys::chemically_conjugated_docking::E2pdb, "E2 structure, or the structure of the thing that is attached to (has cysteine) and does not move; should be one chain" ).def("2OB4.pdb");
+option.add( basic::options::OptionKeys::chemically_conjugated_docking::E2_residue, "E2 catalytic cysteine (PDB numbering) (where the ubiquitin gets attached; assumed to be on the first chain of E2pdb" ).def(85);
+option.add( basic::options::OptionKeys::chemically_conjugated_docking::SASAfilter, "filter out structures with interface dSASA less than this" ).def(1000);
+option.add( basic::options::OptionKeys::chemically_conjugated_docking::scorefilter, "filter out structures with total score greater than this" ).def(10);
+option.add( basic::options::OptionKeys::chemically_conjugated_docking::publication, "output statistics used in publication.  TURN OFF if not running (original Saha et al.) publication demo." ).def(false);
+option.add( basic::options::OptionKeys::chemically_conjugated_docking::n_tail_res, "Number of c-terminal ~tail~ residues to make flexible (terminus inclusive)" ).def(3);
+option.add( basic::options::OptionKeys::chemically_conjugated_docking::two_ubiquitins, "Mind-blowing - use two ubiquitins (assembled for a K48 linkage) to try to examine the transition state.  Don't use this option unless trying to reproduce publication XXXX" ).def(false);
+option.add( basic::options::OptionKeys::chemically_conjugated_docking::extra_bodies, "extra structures to add before modeling.  Should be in the coordinate frame of the non-moving partner.  Will not move during modeling.  Will be detected as part of the nonmoving body for repacking purposes." ).def("");
+option.add( basic::options::OptionKeys::chemically_conjugated_docking::UB_lys, "which Lys on the second UB will be conjugated" ).def(48);
+option.add( basic::options::OptionKeys::chemically_conjugated_docking::pdz, "For the UBQ_Gp_LYX-Cterm executable, if -publication is already on, switch to the PDZ center of mass instead of ubiquitin center of mass for the extra statistics calculations.  Don't use this option unless trying to reproduce publication XXXX" ).def(false);
+option.add( basic::options::OptionKeys::chemically_conjugated_docking::GTPasepdb, "GTPase structure, or the structure of the thing that is attached to (has cysteine) and does not move; should be one chain" ).def("2OB4.pdb");
+option.add( basic::options::OptionKeys::chemically_conjugated_docking::GTPase_residue, "GTPase lysine (PDB numbering) (where the ubiquitin gets attached; assumed to be on the first chain of GTPase_pdb" ).def(85);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::DenovoProteinDesign, "DenovoProteinDesign option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_core, "redesign core of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_loops, "redesign loops of pdb" ).def(false);
@@ -1871,14 +1885,14 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "om
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
-option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_seqwidth, "sequence width on constraints" ).def(0);
 option.add( basic::options::OptionKeys::edensity::edensity, "edensity option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::edensity::debug, "No description" ).def(false);
 option.add( basic::options::OptionKeys::edensity::mapfile, "No description" );
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::edensity::mapreso, "No description" ).def(3.0);
+option.add( basic::options::OptionKeys::edensity::mapreso, "No description" ).def(3.0);
 option.add( basic::options::OptionKeys::edensity::grid_spacing, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::centroid_density_mass, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::sliding_window, "No description" ).def(1);

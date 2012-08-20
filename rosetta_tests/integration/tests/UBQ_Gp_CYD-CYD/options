@@ -5,11 +5,11 @@
 #-extra_res_fa /scratch/smlewis/minirosetta_database/chemical/residue_type_sets/fa_standard/residue_types/sidechain_conjugation/LYX.params
 
 #this is the structure whose C-terminus (or C-terminal cysteine) will be attached to the other structure; this is the one that moves
--UBQpdb ../UBQ_Gp_CYD-CYD/1UBQ.pdb.gz
+-chemically_conjugated_docking:UBQpdb ../UBQ_Gp_CYD-CYD/1UBQ.pdb.gz
 #this is the structrue which will have the other structure attached to it mid-chain via a sidechain
--GTPasepdb ../UBQ_Gp_CYD-CYD/5P21_repacked.pdb.gz
+-chemically_conjugated_docking:GTPasepdb ../UBQ_Gp_CYD-CYD/5P21_repacked.pdb.gz
 #this is the resid (rosetta numbering from 1, not PDB numbering) of the position which gets altered to accept a bond from the added second protein
--GTPase_residue 147
+-chemically_conjugated_docking:GTPase_residue 147
 
 -nstruct 1
 
@@ -60,7 +60,7 @@
 -mute core.pack.task protocols.toolbox.PoseMetricCalculators.NeighborsByDistanceCalculator core.util.prof
 
 #used to turn on system-specific calculations used in the original publication - turn off if not running the integration test
--publication true
+-chemically_conjugated_docking:publication true
 
 #number of moving C-terminal tail residues on attached protein (ubiquitin)
--n_tail_res 3
+-chemically_conjugated_docking:n_tail_res 3
