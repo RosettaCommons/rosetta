@@ -229,6 +229,14 @@ std::string ConformerSwitchMover::get_name() const {
 	return ConformerSwitchMoverCreator::mover_name();
 }
 
+std::ostream &operator<< (std::ostream &os, ConformerSwitchMover const &mover)
+{
+	moves::operator<<(os, mover);
+	os << "Temperature:           " << mover.get_temperature() << std::endl <<
+				"Use random conformer?: " << (mover.use_random_conformer() ? "True" : "False") << std::endl;
+	return os;
+}
+
 }  // namespace docking
 
 }  // namespace protocols

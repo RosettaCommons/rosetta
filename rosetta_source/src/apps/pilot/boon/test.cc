@@ -38,7 +38,10 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
-#include <protocols/docking/DockMCMProtocol.hh>
+#include <protocols/docking/ConformerSwitchMover.hh>
+#include <protocols/docking/DockFilters.fwd.hh>
+#include <protocols/docking/DockFilters.hh>
+#include <protocols/docking/DockingEnsemble.hh>
 #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <core/pack/task/TaskFactory.hh>
 
@@ -68,6 +71,9 @@ int main(int argc, char *argv[])
 	//std::cout << "Hello, Rosetta World!" << std::endl;
 	//std::cout << "I just imported my first pose into Rosetta." << std::endl;
 	std::cout << "It has " << test_pose.total_residue() << " total residues." << std::endl;
+
+	protocols::docking::ConformerSwitchMover mover;
+	std::cout << mover << std::endl;
 	
 /*	// setup a movemap object
 	core::kinematics::MoveMapOP mm ( new core::kinematics::MoveMap );
@@ -92,7 +98,7 @@ int main(int argc, char *argv[])
 	// print
 	std::cout << "print MinMover:" << std::endl << minmover << std::endl;*/
 
-// setup a movemap object
+/*// setup a movemap object
 	core::kinematics::MoveMapOP mm ( new core::kinematics::MoveMap );
 	Size bb_begin = 3, bb_end = 6, chi_begin = 5, chi_end = 7, begin2 = 101;
 	mm->set_bb_true_range(bb_begin, bb_end);
@@ -107,7 +113,7 @@ int main(int argc, char *argv[])
 
 	protocols::docking::DockMCMProtocol dmp2;
 	dmp2.set_move_map(mm);
-	std::cout << dmp2 << std::endl;
+	std::cout << dmp2 << std::endl;*/
 
 /*	// setup kT and nmoves
 	Real kT = 1.0;

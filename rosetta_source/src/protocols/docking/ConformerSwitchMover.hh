@@ -76,6 +76,8 @@ public:
 	void set_temperature( core::Real temp_in );
 
 	void set_random_confomer( bool rand ) { random_conformer_ = rand; }
+	core::Real get_temperature() const {return temperature_;}
+	bool use_random_conformer() const {return random_conformer_;}
 
 private:
 
@@ -88,6 +90,7 @@ private:
 	protocols::docking::DockingLowResFilterOP lowres_filter_;
 }; //mover
 
+std::ostream &operator<< (std::ostream &os, ConformerSwitchMover const &mover);
 
 } // docking
 
