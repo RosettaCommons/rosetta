@@ -339,7 +339,7 @@ DockingSlideIntoContact::get_name() const {
 std::ostream &operator<< ( std::ostream &os, DockingSlideIntoContact const &mover )
 {
 	moves::operator<<(os, mover);
-	os << "Jump num: " << mover.get_jump_num() << std::endl;
+	os << "Jump number: " << mover.get_jump_num() << std::endl;
 	return os;
 }
 
@@ -459,7 +459,7 @@ FaDockingSlideIntoContact::get_name() const {
 std::ostream &operator<< ( std::ostream &os, FaDockingSlideIntoContact const &fadock )
 {
 	moves::operator<<(os, fadock);
-	os << "Jump num: " << fadock.get_jump_num() << ", Tolerance: " << fadock.get_tolerance() << std::endl;
+	os << "Jump number: " << fadock.get_jump_num() << "\nTolerance:   " << fadock.get_tolerance() << std::endl;
 	return os;
 }
 

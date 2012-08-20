@@ -284,8 +284,9 @@ void RigidBodyPerturbMover::rot_center( core::Vector const /*rot_center_in*/ )
 std::ostream &operator<< ( std::ostream &os, RigidBodyPerturbMover const &mover )
 {
 	moves::operator<<(os, mover);
-	os << "Magnitude of translational movement: " << mover.get_trans_mag() << std::endl << "Magnitude of rotational movement: " << mover.get_rot_mag() << std::endl;
-	os << "Jump num: " << mover.rb_jump() << std::endl;
+	os << "Jump number:  " << mover.rb_jump() << std::endl;
+	os << "Magnitude of translational movement (deg): " << mover.get_trans_mag() << std::endl << 
+				"Magnitude of rotational movement (deg):    " << mover.get_rot_mag() << std::endl;
 	return os;
 }
 
@@ -504,7 +505,8 @@ RigidBodyRandomizeMover::get_psi() const {
 std::ostream &operator<< ( std::ostream &os, RigidBodyRandomizeMover const &randommover )
 {
 	moves::operator<<(os, randommover);
-	os << "Jump num: " << randommover.rb_jump() << ", Phi angle: " << randommover.get_phi() << ", Psi angle: " << randommover.get_psi() << std::endl;
+	os << "Jump number: " << randommover.rb_jump() << "\nPhi angle:   " << randommover.get_phi() << 
+			"\nPsi angle:   " << randommover.get_psi() << std::endl;
 	return os;
 }
 
@@ -585,7 +587,7 @@ RigidBodySpinMover::get_name() const {
 std::ostream &operator<< ( std::ostream &os, RigidBodySpinMover const &spinmover )
 {
 	moves::operator<<(os, spinmover);
-	os << "Jump num: " << spinmover.rb_jump() << std::endl;
+	os << "Jump number: " << spinmover.rb_jump() << std::endl;
 	return os;
 }
 
@@ -635,7 +637,7 @@ RigidBodyTransMover::get_name() const {
 std::ostream &operator<< ( std::ostream &os, RigidBodyTransMover const &mover )
 {
 	moves::operator<<(os, mover);
-	os << "Jump num: " << mover.rb_jump() << std::endl;
+	os << "Jump number: " << mover.rb_jump() << std::endl;
 	return os;
 }
 

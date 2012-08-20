@@ -327,10 +327,10 @@ public:
 	friend std::ostream &operator<< (std::ostream &os, PyMolMover const &mover)
 	{
 		moves::operator<<(os, mover);
-		os << "Keep history: " << ( ( mover.keep_history_ ) ? ("true") : ("false") ) << std::endl; 
-		os << "Update energy: " << ( ( mover.update_energy_ ) ? ("true") : ("false") ) << std::endl; 
+		os << "Keep history:          " << ( ( mover.keep_history_ ) ? ("True") : ("False") ) << std::endl; 
+		os << "Update energy:         " << ( ( mover.update_energy_ ) ? ("True") : ("False") ) << std::endl; 
 		os << "Last packet sent time: " << mover.last_packet_sent_time_ << std::endl;
-		os << "Update interval: " << mover.update_interval_ << std::endl; 
+		os << "Update interval:       " << mover.update_interval_ << std::endl; 
 
 		return os;
 	}

@@ -51,6 +51,11 @@
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <protocols/moves/PyMolMover.hh>
+#include <protocols/simple_moves/ReturnSidechainMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
+#include <protocols/moves/TrialMover.hh>
+#include <protocols/docking/DockingInitialPerturbation.hh>
 
 int main(int argc, char *argv[])
 {
@@ -63,17 +68,58 @@ int main(int argc, char *argv[])
 
 	// declare variables
 	Pose test_pose;
-	std::string sequence = "ASDFG";
-	core::pose::make_pose_from_sequence(test_pose, sequence, "fa_standard", true);
+	//std::string sequence = "ASDFG";
+	//core::pose::make_pose_from_sequence(test_pose, sequence, "fa_standard", true);
 	// import a test pose
-	//pose_from_pdb(test_pose, "/home/boon/data/test.pdb");
+	pose_from_pdb(test_pose, "/home/boon/data/1YY9.pdb");
 
 	//std::cout << "Hello, Rosetta World!" << std::endl;
 	//std::cout << "I just imported my first pose into Rosetta." << std::endl;
 	std::cout << "It has " << test_pose.total_residue() << " total residues." << std::endl;
 
-	protocols::docking::ConformerSwitchMover mover;
-	std::cout << mover << std::endl;
+	//Reformatting
+		
+	// PyMOL mover
+	protocols::moves::PyMolMover pmm;
+	pmm.update_energy(true);
+	pmm.keep_history(true);
+	std::cout << pmm << std::endl;
+
+	// ReturnSidechainMover
+	protocols::simple_moves::ReturnSidechainMover returnmover = protocols::simple_moves::ReturnSidechainMover(test_pose,10,20) ;
+	std::cout << returnmover << std::endl;
+
+	// RigidBodyPerturbMover
+	protocols::rigid::RigidBodyPerturbMover pmover;
+	std::cout << pmover << std::endl;
+
+	// RigidBodyRandomizeMover
+	protocols::rigid::RigidBodyRandomizeMover rmover;
+	std::cout << rmover << std::endl;
+
+	// RigidBodySpinMover
+	protocols::rigid::RigidBodySpinMover smover (protocols::rigid::RigidBodySpinMover(1));
+	std::cout << smover << std::endl;
+
+	// RigidBodyTransMover
+	int jump_num = 2;
+	protocols::rigid::RigidBodyTransMover mover2 (protocols::rigid::RigidBodyTransMover(test_pose, jump_num));
+	std::cout << mover2 << std::endl;
+
+	// TrialMover
+	protocols::moves::TrialMover trialmover;
+	std::cout << trialmover << std::endl;
+
+	// DockingSlideIntoContact
+	protocols::docking::DockingSlideIntoContact dmover (protocols::docking::DockingSlideIntoContact(2) );
+	std::cout << dmover << std::endl;
+
+	// FaDockingSlideIntoContact
+	protocols::docking::FaDockingSlideIntoContact famover (protocols::docking::FaDockingSlideIntoContact(1) );
+	std::cout << famover << std::endl;
+
+/*	protocols::docking::ConformerSwitchMover mover;
+	std::cout << mover << std::endl;*/
 	
 /*	// setup a movemap object
 	core::kinematics::MoveMapOP mm ( new core::kinematics::MoveMap );

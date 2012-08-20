@@ -269,10 +269,10 @@ std::ostream &operator<< (std::ostream &os, TrialMover const &mover)
 {
 	//moves::operator<<(os, mover); // this line causes unexpected segmentation fault.
 	os << "Mover name: " << mover.get_name() << ", Mover type: " << mover.get_type() << ", Mover current tag: " << mover.get_current_tag() << std::endl <<
-			"Mover being tried: " << mover.mover() << std::endl <<
-			"Number of times the move was accepted: " << mover.num_accepts() << std::endl <<
-			"Acceptance rate: " << mover.stats_.acceptance_rate() << std::endl;
-	os << "MonteCarlo: ";
+			  "Mover being tried:   " << mover.mover() << std::endl <<
+			  "Moves were accepted: " << mover.num_accepts() << " times." << std::endl <<
+			  "Acceptance rate:     " << mover.stats_.acceptance_rate() << std::endl;
+	os << "MonteCarlo:          ";
 	if ( mover.mc_ != 0 ) { os << mover.mc_ << std::endl; }
 	else { os << "none" << std::endl; }
 

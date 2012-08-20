@@ -174,7 +174,8 @@ core::Size ReturnSidechainMover::get_end_res() const {
 std::ostream &operator<< (std::ostream &os, ReturnSidechainMover const &mover)
 {
 	moves::operator<<(os, mover);
-	os << "Range of residues:" << std::endl << "start res: " << mover.get_start_res() << ", end res: " << mover.get_end_res() << std::endl;
+	os << "                    start\tend" << std::endl;
+	os << "Range of residues:  " << mover.get_start_res() << "\t\t" << mover.get_end_res() << std::endl;
 
 	return os;
 }
