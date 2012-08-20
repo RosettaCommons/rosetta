@@ -74,5 +74,15 @@ FileExistFilter::compute(
 	return infile.good();
 }
 
+void FileExistFilter::filename( std::string const f )
+{
+	filename_ = f;
+}
+
+std::string FileExistFilter::filename() const
+{
+	return filename_;
+}
+
 }
 }
