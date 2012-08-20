@@ -182,6 +182,7 @@ sources = {
 	],
 
 	"toolbox/task_operations" : [
+                "LimitAromaChi2Operation",
 		"RestrictOperations",
 		"RestrictNonSurfaceToRepackingOperation",
 		"RestrictToCDRH3Loop",

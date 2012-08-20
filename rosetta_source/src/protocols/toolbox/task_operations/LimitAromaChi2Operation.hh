@@ -103,7 +103,12 @@ public:
 		chi2min_ = r;
 	}
 
-
+	/// @brief include TRP ?
+	void include_trp( bool const b )
+	{
+		include_trp_ = b;
+	}
+	
 private: // data
 
 	/// @brief max chi2 for picking rotamers of YFH
@@ -112,6 +117,9 @@ private: // data
 	/// @brief min chi2 for picking rotamers of YFH
 	Real chi2min_;
 
+	/// @brief include TRP ? ( default false )
+	bool include_trp_;
+	
 };
 
 
@@ -140,6 +148,27 @@ public:
 
 	/// @brief make clone
 	virtual TaskOperationOP clone() const;
+	
+public:
+	
+	
+	/// @brief max chi2 for picking rotamers of YFH
+	Real chi2max() const
+	{
+		return chi2max_;
+	}
+	
+	/// @brief min chi2 for picking rotamers of YFH
+	Real chi2min() const
+	{
+		return chi2min_;
+	}
+	
+	/// @brief include TRP ?
+	bool include_trp() const
+	{
+		return include_trp_;
+	}
 
 
 public:
@@ -156,6 +185,13 @@ public:
 	{
 		chi2min_ = r;
 	}
+	
+	/// @brief include TRP ?
+	void include_trp( bool const b )
+	{
+		include_trp_ = b;
+	}
+
 
 
 public:
@@ -180,6 +216,8 @@ private: // data
 	/// @brief min chi2 for picking rotamers of YFH
 	Real chi2min_;
 
+	/// @brief include TRP ? ( default false )
+	bool include_trp_;
 
 };
 
