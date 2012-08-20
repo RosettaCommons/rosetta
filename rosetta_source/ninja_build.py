@@ -17,26 +17,33 @@ print "Default - run ninja only to build release version without reloading *.src
 print "Options"
 print "remake: Full build process by running make_project.py and cmake too (slower)."
 print "debug:  build debug version instead."
+print "unit: build unit test version."
 print "###################################################################"
 
 #Command line options
 is_debug = False
 is_remake = False
+is_unit = False
 if "remake" in sys.argv :
     is_remake = True
 if "debug" in sys.argv:
     is_debug = True
+if "unit" in sys.argv:
+    is_unit = True
 
 #Check if required files exists
 assert exists("./cmake/make_project.py")
 assert exists("./cmake/build_release/CMakeLists.txt")
 assert exists("./cmake/build_debug/CMakeLists.txt")
+assert exists("./cmake/build_unit/CMakeLists.txt")
 
 os.chdir("./cmake")
 if is_remake :
     subprocess.check_call("./make_project.py all", shell=True)
 
-if is_debug :
+if is_unit:
+    os.chdir("./build_unit")
+elif is_debug :
     os.chdir("./build_debug")
 else :
     os.chdir("./build_release")
@@ -44,6 +51,12 @@ else :
 if is_remake :
     subprocess.check_call("cmake -G Ninja", shell=True)
 
-subprocess.check_call("ninja")
+try:
+    subprocess.check_call("ninja")
+except subprocess.CalledProcessError:
+    print "----------------------------------------------------------------------------------------------------"
+    print "----- Ninja error: Did you not call with the remake option the first time you ran this build? ------"
+    print "----------------------------------------------------------------------------------------------------"
+    raise
 
 print "DONE!...Total time = %f s" % ( time.time() - start_time )

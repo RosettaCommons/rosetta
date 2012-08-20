@@ -11,6 +11,8 @@ sources = {
 	"" : [
 	],
 }
+testinputfiles = [
+	]
 include_path = [ "#external/cxxtest", "#" ]
 library_path = []
 libraries    = [ "ObjexxFCL" ]

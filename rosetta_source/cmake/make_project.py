@@ -29,7 +29,7 @@ def project_callback(project, project_path, project_files):
 			for file in entry[ 1 ]:
 				full_path = file_path + '/' + file
 				split_file = file.split( '.' )
-				extension = split_file.pop()			   
+				extension = split_file.pop()
 
 				if extension == 'cc':
 					tag = ''.join( split_file )
@@ -43,7 +43,7 @@ def project_callback(project, project_path, project_files):
 
 			symlink_var = key + '_symlink'
 			output += 'ADD_CUSTOM_TARGET( %s  ALL)\n' % ( symlink_var )
-			output += 'ADD_CUSTOM_COMMAND( TARGET %s POST_BUILD COMMAND python ../smart_symlink.py ${COMPILER} ${MODE} %s )\n' % ( symlink_var, key ) 
+			output += 'ADD_CUSTOM_COMMAND( TARGET %s POST_BUILD COMMAND python ../smart_symlink.py ${COMPILER} ${MODE} %s )\n' % ( symlink_var, key )
 			output += 'ADD_DEPENDENCIES( %s %s )\n' % ( symlink_var, key )
 			output += 'ADD_DEPENDENCIES( %s BUILD_ROSETTA_LIBS )\n' % ( key )
 			apps_file = key + '.cmake'
@@ -63,8 +63,42 @@ def project_callback(project, project_path, project_files):
 		open('build/' + project + '.cmake', 'w').write(output)
 	print 'done.'
 
+def project_test_callback(test, project_path, test_path, test_files, test_inputs):
+	print 'making test files for test ' + test + ' ...',
+
+	output = ''
+	cmake_headers = []
+	cmake_testfiles = []
+	cmake_testinputs = []
+	cmake_directories = set()
+
+	for dir, files in test_files:
+			cmake_directories.add(dir)
+			cmake_directories.update( [dir + cxx.rsplit('/',1)[0] for (header, cxx, root) in files if cxx is not None and '/' in cxx] )
+			cmake_testfiles.extend( [dir + header[:-3] + ".cc" for (header, cxx, root) in files if root != True and cxx != None] )
+			cmake_headers.extend( [dir + header for (header, cxx, root) in files if root != True and cxx == None] )
+
+	for dir, files in test_inputs:
+			cmake_directories.add(dir)
+			cmake_directories.update( [dir + file.rsplit('/',1)[0] for file in files if '/' in file] )
+			cmake_testinputs.extend( [dir + file for file in files] )
+
+
+	#Make directories alphabetical, so parent directories are created before child directories
+	cmake_directories = list(cmake_directories)
+	cmake_directories.sort()
+
+	output += 'SET(' + test + '_testfiles\n\t' + '\n\t'.join(cmake_testfiles) + '\n)\n\n'
+	output += 'SET(' + test + '_testdirectories\n\t' + '\n\t'.join(cmake_directories) + '\n)\n\n'
+	output += 'SET(' + test + '_testheaders\n\t' + '\n\t'.join(cmake_headers) + '\n)\n\n'
+	output += 'SET(' + test + '_testinputs\n\t' + '\n\t'.join(cmake_testinputs) + '\n)\n\n'
+
+	open(test_path + "test_" + test + '.cmake', 'w').write(output)
+	print 'done.'
 
 update_svn_version()
 
 build_util.project_main(PATH_TO_ROOT + MINI_DIR + "/", sys.argv, project_callback)
+
+build_util.test_main(PATH_TO_ROOT + MINI_DIR + "/", sys.argv, project_test_callback)
 

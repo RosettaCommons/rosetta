@@ -35,6 +35,8 @@ class Tester:
         self.systemLog = ""  # System log - we store all information here
         self.results = {}
         self.jobs = []  # list of spawned process pid's
+        self.platform = None
+        self.testpath = None
 
 
     # print and log given mesage, return message
@@ -66,6 +68,10 @@ class Tester:
 
     # Try to identity plaform by using scons compiliation feature.
     def getPlatformID(self):
+        if Options.CMake:
+            self.testpath = Options.testpath
+            self.log( "Skipping platform identification. Using explicit directory instead: " + self.testpath )
+            return
         self.log( "Identifying platform...\n")
         cmd_str = "./scons.py unit_test_platform_only log=platform"
         if Options.extras:
@@ -81,7 +87,9 @@ class Tester:
             if  len( s.split() ) > 1 and s.split()[0] == 'Platform:':
                 platform = s.split()[1]
                 self.log( "Platform found: " + platform )
-                return platform
+                self.platform = platform
+                self.testpath = "build/test/" + platform
+                return
         sys.exit("run.py is about to crash because it could not use SCons to detect your platform.  The most likely reason for this is that you are running it from the wrong directory - it must be run from the rosetta_source directory, not the rosetta_source/test directory, even though it lives in the latter.")
         return "PlatformWasNotFound!!!"  # <-- That should not reall happend.
 
@@ -122,11 +130,11 @@ class Tester:
         return oi
 
 
-    def runOneLibUnitTests(self, platform, lib, yaml_file, log_file):
+    def runOneLibUnitTests(self, lib, yaml_file, log_file):
         if Options.one  and  ( (lib, Options.one.split(':')[0]) not in self.all_tests_by_lib[lib] ): return
 
         #self.unitTestLog += self.log("-------- %s --------\n" % E)
-        path = "cd build/test/" + platform + " && "
+        path = "cd " + self.testpath + " && "
         mute, unmute  = ' ', ' '
         if Options.mute:   mute   = ' -mute '   + ' '.join(Options.mute)
         if Options.unmute: unmute = ' -unmute ' + ' '.join(Options.unmute)
@@ -160,8 +168,8 @@ class Tester:
         f = open(log_file, 'w');  f.write(output);  f.close()
 
 
-    def runOneSuite(self, platform, lib, suite):
-        path = "cd build/test/" + platform + " && "
+    def runOneSuite(self, lib, suite):
+        path = "cd " + self.testpath + " && "
         mute, unmute  = ' ', ' '
         if Options.mute:   mute   = ' -mute '   + ' '.join(Options.mute)
         if Options.unmute: unmute = ' -unmute ' + ' '.join(Options.unmute)
@@ -169,8 +177,8 @@ class Tester:
         #if self.db_path: exe += " " + self.db_path
         #print "Paths:", path, 'command line:', exe
 
-        log_file = 'build/test/'+ platform + '/' + lib + '.' + suite + '.log'
-        yaml_file = 'build/test/'+ platform + '/' + lib + '.'+ suite + '.yaml'
+        log_file = self.testpath + '/' + lib + '.' + suite + '.log'
+        yaml_file = self.testpath + '/' + lib + '.'+ suite + '.yaml'
 
         if os.path.isfile(yaml_file): os.remove(yaml_file)
         if os.path.isfile(log_file): os.remove(log_file)
@@ -179,7 +187,7 @@ class Tester:
         output = "Running %s:%s unit tests..." % (lib, suite)
         #print output
 
-        timelimit = sys.executable + ' ' +os.path.abspath('test/timelimit.py') + ' 30 '
+        timelimit = sys.executable + ' ' + os.path.abspath('test/timelimit.py') + ' 30 '
         #print "timelimit:", timelimit
 
         command_line = path + ' ' + timelimit + exe + " 1>&2"
@@ -200,7 +208,7 @@ class Tester:
 
     # Run unit test.
     def runUnitTests(self):
-        platform = self.getPlatformID()
+        self.getPlatformID()
         #self.log( "Run unit tests...\n")
         self.unitTestLog = "================================ UnitTest Results ================================\n"
 
@@ -211,28 +219,27 @@ class Tester:
         self.all_tests_by_lib = {}
         for lib in UnitTestExecutable:
             tests = []
-            for suite in commands.getoutput('build/test/'+ platform + '/' + lib + ' _ListAllTests_').split():
+            for suite in commands.getoutput(self.testpath + '/' + lib + ' _ListAllTests_').split():
                 tests.append( (lib, suite) )
 
             self.all_tests.extend( tests )
             self.all_tests_by_lib[lib] = tests
 
-
         if Options.one:  # or Options.jobs < 5:
             for lib in UnitTestExecutable:
-                log_file = 'build/test/'+ platform + '/' + lib + '.log'
-                yaml_file = 'build/test/'+ platform + '/' + lib + '.yaml'
+                log_file = self.testpath + '/' + lib + '.log'
+                yaml_file = self.testpath + '/' + lib + '.yaml'
 
                 logs_yamls[lib] = (log_file, yaml_file)
 
                 if Options.jobs > 1:
                     pid = self.mfork()
                     if not pid:  # we are child process
-                        self.runOneLibUnitTests(platform, lib, yaml_file, log_file)
+                        self.runOneLibUnitTests(lib, yaml_file, log_file)
                         sys.exit(0)
 
                 else:
-                    self.runOneLibUnitTests(platform, lib, yaml_file, log_file)
+                    self.runOneLibUnitTests(lib, yaml_file, log_file)
 
             for p in self.jobs: os.waitpid(p, 0)  # waiting for all child process to termintate...
 
@@ -267,7 +274,7 @@ class Tester:
             for lib, suite in self.all_tests:
                 pid = self.mfork()
                 if not pid:  # we are child process
-                    self.runOneSuite(platform, lib, suite)
+                    self.runOneSuite(lib, suite)
                     sys.exit(0)
 
             for p in self.jobs: os.waitpid(p, 0)  # waiting for all child process to termintate...
@@ -275,8 +282,8 @@ class Tester:
             # Now all tests should be finished, all we have to do is to create a log file and aggegated yaml file to emulate single CPU out run
             all_yaml = {}
             for lib in UnitTestExecutable:
-                log_file = 'build/test/'+ platform + '/' + lib + '.log'
-                yaml_file = 'build/test/'+ platform + '/' + lib + '.yaml'
+                log_file = self.testpath + '/' + lib + '.log'
+                yaml_file = self.testpath + '/' + lib + '.yaml'
 
                 logs_yamls[lib] = (log_file, yaml_file)
 
@@ -284,8 +291,8 @@ class Tester:
                 yaml_file_h = file(yaml_file, 'w')
                 yaml_data = {}
                 for l, suite in self.all_tests_by_lib[lib]:
-                    log_file_h.write( file('build/test/'+ platform + '/' + lib + '.' + suite + '.log').read() )
-                    data = yaml.load( file('build/test/'+ platform + '/' + lib + '.'+ suite + '.yaml').read() )
+                    log_file_h.write( file(self.testpath + '/' + lib + '.' + suite + '.log').read() )
+                    data = yaml.load( file(self.testpath + '/' + lib + '.'+ suite + '.yaml').read() )
                     for k in data:
                         if k in yaml_data: yaml_data[k] = list( set(yaml_data[k] + data[k]) )
                         else: yaml_data[k] = data[k]
@@ -397,6 +404,18 @@ def main(args):
       default='gcc',
       action="store",
       help="Name of the compiler used.",
+    )
+
+    parser.add_option("-C", '--CMake',
+      default=False,
+      action="store_true",
+      help="Was CMake used to build the unit tests? (i.e. obey the --testpath option).",
+    )
+
+    parser.add_option("-T", '--testpath',
+      default="cmake/build_unit/",
+      action="store",
+      help="The relative directory where the unit tests were built into. (default: 'cmake/build_unit/')",
     )
 
     (options, args) = parser.parse_args(args=args[1:])
