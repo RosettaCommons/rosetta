@@ -5,6 +5,7 @@
 -ex2
 -overwrite
 -constraints:cst_file ./inputs/cter_constraint
+-loops:fast
 -loops:max_kic_build_attempts 20
 -antibody::remodel              perturb_kic
 -antibody::snugfit              true
@@ -14,4 +15,3 @@
 -antibody::bad_nter             true
 -antibody::h3_filter            true
 -antibody::h3_filter_tolerance  20
--run:test_cycles

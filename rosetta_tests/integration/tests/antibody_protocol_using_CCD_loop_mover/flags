@@ -8,7 +8,6 @@
 -loops:frag_sizes 9 3 1
 -loops:frag_files  inputs/aaFR02_09_05.200_v1_3 inputs/aaFR02_03_05.200_v1_3 none
 -loops:fast
--run:debug
 -antibody::remodel              quick_ccd
 -antibody::snugfit              true
 -antibody::refine               refine_ccd
