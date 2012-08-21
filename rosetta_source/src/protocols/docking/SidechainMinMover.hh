@@ -37,20 +37,20 @@ public:
 	SidechainMinMover();
 
 	/// @brief Constructor with one argument - the scoerfunction to minimize with
-	SidechainMinMover( core::scoring::ScoreFunctionCOP scorefxn );
+	SidechainMinMover( core::scoring::ScoreFunctionOP scorefxn );
 
 	/// @brief Constructor with two arguments.  The first is the scorefunction to minimize with, the second is a movemap
-	SidechainMinMover( core::scoring::ScoreFunctionCOP scorefxn,core::kinematics::MoveMapOP movemap );
+	SidechainMinMover( core::scoring::ScoreFunctionOP scorefxn,core::kinematics::MoveMapOP movemap );
 
 	/// @brief Constructor with two arguments. The first is the scorefunction to minimize with, the second is a task
-	SidechainMinMover( core::scoring::ScoreFunctionCOP scorefxn, core::pack::task::PackerTaskOP);
+	SidechainMinMover( core::scoring::ScoreFunctionOP scorefxn, core::pack::task::PackerTaskOP);
 
 	/// @brief Constructor with two arguments. The first is the scorefunction to minimize with, the second is a taskfactory
-	SidechainMinMover( core::scoring::ScoreFunctionCOP scorefxn, core::pack::task::TaskFactoryCOP );
+	SidechainMinMover( core::scoring::ScoreFunctionOP scorefxn, core::pack::task::TaskFactoryCOP );
 
 	/// @brief Constructor with two arguments.  The first is the jump that docking will occur over, the second is the
 	///		scorefunction to minimize with.
-	SidechainMinMover( core::Size rb_jump, core::scoring::ScoreFunctionCOP scorefxn );
+	SidechainMinMover( core::Size rb_jump, core::scoring::ScoreFunctionOP scorefxn );
 
 	// destructor
 	~SidechainMinMover();
@@ -84,7 +84,7 @@ public:
 	// constructor with arguments
 	InterfaceSidechainMinMover(
 		core::Size rb_jump,
-		core::scoring::ScoreFunctionCOP scorefxn,
+		core::scoring::ScoreFunctionOP scorefxn,
 		core::Real interface_dist=8.0
 	);
 

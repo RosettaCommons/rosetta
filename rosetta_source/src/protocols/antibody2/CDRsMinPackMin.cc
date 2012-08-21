@@ -157,8 +157,8 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose )
 	utility::vector1< bool> bb_is_flexible( pose.total_residue(), false );
 	utility::vector1< bool> sc_is_flexible( pose.total_residue(), false );
 
-	select_loop_residues( pose, ab_info_->all_cdr_loops_, false /*include_neighbors*/, bb_is_flexible );
-	select_loop_residues( pose, ab_info_->all_cdr_loops_, true /*include_neighbors*/, sc_is_flexible );
+	select_loop_residues( pose, *(ab_info_->get_all_cdr_loops()), false /*include_neighbors*/, bb_is_flexible );
+	select_loop_residues( pose, *(ab_info_->get_all_cdr_loops()), true /*include_neighbors*/, sc_is_flexible );
 
 	//for (Size kk=1;kk<=sc_is_flexible.size();kk++){
 	//    TR<<kk<<"    "<<sc_is_flexible[kk]<<std::endl;
@@ -175,7 +175,7 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose )
 		allcdr_map_->set_chi( sc_is_flexible );
 
 
-		for( Size ii = 1; ii <= ab_info_->all_cdr_loops_.num_loop(); ii++ ){
+		for( Size ii = 1; ii <= ab_info_->get_all_cdr_loops()->num_loop(); ii++ ){
 			allcdr_map_->set_jump( ii, false );
 		}//TODO: start from 1 or 2? should have a set function to handle this!
 	}

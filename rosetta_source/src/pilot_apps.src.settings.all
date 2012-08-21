@@ -635,8 +635,9 @@ sources = {
 		#"model_e2c_ubiquitin", # /* Aroop,Documentation Location,Demo Location */
 	],
 	"pilot/jianqing" : [
-                "antibody_assemble_CDRs",
-                "antibody_model_CDR_H3",
+    "antibody_assemble_CDRs",
+    "antibody_model_CDR_H3",
+		"snugdock",
 	],
 	"pilot/barak" : [
 		#"BuildFloppyTail",

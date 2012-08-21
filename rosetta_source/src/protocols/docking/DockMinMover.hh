@@ -45,12 +45,12 @@ public:
 	/// minimization.
 	DockMinMover(
 		DockJumps const movable_jumps,
-		core::scoring::ScoreFunctionCOP scorefxn
+		core::scoring::ScoreFunctionOP scorefxn
 	);
 	//JQX: constructor with mc_ object
 	DockMinMover(
 				 DockJumps const movable_jumps,
-				 core::scoring::ScoreFunctionCOP scorefxn,
+				 core::scoring::ScoreFunctionOP scorefxn,
 				 moves::MonteCarloOP mc
 	);
 	
@@ -61,7 +61,7 @@ public:
 	DockMinMover(
 		DockJumps const movable_jumps,
 		core::kinematics::MoveMapOP movemap,
-		core::scoring::ScoreFunctionCOP scorefxn,
+		core::scoring::ScoreFunctionOP scorefxn,
 		std::string min_type,
 		core::Real min_tolerance,
 		bool nb_list,

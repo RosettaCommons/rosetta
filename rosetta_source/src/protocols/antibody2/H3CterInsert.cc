@@ -125,9 +125,9 @@ void H3CterInsert::apply(pose::Pose & pose)
     
     
     
-    loop_begin = ab_info_->get_CDR_loop("h3")->start()-1;  //JQX: to match R2_Antibody
-    cutpoint   = ab_info_->get_CDR_loop("h3")->cut(); // keep the cutpoint unchanged
-    loop_end   = ab_info_->get_CDR_loop("h3")->stop()+2; //JQX: to match R2_Antibody
+    loop_begin = ab_info_->get_CDR_loop(h3)->start()-1;  //JQX: to match R2_Antibody
+    cutpoint   = ab_info_->get_CDR_loop(h3)->cut(); // keep the cutpoint unchanged
+    loop_end   = ab_info_->get_CDR_loop(h3)->stop()+2; //JQX: to match R2_Antibody
     
     setup_simple_fold_tree(loop_begin, cutpoint, loop_end, pose.total_residue(), pose);
     TR<<pose.fold_tree()<<std::endl;
@@ -153,12 +153,12 @@ void H3CterInsert::apply(pose::Pose & pose)
         Size cter_insertion_pos( is_camelid_ ? 4 : 2 ); // not sure why 4 for camelid
     
     
-        if( (ab_info_->get_CDR_loop("h3")->stop() - cter_insertion_pos) <= ab_info_->get_CDR_loop("h3")->start() )
+        if( (ab_info_->get_CDR_loop(h3)->stop() - cter_insertion_pos) <= ab_info_->get_CDR_loop(h3)->start() )
         {
             TR << "H3 LOOP IS TOO SHORT: CAN NOT USE C-TERM INFORMATION"<< std::endl;
         }
         else {
-            f.apply( pose, ab_info_->get_CDR_loop("h3")->stop() - cter_insertion_pos, ab_info_->get_CDR_loop("h3")->stop() + 1 );
+            f.apply( pose, ab_info_->get_CDR_loop(h3)->stop() - cter_insertion_pos, ab_info_->get_CDR_loop(h3)->stop() + 1 );
         
         }
 
@@ -212,14 +212,14 @@ void H3CterInsert::read_H3_cter_fragment(bool is_camelid )
     
     
     // extract single letter aa codes for the chopped loop residues
-    TR<< *(ab_info_->get_CDR_loop("h3"))<<std::endl;
+    TR<< *(ab_info_->get_CDR_loop(h3))<<std::endl;
 
-    Size cdr_h3_size = ( ab_info_->get_CDR_loop("h3")->stop() - ab_info_->get_CDR_loop("h3")->start() ) + 1;
+    Size cdr_h3_size = ( ab_info_->get_CDR_loop(h3)->stop() - ab_info_->get_CDR_loop(h3)->start() ) + 1;
     
     TR<<"cdr_h3_size="<<cdr_h3_size<<std::endl;
     utility::vector1< char > aa_1name;
-    for( Size ii =    ab_info_->get_CDR_loop("h3")->start() - 2;
-              ii <= ( ab_info_->get_CDR_loop("h3")->start() - 2 ) + cdr_h3_size + 3; 
+    for( Size ii =    ab_info_->get_CDR_loop(h3)->start() - 2;
+              ii <= ( ab_info_->get_CDR_loop(h3)->start() - 2 ) + cdr_h3_size + 3;
               ++ii ) // XXcdrh3seqXX
     {
         aa_1name.push_back( ab_info_->get_Fv_sequence()[ii] );

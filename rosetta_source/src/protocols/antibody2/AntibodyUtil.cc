@@ -429,8 +429,8 @@ bool CDR_H3_cter_filter(const pose::Pose & pose_in, AntibodyInfoOP ab_info)
     
     // chop out the loop: 
     //JQX: 2 residues before h3, one residue after h3. Matched Rosetta2!
-    Size start(  ab_info->get_CDR_loop("h3")->start()  -  2 );
-    Size stop(  ab_info->get_CDR_loop("h3")->stop()  +  1  );
+    Size start(  ab_info->get_CDR_loop(h3)->start()  -  2 );
+    Size stop(  ab_info->get_CDR_loop(h3)->stop()  +  1  );
     
     
     bool matched_kinked( false );
@@ -601,8 +601,8 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in )
         
         bool closed_cutpoints = true;
         
-        for( loops::Loops::const_iterator it=antibody_info->all_cdr_loops_.begin(),
-            it_end=antibody_info->all_cdr_loops_.end(),
+        for( loops::Loops::const_iterator it=antibody_info->get_all_cdr_loops()->begin(),
+            it_end=antibody_info->get_all_cdr_loops()->end(),
             it_next; it != it_end; ++it ) {
             Size cutpoint   = it->cut();
             Real separation = 10.00; // an unlikely high number
@@ -658,7 +658,7 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in )
     
     
     
-    std::string get_seq_from_a_loop(core::pose::Pose & pose_in, loops::LoopOP loop )
+    std::string get_seq_from_a_loop(core::pose::Pose const & pose_in, loops::LoopOP loop )
     {
         std::string seq="";
         for (Size it=loop->start(); it <= loop->stop(); ++it ) {

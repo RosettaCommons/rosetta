@@ -21,7 +21,7 @@
 #include <protocols/docking/DockTaskFactory.fwd.hh>
 
 // Package headers
-// AUTO-REMOVED #include <protocols/docking/DockingHighRes.hh>
+#include <protocols/docking/types.hh>
 
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <protocols/toolbox/task_operations/InterfaceTaskOperation.fwd.hh>
@@ -62,7 +62,7 @@ public:
 	///		Two arguments: DockingHighResOP and a pose.
 	void create_and_attach_task_factory(
 		DockingHighResOP docker,
-		core::pose::Pose & pose
+		core::pose::Pose const & pose
 	) const;
 	/// @brief Sets booleans to default values
 	void set_default();

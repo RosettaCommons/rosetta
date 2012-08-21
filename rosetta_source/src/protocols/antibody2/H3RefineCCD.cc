@@ -94,7 +94,7 @@ namespace antibody2 {
 // default constructor
 H3RefineCCD::H3RefineCCD( ) : Mover() {}
 
-H3RefineCCD::H3RefineCCD( AntibodyInfoOP antibody_info, std::string loop_name ) : Mover() 
+H3RefineCCD::H3RefineCCD( AntibodyInfoOP antibody_info, AntibodyCDRNameEnum loop_name ) : Mover() 
 {
     user_defined_ = false;
     ab_info_    = antibody_info;
@@ -105,7 +105,7 @@ H3RefineCCD::H3RefineCCD( AntibodyInfoOP antibody_info, std::string loop_name ) 
   
     
 H3RefineCCD::H3RefineCCD(AntibodyInfoOP antibody_info, 
-                                       std::string loop_name,
+                                       AntibodyCDRNameEnum loop_name,
                                        scoring::ScoreFunctionCOP highres_scorefxn 
                                        ) : Mover()  
 {
@@ -129,11 +129,11 @@ void H3RefineCCD::init( )
 {
     set_default();
         
-    the_loop_   = *(ab_info_->get_CDR_loop(loop_name_));
+    the_loop_   = ab_info_->get_CDR_loop(loop_name_);
     
-    loop_begin_ = the_loop_.start();
-    cutpoint_   = the_loop_.cut();
-    loop_end_   = the_loop_.stop();
+    loop_begin_ = the_loop_->start();
+    cutpoint_   = the_loop_->cut();
+    loop_end_   = the_loop_->stop();
     loop_size_  = ( loop_end_ - loop_begin_ ) + 1;
     
     gamma_ = std::pow( (last_temp_/init_temp_), (1.0/loop_size_)); //TODO: check this gama value carefully
@@ -235,7 +235,7 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ){
 
     // the list of residues that are allowed to pack
     for(Size ii=1; ii <=pose.total_residue();ii++) {allow_repack_.push_back(false);}
-    select_loop_residues( pose, the_loop_, include_neighbors_, allow_repack_, neighbor_dist_);
+    select_loop_residues( pose, *the_loop_, include_neighbors_, allow_repack_, neighbor_dist_);
 
     
     // the list of residues that are allowed to change backbone
@@ -324,7 +324,7 @@ void H3RefineCCD::finalize_setup( core::pose::Pose & pose ){
 
     
     // ccd moves
-    CcdMoverOP ccd_moves = new CcdMover( the_loop_, cdrh3_map_ );
+    CcdMoverOP ccd_moves = new CcdMover( *the_loop_, cdrh3_map_ );
     RepeatMoverOP ccd_cycle = new RepeatMover(ccd_moves, n_small_moves_);
     
     
@@ -363,7 +363,8 @@ void H3RefineCCD::apply( pose::Pose & pose ) {
     using namespace pack::task;
     using namespace pack::task::operation;
         
-    
+    /// FIXME: This can cause issues if using the default refine_method in RefineOneCDRLoop and a loop in centroid mode!
+	 /// This can happen in SnugDock.
     if ( !pose.is_fullatom() ){utility_exit_with_message("Fullatom poses only");}
     
     TR <<  " Relaxing Fullatom CDR H3 loop" << std::endl;
@@ -382,7 +383,7 @@ void H3RefineCCD::apply( pose::Pose & pose ) {
             loop_min_mover_->apply(pose);
         
             // rotamer trials
-            select_loop_residues( pose, the_loop_, include_neighbors_, allow_repack_, neighbor_dist_);
+            select_loop_residues( pose, *the_loop_, include_neighbors_, allow_repack_, neighbor_dist_);
             tf_ = setup_packer_task( start_pose_ );
             ( *highres_scorefxn_ )( pose );
             tf_->push_back( new RestrictToInterface( allow_repack_ ) );
@@ -412,7 +413,7 @@ void H3RefineCCD::apply( pose::Pose & pose ) {
                     wiggle_cdr_h3_->apply( pose );
                 
                     // rotamer trials
-                    select_loop_residues( pose, the_loop_, include_neighbors_, allow_repack_, neighbor_dist_);
+                    select_loop_residues( pose, *the_loop_, include_neighbors_, allow_repack_, neighbor_dist_);
                     tf_ = setup_packer_task( start_pose_);
                     ( *highres_scorefxn_ )( pose );
                     tf_->push_back( new RestrictToInterface( allow_repack_ ) );

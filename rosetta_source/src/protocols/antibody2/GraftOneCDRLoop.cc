@@ -44,25 +44,9 @@ using namespace core;
 
 GraftOneCDRLoop::GraftOneCDRLoop(){}
 
-GraftOneCDRLoop::GraftOneCDRLoop(std::string cdr_name, 
-                                           Size query_start, 
-                                           Size query_end, 
-                                           scoring::ScoreFunctionCOP scorefxn ) : Mover( "GraftOneCDRLoop" )
-{
-    scorefxn_ = scorefxn;
-	query_start_ = query_start;
-	query_end_   = query_end;
-	set_default( cdr_name );
-    std::string const path = basic::options::option[ basic::options::OptionKeys::in::path::path ]()[1];
-    TRG << "Reading in template: " << path << cdr_name << ".pdb " << std::endl;
-    import_pose::pose_from_pdb( template_pose_, path + cdr_name + ".pdb" );
-    
-} //default constructor
-
-    
     
 
-GraftOneCDRLoop::GraftOneCDRLoop( std::string cdr_name, 
+GraftOneCDRLoop::GraftOneCDRLoop( AntibodyCDRNameEnum cdr_name, 
                                            AntibodyInfoOP ab_info, 
                                            Ab_TemplateInfoOP ab_t_info, 
                                            scoring::ScoreFunctionCOP scorefxn ) : Mover( "GraftOneCDRLoop" )
@@ -71,7 +55,7 @@ GraftOneCDRLoop::GraftOneCDRLoop( std::string cdr_name,
     query_start_ = ab_info->get_CDR_loop(cdr_name)->start();
 	query_end_   = ab_info->get_CDR_loop(cdr_name)->stop();
 	set_default(cdr_name);
-    template_pose_ = ab_t_info->get_one_template_pose(cdr_name) ;
+    template_pose_ = ab_t_info->get_one_template_pose(ab_info->get_CDR_Name(cdr_name)) ;
     TRG<< "template_pose_ "<<std::endl;
     TRG<< template_pose_<<std::endl;
 }
@@ -87,7 +71,7 @@ GraftOneCDRLoop::~GraftOneCDRLoop() {}
     
     
 
-void GraftOneCDRLoop::set_default( std::string template_name )
+void GraftOneCDRLoop::set_default( AntibodyCDRNameEnum template_name )
 {
 
 /*        

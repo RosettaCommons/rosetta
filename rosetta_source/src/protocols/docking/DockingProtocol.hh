@@ -40,7 +40,7 @@
 #include <protocols/simple_moves/ConstraintSetMover.fwd.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.fwd.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.fwd.hh>
-//#include <protocols/moves/MoverContainer.fwd.hh>
+#include <protocols/moves/MoverContainer.fwd.hh>
 
 #include <utility/tag/Tag.fwd.hh>
 
@@ -74,8 +74,8 @@ public:
 		bool const low_res_protocol_only=false, // if true: skip high resolution docking
 		bool const docking_local_refine=false, // if true: skip low resolution docking
 		bool const autofoldtree=true,
-		core::scoring::ScoreFunctionCOP docking_score_low = core::scoring::ScoreFunctionCOP(NULL),
-		core::scoring::ScoreFunctionCOP docking_score_high = core::scoring::ScoreFunctionCOP(NULL)
+		core::scoring::ScoreFunctionOP docking_score_low = core::scoring::ScoreFunctionOP(NULL),
+		core::scoring::ScoreFunctionOP docking_score_high = core::scoring::ScoreFunctionOP(NULL)
 	);
 
 	DockingProtocol(
@@ -83,8 +83,8 @@ public:
 		bool const low_res_protocol_only=false, // if true: skip high resolution docking
 		bool const docking_local_refine=false, // if true: skip low resolution docking
 		bool const autofoldtree=true,
-		core::scoring::ScoreFunctionCOP docking_score_low = core::scoring::ScoreFunctionCOP(NULL),
-		core::scoring::ScoreFunctionCOP docking_score_high = core::scoring::ScoreFunctionCOP(NULL)
+		core::scoring::ScoreFunctionOP docking_score_low = core::scoring::ScoreFunctionOP(NULL),
+		core::scoring::ScoreFunctionOP docking_score_high = core::scoring::ScoreFunctionOP(NULL)
 	);
 
 	/// @brief Assigns default values to primitive members
@@ -125,15 +125,15 @@ public:
 	/// @brief Sets the score function that will be used in the high-resolution phase.
 	///		The first scorefunction will be used for evaluating moves and discriminating, the second will be used for packing
 	void set_highres_scorefxn(
-		core::scoring::ScoreFunctionCOP docking_scorefxn_high,
-		core::scoring::ScoreFunctionCOP docking_scorefxn_pack );
+		core::scoring::ScoreFunctionOP docking_scorefxn_high,
+		core::scoring::ScoreFunctionOP docking_scorefxn_pack );
 
 	/// @brief Sets the score function that will be used in the high-resolution phase.
 	///		The first scorefunction will be used for evaluating moves, the second will be used for packing and the third for discriminating
 	void set_highres_scorefxn(
-		core::scoring::ScoreFunctionCOP docking_scorefxn_high,
-		core::scoring::ScoreFunctionCOP docking_scorefxn_pack,
-		core::scoring::ScoreFunctionCOP docking_scorefxn_output);
+		core::scoring::ScoreFunctionOP docking_scorefxn_high,
+		core::scoring::ScoreFunctionOP docking_scorefxn_pack,
+		core::scoring::ScoreFunctionOP docking_scorefxn_output);
 
 	void set_sc_min( bool sc_min );
 	void set_rt_min( bool rt_min );
@@ -171,6 +171,13 @@ public:
 	protocols::docking::DockingHighResCOP docking_highres_mover() const;
 	protocols::docking::DockingInitialPerturbationCOP perturber() const;
 
+	//Allow a developer to set a custom high resolution mover
+	void set_docking_highres_mover( protocols::docking::DockingHighResOP docking_highres_mover );
+
+	//Allow a developer to add some additional steps to the end of the low resolution phase.
+	//Each mover that's added in this way is added to a SequenceMover that is applied after low resolution
+	//docking concludes.
+	void add_additional_low_resolution_step( protocols::moves::MoverOP additional_low_resolution_mover );
 
 	// inline setters
 	void set_autofoldtree( bool const autofoldtree ){ autofoldtree_ = autofoldtree; }
@@ -229,10 +236,10 @@ private:
 	DockJumps movable_jumps_;
 
 	// score functions
-	core::scoring::ScoreFunctionCOP docking_scorefxn_low_;
-	core::scoring::ScoreFunctionCOP docking_scorefxn_high_;
-	core::scoring::ScoreFunctionCOP docking_scorefxn_pack_;
-	core::scoring::ScoreFunctionCOP docking_scorefxn_output_;
+	core::scoring::ScoreFunctionOP docking_scorefxn_low_;
+	core::scoring::ScoreFunctionOP docking_scorefxn_high_;
+	core::scoring::ScoreFunctionOP docking_scorefxn_pack_;
+	core::scoring::ScoreFunctionOP docking_scorefxn_output_;
 
 	// success criteria enforcers
 	protocols::moves::MonteCarloOP mc_; //not used currently
@@ -259,6 +266,8 @@ private:
 
 	protocols::simple_moves::ReturnSidechainMoverOP recover_sidechains_;
 
+	protocols::moves::SequenceMoverOP additional_low_resolution_steps_;
+
 	//if side-chains are to be taken from specified pdb file... it is set here...
 	std::string recover_sidechains_filename_;
 
@@ -279,8 +288,8 @@ private:
 		bool const low_res_protocol_only_,
 		bool const docking_local_refine,
 		bool const autofoldtree,
-		core::scoring::ScoreFunctionCOP docking_score_low,
-		core::scoring::ScoreFunctionCOP docking_score_high
+		core::scoring::ScoreFunctionOP docking_score_low,
+		core::scoring::ScoreFunctionOP docking_score_high
 	);
 
   	void initForEqualOperatorAndCopyConstructor(DockingProtocol & lhs, DockingProtocol const & rhs);

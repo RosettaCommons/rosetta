@@ -165,7 +165,7 @@ void DockTaskFactory::set_interface_definition_task_operation(  protocols::toolb
 void
 DockTaskFactory::create_and_attach_task_factory(
 	DockingHighResOP docker,
-	core::pose::Pose & pose
+	core::pose::Pose const & pose
 ) const
 {
 	using namespace core::pack::task;
@@ -218,12 +218,12 @@ DockTaskFactory::create_and_attach_task_factory(
         tf->push_back( restrict_to_interface_ );  //JQX: add restrict to interface, the Legacy code used this in the initial packing as well
 	}
     
-    // Add user specified task operations
-    for( utility::vector1< core::pack::task::operation::TaskOperationOP>::const_iterator operation = additional_task_operations_.begin(); operation != additional_task_operations_.end(); ++operation ) {
-        tf->push_back( *operation );
-    }
-    
-    docker->set_task_factory(tf);
+	// Add user specified task operations
+	for( utility::vector1< core::pack::task::operation::TaskOperationOP>::const_iterator operation = additional_task_operations_.begin(); operation != additional_task_operations_.end(); ++operation ) {
+		tf->push_back( *operation );
+	}
+
+	docker->set_task_factory( tf );
 }
 
 

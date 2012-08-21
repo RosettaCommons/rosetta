@@ -913,7 +913,7 @@ AntibodyModeler::snugfit_mcm_protocol(
 																										 mc );
 
 	protocols::docking::SidechainMinMoverOP scmin_mover = new
-	protocols::docking::SidechainMinMover( core::scoring::ScoreFunctionCOP( pack_scorefxn ), core::pack::task::TaskFactoryCOP( tf_ ) );
+	protocols::docking::SidechainMinMover( core::scoring::ScoreFunctionOP( pack_scorefxn ), core::pack::task::TaskFactoryCOP( tf_ ) );
 	TrialMoverOP scmin_trial = new TrialMover( scmin_mover, mc );
 
 	SequenceMoverOP rb_mover = new SequenceMover;

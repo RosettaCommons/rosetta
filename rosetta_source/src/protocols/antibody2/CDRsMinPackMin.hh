@@ -33,13 +33,9 @@
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/CDRsMinPackMin.fwd.hh>
 #include <protocols/antibody2/RefineBetaBarrel.fwd.hh>
-#include <protocols/antibody2/RefineCDRH3HighRes.fwd.hh>
 #include <utility/vector1.hh>
 
 
-
-
-using namespace core;
 namespace protocols {
 namespace antibody2 {
 
@@ -54,18 +50,18 @@ public:
 	CDRsMinPackMin(
 		AntibodyInfoOP antibody_info, 
 		core::scoring::ScoreFunctionOP scorefxn,
-		pack::task::TaskFactoryOP tf,
-		kinematics::MoveMapOP movemap
+		core::pack::task::TaskFactoryOP tf,
+		core::kinematics::MoveMapOP movemap
 	);
 
 	// default destructor
 	~CDRsMinPackMin();
 
-	virtual void apply( pose::Pose & pose );
+	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 
-	void set_task_factory(pack::task::TaskFactoryCOP tf);
-	void set_move_map(kinematics::MoveMapCOP movemap);
+	void set_task_factory(core::pack::task::TaskFactoryCOP tf);
+	void set_move_map(core::kinematics::MoveMapCOP movemap);
 
 	// simple inline setters
 	void set_sc_min (bool scmin) {sc_min_ = scmin ;}
@@ -92,11 +88,11 @@ private:
 	AntibodyInfoOP ab_info_;
 	core::scoring::ScoreFunctionOP loop_scorefxn_highres_;
 	protocols::moves::SequenceMoverOP cdr_sequence_move_ ;
-	kinematics::MoveMapOP allcdr_map_;
-	pack::task::TaskFactoryOP tf_;
+	core::kinematics::MoveMapOP allcdr_map_;
+	core::pack::task::TaskFactoryOP tf_;
 	std::string min_type_;
-	Real Temperature_;
-	Real min_tolerance_;
+	core::Real Temperature_;
+	core::Real min_tolerance_;
     
 
 

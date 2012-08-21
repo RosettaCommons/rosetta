@@ -52,7 +52,7 @@ DockMinMover::DockMinMover() : DockingHighRes()
 
 DockMinMover::DockMinMover(
 	DockJumps const movable_jumps,
-	core::scoring::ScoreFunctionCOP scorefxn
+	core::scoring::ScoreFunctionOP scorefxn
 ) : DockingHighRes(movable_jumps, scorefxn, scorefxn) {
 	//need to set this up with default values;
 	set_default();
@@ -67,7 +67,7 @@ DockMinMover::DockMinMover(
 //JQX: made a new constructor, which can take the mc_ object
 DockMinMover::DockMinMover(
 	DockJumps const movable_jumps,
-	core::scoring::ScoreFunctionCOP scorefxn,
+	core::scoring::ScoreFunctionOP scorefxn,
 	moves::MonteCarloOP mc
 ) : DockingHighRes(movable_jumps, scorefxn, scorefxn) {
 	//need to set this up with default values;
@@ -85,7 +85,7 @@ DockMinMover::DockMinMover(
 DockMinMover::DockMinMover(
 	DockJumps const movable_jumps,
 	core::kinematics::MoveMapOP movemap,
-	core::scoring::ScoreFunctionCOP scorefxn,
+	core::scoring::ScoreFunctionOP scorefxn,
 	std::string min_type,
 	core::Real min_tolerance,
 	bool nb_list,

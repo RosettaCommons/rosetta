@@ -127,7 +127,7 @@ DockingHighResLegacy::DockingHighResLegacy() : DockingHighRes()
 // only one movable jump
 DockingHighResLegacy::DockingHighResLegacy(
 	int rb_jump,
-	core::scoring::ScoreFunctionCOP scorefxn
+	core::scoring::ScoreFunctionOP scorefxn
 
 ) : DockingHighRes( rb_jump, scorefxn )
 {
@@ -141,8 +141,8 @@ DockingHighResLegacy::DockingHighResLegacy(
 // only one movable jump, scoring and packing defined
 DockingHighResLegacy::DockingHighResLegacy(
 	int rb_jump,
-	core::scoring::ScoreFunctionCOP scorefxn,
-	core::scoring::ScoreFunctionCOP scorefxn_pack
+	core::scoring::ScoreFunctionOP scorefxn,
+	core::scoring::ScoreFunctionOP scorefxn_pack
 ) : DockingHighRes( rb_jump, scorefxn, scorefxn_pack )
 {
 	//movable_jumps_.push_back( rb_jump_in );
@@ -155,8 +155,8 @@ DockingHighResLegacy::DockingHighResLegacy(
 // only one movable jump, scoring and packing defined
 DockingHighResLegacy::DockingHighResLegacy(
 	DockJumps const movable_jumps,
-	core::scoring::ScoreFunctionCOP scorefxn,
-	core::scoring::ScoreFunctionCOP scorefxn_pack
+	core::scoring::ScoreFunctionOP scorefxn,
+	core::scoring::ScoreFunctionOP scorefxn_pack
 ) : DockingHighRes( movable_jumps, scorefxn, scorefxn_pack )
 {
 	//movable_jumps_ = movable_jumps;

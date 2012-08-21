@@ -20,26 +20,12 @@
 /// @author Modified by Jacob Corn
 
 #include <protocols/docking/DockMCMCycle.hh>
-// AUTO-REMOVED #include <protocols/docking/SidechainMinMover.hh>
-// AUTO-REMOVED #include <protocols/docking/DockTaskFactory.hh>
 
 // Rosetta Headers
 #include <core/kinematics/MoveMap.hh>
 
-// AUTO-REMOVED #include <basic/options/option.hh>
-
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
-// AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh> // for design() flag
-// AUTO-REMOVED #include <core/pack/task/operation/NoRepackDisulfides.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/OperateOnCertainResidues.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/ResLvlTaskOperations.hh> // PreventRepackingRLT
-// AUTO-REMOVED #include <core/pack/task/operation/ResFilters.hh> // ResidueLacksProperty
-// AUTO-REMOVED #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/RotamerConstraint.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -52,9 +38,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/moves/PyMolMover.hh>
 #include <protocols/simple_moves/RotamerTrialsMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
@@ -69,15 +53,8 @@
 // C++ Headers
 #include <string>
 
-//Utility Headers
-// AUTO-REMOVED #include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
-
 #include <basic/Tracer.hh>
 using basic::T;
-
-// option key includes
-// AUTO-REMOVED #include <basic/options/keys/docking.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <protocols/toolbox/task_operations/InterfaceTaskOperation.fwd.hh>
 #include <utility/vector0.hh>
@@ -113,7 +90,7 @@ DockMCMCycle::DockMCMCycle() : Mover()
 // only one movable jump
 DockMCMCycle::DockMCMCycle(
 	core::Size const rb_jump,
-	core::scoring::ScoreFunctionCOP scorefxn
+	core::scoring::ScoreFunctionOP scorefxn
 ) : Mover(), scorefxn_(scorefxn), scorefxn_pack_(scorefxn)
 {
 	movable_jumps_.push_back( rb_jump );
@@ -125,8 +102,8 @@ DockMCMCycle::DockMCMCycle(
 // only one movable jump, scoring and packing defined
 DockMCMCycle::DockMCMCycle(
 	core::Size const rb_jump,
-	core::scoring::ScoreFunctionCOP scorefxn,
-	core::scoring::ScoreFunctionCOP scorefxn_pack
+	core::scoring::ScoreFunctionOP scorefxn,
+	core::scoring::ScoreFunctionOP scorefxn_pack
 ) : Mover(), scorefxn_(scorefxn), scorefxn_pack_(scorefxn_pack)
 {
 	movable_jumps_.push_back( rb_jump );
@@ -138,8 +115,8 @@ DockMCMCycle::DockMCMCycle(
 // only one movable jump, scoring and packing defined
 DockMCMCycle::DockMCMCycle(
 	DockJumps const movable_jumps,
-	core::scoring::ScoreFunctionCOP scorefxn,
-	core::scoring::ScoreFunctionCOP scorefxn_pack
+	core::scoring::ScoreFunctionOP scorefxn,
+	core::scoring::ScoreFunctionOP scorefxn_pack
 ) : Mover(), scorefxn_(scorefxn), scorefxn_pack_(scorefxn_pack)
 {
 	movable_jumps_ = movable_jumps;
@@ -224,7 +201,8 @@ void DockMCMCycle::apply( core::pose::Pose & pose )
 //	protocols::moves::PyMolMover pymol;   //JQX: comment out, pymolmover will use the random number, not good for debug
 
 	// only set up on first call to the mover
-	if ( mc_->last_accepted_pose().empty() ) {
+	if ( ! dock_mcm_cycle_ )
+	{
 		init_mc(pose);
 	}
 
@@ -238,9 +216,6 @@ DockMCMCycle::get_name() const {
 	return "DockMCMCycle";
 }
 
-
-
-
 //JQX: reset the pack_cycle_ index
 void DockMCMCycle::reset_cycle_index()
 {
@@ -249,18 +224,18 @@ void DockMCMCycle::reset_cycle_index()
 
 void DockMCMCycle::init_mc(core::pose::Pose & pose)
 {
-	(*scorefxn_)(pose);
-	mc_->reset( pose );
+	/// It is possible for the MonteCarlo instance to be shared among several movers
+	/// in other protocols and we do not want to overwrite the history of that instance,
+	/// but we must ensure the MonteCarlo instance is ready for use.
+	if ( mc_->last_accepted_pose().empty() )
+	{
+		(*scorefxn_)(pose);
+		mc_->reset( pose );
+	}
 	setup_protocol( pose );
 	TR << "Setting up defaults for DockMCMCycle: " << std::endl;
 	show(TR);
 }
-
-
-
-
-
-
 
 ///////////////////////////////////////////////////////////////////////////////////
 /// @begin dock_mcm_protocol
@@ -279,134 +254,12 @@ void DockMCMCycle::init_mc(core::pose::Pose & pose)
 ///
 /// @last_modified August 19 2010
 /////////////////////////////////////////////////////////////////////////////////
-//void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
-//	using namespace moves;
-//	using namespace basic::options;
-//	using namespace core::pack::task;
-//	using namespace core::pack::task::operation;
-//	using namespace protocols::toolbox::task_operations;
-//
-//	// @TODO these are not being used at all, need to be incorporated into the sequence
-////	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn_pack_, tf_ );
-////	TrialMoverOP rtmin_trial = new TrialMover( rtmin, mc_ );
-////
-////	SidechainMinMoverOP scmin_mover = new SidechainMinMover(scorefxn_pack_, tf_ );
-////	TrialMoverOP scmin_trial = new TrialMover( scmin_mover, mc_ );
-//
-//	//set up rigid body movers
-//	rigid::RigidBodyPerturbMoverOP rb_perturb = new rigid::RigidBodyPerturbMover( pose, *movemap_, rot_magnitude_, trans_magnitude_ , rigid::partner_downstream, true );
-//
-//	//set up sidechain movers for each movable jump
-//	tf_->push_back( new RestrictToInterface( movable_jumps_ ) );
-//
-//	protocols::simple_moves::RotamerTrialsMoverOP rottrial = new protocols::simple_moves::RotamerTrialsMover( scorefxn_pack_, tf_ );
-//
-//	// old loop here
-//	protocols::simple_moves::PackRotamersMoverOP pack_rotamers = new protocols::simple_moves::PackRotamersMover( scorefxn_pack_ );
-//	pack_rotamers->task_factory(tf_);
-//	TrialMoverOP pack_trial = new TrialMover( pack_rotamers, mc_ );
-//
-//	SequenceMoverOP rb_mover = new SequenceMover;
-//	rb_mover->add_mover( rb_perturb );
-//	rb_mover->add_mover( rottrial );
-//
-//	//set up minimizer movers
-//	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap_, scorefxn_, min_type_, min_tolerance_, nb_list_ );
-//	core::Real minimization_threshold = 15.0;
-//	JumpOutMoverOP rb_min = new JumpOutMover( rb_mover, min_mover, scorefxn_, minimization_threshold );
-//	TrialMoverOP rb_min_trial = new TrialMover( rb_min, mc_ );
-//
-//	SequenceMoverOP rb_min_pack = new SequenceMover;
-//	rb_min_pack->add_mover( rb_min_trial );
-//	rb_min_pack->add_mover( pack_trial );
-//
-//	CycleMoverOP pack_cycle = new CycleMover;
-//	for (Size i=1; i<repack_period_; ++i) pack_cycle->add_mover( rb_min_trial );
-//	pack_cycle->add_mover( rb_min_pack );
-//
-//	dock_mcm_mover_ = new TrialMover( pack_cycle, mc_ );
-//}
-
-
-
-
-
-
-
-/*    JQX:     completely comment this out and rewrite it !!!!!
-
-
-void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
-	using namespace moves;
-	using namespace basic::options;
-	using namespace core::pack::task;
-	using namespace core::pack::task::operation;
-  using namespace protocols::toolbox::task_operations;
-
-	// @TODO these are not being used at all, need to be incorporated into the sequence
-//	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn_pack_, tf_ );
-//	TrialMoverOP rtmin_trial = new TrialMover( rtmin, mc_ );
-//
-//	SidechainMinMoverOP scmin_mover = new SidechainMinMover(scorefxn_pack_, tf_ );
-//	TrialMoverOP scmin_trial = new TrialMover( scmin_mover, mc_ );
-
-	//set up rigid body movers
-	rigid::RigidBodyPerturbMoverOP rb_mover = new rigid::RigidBodyPerturbMover( pose, *movemap_, rot_magnitude_, trans_magnitude_ , rigid::partner_downstream, true );
-
-	//set up sidechain movers for each movable jump
-//	tf_->push_back( new RestrictToInterface( movable_jumps_ ) );   //JQX: temporarly commented out this, because I commented out the Legacy code for this for testing
-
-	protocols::simple_moves::RotamerTrialsMoverOP rottrial = new protocols::simple_moves::RotamerTrialsMover( scorefxn_pack_, tf_ );
-
-	// old loop here
-	protocols::simple_moves::PackRotamersMoverOP pack_rotamers = new protocols::simple_moves::PackRotamersMover( scorefxn_pack_ );
-	pack_rotamers->task_factory(tf_);
-
-	CycleMoverOP pack_cycle = new CycleMover;
-	for (Size i=1; i<repack_period_; ++i) pack_cycle->add_mover( rottrial );
-	pack_cycle->add_mover( pack_rotamers );
-
-	//set up minimizer movers
-	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap_, scorefxn_, min_type_, min_tolerance_, nb_list_ );
-
-	// the standard mcm cycle : rb perturbation->rotamer trials->minimization->MC accept
-	SequenceMoverOP rb_pack_min = new SequenceMover;
-	rb_pack_min->add_mover( rb_mover );
-	rb_pack_min->add_mover( pack_cycle );
-//	rb_pack_min->add_mover( min_mover ); // JQX comment this out, it was pulled out from rb_pack_min, so that I can define JumpOutMover, see below
-
-//	dock_mcm_mover_ = new TrialMover( rb_pack_min, mc_ );  //JQX commented this out, pull out the "min_mover" out of "rb_pack_min", redefine a JumpOutMOver to match Legacy
-	core::Real minimization_threshold = 15.0;              // JQX add this, in order to define a new   JumpOutMover
-	JumpOutMoverOP rb_mover_min = new JumpOutMover( rb_pack_min, min_mover, scorefxn_, minimization_threshold ); // JQX define the new JumpOutMover called rb_mover_min, match the Legacy code
-	dock_mcm_mover_ = new TrialMover( rb_mover_min,mc_ );  //JQX redfine the dock_mcm_mover_
-}
-
-*/
-//JQX: completely comment above things
-
-
-
-
-
-
-
-
-
-// JQX rewrote the setup_protocol below
-
 void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
 	using namespace moves;
 	using namespace basic::options;
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 	using namespace protocols::toolbox::task_operations;
-
-
-
-
-
-
-
 
 	//JQX: set up rigid body movers
 	rigid::RigidBodyPerturbMoverOP rb_mover = new rigid::RigidBodyPerturbMover( pose, *movemap_, rot_magnitude_, trans_magnitude_ , rigid::partner_downstream, true );
@@ -462,9 +315,6 @@ void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
         TrialMoverOP scmin_trial = new TrialMover( scmin_mover, mc_ );
         repack_step->add_mover(scmin_trial);
     }
-    
-    
-    
 
 	//JQX: define the cycle mover
 	//JQX: 1. rb_mover_min_trail (7 times)
@@ -475,19 +325,6 @@ void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /// @details  Show the complete setup of the docking protocol
 void
@@ -536,6 +373,10 @@ std::ostream & operator<<(std::ostream& out, const DockMCMCycle & dp )
 	return out;
 }
 
+DockJumps const & DockMCMCycle::movable_jumps() const
+{
+	return movable_jumps_;
+}
 
 } // namespace docking
 } // namespace protocols

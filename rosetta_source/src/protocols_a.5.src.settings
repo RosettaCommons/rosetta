@@ -31,10 +31,12 @@ sources = {
 		"RefineBetaBarrel",
 		"LHRepulsiveRamp",
 		"LHSnugFitLegacy",
-		"RefineCDRH3HighRes",
+		"RefineOneCDRLoop",
 		"H3RefineCCD",
 		"RefineCDRH1Centroid",
-		"CDRsMinPackMin"
+		"CDRsMinPackMin",
+		"SnugDock",
+		"SnugDockProtocol",
 	],
 }
 include_path = [

@@ -50,22 +50,22 @@ public:
 	// constructor with arguments
 	DockingHighResLegacy(
 		int rb_jump,
-		core::scoring::ScoreFunctionCOP scorefxn
+		core::scoring::ScoreFunctionOP scorefxn
 
 	);
 
 	// constructor with arguments
 	DockingHighResLegacy(
 		int rb_jump,
-		core::scoring::ScoreFunctionCOP scorefxn,
-		core::scoring::ScoreFunctionCOP scorefxn_pack
+		core::scoring::ScoreFunctionOP scorefxn,
+		core::scoring::ScoreFunctionOP scorefxn_pack
 	);
 
 	// constructor with arguments
 	DockingHighResLegacy(
 		DockJumps const movable_jumps,
-		core::scoring::ScoreFunctionCOP scorefxn,
-		core::scoring::ScoreFunctionCOP scorefxn_pack
+		core::scoring::ScoreFunctionOP scorefxn,
+		core::scoring::ScoreFunctionOP scorefxn_pack
 	);
 
 	~DockingHighResLegacy();

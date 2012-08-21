@@ -58,23 +58,23 @@ public:
 	///		The second is a scorefunction that will be used for docking and packing.
 	DockMCMCycle(
 		core::Size const rb_jump,
-		core::scoring::ScoreFunctionCOP scorefxn
+		core::scoring::ScoreFunctionOP scorefxn
 	);
 
 	/// @brief Constructor with arguments: The first argument is the jump number to dock over.
 	///		The second is a scorefunction that will be used for docking, the third is a scorefunction that will be used for packing.
 	DockMCMCycle(
 		core::Size const rb_jump,
-		core::scoring::ScoreFunctionCOP scorefxn,
-		core::scoring::ScoreFunctionCOP scorefxn_pack
+		core::scoring::ScoreFunctionOP scorefxn,
+		core::scoring::ScoreFunctionOP scorefxn_pack
 	);
 
 	/// @brief Constructor with arguments: The first argument is a DockJumps vector.
 	///		The second is a scorefunction that will be used for docking, the third is a scorefunction that will be used for packing.
 	DockMCMCycle(
 		DockJumps const movable_jumps,
-		core::scoring::ScoreFunctionCOP scorefxn,
-		core::scoring::ScoreFunctionCOP scorefxn_pack
+		core::scoring::ScoreFunctionOP scorefxn,
+		core::scoring::ScoreFunctionOP scorefxn_pack
 	);
 
 	~DockMCMCycle();
@@ -107,11 +107,13 @@ public:
     void set_rtmin(bool setting){rtmin_=setting;}
     void set_rot_magnitude(core::Real value){rot_magnitude_=value;}
 
+	DockJumps const & movable_jumps() const;
+
 private:
-	core::scoring::ScoreFunctionCOP scorefxn_;
-	core::scoring::ScoreFunctionCOP scorefxn_pack_;
+	core::scoring::ScoreFunctionOP scorefxn_;
+	core::scoring::ScoreFunctionOP scorefxn_pack_;
 	core::kinematics::MoveMapOP movemap_;
-	moves::TrialMoverOP dock_mcm_mover_;
+	// moves::TrialMoverOP dock_mcm_mover_;
 	moves::CycleMoverOP dock_mcm_cycle_; //JQX define it
 	moves::MonteCarloOP mc_;
 

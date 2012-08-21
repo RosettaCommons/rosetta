@@ -407,7 +407,7 @@ void H3PerturbCCD::read_and_store_fragments( core::pose::Pose & pose ) {
         
     protocols::loops::read_loop_fragments( frag_libs );
         
-    Size frag_size = (ab_info_->get_CDR_loop("h3")->stop() - ab_info_->get_CDR_loop("h3")->start()) + 3; //JQX: why +3??
+    Size frag_size = (ab_info_->get_CDR_loop(h3)->stop() - ab_info_->get_CDR_loop(h3)->start()) + 3; //JQX: why +3??
     TR<<frag_size<<std::endl;
     
 
@@ -423,7 +423,7 @@ void H3PerturbCCD::read_and_store_fragments( core::pose::Pose & pose ) {
           eit = loop_3mer_frames.end(); it!=eit; ++it ) {
         FrameOP short_frame = (*it)->clone_with_frags();
         offset++;
-        short_frame->shift_to( ( ab_info_->get_CDR_loop("h3")->start() - 2 ) + offset  );
+        short_frame->shift_to( ( ab_info_->get_CDR_loop(h3)->start() - 2 ) + offset  );
         offset_3mer_frags->add( short_frame );
     }
         
@@ -437,7 +437,7 @@ void H3PerturbCCD::read_and_store_fragments( core::pose::Pose & pose ) {
             eit = loop_9mer_frames.end(); it!=eit; ++it ) {
         FrameOP short_frame = (*it)->clone_with_frags();
         offset++;
-        short_frame->shift_to( ( ab_info_->get_CDR_loop("h3")->start() - 2 ) + offset  );
+        short_frame->shift_to( ( ab_info_->get_CDR_loop(h3)->start() - 2 ) + offset  );
         offset_9mer_frags->add( short_frame );
     }
         

@@ -155,6 +155,8 @@ void DockingEnsemble::recover_conformer_sidechains( core::pose::Pose & pose )
 
 	data->map()[ partner_ ] = highres_reference_energies_[conf_num_];
 	pose.data().set( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA, data );
+
+    //jjg: need to cache pointer to this function in the pose too!
 }
 
 void DockingEnsemble::calculate_lowres_ref_energy( core::pose::Pose & pose )

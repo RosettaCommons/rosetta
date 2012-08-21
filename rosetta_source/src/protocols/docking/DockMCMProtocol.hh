@@ -54,23 +54,23 @@ public:
 	/// and the third is the packing scorefxn.
 	DockMCMProtocol(
 		core::Size const rb_jump,
-		core::scoring::ScoreFunctionCOP scorefxn,
-		core::scoring::ScoreFunctionCOP scorefxn_pack
+		core::scoring::ScoreFunctionOP scorefxn,
+		core::scoring::ScoreFunctionOP scorefxn_pack
 	);
 
 	/// @brief Constructor with two arguments. The first is the DockJumps, the second is a scorefunction that will be
 	/// used for docking and packing.
 	DockMCMProtocol(
 		DockJumps const movable_jumps,
-		core::scoring::ScoreFunctionCOP scorefxn
+		core::scoring::ScoreFunctionOP scorefxn
 	);
 
 	/// @brief Constructor with three arguments. The first is the DockJumps, the second is the docking scorefunction
 	/// and the third is the packing scorefunction.
 	DockMCMProtocol(
 		DockJumps const movable_jumps,
-		core::scoring::ScoreFunctionCOP scorefxn,
-		core::scoring::ScoreFunctionCOP scorefxn_pack
+		core::scoring::ScoreFunctionOP scorefxn,
+		core::scoring::ScoreFunctionOP scorefxn_pack
 	);
 
 	// destructor

@@ -91,8 +91,8 @@ DockMCMProtocol::DockMCMProtocol(
 // only one movable jump, scoring and packing defined
 DockMCMProtocol::DockMCMProtocol(
 	core::Size const rb_jump,
-	core::scoring::ScoreFunctionCOP scorefxn,
-	core::scoring::ScoreFunctionCOP scorefxn_pack
+	core::scoring::ScoreFunctionOP scorefxn,
+	core::scoring::ScoreFunctionOP scorefxn_pack
 ) : DockingHighRes(rb_jump, scorefxn, scorefxn_pack)
 {
 	init();
@@ -102,7 +102,7 @@ DockMCMProtocol::DockMCMProtocol(
 // only one movable jump, scoring and packing defined
 DockMCMProtocol::DockMCMProtocol(
 	DockJumps const movable_jumps,
-	core::scoring::ScoreFunctionCOP scorefxn
+	core::scoring::ScoreFunctionOP scorefxn
 ) : DockingHighRes(movable_jumps[1], scorefxn)
 {
 	init();
@@ -112,8 +112,8 @@ DockMCMProtocol::DockMCMProtocol(
 // only one movable jump, scoring and packing defined
 DockMCMProtocol::DockMCMProtocol(
 	DockJumps const movable_jumps,
-	core::scoring::ScoreFunctionCOP scorefxn,
-	core::scoring::ScoreFunctionCOP scorefxn_pack
+	core::scoring::ScoreFunctionOP scorefxn,
+	core::scoring::ScoreFunctionOP scorefxn_pack
 ) : DockingHighRes(movable_jumps, scorefxn, scorefxn_pack)
 {
 	init();
@@ -137,82 +137,6 @@ DockMCMProtocol::init()
 	filter_ = new DockingHighResFilter();
     movemap_reset_ = false;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-/*  JQX: rewrite this apply function, try to use all the really OO concept, especial to make sure that the same mc_ object is always being used
-
-
-////////////////////////////////////////////////////////////////////////////////
-/// @begin docking high resolution apply function
-/// @brief
-/// @detailed
-///		decides what to call according to options
-void DockMCMProtocol::apply( core::pose::Pose & pose )
-{
-	using namespace scoring;
-
-	TR << "in DockMCMProtocol.apply" << std::endl;
-
-	tf2()->create_and_attach_task_factory( this, pose );
-
-	protocols::simple_moves::PackRotamersMoverOP initial_pack = new protocols::simple_moves::PackRotamersMover();
-	initial_pack->score_function( scorefxn_pack() );
-	initial_pack->task_factory( task_factory() );
-
-	/// minimize_trial defaults to a min_tolerance of 1.0
-	DockMinMoverOP minimize_trial = new DockMinMover( movable_jumps(), scorefxn() );
-
-	dock_mcm_ = new DockMCMCycle( movable_jumps(), scorefxn(), scorefxn_pack() );
-	dock_mcm_->set_task_factory( task_factory() );
-
-	initial_pack->apply( pose );
-
-	minimize_trial->apply( pose );
-
-//	dock_mcm_->apply( pose );            //JQX comment this out, it seems not necessary compared to the Legacy
-//	dock_mcm_->get_mc()->show_scores();  //JQX comment this out, it seems not necessary compared to the Legacy
-
-	filter_->set_score_margin( 10.0 );
-	if ( filter_->apply( pose ) )
-	{
-		for ( Size i=1; i<=4; ++i ) { dock_mcm_->apply( pose );
-		dock_mcm_->get_mc()->show_scores();}
-
-		pose.dump_pdb("after_4_cycles.pdb");   //JQX:  want to check the pose after 4 cycles
-		exit(-1) ;  //JQX: for testing
-
-		filter_->set_score_margin( 5.0 );
-		if ( filter_->apply( pose ) )
-		{
-			for ( Size i=1; i<=45; ++i ) { dock_mcm_->apply( pose );
-			dock_mcm_->get_mc()->show_scores();}
-		}
-	}
-	filter_->set_score_margin( 0.0 );
-
-	// add minimize to strict tolerance 0.02
-	minimize_trial->set_min_tolerance( 0.02 );
-	minimize_trial->apply( pose );
-}
-
-
-*/
-
-
-
-
-
-
 
 // JQX: rewrite the apply function
 
@@ -295,12 +219,8 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 //	{
 		for ( Size i=1; i<=4; ++i ) {
 			dock_mcm_->apply( pose );
-//			dock_mcm_->get_mc()->show_scores();
 			jd2::write_score_tracer( pose, "DockMCM_cycle_"+ObjexxFCL::fmt::I(1, i ) );
 		}
-
-//		pose.dump_pdb("after_4_cycles.pdb");
-
 
 //		filter_->set_score_margin( 5.0 );
 
@@ -311,9 +231,7 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 //		{
 			for ( Size i=1; i<=45; ++i ) {
 				dock_mcm_->apply( pose );
-//				dock_mcm_->get_mc()->show_scores();
-			jd2::write_score_tracer( pose, "DockMCM_cycle_"+ObjexxFCL::fmt::I(1, i+4 ) );
-
+				jd2::write_score_tracer( pose, "DockMCM_cycle_"+ObjexxFCL::fmt::I(1, i+4 ) );
 			}
 //		}
 //	}

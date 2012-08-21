@@ -25,16 +25,64 @@
 #include <protocols/loops/Loops.hh>
 #include <utility/vector1.hh>
 #include <protocols/docking/types.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <boost/lexical_cast.hpp>
 
-// C++ Headers
-
-// Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {
 namespace antibody2 {
 
+    /*
+     class Antibody_Loop : public loops::Loop{
+     public:
+     Antibody_Loop(core::pose::Pose const & pose,
+     AntibodyCDRNameEnum const & cdr_name,
+     AntibodyNumberingEnum const & numbering);
+     
+     std::string get_Sequence() {return cdr_sequence_;}
+     std::string get_ChainID()  {return chain_id_;}
+     std::string get_CDRLoopName() {return cdr_name_;}
+     std::string get_NumberingInfo() { return numbering_type_ + " numbering: " + chain_id_ + " " +
+     boost::lexical_cast<std::string>(numbering_start_) + "-" +
+     boost::lexical_cast<std::string>(numbering_stop_) ;}
+     
+     private:
+     AntibodyNumberingEnum numbering_;
+     std::string chain_id_; // this CDR is on heavy or light chain
+     std::string cdr_sequence_;
+     std::string cdr_name_;
+     std::string numbering_type_;
+     core::Size numbering_start_;
+     core::Size numbering_stop_;
+     
+     };
+     */
+    
+    enum AntibodyCDRNameEnum{
+        start_cdr_loop = 1,
+        h1 = start_cdr_loop,
+        h2,
+        h3,
+        H_chain_last_loop = h3,
+        camelid_last_loop = h3,
+        l1,
+        l2,
+        l3,
+        L_chain_last_loop = l3,
+        num_cdr_loops = l3
+    };
+    
+    enum AntibodyNumberingEnum{
+        Aroop = 1,
+        Chothia,
+        Kabat,
+        Enhanced_Chothia,
+        AHO,
+        IMGT
+    };
+    
     
 struct FrameWork{
 public:
@@ -50,30 +98,55 @@ private:
     std::string chain_name_;
 };
     
+    
+
+    
+
 /// antibody2 definition
 class AntibodyInfo : public utility::pointer::ReferenceCount {
 
 public:
-	typedef std::map < std::string, loops::LoopOP > LoopMap;
-    typedef std::map <std::string, core::Size> CDR_Numbering_Begin_Map;
-    typedef std::map <std::string, core::Size> CDR_Numbering_End_Map;
 
-    
 	/// default constructor
 	AntibodyInfo();
 
 	/// constructor with arguments
-	AntibodyInfo( core::pose::Pose & pose );
-	AntibodyInfo( core::pose::Pose & pose, bool camelid );
-	AntibodyInfo( core::pose::Pose & pose, std::string cdr_name );
+	AntibodyInfo( core::pose::Pose const & pose );
+	AntibodyInfo( core::pose::Pose const & pose,
+                 AntibodyNumberingEnum const & numbering_scheme);
 
-	void setup_CDR_loops( core::pose::Pose & pose, bool camelid );
 
-	void all_cdr_fold_tree( core::pose::Pose & pose );
-//	void cdr_h3_fold_tree( core::pose::Pose & pose );
+    void init(core::pose::Pose const & pose);
+    
+    /// @brief check the input pose is nanobody, antibody or wrong
+    void check_AntibodyRelatedPose(core::pose::Pose const & pose);
+
+    /// @brief setup the CDR loops objects based on the input numbering scheme
+    void setup_CDRsInfo( core::pose::Pose const & pose );
+    
+    /// @brief setup the framework information based on the input numbering scheme
+    void setup_FrameWorkInfo(core::pose::Pose const & pose );
+    
+    /// @brief predict kinked/extended information based on bioinformatics rules
+    std::string Predict_K_E_CDRH3( core::pose::Pose const & pose );
+    void detect_and_set_camelid_CDR_H3_stem_type();
+	void detect_and_set_regular_CDR_H3_stem_type( core::pose::Pose const & pose );
+    void detect_and_set_regular_CDR_H3_stem_type_new_rule( core::pose::Pose const & pose );
 
 	/// @brief return the loop of a certain loop type
-	loops::LoopOP get_CDR_loop( std::string loop );
+    loops::LoopOP get_CDR_loop( AntibodyCDRNameEnum const & cdr_name ) const;
+    
+    std::string get_CDR_Sequence( AntibodyCDRNameEnum const & cdr_name) const {
+        return cdr_sequence_[cdr_name];
+    };
+    
+    loops::LoopsOP get_all_cdr_loops(){
+        return all_cdr_loops_;
+    }
+    
+    std::string get_CDR_Name(AntibodyCDRNameEnum const & cdr_name) const{
+        return cdr_name_[cdr_name];
+    }
 
 	// return kinked/extended
 	bool is_kinked()   { return kinked_H3_;   }
@@ -94,48 +167,68 @@ public:
 	core::Size current_start;
 	// End coordinates of active loop
 	core::Size current_end;
+    
 
-    //TODO: JQX, fix this, this is not supposed to be here
-	loops::Loops all_cdr_loops_;
     
-    void detect_and_set_CDR_H3_stem_type( core::pose::Pose & pose );
-	void detect_and_set_camelid_CDR_H3_stem_type();
-	void detect_and_set_regular_CDR_H3_stem_type( core::pose::Pose & pose );
-    void detect_and_set_regular_CDR_H3_stem_type_new_rule( core::pose::Pose & pose );
-    
-    void get_CDRs_numbering();
+    utility::vector1< utility::vector1<int> >  get_AntibodyNumberingScheme(AntibodyNumberingEnum const & numbering_scheme);
     utility::vector1<FrameWork> get_ab_framework(){return Ab_framework_;}
     utility::vector1<FrameWork> get_Hfr(){return Hfr_;}
     utility::vector1<FrameWork> get_Lfr(){return Lfr_;}
 
-	void set_default( bool camelid );
+	void set_default( );
     void identify_CDR_from_a_sequence(std::string & querychain);
-    
-    //bool is_my_pose_antibody(core::pose::Pose & pose);
-    //bool is_my_antibody_camelid(core::pose::Pose & pose);
+
 
     docking::DockJumps LH_dock_jump(){ return LH_dock_jumps_;}
 
     std::string LH_dock_partner(){return LH_dock_partners_;}
     
+    
+
+    
+    
+    // JQX: all the FoldTree Stuff
+    void all_cdr_fold_tree( core::pose::Pose & pose );
+    //	void cdr_h3_fold_tree( core::pose::Pose & pose );
     void all_cdr_VL_VH_fold_tree( core::pose::Pose & pose_in);
+    core::kinematics::FoldTreeOP get_foldtree_LH_A( core::pose::Pose const & pose );
+    core::kinematics::FoldTreeOP get_foldtree_L_HA( core::pose::Pose const & pose );
+    core::kinematics::FoldTreeOP get_foldtree_LA_H( core::pose::Pose const & pose );
+    // JQX: all the MoveMap Stuff
+    core::kinematics::MoveMapOP get_movemap_allCDRbb(core::pose::Pose const & pose);
+    core::kinematics::MoveMapOP get_movemap_OneCDRbb(core::pose::Pose const & pose, AntibodyCDRNameEnum const & cdr_loop);
+    core::pack::task::TaskFactoryOP get_taskfctory_allCDRs(core::pose::Pose  & pose);
+    
+    /// @brief return the num of cdr loops, can be 3 (nanobody) or 6 (regular antibody)
+    AntibodyCDRNameEnum get_total_num_cdr_loops(){return tot_cdr_loops_enum_;}
+
+    bool get_antigen_existence_input_pose(){return InputPose_has_antigen_;}
     
 private:
-	// cdr loops
-	LoopMap loops_;
-	loops::LoopOP L1_, L2_, L3_;
-	loops::LoopOP H1_, H2_, H3_;
+
+    AntibodyNumberingEnum numbering_scheme_;
+    std::string CDRH3CterminalPredicition_;
+
+    
+    /// @brief a "LoopsOP" object, save cdr "Loop" one by one
+    loops::LoopsOP all_cdr_loops_;
+    
+    /// @brief a "vector1" of "LoopsOP", each "LoopsOP" only has one cdr "Loop"
+    utility::vector1<loops::LoopsOP> vector1_of_all_cdr_loopsOP_;
+    
+    /// @brief a "vector1" of "LoopOP", each "LoopOP" itself is a cdr "LoopOP"
+    utility::vector1<loops::LoopOP> vector1_of_all_cdr_loopOP_;
+    
 	std::string L1_seq_, L2_seq_, L3_seq_;
 	std::string H1_seq_,H2_seq_,H3_seq_;
 
-
-	CDR_Numbering_Begin_Map CDR_numbering_begin_;
-	CDR_Numbering_End_Map CDR_numbering_end_;
-
-
+    utility::vector1<std::string> cdr_sequence_;
+    utility::vector1<std::string> cdr_name_;
+    
 	bool is_camelid_;
 	bool kinked_H3_;
 	bool extended_H3_;
+    bool InputPose_has_antigen_;
 
 	utility::vector1< char > Fv_sequence_;
 
@@ -145,7 +238,19 @@ private:
 	docking::DockJumps LH_dock_jumps_;
 	std::string LH_dock_partners_;
     
-
+    
+	core::kinematics::FoldTreeOP LH_A_foldtree_;
+	core::kinematics::FoldTreeOP L_HA_foldtree_;
+	core::kinematics::FoldTreeOP LA_H_foldtree_;
+    
+    core::pose::Pose the_definition_pose_;  // save the pose that was used to define ab_info object
+    
+    utility::vector1< utility::vector1<int> > numbering_info_;
+    
+    utility::vector1<char> Chain_IDs_for_CDRs_;
+    
+    AntibodyCDRNameEnum tot_cdr_loops_enum_;
+    
 };
 
 

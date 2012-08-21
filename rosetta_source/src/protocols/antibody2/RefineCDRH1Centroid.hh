@@ -54,7 +54,7 @@ public:
 	RefineCDRH1Centroid();
 
     /// @brief constructor with arguments
-    RefineCDRH1Centroid(AntibodyInfoOP antibody_info, std::string loop_name);
+    RefineCDRH1Centroid(AntibodyInfoOP antibody_info, AntibodyCDRNameEnum loop_name);
 
     /// @brief constructor with arguments
     RefineCDRH1Centroid( loops::LoopOP a_cdr_loop);

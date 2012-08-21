@@ -59,7 +59,7 @@
 #include <protocols/antibody2/AntibodyModelerProtocol.hh>
 #include <protocols/antibody2/ModelCDRH3.hh>
 #include <protocols/antibody2/CDRsMinPackMin.hh>
-#include <protocols/antibody2/RefineCDRH3HighRes.hh>
+#include <protocols/antibody2/RefineOneCDRLoop.hh>
 #include <protocols/antibody2/RefineBetaBarrel.hh>
 
 #include <ObjexxFCL/format.hh>
@@ -313,7 +313,7 @@ void AntibodyModelerProtocol::finalize_setup( pose::Pose & pose )
 
 	set_native_pose( native_pose ); // pass the native pose to the mover.native_pose_
 
-    ab_info_ = new AntibodyInfo(pose,camelid_);
+    ab_info_ = new AntibodyInfo(pose); ab_info_->all_cdr_fold_tree(pose);
     TR<<*ab_info_<<std::endl;
     
     //AntibodyInfoOP native_ab_info = new AntibodyInfo(*native_pose,camelid_);
@@ -405,7 +405,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
     
 	// Step 3: Full Atom Relax 
     if(refine_h3_){
-        RefineCDRH3HighResOP cdr_highres_refine_ = new RefineCDRH3HighRes(ab_info_, h3_refine_type_, loop_scorefxn_highres_); 
+        RefineOneCDRLoopOP cdr_highres_refine_ = new RefineOneCDRLoop(ab_info_, h3_refine_type_, loop_scorefxn_highres_);
             cdr_highres_refine_ -> set_refine_mode(h3_refine_type_);
             cdr_highres_refine_ -> set_h3_filter(h3_filter_);
             cdr_highres_refine_ -> set_num_filter_tries(h3_filter_tolerance_);
@@ -427,7 +427,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
     
     // align pose to native pose
     pose::Pose native_pose = *get_native_pose();
-    antibody2::AntibodyInfoOP native_ab_info = new AntibodyInfo(native_pose,camelid_);
+    antibody2::AntibodyInfoOP native_ab_info = new AntibodyInfo(native_pose);
     align_to_native( pose, native_pose, ab_info_, native_ab_info );
     
     
@@ -447,13 +447,13 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 	// add scores to map for output
 	TR<< "Final Score = "<< ( *loop_scorefxn_highres_ )( pose ) << std::endl;
 
-	job->add_string_real_pair("H3_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_loop("h3") ));
-	job->add_string_real_pair("H2_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_loop("h2") ));
-	job->add_string_real_pair("H1_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_loop("h1") ));
+	job->add_string_real_pair("H3_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_loop(h3) ));
+	job->add_string_real_pair("H2_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_loop(h2) ));
+	job->add_string_real_pair("H1_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_loop(h1) ));
 	if( camelid_ == false ) {
-		job->add_string_real_pair("L3_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_loop("l3") ));
-		job->add_string_real_pair("L2_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_loop("l2") ));
-		job->add_string_real_pair("L1_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_loop("l1") ));
+		job->add_string_real_pair("L3_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_loop(l3) ));
+		job->add_string_real_pair("L2_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_loop(l2) ));
+		job->add_string_real_pair("L1_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_loop(l1) ));
 	}
 	job->add_string_real_pair("AF_constraint", constraint_score);
 
@@ -492,7 +492,7 @@ void AntibodyModelerProtocol::display_constraint_residues( core::pose::Pose & po
         H1_Cys = pose.pdb_info()->pdb2pose( 'H', 33 );
     }
 
-    for( Size ii = ab_info_->get_CDR_loop("h3")->start(); ii <= ab_info_->get_CDR_loop("h3")->stop(); ii++ ){
+    for( Size ii = ab_info_->get_CDR_loop(h3)->start(); ii <= ab_info_->get_CDR_loop(h3)->stop(); ii++ ){
         if( pose.residue(ii).name3() == "CYS" ) {
             H3_Cys = ii;
         }
@@ -507,7 +507,7 @@ void AntibodyModelerProtocol::display_constraint_residues( core::pose::Pose & po
 
     Size hfr_46(0), h3_closest(0);
     hfr_46 = pose.pdb_info()->pdb2pose( 'H', 46 );
-    if( ab_info_->is_extended() ) h3_closest = ab_info_->get_CDR_loop("h3")->stop() - 5;
+    if( ab_info_->is_extended() ) h3_closest = ab_info_->get_CDR_loop(h3)->stop() - 5;
     if( h3_closest != 0 ) {
         TR << "CONSTRAINTS: " << "AtomPair CA " << hfr_46 << " CA " << h3_closest
            << " BOUNDED 6.5 9.1 0.7 DISTANCE; mean 8.0 sd 0.7" << std::endl;

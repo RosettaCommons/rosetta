@@ -273,7 +273,7 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
 	set_native_pose( native_pose ); // pass the native pose to the mover.native_pose_
 
     
-    ab_info_   =  new AntibodyInfo(frame_pose, camelid_);
+    ab_info_   =  new AntibodyInfo(frame_pose);
     ab_t_info_ =  new Ab_TemplateInfo(graft_l1_, graft_l2_, graft_l3_,
                                       graft_h1_, graft_h2_, graft_h3_, camelid_);
     
@@ -283,13 +283,14 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
     TR<<" Checking AntibodyInfo object: "<<std::endl<<*ab_info_<<std::endl<<std::endl;
     TR<<" Checking Ab_TemplateInfo object: "<<std::endl<<*ab_t_info_<<std::endl<<std::endl;
 
-    for ( GraftMap::const_iterator it = grafts_.begin(); it != grafts_.end(); ++it ) {
-        if ( it->second ) {
-            TR << "Creating movers for " << it->first << std::endl;
-            TR << "                  start (chothia): "<<ab_info_->get_CDR_loop(it->first)->start()<<std::endl;
-            TR << "                   stop (chothia): "<<ab_info_->get_CDR_loop(it->first)->stop()<<std::endl;
+    //for ( GraftMap::const_iterator it = grafts_.begin(); it != grafts_.end(); ++it ) {
+    for (AntibodyCDRNameEnum it = start_cdr_loop; it <= ab_info_->get_total_num_cdr_loops(); it=AntibodyCDRNameEnum(it+1) ){
+        //if ( it->second ) {
+            TR << "Creating movers for " << it << std::endl;
+            TR << "                  start (chothia): "<<ab_info_->get_CDR_loop(it)->start()<<std::endl;
+            TR << "                   stop (chothia): "<<ab_info_->get_CDR_loop(it)->stop()<<std::endl;
             
-            GraftOneCDRLoopOP graft_one_cdr = new GraftOneCDRLoop( it->first, ab_info_, ab_t_info_, scorefxn_pack_) ;
+            GraftOneCDRLoopOP graft_one_cdr = new GraftOneCDRLoop( it, ab_info_, ab_t_info_, scorefxn_pack_) ;
             graft_one_cdr->enable_benchmark_mode( benchmark_ );
             graft_sequence_->add_mover( graft_one_cdr);
             
@@ -300,7 +301,7 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
              closeone->enable_benchmark_mode( benchmark_ );
              graft_sequence_->add_mover( closeone );
              */
-        }
+        //}
     }
     
     // Exact match Aroop's old code in Rosetta 2:
@@ -385,7 +386,7 @@ void GraftCDRLoopsProtocol::apply( pose::Pose & frame_pose ) {
     if( get_native_pose() ) native_pose = *get_native_pose();
     else                    native_pose = frame_pose;
     
-    AntibodyInfoOP native_ab_info = new AntibodyInfo( native_pose, camelid_ );
+    AntibodyInfoOP native_ab_info = new AntibodyInfo( native_pose );
     
     
     align_to_native( frame_pose, native_pose, ab_info_, native_ab_info );
@@ -417,7 +418,7 @@ void GraftCDRLoopsProtocol::display_constraint_residues( core::pose::Pose & pose
     else if( pose.residue( pose.pdb_info()->pdb2pose('H',33 ) ).name3() == "CYS" )
         H1_Cys = pose.pdb_info()->pdb2pose( 'H', 33 );
 
-    for( Size ii = ab_info_->get_CDR_loop("h3")->start(); ii <= ab_info_->get_CDR_loop("h3")->stop(); ii++ )
+    for( Size ii = ab_info_->get_CDR_loop(h3)->start(); ii <= ab_info_->get_CDR_loop(h3)->stop(); ii++ )
         
         if( pose.residue(ii).name3() == "CYS" ) H3_Cys = ii;
 
@@ -429,7 +430,7 @@ void GraftCDRLoopsProtocol::display_constraint_residues( core::pose::Pose & pose
 
     Size hfr_46(0), h3_closest(0);
     hfr_46 = pose.pdb_info()->pdb2pose( 'H', 46 );
-    if( ab_info_->is_extended() ) h3_closest = ab_info_->get_CDR_loop("h3")->stop() - 5;
+    if( ab_info_->is_extended() ) h3_closest = ab_info_->get_CDR_loop(h3)->stop() - 5;
     if( h3_closest != 0 )
         TR << "CONSTRAINTS: " << "AtomPair CA " << hfr_46 << " CA " << h3_closest
             << " BOUNDED 6.5 9.1 0.7 DISTANCE; mean 8.0 sd 0.7" << std::endl;

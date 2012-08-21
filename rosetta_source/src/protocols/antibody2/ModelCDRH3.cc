@@ -39,6 +39,8 @@
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/H3CterInsert.hh>
 #include <protocols/antibody2/RefineCDRH1Centroid.hh>
+#include <core/pose/PDBInfo.hh>
+
 
 
 static basic::Tracer TR("protocols.antibody2.ModelCDRH3");
@@ -151,9 +153,9 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
 
 
 
-    Size framework_loop_begin( ab_info_->get_CDR_loop("h3")->start() );
-    Size framework_loop_end  ( ab_info_->get_CDR_loop("h3")->stop()  );
-    Size cutpoint = ab_info_->get_CDR_loop("h3")->cut() ; // keep the cutpoint unchanged
+    Size framework_loop_begin( ab_info_->get_CDR_loop(h3)->start() );
+    Size framework_loop_end  ( ab_info_->get_CDR_loop(h3)->stop()  );
+    Size cutpoint = ab_info_->get_CDR_loop(h3)->cut() ; // keep the cutpoint unchanged
     Size framework_loop_size = (framework_loop_end - framework_loop_begin) + 1;
 
     loops::Loop cdr_h3( framework_loop_begin, framework_loop_end, cutpoint, 0, true );
@@ -242,10 +244,9 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
         Size unaligned_cdr_loop_begin(0), unaligned_cdr_loop_end(0);
         std::string const path = basic::options::option[ basic::options::OptionKeys::in::path::path ]()[1];
         core::import_pose::pose_from_pdb( hfr_pose_, path+"hfr.pdb" );
-        std::string cdr_name = "h3";
-        AntibodyInfoOP hfr_info =  new AntibodyInfo ( hfr_pose_, cdr_name );
-        unaligned_cdr_loop_begin = hfr_info->current_start;
-        unaligned_cdr_loop_end   = hfr_info->current_end;
+        unaligned_cdr_loop_begin = hfr_pose_.pdb_info()->pdb2pose('H', 95) ;
+        unaligned_cdr_loop_end   = hfr_pose_.pdb_info()->pdb2pose('H', 103);
+        unaligned_cdr_loop_end -= 1 ;
     
         if(framework_loop_size > 4){  //JQX: add this if statement to match R2_antibody
             pose_in.set_psi  (framework_loop_begin - 1, hfr_pose_.psi( unaligned_cdr_loop_begin - 1 )   );
@@ -265,7 +266,6 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
         if (do_cter_insert_){
             h3_cter_insert_mover_->apply(pose_in);
         }
-        
         //pose_in.dump_pdb("after_c_insert.pdb");
 
         if(remodel_=="legacy_perturb_ccd"){
@@ -287,8 +287,8 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
     
     //#############################  //JQX: this should not be here
     if( is_camelid_ ){
-        RefineCDRH1Centroid refine_cdr_centroid( ab_info_->get_CDR_loop("h1") );
-        refine_cdr_centroid.apply(pose_in);
+        //RefineCDRH1Centroid refine_cdr_centroid( ab_info_->get_CDR_loop(h1) );
+        //refine_cdr_centroid.apply(pose_in);
     }
     //#############################
     
@@ -298,7 +298,7 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
     to_full_atom.apply( pose_in );
 
     utility::vector1<bool> allow_chi_copy( pose_in.total_residue(), true );
-    for( Size ii=ab_info_->get_CDR_loop("h3")->start(); ii<=ab_info_->get_CDR_loop("h3")->stop(); ii++ ){
+    for( Size ii=ab_info_->get_CDR_loop(h3)->start(); ii<=ab_info_->get_CDR_loop(h3)->stop(); ii++ ){
         allow_chi_copy[ii] = false;
     }
     //recover sidechains from starting structures except H3

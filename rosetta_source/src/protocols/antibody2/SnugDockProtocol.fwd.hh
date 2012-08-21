@@ -7,28 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   Ab_LHSnugFit_Mover.fwd.hh
+/// @file   SnugDockProtocol.fwd.hh
 ///
 /// @brief forward declaration
 /// @author Jianqing Xu (xubest@gmail.com)
+/// @author Brian D. Weitzner ( brian.weitzner@gmail.com )
 
-#ifndef INCLUDED_protocols_antibody2_RefineCDRH3HighRes_fwd_hh
-#define INCLUDED_protocols_antibody2_RefineCDRH3HighRes_fwd_hh
+#ifndef INCLUDED_protocols_antibody2_SnugDockProtocol_FWD_HH
+#define INCLUDED_protocols_antibody2_SnugDockProtocol_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace antibody2 {
-        
-    class RefineCDRH3HighRes;
-    typedef utility::pointer::owning_ptr< RefineCDRH3HighRes > RefineCDRH3HighResOP;
-    typedef utility::pointer::owning_ptr< RefineCDRH3HighRes const > RefineCDRH3HighResCOP;
-        
-}
-}
 
-#endif
+	class SnugDockProtocol;
+	typedef utility::pointer::owning_ptr< SnugDockProtocol > SnugDockProtocolOP;
+	typedef utility::pointer::owning_ptr< SnugDockProtocol const > SnugDockProtocolCOP;
 
+} // namespace antibody2
+} // namespace protocols
 
-
-
+#endif // INCLUDED_protocols_antibody2_SnugDockProtocol_FWD_HH

@@ -49,7 +49,7 @@ public:
 	LHSnugFitLegacy();
     
 	/// @brief constructor with arguments
-    LHSnugFitLegacy(loops::Loops loops_in );
+    LHSnugFitLegacy(loops::LoopsOP loops_in );
     LHSnugFitLegacy(antibody2::AntibodyInfoOP antibody_in );
 	LHSnugFitLegacy(antibody2::AntibodyInfoOP antibody_in, bool camelid );
         
@@ -76,13 +76,13 @@ private:
     bool user_defined_;
     bool benchmark_;
     bool is_camelid_;
-    loops::Loops all_loops_; 
+    loops::LoopsOP all_loops_;
     std::string min_type_;
     Real rot_mag_;
     Real trans_mag_;
     Real temperature_;
     
-    void init(loops::Loops loops_in, bool camelid);
+    void init(loops::LoopsOP loops_in, bool camelid);
     
     void setup_objects();
     

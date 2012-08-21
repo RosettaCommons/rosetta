@@ -62,23 +62,23 @@ public:
 	///		used for docking and packing.
 	DockingHighRes(
 		core::Size const rb_jump,
-		core::scoring::ScoreFunctionCOP scorefxn
+		core::scoring::ScoreFunctionOP scorefxn
 	);
 
 	/// @brief Constructor with three arguments.  The first is the jump number, the second is a scorefunction that will
 	///		be used for docking and the third is a scorefunction that will be used for packing.
 	DockingHighRes(
 		core::Size const rb_jump,
-		core::scoring::ScoreFunctionCOP scorefxn,
-		core::scoring::ScoreFunctionCOP scorefxn_pack
+		core::scoring::ScoreFunctionOP scorefxn,
+		core::scoring::ScoreFunctionOP scorefxn_pack
 	);
 
 	/// @brief Constructor with three arguments.  The first is the DockJumps, the second is a scorefunction that will
 	///		be used for docking and the third is a scorefunction that will be used for packing.
 	DockingHighRes(
 		DockJumps const movable_jumps,
-		core::scoring::ScoreFunctionCOP scorefxn,
-		core::scoring::ScoreFunctionCOP scorefxn_pack
+		core::scoring::ScoreFunctionOP scorefxn,
+		core::scoring::ScoreFunctionOP scorefxn_pack
 	);
 
 	//Copy constructor
@@ -94,8 +94,8 @@ public:
 	//only works for DockMCMProtocol at the moment
 	void set_ignore_default_task( bool ignore_default_task );
 	bool ignore_default_task();
-	void set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn );
-	void set_scorefxn_pack( core::scoring::ScoreFunctionCOP scorefxn_pack );
+	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn );
+	void set_scorefxn_pack( core::scoring::ScoreFunctionOP scorefxn_pack );
 
 	DockJumps & movable_jumps() { return movable_jumps_; }
 	DockJumps const & movable_jumps() const { return movable_jumps_; }
@@ -118,8 +118,8 @@ public:
 	bool rt_min() { return rt_min_; }
 	std::string partners() { return partners_; }
 
-	core::scoring::ScoreFunctionCOP scorefxn() const;
-	core::scoring::ScoreFunctionCOP scorefxn_pack() const;
+	core::scoring::ScoreFunctionOP scorefxn() const;
+	core::scoring::ScoreFunctionOP scorefxn_pack() const;
 
 protected:
 	protocols::docking::DockTaskFactoryOP tf2();  //JQX: change COP to OP
@@ -129,8 +129,8 @@ private:
 	bool rt_min_;
 	std::string partners_;
 
-	core::scoring::ScoreFunctionCOP scorefxn_;
-	core::scoring::ScoreFunctionCOP scorefxn_pack_;
+	core::scoring::ScoreFunctionOP scorefxn_;
+	core::scoring::ScoreFunctionOP scorefxn_pack_;
 
 	// docking
 	DockJumps movable_jumps_;

@@ -148,8 +148,8 @@ DockAndRetrieveSidechains::parse_my_tag( TagPtr const tag, DataMap & data, proto
 	}
 
 	using namespace core::scoring;
-	ScoreFunctionCOP scorelo = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", score_low ) );
-	ScoreFunctionCOP scorehi = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", score_high ));
+	ScoreFunctionOP scorelo = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", score_low ) );
+	ScoreFunctionOP scorehi = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", score_high ));
 
 	utility::vector1<std::string> jumps_str = utility::string_split( tag->getOption<string>( "jumps", "1" ), ',' );
 	utility::vector1<core::Size> movable_jumps;

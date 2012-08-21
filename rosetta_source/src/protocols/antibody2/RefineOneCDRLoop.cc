@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer, email:license@u.washington.edu
 
-/// @file protocols/antibody2/RefineCDRH3HighRes.cc
+/// @file protocols/antibody2/RefineOneCDRLoop.cc
 /// @brief Build a homology model of an antibody2
 /// @detailed
 ///
@@ -17,7 +17,7 @@
 
 
 
-#include <protocols/antibody2/RefineCDRH3HighRes.hh>
+#include <protocols/antibody2/RefineOneCDRLoop.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -47,7 +47,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.antibody2.RefineCDRH3HighRes");
+static basic::Tracer TR("protocols.antibody2.RefineOneCDRLoop");
 
 
 
@@ -60,39 +60,54 @@ namespace antibody2 {
     
     
 // default constructor
-RefineCDRH3HighRes::RefineCDRH3HighRes( ) : Mover() {}
+RefineOneCDRLoop::RefineOneCDRLoop( ) : Mover() {}
     
-RefineCDRH3HighRes::RefineCDRH3HighRes( AntibodyInfoOP antibody_info ) : Mover() {   
+RefineOneCDRLoop::RefineOneCDRLoop( AntibodyInfoOP antibody_info ) : Mover() {   
     user_defined_ = false;
     ab_info_ = antibody_info;
     init();
 }
     
 
-RefineCDRH3HighRes::RefineCDRH3HighRes( AntibodyInfoOP antibody_info, std::string refine_mode ) : Mover() {
-    user_defined_ = false;
-    ab_info_    = antibody_info;
-    refine_mode_  = refine_mode;
-    init();
+RefineOneCDRLoop::RefineOneCDRLoop( AntibodyInfoOP antibody_info, std::string refine_mode ) : Mover() {
+	user_defined_ = false;
+	ab_info_    = antibody_info;
+	refine_mode_  = refine_mode;
+	init();
 }
   
     
-RefineCDRH3HighRes::RefineCDRH3HighRes(AntibodyInfoOP antibody_info, 
+RefineOneCDRLoop::RefineOneCDRLoop(AntibodyInfoOP antibody_info, 
                                        std::string refine_mode,
-                                       scoring::ScoreFunctionCOP highres_scorefxn 
+                                       scoring::ScoreFunctionCOP scorefxn
                                        ) : Mover()  {
     user_defined_ = true;
+	 cdr_loop_name_ = h3;
     ab_info_    = antibody_info;
     refine_mode_  = refine_mode;
-    highres_scorefxn_ = new scoring::ScoreFunction(*highres_scorefxn);
+    scorefxn_ = new scoring::ScoreFunction(*scorefxn);
     
     init();   
 }
     
+    
+RefineOneCDRLoop::RefineOneCDRLoop(AntibodyInfoOP antibody_info,
+                                    AntibodyCDRNameEnum const & cdr_loop_name,
+                                   std::string refine_mode,
+                                    scoring::ScoreFunctionCOP scorefxn
+                                    ) : Mover()  {
+    user_defined_ = true;
+    ab_info_    = antibody_info;
+    cdr_loop_name_ = cdr_loop_name;
+    refine_mode_  = refine_mode;
+    scorefxn_ = new scoring::ScoreFunction(*scorefxn);
+        
+    init();   
+}
 
     
     
-void RefineCDRH3HighRes::init( ) {
+void RefineOneCDRLoop::init( ) {
     set_default();
 }
 
@@ -100,9 +115,9 @@ void RefineCDRH3HighRes::init( ) {
     
     
     
-void RefineCDRH3HighRes::set_default()
-{ 
-    refine_mode_    = "legacy_refine_ccd";
+void RefineOneCDRLoop::set_default()
+{
+    cdr_loop_name_  = h3;
     flank_size_     = 2;
     H3_filter_      = true;
     flank_relax_    = true;
@@ -110,33 +125,37 @@ void RefineCDRH3HighRes::set_default()
     num_filter_tries_ = 20;
     
     if(!user_defined_){
-        highres_scorefxn_ = scoring::ScoreFunctionFactory::create_score_function("standard", "score12" );
-            highres_scorefxn_->set_weight( scoring::chainbreak, 1.0 );
-            highres_scorefxn_->set_weight( scoring::overlap_chainbreak, 10./3. );
-            highres_scorefxn_->set_weight( scoring::atom_pair_constraint, high_cst_ );
-    }
-    
+		refine_mode_    = "legacy_refine_ccd";
+		cdr_loop_name_  = h3;
+		scorefxn_ = scoring::ScoreFunctionFactory::create_score_function("standard", "score12" );
+		scorefxn_->set_weight( scoring::chainbreak, 1.0 );
+		scorefxn_->set_weight( scoring::overlap_chainbreak, 10./3. );
+		scorefxn_->set_weight( scoring::atom_pair_constraint, high_cst_ );
+	}
 }
     
     
     
 // default destructor
-RefineCDRH3HighRes::~RefineCDRH3HighRes() {}
+RefineOneCDRLoop::~RefineOneCDRLoop() {}
     
 //clone
-protocols::moves::MoverOP RefineCDRH3HighRes::clone() const {
-    return( new RefineCDRH3HighRes() );
+protocols::moves::MoverOP RefineOneCDRLoop::clone() const {
+    return( new RefineOneCDRLoop() );
 }
     
     
 
-std::string RefineCDRH3HighRes::get_name() const {
-    return "RefineCDRH3HighRes";
+std::string RefineOneCDRLoop::get_name() const {
+    return "RefineOneCDRLoop";
 }
 
+void RefineOneCDRLoop::set_score_function(core::scoring::ScoreFunctionCOP scorefxn){
+    scorefxn_ = new core::scoring::ScoreFunction(*scorefxn);
+}
     
     
-void RefineCDRH3HighRes::pass_start_pose(core::pose::Pose & start_pose){
+void RefineOneCDRLoop::pass_start_pose(core::pose::Pose & start_pose){
     start_pose_ = start_pose;
 }
     
@@ -144,19 +163,23 @@ void RefineCDRH3HighRes::pass_start_pose(core::pose::Pose & start_pose){
 
     
     
-void RefineCDRH3HighRes::apply(core::pose::Pose &pose){
+void RefineOneCDRLoop::apply(core::pose::Pose &pose){
     
-
+    //JQX: make sure the pose and the scoring function is on the same resolution
+    if ( pose.is_fullatom() != scorefxn_->has_nonzero_weight( core::scoring::fa_rep )){
+        utility_exit_with_message("the resultions of the 'pose' and the 'scoring function' don't match!");
+    }
+    
     
     if( refine_mode_ == "legacy_refine_ccd" ){
-        H3RefineCCDOP legacy_refine_ccd = new H3RefineCCD(ab_info_, "h3", highres_scorefxn_); 
+        H3RefineCCDOP legacy_refine_ccd = new H3RefineCCD(ab_info_, h3, scorefxn_);
             legacy_refine_ccd -> pass_start_pose(start_pose_);
         legacy_refine_ccd -> apply(pose);
     }  // the legacy refine_ccd method
     
     else{
                 
-        loops::LoopOP h3_loop = ab_info_->get_CDR_loop("h3");
+        loops::LoopOP one_cdr_loop = ab_info_->get_CDR_loop(cdr_loop_name_);
         
         if(flank_relax_){
             // JQX: The idea is to minimize the flanking residues backbones on each stems, 
@@ -165,15 +188,15 @@ void RefineCDRH3HighRes::apply(core::pose::Pose &pose){
             //      Will this special fold_tree affect perturbation? I don't think so. It doesn't really matter 
             //      2 or 3 residues before loop_begin or after loop_end, as long as the cut point is in
             //      the middle and the loop is within two jumps points.
-            simple_fold_tree( pose,  h3_loop->start()- 1 - flank_size_, h3_loop->cut(), h3_loop->stop() + 1 + flank_size_ );
+            simple_fold_tree( pose,  one_cdr_loop->start()- 1 - flank_size_, one_cdr_loop->cut(), one_cdr_loop->stop() + 1 + flank_size_ );
         }
         else{
-            simple_fold_tree( pose,  h3_loop->start()- 1, h3_loop->cut(), h3_loop->stop() + 1 );
+            simple_fold_tree( pose,  one_cdr_loop->start()- 1, one_cdr_loop->cut(), one_cdr_loop->stop() + 1 );
         }
         //JQX: be careful, no fold_tree operations are conducted in the two movers below.
         
         loops::LoopsOP pass_loops = new loops::Loops(); 
-        pass_loops->add_loop(  *h3_loop  );   
+        pass_loops->add_loop(  *one_cdr_loop  );
         
         
         core::Size itry=1;
@@ -183,7 +206,7 @@ void RefineCDRH3HighRes::apply(core::pose::Pose &pose){
         core::pose::Pose pose_before_refine = pose; //JQX: save the current pose before doing any refinement
         
         if(refine_mode_ == "refine_ccd"){ 
-            loops::loop_mover::refine::LoopMover_Refine_CCD refine_ccd( pass_loops, highres_scorefxn_ );
+            loops::loop_mover::refine::LoopMover_Refine_CCD refine_ccd( pass_loops, scorefxn_ );
             if(get_native_pose()) {     refine_ccd.set_native_pose( get_native_pose() );    }
             if(flank_relax_)      {     refine_ccd.set_flank_residue_min(flank_relax_);     }
             while (itry<=num_filter_tries_){
@@ -192,7 +215,6 @@ void RefineCDRH3HighRes::apply(core::pose::Pose &pose){
                 refine_ccd.apply( pose );
                 
                 Num<<itry; Num>>str_num; Num.str(""); Num.clear();
-                pose.dump_pdb("after_refine_"+str_num+".pdb");
                 
                 if(H3_filter_){ 
                         if( CDR_H3_cter_filter(pose, ab_info_) ) { break;} 
@@ -213,7 +235,7 @@ void RefineCDRH3HighRes::apply(core::pose::Pose &pose){
                              
         else if(refine_mode_ == "refine_kic"){
             //loops.remove_terminal_loops( pose );
-            loops::loop_mover::refine::LoopMover_Refine_KIC refine_kic( pass_loops, highres_scorefxn_ );
+            loops::loop_mover::refine::LoopMover_Refine_KIC refine_kic( pass_loops, scorefxn_ );
             if(get_native_pose()) {     refine_kic.set_native_pose( get_native_pose() );    }
             if(flank_relax_)      {     refine_kic.set_flank_residue_min(flank_relax_);     }
             while (itry<=num_filter_tries_ ){
@@ -221,7 +243,6 @@ void RefineCDRH3HighRes::apply(core::pose::Pose &pose){
                 pose = pose_before_refine;
                 refine_kic.apply( pose );
                 Num<<itry; Num>>str_num; Num.str(""); Num.clear();
-                pose.dump_pdb("after_refine_"+str_num+".pdb");
                 
                 if(H3_filter_){ 
                         if( CDR_H3_cter_filter(pose, ab_info_) ) { break;} 

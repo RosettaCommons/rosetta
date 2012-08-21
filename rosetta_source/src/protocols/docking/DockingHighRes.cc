@@ -82,7 +82,7 @@ DockingHighRes::DockingHighRes(
 // only one movable jump
 DockingHighRes::DockingHighRes(
 	core::Size const rb_jump,
-	core::scoring::ScoreFunctionCOP scorefxn
+	core::scoring::ScoreFunctionOP scorefxn
 ) : Mover(), scorefxn_(scorefxn), scorefxn_pack_(scorefxn)
 {
 	init( utility::tools::make_vector1<core::SSize>(rb_jump) );
@@ -92,8 +92,8 @@ DockingHighRes::DockingHighRes(
 // only one movable jump, scoring and packing defined
 DockingHighRes::DockingHighRes(
 	core::Size const rb_jump,
-	core::scoring::ScoreFunctionCOP scorefxn,
-	core::scoring::ScoreFunctionCOP scorefxn_pack
+	core::scoring::ScoreFunctionOP scorefxn,
+	core::scoring::ScoreFunctionOP scorefxn_pack
 ) : Mover(), scorefxn_(scorefxn), scorefxn_pack_(scorefxn_pack)
 {
 	init( utility::tools::make_vector1<core::SSize>(rb_jump) );
@@ -103,8 +103,8 @@ DockingHighRes::DockingHighRes(
 // vector of  movable jumps, scoring and packing defined
 DockingHighRes::DockingHighRes(
 	DockJumps const movable_jumps,
-	core::scoring::ScoreFunctionCOP scorefxn,
-	core::scoring::ScoreFunctionCOP scorefxn_pack
+	core::scoring::ScoreFunctionOP scorefxn,
+	core::scoring::ScoreFunctionOP scorefxn_pack
 ) : Mover(), scorefxn_(scorefxn), scorefxn_pack_(scorefxn_pack)
 {
 	init( movable_jumps );
@@ -165,12 +165,12 @@ protocols::docking::DockTaskFactoryOP DockingHighRes::tf2()    //JQX: change COP
 	return tf2_;
 }
 
-void DockingHighRes::set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn )
+void DockingHighRes::set_scorefxn( core::scoring::ScoreFunctionOP scorefxn )
 {
 	scorefxn_ = scorefxn;
 }
 
-void DockingHighRes::set_scorefxn_pack( core::scoring::ScoreFunctionCOP scorefxn_pack )
+void DockingHighRes::set_scorefxn_pack( core::scoring::ScoreFunctionOP scorefxn_pack )
 {
 	scorefxn_pack_ = scorefxn_pack;
 }
@@ -195,12 +195,12 @@ utility::vector1< core::pack::task::operation::TaskOperationOP > DockingHighRes:
     return tf2_->get_additional_task_operarations();
 }
 
-core::scoring::ScoreFunctionCOP DockingHighRes::scorefxn() const
+core::scoring::ScoreFunctionOP DockingHighRes::scorefxn() const
 {
 	return scorefxn_;
 }
 
-core::scoring::ScoreFunctionCOP DockingHighRes::scorefxn_pack() const
+core::scoring::ScoreFunctionOP DockingHighRes::scorefxn_pack() const
 {
 	return scorefxn_pack_;
 }

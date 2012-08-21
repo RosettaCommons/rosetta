@@ -54,13 +54,13 @@ SidechainMinMover::SidechainMinMover() : DockingHighRes()
 {
 	DockingHighRes::type( "SidechainMin" );
 	update_movemap_ = true;
-	core::scoring::ScoreFunctionCOP temp_sf = core::scoring::ScoreFunctionFactory::create_score_function( "standard" );
+	core::scoring::ScoreFunctionOP temp_sf = core::scoring::ScoreFunctionFactory::create_score_function( "standard" );
 	set_scorefxn( temp_sf );
 	set_default();
 }
 
 //construtor with arguments
-SidechainMinMover::SidechainMinMover( core::scoring::ScoreFunctionCOP scorefxn) : DockingHighRes( 1, scorefxn )
+SidechainMinMover::SidechainMinMover( core::scoring::ScoreFunctionOP scorefxn) : DockingHighRes( 1, scorefxn )
 {
 	DockingHighRes::type( "SidechainMin" );
 	//scorefxn_ = new core::scoring::ScoreFunction( *scorefxn() );
@@ -69,7 +69,7 @@ SidechainMinMover::SidechainMinMover( core::scoring::ScoreFunctionCOP scorefxn) 
 
 //construtor with arguments
 SidechainMinMover::SidechainMinMover(
-	core::scoring::ScoreFunctionCOP scorefxn,
+	core::scoring::ScoreFunctionOP scorefxn,
 	core::kinematics::MoveMapOP movemap
 ) : DockingHighRes( 1, scorefxn ), movemap_(movemap), update_movemap_(false)
 {
@@ -80,7 +80,7 @@ SidechainMinMover::SidechainMinMover(
 
 //constructor with arguments
 SidechainMinMover::SidechainMinMover(
-	core::scoring::ScoreFunctionCOP scorefxn,
+	core::scoring::ScoreFunctionOP scorefxn,
 	core::pack::task::PackerTaskOP task) : DockingHighRes( 1, scorefxn ), task_(task), update_movemap_(true)
 {
 	DockingHighRes::type( "SidechainMin" );
@@ -90,7 +90,7 @@ SidechainMinMover::SidechainMinMover(
 
 //constructor with arguments
 SidechainMinMover::SidechainMinMover(
-	core::scoring::ScoreFunctionCOP scorefxn,
+	core::scoring::ScoreFunctionOP scorefxn,
 	core::pack::task::TaskFactoryCOP tf) : DockingHighRes( 1, scorefxn), update_movemap_(true)
 {
 	DockingHighRes::type( "SidechainMin" );
@@ -101,7 +101,7 @@ SidechainMinMover::SidechainMinMover(
 }
 
 SidechainMinMover::SidechainMinMover(
-	core::Size rb_jump, core::scoring::ScoreFunctionCOP scorefxn ): DockingHighRes( rb_jump, scorefxn)
+	core::Size rb_jump, core::scoring::ScoreFunctionOP scorefxn ): DockingHighRes( rb_jump, scorefxn)
 {
 	DockingHighRes::type( "SidechainMin" );
 	set_default();
@@ -157,7 +157,7 @@ InterfaceSidechainMinMover::InterfaceSidechainMinMover() : SidechainMinMover(), 
 
 InterfaceSidechainMinMover::InterfaceSidechainMinMover(
 	core::Size rb_jump,
-	core::scoring::ScoreFunctionCOP scorefxn,
+	core::scoring::ScoreFunctionOP scorefxn,
 	core::Real interface_dist
 ) : SidechainMinMover(rb_jump, scorefxn), interface_dist_(interface_dist)
 {

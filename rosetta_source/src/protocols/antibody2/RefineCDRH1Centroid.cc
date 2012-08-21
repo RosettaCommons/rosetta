@@ -97,7 +97,7 @@ RefineCDRH1Centroid::RefineCDRH1Centroid( ) : Mover()
 
 }
 
-RefineCDRH1Centroid::RefineCDRH1Centroid( AntibodyInfoOP antibody_info, std::string loop_name ) : Mover() 
+RefineCDRH1Centroid::RefineCDRH1Centroid( AntibodyInfoOP antibody_info, AntibodyCDRNameEnum loop_name ) : Mover() 
 {
 
     
@@ -107,7 +107,7 @@ RefineCDRH1Centroid::RefineCDRH1Centroid( AntibodyInfoOP antibody_info, std::str
     
 
     
-RefineCDRH1Centroid::RefineCDRH1Centroid( loops::LoopOP a_cdr_loop ) : Mover() 
+RefineCDRH1Centroid::RefineCDRH1Centroid( loops::LoopOP a_cdr_loop ) : Mover()
 {        
     init(a_cdr_loop);
 }
@@ -115,7 +115,7 @@ RefineCDRH1Centroid::RefineCDRH1Centroid( loops::LoopOP a_cdr_loop ) : Mover()
     
 
     
-void RefineCDRH1Centroid::set_default(){ 
+void RefineCDRH1Centroid::set_default(){
 
     benchmark_          = false;
 
@@ -138,7 +138,7 @@ RefineCDRH1Centroid::~RefineCDRH1Centroid() {}
 
     
     
-void RefineCDRH1Centroid::init(loops::LoopOP a_cdr_loop ) 
+void RefineCDRH1Centroid::init(loops::LoopOP a_cdr_loop )
 {
     the_cdr_loop_ = a_cdr_loop;
 }

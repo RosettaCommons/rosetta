@@ -70,7 +70,7 @@
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 // AUTO-REMOVED #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-//#include <protocols/moves/MoverContainer.hh>
+#include <protocols/moves/MoverContainer.hh>
 
 #include <protocols/moves/DataMap.hh>
 
@@ -138,8 +138,8 @@ DockingProtocol::DockingProtocol(
 	bool const low_res_protocol_only,
 	bool const docking_local_refine,
 	bool const autofoldtree,
-	core::scoring::ScoreFunctionCOP docking_score_low,
-	core::scoring::ScoreFunctionCOP docking_score_high
+	core::scoring::ScoreFunctionOP docking_score_low,
+	core::scoring::ScoreFunctionOP docking_score_high
 ) : Mover()
 {
 	user_defined_ = true;
@@ -151,8 +151,8 @@ DockingProtocol::DockingProtocol(
 	bool const low_res_protocol_only,
 	bool const docking_local_refine,
 	bool const autofoldtree,
-	core::scoring::ScoreFunctionCOP docking_score_low,
-	core::scoring::ScoreFunctionCOP docking_score_high
+	core::scoring::ScoreFunctionOP docking_score_low,
+	core::scoring::ScoreFunctionOP docking_score_high
 ) : Mover()
 {
 	user_defined_ = true;
@@ -166,8 +166,8 @@ void DockingProtocol::init(
 	bool const low_res_protocol_only,
 	bool const docking_local_refine,
 	bool const autofoldtree,
-	core::scoring::ScoreFunctionCOP docking_score_low,
-	core::scoring::ScoreFunctionCOP docking_score_high
+	core::scoring::ScoreFunctionOP docking_score_low,
+	core::scoring::ScoreFunctionOP docking_score_high
 )
 {
 
@@ -693,8 +693,8 @@ void DockingProtocol::set_highres_scorefxn( core::scoring::ScoreFunctionOP docki
 }
 
 void DockingProtocol::set_highres_scorefxn( // delete
-	core::scoring::ScoreFunctionCOP docking_scorefxn_high,
-	core::scoring::ScoreFunctionCOP docking_scorefxn_pack )
+	core::scoring::ScoreFunctionOP docking_scorefxn_high,
+	core::scoring::ScoreFunctionOP docking_scorefxn_pack )
 {
 	docking_scorefxn_high_ = docking_scorefxn_high;
 	docking_scorefxn_pack_ = docking_scorefxn_pack;
@@ -702,9 +702,9 @@ void DockingProtocol::set_highres_scorefxn( // delete
 }
 
 void DockingProtocol::set_highres_scorefxn(
-	core::scoring::ScoreFunctionCOP docking_scorefxn_high,
-	core::scoring::ScoreFunctionCOP docking_scorefxn_pack,
-	core::scoring::ScoreFunctionCOP docking_scorefxn_output )
+	core::scoring::ScoreFunctionOP docking_scorefxn_high,
+	core::scoring::ScoreFunctionOP docking_scorefxn_pack,
+	core::scoring::ScoreFunctionOP docking_scorefxn_output )
 {
 	docking_scorefxn_high_ = docking_scorefxn_high;
 	docking_scorefxn_pack_ = docking_scorefxn_pack;
@@ -925,6 +925,12 @@ DockingProtocol::apply( pose::Pose & pose )
 
 		docking_lowres_mover_->apply( pose );
 
+		// Perform additional low resolution steps if they have been specified
+		if ( additional_low_resolution_steps_ )
+		{
+			additional_low_resolution_steps_->apply( pose );
+		}
+
 		// add scores to jd2 output
 		if( reporting_ ) {
 			if ( ensemble1_ ) job->add_string_real_pair("conf_num1", ensemble1_->get_current_confnum() );
@@ -1034,6 +1040,30 @@ protocols::docking::DockingInitialPerturbationCOP DockingProtocol::perturber() c
 	return perturber_;
 }
 
+//Allow a developer to set a custom high resolution mover
+void DockingProtocol::set_docking_highres_mover( protocols::docking::DockingHighResOP docking_highres_mover )
+{
+	docking_highres_mover_ = docking_highres_mover;
+
+	// If docking_highres_mover_ has been configured with custom scorefxns, we will tell DockingProtocol.
+	if ( docking_highres_mover_->scorefxn() && docking_highres_mover_->scorefxn_pack() )
+	{
+		set_highres_scorefxn( docking_highres_mover_->scorefxn(), docking_highres_mover_->scorefxn_pack() );
+	}
+	else if ( docking_highres_mover_->scorefxn() && ! docking_highres_mover_->scorefxn_pack() )
+	{
+		set_highres_scorefxn( docking_highres_mover_->scorefxn() );
+	}
+}
+
+void DockingProtocol::add_additional_low_resolution_step( protocols::moves::MoverOP additional_low_resolution_mover )
+{
+	if ( ! additional_low_resolution_steps_ )
+	{
+		additional_low_resolution_steps_ = new moves::SequenceMover;
+	}
+	additional_low_resolution_steps_->add_mover( additional_low_resolution_mover );
+}
 
 /// @details  Show the complete setup of the docking protocol
 void

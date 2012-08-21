@@ -22,7 +22,7 @@
 #include <core/scoring/ScoreFunction.hh>  
 // Needs to be the full header so the scorefxn can default to NULL
 #include <protocols/moves/Mover.hh>
-#include <protocols/antibody2/AntibodyInfo.fwd.hh>
+#include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/Ab_TemplateInfo.fwd.hh>
 
 namespace protocols {
@@ -34,13 +34,8 @@ namespace antibody2 {
 		// default constructor
 		GraftOneCDRLoop();
 
-		// constructor with arguments
-		GraftOneCDRLoop(std::string cdr_name, 
-                             core::Size query_start, 
-                             core::Size query_end, 
-                             core::scoring::ScoreFunctionCOP scorefxn );
-        
-		GraftOneCDRLoop(std::string cdr_name, 
+		// constructor with arguments        
+		GraftOneCDRLoop(AntibodyCDRNameEnum cdr_name,
                              AntibodyInfoOP ab_info,
                              Ab_TemplateInfoOP ab_t_info,
                              core::scoring::ScoreFunctionCOP scorefxn );
@@ -48,7 +43,7 @@ namespace antibody2 {
         
 		~GraftOneCDRLoop();
 
-		void set_default( std::string template_name );
+		void set_default( AntibodyCDRNameEnum template_name );
 		virtual void apply( core::pose::Pose & pose_in );
 		virtual std::string get_name() const;
 

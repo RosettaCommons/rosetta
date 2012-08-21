@@ -101,15 +101,15 @@ void RefineBetaBarrel::finalize_setup(pose::Pose & pose ){
     utility::vector1< bool> bb_is_flexible( pose.total_residue(), false );
     utility::vector1< bool> sc_is_flexible( pose.total_residue(), false );
         
-    select_loop_residues( pose, ab_info_->all_cdr_loops_, false/*include_neighbors*/, bb_is_flexible);
+    select_loop_residues( pose, *(ab_info_->get_all_cdr_loops()), false/*include_neighbors*/, bb_is_flexible);
     cdr_dock_map_->set_bb( bb_is_flexible );
-    select_loop_residues( pose, ab_info_->all_cdr_loops_, true/*include_neighbors*/, sc_is_flexible);
+    select_loop_residues( pose, *(ab_info_->get_all_cdr_loops()), true/*include_neighbors*/, sc_is_flexible);
     cdr_dock_map_->set_chi( sc_is_flexible );
         // JQX: the question here is how to update this sc_is_flexible due to the -include_neighbors options
         //      I think for the L-H docking, it is fine, because the restrict_to_interface for the pack_mover
         //      will update the interface residues anyway. But for H3 refinement, one need to consider this
     cdr_dock_map_->set_jump( 1, true );
-    for( Size ii = 2; ii <= ab_info_->all_cdr_loops_.num_loop() + 1; ii++ )
+    for( Size ii = 2; ii <= ab_info_->get_all_cdr_loops()->num_loop() + 1; ii++ )
         cdr_dock_map_->set_jump( ii, false );
         
         

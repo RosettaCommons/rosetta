@@ -705,7 +705,7 @@ void HotspotStubSet::fill( core::pose::Pose const & reference_pose, core::scorin
 	// set up scorefxn's. DISABLE environment-dependent H-bonds
 	core::scoring::ScoreFunctionOP centroid_scorefxn( core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen" ) );
 
-	core::scoring::ScoreFunctionCOP scorefxn = new core::scoring::ScoreFunction( *scorefxn_in );
+	core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction( *scorefxn_in );
 
 /*
 	core::scoring::ScoreFunctionOP noenvhbond_scorefxn( core::scoring::ScoreFunctionFactory::create_score_function( "score13" ) );

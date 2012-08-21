@@ -96,7 +96,7 @@ core::Real global_loop_rmsd ( const core::pose::Pose & pose_in,
                               loops::LoopOP current_loop );
 
     
-std::string get_seq_from_a_loop(core::pose::Pose & pose_in, loops::LoopOP  loop);
+std::string get_seq_from_a_loop(core::pose::Pose const & pose_in, loops::LoopOP  loop);
     
     
 /// align current Fv to native.Fv

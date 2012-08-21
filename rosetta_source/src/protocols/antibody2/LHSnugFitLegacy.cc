@@ -106,7 +106,7 @@ LHSnugFitLegacy::LHSnugFitLegacy() : Mover() {
 }
 
     
-LHSnugFitLegacy::LHSnugFitLegacy(loops::Loops loops_in ) : Mover() {
+LHSnugFitLegacy::LHSnugFitLegacy(loops::LoopsOP loops_in ) : Mover() {
     user_defined_ = true;
     init(loops_in, false);
 }
@@ -114,12 +114,12 @@ LHSnugFitLegacy::LHSnugFitLegacy(loops::Loops loops_in ) : Mover() {
     
 LHSnugFitLegacy::LHSnugFitLegacy(antibody2::AntibodyInfoOP antibody_in) : Mover() {
     user_defined_ = true;
-    init(antibody_in->all_cdr_loops_,false);
+    init(antibody_in->get_all_cdr_loops(),false);
 }
     
 LHSnugFitLegacy::LHSnugFitLegacy(antibody2::AntibodyInfoOP antibody_in, bool camelid) : Mover() {
     user_defined_ = true;
-    init(antibody_in->all_cdr_loops_, camelid);
+    init(antibody_in->get_all_cdr_loops(), camelid);
 }
     
     
@@ -135,7 +135,7 @@ protocols::moves::MoverOP LHSnugFitLegacy::clone() const {
 
     
     
-void LHSnugFitLegacy::init(loops::Loops loops_in, bool camelid ) 
+void LHSnugFitLegacy::init(loops::LoopsOP loops_in, bool camelid )
 {
     is_camelid_ = camelid;
     all_loops_ = loops_in;
@@ -189,8 +189,8 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
     loops::remove_cutpoint_variants( pose, true );
     
     using namespace core::chemical;
-    for ( loops::Loops::const_iterator it = all_loops_.begin(),
-         it_end = all_loops_.end();	it != it_end; ++it ) {
+    for ( loops::Loops::const_iterator it = all_loops_->begin(),
+         it_end = all_loops_->end();	it != it_end; ++it ) {
         core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, it->cut() );
         core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER,it->cut()+1);
     }
@@ -203,12 +203,12 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
     cdr_dock_map->set_bb( false );
     utility::vector1< bool> bb_is_flexible( nres, false );
     utility::vector1< bool> sc_is_flexible( nres, false );
-    select_loop_residues( pose, all_loops_, false /*include_neighbors*/, bb_is_flexible);
+    select_loop_residues( pose, *all_loops_, false /*include_neighbors*/, bb_is_flexible);
     cdr_dock_map->set_bb( bb_is_flexible );
-    select_loop_residues( pose, all_loops_, true/*include_neighbors*/, sc_is_flexible);
+    select_loop_residues( pose, *all_loops_, true/*include_neighbors*/, sc_is_flexible);
     cdr_dock_map->set_chi( sc_is_flexible );
     cdr_dock_map->set_jump( 1, true );
-    for( Size ii = 2; ii <= all_loops_.num_loop() + 1; ii++ )
+    for( Size ii = 2; ii <= all_loops_->num_loop() + 1; ii++ )
         cdr_dock_map->set_jump( ii, false );
     
     
@@ -246,7 +246,7 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
     
     TrialMoverOP pack_interface_trial = new TrialMover(pack_interface_repack, mc );
     
-    protocols::docking::SidechainMinMoverOP scmin_mover = new protocols::docking::SidechainMinMover( core::scoring::ScoreFunctionCOP( pack_scorefxn ), core::pack::task::TaskFactoryCOP( tf_ ) );
+    protocols::docking::SidechainMinMoverOP scmin_mover = new protocols::docking::SidechainMinMover( core::scoring::ScoreFunctionOP( pack_scorefxn ), core::pack::task::TaskFactoryCOP( tf_ ) );
     TrialMoverOP scmin_trial = new TrialMover( scmin_mover, mc );
     
     SequenceMoverOP rb_mover = new SequenceMover;
