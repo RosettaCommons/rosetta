@@ -108,7 +108,9 @@ from rosetta.protocols.simple_moves import *
 from rosetta.toolbox import *
 
 # PyMOLMover and associated methods.
-from rosetta.pymol_link import *
+from PyMolLink import *
+
+
 
 
 ###############################################################################
@@ -137,7 +139,7 @@ _python_py_exit_callback = None
 #Exception handling.
 class PyRosettaException(Exception):
     #def __init__(self): pass
-    
+
     def __str__(self):
         return 'PyRosettaException'
 
@@ -228,11 +230,12 @@ def _Pose_residue_iterator(obj):
 Pose.__iter__ = _Pose_residue_iterator
 
 
+'''
 # Add get() method to Pose (for compatibility with Rosetta Mover containers).
 def _get(self):
     """
     Returns the Pose itself.
-    
+
     The entire purpose of this method is so that custom Movers in PyRosetta do
     not crash when apply(pose) is called from within Mover containers (such as
     TrialMover, RepeatMover, etc.)  When these C++ Movers call the apply()
@@ -243,8 +246,8 @@ def _get(self):
     called from within Python code or C++ code.
     """
     return self
-
-Pose.get = _get
+'''
+Pose.get = lambda x: x
 
 
 # Vector compatibility.
@@ -302,14 +305,14 @@ def Vector1(list_in):
 def generate_nonstandard_residue_set(params_list):
     """
     Generates a ResidueTypeSet from a list of .params filenames.
-    
+
     .params files must be generated beforehand. Typically, one would obtain a
     molfile (.mdl) generated from the xyz coordinates of a residue, small
     molecule, or ion.  The script molfile_to_params.py can be used to convert
     to a Rosetta-readable .params file.  It can be found in the /test/tools
     folder of your PyRosetta installation or downloaded from the Rosetta
     Commons.
-    
+
     Example:
         params = ["penicillin.params", "amoxicillin.params"]
         type_set = generate_nonstandard_residue_set(params)
@@ -319,7 +322,8 @@ def generate_nonstandard_residue_set(params_list):
         Vector1()
         pose_from_pdb()
     """
-    res_set = ChemicalManager.get_instance().nonconst_residue_type_set("fa_standard")    res_set.read_files(Vector1(params_list),
+    res_set = ChemicalManager.get_instance().nonconst_residue_type_set("fa_standard")
+    res_set.read_files(Vector1(params_list),
 	           ChemicalManager.get_instance().atom_type_set("fa_standard"),
                ChemicalManager.get_instance().element_set('fa_standard'),
 	           ChemicalManager.get_instance().mm_atom_type_set("fa_standard"),
@@ -391,7 +395,7 @@ def etable_atom_pair_energies(atom1, atom2, sfxn):
     etable_ptr = score_manager.etable(
                                     sfxn.energy_method_options().etable_type())
     etable=etable_ptr.get()
-    etable_energy = core.scoring.etable.TableLookupEtableEnergy(etable, 
+    etable_energy = core.scoring.etable.TableLookupEtableEnergy(etable,
                                                   sfxn.energy_method_options())
 
 	# Construct AtomPairEnergy container to hold computed energies.
@@ -466,7 +470,8 @@ class PyJobDistributor:
 		if not os.path.exists(scorefile):
 			with open(scorefile, 'w') as f:
 			    f.write("pdb name: " + self.pdb_name + "     nstruct: " +
-			            str(self.nstruct) + '\n')
+			            str(self.nstruct) + '\n')
+
 		score = self.scorefxn(pose)	 # Calculates total score.
 		score_line = pose.energies().total_energies().weighted_string_of(
 		                                               self.scorefxn.weights())
@@ -476,7 +481,7 @@ class PyJobDistributor:
 		if self.native_pose is not None:
 			rmsd = CA_rmsd(self.native_pose, pose)
 			output_line = output_line + " rmsd: " + str(round(rmsd, 2))
-			
+
 		with open(scorefile, 'a') as f:
 		    f.write(output_line + ' ' + score_line +
 		               self.additional_decoy_info + '\n')  # Outputs scorefile.
@@ -494,7 +499,7 @@ class CD:
     '''Class to represent named tuples.'''
     def __init__(self, **entries):
         self.__dict__.update(entries)
-        
+
     def __repr__(self):
         r = '|'
         for i in dir(self):
@@ -566,7 +571,7 @@ class EnergyMethod:
                         err_msg = 'Cannot find free ScoreType to create' + \
                            '%s! (looking in range [%s, %s])' % (self.scoreName,
                                                                 s.first,
-                                                                s.last) 
+                                                                s.last)
                         raise Exception(err_msg)
                     s.methods[self.scoreType] = self.scoreName
                     ScoreTypesRegistry[self.scoreType] = self.scoreName
@@ -574,13 +579,13 @@ class EnergyMethod:
 
         def _clone(self):
             return type(self)()
-            
+
         def _f_version(self):
             return self.version
-            
+
         def _indicate_required_context_graphs(self, v):
             pass
-            
+
         creator = defineEnergyMethodCreator(original_class, self.scoreType)
 
         if 'clone' not in original_class.__dict__:

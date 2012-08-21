@@ -15,7 +15,7 @@ Instructions:
 1) ensure that your PDB file is in the current directory
 2) run the script:
     from commandline                        >python D010_Pose_structure.py
-    
+
     from within python/ipython              [1]: run D010_Pose_structure.py
 
 Author: Evan H. Baugh
@@ -53,6 +53,8 @@ The method pose_structure:
 import optparse    # for option sorting
 
 from rosetta import *
+from rosetta.PyMolLink import *
+
 init()
 
 def pose_structure(pose, display_residues = []):
@@ -67,10 +69,10 @@ def pose_structure(pose, display_residues = []):
     """
     # store the pose's number of residues, example Python syntax
     nres = pose.total_residue()
-        
+
     # 1. obtain the pose's sequence
     sequence = pose.sequence()
-    
+
     # 2. obtain a list of PDB numbering and icode as a single string
     pdb_info = pose.pdb_info()
     PDB_nums = [(str( pdb_info.number(i)) + pdb_info.icode(i)).strip()
@@ -100,12 +102,12 @@ def pose_structure(pose, display_residues = []):
     print '\t' + str(100. * ss.count('H') / len(ss))[:4] + '% Helical'
     print '\t' + str(100. * ss.count('E') / len(ss))[:4] + '% Sheet'
     print '\t' + str(100. * ss.count('L') / len(ss))[:4] + '% Loop'
-    
+
     # 6. obtain the phi, psi, and omega torsion angles
     phis = [pose.phi(i) for i in range(1, nres + 1)]
     psis = [pose.psi(i) for i in range(1, nres + 1)]
     omegas = [pose.omega(i) for i in range(1, nres + 1)]
-    
+
     # this object is contained in PyRosetta v2.0 and above
     # create a PyMOL_Mover for exporting structures directly to PyMOL
     pymover = PyMOL_Mover()

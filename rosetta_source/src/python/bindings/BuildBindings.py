@@ -243,7 +243,8 @@ def main(args):
 
 
     if not os.path.isdir(bindings_path): os.makedirs(bindings_path)
-    shutil.copyfile('src/__init__.py', bindings_path + '/__init__.py')
+    #shutil.copyfile('src/__init__.py', bindings_path + '/__init__.py')
+    execute('Copy init script and additional files...', 'cp src/*.py %s/' % bindings_path, verbose=False)
 
     if Platform == "windows":  # we dealing with windows native build
         #bindings_path = os.path.abspath('python/bindings/rosetta')
@@ -342,9 +343,11 @@ def main(args):
     print "Done!"
 
 
-def execute(message, command_line, return_=False, untilSuccesses=False, print_output=True):
-    print message
-    print command_line
+def execute(message, command_line, return_=False, untilSuccesses=False, print_output=True, verbose=True):
+    if verbose:
+        print message
+        print command_line
+
     while True:
         #(res, output) = commands.getstatusoutput(commandline)
 

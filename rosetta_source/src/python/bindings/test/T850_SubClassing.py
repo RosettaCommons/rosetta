@@ -27,8 +27,12 @@ class My_New_Mover(rosetta.protocols.moves.Mover):
     def get_name(self): return 'My_New_Mover'
 
     def apply(self, p):
+        if isinstance(p, rosetta.core.pose.PoseAP):
+            print 'Got rosetta.core.pose.PoseAP!'
+            p = p.get()
+
         print 'This My_New_Mover apply...'
-        p.get().set_phi(1, p.get().phi(1)+1)
+        p.set_phi(1, p.phi(1)+1)
 
 
 new_mover = My_New_Mover()

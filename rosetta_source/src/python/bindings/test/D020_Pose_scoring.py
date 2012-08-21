@@ -15,9 +15,9 @@ Instructions:
 1) ensure that your PDB file is in the current directory
 2) run the script:
     from commandline                        >python D020_Pose_scoring.py
-    
+
     from within python/ipython              [1]: run D020_Pose_scoring.py
-    
+
 Author: Evan H. Baugh
     revised and motivated by Robert Schleif
 
@@ -27,7 +27,7 @@ References:
     A. Leaver-Fay et al., "ROSETTA3: An object-oriented software suite for the
         simulation and design of macromolecules," Methods in Enymology 487,
         548-574 (2011).
-        
+
 """
 
 ################################################################################
@@ -62,6 +62,7 @@ The method pose_scoring:
 import optparse    # for option sorting
 
 from rosetta import *
+from rosetta.PyMolLink import *
 init()
 
 def pose_scoring(pose, display_residues = []):
@@ -72,12 +73,12 @@ def pose_scoring(pose, display_residues = []):
 		score term evaluations
 		per-residue score
 		radius of gyration (approximate)
-		
+
     """
     # this object is contained in PyRosetta v2.0 and above
     # create a PyMOL_Mover for exporting structures directly to PyMOL
     pymover = PyMOL_Mover()
-    
+
     # 1. score the pose using the default fullatom (fa) ScoreFunction
     # a ScoreFunction is essentially a list of weights indicating which
     #    ScoreTypes are "on" and how they are scaled when summed together
@@ -135,12 +136,12 @@ def pose_scoring(pose, display_residues = []):
     print 'ScoreFunction 4:', patch_scorefxn(pose)
     print 'ScoreFunction 5:', scorefxn(pose)
     pose_score = scorefxn(pose)
-    
+
     # 3. obtain the pose Energies object and all the residue total scores
     energies = pose.energies()
     residue_energies = [energies.residue_total_energy(i)
         for i in range(1, pose.total_residue() + 1)]
-    
+
     # 4. obtain the non-zero weights of the ScoreFunction, active ScoreTypes
     weights = [ScoreType(s)
         for s in range(1, end_of_score_type_enumeration + 1)
@@ -236,7 +237,7 @@ PDB files. The most likely problems could be:
     -if the input PDB file cannot be loaded into PyRosetta
     -if the residues to specifically investigate do not exist
     -if the input pose is not fullatom
-    
+
 """
 
 ################################################################################
