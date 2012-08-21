@@ -3793,7 +3793,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 							 Option( 'n_tail_res', 'Integer', desc='Number of c-terminal ~tail~ residues to make flexible (terminus inclusive)', default='3'),
 							 Option( 'two_ubiquitins', 'Boolean', desc='Mind-blowing - use two ubiquitins (assembled for a K48 linkage) to try to examine the transition state.  Don\'t use this option unless trying to reproduce publication XXXX', default='false'),
 							 Option( 'extra_bodies', 'FileVector', desc='extra structures to add before modeling.  Should be in the coordinate frame of the non-moving partner.  Will not move during modeling.  Will be detected as part of the nonmoving body for repacking purposes.', default=''),
-							 Option( 'UB_lys', 'Integer', desc='which Lys on the second UB will be conjugated', default='48'),
+							 Option( 'UBQ2_lys', 'Integer', desc='which Lys on the second UB will be conjugated', default='48'),
+							 Option( 'UBQ2_pdb', 'File', desc='PDB for second ubiquitin (second moving chain).  Only active if -two_ubiquitins is used; inactive otherwise.  Optional; defaults to value of -UBQpdb if not passed.'),
+							 Option( 'dont_minimize_omega', 'Boolean', desc='disable minimization of omega angles near thioester in MoveMap; not present in original publications (Saha; Baker)', default='false'),
 							 #UBQ_Gp_LYX-Cterm and UBQ_Gp_CYD-CYD group
 							 Option( 'pdz', 'Boolean', desc='For the UBQ_Gp_LYX-Cterm executable, if -publication is already on, switch to the PDZ center of mass instead of ubiquitin center of mass for the extra statistics calculations.  Don\'t use this option unless trying to reproduce publication XXXX', default='false'),
 							 Option( 'GTPasepdb', 'File', desc='GTPase structure, or the structure of the thing that is attached to (has cysteine) and does not move; should be one chain', default='2OB4.pdb'),

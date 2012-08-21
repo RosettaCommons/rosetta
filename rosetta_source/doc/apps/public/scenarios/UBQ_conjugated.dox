@@ -73,6 +73,16 @@ UBQ_E2_thioester options
 @li publication - Boolean - Publication mode?  In publication mode, the code runs an extra analysis step to find the neighbors of ubiquitin I44.  This is used for the integration test and for reproducibility but has no other purpose.  Defaults to false, but use true for reproduction.
 @li n_tail_res - Integer - number of moving C-terminal tail residues on attached protein (ubiquitin).  Defaults to 3, which matches the original publication.  Not present at the time of publication.
 
+Experimental UBQ_E2_thioester options
+@li two_ubiquitins - Boolean - Mind-blowing - use two ubiquitins (assembled for a K48 linkage) to try to examine the transition state.  Don't use this option unless trying to reproduce publication XXXX, default='false'
+@li extra_bodies - FileVector - extra structures to add before modeling.  Should be in the coordinate frame of the non-moving partner.  Will not move during modeling.  Will be detected as part of the nonmoving body for repacking purposes.
+@li UBQ2_lys - Integer - which Lys on the second UB will be conjugated, default=48
+@li UBQ2_pdb - File - PDB for second ubiquitin (second moving chain).  Only active if -two_ubiquitins is used; inactive otherwise.  Optional; defaults to value of -UBQpdb if not passed.
+@li dont_minimize_omega - Boolean - disable minimization of omega angles near thioester in MoveMap; not present in original publications (Saha; Baker), default=false
+
+Experimental UBQ_Gp* options
+@li pdz - Boolean - For the UBQ_Gp_LYX-Cterm executable, if -publication is already on, switch to the PDZ center of mass instead of ubiquitin center of mass for the extra statistics calculations.  Don\'t use this option unless trying to reproduce publication XXXX, default=false
+
 AnchoredDesign options (borrowed for simplicity, not tied to AnchoredDesign in any other way); all are in the AnchoredDesign namespace
 @li AnchoredDesign::refine_temp - real - Monte Carlo temperature for refine phase (0.8 used for production)
 @li AnchoredDesign::refine_cycles - unsigned integer - number of refine phase cycles (20000 used for production)

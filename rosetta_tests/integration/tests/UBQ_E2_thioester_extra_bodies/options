@@ -66,6 +66,13 @@
 #activate only for two-ubiquitins (catalytic model)
 -chemically_conjugated_docking:two_ubiquitins true
 
+#defaults ok, no need to change
+#-chemically_conjugated_docking:UBQ2_lys 48
+#-chemically_conjugated_docking:UBQ2_pdb ##
+
+#under testing
+-chemically_conjugated_docking:dont_minimize_omega
+
 -loops::loop_file loop_file
 
 -chemically_conjugated_docking:extra_bodies Cul1.pdb.gz RING.pdb.gz

@@ -38,6 +38,8 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/AtomTree.hh>
+#include <core/id/TorsionID.hh> //used for movemap to set omega angle false
+#include <core/id/types.hh> //used for movemap to set omega angle false
 
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
@@ -135,7 +137,8 @@ public:
 		InterfaceSasaDefinition_("InterfaceSasaDefinition_" + 1),
 		IAM_(new protocols::analysis::InterfaceAnalyzerMover),
 		two_ubiquitins_(false),
-		extra_bodies_chains_() //uninitializable
+		extra_bodies_chains_(), //uninitializable
+		ubq2_lys_pos_in_complex_(0)
 	{
 		//set up fullatom scorefunction
 		using namespace core::scoring;
@@ -180,6 +183,9 @@ public:
 		core::Size const UBQlength = UBQ.total_residue();
 		core::pose::PoseOP UBQ_second;
 		if(two_ubiquitins_) UBQ_second = new core::pose::Pose(UBQ);
+		if(basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UBQ2_pdb].user()){
+			core::import_pose::pose_from_pdb( *UBQ_second, basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UBQ2_pdb].value() );
+		}
 
 		//determine cysteine target
 		runtime_assert(E2.conformation().num_chains() == 1);
@@ -195,6 +201,8 @@ public:
 		core::chemical::ResidueTypeSetCAP fa_standard(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD));
 		UBQ.conformation().delete_residue_slow( UBQ_term );
 		UBQ.append_residue_by_bond( *(core::conformation::ResidueFactory::create_residue(fa_standard->name_map("GLY")) ) );
+		UBQ.conformation().insert_ideal_geometry_at_polymer_bond( UBQ_term-1 );
+		UBQ.set_omega(UBQ_term-1, 180);
 		//UBQ.dump_pdb("post-removeUQB.pdb");
 
 		//replace cysteine
@@ -257,8 +265,10 @@ public:
 			complex.prepend_polymer_residue_before_seqpos( UBQ.residue(i), E2length+1, false );
 		}
 
+		//complex.dump_pdb("isthisthefix.pdb");
 		core::Size const complexlength( complex.total_residue());
 		complex.conformation().insert_ideal_geometry_at_polymer_bond( complexlength-1 );
+		complex.set_omega(complexlength-1, 180);
 		complex.conformation().insert_chain_ending(E2length);
 		//complex.dump_pdb("initcomplex.pdb");
 
@@ -274,25 +284,28 @@ public:
 
 		if(two_ubiquitins_) {
 			//now add in the second ubiquitin - link to thioester C=O from UB_lys
-			core::Size const ub_lys_pos(basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UB_lys].value());
+			core::Size const ub_lys_pos(basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UBQ2_lys].value());
 			complex.conformation().append_residue_by_jump(UBQ_second->residue(ub_lys_pos), complexlength, "C", "NZ", true);
-			for( core::Size i(ub_lys_pos+1); i <= UBQlength; ++i) complex.conformation().append_polymer_residue_after_seqpos(UBQ_second->residue(i), complex.total_residue(), false);
+			//there is a bug lurking here somewhere for C-terminal lysines
+			for( core::Size i(ub_lys_pos+1); i <= UBQ_second->total_residue(); ++i) complex.conformation().append_polymer_residue_after_seqpos(UBQ_second->residue(i), complex.total_residue(), false);
 			for( core::Size i(ub_lys_pos-1); i >= 1; --i) complex.conformation().prepend_polymer_residue_before_seqpos(UBQ_second->residue(i), complexlength+1, false);
 
 			//check it!
 			TR << complex.fold_tree() << std::endl;
 
+			ubq2_lys_pos_in_complex_ = ub_lys_pos+complexlength;
+
 			//continue paking atomIDs vector
 			core::chemical::ResidueType const & lys_rsd_type( fa_standard->name_map("LYS") );
-			//atomIDs[LYS_2HZ] = core::id::AtomID( lys_rsd_type.atom_index("2HZ"), complexlength + ub_lys_pos);
-			//atomIDs[LYS_NZ]  = core::id::AtomID( lys_rsd_type.atom_index("NZ" ), complexlength + ub_lys_pos);
-			//atomIDs[LYS_CE]  = core::id::AtomID( lys_rsd_type.atom_index("CE" ), complexlength + ub_lys_pos);
-			//atomIDs[LYS_CD]  = core::id::AtomID( lys_rsd_type.atom_index("CD" ), complexlength + ub_lys_pos);
+			//atomIDs[LYS_2HZ] = core::id::AtomID( lys_rsd_type.atom_index("2HZ"), ubq2_lys_pos_in_complex_);
+			//atomIDs[LYS_NZ]  = core::id::AtomID( lys_rsd_type.atom_index("NZ" ), ubq2_lys_pos_in_complex_);
+			//atomIDs[LYS_CE]  = core::id::AtomID( lys_rsd_type.atom_index("CE" ), ubq2_lys_pos_in_complex_);
+			//atomIDs[LYS_CD]  = core::id::AtomID( lys_rsd_type.atom_index("CD" ), ubq2_lys_pos_in_complex_);
 
-			atomIDs.push_back(core::id::AtomID( lys_rsd_type.atom_index("2HZ"), complexlength + ub_lys_pos));
-			atomIDs.push_back(core::id::AtomID( lys_rsd_type.atom_index("NZ" ), complexlength + ub_lys_pos));
-			atomIDs.push_back(core::id::AtomID( lys_rsd_type.atom_index("CE" ), complexlength + ub_lys_pos));
-			atomIDs.push_back(core::id::AtomID( lys_rsd_type.atom_index("CD" ), complexlength + ub_lys_pos));
+			atomIDs.push_back(core::id::AtomID( lys_rsd_type.atom_index("2HZ"), ubq2_lys_pos_in_complex_));
+			atomIDs.push_back(core::id::AtomID( lys_rsd_type.atom_index("NZ" ), ubq2_lys_pos_in_complex_));
+			atomIDs.push_back(core::id::AtomID( lys_rsd_type.atom_index("CE" ), ubq2_lys_pos_in_complex_));
+			atomIDs.push_back(core::id::AtomID( lys_rsd_type.atom_index("CD" ), ubq2_lys_pos_in_complex_));
 
 			//ok, jump is in place (numbered 1) - now we have to make a statement about where to put it
 			//relevant atoms for placing NZ
@@ -300,21 +313,21 @@ public:
 			core::Vector const & O_xyz(complex.residue(complexlength).atom("O").xyz());
 			//TR << "C " << C_xyz << " O " << O_xyz << std::endl;
 			core::Vector newpos(C_xyz+(3*(C_xyz-O_xyz)/O_xyz.distance(C_xyz)));
-			core::Vector oldpos(complex.residue(complexlength+ub_lys_pos).atom("NZ").xyz());
+			core::Vector oldpos(complex.residue(ubq2_lys_pos_in_complex_).atom("NZ").xyz());
 
-			//core::Vector oldposC(complex.residue(complexlength+ub_lys_pos).atom("CE").xyz());
+			//core::Vector oldposC(complex.residue(ubq2_lys_pos_in_complex_).atom("CE").xyz());
 			//core::Vector newposC(newpos+(oldpos-oldposC));
 
 			//force NZ (alone) to proper position - this breaks the lysine
-			complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("NZ"), complexlength+ub_lys_pos), newpos);
-			//	complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("CE"), complexlength+ub_lys_pos), newposC);
+			complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("NZ"), ubq2_lys_pos_in_complex_), newpos);
+			//	complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("CE"), ubq2_lys_pos_in_complex_), newposC);
 
 			//get a copy of that jump
-			core::kinematics::Jump newjump(complex.atom_tree().jump(core::id::AtomID(lys_rsd_type.atom_index("NZ"), complexlength+ub_lys_pos)));
+			core::kinematics::Jump newjump(complex.atom_tree().jump(core::id::AtomID(lys_rsd_type.atom_index("NZ"), ubq2_lys_pos_in_complex_)));
 
 			//reset NZ position to fix the lysine
-			complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("NZ"), complexlength+ub_lys_pos), oldpos);
-			//	complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("CE"), complexlength+ub_lys_pos), oldposC);
+			complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("NZ"), ubq2_lys_pos_in_complex_), oldpos);
+			//	complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("CE"), ubq2_lys_pos_in_complex_), oldposC);
 
 			//reapply the properly-calculated jump
 			complex.conformation().set_jump_now(1, newjump);
@@ -341,9 +354,14 @@ public:
 
 		//setup MoveMaps
 		//small/shear behave improperly @ the last residue - psi is considered nonexistent and the wrong phis apply.
+		bool const dont_minimize_omega(basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::dont_minimize_omega].value());
 		thioester_mm_ = new core::kinematics::MoveMap;
 		for( core::Size i(1), ntailres(basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::n_tail_res]); i<ntailres; ++i){ //slightly irregular < comparison because C-terminus is functionally zero-indexed
 			thioester_mm_->set_bb((complexlength-i), true);
+			if(dont_minimize_omega){
+				thioester_mm_->set( core::id::TorsionID(complexlength-i, core::id::BB, core::id::omega_torsion), false);
+
+			}
 		}
 		//thioester_mm_->set_bb(complexlength, true);
 		//thioester_mm_->set(core::id::TorsionID(complexlength, core::id::BB, core::id::phi_torsion), true);
@@ -378,8 +396,7 @@ public:
 		prevent->include_residue(E2_cys);
 		if(two_ubiquitins_) {
 			//prevent repacking at the lysine!
-			core::Size const ub_lys_pos(basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::UB_lys].value());
-			prevent->include_residue(ub_lys_pos);
+			prevent->include_residue(ubq2_lys_pos_in_complex_);
  		}
 		task_factory_->push_back(prevent);
 
@@ -642,6 +659,7 @@ public:
 			protocols::simple_moves::sidechain_moves::SidechainMoverOP SCmover( new protocols::simple_moves::sidechain_moves::SidechainMover() );
 			SCmover->set_task(task);
 			SCmover->set_prob_uniform(0); //we want only Dunbrack rotamers, 0 percent chance of uniform sampling
+			SCmover->set_change_chi_without_replacing_residue(true);
 
 			backbone_mover->add_mover(SCmover, 1);
 
@@ -835,6 +853,9 @@ private:
 
 	///@brief used to track which chains are "extra" nonmoving bodies in extra bodies mode
 	utility::vector1< core::Size > extra_bodies_chains_;
+
+	///@brief the lysine attachment position for the second ubiquitin (the second moving chain), in the whole complex numbering
+	core::Size ubq2_lys_pos_in_complex_;
 
 };
 

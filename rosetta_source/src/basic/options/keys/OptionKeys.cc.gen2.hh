@@ -593,7 +593,9 @@ namespace chemically_conjugated_docking { BooleanOptionKey const publication( "c
 namespace chemically_conjugated_docking { IntegerOptionKey const n_tail_res( "chemically_conjugated_docking:n_tail_res" );  }
 namespace chemically_conjugated_docking { BooleanOptionKey const two_ubiquitins( "chemically_conjugated_docking:two_ubiquitins" );  }
 namespace chemically_conjugated_docking { FileVectorOptionKey const extra_bodies( "chemically_conjugated_docking:extra_bodies" );  }
-namespace chemically_conjugated_docking { IntegerOptionKey const UB_lys( "chemically_conjugated_docking:UB_lys" );  }
+namespace chemically_conjugated_docking { IntegerOptionKey const UBQ2_lys( "chemically_conjugated_docking:UBQ2_lys" );  }
+namespace chemically_conjugated_docking { FileOptionKey const UBQ2_pdb( "chemically_conjugated_docking:UBQ2_pdb" );  }
+namespace chemically_conjugated_docking { BooleanOptionKey const dont_minimize_omega( "chemically_conjugated_docking:dont_minimize_omega" );  }
 namespace chemically_conjugated_docking { BooleanOptionKey const pdz( "chemically_conjugated_docking:pdz" );  }
 namespace chemically_conjugated_docking { FileOptionKey const GTPasepdb( "chemically_conjugated_docking:GTPasepdb" );  }
 namespace chemically_conjugated_docking { IntegerOptionKey const GTPase_residue( "chemically_conjugated_docking:GTPase_residue" );  }
@@ -623,5 +625,3 @@ namespace RBSegmentRelax { BooleanOptionKey const skip_fragment_moves( "RBSegmen
 namespace RBSegmentRelax { BooleanOptionKey const skip_seqshift_moves( "RBSegmentRelax:skip_seqshift_moves" );  }
 namespace RBSegmentRelax { BooleanOptionKey const skip_rb_moves( "RBSegmentRelax:skip_rb_moves" );  }
 namespace RBSegmentRelax { RealVectorOptionKey const helical_movement_params( "RBSegmentRelax:helical_movement_params" );  }
-namespace RBSegmentRelax { RealVectorOptionKey const strand_movement_params( "RBSegmentRelax:strand_movement_params" );  }
-namespace RBSegmentRelax { RealVectorOptionKey const default_movement_params( "RBSegmentRelax:default_movement_params" );  }

@@ -9023,9 +9023,18 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: ""</dd><br>
 </dl>
 <dl>
-<dt><b>-UB_lys</b> \<Integer\><dt>
+<dt><b>-UBQ2_lys</b> \<Integer\><dt>
 <dd>which Lys on the second UB will be conjugated</dd><br>
 <dd>Default: 48</dd><br>
+</dl>
+<dl>
+<dt><b>-UBQ2_pdb</b> \<File\><dt>
+<dd>PDB for second ubiquitin (second moving chain).  Only active if -two_ubiquitins is used; inactive otherwise.  Optional; defaults to value of -UBQpdb if not passed.</dd><br>
+</dl>
+<dl>
+<dt><b>-dont_minimize_omega</b> \<Boolean\><dt>
+<dd>disable minimization of omega angles near thioester in MoveMap; not present in original publications (Saha; Baker)</dd><br>
+<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-pdz</b> \<Boolean\><dt>

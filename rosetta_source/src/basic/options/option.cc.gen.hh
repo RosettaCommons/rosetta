@@ -1856,7 +1856,9 @@ option.add( basic::options::OptionKeys::chemically_conjugated_docking::publicati
 option.add( basic::options::OptionKeys::chemically_conjugated_docking::n_tail_res, "Number of c-terminal ~tail~ residues to make flexible (terminus inclusive)" ).def(3);
 option.add( basic::options::OptionKeys::chemically_conjugated_docking::two_ubiquitins, "Mind-blowing - use two ubiquitins (assembled for a K48 linkage) to try to examine the transition state.  Don't use this option unless trying to reproduce publication XXXX" ).def(false);
 option.add( basic::options::OptionKeys::chemically_conjugated_docking::extra_bodies, "extra structures to add before modeling.  Should be in the coordinate frame of the non-moving partner.  Will not move during modeling.  Will be detected as part of the nonmoving body for repacking purposes." ).def("");
-option.add( basic::options::OptionKeys::chemically_conjugated_docking::UB_lys, "which Lys on the second UB will be conjugated" ).def(48);
+option.add( basic::options::OptionKeys::chemically_conjugated_docking::UBQ2_lys, "which Lys on the second UB will be conjugated" ).def(48);
+option.add( basic::options::OptionKeys::chemically_conjugated_docking::UBQ2_pdb, "PDB for second ubiquitin (second moving chain).  Only active if -two_ubiquitins is used; inactive otherwise.  Optional; defaults to value of -UBQpdb if not passed." );
+option.add( basic::options::OptionKeys::chemically_conjugated_docking::dont_minimize_omega, "disable minimization of omega angles near thioester in MoveMap; not present in original publications (Saha; Baker)" ).def(false);
 option.add( basic::options::OptionKeys::chemically_conjugated_docking::pdz, "For the UBQ_Gp_LYX-Cterm executable, if -publication is already on, switch to the PDZ center of mass instead of ubiquitin center of mass for the extra statistics calculations.  Don't use this option unless trying to reproduce publication XXXX" ).def(false);
 option.add( basic::options::OptionKeys::chemically_conjugated_docking::GTPasepdb, "GTPase structure, or the structure of the thing that is attached to (has cysteine) and does not move; should be one chain" ).def("2OB4.pdb");
 option.add( basic::options::OptionKeys::chemically_conjugated_docking::GTPase_residue, "GTPase lysine (PDB numbering) (where the ubiquitin gets attached; assumed to be on the first chain of GTPase_pdb" ).def(85);
@@ -1886,11 +1888,11 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "om
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
-option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
-option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::cst_seqwidth, "sequence width on constraints" ).def(0);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
+option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));
+option.add( basic::options::OptionKeys::RBSegmentRelax::cst_seqwidth, "sequence width on constraints" ).def(0);
 option.add( basic::options::OptionKeys::edensity::edensity, "edensity option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::edensity::debug, "No description" ).def(false);
 option.add( basic::options::OptionKeys::edensity::mapfile, "No description" );

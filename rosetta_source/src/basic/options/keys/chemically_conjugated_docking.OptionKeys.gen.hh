@@ -31,7 +31,9 @@ namespace chemically_conjugated_docking { extern BooleanOptionKey const publicat
 namespace chemically_conjugated_docking { extern IntegerOptionKey const n_tail_res; }
 namespace chemically_conjugated_docking { extern BooleanOptionKey const two_ubiquitins; }
 namespace chemically_conjugated_docking { extern FileVectorOptionKey const extra_bodies; }
-namespace chemically_conjugated_docking { extern IntegerOptionKey const UB_lys; }
+namespace chemically_conjugated_docking { extern IntegerOptionKey const UBQ2_lys; }
+namespace chemically_conjugated_docking { extern FileOptionKey const UBQ2_pdb; }
+namespace chemically_conjugated_docking { extern BooleanOptionKey const dont_minimize_omega; }
 namespace chemically_conjugated_docking { extern BooleanOptionKey const pdz; }
 namespace chemically_conjugated_docking { extern FileOptionKey const GTPasepdb; }
 namespace chemically_conjugated_docking { extern IntegerOptionKey const GTPase_residue; }
