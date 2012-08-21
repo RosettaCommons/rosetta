@@ -195,6 +195,7 @@ public:
 		min_frag_length_ = setting;
 	}
 
+	friend std::ostream &operator<< ( std::ostream &os, ClassicFragmentMover const &cfmover );
 
 protected:
 

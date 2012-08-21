@@ -507,6 +507,24 @@ bool ClassicFragmentMover::apply_frames( pose::Pose &pose, FrameList const& fram
 	return success;
 }
 
+std::ostream &operator<< ( std::ostream &os, ClassicFragmentMover const &cfmover )
+{
+    moves::operator<<(os, cfmover);
+    os << "-------------------Settings--------------------" << std::endl;
+    os << "End bias:            " << cfmover.end_bias_ << std::endl <<
+					"Min overlap:         " << cfmover.min_overlap_ << std::endl <<
+					"Min fragment length: " << cfmover.min_frag_length_ << std::endl <<
+					"Check ss:            " << ( (cfmover.check_ss_) ? "True" : "False" ) << std::endl <<
+					"bApplyEndBias:       " << ( ( cfmover.bApplyEndBias_ ) ? "True" : "False" ) << std::endl <<
+					"Use predefined window start: " << ( (cfmover.use_predefined_window_start_) ? "True": "False" ) << std::endl <<
+					"Predefined window start:     " << cfmover.predefined_window_start_ << std::endl;
+		os << "-----------------------------------------------" << std::endl;
+		os << "Movemap: " << std::endl;
+		cfmover.movemap()->show();
+		os << "**Unless a movemap is specified above, all backbone torsion angles are set to TRUE**" << std::endl;  
+    return os;
+}
+
 bool FragmentMover::apply( pose::Pose & pose, Size pos ) const {
 	FrameList frames;
 	if ( !fragset_->frames( pos, frames ) ) return false;
@@ -521,7 +539,6 @@ core::fragment::FragSetCOP fragset,
 
 LoggedFragmentMover::~LoggedFragmentMover()
 {}
-
 
 } // simple_moves
 } // protocols

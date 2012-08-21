@@ -52,7 +52,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/moves/PyMolMover.hh>
-#include <protocols/simple_moves/ReturnSidechainMover.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
@@ -146,13 +146,13 @@ int main(int argc, char *argv[])
 	// print
 	std::cout << "print MinMover:" << std::endl << minmover << std::endl;*/
 
-/* // setup a movemap object
+ // setup a movemap object
 	core::kinematics::MoveMapOP mm ( new core::kinematics::MoveMap );
 	Size bb_begin = 3, bb_end = 6, chi_begin = 5, chi_end = 7, begin2 = 101;
 	mm->set_bb_true_range(bb_begin, bb_end);
 	mm->set_chi_true_range(chi_begin, chi_end);
 	mm->set_chi(begin2, true);
-	mm->set_jump(2, true);*/
+	mm->set_jump(2, true);
 
 
 /*// DockMCMProtocol
@@ -207,11 +207,13 @@ int main(int argc, char *argv[])
 	// read name again
 	std::cout << "Score function's new name: " << scorefxn->get_name() << std::endl;*/
 
-/*	using namespace fragment;
-	ConstantLengthFragSetOP fragset = new ConstantLengthFragSet( 3 );
-	fragset->read_fragment_file( "home/boon/data/mfr_aa2GB3_03_05.200_v1_3" );
-	protocols::simple_moves::ClassicFragmentMover cfmover = protocols::simple_moves::ClassicFragmentMover(fragset);
-	std::cout << cfmover << std::endl;*/
+	Size frag_length = 3;
+	core::fragment::ConstantLengthFragSetOP fragset = new core::fragment::ConstantLengthFragSet( frag_length, "/home/boon/data/test_in.frag3" );
+	protocols::simple_moves::ClassicFragmentMover cfmover = protocols::simple_moves::ClassicFragmentMover(fragset, mm);
+	std::cout << cfmover << std::endl;
+
+	protocols::simple_moves::ClassicFragmentMover cfmover2 = protocols::simple_moves::ClassicFragmentMover(fragset);
+	std::cout << cfmover2 << std::endl;
 
 	//std::cout << test_pose.energies() << std::endl;
 
@@ -314,7 +316,7 @@ int main(int argc, char *argv[])
 	// create an empty loops object
 	// protocols::loops::LoopsOP emptyloops ( new protocols::loops::Loops );
 	// create a score12 scorefxn
-	core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction;
+/*	core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction;
 	scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score12" );
 	// create a loops object
 	core::Size start = 15, start2 = 51;
@@ -330,5 +332,5 @@ int main(int argc, char *argv[])
 	std::cout << loopmover << std::endl;
 	// create another loopmover (add loops)
 	protocols::loops::loop_mover::perturb::LoopMover_Perturb_CCD loopmover2 (protocols::loops::loop_mover::perturb::LoopMover_Perturb_CCD(loops, scorefxn));
-	std::cout << loopmover2 << std::endl;
+	std::cout << loopmover2 << std::endl;*/
 }
