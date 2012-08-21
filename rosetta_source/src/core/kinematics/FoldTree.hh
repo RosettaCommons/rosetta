@@ -588,7 +588,7 @@ public:
 	inline Size num_jump() const;
 
 	/// @brief starting or stopping residue of a jump edge
-	inline int jump_point( int const lower_higher, int const jump_number ) const;
+	int jump_point( int const lower_higher, int const jump_number ) const;
 
 	/// @brief Returns true if  <seqpos>  is a starting or stopping residue of a jump edge
 	///
@@ -980,24 +980,6 @@ FoldTree::num_jump() const
 	return num_jump_;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-inline
-Edge const &
-FoldTree::jump_edge( int const jump_number ) const
-{
-	check_order();
-	return edge_list_[ jump_edge_( jump_number ) ];
-}
-
-///////////////////////////////////////////////////////////////////////////////
-inline
-Edge &
-FoldTree::jump_edge( int const jump_number )
-{
-	check_order();
-	return edge_list_[ jump_edge_( jump_number ) ];
-}
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // is seqpos a jump-point?
@@ -1007,19 +989,6 @@ FoldTree::is_jump_point( int const seqpos ) const
 {
 	check_topology();
 	return is_jump_point_(seqpos);
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-inline
-int
-FoldTree::jump_point(
-		int const lower_higher, // = 1 or 2
-		int const jump_number
-) const
-{
-	check_topology();
-	return jump_point_( lower_higher, jump_number );
 }
 
 

@@ -1877,6 +1877,20 @@ FoldTree::partition_by_residue(
 	}
 }
 
+
+int
+FoldTree::jump_point(
+		int const lower_higher, // = 1 or 2
+		int const jump_number
+) const
+{
+	PyAssert(((jump_number <= 0) || (jump_number > num_jump_)),
+			"FoldTree::jump_point( int const lower_higher, int const jump_number ): Input variable jump_number is not a valid value.");
+	check_topology();
+	return jump_point_( lower_higher, jump_number );
+}
+
+
 ////////////////////////////////////////////////////////////////////////////
 /// @details
 /// To keep the fold tree non-cyclic, for each jump added, there should be
@@ -2039,6 +2053,27 @@ FoldTree::get_residue_direction( int const seqpos ) const
 	return 0;
 }
 */
+
+
+Edge const &
+FoldTree::jump_edge( int const jump_number ) const
+{
+	PyAssert(((jump_number <= 0) || (jump_number > num_jump_)),
+			"FoldTree::jump_edge( int const jump_number ): Input variable jump_number is not a valid value.");
+	check_order();
+	return edge_list_[ jump_edge_( jump_number ) ];
+}
+
+
+Edge &
+FoldTree::jump_edge( int const jump_number )
+{
+	PyAssert(((jump_number <= 0) || (jump_number > num_jump_)),
+			"FoldTree::jump_edge( int const jump_number ): Input variable jump_number is not a valid value.");
+	check_order();
+	return edge_list_[ jump_edge_( jump_number ) ];
+}
+
 
 Edge const &
 FoldTree::get_residue_edge( int const seqpos ) const
