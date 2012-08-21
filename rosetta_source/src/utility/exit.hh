@@ -81,6 +81,14 @@
 namespace utility {
 
 
+#ifdef __GNUC__
+#  define NORETURN __attribute__ ((noreturn))
+#elif __clang__
+#  define NORETURN __attribute__ ((noreturn))
+#else
+#  define NORETURN
+#endif
+
 /// @brief Exit with file + line + message + optional status
 void
 exit(
@@ -88,7 +96,7 @@ exit(
 	int const line,
 	std::string const & message,
 	int const status = 1
-);
+) NORETURN;
 
 /// @brief Conditional Exit with file + line + message + optional status. WIll exit if the condition is not met!
 int
@@ -109,6 +117,16 @@ exit(
 	std::string const & file,
 	int const line,
 	int const status = 1
+) NORETURN;
+
+
+/// @brief Exit with file + line + optional status
+inline
+void
+exit(
+	std::string const & file,
+	int const line,
+	int const status
 )
 {
 	utility::exit( file, line, std::string(), status );
