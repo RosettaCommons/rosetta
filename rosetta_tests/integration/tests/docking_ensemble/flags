@@ -9,6 +9,8 @@
 -no_filters
 -mute core.util.prof ## dont show timing info
 -out:overwrite
+-docking_centroid_outer_cycles 2
+-docking_centroid_inner_cycles 2
 -out:file:scorefile ensemble_1abc.fasc
 -out:file:fullatom #output in fullatom scorefile
 -mute core.io.database
