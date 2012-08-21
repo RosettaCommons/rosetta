@@ -613,6 +613,7 @@ pyrimidine_flip_trial( pose::Pose & pose,
 	Pose screen_pose = pose;
 	Real orig_score, new_score;
 	orig_score = (*scorefxn) (pose);
+	std::cout << "Start pyrimidine_flip_trial. Fiip residue :";		
 	for (Size i = 1; i <= total_res; ++i) {
 		if ( check_num_in_vector( i, fixed_res_list ) ) continue;
 		Residue const & res = pose.residue(i);
@@ -624,11 +625,13 @@ pyrimidine_flip_trial( pose::Pose & pose,
 			if (new_score < orig_score) { //Flip the chi!
 				pose.set_torsion( TorsionID( i, id::CHI, 1 ), new_chi );
 				orig_score = new_score;
+				std::cout << ' ' << i;		
 			} else { //Keep the original chi
 				screen_pose.set_torsion( TorsionID( i, id::CHI, 1 ), orig_chi );
 			}
 		}
 	}
+	std::cout << std::endl;
 }
 ///////////////////////////////////////////
 void
@@ -722,7 +725,9 @@ pdb_minimizer() {
 	protocols::swa::rna::Output_fold_tree_info ( pose.fold_tree(), "rna_pdb_minimizing" );
 
 	//Try flipping the pyrimidines
-	if ( attempt_pyrimidine_flip_ ) pyrimidine_flip_trial( pose, fixed_res_list, scorefxn);
+	if ( attempt_pyrimidine_flip_ ) {
+		pyrimidine_flip_trial( pose, fixed_res_list, scorefxn);
+	}
 	if ( skip_minimize_ ) {
 		pose.dump_pdb(output_pdb_name);
 		return;	
@@ -769,6 +774,7 @@ pdb_minimizer() {
 	if ( fixed_res_list.size() != 0 ) {
 		std::cout << "fixed res: ";
 	}
+	std::cout << std::endl;
 
 	for ( Size i = 1; i <= fixed_res_list.size(); ++i ) {
 		Size fixed_res_num ( fixed_res_list[i] );
