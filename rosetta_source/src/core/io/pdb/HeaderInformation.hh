@@ -131,8 +131,7 @@ public: //  Fields for KEYWDS Records
 	Keywords const &
 	keywords() const;
 
-	std::string
-	keywords_string() const;
+	// Undefined, commenting out to fix PyRosetta build  std::string keywords_string() const;
 
 	void
 	fill_keyword_records(std::vector< Record > & VR) const;
