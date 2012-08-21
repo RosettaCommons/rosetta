@@ -32,10 +32,21 @@ cd %(workdir)s
 minidir=%(minidir)s
 features_base=${minidir%%%%rosetta_source}rosetta_tests/features
 
+
 if [ ! -x $features_base ]; then
-   echo "Unable to locate features base directory: $features_base"
+   echo "Unable to locate features base directory: $features_base" > dry_run.log
+
+   # exit nicely to keep the noise down
+   exit 0
 fi
 
+
+if [ -n $(which Rscript) ]; then
+   echo "Unable to locate the program Rscript which is needed to run the features scientific benchmark" > dry_run.log
+
+   # exit nicely to keep the noise down
+   exit 0
+fi
 
 $features_base/compare_sample_sources.R --fail_on_missing_packages --dry_run | egrep -v "*.R" > dry_run.log 2>&1
 
