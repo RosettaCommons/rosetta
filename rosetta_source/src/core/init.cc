@@ -476,15 +476,18 @@ using namespace numeric::random;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-
-void
-init_mpi() {
 #ifdef USEMPI
+void
+init_mpi(int argc, char * argv []) {
 	int already_initialized( 0 );
 	MPI_Initialized( & already_initialized );
 	if ( already_initialized == 0 ) MPI_Init(&argc, &argv);
-#endif
 }
+#else
+void
+init_mpi(int, char **){}
+#endif
+
 
 void
 init_options(int argc, char * argv []) {
@@ -892,7 +895,7 @@ init_profiling(){
 void init(int argc, char * argv [])
 {
 	//Initialize MPI
-	init_mpi();
+	init_mpi(argc, argv);
 
 	//The options system manages command line options
 	init_options(argc, argv);
