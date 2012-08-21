@@ -90,7 +90,8 @@ f(x) = \left \{
 @f]
 
 @li @ref GaussianFunc "GAUSSIANFUNC":
-<tt>mean sd</tt>
+<tt>mean sd tag</tt>
+Note: <tt>tag</tt> is NOT optional, as for BoundFunc/BOUNDED.  If <tt>tag</tt> = NOLOG, it triggers some undocumented behavior involving a logarithm of some sort.
 @f[ f(x) = -\ln \left( \frac{1}{sd \sqrt{2\pi}} * \exp \left( -\frac{(x-mean)^2}{2 sd^2} \right) \right) @f]
 
 @li @ref SOGFunc "SOGFUNC":

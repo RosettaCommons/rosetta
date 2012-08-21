@@ -40,6 +40,7 @@ namespace constraints {
 	GaussianFunc::read_data( std::istream& in ) {
 		in 	>> mean_ >> sd_;
 
+		//I'm not sure what in.good() is meant to do here; it does NOT prevent GaussianFunc from chomping the next line of the constraint file as its tag if no tag is present.  SML 08.21.12
 		if ( in.good() ) {
 			std::string tag;
 			in >> tag;
