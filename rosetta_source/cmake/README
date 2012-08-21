@@ -34,3 +34,22 @@ make VERBOSE=1
 
 If you want to go even faster (especially for rebuilding after only changing one file), 
 use ninja instead of make... instructions in README_ninja.
+
+
+
+----- Building and running Unit Tests -----
+
+Usage is straightforward, and similar to regular CMake builds:
+#Build:
+cd rosetta_source/cmake
+./make_project.py all
+cd ./build_unit
+cmake .
+make -j8
+#Test
+cd rosetta_source/
+test/run.py -C -j8 --mute all # Don't forget the "-C"
+For those who follow the way of the ninja, it's even easier:
+cd rosetta_source/
+./ninja_build.py remake unit # Omit "remake" if you haven't edited any *.src.settings since the last run
+test/run.py -C -j8 --mute all 
