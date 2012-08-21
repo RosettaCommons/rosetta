@@ -79,7 +79,8 @@ public:
 	virtual protocols::moves::MoverOP clone() const;
 
 	void set_default_settings(){}
-
+	virtual protocols::loops::LoopsCOP get_loops() const;
+	virtual core::scoring::ScoreFunctionOP get_scorefxn() const;
 	
 
 protected:
@@ -91,6 +92,8 @@ protected:
     virtual basic::Tracer & tr() const;
 
 };
+
+std::ostream &operator<< ( std::ostream &os, LoopMover_Perturb_CCD const &mover );
 
 } //namespace perturb
 } //namespace loop_mover

@@ -67,15 +67,15 @@ int main(int argc, char *argv[])
 	devel::init(argc, argv);
 
 	// declare variables
-	Pose test_pose;
+	//Pose test_pose;
 	//std::string sequence = "ASDFG";
 	//core::pose::make_pose_from_sequence(test_pose, sequence, "fa_standard", true);
 	// import a test pose
-	pose_from_pdb(test_pose, "/home/boon/data/1YY9.pdb");
+	//pose_from_pdb(test_pose, "/home/boon/data/1YY9.pdb");
 
 	//std::cout << "Hello, Rosetta World!" << std::endl;
 	//std::cout << "I just imported my first pose into Rosetta." << std::endl;
-	std::cout << "It has " << test_pose.total_residue() << " total residues." << std::endl;
+	//std::cout << "It has " << test_pose.total_residue() << " total residues." << std::endl;
 
 	// 
 
@@ -294,7 +294,7 @@ int main(int argc, char *argv[])
 	//protocols::docking::ConformerSwitchMover mover2 ( protocols::docking::ConformerSwitchMover("True", 1.0) );
 	//std::cout << mover2 << std::endl;
 
-  // create a loops object
+/*  // create a loops object
 	core::Size start = 15;
 	core::Size stop = 24;
 	core::Size cutpoint = 19;
@@ -309,12 +309,26 @@ int main(int argc, char *argv[])
 
 	// create a CcdLoopClosureMover object
 	protocols::loops::loop_closure::ccd::CcdLoopClosureMover ccdmover ( protocols::loops::loop_closure::ccd::CcdLoopClosureMover(loop, mm) );
-	std::cout << ccdmover << std::endl;
+	std::cout << ccdmover << std::endl;*/
 
 	// create an empty loops object
 	// protocols::loops::LoopsOP emptyloops ( new protocols::loops::Loops );
-
+	// create a score12 scorefxn
+	core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction;
+	scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score12" );
+	// create a loops object
+	core::Size start = 15, start2 = 51;
+	core::Size stop = 24, stop2 = 60;
+	core::Size cutpoint = 19, cutpoint2 = 55; 
+	protocols::loops::Loop loop ( protocols::loops::Loop(start, stop, cutpoint) );
+	protocols::loops::Loop loop2 ( protocols::loops::Loop(start2, stop2, cutpoint2) );
+	protocols::loops::LoopsOP loops = new protocols::loops::Loops;
+	loops->add_loop(loop);
+	loops->add_loop(loop2);	
 	// create and print a loopmover
-	//protocols::loops::loop_mover::refine::LoopMover_Perturb_CCD loopmover;
-	//std::cout << loopmover << std::endl;
+	protocols::loops::loop_mover::perturb::LoopMover_Perturb_CCD loopmover;
+	std::cout << loopmover << std::endl;
+	// create another loopmover (add loops)
+	protocols::loops::loop_mover::perturb::LoopMover_Perturb_CCD loopmover2 (protocols::loops::loop_mover::perturb::LoopMover_Perturb_CCD(loops, scorefxn));
+	std::cout << loopmover2 << std::endl;
 }

@@ -445,6 +445,14 @@ loop_mover::LoopResult LoopMover_Perturb_CCD::model_loop(
 
 }
 
+protocols::loops::LoopsCOP LoopMover_Perturb_CCD::get_loops() const {
+	return loops();
+}
+
+core::scoring::ScoreFunctionOP LoopMover_Perturb_CCD::get_scorefxn() const {
+	return scorefxn();
+}
+
 basic::Tracer & LoopMover_Perturb_CCD::tr() const
 {
     return TR;
@@ -458,6 +466,14 @@ moves::MoverOP LoopMover_Perturb_CCDCreator::create_mover() const {
 
 std::string LoopMover_Perturb_CCDCreator::keyname() const {
   return "LoopMover_Perturb_CCD";
+}
+
+std::ostream &operator<< ( std::ostream &os, LoopMover_Perturb_CCD const &mover )
+{
+	moves::operator<<(os, mover);
+	os << "Loops:\n" << *mover.get_loops();
+	os << "Scorefunction: " << mover.get_scorefxn()->get_name() << std::endl;
+	return os;
 }
 
 } // namespace perturb
