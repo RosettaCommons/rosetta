@@ -125,6 +125,8 @@ OPT_KEY ( String, out_pdb )
 OPT_KEY ( Boolean, vary_geometry )
 OPT_KEY ( Boolean, constrain_P )
 OPT_KEY ( Boolean, ready_set_only )
+OPT_KEY ( Boolean, skip_minimize )
+OPT_KEY ( Boolean, attempt_pyrimidine_flip )
 OPT_KEY ( IntegerVector, fixed_res )
 OPT_KEY ( IntegerVector, cutpoint_open )
 
@@ -596,6 +598,40 @@ setup_fold_tree_sample_res ( pose::Pose & pose, utility::vector1< core::Size > c
 }
 ///////////////////////////////////////////
 void
+pyrimidine_flip_trial( pose::Pose & pose, 
+											 utility::vector1< Size > const & fixed_res_list,
+											 scoring::ScoreFunctionOP scorefxn )
+{
+	using namespace core::id;
+	using namespace core::scoring;
+	using namespace core::scoring::rna;
+	using namespace core::conformation;
+	using namespace core::pose;
+	using namespace core::chemical;
+
+	Size const total_res = pose.total_residue();
+	Pose screen_pose = pose;
+	Real orig_score, new_score;
+	orig_score = (*scorefxn) (pose);
+	for (Size i = 1; i <= total_res; ++i) {
+		if ( check_num_in_vector( i, fixed_res_list ) ) continue;
+		Residue const & res = pose.residue(i);
+		if ( res.is_RNA() && (res.aa() == na_rcy || res.aa() == na_ura)) {
+			Real const orig_chi = pose.torsion( TorsionID( i, id::CHI, 1 ) );
+			Real const new_chi = orig_chi + 180.0;
+			screen_pose.set_torsion( TorsionID( i, id::CHI, 1 ), new_chi );
+			new_score = (*scorefxn) (screen_pose);
+			if (new_score < orig_score) { //Flip the chi!
+				pose.set_torsion( TorsionID( i, id::CHI, 1 ), new_chi );
+				orig_score = new_score;
+			} else { //Keep the original chi
+				screen_pose.set_torsion( TorsionID( i, id::CHI, 1 ), orig_chi );
+			}
+		}
+	}
+}
+///////////////////////////////////////////
+void
 pdb_minimizer() {
 	using namespace core::pose;
 	using namespace core::conformation;
@@ -608,12 +644,13 @@ pdb_minimizer() {
 	using namespace core::id;
 	using namespace protocols::swa::rna;
 
-	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->
-	          residue_type_set ( RNA );
-	bool vary_bond_geometry_ =  option[ vary_geometry ];
-	bool constrain_phosphate =  option[ constrain_P ];
-	bool ready_set_only_ =  option[ ready_set_only ];
+	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->
+	          									residue_type_set ( RNA );
+	bool const vary_bond_geometry_ =  option[ vary_geometry ];
+	bool const constrain_phosphate =  option[ constrain_P ];
+	bool const ready_set_only_ =  option[ ready_set_only ];
+	bool const skip_minimize_ =  option[ skip_minimize ];
+	bool const attempt_pyrimidine_flip_ =  option[ attempt_pyrimidine_flip ];
 	utility::vector1< core::Size > const fixed_res_list = option[ fixed_res ]();
 	utility::vector1< core::Size > const cutpoint_list = option[cutpoint_open]();
 
@@ -683,6 +720,14 @@ pdb_minimizer() {
 	std::string working_sequence = pose.sequence();
 	std::cout << "Pose sequence = " << working_sequence << std::endl;
 	protocols::swa::rna::Output_fold_tree_info ( pose.fold_tree(), "rna_pdb_minimizing" );
+
+	//Try flipping the pyrimidines
+	if ( attempt_pyrimidine_flip_ ) pyrimidine_flip_trial( pose, fixed_res_list, scorefxn);
+	if ( skip_minimize_ ) {
+		pose.dump_pdb(output_pdb_name);
+		return;	
+	}
+
 
 	//Set the MoveMap, avoiding moving the virtual residue
 	std::cout << "Setting up movemap ..." << std::endl;
@@ -866,7 +911,10 @@ main ( int argc, char * argv [] ) {
 	NEW_OPT ( constrain_P, "constrain phosphate", false );
 	NEW_OPT ( fixed_res, "optional: residues to be held fixed in minimizer", blank_size_vector );
 	NEW_OPT ( cutpoint_open, "optional: chainbreak in full sequence", blank_size_vector );
-	NEW_OPT ( ready_set_only, "output the pdb without minimization", false );
+	NEW_OPT ( ready_set_only, "load in and output directly for reformatting the pdb", false );
+	NEW_OPT ( skip_minimize, "output the pdb without minimization", false );
+	NEW_OPT ( attempt_pyrimidine_flip, "try to flip pyrimidine by 180 degree and pick the better energy conformer", false );
+
 	////////////////////////////////////////////////////////////////////////////
 	// setup
 	////////////////////////////////////////////////////////////////////////////

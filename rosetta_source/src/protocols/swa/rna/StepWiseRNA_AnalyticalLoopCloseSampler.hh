@@ -139,6 +139,11 @@ public:
 	set_user_input_VDW_bin_screener ( StepWiseRNA_VDW_Bin_ScreenerOP const & user_input_VDW_bin_screener );
 
 	void
+	set_allow_syn_pyrimidine( bool const & setting ) { 
+		allow_syn_pyrimidine_ =setting;
+	}
+
+	void
 	set_extra_syn_chi_rotamer ( bool const & setting ) {
 		extra_syn_chi_rotamer_ = setting;
 	}
@@ -261,6 +266,7 @@ private:
 	bool PBP_clustering_at_chain_closure_;
 	bool extra_anti_chi_rotamer_;
 	bool extra_syn_chi_rotamer_;
+	bool allow_syn_pyrimidine_;
 	bool use_phenix_geo_;
 
 	StepWiseRNA_VDW_Bin_ScreenerOP user_input_VDW_bin_screener_;

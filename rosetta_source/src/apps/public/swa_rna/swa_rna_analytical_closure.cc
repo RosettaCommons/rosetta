@@ -159,6 +159,7 @@ OPT_KEY ( Boolean, minimize_and_score_sugar )
 OPT_KEY ( Boolean, sampler_extra_anti_chi_rotamer )
 OPT_KEY ( Boolean, sampler_extra_syn_chi_rotamer )
 OPT_KEY ( Boolean, PBP_clustering_at_chain_closure )
+OPT_KEY( Boolean, sampler_allow_syn_pyrimidine )
 OPT_KEY ( Boolean, clusterer_two_stage_clustering )
 OPT_KEY ( Boolean, clusterer_keep_pose_in_memory )
 OPT_KEY ( Boolean, finer_sampling_at_chain_closure )
@@ -691,6 +692,7 @@ rna_resample_test() {
 	stepwise_rna_residue_sampler.set_distinguish_pucker ( option[ distinguish_pucker]() );
 	stepwise_rna_residue_sampler.set_finer_sampling_at_chain_closure ( option[ finer_sampling_at_chain_closure]() );
 	stepwise_rna_residue_sampler.set_PBP_clustering_at_chain_closure ( option[ PBP_clustering_at_chain_closure]() );
+	stepwise_rna_residue_sampler.set_allow_syn_pyrimidine( option[ sampler_allow_syn_pyrimidine ]() );
 	stepwise_rna_residue_sampler.set_extra_syn_chi_rotamer ( option[ sampler_extra_syn_chi_rotamer]() );
 	stepwise_rna_residue_sampler.set_extra_anti_chi_rotamer ( option[ sampler_extra_anti_chi_rotamer]() );
 	stepwise_rna_residue_sampler.set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
@@ -761,6 +763,7 @@ main ( int argc, char * argv [] ) {
 //New option Aug 15 2010 //Reinitialize_CCD_torsion to zero before every CCD chain closure
 	NEW_OPT ( minimize_and_score_native_pose, "minimize_and_score_native_pose ", false ); //Sept 15, 2010
 	NEW_OPT ( minimize_and_score_sugar, "minimize and sugar torsion+angle? and include the rna_sugar_close_score_term ", true ); //Sept 15, 2010
+	NEW_OPT( sampler_allow_syn_pyrimidine, "sampler_allow_syn_pyrimidine", false);
 	NEW_OPT ( sampler_extra_syn_chi_rotamer, "Samplerer: extra_chi_rotamer", false );
 	NEW_OPT ( sampler_extra_anti_chi_rotamer, "Samplerer: extra_chi_rotamer", false );
 	NEW_OPT ( PBP_clustering_at_chain_closure, "Samplerer: PBP_clustering_at_chain_closure", false );

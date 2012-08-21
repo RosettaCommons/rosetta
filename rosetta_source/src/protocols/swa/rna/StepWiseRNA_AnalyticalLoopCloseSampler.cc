@@ -295,7 +295,13 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 		for ( Size ii = 1; ii <= rna_loop_close_sampler.n_construct(); ++ii ) {
 			rna_loop_close_sampler.fill_pose ( screening_pose, ii );
 			//Sample CHI torsion angle
-			BaseState base_state = ( core::scoring::rna::is_purine ( pose.residue ( moving_res ) ) ) ? BOTH : ANTI;
+			BaseState base_state;
+			if ( allow_syn_pyrimidine_ ) {
+				base_state = BOTH;
+			} else {
+				base_state = ( core::scoring::rna::is_purine ( pose.residue ( moving_res ) ) ) ? BOTH : ANTI;
+			}
+
 			PuckerState pucker_state;
 
 			if ( pucker_id == 0 ) {
