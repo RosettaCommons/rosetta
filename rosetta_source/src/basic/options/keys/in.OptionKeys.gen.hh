@@ -48,6 +48,7 @@ namespace in { namespace file { extern BooleanOptionKey const file; } }
 namespace in { namespace file { extern FileVectorOptionKey const s; } }
 namespace in { namespace file { extern FileVectorOptionKey const l; } }
 namespace in { namespace file { extern FileVectorOptionKey const list; } }
+namespace in { namespace file { extern FileVectorOptionKey const screening_list; } }
 namespace in { namespace file { extern FileOptionKey const native; } }
 namespace in { namespace file { extern FileOptionKey const torsion_bin_probs; } }
 namespace in { namespace file { extern FileOptionKey const PCS_frag_cst; } }
@@ -70,6 +71,7 @@ namespace in { namespace file { extern StringOptionKey const extra_res_database_
 namespace in { namespace file { extern FileOptionKey const extra_res_database_resname_list; } }
 namespace in { namespace file { extern FileVectorOptionKey const extra_res_cen; } }
 namespace in { namespace file { extern PathVectorOptionKey const extra_res_path; } }
+namespace in { namespace file { extern PathVectorOptionKey const extra_res_batch_path; } }
 namespace in { namespace file { extern FileVectorOptionKey const extra_patch_fa; } }
 namespace in { namespace file { extern FileVectorOptionKey const extra_patch_cen; } }
 namespace in { namespace file { extern StringOptionKey const frag3; } }

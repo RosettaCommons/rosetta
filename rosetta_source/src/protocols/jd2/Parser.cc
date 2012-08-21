@@ -42,7 +42,9 @@ protocols::jd2::Parser::generate_mover_from_job( JobOP job, protocols::moves::Mo
     err_msg
 			<< "Attempting to initiate job distribution for "
 			<< "input job '" << job->input_tag() << "', "
-			<< "but the generated pose has no residues.";
+			<< "but the generated pose has no residues."
+			<< "make sure you specified a valid input PDB, silent file "
+			<< "or database.";
             
     runtime_assert_string_msg( pose.total_residue() > 0, err_msg.str() );
     

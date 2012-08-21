@@ -43,6 +43,7 @@ namespace in { namespace file { BooleanOptionKey const file( "in:file" );  } }
 namespace in { namespace file { FileVectorOptionKey const s( "in:file:s" );  } }
 namespace in { namespace file { FileVectorOptionKey const l( "in:file:l" );  } }
 namespace in { namespace file { FileVectorOptionKey const list( "in:file:list" );  } }
+namespace in { namespace file { FileVectorOptionKey const screening_list( "in:file:screening_list" );  } }
 namespace in { namespace file { FileOptionKey const native( "in:file:native" );  } }
 namespace in { namespace file { FileOptionKey const torsion_bin_probs( "in:file:torsion_bin_probs" );  } }
 namespace in { namespace file { FileOptionKey const PCS_frag_cst( "in:file:PCS_frag_cst" );  } }
@@ -65,6 +66,7 @@ namespace in { namespace file { StringOptionKey const extra_res_database_mode( "
 namespace in { namespace file { FileOptionKey const extra_res_database_resname_list( "in:file:extra_res_database_resname_list" );  } }
 namespace in { namespace file { FileVectorOptionKey const extra_res_cen( "in:file:extra_res_cen" );  } }
 namespace in { namespace file { PathVectorOptionKey const extra_res_path( "in:file:extra_res_path" );  } }
+namespace in { namespace file { PathVectorOptionKey const extra_res_batch_path( "in:file:extra_res_batch_path" );  } }
 namespace in { namespace file { FileVectorOptionKey const extra_patch_fa( "in:file:extra_patch_fa" );  } }
 namespace in { namespace file { FileVectorOptionKey const extra_patch_cen( "in:file:extra_patch_cen" );  } }
 namespace in { namespace file { StringOptionKey const frag3( "in:file:frag3" );  } }
@@ -623,4 +625,3 @@ namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:vio
 namespace fold_cst { BooleanOptionKey const keep_skipped_csts( "fold_cst:keep_skipped_csts" );  }
 namespace fold_cst { BooleanOptionKey const no_minimize( "fold_cst:no_minimize" );  }
 namespace fold_cst { BooleanOptionKey const force_minimize( "fold_cst:force_minimize" );  }
-namespace fold_cst { RealVectorOptionKey const seq_sep_stages( "fold_cst:seq_sep_stages" );  }

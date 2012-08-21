@@ -98,7 +98,7 @@ JobInputterFactory::get_new_JobInputter()
 	}
 
 	//PDB input block
-	if ( basic::options::option[ basic::options::OptionKeys::in::file::s ].user() || basic::options::option[ basic::options::OptionKeys::in::file::l ].user() || basic::options::option[ basic::options::OptionKeys::in::file::list ].user() ) {
+	if ( basic::options::option[ basic::options::OptionKeys::in::file::s ].user() || basic::options::option[ basic::options::OptionKeys::in::file::l ].user() || basic::options::option[ basic::options::OptionKeys::in::file::list ].user() || basic::options::option[ basic::options::OptionKeys::in::file::screening_list ].user() ) {
 		if ( basic::options::option[ basic::options::OptionKeys::enzdes::parser_read_cloud_pdb ].user() ){
 			 return get_JobInputter_from_string( "EnzdesJobInputter" );
 		}

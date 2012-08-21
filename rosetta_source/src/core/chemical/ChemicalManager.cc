@@ -193,6 +193,8 @@ ChemicalManager::residue_type_set( std::string tag )
 		std::vector<core::chemical::ResidueTypeOP> extra_residues;
 
 		if(tag == FA_STANDARD) {
+
+			//this whole thing is desperately in need of some method extraction
 			utility::options::FileVectorOption & fvec
 				= basic::options::option[ basic::options::OptionKeys::in::file::extra_res_fa ];
 			for(Size i = 1, e = fvec.size(); i <= e; ++i) {
@@ -217,6 +219,33 @@ ChemicalManager::residue_type_set( std::string tag )
 					}
 				}
 				tr.Debug<< std::endl;
+			}
+
+			utility::options::PathVectorOption & pvec_batch
+				= basic::options::option[basic::options::OptionKeys::in::file::extra_res_batch_path];
+			for(Size i=1, e= pvec_batch.size(); i<=e; i++){
+				utility::vector1<std::string> subdirs;
+				std::string directory=pvec_batch[i].name();
+
+				utility::file::list_dir(directory, subdirs);
+				tr.Debug<< std::endl;
+				for(size_t j=1; j<= subdirs.size();++j)
+				{
+					if(subdirs[j] == "." || subdirs[j] == "..")
+					{
+						continue;
+					}
+					utility::vector1<std::string> files;
+					utility::file::list_dir(directory+"/"+subdirs[j],files);
+					for(size_t k=1; k<= files.size(); k++){
+						if (files[k].find("param")!=std::string::npos){
+							tr.Debug << files[k]<< ", ";
+							std::string path= directory+'/'+subdirs[j]+'/'+files[k];
+							extra_params_files.push_back(path);
+						}
+					}
+				}
+
 			}
 
 			utility::options::FileVectorOption & mdlvec

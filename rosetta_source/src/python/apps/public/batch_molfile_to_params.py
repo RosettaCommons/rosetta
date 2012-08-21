@@ -93,6 +93,7 @@ usage = "%prog -d path/to/rosetta/database --script_path=/path/to/molfile_to_par
 parser=OptionParser(usage)
 parser.add_option("-d", dest ="database",help="path to minirosetta database",default=1)
 parser.add_option("--script_path",dest="script",help="location of the molfile_to_params script",default = "")
+parser.add_option("--exclusion_list",dest="excluded",help="list of ligand names to manually exclude",default="")
 (options, args) = parser.parse_args()
 
 if not os.path.exists("params"):
@@ -112,6 +113,15 @@ molfile_list_path = args[0]
 ligand_names = itertools.product(char_set,repeat=3)
 
 disallowed_ligands = get_disallowed_ligands(options.database+"/")
+
+
+
+if(options.excluded != ""):
+	exclude_list = open(options.excluded,'r')
+	for line in exclude_list:
+		line = line.rstrip()
+		disallowed_ligands.add(line)
+	exclude_list.close()
 
 
 molfile_list = open(molfile_list_path,'r')
