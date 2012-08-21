@@ -613,7 +613,7 @@ pyrimidine_flip_trial( pose::Pose & pose,
 	Pose screen_pose = pose;
 	Real orig_score, new_score;
 	orig_score = (*scorefxn) (pose);
-	std::cout << "Start pyrimidine_flip_trial. Fiip residue :";		
+	std::cout << "Start pyrimidine_flip_trial. Filp residue :";		
 	for (Size i = 1; i <= total_res; ++i) {
 		if ( check_num_in_vector( i, fixed_res_list ) ) continue;
 		Residue const & res = pose.residue(i);
