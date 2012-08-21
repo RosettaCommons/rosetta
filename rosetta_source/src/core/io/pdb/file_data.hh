@@ -18,6 +18,8 @@
 
 
 // Unit headers
+#include <core/io/pdb/Field.fwd.hh>
+#include <core/io/pdb/HeaderInformation.hh>
 #include <core/io/pdb/file_data.fwd.hh>
 
 // Package headers
@@ -114,37 +116,12 @@ class ResidueInformation
 {
 public:
 	///@brief default constructor to initialize all values
-	ResidueInformation() :
-		resid( "" ),
-		resName( "" ),
-		chainID( ' ' ),
-		resSeq( 0 ),
-		iCode( ' ' ),
-		terCount( 0 ),
-		atoms(),
-		xyz(),
-		temps()
-	{}
+	ResidueInformation();
 
-	ResidueInformation(AtomInformation const & ai) :
-		resid( "" ),
-		resName( ai.resName ),
-		chainID( ai.chainID ),
-		resSeq( ai.resSeq ),
-		iCode( ai.iCode ),
-		terCount( ai.terCount ),
-		atoms(),
-		xyz(),
-		temps()
-	{}
+	ResidueInformation(AtomInformation const & ai);
 
-	bool operator==(ResidueInformation const & that) const
-	{
-		return resName == that.resName && chainID == that.chainID && resSeq == that.resSeq && iCode == that.iCode && terCount == that.terCount;
-	}
-	// Stupid language that allows separate definitions of == and !=
-	bool operator!=(ResidueInformation const & that) const
-	{ return !(*this == that); }
+	bool operator==(ResidueInformation const & that) const;
+	bool operator!=(ResidueInformation const & that) const;
 
 	/// For now, all member names have the same names as fields in PDB standard.
 	String resid; //< 6-character (partial) identifier used by reader
@@ -164,7 +141,10 @@ public:
 class FileData
 {
 public:
-	FileData() : remarks(new pose::Remarks) {}
+	FileData() :
+		remarks(new pose::Remarks),
+		header(0)
+	{}
 
 	/// @brief empty destructor in C++ file to reduce number of necessary includes.
 	~FileData();
@@ -173,12 +153,33 @@ public:
 	std::vector< AtomChain > chains;
 	//std::vector< RemarkInfo > remarks;
 	pose::RemarksOP remarks;
+	HeaderInformationOP header;
 	std::string filename;
 	std::string modeltag;
-	
+
+	void
+	initialize_header_information();
+
+	HeaderInformationOP
+	header_information() const;
+
+	void
+	store_header_record(Record & R);
+
+	/// @brief The header records can span multiple lines while the
+	/// pdb_dynamic_parser is done line-wise. Finalizing the header
+	/// information ensures that all the information is fully processed.
+ 	void
+	finalize_header_information();
+
+	/// @brief Make sure to call finalize_header_information before
+	/// calling this.
+	void
+	fill_header_records(std::vector< Record > & VR) const;
+
 	/// @brief Fill FileData structure using information from given pose object.
 	void init_from_pose(core::pose::Pose const & pose);
-	
+ 
 	/// @brief Fill FileData structure using information from given pose object and a set of options.
 	void init_from_pose(core::pose::Pose const & pose, FileDataOptions const & options);
 

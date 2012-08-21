@@ -29,11 +29,10 @@
 #include <core/conformation/signals/ConnectionEvent.fwd.hh>
 #include <core/conformation/signals/IdentityEvent.fwd.hh>
 #include <core/conformation/signals/LengthEvent.fwd.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh>
 
 #include <core/pose/PDBPoseMap.hh>
 
-//#include <core/io/pdb/file_data.hh>
+#include <core/io/pdb/HeaderInformation.hh>
 #include <core/pose/Remarks.hh>
 
 // Utility headers
@@ -52,6 +51,7 @@
 namespace core {
 namespace pose {
 
+// TODO move this to core/chemical/types.hh
 static std::string const chr_chains( " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz" );
 
 
@@ -502,6 +502,33 @@ public: // pdb-wide accessors/mutators
 	remarks( Remarks const & in )
 	{
 		remarks_ = in;
+	}
+
+	/// @brief For structures deposited into the protein databank, the
+	/// header information record stores the classfication, deposition
+	/// date and the 4 character identification code.
+
+	/// For now only allow initalizing it with copy and accessing it
+	/// with a constant owning pointer.
+
+	/// Note: The header information is only initialized if it is needed.
+	/// Generally this requires using the -run:preserve_header options flag.
+	inline
+	void
+	header_information(io::pdb::HeaderInformation * header_information){
+		header_information_ = header_information;
+	}
+
+	inline
+	io::pdb::HeaderInformationCOP
+	header_information() const {
+		return header_information_;
+	}
+
+	inline
+	io::pdb::HeaderInformationOP
+	header_information() {
+		return header_information_;
 	}
 
 
@@ -1134,6 +1161,9 @@ private: // data
 	/// @brief model tag for multi-model pdbs
 	String modeltag_;
 
+
+	/// @breif header information
+	io::pdb::HeaderInformationOP header_information_;
 
 	/// @brief pdb remarks
 	Remarks remarks_;

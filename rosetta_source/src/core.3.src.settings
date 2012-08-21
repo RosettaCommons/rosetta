@@ -14,8 +14,10 @@ sources = {
 		"PositionDdGInfo",
 	],
 	"core/io/pdb": [
+		"Field",
 		"file_data",
 		"file_data_options",
+		"HeaderInformation",
 		"pdb_dynamic_reader",
 		"pdb_dynamic_reader_options",
 		"pose_io",

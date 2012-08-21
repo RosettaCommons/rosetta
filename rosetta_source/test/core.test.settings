@@ -53,6 +53,10 @@ sources = {
 	"io" : [
 		"PDB_IO",
 	],
+	"io/pdb" : [
+		"Field",
+		"HeaderInformationTests",
+	],
 	"io/atom_tree_diffs": [
 		"atom_tree_diff",
 	],

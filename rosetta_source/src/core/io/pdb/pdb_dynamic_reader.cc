@@ -19,9 +19,13 @@
 #include <core/io/pdb/pdb_dynamic_reader_options.hh>
 
 //
+#include <core/io/pdb/Field.hh>
+#include <core/io/pdb/HeaderInformation.hh>
 #include <core/io/pdb/file_data.hh>
 #include <core/pose/Remarks.hh>
 #include <core/types.hh>
+ #include <basic/options/option.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/tools/make_map.hh>
@@ -51,126 +55,12 @@ namespace pdb {
 using core::Size;
 using core::SSize;
 
-/// @details static holder for collection of Fields.
-PDB_DReader::RecordRef PDB_DReader::PDB_Records_;
-
-/// @details Debug printing, serialazing to Tracer like object.
-std::ostream& operator <<(std::ostream &os,Record const & R)
-{
-	for(Record::const_iterator p=R.begin(); p!=R.end(); p++ ) {
-		os << "<Record>{" << p->first << ":" << p->second
-			<< "}\n";
-	}
-
-	return os;
-}
-
-/// @details check if records table was init, init table otherwise
-/// return reference to private static records collection
-PDB_DReader::RecordRef & PDB_DReader::getRecordCollection()
-{
-	if( PDB_Records_.size() == 0 ) {
-		PDB_Records_ = utility::tools::make_map<String, Record>(
-			"MODEL ", utility::tools::make_map<String, Field>(
-				"type",			Field( 1,    6),
-				"serial",		Field( 7,   80) ), /// String
-
-			"HEADER", utility::tools::make_map<String, Field>(
-				"type",           Field( 1,  6),
-				"classification", Field(11, 50),
-				"depDate",        Field(51, 59),
-				"idCode",         Field(63, 66)	),
-
-			"TITLE ", utility::tools::make_map<String, Field>(
-				"type",         Field( 1,  6),
-				"continuation", Field( 9, 10),
-				"title",        Field(11, 70) ),
-
-			"COMPND", utility::tools::make_map<String, Field>(
-				"type",         Field( 1,  6),
-				"continuation", Field( 9, 10),
-				"compound",     Field(11, 70) ),
-
-			"REMARK", utility::tools::make_map<String, Field>(
-				"type",      Field( 1,  6),
-				"remarkNum", Field( 8, 10),
-				"value",     Field(12, 70) ), // non standard name.
-
-			"ATOM  ", utility::tools::make_map<String, Field>(
-				"type",       Field( 1,  6),
-				"serial",     Field( 7, 11), /// Integer
-				"name",       Field(13, 16), /// Atom
-				"altLoc",     Field(17, 17), /// Character
-				"resName",    Field(18, 20), /// Residue name
-				"chainID",    Field(22, 22), /// Character
-				"resSeq",     Field(23, 26), /// Integer
-				"iCode",      Field(27, 27), /// AChar
-				"x",          Field(31, 38), /// Real(8.3)
-				"y",          Field(39, 46), /// Real(8.3)
-				"z",          Field(47, 54), /// Real(8.3)
-				"occupancy",  Field(55, 60), /// Real(6.2)
-				"tempFactor", Field(61, 66), /// Real(6.2)
-				///"segID",     Field(73, 76),
-				"element",    Field(77, 78), /// LString(2)
-				"charge",     Field(79, 80)  /// LString(2)
-				),
-			"HETATM", utility::tools::make_map<String, Field>(
-				"type",       Field( 1,  6),
-				"serial",     Field( 7, 11), /// Integer
-				"name",       Field(13, 16), /// Atom
-				"altLoc",     Field(17, 17), /// Character
-				"resName",    Field(18, 20), /// Residue name
-				"chainID",    Field(22, 22), /// Character
-				"resSeq",     Field(23, 26), /// Integer
-				"iCode",      Field(27, 27), /// AChar
-				"x",          Field(31, 38), /// Real(8.3)
-				"y",          Field(39, 46), /// Real(8.3)
-				"z",          Field(47, 54), /// Real(8.3)
-				"occupancy",  Field(55, 60), /// Real(6.2)
-				"tempFactor", Field(61, 66), /// Real(6.2)
-				///"segID",     Field(73, 76),
-				"element",    Field(77, 78), /// LString(2)
-				"charge",     Field(79, 80)  /// LString(2)
-				),
-			"SSBOND", utility::tools::make_map<String, Field>(
-				"type",     Field( 1,  6),
-				"serNum",   Field( 8, 10), /// Integer
-				"CYS",      Field(12, 14),
-				"chainID1", Field(16, 16), /// Character
-				"seqNum1",  Field(18, 21), /// Integer
-				"icode1",   Field(22, 22), /// AChar
-				"CYS",      Field(26, 28),
-				"chainID2", Field(30, 30), /// Character
-				"seqNum2",  Field(32, 35), /// Integer
-				"icode2",   Field(36, 36), /// AChar
-				"sym1",     Field(60, 65), /// SymOP
-				"sym2",     Field(67, 72)  /// SymOP
-				),
-			"TER   ", utility::tools::make_map<String, Field>(
-				"type",       Field( 1,  6),
-				"serial",     Field( 7, 11),
-				"resName",    Field(18, 20),
-				"chainID",    Field(22, 22),
-				"resSeq",     Field(23, 26),
-				"iCode",      Field(27, 27) ),
-
-			"UNKNOW", utility::tools::make_map<String, Field>(
-				"type", Field( 1,  6),
-				"info", Field( 7, 80) )
-			);
-	}
-	return PDB_Records_;
-}
-
-
 /// @details create Record Object with field collection (depending of the type information in _s),
 /// and read fields values.
 Record PDB_DReader::mapStringToRecord(const String & _s)
 {
-	//PDB_Records();
-	getRecordCollection();
+	RecordRef pdb_records(Field::getRecordCollection());
 
-	//if( PDB_Records_.size() == 0 ) PDB_Records_ = getRecordCollection();
 	String s(_s);
 	s.resize(80, ' ');
 	Field T = Field("type", 1,  6);
@@ -178,8 +68,8 @@ Record PDB_DReader::mapStringToRecord(const String & _s)
 	T.getValueFrom(s);
 
 	Record R;
-	if( PDB_Records_.count(T.value) ) {	R = PDB_Records_[ T.value ]; }
-	else { R = PDB_Records_["UNKNOW"]; }
+	if( pdb_records.count(T.value) ) {	R = pdb_records[ T.value ]; }
+	else { R = pdb_records["UNKNOW"]; }
 
 	for(Record::iterator p=R.begin(); p!=R.end(); p++) (*p).second.getValueFrom(s);
 
@@ -230,6 +120,12 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOption
 {
 	FileData fd;
 
+	bool read_pdb_header =
+		basic::options::option[
+			basic::options::OptionKeys::run::preserve_header]();
+
+	fd.initialize_header_information();
+
 	typedef std::map<char, AtomChain> ChainMap;
 	ChainMap m;
 
@@ -265,6 +161,13 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOption
 				} else {
 					modeltags_present = true;
 				}
+			}
+		} else if (
+			VR[i]["type"].value == "HEADER" || VR[i]["type"].value == "KEYWDS" ||
+			VR[i]["type"].value == "TITLE " || VR[i]["type"].value == "COMPND" ||
+			VR[i]["type"].value == "EXPDTA") {
+			if( read_pdb_header ){
+				fd.store_header_record(VR[i]);
 			}
 		} else if( VR[i]["type"].value == "ATOM  " || VR[i]["type"].value == "HETATM")  {
 			Record & R(VR[i]);
@@ -326,6 +229,10 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOption
 		}
 	}
 
+	if( read_pdb_header ) {
+		fd.finalize_header_information();
+	}
+
 	for ( Size i=0; i< chain_list.size(); ++i ) { // std::vector
 		fd.chains.push_back( m.find( chain_list[i] )->second );
 	}
@@ -373,7 +280,8 @@ String PDB_DReader::createPDBData(FileData const &fd)
 	return r;
 }
 
-utility::vector1< std::string > PDB_DReader::createPDBData_vector( FileData const & fd ) {
+utility::vector1< std::string >
+PDB_DReader::createPDBData_vector( FileData const & fd ) {
 	std::vector<Record> VR( PDB_DReader::createRecords(fd) );
 
 	utility::vector1< std::string > lines;
@@ -404,9 +312,14 @@ std::string print_d(const char *format, double d)
 //  Used in PDB writing support.
 std::vector<Record> PDB_DReader::createRecords(FileData const & fd)
 {
-	Record R = getRecordCollection()["REMARK"];
+
 	std::vector<Record> VR;
 
+	if(fd.header_information()){
+		fd.fill_header_records(VR);
+	}
+
+	Record R = Field::getRecordCollection()["REMARK"];
 	for(Size i=0; i<fd.remarks->size(); i++) {
 		pose::RemarkInfo const & ri( fd.remarks->at(i) );
 
@@ -417,7 +330,7 @@ std::vector<Record> PDB_DReader::createRecords(FileData const & fd)
 	}
 
 
-	R = getRecordCollection()["ATOM  "];
+	R = Field::getRecordCollection()["ATOM  "];
 	for(Size i=0; i<fd.chains.size(); i++) {
 		for(Size j=0; j<fd.chains[i].size(); j++) {
 			AtomInformation const & ai( fd.chains[i][j] );
@@ -436,22 +349,11 @@ std::vector<Record> PDB_DReader::createRecords(FileData const & fd)
 			R["occupancy"].value = print_d("%6.2f", ai.occupancy);
 			R["tempFactor"].value = print_d("%6.2f", ai.temperature);
 			VR.push_back(R);
-			//std::cout << "ai.resSeq=" << ai.resSeq << " R=" << R["resSeq"].value << "\n";
 		}
 	}
 
-	//R = getRecordCollection()["REMARK"];
-	//for(Size i=0; i<fd.remarks->size(); i++) {
-	//	RemarkInfo const & ri( fd.remarks->at(i) );
-
-	//	R["type"].value = "REMARK";
-	//	R["remarkNum"].value = print_i("%3d", ri.num);
-	//	R["value"].value = ri.value;
-	//	VR.push_back(R);
-	//}
-
 	// Adding 'TER' line at the end of PDB.
-	Record T = getRecordCollection()["TER   "];
+	Record T = Field::getRecordCollection()["TER   "];
 	T["type"].value = "TER   ";
 	VR.push_back(T);
 

@@ -8,21 +8,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/io/pdb/file_data.fwd.hh
+/// @file   core/io/pdb/HeaderInformation.fwd.hh
 ///
-/// @brief
-/// @author Sergey Lyskov
+/// @brief Information stored in the HEADER record in the PDB format
+/// @author Matthew O'Meara
 
-#ifndef INCLUDED_core_io_pdb_file_data_fwd_hh
-#define INCLUDED_core_io_pdb_file_data_fwd_hh
+#ifndef INCLUDED_core_io_pdb_HeaderInformation_fwd_hh
+#define INCLUDED_core_io_pdb_HeaderInformation_fwd_hh
+
+#include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace io {
 namespace pdb {
 
+class HeaderInformation;
 
-class ResidueInformation;
-class FileData;
+typedef utility::pointer::owning_ptr< HeaderInformation > HeaderInformationOP;
+typedef utility::pointer::owning_ptr< HeaderInformation const > HeaderInformationCOP;
 
 
 } // namespace pdb
@@ -30,4 +33,4 @@ class FileData;
 } // namespace core
 
 
-#endif // INCLUDED_core_io_pdb_file_data_FWD_HH
+#endif // INCLUDED_core_io_pdb_HeaderInformation_FWD_HH

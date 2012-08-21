@@ -22,6 +22,7 @@
 #include <core/io/pdb/pdb_dynamic_reader_options.fwd.hh>
 
 // Utility headers
+#include <core/io/pdb/Field.hh>
 #include <utility/Show.hh>
 // AUTO-REMOVED #include <utility/vector1.hh>
 
@@ -43,48 +44,8 @@ namespace io {
 namespace pdb {
 
 
-// Forward
-class Field;
-
 /// Record type, represent one line in pdb file
 typedef std::string String;
-typedef std::map<String, Field> Record;
-
-/// @brief Debug printing, serialazing to Tracer like object.
-std::ostream& operator <<(std::ostream &os,Record const & R);
-
-/// ------------------------------------------------------------------------------------------------
-/// @brief Data type Class to represent one field in PDB file.
-class Field : public utility::Show
-{
-public:
-	/// @brief various constructors - only for convinience.
-	Field() : type(""), value(""), start(-1), end(-1) {};
-	Field(int s, int e) { start=s; end=e; };
-	Field(String type_, int s, int e) { type=type_; start=s; end=e; };
-
-	/// @brief read field value from given string.
-	void getValueFrom(String source) { value = String(source.begin()+start-1, source.begin()+end); }
-
-
-public:  /// This class is intended to be just 'data' type class - no need to make it private.
-
-	/// @brief string value of field, type of the field.
-	String type, value;
-
-	/// @brief begining position in line, ending postion in line
-	int start, end;
-
-
-	/// @brief Debug output.
-	friend std::ostream& operator <<(std::ostream &os, Field const & F) {
-		//os << "type[" << F.start << ", " <<  F.end << "]="<<  F.type << "  value=" <<  F.value << "\n";
-		os << "[" << F.start << ", " <<  F.end << "]="<< F.value << "";
-		return os;
-	};
-};
-
-
 
 /// @brief PDB Reader it self, D - for dynamic approch of type handling
 class PDB_DReader
@@ -124,17 +85,6 @@ public:
 	/// @brief create vector of records for given FileData object.
 	static std::vector<Record> createRecords(FileData const & fd);
 
-
-private:
-	/// @brief collection of all possible records (line types), that can exist in PDB file.
-	typedef std::map<String, Record> RecordRef;
-
-	/// @brief static holder for collection.
-	static RecordRef PDB_Records_;
-
-
-	/// @brief collection builder
-	static RecordRef & getRecordCollection();
 };
 
 } // namespace pdb

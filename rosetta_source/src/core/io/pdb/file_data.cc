@@ -14,6 +14,8 @@
 /// @author Sergey Lyskov
 
 // Unit headers
+#include <core/io/pdb/Field.hh>
+#include <core/io/pdb/HeaderInformation.hh>
 #include <core/io/pdb/file_data.hh>
 
 #include <core/io/pdb/pose_io.hh>
@@ -27,6 +29,7 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/AtomType.hh>
@@ -39,9 +42,21 @@
 
 #include <core/scoring/dssp/Dssp.hh>
 
+#include <core/pose/util.hh>
+
+
 // Basic headers
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
+
+// option key includes
+#include <basic/options/option.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/inout.OptionKeys.gen.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
+
 
 #include <numeric/random/random.hh>
 
@@ -81,6 +96,9 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
+using std::string;
+using std::iostream;
+
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::fmt;
 /// Tracer instance for this file
@@ -89,8 +107,53 @@ static basic::Tracer TR("core.io.pdb.file_data");
 /// random number generator for randomizing missing density coordinates
 static numeric::random::RandomGenerator RG(231411);  // <- Magic number, do not change it!
 
-static std::string const chr_chains( "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz" );
+// TODO: move this to core/chemical/types.hh
+// TODO: Confirm that not allowing ' ' as a chain id is intended--as this is inconsistent with the PDB spec
+static string const chr_chains( "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz" );
 
+ResidueInformation::ResidueInformation() :
+	resid( "" ),
+	resName( "" ),
+	chainID( ' ' ),
+	resSeq( 0 ),
+	iCode( ' ' ),
+	terCount( 0 ),
+	atoms(),
+	xyz(),
+	temps()
+{}
+
+ResidueInformation::ResidueInformation(
+	AtomInformation const & ai) :
+	resid( "" ),
+	resName( ai.resName ),
+	chainID( ai.chainID ),
+	resSeq( ai.resSeq ),
+	iCode( ai.iCode ),
+	terCount( ai.terCount ),
+	atoms(),
+	xyz(),
+	temps()
+{}
+
+bool
+ResidueInformation::operator==(
+	ResidueInformation const & that) const {
+	return
+		resName == that.resName &&
+		chainID == that.chainID &&
+		resSeq == that.resSeq &&
+		iCode == that.iCode &&
+		terCount == that.terCount;
+}
+
+bool
+ResidueInformation::operator!=(
+	ResidueInformation const & that) const {
+	return !(*this == that);
+}
+
+/////////////////////////////////////////////
 
 FileData::~FileData()
 {
@@ -204,6 +267,44 @@ void FileData::init_from_pose(core::pose::Pose const & pose)
 	init_from_pose( pose, options );
 }
 
+
+///@details prepare the HeaderInformation data structure;
+void
+FileData::initialize_header_information() {
+	header = new HeaderInformation();
+}
+
+HeaderInformationOP
+FileData::header_information() const {
+	return header;
+}
+
+///@details Store information in the header record into the HeaderInformation
+///Note: HeaderInformation must be created explicitly before it can be filled!
+void
+FileData::store_header_record(Record & R) {
+	header->store_record(R);
+}
+
+///@details Populate the header records from the data in the HeaderInformation
+///Note: HeaderInformation must be created explicitly before it can be filled!
+void
+FileData::fill_header_records(
+	std::vector<Record> & VR
+) const {
+	header->fill_records(VR);
+}
+
+///@details finalize storing records from the data in the HeaderInformation
+///Note: HeaderInformation must be created explicitly before it can be filled!
+void
+FileData::finalize_header_information() {
+	header->finalize_parse();
+
+}
+
+
+
 /// @details
 /// init FileData structure from pose object.
 /// read atoms/residue information from Pose object and put it in FileData object using options defined in FileDataOptions.
@@ -218,6 +319,11 @@ void FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions con
 	using core::pose::PDBInfo;
 	if( options.preserve_header() == true && pose.pdb_info() ) {
 		*remarks = pose.pdb_info()->remarks();
+		if(pose.pdb_info()->header_information()){
+			header = new HeaderInformation(*(pose.pdb_info()->header_information()));
+		} else {
+			header = new HeaderInformation();
+		}
 	}
 
 	chains.resize(0);
@@ -254,11 +360,11 @@ void FileData::init_from_pose(
 void FileData::dump_pdb(
 	core::pose::Pose const & pose,
 	std::ostream & out,
-	std::string const & /* tag */,
+	string const & /* tag */,
 	bool write_fold_tree
 )
 {
-	std::string data;
+	string data;
 	FileData fd;
 	fd.init_from_pose(pose);
 
@@ -273,8 +379,8 @@ void FileData::dump_pdb(
 /// return: true if operation was completed without error, false other wise.
 bool FileData::dump_pdb(
 	core::pose::Pose const & pose,
-	std::string const & file_name,
-	std::string const & tag,
+	string const & file_name,
+	string const & tag,
 	bool write_fold_tree)
 {
 	utility::io::ozstream file(file_name.c_str(), std::ios::out | std::ios::binary);
@@ -297,11 +403,11 @@ FileData::dump_pdb(
 	core::pose::Pose const & pose,
 	std::ostream & out,
 	utility::vector1< core::Size > const & residue_indices,
-	std::string const & /* tag */
+	string const & /* tag */
 )
 {
 	FileData fd;
-	std::string data;
+	string data;
 	fd.init_from_pose( pose, residue_indices );
 //	data = "MODEL     " + tag + "\n";
 //	out.write( data.c_str(), data.size() );
@@ -928,6 +1034,7 @@ build_pose_as_is1(
 
 	if( options.preserve_header() == true ) {
 		pdb_info->remarks( *fd.remarks );
+		pdb_info->header_information( fd.header_information()() );
 	}
 
 	// set residue level pdb information

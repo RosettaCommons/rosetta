@@ -8,26 +8,37 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/io/pdb/file_data.fwd.hh
+/// @file   core/io/pdb/Field.fwd.hh
 ///
-/// @brief
-/// @author Sergey Lyskov
+/// @brief Each line of a PDB file is a Record which is divided into Fields
+/// @author Matthew O'Meara (mattjomeara@gmail.com)
 
-#ifndef INCLUDED_core_io_pdb_file_data_fwd_hh
-#define INCLUDED_core_io_pdb_file_data_fwd_hh
+#ifndef INCLUDED_core_io_pdb_Field_fwd_hh
+#define INCLUDED_core_io_pdb_Field_fwd_hh
+
+#include <map>
+#include <string>
 
 namespace core {
 namespace io {
 namespace pdb {
 
 
-class ResidueInformation;
-class FileData;
+
+// Forward
+class Field;
+
+typedef std::map<std::string, Field> Record;
+
+/// @brief collection of all possible records (line types), that can
+/// exist in PDB file.
+typedef std::map<std::string, Record> RecordRef;
 
 
-} // namespace pdb
-} // namespace io
-} // namespace core
 
 
-#endif // INCLUDED_core_io_pdb_file_data_FWD_HH
+} // namespace
+} // namespace
+} // namespace
+
+#endif // include guard

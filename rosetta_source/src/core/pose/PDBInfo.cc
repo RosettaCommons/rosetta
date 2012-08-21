@@ -115,6 +115,7 @@ PDBInfo::PDBInfo( PDBInfo const & info ) :
 	obsolete_( info.obsolete_ ),
 	name_( info.name_ ),
 	modeltag_( info.modeltag_ ),
+	header_information_( info.header_information_ ),
 	remarks_( info.remarks_ ),
 	residue_rec_( info.residue_rec_ ),
 	pdb2pose_( info.pdb2pose_ ),
@@ -148,6 +149,10 @@ PDBInfo::operator =( PDBInfo const & info )
 		name_ = info.name_;
 		modeltag_ = info.modeltag_;
 		remarks_ = info.remarks_;
+		if(info.header_information_){
+			header_information_ =
+				new io::pdb::HeaderInformation(*info.header_information_);
+		}
 
 		residue_rec_ = info.residue_rec_;
 
