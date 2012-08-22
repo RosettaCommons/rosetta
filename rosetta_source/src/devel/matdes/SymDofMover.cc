@@ -75,7 +75,8 @@ SymDofMoverCreator::mover_name()
 
 SymDofMover::SymDofMover() :
 	axis_("z"),
-	align_axis_(true)
+	align_axis_(true),
+	auto_range_(false)
 { }
 
 protocols::moves::MoverOP 
@@ -257,6 +258,7 @@ SymDofMover::parse_my_tag( TagPtr const tag,
 	using std::string;
 	axis_ = tag->getOption<string>( "axis", "z" );
 	align_axis_ = tag->getOption<bool>( "align_axis", true );
+	auto_range_ = tag->getOption<bool>( "auto_range", false );
 	symm_file_ = tag->getOption<string>( "symm_file" );
 	sym_dof_names_ = utility::string_split( tag->getOption< std::string >( "sym_dof_names" ), ',' );
 
@@ -319,6 +321,22 @@ SymDofMover::parse_my_tag( TagPtr const tag,
 		}
 		angles_range_max_ = angles_range_max;
 
+		// If auto_rev_range option is set to true, then the range and signs of the displacements are reversed for negative displacements.
+		// This makes it so that a negative value in the range corresponds to displacement toward the origin and a positive value is away from the origin. 
+		if( auto_range_ ) {
+			utility::vector1<Real> new_radial_disps_range_min, new_radial_disps_range_max;	
+			for(Size i = 1; i <= radial_disps_.size(); i++) {
+				if( radial_disps_[i] < 0 ) {
+					new_radial_disps_range_min.push_back(-radial_disps_range_max_[i]);
+					new_radial_disps_range_max.push_back(-radial_disps_range_min_[i]);
+				} else {
+					new_radial_disps_range_min.push_back(radial_disps_range_min_[i]);
+					new_radial_disps_range_max.push_back(radial_disps_range_max_[i]);
+				}
+			}	
+			radial_disps_range_min_ = new_radial_disps_range_min;
+			radial_disps_range_max_ = new_radial_disps_range_max;
+		}
 	}
 
 	if( sampling_mode_ == "grid" ) {
