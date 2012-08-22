@@ -68,15 +68,17 @@ static basic::Tracer TR( "devel.matdes.SymUnsatHbondFilter" );
 SymUnsatHbondFilter::SymUnsatHbondFilter():
   upper_threshold_( 20 ),
   jump_num_( 1 ),
+  sym_dof_names_( "" ),
 	verbose_( 0 ),
 	write2pdb_( 0 )
 {}
 
 // @brief constructor with arguments 
-SymUnsatHbondFilter::SymUnsatHbondFilter( core::Size const upper_cutoff, core::Size const jump, bool verb, bool write ):
+SymUnsatHbondFilter::SymUnsatHbondFilter( core::Size const upper_cutoff, core::Size const jump, std::string const sym_dofs, bool verb, bool write ):
 	Filter( "SymUnsatHbonds" ),
 	upper_threshold_( upper_cutoff ),
 	jump_num_( jump ),
+	sym_dof_names_( sym_dofs ),
 	verbose_( verb ),
 	write2pdb_( write )
 {}
@@ -86,6 +88,7 @@ SymUnsatHbondFilter::SymUnsatHbondFilter( SymUnsatHbondFilter const & rval ):
 	Super( rval ),
 	upper_threshold_( rval.upper_threshold_ ),
 	jump_num_( rval.jump_num_ ),
+	sym_dof_names_( rval.sym_dof_names_ ),
 	verbose_( rval.verbose_ ),
 	write2pdb_( rval.write2pdb_ )
 {}
@@ -103,12 +106,14 @@ SymUnsatHbondFilter::clone() const{
 // @brief getters
 core::Size SymUnsatHbondFilter::upper_threshold() const { return upper_threshold_; }
 core::Size SymUnsatHbondFilter::jump_num() const { return jump_num_; }
+std::string SymUnsatHbondFilter::sym_dof_names() const { return sym_dof_names_; }
 bool SymUnsatHbondFilter::verbose() const { return verbose_; }
 bool SymUnsatHbondFilter::write2pdb() const { return write2pdb_; }
 
 // @brief setters
 void SymUnsatHbondFilter::upper_threshold( core::Size const upper_cutoff ) { upper_threshold_ = upper_cutoff; }
 void SymUnsatHbondFilter::jump_num( core::Size const jump ) { jump_num_ = jump; }
+void SymUnsatHbondFilter::sym_dof_names( std::string const sym_dofs ) { sym_dof_names_ = sym_dofs; }
 void SymUnsatHbondFilter::verbose( bool const verb ) { verbose_ = verb; }
 void SymUnsatHbondFilter::write2pdb( bool const write ) { write2pdb_ = write; }
 
@@ -127,10 +132,22 @@ SymUnsatHbondFilter::compute( core::pose::Pose const & pose, bool const & verb, 
 	core::pose::Pose bound = pose;
   core::pose::Pose unbound = bound;
 
-	int sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num( unbound, jump_num() ); // JB 120420
-	protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( unbound, sym_aware_jump_id ) );
-	translate->step_size( 1000.0 );
-	translate->apply( unbound );
+	int sym_aware_jump_id = 0;
+	if ( sym_dof_names() != "" ) {
+		utility::vector1<std::string> sym_dof_name_list;
+		sym_dof_name_list = utility::string_split( sym_dof_names() , ',' );
+		for (Size i = 1; i <= sym_dof_name_list.size(); i++) {
+			sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name_list[i] );
+			protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( unbound, sym_aware_jump_id ) );
+			translate->step_size( 1000.0 );
+			translate->apply( unbound );
+		}
+	} else {
+		sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num( pose, jump_num() );
+		protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( unbound, sym_aware_jump_id ) );
+		translate->step_size( 1000.0 );
+		translate->apply( unbound );
+	}
 
 //  Uncomment to verify that symmetric pose is being generated and unbound properly.
 //	bound.dump_pdb("bound.pdb");
@@ -229,6 +246,7 @@ SymUnsatHbondFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::mo
 {
 	upper_threshold( tag->getOption<core::Size>( "cutoff", 20 ) );
 	jump_num( tag->getOption<core::Size>( "jump", 1 ) );
+	sym_dof_names( tag->getOption< std::string >( "sym_dof_names" , "" ) );
 	verbose( tag->getOption< bool >( "verbose", 0 ) );
 	write2pdb( tag->getOption< bool >("write2pdb", 0) );
 

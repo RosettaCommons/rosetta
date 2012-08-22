@@ -45,7 +45,7 @@ public:
 	SymUnsatHbondFilter();
 
 	// @brief constructor with arguments
-	SymUnsatHbondFilter( core::Size const upper_cutoff, core::Size const jump, bool verb, bool write );
+	SymUnsatHbondFilter( core::Size const upper_cutoff, core::Size const jump, std::string const sym_dofs,  bool verb, bool write );
 
 	// @brief copy constructor
 	SymUnsatHbondFilter( SymUnsatHbondFilter const & rval );
@@ -67,12 +67,14 @@ public:// accessor
 public:// setters
 	void upper_threshold( core::Size const upper_cutoff );
 	void jump_num( core::Size const jump );
+	void sym_dof_names( std::string const sym_dofs );
 	void verbose( bool const verb );
 	void write2pdb( bool const write );
 
 public:// getters
 	core::Size upper_threshold() const;
 	core::Size jump_num() const;
+	std::string sym_dof_names() const;
 	bool verbose() const;
 	bool write2pdb() const;
 
@@ -102,6 +104,7 @@ private:
 
 	core::Size upper_threshold_;
 	core::Size jump_num_;
+	std::string sym_dof_names_;
 	bool verbose_;
 	bool write2pdb_;
 
