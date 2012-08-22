@@ -129,8 +129,8 @@ class BaseSampleSource:
     def setup_job_files(self):
         run_dir = "%(output_dir)s/%(sample_source_id)s" % self.mvars
 
-        copy("%(workdir)s/sample_sources/merge_databases.py" % self.mvars,
-             path.join(run_dir, "merge_databases.py"))
+        copy("%(workdir)s/sample_sources/merge.sh" % self.mvars,
+             path.join(run_dir, "merge.sh"))
 
         for template_fname in glob.glob("*.TEMPLATE"):
             fname = template_fname[:-9]

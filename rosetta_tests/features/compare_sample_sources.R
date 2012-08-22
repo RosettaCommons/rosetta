@@ -92,7 +92,7 @@ initialize_command_line_options <- function() {
 		make_option(c("--generate_website"), action="store_true", type="logical", default=TRUE, dest="generate_website",
 			help="Add footer to plots saying the analysis script and run date. [Default \"%defulat\"]"),
 		make_option(c("--config"), action="store", type="character", default=NULL, dest="config_filename",
-			help=". [Default \"%defulat\"]")))
+			help=". [Default \"%default\"]")))
 
 	# Density estimation options
 	option_list <- c(option_list, list(
