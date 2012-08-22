@@ -53,8 +53,9 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <ObjexxFCL/format.hh>
 
-// Jacob header 120423
+// Jacob headers 120423/120817
 #include <core/pose/symmetry/util.hh>
+#include <utility/string_util.hh>
 
 #include <utility/vector0.hh>
 
@@ -73,6 +74,7 @@ RotamerBoltzmannWeight::RotamerBoltzmannWeight() :
 	parent( "RotamerBoltzmannWeight" ),
 	task_factory_( NULL ),
 	rb_jump_( 1 ),
+	sym_dof_names_( "" ),
 	unbound_( true ),
 	scorefxn_( NULL ),
 	temperature_( 0.8 ),
@@ -158,6 +160,18 @@ core::Size
 RotamerBoltzmannWeight::rb_jump() const
 {
 	return rb_jump_;
+}
+
+void
+RotamerBoltzmannWeight::sym_dof_names( std::string const dof_names )
+{
+	sym_dof_names_ = dof_names;
+}
+
+std::string
+RotamerBoltzmannWeight::sym_dof_names() const
+{
+	return sym_dof_names_;
 }
 
 void
@@ -254,14 +268,26 @@ RotamerBoltzmannWeight::compute( core::pose::Pose const & const_pose ) const{
 		} else {
 			if( unbound() ){
 				using namespace protocols::moves;
-				int sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num(unbound_pose, rb_jump() ); // JB 120420
-				rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( unbound_pose, sym_aware_jump_id ) ); // JB 120420
-				translate->step_size( 1000.0 );
-				translate->apply( unbound_pose );
+
+				if ( sym_dof_names() != "" ) { // JB 120817
+					utility::vector1<std::string> sym_dof_name_list = utility::string_split( sym_dof_names() , ',' ); // JB 120817
+					for (Size i = 1; i <= sym_dof_name_list.size(); i++) { // JB 120817
+						int sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( unbound_pose, sym_dof_name_list[i] ); // JB 120817
+						rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( unbound_pose, sym_aware_jump_id ) ); // JB 120817
+						translate->step_size( 1000.0 ); // JB 120817
+						translate->apply( unbound_pose ); // JB 120817
+					} // JB 120817
+				} else {	// JB 120817
+					int sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num(unbound_pose, rb_jump() ); // JB 120420
+					rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( unbound_pose, sym_aware_jump_id ) ); // JB 120420
+					translate->step_size( 1000.0 );
+					translate->apply( unbound_pose );
+				}
 			}
 			hotspot_res = first_pass_ala_scan( const_pose );
 		}
 	}
+	//unbound_pose.dump_pdb("unbound_pose.pdb");
 	if( hotspot_res.size() == 0 ){
 		TR<<"No hot-spot residues detected in first pass alanine scan. Doing nothing"<<std::endl;
 		return( 0 );
@@ -333,7 +359,7 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	if( unbound() ) // the complex was split, don't minimize rb dof
 		mm->set_jump( false );
 	else // minimize rb if bound
-		mm->set_jump( rb_jump(), true );
+		mm->set_jump( rb_jump(), true ); // Need to modify for multicomponent symmetries (JBB)
 	for( core::Size i=1; i<=pose.total_residue(); ++i ){
 		if( task->being_designed( i ) ){
 			task->nonconst_residue_task( i ).restrict_to_repacking(); // mark all des around to repacking only
@@ -457,6 +483,7 @@ RotamerBoltzmannWeight::parse_my_tag( utility::tag::TagPtr const tag,
 	repacking_radius( tag->getOption< core::Real >( "radius", 6.0 ) );
 	type_ = tag->getOption< std::string >( "type", "" );
 	rb_jump( tag->getOption< core::Size >( "jump", 1 ) );
+	sym_dof_names( tag->getOption< std::string >( "sym_dof_names" , "" ) );
 	unbound( tag->getOption< bool >( "unbound", 1 ) );
 	ddG_threshold( tag->getOption< core::Real >( "ddG_threshold", 1.5 ) );
 	temperature( tag->getOption< core::Real >( "temperature", 0.8 ) );

@@ -61,6 +61,8 @@ public:
 	core::Real compute_Boltzmann_weight( core::pose::Pose const & pose, core::Size const resi ) const;
 	void rb_jump( core::Size const jump );
 	core::Size rb_jump() const;
+	void sym_dof_names( std::string const dof_names );
+	std::string sym_dof_names() const;
 	void repacking_radius( core::Real const rad );
 	core::Real repacking_radius() const;
 	core::Real ddG_threshold() const;
@@ -91,6 +93,7 @@ public:
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::Size rb_jump_; // dflt 1.
+	std::string sym_dof_names_; // dflt "".
 	bool unbound_; // dflt true. what is the reference state for computing the boltz weight
 	core::scoring::ScoreFunctionOP scorefxn_;
 	core::Real temperature_; //dflt 0.8 ; this is actually kT rather than just T
