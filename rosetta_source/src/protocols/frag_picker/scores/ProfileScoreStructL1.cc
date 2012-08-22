@@ -10,6 +10,7 @@
 /// @file   protocols/frag_picker/scores/ProfileScoreStructL1.cc
 /// @brief  scores a fragment using structure based profiles
 /// @author Dominik Gront (dgront@chem.uw.edu.pl)
+/// @author David E Kim (dekim@uw.edu)
 
 
 // type headers

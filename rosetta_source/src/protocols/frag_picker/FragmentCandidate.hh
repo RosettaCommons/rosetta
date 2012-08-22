@@ -21,7 +21,9 @@
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
 #include <protocols/frag_picker/VallChunk.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
+#include <protocols/frag_picker/scores/FragmentScoreManager.hh>
 #include <core/fragment/FragData.hh>
+#include <core/io/silent/SilentFileData.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <core/fragment/BBTorsionSRFD.hh>
@@ -39,7 +41,7 @@ using ObjexxFCL::fmt::F;
 using ObjexxFCL::fmt::I;
 
 utility::vector1<FragmentCandidateOP> read_fragment_candidates(std::string,
-		VallProviderOP);
+		VallProviderOP, Size max_nfrags_per_pos = 10000000000);
 
 /// @brief Vector candidate says which X-mer from vall fits to a query sequence
 /// @detailed Scores for a given fragment are stored separately in a FragmentScoreMap object
@@ -151,6 +153,9 @@ public:
 
 	/// @brief Prints fragment sequence, used for generating structure based sequence profiles
 	void print_fragment_seq(std::ostream& out);
+
+	/// @brief Prints fragment to silent struct
+	void output_silent(core::io::silent::SilentFileData & sfd, const std::string sequence, const std::string silent_file_name, const std::string tag, scores::FragmentScoreMapOP sc, scores::FragmentScoreManagerOP ms);
 
 	inline void set_pool_name(std::string pool_name) {
 	    if(pool_name_!=NULL) delete pool_name_;

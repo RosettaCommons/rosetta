@@ -70,6 +70,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
@@ -218,10 +219,13 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 	Size neighbors = option[frags::contacts::neighbors]();
 
 	// output all contacts?
+	std::set<ContactType>::iterator it;
 	utility::io::ozstream output_all_contacts;
 	bool output_all = option[frags::contacts::output_all]();
 	if (output_all) {
-		std::string scale_factor = string_of(sidechain_contact_dist_cutoff_->scale_factor());
+		std::string scale_factor = "0";
+		for (it=contact_types_.begin(); it!=contact_types_.end(); it++)
+			if (*it == CEN) scale_factor = string_of(sidechain_contact_dist_cutoff_->scale_factor());
 		replace( scale_factor.begin(), scale_factor.end(), '.', '_' );
 		const std::string out_file_name_all_contacts = prefix_ + "." + string_of(contacts_min_seq_sep_) + "." + string_of(sqrt(contacts_dist_cutoff_squared_)) + "." + scale_factor +
 				"." + string_of(n_frags_) + "." + string_of(fragment_size) + "mers.contacts";
@@ -230,7 +234,6 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 
 	// initialize contact counts
 	std::map<std::pair<Real,ContactType>, ContactCountsOP> contact_counts;
-	std::set<ContactType>::iterator it;
 	for (it=contact_types_.begin(); it!=contact_types_.end(); it++) {
 		if (*it == CEN) {
 			std::pair<Real,ContactType> p(0,*it);
@@ -278,7 +281,7 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 								sidechain_contact_dist_cutoff_->get_cutoff_squared( ri->aa(), outi[fi].first->get_residue(j)->aa() ) :
 								contacts_dist_cutoff_squared_;
 
-						if (distance_squared < cutoff_dist_squared) {
+						if (distance_squared <= cutoff_dist_squared) {
 
 							// output all row
 							if (output_all)
@@ -320,7 +323,7 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 											if (std::abs(int( chunk->at(chunk_i)->resi() - chunk->at(chunk_j)->resi() )) < contacts_min_seq_sep_) continue;
 
 											Real dist_squared = chunk->at(chunk_i)->distance_squared(chunk->at(chunk_j), *it);
-											if (dist_squared < sidechain_contact_dist_cutoff_->get_cutoff_squared( chunk->at(chunk_i)->aa(), chunk->at(chunk_j)->aa() )) {
+											if (dist_squared <= sidechain_contact_dist_cutoff_->get_cutoff_squared( chunk->at(chunk_i)->aa(), chunk->at(chunk_j)->aa() )) {
 												 std::pair<Size,Size> neighbor_pair(m, n);
 												 contact_counts[p]->iterate_neighbor(querypair, neighbor_pair);
 											}
@@ -364,7 +367,7 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 													if (std::abs(int( chunk->at(chunk_i)->resi() - chunk->at(chunk_j)->resi() )) < contacts_min_seq_sep_) continue;
 
 													Real dist_squared = chunk->at(chunk_i)->distance_squared(chunk->at(chunk_j), *it);
-													if (dist_squared < contacts_dist_cutoffs_squared_[cdi]) {
+													if (dist_squared <= contacts_dist_cutoffs_squared_[cdi]) {
 														 std::pair<Size,Size> neighbor_pair(m, n);
 														 contact_counts[p]->iterate_neighbor(querypair, neighbor_pair);
 													}
@@ -473,11 +476,14 @@ void FragmentPicker::nonlocal_pairs_at_positions( utility::vector1<Size> const &
 					if (std::abs(int(outi[fi].first->get_residue(1)->resi()-outj[fj].first->get_residue(1)->resi())) < fragment_size) continue; // skip overlapping fragments in PDB
 					Size qpi = qPosi; // query position i in fragment
 					utility::vector1<ContactOP> contacts;
+					bool skip = false;
+					bool has_good_constraint = false;
+					bool has_constraints = (atom_pair_constraint_contact_map_.size() > 0) ? true : false;
 					for (Size i=1; i<=fragment_size;++i) {
 						VallResidueOP ri = outi[fi].first->get_residue(i);
 						Size qpj = qPosj; // query position j in fragment
 						for (Size j=1; j<=fragment_size;++j) {
-							// skip local contacts relative to query
+							if (skip) continue;
 							if (std::abs(int(qpi-qpj)) < contacts_min_seq_sep_) continue;
 							// skip local contacts relative to fragments
 							if (std::abs(int( ri->resi()-outj[fj].first->get_residue(j)->resi() )) < contacts_min_seq_sep_) continue;
@@ -489,13 +495,21 @@ void FragmentPicker::nonlocal_pairs_at_positions( utility::vector1<Size> const &
 										contacts_dist_cutoff_squared_;
 								// contact distance
 								Real dist_squared = ri->distance_squared(outj[fj].first->get_residue(j), *it);
-								if (dist_squared < cutoff_dist_squared) contacts.push_back(new Contact( qpi, qpj, dist_squared, *it ));
+								if (has_constraints && atom_pair_constraint_contact_map_[qpi][qpj] > 0) {
+									if (dist_squared > atom_pair_constraint_contact_map_[qpi][qpj]) {
+										skip = true;
+										continue;
+									} else {
+										has_good_constraint = true;
+									}
+								}
+								if (dist_squared <= cutoff_dist_squared) contacts.push_back(new Contact( qpi, qpj, dist_squared, *it ));
 							}
 							qpj++;
 						}
 						qpi++;
 					}
-					if (contacts.size() > 0) {
+					if (!skip && contacts.size() > 0 && (!has_constraints || has_good_constraint)) {
 						// save all fragment pairs with contacts
 						nonlocal::NonlocalPairOP pair = new nonlocal::NonlocalPair( qPosi, qPosj, outi[fi], outj[fj], fi, fj, contacts );
 						pairs.push_back(pair);
@@ -529,6 +543,57 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 		core::import_pose::pose_from_pdb(*nativePose, option[in::file::s]()[1]);
 		has_native = true;
 	}
+
+	// atom pair constraints?
+  if (option[constraints::cst_file].user()) {
+    trPicker.Info << "Reading constraints from: "
+        << option[constraints::cst_file]()[1] << std::endl;
+		// initialize
+		atom_pair_constraint_contact_map_.resize(size_of_query());
+		for ( Size qi = 1; qi <= size_of_query(); qi++) {
+			for ( Size qj = 1; qj <= size_of_query(); qj++) {
+				atom_pair_constraint_contact_map_[qi].push_back( 0 );
+			}
+		}
+
+		utility::io::izstream data(option[constraints::cst_file]()[1].c_str());
+		if (!data) {
+			utility_exit_with_message("[ERROR] Unable to open constraints file: "
+        + option[constraints::cst_file]()[1]);
+		}
+		std::string line;
+		getline(data, line); // header line
+		std::string tag;
+		Size n_constr = 0;
+		while (!data.fail()) {
+			char c = data.peek();
+			if (c == '#' || c == '\n') {
+				getline(data, line); //comment
+				continue;
+			}
+			data >> tag;
+			if (data.fail()) {
+				trPicker.Debug << option[constraints::cst_file]()[1]
+					<< " end of file reached" << std::endl;
+				break;
+			}
+			if (tag == "AtomPair") {
+				std::string name1, name2, func_type;
+				Size id1, id2;
+				data >> name1 >> id1 >> name2 >> id2 >> func_type;
+				trPicker.Debug << "read: " << name1 << " " << id1
+					<< " " << name2 << " " << id2 << " func: " << func_type
+					<< std::endl;
+				if (id1 <= size_of_query() && id2 <= size_of_query()) {
+					atom_pair_constraint_contact_map_[id1][id2] = 81.0; // hard code this for a casp10 hack
+					atom_pair_constraint_contact_map_[id2][id1] = 81.0;
+					n_constr++;
+				}
+			}
+		}
+		trPicker.Info << n_constr << " constraints loaded from a file" << std::endl;
+  }
+
 
 	// skip positions from an input alignment if one exists
 	utility::vector1<bool> skip_position( size_of_query(), false );
@@ -611,7 +676,9 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 #endif
 
 	// silent output
-	std::string scale_factor = string_of(sidechain_contact_dist_cutoff_->scale_factor());
+	std::string scale_factor = "0";
+	for (it=contact_types_.begin(); it!=contact_types_.end(); it++)
+	    if (*it == CEN) scale_factor = string_of(sidechain_contact_dist_cutoff_->scale_factor());
 	replace( scale_factor.begin(), scale_factor.end(), '.', '_' );
 	const std::string silent_out_file_name = prefix_ + "." + string_of(contacts_min_seq_sep_) + "." + string_of(sqrt(contacts_dist_cutoff_squared_)) + "." + scale_factor +
 			"." + string_of(n_frags_) + "." + string_of(fragment_size) + "mers.nonlocal_pairs.out";
@@ -783,7 +850,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 
 								// contact distance
 								Real dist_squared = chunki->at(chunk_i)->distance_squared(chunkj->at(chunk_j), contacts[i]->type());
-								if (dist_squared < sidechain_contact_dist_cutoff_->get_cutoff_squared( chunki->at(chunk_i)->aa(), chunkj->at(chunk_j)->aa() )) {
+								if (dist_squared <= sidechain_contact_dist_cutoff_->get_cutoff_squared( chunki->at(chunk_i)->aa(), chunkj->at(chunk_j)->aa() )) {
 									std::pair<Size,Size> neighbor_pair(m, n);
 									contact_counts[p]->iterate_neighbor(querypair, neighbor_pair);
 								}
@@ -793,7 +860,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 				} else {
 
 					for (Size cdi=1; cdi<=contacts_dist_cutoffs_squared_.size();++cdi) {
-						if (contacts[i]->dist_squared() < contacts_dist_cutoffs_squared_[cdi]) {
+						if (contacts[i]->dist_squared() <= contacts_dist_cutoffs_squared_[cdi]) {
 							std::pair<Real,ContactType> p(contacts_dist_cutoffs_squared_[cdi],contacts[i]->type());
 							std::pair<Size,Size> querypair(contacts[i]->i(), contacts[i]->j());
 							contact_counts[p]->iterate(querypair);
@@ -827,7 +894,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 
 										// contact distance
 										Real dist_squared = chunki->at(chunk_i)->distance_squared(chunkj->at(chunk_j), contacts[i]->type());
-										if (dist_squared < contacts_dist_cutoffs_squared_[cdi]) {
+										if (dist_squared <= contacts_dist_cutoffs_squared_[cdi]) {
 											 std::pair<Size,Size> neighbor_pair(m, n);
 											 contact_counts[p]->iterate_neighbor(querypair, neighbor_pair);
 										}
@@ -1046,7 +1113,7 @@ double FragmentPicker::total_score(scores::FragmentScoreMapOP f, Size index) {
 
 void FragmentPicker::read_ss_files(utility::vector1<std::string> sec_str_input) {
 	trPicker.Debug << sec_str_input.size() / 2 << " secondary structure assignment(s):\n";
-	for (Size i = 1; i <= sec_str_input.size() - 1; i += 2) {
+	for (Size i = 1; i <= sec_str_input.size(); i += 2) {
 		trPicker.Debug << i / 2 << " " << sec_str_input[i]
 			<< " file will be loaded under \"" << sec_str_input[i + 1] << "\" name\n";
 		read_ss_file(sec_str_input[i], sec_str_input[i + 1]);
@@ -1883,6 +1950,7 @@ void FragmentPicker::output_fragments( Size const fragment_size, utility::vector
 
 
 	std::string out_file_name = prefix_ + "." + string_of(n_frags_) + "." + string_of(fragment_size) + "mers";
+	std::string silent_out_file_name = out_file_name + ".out";
 	utility::io::ozstream output_file(out_file_name);
 	utility::io::ozstream output_info_file;
 	if (option[frags::describe_fragments].user()) {
@@ -1911,9 +1979,25 @@ void FragmentPicker::output_fragments( Size const fragment_size, utility::vector
 		if (option[frags::describe_fragments].user())
 			ms->describe_fragments(final_fragments[qPos], output_info_file);
 	}
-//		storage->print_report(trPicker.Debug, ms);
+
+	//		storage->print_report(trPicker.Debug, ms);
 	output_file.close();
 	output_info_file.close();
+
+	// silent file output
+	if (option[frags::output_silent]() || option[frags::score_output_silent]()) {
+		core::io::silent::SilentFileData sfd;
+		for (Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos) {
+			Size qPos = query_positions_[iqpos];
+			if ( qPos > maxqpos) continue;
+			std::string const & sequence = get_query_seq_string().substr(qPos-1,fragment_size);
+			for (Size fi = 1; fi <= final_fragments[qPos].size(); ++fi) {
+				std::string tag = "frag_" + ObjexxFCL::lead_zero_string_of(qPos,6) + "_" + ObjexxFCL::lead_zero_string_of(fi,6);
+				final_fragments[qPos][fi].first->output_silent( sfd, sequence, silent_out_file_name, tag, final_fragments[qPos][fi].second, ms );
+			}
+		}
+	}
+
 }
 
 QuotaDebug FragmentPicker::log_25_(25);

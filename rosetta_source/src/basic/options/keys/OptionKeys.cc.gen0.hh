@@ -507,6 +507,8 @@ namespace frags { RealOptionKey const seqsim_L( "frags:seqsim_L" );  }
 namespace frags { RealOptionKey const rama_norm( "frags:rama_norm" );  }
 namespace frags { StringOptionKey const describe_fragments( "frags:describe_fragments" );  }
 namespace frags { BooleanOptionKey const write_sequence_only( "frags:write_sequence_only" );  }
+namespace frags { BooleanOptionKey const output_silent( "frags:output_silent" );  }
+namespace frags { BooleanOptionKey const score_output_silent( "frags:score_output_silent" );  }
 namespace frags { namespace scoring { BooleanOptionKey const scoring( "frags:scoring" );  } }
 namespace frags { namespace scoring { FileOptionKey const config( "frags:scoring:config" );  } }
 namespace frags { namespace scoring { StringOptionKey const profile_score( "frags:scoring:profile_score" );  } }
@@ -624,4 +626,3 @@ namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:viol
 namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }
 namespace fold_cst { BooleanOptionKey const keep_skipped_csts( "fold_cst:keep_skipped_csts" );  }
 namespace fold_cst { BooleanOptionKey const no_minimize( "fold_cst:no_minimize" );  }
-namespace fold_cst { BooleanOptionKey const force_minimize( "fold_cst:force_minimize" );  }

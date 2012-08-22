@@ -10,6 +10,7 @@
 /// @file   protocols/frag_picker/scores/ProfileScoreStructL1.hh
 /// @brief  scores a fragment by L1 structure based profile score
 /// @author Dominik Gront (dgront@chem.uw.edu.pl)
+/// @author David E Kim (dekim@uw.edu)
 
 #ifndef INCLUDED_protocols_frag_picker_scores_ProfileScoreStructL1_hh
 #define INCLUDED_protocols_frag_picker_scores_ProfileScoreStructL1_hh

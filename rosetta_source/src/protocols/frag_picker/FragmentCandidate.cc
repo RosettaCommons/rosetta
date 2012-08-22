@@ -19,12 +19,41 @@
 #include <protocols/frag_picker/VallChunk.hh>
 #include <protocols/frag_picker/VallProvider.hh>
 
+#include <ObjexxFCL/string.functions.hh>
+
 #include <basic/Tracer.hh>
 
 // Options
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
+
+// core
+#include <core/io/silent/SilentStructFactory.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/fragment/util.hh>
+#include <core/pose/util.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <core/optimization/AtomTreeMinimizer.hh>
+#include <core/optimization/MinimizerOptions.hh>
+#include <core/util/SwitchResidueTypeSet.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
+#include <core/chemical/VariantType.hh>
+#include <core/conformation/Conformation.hh>
+
+// Project headers
+#include <core/scoring/rms_util.hh>
+#include <numeric/model_quality/rms.hh>
+#include <protocols/relax/FastRelax.hh>
+#include <protocols/relax/RelaxProtocolBase.hh>
+#include <protocols/relax/util.hh>
+#include <protocols/simple_filters/RmsdEvaluator.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+
 
 
 // Utility
@@ -45,7 +74,7 @@ const std::string FragmentCandidate::unknown_pool_name_ = "UNKNOWN_POOL_NAME";
 
 
 utility::vector1<FragmentCandidateOP> read_fragment_candidates(
-		std::string file_name, VallProviderOP chunk_owner) {
+		std::string file_name, VallProviderOP chunk_owner, Size max_nfrags_per_pos) {
 
 	utility::vector1<FragmentCandidateOP> candidates;
 
@@ -100,7 +129,7 @@ utility::vector1<FragmentCandidateOP> read_fragment_candidates(
 				}
 				FragmentCandidateOP c = new FragmentCandidate(qpos, vpos,
 						chunk, n_res);
-				candidates.push_back(c);
+				if (n_frags < max_nfrags_per_pos) candidates.push_back(c);
 				++n_frags;
 				n_res = 0;
 				pdb_id = "";
@@ -184,6 +213,100 @@ void FragmentCandidate::print_fragment_seq(std::ostream& out) {
 	}
 }
 
+/// @brief Prints fragment to silent struct
+void FragmentCandidate::output_silent(core::io::silent::SilentFileData & sfd, const std::string sequence, const std::string silent_file_name, const std::string tag, scores::FragmentScoreMapOP sc, scores::FragmentScoreManagerOP ms) {
+
+	using namespace ObjexxFCL;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+				    //if (option[frags::write_ca_coordinates].user())
+						  //    if_ca_in_output = option[frags::write_ca_coordinates]();
+
+	pose::Pose pose;
+	// make pose from frag
+	utility::vector1<fragment::FragDataCOP> fragdata;
+	fragdata.push_back(get_frag_data());
+	fragment::make_pose_from_frags( pose, sequence, fragdata, false );
+
+	if (option[frags::score_output_silent]()) {
+		pose::Pose relax_pose = pose;
+
+		core::scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
+
+		if ( !relax_pose.is_fullatom() )
+			core::util::switch_to_residue_type_set( relax_pose, core::chemical::FA_STANDARD );
+
+
+		relax_pose.energies().clear();
+		relax_pose.data().clear();
+
+		//   Detect disulfides
+		relax_pose.conformation().detect_disulfides();
+		relax_pose.conformation().detect_bonds();
+
+		utility::vector1< bool > needToRepack( relax_pose.total_residue(), true );
+		core::pack::task::PackerTaskOP taskstd = core::pack::task::TaskFactory::create_packer_task( relax_pose );
+		taskstd->restrict_to_repacking();
+		taskstd->or_include_current(true);
+		taskstd->restrict_to_residues( needToRepack );
+		protocols::simple_moves::PackRotamersMover pack1( sfxn, taskstd );
+		pack1.apply( relax_pose );
+
+		// quick SC minimization
+		core::optimization::AtomTreeMinimizer mzr;
+		core::optimization::MinimizerOptions options( "dfpmin_armijo_nonmonotone", 1e-5, true, false );
+		core::kinematics::MoveMapOP mm_min = new core::kinematics::MoveMap();
+		mm_min->set_bb( false );
+		mm_min->set_chi( true );
+		mzr.run( relax_pose, *mm_min, *sfxn, options );
+
+		Real sc_min_score = (*sfxn)( relax_pose );
+		core::pose::setPoseExtraScores( pose, "sc_min_score", sc_min_score );
+
+		// RELAX fragment
+		// setup relax protocol for pose
+		protocols::relax::RelaxProtocolBaseOP sub_pose_relax_protocol = protocols::relax::generate_relax_from_cmd();
+		kinematics::MoveMapOP mm = sub_pose_relax_protocol->get_movemap();
+		sub_pose_relax_protocol->apply( relax_pose );
+
+		// check relaxed pose
+		Real relaxed_rmsd = scoring::CA_rmsd( relax_pose, pose );
+		Real relaxed_score = (*sfxn)( relax_pose );
+
+		core::pose::setPoseExtraScores( pose, "rlx_rms", relaxed_rmsd );
+		core::pose::setPoseExtraScores( pose, "rlx_score", relaxed_score );
+	}
+
+	// add fragment info and scores
+	VallResidueOP r = get_residue(1);
+	core::pose::add_score_line_string( pose, "query_pos", string_of(get_first_index_in_query()) ); // query position
+	core::pose::add_score_line_string( pose, "vall_pos", string_of(r->resi()) ); // vall position
+	core::pose::add_score_line_string( pose, "pdbid", get_pdb_id() ); // pdbid
+	core::pose::add_score_line_string( pose, "c", string_of(get_chain_id()) ); // chain id
+	core::pose::add_score_line_string( pose, "ss", string_of(get_middle_ss()) ); // secondary structure
+
+	bool if_quota = false;
+	if ( sc->get_quota_score() < 999.98 ) if_quota = true;
+
+	for (Size i = 1; i <= sc->size(); i++) {
+		scores::FragmentScoringMethodOP ms_i = ms->get_component(i);
+		core::pose::setPoseExtraScores( pose, ms_i->get_score_name(), sc->at(i) );
+	}
+  if (if_quota) {
+		core::pose::setPoseExtraScores( pose, "QUOTA_TOT", sc->get_quota_score());
+		core::pose::setPoseExtraScores( pose, "TOTAL", ms->total_score(sc));
+		core::pose::add_score_line_string( pose, "POOL_NAME", get_pool_name());
+  } else {
+		core::pose::setPoseExtraScores( pose, "TOTAL", ms->total_score(sc));
+  }
+	assert ( key() > 0 );
+	assert ( key() < 40000000 );
+	core::pose::add_score_line_string( pose, "FRAG_ID", string_of(key()));
+
+	core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( pose );
+	ss->fill_struct( pose, tag );
+	sfd.write_silent_struct( *ss, silent_file_name );
+}
 
 bool FragmentCandidate::same_chain( FragmentCandidateCOP fr ) {
 	if (get_pdb_id() != fr->get_pdb_id() || get_chain_id() != fr->get_chain_id()) return false;

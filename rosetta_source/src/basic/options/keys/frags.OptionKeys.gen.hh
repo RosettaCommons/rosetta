@@ -52,6 +52,8 @@ namespace frags { extern RealOptionKey const seqsim_L; }
 namespace frags { extern RealOptionKey const rama_norm; }
 namespace frags { extern StringOptionKey const describe_fragments; }
 namespace frags { extern BooleanOptionKey const write_sequence_only; }
+namespace frags { extern BooleanOptionKey const output_silent; }
+namespace frags { extern BooleanOptionKey const score_output_silent; }
 namespace frags { namespace scoring { extern BooleanOptionKey const scoring; } }
 namespace frags { namespace scoring { extern FileOptionKey const config; } }
 namespace frags { namespace scoring { extern StringOptionKey const profile_score; } }

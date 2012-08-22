@@ -512,6 +512,8 @@ option.add( basic::options::OptionKeys::frags::seqsim_L, "Secondary structure ty
 option.add( basic::options::OptionKeys::frags::rama_norm, "Used to multiply rama table values after normalization, default (0.0) means use raw counts (unnormalized)" ).def(0.0);
 option.add( basic::options::OptionKeys::frags::describe_fragments, "Writes scores for all fragments into a file" ).def("");
 option.add( basic::options::OptionKeys::frags::write_sequence_only, "Fragment picker will output fragment sequences only. This option is for creating structure based sequence profiles using the FragmentCrmsdResDepth score." ).def(false);
+option.add( basic::options::OptionKeys::frags::output_silent, "Fragment picker will output fragments into a silent file." ).def(false);
+option.add( basic::options::OptionKeys::frags::score_output_silent, "Fragment picker will output fragments into a silent file. Scores of relaxed fragments are added to the silent file." ).def(false);
 option.add( basic::options::OptionKeys::frags::scoring::scoring, "scoring option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::frags::scoring::config, "scoring scheme used for picking fragments" ).def("");
 option.add( basic::options::OptionKeys::frags::scoring::profile_score, "scoring scheme used for profile-profile comparison" ).def("L1");
@@ -629,10 +631,10 @@ option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local s
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
 option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
-option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::seq_sep_stages, "give vector with sequence_separation after stage1, stage3 and stage4" ).def(0);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
+option.add( basic::options::OptionKeys::fold_cst::seq_sep_stages, "give vector with sequence_separation after stage1, stage3 and stage4" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::reramp_cst_cycles, "in stage2 do xxx cycles where atom_pair_constraint is ramped up" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::reramp_start_cstweight, "drop cst_weight to this value and ramp to 1.0 in stage2 -- needs reramp_cst_cycles > 0" ).def(0.01);
 option.add( basic::options::OptionKeys::fold_cst::reramp_iterations, "do X loops of annealing cycles" ).def(1);
@@ -1888,10 +1890,10 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "om
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
+option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
-option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_seqwidth, "sequence width on constraints" ).def(0);
 option.add( basic::options::OptionKeys::edensity::edensity, "edensity option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::edensity::debug, "No description" ).def(false);

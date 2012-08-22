@@ -2422,6 +2422,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Fragment picker will output fragment sequences only. This option is for creating structure based sequence profiles using the FragmentCrmsdResDepth score.</dd><br>
 <dd>Default: false</dd><br>
 </dl>
+<dl>
+<dt><b>-output_silent</b> \<Boolean\><dt>
+<dd>Fragment picker will output fragments into a silent file.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-score_output_silent</b> \<Boolean\><dt>
+<dd>Fragment picker will output fragments into a silent file. Scores of relaxed fragments are added to the silent file.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
  </li>
 <li><h2>frags:scoring</h2>
 <dl>

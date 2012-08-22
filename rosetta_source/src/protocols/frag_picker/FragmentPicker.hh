@@ -24,6 +24,7 @@
 #include <protocols/frag_picker/CandidatesCollector.hh>
 #include <protocols/frag_picker/FragmentSelectingRule.hh>
 #include <protocols/frag_picker/scores/FragmentScoreManager.hh>
+#include <protocols/frag_picker/scores/AtomPairConstraintsScore.hh>
 #include <protocols/frag_picker/scores/PValuedFragmentScoreManager.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
@@ -423,6 +424,10 @@ private:
 
 	// residue depth
 	utility::vector1<Real> query_residue_depth_;
+
+	// atom pair constraint contact map
+	utility::vector1<utility::vector1<Real> >  atom_pair_constraint_contact_map_;
+
 };
 
 
