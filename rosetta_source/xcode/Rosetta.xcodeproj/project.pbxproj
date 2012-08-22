@@ -2039,8 +2039,8 @@
 		2452973BD6BBB8485DBB13EA /* RepGrid.cc in Sources */ = {isa = PBXBuildFile; fileRef = 23503B202A195E714D8842D7 /* RepGrid.cc */; };
 		2CBB94854D14F8232EDB9A00 /* ScoringGridLoader.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4FCB33C504C9E8A39FDC10F3 /* ScoringGridLoader.cc */; };
 		D142715026252B86D447F622 /* SingleGrid.cc in Sources */ = {isa = PBXBuildFile; fileRef = BCC1422284647089B5167648 /* SingleGrid.cc */; };
+		E7BA679FC94370C4BBBEA235 /* SolvationGrid.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4F1E8E7DCF70854C39B272C5 /* SolvationGrid.cc */; };
 		0A7CF3203D826C2252E27C15 /* VdwGrid.cc in Sources */ = {isa = PBXBuildFile; fileRef = 23C9637D12AF211CEEEC000D /* VdwGrid.cc */; };
-		9470E84A149E836EDC54E906 /* polarizGrid.cc in Sources */ = {isa = PBXBuildFile; fileRef = CA7445561440B976955D6F39 /* polarizGrid.cc */; };
 		D6BC95DC37E2E63AE96D0F03 /* AntibodyClass.cc in Sources */ = {isa = PBXBuildFile; fileRef = C75004C59FC1DE830DC158C1 /* AntibodyClass.cc */; };
 		E4B80E679C2E693B59DED737 /* AntibodyModeler.cc in Sources */ = {isa = PBXBuildFile; fileRef = 02F285C5862B7252D90648F6 /* AntibodyModeler.cc */; };
 		D086FDF2122AF1290C91EEC7 /* CDRH3Modeler.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1E1F34C9ED2DF6E5DE987ED0 /* CDRH3Modeler.cc */; };
@@ -13195,14 +13195,14 @@
 		BCC1422284647089B5167648 /* SingleGrid.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SingleGrid.cc; path = ../src/protocols/qsar/scoring_grid/SingleGrid.cc; sourceTree = SOURCE_ROOT; };
 		21C1FCB2C95C7667E3E24CCC /* SingleGrid.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SingleGrid.fwd.hh; path = ../src/protocols/qsar/scoring_grid/SingleGrid.fwd.hh; sourceTree = SOURCE_ROOT; };
 		6E22D53180051AAC6AE430CA /* SingleGrid.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SingleGrid.hh; path = ../src/protocols/qsar/scoring_grid/SingleGrid.hh; sourceTree = SOURCE_ROOT; };
+		4F1E8E7DCF70854C39B272C5 /* SolvationGrid.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SolvationGrid.cc; path = ../src/protocols/qsar/scoring_grid/SolvationGrid.cc; sourceTree = SOURCE_ROOT; };
+		98B4ED36055A529FA13792B3 /* SolvationGrid.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SolvationGrid.fwd.hh; path = ../src/protocols/qsar/scoring_grid/SolvationGrid.fwd.hh; sourceTree = SOURCE_ROOT; };
+		834A0368C37B67A787D306C8 /* SolvationGrid.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SolvationGrid.hh; path = ../src/protocols/qsar/scoring_grid/SolvationGrid.hh; sourceTree = SOURCE_ROOT; };
+		95C99438F604AF5C2B21C657 /* SolvationGridCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SolvationGridCreator.hh; path = ../src/protocols/qsar/scoring_grid/SolvationGridCreator.hh; sourceTree = SOURCE_ROOT; };
 		23C9637D12AF211CEEEC000D /* VdwGrid.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = VdwGrid.cc; path = ../src/protocols/qsar/scoring_grid/VdwGrid.cc; sourceTree = SOURCE_ROOT; };
 		AA8F9053B1736A5E5858EA50 /* VdwGrid.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = VdwGrid.fwd.hh; path = ../src/protocols/qsar/scoring_grid/VdwGrid.fwd.hh; sourceTree = SOURCE_ROOT; };
 		90DF113D1976B643EE453A6E /* VdwGrid.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = VdwGrid.hh; path = ../src/protocols/qsar/scoring_grid/VdwGrid.hh; sourceTree = SOURCE_ROOT; };
 		9DA42E73A713548D12D667D9 /* VdwGridCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = VdwGridCreator.hh; path = ../src/protocols/qsar/scoring_grid/VdwGridCreator.hh; sourceTree = SOURCE_ROOT; };
-		CA7445561440B976955D6F39 /* polarizGrid.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = polarizGrid.cc; path = ../src/protocols/qsar/scoring_grid/polarizGrid.cc; sourceTree = SOURCE_ROOT; };
-		D2B9478BA9AC05C3B6703548 /* polarizGrid.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = polarizGrid.fwd.hh; path = ../src/protocols/qsar/scoring_grid/polarizGrid.fwd.hh; sourceTree = SOURCE_ROOT; };
-		4FEF1B9765B956986CB05FA7 /* polarizGrid.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = polarizGrid.hh; path = ../src/protocols/qsar/scoring_grid/polarizGrid.hh; sourceTree = SOURCE_ROOT; };
-		A2F96186C787B1EDD1F281B4 /* polarizGridCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = polarizGridCreator.hh; path = ../src/protocols/qsar/scoring_grid/polarizGridCreator.hh; sourceTree = SOURCE_ROOT; };
 		C75004C59FC1DE830DC158C1 /* AntibodyClass.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AntibodyClass.cc; path = ../src/protocols/antibody/AntibodyClass.cc; sourceTree = SOURCE_ROOT; };
 		CD47209AC6FD6B138D3D6AF7 /* AntibodyClass.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AntibodyClass.fwd.hh; path = ../src/protocols/antibody/AntibodyClass.fwd.hh; sourceTree = SOURCE_ROOT; };
 		84A57BCCB58A2AB036C9F4C7 /* AntibodyClass.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AntibodyClass.hh; path = ../src/protocols/antibody/AntibodyClass.hh; sourceTree = SOURCE_ROOT; };
@@ -23396,14 +23396,14 @@
 				BCC1422284647089B5167648 /* SingleGrid.cc */,
 				21C1FCB2C95C7667E3E24CCC /* SingleGrid.fwd.hh */,
 				6E22D53180051AAC6AE430CA /* SingleGrid.hh */,
+				4F1E8E7DCF70854C39B272C5 /* SolvationGrid.cc */,
+				98B4ED36055A529FA13792B3 /* SolvationGrid.fwd.hh */,
+				834A0368C37B67A787D306C8 /* SolvationGrid.hh */,
+				95C99438F604AF5C2B21C657 /* SolvationGridCreator.hh */,
 				23C9637D12AF211CEEEC000D /* VdwGrid.cc */,
 				AA8F9053B1736A5E5858EA50 /* VdwGrid.fwd.hh */,
 				90DF113D1976B643EE453A6E /* VdwGrid.hh */,
 				9DA42E73A713548D12D667D9 /* VdwGridCreator.hh */,
-				CA7445561440B976955D6F39 /* polarizGrid.cc */,
-				D2B9478BA9AC05C3B6703548 /* polarizGrid.fwd.hh */,
-				4FEF1B9765B956986CB05FA7 /* polarizGrid.hh */,
-				A2F96186C787B1EDD1F281B4 /* polarizGridCreator.hh */,
 			);
 			name = scoring_grid;
 			path = ../src/protocols/qsar/scoring_grid/;
@@ -28190,8 +28190,8 @@
 				2452973BD6BBB8485DBB13EA /* RepGrid.cc in Sources */,
 				2CBB94854D14F8232EDB9A00 /* ScoringGridLoader.cc in Sources */,
 				D142715026252B86D447F622 /* SingleGrid.cc in Sources */,
+				E7BA679FC94370C4BBBEA235 /* SolvationGrid.cc in Sources */,
 				0A7CF3203D826C2252E27C15 /* VdwGrid.cc in Sources */,
-				9470E84A149E836EDC54E906 /* polarizGrid.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -147,7 +147,13 @@ core::Real SingleGrid::get_min_value() const
 
 core::Real SingleGrid::get_point(core::Real x, core::Real y, core::Real z)
 {
-	 return grid_.getValue(x,y,z);
+	if(grid_.is_in_grid(x,y,z))
+	{
+		return grid_.getValue(x,y,z);
+	}else
+	{
+		return 0.0;
+	}
 }
 
 core::Real SingleGrid::get_point(core::Vector coords)

@@ -98,10 +98,11 @@ sources = {
 		"ChargeGrid",
 		"HbaGrid",
 		"HbdGrid",
-		"polarizGrid",
 		"RepGrid",
 		"ScoringGridLoader",
 		"VdwGrid",
+		"SolvationGrid",
+		"SolvationMetaGrid"
 	],
 }
 include_path = [

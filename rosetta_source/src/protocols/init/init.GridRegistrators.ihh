@@ -22,8 +22,9 @@ static GridRegistrator<RepGridCreator> reg_RepGridCreator;
 static GridRegistrator<ClassicGridCreator> reg_ClassicGridCreator;
 static GridRegistrator<HbaGridCreator> reg_HbaGridCreator;
 static GridRegistrator<HbdGridCreator> reg_HbdGridCreator;
-static GridRegistrator<polarizGridCreator> reg_polarizGridCreator;
 static GridRegistrator<VdwGridCreator> reg_VdwGridCreator;
 static GridRegistrator<ChargeGridCreator> reg_ChargeGridCreator;
+static GridRegistrator<SolvationGridCreator> reg_SolvationGridCreator;
+static GridRegistrator<SolvationMetaGridCreator> reg_SolvationMetaGridCreator;
 
 } //namespace protocols

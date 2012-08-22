@@ -7,19 +7,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/protocols/qsar/scoring_grid/polarizGrid.fwd.hh
+/// @file   src/protocols/ligand_docking/scoring_grid/SolvationMetaGrid.fwd.hh
 /// @author Sam DeLuca
 
-#ifndef INCLUDED_protocols_qsar_scoring_grid_polarizGrid_fwd_hh
-#define INCLUDED_protocols_qsar_scoring_grid_polarizGrid_fwd_hh
+
+#ifndef INCLUDED_protocols_qsar_scoring_grid_SolvationMetaGrid_fwd_hh
+#define INCLUDED_protocols_qsar_scoring_grid_SolvationMetaGrid_fwd_hh
 
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-class AtrGrid;
+class SolvationMetaGrid;
 
 }
 }
 }
-#endif /* POLARIZGRID_FWD_HH_ */
+
+#endif /* SOLVATIONMETAGRID_HH_ */

@@ -7,31 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/protocols/qsar/scoring_grid/PolarizGridCreator.hh
+/// @file   src/protocols/ligand_docking/scoring_grid/SolvationGrid.fwd.hh
 /// @author Sam DeLuca
 
-#ifndef INCLUDED_protocols_qsar_scoring_grid_PolarizGridCreator_HH
-#define INCLUDED_protocols_qsar_scoring_grid_PolarizGridCreator_HH
+#ifndef INCLUDED_protocols_qsar_scoring_grid_SolvationGrid_fwd_hh
+#define INCLUDED_protocols_qsar_scoring_grid_SolvationGrid_fwd_hh
 
-#include <protocols/qsar/scoring_grid/GridCreator.hh>
-#include <utility/tag/Tag.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {
+    
+class SolvationGrid;
+    
 
-class polarizGridCreator : public GridCreator
-{
-public:
-	virtual GridBaseOP create_grid(utility::tag::TagPtr const tag) const;
-	virtual GridBaseOP create_grid() const;
-	virtual std::string keyname() const;
-	static std::string grid_name();
-};
+typedef utility::pointer::owning_ptr<SolvationGrid> SolvationGridOP;
+typedef utility::pointer::owning_ptr<SolvationGrid const> SolvationGridCOP ;
 
 }
 }
 }
 
 
-#endif /* ATRGRIDCREATOR_HH_ */
+#endif 

@@ -18,6 +18,7 @@
 #include <protocols/qsar/scoring_grid/RepGridCreator.hh>
 #include <protocols/qsar/scoring_grid/HbdGridCreator.hh>
 #include <protocols/qsar/scoring_grid/HbaGridCreator.hh>
-#include <protocols/qsar/scoring_grid/polarizGridCreator.hh>
 #include <protocols/qsar/scoring_grid/VdwGridCreator.hh>
 #include <protocols/qsar/scoring_grid/ChargeGridCreator.hh>
+#include <protocols/qsar/scoring_grid/SolvationGridCreator.hh>
+#include <protocols/qsar/scoring_grid/SolvationMetaGridCreator.hh>
