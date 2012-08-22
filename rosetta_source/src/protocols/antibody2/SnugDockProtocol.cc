@@ -129,7 +129,7 @@ void SnugDockProtocol::setup_objects( Pose const & pose )
 	/// that information (e.g. the various FoldTrees that are needed for SnugDock).
 	antibody_info_ = new AntibodyInfo( pose );
 
-	setup_loop_refinement_movers( pose );
+	setup_loop_refinement_movers();
 	docking()->add_additional_low_resolution_step( low_res_refine_cdr_h2_ );
 	docking()->add_additional_low_resolution_step( low_res_refine_cdr_h3_ );
 
