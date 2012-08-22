@@ -219,7 +219,7 @@ std::ostream & operator<<(std::ostream& out, SnugDockProtocol const & snugdockpr
 	{
 		out << snugdockprotocol.get_name() << " has been configured to operate on an Antibody-Antigen complex with the "
 			<< "following information:" << std::endl;
-		out << snugdockprotocol.antibody_info_ << std::endl;
+		out << * snugdockprotocol.antibody_info_ << std::endl;
 	}
 	else
 	{
