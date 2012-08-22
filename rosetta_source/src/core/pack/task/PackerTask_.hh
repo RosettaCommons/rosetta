@@ -38,7 +38,7 @@
 // AUTO-REMOVED #include <map>
 
 #include <iosfwd>
-
+#include <iostream>
 #include <utility/vector1.hh>
 
 
@@ -214,6 +214,9 @@ public:
 
 	///@brief
 	virtual chemical::ResidueTypeSet const & get_original_residue_set() const;
+	
+	///@brief
+	virtual chemical::AA const & get_original_residue() const; 
 
 	///@brief explicitly allow a NCAA
 	virtual void allow_noncanonical_aa(
@@ -536,6 +539,12 @@ public:
 	virtual void increase_multi_cool_annealer_history_size( Size setting );
 	///@brief returns the requested size for the MultiCoolAnnealer
 	virtual Size multi_cool_annealer_history_size() const;
+
+	virtual void show( std::ostream & out ) const;
+	virtual void show() const;
+	virtual void show_residue_task( std::ostream & out, Size resid ) const;
+	virtual void show_residue_task( Size resid ) const;
+	virtual void show_all_residue_tasks() const;
 
 	///@brief read command line options (but not resfile) to set the state of the PackerTask, NOT IN CONSTRUCTOR
 	virtual

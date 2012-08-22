@@ -38,6 +38,9 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/id/SequenceMapping.hh>
 
+// Objexx headers
+#include <ObjexxFCL/format.hh>
+
 //Utility Headers
 #include <basic/Tracer.hh>
 
@@ -50,8 +53,8 @@
 
 #include <utility/vector1.hh>
 
-
-
+using namespace ObjexxFCL;
+using namespace ObjexxFCL::fmt;
 
 namespace core {
 namespace pack {
@@ -847,6 +850,10 @@ bool ResidueLevelTask_::is_original_type( chemical::ResidueTypeCAP type ) const
 
 chemical::ResidueTypeSet const & ResidueLevelTask_::get_original_residue_set() const {
   return original_residue_type_->residue_type_set();
+}
+
+chemical::AA const & ResidueLevelTask_::get_original_residue() const {
+	return original_residue_type_->aa();
 }
 
 // expand (or) the list of available aa's for non-cannonicals
@@ -1764,7 +1771,83 @@ Size PackerTask_::multi_cool_annealer_history_size() const
 	return mca_history_size_;
 }
 
+void
+PackerTask_::show( std::ostream & out ) const {
 
+	out << "#Packer_Task" << std::endl;
+	out <<                   std::endl;
+
+
+	out << "resid\tpack?\tdesign?\tallowed_aas" << std::endl;
+
+	for ( Size i=1, it_end = total_residue();
+				i <= it_end; ++i){
+
+		out << i;
+		out << "\t" << (pack_residue( i ) ? "TRUE" : "FALSE");
+		out << "\t" << (design_residue( i ) ? "TRUE" : "FALSE");
+
+		out << "\t";
+		for ( ResidueLevelTask::ResidueTypeCAPListConstIter
+						allowed_iter(   residue_task( i ).allowed_residue_types_begin() );
+						allowed_iter != residue_task( i ).allowed_residue_types_end();
+					++allowed_iter ) {
+			out << ((allowed_iter == residue_task( i ).allowed_residue_types_begin()) ? "" : ",") <<
+					(*allowed_iter)->name();
+		}
+		out << std::endl;
+	}
+
+	//sml pymol-style selection, great for debugging
+	if( basic::options::option[ basic::options::OptionKeys::packing::print_pymol_selection ].value() ){
+		for ( Size i=1, it_end = total_residue();	i != it_end; ++i)	if( pack_residue(i) ) out << i << "+";
+		out << std::endl;
+	}
+}
+
+void
+PackerTask_::show() const {
+	show(std::cout);
+}
+
+void
+PackerTask_::show_residue_task( std::ostream & out, Size resid ) const {
+	out << "Residue " << resid << ": " << residue_task(resid).get_original_residue() << "\n";
+	out << " \tpack?\t\t\t\t" << (pack_residue(resid) ? "TRUE" : "FALSE") <<
+			"\n" << " \tdesign?\t\t\t\t" << (design_residue(resid) ? "TRUE" : "FALSE") <<
+			"\n" << " \tinclude current rotamer?\t" << (residue_task(resid).include_current() ? "TRUE" : "FALSE") <<
+			"\n" << " \thas protocol-level behavior?\t" << (residue_task(resid).has_behavior() ? "TRUE" : "FALSE") <<
+			"\n" << " \tinclude adducts?\t\t" << (residue_task(resid).adducts() ? "TRUE" : "FALSE") <<
+			"\n" << " \toptimize H placements?\t\t" << (residue_task(resid).optimize_h() ? "TRUE" : "FALSE") <<
+			"\n" << " \tpreserve C beta?\t\t" << (residue_task(resid).preserve_c_beta() ? "TRUE" : "FALSE") <<
+			"\n" << " \tflip HIS/ASN/GLN?\t\t" << (residue_task(resid).flip_HNQ() ? "TRUE" : "FALSE")<<
+			"\n" << " \tfix HIS tautamer?\t\t" << (residue_task(resid).fix_his_tautomer() ? "TRUE" : "FALSE") <<
+			"\n" << " \tsample proton chi?\t\t" << (residue_task(resid).sample_proton_chi() ? "TRUE" : "FALSE") <<
+			"\n" << " \tsample RNA chi?\t\t\t" << (residue_task(resid).sample_rna_chi() ? "TRUE" : "FALSE") <<
+			"\n" << " \textra chi cutoff:\t\t" << residue_task(resid).extrachi_cutoff() <<
+			"\n" << " \textra rotamer for chi 1\t\t" << (residue_task(resid).ex1() ? "TRUE" : "FALSE") <<
+			"\n" << " \textra rotamer for chi 2\t\t" << (residue_task(resid).ex2() ? "TRUE" : "FALSE") <<
+			"\n" << " \textra rotamer for chi 3\t\t" << (residue_task(resid).ex3() ? "TRUE" : "FALSE") <<
+			"\n" << " \textra rotamer for chi 4\t\t" << (residue_task(resid).ex4() ? "TRUE" : "FALSE") <<
+			"\n" << " \textra rotamer for chi 1 (aromatics)\t\t" << (residue_task(resid).ex1aro() ? "TRUE" : "FALSE") <<
+			"\n" << " \textra rotamer for chi 2 (aromatics)\t\t" << (residue_task(resid).ex2aro() ? "TRUE" : "FALSE") <<
+			"\n" << " \textra rotamer for chi 1 (exposed aromatics)\t" <<
+			(residue_task(resid).ex1aro_exposed() ? "TRUE" : "FALSE") <<
+			"\n" << " \textra rotamer for chi 2 (exposed aromatics)\t" <<
+			(residue_task(resid).ex2aro_exposed() ? "TRUE" : "FALSE") << "\n";
+}
+
+void
+PackerTask_::show_residue_task( Size resid ) const {
+	show_residue_task(std::cout, resid);
+}
+
+void
+PackerTask_::show_all_residue_tasks() const {
+	for ( Size i=1, it_end = total_residue(); i <= it_end; ++i){
+		show_residue_task( i );
+	}
+}
 
 PackerTask &
 PackerTask_::initialize_from_command_line()
@@ -2077,7 +2160,7 @@ std::string PackerTask_::task_string( pose::Pose const & pose ) const{
 ///acids are allowed.
 
 std::ostream &
-operator << ( std::ostream & os, PackerTask const & t )
+operator << ( std::ostream & os, PackerTask const & task )
 {
 	// (Matt O'Meara) Note that PackerTask is the BASE pure virtual
 	// class while PackerTask_ is the DERIVED class.
@@ -2088,35 +2171,7 @@ operator << ( std::ostream & os, PackerTask const & t )
 	// different too.
 	//sml If you have a derived child of PackerTask, and this function isn't working for you, create a PackerTask.print() pure virtual, move these contents to PackerTask_.print(), and have this function call PackerTask.print() so it will virtual-lookup the right function.  You'd need to write your own print too of course.  Google for "virtual friend function idiom".
 
-	os << "#Packer_Task" << std::endl;
-	os <<                   std::endl;
-
-
-	os << "resid\tpack?\tdesign?\tallowed_aas" << std::endl;
-
-	for ( Size i=1, it_end = t.total_residue();
-				i <= it_end; ++i){
-
-		os << i;
-		os << "\t" << t.pack_residue( i );
-		os << "\t" << t.design_residue( i );
-
-		os << "\t";
-		for ( ResidueLevelTask::ResidueTypeCAPListConstIter
-						allowed_iter(   t.residue_task( i ).allowed_residue_types_begin() );
-						allowed_iter != t.residue_task( i ).allowed_residue_types_end();
-					++allowed_iter ) {
-			os << (*allowed_iter)->name()<<",";
-		}
-		os << std::endl;
-	}
-
-	//sml pymol-style selection, great for debugging
-	if( basic::options::option[ basic::options::OptionKeys::packing::print_pymol_selection ].value() ){
-		for ( Size i=1, it_end = t.total_residue();	i != it_end; ++i)	if( t.pack_residue(i) ) os << i << "+";
-		os << std::endl;
-	}
-
+	task.show( os );
 	return os;
 }
 

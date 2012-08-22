@@ -51,7 +51,7 @@
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <protocols/moves/PyMolMover.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
@@ -67,17 +67,35 @@ int main(int argc, char *argv[])
 	devel::init(argc, argv);
 
 	// declare variables
-	//Pose test_pose;
+	Pose test_pose;
 	//std::string sequence = "ASDFG";
 	//core::pose::make_pose_from_sequence(test_pose, sequence, "fa_standard", true);
 	// import a test pose
-	//pose_from_pdb(test_pose, "/home/boon/data/1YY9.pdb");
+	pose_from_pdb(test_pose, "/home/boon/data/test.pdb");
 
 	//std::cout << "Hello, Rosetta World!" << std::endl;
 	//std::cout << "I just imported my first pose into Rosetta." << std::endl;
 	//std::cout << "It has " << test_pose.total_residue() << " total residues." << std::endl;
 
-	// 
+/*	// create a FoldTree
+	kinematics::FoldTree ft;
+	ft.add_edge(1,13,-1);
+	ft.add_edge(13,19,-1);
+	ft.add_edge(13,26,1);
+	ft.add_edge(26,20,-1);
+	ft.add_edge(26,116,-1);
+	std::cout << ft << std::endl;
+	ft.show();
+
+	// create a FoldTree (new method)
+	kinematics::FoldTree ft2;
+	ft2.add_edge(1,13);
+	ft2.add_edge(13,19);
+	ft2.add_jump(13,26,1);
+	ft2.add_edge(26,20);
+	ft2.add_edge(26,116);
+	std::cout << ft2 << std::endl;
+	ft2.show();*/
 
 /*	//Reformatting
 		
@@ -146,13 +164,13 @@ int main(int argc, char *argv[])
 	// print
 	std::cout << "print MinMover:" << std::endl << minmover << std::endl;*/
 
- // setup a movemap object
+/* // setup a movemap object
 	core::kinematics::MoveMapOP mm ( new core::kinematics::MoveMap );
 	Size bb_begin = 3, bb_end = 6, chi_begin = 5, chi_end = 7, begin2 = 101;
 	mm->set_bb_true_range(bb_begin, bb_end);
 	mm->set_chi_true_range(chi_begin, chi_end);
 	mm->set_chi(begin2, true);
-	mm->set_jump(2, true);
+	mm->set_jump(2, true);*/
 
 
 /*// DockMCMProtocol
@@ -207,13 +225,13 @@ int main(int argc, char *argv[])
 	// read name again
 	std::cout << "Score function's new name: " << scorefxn->get_name() << std::endl;*/
 
-	Size frag_length = 3;
+/*	Size frag_length = 3;
 	core::fragment::ConstantLengthFragSetOP fragset = new core::fragment::ConstantLengthFragSet( frag_length, "/home/boon/data/test_in.frag3" );
 	protocols::simple_moves::ClassicFragmentMover cfmover = protocols::simple_moves::ClassicFragmentMover(fragset, mm);
 	std::cout << cfmover << std::endl;
 
 	protocols::simple_moves::ClassicFragmentMover cfmover2 = protocols::simple_moves::ClassicFragmentMover(fragset);
-	std::cout << cfmover2 << std::endl;
+	std::cout << cfmover2 << std::endl;*/
 
 	//std::cout << test_pose.energies() << std::endl;
 
@@ -273,7 +291,7 @@ int main(int argc, char *argv[])
 	//core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction;
 	//scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );*/
 
-/*	// setup a packer task
+	// setup a packer task
 	core::pack::task::PackerTaskOP task ( core::pack::task::TaskFactory::create_packer_task( test_pose ));
 	task->initialize_from_command_line().or_include_current( true );
 	Size resid = 2;
@@ -281,7 +299,7 @@ int main(int argc, char *argv[])
 	task->show_residue_task(resid);
 	std::cout << "show all residue tasks" << std::endl;
 	task->show_all_residue_tasks();
-	std::cout << "print packer task" << std::endl << *task << std::endl;	*/
+	std::cout << "print packer task" << std::endl << *task << std::endl;
 
 /*	// define nloop
 	//core::Size nloop = 1;

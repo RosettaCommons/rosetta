@@ -187,6 +187,9 @@ public:
 	///@brief
 	virtual chemical::ResidueTypeSet const & get_original_residue_set() const = 0;
 
+	///@brief
+	virtual chemical::AA const & get_original_residue() const = 0; 
+
 	// expand (or) the list of available aa's for non-cannonicals
 	virtual void allow_noncanonical_aa(
 		std::string const & aaname,
@@ -318,6 +321,12 @@ public:
 
 	virtual void increase_multi_cool_annealer_history_size( Size setting ) = 0;
 	virtual Size multi_cool_annealer_history_size() const = 0;
+
+	virtual void show( std::ostream & out ) const = 0;
+	virtual void show() const = 0;
+	virtual void show_residue_task( std::ostream & out, Size resid ) const = 0;
+	virtual void show_residue_task( Size resid ) const = 0;
+	virtual void show_all_residue_tasks() const = 0;
 
 	virtual
 	PackerTask &
