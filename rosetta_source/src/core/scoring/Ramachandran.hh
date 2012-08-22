@@ -56,6 +56,11 @@ public:
 
 public:
 	Ramachandran();
+
+	Ramachandran(
+		std::string const & rama_map_filename,
+		bool use_bicubic_interpolation);
+
 	~Ramachandran() {}
 
 	Real
@@ -75,6 +80,18 @@ public:
 
 	void
 	eval_rama_score_residue(
+		AA const res_aa,
+		Real const phi,
+		Real const psi,
+		Real & rama,
+		Real & drama_dphi,
+		Real & drama_dpsi
+	) const;
+
+	void
+	eval_rama_score_residue(
+		bool use_bicubic_interpolation,
+		bool rama_not_squared,
 		AA const res_aa,
 		Real const phi,
 		Real const psi,
@@ -111,7 +128,10 @@ public:
 
 private:
 
-	void read_rama();
+	void read_rama(
+		std::string const & rama_map_filename,
+		bool use_bicubic_interpolation);
+
 	void init_rama_sampling_table();
 /*
 	static

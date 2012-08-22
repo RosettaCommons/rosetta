@@ -58,13 +58,18 @@ open(
 		db_stream.close();
 		db_stream.clear();
 	}
+	if(db_file.length() == 0){
+		TR.Error
+			<< "Unable to open database file because no file name was provided." << std::endl;
+		return false;
+	}
 	db_stream.open( full_name( db_file ) );
 
 	if ( db_stream ) { // Open succeeded
 		TR << "Database file opened: " << db_file << std::endl;
 		return true;
 	} else { // Open failed
-		Error() << "ERROR: Database file open failed for: " << db_stream.filename() << std::endl;
+		TR.Error << "Database file open failed for: " << db_stream.filename() << std::endl;
 #ifdef NATCL
 		throw( "ERROR: Database file open failed for: " + db_file );
 #endif

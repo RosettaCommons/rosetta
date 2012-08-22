@@ -125,6 +125,7 @@ sources = {
 		"SurfacePotential",
 		"UnfoldedStatePotential",
 		"VirtualResidues",
+		"use_bicubic_interpolation",
 	],
 	"scoring/etable" : [
 		"EtableEnergy",

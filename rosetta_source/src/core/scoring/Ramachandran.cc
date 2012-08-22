@@ -49,7 +49,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 
 #include <utility/vector1.hh>
-
+#include <sstream>
 
 
 
@@ -71,10 +71,18 @@ ObjexxFCL::FArray2D< Real > R::ram_entropy_( 3, R::n_aa_ );
 
 Ramachandran::Ramachandran()
 {
-	read_rama();
-	//if (basic::options::option[ basic::options::OptionKeys::loops::nonpivot_torsion_sampling ]()) {
-	//	init_rama_sampling_table();
-	//}
+	using namespace basic::options;
+	read_rama(
+		option[ OptionKeys::corrections::score::rama_map ]().name(),
+		option[ OptionKeys::corrections::score::use_bicubic_interpolation ]);
+}
+
+
+Ramachandran::Ramachandran(
+	std::string const & rama_map_filename,
+	bool use_bicubic_interpolation
+) {
+	read_rama(rama_map_filename, use_bicubic_interpolation);
 }
 
 
@@ -333,10 +341,28 @@ Ramachandran::eval_rama_score_residue(
 	return rama;
 }
 
+void
+Ramachandran::eval_rama_score_residue(
+	AA const res_aa,
+	Real const phi,
+	Real const psi,
+	Real & rama,
+	Real & drama_dphi,
+	Real & drama_dpsi
+) const {
+	using namespace basic::options;
+	eval_rama_score_residue(
+		option[ OptionKeys::corrections::score::use_bicubic_interpolation ],
+		option[ OptionKeys::corrections::score::rama_not_squared ],
+		res_aa, phi, psi, rama, drama_dphi, drama_dpsi);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 ///
 void
 Ramachandran::eval_rama_score_residue(
+	bool use_bicubic_interpolation,
+	bool rama_not_squared,
 	AA const res_aa,
 	Real const phi,
 	Real const psi,
@@ -373,7 +399,7 @@ Ramachandran::eval_rama_score_residue(
 
 	//int const res_aa( rsd.aa() );
 	// 	int const res_aa( pose.residue( res ).aa() );
-	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
+	if ( use_bicubic_interpolation ) {
 
 		rama = rama_energy_splines_[ res_aa ].F(phi,psi);
 		drama_dphi = rama_energy_splines_[ res_aa ].dFdx(phi,psi);
@@ -404,7 +430,7 @@ Ramachandran::eval_rama_score_residue(
 			rama = 20.0;
 		}
 
-		if ( ! basic::options::option[basic::options::OptionKeys::corrections::score::rama_not_squared] ) {
+		if ( ! rama_not_squared ) {
 			if ( rama > 1.0 ) {
 				Real const rama_squared = rama * rama;
 				if ( rama_squared > 20.0 ) {
@@ -434,10 +460,11 @@ void Ramachandran::eval_procheck_rama(
 ) const
 {}
 
-
 void
-Ramachandran::read_rama()
-{
+Ramachandran::read_rama(
+	std::string const & rama_map_filename,
+	bool use_bicubic_interpolation
+) {
 
 	int aa_num,phi_bin,psi_bin,ss_type;
 	Real check,min_prob,max_prob;
@@ -449,11 +476,15 @@ Ramachandran::read_rama()
 	utility::io::izstream  iunit;
 
   // search in the local directory first
-  iunit.open( basic::options::option[ basic::options::OptionKeys::corrections::score::rama_map ]().name() );
+  iunit.open( rama_map_filename );
 
   if ( !iunit.good() ) {
     iunit.close();
-    basic::database::open( iunit, basic::options::option[ basic::options::OptionKeys::corrections::score::rama_map ]().name() );
+    if(!basic::database::open( iunit, rama_map_filename )){
+			std::stringstream err_msg;
+			err_msg << "Unable to open Ramachandran map '" << rama_map_filename << "'.";
+			utility_exit_with_message(err_msg.str());
+		}
   }
 
 //cj      std::cout << "index" << "aa" << "ramachandran entropy" << std::endl;
@@ -520,7 +551,7 @@ L100:
 	iunit.close();
 	iunit.clear();
 
-	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
+	if ( use_bicubic_interpolation ) {
 		using namespace numeric;
 		using namespace numeric::interpolation::spline;
 		rama_energy_splines_.resize( chemical::num_canonical_aas );
