@@ -65,7 +65,7 @@ public:// constructor/destructor
 	OligomericAverageDegreeFilter();
 
 	// @brief constructor with arguments
-	OligomericAverageDegreeFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const t, core::Real const d, core::Size jump );
+	OligomericAverageDegreeFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const t, core::Real const d, core::Size jump, std::string dof_names, bool mcomp );
 
 	// @brief copy constructor
 	OligomericAverageDegreeFilter( OligomericAverageDegreeFilter const & rval );
@@ -94,14 +94,18 @@ public:// setters
 	void threshold( core::Real const t );
 	void distance_threshold( core::Real const d );
 	void jump_id( core::Size const jump );
+	void sym_dof_names( std::string const dof_names );
 	void write2pdb( bool const write );
+	void multicomp( bool const multicomp );
 
 public:// getters
 	core::pack::task::TaskFactoryOP task_factory() const;
 	core::Real threshold() const;
 	core::Real distance_threshold() const;
 	core::Size jump_id() const;
+	std::string sym_dof_names() const;
 	bool write2pdb() const;
+	bool multicomp() const;
 
 public:// parser
 
@@ -132,7 +136,8 @@ private:
   core::Real threshold_;
   core::Real distance_threshold_;
 	core::Size jump_id_;
-	bool write2pdb_;
+	std::string sym_dof_names_;
+	bool write2pdb_, multicomp_;
 
 };
 

@@ -39,6 +39,7 @@
 // Parser headers
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/string_util.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -55,16 +56,20 @@ OligomericAverageDegreeFilter::OligomericAverageDegreeFilter():
   task_factory_( NULL ),
   threshold_( 0 ),
   distance_threshold_( 10.0 ),
-	jump_id_( 1 )
+	jump_id_( 1 ),
+	sym_dof_names_( "" ),
+	multicomp_( 0 )
 {}
 
 
 // @brief constructor with arguments
-OligomericAverageDegreeFilter::OligomericAverageDegreeFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const t, core::Real const d, core::Size jump ):
+OligomericAverageDegreeFilter::OligomericAverageDegreeFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const t, core::Real const d, core::Size jump, std::string dof_names, bool mcomp ):
 	task_factory_( task_factory ),
 	threshold_( t ),
 	distance_threshold_( d ),
-	jump_id_( jump)
+	jump_id_( jump),
+	sym_dof_names_( dof_names ),
+	multicomp_( mcomp )
 {}
 
 // @brief copy constructor
@@ -73,7 +78,9 @@ OligomericAverageDegreeFilter::OligomericAverageDegreeFilter( OligomericAverageD
 	task_factory_( rval.task_factory_ ),
 	threshold_( rval.threshold_ ),
 	distance_threshold_( rval.distance_threshold_ ),
-	jump_id_( rval.jump_id_ )
+	jump_id_( rval.jump_id_ ),
+	sym_dof_names_( rval.sym_dof_names_ ),
+	multicomp_( rval.multicomp_ )
 {}
 
 // @brief destructor
@@ -94,53 +101,79 @@ core::pack::task::TaskFactoryOP OligomericAverageDegreeFilter::task_factory() co
 core::Real OligomericAverageDegreeFilter::threshold() const { return threshold_; }
 core::Real OligomericAverageDegreeFilter::distance_threshold() const { return distance_threshold_; }
 core::Size OligomericAverageDegreeFilter::jump_id() const { return jump_id_; }
+std::string OligomericAverageDegreeFilter::sym_dof_names() const { return sym_dof_names_; }
 bool OligomericAverageDegreeFilter::write2pdb() const { return write2pdb_; }
+bool OligomericAverageDegreeFilter::multicomp() const { return multicomp_; }
 
 // @brief setters
 void OligomericAverageDegreeFilter::task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
 void OligomericAverageDegreeFilter::threshold( core::Real const t ) { threshold_ = t; }
 void OligomericAverageDegreeFilter::distance_threshold( core::Real const d ) { distance_threshold_ = d; }
 void OligomericAverageDegreeFilter::jump_id( core::Size const jump ) { jump_id_ = jump; }
+void OligomericAverageDegreeFilter::sym_dof_names( std::string const dof_names ) { sym_dof_names_ = dof_names; }
 void OligomericAverageDegreeFilter::write2pdb( bool const write ) { write2pdb_ = write; }
+void OligomericAverageDegreeFilter::multicomp( bool const mcomp ) { multicomp_ = mcomp; }
 
 /// @brief
 core::Real OligomericAverageDegreeFilter::compute( Pose const & pose, bool const & verbose, bool const & write ) const
 {
 
 	runtime_assert( task_factory() );
+	utility::vector1<std::string> sym_dof_name_list;
+	std::string sym_dof_name;
   core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 
   // Partition pose according to specified jump and symmetry information
-  int sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num(pose, jump_id() );
-  ObjexxFCL::FArray1D_bool is_upstream ( pose.total_residue(), false );
-  pose.fold_tree().partition_by_jump( sym_aware_jump_id, is_upstream );
 
-	// Count neighbors in the sub_pose
+	Size nsubposes = 1;
+	if ( sym_dof_names_ != "" ) {
+		sym_dof_name_list = utility::string_split( sym_dof_names_ , ',' );
+		nsubposes = sym_dof_name_list.size();
+		TR.Debug << "nsubposes: " << nsubposes << std::endl;
+	}
+
   core::Size count_residues( 0 );
   core::Size count_neighbors( 0 );
-	for( core::Size resi=1; resi<=pose.total_residue(); ++resi ){
-		if(pose.residue_type(resi).aa() == core::chemical::aa_vrt) continue;
-    if( packer_task->being_packed( resi ) ){
-			//if ( is_upstream(resi) ) { utility_exit_with_message("Your packable residues are upstream of the jump you defined! Check your TaskOperation or your jump."); }
-			bool which_side = is_upstream(resi);  //fpd  designable residues may be upstream ... that's ok as long as we're separated
-      core::Size resi_neighbors( 0 );
-      ++count_residues;
-			core::conformation::Residue const res_target( pose.conformation().residue( resi ) );
-      for( core::Size j=1; j<=pose.total_residue(); ++j ) {
-				if ( is_upstream(j) == which_side ) {
-	        core::conformation::Residue const resj( pose.residue( j ) );
-					if(resj.aa() == core::chemical::aa_vrt) continue;
-	        core::Real const distance( resj.xyz( resj.nbr_atom() ).distance( res_target.xyz( res_target.nbr_atom() ) ) );
-	        if( distance <= distance_threshold() ){
-	          ++count_neighbors;
-	          ++resi_neighbors;
-	        }
+	for (Size i = 1; i <= nsubposes; i++) {
+		int sym_aware_jump_id;
+		if ( sym_dof_names() != "" ) {
+			TR.Debug << "computing neighbors for sym_dof_name " << sym_dof_name_list[i] << std::endl;
+			sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name_list[i] );
+  	} else {
+			sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num(pose, jump_id() );
+		}
+		ObjexxFCL::FArray1D_bool is_upstream ( pose.total_residue(), false );
+		pose.fold_tree().partition_by_jump( sym_aware_jump_id, is_upstream );
+
+		// Count neighbors in the sub_pose
+		for( core::Size resi=1; resi<=pose.total_residue(); ++resi ){
+			if(pose.residue_type(resi).aa() == core::chemical::aa_vrt) continue;
+			if( packer_task->being_packed( resi ) ){
+				//if ( is_upstream(resi) ) { utility_exit_with_message("Your packable residues are upstream of the jump you defined! Check your TaskOperation or your jump."); }
+				bool which_side = is_upstream(resi);  //fpd  designable residues may be upstream ... that's ok as long as we're separated
+				if ( multicomp() && (which_side != false) ) continue; 
+				++count_residues;
+				TR.Debug << "resi: " << resi << std::endl;
+				core::Size resi_neighbors( 0 );
+				core::conformation::Residue const res_target( pose.conformation().residue( resi ) );
+				for( core::Size j=1; j<=pose.total_residue(); ++j ) {
+					if ( is_upstream(j) == which_side ) {
+						core::conformation::Residue const resj( pose.residue( j ) );
+						if(resj.aa() == core::chemical::aa_vrt) continue;
+						core::Real const distance( resj.xyz( resj.nbr_atom() ).distance( res_target.xyz( res_target.nbr_atom() ) ) );
+					 	if( distance <= distance_threshold() ){
+							TR.Debug << "j: " << j << std::endl;
+							TR.Debug << "count_residues: " << count_residues << " count_neighbors: " << count_neighbors << std::endl;
+						 	++count_neighbors;
+						 	++resi_neighbors;
+					 	}
+					}
 				}
-      }
 			if ( verbose ) { TR << "Connectivity of " << res_target.name3() << resi << " is " << resi_neighbors << std::endl; }
 			if ( write ) { write_to_pdb( resi, res_target.name3(), resi_neighbors ); }
-    }
-  }
+			}
+		}
+	}
   return( (core::Real) count_neighbors / count_residues );
 
 } // compute
@@ -189,7 +222,9 @@ OligomericAverageDegreeFilter::parse_my_tag(
   threshold( tag->getOption< core::Size >( "threshold", 0 ) );
   distance_threshold( tag->getOption< core::Real >( "distance_threshold", 10.0 ) );
   jump_id( tag->getOption< core::Size >( "jump", 1 ) );
+	sym_dof_names( tag->getOption< std::string >( "sym_dof_names" , "" ) );
 	write2pdb( tag->getOption< bool >("write2pdb", 0) );
+	multicomp( tag->getOption< bool >("multicomp", 0) );
   TR << "with options threshold: " <<threshold() << " and distance_threshold " << distance_threshold() << std::endl;
 }
 
