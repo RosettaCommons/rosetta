@@ -139,7 +139,7 @@ void SnugDockProtocol::setup_objects( Pose const & pose )
 
 }
 
-void SnugDockProtocol::setup_loop_refinement_movers( Pose const & pose )
+void SnugDockProtocol::setup_loop_refinement_movers()
 {
 	using core::scoring::ScoreFunctionFactory;
 	using core::scoring::ScoreFunctionOP;

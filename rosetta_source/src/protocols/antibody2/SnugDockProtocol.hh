@@ -70,7 +70,7 @@ public:
 
 private: // methods
 	void setup_objects( Pose const & pose );
-	void setup_loop_refinement_movers( Pose const & pose );
+	void setup_loop_refinement_movers();
 	void init();
 	void init_for_equal_operator_and_copy_constructor( SnugDockProtocol & lhs, SnugDockProtocol const & rhs);
 	void init_options();
