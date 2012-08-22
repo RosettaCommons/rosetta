@@ -29,12 +29,17 @@
 #include <core/scoring/sasa.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/types.hh>
 #include <core/id/AtomID_Map.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
+#include <basic/options/keys/matdes.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
 #include <utility/vector1.hh>
+#include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/FArray1D.hh>
 
 #include <set>
 
@@ -96,7 +101,7 @@ pick_design_position(core::pose::Pose const & pose, Size nsub_bblock, Real conta
 	using utility::vector1;
 	using core::conformation::symmetry::SymmetryInfoCOP;
 	core::pose::Pose p(pose);
-  SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(p);
+  SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(p);
 	std::set<Size> design_pos;
 	Real bblock_dist_sq = bblock_dist * bblock_dist;
 	// score the pose so the we check for clashes
@@ -106,7 +111,7 @@ pick_design_position(core::pose::Pose const & pose, Size nsub_bblock, Real conta
 	sf->set_energy_method_options(eo);
 	sf->score(p);
 	// get the accesible residues
-	Pose mono(p, 1, sym_info->get_nres_subunit());
+	Pose mono(p, 1, symm_info->get_nres_subunit());
 	vector1<Real> sc_sasa = sidechain_sasa(mono,probe_radius);
 
 	// get the residues in chain A that make contacts within the building block
@@ -114,11 +119,11 @@ pick_design_position(core::pose::Pose const & pose, Size nsub_bblock, Real conta
 	std::set<Size> intra_bblock_interface_clashes;
 
 	TR.Debug << "Looking for the residues in the interface or that are clashing" << std::endl;
-	for (Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++) {
-		for (Size jr=ir+1; jr<=sym_info->num_total_residues_without_pseudo(); jr++) {
+	for (Size ir=1; ir<=symm_info->num_total_residues_without_pseudo(); ir++) {
+		for (Size jr=ir+1; jr<=symm_info->num_total_residues_without_pseudo(); jr++) {
 			TR.Debug << "res_i = " << ir << "\tres_j = " << jr << std::endl;
 			// skip if residues are in same building block
-   		if ( sym_info->subunit_index(jr) > nsub_bblock || sym_info->subunit_index(jr) == 1){
+   		if ( symm_info->subunit_index(jr) > nsub_bblock || symm_info->subunit_index(jr) == 1){
 					TR.Debug << "skipping residue " << jr << ", same building block as residue " << ir << std::endl;
 					continue;
 			}
@@ -155,16 +160,16 @@ pick_design_position(core::pose::Pose const & pose, Size nsub_bblock, Real conta
 	TR.Debug  << "clashing  residues: " << stringify_iterable(intra_bblock_interface_clashes) << std::endl;
 
 	Real const contact_dist_sq = contact_dist * contact_dist;
-	vector1<bool> indy_resis = sym_info->independent_residues();
+	vector1<bool> indy_resis = symm_info->independent_residues();
 
 	TR.Debug << "filtering residues that are in contact with other residues on the interface (distance less than "<< contact_dist  <<")" << std::endl;
-	for (Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++) {
+	for (Size ir=1; ir<=symm_info->num_total_residues_without_pseudo(); ir++) {
 		if (!indy_resis[ir]) continue;
 		std::string atom_i = (p.residue(ir).name3() == "GLY") ? "CA" : "CB";
 
-		for (Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++) {
+		for (Size jr=1; jr<=symm_info->num_total_residues_without_pseudo(); jr++) {
 			// skip residue jr if it is in the same building block
-   		if ( sym_info->subunit_index(jr) <= nsub_bblock ) continue;
+   		if ( symm_info->subunit_index(jr) <= nsub_bblock ) continue;
 			std::string atom_j = (p.residue(jr).name3() == "GLY") ? "CA" : "CB";
 			// Here we are filtering the residues that are in contact
 			if (p.residue(ir).xyz(atom_i).distance_squared(p.residue(jr).xyz(atom_j)) <= contact_dist_sq) {
@@ -184,7 +189,7 @@ pick_design_position(core::pose::Pose const & pose, Size nsub_bblock, Real conta
 }
 
 // Figure out which chains touch chain A, and return those chains
-
+// Should we also change this function to include intra_subs, like the get_neighbor_sub_resis function?
 core::pose::Pose
 get_neighbor_subs (Pose const &pose_in, utility::vector1<Size> intra_subs) {
 	//fpd we need to first score the pose
@@ -219,6 +224,54 @@ get_neighbor_subs (Pose const &pose_in, utility::vector1<Size> intra_subs) {
   }
 
   return sub_pose;
+}
+
+
+
+utility::vector1<Size> 
+get_neighbor_sub_resis (Pose const &pose_in, Real contact_dist, std::string sym_dof_name) {
+
+	using namespace basic;
+	using namespace core::conformation::symmetry;
+	using namespace core::pose::symmetry;
+
+	//Get the intra_subs
+	Pose pose = pose_in;
+	Size monomer_lower_bound, monomer_upper_bound;
+	utility::vector1<char> subs;
+	utility::vector1<Size> resis; 
+	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
+	Real const contact_dist_sq = contact_dist * contact_dist;
+
+	int	sym_aware_jump_id = sym_dof_jump_num( pose, sym_dof_name );
+	ObjexxFCL::FArray1D_bool is_upstream ( pose.total_residue(), false );
+	pose.fold_tree().partition_by_jump( sym_aware_jump_id, is_upstream );
+
+	bool start = true;
+	for (Size i=1; i<=symm_info->num_independent_residues(); ++i) {
+		if ( is_upstream(i) ) continue;
+		if ( start ) monomer_lower_bound = i;
+		start = false;
+		monomer_upper_bound = i;
+	}
+
+	subs.push_back(pose.residue(monomer_lower_bound).chain());
+	for (Size i=monomer_lower_bound; i<=monomer_upper_bound; ++i) {
+		for (Size j=1; j<=symm_info->num_total_residues_without_pseudo(); j++) {
+			if( (j >= monomer_lower_bound) && (j <= monomer_upper_bound) ) continue; 
+			if(find(subs.begin(),subs.end(), pose.residue(j).chain() )!=subs.end()) continue;
+			std::string atom_i = (pose.residue(i).name3() == "GLY") ? "CA" : "CB";
+			std::string atom_j = (pose.residue(j).name3() == "GLY") ? "CA" : "CB";
+			if(pose.residue(i).xyz(atom_i).distance_squared(pose.residue(j).xyz(atom_j)) <= contact_dist_sq) {
+				subs.push_back(pose.residue(j).chain());
+			}
+		}
+	}
+	for(Size i=1; i<=symm_info->num_total_residues_without_pseudo(); i++) {
+		if(find(subs.begin(),subs.end(), pose.residue(i).chain()) == subs.end()) continue;
+		resis.push_back(i);
+	}
+	return resis;
 }
 
 } // devel

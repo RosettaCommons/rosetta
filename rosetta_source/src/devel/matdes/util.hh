@@ -56,6 +56,9 @@ pick_design_position(core::pose::Pose const & pose, Size nsub_bblock = 1, Real c
 core::pose::Pose
 get_neighbor_subs(core::pose::Pose const &pose, utility::vector1<Size> intra_subs);
 
+utility::vector1<Size>
+get_neighbor_sub_resis(core::pose::Pose const &pose, Real contact_dist=10.0, std::string sym_dof_name = "" );
+
 } // devel
 } // matdes
 #endif

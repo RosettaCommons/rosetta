@@ -26,13 +26,17 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/string_util.hh>
+#include <utility/exit.hh>
 
+#include <ObjexxFCL/FArray1D.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/io/pdb/file_data.hh>
 #include <devel/matdes/util.hh>
-#include <basic/options/keys/matdes.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
+#include <protocols/jd2/JobDistributor.hh>
 
 namespace devel {
 namespace matdes {
@@ -43,13 +47,20 @@ static basic::Tracer TR( "devel.matdes.InterfacePackingFilter" );
 InterfacePackingFilter::InterfacePackingFilter() :
 	parent( "InterfacePacking" ),
 	distance_cutoff_( 9.0 ),
+	contact_dist_( 10.0 ),
 	lower_threshold_( -5 ),
-	upper_threshold_( 5 )
+	upper_threshold_( 5 ),
+	sym_dof_names_( "" )
 {}
 
 core::Real
 InterfacePackingFilter::distance_cutoff() const{
 	return distance_cutoff_;
+}
+
+core::Real
+InterfacePackingFilter::contact_dist() const{
+	return contact_dist_;
 }
 
 core::Real
@@ -62,9 +73,19 @@ InterfacePackingFilter::upper_threshold() const{
 	return upper_threshold_;
 }
 
+std::string
+InterfacePackingFilter::sym_dof_names() const{
+	return sym_dof_names_;
+}
+
 void
 InterfacePackingFilter::distance_cutoff( core::Real const d ){
 	distance_cutoff_ = d;
+}
+
+void
+InterfacePackingFilter::contact_dist( core::Real const c ){
+	contact_dist_ = c;
 }
 
 void
@@ -75,6 +96,11 @@ InterfacePackingFilter::lower_threshold( core::Real const l ){
 void
 InterfacePackingFilter::upper_threshold( core::Real const u ){
 	upper_threshold_ = u;
+}
+
+void
+InterfacePackingFilter::sym_dof_names( std::string const s ){
+	sym_dof_names_ = s;
 }
 
 bool
@@ -94,43 +120,87 @@ InterfacePackingFilter::apply(core::pose::Pose const & pose ) const
 core::Real
 InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 
-  utility::vector1<Size> intra_subs; 
-	if (!basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block].user()) {
-    utility_exit_with_message("ERROR: You have not set the required option -matdes::num_subs_building_block");
-  } else {
-		core::Size num_subs = basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block]();
-    for(core::Size intrasub=1; intrasub<=num_subs; intrasub++) {
-      intra_subs.push_back(intrasub);
-    }
-  }
-  core::pose::Pose sub_pose = devel::matdes::get_neighbor_subs(pose, intra_subs);
-  core::scoring::packing::HolesParams hp(basic::database::full_name("scoring/rosettaholes/decoy15.params"));
-  core::scoring::packing::HolesResult hr(core::scoring::packing::compute_holes_score(sub_pose, hp));
-  core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
-  core::Size nres_monomer = symm_info->num_independent_residues();
-  core::Size count = 0; Real if_score = 0;
+	using namespace core::pose::symmetry;
 
-  core::Real cutoff2 = distance_cutoff_*distance_cutoff_;
-  for (core::Size ir=1; ir<=nres_monomer; ir++) {
-    for (core::Size ia = 1; ia<=sub_pose.residue(ir).nheavyatoms(); ia++) {
-      bool contact = false;
-      for (core::Size jr=nres_monomer+1; jr<=sub_pose.n_residue(); jr++) {
-        for (core::Size ja = 1; ja<=sub_pose.residue(jr).nheavyatoms(); ja++) {
-          if (sub_pose.residue(ir).xyz(ia).distance_squared(sub_pose.residue(jr).xyz(ja)) <= cutoff2)  {
-            contact = true;
-            break; // ja
-          }
-        } // ja
-        if (contact == true) break;
-      } // jr
-      if (contact == true) {
-        count++;
-        if_score += hr.atom_scores[core::id::AtomID(ia, ir)];
-      }
-    } // ia
-  } // ir
-	TR << "if_score / count = " << if_score << " / " << count << " = " << (if_score / (Real)count) << std::endl;
-  return if_score / (Real)count;
+//	sub_pose.dump_pdb("subpose");
+	core::pose::Pose sub_pose; 
+  core::scoring::packing::HolesParams hp(basic::database::full_name("scoring/rosettaholes/decoy15.params"));
+	core::Real cutoff2 = distance_cutoff_*distance_cutoff_;
+  core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
+  core::Size monomer_lower_bound, monomer_upper_bound, ir, jr, base;
+  utility::vector1<core::Size> sub_pose_resis, neighbor_resis;
+  core::Size count = 0; Real if_score = 0;
+	utility::vector1<std::string> sym_dof_name_list;
+	std::string sym_dof_name;
+
+	sym_dof_name_list = utility::string_split( sym_dof_names_ , ',' );
+
+	for (Size i = 1; i <= sym_dof_name_list.size(); i++) {
+
+		sym_dof_name = sym_dof_name_list[i];
+
+		if (sym_dof_name == "") {
+			utility_exit_with_message("The required argument, sym_dof_names, for the InterfacePackingFilter was now set properly.");
+		}
+
+		int	sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name );
+		ObjexxFCL::FArray1D_bool is_upstream ( pose.total_residue(), false );
+		pose.fold_tree().partition_by_jump( sym_aware_jump_id, is_upstream );
+		sub_pose_resis = devel::matdes::get_neighbor_sub_resis(pose, contact_dist_, sym_dof_name);
+		core::io::pdb::pose_from_pose(sub_pose, pose, sub_pose_resis);
+		sub_pose.dump_pdb("sub_pose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
+	 	core::scoring::packing::HolesResult hr(core::scoring::packing::compute_holes_score(sub_pose, hp));
+		TR << "computed_holes" << std::endl;
+
+		Size nres_monomer = 0;
+		bool start = true;
+		for (Size i=1; i<=symm_info->num_independent_residues(); ++i) {
+			if ( is_upstream(i) ) continue;
+			if ( start ) monomer_lower_bound = i;
+			start = false;
+			monomer_upper_bound = i;
+			nres_monomer++;
+		}
+		TR << "nres_monomer: " << nres_monomer << " for sym_dof_name: " << sym_dof_name << std::endl;
+
+		for(Size r=1; r<=sub_pose_resis.size(); r++) {
+			if (monomer_lower_bound == sub_pose_resis[r]) { 
+				base = r;
+				break;
+			}
+			TR.Debug << "r: " << r << " sub_pose_resi: " << sub_pose_resis[r] << std::endl;
+		}
+		TR.Debug << "base residue of monomer: " << base << std::endl; 
+ 
+		for (core::Size sir=base; sir<=base+nres_monomer-1; sir++) {
+			ir = sub_pose_resis[sir];
+			for (core::Size ia = 1; ia<=pose.residue(ir).nheavyatoms(); ia++) {
+				bool contact = false;
+				for (core::Size sjr=1; sjr<=sub_pose_resis.size(); sjr++) {
+					jr = sub_pose_resis[sjr];
+					if ( !is_upstream(jr) ) continue; 
+					for (core::Size ja = 1; ja<=pose.residue(jr).nheavyatoms(); ja++) {
+						if (pose.residue(ir).xyz(ia).distance_squared(pose.residue(jr).xyz(ja)) <= cutoff2)  {
+							contact = true;
+							break; // ja
+						}
+					} // ja
+					if (contact == true) {
+						TR.Debug << "ir: " << ir << " jr: " << jr << std::endl;
+						break;
+					}
+				} // jr
+				if (contact == true) {
+					count++;
+					if_score += hr.atom_scores[core::id::AtomID(ia, sir)];
+					TR.Debug << "count: " << count << " atom_score: " << hr.atom_scores[core::id::AtomID(ia, sir)] << " if_score: " << if_score << std::endl;
+				}
+			} // ia
+		} // ir
+		TR.Debug << "subpose " << i << " if_score/count = " << if_score << " / " << count << " = " << (if_score / (Real)count) << std::endl;
+	}
+		TR << "final if_score / count = " << if_score << " / " << count << " = " << (if_score / (Real)count) << std::endl;
+		return if_score / (Real)count;
 }
 
 core::Real
@@ -155,9 +225,11 @@ InterfacePackingFilter::parse_my_tag( utility::tag::TagPtr const tag,
 {
 	TR << "InterfacePackingFilter"<<std::endl;
 	distance_cutoff( tag->getOption< core::Real >( "distance_cutoff", 9.0 ) );
+	contact_dist( tag->getOption<core::Real>("contact_dist", 10.0));
 	lower_threshold( tag->getOption< core::Real >( "lower_cutoff", -5 ) );
 	upper_threshold( tag->getOption< core::Real >( "upper_cutoff", 5 ) );
-	TR<<"with options lower_threshold: "<<lower_threshold()<<", upper_threshold: "<<upper_threshold()<<", and distance_cutoff: "<<distance_cutoff()<<std::endl;
+	sym_dof_names( tag->getOption< std::string >( "sym_dof_names", "" ) );
+	TR<<"with options lower_threshold: "<<lower_threshold()<<", upper_threshold: "<<upper_threshold()<<", distance_cutoff: "<<distance_cutoff()<<"contact_dist: "<<contact_dist()<<"sym_dof_names: "<<sym_dof_names()<<std::endl;
 }
 
 protocols::filters::FilterOP
