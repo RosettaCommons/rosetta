@@ -144,8 +144,10 @@ int
 sym_dof_jump_num(core::pose::Pose const & pose, std::string const & jname);
 
 utility::vector1<Size>
-get_symdof_subunits(core::pose::Pose const &, std::string const & jname);
+get_symdof_subunits(core::pose::Pose const & pose, std::string const & jname);
 
+bool is_multicomponent (core::pose::Pose const & pose);
+bool is_singlecomponent(core::pose::Pose const & pose);
 Size get_component_lower_bound(core::pose::Pose const & pose, char c);
 Size get_component_upper_bound(core::pose::Pose const & pose, char c);
 char get_component_of_residue(core::pose::Pose const & pose, Size ir);

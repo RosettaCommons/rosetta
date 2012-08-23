@@ -996,6 +996,12 @@ get_symdof_subunits(core::pose::Pose const & pose, std::string const & jname){
 	return subs;
 }
 
+bool is_singlecomponent(core::pose::Pose const & pose){
+	return symmetry_info(pose)->get_components().size()==1;
+}
+bool is_multicomponent(core::pose::Pose const & pose){
+	return symmetry_info(pose)->get_components().size()>=2;
+}
 
 Size get_component_lower_bound(core::pose::Pose const & pose, char c){
 	return symmetry_info(pose)->get_component_lower_bound(c);
