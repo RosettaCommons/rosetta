@@ -112,7 +112,7 @@ namespace rna {
 	//			total_variation_=100; //+-50 //testing on Sept 15 2010
 	//			bin_size_= std::min(int(inputted_bin_size_), 10); // Aug_29 to Sept 15 2010 //Mod out on May 06, 2011
 
-				total_variation_=80;
+				total_variation_=120;
 				bin_size_=inputted_bin_size_;				
 				num_base_std_ID_= Size(1 + (total_variation_/bin_size_) ); //-40,-20,0,20,40
 			}else{

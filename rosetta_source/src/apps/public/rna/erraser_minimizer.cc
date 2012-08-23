@@ -774,7 +774,6 @@ pdb_minimizer() {
 	if ( fixed_res_list.size() != 0 ) {
 		std::cout << "fixed res: ";
 	}
-	std::cout << std::endl;
 
 	for ( Size i = 1; i <= fixed_res_list.size(); ++i ) {
 		Size fixed_res_num ( fixed_res_list[i] );
@@ -821,6 +820,7 @@ pdb_minimizer() {
 		}
 
 	}
+	std::cout << std::endl;
 
 	//constrain phosphate mode
 	if (constrain_phosphate) {

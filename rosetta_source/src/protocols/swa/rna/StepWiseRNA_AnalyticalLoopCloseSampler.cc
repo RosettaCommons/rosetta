@@ -310,15 +310,15 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 				pucker_state = SOUTH;
 			}
 
-			core::scoring::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
+			Real best_score = 99999;
+			Size best_chi = 9999;
+
 			StepWiseRNA_Base_Sugar_RotamerOP base_sugar_rotamer = new StepWiseRNA_Base_Sugar_Rotamer ( base_state, pucker_state, rna_fitted_torsion_info );
 			base_sugar_rotamer->set_extra_syn_chi ( extra_syn_chi_rotamer_ );
 			base_sugar_rotamer->set_extra_anti_chi ( extra_anti_chi_rotamer_ );
-
 			while ( base_sugar_rotamer->get_next_rotamer() ) {
-				count_data_.tot_rotamer_count++;
-				std::cout << "total_rotamer = " << count_data_.tot_rotamer_count << std::endl;
-				screening_pose.set_torsion ( TorsionID ( moving_res , id::CHI, 1 ) , base_sugar_rotamer->chi() );
+				Real chi = base_sugar_rotamer->chi();
+				screening_pose.set_torsion ( TorsionID ( moving_res , id::CHI, 1 ) ,chi );
 
 				//Native RMSD Screening
 				if ( native_rmsd_screen_ && get_native_pose() ) {
@@ -353,16 +353,32 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 					count_data_.good_bin_rep_count++;
 				}
 
-				//Copy the Torsion angles of screen_pose to pose
-				copy_suite_torsion ( pose, screening_pose, moving_res );
-				if (use_phenix_geo_) {
-					if ( pucker_id == 0 ) { //Sample North Pucker
-						ideal_coord.apply( pose, moving_res, true);
-					} else { //Sample South Pucker
-						ideal_coord.apply( pose, moving_res, false);
-					}
+				Real current_score = (*chi_screen_scorefxn_) (screening_pose);
+				if (current_score < best_score) {
+					best_score = current_score;
+					best_chi = chi;
 				}
-				////////////////Add pose to pose_data_list if pose have good score/////
+			}
+
+			if (best_chi == 9999) continue;
+
+			//Copy the Torsion angles of screen_pose to pose
+			copy_suite_torsion ( pose, screening_pose, moving_res );
+			if (use_phenix_geo_) {
+				if ( pucker_id == 0 ) { //Sample North Pucker
+					ideal_coord.apply( pose, moving_res, true);
+				} else { //Sample South Pucker
+					ideal_coord.apply( pose, moving_res, false);
+				}
+			}
+
+			////////////////Add pose to pose_data_list/////
+			for (Size i = 0; i != 2; ++i) {
+				if (i == 0) {
+					pose.set_torsion ( TorsionID ( moving_res , id::CHI, 1 ) ,best_chi );
+				} else {
+					pose.set_torsion ( TorsionID ( moving_res , id::CHI, 1 ) ,best_chi+180 );
+				}
 
 				if ( o2star_screen_ ) sample_o2star_hydrogen ( pose , pose_with_original_HO2star_torsion );
 
@@ -546,6 +562,11 @@ StepWiseRNA_AnalyticalLoopCloseSampler::initialize_scorefunctions() {
 	// just a comparison. This is extremely slow. Would need to implement trie
 	//  for geom_sol, lk_nonpolar, and hackelec... Not too hard, but I don't feel like doing it now. (Rhiju)
 	//o2star_pack_scorefxn_ = sampling_scorefxn_->clone();
+	//For chi screening
+	chi_screen_scorefxn_ = o2star_pack_scorefxn_->clone();
+	chi_screen_scorefxn_ -> set_weight ( elec_dens_atomwise, sampling_scorefxn_->get_weight ( elec_dens_atomwise ) );
+	chi_screen_scorefxn_ -> set_weight ( rna_torsion, sampling_scorefxn_->get_weight ( rna_torsion ) );
+	
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
