@@ -26,7 +26,7 @@
 namespace core {
 
 	/// @brief Initialize MPI (message passing interface) for parallel applications
-	void init_mpi();
+	void init_mpi(int argc, char * argv []);
 
 	/// @brief Initialize the option system, which manages command line options
 	void init_options(int argc, char * argv []);

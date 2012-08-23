@@ -485,7 +485,7 @@ init_mpi(int argc, char * argv []) {
 }
 #else
 void
-init_mpi(int, char **){}
+init_mpi(int, char **) {}
 #endif
 
 
