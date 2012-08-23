@@ -118,10 +118,14 @@ main( int argc, char* argv [] ) {
 		}
 	}
 
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
-	tr.Debug << "scoring using ScoreFunction with weights: " << std::endl;
-	scorefxn->show( tr.Debug );
-	tr.flush();
+	core::scoring::ScoreFunctionOP scorefxn;
+
+	if ( option[ in::file::rescore ]() ){
+		scorefxn = core::scoring::getScoreFunction();
+		tr.Debug << "scoring using ScoreFunction with weights: " << std::endl;
+		scorefxn->show( tr.Debug );
+		tr.flush();
+	}
 
 	core::pose::Pose pose;
 	std::string out_prefix = option[ out::prefix ]();
