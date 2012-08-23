@@ -263,6 +263,8 @@ namespace docking { BooleanOptionKey const spin( "docking:spin" );  }
 namespace docking { RealVectorOptionKey const dock_pert( "docking:dock_pert" );  }
 namespace docking { RealOptionKey const uniform_trans( "docking:uniform_trans" );  }
 namespace docking { BooleanOptionKey const center_at_interface( "docking:center_at_interface" );  }
+namespace docking { IntegerOptionKey const dock_mcm_first_cycles( "docking:dock_mcm_first_cycles" );  }
+namespace docking { IntegerOptionKey const dock_mcm_second_cycles( "docking:dock_mcm_second_cycles" );  }
 namespace docking { IntegerOptionKey const docking_centroid_outer_cycles( "docking:docking_centroid_outer_cycles" );  }
 namespace docking { IntegerOptionKey const docking_centroid_inner_cycles( "docking:docking_centroid_inner_cycles" );  }
 namespace docking { BooleanOptionKey const dock_min( "docking:dock_min" );  }
@@ -624,5 +626,3 @@ namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
 namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constraint_skip_rate" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }
-namespace fold_cst { BooleanOptionKey const keep_skipped_csts( "fold_cst:keep_skipped_csts" );  }
-namespace fold_cst { BooleanOptionKey const no_minimize( "fold_cst:no_minimize" );  }

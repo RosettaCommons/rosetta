@@ -36,6 +36,8 @@ namespace docking { extern BooleanOptionKey const spin; }
 namespace docking { extern RealVectorOptionKey const dock_pert; }
 namespace docking { extern RealOptionKey const uniform_trans; }
 namespace docking { extern BooleanOptionKey const center_at_interface; }
+namespace docking { extern IntegerOptionKey const dock_mcm_first_cycles; }
+namespace docking { extern IntegerOptionKey const dock_mcm_second_cycles; }
 namespace docking { extern IntegerOptionKey const docking_centroid_outer_cycles; }
 namespace docking { extern IntegerOptionKey const docking_centroid_inner_cycles; }
 namespace docking { extern BooleanOptionKey const dock_min; }

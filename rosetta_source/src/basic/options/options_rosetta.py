@@ -528,6 +528,16 @@ Options = Option_Group( '',
         desc='Perform all initial perturbations with the center of rotation at the interface between partners instead of at the center of mass of the oppposite partner.',
         default='false'
         ),
+		Option('dock_mcm_first_cycles', 'Integer',
+			short='First cycle of DockMCMProtocol.',
+			desc='Perfrom 4 cycles to let the filter decide to continue.',
+			default='4'
+			),
+		Option('dock_mcm_second_cycles', 'Integer',
+			short='Second cycle of DockMCMProtocol.',
+			desc='If the first cycle pass the fliter, continue 45 cycles.',
+			default='45'
+			),
 		Option('docking_centroid_outer_cycles', 'Integer',
 			short='Outer cycles during docking rigid body adaptive moves.',
 			desc='Outer cycles during cking rigid body adaptive moves.',

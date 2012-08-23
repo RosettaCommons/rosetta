@@ -1257,6 +1257,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-dock_mcm_first_cycles</b> \<Integer\><dt>
+<dd>Perfrom 4 cycles to let the filter decide to continue.</dd><br>
+<dd>Default: 4</dd><br>
+</dl>
+<dl>
+<dt><b>-dock_mcm_second_cycles</b> \<Integer\><dt>
+<dd>If the first cycle pass the fliter, continue 45 cycles.</dd><br>
+<dd>Default: 45</dd><br>
+</dl>
+<dl>
 <dt><b>-docking_centroid_outer_cycles</b> \<Integer\><dt>
 <dd>Outer cycles during cking rigid body adaptive moves.</dd><br>
 <dd>Default: 10</dd><br>
