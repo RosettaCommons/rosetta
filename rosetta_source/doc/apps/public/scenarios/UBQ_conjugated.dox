@@ -13,7 +13,7 @@
 @page UBQ_conjugated Documentation for UBQ_E2_thioester, UBQ_Gp_CYD-CYD, and UBQ_Gp_LYX-Cterm applications
 
 @section metadata Metadata
-Last edited 5/30/12.  Code by Steven Lewis.  Corresponding PI Brian Kuhlman bkuhlman@email.unc.edu.
+Last edited 8/23/12.  Code by Steven Lewis.  Corresponding PI Brian Kuhlman bkuhlman@email.unc.edu.
 
 @section contents_note Note on contents and history
 This page documents three applications, UBQ_E2_thioester, UBQ_Gp_CYD-CYD, and UBQ_Gp_LYX-Cterm.  The code and documentation were originally written for the thioester version.  The other versions are modifications of the first, and they all behave nearly the same from the outside, so they are all documented here.  Assume the document is talking about the thioester case, but also assume what it says is true for the other cases.
@@ -104,4 +104,6 @@ Pick the best models by total score and look at the satisfaction of your experim
 Rosetta 3.3 was the first release.
 For the 3.4 release, the UBQ_Gp series of applications was added.
 For 3.5, the constraint code was factored out into a constraint file publication.cst, and some system-specific details in the code were altered to run under a "publication" flag.  With these changes, UBQ_Gp_CYX-Cterm was deprecated and deleted.
+Also for 3.5, an issue with omega angles near the conjugation bond was corrected.  The omega nearest the bond now starts at 180 degrees instead of 140.
+Significant refactoring is underway as of this writing, which may or may not complete in time for 3.5.
 */
