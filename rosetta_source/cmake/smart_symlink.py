@@ -32,7 +32,8 @@ for filename in files:
     default_name = path + executable_name + '.default.' + binext
 
     if os.path.exists( executable_name ):
-        print 'symlinking ', executable_name, ' to ', new_name
+        # removing this print statement as it is unnecessary, and adds extra lines to compact ninja output.
+        #print 'symlinking ', executable_name, ' to ', new_name
         if os.path.exists( new_name ):
             os.unlink( new_name )
         if os.path.exists( default_name ):
