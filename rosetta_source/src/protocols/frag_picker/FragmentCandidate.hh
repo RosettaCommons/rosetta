@@ -41,7 +41,7 @@ using ObjexxFCL::fmt::F;
 using ObjexxFCL::fmt::I;
 
 utility::vector1<FragmentCandidateOP> read_fragment_candidates(std::string,
-		VallProviderOP, Size max_nfrags_per_pos = 10000000000);
+		VallProviderOP, Size max_nfrags_per_pos = 900000000);
 
 /// @brief Vector candidate says which X-mer from vall fits to a query sequence
 /// @detailed Scores for a given fragment are stored separately in a FragmentScoreMap object
