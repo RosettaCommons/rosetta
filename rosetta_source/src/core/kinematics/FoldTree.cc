@@ -1884,7 +1884,7 @@ FoldTree::jump_point(
 		int const jump_number
 ) const
 {
-	PyAssert(((jump_number <= 0) || (jump_number > num_jump_)),
+	PyAssert(((jump_number > 0) || (jump_number <= num_jump_)),
 			"FoldTree::jump_point( int const lower_higher, int const jump_number ): Input variable jump_number is not a valid value.");
 	check_topology();
 	return jump_point_( lower_higher, jump_number );
@@ -2058,7 +2058,7 @@ FoldTree::get_residue_direction( int const seqpos ) const
 Edge const &
 FoldTree::jump_edge( int const jump_number ) const
 {
-	PyAssert(((jump_number <= 0) || (jump_number > num_jump_)),
+	PyAssert(((jump_number > 0) || (jump_number <= num_jump_)),
 			"FoldTree::jump_edge( int const jump_number ): Input variable jump_number is not a valid value.");
 	check_order();
 	return edge_list_[ jump_edge_( jump_number ) ];
@@ -2068,7 +2068,7 @@ FoldTree::jump_edge( int const jump_number ) const
 Edge &
 FoldTree::jump_edge( int const jump_number )
 {
-	PyAssert(((jump_number <= 0) || (jump_number > num_jump_)),
+	PyAssert(((jump_number > 0) || (jump_number <= num_jump_)),
 			"FoldTree::jump_edge( int const jump_number ): Input variable jump_number is not a valid value.");
 	check_order();
 	return edge_list_[ jump_edge_( jump_number ) ];
