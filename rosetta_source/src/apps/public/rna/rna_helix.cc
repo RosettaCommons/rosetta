@@ -12,31 +12,22 @@
 
 // libRosetta headers
 #include <core/scoring/rms_util.hh>
-// AUTO-REMOVED #include <core/scoring/rna/RNA_Util.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/RNA_SilentStruct.hh>
-// AUTO-REMOVED #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
@@ -44,25 +35,16 @@
 #include <protocols/rna/RNA_HelixAssembler.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
-//#include <basic/database/open.hh>
 #include <core/init.hh>
 #include <core/io/pdb/pose_io.hh>
 
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/conversions.hh>
-
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 // C++ headers
-//#include <cstdlib>
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
 
@@ -139,10 +121,14 @@ rna_build_helix_test(){
 		core::scoring::ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( score_weight_file );
 		rna_helix_assembler.set_scorefxn ( scorefxn );
 	}
+	rna_helix_assembler.set_model_and_remove_capping_residues( true );
 
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
 	Size const nstruct = option[ out::nstruct ];
+
+	std::string outfile = full_sequence+".pdb";
+	if ( option[ out::file::o ].user() ) outfile = option[ out::file::o ]();
 
 	for (Size n = 1; n <= nstruct; n++ ) {
 		rna_helix_assembler.apply( pose, full_sequence );
@@ -152,7 +138,7 @@ rna_build_helix_test(){
 			BinaryRNASilentStruct s( pose, tag );
 			silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
 		}
-		pose.dump_pdb( full_sequence+".pdb" );
+		pose.dump_pdb( outfile );
 	}
 
 }

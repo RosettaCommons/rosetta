@@ -89,7 +89,8 @@ RNA_HelixAssembler::RNA_HelixAssembler():
 	NU2_A_FORM( 38.82),
 	NU1_A_FORM( 95.34),
 	perturb_amplitude_( 10.0 ),
-	scorefxn( core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::RNA_HIRES_WTS ) )
+	scorefxn( core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::RNA_HIRES_WTS ) ),
+	model_and_remove_capping_residues_( true )
 {
 	Mover::type("RNA_HelixAssembler");
 	// scorefxn->set_weight( core::scoring::atom_pair_constraint, 0.01 );
@@ -144,14 +145,21 @@ void RNA_HelixAssembler::apply( core::pose::Pose & pose, std::string const & ful
 	using namespace core::pose;
 	using namespace core::kinematics;
 
-	Size const seq_length( full_sequence.size() );
+	Size seq_length( full_sequence.size() );
+	std::string sequence1( full_sequence.substr( 0, seq_length/2 ) );
+	std::string sequence2( full_sequence.substr( seq_length/2, seq_length ) );
 
-	std::string const sequence1( full_sequence.substr( 0, seq_length/2 ) );
-	std::string const sequence2( full_sequence.substr( seq_length/2, seq_length ) );
+	if 	( model_and_remove_capping_residues_ ){
+		sequence1 = "g" + sequence1 + "c";
+		sequence2 = "g" + sequence2 + "c"; // will remove these base pairs later.
+	}
+
+
 	if ( verbose_ ) {
 		std::cout << "SEQ1 " << sequence1 << std::endl;
 		std::cout << "SEQ2 " << sequence2 << std::endl;
 	}
+
 	Size const numres = sequence1.size();
 	assert( sequence2.size() == numres );
 
@@ -191,6 +199,11 @@ void RNA_HelixAssembler::apply( core::pose::Pose & pose, std::string const & ful
 		minimize_base_step( pose, n );
 
 		//		pose.dump_pdb( "helix_min"+string_of(n)+".pdb" );
+	}
+
+
+	if 	( model_and_remove_capping_residues_ ){
+		get_rid_of_capping_base_pairs( pose );
 	}
 
 }
@@ -349,6 +362,34 @@ RNA_HelixAssembler::put_constraints_on_base_step( pose::Pose & pose, Size const 
 	pose.constraint_set( new_cst_set ); //blank out cst set.
 
 	protocols::rna::setup_base_pair_constraints( pose, pairings );
+}
+
+//////////////////////////////////////////////////////
+void
+RNA_HelixAssembler::get_rid_of_capping_base_pairs( pose::Pose & pose ){
+
+	using namespace core::kinematics;
+
+	//Need to fix up fold_tree
+	Size const nres = pose.total_residue();
+	FoldTree f( nres );
+	f.new_jump( nres/2-1, nres/2+2, nres/2);  // put jump across second-to-last base pair
+	f.set_jump_atoms( 1,
+										core::scoring::rna::chi1_torsion_atom( pose.residue(nres/2-1) ),
+										core::scoring::rna::chi1_torsion_atom( pose.residue(nres/2+2) ) );
+	f.reorder( nres/2-1 ); // root cannot be deleted, I think, so place it at this second-to-last base pair.
+	pose.fold_tree( f );
+
+
+ // get rid of last base pair
+	pose.delete_polymer_residue( nres/2 );
+	pose.delete_polymer_residue( nres/2 );
+
+ // get rid of first base pair
+	pose.delete_polymer_residue( 1 );
+	pose.delete_polymer_residue( pose.total_residue() );
+
+
 }
 
 

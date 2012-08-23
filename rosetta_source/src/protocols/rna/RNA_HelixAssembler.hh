@@ -64,6 +64,8 @@ public:
 	void
 	use_phenix_geo( bool const setting );
 
+	void set_model_and_remove_capping_residues( bool setting ){ model_and_remove_capping_residues_ = setting; }
+
 private:
 
 	void
@@ -78,6 +80,9 @@ private:
 
 	void
 	put_constraints_on_base_step( core::pose::Pose & pose, Size const & n );
+
+	void
+	get_rid_of_capping_base_pairs( core::pose::Pose & pose );
 
 private:
 
@@ -104,6 +109,8 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn;
 
 	core::scoring::rna::RNA_IdealCoord ideal_coord_;
+
+	bool model_and_remove_capping_residues_;
 
 }; // class RNA_HelixAssembler
 
