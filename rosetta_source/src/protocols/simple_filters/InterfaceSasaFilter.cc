@@ -22,6 +22,7 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/DataMap.hh>
 // Jacob
+#include <utility/string_util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
@@ -47,15 +48,17 @@ InterfaceSasaFilter::InterfaceSasaFilter() :
 	hydrophobic_( false ),
 	polar_( false ),
 	jump_( 1 ),
+	sym_dof_names_( "" ),
 	upper_threshold_(100000000000.0)
 {}
 
-InterfaceSasaFilter::InterfaceSasaFilter( core::Real const lower_threshold, bool const hydrophobic/*=false*/, bool const polar/*=false*/, core::Real upper_threshold ) :
+InterfaceSasaFilter::InterfaceSasaFilter( core::Real const lower_threshold, bool const hydrophobic/*=false*/, bool const polar/*=false*/, core::Real upper_threshold, std::string sym_dof_names ) :
 	Filter( "Sasa" ),
 	lower_threshold_( lower_threshold ),
 	hydrophobic_( hydrophobic ),
 	polar_( polar ),
-	upper_threshold_(upper_threshold)
+	upper_threshold_(upper_threshold),
+	sym_dof_names_(sym_dof_names)
 {}
 
 InterfaceSasaFilter::~InterfaceSasaFilter(){}
@@ -76,6 +79,7 @@ InterfaceSasaFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMa
 	lower_threshold_ = tag->getOption<core::Real>( "threshold", 800 );
 	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 1000000);
 	jump( tag->getOption< core::Size >( "jump", 1 ));
+	sym_dof_names( tag->getOption< std::string >( "sym_dof_names" , "" ) );
 	hydrophobic_ = tag->getOption<bool>( "hydrophobic", false );
 	polar_ = tag->getOption<bool>( "polar", false );
 	runtime_assert( !hydrophobic_ || !polar_ );
@@ -129,6 +133,18 @@ InterfaceSasaFilter::jump() const
 	return jump_;
 }
 
+void
+InterfaceSasaFilter::sym_dof_names( std::string const sym_dof_names )
+{
+	sym_dof_names_ = sym_dof_names;
+}
+
+std::string
+InterfaceSasaFilter::sym_dof_names() const
+{
+	return sym_dof_names_;
+}
+
 core::Real
 InterfaceSasaFilter::compute( core::pose::Pose const & pose ) const {
 	using namespace core::pose::metrics;
@@ -137,10 +153,25 @@ InterfaceSasaFilter::compute( core::pose::Pose const & pose ) const {
 	using namespace protocols::moves;
 
 	core::pose::Pose split_pose( pose );
-	int sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num(split_pose, jump() ); // JB 120516
-	rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( split_pose, sym_aware_jump_id ) ); // JB 120516
-	translate->step_size( 1000.0 );
-	translate->apply( split_pose );
+	// JBB 120819
+	int sym_aware_jump_id = 0;
+	if ( sym_dof_names() != "" ) {
+		utility::vector1<std::string> sym_dof_name_list;
+		sym_dof_name_list = utility::string_split( sym_dof_names() , ',' );
+		for (Size i = 1; i <= sym_dof_name_list.size(); i++) {
+			sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( split_pose, sym_dof_name_list[i] );
+			protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( split_pose, sym_aware_jump_id ) );
+			translate->step_size( 1000.0 );
+			translate->apply( split_pose );
+		}
+	} else {
+		sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num( split_pose, jump() );
+		protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( split_pose, sym_aware_jump_id ) );
+		translate->step_size( 1000.0 );
+		translate->apply( split_pose );
+	}
+	//split_pose.dump_pdb("split_pose.pdb");
+	// JBB 120819
 
 	runtime_assert( !hydrophobic_ || !polar_ );
 	if( !hydrophobic_ && !polar_ ){
@@ -153,6 +184,7 @@ InterfaceSasaFilter::compute( core::pose::Pose const & pose ) const {
 		if( core::pose::symmetry::is_symmetric( pose )) {
 			core::conformation::symmetry::SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 			core::Real const buried_sasa( (unbound_sasa - bound_sasa) /(sym_info->subunits()));
+			interface_sasa_filter_tracer << "subunits: " << sym_info->subunits() << std::endl;
 			return( buried_sasa );
 		} else {
 			core::Real const buried_sasa(unbound_sasa - bound_sasa);
