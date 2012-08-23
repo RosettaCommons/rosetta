@@ -1915,6 +1915,7 @@ Options = Option_Group( '',
 		Option('residue_scores','Boolean', desc="output scores for all residues (avg over atoms)",default="false"),
       	Option('cav_shrink'    ,'Real'   , desc="Cavity ball radii reduced by this amount",default="0.7"),
       	Option('minimize'      ,'String' , desc="RosettaHoles params to use: decoy15, decoy25 or resl",default="decoy15"),
+      	Option('debug'      ,'Boolean' , desc="dump debug output",default="false"),
 	),
 
 	# packstat measure settings  -----------------------------------------------------------
