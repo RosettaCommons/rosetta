@@ -50,7 +50,9 @@
 #include <ObjexxFCL/format.hh>
 #include <core/kinematics/MoveMap.hh>
 
-
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/docking.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 
 #include <protocols/docking/DockTaskFactory.hh>
@@ -136,6 +138,8 @@ DockMCMProtocol::init()
 	moves::Mover::type( "DockMCMProtocol" );
 	filter_ = new DockingHighResFilter();
     movemap_reset_ = false;
+	num_of_first_cycle_=4;
+	num_of_second_cycle_=45;
 }
 
 // JQX: rewrite the apply function
@@ -217,7 +221,7 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 //	filter_->set_score_margin( 10.0 );
 //	if ( filter_->apply( pose ) )
 //	{
-		for ( Size i=1; i<=4; ++i ) {
+		for ( Size i=1; i<=num_of_first_cycle_; ++i ) {
 			dock_mcm_->apply( pose );
 			jd2::write_score_tracer( pose, "DockMCM_cycle_"+ObjexxFCL::fmt::I(1, i ) );
 		}
@@ -229,7 +233,7 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 
 //		if ( filter_->apply( pose ) )
 //		{
-			for ( Size i=1; i<=45; ++i ) {
+			for ( Size i=1; i<=num_of_second_cycle_; ++i ) {
 				dock_mcm_->apply( pose );
 				jd2::write_score_tracer( pose, "DockMCM_cycle_"+ObjexxFCL::fmt::I(1, i+4 ) );
 			}
@@ -255,6 +259,13 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 void DockMCMProtocol::set_move_map(core::kinematics::MoveMapOP movemap){
     movemap_reset_ = true;
     movemap_ = movemap;
+}
+
+void DockMCMProtocol::set_first_cycle(Size const & num){
+		    num_of_first_cycle_ = num;
+}
+void DockMCMProtocol::set_second_cycle(Size const & num){
+		    num_of_second_cycle_ = num;
 }
 
 core::scoring::ScoreFunctionCOP DockMCMProtocol::scorefxn_docking() const { 

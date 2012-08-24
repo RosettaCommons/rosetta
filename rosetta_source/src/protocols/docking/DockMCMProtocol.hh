@@ -89,6 +89,9 @@ public:
 	virtual std::string get_name() const;
     
   void set_move_map(core::kinematics::MoveMapOP movemap );
+  void set_second_cycle(Size const & num);
+	void set_first_cycle(Size const & num);
+
 	core::scoring::ScoreFunctionCOP scorefxn_docking() const;
 	core::scoring::ScoreFunctionCOP scorefxn_packing() const;
   friend std::ostream & operator<<(std::ostream& out, const DockMCMProtocol & dmp );
@@ -98,6 +101,8 @@ private:
 	DockMCMCycleOP dock_mcm_; //JQX: make it as a memmber
     bool movemap_reset_ ;
     core::kinematics::MoveMapOP movemap_;
+		Size num_of_first_cycle_;
+	  Size num_of_second_cycle_;
 };
 
 } // docking
