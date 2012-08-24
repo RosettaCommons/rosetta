@@ -796,6 +796,8 @@ init_random_number_generators(){
 	std::cerr << "Initializing random generators... ok " << std::endl;std::cerr.flush();
 #endif
 	init_random_generators(real_seed, _RND_NormalRun_, option[ run::rng ]);
+
+	srand( time(NULL) );  // seed default random generator, this will expose all code that use non approved random methods
 }
 
 /// @brief Initialize random generator systems (and send debug io to tracer with seed/mode info).
