@@ -23,6 +23,7 @@ sources = {
 		"DnaInterfaceMinMover",
 		"DnaInterfaceMultiStateDesign",
 		"DnaInterfacePacker",
+		"DNAParameters",
 		"PDBOutput",
 		"RestrictDesignToProteinDNAInterface",
 		"RotamerDNAHBondFilter",

@@ -23,6 +23,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Atom.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -203,6 +204,21 @@ void
 add_constraints_from_file(
 	core::pose::Pose & pose
 );
+
+core::kinematics::FoldTree
+make_base_pair_aware_fold_tree(
+	core::pose::Pose const & pose
+);
+
+bool
+not_already_connected(
+	core::pose::Pose const & pose,
+	core::Size const num_jumps,
+	char const this_chain,
+	char const other_chain,
+	ObjexxFCL::FArray2D_int & jump_pairs
+);
+
 
 } // namespace dna
 } // namespace protocols

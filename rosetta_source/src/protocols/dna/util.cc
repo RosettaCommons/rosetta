@@ -13,6 +13,7 @@
 #include <protocols/dna/util.hh>
 #include <protocols/dna/DnaChains.hh>
 #include <protocols/dna/DnaDesignDef.hh>
+#include <protocols/dna/DNAParameters.hh>
 
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
@@ -800,6 +801,276 @@ add_constraints_from_file(
 
 	pose.constraint_set( cst_set );
 }
+
+kinematics::FoldTree
+make_base_pair_aware_fold_tree ( pose::Pose const & pose )
+{
+
+	Size const nres( pose.total_residue() );
+
+	pose::PDBInfoCOP pdb_data( pose.pdb_info() );
+
+	// Identify DNA duplexed regions
+	protocols::dna::DNAParameters dna_info( pose );
+//	dna_info.calculate( pose );
+
+	Size num_chains( 1 );
+	utility::vector1< Size > chain_start;
+	utility::vector1< Size > chain_end;
+	utility::vector1< Size > chain_type;
+
+	chain_start.push_back( 1 );
+	for( Size resid = 1 ; resid < nres ; ++resid ) {
+		if( pdb_data->chain( resid ) != pdb_data->chain( resid + 1 ) ){
+			chain_end.push_back( resid );
+			chain_start.push_back( resid + 1 );
+			num_chains++;
+		}
+	}
+	chain_end.push_back( nres );
+
+	// Allocate the FArrays to call FoldTree::tree_from_cuts_and_jumps
+	Size num_cuts( num_chains - 1 );
+	ObjexxFCL::FArray1D_int cut_positions( num_cuts, 0 );
+	ObjexxFCL::FArray2D_int jump_pairs( 2, num_cuts, 0 );
+	Size jump_pair_count( 1 );
+
+	// We can fill the cut info now
+	for( Size cut_num = 1 ; cut_num < chain_end.size() ; ++cut_num ){
+		cut_positions( cut_num ) = chain_end[ cut_num ];
+	}
+
+	Size const amino( 1 );
+	Size const bped_dna( 2 );
+	Size const non_bped_dna( 3 );
+
+	utility::vector1< Size > protein_root( num_chains, 0 );
+	utility::vector1< Size > closest_base( num_chains, 0 );
+
+	// Analyze each chain
+	for( Size this_chain = 1 ; this_chain <= num_chains ; ++this_chain ) {
+		TR << "Working on chain " << this_chain << std::endl;
+
+		// Check for amino acid chain
+		if( pose.residue( chain_start[ this_chain ] ).is_protein() ) {
+			chain_type.push_back( amino );
+			TR << "Found 1 initial segments for chain " << this_chain << std::endl;
+			TR << "Chain " << this_chain << " segment 1 start res " << chain_start[ this_chain ] <<
+										" end res " << chain_end[ this_chain ] << " of type 1" << std::endl;
+
+
+			// Find the DNA base with the closest C1' atom to some Calpha in this protein
+			Real best_dist( 9999.0 );
+			for( Size prot_res = chain_start[ this_chain ] ; prot_res <= chain_end[ this_chain ] ; ++prot_res ) {
+				for( Size dna_res = 1 ; dna_res <= nres ; ++dna_res ) {
+					if( !pose.residue( dna_res ).is_DNA() ) continue;
+					Real check_dist = pose.residue( prot_res ).xyz( "CA" ).distance_squared( pose.residue( dna_res ).xyz( "C1*" ) );
+					if( check_dist < best_dist ) {
+						best_dist = check_dist;
+						protein_root[ this_chain ] = prot_res;
+						closest_base[ this_chain ] = dna_res;
+					}
+				}
+			}
+
+			TR << "Protein closest approach is res " << protein_root[ this_chain ]<< " with base " << closest_base[ this_chain ] << " with distance " << std::sqrt( best_dist ) << std::endl;
+
+			// Note this pair as a jump
+			if( protein_root[this_chain] < closest_base[this_chain] ) {
+				jump_pairs( 1, jump_pair_count ) = protein_root[this_chain];
+				jump_pairs( 2, jump_pair_count ) = closest_base[this_chain];
+			} else {
+				jump_pairs( 2, jump_pair_count ) = protein_root[this_chain];
+				jump_pairs( 1, jump_pair_count ) = closest_base[this_chain];
+			}
+			jump_pair_count++;
+
+			continue;
+		}
+
+		// Bail if it's something other than protein or DNA
+		if( !pose.residue( chain_start[ this_chain ] ).is_DNA() ) {
+			std::cerr << "Bad call to make_basepair_aware_fold_tree() with non-protein, non-DNA type" << std::endl;
+			utility_exit_with_message( "make_base_aware_fold_tree() takes only protein, DNA!" );
+		}
+
+		chain_type.push_back( bped_dna );
+
+		// Break up this DNA into segments
+
+		Size num_segments( 1 );
+		utility::vector1< Size > segment_start;
+		utility::vector1< Size > segment_end;
+		utility::vector1< Size > segment_type;
+
+		segment_start.push_back( chain_start[ this_chain ] );
+		if( dna_info.find_partner( chain_start[ this_chain ] ) != 0 ) {
+			segment_type.push_back( bped_dna );
+		} else {
+			segment_type.push_back( non_bped_dna );
+		}
+		for( Size resid = chain_start[this_chain]  ; resid < chain_end[ this_chain ] ; ++resid ) {
+			// Check for difference
+			bool this_bped( dna_info.find_partner( resid ) != 0 );
+			bool next_bped( dna_info.find_partner( resid + 1 ) != 0 );
+			// Switch from base paired to not base paired
+			if( this_bped && !next_bped ) { // Switch from base paired to not base paired
+				segment_end.push_back( resid );
+				segment_start.push_back( resid + 1 );
+				segment_type.push_back( non_bped_dna );
+			} else if ( !this_bped && next_bped ) { // Switch from not base paired to base paired
+				segment_end.push_back( resid );
+				segment_start.push_back( resid + 1 );
+				segment_type.push_back( bped_dna );
+			} else if (!this_bped && !next_bped ) { // No switch - do nothing
+				continue;
+			} else if ( pdb_data->chain( dna_info.find_partner( resid ) ) !=
+									pdb_data->chain( dna_info.find_partner( resid + 1 ) ) ) { // Both base-paired, but to different strands
+				segment_end.push_back( resid );
+				segment_start.push_back( resid + 1 );
+				segment_type.push_back( bped_dna );
+			}
+		}
+		segment_end.push_back( chain_end[ this_chain ] );
+
+		num_segments = segment_start.size();
+
+		// Let's see what we have
+		TR << "Found " << num_segments << " initial segments for chain " << this_chain << std::endl;
+		for( Size this_segment = 1 ; this_segment <= num_segments ; ++this_segment ) {
+			TR << "Chain " << this_chain << " segment " << this_segment << " start res " << segment_start[ this_segment ] <<
+										" end res " << segment_end[ this_segment ] << " of type " << segment_type[ this_segment ] << std::endl;
+		}
+
+
+		// Record mid-points of base paired segments
+		utility::vector1< Size > bp_middle( num_segments, 0 );
+
+		for( Size this_segment = 1 ; this_segment <= num_segments ; ++this_segment ) {
+			if( segment_type[ this_segment ] == bped_dna ) {
+				bp_middle[ this_segment ] = ( segment_start[ this_segment ] + segment_end[ this_segment ] ) / 2;
+			}
+		}
+
+		// Merge non-base paired segments into base paired segments if possible
+
+		Size num_processed( num_segments );
+
+		if( num_segments  > 1 ) {
+			for( Size this_segment = 1 ; this_segment <= num_segments ; ++this_segment ) {
+				if( segment_type[ this_segment ] == non_bped_dna  && num_segments > 1 ) {
+					num_processed--;
+					if( this_segment == 1 ) { // Just merge with the next segment
+						segment_start[ this_segment + 1 ] = segment_start[ this_segment ];
+					} else if( this_segment == num_segments ) { // Just merge with the previous segment
+						segment_end[ this_segment - 1 ] = segment_end[ this_segment ];
+					} else {  // Must be between two base paired segments - split evenly
+						// Handle single residue segment
+						if( segment_start[ this_segment ] == segment_end[ this_segment ] ) {
+							// Just give it to the previous
+							segment_end[ this_segment - 1 ] = segment_end[ this_segment ];
+						} else {
+							// Divide in half
+							Size split_pos(  ( segment_start[ this_segment ] + segment_end[ this_segment ] ) / 2 );
+							segment_end[ this_segment - 1 ] = split_pos;
+							segment_start[ this_segment + 1 ] = split_pos + 1;
+						}
+					}
+				}
+			}
+		}
+
+		// Need to handle the case of a single segment chain of non-base paired DNA - it needs a jump somewhere
+		if( num_segments == 1 && chain_type[ this_chain ] == non_bped_dna ) {
+			// Find the amino acid with the closest Calpha atom to some C1' atom this chain
+			Real best_dist( 9999.0 );
+			for( Size dna_res = chain_start[ this_chain ] ; dna_res <= chain_end[ this_chain ] ; ++dna_res ) {
+				for( Size prot_res = 1 ; prot_res <= nres ; ++prot_res ) {
+					if( !pose.residue( prot_res ).is_protein() ) continue;
+					Real check_dist = pose.residue( prot_res ).xyz( "CA" ).distance_squared( pose.residue( dna_res ).xyz( "C1*" ) );
+					if( check_dist < best_dist ) {
+						best_dist = check_dist;
+						protein_root[ this_chain ] = prot_res;
+						closest_base[ this_chain ] = dna_res;
+					}
+				}
+			}
+
+			TR << "Unpaired DNA closest approach is res " << closest_base[ this_chain ]<< " with amino acid " << protein_root[ this_chain ] << " with distance " << std::sqrt( best_dist ) << std::endl;
+
+			// Note this pair as a jump
+			if( protein_root[this_chain] < closest_base[this_chain] ) {
+				jump_pairs( 1, jump_pair_count ) = protein_root[this_chain];
+				jump_pairs( 2, jump_pair_count ) = closest_base[this_chain];
+			} else {
+				jump_pairs( 2, jump_pair_count ) = protein_root[this_chain];
+				jump_pairs( 1, jump_pair_count ) = closest_base[this_chain];
+			}
+			jump_pair_count++;
+		}
+
+
+		// Let's see what we have
+		TR << "Found " << num_processed << " final segments for chain " << this_chain << std::endl;
+		Size accum_count( 0 );
+		for( Size this_segment = 1 ; this_segment <= num_segments ; ++this_segment ) {
+			if( segment_type[ this_segment ] == bped_dna ) {
+				accum_count++;
+				TR << "Chain " << this_chain << " segment " << accum_count << " start res " << segment_start[ this_segment ] <<
+										" end res " << segment_end[ this_segment ] << " of type " << segment_type[ this_segment ] << std::endl;
+
+				// retrieve the mid-point base pair and its partner
+				Size mid_partner = dna_info.find_partner( bp_middle[ this_segment ] );
+
+				// Store the jump info if this chain is the lower number (to avoid adding twice)
+				// Also check to make sure these chains haven't already been connected.  This
+				// can happen in two strands are base-paired at the ends but have a non-bp-ed
+				// bubble in between.
+				if( ( bp_middle[ this_segment ] < mid_partner ) &&
+							not_already_connected( pose, jump_pair_count - 1, pose.pdb_info()->chain( bp_middle[ this_segment] ), pose.pdb_info()->chain( mid_partner ), jump_pairs ) ) {
+					TR << "Making jump between " << bp_middle[ this_segment ] << " and " << mid_partner << std::endl;
+					jump_pairs( 1, jump_pair_count ) = bp_middle[ this_segment ];
+					jump_pairs( 2, jump_pair_count ) = mid_partner;
+					jump_pair_count++;
+				}
+			}
+		}
+	}
+
+	kinematics::FoldTree ft( nres );
+
+	ft.tree_from_jumps_and_cuts( nres, num_cuts, jump_pairs, cut_positions, 1 );
+
+	return ft;
+}
+
+bool
+not_already_connected(
+	pose::Pose const & pose,
+	Size const num_jumps,
+	char const this_chain,
+	char const other_chain,
+	ObjexxFCL::FArray2D_int & jump_pairs
+)
+{
+
+	for( Size i = 1 ; i <= num_jumps ; ++i ) {
+
+		// Get chain ids for residues involved in jumps
+		char const jump_chain1( pose.pdb_info()->chain( jump_pairs( 1, i ) ) );
+		char const jump_chain2( pose.pdb_info()->chain( jump_pairs( 2, i ) ) );
+
+		// Check versus pre-existing jump ( both ways )
+
+		if( ( jump_chain1 == this_chain && jump_chain2 == other_chain ) ||
+				( jump_chain2 == this_chain && jump_chain1 == other_chain ) ) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 
 } // namespace dna
 } // namespace protocols

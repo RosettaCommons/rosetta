@@ -72,6 +72,9 @@ public:
 	);
 
 	void
+	determine_interface( core::pose::Pose const & pose );
+
+	void
 	determine_protein_interface(
 		core::pose::Pose const & pose,
 		utility::vector1< core::Size > const & protein_positions,
