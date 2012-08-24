@@ -177,6 +177,10 @@ Splice::load_from_checkpoint()
   {
   	string line;
 		getline( data, line );
+		if( line.length() == 0 ){
+			TR<<"Checkpointing file empty or corrupted. Not loading."<<std::endl;
+			return;
+		}
   	istringstream line_stream( line );
 		dbase_subset_.clear();
 		while( !line_stream.eof() ){
