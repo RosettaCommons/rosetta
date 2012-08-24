@@ -8,6 +8,17 @@
 # (c) Questions about this can be addressed to University of Washington UW
 # (c) TechTransfer, email: license@u.washington.edu.
 """
+!!!!!
+please move the contents of this file to be the __init__.py of the toolbox/
+directory
+this will allow from toolbox import *
+ONLY essential, tested, PyRosetta exclusive methods should live here!!!
+remember, the rest of the python scripts in "toolbox/" are NOT supported,
+just provided (ex. environment setup scripts etc.)
+
+thanks!
+!!!!!
+
 Brief:   A toolbox of exposed methods for use in PyRosetta.
 
 Remarks: These methods are useful in PyRosetta and are further intended to
