@@ -27,10 +27,7 @@ namespace fourier {
 
 ///@brief 1D fft c->c double
 void fft(ObjexxFCL::FArray1D< std::complex<double> > &X , ObjexxFCL::FArray1D< std::complex<double> > &fX) {
-	// we declare this static so repeated FFTs _at the same dimension_ do not require reinitialization
-	//   this may lead to some wasted memory but the time savings may be significant, since
-	//   in general we'll be taking many ffts a the same size in a single run
-	static kiss_fft_state fft_params;
+	kiss_fft_state fft_params;
 	fft_params.resize( X.I1().size(), 0 );
 	fX.dimension(X.I1().size());  // resizes "on demand"
 	kiss_fft(&fft_params, &X[0], &fX[0] );
@@ -38,7 +35,7 @@ void fft(ObjexxFCL::FArray1D< std::complex<double> > &X , ObjexxFCL::FArray1D< s
 
 ///@brief 1D inverse fft c->c double
 void ifft(ObjexxFCL::FArray1D< std::complex<double> > &fX , ObjexxFCL::FArray1D< std::complex<double> > &X) {
-	static kiss_fft_state ifft_params;
+	kiss_fft_state ifft_params;
 	ifft_params.resize( fX.I1().size(), 1 );
 	X.dimension(fX.I1().size());
 	kiss_fft(&ifft_params, &fX[0], &X[0] );
@@ -89,10 +86,7 @@ void ifft(ObjexxFCL::FArray1D< std::complex<double> > &fX , ObjexxFCL::FArray1D<
 
 ///@brief 2D fft c->c double
 void fft2(ObjexxFCL::FArray2D< std::complex<double> > &X , ObjexxFCL::FArray2D< std::complex<double> > &fX) {
-	// we declare this static so repeated FFTs _at the same dimension_ do not require reinitialization
-	//   this may lead to some wasted memory but the time savings may be significant, since
-	//   -- in general -- we'll be taking many ffts a the same size in a single run
-	static kiss_fftnd_state fft_params;
+	kiss_fftnd_state fft_params;
 	std::vector< int > dims(2);
 	dims[0]=X.I2().size(); dims[1]=X.I1().size();  /// FArray dimensions in reverse order
 	fft_params.resize( dims, 0 );
@@ -102,7 +96,7 @@ void fft2(ObjexxFCL::FArray2D< std::complex<double> > &X , ObjexxFCL::FArray2D< 
 
 ///@brief 2D inverse fft c->c double
 void ifft2(ObjexxFCL::FArray2D< std::complex<double> > &fX , ObjexxFCL::FArray2D< std::complex<double> > &X) {
-	static kiss_fftnd_state ifft_params;
+	kiss_fftnd_state ifft_params;
 	std::vector< int > dims(2);
 	dims[0]=fX.I2().size(); dims[1]=fX.I1().size();  /// FArray dimensions in reverse order
 	ifft_params.resize( dims, 1 );
@@ -156,10 +150,7 @@ void ifft2(ObjexxFCL::FArray2D< std::complex<double> > &fX , ObjexxFCL::FArray2D
 
 ///@brief 3D fft c->c double
 void fft3(ObjexxFCL::FArray3D< std::complex<double> > &X , ObjexxFCL::FArray3D< std::complex<double> > &fX) {
-	// we declare this static so repeated FFTs _at the same dimension_ do not require reinitialization
-	//   this may lead to some wasted memory but the time savings may be significant, since
-	//   -- in general -- we'll be taking many ffts a the same size in a single run
-	static kiss_fftnd_state fft_params;
+	kiss_fftnd_state fft_params;
 	std::vector< int > dims(3);
 	dims[0]=X.I3().size(); dims[1]=X.I2().size(); dims[2]=X.I1().size();  /// FArray dimensions in reverse order
 	fft_params.resize( dims, 0 );
@@ -169,7 +160,7 @@ void fft3(ObjexxFCL::FArray3D< std::complex<double> > &X , ObjexxFCL::FArray3D< 
 
 ///@brief 3D inverse fft c->c double
 void ifft3(ObjexxFCL::FArray3D< std::complex<double> > &fX , ObjexxFCL::FArray3D< std::complex<double> > &X) {
-	static kiss_fftnd_state ifft_params;
+	kiss_fftnd_state ifft_params;
 	std::vector< int > dims(3);
 	dims[0]=fX.I3().size(); dims[1]=fX.I2().size(); dims[2]=fX.I1().size();  /// FArray dimensions in reverse order
 	ifft_params.resize( dims, 1 );
