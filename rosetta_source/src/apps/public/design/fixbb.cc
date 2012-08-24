@@ -31,6 +31,7 @@
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/TaskAwareMinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
@@ -135,16 +136,28 @@ main( int argc, char * argv [] )
 
 	//If sidechain minimization is requested, include that too
 	if ( option[ minimize_sidechains ] ) {
-		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover(
+            core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+            protocols::simple_moves::MinMoverOP min_mover;
+            if (option [ symmetry::symmetry_definition ].user() ){
+                min_mover = new protocols::simple_moves::symmetry::SymMinMover(
 			movemap,
 			score_fxn,
 			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
 			0.01,
 			true
 		);
-		protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover = new protocols::simple_moves::TaskAwareMinMover(min_mover, main_task_factory);
-		seq_mover->add_mover( TAmin_mover );
+            }
+            else {
+		min_mover = new protocols::simple_moves::MinMover(
+			movemap,
+			score_fxn,
+			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
+			0.01,
+			true
+		);
+            }
+	    protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover = new protocols::simple_moves::TaskAwareMinMover(min_mover, main_task_factory);
+            seq_mover->add_mover( TAmin_mover );
 	} // end optional side chain minimization
 
 	protocols::jd2::JobDistributor::get_instance()->go(seq_mover);
