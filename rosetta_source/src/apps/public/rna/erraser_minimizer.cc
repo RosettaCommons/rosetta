@@ -14,6 +14,7 @@
 /// @brief
 
 #include <protocols/rna/RNA_ProtocolUtil.hh>
+#include <protocols/rna/RNA_IdealCoord.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 // libRosetta headers
 #include <core/types.hh>
@@ -53,7 +54,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/rna/RNA_TorsionPotential.hh>
-#include <core/scoring/rna/RNA_IdealCoord.hh>
 #include <core/scoring/rna/RNA_Util.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -189,7 +189,7 @@ apply_ideal_coordinates ( pose::Pose const & pose, pose::Pose & pose_reference )
 	bool const is_use_phenix_geo = option[ basic::options::OptionKeys::rna::corrected_geo ];
 	utility::vector1 <Size> pucker_conformation (pose_reference.total_residue(), 0);
 		
-	core::scoring::rna::RNA_IdealCoord ideal_coord;
+	protocols::rna::RNA_IdealCoord ideal_coord;
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
 		if ( pose.residue ( n ).aa() == core::chemical::aa_vrt ) continue; //FCC
 
@@ -613,6 +613,7 @@ pyrimidine_flip_trial( pose::Pose & pose,
 	Pose screen_pose = pose;
 	Real orig_score, new_score;
 	orig_score = (*scorefxn) (pose);
+	new_score = (*scorefxn) (screen_pose);
 	std::cout << "Start pyrimidine_flip_trial. Filp residue :";		
 	for (Size i = 1; i <= total_res; ++i) {
 		if ( check_num_in_vector( i, fixed_res_list ) ) continue;

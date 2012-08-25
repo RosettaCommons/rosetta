@@ -6,12 +6,12 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-/// @file   core/scoring/rna/RNA_IdealCoord.cc
+/// @file   protocols/rna/RNA_IdealCoord.cc
 /// @brief  Apply ideal RNA geometry to a residue or a pose
 /// @author  Fang-Chieh Chou
 
 // Unit headers
-#include <core/scoring/rna/RNA_IdealCoord.hh>
+#include <protocols/rna/RNA_IdealCoord.hh>
 #include <utility/vector1.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -34,9 +34,9 @@
 
 using namespace core;
 using namespace core::pose;
+using namespace core::scoring::rna;
 
-namespace core {
-namespace scoring {
+namespace protocols {
 namespace rna {
 
 //////////////////////////////////////////////////////
@@ -165,6 +165,5 @@ void RNA_IdealCoord::apply( Pose & pose, utility::vector1 < Size > const & pucke
 }
 /////////////////////////////////////////////////
 
-}
 }
 }

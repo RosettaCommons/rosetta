@@ -171,6 +171,36 @@ rotate_into_nucleobase_frame( core::pose::Pose & pose ){
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+//Measure the centroid distance between two bases
+Real
+centroid_dist( core::pose::Pose & pose ){
+
+	using namespace core::conformation;
+	using namespace core::scoring::rna;
+	using namespace core::id;
+
+
+	bool const sample_another_adenosine_ = option[ sample_another_adenosine ]();
+	Residue const & rsd1 = pose.residue( 1 );
+	Residue const & rsd2 = sample_another_adenosine_ ? pose.residue( 4 ) : pose.residue( 3 );
+
+	Vector centroid1, centroid2;
+	if ( rsd1.is_RNA() ) {
+		centroid1 = get_rna_base_centroid( rsd1, false /*verbose*/ );
+	} else {
+		centroid1 = rsd1.nbr_atom_xyz(); //Just use the nbr atom if not RNA
+	}
+
+	if ( rsd2.is_RNA() ) {
+		centroid2 = get_rna_base_centroid( rsd2, false /*verbose*/ );
+	} else {
+		centroid2 = rsd2.nbr_atom_xyz(); //Just use the nbr atom if not RNA
+	}
+	
+	return (centroid1 - centroid2).length();
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // This is imported from protocols/swa/RigidBodySampler.cco
@@ -373,7 +403,6 @@ adenine_probe_score_test()
 
 	pose.append_residue_by_jump ( *new_res ,  pose.total_residue() );
 
-	pose.dump_pdb( "START.pdb" );
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 800, 800 );
 
 
@@ -402,6 +431,7 @@ adenine_probe_score_test()
 			pose.set_xyz( AtomID( i, pos2 ),  rsd_ref.xyz( i_ref ) );
 		}
 	}
+	pose.dump_pdb( "START.pdb" );
 
 
 	//////////////////////////////////////////////////////////////////
@@ -465,8 +495,7 @@ adenine_probe_score_test()
 		Real const z = i * translation_increment;
 		jump.set_translation( Vector( x, y, z ) ) ;
 		pose.set_jump( probe_jump_num, jump );
-		out << z << ' ' << do_scoring( pose, scorefxn, sample_water_, probe_jump_num );
-		out << std::endl;
+		out << z << ' ' << centroid_dist( pose )  << ' ' << do_scoring( pose, scorefxn, sample_water_, probe_jump_num ) << std::endl;
 	}
 	out.close();
 

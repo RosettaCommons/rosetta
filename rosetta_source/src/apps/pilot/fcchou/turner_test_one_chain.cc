@@ -60,6 +60,7 @@
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/swa/StepWiseUtil.hh>
+#include <protocols/rna/RNA_SuiteAssign.hh>
 #include <protocols/swa/StepWiseClusterer.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <core/init.hh>
@@ -106,13 +107,13 @@ using utility::tools::make_vector1;
 
 OPT_KEY( String, force_field )
 OPT_KEY( String, seq )
-OPT_KEY( String, out_decoy )
 OPT_KEY( String, algorithm )
-OPT_KEY( Real, out_decoy_score_cutoff )
 OPT_KEY( Real, score_cutoff )
 OPT_KEY( Real, sampling_stddev )
 OPT_KEY( Real, kT )
 OPT_KEY( Integer, n_sample )
+OPT_KEY( Boolean, output_binary )
+OPT_KEY( String, output_binary_prefix )
 OPT_KEY( Boolean, check_clash )
 OPT_KEY( Boolean, o2star_trials )
 OPT_KEY( Boolean, sample_3_prime_end )
@@ -125,6 +126,55 @@ OPT_KEY( Real, exchange_rate )
 
 static const scoring::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
 static numeric::random::RandomGenerator RG(245075);  // <- Magic number, do not change it!
+
+
+//////////Binary IO////////////////
+class RNA_scores {
+	public :
+		Size counts;
+		float total, fa_stack, hbond_sc, hbond_intra, rna_torsion;
+		RNA_scores();
+		RNA_scores(Size, float, float, float, float, float);
+};
+
+RNA_scores::RNA_scores () {
+	counts = 0;
+	total = 0;
+	fa_stack = 0;
+	hbond_sc = 0;
+	hbond_intra = 0;
+	rna_torsion = 0;
+}
+
+RNA_scores::RNA_scores (Size a, float b, float c, float d, float e, float g) {
+	counts = a;
+	total = b;
+	fa_stack = c;
+	hbond_sc = d;
+	hbond_intra = e;
+	rna_torsion = g;
+}
+
+void 
+write_scores( utility::vector1 < RNA_scores > const & scores, std::string const & out_name) {
+	std::ofstream out_file (out_name.c_str(), std::ios::out | std::ios::binary);
+	Size const vector_size = scores.size();
+	out_file.write( (char*) & vector_size, sizeof(vector_size) );
+	out_file.write( (char*) & scores[1], sizeof(RNA_scores) * vector_size );
+	out_file.close();
+}
+
+void
+read_scores( utility::vector1 < RNA_scores > & scores, std::string const & in_name) {
+	std::ifstream in_file (in_name.c_str(), std::ios::in | std::ios::binary);
+	Size vector_size = 0;
+	in_file.read( (char*) & vector_size, sizeof(vector_size) );
+	scores.clear();
+	scores.resize(vector_size);
+	in_file.read( (char*) & scores[1], sizeof(RNA_scores) * vector_size );
+	in_file.close();
+}
+
 //////////////////////////////////
 utility::vector1< Real >
 get_suite_ideal_A_form_torsions(){
@@ -352,7 +402,7 @@ sample_near_suite_torsion(utility::vector1< Real > & torsion_list, Real const st
 	if (RG.uniform() < 0.2) {
 		torsion_list[6]  = (RG.uniform() < 0.5) ? delta_north : delta_south;
 	}
-	for (Size i = 0; i <= torsion_list.size(); ++i) {
+	for (Size i = 1; i <= torsion_list.size(); ++i) {
 		if (torsion_list[i] > 360) {
 			torsion_list[i] -= 360;
 		} else if (torsion_list[i] <=  0) {
@@ -434,14 +484,12 @@ one_chain_MC_sampling(){
 	scorefxn -> show(pose);
 
 	std::string const outfile = option[ out::file::o ] ();
-	std::string const outfile_decoy = option[out_decoy] ();
-	Real const decoy_cutoff = option[ out_decoy_score_cutoff ]();
+	bool const is_binary_out = option[ output_binary ] ();
 	Size const num_cycle = option[ n_sample ]();
 	bool const is_check_clash = option[ check_clash ] ();
 	bool const is_add_virt_res = option[ add_virt_res ] ();
 	bool const output_rmsd_vs_energy = option[ rmsd_vs_energy ] ();
 	Real const kT_sys = option[ kT ] ();
-	bool const is_saving_decoy = !(outfile_decoy == "");
 	Size first_res = 0;
 	if (is_add_virt_res) {
 		first_res = 2;
@@ -472,7 +520,7 @@ one_chain_MC_sampling(){
 
 	Real const rep_score_cutoff = 100;
 	Real const max_score =  500.005;
-	Real const min_score = -90.005;
+	Real const min_score = -200.005;
 	Real const bin_size  =   0.01;
 	for (Real i = min_score; i <= max_score; i += bin_size) {
 		hist.push_back(0);
@@ -490,17 +538,24 @@ one_chain_MC_sampling(){
 		suite_torsion_new.push_back( A_form_torsion_set );
 	}
 	Real score = (*scorefxn)( pose );
-	pose.dump_pdb("test1.pdb");
+
+	//Initialize binary score saving
+	utility::vector1 <RNA_scores> scores_list;
+	ScoreFunctionOP fa_stack_scorefxn = new ScoreFunction;
+	ScoreFunctionOP hbond_sc_scorefxn = new ScoreFunction;
+	ScoreFunctionOP hbond_intra_scorefxn = new ScoreFunction;
+	ScoreFunctionOP rna_torsion_scorefxn = new ScoreFunction;
+	fa_stack_scorefxn->set_weight( fa_stack, 1 );
+	hbond_sc_scorefxn->set_weight( hbond_sc, 1 );
+	hbond_intra_scorefxn->set_weight( hbond_intra, 1 );
+	rna_torsion_scorefxn->set_weight( rna_torsion, 1 );
+
+	RNA_scores current_scores ( 1, score, (fa_stack_scorefxn*)(pose), (hbond_sc_scorefxn*)(pose), 
+	(hbond_intra_scorefxn*)(pose), (rna_torsion_scorefxn*)(pose) );
+
 
 	bool const is_kT_inf = (kT_sys > 999);
 	Size n_accpet = 0;
-
-	ozstream output_decoy, output_rmsd;
-	output_rmsd.open("rmsd_vs_energy.out");
-
-	if (is_saving_decoy) {
-		output_decoy.open(outfile_decoy);
-	}
 
 	std::cout << "Start MC sampling" << std::endl;
 	for (Size count = 1; count <= num_cycle; count++) {
@@ -537,20 +592,13 @@ one_chain_MC_sampling(){
 			nucleoside_torsion = nucleoside_torsion_new;
 			suite_torsion = suite_torsion_new;
 			++n_accpet;
-			if (is_saving_decoy && score < decoy_cutoff) {
-				output_decoy << score << ' ' << nucleoside_torsion[1] << ' ' << nucleoside_torsion[2];
-				for (Size i = first_res; i <= n_residue - 1; ++i) {
-					for (Size j = 1; j <= suite_torsion[i].size(); ++j) {
-						output_decoy << ' ' << suite_torsion[i][j];
-					}
-				}
-				output_decoy << std::endl;
-			}
 
-			if (output_rmsd_vs_energy && score < decoy_cutoff) {
-				output_rmsd << score << ' ' << rmsd_compute(pose, ideal_pose) << std::endl;
+			if (output_binary) {
+				scores_list.push_back(current_scores);
+				current_scores = RNA_scores ( 1, score, (fa_stack_scorefxn*)(pose), (hbond_sc_scorefxn*)(pose), 
+					(hbond_intra_scorefxn*)(pose), (rna_torsion_scorefxn*)(pose) );
 			}
-
+	
 			if (score < lowest_score) {
 				lowest_score = score; 
 				lowest_pose = pose;
@@ -558,6 +606,7 @@ one_chain_MC_sampling(){
 		} else {
 			nucleoside_torsion_new = nucleoside_torsion;
 			suite_torsion_new = suite_torsion;
+			if (output_binary) ++current_scores.counts;
 		}
 
 		Real score_saved = score;
@@ -600,6 +649,14 @@ one_chain_MC_sampling(){
 		out << score << " " << hist[i] << std::endl;
 	}
 	out.close();
+
+	if (output_binary) {
+		std::ostringstream oss;
+		std::string const binary_out_prefix = option[ output_binary_prefix ] ();
+		oss << binary_out_prefix << '_' << kT_sys << ".out";
+		write_scores(scores_list, oss.str() );
+	}
+
 }
 
 //////////////////////////////////
@@ -636,7 +693,6 @@ one_chain_ST_MC () {
 	scorefxn -> show(pose);
 
 	std::string const outfile = option[ out::file::o ] ();
-	Real const decoy_cutoff = option[ out_decoy_score_cutoff ]();
 	Size const num_cycle = option[ n_sample ]();
 	bool const is_check_clash = option[ check_clash ] ();
 	bool const is_add_virt_res = option[ add_virt_res ] ();
@@ -747,9 +803,6 @@ one_chain_ST_MC () {
 			nucleoside_torsion = nucleoside_torsion_new;
 			suite_torsion = suite_torsion_new;
 			++n_accpet;
-			if (output_rmsd_vs_energy && score < decoy_cutoff) {
-				output_rmsd << score << ' ' << rmsd_compute(pose, ideal_pose) << std::endl;
-			}
 
 			if (score < lowest_score) {
 				lowest_score = score; 
@@ -825,6 +878,7 @@ one_chain_ST_MC () {
 
 
 //////////////////////////////////
+/*
 void
 one_chain_SWA_cluster(){
 	using namespace chemical;
@@ -880,14 +934,11 @@ one_chain_SWA_cluster(){
 	scorefxn -> show(pose);
 
 	std::string const outfile = option[ out::file::o ] ();
-	std::string const outfile_decoy = option[out_decoy] ();
-	Real const decoy_cutoff = option[ out_decoy_score_cutoff ]();
 	Size const num_cycle = option[ n_sample ]();
 	bool const is_check_clash = option[ check_clash ] ();
 	bool const is_add_virt_res = option[ add_virt_res ] ();
 	bool const output_rmsd_vs_energy = option[ rmsd_vs_energy ] ();
 	Real const kT_sys = option[ kT ] ();
-	bool const is_saving_decoy = !(outfile_decoy == "");
 	Size first_res = 0;
 	if (is_add_virt_res) {
 		first_res = 2;
@@ -941,13 +992,6 @@ one_chain_SWA_cluster(){
 	bool const is_kT_inf = (kT_sys > 999);
 	Size n_accpet = 0;
 
-	ozstream output_decoy, output_rmsd;
-	output_rmsd.open("rmsd_vs_energy.out");
-
-	if (is_saving_decoy) {
-		output_decoy.open(outfile_decoy);
-	}
-
 	std::cout << "Start MC sampling" << std::endl;
 	for (Size count = 1; count <= num_cycle; count++) {
 
@@ -984,9 +1028,6 @@ one_chain_SWA_cluster(){
 			suite_torsion = suite_torsion_new;
 			++n_accpet;
 
-			if (output_rmsd_vs_energy && score < decoy_cutoff) {
-				output_rmsd << score << ' ' << rmsd_compute(pose, ideal_pose) << std::endl;
-			}
 
 			if (score < lowest_score) {
 				lowest_score = score; 
@@ -1081,18 +1122,463 @@ one_chain_SWA_cluster(){
 	out_SWA.close();
 
 }
+*/
+/////////////////////////////////////
+//Convert torsion id into torsions
+utility::vector1< Real > id2torsion(Size torsion_id) {
+	utility::vector1< Real > torsion_list;
+	//Ordering: epsilon, zeta, alpha, beta, gamma, chi1, chi2, delta1, delta2
+	static utility::vector1< Real > const  A_form_torsion_set = get_suite_ideal_A_form_torsions();
+	static const Real delta_north = rna_fitted_torsion_info.ideal_delta_north();
+	static const Real delta_south = rna_fitted_torsion_info.ideal_delta_south();
+	Size remainder; 
+	Real angle;
+	for (Size i = 1; i <= 7; ++i) {
+		remainder = torsion_id % 12;
+		torsion_id = torsion_id / 12;
+		if (i <= 5) {
+			angle = A_form_torsion_set[i] + remainder * 30;
+		} else {
+			angle = A_form_torsion_set[7] + remainder * 30;
+		}
 
+		if (angle > 180) {
+			angle -= 360;
+		} else if (angle < -180) {
+			angle += 360;
+		}
+
+		torsion_list.push_back(angle);
+	}
+
+	for (Size i = 1; i <= 2; ++i) {
+		remainder = torsion_id % 2;
+		torsion_id = torsion_id / 2;
+		(remainder == 0) ? angle = delta_north : angle = delta_south;
+		torsion_list.push_back(angle);
+	}
+
+	return torsion_list;
+}
+//Convert torsions in torsion_id (start with 0)
+Size 
+torsion2id ( utility::vector1< Real > const & nucleoside_torsion, 
+             utility::vector1< Real > const & suite_torsion) {
+
+	static utility::vector1< Real > const A_form_torsion = get_suite_ideal_A_form_torsions();
+	static const Real delta_north = rna_fitted_torsion_info.ideal_delta_north();
+	static const Real delta_south = rna_fitted_torsion_info.ideal_delta_south();
+	Size id = 0;
+	Size multiplier = 1;
+	Real angle_diff;
+	for (Size i = 1; i <= 5; ++i) {
+		angle_diff = suite_torsion[i] - A_form_torsion[i] + 15;
+		if (angle_diff > 360) {
+			angle_diff -= 360;
+		} else if (angle_diff < 0) {
+			angle_diff += 360;
+		}
+		id += std::floor(angle_diff / 30.0) * multiplier;
+		multiplier *= 12;
+	}
+
+	//chi1
+	angle_diff = nucleoside_torsion[2] - A_form_torsion[7] + 15;
+	if (angle_diff > 360) {
+		angle_diff -= 360;
+	} else if (angle_diff < 0) {
+		angle_diff += 360;
+	}
+	id += std::floor(angle_diff / 30.0) * multiplier;
+	multiplier *= 12;
+
+	//chi2
+	angle_diff = suite_torsion[7] - A_form_torsion[7] + 15;
+	if (angle_diff > 360) {
+		angle_diff -= 360;
+	} else if (angle_diff < 0) {
+		angle_diff += 360;
+	}
+	id += std::floor(angle_diff / 30.0) * multiplier;
+	multiplier *= 12;
+
+	//delta1
+	if ( abs (nucleoside_torsion[1] - delta_south) < 1) id += multiplier;
+	multiplier *= 2;
+		
+	//delta2
+	if (abs (suite_torsion[6] - delta_south) < 1) id += multiplier;
+	multiplier *= 2;
+
+	return id;
+}
+
+//Convert torsions to 1d torsion_list
+utility::vector1< Real >  
+torsion_convert ( utility::vector1< Real > const & nucleoside_torsion, 
+                  utility::vector1< Real > const & suite_torsion) {
+
+	utility::vector1< Real >  torsion_list;
+	for (Size i = 1; i <= 5; ++i) {
+		torsion_list.push_back(suite_torsion[i]);
+	}
+
+	//chi1
+	torsion_list.push_back(nucleoside_torsion[2]);
+
+	//chi2
+	torsion_list.push_back(suite_torsion[7]);
+
+	//delta1
+	torsion_list.push_back(nucleoside_torsion[1]);
+		
+	//delta2
+	torsion_list.push_back(suite_torsion[6]);
+
+	return torsion_list;
+}
+
+
+bool
+sort_mine( std::pair <Size, Size> const i, std::pair <Size, Size> const j) {
+	return (i.first > j.first);
+}
+
+/*
+void test() {
+	static utility::vector1< Real > const A_form_torsion = get_suite_ideal_A_form_torsions();
+	static const Real delta_north = rna_fitted_torsion_info.ideal_delta_north();
+	static const Real delta_south = rna_fitted_torsion_info.ideal_delta_south();
+	utility::vector1< Real > nucleoside_torsion, suite_torsion;
+	nucleoside_torsion.push_back(delta_north);
+	nucleoside_torsion.push_back(155.22);
+	suite_torsion.push_back(A_form_torsion[1]);
+	suite_torsion.push_back(100.3);
+	suite_torsion.push_back(300.3);
+	suite_torsion.push_back(27.5);
+	suite_torsion.push_back(98.33);
+	suite_torsion.push_back(delta_south);
+	suite_torsion.push_back(330.3);
+
+	for (Size i = 1; i <= suite_torsion.size(); ++i) {
+		std::cout << suite_torsion[i] << ' ';
+	}
+	for (Size i = 1; i <= nucleoside_torsion.size(); ++i) {
+		std::cout << nucleoside_torsion[i] << ' ';
+	}
+	std::cout << std::endl;
+
+	Size id = torsion2id(nucleoside_torsion, suite_torsion);
+	std::cout << id << std::endl;
+	utility::vector1< Real > torsion_list = id2torsion(id);
+	for (Size i = 1; i <= torsion_list.size(); ++i) {
+		std::cout << torsion_list[i] << ' ';
+	}
+	std::cout << std::endl;
+}
+
+void
+one_chain_torsion_cluster(){
+	using namespace chemical;
+	using namespace scoring;
+	using namespace scoring::rna;
+	using namespace kinematics;
+	using namespace optimization;
+	using namespace pose;
+	using namespace pack;
+	using namespace pack::task;
+	using namespace utility::io;
+	using namespace scoring::rna;
+
+
+	//Initialize one_chain_torsion_clustering
+	utility::vector1< Real > lowest_score_torsion;
+	utility::vector1< std::pair <Size, Size> > counts_torsion;
+	utility::vector1< Size > used_id;
+	utility::vector1< Size >::iterator id_it;
+	utility::vector1< utility::vector1< Real > > lowest_torsion;
+	Size n_id (0), curr_id(99999), pre_id(99999), curr_index(0);
+	//////////////////////////////
+	//Initialize suite test
+	protocols::rna::RNA_suite_list const suite_list;
+	utility::vector1 <protocols::rna::suite_info> const & all_suites = suite_list.full_list();
+	utility::vector1 <std::string> suite_names;	
+	utility::vector1 <Size> suite_counts;
+	for (Size i = 1; i <= all_suites.size(); ++i) {
+		suite_names.push_back( all_suites[i].name );
+		suite_counts.push_back( 0 );
+	}
+	suite_names.push_back( "!!" );
+	suite_counts.push_back( 0 );
+	Size suite_index = 1;
+	//////////////////////////////////////////
+
+	Pose pose, pose_full, lowest_pose;
+	Real lowest_score = 9999;
+	setup_one_chain_pose( pose );
+	setup_one_chain_pose( pose_full, false );
+
+	Pose const ideal_pose = pose;
+
+	pose.dump_pdb("ideal.pdb");
+	pose_full.dump_pdb("ideal_full.pdb");
+	Size const n_residue = pose.n_residue();
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
+
+	//Setup scoring function
+	std::string const force_field_name = option[force_field];
+	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( force_field_name );
+	ScoreFunctionOP rep_scorefxn = new ScoreFunction;
+	rep_scorefxn->set_weight( fa_rep, scorefxn -> get_weight( fa_rep ) );
+	scorefxn -> show(pose);
+
+	std::string const outfile = option[ out::file::o ] ();
+	Size const num_cycle = option[ n_sample ]();
+	bool const is_check_clash = option[ check_clash ] ();
+	bool const is_add_virt_res = option[ add_virt_res ] ();
+	bool const output_rmsd_vs_energy = option[ rmsd_vs_energy ] ();
+	Real const kT_sys = option[ kT ] ();
+	Size first_res = 0;
+	if (is_add_virt_res) {
+		first_res = 2;
+	} else {
+		first_res = 1;
+	}
+
+	Real sample_range;
+	if (option[ sampling_stddev ].user()) {
+		sample_range = option[ sampling_stddev ] ();
+	} else {
+		sample_range = kT_sys * 24.0 / double(n_residue);
+	}
+
+	// initialize for o2star rotamer trials. 	
+	PackerTaskOP o2star_pack_task =  pack::task::TaskFactory::create_packer_task( pose );
+	ScoreFunctionOP o2star_pack_scorefxn = new ScoreFunction;
+	if ( option[ o2star_trials ]() ) {
+		initialize_o2star_pack(pose, scorefxn, o2star_pack_scorefxn, o2star_pack_task );
+	}
+
+	// Get ready for main loop.
+	clock_t const time_start( clock() );
+
+	utility::vector1< Size > hist;
+	utility::vector1< Real > nucleoside_torsion, nucleoside_torsion_new;
+	utility::vector1< utility::vector1< Real > > suite_torsion, suite_torsion_new;
+
+	Real const rep_score_cutoff = 100;
+	Real const max_score =  500.005;
+	Real const min_score = -90.005;
+	Real const bin_size  =   0.01;
+	for (Real i = min_score; i <= max_score; i += bin_size) {
+		hist.push_back(0);
+	}
+
+	utility::vector1< Real > A_form_torsion_set = get_suite_ideal_A_form_torsions();
+	nucleoside_torsion.push_back(A_form_torsion_set[6]);
+	nucleoside_torsion.push_back(A_form_torsion_set[7]);
+	nucleoside_torsion_new = nucleoside_torsion;
+	apply_nucleoside_torsion(nucleoside_torsion, pose, first_res);
+
+	for (Size i = first_res; i <= n_residue - 1; ++i) {
+		apply_suite_torsion( A_form_torsion_set, pose, i );
+		suite_torsion.push_back( A_form_torsion_set );
+		suite_torsion_new.push_back( A_form_torsion_set );
+	}
+	Real score = (*scorefxn)( pose );
+	pose.dump_pdb("test1.pdb");
+
+	bool const is_kT_inf = (kT_sys > 999);
+	Size n_accpet = 0;
+
+	std::cout << "Start MC sampling" << std::endl;
+	for (Size count = 1; count <= num_cycle; count++) {
+
+		if (is_kT_inf) {
+			for (Size i = first_res; i <= n_residue - 1; ++i) {
+				create_random_suite_torsion(suite_torsion_new[i + 1 - first_res]);
+				apply_suite_torsion( suite_torsion_new[i + 1 - first_res], pose, i );
+			}
+			create_random_nucleoside_torsion(nucleoside_torsion_new);
+			apply_nucleoside_torsion(nucleoside_torsion_new, pose, first_res);
+		} else {
+			for (Size i = first_res; i <= n_residue - 1; ++i) {
+				sample_near_suite_torsion(suite_torsion_new[i + 1 - first_res], sample_range);
+				apply_suite_torsion( suite_torsion_new[i + 1 - first_res], pose, i );
+			}
+			sample_near_nucleoside_torsion(nucleoside_torsion_new, sample_range);
+			apply_nucleoside_torsion(nucleoside_torsion_new, pose, first_res);
+		}
+
+
+//		if ( option[ o2star_trials ]() ) pack::rotamer_trials( pose, *o2star_pack_scorefxn, o2star_pack_task );
+
+		Real const rep_score = (*rep_scorefxn)( pose_full );
+		Real score_new;
+		if (is_check_clash && rep_score > rep_score_cutoff) {
+			score_new = rep_score;
+		} else {
+			score_new = (*scorefxn)( pose );
+		}
+
+		if (is_kT_inf || score_new <= score || RG.uniform() < exp( (score - score_new) / kT_sys )) {
+			score = score_new;
+			nucleoside_torsion = nucleoside_torsion_new;
+			suite_torsion = suite_torsion_new;
+			++n_accpet;
+			
+			//Calculate suite
+			std::pair< std::string, std::pair <Size, Real> > suite = protocols::rna::suite_assign(pose, 2);
+			suite_index = suite.second.first;
+			if (suite_index == 0) suite_index = suite_names.size();
+			++suite_counts[suite_index];
+
+			//Cluster the torsions//
+			curr_id = torsion2id(nucleoside_torsion, suite_torsion[1]);
+			if (curr_id == pre_id) {
+				counts_torsion[curr_index].first++;
+				if (score < lowest_score_torsion[curr_index]) {
+					lowest_score_torsion[curr_index] = score;
+					lowest_torsion[curr_index] = torsion_convert(nucleoside_torsion, suite_torsion[1]);
+				}
+			} else {
+				id_it = find (used_id.begin(), used_id.end(), curr_id);
+				if ( id_it != used_id.end() ) {
+					curr_index = std::distance(used_id.begin(), id_it) + 1;
+					pre_id = curr_id;
+					counts_torsion[curr_index].first++;
+					if (score < lowest_score_torsion[curr_index]) {
+						lowest_score_torsion[curr_index] = score;
+						lowest_torsion[curr_index] = torsion_convert(nucleoside_torsion, suite_torsion[1]);
+					}
+				} else {
+					++n_id;
+					used_id.push_back(curr_id);
+					counts_torsion.push_back( std::pair<Size, Size> (1, n_id) );
+					lowest_score_torsion.push_back( score );
+					lowest_torsion.push_back( torsion_convert(nucleoside_torsion, suite_torsion[1]) );
+				}
+			}
+
+			////////////////////////
+		} else {
+			nucleoside_torsion_new = nucleoside_torsion;
+			suite_torsion_new = suite_torsion;
+			++suite_counts[suite_index];
+		}
+
+		Real score_saved = score;
+		if (score_saved < min_score) {
+			std::cout << "Warning: score < min_score" << std::endl;
+			continue;
+		} else if (score_saved > max_score) {
+			score_saved = max_score;
+		}
+
+		Size const bin = score2bin( score_saved, min_score, max_score, bin_size );
+		++hist[bin];
+
+	}
+	
+	std::cout << "Total number of rotamers applied: " << num_cycle << std::endl;
+	std::cout << "sampling stdev: " << sample_range << std::endl;
+	std::cout << "accept rate:" << (1.0 * n_accpet / num_cycle) << std::endl;
+	Real const time_in_dinucleotide_test = static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC;
+	std::cout << "Time in dinucleotide sampler: " <<  time_in_dinucleotide_test << std::endl;
+
+
+	Size first_bin = 0;
+	Size last_bin  = 0;
+	for (Size i = 1; i <= hist.size(); ++i) {
+		if (first_bin == 0) {
+			if (hist[i] == 0) continue;
+			first_bin = i;
+		}
+		if (hist[i] != 0) last_bin = i;
+	}
+	
+	ozstream out;
+	out.open( outfile );
+	out << "Score N_sample" << std::endl;
+	out << "Total " << num_cycle << std::endl;
+	for (Size i = first_bin; i <= last_bin; ++i) {
+		Real score = min_score + (static_cast<Real>(i)- 0.5) * static_cast<Real>(bin_size);
+		out << score << " " << hist[i] << std::endl;
+	}
+	out.close();
+
+	//Output_torsion_clusters
+	ozstream out_tor;
+	out_tor.open( "torsion_cluster.out" );
+	std::sort(counts_torsion.begin(), counts_torsion.end(), sort_mine );
+	for (Size i = 1; i <= counts_torsion.size(); ++i) {
+		out_tor << counts_torsion[i].first << " : ";
+		Size const index = counts_torsion[i].second;
+		out_tor << lowest_score_torsion[index] << " : ";
+		utility::vector1< Real > cluster_center = id2torsion( used_id[index] );
+		for (Size j = 1; j <= cluster_center.size(); ++j) {
+			out_tor << cluster_center[j] << ' ';
+		}
+		out_tor << ": ";
+
+		for (Size j = 1; j <= lowest_torsion[index].size(); ++j) {
+			out_tor << lowest_torsion[index][j] << ' ';
+		}
+		out_tor << std::endl;
+	}
+
+	//Output_suite_counts
+	ozstream out_suite;
+	out_suite.open( "suite_counts.out" );
+	for (Size i = 1; i <= suite_names.size(); ++i) {
+		out_suite << suite_names[i] << " : " << suite_counts[i] << std::endl;
+	}
+	out_suite.close();
+}
+*/
+//////////////////////////////////
+void
+torsion2decoy () {
+	utility::vector1< Real > const torsion = option[ torsion_list ] ();
+	utility::vector1< Real > suite_torsion;
+	utility::vector1< Real > nucleoside_torsion;
+
+	core::pose::Pose pose;
+	setup_one_chain_pose( pose );
+
+	for (Size i = 1; i <= 5; ++i) {
+		suite_torsion.push_back(torsion[i]);
+	}
+	suite_torsion.push_back(torsion[9]);
+	suite_torsion.push_back(torsion[7]);
+	nucleoside_torsion.push_back(torsion[8]);
+	nucleoside_torsion.push_back(torsion[6]);
+	apply_nucleoside_torsion(nucleoside_torsion, pose, 1);
+	apply_suite_torsion( suite_torsion, pose, 1 );
+	std::pair< std::string, std::pair <Size, Real> > suite = protocols::rna::suite_assign(pose, 2);
+	std::cout << suite.first << ' ' << suite.second.second << std::endl;
+	pose.dump_pdb("decoy.pdb");
+}
+	
 //////////////////////////////////
 void*
 my_main( void* ) {
 	std::string const algorithm_name = option[algorithm];
 
+
 	if ( algorithm_name == "one_chain_MC" ) {
 		one_chain_MC_sampling();
 	} else if ( algorithm_name == "one_chain_ST" ) {
 		one_chain_ST_MC();
-	} else if ( algorithm_name == "one_chain_cluster_SWA_test" ) {
+/*	
+  } else if ( algorithm_name == "one_chain_cluster_SWA_test" ) {
 		one_chain_SWA_cluster();
+
+  } else if ( algorithm_name == "one_chain_torsion_cluster" ) {
+		one_chain_torsion_cluster();
+*/
+	} else if ( algorithm_name == "torsion2decoy" ) {
+		torsion2decoy();
 	}
 
 	protocols::viewer::clear_conformation_viewers();
@@ -1107,19 +1593,20 @@ main( int argc, char * argv [] ) {
 
 	NEW_OPT(force_field, "score_file", "rna_hires_07232011_with_intra_base_phosphate");
 	NEW_OPT( seq, "sequence to model", "" );
-	NEW_OPT( out_decoy, "out file name for decoys", "" );
-	NEW_OPT( out_decoy_score_cutoff, "out file name for decoys", 999.99 );
 	NEW_OPT( algorithm, "Specify algorithm to execute", "");
 	NEW_OPT( score_cutoff, "Cutoff in energy score", 99999.99 );
 	NEW_OPT( n_sample, "Sample number for Random sampling", 0 );
 	NEW_OPT( sampling_stddev, "Sampling standard deviation in degree", 0.0 );
 	NEW_OPT( kT, "kT of simulation in RU", 9999.99 );
 	NEW_OPT( check_clash, "check clahsed conformers", true );
+	NEW_OPT( output_binary, "", true );
+	NEW_OPT( output_binary_prefix, "", "" );
 	NEW_OPT( rmsd_vs_energy, "", true );
 	NEW_OPT( add_virt_res, "Append a virtual residue", false );
 	NEW_OPT( o2star_trials, "do rotamer trials", false );
 	NEW_OPT( kT_list, "list of kT for ST", blank_size_vector_real );
 	NEW_OPT( ST_weight_list, "list of ST weights", blank_size_vector_real );
+	NEW_OPT( torsion_list, "list of torsions", blank_size_vector_real );
 	NEW_OPT( exchange_rate, "", 0.2 );
 	//////////////////////////////
 	// setup

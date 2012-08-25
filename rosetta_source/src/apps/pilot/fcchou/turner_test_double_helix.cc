@@ -26,6 +26,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <protocols/rna/RNA_SuiteAssign.hh>
 #include <core/scoring/rna/RNA_Util.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
@@ -123,9 +124,57 @@ OPT_KEY( RealVector, kT_list )
 OPT_KEY( RealVector, ST_weight_list )
 
 static const scoring::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
-static numeric::random::RandomGenerator RG(245075);  // <- Magic number, do not change it!
+static numeric::random::RandomGenerator RG(5075);  // <- Magic number, do not change it!
 
 
+//////////Binary IO////////////////
+class RNA_scores {
+	public :
+		Size counts;
+		float total, fa_stack, hbond_sc, hbond_intra, rna_torsion;
+		RNA_scores();
+		RNA_scores(Size, float, float, float, float, float);
+};
+
+RNA_scores::RNA_scores () {
+	counts = 0;
+	total = 0;
+	fa_stack = 0;
+	hbond_sc = 0;
+	hbond_intra = 0;
+	rna_torsion = 0;
+}
+
+RNA_scores::RNA_scores (Size a, float b, float c, float d, float e, float g) {
+	counts = a;
+	total = b;
+	fa_stack = c;
+	hbond_sc = d;
+	hbond_intra = e;
+	rna_torsion = g;
+}
+
+void 
+write_scores( utility::vector1 < RNA_scores > const & scores, std::string const & out_name) {
+	std::ofstream out_file (out_name.c_str(), std::ios::out | std::ios::binary);
+	Size const vector_size = scores.size();
+	out_file.write( (char*) & vector_size, sizeof(vector_size) );
+	out_file.write( (char*) & scores[1], sizeof(RNA_scores) * vector_size );
+	out_file.close();
+}
+
+void
+read_scores( utility::vector1 < RNA_scores > & scores, std::string const & in_name) {
+	std::ifstream in_file (in_name.c_str(), std::ios::in | std::ios::binary);
+	Size vector_size = 0;
+	in_file.read( (char*) & vector_size, sizeof(vector_size) );
+	scores.clear();
+	scores.resize(vector_size);
+	in_file.read( (char*) & scores[1], sizeof(RNA_scores) * vector_size );
+	in_file.close();
+}
+
+//////////////////////////////////
 //////////////////////////////////
 utility::vector1< Real >
 get_suite_ideal_A_form_torsions(){
@@ -505,21 +554,31 @@ helix_minimize (core::pose::Pose & pose, scoring::ScoreFunctionOP scorefxn) {
 
 	AtomTreeMinimizer minimizer;
 	float const dummy_tol ( 0.00000001 );
-	MinimizerOptions min_options1 ( "dfpmin_armijo_nonmonotone", dummy_tol, false, false, false );
+	MinimizerOptions min_options1 ( "dfpmin", dummy_tol, false, false, false );
 
 	kinematics::MoveMap mm;
 	mm.set_bb ( true );
 	mm.set_chi ( true );
 	mm.set_jump ( false );
 
-	for (Size i = 1; i <= pose.total_residue(); ++i) {
-		mm.set( id::TorsionID( i, id::BB,  4 ), false);
-		mm.set( id::TorsionID( i, id::CHI, 2 ), false);
-		mm.set( id::TorsionID( i, id::CHI, 3 ), false);
-	}
 	minimizer.run ( pose, mm, *scorefxn, min_options1 );
 }
 //////////////////////////////////
+Real
+rmsd_compute (core::pose::Pose const & pose1, core::pose::Pose const & pose2) {
+	Real sum_rmsd = 0;
+	Size n_atom = 0;
+	for (Size i = 1; i <= pose1.total_residue(); ++i) {
+		conformation::Residue const & rsd1 = pose1.residue(i);
+		conformation::Residue const & rsd2 = pose2.residue(i);
+		for (Size j = 1; j <= rsd1.nheavyatoms(); ++j) {
+			sum_rmsd += ( rsd1.xyz(j) - rsd2.xyz(j) ).length_squared();
+			++n_atom;
+		}
+	}
+	return sqrt(sum_rmsd / double(n_atom) );
+}
+///////////////////////////////////
 bool 
 is_atom_clash (core::pose::Pose const & pose, Real const dist_cutoff = 1.2) {
 	Size const n_res = pose.total_residue();
@@ -547,6 +606,23 @@ is_atom_clash (core::pose::Pose const & pose, Real const dist_cutoff = 1.2) {
 		}
 	}
 	return false;
+}
+//////////////////////////////////
+Size
+torsion2bin( Real const torsion, Size const total_bin) {
+	Real torsion_test = torsion;
+	if (torsion_test < 0) {
+		torsion_test += 360;
+	} else if (torsion > 360) {
+		torsion_test -= 360;
+	}
+
+	return std::ceil( torsion_test / (360.0 / total_bin) );
+}
+//////////////////////////////////
+bool
+pose_list_compare( std::pair <pose::Pose, Real> const & i, std::pair <pose::Pose, Real> const & j) {
+	return (i.second < j.second);
 }
 //////////////////////////////////
 void
@@ -718,6 +794,7 @@ helix_ST(){
 	pose.dump_pdb( "ideal.pdb" );
 	scorefxn -> show(pose);
 
+	bool const is_binary_out = option[ output_binary ] ();
 	std::string const outfile = option[ out::file::o ] ();
 	Size const num_cycle = option[ n_cycle ]();
 	utility::vector1< Real > const kT_sys_list = option[ kT_list ] ();
@@ -757,7 +834,7 @@ helix_ST(){
 	utility::vector1< utility::vector1< Size > > hist;
 	utility::vector1< Size > hist_1d;
 	Real const max_score =  500.005;
-	Real const min_score = -90.005;
+	Real const min_score = -200.005;
 	Real const bin_size  =   0.01;
 	for (Real i = min_score; i <= max_score; i += bin_size) {
 		hist_1d.push_back(0);
@@ -766,20 +843,37 @@ helix_ST(){
 		hist.push_back(hist_1d);
 	}
 
+	//score list
+	ScoreFunctionOP fa_stack_scorefxn = new ScoreFunction;
+	ScoreFunctionOP hbond_sc_scorefxn = new ScoreFunction;
+	ScoreFunctionOP hbond_intra_scorefxn = new ScoreFunction;
+	ScoreFunctionOP rna_torsion_scorefxn = new ScoreFunction;
+	fa_stack_scorefxn->set_weight( fa_stack, 1 );
+	hbond_sc_scorefxn->set_weight( hbond_sc, 1 );
+	hbond_intra_scorefxn->set_weight( hbond_intra, 1 );
+	rna_torsion_scorefxn->set_weight( rna_torsion, 1 );
+
+	Real score = (*scorefxn)( pose );
+	RNA_scores current_scores ( 1, score, (fa_stack_scorefxn*)(pose), (hbond_sc_scorefxn*)(pose), 
+	(hbond_intra_scorefxn*)(pose), (rna_torsion_scorefxn*)(pose) );
+
+	utility::vector1< utility::vector1 < RNA_scores > > scores_list (n_temp);
+
 	//Other params
 	Size kT_id = 1;
 	Size new_kT_id = 0;
 	Real kT_sys = kT_sys_list[kT_id];
 	bool is_kT_inf = (kT_sys > 999);
 	Real sampling_range = kT_sys * 4.0 / double(n_res - 2);
-	Real score = (*scorefxn)( pose );	
 	Real score_new, score_saved, new_kT, beta_old, beta_new,log_prob, rep_score;
 	Size bin (0), n_accpet (0), n_exchange(0), n_accp_exch (0);
 	Size const n_res_half = (n_res - 2) / 2;
 	Size const torsion_list_size = suite_torsion_new.size();
 	Real const rep_score_cutoff = 100;
 	clock_t const time_start( clock() );
-
+	Real lowest_score = 999;
+	Pose lowest_pose = pose;
+	
 	//Start MC
 	for (Size cycle = 1; cycle <= num_cycle; cycle++) {
 		//Normal MCMC
@@ -808,8 +902,20 @@ helix_ST(){
 			score = score_new;
 			suite_torsion = suite_torsion_new;
 			++n_accpet;
+			
+			if (score < lowest_score) {
+				lowest_score = score;
+				lowest_pose = pose;
+			}
+			if (output_binary) {
+				scores_list[kT_id].push_back(current_score);
+				current_scores = RNA_scores ( 1, score, (fa_stack_scorefxn*)(pose), (hbond_sc_scorefxn*)(pose), 
+				(hbond_intra_scorefxn*)(pose), (rna_torsion_scorefxn*)(pose) );
+			}
+
 		} else {
 			suite_torsion_new = suite_torsion;
+			if (output_binary) ++current_scores.counts;
 		}
 
 		score_saved = score;
@@ -824,7 +930,7 @@ helix_ST(){
 		++hist[kT_id][bin];
 
 		//Try changing kT
-		if (RG.uniform() < 0.1) {
+		if (RG.uniform() < 0.2) {
 			++n_exchange;
 			(RG.uniform() < 0.5) ? new_kT_id = kT_id + 1 : new_kT_id = kT_id - 1;
 			if (new_kT_id < 1 || new_kT_id > n_temp) continue;
@@ -833,6 +939,10 @@ helix_ST(){
 			beta_new = (new_kT > 999) ? 0 : (1.0 / new_kT);
 			log_prob = - (beta_new - beta_old) * score + (weight_list[new_kT_id] - weight_list[kT_id]);
 			if (log_prob > 0 || RG.uniform() < exp (log_prob) ) { //check if we want to exchange kT
+				if (output_binary) {
+					scores_list[kT_id].push_back(current_score);
+					current_scores.counts = 1;
+				}
 				++n_accp_exch;
 				kT_id = new_kT_id;
 				kT_sys = new_kT;
@@ -875,7 +985,15 @@ helix_ST(){
 		}
 		out << "Total " << total_data << std::endl;
 		out.close();
+
+		if (output_binary) {
+			std::ostringstream oss;
+			std::string const binary_out_prefix = option[ output_binary_prefix ] ();
+			oss << binary_out_prefix << '_' << kT << ".out";
+			write_scores(scores_list[id], oss.str() );
+		}
 	}
+
 }
 ///////////////////////////////////
 void

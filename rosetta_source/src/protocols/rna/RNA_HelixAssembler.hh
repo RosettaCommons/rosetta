@@ -21,8 +21,8 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/rna/RNA_IdealCoord.fwd.hh>
-#include <core/scoring/rna/RNA_IdealCoord.hh>
+#include <protocols/rna/RNA_IdealCoord.fwd.hh>
+#include <protocols/rna/RNA_IdealCoord.hh>
 
 #include <core/types.hh>
 
@@ -108,7 +108,7 @@ private:
 
 	core::scoring::ScoreFunctionOP scorefxn;
 
-	core::scoring::rna::RNA_IdealCoord ideal_coord_;
+	protocols::rna::RNA_IdealCoord ideal_coord_;
 
 	bool model_and_remove_capping_residues_;
 

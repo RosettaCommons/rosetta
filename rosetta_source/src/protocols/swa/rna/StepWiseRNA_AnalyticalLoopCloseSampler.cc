@@ -44,7 +44,6 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
-#include <core/scoring/rna/RNA_IdealCoord.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
@@ -65,6 +64,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <protocols/rna/RNA_LoopCloser.hh>
+#include <protocols/rna/RNA_IdealCoord.hh>
 #include <core/io/pdb/pose_io.hh>
 
 #include <ObjexxFCL/format.hh>
@@ -259,7 +259,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 	Size pucker_id;
 	Size total_count = 0;
 	std::cout << "Start Generating Rotamer ..." << std::endl;
-	core::scoring::rna::RNA_IdealCoord const ideal_coord;
+	protocols::rna::RNA_IdealCoord const ideal_coord;
 
 	for ( pucker_id = 0; pucker_id < 2; pucker_id ++ ) {
 		std::cout << "pucker_id = " << pucker_id << std::endl;
@@ -311,7 +311,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 			}
 
 			Real best_score = 99999;
-			Size best_chi = 9999;
+			Real best_chi = 9999;
 
 			StepWiseRNA_Base_Sugar_RotamerOP base_sugar_rotamer = new StepWiseRNA_Base_Sugar_Rotamer ( base_state, pucker_state, rna_fitted_torsion_info );
 			base_sugar_rotamer->set_extra_syn_chi ( extra_syn_chi_rotamer_ );

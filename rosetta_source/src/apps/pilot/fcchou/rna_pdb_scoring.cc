@@ -122,6 +122,7 @@ pdb_scoring() {
 	core::scoring::ScoreFunctionOP scorefxn =
 		ScoreFunctionFactory::create_score_function ( force_field_file_option );
 	scorefxn -> show ( std::cout, *pose );
+	//pose->dump_pdb("test.pdb");
 }
 
 ///////////////////////////////////////////////////////////////

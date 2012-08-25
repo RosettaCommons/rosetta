@@ -26,7 +26,6 @@
 #include <protocols/rna/RNA_SuiteAssign.hh>
 #include <core/scoring/rna/RNA_Util.hh>
 #include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
-#include <core/scoring/rna/RNA_IdealCoord.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
@@ -39,6 +38,7 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/import_pose/import_pose.hh>
 #include <basic/options/option.hh>
+#include <protocols/rna/RNA_IdealCoord.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <utility/vector1.hh>
@@ -104,7 +104,7 @@ void
 apply_torsion_set( Pose & pose, utility::vector1 < utility::vector1 < Real > > const & torsion_set )
 {
 	using namespace id;
-	static core::scoring::rna::RNA_IdealCoord const ideal_coord_rna;
+	static protocols::rna::RNA_IdealCoord const ideal_coord_rna;
 	Size const total_res = pose.total_residue();
 	Size moving_suite;
 
@@ -191,7 +191,7 @@ lariat_modeling ()
 	core::scoring::ScoreFunctionOP scorefxn =
 			ScoreFunctionFactory::create_score_function ( score_weight_file );
 
-	core::scoring::rna::RNA_IdealCoord const ideal_coord_rna;
+	protocols::rna::RNA_IdealCoord const ideal_coord_rna;
 	Size const total_res = pose.total_residue();
 	for (Size i = total_res - 2; i <= total_res; ++i) {
 		ideal_coord_rna.apply( pose, i );

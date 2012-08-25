@@ -60,6 +60,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/scoring/rna/RNA_Util.hh>
 #include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/EnergyGraph.hh>
@@ -217,7 +218,7 @@ OPT_KEY ( Boolean, allow_chain_boundary_jump_partner_right_at_fixed_BP )
 OPT_KEY ( Boolean, allow_fixed_res_at_moving_res )
 OPT_KEY( Real, sampler_cluster_rmsd )
 OPT_KEY( Boolean,  output_pdb )
-OPT_KEY ( Boolean, constraint_purine_chi )
+OPT_KEY ( Boolean, constraint_chi )
 OPT_KEY ( Boolean, rm_virt_phosphate )
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -234,13 +235,13 @@ void apply_chi_cst(core::pose::Pose & pose, core::pose::Pose const & ref_pose) {
 	ConstraintSetOP cst_set = new ConstraintSet;
 	for (Size i = 1; i <= nres; ++i) {
 		Residue const & res = pose.residue(i);
-		if ( res.is_RNA() && (res.aa() == na_rad || res.aa() == na_rgu)) {
+		if ( res.is_RNA() ) {
 			Real const chi = numeric::conversions::radians( ref_pose.torsion( TorsionID( i, id::CHI, 1 ) ) );
 			FuncOP chi_cst_func ( new CharmmPeriodicFunc( chi, 1.0, 1.0 ) );
 			AtomID const atom1 (res.atom_index("C2*"), i);
 			AtomID const atom2 (res.atom_index("C1*"), i);
-			AtomID const atom3 (res.atom_index("N9"), i);
-			AtomID const atom4 (res.atom_index("C4"), i);
+			AtomID const atom3 ( is_purine(res) ? res.atom_index("N9") : res.atom_index("N1"), i);
+			AtomID const atom4 ( is_purine(res) ? res.atom_index("C4") : res.atom_index("C2"), i);
 			cst_set->add_constraint( new DihedralConstraint( atom1, atom2, atom3, atom4, chi_cst_func ) );
 		}
 	}
@@ -672,7 +673,7 @@ rna_resample_test() {
 	}
 
 	//Constrain chi angles of purines
-	bool const chi_constraint = option[ constraint_purine_chi ];
+	bool const chi_constraint = option[ constraint_chi ];
 	if (chi_constraint) {
 		apply_chi_cst( pose, *job_parameters_COP->working_native_pose() );
 	}
@@ -828,7 +829,7 @@ main ( int argc, char * argv [] ) {
 	NEW_OPT ( allow_fixed_res_at_moving_res, "allow_fixed_res_at_moving_res, mainly just to get Hermann Duplex working", false ); //Nov 15, 2010
 	NEW_OPT( sampler_cluster_rmsd, " Clustering rmsd of conformations in the sampler", 0.5); //DO NOT CHANGE THIS!
 	NEW_OPT( output_pdb, "output_pdb: If true, then will dump the pose into a PDB file at different stages of the stepwise assembly process.", false); //Sept 24, 2011
-	NEW_OPT ( constraint_purine_chi, "Constrain the purine chi angles", false );
+	NEW_OPT ( constraint_chi, "Constrain the chi angles", false );
 	NEW_OPT ( rm_virt_phosphate, "Remove virtual phosphate patches during minimization", false );
 	////////////////////////////////////////////////////////////////////////////
 	// setup
