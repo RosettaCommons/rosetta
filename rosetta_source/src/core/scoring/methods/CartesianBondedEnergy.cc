@@ -338,11 +338,19 @@ TorsionDatabase::lookup(
 
 			if (proton_chi) {
 				Kphi=k_torsion_proton;
-				if (restype.aa()==core::chemical::aa_tyr) {
-					torsion_steps_[ tuple ] = phi_step = numeric::constants::f::pi;
-				} else {
-					torsion_steps_[ tuple ] = phi_step = 2.0*numeric::constants::f::pi/3.0;
-				}
+				//if (restype.aa()==core::chemical::aa_tyr) {
+				//	torsion_steps_[ tuple ] = phi_step = numeric::constants::f::pi;
+				//} else {
+				//	torsion_steps_[ tuple ] = phi_step = 2.0*numeric::constants::f::pi/3.0;
+				//}
+
+				//fpd it turns out that the .params file of SER and THR put the 
+				//      HG 60 degrees off from where it should be
+				// query proton_chi to get the real value
+				utility::vector1< Real > const & v = restype.proton_chi_samples( 1 );
+				phi0 = numeric::constants::d::deg2rad*v[1];
+				phi_step = std::fabs( numeric::constants::d::deg2rad*(v[2]-v[1]) );  // i guess this assumes we have two adjacent samples
+				torsion_steps_[ tuple ] = phi_step;
 			}
 		}
 		Kphis_[ tuple ] = Kphi;
