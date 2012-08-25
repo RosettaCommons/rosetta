@@ -25,6 +25,7 @@ sources = {
 		"RNA_FragmentMover",
 		"RNA_Fragments",
 		"RNA_HelixAssembler",
+		"RNA_IdealCoord",
 		"RNA_JumpLibrary",
 		"RNA_LoopCloser",
 		"RNA_Minimizer",
