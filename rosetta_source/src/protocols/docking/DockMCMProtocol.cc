@@ -140,6 +140,18 @@ DockMCMProtocol::init()
     movemap_reset_ = false;
 	num_of_first_cycle_=4;
 	num_of_second_cycle_=45;
+
+    using namespace basic::options;
+    using namespace basic::options::OptionKeys;
+
+    if ( option[ OptionKeys::docking::dock_mcm_first_cycles ].user() ) {
+        set_first_cycle(option[ OptionKeys::docking::dock_mcm_first_cycles ]() );
+    }
+    if ( option[ OptionKeys::docking::dock_mcm_second_cycles ].user() ) {
+        set_second_cycle(option[ OptionKeys::docking::dock_mcm_second_cycles ]() );
+    }
+
+
 }
 
 // JQX: rewrite the apply function
