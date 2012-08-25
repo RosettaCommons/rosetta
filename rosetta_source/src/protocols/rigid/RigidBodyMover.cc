@@ -34,6 +34,7 @@
 // Random number generator
 // AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 #include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
 // AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 
 #include <basic/Tracer.hh>
@@ -1043,8 +1044,9 @@ void RigidBodyDofSeqTransMover::apply( core::pose::Pose & pose )
   start = rb_jumps_.begin();
   end = rb_jumps_.end();
 
-  random_shuffle(rb_jumps_.begin(), rb_jumps_.end() );
-
+  //random__shuffle(rb_jumps_.begin(), rb_jumps_.end() );
+    numeric::random::random_permutation(rb_jumps_.begin(), rb_jumps_.end(), numeric::random::RG);
+    
   for ( it = start; it != end; ++it ) {
     jump_iterator = dofs_.find( *it );
     if ( jump_iterator == dofs_.end() ) {
@@ -1128,7 +1130,9 @@ void RigidBodyDofRandomTransMover::apply( core::pose::Pose & pose )
   start = rb_jumps_.begin();
   end = rb_jumps_.end();
 
-  random_shuffle(rb_jumps_.begin(), rb_jumps_.end() );
+  //random__shuffle(rb_jumps_.begin(), rb_jumps_.end() );
+  numeric::random::random_permutation(rb_jumps_.begin(), rb_jumps_.end(), numeric::random::RG);
+  
 	int jump_;
 	if ( rb_jumps_.size() < 1 ) return;
 	else jump_ = rb_jumps_[1];
@@ -1313,7 +1317,8 @@ void RigidBodyDofSeqPerturbMover::apply( core::pose::Pose & pose )
 	start = rb_jumps_.begin();
 	end = rb_jumps_.end();
 	// Shuffle the order by which we visit the jumps
-	random_shuffle(rb_jumps_.begin(), rb_jumps_.end() );
+	//random__shuffle(rb_jumps_.begin(), rb_jumps_.end() );
+	numeric::random::random_permutation(rb_jumps_.begin(), rb_jumps_.end(), numeric::random::RG);
 	// Iterate over all available translation jumps
 	// and do a translation for its allowd translation dofs
 	for ( it = start; it != end; ++it ) {

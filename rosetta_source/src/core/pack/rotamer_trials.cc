@@ -103,7 +103,7 @@ rotamer_trials(
 
 	utility::vector1< uint > residues_for_trials( repackable_residues( *input_task ));
 	// Replace this random shuffle with one based on rosetta's RNG
-	//random_shuffle(residues_for_trials.begin(), residues_for_trials.end() );
+	//random__shuffle(residues_for_trials.begin(), residues_for_trials.end() );
 	random_permutation( residues_for_trials, rottrials_RG );
 
 	task::PackerTaskOP rottrial_task( input_task->clone() );
@@ -217,7 +217,7 @@ symmetric_rotamer_trials(
 
 	utility::vector1< uint > residues_for_trials( symmetric_repackable_residues( *input_task, pose ));
 	// Replace this random shuffle with one based on rosetta's RNG
-	//random_shuffle(residues_for_trials.begin(), residues_for_trials.end() );
+	//random__shuffle(residues_for_trials.begin(), residues_for_trials.end() );
 	random_permutation( residues_for_trials, rottrials_RG );
 
 	task::PackerTaskOP rottrial_task( input_task->clone() );

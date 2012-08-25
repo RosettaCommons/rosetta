@@ -106,8 +106,12 @@
 #include <utility/vector0.hh>
 #include <basic/options/option.hh>
 
+#include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
+
 
 #define foreach BOOST_FOREACH
+
 
 using basic::T;
 using basic::Error;
@@ -625,7 +629,9 @@ void HotspotStubSet::remove_random_stubs_from_set( int const num_to_remove ){
 	for( core::Size i = 1; i <= size(); ++i )
 		to_remove.push_back( i );
 
-	std::random_shuffle( to_remove.begin(), to_remove.end() );
+	//std::random__shuffle( to_remove.begin(), to_remove.end() );
+	numeric::random::random_permutation(to_remove.begin(), to_remove.end(), numeric::random::RG);
+
 	std::vector< HotspotStubOP > stubs_to_remove;
 	for( int i = 1; i <= num_to_remove; ++i )
 		stubs_to_remove.push_back( stub_set_vec_[ i ].second.second );

@@ -94,6 +94,11 @@
 #include <utility/vector1.hh>
 #include <utility/excn/EXCN_Base.hh>
 
+// Numeric Headers
+#include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
+
+
 #ifdef WIN32
 	#include <ctime>
 #endif
@@ -115,6 +120,7 @@ using namespace protocols::loophash;
 namespace protocols {
 namespace loophash {
 
+static numeric::random::RandomGenerator RG(9479); // <- Magic number, do not change it!!!
 
 void
 Mover_LoopHashRefine::apply( core::pose::Pose& pose )
@@ -154,6 +160,7 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
 			core::Size lcount = 0;
 			while( lib_structs.size() < skim_size ){
 				core::Size resnum = (rand() % (pose.total_residue()-2)) + 1 ;
+				
   			lsampler.set_start_res ( resnum );
   			lsampler.set_stop_res ( resnum );
 				lsampler.build_structures( pose, lib_structs );
@@ -189,7 +196,9 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
 			if( option[ OptionKeys::lh::centroid_only ]() ) break;
 
 			// Choose a set of structures to refine/relax
-			std::random_shuffle( lib_structs.begin(), lib_structs.end());
+			//std::random__shuffle( lib_structs.begin(), lib_structs.end());
+			numeric::random::random_permutation(lib_structs.begin(), lib_structs.end(), numeric::random::RG);
+			
 			std::vector< core::io::silent::SilentStructOP > select_lib_structs;
 			for( core::Size k=0;k< std::min(skim_size, lib_structs.size() ) ;k++){
 				select_lib_structs.push_back( lib_structs[k] );

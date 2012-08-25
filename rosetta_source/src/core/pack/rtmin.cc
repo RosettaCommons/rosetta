@@ -209,7 +209,7 @@ RTMin::rtmin(
 	input_task->temporarily_fix_everything();
 
 	/// in real rtmin, the active residues will be examined in a random order;
-	/// random_shuffle( active_residues );
+	/// random__shuffle( active_residues );
 
 	optimization::Multivec chi( 4 ); // guess -- resized smaller
 

@@ -49,6 +49,8 @@
 #include <utility/string_util.hh>
 
 
+#include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
 
 #include <utility/sort_predicates.hh>
 
@@ -162,7 +164,8 @@ LoopHashMoverWrapper::apply( Pose & pose )
 	Size endtime = time( NULL );
 	Size nstructs = lib_structs.size();
 	TR << "Found " << nstructs << " alternative states in time: " << endtime - starttime << std::endl;
-	std::random_shuffle( lib_structs.begin(), lib_structs.end() );
+	//std::random__shuffle( lib_structs.begin(), lib_structs.end() );
+	numeric::random::random_permutation(lib_structs.begin(), lib_structs.end(), numeric::random::RG);
 
 	std::vector< std::pair< Real, SilentStructOP > > cen_scored_structs;
 	foreach( SilentStructOP structure, lib_structs ){

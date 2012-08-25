@@ -42,6 +42,8 @@
 #include <basic/Tracer.hh>
 
 #include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
+
 #include <numeric/xyzVector.hh>
 
 // option key includes
@@ -470,7 +472,10 @@ void KinematicMover::apply( core::pose::Pose & pose )
 		for (int i=1; i<=nsol; i++) {
 			pos[i]=i;
 		}
-		std::random_shuffle(pos.begin(), pos.end());
+		
+		//std::random__shuffle(pos.begin(), pos.end());
+		numeric::random::random_permutation(pos.begin(), pos.end(), RG);
+		
 		// Look for solutions passing NaN, Rama, bump checks and eventual filters
 		for (Size i=nsol; i>=1; i--) {
 			//TR << "KINMOVER checking sol " << nsol - i + 1 << " of " << nsol << " .. "; // DJM: debug

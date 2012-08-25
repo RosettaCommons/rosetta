@@ -61,6 +61,7 @@
 
 #include <numeric/geometry/hashing/SixDHasher.hh>
 #include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
 
 // C++ headers
 //#include <cstdlib>
@@ -215,7 +216,9 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 		TR.Info << "Selection size: " << selection.size() << std::endl;
 		if( selection.size() > 0 ){
 			utility::vector1< core::Size > temp_selection = selection;
-			std::random_shuffle( temp_selection.begin(), temp_selection.end());
+			//std::random__shuffle( temp_selection.begin(), temp_selection.end());
+			numeric::random::random_permutation(temp_selection.begin(), temp_selection.end(), numeric::random::RG);
+			
 			start_res = std::max( core::Size(2), core::Size( temp_selection[1] ) ); 
 			stop_res  = std::min( core::Size(pose.total_residue()), core::Size(start_res + sampler_chunk_size - 1)  );      
 			TR.Info << "SubselectionSample: " << start_res << " - " << stop_res << std::endl;
@@ -234,7 +237,9 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 		if ( lib_structs.size() == 0 ) continue; 
 
 		// choose up to "skim_size" of them 
-    std::random_shuffle( lib_structs.begin(), lib_structs.end());
+    //std::random_shuffle( lib_structs.begin(), lib_structs.end());
+    numeric::random::random_permutation(lib_structs.begin(), lib_structs.end(), numeric::random::RG);
+    
     std::vector< core::io::silent::SilentStructOP > select_lib_structs;
     for( core::Size k=0;k< std::min(skim_size, lib_structs.size() ) ;k++){
       select_lib_structs.push_back( lib_structs[k] );

@@ -200,7 +200,8 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
     core::Size endtime2 = time(NULL);
     TR.Info << "FOUND " << lib_structs.size() << " alternative states in time: " << endtime2 - starttime2 << std::endl;
 
-    std::random_shuffle( lib_structs.begin(), lib_structs.end());
+    //std::random_shuffle( lib_structs.begin(), lib_structs.end());
+    numeric::random::random_permutation(lib_structs.begin(), lib_structs.end(), numeric::random::RG);
 
     std::vector< core::io::silent::SilentStructOP > select_lib_structs;
 

@@ -55,6 +55,10 @@
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 
+#include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
+
+
 //Auto Headers
 #include <utility/vector1.hh>
 //Auto Headers
@@ -496,7 +500,8 @@ namespace loophash {
 			core::Size endtime2 = time(NULL);
 			TR.Info << "FOUND " << lib_structs.size() << " alternative states in time: " << endtime2 - starttime2 << std::endl;
 
-			std::random_shuffle( lib_structs.begin(), lib_structs.end());
+			//std::random__shuffle( lib_structs.begin(), lib_structs.end());
+			numeric::random::random_permutation(lib_structs.begin(), lib_structs.end(), numeric::random::RG);
 
 			std::vector< core::io::silent::SilentStructOP > select_lib_structs;
 
@@ -611,6 +616,8 @@ namespace loophash {
 
 			// pick a random loop length
 			core::Size loop_size = hash_sizes_[ rand() % hash_sizes_.size() ];
+
+			std::cout << "~~~~~~~ loophash/LoopHashLibrary.cc::rand() line 615" << std::endl;
 
 			// pick a starting residue
 			ir = rand() % (nres - loop_size-2) + 2;
@@ -785,7 +792,9 @@ namespace loophash {
 
 				// Now go through the chosen loops in random order
 				core::Size explore_count = 0;
-				std::random_shuffle( filter_leap_index_bucket.begin(), filter_leap_index_bucket.end());
+				//std::random__shuffle( filter_leap_index_bucket.begin(), filter_leap_index_bucket.end());
+				numeric::random::random_permutation(filter_leap_index_bucket.begin(), filter_leap_index_bucket.end(), numeric::random::RG);
+				
 				for(  std::vector < core::Size >::const_iterator it = filter_leap_index_bucket.begin();
 						it != filter_leap_index_bucket.end();
 						++it ){

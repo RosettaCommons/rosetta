@@ -30,6 +30,9 @@
 
 #include <utility/vector1.hh>
 
+#include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
+
 
 #if defined(WIN32) || defined(__CYGWIN__)
 	#include <ctime>
@@ -320,8 +323,9 @@ struct FilterBucket {
 					}
 
 					// treat the fragments in a random order so shuffle them up
-					std::random_shuffle( filter_leap_index_bucket.begin(), filter_leap_index_bucket.end());
-
+					//std::random__shuffle( filter_leap_index_bucket.begin(), filter_leap_index_bucket.end());
+					numeric::random::random_permutation(filter_leap_index_bucket.begin(), filter_leap_index_bucket.end(), numeric::random::RG);
+					
 					// Now create models and check rms after insertion
 					for(  std::vector < FilterBucket >::const_iterator it = filter_leap_index_bucket.begin();
 							it != filter_leap_index_bucket.end();

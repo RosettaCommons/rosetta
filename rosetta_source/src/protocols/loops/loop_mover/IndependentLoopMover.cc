@@ -37,6 +37,7 @@
 
 // Numeric headers
 #include <numeric/random/random.fwd.hh>
+#include <numeric/random/random_permutation.hh>
 
 /// ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>
@@ -54,6 +55,8 @@
 namespace protocols {
 namespace loops {
 namespace loop_mover {
+
+static numeric::random::RandomGenerator RG(47537); // <- Magic number, do not change it!!!
 
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
@@ -340,7 +343,8 @@ void IndependentLoopMover::select_loops( Loops & selected_loops ){
 
 	// randomize order if required
 	if ( random_order_ ) {
-		std::random_shuffle( comb_loops.v_begin(), comb_loops.v_end() );
+		//std::random__shuffle( comb_loops.v_begin(), comb_loops.v_end() );
+		numeric::random::random_permutation( comb_loops.v_begin(), comb_loops.v_end(), RG);
 	}
 
 	selected_loops = comb_loops;

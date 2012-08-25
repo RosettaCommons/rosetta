@@ -66,6 +66,9 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/vector1.hh>
 
+#include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
+
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::fmt;
 
@@ -347,7 +350,8 @@ MPI_LoopHashRefine_Master::add_relax_batch( SilentStructStore &start_decoys ){
 		}
 
 		// Mix up the order
-    std::random_shuffle( new_wu->decoys().begin(), new_wu->decoys().end());
+    //std::random__shuffle( new_wu->decoys().begin(), new_wu->decoys().end());
+    numeric::random::random_permutation(new_wu->decoys().begin(), new_wu->decoys().end(), numeric::random::RG);
 
 		// make sure the chunk size doesnt exceed batch_relax_absolute_max_
 		core::Size chunk_size = new_wu->decoys().size();
