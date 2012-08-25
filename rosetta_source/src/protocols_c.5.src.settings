@@ -19,6 +19,7 @@ sources = {
 	],
 	"protocols/comparative_modeling/hybridize" : [
 		"CartesianHybridize",
+		"CartesianSampler",
 		"ChunkTrialMover",
 		"DDomainParse",
 		"DomainAssembly",

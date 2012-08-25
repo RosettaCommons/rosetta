@@ -36,6 +36,7 @@ static MoverRegistrator< canonical_sampling::TrialCounterObserverCreator > reg_T
 
 static MoverRegistrator< comparative_modeling::LoopRelaxMoverCreator > reg_LoopRelaxMoverCreator;
 static MoverRegistrator< comparative_modeling::hybridize::HybridizeProtocolCreator > reg_HybridizeProtocolCreator;
+static MoverRegistrator< comparative_modeling::hybridize::CartesianSamplerCreator > reg_CartesianSamplerCreator;
 
 static MoverRegistrator< contact_map::ContactMapCreator> reg_ContactMapCreator;
 

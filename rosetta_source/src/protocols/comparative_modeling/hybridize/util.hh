@@ -17,6 +17,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/conformation/Residue.hh>
 
 #include <core/id/AtomID.hh>
@@ -118,6 +119,9 @@ apply_transformation(
 					 std::list <core::Size> const & residue_list,
 					 numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT
 					 );
+
+core::fragment::FragSetOP
+create_fragment_set( core::pose::Pose const & pose, core::Size len, core::Size nfrag );
 
 } // hybridize 
 } // comparative_modeling 

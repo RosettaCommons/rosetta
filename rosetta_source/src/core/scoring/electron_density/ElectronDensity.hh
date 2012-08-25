@@ -60,19 +60,15 @@ public:
 	                 core::Real apix = 1.0,
 	                 numeric::xyzVector< core::Real > new_origin=numeric::xyzVector< core::Real >(0,0,0),
 	                 bool fftshift=false) {
-		// set defaults!!!
+		init();
+
 		isLoaded = true;
-
 		efforigin = origin = new_origin;
-
-
 		grid = numeric::xyzVector< int >(map.u1(),map.u2(),map.u3());
 		cellDimensions = numeric::xyzVector< float >(apix*map.u1(),apix*map.u2(),apix*map.u3());
 		cellAngles = numeric::xyzVector< float >(90,90,90);
 		density.dimension( map.u1(),map.u2(),map.u3() );
-
 		if (fftshift) origin -= grid/2;
-
 		for (int i=1; i<=(int)map.u1(); ++i) {
 			int fi = (int)(fftshift ? pos_mod( i-(map.u1()/2)-1 , map.u1())+1 : i);
 			for (int j=1; j<=(int)map.u2(); ++j) {
@@ -84,6 +80,9 @@ public:
 			}
 		}
 	}
+
+	void
+	init();
 
 	/// @brief Load an MRC (="new-CCP4") density map
 	bool
@@ -211,27 +210,34 @@ public:
 
 	/// @brief Print cached CCs
 	void showCachedScores( utility::vector1< int > const &reses );
+	inline core::Real getCachedScore( core::Size resid ) { 
+		runtime_assert( resid <= CCs.size() );
+		return CCs[resid];
+	}
 
 	//////////////////////////////////
-	//////////////////////////////////
-	// getters and setters
-	inline core::Real getCCs( int resid ) { return CCs[resid]; }
-
+	// property getters and setters
 	inline void setUseDensityInMinimizer( bool newVal ) { DensScoreInMinimizer = newVal; }
 	inline bool getUseDensityInMinimizer() const { return DensScoreInMinimizer; }
 
 	inline void setUseExactDerivatives( bool newVal ) { ExactDerivatives = newVal; }
 	inline bool getUseExactDerivatives() const { return ExactDerivatives; }
 
-	inline core::Real getNumDerivH() const { return NUM_DERIV_H; }
+	inline void setWindow( core::Size window_in ) { WINDOW_ = window_in; }
+	inline core::Size getWindow( ) { return WINDOW_; }
 
+	inline void setScoreWindowContext( bool newVal ) { score_window_context_ = newVal; }
+	inline bool getScoreWindowContext() const { return score_window_context_; }
+
+	//////////////////////////////////
+	//  map properties
+	inline bool isMapLoaded() const { return this->isLoaded; };
+	inline core::Real getNumDerivH() const { return NUM_DERIV_H; }
 	inline core::Real getMean() const { return dens_mean; }
 	inline core::Real getMin()  const { return dens_min;  }
 	inline core::Real getMax()  const { return dens_max;  }
 	inline core::Real getStdev() const { return dens_stdev; }
 	inline core::Real getResolution( ) const { return this->reso; }
-	inline bool isMapLoaded() const { return this->isLoaded; };
-
 	inline numeric::xyzVector<core::Real> getCoM() const { return centerOfMass; }
 	inline numeric::xyzVector<core::Real> getOrigin() const { return origin; }
 	inline numeric::xyzVector<core::Real> getEffOrigin() const { return efforigin; }
@@ -363,6 +369,16 @@ private:
 	// fft of density
 	ObjexxFCL::FArray3D< std::complex<double> > Fdensity;
 
+	// Controllable parameters
+	std::map< core::Size, bool > scoring_mask_;
+	core::Real reso, ATOM_MASK, CA_MASK, force_apix_;
+	core::Size WINDOW_;
+	bool score_window_context_, remap_symm_;
+
+	bool DensScoreInMinimizer, ExactDerivatives;
+	core::Real NUM_DERIV_H, NUM_DERIV_H_CEN, PattersonB, PattersonMinR, PattersonMaxR;
+	ObjexxFCL::FArray3D< float > PattersonEpsilon;
+
 	// (patterson only) map resamped on p_calc grid
 	ObjexxFCL::FArray3D< double >  p_o;
 	double po_bar;
@@ -414,16 +430,6 @@ private:
 	core::Real max_del_grid; // max dist between grid pts
 	numeric::xyzVector< int > grid;
 	numeric::xyzVector< core::Real > origin, efforigin;
-
-	// Parameters for scoring
-	std::map< core::Size, bool > scoring_mask_;
-	core::Real reso, ATOM_MASK, CA_MASK;
-
-	// Parameters for derivatives
-	bool DensScoreInMinimizer, ExactDerivatives;
-	core::Real NUM_DERIV_H, NUM_DERIV_H_CEN;
-	core::Real PattersonB, PattersonMinR, PattersonMaxR;
-	ObjexxFCL::FArray3D< float > PattersonEpsilon;
 
 	// cache scoring-related statistics
 	utility::vector1<core::Real>  CCs;

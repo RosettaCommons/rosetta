@@ -197,42 +197,7 @@ ElectronDensity &getDensityMap_legacy() {
 
 /// null constructor
 ElectronDensity::ElectronDensity() {
-	isLoaded = false;
-
-	grid = numeric::xyzVector< int >(0,0,0);
-	efforigin = origin = numeric::xyzVector< int >(0,0,0);
-	cellDimensions = numeric::xyzVector< float >(1,1,1);
-	cellAngles = numeric::xyzVector< float >(90,90,90);
-
-	reso = basic::options::option[ basic::options::OptionKeys::edensity::mapreso ]();
-	ATOM_MASK = basic::options::option[ basic::options::OptionKeys::edensity::atom_mask ]();
-	CA_MASK = basic::options::option[ basic::options::OptionKeys::edensity::ca_mask ]();
-
-
-	// more defaults
-	DensScoreInMinimizer = true;
-	ExactDerivatives = basic::options::option[ basic::options::OptionKeys::edensity::debug_derivatives ]();
-
-	PattersonB = basic::options::option[ basic::options::OptionKeys::patterson::model_B ]();
-	PattersonMinR = 3.0;
-	PattersonMaxR = 20.0;
-
-	if (basic::options::option[ basic::options::OptionKeys::patterson::radius_cutoffs ].user() ) {
-		utility::vector1< core::Real > radius_cuts = basic::options::option[ basic::options::OptionKeys::patterson::radius_cutoffs ]();
-		if (radius_cuts.size() == 1) {
-			PattersonMinR = radius_cuts[1];
-		} else if (radius_cuts.size() >= 2) {
-			PattersonMinR = std::min( radius_cuts[1] , radius_cuts[2] );
-			PattersonMaxR = std::max( radius_cuts[1] , radius_cuts[2] );
-		}
-	}
-
-	p_extent = p_origin = numeric::xyzVector< core::Real >(0,0,0);
-	p_grid = numeric::xyzVector< core::Size >(0,0,0);
-
-	// only used when computing exact derivatives
-	NUM_DERIV_H = 0.1;
-	NUM_DERIV_H_CEN = NUM_DERIV_H;
+	init();
 }
 
 
@@ -375,6 +340,49 @@ ElectronDensity::ElectronDensity( utility::vector1< core::pose::PoseOP > poses, 
 			}
 		}
 	}
+}
+
+void
+ElectronDensity::init() {
+	isLoaded = false;
+
+	grid = numeric::xyzVector< int >(0,0,0);
+	efforigin = origin = numeric::xyzVector< int >(0,0,0);
+	cellDimensions = numeric::xyzVector< float >(1,1,1);
+	cellAngles = numeric::xyzVector< float >(90,90,90);
+
+	// command line overrides defaults
+	reso = basic::options::option[ basic::options::OptionKeys::edensity::mapreso ]();
+	ATOM_MASK = basic::options::option[ basic::options::OptionKeys::edensity::atom_mask ]();
+	CA_MASK = basic::options::option[ basic::options::OptionKeys::edensity::ca_mask ]();
+	WINDOW_ = basic::options::option[ basic::options::OptionKeys::edensity::sliding_window ]();
+	score_window_context_ = basic::options::option[ basic::options::OptionKeys::edensity::score_sliding_window_context ]();
+	remap_symm_ = basic::options::option[ basic::options::OptionKeys::edensity::score_symm_complex ]();
+	force_apix_ = basic::options::option[ basic::options::OptionKeys::edensity::force_apix ]();
+
+	// more defaults
+	DensScoreInMinimizer = true;
+	ExactDerivatives = basic::options::option[ basic::options::OptionKeys::edensity::debug_derivatives ]();
+
+	PattersonB = basic::options::option[ basic::options::OptionKeys::patterson::model_B ]();
+	PattersonMinR = 3.0;
+	PattersonMaxR = 20.0;
+	if (basic::options::option[ basic::options::OptionKeys::patterson::radius_cutoffs ].user() ) {
+		utility::vector1< core::Real > radius_cuts = basic::options::option[ basic::options::OptionKeys::patterson::radius_cutoffs ]();
+		if (radius_cuts.size() == 1) {
+			PattersonMinR = radius_cuts[1];
+		} else if (radius_cuts.size() >= 2) {
+			PattersonMinR = std::min( radius_cuts[1] , radius_cuts[2] );
+			PattersonMaxR = std::max( radius_cuts[1] , radius_cuts[2] );
+		}
+	}
+
+	p_extent = p_origin = numeric::xyzVector< core::Real >(0,0,0);
+	p_grid = numeric::xyzVector< core::Size >(0,0,0);
+
+	// only used when computing exact derivatives
+	NUM_DERIV_H = 0.1;
+	NUM_DERIV_H_CEN = NUM_DERIV_H;
 }
 
 // gradient of density
@@ -2556,9 +2564,9 @@ core::Real ElectronDensity::matchRes(
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 	std::set< core::Size > neighborResids;
 
-	int WINDOW = basic::options::option[ basic::options::OptionKeys::edensity::sliding_window ]/2;
-	int win_start=(int)resid-WINDOW, win_stop = (int)resid+WINDOW;
-	for (int i=WINDOW-1; i>=0; --i) {
+	int HALFWINDOW = WINDOW_/2;
+	int win_start=(int)resid-HALFWINDOW, win_stop = (int)resid+HALFWINDOW;
+	for (int i=HALFWINDOW-1; i>=0; --i) {
 		if ( ((int)resid-i)>1 && pose.fold_tree().is_cutpoint( resid-i-1 ) ) win_start = resid-i;
 		if ( ((int)resid+i)<=nres && pose.fold_tree().is_cutpoint( resid+i ) ) win_stop = resid+i;
 	}
@@ -2571,7 +2579,7 @@ core::Real ElectronDensity::matchRes(
 		core::conformation::Residue const &rsd_i( pose.residue(i) );
 
 		// calc neighbor residues
-		if ( basic::options::option[ basic::options::OptionKeys::edensity::score_sliding_window_context ]() ) {
+		if ( score_window_context_ ) {
 			for ( graph::Graph::EdgeListConstIter
 							iru  = energy_graph.get_node(i)->const_edge_list_begin(),
 							irue = energy_graph.get_node(i)->const_edge_list_end();
@@ -2704,9 +2712,6 @@ core::Real ElectronDensity::matchRes(
 	///////////////////////////
 	/// 2 COMPUTE RHO_C, MASK
 	chemical::AtomTypeSet const & atom_type_set( rsd.atom_type_set() );
-	//fpd  don't use sidechain scaling for sliding window
-	//core::Real SC_scaling = basic::options::option[ basic::options::OptionKeys::edensity::sc_scaling ]();
-
 	core::Real clc_x, obs_x;
 	int mapX,mapY,mapZ;
 
@@ -2809,7 +2814,7 @@ core::Real ElectronDensity::matchRes(
 		}
 	}
 
-	if (basic::options::option[ basic::options::OptionKeys::edensity::debug ]() && resid == 2) {
+	if (basic::options::option[ basic::options::OptionKeys::edensity::debug ]() && resid == 1) {
 		ElectronDensity(rho_obs,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "rho_obs.mrc");
 		ElectronDensity(inv_rho_mask,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "rho_mask.mrc");
 		ElectronDensity(rho_calc_bg,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "rho_calc_bg.mrc");
@@ -2924,7 +2929,7 @@ core::Real ElectronDensity::matchResFast(
 
 	// symmetry
 	bool isSymm = (symmInfo != NULL);
-	bool remapSymm = basic::options::option[ basic::options::OptionKeys::edensity::score_symm_complex ]();
+	bool remapSymm = remap_symm_;
 
 	// symm
 	if (isSymm && !symmInfo->bb_is_independent(resid) && !remapSymm) return 0.0; // only score monomer
@@ -3318,18 +3323,6 @@ ElectronDensity::readMRCandResize(
 
 	// set map resolution
 	this->reso = reso;
-
-	// OLD VERSION
-	// 	if ( basic::options::option[ basic::options::OptionKeys::edensity::atom_mask ]() <= 0 )
-	// 		ATOM_MASK = 1.25*reso; //  ??? 0.45*r ~ sqrt(2)*stdev = 1/(sqrt(2)*pi)
-	// 	else
-	// 		ATOM_MASK = basic::options::option[ basic::options::OptionKeys::edensity::atom_mask ]();
-	//
-	// 	if ( basic::options::option[ basic::options::OptionKeys::edensity::ca_mask ]() <= 0 )
-	// 		CA_MASK = 1.25*reso;
-	// 	else
-	// 		CA_MASK = basic::options::option[ basic::options::OptionKeys::edensity::ca_mask ]();
-
 	char mapString[4], symData[81];
 
 	int  crs2xyz[3], extent[3], mode, symBytes, grid[3], origin[3];
@@ -3530,16 +3523,15 @@ ElectronDensity::readMRCandResize(
 	this->grid[2] = grid[2];
 
 	// advanced: force the apix value different than what is provided
-	core::Real force_apix = basic::options::option[ basic::options::OptionKeys::edensity::force_apix ]();
 	numeric::xyzVector< core::Real > ori_scale;
-	if (force_apix > 0) {
-		ori_scale[0] = (force_apix * this->grid[0]) / cellDimensions[0];
-		ori_scale[1] = (force_apix * this->grid[0]) / cellDimensions[1];
-		ori_scale[2] = (force_apix * this->grid[0]) / cellDimensions[2];
-		cellDimensions[0] = force_apix * this->grid[0];
-		cellDimensions[1] = force_apix * this->grid[1];
-		cellDimensions[2] = force_apix * this->grid[2];
-		TR << "Forcing apix to " << force_apix << std::endl;
+	if (force_apix_ > 0) {
+		ori_scale[0] = (force_apix_ * this->grid[0]) / cellDimensions[0];
+		ori_scale[1] = (force_apix_ * this->grid[0]) / cellDimensions[1];
+		ori_scale[2] = (force_apix_ * this->grid[0]) / cellDimensions[2];
+		cellDimensions[0] = force_apix_ * this->grid[0];
+		cellDimensions[1] = force_apix_ * this->grid[1];
+		cellDimensions[2] = force_apix_ * this->grid[2];
+		TR << "Forcing apix to " << force_apix_ << std::endl;
 	}
 
 	///////////////////////////////////
@@ -3564,7 +3556,7 @@ ElectronDensity::readMRCandResize(
  	}
 
 	// if we force the apix, adjust the origin accordingly
-	if (force_apix > 0) {
+	if (force_apix_ > 0) {
 		this->origin = numeric::xyzVector<core::Real>(
 			this->origin[0]*ori_scale[0] ,
 			this->origin[1]*ori_scale[1] ,
@@ -3772,7 +3764,6 @@ void ElectronDensity::expandToUnitCell() {
 		ElectronDensity(density,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "rho_before_expand.mrc");
 		ElectronDensity(newDensity,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "rho_after_expand.mrc");
 	}
-	//exit(1);
 
 	// new map!
 	density = newDensity;
@@ -4079,12 +4070,6 @@ void ElectronDensity::computeStats() {
 		}
 	}
 	centerOfMass /= sumCoM;
-
-	// now that we have CoM, update effective CoM
-	//std::string align = basic::options::option[ basic::options::OptionKeys::edensity::realign ]();
-	//if ( align != "no" && align != "min") {
-	//	efforigin = -centerOfMass+1.0;
-	//}
 
 	TR << "Density map stats:" << std::endl;
 	TR << "      min = " << dens_min << std::endl;

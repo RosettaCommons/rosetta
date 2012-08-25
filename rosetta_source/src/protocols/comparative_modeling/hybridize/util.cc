@@ -19,6 +19,10 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.hh>
+#include <core/fragment/ConstantLengthFragSet.hh>
+#include <core/fragment/FragSet.hh>
+#include <core/fragment/Frame.hh>
+#include <core/fragment/IndependentBBTorsionSRFD.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
@@ -39,7 +43,13 @@
 #include <core/scoring/constraints/ScalarWeightedFunc.hh>
 #include <core/scoring/constraints/SOGFunc.hh>
 #include <core/scoring/constraints/util.hh>
+#include <core/scoring/dssp/Dssp.hh>
 #include <core/pose/PDBInfo.hh>
+
+// dynamic fragpick
+#include <protocols/moves/DsspMover.hh>
+#include <core/fragment/picking_old/vall/util.hh>
+
 
 // symmetry
 #include <core/pose/symmetry/util.hh>
@@ -475,6 +485,49 @@ apply_transformation(
 	}
 	mod_pose.batch_set_xyz(ids,positions);
 }
+
+core::fragment::FragSetOP
+create_fragment_set( core::pose::Pose const & pose, core::Size len, core::Size nfrag ) {
+	core::fragment::FragSetOP fragset = new core::fragment::ConstantLengthFragSet( len );
+	core::scoring::dssp::Dssp dssp( pose );
+	
+
+	// number of residues
+	core::Size nres_tgt = pose.total_residue();
+	core::conformation::symmetry::SymmetryInfoCOP symm_info;
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		core::conformation::symmetry::SymmetricConformation const & SymmConf (
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
+		symm_info = SymmConf.Symmetry_Info();
+		nres_tgt = symm_info->num_independent_residues();
+	}
+	if (pose.residue(nres_tgt).aa() == core::chemical::aa_vrt) nres_tgt--;
+	while (!pose.residue(nres_tgt).is_protein()) nres_tgt--;
+	
+	// sequence
+	std::string tgt_seq = pose.sequence();
+	std::string tgt_ss = dssp.get_dssp_secstruct();
+
+	// pick from vall based on template SS + target sequence
+	for ( core::Size j=1; j<=nres_tgt-len+1; ++j ) {
+		bool crosses_cut = false;
+		for (core::Size k=j; k<j+len-1; ++k)   // it's alright if the last residue is a cutpoint
+			crosses_cut |= pose.fold_tree().is_cutpoint( k );
+
+		if (!crosses_cut) {
+			core::fragment::FrameOP frame = new core::fragment::Frame( j, len );
+			frame->add_fragment( 
+				core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa(
+					tgt_ss.substr( j-1, len ), tgt_seq.substr( j-1, len ), nfrag, true, core::fragment::IndependentBBTorsionSRFD() 
+				)
+			);
+			fragset->add( frame );
+		}
+	}
+	return fragset;
+}
+
+
 
 
 } // hybridize

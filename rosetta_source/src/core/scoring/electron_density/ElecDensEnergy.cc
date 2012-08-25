@@ -380,7 +380,7 @@ ElecDensEnergy::eval_atom_derivative(
 								numeric::xyzVector<core::Real> X_lm_tgt = pose.residue(target_res).atom(m).xyz();
 
 								core::scoring::electron_density::getDensityMap().dCCdx_res( m, source_res, X_lm_src, pose.residue(source_res), pose, dCCdx );
-								Real CC = core::scoring::electron_density::getDensityMap().getCCs( source_res );
+								Real CC = core::scoring::electron_density::getDensityMap().getCachedScore( source_res );
 								Real z_CC = CC / 0.1;
 								Real p_null = 0.5 * errfc( z_CC/sqrt(2.0) );
 								numeric::xyzVector< core::Real > dEdx = 0.5 * ( 1.0 / p_null ) *
@@ -420,7 +420,7 @@ ElecDensEnergy::eval_atom_derivative(
 
 							//core::scoring::electron_density::getDensityMap().dCCdx_res( m, source_res, X_lm_src, dummyAtmList, dummyAtmList, dCCdx );
 							core::scoring::electron_density::getDensityMap().dCCdx_res( m, source_res, X_lm_src, pose.residue(source_res), pose, dCCdx );
-							Real CC = core::scoring::electron_density::getDensityMap().getCCs( source_res );
+							Real CC = core::scoring::electron_density::getDensityMap().getCachedScore( source_res );
 							Real z_CC = CC / 0.1;
 							Real p_null = 0.5 * errfc( z_CC/sqrt(2.0) );
 							numeric::xyzVector< core::Real > dEdx = 0.5 * ( 1.0 / p_null ) *
@@ -455,7 +455,7 @@ ElecDensEnergy::eval_atom_derivative(
 				if (remapSymm)
 					core::scoring::electron_density::getDensityMap().get_R( symminfo->subunit_index( (i==0) ? resid : myClones[i] ), R );
 
- 				Real CC = core::scoring::electron_density::getDensityMap().getCCs( (i==0) ? resid : myClones[i] );
+ 				Real CC = core::scoring::electron_density::getDensityMap().getCachedScore( (i==0) ? resid : myClones[i] );
  				Real z_CC = CC / 0.1;
  				Real p_null = 0.5 * errfc( z_CC/sqrt(2.0) );
 
@@ -486,7 +486,7 @@ ElecDensEnergy::eval_atom_derivative(
 
 
 		// the derivative of edens _score_ as a function of dCC/dx
-		Real CC = core::scoring::electron_density::getDensityMap().getCCs( resid );
+		Real CC = core::scoring::electron_density::getDensityMap().getCachedScore( resid );
 		Real z_CC = CC / 0.1;
 		Real p_null = 0.5 * errfc( z_CC/sqrt(2.0) );
 
