@@ -617,8 +617,6 @@ namespace loophash {
 			// pick a random loop length
 			core::Size loop_size = hash_sizes_[ rand() % hash_sizes_.size() ];
 
-			std::cout << "~~~~~~~ loophash/LoopHashLibrary.cc::rand() line 615" << std::endl;
-
 			// pick a starting residue
 			ir = rand() % (nres - loop_size-2) + 2;
 			jr = ir + loop_size;
