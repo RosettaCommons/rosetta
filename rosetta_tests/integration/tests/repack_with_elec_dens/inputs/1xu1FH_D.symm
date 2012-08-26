@@ -1,0 +1,13 @@
+symmetry_name inputs/1xu1FH_D_P_21_21_21
+E = 2*VRT_0_0_0_0_base
+anchor_residue 1
+virtual_coordinates_start
+xyz VRT_0_0_0_0 1.000000,0.000000,0.000000 -0.000000,1.000000,0.000000 0.108066,11.110453,29.230474
+xyz VRT_0_0_0_0_base 1.000000,0.000000,0.000000 -0.000000,1.000000,0.000000 -0.891934,10.110453,28.230474
+virtual_coordinates_stop
+connect_virtual JUMP_0_0_0_0_to_subunit VRT_0_0_0_0_base SUBUNIT
+connect_virtual JUMP_0_0_0_0_to_com VRT_0_0_0_0 VRT_0_0_0_0_base
+set_dof JUMP_0_0_0_0_to_com x y z
+set_dof JUMP_0_0_0_0_to_subunit angle_x angle_y angle_z
+set_jump_group JUMPGROUP1  JUMP_0_0_0_0_to_subunit
+set_jump_group JUMPGROUP2  JUMP_0_0_0_0_to_com

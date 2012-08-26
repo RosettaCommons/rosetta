@@ -1,0 +1,7 @@
+-s ../../tests/make_symmdef_file/inputs/1xu1FH_D.pdb
+-overwrite
+-parser:protocol parser_script.xml
+-edensity:mapfile r1xu1sf_2mFobs-DFmodel_map_coeffs_1.ccp4
+-edensity:mapreso 1.9
+-edensity:grid_spacing .85
+-parser:script_vars symmdef=inputs/1xu1FH_D.symm
