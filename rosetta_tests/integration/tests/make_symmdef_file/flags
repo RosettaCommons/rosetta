@@ -1,0 +1,5 @@
+-s inputs/1xu1FH_D.pdb
+-overwrite
+-parser:protocol parser_script.xml
+-mute protocols.jd2.PDBJobInputter core.scoring.etable basic.io.database
+
