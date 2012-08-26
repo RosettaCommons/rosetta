@@ -192,9 +192,6 @@ StructureScoresFeatures::parse_my_tag(
 }
 
 
-
-
-
 Size
 StructureScoresFeatures::report_features(
 	Pose const & pose,
@@ -202,12 +199,6 @@ StructureScoresFeatures::report_features(
 	boost::uuids::uuid struct_id,
 	sessionOP db_session
 ){
-	if(!pose.energies().energies_updated()){
-		stringstream err_msg;
-		err_msg << "Attempting to extract structure score features from pose, however the energies are not up to date. Please score the pose with a ScoreFunction first.";
-		utility_exit_with_message(err_msg.str());
-	}
-
 	insert_structure_score_rows(pose, relevant_residues, struct_id, db_session);
 	return 0;
 }
@@ -225,8 +216,40 @@ void StructureScoresFeatures::delete_record(
 }
 
 void
+StructureScoresFeatures::compute_energies(
+	Pose const & pose_in,
+	vector1<bool> const & relevant_residues,
+	EnergyMap & emap
+) const {
+	// We only get const access to the pose, so make a copy of it so it
+	// can be scored. TODO: This is a bit wasteful, as we don't actually
+	// need a copy of the coodinates part of the pose only the
+	// energies part of the pose.
+	Pose pose = pose_in;
+	(*scfxn_)(pose);
+
+	// if relevant residues includes all of the residues, then include
+	// the whole structure scores, otherwise just the one-body and
+	// two-body scores.
+	bool all_residues(true);
+	for(vector1<bool>::const_iterator
+				i=relevant_residues.begin(), ie=relevant_residues.end(); i != ie; ++i){
+		if(*i == false){
+			all_residues = false;
+			break;
+		}
+	}
+	if(all_residues){
+		emap = pose.energies().total_energies();
+	} else {
+		scfxn_->get_sub_score(pose, relevant_residues, emap);
+	}
+}
+
+
+void
 StructureScoresFeatures::insert_structure_score_rows(
-	Pose const & pose,
+	Pose const & pose_in,
 	vector1< bool > const & relevant_residues,
 	boost::uuids::uuid struct_id,
 	sessionOP db_session
@@ -238,9 +261,8 @@ StructureScoresFeatures::insert_structure_score_rows(
 	structure_scores_insert.add_column("score_type_id");
 	structure_scores_insert.add_column("score_value");
 
-	Energies const & energies(pose.energies());
 	EnergyMap emap;
-	scfxn_->get_sub_score(pose, relevant_residues, emap);
+	compute_energies(pose_in, relevant_residues, emap);
 
 	core::Real total_score= 0.0;
 	Size const batch_id(get_batch_id(struct_id, db_session));
@@ -249,7 +271,7 @@ StructureScoresFeatures::insert_structure_score_rows(
 
 	for(Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id){
 		ScoreType type(static_cast<ScoreType>(score_type_id));
-		Real const score_value( energies.weights()[type] * emap[type] );
+		Real const score_value( (*scfxn_)[type] * emap[type] );
 		if(!score_value) continue;
 		total_score += score_value;
 
@@ -258,7 +280,7 @@ StructureScoresFeatures::insert_structure_score_rows(
 
 		structure_scores_insert.add_row(
 			utility::tools::make_vector(batch_id_data,struct_id_data,score_type_id_data,score_value_data));
-		
+
 	}
 
 	// add the total_score type

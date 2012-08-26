@@ -227,7 +227,7 @@ RotamerRecoveryFeatures::parse_my_tag(
 
 Size
 RotamerRecoveryFeatures::report_features(
-	Pose const & pose,
+	Pose const & pose_in,
 	vector1< bool > const & relevant_residues,
 	boost::uuids::uuid const struct_id,
 	sessionOP db_session
@@ -238,8 +238,8 @@ RotamerRecoveryFeatures::report_features(
 	reporter->set_struct_id1(struct_id);
 	RotamerRecovery rotamer_recovery(protocol_, comparer_, reporter);
 
-	// I would like to assert that this has been called but I don't know how.
-	//scfxn.setup_for_scoring(pose);
+	Pose pose=pose_in;
+	scfxn_->setup_for_scoring(pose);
 
 	if(task_factory_ == 0){
 		task_factory_ = new TaskFactory();

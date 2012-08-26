@@ -20,7 +20,6 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <protocols/features/FeaturesReporter.fwd.hh>
@@ -56,7 +55,6 @@ public:
 		std::string const & name,
 		utility::sql_database::sessionOP db_session,
 		std::string const & sample_source,
-		core::scoring::ScoreFunctionOP scfxn,
 		bool use_transactions=true,
 		core::Size cache_size=2000);
 
@@ -101,7 +99,8 @@ public:
 		utility::tag::TagPtr const tag);
 
 	void
-	parse_name_tag_item(TagPtr const tag);
+	parse_name_tag_item(
+		utility::tag::TagPtr const tag);
 
 	void
 	parse_my_tag(
@@ -162,7 +161,6 @@ private:
 	std::string sample_source_;
 	std::string name_;
 
-	core::scoring::ScoreFunctionOP scfxn_;
 	bool use_transactions_;
 
 	core::Size cache_size_;

@@ -34,6 +34,7 @@
 #include <string>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/EnergyMap.fwd.hh>
 #include <utility/vector1.hh>
 
 
@@ -71,6 +72,13 @@ public:
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/);
+
+
+	void
+	compute_energies(
+		core::pose::Pose const & pose_in,
+		utility::vector1<bool> const & relevant_residues,
+		core::scoring::EnergyMap & emap) const;
 
 	///@brief collect all the feature data for the pose
 	core::Size

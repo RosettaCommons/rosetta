@@ -36,8 +36,8 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/pose/symmetry/util.hh>
 #include <protocols/features/FeaturesReporterFactory.hh>
 #include <protocols/features/ProteinRMSDFeatures.fwd.hh>
 #include <protocols/features/ProtocolFeatures.hh>
@@ -109,6 +109,7 @@ using core::pack::task::PackerTaskCOP;
 using core::pack::task::TaskFactory;
 using core::pose::Pose;
 using core::pose::PoseOP;
+using core::pose::symmetry::is_symmetric;
 using core::scoring::getScoreFunction;
 using core::scoring::ScoreFunctionFactory;
 using core::scoring::ScoreFunction;
@@ -128,6 +129,7 @@ using protocols::moves::MoverOP;
 using protocols::moves::DataMap;
 using protocols::moves::Movers_map;
 using protocols::rosetta_scripts::parse_task_operations;
+using protocols::rosetta_scripts::parse_score_function;
 using protocols::rosetta_scripts::parse_database_connection;
 using std::string;
 using std::endl;
@@ -148,7 +150,6 @@ ReportToDB::ReportToDB():
 	Mover("ReportToDB"),
 	db_session_(),
 	sample_source_("Rosetta: Unknown Protocol"),
-	scfxn_(getScoreFunction()),
 	use_transactions_(true),
 	cache_size_(2000),
 	protocol_id_(0),
@@ -165,7 +166,6 @@ ReportToDB::ReportToDB(string const & name):
 	Mover(name),
 	db_session_(),
 	sample_source_("Rosetta: Unknown Protocol"),
-	scfxn_( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) ),
 	use_transactions_(true),
 	cache_size_(2000),
 	protocol_id_(0),
@@ -182,13 +182,11 @@ ReportToDB::ReportToDB(
 	string const & name,
 	sessionOP db_session,
 	string const & sample_source,
-	ScoreFunctionOP scfxn,
 	bool use_transactions,
 	Size cache_size) :
 	Mover(name),
 	db_session_(db_session),
 	sample_source_(sample_source),
-	scfxn_(scfxn),
 	use_transactions_(use_transactions),
 	cache_size_(cache_size),
 	protocol_id_(0),
@@ -206,7 +204,6 @@ ReportToDB::ReportToDB( ReportToDB const & src):
 	db_session_(src.db_session_),
 	sample_source_(src.sample_source_),
 	name_(src.name_),
-	scfxn_(new ScoreFunction(* src.scfxn_)),
 	use_transactions_(src.use_transactions_),
 	cache_size_(src.cache_size_),
 	protocol_id_(src.protocol_id_),
@@ -458,9 +455,6 @@ vector1< bool >
 ReportToDB::initialize_pose(
 	Pose & pose
 ) const {
-
-	// Make sure energy objects are initialized
-	(*scfxn_)(pose);
 
 	PackerTaskCOP task(task_factory_->create_task_and_apply_taskoperations(pose));
 	vector1< bool > relevant_residues(task->repacking_residues());
