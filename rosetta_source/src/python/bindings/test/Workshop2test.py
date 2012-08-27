@@ -5,7 +5,7 @@ from math import *
 
 # Basic PyRosetta
 from rosetta import *
-from rosetta.toolbox import *
+
 init()
 
 pose = pose_from_pdb("test/data/workshops/1YY8.clean.pdb")

@@ -23,7 +23,6 @@ pack_mover = PackRotamersMover(scorefxn, task_pack)
 
 pack_mover.apply(pose)
 
-
 import os, tempfile
 
 # Design

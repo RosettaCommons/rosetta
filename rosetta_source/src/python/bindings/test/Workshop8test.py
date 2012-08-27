@@ -28,6 +28,11 @@ for res in (10, 13, 16, 23, 26, 30):
     pose.set_phi(res, 180)
     pose.dump_pdb("loop" + str(res) + ".pdb")
 
+pmm = PyMOL_Mover()
+pmm.apply(pose)
+pmm.send_foldtree(pose)
+pmm.view_foldtree_diagram(pose, ft)
+
 ft.clear()
 ft.simple_tree(116)
 ft.new_jump(76, 85, 80)
@@ -41,7 +46,6 @@ loop1 = Loop(15, 24, 19)
 ccd = CcdLoopClosureMover(loop1, movemap)
 
 ccd.apply(pose)
-
 set_single_loop_fold_tree(pose, loop1)
 
 # Multiple Loops
@@ -65,7 +69,6 @@ jd.additional_decoy_info = " LRMSD: " + str(lrms)
 
 # High-Resolution Loop Protocol
 loop_refine = LoopMover_Refine_CCD(loops)
-
 # loop_refine.apply(pose)  # takes too long
 
 
@@ -78,13 +81,13 @@ set_single_loop_fold_tree(pose, loop1)
 sw_low = SwitchResidueTypeSetMover("centroid")
 sw_low.apply(pose)
 kic_perturb = LoopMover_Perturb_KIC(loops)
-kic_perturb.apply(pose)  # won't show in Pymol for efficiency
+# kic_perturb.apply(pose)  # won't show in Pymol for efficiency # takes too long
 
 
 sw_high = SwitchResidueTypeSetMover("fa_standard")
 sw_high.apply(pose)
 kic_refine = LoopMover_Refine_KIC(loops)
-kic_refine.apply(pose)  # won't show in Pymol for efficiency
+# kic_refine.apply(pose)  # won't show in Pymol for efficiency # takes too long
 
 # use the KinematicMover explicitly in centroid stage
 sw_low.apply(pose)

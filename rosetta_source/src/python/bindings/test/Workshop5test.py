@@ -1,5 +1,5 @@
 #! /usr/bin/python
-# List of commands used in PyRosetts Workshop #2
+# List of commands used in PyRosetts Workshop #5
 
 from rosetta import *
 init()
@@ -7,6 +7,15 @@ init()
 start = pose_from_pdb("test/data/workshops/1YY8.clean.pdb")
 test = Pose()
 test.assign(start)
+
+start.pdb_info().name("start")
+test.pdb_info().name("test")
+
+pmm = PyMOL_Mover()
+pmm.apply(start)
+pmm.apply(test)
+pmm.keep_history(True)
+print pmm
 
 # Small and Shear Moves
 kT = 1.0
@@ -21,17 +30,23 @@ small_mover.angle_max("E", 5)
 small_mover.angle_max("L", 5)
 
 small_mover.apply(test)
+print small_mover
+print shear_mover
 
-test.assign(start)
 test2 = Pose()
 test2.assign(start)
+test2.pdb_info().name("test2")
+pmm.apply(test2)
 
 movemap.set_bb(False)
 movemap.set_bb(50, True)
 movemap.set_bb(51, True)
+print movemap
 
 small_mover.apply(test)
 shear_mover.apply(test2)
+pmm.apply(test)
+pmm.apply(test2)
 
 # Minimization Moves
 min_mover = MinMover()
@@ -43,8 +58,9 @@ scorefxn = create_score_function("standard")
 
 min_mover.movemap(mm4060)
 min_mover.score_function(scorefxn)
-
+AddPyMolObserver(test2, True)
 min_mover.apply(test2)
+print min_mover
 
 # Monte Carlo Object
 mc = MonteCarlo(test, scorefxn, kT)
@@ -57,7 +73,8 @@ mc.show_state()
 
 # Trial Mover
 trial_mover = TrialMover(small_mover, mc)
-trial_mover.apply(test)
+for i in range (10):
+    trial_mover.apply(test)
 
 print trial_mover.num_accepts()
 print trial_mover.acceptance_rate()
@@ -68,9 +85,14 @@ seq_mover = SequenceMover()
 seq_mover.add_mover(small_mover)
 seq_mover.add_mover(shear_mover)
 seq_mover.add_mover(min_mover)
+print seq_mover
 
-repeat_mover = RepeatMover(trial_mover, 5)
-
+trialmover = TrialMover(seq_mover, mc)
+print trialmover
+repeat_mover = RepeatMover(trialmover, 5)
+repeat_mover.apply(test)
+mc.show_state()
+print repeat_mover
 # Refinement Protocol
 relax = ClassicRelax()
 relax.set_scorefxn(scorefxn)

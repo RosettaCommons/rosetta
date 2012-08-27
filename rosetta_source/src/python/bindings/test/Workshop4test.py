@@ -1,6 +1,6 @@
 #! /usr/bin/python
 # :noTabs=true:
-# List of commands used in PyRosetts Workshop #2
+# List of commands used in PyRosetts Workshop #4
 
 # A simple de Novo Folding Algorithm
 # import modules
@@ -31,14 +31,17 @@ def random_move(pose):
         pose.set_psi(res, a)
 
 # initialize pose objects
-p = Pose()
 last_pose = Pose()
 low_pose = Pose()
 
 # create poly-A chain and set all peptide bonds to trans
-make_pose_from_sequence(p, "AAAAAAAAAA", "fa_standard")
+p = pose_from_sequence("AAAAAAAAAA", "fa_standard")
 for res in range(1, p.total_residue() + 1):
     p.set_omega(res, 180)
+
+# use the PyMOL_Mover to echo this structure to PyMOL
+pmm = PyMOL_Mover()
+pmm.apply(p)
 
 # set score function to include Van der Wals and H-bonds only
 score = ScoreFunction()

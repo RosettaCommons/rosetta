@@ -1,10 +1,10 @@
 #! /usr/bin/python
-# List of commands used in PyRosetts Workshop #2
+# List of commands used in PyRosetts Workshop #7
 
 import sys
 
 from rosetta import *
-from rosetta.protocols.rigid import *
+import rosetta.protocols.rigid as rigid_moves
 init()
 
 '''
@@ -25,19 +25,19 @@ print pose.jump(jump_num).get_rotation()
 print pose.jump(jump_num).get_translation()
 
 print "_____ Check point 1"
-pert_mover = RigidBodyPerturbMover(jump_num, 3, 8)
-
+pert_mover = rigid_moves.RigidBodyPerturbMover(jump_num, 8, 3)
 #pert_mover.apply(pose)
 
-randomize1 = RigidBodyRandomizeMover(pose, jump_num, partner_upstream)
-randomize2 = RigidBodyRandomizeMover(pose, jump_num, partner_downstream)
+randomize1 = rigid_moves.RigidBodyRandomizeMover(pose, jump_num, rigid_moves.partner_upstream)
+randomize2 = rigid_moves.RigidBodyRandomizeMover(pose, jump_num, rigid_moves.partner_downstream)
 
 print "_____ Check point 2"
 #randomize1.apply(pose)
 #randomize2.apply(pose)
-
+slid = DockingSlideIntoContact(jump_num)
 slide = FaDockingSlideIntoContact(jump_num)
 slide.apply(pose)
+
 movemap = MoveMap()
 movemap.set_jump(jump_num, True)
 
@@ -103,7 +103,7 @@ while (jd.job_complete == False):
 
 # High-Resolution Docking
 scorefxn_high = create_score_function_ws_patch("standard", "docking")
-dock_hires = DockingHighResLegacy()
+dock_hires = DockMCMProtocol()
 dock_hires.set_scorefxn(scorefxn_high)
 dock_hires.set_partners("A_B")
 

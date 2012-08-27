@@ -23,6 +23,17 @@ scorefxn.show(ras)
 
 print ras.energies().show(24)
 
+r1 = ras.residue(24)
+r2 = ras.residue(20)
+a1 = r1.atom("N")
+a2 = r2.atom("O")
+etable_atom_pair_energies(a1, a2, scorefxn)
+
+hbond_set = hbonds.HBondSet()
+ras.update_residue_neighbors()
+hbonds.fill_hbond_set(ras, False, hbond_set)
+hbond_set.show(ras)
+
 hset = get_hbonds(ras)
 hset.show(ras)
 hset.show(ras, 24)
@@ -31,7 +42,8 @@ pose = pose_from_pdb("test/data/workshops/1YY9.clean.pdb")
 
 rsd1_num = pose.pdb_info().pdb2pose('D', 102)
 rsd2_num = pose.pdb_info().pdb2pose('A', 408)
-
+print rsd1_num
+print rsd2_num
 rsd1 = pose.residue(rsd1_num)
 rsd2 = pose.residue(rsd2_num)
 
@@ -40,4 +52,16 @@ scorefxn.eval_ci_2b(rsd1, rsd2, pose, emap)
 print emap[fa_atr]
 print emap[fa_rep]
 print emap[fa_sol]
+
+pymol = PyMOL_Mover()
+ras.pdb_info().name("ras")
+pymol.send_energy(ras)
+pymol.send_energy(ras, "fa_atr")
+pymol.send_energy(ras, "fa_sol")
+pymol.update_energy(True)
+pymol.energy_type(fa_atr)
+pymol.apply(ras)
+pymol.label_energy(ras, "fa_rep")
+pymol.send_hbonds(ras)
+
 
