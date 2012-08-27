@@ -41,6 +41,10 @@ Constraints are listed as "Constraint_Type: Constraint_Def". Function types and 
 <tt>Atom1_Name Atom1_ResNum Atom2_Name Atom2_ResNum Func_Type Func_Def</tt><br>
 Distance between Atom1 and Atom2
 
+@li @ref AmbiguousNMRDistanceConstraint "AmbiguousNMRDistance":
+<tt>Atom1_Name Atom1_ResNum Atom2_Name Atom2_ResNum Func_Type Func_Def</tt><br>
+Distance between Atom1 and Atom2.  The difference from AtomPairConstraint is that atom names are specially parsed to detect ambiguous hydrogens, which are either experimentally ambiguous or rotationally identical (like methyl hydrogens).  The constraint applies to any hydrogens equivalent to the named hydrogen.  The logic for determining which hydrogens are which is in src/core/scoring/constraints/AmbiguousNMRDistanceConstraints.cc:parse_NMR_name.
+
 @li @ref AngleConstraint "Angle":
 <tt>Atom1_Name Atom1_ResNum Atom2_Name Atom2_ResNum Atom3_Name Atom3_ResNum Func_Type Func_Def</tt><br>
 Angle between Atom2->Atom1 vector and Atom2->Atom3 vector; the angle (passed as a value to the Func) appears to be measured in radians

@@ -667,7 +667,7 @@ AmbiguousNMRDistanceConstraint::AmbiguousNMRDistanceConstraint(
 	}
 }
 
-///@details one line definition "AmbiguousNMRDistances atom1 res1 atom2 res2 function_type function_definition"
+///@details one line definition "AmbiguousNMRDistance atom1 res1 atom2 res2 function_type function_definition"
 void
 AmbiguousNMRDistanceConstraint::read_def(
 	std::istream & data,
