@@ -1,8 +1,8 @@
 ## fullatom protein n-terminus patch
 ## I would like to redo this in YAML! no begin_ end_ blocks!
 
-NAME NtermProteinFull
-TYPES LOWER_TERMINUS
+NAME NtermTruncation
+TYPES LOWERTERM_TRUNC
 
 ## general requirements for this patch
 ## require protein, ignore anything that's already nterm patched:

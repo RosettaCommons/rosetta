@@ -1,7 +1,7 @@
-## fullatom protein c-terminus patch to allow connection to C-term of protein
+## fullatom protein c-terminus patch
 
-NAME CtermConnect
-TYPES CTERM_CONNECT
+NAME CtermTruncation
+TYPES UPPERTERM_TRUNC
 
 ## general requirements for this patch
 
@@ -16,15 +16,13 @@ END_SELECTOR
 
 BEGIN_CASE ### THE GENERAL CASE ##########################################
 
-## delete the polymer connection
+## these are the operations involved
+
+SET_ICOOR O    80.0 60 1.2 C CA N
+
 SET_POLYMER_CONNECT UPPER NONE
-
-## here we add the new connection point, the icoor values are bogus
-##
-ADD_CONNECT C ICOOR 180.0 60.0 1.2 C CA N
-
-SET_ICOOR O 180.0 60 1.2 C CA CONN%NCONN
 
 ADD_PROPERTY UPPER_TERMINUS ## implies terminus
 
 END_CASE
+

@@ -1,5 +1,7 @@
 patches/CtermProteinFull.txt
 patches/NtermProteinFull.txt
+patches/CtermTruncation.txt
+patches/NtermTruncation.txt
 patches/LowerDNA.txt
 patches/UpperDNA.txt
 patches/protein_cutpoint_upper.txt

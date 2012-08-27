@@ -1,6 +1,8 @@
 patches/CtermProteinFull.txt
 patches/Cterm_amidation.txt
 patches/NtermProteinFull.txt
+patches/CtermTruncation.txt
+patches/NtermTruncation.txt
 patches/LowerDNA.txt
 patches/UpperDNA.txt
 patches/SpecialRotamer.txt

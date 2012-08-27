@@ -1,9 +1,14 @@
 patches/CtermProtein.txt
 patches/NtermProtein.txt
+patches/CtermTruncation.txt
+patches/NtermTruncation.txt
+#patches/LowerDNA.txt
+#patches/UpperDNA.txt
 patches/protein_cutpoint_upper.txt
 patches/protein_cutpoint_lower.txt
 patches/VirtualBB.txt
 patches/ShoveBB.txt
+#patches/VirtualDNAPhosphate.txt
 patches/protein_centroid_with_HA.txt
 patches/VirtualNterm.txt
 patches/N_acetylated.txt
