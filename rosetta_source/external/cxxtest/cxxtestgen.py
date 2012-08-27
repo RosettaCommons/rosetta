@@ -424,6 +424,8 @@ def writePreamble( output ):
     if gui:
         output.write( "#include <cxxtest/%s.h>\n" % gui )
     output.write( "\n" )
+    output.write( "//catch unhandled exceptions in unit tests\n" )
+    output.write( "#include <utility/excn/EXCN_Base.hh>\n" )
     wrotePreamble = 1
 
 def writeMain( output ):
@@ -454,7 +456,15 @@ def writeMain( output ):
 
         if noStaticInit:
             output.write( ' CxxTest::initialize();\n' )
-        output.write( ' return CxxTest::%s().run();\n' % runner )
+        output.write( ' try{\n' )
+        output.write( '  return CxxTest::%s().run();\n' % runner )
+	output.write( ' } catch( utility::excn::EXCN_Base& excn ) {\n' )
+	output.write( '  std::cerr\n' )
+	output.write( '   << "ERROR: Unhandled Exception caught by cxxtest: "\n' )
+	output.write( '   << excn << std::endl;\n' )
+	output.write( '  assert(false); // core dump in debug mode\n' )
+	output.write( '  std::exit( 1 );\n' )
+	output.write( ' }\n' )
         output.write( '}\n' )
 
 wroteWorld = 0
