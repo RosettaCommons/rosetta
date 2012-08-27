@@ -43,9 +43,9 @@ Simply calling 'UTracer & delta(double absolute_delta)' will set current acceptb
 @code
 	UTracer UT(“MyFile.u”);
 	Real a,b,c;
-	UT.delta(.001) << a;  // a will be compared with precisions .001
-	UT.delta(.01) << b;  // b will be compared with precisions .01
-	UT.delta(.1) << c;  // b will be compared with precisions .1
+	UT.abs_tolerance(.001) << a;  // a will be compared with precisions .001
+	UT.abs_tolerance(.01) << b;  // b will be compared with precisions .01
+	UT.abs_tolerance(.1) << c;  // b will be compared with precisions .1
 @endcode
 
 @subsection relative_precision 2. Specifying relative precisions.
@@ -54,9 +54,9 @@ delta = (original_value + new_value)/2. * relative_precision. Where original_val
 @code
 	UTracer UT(“MyFile.u”);
 	Real a,b,c;
-	UT.relative(.001) << a;  // a will be compared with relative precisions .001
-	UT.relative(.01) << b;  // b will be compared with relative precisions .01
-	UT.relative(.1) << c;  // b will be compared with relative precisions .1
+	UT.rel_tolerance(.001) << a;  // a will be compared with relative precisions .001
+	UT.rel_tolerance(.01) << b;  // b will be compared with relative precisions .01
+	UT.rel_tolerance(.1) << c;  // b will be compared with relative precisions .1
 @endcode
 
 @subsection relative_and_absolute 3. Specifying relative and absolute precisions.
@@ -66,7 +66,7 @@ It is possible to effectively use absolute and relative precision in the same ti
 	UTracer UT(“MyFile.u”);
 	Vector<Real> v;
 	...
-	UT.delta(.1).relative(.05);  	// set absolute precision as .1
+	UT.abs_tolerance(.1).rel_tolerance(.05);  	// set absolute precision as .1
 					// and set relative precision as 5%
 	for(i=0; i<v.size(); i++) {
 		UT << v[i];

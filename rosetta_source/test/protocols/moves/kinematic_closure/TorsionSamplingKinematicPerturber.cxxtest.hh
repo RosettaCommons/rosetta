@@ -221,6 +221,17 @@ public:
 // 			std::cout << "TS_ASSERT_DELTA( " << copy.omega(i) << ", copy.omega(" << i << "), 1e-9 );\n";
 // 		}
 
+		test::UTracer UT("protocols/moves/kinematic_closure/TorsionSamplingKinematicPerturber_vicinity.u");
+		UT.abs_tolerance(1e-9);
+
+		UT << "\nRaw torsions:\n";
+		for(int i=7; i<12; i++) {
+			UT << "  copy.phi(" << i << "):   " << copy.phi(i) << "\n";
+			UT << "  copy.psi(" << i << "):   " << copy.psi(i) << "\n";
+			UT << "  copy.omega(" << i << "): " << copy.omega(i)<< "\n";
+		}
+
+		/*
 		//This part of the protein is different; here's raw torsions
 		//7
 		TS_ASSERT_DELTA( 289.40271436608145450009, copy.phi(7), 1e-9 );
@@ -242,6 +253,7 @@ public:
 		TS_ASSERT_DELTA( 58.84742871607191005978, copy.phi(11), 1e-9 );
 		TS_ASSERT_DELTA( 234.70105204067374415899, copy.psi(11), 1e-9 );
 		TS_ASSERT_DELTA( -178.41640975783539602162, copy.omega(11), 1e-9 );
+		*/
 
 		//With "local sampling", it should be within one degree of where it started
 		for(core::Size i(start+1); i<=end-1; ++i){
