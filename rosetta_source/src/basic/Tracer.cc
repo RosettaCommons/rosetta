@@ -440,6 +440,12 @@ void Tracer::set_ios_hook(otstreamOP tr, std::string const & monitoring_channels
 	ios_hook_raw_ = raw;
 }
 
+void PyTracer::t_flush(std::string const &str)
+{
+	buf_ += str;
+	output_callback(str);
+}
+
 
 } // namespace basic
 

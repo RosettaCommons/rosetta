@@ -92,7 +92,6 @@ public:
 			return buf->str().size() == 0;
 	}
 
-
 protected:
 	/// @brief notification that flush function was called and inner buffer should be outputed.
 	virtual void t_flush(std::string const &) { assert("basic_otstream::t_flush"); };
@@ -163,6 +162,8 @@ public:
 	static void set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list, bool raw);
 
 	static std::string const AllChannels;
+
+	static std::string const get_AllChannels_string() { return AllChannels; } // PyRosetta helper function
 
 	/// @brief Is this tracer currently visible?.
 	bool visible() const;
@@ -311,7 +312,26 @@ inline Tracer & Error(TracerPriority priority=t_error) { return T("Error", prior
 inline Tracer & Warning(TracerPriority priority=t_warning) { return T("Warning", priority); }
 
 
+/// Special PyRosetta friendly Tracer like buffer. Use it to capture Tracer output with set_ios_hook
+class PyTracer :  public otstream
+{
+public:
+	//Tracer(void) {}
+	//virtual ~PyTracer() {}
 
+
+	std::string buf() { return buf_; }
+	void buf(std::string b) { buf_ = b; }
+
+	virtual void output_callback(std::string const &) {}
+
+protected:
+	/// @brief overload member function.
+	virtual void t_flush(std::string const &);
+
+private:
+	std::string buf_;
+};
 
 } // namespace basic
 
