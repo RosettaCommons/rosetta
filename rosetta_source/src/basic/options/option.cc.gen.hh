@@ -631,10 +631,10 @@ option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option gro
 option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
+option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
-option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::seq_sep_stages, "give vector with sequence_separation after stage1, stage3 and stage4" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::reramp_cst_cycles, "in stage2 do xxx cycles where atom_pair_constraint is ramped up" ).def(0);
@@ -899,6 +899,7 @@ option.add( basic::options::OptionKeys::holes::atom_scores, "output scores for a
 option.add( basic::options::OptionKeys::holes::residue_scores, "output scores for all residues (avg over atoms)" ).def(false);
 option.add( basic::options::OptionKeys::holes::cav_shrink, "Cavity ball radii reduced by this amount" ).def(0.7);
 option.add( basic::options::OptionKeys::holes::minimize, "RosettaHoles params to use: decoy15, decoy25 or resl" ).def("decoy15");
+option.add( basic::options::OptionKeys::holes::debug, "dump debug output" ).def(false);
 option.add( basic::options::OptionKeys::packstat::packstat, "packstat option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::packstat::include_water, "Revert to old style etables" ).def(false);
 option.add( basic::options::OptionKeys::packstat::oversample, "Precision of SASA measurements" ).def(0);
@@ -1261,10 +1262,10 @@ option.add( basic::options::OptionKeys::lh::mpi_batch_relax_absolute_max, "No de
 option.add( basic::options::OptionKeys::lh::mpi_outbound_wu_buffer_size, "No description" ).def(60);
 option.add( basic::options::OptionKeys::lh::mpi_loophash_split_size    , "No description" ).def(50);
 option.add( basic::options::OptionKeys::lh::mpi_metropolis_temp, "No description" ).def(1000000.0);
+option.add( basic::options::OptionKeys::lh::mpi_save_state_interval, "No description" ).def(1200);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::mpi_save_state_interval, "No description" ).def(1200);
-option.add( basic::options::OptionKeys::lh::mpi_master_save_score_only, "No description" ).def(true);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::mpi_master_save_score_only, "No description" ).def(true);
 option.add( basic::options::OptionKeys::lh::max_loophash_per_structure, "No description" ).def(1);
 option.add( basic::options::OptionKeys::lh::rms_limit, "How to deal with returned relaxed structures" ).def(2.0);
 option.add( basic::options::OptionKeys::lh::centroid_only, "false" ).def(false);
@@ -1891,11 +1892,11 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of 
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
+option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
+option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
-option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
-option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_seqwidth, "sequence width on constraints" ).def(0);
 option.add( basic::options::OptionKeys::edensity::edensity, "edensity option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::edensity::debug, "No description" ).def(false);
@@ -2091,6 +2092,9 @@ option.add( basic::options::OptionKeys::remodel::dr_cycles, "number of design-re
 option.add( basic::options::OptionKeys::remodel::two_chain_tree, "label the start of the second chain" );
 option.add( basic::options::OptionKeys::remodel::repeat_structure, "build identical repeats this many times" ).def(1);
 option.add( basic::options::OptionKeys::remodel::lh_ex_limit, "loophasing neighboring bin expansion limit" ).def(5);
+option.add( basic::options::OptionKeys::remodel::lh_filter_string, "loophash ABEGO filter target fragment type" ).def("");
+option.add( basic::options::OptionKeys::remodel::lh_cbreak_selection, "loophash with cbreak dominant weight" ).def(10);
+option.add( basic::options::OptionKeys::remodel::lh_closure_filter, "filter for close rms when bypass_closure is used" ).def(false);
 option.add( basic::options::OptionKeys::remodel::cen_minimize, "centroid minimization after fragment building" ).def(false);
 option.add( basic::options::OptionKeys::remodel::core_cutoff, "number of neighbors required to consider core in auto design" ).def(15);
 option.add( basic::options::OptionKeys::remodel::boundary_cutoff, "number of neighbors required to consider boundary in auto design" ).def(10);
@@ -2118,10 +2122,11 @@ option.add( basic::options::OptionKeys::remodel::design::design_neighbors, "desi
 option.add( basic::options::OptionKeys::remodel::design::find_neighbors, "find neighbors for design/repack" ).def(false);
 option.add( basic::options::OptionKeys::remodel::rank_by_bsasa, "rank results by bsasa." );
 option.add( basic::options::OptionKeys::remodel::RemodelLoopMover::RemodelLoopMover, "RemodelLoopMover option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::remodel::RemodelLoopMover::max_linear_chainbreak, "linear chainbreak is <= this value, loop is considered closed (default 0.07) " );
-option.add( basic::options::OptionKeys::remodel::RemodelLoopMover::randomize_loops, "randomize loops prior to running main protocol (default false)" );
+option.add( basic::options::OptionKeys::remodel::RemodelLoopMover::max_linear_chainbreak, "linear chainbreak is <= this value, loop is considered closed (default 0.07) " ).def(0.07);
+option.add( basic::options::OptionKeys::remodel::RemodelLoopMover::randomize_loops, "randomize loops prior to running main protocol (default true)" );
 option.add( basic::options::OptionKeys::remodel::RemodelLoopMover::use_loop_hash, "centroid build with loop hash (default false)" );
 option.add( basic::options::OptionKeys::remodel::RemodelLoopMover::allowed_closure_attempts, "the allowed number of overall closure attempts (default 1)" );
+option.add( basic::options::OptionKeys::remodel::RemodelLoopMover::loophash_cycles, "the number of loophash closure cycles to perform (default 8)" );
 option.add( basic::options::OptionKeys::remodel::RemodelLoopMover::simultaneous_cycles, "the number of simultaneous closure cycles to perform (default 2)" );
 option.add( basic::options::OptionKeys::remodel::RemodelLoopMover::independent_cycles, "the number of independent closure cycles to perform (default 8)" );
 option.add( basic::options::OptionKeys::remodel::RemodelLoopMover::boost_closure_cycles, "the maximum number of possible lockdown closure cycles to perform (default 30)" );

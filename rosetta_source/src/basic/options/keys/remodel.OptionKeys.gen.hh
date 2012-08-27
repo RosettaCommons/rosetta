@@ -57,6 +57,9 @@ namespace remodel { extern IntegerOptionKey const dr_cycles; }
 namespace remodel { extern IntegerOptionKey const two_chain_tree; }
 namespace remodel { extern IntegerOptionKey const repeat_structure; }
 namespace remodel { extern IntegerOptionKey const lh_ex_limit; }
+namespace remodel { extern StringOptionKey const lh_filter_string; }
+namespace remodel { extern IntegerOptionKey const lh_cbreak_selection; }
+namespace remodel { extern BooleanOptionKey const lh_closure_filter; }
 namespace remodel { extern BooleanOptionKey const cen_minimize; }
 namespace remodel { extern IntegerOptionKey const core_cutoff; }
 namespace remodel { extern IntegerOptionKey const boundary_cutoff; }
@@ -84,10 +87,11 @@ namespace remodel { namespace design { extern BooleanOptionKey const design_neig
 namespace remodel { namespace design { extern BooleanOptionKey const find_neighbors; } }
 namespace remodel { extern BooleanOptionKey const rank_by_bsasa; }
 namespace remodel { namespace RemodelLoopMover { extern BooleanOptionKey const RemodelLoopMover; } }
-namespace remodel { namespace RemodelLoopMover { extern IntegerOptionKey const max_linear_chainbreak; } }
+namespace remodel { namespace RemodelLoopMover { extern RealOptionKey const max_linear_chainbreak; } }
 namespace remodel { namespace RemodelLoopMover { extern BooleanOptionKey const randomize_loops; } }
 namespace remodel { namespace RemodelLoopMover { extern BooleanOptionKey const use_loop_hash; } }
 namespace remodel { namespace RemodelLoopMover { extern IntegerOptionKey const allowed_closure_attempts; } }
+namespace remodel { namespace RemodelLoopMover { extern IntegerOptionKey const loophash_cycles; } }
 namespace remodel { namespace RemodelLoopMover { extern IntegerOptionKey const simultaneous_cycles; } }
 namespace remodel { namespace RemodelLoopMover { extern IntegerOptionKey const independent_cycles; } }
 namespace remodel { namespace RemodelLoopMover { extern IntegerOptionKey const boost_closure_cycles; } }

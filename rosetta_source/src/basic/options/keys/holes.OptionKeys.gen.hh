@@ -32,6 +32,7 @@ namespace holes { extern BooleanOptionKey const atom_scores; }
 namespace holes { extern BooleanOptionKey const residue_scores; }
 namespace holes { extern RealOptionKey const cav_shrink; }
 namespace holes { extern StringOptionKey const minimize; }
+namespace holes { extern BooleanOptionKey const debug; }
 
 } // namespace OptionKeys
 } // namespace options

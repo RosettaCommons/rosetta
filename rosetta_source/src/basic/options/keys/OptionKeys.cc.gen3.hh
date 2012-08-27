@@ -1,5 +1,3 @@
-namespace RBSegmentRelax { RealVectorOptionKey const helical_movement_params( "RBSegmentRelax:helical_movement_params" );  }
-namespace RBSegmentRelax { RealVectorOptionKey const strand_movement_params( "RBSegmentRelax:strand_movement_params" );  }
 namespace RBSegmentRelax { RealVectorOptionKey const default_movement_params( "RBSegmentRelax:default_movement_params" );  }
 namespace RBSegmentRelax { IntegerOptionKey const cst_seqwidth( "RBSegmentRelax:cst_seqwidth" );  }
 namespace edensity { BooleanOptionKey const edensity( "edensity" );  }
@@ -196,6 +194,9 @@ namespace remodel { IntegerOptionKey const dr_cycles( "remodel:dr_cycles" );  }
 namespace remodel { IntegerOptionKey const two_chain_tree( "remodel:two_chain_tree" );  }
 namespace remodel { IntegerOptionKey const repeat_structure( "remodel:repeat_structure" );  }
 namespace remodel { IntegerOptionKey const lh_ex_limit( "remodel:lh_ex_limit" );  }
+namespace remodel { StringOptionKey const lh_filter_string( "remodel:lh_filter_string" );  }
+namespace remodel { IntegerOptionKey const lh_cbreak_selection( "remodel:lh_cbreak_selection" );  }
+namespace remodel { BooleanOptionKey const lh_closure_filter( "remodel:lh_closure_filter" );  }
 namespace remodel { BooleanOptionKey const cen_minimize( "remodel:cen_minimize" );  }
 namespace remodel { IntegerOptionKey const core_cutoff( "remodel:core_cutoff" );  }
 namespace remodel { IntegerOptionKey const boundary_cutoff( "remodel:boundary_cutoff" );  }
@@ -223,10 +224,11 @@ namespace remodel { namespace design { BooleanOptionKey const design_neighbors( 
 namespace remodel { namespace design { BooleanOptionKey const find_neighbors( "remodel:design:find_neighbors" );  } }
 namespace remodel { BooleanOptionKey const rank_by_bsasa( "remodel:rank_by_bsasa" );  }
 namespace remodel { namespace RemodelLoopMover { BooleanOptionKey const RemodelLoopMover( "remodel:RemodelLoopMover" );  } }
-namespace remodel { namespace RemodelLoopMover { IntegerOptionKey const max_linear_chainbreak( "remodel:RemodelLoopMover:max_linear_chainbreak" );  } }
+namespace remodel { namespace RemodelLoopMover { RealOptionKey const max_linear_chainbreak( "remodel:RemodelLoopMover:max_linear_chainbreak" );  } }
 namespace remodel { namespace RemodelLoopMover { BooleanOptionKey const randomize_loops( "remodel:RemodelLoopMover:randomize_loops" );  } }
 namespace remodel { namespace RemodelLoopMover { BooleanOptionKey const use_loop_hash( "remodel:RemodelLoopMover:use_loop_hash" );  } }
 namespace remodel { namespace RemodelLoopMover { IntegerOptionKey const allowed_closure_attempts( "remodel:RemodelLoopMover:allowed_closure_attempts" );  } }
+namespace remodel { namespace RemodelLoopMover { IntegerOptionKey const loophash_cycles( "remodel:RemodelLoopMover:loophash_cycles" );  } }
 namespace remodel { namespace RemodelLoopMover { IntegerOptionKey const simultaneous_cycles( "remodel:RemodelLoopMover:simultaneous_cycles" );  } }
 namespace remodel { namespace RemodelLoopMover { IntegerOptionKey const independent_cycles( "remodel:RemodelLoopMover:independent_cycles" );  } }
 namespace remodel { namespace RemodelLoopMover { IntegerOptionKey const boost_closure_cycles( "remodel:RemodelLoopMover:boost_closure_cycles" );  } }

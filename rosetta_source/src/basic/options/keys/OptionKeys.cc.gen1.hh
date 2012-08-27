@@ -1,4 +1,3 @@
-namespace fold_cst { BooleanOptionKey const keep_skipped_csts( "fold_cst:keep_skipped_csts" );  }
 namespace fold_cst { BooleanOptionKey const no_minimize( "fold_cst:no_minimize" );  }
 namespace fold_cst { BooleanOptionKey const force_minimize( "fold_cst:force_minimize" );  }
 namespace fold_cst { RealVectorOptionKey const seq_sep_stages( "fold_cst:seq_sep_stages" );  }
@@ -264,6 +263,7 @@ namespace holes { BooleanOptionKey const atom_scores( "holes:atom_scores" );  }
 namespace holes { BooleanOptionKey const residue_scores( "holes:residue_scores" );  }
 namespace holes { RealOptionKey const cav_shrink( "holes:cav_shrink" );  }
 namespace holes { StringOptionKey const minimize( "holes:minimize" );  }
+namespace holes { BooleanOptionKey const debug( "holes:debug" );  }
 namespace packstat { BooleanOptionKey const packstat( "packstat" );  }
 namespace packstat { BooleanOptionKey const include_water( "packstat:include_water" );  }
 namespace packstat { IntegerOptionKey const oversample( "packstat:oversample" );  }
@@ -626,3 +626,4 @@ namespace lh { IntegerOptionKey const mpi_batch_relax_absolute_max( "lh:mpi_batc
 namespace lh { IntegerOptionKey const mpi_outbound_wu_buffer_size( "lh:mpi_outbound_wu_buffer_size" );  }
 namespace lh { IntegerOptionKey const mpi_loophash_split_size    ( "lh:mpi_loophash_split_size    " );  }
 namespace lh { RealOptionKey const mpi_metropolis_temp( "lh:mpi_metropolis_temp" );  }
+namespace lh { IntegerOptionKey const mpi_save_state_interval( "lh:mpi_save_state_interval" );  }

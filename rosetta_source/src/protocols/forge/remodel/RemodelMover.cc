@@ -551,11 +551,13 @@ if (working_model.manager.size()!= 0){
 		// do centroid build
 		TR << "BUILD CYCLE REMAINING " << i << std::endl;
 		core::kinematics::FoldTree originalTree = pose.fold_tree();
+TR << "ORIGINAL TREE: " << pose.fold_tree() << std::endl;
 		if (working_model.manager.size() != 0){
 			if ( !centroid_build( pose, working_model.manager ) ) { // build failed
 				set_last_move_status( FAIL_RETRY );
+				i--;
 				continue;
-			//	return;
+				//return;
 			}
 		}
 
@@ -664,11 +666,33 @@ if (working_model.manager.size()!= 0){
 
 			if (option[ OptionKeys::remodel::cen_minimize]) {
 
+				//cache current foldTree;
+				core::kinematics::FoldTree cenFT = pose.fold_tree();
+				pose.fold_tree(originalTree);
+
 				core::kinematics::MoveMapOP cmmop = new core::kinematics::MoveMap;
 				//pose.dump_pdb("pretest.pdb");
 
 				cmmop->import(remodel_data_.natro_movemap_);
 				cmmop->import( manager_.movemap() );
+
+				for (int i = 1; i<= pose.total_residue(); i++){
+					std::cout << "bb at " << i << " " << cmmop->get_bb(i) << std::endl;
+				}
+
+				//adding angles and bonds dof 
+			//	cmmop->set(core::id::THETA, true);
+			//	cmmop->set(core::id::D, true);
+
+				 for(Size i = 1; i <= pose.n_residue(); i++) {
+						for(Size j = 1; j <= pose.residue(i).nheavyatoms(); j++) {
+							if (cmmop->get_bb(i) == 1){
+								cmmop->set(core::id::DOF_ID(core::id::AtomID(j,i),core::id::THETA),true);
+								cmmop->set(core::id::DOF_ID(core::id::AtomID(j,i),core::id::D),true);
+							}
+						}
+					} 
+
 
 				//core::scoring::ScoreFunctionOP cen_min_sfxn = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth");
 
@@ -713,25 +737,40 @@ if (working_model.manager.size()!= 0){
 							targetSS << 1+(segment_length*(repeat_number-1))+1 << "-" << segment_length + (segment_length*(repeat_number-1))-1;
 							TR << "NCS " << templateRangeSS.str() << " " << targetSS.str() << std::endl;
 							setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
+							setup_ncs.apply(pose);
 
 				}
 
-				setup_ncs.apply(pose);
 				//sfx->show(TR, pose);
 				//TR << std::endl;
 
 				centroid_sfx_->set_weight( core::scoring::atom_pair_constraint, 1.0);
 				centroid_sfx_->set_weight(core::scoring::dihedral_constraint, 10.0 );
+				//enable cartesian bond terms
+				centroid_sfx_->set_weight(core::scoring::cart_bonded_angle,  0.1 );
+				centroid_sfx_->set_weight(core::scoring::cart_bonded_length,  0.1 );
+				centroid_sfx_->set_weight(core::scoring::cart_bonded_torsion,  0.1 );
+				centroid_sfx_->set_weight(core::scoring::omega, 0.2 );
+
 				//only use smooth hb if either of the term is used in centroid build level
 				if (centroid_sfx_->get_weight(core::scoring::hbond_lr_bb) > 0 || centroid_sfx_->get_weight(core::scoring::hbond_sr_bb) > 0 ){
-					centroid_sfx_->set_weight( core::scoring::cen_hb, 1.0);
+					centroid_sfx_->set_weight( core::scoring::cen_hb, 2.0);
 				}
+				/*
+				if (centroid_sfx_->get_weight(core::scoring::env) > 0 ){
+					centroid_sfx_->set_weight( core::scoring::cen_env_smooth, centroid_sfx_->get_weight(core::scoring::env));
+					centroid_sfx_->set_weight( core::scoring::env, 0.0);
+				}*/
 
-				simple_moves::MinMoverOP minMover = new simple_moves::MinMover( cmmop , centroid_sfx_, "dfpmin_armijo", 0.01, true);
+				//simple_moves::MinMoverOP minMover = new simple_moves::MinMover( cmmop , centroid_sfx_, "dfpmin_armijo", 0.01, true);
+				simple_moves::MinMoverOP minMover = new simple_moves::MinMover( cmmop , centroid_sfx_, "lbfgs_armijo", 0.01, true);
+				TR << "cen_minimize pose foldtree: " << pose.fold_tree() << std::endl;
 				minMover->apply(pose);
 
 				//reset cen_hb to 0
 				centroid_sfx_->set_weight( core::scoring::cen_hb, 0.0);
+				//switch back the foldtree 
+				//pose.fold_tree(cenFT);
 
 				// flip residue type set back, for repeat builds, currently don't do
 				// restore_sidechain, as they should all be redesigned.  MAY NEED TO
@@ -1323,8 +1362,6 @@ bool RemodelMover::design_refine(
 		// of the refine Mover?
 		remove_cutpoint_variants( pose );
 
-		// set original topology
-		pose.fold_tree( original_ft );
 	//debug
 //	std::stringstream SS;
 //	SS << "RefineStage" << i << ".pdb";
@@ -1346,13 +1383,15 @@ bool RemodelMover::design_refine(
 	for ( Loops::const_iterator l = loops->begin(), le = loops->end(); l != le && cbreaks_pass; ++l ) {
 		if ( l->cut() > 0 ) {
 			Real const c = linear_chainbreak( pose, l->cut() );
-			TR << "design_refine: final chainbreak = " << c << std::endl;
+			TR << "design_refine: final chainbreak = " << c  << " at " << l->cut() << std::endl;
 			cbreaks_pass = c <= max_linear_chainbreak_;
 		}
 	}
+		// set original topology
+		pose.fold_tree( original_ft );
 
-	//return cbreaks_pass;
-	return true; //FOR NOW!!  change me back!
+	return cbreaks_pass;
+	//return true; //FOR NOW!!  change me back!
 }
 
 bool RemodelMover::confirm_sequence(core::pose::Pose & pose ) {

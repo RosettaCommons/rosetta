@@ -41,6 +41,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/util/ABEGOManager.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/Tracer.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
@@ -125,6 +126,7 @@ RemodelLoopMover::RemodelLoopMover() :
 	max_linear_chainbreak_( 0.07 ),
 	randomize_loops_( true ),
 	allowed_closure_attempts_( 1 ), //switched from 3 so no accumulation
+	loophash_cycles_( 8 ),
 	simultaneous_cycles_( 2 ),
 	independent_cycles_( 8 ),
 	user_provided_movers_apply_cycle_(3),
@@ -144,6 +146,7 @@ RemodelLoopMover::RemodelLoopMover( loops::LoopsOP const loops ) :
 	max_linear_chainbreak_( 0.07 ),
 	randomize_loops_( true ),
 	allowed_closure_attempts_( 1 ),
+	loophash_cycles_( 8 ),
 	simultaneous_cycles_( 2 ),
 	independent_cycles_( 8 ),
 	user_provided_movers_apply_cycle_(3),
@@ -165,6 +168,7 @@ RemodelLoopMover::RemodelLoopMover( RemodelLoopMover const & rval ) :
 	max_linear_chainbreak_( rval.max_linear_chainbreak_ ),
 	randomize_loops_( rval.randomize_loops_ ),
 	allowed_closure_attempts_( rval.allowed_closure_attempts_ ),
+	loophash_cycles_( rval.loophash_cycles_ ),
 	simultaneous_cycles_( rval.simultaneous_cycles_ ),
 	independent_cycles_( rval.independent_cycles_ ),
 	user_provided_movers_(rval.user_provided_movers_),
@@ -199,6 +203,7 @@ void RemodelLoopMover::set_param_from_options(){
 	if( option[ OptionKeys::remodel::RemodelLoopMover::max_linear_chainbreak ].user() )    max_linear_chainbreak_ = option[ OptionKeys::remodel::RemodelLoopMover::max_linear_chainbreak ].value();
 	if( option[ OptionKeys::remodel::RemodelLoopMover::randomize_loops ].user() )          randomize_loops_       = option[ OptionKeys::remodel::RemodelLoopMover::randomize_loops ].value();
 	if( option[ OptionKeys::remodel::RemodelLoopMover::allowed_closure_attempts ].user() ) allowed_closure_attempts_ = option[ OptionKeys::remodel::RemodelLoopMover::allowed_closure_attempts ].value();
+	if( option[ OptionKeys::remodel::RemodelLoopMover::loophash_cycles ].user() )       loophash_cycles_       = option[ OptionKeys::remodel::RemodelLoopMover::loophash_cycles ].value();
 	if( option[ OptionKeys::remodel::RemodelLoopMover::simultaneous_cycles ].user() )      simultaneous_cycles_      = option[ OptionKeys::remodel::RemodelLoopMover::simultaneous_cycles ].value();
 	if( option[ OptionKeys::remodel::RemodelLoopMover::independent_cycles ].user() )       independent_cycles_       = option[ OptionKeys::remodel::RemodelLoopMover::independent_cycles ].value();
 	if( option[ OptionKeys::remodel::RemodelLoopMover::boost_closure_cycles ].user() ) 	   boost_closure_cycles_     = option[ OptionKeys::remodel::RemodelLoopMover::boost_closure_cycles ].value();
@@ -216,6 +221,7 @@ void RemodelLoopMover::register_options(){
  	option.add_relevant( OptionKeys::remodel::RemodelLoopMover::max_linear_chainbreak );
 	option.add_relevant( OptionKeys::remodel::RemodelLoopMover::randomize_loops );
 	option.add_relevant( OptionKeys::remodel::RemodelLoopMover::allowed_closure_attempts );
+	option.add_relevant( OptionKeys::remodel::RemodelLoopMover::loophash_cycles );
 	option.add_relevant( OptionKeys::remodel::RemodelLoopMover::simultaneous_cycles );
 	option.add_relevant( OptionKeys::remodel::RemodelLoopMover::independent_cycles );
 	option.add_relevant( OptionKeys::remodel::RemodelLoopMover::boost_closure_cycles );
@@ -1082,6 +1088,8 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		set_last_move_status( protocols::moves::MS_SUCCESS );
 	} else {
 		set_last_move_status( protocols::moves::FAIL_RETRY );
+		TR << "fail in loop building: EXIT " << std::endl;
+		exit(0); 
 	}
 
 	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
@@ -1296,7 +1304,7 @@ void RemodelLoopMover::loophash_stage(
 	// parameters
 	//Size const n_standard_cycles = total_standard_cycles();
 	//	Size const n_standard_cycles = 3;
-	Size const max_outer_cycles = independent_cycles();
+	Size const max_outer_cycles = loophash_cycles();
 	//	Size const max_outer_cycles = 1;
 
 	// per-loop frag + ccd_move
@@ -1461,6 +1469,10 @@ void RemodelLoopMover::loophash_stage(
 		//std::random_shuffle( leap_index_list.begin(), leap_index_list.end() );
 
 		TR << "collected " << leap_index_list.size() << " fragments." << std::endl;
+		Size lh_frag_count = leap_index_list.size();
+		if (leap_index_list.size() == 0){
+			exit(0);
+		}
 
 		for( std::vector < core::Size >::const_iterator itx = leap_index_list.begin(); itx != leap_index_list.end(); ++itx ){
 					core::Size bb_index = *itx;
@@ -1483,8 +1495,8 @@ void RemodelLoopMover::loophash_stage(
 			ScoreFunctionOP sfxOP = mc.score_function().clone();
 			sfxOP->set_weight(
 				core::scoring::linear_chainbreak,
-				//sfxOP->get_weight( core::scoring::linear_chainbreak ) + cbreak_increment
-				sfxOP->get_weight( core::scoring::linear_chainbreak ) + 1
+				sfxOP->get_weight( core::scoring::linear_chainbreak ) + cbreak_increment
+				//sfxOP->get_weight( core::scoring::linear_chainbreak ) + 1
 			);
 
 			if (option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
@@ -1496,6 +1508,10 @@ void RemodelLoopMover::loophash_stage(
 					core::scoring::atom_pair_constraint,
 					sfxOP->get_weight( core::scoring::atom_pair_constraint) + cbreak_increment
 				);
+			}
+
+			if (option[OptionKeys::remodel::lh_cbreak_selection].user()){
+				sfxOP->set_weight( core::scoring::linear_chainbreak, option[OptionKeys::remodel::lh_cbreak_selection]);
 			}
 
 			mc.score_function( *sfxOP );
@@ -1533,6 +1549,28 @@ void RemodelLoopMover::loophash_stage(
 						std::vector<core::Real> psi = (*i).psi();
 						std::vector<core::Real> omega = (*i).omega();
 						Size seg_length = (*i).length();
+
+						//check sec. struct at stub.
+						//Size idxresStart = (int)loop.start()-1;  // this is terrible, due to the use of std:vector.  i has to start from 0, but positions offset by 1.
+						//Size idxresStop = (int)loop.start()-1+(seg_length-1);  // this is terrible, due to the use of std:vector.  i has to start from 0, but positions offset by 1.
+						Size idxresStart = 0;  // 0 means starting from the jump position!
+						Size idxresStop = seg_length-1; 
+
+						//special case for DB's test
+						core::util::ABEGOManager AM;
+						std::string alphabet;
+						std::string target = basic::options::option[ OptionKeys::remodel::lh_filter_string];
+						for (Size idx = idxresStart; idx <= idxresStop; idx++){
+							alphabet += AM.index2symbol( AM.torsion2index(phi[idx],psi[idx], omega[idx],1));
+						}
+						runtime_assert(alphabet.length() == target.length());
+						if ( alphabet.compare( basic::options::option[ OptionKeys::remodel::lh_filter_string] ) != 0 ){
+							std::cout << "lh frag at " << idxresStart << " and " << idxresStop << " not as " << target <<  ": " <<  alphabet << std::endl;
+							lh_frag_count--;
+							continue;
+						}
+	
+						
 
 						/*
 						Pose test_segment;
@@ -1596,7 +1634,7 @@ void RemodelLoopMover::loophash_stage(
 
 							//pass every build through ccd for now
 								if (!option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
-									//ccd_moves( 10, repeat_pose_, movemap, (int)loop.start(), (int)loop.stop(), (int)loop.cut() );
+									ccd_moves( 10, repeat_pose_, movemap, (int)loop.start(), (int)loop.stop(), (int)loop.cut() );
 								}
 								repeat_sync( repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
 								mc.boltzmann( repeat_pose_, "loop_hash-ccd");
@@ -1613,14 +1651,15 @@ void RemodelLoopMover::loophash_stage(
 							}
 							//mc.boltzmann( pose, "loophash" );
 							if (!option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
-									//ccd_moves( 10, pose, movemap, (int)loop.start(), (int)loop.stop(), (int)loop.cut() );
+									ccd_moves( 10, pose, movemap, (int)loop.start(), (int)loop.stop(), (int)loop.cut() );
 							}
 							mc.boltzmann( pose, "loop_hash ccd");
 						}
 
 			} // inner_cycles hashed loops
-
+			TR << "Sec struc filtered fragment count = " << lh_frag_count << std::endl;
 		} // outer_cycles
+
 		// recover low
 		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 			Size copy_size =0;
@@ -2367,14 +2406,36 @@ bool RemodelLoopMover::check_closure_criteria(
 	using namespace basic::options;
 	using namespace OptionKeys::remodel;
 
+	boost::format fmt( "%|5t|%1% %|5t|%2% %|5t|%3% %|8t|%4%" );
+
 	//breakout case if we don't care if the loops are closed
 	if (option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
-		return true;
+		//special case for DB, filtering on close RMS with loophash
+		//only trigger if lh_closure_filter is used before evaluation 
+		if (option[OptionKeys::remodel::lh_closure_filter].user()){
+			TR << "using cbreak filter under bypass_closure." << std::endl;
+		  bool all_loops_pass = true;
+			for ( Loops::const_iterator l = loops_->begin(), le = loops_->end(); l != le; ++l ) {
+				Real cbreak = 0.0;
+				if ( !l->is_terminal( pose ) ) {
+					cbreak = linear_chainbreak( pose, l->cut() );
+					TR << "chain break " << cbreak << std::endl;
+					all_loops_pass &= ( cbreak <= max_linear_chainbreak_ );
+				}
+
+				if ( show_in_tracer ) {
+					TR << fmt % l->start() % l->stop() % l->cut() % cbreak << std::endl;
+				}
+			}
+			return all_loops_pass;
+		}
+		else {	
+			return true;
+		}
 	}
 
 	// boost::format here does not appear to be doing what I want it to do...
 	// The format string is probably borked.
-	boost::format fmt( "%|5t|%1% %|5t|%2% %|5t|%3% %|8t|%4%" );
 	if ( show_in_tracer ) {
 		TR << fmt % "start" % "stop" % "cut" % "cbreak" << std::endl;
 	}
@@ -2621,6 +2682,7 @@ RemodelLoopMover::parse_my_tag(
 	max_linear_chainbreak_    = tag->getOption<Real>( "max_linear_chainbreak", 0.07 );
 	randomize_loops_          = tag->getOption<bool>( "randomize_loops", true );
 	allowed_closure_attempts_ = tag->getOption<Size>( "allowed_closure_attempts", 1 );
+	loophash_cycles_      = 	tag->getOption<Size>( "loophash_cycles", 8 );
 	simultaneous_cycles_      = tag->getOption<Size>( "simultaneous_cycles", 2 );
 	independent_cycles_       = tag->getOption<Size>( "independent_cycles", 8 );
 	boost_closure_cycles_     = tag->getOption<Size>( "boost_closure_cycles", 30 );

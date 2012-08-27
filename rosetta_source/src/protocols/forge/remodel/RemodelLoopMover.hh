@@ -173,6 +173,11 @@ public: // accessors
 		return allowed_closure_attempts_;
 	}
 
+	/// @brief the number of loophash closure cycles to perform (default 8)
+	inline
+	Size loophash_cycles() const {
+		return loophash_cycles_;
+	}
 
 	/// @brief the number of simultaneous closure cycles to perform (default 2)
 	inline
@@ -200,7 +205,7 @@ public: // accessors
 	///  to perform
 	inline
 	Size total_standard_cycles() const {
-		return simultaneous_cycles_ + independent_cycles_;
+		return simultaneous_cycles_ + independent_cycles_ + loophash_cycles_;
 	}
 
 	/// @brief temperature for mc ( default 2.0 )
@@ -264,6 +269,11 @@ public: // mutators
 		allowed_closure_attempts_ = attempts;
 	}
 
+	/// @brief the number of loophash closure cycles to perform
+	inline
+	void loophash_cycles( Size const cycles ) {
+		loophash_cycles_ = cycles;
+	}
 
 	/// @brief the number of simultaneous closure cycles to perform
 	inline
@@ -547,6 +557,8 @@ private: // data
 	///  (default 3)
 	Size allowed_closure_attempts_;
 
+	/// @brief the number of loophash closure cycles to perform (default 8)
+	Size loophash_cycles_;
 
 	/// @brief the number of simultaneous closure cycles to perform (default 2)
 	Size simultaneous_cycles_;
