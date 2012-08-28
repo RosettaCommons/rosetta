@@ -159,7 +159,7 @@ public:
     }
 
     /// @brief use the H3 cterm coordinates in the pose to calculate the cterminal type
-    std::string calculate_H3_base_by_coordinates(pose::Pose const & pose) const;
+    //std::string calculate_H3_base_by_coordinates(pose::Pose const & pose) const;
 	
 	void show( std::ostream & out=std::cout );
     friend std::ostream & operator<<(std::ostream& out, const AntibodyInfo & ab_info ) ;
