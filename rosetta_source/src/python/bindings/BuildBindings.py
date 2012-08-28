@@ -198,6 +198,12 @@ def main(args):
       help="Number of processors to use for parsing when building. WARNING: Some namespace will consume huge amount of memory when parsing (up to ~4Gb), use this option with caution! (default: 1)",
     )
 
+    parser.add_option("-s", "--sleep",
+      default=0,
+      type="float",
+      help="Sleep number of second between compilation jobs, good for notebook quite operation! Actual sleep time will be: time_spend_compiling*option_value  (default: 0)",
+    )
+
     parser.add_option('--no-color',
       action="store_false", dest='color', default=True,
       help="Disable color output [Good when piping output to file]",
@@ -341,6 +347,32 @@ def main(args):
 
 
     print "Done!"
+
+
+def Sleep(time_, message, dict_={}):
+    ''' Fancy sleep function '''
+    len_ = 0
+    for i in range(time_, 0, -1):
+        #print "Waiting for a new revision:%s... Sleeping...%d     \r" % (sc.revision, i),
+        msg = message % dict(dict_, time_left=i)
+        print msg,
+        len_ = max(len_, len(msg))
+        sys.stdout.flush()
+        time.sleep(1)
+
+    print ' '*len_ + '\r',  # erazing sleep message
+
+
+def SleepPrecise(time_, message, dict_={}):
+    ''' Fancy sleep function '''
+    len_ = 0
+    msg = message % dict(dict_, time=time_)
+    print msg,
+    len_ = max(len_, len(msg))
+    sys.stdout.flush()
+    time.sleep(time_)
+
+    print ' '*len_ + '\r',  # erazing sleep message
 
 
 def execute(message, command_line, return_=False, untilSuccesses=False, print_output=True, verbose=True):
@@ -580,11 +612,13 @@ def buildModules(paths, dest, include_paths, libpaths, runtime_libpaths, gccxml_
             mb[-1].generateBindings()
             gc.collect()
 
+
         mWait(all_=True)  # waiting for all jobs to finish before movinf in to next phase
 
         for b in mb:
             b.compileBindings()
             gc.collect()
+
 
         mWait(all_=True)  # waiting for all jobs to finish before movinf in to next phase
 
@@ -1110,6 +1144,8 @@ class ModuleBuilder:
         f = file( self.dest + '/' + self.path + '/__init__.py', 'w');  f.write(t+'from %s import *\n' % self.all_at_once_base);  f.close()
 
         if xml_recompile or (not Options.update):
+            start_time = time.time()
+
             if os.path.isfile(self.all_at_once_lib): os.remove(self.all_at_once_lib)
 
             def generate():
@@ -1150,7 +1186,9 @@ class ModuleBuilder:
                     generate()
                     sys.exit(0)
 
-            else: generate()
+            else:
+                generate();
+                SleepPrecise( (time.time() - start_time) * Options.sleep, 'Sleeping %(time)s seconds so CPU could cool-off...\r')
 
 
     def compileBindings(self):
@@ -1166,8 +1204,9 @@ class ModuleBuilder:
                 if not os.path.isfile(all_at_once_N_obj)  or  os.path.getmtime(all_at_once_N_cpp) > os.path.getmtime(all_at_once_N_obj): recompile = True; break
 
         if recompile or (not Options.update):
-
             for (all_at_once_N_cpp, all_at_once_N_obj) in source_list: #range( len(code) ):
+                start_time = time.time()
+
                 #all_at_once_N_cpp = self.all_at_once_cpp+'%s.cpp' % i
                 #all_at_once_N_obj = self.all_at_once_obj+'%s.o' % i
 
@@ -1191,6 +1230,8 @@ class ModuleBuilder:
 
                     else:
                         compile_()
+                        SleepPrecise( (time.time() - start_time) * Options.sleep, 'Sleeping %(time)s seconds so CPU could cool-off...\r')
+
 
                 if Options.jobs == 1:
                     if Options.continue_ and failed: return new_headers
@@ -1212,6 +1253,8 @@ class ModuleBuilder:
 
         if relink:
             if not Options.cross_compile:  # -fPIC -ffloat-store -ffor-scope
+                start_time = time.time()
+
                 objs_list = map(lambda x:x[1], source_list)
                 linker_cmd = "cd %(dest)s/../ && %(compiler)s %(obj)s %(add_option)s -lmini -lstdc++ -lz -l%(python_lib)s \
                               -l%(boost_lib)s %(libpaths)s %(runtime_libpaths)s -o %(dst)s"
@@ -1231,6 +1274,7 @@ class ModuleBuilder:
                         sys.exit(0)
                 else:
                     linking()
+                    SleepPrecise( (time.time() - start_time) * Options.sleep, 'Sleeping %(time)s seconds so CPU could cool-off...\r')
 
 
             else: execute("Toching %s file..." % self.all_at_once_lib, 'cd %(dest)s/../ && touch %(dst)s' % dict(dest=self.dest, dst=self.all_at_once_lib) )
