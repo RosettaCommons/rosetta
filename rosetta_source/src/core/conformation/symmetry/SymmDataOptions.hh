@@ -12,7 +12,7 @@
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 #ifndef INCLUDED_core_conformation_symmetry_SymmDataOptions_hh
-#define INCLUDED_core_confomration_symmetry_SymmDataOptions_hh
+#define INCLUDED_core_conformation_symmetry_SymmDataOptions_hh
 
 //unit headers
 #include <core/conformation/symmetry/SymmDataOptions.fwd.hh>
