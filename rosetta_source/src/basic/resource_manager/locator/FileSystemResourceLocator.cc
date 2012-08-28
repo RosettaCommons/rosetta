@@ -81,7 +81,11 @@ FileStream::FileStream(
 	std::ios_base::openmode open_mode
 ) :
 	stream_(filename, open_mode)
-{}
+{
+	if(!stream_){
+		throw utility::excn::EXCN_FileNotFound(filename);
+	}
+}
 
 FileStream::~FileStream() {}
 
@@ -91,6 +95,10 @@ FileStream::open(
 	std::ios_base::openmode open_mode
 ) {
 	stream_.open(filename, open_mode);
+	if(!stream_){
+		throw utility::excn::EXCN_FileNotFound(filename);
+	}
+
 }
 
 istream &

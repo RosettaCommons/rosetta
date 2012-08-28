@@ -23,7 +23,7 @@
 #include <utility/string_util.hh>
 
 #include <utility/vector1.hh>
-
+#include <algorithm>
 
 namespace core {
 namespace conformation {
@@ -296,6 +296,32 @@ SymDof::add_dof_from_string( utility::vector1< std::string > dof_line )
 	for ( Size i = 3; i <= dof_line.size(); ++i ) {
 		read(dof_line[i]);
 	}
+}
+
+bool
+operator==(
+  SymDof const & a,
+  SymDof const & b
+) {
+	return
+		std::equal(a.allowed_dof_jumps_.begin(), a.allowed_dof_jumps_.end(), b.allowed_dof_jumps_.begin()) &&
+		std::equal(a.lower_range_dof_jumps1_.begin(), a.lower_range_dof_jumps1_.end(), b.lower_range_dof_jumps1_.begin()) &&
+		std::equal(a.upper_range_dof_jumps1_.begin(), a.upper_range_dof_jumps1_.end(), b.upper_range_dof_jumps1_.begin()) &&
+		std::equal(a.lower_range_dof_jumps2_.begin(), a.lower_range_dof_jumps2_.end(), b.lower_range_dof_jumps2_.begin()) &&
+		std::equal(a.upper_range_dof_jumps2_.begin(), a.upper_range_dof_jumps2_.end(), b.upper_range_dof_jumps2_.begin()) &&
+		std::equal(a.has_range1_lower_.begin(), a.has_range1_lower_.end(), b.has_range1_lower_.begin()) &&
+		std::equal(a.has_range1_upper_.begin(), a.has_range1_upper_.end(), b.has_range1_upper_.begin()) &&
+		std::equal(a.has_range2_lower_.begin(), a.has_range2_lower_.end(), b.has_range2_lower_.begin()) &&
+		std::equal(a.has_range2_upper_.begin(), a.has_range2_upper_.end(), b.has_range2_upper_.begin()) &&
+		std::equal(a.jump_dir_.begin(), a.jump_dir_.end(), b.jump_dir_.begin());
+}
+
+bool
+operator!=(
+  SymDof const & a,
+  SymDof const & b
+) {
+	return !(a == b);
 }
 
 } // symmetry

@@ -37,7 +37,7 @@ ElectronDensityOptionsCreator::ElectronDensityOptionsCreator() {}
 ElectronDensityOptionsCreator::~ElectronDensityOptionsCreator() {}
 
 ResourceOptionsOP
-ElectronDensityOptionsCreator::create_resource_options() const {
+ElectronDensityOptionsCreator::create_options() const {
 	return new ElectronDensityOptions;
 }
 

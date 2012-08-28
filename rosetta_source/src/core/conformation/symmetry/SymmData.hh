@@ -49,19 +49,25 @@ class SymmData : public utility::pointer::ReferenceCount
 
 	public:
 
-	//SymmData();
+	SymmData();
 	SymmData( core::Size nres, core::Size njump );
 	SymmData( SymmData const &);
 	SymmDataOP
 	clone() const;
 	~SymmData();
 
+	friend
+	bool
+	operator==(SymmData const & a, SymmData const & b);
+
+	friend
+	bool
+	operator!=(SymmData const & a, SymmData const & b);
+
 	//void test( SymmData tmp );
 
 	private:
 
-	//core::Size nres_subunit_;
-	//core::Size njump_subunit_;
 	std::string symmetry_name_;
 	std::string symmetry_type_;
 	core::Size subunits_;
@@ -137,12 +143,6 @@ class SymmData : public utility::pointer::ReferenceCount
 
 	public:
 	// Accessor functions
-
-	//Size
-	//get_nres_subunit() const;
-
-	//Size
-	//get_njump_subunit() const;
 
 	std::string const &
 	get_symmetry_name() const;

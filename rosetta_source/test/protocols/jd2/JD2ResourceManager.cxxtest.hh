@@ -712,7 +712,7 @@ public:
 	/// but for which a FallbackConfiguration has been registered with the FallbackConfigurationFactory.
 	/// The DummyResource1 resource description can be instantiated, illustrating a case
 	/// where the correct set of command line options have been given for a desired resource
-	void test_JD2ResourceManager_fallback_1() {
+	void do_not_test_JD2ResourceManager_fallback_1() {
 		JD2ResourceManager * jd2rm = JD2ResourceManager::get_jd2_resource_manager_instance();
 		jd2rm->clear();
 

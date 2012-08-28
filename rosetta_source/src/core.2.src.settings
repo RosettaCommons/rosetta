@@ -79,6 +79,7 @@ sources = {
 	"core/conformation/symmetry": [
 		"SymDof",
 		"SymmData",
+		"SymmDataLoader",
 		"SymmetricConformation",
 		"SymmetryInfo",
 		"SymSlideInfo",

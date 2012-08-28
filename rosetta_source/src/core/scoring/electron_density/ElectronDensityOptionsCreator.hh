@@ -33,7 +33,7 @@ public:
 	ElectronDensityOptionsCreator();
 	virtual ~ElectronDensityOptionsCreator();
 
-	virtual basic::resource_manager::ResourceOptionsOP create_resource_options() const;
+	virtual basic::resource_manager::ResourceOptionsOP create_options() const;
 	virtual std::string options_type() const;
 };
 

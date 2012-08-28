@@ -129,6 +129,26 @@ VirtualCoordinate::add_coordinate_from_string(
 		}
 }
 
+bool
+operator==(
+  VirtualCoordinate const & a,
+  VirtualCoordinate const & b
+) {
+	return
+		(a.axis_x_ == b.axis_x_) &&
+		(a.axis_y_ == b.axis_y_) &&
+		(a.axis_origin_ == b.axis_origin_);
+}
+
+bool
+operator!=(
+  VirtualCoordinate const & a,
+  VirtualCoordinate const & b
+) {
+	return !(a == b);
+}
+
+
 } // symmetry
 } // conformation
 } // core

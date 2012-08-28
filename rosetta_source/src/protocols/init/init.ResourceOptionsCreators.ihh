@@ -14,5 +14,4 @@
 //ResourceOptionsCreator #includes
 #include <basic/resource_manager/ResourceOptionsRegistrator.hh>
 
-#include <core/scoring/electron_density/ElectronDensityOptionsCreator.hh>
 #include <protocols/loops/LoopsFileOptionsCreator.hh>

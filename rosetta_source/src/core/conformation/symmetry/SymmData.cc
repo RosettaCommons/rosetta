@@ -72,6 +72,24 @@ static basic::Tracer TR("core.conformation.symmetry.SymmData");
 static std::string const NOPARENT = "NOPARENT";
 
 // @define: constructor
+SymmData::SymmData() :
+	utility::pointer::ReferenceCount(),
+	subunits_( 0 ),
+	num_components_( 1 ),
+	interfaces_( 1 ),
+	score_subunit_( 1 ),
+	anchor_residue_( "1" ),
+	recenter_( false ),
+	root_( 1 ),
+	cell_a_(0),
+	cell_b_(0),
+	cell_c_(0),
+	cell_alfa_(0),
+	cell_beta_(0),
+	cell_gamma_(0)
+{}
+
+// @define: constructor
 SymmData::SymmData( Size, Size ) :
 	utility::pointer::ReferenceCount(),
 	//nres_subunit_( nres ),
@@ -82,7 +100,13 @@ SymmData::SymmData( Size, Size ) :
 	score_subunit_( 1 ),
 	anchor_residue_( "1" ),
 	recenter_( false ),
-	root_( 1 )
+	root_( 1 ),
+	cell_a_(0),
+	cell_b_(0),
+	cell_c_(0),
+	cell_alfa_(0),
+	cell_beta_(0),
+	cell_gamma_(0)
 {}
 
 
@@ -99,20 +123,37 @@ SymmData::SymmData( SymmData const & src ) :
 	score_subunit_( src.score_subunit_ ),
 	anchor_residue_( src.anchor_residue_ ),
 	recenter_( src.recenter_ ),
+	root_(src.root_),
+	slide_info_(src.slide_info_),
+	slide_order_string_(src.slide_order_string_),
 	symm_transforms_( src.symm_transforms_ ),
 	rotation_matrices_( src.rotation_matrices_ ),
 	translation_matrices_( src.translation_matrices_ ),
 	virtual_coordinates_( src.virtual_coordinates_ ),
+	jump_string_to_virtual_pair_( src.jump_string_to_virtual_pair_ ),
+	jump_string_to_jump_num_( src.jump_string_to_jump_num_ ),
+	virt_id_to_virt_num_( src.virt_id_to_virt_num_ ),
+	virt_id_to_subunit_num_( src.virt_id_to_subunit_num_ ),
+	virt_id_to_subunit_chain_( src.virt_id_to_subunit_chain_ ),
+	virt_id_to_subunit_residue_( src.virt_id_to_subunit_residue_ ),
+	virt_num_to_virt_id_( src.virt_num_to_virt_id_ ),
+	subunit_num_to_virt_id_( src.subunit_num_to_virt_id_ ),
 	jump_clones_( src.jump_clones_ ),
 	dofs_( src.dofs_ ),
 	allow_virtual_( src.allow_virtual_ ),
 	score_multiply_subunit_( src.score_multiply_subunit_ ),
+	include_subunit_( src.include_subunit_ ),
+	output_subunit_( src.output_subunit_ ),
 	cell_a_(src.cell_a_),
 	cell_b_(src.cell_b_),
 	cell_c_(src.cell_c_),
 	cell_alfa_(src.cell_alfa_),
 	cell_beta_(src.cell_beta_),
-	cell_gamma_(src.cell_gamma_)
+	cell_gamma_(src.cell_gamma_),
+	components_(src.components_),
+	name2component_(src.name2component_),
+	jname2components_(src.jname2components_),
+	jname2subunits_(src.jname2subunits_)
 {}
 
 // @define: deep copy of SymmData
@@ -1589,7 +1630,7 @@ SymmData::components_moved_by_jump(std::string const & jname) const {
 	return vector1<char>(components.begin(),components.end());
 }
 
-vector1<Size> 
+vector1<Size>
 SymmData::subunits_moved_by_jump(std::string const & jname) const {
 	vector1<string> leaves = leaves_of_jump(jname);
 	std::set<Size> subunits;
@@ -1600,7 +1641,153 @@ SymmData::subunits_moved_by_jump(std::string const & jname) const {
 	return vector1<char>(subunits.begin(),subunits.end());
 }
 
+bool
+operator==(
+  SymmData const & a,
+  SymmData const & b
+) {
+  if(
+	(a.symmetry_name_ != b.symmetry_name_) ||
+	(a.symmetry_type_ != b.symmetry_type_) ||
+	(a.subunits_ != b.subunits_) ||
+	(a.num_components_ != b.num_components_) ||
+	(a.interfaces_ != b.interfaces_) ||
+	(a.score_subunit_ != b.score_subunit_) ||
+	(a.anchor_residue_ != b.anchor_residue_) ||
+	(a.recenter_ != b.recenter_) ||
+	(a.root_ != b.root_) ||
+	(a.slide_info_ != a.slide_info_) ||
+	!std::equal(
+	  a.slide_order_string_.begin(),
+	  a.slide_order_string_.end(),
+	  b.slide_order_string_.begin()) ||
+	!std::equal(
+	  a.rotation_matrices_.begin(),
+	  a.rotation_matrices_.end(),
+	  b.rotation_matrices_.begin()) ||
+	!std::equal(
+	  a.translation_matrices_.begin(),
+	  a.translation_matrices_.end(),
+	  b.translation_matrices_.begin()) ||
+	!std::equal(
+	  a.virtual_coordinates_.begin(),
+	  a.virtual_coordinates_.end(),
+	  b.virtual_coordinates_.begin()) ||
+	!std::equal(
+	  a.jump_string_to_virtual_pair_.begin(),
+	  a.jump_string_to_virtual_pair_.end(),
+	  b.jump_string_to_virtual_pair_.begin()) ||
+	!std::equal(
+	  a.jump_string_to_jump_num_.begin(),
+	  a.jump_string_to_jump_num_.end(),
+	  b.jump_string_to_jump_num_.begin()) ||
+	!std::equal(
+	  a.virt_id_to_virt_num_.begin(),
+	  a.virt_id_to_virt_num_.end(),
+	  b.virt_id_to_virt_num_.begin()) ||
+	!std::equal(
+	  a.virt_id_to_subunit_num_.begin(),
+	  a.virt_id_to_subunit_num_.end(),
+	  b.virt_id_to_subunit_num_.begin()) ||
+	!std::equal(
+	  a.virt_id_to_subunit_chain_.begin(),
+	  a.virt_id_to_subunit_chain_.end(),
+	  b.virt_id_to_subunit_chain_.begin()) ||
+	!std::equal(
+	  a.virt_id_to_subunit_residue_.begin(),
+	  a.virt_id_to_subunit_residue_.end(),
+	  b.virt_id_to_subunit_residue_.begin()) ||
+	!std::equal(
+	  a.virt_num_to_virt_id_.begin(),
+	  a.virt_num_to_virt_id_.end(),
+	  b.virt_num_to_virt_id_.begin()) ||
+	!std::equal(
+	  a.subunit_num_to_virt_id_.begin(),
+	  a.subunit_num_to_virt_id_.end(),
+	  b.subunit_num_to_virt_id_.begin()) ||
+	!std::equal(
+	  a.dofs_.begin(),
+	  a.dofs_.end(),
+	  b.dofs_.begin()) ||
+	!std::equal(
+	  a.allow_virtual_.begin(),
+	  a.allow_virtual_.end(),
+	  b.allow_virtual_.begin()) ||
+	!std::equal(
+	  a.score_multiply_subunit_.begin(),
+	  a.score_multiply_subunit_.end(),
+	  b.score_multiply_subunit_.begin()) ||
+	!std::equal(
+	  a.include_subunit_.begin(),
+	  a.include_subunit_.end(),
+	  b.include_subunit_.begin()) ||
+	!std::equal(
+	  a.output_subunit_.begin(),
+	  a.output_subunit_.end(),
+	  b.output_subunit_.begin()) ||
+	(a.cell_a_ != b.cell_a_) ||
+	(a.cell_b_ != b.cell_b_) ||
+	(a.cell_c_ != b.cell_c_) ||
+	(a.cell_alfa_ != b.cell_alfa_) ||
+	(a.cell_beta_ != b.cell_beta_) ||
+	(a.cell_gamma_ != b.cell_gamma_) ||
+	!std::equal(
+	  a.components_.begin(),
+	  a.components_.end(),
+	  b.components_.begin()) ||
+	!std::equal(
+	  a.name2component_.begin(),
+	  a.name2component_.end(),
+	  b.name2component_.begin())){
+	return false;
+  }
 
+  for(
+	std::vector< std::vector< std::string > >::const_iterator
+	  ai = a.symm_transforms_.begin(), aie = a.symm_transforms_.end(),
+	  bi = b.symm_transforms_.begin();
+	ai != aie; ++ai, ++bi){
+	if(bi == b.symm_transforms_.end() ||
+	  !std::equal(ai->begin(), ai->end(), bi->begin())){
+	  return false;
+	}
+  }
+
+  for(
+	std::map< Size, WtedClones >::const_iterator
+	  ai = a.jump_clones_.begin(), aie = a.jump_clones_.end(),
+	  bi = b.jump_clones_.begin();
+	ai != aie; ++ai, ++bi){
+	if(bi == b.jump_clones_.end() ||
+	  !std::equal(ai->second.begin(), ai->second.end(), bi->second.begin())){
+	  return false;
+	}
+  }
+
+  for(
+	std::map< std::string, utility::vector1<char> >::const_iterator
+	  ai = a.jname2components_.begin(), aie = a.jname2components_.end(),
+	  bi = b.jname2components_.begin();
+	ai != aie; ++ai, ++bi){
+	if(bi == b.jname2components_.end() ||
+	  !std::equal(ai->second.begin(), ai->second.end(), bi->second.begin())){
+	  return false;
+	}
+  }
+
+  for(
+	std::map< std::string, utility::vector1<Size> >::const_iterator
+	  ai = a.jname2subunits_.begin(), aie = a.jname2subunits_.end(),
+	  bi = b.jname2subunits_.begin();
+	ai != aie; ++ai, ++bi){
+	if(bi == b.jname2subunits_.end() ||
+	  !std::equal(ai->second.begin(), ai->second.end(), bi->second.begin())){
+	  return false;
+	}
+  }
+
+  return true;
+}
 
 } // symmetry
 } // conformation

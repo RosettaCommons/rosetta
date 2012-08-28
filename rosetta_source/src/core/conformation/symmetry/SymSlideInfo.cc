@@ -23,7 +23,7 @@
 // AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <utility/vector1.hh>
-
+#include <algorithm>
 
 namespace core {
 namespace conformation {
@@ -100,6 +100,29 @@ SymSlideInfo::SymSlideInfo( SymSlideInfo const & src )
 	{
 		return slide_order_;
 	}
+
+
+bool
+operator==(
+  SymSlideInfo const & a,
+  SymSlideInfo const & b
+) {
+  return
+		(a.slide_type_ == b.slide_type_) &&
+		(a.score_criteria_ == b.score_criteria_) &&
+		(a.SlideCriteriaVal_ == b.SlideCriteriaVal_) &&
+		std::equal(
+			a.slide_order_.begin(), a.slide_order_.end(), b.slide_order_.begin());
+}
+
+bool
+operator!=(
+  SymSlideInfo const & a,
+  SymSlideInfo const & b
+) {
+  return !(a == b);
+}
+
 
 } // symmetry
 } // conformation

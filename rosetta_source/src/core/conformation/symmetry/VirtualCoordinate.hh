@@ -78,6 +78,14 @@ class VirtualCoordinate {
 		core::Size coord_start=2
 	);
 
+	friend
+	bool
+	operator==(VirtualCoordinate const & a, VirtualCoordinate const & b);
+
+	friend
+	bool
+	operator!=(VirtualCoordinate const & a, VirtualCoordinate const & b);
+
 
 	private:
 

@@ -116,6 +116,14 @@ class SymDof {
 	int
 	jump_direction( int df ) const;
 
+	friend
+	bool
+	operator==(SymDof const & a, SymDof const & b);
+
+	friend
+	bool
+	operator!=(SymDof const & a, SymDof const & b);
+
 	private:
 
 	utility::vector1< bool > allowed_dof_jumps_; // is a particular dof allowed to move?

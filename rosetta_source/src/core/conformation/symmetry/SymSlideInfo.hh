@@ -76,6 +76,15 @@ class SymSlideInfo {
 	std::string get_SlideCriteriaVal() const;
 	std::vector<core::Size> get_slide_order() const;
 
+	friend
+	bool
+	operator==(SymSlideInfo const & a, SymSlideInfo const & b);
+
+	friend
+	bool
+	operator!=(SymSlideInfo const & a, SymSlideInfo const & b);
+
+
 	private:
 		SlideType slide_type_;
 		SlideCriteriaType score_criteria_;

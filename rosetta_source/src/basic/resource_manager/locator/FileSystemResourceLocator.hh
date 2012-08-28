@@ -24,6 +24,7 @@
 #include <utility/file/FileName.hh>
 //utility headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/excn/Exceptions.hh>
 
 //C++ headers
 #include <istream>
