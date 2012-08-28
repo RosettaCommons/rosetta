@@ -130,13 +130,11 @@ FullatomDisulfideEnergy::clone() const
 	return new FullatomDisulfideEnergy( potential_ );
 }
 
-
 void
-FullatomDisulfideEnergy::setup_for_scoring(
-	pose::Pose & pose,
-	ScoreFunction const & ) const
+FullatomDisulfideEnergy::ensure_lrenergy_container_is_up_to_date(
+	pose::Pose & pose
+) const
 {
-
 	using namespace methods;
 
 	if ( pose.energies().long_range_container( fa_disulfide_energy ) == 0 ) {
@@ -152,7 +150,24 @@ FullatomDisulfideEnergy::setup_for_scoring(
 			pose.energies().set_long_range_container( fa_disulfide_energy, dec );
 		}
 	}
+}
 
+void
+FullatomDisulfideEnergy::setup_for_scoring(
+	pose::Pose & pose,
+	ScoreFunction const & ) const
+{
+	ensure_lrenergy_container_is_up_to_date( pose );
+}
+
+void
+FullatomDisulfideEnergy::setup_for_packing(
+	pose::Pose & pose,
+	utility::vector1< bool > const & ,
+	utility::vector1< bool > const &
+) const
+{
+	ensure_lrenergy_container_is_up_to_date( pose );
 }
 
 /// @details returns true if both residues are cys, if both are disulfide-cys, and then
@@ -241,7 +256,7 @@ FullatomDisulfideEnergy::setup_for_minimizing_for_residue_pair(
 	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ){
 		return;
 	}
-	
+
 	conformation::Residue const & rsdl( rsd1.seqpos() < rsd2.seqpos() ? rsd1 : rsd2 );
 	conformation::Residue const & rsdu( rsd1.seqpos() < rsd2.seqpos() ? rsd2 : rsd1 );
 
@@ -421,7 +436,7 @@ FullatomDisulfideEnergy::residue_pair_energy(
 	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ){
 		return;
 	}
-	
+
 	if ( rsd1.aa() != chemical::aa_cys || rsd2.aa() != chemical::aa_cys ) return;
 
 	Energy distance_score_this_disulfide;
@@ -503,7 +518,7 @@ FullatomDisulfideEnergy::defines_residue_pair_energy(
 	Size res2
 ) const
 {
-	
+
 	using namespace methods;
 	if ( ! pose.energies().long_range_container( fa_disulfide_energy )) return false;
 

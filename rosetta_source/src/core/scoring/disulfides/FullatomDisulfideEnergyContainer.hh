@@ -169,6 +169,10 @@ public:
 	LREnergyContainerOP clone() const;
 
 	virtual
+	void
+	set_num_nodes( Size );
+
+	virtual
 	ResidueNeighborConstIteratorOP
 	const_neighbor_iterator_begin( int resid ) const;
 
@@ -231,6 +235,7 @@ public:
 	void retrieve_energy( Size disulfide_index, EnergyMap & emap ) const;
 	bool energy_computed( Size disulfide_index ) const;
 	Size num_residues() const;
+
 
 private:
 	void find_disulfides( pose::Pose const & pose );

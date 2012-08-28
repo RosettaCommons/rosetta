@@ -225,11 +225,23 @@ public:
 	) const;
 
 
+	void
+	prepare_constraints_energy_container( pose::Pose & pose ) const;
+
 	// check compatibility with atomtypeset and store a constraint graph in
 	// the pose.energies object
  	virtual
  	void
  	setup_for_scoring( pose::Pose &pose, ScoreFunction const &scfxn ) const;
+
+	/// @brief Make sure that the ConstraintsEnergyContainer is ready for packing.
+	virtual
+	void
+	setup_for_packing( 
+		pose::Pose & pose,
+		utility::vector1< bool > const & residues_repacking,
+		utility::vector1< bool > const & residues_designing
+	) const;
 
 	// call the cst setup_for_derivatives wrapper
  	virtual

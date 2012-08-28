@@ -342,6 +342,12 @@ FullatomDisulfideEnergyContainer::clone() const
 	return dec;
 }
 
+void
+FullatomDisulfideEnergyContainer::set_num_nodes( Size newsize )
+{
+	resid_2_disulfide_index_.resize( newsize, NO_DISULFIDE );
+}
+
 ResidueNeighborConstIteratorOP
 FullatomDisulfideEnergyContainer::const_neighbor_iterator_begin( int resid ) const
 {

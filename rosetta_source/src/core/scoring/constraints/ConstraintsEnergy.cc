@@ -451,7 +451,7 @@ ConstraintsEnergy::eval_intraresidue_dof_derivative(
 // decide between a constraint graph or a constraint table.  In the case of
 // dense residue pair constraints (i.e. all pairs), a table would be more efficient.
 void
-ConstraintsEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & sfxn ) const
+ConstraintsEnergy::prepare_constraints_energy_container( pose::Pose & pose ) const
 {
 	using namespace methods;
 
@@ -477,8 +477,25 @@ ConstraintsEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & s
 		energies.set_long_range_container( constraints_lr, new_cec );
 	}
 
-	pose.constraint_set()->setup_for_scoring( pose, sfxn );  //fpd
+}
 
+void
+ConstraintsEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & sfxn ) const
+{
+	prepare_constraints_energy_container( pose );
+	if ( pose.constraint_set() ) {
+		pose.constraint_set()->setup_for_scoring( pose, sfxn );  //fpd
+	}
+}
+
+void
+ConstraintsEnergy::setup_for_packing(
+	pose::Pose & pose,
+	utility::vector1< bool > const &,
+	utility::vector1< bool > const &
+) const
+{
+	prepare_constraints_energy_container( pose );
 }
 
 ///@brief Setup constraint-set specific derivatives

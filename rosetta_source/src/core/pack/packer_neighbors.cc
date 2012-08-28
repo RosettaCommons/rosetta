@@ -201,9 +201,9 @@ pack_scorefxn_pose_handshake(
 	scoring::ScoreFunction const & scfxn
 )
 {
-	if ( pose.energies().get_scorefxn_info() != *(scfxn.info() ) ) {
+//	if ( true ){//pose.energies().get_scorefxn_info() != *(scfxn.info() ) ) {
 		scfxn( pose );
-	}
+//	}
 }
 
 } // namespace core

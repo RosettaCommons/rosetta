@@ -341,6 +341,17 @@ CstEnergyContainer::clone() const
 	return cstec;
 }
 
+void
+CstEnergyContainer::set_num_nodes( Size newsize )
+{
+	if ( !empty() ) {
+		cst_graph_->set_num_nodes( newsize );
+		cst_set_revision_id_ = 0;
+		constraint_set_ = 0; // flag that the CstEnergyContainer needs to be recreated.
+	}
+}
+
+
 ResidueNeighborConstIteratorOP
 CstEnergyContainer::const_neighbor_iterator_begin( int resid ) const
 {

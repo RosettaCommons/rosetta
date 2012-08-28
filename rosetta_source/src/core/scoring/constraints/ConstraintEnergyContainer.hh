@@ -129,6 +129,10 @@ public:
 	LREnergyContainerOP clone() const;
 
 	virtual
+	void
+	set_num_nodes( Size );
+
+	virtual
 	ResidueNeighborConstIteratorOP
 	const_neighbor_iterator_begin( int resid ) const;
 

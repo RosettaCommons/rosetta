@@ -46,9 +46,25 @@ public:
 	methods::EnergyMethodOP
 	clone() const;
 
+	/// @brief check that the fullatom disulfid energy container is the right size, and the
+	/// set of disulfides it holds corresponds correctly to the set of disulfides in the Pose.
+	void
+	ensure_lrenergy_container_is_up_to_date(
+		pose::Pose & pose
+	) const;
+
 	virtual
 	void
 	setup_for_scoring( pose::Pose &, ScoreFunction const & ) const;
+
+	/// @brief Make sure that the FullatomDisulfideEnergyContainer is ready for packing.
+	virtual
+	void
+	setup_for_packing( 
+		pose::Pose & pose,
+		utility::vector1< bool > const & residues_repacking,
+		utility::vector1< bool > const & residues_designing
+	) const;
 
 	/// @brief Returns true only for disulfide-bonded residue pairs
 	virtual
