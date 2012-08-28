@@ -6,7 +6,7 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 ## @file   TestBindings.py
-## @brief  Run bindings test scrips
+## @brief  Run bindings test and demo scrips
 ## @author Sergey Lyskov
 
 
@@ -37,15 +37,27 @@ def execute(message, commandline, return_=False, untilSuccesses=False):
 
 
 def main(args):
+
+
     #tests = execute('getting list of tests...', 'ls test/T*.py', return_= 'output').split()
     #tests = filter(lambda x: x.startswith('T') and x.endswith('.py'), sorted( os.listdir('test/') ) )
-    tests = filter(lambda x: x.endswith('.py'), sorted( os.listdir('test/') ) )
+
+    #tests = filter(lambda x: x.endswith('.py'), sorted( os.listdir('test/') + os.listdir('demos/') ) )
+
+    def get_py_files(dir_): return [dir_ + '/' + f for f in os.listdir(dir_) if f.endswith('.py')]
+
+    tests = sorted( get_py_files('test') + get_py_files('demos') )
+
     print 'Preparingn to run:\n%s\n' % '\n'.join(tests)
 
+    #for t in map(lambda x: x.replace('/', '.'), args[1:]) or tests:
     for t in args[1:] or tests:
-        print '\nRunning %s...' % t
-        __import__( 'test.' + t[:-3] )
+        #print '\nRunning %s...' % t
+        #__import__( t[:-3] )
+        execute('\n\nExecuting %s...' % t, '%s %s' % (sys.executable, t) )
 
+
+        #__import__( 'test.' + t[:-3] )
         #execute('Executing %s...' % t, 'export PYTHONPATH=`pwd`:$PYTHONPATH && python %s' % t)
         #execute('Executing %s...' % t, 'source SetPyRosettaEnvironment.sh && python %s' % t)
 
