@@ -35,6 +35,7 @@
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 // AUTO-REMOVED #include <core/pose/symmetry/util.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
@@ -867,7 +868,13 @@ TR << "ORIGINAL TREE: " << pose.fold_tree() << std::endl;
 		}
 
 		std::stringstream SS;
-		SS << filecount << ".pdb";
+		std::string prefix =  basic::options::option[basic::options::OptionKeys::out::prefix];
+		if (!prefix.empty()){
+			SS << prefix << "_" << filecount << ".pdb";
+		}
+		else {
+			SS << filecount << ".pdb";
+		}
 
 		//this is to make sure that the final scoring is done with SCORE12
 		core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH );
