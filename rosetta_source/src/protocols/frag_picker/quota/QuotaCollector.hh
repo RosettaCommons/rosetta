@@ -60,7 +60,7 @@ public:
 	/// fragment picking machinery.
 	Size query_length() const { return storage_.size(); }
 
-	ScoredCandidatesVector1 const & get_candidates(Size position_in_query) const;
+	//Undefined, commenting out to fix PyRosetta build  ScoredCandidatesVector1 const & get_candidates(Size position_in_query) const;
 	ScoredCandidatesVector1 & get_candidates(Size position_in_query);
 
 	/// @brief Describes what has been collected
