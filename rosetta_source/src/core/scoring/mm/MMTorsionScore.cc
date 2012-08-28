@@ -43,6 +43,9 @@ namespace core {
 namespace scoring {
 namespace mm {
 
+/// @details Auto-generated virtual destructor
+MMTorsionScore::~MMTorsionScore() {}
+
 MMTorsionScore::MMTorsionScore() :
 	mm_torsion_library_( scoring::ScoringManager::get_instance()->get_MMTorsionLibrary() )
 { }

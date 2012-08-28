@@ -320,8 +320,8 @@ ConstrainToIdealMover::check_if_really_connected(
 	if (  atom_id1.rsd() == atom_id2.rsd() ) return true;
 
 
-	core::kinematics::tree::Atom const * atom1 ( & pose.atom_tree().atom( atom_id1 ) );
-	core::kinematics::tree::Atom const * atom2 ( & pose.atom_tree().atom( atom_id2 ) );
+	core::kinematics::tree::AtomCOP atom1 ( & pose.atom_tree().atom( atom_id1 ) );
+	core::kinematics::tree::AtomCOP atom2 ( & pose.atom_tree().atom( atom_id2 ) );
 
 	if ( atom1->parent() == atom2 ) return true;
 	if ( atom2->parent() == atom1 ) return true;
@@ -387,17 +387,17 @@ ConstrainToIdealMover::vary_bond_geometry(
 
 			if ( !i_want_this_atom_to_move( residue, j ) ) continue;
 
-			core::kinematics::tree::Atom const * current_atom ( & pose.atom_tree().atom( AtomID(j,i) ) );
+			core::kinematics::tree::AtomCOP current_atom ( & pose.atom_tree().atom( AtomID(j,i) ) );
 			if ( current_atom->is_jump() ) continue;
 
 			///////////////////
-			core::kinematics::tree::Atom const * input_stub_atom1( current_atom->input_stub_atom1() );
+			core::kinematics::tree::AtomCOP input_stub_atom1( current_atom->input_stub_atom1() );
 			if ( !input_stub_atom1 ) continue;
 			if ( !i_want_this_atom_to_move( pose, input_stub_atom1->id() ) ) continue;
 			mm_->set( DOF_ID( AtomID( j, i ), D ), true );
 			if ( input_stub_atom1->is_jump() ) continue;
 
-			core::kinematics::tree::Atom const * input_stub_atom2( current_atom->input_stub_atom2() );
+			core::kinematics::tree::AtomCOP input_stub_atom2( current_atom->input_stub_atom2() );
 
 			///////////////////
 			if ( !input_stub_atom2 ) continue;
@@ -407,7 +407,7 @@ ConstrainToIdealMover::vary_bond_geometry(
 			if ( input_stub_atom2->is_jump() ) continue;
 
 			///////////////////
-			core::kinematics::tree::Atom const * input_stub_atom3( current_atom->input_stub_atom3() );
+			core::kinematics::tree::AtomCOP input_stub_atom3( current_atom->input_stub_atom3() );
 			if ( !input_stub_atom3 ) continue;
 			if ( !i_want_this_atom_to_move( pose, input_stub_atom3->id() ) ) continue;
 			if ( input_stub_atom3 == current_atom ) continue;

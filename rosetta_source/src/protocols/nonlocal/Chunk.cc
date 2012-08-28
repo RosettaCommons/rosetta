@@ -35,6 +35,9 @@
 namespace protocols {
 namespace nonlocal {
 
+// @brief Auto-generated virtual destructor
+Chunk::~Chunk() {}
+
 /// @brief A small, positive value added to the standard deviation of each chunk.
 /// The distribution requires its standard deviation to be strictly positive.
 #define SALT 0.00000001

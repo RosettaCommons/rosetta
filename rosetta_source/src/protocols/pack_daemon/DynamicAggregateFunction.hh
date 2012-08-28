@@ -837,7 +837,7 @@ public:
 
 public:
 	EntityFunc();
-	~EntityFunc();
+	virtual ~EntityFunc();
 
 	void set_num_entity_elements( Size num_ee );
 

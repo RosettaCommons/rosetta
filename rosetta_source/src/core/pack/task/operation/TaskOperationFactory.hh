@@ -41,10 +41,9 @@ namespace task {
 namespace operation {
 
 // singleton class
-class TaskOperationFactory : public utility::pointer::ReferenceCount
+class TaskOperationFactory
 {
 public:
-	typedef utility::pointer::ReferenceCount parent;
 	typedef utility::vector1< TaskOperationOP > TaskOperationOPs;
 	typedef std::map< std::string, TaskOperationCreatorOP > TaskOperationCreatorMap;
 	typedef utility::tag::Tag Tag;

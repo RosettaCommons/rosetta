@@ -35,6 +35,8 @@ namespace protocols {
 namespace match {
 namespace upstream {
 
+ProteinSCSampler::~ProteinSCSampler() {}
+
 /// @details If there is no library, returns a one-element vector.
 DunbrackSCSampler::DunbrackRotamerSampleDataVector
 DunbrackSCSampler::samples(

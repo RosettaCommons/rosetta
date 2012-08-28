@@ -15,6 +15,9 @@
 
 namespace numeric {
 
+/// @details Auto-generated virtual destructor
+ClusteringTreeNode::~ClusteringTreeNode() {}
+
 ClusteringTreeNodeOP ClusteringTreeNode::visit_next_leaf() {
 
 	if(flag_ == 1) {

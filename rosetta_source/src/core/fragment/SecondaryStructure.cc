@@ -57,6 +57,9 @@ static basic::Tracer tr("core.fragment");
 namespace core {
 namespace fragment {
 
+/// @details Auto-generated virtual destructor
+SecondaryStructure::~SecondaryStructure() {}
+
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::fmt;
 

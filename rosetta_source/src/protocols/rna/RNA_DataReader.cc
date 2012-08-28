@@ -39,9 +39,11 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace rna{
+namespace protocols {
+namespace rna {
 
+/// @details Auto-generated virtual destructor
+RNA_DataReader::~RNA_DataReader() {}
 
 static basic::Tracer tr( "protocols.rna.rna_structure_parameters" ) ;
 

@@ -143,9 +143,9 @@ BranchAngleOptimizer::optimize_angles(
 
 	//TR << "Optimizing Backbone: " << main_atomid1 << center_atomid << main_atomid2 << std::endl;
 
-	kinematics::tree::Atom const * main_atom1(& pose.atom_tree().atom(main_atomid1));
-	kinematics::tree::Atom const * const center_atom(& pose.atom_tree().atom(center_atomid));
-	kinematics::tree::Atom const * main_atom2(& pose.atom_tree().atom(main_atomid2));
+	kinematics::tree::AtomCOP main_atom1(& pose.atom_tree().atom(main_atomid1));
+	kinematics::tree::AtomCOP const center_atom(& pose.atom_tree().atom(center_atomid));
+	kinematics::tree::AtomCOP main_atom2(& pose.atom_tree().atom(main_atomid2));
 
 	Size coef_index(0);
 
@@ -166,12 +166,12 @@ BranchAngleOptimizer::optimize_angles(
 
 		//TR << "Optimizing 1 Branching Atom: " << branch_atomid1 << std::endl;
 
-		kinematics::tree::Atom const * const branch_atom1(& pose.atom_tree().atom(branch_atomid1));
+		kinematics::tree::AtomCOP const branch_atom1(& pose.atom_tree().atom(branch_atomid1));
 
 		// switch main atoms if necessary for having a working stub
 		if (branch_atom1->input_stub_atom2() == main_atom2) {
 			id::AtomID temp_atomid(main_atomid1);
-			kinematics::tree::Atom const * temp_atom(main_atom1);
+			kinematics::tree::AtomCOP temp_atom(main_atom1);
 			main_atomid1 = main_atomid2;
 			main_atom1 = main_atom2;
 			main_atomid2 = temp_atomid;
@@ -220,13 +220,13 @@ BranchAngleOptimizer::optimize_angles(
 
 		//TR << "Optimizing 2 Branching Atoms: " << branch_atomid1 << branch_atomid2 << std::endl;
 
-		kinematics::tree::Atom const * branch_atom1(& pose.atom_tree().atom(branch_atomid1));
-		kinematics::tree::Atom const * branch_atom2(& pose.atom_tree().atom(branch_atomid2));
+		kinematics::tree::AtomCOP branch_atom1(& pose.atom_tree().atom(branch_atomid1));
+		kinematics::tree::AtomCOP branch_atom2(& pose.atom_tree().atom(branch_atomid2));
 
 		// switch main atoms (and branching atom chirality) if necessary for having a working stub
 		if (branch_atom1->input_stub_atom2() == main_atom2 && branch_atom2->input_stub_atom2() == main_atom2) {
 			id::AtomID temp_atomid(main_atomid1);
-			kinematics::tree::Atom const * temp_atom(main_atom1);
+			kinematics::tree::AtomCOP temp_atom(main_atom1);
 			main_atomid1 = main_atomid2;
 			main_atom1 = main_atom2;
 			main_atomid2 = temp_atomid;
@@ -319,9 +319,9 @@ BranchAngleOptimizer::overall_params(
 	core::Real & energy0
 )
 {
-	//kinematics::tree::Atom const * main_atom1(& pose.atom_tree().atom(main_atomid1));
-	//kinematics::tree::Atom const * const center_atom(& pose.atom_tree().atom(center_atomid));
-	kinematics::tree::Atom const * main_atom2(& pose.atom_tree().atom(main_atomid2));
+	//kinematics::tree::AtomCOP main_atom1(& pose.atom_tree().atom(main_atomid1));
+	//kinematics::tree::AtomCOP const center_atom(& pose.atom_tree().atom(center_atomid));
+	kinematics::tree::AtomCOP main_atom2(& pose.atom_tree().atom(main_atomid2));
 
 	//TR << "Getting Overall Parameters: " << main_atomid1 << center_atomid << main_atomid2 << std::endl;
 
@@ -341,7 +341,7 @@ BranchAngleOptimizer::overall_params(
 
 		//TR << "1 Branching Atom: " << branch_atomid1 << std::endl;
 
-		kinematics::tree::Atom const * const branch_atom1(& pose.atom_tree().atom(branch_atomid1));
+		kinematics::tree::AtomCOP const branch_atom1(& pose.atom_tree().atom(branch_atomid1));
 
 		// switch main atoms if necessary for having a working stub
 		if (branch_atom1->input_stub_atom2() == main_atom2) {
@@ -375,8 +375,8 @@ BranchAngleOptimizer::overall_params(
 
 		//TR << "2 Branching Atoms: " << branch_atomid1 << branch_atomid2 << std::endl;
 
-		kinematics::tree::Atom const * branch_atom1(& pose.atom_tree().atom(branch_atomid1));
-		kinematics::tree::Atom const * branch_atom2(& pose.atom_tree().atom(branch_atomid2));
+		kinematics::tree::AtomCOP branch_atom1(& pose.atom_tree().atom(branch_atomid1));
+		kinematics::tree::AtomCOP branch_atom2(& pose.atom_tree().atom(branch_atomid2));
 
 		// switch main atoms (and branching atom chirality) if necessary for having a working stub
 		if (branch_atom1->input_stub_atom2() == main_atom2 && branch_atom2->input_stub_atom2() == main_atom2) {
@@ -1173,14 +1173,14 @@ branching_atomids2(
 /// to the central atom.
 void
 get_branching_atoms2(
-	kinematics::tree::Atom const * const main_atom2,
-	kinematics::tree::Atom const * & branch_atom1,
-	kinematics::tree::Atom const * & branch_atom2
+	kinematics::tree::AtomCOP const main_atom2,
+	kinematics::tree::AtomCOP & branch_atom1,
+	kinematics::tree::AtomCOP & branch_atom2
 )
 {
 	Real static const pi_2(numeric::NumericTraits<Real>::pi_2());
 
-	kinematics::tree::Atom const * const parent(main_atom2->parent());
+	kinematics::tree::AtomCOP const parent(main_atom2->parent());
 
 	// check to see if parent exsits and that the correct number of bonded atoms are present
 	runtime_assert(parent);
@@ -1192,7 +1192,7 @@ get_branching_atoms2(
 
 	// iterate through the bonded atoms and find the two siblings
 	for (Size i = 1; i <= 3; ++i) {
-		kinematics::tree::Atom const * const sibling(parent->get_nonjump_atom(i));
+		kinematics::tree::AtomCOP const sibling(parent->get_nonjump_atom(i));
 		TR << sibling->id() << std::endl;
 		if (sibling != main_atom2) {
 			if (!branch_atom1) {
@@ -1214,7 +1214,7 @@ get_branching_atoms2(
 
 	// switch the atoms if their dihedral offsets are in the wrong order
 	if (dihedral2 < dihedral1) {
-		kinematics::tree::Atom const * const temp_atom(branch_atom1);
+		kinematics::tree::AtomCOP const temp_atom(branch_atom1);
 		branch_atom1 = branch_atom2;
 		branch_atom2 = temp_atom;
 	}

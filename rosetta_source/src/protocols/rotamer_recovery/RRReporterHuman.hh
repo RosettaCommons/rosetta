@@ -76,7 +76,7 @@ public: // public constructors / destructors
 		core::pose::Pose const & native_pose
 	);
 
-	~PerNativeRRReporterHuman();
+	virtual ~PerNativeRRReporterHuman();
 
 	PerNativeRRReporterHuman( PerNativeRRReporterHuman const & src );
 

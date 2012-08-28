@@ -67,7 +67,7 @@ class AtomPairFuncList : public utility::pointer::ReferenceCount
 {
 public:
 	AtomPairFuncList();
-	~AtomPairFuncList();
+	virtual ~AtomPairFuncList();
 
 	std::list< atoms_and_func_struct > const & ats_n_func_list() const {
 		return interacting_atompair_list_;

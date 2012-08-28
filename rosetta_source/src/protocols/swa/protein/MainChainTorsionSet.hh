@@ -36,7 +36,7 @@ public:
 
 	MainChainTorsionSet( core::Real const & phi, core::Real const & psi );
 
-	~MainChainTorsionSet();
+	virtual ~MainChainTorsionSet();
 
 	MainChainTorsionSet
 	operator=( MainChainTorsionSet const & src );

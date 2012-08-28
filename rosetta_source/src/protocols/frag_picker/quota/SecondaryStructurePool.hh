@@ -56,20 +56,20 @@ public:
 	SecondaryStructurePool(Size,std::string,char,
 	    utility::vector1<Size>&,utility::vector1<Real>&,Real,Size,Size);
 
-	char get_ss_type() { return ss_type_; }
+	char get_ss_type() const { return ss_type_; }
 
 	virtual ~SecondaryStructurePool();
 
 	/// @brief Says how many fragments (in total) may fit into this pool
-	virtual Size total_size() { return storage_->size(); }
+	virtual Size total_size() const { return storage_->size(); }
 
 	/// @brief Says how many fragments are currently in this pool
-	virtual Size current_size() { return storage_->count_inserted();}
+	virtual Size current_size() const { return storage_->count_inserted();}
 
 	/// @brief Says how many fragments can still be inserted into this pool
-	virtual Size size_left() { return total_size() - current_size(); }
+	virtual Size size_left() const { return total_size() - current_size(); }
 
-	virtual bool could_be_accepted(ScoredCandidate);
+	virtual bool could_be_accepted(ScoredCandidate) const;
 
 	/// @brief Push a fragment candidate into the container
 	virtual void push(ScoredCandidate candidate) {
@@ -87,20 +87,20 @@ public:
 	/// @brief  Check how many candidates have been already collected for a given position
 	/// @detailed This is a very special case - collector will be used only for a given position.
 	/// Thus it returns the total number of inserted candidates, as count_candidates() does
-	Size count_candidates(Size) { return current_size(); }
+	Size count_candidates(Size) const { return current_size(); }
 
 	/// @brief  Check how many candidates have been already collected for all positions
-	Size count_candidates()  { return current_size(); }
+	Size count_candidates() const { return current_size(); }
 
 	/// @brief  Check the size of query sequence that this object knows.
 	/// @detailed This is a very special case - collector will be used only for a given position and it does NOT
 	/// know the tolal size. Thus it returns always 0
-	Size query_length()  { return 0; }
+	Size query_length() const { return 0; }
 
 	/// @brief Inserts candidates from another Collector for a give position in the query
 	/// Candidates may or may not get inserted depending on the candidate
 	void insert(Size, CandidatesCollectorOP collector) {
-		SecondaryStructurePool *c = dynamic_cast<SecondaryStructurePool*> (collector());
+		SecondaryStructurePoolOP c = dynamic_cast<SecondaryStructurePool*> (collector());
 		if (c == 0)
 			utility_exit_with_message("Cant' cast candidates' collector to SecondaryStructurePool.");
 		ScoredCandidatesVector1 & content = c->get_candidates(0);
@@ -118,7 +118,7 @@ public:
 	}
 
 	/// @brief Describes what has been collected
-	void print_report(std::ostream &, scores::FragmentScoreManagerOP);
+	void print_report(std::ostream &, scores::FragmentScoreManagerOP) const;
 
 	virtual void set_fraction(Real new_fraction) {
 		QuotaPool::set_fraction(new_fraction);

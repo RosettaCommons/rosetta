@@ -141,8 +141,8 @@ public:
 
 	/// @brief copy this atom
 	virtual
-	Atom*
-	clone( Atom* parent_in, AtomPointer2D & atom_pointer ) const;
+	AtomOP
+	clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const;
 
 
 	///////////////////////////////////////////////////////////////////////////
@@ -225,7 +225,7 @@ public: // Properties
 	/// @brief stub_atom1 of a jump-atom
 	/** it is itself if a stub can be defined for it. Otherwise it is parent*/
 	inline
-	Atom const *
+	AtomCOP
 	stub_atom1() const
 	{
 		return ( stub_defined() ? this : parent() );
@@ -237,7 +237,7 @@ public: // Properties
 	/** it is its first bonded child if a stub can be defined for it. Otherwise
 			it is parent's stub_atom2. */
 	inline
-	Atom const *
+	AtomCOP
 	stub_atom2() const
 	{
 		if ( stub_defined() ) {
@@ -251,13 +251,13 @@ public: // Properties
 	/** it is its child's child or its second child if a stub can be defined for it,
 			otherwise it is its parent's stub_atom3 */
 	inline
-	Atom const *
+	AtomCOP
 	stub_atom3() const
 	{
 		//std::cout << "stub_atom3: " << this << ' ' << parent_ << std::endl();
 		if ( stub_defined() ) {
-			Atom const * first( get_nonjump_atom(0) );
-			Atom const * second( first->get_nonjump_atom(0) );
+			AtomCOP first( get_nonjump_atom(0) );
+			AtomCOP second( first->get_nonjump_atom(0) );
 			if ( second != 0 ) {
 				return second;
 			} else {
@@ -293,8 +293,12 @@ private: // Fields
 
 }; // JumpAtom
 
+typedef utility::pointer::owning_ptr< JumpAtom > JumpAtomOP;
+typedef utility::pointer::owning_ptr< JumpAtom const > JumpAtomCOP;
+typedef utility::pointer::access_ptr< JumpAtom > JumpAtomAP;
+typedef utility::pointer::access_ptr< JumpAtom const > JumpAtomCAP;
 
-}
+} // namespace tree
 } // namespace kinematics
 } // namespace core
 

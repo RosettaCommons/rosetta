@@ -37,6 +37,12 @@ namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
+/// @details Auto-generated virtual destructor
+EnzdesLoopsFile::~EnzdesLoopsFile() {}
+
+/// @details Auto-generated virtual destructor
+EnzdesLoopInfo::~EnzdesLoopInfo() {}
+
 
 ResInteractions::ResInteractions() :
 	targ_res_(0), num_interactions_(1),

@@ -30,6 +30,11 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
+
+class RamaScore;
+typedef utility::pointer::owning_ptr< RamaScore > RamaScoreOP;
+typedef utility::pointer::owning_ptr< RamaScore const > RamaScoreCOP;
+
 /// @brief  RamaScore score counts identical residues
 /// @detailed Resulting score is the number of identical residues
 /// on corresponding positions in a vall fragment and a query sequence

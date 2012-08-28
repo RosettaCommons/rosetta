@@ -403,16 +403,19 @@ void addVirtualResAsRoot( core::pose::Pose & pose ) {
 bool getPoseExtraScores(
 	core::pose::Pose const & pose,
 	std::string const name,
-	core::Real & value) {
+	core::Real & value
+)
+{
 	using basic::datacache::CacheableStringFloatMap;
+	using basic::datacache::CacheableStringFloatMapCOP;
 
 	// make sure that the pose has one of these.
 	if( !pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ){
 		return false;
 	}
 
-	CacheableStringFloatMap const *data
-		= dynamic_cast< CacheableStringFloatMap const* >
+	CacheableStringFloatMapCOP data
+		= dynamic_cast< CacheableStringFloatMap const * >
 			( pose.data().get_raw_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
 	assert( data != NULL );
 
@@ -429,8 +432,10 @@ void setPoseExtraScores(
 	core::pose::Pose & pose,
 	std::string name,
 	core::Real value
-) {
+)
+{
 	using basic::datacache::CacheableStringFloatMap;
+	using basic::datacache::CacheableStringFloatMapOP;
 
 	// make sure that the pose has one of these.
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ) {
@@ -440,7 +445,7 @@ void setPoseExtraScores(
 		);
 	}
 
-	CacheableStringFloatMap *data
+	CacheableStringFloatMapOP data
 		=  dynamic_cast< CacheableStringFloatMap* >
 			( pose.data().get_raw_ptr(core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA) );
 
@@ -451,8 +456,11 @@ void setPoseExtraScores(
 void add_comment(
 	core::pose::Pose & pose,
 	std::string const & key,
-	std::string const & val) {
+	std::string const & val
+)
+{
 	using basic::datacache::CacheableStringMap;
+	using basic::datacache::CacheableStringMapOP;
 
 	// make sure that the pose has a map of strings
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::STRING_MAP ) ) {
@@ -462,7 +470,7 @@ void add_comment(
 		);
 	}
 
-	CacheableStringMap *data
+	CacheableStringMapOP data
 		=  dynamic_cast< CacheableStringMap* >
 			( pose.data().get_raw_ptr(core::pose::datacache::CacheableDataType::STRING_MAP) );
 
@@ -473,8 +481,11 @@ void add_comment(
 void add_score_line_string(
 	core::pose::Pose & pose,
 	std::string const & key,
-	std::string const & val) {
+	std::string const & val
+)
+{
 	using basic::datacache::CacheableStringMap;
+	using basic::datacache::CacheableStringMapOP;
 
 	// make sure that the pose has a map of strings
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::SCORE_LINE_STRINGS ) ) {
@@ -484,7 +495,7 @@ void add_score_line_string(
 		);
 	}
 
-	CacheableStringMap *data
+	CacheableStringMapOP data
 		=  dynamic_cast< CacheableStringMap* >
 			( pose.data().get_raw_ptr(core::pose::datacache::CacheableDataType::SCORE_LINE_STRINGS) );
 
@@ -493,7 +504,8 @@ void add_score_line_string(
 }
 
 void clearPoseExtraScores(
-	core::pose::Pose & pose) {
+	core::pose::Pose & pose
+) {
 
 	{
 		using basic::datacache::CacheableStringFloatMap;
@@ -522,14 +534,17 @@ void clearPoseExtraScores(
 
 void clearPoseExtraScore(
 	core::pose::Pose & pose,
-	std::string const & name) {
+	std::string const & name
+)
+{
 	using basic::datacache::CacheableStringFloatMap;
+	using basic::datacache::CacheableStringFloatMapOP;
 
 	if( !pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ){
 		return;
 	}
 
-	CacheableStringFloatMap *data
+	CacheableStringFloatMapOP data
 		= dynamic_cast< CacheableStringFloatMap* >
 			( pose.data().get_raw_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
 	assert( data != NULL );
@@ -573,11 +588,13 @@ bool get_score_line_string(
 
 void delete_comment(
 	core::pose::Pose & pose,
-	std::string const & key) {
+	std::string const & key
+) {
 	using basic::datacache::CacheableStringMap;
+	using basic::datacache::CacheableStringMapOP;
 
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::STRING_MAP ) ) {
-		CacheableStringMap *data
+		CacheableStringMapOP data
 			=  dynamic_cast< CacheableStringMap* >
 				( pose.data().get_raw_ptr(core::pose::datacache::CacheableDataType::STRING_MAP) );
 		std::map< std::string, std::string >::iterator it;
@@ -588,14 +605,18 @@ void delete_comment(
 	}
 }
 
-std::map< std::string, std::string > get_all_score_line_strings(
-	core::pose::Pose const & pose) {
+std::map< std::string, std::string >
+get_all_score_line_strings(
+	core::pose::Pose const & pose
+)
+{
 	using basic::datacache::CacheableStringMap;
+	using basic::datacache::CacheableStringMapCOP;
 
 	std::map< std::string, std::string > score_line_strings;
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::SCORE_LINE_STRINGS ) ) {
-		const CacheableStringMap *data
-			= dynamic_cast< const CacheableStringMap* >
+		CacheableStringMapCOP data
+			= dynamic_cast< CacheableStringMap const * >
 				( pose.data().get_raw_const_ptr( core::pose::datacache::CacheableDataType::SCORE_LINE_STRINGS ) );
 		score_line_strings = data->map();
 		runtime_assert( data != NULL );
@@ -603,13 +624,17 @@ std::map< std::string, std::string > get_all_score_line_strings(
 	return score_line_strings;
 }
 
-std::map< std::string, std::string > get_all_comments(
-	core::pose::Pose const & pose) {
+std::map< std::string, std::string >
+get_all_comments(
+	core::pose::Pose const & pose
+)
+{
 	using basic::datacache::CacheableStringMap;
+	using basic::datacache::CacheableStringMapCOP;
 
 	std::map< std::string, std::string > comments;
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::STRING_MAP ) ) {
-		const CacheableStringMap *data
+		CacheableStringMapCOP data
 			= dynamic_cast< const CacheableStringMap* >
 				( pose.data().get_raw_const_ptr( core::pose::datacache::CacheableDataType::STRING_MAP ) );
 		comments = data->map();
@@ -1140,7 +1165,7 @@ copy_dofs(
 		//			verbose = true;
 		//		}
 
-		core::kinematics::tree::Atom const * current_atom ( & reference_pose.atom_tree().atom_dont_do_update( AtomID(j,i) ) );
+		core::kinematics::tree::AtomCOP current_atom ( & reference_pose.atom_tree().atom_dont_do_update( AtomID(j,i) ) );
 
 		if ( !get_scratch_atom_id( current_atom_scratch_atom_id, atom_id_map, current_atom ) ) {
 			if ( verbose ){ std::cout << "No current atom id? " << " skipping " <<  pose.residue( i ).name1() << i << " " << pose.residue( i ).atom_name( j ) << std::endl;}
@@ -1158,9 +1183,9 @@ copy_dofs(
 				continue;
 			}
 
-			core::kinematics::tree::Atom const * input_stub_atom1( current_atom->input_stub_atom1() );
-			core::kinematics::tree::Atom const * input_stub_atom2( current_atom->input_stub_atom2() );
-			core::kinematics::tree::Atom const * input_stub_atom3( current_atom->input_stub_atom3() );
+			core::kinematics::tree::AtomCOP input_stub_atom1( current_atom->input_stub_atom1() );
+			core::kinematics::tree::AtomCOP input_stub_atom2( current_atom->input_stub_atom2() );
+			core::kinematics::tree::AtomCOP input_stub_atom3( current_atom->input_stub_atom3() );
 			if ( !get_scratch_atom_id( input_stub_atom1_scratch_atom_id, atom_id_map, input_stub_atom1 ) ) {
 				if ( verbose ){ std::cout << "No JUMP input_stub_atom1? " << " skipping " <<  pose.residue( i ).name1() << i << " " << pose.residue( i ).atom_name( j ) << std::endl;}
 				continue;
@@ -1177,9 +1202,9 @@ copy_dofs(
 														 scratch_pose.xyz( input_stub_atom2_scratch_atom_id ),
 														 scratch_pose.xyz( input_stub_atom3_scratch_atom_id ) );
 
-			core::kinematics::tree::Atom const * stub_atom1( current_atom->stub_atom1() );
-			core::kinematics::tree::Atom const * stub_atom2( current_atom->stub_atom2() );
-			core::kinematics::tree::Atom const * stub_atom3( current_atom->stub_atom3() );
+			core::kinematics::tree::AtomCOP stub_atom1( current_atom->stub_atom1() );
+			core::kinematics::tree::AtomCOP stub_atom2( current_atom->stub_atom2() );
+			core::kinematics::tree::AtomCOP stub_atom3( current_atom->stub_atom3() );
 			if ( !get_scratch_atom_id( stub_atom1_scratch_atom_id, atom_id_map, stub_atom1 ) ) {
 				if ( verbose ){ std::cout << "No JUMP stub_atom1? " << " skipping " <<  pose.residue( i ).name1() << i << " " << pose.residue( i ).atom_name( j ) << std::endl;}
 				continue;
@@ -1243,7 +1268,7 @@ copy_dofs(
 
 		//////////////////////////////////
 		// D
-		core::kinematics::tree::Atom const * input_stub_atom1( current_atom->input_stub_atom1() );
+		core::kinematics::tree::AtomCOP input_stub_atom1( current_atom->input_stub_atom1() );
 		if ( !get_scratch_atom_id( input_stub_atom1_scratch_atom_id, atom_id_map, input_stub_atom1 ) ) {
 			if ( verbose ) { std::cout << "No D input_stub_atom1? " << " skipping " <<  pose.residue( i ).name1() << i << " " << pose.residue( i ).atom_name( j ) << std::endl; }
 			continue;
@@ -1276,7 +1301,7 @@ copy_dofs(
 
 			bool problem_with_sister( false );
 			for ( Size n = 0; n < input_stub_atom1->n_children(); n++ ) {
-				core::kinematics::tree::Atom const * child_atom( input_stub_atom1->child( n ) );
+				core::kinematics::tree::AtomCOP child_atom( input_stub_atom1->child( n ) );
 				if (!get_scratch_atom_id( dummy_atom_id, atom_id_map, child_atom ) ) {
 					if ( verbose ) { std::cout << "No THETA ... Sister atom outside region of interest? " << " skipping " <<  pose.residue( i ).name1() << i << " " << pose.residue( i ).atom_name( j ) << std::endl; }
 					problem_with_sister = true;
@@ -1288,7 +1313,7 @@ copy_dofs(
 			if (problem_with_sister) continue;
 		}
 
-		core::kinematics::tree::Atom const * input_stub_atom2( current_atom->input_stub_atom2() );
+		core::kinematics::tree::AtomCOP input_stub_atom2( current_atom->input_stub_atom2() );
 		if ( !get_scratch_atom_id( input_stub_atom2_scratch_atom_id, atom_id_map, input_stub_atom2 ) ) {
 			if ( verbose ) std::cout << "No THETA input_stub_atom2? " << " skipping " <<  pose.residue( i ).name1() << i << " " << pose.residue( i ).atom_name( j ) << std::endl;
 			continue;
@@ -1339,9 +1364,9 @@ copy_dofs(
 		bool stub3_is_external_sister( false );
 		bool stub3_is_external_granny( false );
 
-		core::kinematics::tree::Atom const * input_stub_atom3( current_atom->input_stub_atom3() ); // the real great-grandparent, not some phi_offset garbage.
-		core::kinematics::tree::Atom const * reference_atom( current_atom->input_stub_atom3() );
-		core::kinematics::tree::Atom const * atom_to_move( current_atom );
+		core::kinematics::tree::AtomCOP input_stub_atom3( current_atom->input_stub_atom3() ); // the real great-grandparent, not some phi_offset garbage.
+		core::kinematics::tree::AtomCOP reference_atom( current_atom->input_stub_atom3() );
+		core::kinematics::tree::AtomCOP atom_to_move( current_atom );
 
 		if ( input_stub_atom3 == current_atom ) {
 			if ( verbose ) { std::cout << "Part of jump triumvirate, No PHI " << " skipping " <<  pose.residue( i ).name1() << i << " " << pose.residue( i ).atom_name( j ) << std::endl; }
@@ -1481,7 +1506,7 @@ copy_dofs(
 bool
 get_scratch_atom_id( id::AtomID & other_scratch_atom_id,
 										 std::map< core::id::AtomID, core::id::AtomID> const & atom_id_map,
-										 core::kinematics::tree::Atom const * other_atom )
+										 core::kinematics::tree::AtomCOP other_atom )
 {
 
 	using namespace core::id;
@@ -2416,9 +2441,10 @@ std::string extract_tag_from_pose( core::pose::Pose &pose )
 {
 	//using core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG;
 	using basic::datacache::CacheableString;
+	using basic::datacache::CacheableStringOP;
 
 	if( pose.data().has( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ){
-			CacheableString *data =  dynamic_cast< CacheableString* > (  (pose.data().get_raw_ptr( ( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG  )) ));
+			CacheableStringOP data =  dynamic_cast< CacheableString* > (  (pose.data().get_raw_ptr( ( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG  )) ));
 			if( data == NULL ) return std::string("UnknownTag");
 			else               return data->str();
 	}

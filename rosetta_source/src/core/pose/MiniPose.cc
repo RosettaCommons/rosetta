@@ -30,6 +30,9 @@
 namespace core {
 namespace pose {
 
+// @brief Auto-generated virtual destructor
+MiniPose::~MiniPose() {}
+
 	///////////////////////////////////////////////////////////////////////
 	MiniPose::MiniPose( core::pose::Pose const & pose )
 	{

@@ -40,7 +40,7 @@ namespace protein {
     StepWiseProteinFilterer();
 
     //destructor -- necessary?
-    ~StepWiseProteinFilterer();
+    virtual ~StepWiseProteinFilterer();
 
     /// @brief Filter a list of poses by score.
     void filter( PoseList & pose_list, PoseList & minimize_pose_list ) const;

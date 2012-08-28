@@ -42,6 +42,8 @@ namespace rotamer_recovery {
 class RRComparer : public utility::pointer::ReferenceCount {
 
 public: // constructors destructors
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~RRComparer();
 
 //	RRComparer();
 //

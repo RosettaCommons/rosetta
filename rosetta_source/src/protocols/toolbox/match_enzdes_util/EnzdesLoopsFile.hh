@@ -181,6 +181,8 @@ class EnzdesLoopInfo : public utility::pointer::ReferenceCount
 
 
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~EnzdesLoopInfo();
 
 	EnzdesLoopInfo();
 
@@ -309,6 +311,8 @@ class EnzdesLoopsFile : public utility::pointer::ReferenceCount
 {
 
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~EnzdesLoopsFile();
 
 	EnzdesLoopsFile();
 

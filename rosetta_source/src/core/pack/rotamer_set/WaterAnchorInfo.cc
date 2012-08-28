@@ -27,6 +27,9 @@ namespace core {
 namespace pack {
 namespace rotamer_set {
 
+/// @details Auto-generated virtual destructor
+WaterAnchorInfo::~WaterAnchorInfo() {}
+
 Size
 WaterAnchorInfo::anchor_residue() const {
 	return anchor_residue_;

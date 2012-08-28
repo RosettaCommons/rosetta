@@ -52,7 +52,7 @@ public:
 
 	//constructor
 	AllowInsert( core::pose::Pose const & pose );
-	~AllowInsert();
+	virtual ~AllowInsert();
 
 public:
 

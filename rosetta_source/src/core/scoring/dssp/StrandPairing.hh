@@ -137,7 +137,7 @@ public:
 	StrandPairingSet( ObjexxFCL::FArray2_float const& hbonds, float threshold, core::pose::Pose const& );
 	StrandPairingSet( core::pose::Pose const&, core::Real threshold = -0.5 );
 	StrandPairingSet( core::scoring::dssp::PairingList const& );
-	~StrandPairingSet();
+	virtual ~StrandPairingSet();
 
 	//void add_decoy( core::Size dec );
 	bool check_pleat() const;

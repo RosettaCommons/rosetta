@@ -132,6 +132,8 @@ comment_begin( utility::vector1< std::string > const & tokens, Size which_token 
 	return tokens[ which_token ][ 0 ] == '#';
 }
 
+/// @details Auto-generated virtual destructor
+DomainAssemblyCommand::~DomainAssemblyCommand() {}
 
 void
 parse_da_option_file( utility::vector1< DomainInfo > & domains, std::string filename )

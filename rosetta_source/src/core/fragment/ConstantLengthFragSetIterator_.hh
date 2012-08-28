@@ -84,12 +84,12 @@ protected:
 		return *this;
 	}
 
-	Frame* frame_ptr() {
-		return it_->get(); //call get() of owning_ptr
+	FrameOP frame_ptr() {
+		return *it_;
 	}
 
-	Frame const* frame_ptr() const {
-		return it_->get(); //call get() of owning_ptr
+	FrameCOP frame_ptr() const {
+		return *it_;
 	}
 
 private:

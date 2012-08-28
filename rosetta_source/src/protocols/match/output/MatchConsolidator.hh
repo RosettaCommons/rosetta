@@ -119,6 +119,7 @@ public:
 
 public:
 	BestMatchesCollection( Size n_to_keep, bool dspos1_mode = false );
+	virtual ~BestMatchesCollection();
 
 	void
 	add_match( match const & m, Real score );

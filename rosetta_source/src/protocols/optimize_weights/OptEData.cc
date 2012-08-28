@@ -71,6 +71,15 @@ using namespace ObjexxFCL::fmt;
 namespace protocols {
 namespace optimize_weights {
 
+/// @details Auto-generated virtual destructor
+OptEData::~OptEData() {}
+
+/// @details Auto-generated virtual destructor
+PNatRotOptERotamerData::~PNatRotOptERotamerData() {}
+
+/// @details Auto-generated virtual destructor
+PNatAAOptERotamerData::~PNatAAOptERotamerData() {}
+
 static basic::Tracer TR("protocols.optimize_weights.OptEData");
 
 ///@begin (ostream operator for OptERotamerDataOP)

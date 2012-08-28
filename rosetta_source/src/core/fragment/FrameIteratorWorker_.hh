@@ -24,7 +24,7 @@
 // AUTO-REMOVED #include <core/types.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <core/fragment/Frame.hh>
+#include <core/fragment/Frame.hh>
 // AUTO-REMOVED #include <core/fragment/FragID.hh>
 
 // Project Headers
@@ -75,24 +75,24 @@ protected:
 
 	virtual FrameIteratorWorker_& operator = ( FrameIteratorWorker_ const& itr ) = 0;
 
-	Frame* operator* () {
+	FrameOP operator* () {
 		return frame_ptr();
 	}
 
-	Frame const* operator* () const {
+	FrameCOP operator* () const {
 		return frame_ptr();
 	}
 
-	Frame* operator-> () {
+	FrameOP operator-> () {
 		return ( frame_ptr() );
 	}
 
-	Frame const* operator-> () const {
+	FrameCOP operator-> () const {
 		return ( frame_ptr() );
 	}
 
-	virtual Frame* frame_ptr() = 0;
-	virtual Frame const* frame_ptr() const = 0;
+	virtual FrameOP frame_ptr() = 0;
+	virtual FrameCOP frame_ptr() const = 0;
 };
 
 }

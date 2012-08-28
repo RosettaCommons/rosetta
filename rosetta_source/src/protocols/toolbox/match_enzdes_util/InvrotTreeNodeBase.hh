@@ -48,7 +48,7 @@ public:
 
 	InvrotCollector( InvrotCollector const & other );
 
-	~InvrotCollector();
+	virtual ~InvrotCollector();
 
 	InvrotCollectorOP
 	clone() const;
@@ -92,7 +92,7 @@ public:
     InvrotTreeNodeBaseCAP parent_node
   );
 
-  ~InvrotTreeNodeBase();
+  virtual ~InvrotTreeNodeBase();
 
   InvrotTreeNodeBaseCAP
   parent_node() const {

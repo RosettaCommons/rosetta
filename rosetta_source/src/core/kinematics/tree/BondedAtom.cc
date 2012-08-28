@@ -65,7 +65,7 @@ BondedAtom::dfs(
 			assert( parent_ );
 			Atoms_Iterator iter = parent_->atoms_begin();
 			/// you had better find yourself in your parent's atom list.
-			while ( (*iter) != this ) { ++iter; assert( iter != parent_->atoms_end() );}
+			while ( (*iter)() != this ) { ++iter; assert( iter != parent_->atoms_end() );}
 			++iter; // point to your next-youngest sibling.
 			while ( iter != parent_->atoms_end() ) {
 				(*iter)->dfs( changeset, res_change_list, start_atom_index );
@@ -100,7 +100,7 @@ BondedAtom::update_xyz_coords()
 		assert( parent_ );
 		Atoms_Iterator iter = parent_->atoms_begin();
 		/// you had better find yourself in your parent's atom list.
-		while ( (*iter) != this ) { ++iter; assert( iter != Atom_::parent()->atoms_end() );}
+		while ( (*iter)() != this ) { ++iter; assert( iter != Atom_::parent()->atoms_end() );}
 		++iter; // point to your next-youngest sibling.
 		while ( iter != parent_->atoms_end() ) {
 			(*iter)->update_xyz_coords( stub );
@@ -304,11 +304,12 @@ BondedAtom::dof(
 /// @note  This will recursively clone all this atom's offspring atoms
 /// @note  Assumes that atom_pointer has already been properly dimensioned
 
-Atom *
-BondedAtom::clone( Atom* parent_in, AtomPointer2D & atom_pointer ) const
+AtomOP
+BondedAtom::clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const
 {
 
-	BondedAtom * new_me = new BondedAtom( *this );
+	BondedAtomOP new_me = new BondedAtom( *this );
+	new_me->set_weak_ptr_to_self( new_me() );
 
 	atom_pointer[ id() ] = new_me; // handles memory management
 
@@ -328,7 +329,7 @@ BondedAtom::clone( Atom* parent_in, AtomPointer2D & atom_pointer ) const
 	// copy atoms
 	for ( Atoms_ConstIterator a=atoms_begin(), a_end = atoms_end();
 				a != a_end; ++a ) {
-		new_me->append_atom( (*a)->clone( new_me /*the new parent*/, atom_pointer ) );
+		new_me->append_atom( (*a)->clone( new_me() /*the new parent*/, atom_pointer ) );
 	}
 
 	return new_me;

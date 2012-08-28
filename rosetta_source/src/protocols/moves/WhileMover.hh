@@ -52,7 +52,7 @@ public:
 	~WhileMover();
 
 	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;                  
+	virtual std::string get_name() const;
 
 private:
 	MoverOP mover_;
@@ -63,6 +63,7 @@ private:
 class PoseCondition : public utility::pointer::ReferenceCount {
 public:
 	PoseCondition() {};
+	virtual ~PoseCondition();
 	virtual bool operator() ( core::pose::Pose const& ) = 0;
 };
 

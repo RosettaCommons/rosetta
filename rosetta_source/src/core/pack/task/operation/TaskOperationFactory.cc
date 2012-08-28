@@ -53,9 +53,7 @@ TaskOperationFactory * TaskOperationFactory::get_instance()
 TaskOperationFactory::~TaskOperationFactory(){}
 
 ///@brief the default TaskOperations are now initialized in core/init.cc via the registrator/creator scheme
-TaskOperationFactory::TaskOperationFactory()
-	: parent()
-{}
+TaskOperationFactory::TaskOperationFactory() {}
 
 void
 TaskOperationFactory::factory_register( TaskOperationCreatorOP creator )

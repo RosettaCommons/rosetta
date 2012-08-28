@@ -72,7 +72,7 @@ public: // construct/destruct
 	NatbiasStrandPairPotential( StrandPairingSetOP const spairset );
 
 	/// @brief default destructor
-	~NatbiasStrandPairPotential();
+	virtual ~NatbiasStrandPairPotential();
 
 
 public: // scoring

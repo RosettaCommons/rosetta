@@ -39,9 +39,9 @@ namespace backrub {
 void
 protocols::backrub::BackrubSegment::start_atoms1(
 	core::pose::Pose const & pose,
-	core::kinematics::tree::Atom const * & start_atom_m1,
-	core::kinematics::tree::Atom const * & start_atom,
-	core::kinematics::tree::Atom const * & start_atom_p1
+	core::kinematics::tree::AtomCOP & start_atom_m1,
+	core::kinematics::tree::AtomCOP & start_atom,
+	core::kinematics::tree::AtomCOP & start_atom_p1
 ) const
 {
 	kinematics::AtomTree const & atom_tree(pose.atom_tree());
@@ -54,11 +54,11 @@ protocols::backrub::BackrubSegment::start_atoms1(
 void
 protocols::backrub::BackrubSegment::start_atoms2(
 	core::pose::Pose const & pose,
-	core::kinematics::tree::Atom const * & start_atom_m2,
-	core::kinematics::tree::Atom const * & start_atom_m1,
-	core::kinematics::tree::Atom const * & start_atom,
-	core::kinematics::tree::Atom const * & start_atom_p1,
-	core::kinematics::tree::Atom const * & start_atom_p2
+	core::kinematics::tree::AtomCOP & start_atom_m2,
+	core::kinematics::tree::AtomCOP & start_atom_m1,
+	core::kinematics::tree::AtomCOP & start_atom,
+	core::kinematics::tree::AtomCOP & start_atom_p1,
+	core::kinematics::tree::AtomCOP & start_atom_p2
 ) const
 {
 	start_atoms1(pose, start_atom_m1, start_atom, start_atom_p1);
@@ -72,7 +72,7 @@ protocols::backrub::BackrubSegment::start_bond_angle_key(
 	core::pose::Pose const & pose
 )
 {
-	kinematics::tree::Atom const *start_atom_m1, *start_atom, *start_atom_p1;
+	kinematics::tree::AtomCOP start_atom_m1, start_atom, start_atom_p1;
 	start_atoms1(pose, start_atom_m1, start_atom, start_atom_p1);
 
 	if (start_atom_m1->id() < start_atom_p1->id()) {
@@ -85,9 +85,9 @@ protocols::backrub::BackrubSegment::start_bond_angle_key(
 void
 protocols::backrub::BackrubSegment::end_atoms1(
 	core::pose::Pose const & pose,
-	core::kinematics::tree::Atom const * & end_atom_m1,
-	core::kinematics::tree::Atom const * & end_atom,
-	core::kinematics::tree::Atom const * & end_atom_p1
+	core::kinematics::tree::AtomCOP & end_atom_m1,
+	core::kinematics::tree::AtomCOP & end_atom,
+	core::kinematics::tree::AtomCOP & end_atom_p1
 ) const
 {
 	end_atom = & pose.atom_tree().atom(end_atomid_);
@@ -98,11 +98,11 @@ protocols::backrub::BackrubSegment::end_atoms1(
 void
 protocols::backrub::BackrubSegment::end_atoms2(
 	core::pose::Pose const & pose,
-	core::kinematics::tree::Atom const * & end_atom_m2,
-	core::kinematics::tree::Atom const * & end_atom_m1,
-	core::kinematics::tree::Atom const * & end_atom,
-	core::kinematics::tree::Atom const * & end_atom_p1,
-	core::kinematics::tree::Atom const * & end_atom_p2
+	core::kinematics::tree::AtomCOP & end_atom_m2,
+	core::kinematics::tree::AtomCOP & end_atom_m1,
+	core::kinematics::tree::AtomCOP & end_atom,
+	core::kinematics::tree::AtomCOP & end_atom_p1,
+	core::kinematics::tree::AtomCOP & end_atom_p2
 ) const
 {
 	end_atoms1(pose, end_atom_m1, end_atom, end_atom_p1);
@@ -110,7 +110,7 @@ protocols::backrub::BackrubSegment::end_atoms2(
 	runtime_assert(end_atom_m1);
 
 	end_atom_m2 = end_atom_m1->parent();
-	end_atom_p2 = end_atom_p1 ? end_atom_p1->get_nonjump_atom(0) : NULL;
+	end_atom_p2 = end_atom_p1 ? end_atom_p1->get_nonjump_atom(0) : core::kinematics::tree::AtomCOP(0) ;
 }
 
 protocols::backrub::BackrubSegment::BondAngleKey
@@ -118,7 +118,7 @@ protocols::backrub::BackrubSegment::end_bond_angle_key(
 	core::pose::Pose const & pose
 )
 {
-	kinematics::tree::Atom const *end_atom_m1, *end_atom, *end_atom_p1;
+	kinematics::tree::AtomCOP end_atom_m1, end_atom, end_atom_p1;
 	end_atoms1(pose, end_atom_m1, end_atom, end_atom_p1);
 
 	if (!end_atom_p1) {
@@ -136,9 +136,9 @@ void
 protocols::backrub::BackrubSegment::bond_angle_atoms(
 	core::pose::Pose const & pose,
 	BackrubSegment::BondAngleKey bond_angle_key,
-	core::kinematics::tree::Atom const * & atom_m1,
-	core::kinematics::tree::Atom const * & atom,
-	core::kinematics::tree::Atom const * & atom_p1
+	core::kinematics::tree::AtomCOP & atom_m1,
+	core::kinematics::tree::AtomCOP & atom,
+	core::kinematics::tree::AtomCOP & atom_p1
 )
 {
 	kinematics::AtomTree const & atom_tree(pose.atom_tree());

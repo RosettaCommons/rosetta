@@ -73,26 +73,26 @@ SecondaryStructurePool::SecondaryStructurePool(Size total_size,std::string pool_
 
 SecondaryStructurePool::~SecondaryStructurePool() {}
 
-bool SecondaryStructurePool::could_be_accepted(ScoredCandidate candidate) {
-
+bool SecondaryStructurePool::could_be_accepted(ScoredCandidate candidate) const
+{
 	if( candidate.first->get_middle_ss() == ss_type_ ) return true;
-
 	return false;
 }
 
 
-bool SecondaryStructurePool::add(ScoredCandidate candidate) {
-
+bool SecondaryStructurePool::add(ScoredCandidate candidate)
+{
 	if( candidate.first->get_middle_ss() == ss_type_ ) {
 	    return  storage_->push( candidate );
 	}
-
 	return false;
 }
 
-void SecondaryStructurePool::print_report(std::ostream & out, scores::FragmentScoreManagerOP //manager
-	    ) {
-
+void SecondaryStructurePool::print_report(
+	std::ostream & out,
+	scores::FragmentScoreManagerOP //manager
+) const
+{
 	out << get_pool_name() << " collected "<<current_size()<<" candidates of type "<<ss_type_<<std::endl;
 }
 

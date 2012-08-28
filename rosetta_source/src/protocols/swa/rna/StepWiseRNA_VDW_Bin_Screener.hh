@@ -95,7 +95,7 @@ namespace rna {
 		StepWiseRNA_VDW_Bin_Screener();
 
     //destructor -- necessary?
-    ~StepWiseRNA_VDW_Bin_Screener();
+    virtual ~StepWiseRNA_VDW_Bin_Screener();
 
 		void
 		FARFAR_setup_using_user_input_VDW_pose(utility::vector1< std::string > const & VDW_rep_screen_pose_info, core::pose::Pose const & const_working_pose);

@@ -283,7 +283,7 @@ MetropolisHastingsMover::parse_my_tag(
 			}
 			mover = mover_iter->second;
 		} else { //generate new mover
-			protocols::moves::MoverFactory *mover_factory(protocols::moves::MoverFactory::get_instance());
+			protocols::moves::MoverFactory * mover_factory(protocols::moves::MoverFactory::get_instance());
 			mover = mover_factory->newMover(subtag, data, filters, movers, pose);
 		}
 

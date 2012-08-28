@@ -35,7 +35,7 @@ namespace resource_manager {
 /// at load time.  If two Creators are registered and they both give the
 /// same name for the ResourceLoader they say they will instantiate, then
 /// the Factory will exit with an error message.
-class ResourceLoaderFactory : public utility::pointer::ReferenceCount
+class ResourceLoaderFactory
 {
 public:
 	/// @brief Instantiates a resource loader ofa  given type; throws

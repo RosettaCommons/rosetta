@@ -43,6 +43,9 @@
 namespace core {
 namespace fragment {
 
+/// @details Auto-generated virtual destructor
+Frame::~Frame() {}
+
 using namespace kinematics;
 
 

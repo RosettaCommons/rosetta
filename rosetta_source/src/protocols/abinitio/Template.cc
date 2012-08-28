@@ -75,6 +75,9 @@ void protocols::abinitio::Template::register_options() {
 namespace protocols {
 namespace abinitio {
 
+/// @details Auto-generated virtual destructor
+Template::~Template() {}
+
 using namespace core;
 using namespace fragment;
 using namespace scoring::constraints;
@@ -374,10 +377,10 @@ void Template::_read_constraints( std::string const& cst_file ) const {
   FlatList all_cst = cstset->get_all_constraints();
   for ( FlatList::const_iterator it = all_cst.begin(),
 	  eit = all_cst.end(); it!=eit; ++it ) {
-    Constraint const* ptr = it->get();
-    AtomPairConstraint const* ptr2 = dynamic_cast< AtomPairConstraint const* > ( ptr );
+    ConstraintCOP ptr = it->get();
+    AtomPairConstraintCOP ptr2 = dynamic_cast< AtomPairConstraint const * > ( ptr.get() );
     if ( ptr2 ) {
-      AtomPairConstraintOP valued_cst = const_cast< AtomPairConstraint* > (ptr2);
+      AtomPairConstraintOP valued_cst = const_cast< AtomPairConstraint * > (ptr2.get());
       cstset_.push_back( new Obsolet_NamedAtomPairConstraint( valued_cst, *pose_ ) );
     } else {
       tr.Warning << "WARNING: constraint found that is not AtomPairConstraint... will be ignored by Template" << std::endl;

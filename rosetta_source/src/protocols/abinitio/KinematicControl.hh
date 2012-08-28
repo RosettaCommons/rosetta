@@ -82,7 +82,7 @@ namespace abinitio {
 class KinematicControl : public utility::pointer::ReferenceCount {
 public:
 	KinematicControl();
-	~KinematicControl();
+	virtual ~KinematicControl();
 
 	//@brief setup things in pose: e.g., set correct fold-tree, set jump-geometries to initial values...
 	bool prepare_pose_for_sampling( core::pose::Pose& pose ) const;

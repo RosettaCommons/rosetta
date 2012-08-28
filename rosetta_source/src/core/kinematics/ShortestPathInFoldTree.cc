@@ -45,13 +45,20 @@
 #include <basic/Tracer.hh>
 
 //Auto using namespaces
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+namespace ObjexxFCL {
+namespace fmt {
+}
+}
+using namespace ObjexxFCL::fmt; // AUTO USING NS
 //Auto using namespaces end
 
 
 
 namespace core {
 namespace kinematics {
+
+/// @details Auto-generated virtual destructor
+ShortestPathInFoldTree::~ShortestPathInFoldTree() {}
 
 static basic::Tracer tr("core.kinematics.ShortestPathInFoldTree",basic::t_info);
 

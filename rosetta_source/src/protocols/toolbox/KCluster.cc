@@ -55,6 +55,12 @@ static numeric::random::RandomGenerator RG(2831); // <- Magic number, do not cha
 namespace protocols {
 namespace toolbox {
 
+/// @details Auto-generated virtual destructor
+KClusterData::~KClusterData() {}
+
+/// @details Auto-generated virtual destructor
+KClusterElement::~KClusterElement() {}
+
 KClusterOP get_K_cluster_engine(const string &style)
 {
     if (style == "GKC") return new GreedyKCenter();

@@ -47,6 +47,9 @@ using namespace ObjexxFCL::fmt;
 namespace protocols {
 namespace moves {
 
+/// @details Auto-generated virtual destructor
+MoverStatistics::~MoverStatistics() {}
+
 typedef core::Real Real;
 using basic::T;
 using basic::Error;

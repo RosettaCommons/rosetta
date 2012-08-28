@@ -43,7 +43,7 @@ class KinematicPerturber : public utility::pointer::ReferenceCount {
 public:
 
 	KinematicPerturber();
-	~KinematicPerturber();
+	virtual ~KinematicPerturber();
 
 	virtual
 	std::string perturber_type() const = 0;

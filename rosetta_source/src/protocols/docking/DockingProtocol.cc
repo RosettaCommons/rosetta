@@ -561,7 +561,7 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 	// set relevant information to legacy high res mover
 	if ( docking_highres_mover_ ) {
 		if ( docking_highres_mover_->get_name() == "DockingHighResLegacy" && design_ ) {
-			DockingHighResLegacy* legacy_mover = dynamic_cast< DockingHighResLegacy* >(docking_highres_mover_.get());
+			DockingHighResLegacyOP legacy_mover = dynamic_cast< DockingHighResLegacy* >(docking_highres_mover_.get());
 			legacy_mover->design( design_ );
 		}
 		// passes the task factory down the chain and allows setting of the default docking task

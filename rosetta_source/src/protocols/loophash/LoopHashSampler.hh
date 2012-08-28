@@ -45,7 +45,7 @@ class LoopHashSampler : public utility::pointer::ReferenceCount  {
     LocalInserterOP inserter
 	);
 
-	~LoopHashSampler();
+	virtual ~LoopHashSampler();
 
 	void set_defaults();
 

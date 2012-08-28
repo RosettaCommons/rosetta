@@ -40,9 +40,13 @@ public:
 	/// @param size - how many fragments may fit into this pool
 	/// @param name - name assigned to this pool. This in general may be any string that
 	///	later allows one control pool's behavior from a flag file
-	TorsionBinPool(Size size,std::string pool_name,
-		core::fragment::SecondaryStructureOP prediction) :
-		QuotaPool(size,pool_name) {
+	TorsionBinPool(
+		Size size,
+		std::string pool_name,
+		core::fragment::SecondaryStructureOP prediction
+	) :
+		QuotaPool(size,pool_name)
+	{
 		prediction_ = prediction;
 	}
 
@@ -56,11 +60,12 @@ public:
 	void restart(Size,Size);
 
 private:
-        core::fragment::SecondaryStructureOP prediction_;
+	core::fragment::SecondaryStructureOP prediction_;
 	Size nh_, ne_, nl_;
 	Size max_h_,max_l_,max_e_;
 	Size frag_size_;
-        inline Size round(Real x) { return Size(x > 0.0 ? x + 0.5 : x - 0.5); }
+
+	inline Size round(Real x) { return Size(x > 0.0 ? x + 0.5 : x - 0.5); }
 };
 
 } // quota

@@ -49,6 +49,8 @@ class MMLJLibrary  : public utility::pointer::ReferenceCount
 {
 
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~MMLJLibrary();
   /// @brief ctor
   MMLJLibrary( core::chemical::MMAtomTypeSetCAP mm_atom_set );
 

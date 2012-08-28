@@ -47,6 +47,9 @@
 namespace protocols {
 namespace simple_moves {
 
+/// @details Auto-generated virtual destructor
+FragmentCost::~FragmentCost() {}
+
 static numeric::random::RandomGenerator RG(345);  // <- Magic number, do not change it!
 
 using namespace core;

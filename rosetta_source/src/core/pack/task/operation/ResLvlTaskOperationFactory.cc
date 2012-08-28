@@ -52,9 +52,7 @@ ResLvlTaskOperationFactory::factory_register( ResLvlTaskOperationCreatorOP creat
 	add_creator( creator );
 }
 
-ResLvlTaskOperationFactory::ResLvlTaskOperationFactory()
-	: parent()
-{}
+ResLvlTaskOperationFactory::ResLvlTaskOperationFactory() {}
 
 ResLvlTaskOperationFactory::~ResLvlTaskOperationFactory(){}
 

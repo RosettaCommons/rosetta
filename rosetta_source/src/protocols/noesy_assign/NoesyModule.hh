@@ -54,6 +54,8 @@ private:
  static bool options_registered_;
 
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~NoesyModule();
   ///@brief register options
   static void register_options();
 

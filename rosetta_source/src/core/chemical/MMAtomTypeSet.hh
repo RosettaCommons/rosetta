@@ -49,7 +49,7 @@ class MMAtomTypeSet : public utility::pointer::ReferenceCount {
 
 public:
 	MMAtomTypeSet();
-	~MMAtomTypeSet();
+	virtual ~MMAtomTypeSet();
 
 	/// @brief Number of MM atom types in the set
 	Size

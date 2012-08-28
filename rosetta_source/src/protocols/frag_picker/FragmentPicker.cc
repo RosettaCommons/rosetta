@@ -123,12 +123,12 @@ void FragmentPicker::quota_protocol() {
 	const bool skip_merge = (candidates_sinks_.size() == 1) ? true : false;
 	for (Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize) { // Loop over various sizes of fragments
 		Size fragment_size = frag_sizes_[iFragSize];
-		quota::QuotaCollector *c = (skip_merge) ? dynamic_cast<quota::QuotaCollector*> (candidates_sinks_[1][fragment_size]()) :
+		quota::QuotaCollectorOP c = (skip_merge) ? dynamic_cast<quota::QuotaCollector*> (candidates_sinks_[1][fragment_size]()) :
 				dynamic_cast<quota::QuotaCollector*> (candidates_sink_[fragment_size]()); // merged storage
 		if (c == 0)
 			utility_exit_with_message("Cant' cast candidates' collector to QuotaCollector. Is quota set up correctly?");
-		log_25_.setup_summary(c);
-		log_200_.setup_summary(c);
+		log_25_.setup_summary(*c);
+		log_200_.setup_summary(*c);
 		Size maxqpos = size_of_query() - fragment_size + 1;
 
 		utility::vector1<Candidates> final_fragments(maxqpos); // final fragments
@@ -1581,34 +1581,34 @@ void FragmentPicker::set_up_ss_abego_quota() {
 	utility::vector1<Real> weights;
 	utility::vector1<Real> scoring_weights = scores_[1]->get_weights();
 	for (Size i = 1; i <= scores_[1]->count_components(); ++i) {
-		ABEGO_SS_Score *s0 =
+		ABEGO_SS_ScoreOP s0 =
 			dynamic_cast<ABEGO_SS_Score*> (scores_[1]->get_component(i).get());
 		if (s0 != 0) {
 			components.push_back( i );
 			weights.push_back( scoring_weights[s0->get_id()] );
 		}
-		ProfileScoreL1 *s1 =
+		ProfileScoreL1OP s1 =
 			dynamic_cast<ProfileScoreL1*> (scores_[1]->get_component(i).get());
 		if (s1 != 0) {
 			components.push_back( i );
 			weights.push_back( scoring_weights[s1->get_id()] );
 		}
 
-		RamaScore *s2 =
+		RamaScoreOP s2 =
 			dynamic_cast<RamaScore*> (scores_[1]->get_component(i).get());
 		if (s2 != 0) {
 			components.push_back( i );
 			weights.push_back( scoring_weights[s2->get_id()] );
 		}
 
-		CSScore *s3 =
+		CSScoreOP s3 =
 			dynamic_cast<CSScore*> (scores_[1]->get_component(i).get());
 		if (s3 != 0) {
 			components.push_back( i );
 			weights.push_back( scoring_weights[s3->get_id()] );
 		}
 
-		SecondarySimilarity *s4 =
+		SecondarySimilarityOP s4 =
 			dynamic_cast<SecondarySimilarity*> (scores_[1]->get_component(i).get());
 		if (s4 != 0) {
 			components.push_back( i );
@@ -1617,8 +1617,9 @@ void FragmentPicker::set_up_ss_abego_quota() {
 	}
 
 	trPicker.Debug<<"Scoring scheme for ABEGO_SS quota pool sorting is:";
-	for(Size l=1;l<=weights.size();l++)
+	for(Size l=1;l<=weights.size();l++) {
 			trPicker.Debug<<"\n\t"<<components[l]<<"\t"<<weights[l];
+	}
 	trPicker.Debug<<std::endl;
 	Size buffer_factor = 5;
 	for(Size f=1;f<=frag_sizes_.size();f++) {
@@ -1634,7 +1635,7 @@ void FragmentPicker::set_up_ss_abego_quota() {
 				Real prob = q_config.probability(j+middle-1,i);
 				for (Size k = 0; k <= max_threads_; ++k) {  // 0 for the merged collector
 					CandidatesCollectorOP storage = get_candidates_collector(frag_sizes_[f], k);
-					quota::QuotaCollector *collector = dynamic_cast<quota::QuotaCollector*> (storage());
+					quota::QuotaCollectorOP collector = dynamic_cast<quota::QuotaCollector*> (storage());
 					quota::QuotaPoolOP p = new quota::ABEGO_SS_Pool(n_candidates_,q_config.get_pool_name(i),
 							q_config.get_pool_bins((i)),components,weights,prob,scores_[1]->count_components(),buffer_factor);
 					collector->add_pool(j,p);
@@ -1658,7 +1659,7 @@ void FragmentPicker::set_up_quota_nnmake_style() {
 	weights.push_back( 0.0 );		// score weight for RamaScore; will be changed later
 	utility::vector1<Real> scoring_weights = scores_[1]->get_weights();
 	for (Size i = 1; i <= scores_[1]->count_components(); ++i) {
-		ProfileScoreL1 *s1 =
+		ProfileScoreL1OP s1 =
 			dynamic_cast<ProfileScoreL1*> (scores_[1]->get_component(i).get());
 		if (s1 != 0) {
 			components.push_back( i );
@@ -1673,19 +1674,19 @@ void FragmentPicker::set_up_quota_nnmake_style() {
 			weights.push_back( scoring_weights[s2->get_id()] );
 		}
 *********/
-		CSScore *s3 =
+		CSScoreOP s3 =
 			dynamic_cast<CSScore*> (scores_[1]->get_component(i).get());
 		if (s3 != 0) {
 			components.push_back( i );
 			weights.push_back( scoring_weights[s3->get_id()] );
 		}
-		ABEGO_SS_Score *s4 =
+		ABEGO_SS_ScoreOP s4 =
 			dynamic_cast<ABEGO_SS_Score*> (scores_[1]->get_component(i).get());
 		if (s4 != 0) {
 			components.push_back( i );
 			weights.push_back( scoring_weights[s4->get_id()] );
 		}
-		TorsionBinSimilarity *s5 =
+		TorsionBinSimilarityOP s5 =
 			dynamic_cast<TorsionBinSimilarity*> (scores_[1]->get_component(i).get());
 		if (s5 != 0) {
 			components.push_back( i );
@@ -1711,7 +1712,7 @@ void FragmentPicker::set_up_quota_nnmake_style() {
 // --------- This part puts RamaScore into quota scoring; each Rama is based on a certain SS prediction and this part of the code
 // --------- dispatches each Rama into a proper pool
 		for (Size i = 1; i <= scores_[1]->count_components(); ++i) {
-			RamaScore *sr = dynamic_cast<RamaScore*> (scores_[1]->get_component(i).get());
+			RamaScoreOP sr = dynamic_cast<RamaScore*> (scores_[1]->get_component(i).get());
 			if (sr != 0) {
 				std::string & name = sr->get_prediction_name();
 				if( ! q_config.is_valid_quota_pool_name( name ) ) continue;
@@ -1726,7 +1727,7 @@ void FragmentPicker::set_up_quota_nnmake_style() {
 
 // Create secondary structure pools (if any)
 		for (Size i = 1; i <= scores_[1]->count_components(); ++i) {
-			SecondarySimilarity *ss = dynamic_cast<SecondarySimilarity*> (scores_[1]->get_component(i).get());
+			SecondarySimilarityOP ss = dynamic_cast<SecondarySimilarity*> (scores_[1]->get_component(i).get());
 
 		//PartialSecondarySimilarity is a variant of SecondarySimilarity, this means they're not compatible
 		//So what is it compatible with???
@@ -1749,7 +1750,7 @@ void FragmentPicker::set_up_quota_nnmake_style() {
 
 				for (Size j = 0; j <= max_threads_; ++j) { // 0 for the merged collector
 					CandidatesCollectorOP storage = get_candidates_collector(frag_sizes_[f], j);
-					quota::QuotaCollector *collector = dynamic_cast<quota::QuotaCollector*> (storage());
+					quota::QuotaCollectorOP collector = dynamic_cast<quota::QuotaCollector*> (storage());
 
 					collector->attach_secondary_structure_pools(q_config.get_fraction( name ) ,
 					get_query_ss( name ),name,n_candidates_,components,weights,scores_[1]->count_components());
@@ -1814,14 +1815,17 @@ void QuotaDebug::log(Size frag_len,Size q_pos,utility::vector1<Real> data) {
 	*this  << std::endl;
 }
 
-void QuotaDebug::setup_summary(quota::QuotaCollector* collector_) {
+void QuotaDebug::setup_summary(
+	quota::QuotaCollector const & collector
+)
+{
 	Size last_tag = 0;
-	for(Size i=1;i<=collector_->query_length();++i) {
-		for(Size j=1;j<=collector_->count_pools(i);++j) {
-			if( tag_map_.find(collector_->get_pool(i,j)->get_pool_name())==tag_map_.end() ) {
-				tags_.push_back(collector_->get_pool(i,j)->get_pool_name());
+	for(Size i=1;i<=collector.query_length();++i) {
+		for(Size j=1;j<=collector.count_pools(i);++j) {
+			if( tag_map_.find(collector.get_pool(i,j)->get_pool_name())==tag_map_.end() ) {
+				tags_.push_back(collector.get_pool(i,j)->get_pool_name());
 				last_tag++;
-				tag_map_[collector_->get_pool(i,j)->get_pool_name()] = last_tag;
+				tag_map_[collector.get_pool(i,j)->get_pool_name()] = last_tag;
 			}
 		}
 	}

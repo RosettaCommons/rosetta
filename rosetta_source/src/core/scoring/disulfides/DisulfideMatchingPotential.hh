@@ -49,7 +49,7 @@ namespace disulfides {
 class DisulfideMatchingPotential : public utility::pointer::ReferenceCount {
 public:
 	DisulfideMatchingPotential();
-	~DisulfideMatchingPotential();
+	virtual ~DisulfideMatchingPotential();
 
 	/**
 	 * @brief Calculates scoring terms for the disulfide bond specified

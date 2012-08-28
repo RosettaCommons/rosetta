@@ -33,6 +33,9 @@
 namespace basic {
 namespace resource_manager {
 
+/// @details Auto-generated virtual destructor
+JobOptions::~JobOptions() {}
+
 using platform::Real;
 using utility::options::BooleanOptionKey;
 using utility::options::BooleanVectorOptionKey;

@@ -81,6 +81,8 @@ class JumpSetup;
 ///@brief virtual base class: can create a set of jumps and cuts
 class BaseJumpSetup : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~BaseJumpSetup();
 	virtual
 	JumpSample
 	create_jump_sample( ) const = 0;

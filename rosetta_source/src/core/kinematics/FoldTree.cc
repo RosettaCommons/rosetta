@@ -46,6 +46,9 @@ static basic::Tracer TR("core.kinematics.FoldTree");
 namespace core {
 namespace kinematics {
 
+// @brief Auto-generated virtual destructor
+FoldTree::~FoldTree() {}
+
 
 ///////////////////////////////////////////////////////////////////////
 // ensure that stored data depending on the topology are up-to-date

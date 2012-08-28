@@ -55,7 +55,7 @@ public:
 
 	//constructor
 	RNA_StructureParameters();
-	~RNA_StructureParameters();
+	virtual ~RNA_StructureParameters();
 	void
 	initialize(
 		core::pose::Pose & pose,

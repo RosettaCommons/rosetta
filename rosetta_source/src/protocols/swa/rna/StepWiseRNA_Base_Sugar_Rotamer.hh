@@ -44,7 +44,7 @@ namespace rna {
 											core::scoring::rna::RNA_FittedTorsionInfo const & rna_fitted_torsion_info,
 											core::Size const bin_size=20);
 
-    ~StepWiseRNA_Base_Sugar_Rotamer();
+    virtual ~StepWiseRNA_Base_Sugar_Rotamer();
 
 		void reset();
 

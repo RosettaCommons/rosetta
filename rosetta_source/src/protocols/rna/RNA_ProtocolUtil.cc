@@ -1113,18 +1113,18 @@ print_internal_coords( core::pose::Pose const & pose ) {
 		std::cout << "RESIDUE: " << rsd.name3() << " " << rsd.seqpos() << std::endl;
 
 		for (Size j = 1; j <= rsd.natoms(); j++ ){
-			core::kinematics::tree::Atom const * current_atom ( & pose.atom_tree().atom( AtomID(j,i) ) );
-			core::kinematics::tree::Atom const * input_stub_atom1( current_atom->input_stub_atom1() );
-			core::kinematics::tree::Atom const * input_stub_atom2( current_atom->input_stub_atom2() );
-			core::kinematics::tree::Atom const * input_stub_atom3( current_atom->input_stub_atom3() );
+			core::kinematics::tree::AtomCOP current_atom ( & pose.atom_tree().atom( AtomID(j,i) ) );
+			core::kinematics::tree::AtomCOP input_stub_atom1( current_atom->input_stub_atom1() );
+			core::kinematics::tree::AtomCOP input_stub_atom2( current_atom->input_stub_atom2() );
+			core::kinematics::tree::AtomCOP input_stub_atom3( current_atom->input_stub_atom3() );
 
 			if ( !(current_atom && input_stub_atom1 && input_stub_atom2 && input_stub_atom3) )  continue;
 
 			if ( current_atom->is_jump() ) {
 
-				core::kinematics::tree::Atom const * jump_stub_atom1( current_atom->stub_atom1() );
-				core::kinematics::tree::Atom const * jump_stub_atom2( current_atom->stub_atom2() );
-				core::kinematics::tree::Atom const * jump_stub_atom3( current_atom->stub_atom3() );
+				core::kinematics::tree::AtomCOP jump_stub_atom1( current_atom->stub_atom1() );
+				core::kinematics::tree::AtomCOP jump_stub_atom2( current_atom->stub_atom2() );
+				core::kinematics::tree::AtomCOP jump_stub_atom3( current_atom->stub_atom3() );
 
 				// Now try to reproduce this jump based on coordinates of atoms.
 				std::cout << 	 "JUMP! " <<

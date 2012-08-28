@@ -116,6 +116,8 @@ tag_(""), function_tag_("default"), ideal_val_(ideal_val), tolerance_(tolerance)
 periodicity_(periodicity), force_const_(force_k), num_steps_(0), step_size_(0.0)
 {}
 
+GeomSampleInfo::~GeomSampleInfo() {}
+
 bool
 GeomSampleInfo::read_data( std::istringstream & line_stream )
 {
@@ -705,6 +707,7 @@ MatchConstraintFileInfoList::MatchConstraintFileInfoList(
 	mcfis_.clear();
 }
 
+MatchConstraintFileInfoList::~MatchConstraintFileInfoList() {}
 
 /// @brief temporary implementation for now, only one MCFI supported
 bool

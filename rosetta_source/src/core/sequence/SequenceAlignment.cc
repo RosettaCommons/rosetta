@@ -35,6 +35,11 @@
 namespace core {
 namespace sequence {
 
+/// @details moving from .cc file
+SequenceAlignment::~SequenceAlignment() {
+	// clear(); // APL NOTE: originally, this dstor called clear(), but clear() doesn't do anything that the dstor itself doesn't do
+}
+
 static basic::Tracer tr( "core.sequence.SequenceAlignment" );
 
 void SequenceAlignment::add_sequence( SequenceOP myseq ) {

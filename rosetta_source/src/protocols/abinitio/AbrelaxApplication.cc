@@ -1297,7 +1297,7 @@ void AbrelaxApplication::setup_templates() {
 	}
 
 	if ( option[ jumps::fix_jumps ].user() ) {
-		JumpSetup *ptr = new JumpSetup( extended_pose.total_residue() );
+		JumpSetupOP ptr = new JumpSetup( extended_pose.total_residue() );
 		ptr->read_file( option[ jumps::fix_jumps ]() );
 		// initialize jumping
 		jumping::JumpSample current_jumps( ptr->create_jump_sample() );
@@ -1310,7 +1310,7 @@ void AbrelaxApplication::setup_templates() {
 	}
 	if ( option[ jumps::jump_lib ].user() ) {
 		bDoubleDef = jump_def_ != 0;
-		JumpSelector *ptr = new JumpSelector( native_pose_->secstruct() );
+		JumpSelectorOP ptr = new JumpSelector( native_pose_->secstruct() );
 		ptr->read_file( option[ jumps::jump_lib ] );
 		jump_def_ = ptr;
 	}
@@ -1368,7 +1368,7 @@ void AbrelaxApplication::setup_templates() {
 
 	if ( option[ jumps::residue_pair_jump_file ].user() ) {
 		bDoubleDef = jump_def_ != 0;
-		ResiduePairJumpSetup * ptr = new ResiduePairJumpSetup( extended_pose.total_residue() );
+		ResiduePairJumpSetupOP ptr = new ResiduePairJumpSetup( extended_pose.total_residue() );
 		ptr->read_file( option[ jumps::residue_pair_jump_file ]() );
 		jump_def_ = ptr;
 	}
@@ -1545,7 +1545,7 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 			}
 
 			if ( option[ OptionKeys::loops::fa_closure_protocol ]() ) {
-				loops::loop_closure::ccd::FASelectSlidingWindowLoopClosure* prot;
+				loops::loop_closure::ccd::FASelectSlidingWindowLoopClosureOP prot;
 				closure_protocol = prot = new loops::loop_closure::ccd::FASelectSlidingWindowLoopClosure;
 				//spaeter kann man hier einen ResolutionSwitcher uebergeben.
 				runtime_assert( extended_pose.is_fullatom() );
@@ -1632,7 +1632,7 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 				tr.Info << "run JumpingFoldConstraints....." << std::endl;
 			// it doesn't matter if we have no constraints the extra FoldConstraints part in the Jumping protocl
 			// won't do anything
-			JumpingFoldConstraintsWrapper* pp;
+			JumpingFoldConstraintsWrapperOP pp;
 			pp = new JumpingFoldConstraintsWrapper( fragset_small_, fragset_large_, movemap, jump_def_ );
 			if ( native_pose_ ) pp->set_native_pose( native_pose_ ); //to steal native jumps
 			pp->set_show_viol_level( option[ constraints::viol_level ] );
@@ -1641,7 +1641,7 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 			if ( extended_pose.constraint_set()->has_residue_pair_constraints() ) {
 				// We have constraints: run xxxFoldConstraints
 				tr.Info << "run FoldConstraints....." << std::endl;
-				FoldConstraints* pp;
+				FoldConstraintsOP pp;
 				pp = new FoldConstraints( fragset_small_, fragset_large_, movemap );
 				pp->set_show_viol_level( option[ constraints::viol_level ] );
 				prot_ptr = pp;

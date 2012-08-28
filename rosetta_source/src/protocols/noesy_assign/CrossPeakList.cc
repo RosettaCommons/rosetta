@@ -75,6 +75,8 @@ CrossPeakList::CrossPeakList() :
 	assignments_()
 {}
 
+CrossPeakList::~CrossPeakList() {}
+
 Size CrossPeakList::count_assignments() const {
 	Size total_size( 0 );
 	for ( const_iterator it = begin(); it != end(); ++it ) {

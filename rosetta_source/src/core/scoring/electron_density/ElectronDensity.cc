@@ -75,6 +75,9 @@ namespace core {
 namespace scoring {
 namespace electron_density {
 
+/// @details Auto-generated virtual destructor
+ElectronDensity::~ElectronDensity() {}
+
 using basic::T;
 using basic::Tracer;
 basic::Tracer TR("core.scoring.electron_density.ElectronDensity");
@@ -676,7 +679,7 @@ numeric::xyzMatrix< core::Real > ElectronDensity::rotAlign2DPose(
 //    map and pose.
 core::Real ElectronDensity::matchCentroidPose(
 		core::pose::Pose const &pose,
- 		const core::conformation::symmetry::SymmetryInfo *symmInfo /*=NULL*/,
+ 		core::conformation::symmetry::SymmetryInfoCOP symmInfo /*=NULL*/,
  		bool cacheCCs /* = false */)
 {
 	using namespace numeric::statistics;
@@ -911,7 +914,7 @@ core::Real ElectronDensity::matchCentroidPose(
 ///    map and pose
 core::Real ElectronDensity::matchPose(
 		core::pose::Pose const &pose,
-		const core::conformation::symmetry::SymmetryInfo *symmInfo /*=NULL*/,
+		core::conformation::symmetry::SymmetryInfoCOP symmInfo /*=NULL*/,
 		bool cacheCCs/*=false*/ )
 {
 	using namespace numeric::statistics;
@@ -2388,8 +2391,10 @@ void ElectronDensity::updateCachedDensity( core::conformation::Residue const &rs
 
 /////////////////////////////////////
 /// Computes the symmatric rotation matrices.  Stores mapping in 'symmap'.
-void ElectronDensity::compute_symm_rotations( core::pose::Pose const &pose,
-                                              const core::conformation::symmetry::SymmetryInfo *symmInfo /*=NULL*/ ) {
+void ElectronDensity::compute_symm_rotations(
+	core::pose::Pose const &pose,
+	core::conformation::symmetry::SymmetryInfoCOP symmInfo /*=NULL*/
+) {
 	// symmetry
 	bool isSymm = (symmInfo != NULL);
 	bool remapSymm = basic::options::option[ basic::options::OptionKeys::edensity::score_symm_complex ]();
@@ -2535,7 +2540,7 @@ core::Real ElectronDensity::matchRes(
 	int resid,
 	core::conformation::Residue const &rsd,
 	core::pose::Pose const &pose,
-	const core::conformation::symmetry::SymmetryInfo *symmInfo /*=NULL*/,
+	core::conformation::symmetry::SymmetryInfoCOP symmInfo /*=NULL*/,
 	bool cacheCCs /* = false */
 ) {
 	// make sure map is loaded
@@ -2911,11 +2916,13 @@ core::Real ElectronDensity::matchRes(
 
 /////////////////////////////////////
 /// Match a residue to the density map.  Use the fast version of the scoring function
-core::Real ElectronDensity::matchResFast(
-				int resid,
-				core::conformation::Residue const &rsd,
-				core::pose::Pose const &pose,
-				const core::conformation::symmetry::SymmetryInfo *symmInfo /*=NULL*/) {
+core::Real
+ElectronDensity::matchResFast(
+	int resid,
+	core::conformation::Residue const &rsd,
+	core::pose::Pose const &pose,
+	core::conformation::symmetry::SymmetryInfoCOP symmInfo /*=NULL*/
+) {
 	// make sure map is loaded
 	if (!isLoaded) {
 		TR << "[ ERROR ]  ElectronDensity::matchResFast called but no map is loaded!\n";

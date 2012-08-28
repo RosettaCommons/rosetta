@@ -176,6 +176,12 @@
 namespace core {
 namespace chemical {
 
+/// @details Auto-generated virtual destructor
+Patch::~Patch() {}
+
+/// @details Auto-generated virtual destructor
+PatchCase::~PatchCase() {}
+
 static basic::Tracer tr("core.chemical");
 
 /// @brief the string used to generate new residue names

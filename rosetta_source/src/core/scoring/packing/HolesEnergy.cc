@@ -144,7 +144,7 @@ HolesEnergy::setup_for_derivatives(
 		pose.data().set( core::pose::datacache::CacheableDataType::HOLES_POSE_INFO, new CacheableAtomID_MapVector );
 	}
 	CacheableDataOP dat( pose.data().get_ptr( core::pose::datacache::CacheableDataType::HOLES_POSE_INFO ) );
-	CacheableAtomID_MapVector *cachemap = (CacheableAtomID_MapVector*)dat();
+	CacheableAtomID_MapVectorOP cachemap = (CacheableAtomID_MapVector*)dat();
 	AtomID_Map<xyzVector<Real> > & derivs(cachemap->map());
 	core::pose::initialize_atomid_map_heavy_only(derivs,pose);
 
@@ -176,7 +176,7 @@ HolesEnergy::eval_atom_derivative(
 	using namespace id;
 	using namespace numeric;
 	CacheableDataCOP dat( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::HOLES_POSE_INFO ) );
-	CacheableAtomID_MapVector const *cachemap = (CacheableAtomID_MapVector const *)dat();
+	CacheableAtomID_MapVectorCOP cachemap = (CacheableAtomID_MapVector const *)dat();
 	AtomID_Map<xyzVector<Real> > const & derivs(cachemap->map());
 
 	if( aid.rsd() > derivs.n_residue() || aid.atomno() > derivs.n_atom(aid.rsd()) ) {

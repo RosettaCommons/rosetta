@@ -84,7 +84,7 @@ public:
 	HSSTriplet( String const & hss );
 
 	/// @brief default destructor
-	~HSSTriplet() {}
+	virtual ~HSSTriplet() ; // auto-removing definition from header{}
 
 	/// @brief copy constructor
 	HSSTriplet( HSSTriplet const & hss );
@@ -240,7 +240,7 @@ public:
 	HSSTripletSet( HSSTripletSet const & s );
 
 	/// @brief destructor
-	~HSSTripletSet();
+	virtual ~HSSTripletSet();
 
 
 public:// operator

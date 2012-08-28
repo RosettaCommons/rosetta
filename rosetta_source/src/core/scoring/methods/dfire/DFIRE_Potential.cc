@@ -33,6 +33,9 @@ namespace scoring {
 namespace methods {
 namespace dfire {
 
+// @brief Auto-generated virtual destructor
+DFIRE_Potential::~DFIRE_Potential() {}
+
 static basic::Tracer TR("core.scoring.methods.DFIRE_Potential");
 
 static Size const INVALID(999);

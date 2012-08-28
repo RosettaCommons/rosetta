@@ -49,7 +49,7 @@ protected:
   typedef std::map< int, LineBuffer> BufferMap;
 public:
 	SingleFileBuffer( std::string const & filename, core::Size channel, core::Size&  status ) : filename_( filename ), mpi_channel_( channel ) { status = 0; };
-	virtual ~SingleFileBuffer() { runtime_assert( !has_open_slaves() ); };
+	virtual ~SingleFileBuffer();
 	void flush( core::Size slave );
 	void store_line( core::Size slave, core::Size channel, std::string const & line );
 	core::Size length( core::Size slave );

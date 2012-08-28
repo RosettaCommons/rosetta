@@ -62,7 +62,7 @@ public:
 	MotifSearch();
 
 	// Destructor
-	~MotifSearch();
+	virtual ~MotifSearch();
 
 	// Copy constructor
 	MotifSearch(

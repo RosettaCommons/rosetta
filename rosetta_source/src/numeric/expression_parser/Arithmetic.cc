@@ -32,6 +32,24 @@
 namespace numeric {
 namespace expression_parser {
 
+/// @details Auto-generated virtual destructor
+Expression::~Expression() {}
+
+/// @details Auto-generated virtual destructor
+ASTVisitor::~ASTVisitor() {}
+
+/// @details Auto-generated virtual destructor
+ArithmeticASTNode::~ArithmeticASTNode() {}
+
+/// @details Auto-generated virtual destructor
+ArithmeticScanner::~ArithmeticScanner() {}
+
+/// @details Auto-generated virtual destructor
+TokenSet::~TokenSet() {}
+
+/// @details Auto-generated virtual destructor
+Token::~Token() {}
+
 std::string
 token_type_name( TokenType tt )
 {

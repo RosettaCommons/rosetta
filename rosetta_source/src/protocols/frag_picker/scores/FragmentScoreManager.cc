@@ -78,6 +78,9 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
+/// @details Auto-generated virtual destructor
+FragmentScoreManager::~FragmentScoreManager() {}
+
 /// @brief creates an empty score map
 /// @detailed this is the recommended way to create FragmentScoreMap objects since FragmentScoreManager knows exactly
 /// what is the correct size of the map i.e. how many scoring terms have been registered.
@@ -138,7 +141,7 @@ void FragmentScoreManager::do_caching(VallChunkOP chunk) {
 
 	for (Size iScore = 1; iScore <= scores_.size(); ++iScore) {
 		if (( zeros_score_later_ ) && ( fabs(score_weights_[iScore]) < 0.000001 ))	continue;
-		CachingScoringMethod* score =
+		CachingScoringMethodOP score =
 				dynamic_cast<CachingScoringMethod*> (scores_[iScore].get());
 		if (score != 0)
 			score->do_caching(chunk);
@@ -148,7 +151,7 @@ void FragmentScoreManager::do_caching(VallChunkOP chunk) {
 void FragmentScoreManager::clean_up() {
 
 	for (Size iScore = 1; iScore <= scores_.size(); ++iScore) {
-		CachingScoringMethod* score =
+		CachingScoringMethodOP score =
 				dynamic_cast<CachingScoringMethod*> (scores_[iScore].get());
 		if (score != 0)
 			score->clean_up();
@@ -257,7 +260,7 @@ bool FragmentScoreManager::score_fragment_from_cache(
 	for ( Size iScore = 1; iScore <= scores_.size(); iScore++ ) {
 		if (( zeros_score_later_ ) && ( fabs(score_weights_[iScore]) < 0.000001 ))
 		    continue;
-		CachingScoringMethod *s =
+		CachingScoringMethodOP s =
 			dynamic_cast<CachingScoringMethod*> (scores_[iScore].get());
 		if ( s != 0 ) {
 			if ( !s->cached_score(candidate, empty_map) )

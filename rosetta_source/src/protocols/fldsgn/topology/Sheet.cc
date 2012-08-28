@@ -47,6 +47,9 @@ namespace protocols {
 namespace fldsgn {
 namespace topology {
 
+/// @details Auto-generated virtual destructor
+SheetSet::~SheetSet() {}
+
 
 /// @brief default constructor
 Sheet::Sheet() :

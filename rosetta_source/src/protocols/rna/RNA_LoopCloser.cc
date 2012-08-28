@@ -360,15 +360,15 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Si
 				dir = -1;
 			}
 
-			core::kinematics::tree::Atom const * current_atom ( & pose.atom_tree().atom( my_id ) );
+			core::kinematics::tree::Atom const & current_atom ( pose.atom_tree().atom( my_id ) );
 
-			kinematics::Stub const & stub_i( current_atom->get_stub() );
+			kinematics::Stub const & stub_i( current_atom.get_stub() );
 			Matrix const & M_i( stub_i.M );
 			Vector const & x_i = M_i.col_x();
 
 			Real weighted_sine( 0.0 ), weighted_cosine( 0.0 );
 			for (Size m = 1; m <= upstream_xyzs.size(); m++ ){
-				Vector const current_xyz( current_atom->xyz() );
+				Vector const current_xyz( current_atom.xyz() );
 
 				Vector const r1 = upstream_xyzs[m] - current_xyz;
 				Vector const rho1 = r1 - dot( r1, x_i) * x_i;

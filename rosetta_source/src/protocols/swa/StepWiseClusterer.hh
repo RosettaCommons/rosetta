@@ -48,7 +48,7 @@ namespace swa {
 		StepWiseClusterer(  core::io::silent::SilentFileDataOP & sfd );
 
     //destructor -- necessary?
-    ~StepWiseClusterer();
+    virtual ~StepWiseClusterer();
 
     /// @brief Filter a list of poses by score.
 

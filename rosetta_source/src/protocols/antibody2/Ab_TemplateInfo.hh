@@ -32,6 +32,8 @@ using namespace core;
 class Ab_TemplateInfo  : public utility::pointer::ReferenceCount {
 
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~Ab_TemplateInfo();
     typedef std::map <std::string, core::pose::Pose> TemplatePoseMap;
 
     /// constructors

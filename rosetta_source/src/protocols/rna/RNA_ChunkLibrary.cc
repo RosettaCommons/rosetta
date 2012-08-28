@@ -59,6 +59,9 @@ static basic::Tracer TR( "protocols.rna.rna_chunk_library" ) ;
 namespace protocols{
 namespace rna{
 
+/// @details Auto-generated virtual destructor
+RNA_ChunkLibrary::~RNA_ChunkLibrary() {}
+
 	using namespace core;
 	using namespace ObjexxFCL;
 

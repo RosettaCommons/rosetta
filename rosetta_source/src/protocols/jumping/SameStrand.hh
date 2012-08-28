@@ -61,7 +61,7 @@ public:
   SameStrand( core::fragment::SecondaryStructureOP );
 
 	///@brief explicit definitions of c'stor and d'stor
-	~SameStrand();
+	virtual ~SameStrand();
 	SameStrand( SameStrand const& );
 
 

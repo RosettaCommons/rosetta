@@ -36,6 +36,8 @@ namespace frag_picker {
 /// @detailed VallChunk contains a vector of VallResidue objects and provides a basic ways to access them
 class VallChunk: public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~VallChunk();
 
 	VallChunk(VallProviderAP provider);
 

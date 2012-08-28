@@ -37,10 +37,10 @@ namespace pack {
 namespace task {
 namespace operation {
 
-class ResFilterFactory : public utility::pointer::ReferenceCount
+class ResFilterFactory // singleton; no need to derive from RefCount : public utility::pointer::ReferenceCount
 {
 public:
-	typedef utility::pointer::ReferenceCount parent;
+	//typedef utility::pointer::ReferenceCount parent;
 	typedef std::map< std::string, ResFilterCreatorOP > ResFilterCreatorMap;
 	typedef utility::tag::Tag Tag;
 	typedef utility::tag::TagPtr TagPtr;

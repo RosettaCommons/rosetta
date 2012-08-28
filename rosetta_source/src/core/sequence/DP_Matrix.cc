@@ -32,6 +32,10 @@ using utility::vector1;
 using ObjexxFCL::fmt::A;
 using ObjexxFCL::fmt::F;
 
+Cell::~Cell() {}
+
+DP_Matrix::~DP_Matrix() {}
+
 void
 DP_Matrix::clear() {
 		scoring_matrix_.erase( scoring_matrix_.begin(), scoring_matrix_.end() );

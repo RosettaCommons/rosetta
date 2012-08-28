@@ -65,6 +65,8 @@ typedef utility::vector1 < Size > PositionList;
 
 class SingleResidueFragData : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~SingleResidueFragData();
 	SingleResidueFragData( char sequence )
 		: sequence_( sequence )
 	{};

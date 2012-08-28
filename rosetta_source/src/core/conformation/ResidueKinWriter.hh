@@ -47,6 +47,7 @@ public:
 
 public:
 	ResidueKinWriter();
+	virtual ~ResidueKinWriter();
 
 	/// @brief write the header for the kinemage to center on this residue
 	void write_kin_header(
@@ -93,6 +94,7 @@ private:
 class ConformationKinWriter : public utility::pointer::ReferenceCount
 {
 public:
+	virtual ~ConformationKinWriter();
 
 	/// @brief Write out the coordinates for an entire conformation; this includes
 	/// inter-residue bonds that would be missed by the ResidueKinWriter.

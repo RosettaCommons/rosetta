@@ -118,12 +118,12 @@ protected:
     return *this;
   }
 
-  virtual Frame* frame_ptr() {
-    return inner_->get(); //call get() of owning_ptr
+  virtual FrameOP frame_ptr() {
+    return *inner_; //call get() of owning_ptr
   }
 
-  virtual Frame const* frame_ptr() const {
-    return inner_->get(); //call get() of owning_ptr
+  virtual FrameCOP frame_ptr() const {
+    return *inner_; //call get() of owning_ptr
   }
 
 private:

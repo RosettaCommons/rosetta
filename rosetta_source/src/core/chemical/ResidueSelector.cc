@@ -44,6 +44,12 @@
 namespace core {
 namespace chemical {
 
+/// @details Auto-generated virtual destructor
+ResidueSelector::~ResidueSelector() {}
+
+/// @details Auto-generated virtual destructor
+ResidueSelectorSingle::~ResidueSelectorSingle() {}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////
 

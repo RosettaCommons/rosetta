@@ -48,6 +48,8 @@ namespace optest {
 
 class B2 : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~B2();
 
 /*	B2();
 	~B2();

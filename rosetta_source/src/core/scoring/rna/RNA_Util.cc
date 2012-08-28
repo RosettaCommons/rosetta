@@ -433,8 +433,8 @@ fix_sugar_coords(
 
 		// "Don't do update" --> my hack to prevent lots of refolds. I just want information about whether the
 		// atom is a jump_atom, what its stub atoms are, etc... in principle could try to use input_stub_atom1_id(), etc.
-		core::kinematics::tree::Atom const * current_atom ( & reference_pose.atom_tree().atom_dont_do_update( AtomID(j,i) ) );
-		core::kinematics::tree::Atom const * input_stub_atom1( current_atom->input_stub_atom1() );
+		core::kinematics::tree::AtomCOP current_atom ( & reference_pose.atom_tree().atom_dont_do_update( AtomID(j,i) ) );
+		core::kinematics::tree::AtomCOP input_stub_atom1( current_atom->input_stub_atom1() );
 
 		if ( !input_stub_atom1) continue;
 		if ( (input_stub_atom1->id()).rsd() != (current_atom->id()).rsd() ) continue;
@@ -446,7 +446,7 @@ fix_sugar_coords(
 
 		if ( input_stub_atom1->is_jump() ) continue;
 
-		core::kinematics::tree::Atom const * input_stub_atom2( current_atom->input_stub_atom2() );
+		core::kinematics::tree::AtomCOP input_stub_atom2( current_atom->input_stub_atom2() );
 		if ( !input_stub_atom2) continue;
 		if ( (input_stub_atom2->id()).rsd() != (current_atom->id()).rsd() ) continue;
 		if ( (input_stub_atom2->id()).atomno() > scratch_rsd->first_sidechain_atom() ) continue;
@@ -462,7 +462,7 @@ fix_sugar_coords(
 		//  but there may be fallout.
 		// if ( input_stub_atom2->is_jump() ) continue; //HEY NEED TO BE CAREFUL HERE.
 
-		core::kinematics::tree::Atom const * input_stub_atom3( current_atom->input_stub_atom3() );
+		core::kinematics::tree::AtomCOP input_stub_atom3( current_atom->input_stub_atom3() );
 
 		if ( !input_stub_atom3) continue;
 		if ( (input_stub_atom3->id()).rsd() != (current_atom->id()).rsd() ) continue;
@@ -500,9 +500,9 @@ initialize_atoms_for_which_we_need_new_dofs(
 	//
 	conformation::Residue const & rsd( pose.residue( i ) );
 
- 	core::kinematics::tree::Atom const * c1star_atom ( & pose.atom_tree().atom( AtomID( rsd.atom_index( " C1*" ), i ) ) );
- 	core::kinematics::tree::Atom const * o2star_atom ( & pose.atom_tree().atom( AtomID( rsd.atom_index( " O2*" ), i ) ) );
- 	core::kinematics::tree::Atom const * c2star_atom ( & pose.atom_tree().atom( AtomID( rsd.atom_index( " C2*" ), i ) ) );
+ 	core::kinematics::tree::AtomCOP c1star_atom ( & pose.atom_tree().atom( AtomID( rsd.atom_index( " C1*" ), i ) ) );
+ 	core::kinematics::tree::AtomCOP o2star_atom ( & pose.atom_tree().atom( AtomID( rsd.atom_index( " O2*" ), i ) ) );
+ 	core::kinematics::tree::AtomCOP c2star_atom ( & pose.atom_tree().atom( AtomID( rsd.atom_index( " C2*" ), i ) ) );
 
 	if ( (c1star_atom->parent()->id()).atomno() == first_base_atom_index( rsd ) ) {
 		// There's a jump to this residue.

@@ -47,7 +47,7 @@ public:
 
 	HBondOptions( std::string params_db_tag );
 
-	~HBondOptions();
+	virtual ~HBondOptions();
 
 	/// copy constructor
 	HBondOptions( HBondOptions const & src );

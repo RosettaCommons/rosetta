@@ -45,6 +45,9 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
+/// @details Auto-generated virtual destructor
+Obsolet_NamedAtomPairConstraint::~Obsolet_NamedAtomPairConstraint() {}
+
 
 /// @brief Copies the data from this Constraint into a new object and returns an OP
 /// atoms are mapped to atoms with the same name in dest pose ( e.g. for switch from centroid to fullatom )

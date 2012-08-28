@@ -18,6 +18,9 @@ namespace numeric {
 namespace interpolation {
 namespace spline {
 
+/// @details Auto-generated virtual destructor
+Interpolator::~Interpolator() {}
+
 Interpolator::Interpolator() :
 	has_lb_function_(false),
 	has_ub_function_(false),

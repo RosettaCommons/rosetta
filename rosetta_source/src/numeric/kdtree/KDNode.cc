@@ -36,6 +36,8 @@ KDNode::KDNode( KDTree const & tree ) :
 	tree_( tree )
 {}
 
+KDNode::~KDNode() {}
+
 KDNodeOP KDNode::parent() const {
 	return parent_;
 }

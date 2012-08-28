@@ -100,6 +100,8 @@ namespace swa {
 		initialize_counters();
 	}
 
+RigidBodySampler::~RigidBodySampler() {}
+
 	////////////////////////////////////////////////////////////
 	void
 	RigidBodySampler::initialize_counters(){

@@ -62,6 +62,8 @@ namespace abinitio {
 
 class Template : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~Template();
 	typedef utility::vector1< core::scoring::constraints::AtomPairConstraintOP > AtomPairConstraintList;
 	typedef utility::vector1< core::scoring::constraints::Obsolet_NamedAtomPairConstraintOP > NamedAtomPairConstraintList;
 

@@ -49,6 +49,8 @@ namespace frags {
 
 using namespace core;
 
+TorsionFragment::~TorsionFragment() {}
+
 ///\brief insert this piece of fragment to a pose at position "begin"
 ///
 ///call pose.set_torsion which maps TorsionID to DOF_ID, so it is safe
@@ -136,6 +138,10 @@ TorsionFragmentLibrary::read_file(
 	TR.Info << "read succesfully " << frag_size << "-mer fragment library file: " << filename << std::endl;
 	return true;
 }
+
+
+TorsionFragmentLibrary::~TorsionFragmentLibrary() {}
+
 /////////////////////////////////////////////////////////////////////////////////////////////
 ///\brief extract a fragment library with smaller fragment size from the one with larger lize
 ///
@@ -239,6 +245,7 @@ TorsionFragmentLibrary::print( std::ostream & os ) const
 	}
 }
 
+SingleResidueTorsionFragmentLibrary::~SingleResidueTorsionFragmentLibrary() {}
 
 } // ns frags
 } // ns protocols

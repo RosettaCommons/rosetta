@@ -30,8 +30,8 @@
 
 namespace protocols {
 namespace jd2 {
-using namespace core;
 
+using namespace core;
 using namespace utility::io::mpi_stream;
 
 static basic::Tracer tr("protocols.jd2.MpiFileBuffer");
@@ -39,6 +39,8 @@ static basic::Tracer tr("protocols.jd2.MpiFileBuffer");
 ///@details this is a implementation of Buffer for silent-file-based output.
 std::string const START_BLOCK( "MPI_FILE_BUFFER_BLOCK_START" );
 std::string const END_BLOCK( "MPI_FILE_BUFFER_BLOCK_END" );
+
+SingleFileBuffer::~SingleFileBuffer() { runtime_assert( !has_open_slaves() ); }
 
 void SingleFileBuffer::flush( Size slave ) {
 	//	std::cout << "flush channel: " << filename() << " for slave : " << slave << std::endl;

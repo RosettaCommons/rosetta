@@ -49,7 +49,7 @@ namespace rna {
 			{
 			}
 
-			~SlicedPoseJobParameters(){};
+			virtual ~SlicedPoseJobParameters(); // auto-removing definition from header{};
 
 			void 
 			setup(protocols::swa::rna::StepWiseRNA_JobParametersCOP & job_parameters);
@@ -113,7 +113,7 @@ namespace rna {
 		StepWiseRNA_Clusterer(  core::io::silent::SilentFileDataOP & sfd );
 
     //destructor -- necessary?
-    ~StepWiseRNA_Clusterer();
+    virtual ~StepWiseRNA_Clusterer();
 
     /// @brief Filter a list of poses by score.
 

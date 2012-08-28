@@ -38,6 +38,9 @@ namespace core {
 namespace scoring {
 namespace mm {
 
+/// @details Auto-generated virtual destructor
+MMLJLibrary::~MMLJLibrary() {}
+
 using basic::T;
 using basic::Error;
 using basic::Warning;

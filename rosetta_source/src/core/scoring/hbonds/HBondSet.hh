@@ -58,6 +58,8 @@ namespace hbonds {
 class HBond : public utility::pointer::ReferenceCount {
 
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~HBond();
 	HBond(
 		Size const dhatm,
 		bool const dhatm_is_protein_backbone,

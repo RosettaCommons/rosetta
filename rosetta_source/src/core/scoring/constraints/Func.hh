@@ -30,6 +30,8 @@ namespace constraints {
 /// r.
 class Func : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~Func();
 
 	virtual
 	FuncOP clone() const = 0;

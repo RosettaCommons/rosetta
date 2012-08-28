@@ -68,6 +68,8 @@ namespace noesy_assign {
 ResonanceList::ResonanceList( std::string const& sequence ) : sequence_( sequence )
 {}
 
+ResonanceList::~ResonanceList() {}
+
 /// translate sequence information into AA
 core::chemical::AA ResonanceList::aa_from_resid( core::Size resi ) const {
   runtime_assert(  resi <= sequence_.size() );

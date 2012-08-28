@@ -63,6 +63,9 @@ namespace core {
 namespace scoring {
 namespace methods {
 
+/// @details Auto-generated virtual destructor
+LKB_ResidueInfo::~LKB_ResidueInfo() {}
+
 
 static basic::Tracer TR("core.scoring.methods.LK_BallInfo" );
 

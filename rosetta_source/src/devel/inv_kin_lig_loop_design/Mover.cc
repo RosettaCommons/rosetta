@@ -174,7 +174,7 @@ Mover::~Mover()
 			core::pack::dunbrack::SingleResidueRotamerLibraryCAP rotamer_library = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( res_type );
 			if( ! rotamer_library ) return;
 
-			core::pack::dunbrack::SingleResidueDunbrackLibrary const * dun_rotlib =
+			core::pack::dunbrack::SingleResidueDunbrackLibraryCOP dun_rotlib =
 				dynamic_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const* >( rotamer_library.get() );
 			//assert( dun_rotlib ); // WHOA! Where's the guarantee here?
 			if ( ! dun_rotlib ) return; // Is this right? maybe we would want random rotamers for ligands?

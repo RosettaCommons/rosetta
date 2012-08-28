@@ -49,7 +49,7 @@ namespace kinematics {
 typedef utility::vector1< utility::vector1< Size > > Links;
 
 /// @brief creat an atom and add it to the residue atom-tree based on information stored in links.
-tree::Atom*
+tree::AtomOP
 add_atom(
 	int const atomno,
 	int const seqpos,
@@ -64,7 +64,7 @@ pick_loopy_cutpoint(
 	ObjexxFCL::FArray1D_float const & cut_bias_sum
 );
 
-tree::Atom*
+tree::AtomOP
 setup_backrub_atom_tree(
 	utility::vector1< id::AtomID > mainchain, // make our own local copy
 	id::AtomID const & downstream_id, // mainchain child of last mainchain atom
@@ -102,14 +102,14 @@ visualize_fold_tree(
 std::string
 visualize_fold_tree(
 	FoldTree const & fold_tree,
-	std::map<Size,std::string> const & node_labels_partial 
+	std::map<Size,std::string> const & node_labels_partial
 );
 
 std::string
 visualize_fold_tree(
 	FoldTree const & fold_tree,
 	std::map<Size,char> const & mark_jump_to_res
-);	
+);
 
 std::string
 visualize_fold_tree(

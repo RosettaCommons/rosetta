@@ -46,7 +46,7 @@ namespace rna {
 																PuckerState const pucker2); 
 
 
-    ~StepWiseRNA_RotamerGenerator();
+    virtual ~StepWiseRNA_RotamerGenerator();
 
 		utility::vector1< core::id::TorsionID > const & torsion_ids() const;
 

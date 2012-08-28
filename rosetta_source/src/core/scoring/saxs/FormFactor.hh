@@ -35,6 +35,8 @@ namespace saxs {
 /// @brief
 class FormFactor: public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~FormFactor();
 
 	/// @ A unique identifier of a form factor object, set by the manager
 	Size id_;

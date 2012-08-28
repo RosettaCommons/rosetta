@@ -63,7 +63,7 @@ public:
 
 public:
 	SymmetryInfo();
-	~SymmetryInfo();
+	virtual ~SymmetryInfo();
 	//SymmetryInfo(SymmetryInfo const &);
 	SymmetryInfo( SymmData const & symmdata, Size const nres_subunit, Size const njump_subunit );
 

@@ -75,7 +75,7 @@ public:// construct/destruct
   StrandPairing( StrandPairing const & sp );
 
   /// @brief default destructor
-  ~StrandPairing();
+  virtual ~StrandPairing();
 
 	/// @brief clone this object
 	StrandPairingOP clone();
@@ -228,7 +228,7 @@ public:// construct/destruct
   StrandPairingSet( StrandPairingSet const & s );
 
   /// @brief default destructor
-  ~StrandPairingSet();
+  virtual ~StrandPairingSet();
 
 	/// @brief clone this object
 	StrandPairingSetOP clone() const;

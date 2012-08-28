@@ -1161,8 +1161,8 @@ void vary_geometry_sidechains( pose::Pose & pose, kinematics::MoveMap & mm )
 			AtomID id1,id2,id3,id4, my_ID;
 			pose.conformation().get_torsion_angle_atom_ids( tor_id, id1, id2, id3, id4 );
 
-			core::kinematics::tree::Atom const * atom2 ( & pose.atom_tree().atom( id2 ) );
-			core::kinematics::tree::Atom const * atom3 ( & pose.atom_tree().atom( id3 ) );
+			core::kinematics::tree::AtomCOP atom2 ( & pose.atom_tree().atom( id2 ) );
+			core::kinematics::tree::AtomCOP atom3 ( & pose.atom_tree().atom( id3 ) );
 
 			DOF_ID dof_id;
 			if ( atom2->parent() == atom3 ) {
@@ -1223,8 +1223,8 @@ void vary_geometry_backbone( pose::Pose & pose, kinematics::MoveMap & mm )
 			bool const failure = pose.conformation().get_torsion_angle_atom_ids( tor_id, id1, id2, id3, id4 );
 			if (failure) continue;
 
-			core::kinematics::tree::Atom const * atom2 ( & pose.atom_tree().atom( id2 ) );
-			core::kinematics::tree::Atom const * atom3 ( & pose.atom_tree().atom( id3 ) );
+			core::kinematics::tree::AtomCOP atom2 ( & pose.atom_tree().atom( id2 ) );
+			core::kinematics::tree::AtomCOP atom3 ( & pose.atom_tree().atom( id3 ) );
 
 			DOF_ID dof_id;
 			if ( atom2->parent() == atom3 ) {

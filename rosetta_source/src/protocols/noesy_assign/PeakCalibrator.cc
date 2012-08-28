@@ -51,6 +51,12 @@ const char* CALIBRATOR_TYPE_NAMES[]={"NONE","BACKBONE","BETA_NON_METHYL","METHYL
 namespace protocols {
 namespace noesy_assign {
 
+/// @details Auto-generated virtual destructor
+PeakCalibratorMap::~PeakCalibratorMap() {}
+
+/// @details Auto-generated virtual destructor
+PeakCalibrator::~PeakCalibrator() {}
+
 PeakCalibratorMap::PeakCalibratorMap( CrossPeakList& list, PeakCalibratorOP calibrator_template ) {
 	PeakCalibratorOP fresh_calibrator = calibrator_template->fresh_instance();
 	for ( CrossPeakList::iterator it = list.begin(); it != list.end(); ++it ) {

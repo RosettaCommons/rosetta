@@ -182,7 +182,7 @@ public:
 	ABEGOManager();
 
 	/// @brief value constructor
-	~ABEGOManager() {}
+	virtual ~ABEGOManager() ; // auto-removing definition from header{}
 
 	/// @brief copy constructor
 	ABEGOManager( ABEGOManager const & rval );

@@ -45,7 +45,7 @@ namespace disulfides {
 class CentroidDisulfidePotential : public utility::pointer::ReferenceCount {
 public:
 	CentroidDisulfidePotential();
-	~CentroidDisulfidePotential();
+	virtual ~CentroidDisulfidePotential();
 
 	/**
 	 * @brief Calculates scoring terms for the disulfide bond specified

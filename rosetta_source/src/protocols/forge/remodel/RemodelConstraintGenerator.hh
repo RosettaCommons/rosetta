@@ -38,14 +38,16 @@
 
 
 namespace protocols {
-namespace forge{
-namespace remodel{
+namespace forge {
+namespace remodel {
 
 
 /// @brief pure virtual base class
 class RemodelConstraintGenerator : public utility::pointer::ReferenceCount
 {
 public: // typedefs
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~RemodelConstraintGenerator();
 
 
 	typedef protocols::forge::components::VarLengthBuildCAP VarLengthBuildCAP;

@@ -111,7 +111,7 @@ public:
 	/// ctor
 	ScoreFunction();
 
-	~ScoreFunction();
+	virtual ~ScoreFunction();
 
 	ScoreFunction &
 	operator=( ScoreFunction const & );

@@ -109,6 +109,7 @@ PairingStatEntry::PairingStatEntry( core::scoring::dssp::StrandPairing const& st
   models_.push_back( id );
 }
 
+
 bool PairingStatEntry::add_pairing( core::scoring::dssp::StrandPairing const& new_strand, Model const& id ) {
   bool success( true );
   if ( models_.size() ) {
@@ -202,6 +203,8 @@ PairingStatistics::PairingStatistics( core::scoring::dssp::StrandPairingSet cons
 	 model_freq[ "SING" ] = 1;
 	 compute_model_weights( model_freq );
 }
+
+PairingStatistics::~PairingStatistics() {}
 
 core::Real PairingStatistics::strand_weight( core::scoring::dssp::StrandPairing const& pairing ) const {
 	StatEntries::const_iterator itentry = entries_.find( pairing );

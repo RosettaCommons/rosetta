@@ -50,7 +50,7 @@ class MatchPositionModifier : public utility::pointer::ReferenceCount {
 public:
 	MatchPositionModifier();
 
-	~MatchPositionModifier();
+	virtual ~MatchPositionModifier();
 
 	/// @brief the positions in the vector1< Size > that is returned
 	/// by this function will replace the match positions in the MatcherTask.

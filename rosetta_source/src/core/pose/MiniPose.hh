@@ -50,7 +50,7 @@ namespace pose {
 							core::kinematics::FoldTree const & fold_tree,
 							std::string const & sequence );
 
-		~MiniPose(){};
+		virtual ~MiniPose(); // auto-removing definition from header{};
 
 		core::kinematics::FoldTree const & fold_tree() const;
 

@@ -200,7 +200,7 @@ Minimizer::dfpmin(
 
 	 // Grab a line minimizer
 	 BrentLineMinimization test_brent( func_, N );
-	 LineMinimizationAlgorithm* line_min = &test_brent;
+	 LineMinimizationAlgorithm * line_min = &test_brent; // this variable is not neccessary
 
 	 // should get rid of these FArrays
 	 FArray2D< Real > HESSIN( N, N, 0.0 );

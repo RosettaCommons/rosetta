@@ -367,12 +367,12 @@ private:
 /// @brief calculate constants necessary for calculating internal angles/derivatives
 void
 backrub_rotation_constants(
-	core::kinematics::tree::Atom const * PM2_atom,
-	core::kinematics::tree::Atom const * PM1_atom,
-	core::kinematics::tree::Atom const * P_atom,
-	core::kinematics::tree::Atom const * PP1_atom,
-	core::kinematics::tree::Atom const * PP2_atom,
-	core::kinematics::tree::Atom const * REF_atom,
+	core::kinematics::tree::AtomCOP PM2_atom,
+	core::kinematics::tree::AtomCOP PM1_atom,
+	core::kinematics::tree::AtomCOP P_atom,
+	core::kinematics::tree::AtomCOP PP1_atom,
+	core::kinematics::tree::AtomCOP PP2_atom,
+	core::kinematics::tree::AtomCOP REF_atom,
 	utility::vector0<double> & constants,
 	core::Real const alpha_min = 0,
 	core::Real const alpha_max = numeric::NumericTraits<core::Real>::pi(),

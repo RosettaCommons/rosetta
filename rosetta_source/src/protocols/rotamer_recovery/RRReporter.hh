@@ -37,6 +37,8 @@ namespace rotamer_recovery {
 class RRReporter : public utility::pointer::ReferenceCount {
 
 public: // constructors destructors
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~RRReporter();
 
 public: // public interface
 

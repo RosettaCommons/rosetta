@@ -34,6 +34,8 @@ namespace dna {
 
 class DNA_BasePotential : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~DNA_BasePotential();
 	typedef numeric::xyzMatrix< Real > Matrix;
 	typedef utility::vector1< Real > Params;
 	typedef conformation::Residue Residue;

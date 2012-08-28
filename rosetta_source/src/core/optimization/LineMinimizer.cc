@@ -36,7 +36,8 @@
 
 
 //Auto using namespaces
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
+namespace ObjexxFCL {
+} using namespace ObjexxFCL; // AUTO USING NS
 //Auto using namespaces end
 
 using basic::T;
@@ -47,6 +48,9 @@ static basic::Tracer TR("core.optimization");
 
 namespace core {
 namespace optimization {
+
+/// @details Auto-generated virtual destructor
+LineMinimizationAlgorithm::~LineMinimizationAlgorithm() {}
 
 void
 func_1d::dump( Real displacement ) {

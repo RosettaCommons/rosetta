@@ -94,6 +94,7 @@ PCluster::PCluster(const PCluster& old){
   step = old.step;
 }
 
+
 bool PCluster::isClose(PCluster const & c2) const{
   if (minX>c2.maxX+1) return false;
   if ((int)maxX<(int)c2.minX-1) return false;
@@ -306,6 +307,8 @@ PocketGrid::PocketGrid(const PocketGrid& gr) :
   }
 
 }
+
+PocketGrid::~PocketGrid() {}
 
 PocketGrid& PocketGrid::operator=(const PocketGrid& gr){
   if (this != &gr){

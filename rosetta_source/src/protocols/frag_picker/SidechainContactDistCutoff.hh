@@ -42,7 +42,7 @@ public:
 
 	SidechainContactDistCutoff(Real scale_factor);
 
-	~SidechainContactDistCutoff(){};
+	virtual ~SidechainContactDistCutoff(); // auto-removing definition from header{};
 
 	Real get_cutoff(char aa_i, char aa_j);
 

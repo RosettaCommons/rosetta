@@ -103,7 +103,7 @@ public:
 	typedef TopologyClaimers::const_iterator const_iterator;
 	///constructor
 	TopologyBroker();
-	~TopologyBroker();
+	virtual ~TopologyBroker();
 	TopologyBroker( TopologyBroker const& );
 	TopologyBroker const& operator = ( TopologyBroker const& );
 

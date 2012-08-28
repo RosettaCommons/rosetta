@@ -30,10 +30,10 @@
 namespace basic {
 namespace resource_manager {
 
-class ResourceOptionsFactory : public utility::pointer::ReferenceCount
+class ResourceOptionsFactory
 {
 public:
-	~ResourceOptionsFactory();
+	virtual ~ResourceOptionsFactory();
 
 	ResourceOptionsOP
 	create_resource_options(
@@ -50,7 +50,7 @@ public:
 
 	/// @brief Only useful for unit testing.  Since factory registration happens (sometimes) at
 	/// load time, there may be no one to catch a thrown exception in the event of a name collision
-	/// between two ResourceOptionsCreators that register for the same name. 
+	/// between two ResourceOptionsCreators that register for the same name.
 	void
 	set_throw_on_double_registration();
 

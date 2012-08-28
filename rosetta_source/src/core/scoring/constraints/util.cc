@@ -431,7 +431,7 @@ void skip_redundant_constraints( ConstraintCOPs& in, Size total_residue, Size in
 	random_permutation( in, RG );
 
 	for (	utility::vector1< ConstraintCOP >::const_iterator it = in.begin(); it != in.end(); ++it ) {
-		AmbiguousNMRConstraint const* cst_in_casted;
+		AmbiguousNMRConstraintCOP cst_in_casted;
 		cst_in_casted = dynamic_cast< AmbiguousNMRConstraint const* >( (*it).get() );
 		if ( cst_in_casted ) {
 			tr.Debug << "casted to AmbiguousNMRConstraint: " << std::endl;
@@ -453,7 +453,7 @@ void skip_redundant_constraints( ConstraintCOPs& in, Size total_residue, Size in
 
 	for (	utility::vector1< ConstraintCOP >::const_iterator it = in.begin(); it != in.end(); ++it ) {
 
-		AmbiguousNMRConstraint const* cst_in_casted;
+		AmbiguousNMRConstraintCOP cst_in_casted;
 		cst_in_casted = dynamic_cast< AmbiguousNMRConstraint const* >( (*it).get() );
 		bool keep( false );
 		if ( cst_in_casted ) {

@@ -98,7 +98,7 @@ public:
 
   CrossPeak( Spin const&, Spin const&, core::Real strength );
   CrossPeak();
-  ~CrossPeak();
+  virtual ~CrossPeak();
   virtual CrossPeakOP empty_clone() {
     return new CrossPeak;
   }

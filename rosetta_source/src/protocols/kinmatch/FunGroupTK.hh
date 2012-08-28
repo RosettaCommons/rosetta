@@ -80,6 +80,8 @@ protected:
     std::map<std::string,utility::vector1<core::conformation::ResidueOP> > rsd_;
     core::chemical::ResidueTypeSetCAP frs_;
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~FunGroupTK();
     FunGroupTK(
         core::pose::Pose & p_in,
         utility::vector1<Size> & pos

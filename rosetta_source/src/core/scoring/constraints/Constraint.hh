@@ -77,7 +77,7 @@ public:
 
 	/// @brief Virtual destructor.
 	virtual
-	~Constraint(){}
+	~Constraint();
 
 	/// @brief Copies the data from this Constraint into a new object and returns
 	/// an OP to the new object. Intended to be implemented by derived classes and

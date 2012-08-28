@@ -36,6 +36,9 @@
 namespace protocols {
 namespace frag_picker {
 
+// @brief Auto-generated virtual destructor
+SidechainContactDistCutoff::~SidechainContactDistCutoff() {}
+
 using namespace core;
 
 static basic::Tracer TR("protocols.frag_picker.SidechainContactDistCutoff");

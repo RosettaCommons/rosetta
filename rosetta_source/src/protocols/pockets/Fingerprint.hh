@@ -46,6 +46,8 @@ class FingerprintBase : public utility::pointer::ReferenceCount {
 	friend class FingerprintMultifunc;
 
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~FingerprintBase();
 
   FingerprintBase();
 

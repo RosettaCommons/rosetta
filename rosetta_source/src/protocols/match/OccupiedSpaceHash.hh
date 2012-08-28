@@ -87,7 +87,7 @@ public:
 
 public:
 	OccupiedSpaceHash();
-	~OccupiedSpaceHash();
+	virtual ~OccupiedSpaceHash();
 
 	void
 	set_bounding_box(

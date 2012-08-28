@@ -53,6 +53,8 @@ using basic::Warning;
 
 static basic::Tracer TR("core.mm.MMTorsionLibrary");
 
+MMTorsionLibrary::~MMTorsionLibrary() {}
+
 /// @details Constructs a MMTorsionLibrary instance from a filename string and constant access pointer to an MMAtomTypeSet
 MMTorsionLibrary::MMTorsionLibrary(
 	 std::string filename,

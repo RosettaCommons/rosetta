@@ -20,7 +20,7 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/electron_density/xray_scattering.hh>
 #include <core/scoring/electron_density/ElectronDensity.fwd.hh>
-#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -48,6 +48,8 @@ float pos_mod(float x,float y);
 
 class ElectronDensity : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~ElectronDensity();
 	/// @brief constructor
 	ElectronDensity();
 
@@ -109,15 +111,21 @@ public:
 
 	/// @brief Quickly matches a centroid pose into a low-resolution density map
 	///   by placing a single Gaussian at each CA
-	core::Real matchCentroidPose( core::pose::Pose const &pose,
-	                              const core::conformation::symmetry::SymmetryInfo *symmInfo=NULL,
-	                              bool cacheCCs=false );
+	core::Real
+	matchCentroidPose(
+		core::pose::Pose const &pose,
+		core::conformation::symmetry::SymmetryInfoCOP symmInfo = NULL,
+		bool cacheCCs=false
+	);
 
 	/// @brief Quickly matches a centroid pose into a low-resolution density map
 	///   by placing a single Gaussian at each atom
-	core::Real matchPose( core::pose::Pose const &pose,
-	                      const core::conformation::symmetry::SymmetryInfo *symmInfo=NULL,
-	                      bool cacheCCs=false );
+	core::Real
+	matchPose(
+		core::pose::Pose const &pose,
+		core::conformation::symmetry::SymmetryInfoCOP symmInfo=NULL,
+		bool cacheCCs=false
+	);
 
 	/// @brief Match a pose to a patterson map
 	core::Real matchPoseToPatterson( core::pose::Pose const &pose, bool cacheCCs=false );
@@ -132,58 +140,84 @@ public:
 	///   Backbone atoms from adjacent residues are also used for scoring.
 	///   Returns the correlation coefficient between map and pose
 	///   Internally stores per-res CCs, per-atom dCC/dxs
-	core::Real matchRes( int resid,
-	                     core::conformation::Residue const &rsd,
-	                     core::pose::Pose const &pose,
-	                     const core::conformation::symmetry::SymmetryInfo *symmInfo=NULL,
-	                     bool cacheCCs=false );
+	core::Real
+	matchRes(
+		int resid,
+		core::conformation::Residue const &rsd,
+		core::pose::Pose const &pose,
+		core::conformation::symmetry::SymmetryInfoCOP symmInfo=NULL,
+		bool cacheCCs=false
+	);
 
 	/// @brief Match a residue's conformation to the density map.
 	///    Same as matchRes, but using a fast approximation to the match function
-	core::Real matchResFast( int resid,
-	                         core::conformation::Residue const &rsd,
-	                         core::pose::Pose const &pose,
-	                         const core::conformation::symmetry::SymmetryInfo *symmInfo=NULL );
+	core::Real
+	matchResFast( int resid,
+		core::conformation::Residue const &rsd,
+		core::pose::Pose const &pose,
+		core::conformation::symmetry::SymmetryInfoCOP symmInfo=NULL
+	);
 
 	/// @brief Computes the symmatric rotation matrices
-	void compute_symm_rotations( core::pose::Pose const &pose,
-	                             const core::conformation::symmetry::SymmetryInfo *symmInfo=NULL );
+	void
+	compute_symm_rotations(
+		core::pose::Pose const &pose,
+		core::conformation::symmetry::SymmetryInfoCOP symmInfo=NULL
+	);
 
 	/// @brief Return the gradient of CC w.r.t. atom X's movement
 	/// Uses information stored from the previous call to matchRes with this resid
-	void  dCCdx_res( int atmid, int resid,
-	                 numeric::xyzVector<core::Real> const &X,
-	                 core::conformation::Residue const &rsd,
-	                 core::pose::Pose const &pose,
-	                 numeric::xyzVector<core::Real> &gradX);
+	void  dCCdx_res(
+		int atmid,
+		int resid,
+		numeric::xyzVector<core::Real> const &X,
+		core::conformation::Residue const &rsd,
+		core::pose::Pose const &pose,
+		numeric::xyzVector<core::Real> &gradX
+	);
 
 	/// @brief Return the gradient of "fast CC" w.r.t. atom X's movement
 	/// Uses information stored from the previous call to matchRes with this resid
-	void  dCCdx_fastRes( int atmid, int resid,
-	                     numeric::xyzVector<core::Real> const &X,
-	                     core::conformation::Residue const &rsd,
-	                     core::pose::Pose const &pose,
-	                     numeric::xyzVector<core::Real> &gradX);
+	void
+	dCCdx_fastRes(
+		int atmid,
+		int resid,
+		numeric::xyzVector<core::Real> const &X,
+		core::conformation::Residue const &rsd,
+		core::pose::Pose const &pose,
+		numeric::xyzVector<core::Real> &gradX
+	);
 
 	/// @brief Return the gradient of CC w.r.t. res X's CA's movement
 	/// Centroid-mode analogue of dCCdx
-	void  dCCdx_cen( int resid,
-	            	numeric::xyzVector<core::Real> const &X,
-              		 core::pose::Pose const &pose,
-	                 numeric::xyzVector<core::Real> &gradX);
+	void
+	dCCdx_cen(
+		int resid,
+		numeric::xyzVector<core::Real> const &X,
+		core::pose::Pose const &pose,
+		numeric::xyzVector<core::Real> &gradX
+	);
 
 	/// @brief Return the gradient of whole-structure-CC w.r.t. atom X's movement
 	/// non-sliding-window analogue of dCCdx
-	void  dCCdx_aacen( int atmid, int resid,
-	                   numeric::xyzVector<core::Real> const &X,
-                       core::pose::Pose const &pose,
-	                   numeric::xyzVector<core::Real> &gradX);
+	void
+	dCCdx_aacen(
+		int atmid,
+		int resid,
+		numeric::xyzVector<core::Real> const &X,
+		core::pose::Pose const &pose,
+		numeric::xyzVector<core::Real> &gradX
+	);
 
 	/// @brief Return the gradient of patterson-CC w.r.t. atom X's movement
-	void  dCCdx_pat( int atmid, int resid,
-	                 numeric::xyzVector<core::Real> const &X,
-                     core::pose::Pose const &pose,
-	                 numeric::xyzVector<core::Real> &gradX);
+	void
+	dCCdx_pat(
+		int atmid,
+		int resid,
+		numeric::xyzVector<core::Real> const &X,
+		core::pose::Pose const &pose,
+		numeric::xyzVector<core::Real> &gradX
+	);
 
 	/// @brief Resets the counters used for derivative computation in
 	///   sliding-window/fast scoring

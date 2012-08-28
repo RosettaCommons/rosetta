@@ -26,6 +26,9 @@ namespace protocols {
 namespace frag_picker {
 namespace quota {
 
+/// @details Auto-generated virtual destructor
+ABEGO_SS_Map::~ABEGO_SS_Map() {}
+
 char ABEGO_SS_Map::all_abego_[6] = {'X','A','B','E','G','O'};
 char ABEGO_SS_Map::all_ss_[4] = {'X','H','E','L'};
 

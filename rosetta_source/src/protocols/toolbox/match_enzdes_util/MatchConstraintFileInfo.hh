@@ -80,6 +80,8 @@ public:
 		core::Real periodicity_
 	);
 
+	virtual ~GeomSampleInfo();
+
 	/// @brief data reading routine
 	bool
 	read_data( std::istringstream & line_stream );
@@ -339,7 +341,7 @@ public:
 	MatchConstraintFileInfoList(
 		core::chemical::ResidueTypeSetCAP restype_set );
 
-	~MatchConstraintFileInfoList(){}
+	virtual ~MatchConstraintFileInfoList();
 
 public: //accessors
 

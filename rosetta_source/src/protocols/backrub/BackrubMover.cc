@@ -307,11 +307,11 @@ protocols::backrub::BackrubMover::get_name() const {
 /// @brief calculate the number of atom tree bonds between the two atoms
 /// possibly move this into the Atom class
 int tree_distance(
-	kinematics::tree::Atom const * ancestor,
-	kinematics::tree::Atom const * descendent
+	kinematics::tree::AtomCOP ancestor,
+	kinematics::tree::AtomCOP descendent
 )
 {
-	kinematics::tree::Atom const * current(descendent);
+	kinematics::tree::AtomCOP current(descendent);
 
 	for (int tdist = 0; current; ++tdist) {
 		if (ancestor == current) return tdist;
@@ -345,8 +345,8 @@ protocols::backrub::BackrubMover::add_segment(
 	runtime_assert(input_pose);
 
 	// get references to Atom tree atoms
-	kinematics::tree::Atom const * start_atom(&input_pose->atom_tree().atom(start_atomid));
-	kinematics::tree::Atom const * end_atom(&input_pose->atom_tree().atom(end_atomid));
+	kinematics::tree::AtomCOP start_atom(&input_pose->atom_tree().atom(start_atomid));
+	kinematics::tree::AtomCOP end_atom(&input_pose->atom_tree().atom(end_atomid));
 
 	// calculate initial tree distance
 	int tdist(tree_distance(start_atom, end_atom));
@@ -357,7 +357,7 @@ protocols::backrub::BackrubMover::add_segment(
 		if (tdist >= 2) {
 			//TR.Warning << "Warning: Backrub segment " << start_atomid << " to " << end_atomid
 			//           << " ordered wrong, reversing" << std::endl;
-			kinematics::tree::Atom const * const temp_atom(start_atom);
+			kinematics::tree::AtomCOP const temp_atom(start_atom);
 			id::AtomID const temp_atomid(start_atomid);
 			start_atom = end_atom;
 			start_atomid = end_atomid;
@@ -399,7 +399,7 @@ protocols::backrub::BackrubMover::add_segment(
 	// Find the first two atoms on the path from start to end
 	id::AtomID start_atomid1(end_atom->parent()->id());
 	id::AtomID start_atomid2(end_atom->id());
-	for (kinematics::tree::Atom const * current_atom = end_atom->parent()->parent(); current_atom != start_atom;
+	for (kinematics::tree::AtomCOP current_atom = end_atom->parent()->parent(); current_atom != start_atom;
 	     current_atom = current_atom->parent()) {
 		start_atomid2 = start_atomid1;
 		start_atomid1 = current_atom->id();
@@ -826,12 +826,12 @@ protocols::backrub::BackrubMover::dof_id_ranges(
 		BackrubSegment & segment(segments_[i]);
 
 		// get references to Atom tree atoms
-		kinematics::tree::Atom const * start_atom(&pose.atom_tree().atom(segment.start_atomid()));
-		kinematics::tree::Atom const * start_atom1(&pose.atom_tree().atom(segment.start_atomid1()));
-		kinematics::tree::Atom const * start_atom2(&pose.atom_tree().atom(segment.start_atomid2()));
-		kinematics::tree::Atom const * end_atom(&pose.atom_tree().atom(segment.end_atomid()));
-		kinematics::tree::Atom const * end_atom1(end_atom->get_nonjump_atom(0));
-		kinematics::tree::Atom const * end_atom2(end_atom1 ? end_atom1->get_nonjump_atom(0) : NULL);
+		kinematics::tree::AtomCOP start_atom(&pose.atom_tree().atom(segment.start_atomid()));
+		kinematics::tree::AtomCOP start_atom1(&pose.atom_tree().atom(segment.start_atomid1()));
+		kinematics::tree::AtomCOP start_atom2(&pose.atom_tree().atom(segment.start_atomid2()));
+		kinematics::tree::AtomCOP end_atom(&pose.atom_tree().atom(segment.end_atomid()));
+		kinematics::tree::AtomCOP end_atom1(end_atom->get_nonjump_atom(0));
+		kinematics::tree::AtomCOP end_atom2(end_atom1 ? end_atom1->get_nonjump_atom(0) : kinematics::tree::AtomCOP( 0 ) );
 
 		// Only proceed if stub_atom2 != start_atom1
 		if (start_atom->stub_atom2()->id() != segment.start_atomid1()) {
@@ -906,12 +906,12 @@ protocols::backrub::BackrubMover::random_angle(
 	BackrubSegment & segment(segments_[segment_id]);
 
 	// get references to Atom tree atoms
-	kinematics::tree::Atom const * start_atom(&pose.atom_tree().atom(segment.start_atomid()));
-	kinematics::tree::Atom const * start_atom1(&pose.atom_tree().atom(segment.start_atomid1()));
-	kinematics::tree::Atom const * start_atom2(&pose.atom_tree().atom(segment.start_atomid2()));
-	kinematics::tree::Atom const * end_atom(&pose.atom_tree().atom(segment.end_atomid()));
-	kinematics::tree::Atom const * end_atom1(end_atom->get_nonjump_atom(0));
-	kinematics::tree::Atom const * end_atom2(end_atom1 ? end_atom1->get_nonjump_atom(0) : NULL);
+	kinematics::tree::AtomCOP start_atom(&pose.atom_tree().atom(segment.start_atomid()));
+	kinematics::tree::AtomCOP start_atom1(&pose.atom_tree().atom(segment.start_atomid1()));
+	kinematics::tree::AtomCOP start_atom2(&pose.atom_tree().atom(segment.start_atomid2()));
+	kinematics::tree::AtomCOP end_atom(&pose.atom_tree().atom(segment.end_atomid()));
+	kinematics::tree::AtomCOP end_atom1(end_atom->get_nonjump_atom(0));
+	kinematics::tree::AtomCOP end_atom2(end_atom1 ? end_atom1->get_nonjump_atom(0) : kinematics::tree::AtomCOP(0) );
 
 	//TR << "Start Atom:" << segment.start_atomid() << std::endl;
 	//TR << "End Atom:" << segment.end_atomid() << std::endl;
@@ -1019,12 +1019,12 @@ protocols::backrub::BackrubMover::rotate_segment(
 	BackrubSegment & segment(segments_[segment_id]);
 
 	// get references to Atom tree atoms
-	kinematics::tree::Atom const * start_atom(&pose.atom_tree().atom(segment.start_atomid()));
-	kinematics::tree::Atom const * start_atom1(&pose.atom_tree().atom(segment.start_atomid1()));
-	kinematics::tree::Atom const * start_atom2(&pose.atom_tree().atom(segment.start_atomid2()));
-	kinematics::tree::Atom const * end_atom(&pose.atom_tree().atom(segment.end_atomid()));
-	kinematics::tree::Atom const * end_atom1(end_atom->get_nonjump_atom(0));
-	kinematics::tree::Atom const * end_atom2(end_atom1 ? end_atom1->get_nonjump_atom(0) : NULL);
+	kinematics::tree::AtomCOP start_atom(&pose.atom_tree().atom(segment.start_atomid()));
+	kinematics::tree::AtomCOP start_atom1(&pose.atom_tree().atom(segment.start_atomid1()));
+	kinematics::tree::AtomCOP start_atom2(&pose.atom_tree().atom(segment.start_atomid2()));
+	kinematics::tree::AtomCOP end_atom(&pose.atom_tree().atom(segment.end_atomid()));
+	kinematics::tree::AtomCOP end_atom1(end_atom->get_nonjump_atom(0));
+	kinematics::tree::AtomCOP end_atom2(end_atom1 ? end_atom1->get_nonjump_atom(0) : kinematics::tree::AtomCOP(0) );
 
 	/*
 	PointPosition end_atom_xyz(pose.xyz(end_atom->id()));
@@ -1205,12 +1205,12 @@ protocols::backrub::BackrubMover::update_type()
 /// C4 < C5 * cos(C6 + tau)
 void
 backrub_rotation_constants(
-	core::kinematics::tree::Atom const * PM2_atom,
-	core::kinematics::tree::Atom const * PM1_atom,
-	core::kinematics::tree::Atom const * P_atom,
-	core::kinematics::tree::Atom const * PP1_atom,
-	core::kinematics::tree::Atom const * PP2_atom,
-	core::kinematics::tree::Atom const * REF_atom,
+	core::kinematics::tree::AtomCOP PM2_atom,
+	core::kinematics::tree::AtomCOP PM1_atom,
+	core::kinematics::tree::AtomCOP P_atom,
+	core::kinematics::tree::AtomCOP PP1_atom,
+	core::kinematics::tree::AtomCOP PP2_atom,
+	core::kinematics::tree::AtomCOP REF_atom,
 	utility::vector0<Real> & constants,
 	core::Real const alpha_min, // = 0
 	core::Real const alpha_max, // = 0

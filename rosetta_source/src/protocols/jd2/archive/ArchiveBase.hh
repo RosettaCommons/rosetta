@@ -58,6 +58,8 @@ namespace archive {
 ///on processor rank.
 class AbstractArchiveBase : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~AbstractArchiveBase();
 	AbstractArchiveBase( ArchiveManagerAP ptr ) : manager_( ptr ), name_( "archive" ) {};
 	AbstractArchiveBase() : manager_( NULL ), name_( "archive" ) {};
 

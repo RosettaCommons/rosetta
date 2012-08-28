@@ -51,6 +51,8 @@ typedef utility::pointer::owning_ptr< ShortestPathInFoldTree > ShortestPathInFol
 
 class ShortestPathInFoldTree : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~ShortestPathInFoldTree();
 
   // types
   typedef utility::vector1< Edge > EdgeList;

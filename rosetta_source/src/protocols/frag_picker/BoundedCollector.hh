@@ -51,13 +51,22 @@ namespace frag_picker {
 /// @detailed The purpose of a collector is to keep the best fragment candidates to the end
 /// of vall processing. In particular, the capacity of this collector may be larger than
 /// the number of fragments one wants to get
-template<class StrictWeakOrdering>
+template< class StrictWeakOrdering >
 class BoundedCollector: public CandidatesCollector {
+public:
+	typedef utility::pointer::owning_ptr< BoundedCollector< StrictWeakOrdering > > BoundedCollectorOP;
+	typedef utility::pointer::owning_ptr< BoundedCollector< StrictWeakOrdering > const> BoundedCollectorCOP;
+
 public:
 
 	/// @brief create a collector for a given size of a query sequence
-	BoundedCollector(Size query_size, Size max_frags_per_pos,
-			StrictWeakOrdering fragment_comparator,Size n_score_terms,Size buffer_factor = 5) {
+	BoundedCollector(
+		Size query_size,
+		Size max_frags_per_pos,
+		StrictWeakOrdering fragment_comparator,
+		Size n_score_terms,
+		Size buffer_factor = 5
+	) {
 
 		FragmentCandidateOP worst_f = new FragmentCandidate(1,1,0,1);
 		scores::FragmentScoreMapOP worst_s = new scores::FragmentScoreMap(n_score_terms);
@@ -65,8 +74,8 @@ public:
 		    worst_s->set_score_component(99999.9999,i);
 
 		for (Size i = 1; i <= query_size; i++) {
-			LazySortedVector1<std::pair<FragmentCandidateOP,
-					scores::FragmentScoreMapOP>, StrictWeakOrdering> queue(
+			LazySortedVector1< std::pair< FragmentCandidateOP,
+					scores::FragmentScoreMapOP >, StrictWeakOrdering > queue(
 					fragment_comparator, max_frags_per_pos,max_frags_per_pos*buffer_factor);
 			queue.set_worst( std::pair<FragmentCandidateOP,
 			                scores::FragmentScoreMapOP>(worst_f,worst_s) );
@@ -82,12 +91,14 @@ public:
 	}
 
 	/// @brief  Check how many candidates have been already collected for a given position
-	inline Size count_candidates(Size seq_pos) {
+	/// APL Note: you cannot have inlined virtual functions
+	inline Size count_candidates(Size seq_pos) const {
 		return storage_[seq_pos].size();
 	}
 
 	/// @brief  Check how many candidates have been already collected for all positions
-	inline Size count_candidates() {
+	/// APL Note: you cannot have inlined virtual functions
+	inline Size count_candidates() const {
 
 		Size response = 0;
 		for(Size i=1;i<=storage_.size();++i)
@@ -98,16 +109,17 @@ public:
 	/// @brief  Check the size of query sequence that this object knows.
 	/// This is mainly to be able to check if it is the same as in the other parts of
 	/// fragment picking machinery.
-	inline Size query_length() {
+	inline Size query_length() const {
 		return storage_.size();
 	}
 
 	/// @brief Inserts candidates from another Collector for a give position in the query
 	/// Candidates may or may not get inserted depending on the candidate
 	void insert(Size pos, CandidatesCollectorOP collector) {
-		BoundedCollector *c = dynamic_cast<BoundedCollector*> (collector());
-		if (c == 0)
+		BoundedCollectorOP c = dynamic_cast<BoundedCollector*> (collector());
+		if (c == 0) {
 			utility_exit_with_message("Cant' cast candidates' collector to BoundedCollector.");
+		}
 		ScoredCandidatesVector1 & content = c->get_candidates(pos);
 		for(Size l=1;l<=content.size();l++) storage_.at(pos).push( content[l] );
 	}
@@ -124,7 +136,7 @@ public:
 	}
 
 	/// @brief prints how many candidates have been collected for each position and how good they are
-	void print_report(std::ostream& out, scores::FragmentScoreManagerOP scoring) {
+	void print_report(std::ostream& out, scores::FragmentScoreManagerOP scoring) const {
 		using namespace ObjexxFCL::fmt;
 		out
 				<< "\n pos  count   best     worst  | pos  count   best    worst   | pos  count    best    worst  |\n";

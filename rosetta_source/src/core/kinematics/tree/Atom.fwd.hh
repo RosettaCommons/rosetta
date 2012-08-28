@@ -17,8 +17,8 @@
 
 
 // Utility headers
-#include <utility/pointer/access_ptr.fwd.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/access_ptr.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 
 namespace core {
@@ -28,10 +28,12 @@ namespace tree {
 // Forward
 class Atom;
 
-
 // Types
 typedef  utility::pointer::access_ptr< Atom >  AtomAP;
+typedef  utility::pointer::access_ptr< Atom const >  AtomCAP;
+
 typedef  utility::pointer::owning_ptr< Atom >  AtomOP;
+typedef  utility::pointer::owning_ptr< Atom const >  AtomCOP;
 
 }
 } // namespace kinematics

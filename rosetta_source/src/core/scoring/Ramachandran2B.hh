@@ -50,7 +50,7 @@ public:
 
 public:
 	Ramachandran2B();
-	~Ramachandran2B() {}
+	virtual ~Ramachandran2B() ; // auto-removing definition from header{}
 
 	Real
 	eval_rama_score_residue(

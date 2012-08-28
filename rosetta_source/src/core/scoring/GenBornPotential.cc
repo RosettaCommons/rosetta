@@ -65,6 +65,8 @@
 namespace core {
 namespace scoring {
 
+GenBornResidueInfo::~GenBornResidueInfo() {}
+
 ///
 void
 GenBornResidueInfo::initialize( conformation::Residue const & rsd )

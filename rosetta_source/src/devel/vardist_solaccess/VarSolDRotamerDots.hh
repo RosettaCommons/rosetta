@@ -57,7 +57,7 @@ class VarSolDRotamerDots : public utility::pointer::ReferenceCount {
 public:
 	VarSolDRotamerDots();
 	VarSolDRotamerDots( core::conformation::ResidueCOP rotamer, bool allatoms = false );
-	~VarSolDRotamerDots();
+	virtual ~VarSolDRotamerDots();
 	VarSolDRotamerDots( VarSolDRotamerDots const & rhs );
 
 	void copy( VarSolDRotamerDots const & rhs );

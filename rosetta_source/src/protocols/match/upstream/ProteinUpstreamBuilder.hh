@@ -341,6 +341,8 @@ public:
 
 class FullChiSampleSet : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~FullChiSampleSet();
 	typedef core::Size Size;
 	typedef core::Real Real;
 	typedef numeric::HomogeneousTransform< Real > HTReal;

@@ -57,7 +57,7 @@ public:
 
 	InvrotTree();
 
-	~InvrotTree();
+	virtual ~InvrotTree();
 
 	core::scoring::constraints::ConstraintCOP
 	get_constraint_for_target_state( Size target_state ) const;

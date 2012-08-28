@@ -23,6 +23,9 @@ static basic::Tracer TR( "core.util.ABEGOManager" );
 namespace core {
 namespace util {
 
+// @brief Auto-generated virtual destructor
+ABEGOManager::~ABEGOManager() {}
+
 /// @brief add line to specify abego region	
 void
 ABEGO::add_line( Real const slope, Real const intercept, bool const region )

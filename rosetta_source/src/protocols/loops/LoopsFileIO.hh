@@ -167,13 +167,16 @@ private:
 class LoopsFileData : public utility::pointer::ReferenceCount
 {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~LoopsFileData();
+
 	LoopsOP resolve_loops( core::pose::Pose const & pose ) const;
 	SerializedLoopList resolve_as_serialized_loops( core::pose::Pose const & pose ) const;
 	core::Size size() const;
 	void resize( core::Size new_size );
 	void push_back( LoopFromFileData const & loop );
 	void insert_loop_at_index( LoopFromFileData const & loop, core::Size i );
-	
+
 	LoopFromFileData const & operator[] ( core::Size const i ) const;
 
 private:
@@ -267,7 +270,7 @@ public:
 	LoopsFileIO( const LoopsFileIO & src );
 
 	// destructor
-	~LoopsFileIO();
+	virtual ~LoopsFileIO();
 
 	friend std::ostream & operator<<( std::ostream & os, const LoopsFileIO & loops_file_io );
 

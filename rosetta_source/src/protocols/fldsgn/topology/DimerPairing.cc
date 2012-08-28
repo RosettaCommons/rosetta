@@ -27,6 +27,9 @@ namespace protocols {
 namespace fldsgn {
 namespace topology {
 
+/// @details Auto-generated virtual destructor
+DimerPairing::~DimerPairing() {}
+
 
 /// @brief
 DimerPairing::DimerPairing(

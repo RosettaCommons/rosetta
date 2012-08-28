@@ -2474,7 +2474,7 @@ RemodelLoopMover::create_fragment_movers(
 	for ( FragSetOPs::const_iterator f = fragsets_.begin(), fe = fragsets_.end(); f != fe; ++f ) {
 
 		if ( largest_frag_size == 0 || (*f)->max_frag_length() <= largest_frag_size ) {
-			ClassicFragmentMover * cfm = new ClassicFragmentMover( *f, movemap.clone() );
+			ClassicFragmentMoverOP cfm = new ClassicFragmentMover( *f, movemap.clone() );
 			cfm->set_check_ss( false );
 			cfm->enable_end_bias_check( false );
 			frag_movers.push_back( cfm );
@@ -2501,7 +2501,7 @@ void RemodelLoopMover::create_fragment_movers(
 	for ( FragSetOPs::const_iterator f = fragsets_.begin(), fe = fragsets_.end(); f != fe; ++f ) {
 
 		if ( largest_frag_size == 0 || (*f)->max_frag_length() <= largest_frag_size ) {
-			ClassicFragmentMover * cfm = new ClassicFragmentMover( *f, movemap.clone() );
+			ClassicFragmentMoverOP cfm = new ClassicFragmentMover( *f, movemap.clone() );
 			cfm->set_check_ss( false );
 			cfm->enable_end_bias_check( false );
 			frag_movers.push_back( cfm );

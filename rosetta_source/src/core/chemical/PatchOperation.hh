@@ -43,6 +43,8 @@ static basic::Tracer TR_PatchOperations("core.chemical.PatchOperations.hh");
 /// @brief  A single operation that needs to be applied in a residue patch
 class PatchOperation : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~PatchOperation();
 
 	/// @brief  Returns TR_PatchOperationsUE to signal failure
 	virtual

@@ -59,7 +59,7 @@ public:
 								 core::Real const temperature
 	);
 
-	~DualMonteCarlo();
+	virtual ~DualMonteCarlo();
 
 	bool
 	boltzmann(

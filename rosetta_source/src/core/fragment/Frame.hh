@@ -109,6 +109,8 @@ namespace fragment {
 class Frame : public utility::pointer::ReferenceCount {
 	typedef	std::map<std::string, BaseCacheUnitOP > CacheMap;
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~Frame();
 
 	Frame();
 

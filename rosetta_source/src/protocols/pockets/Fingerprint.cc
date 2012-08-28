@@ -59,6 +59,9 @@ using namespace std;
 namespace protocols {
 namespace pockets {
 
+/// @details Auto-generated virtual destructor
+FingerprintBase::~FingerprintBase() {}
+
 FingerprintBase::FingerprintBase () :
 	ReferenceCount()
 {

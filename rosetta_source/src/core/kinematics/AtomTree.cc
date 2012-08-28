@@ -72,6 +72,7 @@ AtomTree::AtomTree(
 	AtomPointer2D const & new_atom_pointer,
 	bool const from_xyz // = true
 ):
+	this_weak_ptr_(0),
 	root_( 0 ),
 	atom_pointer_(), // default_setting_ = null pointer
 	internal_coords_need_updating_( false ),
@@ -84,6 +85,7 @@ AtomTree::AtomTree(
 }
 
 AtomTree::AtomTree():
+	this_weak_ptr_(0),
 	root_(0),
 	atom_pointer_(),
 	internal_coords_need_updating_( false ),
@@ -104,6 +106,7 @@ AtomTree::~AtomTree()
 /// @details copy ctor, uses operator=
 AtomTree::AtomTree( AtomTree const & src ) :
 	utility::pointer::ReferenceCount(),
+	this_weak_ptr_( 0 ),
 	root_( 0 ), /// without this initialization, the destruction of this
 	/// uninitialized pointer might have disasterous consequences
 	atom_pointer_(), // default_setting_ = null pointer
@@ -115,6 +118,12 @@ AtomTree::AtomTree( AtomTree const & src ) :
 	*this = src;
 }
 
+
+void AtomTree::set_weak_pointer_to_self( AtomTreeCAP self_pointer )
+{
+	assert( self_pointer() == this );
+	this_weak_ptr_ = self_pointer;
+}
 
 
 /**
@@ -143,7 +152,7 @@ AtomTree::add_atom(
 	}
 
 
-	Atom* parent(0);
+	AtomOP parent(0);
 	if ( !id2.valid() || // root
 		!atom_pointer_.has( id2 ) ||
 		atom_pointer_[ id2 ] == 0 ) {
@@ -156,9 +165,9 @@ AtomTree::add_atom(
 	}
 
 	// create the new atom
-	Atom* atom( add_bonded_atom ?
-		static_cast< Atom* >( new BondedAtom() ) :
-		static_cast< Atom* >( new JumpAtom() ) );
+	AtomOP atom( add_bonded_atom ?
+		static_cast< AtomOP >( new BondedAtom() ) :
+		static_cast< AtomOP >( new JumpAtom() ) );
 	atom->id( id1 );
 	atom_pointer_.set( id1, atom );
 
@@ -254,14 +263,14 @@ AtomTree::setup_backrub_segment(
 	// operation is done "by xyz" leaving the internal coords out of date
 	update_xyz_coords();
 
-	Atom * subtree_root
+	AtomOP subtree_root
 		( setup_backrub_atom_tree( mainchain, downstream_id, atom_pointer_, edges, first_new_pseudo_residue ) );
 	assert( subtree_root->id() == mainchain[1] );
 
-	Atom * old_root( atom_pointer_[ mainchain[1] ] );
-	Atom * anchor( old_root->parent() );
+	AtomOP old_root( atom_pointer_[ mainchain[1] ] );
+	AtomOP anchor( old_root->parent() );
 
-	Atom * downstream_atom( atom_pointer_[ downstream_id ] );
+	AtomOP downstream_atom( atom_pointer_[ downstream_id ] );
 	downstream_atom->parent()->delete_atom( downstream_atom ); // delete the old outgoing connection
 
 	// update atom_pointer_
@@ -327,9 +336,9 @@ AtomTree::delete_seqpos( Size const seqpos )
 
 	// find the anchor, root, and perhaps child atoms
 	Size const natoms( atom_pointer_[seqpos].size() );
-	Atom* anchor(0), *root(0), *child(0);
+	AtomOP anchor(0), root(0), child(0);
 	for ( Size i=1; i<= natoms; ++i ) {
-		Atom* atom( atom_pointer_[seqpos][i]() );
+		AtomOP atom( atom_pointer_[seqpos][i]() );
 		if ( !atom ) continue;
 		if ( Size(atom->parent()->id().rsd()) != seqpos ) {
 			assert( !anchor );
@@ -418,9 +427,9 @@ AtomTree::replace_residue_subtree(
 	for ( Size i=1; i<= new_atoms.size(); ++i ) assert( new_atoms[i]->id() == AtomID( i, seqpos ) );
 
 	//
-	Atom * anchor_atom(0);
-	Atom * old_root_atom(0);
-	Atom * new_root_atom( new_atoms[ incoming.atom2.atomno() ]() );
+	AtomOP anchor_atom(0);
+	AtomOP old_root_atom(0);
+	AtomOP new_root_atom( new_atoms[ incoming.atom2.atomno() ]() );
 
 	if ( incoming.atom1.valid() ) anchor_atom = atom_pointer( incoming.atom1 );
 
@@ -428,8 +437,8 @@ AtomTree::replace_residue_subtree(
 	// the children in these connections will all have parents in seqpos unless we are inserting into an empty slot,
 	// ie unless old_atoms.empty()
 	for ( Size i=1; i<= outgoing.size(); ++i ) {
-		Atom * child( atom_pointer( outgoing[i].atom2 ) );
-		Atom * old_parent( child->parent() );
+		AtomOP child( atom_pointer( outgoing[i].atom2 ) );
+		AtomOP old_parent( child->parent() );
 		assert( child->id().rsd() != seqpos );
 		if ( !old_parent ) {
 			// we're becoming the new root residue
@@ -445,7 +454,7 @@ AtomTree::replace_residue_subtree(
 			// only necessary for debugging purposes
 			old_parent->delete_atom( child );
 		}
-		Atom * new_parent( new_atoms[ outgoing[i].atom1.atomno() ]() );
+		AtomOP new_parent( new_atoms[ outgoing[i].atom1.atomno() ]() );
 		new_parent->insert_atom( child );
 	}
 
@@ -454,7 +463,7 @@ AtomTree::replace_residue_subtree(
 		assert( old_atoms.empty() );
 	} else {
 		for ( Size i=1; i<= old_atoms.size(); ++i ) {
-			Atom * old_atom( old_atoms[i]() );
+			AtomOP old_atom( old_atoms[i]() );
 			assert( old_atom ); // atom_pointer_ is ragged, always keep dimension equal to actual number of atoms
 			if ( ! old_atom->parent() ) {
 				// this was the root of the atomtree
@@ -596,13 +605,13 @@ AtomTree::torsion_angle_dof_id(
 	// the results of this calculation to allow faster access.
 
 
-	Atom const
-		* const atom1_in( atom_pointer( atom1_in_id ) ),
-		* const atom2_in( atom_pointer( atom2_in_id ) ),
-		* const atom3_in( atom_pointer( atom3_in_id ) ),
-		* const atom4_in( atom_pointer( atom4_in_id ) );
-	Atom const * atom1( atom1_in ), *atom2( atom2_in ),
-		*atom3( atom3_in ), *atom4( atom4_in );
+	AtomCOP
+		atom1_in( atom_pointer( atom1_in_id ) ),
+		atom2_in( atom_pointer( atom2_in_id ) ),
+		atom3_in( atom_pointer( atom3_in_id ) ),
+		atom4_in( atom_pointer( atom4_in_id ) );
+	AtomCOP atom1( atom1_in ), atom2( atom2_in ),
+		atom3( atom3_in ), atom4( atom4_in );
 	// reorder the atoms if necessary
 	// we want it to be the case that atom4 has
 	// input_stub_atom1 == atom3 and
@@ -682,7 +691,7 @@ AtomTree::torsion_angle_dof_id(
 	}
 	// atom4 is not the first sibling of atom3, get offset for that.
 	if ( atom4 != atom3->get_nonjump_atom(0) ) {
-		Atom const * new_atom4( atom3->get_nonjump_atom(0) );
+		AtomCOP new_atom4( atom3->get_nonjump_atom(0) );
 		offset += atom3->dihedral_between_bonded_children( new_atom4, atom4 );
 
 		if ( debug ) { // debugging
@@ -698,7 +707,7 @@ AtomTree::torsion_angle_dof_id(
 
 	DOF_ID dof_id( atom4->id(), PHI );
 
-	Atom const * dof_atom1( atom4->input_stub_atom3() );
+	AtomCOP dof_atom1( atom4->input_stub_atom3() );
 
 	if ( dof_atom1 == atom1 ) {
 		return dof_id;
@@ -1045,12 +1054,12 @@ AtomTree::bond_angle_dof_id(
 
 	assert( atom_pointer( atom1_in_id ) && atom_pointer( atom2_in_id ) && atom_pointer( atom3_in_id ) );
 
-	Atom const
-		* const atom1_in( atom_pointer( atom1_in_id ) ),
-		* const atom2_in( atom_pointer( atom2_in_id ) ),
-		* const atom3_in( atom_pointer( atom3_in_id ) );
+	AtomCOP
+		atom1_in( atom_pointer( atom1_in_id ) ),
+		atom2_in( atom_pointer( atom2_in_id ) ),
+		atom3_in( atom_pointer( atom3_in_id ) );
 
-	Atom const * atom1( atom1_in ), *atom2( atom2_in ), *atom3( atom3_in );
+	AtomCOP atom1( atom1_in ), atom2( atom2_in ), atom3( atom3_in );
 
 	// reorder the atoms if necessary
 	// not necessary at all in the current logic
@@ -1130,7 +1139,7 @@ AtomTree::bond_length_dof_id(
 
 	assert( atom_pointer( atom1_id ) && atom_pointer( atom2_id ) );
 
-	Atom const * atom1( atom_pointer( atom1_id ) ),* atom2( atom_pointer( atom2_id ) );
+	AtomCOP atom1( atom_pointer( atom1_id ) ), atom2( atom_pointer( atom2_id ) );
 
 	if ( !atom2->is_jump() &&
 			 atom2->input_stub_atom1() == atom1 ) {
@@ -1287,7 +1296,7 @@ AtomTree::operator=( AtomTree const & src )
 		return *this;
 	}
 
-	if ( topological_match_to_ == &src || src.topological_match_to_ == this ) {
+	if ( topological_match_to_() == &src || src.topological_match_to_() == this ) {
 		/// Why include the second condition: src.topological_match_to_ == this ?
 		/// As an optimization for the common case when atom trees are being copied
 		/// back and forth into each other as happens in repeated calls to MC::boltzman.
@@ -1313,11 +1322,17 @@ AtomTree::operator=( AtomTree const & src )
 
 	}
 
-	if ( topological_match_to_ != & src ) {
-		if ( topological_match_to_ != 0 ) {
-			topological_match_to_->detatch_topological_observer( this );
+	if ( topological_match_to_() != & src ) {
+		if ( topological_match_to_() != 0 ) {
+			assert( this_weak_ptr_ );
+			topological_match_to_->detatch_topological_observer( this_weak_ptr_ );
 		}
-		src.attach_topological_observer( this );
+		/// topological observation only allowed if both this, and src hold weak pointers to themselves.
+		/// If either AtomTree had been declared on the stack, or if the code that instantiated either one
+		/// never gave them their weak-pointer-to-selves, then the observer system is bypassed.
+		if ( this_weak_ptr_ && src.this_weak_ptr_ ) {
+			src.attach_topological_observer( this_weak_ptr_ );
+		}
 	}
 	return *this;
 
@@ -1363,12 +1378,12 @@ AtomTree::set_stub_transform(
 {
 
 	// look for the connection between these two stubs
-	Atom * jump_atom(0);
+	AtomOP jump_atom(0);
 	int dir(0);
 	for ( Size i=1; i<= 3; ++i ) {
-		Atom * atom1( atom_pointer( stub_id1.atom( i ) ) );
+		AtomOP atom1( atom_pointer( stub_id1.atom( i ) ) );
 		for ( Size j=1; j<= 3; ++j ) {
-			Atom * atom2( atom_pointer( stub_id2.atom( j ) ) );
+			AtomOP atom2( atom_pointer( stub_id2.atom( j ) ) );
 			if ( atom1->is_jump() && atom1->parent() == atom2 ) {
 				assert( !jump_atom );
 				jump_atom = atom1;
@@ -1489,8 +1504,9 @@ AtomTree::note_coordinate_change_registered() const
 /// tree may only be the topological copy of a single other atom tree, though several
 /// atom trees may be copies of a single atom tree.
 void
-AtomTree::attach_topological_observer( AtomTree const * observer ) const
+AtomTree::attach_topological_observer( AtomTreeCAP observer ) const
 {
+	assert( observer->this_weak_ptr_ && this_weak_ptr_ );
 	assert( observer->topological_match_to_ == 0 );
 	bool resize_topo_observers_array_( false );
 	for ( Size ii = 1; ii <= topological_observers_.size(); ++ii ) {
@@ -1506,7 +1522,7 @@ AtomTree::attach_topological_observer( AtomTree const * observer ) const
 		for ( Size ii = 1; ii <= topological_observers_.size(); ++ii ) {
 			if ( topological_observers_[ ii ] != 0 ) ++n_valid;
 		}
-		utility::vector1< AtomTree const * > valid_observers;
+		utility::vector1< AtomTreeCAP > valid_observers;
 		valid_observers.reserve( n_valid + 1 );
 		for ( Size ii = 1; ii <= topological_observers_.size(); ++ii ) {
 			if ( topological_observers_[ ii ] != 0 ) valid_observers.push_back( topological_observers_[ ii ] );
@@ -1515,7 +1531,7 @@ AtomTree::attach_topological_observer( AtomTree const * observer ) const
 	}
 
 	topological_observers_.push_back( observer );
-	observer->topological_match_to_ = this;
+	observer->topological_match_to_ = this_weak_ptr_;
 }
 
 /// @details The AtomTree being observed calls this notify_topological_change on all
@@ -1524,7 +1540,7 @@ AtomTree::attach_topological_observer( AtomTree const * observer ) const
 /// object was actually observing the observee -- if it wasn't, then an internal error
 /// has occurred.  The observee and the observer have gotten out of sync.
 void
-AtomTree::notify_topological_change( AtomTree const * ASSERT_ONLY( observee ) ) const
+AtomTree::notify_topological_change( AtomTreeCAP ASSERT_ONLY( observee ) ) const
 {
 	assert( observee == topological_match_to_ );
 	topological_match_to_ = 0;
@@ -1535,9 +1551,9 @@ AtomTree::notify_topological_change( AtomTree const * ASSERT_ONLY( observee ) ) 
 /// When this happens, this AtomTree marks the observer's position in
 /// its list of observers as null.
 void
-AtomTree::detatch_topological_observer( AtomTree const * observer ) const
+AtomTree::detatch_topological_observer( AtomTreeCAP observer ) const
 {
-	assert( observer->topological_match_to_ == this );
+	assert( observer->topological_match_to_() == this );
 	bool found( false );
 	for ( Size ii = 1; ii <= topological_observers_.size(); ++ii ) {
 		if ( topological_observers_[ ii ] == observer ) {
@@ -1582,14 +1598,14 @@ void
 AtomTree::get_frag_atoms(
 	StubID const & id,
 	FragXYZ const & frag_xyz,
-	Atom const * & frag_atom,
-	Atom const * & nonfrag_atom // could be zero if atom1 is root of tree
+	AtomCOP & frag_atom,
+	AtomCOP & nonfrag_atom // could be zero if atom1 is root of tree
 ) const
 {
 	bool const atom1_in_frag( frag_xyz.count( id.atom1 ) );
 	bool const atom2_in_frag( frag_xyz.count( id.atom2 ) );
 
-	Atom const * atom1( atom_pointer( id.atom1 ) );
+	AtomCOP atom1( atom_pointer( id.atom1 ) );
 
 	if ( atom1->is_jump() ) {
 		if ( !atom1_in_frag && atom1->parent() && frag_xyz.count( atom1->parent()->atom_id() ) ) {
@@ -1636,8 +1652,8 @@ AtomTree::get_frag_pseudo_stub_id(
 
 	utility::vector1< AtomID > ids;
 
-	Atom const * atom( atom_pointer( id ) );
-	Atom const *parent( atom->parent() ), *child1( atom->get_nonjump_atom(0) ), *child2( atom->get_nonjump_atom(1) );
+	AtomCOP atom( atom_pointer( id ) );
+	AtomCOP parent( atom->parent() ), child1( atom->get_nonjump_atom(0) ), child2( atom->get_nonjump_atom(1) );
 
 	if ( !atom->is_jump() && parent && frag_xyz.count( parent->atom_id() ) ) {
 		ids.push_back( parent->atom_id() );
@@ -1649,24 +1665,24 @@ AtomTree::get_frag_pseudo_stub_id(
 		ids.push_back( child2->atom_id() );
 	}
 	if ( child1 && frag_xyz.count( child1->atom_id() ) ) {
-		Atom const * gchild1( child1->get_nonjump_atom(0) );
+		AtomCOP gchild1( child1->get_nonjump_atom(0) );
 		if ( gchild1 && frag_xyz.count( gchild1->atom_id() ) ) {
 			ids.push_back( gchild1->atom_id() );
 		}
 	}
 	if ( child2 && frag_xyz.count( child2->atom_id() ) ) {
-		Atom const * gchild2( child2->get_nonjump_atom(0) );
+		AtomCOP gchild2( child2->get_nonjump_atom(0) );
 		if ( gchild2 && frag_xyz.count( gchild2->atom_id() ) ) {
 			ids.push_back( gchild2->atom_id() );
 		}
 	}
 	if ( !atom->is_jump() && parent && frag_xyz.count( parent->atom_id() ) ) {
-		Atom const * gparent( parent->parent() );
+		AtomCOP gparent( parent->parent() );
 		if ( !parent->is_jump() && gparent && frag_xyz.count( gparent->atom_id() ) ) {
 			ids.push_back( gparent->atom_id() );
 		}
 		for ( Size i=0; i<parent->n_children(); ++i ) {
-			Atom const * sibling( parent->child(i) );
+			AtomCOP sibling( parent->child(i) );
 			if ( sibling != atom && !sibling->is_jump() && frag_xyz.count( sibling->atom_id() ) ) {
 				ids.push_back( sibling->atom_id() );
 			}
@@ -1693,7 +1709,7 @@ AtomTree::get_frag_local_stub(
 {
 	// first look for special case of stub of frag jump-child:
 	AtomID const stub_atom1_id( stubid.atom1 ), stub_atom2_id( stubid.atom2 ), stub_atom3_id( stubid.atom3 );
-	Atom const * stub_atom1( atom_pointer( stub_atom1_id ) );
+	AtomCOP stub_atom1( atom_pointer( stub_atom1_id ) );
 
 	if ( !frag_xyz.count( stub_atom1_id ) && stub_atom1->is_jump() &&
 			 stub_atom1->parent() && frag_xyz.count( stub_atom1->parent()->atom_id()) &&
@@ -1741,7 +1757,7 @@ AtomTree::get_frag_local_xyz(
 	// easiest case:
 	if ( frag_xyz.count( id ) ) return frag_xyz.find( id )->second;
 
-	Atom const * atom( atom_pointer(id) );
+	AtomCOP atom( atom_pointer(id) );
 
 	if ( ( atom->parent() && frag_xyz.count( atom->parent()->atom_id() ) ) ||
 			 ( atom->parent() && atom->parent()->parent() && frag_xyz.count( atom->parent()->parent()->atom_id() ) ) ) {
@@ -1750,7 +1766,7 @@ AtomTree::get_frag_local_xyz(
 	}
 
 	// now should be parent of frag
-	Atom const * child( 0 );
+	AtomCOP child( 0 );
 	for ( Size i=0; i< atom->n_children(); ++i ) {
 		if ( frag_xyz.count( atom->child(i)->atom_id() ) ) {
 			assert( child == 0 );
@@ -1767,7 +1783,7 @@ AtomTree::get_frag_local_xyz(
 ///
 Vector
 AtomTree::get_frag_descendant_local_xyz(
-	Atom const * atom,
+	AtomCOP atom,
 	FragXYZ const & frag_xyz,
 	bool & fail
 ) const
@@ -1810,12 +1826,12 @@ AtomTree::get_frag_descendant_local_xyz(
 ///
 Vector
 AtomTree::get_frag_parent_local_xyz(
-	Atom const * child,
+	AtomCOP child,
 	FragXYZ const & frag_xyz,
 	bool & fail
 ) const
 {
-	Atom const * parent( child->parent() );
+	AtomCOP parent( child->parent() );
 	//assert( !parent->is_jump() ); // dont think we have to handle this case...
 	assert( frag_xyz.count( child->atom_id() ) && ! frag_xyz.count( parent->atom_id() ) );
 
@@ -1849,16 +1865,16 @@ AtomTree::insert_single_fragment(
 	// get the incoming stub:
 	Stub const instub( stub_from_id( instub_id ) );
 
-	Atom const * instub_frag_atom(0), *instub_nonfrag_atom(0);
+	AtomCOP instub_frag_atom(0), instub_nonfrag_atom(0);
 	get_frag_atoms( instub_id, frag_xyz, instub_frag_atom, instub_nonfrag_atom );
 
 	assert( instub_frag_atom->parent() == instub_nonfrag_atom ); // sanity check
 
-	utility::vector1< Atom const * > outstub_nonfrag_atoms; // just for debugging
+	utility::vector1< AtomCOP > outstub_nonfrag_atoms; // just for debugging
 
 	for ( FragRT::const_iterator it= outstub_transforms.begin(), ite= outstub_transforms.end(); it != ite; ++it ) {
 		StubID const & outstub_id( it->first );
-		Atom const * outstub_frag_atom(0), *outstub_nonfrag_atom(0);
+		AtomCOP outstub_frag_atom(0), outstub_nonfrag_atom(0);
 		get_frag_atoms( outstub_id, frag_xyz, outstub_frag_atom, outstub_nonfrag_atom );
 		outstub_nonfrag_atoms.push_back( outstub_nonfrag_atom ); // for debugging
 		assert( outstub_nonfrag_atom->parent() == outstub_frag_atom );
@@ -1899,7 +1915,7 @@ AtomTree::insert_single_fragment(
 
 	for ( FragXYZ::const_iterator it=frag_xyz.begin(), ite= frag_xyz.end(); it != ite; ++it ) {
 		AtomID const & id( it->first );
-		Atom * atom( atom_pointer( id ) );
+		AtomOP atom( atom_pointer( id ) );
 
 		// update xyz using instub
 		atom->xyz( instub.local2global( it->second ) );
@@ -1938,9 +1954,9 @@ AtomTree::set_jump_atom_stub_id(
 {
 	update_xyz_coords(); // since we will need to recalculate all the internal dofs when we're done
 
-	Atom * atom1( atom_pointer( id.atom1 ) );
-	Atom * atom2( atom_pointer( id.atom2 ) );
-	Atom * atom3( atom_pointer( id.atom3 ) );
+	AtomOP atom1( atom_pointer( id.atom1 ) );
+	AtomOP atom2( atom_pointer( id.atom2 ) );
+	AtomOP atom3( atom_pointer( id.atom3 ) );
 	if ( !atom1->is_jump() || atom2->is_jump() || atom3->is_jump() ||
 			 atom2->parent() != atom1 || atom3->parent() != atom2 ) {
 		utility_exit_with_message( "set_jump_atom_stub_id failed!" );
@@ -1973,12 +1989,12 @@ AtomTree::insert_fragment(
 
 	// look for more incoming and/or outgoing connections:
 
-	utility::vector1< Atom const * > incoming_stub_frag_atoms, outgoing_stub_nonfrag_atoms;
+	utility::vector1< AtomCOP > incoming_stub_frag_atoms, outgoing_stub_nonfrag_atoms;
 	utility::vector1< Stub > incoming_local_stubs, outgoing_local_stubs;
 	utility::vector1< StubID > incoming_stub_ids, outgoing_stub_ids;
 
 	{
-		Atom const * frag_atom, *nonfrag_atom;
+		AtomCOP frag_atom, nonfrag_atom;
 		get_frag_atoms( instub_id, frag_xyz, frag_atom, nonfrag_atom );
 		if ( frag_atom->parent() == nonfrag_atom ) {
 			TR.Trace << "AtomTree::insert_fragment: instub is incoming" << std::endl;
@@ -1995,7 +2011,7 @@ AtomTree::insert_fragment(
 
 	for ( FragRT::const_iterator it= outstub_transforms.begin(), ite= outstub_transforms.end(); it != ite; ++it ) {
 		StubID const & outstub_id( it->first );
-		Atom const * frag_atom, *nonfrag_atom;
+		AtomCOP frag_atom, nonfrag_atom;
 		get_frag_atoms( outstub_id, frag_xyz, frag_atom, nonfrag_atom );
 		if ( nonfrag_atom && nonfrag_atom->parent() == frag_atom ) {
 			TR.Trace << "AtomTree::insert_fragment: outstub is outgoing" << std::endl;
@@ -2012,7 +2028,7 @@ AtomTree::insert_fragment(
 
 	for ( FragXYZ::const_iterator it=frag_xyz.begin(), ite= frag_xyz.end(); it != ite; ++it ) {
 		//AtomID const & id( it->first );
-		Atom * atom( atom_pointer( it->first ) );
+		AtomOP atom( atom_pointer( it->first ) );
 		if ( ( atom->parent() == 0 || !frag_xyz.count( atom->parent()->atom_id() ) ) &&
 				 ( std::find( incoming_stub_frag_atoms.begin(), incoming_stub_frag_atoms.end(), atom ) ==
 					 incoming_stub_frag_atoms.end() ) ) {
@@ -2047,7 +2063,7 @@ AtomTree::insert_fragment(
 
 		// look for outgoing connections:
 		for ( Size i=0; i< atom->n_children(); ++i ) {
-			Atom* child( atom->child(i) );
+			AtomOP child( atom->child(i) );
 			if ( !frag_xyz.count( child->atom_id() ) &&
 					 ( std::find( outgoing_stub_nonfrag_atoms.begin(), outgoing_stub_nonfrag_atoms.end(), child ) ==
 						 outgoing_stub_nonfrag_atoms.end() ) ) {
@@ -2071,20 +2087,20 @@ AtomTree::insert_fragment(
 	/// incoming stub.
 	///
 	for ( Size i=1; i<= incoming_stub_frag_atoms.size(); ++i ) {
-		Atom const * instub_atom( incoming_stub_frag_atoms[i] );
+		AtomCOP instub_atom( incoming_stub_frag_atoms[i] );
 		Stub const & local_instub( incoming_local_stubs[ i ] );
 		FragXYZ new_frag_xyz;
 		FragRT new_outstub_transforms;
 		// get frag atoms that depend on this guy:
 		for ( FragXYZ::const_iterator it=frag_xyz.begin(), ite= frag_xyz.end(); it != ite; ++it ) {
 			AtomID const & id( it->first );
-			Atom const * frag_atom( atom_pointer( id ) );
+			AtomCOP frag_atom( atom_pointer( id ) );
 			if ( frag_atom->atom_is_on_path_from_root( instub_atom ) ) {
 				new_frag_xyz[ id ] = local_instub.global2local( it->second );
 			}
 		}
 		for ( Size j=1; j<= outgoing_stub_nonfrag_atoms.size(); ++j ) {
-			Atom const * outstub_atom( outgoing_stub_nonfrag_atoms[j] );
+			AtomCOP outstub_atom( outgoing_stub_nonfrag_atoms[j] );
 			if ( outstub_atom->atom_is_on_path_from_root( instub_atom ) ) {
 				new_outstub_transforms[ outgoing_stub_ids[j] ] = RT( local_instub, outgoing_local_stubs[j] );
 			}
@@ -2106,10 +2122,10 @@ AtomTree::promote_sameresidue_nonjump_child( AtomID const & parent_atom_id )
 {
 	update_xyz_coords(); // since we are about to invalidate the internal coords
 
-	Atom * parent( atom_pointer( parent_atom_id ) );
-	tree::Atom * sameresidue_child( 0 );
+	AtomOP parent( atom_pointer( parent_atom_id ) );
+	tree::AtomOP sameresidue_child( 0 );
 	for ( Size i=0; i< parent->n_nonjump_children(); ++i ) {
-		tree::Atom * child( atom_pointer( parent->get_nonjump_atom( i )->id() ) ); // want nonconst, use atom_pointer
+		tree::AtomOP child( atom_pointer( parent->get_nonjump_atom( i )->id() ) ); // want nonconst, use atom_pointer
 		if ( child->id().rsd() == parent->id().rsd() ) {
 			sameresidue_child = child;
 			break;
@@ -2160,7 +2176,7 @@ AtomTree::promote_sameresidue_nonjump_child( AtomID const & parent_atom_id )
 
 // 		// reorder the atoms if necessary so that atom2 is the parent of atom3
 // 		// and atom3 is the parent of atom4
-// 		Atom *atom1( 0 ), *atom2( 0 ), *atom3( 0 ), *atom4( 0 );
+// 		AtomOPatom1( 0 ), *atom2( 0 ), *atom3( 0 ), *atom4( 0 );
 
 // 		if ( atom_pointer_[ atom_id3 ]->parent()->atom_id() == atom_id2 ) {
 // 			atom1 = atom_pointer_[ atom_id1 ];
@@ -2312,7 +2328,7 @@ AtomTree::promote_sameresidue_nonjump_child( AtomID const & parent_atom_id )
 
 
 // 	bool
-// 	operator()( Atom const * const & atom )
+// 	operator()( AtomCOP const & atom )
 // 	{
 // 		BondID id( atom->atom_id(), atom->parent()->atom_id() );
 // 		if ( std::find( bonds_.begin(), bonds_.end(), id ) == bonds_.end() ) id.reverse();
@@ -2336,7 +2352,7 @@ AtomTree::promote_sameresidue_nonjump_child( AtomID const & parent_atom_id )
 // 		fail = true;
 // 		return Vector(0.0);
 // 	} else if ( child->n_nonjump_children() == 1 ) {
-// 		Atom const * gchild( child->get_nonjump_atom( 0 ) ); // frag or child of frag
+// 		AtomCOP gchild( child->get_nonjump_atom( 0 ) ); // frag or child of frag
 // 		id2 = gchild->atom_id();
 // 		if ( gchild->n_nonjump_children() == 0 ) {
 // 			fail = true;
@@ -2368,7 +2384,7 @@ AtomTree::promote_sameresidue_nonjump_child( AtomID const & parent_atom_id )
 
 // 	// trim stub atom ids to exclude overlapping atoms
 
-// 	vector1< vector1< Atom const * > > paths( nstub );
+// 	vector1< vector1< AtomCOP > > paths( nstub );
 // 	for ( Size i=1; i<= nstub; ++i ) {
 // 		get_atom_path( out_atom_ids[i][1], in_atom_ids[1], paths[i] );
 // 		sizes.push_back( paths[i].size () );
@@ -2376,11 +2392,11 @@ AtomTree::promote_sameresidue_nonjump_child( AtomID const & parent_atom_id )
 
 // 	///
 // 	Size const stub_index( argmin( sizes ) ); // see rotamer_trials.cc
-// 	vector1< Atom const * > stub_path( paths[ stub_index ] );
+// 	vector1< AtomCOP > stub_path( paths[ stub_index ] );
 
 
 // 	/// choose an atom to move ///////////////////////////////////////////////
-// 	Atom * moving_atom( 0 );
+// 	AtomOP moving_atom( 0 );
 // 	// first look for jump atom:
 // 	for ( Size i=1; i<= stub_path.size(); ++i ) {
 // 		AtomID const & id( stub_path[i]->atom_id() );
@@ -2468,10 +2484,10 @@ AtomTree::promote_sameresidue_nonjump_child( AtomID const & parent_atom_id )
 // 	//using tree::Atom;
 
 // 	//// get path between origin atoms of both stubs /////////////////////
-// 	utility::vector1< Atom const * > path1, path2;
+// 	utility::vector1< AtomCOP > path1, path2;
 
-// 	Atom* const stub1_atom1( atom_pointer_[ stub1_id.atom1 ] );
-// 	Atom* const stub2_atom1( atom_pointer_[ stub2_id.atom1 ] );
+// 	AtomOP const stub1_atom1( atom_pointer_[ stub1_id.atom1 ] );
+// 	AtomOP const stub2_atom1( atom_pointer_[ stub2_id.atom1 ] );
 
 
 // 	stub1_atom1->get_path_from_root( path1 );
@@ -2527,11 +2543,11 @@ AtomTree::promote_sameresidue_nonjump_child( AtomID const & parent_atom_id )
 // 	//// first look for a jump on either path that matches the preferred_bonds set
 
 // 	// make paths with just the jump atoms
-// 	utility::vector1< Atom const * > path1_jumps, path2_jumps;
+// 	utility::vector1< AtomCOP > path1_jumps, path2_jumps;
 // 	for ( Size i=1; i<= path1.size(); ++i ) if ( path1[i]->is_jump() ) path1_jumps.push_back( path1[i] );
 // 	for ( Size i=1; i<= path2.size(); ++i ) if ( path2[i]->is_jump() ) path2_jumps.push_back( path2[i] );
 
-// 	utility::vector1< Atom const * >::iterator it = find_if( path1_jumps.begin(), path1_jumps.end(), bond_checker );
+// 	utility::vector1< AtomCOP >::iterator it = find_if( path1_jumps.begin(), path1_jumps.end(), bond_checker );
 // 	if ( it == path1_jumps.end() )             it = find_if( path2_jumps.begin(), path2_jumps.end(), bond_checker );
 // 	if ( it == path2_jumps.end() )             it = find_if(       path1.begin(),       path1.end(), bond_checker );
 // 	if ( it ==       path1.end() )             it = find_if(       path2.begin(),       path2.end(), bond_checker );
@@ -2553,7 +2569,7 @@ AtomTree::promote_sameresidue_nonjump_child( AtomID const & parent_atom_id )
 // 		}
 // 	}
 
-// 	Atom* moving_atom( atom_pointer_[ (*it)->atom_id() ] ); // get nonconst version
+// 	AtomOP moving_atom( atom_pointer_[ (*it)->atom_id() ] ); // get nonconst version
 // 	bool const moving_atom_on_path1( std::find( path1.begin(), path1.end(), *it ) != path1.end() );;
 
 // 	//// now figure out what transform we need to apply

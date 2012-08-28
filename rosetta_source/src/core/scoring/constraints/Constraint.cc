@@ -28,6 +28,9 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
+/// @details Auto-generated virtual destructor
+Constraint::~Constraint() {}
+
 Size
 Constraint::show_violations(
 	std::ostream & out,

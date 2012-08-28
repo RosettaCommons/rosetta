@@ -227,15 +227,15 @@ minimize_test()
 		Residue const & i_rsd( pose.residue(i) );
 		for ( Size ii = 1; ii<= i_rsd.natoms(); ++ii ) {
 
-			kinematics::tree::Atom const * current_atom ( & pose.atom_tree().atom( AtomID(ii,i) ) );
+			kinematics::tree::AtomCOP current_atom ( & pose.atom_tree().atom( AtomID(ii,i) ) );
 			if ( current_atom->is_jump() ) continue;
 
-			kinematics::tree::Atom const * stub_atom1( current_atom->input_stub_atom1() );
+			kinematics::tree::AtomCOP stub_atom1( current_atom->input_stub_atom1() );
 
 			if ( stub_atom1->is_jump() ) continue;
 
-			kinematics::tree::Atom const * stub_atom2( current_atom->input_stub_atom2() );
-			kinematics::tree::Atom const * stub_atom3( current_atom->input_stub_atom3() );
+			kinematics::tree::AtomCOP stub_atom2( current_atom->input_stub_atom2() );
+			kinematics::tree::AtomCOP stub_atom3( current_atom->input_stub_atom3() );
 
 			Real angle = numeric::dihedral_radians
 				( current_atom->xyz(), stub_atom1->xyz(),

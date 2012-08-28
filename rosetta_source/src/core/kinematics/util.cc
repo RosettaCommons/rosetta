@@ -65,7 +65,7 @@ static basic::Tracer TR( "core.kinematics.util");
 ///
 
 
-tree::Atom*
+tree::AtomOP
 add_atom(
 	int const atomno,
 	int const seqpos,
@@ -78,6 +78,7 @@ add_atom(
 
 	// create new atom
 	AtomOP const atom_p( add_jump_atom ? static_cast< Atom* >( new JumpAtom()) : static_cast< Atom* >(new BondedAtom()));
+	atom_p->set_weak_ptr_to_self( atom_p() );
 
 	// fill in the atom_ptr data
 	assert( atom_ptr[ atomno ] == 0 );
@@ -133,14 +134,15 @@ pick_loopy_cutpoint(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// helper function for setup_backrub_atom_tree
-tree::Atom *
+tree::AtomOP
 setup_cloned_atom(
-									tree::Atom const *, // old_atom,
-									utility::vector1< id::AtomID > const & // exclude
+	tree::AtomCOP, // old_atom,
+	utility::vector1< id::AtomID > const & // exclude
 )
 {
 	utility_exit_with_message("needs to be refactored to meet new tree-building guidelines");
 	tree::Atom* new_atom( new tree::BondedAtom() );
+	/// Remember to add a call here to new_atom->set_weak_ptr_to_self when this is refactored, if ever
 	/*
 	new_atom->parent(0);
 	new_atom->id ( old_atom->id () );
@@ -172,13 +174,13 @@ setup_cloned_atom(
 // 	/// get all inter-residue connections
 // 	utility::vector1< Edge
 
-tree::Atom*
+tree::AtomOP
 setup_backrub_atom_tree(
-												utility::vector1< AtomID >, // mainchain, // make our own local copy
-												AtomID const &, // downstream_id, // mainchain child of last mainchain atom
-												AtomPointer2D const &, // old_atom_pointer,
-												utility::vector1< std::pair< Size, Size > > const &, // edges,
-												Size const //first_new_pseudo_residue
+	utility::vector1< AtomID >, // mainchain, // make our own local copy
+	AtomID const &, // downstream_id, // mainchain child of last mainchain atom
+	AtomPointer2D const &, // old_atom_pointer,
+	utility::vector1< std::pair< Size, Size > > const &, // edges,
+	Size const //first_new_pseudo_residue
 )
 {
 
@@ -238,7 +240,7 @@ setup_backrub_atom_tree(
 
 		// what should our anchor atom be?
 		// look at all pseudo rsds associated to a
-		Atom * anchor_atom;
+		AtomOP anchor_atom;
 		Size anchor(0);
 		vector1< Size > const & pseudo_a( mainchain_to_pseudo[a] );
 		for ( Size i=1; i<= pseudo_a.size(); ++i ) {
@@ -256,7 +258,7 @@ setup_backrub_atom_tree(
 		}
 
 		// has b been seen before?
-		Atom const * old_b_atom( old_atom_pointer[ mainchain[b] ] );
+		AtomCOP old_b_atom( old_atom_pointer[ mainchain[b] ] );
 		if ( !seen[ b ] ) {
 			seen[b] = true;
 			// add b and b's non-mainchain children
@@ -298,12 +300,12 @@ setup_backrub_atom_tree(
 
 			if ( terminal ) {
 				int const dir( b<a ? 1 : -1 );
-				Atom * parent_atom( pseudo_b_atom );
+				AtomOP parent_atom( pseudo_b_atom );
 				for ( int c=b+dir; c != (int)a; c += dir ) {
 					assert( !seen[c] );
 
 					// add c and c's non-mainchain children
-					Atom const * old_c_atom( old_atom_pointer[ mainchain[c] ] );
+					AtomCOP old_c_atom( old_atom_pointer[ mainchain[c] ] );
 					Atom* c_atom( setup_cloned_atom( old_c_atom, mainchain ) );
 					parent_atom->insert_atom( c_atom ); // at front of list since this is mainchain. may have already added kids
 					mainchain_atom_pointer[ c ] = c_atom;
@@ -498,7 +500,7 @@ std::string pad_dash_right(Size npad, std::string s) {
 }
 
 struct Node {
-	Node(std::string _name, Size _jnum, Size _jumpfrom, Size _jumpto, char _jumpmark=(char)NULL, Size _follows=0) 
+	Node(std::string _name, Size _jnum, Size _jumpfrom, Size _jumpto, char _jumpmark=(char)NULL, Size _follows=0)
 		: name(_name), jnum(_jnum), jumpfrom(_jumpfrom), jumpto(_jumpto), prefix_len(8), follows(_follows), jumpmark(_jumpmark), parent(NULL) {}
 	~Node(){ for(utility::vector1<Node*>::iterator i = children.begin(); i != children.end(); ++i) delete *i; }
 	void setparent(Node *p) {
@@ -528,7 +530,7 @@ struct Node {
  			if(children.size()==1) pad += string(" ")*(name.size()+1);
 			replace_substr(news,"\n","\n"+vchar+pad);
 			if(children.size()==1) s +=      prefix+news;
-			else                   s += "\n"+prefix+news;			
+			else                   s += "\n"+prefix+news;
 		}
 		s = name + s;
 		return s;
@@ -537,7 +539,7 @@ struct Node {
 	Size jnum, jumpfrom, jumpto, prefix_len, follows;
 	char jumpmark;
 	Node *parent; // worried about cycles, no owning_ptr
-	utility::vector1<Node*> children; 
+	utility::vector1<Node*> children;
 };
 
 struct TreeVizBuilder {
@@ -546,7 +548,7 @@ struct TreeVizBuilder {
 
 	TreeVizBuilder(core::kinematics::FoldTree const & _ft) : ft(_ft) {
 		lb_.resize(ft.nres(),0);
-		ub_.resize(ft.nres(),0);		
+		ub_.resize(ft.nres(),0);
 	}
 
 	void get_ft_node_bounds(Size res, Size & out_lb, Size & out_ub) {
@@ -568,7 +570,7 @@ struct TreeVizBuilder {
 	}
 
 	Size is_single(Size res) {
-		Size lb,ub;	get_ft_node_bounds(res,lb,ub);		
+		Size lb,ub;	get_ft_node_bounds(res,lb,ub);
 		return lb==ub;
 	}
 
@@ -612,7 +614,7 @@ struct TreeVizBuilder {
 		if( ft.nres() >   99 ) npad = 3;
 		if( ft.nres() >  999 ) npad = 4;
 		if( ft.nres() > 9999 ) npad = 5;
-		npad = 0;		
+		npad = 0;
 		utility::vector1<std::string> names(ft.nres(),"ERROR_this_name_was_not_set");
 		for(Size i = 1; i <= ft.nres(); ++i) {
 			Size lb,ub;	get_ft_node_bounds(i,lb,ub);

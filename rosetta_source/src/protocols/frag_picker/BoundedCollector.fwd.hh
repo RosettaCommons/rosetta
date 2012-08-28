@@ -21,21 +21,17 @@
 namespace protocols {
 namespace frag_picker {
 
-/*
 template<class T, class StrictWeakOrdering>
 class BoundedPriorityQueue;
 
 template<class StrictWeakOrdering>
 class BoundedCollector;
 
-class StrictWeakOrdering;
+/*class StrictWeakOrdering;
 
-typedef utility::pointer::owning_ptr<BoundedCollector<StrictWeakOrdering> >
-		BoundedCollectorOP;
-typedef utility::pointer::owning_ptr<BoundedCollector<StrictWeakOrdering> const>
-		BoundedCollectorCOP;
-
-		*/
+typedef utility::pointer::owning_ptr< BoundedCollector< StrictWeakOrdering > > BoundedCollectorOP;
+typedef utility::pointer::owning_ptr< BoundedCollector< StrictWeakOrdering > const> BoundedCollectorCOP;
+*/
 
 } // frag_picker
 } // protocols

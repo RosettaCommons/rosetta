@@ -42,6 +42,8 @@ public:
 	typedef utility::vector1< DunbrackRotamerSampleData >      DunbrackRotamerSampleDataVector;
 
 public:
+	virtual ~ProteinSCSampler();
+
 	virtual
 	DunbrackRotamerSampleDataVector
 	samples(

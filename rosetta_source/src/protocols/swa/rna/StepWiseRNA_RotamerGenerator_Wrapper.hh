@@ -49,7 +49,7 @@ namespace rna {
 								bool const & sample_sugar_and_base1,
 								bool const & sample_sugar_and_base2 );
 
-	  ~StepWiseRNA_RotamerGenerator_Wrapper();
+	  virtual ~StepWiseRNA_RotamerGenerator_Wrapper();
 
 		bool has_another_rotamer() const;
 

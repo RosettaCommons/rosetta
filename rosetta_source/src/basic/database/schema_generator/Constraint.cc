@@ -25,6 +25,9 @@ namespace basic{
 namespace database{
 namespace schema_generator{
 
+/// @details Auto-generated virtual destructor
+Constraint::~Constraint() {}
+
 using std::string;
 using std::stringstream;
 using platform::Size;

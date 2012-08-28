@@ -44,6 +44,9 @@ namespace core{
 namespace chemical{
 namespace orbitals{
 
+/// @details Auto-generated virtual destructor
+OrbitalTypeSet::~OrbitalTypeSet() {}
+
 static basic::Tracer TR("core.chemical.orbitals");
 
 OrbitalTypeSet::OrbitalTypeSet(std::string const & directory)

@@ -35,7 +35,7 @@ namespace scoring {
 
 class SecondaryStructureWeights : public utility::pointer::ReferenceCount {
 
-	public: // construct/destruct
+public: // construct/destruct
 
 		/// @brief default constructor
 		inline
@@ -63,9 +63,8 @@ class SecondaryStructureWeights : public utility::pointer::ReferenceCount {
 		{}
 
 		/// @brief default destructor
-		inline
-		~SecondaryStructureWeights()
-		{}
+		virtual
+		~SecondaryStructureWeights();
 
 
 	public: // assignment

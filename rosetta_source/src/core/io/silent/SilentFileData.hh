@@ -323,9 +323,7 @@ public:
 	}
 
 	/// @brief Destructor.
-	virtual ~SilentFileData() {
-		clear_structure_map();
-	}
+	virtual ~SilentFileData();
 
 	/// @brief write all SilentStruct objects in the structure_map_ to the given
 	/// filename.

@@ -187,7 +187,7 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-class RotamerLibrary : public utility::pointer::ReferenceCount
+class RotamerLibrary // singleton -- no need to derive from RefCount : public utility::pointer::ReferenceCount
 {
 
 public:
@@ -196,7 +196,7 @@ public:
 	typedef chemical::ResidueType ResidueType;
 
 public:
-	~RotamerLibrary();
+	virtual ~RotamerLibrary();
 
 	Real
 	rotamer_energy(

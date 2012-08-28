@@ -57,6 +57,12 @@ namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
+/// @details Auto-generated virtual destructor
+EnzCstTemplateRes::~EnzCstTemplateRes() {}
+
+/// @details Auto-generated virtual destructor
+EnzCstTemplateResAtoms::~EnzCstTemplateResAtoms() {}
+
 
 void
 EnzCstTemplateResAtoms::remap_resid( core::id::SequenceMapping const & smap )

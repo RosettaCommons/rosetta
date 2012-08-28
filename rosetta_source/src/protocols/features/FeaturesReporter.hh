@@ -43,11 +43,13 @@
 #endif
 
 
-namespace protocols{
-namespace features{
+namespace protocols {
+namespace features {
 
 class FeaturesReporter : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~FeaturesReporter();
 
 	virtual
 	std::string

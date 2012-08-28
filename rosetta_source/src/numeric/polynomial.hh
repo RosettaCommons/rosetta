@@ -47,7 +47,7 @@ public:
 
 	Polynomial_1d(Polynomial_1d const & src );
 
-	~Polynomial_1d();
+	virtual ~Polynomial_1d();
 
 	std::string
 	name() const;

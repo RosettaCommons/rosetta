@@ -106,6 +106,8 @@ typedef core::Real rvec[3];
 DecoySetEvaluation::DecoySetEvaluation() : COM( 3 ),n_decoys_( 0 ), n_atoms_( 0 ), n_decoys_max_( 0 )
 {}
 
+DecoySetEvaluation::~DecoySetEvaluation() {}
+
 void DecoySetEvaluation::reserve( core::Size n_resize ) {
 	if ( n_resize == n_decoys_max_ ) return;
 	n_decoys_max_ = n_resize;

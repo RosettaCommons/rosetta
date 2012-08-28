@@ -57,7 +57,7 @@ public:
 	SequenceMapping( conformation::signals::LengthEvent const & event );
 
 	/// @brief dtor
-	~SequenceMapping();
+	virtual ~SequenceMapping();
 
 	/// @brief copy constructor
 	SequenceMapping( SequenceMapping const & src );

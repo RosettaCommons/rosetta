@@ -15,10 +15,11 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <map>
 
-namespace core{
-namespace chemical{
-namespace orbitals{
-class OrbitalTypeMapper : public utility::pointer::ReferenceCount
+namespace core {
+namespace chemical {
+namespace orbitals {
+
+class OrbitalTypeMapper
 {
 public:
 
@@ -43,10 +44,7 @@ private:
 	static OrbitalTypeMapper * instance_ ;
 	std::map<std::string, orbital_type_enum> orbital_type_2_enum_;
 
-
 };
-
-
 
 }
 }

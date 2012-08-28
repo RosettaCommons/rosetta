@@ -43,7 +43,7 @@ namespace rna {
 	// Constructor
 		StepWiseRNA_BaseCentroidScreener( core::pose::Pose const & pose, StepWiseRNA_JobParametersCOP & job_parameters );
 
-		~StepWiseRNA_BaseCentroidScreener();
+		virtual ~StepWiseRNA_BaseCentroidScreener();
 
 		bool
 		Update_base_stub_list_and_Check_centroid_interaction( core::pose::Pose const & pose , SillyCountStruct & count_data);

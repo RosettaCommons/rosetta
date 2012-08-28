@@ -37,6 +37,9 @@ using basic::Tracer;
 namespace protocols {
 namespace rotamer_recovery {
 
+/// @details Auto-generated virtual destructor
+RRProtocol::~RRProtocol() {}
+
 static Tracer TR("protocol.moves.RRProtocol");
 
 bool

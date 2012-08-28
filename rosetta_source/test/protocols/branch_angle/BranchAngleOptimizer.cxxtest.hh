@@ -66,8 +66,8 @@ optimize_atom_tree(
 	BranchAngleOptimizer & branchopt,
 	std::ostream & out,
 	Pose & pose,
-	kinematics::tree::Atom const * main_atom1 = NULL,
-	kinematics::tree::Atom const * center_atom = NULL
+	kinematics::tree::AtomCOP main_atom1 = NULL,
+	kinematics::tree::AtomCOP center_atom = NULL
 )
 {
 	if (!main_atom1 && !center_atom) {
@@ -76,7 +76,7 @@ optimize_atom_tree(
 
 	if (center_atom) {
 
-		kinematics::tree::Atom const * const main_atom2(center_atom->get_nonjump_atom(0));
+		kinematics::tree::AtomCOP const main_atom2(center_atom->get_nonjump_atom(0));
 
 		if (main_atom2) {
 
@@ -162,9 +162,9 @@ public:
 		id::AtomID branch_atomid1;
 		id::AtomID branch_atomid2;
 
-		kinematics::tree::Atom const * atom1(the_pose->atom_tree().root());
-		kinematics::tree::Atom const * atom2(atom1->child(1));
-		kinematics::tree::Atom const * atom3(atom2->child(0));
+		kinematics::tree::AtomCOP atom1(the_pose->atom_tree().root());
+		kinematics::tree::AtomCOP atom2(atom1->child(1));
+		kinematics::tree::AtomCOP atom3(atom2->child(0));
 
 		while (atom3) {
 			UT << "Branching atoms for" << atom1->id() << "->" << atom2->id() << "->" << atom3->id() << ":" << std::endl;

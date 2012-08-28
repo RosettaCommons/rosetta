@@ -23,9 +23,12 @@
 #include <utility/vector1.hh>
 
 
-namespace protocols{
-namespace forge{
-namespace remodel{
+namespace protocols {
+namespace forge {
+namespace remodel {
+
+/// @details Auto-generated virtual destructor
+RemodelConstraintGenerator::~RemodelConstraintGenerator() {}
 
 
 RemodelConstraintGenerator::RemodelConstraintGenerator()

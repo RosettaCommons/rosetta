@@ -24,6 +24,12 @@
 namespace protocols {
 namespace qsar {
 
+/// @details Auto-generated virtual destructor
+qsarMap::~qsarMap() {}
+
+/// @details Auto-generated virtual destructor
+qsarPoint::~qsarPoint() {}
+
 static basic::Tracer qsarMapTracer("protocols.qsar.qsarMap");
 
 

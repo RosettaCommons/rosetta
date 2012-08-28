@@ -70,7 +70,7 @@ public:
 		return func_;
 	}
 
-	~FourAtomsConstraintData();
+	virtual ~FourAtomsConstraintData();
 private:
 	core::scoring::constraints::FuncOP func_;
 	Size first_atom_;

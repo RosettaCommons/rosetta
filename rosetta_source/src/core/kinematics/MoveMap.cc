@@ -41,6 +41,9 @@ using namespace ObjexxFCL::fmt;
 namespace core {
 namespace kinematics {
 
+/// @details Auto-generated virtual destructor
+MoveMap::~MoveMap() {}
+
 void MoveMap::set_ranges_unmodifiable(const std::vector<std::pair<Size, Size> >& ranges) {
 	using std::pair;
 	using std::vector;

@@ -61,7 +61,7 @@ public:
 
 	GridSearchIterator(); //Construct
 
-	~GridSearchIterator(); //Destruct
+	virtual ~GridSearchIterator(); //Destruct
 
 	GridSearchIterator(GridSearchIterator const & other); //copy
 

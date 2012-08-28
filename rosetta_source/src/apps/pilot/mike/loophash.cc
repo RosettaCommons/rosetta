@@ -44,6 +44,7 @@
 
 #include <devel/init.hh>
 #include <protocols/relax/FastRelax.hh>
+#include <protocols/relax/FastRelax.fwd.hh>
 #include <protocols/match/Hit.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <utility/exit.hh>
@@ -199,7 +200,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
     TR.Info << "Loophash apply function ! " << std::endl;
 
     //protocols::relax::FastRelax *qrelax = new protocols::relax::FastRelax( fascorefxn, 1 );
-    protocols::relax::FastRelax *relax = new protocols::relax::FastRelax( fascorefxn,  option[ OptionKeys::relax::sequence_file ]() );
+    protocols::relax::FastRelaxOP relax = new protocols::relax::FastRelax( fascorefxn,  option[ OptionKeys::relax::sequence_file ]() );
 
     // convert pose to centroid pose:
     core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID);

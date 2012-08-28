@@ -47,17 +47,16 @@ public:
 
 	virtual ~QuotaPool() {};
 
-	virtual bool could_be_accepted(ScoredCandidate) = 0;
-
+	virtual bool could_be_accepted(ScoredCandidate) const = 0;
 
 	/// @brief Says how many fragments (in total) may fit into this pool
-	virtual Size total_size()  = 0;
+	virtual Size total_size() const = 0;
 
 	/// @brief Says how many fragments are currently in this pool
-	virtual Size current_size() = 0;
+	virtual Size current_size() const = 0;
 
 	/// @brief Says how many fragments can still be inserted into this pool
-	virtual Size size_left() = 0;
+	virtual Size size_left() const = 0;
 
 	/// @brief Makes the pool empty by removing all candidates
 	virtual void clear() = 0;
@@ -68,22 +67,23 @@ public:
 	/// @brief  Check how many candidates have been already collected for a given position
 	/// @detailed This is a very special case - collector will be used only for a given position.
 	/// Thus it returns the total number of inserted candidates, as count_candidates() does
-	virtual Size count_candidates() = 0;
+	virtual Size count_candidates() const = 0;
 
 	/// @brief returns the name assigned to this quota pool
-	inline std::string &  get_pool_name()  {
-
+	inline
+	std::string const &
+	get_pool_name() const  {
 	  return pool_name_;
 	}
 
 	/// @brief prints information on which fragments can be accepted by this pool and how many of them
 	/// @detailed base class' impementation says the capacity that has left
-	virtual void show_availability(std::ostream & where) {
+	virtual void show_availability(std::ostream & where) const {
 		where << pool_name_<<" : "<< size_left()<<std::endl;
 	}
 
 	/// @brief returns the fraction of this quota pool in the entire population of fragments
-	Real get_fraction() { return quota_fraction_; }
+	Real get_fraction() const { return quota_fraction_; }
 
 	/// @brief Sets the fraction of this quota pool in the entire population of fragments
 	virtual void set_fraction(Real new_fraction) { quota_fraction_ = new_fraction; }

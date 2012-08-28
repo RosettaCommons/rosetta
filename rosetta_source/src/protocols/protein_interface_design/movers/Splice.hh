@@ -46,7 +46,7 @@ class BBDofs : public utility::pointer::ReferenceCount
 		void psi( core::Real const p ){ psi_ = p; }
 		void omega( core::Real const o ){ omega_ = o; }
 		void resn( std::string const r ){ resn_ = r; }
-		~BBDofs();
+		virtual ~BBDofs();
 	private:
 		core::Size resid_; /// this is currently not used in splice
 		core::Real phi_, psi_, omega_;
@@ -63,7 +63,7 @@ class ResidueBBDofs : public utility::pointer::ReferenceCount
 		typedef bbdof_list::const_iterator const_iterator;
 
 		ResidueBBDofs() : cut_site_( 0 ), start_loop_( 0 ), stop_loop_( 0 ) { clear(); }
-		~ResidueBBDofs();
+		virtual ~ResidueBBDofs();
 		void cut_site( core::Size const c ){ cut_site_ = c; }
 		core::Size cut_site() const { return cut_site_; }
 		void clear() { bbdofs_.clear(); }

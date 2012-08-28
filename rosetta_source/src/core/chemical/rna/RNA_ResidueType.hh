@@ -47,7 +47,7 @@ class RNA_ResidueType : public utility::pointer::ReferenceCount {
 
 	RNA_ResidueType();
 
-	~RNA_ResidueType();
+	virtual ~RNA_ResidueType();
 
 	///////////////////////////Implemented for fast lookup! Parin Sripakdeevong, June 25th, 2011//////////////////
 	private:

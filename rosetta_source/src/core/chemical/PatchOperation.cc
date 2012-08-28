@@ -35,6 +35,9 @@
 namespace core {
 namespace chemical {
 
+/// @details Auto-generated virtual destructor
+PatchOperation::~PatchOperation() {}
+
 static basic::Tracer tr("core.chemical");
 
 /// helper function

@@ -56,6 +56,7 @@ public:
 		weights_.push_back( 1.0 );
 		upper_bound(10);
 	}
+	virtual ~SOGFunc_Impl();
 
 	/// @brief Returns the value of this SOGFunc_Impl evaluated at distance x.
 	Real func( Real const x ) const;

@@ -47,7 +47,7 @@ bool QuotaCollector::add(std::pair<FragmentCandidateOP, scores::FragmentScoreMap
     return if_inserted;
 }
 
-void QuotaCollector::list_pools(std::ostream & where) {
+void QuotaCollector::list_pools(std::ostream & where) const {
 
     for(Size i=1;i<storage_.size();++i) {
 	where << std::setw(3) << i;
@@ -66,7 +66,7 @@ void QuotaCollector::clear() {
 	    storage_[i][j]->clear();
 }
 
-Size QuotaCollector::count_candidates(Size pos) {
+Size QuotaCollector::count_candidates(Size pos) const {
 
     Size cnt = 0;
     for(Size j=1;j<storage_[pos].size();++j)
@@ -75,7 +75,7 @@ Size QuotaCollector::count_candidates(Size pos) {
     return cnt;
 }
 
-Size QuotaCollector::count_candidates() {
+Size QuotaCollector::count_candidates() const {
 	Size cnt = 0;
 	for(Size i=1;i<=storage_.size();++i)
 		for(Size j=1;j<storage_[i].size();++j)
@@ -85,9 +85,10 @@ Size QuotaCollector::count_candidates() {
 }
 
 	/// @brief Describes what has been collected
-void QuotaCollector::print_report(std::ostream & output,
+void QuotaCollector::print_report(
+	std::ostream & output,
 	scores::FragmentScoreManagerOP //scoring
-) {
+) const {
 
 	using namespace ObjexxFCL::fmt;
 
@@ -131,8 +132,15 @@ void QuotaCollector::renormalize_quota_pools() {
 }
 
 
-void QuotaCollector::attach_secondary_structure_pools(Real prediction_fraction,core::fragment::SecondaryStructureOP prediction,
-	std::string name, Size n_candidates, utility::vector1<Size> components,utility::vector1<Real> weights,Size n_scores) {
+void QuotaCollector::attach_secondary_structure_pools(
+	Real prediction_fraction,
+	core::fragment::SecondaryStructureOP prediction,
+	std::string name,
+	Size n_candidates,
+	utility::vector1<Size> components,
+	utility::vector1<Real> weights,
+	Size n_scores
+) {
 
     Size n;
     Real f;

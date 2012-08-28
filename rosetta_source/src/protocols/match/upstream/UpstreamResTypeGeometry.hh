@@ -54,6 +54,8 @@ namespace upstream {
 class UpstreamResTypeGeometry : public utility::pointer::ReferenceCount
 {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~UpstreamResTypeGeometry();
 	typedef core::Size                            Size;
 	typedef core::Real                            Real;
 	typedef core::Vector                          Vector;

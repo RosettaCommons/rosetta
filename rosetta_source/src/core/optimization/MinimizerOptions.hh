@@ -31,6 +31,8 @@ namespace optimization {
 class MinimizerOptions : public utility::pointer::ReferenceCount {
 
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~MinimizerOptions();
 	/////////////////////////////////////////////////////////////////////////////
 	// c-tor's -- might want to add a number of c-tors or a string-switched
 	// c-tor to replicate the dependence of, eg, xx_init on the current

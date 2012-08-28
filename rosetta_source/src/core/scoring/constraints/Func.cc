@@ -34,6 +34,9 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
+/// @details Auto-generated virtual destructor
+Func::~Func() {}
+
 void
 Func::read_data( std::istream& ) {
 	 basic::Tracer tr("core.scoring.constraints.Func" );

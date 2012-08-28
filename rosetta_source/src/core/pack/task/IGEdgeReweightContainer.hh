@@ -45,6 +45,7 @@ class IGEdgeReweighter : public utility::pointer::ReferenceCount {
 
 public:
 	IGEdgeReweighter() : default_weight_(1.0) {}
+	virtual ~IGEdgeReweighter();
 
 	virtual
 	Real
@@ -70,6 +71,7 @@ class IGEdgeReweightContainer : public utility::pointer::ReferenceCount {
 public:
 
 	IGEdgeReweightContainer(Size nres );
+	virtual ~IGEdgeReweightContainer();
 
 	Real res_res_weight(
 		pose::Pose const & pose,

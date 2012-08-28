@@ -55,7 +55,7 @@ public:
 };
 
 
-class FilterFactory : public utility::pointer::ReferenceCount
+class FilterFactory // singletons need not derive from RefCount : public utility::pointer::ReferenceCount
 {
 public:
 	typedef std::map< std::string, FilterCreatorOP > FilterMap;

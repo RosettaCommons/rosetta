@@ -5,6 +5,9 @@
 namespace devel {
 namespace optest {
 
+/// @details Auto-generated virtual destructor
+B2::~B2() {}
+
 
 /*
 WARNING.  Changing from an instance to a pointer changes the semantics of these

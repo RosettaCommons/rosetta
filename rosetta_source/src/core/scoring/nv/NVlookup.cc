@@ -36,6 +36,9 @@ namespace core {
 namespace scoring {
 namespace nv {
 
+/// @details Auto-generated virtual destructor
+NVlookup::~NVlookup() {}
+
 using namespace numeric::interpolation::spline;
 
 void NVlookup::set_up_spline_from_data(core::chemical::AA const & aa_type, utility::vector1<core::Real> const & bin_centers, utility::vector1<core::Real> const & data)

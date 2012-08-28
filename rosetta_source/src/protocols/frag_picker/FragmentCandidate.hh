@@ -62,7 +62,7 @@ public:
 		pool_name_ = NULL;
 	}
 
-	~FragmentCandidate() { delete pool_name_; }
+	virtual ~FragmentCandidate() { delete pool_name_; }
 
 	/// @brief returns a pointer to the original chunk from vall the fragment comes from
 	inline VallChunkOP get_chunk() const {
@@ -134,7 +134,7 @@ public:
 
 	inline FragDataOP get_frag_data() {
 
-		AnnotatedFragData * fragdata = new AnnotatedFragData(get_pdb_id(),
+		AnnotatedFragDataOP fragdata = new AnnotatedFragData(get_pdb_id(),
 				queryResidueIndex_);
 
 		for (Size i = 1; i <= fragmentLength_; ++i) {

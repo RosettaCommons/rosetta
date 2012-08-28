@@ -117,6 +117,9 @@
 namespace devel {
 namespace znhash {
 
+/// @details Auto-generated virtual destructor
+FindZnCoordinatingResidues::~FindZnCoordinatingResidues() {}
+
 static basic::Tracer TR("devel.znhash.SymmZnMoversAndTaskOps");
 
 InitializeZNCoordinationConstraintMover::InitializeZNCoordinationConstraintMover() :

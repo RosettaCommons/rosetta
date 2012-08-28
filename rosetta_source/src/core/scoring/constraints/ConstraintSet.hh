@@ -63,6 +63,8 @@ namespace constraints {
 
 class ResidueConstraints : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~ResidueConstraints();
 	typedef std::map< Size, ConstraintsOP > Map;
 	typedef Map::const_iterator const_iterator;
 	typedef Map::iterator iterator;
@@ -156,7 +158,7 @@ public:
 		core::Size end_residue
 	);
 	/// @brief Destructor so far only detaches from conformation
-	~ConstraintSet() { this->detach_from_conformation(); }
+	virtual ~ConstraintSet() { this->detach_from_conformation(); }
 
 	virtual ConstraintSetOP clone() const;
 

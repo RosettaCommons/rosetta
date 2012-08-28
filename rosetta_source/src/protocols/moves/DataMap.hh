@@ -44,7 +44,7 @@ public:
 
 public:
 	DataMap();
-	~DataMap();
+	virtual ~DataMap();
 	iterator begin();
 	iterator end();
 	const_iterator begin() const;

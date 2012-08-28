@@ -153,6 +153,7 @@ protected:
 
 public:
   PocketGrid();
+	virtual ~PocketGrid();
   PocketGrid(const PocketGrid& gr);
   PocketGrid& operator= (const PocketGrid& gr);
 
@@ -164,8 +165,6 @@ public:
   PocketGrid( core::Real const & xc, core::Real const & yc, core::Real const & zc, core::Real x, core::Real const & stepSize=1, bool psp=false, bool sps=false);
   PocketGrid( core::Vector const & center, core::Real x, core::Real const & stepSize=1, bool psp=false, bool sps=false);
   PocketGrid( core::Vector const & center, core::Real const & x, core::Real const & y, core::Real const & z, core::Real const & stepSize=1, bool psp=false, bool sps=false);
-
-  ~PocketGrid() {};
 
   void initialize( core::Real const & xc, core::Real const & yc, core::Real const & zc, core::Real const size_x, core::Real const size_y, core::Real const size_z, core::Real const & stepSize=1, bool psp=false, bool sps=false);
 

@@ -102,7 +102,7 @@ void BBTorsionSRFDTest::test_cartesian_coordinates_iter() {
 
 	for (FrameIterator i = fragments_->begin(); i != fragments_->end(); ++i) {
 		// foreach frame (P)
-		const Frame* frame = *i;
+		FrameCOP frame = *i;
 		Size fragment_length = frame->length();
 
 		for (Size j = 1; j <= frame->nr_frags(); ++j) {
@@ -115,7 +115,7 @@ void BBTorsionSRFDTest::test_cartesian_coordinates_iter() {
 
 				// explicit typecast required-- base class lacks accessors
 				// for Cartesian coordinates
-				BBTorsionSRFD* residue = (BBTorsionSRFD*) entry();
+				BBTorsionSRFDCOP residue = static_cast< BBTorsionSRFD const * > (entry());
         Real x = residue->x();
         Real y = residue->y();
 				Real z = residue->z();
@@ -142,7 +142,7 @@ void BBTorsionSRFDTest::test_cartesian_coordinates() {
 	// fragment() to get the polymorphic behavior desired below.
 	FragDataCOP data = id.fragment_ptr();
 	SingleResidueFragDataCOP residue = data->get_residue(1);
-	BBTorsionSRFD* derived_residue = (core::fragment::BBTorsionSRFD*) residue();
+	BBTorsionSRFDCOP derived_residue = static_cast< core::fragment::BBTorsionSRFD const * > (residue());
 
 	// Check pdb id and chain. Generally speaking, you cannot assume that pdbid() and chain()
 	// have been populated with their correct values. This owes to the myriad ways one can read

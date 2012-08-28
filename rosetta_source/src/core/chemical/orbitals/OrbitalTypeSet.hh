@@ -53,6 +53,8 @@ class OrbitalTypeSet : public utility::pointer::ReferenceCount {
 
 
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~OrbitalTypeSet();
 	OrbitalTypeSet(std::string const & directory);
 
 	void read_file(std::string const & filename);

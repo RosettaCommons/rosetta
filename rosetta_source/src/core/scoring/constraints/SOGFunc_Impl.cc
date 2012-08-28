@@ -31,6 +31,8 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
+SOGFunc_Impl::~SOGFunc_Impl() {}
+
 void
 SOGFunc_Impl::read_data( std::istream & in ) {
 	Size n_funcs;

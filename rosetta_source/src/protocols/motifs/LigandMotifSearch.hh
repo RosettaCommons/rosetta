@@ -64,7 +64,7 @@ public:
 	LigandMotifSearch();
 
 	// Destructor
-	~LigandMotifSearch();
+	virtual ~LigandMotifSearch();
 
 	// Copy constructor
 	LigandMotifSearch(

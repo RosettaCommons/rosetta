@@ -287,7 +287,7 @@ private:
 	update_residue_maps();
 
 	void
-	add_residue_type_to_maps( ResidueType & rsd );
+	add_residue_type_to_maps( ResidueTypeOP rsd );
 
 
 

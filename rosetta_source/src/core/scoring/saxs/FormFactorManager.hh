@@ -33,7 +33,7 @@ namespace scoring {
 namespace saxs {
 
 /// @brief selects a given number of fragments using a quota scheme
-class FormFactorManager: public utility::pointer::ReferenceCount {
+class FormFactorManager {
 public:
 
 	/// @brief return singleton of the manager
@@ -55,7 +55,7 @@ public:
 	Size count_ff() { return ff_vector_.size(); }
 
 	/// @brief returns form factor function for a given atom
-	FormFactorOP get_ff(std::string atom_name); 
+	FormFactorOP get_ff(std::string atom_name);
 
 	/// @brief returns a vector of know atom names
 	utility::vector1<std::string> get_known_atoms() {
@@ -71,10 +71,10 @@ public:
 	    } else
 		return 0;
 	}
-	
+
 	/// @brief asks all the registered form factors to tabulate their values for the new vector of q-arguments
 	void tabulate(const utility::vector1<Real> & q) {
-	
+
 	    for(Size i=1;i<=ff_vector_.size();++i)  ff_vector_[i]->tabulate(q);
 	}
 

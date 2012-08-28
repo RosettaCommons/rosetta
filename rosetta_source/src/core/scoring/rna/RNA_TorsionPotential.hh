@@ -47,11 +47,11 @@ class RNA_TorsionPotential : public utility::pointer::ReferenceCount
 
 public:
 	RNA_TorsionPotential();
-	~RNA_TorsionPotential() {}
+	virtual ~RNA_TorsionPotential() ; // auto-removing definition from header{}
 
 
 	//	void update_constraints( pose::Pose & pose ) const;
-	Real 
+	Real
 	eval_intrares_energy(
 											 core::conformation::Residue const & rsd,
 											 pose::Pose const & pose
@@ -120,8 +120,8 @@ private:
 
 	core::scoring::constraints::FuncOP alpha_potential_, beta_potential_, gamma_potential_, delta_north_potential_,
 	delta_south_potential_, epsilon_north_potential_, epsilon_south_potential_, zeta_alpha_sc_minus_potential_,
-	zeta_alpha_sc_plus_potential_, zeta_alpha_ap_potential_, nu2_north_potential_, nu2_south_potential_, 
-	nu1_north_potential_, nu1_south_potential_, chi_north_potential_others_, chi_south_potential_others_, 
+	zeta_alpha_sc_plus_potential_, zeta_alpha_ap_potential_, nu2_north_potential_, nu2_south_potential_,
+	nu1_north_potential_, nu1_south_potential_, chi_north_potential_others_, chi_south_potential_others_,
 	chi_north_potential_guanosine_, chi_south_potential_guanosine_, chi_purine_north_potential_, chi_purine_south_potential_,
 	chi_pyrimidine_north_potential_, chi_pyrimidine_south_potential_;
 

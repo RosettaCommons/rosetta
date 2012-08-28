@@ -19,6 +19,9 @@
 namespace protocols {
 namespace nonlocal {
 
+/// @details Auto-generated virtual destructor
+Region::~Region() {}
+
 Region::Region(core::Size start_pos, core::Size stop_pos)
   : start_(start_pos), stop_(stop_pos) {}
 

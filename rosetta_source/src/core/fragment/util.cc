@@ -80,7 +80,7 @@ using namespace ObjexxFCL::fmt;
 
 void retain_top(core::Size k, FragSetOP fragments) {
 	for (FrameIterator i = fragments->begin(); i != fragments->end(); ++i) {
-		Frame* existing_frame = *i;
+		FrameOP existing_frame = *i;
 
 		// create a new frame containing only the desired fragments
 		Frame new_frame(existing_frame->start(),
@@ -649,10 +649,10 @@ void make_pose_from_frags( pose::Pose & pose, std::string sequence, utility::vec
 	for (Size i = 1; i <= frags.size(); ++i) {
 		FragDataCOP frag = frags[i];
 		// Construct stubs from the 3 central CA atoms
-		Size central_residue = static_cast<Size>(ceil(frag->size() / 2.0));
-		const BBTorsionSRFD* f1 = reinterpret_cast<const BBTorsionSRFD*>(frag->get_residue(central_residue - 1)());
-		const BBTorsionSRFD* f2 = reinterpret_cast<const BBTorsionSRFD*>(frag->get_residue(central_residue)());
-		const BBTorsionSRFD* f3 = reinterpret_cast<const BBTorsionSRFD*>(frag->get_residue(central_residue + 1)());
+		Size central_residue = static_cast< Size >(ceil(frag->size() / 2.0));
+		BBTorsionSRFDCOP f1 = reinterpret_cast< BBTorsionSRFD const * >(frag->get_residue(central_residue - 1)());
+		BBTorsionSRFDCOP f2 = reinterpret_cast< BBTorsionSRFD const * >(frag->get_residue(central_residue)());
+		BBTorsionSRFDCOP f3 = reinterpret_cast< BBTorsionSRFD const * >(frag->get_residue(central_residue + 1)());
 		numeric::xyzVector<Real> fa1(f1->x(), f1->y(), f1->z());
 		numeric::xyzVector<Real> fa2(f2->x(), f2->y(), f2->z());
 		numeric::xyzVector<Real> fa3(f3->x(), f3->y(), f3->z());

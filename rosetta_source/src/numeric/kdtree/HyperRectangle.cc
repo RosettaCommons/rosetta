@@ -22,6 +22,9 @@
 namespace numeric {
 namespace kdtree {
 
+/// @details Auto-generated virtual destructor
+HyperRectangle::~HyperRectangle() {}
+
 HyperRectangle::HyperRectangle() {}
 
 HyperRectangle::HyperRectangle(

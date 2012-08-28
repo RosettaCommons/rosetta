@@ -85,6 +85,9 @@ using namespace ObjexxFCL;
 namespace protocols {
 namespace jumping {
 
+/// @details Auto-generated virtual destructor
+BaseDisulfPairingLibrary::~BaseDisulfPairingLibrary() {}
+
 static numeric::random::RandomGenerator RG(12345);  // <- Magic number, do not change it, huaah hah ha!
 	// P.S. I GOT DIBBS ON 12345 SO IT IS ALL MINE - Robert
 

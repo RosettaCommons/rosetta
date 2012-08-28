@@ -33,6 +33,9 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
+/// @details Auto-generated virtual destructor
+Constraints::~Constraints() {}
+
 Constraints::Constraints()
 {}
 

@@ -412,10 +412,9 @@ ResidueTypeSet::update_residue_maps()
 
 	assert( residue_types_const_.empty() );
 
-	for ( 	ResidueTypeOPs::iterator rsdtype_it(residue_types_.begin() ), rsdtype_end( residue_types_.end() );
+	for ( ResidueTypeOPs::iterator rsdtype_it(residue_types_.begin() ), rsdtype_end( residue_types_.end() );
 			rsdtype_it != rsdtype_end; ++rsdtype_it ) {
-	//for ( Residue int ires=1; ires<= nres; ++ires ) {  ///TODO Use an iterator
-		ResidueType & rsd( **rsdtype_it );
+		ResidueTypeOP rsd( *rsdtype_it );
 		add_residue_type_to_maps( rsd );
 	}
 	aas_defined_.sort();
@@ -423,40 +422,38 @@ ResidueTypeSet::update_residue_maps()
 }
 
 void
-ResidueTypeSet::add_residue_type_to_maps( ResidueType & rsd )
+ResidueTypeSet::add_residue_type_to_maps( ResidueTypeOP rsd_ptr )
 {
-	ResidueType const * rsd_ptr = &rsd;
 
-	residue_types_const_.push_back( rsd_ptr );
+	residue_types_const_.push_back( rsd_ptr() );
 
 	// name should be unique!
-	if ( name_map_.count( rsd.name() ) ) {
+	if ( name_map_.count( rsd_ptr->name() ) ) {
 		std::stringstream err_msg;
-		err_msg << "Attempting to add a residue type with name '" + rsd.name() + "' ";
+		err_msg << "Attempting to add a residue type with name '" + rsd_ptr->name() + "' ";
 		err_msg << "but this name is already taken." << std::endl;
 		err_msg << "Please check your residue parameter files." << std::endl;
 		utility_exit_with_message(err_msg.str());
 	}
-	name_map_[ rsd.name() ] = rsd_ptr;
-	nonconst_name_map_[ rsd.name() ] = &rsd;
-
+	name_map_[ rsd_ptr->name() ] = rsd_ptr();
+	nonconst_name_map_[ rsd_ptr->name() ] = rsd_ptr;
 
 	// map by AA
-	if ( rsd.aa() != aa_unk ) {
-		aa_map_[ rsd.aa() ].push_back( rsd_ptr );
+	if ( rsd_ptr->aa() != aa_unk ) {
+		aa_map_[ rsd_ptr->aa() ].push_back( rsd_ptr() );
 	}
 
 	// add aa type
-	aas_defined_.push_back( rsd.aa() );
+	aas_defined_.push_back( rsd_ptr->aa() );
 
 	// map by pdb string
-	name3_map_[ rsd.name3() ].push_back( rsd_ptr );
+	name3_map_[ rsd_ptr->name3() ].push_back( rsd_ptr() );
 
 	// For specialty amino acids, add them to the name three maps both with their PDB strings and
 	// with their specialty string -- the first three letters of the residue name.
 	// E.g. CYD will appear in both lists for name3_map_[ "CYS" ] and name3_map_[ "CYD" ]
-	if ( rsd.name3() != rsd.name().substr(0,3) ) {
-		name3_map_[ rsd.name().substr(0,3) ].push_back( rsd_ptr );
+	if ( rsd_ptr->name3() != rsd_ptr->name().substr(0,3) ) {
+		name3_map_[ rsd_ptr->name().substr(0,3) ].push_back( rsd_ptr() );
 	}
 
 }
@@ -627,7 +624,7 @@ ResidueTypeSet::add_residue_type( ResidueTypeOP new_type )
 		add_orbitals_to_residue.assign_orbitals();
 	}
 	residue_types_.push_back( new_type );
-	add_residue_type_to_maps( *new_type );
+	add_residue_type_to_maps( new_type );
 	aas_defined_.sort();
 	aas_defined_.unique();
 }

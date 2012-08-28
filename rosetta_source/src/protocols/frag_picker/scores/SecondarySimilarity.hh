@@ -33,6 +33,10 @@ namespace scores {
 
 typedef utility::vector1<utility::vector1<Real> > Matrix;
 
+class SecondarySimilarity;
+typedef utility::pointer::owning_ptr< SecondarySimilarity > SecondarySimilarityOP;
+typedef utility::pointer::owning_ptr< SecondarySimilarity const > SecondarySimilarityCOP;
+
 /// @brief  scores a fragment by secondary structure similarity
 /// @detail The score for each position is P(H), P(L) or P(E) if
 /// a vall residue is within Helix, Loop or Extended secondary stucture element, respectively.

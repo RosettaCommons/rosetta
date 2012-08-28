@@ -41,6 +41,7 @@ namespace protocols {
 namespace moves {
 
 /// WhileMover
+PoseCondition::~PoseCondition() {}
 
 WhileMover::WhileMover() : Mover(), nmoves_(1) {}
 

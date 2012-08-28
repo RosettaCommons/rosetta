@@ -45,6 +45,8 @@ Size ss_index(char);
 /// @brief represents a single pool used by quota selector
 class ABEGO_SS_Map : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~ABEGO_SS_Map();
 
 	ABEGO_SS_Map(utility::vector1< std::pair<Size,Size> >);
 

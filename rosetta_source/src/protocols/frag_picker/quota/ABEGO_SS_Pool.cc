@@ -79,7 +79,7 @@ ABEGO_SS_Pool::ABEGO_SS_Pool(Size total_size,std::string pool_name,
 
 ABEGO_SS_Pool::~ABEGO_SS_Pool() {}
 
-bool ABEGO_SS_Pool::could_be_accepted(ScoredCandidate candidate) {
+bool ABEGO_SS_Pool::could_be_accepted(ScoredCandidate candidate) const {
 
 	VallResidueOP r = candidate.first->get_middle_residue();
 	Size abego_bin = torsion2big_bin_id(r->phi(),r->psi(),r->omega());
@@ -96,9 +96,11 @@ bool ABEGO_SS_Pool::add(ScoredCandidate candidate) {
 	return false;
 }
 
-void ABEGO_SS_Pool::print_report(std::ostream & out, scores::FragmentScoreManagerOP //manager
-	    ) {
-
+void ABEGO_SS_Pool::print_report(
+	std::ostream & out,
+	scores::FragmentScoreManagerOP //manager
+) const
+{
 	out << get_pool_name() << " collected "<<current_size()<<std::endl;
 }
 

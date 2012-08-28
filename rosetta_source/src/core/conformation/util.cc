@@ -1620,7 +1620,7 @@ promote_sameresidue_child_of_jump_atom(
 	kinematics::Edge const & edge,
 	conformation::ResidueCAPs const & residues,
 	kinematics::AtomTree & atom_tree
-	)
+)
 {
 	assert( edge.is_jump() );
 	Size root_pos( edge.stop() ), anchor_atomno, root_atomno;
@@ -1634,16 +1634,16 @@ promote_sameresidue_child_of_jump_atom(
 	kinematics::Edge const & edge,
 	conformation::ResidueCAPs const & residues,
 	kinematics::AtomPointer2D const & atom_pointer
-	)
+)
 {
 	assert( edge.is_jump() );
 	Size root_pos( edge.stop() ), anchor_atomno, root_atomno;
 	get_anchor_and_root_atoms( *residues[ edge.start() ], *residues[ root_pos ], edge, anchor_atomno, root_atomno );
-	kinematics::tree::Atom * root_atom( atom_pointer[ id::AtomID( root_atomno, root_pos ) ]() );
+	kinematics::tree::AtomOP root_atom( atom_pointer[ id::AtomID( root_atomno, root_pos ) ]() );
 	assert( root_atom->is_jump() );
-	kinematics::tree::Atom * same_residue_child( 0 );
+	kinematics::tree::AtomOP same_residue_child( 0 );
 	for ( Size i=0; i< root_atom->n_nonjump_children(); ++i ) {
-		kinematics::tree::Atom * child( atom_pointer[ root_atom->get_nonjump_atom( i )->id() ]() ); // want nonconst, use atom_pointer
+		kinematics::tree::AtomOP child( atom_pointer[ root_atom->get_nonjump_atom( i )->id() ]() ); // want nonconst, use atom_pointer
 		if ( Size(child->id().rsd()) == root_pos ) {
 			same_residue_child = child;
 			break;

@@ -32,6 +32,7 @@ class RowDataBase : public utility::pointer::ReferenceCount {
 public:
 
 	RowDataBase(std::string const & column_name);
+	virtual ~RowDataBase();
 
 	std::string get_column_name() const;
 	virtual void bind_data(platform::Size const & index, cppdb::statement & statement) = 0;

@@ -42,6 +42,8 @@ namespace operation {
 class TaskOperationCreator : public utility::pointer::ReferenceCount
 {
 public:
+	virtual ~TaskOperationCreator() {}
+
 	/// @brief Instantiate a new TaskOperation
 	virtual TaskOperationOP create_task_operation() const = 0;
 	virtual std::string keyname() const = 0;

@@ -56,7 +56,7 @@ public: // constructor/destructor
 	SelectResiduesByLayer( String const pick );
 
 	/// @brief destructor
-	~SelectResiduesByLayer();
+	virtual ~SelectResiduesByLayer();
 
 
 public:

@@ -45,6 +45,9 @@
 namespace core {
 namespace scoring {
 
+// @brief Auto-generated virtual destructor
+OmegaTether::~OmegaTether() {}
+
 
 OmegaTether::OmegaTether()
 {

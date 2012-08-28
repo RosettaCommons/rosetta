@@ -60,6 +60,9 @@ using namespace basic;
 namespace protocols {
 namespace noesy_assign {
 
+/// @details Auto-generated virtual destructor
+CrossPeakInfo::~CrossPeakInfo() {}
+
 void CrossPeakInfo::show( std::ostream& os ) const {
 	os << "CROSSPEAK: "
 		 << proton_atom_name_ << " " << label_atom_type_ << " "

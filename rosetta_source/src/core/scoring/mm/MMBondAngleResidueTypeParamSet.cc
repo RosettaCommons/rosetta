@@ -64,6 +64,8 @@ MMBondAngleResidueTypeParamSet::MMBondAngleResidueTypeParamSet(
 	*this = src;
 }
 
+MMBondAngleResidueTypeParamSet::~MMBondAngleResidueTypeParamSet() {}
+
 /// @brief lookup a param object for a given ResidueType
 MMBondAngleResidueTypeParam const &
 MMBondAngleResidueTypeParamSet::get(

@@ -45,6 +45,9 @@ namespace core {
 namespace scoring {
 namespace mm {
 
+/// @details Auto-generated virtual destructor
+MMLJEnergyTable::~MMLJEnergyTable() {}
+
 static basic::Tracer TR("core.scoring.mm.MMLJEnergyTable");
 
 MMLJEnergyTable::MMLJEnergyTable() :

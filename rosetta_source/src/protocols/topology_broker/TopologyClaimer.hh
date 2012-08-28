@@ -62,6 +62,8 @@ namespace topology_broker {
 
 class TopologyClaimer : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~TopologyClaimer();
 	TopologyClaimer() : abinitio_mover_weight_ ( new weights::ConstAbinitioMoverWeight( 1.0 ) ) {};
 
 	///@brief construct with weight-set ( how important is mover for different abinitio stages ? )

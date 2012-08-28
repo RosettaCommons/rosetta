@@ -71,6 +71,7 @@ namespace protocols {
 namespace noesy_assign {
 
 PeakAssignmentResidueMap::PeakAssignmentResidueMap() {}
+PeakAssignmentResidueMap::~PeakAssignmentResidueMap() {}
 
 void PeakAssignmentResidueMap::add( PeakAssignmentOP const& assignment ) {
   Size const res1( assignment->resid( 1 ) );

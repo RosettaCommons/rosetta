@@ -38,6 +38,9 @@ namespace core {
 namespace scoring {
 namespace mm {
 
+/// @details Auto-generated virtual destructor
+MMBondLengthScore::~MMBondLengthScore() {}
+
 
 MMBondLengthScore::MMBondLengthScore() :
 	mm_bondlength_library_( scoring::ScoringManager::get_instance()->get_MMBondLengthLibrary() )

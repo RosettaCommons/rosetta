@@ -97,7 +97,7 @@ namespace rna {
 		StepWiseRNA_CombineLongLoopFilterer( StepWiseRNA_JobParametersCOP const & job_parameters, bool const combine_helical_silent_file);
 
     //destructor -- necessary?
-    ~StepWiseRNA_CombineLongLoopFilterer();
+    virtual ~StepWiseRNA_CombineLongLoopFilterer();
 
 		/////////////////////////////////////////////////////////////////////////
 

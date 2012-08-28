@@ -57,6 +57,8 @@ token_type_name( TokenType );
 class Token : public utility::pointer::ReferenceCount
 {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~Token();
 	virtual
 	TokenType
 	type() const = 0;
@@ -158,6 +160,8 @@ private:
 class TokenSet : public utility::pointer::ReferenceCount
 {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~TokenSet();
 	TokenSet();
 
 	void append( TokenCOP token );
@@ -186,6 +190,8 @@ private:
 class ArithmeticScanner : public utility::pointer::ReferenceCount
 {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~ArithmeticScanner();
 	/// @brief Constructor which adds the "standard" set of min, max and sqrt functions.
 	ArithmeticScanner();
 	/// @brief Constructor which does not add the "standard" set of min, max and sqrt functions.
@@ -228,6 +234,8 @@ public:
 class ArithmeticASTNode : public utility::pointer::ReferenceCount
 {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~ArithmeticASTNode();
 	virtual
 	void
 	visit( ASTVisitor & visitor ) const = 0;
@@ -411,6 +419,8 @@ private:
 class ASTVisitor : public utility::pointer::ReferenceCount
 {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~ASTVisitor();
 
 	virtual
 	void
@@ -631,6 +641,8 @@ public:
 class Expression : public utility::pointer::ReferenceCount
 {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~Expression();
 
 	virtual
 	numeric::Real

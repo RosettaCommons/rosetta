@@ -230,6 +230,8 @@ MatchConsolidator::reset_grouper()
 	if ( grouper_ ) grouper_->reset();
 }
 
+BestMatchesCollection::~BestMatchesCollection() {}
+
 BestMatchesCollection::BestMatchesCollection(
 	Size n_to_keep,
 	bool dspos1_mode

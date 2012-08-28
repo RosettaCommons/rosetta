@@ -67,7 +67,7 @@ public:
 		second_atom_ = second_atom;
 	}
 
-	~AtomPairConstraintsData() {}
+	virtual ~AtomPairConstraintsData() ; // auto-removing definition from header{}
 
 	inline Size get_offset() {
 		return offset_;

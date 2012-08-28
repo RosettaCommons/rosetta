@@ -27,6 +27,9 @@ namespace core {
 namespace scoring {
 namespace saxs {
 
+/// @details Auto-generated virtual destructor
+FormFactor::~FormFactor() {}
+
 static basic::Tracer trFormFactor(
 		"core.scoring.saxs.FormFactor");
 

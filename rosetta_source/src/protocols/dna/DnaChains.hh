@@ -59,7 +59,7 @@ class DnaChains : public utility::pointer::ReferenceCount {
 // this class is a light wrapper for DnaPositions (a map which is typedefed above)
 public: // constructors
 	DnaChains();
-	~DnaChains();
+	virtual ~DnaChains();
 	DnaChains( DnaChains const & other );
 	DnaChainsOP clone() const;
 

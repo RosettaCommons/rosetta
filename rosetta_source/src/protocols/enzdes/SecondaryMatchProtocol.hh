@@ -124,7 +124,7 @@ private:
 class PoseFoundResiduesCombination : public utility::pointer::ReferenceCount
 {
 public:
-	~PoseFoundResiduesCombination();
+	virtual ~PoseFoundResiduesCombination();
 	PoseFoundResiduesCombination(
 		core::pose::PoseCOP ref_pose_in,
 		SecondaryMatchProtocolCAP seqmatch_in

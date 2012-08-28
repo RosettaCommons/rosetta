@@ -48,7 +48,8 @@ namespace canonical_sampling {
 namespace mc_convergence_checks {
 
 
-class EXCN_Pool_Converged : public moves::EXCN_Converged {};
+class EXCN_Pool_Converged : public moves::EXCN_Converged
+{};
 
 class Pool_RMSD;
 
@@ -64,7 +65,7 @@ public:
 
 	Pool_RMSD() {};
 
-	~Pool_RMSD() {};
+	virtual ~Pool_RMSD();
 
 	///@brief return position in pool for the best_decoy
 	core::Size evaluate( core::pose::Pose const&, std::string& best_decoy, core::Real& best_rmsd ) const;
@@ -121,7 +122,7 @@ public:
 		: threshold_( threshold ),
 			rmsd_pool_( rmsd_pool_in ) {};
 
-	~Pool_ConvergenceCheck(){};
+	virtual ~Pool_ConvergenceCheck();
 	//throws EXCN_Pool_Converged if lowest_score pose is < threshold away from any pool structure
 	virtual bool operator() ( const core::pose::Pose&, moves::MonteCarlo const& mc, bool /*reject*/ );
 
@@ -132,7 +133,7 @@ private:
 
 class Pool_Evaluator : public evaluation::PoseEvaluator {
 public:
-	~Pool_Evaluator() {};
+	virtual ~Pool_Evaluator();
 	Pool_Evaluator( Pool_RMSD_OP rmsd_pool_in ) : rmsd_pool_( rmsd_pool_in ) {};
 	/// from PoseEvaluator interface:
 

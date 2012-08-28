@@ -87,6 +87,8 @@ typedef utility::pointer::owning_ptr< LKB_ResidueInfo > LKB_ResidueInfoOP;
 
 class LKB_ResidueInfo : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~LKB_ResidueInfo();
 	typedef utility::vector1< Vector > Vectors;
 
 public:

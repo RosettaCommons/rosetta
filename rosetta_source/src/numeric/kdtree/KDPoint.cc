@@ -26,6 +26,9 @@
 namespace numeric {
 namespace kdtree {
 
+/// @details Auto-generated virtual destructor
+KDPoint::~KDPoint() {}
+
 KDPoint::KDPoint() {}
 
 KDPoint::KDPoint(

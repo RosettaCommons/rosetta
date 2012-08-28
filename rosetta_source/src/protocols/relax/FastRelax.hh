@@ -16,6 +16,9 @@
 #ifndef INCLUDED_protocols_relax_FastRelax_hh
 #define INCLUDED_protocols_relax_FastRelax_hh
 
+// Unit headers
+#include <protocols/relax/FastRelax.fwd.hh>
+
 #include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/moves/Mover.hh>
 

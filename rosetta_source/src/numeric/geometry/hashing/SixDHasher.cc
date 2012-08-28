@@ -26,6 +26,9 @@ namespace numeric {
 namespace geometry {
 namespace hashing {
 
+/// @details Auto-generated virtual destructor
+SixDCoordinateBinner::~SixDCoordinateBinner() {}
+
 //static basic::Tracer TR("numeric.geometry.hashing.SixDHasher");
 
 

@@ -59,9 +59,11 @@ public:
 
 	Ramachandran(
 		std::string const & rama_map_filename,
-		bool use_bicubic_interpolation);
+		bool use_bicubic_interpolation
+	);
 
-	~Ramachandran() {}
+	virtual ~Ramachandran() ; // auto-removing definition from header{}
+
 
 	Real
 	eval_rama_score_residue(

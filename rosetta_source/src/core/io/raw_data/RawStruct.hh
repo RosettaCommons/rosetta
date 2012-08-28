@@ -45,7 +45,7 @@ namespace raw_data {
 
 	public:
 		// destructor
-		~RawStruct();
+		virtual ~RawStruct();
 
 		/// @brief Fill a Pose with the conformation information in this RawStruct and the FA_STANDARD
 		/// ResidueTypeSet. This is a virtual method which must be implemented by classes derived from RawStruct.

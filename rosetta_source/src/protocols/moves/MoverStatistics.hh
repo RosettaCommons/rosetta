@@ -45,6 +45,8 @@ namespace moves {
 class MoverStatistics : public utility::pointer::ReferenceCount {
 
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~MoverStatistics();
 
 	// default constructor
 	MoverStatistics():

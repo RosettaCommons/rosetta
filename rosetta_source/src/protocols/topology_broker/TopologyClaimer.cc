@@ -45,6 +45,9 @@ static basic::Tracer tr("protocols.topo_broker",basic::t_info);
 namespace protocols {
 namespace topology_broker {
 
+/// @details Auto-generated virtual destructor
+TopologyClaimer::~TopologyClaimer() {}
+
 using namespace core;
 
 void TopologyClaimer::initialize_dofs( core::pose::Pose&, DofClaims const& init_dofs, DofClaims& failed_to_init ) {

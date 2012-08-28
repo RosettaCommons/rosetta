@@ -61,7 +61,7 @@ public: // construct/destruct
 	NatbiasHelixPairPotential( NatbiasHelixPairPotential const & src );
 
 	/// @brief default destructor
-	~NatbiasHelixPairPotential();
+	virtual ~NatbiasHelixPairPotential();
 
 
 public:

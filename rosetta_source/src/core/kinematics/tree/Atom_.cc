@@ -43,6 +43,14 @@ namespace tree {
 
 static basic::Tracer TR("core.kinematics.tree.Atom_");
 
+void
+Atom_::set_weak_ptr_to_self(
+  AtomAP weak_ptr
+)
+{
+	assert( weak_ptr() == this );
+	this_weak_ptr_ = weak_ptr;
+}
 
 /////////////////////////////////////////////////////////////////////////////
 /// @details get the input stub for building this atom first
@@ -96,8 +104,8 @@ Atom_::show() const
 	if ( parent_ ) {
 		std::cout << parent_->id() << std::endl;
 		std::cout << "  GRAND PARENT: ";
-		if ( static_cast< Atom_* >(parent_)->parent_ ) {
-			std::cout << static_cast< Atom_* >(parent_)->parent_->id() << std::endl;
+		if ( static_cast< Atom_* >( parent_() )->parent_ ) {
+			std::cout << static_cast< Atom_* >( parent_() )->parent_->id() << std::endl;
 		} else {
 			std::cout << " NULL" << std::endl;
 		}
@@ -128,8 +136,8 @@ Atom_::show(int const & n_level) const
 	if ( parent_ ) {
 		TR << parent_->id() << std::endl;
 		TR << "  GRAND PARENT: ";
-		if ( static_cast< Atom_* >(parent_)->parent_ ) {
-			TR << static_cast< Atom_* >(parent_)->parent_->id() << std::endl;
+		if ( static_cast< Atom_* >( parent_() )->parent_ ) {
+			TR << static_cast< Atom_* >( parent_() )->parent_->id() << std::endl;
 		} else {
 			TR << " NULL" << std::endl;
 		}
@@ -219,10 +227,11 @@ Atom_::update_domain_map(
 /// of the children atom list.
 void
 Atom_::append_atom(
-	Atom * const atom
+	AtomOP const atom
 )
 {
-	atom->parent( this );
+	assert( this_weak_ptr_ );
+	atom->parent( this_weak_ptr_ ); // Note: You cannot give "this" to the child atom, or you will loose the reference-count information using boost::weak_ptr
 	if ( atom->is_jump() ) {
 		atoms_.insert( nonjump_atoms_begin(), atom );
 	} else {
@@ -236,7 +245,7 @@ Atom_::append_atom(
 /// children
 void
 Atom_::delete_atom(
-	Atom * const child
+	AtomOP const child
 )
 {
 	Atoms::iterator const iter( std::find( atoms_.begin(), atoms_.end(), child ) );
@@ -254,10 +263,11 @@ Atom_::delete_atom(
 /// the other existing child atoms.
 void
 Atom_::insert_atom(
-	Atom * const atom
+	AtomOP const atom
 )
 {
-	atom->parent( this );
+	assert( this_weak_ptr_ );
+	atom->parent( this_weak_ptr_ ); // Note: you cannot give "this" to the child, or the reference-count information will be lost with boost::weak_ptr.
 	if ( atom->is_jump() ) {
 		atoms_.insert( atoms_.begin(), atom );
 	} else {
@@ -272,11 +282,12 @@ Atom_::insert_atom(
 /// index must be a non-negative integer.
 void
 Atom_::insert_atom(
-	Atom * const atom,
+	AtomOP const atom,
 	int const index
 )
 {
-	atom->parent( this );
+	assert( this_weak_ptr_ );
+	atom->parent( this_weak_ptr_ ); // Note: you cannot give "this" to the child, or the reference-count information will be lost with boost::weak_ptr
 
 	assert( index >= 0 );
 	Atoms::iterator pos( atoms_.begin() + index );
@@ -300,8 +311,8 @@ Atom_::insert_atom(
 /// atom.
 void
 Atom_::replace_atom(
-	Atom* const old_atom,
-	Atom* const new_atom
+	AtomOP const old_atom,
+	AtomOP const new_atom
 )
 {
 	assert( ( old_atom->is_jump() && new_atom->is_jump() ) ||
@@ -314,7 +325,7 @@ Atom_::replace_atom(
 		assert( false );
 		utility_exit();
 	}
-	new_atom->parent( this );
+	new_atom->parent( this_weak_ptr_ ); // Note: you cannot give "this" to the child atom, or the reference-count data will be lost with boost::weak_ptr
 	iter = atoms_.insert( iter, new_atom );
 	// 		std::cout << (*iter == new_atom) << ' ' <<
 	// 			(*iter == old_atom) << std::endl;
@@ -326,7 +337,7 @@ Atom_::replace_atom(
 
 /////////////////////////////////////////////////////////////////////////////
 /// @details returns 0 if atom doesnt exist
-Atom const *
+AtomCOP
 Atom_::get_nonjump_atom(
 	Size const index
 ) const
@@ -362,7 +373,7 @@ Atom_::n_children() const
 }
 
 /////////////////////////////////////////////////////////////////////////////
-Atom const *
+AtomCOP
 Atom_::child( Size const k ) const
 {
 	return atoms_[k];
@@ -370,7 +381,7 @@ Atom_::child( Size const k ) const
 
 
 /////////////////////////////////////////////////////////////////////////////
-Atom *
+AtomOP
 Atom_::child( Size const k )
 {
 	return atoms_[k];
@@ -379,9 +390,9 @@ Atom_::child( Size const k )
 /////////////////////////////////////////////////////////////////////////////
 /// @details the atom-index of this child
 Size
-Atom_::child_index( Atom const * child ) const
+Atom_::child_index( AtomCOP child ) const
 {
-	assert( child->parent() == this );
+	assert( child->parent()() == this );
 	for ( Size k=0; k< atoms_.size(); ++k ) {
 		if ( atoms_[k] == child ) return k;
 	}
@@ -398,12 +409,12 @@ Atom_::child_index( Atom const * child ) const
 ///
 Real
 Atom_::dihedral_between_bonded_children(
-	Atom const * child1,
-	Atom const * child2
+	AtomCOP child1,
+	AtomCOP child2
 ) const
 {
 	// debug args
-	if ( child1->parent() != this || child2->parent() != this ) {
+	if ( child1->parent()() != this || child2->parent()() != this ) {
 		utility_exit_with_message("Atom_::dihedral_between_bonded_children: atoms are not both my children!");
 	}
 	if ( child1->is_jump() || child2->is_jump() ) {
@@ -411,7 +422,7 @@ Atom_::dihedral_between_bonded_children(
 	}
 
 	// keep track of which atoms we've seen and in what order
-	Atom const *first_atom( 0 ), *second_atom( 0 );
+	AtomCOP first_atom( 0 ), second_atom( 0 );
 
 	Real phi_offset(0.0);
 
@@ -443,7 +454,7 @@ Atom_::dihedral_between_bonded_children(
 // I don't think it even works in trunk.
 //
 bool
-Atom_::downstream( Atom const * atom1 ) const
+Atom_::downstream( AtomCOP atom1 ) const
 {
 	for ( int ii=0, ie= n_children(); ii < ie; ++ii ) {
 		if ( child(ii) == atom1 ) {
@@ -500,10 +511,11 @@ Atom_::get_input_stub() const
 /////////////////////////////////////////////////////////////////////////////
 /// @details call parent's previous_child method to get its previous sibling; return 0
 /// if no parent is present.
-Atom const *
+AtomCOP
 Atom_::previous_sibling() const
 {
 	if ( parent_ != 0 ) {
+		assert( this_weak_ptr_ );
 		return parent_->previous_child( this );
 	} else {
 		return 0;
@@ -512,9 +524,9 @@ Atom_::previous_sibling() const
 
 /////////////////////////////////////////////////////////////////////////////
 /// @details return 0 if the input child is the first child in the list
-Atom const *
+AtomCOP
 Atom_::previous_child(
-	Atom const * child
+	AtomCOP child
 ) const
 {
 	//std::cout << "atoms_.size() = " << atoms_.size() << std::endl;
@@ -533,9 +545,9 @@ Atom_::previous_child(
 
 /////////////////////////////////////////////////////////////////////////////
 /// @details return 0 if the input child is the last child in the list
-Atom *
+AtomOP
 Atom_::next_child(
-	Atom const * child
+	AtomCOP child
 )
 {
 	//std::cout << "atoms_.size() = " << atoms_.size() << std::endl;
@@ -582,7 +594,7 @@ Atom_::stub_defined() const
 	//
 
 	if ( is_jump() ) {
-		Atom const * first = get_nonjump_atom(0);
+		AtomCOP first = get_nonjump_atom(0);
 		if ( first != 0 &&
 			( first->get_nonjump_atom(0) != 0 || get_nonjump_atom(1) != 0 ) ) {
 			return true;
@@ -607,7 +619,7 @@ Atom_::stub_defined() const
 ///
 void
 Atom_::update_child_torsions(
-	Atom* const child
+	AtomOP const child
 )
 {
 	Stub my_stub( this->get_stub() );
@@ -656,7 +668,7 @@ Atom_::transform_Ax_plus_b_recursive(
 
 /////////////////////////////////////////////////////////////////////////////
 void
-Atom_::get_path_from_root( utility::vector1< Atom const * > & path ) const
+Atom_::get_path_from_root( utility::vector1< AtomCOP > & path ) const
 {
 	if ( parent_ ) parent_->get_path_from_root( path );
 	path.push_back( this );
@@ -665,9 +677,9 @@ Atom_::get_path_from_root( utility::vector1< Atom const * > & path ) const
 
 /////////////////////////////////////////////////////////////////////////////
 bool
-Atom_::atom_is_on_path_from_root( Atom const * atm ) const
+Atom_::atom_is_on_path_from_root( AtomCOP atm ) const
 {
-	return ( atm == this || ( parent_ && parent_->atom_is_on_path_from_root( atm ) ) );
+	return ( atm() == this || ( parent_ && parent_->atom_is_on_path_from_root( atm ) ) );
 }
 
 

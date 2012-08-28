@@ -33,6 +33,7 @@ using namespace core;
 class AdaptiveScoreHistogram : public utility::pointer::ReferenceCount {
 public:
 	AdaptiveScoreHistogram(Real,Real);
+	virtual ~AdaptiveScoreHistogram();
 
 	void insert(Real);
 

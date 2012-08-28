@@ -55,6 +55,8 @@ class PCA : public utility::pointer::ReferenceCount {
   typedef core::Real matrix[3][3];
   typedef core::Real rvec[3];
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~PCA();
   typedef utility::vector1< core::Real > ProjectionVector;
 
   void read_eigvec_file( std::string fn, core::pose::Pose const& pose, int nvec = -1 );

@@ -145,6 +145,8 @@ private:
 class ResfileCommand : public utility::pointer::ReferenceCount
 {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~ResfileCommand();
 	virtual ResfileCommandOP clone() const = 0;
 
 	// @brief Read the contents of the Resfile and store the state

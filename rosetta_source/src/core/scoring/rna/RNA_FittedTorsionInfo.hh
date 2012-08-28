@@ -58,7 +58,7 @@ public:
 
 	RNA_FittedTorsionInfo();
 
-	~RNA_FittedTorsionInfo();
+	virtual ~RNA_FittedTorsionInfo();
 
 	Real delta_cutoff() const { return DELTA_CUTOFF_; }
 

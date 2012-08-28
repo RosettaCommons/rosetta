@@ -74,6 +74,8 @@ public:
 	///@brief Constructor
   ResonanceList( std::string const& sequence );
 
+	virtual ~ResonanceList();
+
 	///@brief read chemical shift assignments
   void read_from_stream( std::istream& );
 

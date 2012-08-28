@@ -36,6 +36,10 @@ namespace scores {
 
 typedef utility::vector1<utility::vector1<Real> > Matrix;
 
+class ABEGO_SS_Score;
+typedef utility::pointer::owning_ptr< ABEGO_SS_Score > ABEGO_SS_ScoreOP;
+typedef utility::pointer::owning_ptr< ABEGO_SS_Score const > ABEGO_SS_ScoreCOP;
+
 class ABEGO_SS_Score: public CachingScoringMethod {
 public:
 

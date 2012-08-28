@@ -80,6 +80,8 @@ namespace kinematics {
 ///     SmallMover
 class MoveMap: public utility::pointer::ReferenceCount {
  public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~MoveMap();
 	// ids
 	typedef id::AtomID AtomID;
 	typedef id::AtomID_Mask AtomID_Mask;

@@ -40,6 +40,8 @@ using namespace core;
 typedef std::pair< std::string const, FilterCOP > StringFilter_pair;
 typedef utility::tag::TagPtr TagPtr;
 
+FilterCollection::~FilterCollection() {}
+
 bool
 FilterCollection::apply( core::pose::Pose const & pose ) const
 {

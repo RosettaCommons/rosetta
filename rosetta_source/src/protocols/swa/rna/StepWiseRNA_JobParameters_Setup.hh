@@ -51,8 +51,8 @@ namespace rna {
 													 Size const & cutpoint_closed );
 
 
-    //destructor -- necessary?
-    ~StepWiseRNA_JobParameters_Setup();
+    //destructor -- necessary? yes of course it is
+    virtual ~StepWiseRNA_JobParameters_Setup();
 
     virtual void apply();
 

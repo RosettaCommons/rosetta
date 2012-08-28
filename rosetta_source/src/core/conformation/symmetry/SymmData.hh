@@ -54,7 +54,7 @@ class SymmData : public utility::pointer::ReferenceCount
 	SymmData( SymmData const &);
 	SymmDataOP
 	clone() const;
-	~SymmData();
+	virtual ~SymmData();
 
 	friend
 	bool

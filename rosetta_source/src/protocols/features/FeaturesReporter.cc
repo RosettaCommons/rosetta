@@ -53,6 +53,9 @@
 namespace protocols {
 namespace features {
 
+/// @details Auto-generated virtual destructor
+FeaturesReporter::~FeaturesReporter() {}
+
 using basic::Tracer;
 using basic::datacache::CacheableString;
 using boost::char_separator;

@@ -51,6 +51,8 @@ typedef utility::pointer::owning_ptr< DomainAssemblyCommand const > DomainAssemb
 class DomainAssemblyCommand : public utility::pointer::ReferenceCount
 {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~DomainAssemblyCommand();
 	//@brief domain_action is the activity code for the option
 	virtual
 	void domain_action(

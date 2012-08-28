@@ -48,7 +48,7 @@ namespace PositionDdGInfo{
 						core::chemical::AA wt_aa
 						);
 
-		~PositionDdGInfo();
+		virtual ~PositionDdGInfo();
 
 		void
 		add_mutation_ddG(

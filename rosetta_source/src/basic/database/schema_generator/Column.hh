@@ -42,7 +42,7 @@ public:
 
 	Column(Column const & src);
 
-	~Column();
+	virtual ~Column();
 
 	void init_db_mode();
 

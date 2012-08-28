@@ -53,6 +53,8 @@ namespace noesy_assign {
 ///@brief fast access to assignments that are stored in CrossPeak -- similar to FragID
 class PeakAssignment : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~PeakAssignment();
 	typedef core::scoring::constraints::AmbiguousNMRDistanceConstraintOP NmrConstraintOP;
 	typedef core::scoring::constraints::AmbiguousNMRDistanceConstraint NmrConstraint;
 

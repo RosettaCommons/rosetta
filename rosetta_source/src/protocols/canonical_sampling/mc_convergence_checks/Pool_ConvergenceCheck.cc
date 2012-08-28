@@ -53,6 +53,15 @@ namespace protocols {
 namespace canonical_sampling {
 namespace mc_convergence_checks {
 
+// @brief Auto-generated virtual destructor
+Pool_Evaluator::~Pool_Evaluator() {}
+
+// @brief Auto-generated virtual destructor
+Pool_ConvergenceCheck::~Pool_ConvergenceCheck() {}
+
+// @brief Auto-generated virtual destructor
+Pool_RMSD::~Pool_RMSD() {}
+
 using namespace ObjexxFCL;
 using namespace core;
 using namespace basic;

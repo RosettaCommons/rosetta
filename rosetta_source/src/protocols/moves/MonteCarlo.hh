@@ -108,7 +108,7 @@ public:
 	);
 
 	/// @brief Empty destructor in C++ file to reduce number of necessary includes
-	~MonteCarlo();
+	virtual ~MonteCarlo();
 
 
 	/// @brief Resets the ScoreFunction

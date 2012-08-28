@@ -177,15 +177,12 @@ main( int argc, char * argv [] )
 
 	// create a ScoreMover
 
-	simple_moves::ScoreMover* scoretmp;
-	if( option[ krassk::tail_mode])
-	   {
-			scoretmp = new simple_moves::TailsScoreMover(sfxn);
-	   }
-	   else
-	   {
-			scoretmp = new simple_moves::ScoreMover(sfxn);
-	   }
+	simple_moves::ScoreMoverOP scoretmp;
+	if( option[ krassk::tail_mode]) {
+		scoretmp = new simple_moves::TailsScoreMover(sfxn);
+	} else {
+		scoretmp = new simple_moves::ScoreMover(sfxn);
+	}
 
 	if(  option[ rescore::verbose ] )	{
 		scoretmp->set_verbose( true );

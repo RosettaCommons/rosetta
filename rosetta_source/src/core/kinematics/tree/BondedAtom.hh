@@ -157,8 +157,8 @@ public:
 
 	/// @brief copy this atom
 	virtual
-	Atom *
-	clone( Atom* parent_in, AtomPointer2D & atom_pointer ) const;
+	AtomOP
+	clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const;
 
 
 	///////////////////////////////////////////////////////////////////////////
@@ -220,7 +220,7 @@ public: // Properties
 	/// @brief stub_atom1 of a bonded atom
 	/** it is itself */
 	inline
-	Atom const *
+	AtomCOP
 	stub_atom1() const
 	{
 		return this;
@@ -231,7 +231,7 @@ public: // Properties
 	/// @brief stub_atom2 of a bonded atom
 	/** it is its parent */
 	inline
-	Atom const *
+	AtomCOP
 	stub_atom2() const
 	{
 		return parent();
@@ -247,13 +247,13 @@ public: // Properties
 				its first non-jump child (if it does not have any sibling)
 	*/
 	inline
-	Atom const *
+	AtomCOP
 	stub_atom3() const
 	{
 		//std::cout << "stub_atom3: " << this << ' ' << parent_ << std::endl();
 		if ( parent()->is_jump() ) {
 			assert( parent()->stub_defined() ); // weird behavior otherwise
-			Atom const * p_stub2( parent()->stub_atom2() );
+			AtomCOP p_stub2( parent()->stub_atom2() );
 			AtomID const & p_stub2_id( p_stub2->id() );
 			if ( id() == p_stub2_id ) {
 				// very special case!!
@@ -296,8 +296,12 @@ private: // Fields
 
 }; // BondedAtom
 
+typedef utility::pointer::owning_ptr< BondedAtom > BondedAtomOP;
+typedef utility::pointer::owning_ptr< BondedAtom const > BondedAtomCOP;
+typedef utility::pointer::access_ptr< BondedAtom > BondedAtomAP;
+typedef utility::pointer::access_ptr< BondedAtom const > BondedAtomCAP;
 
-}
+} // namespace tree
 } // namespace kinematics
 } // namespace core
 

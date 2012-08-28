@@ -45,7 +45,7 @@ public:
 		heap_init( max_items );
 	}
 
-	~heap() {}
+	virtual ~heap() ; // auto-removing definition from header{}
 
 	/// @brief Inserts a value into the heap that is sorted by coval.
 	void

@@ -59,6 +59,8 @@ public:
   /// @brief Alternate ctor that inintalizes class with given MMLJLibrary
   MMLJScore( MMLJLibrary const & mmljl );
 
+	virtual ~MMLJScore();
+
 	/// @brief blah
 	MMLJLibrary const &
 	mm_lj_library() const

@@ -52,7 +52,7 @@ public:
 
 	HotspotStub( HotspotStub const & src );
 
-	~HotspotStub();
+	virtual ~HotspotStub();
 
 #ifndef BOINC // gives windows build error
 #ifndef WIN32 // gives windows build error

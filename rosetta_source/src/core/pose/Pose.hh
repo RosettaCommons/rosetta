@@ -199,7 +199,7 @@ public:
 	Pose();
 
 	/// @brief destructor -- > kill data on the heap
-	~Pose();
+	virtual ~Pose();
 
 	/// @brief copy constructor
 	Pose( Pose const & src );

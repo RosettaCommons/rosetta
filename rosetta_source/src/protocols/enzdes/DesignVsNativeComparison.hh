@@ -59,7 +59,7 @@ public:
 
 	DesignVsNativeComparison();
 
-	~DesignVsNativeComparison();
+	virtual ~DesignVsNativeComparison();
 
 	void
 	compare_to_native(

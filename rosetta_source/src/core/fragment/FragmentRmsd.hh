@@ -33,9 +33,11 @@ namespace core {
 namespace fragment {
 
 class FragmentRmsd : public utility::pointer::ReferenceCount {
-  typedef boost::unordered_map<core::Size, Frame const *> FrameMap;
+  typedef boost::unordered_map<core::Size, FrameCOP > FrameMap;
 
  public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~FragmentRmsd();
   FragmentRmsd(FragSetCOP fragments);
 
   /// @brief Returns the kth fragment at the specified position
@@ -49,7 +51,7 @@ class FragmentRmsd : public utility::pointer::ReferenceCount {
 
  protected:
   /// @brief Returns the position'th frame in the fragment library
-  Frame const * frame(core::Size position) const;
+  FrameCOP frame(core::Size position) const;
 
 
  private:

@@ -65,6 +65,7 @@ public:
 	typedef conformation::Residue Residue;
 
 public:
+	virtual ~GenBornResidueInfo();
 
 	GenBornResidueInfoOP
 	clone() const

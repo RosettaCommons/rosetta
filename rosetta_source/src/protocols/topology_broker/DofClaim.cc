@@ -45,6 +45,9 @@ static basic::Tracer tr("protocols.topo_broker",basic::t_info);
 namespace protocols {
 namespace topology_broker {
 
+/// @details Auto-generated virtual destructor
+DofClaim::~DofClaim() {}
+
 using namespace core;
 
 void DofClaim::show( std::ostream& os ) const {

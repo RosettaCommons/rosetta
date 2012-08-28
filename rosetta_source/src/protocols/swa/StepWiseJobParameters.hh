@@ -39,7 +39,7 @@ namespace swa {
     StepWiseJobParameters();
 
 	  //destructor -- necessary?
-    ~StepWiseJobParameters();
+    virtual ~StepWiseJobParameters();
 
 		std::string const & sequence() const;
 		std::string const & working_sequence() const;

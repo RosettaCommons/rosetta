@@ -117,6 +117,15 @@ namespace core {
 namespace scoring {
 namespace methods {
 
+/// @details Auto-generated virtual destructor
+BondLengthDatabase::~BondLengthDatabase() {}
+
+/// @details Auto-generated virtual destructor
+BondAngleDatabase::~BondAngleDatabase() {}
+
+/// @details Auto-generated virtual destructor
+TorsionDatabase::~TorsionDatabase() {}
+
 
 static basic::Tracer TR("core.scoring.CartesianBondedEnergy");
 

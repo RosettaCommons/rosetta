@@ -47,6 +47,9 @@ static basic::Tracer TR("protocols.kinmatchFunGroupTK");
 namespace protocols {
 namespace kinmatch {
 
+/// @details Auto-generated virtual destructor
+FunGroupTK::~FunGroupTK() {}
+
 using core::kinematics::Stub;
 using protocols::scoring::ImplicitFastClashCheck;
 using core::Real;

@@ -43,6 +43,8 @@ namespace toolbox {
 class KClusterElement : public utility::pointer::ReferenceCount
 {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~KClusterElement();
     typedef utility::vector1< Size > ClusterNdxList;
     typedef utility::vector1< Size > ClusterTypList;
     typedef utility::vector1< Real > ClusterDisList;
@@ -203,6 +205,8 @@ private:
 class KClusterData : public utility::pointer::ReferenceCount
 {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~KClusterData();
     typedef ObjexxFCL::FArray1D_double FA1Dd;
     typedef ObjexxFCL::FArray2D_double FA2Dd;
     typedef ObjexxFCL::FArray2_double FA2d;

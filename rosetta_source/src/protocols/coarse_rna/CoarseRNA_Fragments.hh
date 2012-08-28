@@ -47,7 +47,7 @@ namespace coarse_rna{
 	public:
 
 		SourcePositions(){}
-		~SourcePositions(){}
+		virtual ~SourcePositions();
 		core::Size size() const { return source_positions_.size(); }
 		void push_back( core::Size const & value ){ source_positions_.push_back( value ); }
 		core::Size operator[]( core::Size num ){ return source_positions_[ num ]; }
@@ -68,7 +68,7 @@ namespace coarse_rna{
 		//Constructor -- needs vall_torsions_file to get started.
 		// CoarseRNA_Fragments();
 		CoarseRNA_Fragments( std::string const & filename );
-		~CoarseRNA_Fragments(){}
+		virtual ~CoarseRNA_Fragments();
 
 		virtual void
 		apply_random_fragment(

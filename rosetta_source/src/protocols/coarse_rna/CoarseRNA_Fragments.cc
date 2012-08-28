@@ -62,6 +62,10 @@ static numeric::random::RandomGenerator RG(22811440);  // <- Magic number, do no
 namespace protocols {
 namespace coarse_rna {
 
+SourcePositions::~SourcePositions() {}
+
+CoarseRNA_Fragments::~CoarseRNA_Fragments() {}
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// This sort of repeats a lot of stuff in protocols/rna/RNA_Fragments
 	//

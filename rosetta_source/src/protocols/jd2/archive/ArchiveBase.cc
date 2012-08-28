@@ -82,6 +82,9 @@ void protocols::jd2::archive::ArchiveBase::register_options() {
 namespace protocols {
 namespace jd2 {
 namespace archive {
+
+/// @details Auto-generated virtual destructor
+AbstractArchiveBase::~AbstractArchiveBase() {}
 // using namespace basic::options;
 // using namespace basic::options::OptionKeys;
 using namespace core;

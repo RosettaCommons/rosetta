@@ -58,6 +58,9 @@
 namespace protocols {
 namespace jumping {
 
+/// @details Auto-generated virtual destructor
+BaseJumpSetup::~BaseJumpSetup() {}
+
 using namespace core;
 using namespace fragment;
 using namespace ObjexxFCL;

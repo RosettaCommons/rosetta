@@ -89,8 +89,9 @@ private:
 /// @brief Wrapper-class that contains a vector1 of Filters
 /// @brief apply function returns true if all member filters return true
 class FilterCollection : public utility::pointer::ReferenceCount {
-
 public:
+
+	virtual ~FilterCollection();
 
 	/// @brief Returns true if the given pose passes all filters, false otherwise.
 	bool apply( core::pose::Pose const & pose ) const;

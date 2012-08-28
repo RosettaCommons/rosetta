@@ -48,6 +48,8 @@ namespace noesy_assign {
 ///@brief shared information about CrossPeak (one for each proton dimension)
 class CrossPeakInfo : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~CrossPeakInfo();
   CrossPeakInfo( std::string const& proton, std::string const& label, core::Real proton_tolerance, core::Real label_tolerance = 0.0 ) :
     proton_atom_name_( proton ),
     label_atom_type_( label ),

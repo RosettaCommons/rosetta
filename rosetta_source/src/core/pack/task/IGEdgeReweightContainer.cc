@@ -27,14 +27,17 @@ namespace core {
 namespace pack {
 namespace task {
 
-
 static basic::Tracer tr("core.pack.task.IGEdgeReweightContainer");
+
+IGEdgeReweighter::~IGEdgeReweighter() {}
 
 IGEdgeReweightContainer::IGEdgeReweightContainer( Size nres )
 {
 	nres_ = nres;
 	edge_reweighters_.clear();
 }
+IGEdgeReweightContainer::~IGEdgeReweightContainer() {}
+
 
 Real
 IGEdgeReweightContainer::res_res_weight(

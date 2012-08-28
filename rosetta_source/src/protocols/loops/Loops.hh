@@ -66,24 +66,24 @@ public:
 
 	//constructor
 	Loops();
-	
+
     //copy constructor
 	Loops( const Loops & src );
-    
+
 	Loops( SerializedLoopList const & src );
 	Loops( std::string const & loop_file_name );
 	Loops( bool setup_loops_from_options_system );
-	
+
 	// assignment operator
 	Loops & operator =( Loops const & src );
-    
-    // destructor
-    ~Loops();
-    
+
+	// destructor
+	virtual ~Loops();
+
 	friend std::ostream & operator<<( std::ostream & os, const Loops & loops );
-    
+
     void read_loops_options();
-    
+
 	void
 	write_loops_to_file(
 		std::string const & filename,
@@ -164,7 +164,7 @@ public:
 	void clear();
 
 	LoopList const & loops() const;
-	
+
 	LoopsFileIOOP get_loop_file_reader() const;
 
 	/// @brief  Is seqpos contained in any of my loops?
@@ -240,13 +240,13 @@ public:
 		core::Real mag_left,
 		core::Real mag_right
 	);
-    
+
     std::string const & loop_file_name();
     void set_loop_file_name_and_reset( std::string const & loop_filename );
-    
+
     bool strict_looprelax_checks();
     void set_strict_looprelax_checks( bool const check );
-    
+
     std::string const & file_reading_token();
     void set_file_reading_token( std::string const & token );
 
@@ -264,7 +264,7 @@ public:
 
 	///@brief add all residues within this loop definition into selection
 	void get_residues( utility::vector1< Size>& selection ) const;
-    
+
 	// i know this encourages old style for-loops (i.e. without iterators) but so much of the code
 	// already used such loops, i opted for safety.
 	const Loop & operator[] ( core::Size const i ) const;
@@ -281,18 +281,18 @@ private:
 		bool const read_loop_file_from_options = false,
 		std::string const & passed_in_filename = ""
 	);
-	
+
 	LoopList setup_loops_from_data( SerializedLoopList const & loop_data );
 
 	void read_loop_file();
 
 private:
-	
+
 	LoopList loops_;
 	mutable LoopsFileIOOP loop_file_reader_;
-	
+
 	bool strict_looprelax_checks_on_file_reads_;
-	
+
 	std::string loop_filename_;
 	std::string file_reading_token_;
 

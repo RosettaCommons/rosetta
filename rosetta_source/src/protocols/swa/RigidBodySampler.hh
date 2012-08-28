@@ -48,7 +48,7 @@ namespace swa {
 											utility::vector1< Size > const & moving_res );
 
     //destructor -- necessary?
-    ~RigidBodySampler(){}
+    virtual ~RigidBodySampler();
 
 		void
 		do_the_sampling( pose::Pose & pose );

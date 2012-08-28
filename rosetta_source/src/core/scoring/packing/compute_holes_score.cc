@@ -51,6 +51,9 @@ namespace core {
 namespace scoring {
 namespace packing {
 
+/// @details Auto-generated virtual destructor
+HolesResult::~HolesResult() {}
+
 
 void compute_holes_surfs(PoseBalls & pb, std::string ) {
 

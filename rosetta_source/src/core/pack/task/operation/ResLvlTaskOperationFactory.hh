@@ -40,10 +40,9 @@ namespace task {
 namespace operation {
 
 // singleton class
-class ResLvlTaskOperationFactory : public utility::pointer::ReferenceCount
+class ResLvlTaskOperationFactory
 {
 public:
-	typedef utility::pointer::ReferenceCount parent;
 	typedef std::map< std::string, ResLvlTaskOperationCreatorOP > RLTOC_Map;
 	typedef utility::tag::Tag Tag;
 	typedef utility::tag::TagPtr TagPtr;

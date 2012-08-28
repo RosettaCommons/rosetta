@@ -66,7 +66,7 @@ private:
 public:
 	PcsInputCenter(); //Construct
 
-	~PcsInputCenter(); //Destruct
+	virtual ~PcsInputCenter(); //Destruct
 
 	PcsInputCenter(PcsInputCenter const & other); //Copy
 

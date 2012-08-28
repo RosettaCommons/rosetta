@@ -56,7 +56,7 @@ class Chunk : public utility::pointer::ReferenceCount {
   Chunk(const Chunk& other);
 
   /// @brief Destructor
-  ~Chunk() {}
+  virtual ~Chunk() ; // auto-removing definition from header{}
 
   /// @brief Assignment operator
   Chunk& operator=(const Chunk& other);

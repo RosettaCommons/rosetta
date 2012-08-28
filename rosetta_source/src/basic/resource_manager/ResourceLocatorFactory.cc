@@ -26,6 +26,9 @@
 namespace basic {
 namespace resource_manager {
 
+/// @details Auto-generated virtual destructor
+ResourceLocatorFactory::~ResourceLocatorFactory() {}
+
 ResourceLocatorFactory * ResourceLocatorFactory::instance_( 0 );
 
 ResourceLocatorOP

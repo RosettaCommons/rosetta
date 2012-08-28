@@ -30,6 +30,8 @@ namespace numeric {
 class ClusteringTreeNode : public utility::pointer::ReferenceCount {
 
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~ClusteringTreeNode();
 
     /// @brief Creates a node with no leaves
     /// @detailed leaves are NULLs, parent is set to this

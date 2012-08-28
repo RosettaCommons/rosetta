@@ -19,13 +19,13 @@
 #include <core/scoring/rna/RNA_Util.hh>
 
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/AtomType.hh>  
+#include <core/chemical/AtomType.hh>
 #include <core/chemical/AA.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <utility/file/file_sys_util.hh> 
+#include <utility/file/file_sys_util.hh>
 
 // Project Headers
 #include <core/conformation/Conformation.hh>
@@ -109,6 +109,9 @@ namespace core {
 namespace scoring {
 namespace rna {
 
+// @brief Auto-generated virtual destructor
+RNA_TorsionPotential::~RNA_TorsionPotential() {}
+
 	RNA_TorsionPotential::RNA_TorsionPotential():
 		rna_tight_torsions_( true ),
 		delta_fade_( 10.0 ),
@@ -124,7 +127,7 @@ namespace rna {
 			std::cout << "-----------------------------------------------------------------------------------" << std::endl;
 			std::cout << "USER INPUTTED path_to_torsion_files_=" <<  basic::database::full_name(path_to_torsion_files_) << std::endl;
 
-			
+
 			//Turn on the new torsional potential if the folder name ends wirh "new"
 			if ( path_to_torsion_files_ .compare(path_to_torsion_files_.size() - 3, 3, "new") == 0 ) {
 				use_new_potential_ = true;
@@ -151,7 +154,7 @@ namespace rna {
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	Real 
+	Real
 	RNA_TorsionPotential::eval_intrares_energy(core::conformation::Residue const & rsd, pose::Pose const & pose) const
 	{
 		using namespace core::id;
@@ -234,7 +237,7 @@ namespace rna {
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	Real 
+	Real
 	RNA_TorsionPotential::residue_pair_energy(core::conformation::Residue const & rsd1, core::conformation::Residue const & rsd2, pose::Pose const & pose) const
 	{
 
@@ -480,7 +483,7 @@ namespace rna {
 
 					} else {
 						dE_dtorsion = ( fade_delta_north_->func( delta ) * chi_north_potential_others_->dfunc( chi ) +
-														fade_delta_south_->func( delta ) * chi_south_potential_others_->dfunc( chi ) );				
+														fade_delta_south_->func( delta ) * chi_south_potential_others_->dfunc( chi ) );
 					}
 				}
 
@@ -713,22 +716,22 @@ namespace rna {
 			std::cout << "fail to get torsion!, perhap this torsion is located at a chain_break " << std::endl;
 			return;
 		}
-	
+
 		conformation::Residue const & rsd_1=pose.residue(id1.rsd());
 		conformation::Residue const & rsd_2=pose.residue(id2.rsd());
 		conformation::Residue const & rsd_3=pose.residue(id3.rsd());
-		conformation::Residue const & rsd_4=pose.residue(id4.rsd());	
+		conformation::Residue const & rsd_4=pose.residue(id4.rsd());
 
 		tr.Info << " Torsion containing one or more virtual atom(s)" << std::endl;
 		tr.Info << "  torsion_id: " << torsion_id;
 		tr.Info << "  atom_id: " << id1 << " " << id2 << " " << id3 << " " << id4 << std::endl;
-		tr.Info << "  name: " << rsd_1.type().atom_name(id1.atomno()) << " " << rsd_2.type().atom_name(id2.atomno()) << " " << rsd_3.type().atom_name(id3.atomno()) << " " << rsd_4.type().atom_name(id4.atomno()) << std::endl;	
+		tr.Info << "  name: " << rsd_1.type().atom_name(id1.atomno()) << " " << rsd_2.type().atom_name(id2.atomno()) << " " << rsd_3.type().atom_name(id3.atomno()) << " " << rsd_4.type().atom_name(id4.atomno()) << std::endl;
 		tr.Info << "  type: " << rsd_1.atom_type(id1.atomno()).name() << " " << rsd_2.atom_type(id2.atomno()).name() << " " << rsd_3.atom_type(id3.atomno()).name() << " " << rsd_4.atom_type(id4.atomno()).name() << std::endl;
 		tr.Info << "		atom_type_index: " << rsd_1.atom_type_index( id1.atomno()) << " " << rsd_2.atom_type_index( id2.atomno()) << " " << rsd_3.atom_type_index( id3.atomno())  << " " << rsd_4.atom_type_index( id4.atomno()) << std::endl;
 		tr.Info << "		atomic_charge: " << rsd_1.atomic_charge( id1.atomno())	<< " " << rsd_2.atomic_charge( id2.atomno())	<< " " << rsd_3.atomic_charge( id3.atomno())	<< " " << rsd_4.atomic_charge( id4.atomno()) << std::endl;
 
 
-	}	
+	}
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	bool
@@ -750,9 +753,9 @@ namespace rna {
 		conformation::Residue const & rsd_1=pose.residue(id1.rsd());
 		conformation::Residue const & rsd_2=pose.residue(id2.rsd());
 		conformation::Residue const & rsd_3=pose.residue(id3.rsd());
-		conformation::Residue const & rsd_4=pose.residue(id4.rsd());	
+		conformation::Residue const & rsd_4=pose.residue(id4.rsd());
 
-		if ( !rsd_1.is_RNA() || !rsd_2.is_RNA() || !rsd_3.is_RNA() || !rsd_4.is_RNA() ) return false;  //Rhiju's added this between r47018 and r46616 
+		if ( !rsd_1.is_RNA() || !rsd_2.is_RNA() || !rsd_3.is_RNA() || !rsd_4.is_RNA() ) return false;  //Rhiju's added this between r47018 and r46616
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		bool Is_virtual_torsion=( rsd_1.is_virtual(id1.atomno()) || rsd_2.is_virtual(id2.atomno()) || rsd_3.is_virtual(id3.atomno()) || rsd_4.is_virtual(id4.atomno()) );
@@ -770,7 +773,7 @@ namespace rna {
 
 		if( METHOD_ONE_Is_cutpoint_closed_torsion != METHOD_TWO_Is_cutpoint_closed_torsion){
 			Output_boolean(" METHOD_ONE_Is_cutpoint_closed_torsion= ", METHOD_ONE_Is_cutpoint_closed_torsion);
-			Output_boolean(" METHOD_TWO_Is_cutpoint_closed_torsion= ", METHOD_TWO_Is_cutpoint_closed_torsion); 
+			Output_boolean(" METHOD_TWO_Is_cutpoint_closed_torsion= ", METHOD_TWO_Is_cutpoint_closed_torsion);
 			Output_boolean(" Is_virtual_torsion= ", Is_virtual_torsion); std::cout << std::endl;
 
 			print_torsion_info(pose, torsion_id);
@@ -824,15 +827,15 @@ namespace rna {
 		if(verbose_){
 			Output_boolean(" should_score_torsion= ", should_score_this_torsion);
 			Output_boolean(" | Is_cutpoint_closed_torsion= ", METHOD_ONE_Is_cutpoint_closed_torsion);
-			Output_boolean(" | Is_virtual_torsion= ", Is_virtual_torsion); 
-			Output_boolean(" | skip_chainbreak_torsions_= ", skip_chainbreak_torsions_); 
-			Output_boolean(" | Is_chain_break_torsion   = ", Is_chain_break_torsion) ; 
-			std::cout << std::endl;			
+			Output_boolean(" | Is_virtual_torsion= ", Is_virtual_torsion);
+			Output_boolean(" | skip_chainbreak_torsions_= ", skip_chainbreak_torsions_);
+			Output_boolean(" | Is_chain_break_torsion   = ", Is_chain_break_torsion) ;
+			std::cout << std::endl;
 		}
-	
+
 		return should_score_this_torsion;
 
-			
+
 	}
 
 

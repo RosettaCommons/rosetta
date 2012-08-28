@@ -50,7 +50,7 @@ public:
 
 public:
 	FullatomDisulfidePotential();
-	~FullatomDisulfidePotential();
+	virtual ~FullatomDisulfidePotential();
 
 	void
 	print_score_functions() const;

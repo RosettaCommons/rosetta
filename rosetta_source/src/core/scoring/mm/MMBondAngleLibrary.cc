@@ -49,6 +49,9 @@ namespace core {
 namespace scoring {
 namespace mm {
 
+/// @details Auto-generated virtual destructor
+MMBondAngleLibrary::~MMBondAngleLibrary() {}
+
 using basic::T;
 using basic::Error;
 using basic::Warning;

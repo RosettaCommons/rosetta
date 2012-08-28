@@ -52,6 +52,9 @@
 namespace devel {
 namespace znhash {
 
+/// @details Auto-generated virtual destructor
+ZnHash::~ZnHash() {}
+
 basic::Tracer TR( "devel.znhash.ZnHash" );
 
 ZnMatchData::ZnMatchData() :

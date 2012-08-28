@@ -68,7 +68,7 @@ public: // construct/destruct
   NatbiasHelicesSheetPotential( NatbiasHelicesSheetPotential const & src );
 
   /// @brief default destructor
-  ~NatbiasHelicesSheetPotential();
+  virtual ~NatbiasHelicesSheetPotential();
 
 
 public:

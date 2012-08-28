@@ -46,6 +46,8 @@ namespace optimize_weights {
 class PNatAAOptERotamerData : public utility::pointer::ReferenceCount
 {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~PNatAAOptERotamerData();
 	typedef core::Real Real;
 	typedef core::chemical::AA AA;
 	typedef core::Size Size;
@@ -101,6 +103,8 @@ private:
 class PNatRotOptERotamerData : public utility::pointer::ReferenceCount
 {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~PNatRotOptERotamerData();
 	typedef core::Real Real;
 	typedef core::Size Size;
 
@@ -1187,6 +1191,8 @@ private:
 class OptEData : public utility::pointer::ReferenceCount
 {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~OptEData();
 	typedef core::Real Real;
 	typedef core::Size Size;
 	typedef core::optimization::Multivec Multivec;

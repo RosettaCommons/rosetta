@@ -50,7 +50,7 @@ public:
 
 public:
 	OmegaTether();
-	~OmegaTether() {}
+	virtual ~OmegaTether() ; // auto-removing definition from header{}
 
 	Real
 	eval_omega_score_residue(

@@ -47,21 +47,23 @@ public:
 	virtual void insert( Size, CandidatesCollectorOP ) = 0;
 
 	/// @brief  Check how many candidates have been already collected for a given position
-	virtual Size count_candidates(Size) = 0;
+	virtual Size count_candidates(Size) const = 0;
 
 	/// @brief  Check how many candidates have been already collected for all positions
-	virtual Size count_candidates() = 0;
+	virtual Size count_candidates() const = 0;
 
 	/// @brief  Check the size of query sequence that this object knows.
 	/// This is mainly to be ale to check if it is the same as in the other parts of
 	/// fragment picking machinery.
-	virtual Size query_length()=0;
+	virtual Size query_length() const =0;
 
 	virtual ScoredCandidatesVector1 & get_candidates( Size position_in_query) = 0;
 
 	/// @brief Describes what has been collected
-	virtual void print_report( std::ostream & output,
-			scores::FragmentScoreManagerOP scoring ) = 0;
+	virtual void print_report(
+		std::ostream & output,
+		scores::FragmentScoreManagerOP scoring
+	) const = 0;
 };
 
 } // frag_picker

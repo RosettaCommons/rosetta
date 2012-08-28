@@ -39,8 +39,12 @@
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::fmt;
 
-namespace core { namespace scoring {
+namespace core {
+namespace scoring {
 namespace dna {
+
+/// @details Auto-generated virtual destructor
+DNA_BasePotential::~DNA_BasePotential() {}
 
 typedef ObjexxFCL::FArray1D< Real > FArray1D_Real;
 

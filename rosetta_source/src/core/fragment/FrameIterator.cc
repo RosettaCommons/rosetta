@@ -77,27 +77,27 @@ FrameIterator const & FrameIterator::operator = ( FrameIterator const& itr ) {
 	return *this;
 }
 
-Frame* FrameIterator::operator* () {
+FrameOP FrameIterator::operator* () {
 	return frame_ptr();
 }
 
-Frame const* FrameIterator::operator* () const {
+FrameCOP FrameIterator::operator* () const {
 	return frame_ptr();
 }
 
-Frame* FrameIterator::operator-> () {
+FrameOP FrameIterator::operator-> () {
 	return frame_ptr();
 }
 
-Frame const* FrameIterator::operator-> () const {
+FrameCOP FrameIterator::operator-> () const {
 	return frame_ptr();
 }
 
-Frame* FrameIterator::frame_ptr() {
+FrameOP FrameIterator::frame_ptr() {
 	return it_->frame_ptr();
 }
 
-Frame const* FrameIterator::frame_ptr() const{
+FrameCOP FrameIterator::frame_ptr() const{
 	return it_->frame_ptr();
 }
 

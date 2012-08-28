@@ -57,6 +57,9 @@ static basic::Tracer TR("core.scoring.PoissonBoltzmannPotential");
 namespace core {
 namespace scoring {
 
+// @brief Auto-generated virtual destructor
+PoissonBoltzmannPotential::~PoissonBoltzmannPotential() {}
+
 typedef PoissonBoltzmannPotential PB;
 
 PB::PoissonBoltzmannPotential()

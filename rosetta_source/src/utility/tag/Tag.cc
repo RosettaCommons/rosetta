@@ -71,6 +71,9 @@ namespace utility {
 
 namespace tag {
 
+/// @details Auto-generated virtual destructor
+Tag::~Tag() {}
+
 using namespace std;
 
 size_t Tag::num_tags = 0;

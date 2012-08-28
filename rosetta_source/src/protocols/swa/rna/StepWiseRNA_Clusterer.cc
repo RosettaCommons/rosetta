@@ -67,6 +67,9 @@ namespace protocols {
 namespace swa {
 namespace rna {
 
+// @brief Auto-generated virtual destructor
+SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
+
 
   //////////////////////////////////////////////////////////////////////////
   //constructor!

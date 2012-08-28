@@ -60,7 +60,9 @@ protected: // Creation
 
 	/// @brief Default constructor
 	inline
-	Atom_() : dof_refold_index_( 0 )
+	Atom_() :
+		this_weak_ptr_( 0 ),
+		dof_refold_index_( 0 )
 	{
 		atoms_.reserve( 4 );
 	}
@@ -71,6 +73,7 @@ protected: // Creation
 	inline
 	Atom_( Atom_ const & atom ) :
 		Super( atom ),
+		this_weak_ptr_( 0 ),
 		position_( atom.position_ ),
 		dof_refold_index_( atom.dof_refold_index_ )
 	{
@@ -107,6 +110,11 @@ protected: // Assignment
 
 public: // Methods
 
+  virtual
+  void
+  set_weak_ptr_to_self(
+    AtomAP weak_ptr
+  );
 
 	// assumes coords for our input stub are good
 	/// @brief update xyz position of this atom and its offspring atoms
@@ -141,8 +149,8 @@ public: // Methods
 	/// @brief dihedral angle between two bonded children to this atom
 	Real
 	dihedral_between_bonded_children(
-		Atom const * child1,
-		Atom const * child2
+		AtomCOP child1,
+		AtomCOP child2
 	) const;
 
 	/// @brief dump out AtomID for this atom, its parent and all its offspring
@@ -210,30 +218,30 @@ public: // Methods
 
 	/// @brief append an atom as this atom's child
 	void
-	append_atom( Atom * );
+	append_atom( AtomOP );
 
 	/// @brief remove an atom from this atom's children
 	void
-	delete_atom( Atom * );
+	delete_atom( AtomOP );
 
 	/// @brief insert an atom as this atom's child
 	void
-	insert_atom( Atom * );
+	insert_atom( AtomOP );
 
 
 	/// @brief tries to insert at the position specified by the second argument
 	void
-	insert_atom( Atom *, int const /*index*/ );
+	insert_atom( AtomOP, int const /*index*/ );
 
 	/// @brief replace the old atom by the new atom in the child atom list
 	void
 	replace_atom(
-		Atom * const old_atom,
-		Atom * const new_atom
+		AtomOP const old_atom,
+		AtomOP const new_atom
 	);
 
 	/// @brief get non-jump atom by its index from the children atoms list
-	Atom const *
+	AtomCOP
 	get_nonjump_atom(
 		Size const i
 	) const;
@@ -254,20 +262,20 @@ public: // Methods
 	}
 
 	/// @brief get a child atom by index (const method)
-	Atom const *
+	AtomCOP
 	child( Size const k ) const;
 
 	/// @brief get a child atom by index
-	Atom *
+	AtomOP
 	child( Size const k );
 
 	/// @brief the atom-index of this child
 	Size
-	child_index( Atom const * child ) const;
+	child_index( AtomCOP child ) const;
 
 	/// @brief whether atom1 is downstream of this atom.
 	bool
-	downstream( Atom const * atom1 ) const;
+	downstream( AtomCOP atom1 ) const;
 
 
 public: // Properties
@@ -383,16 +391,16 @@ public: // Properties
 
 	/// @brief Parent atom pointer
 	inline
-	Atom const *
+	AtomCOP
 	parent() const
 	{
-		return parent_;
+		return parent_();
 	}
 
 
 	///
 	void
-	parent( Atom* parent_in )
+	parent( AtomAP parent_in )
 	{
 		parent_ = parent_in;
 	}
@@ -400,10 +408,10 @@ public: // Properties
 
 	/// @brief Parent atom pointer
 	inline
-	Atom *
+	AtomOP
 	parent()
 	{
-		return parent_;
+		return parent_();
 	}
 
 	/// @brief stub centerd at this atom
@@ -441,17 +449,17 @@ public: // Properties
 	/// @brief the center of the input stub for refolding this atom
 	/** it is its parent*/
 	inline
-	Atom const *
+	AtomCOP
 	input_stub_atom0() const
 	{
 		assert( parent_ );
-		return parent_;
+		return parent_();
 	}
 
 	/// @brief the first atom to construct the input stub for refolding this atom
 	/** it is its parent's stub_atom1, which normally the parent itself*/
 	inline
-	Atom const *
+	AtomCOP
 	input_stub_atom1() const
 	{
 		assert( parent_ );
@@ -461,7 +469,7 @@ public: // Properties
 	/// @brief the second atom to construct the input stub for refolding this atom
 	/** it is its parent's stub_atom2, which normally the parent's parent*/
 	inline
-	Atom const *
+	AtomCOP
 	input_stub_atom2() const
 	{
 		assert( parent_ );
@@ -471,11 +479,11 @@ public: // Properties
 	/// @brief the third atom to construct the input stub for refolding this atom
 	/** it is either its previous sibling or its parent's stub_atom3,*/
 	inline
-	Atom const *
+	AtomCOP
 	input_stub_atom3() const
 	{
 		assert( parent_ );
-		Atom const * sibling( previous_sibling() );
+		AtomCOP sibling( previous_sibling() );
 		if ( is_jump() || sibling == 0 || sibling->is_jump() ||
 		 ( parent_->is_jump() && sibling->id() == parent_->stub_atom2_id() ) ) {
 			return parent_->stub_atom3();
@@ -519,19 +527,19 @@ public: // Properties
 
 	/// @brief  routines for navigating the tree
 	/// find the sibling atom before itself
-	Atom const *
+	AtomCOP
 	previous_sibling() const;
 
 	/// @brief find the child atom before this child in the list
-	Atom const *
+	AtomCOP
 	previous_child(
-		Atom const * child
+		AtomCOP child
 	) const;
 
 	/// @brief find the child atom after this child in the list
-	Atom *
+	AtomOP
 	next_child(
-		Atom const * child
+		AtomCOP child
 	);
 
 	/// @brief whether a Stub can be defined for this atom
@@ -541,11 +549,16 @@ public: // Properties
 
 protected: // Methods
 
+	/// @brief Read access to the replacement "this" pointer
+	AtomAP this_weak_ptr() { return this_weak_ptr_; }
+
+	/// @brief Read access to the replacement "this" pointer
+	AtomCAP this_weak_ptr() const { return this_weak_ptr_; }
 
 	/// @brief when subtrees have changed their coordinates
 	void
 	update_child_torsions(
-		Atom * const child
+		AtomOP const child
 	);
 
 	/// @brief constant iterator of the first non-jump (bonded) atom in the vector of children atoms.
@@ -574,12 +587,12 @@ protected: // Methods
 	///
 	//virtual
 	void
-	get_path_from_root( utility::vector1< Atom const * > & path ) const;
+	get_path_from_root( utility::vector1< AtomCOP > & path ) const;
 
 
 	///
 	bool
-	atom_is_on_path_from_root( Atom const * atm ) const;
+	atom_is_on_path_from_root( AtomCOP atm ) const;
 
 
 	/// @brief Records this atom as having a changed DOF in the input list
@@ -624,6 +637,9 @@ protected:
 protected: // Fields -- should be private...
 // private: // Fields
 
+	/// @brief Each atom must hold a weak pointer to itself, and this weak pointer must
+	/// be given to the atom at its construction
+	AtomAP this_weak_ptr_;
 
 	/// @brief Atom ID
 	AtomID atom_id_;
@@ -632,8 +648,7 @@ protected: // Fields -- should be private...
 	//conformation::AtomAP conformation_atom_p_;
 
 	/// @brief Parent atom pointer
-	Atom * parent_;
-// 	AtomAP parent_;
+	AtomAP parent_;
 
 	/// @brief xyz
 	PointPosition position_;

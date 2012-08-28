@@ -35,6 +35,9 @@ namespace core {
 namespace pack {
 namespace rotamer_set {
 
+/// @details Auto-generated virtual destructor
+ContinuousRotamerSets::~ContinuousRotamerSets() {}
+
 
 ContinuousRotamerSet::ContinuousRotamerSet() :
 	resid_( 0 ),

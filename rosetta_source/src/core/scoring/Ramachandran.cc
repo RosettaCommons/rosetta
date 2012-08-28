@@ -58,6 +58,9 @@ using namespace ObjexxFCL;
 namespace core {
 namespace scoring {
 
+// @brief Auto-generated virtual destructor
+Ramachandran::~Ramachandran() {}
+
 typedef Ramachandran R;
 
 bool R::rama_initialized_( false );

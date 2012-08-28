@@ -40,6 +40,9 @@
 namespace core {
 namespace fragment {
 
+/// @details Auto-generated virtual destructor
+SingleResidueFragData::~SingleResidueFragData() {}
+
 //static basic::Tracer tr("core.fragment");
 
 bool SingleResidueFragData::steal(pose::Pose const& pose,  Size seq_pos) {

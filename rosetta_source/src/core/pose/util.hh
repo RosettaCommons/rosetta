@@ -329,7 +329,7 @@ copy_dofs(
 bool
 get_scratch_atom_id( id::AtomID & other_scratch_atom_id,
 										 std::map< core::id::AtomID, core::id::AtomID> const & atom_id_map,
-										 core::kinematics::tree::Atom const * other_atom );
+										 core::kinematics::tree::AtomCOP other_atom );
 
 ///////////////////////////////////////////////////////////////////
 void

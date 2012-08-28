@@ -27,6 +27,8 @@ RowDataBase::RowDataBase(std::string const & column_name) : column_name_(column_
 
 }
 
+RowDataBase::~RowDataBase() {}
+
 std::string RowDataBase::get_column_name() const
 {
 	return column_name_;

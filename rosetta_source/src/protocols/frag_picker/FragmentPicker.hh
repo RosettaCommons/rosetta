@@ -66,7 +66,7 @@ public:
 		QuotaDebug(Size nFrags) { nFrags_ = nFrags; }
 		utility::vector1<std::string> tags_;
 		std::map<std::string,Size> tag_map_;
-		void setup_summary(quota::QuotaCollector* collector_);
+		void setup_summary(quota::QuotaCollector const & collector_);
 		void write_summary();
 		void log(Size,Size,utility::vector1<Real>);
 		Size max_pools();
@@ -101,7 +101,7 @@ public:
 
 	FragmentPicker(std::string fragment_score_manager_type) {
 		if (fragment_score_manager_type.compare("PValuedFragmentScoreManager") == 0)
-			scores_.push_back((scores::FragmentScoreManager*) new scores::PValuedFragmentScoreManager());
+			scores_.push_back( static_cast< scores::FragmentScoreManager * > ( new scores::PValuedFragmentScoreManager()));
 		else
 			scores_.push_back(new scores::FragmentScoreManager());
 		CandidatesSink storage;
@@ -116,7 +116,7 @@ public:
 
 // destructor
 
-	~FragmentPicker();
+	virtual ~FragmentPicker();
 
 public:
 
@@ -330,9 +330,6 @@ public:
 
 	/// @brief Reads query secondary structure prediction from a Talos+ file
 	void read_talos_ss(std::string const &, std::string);
-
-	//void setup_summary(quota::QuotaCollector* collector_);
-	//void write_summary();
 
 // should be private but some classes directly access these
 	utility::vector1<Size> frag_sizes_;

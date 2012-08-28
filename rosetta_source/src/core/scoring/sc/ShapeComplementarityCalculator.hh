@@ -105,12 +105,12 @@ typedef struct _DOT {
 #endif
 	int buried;
 	int type;
-	Atom const *atom;
+	Atom const * atom;
 } DOT;
 
 // Molecular probe
 typedef struct _PROBE {
-	Atom const *pAtoms[3];
+	Atom const * pAtoms[3];
 #ifdef SC_PRECISION_REAL
 	core::Real height;
 	numeric::xyzVector < core::Real > point, alt;

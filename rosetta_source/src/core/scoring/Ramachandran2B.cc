@@ -55,6 +55,9 @@ using namespace ObjexxFCL;
 namespace core {
 namespace scoring {
 
+// @brief Auto-generated virtual destructor
+Ramachandran2B::~Ramachandran2B() {}
+
 basic::Tracer T("core.scoring.Ramachandran2B");
 
 Real const Ramachandran2B::binw_( 10.0 );

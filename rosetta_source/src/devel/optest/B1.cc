@@ -8,6 +8,9 @@
 namespace devel {
 namespace optest {
 
+/// @details Auto-generated virtual destructor
+B1::~B1() {}
+
 
 /*
 B1::B1() : a_pointer_( 0 ) {}

@@ -41,6 +41,8 @@ namespace scores {
 /// is supposed to be done FragmentPicker, which calls proper method from this class.
 class FragmentScoreManager: public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~FragmentScoreManager();
 
 	/// @brief precision used to display the total score for each fragment
 	static const Size TOTAL_PRECISION = 3;

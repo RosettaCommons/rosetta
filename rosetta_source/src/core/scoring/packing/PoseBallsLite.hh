@@ -34,6 +34,8 @@ namespace packing {
 
 class PoseBallsLite : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~PoseBallsLite();
 
 	// hmode = 0 --> no hydrogens
 	// hmode = 1 --> polar H's

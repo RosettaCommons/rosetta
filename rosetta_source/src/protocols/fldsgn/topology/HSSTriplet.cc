@@ -32,6 +32,9 @@ namespace protocols {
 namespace fldsgn {
 namespace topology {
 
+// @brief Auto-generated virtual destructor
+HSSTriplet::~HSSTriplet() {}
+
 
 /// @value constructor
 HSSTriplet::HSSTriplet( String const & hss )

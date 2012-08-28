@@ -44,7 +44,7 @@ namespace rna {
     StepWiseRNA_JobParameters();
 
 	  //destructor -- necessary?
-    ~StepWiseRNA_JobParameters();
+    virtual ~StepWiseRNA_JobParameters();
 
 		bool const & output_extra_RMSDs() const;
 		bool const & Is_simple_full_length_job_params() const;

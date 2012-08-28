@@ -62,6 +62,9 @@ static basic::Tracer TR("protocols.moves.DockingEnsemble");
 namespace protocols {
 namespace docking {
 
+/// @details Auto-generated virtual destructor
+DockingEnsemble::~DockingEnsemble() {}
+
 
 //constructor with arguments
 DockingEnsemble::DockingEnsemble(
@@ -149,8 +152,8 @@ void DockingEnsemble::recover_conformer_sidechains( core::pose::Pose & pose )
 		);
 	}
 
-	basic::datacache::CacheableStringFloatMap *data
-		= dynamic_cast< basic::datacache::CacheableStringFloatMap* >
+	basic::datacache::CacheableStringFloatMapOP data
+		= dynamic_cast< basic::datacache::CacheableStringFloatMap * >
 		( pose.data().get_raw_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA) );
 
 	data->map()[ partner_ ] = highres_reference_energies_[conf_num_];

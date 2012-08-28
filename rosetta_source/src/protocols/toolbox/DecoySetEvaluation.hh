@@ -98,6 +98,7 @@ private:
 class DecoySetEvaluation : public utility::pointer::ReferenceCount {
 public:
   DecoySetEvaluation();
+	virtual ~DecoySetEvaluation();
 
   static void register_options();
 

@@ -78,6 +78,8 @@ class StrandConstraints : public utility::pointer::ReferenceCount {
 	typedef utility::vector1< AlternativePairings > FuzzyTopology;
 
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~StrandConstraints();
 	StrandConstraints( PairingStatistics const& strand_stats_ );
 	void add_pairing( core::scoring::dssp::StrandPairing const&, std::string model = "NO_MODEL" );
 	void add_pairing( PairingStatEntry const& );

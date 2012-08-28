@@ -53,6 +53,8 @@ namespace fragment {
 
 class SecondaryStructure: public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~SecondaryStructure();
 
 	SecondaryStructure() :
 		total_residue_(0) {

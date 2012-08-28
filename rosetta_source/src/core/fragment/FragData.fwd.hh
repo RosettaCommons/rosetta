@@ -35,6 +35,12 @@ typedef utility::pointer::owning_ptr< FragData const > FragDataCOP;
 
 typedef utility::vector1< FragDataOP > FragDataList;
 
+class AnnotatedFragData;
+
+typedef utility::pointer::owning_ptr< AnnotatedFragData > AnnotatedFragDataOP;
+typedef utility::pointer::owning_ptr< AnnotatedFragData const > AnnotatedFragDataCOP;
+
+
 } // namespace fragment
 } // namespace core
 

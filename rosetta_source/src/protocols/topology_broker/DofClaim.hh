@@ -66,6 +66,8 @@ namespace topology_broker {
 
 class DofClaim : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~DofClaim();
 	typedef core::Size Size;
 	enum ClaimType {
 		BB,

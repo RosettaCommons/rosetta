@@ -140,7 +140,7 @@ class RotamerDots : public utility::pointer::ReferenceCount {
 public:
 	RotamerDots();
 	RotamerDots( conformation::ResidueCOP rotamer, bool exclude_hydrogen_atoms = false, bool use_expanded_polar_atom_radii = false );
-	~RotamerDots();
+	virtual ~RotamerDots();
 	RotamerDots( RotamerDots const & rhs );
 
 	void copy(RotamerDots const & rhs);
@@ -368,7 +368,7 @@ class InvRotamerDots : public utility::pointer::ReferenceCount {
 public:
 	InvRotamerDots();
 	InvRotamerDots( InvRotamerDots const & src );
-	~InvRotamerDots();
+	virtual ~InvRotamerDots();
 
 	InvRotamerDots const & operator = ( InvRotamerDots const & rhs );
 

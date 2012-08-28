@@ -44,6 +44,7 @@ public:
 		cached_pose_id_ = "";
 		largest_chunk_size_ = 0;
 	}
+	virtual ~VallProvider();
 
 	/// @brief Vall reader
 	/// THe defaults should ensure that the file is fully read if startline and endline ar not specified. endline = 0 means read to the end.

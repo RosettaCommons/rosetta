@@ -38,6 +38,8 @@ namespace features {
 class ResidueFeature : public utility::pointer::ReferenceCount {
 
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~ResidueFeature();
 	virtual utility::vector1< ResidueFeatureOP >
 	values_from_pose( core::pose::Pose & pose ) const = 0;
 

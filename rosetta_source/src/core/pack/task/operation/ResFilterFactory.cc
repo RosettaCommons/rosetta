@@ -40,7 +40,7 @@ ResFilterFactory * ResFilterFactory::get_instance()
 	return instance_;
 }
 
-ResFilterFactory::ResFilterFactory() : parent() {}
+ResFilterFactory::ResFilterFactory() {}
 ResFilterFactory::~ResFilterFactory(){}
 
 void

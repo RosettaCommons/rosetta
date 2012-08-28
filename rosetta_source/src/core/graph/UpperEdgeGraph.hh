@@ -96,10 +96,9 @@ public:
 		upper_edges_.reserve( 0 );
 	}
 
-	/// @brief dstor
+	/// @brief dstor, should be non-virtual
 	~UEVertex()
 	{
-		//std::cout << "UEVertex dstor" << std::endl;
 	}
 
 private:

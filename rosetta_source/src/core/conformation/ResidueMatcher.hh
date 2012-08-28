@@ -34,6 +34,8 @@ namespace conformation {
 
 class ResidueMatcher : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~ResidueMatcher();
 	virtual
 	bool
 	operator()( Residue const & rsd1, Residue const & rsd2 ) const = 0;

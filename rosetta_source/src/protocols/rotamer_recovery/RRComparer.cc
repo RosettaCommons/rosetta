@@ -43,6 +43,9 @@ using basic::Tracer;
 namespace protocols {
 namespace rotamer_recovery {
 
+/// @details Auto-generated virtual destructor
+RRComparer::~RRComparer() {}
+
 static Tracer TR("protocol.moves.RRComparer");
 
 RRComparerRotBins::RRComparerRotBins() :

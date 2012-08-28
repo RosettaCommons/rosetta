@@ -60,7 +60,7 @@ namespace silent {
 		SilentStruct();
 
 		// destructor
-		~SilentStruct();
+		virtual ~SilentStruct();
 
 		SilentStruct( SilentStruct const & );
 		SilentStruct& operator= ( SilentStruct const & );

@@ -1140,9 +1140,9 @@ LK_BallEnergy::eval_residue_pair_derivatives(
 
 Size
 get_parallel_h_for_arg(
-											 chemical::ResidueType const & rsd_type,
-											 Size const hatm
-											 )
+	chemical::ResidueType const & rsd_type,
+	Size const hatm
+)
 {
 	using namespace chemical;
 	assert( rsd_type.aa() == aa_arg );

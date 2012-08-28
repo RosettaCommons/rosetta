@@ -61,12 +61,12 @@ protected:
 		return *this;
 	}
 
-	Frame* frame_ptr() {
-		return it_->get();
+	FrameOP frame_ptr() {
+		return *it_;
 	}
 
-	Frame const* frame_ptr() const {
-		return it_->get();
+	FrameCOP frame_ptr() const {
+		return *it_;
 	}
 
 private:

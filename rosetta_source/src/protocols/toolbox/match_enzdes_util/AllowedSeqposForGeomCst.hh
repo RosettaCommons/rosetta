@@ -44,7 +44,7 @@ public:
 
 	AllowedSeqposForGeomCst();
 
-  ~AllowedSeqposForGeomCst();
+  virtual ~AllowedSeqposForGeomCst();
 
 	core::Size
 	num_seqpos_lists() const {

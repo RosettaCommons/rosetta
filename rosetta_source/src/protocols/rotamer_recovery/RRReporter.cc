@@ -27,6 +27,9 @@
 namespace protocols {
 namespace rotamer_recovery {
 
+/// @details Auto-generated virtual destructor
+RRReporter::~RRReporter() {}
+
 using std::endl;
 using std::ostream;
 using std::string;

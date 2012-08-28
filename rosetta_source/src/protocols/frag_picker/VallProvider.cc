@@ -54,6 +54,8 @@ namespace frag_picker {
 
 using namespace core;
 
+VallProvider::~VallProvider() {}
+
 VallChunkOP VallProvider::find_chunk(std::string pdb_id, char chain_id, Size residue_id) {
 
 	for (Size i = 1; i <= chunks_.size(); ++i) {

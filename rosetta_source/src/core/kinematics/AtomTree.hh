@@ -28,6 +28,7 @@
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/ResidueCoordinateChangeList.fwd.hh>
 #include <core/kinematics/Stub.hh>
+#include <core/kinematics/tree/Atom.hh> // apl temp, until all of AtomTree's methods are moved into its .cc file
 #ifdef WIN32
 #include <core/kinematics/tree/Atom.hh>
 #endif
@@ -121,7 +122,9 @@ public: // Types
 	typedef std::map< AtomID, Vector > FragXYZ;
 	typedef std::map< StubID, RT > FragRT;
 
-	typedef tree::Atom Atom;
+	typedef tree::Atom    Atom;
+	typedef tree::AtomOP  AtomOP;
+	typedef tree::AtomCOP AtomCOP;
 
 public: // Creation
 
@@ -150,6 +153,13 @@ public: // Assignment
 	AtomTree &
 	operator=( AtomTree const & src );
 
+public:
+	/// @brief Weak-pointer setter.  The object that instantiates an owning pointer to an AtomTree object
+	/// must hand that AtomTree a weak pointer to itself so that the AtomTree may share that weak pointer
+	/// with other AtomTrees.  Such sharing allows for crucial speedups when copying between AtomTrees.
+	/// If the object that instantiates this AtomTree does not provide it with a pointer-to-self, the
+	/// AtomTree will still function, but it will not share its pointers properly.
+	void set_weak_pointer_to_self( AtomTreeCAP self_pointer );
 
 public: // Methods
 
@@ -391,7 +401,7 @@ public: // Properties
 	}
 
 	/// @brief  const-access to the root of the tree
-	Atom const *
+	AtomCOP
 	root() const
 	{
 		return root_;
@@ -504,15 +514,15 @@ private:
 	/// observers that they are no longer a topological copy of this tree.  An atom
 	/// tree may only be the topological copy of a single other atom tree, though several
 	/// atom trees may be copies of a single atom tree.
-	void attach_topological_observer( AtomTree const * observer ) const;
+	void attach_topological_observer( AtomTreeCAP observer ) const;
 
 	/// @brief When an atom tree changes its topology, it must inform all of its
 	/// observers that they are no longer the same topology as this tree.
-	void notify_topological_change( AtomTree const * observee ) const;
+	void notify_topological_change( AtomTreeCAP observee ) const;
 
 	/// @brief When an atom tree observing this tree decides it wants to become an observer
 	/// of another tree, it must notify the tree that it formerly observed of this change.
-	void detatch_topological_observer( AtomTree const * observer ) const;
+	void detatch_topological_observer( AtomTreeCAP observer ) const;
 
 public:
 	/// Functions only necessary for unit tests
@@ -522,7 +532,7 @@ public:
 	/// is "private" in the sense that no other class needs to worry about it.  However,
 	/// to *test* that the topological match algorithm is working properly, this private
 	/// data needs to be readable.  Do not use this function outside of the unit tests.
-	AtomTree const *
+	AtomTreeCAP
 	topological_match_to() const {
 		return topological_match_to_;
 	}
@@ -533,7 +543,7 @@ public:
 	/// about it.  However, to *test* that the topological match algorithm is working
 	/// properly, this private data needs to be readable.  Do not use this function
 	/// outside of the unit tests.
-	utility::vector1< AtomTree const * > const &
+	utility::vector1< AtomTreeCAP > const &
 	topological_observers() const {
 		return topological_observers_;
 	}
@@ -549,8 +559,8 @@ private: // Helper Methods for fragment insertion
 	get_frag_atoms(
 		StubID const & id,
 		FragXYZ const & frag_xyz,
-		Atom const * & frag_atom,
-		Atom const * & nonfrag_atom
+		AtomCOP & frag_atom,
+		AtomCOP & nonfrag_atom
 	) const;
 
 
@@ -579,7 +589,7 @@ private: // Helper Methods for fragment insertion
 
 	Vector
 	get_frag_descendant_local_xyz(
-		Atom const * atom,
+		AtomCOP atom,
 		FragXYZ const & frag_xyz,
 		bool & fail
 	) const;
@@ -587,7 +597,7 @@ private: // Helper Methods for fragment insertion
 
 	Vector
 	get_frag_parent_local_xyz(
-		Atom const * child,
+		AtomCOP child,
 		FragXYZ const & frag_xyz,
 		bool & fail
 	) const;
@@ -609,14 +619,14 @@ private: // Methods
 
 
 	/// @brief  Convenience when we want an Atom*
-	Atom *
+	AtomOP
 	atom_pointer( AtomID const & id )
 	{
 		return atom_pointer_[ id ]();
 	}
 
 	/// @brief  Convenience when we want an Atom*
-	Atom const *
+	AtomCOP
 	atom_pointer( AtomID const & id ) const
 	{
 		return atom_pointer_[ id ]();
@@ -643,9 +653,12 @@ private: // Methods
 
 private: // Fields
 
+	/// @brief A weak pointer to self (this).  The weak pointer must be provided to the AtomTree immediately after creation.
+	/// The weak pointer
+	AtomTreeCAP this_weak_ptr_;
 
 	/// @brief Root Atom
-	Atom * root_;
+	AtomOP root_;
 
 	/// @brief Atom pointers map (map[AtomID] = AtomPointer)
 	AtomPointer2D atom_pointer_;
@@ -663,12 +676,13 @@ private: // Fields
 	/// since that tree was the last tree copied from without subsequence topological
 	/// modifications -- or at most one modification when that tree copied this
 	/// tree's topology
-	mutable AtomTree const * topological_match_to_;
+	mutable AtomTreeCAP topological_match_to_;
+
 	/// @brief pointers to all atom trees that are observing this tree's topology.
 	/// On topological changes (including the destruction of this tree!),
 	/// each of these trees have their topological_match_to_
 	/// pointers set to null and this list is cleared.
-	mutable utility::vector1< AtomTree const * > topological_observers_;
+	mutable utility::vector1< AtomTreeCAP > topological_observers_;
 
 	/// @brief A list of the atoms that have had changed DOFs since the last refold.
 	mutable AtomDOFChangeSet dof_changeset_;

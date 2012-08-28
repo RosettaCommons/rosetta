@@ -76,7 +76,7 @@ class EnzConstraintIO : public utility::pointer::ReferenceCount{
 public:
 
 	EnzConstraintIO (core::chemical::ResidueTypeSetCAP src_restype_set);
-	~EnzConstraintIO();
+	virtual ~EnzConstraintIO();
 
 	static EnzConstraintIO* get_instance();
 

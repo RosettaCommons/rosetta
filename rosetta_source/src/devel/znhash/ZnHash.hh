@@ -104,6 +104,8 @@ private:
 
 class ZnHash : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~ZnHash();
 	typedef core::Real Real;
 	typedef core::Size Size;
 	typedef numeric::geometry::hashing::bin_index_hasher bin_index_hasher;
@@ -198,7 +200,7 @@ public:
 
 public:
 	ZnCoordinationScorer();
-	~ZnCoordinationScorer();
+	virtual ~ZnCoordinationScorer();
 	ZnCoordinationScorer( ZnCoordinationScorer const & );
 
 	/// @brief set an individual atom ID to use for determining the refrence frame for the asymmetric unit

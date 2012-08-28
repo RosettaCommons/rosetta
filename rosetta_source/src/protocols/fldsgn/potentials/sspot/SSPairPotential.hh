@@ -71,7 +71,7 @@ public: // construct/destruct
 	SSPairPotential();
 
 	/// @brief default destructor
-	~SSPairPotential();
+	virtual ~SSPairPotential();
 
 
 public: // scoring

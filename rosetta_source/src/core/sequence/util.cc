@@ -325,7 +325,7 @@ utility::vector1< SequenceAlignment > read_general_aln(
 ) {
 	std::string line;
 	utility::vector1< SequenceAlignment > alignments;
-	SequenceAlignment* current( new SequenceAlignment );
+	SequenceAlignmentOP current( new SequenceAlignment );
 	while( getline( input, line ) ) {
 		if ( line.substr(0,5) == "score" ) {
 			std::istringstream line_input( line );
@@ -381,7 +381,7 @@ utility::vector1< SequenceAlignment > read_grishin_aln_file(
 	}
 
 	std::string line, id1, id2, method, dummy;
-	SequenceAlignment* current( new SequenceAlignment );
+	SequenceAlignmentOP current( new SequenceAlignment );
 	while( getline( input, line ) ) {
 		if ( line.substr(0,2) == "--" ) {
 			if ( current->size() > 0 ) {

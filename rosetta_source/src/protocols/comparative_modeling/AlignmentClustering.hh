@@ -53,7 +53,7 @@ namespace comparative_modeling {
 		vector1<SequenceAlignment> alns;
 	public:
 		AlignmentCluster(SequenceAlignment & aln_in);
-		~AlignmentCluster();
+		virtual ~AlignmentCluster();
 		void add_aln(SequenceAlignment & aln_in);
 		SequenceAlignment get_aln(Size index);
 		Real size();
@@ -65,7 +65,7 @@ namespace comparative_modeling {
 	class AlignmentClustering : public utility::pointer::ReferenceCount {
 	public:
 		AlignmentClustering();
-		~AlignmentClustering();
+		virtual ~AlignmentClustering();
 	private:
 		vector1<AlignmentClusterOP> cluster(vector1< vector1< Real > > & gdtmms, vector1<SequenceAlignment> & rankedAlignments, Real threshold_gdt);
 		map< string, Pose > poses_from_cmd_line(utility::vector1< std::string > const & fn_list);

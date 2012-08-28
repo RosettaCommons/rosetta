@@ -64,7 +64,7 @@ public:
 	FragmentReader( TagPtr const & tag );
 
 	/// @brief destructor
-	~FragmentReader();
+	virtual ~FragmentReader();
 
 public:
 

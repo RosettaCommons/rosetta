@@ -40,6 +40,9 @@
 namespace devel {
 namespace cartesian_frags {
 
+/// @details Auto-generated virtual destructor
+DNA_FragLib::~DNA_FragLib() {}
+
 using namespace core;
 
 basic::Tracer tt( "devel.cartesian_frags.DNA_FragLib", basic::t_trace );

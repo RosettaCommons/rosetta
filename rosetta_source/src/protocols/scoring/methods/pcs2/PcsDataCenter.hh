@@ -74,7 +74,7 @@ private:
 public:
 	PcsDataCenter(); //construct
 
-	~PcsDataCenter(); //destruct
+	virtual ~PcsDataCenter(); //destruct
 
 	PcsDataCenter(PcsDataCenter const &other); // copy
 

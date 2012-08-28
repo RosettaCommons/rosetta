@@ -42,7 +42,7 @@ public:
 	typedef utility::pointer::ReferenceCount parent;
 public:
 	EntityCorrespondence();
-	~EntityCorrespondence();
+	virtual ~EntityCorrespondence();
 	EntityCorrespondence(EntityCorrespondence const &);
 	EntityCorrespondence const & operator = ( EntityCorrespondence const & );
 

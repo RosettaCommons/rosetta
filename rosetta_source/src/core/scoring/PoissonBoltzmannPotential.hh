@@ -45,7 +45,7 @@ class PoissonBoltzmannPotential : public utility::pointer::ReferenceCount
 public:
 	PoissonBoltzmannPotential();
 
-	~PoissonBoltzmannPotential(){}
+	virtual ~PoissonBoltzmannPotential(); // auto-removing definition from header{}
 
 	void read_APBS_potential(std::string const & apbs_potential_fn);
 	core::Real get_potential(ObjexxFCL::FArray3D< core::Real > const & potential, numeric::xyzVector<core::Real> const & cartX) const;

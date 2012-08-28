@@ -2227,7 +2227,7 @@ RotamerLibrary::write_to_binary( utility::io::ozstream & out ) const
 
 	Size count_libraries( 0 );
 	for ( library_iterator it=libraries_.begin(), eit=libraries_.end(); it!=eit; ++it ) {
-		SingleResidueDunbrackLibrary const * srdl =
+		SingleResidueDunbrackLibraryCOP srdl =
 			dynamic_cast< SingleResidueDunbrackLibrary const * > ( it->second() );
 
 		if ( srdl ) ++count_libraries; /// write out only the dunbrack libraries.
@@ -2239,7 +2239,7 @@ RotamerLibrary::write_to_binary( utility::io::ozstream & out ) const
 	out.write( (char*) & nlibraries, sizeof( boost::int32_t )  );
 
 	for ( library_iterator it=libraries_.begin(), eit=libraries_.end(); it!=eit; ++it ) {
-		SingleResidueDunbrackLibrary const * srdl =
+		SingleResidueDunbrackLibraryCOP srdl =
 			dynamic_cast< SingleResidueDunbrackLibrary const * > ( it->second() );
 
 		if ( ! srdl ) continue; /// write out only the dunbrack libraries.

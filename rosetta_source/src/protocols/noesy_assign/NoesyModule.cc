@@ -136,6 +136,9 @@ using namespace basic::options;
 namespace protocols {
 namespace noesy_assign {
 
+/// @details Auto-generated virtual destructor
+NoesyModule::~NoesyModule() {}
+
 
 ///Constructor   - read input files / requires options to be initialized
 NoesyModule::NoesyModule( std::string const& fasta_sequence ) :

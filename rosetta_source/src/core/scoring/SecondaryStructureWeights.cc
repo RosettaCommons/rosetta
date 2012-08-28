@@ -30,6 +30,8 @@ namespace scoring {
 
 static numeric::random::RandomGenerator ss_weights_RG(82645);
 
+SecondaryStructureWeights::~SecondaryStructureWeights() {}
+
 /// @brief initialize to default values, also load proper data bins from external files
 void
 SecondaryStructureWeights::initialize()

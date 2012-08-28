@@ -70,7 +70,7 @@ public:
 	VallResidue(VallResidue const & rval);
 
 	/// @brief default destructor
-	~VallResidue();
+	virtual ~VallResidue();
 
 public:
 	/// @brief copy assignment

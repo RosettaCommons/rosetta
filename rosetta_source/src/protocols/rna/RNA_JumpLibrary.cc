@@ -35,6 +35,12 @@
 namespace protocols {
 namespace rna {
 
+/// @details Auto-generated virtual destructor
+RNA_JumpLibrary::~RNA_JumpLibrary() {}
+
+/// @details Auto-generated virtual destructor
+RNA_PairingTemplate::~RNA_PairingTemplate() {}
+
 static numeric::random::RandomGenerator RG(144621);  // <- Magic number, do not change it!
 
 static basic::Tracer tr( "protocols.rna.rna_jump_library" ) ;

@@ -38,6 +38,8 @@ namespace core {
 namespace pack {
 namespace rotamer_set {
 
+RotamerSetFactory::~RotamerSetFactory() {}
+
 RotamerSetOP
 RotamerSetFactory::create_rotamer_set( conformation::Residue const & res )
 {

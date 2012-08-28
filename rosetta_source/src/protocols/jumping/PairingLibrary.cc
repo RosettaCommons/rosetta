@@ -73,6 +73,8 @@ namespace jumping {
 
 static numeric::random::RandomGenerator RG(9238);  // <- Magic number, do not change it, huaah hah ha!
 
+BasePairingLibrary::~BasePairingLibrary() {}
+
 //------------------------------------------------------------------------------
 // the x-axis of this coordinate system is along the p(*,2) -> p(*,1) bond vector
 // the y-axis is in the p(*,*) plane, with positive dot product to p(*,2) -> p(*,3) vector

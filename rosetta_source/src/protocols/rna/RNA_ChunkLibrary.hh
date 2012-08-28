@@ -76,7 +76,7 @@ namespace rna{
 		// Need a clone();
 
 		//destructor -- necessary?
-		~ChunkSet();
+		virtual ~ChunkSet();
 
 		void
 		insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_pose_index, protocols::toolbox::AllowInsertOP const & allow_insert ) const;
@@ -104,6 +104,8 @@ namespace rna{
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	class RNA_ChunkLibrary : public utility::pointer::ReferenceCount  {
 	public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~RNA_ChunkLibrary();
 
 		RNA_ChunkLibrary();
 

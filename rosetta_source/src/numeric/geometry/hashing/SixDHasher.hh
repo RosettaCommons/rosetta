@@ -96,6 +96,8 @@ class SixDOffsetTree {
 class SixDCoordinateBinner : public utility::pointer::ReferenceCount
 {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~SixDCoordinateBinner();
 	typedef numeric::Real                               Real;
 	typedef numeric::Size                               Size;
 	typedef numeric::xyzVector< numeric::Real >         Vector;

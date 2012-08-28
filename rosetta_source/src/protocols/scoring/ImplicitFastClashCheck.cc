@@ -26,6 +26,9 @@
 namespace protocols {
 namespace scoring {
 
+/// @details Auto-generated virtual destructor
+ImplicitFastClashCheck::~ImplicitFastClashCheck() {}
+
 using core::pose::Pose;
 using core::Size;
 using core::Real;

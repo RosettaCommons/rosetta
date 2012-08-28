@@ -122,9 +122,9 @@ ElecDensAllAtomCenEnergy::defines_residue_pair_energy(
 void
 ElecDensAllAtomCenEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & /* sf */) const {
 	if (!pose.is_fullatom()) return;
-	const core::conformation::symmetry::SymmetryInfo *symminfo=NULL;
+	core::conformation::symmetry::SymmetryInfoCOP symminfo(0);
 	if (core::pose::symmetry::is_symmetric(pose)) {
-		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info().get();
+		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info();
 	}
 	structure_score = core::scoring::electron_density::getDensityMap().matchPose( pose, symminfo , true );
 }
@@ -182,7 +182,7 @@ ElecDensAllAtomCenEnergy::setup_for_scoring(
 
 	// grab symminfo (if defined) from the pose
 	// make a copy
-	const core::conformation::symmetry::SymmetryInfo *symminfo=NULL;
+	core::conformation::symmetry::SymmetryInfoCOP symminfo(0);
 	if (core::pose::symmetry::is_symmetric(pose)) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info().get();
 	}

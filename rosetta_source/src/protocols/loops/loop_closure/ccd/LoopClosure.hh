@@ -72,7 +72,7 @@ public:
 	);
 
 	//destructor
-	~LoopClosure();
+	virtual ~LoopClosure();
 
   //@brief run protocol on pose
   virtual bool apply( core::pose::Pose const& pose );

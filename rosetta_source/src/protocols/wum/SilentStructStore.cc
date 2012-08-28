@@ -97,6 +97,9 @@ using namespace protocols::moves;
 namespace protocols {
 namespace wum {
 
+/// @details Auto-generated virtual destructor
+SilentStructStore::~SilentStructStore() {}
+
 
 
 	class sort_SilentStructOPs

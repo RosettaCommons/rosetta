@@ -38,6 +38,9 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
+// @brief Auto-generated virtual destructor
+AtomPairConstraintsData::~AtomPairConstraintsData() {}
+
 static basic::Tracer trAtomPairConstraintsScore(
 		"fragment.picking.scores.AtomPairConstraintsScore");
 

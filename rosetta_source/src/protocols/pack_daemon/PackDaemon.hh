@@ -219,7 +219,7 @@ public:
 	typedef std::pair< core::Size, NPDPropCalculatorOP > NPDIndAndCalc;
 public:
 	DaemonSet();
-	~DaemonSet();
+	virtual ~DaemonSet();
 
 	void set_entity_resfile( std::string const & resfile );
 	void set_entity_resfile( std::istream & resfile, std::string const & resfile_name );

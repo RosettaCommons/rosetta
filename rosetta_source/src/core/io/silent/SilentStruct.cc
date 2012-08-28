@@ -566,8 +566,8 @@ void SilentStruct::energies_from_pose( core::pose::Pose const & pose ) {
 
 	// get arbitrary floating point scores from the map stored in the Pose data cache
 	if ( pose.data().has( CacheableDataType::ARBITRARY_FLOAT_DATA ) ) {
-		const basic::datacache::CacheableStringFloatMap *data
-			= dynamic_cast< const basic::datacache::CacheableStringFloatMap* >
+		basic::datacache::CacheableStringFloatMapCOP data
+			= dynamic_cast< basic::datacache::CacheableStringFloatMap const * >
 			( pose.data().get_raw_const_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA) );
 
 		using std::map;
@@ -624,8 +624,8 @@ void SilentStruct::energies_into_pose( core::pose::Pose & pose ) const {
 		);
 	}
 
-	basic::datacache::CacheableStringFloatMap *data
-		= dynamic_cast< basic::datacache::CacheableStringFloatMap* >
+	basic::datacache::CacheableStringFloatMapOP data
+		= dynamic_cast< basic::datacache::CacheableStringFloatMap * >
 		( pose.data().get_raw_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA) );
 
 	runtime_assert( data != NULL );

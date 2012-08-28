@@ -100,10 +100,10 @@ bool BBTorsionAndAnglesSRFD::steal( pose::Pose const& pose, Size seqpos ) {
 }
 
 bool BBTorsionAndAnglesSRFD::is_compatible( SingleResidueFragData const& aSRFD) const {
-	BBTorsionAndAnglesSRFD const* ptr = dynamic_cast< BBTorsionAndAnglesSRFD const* > ( & aSRFD );
+	BBTorsionAndAnglesSRFD const * ptr = dynamic_cast< BBTorsionAndAnglesSRFD const* > ( & aSRFD );
 	if ( ptr ) {
 		return ( (ptr->nbb() == nbb()) && (ptr->nangles() == nangles()) );
-	};
+	}
 	return false; //wrong SRFD-type (cast not successfull)
 }
 

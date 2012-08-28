@@ -44,6 +44,8 @@ class MMBondLengthLibrary  : public utility::pointer::ReferenceCount
 {
 
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~MMBondLengthLibrary();
 	/// @brief ctor
 	MMBondLengthLibrary( std::string filename, core::chemical::MMAtomTypeSetCAP mm_atom_set );
 

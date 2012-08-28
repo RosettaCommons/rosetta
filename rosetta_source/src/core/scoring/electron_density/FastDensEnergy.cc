@@ -116,10 +116,10 @@ bool FastDensEnergy::defines_residue_pair_energy(
 void
 FastDensEnergy::setup_for_derivatives( pose::Pose & pose , ScoreFunction const & /* sf */) const {
 	// grab symminfo (if defined) from the pose
-	const core::conformation::symmetry::SymmetryInfo *symminfo=NULL;
+	core::conformation::symmetry::SymmetryInfoCOP symminfo(0);
 	if (core::pose::symmetry::is_symmetric(pose)) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >(
-		              pose.conformation()).Symmetry_Info().get();
+		              pose.conformation()).Symmetry_Info();
 	}
 
 	core::scoring::electron_density::getDensityMap().compute_symm_rotations( pose, symminfo );
@@ -214,10 +214,10 @@ FastDensEnergy::residue_pair_energy(
 	Size r = rsd.seqpos();
 
 	// grab symminfo (if defined) from the pose
-	const core::conformation::symmetry::SymmetryInfo *symminfo=NULL;
+	core::conformation::symmetry::SymmetryInfoCOP symminfo(0);
 	core::Size nsubunits = 1;
 	if (core::pose::symmetry::is_symmetric(pose)) {
-		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info().get();
+		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info();
 		nsubunits = symminfo->subunits();
 		if (! symminfo->bb_is_independent( r ) ) return;
 	}

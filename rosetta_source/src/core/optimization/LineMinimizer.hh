@@ -98,13 +98,13 @@ class func_1d {
 class LineMinimizationAlgorithm : public utility::pointer::ReferenceCount
 {
 public:
+	virtual ~LineMinimizationAlgorithm();
 	LineMinimizationAlgorithm( Multifunc const & score_fxn, Size dimension ) :
 		_stored_derivatives( dimension, 0.0 ),
 		_last_accepted_step( 1.0 ), _func_to_beat( 0.0 ),
 		_deriv_sum( 0.0 ),_num_linemin_calls(0),_tolerance( 0.1 ),
 		_func( score_fxn ), _nonmonotone( false ) {};
 	virtual Real operator()( Multivec & , Multivec & ){ return 0.0; };
-	virtual ~LineMinimizationAlgorithm() {}
 	virtual bool provide_stored_derivatives(){ return false; };
 	bool nonmonotone() { return _nonmonotone; };
 	void store_current_derivatives( Multivec & curr_derivs );

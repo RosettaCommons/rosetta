@@ -339,7 +339,7 @@ sequence_tolerance_main( void * )
 		// output pdb with information
 		std::string traitstring;
 		for ( core::Size traitnum = 1; traitnum <= entity.traits().size(); ++traitnum ) {
-			PosType const * postype = dynamic_cast< PosType const * > ( entity.traits()[traitnum].get() );
+			PosTypeCOP postype = dynamic_cast< PosType const * > ( entity.traits()[traitnum].get() );
 			if ( ! postype ) {
 				utility_exit_with_message( "PosType dynamic cast failed for entity element with name " + entity.traits()[traitnum]->name() );
 			}

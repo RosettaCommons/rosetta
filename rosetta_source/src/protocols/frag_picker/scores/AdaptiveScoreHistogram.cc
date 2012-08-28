@@ -34,6 +34,8 @@ AdaptiveScoreHistogram::AdaptiveScoreHistogram(Real bin_size,Real initial_max_sc
 	    data_.resize(new_size);
 }
 
+AdaptiveScoreHistogram::~AdaptiveScoreHistogram() {}
+
 void AdaptiveScoreHistogram::insert(Real score) {
 
     Size bin_id = (Size)(score / bin_size_);

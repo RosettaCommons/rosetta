@@ -37,7 +37,7 @@ namespace rna{
 		//Constructor -- needs vall_torsions_file to get started.
 		RNA_Fragments();
 
-		~RNA_Fragments();
+		virtual ~RNA_Fragments();
 
 	public:
 

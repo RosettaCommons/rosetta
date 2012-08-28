@@ -61,6 +61,9 @@ using namespace core;
 namespace protocols{
 namespace rna{
 
+/// @details Auto-generated virtual destructor
+FragmentLibrary::~FragmentLibrary() {}
+
 	using core::Size;
 	using core::Real;
 

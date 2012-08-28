@@ -52,7 +52,7 @@ class ElementSet : public utility::pointer::ReferenceCount {
 
 public:
 	ElementSet();
-	~ElementSet();
+	virtual ~ElementSet();
 
 	/// @brief Number of elements in the set
 	Size

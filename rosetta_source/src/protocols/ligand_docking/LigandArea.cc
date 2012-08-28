@@ -44,6 +44,8 @@ LigandArea::LigandArea():
 		all_atom_mode_(false)
 {}
 
+LigandArea::~LigandArea() {}
+
 void LigandArea::parse_my_tag(
 	utility::tag::TagPtr const tag
 ){

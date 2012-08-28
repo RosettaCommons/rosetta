@@ -41,6 +41,8 @@ namespace loophash {
 // @brief Manages the insertion of an arbitrary length of backbone in a local manner
 class LocalInserter : public utility::pointer::ReferenceCount  {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~LocalInserter();
   LocalInserter(){
   }
 

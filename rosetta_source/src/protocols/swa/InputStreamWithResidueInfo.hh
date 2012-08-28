@@ -61,7 +61,7 @@ namespace swa {
 		InputStreamWithResidueInfo( core::import_pose::pose_stream::PoseInputStreamOP pose_input_stream,
 																utility::vector1< Size > const & input_res);
 
-		~InputStreamWithResidueInfo();
+		virtual ~InputStreamWithResidueInfo();
 
 		core::import_pose::pose_stream::PoseInputStreamOP & pose_input_stream();
 		utility::vector1< Size > const & input_res();

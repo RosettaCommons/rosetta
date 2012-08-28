@@ -94,7 +94,7 @@ SplineGenerator::get_interpolator()
 			interpolator_ = new SimpleInterpolator(x,y,lbdy_,ubdy_);
 		} else {
 			// std::cerr << "compound!" << std::endl;
-			CompoundInterpolator *interp = new CompoundInterpolator();
+			CompoundInterpolatorOP interp = new CompoundInterpolator();
 			points_.push_back( Point(ubx_,uby_,ubdy_));
 			Real lbx  = lbx_;
 			Real lby  = lby_;

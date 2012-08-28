@@ -322,9 +322,9 @@ branching_atomids2(
 /// @brief get 2 siblings of an atom ordered according their torsion offsets
 void
 get_branching_atoms2(
-	core::kinematics::tree::Atom const * const main_atom2,
-	core::kinematics::tree::Atom const * & branch_atom1,
-	core::kinematics::tree::Atom const * & branch_atom2
+	core::kinematics::tree::AtomCOP const main_atom2,
+	core::kinematics::tree::AtomCOP & branch_atom1,
+	core::kinematics::tree::AtomCOP & branch_atom2
 );
 
 } // branch_angle

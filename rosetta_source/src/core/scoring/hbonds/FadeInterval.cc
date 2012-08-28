@@ -26,6 +26,9 @@ namespace core {
 namespace scoring {
 namespace hbonds {
 
+/// @details Auto-generated virtual destructor
+FadeInterval::~FadeInterval() {}
+
 using std::string;
 using std::ostream;
 

@@ -46,6 +46,9 @@ namespace core {
 namespace scoring {
 namespace mm {
 
+/// @details Auto-generated virtual destructor
+MMBondAngleScore::~MMBondAngleScore() {}
+
 MMBondAngleScore::MMBondAngleScore() :
 	mm_bondangle_library_( scoring::ScoringManager::get_instance()->get_MMBondAngleLibrary() )
 { }

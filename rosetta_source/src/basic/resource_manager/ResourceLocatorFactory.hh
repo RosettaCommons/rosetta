@@ -32,6 +32,8 @@ namespace resource_manager {
 class ResourceLocatorFactory : public utility::pointer::ReferenceCount
 {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~ResourceLocatorFactory();
 	ResourceLocatorOP
 	create_resource_locator(
 		std::string const & locator_type,
@@ -47,7 +49,7 @@ public:
 
 	/// @brief Only useful for unit testing.  Since factory registration happens (sometimes) at
 	/// load time, there may be no one to catch a thrown exception in the event of a name collision
-	/// between two ResourceLocatorCreators that register for the same name. 
+	/// between two ResourceLocatorCreators that register for the same name.
 	void
 	set_throw_on_double_registration();
 

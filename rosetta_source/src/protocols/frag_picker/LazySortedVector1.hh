@@ -79,10 +79,10 @@ public:
 	}
 
 	inline void set_worst( T new_worst) { worst_ = new_worst; }
-	inline T peek_back() { return data_[sorted_capacity_]; }
-	inline T peek_front() { return data_[1]; }
+	inline T peek_back() const { return data_[sorted_capacity_]; }
+	inline T peek_front() const { return data_[1]; }
 
-	inline Size count_inserted() { return data_.size(); }
+	inline Size count_inserted() const { return data_.size(); }
 
 
 	/// @brief sets new capacity for the container
@@ -102,7 +102,7 @@ public:
 		return data_[index];
 	}
 
-	inline Size size() {
+	inline Size size() const {
 		return std::min(sorted_capacity_,last_);
 	}
 

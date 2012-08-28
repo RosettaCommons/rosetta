@@ -157,6 +157,7 @@ public:
   typedef std::map< Model, core::Real > Weights;
 
 	PairingStatistics() {};
+	virtual ~PairingStatistics();
 
   PairingStatistics( Templates const& templates ) {
     compute( templates );

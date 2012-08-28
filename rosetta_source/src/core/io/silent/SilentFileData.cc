@@ -60,6 +60,10 @@ namespace silent {
 static basic::Tracer tr("core.io.silent");
 static numeric::random::RandomGenerator RG(21458);
 
+SilentFileData::~SilentFileData() {
+	clear_structure_map();
+}
+
 utility::vector1< std::string >
 SilentFileData::read_tags_fast( std::string const & filename ) const {
 	utility::vector1< std::string > tags_in_file;

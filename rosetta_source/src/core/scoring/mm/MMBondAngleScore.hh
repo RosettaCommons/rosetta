@@ -52,6 +52,8 @@ class MMBondAngleScore : public utility::pointer::ReferenceCount
 {
 
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~MMBondAngleScore();
 
 	/// @brief Default ctor
 	MMBondAngleScore();

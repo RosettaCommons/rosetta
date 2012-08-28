@@ -26,6 +26,9 @@
 namespace core {
 namespace conformation {
 
+/// @details Auto-generated virtual destructor
+ResidueMatcher::~ResidueMatcher() {}
+
 
 bool
 WatsonCrickResidueMatcher::operator()( Residue const & rsd1, Residue const & rsd2 ) const

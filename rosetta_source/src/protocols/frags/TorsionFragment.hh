@@ -62,6 +62,7 @@ public:
 			torsions_[k].resize( nbb_in );
 		}
 	}
+	virtual ~TorsionFragment();
 
 	/// fragment size, 3mer or 9mer?
 	inline
@@ -132,6 +133,8 @@ class SingleResidueTorsionFragmentLibrary : public utility::pointer::ReferenceCo
 /// ******************************************************************************************************
 
 public:
+	virtual ~SingleResidueTorsionFragmentLibrary();
+
 	/// insert one piece of fragment in the front
 	void
 	insert_fragment( TorsionFragmentOP fragment )
@@ -184,6 +187,7 @@ class	TorsionFragmentLibrary : public utility::pointer::ReferenceCount{
 public:
 	/// default constructor
 	TorsionFragmentLibrary() {}
+	virtual ~TorsionFragmentLibrary();
 
 	/// constructor with size (number of residue positions)
 	TorsionFragmentLibrary( Size const size_in )

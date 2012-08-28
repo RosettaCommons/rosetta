@@ -144,7 +144,7 @@ namespace symmetry {
 				core::conformation::symmetry::SlideCriteriaType score_criteria,
 				std::string SlideCriteriaVal = "AUTOMATIC"
 			);
-			~SymmetrySlider();
+			virtual ~SymmetrySlider();
 
 			void setup( core::pose::Pose & pose);
 

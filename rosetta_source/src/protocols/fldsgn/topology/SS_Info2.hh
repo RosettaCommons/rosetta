@@ -63,7 +63,7 @@ public:// construct/destruct
 	SS_Base(	SS_Base const & s );
 
 	/// @brief destructor
-	~SS_Base();
+	virtual ~SS_Base();
 
 
 public:// accessors

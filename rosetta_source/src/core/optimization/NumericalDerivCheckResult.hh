@@ -80,6 +80,8 @@ private:
 
 class SimpleDerivCheckResult : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~SimpleDerivCheckResult();
 	SimpleDerivCheckResult( Size const nangles, Size const nsteps ) :
 		step_data_( nangles ),
 		abs_deriv_dev_( nangles, 0.0 ),
@@ -224,7 +226,7 @@ public:
 
 public:
 	NumericalDerivCheckResult();
-	~NumericalDerivCheckResult();
+	virtual ~NumericalDerivCheckResult();
 
 	void send_to_stdout( bool setting ) { send_to_stdout_ = setting; }
 	bool send_to_stdout() const { return send_to_stdout_; }

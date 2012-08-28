@@ -97,20 +97,20 @@ public:
 	void
 	start_atoms1(
 		core::pose::Pose const & pose,
-		core::kinematics::tree::Atom const * & start_atom_m1,
-		core::kinematics::tree::Atom const * & start_atom,
-		core::kinematics::tree::Atom const * & start_atom_p1
+		core::kinematics::tree::AtomCOP & start_atom_m1,
+		core::kinematics::tree::AtomCOP & start_atom,
+		core::kinematics::tree::AtomCOP & start_atom_p1
 	) const;
 
 	/// @brief get mainchain atom tree atoms 2 bonds away from the start pivot
 	void
 	start_atoms2(
 		core::pose::Pose const & pose,
-		core::kinematics::tree::Atom const * & start_atom_m2,
-		core::kinematics::tree::Atom const * & start_atom_m1,
-		core::kinematics::tree::Atom const * & start_atom,
-		core::kinematics::tree::Atom const * & start_atom_p1,
-		core::kinematics::tree::Atom const * & start_atom_p2
+		core::kinematics::tree::AtomCOP & start_atom_m2,
+		core::kinematics::tree::AtomCOP & start_atom_m1,
+		core::kinematics::tree::AtomCOP & start_atom,
+		core::kinematics::tree::AtomCOP & start_atom_p1,
+		core::kinematics::tree::AtomCOP & start_atom_p2
 	) const;
 
 	/// @brief get a key representing the starting mainchain bond angle atoms
@@ -123,20 +123,20 @@ public:
 	void
 	end_atoms1(
 		core::pose::Pose const & pose,
-		core::kinematics::tree::Atom const * & end_atom_m1,
-		core::kinematics::tree::Atom const * & end_atom,
-		core::kinematics::tree::Atom const * & end_atom_p1
+		core::kinematics::tree::AtomCOP & end_atom_m1,
+		core::kinematics::tree::AtomCOP & end_atom,
+		core::kinematics::tree::AtomCOP & end_atom_p1
 	) const;
 
 	/// @brief get mainchain atom tree atoms 2 bonds away from the end pivot
 	void
 	end_atoms2(
 		core::pose::Pose const & pose,
-		core::kinematics::tree::Atom const * & end_atom_m2,
-		core::kinematics::tree::Atom const * & end_atom_m1,
-		core::kinematics::tree::Atom const * & end_atom,
-		core::kinematics::tree::Atom const * & end_atom_p1,
-		core::kinematics::tree::Atom const * & end_atom_p2
+		core::kinematics::tree::AtomCOP & end_atom_m2,
+		core::kinematics::tree::AtomCOP & end_atom_m1,
+		core::kinematics::tree::AtomCOP & end_atom,
+		core::kinematics::tree::AtomCOP & end_atom_p1,
+		core::kinematics::tree::AtomCOP & end_atom_p2
 	) const;
 
 	/// @brief get a key representing the ending mainchain bond angle atoms
@@ -151,9 +151,9 @@ public:
 	bond_angle_atoms(
 		core::pose::Pose const & pose,
 		BackrubSegment::BondAngleKey bond_angle_key,
-		core::kinematics::tree::Atom const * & atom_m1,
-		core::kinematics::tree::Atom const * & atom,
-		core::kinematics::tree::Atom const * & atom_p1
+		core::kinematics::tree::AtomCOP & atom_m1,
+		core::kinematics::tree::AtomCOP & atom,
+		core::kinematics::tree::AtomCOP & atom_p1
 	);
 
 	/// @brief get maximum angular displacement

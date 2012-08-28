@@ -33,6 +33,8 @@ namespace qsar {
 class qsarPoint : public utility::pointer::ReferenceCount
 {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~qsarPoint();
 	qsarPoint(std::string type, core::Real value, std::string name, core::conformation::ResidueOP residue );
 	///@brief set the value of the qsar point
 	void set_value(core::Real value);
@@ -61,6 +63,8 @@ private:
 class qsarMap : public utility::pointer::ReferenceCount
 {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~qsarMap();
 	qsarMap(std::string map_name, core::conformation::ResidueOP residue);
 
 	///@brief get size of map

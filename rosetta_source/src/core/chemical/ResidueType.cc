@@ -187,8 +187,7 @@ ResidueType::residue_type_set() const
 ResidueTypeOP
 ResidueType::clone() const
 {
-	ResidueType * rsd_ptr( new ResidueType( *this ) );
-
+	ResidueTypeOP rsd_ptr( new ResidueType( *this ) );
 	return rsd_ptr;
 }
 

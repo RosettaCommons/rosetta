@@ -29,14 +29,17 @@
 namespace core {
 namespace fragment {
 
+/// @details Auto-generated virtual destructor
+FragmentRmsd::~FragmentRmsd() {}
+
 FragmentRmsd::FragmentRmsd(FragSetCOP fragments) : fragments_(fragments) {
   for (FrameIterator i = fragments_->begin(); i != fragments_->end(); ++i) {
-    Frame const * frame = *i;
+    FrameCOP frame = *i;
     frames_[frame->start()] = frame;
   }
 }
 
-Frame const * FragmentRmsd::frame(core::Size position) const {
+FrameCOP FragmentRmsd::frame(core::Size position) const {
   if (frames_.find(position) == frames_.end()) {
     utility_exit_with_message("Requested invalid position in FragmentRmsd::fragment");
   }
@@ -45,7 +48,7 @@ Frame const * FragmentRmsd::frame(core::Size position) const {
 }
 
 FragDataCOP FragmentRmsd::fragment(core::Size position, core::Size k) const {
-  Frame const * f = frame(position);
+  FrameCOP f = frame(position);
 
   if (k < 1 || k > f->nr_frags()) {
     utility_exit_with_message("Requested invalid fragment number in FragmentRmsd::fragment");
@@ -58,7 +61,7 @@ core::Real FragmentRmsd::rmsd(core::Size position, core::Size k, const core::pos
   core::pose::Pose pose;
   core::pose::make_pose_from_sequence(pose, reference.sequence(), "centroid");
 
-  Frame const * f = frame(position);
+  FrameCOP f = frame(position);
   f->apply(k, pose);
 
   return core::scoring::CA_rmsd(pose, reference, f->start(), f->stop());

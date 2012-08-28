@@ -236,11 +236,12 @@ JumpAtom::update_internal_coords(
 
 /////////////////////////////////////////////////////////////////////////////
 /// @note this will recursively clone all this atom's offspring atoms
-Atom*
-JumpAtom::clone( Atom* parent_in, AtomPointer2D & atom_pointer ) const
+AtomOP
+JumpAtom::clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const
 {
 
-	JumpAtom* new_me = new JumpAtom(*this);
+	JumpAtomOP new_me = new JumpAtom(*this);
+	new_me->set_weak_ptr_to_self( new_me() );
 
 	atom_pointer[ id() ] = new_me;
 
@@ -256,7 +257,7 @@ JumpAtom::clone( Atom* parent_in, AtomPointer2D & atom_pointer ) const
 	// copy atoms
 	for ( Atoms_ConstIterator it= atoms_begin(), it_end= atoms_end();
 				it != it_end; ++it ) {
-		new_me->append_atom( (*it)->clone( new_me, atom_pointer ) );
+		new_me->append_atom( (*it)->clone( new_me(), atom_pointer ) );
 	}
 
 	return new_me;

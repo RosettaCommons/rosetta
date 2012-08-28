@@ -50,6 +50,8 @@ MMLJScore::MMLJScore( MMLJLibrary const & mmljl ) :
   mm_lj_library_( mmljl )
 { }
 
+MMLJScore::~MMLJScore() {}
+
 /// @details blah
 Energy
 MMLJScore::score( Size atom1, Size atom2, Size path_distance, Real distance ) const

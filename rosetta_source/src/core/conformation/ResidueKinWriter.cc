@@ -110,6 +110,8 @@ ResidueKinWriter::ResidueKinWriter() :
 	write_virtual_atoms_( false )
 {}
 
+ResidueKinWriter::~ResidueKinWriter() {}
+
 void ResidueKinWriter::write_kin_header(
 	std::ostream & ostr,
 	core::conformation::Residue const & rsd,
@@ -203,6 +205,7 @@ void ResidueKinWriter::write_apolar_hydrogens(   bool setting ) { write_apolar_h
 void ResidueKinWriter::write_polar_hydrogens(    bool setting ) { write_polar_hydrogens_ = setting; }
 void ResidueKinWriter::write_backbone_hydrogens( bool setting ) { write_backbone_hydrogens_ = setting; }
 
+ConformationKinWriter::~ConformationKinWriter() {}
 
 /// @brief Write out the coordinates for an entire conformation; this includes
 /// inter-residue bonds that would be missed by the ResidueKinWriter.

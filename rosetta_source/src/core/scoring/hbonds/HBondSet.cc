@@ -61,6 +61,9 @@ namespace core {
 namespace scoring {
 namespace hbonds {
 
+/// @details Auto-generated virtual destructor
+HBond::~HBond() {}
+
 using namespace ObjexxFCL::fmt;
 
 static basic::Tracer t("core.scoring.hbonds.HBondSet");

@@ -79,6 +79,8 @@ public:
 
 class BasePairingLibrary : public utility::pointer::ReferenceCount {
 public:
+	virtual ~BasePairingLibrary();
+
 	virtual void
 	create_jump_fragments(
     int const orientation,

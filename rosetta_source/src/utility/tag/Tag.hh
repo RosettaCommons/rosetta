@@ -32,6 +32,8 @@ namespace tag {
 
 class Tag : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~Tag();
 
   typedef std::map<std::string, std::string > options_t;
   typedef utility::vector0< TagPtr > tags_t;

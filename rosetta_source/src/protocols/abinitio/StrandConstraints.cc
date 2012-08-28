@@ -86,6 +86,9 @@ using namespace basic;
 namespace protocols {
 namespace abinitio {
 
+/// @details Auto-generated virtual destructor
+StrandConstraints::~StrandConstraints() {}
+
 //using namespace jumping;
 
 Size register_cutoff( 5 );

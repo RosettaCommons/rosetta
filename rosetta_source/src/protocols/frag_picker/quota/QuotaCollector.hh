@@ -50,26 +50,28 @@ public:
 	void clear();
 
 	/// @brief  Check how many candidates have been already collected for a given position
-	Size count_candidates(Size);
+	Size count_candidates(Size) const;
 
 	/// @brief  Check how many candidates have been already collected for all positions
-	Size count_candidates();
+	Size count_candidates() const;
 
 	/// @brief  Check the size of query sequence that this object knows.
 	/// This is mainly to be ale to check if it is the same as in the other parts of
 	/// fragment picking machinery.
-	Size query_length() { return storage_.size(); }
+	Size query_length() const { return storage_.size(); }
 
+	ScoredCandidatesVector1 const & get_candidates(Size position_in_query) const;
 	ScoredCandidatesVector1 & get_candidates(Size position_in_query);
 
 	/// @brief Describes what has been collected
 	void print_report(std::ostream & output,
-			scores::FragmentScoreManagerOP scoring);
+			scores::FragmentScoreManagerOP scoring
+	) const;
 
 	/// @brief Inserts candidates from another QuotaCollector for a give position in the query
 	/// Candidates may or may not get inserted depending on the candidate
 	void insert(Size pos, CandidatesCollectorOP collector) {
-		QuotaCollector *c = dynamic_cast<QuotaCollector*> (collector());
+		QuotaCollectorOP c = dynamic_cast<QuotaCollector*> (collector());
 		if (c == 0)
 			utility_exit_with_message("Cant' cast candidates' collector to QuotaCollector. Is quota set up correctly?");
 		for(Size j=1;j<=storage_[pos].size();++j) {
@@ -79,15 +81,18 @@ public:
 	}
 
 	/// @brief list all registered pools with their capacity
-	void list_pools(std::ostream & where);
+	void list_pools(std::ostream & where) const;
 
 	/// @brief prints the number of quota pools for a given positio in query
-	Size count_pools(Size position) {
+	Size count_pools(Size position) const {
 	    return storage_[position].size();
 	}
 
-	QuotaPoolOP get_pool(Size position,Size pool_id) {
+	QuotaPoolCOP get_pool( Size position, Size pool_id ) const {
+	    return storage_[position][pool_id];
+	}
 
+	QuotaPoolOP get_pool( Size position, Size pool_id ) {
 	    return storage_[position][pool_id];
 	}
 

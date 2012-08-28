@@ -74,8 +74,6 @@ MatchPositionModifier::MatchPositionModifier(){}
 
 MatchPositionModifier::~MatchPositionModifier(){}
 
-
-
 SecondaryStructureMPM::SecondaryStructureMPM( utility::vector1< std::string > const & input_tokens )
 	: MatchPositionModifier()
 {

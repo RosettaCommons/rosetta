@@ -62,7 +62,7 @@ public: // Types
 
 
 	typedef  PointPosition  Position;
-	typedef  utility::vector0< Atom * >  Atoms;
+	typedef  utility::vector0< AtomOP >  Atoms;
 	typedef  Atoms::ConstIterator  Atoms_ConstIterator;
 	typedef  Atoms::Iterator  Atoms_Iterator;
 
@@ -103,7 +103,6 @@ protected: // Creation
 		ReferenceCount()
 	{}
 
-
 public: // Creation
 
 
@@ -126,6 +125,15 @@ protected: // Assignment
 
 
 public: // Methods
+
+	/// @brief Set the weak-pointer-to-self for this atom.  Must be called after the Atom is created and put inside of an owning_ptr.
+	/// Required for atoms to be able to hold pointers to their parents: parents must give child atoms weak pointers to themselves.
+	virtual
+	void
+	set_weak_ptr_to_self(
+		AtomAP weak_ptr
+	) = 0;
+
 
 	/// @brief Perform a depth-first traversal of the tree that would be effected by
 	/// a DOF change from this atom.  Stop at atoms that have already been traversed.
@@ -250,8 +258,8 @@ public: // Methods
 
 	/// copy atom with new memory allocation
 	virtual
-	Atom *
-	clone( Atom * parent_in, AtomPointer2D & atom_pointer ) const = 0;
+	AtomOP
+	clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const = 0;
 
 
 	///////////////////////////////////////////////////////////////////////////
@@ -316,8 +324,8 @@ public: // Methods
 	virtual
 	Real
 	dihedral_between_bonded_children(
-		Atom const * child1,
-		Atom const * child2
+		AtomCOP child1,
+		AtomCOP child2
 	) const = 0;
 
 
@@ -366,36 +374,36 @@ public: // Methods
 	// as well) that all the JumpAtoms come before the BondedAtoms
 	virtual
 	void
-	append_atom( Atom * ) = 0;
+	append_atom( AtomOP ) = 0;
 
 
 	virtual
 	void
-	delete_atom( Atom * ) = 0;
+	delete_atom( AtomOP ) = 0;
 
 
 	// inserts at the beginning
 	virtual
 	void
-	insert_atom( Atom * ) = 0;
+	insert_atom( AtomOP ) = 0;
 
 
 	// tries to insert at the position specified by the second argument
 	virtual
 	void
-	insert_atom( Atom *, int const /*index*/ ) = 0;
+	insert_atom( AtomOP, int const /*index*/ ) = 0;
 
 
 	virtual
 	void
 	replace_atom(
-		Atom * const old_atom,
-		Atom * const new_atom
+		AtomOP const old_atom,
+		AtomOP const new_atom
 	) = 0;
 
 
 	virtual
-	Atom const *
+	AtomCOP
 	get_nonjump_atom(
 		Size const i
 	) const = 0;
@@ -416,23 +424,23 @@ public: // Methods
 
 
 	virtual
-	Atom const *
+	AtomCOP
 	child( Size const k ) const = 0;
 
 
 	virtual
-	Atom *
+	AtomOP
 	child( Size const k ) = 0;
 
 
 	/// the atom-index of this child
 	virtual
 	Size
-	child_index( Atom const * child ) const = 0;
+	child_index( AtomCOP child ) const = 0;
 
 	virtual
 	bool
-	downstream( Atom const * atom1 ) const = 0;
+	downstream( AtomCOP atom1 ) const = 0;
 
 
 public: // Properties
@@ -535,28 +543,28 @@ public: // Properties
 
 	/// @brief Parent atom pointer, NULL for root atom
 	virtual
-	Atom const *
+	AtomCOP
 	parent() const = 0;
 
 	///
 	virtual
 	void
-	get_path_from_root( utility::vector1< Atom const * > & path ) const = 0;
+	get_path_from_root( utility::vector1< AtomCOP > & path ) const = 0;
 
 	///
 	virtual
 	bool
-	atom_is_on_path_from_root( Atom const * atm ) const = 0;
+	atom_is_on_path_from_root( AtomCOP atm ) const = 0;
 
 	/// parent assignment
 	virtual
 	void
-	parent( Atom* parent_in ) = 0;
+	parent( AtomAP parent_in ) = 0;
 
 
 	/// @brief Parent atom pointer, NULL for root atom
 	virtual
-	Atom *
+	AtomOP
 	parent() = 0;
 
 
@@ -572,17 +580,17 @@ public: // Properties
 
 
 	virtual
-	Atom const *
+	AtomCOP
 	stub_atom1() const = 0;
 
 
 	virtual
-	Atom const *
+	AtomCOP
 	stub_atom2() const = 0;
 
 
 	virtual
-	Atom const *
+	AtomCOP
 	stub_atom3() const = 0;
 
 
@@ -602,22 +610,22 @@ public: // Properties
 
 
 	virtual
-	Atom const *
+	AtomCOP
 	input_stub_atom0() const = 0;
 
 
 	virtual
-	Atom const *
+	AtomCOP
 	input_stub_atom1() const = 0;
 
 
 	virtual
-	Atom const *
+	AtomCOP
 	input_stub_atom2() const = 0;
 
 
 	virtual
-	Atom const *
+	AtomCOP
 	input_stub_atom3() const = 0;
 
 
@@ -643,20 +651,20 @@ public: // Properties
 
 	// routines for navigating the tree
 	virtual
-	Atom const *
+	AtomCOP
 	previous_sibling() const = 0;
 
 	virtual
-	Atom const *
+	AtomCOP
 	previous_child(
-		Atom const * child
+		AtomCOP child
 	) const = 0;
 
 
 	virtual
-	Atom *
+	AtomOP
 	next_child(
-		Atom const * child
+		AtomCOP child
 	) = 0;
 
 
@@ -672,7 +680,7 @@ protected: // Methods
 	virtual
 	void
 	update_child_torsions(
-		Atom * const child
+		AtomOP const child
 	) = 0;
 
 

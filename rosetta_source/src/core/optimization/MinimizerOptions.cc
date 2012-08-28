@@ -31,6 +31,9 @@
 namespace core {
 namespace optimization {
 
+/// @details Auto-generated virtual destructor
+MinimizerOptions::~MinimizerOptions() {}
+
 MinimizerOptions::MinimizerOptions(
 	std::string const & min_type_in,
 	Real const minimize_tolerance_in,

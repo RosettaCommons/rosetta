@@ -779,7 +779,7 @@ int ShapeComplementarityCalculator::CheckAtomCollision2(
 int ShapeComplementarityCalculator::GenerateConvexSurface(Atom const &atom1)
 {
 	std::vector<Atom*> const &neighbors = atom1.neighbors;
-	Atom const *neighbor;
+	Atom const * neighbor;
 	Vec3 north(0, 0, 1);
 	Vec3 south(0, 0, -1);
 	Vec3 eqvec(1, 0, 0);

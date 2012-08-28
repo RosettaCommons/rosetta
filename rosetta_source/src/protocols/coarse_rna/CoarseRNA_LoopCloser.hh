@@ -102,7 +102,7 @@ private:
 							Size const & res );
 
 	void
-	backtrack( core::kinematics::tree::Atom const * current_atom,
+	backtrack( core::kinematics::tree::AtomCOP current_atom,
 						 utility::vector1< core::Size > & upstream_res,
 						 utility::vector1< bool > & is_upstream_res,
 						 core::pose::Pose const & pose );

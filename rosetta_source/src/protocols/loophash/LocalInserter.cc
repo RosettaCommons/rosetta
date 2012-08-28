@@ -44,6 +44,9 @@ using namespace core::pose;
 namespace protocols {
 namespace loophash {
 
+/// @details Auto-generated virtual destructor
+LocalInserter::~LocalInserter() {}
+
   static basic::Tracer TR("LocalInserter");
 
 

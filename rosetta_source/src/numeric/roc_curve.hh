@@ -32,6 +32,8 @@ namespace numeric {
 class RocPoint : public utility::pointer::ReferenceCount {
 
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~RocPoint();
 	RocPoint(bool predicted, bool actual, std::string const & tag,platform::Real const & score);
 	RocPoint(RocStatus const & status,std::string const & tag, platform::Real const & score);
 
@@ -56,6 +58,8 @@ private:
 
 class RocCurve : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~RocCurve();
 	RocCurve();
 
 	void insert_point(RocPoint const & roc_point);

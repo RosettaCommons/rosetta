@@ -71,7 +71,7 @@ public:
 
 	CovalentConnectionReplaceInfo( CovalentConnectionReplaceInfo const & other );
 
-	~CovalentConnectionReplaceInfo();
+	virtual ~CovalentConnectionReplaceInfo();
 
 	void
 	remove_covalent_connection_from_pose( core::pose::Pose & pose ) const;
@@ -110,7 +110,7 @@ public:
 
 	EnzConstraintParameters( EnzConstraintParameters const & other );
 
-	~EnzConstraintParameters();
+	virtual ~EnzConstraintParameters();
 
 	void
 	show_definitions() const;

@@ -40,6 +40,8 @@ namespace operation {
 class ResLvlTaskOperationCreator : public utility::pointer::ReferenceCount
 {
 public:
+	virtual ~ResLvlTaskOperationCreator() {}
+
 	/// @brief Instantiate a new ResLvlTaskOperation
 	virtual
 	ResLvlTaskOperationOP

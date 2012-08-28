@@ -54,6 +54,8 @@ namespace resource_manager {
 class JobOptions : public utility::pointer::ReferenceCount {
 
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~JobOptions();
 
 	void
 	add_option(

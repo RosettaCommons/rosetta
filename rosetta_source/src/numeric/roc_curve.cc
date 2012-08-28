@@ -26,6 +26,12 @@
 
 namespace numeric {
 
+/// @details Auto-generated virtual destructor
+RocCurve::~RocCurve() {}
+
+/// @details Auto-generated virtual destructor
+RocPoint::~RocPoint() {}
+
 
 RocPoint::RocPoint(
 	bool predicted,

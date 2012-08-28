@@ -79,17 +79,17 @@ public:
 
 	FrameIterator const & operator = ( FrameIterator const& itr );
 
-	Frame* operator* ();
+	FrameOP operator* ();
 
-	Frame const* operator* () const;
+	FrameCOP operator* () const;
 
-	Frame* operator-> ();
+	FrameOP operator-> ();
 
-	Frame const* operator-> () const;
+	FrameCOP operator-> () const;
 
-	Frame* frame_ptr();
+	FrameOP frame_ptr();
 
-	Frame const* frame_ptr() const;
+	FrameCOP frame_ptr() const;
 
 protected:
 	FrameIteratorWorker_OP it_;

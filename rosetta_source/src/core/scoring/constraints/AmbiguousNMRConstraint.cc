@@ -68,12 +68,12 @@ AmbiguousNMRConstraint::score( XYZ_Func const & xyz_func, EnergyMap const & /*we
 	core::Real cum_invdist6 = 0;
 
 	for( ConstraintCOPs::const_iterator member_it = member_constraints().begin(); member_it != member_constraints().end(); member_it++){
-		AmbiguousNMRDistanceConstraint const* cst_in_casted;
-		cst_in_casted = dynamic_cast< AmbiguousNMRDistanceConstraint const* >( (*member_it).get() );
+		AmbiguousNMRDistanceConstraintCOP cst_in_casted;
+		cst_in_casted = dynamic_cast< AmbiguousNMRDistanceConstraint const * >( (*member_it).get() );
 		if ( cst_in_casted ) cum_invdist6 += cst_in_casted->inv_dist6( xyz_func );
 		if ( !cst_in_casted ) {
-			AtomPairConstraint const* cst_in_casted;
-			cst_in_casted = dynamic_cast< AtomPairConstraint const* >( (*member_it).get() );
+			AtomPairConstraintCOP cst_in_casted;
+			cst_in_casted = dynamic_cast< AtomPairConstraint const * >( (*member_it).get() );
 			if ( cst_in_casted ) {
 				Real dist = cst_in_casted->dist( xyz_func );
 				Real inv_dist = 1.0/dist;
@@ -102,13 +102,13 @@ AmbiguousNMRConstraint::dist( XYZ_Func const & xyz ) const
 	core::Real cum_invdist6 = 0;
 
 	for( ConstraintCOPs::const_iterator member_it = member_constraints().begin(); member_it != member_constraints().end(); member_it++){
-		AmbiguousNMRDistanceConstraint const* cst_in_casted;
+		AmbiguousNMRDistanceConstraintCOP cst_in_casted;
 		PROF_START( basic::NOESY_ASSIGN_DIST_CST_CAST );
 		cst_in_casted = dynamic_cast< AmbiguousNMRDistanceConstraint const* >( (*member_it).get() );
 		PROF_STOP( basic::NOESY_ASSIGN_DIST_CST_CAST );
 		if ( cst_in_casted ) cum_invdist6 += cst_in_casted->inv_dist6( xyz );
 		if ( !cst_in_casted ) {
-			AtomPairConstraint const* cst_in_casted;
+			AtomPairConstraintCOP cst_in_casted;
 			PROF_START( basic::NOESY_ASSIGN_DIST_CST_CAST );
 			cst_in_casted = dynamic_cast< AtomPairConstraint const* >( (*member_it).get() );
 			PROF_STOP( basic::NOESY_ASSIGN_DIST_CST_CAST );
@@ -256,7 +256,7 @@ AmbiguousNMRConstraint::show_violations( std::ostream& out, pose::Pose const& po
 void
 AmbiguousNMRConstraint::add_individual_constraint( ConstraintCOP cst_in )
 {
-	Constraint const* cst_in_casted;
+	ConstraintCOP cst_in_casted;
 	cst_in_casted = dynamic_cast< AmbiguousNMRDistanceConstraint const* >( cst_in.get() );
 	if ( !cst_in_casted ) {
 		cst_in_casted = dynamic_cast< AtomPairConstraint const* >( cst_in.get() );

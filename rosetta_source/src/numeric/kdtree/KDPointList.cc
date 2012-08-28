@@ -26,6 +26,9 @@
 namespace numeric {
 namespace kdtree {
 
+/// @details Auto-generated virtual destructor
+KDPointList::~KDPointList() {}
+
 bool KDPoint_MinDist::operator() ( KDPointOP const & a, KDPointOP const & b ) {
 	return ( a->distance() < b->distance() );
 }

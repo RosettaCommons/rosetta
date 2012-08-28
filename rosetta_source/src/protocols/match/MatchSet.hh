@@ -66,7 +66,7 @@ public:
 
 public:
 	HitHasher();
-	~HitHasher();
+	virtual ~HitHasher();
 
 	void
 	set_bounding_box(

@@ -70,6 +70,8 @@ namespace methods {
 //fpd  cache ideal torsions for fast lookup
 class TorsionDatabase  : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~TorsionDatabase();
 	TorsionDatabase(Real k_tors, Real k_tors_prot);
 
 	// lookup ideal torsion; insert in DB if not there
@@ -95,6 +97,8 @@ private:
 //fpd  cache ideal bond angles for fast lookup
 class BondAngleDatabase  : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~BondAngleDatabase();
 	BondAngleDatabase(Real k_ang);
 
 	// lookup ideal bondangle; insert in DB if not there
@@ -118,6 +122,8 @@ private:
 //fpd  cache ideal bond lengths for fast lookup
 class BondLengthDatabase  : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~BondLengthDatabase();
 	BondLengthDatabase(Real k_len);
 
 	// lookup ideal bondlength; insert in DB if not there

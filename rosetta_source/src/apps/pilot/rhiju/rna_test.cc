@@ -2778,13 +2778,13 @@ rna_backbone_rebuild_test()
 		mini_pose.fold_tree( mini_f );
 
 		id::AtomID base_atom1_id(       mini_pose.residue(1).atom_index( " C1*" ), 1 );
-		tree::Atom const * base_atom1 ( & mini_pose.atom_tree().atom( base_atom1_id ) );
+		tree::AtomCOP base_atom1 ( & mini_pose.atom_tree().atom( base_atom1_id ) );
 
 		id::AtomID forward_connect1_id( mini_pose.residue(1).atom_index( " O3*" ), 1 );
-		tree::Atom const * forward_connect1 ( & mini_pose.atom_tree().atom( forward_connect1_id ) );
+		tree::AtomCOP forward_connect1 ( & mini_pose.atom_tree().atom( forward_connect1_id ) );
 
 		id::AtomID base_atom2_id(       mini_pose.residue(2).atom_index( " C1*" ), 2 );
-		tree::Atom const * base_atom2 ( & mini_pose.atom_tree().atom( base_atom2_id ) );
+		tree::AtomCOP base_atom2 ( & mini_pose.atom_tree().atom( base_atom2_id ) );
 
 		base_base_jumps.push_back( Jump( base_atom1->get_stub(), base_atom2->get_stub() ) );
 		forwardconnect_base_jumps.push_back( Jump( forward_connect1->get_stub(), base_atom2->get_stub() ) );
@@ -2797,9 +2797,9 @@ rna_backbone_rebuild_test()
 		Size const i( 1 );
 
 		id::AtomID base_atom1_id(       pose.residue(i).atom_index( " C1*" ), i );
-		tree::Atom const * base_atom1 ( & pose.atom_tree().atom( base_atom1_id ) );
+		tree::AtomCOP base_atom1 ( & pose.atom_tree().atom( base_atom1_id ) );
 		id::AtomID base_atom2_id(       pose.residue(i+1).atom_index( " C1*" ), i+1 );
-		tree::Atom const * base_atom2 ( & pose.atom_tree().atom( base_atom2_id ) );
+		tree::AtomCOP base_atom2 ( & pose.atom_tree().atom( base_atom2_id ) );
 		Jump current_jump( base_atom1->get_stub(), base_atom2->get_stub() );
 
 		Real best_jump_distance( 999.9 );
@@ -2834,9 +2834,9 @@ rna_backbone_rebuild_test()
 	for (Size i = 2; i < nres_real; i++ ){
 
 		id::AtomID base_atom1_id(       pose.residue(i).atom_index( " O3*" ), i );
-		tree::Atom const * base_atom1 ( & pose.atom_tree().atom( base_atom1_id ) );
+		tree::AtomCOP base_atom1 ( & pose.atom_tree().atom( base_atom1_id ) );
 		id::AtomID base_atom2_id(       pose.residue(i+1).atom_index( " C1*" ), i+1 );
-		tree::Atom const * base_atom2 ( & pose.atom_tree().atom( base_atom2_id ) );
+		tree::AtomCOP base_atom2 ( & pose.atom_tree().atom( base_atom2_id ) );
 		Jump current_jump( base_atom1->get_stub(), base_atom2->get_stub() );
 
 		Real best_jump_distance( 999.9 );
@@ -3607,8 +3607,8 @@ vary_bond_length( pose::Pose & pose,
 	bool const failure = pose.conformation().get_torsion_angle_atom_ids( tor_id, id1, id2, id3, id4 );
 	if (failure) return;
 
- 	core::kinematics::tree::Atom const * atom2 ( & pose.atom_tree().atom( id2 ) );
-	core::kinematics::tree::Atom const * atom3 ( & pose.atom_tree().atom( id3 ) );
+ 	core::kinematics::tree::AtomCOP atom2 ( & pose.atom_tree().atom( id2 ) );
+	core::kinematics::tree::AtomCOP atom3 ( & pose.atom_tree().atom( id3 ) );
 
 	DOF_ID dof_id;
 	if ( atom2->parent() == atom3 ) {
@@ -4316,7 +4316,7 @@ output_sugar_internal_dof( pose::Pose & pose, utility::vector1< std::string > co
 
 			Size const j = rsd.atom_index( atom_name );
 
-			core::kinematics::tree::Atom const * current_atom ( & pose.atom_tree().atom( AtomID(j,i) ) );
+			core::kinematics::tree::AtomCOP current_atom ( & pose.atom_tree().atom( AtomID(j,i) ) );
 
 			std::cout << A( 5, rsd.atom_name( j )) << " " <<
 			F(11,6, degrees(	pose.atom_tree().dof( DOF_ID( current_atom->id(), id::PHI ) ) ) )  << " " <<
@@ -4424,7 +4424,7 @@ fix_sugar_bond_angles_EMPIRICAL( pose::Pose & pose )
 		{
 			std::string const atom_name = " C2*";
 			Size const j = rsd.atom_index( atom_name );
-			core::kinematics::tree::Atom const * current_atom ( & pose.atom_tree().atom( AtomID(j,i) ) );
+			core::kinematics::tree::AtomCOP current_atom ( & pose.atom_tree().atom( AtomID(j,i) ) );
 			if (delta < 100.0 ) {
 				theta  = -0.138 * delta + 89.4;
 			} else {
@@ -4437,7 +4437,7 @@ fix_sugar_bond_angles_EMPIRICAL( pose::Pose & pose )
 		{
 			std::string const atom_name = " O4*";
 			Size const j = rsd.atom_index( atom_name );
-			core::kinematics::tree::Atom const * current_atom ( & pose.atom_tree().atom( AtomID(j,i) ) );
+			core::kinematics::tree::AtomCOP current_atom ( & pose.atom_tree().atom( AtomID(j,i) ) );
 			if (delta < 100.0 ) {
 				theta  =  0.132 * delta + 59.5;
 				phi = 0.0118 * delta - 118.0;
@@ -4516,10 +4516,10 @@ fix_sugar_bond_angles_CLOSE_BOND( pose::Pose & pose )
 		}
 
 		{
-			core::kinematics::tree::Atom const * current_atom ( & pose.atom_tree().atom( AtomID(j,i) ) );
-			core::kinematics::tree::Atom const * input_stub_atom1( current_atom->input_stub_atom1() );
-			core::kinematics::tree::Atom const * input_stub_atom2( current_atom->input_stub_atom2() );
-			core::kinematics::tree::Atom const * input_stub_atom3( current_atom->input_stub_atom3() );
+			core::kinematics::tree::AtomCOP current_atom ( & pose.atom_tree().atom( AtomID(j,i) ) );
+			core::kinematics::tree::AtomCOP input_stub_atom1( current_atom->input_stub_atom1() );
+			core::kinematics::tree::AtomCOP input_stub_atom2( current_atom->input_stub_atom2() );
+			core::kinematics::tree::AtomCOP input_stub_atom3( current_atom->input_stub_atom3() );
 			kinematics::Stub const input_stub( input_stub_atom1->xyz(), input_stub_atom1->xyz(), input_stub_atom2->xyz(), input_stub_atom3->xyz());
 
 			Vector const v1 = input_stub.global2local( pose.residue(i).xyz( " O4*" ) );

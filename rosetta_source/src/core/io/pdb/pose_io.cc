@@ -543,8 +543,8 @@ dump_connect_info(
 				if ( ( pose.xyz( atom_id ) - pose.xyz( nbr_id ) ).length() < CUTOFF ) continue;
 
 				// Final check: actually look for a connection in the atom tree.
-				core::kinematics::tree::Atom const * atom( & pose.atom_tree().atom_dont_do_update( atom_id ) );
-				core::kinematics::tree::Atom const * nbr( & pose.atom_tree().atom_dont_do_update( nbr_id ) );
+				core::kinematics::tree::AtomCOP atom( & pose.atom_tree().atom_dont_do_update( atom_id ) );
+				core::kinematics::tree::AtomCOP  nbr( & pose.atom_tree().atom_dont_do_update( nbr_id ) );
 
 				if( ( nbr->parent() != atom ) && ( atom->parent() != nbr ) ) continue;
 

@@ -32,6 +32,9 @@ using namespace core;
 namespace protocols {
 namespace jd2 {
 
+/// @details Auto-generated virtual destructor
+ScoreMap::~ScoreMap() {}
+
 /// Score output helper functions
 /// @details
 ///		creates a list of non zero weighted energies and adds them to the

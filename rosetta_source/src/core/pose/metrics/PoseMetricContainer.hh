@@ -68,7 +68,7 @@ public: // construct/destruct
 
 
 	/// @brief default destructor
-	~PoseMetricContainer();
+	virtual ~PoseMetricContainer();
 
 
 	/// @brief copy assignment

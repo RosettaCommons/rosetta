@@ -56,6 +56,8 @@ public:
 		MMBondAngleResidueTypeParamSet const & src
 	);
 
+	virtual ~MMBondAngleResidueTypeParamSet();
+
 	/// @brief get bond angle library for newly created ResidueTypeParam objects
 	MMBondAngleLibraryCAP
 	mm_bondangle_library() const

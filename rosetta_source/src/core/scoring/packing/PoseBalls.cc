@@ -36,6 +36,9 @@ namespace core {
 namespace scoring {
 namespace packing {
 
+/// @details Auto-generated virtual destructor
+PoseBalls::~PoseBalls() {}
+
 using namespace ObjexxFCL;
 
 static basic::Tracer TR("core.scoring.packing.PoseBalls");

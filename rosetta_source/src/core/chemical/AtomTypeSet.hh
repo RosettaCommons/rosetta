@@ -71,7 +71,7 @@ public:
 		std::string const & name,
 		utility::sql_database::sessionOP db_session);
 
-	~AtomTypeSet();
+	virtual ~AtomTypeSet();
 
 public:
 

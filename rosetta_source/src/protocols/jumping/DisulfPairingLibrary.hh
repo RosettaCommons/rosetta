@@ -76,6 +76,8 @@ public:
 
 class BaseDisulfPairingLibrary : public utility::pointer::ReferenceCount {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~BaseDisulfPairingLibrary();
 
 	//Not currently using base class as copied from PairingLibrary, it's hanging
 	//around because I plan to build into it

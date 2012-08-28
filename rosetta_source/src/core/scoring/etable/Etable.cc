@@ -79,6 +79,9 @@ namespace core {
 namespace scoring {
 namespace etable {
 
+/// @details Auto-generated virtual destructor
+Etable::~Etable() {}
+
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
@@ -985,7 +988,7 @@ Etable::smooth_etables_one_pair(
 	}
 
 	// Save the spline parameters for the analytic evaluation
-	SimpleInterpolator * sinterp = dynamic_cast< SimpleInterpolator * > (interp() );
+	SimpleInterpolatorOP sinterp = dynamic_cast< SimpleInterpolator * > (interp() );
 	if ( ! sinterp ) {
 		utility_exit_with_message( "Etable created non-simple-interpolator in smooth_etables()" );
 	}
@@ -1079,7 +1082,7 @@ Etable::smooth_etables_one_pair(
 		SplineGenerator genclose( dis(S1), fasol1(S1) + fasol2(S1), 0, dis(E2), fasol1(E1)+fasol2(E1), dfasol(E1) );
 		InterpolatorOP interp_close( genclose.get_interpolator() );
 
-		SimpleInterpolator * sinterp_close = dynamic_cast< SimpleInterpolator * > (interp_close() );
+		SimpleInterpolatorOP sinterp_close = dynamic_cast< SimpleInterpolator * > (interp_close() );
 
 		if ( ! sinterp_close ) {
 			utility_exit_with_message( "Etable created non-simple-interpolator in smooth_etables()" );
@@ -1102,7 +1105,7 @@ Etable::smooth_etables_one_pair(
 		SplineGenerator genfar( dis(S2), fasol1(S2) + fasol2(S2), dfasol(S2), dis(E2), 0.0, 0.0 );
 		InterpolatorOP interp_far( genfar.get_interpolator() );
 
-		SimpleInterpolator * sinterp_far = dynamic_cast< SimpleInterpolator * > (interp_far() );
+		SimpleInterpolatorOP sinterp_far = dynamic_cast< SimpleInterpolator * > (interp_far() );
 		if ( ! sinterp_far ) {
 			utility_exit_with_message( "Etable created non-simple-interpolator in smooth_etables()" );
 		}

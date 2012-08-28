@@ -139,8 +139,8 @@ void ConformerSwitchMover::apply( core::pose::Pose & pose )
 		);
 	}
 
-	basic::datacache::CacheableStringFloatMap *data
-		= dynamic_cast< basic::datacache::CacheableStringFloatMap* >
+	basic::datacache::CacheableStringFloatMapOP data
+		= dynamic_cast< basic::datacache::CacheableStringFloatMap * >
 		( pose.data().get_raw_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA) );
 
 	data->map()[ ensemble_->partner() ] = ensemble_->lowres_reference_energy(conf_num);

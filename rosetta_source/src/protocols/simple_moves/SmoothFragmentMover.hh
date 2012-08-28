@@ -43,7 +43,7 @@ class FragmentCost : public utility::pointer::ReferenceCount {
 protected:
 	// Constructor protected for base class
 	FragmentCost( std::string type, core::Real cutoff ) : type_( type ), cutoff_( cutoff ) {};
-
+	virtual ~FragmentCost();
 public:
 	// accesor
 	std::string const& type() {

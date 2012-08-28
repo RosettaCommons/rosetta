@@ -246,6 +246,8 @@ private:
 class FindZnCoordinatingResidues : public utility::pointer::ReferenceCount
 {
 public:
+	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	virtual ~FindZnCoordinatingResidues();
 	FindZnCoordinatingResidues();
 	void fail_on_absent_coordinators( bool setting );
 	void find_coordinating_residues( core::pose::Pose const & p );

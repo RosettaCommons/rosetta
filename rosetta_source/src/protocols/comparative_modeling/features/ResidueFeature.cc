@@ -24,6 +24,9 @@ namespace protocols {
 namespace comparative_modeling {
 namespace features {
 
+/// @details Auto-generated virtual destructor
+ResidueFeature::~ResidueFeature() {}
+
 core::Size ResidueFeature::resnum() const {
 	return resnum_;
 }
