@@ -1024,6 +1024,17 @@ bool RemodelMover::centroid_build(
 		vlb_ = new VarLengthBuild( manager_ , remodel_data_ );
 	}
 
+	if (!remodel_data_.abego.empty()){
+		//the following block simply packages the string to feed to vlb
+		utility::vector1<std::string> abego_vec;
+		for (Size i = 0; i <= remodel_data_.abego.length(); i++){
+			std::string buffer;
+			buffer.push_back(remodel_data_.abego[i]);
+			abego_vec.push_back(buffer);
+		}
+		vlb_->set_abego(abego_vec);
+	}
+
 	vlb_->scorefunction( centroid_sfx_ );
 	vlb_->vall_memory_usage( VLB_VallMemoryUsage::CLEAR_IF_CACHING_FRAGMENTS );
 	vlb_->use_fullmer( option[OptionKeys::remodel::use_same_length_fragments] );

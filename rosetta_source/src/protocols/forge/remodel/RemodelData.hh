@@ -53,6 +53,8 @@ namespace remodel{
             // need this for "." switch to find remodel regions
 						std::string ss;
 
+						std::string abego;
+
             // merge the dssp assignment with ss string, exclude ".",
 						// gets the final dssp_updated_ss for fragment pick
 						std::string dssp_updated_ss;
@@ -84,7 +86,7 @@ namespace remodel{
             std::string insertionSS;
 
             float total_chain_break_score;
-
+						void translateDSSP_ABEGO(std::string & ss, std::string & abego);
 						void getLoopsToBuildFromFile(std::string filename);
             void splitString(std::string str, std::string delim, std::vector<std::string> & results);
             void updateWithDsspAssignment(ObjexxFCL::FArray1D_char & dsspSS);

@@ -369,11 +369,62 @@ protocols::forge::remodel::RemodelData::getLoopsToBuildFromFile(std::string file
 		this->sequence.append(iter->resname);
 		this->ss.append(iter->sstype);
 	}
+	
+	translateDSSP_ABEGO(this->ss, this->abego);
+
 
 	TR_REMODEL << "sequence: " << std::endl << this->sequence << std::endl;
 	TR_REMODEL << "sstype  : " << std::endl << this->ss << std::endl;
+	TR_REMODEL << "ABEGOtype  : " << std::endl << this->abego << std::endl;
 
 }
+
+void
+protocols::forge::remodel::RemodelData::translateDSSP_ABEGO(std::string & ss, std::string & abego){
+	size_t found_idx;
+	bool abego_switch = false; 
+	found_idx = ss.find_first_of("abgoABGO"); // E is shared so only ABGO for mapping
+	if (found_idx == std::string::npos){
+		std::cout << "SS based assignment found" << std::endl; // in case of only E assignment, treat it as DSSP
+	} else if (found_idx != std::string::npos){
+		abego_switch = true;
+		std::cout << "ABEGO based assignment found" << std::endl;
+	}
+	std::string trans_ss;
+	
+	if (abego_switch){ //need to make a new string with DSSP assignment and swap
+		found_idx = ss.find_first_of("abegoABEGO"); // this substitution use all 5 regions
+		for (int idx = 0; idx <= ss.length(); idx++){
+			if (ss[idx] == 'A' || ss[idx] == 'a'){
+				trans_ss.push_back('H');
+			}
+			else if (ss[idx] == 'B' || ss[idx] == 'b'){
+				trans_ss.push_back('E');
+			}
+			else if (ss[idx] == 'E' || ss[idx] == 'e'){
+				trans_ss.push_back('L');
+			}
+			else if (ss[idx] == 'G' || ss[idx] == 'g'){
+				trans_ss.push_back('L');
+			}
+			else if (ss[idx] == 'O' || ss[idx] == 'o'){
+				trans_ss.push_back('L');
+			}
+			else if (ss[idx] == '.'){
+				trans_ss.push_back('.');
+				ss[idx]= 'X';
+			}
+			else{ // could have other characters like I, or D so leave them alone
+				trans_ss.push_back(ss[idx]);
+			}
+		}
+		trans_ss.swap(ss);
+	}
+	abego = trans_ss;
+}
+	
+
+
 
 void
 protocols::forge::remodel::RemodelData::updateWithDsspAssignment(ObjexxFCL::FArray1D_char & dsspSS){

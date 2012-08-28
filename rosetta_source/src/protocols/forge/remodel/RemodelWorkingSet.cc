@@ -162,7 +162,7 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 	if (option[ OptionKeys::remodel::repeat_structure].user()){
 		this->ss.append(this->ss);
 	} else {
-		this->ss.append("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
+		//this->ss.append("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
 	}
 
 	this->sequence = data.sequence;
