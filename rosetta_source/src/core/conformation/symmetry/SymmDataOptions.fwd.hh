@@ -12,7 +12,7 @@
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 #ifndef INCLUDED_core_conformation_symmetry_SymmDataOptions_fwd_hh
-#define INCLUDED_core_confomration_symmetry_SymmDataOptions_fwd_hh
+#define INCLUDED_core_conformation_symmetry_SymmDataOptions_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 

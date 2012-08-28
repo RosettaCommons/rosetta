@@ -12,7 +12,7 @@
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 #ifndef INCLUDED_core_conformation_symmetry_SymmDataOptionsCreator_hh
-#define INCLUDED_core_confomration_symmetry_SymmDataOptionsCreator_hh
+#define INCLUDED_core_conformation_symmetry_SymmDataOptionsCreator_hh
 
 //unit headers
 #include <basic/resource_manager/ResourceOptionsCreator.hh>
