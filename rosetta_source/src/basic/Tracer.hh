@@ -316,14 +316,13 @@ inline Tracer & Warning(TracerPriority priority=t_warning) { return T("Warning",
 class PyTracer :  public otstream
 {
 public:
-	//Tracer(void) {}
+	//PyTracer(void) {}
 	//virtual ~PyTracer() {}
-
 
 	std::string buf() { return buf_; }
 	void buf(std::string b) { buf_ = b; }
 
-	virtual void output_callback(std::string const &) {}
+	virtual void output_callback(std::string) {}
 
 protected:
 	/// @brief overload member function.

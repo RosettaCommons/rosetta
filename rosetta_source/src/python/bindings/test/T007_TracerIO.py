@@ -19,3 +19,19 @@ rosetta.init()
 
 print '\nCaptured IO:'
 print T.buf()
+
+
+# More fancy example, using a output callback:
+
+class MyPyTracer(rosetta.basic.PyTracer):
+    def __init__(self):
+        rosetta.basic.PyTracer.__init__(self)
+
+    def output_callback(self, s):
+        print 'MyPyTracer.output_callback with argument:'
+        print s
+
+M = MyPyTracer()
+rosetta.basic.Tracer.set_ios_hook(M, rosetta.basic.Tracer.get_AllChannels_string())
+
+rosetta.init()

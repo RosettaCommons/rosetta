@@ -145,7 +145,7 @@ Tracer::~Tracer()
     /// We check if anything still present in channel buffer, and if it is - print it contents with warning.
 
 	std::vector< otstream* > v = utility::tools::make_vector< otstream* >(this, &Fatal, &Error, &Warning,
-															 &Info, &Debug, &Trace);
+ 															 &Info, &Debug, &Trace);
 
 	//bool need_flush = false;
 	for(size_t i=0; i<v.size(); i++) {

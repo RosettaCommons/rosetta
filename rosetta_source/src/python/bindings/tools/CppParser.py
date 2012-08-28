@@ -582,8 +582,9 @@ class CppClass:
         for b in self.bases:
             if b.type_.T() in self.reference.Objects:
                 o = self.reference.Objects[ b.type_.T() ]
-                if b.virtual: r.append( o.context + o.name )
+                if b.virtual  and  o.context != '::std::': r.append( o.context + o.name )
                 r += o.getVirtualBases()
+        #print 'VirtualBases:', r
         return r
 
 
@@ -684,20 +685,24 @@ class CppClass:
     def isCallbackStructNeeded(self):
         ''' Return True if class have public virtual functions, so it make sense to allow callback from Python...
         '''
+        #print 'isCallbackStructNeeded[0]', self.context+self.name
         if self.getVirtualBases(): return False  # we cant auto create virtual base classes
 
-
+        #print 'isCallbackStructNeeded[1]', self.context+self.name
         for f in self.functions:
             if f.pure_virtual and not f.public: return False
 
+        #print 'isCallbackStructNeeded[2]', self.context+self.name
         if self.constructors: # check if there is a way to construct subclass... (ie constructors that public or no constructors)
             for c in self.constructors:
                 if len(c.argsTypes) == 1  and  c.argsTypes[0].type_.T().find(self.context+self.name+' ') >= 0: continue  # skip copy constructor
                 if c.public: break
             else: return False
 
+        #print 'isCallbackStructNeeded[3]', self.context+self.name
         if not self.isCreatable(with_callback_struct=True): return False  # there is no point to wrap it if we can't create it
 
+        #print 'isCallbackStructNeeded[4]', self.context+self.name
         for f in self.functions:
             #if f.virtual and f.public: return True  # and (not f.const)
             if f.isCallbackStructNeeded() and f.isWrapable(): return True  # and (not f.const)
@@ -848,7 +853,7 @@ class CppClass:
 
         print 'WrappingClass %s %s... [' % (self.context, self.name),
         for b in self.bases: print b.type_.T(),
-        print ']'
+        print ']', '[I]' if use_callback_struct else ''
 
         self.markConstOverloaded()
         if use_callback_struct: class_name = self.getCallbackClassName()
