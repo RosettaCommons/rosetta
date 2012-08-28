@@ -201,7 +201,7 @@ def main(args):
     parser.add_option("-s", "--sleep",
       default=0,
       type="float",
-      help="Sleep number of second between compilation jobs, good for notebook quite operation! Actual sleep time will be: time_spend_compiling*option_value  (default: 0)",
+      help="Sleep number of second between compilation jobs, good for notebook quiet operation! Actual sleep time will be: time_spend_compiling*option_value  (default: 0)",
     )
 
     parser.add_option('--no-color',
