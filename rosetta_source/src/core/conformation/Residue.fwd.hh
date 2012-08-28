@@ -16,8 +16,8 @@
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
+#include <utility/pointer/access_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.fwd.hh>
 
 // C++ headers
 
@@ -26,10 +26,10 @@ namespace conformation {
 
 class Residue;
 
-typedef  boost::weak_ptr< Residue >  ResidueAP;
-typedef  boost::weak_ptr< Residue const >  ResidueCAP;
-typedef  boost::shared_ptr< Residue >  ResidueOP;
-typedef  boost::shared_ptr< Residue const >  ResidueCOP;
+typedef  utility::pointer::access_ptr< Residue >  ResidueAP;
+typedef  utility::pointer::access_ptr< Residue const >  ResidueCAP;
+typedef  utility::pointer::owning_ptr< Residue >  ResidueOP;
+typedef  utility::pointer::owning_ptr< Residue const >  ResidueCOP;
 
 typedef  utility::vector1< ResidueOP >  ResidueOPs;
 typedef  utility::vector1< ResidueCOP >  ResidueCOPs;

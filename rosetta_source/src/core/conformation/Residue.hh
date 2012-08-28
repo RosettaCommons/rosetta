@@ -39,7 +39,7 @@
 // AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
-//#include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/ReferenceCount.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 
@@ -81,7 +81,7 @@ namespace conformation {
 
  **/
 
-class Residue {
+class Residue : public utility::pointer::ReferenceCount {
 
 public:
 	typedef chemical::AtomType AtomType;
