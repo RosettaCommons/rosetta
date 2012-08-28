@@ -85,9 +85,9 @@ void H3CterInsert::init(AntibodyInfoOP antibody_info, bool camelid, bool benchma
     }
     
     //    setup_objects();
-    
-    read_H3_cter_fragment(camelid ) ;
-    
+	
+	read_H3_cter_fragment( ) ;
+
 }
         
     
@@ -125,9 +125,9 @@ void H3CterInsert::apply(pose::Pose & pose)
     
     
     
-    loop_begin = ab_info_->get_CDR_loop(h3)->start()-1;  //JQX: to match R2_Antibody
-    cutpoint   = ab_info_->get_CDR_loop(h3)->cut(); // keep the cutpoint unchanged
-    loop_end   = ab_info_->get_CDR_loop(h3)->stop()+2; //JQX: to match R2_Antibody
+    loop_begin = ab_info_->get_one_cdr_loop_object(h3).start()-1;  //JQX: to match R2_Antibody
+    cutpoint   = ab_info_->get_one_cdr_loop_object(h3).cut(); // keep the cutpoint unchanged
+    loop_end   = ab_info_->get_one_cdr_loop_object(h3).stop()+2; //JQX: to match R2_Antibody
     
     setup_simple_fold_tree(loop_begin, cutpoint, loop_end, pose.total_residue(), pose);
     TR<<pose.fold_tree()<<std::endl;
@@ -137,7 +137,7 @@ void H3CterInsert::apply(pose::Pose & pose)
     
         fragment::FragData f;
         Size random_H3_ter(0);
-        random_H3_ter = RG.random_range( 1, H3_base_library_.size() ); 
+        random_H3_ter = RG.random_range( 1, H3_base_library_.size() );
         f = H3_base_library_[ random_H3_ter ];
         //    TR<<H3_base_library_.size()<<std::endl;
         // f = H3_base_library_[ 1 ]; //JQX: a test case to match R2_Antibody
@@ -153,12 +153,12 @@ void H3CterInsert::apply(pose::Pose & pose)
         Size cter_insertion_pos( is_camelid_ ? 4 : 2 ); // not sure why 4 for camelid
     
     
-        if( (ab_info_->get_CDR_loop(h3)->stop() - cter_insertion_pos) <= ab_info_->get_CDR_loop(h3)->start() )
+        if( (ab_info_->get_one_cdr_loop_object(h3).stop()-cter_insertion_pos) <= ab_info_->get_one_cdr_loop_object(h3).start() )
         {
             TR << "H3 LOOP IS TOO SHORT: CAN NOT USE C-TERM INFORMATION"<< std::endl;
         }
         else {
-            f.apply( pose, ab_info_->get_CDR_loop(h3)->stop() - cter_insertion_pos, ab_info_->get_CDR_loop(h3)->stop() + 1 );
+            f.apply( pose, ab_info_->get_one_cdr_loop_object(h3).stop() - cter_insertion_pos, ab_info_->get_one_cdr_loop_object(h3).stop() + 1 );
         
         }
 
@@ -195,8 +195,8 @@ std::string H3CterInsert::get_name() const {
         
         
         
-        
-void H3CterInsert::read_H3_cter_fragment(bool is_camelid ) 
+        /// FIXME: JQX the get_CDR_loop is so weird here
+	void H3CterInsert::read_H3_cter_fragment( )
 {
     using namespace fragment;
             
@@ -204,30 +204,24 @@ void H3CterInsert::read_H3_cter_fragment(bool is_camelid )
             
     TR <<  "Reading CDR H3 C-ter Fragments" << std::endl;
   
-    bool is_kinked( ab_info_->is_kinked() );
-    bool is_extended( ab_info_->is_extended() );
-            
-    
-    
+    bool is_kinked = false;
+    bool is_extended  = false;
+    if (ab_info_->get_predicted_H3_base_type() == Kinked) is_kinked = true;
+    if (ab_info_->get_predicted_H3_base_type() == Extended) is_extended = true;
     
     
     // extract single letter aa codes for the chopped loop residues
-    TR<< *(ab_info_->get_CDR_loop(h3))<<std::endl;
+    TR<< ab_info_->get_one_cdr_loop_object(h3)<<std::endl;
 
-    Size cdr_h3_size = ( ab_info_->get_CDR_loop(h3)->stop() - ab_info_->get_CDR_loop(h3)->start() ) + 1;
+    Size cdr_h3_size = (     ab_info_->get_one_cdr_loop_object(h3).stop() - ab_info_->get_one_cdr_loop_object(h3).start()  ) + 1;
     
     TR<<"cdr_h3_size="<<cdr_h3_size<<std::endl;
-    utility::vector1< char > aa_1name;
-    for( Size ii =    ab_info_->get_CDR_loop(h3)->start() - 2;
-              ii <= ( ab_info_->get_CDR_loop(h3)->start() - 2 ) + cdr_h3_size + 3;
-              ++ii ) // XXcdrh3seqXX
-    {
-        aa_1name.push_back( ab_info_->get_Fv_sequence()[ii] );
-    }
+    utility::vector1< char > aa_1name = ab_info_->get_CDR_Sequence_with_Stem(h3,2,2);
+
     TR<<"aa_1name.size()="<<aa_1name.size()<<std::endl;
     
     std::string tttttt="";
-    for(int i=1;i<=aa_1name.size();i++){
+    for(Size i=1;i<=aa_1name.size();i++){
         tttttt+=aa_1name[i];
     }
     TR<<tttttt<<std::endl;
@@ -244,7 +238,7 @@ void H3CterInsert::read_H3_cter_fragment(bool is_camelid )
             
 
     // file is read in from where other contraints are supposed to exist
-    if( is_camelid ){
+    if( ab_info_->is_camelid() ){
         H3_ter_library_filename_ = path+"camelid_H3_CTERM";
     }
     else{
@@ -273,7 +267,7 @@ void H3CterInsert::read_H3_cter_fragment(bool is_camelid )
     std::string base_type;
             
     Size pdb_H3_length = cdr_h3_size;
-    Size h3_base_frag_size( is_camelid ? 6 : 4 );
+    Size h3_base_frag_size( ab_info_->is_camelid() ? 6 : 4 );
     
     bool end_not_reached(true);
     while(end_not_reached){
@@ -312,7 +306,7 @@ void H3CterInsert::read_H3_cter_fragment(bool is_camelid )
         
         
         //regular antibody
-        if( is_camelid == false) {
+        if( ab_info_->is_camelid() == false) {
             if( is_kinked && base_type == "KINK" ){
                 base_match = true;
             }
@@ -338,7 +332,7 @@ void H3CterInsert::read_H3_cter_fragment(bool is_camelid )
         
         
         //camelid antibody
-        if( is_camelid && end_not_reached && base_match ){
+        if( ab_info_->is_camelid() && end_not_reached && base_match ){
 
             H3_base_library_.push_back( f );
         }

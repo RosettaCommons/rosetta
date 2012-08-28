@@ -57,7 +57,7 @@ public:
     RefineCDRH1Centroid(AntibodyInfoOP antibody_info, AntibodyCDRNameEnum loop_name);
 
     /// @brief constructor with arguments
-    RefineCDRH1Centroid( loops::LoopOP a_cdr_loop);
+    RefineCDRH1Centroid( loops::Loop a_cdr_loop);
 
     /// @brief default destructor
 	~RefineCDRH1Centroid();
@@ -69,7 +69,7 @@ public:
 
 
 private:
-    void init(loops::LoopOP a_cdr_loop);
+    void init(loops::Loop a_cdr_loop);
 
     void finalize_setup( core::pose::Pose & pose );
 	void loop_centroid_relax(
@@ -77,7 +77,7 @@ private:
                              Size const loop_begin,
                              Size const loop_end );
     
-    loops::LoopOP the_cdr_loop_;
+    loops::Loop the_cdr_loop_;
     
     bool benchmark_;
     scoring::ScoreFunctionOP lowres_scorefxn_;

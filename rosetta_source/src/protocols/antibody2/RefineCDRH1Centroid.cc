@@ -101,13 +101,13 @@ RefineCDRH1Centroid::RefineCDRH1Centroid( AntibodyInfoOP antibody_info, Antibody
 {
 
     
-    init( antibody_info->get_CDR_loop(loop_name) );
+    init( antibody_info->get_one_cdr_loop_object(loop_name) );
 }
   
     
 
     
-RefineCDRH1Centroid::RefineCDRH1Centroid( loops::LoopOP a_cdr_loop ) : Mover()
+RefineCDRH1Centroid::RefineCDRH1Centroid( loops::Loop a_cdr_loop ) : Mover()
 {        
     init(a_cdr_loop);
 }
@@ -138,7 +138,7 @@ RefineCDRH1Centroid::~RefineCDRH1Centroid() {}
 
     
     
-void RefineCDRH1Centroid::init(loops::LoopOP a_cdr_loop )
+void RefineCDRH1Centroid::init(loops::Loop a_cdr_loop )
 {
     the_cdr_loop_ = a_cdr_loop;
 }
@@ -187,7 +187,7 @@ void RefineCDRH1Centroid::apply( pose::Pose & pose ) {
     finalize_setup(pose);
     
     
-    loop_centroid_relax(pose, the_cdr_loop_->start(), the_cdr_loop_->stop()   );
+    loop_centroid_relax(pose, the_cdr_loop_.start(), the_cdr_loop_.stop()   );
 
     
     TR<<"finish apply function !!!"<<std::endl;

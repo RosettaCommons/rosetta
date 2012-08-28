@@ -97,7 +97,7 @@ private:
     
     kinematics::MoveMapOP cdr_dock_map_;
     
-    
+	docking::DockJumps LH_dock_jump_;
 };
     
     

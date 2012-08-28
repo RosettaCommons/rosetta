@@ -429,8 +429,8 @@ bool CDR_H3_cter_filter(const pose::Pose & pose_in, AntibodyInfoOP ab_info)
     
     // chop out the loop: 
     //JQX: 2 residues before h3, one residue after h3. Matched Rosetta2!
-    Size start(  ab_info->get_CDR_loop(h3)->start()  -  2 );
-    Size stop(  ab_info->get_CDR_loop(h3)->stop()  +  1  );
+    Size start(  ab_info->get_one_cdr_loop_object(h3).start()  -  2 );
+    Size stop(  ab_info->get_one_cdr_loop_object(h3).stop()  +  1  );
     
     
     bool matched_kinked( false );
@@ -466,10 +466,10 @@ bool CDR_H3_cter_filter(const pose::Pose & pose_in, AntibodyInfoOP ab_info)
     
     
     if( (base_dihedral > kink_lower_bound ) && (base_dihedral < kink_upper_bound ) ) {
-        if(ab_info->is_kinked()) {matched_kinked = true;}
+        if(ab_info->get_predicted_H3_base_type()==Kinked) {matched_kinked = true;}
     }
     if( (base_dihedral > extended_lower_bound ) && (base_dihedral < extended_upper_bound ) ) {
-        if(ab_info->is_extended()) {matched_extended = true;}
+        if(ab_info->get_predicted_H3_base_type()==Extended) {matched_extended = true;}
     }
     
     
@@ -636,12 +636,12 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in )
     
     
     
-    Real global_loop_rmsd (const pose::Pose & pose_in, const pose::Pose & native_pose,loops::LoopOP current_loop ) 
+    Real global_loop_rmsd (const pose::Pose & pose_in, const pose::Pose & native_pose,loops::LoopsOP current_loop )
     {
         using namespace scoring;
         
-        Size loop_start = current_loop->start();
-        Size loop_end = current_loop->stop();
+        Size loop_start = (*current_loop)[1].start();
+        Size loop_end = (*current_loop)[1].stop();
         
         using ObjexxFCL::FArray1D_bool;
         FArray1D_bool superpos_partner ( pose_in.total_residue(), false );
@@ -678,7 +678,36 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in )
         core::id::AtomID_Map< core::id::AtomID > atom_map;
         core::pose::initialize_atomid_map( atom_map, pose, core::id::BOGUS_ATOM_ID );
         
+		for (Size i_chain=1; i_chain<=ab_info->get_AntibodyFrameworkInfo().size(); i_chain++){
+			vector1<FrameWork>        chain_frmwk =        ab_info->get_AntibodyFrameworkInfo()[i_chain];
+			vector1<FrameWork> native_chain_frmwk = native_ab_info->get_AntibodyFrameworkInfo()[i_chain];
+
+			
+			
+			for (Size j_seg=1; j_seg<=chain_frmwk.size(); j_seg++) { // for loop of the framework segments
+				Size count=0;
+				
+				for (Size k_res=chain_frmwk[j_seg].start; k_res<= chain_frmwk[j_seg].stop; k_res++){
+					count++;
+					Size res_counter = k_res;
+					Size nat_counter = native_chain_frmwk[j_seg].start+count-1;
+					//TR<< res_counter<<"    "<<nat_counter<<std::endl;
+					
+					for( core::Size latm=1; latm <= 4; latm++ ) {
+						core::id::AtomID const id1( latm, res_counter );
+						core::id::AtomID const id2( latm, nat_counter );
+						atom_map[ id1 ] = id2;
+					}
+				}
+			}
+			
+			
+			
+		}
         
+		
+		
+		/*
         for (core::Size j=1; j<= ab_info->get_ab_framework().size();j++){
             core::Size count=0;
             for (core::Size k=ab_info->get_ab_framework()[j].start(); k<= ab_info->get_ab_framework()[j].stop();k++){
@@ -694,7 +723,7 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in )
                 }
             }
         }
-        
+        */
         core::scoring::superimpose_pose( pose, native_pose, atom_map );
         
     } // align_to_native()

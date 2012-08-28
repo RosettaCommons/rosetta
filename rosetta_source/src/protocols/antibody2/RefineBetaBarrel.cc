@@ -81,6 +81,7 @@ void RefineBetaBarrel::init( ){
     repulsive_ramp_ = true;
     sc_min_ = false;
     rt_min_ = false;
+	LH_dock_jump_.push_back(1);
 
 }
    
@@ -126,7 +127,7 @@ void RefineBetaBarrel::finalize_setup(pose::Pose & pose ){
     using namespace protocols::toolbox::task_operations;
     if(!tf_){
         tf_= setup_packer_task(pose);
-        tf_->push_back( new RestrictToInterface( ab_info_->LH_dock_jump(), loop_residues ) );
+        tf_->push_back( new RestrictToInterface( LH_dock_jump_, loop_residues ) );
     }
         
     core::pack::task::PackerTaskOP my_task2(tf_->create_task_and_apply_taskoperations(pose));
@@ -177,7 +178,7 @@ void RefineBetaBarrel::apply( pose::Pose & pose ) {
     // it will be moved to DockingProtocol soon
     // one must specify fold_tree and variants before using this mover
     if(repulsive_ramp_) {
-        lh_repulsive_ramp_ = new LHRepulsiveRamp(ab_info_->LH_dock_jump(), dock_scorefxn_, pack_scorefxn_);
+        lh_repulsive_ramp_ = new LHRepulsiveRamp(LH_dock_jump_, dock_scorefxn_, pack_scorefxn_);
             lh_repulsive_ramp_ -> set_move_map(cdr_dock_map_);
             lh_repulsive_ramp_ -> set_task_factory(tf_);
             if(sc_min_) lh_repulsive_ramp_ -> set_sc_min(true);
@@ -187,7 +188,7 @@ void RefineBetaBarrel::apply( pose::Pose & pose ) {
     }
     
     
-    dock_mcm_protocol_ = new docking::DockMCMProtocol( ab_info_->LH_dock_jump(), dock_scorefxn_, pack_scorefxn_ );
+    dock_mcm_protocol_ = new docking::DockMCMProtocol( LH_dock_jump_, dock_scorefxn_, pack_scorefxn_ );
         dock_mcm_protocol_ -> set_task_factory(tf_);
         dock_mcm_protocol_ -> set_move_map(cdr_dock_map_);
         if(sc_min_) dock_mcm_protocol_ -> set_sc_min(true);

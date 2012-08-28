@@ -84,30 +84,30 @@ Ab_TemplateInfo::load_templates_from_pdbs(bool load_L1, bool load_L2, bool load_
     if(!camelid_){
         if(load_L1_){
             import_pose::pose_from_pdb( L1_t_pose_, "input/l1.pdb" );
-            templates_poses_.insert(  std::pair<std::string, core::pose::Pose> ("l1", L1_t_pose_) );
+            templates_poses_.insert(  std::pair<std::string, core::pose::Pose> ("L1", L1_t_pose_) );
         }
         if(load_L2_){
             import_pose::pose_from_pdb( L2_t_pose_, "input/l2.pdb" );
-            templates_poses_.insert(  std::pair<std::string, core::pose::Pose> ("l2", L2_t_pose_) );
+            templates_poses_.insert(  std::pair<std::string, core::pose::Pose> ("L2", L2_t_pose_) );
         }
         if(load_L3_){
             import_pose::pose_from_pdb( L3_t_pose_, "input/l3.pdb" );
-            templates_poses_.insert(  std::pair<std::string, core::pose::Pose> ("l3", L3_t_pose_) );
+            templates_poses_.insert(  std::pair<std::string, core::pose::Pose> ("L3", L3_t_pose_) );
         }
     }
         
     
     if(load_H1_){
         import_pose::pose_from_pdb( H1_t_pose_, "input/h1.pdb" );
-        templates_poses_.insert(  std::pair<std::string, core::pose::Pose> ("h1", H1_t_pose_) );
+        templates_poses_.insert(  std::pair<std::string, core::pose::Pose> ("H1", H1_t_pose_) );
     }
     if(load_H2_){
         import_pose::pose_from_pdb( H2_t_pose_, "input/h2.pdb" );
-        templates_poses_.insert(  std::pair<std::string, core::pose::Pose> ("h2", H2_t_pose_) );
+        templates_poses_.insert(  std::pair<std::string, core::pose::Pose> ("H2", H2_t_pose_) );
     }
     if(load_H3_){
         import_pose::pose_from_pdb( H3_t_pose_, "input/h3.pdb" );
-        templates_poses_.insert(  std::pair<std::string, core::pose::Pose> ("h3", H3_t_pose_) );
+        templates_poses_.insert(  std::pair<std::string, core::pose::Pose> ("H3", H3_t_pose_) );
     }
 
         

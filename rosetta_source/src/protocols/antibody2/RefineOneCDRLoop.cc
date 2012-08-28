@@ -178,8 +178,8 @@ void RefineOneCDRLoop::apply(core::pose::Pose &pose){
     }  // the legacy refine_ccd method
     
     else{
-                
-        loops::LoopOP one_cdr_loop = ab_info_->get_CDR_loop(cdr_loop_name_);
+                /// FIXME:   JQX this should be fixed by a simple loops object
+        loops::Loop one_cdr_loop = ab_info_->get_one_cdr_loop_object(cdr_loop_name_);
         
         if(flank_relax_){
             // JQX: The idea is to minimize the flanking residues backbones on each stems, 
@@ -188,15 +188,15 @@ void RefineOneCDRLoop::apply(core::pose::Pose &pose){
             //      Will this special fold_tree affect perturbation? I don't think so. It doesn't really matter 
             //      2 or 3 residues before loop_begin or after loop_end, as long as the cut point is in
             //      the middle and the loop is within two jumps points.
-            simple_fold_tree( pose,  one_cdr_loop->start()- 1 - flank_size_, one_cdr_loop->cut(), one_cdr_loop->stop() + 1 + flank_size_ );
+            simple_fold_tree( pose,  one_cdr_loop.start()- 1 - flank_size_, one_cdr_loop.cut(), one_cdr_loop.stop() + 1 + flank_size_ );
         }
         else{
-            simple_fold_tree( pose,  one_cdr_loop->start()- 1, one_cdr_loop->cut(), one_cdr_loop->stop() + 1 );
+            simple_fold_tree( pose,  one_cdr_loop.start()- 1, one_cdr_loop.cut(), one_cdr_loop.stop() + 1 );
         }
         //JQX: be careful, no fold_tree operations are conducted in the two movers below.
         
         loops::LoopsOP pass_loops = new loops::Loops(); 
-        pass_loops->add_loop(  *one_cdr_loop  );
+        pass_loops->add_loop(  one_cdr_loop  );
         
         
         core::Size itry=1;

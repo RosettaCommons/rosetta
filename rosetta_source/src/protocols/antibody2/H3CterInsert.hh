@@ -60,7 +60,7 @@ public:
     virtual std::string get_name() const;
 
     // read CDR H3 C-terminal fragments (size: 4)
-    void read_H3_cter_fragment( bool is_camelid);
+    void read_H3_cter_fragment();
 
 
 private:

@@ -93,7 +93,7 @@ core::Real cutpoint_separation(core::pose::Pose & pose_in, Size cutpoint);
     
 core::Real global_loop_rmsd ( const core::pose::Pose & pose_in, 
                               const core::pose::Pose & native_pose, 
-                              loops::LoopOP current_loop );
+                              loops::LoopsOP current_loop );
 
     
 std::string get_seq_from_a_loop(core::pose::Pose const & pose_in, loops::LoopOP  loop);

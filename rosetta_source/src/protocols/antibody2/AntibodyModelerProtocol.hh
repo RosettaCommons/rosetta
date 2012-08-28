@@ -146,7 +146,6 @@ private:
 	bool user_defined_; // for constructor options passed to init
 
 	bool flags_and_objects_are_in_sync_;
-	bool first_apply_with_current_setup_;
     core::Size h3_filter_tolerance_;
 
 

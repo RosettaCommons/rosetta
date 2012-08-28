@@ -189,10 +189,10 @@ void SnugDock::setup_objects( Pose const & pose )
 	mc_ = standard_dock_cycle->get_mc();
 	
 	ChangeFoldTreeMoverOP set_foldtree_for_ab_ag_docking = new ChangeFoldTreeMover(
-		* antibody_info_->get_foldtree_LH_A( pose )
+		 antibody_info_->get_foldtree_LH_A( pose )
 	);
 	ChangeFoldTreeMoverOP set_foldtree_for_vH_vL_docking = new ChangeFoldTreeMover(
-		* antibody_info_->get_foldtree_L_HA( pose )
+		 antibody_info_->get_foldtree_L_HA( pose )
 	);
 
 	SequenceMoverOP antibody_antigen_dock_cycle = new SequenceMover(

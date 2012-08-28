@@ -13,38 +13,28 @@
 /// @author Jianqing Xu (xubest@gmail.com)
 
 #include <protocols/antibody2/AntibodyInfo.hh>
-
-// Rosetta Headers
-#include <core/kinematics/FoldTree.hh>
+#include <protocols/antibody2/AntibodyUtil.hh>
+#include <protocols/rigid/RB_geometry.hh>
+#include <protocols/loops/loops_main.hh>
+#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 
 #include <core/scoring/rms_util.hh>
-#include <core/types.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/pose/util.tmpl.hh>
-#include <core/import_pose/import_pose.hh>
 
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
-
-#include <iostream>
-#include <fstream>
 #include <basic/Tracer.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
-#include <protocols/rigid/RB_geometry.hh>
-#include <protocols/antibody2/AntibodyUtil.hh>
-#include <protocols/loops/loops_main.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 
 // Utility headers
 #include <utility/excn/Exceptions.hh>
-#include <utility/exit.hh>
-#include <utility/tools/make_vector1.hh>
 
+
+
+///////////////////////////////////////////////////////////////////////////////
 
 static basic::Tracer TR("antibody2.AntibodyInfo");
 
@@ -52,139 +42,105 @@ namespace protocols{
 namespace antibody2{
 
     
-/// default constructor
-AntibodyInfo::AntibodyInfo() {
-	set_default();
-}
-
-
-/// constructor with arguments
-AntibodyInfo::AntibodyInfo( core::pose::Pose const & pose ) {
-    set_default();
-    check_AntibodyRelatedPose(pose);
-    init(pose);
-    the_definition_pose_ = pose;
-}
-
-/// constructor with arguments
-AntibodyInfo::AntibodyInfo( core::pose::Pose const & pose, AntibodyNumberingEnum const & numbering_scheme ) {
+AntibodyInfo::AntibodyInfo( pose::Pose const & pose, AntibodyNumberingEnum const & numbering_scheme ) {
     set_default();
     numbering_scheme_ = numbering_scheme;
     check_AntibodyRelatedPose(pose);
     init(pose);
-    the_definition_pose_ = pose;
 }
 
 
-
-    
-    
-    
-    
-    
     
 void AntibodyInfo::set_default()
 {
     is_camelid_ = false;
-
-
-    all_cdr_loops_=NULL;
-    
-    current_start = 0;
-    current_end = 0;
-    kinked_H3_ = false;
-    extended_H3_ = false;
-    LH_dock_jumps_ .push_back(1);
-    LH_dock_partners_ = "L_H";
-    LH_A_foldtree_ = NULL;
-    L_HA_foldtree_ = NULL;
-    LA_H_foldtree_ = NULL;
-    
+    InputPose_has_antigen_ = false;
+    H3_base_type_predicted_ = Kinked;
+    all_cdr_loops_=NULL;	
     numbering_scheme_ = Aroop;
+	
+    cdr_name_.push_back("H1"); cdr_name_.push_back("H2"); cdr_name_.push_back("H3"); // HEAVY chain first
+    cdr_name_.push_back("L1"); cdr_name_.push_back("L2"); cdr_name_.push_back("L3"); // light
+	
+	h3_base_type_.push_back("KINKED");
+	h3_base_type_.push_back("EXTENDED");
+	h3_base_type_.push_back("NEUTRAL");
 }
 
 
-void AntibodyInfo::check_AntibodyRelatedPose(core::pose::Pose const & pose){
+void AntibodyInfo::check_AntibodyRelatedPose(pose::Pose const & pose){
     
-    if (pose.conformation().num_chains()==0) {
-        throw utility::excn::EXCN_Msg_Exception("the number of chains in the input pose is '0' !!");
+    switch (pose.conformation().num_chains() ) {
+        case 0:
+            throw excn::EXCN_Msg_Exception("the number of chains in the input pose is '0' !!");
+            break;
+        case 1:     //if pose has only "1" chain, it is a nanobody
+            if (pose.pdb_info()->chain(pose.conformation().chain_end(1)) == 'H'){
+                is_camelid_ = true;
+                InputPose_has_antigen_=false;
+            }
+            else{
+                throw excn::EXCN_Msg_Exception("  A): the input pose has only 1 chain, if it is a nanobody, the chain ID is supposed to be 'H' !!");
+            }
+            break;
+        case 2:       // if pose has "2" chains, it can be 2 possibilities
+            // possiblity 1): L and H, regular antibody
+            if (  (pose.pdb_info()->chain(pose.conformation().chain_end(1)) == 'L')  &&  (pose.pdb_info()->chain(pose.conformation().chain_end(2)) == 'H')  ) {
+                is_camelid_ = false;
+                InputPose_has_antigen_ = false;
+            }
+            // possiblity 2): H nanobody and antigen
+            else if ( pose.pdb_info()->chain(pose.conformation().chain_end(1)) == 'H' ) {
+                is_camelid_ = true;
+                InputPose_has_antigen_ = true;
+            }
+            else{
+                throw excn::EXCN_Msg_Exception("  B): the input pose has two chains, 1). if it is nanobody, the 1st chain should be 'H'. 2). If it is a regular antibody, the 1st and 2nd chains should be 'L' and 'H' !!");
+            }
+            break;
+        default:      // if pose has >=3 chains, it can be 2 possibilities
+            // possiblity 1): L and H, and antigen
+            if(   pose.pdb_info()->chain(pose.conformation().chain_end(1)) == 'L'  &&  pose.pdb_info()->chain(pose.conformation().chain_end(2)) == 'H'    ){
+                is_camelid_ = false;
+                InputPose_has_antigen_ = true;
+            }
+            // possiblity 2):  H annobody and antigen
+            else if (pose.pdb_info()->chain(pose.conformation().chain_end(1)) == 'H'){
+                is_camelid_ = true;
+                InputPose_has_antigen_ = true;
+            }
+            else{
+                throw excn::EXCN_Msg_Exception("  C). the input pose has more than two chains, 1). if it is nanobody, the 1st chain should be 'H'. 2). If it is a regular antibody, the 1st and 2nd chains should be 'L' and 'H' !!");
+            }
+            break;
     }
-    //if pose has only "1" chain, it is a nanobody
-    else if (pose.conformation().num_chains()==1) {
-        if (pose.pdb_info()->chain(pose.conformation().chain_end(1)) == 'H'){
-            is_camelid_ = true;
-            InputPose_has_antigen_=false;
-        }
-        else{
-            throw utility::excn::EXCN_Msg_Exception("  A): the input pose has only 1 chain, if it is a nanobody, the chain ID is supposed to be 'H' !!");
-        }
-    }
-    // if pose has "2" chains, it can be
-    //      case 1). L and H, regular antibody
-    //      case 2). H nanobody and antigen
-    else if (pose.conformation().num_chains()==2) {
-        // case 1).
-        if (  (pose.pdb_info()->chain(pose.conformation().chain_end(1)) == 'L')  &&  (pose.pdb_info()->chain(pose.conformation().chain_end(2)) == 'H')  ) {
-            is_camelid_ = false;
-            InputPose_has_antigen_ = false;
-        }
-        // case 2).
-        else if ( pose.pdb_info()->chain(pose.conformation().chain_end(1)) == 'H' ) {
-            is_camelid_ = true;
-            InputPose_has_antigen_ = true;
-        }
-        else{
-            throw utility::excn::EXCN_Msg_Exception("  B): the input pose has two chains, 1). if it is nanobody, the 1st chain should be 'H'. 2). If it is a regular antibody, the 1st and 2nd chains should be 'L' and 'H' !!");
-        }
-    }
-    // if pose has ">2" chains, it can  be
-    //       case 1). L and H, and antigen
-    //       case 2). H annobody and antigen
-    else if (pose.conformation().num_chains()>2) {
-        // case 1).
-        if(   pose.pdb_info()->chain(pose.conformation().chain_end(1)) == 'L'  &&  pose.pdb_info()->chain(pose.conformation().chain_end(2)) == 'H'    ){
-            is_camelid_ = false;
-            InputPose_has_antigen_ = true;
-        }
-        // case 2).
-        else if (pose.pdb_info()->chain(pose.conformation().chain_end(1)) == 'H'){
-            is_camelid_ = true;
-            InputPose_has_antigen_ = true;
-        }
-        else{
-            throw utility::excn::EXCN_Msg_Exception("  C). the input pose has more than two chains, 1). if it is nanobody, the 1st chain should be 'H'. 2). If it is a regular antibody, the 1st and 2nd chains should be 'L' and 'H' !!");
-        }
-
-    }
-
+    
+	/// record the antibody sequence
+	Size chain_count = (is_camelid_)? 1:2 ;
+	for (Size i=1; i<=pose.conformation().chain_end(chain_count) ; i++){
+		ab_sequence_.push_back(pose.residue(i).name1());
+	}
+	
 }
 
 
-void AntibodyInfo::init(core::pose::Pose const & pose){
-    
-    for (Size i=1;i<=3;i++) { Chain_IDs_for_CDRs_.push_back('H'); }
-    for (Size i=1;i<=3;i++) { Chain_IDs_for_CDRs_.push_back('L'); }
-    
-    cdr_name_.push_back("h1"); cdr_name_.push_back("h2"); cdr_name_.push_back("h3");
-    cdr_name_.push_back("l1"); cdr_name_.push_back("l2"); cdr_name_.push_back("l3");    
+void AntibodyInfo::init(pose::Pose const & pose){
     
     if(is_camelid_) tot_cdr_loops_enum_ = camelid_last_loop;
     else            tot_cdr_loops_enum_ = num_cdr_loops;
-    
-    numbering_info_ = get_AntibodyNumberingScheme(numbering_scheme_);
     
     setup_CDRsInfo(pose) ;
     
     setup_FrameWorkInfo(pose) ;
     
-    Predict_K_E_CDRH3( pose );
+    predict_H3_base_type( pose );
 }
 
 
     
-/// @TODO
+/// TODO: 
 // JQX:
-// The code assumed that the input PDB has been been renumbered using the Chothia
+// The code assumed that the input PDB has been been renumbered using the Aroop
 // numbering scheme [see the "get_AntibodyNumberingScheme()" function below]: as a matter
 // of fact, since this code is desigend for the Rosetta Antibody Homology Modeling
 // the input is always the structure made from different templates, and they are
@@ -192,19 +148,25 @@ void AntibodyInfo::init(core::pose::Pose const & pose){
 // A smart way would be to use the "identify_CDR_from_a_sequence()" to automatically
 // check this out. On my list!
 
-void AntibodyInfo::setup_CDRsInfo( core::pose::Pose const & pose ) {
-        
+void AntibodyInfo::setup_CDRsInfo( pose::Pose const & pose ) {
+	
+	vector1<char> Chain_IDs_for_CDRs;
+	for (Size i=1;i<=3;i++) { Chain_IDs_for_CDRs.push_back('H'); } // HEAVY chain first
+    for (Size i=1;i<=3;i++) { Chain_IDs_for_CDRs.push_back('L'); } // light
+	
+	vector1< vector1<int> > cdr_numbering_info = get_CDR_NumberingInfo(numbering_scheme_);
+
     int loop_start_in_pose, loop_stop_in_pose, cut_position ;
     all_cdr_loops_ = new loops::Loops();
     
     for (AntibodyCDRNameEnum i=start_cdr_loop; i<=tot_cdr_loops_enum_; i=AntibodyCDRNameEnum(i+1) ){
-        loop_start_in_pose = pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs_[i], numbering_info_[1][i]);
+        loop_start_in_pose = pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs[i], cdr_numbering_info[Begin][i]);
         if(i != h3 ){
-            loop_stop_in_pose= pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs_[i], numbering_info_[2][i]);
+            loop_stop_in_pose= pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs[i], cdr_numbering_info[End][i]);
             cut_position = (loop_stop_in_pose - loop_start_in_pose +1) /2 + loop_start_in_pose;
         }
         else{
-            loop_stop_in_pose  = pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs_[i], numbering_info_[2][i]+1 );
+            loop_stop_in_pose  = pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs[i], cdr_numbering_info[End][i]+1 );
             loop_stop_in_pose -=1;
             // JQX:
             // One should always see 95-102 as the positions for your H3 in your FR02.pdb, but as a matter of fact,
@@ -219,28 +181,18 @@ void AntibodyInfo::setup_CDRsInfo( core::pose::Pose const & pose ) {
             // Aroop seems did this in his old R3 code, CHECK LATER !!!
         }
             
-        loops::LoopOP  one_loop  = new loops::Loop(loop_start_in_pose, loop_stop_in_pose, cut_position);
-        loops::LoopsOP one_loops = new loops::Loops(); one_loops->add_loop(*one_loop);
+        loops::Loop  one_loop(loop_start_in_pose, loop_stop_in_pose, cut_position);
+        loops::LoopsOP one_loops = new loops::Loops(); one_loops->add_loop(one_loop);
     
         // make a "LoopsOP" object, in which each "Loop" was saved
-        all_cdr_loops_->add_loop(*one_loop);
-        
-        // make a "vector1" of "LoopOP" object, each "LoopOP" is one cdr
-        vector1_of_all_cdr_loopOP_.push_back(one_loop);
+        all_cdr_loops_->add_loop(one_loop);
         
         // make a "vector1" of "LoopsOP" object, each "LoopsOP" has one "Loop" object
         vector1_of_all_cdr_loopsOP_.push_back(one_loops);
-        
-        // make a "vector1" of cdr sequences
-        std::string seq="";
-        for (Size it = one_loop->start(); it <= one_loop->stop(); ++it ) {
-            seq+=pose.residue(it).name1();
-        }
-        cdr_sequence_.push_back(seq);
     }
     
                                             // ***********************
-    	all_cdr_loops_->sequential_order(); // JQXTODO: kind of dangerous here
+	all_cdr_loops_->sequential_order(); /// TODO: kind of dangerous here
     
     TR<<"Successfully finished the CDR defintion"<<std::endl;
             
@@ -249,118 +201,143 @@ void AntibodyInfo::setup_CDRsInfo( core::pose::Pose const & pose ) {
 
 
 
-void AntibodyInfo::setup_FrameWorkInfo( core::pose::Pose const & pose ) {
-
+void AntibodyInfo::setup_FrameWorkInfo( pose::Pose const & pose ) {
 
     FrameWork frmwk;
+	vector1<FrameWork> Lfr, Hfr;
 
-    if(! is_camelid_){
-        frmwk.set_chain_name("L");
-        frmwk.set_start(pose.pdb_info()->pdb2pose('L',5));   frmwk.set_stop(pose.pdb_info()->pdb2pose('L',6));   Lfr_.push_back(frmwk);
-        frmwk.set_start(pose.pdb_info()->pdb2pose('L',10));  frmwk.set_stop(pose.pdb_info()->pdb2pose('L',23));  Lfr_.push_back(frmwk);
-        frmwk.set_start(pose.pdb_info()->pdb2pose('L',35));  frmwk.set_stop(pose.pdb_info()->pdb2pose('L',38));  Lfr_.push_back(frmwk);
-        frmwk.set_start(pose.pdb_info()->pdb2pose('L',45));  frmwk.set_stop(pose.pdb_info()->pdb2pose('L',49));  Lfr_.push_back(frmwk);
-        frmwk.set_start(pose.pdb_info()->pdb2pose('L',57));  frmwk.set_stop(pose.pdb_info()->pdb2pose('L',66));  Lfr_.push_back(frmwk);
-        frmwk.set_start(pose.pdb_info()->pdb2pose('L',71));  frmwk.set_stop(pose.pdb_info()->pdb2pose('L',88));  Lfr_.push_back(frmwk);
-        frmwk.set_start(pose.pdb_info()->pdb2pose('L',98));  frmwk.set_stop(pose.pdb_info()->pdb2pose('L',105)); Lfr_.push_back(frmwk);
-        for(Size ii=1; ii<=Lfr_.size();++ii){ Ab_framework_.push_back(Lfr_[ii]); }
-    }
+	if(is_camelid() == false ){
+		if (! pose.pdb_info()->pdb2pose('L', 5)) {
+			throw excn::EXCN_Msg_Exception( "L chain 5th residues missing, framework definition failed!!! " );
+		}
+		if (! pose.pdb_info()->pdb2pose('L', 105)) {
+			throw excn::EXCN_Msg_Exception( "L chain 105th residues missing, framework definition failed!!! " );
+		}
+	}
+	if (! pose.pdb_info()->pdb2pose('H', 5)) {
+		throw excn::EXCN_Msg_Exception( "H chain 5th residues missing, framework definition failed!!! " );
+	}
+	if (! pose.pdb_info()->pdb2pose('H', 110)) {
+		throw excn::EXCN_Msg_Exception( "H chain 110th residues missing, framework definition failed!!! " );
+	}
+	
+	
+	switch (numbering_scheme_) {
+	case Aroop:
+		if(! is_camelid_){
+			frmwk.chain_name='L';
+			frmwk.start=pose.pdb_info()->pdb2pose('L',5); frmwk.stop=pose.pdb_info()->pdb2pose('L',6);  Lfr.push_back(frmwk);
+			frmwk.start=pose.pdb_info()->pdb2pose('L',10);frmwk.stop=pose.pdb_info()->pdb2pose('L',23); Lfr.push_back(frmwk);
+			frmwk.start=pose.pdb_info()->pdb2pose('L',35);frmwk.stop=pose.pdb_info()->pdb2pose('L',38); Lfr.push_back(frmwk);
+			frmwk.start=pose.pdb_info()->pdb2pose('L',45);frmwk.stop=pose.pdb_info()->pdb2pose('L',49); Lfr.push_back(frmwk);
+			frmwk.start=pose.pdb_info()->pdb2pose('L',57);frmwk.stop=pose.pdb_info()->pdb2pose('L',66); Lfr.push_back(frmwk);
+			frmwk.start=pose.pdb_info()->pdb2pose('L',71);frmwk.stop=pose.pdb_info()->pdb2pose('L',88); Lfr.push_back(frmwk);
+			frmwk.start=pose.pdb_info()->pdb2pose('L',98);frmwk.stop=pose.pdb_info()->pdb2pose('L',105);Lfr.push_back(frmwk);
+		}
 
-    frmwk.set_chain_name("H"); 
-    frmwk.set_start(pose.pdb_info()->pdb2pose('H',5));   frmwk.set_stop(pose.pdb_info()->pdb2pose('H',6));   Hfr_.push_back(frmwk);
-    frmwk.set_start(pose.pdb_info()->pdb2pose('H',10));  frmwk.set_stop(pose.pdb_info()->pdb2pose('H',25));  Hfr_.push_back(frmwk);
-    frmwk.set_start(pose.pdb_info()->pdb2pose('H',36));  frmwk.set_stop(pose.pdb_info()->pdb2pose('H',39));  Hfr_.push_back(frmwk);
-    frmwk.set_start(pose.pdb_info()->pdb2pose('H',46));  frmwk.set_stop(pose.pdb_info()->pdb2pose('H',49));  Hfr_.push_back(frmwk);
-    frmwk.set_start(pose.pdb_info()->pdb2pose('H',66));  frmwk.set_stop(pose.pdb_info()->pdb2pose('H',94));  Hfr_.push_back(frmwk);
-    frmwk.set_start(pose.pdb_info()->pdb2pose('H',103)); frmwk.set_stop(pose.pdb_info()->pdb2pose('H',110)); Hfr_.push_back(frmwk);
-    for(Size ii=1; ii<=Hfr_.size();++ii){ Ab_framework_.push_back(Hfr_[ii]); }
+		frmwk.chain_name='H';
+		frmwk.start=pose.pdb_info()->pdb2pose('H',5);  frmwk.stop=pose.pdb_info()->pdb2pose('H',6);  Hfr.push_back(frmwk);
+		frmwk.start=pose.pdb_info()->pdb2pose('H',10); frmwk.stop=pose.pdb_info()->pdb2pose('H',25); Hfr.push_back(frmwk);
+		frmwk.start=pose.pdb_info()->pdb2pose('H',36); frmwk.stop=pose.pdb_info()->pdb2pose('H',39); Hfr.push_back(frmwk);
+		frmwk.start=pose.pdb_info()->pdb2pose('H',46); frmwk.stop=pose.pdb_info()->pdb2pose('H',49); Hfr.push_back(frmwk);
+		frmwk.start=pose.pdb_info()->pdb2pose('H',66); frmwk.stop=pose.pdb_info()->pdb2pose('H',94); Hfr.push_back(frmwk);
+		frmwk.start=pose.pdb_info()->pdb2pose('H',103);frmwk.stop=pose.pdb_info()->pdb2pose('H',110);Hfr.push_back(frmwk);
+		break;
+	case Chothia:
+		break;
+	case Kabat:
+		break;
+	case Enhanced_Chothia:
+		break;
+	case AHO:
+		break;
+	case IMGT:
+		break;
+	default:
+		throw excn::EXCN_Msg_Exception("the numbering schemes can only be 'Aroop','Chothia','Kabat', 'Enhanced_Chothia', 'AHO', 'IMGT' !!!!!! ");
+		break;
+	}
+	
+	if (Lfr.size()>0)  { framework_info_.push_back(Lfr);}
+	if (Hfr.size()>0)  { framework_info_.push_back(Hfr);}
+	else { throw excn::EXCN_Msg_Exception("The heavy chain has no framework? This cannot be correct");}
+	
 
-
-	for( core::Size i = 1; i <= pose.total_residue(); ++i ){
-		Fv_sequence_.push_back( pose.residue(i).name1() );
-    }
-
-
-} // set_defaults
-
-
-loops::LoopOP AntibodyInfo::get_CDR_loop( AntibodyCDRNameEnum const & cdr_name ) const {
-    for (AntibodyCDRNameEnum i=start_cdr_loop; i<=tot_cdr_loops_enum_; i=AntibodyCDRNameEnum(i+1) ){
-        if (i == cdr_name) { return vector1_of_all_cdr_loopOP_[i]; }
-    }
-        
-    throw utility::excn::EXCN_Msg_Exception( "The loop is not a valid CDR loop. Valid CDR loops are 'l1', 'l2', 'l3', 'h1', 'h2', 'h3' for standard antibodies (IgGs), and 'h1', 'h2', 'h3' for camelid antibodies (nanobodies). Capitalization matters." );
 }
-
-
+	
+	
     
 
-std::string AntibodyInfo::Predict_K_E_CDRH3( core::pose::Pose const & pose ) {
+	
+////////////////////////////////////////////////////////////////////////////////
+///                                                                          ///
+///	predicit H3 cterminus base type (Kinked or Extended) based on sequence   ///
+///                                                                          ///
+////////////////////////////////////////////////////////////////////////////////
+void AntibodyInfo::predict_H3_base_type( pose::Pose const & pose ) {
 	if( is_camelid_ ){
-		detect_and_set_camelid_CDR_H3_stem_type();
+		detect_and_set_camelid_CDR_H3_stem_type( pose );
     }
 	else{
 		//detect_and_set_regular_CDR_H3_stem_type( pose );
         detect_and_set_regular_CDR_H3_stem_type_new_rule( pose );
     }
-    
-    if (kinked_H3_)   { return "Kinked";}
-    if (extended_H3_) { return "Extended";}
 } // detect_CDR_H3_stem_type
 
 
-
-
-void AntibodyInfo::detect_and_set_camelid_CDR_H3_stem_type() {
+void AntibodyInfo::detect_and_set_camelid_CDR_H3_stem_type(pose::Pose const & pose ) {
 	TR << "AC Detecting Camelid CDR H3 Stem Type" << std::endl;
 
+    bool kinked_H3 (false);
+    bool extended_H3 (false);
+    
 	// extract single letter aa codes for the chopped loop residues
-	utility::vector1< char > cdr_h3_sequence;
-	for( core::Size ii = get_CDR_loop(h3)->start() - 2; ii <= get_CDR_loop(h3)->stop(); ++ii )
-		cdr_h3_sequence.push_back( Fv_sequence_[ii] );
+	vector1< char > cdr_h3_sequence;
+	for( Size ii = get_one_cdr_loop_object(h3).start() - 2; ii <= get_one_cdr_loop_object(h3).stop(); ++ii )
+		cdr_h3_sequence.push_back( pose.sequence()[ii-1] );
 
 	// Rule for extended
-	if( ( ( get_CDR_loop(h3)->stop() - get_CDR_loop(h3)->start() ) ) >= 12 ) {
+	if( ( ( get_one_cdr_loop_object(h3).stop() - get_one_cdr_loop_object(h3).start() ) ) >= 12 ) {
 		if( ( ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'Y' ) ||
 					( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'W' ) ||
 					( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'F' ) ) &&
 				( cdr_h3_sequence[ cdr_h3_sequence.size() - 2 ] != 'H' ) &&
 				( cdr_h3_sequence[ cdr_h3_sequence.size() - 1 ] != 'G' ) )
-			extended_H3_ = true;
+			extended_H3 = true;
 	}
 
-	if( !extended_H3_ ) {
-		kinked_H3_ = true;
+	if( !extended_H3 ) {
+		kinked_H3 = true;
 		if(           ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'R' ) ||
 				      ( cdr_h3_sequence[ cdr_h3_sequence.size() - 2 ] == 'Y' ) ||
 				((     ( cdr_h3_sequence[ cdr_h3_sequence.size() - 1 ] != 'Y' ) || ( cdr_h3_sequence[ cdr_h3_sequence.size() - 1 ] != 'W' )    ) &&
 				(     ( cdr_h3_sequence[ cdr_h3_sequence.size() - 2 ] != 'Y' ) || ( cdr_h3_sequence[ cdr_h3_sequence.size() - 2 ] != 'W' )    ) &&
 				( 	  ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] != 'Y' ) || ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] != 'W' )    ))
 		)
-			kinked_H3_ = false;
+			kinked_H3 = false;
 	}
 
-
-	TR << "AC Finished Detecting Camelid CDR H3 Stem Type: "
-		 << "Kink: " << kinked_H3_ << " Extended: " << extended_H3_ << std::endl;
+    if (kinked_H3) H3_base_type_predicted_ = Kinked;
+    if (extended_H3) H3_base_type_predicted_ = Extended;
+    if (!kinked_H3 && !extended_H3) H3_base_type_predicted_ = Neutral;
+	TR << "AC Finished Detecting Camelid CDR H3 Stem Type: " << h3_base_type_[H3_base_type_predicted_] << std::endl;
 } 
 
 
-
-
-void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type( core::pose::Pose const & pose ) {
+void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type( pose::Pose const & pose ) {
 	TR << "AC Detecting Regular CDR H3 Stem Type" << std::endl;
-
+    bool extended_H3 (false) ;
+    bool kinked_H3 (false);
 	bool is_H3( false );
 
 	// extract single letter aa codes for the chopped loop residues
-	utility::vector1< char > cdr_h3_sequence;
-	for( core::Size ii = get_CDR_loop(h3)->start() - 2; ii <= get_CDR_loop(h3)->stop()+1 ; ++ii )
-		cdr_h3_sequence.push_back( Fv_sequence_[ii] );
+	vector1< char > cdr_h3_sequence;
+	for( Size ii = get_one_cdr_loop_object(h3).start() - 2; ii <= get_one_cdr_loop_object(h3).stop()+1 ; ++ii )
+		cdr_h3_sequence.push_back( pose.sequence()[ii-1] );
 
 	// Rule 1a for standard kink
 	if( cdr_h3_sequence[ cdr_h3_sequence.size() - 2 ] != 'D') {
-		kinked_H3_ = true;
+		kinked_H3 = true;
 		is_H3 = true;
 	}
 
@@ -368,14 +345,14 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type( core::pose::Pose con
 	if( ( cdr_h3_sequence[ cdr_h3_sequence.size() - 2 ] == 'D')
 			&& ( (cdr_h3_sequence[2] != 'K') &&
 					 (cdr_h3_sequence[2] != 'R') ) && (is_H3 != true)) {
-		extended_H3_ = true;
+		extended_H3 = true;
 		is_H3 = true;
 	}
 
 	if( !is_H3 ) {
 		// Rule 1b extension for special kinked form
 		bool is_basic( false ); // Special basic residue exception flag
-		for(core::Size ii = 3; ii <= core::Size(cdr_h3_sequence.size() - 4);
+		for(Size ii = 3; ii <= Size(cdr_h3_sequence.size() - 4);
 				ii++) {
 			if( cdr_h3_sequence[ii] == 'R' || cdr_h3_sequence[ii] == 'K') {
 				is_basic = true;
@@ -384,13 +361,13 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type( core::pose::Pose con
 		}
 
 		if( !is_basic ) {
-			core::Size L49_pose_number = pose.pdb_info()->pdb2pose( 'L', 49 );
+			Size L49_pose_number = pose.pdb_info()->pdb2pose( 'L', 49 );
 			char aa_code_L49 = pose.residue( L49_pose_number ).name1();
 			if( aa_code_L49 == 'R' || aa_code_L49 == 'K')
 				is_basic = true;
 		}
 		if( is_basic ) {
-			kinked_H3_ = true;
+			kinked_H3 = true;
 			is_H3 = true;
 		}
 	}
@@ -401,16 +378,16 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type( core::pose::Pose con
 				(cdr_h3_sequence[2] == 'R') ) &&
 			( (cdr_h3_sequence[1] != 'K') &&
 				(cdr_h3_sequence[1] != 'R') ) && (is_H3 != true) ) {
-		kinked_H3_ = true;
+		kinked_H3 = true;
 		is_H3 = true;
 		if( !is_H3 ) {
 			bool is_basic( false ); // Special basic residue exception flag
-			core::Size L46_pose_number = pose.pdb_info()->pdb2pose( 'L', 46 );
+			Size L46_pose_number = pose.pdb_info()->pdb2pose( 'L', 46 );
 			char aa_code_L46 = pose.residue( L46_pose_number ).name1();
 			if( aa_code_L46 == 'R' || aa_code_L46 == 'K')
 				is_basic = true;
 			if( is_basic ) {
-				extended_H3_ = true;
+				extended_H3 = true;
 				is_H3 = true;
 			}
 		}
@@ -422,29 +399,31 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type( core::pose::Pose con
 				(cdr_h3_sequence[2] == 'R')) &&
 			( (cdr_h3_sequence[1] == 'K') ||
 				(cdr_h3_sequence[1] == 'R') ) && (is_H3 != true) ) {
-		extended_H3_ = true;
+		extended_H3 = true;
 		is_H3 = true;
 	}
 
-	TR << "AC Finished Detecting Regular CDR H3 Stem Type: "
-		 << "Kink: " << kinked_H3_ << " Extended: " << extended_H3_ << std::endl;
+    if (kinked_H3) H3_base_type_predicted_ = Kinked;
+    if (extended_H3) H3_base_type_predicted_ = Extended;
+    if (!kinked_H3 && !extended_H3) H3_base_type_predicted_ = Neutral;
+	TR << "AC Finished Detecting Regular CDR H3 Stem Type: " << h3_base_type_[H3_base_type_predicted_] << std::endl;
 } // detect_regular_CDR_H3_stem_type()
     
     
-    
-    
-void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( core::pose::Pose const & pose ) {
+void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose const & pose ) {
     TR << "AC Detecting Regular CDR H3 Stem Type" << std::endl;
         
+    bool extended_H3 (false) ;
+    bool kinked_H3 (false);
     bool is_H3( false );	// "is_H3" is no longer used. 06/18/12
         
     // extract single letter aa codes for the chopped loop residues
-    utility::vector1< char > cdr_h3_sequence;
-    for( core::Size ii = get_CDR_loop(h3)->start() - 2; ii <= get_CDR_loop(h3)->stop() + 1; ++ii )
-        cdr_h3_sequence.push_back( Fv_sequence_[ii] );
+    vector1< char > cdr_h3_sequence;
+    for( Size ii = get_one_cdr_loop_object(h3).start() - 2; ii <= get_one_cdr_loop_object(h3).stop() + 1; ++ii )
+        cdr_h3_sequence.push_back( pose.sequence()[ii-1] );
     //for (Size i=1; i<=cdr_h3_sequence.size();i++){    TR<<cdr_h3_sequence[i];} TR<<std::endl;
     
-    /// @authors DK 06/18/2012
+    /// @author: Daisuke Kuroda (dkuroda1981@gmail.com) 06/18/2012
     ///
     /// @last_modified 06/18/2012
     ///
@@ -454,7 +433,7 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( core::pose:
     // This is only for rule 1b
     bool is_basic( false ); // Special basic residue exception flag
     if( !is_basic ) {
-            core::Size L49_pose_number = pose.pdb_info()->pdb2pose( 'L', 49 );
+            Size L49_pose_number = pose.pdb_info()->pdb2pose( 'L', 49 );
             char aa_code_L49 = pose.residue( L49_pose_number ).name1();
             if( aa_code_L49 == 'R' || aa_code_L49 == 'K')
                 is_basic = true;
@@ -465,29 +444,29 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( core::pose:
            ( ( cdr_h3_sequence[ 2 ] == 'K') || (cdr_h3_sequence[2] == 'R') ) &&
            ( ( cdr_h3_sequence[ 1 ] == 'K') || (cdr_h3_sequence[1] == 'R') ) ) {
             // Rule 1d for extened form with salt bridge
-            extended_H3_ = true;
+            extended_H3 = true;
         }else if( ( cdr_h3_sequence[ cdr_h3_sequence.size() - 2 ] == 'D') &&
                  ( ( cdr_h3_sequence[ 2 ] == 'K') || ( cdr_h3_sequence[ 2 ] == 'R') ) &&
                  ( ( cdr_h3_sequence[ 1 ] != 'K') && ( cdr_h3_sequence[ 1 ] != 'R') ) ) {
             // Rule 1c for kinked form with salt bridge with/without Notable signal (L46)
             // Special basic residue exception flag
-            core::Size L46_pose_number = pose.pdb_info()->pdb2pose( 'L', 46 );
+            Size L46_pose_number = pose.pdb_info()->pdb2pose( 'L', 46 );
             char aa_code_L46 = pose.residue( L46_pose_number ).name1();
             
             // Special Tyr residue exception flag
-            core::Size L36_pose_number = pose.pdb_info()->pdb2pose( 'L', 36 );
+            Size L36_pose_number = pose.pdb_info()->pdb2pose( 'L', 36 );
             char aa_code_L36 = pose.residue( L36_pose_number ).name1();
             
             if( ( aa_code_L46 == 'R' || aa_code_L46 == 'K') && aa_code_L36 != 'Y' ){
-                extended_H3_ = true;
+                extended_H3 = true;
             }else{
-                kinked_H3_   = true;
+                kinked_H3   = true;
             }
         }else if( ( cdr_h3_sequence[ cdr_h3_sequence.size() - 2 ] == 'D' ) &&
                  ( cdr_h3_sequence[ 2 ] != 'K' ) && ( cdr_h3_sequence[ 2 ] != 'R' ) &&
                  ( is_basic == true ) ) {
             // Rule 1b for standard extended form with Notable signal (L49)
-            kinked_H3_   = true;
+            kinked_H3   = true;
         }else if( ( ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'F' ) &&
                    ( cdr_h3_sequence[ cdr_h3_sequence.size() - 4 ] == 'A' ) ) || 
                  ( ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'F' ) &&
@@ -497,50 +476,55 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( core::pose:
                  ( ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'M' ) &&
                   ( cdr_h3_sequence[ cdr_h3_sequence.size() - 4 ] == 'G' ) ) ) {
                      // This is new feature
-                     kinked_H3_   = true;
+                     kinked_H3   = true;
                  }else if( ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'R' ) ||
                           ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'K' ) ||
                           ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'D' ) ||
                           ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'N' ) ){
                      // This is new feature
-                     extended_H3_ = true;
+                     extended_H3 = true;
                  }else if( ( ( cdr_h3_sequence[ 3 ] == 'Y' ) &&
                             ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'F' ) ) ||
                           ( (cdr_h3_sequence[ 3 ] == 'Y' ) &&
                            (cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'M') ) ){ 
                               // This is new feature
-                              extended_H3_ = true;
+                              extended_H3 = true;
                           }else if( cdr_h3_sequence.size() - 3  == 7 ) {
                               // This is new feature
-                              extended_H3_ = true;
+                              extended_H3 = true;
                           }else if( cdr_h3_sequence[ cdr_h3_sequence.size() - 2 ] == 'D' ) {
                               // Rule 1b for standard extended form without Notable signal (L49)
-                              extended_H3_ = true;
+                              extended_H3 = true;
                           }else if( cdr_h3_sequence[ cdr_h3_sequence.size() - 2 ] != 'D' ) {
                               // Rule 1a for standard kink. i.e. No sequence feature...
-                              kinked_H3_ = true;
+                              kinked_H3 = true;
                           }
         // END H3-RULE 2007
         
-        
+    if (kinked_H3) H3_base_type_predicted_ = Kinked;
+    if (extended_H3) H3_base_type_predicted_ = Extended;
+    if (!kinked_H3 && !extended_H3) H3_base_type_predicted_ = Neutral;
+	TR << "AC Finished Detecting Regular CDR H3 Stem Type: " << h3_base_type_[H3_base_type_predicted_] << std::endl;
         
         TR << "AC Finished Detecting Regular CDR H3 Stem Type: "
-    << "Kink: " << kinked_H3_ << " Extended: " << extended_H3_ << std::endl;
-    } // detect_regular_CDR_H3_stem_type()
+    << "Kink: " << kinked_H3 << " Extended: " << extended_H3 << std::endl;
+} // detect_regular_CDR_H3_stem_type()
     
     
     
-    
-    
-void AntibodyInfo::all_cdr_fold_tree( core::pose::Pose & pose ) {
-	using namespace core::kinematics;
+////////////////////////////////////////////////////////////////////////////////
+///                                                                          ///
+///				provide fold tree utilities for various purpose              ///
+///                                                                          ///
+////////////////////////////////////////////////////////////////////////////////
 
-
+void AntibodyInfo::all_cdr_fold_tree( pose::Pose & pose ) {
+	using namespace kinematics;
 
 	FoldTree f;
 	f.clear();
 
-	core::Size jump_num = 0;
+	Size jump_num = 0;
 	for( loops::Loops::const_iterator it=all_cdr_loops_->begin(), it_end=all_cdr_loops_->end(), it_next; it < it_end; ++it ) {
 
 		it_next = it;
@@ -578,7 +562,7 @@ void AntibodyInfo::all_cdr_VL_VH_fold_tree( pose::Pose & pose_in )
 	using namespace kinematics;
         
 	Size nres = pose_in.total_residue();
-	core::pose::PDBInfoCOP pdb_info = pose_in.pdb_info();
+	pose::PDBInfoCOP pdb_info = pose_in.pdb_info();
 	char second_chain = 'H';
 	Size rb_cutpoint(0);
         
@@ -589,8 +573,8 @@ void AntibodyInfo::all_cdr_VL_VH_fold_tree( pose::Pose & pose_in )
 		}
 	}
         
-    core::Size jump_pos1 ( geometry::residue_center_of_mass( pose_in, 1, rb_cutpoint ) );
-    core::Size jump_pos2 ( geometry::residue_center_of_mass( pose_in,rb_cutpoint+1, nres ) );
+    Size jump_pos1 ( geometry::residue_center_of_mass( pose_in, 1, rb_cutpoint ) );
+    Size jump_pos2 ( geometry::residue_center_of_mass( pose_in,rb_cutpoint+1, nres ) );
     //TR<<rb_cutpoint<<std::endl;
     //TR<<jump_pos1<<std::endl;
     //TR<<jump_pos2<<std::endl;
@@ -645,247 +629,291 @@ void AntibodyInfo::all_cdr_VL_VH_fold_tree( pose::Pose & pose_in )
 } // all_cdr_VL_VH_fold_tree
     
     
-    ///////////////////////////////////////////////////////////////////////////
-    /// @begin LH_A_foldtree
-    ///
-    /// @brief	Fold tree for snugdock, docks LH with the antigen chains. The function
-    ///			assumes that the coordinates for antigen chains in the input PDB file
-    ///			are right after the antibody heavy chain (which must be named H).The
-    ///			expected order of chains is thus L, H followed by the antigen chains.
-    ///
-    /// @authors krishna 08/14/2012
-    ///
-    /// @last_modified 08/14/2012
-    ///////////////////////////////////////////////////////////////////////////
-    kinematics::FoldTreeOP AntibodyInfo::get_foldtree_LH_A( core::pose::Pose const & pose ) {
-        
-		using namespace core;
-		using namespace kinematics;
-        
-		Size nres = pose.total_residue();
-		core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
-		char second_chain = 'H';
-		core::Size cutpoint = 0;
-        
-		LH_A_foldtree_ = new kinematics::FoldTree();
-        
-		for ( Size i = 1; i <= nres; ++i ) {
-			if(pdb_info->chain(1) != 'L'){
-				throw utility::excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
-				break;
-			}
-			if( (pdb_info->chain(i) == 'L') && (pdb_info->chain(i) != pdb_info->chain(i+1))) {
-				if(pdb_info->chain(i+1) != second_chain){
-					throw utility::excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
-					break;
-				}
-			}
-			if( (pdb_info->chain(i) == second_chain) && (pdb_info->chain(i) != pdb_info->chain(i+1))) {
-				cutpoint = i;
-				break;
-			}
-		}
-        
-		Size jump_pos1 ( geometry::residue_center_of_mass( pose, 1, cutpoint ) );
-		Size jump_pos2 ( geometry::residue_center_of_mass( pose, cutpoint+1, pose.total_residue() ) );
-        
-		//setup fold tree based on cutpoints and jump points
-		LH_A_foldtree_->clear();
-		LH_A_foldtree_->simple_tree( pose.total_residue() );
-		LH_A_foldtree_->new_jump( jump_pos1, jump_pos2, cutpoint);
-        
-		Size chain_begin(0), chain_end(0);
-        
-		//rebuild jumps between antibody light and heavy chains
-		chain_end = cutpoint;
-		chain_begin = pose.conformation().chain_begin( pose.chain(chain_end) );
-		while (chain_begin != 1){
-			chain_end = chain_begin-1;
-			LH_A_foldtree_->new_jump( chain_end, chain_begin, chain_end);
-			chain_begin = pose.conformation().chain_begin( pose.chain(chain_end) );
-		}
-        
-		//rebuild jumps between all the antigen chains
-		chain_begin = cutpoint+1;
-		chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
-		while (chain_end != pose.total_residue()){
-			chain_begin = chain_end+1;
-			LH_A_foldtree_->new_jump( chain_end, chain_begin, chain_end);
-			chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
-		}
-        
-		LH_A_foldtree_->reorder( 1 );
-		LH_A_foldtree_->check_fold_tree();
-        
-		return LH_A_foldtree_;
-        
-        //		pose.fold_tree( f );
-        //		f.show( std::cout );
-        
+///////////////////////////////////////////////////////////////////////////
+/// @begin LH_A_foldtree
+///
+/// @brief	Fold tree for snugdock, docks LH with the antigen chains. The function
+///			assumes that the coordinates for antigen chains in the input PDB file
+///			are right after the antibody heavy chain (which must be named H).The
+///			expected order of chains is thus L, H followed by the antigen chains.
+///
+/// @authors Krishna Praneeth Kilambi 08/14/2012
+///
+/// @last_modified 08/14/2012
+///////////////////////////////////////////////////////////////////////////
+kinematics::FoldTree AntibodyInfo::get_foldtree_LH_A( pose::Pose const & pose ) const {
+    
+    using namespace core;
+    using namespace kinematics;
+    
+    Size nres = pose.total_residue();
+    pose::PDBInfoCOP pdb_info = pose.pdb_info();
+    char second_chain = 'H';
+    Size cutpoint = 0;
+    
+    kinematics::FoldTree LH_A_foldtree;
+    
+    for ( Size i = 1; i <= nres; ++i ) {
+        if(pdb_info->chain(1) != 'L'){
+            throw excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
+            break;
+        }
+        if( (pdb_info->chain(i) == 'L') && (pdb_info->chain(i) != pdb_info->chain(i+1))) {
+            if(pdb_info->chain(i+1) != second_chain){
+                throw excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
+                break;
+            }
+        }
+        if( (pdb_info->chain(i) == second_chain) && (pdb_info->chain(i) != pdb_info->chain(i+1))) {
+            cutpoint = i;
+            break;
+        }
     }
     
+    Size jump_pos1 ( geometry::residue_center_of_mass( pose, 1, cutpoint ) );
+    Size jump_pos2 ( geometry::residue_center_of_mass( pose, cutpoint+1, pose.total_residue() ) );
     
-    ///////////////////////////////////////////////////////////////////////////
-    /// @begin L_HA_foldtree
-    ///
-    /// @brief	Fold tree for LH refinement in snugdock, docks L with H + antigen
-    ///			chains. The function assumes that the coordinates for antigen chains
-    ///			in the input PDB file are right after the antibody heavy chain
-    ///			(which must be named H).The expected order of chains is thus
-    ///			L, H followed by the antigen chains.
-    ///
-    /// @authors krishna 08/14/2012
-    ///
-    /// @last_modified 08/14/2012
-    ///////////////////////////////////////////////////////////////////////////
-    kinematics::FoldTreeOP AntibodyInfo::get_foldtree_L_HA( core::pose::Pose const & pose ) {
-        
-		using namespace core;
-		using namespace kinematics;
-        
-		Size nres = pose.total_residue();
-		core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
-		char second_chain = 'H';
-		core::Size cutpoint = 0;
-        
-		L_HA_foldtree_ = new kinematics::FoldTree();
-        
-		for ( Size i = 1; i <= nres; ++i ) {
-			if(pdb_info->chain(1) != 'L'){
-				throw utility::excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
-				break;
-			}
-			if( (pdb_info->chain(i) == 'L') && (pdb_info->chain(i) != pdb_info->chain(i+1))) {
-				if(pdb_info->chain(i+1) != second_chain){
-					throw utility::excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
-					break;
-				}
-			}
-			if( (pdb_info->chain(i) == 'L') && (pdb_info->chain(i+1) == second_chain)) {
-				cutpoint = i;
-				break;
-			}
-		}
-        
-		Size jump_pos1 ( geometry::residue_center_of_mass( pose, 1, cutpoint ) );
-		Size jump_pos2 ( geometry::residue_center_of_mass( pose, cutpoint+1, pose.conformation().chain_end( pose.chain(cutpoint+1) ) ) );
-        
-		//setup fold tree based on cutpoints and jump points
-		L_HA_foldtree_->clear();
-		L_HA_foldtree_->simple_tree( pose.total_residue() );
-		L_HA_foldtree_->new_jump( jump_pos1, jump_pos2, cutpoint);
-        
-		Size chain_begin(0), chain_end(0);
-        
-		//rebuild jumps between heavy chain and antigen chains
-		chain_begin = cutpoint+1;
-		chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
-		while (chain_end != pose.total_residue()){
-			chain_begin = chain_end+1;
-			L_HA_foldtree_->new_jump( chain_end, chain_begin, chain_end);
-			chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
-		}
-        
-		L_HA_foldtree_->reorder( 1 );
-		L_HA_foldtree_->check_fold_tree();
-        
-		return L_HA_foldtree_;
-        
-        //		pose.fold_tree( f );
-        //		f.show( std::cout );
-        
+    //setup fold tree based on cutpoints and jump points
+    LH_A_foldtree.clear();
+    LH_A_foldtree.simple_tree( pose.total_residue() );
+    LH_A_foldtree.new_jump( jump_pos1, jump_pos2, cutpoint);
+    
+    Size chain_begin(0), chain_end(0);
+    
+    //rebuild jumps between antibody light and heavy chains
+    chain_end = cutpoint;
+    chain_begin = pose.conformation().chain_begin( pose.chain(chain_end) );
+    while (chain_begin != 1){
+        chain_end = chain_begin-1;
+        LH_A_foldtree.new_jump( chain_end, chain_begin, chain_end);
+        chain_begin = pose.conformation().chain_begin( pose.chain(chain_end) );
     }
     
-    ///////////////////////////////////////////////////////////////////////////
-    /// @begin LA_H_foldtree
-    ///
-    /// @brief	Fold tree for LH refinement in snugdock, docks L + antigen chains
-    ///			with H. The function assumes that the coordinates for antigen chains
-    ///			in the input PDB file are right after the antibody heavy chain
-    ///			(which must be named H).The expected order of chains is thus
-    ///			L, H followed by the antigen chains.
-    ///
-    /// @authors krishna 08/14/2012
-    ///
-    /// @last_modified 08/14/2012
-    ///////////////////////////////////////////////////////////////////////////
-    kinematics::FoldTreeOP AntibodyInfo::get_foldtree_LA_H( core::pose::Pose const & pose ) {
-        
-		using namespace core;
-		using namespace kinematics;
-        
-		Size nres = pose.total_residue();
-		core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
-		char second_chain = 'H';
-		core::Size cutpoint = 0;
-		bool lchain_jump = false;
-        
-		LA_H_foldtree_ = new kinematics::FoldTree();
-        
-		for ( Size i = 1; i <= nres; ++i ) {
-			if(pdb_info->chain(1) != 'L'){
-				throw utility::excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
-				break;
-			}
-			if( (pdb_info->chain(i) == 'L') && (pdb_info->chain(i) != pdb_info->chain(i+1))) {
-				if(pdb_info->chain(i+1) != second_chain){
-					throw utility::excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
-					break;
-				}
-			}
-			if( (pdb_info->chain(i) == 'L') && (pdb_info->chain(i+1) == second_chain)) {
-				cutpoint = i;
-				break;
-			}
-		}
-        
-		Size jump_pos1 ( geometry::residue_center_of_mass( pose, 1, cutpoint ) );
-		Size jump_pos2 ( geometry::residue_center_of_mass( pose, cutpoint+1, pose.conformation().chain_end( pose.chain(cutpoint+1) ) ) );
-        
-		//setup fold tree based on cutpoints and jump points
-		LA_H_foldtree_->clear();
-		LA_H_foldtree_->simple_tree( pose.total_residue() );
-		LA_H_foldtree_->new_jump( jump_pos1, jump_pos2, cutpoint);
-        
-		Size chain_begin(0), chain_end(0);
-        
-		//rebuild jumps between the light chain and antigen chains
-		chain_begin = cutpoint+1;
-		chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
-		while (chain_end != pose.total_residue()){
-			chain_begin = chain_end+1;
-			if (!lchain_jump){
-				LA_H_foldtree_->new_jump( pose.conformation().chain_end( pose.chain(1) ), chain_begin, chain_end);
-				lchain_jump = true;
-			}
-			else{
-				LA_H_foldtree_->new_jump( chain_end, chain_begin, chain_end);
-			}
-			chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
-		}
-        
-		LA_H_foldtree_->reorder( 1 );
-		LA_H_foldtree_->check_fold_tree();
-        
-		return LA_H_foldtree_;
-        
-        //		pose.fold_tree( f );
-        //		f.show( std::cout );
-        
+    //rebuild jumps between all the antigen chains
+    chain_begin = cutpoint+1;
+    chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
+    while (chain_end != pose.total_residue()){
+        chain_begin = chain_end+1;
+        LH_A_foldtree.new_jump( chain_end, chain_begin, chain_end);
+        chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
     }
+    
+    LH_A_foldtree.reorder( 1 );
+    LH_A_foldtree.check_fold_tree();
+    
+    return LH_A_foldtree;
+}
+    
+    
+///////////////////////////////////////////////////////////////////////////
+/// @begin L_HA_foldtree
+///
+/// @brief	Fold tree for LH refinement in snugdock, docks L with H + antigen
+///			chains. The function assumes that the coordinates for antigen chains
+///			in the input PDB file are right after the antibody heavy chain
+///			(which must be named H).The expected order of chains is thus
+///			L, H followed by the antigen chains.
+///
+/// @authors Krishna Praneeth Kilambi 08/14/2012
+///
+/// @last_modified 08/14/2012
+///////////////////////////////////////////////////////////////////////////
+kinematics::FoldTree AntibodyInfo::get_foldtree_L_HA( pose::Pose const & pose ) const {
+	
+	using namespace core;
+	using namespace kinematics;
+	
+	Size nres = pose.total_residue();
+	pose::PDBInfoCOP pdb_info = pose.pdb_info();
+	char second_chain = 'H';
+	Size cutpoint = 0;
+	
+	kinematics::FoldTree L_HA_foldtree;
+	
+	for ( Size i = 1; i <= nres; ++i ) {
+		if(pdb_info->chain(1) != 'L'){
+			throw excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
+			break;
+		}
+		if( (pdb_info->chain(i) == 'L') && (pdb_info->chain(i) != pdb_info->chain(i+1))) {
+			if(pdb_info->chain(i+1) != second_chain){
+				throw excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
+				break;
+			}
+		}
+		if( (pdb_info->chain(i) == 'L') && (pdb_info->chain(i+1) == second_chain)) {
+			cutpoint = i;
+			break;
+		}
+	}
+	
+	Size jump_pos1 ( geometry::residue_center_of_mass( pose, 1, cutpoint ) );
+	Size jump_pos2 ( geometry::residue_center_of_mass( pose, cutpoint+1, pose.conformation().chain_end( pose.chain(cutpoint+1) ) ) );
+	
+	//setup fold tree based on cutpoints and jump points
+	L_HA_foldtree.clear();
+	L_HA_foldtree.simple_tree( pose.total_residue() );
+	L_HA_foldtree.new_jump( jump_pos1, jump_pos2, cutpoint);
+	
+	Size chain_begin(0), chain_end(0);
+	
+	//rebuild jumps between heavy chain and antigen chains
+	chain_begin = cutpoint+1;
+	chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
+	while (chain_end != pose.total_residue()){
+		chain_begin = chain_end+1;
+		L_HA_foldtree.new_jump( chain_end, chain_begin, chain_end);
+		chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
+	}
+	
+	L_HA_foldtree.reorder( 1 );
+	L_HA_foldtree.check_fold_tree();
+	
+	return L_HA_foldtree;
+	
+}
+    
+///////////////////////////////////////////////////////////////////////////
+/// @begin LA_H_foldtree
+///
+/// @brief	Fold tree for LH refinement in snugdock, docks L + antigen chains
+///			with H. The function assumes that the coordinates for antigen chains
+///			in the input PDB file are right after the antibody heavy chain
+///			(which must be named H).The expected order of chains is thus
+///			L, H followed by the antigen chains.
+///
+/// @authors Krishna Praneeth Kilambi 08/14/2012
+///
+/// @last_modified 08/14/2012
+///////////////////////////////////////////////////////////////////////////
+kinematics::FoldTree AntibodyInfo::get_foldtree_LA_H( pose::Pose const & pose ) const {
+    
+	using namespace core;
+	using namespace kinematics;
+
+	Size nres = pose.total_residue();
+	pose::PDBInfoCOP pdb_info = pose.pdb_info();
+	char second_chain = 'H';
+	Size cutpoint = 0;
+	bool lchain_jump = false;
+
+	kinematics::FoldTree LA_H_foldtree ;
+	
+	for ( Size i = 1; i <= nres; ++i ) {
+		if(pdb_info->chain(1) != 'L'){
+			throw excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
+			break;
+		}
+		if( (pdb_info->chain(i) == 'L') && (pdb_info->chain(i) != pdb_info->chain(i+1))) {
+			if(pdb_info->chain(i+1) != second_chain){
+				throw excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
+				break;
+			}
+		}
+		if( (pdb_info->chain(i) == 'L') && (pdb_info->chain(i+1) == second_chain)) {
+			cutpoint = i;
+			break;
+		}
+	}
+	
+	Size jump_pos1 ( geometry::residue_center_of_mass( pose, 1, cutpoint ) );
+	Size jump_pos2 ( geometry::residue_center_of_mass( pose, cutpoint+1, pose.conformation().chain_end( pose.chain(cutpoint+1) ) ) );
+	
+	//setup fold tree based on cutpoints and jump points
+	LA_H_foldtree.clear();
+	LA_H_foldtree.simple_tree( pose.total_residue() );
+	LA_H_foldtree.new_jump( jump_pos1, jump_pos2, cutpoint);
+	
+	Size chain_begin(0), chain_end(0);
+	
+	//rebuild jumps between the light chain and antigen chains
+	chain_begin = cutpoint+1;
+	chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
+	while (chain_end != pose.total_residue()){
+		chain_begin = chain_end+1;
+		if (!lchain_jump){
+			LA_H_foldtree.new_jump( pose.conformation().chain_end( pose.chain(1) ), chain_begin, chain_end);
+			lchain_jump = true;
+		}
+		else{
+			LA_H_foldtree.new_jump( chain_end, chain_begin, chain_end);
+		}
+		chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
+	}
+	
+	LA_H_foldtree.reorder( 1 );
+	LA_H_foldtree.check_fold_tree();
+	
+	return LA_H_foldtree;
+
+	
+}
 
 
+    //JQX: once you create a new movemap, the default of bb, sc and jump are all false
+	kinematics::MoveMapOP AntibodyInfo::get_movemap_allCDRbb(pose::Pose const & pose){
+        kinematics::MoveMapOP all_CDRs_bb_movemap = new kinematics::MoveMap();
+        
+        vector1< bool> bb_is_flexible( pose.total_residue(), false );
+        select_loop_residues( pose, *all_cdr_loops_, false/*include_neighbors*/, bb_is_flexible);
+        all_CDRs_bb_movemap->set_bb( bb_is_flexible );
+        
+        return all_CDRs_bb_movemap;
+	}
+    
+	kinematics::MoveMapOP AntibodyInfo::get_movemap_OneCDRbb(pose::Pose const & pose, AntibodyCDRNameEnum const & cdr_loop){
+        kinematics::MoveMapOP one_CDR_bb_movemap = new kinematics::MoveMap();
+        
+        vector1< bool> bb_is_flexible( pose.total_residue(), false );
+        
+        for ( Size i = get_one_cdr_loop_object(cdr_loop).start(); i <= get_one_cdr_loop_object(cdr_loop).stop(); ++i ) {
+            bb_is_flexible[i] = true;
+        }
+        
+        select_loop_residues( pose, *all_cdr_loops_, false/*include_neighbors*/, bb_is_flexible);
+        one_CDR_bb_movemap->set_bb( bb_is_flexible );
+        
+        return one_CDR_bb_movemap;
+	}
+    
+    
+    
+	//JQX: doesn't matter only antibody or antibody-antigen complex, just include CDRs and their neighbors
+	pack::task::TaskFactoryOP AntibodyInfo::get_taskfctory_allCDRs(pose::Pose  & pose){
+        
+		vector1< bool> sc_is_packable( pose.total_residue(), false );
+		select_loop_residues( pose, *all_cdr_loops_, true/*include_neighbors*/, sc_is_packable);
+		
+		using namespace pack::task;
+		using namespace pack::task::operation;
+		// selecting movable c-terminal residues
+		ObjexxFCL::FArray1D_bool loop_residues( pose.total_residue(), false );
+		for( Size i = 1; i <= pose.total_residue(); i++ ) {
+			loop_residues(i) = sc_is_packable[i];
+		} // check mapping
+        
+		using namespace protocols::toolbox::task_operations;
+		pack::task::TaskFactoryOP tf ;
+		tf= setup_packer_task(pose);
+		tf->push_back( new RestrictToInterface(loop_residues) );
+		
+        
+		//pack::task::PackerTaskOP my_task2(tf->create_task_and_apply_taskoperations(pose));
+		//TR<<*my_task2<<std::endl; //exit(-1);
+        
+		return tf;
+	}
     
     
     
     
 // JQX:: assuming Aroop numbering for now
-utility::vector1< utility::vector1<int> > AntibodyInfo::get_AntibodyNumberingScheme(AntibodyNumberingEnum const & numbering_scheme){
+vector1< vector1<int> > AntibodyInfo::get_CDR_NumberingInfo(AntibodyNumberingEnum const & numbering_scheme) const {
     
 
     // definte local variables
-    utility::vector1<int> start, stop;
-    utility::vector1< utility::vector1<int> > local_numbering_info;
+    vector1<int> start, stop;
+    vector1< vector1<int> > local_numbering_info;
 
     // doesn't hurt to clear all the contents, no matter they are empty or not
     start.clear(); stop.clear();
@@ -902,7 +930,6 @@ utility::vector1< utility::vector1<int> > AntibodyInfo::get_AntibodyNumberingSch
     //    citation:
     //**********************************************************************************
     if(numbering_scheme == Aroop ){
-        start.clear(); stop.clear();
         // Heavy Chain
         start.push_back(26); stop.push_back(35);  //h1
         start.push_back(50); stop.push_back(65);  //h2
@@ -911,10 +938,6 @@ utility::vector1< utility::vector1<int> > AntibodyInfo::get_AntibodyNumberingSch
         start.push_back(24); stop.push_back(34);  //l1
         start.push_back(50); stop.push_back(56);  //l2
         start.push_back(89); stop.push_back(97);  //l3
-        // save to the numbering_info_ array
-        local_numbering_info.push_back(start);
-        local_numbering_info.push_back(stop);
-        return local_numbering_info;
     }
     //**********************************************************************************
     //  Chothia Numbering                                                              *
@@ -929,10 +952,6 @@ utility::vector1< utility::vector1<int> > AntibodyInfo::get_AntibodyNumberingSch
         start.push_back(24); stop.push_back(34);  //l1
         start.push_back(50); stop.push_back(56);  //l2
         start.push_back(89); stop.push_back(97);  //l3
-        // save to the numbering_info_ array
-        local_numbering_info.push_back(start);
-        local_numbering_info.push_back(stop);
-        return local_numbering_info;
     }
 
     //**********************************************************************************
@@ -960,57 +979,36 @@ utility::vector1< utility::vector1<int> > AntibodyInfo::get_AntibodyNumberingSch
     else if(numbering_scheme == IMGT){
     }
     else{
-        throw utility::excn::EXCN_Msg_Exception("the numbering schemes can only be 'Aroop','Chothia','Kabat', 'Enhanced_Chothia', 'AHO', 'IMGT' !!!!!! ");
+        throw excn::EXCN_Msg_Exception("the numbering schemes can only be 'Aroop','Chothia','Kabat', 'Enhanced_Chothia', 'AHO', 'IMGT' !!!!!! ");
     }
+	
+	local_numbering_info.push_back(start);
+	local_numbering_info.push_back(stop);
+	return local_numbering_info;
 }
 
     
 
 
 
-/// @details  Show the complete setup of the docking protocol
-void AntibodyInfo::show( std::ostream & out ) {
-    //      if ( !flags_and_objects_are_in_sync_ ){
-    //              sync_objects_with_flags();
-    //      }
-    out << *this;
-}
-
-std::ostream & operator<<(std::ostream& out, const AntibodyInfo & ab_info )
-{
-    using namespace ObjexxFCL::fmt;
-    // All output will be 80 characters - 80 is a nice number, don't you think?
-    std::string line_marker = "///";
-    out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
-    out << line_marker << A( 47, "Rosetta Antibody Info" ) << space( 27 ) << line_marker << std::endl;
-    out << line_marker << space( 74 ) << line_marker << std::endl;
-    for (AntibodyCDRNameEnum i=start_cdr_loop; i<=ab_info.tot_cdr_loops_enum_; i=AntibodyCDRNameEnum(i+1) ){
-        out << line_marker << " "+ab_info.get_CDR_Name(i)+" info: "<<std::endl;
-        out << line_marker << "           length:  "<< ab_info.get_CDR_loop(i)->length() <<std::endl;
-        out << line_marker << "         sequence:  "<< ab_info.get_CDR_Sequence(i) <<std::endl;
-        out << line_marker << "        loop_info:  "<< *(ab_info.get_CDR_loop(i))<<std::endl;
-    }
-    
-    // Close the box I have drawn
-    out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
-    return out;
-}
 
 
     
     
-//TODO:
+/// TODO:
 //JQX: make Daisuke's code compatible with my code
 //
-    //
-    // Identify 3 CDRs from a sequence
-    // Automatically judge heavy or light chain (I hope!)
-    //
-    // Last modified 06/15/2012 by DK
-    //
+	
+//
+// Identify 3 CDRs from a sequence
+// Automatically judge heavy or light chain (I hope!)
+//
+// @author: Daisuke Kuroda (dkuroda1981@gmail.com)
+//
+// Last modified 06/15/2012 by DK
+//
     
-void AntibodyInfo::identify_CDR_from_a_sequence(std::string & querychain)
-{
+void AntibodyInfo::identify_CDR_from_a_sequence(std::string & querychain){
 
         int l1found = 0, l2found = 0, l3found = 1, h1found = 1, h2found = 0, h3found = 1; // 0 if exst; otherwise 1.
         int lenl1 = 0, lenl2 = 0, lenl3 = 0, lenh1 = 0, lenh2 = 0, lenh3 = 0;
@@ -1322,112 +1320,61 @@ void AntibodyInfo::identify_CDR_from_a_sequence(std::string & querychain)
         //TR << frh3 << "\t" << posh3_s << "\t" << posh3_e << endl;
         
        // return 0;
-    }
-    
-
-
-    
-    
-    
-//JQX: once you create a new movemap, the default of bb, sc and jump are all false
-kinematics::MoveMapOP AntibodyInfo::get_movemap_allCDRbb(core::pose::Pose const & pose){
-        kinematics::MoveMapOP all_CDRs_bb_movemap = new kinematics::MoveMap();
-        
-        utility::vector1< bool> bb_is_flexible( pose.total_residue(), false );
-        select_loop_residues( pose, *all_cdr_loops_, false/*include_neighbors*/, bb_is_flexible);
-        all_CDRs_bb_movemap->set_bb( bb_is_flexible );
-        
-        return all_CDRs_bb_movemap;
 }
     
-kinematics::MoveMapOP AntibodyInfo::get_movemap_OneCDRbb(core::pose::Pose const & pose, AntibodyCDRNameEnum const & cdr_loop){
-        kinematics::MoveMapOP one_CDR_bb_movemap = new kinematics::MoveMap();
-        
-        utility::vector1< bool> bb_is_flexible( pose.total_residue(), false );
-        
-        for ( Size i = get_CDR_loop(cdr_loop)->start(); i <= get_CDR_loop(cdr_loop)->stop(); ++i ) {
-            bb_is_flexible[i] = true;
-        }
-        
-        select_loop_residues( pose, *all_cdr_loops_, false/*include_neighbors*/, bb_is_flexible);
-        one_CDR_bb_movemap->set_bb( bb_is_flexible );
-        
-        return one_CDR_bb_movemap;
+
+
+vector1<char> AntibodyInfo::get_CDR_Sequence_with_Stem(AntibodyCDRNameEnum const & cdr_name,
+													   Size left_stem ,
+													   Size right_stem ) const {
+	vector1<char> sequence;
+	loops::Loop the_loop = get_one_cdr_loop_object(cdr_name);
+	/// JQX: the pose number in the loop should be consistent with the number in the ab_sequence_
+	for (Size i=the_loop.start()-left_stem; i<=the_loop.stop()+right_stem; i++){
+		sequence.push_back( ab_sequence_[i]  );
+	}
+	return sequence;	
 }
     
     
-    
-//JQX: doesn't matter only antibody or antibody-antigen complex, just include CDRs and their neighbors
-core::pack::task::TaskFactoryOP AntibodyInfo::get_taskfctory_allCDRs(core::pose::Pose  & pose){
-        
-    utility::vector1< bool> sc_is_packable( pose.total_residue(), false );
-    select_loop_residues( pose, *all_cdr_loops_, true/*include_neighbors*/, sc_is_packable);
 
-    using namespace core::pack::task;
-    using namespace core::pack::task::operation;
-    // selecting movable c-terminal residues
-    ObjexxFCL::FArray1D_bool loop_residues( pose.total_residue(), false );
-    for( Size i = 1; i <= pose.total_residue(); i++ ) {
-        loop_residues(i) = sc_is_packable[i];
-    } // check mapping
-        
-    using namespace protocols::toolbox::task_operations;
-    pack::task::TaskFactoryOP tf ;
-    tf= setup_packer_task(pose);
-    tf->push_back( new RestrictToInterface(loop_residues) );
-    
-        
-    //core::pack::task::PackerTaskOP my_task2(tf->create_task_and_apply_taskoperations(pose));
-    //TR<<*my_task2<<std::endl; //exit(-1);
-        
-    return tf;
-}
-    
-    
-    
-    
-    
-void AntibodyInfo::load_CDR_query_info_to_check(){
-
-        using namespace std;
-        ifstream inf;
-        std::string temp;
-
-        inf.open("input/query.l1");
-        if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.l1' file!!");}
-        inf>>temp; inf>>L1_seq_;
-        inf.close();
-
-        inf.open("input/query.l2");
-        if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.l2' file!!");}
-        inf>>temp; inf>>L2_seq_;
-        inf.close();
-
-        inf.open("input/query.l3");
-        if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.l3' file!!");}
-        inf>>temp; inf>>L3_seq_;
-        inf.close();
-
-        inf.open("input/query.h1");
-        if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.h1' file!!");}
-        inf>>temp; inf>>H1_seq_;
-        inf.close();
-
-        inf.open("input/query.h2");
-        if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.h2' file!!");}
-        inf>>temp; inf>>H2_seq_;
-        inf.close();
-
-        inf.open("input/query.h3");
-        if(!inf.is_open()) {utility_exit_with_message("Cannot open 'query.h3' file!!");}
-        inf>>temp; inf>>H3_seq_;
-        inf.close();
+	
+/// @details  Show the complete setup of the docking protocol
+void AntibodyInfo::show( std::ostream & out ) {
+	out << *this;
 }
 
+std::ostream & operator<<(std::ostream& out, const AntibodyInfo & ab_info )  {
+	
+	using namespace ObjexxFCL::fmt;
+	std::string line_marker = "///";
+	out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
+	out << line_marker << A( 47, "Rosetta Antibody Info" ) << space( 27 ) << line_marker << std::endl;
+	out << line_marker << space( 74 ) << line_marker << std::endl;
+	
+	out << line_marker << "             Antibody Type:";
+	if(ab_info.is_camelid()){ out << "  Camelid Antibody"<< std::endl;}
+	else                    { out << "  Regular Antibody"<< std::endl;}
+	
+	out << line_marker << " Predict H3 Cterminus Base:";
+	out <<"  "<<ab_info.h3_base_type_[ab_info.get_predicted_H3_base_type()]<<std::endl;
+	
+	out << line_marker << space( 74 ) << std::endl;
+	for (AntibodyCDRNameEnum i=start_cdr_loop; i<=ab_info.tot_cdr_loops_enum_; i=AntibodyCDRNameEnum(i+1) ){
+		out << line_marker << " "+ab_info.get_CDR_Name(i)+" info: "<<std::endl;
+		out << line_marker << "           length:  "<< ab_info.get_one_cdr_loop_object(i).length() <<std::endl;
+		out << line_marker << "         sequence:  ";
+		for (Size j=1;j<=ab_info.get_CDR_Sequence_with_Stem(i,0,0).size();j++) {
+			out << ab_info.get_CDR_Sequence_with_Stem(i,0,0)[j] ;
+		}
+		out <<std::endl;
+		out << line_marker << "        loop_info:  "<< ab_info.get_one_cdr_loop_object(i)<<std::endl;
+	}
+	out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
+	return out;
+}
 
 
 
 } // namespace antibody2
 } // namespace protocols
-
-

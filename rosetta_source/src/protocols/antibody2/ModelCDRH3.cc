@@ -85,7 +85,7 @@ void ModelCDRH3::init( )
 
     //TODO:
     //JQX: need to deal with this
-    if( is_camelid_ && !ab_info_->is_extended() && !ab_info_->is_kinked() ){
+    if( is_camelid_ && ab_info_->get_predicted_H3_base_type()!=Kinked && ab_info_->get_predicted_H3_base_type()!=Extended ){
         c_ter_stem_ = 0;
     }
     
@@ -152,10 +152,10 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
     pose::Pose start_pose = pose_in;
 
 
-
-    Size framework_loop_begin( ab_info_->get_CDR_loop(h3)->start() );
-    Size framework_loop_end  ( ab_info_->get_CDR_loop(h3)->stop()  );
-    Size cutpoint = ab_info_->get_CDR_loop(h3)->cut() ; // keep the cutpoint unchanged
+	/// FIXME: JQX: very redudent here, just get one loops object
+    Size framework_loop_begin( ab_info_->get_one_cdr_loop_object(h3).start() );
+    Size framework_loop_end  ( ab_info_->get_one_cdr_loop_object(h3).stop()  );
+    Size cutpoint = ab_info_->get_one_cdr_loop_object(h3).cut() ; // keep the cutpoint unchanged
     Size framework_loop_size = (framework_loop_end - framework_loop_begin) + 1;
 
     loops::Loop cdr_h3( framework_loop_begin, framework_loop_end, cutpoint, 0, true );
@@ -176,9 +176,10 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
         input_loop = cdr_h3;
     }
         
-
     simple_one_loop_fold_tree( pose_in, cdr_h3 );
-
+//    TR<<"*******************************************"<<std::endl;
+//    TR<<pose_in.fold_tree()<<std::endl;
+//    TR<<"*******************************************"<<std::endl;
     // switching to centroid mode
     simple_moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
     simple_moves::SwitchResidueTypeSetMover to_full_atom( chemical::FA_STANDARD );
@@ -210,6 +211,7 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
 
     }
     else{
+		/// FIXME: JQX very redudent loops defitions
         // use H3 to define a loops object
         loops::LoopsOP pass_loops = new loops::Loops(); 
         pass_loops->add_loop( input_loop   );
@@ -298,7 +300,8 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
     to_full_atom.apply( pose_in );
 
     utility::vector1<bool> allow_chi_copy( pose_in.total_residue(), true );
-    for( Size ii=ab_info_->get_CDR_loop(h3)->start(); ii<=ab_info_->get_CDR_loop(h3)->stop(); ii++ ){
+	/// FIXME: JQX very redudent loops defition
+    for( Size ii=ab_info_->get_one_cdr_loop_object(h3).start(); ii<=ab_info_->get_one_cdr_loop_object(h3).stop(); ii++ ){
         allow_chi_copy[ii] = false;
     }
     //recover sidechains from starting structures except H3
