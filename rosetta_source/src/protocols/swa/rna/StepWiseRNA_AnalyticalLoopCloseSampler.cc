@@ -310,9 +310,6 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 				pucker_state = SOUTH;
 			}
 
-			Real best_score = 99999;
-			Real best_chi = 9999;
-
 			StepWiseRNA_Base_Sugar_RotamerOP base_sugar_rotamer = new StepWiseRNA_Base_Sugar_Rotamer ( base_state, pucker_state, rna_fitted_torsion_info );
 			base_sugar_rotamer->set_extra_syn_chi ( extra_syn_chi_rotamer_ );
 			base_sugar_rotamer->set_extra_anti_chi ( extra_anti_chi_rotamer_ );
@@ -353,33 +350,18 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 					count_data_.good_bin_rep_count++;
 				}
 
-				Real current_score = (*chi_screen_scorefxn_) (screening_pose);
-				if (current_score < best_score) {
-					best_score = current_score;
-					best_chi = chi;
-				}
-			}
 
-			if (best_chi == 9999) continue;
-
-			//Copy the Torsion angles of screen_pose to pose
-			copy_suite_torsion ( pose, screening_pose, moving_res );
-			if (use_phenix_geo_) {
-				if ( pucker_id == 0 ) { //Sample North Pucker
-					ideal_coord.apply( pose, moving_res, true);
-				} else { //Sample South Pucker
-					ideal_coord.apply( pose, moving_res, false);
-				}
-			}
-
-			////////////////Add pose to pose_data_list/////
-			for (Size i = 0; i != 2; ++i) {
-				if (i == 0) {
-					pose.set_torsion ( TorsionID ( moving_res , id::CHI, 1 ) ,best_chi );
-				} else {
-					pose.set_torsion ( TorsionID ( moving_res , id::CHI, 1 ) ,best_chi+180 );
+				//Copy the Torsion angles of screen_pose to pose
+				copy_suite_torsion ( pose, screening_pose, moving_res );
+				if (use_phenix_geo_) {
+					if ( pucker_id == 0 ) { //Sample North Pucker
+						ideal_coord.apply( pose, moving_res, true);
+					} else { //Sample South Pucker
+						ideal_coord.apply( pose, moving_res, false);
+					}
 				}
 
+				////////////////Add pose to pose_data_list/////
 				if ( o2star_screen_ ) sample_o2star_hydrogen ( pose , pose_with_original_HO2star_torsion );
 
 				std::stringstream ss;
@@ -524,49 +506,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::get_base_atr_rep_score ( core::pose::Pos
 ////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseRNA_AnalyticalLoopCloseSampler::initialize_scorefunctions() {
-	using namespace core::scoring;
-	///////////////////////////////////////////////////////////////////
-	// Bare minimum to check for contact (fa_atr) but not clash (fa_rep)
-	atr_rep_screening_scorefxn_ =  new ScoreFunction;
-	atr_rep_screening_scorefxn_->set_weight ( fa_atr  , 0.23 );
-	atr_rep_screening_scorefxn_->set_weight ( fa_rep  , 0.12 );
-	///////////////////////////////////////////////////////////////////
-	chainbreak_scorefxn_ =  new ScoreFunction;
-	chainbreak_scorefxn_->set_weight ( angle_constraint, 1.0 );
-	chainbreak_scorefxn_->set_weight ( atom_pair_constraint, 1.0 );
-	////////////////////Setup sampling scoring//////////////////////////////////////////////////////////////////////////////
-	//1. Want to increase fa_rep during the minimization phase but want to keep it at 0.12 during the sample phase
-	//2. Sugar scoring is always turned off during sampling stage since it screw up pose selection. (TURN IT BACK ON: RD 01/31/2010)
-	//3. Harmonic and Linear Chain_break scoring is always turned off during sampling stage
-	sampling_scorefxn_ = scorefxn_->clone();
-	//		sampling_scorefxn_->set_weight( rna_sugar_close, 0.0 ); (TURN IT BACK ON: RD 01/31/2010)
-	sampling_scorefxn_->set_weight ( fa_rep, 0.12 );
-	//Only important only if fa_rep score in weight file is not 0.12..want to make sure that changing fa_rep in weight file doesn't effect sampling process. May 23 2010 Parin S.
-	sampling_scorefxn_->set_weight ( linear_chainbreak, 0.0 );
-	sampling_scorefxn_->set_weight ( angle_constraint, 0.0 );
-	sampling_scorefxn_->set_weight ( atom_pair_constraint, 0.0 );
-	//This makes sure that there are no chain_break score involve in the full_score screening.
-	//This works since by the time a pose reach full_score screening, it must already pass chain_break screening, May 23, 2010 Parin S.
-	///////////////////////////////////////////////////////////////////
-	o2star_pack_scorefxn_ = new ScoreFunction;
-	// Each of the following terms have been pretty optimized for the packer (trie, etc.)
-	o2star_pack_scorefxn_->set_weight ( fa_atr, sampling_scorefxn_->get_weight ( fa_atr ) );
-	o2star_pack_scorefxn_->set_weight ( fa_rep, sampling_scorefxn_->get_weight ( fa_rep ) );
-	o2star_pack_scorefxn_->set_weight ( hbond_lr_bb_sc, sampling_scorefxn_->get_weight ( hbond_lr_bb_sc ) );
-	o2star_pack_scorefxn_->set_weight ( hbond_sr_bb_sc, sampling_scorefxn_->get_weight ( hbond_sr_bb_sc ) );
-	o2star_pack_scorefxn_->set_weight ( hbond_sc, sampling_scorefxn_->get_weight ( hbond_sc ) );
-	o2star_pack_scorefxn_->set_energy_method_options ( sampling_scorefxn_->energy_method_options() );
-	// note that geom_sol is not optimized well --> replace with lk_sol for now.
-	o2star_pack_scorefxn_->set_weight ( fa_sol, sampling_scorefxn_->get_weight ( lk_nonpolar ) );
-	// Note that: rna_torsion, rna_sugar_close, fa_stack not optimized -- also irrelevant for 2'-OH sampling.
-	// just a comparison. This is extremely slow. Would need to implement trie
-	//  for geom_sol, lk_nonpolar, and hackelec... Not too hard, but I don't feel like doing it now. (Rhiju)
-	//o2star_pack_scorefxn_ = sampling_scorefxn_->clone();
-	//For chi screening
-	chi_screen_scorefxn_ = o2star_pack_scorefxn_->clone();
-	chi_screen_scorefxn_ -> set_weight ( elec_dens_atomwise, sampling_scorefxn_->get_weight ( elec_dens_atomwise ) );
-	chi_screen_scorefxn_ -> set_weight ( rna_torsion, sampling_scorefxn_->get_weight ( rna_torsion ) );
-	
+	initialize_common_scorefxns(scorefxn_, sampling_scorefxn_, atr_rep_screening_scorefxn_, chainbreak_scorefxn_, o2star_pack_scorefxn_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

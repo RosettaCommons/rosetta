@@ -232,10 +232,9 @@ private:
 
 	core::scoring::ScoreFunctionOP scorefxn_;
 	core::scoring::ScoreFunctionOP atr_rep_screening_scorefxn_;
-	core::scoring::ScoreFunctionOP chainbreak_scorefxn_;
 	core::scoring::ScoreFunctionOP sampling_scorefxn_;
 	core::scoring::ScoreFunctionOP o2star_pack_scorefxn_;
-	core::scoring::ScoreFunctionOP chi_screen_scorefxn_;
+	core::scoring::ScoreFunctionOP chainbreak_scorefxn_;
 
 	utility::vector1 < core::Size > working_rmsd_res_;
 

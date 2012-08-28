@@ -3475,6 +3475,7 @@ principal_angle_degrees( T const & angle )
 		//Only important only if fa_rep score in weight file is not 0.12..want to make sure that changing fa_rep in weight file doesn't effect sampling process. May 23 2010 Parin S.
 
 		sampling_scorefxn_->set_weight( linear_chainbreak, 0.0);
+		sampling_scorefxn_->set_weight( chainbreak, 0.0 );
 		sampling_scorefxn_->set_weight( angle_constraint, 0.0 );
 		sampling_scorefxn_->set_weight( atom_pair_constraint, 0.0 );
 		//This makes sure that there are no chain_break score involve in the full_score screening.

@@ -15,7 +15,7 @@ fa_stack        		   1.0
 elec_dens_atomwise         5.5
 rna_bond_geometry          16.0
 angle_constraint 		   1.0
-dihedral_constraint 	   50.0
+dihedral_constraint 	   40.0
 atom_pair_constraint       1.0
 rna_bulge                  1.0
 chainbreak      		   40.00
