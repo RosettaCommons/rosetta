@@ -22,6 +22,7 @@
 #include <utility/string_util.hh>
 #include <boost/foreach.hpp>
 #include <stdio.h>
+#include <fstream>
 
 #define foreach BOOST_FOREACH
 
@@ -41,7 +42,8 @@ FileRemoveFilterCreator::keyname() const { return "FileRemove"; }
 
 //default ctor
 FileRemoveFilter::FileRemoveFilter() :
-protocols::filters::Filter( "FileRemove" )
+protocols::filters::Filter( "FileRemove" ),
+delete_content_only_( false )
 {
 	file_names_.clear();
 }
@@ -54,15 +56,23 @@ FileRemoveFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &
 	std::string s;
 	s = tag->getOption< std::string >( "filenames" );
 	file_names( utility::string_split( s, ',' ) );
+	delete_content_only( tag->getOption< bool >( "delete_content_only", false ) );
 }
 
 bool
 FileRemoveFilter::apply( core::pose::Pose const & ) const {
+	using namespace std;
 	foreach( std::string const f, file_names_ ){
 		if( remove( f.c_str() ) )
 			TR<<"Successfully removed "<<f<<std::endl;
 		else
 			TR<<"File "<<f<<" not found."<<std::endl;
+		if( delete_content_only() ){
+			TR<<"Leaving 0b placeholder for file "<<f<<std::endl;
+			ofstream outfile;
+			outfile.open( f.c_str(), ios::trunc );
+			outfile.close();
+		}
 	}
 	return true;
 }

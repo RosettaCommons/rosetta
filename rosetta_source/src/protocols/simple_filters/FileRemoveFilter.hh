@@ -48,8 +48,11 @@ public:
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	utility::vector1< std::string > file_names() const;
 	void file_names( utility::vector1< std::string > const f );
+	bool delete_content_only() const{ return delete_content_only_; }
+	void delete_content_only( bool const b ){ delete_content_only_ = b; }
 private:
 	utility::vector1< std::string > file_names_;
+	bool delete_content_only_; //dflt false; if true, deletes the file but leaves a 0b placeholder for the file
 };
 
 }

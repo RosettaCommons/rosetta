@@ -37,7 +37,8 @@ FileExistFilterCreator::keyname() const { return "FileExist"; }
 //default ctor
 FileExistFilter::FileExistFilter() :
 protocols::filters::Filter( "FileExist" ),
-filename_( "" )
+filename_( "" ),
+ignore_zero_byte_( false )
 {}
 
 FileExistFilter::~FileExistFilter() {}
@@ -46,6 +47,7 @@ void
 FileExistFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	filename_ = tag->getOption< std::string >( "filename" );
+	ignore_zero_byte( tag->getOption< bool >( "ignore_zero_byte", false ) );
 }
 
 bool
@@ -71,7 +73,17 @@ FileExistFilter::compute(
 
 	ifstream infile;
 	infile.open( filename_.c_str(), ios::in );
-	return infile.good();
+	if( !infile.good() )
+		return false;
+
+	if( !ignore_zero_byte() )
+		return true;
+
+/// if the file is there and we're ignoring zero-byte files, we return true only if the file contains information
+	core::Size const begin = infile.tellg();
+	infile.seekg( 0, ios::end );
+	core::Size const end = infile.tellg();
+	return( end - begin > 0 );
 }
 
 void FileExistFilter::filename( std::string const f )

@@ -49,8 +49,11 @@ public:
 
 	void filename( std::string const f );
 	std::string filename() const;
+	bool ignore_zero_byte() const{ return ignore_zero_byte_; }
+	void ignore_zero_byte( bool const i ){ ignore_zero_byte_ = i; }
 private:
 	std::string filename_;
+	bool ignore_zero_byte_; // dflt false; if the file is 0b then it counts as if the file doesn't exist
 };
 
 }
