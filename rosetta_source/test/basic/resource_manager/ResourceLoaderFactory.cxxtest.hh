@@ -94,9 +94,9 @@ public:
 			factory->factory_register( new DummyResourceLoaderCreator );
 			TS_ASSERT( false );
 		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			std::string expected_error_message = "Double registration of a ResourceLoaderCreator in the ResourceLoaderFactory, named DummyResource. Are there two registrators for this options object, or have you chosen a previously assigned name to a new resource option?";
+			std::string expected_error_message = "Double registration of a ResourceLoaderCreator in the ResourceLoaderFactory, named DummyResource. Are there two registrators for this ResourceLoader object, or have you chosen a previously assigned name to a new resource option?";
 			TS_ASSERT( expected_error_message == e.msg() );
-			//std::cout << e.msg() << std::endl;
+
 		}
 
 	}
