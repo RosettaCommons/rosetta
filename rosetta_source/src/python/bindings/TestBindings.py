@@ -54,8 +54,7 @@ def main(args):
     for t in args[1:] or tests:
         #print '\nRunning %s...' % t
         #__import__( t[:-3] )
-        execute('\n\nExecuting %s...' % t, '%s %s' % (sys.executable, t) )
-
+        execute('\n\nExecuting %s...' % t, 'export PYTHONPATH=`pwd`:$PYTHONPATH && %s %s' % (sys.executable, t) )
 
         #__import__( 'test.' + t[:-3] )
         #execute('Executing %s...' % t, 'export PYTHONPATH=`pwd`:$PYTHONPATH && python %s' % t)
