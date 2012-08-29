@@ -425,12 +425,16 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose 
         cdr_h3_sequence.push_back( pose.sequence()[ii-1] );
     //for (Size i=1; i<=cdr_h3_sequence.size();i++){    TR<<cdr_h3_sequence[i];} TR<<std::endl;
 
-    /// @author: Daisuke Kuroda (dkuroda1981@gmail.com) 06/18/2012
+    ///////////////////////////////////////////////////////////////////////////
+    /// @author Daisuke Kuroda (dkuroda1981@gmail.com) 06/18/2012
     ///
     /// @last_modified 06/18/2012
     ///
+    /// @brief Identify kinked or extended form in CDR-H3 by knowledge-based rules
+    ///
     /// @reference Kuroda et al. Proteins. 2008 Nov 15;73(3):608-20.
     ///			   Koliansnikov et al. J Bioinform Comput Biol. 2006 Apr;4(2):415-24.
+    ///////////////////////////////////////////////////////////////////////////
 
     // This is only for rule 1b
     bool is_basic( false ); // Special basic residue exception flag
@@ -989,17 +993,17 @@ vector1< vector1<int> > AntibodyInfo::get_CDR_NumberingInfo(AntibodyNumberingEnu
 //JQX: make Daisuke's code compatible with my code
 //
 
-//
-// Identify 3 CDRs from a sequence
-// Automatically judge heavy or light chain (I hope!)
-//
-// @author: Daisuke Kuroda (dkuroda1981@gmail.com)
-//
-// Last modified 06/15/2012 by DK
-//
+///////////////////////////////////////////////////////////////////////////
+/// @author: Daisuke Kuroda (dkuroda1981@gmail.com) 06/18/2012
+///
+/// @brief: Identify 3 CDRs from a sequence. Automatically judge heavy or light chains (I hope!).
+///         The input can be either a light chain, a heavy chain or another sequence.
+///
+/// @last_modified 08/28/2012 by DK
+///////////////////////////////////////////////////////////////////////////
 void AntibodyInfo::identify_CDR_from_a_sequence(std::string & querychain){
 
-        int l1found = 0, l2found = 0, l3found = 1, h1found = 1, h2found = 0, h3found = 1; // 0 if exst; otherwise 1.
+        int l1found = 0, l2found = 0, l3found = 1, h1found = 1, h2found = 0, h3found = 1; // 0 if exist; otherwise 1.
         int lenl1 = 0, lenl2 = 0, lenl3 = 0, lenh1 = 0, lenh2 = 0, lenh3 = 0;
         int posl1_s = 0, posl1_e = 0, posl2_s = 0, posl2_e = 0, posl3_s = 0, posl3_e = 0;
         int posh1_s = 0, posh1_e = 0, posh2_s = 0, posh2_e = 0, posh3_s = 0, posh3_e = 0;
@@ -1152,7 +1156,7 @@ void AntibodyInfo::identify_CDR_from_a_sequence(std::string & querychain){
 
                             if(seql3.length() > 4){
                                 l3found = 0;
-                                goto L3_FINISH;
+                                break;
                             }else{
                                 l3found = 1;
                             }
@@ -1167,10 +1171,14 @@ void AntibodyInfo::identify_CDR_from_a_sequence(std::string & querychain){
                             seq_fr4   = querychain3.substr(pos_fr4_s,len_fr4);
                         }
                     }
+
+                    l = 3;
+                    m = 4;
+                    n = 2;
+                    k = 20; 
                 }
             }
         }
-	L3_FINISH:
         /* L3 search Finish */
 
         /*****************************************************/
@@ -1192,14 +1200,15 @@ void AntibodyInfo::identify_CDR_from_a_sequence(std::string & querychain){
                             if(querychain_first.find(frh1, 0) != std::string::npos){
                                 posh1_e = querychain_first.find(frh1, 0) - 1;
                                 h1found = 0;
-                                goto H1_FINISH; //// NO! NO NO NO NO NO!
+                                n = 2;
+                                l = 6;
+                                m = 6;
+                                k = 10;
                             }
                         }
                     }
                 }
             }
-
-		H1_FINISH:
 
             if(h1found != 1){
                 posh1_s  = querychain_first.find("C") + 4;
@@ -1227,12 +1236,13 @@ void AntibodyInfo::identify_CDR_from_a_sequence(std::string & querychain){
                         if(querychain2.find(frh3, 80) != std::string::npos){
                             posh3_e = querychain2.find(frh3,80) - 1;
                             h3found = 0;
-                            goto H3_FINISH;
+                             m = 3;
+                             l = 5;
+                             k = 20;
                         }
                     }
                 }
             }
-		H3_FINISH:
 
             if(querychain2.find("C", 80) != std::string::npos){
                 posh3_s = querychain2.find("C", 80) + 3;
@@ -1272,29 +1282,9 @@ void AntibodyInfo::identify_CDR_from_a_sequence(std::string & querychain){
         if(l1found == 0 && l2found == 0 && l3found == 0){
             TR << lenl1 << "\t" << lenl2 << "\t" << lenl3 << "\t";
             TR << seql1 << "\t" << seql2 << "\t" << seql3 << "\t" << check << "\tLIGHT" << std::endl;
-
-            //TR << "This is Light chain!" << endl;
-            //TR << "L1(L24-L34)   info:" << "\t" << lenl1 << "\t" << posl1_s+1 << "-" << posl1_e+1 << "\t" << seql1 << endl;
-            //TR << "L2(L50-L56)   info:" << "\t" << lenl2 << "\t" << posl2_s+1 << "-" << posl2_e+1 << "\t" << seql2 << endl;
-            //TR << "L3(L89-L97)   info:" << "\t" << lenl3 << "\t" << posl3_s+1 << "-" << posl3_e+1 << "\t" << seql3 << endl;
-
-            //TR << "FR1(L1-L23)   info:" << "\t" << len_fr1 << "\t" << pos_fr1_s+1 << "-" << pos_fr1_e+1 << "\t" << seq_fr1 << endl;
-            //TR << "FR2(L35-L49)  info:" << "\t" << len_fr2 << "\t" << pos_fr2_s+1 << "-" << pos_fr2_e+1 << "\t" << seq_fr2 << endl;
-            //TR << "FR3(L57-L88)  info:" << "\t" << len_fr3 << "\t" << pos_fr3_s+1 << "-" << pos_fr3_e+1 << "\t" << seq_fr3 << endl;
-            //TR << "FR4(L98-L103) info:" << "\t" << len_fr4 << "\t" << pos_fr4_s+1 << "-" << pos_fr4_e+1 << "\t" << seq_fr4 << endl;
         }else if(h1found == 0 && h2found == 0 && h3found == 0){
             TR << lenh1 << "\t" << lenh2 << "\t" << lenh3 << "\t";
             TR << seqh1 << "\t" << seqh2 << "\t" << seqh3 << "\t" << check << "\tHEAVY" << std::endl;
-
-            //TR << "This is Heavy chain!" << endl;
-            //TR << "H1(H26-H35)    info:" << "\t" << lenh1 << "\t" << posh1_s+1 << "-" << posh1_e+1 << "\t" << seqh1 << endl;
-            //TR << "H2(H50-H65)    info:" << "\t" << lenh2 << "\t" << posh2_s+1 << "-" << posh2_e+1 << "\t" << seqh2 << endl;
-            //TR << "H3(H95-H102)   info:" << "\t" << lenh3 << "\t" << posh3_s+1 << "-" << posh3_e+1 << "\t" << seqh3 << endl;
-
-            //TR << "FR1(H1-H25)    info:" << "\t" << len_fr1 << "\t" << pos_fr1_s+1 << "-" << pos_fr1_e+1 << "\t" << seq_fr1 << endl;
-            //TR << "FR2(H36-H49)   info:" << "\t" << len_fr2 << "\t" << pos_fr2_s+1 << "-" << pos_fr2_e+1 << "\t" << seq_fr2 << endl;
-            //TR << "FR3(H66-H94)   info:" << "\t" << len_fr3 << "\t" << pos_fr3_s+1 << "-" << pos_fr3_e+1 << "\t" << seq_fr3 << endl;
-            //TR << "FR4(H103-H108) info:" << "\t" << len_fr4 << "\t" << pos_fr4_s+1 << "-" << pos_fr4_e+1 << "\t" << seq_fr4 << endl;
         }else if(l1found == 0 && l2found == 0 && l3found == 0 && h1found == 0 && h2found == 0 && h3found == 0){
             TR << lenl1 << "\t" << lenl2 << "\t" << lenl3 << "\t";
             TR << lenh1 << "\t" << lenh2 << "\t" << lenh3 << "\t";
@@ -1305,9 +1295,6 @@ void AntibodyInfo::identify_CDR_from_a_sequence(std::string & querychain){
             TR << lenh1 << "\t" << lenh2 << "\t" << lenh3 << "\t";
             TR << "H1:" << seqh1 << "\tH2: " << seqh2 << "\tH3 " << seqh3 << "\t" << posh3_s << std::endl;
         }
-
-        //TR << frl3 << "\t" << posl3_s << "\t" << posl3_e << endl;
-        //TR << frh3 << "\t" << posh3_s << "\t" << posh3_e << endl;
 
        // return 0;
 }

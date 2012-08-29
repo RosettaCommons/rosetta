@@ -10,6 +10,7 @@
 /// @file ConformerSwitchMover.cc
 /// @brief code for the conformer switch mover in ensemble docking
 /// @author Sid Chaudhury
+/// @Modified by Daisuke Kuroda
 
 
 #include <protocols/docking/ConformerSwitchMover.hh>
@@ -186,13 +187,8 @@ void ConformerSwitchMover::switch_conformer(
 	core::Size conf_num
 	)
 {
-//	core::pose::Pose new_conf = ensemble_->get_conformer(conf_num);		// new_conf is fullatom
-	core::pose::Pose new_conf = ensemble_->get_conformer_cen(conf_num);	// new_conf is centroid; Add by DK
+	core::pose::Pose new_conf = ensemble_->get_conformer_cen(conf_num);	// new_conf is centroid
 
-// Comment out by DK for speed up
-//	protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
-//	to_centroid.apply( new_conf );
-//
 	(*(ensemble_->scorefxn_low()))(pose);
 	scoring::Interface interface( ensemble_->jump_id() );
 
