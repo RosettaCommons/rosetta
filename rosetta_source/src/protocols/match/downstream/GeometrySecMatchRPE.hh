@@ -104,8 +104,8 @@ public:
 	virtual
 	std::string
 	print(
-		core::chemical::ResidueTypeCAP candidate_restype,
-		core::chemical::ResidueTypeCAP target_restype
+		core::chemical::ResidueTypeCOP candidate_restype,
+		core::chemical::ResidueTypeCOP target_restype
 	) const = 0;
 
 
@@ -164,8 +164,8 @@ public:
 	virtual
 	std::string
 	print(
-		core::chemical::ResidueTypeCAP candidate_restype,
-		core::chemical::ResidueTypeCAP target_restype
+		core::chemical::ResidueTypeCOP candidate_restype,
+		core::chemical::ResidueTypeCOP target_restype
 	) const;
 
 };
@@ -189,8 +189,8 @@ public:
 	virtual
 	std::string
 	print(
-		core::chemical::ResidueTypeCAP candidate_restype,
-		core::chemical::ResidueTypeCAP target_restype
+		core::chemical::ResidueTypeCOP candidate_restype,
+		core::chemical::ResidueTypeCOP target_restype
 	) const;
 
 };
@@ -216,8 +216,8 @@ public:
 	virtual
 	std::string
 	print(
-		core::chemical::ResidueTypeCAP candidate_restype,
-		core::chemical::ResidueTypeCAP target_restype
+		core::chemical::ResidueTypeCOP candidate_restype,
+		core::chemical::ResidueTypeCOP target_restype
 	) const;
 
 private:

@@ -113,7 +113,7 @@ rescale_phosphate_charges(
 	ResidueTypeSet & rsd_set( ChemicalManager::get_instance()->nonconst_residue_type_set( FA_STANDARD ) );
 
 	for ( int i= first_DNA_aa; i<= last_DNA_aa; ++i ) {
-		ResidueTypeCAPs const rsd_types( rsd_set.aa_map( AA(i) ) );
+		ResidueTypeCOPs const rsd_types( rsd_set.aa_map( AA(i) ) );
 		for ( Size k=1; k<= rsd_types.size(); ++k ) {
 			ResidueType & rsd_type( rsd_set.nonconst_name_map( rsd_types[k]->name() ) );
 			assert( rsd_type.is_DNA() );

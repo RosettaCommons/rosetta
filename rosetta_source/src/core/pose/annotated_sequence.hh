@@ -33,7 +33,7 @@ namespace pose {
 /// @param[in] sequence_in an annotated sequence
 /// @param[in] residue_set the desired residue set
 /// @param[in] auto_termini mark position 1, last_residue with lower, upper termini; default true
-chemical::ResidueTypeCAPs residue_types_from_sequence(
+chemical::ResidueTypeCOPs residue_types_from_sequence(
 	std::string const & sequence_in,
 	chemical::ResidueTypeSet const & residue_set,
 	bool const auto_termini = true

@@ -208,8 +208,8 @@ DnaInterfaceMultiStateDesign::initialize( Pose & pose )
 			vector1< EntityElementOP > choices;
 			// to avoid duplicate AA's (such as for multiple histidine ResidueTypes)
 			std::set< core::chemical::AA > aaset;
-			std::list< ResidueTypeCAP > const & allowed( rtask.allowed_residue_types() );
-			for ( std::list< ResidueTypeCAP >::const_iterator t( allowed.begin() ), end( allowed.end() );
+			std::list< ResidueTypeCOP > const & allowed( rtask.allowed_residue_types() );
+			for ( std::list< ResidueTypeCOP >::const_iterator t( allowed.begin() ), end( allowed.end() );
 						t != end; ++t ) {
 				core::chemical::AA aa( (*t)->aa() );
 				// avoid duplicate AA's (such as for multiple histidine ResidueTypes)
@@ -421,7 +421,7 @@ DnaInterfaceMultiStateDesign::add_dna_states(
 	// temporary copy of Pose used to build DNA target and competitor states
 	Pose mutpose( pose );
 	ResidueTypeSet const & rts( mutpose.residue(1).residue_type_set() );
-	ResidueTypeCAPs dna_types(
+	ResidueTypeCOPs dna_types(
 		ResidueSelector().set_property("DNA").exclude_variants().select( rts )
 	);
 
@@ -443,7 +443,7 @@ DnaInterfaceMultiStateDesign::add_dna_states(
 		} else {
 			pdbtag << pose.chain(index) << '.' << index;
 		}
-		ResidueTypeCAP target_type( ptask->residue_task( index ).target_type() );
+		ResidueTypeCOP target_type( ptask->residue_task( index ).target_type() );
 		if ( ! target_type ) {
 			TR(t_error) << "No target type found for " << pdbtag.str() << '\n'
 				<< "(Did the DNA definition string indicate a target nucleotide type?" << std::endl;
@@ -457,7 +457,7 @@ DnaInterfaceMultiStateDesign::add_dna_states(
 		} else {
 			pdbtag_btm << pose.chain( pos.bottom() ) << '.' << pos.bottom();
 		}
-		ResidueTypeCAP bot_type( ptask->residue_task( pos.bottom() ).target_type() );
+		ResidueTypeCOP bot_type( ptask->residue_task( pos.bottom() ).target_type() );
 		if ( ! target_type ) {
 			TR(t_error) << "No target type found for " << pdbtag_btm.str() << '\n'
 				<< "(Did the DNA definition string indicate a target nucleotide type?" << std::endl;
@@ -495,7 +495,7 @@ DnaInterfaceMultiStateDesign::add_dna_states(
 		ResidueType const & orig_bot( mutpose.residue_type( pos.bottom() ) );
 
 		// add a negative state for every single basepair substitution
-		for ( ResidueTypeCAPs::const_iterator rt( dna_types.begin() ); rt != dna_types.end(); ++rt ) {
+		for ( ResidueTypeCOPs::const_iterator rt( dna_types.begin() ); rt != dna_types.end(); ++rt ) {
 			std::string name( (*rt)->name() );
 			if ( (*rt)->name3() == orig_top.name3() ) continue; // add mutants only
 			ResidueType const & bot_type( rts.name_map( dna_comp_name_str( name ) ) );

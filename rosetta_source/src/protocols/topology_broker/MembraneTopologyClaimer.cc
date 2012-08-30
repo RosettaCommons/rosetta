@@ -150,7 +150,7 @@ void MembraneTopologyClaimer::addVirtualResAsRootMembrane( core::pose::Pose & po
 		core::chemical::ChemicalManager::get_instance()->residue_type_set
 		( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
 		);
-	core::chemical::ResidueTypeCAPs const & rsd_type_list( residue_set->name3_map("VRT") );
+	core::chemical::ResidueTypeCOPs const & rsd_type_list( residue_set->name3_map("VRT") );
 	core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type_list[1] ) );
 
 	// move to membrane_center if it's defined

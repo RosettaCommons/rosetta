@@ -209,7 +209,7 @@ BuildManager::Original2Modified BuildManager::modify( Pose & pose ) {
 	using protocols::forge::methods::closed_range;
 
 //testing
-using core::chemical::ResidueTypeCAPs;
+using core::chemical::ResidueTypeCOPs;
 using core::kinematics::Edge;
 using core::kinematics::FoldTree;
 using namespace core::conformation;

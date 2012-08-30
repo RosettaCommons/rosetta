@@ -83,13 +83,13 @@ parse_adduct_string(
 /// @brief Make sure any adducts requested actually exist
 void
 error_check_requested_adducts( std::map< std::string, int > const & add_map,
-	 ResidueTypeCAPs const & rsd_types ) {
+	 ResidueTypeCOPs const & rsd_types ) {
 
 	for( std::map< std::string, int >::const_iterator this_add = add_map.begin() ;
 				this_add != add_map.end() ; ++this_add ) {
 		bool not_found( true );
 
-		for ( ResidueTypeCAPs::const_iterator this_rsd = rsd_types.begin(),
+		for ( ResidueTypeCOPs::const_iterator this_rsd = rsd_types.begin(),
 					end_rsd = rsd_types.end(); this_rsd != end_rsd ; ++this_rsd ) {
 					// shortcircuit if we've already found an instance of the adduct
 			ResidueType const & rsd( **this_rsd );

@@ -309,7 +309,7 @@ bool
 is_residue_type_recognized(
 	Size const pdb_residue_index,
 	std::string const & pdb_name,
-	core::chemical::ResidueTypeCAPs const & rsd_type_list,
+	core::chemical::ResidueTypeCOPs const & rsd_type_list,
 	std::map< std::string, Vector > const & xyz,
 	std::map< std::string, double > const & rtemp,
 	utility::vector1<Size> & UA_res_nums,
@@ -322,7 +322,7 @@ bool
 is_residue_type_recognized(
 	Size const pdb_residue_index,
 	std::string const & pdb_name,
-	core::chemical::ResidueTypeCAPs const & rsd_type_list,
+	core::chemical::ResidueTypeCOPs const & rsd_type_list,
 	std::map< std::string, Vector > const & xyz,
 	std::map< std::string, double > const & rtemp,
 	utility::vector1<Size> & UA_res_nums,

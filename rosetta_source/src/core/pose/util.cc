@@ -350,7 +350,7 @@ void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::
 								          core::chemical::ChemicalManager::get_instance()->residue_type_set
 	                            ( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
 	                                                    );
-	core::chemical::ResidueTypeCAPs const & rsd_type_list( residue_set->name3_map("VRT") );
+	core::chemical::ResidueTypeCOPs const & rsd_type_list( residue_set->name3_map("VRT") );
 	if (rsd_type_list.size() == 0) {
 		utility_exit_with_message("Cannot find residue type VRT" );
 	}
@@ -957,7 +957,7 @@ bool compare_atom_coordinates(core::pose::Pose const & lhs, core::pose::Pose con
 	//now iterate through residues and make comparisons
 	for( core::Size i(1); i<=lhssize; ++i){
 		//check equality of residue types
-		core::chemical::ResidueType const & lhstype(lhs.residue_type(i)), rhstype(rhs.residue_type(i));
+		core::chemical::ResidueType const & lhstype(lhs.residue_type(i)), & rhstype(rhs.residue_type(i));
 		if(lhstype.name() != rhstype.name()) { //string matching is sufficient because ResidueType objects have unique names
 			TR.Warning << "nonmatching ResidueTypes at " << i << " in compare_atom_coordinates" << std::endl;
 			return false;

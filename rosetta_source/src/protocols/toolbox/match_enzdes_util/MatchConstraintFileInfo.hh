@@ -57,8 +57,8 @@ namespace match_enzdes_util{
 /// i.e. this function gets rid of the variant redundancy
 void
 add_relevant_restypes_to_subset(
-	std::set< core::chemical::ResidueTypeCAP > & restype_subset,
-	utility::vector1< core::chemical::ResidueTypeCAP > const & restypes,
+	std::set< core::chemical::ResidueTypeCOP > & restype_subset,
+	utility::vector1< core::chemical::ResidueTypeCOP > const & restypes,
 	core::chemical::ResidueTypeSetCAP restype_set
 );
 
@@ -189,7 +189,7 @@ public:  //atom and residue accessors
 
 	/// @brief all chemically non-redundant restypes
 	/// of the given restypes
-	utility::vector1< core::chemical::ResidueTypeCAP >
+	utility::vector1< core::chemical::ResidueTypeCOP >
 	allowed_restypes( core::Size which_cstres ) const;
 
 	/// @brief which one of the residues (1 or 2 ) in this block
@@ -289,7 +289,7 @@ public: //convenience functions
 	std::list< core::conformation::ResidueCOP >
 	inverse_rotamers_against_residue(
 		core::conformation::Residue const & target_conf,
-		core::chemical::ResidueTypeCAP invrot_restype,
+		core::chemical::ResidueTypeCOP invrot_restype,
 		utility::vector1< core::Size > const & target_ats,
 		utility::vector1< core::Size > const & invrot_ats,
 		bool const flip_exgs_upstream_downstream_samples
@@ -345,12 +345,12 @@ public:
 
 public: //accessors
 
-	utility::vector1< core::chemical::ResidueTypeCAP> const &
+	utility::vector1< core::chemical::ResidueTypeCOP> const &
 	upstream_restypes() const {
 		return upstream_restypes_; }
 
 	utility::vector1< MatchConstraintFileInfoCOP > const &
-	mcfis_for_upstream_restype( core::chemical::ResidueTypeCAP restype ) const;
+	mcfis_for_upstream_restype( core::chemical::ResidueTypeCOP restype ) const;
 
 	//utility::vector1< protocols::match::ExternalGeomSampler >
 	//exgs_for_upstream_restype( std::string upstream_name3 ) const;
@@ -399,9 +399,9 @@ private:
 
 	utility::vector1< MatchConstraintFileInfoOP > mcfis_;
 
-	utility::vector1< core::chemical::ResidueTypeCAP > upstream_restypes_;
+	utility::vector1< core::chemical::ResidueTypeCOP > upstream_restypes_;
 
-	std::map< core::chemical::ResidueTypeCAP, utility::vector1< MatchConstraintFileInfoCOP > > mcfis_for_restype_;
+	std::map< core::chemical::ResidueTypeCOP, utility::vector1< MatchConstraintFileInfoCOP > > mcfis_for_restype_;
 
 	core::chemical::ResidueTypeSetCAP restype_set_;
 

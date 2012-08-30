@@ -320,9 +320,9 @@ FullatomCustomPairDistanceEnergy::setup_for_minimizing(
 			 respairiter != respairiter_end; ++respairiter) {
 		ResTypePair respair = (*respairiter).first.data();
 		for (Size i=1; i<=pose.total_residue(); ++i) {
-			if (chemical::ResidueTypeCAP( & (pose.residue_type(i))) == respair[1]) {
+			if (chemical::ResidueTypeCOP( & (pose.residue_type(i))) == respair[1]) {
 				for (Size j=1; j<=pose.total_residue(); ++j) {
-						if (chemical::ResidueTypeCAP( & (pose.residue_type(j))) == respair[2]) {
+						if (chemical::ResidueTypeCOP( & (pose.residue_type(j))) == respair[2]) {
 							for ( std::list<atoms_and_func_struct>::const_iterator iter_a = (*respairiter).second.begin(),
 										iter_end_a = (*respairiter).second.end(); iter_a != iter_end_a; ++iter_a) {
 								if (i == j && (*iter_a).resA_atom_index_ == (*iter_a).resB_atom_index_) continue; // skip same atom
@@ -467,13 +467,13 @@ FullatomCustomPairDistanceEnergy::set_pair_and_func_map()
 
 			// get all possible residue types for each residue pair
 			for (Size i = 1; i <= resA.size(); ++i) {
-				ResidueTypeCAPs const & possible_res_types_a = restype_set->name3_map( resA[i] );
-				ResidueTypeCAPs const & possible_res_types_b = restype_set->name3_map( resB[i] );
+				ResidueTypeCOPs const & possible_res_types_a = restype_set->name3_map( resA[i] );
+				ResidueTypeCOPs const & possible_res_types_b = restype_set->name3_map( resB[i] );
 				for ( Size j = 1; j <= possible_res_types_a.size(); ++j ) {
-					ResidueTypeCAP const & rsd_type_a = possible_res_types_a[ j ];
+					ResidueTypeCOP const & rsd_type_a = possible_res_types_a[ j ];
 					Size atom_index_a = rsd_type_a->atom_index( atomA[i] );
 					for ( Size k = 1; k <= possible_res_types_b.size(); ++k ) {
-						ResidueTypeCAP const & rsd_type_b = possible_res_types_b[ k ];
+						ResidueTypeCOP const & rsd_type_b = possible_res_types_b[ k ];
 						Size atom_index_b = rsd_type_b->atom_index( atomB[i] );
 						ResTypePair respair;
 

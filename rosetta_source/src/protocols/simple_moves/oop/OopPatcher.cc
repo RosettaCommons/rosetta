@@ -57,12 +57,12 @@ void OopPatcher::apply( core::pose::Pose & pose )
 	chemical::ResidueTypeSetCAP restype_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
 	//kdrew: check if already patched
-	if ( pose.residue(oop_pre_pos_).has_variant_type(chemical::OOP_PRE) != 1) 
+	if ( pose.residue(oop_pre_pos_).has_variant_type(chemical::OOP_PRE) != 1)
 	{
 		TR<< "patching pre" <<std::endl;
 
 		//kdrew: get base residue type
-		chemical::ResidueType pre_base_type = pose.residue(oop_pre_pos_).type();
+		chemical::ResidueType const & pre_base_type = pose.residue(oop_pre_pos_).type();
 		TR<< pre_base_type.name() << std::endl;
 
 		//kdrew: add variant
@@ -70,7 +70,7 @@ void OopPatcher::apply( core::pose::Pose & pose )
 
 		replace_res_pre.set_all_chi(pose.residue(oop_pre_pos_).chi());
 		//replace_res_pre.mainchain_torsions(pose.residue(oop_pre_pos_).mainchain_torsions());
-		
+
 
 		pose.replace_residue( oop_pre_pos_, replace_res_pre, true );
 		conformation::idealize_position( oop_pre_pos_, pose.conformation() );
@@ -80,7 +80,7 @@ void OopPatcher::apply( core::pose::Pose & pose )
 	if ( pose.residue(oop_post_pos_).has_variant_type(chemical::OOP_POST) != 1 ) {
 		TR<< "patching post" <<std::endl;
 		//kdrew: get base residue type
-		chemical::ResidueType post_base_type = pose.residue(oop_post_pos_).type();
+		chemical::ResidueType const & post_base_type = pose.residue(oop_post_pos_).type();
 		TR<< post_base_type.name() << std::endl;
 
 		//kdrew: add variant
@@ -104,7 +104,7 @@ OopPatcher::get_name() const {
 }
 
 ///@brief
-OopPatcher::OopPatcher( 
+OopPatcher::OopPatcher(
 		core::Size oop_seq_position
 	): Mover(), oop_pre_pos_(oop_seq_position), oop_post_pos_(oop_seq_position+1)
 {

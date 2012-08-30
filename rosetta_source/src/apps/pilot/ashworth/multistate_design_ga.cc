@@ -97,7 +97,7 @@ add_dna_states(
 	// temporary Pose to build states
 	pose::Pose mutpose( pose );
 	ResidueTypeSet const & rts( mutpose.residue(1).residue_type_set() );
-	ResidueTypeCAPs dna_types(
+	ResidueTypeCOPs dna_types(
 		ResidueSelector().set_property("DNA").exclude_variants().select( rts )
 	);
 
@@ -116,9 +116,9 @@ add_dna_states(
 		// resfile key "TARGET" indicates positions at which multistate design will be targeted
 		if ( !ptask->has_behavior("TARGET",index) ) continue;
 
-		ResidueTypeCAP target_type( ptask->residue_task( index ).target_type() );
+		ResidueTypeCOP target_type( ptask->residue_task( index ).target_type() );
 		runtime_assert( pos.paired() );
-		ResidueTypeCAP bot_type( ptask->residue_task( pos.bottom() ).target_type() );
+		ResidueTypeCOP bot_type( ptask->residue_task( pos.bottom() ).target_type() );
 		TR(t_info) << mutpose.pdb_info()->chain( index ) << '.'
 		           << mutpose.pdb_info()->number( index ) << '.' << target_type->name() << '/'
 		           << mutpose.pdb_info()->chain( pos.bottom() ) << '.'
@@ -148,7 +148,7 @@ add_dna_states(
 		ResidueType const & orig_bot( mutpose.residue_type( pos.bottom() ) );
 
 		// add a negative state for every single basepair substitution
-		for ( ResidueTypeCAPs::const_iterator rt( dna_types.begin() ); rt != dna_types.end(); ++rt ) {
+		for ( ResidueTypeCOPs::const_iterator rt( dna_types.begin() ); rt != dna_types.end(); ++rt ) {
 			std::string name( (*rt)->name() );
 			if ( (*rt)->name3() == orig_top.name3() ) continue; // add mutants only
 			ResidueType const & bot_type( rts.name_map( dna_comp_name_str( name ) ) );
@@ -230,8 +230,8 @@ ga_main( void * )
 			EntityElements choices;
 			// to avoid duplicate AA's (such as for multiple histidine ResidueTypes)
 			std::set< core::chemical::AA > aaset;
-			std::list< ResidueTypeCAP > const & allowed( rtask.allowed_residue_types() );
-			for ( std::list< ResidueTypeCAP >::const_iterator t( allowed.begin() ), end( allowed.end() );
+			std::list< ResidueTypeCOP > const & allowed( rtask.allowed_residue_types() );
+			for ( std::list< ResidueTypeCOP >::const_iterator t( allowed.begin() ), end( allowed.end() );
 						t != end; ++t ) {
 				core::chemical::AA aa( (*t)->aa() );
 				// avoid duplicate AA's (such as for multiple histidine ResidueTypes)

@@ -282,7 +282,7 @@ public:
 	) const;
 
 	void
-	set_restype( core::chemical::ResidueTypeCAP );
+	set_restype( core::chemical::ResidueTypeCOP );
 
 	void
 	set_downstream_builder( downstream::DownstreamBuilderCOP dsbuilder );
@@ -294,7 +294,7 @@ public:
 private:
 
 	std::string master_;
-	core::chemical::ResidueTypeCAP restype_;
+	core::chemical::ResidueTypeCOP restype_;
 	utility::vector1< core::id::AtomID >       all_atom_inds_;
 	downstream::DownstreamBuilderCOP           dsbuilder_;
 

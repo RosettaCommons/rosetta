@@ -552,7 +552,7 @@ DisulfideMatchingEnergyContainer::find_disulfides( pose::Pose const & pose )
 	resid_2_disulfide_index_.resize( pose.total_residue() );
 	disulfide_residue_types_.resize( pose.total_residue() );
 	std::fill( resid_2_disulfide_index_.begin(), resid_2_disulfide_index_.end(), NO_DISULFIDE );
-	std::fill( disulfide_residue_types_.begin(), disulfide_residue_types_.end(), chemical::ResidueTypeCAP(0) );
+	std::fill( disulfide_residue_types_.begin(), disulfide_residue_types_.end(), chemical::ResidueTypeCOP(0) );
 
 	Size count_disulfides( 0 );
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
@@ -595,7 +595,7 @@ DisulfideMatchingEnergyContainer::find_disulfides( pose::Pose const & pose )
 			resid_2_disulfide_index_[ ii ] = count_disulfides;
 			resid_2_disulfide_index_[ other_res_ii ] = count_disulfides;
 			disulfide_residue_types_[ ii ] = & ( pose.residue_type( ii ));
-			disulfide_residue_types_[ other_res_ii ] = chemical::ResidueTypeCAP( & ( pose.residue_type( other_res_ii )));
+			disulfide_residue_types_[ other_res_ii ] = chemical::ResidueTypeCOP( & ( pose.residue_type( other_res_ii )));
 			disulfide_partners_.push_back( std::pair< Size, Size >( ii, other_res_ii ) );
 			disulfide_atom_indices_.push_back( std::pair< DisulfideAtomIndices, DisulfideAtomIndices > (
 						DisulfideAtomIndices( pose.residue(ii ) ), DisulfideAtomIndices( pose.residue( other_res_ii ) ) ));

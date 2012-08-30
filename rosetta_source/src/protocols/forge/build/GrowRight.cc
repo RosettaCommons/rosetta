@@ -231,12 +231,12 @@ GrowRight::Positions GrowRight::original_mutable_positions() const {
 
 /// @brief do the actual work of modifying the Pose
 void GrowRight::modify_impl( Pose & pose ) {
-	using core::chemical::ResidueTypeCAPs;
+	using core::chemical::ResidueTypeCOPs;
 	using protocols::forge::methods::grow_right_rtype;
 	using protocols::forge::methods::trans_omega;
 
 	// grab residue types from aa string
-	ResidueTypeCAPs r_types = core::pose::residue_types_from_sequence( aa_, residue_type_set(), false );
+	ResidueTypeCOPs r_types = core::pose::residue_types_from_sequence( aa_, residue_type_set(), false );
 	assert( r_types.size() == ss_.length() );
 
 	// BEGIN POS SHIFT: after this point, pos_ will begin to shift due to length

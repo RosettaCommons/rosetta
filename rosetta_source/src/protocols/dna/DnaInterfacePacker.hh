@@ -144,7 +144,7 @@ private: // data
 	core::optimization::MinimizerOptionsOP minimize_options_;
 	core::kinematics::MoveMapOP min_movemap_;
 	PDBOutputOP pdboutput_;
-	utility::vector1< core::chemical::ResidueTypeCAP > reference_residue_types_;
+	utility::vector1< core::chemical::ResidueTypeCOP > reference_residue_types_;
 	bool initialization_state_;
 	std::string pdbname_;
 };

@@ -171,7 +171,7 @@ TheozymeInvrotTree::generate_targets_and_inverse_rotamers()
 	this->clear_target_states();
 
 	//1. make a residue from the first block ligand
-	utility::vector1< core::chemical::ResidueTypeCAP > ds_restypes( enzcst_io_->mcfi_list( 1 )->mcfi( 1 )->allowed_restypes( enzcst_io_->mcfi_list( 1 )->mcfi( 1 )->downstream_res() ) );
+	utility::vector1< core::chemical::ResidueTypeCOP > ds_restypes( enzcst_io_->mcfi_list( 1 )->mcfi( 1 )->allowed_restypes( enzcst_io_->mcfi_list( 1 )->mcfi( 1 )->downstream_res() ) );
 	core::conformation::ResidueCOP ligres( core::conformation::ResidueFactory::create_residue( *(ds_restypes[1]) ) );
 
 	utility::vector1< core::conformation::ResidueCOP > all_rots;

@@ -127,7 +127,7 @@ public:
 		//1. asserting stuff for residue 1
 		MatchConstraintFileInfoListCOP mcfil1 = enz_io->mcfi_list( 1 );
 
-		utility::vector1< core::chemical::ResidueTypeCAP > const & up_res1 = mcfil1->upstream_restypes();
+		utility::vector1< core::chemical::ResidueTypeCOP > const & up_res1 = mcfil1->upstream_restypes();
 
 		TS_ASSERT_EQUALS( up_res1.size(), 2 );
 
@@ -187,7 +187,7 @@ public:
 		//4. asserting stuff for residue 4
 		MatchConstraintFileInfoListCOP mcfil4 = enz_io->mcfi_list( 4 );
 
-		utility::vector1< core::chemical::ResidueTypeCAP > const & up_res4 = mcfil4->upstream_restypes();
+		utility::vector1< core::chemical::ResidueTypeCOP > const & up_res4 = mcfil4->upstream_restypes();
 		TS_ASSERT_EQUALS( up_res4.size(), 3 );
 
 

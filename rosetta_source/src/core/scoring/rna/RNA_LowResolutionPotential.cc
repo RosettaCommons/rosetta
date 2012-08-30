@@ -2176,8 +2176,8 @@ RNA_LowResolutionPotential::fill_atom_numbers_for_backbone_oxygens( chemical::Re
 {
 	using namespace core::chemical;
 
-	ResidueTypeCAPs const & rsd_types( rsd_set->aa_map( aa ) );
-	ResidueTypeCAP const & rsd_type = rsd_types[ 1 ]; //This better work.
+	ResidueTypeCOPs const & rsd_types( rsd_set->aa_map( aa ) );
+	ResidueTypeCOP const & rsd_type = rsd_types[ 1 ]; //This better work.
 
 	for (Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ) {
 		atom_numbers_for_backbone_score_calculations_.push_back( rsd_type->atom_index( RNA_backbone_oxygen_atoms_[ m ] ) );
@@ -2191,8 +2191,8 @@ RNA_LowResolutionPotential::check_atom_numbers_for_backbone_oxygens( chemical::R
 {
 	using namespace core::chemical;
 
-	ResidueTypeCAPs const & rsd_types( rsd_set->aa_map( aa ) );
-	ResidueTypeCAP const &  rsd_type = rsd_types[ 1 ]; //This better work.
+	ResidueTypeCOPs const & rsd_types( rsd_set->aa_map( aa ) );
+	ResidueTypeCOP const &  rsd_type = rsd_types[ 1 ]; //This better work.
 
 	for (Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ) {
 		if ( atom_numbers_for_backbone_score_calculations_[m] != rsd_type->atom_index( RNA_backbone_oxygen_atoms_[ m ] ) ) return false;

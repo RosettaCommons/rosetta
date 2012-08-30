@@ -801,7 +801,7 @@ build_pose_as_is1(
 		ResidueCoords const & xyz = rinfo.xyz;
 		ResidueTemps  const & rtemp = rinfo.temps;
 
-		ResidueTypeCAPs const & rsd_type_list( residue_set.name3_map( pdb_name ) );
+		ResidueTypeCOPs const & rsd_type_list( residue_set.name3_map( pdb_name ) );
 		if(!is_residue_type_recognized(
 				i, pdb_name, rsd_type_list, xyz, rtemp,
 				UA_res_nums, UA_res_names, UA_atom_names, UA_coords, UA_temps, options)) {
@@ -1114,7 +1114,7 @@ build_pose_as_is1(
 bool is_residue_type_recognized(
 	Size const pdb_residue_index,
 	std::string const & pdb_name,
-	core::chemical::ResidueTypeCAPs const & rsd_type_list,
+	core::chemical::ResidueTypeCOPs const & rsd_type_list,
 	std::map< std::string, Vector > const & xyz,
 	std::map< std::string, double > const & rtemp,
 	utility::vector1<Size> & UA_res_nums,
@@ -1140,7 +1140,7 @@ bool is_residue_type_recognized(
 bool is_residue_type_recognized(
 	Size const pdb_residue_index,
 	std::string const & pdb_name,
-	core::chemical::ResidueTypeCAPs const & rsd_type_list,
+	core::chemical::ResidueTypeCOPs const & rsd_type_list,
 	std::map< std::string, Vector > const & xyz,
 	std::map< std::string, double > const & rtemp,
 	utility::vector1<Size> & UA_res_nums,

@@ -117,8 +117,8 @@ ResidueLevelTask_::ResidueLevelTask_(
 		// amino acids from the list of allowed ones
 		//no rule yet to treat chemically modified aa's differently
 		for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
-			ResidueTypeCAPs const & aas( residue_set.aa_map( chemical::AA( ii )));
-			for ( ResidueTypeCAPs::const_iterator
+			ResidueTypeCOPs const & aas( residue_set.aa_map( chemical::AA( ii )));
+			for ( ResidueTypeCOPs::const_iterator
 					aas_iter = aas.begin(),
 					aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
 				if ( original_residue.type().variants_match(**aas_iter )) {
@@ -131,8 +131,8 @@ ResidueLevelTask_::ResidueLevelTask_(
 			allowed_residue_types_.push_back( & (original_residue.type()) );
 	} else if ( original_residue.is_DNA() ) {
 		// default: all canonical DNA types w/ adducts
-	  ResidueTypeCAPs dna_types( ResidueSelector().set_property("DNA").select( residue_set ) );
-		for ( ResidueTypeCAPs::const_iterator type( dna_types.begin() ), end( dna_types.end() );
+	  ResidueTypeCOPs dna_types( ResidueSelector().set_property("DNA").select( residue_set ) );
+		for ( ResidueTypeCOPs::const_iterator type( dna_types.begin() ), end( dna_types.end() );
 		      type != end; ++type ) {
 			if ( original_residue.type().nonadduct_variants_match( **type ) ) {
 				allowed_residue_types_.push_back( *type );
@@ -159,7 +159,7 @@ ExtraRotSample
 ResidueLevelTask_::extrachi_sample_level(
 	bool buried,
 	int chi,
-	chemical::ResidueTypeCAP concrete_residue
+	chemical::ResidueTypeCOP concrete_residue
 ) const
 {
 
@@ -310,7 +310,7 @@ bool ResidueLevelTask_::has_behavior() const
 	return behaviors_.empty() ? false : true;
 }
 
-void ResidueLevelTask_::target_type( chemical::ResidueTypeCAP type ) {
+void ResidueLevelTask_::target_type( chemical::ResidueTypeCOP type ) {
 	bool allowed( std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(), type ) !=
 		            allowed_residue_types_.end() );
 	if ( !allowed ) {
@@ -329,7 +329,7 @@ void ResidueLevelTask_::target_type( std::string name ) {
 
 void ResidueLevelTask_::or_adducts( bool setting ) {
 	if ( setting ) return;
-	for ( ResidueTypeCAPListIter type_itr( allowed_residue_types_.begin() ),
+	for ( ResidueTypeCOPListIter type_itr( allowed_residue_types_.begin() ),
 		    next_itr( allowed_residue_types_.begin() ),
 		    end_itr( allowed_residue_types_.end() ); type_itr != end_itr;
 		    /* no increment: deletion + iterator incrementing = segfault! */ ) {
@@ -630,14 +630,14 @@ void ResidueLevelTask_::or_fix_his_tautomer( bool setting )
 	if ( !setting || original_residue_type_->aa() != chemical::aa_his ) return;
 	fix_his_tautomer_ |= setting;
 
-	//logic: iterate through ResidueTypeCAPList.  Remove all ResidueTypeCAPs that ARE histidine but are not of the same tautomer as this residue's original_residue_type_.
+	//logic: iterate through ResidueTypeCOPList.  Remove all ResidueTypeCOPs that ARE histidine but are not of the same tautomer as this residue's original_residue_type_.
 	//but how do we decide tautomer?  ResidueType offers two options: string comparisons of the names, and checking which atoms are present.  We're going with the latter.
 
 	//which hydrogen atoms are present in the original residue?  We'll check both and vainly hope this won't break if somone tries protonation variants.
 	bool HIS(original_residue_type_->has_atom_name(" HE2")); //HIS
 	bool HIS_D(original_residue_type_->has_atom_name(" HD1")); //HIS_D
 
-	for ( ResidueTypeCAPListIter
+	for ( ResidueTypeCOPListIter
 					allowed_iter = allowed_residue_types_.begin(),
 					iter_next = allowed_residue_types_.begin(),
 					allowed_end = allowed_residue_types_.end();
@@ -732,7 +732,7 @@ void
 ResidueLevelTask_::do_restrict_absent_canonical_aas( utility::vector1< bool > const & allowed_aas )
 {
 	assert( allowed_aas.size() == chemical::num_canonical_aas );
-	for ( ResidueTypeCAPListIter
+	for ( ResidueTypeCOPListIter
 			allowed_iter = allowed_residue_types_.begin(),
 			iter_next = allowed_residue_types_.begin(),
 			allowed_end = allowed_residue_types_.end();
@@ -754,7 +754,7 @@ ResidueLevelTask_::do_restrict_absent_canonical_aas( utility::vector1< bool > co
 void
 ResidueLevelTask_::restrict_nonnative_canonical_aas( utility::vector1< bool > const & allowed_aas){
 	assert( allowed_aas.size() == chemical::num_canonical_aas );
-	for ( ResidueTypeCAPListIter
+	for ( ResidueTypeCOPListIter
 					allowed_iter = allowed_residue_types_.begin(),
 					iter_next = allowed_residue_types_.begin(),
 					allowed_end = allowed_residue_types_.end();
@@ -783,7 +783,7 @@ ResidueLevelTask_::restrict_absent_nas(
 )
 {
 	typedef utility::vector1< chemical::AA > AAs;
-	for ( ResidueTypeCAPListIter
+	for ( ResidueTypeCOPListIter
 		    type_itr = allowed_residue_types_.begin(), next_itr = allowed_residue_types_.begin(),
 		    end_itr = allowed_residue_types_.end(); type_itr != end_itr;
 		    /* no increment: deletion + iterator incrementing = segfault! */ ) {
@@ -818,7 +818,7 @@ ResidueLevelTask_::restrict_absent_nas(
 void
 ResidueLevelTask_::restrict_to_repacking()
 {
-	for ( ResidueTypeCAPListIter
+	for ( ResidueTypeCOPListIter
 			allowed_iter = allowed_residue_types_.begin(),
 			iter_next = allowed_residue_types_.begin(),
 			allowed_end = allowed_residue_types_.end();
@@ -834,7 +834,7 @@ ResidueLevelTask_::restrict_to_repacking()
 	mode_tokens_.push_back("NATAA");
 }
 
-bool ResidueLevelTask_::is_original_type( chemical::ResidueTypeCAP type ) const
+bool ResidueLevelTask_::is_original_type( chemical::ResidueTypeCOP type ) const
 {
 	if ( original_residue_type_->aa() == chemical::aa_unk ) {
 		// unknown aa != equivalent type
@@ -864,10 +864,10 @@ void ResidueLevelTask_::allow_noncanonical_aa(
 {
 	if ( disabled_ || design_disabled_ ) return;
 
-	// get ResidueTypeCAPs vector
-	chemical::ResidueTypeCAPs const & aas( residue_set.residue_types() );
+	// get ResidueTypeCOPs vector
+	chemical::ResidueTypeCOPs const & aas( residue_set.residue_types() );
 
-	for ( chemical::ResidueTypeCAPs::const_iterator	aas_iter = aas.begin(), aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
+	for ( chemical::ResidueTypeCOPs::const_iterator	aas_iter = aas.begin(), aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
 	    if ( original_residue_type_->variants_match( **aas_iter ) &&
 			std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(), *aas_iter ) ==	allowed_residue_types_.end() && /* haven't already added it */
 			aaname ==	(**aas_iter).name3() )
@@ -905,9 +905,9 @@ ResidueLevelTask_::allow_aa(
 	design_disabled_ = false;
 
 	chemical::ResidueTypeSet const & residue_set( original_residue_type_->residue_type_set() );
-	chemical::ResidueTypeCAPs const & aas( residue_set.aa_map( aa ) );
+	chemical::ResidueTypeCOPs const & aas( residue_set.aa_map( aa ) );
 
-	for ( chemical::ResidueTypeCAPs::const_iterator
+	for ( chemical::ResidueTypeCOPs::const_iterator
 					aas_iter = aas.begin(), aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
 		if ( original_residue_type_->variants_match( **aas_iter ) &&
 				 ( std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(), *aas_iter ) ==
@@ -920,25 +920,25 @@ ResidueLevelTask_::allow_aa(
 	determine_if_repacking();
 }
 
-ResidueLevelTask::ResidueTypeCAPList const &
+ResidueLevelTask::ResidueTypeCOPList const &
 ResidueLevelTask_::allowed_residue_types() const
 {
 	return allowed_residue_types_;
 }
 
-ResidueLevelTask::ResidueTypeCAPListConstIter
+ResidueLevelTask::ResidueTypeCOPListConstIter
 ResidueLevelTask_::allowed_residue_types_begin() const
 {
 	return allowed_residue_types_.begin();
 }
 
-ResidueLevelTask::ResidueTypeCAPListConstIter
+ResidueLevelTask::ResidueTypeCOPListConstIter
 ResidueLevelTask_::allowed_residue_types_end() const
 {
 	return allowed_residue_types_.end();
 }
 
-chemical::ResidueTypeCAP
+chemical::ResidueTypeCOP
 ResidueLevelTask_::target_type() const {
 
 	bool allowed( std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(),
@@ -950,7 +950,7 @@ ResidueLevelTask_::target_type() const {
 void
 ResidueLevelTask_::print_allowed_types( std::ostream & os ) const
 {
-	for ( ResidueTypeCAPListConstIter type( allowed_residue_types_begin() );
+	for ( ResidueTypeCOPListConstIter type( allowed_residue_types_begin() );
 		    type != allowed_residue_types_end(); ++type ) {
 		os << '\t' << (**type).name() << '\n';
 	}
@@ -1017,7 +1017,7 @@ ResidueLevelTask_::determine_if_designing()
 {
 	designing_ = false;
 	bool found_aa_difference = false;
-	for ( ResidueTypeCAPListConstIter
+	for ( ResidueTypeCOPListConstIter
 			allowed_iter = allowed_residue_types_.begin(),
 			allowed_end = allowed_residue_types_.end();
 			allowed_iter != allowed_end;  ++allowed_iter ) {
@@ -1111,7 +1111,7 @@ ResidueLevelTask_::update_union( ResidueLevelTask const & t )
 			mode_tokens_.push_back(*i);
 		}
 	}
-	for(ResidueTypeCAPList::const_iterator i = o.allowed_residue_types_.begin(); i != o.allowed_residue_types_.end(); ++i){
+	for(ResidueTypeCOPList::const_iterator i = o.allowed_residue_types_.begin(); i != o.allowed_residue_types_.end(); ++i){
 		if( std::find(allowed_residue_types_.begin(),allowed_residue_types_.end(),*i) == allowed_residue_types_.end() ) {
 			std::cout << "allowed_residue_types_ add " << (*i)->name();
 			allowed_residue_types_.push_back(*i);
@@ -1203,8 +1203,8 @@ ResidueLevelTask_::update_intersection( ResidueLevelTask const & t )
 	}
 	mode_tokens_ = new_mode_tokens_;
 
-	ResidueTypeCAPList new_allowed_residue_types;
-	for(ResidueTypeCAPList::const_iterator i = o.allowed_residue_types_.begin(); i != o.allowed_residue_types_.end(); ++i){
+	ResidueTypeCOPList new_allowed_residue_types;
+	for(ResidueTypeCOPList::const_iterator i = o.allowed_residue_types_.begin(); i != o.allowed_residue_types_.end(); ++i){
 		if( std::find(  allowed_residue_types_.begin(),  allowed_residue_types_.end(),*i) !=   allowed_residue_types_.end() &&
 			std::find(o.allowed_residue_types_.begin(),o.allowed_residue_types_.end(),*i) != o.allowed_residue_types_.end() ){
 			allowed_residue_types_.push_back(*i);
@@ -1296,12 +1296,12 @@ ResidueLevelTask_::update_commutative(
 	target_residue_type_ = o.target_residue_type_; // <-- there can be only one, so, this is obviously a non-commutative member
 
 	// merge the allowed residue types to find the set that overlaps
-	ResidueTypeCAPList my_allowed_residue_types( allowed_residue_types_ );
-	ResidueTypeCAPList o_allowed_residue_types( o.allowed_residue_types_ );
+	ResidueTypeCOPList my_allowed_residue_types( allowed_residue_types_ );
+	ResidueTypeCOPList o_allowed_residue_types( o.allowed_residue_types_ );
 	my_allowed_residue_types.sort();
 	o_allowed_residue_types.sort();
-	ResidueTypeCAPList common;
-	for ( ResidueTypeCAPListConstIter
+	ResidueTypeCOPList common;
+	for ( ResidueTypeCOPListConstIter
 			myiter = my_allowed_residue_types.begin(),
 			myend = my_allowed_residue_types.end(),
 			oiter = o_allowed_residue_types.begin(),
@@ -1320,9 +1320,9 @@ ResidueLevelTask_::update_commutative(
 		}
 	}
 	// Now insert the elements of common in their original order into allowed_residue_types_
-	ResidueTypeCAPList my_allowed_residue_types2;
+	ResidueTypeCOPList my_allowed_residue_types2;
 	my_allowed_residue_types2.swap( allowed_residue_types_ );
-	for ( ResidueTypeCAPListConstIter
+	for ( ResidueTypeCOPListConstIter
 			myiter = my_allowed_residue_types2.begin(),
 			myend = my_allowed_residue_types2.end();
 			myiter != myend; ++myiter ) {
@@ -1632,7 +1632,7 @@ bool PackerTask_::has_behavior( Size resid ) const
 }
 
 
-chemical::ResidueTypeCAP
+chemical::ResidueTypeCOP
 PackerTask_::target_type( Size resid ) const
 	{ return residue_tasks_[ resid ].target_type(); }
 
@@ -1788,7 +1788,7 @@ PackerTask_::show( std::ostream & out ) const {
 		out << "\t" << (design_residue( i ) ? "TRUE" : "FALSE");
 
 		out << "\t";
-		for ( ResidueLevelTask::ResidueTypeCAPListConstIter
+		for ( ResidueLevelTask::ResidueTypeCOPListConstIter
 						allowed_iter(   residue_task( i ).allowed_residue_types_begin() );
 						allowed_iter != residue_task( i ).allowed_residue_types_end();
 					++allowed_iter ) {

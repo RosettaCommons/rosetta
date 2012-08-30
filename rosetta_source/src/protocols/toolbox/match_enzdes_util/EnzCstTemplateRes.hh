@@ -90,10 +90,10 @@ public:
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~EnzCstTemplateRes();
 
-	typedef std::map< core::chemical::ResidueTypeCAP, utility::vector1< utility::vector1< core::Size > > > RestypeToTemplateAtomsMap;
+	typedef std::map< core::chemical::ResidueTypeCOP, utility::vector1< utility::vector1< core::Size > > > RestypeToTemplateAtomsMap;
 
 public:
-	typedef std::map< core::chemical::ResidueTypeCAP, utility::vector1< utility::vector1< core::Size > > > AtomIndsForRestypeMap;
+	typedef std::map< core::chemical::ResidueTypeCOP, utility::vector1< utility::vector1< core::Size > > > AtomIndsForRestypeMap;
 
 public:
 
@@ -174,12 +174,12 @@ public:
 	remap_resid( core::id::SequenceMapping const & smap );
 
 	void
-	determine_atom_inds_for_restype( core::chemical::ResidueTypeCAP restype ) const;
+	determine_atom_inds_for_restype( core::chemical::ResidueTypeCOP restype ) const;
 
 	utility::vector1< core::Size > const &
 	atom_inds_for_restype(
 		core::Size template_atom,
-		core::chemical::ResidueTypeCAP restype
+		core::chemical::ResidueTypeCOP restype
   ) const;
 
 	/// @brief checks whether the distance

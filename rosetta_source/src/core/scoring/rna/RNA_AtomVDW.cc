@@ -122,14 +122,14 @@ RNA_AtomVDW::initialize_atom_numbers( chemical::ResidueTypeSetCAP & rsd_set, che
 {
 	using namespace core::chemical;
 
-	ResidueTypeCAPs const & rsd_types( rsd_set->aa_map( aa ) );
+	ResidueTypeCOPs const & rsd_types( rsd_set->aa_map( aa ) );
 
 	if ( rsd_types.size() < 1) {
 		std::cout << "PROBLEM FINDING RESIDUE: " << name_from_aa( aa ) << std::endl;
 		return;
 	}
 
-	ResidueTypeCAP const & rsd_type( rsd_types[1] );
+	ResidueTypeCOP const & rsd_type( rsd_types[1] );
 	char const which_nucleotide( rsd_type->name1() ) ;
 
 	utility::vector1 < Size > atom_numbers_temp;

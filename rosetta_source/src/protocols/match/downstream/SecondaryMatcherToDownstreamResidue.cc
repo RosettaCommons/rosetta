@@ -305,7 +305,7 @@ SecondaryMatcherToDownstreamResidue::n_possible_hits_per_upstream_conformation()
 
 
 void
-SecondaryMatcherToDownstreamResidue::set_downstream_restype( core::chemical::ResidueTypeCAP downstream_restype )
+SecondaryMatcherToDownstreamResidue::set_downstream_restype( core::chemical::ResidueTypeCOP downstream_restype )
 {
 	downstream_restype_ = downstream_restype;
 }

@@ -415,7 +415,7 @@ struct PoseWrap : public ReferenceCount {
 	std::map<Size,Size> attach_to_region_;
 	// vector1<Size> floating_scs_attach_;
 	vector1<bool> is_repackable_, is_designable_, chainbreaks_;
-	vector1<core::chemical::ResidueTypeCAP> res_types_;
+	vector1<core::chemical::ResidueTypeCOP> res_types_;
 	bool hascst, has_floating_sc;
 	core::conformation::symmetry::SymmDataOP symm_data,symm_data_full;
 	core::chemical::ResidueTypeSetCAP fa_residue_set_,cen_residue_set_;

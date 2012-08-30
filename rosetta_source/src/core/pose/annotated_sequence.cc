@@ -57,13 +57,13 @@ using namespace core::conformation;
 /// file, such as with distiguished HIS tautomers, various chain termini and
 /// cutpoint variants etc. Currently not working with disulfide variant CYD, but
 /// this is on to-do list.
-chemical::ResidueTypeCAPs residue_types_from_sequence(
+chemical::ResidueTypeCOPs residue_types_from_sequence(
 	std::string const & sequence_in,
 	chemical::ResidueTypeSet const & residue_set,
 	bool const auto_termini /* true */
 )
 {
-	chemical::ResidueTypeCAPs requested_types;
+	chemical::ResidueTypeCOPs requested_types;
 
 	using namespace core::chemical;
 
@@ -128,7 +128,7 @@ chemical::ResidueTypeCAPs residue_types_from_sequence(
 			is_upper_terminus = ( *requested_types.back() ).has_variant_type( chemical::UPPER_TERMINUS );
 		} else {
 			// use aa_map to find list of possible ResidueTypes
-			chemical::ResidueTypeCAPs const & rsd_type_list( residue_set.aa_map( my_aa ) );
+			chemical::ResidueTypeCOPs const & rsd_type_list( residue_set.aa_map( my_aa ) );
 			// for non-annotated sequence, assume single chain for now
 			is_lower_terminus = auto_termini && ( seqpos == 1 );
 			is_upper_terminus = auto_termini && ( seqpos == one_letter_sequence.length() );
@@ -151,7 +151,7 @@ chemical::ResidueTypeCAPs residue_types_from_sequence(
 			}
 			if ( !best_index ) utility_exit_with_message( " can't find residue type at pos " + ObjexxFCL::string_of(seqpos) +
 				"in sequence "+ sequence_in);
-			// add the ResidueTypeCAP
+			// add the ResidueTypeCOP
 			requested_types.push_back( rsd_type_list[ best_index ] );
 		}
 
@@ -185,7 +185,7 @@ void make_pose_from_sequence(
 	typedef core::Size Size;
 
 	// grab residue types
-	chemical::ResidueTypeCAPs requested_types = core::pose::residue_types_from_sequence( sequence_in, residue_set, auto_termini );
+	chemical::ResidueTypeCOPs requested_types = core::pose::residue_types_from_sequence( sequence_in, residue_set, auto_termini );
 	assert( core::pose::annotated_to_oneletter_sequence( sequence_in ).length() == requested_types.size() );
 
 	// clear the pose

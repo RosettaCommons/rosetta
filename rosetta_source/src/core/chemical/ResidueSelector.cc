@@ -115,11 +115,11 @@ residue_selector_single_from_line( std::string const & line )
 }
 
 ///
-ResidueTypeCAPs
+ResidueTypeCOPs
 ResidueSelector::select( ResidueTypeSet const & rsd_set )
 {
-	ResidueTypeCAPs rsd_list;
-	for ( ResidueTypeCAPs::const_iterator it= rsd_set.residue_types().begin(), ite= rsd_set.residue_types().end();
+	ResidueTypeCOPs rsd_list;
+	for ( ResidueTypeCOPs::const_iterator it= rsd_set.residue_types().begin(), ite= rsd_set.residue_types().end();
 				it != ite; ++it ) {
 		if ( operator[]( **it ) ) rsd_list.push_back( *it );
 	}

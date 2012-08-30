@@ -94,7 +94,7 @@ LigandConformerBuilder::LigandConformerBuilder( LigandConformerBuilder const & o
 	//std::cout << "APL DEBUG LigandConformerBuilder copy ctor " << this << std::endl;
 }
 
-//LigandConformerBuilder::LigandConformerBuilder( LigandConformerBuilder const & other, core::chemical::ResidueTypeCAP upstream_restype ) :
+//LigandConformerBuilder::LigandConformerBuilder( LigandConformerBuilder const & other, core::chemical::ResidueTypeCOP upstream_restype ) :
 //  parent(other),
 //  downstream_restype_( other.downstream_restype_ ),
 //  upstream_restype_( upstream_restype ),
@@ -412,7 +412,7 @@ LigandConformerBuilder::initialize_from_residue(
 
 void
 LigandConformerBuilder::initialize_upstream_residue(
-	core::chemical::ResidueTypeCAP upstream_res,
+	core::chemical::ResidueTypeCOP upstream_res,
 	core::scoring::etable::count_pair::CountPairFunctionCOP count_pair
 )
 {
@@ -814,7 +814,7 @@ LigandConformerBuilder::get_lig_conformers(core::Size conf_id) const
 //	return min_sep_d2_from_upstream_atoms_;
 //}
 
-core::chemical::ResidueTypeCAP
+core::chemical::ResidueTypeCOP
 LigandConformerBuilder::get_upstream_restype() const
 {
   return upstream_restype_;

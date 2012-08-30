@@ -688,7 +688,7 @@ void new_pose_generator(
 			TR << "RES AA   " << residue << aa <<std::endl;
 
 
-			core::chemical::ResidueTypeCAP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
+			core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
 
 
 
@@ -720,7 +720,7 @@ void new_pose_generator(
 
 
 
-			core::chemical::ResidueTypeCAP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
+			core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
 
 
 			core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
@@ -791,7 +791,7 @@ void new_pose_generator(
 					TR << "RES AA N1  " << residue << aa <<std::endl;
 
 
-					core::chemical::ResidueTypeCAP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
+					core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
 
 
 
@@ -818,7 +818,7 @@ void new_pose_generator(
 
 					TR << "RES AA C1  " << residue << aa <<std::endl;
 
-					core::chemical::ResidueTypeCAP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
+					core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
 
 
 					core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
@@ -856,7 +856,7 @@ void new_pose_generator(
 
 				TR << "RES AA N2  " << residue << aa <<std::endl;
 
-				core::chemical::ResidueTypeCAP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
+				core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
 
 
 				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
@@ -881,7 +881,7 @@ void new_pose_generator(
 
 				TR << "RES AA C2  " << residue << aa <<std::endl;
 
-				core::chemical::ResidueTypeCAP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
+				core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
 
 
 				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
@@ -961,7 +961,7 @@ void new_pose_generator(
 				TR << "RES AA N1  " << residue << aa <<std::endl;
 
 
-				core::chemical::ResidueTypeCAP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
+				core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
 
 
 
@@ -986,7 +986,7 @@ void new_pose_generator(
 
 				TR << "RES AA C1  " << residue << aa <<std::endl;
 
-				core::chemical::ResidueTypeCAP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
+				core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
 
 
 				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
@@ -1019,7 +1019,7 @@ void new_pose_generator(
 
 				TR << "RES AA N2  " << residue << aa <<std::endl;
 
-				core::chemical::ResidueTypeCAP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
+				core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
 
 
 				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
@@ -1044,7 +1044,7 @@ void new_pose_generator(
 
 				TR << "RES AA C2  " << residue << aa <<std::endl;
 
-				core::chemical::ResidueTypeCAP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
+				core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
 
 
 				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
@@ -1075,7 +1075,7 @@ void new_pose_generator(
 
 				TR << "RES AA N3  " << residue << aa <<std::endl;
 
-				core::chemical::ResidueTypeCAP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
+				core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
 
 
 				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
@@ -1100,7 +1100,7 @@ void new_pose_generator(
 
 							TR << "RES AA C3  " << residue << aa <<std::endl;
 
-							core::chemical::ResidueTypeCAP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
+							core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
 
 
 							core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );

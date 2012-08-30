@@ -43,6 +43,7 @@ typedef  utility::pointer::owning_ptr< ResidueType >  ResidueTypeOP;
 typedef  utility::pointer::owning_ptr< ResidueType const >  ResidueTypeCOP;
 typedef  utility::vector1< ResidueTypeOP >  ResidueTypeOPs;
 typedef  utility::vector1< ResidueTypeCAP >  ResidueTypeCAPs;
+typedef  utility::vector1< ResidueTypeCOP >  ResidueTypeCOPs;
 
 typedef utility::vector1< Size > AtomIndices;
 typedef utility::vector1<Size> OrbitalIndices;

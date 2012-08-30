@@ -706,8 +706,8 @@ public:
 		bool const uterm_cap = true,
 		bool const lterm_cap = true){
 
-		ResidueTypeCAPs possible_types(residue_type_set->name3_map( res_name3 ));
-		for ( ResidueTypeCAPs::const_iterator
+		ResidueTypeCOPs possible_types(residue_type_set->name3_map( res_name3 ));
+		for ( ResidueTypeCOPs::const_iterator
 						type_iter = possible_types.begin(), type_end = possible_types.end();
 					type_iter != type_end; ++type_iter ){
 			if (uterm_cap != (*type_iter)->has_variant_type( UPPER_TERMINUS )){

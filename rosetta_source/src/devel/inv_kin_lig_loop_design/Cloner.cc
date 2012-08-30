@@ -323,14 +323,14 @@ namespace devel {
 		//       return get_fold_tree(tag0,pose0,pose1,resids,clones,segments);
 		//     } // Cloner::getFoldTree
 
-    void append_seq( core::pose::Pose& pose0, int sp_lo, int sp_hi, utility::vector1< core::chemical::ResidueTypeCAP >& seq ) {
+    void append_seq( core::pose::Pose& pose0, int sp_lo, int sp_hi, utility::vector1< core::chemical::ResidueTypeCOP >& seq ) {
 
       //seq.clear();
 
       string s;
 
       for( int i = sp_lo; i <= sp_hi; ++i ) {
-				seq.push_back( core::chemical::ResidueTypeCAP( pose0.residue_type(i) ) );
+				seq.push_back( core::chemical::ResidueTypeCOP( pose0.residue_type(i) ) );
 				s.push_back( pose0.residue(i).name1() );
       }
 
@@ -338,14 +338,14 @@ namespace devel {
 
     }
 
-    utility::vector1< core::chemical::ResidueTypeCAP > get_seq_from_aas( vector< core::chemical::AA > const& aas ) {
+    utility::vector1< core::chemical::ResidueTypeCOP > get_seq_from_aas( vector< core::chemical::AA > const& aas ) {
 
       core::chemical::ResidueTypeSetCAP residue_set
 				( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
 
-      utility::vector1< core::chemical::ResidueTypeCAP > rval;
+      utility::vector1< core::chemical::ResidueTypeCOP > rval;
       for( Size i = 0; i < aas.size(); ++i ) {
-				core::chemical::ResidueTypeCAPs const& res_types = residue_set->aa_map( aas[i] );
+				core::chemical::ResidueTypeCOPs const& res_types = residue_set->aa_map( aas[i] );
 				assert( res_types.size() != 0 );
 				rval.push_back( res_types[1] );
       }
@@ -354,7 +354,7 @@ namespace devel {
 
     namespace {
 
-      void make_pose_from_sequence(core::pose::Pose & pose, utility::vector1< core::chemical::ResidueTypeCAP > const& sequence ) {
+      void make_pose_from_sequence(core::pose::Pose & pose, utility::vector1< core::chemical::ResidueTypeCOP > const& sequence ) {
 
 				using namespace core::chemical;
 				// clear all of the old data in the pose
@@ -510,7 +510,7 @@ namespace devel {
 
       int total_size = 0;
 
-      utility::vector1< core::chemical::ResidueTypeCAP > seq;
+      utility::vector1< core::chemical::ResidueTypeCOP > seq;
 
       for( Size k = 0; k < segments.size(); ++k ) {
 				int size = segments[k].hi_res->seqpos() - segments[k].lo_res->seqpos() + 1;

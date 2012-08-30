@@ -98,10 +98,10 @@ GrowLigand::set_fragments(){
 	rs.set_property("FRAGMENT");
 	core::chemical::ChemicalManager *cm= core::chemical::ChemicalManager::get_instance();
 	core::chemical::ResidueTypeSetCAP rsd_set= cm->residue_type_set( core::chemical::FA_STANDARD );
-	core::chemical::ResidueTypeCAPs fragment_types= rs.select( *rsd_set );
+	core::chemical::ResidueTypeCOPs fragment_types= rs.select( *rsd_set );
 	grow_ligand_tracer<< fragment_types.size()<< " fragment_types"<< std::endl;
 
-	foreach(core::chemical::ResidueTypeCAP fragment_type, fragment_types){
+	foreach(core::chemical::ResidueTypeCOP fragment_type, fragment_types){
 		fragments_.push_back( new core::conformation::Residue(*fragment_type, true) );
 		grow_ligand_tracer<< "frag_name: "<< fragment_type->name()<< std::endl;
 	}

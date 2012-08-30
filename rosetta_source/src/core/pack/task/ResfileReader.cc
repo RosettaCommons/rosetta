@@ -887,7 +887,7 @@ POLAR::residue_action(
 
 	utility::vector1< bool > keep_aas( chemical::num_canonical_aas, false );
 
-	for ( ResidueLevelTask::ResidueTypeCAPListConstIter
+	for ( ResidueLevelTask::ResidueTypeCOPListConstIter
 			restype_iter = task.residue_task( resid ).allowed_residue_types_begin(),
 			restype_iter_end = task.residue_task( resid ).allowed_residue_types_end();
 			restype_iter != restype_iter_end; ++restype_iter ) {
@@ -930,7 +930,7 @@ APOLAR::residue_action(
 
 	utility::vector1< bool > keep_aas( chemical::num_canonical_aas, false );
 
-	for ( ResidueLevelTask::ResidueTypeCAPListConstIter
+	for ( ResidueLevelTask::ResidueTypeCOPListConstIter
 			restype_iter = task.residue_task( resid ).allowed_residue_types_begin(),
 			restype_iter_end = task.residue_task( resid ).allowed_residue_types_end();
 			restype_iter != restype_iter_end; ++restype_iter ) {

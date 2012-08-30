@@ -353,7 +353,7 @@ figure_out_icoord_test( ){
 
 	std::cout << "ABOUT TO MAKE EXTENDED POSE" << std::endl;
 
-// 	ResidueTypeCAPs const & rsd_type_list(	rsd_set->aa_map( aa_from_oneletter_code( 'a' )  ) );
+// 	ResidueTypeCOPs const & rsd_type_list(	rsd_set->aa_map( aa_from_oneletter_code( 'a' )  ) );
 // 	std::cout << "SIZE " << rsd_type_list.size() << std::endl;
 // 	for ( Size j=1; j<= rsd_type_list.size(); ++j ) {
 // 		ResidueType const & rsd_type( *(rsd_type_list[j]) );

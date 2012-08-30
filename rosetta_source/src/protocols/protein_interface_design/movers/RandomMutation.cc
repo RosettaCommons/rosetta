@@ -115,11 +115,11 @@ RandomMutation::apply( core::pose::Pose & pose )
 		return;
 	}
 	core::Size const random_entry = being_designed[ (core::Size) floor( RG.uniform() * being_designed.size() )+1 ];
-  typedef list< ResidueTypeCAP > ResidueTypeCAPList;
-  ResidueTypeCAPList const & allowed( task->residue_task( random_entry ).allowed_residue_types() );
+  typedef list< ResidueTypeCOP > ResidueTypeCOPList;
+  ResidueTypeCOPList const & allowed( task->residue_task( random_entry ).allowed_residue_types() );
   utility::vector1< AA > allow_temp;
   allow_temp.clear();
-  foreach( ResidueTypeCAP const t, allowed ){
+  foreach( ResidueTypeCOP const t, allowed ){
 		if( t->aa() != pose.residue( random_entry ).aa() )
     	allow_temp.push_back( t->aa() );
 	}

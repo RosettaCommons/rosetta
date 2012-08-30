@@ -118,8 +118,8 @@ main( int argc, char * argv [] )
     // read centroid residue set
     chemical::ResidueTypeSetCAP rsd_set( chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" ) );
     for ( Size i=1; i<= 20; ++i ) {
-      ResidueTypeCAPs const & rsd_list( rsd_set->aa_map( static_cast<AA>(i) ) /*BAD*/ );
-      for ( ResidueTypeCAPs::const_iterator iter=rsd_list.begin(), iter_end= rsd_list.end(); iter!= iter_end; ++iter ) {
+      ResidueTypeCOPs const & rsd_list( rsd_set->aa_map( static_cast<AA>(i) ) /*BAD*/ );
+      for ( ResidueTypeCOPs::const_iterator iter=rsd_list.begin(), iter_end= rsd_list.end(); iter!= iter_end; ++iter ) {
 	ResidueType const & rsd_type( **iter );
 	if ( ( rsd_type.is_lower_terminus() == ( i == 1 ) ) &&
 	  ( rsd_type.is_upper_terminus() == ( i == 20 ) ) ) {

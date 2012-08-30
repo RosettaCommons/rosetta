@@ -1042,7 +1042,7 @@ assign_random_continuous_rotamer(
 				resatc.set_chi( ii, rotdata.chi_mean()[ii] - iisd + 2 * iisd * iichi_randval );
 			}
 		}
-		chemical::ResidueTypeCAP ran_restype( rotset.restype_for_rotblock( ran_rotblock_for_ranrot ));
+		chemical::ResidueTypeCOP ran_restype( rotset.restype_for_rotblock( ran_rotblock_for_ranrot ));
 		for ( Size ii = 1; ii  <= ran_restype->n_proton_chi(); ++ii ) {
 			Size ii_chi = ran_restype->proton_chi_2_chi( ii );
 			utility::vector1< Real > const & ii_chi_samples = ran_restype->proton_chi_samples( ii );

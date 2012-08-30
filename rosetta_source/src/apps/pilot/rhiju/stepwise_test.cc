@@ -1199,8 +1199,8 @@ peptide_plane_test_OLD(){
 		chemical::add_variant_type_to_pose_residue( peptide_plane_pose, "N_ACETYLATION", 1   );
 
 		if ( false ){
-			//ResidueTypeCAP new_rsd_type( ResidueSelector().set_name1( 'W' ).set_property( "N_ACETYLATION" ).select( *rsd_set )[1] );
-			ResidueTypeCAP new_rsd_type( rsd_set->get_residue_type_with_variant_added( pose.residue(1).type(), "N_ACETYLATION" ) );
+			//ResidueTypeCOP new_rsd_type( ResidueSelector().set_name1( 'W' ).set_property( "N_ACETYLATION" ).select( *rsd_set )[1] );
+			ResidueTypeCOP new_rsd_type( rsd_set->get_residue_type_with_variant_added( pose.residue(1).type(), "N_ACETYLATION" ) );
 
 			ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type ) );
 
@@ -1363,7 +1363,7 @@ score12_plot_test()
 		seqstream >> sequence;
 
 		char const seqchar( protein_sequence[i-1] );
-		//		ResidueTypeCAP new_rsd_type( ResidueSelector().set_name1( seqchar ).exclude_variants().select( *rsd_set )[1] );
+		//		ResidueTypeCOP new_rsd_type( ResidueSelector().set_name1( seqchar ).exclude_variants().select( *rsd_set )[1] );
 		//		ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type ) );
 
 		std::cout << "DOING: " << seqchar << std::endl;

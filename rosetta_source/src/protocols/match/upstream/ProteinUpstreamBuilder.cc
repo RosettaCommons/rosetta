@@ -310,7 +310,7 @@ BuildSet::operator = ( BuildSet const & rhs )
 
 
 void BuildSet::set_residue_type(
-	core::chemical::ResidueTypeCAP restype,
+	core::chemical::ResidueTypeCOP restype,
 	bool backbone_only
 )
 {
@@ -1146,7 +1146,7 @@ ProteinUpstreamBuilder::n_restypes_to_build() const
 	return build_sets_.size();
 }
 
-core::chemical::ResidueTypeCAP
+core::chemical::ResidueTypeCOP
 ProteinUpstreamBuilder::restype( Size which_restype ) const
 {
 	return & ( build_sets_[ which_restype ].restype() );
@@ -1211,13 +1211,13 @@ ProteinUpstreamBuilder::add_build_set(
 }
 
 BuildSet const &
-ProteinUpstreamBuilder::build_set( core::chemical::ResidueTypeCAP restype ) const
+ProteinUpstreamBuilder::build_set( core::chemical::ResidueTypeCOP restype ) const
 {
 	return const_cast< ProteinUpstreamBuilder * > (this)->build_set( restype );
 }
 
 BuildSet &
-ProteinUpstreamBuilder::build_set( core::chemical::ResidueTypeCAP restype )
+ProteinUpstreamBuilder::build_set( core::chemical::ResidueTypeCOP restype )
 {
 	for ( Size ii = 1; ii <= build_sets_.size(); ++ii ) {
 		if ( & (build_sets_[ ii ].restype()) == restype() ) {

@@ -493,13 +493,13 @@ LigandBaseProtocol::make_packer_task(
 		if( !this_rsd.is_polymer() && ligand_protonation ) {
 			using namespace core::chemical;
 			ResidueTypeSet const & rsd_type_set = this_rsd.residue_type_set();
-			ResidueTypeCAPs allowed_types = rsd_type_set.name3_map( this_rsd.name3() ); // a vector1
+			ResidueTypeCOPs allowed_types = rsd_type_set.name3_map( this_rsd.name3() ); // a vector1
 			for( core::Size j = 1; j <= allowed_types.size(); ++j ) {
 				if( allowed_types[j]->name() == this_rsd.name() ) continue; // already in the task's list
 				pack_task->nonconst_residue_task( i ).allow_noncanonical_aa( allowed_types[j]->name() );
 			}
 			TR << "Allowed residues at position " << i << ":" << std::endl;
-			for(ResidueLevelTask::ResidueTypeCAPListConstIter rt = pack_task->nonconst_residue_task( i ).allowed_residue_types_begin();
+			for(ResidueLevelTask::ResidueTypeCOPListConstIter rt = pack_task->nonconst_residue_task( i ).allowed_residue_types_begin();
 				rt != pack_task->nonconst_residue_task( i ).allowed_residue_types_end(); ++rt) {
 				TR << "  " << (*rt)->name() << std::endl;
 			}
@@ -987,7 +987,7 @@ LigandBaseProtocol::get_non_bb_clashing_rotamers(
 	//graph::GraphOP neighbor_graph = pack::create_packer_graph( pose, *scofx, help_task );
 	graph::GraphOP neighbor_graph = new graph::Graph( pose.energies().energy_graph() );
 
-	chemical::ResidueTypeCAP res_type = & pose.residue_type( seqpos );
+	chemical::ResidueTypeCOP res_type = & pose.residue_type( seqpos );
 	conformation::Residue const & existing_residue( pose.residue( seqpos ) );
 
 	utility::vector1< utility::vector1< Real > > extra_chi_steps( res_type->nchi() );

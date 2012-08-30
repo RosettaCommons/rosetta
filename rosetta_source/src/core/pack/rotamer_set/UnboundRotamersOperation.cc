@@ -138,7 +138,7 @@ UnboundRotamersOperation::alter_rotamer_set(
 		if(seqnum > ubr_pose.total_residue()) continue;
 		core::chemical::ResidueType const & restype = ubr_pose.residue_type(seqnum);
 		bool type_is_allowed = false;
-		for(core::pack::task::ResidueLevelTask::ResidueTypeCAPListConstIter j = rtask.allowed_residue_types_begin(),
+		for(core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter j = rtask.allowed_residue_types_begin(),
 			j_end = rtask.allowed_residue_types_end(); j != j_end; ++j)
 		{
 			if( restype.name() == (**j).name() ) {

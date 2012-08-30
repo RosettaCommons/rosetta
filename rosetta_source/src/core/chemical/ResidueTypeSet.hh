@@ -75,7 +75,7 @@ class ResidueTypeSet : public utility::pointer::ReferenceCount
 {
 public:
 	typedef std::list< AA >::const_iterator AAsIter;
-	typedef	std::map< std::string, ResidueTypeCAP >::const_iterator const_residue_iterator;
+	typedef	std::map< std::string, ResidueTypeCOP >::const_iterator const_residue_iterator;
 
 public:
 
@@ -152,7 +152,7 @@ public:
 	/// @details 3-letter name is not unique to each ResidueType
 	/// for example, 3-letter name "HIS" matches both his tautomers,
 	/// HIS and HIS_D. Return an empty list if no match is found.
-	ResidueTypeCAPs const &
+	ResidueTypeCOPs const &
 	name3_map( std::string const & name ) const
 	{
 		assert( name.size() == 3 );
@@ -224,7 +224,7 @@ public:
 	///
 	/// @details similar to name3_map, return all matched residue types
 	/// or an empty list.
-	ResidueTypeCAPs const &
+	ResidueTypeCOPs const &
 	aa_map( AA const & aa ) const
 	{
 		if ( aa_map_.find( aa ) == aa_map_.end() ) {
@@ -237,7 +237,7 @@ public:
 	void
 	select_residues(
 		ResidueSelector const & selector,
-		ResidueTypeCAPs & matches
+		ResidueTypeCOPs & matches
 	) const;
 
 	/// @brief beginning of aas_defined_ list
@@ -261,7 +261,7 @@ public:
 	}
 
 	/// alternate access to all residuetypes as vector
-	ResidueTypeCAPs const &
+	ResidueTypeCOPs const &
 	residue_types() const
 	{
 		return residue_types_const_;
@@ -310,21 +310,21 @@ private:
 	ResidueTypeOPs residue_types_;
 
 	/// for handing out
-	ResidueTypeCAPs residue_types_const_;
+	ResidueTypeCOPs residue_types_const_;
 
 	/// @brief null list of residues when query fails
 	//should make this static or something
-	ResidueTypeCAPs empty_residue_list_;
+	ResidueTypeCOPs empty_residue_list_;
 
 
 	/// @brief map to ResidueType pointers by AA enum
-	std::map< AA, ResidueTypeCAPs > aa_map_;
+	std::map< AA, ResidueTypeCOPs > aa_map_;
 
 	/// @brief map to ResidueType pointers by 3-letter string name
-	std::map< std::string, ResidueTypeCAPs > name3_map_;
+	std::map< std::string, ResidueTypeCOPs > name3_map_;
 
 	/// @brief map to ResidueType pointers by unique residue id
-	std::map< std::string, ResidueTypeCAP > name_map_;
+	std::map< std::string, ResidueTypeCOP > name_map_;
 
 	/// @brief map to ResidueType pointers by unique residue id, for nonconst access
 	std::map< std::string, ResidueTypeOP > nonconst_name_map_;

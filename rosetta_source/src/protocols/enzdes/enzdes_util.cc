@@ -346,7 +346,7 @@ recreate_task(
 		else{
 			utility::vector1< bool > keep_aas( core::chemical::num_canonical_aas, false );
 
-      for( ResidueLevelTask::ResidueTypeCAPListConstIter res_it = orig_task.residue_task( i ).allowed_residue_types_begin(); res_it != orig_task.residue_task( i ).allowed_residue_types_end(); ++res_it) {
+      for( ResidueLevelTask::ResidueTypeCOPListConstIter res_it = orig_task.residue_task( i ).allowed_residue_types_begin(); res_it != orig_task.residue_task( i ).allowed_residue_types_end(); ++res_it) {
 
         keep_aas[ (*res_it)->aa() ] = true;
       }

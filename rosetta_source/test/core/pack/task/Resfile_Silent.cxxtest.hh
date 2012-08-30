@@ -90,8 +90,8 @@ public:
 		for ( int i=1, it_end = tA.total_residue(); i <= it_end; ++i){
 			TS_ASSERT_EQUALS( tA.pack_residue( i ), tB.pack_residue( i ) );
 			TS_ASSERT_EQUALS( tA.design_residue( i ), tB.design_residue( i ) );
-			ResidueLevelTask::ResidueTypeCAPListConstIter itA( tA.residue_task( i ).allowed_residue_types_begin() );
-			ResidueLevelTask::ResidueTypeCAPListConstIter itB( tB.residue_task( i ).allowed_residue_types_begin() );
+			ResidueLevelTask::ResidueTypeCOPListConstIter itA( tA.residue_task( i ).allowed_residue_types_begin() );
+			ResidueLevelTask::ResidueTypeCOPListConstIter itB( tB.residue_task( i ).allowed_residue_types_begin() );
 			while( itA != tA.residue_task( i ).allowed_residue_types_end() )
 				{
 					TS_ASSERT_EQUALS( (*itA)->name(), (*itB)->name() );

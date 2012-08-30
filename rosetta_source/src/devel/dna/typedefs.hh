@@ -25,9 +25,9 @@
 namespace devel {
 namespace dna {
 
-typedef std::map< core::Size, core::chemical::ResidueTypeCAP > ResTypeSequence;
+typedef std::map< core::Size, core::chemical::ResidueTypeCOP > ResTypeSequence;
 typedef utility::vector1< ResTypeSequence > ResTypeSequences;
-typedef std::map< core::Size, core::chemical::ResidueTypeCAPs > TypesMap;
+typedef std::map< core::Size, core::chemical::ResidueTypeCOPs > TypesMap;
 typedef utility::vector1< core::Size > Positions;
 typedef utility::vector1< std::string > Strings;
 

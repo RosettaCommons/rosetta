@@ -123,7 +123,7 @@ void init_usage_prompt( std::string exe ) {
 /// basically a copy of the function in core::pack::rotamer_set::bb_independent_rotamers.hh, but it samples more chi angles
 /// thereby building more rotamers. 
 ///
-void build_bb_independent_rotamers( core::chemical::ResidueTypeCAP target_res_restype, utility::vector1< core::conformation::ResidueOP > & rotamers ) {
+void build_bb_independent_rotamers( core::chemical::ResidueTypeCOP target_res_restype, utility::vector1< core::conformation::ResidueOP > & rotamers ) {
 
 	using namespace core;
 	using namespace core::conformation;
@@ -525,7 +525,7 @@ main( int argc, char * argv [] ) {
 			TR << "Building generic residues for residue " << reference_res.name3() << "-" << reference_res.seqpos() << std::endl;
 
 			// use a function written for the enzyme design application to build residue specific rotamers
-			core::chemical::ResidueTypeCAP invrot_restype( reference_res.type() );
+			core::chemical::ResidueTypeCOP invrot_restype( reference_res.type() );
 			
 			utility::vector1< conformation::ResidueOP > rotamers;
 			build_bb_independent_rotamers( invrot_restype, rotamers );

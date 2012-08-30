@@ -91,7 +91,7 @@ public:
 	n_restypes_to_build() const = 0;
 
 	virtual
-	core::chemical::ResidueTypeCAP
+	core::chemical::ResidueTypeCOP
 	restype( Size which_restype ) const = 0;
 
 	virtual bool compatible(

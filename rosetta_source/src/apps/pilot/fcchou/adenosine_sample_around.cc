@@ -120,7 +120,7 @@ add_virtual_res ( core::pose::Pose & pose, bool set_res_as_root = true ) {
 	// attach virt res there
 	bool fullatom = pose.is_fullatom();
 	core::chemical::ResidueTypeSet const & residue_set = pose.residue_type ( 1 ).residue_type_set();
-	core::chemical::ResidueTypeCAPs const & rsd_type_list ( residue_set.name3_map ( "VRT" ) );
+	core::chemical::ResidueTypeCOPs const & rsd_type_list ( residue_set.name3_map ( "VRT" ) );
 	core::conformation::ResidueOP new_res ( core::conformation::ResidueFactory::create_residue ( *rsd_type_list[1] ) );
 	pose.append_residue_by_jump ( *new_res , 1 );
 
@@ -138,7 +138,7 @@ add_another_virtual_res ( core::pose::Pose & pose ) {
 	// attach virt res there
 	bool fullatom = pose.is_fullatom();
 	core::chemical::ResidueTypeSet const & residue_set = pose.residue_type ( 1 ).residue_type_set();
-	core::chemical::ResidueTypeCAPs const & rsd_type_list ( residue_set.name3_map ( "VRT" ) );
+	core::chemical::ResidueTypeCOPs const & rsd_type_list ( residue_set.name3_map ( "VRT" ) );
 	core::conformation::ResidueOP new_res ( core::conformation::ResidueFactory::create_residue ( *rsd_type_list[1] ) );
 	pose.append_residue_by_jump ( *new_res , pose.total_residue() );
 }
@@ -379,12 +379,12 @@ adenine_probe_score_test()
 	if ( sample_another_adenosine_ ) add_another_virtual_res(pose); // this is the coordinate system for the next base.
 
 	if ( sample_water_ ) {
-		core::chemical::ResidueTypeCAPs const & rsd_type_list ( residue_set.name3_map ( "TP3" ) );
+		core::chemical::ResidueTypeCOPs const & rsd_type_list ( residue_set.name3_map ( "TP3" ) );
 		new_res = ( core::conformation::ResidueFactory::create_residue ( *rsd_type_list[1] ) );
 	} else if ( sample_another_adenosine_ ){
 		new_res = pose.residue(1).clone();
 	} else {
-		core::chemical::ResidueTypeCAPs const & rsd_type_list ( residue_set.name3_map ( "  C" ) ); // just a carbon atom.
+		core::chemical::ResidueTypeCOPs const & rsd_type_list ( residue_set.name3_map ( "  C" ) ); // just a carbon atom.
 		new_res = ( core::conformation::ResidueFactory::create_residue ( *rsd_type_list[1] ) );
 	}
 

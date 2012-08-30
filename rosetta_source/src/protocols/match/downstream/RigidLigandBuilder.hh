@@ -62,7 +62,7 @@ public:
 	RigidLigandBuilder( RigidLigandBuilder const & );
 
 	//initiates collision check in the Secondary matcher
-//	RigidLigandBuilder( RigidLigandBuilder const & , core::chemical::ResidueTypeCAP upstream_restype );
+//	RigidLigandBuilder( RigidLigandBuilder const & , core::chemical::ResidueTypeCOP upstream_restype );
 
 	virtual ~RigidLigandBuilder();
 
@@ -175,7 +175,7 @@ public:
 //  get_min_sep_d2_from_upstream_atoms() const;
 
   virtual
-	core::chemical::ResidueTypeCAP
+	core::chemical::ResidueTypeCOP
   get_upstream_restype() const;
 
 public:
@@ -203,7 +203,7 @@ public:
 
 	void
 	initialize_upstream_residue(
-		core::chemical::ResidueTypeCAP upstream_res,
+		core::chemical::ResidueTypeCOP upstream_res,
 		core::scoring::etable::count_pair::CountPairFunctionCOP count_pair = 0
 	);
 
@@ -226,8 +226,8 @@ private:
 
 private:
 
-	core::chemical::ResidueTypeCAP downstream_restype_;
-	core::chemical::ResidueTypeCAP upstream_restype_;
+	core::chemical::ResidueTypeCOP downstream_restype_;
+	core::chemical::ResidueTypeCOP upstream_restype_;
 
 	bool ignore_h_collisions_;
 

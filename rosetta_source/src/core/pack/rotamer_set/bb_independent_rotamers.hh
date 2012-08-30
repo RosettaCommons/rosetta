@@ -36,7 +36,7 @@ namespace rotamer_set {
 /// in packing
 utility::vector1< core::conformation::ResidueCOP >
 bb_independent_rotamers(
-	core::chemical::ResidueTypeCAP rot_restype,
+	core::chemical::ResidueTypeCOP rot_restype,
 	bool ignore_cmdline = false
 );
 

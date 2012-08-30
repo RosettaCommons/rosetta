@@ -124,14 +124,14 @@ construct_poly_uniq_restype_pose(
 			if( !variants_match ){
 
 				current_variants = cur_restype->variant_types();
-				chemical::ResidueType var_replace_type = replace_res.type();
+				chemical::ResidueTypeCOP var_replace_type = & ( replace_res.type() );
 
 				for(core::Size var = 1; var <= current_variants.size(); var++){
-					var_replace_type = restype_set->get_residue_type_with_variant_added( var_replace_type, current_variants[ var ] );
+					var_replace_type = & ( restype_set->get_residue_type_with_variant_added( * var_replace_type, current_variants[ var ] ));
 				}
 
-				//runtime_assert( var_replace_type.name3() == "ALA" );
-				conformation::Residue const var_replace_res( restype_set->name_map( var_replace_type.name() ), true );
+				//runtime_assert( var_replace_type->name3() == "ALA" );
+				conformation::Residue const var_replace_res( *var_replace_type, true );
 
 				pose.replace_residue( *pos_it, var_replace_res, true );
 			}
@@ -179,14 +179,14 @@ construct_poly_XXX_pose(
 			if( !variants_match ){
 
 				current_variants = cur_restype->variant_types();
-				chemical::ResidueType var_replace_type = replace_res.type();
+				chemical::ResidueTypeCOP var_replace_type = & replace_res.type();
 
 				for(core::Size var = 1; var <= current_variants.size(); var++){
-					var_replace_type = restype_set->get_residue_type_with_variant_added( var_replace_type, current_variants[ var ] );
+					var_replace_type = & ( restype_set->get_residue_type_with_variant_added( * var_replace_type, current_variants[ var ] ));
 				}
 
-				runtime_assert( var_replace_type.name3() == aa );
-				conformation::Residue const var_replace_res( restype_set->name_map( var_replace_type.name() ), true );
+				runtime_assert( var_replace_type->name3() == aa );
+				conformation::Residue const var_replace_res( *var_replace_type, true );
 
 				pose.replace_residue( *pos_it, var_replace_res, true );
 			}

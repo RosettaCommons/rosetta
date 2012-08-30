@@ -135,7 +135,7 @@ public:
 
 public:
 
-	void set_residue_type( core::chemical::ResidueTypeCAP restype );
+	void set_residue_type( core::chemical::ResidueTypeCOP restype );
 
 	void add_external_geom_sampler(
 		toolbox::match_enzdes_util::ExternalGeomSampler const & sampler,
@@ -173,7 +173,7 @@ public:
 	}
 
 private:
-	core::chemical::ResidueTypeCAP  restype_;
+	core::chemical::ResidueTypeCOP  restype_;
 
 	utility::vector1< toolbox::match_enzdes_util::ExternalGeomSampler > external_samplers_;
 	utility::vector1< utility::fixedsizearray1< Size, 3 > > launch_points_;

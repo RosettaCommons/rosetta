@@ -324,12 +324,12 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 
 		ResidueTypeSet const & res2_set( trpcage.residue( 2 ).residue_type_set() );
-		ResidueTypeCAPs const & aas( res2_set.aa_map( aa_phe ));
+		ResidueTypeCOPs const & aas( res2_set.aa_map( aa_phe ));
 
 		BuildSet build_set;
 
 		/// Find the matching phe residue type for residue 2.
-		for ( ResidueTypeCAPs::const_iterator
+		for ( ResidueTypeCOPs::const_iterator
 				aas_iter = aas.begin(),
 				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
 			if ( trpcage.residue(2).type().variants_match(**aas_iter )) {
@@ -358,12 +358,12 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 		OriginalBackboneBuildPointOP res2bp = new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 );
 
 		ResidueTypeSet const & res2_set( trpcage.residue( 2 ).residue_type_set() );
-		ResidueTypeCAPs const & aas( res2_set.aa_map( aa_phe ));
+		ResidueTypeCOPs const & aas( res2_set.aa_map( aa_phe ));
 
 		BuildSet build_set;
 
 		/// Find the matching phe residue type for residue 2.
-		for ( ResidueTypeCAPs::const_iterator
+		for ( ResidueTypeCOPs::const_iterator
 				aas_iter = aas.begin(),
 				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
 			if ( trpcage.residue(2).type().variants_match(**aas_iter )) {
@@ -414,12 +414,12 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 		OriginalBackboneBuildPointOP res2bp = new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 );
 
 		ResidueTypeSet const & res2_set( trpcage.residue( 2 ).residue_type_set() );
-		ResidueTypeCAPs const & aas( res2_set.aa_map( aa_phe ));
+		ResidueTypeCOPs const & aas( res2_set.aa_map( aa_phe ));
 
 		BuildSet build_set;
 
 		/// Find the matching phe residue type for residue 2.
-		for ( ResidueTypeCAPs::const_iterator
+		for ( ResidueTypeCOPs::const_iterator
 				aas_iter = aas.begin(),
 				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
 			if ( trpcage.residue(2).type().variants_match(**aas_iter )) {
@@ -466,12 +466,12 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 		OriginalBackboneBuildPointOP res2bp = new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 );
 
 		ResidueTypeSet const & res2_set( trpcage.residue( 2 ).residue_type_set() );
-		ResidueTypeCAPs const & aas( res2_set.aa_map( aa_phe ));
+		ResidueTypeCOPs const & aas( res2_set.aa_map( aa_phe ));
 
 		BuildSet build_set;
 
 		/// Find the matching phe residue type for residue 2.
-		for ( ResidueTypeCAPs::const_iterator
+		for ( ResidueTypeCOPs::const_iterator
 				aas_iter = aas.begin(),
 				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
 			if ( trpcage.residue(2).type().variants_match(**aas_iter )) {
@@ -553,12 +553,12 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 		OriginalBackboneBuildPointOP res2bp = new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 );
 
 		ResidueTypeSet const & res2_set( trpcage.residue( 2 ).residue_type_set() );
-		ResidueTypeCAPs const & aas( res2_set.aa_map( aa_phe ));
+		ResidueTypeCOPs const & aas( res2_set.aa_map( aa_phe ));
 
 		BuildSet build_set;
 
 		/// Find the matching phe residue type for residue 2.
-		for ( ResidueTypeCAPs::const_iterator
+		for ( ResidueTypeCOPs::const_iterator
 				aas_iter = aas.begin(),
 				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
 			if ( trpcage.residue(2).type().variants_match(**aas_iter )) {
@@ -637,12 +637,12 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 		OriginalBackboneBuildPointOP res2bp = new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 );
 
 		ResidueTypeSet const & res2_set( trpcage.residue( 2 ).residue_type_set() );
-		ResidueTypeCAPs const & aas( res2_set.aa_map( aa_phe ));
+		ResidueTypeCOPs const & aas( res2_set.aa_map( aa_phe ));
 
 		BuildSet build_set;
 
 		/// Find the matching phe residue type for residue 2.
-		for ( ResidueTypeCAPs::const_iterator
+		for ( ResidueTypeCOPs::const_iterator
 				aas_iter = aas.begin(),
 				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
 			if ( trpcage.residue(2).type().variants_match(**aas_iter )) {
@@ -689,12 +689,12 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 		OriginalBackboneBuildPointOP res2bp = new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 );
 
 		ResidueTypeSet const & res2_set( trpcage.residue( 2 ).residue_type_set() );
-		ResidueTypeCAPs const & aas( res2_set.aa_map( aa_phe ));
+		ResidueTypeCOPs const & aas( res2_set.aa_map( aa_phe ));
 
 		BuildSet build_set;
 
 		/// Find the matching phe residue type for residue 2.
-		for ( ResidueTypeCAPs::const_iterator
+		for ( ResidueTypeCOPs::const_iterator
 				aas_iter = aas.begin(),
 				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
 			if ( trpcage.residue(2).type().variants_match(**aas_iter )) {
@@ -745,12 +745,12 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 		OriginalBackboneBuildPointOP res2bp = new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 );
 
 		ResidueTypeSet const & res2_set( trpcage.residue( 2 ).residue_type_set() );
-		ResidueTypeCAPs const & aas( res2_set.aa_map( aa_phe ));
+		ResidueTypeCOPs const & aas( res2_set.aa_map( aa_phe ));
 
 		BuildSet build_set;
 
 		/// Find the matching phe residue type for residue 2.
-		for ( ResidueTypeCAPs::const_iterator
+		for ( ResidueTypeCOPs::const_iterator
 				aas_iter = aas.begin(),
 				aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
 			if ( trpcage.residue(2).type().variants_match(**aas_iter )) {

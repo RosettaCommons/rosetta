@@ -100,7 +100,7 @@ public:
 
 	/// @brief constructor
 	Translator( RuleSet const &rules,
-		chemical::ResidueTypeCAP fine_res,
+		chemical::ResidueTypeCOP fine_res,
 		chemical::ResidueTypeAP coarse_res
 	);
 
@@ -159,8 +159,8 @@ protected:
 
 private:
 	/// @brief  Pointers to the connected Residue Sets... CHECK these should probably be access pointers CHECK
-	chemical::ResidueTypeCAP coarse_res_type_;
-	chemical::ResidueTypeCAP fine_res_type_;
+	chemical::ResidueTypeCOP coarse_res_type_;
+	chemical::ResidueTypeCOP fine_res_type_;
 
 	/// @brief list of beads, a bead is a AtomList --- which atoms of fine_rsd belong to bead of coarse_rsd
 	BeadList beads_;

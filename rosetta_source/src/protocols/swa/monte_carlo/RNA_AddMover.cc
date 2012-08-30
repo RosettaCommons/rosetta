@@ -99,7 +99,7 @@ namespace monte_carlo {
 			//std::cout << "I want to add: " << newrestype << std::endl;
 
 			chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
-			chemical::ResidueTypeCAPs const & rsd_type_list( rsd_set_->aa_map( my_aa ) );
+			chemical::ResidueTypeCOPs const & rsd_type_list( rsd_set_->aa_map( my_aa ) );
 			// iterate over rsd_types, pick one.
 			chemical::ResidueType const & rsd_type = *rsd_type_list[1];
 			core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
@@ -122,7 +122,7 @@ namespace monte_carlo {
 			//std::cout << "I want to add: " << newrestype << std::endl;
 
 			chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
-			chemical::ResidueTypeCAPs const & rsd_type_list( rsd_set_->aa_map( my_aa ) );
+			chemical::ResidueTypeCOPs const & rsd_type_list( rsd_set_->aa_map( my_aa ) );
 			// iterate over rsd_types, pick one.
 			chemical::ResidueType const & rsd_type = *rsd_type_list[1];
 			core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );

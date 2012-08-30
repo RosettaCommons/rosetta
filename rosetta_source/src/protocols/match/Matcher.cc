@@ -179,7 +179,7 @@ void Matcher::set_n_geometric_constraints( Size n_constraints )
 
 void Matcher::add_upstream_restype_for_constraint(
 	Size cst_id,
-	core::chemical::ResidueTypeCAP restype
+	core::chemical::ResidueTypeCOP restype
 )
 {
 	/// ASSUMPTION: matching from protein sidechain
@@ -208,7 +208,7 @@ void Matcher::add_upstream_restype_for_constraint(
 
 void Matcher::set_sample_startegy_for_constraint(
 	Size cst_id,
-	core::chemical::ResidueTypeCAP restype,
+	core::chemical::ResidueTypeCOP restype,
 	Size chi,
 	upstream::SampleStrategyData const & strat
 )
@@ -228,7 +228,7 @@ void Matcher::set_sample_startegy_for_constraint(
 void
 Matcher::set_fa_dun_cutoff_for_constraint(
 	Size cst_id,
-	core::chemical::ResidueTypeCAP restype,
+	core::chemical::ResidueTypeCOP restype,
 	core::Real fa_dun_cutoff
 )
 {
@@ -245,7 +245,7 @@ Matcher::set_fa_dun_cutoff_for_constraint(
 
 void Matcher::add_external_geometry_samples_for_constraint(
 	Size cst_id,
-	core::chemical::ResidueTypeCAP restype,
+	core::chemical::ResidueTypeCOP restype,
 	utility::vector1< std::string >  const & upstream_launch_atoms,
 	utility::vector1< core::id::AtomID > const & downstream_3atoms,
 	toolbox::match_enzdes_util::ExternalGeomSampler const & exgeom,
@@ -339,8 +339,8 @@ void Matcher::add_external_geometry_samples_for_constraint(
 void Matcher::add_secondary_upstream_match_geometry_for_constraint(
 	Size geom_cst_id,
 	Size target_geom_cst_id,
-	core::chemical::ResidueTypeCAP candidate_restype,
-	core::chemical::ResidueTypeCAP target_restype,
+	core::chemical::ResidueTypeCOP candidate_restype,
+	core::chemical::ResidueTypeCOP target_restype,
 	utility::vector1< Size > const & candidate_atids,
 	utility::vector1< Size > const & target_atids,
 	toolbox::match_enzdes_util::MatchConstraintFileInfoCOP mcfi,
@@ -400,8 +400,8 @@ void Matcher::add_secondary_upstream_match_geometry_for_constraint(
 void
 Matcher::add_secondary_downstream_match_geometry_for_constraint(
 	Size geom_cst_id,
-	core::chemical::ResidueTypeCAP candidate_restype,
-	core::chemical::ResidueTypeCAP downstream_restype,
+	core::chemical::ResidueTypeCOP candidate_restype,
+	core::chemical::ResidueTypeCOP downstream_restype,
 	utility::vector1< Size > const & candidate_atids,
 	utility::vector1< Size > const & target_atids,
 	toolbox::match_enzdes_util::MatchConstraintFileInfoCOP mcfi,
@@ -552,7 +552,7 @@ Matcher::initialize_from_task(
 		static_cast< upstream::ProteinUpstreamBuilder * > ( upstream_builders_[ ii ].get() ));
 
 		toolbox::match_enzdes_util::MatchConstraintFileInfoListCOP constraint_list = (mtask.enz_input_data())->mcfi_list( ii );
-		utility::vector1< core::chemical::ResidueTypeCAP > const & upres( constraint_list->upstream_restypes() );
+		utility::vector1< core::chemical::ResidueTypeCOP > const & upres( constraint_list->upstream_restypes() );
 
 		for ( Size jj = 1; jj <= upres.size(); ++jj ) {
 
@@ -676,7 +676,7 @@ void Matcher::initialize_from_file(
 
 		MatchConstraintFileInfoListCOP constraint_list = enz_data.mcfi_list( ii );
 
-		utility::vector1< core::chemical::ResidueTypeCAP > const & upres( constraint_list->upstream_restypes() );
+		utility::vector1< core::chemical::ResidueTypeCOP > const & upres( constraint_list->upstream_restypes() );
 
 		for ( Size jj = 1; jj <= upres.size(); ++jj ) {
 			add_upstream_restype_for_constraint( ii, upres[ jj ] );
@@ -1028,7 +1028,7 @@ void Matcher::initialize_from_file(
 
 				for ( Size ll = 1; ll <= jj_mcfis[ kk ]->allowed_restypes( downstream_id ).size(); ++ll ) {
 
-					core::chemical::ResidueTypeCAP ll_downres( jj_mcfis[ kk ]->allowed_restypes( downstream_id )[ ll ] );
+					core::chemical::ResidueTypeCOP ll_downres( jj_mcfis[ kk ]->allowed_restypes( downstream_id )[ ll ] );
 
 					utility::vector1< std::string > upstream_launch_atoms( 3 );
 					//utility::vector1< std::string > downstream_launch_atoms( 3 ); /// TEMP HACK.  Assume single ligand downstream
@@ -1618,7 +1618,7 @@ Matcher::initialize_downstream_algorithms()
 downstream::DownstreamBuilderOP
 Matcher::create_ds_builder(
 	Size const cst_id,
-	core::chemical::ResidueTypeCAP restype,
+	core::chemical::ResidueTypeCOP restype,
 	utility::vector1< std::string >  const & upstream_launch_atoms,
 	utility::vector1< core::id::AtomID > const & downstream_3atoms,
 	bool enumerate_ligand_rotamers,

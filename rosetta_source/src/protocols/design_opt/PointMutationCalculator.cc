@@ -613,10 +613,10 @@ PointMutationCalculator::calc_point_mut_filters(
 	for( Size iresi = 1; iresi <= being_designed.size(); ++iresi ){
 		Size const resi( being_designed[ iresi ] );
 		//create vector< AA > of allowed residue types at seqpos
-		typedef std::list< ResidueTypeCAP > ResidueTypeCAPList;
-		ResidueTypeCAPList const & allowed( task->residue_task( resi ).allowed_residue_types() );
+		typedef std::list< ResidueTypeCOP > ResidueTypeCOPList;
+		ResidueTypeCOPList const & allowed( task->residue_task( resi ).allowed_residue_types() );
 		vector1< AA > allow_temp;
-		foreach( ResidueTypeCAP const t, allowed ){
+		foreach( ResidueTypeCOP const t, allowed ){
 			if(std::find(allow_temp.begin(),allow_temp.end(),t->aa())!=allow_temp.end()) continue;
 			allow_temp.push_back( t->aa() );
 		}

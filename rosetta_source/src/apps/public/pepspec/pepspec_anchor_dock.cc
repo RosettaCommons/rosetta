@@ -242,7 +242,7 @@ make_sequence_change(
 	conformation::Residue const & current_rsd( pose.residue( seqpos ) );
 	if ( current_rsd.aa() == new_aa ) return; // already done
 
-	chemical::ResidueTypeCAPs rsd_types
+	chemical::ResidueTypeCOPs rsd_types
 		( chemical::ResidueSelector().set_aa( new_aa ).match_variants( current_rsd.type() ).select( current_rsd.residue_type_set() ) );
 
 	Size rsd_types_index( 1 );

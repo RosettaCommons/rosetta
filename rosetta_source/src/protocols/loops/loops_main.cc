@@ -1144,7 +1144,7 @@ apply_sequence_mapping(
 			char const new_seq( target_seq[ mapping[i]-1 ] ); // strings are 0-indexed
 			if ( new_seq != pose.residue(i).name1() ) {
 				// will fail if .select(...) returns empty list
-				ResidueTypeCAP new_rsd_type
+				ResidueTypeCOP new_rsd_type
 					( ResidueSelector().set_name1( new_seq ).match_variants( pose.residue(i).type() ).select( rsd_set )[1] );
 				ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type, pose.residue(i), pose.conformation() ) );
 				pose.replace_residue( i, *new_rsd, false );
@@ -1176,7 +1176,7 @@ apply_sequence_mapping(
 	while ( mapping[ 1 ] != 1 ) {
 		int const aligned_pos( mapping[1] - 1 );
 		char const new_seq( target_seq[ aligned_pos-1 ] ); // 0-indexed
-		ResidueTypeCAP new_rsd_type( ResidueSelector().set_name1( new_seq ).exclude_variants().select( rsd_set )[1] );
+		ResidueTypeCOP new_rsd_type( ResidueSelector().set_name1( new_seq ).exclude_variants().select( rsd_set )[1] );
 		ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type ) );
 		pose.conformation().safely_prepend_polymer_residue_before_seqpos( *new_rsd, 1, true );
 		pose.set_omega( 1, 180.0 );
@@ -1187,7 +1187,7 @@ apply_sequence_mapping(
 		int const seqpos( mapping.size1() + 1 );
 		int const aligned_pos( mapping[seqpos-1] + 1 );
 		char const new_seq( target_seq[ aligned_pos-1 ] ); // 0-indexed
-		ResidueTypeCAP new_rsd_type( ResidueSelector().set_name1( new_seq ).exclude_variants().select( rsd_set )[1] );
+		ResidueTypeCOP new_rsd_type( ResidueSelector().set_name1( new_seq ).exclude_variants().select( rsd_set )[1] );
 		ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type ) );
 		pose.conformation().safely_append_polymer_residue_after_seqpos( *new_rsd, seqpos-1, true );
 		pose.set_omega( seqpos-1, 180.0 );
@@ -1207,7 +1207,7 @@ apply_sequence_mapping(
 				}
 				int const aligned_pos( cutpoint+1 );
 				char const new_seq( target_seq[ aligned_pos - 1 ] ); // 0-indexed
-				ResidueTypeCAP new_rsd_type( ResidueSelector().set_name1( new_seq ).exclude_variants().select( rsd_set )[1] );
+				ResidueTypeCOP new_rsd_type( ResidueSelector().set_name1( new_seq ).exclude_variants().select( rsd_set )[1] );
 				ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type ) );
 				mapping.insert_aligned_residue( cutpoint + 1, aligned_pos );
 				if ( pose.residue( cutpoint ).is_protein() ) {

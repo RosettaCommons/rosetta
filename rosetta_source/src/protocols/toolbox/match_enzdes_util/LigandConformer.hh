@@ -182,7 +182,7 @@ private:
 
 private:
 
-	core::chemical::ResidueTypeCAP ligand_restype_;
+	core::chemical::ResidueTypeCOP ligand_restype_;
 
 	/// The indices of the three atoms defining the orientation of the
 	/// ligand in the global coordinate frame

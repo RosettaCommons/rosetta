@@ -100,7 +100,7 @@ switch_to_residue_type_set(
 		if( ( rsd.aa() == aa_unk ) || ( rsd.name().substr(0,5) == "HIS_D" ) ){
 			// ligand or metal ions are all defined as "UNK" AA, so check a rsdtype with same name
 			// for HIS_D tautomer, we want to keep its tautomer state
-			core::chemical::ResidueTypeCAPs const & rsd_types( target_residue_type_set->name3_map( rsd.name3() ) );
+			core::chemical::ResidueTypeCOPs const & rsd_types( target_residue_type_set->name3_map( rsd.name3() ) );
 			for (core::Size j=1; j<=rsd_types.size(); ++j ) {
 				core::chemical::ResidueType const & new_rsd_type( *rsd_types[j] );
 				if ( rsd.type().name() == new_rsd_type.name() ) {
@@ -110,7 +110,7 @@ switch_to_residue_type_set(
 			}
 		} else  {
 			// for a normal AA/DNA/RNA residue, now look for a rsdtype with same variants
-			core::chemical::ResidueTypeCAPs const & rsd_types( target_residue_type_set->name3_map( rsd.name().substr(0,3) ) );
+			core::chemical::ResidueTypeCOPs const & rsd_types( target_residue_type_set->name3_map( rsd.name().substr(0,3) ) );
 			for ( core::Size j=1; j<= rsd_types.size(); ++j ) {
 				core::chemical::ResidueType const & new_rsd_type( *rsd_types[j] );
 				if ( rsd.type().variants_match( new_rsd_type ) ) {

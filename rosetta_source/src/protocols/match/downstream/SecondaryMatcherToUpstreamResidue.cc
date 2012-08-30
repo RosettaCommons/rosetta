@@ -288,7 +288,7 @@ SecondaryMatcherToUpstreamResidue::build(
 	for ( Size ii = 1; ii <= target_geomcst_coords_->n_restypes(); ++ii ) {
 		core::conformation::Residue target_residue( *target_geomcst_coords_->restype( ii ), false );
 		Size const ii_natoms = target_geomcst_coords_->n_atoms_for_restype( ii );
-    core::chemical::ResidueTypeCAP us_res_type = & upstream_residue.type();
+    core::chemical::ResidueTypeCOP us_res_type = & upstream_residue.type();
     //TR << " sec. matched  residue type:  " << us_res_type->name() << std::endl;
 
 		for ( Size jj = 1; jj <= target_geomcst_coords_->n_rotamers_for_restype( ii ); ++jj ) {
@@ -398,7 +398,7 @@ SecondaryMatcherToUpstreamResidue::n_possible_hits_per_upstream_conformation() c
 }
 
 //void
-//SecondaryMatcherToUpstreamResidue::set_match_restype( core::chemical::ResidueTypeCAP match_restype )
+//SecondaryMatcherToUpstreamResidue::set_match_restype( core::chemical::ResidueTypeCOP match_restype )
 //{
 //
 //}
@@ -410,7 +410,7 @@ SecondaryMatcherToUpstreamResidue::set_target_geomcst_id( Size target_geomcst_id
 }
 
 void
-SecondaryMatcherToUpstreamResidue::add_target_restype( core::chemical::ResidueTypeCAP target_restype )
+SecondaryMatcherToUpstreamResidue::add_target_restype( core::chemical::ResidueTypeCOP target_restype )
 {
 	if( target_restype_index_map_.find( target_restype ) == target_restype_index_map_.end() ){
 		target_restypes_.push_back( target_restype );
@@ -420,7 +420,7 @@ SecondaryMatcherToUpstreamResidue::add_target_restype( core::chemical::ResidueTy
 
 void
 SecondaryMatcherToUpstreamResidue::add_evaluator_for_target_restype(
-	core::chemical::ResidueTypeCAP  target_restype,
+	core::chemical::ResidueTypeCOP  target_restype,
 	SecMatchResiduePairEvaluatorCOP evaluator,
 	Size                            mcfi_id_for_evaluator
 )
@@ -477,7 +477,7 @@ SecondaryMatcherToUpstreamResidue::prepare_for_hit_generation(
 	}
 
 	for ( Size ii = 1; ii <= n_target_restypes; ++ii ) {
-		core::chemical::ResidueTypeCAP iirestype = usbuilder->restype( ii );
+		core::chemical::ResidueTypeCOP iirestype = usbuilder->restype( ii );
 		target_geomcst_coords_->set_restype( ii, iirestype );
 		utility::vector1< bool > atom_required( iirestype->natoms(), false );
 
@@ -671,7 +671,7 @@ void SecondaryMatcherToUpstreamResidue::reorder_restypes(
   //TR << "TARGET RESTYPES: "<< target_restypes_.size() << "UPSTREAMBUILDER RESTYPES: " <<usbuilder.n_restypes_to_build() << std::endl;
 	runtime_assert( target_restypes_.size() == usbuilder.n_restypes_to_build() );
 	for ( Size ii = 1; ii <= usbuilder.n_restypes_to_build(); ++ii ) {
-		std::map< core::chemical::ResidueTypeCAP, Size >::const_iterator
+		std::map< core::chemical::ResidueTypeCOP, Size >::const_iterator
 			olditer = target_restype_index_map_.find( usbuilder.restype( ii ) );
     //TR << "TARGET RESTYPES: " << usbuilder.restype( ii )->name() << std::endl;
 		runtime_assert( olditer != target_restype_index_map_.end() );
@@ -681,7 +681,7 @@ void SecondaryMatcherToUpstreamResidue::reorder_restypes(
 		runtime_assert( old_2_new[ ii ] != 0 );
 	}
 
-	utility::vector1< core::chemical::ResidueTypeCAP >  old_target_restypes( target_restypes_ );
+	utility::vector1< core::chemical::ResidueTypeCOP >  old_target_restypes( target_restypes_ );
 	utility::vector1< EvaluatorSet > old_respair_evaluators( respair_evaluators_ );
 
 	for ( Size ii = 1; ii <= usbuilder.n_restypes_to_build(); ++ii ) {
@@ -710,7 +710,7 @@ void TargetRotamerCoords::set_num_restypes( Size n_restypes )
 
 void TargetRotamerCoords::set_restype(
 	Size restype_index,
-	core::chemical::ResidueTypeCAP restype )
+	core::chemical::ResidueTypeCOP restype )
 {
 	target_restypes_[ restype_index ] = restype;
 }

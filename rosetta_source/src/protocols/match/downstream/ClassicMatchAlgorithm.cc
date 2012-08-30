@@ -385,7 +385,7 @@ ClassicMatchAlgorithm::build_from_three_coords(
 */
 
 
-void ClassicMatchAlgorithm::set_residue_type( core::chemical::ResidueTypeCAP restype )
+void ClassicMatchAlgorithm::set_residue_type( core::chemical::ResidueTypeCOP restype )
 {
 	restype_ = restype;
 	external_samplers_.clear();

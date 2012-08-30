@@ -46,7 +46,7 @@ namespace chemical {
 	/// @brief Make sure requested adducts exist in some residue
 	void
 	error_check_requested_adducts( AdductMap const & add_map,
-		ResidueTypeCAPs const & rsd_types );
+		ResidueTypeCOPs const & rsd_types );
 
 	/// @brief Apply adducts to residue using a boolean mask
 	ResidueTypeOP apply_adducts_to_residue(

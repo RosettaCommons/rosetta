@@ -1764,7 +1764,7 @@ prepare_full_length_start_model(
 	//Write over sequence?
 	for (Size i = 1; i <= desired_sequence.size(); i++ ){
 		char const new_seq = desired_sequence[i-1];
-		ResidueTypeCAP new_rsd_type( ResidueSelector().set_name1( new_seq ).exclude_variants().select( rsd_set )[1] );
+		ResidueTypeCOP new_rsd_type( ResidueSelector().set_name1( new_seq ).exclude_variants().select( rsd_set )[1] );
 		ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type, pose.residue( i ), pose.conformation() ) );
 		pose.replace_residue( i, *new_rsd, false );
 	}
@@ -1796,7 +1796,7 @@ prepare_full_length_start_model(
 	for (Size n = 1; n <= loops.size(); n++ ) {
 		std::cout << "LOOP " << n << " ==> " << loops[n].first << " " << loops[n].second << std::endl;
 		for (Size i = loops[n].first; i <= loops[n].second; i++ ) {
-			ResidueTypeCAP new_rsd_type( ResidueSelector().set_name1( desired_sequence[i-1] ).exclude_variants().select( rsd_set )[1] );
+			ResidueTypeCOP new_rsd_type( ResidueSelector().set_name1( desired_sequence[i-1] ).exclude_variants().select( rsd_set )[1] );
 			ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type ) );
 			pose.conformation().append_polymer_residue_after_seqpos( *new_rsd, i-1, true );
 			pose.set_omega( i, 180.0 );

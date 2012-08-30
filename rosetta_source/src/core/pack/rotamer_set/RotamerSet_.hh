@@ -198,7 +198,7 @@ protected:
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
-		chemical::ResidueTypeCAP concrete_residue,
+		chemical::ResidueTypeCOP concrete_residue,
 		graph::GraphCOP packer_neighbor_graph,
 		bool use_neighbor_context = true
 	);
@@ -210,7 +210,7 @@ protected:
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
-		chemical::ResidueTypeCAP concrete_residue,
+		chemical::ResidueTypeCOP concrete_residue,
 		conformation::Residue const & existing_residue,
 		graph::GraphCOP packer_neighbor_graph,
 		bool use_neighbor_context = true
@@ -227,7 +227,7 @@ protected:
 			scoring::ScoreFunction const &, // scorefxn,
 		task::PackerTask const & task,
 		conformation::Residue const & existing_residue,
-		chemical::ResidueTypeCAP concrete_residue,
+		chemical::ResidueTypeCOP concrete_residue,
 		graph::GraphCOP packer_neighbor_graph
 	);
 
@@ -237,7 +237,7 @@ protected:
 	build_optimize_H_rotamers(
 		pose::Pose const & pose,
 		task::PackerTask const & task,
-		chemical::ResidueTypeCAP concrete_residue,
+		chemical::ResidueTypeCOP concrete_residue,
 		conformation::Residue const & existing_residue
 	);
 
@@ -251,7 +251,7 @@ public:
 		task::PackerTask const & task,
 		int num_10A_neighbors,
 		int chi,
-		chemical::ResidueTypeCAP concrete_residue,
+		chemical::ResidueTypeCOP concrete_residue,
 		utility::vector1< Real > & extra_chi_steps
 	) const;
 

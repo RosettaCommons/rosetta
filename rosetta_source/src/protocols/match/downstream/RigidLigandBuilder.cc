@@ -74,7 +74,7 @@ RigidLigandBuilder::RigidLigandBuilder( RigidLigandBuilder const & other ) :
   }
 }
 
-//RigidLigandBuilder::RigidLigandBuilder( RigidLigandBuilder const & other, core::chemical::ResidueTypeCAP upstream_restype ) :
+//RigidLigandBuilder::RigidLigandBuilder( RigidLigandBuilder const & other, core::chemical::ResidueTypeCOP upstream_restype ) :
 //	parent(other),
 //	downstream_restype_( other.downstream_restype_ ),
 //	upstream_restype_( upstream_restype ),
@@ -410,7 +410,7 @@ RigidLigandBuilder::initialize_from_residue(
 
 void
 RigidLigandBuilder::initialize_upstream_residue(
-	core::chemical::ResidueTypeCAP upstream_res,
+	core::chemical::ResidueTypeCOP upstream_res,
 	core::scoring::etable::count_pair::CountPairFunctionCOP count_pair
 )
 {
@@ -620,7 +620,7 @@ RigidLigandBuilder::get_lig_conformers(core::Size conf_id) const
 //	return min_sep_d2_from_upstream_atoms_;
 //}
 
-core::chemical::ResidueTypeCAP
+core::chemical::ResidueTypeCOP
 RigidLigandBuilder::get_upstream_restype() const
 {
 	return upstream_restype_;

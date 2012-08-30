@@ -188,7 +188,7 @@ public:
 //  get_min_sep_d2_from_upstream_atoms() const = 0;
 
   virtual
-  core::chemical::ResidueTypeCAP
+  core::chemical::ResidueTypeCOP
   get_upstream_restype() const = 0;
 
 	virtual

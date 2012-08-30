@@ -227,7 +227,7 @@ positions_incompatible_with_task(
 
 			// check to see if pose residue type is in list of allowed residue types
 			core::pack::task::ResidueLevelTask const & residueleveltask(packertask.residue_task(i));
-			for (core::pack::task::ResidueLevelTask::ResidueTypeCAPListConstIter iter(residueleveltask.allowed_residue_types_begin());
+			for (core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter iter(residueleveltask.allowed_residue_types_begin());
 			     iter != residueleveltask.allowed_residue_types_end(); ++iter) {
 
 				if ((*iter)->name() == pose.residue_type(i).name()) incompatible = false;

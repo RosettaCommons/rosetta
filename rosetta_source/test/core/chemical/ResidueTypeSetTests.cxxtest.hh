@@ -82,7 +82,7 @@ public:
 		core::Size n_ser_types = rs->name3_map( "SER" ).size();
 		core::Size n_gln_types = rs->name3_map( "GLN" ).size();
 		core::Size n_ser_aa = rs->aa_map( aa_ser ).size();
-		//ResidueTypeCAP pointer10 = rs->residue_types()[10];
+		//ResidueTypeCOP pointer10 = rs->residue_types()[10];
 
 		//now change the residue type set
 		rs->add_residue_type( modser );
@@ -94,7 +94,7 @@ public:
 		TS_ASSERT( n_ser_aa + 1 == rs->aa_map( aa_ser ).size() );
 		TS_ASSERT( rs->has_name("bigser") );
 
-		//ResidueTypeCAP * newpointer10 = &(rs->residue_types()[10]);
+		//ResidueTypeCOP * newpointer10 = &(rs->residue_types()[10]);
 		//TR << "old pointer addr is " << pointer10 << ", new pointer addr is " << newpointer10 << std::endl;
 		//TS_ASSERT( pointer10 == newpointer10 );
 	}

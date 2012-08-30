@@ -390,7 +390,7 @@ main( int argc, char * argv [] )
 	for(int i =1;i<=pose.total_residue();i++){
 
 		if(storage_task->design_residue(i)){
-			for( ResidueLevelTask::ResidueTypeCAPListConstIter aa_iter(storage_task->residue_task(i).allowed_residue_types_begin()),
+			for( ResidueLevelTask::ResidueTypeCOPListConstIter aa_iter(storage_task->residue_task(i).allowed_residue_types_begin()),
 						 aa_end(storage_task->residue_task(i).allowed_residue_types_end());
 					 aa_iter != aa_end; ++aa_iter){
 

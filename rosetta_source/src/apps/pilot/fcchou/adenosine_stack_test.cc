@@ -100,7 +100,7 @@ add_virtual_res ( core::pose::Pose & pose, bool set_res_as_root = true ) {
 	// attach virt res there
 	bool fullatom = pose.is_fullatom();
 	core::chemical::ResidueTypeSet const & residue_set = pose.residue_type ( 1 ).residue_type_set();
-	core::chemical::ResidueTypeCAPs const & rsd_type_list ( residue_set.name3_map ( "VRT" ) );
+	core::chemical::ResidueTypeCOPs const & rsd_type_list ( residue_set.name3_map ( "VRT" ) );
 	core::conformation::ResidueOP new_res ( core::conformation::ResidueFactory::create_residue ( *rsd_type_list[1] ) );
 	pose.append_residue_by_jump ( *new_res , 1 );
 

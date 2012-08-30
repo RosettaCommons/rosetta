@@ -97,7 +97,7 @@ void RotamerSet_::build_rotamers(
 {
 	using namespace chemical;
 
-	for ( task::ResidueLevelTask::ResidueTypeCAPListConstIter
+	for ( task::ResidueLevelTask::ResidueTypeCOPListConstIter
 			allowed_iter = the_task.residue_task( resid() ).allowed_residue_types_begin(),
 			allowed_end = the_task.residue_task( resid() ).allowed_residue_types_end();
 			allowed_iter != allowed_end; ++allowed_iter ) {
@@ -189,7 +189,7 @@ RotamerSet_::build_rotamers_for_concrete_virt(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scorefxn,
 	task::PackerTask const & task,
-	chemical::ResidueTypeCAP concrete_residue,
+	chemical::ResidueTypeCOP concrete_residue,
 	graph::GraphCOP packer_neighbor_graph,
 	bool use_neighbor_context
 )
@@ -205,7 +205,7 @@ RotamerSet_::build_rotamers_for_concrete(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scorefxn,
 	task::PackerTask const & task,
-	chemical::ResidueTypeCAP concrete_residue,
+	chemical::ResidueTypeCOP concrete_residue,
 	conformation::Residue const & existing_residue,
 	graph::GraphCOP packer_neighbor_graph,
 	bool use_neighbor_context
@@ -402,7 +402,7 @@ void
 RotamerSet_::build_optimize_H_rotamers(
 	pose::Pose const & pose,
 	task::PackerTask const & task,
-	chemical::ResidueTypeCAP concrete_residue,
+	chemical::ResidueTypeCOP concrete_residue,
 	conformation::Residue const & existing_residue
 )
 {
@@ -546,7 +546,7 @@ void RotamerSet_::set_extra_samples(
 	task::PackerTask const & task,
 	int num_10A_neighbors,
 	int chi,
-	chemical::ResidueTypeCAP concrete_residue,
+	chemical::ResidueTypeCOP concrete_residue,
 	utility::vector1< Real > & extra_chi_steps
 ) const
 {
@@ -994,7 +994,7 @@ void RotamerSet_::build_dependent_rotamers(
 {
 	using namespace chemical;
 	conformation::Residue const & existing_residue( pose.residue( resid() ) );
-	for ( task::ResidueLevelTask::ResidueTypeCAPListConstIter
+	for ( task::ResidueLevelTask::ResidueTypeCOPListConstIter
 			allowed_iter = the_task.residue_task( resid() ).allowed_residue_types_begin(),
 			allowed_end = the_task.residue_task( resid() ).allowed_residue_types_end();
 			allowed_iter != allowed_end; ++allowed_iter ) {
@@ -1010,7 +1010,7 @@ RotamerSet_::build_dependent_rotamers_for_concrete(
 	scoring::ScoreFunction const &,// scorefxn,
 	task::PackerTask const & task,
 	conformation::Residue const & existing_residue,
-	chemical::ResidueTypeCAP concrete_residue,
+	chemical::ResidueTypeCOP concrete_residue,
 	graph::GraphCOP packer_neighbor_graph
 )
 {

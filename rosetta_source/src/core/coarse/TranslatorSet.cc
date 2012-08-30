@@ -60,7 +60,7 @@ TranslatorSet::TranslatorSet(
 			T("coarse.setup") << "in loop " << res.name() << " " << res.name3() << "  aa: " << res.aa() <<  "\n";
 			if ( coarse_residue_set_->has_name( res.name() ) ) {
 	TranslatorOP cmap_ptr =
-		new Translator( rules,ResidueTypeCAP( res ),
+		new Translator( rules,ResidueTypeCOP( res ),
 			ResidueTypeAP( const_cast<ResidueType&> (coarse_residue_set_->name_map( res.name() )) )
 		); //the non-const object is only needed in the construction of Translator (fix_geometry)
 	//, a CAP is stored for later...
@@ -84,7 +84,7 @@ TranslatorSet::pretty_print( std::ostream &os ) const
 TranslatorCOP const&
 TranslatorSet::default_for_aa( chemical::AA aa ) const
 {
-	chemical::ResidueTypeCAPs types=residue_set_->aa_map(aa);
+	chemical::ResidueTypeCOPs types=residue_set_->aa_map(aa);
 	if (types.size() > 1) {
 		Warning() << "WARNING: coarse/Translator.cc: using the first residue in the set with AA "
 				<< aa << "\n" << "do not know if that is the best choice. Might be good to add " <<

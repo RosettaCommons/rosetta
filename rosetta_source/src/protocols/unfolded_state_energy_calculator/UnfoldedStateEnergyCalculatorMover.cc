@@ -132,7 +132,7 @@ UnfoldedStateEnergyCalculatorMover::apply( Pose & pose )
 
 	// get residue type set and a copy of the residue to mutate to
 	ResidueTypeSetCAP rts( chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
-	ResidueType mut_aa_type( rts->name_map( mut_aa_ ) );
+	ResidueType const & mut_aa_type( rts->name_map( mut_aa_ ) );
 	ResidueOP mut_aa_res( ResidueFactory::create_residue( mut_aa_type ) );
 
 	// create fragments

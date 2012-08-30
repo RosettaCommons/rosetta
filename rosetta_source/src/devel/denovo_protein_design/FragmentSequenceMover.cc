@@ -76,7 +76,7 @@ void FragmentSequenceMover::apply( core::pose::Pose & pose ){
 		// get all residue types with same AA
 		char aa = new_seq[i-1];
 		core::chemical::AA this_aa = core::chemical::aa_from_oneletter_code( aa );
-		core::chemical::ResidueTypeCAPs const & rsd_types( residue_set->aa_map( this_aa ) );
+		core::chemical::ResidueTypeCOPs const & rsd_types( residue_set->aa_map( this_aa ) );
 		core::conformation::ResidueOP new_rsd( 0 );
 		// now look for a rsdtype with same variants
 		for ( Size j=1; j<= rsd_types.size(); ++j ) {

@@ -460,20 +460,20 @@ TaskOperationMPM::modified_match_positions(
 	//the following code is not the most efficient, searching through vectors/lists, etc
 	//but it'll only be done once per matcher run, and the vectors are usually not very large
 	//so it shouldn't matter that much
-	utility::vector1< core::chemical::ResidueTypeCAP> const & upstream_restypes( mtask->enz_input_data()->mcfi_list( which_geom_cst_ )->upstream_restypes() );
+	utility::vector1< core::chemical::ResidueTypeCOP> const & upstream_restypes( mtask->enz_input_data()->mcfi_list( which_geom_cst_ )->upstream_restypes() );
 
 	for( core::Size i = 1; i <= original_positions.size(); ++i){
 		ResidueLevelTask const & restask( ptask->residue_task( original_positions[i] ));
 		if( restask.being_packed() ){ //let's only match repackable positions
 
-			for( ResidueLevelTask::ResidueTypeCAPListConstIter restype_it( restask.allowed_residue_types_begin()), restype_it_end( restask.allowed_residue_types_end() ); restype_it != restype_it_end; ++restype_it ){
+			for( ResidueLevelTask::ResidueTypeCOPListConstIter restype_it( restask.allowed_residue_types_begin()), restype_it_end( restask.allowed_residue_types_end() ); restype_it != restype_it_end; ++restype_it ){
 
 				//let's be somewhat generous: if any of the upstream residues specified in the cstfile
 				//is allowed at this residue, we consider it good for matching
 				//note: we're doing name3 comparison instead of pointer comparison here because
 				//of variant type uncertainties
 				bool name3_found( false );
-				for( utility::vector1< core::chemical::ResidueTypeCAP>::const_iterator upres_it( upstream_restypes.begin() ), upres_end(upstream_restypes.end()); upres_it != upres_end; ++ upres_it ){
+				for( utility::vector1< core::chemical::ResidueTypeCOP>::const_iterator upres_it( upstream_restypes.begin() ), upres_end(upstream_restypes.end()); upres_it != upres_end; ++ upres_it ){
 					if( (*restype_it)->name3() == (*upres_it)->name3() ){
 						//tr << "ARRG residue " << (*restype_it)->name3() << " allowed at pos " << i << ", set to matching " << std::endl;
 						to_return.push_back( original_positions[i] );

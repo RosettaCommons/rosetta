@@ -287,7 +287,7 @@ void BridgeFragmentMover::apply(core::pose::Pose & pose){
 //		for ( int i = num_helical_atoms+1; i <= min_frag_data.size()-num_helical_atoms; i++)
 //		{
 //			TR << "sequence[" << i << "]: " << sequence[i-1] << endl;
-//			core::chemical::ResidueTypeCAPs residue_types = fa_set->aa_map(core::chemical::aa_from_oneletter_code(sequence[i-1]));
+//			core::chemical::ResidueTypeCOPs residue_types = fa_set->aa_map(core::chemical::aa_from_oneletter_code(sequence[i-1]));
 //			TR << "restypes size: " << residue_types.size() << endl;
 //			core::conformation::Residue new_residue((*residue_types[1]), true/*dummy*/);
 //			TR << "appending: " << residue_types[1]->name() << " to residue " << anchor_res << endl;

@@ -64,7 +64,7 @@ public:
 	LigandConformerBuilder( LigandConformerBuilder const & );
 
 	// for collision checking
-	//LigandConformerBuilder( LigandConformerBuilder const & , core::chemical::ResidueTypeCAP upstream_restype );
+	//LigandConformerBuilder( LigandConformerBuilder const & , core::chemical::ResidueTypeCOP upstream_restype );
 
 	virtual ~LigandConformerBuilder();
 
@@ -201,7 +201,7 @@ public:
 
 	void
 	initialize_upstream_residue(
-		core::chemical::ResidueTypeCAP upstream_res,
+		core::chemical::ResidueTypeCOP upstream_res,
 		core::scoring::etable::count_pair::CountPairFunctionCOP count_pair = 0
 	);
 
@@ -216,7 +216,7 @@ public:
 //  get_min_sep_d2_from_upstream_atoms() const;
 
 	virtual
-  core::chemical::ResidueTypeCAP
+  core::chemical::ResidueTypeCOP
 	get_upstream_restype() const;
 
 	/*Real6
@@ -250,8 +250,8 @@ private:
 
 private:
 
-	core::chemical::ResidueTypeCAP downstream_restype_;
-	core::chemical::ResidueTypeCAP upstream_restype_;
+	core::chemical::ResidueTypeCOP downstream_restype_;
+	core::chemical::ResidueTypeCOP upstream_restype_;
 
 	bool ignore_h_collisions_;
 	bool idealize_conformers_;

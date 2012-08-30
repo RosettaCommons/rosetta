@@ -641,7 +641,7 @@ SingleResidueDunbrackLibrary::hokey_template_workaround()
 
 	pose::Pose pose; scoring::ScoreFunction sfxn; pack::task::PackerTask_ task( pose );
 	core::graph::GraphOP png;
-	chemical::ResidueTypeCAP cr;
+	chemical::ResidueTypeCOP cr;
 	utility::vector1< utility::vector1< Real > > ecs;
 	RotamerVector rv;
 

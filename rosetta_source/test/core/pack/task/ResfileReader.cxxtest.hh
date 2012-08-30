@@ -86,7 +86,7 @@ public:
 	//extracts the restype list as a string of one-letter name codes
 	string decompose_restypes_list(Size resid){
 		string oneletters;
-		for ( ResidueLevelTask::ResidueTypeCAPListConstIter
+		for ( ResidueLevelTask::ResidueTypeCOPListConstIter
 						restype_iter = the_task->residue_task( resid ).allowed_residue_types_begin(),
 						restype_iter_end = the_task->residue_task( resid ).allowed_residue_types_end();
 					restype_iter != restype_iter_end; ++restype_iter ) {
@@ -98,7 +98,7 @@ public:
 	}//decompose_restypes_list
 
 	//extracts the extrachi levels into a string for ease of comparison; format in test function
-	string decompose_EX_info( Size resid, ResidueTypeCAP const phe, ResidueTypeCAP const ala){
+	string decompose_EX_info( Size resid, ResidueTypeCOP const phe, ResidueTypeCOP const ala){
 		//stringstreams allow coercion of ExtraRotSample -> int -> char -> string for ease of comparison
 		//each position in the returned string represents a different query (see below)
 		std::ostringstream EXstream;
@@ -209,8 +209,8 @@ public:
 
 		//we need instances of an aromatic and nonaromatic residue
 		//fastest route is filching ResidueTypeSet reference out of pose
-		ResidueTypeCAP phe = &pose.residue_type(1).residue_type_set().name_map("PHE");
-		ResidueTypeCAP ala = &pose.residue_type(1).residue_type_set().name_map("ALA");
+		ResidueTypeCOP phe = &pose.residue_type(1).residue_type_set().name_map("PHE");
+		ResidueTypeCOP ala = &pose.residue_type(1).residue_type_set().name_map("ALA");
 
 		//the "magic number" strings represent the expected data
 		//the format, presented as (position indexed from 0, meaning) is as follows:

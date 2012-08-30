@@ -226,7 +226,7 @@ limit_rotamer_set(
 	for ( Size rot_i(1); rot_i <= nrotamers; ++rot_i ) {
 
 		Size const rot_pos( rotsets.res_for_rotamer( rot_i ) );
-		core::chemical::ResidueTypeCAP rot_type( rotsets.rotamer( rot_i )->type() );
+		core::chemical::ResidueTypeCOP rot_type( rotsets.rotamer( rot_i )->type() );
 
 		core::chemical::AA seq_type( core::chemical::aa_unk );
 		for ( vector1< genetic_algorithm::EntityElementOP >::const_iterator

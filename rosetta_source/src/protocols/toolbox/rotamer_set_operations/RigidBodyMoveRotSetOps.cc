@@ -78,7 +78,7 @@ RigidBodyMoveRSO::alter_rotamer_set(
 	using namespace core::pack::rotamer_set;
 	if (rigid_body_confs_.size() == 0 ) return;
 	bump_selector_.reset();
-	core::chemical::ResidueTypeCAP concrete_residue;
+	core::chemical::ResidueTypeCOP concrete_residue;
 	if( rotamer_set.num_rotamers() != 0 ) concrete_residue = (*rotamer_set.begin())->type();
 	else concrete_residue = pose.residue( seqpos_ ).type();
 	runtime_assert( concrete_residue->is_ligand() );

@@ -128,7 +128,7 @@ add_coordinate_constraints( pose::Pose & pose, core::Size const resnum, core::co
 		using namespace core::conformation;
 		using namespace core::chemical;
 
-		ResidueType const rsd_type( rsd_i.type() );
+		ResidueType const & rsd_type( rsd_i.type() );
 		AA const aa = rsd_i.aa();
 		switch ( aa ){
 			using namespace core::id;

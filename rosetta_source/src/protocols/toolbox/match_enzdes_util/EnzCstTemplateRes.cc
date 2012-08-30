@@ -267,7 +267,7 @@ void EnzCstTemplateRes::get_pose_data(core::pose::Pose & pose) const {
   //and for each residue, check whether the atoms specified in the cst file actually match atoms in this residue type
 	for (std::map< Size, EnzCstTemplateResAtomsOP >::iterator respos_it = template_cache->seqpos_map_.begin(); respos_it != template_cache->seqpos_map_.end(); ++respos_it){
 
-    ResidueTypeCAP cur_res =  & pose.residue_type( respos_it->first );
+    ResidueTypeCOP cur_res =  & pose.residue_type( respos_it->first );
 		std::string cur_res_name3 = pose.residue( respos_it->first ).name3();
 		//utility::trim( cur_res_name3 );
 
@@ -284,7 +284,7 @@ void EnzCstTemplateRes::get_pose_data(core::pose::Pose & pose) const {
     }
 
     //now assign the atoms based on the cst file input, input of atom name takes priority  over input of atom type
-		std::map< core::chemical::ResidueTypeCAP, utility::vector1< utility::vector1< core::Size > > >::iterator res_aid_it = atom_inds_for_restype_.find( cur_res );
+		std::map< core::chemical::ResidueTypeCOP, utility::vector1< utility::vector1< core::Size > > >::iterator res_aid_it = atom_inds_for_restype_.find( cur_res );
 
 		if( res_aid_it == atom_inds_for_restype_.end() ){
 			this->determine_atom_inds_for_restype( cur_res );
@@ -441,7 +441,7 @@ EnzCstTemplateRes::remap_resid( core::id::SequenceMapping const & smap )
 
 void
 EnzCstTemplateRes::determine_atom_inds_for_restype(
-	core::chemical::ResidueTypeCAP restype ) const
+	core::chemical::ResidueTypeCOP restype ) const
 {
 
 	Size natoms = restype->natoms();
@@ -527,7 +527,7 @@ EnzCstTemplateRes::determine_atom_inds_for_restype(
 	at_ids.push_back( at2_ids );
 	at_ids.push_back( at3_ids );
 
-	atom_inds_for_restype_.insert( std::pair< core::chemical::ResidueTypeCAP, utility::vector1< utility::vector1< core::Size > > > ( restype, at_ids ) );
+	atom_inds_for_restype_.insert( std::pair< core::chemical::ResidueTypeCOP, utility::vector1< utility::vector1< core::Size > > > ( restype, at_ids ) );
 
 
 } //determine_atom_ids_for_restype
@@ -537,7 +537,7 @@ EnzCstTemplateRes::determine_atom_inds_for_restype(
 utility::vector1< core::Size > const &
 EnzCstTemplateRes::atom_inds_for_restype(
 	core::Size template_atom,
-	core::chemical::ResidueTypeCAP restype ) const
+	core::chemical::ResidueTypeCOP restype ) const
 {
 
 	//utility::vector1< std::string > const & atom_names;

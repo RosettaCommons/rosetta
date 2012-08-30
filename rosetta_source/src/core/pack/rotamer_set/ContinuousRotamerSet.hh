@@ -94,7 +94,7 @@ public:
 	
 	Size resid() const;
 
-	chemical::ResidueTypeCAP
+	chemical::ResidueTypeCOP
 	restype_for_rotblock( Size rotblock ) const;
 
 	dunbrack::DunbrackRotamerSampleData const &
@@ -116,7 +116,7 @@ private:
 
 	Size n_restypes_; // aka n_rotblocks
 	utility::vector1< chemical::AA >              aa_for_rotblock_;
-	utility::vector1< chemical::ResidueTypeCAP >  restype_for_rotblock_;
+	utility::vector1< chemical::ResidueTypeCOP >  restype_for_rotblock_;
 
 	Size n_baserots_total_; // excluding proton chis, how many dihedral angle bins are there?
 	utility::vector1< Size >          n_baserotamers_for_rotblock_;

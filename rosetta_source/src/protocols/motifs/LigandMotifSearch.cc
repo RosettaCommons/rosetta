@@ -1298,7 +1298,7 @@ LigandMotifSearch::fill_bp_allowed_types(
 	core::pack::task::TaskFactoryOP tf = new core::pack::task::TaskFactory;
 	tf->push_back( new core::pack::task::ReadResfileOperation );//new protocols::dna::RestrictDesignToProteinDNAInterface );
 	core::pack::task::PackerTaskOP task( tf->create_task_and_apply_taskoperations( pose ) );
-	for( core::pack::task::ResidueLevelTask::ResidueTypeCAPListConstIter
+	for( core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter
 			allowed_iter = task->residue_task( seqpos ).allowed_residue_types_begin(),
 			allowed_end = task->residue_task( seqpos ).allowed_residue_types_end();
 			allowed_iter != allowed_end; ++allowed_iter ) {

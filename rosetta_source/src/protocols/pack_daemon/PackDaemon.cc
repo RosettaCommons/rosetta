@@ -651,7 +651,7 @@ DaemonSet::add_pack_daemon(
 			continue;
 		}
 
-		core::pack::task::ResidueLevelTask::ResidueTypeCAPListConstIter
+		core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter
 			final_task_allowed = task->residue_task( ii ).allowed_residue_types_begin(),
 			entity_task_allowed = entity_task_->residue_task( ii_entity_id ).allowed_residue_types_begin(),
 			final_task_allowed_end = task->residue_task( ii ).allowed_residue_types_end(),

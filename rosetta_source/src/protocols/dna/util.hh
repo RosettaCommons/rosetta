@@ -45,12 +45,12 @@ class PositionType {
 public:
 	PositionType(
 		core::Size pos = 0,
-		core::chemical::ResidueTypeCAP rt = 0,
+		core::chemical::ResidueTypeCOP rt = 0,
 		bool design = false
 	) : position( pos ), type( rt ), designable( design ) {}
 
 	core::Size position;
-	core::chemical::ResidueTypeCAP type;
+	core::chemical::ResidueTypeCOP type;
 	bool designable;
 };
 
@@ -166,7 +166,7 @@ restrict_dna_rotamers(
 void
 restrict_to_single_sequence(
 	core::pack::rotamer_set::RotamerSetsCOP rotamer_sets,
-	utility::vector1< core::chemical::ResidueTypeCAP > const & single_sequence,
+	utility::vector1< core::chemical::ResidueTypeCOP > const & single_sequence,
 	utility::vector0< int > & rot_to_pack
 );
 

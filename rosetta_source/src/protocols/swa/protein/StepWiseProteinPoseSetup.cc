@@ -363,8 +363,8 @@ namespace protein {
 
 // 		pose::remove_lower_terminus_type_from_pose_residue( pose, 1   );
 // 		for ( Size i = start_res_ - 1; i > 0; i-- ) {
-// 			ResidueTypeCAP new_rsd_type( ResidueSelector().set_name1( desired_sequence_[i-1] ).exclude_variants().select( *rsd_set_ )[1] );
-// 			//			ResidueTypeCAP new_rsd_type( rsd_set_->aa_map( aa_from_oneletter_code( desired_sequence[i-1] ) )[1] );
+// 			ResidueTypeCOP new_rsd_type( ResidueSelector().set_name1( desired_sequence_[i-1] ).exclude_variants().select( *rsd_set_ )[1] );
+// 			//			ResidueTypeCOP new_rsd_type( rsd_set_->aa_map( aa_from_oneletter_code( desired_sequence[i-1] ) )[1] );
 // 			ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type ) );
 // 			pose.conformation().safely_prepend_polymer_residue_before_seqpos( *new_rsd, 1, true );
 // 			pose.set_omega( 1, 180.0 ); //NOTE SIDE CHAINS ARE MESSED UP!
@@ -386,7 +386,7 @@ namespace protein {
 
 // 		pose::remove_upper_terminus_type_from_pose_residue( pose, pose.total_residue()   );
 // 		for ( Size i = end_res_ + 1; i <= desired_sequence_.size(); i++ ) {
-// 			ResidueTypeCAP new_rsd_type( ResidueSelector().set_name1( desired_sequence_[i-1] ).exclude_variants().select( *rsd_set_ )[1] );
+// 			ResidueTypeCOP new_rsd_type( ResidueSelector().set_name1( desired_sequence_[i-1] ).exclude_variants().select( *rsd_set_ )[1] );
 // 			ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type ) );
 // 			pose.conformation().append_polymer_residue_after_seqpos( *new_rsd, pose.total_residue(), true );
 // 			pose.set_omega( pose.total_residue(), 180.0 );

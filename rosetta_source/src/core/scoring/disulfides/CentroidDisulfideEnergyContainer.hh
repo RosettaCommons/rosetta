@@ -258,7 +258,7 @@ private:
 	Size num_disulfides() const;
 private:
 	utility::vector1< Size > resid_2_disulfide_index_;
-	utility::vector1< chemical::ResidueTypeCAP > disulfide_residue_types_;
+	utility::vector1< chemical::ResidueTypeCOP > disulfide_residue_types_;
 	utility::vector1< std::pair< Size, Size > > disulfide_partners_;
 	utility::vector1< std::pair< DisulfideAtomIndices, DisulfideAtomIndices > > disulfide_atom_indices_;
 	utility::vector1< std::pair< CentroidDisulfideEnergyComponents, bool > > disulfide_info_;

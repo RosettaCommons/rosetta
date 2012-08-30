@@ -18,6 +18,7 @@
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
+#include <core/chemical/ResidueType.hh>
 #include <core/pack/min_pack.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>

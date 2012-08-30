@@ -126,7 +126,7 @@ void append_sequence_to_pose(
 
 	// grab residue types
 	TR << "append_seq_to_pose - start" << std::endl;
-	ResidueTypeCAPs requested_types = residue_types_from_sequence( sequence_in, residue_set, auto_termini );
+	ResidueTypeCOPs requested_types = residue_types_from_sequence( sequence_in, residue_set, auto_termini );
 	assert( annotated_to_oneletter_sequence( sequence_in ).length() == requested_types.size() );
 	TR << "read types" << std::endl;
 

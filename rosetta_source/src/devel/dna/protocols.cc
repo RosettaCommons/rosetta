@@ -511,7 +511,7 @@ packing_specificity_test(
 			int const seqpos( pos_list[i] );
 
 
-			ResidueTypeCAP rsd_type( ResidueSelector().set_aa( aa ).exclude_variants().select( residue_set )[1] );
+			ResidueTypeCOP rsd_type( ResidueSelector().set_aa( aa ).exclude_variants().select( residue_set )[1] );
 
 			Residue const & existing_residue( pose.residue( seqpos ) );
 			assert( existing_residue.is_DNA() );

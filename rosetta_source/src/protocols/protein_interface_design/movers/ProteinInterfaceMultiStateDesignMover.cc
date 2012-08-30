@@ -235,10 +235,10 @@ ProteinInterfaceMultiStateDesignMover::restrict_sequence_profile(
 				template_substitution_task->nonconst_residue_task(i).prevent_repacking();
 
 		ResidueLevelTask & rtask( ptask->nonconst_residue_task( pos ) );
-		list< ResidueTypeCAP > const & allowed( rtask.allowed_residue_types() );
+		list< ResidueTypeCOP > const & allowed( rtask.allowed_residue_types() );
 		Pose ala_pose_and_single_residue( *ala_pose );
 		vector1< bool > allowed_aas_in_pos( num_canonical_aas, false );
-		foreach( ResidueTypeCAP const t, allowed ){
+		foreach( ResidueTypeCOP const t, allowed ){
 			AA const aa( t->aa() );
 			PackerTaskOP specific_substitution_task( template_substitution_task->clone() );
 			utility::vector1< bool > allow_aa( num_canonical_aas, false );
@@ -248,7 +248,7 @@ ProteinInterfaceMultiStateDesignMover::restrict_sequence_profile(
 			core::Real const bump_energy( eprf.compute( ala_pose_and_single_residue ) );
 			if( bump_energy - ref_bump_energy <= bump_threshold_ )
 				allowed_aas_in_pos[ aa ] = true;
-		}///foreach ResidueTypeCAP const t
+		}///foreach ResidueTypeCOP const t
 		rtask.restrict_absent_canonical_aas( allowed_aas_in_pos );
 		AA const aa_in_pose( pose.residue( pos ).aa() );
 		if( !allowed_aas_in_pos[ aa_in_pose ] ){
@@ -323,8 +323,8 @@ ProteinInterfaceMultiStateDesignMover::initialize( Pose & pose )
 			EntityElements choices;
 			// to avoid duplicate AA's (such as for multiple histidine ResidueTypes)
 			std::set< core::chemical::AA > aaset;
-			std::list< ResidueTypeCAP > const & allowed( rtask.allowed_residue_types() );
-			for ( std::list< ResidueTypeCAP >::const_iterator t( allowed.begin() ), end( allowed.end() );
+			std::list< ResidueTypeCOP > const & allowed( rtask.allowed_residue_types() );
+			for ( std::list< ResidueTypeCOP >::const_iterator t( allowed.begin() ), end( allowed.end() );
 						t != end; ++t ) {
 				core::chemical::AA aa( (*t)->aa() );
 				// avoid duplicate AA's (such as for multiple histidine ResidueTypes)

@@ -1784,7 +1784,7 @@ bool change_cys_state( Size const index, std::string cys_type_name3, Conformatio
 	// yet handled via functions such as ResidueTypeSet::get_residue_type_with_variant_*
 	// functions, so we need the name3 string to grab the possible residue types and
 	// look through them manually to find the right one.
-	chemical::ResidueTypeCAPs const & possible_types = residue_type_set.name3_map( cys_type_name3 );
+	chemical::ResidueTypeCOPs const & possible_types = residue_type_set.name3_map( cys_type_name3 );
 
 	// Track the variant types of the old residue type.  We want the
 	// new residue to have the same variant type as the old.
@@ -1800,7 +1800,7 @@ bool change_cys_state( Size const index, std::string cys_type_name3, Conformatio
 	}
 
 	// Run through all possible new residue types.
-	for ( chemical::ResidueTypeCAPs::const_iterator
+	for ( chemical::ResidueTypeCOPs::const_iterator
 		type_iter = possible_types.begin(), type_end = possible_types.end();
 		type_iter != type_end; ++type_iter )
 	{

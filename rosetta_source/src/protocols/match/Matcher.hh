@@ -205,12 +205,12 @@ public:
 
 	void add_upstream_restype_for_constraint(
 		Size cst_id,
-		core::chemical::ResidueTypeCAP restype
+		core::chemical::ResidueTypeCOP restype
 	);
 
 	void set_sample_startegy_for_constraint(
 		Size cst_id,
-		core::chemical::ResidueTypeCAP restype,
+		core::chemical::ResidueTypeCOP restype,
 		Size chi,
 		upstream::SampleStrategyData const & strat
 	);
@@ -218,13 +218,13 @@ public:
 	void
 	set_fa_dun_cutoff_for_constraint(
 		Size cst_id,
-		core::chemical::ResidueTypeCAP restype,
+		core::chemical::ResidueTypeCOP restype,
 		core::Real fa_dun_cutoff
 	);
 
 	void add_external_geometry_samples_for_constraint(
 		Size cst_id,
-		core::chemical::ResidueTypeCAP restype,
+		core::chemical::ResidueTypeCOP restype,
 		utility::vector1< std::string >  const & upstream_launch_atoms,
 		utility::vector1< core::id::AtomID > const & downstream_3atoms,
 		toolbox::match_enzdes_util::ExternalGeomSampler const & exgeom,
@@ -236,8 +236,8 @@ public:
 	void add_secondary_upstream_match_geometry_for_constraint(
 		Size geom_cst_id,
 		Size target_geom_cst_id,
-		core::chemical::ResidueTypeCAP candidate_restype,
-		core::chemical::ResidueTypeCAP target_restype,
+		core::chemical::ResidueTypeCOP candidate_restype,
+		core::chemical::ResidueTypeCOP target_restype,
 		utility::vector1< Size > const & candidate_atids,
 		utility::vector1< Size > const & target_atids,
 		toolbox::match_enzdes_util::MatchConstraintFileInfoCOP mcfi,
@@ -247,8 +247,8 @@ public:
 
 	void add_secondary_downstream_match_geometry_for_constraint(
 		Size geom_cst_id,
-		core::chemical::ResidueTypeCAP candidate_restype,
-		core::chemical::ResidueTypeCAP downstream_restype,
+		core::chemical::ResidueTypeCOP candidate_restype,
+		core::chemical::ResidueTypeCOP downstream_restype,
 		utility::vector1< Size > const & candidate_atids,
 		utility::vector1< Size > const & target_atids,
 		toolbox::match_enzdes_util::MatchConstraintFileInfoCOP mcfi,
@@ -405,7 +405,7 @@ private:
 	downstream::DownstreamBuilderOP
 	create_ds_builder(
 		Size const cst_id,
-		core::chemical::ResidueTypeCAP restype,
+		core::chemical::ResidueTypeCOP restype,
 		utility::vector1< std::string >  const & upstream_launch_atoms,
 		utility::vector1< core::id::AtomID > const & downstream_3atoms,
 		bool enumerate_ligand_rotamers,

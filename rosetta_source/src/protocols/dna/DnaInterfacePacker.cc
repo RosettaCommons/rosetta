@@ -109,7 +109,7 @@ using basic::t_debug;
 static basic::Tracer TR("protocols.dna.DnaInterfacePacker");
 static basic::Tracer TR_spec("protocols.dna.Specificity");
 
-// for comparing ResTypeSequence, which contain ResidueTypeCAP pointers (must dereference for sorting purposes)
+// for comparing ResTypeSequence, which contain ResidueTypeCOP pointers (must dereference for sorting purposes)
 
 std::string
 DnaInterfacePackerCreator::keyname() const
@@ -556,9 +556,9 @@ DnaInterfacePacker::add_complementary_sequence( ResTypeSequence & sequence )
 		if ( !dnatop.paired() ) continue;
 		Size const comppos( dnatop.bottom() );
 		// find the complement type in the current typeset
-		ResidueTypeCAP type( postype->second );
+		ResidueTypeCOP type( postype->second );
 		ResidueTypeSet const & typeset( type->residue_type_set() );
-		ResidueTypeCAP comptype( typeset.aa_map( dna_base_partner( type->aa() ) ).front() );
+		ResidueTypeCOP comptype( typeset.aa_map( dna_base_partner( type->aa() ) ).front() );
 		complement[ comppos ] = comptype;
 	}
 	// append this temporary bottom-stranded sequence to the original top-stranded sequence
@@ -681,7 +681,7 @@ DnaInterfacePacker::measure_bp_specificities( Pose & pose )
 		Size index( bppos->first );
 		ResidueLevelTask const & rtask( task()->residue_task(index) );
 		// add competitors for this position
-		for ( ResidueLevelTask::ResidueTypeCAPListConstIter type( rtask.allowed_residue_types_begin() ),
+		for ( ResidueLevelTask::ResidueTypeCOPListConstIter type( rtask.allowed_residue_types_begin() ),
 			end_type( rtask.allowed_residue_types_end() ); type != end_type; ++type ) {
 			if ( (*type)->aa() == bppos->second->aa() ) continue; // avoid duplicating input sequence
 			// ignore adduct variant types
@@ -780,7 +780,7 @@ DnaInterfacePacker::measure_specificities( Pose & pose, ResTypeSequences const &
 		Real best_trial_E(0), best_trial_binding_E(0);
 		// restrict packer to current protein sequence and this DNA sequence
 		utility::vector0< int > rot_to_pack;
-		vector1< ResidueTypeCAP > single_sequence;
+		vector1< ResidueTypeCOP > single_sequence;
 		for ( Size index(1), end( pose.total_residue() ); index <= end; ++index ) {
 			single_sequence.push_back( & pose.residue_type(index) );
 		}
@@ -879,7 +879,7 @@ DnaInterfacePacker::calculate_specificity(
 
 class Reversion {
 public:
-	Reversion( Size i = 0, ResidueTypeCAP t = 0 )
+	Reversion( Size i = 0, ResidueTypeCOP t = 0 )
 		: index(i), type(t), dscore_bound(0.), dspec_bound(0.), dscore_binding(0.), dspec_binding(0.) {}
 	~Reversion(){}
 	// assign a number to the effect of this reversion
@@ -888,7 +888,7 @@ public:
 	bool operator < ( Reversion const & other ) const
 		{ return reversion_score() < other.reversion_score(); }
 	Size index;
-	ResidueTypeCAP type;
+	ResidueTypeCOP type;
 	Real dscore_bound, dspec_bound, dscore_binding, dspec_binding;
 };
 typedef vector1< Reversion > Reversions;
@@ -911,7 +911,7 @@ DnaInterfacePacker::reversion_scan(
 	Real current_bound_score( starting_bound_score ), current_binding_score( starting_binding_score );
 	std::pair< Real, Real > current_specificities( starting_specificities );
 
-	vector1< ResidueTypeCAP > fixed_residue_types;
+	vector1< ResidueTypeCOP > fixed_residue_types;
 
 	for ( Size index(1), end( pose.total_residue() ); index <= end; ++index ) {
 		fixed_residue_types.push_back( &pose.residue_type( index ) );
@@ -921,7 +921,7 @@ DnaInterfacePacker::reversion_scan(
 	Reversions reversions;
 	runtime_assert( fixed_residue_types.size() == reference_residue_types_.size() );
 	for ( Size index(1), end( fixed_residue_types.size() ); index != end; ++index ) {
-		ResidueTypeCAP reference_type( reference_residue_types_[index] );
+		ResidueTypeCOP reference_type( reference_residue_types_[index] );
 		if ( reference_type->is_protein() &&
 				fixed_residue_types[index]->name3() != reference_type->name3() ) {
 			reversions.push_back( Reversion( index, reference_type ) );
@@ -938,7 +938,7 @@ DnaInterfacePacker::reversion_scan(
 		for ( Reversions::iterator rev( reversions.begin() ), end( reversions.end() );
 				rev != end; ++rev ) {
 			Size const index( rev->index );
-			ResidueTypeCAP starting_type( fixed_residue_types[ index ] ),
+			ResidueTypeCOP starting_type( fixed_residue_types[ index ] ),
 							reference_type( reference_residue_types_[ index ] ); // 'reference' == 'native'
 			fixed_residue_types[ index ] = reference_type;
 
@@ -997,7 +997,7 @@ DnaInterfacePacker::reversion_scan(
 			if ( rev->dscore_binding > dscore_cutoff || rev->dspec_binding < dspec_cutoff ) continue;
 			// make 'best' reversion 'permanent'
 			Size const index( rev->index );
-			ResidueTypeCAP starting_type( fixed_residue_types[ index ] ),
+			ResidueTypeCOP starting_type( fixed_residue_types[ index ] ),
 									reference_type( reference_residue_types_[ index ] ); // 'reference' == 'native'
 			fixed_residue_types[ index ] = reference_type;
 			TR << "(round " << round << ") Reversion from " << starting_type->name3()
@@ -1053,11 +1053,11 @@ DnaInterfacePacker::protein_scan( Pose & pose )
 	std::string const typestring( allowed_types() );
 	TR << "Starting protein_scan with allowed types " << typestring << "." << std::endl;
 	// parse allowed_types string into residue types
-	ResidueTypeCAPs allowed_type_caps;
+	ResidueTypeCOPs allowed_type_caps;
 	ResidueTypeSet const & rts( pose.residue(1).residue_type_set() );
 	for ( std::string::const_iterator typechar( typestring.begin() );
 		typechar != typestring.end(); ++typechar ) {
-		ResidueTypeCAPs aas( rts.aa_map( aa_from_oneletter_code( *typechar ) ) );
+		ResidueTypeCOPs aas( rts.aa_map( aa_from_oneletter_code( *typechar ) ) );
 		if ( aas.empty() ) {
 			TR(t_warning) << "no ResidueType found in ResidueTypeSet for " << *typechar << std::endl;
 			runtime_assert(false);
@@ -1115,7 +1115,7 @@ DnaInterfacePacker::protein_scan( Pose & pose )
 
 	Pose const input_pose( pose );
 
-	vector1< ResidueTypeCAP > pose_residue_types;
+	vector1< ResidueTypeCOP > pose_residue_types;
 	for ( Size index(1), end( pose.total_residue() ); index <= end; ++index ) {
 		pose_residue_types.push_back( &pose.residue_type(index) );
 	}
@@ -1176,14 +1176,14 @@ DnaInterfacePacker::protein_scan( Pose & pose )
 		}
 		outfile << '\n';
 		// save the native type
-		ResidueTypeCAP native_type( pose_residue_types[ *index ] );
+		ResidueTypeCOP native_type( pose_residue_types[ *index ] );
 
-		for ( ResidueTypeCAPs::const_iterator scan_type( allowed_type_caps.begin() );
+		for ( ResidueTypeCOPs::const_iterator scan_type( allowed_type_caps.begin() );
 			scan_type != allowed_type_caps.end(); ++scan_type ) {
 
 			// ensure that this type was allowed by the PackerTask/RotamerSets/I.G. before proceeding
 			ResidueLevelTask const & rtask( task()->residue_task(*index) );
-			ResidueLevelTask::ResidueTypeCAPList const & art( rtask.allowed_residue_types() );
+			ResidueLevelTask::ResidueTypeCOPList const & art( rtask.allowed_residue_types() );
 			// maybe this should be a ResidueLevelTask method, and maybe the ResidueLevelTask should clear
 			// its allowed_residue_types if !being_packed
 			if ( !rtask.being_packed() ) {

@@ -884,12 +884,12 @@ ZnCoordinationScorer::insert_match_onto_pose(
 		assert( &restypeset == & matchres.type().residue_type_set() );
 
 		// find the appropriate residue type for this position
-		core::chemical::ResidueTypeCAP newrestype( & matchres.type() );
+		core::chemical::ResidueTypeCOP newrestype( & matchres.type() );
 		utility::vector1< core::chemical::VariantType > const & matchres_variants
 			= matchres.type().variant_types();
 		for ( Size jj = 1; jj <= matchres_variants.size(); ++jj ) {
 			if ( ! dstres.type().has_variant_type( matchres_variants[ jj ]  )) {
-				core::chemical::ResidueTypeCAP variantfree_newrestype;
+				core::chemical::ResidueTypeCOP variantfree_newrestype;
 				variantfree_newrestype = & ( restypeset.get_residue_type_with_variant_removed( *newrestype, matchres_variants[jj] ));
 				if ( ! variantfree_newrestype  ) {
 					std::cerr << "Error could not remove variant " << matchres_variants[ jj ] << " from restype " <<
@@ -904,7 +904,7 @@ ZnCoordinationScorer::insert_match_onto_pose(
 			= dstres.type().variant_types();
 		for ( Size jj = 1; jj <= dstres_variants.size(); ++jj ) {
 			if ( ! newrestype->has_variant_type( dstres_variants[ jj ]  )) {
-				core::chemical::ResidueTypeCAP variantful_newrestype;
+				core::chemical::ResidueTypeCOP variantful_newrestype;
 				variantful_newrestype = & ( restypeset.get_residue_type_with_variant_added( *newrestype, dstres_variants[jj] ));
 				if ( ! variantful_newrestype  ) {
 					std::cerr << "Error could not add variant " << dstres_variants[ jj ] << " to restype " <<

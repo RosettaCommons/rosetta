@@ -616,9 +616,9 @@ EnzConstraintParameters::make_constraint_covalent_helper(
 		utility::pointer::access_ptr< ResidueTypeSet > mod_restype_set = & ChemicalManager::get_instance()->nonconst_residue_type_set( restype_set_->name() );
 
 		//first get all residue types that correspond to the type in question
-		ResidueTypeCAPs res_to_modify = mod_restype_set->name3_map( pose.residue_type(res_pos).name3() );
+		ResidueTypeCOPs res_to_modify = mod_restype_set->name3_map( pose.residue_type(res_pos).name3() );
 
-		for ( utility::vector1< ResidueTypeCAP >::iterator res_it = res_to_modify.begin(); res_it != res_to_modify.end(); ++res_it) {
+		for ( utility::vector1< ResidueTypeCOP >::iterator res_it = res_to_modify.begin(); res_it != res_to_modify.end(); ++res_it) {
 			std::string const base_name( residue_type_base_name( *(*res_it) ) );
 			//std::cerr << "contemplating modification of residuetype " << (*res_it)->name() << " with basename " << base_name << std::endl;
 
@@ -797,7 +797,7 @@ EnzConstraintParameters::inverse_rotamers_for_residue_missing_in_pose(
 	EnzCstTemplateResCOP missing_template( this->get_missing_template_res( pose ) );
 
 	for( core::Size restype_index = 1; restype_index <= missing_template->allowed_res_types().size(); ++restype_index ){
-		core::chemical::ResidueTypeCAP restype( restype_set_->name( missing_template->allowed_res_types()[ restype_index ] ) );
+		core::chemical::ResidueTypeCOP restype( restype_set_->name( missing_template->allowed_res_types()[ restype_index ] ) );
 		utility::vector1< core::conformation::ResidueCOP > raw_rotamers;
 		// for now we'll only work with one rotamer
 		raw_rotamers.push_back( new core::conformation::Residue( restype, true ) );

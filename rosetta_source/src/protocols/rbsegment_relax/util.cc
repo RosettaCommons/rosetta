@@ -313,7 +313,7 @@ void setup_pose_from_rbsegs(
 	// virtual res as root
 	core::chemical::ResidueTypeSetCAP const &residue_set(
 									core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )  );
-	core::chemical::ResidueTypeCAPs const & rsd_type_list( residue_set->name3_map("VRT") );
+	core::chemical::ResidueTypeCOPs const & rsd_type_list( residue_set->name3_map("VRT") );
 	core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type_list[1] ) );
 	pose_out.append_residue_by_jump( *new_res , 1 );
 
@@ -418,7 +418,7 @@ void restore_pose_from_rbsegs(
 	// virtual res as root
 	core::chemical::ResidueTypeSetCAP const &residue_set(
 									core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )  );
-	core::chemical::ResidueTypeCAPs const & rsd_type_list( residue_set->name3_map("VRT") );
+	core::chemical::ResidueTypeCOPs const & rsd_type_list( residue_set->name3_map("VRT") );
 	core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type_list[1] ) );
 	pose_out.append_residue_by_jump( *new_res , pose_out.total_residue()/2 );
 

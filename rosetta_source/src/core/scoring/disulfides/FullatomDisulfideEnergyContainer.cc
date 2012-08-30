@@ -558,7 +558,7 @@ FullatomDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 	resid_2_disulfide_index_.resize( nres );
 	disulfide_residue_types_.resize( nres );
 	std::fill( resid_2_disulfide_index_.begin(), resid_2_disulfide_index_.end(), NO_DISULFIDE );
-	std::fill( disulfide_residue_types_.begin(), disulfide_residue_types_.end(), chemical::ResidueTypeCAP(0) );
+	std::fill( disulfide_residue_types_.begin(), disulfide_residue_types_.end(), chemical::ResidueTypeCOP(0) );
 
 
 	Size count_disulfides( 0 );
@@ -586,7 +586,7 @@ FullatomDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 			resid_2_disulfide_index_[ ii ] = count_disulfides;
 			resid_2_disulfide_index_[ other_res ] = count_disulfides;
 			disulfide_residue_types_[ ii ] = & ( pose.residue_type( ii ));
-			disulfide_residue_types_[ other_res ] = chemical::ResidueTypeCAP( & ( pose.residue_type( other_res )));
+			disulfide_residue_types_[ other_res ] = chemical::ResidueTypeCOP( & ( pose.residue_type( other_res )));
 			disulfide_partners_.push_back( std::pair< Size, Size >( ii, other_res ) );
 			disulfide_atom_indices_.push_back( std::pair< DisulfideAtomIndices, DisulfideAtomIndices > (
 						DisulfideAtomIndices( pose.residue(ii ) ), DisulfideAtomIndices( pose.residue( other_res ) ) ));

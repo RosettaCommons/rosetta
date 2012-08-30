@@ -509,7 +509,7 @@ make_sequence_change(
 	conformation::Residue const & current_rsd( pose.residue( seqpos ) );
 	if ( current_rsd.aa() == new_aa ) return; // already done
 
-	ResidueTypeCAPs rsd_types
+	ResidueTypeCOPs rsd_types
 		( ResidueSelector().set_aa( new_aa ).match_variants( current_rsd.type() ).select( current_rsd.residue_type_set() ) );
 
 	std::string const errmsg

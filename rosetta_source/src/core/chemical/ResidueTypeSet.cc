@@ -477,7 +477,7 @@ ResidueTypeSet::aas_defined_end() const
 void
 ResidueTypeSet::select_residues(
 	ResidueSelector const & selector,
-	ResidueTypeCAPs & matches
+	ResidueTypeCOPs & matches
 ) const
 {
 	for ( ResidueTypeOPs::const_iterator iter=residue_types_.begin(), iter_end = residue_types_.end(); iter!= iter_end; ++iter ) {

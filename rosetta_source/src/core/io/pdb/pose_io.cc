@@ -347,7 +347,7 @@ traced_dump_pdb(
 
 // 		ResidueCoords const & xyz( coords.find( resid )->second );
 
-// 		ResidueTypeCAPs const & rsd_type_list( residue_set.name3_map( pdb_name ) );
+// 		ResidueTypeCOPs const & rsd_type_list( residue_set.name3_map( pdb_name ) );
 // 		if ( rsd_type_list.empty() ) {
 // 			std::cout << "Unrecognized aa: " << pdb_name << '\n';
 // 			continue;

@@ -606,7 +606,7 @@ SingleDownstreamResidueWriter::write_downstream_coordinates(
 }
 
 void
-SingleDownstreamResidueWriter::set_restype( core::chemical::ResidueTypeCAP restype )
+SingleDownstreamResidueWriter::set_restype( core::chemical::ResidueTypeCOP restype )
 {
 	restype_ = restype;
 	all_atom_inds_.resize( restype_->natoms() );

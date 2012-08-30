@@ -998,7 +998,7 @@ namespace rna {
 		}
 
 		core::chemical::ResidueTypeSet const & residue_set = pose.residue_type(1).residue_type_set();
-		core::chemical::ResidueTypeCAPs const & rsd_type_list( residue_set.name3_map("VRT") );
+		core::chemical::ResidueTypeCOPs const & rsd_type_list( residue_set.name3_map("VRT") );
 		core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type_list[1] ) );
 		if (working_moving_res == 1) {
 			pose.append_residue_by_jump( *new_res , nres );

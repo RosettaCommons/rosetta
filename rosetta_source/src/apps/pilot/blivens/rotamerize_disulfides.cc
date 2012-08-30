@@ -134,7 +134,7 @@ int main( int argc, char * argv [] )
 	graph::GraphOP graph( new graph::Graph( pose.energies().energy_graph() ));
 	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
 
-	rot_lib->fill_rotamer_vector(pose, *sfxn, *task, graph, ResidueTypeCAP(&restype),
+	rot_lib->fill_rotamer_vector(pose, *sfxn, *task, graph, ResidueTypeCOP(&restype),
 		pose.residue(target),extra_chi_steps, false, //guess its not buried
 		rotamers);
 	Size n(rotamers.size());

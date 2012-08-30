@@ -415,7 +415,7 @@ make_base_pair_mutation(
 		assert( existing_residue.is_DNA() );
 
 		// search for the matching residue type
-		ResidueTypeCAPs rsd_types
+		ResidueTypeCOPs rsd_types
 			( ResidueSelector().set_aa( aa ).match_variants( existing_residue.type() ).select( residue_set ) );
 		if ( rsd_types.size() != 1 ) {
 			utility_exit_with_message("couldnt find residuetype for basepair mutation!");

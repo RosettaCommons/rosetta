@@ -366,7 +366,7 @@ SegmentRebuild::Positions SegmentRebuild::original_mutable_positions() const {
 ///  a new segment containing a random cutpoint will be inserted.  The new jump
 ///  will be created between (left-1) and (right+1) of the new segment.
 void SegmentRebuild::modify_impl( Pose & pose ) {
-	using core::chemical::ResidueTypeCAPs;
+	using core::chemical::ResidueTypeCOPs;
 	using core::kinematics::Edge;
 	using core::kinematics::FoldTree;
 
@@ -482,7 +482,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 	}
 
 	// grab residue types from aa string
-	ResidueTypeCAPs r_types = core::pose::residue_types_from_sequence( aa_, residue_type_set(), false );
+	ResidueTypeCOPs r_types = core::pose::residue_types_from_sequence( aa_, residue_type_set(), false );
 	assert( ss_.length() == r_types.size() );
 
 	// BEGIN INTERVAL SHIFT: after this point, interval_ will begin to shift due to length

@@ -66,7 +66,7 @@ make_pose_from_sequence_(
 		char aa = sequence[seqpos-1]; // string indexing is zero-based!
 		//		std::cerr<<  aa << " aminoacid requested" << std::endl;
 		AA my_aa = aa_from_oneletter_code( aa );
-		ResidueTypeCAPs const & rsd_type_list( residue_set.aa_map( my_aa ) );
+		ResidueTypeCOPs const & rsd_type_list( residue_set.aa_map( my_aa ) );
 		if ( rsd_type_list.size() == 0 ) {
 			std::cerr << " cannot find aminoacid " << my_aa << " from sequence " << sequence << " in Frame::fragment_from_pose() " << std::endl;
 		}

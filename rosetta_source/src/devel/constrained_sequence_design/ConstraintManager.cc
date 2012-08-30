@@ -94,7 +94,7 @@ void
 ConstraintManager::apply(const Pose& pose, PackerTask& task)  const
 {
 	using core::pack::task::ResidueLevelTask;
-	typedef core::pack::task::ResidueLevelTask::ResidueTypeCAPListConstIter ResidueTypeCAPListConstIter;
+	typedef core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter ResidueTypeCOPListConstIter;
 
 	// Update the constraints to reflect the state of the pose.
   for(SequenceConstraintMap::const_iterator cntr = seq_constraints_.begin(); cntr != seq_constraints_.end(); ++cntr) 
@@ -105,9 +105,9 @@ ConstraintManager::apply(const Pose& pose, PackerTask& task)  const
 	// iterate over the positions of the packer task
 	for(VecSize::const_iterator p = positions.begin(); p != positions.end(); ++p) {
 		// and for each position iterate over the residue types 
-		ResidueTypeCAPListConstIter restype_begin  = task.nonconst_residue_task(*p).allowed_residue_types_begin();
-		ResidueTypeCAPListConstIter restype_end    = task.nonconst_residue_task(*p).allowed_residue_types_end();
-		for(ResidueTypeCAPListConstIter it = restype_begin; it != restype_end; ++it) {
+		ResidueTypeCOPListConstIter restype_begin  = task.nonconst_residue_task(*p).allowed_residue_types_begin();
+		ResidueTypeCOPListConstIter restype_end    = task.nonconst_residue_task(*p).allowed_residue_types_end();
+		for(ResidueTypeCOPListConstIter it = restype_begin; it != restype_end; ++it) {
 			core::chemical::AA  aa = (*it)->aa();
 			Real score_p = score(*p, aa);
 			if( score_p >= 0.0)

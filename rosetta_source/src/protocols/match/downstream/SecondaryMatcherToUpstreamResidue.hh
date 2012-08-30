@@ -164,17 +164,17 @@ public:
 	n_possible_hits_per_upstream_conformation() const;
 
 	//void
-	//set_match_restype( core::chemical::ResidueTypeCAP match_restype );
+	//set_match_restype( core::chemical::ResidueTypeCOP match_restype );
 
 	void
 	set_target_geomcst_id( Size target_geomcst_id );
 
 	void
-	add_target_restype( core::chemical::ResidueTypeCAP target_restype );
+	add_target_restype( core::chemical::ResidueTypeCOP target_restype );
 
 	void
 	add_evaluator_for_target_restype(
-		core::chemical::ResidueTypeCAP  target_restype,
+		core::chemical::ResidueTypeCOP  target_restype,
 		SecMatchResiduePairEvaluatorCOP evaluator,
 		Size                            mcfi_id_for_evaluator
 	);
@@ -227,14 +227,14 @@ private:
 	/// constraint are examined in the build() method.
 	Size target_geomcst_id_;
 
-	std::map< core::chemical::ResidueTypeCAP, Size >    target_restype_index_map_;
-	utility::vector1< core::chemical::ResidueTypeCAP >  target_restypes_;
+	std::map< core::chemical::ResidueTypeCOP, Size >    target_restype_index_map_;
+	utility::vector1< core::chemical::ResidueTypeCOP >  target_restypes_;
 	utility::vector1< EvaluatorSet > respair_evaluators_;
 
 //  std::map < std::string, DownstreamBuilderCOP > dsbuilders_;
 
 	bool count_rotamers_per_target_restype_;
-	core::chemical::ResidueTypeCAP last_seen_restype_;
+	core::chemical::ResidueTypeCOP last_seen_restype_;
 	Size last_seen_restype_index_;
 	Size count_rotamer_for_lastseen_restype_;
 	Matcher::HitListConstIterator target_hits_for_focused_build_point_begin_;
@@ -261,7 +261,7 @@ public:
 	virtual ~TargetRotamerCoords();
 
 	void set_num_restypes( Size n_restypes );
-	void set_restype( Size restype_index, core::chemical::ResidueTypeCAP restype );
+	void set_restype( Size restype_index, core::chemical::ResidueTypeCOP restype );
 	void set_required_atoms( Size restype_index, utility::vector1< bool > const & atom_required );
 
 	void set_num_target_rotamers(
@@ -285,7 +285,7 @@ public:
 		return target_restypes_.size();
 	}
 
-	core::chemical::ResidueTypeCAP
+	core::chemical::ResidueTypeCOP
 	restype( Size restype_index ) const {
 		return target_restypes_[ restype_index ];
 	}
@@ -379,7 +379,7 @@ public:
 
 
 private:
-	utility::vector1< core::chemical::ResidueTypeCAP > target_restypes_;
+	utility::vector1< core::chemical::ResidueTypeCOP > target_restypes_;
 	utility::vector1< utility::vector1< Size > > atom_ids_for_coordinates_;
 	utility::vector1< ObjexxFCL::FArray2D< Vector > > coords_;
 	Size n_rots_total_;

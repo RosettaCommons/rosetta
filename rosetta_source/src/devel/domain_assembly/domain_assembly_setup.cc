@@ -103,7 +103,7 @@ DomainInfo::process_domain( )
 	for ( Size pos = linker_sequence_n.length(); pos > 0; --pos ) {
 		char aa = linker_sequence_n[pos-1]; // string indexing is zero-based!
 		AA my_aa = aa_from_oneletter_code( aa );
-		ResidueTypeCAPs const & rsd_type_list( residue_set->aa_map( my_aa ) );
+		ResidueTypeCOPs const & rsd_type_list( residue_set->aa_map( my_aa ) );
 		Size best_index = 1;
 		ResidueType const & rsd_type( *(rsd_type_list[ best_index ]) );
 		conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( rsd_type ) );
@@ -136,7 +136,7 @@ DomainInfo::process_domain( )
 	for ( Size pos = 0; pos < linker_sequence.length(); ++pos ) {
 		char aa = linker_sequence[pos]; // string indexing is zero-based!
 		AA my_aa = aa_from_oneletter_code( aa );
-		ResidueTypeCAPs const & rsd_type_list( residue_set->aa_map( my_aa ) );
+		ResidueTypeCOPs const & rsd_type_list( residue_set->aa_map( my_aa ) );
 		Size best_index = 1;
 		ResidueType const & rsd_type( *(rsd_type_list[ best_index ]) );
 		conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( rsd_type ) );

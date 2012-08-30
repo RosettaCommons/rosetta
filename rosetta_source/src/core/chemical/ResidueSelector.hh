@@ -398,7 +398,7 @@ public:
 	}
 
 	///
-	ResidueTypeCAPs
+	ResidueTypeCOPs
 	select( ResidueTypeSet const & rsd_set );
 
 	// data

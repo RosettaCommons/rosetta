@@ -142,8 +142,8 @@ AtomDistanceSecMatchRPE::evaluate_residues(
 
 std::string
 AtomDistanceSecMatchRPE::print(
-	core::chemical::ResidueTypeCAP candidate_restype,
-	core::chemical::ResidueTypeCAP target_restype
+	core::chemical::ResidueTypeCOP candidate_restype,
+	core::chemical::ResidueTypeCOP target_restype
 ) const
 {
 	return "AtomDistance range " + utility::to_string( std::sqrt(lowval()) ) +
@@ -243,8 +243,8 @@ AtomAngleSecMatchRPE::evaluate_residues(
 
 std::string
 AtomAngleSecMatchRPE::print(
-	core::chemical::ResidueTypeCAP candidate_restype,
-	core::chemical::ResidueTypeCAP target_restype
+	core::chemical::ResidueTypeCOP candidate_restype,
+	core::chemical::ResidueTypeCOP target_restype
 ) const
 {
 	return "AtomAngle range " + utility::to_string( numeric::constants::d::radians_to_degrees * lowval() ) +
@@ -301,8 +301,8 @@ AtomDihedralSecMatchRPE::evaluate_residues(
 
 std::string
 AtomDihedralSecMatchRPE::print(
-	core::chemical::ResidueTypeCAP candidate_restype,
-	core::chemical::ResidueTypeCAP target_restype
+	core::chemical::ResidueTypeCOP candidate_restype,
+	core::chemical::ResidueTypeCOP target_restype
 ) const
 {
 	std::string prefix = "AtomDihedral range" + std::string( std::abs( periodicity_ - numeric::constants::d::pi_2 ) > 1e-6 ? "s:" : ":" );

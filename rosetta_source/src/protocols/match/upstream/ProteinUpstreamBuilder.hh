@@ -243,7 +243,7 @@ public:
 
 public:
 	/// initialization
-	void set_residue_type( core::chemical::ResidueTypeCAP restype, bool backbone_only = false );
+	void set_residue_type( core::chemical::ResidueTypeCOP restype, bool backbone_only = false );
 
 	void set_sample_strategy_for_chi( Size chi, SampleStrategyData const & data );
 
@@ -321,7 +321,7 @@ public:
 		return fa_dun_cutoff_; }
 
 public:
-	core::chemical::ResidueTypeCAP  restype_;
+	core::chemical::ResidueTypeCOP  restype_;
 	bool backbone_only_; // true if only the geometry of the backbone is important
 
 	UpstreamResTypeGeometryOP restype_geom_;
@@ -485,7 +485,7 @@ public:
 	n_restypes_to_build() const;
 
 	virtual
-	core::chemical::ResidueTypeCAP
+	core::chemical::ResidueTypeCOP
 	restype( Size which_restype ) const;
 
 	virtual bool compatible(
@@ -517,10 +517,10 @@ public:
 	}
 
 	BuildSet const &
-	build_set( core::chemical::ResidueTypeCAP restype ) const;
+	build_set( core::chemical::ResidueTypeCOP restype ) const;
 
 	BuildSet &
-	build_set( core::chemical::ResidueTypeCAP restype );
+	build_set( core::chemical::ResidueTypeCOP restype );
 
 	void
 	set_sampler(

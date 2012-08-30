@@ -112,7 +112,7 @@ public:
 		for ( core::Size ii = 1; ii <= pose->total_residue(); ++ii ) {
 			/// the list of residue types should not be empty
 			TS_ASSERT( task->residue_task( ii ).allowed_residue_types_begin() != task->residue_task( ii ).allowed_residue_types_end() );
-			for ( core::pack::task::ResidueLevelTask::ResidueTypeCAPListConstIter
+			for ( core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter
 					iter = task->residue_task( ii ).allowed_residue_types_begin(),
 					iter_end = task->residue_task( ii ).allowed_residue_types_end();
 					iter != iter_end; ++iter ) {

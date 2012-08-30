@@ -52,7 +52,7 @@ core::pose::make_pose_from_sequence_(
 	for ( Size seqpos = 1; seqpos <= sequence.length(); ++seqpos ) {
 		char aa = sequence[seqpos-1]; // string indexing is zero-based!
 		AA my_aa = aa_from_oneletter_code( aa );
-		ResidueTypeCAPs const & rsd_type_list( residue_set.aa_map( my_aa ) );
+		ResidueTypeCOPs const & rsd_type_list( residue_set.aa_map( my_aa ) );
 		Size best_index = 1;
 		ResidueType const & rsd_type( *(rsd_type_list[ best_index ]) );
 		conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( rsd_type ) );
@@ -94,7 +94,7 @@ core::util::switch_to_residue_type_set(
 			continue;
 		}
 		// get all residue types with same AA
-		ResidueTypeCAPs const & rsd_types( target_residue_type_set->aa_map( rsd.aa() ) );
+		ResidueTypeCOPs const & rsd_types( target_residue_type_set->aa_map( rsd.aa() ) );
 		ResidueOP new_rsd( 0 );
 		// now look for a rsdtype with same variants
 		for ( Size j=1; j<= rsd_types.size(); ++j ) {

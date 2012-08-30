@@ -184,8 +184,8 @@ sequence_tolerance_main( void * )
 			EntityElements choices;
 			// to avoid duplicate AA's (such as for multiple histidine ResidueTypes)
 			std::set< core::chemical::AA > aaset;
-			std::list< ResidueTypeCAP > const & allowed( rtask.allowed_residue_types() );
-			for ( std::list< ResidueTypeCAP >::const_iterator t( allowed.begin() ), end( allowed.end() );
+			std::list< ResidueTypeCOP > const & allowed( rtask.allowed_residue_types() );
+			for ( std::list< ResidueTypeCOP >::const_iterator t( allowed.begin() ), end( allowed.end() );
 						t != end; ++t ) {
 				core::chemical::AA aa( (*t)->aa() );
 				// avoid duplicate AA's (such as for multiple histidine ResidueTypes)

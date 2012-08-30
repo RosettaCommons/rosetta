@@ -297,11 +297,11 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 		}
 		if( delta_filters_.size() == 0 )
 			baseline = filter()->report_sm( pose );
-    typedef std::list< ResidueTypeCAP > ResidueTypeCAPList;
-    ResidueTypeCAPList const & allowed( task->residue_task( resi ).allowed_residue_types() );
+    typedef std::list< ResidueTypeCOP > ResidueTypeCOPList;
+    ResidueTypeCOPList const & allowed( task->residue_task( resi ).allowed_residue_types() );
     utility::vector1< AA > allow_temp;
     allow_temp.clear();
-    foreach( ResidueTypeCAP const t, allowed ){
+    foreach( ResidueTypeCOP const t, allowed ){
     	allow_temp.push_back( t->aa() );
     }
 		foreach( AA const target_aa, allow_temp ){

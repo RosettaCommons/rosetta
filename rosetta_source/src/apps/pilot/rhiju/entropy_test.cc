@@ -205,7 +205,7 @@ sidechain_sample( pose::Pose & pose,
 		pose = pose_start;
 
 		// Figure out how many alternative rotamers there might be.
-		core::chemical::ResidueTypeCAP residue_type( pose.residue( n ).type() );
+		core::chemical::ResidueTypeCOP residue_type( pose.residue( n ).type() );
 
 		SingleResidueRotamerLibraryCAP residue_rotamer_library	( rotamer_library_.get_rsd_library(*residue_type) );
 		SingleResidueDunbrackLibraryCAP	residue_dunbrack_library( dynamic_cast< core::scoring::dunbrack::SingleResidueDunbrackLibrary const * >(residue_rotamer_library.get())	);

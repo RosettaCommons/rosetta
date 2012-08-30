@@ -55,9 +55,9 @@ namespace task {
 class ResidueLevelTask
 {
 public:
-	typedef std::list< chemical::ResidueTypeCAP > ResidueTypeCAPList;
-	typedef std::list< chemical::ResidueTypeCAP >::iterator ResidueTypeCAPListIter;
-	typedef std::list< chemical::ResidueTypeCAP >::const_iterator ResidueTypeCAPListConstIter;
+	typedef std::list< chemical::ResidueTypeCOP > ResidueTypeCOPList;
+	typedef std::list< chemical::ResidueTypeCOP >::iterator ResidueTypeCOPListIter;
+	typedef std::list< chemical::ResidueTypeCOP >::const_iterator ResidueTypeCOPListConstIter;
 public:
 	virtual ~ResidueLevelTask();
 
@@ -66,7 +66,7 @@ public:
 	extrachi_sample_level(
 		bool buried,
 		int chi,
-		chemical::ResidueTypeCAP concrete_residue
+		chemical::ResidueTypeCOP concrete_residue
 	) const = 0;
 
 	virtual void initialize_from_command_line() = 0;
@@ -80,7 +80,7 @@ public:
 	virtual bool has_behavior( std::string const & behavior ) const = 0;
 	virtual bool has_behavior() const = 0;
 
-	virtual void target_type( chemical::ResidueTypeCAP type ) = 0;
+	virtual void target_type( chemical::ResidueTypeCOP type ) = 0;
 	virtual void target_type( chemical::AA aa ) = 0;
 	virtual void target_type( std::string name ) = 0;
 
@@ -182,7 +182,7 @@ public:
 	virtual void restrict_to_repacking() = 0;
 
 	///@brief
-	virtual bool is_original_type( chemical::ResidueTypeCAP type ) const = 0;
+	virtual bool is_original_type( chemical::ResidueTypeCOP type ) const = 0;
 
 	///@brief
 	virtual chemical::ResidueTypeSet const & get_original_residue_set() const = 0;
@@ -207,10 +207,10 @@ public:
 	void
 	allow_aa( chemical::AA const & aa ) = 0;
 
-	virtual ResidueTypeCAPList const & allowed_residue_types() const = 0;
-	virtual ResidueTypeCAPListConstIter allowed_residue_types_begin() const = 0;
-	virtual ResidueTypeCAPListConstIter allowed_residue_types_end() const = 0;
-	virtual chemical::ResidueTypeCAP target_type() const = 0;
+	virtual ResidueTypeCOPList const & allowed_residue_types() const = 0;
+	virtual ResidueTypeCOPListConstIter allowed_residue_types_begin() const = 0;
+	virtual ResidueTypeCOPListConstIter allowed_residue_types_end() const = 0;
+	virtual chemical::ResidueTypeCOP target_type() const = 0;
 
 	virtual void print_allowed_types( std::ostream & os ) const = 0;
 

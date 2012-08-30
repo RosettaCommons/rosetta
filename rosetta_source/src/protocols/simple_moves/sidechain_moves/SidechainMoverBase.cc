@@ -230,7 +230,7 @@ SidechainMoverBase::make_move( conformation::ResidueOP old_res )
 	using numeric::conversions::radians;
 	using namespace ObjexxFCL;
 	chemical::ResidueType  const& old_res_type( old_res->type() );
-	chemical::ResidueTypeCAP new_res_type( &( old_res->type() ) ); //for now until we fix the design stuff back in...
+	chemical::ResidueTypeCOP new_res_type( &( old_res->type() ) ); //for now until we fix the design stuff back in...
 	utility::vector1<Real> const old_chi( old_res->chi() );
 	Size resnum = old_res->seqpos();
 	Size nchi( old_chi.size() );
@@ -359,7 +359,7 @@ SidechainMoverBase::set_task(	pack::task::PackerTaskCOP task ) {
 		// loop over all possible residue types and check if any have chi angles
 		residue_packed_[i] = false;
 		pack::task::ResidueLevelTask const & residue_task(task->residue_task(i));
-		for (ResidueLevelTask::ResidueTypeCAPListConstIter iter(residue_task.allowed_residue_types_begin());
+		for (ResidueLevelTask::ResidueTypeCOPListConstIter iter(residue_task.allowed_residue_types_begin());
 		     iter != residue_task.allowed_residue_types_end(); ++iter) {
 
 			// temporarily exclude proline residues from side chain sampling
@@ -417,7 +417,7 @@ SidechainMoverBase::dof_id_ranges( pose::Pose & pose ) {
 		// we only monitor DOFs of residues that won't change primary type
 		// check to see if pose residue type has the same name as all allowed residue types
 		pack::task::ResidueLevelTask const & residueleveltask(task_->residue_task(resnum));
-		for (pack::task::ResidueLevelTask::ResidueTypeCAPListConstIter iter(residueleveltask.allowed_residue_types_begin());
+		for (pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter iter(residueleveltask.allowed_residue_types_begin());
 				 iter != residueleveltask.allowed_residue_types_end(); ++iter) {
 
 			if ((*iter)->name3() != pose.residue_type(resnum).name3()) {

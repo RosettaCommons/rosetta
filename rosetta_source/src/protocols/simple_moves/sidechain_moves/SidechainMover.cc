@@ -302,13 +302,13 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue )
 
 	core::Size resnum = input_residue->seqpos();
 	core::pack::task::ResidueLevelTask const & residue_task(task_->residue_task(resnum));
-	core::pack::task::ResidueLevelTask::ResidueTypeCAPList const & residue_types(residue_task.allowed_residue_types());
+	core::pack::task::ResidueLevelTask::ResidueTypeCOPList const & residue_types(residue_task.allowed_residue_types());
 
 	// select a residue type
-	core::chemical::ResidueTypeCAP residue_type;
+	core::chemical::ResidueTypeCOP residue_type;
 	do {
 		Size const restypenum(RG.random_range(1, residue_types.size()));
-		core::pack::task::ResidueLevelTask::ResidueTypeCAPListConstIter iter(residue_types.begin());
+		core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter iter(residue_types.begin());
 		for (Size i = 1; i < restypenum; ++i) ++iter;
 		residue_type = *iter;
 	}
@@ -852,7 +852,7 @@ SidechainMover::set_task(
 		// loop over all possible residue types and check if any have chi angles
 		residue_packed_[i] = false;
 		core::pack::task::ResidueLevelTask const & residue_task(task->residue_task(i));
-		for (ResidueLevelTask::ResidueTypeCAPListConstIter iter(residue_task.allowed_residue_types_begin());
+		for (ResidueLevelTask::ResidueTypeCOPListConstIter iter(residue_task.allowed_residue_types_begin());
 		     iter != residue_task.allowed_residue_types_end(); ++iter) {
 
 			// temporarily exclude proline residues from side chain sampling
@@ -962,7 +962,7 @@ SidechainMover::dof_id_ranges(
 		// we only monitor DOFs of residues that won't change primary type
 		// check to see if pose residue type has the same name as all allowed residue types
 		core::pack::task::ResidueLevelTask const & residueleveltask(task_->residue_task(resnum));
-		for (core::pack::task::ResidueLevelTask::ResidueTypeCAPListConstIter iter(residueleveltask.allowed_residue_types_begin());
+		for (core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter iter(residueleveltask.allowed_residue_types_begin());
 				 iter != residueleveltask.allowed_residue_types_end(); ++iter) {
 
 			if ((*iter)->name3() != pose.residue_type(resnum).name3()) {

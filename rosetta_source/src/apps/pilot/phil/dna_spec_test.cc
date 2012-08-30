@@ -195,7 +195,7 @@ show_allowed_residue_types(
 													 )
 {
 	std::cout << "allowed rsd_types at position " << seqpos;
-	for ( pack::task::ResidueLevelTask::ResidueTypeCAPListConstIter
+	for ( pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter
 					allowed_iter = task.residue_task( seqpos ).allowed_residue_types_begin(),
 					allowed_end =  task.residue_task( seqpos ).allowed_residue_types_end();
 				allowed_iter != allowed_end; ++allowed_iter ) {
@@ -4000,7 +4000,7 @@ zf_test()
 		for ( pos_iter=zf1_positions.begin() ; pos_iter<zf1_positions.end(); ++pos_iter ) {
 
 			Size const pose_i( motif_begin_protein + (*pos_iter) );
-			ResidueTypeCAP rsd_type( ref_pose.residue( ref_motif_begin_protein+(*pos_iter) ).type() );
+			ResidueTypeCOP rsd_type( ref_pose.residue( ref_motif_begin_protein+(*pos_iter) ).type() );
 
  			Residue const & existing_residue( pose.residue( pose_i ) );
  			assert( existing_residue.is_protein() );
@@ -4018,7 +4018,7 @@ zf_test()
 			for ( pos_iter=zf2_positions.begin() ; pos_iter<zf2_positions.end(); ++pos_iter ) {
 
 				Size const pose_i( motif_begin_protein_next + (*pos_iter) );
-				ResidueTypeCAP rsd_type( ref_pose.residue( ref_motif_begin_protein_next+(*pos_iter) ).type() );
+				ResidueTypeCOP rsd_type( ref_pose.residue( ref_motif_begin_protein_next+(*pos_iter) ).type() );
 
 				Residue const & existing_residue( pose.residue( pose_i ) );
 				assert( existing_residue.is_protein() );

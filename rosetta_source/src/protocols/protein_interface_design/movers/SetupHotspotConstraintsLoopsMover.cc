@@ -275,8 +275,8 @@ SetupHotspotConstraintsLoopsMover::generate_csts(
 		// Start the vector which will become a single AmbiguousConstraint, if apply_ambiguous_constraints is true
 		utility::vector1< core::scoring::constraints::ConstraintCOP > ambig_csts;
 		// Loop over all allowed AAs at this position
-		std::list< core::chemical::ResidueTypeCAP > allowed_aas = task->residue_task( resnum ).allowed_residue_types();
-		for (std::list< core::chemical::ResidueTypeCAP >::const_iterator restype = allowed_aas.begin();
+		std::list< core::chemical::ResidueTypeCOP > allowed_aas = task->residue_task( resnum ).allowed_residue_types();
+		for (std::list< core::chemical::ResidueTypeCOP >::const_iterator restype = allowed_aas.begin();
 				 restype != allowed_aas.end(); ++restype) {
 
 			// Loop over all stubs with this restype

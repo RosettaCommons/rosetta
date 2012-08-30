@@ -421,7 +421,7 @@ make_sequence_combinations(
 	Size resid( *seqset_iter );
 	ResidueLevelTask const & restask( ptask->residue_task( resid ) );
 
-	for ( ResidueLevelTask::ResidueTypeCAPListConstIter type( restask.allowed_residue_types_begin() );
+	for ( ResidueLevelTask::ResidueTypeCOPListConstIter type( restask.allowed_residue_types_begin() );
 				type != restask.allowed_residue_types_end(); ++type ) {
 		// ignore adduct variant types for now (probably hydrated)
 		if ( (*type)->has_variant_type( chemical::ADDUCT ) ) continue;
@@ -446,7 +446,7 @@ make_single_mutants(
 	for ( ResTypeSequence::const_iterator it( sequence.begin() ); it != sequence.end(); ++it ) {
 		Size index( it->first );
 		ResidueLevelTask const & rtask( ptask->residue_task(index) );
-		for ( ResidueLevelTask::ResidueTypeCAPListConstIter type( rtask.allowed_residue_types_begin() );
+		for ( ResidueLevelTask::ResidueTypeCOPListConstIter type( rtask.allowed_residue_types_begin() );
 					type != rtask.allowed_residue_types_end(); ++type ) {
 			// ignore adduct variant types for now (probably hydrated)
 			if ( (*type)->has_variant_type( chemical::ADDUCT ) ) continue;
@@ -562,7 +562,7 @@ restrict_dna_rotamers(
 	for ( Size roti(1); roti <= nrot; ++roti ) {
 
 		Size const rotpos( rotamer_sets->res_for_rotamer(roti) );
-		ResidueTypeCAP rot_type( rotamer_sets->rotamer(roti)->type() );
+		ResidueTypeCOP rot_type( rotamer_sets->rotamer(roti)->type() );
 
 		ResTypeSequence::const_iterator seqindex( seq.find( rotpos ) );
 		if ( seqindex != seq.end() ) {
@@ -584,7 +584,7 @@ restrict_dna_rotamers(
 void
 restrict_to_single_sequence(
 	rotamer_set::RotamerSetsCOP rotamer_sets,
-	vector1< ResidueTypeCAP > const & single_sequence,
+	vector1< ResidueTypeCOP > const & single_sequence,
 	utility::vector0< int > & rot_to_pack
 )
 {
@@ -592,7 +592,7 @@ restrict_to_single_sequence(
 	Size const nrot( rotamer_sets->nrotamers() );
 	for ( Size roti(1); roti <= nrot; ++roti ) {
 		Size const rotpos( rotamer_sets->res_for_rotamer(roti) );
-		ResidueTypeCAP rot_type( rotamer_sets->rotamer(roti)->type() );
+		ResidueTypeCOP rot_type( rotamer_sets->rotamer(roti)->type() );
 		// a comparison operator is not defined for the ResidueType class
 		// compare names here
 		// name3 comparison should allow variants

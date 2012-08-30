@@ -96,9 +96,9 @@ main
 
 		TR << *aa_iter << std::endl;
 
-		core::chemical::ResidueTypeCAPs const & aa_caps(residue_set->aa_map(*aa_iter));
+		core::chemical::ResidueTypeCOPs const & aa_caps(residue_set->aa_map(*aa_iter));
 
-		for (core::chemical::ResidueTypeCAPs::const_iterator residue_iter(aa_caps.begin());
+		for (core::chemical::ResidueTypeCOPs::const_iterator residue_iter(aa_caps.begin());
 		     residue_iter != aa_caps.end(); ++residue_iter) {
 
 			core::chemical::ResidueType const & residue_type(**residue_iter);

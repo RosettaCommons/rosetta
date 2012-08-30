@@ -126,7 +126,7 @@ Translator::add_all_remaining(AtomList &list, const ResidueType &res) {
 	};
 }
 
-Translator::Translator(const RuleSet &rules, ResidueTypeCAP fine_res_ptr,  ResidueTypeAP coarse_res_ptr) {
+Translator::Translator(const RuleSet &rules, ResidueTypeCOP fine_res_ptr,  ResidueTypeAP coarse_res_ptr) {
 	coarse_res_type_=coarse_res_ptr;
 	coarse_res_type_->set_translator(TranslatorCAP(this));
 	fine_res_type_=fine_res_ptr;
@@ -242,7 +242,7 @@ bool update_mask(RotVector& mask,int nchi,RotVector const &max_bins);
 
 pose::PoseOP create_rotamer(
 	Translator const& map,
-	ResidueTypeCAP fine_res_type,
+	ResidueTypeCOP fine_res_type,
 	DunbrackRotamer< FOUR, Real > const& rotamer
 );
 
@@ -255,8 +255,8 @@ int find_most_frequent_rotamer(
 
 void coarse_rotamer(
 	Translator const& map,
-	ResidueTypeCAP fine_res_type,
-	ResidueTypeCAP coarse_res_type,
+	ResidueTypeCOP fine_res_type,
+	ResidueTypeCOP coarse_res_type,
 	DunbrackRotamer< FOUR, Real > const& rotamer,
 	Size nchi,
 	ChiVector &chi,
@@ -265,8 +265,8 @@ void coarse_rotamer(
 
 void average_rotamers(
 	Translator const& map,
-	ResidueTypeCAP fine_res_type,
-	ResidueTypeCAP coarse_res_type,
+	ResidueTypeCOP fine_res_type,
+	ResidueTypeCOP coarse_res_type,
 	utility::vector1< DunbrackRotamer< FOUR > > const & fine_rotamers,
 	RotVector const& mask,
 	Size nchi,
@@ -379,7 +379,7 @@ inline Real sqr3 ( Real x ) {
 pose::PoseOP
 create_rotamer(
 	Translator const& map,
-	ResidueTypeCAP fine_res_type,
+	ResidueTypeCOP fine_res_type,
 	DunbrackRotamer< FOUR, Real > const & rotamer
 )
 {
@@ -406,8 +406,8 @@ create_rotamer(
 
 void coarse_rotamer(
 	Translator const& map,
-	ResidueTypeCAP fine_res_type,
-	ResidueTypeCAP coarse_res_type,
+	ResidueTypeCOP fine_res_type,
+	ResidueTypeCOP coarse_res_type,
 	DunbrackRotamer< FOUR, Real > const & rotamer,
 	Size nchi,
 	ChiVector &chi,
@@ -427,8 +427,8 @@ void coarse_rotamer(
 
 void average_rotamers(
 	Translator const& map,
-	ResidueTypeCAP fine_res_type,
-	ResidueTypeCAP coarse_res_type,
+	ResidueTypeCOP fine_res_type,
+	ResidueTypeCOP coarse_res_type,
 	utility::vector1< DunbrackRotamer< FOUR > > const & fine_rotamers,
 	RotVector const& mask,
 	Size nchi,

@@ -64,7 +64,7 @@ public:
 	extrachi_sample_level(
 		bool buried,
 		int chi,
-		chemical::ResidueTypeCAP concrete_residue
+		chemical::ResidueTypeCOP concrete_residue
 	) const;
 
 	///@brief initialize options from command line flags
@@ -84,7 +84,7 @@ public:
 	virtual bool has_behavior( std::string const & behavior ) const;
 	virtual bool has_behavior() const;
 
-	virtual void target_type( chemical::ResidueTypeCAP type );
+	virtual void target_type( chemical::ResidueTypeCOP type );
 	virtual void target_type( chemical::AA aa );
 	virtual void target_type( std::string name );
 
@@ -210,7 +210,7 @@ public:
 	virtual void restrict_to_repacking();
 
 	///@brief
-	virtual bool is_original_type( chemical::ResidueTypeCAP type ) const;
+	virtual bool is_original_type( chemical::ResidueTypeCOP type ) const;
 
 	///@brief
 	virtual chemical::ResidueTypeSet const & get_original_residue_set() const;
@@ -233,13 +233,13 @@ public:
 	///@brief explicitly allow a canonical AA
 	virtual	void allow_aa( chemical::AA const & aa );
 
-	virtual ResidueTypeCAPList const & allowed_residue_types() const;
+	virtual ResidueTypeCOPList const & allowed_residue_types() const;
 	///@brief returns iterator to beginning of allowed residue types list (traversal only)
-	virtual ResidueTypeCAPListConstIter allowed_residue_types_begin() const;
+	virtual ResidueTypeCOPListConstIter allowed_residue_types_begin() const;
 	///@brief returns iterator to end of allowed residue types list (traversal only)
-	virtual ResidueTypeCAPListConstIter allowed_residue_types_end() const;
+	virtual ResidueTypeCOPListConstIter allowed_residue_types_end() const;
 
-	virtual chemical::ResidueTypeCAP target_type() const;
+	virtual chemical::ResidueTypeCOP target_type() const;
 
 	virtual void print_allowed_types( std::ostream & os ) const;
 
@@ -337,11 +337,11 @@ private:
 	utility::vector1< std::string > behaviors_;
 	///@brief include adducts at this residue
 	bool adducts_;
-	///@details std::list of ResidueTypeCAP objects - these are only residue types allowed at position
-	ResidueTypeCAPList allowed_residue_types_;
-	chemical::ResidueTypeCAP original_residue_type_; //record this on construction
+	///@details std::list of ResidueTypeCOP objects - these are only residue types allowed at position
+	ResidueTypeCOPList allowed_residue_types_;
+	chemical::ResidueTypeCOP original_residue_type_; //record this on construction
 	///@details a member of the allowed types that can optionally respresent a target state
-	chemical::ResidueTypeCAP target_residue_type_;
+	chemical::ResidueTypeCOP target_residue_type_;
 
 	///@details can the sequence change?  true implies repacking_ is true as well
 	bool designing_;
@@ -359,7 +359,7 @@ private:
 	///symmetric seeming residues: histadine, asparagine and glutamine? Implies optimize_H_mode_
 	bool flip_HNQ_;
 
-	///@details has this histidine tautomer been fixed?  This value is kept for bookkeeping; the tautomer's fixation is effected by removing the other tautomer from the ResidueTypeCAPList.
+	///@details has this histidine tautomer been fixed?  This value is kept for bookkeeping; the tautomer's fixation is effected by removing the other tautomer from the ResidueTypeCOPList.
 	bool fix_his_tautomer_;
 
 	///@details if this is true, this residue will be treated as part of the background.
@@ -475,7 +475,7 @@ public:
 	virtual bool has_behavior( Size resid ) const;
 
 	///@brief return the targeted type (may be null pointer)
-	virtual chemical::ResidueTypeCAP target_type( Size resid ) const;
+	virtual chemical::ResidueTypeCOP target_type( Size resid ) const;
 
 	///@brief for all positions, disable adducts if false, do nothing if true
 	virtual void or_adducts( bool setting );

@@ -104,7 +104,7 @@ public:
 		scoring::ScoreFunction const & scorefxn,
 		pack::task::PackerTask const & task,
 		graph::GraphCOP,
-		chemical::ResidueTypeCAP concrete_residue,
+		chemical::ResidueTypeCOP concrete_residue,
 		conformation::Residue const& existing_residue,
 		utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 		bool buried,

@@ -25,6 +25,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 // AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>

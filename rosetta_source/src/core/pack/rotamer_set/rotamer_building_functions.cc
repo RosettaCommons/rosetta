@@ -153,7 +153,7 @@ build_lib_dna_rotamers(
 	utility::vector1< DihedralSet* > const & library,
 	Size const resid,
 	pose::Pose const & pose,
-	chemical::ResidueTypeCAP concrete_residue,
+	chemical::ResidueTypeCOP concrete_residue,
 	utility::vector1< conformation::ResidueOP > & rotamers
 )
 {
@@ -346,7 +346,7 @@ void
 build_random_dna_rotamers(
 	Size const resid,
 	pose::Pose const & pose,
-	chemical::ResidueTypeCAP concrete_residue,
+	chemical::ResidueTypeCOP concrete_residue,
 	pack::task::ExtraRotSample const & level,
 	utility::vector1< conformation::ResidueOP > & rotamers
 )
@@ -569,7 +569,7 @@ void
 build_dna_rotamers(
 	Size const resid,
 	pose::Pose const & pose,
-	chemical::ResidueTypeCAP concrete_residue,
+	chemical::ResidueTypeCOP concrete_residue,
 	pack::task::PackerTask const & task,
 	utility::vector1< conformation::ResidueOP > & rotamers
 )
@@ -751,7 +751,7 @@ void
 build_rna_chi_rotamers(
 	Size const resid,
 	pose::Pose const & pose,
-	chemical::ResidueTypeCAP concrete_residue,
+	chemical::ResidueTypeCOP concrete_residue,
 	pack::task::ExtraRotSample const & level,
 	bool const sample_rna_chi, bool const & include_current,
 	utility::vector1< conformation::ResidueOP > & rotamers
@@ -815,7 +815,7 @@ void
 build_rna_rotamers(
 	Size const resid,
 	pose::Pose const & pose,
-	chemical::ResidueTypeCAP concrete_residue,
+	chemical::ResidueTypeCOP concrete_residue,
 	pack::task::PackerTask const & task,
 	utility::vector1< conformation::ResidueOP > & new_rotamers,
 	Size & id_for_current_rotamer

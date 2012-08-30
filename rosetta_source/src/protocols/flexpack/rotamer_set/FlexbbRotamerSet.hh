@@ -72,7 +72,7 @@ protected:
 		core::pose::Pose const & pose,
 		core::scoring::ScoreFunction const & scorefxn,
 		core::pack::task::PackerTask const & task,
-		core::chemical::ResidueTypeCAP concrete_residue,
+		core::chemical::ResidueTypeCOP concrete_residue,
 		core::graph::GraphCOP packer_neighbor_graph,
 		bool use_neighbor_context = true
 	);

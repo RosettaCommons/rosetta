@@ -144,7 +144,7 @@ public:
 	n_possible_hits_per_upstream_conformation() const;
 
 	void
-	set_downstream_restype( core::chemical::ResidueTypeCAP downstream_restype );
+	set_downstream_restype( core::chemical::ResidueTypeCOP downstream_restype );
 
 	void
 	set_focused_geomcst_id( Size focused_geomcst_id );
@@ -172,7 +172,7 @@ public:
 	//min_sep_d2_from_upstream_atoms_[ downstream ][ upstream ].first
 //	void
 //	initialize_upstream_residue(
-//  	core::chemical::ResidueTypeCAP  us_res /*upstream residue*/
+//  	core::chemical::ResidueTypeCOP  us_res /*upstream residue*/
 //	);
 
 private:
@@ -217,7 +217,7 @@ private:
 
 private:
 
-	core::chemical::ResidueTypeCAP downstream_restype_;
+	core::chemical::ResidueTypeCOP downstream_restype_;
 	core::pose::PoseCOP upstream_pose_;
 	EvaluatorSet respair_evaluators_;
 //  std::map < std::string, DownstreamBuilderCOP > dsbuilders_;

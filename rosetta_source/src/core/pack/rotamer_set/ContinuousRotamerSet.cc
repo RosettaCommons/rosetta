@@ -69,7 +69,7 @@ void ContinuousRotamerSet::build_rotamers(
 	/// for the ideal rotamer.
 
 	Size count_allowed( 0 );
-	for ( task::ResidueLevelTask::ResidueTypeCAPListConstIter
+	for ( task::ResidueLevelTask::ResidueTypeCOPListConstIter
 			allowed_iter = task.residue_task( resid ).allowed_residue_types_begin(),
 			allowed_end = task.residue_task( resid ).allowed_residue_types_end();
 			allowed_iter != allowed_end; ++allowed_iter ) {
@@ -92,7 +92,7 @@ void ContinuousRotamerSet::build_rotamers(
 	}
 
 	Size count_restype_ind( 0 );
-	for ( task::ResidueLevelTask::ResidueTypeCAPListConstIter
+	for ( task::ResidueLevelTask::ResidueTypeCOPListConstIter
 			allowed_iter = task.residue_task( resid ).allowed_residue_types_begin(),
 			allowed_end = task.residue_task( resid ).allowed_residue_types_end();
 			allowed_iter != allowed_end; ++allowed_iter ) {
@@ -211,7 +211,7 @@ ContinuousRotamerSet::current_rotamer_coords() const
 Size
 ContinuousRotamerSet::resid() const { return resid_;}
 
-chemical::ResidueTypeCAP
+chemical::ResidueTypeCOP
 ContinuousRotamerSet::restype_for_rotblock( Size rotblock ) const
 {
 	return restype_for_rotblock_[ rotblock ];

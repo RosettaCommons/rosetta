@@ -100,7 +100,7 @@ RNA_DataBackboneEnergy::initialize_atom_numbers_sugar() {
 	using namespace core::chemical;
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
-	ResidueTypeCAP const & rsd_type( rsd_set->aa_map( na_rad )[ 1 ] ); //Check out adenine.
+	ResidueTypeCOP const & rsd_type( rsd_set->aa_map( na_rad )[ 1 ] ); //Check out adenine.
 
 	atom_numbers_sugar_.clear();
 	atom_numbers_sugar_.push_back( rsd_type->atom_index( " C1*" ) );
@@ -110,7 +110,7 @@ RNA_DataBackboneEnergy::initialize_atom_numbers_sugar() {
 	atom_numbers_sugar_.push_back( rsd_type->atom_index( " C5*" ) );
 
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( COARSE_RNA );
-	ResidueTypeCAP const & rsd_type_coarse( rsd_set->aa_map( na_rad )[ 1 ] ); //Check out adenine.
+	ResidueTypeCOP const & rsd_type_coarse( rsd_set->aa_map( na_rad )[ 1 ] ); //Check out adenine.
 
 	atom_numbers_sugar_coarse_.clear();
 	atom_numbers_sugar_coarse_.push_back( rsd_type_coarse->atom_index( " S  " ) );

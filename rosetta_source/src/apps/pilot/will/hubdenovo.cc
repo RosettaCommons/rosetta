@@ -276,7 +276,7 @@ struct ConstraintConfig {
 		parse_config_file(in);
 	}
 	Strings residue_names_from_sequence(string s) const {
-		core::chemical::ResidueTypeCAPs r = core::pose::residue_types_from_sequence(s,*frs,false);
+		core::chemical::ResidueTypeCOPs r = core::pose::residue_types_from_sequence(s,*frs,false);
 		Strings rn;
 		for(Size i = 1; i <= r.size(); ++i) {
 			rn.push_back( str( r[i]->name1() ) );

@@ -418,7 +418,7 @@ public:
 void
 expand_proton_chi(
 	pack::task::ExtraRotSample ex_samp_level,
-	chemical::ResidueTypeCAP concrete_residue,
+	chemical::ResidueTypeCOP concrete_residue,
 	Size proton_chi,
 	utility::vector1< ChiSetOP > & chi_set_vector
 );

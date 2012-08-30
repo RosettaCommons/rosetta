@@ -224,9 +224,9 @@ RestrictDesignToProteinDNAInterface::apply(
 				// specifying the appropriate ResidueType here is tricky, because there are multiple possible 'name3's for the nucleotides, AND because we must make sure to indicate a ResidueType that is already represented in the ResidueLevelTask
 				ResidueTypeSet const & rts( pose.residue(1).residue_type_set() );
 				// a list of all existing residue types that match the input name3
-				ResidueTypeCAPs const & name3map( rts.name3_map( (*def)->name3 ) );
+				ResidueTypeCOPs const & name3map( rts.name3_map( (*def)->name3 ) );
 				// use the first ResidueType represented in the ResidueLevelTask that corresponds to one in the name3 map
-				for ( ResidueLevelTask::ResidueTypeCAPListConstIter
+				for ( ResidueLevelTask::ResidueTypeCOPListConstIter
 					    allowed_type( toptask.allowed_residue_types_begin() ),
 					    end( toptask.allowed_residue_types_end() ); allowed_type != end; ++allowed_type ) {
 					if ( std::find( name3map.begin(), name3map.end(), *allowed_type ) != name3map.end() ) {
@@ -242,9 +242,9 @@ RestrictDesignToProteinDNAInterface::apply(
 				}
 				if ( pos.paired() ) {
 					std::string const comp_name3( dna_comp_name_str( (*def)->name3 ) );
-					ResidueTypeCAPs const & name3map_comp( rts.name3_map( comp_name3 ) );
+					ResidueTypeCOPs const & name3map_comp( rts.name3_map( comp_name3 ) );
 					ResidueLevelTask & bottask( ptask.nonconst_residue_task( pos.bottom() ) );
-					for ( ResidueLevelTask::ResidueTypeCAPListConstIter
+					for ( ResidueLevelTask::ResidueTypeCOPListConstIter
 						    allowed_type( bottask.allowed_residue_types_begin() ),
 						    end( bottask.allowed_residue_types_end() ); allowed_type != end; ++allowed_type ) {
 						if ( std::find( name3map_comp.begin(), name3map_comp.end(), *allowed_type ) !=
@@ -386,7 +386,7 @@ RestrictDesignToProteinDNAInterface::apply(
 			TR << ":";
 			// set used here to avoid redundant name3's from extra adduct variant allowed_types
 			std::set< std::string > name3set;
-			for ( ResidueLevelTask::ResidueTypeCAPListConstIter
+			for ( ResidueLevelTask::ResidueTypeCOPListConstIter
 				    allowed_type( rlt.allowed_residue_types_begin() ),
 				    typesend( rlt.allowed_residue_types_end() ); allowed_type != typesend; ++allowed_type ) {
 				name3set.insert( (*allowed_type)->name3() );

@@ -591,7 +591,7 @@ SegmentInsert::Positions SegmentInsert::original_mutable_positions() const {
 
 /// @brief do the actual work of modifying the Pose
 void SegmentInsert::modify_impl( Pose & pose ) {
-	using core::chemical::ResidueTypeCAPs;
+	using core::chemical::ResidueTypeCOPs;
 	using core::conformation::Residue;
 	using core::conformation::ResidueOP;
 	using core::conformation::ResidueOPs;
@@ -713,13 +713,13 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 	}
 
 	// grab residue types from aa string
-	ResidueTypeCAPs r_types_flanking_left = core::pose::residue_types_from_sequence(
+	ResidueTypeCOPs r_types_flanking_left = core::pose::residue_types_from_sequence(
 		flanking_left_aa(),
 		residue_type_set(),
 		false
 	);
 
-	ResidueTypeCAPs r_types_flanking_right = core::pose::residue_types_from_sequence(
+	ResidueTypeCOPs r_types_flanking_right = core::pose::residue_types_from_sequence(
 		flanking_right_aa(),
 		residue_type_set(),
 		false

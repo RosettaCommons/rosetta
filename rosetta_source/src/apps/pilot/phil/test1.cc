@@ -545,7 +545,7 @@ set_fullatom_flag_test()
 				std::cout << rsd.type().variant_types()[j] << std::endl;
 			}
 			// get all residue types with same AA
-			ResidueTypeCAPs const & rsd_types( fullatom_residue_set->aa_map( rsd.aa() ) );
+			ResidueTypeCOPs const & rsd_types( fullatom_residue_set->aa_map( rsd.aa() ) );
 			ResidueOP new_rsd( 0 );
 			// now look for a rsdtype with same variants
 			for ( Size j=1; j<= rsd_types.size(); ++j ) {
@@ -685,7 +685,7 @@ simple_loop_modeling_test()
 		for ( Size i=1; i<= mapping.size1(); ++i ) {
 			char const new_seq( target_seq[ mapping[i]-1 ] ); // strings are 0-indexed
 			// will fail if .select(...) returns empty list
-			ResidueTypeCAP new_rsd_type( ResidueSelector().set_name1( new_seq ).exclude_variants().select( rsd_set )[1] );
+			ResidueTypeCOP new_rsd_type( ResidueSelector().set_name1( new_seq ).exclude_variants().select( rsd_set )[1] );
 			ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type, pose.residue(i), pose.conformation() ) );
 			pose.replace_residue( i, *new_rsd, false );
 		}
@@ -710,7 +710,7 @@ simple_loop_modeling_test()
 	while ( mapping[ 1 ] != 1 ) {
 		int const aligned_pos( mapping[1] - 1 );
 		char const new_seq( target_seq[ aligned_pos-1 ] ); // 0-indexed
-		ResidueTypeCAP new_rsd_type( ResidueSelector().set_name1( new_seq ).exclude_variants().select( rsd_set )[1] );
+		ResidueTypeCOP new_rsd_type( ResidueSelector().set_name1( new_seq ).exclude_variants().select( rsd_set )[1] );
 		ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type ) );
 		pose.conformation().prepend_polymer_residue_before_seqpos( *new_rsd, 1, true );
 		pose.set_omega( 1, 180.0 );
@@ -721,7 +721,7 @@ simple_loop_modeling_test()
 		int const seqpos( mapping.size1() + 1 );
 		int const aligned_pos( mapping[seqpos-1] + 1 );
 		char const new_seq( target_seq[ aligned_pos-1 ] ); // 0-indexed
-		ResidueTypeCAP new_rsd_type( ResidueSelector().set_name1( new_seq ).exclude_variants().select( rsd_set )[1] );
+		ResidueTypeCOP new_rsd_type( ResidueSelector().set_name1( new_seq ).exclude_variants().select( rsd_set )[1] );
 		ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type ) );
 		pose.conformation().append_polymer_residue_after_seqpos( *new_rsd, seqpos-1, true );
 		pose.set_omega( seqpos-1, 180.0 );
@@ -738,7 +738,7 @@ simple_loop_modeling_test()
 				// add at the nterm of the loop
 				int const aligned_pos( cutpoint+1 );
 				char const new_seq( target_seq[ aligned_pos - 1 ] ); // 0-indexed
-				ResidueTypeCAP new_rsd_type( ResidueSelector().set_name1( new_seq ).exclude_variants().select( rsd_set )[1] );
+				ResidueTypeCOP new_rsd_type( ResidueSelector().set_name1( new_seq ).exclude_variants().select( rsd_set )[1] );
 				ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type ) );
 				pose.conformation().append_polymer_residue_after_seqpos( *new_rsd, cutpoint, true );
 				pose.set_omega( cutpoint, 180.0 );
@@ -1295,8 +1295,8 @@ simple_frag_test()
 
 		Pose pose;
 		for ( Size i=1; i<= 20; ++i ) {
-			ResidueTypeCAPs const & rsd_list( rsd_set->aa_map( static_cast<AA>(i) ) /*BAD*/ );
-			for ( ResidueTypeCAPs::const_iterator iter=rsd_list.begin(), iter_end= rsd_list.end(); iter!= iter_end; ++iter ) {
+			ResidueTypeCOPs const & rsd_list( rsd_set->aa_map( static_cast<AA>(i) ) /*BAD*/ );
+			for ( ResidueTypeCOPs::const_iterator iter=rsd_list.begin(), iter_end= rsd_list.end(); iter!= iter_end; ++iter ) {
 				ResidueType const & rsd_type( **iter );
 				if ( ( rsd_type.is_lower_terminus() == ( i == 1 ) ) &&
 						 ( rsd_type.is_upper_terminus() == ( i == 20 ) ) ) {

@@ -102,7 +102,7 @@ ResidueAtomTreeCollection::ResidueAtomTreeCollection(
 	Size const resid( orig_res.seqpos() );
 
 	Size ii( 0 );
-	for ( task::ResidueLevelTask::ResidueTypeCAPListConstIter
+	for ( task::ResidueLevelTask::ResidueTypeCOPListConstIter
 			allowed_iter = rltask.allowed_residue_types_begin(),
 			allowed_end = rltask.allowed_residue_types_end();
 			allowed_iter != allowed_end; ++allowed_iter ) {
