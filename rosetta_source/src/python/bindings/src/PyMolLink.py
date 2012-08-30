@@ -27,6 +27,7 @@ from array import array
 import rosetta
 import rosetta.core.pose
 import rosetta.core.scoring.hbonds
+import rosetta.core.scoring
 import rosetta.core.scoring.dssp
 import rosetta.protocols.moves
 
@@ -347,16 +348,22 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
                          'Energy is not updated; please score the pose first!')
 
         # Get the proper score type.
-        if isinstance(energy_type, str):
+        if energy_type == rosetta.end_of_score_type_enumeration:
+            # WORKAROUND: If one sets self.energy_type(total_score),
+            # self.energy_type() returns instead end_of_score_type_enumeration.
+            score_type = rosetta.core.scoring.total_score
+        elif isinstance(energy_type, rosetta.core.scoring.ScoreType):
+            score_type = energy_type
+        elif isinstance(energy_type, str):
             score_type = rosetta.score_type_from_name(energy_type)
         else:
-            raise TypeError('Score type must be a string.')
+            raise TypeError('energy_type must be a string or ScoreType.')
 
         return [pose.energies().residue_total_energies(i + 1)[score_type]
                                          for i in xrange(pose.total_residue())]
 
     def _send_raw_energies(self, pose, energy_type, energies, autoscale=True):
-        energy_type = energy_type[:255]
+        energy_type = str(energy_type)[:255]
         name = self._get_pose_name(pose)
 
         if autoscale:
@@ -424,11 +431,11 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
         self.link.send_message(message)
 
         if self.update_energy():
-            self.send_energy(pose, str(self.energy_type()))
+            self.send_energy(pose, self.energy_type())
 
     # Energy output.
-    def send_energy(self, input_pose, energy_type='total_score', label=False,
-                    sigs=6):
+    def send_energy(self, input_pose, energy_type=rosetta.total_score,
+                    label=False, sigs=6):
         """
         Sends cummulative energy score to PyMOL.
         
