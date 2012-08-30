@@ -452,6 +452,8 @@ Splice::apply( core::pose::Pose & pose )
 	TR<<std::endl;
 	std::string threaded_seq( "" );/// will be all ALA except for Pro/Gly on source pose and matching identities on source pose
 /// Now decide on residue identities: Alanine throughout except when the template pose has Gly, Pro or a residue that is the same as that in the original pose
+	utility::vector1< core::Size > pro_gly_res; //keeping track of where pro/gly residues are placed
+	pro_gly_res.clear();
 	for( core::Size i = 0; i < total_residue_new; ++i ){
 		core::Size const pose_resi( from_res() + i );
 		std::string const dofs_resn( dofs[ i + 1 ].resn() );
@@ -461,8 +463,11 @@ Splice::apply( core::pose::Pose & pose )
 			continue;
 		}
 		if( design() ){ // all non pro/gly residues in template are allowed to design
-			if( dofs_resn == "G" || dofs_resn == "P" )
+			if( dofs_resn == "G" || dofs_resn == "P" ){
 				threaded_seq += dofs_resn;
+				pro_gly_res.push_back( pose_resi );
+				TR<<"Pro/Gly will be allowed at: "<<pose_resi<<std::endl;
+			}
 			else
 				threaded_seq += 'x';
 			continue;
@@ -505,10 +510,18 @@ Splice::apply( core::pose::Pose & pose )
 			dao->include_residue( i );
 	}
 	tf->push_back( dao );
-	operation::RestrictAbsentCanonicalAASOP racaas = new operation::RestrictAbsentCanonicalAAS;
-	racaas->keep_aas( "ADEFIKLMNQRSTVWY" ); /// disallow pro/gly/cys/his
-	racaas->include_residue( 0 ); /// restrict all residues
-	tf->push_back( racaas);
+	TR<<"allowing pro/gly only at positions: ";
+	for(core::Size res_num=1; res_num <= pose.total_residue(); res_num++ ){
+		if( std::find( pro_gly_res.begin(), pro_gly_res.end(), res_num ) == pro_gly_res.end() ){
+			operation::RestrictAbsentCanonicalAASOP racaas = new operation::RestrictAbsentCanonicalAAS;
+			racaas->keep_aas( "ADEFIKLMNQRSTVWY" ); /// disallow pro/gly/cys/his
+			racaas->include_residue( res_num );
+			tf->push_back( racaas);
+		}
+		else
+			TR<<res_num<<", ";
+	}
+	TR<<std::endl;
 //	if( locked_res() ){
 //		operation::PreventRepackingOP pr = new operation::PreventRepacking;
 //		pr->include_residue( locked_res() );
