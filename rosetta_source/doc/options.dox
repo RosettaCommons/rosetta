@@ -783,6 +783,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>filter to use with database output. arguments for filter follow filter name</dd><br>
 </dl>
 <dl>
+<dt><b>-resume_batch</b> \<IntegerVector\><dt>
+<dd>specify 1 or more batch ids to finish an incomplete protocol.  Only works with the DatabaseJobOutputter.  The new jobs will be generated under a new protocol and batch ID</dd><br>
+</dl>
+<dl>
 <dt><b>-nooutput</b> \<Boolean\><dt>
 <dd>Surpress outputfiles</dd><br>
 <dd>Default: false</dd><br>
@@ -4296,6 +4300,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-minimize</b> \<String\><dt>
 <dd>RosettaHoles params to use: decoy15, decoy25 or resl</dd><br>
 <dd>Default: "decoy15"</dd><br>
+</dl>
+<dl>
+<dt><b>-debug</b> \<Boolean\><dt>
+<dd>dump debug output</dd><br>
+<dd>Default: false</dd><br>
 </dl>
  </li>
 <li><h2>packstat</h2>
@@ -10113,6 +10122,21 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 5</dd><br>
 </dl>
 <dl>
+<dt><b>-lh_filter_string</b> \<String\><dt>
+<dd>loophash ABEGO filter target fragment type</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-lh_cbreak_selection</b> \<Integer\><dt>
+<dd>loophash with cbreak dominant weight</dd><br>
+<dd>Default: 10</dd><br>
+</dl>
+<dl>
+<dt><b>-lh_closure_filter</b> \<Boolean\><dt>
+<dd>filter for close rms when bypass_closure is used</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-cen_minimize</b> \<Boolean\><dt>
 <dd>centroid minimization after fragment building</dd><br>
 <dd>Default: false</dd><br>
@@ -10250,12 +10274,13 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>RemodelLoopMover option group</dd><br>
 </dl>
 <dl>
-<dt><b>-max_linear_chainbreak</b> \<Integer\><dt>
+<dt><b>-max_linear_chainbreak</b> \<Real\><dt>
 <dd>linear chainbreak is <= this value, loop is considered closed (default 0.07) </dd><br>
+<dd>Default: 0.07</dd><br>
 </dl>
 <dl>
 <dt><b>-randomize_loops</b> \<Boolean\><dt>
-<dd>randomize loops prior to running main protocol (default false)</dd><br>
+<dd>randomize loops prior to running main protocol (default true)</dd><br>
 </dl>
 <dl>
 <dt><b>-use_loop_hash</b> \<Boolean\><dt>
@@ -10264,6 +10289,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-allowed_closure_attempts</b> \<Integer\><dt>
 <dd>the allowed number of overall closure attempts (default 1)</dd><br>
+</dl>
+<dl>
+<dt><b>-loophash_cycles</b> \<Integer\><dt>
+<dd>the number of loophash closure cycles to perform (default 8)</dd><br>
 </dl>
 <dl>
 <dt><b>-simultaneous_cycles</b> \<Integer\><dt>

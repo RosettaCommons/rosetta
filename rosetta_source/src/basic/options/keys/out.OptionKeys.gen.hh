@@ -34,6 +34,7 @@ namespace out { extern BooleanOptionKey const silent_gz; }
 namespace out { extern BooleanOptionKey const use_database; }
 namespace out { extern IntegerOptionKey const database_protocol_id; }
 namespace out { extern StringVectorOptionKey const database_filter; }
+namespace out { extern IntegerVectorOptionKey const resume_batch; }
 namespace out { extern BooleanOptionKey const nooutput; }
 namespace out { extern BooleanOptionKey const output; }
 namespace out { extern RealOptionKey const scorecut; }

@@ -190,7 +190,13 @@ InterfaceScoreCalculator::append_ligand_docking_scores(
 	foreach(std::string chain, chains_){
 		InterfaceScoreCalculator_tracer.Debug << "appending ligand: "<< chain << std::endl;
 		assert( core::pose::has_chain(chain, after));
-		if(native_)	assert( core::pose::has_chain(chain, *native_));
+		if(native_)
+		{
+			if( !core::pose::has_chain(chain, *native_))
+			{
+				utility_exit_with_message("The native pose passed to InterfaceScoreCalculator does not have chain " +chain);
+			}
+		}
 
 		utility::vector1<core::Size> jump_ids= core::pose::get_jump_ids_from_chain(chain, after);
 		foreach(core::Size jump_id, jump_ids){

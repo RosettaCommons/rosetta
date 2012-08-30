@@ -167,6 +167,7 @@ namespace out { BooleanOptionKey const silent_gz( "out:silent_gz" );  }
 namespace out { BooleanOptionKey const use_database( "out:use_database" );  }
 namespace out { IntegerOptionKey const database_protocol_id( "out:database_protocol_id" );  }
 namespace out { StringVectorOptionKey const database_filter( "out:database_filter" );  }
+namespace out { IntegerVectorOptionKey const resume_batch( "out:resume_batch" );  }
 namespace out { BooleanOptionKey const nooutput( "out:nooutput" );  }
 namespace out { BooleanOptionKey const output( "out:output" );  }
 namespace out { RealOptionKey const scorecut( "out:scorecut" );  }

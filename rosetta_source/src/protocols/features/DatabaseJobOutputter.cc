@@ -25,6 +25,7 @@
 ///Utility headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/sql_utils.hh>
 #include <utility/exit.hh>
@@ -104,6 +105,7 @@ DatabaseJobOutputter::register_options(){
 	option.add_relevant( inout::dbms::password );
 	option.add_relevant( inout::dbms::port );
 	option.add_relevant( inout::dbms::separate_db_per_mpi_process );
+	option.add_relevant( out::resume_batch);
 
 }
 
@@ -186,13 +188,36 @@ bool DatabaseJobOutputter::job_has_completed(
 
 	protein_silent_report_->initialize(db_session);
 
-	std::string job_completion_string = "SELECT count(*) FROM sampled_structures WHERE tag=? and batch_id = ?;";
-	cppdb::statement job_completion_statement(basic::database::safely_prepare_statement(job_completion_string,db_session));
-	job_completion_statement.bind(1,output_name(job));
-	job_completion_statement.bind(2,protein_silent_report_->get_batch_id());
+	result res;
+	if(option[out::resume_batch].user())
+	{
+		utility::vector1<core::Size> batch_ids(option[out::resume_batch].value());
+		core::Size placeholder_count = batch_ids.size();
+		std::string placeholder_block= "(?";
+		for(int j = 1; j < placeholder_count; ++j)
+		{
+			placeholder_block += ",?";
+		}
+		placeholder_block += ")";
 
+		std::string job_completion_string = "SELECT count(*) FROM sampled_structures WHERE tag=? AND batch_id IN " +placeholder_block+";";
+		cppdb::statement job_completion_statement(basic::database::safely_prepare_statement(job_completion_string,db_session));
+		job_completion_statement.bind(1,output_name(job));
+		for(int i = 1; i <= batch_ids.size();++i)
+		{
+			core::Size column_index =i+1;
+			job_completion_statement.bind(column_index,batch_ids[i]);
+		}
+		res = basic::database::safely_read_from_database(job_completion_statement);
 
-	result res(basic::database::safely_read_from_database(job_completion_statement));
+	}else
+	{
+		std::string job_completion_string = "SELECT count(*) FROM sampled_structures WHERE tag=? and batch_id = ?;";
+		cppdb::statement job_completion_statement(basic::database::safely_prepare_statement(job_completion_string,db_session));
+		job_completion_statement.bind(1,output_name(job));
+		job_completion_statement.bind(2,protein_silent_report_->get_batch_id());
+		res = basic::database::safely_read_from_database(job_completion_statement);
+	}
 
 	res.next();
 	Size already_written;

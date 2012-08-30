@@ -172,6 +172,7 @@ option.add( basic::options::OptionKeys::out::silent_gz, "Use gzipped compressed 
 option.add( basic::options::OptionKeys::out::use_database, "Write out structures to database.  Specify database via -inout:dbms:database_name and wanted structures with -in:file:tags" );
 option.add( basic::options::OptionKeys::out::database_protocol_id, "Manually specify a protocol ID for database output. MPI distributed jobs are the only time when you will want to use this. It is a temporary workaround to a limitation of the MPI distributor" );
 option.add( basic::options::OptionKeys::out::database_filter, "filter to use with database output. arguments for filter follow filter name" );
+option.add( basic::options::OptionKeys::out::resume_batch, "specify 1 or more batch ids to finish an incomplete protocol.  Only works with the DatabaseJobOutputter.  The new jobs will be generated under a new protocol and batch ID" );
 option.add( basic::options::OptionKeys::out::nooutput, "Surpress outputfiles" ).def(false);
 option.add( basic::options::OptionKeys::out::output, "Force outputfiles" ).def(false);
 option.add( basic::options::OptionKeys::out::scorecut, "Only output lowest energy fraction of structures - default 1.0, i.e. output all " ).def(1.0);
@@ -1263,10 +1264,10 @@ option.add( basic::options::OptionKeys::lh::mpi_outbound_wu_buffer_size, "No des
 option.add( basic::options::OptionKeys::lh::mpi_loophash_split_size    , "No description" ).def(50);
 option.add( basic::options::OptionKeys::lh::mpi_metropolis_temp, "No description" ).def(1000000.0);
 option.add( basic::options::OptionKeys::lh::mpi_save_state_interval, "No description" ).def(1200);
+option.add( basic::options::OptionKeys::lh::mpi_master_save_score_only, "No description" ).def(true);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::mpi_master_save_score_only, "No description" ).def(true);
-option.add( basic::options::OptionKeys::lh::max_loophash_per_structure, "No description" ).def(1);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_loophash_per_structure, "No description" ).def(1);
 option.add( basic::options::OptionKeys::lh::rms_limit, "How to deal with returned relaxed structures" ).def(2.0);
 option.add( basic::options::OptionKeys::lh::centroid_only, "false" ).def(false);
 option.add( basic::options::OptionKeys::lh::write_centroid_structs, "Output raw loophashed decoys as well as relaxed ones" ).def(false);
@@ -1894,11 +1895,11 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "om
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
+option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));
+option.add( basic::options::OptionKeys::RBSegmentRelax::cst_seqwidth, "sequence width on constraints" ).def(0);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));
-option.add( basic::options::OptionKeys::RBSegmentRelax::cst_seqwidth, "sequence width on constraints" ).def(0);
-option.add( basic::options::OptionKeys::edensity::edensity, "edensity option group" ).legal(true).def(true);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::edensity::edensity, "edensity option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::edensity::debug, "No description" ).def(false);
 option.add( basic::options::OptionKeys::edensity::mapfile, "No description" );
 option.add( basic::options::OptionKeys::edensity::mapreso, "No description" ).def(3.0);
