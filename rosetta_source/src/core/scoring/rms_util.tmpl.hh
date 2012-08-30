@@ -398,14 +398,17 @@ rmsd_with_super(
 	T* predicate
 )
 {
-	ASSERT_ONLY(core::Size const nres1 = pose1.total_residue();)
-	ASSERT_ONLY(core::Size const nres2 = pose2.total_residue();)
+	core::Size nres1 = pose1.total_residue();
+	core::Size nres2 = pose2.total_residue();
+	while ( pose1.residue( nres1 ).aa() == core::chemical::aa_vrt ) nres1--;
+	while ( pose2.residue( nres2 ).aa() == core::chemical::aa_vrt ) nres2--;
 	assert( nres1 == nres2 );
-
+	
 	std::vector< core::Vector > p1_coords;
 	std::vector< core::Vector > p2_coords;
 
 	foreach(Size i, subset_residues){
+	    if (i>nres1) continue;
 	    Size num_atoms ( pose1.residue(i).natoms() );
 	    if ( predicate == is_ligand_heavyatom ||
 		 predicate == is_polymer_heavyatom ||

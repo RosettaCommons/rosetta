@@ -180,7 +180,7 @@ ProteinRMSDFeatures::parse_my_tag(
 	} else {
 		using namespace basic::options;
 		if (option[OptionKeys::in::file::native].user()) {
-			PoseOP ref_pose;
+			PoseOP ref_pose = new core::pose::Pose();
 			string native_pdb_fname(option[OptionKeys::in::file::native]());
 			pose_from_pdb(*ref_pose, native_pdb_fname);
 			tr << "Adding features reporter '" << type_name() << "' referencing '"
