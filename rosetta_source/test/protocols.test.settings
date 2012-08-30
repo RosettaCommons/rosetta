@@ -163,6 +163,7 @@ sources = {
 	],
 
 	"features" : [
+		"BetaTurnDetectionFeatures",
 		"FeaturesReporterTests",
 		"ProteinSilentReportTests"
         ],

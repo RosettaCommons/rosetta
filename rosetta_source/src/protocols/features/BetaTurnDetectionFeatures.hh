@@ -16,7 +16,7 @@
 
 // Unit Headers
 #include <protocols/features/FeaturesReporter.hh>
-#include <protocols/features/LoopAnchorFeatures.fwd.hh>
+#include <protocols/features/BetaTurnDetectionFeatures.fwd.hh>
 
 //External
 #include <boost/uuid/uuid.hpp>
@@ -37,6 +37,14 @@
 
 namespace protocols{
 namespace features{
+
+enum RamachandranHash {
+	A = 1,
+	B,
+	L,
+	E,
+	number_of_ramachandran_hashes = E
+};
 
 class BetaTurnDetectionFeatures : public FeaturesReporter {
 public:
@@ -76,17 +84,23 @@ public:
 		utility::sql_database::sessionOP db_session);
 private:
 	static std::map< std::string, std::string > const & get_conformation_to_turn_type_map();
+	static utility::vector1< std::string > const & get_valid_ramachandran_hashes();
 
-    bool all_turn_residues_are_on_the_same_chain( core::pose::Pose const & pose, Size first_residue ) const;
+	bool all_turn_residues_are_on_the_same_chain( core::pose::Pose const & pose, Size first_residue ) const;
 
-    bool residue_range_is_relevant( utility::vector1< bool > const & relevant_residues, Size range_begin, Size range_end ) const;
+	bool residue_range_is_relevant( utility::vector1< bool > const & relevant_residues, Size range_begin, Size range_end ) const;
 
-    bool residue_range_is_protein( core::pose::Pose const & pose, Size range_begin, Size range_end ) const;
+	bool residue_range_is_protein( core::pose::Pose const & pose, Size range_begin, Size range_end ) const;
 
-    bool beta_turn_present( core::pose::Pose const & pose, Size first_residue ) const;
+	bool beta_turn_present( core::pose::Pose const & pose, Size first_residue ) const;
 
-    std::string const & beta_turn_type( core::pose::Pose const & pose, Size first_residue ) const;
-	std::string determine_ramachandran_hash( core::Real phi, core::Real psi, core::Real omega ) const;
+	std::string const & beta_turn_type( core::pose::Pose const & pose, Size first_residue ) const;
+	
+	std::string determine_ramachandran_hash( core::pose::Pose const & pose, core::Size first_residue ) const;
+
+	std::string determine_ramachandran_hash_for_residue_with_dihedrals( core::Real phi, core::Real psi, core::Real omega ) const;
+
+	void validate_ramachandran_hash( std::string & rama_hash ) const;
 
 private:
 	Size const beta_turn_length;

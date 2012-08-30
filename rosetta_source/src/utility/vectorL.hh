@@ -303,7 +303,7 @@ public: // Methods
 	/// @brief  Check if vector contains a given element.
 	inline
 	bool
-	contains(T const & t)
+	contains(T const & t) const
 	{
 		if (std::find(begin(), end(), t) == end()) {
 			return false;
