@@ -33,6 +33,8 @@
 //#include <basic/options/option.hh>
 //#include <core/id/SequenceMapping.hh>
 #include <core/chemical/Patch.hh>
+#include <core/chemical/VariantType.hh>
+#include <core/pose/util.hh>
 #include <basic/basic.hh>
 //#include <core/io/pdb/pose_io.hh>  //debug only include
 //#include <core/pack/dunbrack/RotamerLibrary.hh> //debug only include
@@ -492,7 +494,9 @@ MatchConstraintFileInfo::inverse_rotamers_against_residue(
 	utility::vector1< core::chemical::ResidueTypeCOP > invrot_restypes(this->allowed_restypes( invrot_template ));
 
 	//if we're dealing with backbone interaction, only build glycine rotamers
+	bool backbone_interaction(false);
 	if( this->is_backbone( invrot_template ) ){
+		backbone_interaction = true;
 		invrot_restypes.clear();
 		invrot_restypes.push_back( &(restype_set_->name_map("ALA")) );
 		tr << "Only Ala inverse rotamers will be built because it is a backbone interaction." << std::endl;
@@ -517,7 +521,7 @@ MatchConstraintFileInfo::inverse_rotamers_against_residue(
 				invrot_ats[1] = invrot_template_atom_inds[1][kk]; invrot_ats[2] = invrot_template_atom_inds[2][kk]; invrot_ats[3] = invrot_template_atom_inds[3][kk];
 
 				//4. hand off to other function so code stays readable
-				std::list<core::conformation::ResidueCOP > inv_rots_this_combo = this->inverse_rotamers_against_residue( *target_conf, invrot_restypes[ii], targ_ats, invrot_ats, flip_exgs_upstream_downstream_samples );
+				std::list<core::conformation::ResidueCOP > inv_rots_this_combo = this->inverse_rotamers_against_residue( *target_conf, invrot_restypes[ii], targ_ats, invrot_ats, flip_exgs_upstream_downstream_samples, backbone_interaction );
 				to_return.splice( to_return.end(), inv_rots_this_combo  );
 
 			} // kk loop over all possible atoms in the inverse rotamer
@@ -534,7 +538,8 @@ MatchConstraintFileInfo::inverse_rotamers_against_residue(
 	core::chemical::ResidueTypeCOP invrot_restype,
 	utility::vector1< core::Size > const & target_ats,
 	utility::vector1< core::Size > const & invrot_ats,
-	bool const flip_exgs_upstream_downstream_samples
+	bool const flip_exgs_upstream_downstream_samples,
+	bool const backbone_interaction
 ) const
 {
 	//using namespace protocols::match::downstream;
@@ -549,6 +554,12 @@ MatchConstraintFileInfo::inverse_rotamers_against_residue(
 	runtime_assert( rotamers.size() > 0 );
 	tr << rotamers.size() << " bbindependent rotamers for Residue " << rotamers[1]->type().name() << "." << std::endl;
 
+	//note: if we have a backbone interaction, this means we need to diversify
+	//the phi value of the rotamer
+	if( backbone_interaction ){
+		runtime_assert( (rotamers.size() == 1) && (rotamers[1]->name3() == "ALA") );
+		this->diversify_backbone_only_rotamers( rotamers );
+	}
 	core::Size inv_oat1(0), inv_oat2(0), inv_oat3(0);
 	rotamers[1]->select_orient_atoms( inv_oat1, inv_oat2, inv_oat3 );
 
@@ -598,6 +609,32 @@ MatchConstraintFileInfo::inverse_rotamers_against_residue(
 		} // jj sampler
 	} //ii sampler
 	return to_return;
+}
+
+/// @details
+/// helper function to keep code readable
+/// for rotamers that make backbone interactions,
+/// as opposed to sidechain interactions only, the default
+/// phi (-150) that comes out of the bb-indep rotamers function
+/// has an influence on what fragments in sampling can overlap
+/// with this rotamer. thus we'll put in more samples to allow
+/// for more diversity
+/// the implementation is quite clumsy, make a one residue pose
+/// add the chainbreak variant, set the chi, return the residue
+/// put there's no easier way to simply rotate around a bond
+/// additional samples will be put at a phi of -60 and 70,
+/// i.e. other regions observed in ramachandran plot
+void
+MatchConstraintFileInfo::diversify_backbone_only_rotamers( utility::vector1< core::conformation::ResidueCOP > & rotamers ) const
+{
+	//core::conformation::ResidueOP changeres( rotamers[1]->clone() );
+	core::pose::Pose dummy_pose;
+	dummy_pose.append_residue_by_jump( *(rotamers[1]), (core::Size) 0 );
+	core::pose::add_variant_type_to_pose_residue( dummy_pose, core::chemical::CUTPOINT_UPPER, 1 );
+	dummy_pose.set_phi( 1, -60.0 );
+	rotamers.push_back( core::pose::remove_variant_type_from_residue( dummy_pose.residue(1), core::chemical::CUTPOINT_UPPER, dummy_pose ) );
+	dummy_pose.set_phi( 1, 70.0 );
+	rotamers.push_back( core::pose::remove_variant_type_from_residue( dummy_pose.residue(1), core::chemical::CUTPOINT_UPPER, dummy_pose ) );
 }
 
 bool

@@ -292,7 +292,13 @@ public: //convenience functions
 		core::chemical::ResidueTypeCOP invrot_restype,
 		utility::vector1< core::Size > const & target_ats,
 		utility::vector1< core::Size > const & invrot_ats,
-		bool const flip_exgs_upstream_downstream_samples
+		bool const flip_exgs_upstream_downstream_samples,
+		bool const backbone_interaction
+	) const;
+
+	void
+	diversify_backbone_only_rotamers(
+		utility::vector1< core::conformation::ResidueCOP > & rotamers
 	) const;
 
 
