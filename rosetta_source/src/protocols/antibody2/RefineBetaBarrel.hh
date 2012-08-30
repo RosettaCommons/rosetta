@@ -27,7 +27,7 @@
 #include <protocols/antibody2/LHRepulsiveRamp.fwd.hh>
 #include <protocols/antibody2/LHSnugFitLegacy.fwd.hh>
 #include <protocols/docking/DockMCMProtocol.fwd.hh>
-
+#include <protocols/docking/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 using namespace core;
