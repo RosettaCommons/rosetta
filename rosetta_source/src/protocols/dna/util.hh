@@ -20,7 +20,7 @@
 
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
-#include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/conformation/Atom.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
