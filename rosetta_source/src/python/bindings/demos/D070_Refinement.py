@@ -342,7 +342,7 @@ the search space.
 #    cycles/jobs to provide results quickly
 parser = optparse.OptionParser()
 parser.add_option('--pdb_filename', dest = 'pdb_filename',
-    default = 'test/data/demo/test_in.pdb',    # default example PDB
+    default = 'test/data/test_in.pdb',    # default example PDB
     help = 'the PDB file containing the protein to refine')  
 # custom refinement options
 parser.add_option('--kT', dest='kT',

@@ -98,10 +98,7 @@ def fold_tree(PDB_out = False):
     #    FoldTree
     
     # 1. create the example pose
-    test_pose = Pose()
-    make_pose_from_sequence(test_pose, 'ACDEFGHIKLMNPQRSTVWY'*3,
-        'fa_standard')
-    test_pose.pdb_info(rosetta.core.pose.PDBInfo())   # needed for PyMOL_Mover
+    test_pose = pose_from_sequence('ACDEFGHIKLMNPQRSTVWY'*3)
 
     # 2. setup the jump points, where a jump is anchored, and the cutpoint
     cutpoint = test_pose.total_residue() / 2    # integer division, no decimal

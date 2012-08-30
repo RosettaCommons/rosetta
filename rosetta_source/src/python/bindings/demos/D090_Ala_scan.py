@@ -582,7 +582,7 @@ from its bound conformation to it solution-state conformation.
 #    to provide results quickly
 parser = optparse.OptionParser()
 parser.add_option('--pdb_filename', dest = 'pdb_filename',
-    default = 'test/data/demo/test_dock.pdb',    # default example PDB
+    default = 'test/data/test_dock.pdb',    # default example PDB
     help = 'the PDB file containing the protein to refine')
 # for more information on "partners", see sample_docking step 2.
 parser.add_option('--partners', dest = 'partners',

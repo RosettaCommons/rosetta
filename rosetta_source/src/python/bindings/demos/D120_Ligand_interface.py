@@ -23,7 +23,7 @@ in older and newer versions of PyRosetta.
 Instructions:
 
 1) ensure that your PDB file is in the current directory
-2) obtain ATP.params file from /test/data/demo/ 
+2) obtain ATP.params file from /demos/data 
 3) ***uncomment lines 321-322***
 4) run the script:
     from commandline                        >python D120_Ligand_interface.py
@@ -286,7 +286,7 @@ undergoing repairs though manually splitting a PDB is very easy).
 #    cycles/jobs to provide results quickly
 parser = optparse.OptionParser()
 parser.add_option('--pdb_filename', dest = 'pdb_filename',
-    default = 'test/data/demo/test_lig.pdb',    # default example PDB
+    default = 'demos/data/test_lig.pdb',    # default example PDB
     help = 'the PDB file containing the ligand and protein to dock')
 # for more information on "partners", see sample_docking step 2.
 parser.add_option('--partners', dest = 'partners',

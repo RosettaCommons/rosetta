@@ -175,7 +175,7 @@ separately and aligning them.
 # all defaults are for the example using "test_in.pdb"
 parser = optparse.OptionParser()
 parser.add_option('--pdb_filename', dest = 'pdb_filename',
-    default = 'test/data/demo/test_in.pdb',    # default example PDB
+    default = 'test/data/test_in.pdb',    # default example PDB
     help = 'the PDB file containing the loop to remodel')
 parser.add_option('--PDB_out', dest = 'PDB_out',
     default = '',    # default to False

@@ -383,7 +383,7 @@ guess_disulfides).
 #    cycles/jobs to provide results quickly
 parser = optparse.OptionParser()
 parser.add_option( '--pdb_filename', dest = 'pdb_filename',
-    default = 'test/data/demo/test_in.pdb',    # default example PDB
+    default = 'test/data/test_in.pdb',    # default example PDB
     help = 'the PDB file containing the protein to fold')
 parser.add_option('--fasta_filename', dest = 'fasta_filename',
     default = '',    # default empty!
@@ -393,13 +393,13 @@ parser.add_option( '--sequence', dest = 'sequence',
     help = 'the protein sequence to fold')
 # the fragment files options
 parser.add_option('--long_frag_filename', dest = 'long_frag_filename',
-    default = 'test/data/demo/test9_fragments',    # specific to each PDB (test_in.pdb here)
+    default = 'test/data/test9_fragments',    # specific to each PDB (test_in.pdb here)
     help = 'the file of long fragments corresponding to the sequence')
 parser.add_option('--long_frag_length', dest = 'long_frag_length',
     default = '9',    # must match the long_frag_filename
     help = 'the length of fragments contained in the long_frag_file')
 parser.add_option('--short_frag_filename', dest = 'short_frag_filename',
-    default = 'test/data/demo/test3_fragments',    # specific to each PDB (test_in.pdb here)
+    default = 'test/data/test3_fragments',    # specific to each PDB (test_in.pdb here)
     help = 'the file of short fragments corresponding to the sequence')
 parser.add_option( '--short_frag_length', dest = 'short_frag_length',
     default = '3',    # must match the short_frag_filename
