@@ -125,9 +125,9 @@ void H3CterInsert::apply(pose::Pose & pose)
     
     
     
-    loop_begin = ab_info_->get_one_cdr_loop_object(h3).start()-1;  //JQX: to match R2_Antibody
-    cutpoint   = ab_info_->get_one_cdr_loop_object(h3).cut(); // keep the cutpoint unchanged
-    loop_end   = ab_info_->get_one_cdr_loop_object(h3).stop()+2; //JQX: to match R2_Antibody
+    loop_begin = ab_info_->get_CDR_loop(h3).start()-1;  //JQX: to match R2_Antibody
+    cutpoint   = ab_info_->get_CDR_loop(h3).cut(); // keep the cutpoint unchanged
+    loop_end   = ab_info_->get_CDR_loop(h3).stop()+2; //JQX: to match R2_Antibody
     
     setup_simple_fold_tree(loop_begin, cutpoint, loop_end, pose.total_residue(), pose);
     TR<<pose.fold_tree()<<std::endl;
@@ -153,12 +153,12 @@ void H3CterInsert::apply(pose::Pose & pose)
         Size cter_insertion_pos( is_camelid_ ? 4 : 2 ); // not sure why 4 for camelid
     
     
-        if( (ab_info_->get_one_cdr_loop_object(h3).stop()-cter_insertion_pos) <= ab_info_->get_one_cdr_loop_object(h3).start() )
+        if( (ab_info_->get_CDR_loop(h3).stop()-cter_insertion_pos) <= ab_info_->get_CDR_loop(h3).start() )
         {
             TR << "H3 LOOP IS TOO SHORT: CAN NOT USE C-TERM INFORMATION"<< std::endl;
         }
         else {
-            f.apply( pose, ab_info_->get_one_cdr_loop_object(h3).stop() - cter_insertion_pos, ab_info_->get_one_cdr_loop_object(h3).stop() + 1 );
+            f.apply( pose, ab_info_->get_CDR_loop(h3).stop() - cter_insertion_pos, ab_info_->get_CDR_loop(h3).stop() + 1 );
         
         }
 
@@ -206,14 +206,14 @@ std::string H3CterInsert::get_name() const {
   
     bool is_kinked = false;
     bool is_extended  = false;
-    if (ab_info_->get_predicted_H3_base_type() == Kinked) is_kinked = true;
-    if (ab_info_->get_predicted_H3_base_type() == Extended) is_extended = true;
+    if (ab_info_->get_Predicted_H3BaseType() == Kinked) is_kinked = true;
+    if (ab_info_->get_Predicted_H3BaseType() == Extended) is_extended = true;
     
     
     // extract single letter aa codes for the chopped loop residues
-    TR<< ab_info_->get_one_cdr_loop_object(h3)<<std::endl;
+    TR<< ab_info_->get_CDR_loop(h3)<<std::endl;
 
-    Size cdr_h3_size = (     ab_info_->get_one_cdr_loop_object(h3).stop() - ab_info_->get_one_cdr_loop_object(h3).start()  ) + 1;
+    Size cdr_h3_size = (     ab_info_->get_CDR_loop(h3).stop() - ab_info_->get_CDR_loop(h3).start()  ) + 1;
     
     TR<<"cdr_h3_size="<<cdr_h3_size<<std::endl;
     utility::vector1< char > aa_1name = ab_info_->get_CDR_Sequence_with_Stem(h3,2,2);
@@ -238,7 +238,7 @@ std::string H3CterInsert::get_name() const {
             
 
     // file is read in from where other contraints are supposed to exist
-    if( ab_info_->is_camelid() ){
+    if( ab_info_->is_Camelid() ){
         H3_ter_library_filename_ = path+"camelid_H3_CTERM";
     }
     else{
@@ -267,7 +267,7 @@ std::string H3CterInsert::get_name() const {
     std::string base_type;
             
     Size pdb_H3_length = cdr_h3_size;
-    Size h3_base_frag_size( ab_info_->is_camelid() ? 6 : 4 );
+    Size h3_base_frag_size( ab_info_->is_Camelid() ? 6 : 4 );
     
     bool end_not_reached(true);
     while(end_not_reached){
@@ -306,7 +306,7 @@ std::string H3CterInsert::get_name() const {
         
         
         //regular antibody
-        if( ab_info_->is_camelid() == false) {
+        if( ab_info_->is_Camelid() == false) {
             if( is_kinked && base_type == "KINK" ){
                 base_match = true;
             }
@@ -332,7 +332,7 @@ std::string H3CterInsert::get_name() const {
         
         
         //camelid antibody
-        if( ab_info_->is_camelid() && end_not_reached && base_match ){
+        if( ab_info_->is_Camelid() && end_not_reached && base_match ){
 
             H3_base_library_.push_back( f );
         }

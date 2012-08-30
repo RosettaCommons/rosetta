@@ -413,7 +413,7 @@ bool CDR_H3_cter_filter(const pose::Pose & pose_in, AntibodyInfoOP ab_info)
     
     TR <<  "Utility: Checking Kink/Extended CDR H3 Base Angle" << std::endl;
     
-    if(ab_info->is_camelid() ){ return( true ); }
+    if(ab_info->is_Camelid() ){ return( true ); }
     
     // Values read from plot in reference paper. Fig 1 on Page 3
     // Values adjusted to match data from antibody training set
@@ -429,8 +429,8 @@ bool CDR_H3_cter_filter(const pose::Pose & pose_in, AntibodyInfoOP ab_info)
     
     // chop out the loop: 
     //JQX: 2 residues before h3, one residue after h3. Matched Rosetta2!
-    Size start(  ab_info->get_one_cdr_loop_object(h3).start()  -  2 );
-    Size stop(  ab_info->get_one_cdr_loop_object(h3).stop()  +  1  );
+    Size start(  ab_info->get_CDR_loop(h3).start()  -  2 );
+    Size stop(  ab_info->get_CDR_loop(h3).stop()  +  1  );
     
     
     bool matched_kinked( false );
@@ -466,10 +466,10 @@ bool CDR_H3_cter_filter(const pose::Pose & pose_in, AntibodyInfoOP ab_info)
     
     
     if( (base_dihedral > kink_lower_bound ) && (base_dihedral < kink_upper_bound ) ) {
-        if(ab_info->get_predicted_H3_base_type()==Kinked) {matched_kinked = true;}
+        if(ab_info->get_Predicted_H3BaseType()==Kinked) {matched_kinked = true;}
     }
     if( (base_dihedral > extended_lower_bound ) && (base_dihedral < extended_upper_bound ) ) {
-        if(ab_info->get_predicted_H3_base_type()==Extended) {matched_extended = true;}
+        if(ab_info->get_Predicted_H3BaseType()==Extended) {matched_extended = true;}
     }
     
     
@@ -514,7 +514,7 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in )
     tf->push_back( unboundrot_operation );
         
     // adds scoring bonuses for the "unbound" rotamers, if any
-    core::pack::dunbrack::load_unboundrot( pose_in );
+    core::pack::dunbrack::load_unboundrot( pose_in ); ///FIXME: this is dangerous here..... JQX
     //TODO:
     //JQX: need to understand this pose_in!!!! 
         
@@ -601,8 +601,8 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in )
         
         bool closed_cutpoints = true;
         
-        for( loops::Loops::const_iterator it=antibody_info->get_all_cdr_loops()->begin(),
-            it_end=antibody_info->get_all_cdr_loops()->end(),
+        for( loops::Loops::const_iterator it=antibody_info->get_AllCDRs_in_loopsop()->begin(),
+            it_end=antibody_info->get_AllCDRs_in_loopsop()->end(),
             it_next; it != it_end; ++it ) {
             Size cutpoint   = it->cut();
             Real separation = 10.00; // an unlikely high number
@@ -657,15 +657,8 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in )
     
     
     
-    
-    std::string get_seq_from_a_loop(core::pose::Pose const & pose_in, loops::LoopOP loop )
-    {
-        std::string seq="";
-        for (Size it=loop->start(); it <= loop->stop(); ++it ) {
-            seq+=pose_in.residue(it).name1();
-        }
-        return seq;
-    }
+
+	
 
     
 

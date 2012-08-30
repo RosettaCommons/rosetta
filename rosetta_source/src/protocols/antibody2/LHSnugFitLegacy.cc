@@ -114,12 +114,12 @@ LHSnugFitLegacy::LHSnugFitLegacy(loops::LoopsOP loops_in ) : Mover() {
     
 LHSnugFitLegacy::LHSnugFitLegacy(antibody2::AntibodyInfoOP antibody_in) : Mover() {
     user_defined_ = true;
-    init(antibody_in->get_all_cdr_loops(),false);
+    init(antibody_in->get_AllCDRs_in_loopsop(),false);
 }
     
 LHSnugFitLegacy::LHSnugFitLegacy(antibody2::AntibodyInfoOP antibody_in, bool camelid) : Mover() {
     user_defined_ = true;
-    init(antibody_in->get_all_cdr_loops(), camelid);
+    init(antibody_in->get_AllCDRs_in_loopsop(), camelid);
 }
     
     

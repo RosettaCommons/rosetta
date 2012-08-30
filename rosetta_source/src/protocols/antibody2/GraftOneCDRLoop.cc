@@ -52,8 +52,8 @@ GraftOneCDRLoop::GraftOneCDRLoop( AntibodyCDRNameEnum cdr_name,
                                            scoring::ScoreFunctionCOP scorefxn ) : Mover( "GraftOneCDRLoop" )
 {
     scorefxn_ = scorefxn;
-    query_start_ = ab_info->get_one_cdr_loop_object(cdr_name).start();
-	query_end_   = ab_info->get_one_cdr_loop_object(cdr_name).stop();
+    query_start_ = ab_info->get_CDR_loop(cdr_name).start();
+	query_end_   = ab_info->get_CDR_loop(cdr_name).stop();
 	set_default(cdr_name);
     template_pose_ = ab_t_info->get_one_template_pose(ab_info->get_CDR_Name(cdr_name)) ;
     TRG<< "template_pose_ "<<std::endl;

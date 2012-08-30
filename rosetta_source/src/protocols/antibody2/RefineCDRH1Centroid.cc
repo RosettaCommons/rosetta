@@ -101,7 +101,7 @@ RefineCDRH1Centroid::RefineCDRH1Centroid( AntibodyInfoOP antibody_info, Antibody
 {
 
     
-    init( antibody_info->get_one_cdr_loop_object(loop_name) );
+    init( antibody_info->get_CDR_loop(loop_name) );
 }
   
     

@@ -115,7 +115,7 @@ void SnugDockProtocol::apply( Pose & pose )
 
 	show( TR );
 	TR << "Setting the input structure's FoldTree for Antibody-Antigen docking." << std::endl;
-	pose.fold_tree( antibody_info_->get_foldtree_LH_A( pose ) );
+	pose.fold_tree( antibody_info_->get_FoldTree_LH_A( pose ) );
 
 	TR << "Beginning application of " + docking()->get_name() + "." << std::endl;
 	docking()->apply( pose );

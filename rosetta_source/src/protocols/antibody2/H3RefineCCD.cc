@@ -129,7 +129,7 @@ void H3RefineCCD::init( )
 {
     set_default();
         
-    the_loop_   = ab_info_->get_one_cdr_loop_object(loop_name_);
+    the_loop_   = ab_info_->get_CDR_loop(loop_name_);
     
     loop_begin_ = the_loop_.start();
     cutpoint_   = the_loop_.cut();

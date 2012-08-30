@@ -179,7 +179,7 @@ void RefineOneCDRLoop::apply(core::pose::Pose &pose){
     
     else{
                 /// FIXME:   JQX this should be fixed by a simple loops object
-        loops::Loop one_cdr_loop = ab_info_->get_one_cdr_loop_object(cdr_loop_name_);
+        loops::Loop one_cdr_loop = ab_info_->get_CDR_loop(cdr_loop_name_);
         
         if(flank_relax_){
             // JQX: The idea is to minimize the flanking residues backbones on each stems, 

@@ -284,11 +284,11 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
     TR<<" Checking Ab_TemplateInfo object: "<<std::endl<<*ab_t_info_<<std::endl<<std::endl;
 
     //for ( GraftMap::const_iterator it = grafts_.begin(); it != grafts_.end(); ++it ) {
-    for (AntibodyCDRNameEnum it = start_cdr_loop; it <= ab_info_->get_total_num_cdr_loops(); it=AntibodyCDRNameEnum(it+1) ){
+    for (AntibodyCDRNameEnum it = start_cdr_loop; it <= ab_info_->get_TotalNumCDRs(); it=AntibodyCDRNameEnum(it+1) ){
         //if ( it->second ) {
             TR << "Creating movers for " << it << std::endl;
-            TR << "                  start (chothia): "<<ab_info_->get_one_cdr_loop_object(it).start()<<std::endl;
-            TR << "                   stop (chothia): "<<ab_info_->get_one_cdr_loop_object(it).stop()<<std::endl;
+            TR << "                  start (chothia): "<<ab_info_->get_CDR_loop(it).start()<<std::endl;
+            TR << "                   stop (chothia): "<<ab_info_->get_CDR_loop(it).stop()<<std::endl;
             
             GraftOneCDRLoopOP graft_one_cdr = new GraftOneCDRLoop( it, ab_info_, ab_t_info_, scorefxn_pack_) ;
             graft_one_cdr->enable_benchmark_mode( benchmark_ );
@@ -418,7 +418,7 @@ void GraftCDRLoopsProtocol::display_constraint_residues( core::pose::Pose & pose
     else if( pose.residue( pose.pdb_info()->pdb2pose('H',33 ) ).name3() == "CYS" )
         H1_Cys = pose.pdb_info()->pdb2pose( 'H', 33 );
 
-    for( Size ii = ab_info_->get_one_cdr_loop_object(h3).start(); ii <= ab_info_->get_one_cdr_loop_object(h3).stop(); ii++ )
+    for( Size ii = ab_info_->get_CDR_loop(h3).start(); ii <= ab_info_->get_CDR_loop(h3).stop(); ii++ )
         
         if( pose.residue(ii).name3() == "CYS" ) H3_Cys = ii;
 
@@ -430,7 +430,7 @@ void GraftCDRLoopsProtocol::display_constraint_residues( core::pose::Pose & pose
 
     Size hfr_46(0), h3_closest(0);
     hfr_46 = pose.pdb_info()->pdb2pose( 'H', 46 );
-    if( ab_info_->get_predicted_H3_base_type() == Extended ) h3_closest = ab_info_->get_one_cdr_loop_object(h3).stop() - 5;
+    if( ab_info_->get_Predicted_H3BaseType() == Extended ) h3_closest = ab_info_->get_CDR_loop(h3).stop() - 5;
     if( h3_closest != 0 )
         TR << "CONSTRAINTS: " << "AtomPair CA " << hfr_46 << " CA " << h3_closest
             << " BOUNDED 6.5 9.1 0.7 DISTANCE; mean 8.0 sd 0.7" << std::endl;

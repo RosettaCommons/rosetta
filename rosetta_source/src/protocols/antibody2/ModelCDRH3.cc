@@ -85,7 +85,7 @@ void ModelCDRH3::init( )
 
     //TODO:
     //JQX: need to deal with this
-    if( is_camelid_ && ab_info_->get_predicted_H3_base_type()!=Kinked && ab_info_->get_predicted_H3_base_type()!=Extended ){
+    if( is_camelid_ && ab_info_->get_Predicted_H3BaseType()!=Kinked && ab_info_->get_Predicted_H3BaseType()!=Extended ){
         c_ter_stem_ = 0;
     }
     
@@ -153,9 +153,9 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
 
 
 	/// FIXME: JQX: very redudent here, just get one loops object
-    Size framework_loop_begin( ab_info_->get_one_cdr_loop_object(h3).start() );
-    Size framework_loop_end  ( ab_info_->get_one_cdr_loop_object(h3).stop()  );
-    Size cutpoint = ab_info_->get_one_cdr_loop_object(h3).cut() ; // keep the cutpoint unchanged
+    Size framework_loop_begin( ab_info_->get_CDR_loop(h3).start() );
+    Size framework_loop_end  ( ab_info_->get_CDR_loop(h3).stop()  );
+    Size cutpoint = ab_info_->get_CDR_loop(h3).cut() ; // keep the cutpoint unchanged
     Size framework_loop_size = (framework_loop_end - framework_loop_begin) + 1;
 
     loops::Loop cdr_h3( framework_loop_begin, framework_loop_end, cutpoint, 0, true );
@@ -301,7 +301,7 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
 
     utility::vector1<bool> allow_chi_copy( pose_in.total_residue(), true );
 	/// FIXME: JQX very redudent loops defition
-    for( Size ii=ab_info_->get_one_cdr_loop_object(h3).start(); ii<=ab_info_->get_one_cdr_loop_object(h3).stop(); ii++ ){
+    for( Size ii=ab_info_->get_CDR_loop(h3).start(); ii<=ab_info_->get_CDR_loop(h3).stop(); ii++ ){
         allow_chi_copy[ii] = false;
     }
     //recover sidechains from starting structures except H3
