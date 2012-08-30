@@ -793,26 +793,37 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
 
 ###############################################################################
 class PyMOL_Observer(rosetta.core.pose.PosePyObserver):
-    """
-    Responds to general events (changes of geometry and energies) to pose and
-    sends updates to PyMOL.
+    """Responds to general events (changes of geometry and energies) to pose
+    and sends updates to PyMOL.
     
     WARNING: This will slow up resources and cause PyMOL to crawl if enabled
     during protocols with large numbers of moves to pose.
+    
+    Usage:
+    observer = PyMOL_Observer(pose)  # Construct observer and begin observing.
+    observer.add_observer(pose2)  # Begin watching pose 2 also.
+    observer.remove_observer(pose)  # Stop watching pose.
+    
     """
-    def __init__(self, keep_history=False):
+    def __init__(self, pose_to_observe=None, keep_history=False,
+                 update_energy=False,
+                 energy_type=rosetta.core.scoring.total_score):
         rosetta.core.pose.PosePyObserver.__init__(self)
         self.pymol = PyMOL_Mover()
         self.pymol.keep_history(keep_history)
+        self.pymol.update_energy(update_energy)
+        self.pymol.energy_type(energy_type)
+        if pose_to_observe is not None:
+            self.add_observer(pose_to_observe)
 
     def generalEvent(self, event):
         #print 'PyMOL_Observer...'
         #print 'PyMOL_Observer:generalEvent', event.pose
         self.pymol.apply(event.getPose())
-        
+
         
 ###############################################################################
-# A helper method.
+# Helper methods.
 def list_valid_PyMOL_colors():
     """
     A simple exposed helper method that prints a sorted list of valid color
