@@ -65,6 +65,26 @@ public:
 
 	virtual ~Job();
 
+	///@brief Note: only compare if the pointers to the poses are to the
+	///same location
+	friend
+	bool
+	operator==(Job const & a, Job const & b);
+
+	friend
+	bool
+	operator!=(Job const & a, Job const & b);
+
+
+	virtual
+	void
+	show( std::ostream & out ) const;
+
+	friend
+	std::ostream &
+	operator<< ( std::ostream & out, const Job & job );
+
+
 	///@brief access to inner-job ... use is discouraged - use sparingly!
 	/// --- DO NOT use my_job->inner_job()->get_pose()
 	/// INSTEAD use my_job->get_pose()

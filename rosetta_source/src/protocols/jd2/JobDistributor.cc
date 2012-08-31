@@ -334,8 +334,8 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 		{
 			basic::Error()
 					<< "ERROR: Exception caught by JobDistributor while trying to get pose from job "
-					<< job_outputter_->output_name(current_job_) << excn
-					<< std::endl;
+					<< "'" << job_outputter_->output_name(current_job_) << "'" << std::endl
+					<< excn << std::endl;
 			basic::Error()
 					<< "Treating failure as bad input; canceling similar jobs"
 					<< std::endl;

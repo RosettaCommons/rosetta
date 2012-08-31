@@ -61,6 +61,25 @@ public:
 
 	virtual ~InnerJob();
 
+	///@brief Note: only compare if the pointers to the poses are to the
+	///same location
+	friend
+	bool
+	operator==(InnerJob const & a, InnerJob const & b);
+
+
+	friend
+	bool
+	operator!=(InnerJob const & a, InnerJob const & b);
+
+	virtual
+	void
+	show( std::ostream & out ) const;
+
+	friend
+	std::ostream &
+	operator<< ( std::ostream & out, const InnerJob & inner_job );
+
 	///@brief return the input tag (a string of space separated PDB filenames)
 	std::string const & input_tag() const;
 

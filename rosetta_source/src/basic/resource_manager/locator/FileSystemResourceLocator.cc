@@ -19,11 +19,13 @@
 #include <utility/tag/Tag.hh>
 #include <utility/file/FileName.hh>
 #include <utility/io/izstream.hh>
+#include <utility/file/file_sys_util.hh>
 #include <basic/Tracer.hh>
 
 
 //utility headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/vector1.hh>
 
 //C++ headers
 #include <istream>
@@ -36,6 +38,7 @@ namespace locator {
 using utility::tag::TagPtr;
 using utility::file::FileName;
 using utility::io::izstream;
+using utility::vector1;
 using std::string;
 using std::endl;
 using std::istream;
@@ -83,6 +86,20 @@ FileStream::FileStream(
 	stream_(filename, open_mode)
 {
 	if(!stream_){
+		vector1<string> alternative_search_paths(
+			izstream::get_alternative_search_paths());
+
+		TR << "Unable to open file '" << filename << "' at any of the following paths:" << endl;
+		TR << "\t" << filename << endl;
+		for(
+			vector1<string>::const_iterator
+				p=alternative_search_paths.begin(), pe=alternative_search_paths.end();
+			p != pe; ++p){
+			TR << "\t" << *p << platform::file::PATH_SEPARATOR << filename << endl;
+			if(utility::file::file_extension( filename) != "gz") {
+				TR << "\t" << *p << filename << ".gz" << endl;
+			}
+		}
 		throw utility::excn::EXCN_FileNotFound(filename);
 	}
 }
@@ -121,6 +138,35 @@ FileSystemResourceLocator::FileSystemResourceLocator(
 ) :
 	open_mode_(src.open_mode_)
 {}
+
+void
+FileSystemResourceLocator::show(
+	std::ostream & out
+) const {
+	out
+		<< "FileSystemResourceLocator:" << endl
+		<< "  open_mode:"
+		<< (std::ios_base::app & open_mode_ ? " append" : "")
+		<< (std::ios_base::ate & open_mode_ ? " at_end" : "")
+		<< (std::ios_base::binary & open_mode_ ? " binary" : "")
+		<< (std::ios_base::in & open_mode_ ? " input" : "")
+		<< (std::ios_base::out & open_mode_ ? " output" : "")
+		<< (std::ios_base::trunc & open_mode_ ? " truncate" : "");
+}
+
+//std::ostream &
+//FileSystemResourceLocator::operator<< (
+//	std::ostream & out,
+//	const FileSystemResourceLocator & file_system_resource_locator
+//) {
+//	file_system_resource_locator.show(out);
+//	return out;
+//}
+
+std::string
+FileSystemResourceLocator::type() const {
+	return "FileSystemResourceLocator";
+}
 
 void
 FileSystemResourceLocator::set_open_mode(

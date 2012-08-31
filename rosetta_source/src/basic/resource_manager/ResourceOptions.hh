@@ -47,6 +47,18 @@ public:
 
 	virtual ~ResourceOptions();
 
+	virtual
+	void
+	show(
+		std::ostream & out) const;
+
+	friend
+	std::ostream &
+	operator<< (
+		std::ostream & out,
+		const ResourceOptions & resource_manager);
+
+
 	/// @brief Initialize from the recursive "tag" structure.
 	virtual
 	void

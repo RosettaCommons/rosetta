@@ -29,12 +29,14 @@
 
 //C++ headers
 #include <sstream>
+#include <iomanip>
 
 namespace basic {
 namespace resource_manager {
 
 using std::stringstream;
 using std::endl;
+using std::setw;
 
 ResourceManager * ResourceManager::instance_( 0 );
 
@@ -105,6 +107,32 @@ ResourceManager::free_resource(
 		resources_.erase(resource_tag);
 	}
 }
+
+void
+ResourceManager::show(
+	std::ostream & out
+) const {
+	out
+		<< "ResourceManager.resources:" << endl
+		<< setiosflags(std::ios::left) << setw(16) << "ResourceTag" << "ResourceExists" << endl;
+	for(
+		ResourceManager::ResourcesMap::const_iterator
+			r = resources_.begin(), re = resources_.end(); r != re; ++r){
+		out
+			<< setiosflags(std::ios::left) << setw(16) << r->first
+			<< (r->second() ? "true" : "false") << endl;
+	}
+}
+
+std::ostream &
+operator<<(
+	std::ostream & out,
+	const ResourceManager & resource_manager
+) {
+	resource_manager.show(out);
+	return out;
+}
+
 
 } // namespace resource_manager
 } // namespace basic

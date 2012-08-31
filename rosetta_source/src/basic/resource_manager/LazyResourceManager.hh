@@ -26,6 +26,9 @@
 #include <basic/resource_manager/ResourceOptions.fwd.hh>
 #include <utility/exit.hh>
 
+// C++ Headers
+#include <iomanip>
+
 namespace basic {
 namespace resource_manager {
 
@@ -37,6 +40,18 @@ struct ResourceConfiguration {
 	LocatorID locator_id;
 	LoaderType loader_type;
 	ResourceOptionsTag resource_options_tag;
+
+public: // show methods
+
+	virtual
+	void
+	show( std::ostream & out ) const;
+
+	friend
+	std::ostream &
+	operator<< (
+		std::ostream & out, const ResourceConfiguration & resource_configuration );
+
 };
 
 /// @brief This is a mule class, meant to be derived from.  It's job
@@ -178,6 +193,18 @@ public: // Interface to for creating and accessing resources
 	//virtual
 	//ResourceOP
 	//get_resource( ResourceDescription const & );
+
+	virtual
+	void
+	show( std::ostream & out ) const;
+
+	friend
+	std::ostream &
+	operator<< (
+		std::ostream & out,
+		const LazyResourceManager & resource_manager );
+
+
 
 public:
 	/// @brief has a ResourceConfiguration been provided to the LazyResourceManager for a Resource with a particular ResourceTag?

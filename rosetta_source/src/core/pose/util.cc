@@ -53,6 +53,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/io/raw_data/DisulfideFile.hh>
+#include <core/io/silent/BinaryProteinSilentStruct.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/MiniPose.hh>
@@ -984,6 +985,22 @@ bool compare_atom_coordinates(core::pose::Pose const & lhs, core::pose::Pose con
 	return true; //whoo! we made it!
 }//compare_atom_coordinates
 
+
+bool
+compare_binary_protein_silent_struct(
+	Pose const & lhs,
+	Pose const & rhs
+) {
+	core::io::silent::BinaryProteinSilentStruct lhs_silent_struct(lhs, "" );
+	std::stringstream lhs_str;
+	lhs_silent_struct.print_conformation(lhs_str);
+
+	core::io::silent::BinaryProteinSilentStruct rhs_silent_struct(rhs, "" );
+	std::stringstream rhs_str;
+	rhs_silent_struct.print_conformation(rhs_str);
+
+	return lhs_str.str() == rhs_str.str();
+}
 
 ///////////////////////////////////////////////
 ///////////////////////////////////////////////

@@ -53,9 +53,23 @@ namespace resource_manager {
 /// for every kind of OptionKey.
 class JobOptions : public utility::pointer::ReferenceCount {
 
-public:
+public: // management methods
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~JobOptions();
+
+	virtual
+	void
+	show( std::ostream & out ) const;
+
+	friend
+	std::ostream &
+	operator<< (
+		std::ostream & out,
+		const JobOptions & job_options );
+
+
+
+public: // accessor methods
 
 	void
 	add_option(

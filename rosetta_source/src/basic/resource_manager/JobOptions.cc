@@ -28,7 +28,7 @@
 //C++ Headers
 #include <string>
 #include <map>
-
+#include <iomanip>
 
 namespace basic {
 namespace resource_manager {
@@ -55,6 +55,58 @@ using utility::file::PathName;
 using utility::vector1;
 using std::map;
 using std::string;
+using std::endl;
+using std::setw;
+
+void
+JobOptions::show(
+	std::ostream & out
+) const {
+	using namespace utility::options;
+	out
+		<< setiosflags(std::ios::left) << setw(16) << "OptionKeyType"
+		<< setiosflags(std::ios::left) << setw(16) << "OptionKey"
+		<< "OptionValue" << endl;
+	for(
+		map<BooleanOptionKey, bool>::const_iterator
+			o = boolean_options_.begin(), oe = boolean_options_.end(); o != oe; ++o){
+		out
+			<< setiosflags(std::ios::left) << setw(16) << "Boolean"
+			<< setiosflags(std::ios::left) << setw(16) << o->first.id()
+			<< o->second << endl;
+	}
+
+	for(
+		map<BooleanVectorOptionKey, vector1<bool> >::const_iterator
+			o = boolean_vector_options_.begin(), oe = boolean_vector_options_.end();
+		o != oe; ++o){
+		out
+			<< setiosflags(std::ios::left) << setw(16) << "BooleanVector"
+			<< setiosflags(std::ios::left) << setw(16) << o->first.id();
+		bool first(true);
+		for(
+			vector1<bool>::const_iterator
+				k = o->second.begin(), ke = o->second.end(); k != ke; ++k){
+			if(!first){
+				out << " ";
+			} else {
+				first = false;
+			}
+
+			out	<< (*k ? "true" : "false");
+		}
+		out << endl;
+	}
+}
+
+std::ostream &
+operator<<(
+	std::ostream & out,
+	const JobOptions & job_options
+) {
+	job_options.show(out);
+	return out;
+}
 
 void
 JobOptions::add_option(

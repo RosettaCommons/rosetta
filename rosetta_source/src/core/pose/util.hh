@@ -255,9 +255,16 @@ void remove_ligand_canonical_residues( core::pose::Pose & pose);
 ///@param[in] rhs one pose to compare
 ///@param[in] n_dec_places number of decimal places to compare for the coordinates (remember == doesn't work for float); defaults to 3 which is PDB accuracy
 bool compare_atom_coordinates(
-															core::pose::Pose const & lhs,
-															core::pose::Pose const & rhs,
-															core::Size const n_dec_places = 3);
+	Pose const & lhs,
+	Pose const & rhs,
+	Size const n_dec_places = 3);
+
+///@breif this function compares poses for equality up to the
+///information stored in the binary protein silent struct format.
+bool compare_binary_protein_silent_struct(
+	Pose const & lhs,
+	Pose const & rhs);
+
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////

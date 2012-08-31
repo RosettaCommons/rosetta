@@ -31,6 +31,7 @@
 //C++ headers
 #include <string>
 #include <sstream>
+#include <iomanip>
 
 namespace basic {
 namespace resource_manager {
@@ -38,10 +39,34 @@ namespace resource_manager {
 using std::stringstream;
 using std::string;
 using std::endl;
+using std::setw;
 using basic::Tracer;
 using utility::vector1;
 
 static Tracer TR("basic.resource_manager.LazyResourceManager");
+
+void
+ResourceConfiguration::show(
+	std::ostream & out
+) const {
+	out
+		<< "ResourceConfiguationKey Value" << endl
+		<< "ResourceTag             " << resource_tag << endl
+		<< "LocatorTag              " << locator_tag << endl
+		<< "LocatorID               " << locator_id << endl
+		<< "LoaderType              " << loader_type << endl
+		<< "ResourceOptionsTag      " << resource_options_tag << endl;
+}
+
+std::ostream &
+operator<<(
+	std::ostream & out,
+	const ResourceConfiguration & resource_configuration
+) {
+	resource_configuration.show(out);
+	return out;
+}
+
 
 LazyResourceManager::LazyResourceManager() {
 	add_default_resource_locator();
@@ -307,6 +332,77 @@ LazyResourceManager::create_resources(
 ) {
 	utility_exit_with_message("This is meant to be overwritten in the the derived class.");
 }
+
+void
+LazyResourceManager::show(
+	std::ostream & out
+) const {
+	ResourceManager::show(out);
+	out << endl;
+
+	out
+		<< "LazyResourceManager.resource_tags:" << endl
+		<< setiosflags(std::ios::left) << setw(16) << "ResourceDescription"
+		<< setiosflags(std::ios::left) << setw(16) << "JobTag ->"
+		<< "ResourceTag" << endl;
+	for(
+		LazyResourceManager::ResourceTagsMap::const_iterator
+			r = resource_tags_.begin(), re = resource_tags_.end(); r != re; ++r){
+		out
+			<< setiosflags(std::ios::left) << setw(16) << r->first.first << setw(16) << r->first.second
+			<< r->second << endl;
+	}
+	out << endl;
+
+	out
+		<< "LazyResourceManager.job_options:" << endl;
+	for(
+		LazyResourceManager::JobOptionsMap::const_iterator
+			r = job_options_.begin(), re = job_options_.end(); r != re; ++r){
+		out
+			<< "ResourceTag: " << r->first << endl
+			<< *(r->second) << endl;
+	}
+	out << endl;
+
+	out
+		<< "LazyResourceManager.resource_configurations:" << endl;
+	for(
+		LazyResourceManager::ResourceConfigurationMap::const_iterator
+			r = resource_configurations_.begin(), re = resource_configurations_.end();
+		r != re; ++r){
+		out
+			<< "ResourceTag: " << r->first << endl
+			<< r->second << endl;
+	}
+	out << endl;
+
+	out
+		<< "LazyResourceManager.resource_locators:" << endl;
+	for(
+		LazyResourceManager::ResourceLocatorsMap::const_iterator
+			r = resource_locators_.begin(), re = resource_locators_.end();
+		r != re; ++r){
+		out
+			<< "LocatorTag: " << r->first << endl;
+		r->second->show(out);
+		out << endl;
+	}
+	out << endl;
+
+	out
+		<< "LazyResourceManager.resource_options:" << endl;
+	for(
+		LazyResourceManager::ResourceOptionsMap::const_iterator
+			r = resource_options_.begin(), re = resource_options_.end(); r != re; ++r){
+		out
+			<< "LocatorOptionsTag: " << r->first << endl
+			<< *(r->second) << endl;
+	}
+
+}
+
+
 
 bool
 LazyResourceManager::has_resource_configuration( ResourceTag const & resource_tag ) const

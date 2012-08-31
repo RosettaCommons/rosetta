@@ -60,6 +60,18 @@ public:
 		utility::tag::TagPtr tag
 	) = 0;
 
+	virtual
+	void
+	show(
+		std::ostream & out
+	) const = 0;
+
+	/// @brief The class name for a particular ResourceOptions instance.
+	/// This function allows for better error message delivery.
+	virtual
+	std::string
+	type() const = 0;
+
 };
 
 } // namespace resource_manager

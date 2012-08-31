@@ -20,7 +20,7 @@
 // AUTO-REMOVED #include <protocols/jd2/JobInputter.hh>
 
 #include <core/pose/Pose.hh>
-
+#include <core/pose/util.hh>
 ///Utility headers
 #include <basic/Tracer.hh>
 // AUTO-REMOVED #include <utility/exit.hh>
@@ -64,6 +64,56 @@ core::Size InnerJob::nstruct_max() const { return nstruct_max_; }
 core::pose::PoseCOP InnerJob::get_pose() const { return pose_; }
 
 void InnerJob::set_pose( core::pose::PoseCOP pose ) { pose_ = pose; }
+
+///@details Only compare the pointer value of the pose the inner
+///job is referencing.
+bool
+operator==(
+	InnerJob const & a,
+	InnerJob const & b
+) {
+	return
+		!(a.input_tag_.compare(b.input_tag_)) &&
+		a.nstruct_max_ == b.nstruct_max_ &&
+		a.pose_() == b.pose_() &&
+		a.bad_ == b.bad_;
+}
+
+
+bool
+operator!=(
+	InnerJob const & a,
+	InnerJob const & b
+) {
+	return !(a == b);
+}
+
+
+void
+InnerJob::show(
+	std::ostream & out
+) const {
+	out
+		<< "input_tag:" << input_tag_ << std::endl
+		<< "nstruct max: " << nstruct_max_ << std::endl
+		<< "bad: " << (bad_ ? "true" : "false" ) << std::endl
+		<< "Pose:";
+	if( pose_() ){
+		out << std::endl << *pose_ << std::endl;
+	} else {
+		out << " NULL" << std::endl;
+	}
+}
+
+std::ostream &
+operator<< (
+	std::ostream & out,
+	const InnerJob & inner_job
+) {
+	inner_job.show(out);
+	return out;
+}
+
 
 } // jd2
 } // protocols

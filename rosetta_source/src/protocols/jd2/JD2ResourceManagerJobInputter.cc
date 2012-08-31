@@ -109,10 +109,10 @@ JD2ResourceManagerJobInputter::pose_from_job(
 			"startstruct", job->inner_job()->input_tag() );
 		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
 			std::ostringstream err;
-			err << e.msg();
+			err << e.msg() << std::endl;
 			err << "Failed to access 'startstruct' resource from the JD2ResourceManager for job '";
 			err << job->inner_job()->input_tag() << "' with nstruct index " << job->nstruct_index();
-			err << "\n" << "Exception caught and re-thrown from JD2ResourceManagerKobInputter::pose_from_job\n";
+			err << "\n" << "Exception caught and re-thrown from JD2ResourceManagerJobInputter::pose_from_job\n";
 			throw utility::excn::EXCN_Msg_Exception( err.str() );
 		}
 
@@ -576,6 +576,15 @@ JD2ResourceManagerJobInputter::read_StringVectorOption_subtag_for_job(
 	job_options->add_option( strinvectopt, vals );
 }
 
+
+///@details Read the <Data/> subtag of the <Job/>
+///
+///   Form 1: <Data desc="resource_description" resource="resource_tag"/>
+///      Precondition requirements:
+///         has_resource_configuration(resource_tag)
+///      Postcondition guarentees:
+///         resources_for_job["resource_description"] == "resource_tag"
+///
 void
 JD2ResourceManagerJobInputter::read_Data_for_subtag(
 	utility::tag::TagPtr data_tag,
@@ -626,9 +635,9 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 	if ( resource_found && pdb_found ) {
 		in_error = true;
 		err << "Error: Both a 'resource' and a 'pdb' tag were found for a 'Data' tag in the Job tag";
-	} else if ( resource_found && ! jd2rm->has_resource( rname )) {
+	} else if ( resource_found && ! jd2rm->has_resource_configuration( rname )) {
 		in_error = true;
-		err << "Error: resource '" << rname << "' given for desc='" << desc << "' has not previously been declared.\n";
+		err << "Error: In Data subtag with descr='" << desc << "', the ResourceManager has no resource configuration for ResourceTag '" << rname << "'.\n";
 	}
 	if ( ! local_startstruct_found && pdb_found ) {
 		in_error = true;
@@ -642,7 +651,7 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 	}
 
 	if ( in_error ) {
-		err << "Problem encountered";
+		err << "Problem encountered ";
 		if ( jobname.size() != 0 ) {
 			err << "for job named '" << jobname << "'";
 		} else if ( desc != "startstruct" && startstruct_found ) {
@@ -653,7 +662,7 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 				opt_iter = data_tag->getOptions().begin(),
 				opt_iter_end = data_tag->getOptions().end();
 				opt_iter != opt_iter_end; ++opt_iter ) {
-			err << "(" << opt_iter->first << "," << opt_iter->second << ")\n";
+			err << "\t(" << opt_iter->first << ", " << opt_iter->second << ")\n";
 		}
 		err << "Thrown from protocols::jd2::JD2ResourceManagerJobInputter::parse_job_tag\n";
 		throw EXCN_Msg_Exception( err.str() );

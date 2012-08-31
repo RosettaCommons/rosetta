@@ -18,7 +18,7 @@
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
-
+#include <core/conformation/symmetry/SymmData.hh>
 #include <utility/vector1.hh>
 
 
@@ -58,7 +58,7 @@ public:
 
 private:
 	bool slide_;
-	std::string symmdef_file_;
+	core::conformation::symmetry::SymmDataOP symmdef_;
 };
 
 ///////////////

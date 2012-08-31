@@ -166,5 +166,84 @@ void Job::set_bad(bool value)  {
 
 JobOP const JD2_BOGUS_JOB( new Job( (new InnerJob("EMPTY_JOB_use_jd2", 0)), 0) );
 
+bool
+operator==(
+  Job const & a,
+  Job const & b
+) {
+	return
+		*(a.inner_job_) == *(b.inner_job_) &&
+		a.nstruct_index_ == b.nstruct_index_ &&
+		a.status_prefix_ == b.status_prefix_ &&
+		a.long_strings_ == b.long_strings_ &&
+		a.string_string_pairs_ == b.string_string_pairs_ &&
+		a.string_real_pairs_ == b.string_real_pairs_ &&
+		a.completed_ == b.completed_;
+}
+
+
+bool
+operator!=(
+  Job const & a,
+  Job const & b
+) {
+	return !(a == b);
+}
+
+
+void
+Job::show(
+	std::ostream & out
+) const {
+	out
+		<< "Inner Job:";
+	if(inner_job_()){
+		out << std::endl << *inner_job_ << std::endl;
+	} else {
+		out << " NULL" << std::endl;
+	}
+
+	out
+		<< "nstruct index: " << nstruct_index_ << std::endl
+		<< "status_prefix: " << status_prefix_ << std::endl
+		<< "long_strings:" << std::endl;
+	for(
+		Strings::const_iterator
+			s = long_strings_.begin(), se = long_strings_.end();
+		s != se; ++s){
+		out << *s << std::endl;
+	}
+
+	out
+		<< "completed: " << completed_ << std::endl
+		<< "String -> String Pairs:" << std::endl;
+	for(
+		StringStringPairs::const_iterator
+			s = string_string_pairs_.begin(), se = string_string_pairs_.end();
+		s != se; ++s){
+		out
+			<< "\t" << s->first << ": " << s->second << std::endl;
+	}
+
+	out	<< "String -> Real Pairs:" << std::endl;
+	for(
+		StringRealPairs::const_iterator
+			s = string_real_pairs_.begin(), se = string_real_pairs_.end();
+		s != se; ++s){
+		out
+			<< "\t" << s->first << ": " << s->second << std::endl;
+	}
+}
+
+std::ostream &
+operator<< (
+	std::ostream & out,
+	const Job & job
+) {
+	job.show(out);
+	return out;
+}
+
+
 } // jd2
 } // protocols

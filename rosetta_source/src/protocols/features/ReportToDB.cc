@@ -252,7 +252,7 @@ ReportToDB::parse_sample_source_tag_item(
 		sample_source_ = tag->getOption<string>("sample_source");
 	} else {
 		TR << "Field 'sample_source' required for use of ReportToDB in Rosetta Scripts." << endl;
-		TR << "The sample_sourOBce should describe where the samples came from. To access the description run \"sqlite3 'select description from sample_source' fname.db3\"" << endl;
+		TR << "The sample_source should describe where the samples came from. To access the description run \"sqlite3 'select description from sample_source' fname.db3\"" << endl;
 		TR << "For example: Top4400 natives from Richardson Lab. Reduce placed hydrogens with -correct flag." << endl;
 	}
 }

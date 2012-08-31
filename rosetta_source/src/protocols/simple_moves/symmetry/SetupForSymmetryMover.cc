@@ -14,15 +14,21 @@
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMoverCreator.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
+#include <core/conformation/symmetry/SymmData.hh>
 
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 // AUTO-REMOVED #include <protocols/rosetta_scripts/util.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/excn/Exceptions.hh>
 
 // Package headers
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
+
+#include <basic/resource_manager/ResourceManager.hh>
+#include <basic/resource_manager/util.hh>
+
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
@@ -31,6 +37,7 @@
 // ObjexxFCL Headers
 
 // C++ Headers
+#include <string>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -98,22 +105,47 @@ ExtractAsymmetricPoseMoverCreator::mover_name() {
 ////////////////////
 
 
-SetupForSymmetryMover::SetupForSymmetryMover()
-	: protocols::moves::Mover("SetupForSymmetryMover"), slide_(false), symmdef_file_("") { }
+SetupForSymmetryMover::SetupForSymmetryMover() :
+	protocols::moves::Mover("SetupForSymmetryMover"),
+	slide_(false),
+	symmdef_()
+{
+}
 
-SetupForSymmetryMover::SetupForSymmetryMover( std::string const & symmdef_file)
-	: protocols::moves::Mover("SetupForSymmetryMover"), slide_(false), symmdef_file_(symmdef_file) { }
-
+SetupForSymmetryMover::SetupForSymmetryMover( std::string const & symmdef_file) :
+	protocols::moves::Mover("SetupForSymmetryMover"),
+	slide_(false),
+	symmdef_()
+{
+	symmdef_ = new core::conformation::symmetry::SymmData();
+	symmdef_->read_symmetry_data_from_file(symmdef_file);
+}
 
 SetupForSymmetryMover::~SetupForSymmetryMover(){}
 
 void
 SetupForSymmetryMover::apply( core::pose::Pose & pose )
 {
+	using namespace basic::options;
+
+	if(!symmdef_()){
+		if(option[ OptionKeys::symmetry::symmetry_definition].user()){
+			symmdef_ = new core::conformation::symmetry::SymmData();
+			symmdef_->read_symmetry_data_from_file(
+				option[OptionKeys::symmetry::symmetry_definition]);
+
+		} else {
+			throw utility::excn::EXCN_BadInput(
+				"The -symmetry:symmetry_definition command line option "
+				"was not specified.");
+		}
+	}
+
+
 	// If we are alredy symmetric do nothing
 	if ( core::pose::symmetry::is_symmetric( pose ) ) return;
 
-	core::pose::symmetry::make_symmetric_pose( pose, symmdef_file_ );
+	core::pose::symmetry::make_symmetric_pose( pose, *symmdef_ );
 	assert( core::pose::symmetry::is_symmetric( pose ) );
 
 	//fpd  explicitly update disulfide lr energy container
@@ -136,8 +168,36 @@ void SetupForSymmetryMover::parse_my_tag(
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
 			core::pose::Pose const & /*pose*/ ) {
-	symmdef_file_ = tag->getOption<std::string>("definition", "");
-	 basic::options::option[basic::options::OptionKeys::symmetry::symmetry_definition].value( "dummy" );
+
+	using namespace basic::options;
+	using namespace basic::resource_manager;
+
+	if(tag->hasOption("definition") && tag->hasOption("resource_description")){
+		throw utility::excn::EXCN_BadInput(
+			"SetupForSymmetry takes either a 'definition' OR "
+			"a 'resource_description' tag but not both.");
+	}
+
+	if(tag->hasOption("definition")){
+		symmdef_ = new core::conformation::symmetry::SymmData();
+		symmdef_->read_symmetry_data_from_file(
+			tag->getOption<std::string>("definition"));
+		option[OptionKeys::symmetry::symmetry_definition].value( "dummy" );
+
+	} else if(tag->hasOption("resource_description")){
+		symmdef_ = get_resource< core::conformation::symmetry::SymmData >(
+			tag->getOption<std::string>("resource_description"));
+		option[OptionKeys::symmetry::symmetry_definition].value( "dummy" );
+
+	} else if(option[ OptionKeys::symmetry::symmetry_definition].user()){
+		symmdef_ = new core::conformation::symmetry::SymmData();
+		symmdef_->read_symmetry_data_from_file(
+			option[OptionKeys::symmetry::symmetry_definition]);
+
+	} else {
+		throw utility::excn::EXCN_BadInput(
+			"To use SetupForSymmetryMover with rosetta scripts please supply either a 'definition' tag, a 'resource_decription' tag or specify -symmetry:symmetry_definition the command line.");
+	}
 }
 
 std::string

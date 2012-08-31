@@ -112,6 +112,15 @@ public:
 	void
 	clear();
 
+	virtual
+	void
+	show( std::ostream & out ) const;
+
+	friend
+	std::ostream &
+	operator<< ( std::ostream & out, const ResourceManager & resource_manager );
+
+
 public: // Protocol interface
 
 	/// @brief A protocol may ask whether a resource with a given resource description

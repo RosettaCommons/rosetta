@@ -9,18 +9,18 @@
 
 sources = {
         "loops" : [
-          "Loop",
-          "Loops",
-					"LoopsFileFallbackConfiguration",
-          "LoopsFileIO",
-          "LoopsFileLoader",
-          "LoopsFileOptions",
-          "LoopsUtil",
+		"Loop",
+		"Loops",
+		"LoopsFileFallbackConfiguration",
+		"LoopsFileIO",
+		"LoopsFileLoader",
+		"LoopsFileOptions",
+		"LoopsUtil",
         ],
         "nonlocal" : [
-          "Chunk",
-          "NonlocalUtil",
-          "Region",
+		"Chunk",
+		"NonlocalUtil",
+		"Region",
         ],
 	"loophash" : [
 		"loophash",
@@ -93,6 +93,7 @@ sources = {
 	"jd2" : [
 		"JD2ResourceManager",
 		"JD2ResourceManagerJobInputter",
+		"JD2ResourceManagerJobInputterSimplifiedInput",
 	],
        	"jd2/parser" : [
             "BluePrint",

@@ -82,6 +82,22 @@ public:
 
 	virtual ~FileSystemResourceLocator();
 
+	virtual
+	void
+	show(
+		std::ostream & out) const;
+
+	//friend
+	//std::ostream &
+	//operator<<(
+	//	std::ostream & out,
+	//	const FileSystemResourceLocator & file_system_resource_locator);
+
+	virtual
+	std::string
+	type() const;
+
+
 	void
 	set_open_mode(
 		std::ios_base::openmode open_mode);

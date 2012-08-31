@@ -19,9 +19,28 @@
 #include <utility/tag/Tag.fwd.hh>
 
 //C++ headers
+#include <string>
+#include <ostream>
 
 namespace basic {
 namespace resource_manager {
+
+void
+ResourceOptions::show(
+	std::ostream & out
+) const {
+	out << "ResourceOptions.name: " << name_ << std::endl;
+}
+
+std::ostream &
+operator<<(
+	std::ostream & out,
+	const ResourceOptions & resource_options
+) {
+	resource_options.show(out);
+	return out;
+}
+
 
 ResourceOptions::ResourceOptions() :
 	name_( "unnamed" )

@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file basic/resource_manager/ResourceOptionsFactory.cxxtest.hh
-/// @brief test suite for basic::resource_manager::ResourceOptionsFactory
+/// @file basic/resource_manager/JD2ResourceManagerJobInputter.cxxtest.hh
+/// @brief test suite for protocols::jd2::JD2ResourceManagerJobInputter
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 // Test headers
@@ -25,8 +25,6 @@
 
 // C++ headers
 #include <string>
-
-//#include <basic/resource_manager/;
 
 using namespace protocols::jd2;
 
@@ -79,14 +77,15 @@ public:
 			std::string expected_error =
 				"Failed to find a data description (desc) amongst the options pairs listed reading a 'Data' tag in a Job tag.\n"
 				" A desc option must always be given\n"
-				"Error:  'pdb' tag given for a non-'startstruct' option in the 'Data' tag of a Job tagProblem encounteredfor job named 'firstjob'.\n"
+				"Error:  'pdb' tag given for a non-'startstruct' option in the 'Data' tag of a Job tagProblem encountered for job named 'firstjob'.\n"
 				"Options given:\n"
-				"(pdb,1ten.pdb)\n"
+				"	(pdb, 1ten.pdb)\n"
 				"Thrown from protocols::jd2::JD2ResourceManagerJobInputter::parse_job_tag\n";
-			TS_ASSERT( e.msg() == expected_error );
 			if ( e.msg() != expected_error ) {
-				std::cout << e.msg() << std::endl;
+				std::cout << "expected error: '" << expected_error << "'" << std::endl;
+				std::cout << "actual error:   '" << e.msg() << "'" << std::endl;
 			}
+			TS_ASSERT( e.msg() == expected_error );
 		}
 
 	}
@@ -110,14 +109,16 @@ public:
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::string expected_error =
 				"Failed to find a resource name or a pdb name reading a 'Data' tag in a Job tag.  Either a 'resource' or a 'pdb' option must be provided.\n"
-				"Problem encounteredfor job named 'firstjob'.\n"
+				"Problem encountered for job named 'firstjob'.\n"
 				"Options given:\n"
-				"(desc,startstruct)\n"
+				"	(desc, startstruct)\n"
 				"Thrown from protocols::jd2::JD2ResourceManagerJobInputter::parse_job_tag\n";
-			TS_ASSERT( e.msg() == expected_error );
 			if ( e.msg() != expected_error ) {
-				std::cout << e.msg() << std::endl;
+				std::cout << "expected error: '" << expected_error << "'" << std::endl;
+				std::cout << "actual error:   '" << e.msg() << "'" << std::endl;
 			}
+
+			TS_ASSERT( e.msg() == expected_error );
 		}
 	}
 
@@ -139,16 +140,18 @@ public:
 			TS_ASSERT( false ); // should throw an exception
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::string expected_error =
-				"Error: Both a 'resource' and a 'pdb' tag were found for a 'Data' tag in the Job tagProblem encounteredfor job named 'firstjob'.\n"
+				"Error: Both a 'resource' and a 'pdb' tag were found for a 'Data' tag in the Job tagProblem encountered for job named 'firstjob'.\n"
 				"Options given:\n"
-				"(desc,startstruct)\n"
-				"(pdb,1ten.pdb)\n"
-				"(resource,1ten_native)\n"
+				"	(desc, startstruct)\n"
+				"	(pdb, 1ten.pdb)\n"
+				"	(resource, 1ten_native)\n"
 				"Thrown from protocols::jd2::JD2ResourceManagerJobInputter::parse_job_tag\n";
-			TS_ASSERT( e.msg() == expected_error );
 			if ( e.msg() != expected_error ) {
-				std::cout << e.msg() << std::endl;
+				std::cout << "expected error: '" << expected_error << "'" << std::endl;
+				std::cout << "actual error:   '" << e.msg() << "'" << std::endl;
 			}
+
+			TS_ASSERT( e.msg() == expected_error );
 		}
 	}
 
@@ -171,15 +174,17 @@ public:
 			TS_ASSERT( false ); // should throw an exception
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::string expected_error =
-				"Error:  'pdb' tag given for a non-'startstruct' option in the 'Data' tag of a Job tagProblem encounteredfor job named 'firstjob'.\n"
+				"Error:  'pdb' tag given for a non-'startstruct' option in the 'Data' tag of a Job tagProblem encountered for job named 'firstjob'.\n"
 				"Options given:\n"
-				"(desc,whatever)\n"
-				"(pdb,1ten.pdb)\n"
+				"	(desc, whatever)\n"
+				"	(pdb, 1ten.pdb)\n"
 				"Thrown from protocols::jd2::JD2ResourceManagerJobInputter::parse_job_tag\n";
-			TS_ASSERT( e.msg() == expected_error );
 			if ( e.msg() != expected_error ) {
-				std::cout << e.msg() << std::endl;
+				std::cout << "expected error: '" << expected_error << "'" << std::endl;
+				std::cout << "actual error:   '" << e.msg() << "'" << std::endl;
 			}
+
+			TS_ASSERT( e.msg() == expected_error );
 		}
 
 	}
@@ -201,10 +206,12 @@ public:
 			TS_ASSERT( false ); // should throw an exception
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::string expected_error = "Error: Job given without a 'startstruct'";
-			TS_ASSERT( e.msg() == expected_error );
 			if ( e.msg() != expected_error ) {
-				std::cout << e.msg() << std::endl;
+				std::cout << "expected error: '" << expected_error << "'" << std::endl;
+				std::cout << "actual error:   '" << e.msg() << "'" << std::endl;
 			}
+
+			TS_ASSERT( e.msg() == expected_error );
 		}
 
 	}
@@ -226,12 +233,12 @@ public:
 		try {
 			inputter.fill_jobs_from_stream( jobstream, jobvector );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			TS_ASSERT( false );
 			std::cout << e.msg() << std::endl;
+			TS_ASSERT( false );
 		}
 		TS_ASSERT( jobvector.size() == 10 );
-
 	}
+
 	void test_JD2ResourceManagerJobInputter_integer_option_read_error() {
 		std::string xmlfile =
 			"<JD2ResourceManagerJobInputter>\n"
@@ -252,10 +259,12 @@ public:
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::string expected_error =
 				"Error converting value 'four' given for option 'packing:ex1:level' to an integer from within JD2ResourceManagerJobInputter::parse_job_tag\n";
-			TS_ASSERT( e.msg() == expected_error );
 			if ( e.msg() != expected_error ) {
-				std::cout << e.msg() << std::endl;
+				std::cout << "expected error: '" << expected_error << "'" << std::endl;
+				std::cout << "actual error:   '" << e.msg() << "'" << std::endl;
 			}
+
+			TS_ASSERT( e.msg() == expected_error );
 		}
 
 	}
@@ -276,8 +285,8 @@ public:
 		try {
 			inputter.fill_jobs_from_stream( jobstream, jobvector );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			TS_ASSERT( false );
 			std::cout << e.msg() << std::endl;
+			TS_ASSERT( false );
 		}
 		TS_ASSERT( jobvector.size() == 10 );
 
@@ -302,10 +311,12 @@ public:
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::string expected_error =
 				"Error converting value '0fge.3' given for option 'out:scorecut' to a floating point number from within JD2ResourceManagerJobInputter::parse_job_tag\n";
-			TS_ASSERT( e.msg() == expected_error );
 			if ( e.msg() != expected_error ) {
-				std::cout << e.msg() << std::endl;
+				std::cout << "expected error: '" << expected_error << "'" << std::endl;
+				std::cout << "actual error:   '" << e.msg() << "'" << std::endl;
 			}
+
+			TS_ASSERT( e.msg() == expected_error );
 		}
 
 	}
@@ -353,10 +364,12 @@ public:
 			std::string expected_error =
 				"Error converting value 'true' given for option 'packing:ex1' to a boolean from within JD2ResourceManagerJobInputter::parse_job_tag\n"
 				" Boolean options must be given either a '1' or a '0'";
-			TS_ASSERT( e.msg() == expected_error );
 			if ( e.msg() != expected_error ) {
-				std::cout << e.msg() << std::endl;
+				std::cout << "expected error: '" << expected_error << "'" << std::endl;
+				std::cout << "actual error:   '" << e.msg() << "'" << std::endl;
 			}
+
+			TS_ASSERT( e.msg() == expected_error );
 		}
 
 	}
@@ -384,10 +397,11 @@ public:
 				"Options must be fully namespaced (e.g. 'ex1' will not work, but 'packing:ex1' would work.\n"
 				"Please remember to use only one colon when giving options.\n"
 				"Thrown from JD2ResourceManagerJobInputter::parse_job_tag\n";
-			TS_ASSERT( e.msg() == expected_error );
 			if ( e.msg() != expected_error ) {
-				std::cout << e.msg() << std::endl;
+				std::cout << "expected error: '" << expected_error << "'" << std::endl;
+				std::cout << "actual error:   '" << e.msg() << "'" << std::endl;
 			}
+			TS_ASSERT( e.msg() == expected_error );
 		}
 
 	}
@@ -415,10 +429,12 @@ public:
 				"Options must be fully namespaced (e.g. 'ex1' will not work, but 'packing:ex1' would work.\n"
 				"Please remember to use only one colon when giving options.\n"
 				"Thrown from JD2ResourceManagerJobInputter::parse_job_tag\n";
-			TS_ASSERT( e.msg() == expected_error );
 			if ( e.msg() != expected_error ) {
-				std::cout << e.msg() << std::endl;
+				std::cout << "expected error: '" << expected_error << "'" << std::endl;
+				std::cout << "actual error:   '" << e.msg() << "'" << std::endl;
 			}
+
+			TS_ASSERT( e.msg() == expected_error );
 		}
 
 	}

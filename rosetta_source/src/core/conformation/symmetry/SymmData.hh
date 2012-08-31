@@ -21,8 +21,8 @@
 
 // Unit headers
 #include <core/conformation/symmetry/SymmData.fwd.hh>
-#include <core/conformation/symmetry/VirtualCoordinate.fwd.hh>
-#include <core/conformation/symmetry/SymDof.fwd.hh>
+#include <core/conformation/symmetry/VirtualCoordinate.hh>
+#include <core/conformation/symmetry/SymDof.hh>
 #include <core/conformation/symmetry/SymSlideInfo.hh>
 
 // Utility headers
@@ -34,7 +34,7 @@
 #include <map>
 
 #include <utility/vector1_bool.hh>
-#include <numeric/xyzMatrix.fwd.hh>
+#include <numeric/xyzMatrix.hh>
 
 
 namespace core {

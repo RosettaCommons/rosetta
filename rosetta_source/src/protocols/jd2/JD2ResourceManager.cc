@@ -65,6 +65,14 @@ using basic::resource_manager::ResourceDescription;
 using basic::resource_manager::ResourceOP;
 using basic::resource_manager::JobOptionsOP;
 using utility::excn::EXCN_Msg_Exception;
+using basic::resource_manager::LoaderType;
+using basic::resource_manager::LocatorTag;
+using basic::resource_manager::LocatorID;
+using basic::resource_manager::ResourceConfiguration;
+using basic::resource_manager::ResourceOptionsTag;
+using basic::resource_manager::ResourceLoaderFactory;
+using basic::resource_manager::ResourceTag;
+using utility::tag::Tag;
 
 static Tracer TR("protocols.resource_manager.planner.JD2ResourceManager");
 
@@ -120,13 +128,13 @@ void JD2ResourceManager::read_resource_locators_tags( utility::tag::TagPtr tags 
 		}
 		LocatorTag locator_tag = (*tag_iter)->getOption< LocatorTag >( "tag" );
 
-		// 2. Make sure no other resource_options object has been declared with this name
+		// 2. Make sure no other resource locator object has been declared with this name
 		if ( LazyResourceManager::has_resource_locator( locator_tag ) ) {
 			std::ostringstream err;
 			err << "Duplicated tag, '" << locator_tag <<"' assigned to a ResourceLocator object with type '";
 			err << tagname << "'.\n";
 			err << "Prevous ResourceLocator object with this tag was of type '";
-			err << LazyResourceManager::find_resource_options( locator_tag )->type() << "'\n";
+			err << LazyResourceManager::find_resource_locator( locator_tag )->type() << "'\n";
 			throw MsgException( err.str() );
 		}
 
@@ -200,96 +208,185 @@ void JD2ResourceManager::read_resource_options_tags( utility::tag::TagPtr tags )
 
 }
 
+///@detail Create the loader type from the name of the resource tag
+LoaderType
+JD2ResourceManager::read_resource_loader_type_item(
+	utility::tag::TagPtr tag
+) {
+	typedef utility::excn::EXCN_Msg_Exception MsgException;
+
+	LoaderType loader_type = tag->getName();
+
+	/// 1. Make sure this is an allowed resource type / loader type
+	if ( ! ResourceLoaderFactory::get_instance()->has_resource_loader( loader_type ) ) {
+		std::ostringstream err;
+		err << "ResourceLoader type '" << loader_type << "' requested in JD2ResourceManager::read_resources_tags has not been registered with the ResourceLoaderFactory.  Available types include:.\n";
+		std::list< std::string > loader_types = ResourceLoaderFactory::get_instance()->available_resource_loaders();
+		for ( std::list< std::string >::const_iterator
+						iter = loader_types.begin(), iter_end = loader_types.end(); iter != iter_end; ++iter ) {
+			err << "  '" << *iter << std::endl;
+		}
+		throw MsgException( err.str() );
+	}
+	return loader_type;
+}
+
+///@details make sure the resource object has been given a tag and
+///that no other resource object has been delecared with the same name.
+ResourceTag
+JD2ResourceManager::read_resource_tag_item(
+	utility::tag::TagPtr tag,
+	LoaderType const & loader_type,
+	LocatorID const & locator_id
+) {
+	typedef utility::excn::EXCN_Msg_Exception MsgException;
+
+	/// 2. Set the resource tag to be the locator id unless it has been
+	/// explcitely provided.
+	ResourceTag resource_tag;
+	if ( ! tag->hasOption( "tag" ) ) {
+		resource_tag = locator_id;
+	} else {
+		resource_tag = tag->getOption< ResourceTag >( "tag" );
+	}
+
+	// 3. Make sure no other resource object has been declared with this name
+	if ( LazyResourceManager::has_resource_configuration( resource_tag ) ) {
+		std::ostringstream err;
+		err << "Duplicated tag, '" << resource_tag << "' assigned to a Resource object with ResourceLoader type '";
+		err << loader_type << "'.\n";
+		throw MsgException( err.str() );
+	}
+	return resource_tag;
+}
+
+///@brief find the LocatorTag item from the resource tag. Based on the
+///LocatorTag fill the LocatorID.
+///   locator item (&string):
+///     FileSystemResourceLocator (default)
+///       - file item is interchangable with the locatorID item
+///   locatorID item (&string):
+LocatorTag
+JD2ResourceManager::read_resource_locator_items(
+	utility::tag::TagPtr tag,
+	LoaderType const & loader_type,
+	LocatorID & locator_id
+) {
+	typedef utility::excn::EXCN_Msg_Exception MsgException;
+
+	/// 4. Verify that, if it's been given a locator, that the ResourceLocator has previously been declared
+	LocatorTag locator_tag;
+	if ( tag->hasOption( "locator" ) ) {
+		locator_tag = tag->getOption< LocatorTag >( "locator" );
+		if ( ! LazyResourceManager::has_resource_locator( locator_tag ) ) {
+			std::ostringstream err;
+			err
+				<< "Resource subtag"
+				<< " with LoaderType '" << loader_type << "'"
+				<< " was given the ResourceLocator tag '" << locator_tag << "',"
+				<< " which has not previously been declared.";
+			throw MsgException( err.str() );
+		}
+		if( tag->hasOption( "file" ) && locator_tag != "FileSystemResourceLocator" ){
+			std::ostringstream err;
+			err
+				<< "Resource subtag "
+				<< "with LoaderType '" << loader_type << "'"
+				<< " has locator='" << locator_tag << "' and "
+				<< " file='" << tag->getOption< LocatorID > ("file") << "'."
+				<< " But specifying a file is only compatible with the"
+				<< " FileSystemResourceLocator." << std::endl;
+			throw MsgException(err.str());
+		}
+	} else {
+		locator_tag = "";
+	}
+
+	if(tag->hasOption( "file" )){
+		if(tag->hasOption("locatorID")) {
+			std::ostringstream err;
+			err
+				<< "Resource subtag"
+				<< " with LoaderType '" << loader_type << "'"
+				<< " has both"
+				<< " file='" << tag->getOption< LocatorID >("file") << "' and"
+				<< " locatorID='" << tag->getOption< LocatorID >("locatorID") << "'"
+				<< " but it is only allowed to have one." << std::endl;
+			throw MsgException(err.str());
+		}
+		locator_id = tag->getOption< LocatorID >("file");
+	} else if( tag->hasOption("locatorID")){
+		locator_id = tag->getOption< LocatorID >( "locatorID" );
+	} else {
+		std::ostringstream err;
+		err
+			<< "Resource subtag"
+			<< " with LoaderType '" << loader_type << "' was not supplied"
+			<< " with a locatorID tag, which is required." << std::endl;
+		throw MsgException( err.str() );
+	}
+
+	return locator_tag;
+}
+
+
+ResourceOptionsTag
+JD2ResourceManager::read_resource_options_tag_item(
+	utility::tag::TagPtr tag,
+	LoaderType const & loader_type,
+	ResourceTag const & resource_tag
+) {
+	typedef utility::excn::EXCN_Msg_Exception MsgException;
+
+	/// 5. Verify that, if it's been given a resource options, that the
+	/// ResourceOptions has been previously declared
+	ResourceOptionsTag resource_options_tag;
+	if ( tag->hasOption( "options" ) ) {
+		resource_options_tag = tag->getOption< ResourceOptionsTag >( "options" );
+		if ( ! LazyResourceManager::has_resource_options( resource_options_tag ) ) {
+			std::ostringstream err;
+			err << "Resource '" << resource_tag << "' with LoaderType '" << loader_type << "' was given the tag ";
+			err << "for a ResourceLoaderOptions, '" << resource_options_tag << "', which has not previously been declared.";
+			throw MsgException( err.str() );
+		}
+	}
+	return resource_options_tag;
+}
+
 /// @details read through all the resources, and put them into the base class
 /// for later instantiation.  Make sure each resource is named, that it is the
 /// only resource that has been declared with this name, and that
 void JD2ResourceManager::read_resources_tags( utility::tag::TagPtr tags )
 {
-	using basic::resource_manager::LoaderType;
-	using basic::resource_manager::LocatorTag;
-	using basic::resource_manager::LocatorID;
-	using basic::resource_manager::ResourceConfiguration;
-	using basic::resource_manager::ResourceOptionsTag;
-	using basic::resource_manager::ResourceLoaderFactory;
-	using basic::resource_manager::ResourceTag;
-	using utility::tag::Tag;
-	typedef utility::excn::EXCN_Msg_Exception MsgException;
 
 	for ( Tag::tags_t::const_iterator
 			tag_iter = tags->getTags().begin(),
 			tag_iter_end = tags->getTags().end();
 			tag_iter != tag_iter_end; ++tag_iter ) {
-		LoaderType loader_type = (*tag_iter)->getName();
 
-		/// 1. Make sure this is an allowed resource type / loader type
-		if ( ! ResourceLoaderFactory::get_instance()->has_resource_loader( loader_type ) ) {
-			std::ostringstream err;
-			err << "ResourceLoader type '" << loader_type << "' requested in JD2ResourceManager::read_resources_tags has not been registered with the ResourceLoaderFactory.  Available types include:.\n";
-			std::list< std::string > loader_types = ResourceLoaderFactory::get_instance()->available_resource_loaders();
-			for ( std::list< std::string >::const_iterator
-					iter = loader_types.begin(), iter_end = loader_types.end(); iter != iter_end; ++iter ) {
-				err << "  '" << *iter << std::endl;
-			}
-			throw MsgException( err.str() );
-		}
+		LoaderType loader_type(read_resource_loader_type_item(*tag_iter));
 
-		/// 2. Make sure this resource object has been given a tag.
-		if ( ! (*tag_iter)->hasOption( "tag" ) ) {
-			std::ostringstream err;
-			err << "Unable to find a 'tag' for a Resource of type '" << loader_type << "'\n";
-			throw MsgException( err.str() );
-		}
-		ResourceTag resource_tag = (*tag_iter)->getOption< ResourceTag >( "tag" );
+		LocatorID locator_id;
+		LocatorTag locator_tag(
+			read_resource_locator_items(
+				*tag_iter, loader_type, locator_id));
 
-		// 3. Make sure no other resource object has been declared with this name
-		if ( LazyResourceManager::has_resource_configuration( resource_tag ) ) {
-			std::ostringstream err;
-			err << "Duplicated tag, '" << resource_tag << "' assigned to a Resource object with ResourceLoader type '";
-			err << loader_type << "'.\n";
-			throw MsgException( err.str() );
-		}
+		ResourceTag resource_tag(
+			read_resource_tag_item(*tag_iter, loader_type, locator_id));
 
-		/// 4. Verify that, if it's been given a locator, that the ResourceLocator has previously been declared
-		LocatorTag locator_tag;
-		if ( (*tag_iter)->hasOption( "locator" ) ) {
-			locator_tag = (*tag_iter)->getOption< LocatorTag >( "locator" );
-			if ( ! LazyResourceManager::has_resource_locator( locator_tag ) ) {
-				std::ostringstream err;
-				err << "Resource '" << resource_tag << "' with LoaderType '" << loader_type << "' was given the tag ";
-				err << "for a ResourceLocator, '" << locator_tag << "', which has not previously been declared.";
-				throw MsgException( err.str() );
-			}
-		}
 
-		/// 5. Verify that, if it's been given a resource options, that the ResourceOptions has been previously declared
-		ResourceOptionsTag resource_options_tag;
-		if ( (*tag_iter)->hasOption( "options" ) ) {
-			resource_options_tag = (*tag_iter)->getOption< ResourceOptionsTag >( "options" );
-			if ( ! LazyResourceManager::has_resource_options( resource_options_tag ) ) {
-				std::ostringstream err;
-				err << "Resource '" << resource_tag << "' with LoaderType '" << loader_type << "' was given the tag ";
-				err << "for a ResourceLoaderOptions, '" << resource_options_tag << "', which has not previously been declared.";
-				throw MsgException( err.str() );
-			}
-		}
-
-		/// 6. Verify that it has been given a locatorID
-		if ( ! (*tag_iter)->hasOption( "locatorID" ) ) {
-			std::ostringstream err;
-			err << "Resource '" << resource_tag << "' with LoaderType '" << loader_type << "' was not supplied with ";
-			err << "an option 'locatorID', which is required" << std::endl;
-			throw MsgException( err.str() );
-		}
-		LocatorID locator_id = (*tag_iter)->getOption< LocatorID >( "locatorID" );
+		ResourceOptionsTag resource_options_tag(
+			read_resource_options_tag_item(*tag_iter, loader_type, resource_tag));
 
 		ResourceConfiguration resource_configuration;
+		resource_configuration.loader_type            = loader_type;
 		resource_configuration.resource_tag           = resource_tag;
 		resource_configuration.locator_tag            = locator_tag;
 		resource_configuration.locator_id             = locator_id;
-		resource_configuration.loader_type            = resource_tag;
 		resource_configuration.resource_options_tag   = resource_options_tag;
 
-		LazyResourceManager::add_resource_configuration( resource_tag, resource_configuration );
+		LazyResourceManager::add_resource_configuration(
+			resource_tag, resource_configuration );
 	}
 
 }
@@ -355,7 +452,7 @@ JD2ResourceManager::get_resource(
 	} else {
 		using basic::resource_manager::FallbackConfigurationFactory;
 		using basic::resource_manager::FallbackConfigurationOP;
-        
+
         if ( FallbackConfigurationFactory::get_instance()->has_fallback_for_resource( resource_description )) {
             FallbackConfigurationOP fallback = FallbackConfigurationFactory::get_instance()->create_fallback_configuration( resource_description );
             if ( fallback->fallback_specified( resource_description ) ) {
@@ -378,7 +475,7 @@ JD2ResourceManager::get_resource(
                 return fallbackresource;
             }
         }
-        
+
 		std::ostringstream errmsg;
 		errmsg << "JD2ResourceManager does not have a resource "
 			"corresponding to the resource description '" + resource_description + ".' for job '" +

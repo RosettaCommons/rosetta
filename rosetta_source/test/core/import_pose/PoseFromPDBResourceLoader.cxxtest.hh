@@ -19,6 +19,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/io/silent/BinaryProteinSilentStruct.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 
 // Package headers
 #include <basic/resource_manager/LazyResourceManager.hh>
@@ -71,19 +72,15 @@ public:
 
 		TS_ASSERT( idealized_input_pose ); // make sure we got back the right resource type
 
-		core::io::silent::BinaryProteinSilentStruct silent_struct( *idealized_input_pose, "" );
-		std::stringstream test_pose_string;
-		silent_struct.print_conformation( test_pose_string );
-
 		// Crearte a pose in the old fashioned way and make sure the contents of this pose and
 		// the pose from the Loader are identical.
 		core::pose::Pose reference_pose;
 		core::import_pose::pose_from_pdb( reference_pose, test_pdb_filename );
-		core::io::silent::BinaryProteinSilentStruct reference_silent_struct( reference_pose, "" );
-		std::stringstream reference_pose_string;
-		reference_silent_struct.print_conformation( reference_pose_string );
 
-		TS_ASSERT( test_pose_string.str() == reference_pose_string.str() );
+		TS_ASSERT(
+			core::pose::compare_binary_protein_silent_struct(
+				*idealized_input_pose, reference_pose));
+
 	}
 
 };

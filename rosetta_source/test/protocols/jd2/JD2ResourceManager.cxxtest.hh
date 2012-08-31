@@ -158,6 +158,12 @@ public:
 		utility::tag::TagPtr
 	) {}
 
+	void
+	show(std::ostream & out) const { out << "DummyResourceLocator" << std::endl; }
+
+	std::string
+	type() const { return "DummyResourceLocator"; }
+
 };
 
 class DummyResourceLocatorCreator : public ResourceLocatorCreator
@@ -210,7 +216,7 @@ class DummyResourceFallbackConfiguration2 : public DummyResourceFallbackConfigur
 {
 public:
 	virtual bool fallback_specified( ResourceDescription const & ) const { return false; }
-	virtual std::string could_not_create_resource_error_message( ResourceDescription const & desc ) const { return "test error message"; }
+	virtual std::string could_not_create_resource_error_message( ResourceDescription const & ) const { return "test error message"; }
 };
 
 
@@ -454,15 +460,15 @@ public:
 		try {
 			jd2rm->read_resource_options_tags( resource_options_tags );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			TS_ASSERT( false );
 			std::cerr << "Raised exception " << e.msg() << std::endl;
+			TS_ASSERT( false );
 		}
 		try {
 			TS_ASSERT( jd2rm->has_resource_options( "dummyopt1" ) );
 			TS_ASSERT( dynamic_cast< DummyResourceOptions * > ( jd2rm->find_resource_options( "dummyopt1" )() ));
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			TS_ASSERT( false );
 			std::cerr << "Raised exception " << e.msg() << std::endl;
+			TS_ASSERT( false );
 		}
 	}
 
@@ -480,8 +486,8 @@ public:
 		try {
 			jd2rm->read_resource_options_tags( resource_options_tags );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			TS_ASSERT( false );
 			std::cerr << "Raised exception " << e.msg() << std::endl;
+			TS_ASSERT( false );
 		}
 		try {
 			TS_ASSERT( jd2rm->has_resource_options( "dummyopt1" ) );
@@ -491,8 +497,8 @@ public:
 			TS_ASSERT( dynamic_cast< DummyResourceOptions * > ( jd2rm->find_resource_options( "dummyopt2" )() ));
 			TS_ASSERT( dynamic_cast< DummyResourceOptions * > ( jd2rm->find_resource_options( "dummyopt2" )() )->somevar_ == 6 );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			TS_ASSERT( false );
 			std::cerr << "Raised exception " << e.msg() << std::endl;
+			TS_ASSERT( false );
 		}
 	}
 
@@ -515,10 +521,11 @@ public:
 			std::string expected_error =
 				"Duplicated tag, 'dummyopt1' assigned to a ResourceOptions object with type 'DummyResourceOptions'.\n"
 				"Prevous ResourceOptions object with this tag was of type 'DummyResourceOptions'\n";
-			TS_ASSERT( e.msg() == expected_error );
 			if ( e.msg() != expected_error ) {
 				std::cout << e.msg() << std::endl;
+				std::cout << expected_error << std::endl;
 			}
+			TS_ASSERT( e.msg() == expected_error );
 		}
 	}
 
@@ -536,14 +543,14 @@ public:
 		try {
 			jd2rm->read_resources_tags( resources_tags );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			TS_ASSERT( false );
 			std::cerr << "Raised exception " << e.msg() << std::endl;
+			TS_ASSERT( false );
 		}
 		try {
 			TS_ASSERT( jd2rm->has_resource_configuration( "dummyresource" ) );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			TS_ASSERT( false );
 			std::cerr << "Raised exception " << e.msg() << std::endl;
+			TS_ASSERT( false );
 		}
 	}
 
@@ -561,11 +568,12 @@ public:
 			jd2rm->read_resources_tags( resources_tags );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::string expected_error =
-				"Resource 'dummyresource' with LoaderType 'DummyResource' was not supplied with an option 'locatorID', which is required\n";
-			TS_ASSERT( e.msg() == expected_error );
+				"Resource subtag with LoaderType 'DummyResource' was not supplied with a locatorID tag, which is required.\n";
 			if ( e.msg() != expected_error ) {
 				std::cout << e.msg() << std::endl;
+				std::cout << expected_error << std::endl;
 			}
+			TS_ASSERT( e.msg() == expected_error );
 		}
 	}
 
@@ -585,10 +593,11 @@ public:
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::string expected_error =
 				"Duplicated tag, 'dummyresource' assigned to a Resource object with ResourceLoader type 'DummyResource'.\n";
-			TS_ASSERT( e.msg() == expected_error );
 			if ( e.msg() != expected_error ) {
 				std::cout << e.msg() << std::endl;
+				std::cout << expected_error << std::endl;
 			}
+			TS_ASSERT( e.msg() == expected_error );
 		}
 	}
 
@@ -613,14 +622,14 @@ public:
 		try {
 			jd2rm->read_resources_tags( resources_tags );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			TS_ASSERT( false );
 			std::cout << "Raised exception " << e.msg() << std::endl;
+			TS_ASSERT( false );
 		}
 		try {
 			TS_ASSERT( jd2rm->has_resource_configuration( "dummyresource" ) );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			TS_ASSERT( false );
 			std::cerr << "Raised exception " << e.msg() << std::endl;
+			TS_ASSERT( false );
 		}
 
 	}
@@ -640,10 +649,103 @@ public:
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::string expected_error =
 				"Resource 'dummyresource' with LoaderType 'DummyResource' was given the tag for a ResourceLoaderOptions, 'dummyopt1', which has not previously been declared.";
-			TS_ASSERT( e.msg() == expected_error );
 			if ( e.msg() != expected_error ) {
 				std::cout << e.msg() << std::endl;
+				std::cout << expected_error << std::endl;
 			}
+			TS_ASSERT( e.msg() == expected_error );
+		}
+	}
+
+	void test_JD2ResourceManager_read_dummy_resource_w_file_tag() {
+		JD2ResourceManager * jd2rm = JD2ResourceManager::get_jd2_resource_manager_instance();
+		jd2rm->clear();
+
+		std::string xmlfile =
+			"<Resources>\n"
+			"  <DummyResource tag=dummyresource file=1ten.pdb options=dummyopt1/>\n"
+			"</Resources>\n";
+		std::istringstream resources_stream( xmlfile );
+		utility::tag::TagPtr resources_tags = utility::tag::Tag::create( resources_stream );
+		try {
+			jd2rm->read_resources_tags( resources_tags );
+		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+			std::string expected_error =
+				"Resource 'dummyresource' with LoaderType 'DummyResource' was given the tag for a ResourceLoaderOptions, 'dummyopt1', which has not previously been declared.";
+			if ( e.msg() != expected_error ) {
+				std::cout << e.msg() << std::endl;
+				std::cout << expected_error << std::endl;
+			}
+			TS_ASSERT( e.msg() == expected_error );
+		}
+	}
+
+	void test_JD2ResourceManager_read_dummy_resource_w_file_and_locatorID_tags() {
+		JD2ResourceManager * jd2rm = JD2ResourceManager::get_jd2_resource_manager_instance();
+		jd2rm->clear();
+
+		std::string xmlfile =
+			"<Resources>\n"
+			"  <DummyResource tag=dummyresource file=1ten.pdb locatorID=1ten.pdb options=dummyopt1/>\n"
+			"</Resources>\n";
+		std::istringstream resources_stream( xmlfile );
+		utility::tag::TagPtr resources_tags = utility::tag::Tag::create( resources_stream );
+		try {
+			jd2rm->read_resources_tags( resources_tags );
+		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+			std::string expected_error =
+				"Resource subtag with LoaderType 'DummyResource' has both file='1ten.pdb' and locatorID='1ten.pdb' but it is only allowed to have one.\n";
+			if ( e.msg() != expected_error ) {
+				std::cout << "'" << e.msg() << "'" << std::endl;
+				std::cout << "'" << expected_error << "'" << std::endl;
+			}
+			TS_ASSERT( e.msg() == expected_error );
+		}
+	}
+
+	void test_JD2ResourceManager_read_dummy_resource_w_non_file_system_resource_locator_and_file_tags() {
+		JD2ResourceManager * jd2rm = JD2ResourceManager::get_jd2_resource_manager_instance();
+		jd2rm->clear();
+
+		std::string xmlfile =
+			"<Resources>\n"
+			"  <DummyResource tag=dummyresource locator=\"\" file=1ten.pdb/>\n"
+			"</Resources>\n";
+		std::istringstream resources_stream( xmlfile );
+		utility::tag::TagPtr resources_tags = utility::tag::Tag::create( resources_stream );
+		try {
+			jd2rm->read_resources_tags( resources_tags );
+		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+			std::string expected_error =
+				"Resource 'dummyresource' with LoaderType 'DummyResource' has locator=\"\" and file='1ten.pdb'. But specifying a file only compatible with the FileSystemResourceLocator.";
+			if ( e.msg() != expected_error ) {
+				std::cout << e.msg() << std::endl;
+				std::cout << expected_error << std::endl;
+			}
+			TS_ASSERT( e.msg() == expected_error );
+		}
+	}
+
+	void test_JD2ResourceManager_read_dummy_resource_w_file_system_resource_locator_and_file_tags() {
+		JD2ResourceManager * jd2rm = JD2ResourceManager::get_jd2_resource_manager_instance();
+		jd2rm->clear();
+
+		std::string xmlfile =
+			"<Resources>\n"
+			"  <DummyResource tag=dummyresource locator=FileSystemResourceLocator file=1ten.pdb options=dummyopt1/>\n"
+			"</Resources>\n";
+		std::istringstream resources_stream( xmlfile );
+		utility::tag::TagPtr resources_tags = utility::tag::Tag::create( resources_stream );
+		try {
+			jd2rm->read_resources_tags( resources_tags );
+		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+			std::string expected_error =
+				"Resource subtag with LoaderType 'DummyResource' was given the ResourceLocator tag 'FileSystemResourceLocator', which has not previously been declared.";
+			if ( e.msg() != expected_error ) {
+				std::cout << e.msg() << std::endl;
+				std::cout << expected_error << std::endl;
+			}
+			TS_ASSERT( e.msg() == expected_error );
 		}
 	}
 
@@ -661,11 +763,12 @@ public:
 		try {
 			jd2rm->read_resource_locators_tags( resource_locators_tags );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			TS_ASSERT( false );
 			std::cerr << "Raised exception " << e.msg() << std::endl;
+			TS_ASSERT( false );
 		}
 		TS_ASSERT( jd2rm->has_resource_locator( "dummyresloc" ) );
 	}
+
 
 	void test_JD2ResourceManager_read_dummy_resource_w_resource_options_and_locator() {
 		JD2ResourceManager * jd2rm = JD2ResourceManager::get_jd2_resource_manager_instance();
@@ -702,8 +805,8 @@ public:
 		try {
 			TS_ASSERT( jd2rm->has_resource_configuration( "dummyresource" ) );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			TS_ASSERT( false );
 			std::cerr << "Raised exception " << e.msg() << std::endl;
+			TS_ASSERT( false );
 		}
 
 	}
@@ -754,10 +857,11 @@ public:
 				"The FallbackConfiguration for this resource description gives this error:\n"
 				"test error message\n"
 				"Thrown from JD2ResourceManager::get_resource\n";
-			TS_ASSERT( e.msg() == expected_error );
 			if ( e.msg() != expected_error ) {
-				std::cout  << e.msg() << std::endl;
+				std::cout << e.msg() << std::endl;
+				std::cout << expected_error << std::endl;
 			}
+			TS_ASSERT( e.msg() == expected_error );
 		}
 	}
 
@@ -782,10 +886,11 @@ public:
 				"Resources may be specified on the command line or through the JD2ResourceManagerJobInputter resource-declaration file.\n"
 				"This resource description does not have a FallbackConfiguration defined.\n"
 				"Thrown from JD2ResourceManager::get_resource\n";
-			TS_ASSERT( e.msg() == expected_error );
 			if ( e.msg() != expected_error ) {
-				std::cout  << e.msg() << std::endl;
+				std::cout << e.msg() << std::endl;
+				std::cout << expected_error << std::endl;
 			}
+			TS_ASSERT( e.msg() == expected_error );
 		}
 	}
 
