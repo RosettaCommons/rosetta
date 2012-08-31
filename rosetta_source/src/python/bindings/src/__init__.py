@@ -105,7 +105,7 @@ from rosetta.protocols.relax import *
 from rosetta.protocols.simple_moves import *
 
 # PyRosetta toolbox.
-from rosetta.toolbox import *
+from toolbox import *
 
 # PyMOLMover and associated methods.
 from PyMolLink import *
