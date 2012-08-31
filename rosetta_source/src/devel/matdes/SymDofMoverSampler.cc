@@ -20,6 +20,7 @@
 #include <utility/vector1.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <ObjexxFCL/format.hh>
+#include <string>
 
 static basic::Tracer TR("devel.matdes.SymDofMoverSampler");
 
