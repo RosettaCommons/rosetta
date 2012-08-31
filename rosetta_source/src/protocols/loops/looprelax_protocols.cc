@@ -535,7 +535,7 @@ void LoopRebuild::build_loop_with_ccd_closure(
 	for ( std::vector< core::fragment::FragSetOP >::const_iterator
 				it = frag_libs_.begin(), it_end = frag_libs_.end();
 				it != it_end; it++ ) {
-		ClassicFragmentMover *cfm = new ClassicFragmentMover( *it, movemap );
+		ClassicFragmentMoverOP cfm = new ClassicFragmentMover( *it, movemap );
 		cfm->set_check_ss( false );
 		cfm->enable_end_bias_check( false );
 		fragmover.push_back( cfm );

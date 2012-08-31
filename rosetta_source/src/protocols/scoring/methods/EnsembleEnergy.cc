@@ -97,8 +97,8 @@ EnsembleEnergy::finalize_total_energy(
 	using namespace core::scoring;
 	Real unbound_score ( 0.0 );
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ) {
-		basic::datacache::CacheableStringFloatMap *data
-				= dynamic_cast< basic::datacache::CacheableStringFloatMap* >
+		basic::datacache::CacheableStringFloatMapOP data
+				= dynamic_cast< basic::datacache::CacheableStringFloatMap * >
 				( pose.data().get_raw_ptr(core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
 		for ( std::map< std::string, float >::const_iterator iter = data->map().begin(),
 						end = data->map().end(); iter != end; iter++

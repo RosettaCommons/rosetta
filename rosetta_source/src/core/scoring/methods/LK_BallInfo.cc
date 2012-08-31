@@ -295,8 +295,8 @@ LKB_ResidueInfo::initialize_residue_type( ResidueType const & rsd_type ) const
 
 	bool const sidechain_only( true );
 
-	ResidueType const * const address( &rsd_type );
-	assert( !water_builder_map_.count( address ) );
+	ResidueTypeCOP const address( &rsd_type );
+	assert( ! water_builder_map_.count( address ) );
 
 	water_builder_map_[ address ]; // create entry in map
 	utility::vector1< WaterBuilders > & rsd_water_builders( water_builder_map_.find( address )->second );
@@ -313,7 +313,7 @@ LKB_ResidueInfo::build_waters( Residue const & rsd )
 
 	if ( !residue_type_has_waters( rsd.type() ) ) return;
 
-	ResidueType const * const address( &( rsd.type() ) );
+	ResidueTypeCOP const address( &( rsd.type() ) );
 
 	WaterBuilderMap::const_iterator it( water_builder_map_.find( address ) );
 	if ( it == water_builder_map_.end() ) {

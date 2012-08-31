@@ -77,8 +77,7 @@ SymmetricEnergies::operator = ( Energies const & rhs )
 bool
 SymmetricEnergies::same_type_as_me( Energies const & other, bool recurse  /* = true */ ) const
 {
-   SymmetricEnergies const * symm_other = dynamic_cast< SymmetricEnergies const * > ( &other);
-   if ( ! symm_other ) {
+   if ( ! dynamic_cast< SymmetricEnergies const * > ( &other ) ) {
       return false;
    }
    if ( recurse ) {
@@ -93,7 +92,7 @@ SymmetricEnergies::same_type_as_me( Energies const & other, bool recurse  /* = t
 EnergiesOP
 SymmetricEnergies::clone() const
 {
-  return (EnergiesOP)( new SymmetricEnergies( *this ) );
+  return new SymmetricEnergies( *this );
 }
 
 SymmetricEnergies::~SymmetricEnergies() {}

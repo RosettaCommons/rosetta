@@ -1259,8 +1259,7 @@ ProteinUpstreamBuilder::initialize_rescoords(
 {
 	{ /// scope to test that we have a protein backbone residue
 
-	ProteinBackboneBuildPoint const * bbptr = dynamic_cast< ProteinBackboneBuildPoint const * > ( & build_point );
-	if ( bbptr == 0 ) {
+	if ( ! dynamic_cast< ProteinBackboneBuildPoint const * > ( & build_point ) ) {
 		utility_exit_with_message( "Input to ProteinUpstreamBuilder not castable to ProteinBackboneBuildPoint *" );
 	}
 

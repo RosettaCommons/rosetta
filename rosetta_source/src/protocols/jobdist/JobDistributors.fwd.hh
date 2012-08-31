@@ -23,8 +23,10 @@ namespace protocols {
 namespace jobdist {
 
 class BaseJobDistributor;
+class PlainSilentFileJobDistributor;
 
 typedef utility::pointer::owning_ptr< BaseJobDistributor > BaseJobDistributorOP;
+typedef utility::pointer::owning_ptr< PlainSilentFileJobDistributor > PlainSilentFileJobDistributorOP;
 
 }
 }

@@ -15,20 +15,17 @@
 #ifndef INCLUDED_core_scoring_carbon_hbonds_CarbonHBondPotential_fwd_hh
 #define INCLUDED_core_scoring_carbon_hbonds_CarbonHBondPotential_fwd_hh
 
-// Unit Headers
-
-// Package headers
-
-// Project headers
-
 // Utility headers
-
+#include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace scoring {
 namespace carbon_hbonds {
 
 class CarbonHBondPotential;
+
+typedef  utility::pointer::owning_ptr< CarbonHBondPotential > CarbonHBondPotentialOP;
+typedef  utility::pointer::owning_ptr< CarbonHBondPotential const > CarbonHBondPotentialCOP;
 
 }
 }

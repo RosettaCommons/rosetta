@@ -122,10 +122,10 @@ ElecDensEnergy::setup_for_derivatives( pose::Pose & pose , ScoreFunction const &
 	core::scoring::electron_density::getDensityMap().clear_dCCdx_res_cache( pose );
 
 	// grab symminfo (if defined) from the pose
-	const core::conformation::symmetry::SymmetryInfo *symminfo=NULL;
+	core::conformation::symmetry::SymmetryInfoCOP symminfo=NULL;
 	if (core::pose::symmetry::is_symmetric(pose)) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >(
-		              pose.conformation()).Symmetry_Info().get();
+		              pose.conformation()).Symmetry_Info();
 	}
 
 	// rescore everything, cache derivatives
@@ -245,10 +245,10 @@ ElecDensEnergy::residue_pair_energy(
 	Size r = rsd.seqpos();
 
 	// grab symminfo (if defined) from the pose
-	const core::conformation::symmetry::SymmetryInfo *symminfo=NULL;
+	core::conformation::symmetry::SymmetryInfoCOP symminfo=NULL;
 	core::Size nsubunits = 1;
 	if (core::pose::symmetry::is_symmetric(pose)) {
-		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info().get();
+		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info();
 		nsubunits = symminfo->subunits();
 
 		if (! symminfo->bb_is_independent( r ) ) return;

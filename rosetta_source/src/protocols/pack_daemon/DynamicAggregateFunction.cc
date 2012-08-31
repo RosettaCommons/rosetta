@@ -2036,9 +2036,9 @@ DynamicAggregateFunction::verify_vector_arguments(
 	}
 	utility::vector1< VectorExpressionCOP > vector_expressions( expected_nargs );
 	for ( Size ii = 1; ii <= expected_nargs; ++ii ) {
-		VectorExpression const * vec_ptr = dynamic_cast< VectorExpression const * > ( args[ ii ].get() );
+		VectorExpressionCOP vec_ptr = dynamic_cast< VectorExpression const * > ( args[ ii ].get() );
 		if ( ! vec_ptr ) {
-			VariableExpression const * var_ptr = dynamic_cast< VariableExpression const * > ( args[ ii ].get() );
+			VariableExpressionCOP var_ptr = dynamic_cast< VariableExpression const * > ( args[ ii ].get() );
 			if ( var_ptr ) {
 				throw utility::excn::EXCN_Msg_Exception( "vector function expression " + fname + " can only be constructed from a vector expression.\n"
 					"Variable " + var_ptr->name() + " is not a vector variable." );
@@ -3203,8 +3203,8 @@ void EntityFunc::assign_entity_sequence_to_variables( Entity const & entity )
 
 	runtime_assert( entity.traits().size() == num_entity_elements_ );
 	for ( Size ii = 1; ii <= entity.traits().size(); ++ii ) {
-		PosType const * pt_ptr( dynamic_cast< PosType const * > ( entity.traits()[ ii ].get() ));
-		core::chemical::AA entity_aa( pt_ptr->type() );
+		PosType const & pt_ptr( dynamic_cast< PosType const & > ( * entity.traits()[ ii ] ));
+		core::chemical::AA entity_aa( pt_ptr.type() );
 		entity_aas_[ ii ]->set_value( entity_aa );
 	}
 }

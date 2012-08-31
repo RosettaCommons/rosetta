@@ -55,7 +55,7 @@
 
 // AUTO-REMOVED #include <core/chemical/ResidueType.fwd.hh>
 #include <core/scoring/nv/NVlookup.fwd.hh>
-#include <core/scoring/orbitals/OrbitalsLookup.hh>
+#include <core/scoring/orbitals/OrbitalsLookup.fwd.hh>
 #include <core/scoring/interface/DDPlookup.fwd.hh>
 #include <core/scoring/methods/EnergyMethod.fwd.hh>
 
@@ -87,11 +87,11 @@ namespace scoring {
 class ScoringManager
 {
 public:
-	typedef core::scoring::mm::MMLJLibrary MMLJLibrary;
-	typedef core::scoring::mm::MMLJEnergyTable MMLJEnergyTable;
-	typedef core::scoring::mm::MMTorsionLibrary MMTorsionLibrary;
-	typedef core::scoring::mm::MMBondAngleLibrary MMBondAngleLibrary;
-	typedef core::scoring::mm::MMBondLengthLibrary MMBondLengthLibrary;
+	//typedef core::scoring::mm::MMLJLibrary MMLJLibrary;
+	//typedef core::scoring::mm::MMLJEnergyTable MMLJEnergyTable;
+	//typedef core::scoring::mm::MMTorsionLibrary MMTorsionLibrary;
+	//typedef core::scoring::mm::MMBondAngleLibrary MMBondAngleLibrary;
+	//typedef core::scoring::mm::MMBondLengthLibrary MMBondLengthLibrary;
 
 public:
 	static ScoringManager * get_instance();
@@ -140,15 +140,15 @@ public:
 
 	dna::DirectReadoutPotential const & get_DirectReadoutPotential() const;
 
-	MMLJLibrary const & get_MMLJLibrary() const;
+	mm::MMLJLibrary const & get_MMLJLibrary() const;
 
-	MMLJEnergyTable const & get_MMLJEnergyTable() const;
+	mm::MMLJEnergyTable const & get_MMLJEnergyTable() const;
 
-	MMTorsionLibrary const & get_MMTorsionLibrary() const;
+	mm::MMTorsionLibrary const & get_MMTorsionLibrary() const;
 
-	MMBondAngleLibrary const & get_MMBondAngleLibrary() const;
+	mm::MMBondAngleLibrary const & get_MMBondAngleLibrary() const;
 
-	MMBondLengthLibrary const & get_MMBondLengthLibrary() const;
+	mm::MMBondLengthLibrary const & get_MMBondLengthLibrary() const;
 
 	nv::NVlookup const & get_NVLookupTable() const;
 	core::scoring::orbitals::OrbitalsLookup const & get_OrbitalsLookupTable() const;
@@ -226,45 +226,45 @@ private:
 	~ScoringManager();
 
 	// WARNING -- if you add something here don't forget to initialize to 0 in the constructor
-	mutable PairEPotential * pairE_potential_;
+	mutable PairEPotentialOP pairE_potential_;
 	//mutable RotamerLibrary * rotamer_Library_;
-	mutable Ramachandran * rama_;
-	mutable Ramachandran2B * rama2b_;
-	mutable OmegaTether * omega_;
-	mutable EnvPairPotential * env_pair_potential_;
-	mutable SmoothEnvPairPotential * smooth_env_pair_potential_;
-	mutable CenHBPotential * cen_hb_potential_;
-	mutable SecondaryStructurePotential * secondary_structure_potential_;
-	mutable std::map< std::string, AtomVDW * > atom_vdw_;
-	mutable rna::RNA_AtomVDW * rna_atom_vdw_;
-	mutable geometric_solvation::DatabaseOccSolEne * occ_hbond_sol_database_;
-	mutable dna::DirectReadoutPotential * dna_dr_potential_;
-	mutable MMLJLibrary * mm_lj_library_;
-	mutable MMLJEnergyTable * mm_lj_energy_table_;
-	mutable MMTorsionLibrary * mm_torsion_library_;
-	mutable MMBondAngleLibrary * mm_bondangle_library_;
-	mutable MMBondLengthLibrary * mm_bondlength_library_;
+	mutable RamachandranOP rama_;
+	mutable Ramachandran2BOP rama2b_;
+	mutable OmegaTetherOP omega_;
+	mutable EnvPairPotentialOP env_pair_potential_;
+	mutable SmoothEnvPairPotentialOP smooth_env_pair_potential_;
+	mutable CenHBPotentialOP cen_hb_potential_;
+	mutable SecondaryStructurePotentialOP secondary_structure_potential_;
+	mutable std::map< std::string, AtomVDWOP > atom_vdw_;
+	mutable rna::RNA_AtomVDWOP rna_atom_vdw_;
+	mutable geometric_solvation::DatabaseOccSolEneOP occ_hbond_sol_database_;
+	mutable dna::DirectReadoutPotentialOP dna_dr_potential_;
+	mutable mm::MMLJLibraryOP mm_lj_library_;
+	mutable mm::MMLJEnergyTableOP mm_lj_energy_table_;
+	mutable mm::MMTorsionLibraryOP mm_torsion_library_;
+	mutable mm::MMBondAngleLibraryOP mm_bondangle_library_;
+	mutable mm::MMBondLengthLibraryOP mm_bondlength_library_;
 	//P_AA                     Paa_ppPotential_;
-	mutable dna::DNA_BasePotential * DNA_base_potential_;
-	mutable carbon_hbonds::CarbonHBondPotential * carbon_hbond_potential_;
-	mutable rna::RNA_LowResolutionPotential * rna_low_resolution_potential_;
-	mutable rna::RNA_TorsionPotential * rna_torsion_potential_;
-	mutable P_AA * p_aa_;
-	mutable WaterAdductHBondPotential * water_adduct_hbond_potential_;
-	mutable GenBornPotential * gen_born_potential_;
-	mutable disulfides::FullatomDisulfidePotential * fa_disulfide_potential_;
-	mutable disulfides::CentroidDisulfidePotential * cen_disulfide_potential_;
-	mutable disulfides::DisulfideMatchingPotential * disulfide_matching_potential_;
-	mutable MembranePotential * membrane_potential_;
-	mutable Membrane_FAPotential * membrane_fapotential_; //pba
-	mutable PoissonBoltzmannPotential * PB_potential_;
+	mutable dna::DNA_BasePotentialOP DNA_base_potential_;
+	mutable carbon_hbonds::CarbonHBondPotentialOP carbon_hbond_potential_;
+	mutable rna::RNA_LowResolutionPotentialOP rna_low_resolution_potential_;
+	mutable rna::RNA_TorsionPotentialOP rna_torsion_potential_;
+	mutable P_AAOP p_aa_;
+	mutable WaterAdductHBondPotentialOP water_adduct_hbond_potential_;
+	mutable GenBornPotentialOP gen_born_potential_;
+	mutable disulfides::FullatomDisulfidePotentialOP fa_disulfide_potential_;
+	mutable disulfides::CentroidDisulfidePotentialOP cen_disulfide_potential_;
+	mutable disulfides::DisulfideMatchingPotentialOP disulfide_matching_potential_;
+	mutable MembranePotentialOP membrane_potential_;
+	mutable Membrane_FAPotentialOP membrane_fapotential_; //pba
+	mutable PoissonBoltzmannPotentialOP PB_potential_;
 	//ReferenceEnergyPotential referenceEnergyPotential_;
-	mutable UnfoldedStatePotential * unf_state_;
-	mutable nv::NVlookup * NV_lookup_table_;
-	mutable orbitals::OrbitalsLookup * orbitals_lookup_table_;
+	mutable UnfoldedStatePotentialOP unf_state_;
+	mutable nv::NVlookupOP NV_lookup_table_;
+	mutable orbitals::OrbitalsLookupOP orbitals_lookup_table_;
 
 
-  mutable interface::DDPlookup * DDP_lookup_table_;
+  mutable interface::DDPlookupOP DDP_lookup_table_;
 	// data
 	mutable std::map< std::string, etable::EtableOP > etables_;
 	//XRW_B_T1

@@ -63,9 +63,11 @@ MultiStateFitnessFunction::evaluate( protocols::genetic_algorithm::Entity & enti
 {
 	runtime_assert(aggregate_function_);
 
-	protocols::multistate_design::MultiStateEntity* multi_state_entity =
-		dynamic_cast< protocols::multistate_design::MultiStateEntity* >( &entity );
-	if (multi_state_entity) multi_state_entity->single_state_entity_data().resize(states().size());
+	if ( dynamic_cast< protocols::multistate_design::MultiStateEntity * >( &entity ) ) {
+		protocols::multistate_design::MultiStateEntity & multi_state_entity =
+			static_cast< protocols::multistate_design::MultiStateEntity & >( entity );
+		multi_state_entity.single_state_entity_data().resize(states().size());
+	}
 
 	utility::vector1<core::Real> single_state_fitnesses(states_.size());
 	for (core::Size i = 1; i <= states_.size(); ++i) {

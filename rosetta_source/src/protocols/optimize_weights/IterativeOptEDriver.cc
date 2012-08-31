@@ -310,27 +310,28 @@ IterativeOptEDriver::read_tagfile_to_taskfactory(std::string tagfile_name,
 ///
 /// @brief
 /// loads structure into pose - decides between silent or pdb
-///    
+///
 
 // PTC - this is a quick and dirty function to intercept the file name intended for pose_from_pdb and retrieve it from a silent file instead
 // it dramatically speeds up decoy discrimination (more than 70% of the time is spent on loading pdbs!)
-// it uses the path of requested pdb to find silent file, each PDB needs to have all of its structures in its own folder (ie: 1agy/pdb_set.silent) 
+// it uses the path of requested pdb to find silent file, each PDB needs to have all of its structures in its own folder (ie: 1agy/pdb_set.silent)
 // it looks within each folder for the filename passed to optE::load_from_silent option
 // only used in optimize_decoy_discrimination and use of optE::load_from_silent option is not exhaustively tested!
- 
-void 
+
+void
 IterativeOptEDriver::load_pose( pose::Pose & pose, std::string const & filename, bool ignore_centroid_input_flag=false )
 {
 	if ( option[ optE::load_from_silent ].user() ) {
+		/// APL -- refactor this.  Static data is unacceptible here.
 		static std::string prev_path = "";
 		static core::io::silent::SilentFileData * sfd;
-		
+
 		Size slash_index = filename.find_last_of("/\\");
 		std::string path = filename.substr(0, slash_index);
 		std::string tag = filename.substr(slash_index+1);
 		std::string filename = option[ optE::load_from_silent ];
 		TR_VERBOSE << "loading: " << tag << "from " << path << "/" << filename << std::endl;
-		
+
 		if ( prev_path != path ) {
 			prev_path = path;
 			delete sfd;
@@ -949,7 +950,7 @@ IterativeOptEDriver::compute_rotamer_energies_for_assigned_pdbs()
 	optE_data_ = new OptEData; // get rid of old optEdata...
 
 	if ( MPI_rank_ == 0 && option[ optE::constrain_weights ].user() ) {
-		ConstraintedOptimizationWeightFunc * cst = new ConstraintedOptimizationWeightFunc( free_score_list_ );
+		ConstraintedOptimizationWeightFuncOP cst = new ConstraintedOptimizationWeightFunc( free_score_list_ );
 		std::string cstfilename = option[ optE::constrain_weights ]();
 		std::ifstream input( cstfilename.c_str() );
 		cst->initialize_constraints_from_file( input );
@@ -1984,7 +1985,7 @@ void IterativeOptEDriver::optimize_weights()
 		return;
 	}
 
-	if ( option[ optE::starting_refEs ].user() && outer_loop_counter_ == 1 ) {	
+	if ( option[ optE::starting_refEs ].user() && outer_loop_counter_ == 1 ) {
 		std::cout << "READING REFERENCE ENERGIES FROM FILE" << std::endl;
 		std::cout << "FREE COUNT: " << free_count_ << std::endl;
 		after_minimization_reference_energies_ = read_reference_energies_from_file( option[ optE::starting_refEs ] );
@@ -2018,7 +2019,7 @@ void IterativeOptEDriver::optimize_weights()
 
 	if ( option[ optE::fit_reference_energies_to_aa_profile_recovery ] && !(outer_loop_counter_ == 1 && inner_loop_counter_ == 1) ) {
 		opt_min.fix_reference_energies( true );
-	} else if ( option[ optE::starting_refEs ].user() && outer_loop_counter_ == 1 ) {	
+	} else if ( option[ optE::starting_refEs ].user() && outer_loop_counter_ == 1 ) {
 		opt_min.fix_reference_energies( true );
 	}
 
@@ -2866,7 +2867,7 @@ IterativeOptEDriver::output_weighted_unfolded_energies() {
 		utility::vector1< EnergyMap > unweighted_unfolded_emap( chemical::num_canonical_aas );
 		for ( Size aa=1; aa <= chemical::num_canonical_aas; ++aa ) {
 			unweighted_unfolded_emap[ aa ].zero();
-			unfE_potential.raw_unfolded_state_energymap( chemical::name_from_aa( (chemical::AA) aa ), unweighted_unfolded_emap[ aa ] );			
+			unfE_potential.raw_unfolded_state_energymap( chemical::name_from_aa( (chemical::AA) aa ), unweighted_unfolded_emap[ aa ] );
 		}
 
 		for( Size aa = 1; aa <= chemical::num_canonical_aas; ++aa ) {

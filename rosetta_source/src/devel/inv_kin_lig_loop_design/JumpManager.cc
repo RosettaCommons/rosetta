@@ -352,8 +352,8 @@ namespace devel {
 			cout << "getting residues" << endl;
 			devel::inv_kin_lig_loop_design::resids_type resids = ResID::get_resids( *pose );
 
-			Residue const* r_from = find_or_throw(resids,res_id_from);
-			Residue const* r_to   = find_or_throw(resids,res_id_to);
+			Residue const* r_from = find_or_throw(resids,res_id_from); // apl -- this has to go
+			Residue const* r_to   = find_or_throw(resids,res_id_to); // apl -- this has to go
 
 			string const tag_start_atom = tag_template->hasOption("from_atom") ? tag_template->getOption<string>("from_atom") : tag_segment->getTag("from")->getOption<string>("atom");
 			string const tag_stop_atom  = tag_template->hasOption("to_atom")   ? tag_template->getOption<string>("to_atom")   : tag_segment->getTag("to")->getOption<string>("atom");

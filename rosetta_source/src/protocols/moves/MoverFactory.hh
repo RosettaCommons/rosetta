@@ -52,7 +52,7 @@ public:
 };
 
 
-class MoverFactory : public utility::pointer::ReferenceCount
+class MoverFactory // Singleton: should not derive from ReferenceCount
 {
 public:
 	typedef std::map< std::string, MoverCreatorOP > MoverMap;

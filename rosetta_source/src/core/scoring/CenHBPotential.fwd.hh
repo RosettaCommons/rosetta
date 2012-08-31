@@ -24,6 +24,9 @@ namespace scoring {
 
 class CenHBPotential;
 
+typedef utility::pointer::owning_ptr< CenHBPotential > CenHBPotentialOP;
+typedef utility::pointer::owning_ptr< CenHBPotential const > CenHBPotentialCOP;
+
 } // ns scoring
 } // ns core
 

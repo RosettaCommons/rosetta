@@ -468,7 +468,7 @@ SecondaryMatcherToUpstreamResidue::prepare_for_hit_generation(
 	std::list< SecondaryMatcherToUpstreamResidueOP > secmatch_algs;
 	for ( std::list< DownstreamAlgorithmOP >::const_iterator iter = dsalgs.begin(),
 			iter_end = dsalgs.end(); iter != iter_end; ++iter ) {
-		SecondaryMatcherToUpstreamResidue * secmatcher =
+		SecondaryMatcherToUpstreamResidueOP secmatcher =
 			dynamic_cast< SecondaryMatcherToUpstreamResidue * > ( iter->get() );
 		runtime_assert( secmatcher );
 		secmatcher->smUR_pose_build_resids_ = matcher.get_pose_build_resids();
@@ -593,7 +593,7 @@ SecondaryMatcherToUpstreamResidue::prepare_for_hit_generation_at_target_build_po
 			iter = dsalgs.begin(), iter_end = dsalgs.end();
 			iter != iter_end; ++iter ) {
 		if ( iter->get() != this ) {
-			SecondaryMatcherToUpstreamResidue * other = dynamic_cast< SecondaryMatcherToUpstreamResidue * >
+			SecondaryMatcherToUpstreamResidueOP other = dynamic_cast< SecondaryMatcherToUpstreamResidue * >
 				( iter->get() );
 			runtime_assert( other );
 			//TR << "SecondaryMatcherToUpstreamResidue * other" << other << std::endl;

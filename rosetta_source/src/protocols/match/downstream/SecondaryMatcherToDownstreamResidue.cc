@@ -343,10 +343,10 @@ SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation(
 	/// Initialize the other downstream algorithms for this geometric constraint
 	/// so that they point all point to the same target_downstream_coords_ object
 	std::list< DownstreamAlgorithmOP > const & dsalgs = matcher.nonconst_downstream_algorithms( geom_cst_id() );
-	std::list< SecondaryMatcherToDownstreamResidue * > secmatchers;
+	std::list< SecondaryMatcherToDownstreamResidueOP > secmatchers;
 	for ( std::list< DownstreamAlgorithmOP >::const_iterator iter = dsalgs.begin(),
 			iter_end = dsalgs.end(); iter != iter_end; ++iter ) {
-		SecondaryMatcherToDownstreamResidue * secmatcher =
+		SecondaryMatcherToDownstreamResidueOP secmatcher =
 			dynamic_cast< SecondaryMatcherToDownstreamResidue * > ( iter->get() );
 		runtime_assert( secmatcher );
 		if ( secmatcher != this ) {
@@ -359,7 +359,7 @@ SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation(
 	downstream_atom_coordinates_needed_.clear();
 
 	bool any_evaluators_require_all_coords( false );
-	for ( std::list< SecondaryMatcherToDownstreamResidue * >::const_iterator
+	for ( std::list< SecondaryMatcherToDownstreamResidueOP >::const_iterator
 			secmatch_iter = secmatchers.begin(), secmatch_iter_end = secmatchers.end();
 			secmatch_iter != secmatch_iter_end; ++secmatch_iter ) {
 
@@ -380,7 +380,7 @@ SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation(
 	} else {
 		for ( Size ii = 1; ii <= downstream_restype_->natoms(); ++ii ) {
 
-			for ( std::list< SecondaryMatcherToDownstreamResidue * >::const_iterator
+			for ( std::list< SecondaryMatcherToDownstreamResidueOP >::const_iterator
 					secmatch_iter = secmatchers.begin(), secmatch_iter_end = secmatchers.end();
 					secmatch_iter != secmatch_iter_end; ++secmatch_iter ) {
 
@@ -426,8 +426,7 @@ SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation_for_geomcst(
 			iter = dsalgs.begin(), iter_end = dsalgs.end();
 			iter != iter_end; ++iter ) {
 		if ( iter->get() != this ) {
-			SecondaryMatcherToDownstreamResidue * other = dynamic_cast< SecondaryMatcherToDownstreamResidue * >
-				( iter->get() );
+			SecondaryMatcherToDownstreamResidueOP other = dynamic_cast< SecondaryMatcherToDownstreamResidue * > ( iter->get() );
 			runtime_assert( other );
 			other->set_focused_geomcst_id( focused_geomcst_id_ );
 			//set downstram atom coords needed for all downstream algorithms

@@ -14,12 +14,16 @@
 #ifndef INCLUDED_core_scoring_dna_DNA_BasePotential_fwd_hh
 #define INCLUDED_core_scoring_dna_DNA_BasePotential_fwd_hh
 
+#include <utility/pointer/owning_ptr.hh>
+
 namespace core {
 namespace scoring {
 namespace dna {
 
-
 class DNA_BasePotential;
+
+typedef  utility::pointer::owning_ptr< DNA_BasePotential > DNA_BasePotentialOP;
+typedef  utility::pointer::owning_ptr< DNA_BasePotential const > DNA_BasePotentialCOP;
 
 } // namespace dna
 } // scoring

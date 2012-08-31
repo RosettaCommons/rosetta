@@ -53,6 +53,7 @@ using core::pose::Pose;
 using core::chemical::BondName;
 using core::chemical::AtomIndices;
 using core::chemical::ResidueType;
+using core::chemical::ResidueTypeCOP;
 using utility::sql_database::sessionOP;
 using utility::vector1;
 using basic::Tracer;
@@ -95,13 +96,13 @@ ResidueTypesFeatures::report_features(
 ){
 
 	// Get a set of the unique residue types that are used in this pose
-	set< ResidueType const * > res_types;
+	set< ResidueTypeCOP > res_types;
 	for(Size i=1; i <= pose.n_residue(); ++i){
 		if(!relevant_residues[i]) continue;
 		res_types.insert(&pose.residue_type(i));
 	}
 
-	foreach(ResidueType const * res_type, res_types){
+	foreach( ResidueTypeCOP res_type, res_types){
 		string const & residue_type_set_name(res_type->residue_type_set().name());
 
 		// Is this residue type already in the database?

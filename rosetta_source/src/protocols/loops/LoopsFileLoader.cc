@@ -40,13 +40,13 @@ LoopsFileLoader::create_resource(
 	std::istream & istream
 ) const
 {
-	LoopsFileOptions const * loops_opts_ptr = dynamic_cast< LoopsFileOptions const * > ( &options );
-	if ( ! loops_opts_ptr ) {
+	if ( ! dynamic_cast< LoopsFileOptions const * > ( &options ) ) {
 		throw utility::excn::EXCN_Msg_Exception( "LoopsFileLoader expected to be given a LoopsFileOptions object, " \
 			"but was given a non-LoopsFileOptions object of type '" + options.type() + "', which has the name '" + options.name() + "'." );
 	}
+	LoopsFileOptions const & loops_opts = static_cast< LoopsFileOptions const & > ( options );
 	LoopsFileIO lfio;
-	LoopsFileDataOP lfd = lfio.read_loop_file_stream( istream, locator_id, loops_opts_ptr->prohibit_single_residue_loops() );
+	LoopsFileDataOP lfd = lfio.read_loop_file_stream( istream, locator_id, loops_opts.prohibit_single_residue_loops() );
 	return lfd;
 }
 

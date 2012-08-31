@@ -301,11 +301,11 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 
 	// get nres, accounting for symmetry/vrt/ligands
 	core::Size nres = pose.total_residue();
-	const core::conformation::symmetry::SymmetryInfo *symminfo=NULL;
+	core::conformation::symmetry::SymmetryInfoCOP symminfo(0);
 	if (core::pose::symmetry::is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetricConformation const & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
-		symminfo = SymmConf.Symmetry_Info().get();
+		symminfo = SymmConf.Symmetry_Info();
 		nres = symminfo->num_independent_residues();
 	}
 	while (!pose.residue(nres).is_protein()) nres--;

@@ -26,7 +26,7 @@
 #include <core/conformation/Residue.fwd.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 #include <string>
 
@@ -37,7 +37,7 @@ namespace dna {
 /// @brief  1st pass implementation of Kono + Sarai's protein-DNA interaction potential
 /// @details  Needs polishing, converting to mini standards in some respects, but still in trial stage.
 
-class DirectReadoutPotential {
+class DirectReadoutPotential : public utility::pointer::ReferenceCount {
 
 public:
 	typedef std::string string;

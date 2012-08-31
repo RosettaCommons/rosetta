@@ -22,15 +22,11 @@
 
 // Unit headers
 #include <core/scoring/Membrane_FAPotential.fwd.hh> //pba
-// AUTO-REMOVED #include <core/scoring/MembranePotential.hh> //pba
-#include <core/scoring/MembranePotential.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/MembraneTopology.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/MembraneTopology.hh>
-#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/EnvPairPotential.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.fwd.hh>
+#include <core/scoring/MembranePotential.fwd.hh>
+#include <core/scoring/ScoringManager.hh>
+#include <core/scoring/EnvPairPotential.hh>
 #include <core/conformation/Residue.fwd.hh>
 
 // Project headers
@@ -40,13 +36,15 @@
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <utility/pointer/ReferenceCount.hh>
+
+// Numeric headers
 #include <numeric/xyzVector.hh>
+
+// ObjexxFCL headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
-
-//Auto Headers
-// C++
 
 namespace core {
 namespace scoring {

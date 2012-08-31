@@ -22,13 +22,16 @@
 // Project headers
 
 // Utility headers
-
+#include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace scoring {
 namespace rna {
 
 class RNA_AtomVDW;
+
+typedef utility::pointer::owning_ptr< RNA_AtomVDW > RNA_AtomVDWOP;
+typedef utility::pointer::owning_ptr< RNA_AtomVDW const > RNA_AtomVDWCOP;
 
 }
 }

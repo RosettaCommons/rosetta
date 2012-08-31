@@ -33,7 +33,7 @@ namespace parser {
 /// arbitrary data into the DataMap used in the XML-based parser.
 /// This factory supports the load-time registration scheme allowing
 /// DataLoaders to be defined in libraries outside of protocols.lib
-class DataLoaderFactory : public utility::pointer::ReferenceCount
+class DataLoaderFactory
 {
 public:
 	typedef std::map< std::string, DataLoaderCreatorOP > LoaderMap;

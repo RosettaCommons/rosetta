@@ -120,12 +120,11 @@ namespace simple_moves {
 			return;
 		}
 		CacheableDataOP cd = pose.data().get_ptr( core::pose::datacache::CacheableDataType::POSE_BEFORE_CAVITIES_ADDED );
-		core::pose::Pose *cache_pose = dynamic_cast< core::pose::datacache::CacheablePoseRawPtr*>(cd())->pose();
+		core::pose::PoseOP cache_pose = dynamic_cast< core::pose::datacache::CacheablePoseRawPtr*>(cd())->pose();
 		pose.data().set( core::pose::datacache::CacheableDataType::POSE_BEFORE_CAVITIES_ADDED, NULL );
 		Pose orig_pose = *cache_pose;
 		orig_pose.copy_segment( orig_pose.total_residue(), pose, 1, 1 );
 		pose = orig_pose;
-		delete cache_pose;
 	}
 
 	void

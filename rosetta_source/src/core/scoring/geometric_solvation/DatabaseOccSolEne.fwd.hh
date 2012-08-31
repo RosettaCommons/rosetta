@@ -21,13 +21,16 @@
 // Project headers
 
 // Utility headers
-
+#include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace scoring {
 namespace geometric_solvation {
 
 class DatabaseOccSolEne;
+
+typedef utility::pointer::owning_ptr< DatabaseOccSolEne > DatabaseOccSolEneOP;
+typedef utility::pointer::owning_ptr< DatabaseOccSolEne const > DatabaseOccSolEneCOP;
 
 } // geometric_solvation
 } // scoring

@@ -26,7 +26,7 @@
 #include <core/types.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 // AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray4D.hh>
@@ -42,7 +42,7 @@ namespace scoring {
 namespace rna {
 
 
-class RNA_AtomVDW {
+class RNA_AtomVDW : public utility::pointer::ReferenceCount {
 
 public:
 

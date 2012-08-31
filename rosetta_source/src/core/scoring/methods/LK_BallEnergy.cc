@@ -1146,9 +1146,9 @@ get_parallel_h_for_arg(
 {
 	using namespace chemical;
 	assert( rsd_type.aa() == aa_arg );
-	typedef std::map< ResidueType const *, utility::vector1< Size > > H_Map;
+	typedef std::map< ResidueTypeCOP, utility::vector1< Size > > H_Map;
 	static H_Map hmap;
-	ResidueType const * rsd_type_ptr( &rsd_type );
+	ResidueTypeCOP rsd_type_ptr( &rsd_type );
 	H_Map::const_iterator iter = hmap.find( rsd_type_ptr );
 	if ( iter == hmap.end() ) {
 		// first time seeing this arginine residue type

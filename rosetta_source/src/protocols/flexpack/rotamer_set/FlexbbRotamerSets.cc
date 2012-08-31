@@ -590,17 +590,18 @@ FlexbbRotamerSets::precompute_energies(
 {
 	using namespace interaction_graph;
 
-	OTFFlexbbInteractionGraph * otfig =
-		dynamic_cast< OTFFlexbbInteractionGraph * > ( &flexbb_ig );
-
 	/// Dispatch based on the downcast.
-	if ( otfig ) {
-		compute_one_body_energies_for_otf_ig( pose, sfxn, flexpack_neighbor_graph, *otfig );
+	if ( dynamic_cast< OTFFlexbbInteractionGraph * > ( &flexbb_ig ) ) {
+		OTFFlexbbInteractionGraph & otfig =
+			static_cast< OTFFlexbbInteractionGraph & > ( flexbb_ig );
+
+		compute_one_body_energies_for_otf_ig( pose, sfxn, flexpack_neighbor_graph, otfig );
 	} else {
-		PrecomputedFlexbbInteractionGraph * precomp_ig =
-			dynamic_cast< PrecomputedFlexbbInteractionGraph * > ( &flexbb_ig );
-		assert( precomp_ig );
-		precompute_all_energies( pose, sfxn, flexpack_neighbor_graph, *precomp_ig );
+		assert( dynamic_cast< PrecomputedFlexbbInteractionGraph * > ( &flexbb_ig ) );
+		PrecomputedFlexbbInteractionGraph & precomp_ig =
+			static_cast< PrecomputedFlexbbInteractionGraph & > ( flexbb_ig );
+
+		precompute_all_energies( pose, sfxn, flexpack_neighbor_graph, precomp_ig );
 	}
 }
 

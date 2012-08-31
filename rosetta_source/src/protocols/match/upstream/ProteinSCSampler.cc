@@ -62,10 +62,7 @@ DunbrackSCSampler::samples(
 		}
 
 		{
-		ProteinBackboneBuildPoint const * bbptr(
-			dynamic_cast< ProteinBackboneBuildPoint const * >
-			( & bb_conf ));
-		if ( bbptr == 0 ) {
+		if ( ! dynamic_cast< ProteinBackboneBuildPoint const * > ( & bb_conf ) ) {
 			utility_exit_with_message( "ERROR: DunbrackSCSampler expects a ProteinBackboneBuildPoint but"
 				"was handed an incompatible type.  ScaffoldBuildPoint #" +
 				utility::to_string( bb_conf.index() ) + " is of an incompatible type" );

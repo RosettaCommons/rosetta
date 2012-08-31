@@ -183,8 +183,7 @@ FragmentLibrary::~FragmentLibrary() {}
 	void
 	FullAtomRNA_Fragments::pick_fragment_library( SequenceSecStructPair const & key ){
 
-		//Don't worry, I coded a destructor in later.
-		FragmentLibrary * fragment_library_p;
+		FragmentLibraryOP fragment_library_p;
 		fragment_library_p = new FragmentLibrary;
 
 		std::string const RNA_string = key.first;

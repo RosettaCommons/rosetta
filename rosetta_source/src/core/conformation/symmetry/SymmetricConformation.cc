@@ -88,8 +88,7 @@ SymmetricConformation::clone() const
 bool
 SymmetricConformation::same_type_as_me( Conformation const & other, bool recurse  /* = true */ ) const
 {
-   SymmetricConformation const * symm_other = dynamic_cast< SymmetricConformation const * > ( &other);
-   if ( ! symm_other ) {
+   if ( ! dynamic_cast< SymmetricConformation const * > ( &other) ) {
       return false;
    }
    if ( recurse ) {

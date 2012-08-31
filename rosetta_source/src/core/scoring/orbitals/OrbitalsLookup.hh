@@ -10,6 +10,9 @@
 #ifndef INCLUDED_core_scoring_orbitals_OrbitalsLookup_hh
 #define INCLUDED_core_scoring_orbitals_OrbitalsLookup_hh
 
+// Unit headers
+#include <core/scoring/orbitals/OrbitalsLookup.fwd.hh>
+
 #include <utility/vector1.hh>
 
 #include <core/types.hh>
@@ -18,6 +21,8 @@
 
 #include <numeric/interpolation/spline/Bicubic_spline.hh>
 #include <numeric/interpolation/spline/Cubic_spline.hh>
+
+#include <utility/pointer/ReferenceCount.hh>
 
 #include <map>
 #include <string>
@@ -29,7 +34,7 @@ namespace core {
 namespace scoring {
 namespace orbitals {
 
-class OrbitalsLookup {
+class OrbitalsLookup : public utility::pointer::ReferenceCount {
 public:
 	enum h_type { Hpol_scOrbH, Haro_scOrbH, Hpol_bbOrbH };
 

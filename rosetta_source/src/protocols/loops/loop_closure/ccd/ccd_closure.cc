@@ -557,7 +557,7 @@ fast_ccd_loop_closure(
 	// save the starting torsions for comparison, starting rama score if rama_check == true
 	vector1< vector1< Real > > start_torsions( torsions );
 	vector1< Real > start_rama_score( nres, 0.0 );
-	scoring::Ramachandran const * rama(0);
+	scoring::RamachandranCOP rama(0);
 	if ( rama_check ) {
 		rama = &(scoring::ScoringManager::get_instance()->get_Ramachandran());
 		for ( int i=loop_begin; i<= loop_end; ++i ) {
@@ -1022,7 +1022,7 @@ ccd_moves(
 			} // loop over nbb
 
 
-			scoring::Ramachandran const * rama(0);
+			scoring::RamachandranCOP rama(0);
 			if ( rama_check ) {
 				assert( nbb == 3 );
 				//////////////////////////////////////

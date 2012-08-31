@@ -115,7 +115,7 @@ Relax_main( bool ) {
 			if(  option[ OptionKeys::relax::superimpose_to_native ].user() ) ref_filename =  option[ basic::options::OptionKeys::in::file::native ]();
 			core::import_pose::pose_from_pdb( ref_pose, ref_filename );
 			protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
-			protocols::simple_moves::SuperimposeMover *sm  =  new protocols::simple_moves::SuperimposeMover;
+			protocols::simple_moves::SuperimposeMoverOP sm  =  new protocols::simple_moves::SuperimposeMover;
 			sm->set_reference_pose( ref_pose );
 			seqmov->add_mover( sm );
 			seqmov->add_mover( protocol );

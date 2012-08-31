@@ -10,11 +10,17 @@
 #ifndef INCLUDED_core_scoring_interface_DDPlookup_fwd_hh
 #define INCLUDED_core_scoring_interface_DDPlookup_fwd_hh
 
+#include <utility/pointer/owning_ptr.hh>
+
 namespace core {
 namespace scoring {
 namespace interface {
 
- class DDPlookup;
+class DDPlookup;
+
+typedef utility::pointer::owning_ptr< DDPlookup > DDPlookupOP;
+typedef utility::pointer::owning_ptr< DDPlookup const > DDPlookupCOP;
+
 
 } // Interface
 } // scoring

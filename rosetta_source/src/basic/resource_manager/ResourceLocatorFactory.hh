@@ -29,7 +29,7 @@
 namespace basic {
 namespace resource_manager {
 
-class ResourceLocatorFactory : public utility::pointer::ReferenceCount
+class ResourceLocatorFactory
 {
 public:
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount

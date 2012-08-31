@@ -10,18 +10,19 @@
 #ifndef INCLUDED_core_scoring_interface_DDPlookup_hh
 #define INCLUDED_core_scoring_interface_DDPlookup_hh
 
+// Unit headers
+#include <core/scoring/interface/DDPlookup.fwd.hh>
+
+// Package headers
 #include <core/chemical/AA.hh>
-
-//#include <ObjexxFCL/FArray3D.hh>
-
-//#include <utility/io/izstream.hh>
-//#include <numeric/interpolation/spline/Interpolator.hh>
-#include <numeric/interpolation/spline/SplineGenerator.hh>
-
 #include <core/types.hh>
 
-#include <utility/vector1.hh>
+// Numeric headers
+#include <numeric/interpolation/spline/SplineGenerator.hh>
 
+// Utility headers
+#include <utility/vector1.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 
 
@@ -29,7 +30,7 @@ namespace core {
 namespace scoring {
 namespace interface {
 
-class DDPlookup {
+class DDPlookup : public utility::pointer::ReferenceCount {
 public:
 	DDPlookup(std::string filename);
 

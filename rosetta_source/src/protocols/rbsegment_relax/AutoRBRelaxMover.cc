@@ -171,7 +171,7 @@ AutoRBMover::apply( core::pose::Pose & pose ) {
 		for ( utility::vector1< core::fragment::FragSetOP >::const_iterator
 					it = frag_libs_.begin(), it_end = frag_libs_.end();
 					it != it_end; it++ ) {
-			protocols::simple_moves::ClassicFragmentMover *cfm = new protocols::simple_moves::ClassicFragmentMover( *it, movemap_ );
+			protocols::simple_moves::ClassicFragmentMoverOP cfm = new protocols::simple_moves::ClassicFragmentMover( *it, movemap_ );
 			cfm->set_check_ss( false );
 			cfm->enable_end_bias_check( false );
 			fragmover.push_back( cfm );

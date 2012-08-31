@@ -97,7 +97,7 @@ LigandDesign::set_fragments(){
 	ligand_design_tracer<< fragment_types.size()<< " fragment_types"<< std::endl;
 
 	foreach(core::chemical::ResidueTypeCOP fragment_type, fragment_types){
-		core::conformation::Residue* temp= new core::conformation::Residue(*fragment_type, true);
+		core::conformation::ResidueOP temp = new core::conformation::Residue( *fragment_type, true);
 		fragments_.push_back(temp);
 		ligand_design_tracer<< "frag_name: "<< temp->name()<< std::endl;
 	}

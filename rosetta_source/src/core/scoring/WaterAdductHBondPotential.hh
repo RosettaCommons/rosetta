@@ -17,24 +17,19 @@
 
 #include <core/scoring/WaterAdductHBondPotential.fwd.hh>
 
+// Package headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/scoring/types.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
+#include <core/scoring/hbonds/HBondSet.fwd.hh>
 
+// Project headers
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
-// AUTO-REMOVED #include <core/id/AtomID.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/DomainMap.fwd.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
+// Utility headers
 #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
-
-#include <core/scoring/hbonds/HBondSet.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
 
@@ -49,7 +44,7 @@ namespace scoring {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class WaterAdductHBondPotential {
+class WaterAdductHBondPotential  : public utility::pointer::ReferenceCount{
 public:
 	typedef conformation::Residue Residue;
 

@@ -25,6 +25,7 @@ namespace optimize_weights {
 class PNatAAOptERotamerData;
 class PNatRotOptERotamerData;
 class SingleStructureData;
+class ConstraintedOptimizationWeightFunc;
 
 class OptEPositionData;
 class PNatAAOptEPositionData;
@@ -39,6 +40,7 @@ class OptEData;
 typedef utility::pointer::owning_ptr< PNatAAOptERotamerData > PNatAAOptERotamerDataOP;
 typedef utility::pointer::owning_ptr< PNatRotOptERotamerData > PNatRotOptERotamerDataOP;
 typedef utility::pointer::owning_ptr< SingleStructureData > SingleStructureDataOP;
+typedef utility::pointer::owning_ptr< ConstraintedOptimizationWeightFunc > ConstraintedOptimizationWeightFuncOP;
 typedef utility::pointer::owning_ptr< SingleStructureData const > SingleStructureDataCOP;
 
 typedef utility::pointer::owning_ptr< OptEPositionData > OptEPositionDataOP;

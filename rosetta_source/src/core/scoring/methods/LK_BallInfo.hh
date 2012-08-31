@@ -115,7 +115,7 @@ public:
 private:
 /////////////////////////////////////////////////////////////////////////////
 
-	typedef std::map< chemical::ResidueType const *, utility::vector1< WaterBuilders > > WaterBuilderMap;
+	typedef std::map< chemical::ResidueTypeCOP, utility::vector1< WaterBuilders > > WaterBuilderMap;
 	static WaterBuilderMap water_builder_map_;
 
 	void

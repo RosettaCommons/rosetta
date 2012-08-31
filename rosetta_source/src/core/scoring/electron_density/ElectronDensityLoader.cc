@@ -69,22 +69,22 @@ ElectronDensityLoader::create_resource(
 	istream & istream
 ) const {
 
-	ElectronDensityOptions const * resource_options(
-		dynamic_cast<ElectronDensityOptions const * >(&options));
-	if(!resource_options){
+	if ( ! dynamic_cast< ElectronDensityOptions const * >( &options ) ) {
 		throw utility::excn::EXCN_Msg_Exception(
 			"ElectronDensityLoader expected to get a ElectronDensityOptions object, "
 			"but was given a ResourceOptions of type '" + options.type() + "', "
 			"which has the name '" + options.name() + "'." );
 	}
+	ElectronDensityOptions const & resource_options(
+		static_cast< ElectronDensityOptions const & >( options ));
 
 	ElectronDensityOP electron_density(new ElectronDensity());
 
 	electron_density->readMRCandResize(
 		istream,
 		locator_id,
-		resource_options->get_mapreso(),
-		resource_options->get_grid_spacing());
+		resource_options.get_mapreso(),
+		resource_options.get_grid_spacing());
 
 	return electron_density;
 }

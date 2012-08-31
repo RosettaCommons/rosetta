@@ -28,15 +28,16 @@
 #include <core/id/TorsionID.fwd.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/vector1.hh>
 
-#include <utility/vector1_bool.hh>
+// Numeric headers
 #include <numeric/interpolation/spline/Bicubic_spline.hh>
 
 namespace core {
 namespace scoring {
 
-class P_AA
+class P_AA : public utility::pointer::ReferenceCount
 {
 
 private:

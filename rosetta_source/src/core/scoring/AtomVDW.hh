@@ -25,20 +25,17 @@
 #include <core/types.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
+#include <utility/vector1.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 // C++ Headers
 #include <string>
-
-#include <utility/vector1_bool.hh>
-
-
 
 namespace core {
 namespace scoring {
 
 
-class AtomVDW {
+class AtomVDW : public utility::pointer::ReferenceCount {
 
 public:
 

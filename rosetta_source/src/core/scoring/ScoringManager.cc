@@ -51,12 +51,7 @@
 // Package headers
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 #include <core/scoring/etable/Etable.hh>
-#include <core/scoring/memb_etable/MembEtable.hh> //pba
-//XRW_B_T1
-//#include <core/coarse/CoarseEtable.hh>
-//XRW_E_T1
-
-//#include <core/scoring/hbonds/HBondEnergy.hh>
+#include <core/scoring/memb_etable/MembEtable.hh>
 
 #include <core/scoring/mm/MMTorsionLibrary.hh>
 #include <core/scoring/mm/MMLJLibrary.hh>
@@ -64,104 +59,20 @@
 #include <core/scoring/mm/MMBondAngleLibrary.hh>
 #include <core/scoring/mm/MMBondLengthLibrary.hh>
 
-
-
-//#include <core/scoring/carbon_hbonds/CarbonHBondEnergy.hh>
-//#include <core/scoring/methods/ChainbreakEnergy.hh>
-//#include <core/scoring/methods/LinearChainbreakEnergy.hh>
-//#include <core/scoring/methods/DistanceChainbreakEnergy.hh>
-//#include <core/scoring/methods/CSD_TorsionEnergy.hh>
-//#include <core/scoring/methods/DNA_BaseEnergy.hh>
-//#include <core/pack/dunbrack/DunbrackEnergy.hh>
-//#include <core/scoring/methods/CenPairEnergy.hh>
-//#include <core/scoring/methods/EnvEnergy.hh>
-//#include <core/scoring/methods/MembraneEnvEnergy.hh>
-//#include <core/scoring/methods/MembraneEnvPenalties.hh>
-//#include <core/scoring/methods/MembraneCbetaEnergy.hh>
-//#include <core/scoring/methods/MembraneCenPairEnergy.hh>
-//#include <core/scoring/methods/MembraneLipo.hh>
-//#include <core/scoring/methods/EnvSmoothEnergy.hh>
-//#include <core/scoring/methods/DirectReadoutEnergy.hh>
-//#include <core/scoring/methods/GenBornEnergy.hh>
-//#include <core/scoring/geometric_solvation/GeometricSolEnergy.hh>
-//#include <core/scoring/geometric_solvation/OccludedHbondSolEnergy.hh>
-//#include <core/scoring/geometric_solvation/OccludedHbondSolEnergy_onebody.hh>
-//#include <core/scoring/geometric_solvation/ExactOccludedHbondSolEnergy.hh>
-//#include <core/scoring/hackelec/HackElecEnergy.hh>
-//#include <core/scoring/hackelec/RNAHackElecEnergy.hh>
-//#include <core/scoring/methods/LK_hack.hh>
-//#include <core/scoring/methods/LK_CosThetaEnergy.hh>
-//#include <core/scoring/methods/InterchainEnvEnergy.hh>
-//#include <core/scoring/methods/InterchainPairEnergy.hh>
-//#include <core/scoring/methods/MMBondAngleEnergy.hh>
-//#include <core/scoring/methods/MMTorsionEnergy.hh>
-//#include <core/scoring/methods/OmegaTetherEnergy.hh>
-//#include <core/scoring/methods/P_AA_pp_Energy.hh>
-//#include <core/scoring/methods/pHEnergy.hh>
-
-//#include <core/scoring/NV/NVscore.hh>
 #include <core/scoring/nv/NVlookup.hh>
 #include <core/scoring/orbitals/OrbitalsLookup.hh>
 #include <core/scoring/interface/DDPlookup.hh>
 
-// AUTO-REMOVED #include <core/scoring/symE/symE.hh>
-//#include <core/scoring/methods/P_AA_Energy.hh>
-//#include <core/scoring/methods/PairEnergy.hh>
-//#include <core/scoring/methods/ProClosureEnergy.hh>
-//#include <core/scoring/methods/RamachandranEnergy.hh>
-//#include <core/scoring/methods/RamachandranEnergy2B.hh>
-//#include <core/scoring/rna/RNA_FullAtomStackingEnergy.hh>
-//#include <core/scoring/rna/RNA_PairwiseLowResolutionEnergy.hh>
-//#include <core/scoring/rna/RNA_TorsionEnergy.hh>
-//#include <core/scoring/rna/RNA_LJ_BaseEnergy.hh>
-//#include <core/scoring/rna/RNA_VDW_Energy.hh>
-//#include <core/scoring/rna/RG_Energy_RNA.hh>
-//#include <core/scoring/methods/RG_Energy_Fast.hh>
-//#include <core/scoring/methods/ContactOrderEnergy.hh>
-//#include <core/scoring/methods/ReferenceEnergy.hh>
-//#include <core/scoring/methods/RMS_Energy.hh>
-//#include <core/scoring/methods/SecondaryStructureEnergy.hh>
-//#include <core/scoring/methods/SuckerEnergy.hh>
-//#include <core/scoring/methods/WaterAdductHBondEnergy.hh>
-//#include <core/scoring/methods/WaterAdductIntraEnergy.hh>
-//#include <core/scoring/methods/VDW_Energy.hh>
-//#include <core/scoring/methods/HybridVDW_Energy.hh>
-//#include <core/scoring/methods/PackStatEnergy.hh>
-//#include <core/scoring/methods/SurfaceEnergy.hh>
-//#include <core/scoring/methods/UnfoldedStateEnergy.hh>
-//#include <core/scoring/methods/ResidualDipolarCouplingEnergy.hh>
-//#include <core/scoring/methods/ResidualDipolarCouplingEnergy_Rohl.hh>
-//#include <core/scoring/packing/HolesEnergy.hh>
-//#include <core/scoring/packing/SurfVolEnergy.hh>
-//#include <core/scoring/methods/PeptideBondEnergy.hh>
-
-//#include <core/scoring/electron_density/ElecDensEnergy.hh>
-//#include <core/scoring/electron_density/ElecDensCenEnergy.hh>
-//#include <core/scoring/electron_density/ElecDensAllAtomCenEnergy.hh>
-
-//#include <core/scoring/constraints/ConstraintsEnergy.hh>
-
-//#include <core/scoring/disulfides/FullatomDisulfideEnergy.hh>
-//#include <core/scoring/disulfides/CentroidDisulfideEnergy.hh>
-
-//#include <core/scoring/custom_pair_distance/FullatomCustomPairDistanceEnergy.hh>
-
-// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/types.hh>
 #include <core/scoring/ScoreType.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 
-// Project headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <basic/database/open.hh>
 
 
 // Utility headers
-//#include <utility/vector1.hh>
-//#include <utility/pointer/ReferenceCount.hh>
 #include <utility/string_util.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <utility/vector1.hh>
@@ -506,7 +417,7 @@ ScoringManager::get_MMTorsionLibrary() const
 {
 	if ( mm_torsion_library_ == 0 )
 		{
-			mm_torsion_library_ = new MMTorsionLibrary
+			mm_torsion_library_ = new mm::MMTorsionLibrary
 				( basic::database::full_name( "chemical/mm_atom_type_sets/fa_standard/mm_torsion_params.txt" ),
 					chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD ) );
 		}
@@ -519,7 +430,7 @@ ScoringManager::get_MMLJLibrary() const
 {
 	if ( mm_lj_library_ == 0 )
 		{
-			mm_lj_library_ = new MMLJLibrary
+			mm_lj_library_ = new mm::MMLJLibrary
 				( chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD ) );
 		}
 	return *mm_lj_library_;
@@ -532,7 +443,7 @@ ScoringManager::get_MMLJEnergyTable () const
 {
 	if ( mm_lj_energy_table_ == 0 )
 		{
-			mm_lj_energy_table_ = new MMLJEnergyTable();
+			mm_lj_energy_table_ = new mm::MMLJEnergyTable();
 		}
 	return *mm_lj_energy_table_;
 }
@@ -640,7 +551,7 @@ ScoringManager::get_MMBondAngleLibrary() const
 {
 	if ( mm_bondangle_library_ == 0 )
 		{
-			mm_bondangle_library_ = new MMBondAngleLibrary
+			mm_bondangle_library_ = new mm::MMBondAngleLibrary
 				( basic::database::full_name( "chemical/mm_atom_type_sets/fa_standard/par_all27_prot_na.prm" ),
 					chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD ) );
 		}
@@ -653,7 +564,7 @@ ScoringManager::get_MMBondLengthLibrary() const
 {
 	if ( mm_bondlength_library_ == 0 )
 		{
-			mm_bondlength_library_ = new MMBondLengthLibrary
+			mm_bondlength_library_ = new mm::MMBondLengthLibrary
 				( basic::database::full_name( "chemical/mm_atom_type_sets/fa_standard/par_all27_prot_na.prm" ),
 					chemical::ChemicalManager::get_instance()->mm_atom_type_set( chemical::FA_STANDARD ) );
 		}

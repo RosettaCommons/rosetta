@@ -310,7 +310,7 @@ PackDaemon::select_rotamer_subset( Entity const & entity ) const
 					+ utility::to_string( ii_resid ) + "." );
 			}
 		} else {
-			PosType const * pt_ptr( dynamic_cast< PosType const * > ( entity.traits()[ ii_entity_id ].get() ));
+			PosTypeCOP pt_ptr( dynamic_cast< PosType const * > ( entity.traits()[ ii_entity_id ].get() ));
 			if ( ! pt_ptr ) {
 				utility_exit_with_message( "Failed to downcast entity trait[" +
 					utility::to_string( ii ) + "] to PosTye; trait name: " +

@@ -87,11 +87,11 @@ bool PosType::operator <  ( EntityElement const & rhs ) const
 	if ( parent::operator < ( rhs ) ) {
 		return true;
 	} else if ( parent::operator == ( rhs ) ) {
-		PosType const * pt_rhs( dynamic_cast< PosType const * > ( &rhs ) );
-		if ( ! pt_rhs ) {
+		if ( ! dynamic_cast< PosType const * > ( &rhs ) ) {
 			utility_exit_with_message( "operator < unable to compare a " + name() + " object to a " + rhs.name() + " object!" );
 		}
-		return type_ < pt_rhs->type_;
+		PosType const & pt_rhs( static_cast< PosType const & > ( rhs ) );
+		return type_ < pt_rhs.type_;
 	}
 	return false;
 }
@@ -99,11 +99,11 @@ bool PosType::operator <  ( EntityElement const & rhs ) const
 bool PosType::operator == ( EntityElement const & rhs ) const
 {
 	if ( parent::operator == ( rhs ) ) {
-		PosType const * pt_rhs( dynamic_cast< PosType const * > ( &rhs ) );
-		if ( ! pt_rhs ) {
-			utility_exit_with_message( "operator == unable to compare a " + name() + " object to a " + rhs.name() + " object!" );
-		}
-		if ( type_ == pt_rhs->type_ ) {
+    if ( ! dynamic_cast< PosType const * > ( &rhs ) ) {
+      utility_exit_with_message( "operator < unable to compare a " + name() + " object to a " + rhs.name() + " object!" );
+    }
+    PosType const & pt_rhs( static_cast< PosType const & > ( rhs ) );
+		if ( type_ == pt_rhs.type_ ) {
 			return true;
 		}
 	}
@@ -115,11 +115,13 @@ PosType::operator =  ( EntityElement const & rhs )
 {
 	if ( this != &rhs ) {
 		parent::operator = ( rhs );
-		PosType const * pt_rhs( dynamic_cast< PosType const * > ( &rhs ) );
-		if ( ! pt_rhs ) {
-			utility_exit_with_message( "operator = unable to assign to a " + name() + " object from a " + rhs.name() + " object!" );
-		}
-		type_ = pt_rhs->type_;
+
+    if ( ! dynamic_cast< PosType const * > ( &rhs ) ) {
+      utility_exit_with_message( "operator < unable to compare a " + name() + " object to a " + rhs.name() + " object!" );
+    }
+    PosType const & pt_rhs( static_cast< PosType const & > ( rhs ) );
+
+		type_ = pt_rhs.type_;
 	}
 	return *this;
 }
@@ -178,8 +180,6 @@ MultiStatePacker::evaluate(
 {
 	PackingStateOP state = dynamic_cast< PackingState* >( states()[single_state_num]() );
 	runtime_assert( state );
-	protocols::multistate_design::MultiStateEntity* multi_state_entity =
-		dynamic_cast< protocols::multistate_design::MultiStateEntity* >( &entity );
 
 	// Filter down to the rotamers needed for this single sequence
 	utility::vector0<int> rot_to_pack;
@@ -195,11 +195,13 @@ MultiStatePacker::evaluate(
 		E = state->fitness_function()->evaluate(state->nonconst_pose());
 		if ( E < bestE || i == 0 ) {
 			bestE = E;
-			if (multi_state_entity) {
-				multi_state_entity->single_state_entity_data()[single_state_num].fitness(E);
+			if ( dynamic_cast< protocols::multistate_design::MultiStateEntity * >( &entity ) ) {
+				protocols::multistate_design::MultiStateEntity & multi_state_entity =
+					static_cast< protocols::multistate_design::MultiStateEntity & >( entity );
+				multi_state_entity.single_state_entity_data()[single_state_num].fitness(E);
 				for (MetricValueGetterMap::const_iterator iter = metric_value_getters().begin();
 				     iter != metric_value_getters().end(); ++iter) {
-					multi_state_entity->single_state_entity_data()[single_state_num].metric_value(
+					multi_state_entity.single_state_entity_data()[single_state_num].metric_value(
 						iter->first,
 						iter->second.get(state->pose())
 					);
@@ -235,7 +237,7 @@ limit_rotamer_set(
 			if ( ! it->get() ) {
 				utility_exit_with_message( "Null pointer in EntityElement array" );
 			}
-			PosType const * postype( dynamic_cast< PosType const * > ( it->get() ) );
+			PosTypeCOP postype( dynamic_cast< PosType const * > ( it->get() ) );
 			if ( ! postype ) {
 				utility_exit_with_message( "Dynamic cast to PosType failed for object of type " + (*it)->name() );
 			}

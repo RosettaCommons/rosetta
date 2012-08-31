@@ -141,7 +141,7 @@ setup_cloned_atom(
 )
 {
 	utility_exit_with_message("needs to be refactored to meet new tree-building guidelines");
-	tree::Atom* new_atom( new tree::BondedAtom() );
+	tree::AtomOP new_atom( new tree::BondedAtom() );
 	/// Remember to add a call here to new_atom->set_weak_ptr_to_self when this is refactored, if ever
 	/*
 	new_atom->parent(0);

@@ -474,7 +474,7 @@ int universal_main(
 					if (!silent_output) {
 						jobdist->dump_pose_and_map( curr_job_tag, *the_pose );    // output PDB
 					} else {
-						PlainSilentFileJobDistributor *jd =
+						PlainSilentFileJobDistributorOP jd =
 						 dynamic_cast< PlainSilentFileJobDistributor * > (jobdist());
 						core::io::silent::SilentStructOP pss;
 						//if (option[ out::file::binary_silentfile ].user()) {
@@ -637,7 +637,7 @@ int universal_main(
 			if (!silent_output) {
 				jobdist->dump_pose_and_map( curr_job_tag, *the_pose );    // output PDB
 			} else {
-				PlainSilentFileJobDistributor *jd =
+				PlainSilentFileJobDistributorOP jd =
 				 dynamic_cast< PlainSilentFileJobDistributor * > (jobdist());
 				core::io::silent::SilentStructOP pss;
 				//if (option[ out::file::binary_silentfile ].user()) {
@@ -874,7 +874,7 @@ int main_plain_pdb_mover(
 		if (!silent_output) {
 			jobdist->dump_pose_and_map( curr_job->output_tag(curr_nstruct), *the_pose );    // output PDB
 		} else {
-			protocols::jobdist::PlainSilentFileJobDistributor *jd =
+			protocols::jobdist::PlainSilentFileJobDistributorOP jd =
 			     dynamic_cast< protocols::jobdist::PlainSilentFileJobDistributor * > (jobdist());
 			core::io::silent::ProteinSilentStruct pss;
 			pss.fill_struct( *the_pose, curr_job->output_tag(curr_nstruct) );

@@ -163,7 +163,7 @@ MPI_LoopHashRefine_Master::process_inbound_wus(){
 		if ( next_wu->get_wu_type() == "waitwu" ) continue;
 
 		// Upcast to a StructureModifier WU
-		WorkUnit_SilentStructStore* structure_wu = dynamic_cast<  WorkUnit_SilentStructStore * > ( (WorkUnitBase*) (&(*next_wu)) );
+		WorkUnit_SilentStructStoreOP structure_wu = dynamic_cast<  WorkUnit_SilentStructStore * > ( next_wu() );
 
 		// If upcast was unsuccessful - warn and ignore.
 		if ( structure_wu == NULL ){

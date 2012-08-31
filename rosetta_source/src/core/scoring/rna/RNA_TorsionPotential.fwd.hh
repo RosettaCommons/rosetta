@@ -14,11 +14,16 @@
 #ifndef INCLUDED_core_scoring_rna_RNA_TorsionPotential_fwd_hh
 #define INCLUDED_core_scoring_rna_RNA_TorsionPotential_fwd_hh
 
+#include <utility/pointer/owning_ptr.hh>
+
 namespace core {
 namespace scoring {
 namespace rna {
 
 class RNA_TorsionPotential;
+
+typedef  utility::pointer::owning_ptr< RNA_TorsionPotential > RNA_TorsionPotentialOP;
+typedef  utility::pointer::owning_ptr< RNA_TorsionPotential const > RNA_TorsionPotentialCOP;
 
 }
 }

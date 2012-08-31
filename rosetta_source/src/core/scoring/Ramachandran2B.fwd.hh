@@ -14,10 +14,15 @@
 #ifndef INCLUDED_core_scoring_Ramachandran2B_fwd_hh
 #define INCLUDED_core_scoring_Ramachandran2B_fwd_hh
 
+#include <utility/pointer/owning_ptr.hh>
+
 namespace core {
 namespace scoring {
 
 class Ramachandran2B;
+
+typedef utility::pointer::owning_ptr< Ramachandran2B > Ramachandran2BOP;
+typedef utility::pointer::owning_ptr< Ramachandran2B const > Ramachandran2BCOP;
 
 }
 }

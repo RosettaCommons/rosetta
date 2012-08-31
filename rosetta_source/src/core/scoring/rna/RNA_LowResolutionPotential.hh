@@ -20,24 +20,21 @@
 // Unit headers
 #include <core/scoring/rna/RNA_LowResolutionPotential.fwd.hh>
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
-// AUTO-REMOVED #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-
-// AUTO-REMOVED #include <core/scoring/EnergyMap.hh> //for EnergyMap
-#include <core/scoring/EnergyMap.fwd.hh> //for EnergyMap
+#include <core/scoring/EnergyMap.fwd.hh>
 
 // Project headers
 #include <core/id/AtomID.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/Stub.hh>
+#include <core/kinematics/Stub.fwd.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
+#include <utility/vector1.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
@@ -45,11 +42,8 @@
 #include <ObjexxFCL/FArray4D.hh>
 #include <ObjexxFCL/FArray5D.hh>
 
-#include <core/kinematics/Stub.fwd.hh>
-#include <utility/vector1.hh>
 
 
-// C++
 
 
 namespace core {
@@ -60,7 +54,7 @@ static Real dummy_deriv;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class RNA_LowResolutionPotential {
+class RNA_LowResolutionPotential : public utility::pointer::ReferenceCount {
 
 public:
 	RNA_LowResolutionPotential();

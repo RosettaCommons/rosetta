@@ -48,7 +48,7 @@ public:
 };
 
 
-class JobInputterFactory : public utility::pointer::ReferenceCount
+class JobInputterFactory
 {
 public:
 	typedef std::map< std::string, JobInputterCreatorOP > JobInputterMap;

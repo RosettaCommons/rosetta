@@ -43,6 +43,9 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
+class LocalCoordinateConstraint;
+typedef utility::pointer::owning_ptr< LocalCoordinateConstraint > LocalCoordinateConstraintOP;
+typedef utility::pointer::owning_ptr< LocalCoordinateConstraint const > LocalCoordinateConstraintCOP;
 
 ///
 

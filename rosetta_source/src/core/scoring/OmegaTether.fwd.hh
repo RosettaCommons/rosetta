@@ -14,11 +14,15 @@
 #ifndef INCLUDED_core_scoring_OmegaTether_fwd_hh
 #define INCLUDED_core_scoring_OmegaTether_fwd_hh
 
+#include <utility/pointer/owning_ptr.hh>
+
 namespace core {
 namespace scoring {
 
 class OmegaTether;
 
+typedef utility::pointer::owning_ptr< OmegaTether > OmegaTetherOP;
+typedef utility::pointer::owning_ptr< OmegaTether const > OmegaTetherCOP;
 }
 }
 

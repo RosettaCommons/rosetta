@@ -24,7 +24,7 @@
 #include <core/types.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 // AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
@@ -39,7 +39,7 @@ namespace core {
 namespace scoring {
 namespace carbon_hbonds {
 
-class CarbonHBondPotential {
+class CarbonHBondPotential : public utility::pointer::ReferenceCount {
 
 public:
 

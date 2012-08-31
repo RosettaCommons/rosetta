@@ -15,19 +15,16 @@
 #ifndef INCLUDED_core_scoring_AtomVDW_fwd_hh
 #define INCLUDED_core_scoring_AtomVDW_fwd_hh
 
-// Unit Headers
-
-// Package headers
-
-// Project headers
-
 // Utility headers
-
+#include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace scoring {
 
 class AtomVDW;
+
+typedef utility::pointer::owning_ptr< AtomVDW > AtomVDWOP;
+typedef utility::pointer::owning_ptr< AtomVDW const > AtomVDWCOP;
 
 }
 }

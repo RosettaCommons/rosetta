@@ -17,13 +17,14 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-//#include <utility/pointer/ReferenceCount.hh>
-
 namespace core {
 namespace scoring {
 
-	///
+///
 class WaterAdductHBondPotential;
+
+typedef  utility::pointer::owning_ptr< WaterAdductHBondPotential > WaterAdductHBondPotentialOP;
+typedef  utility::pointer::owning_ptr< WaterAdductHBondPotential const > WaterAdductHBondPotentialCOP;
 
 
 } // scoring

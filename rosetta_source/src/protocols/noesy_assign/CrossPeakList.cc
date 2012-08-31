@@ -357,10 +357,10 @@ core::scoring::constraints::ConstraintSetOP CrossPeakList::generate_constraints(
 		} catch ( core::id::EXCN_AtomNotFound& excn ) {
 			tr.Error << "failed to generate " << ( centroid ?  "centroid " : "full-atom " ) << "constraint for peak: " << (**it) << std::endl;
 			tr.Error  << excn << std::endl;
-			core::pose::Pose const* current_pose = ( centroid ? &centroid_pose : &pose );
-			tr.Info << " residue-type in pose: " << current_pose->residue_type( excn.atom().rsd() ).name3() << " " << excn.atom().rsd() << std::endl;
+			core::pose::Pose const & current_pose = ( centroid ? centroid_pose : pose );
+			tr.Info << " residue-type in pose: " << current_pose.residue_type( excn.atom().rsd() ).name3() << " " << excn.atom().rsd() << std::endl;
 			tr.Debug << " with these atoms ";
-			current_pose->residue_type( excn.atom().rsd() ).show_all_atom_names( tr.Debug );
+			current_pose.residue_type( excn.atom().rsd() ).show_all_atom_names( tr.Debug );
 		}
 	}
 	return cstset;

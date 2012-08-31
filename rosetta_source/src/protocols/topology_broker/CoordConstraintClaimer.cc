@@ -207,7 +207,7 @@ void CoordConstraintClaimer::set_cst_root() {
 	ConstraintSetOP new_set = new ConstraintSet;
 	for ( ConstraintCOPs::const_iterator it = all_cst.begin(), eit = all_cst.end(); it!=eit; ++it ) {
 		ConstraintOP new_cst = (*it)->clone();
-		LocalCoordinateConstraint* ll_cst = dynamic_cast< LocalCoordinateConstraint* > ( new_cst.get() );
+		LocalCoordinateConstraintOP ll_cst = dynamic_cast< LocalCoordinateConstraint* > ( new_cst.get() );
 		runtime_assert( ll_cst ); //only these should be in the constraint set!
 		ll_cst->set_fixed_stub( cst_fix_stub_ID );
 		new_set->add_constraint( ll_cst );
@@ -301,7 +301,7 @@ void CoordConstraintClaimer::superimpose( pose::Pose const& pose ) const {
 
 	for ( ConstraintCOPs::const_iterator it = all_cst.begin(), eit = all_cst.end(); it!=eit; ++it, ++n ) {
 		//		ConstraintOP new_cst = (*it)->clone();
-		LocalCoordinateConstraint const* ll_cst = dynamic_cast< LocalCoordinateConstraint const* > ( it->get() );
+		LocalCoordinateConstraintCOP ll_cst = dynamic_cast< LocalCoordinateConstraint const* > ( it->get() );
 		runtime_assert( ll_cst ); //only these should be in the constraint set!
 		Vector xyz_ref( pose.xyz( ll_cst->atom( 1 ) ) );
 		//n = ll_cst->atom( 1 ).rsd(); //uncomment for debugging
@@ -333,7 +333,7 @@ void CoordConstraintClaimer::superimpose( pose::Pose const& pose ) const {
 	n = 1;
 	for ( ConstraintCOPs::const_iterator it = all_cst.begin(), eit = all_cst.end(); it!=eit; ++it, ++n ) {
 		ConstraintOP new_cst = (*it)->clone();
-		LocalCoordinateConstraint* ll_cst = dynamic_cast< LocalCoordinateConstraint* > ( new_cst.get() );
+		LocalCoordinateConstraintOP ll_cst = dynamic_cast< LocalCoordinateConstraint* > ( new_cst.get() );
 		Vector xyz_cst;
 		//		n = ll_cst->atom( 1 ).rsd();
 		for ( Size d=1; d<=3; ++d ) {

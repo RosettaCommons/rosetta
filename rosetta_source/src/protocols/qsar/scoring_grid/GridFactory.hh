@@ -42,7 +42,7 @@ public:
 	GridRegistrator() : parent() {}
 };
 
-class GridFactory : public utility::pointer::ReferenceCount
+class GridFactory
 {
 public:
 

@@ -14,10 +14,15 @@
 #ifndef INCLUDED_core_scoring_methods_dfire_DFIRE_Potential_FWD_HH
 #define INCLUDED_core_scoring_methods_dfire_DFIRE_Potential_FWD_HH
 
+#include <utility/pointer/owning_ptr.hh>
+
 namespace core {
 namespace scoring {
 
 class PoissonBoltzmannPotential;
+
+typedef  utility::pointer::owning_ptr< PoissonBoltzmannPotential > PoissonBoltzmannPotentialOP;
+typedef  utility::pointer::owning_ptr< PoissonBoltzmannPotential const > PoissonBoltzmannPotentialCOP;
 
 }
 }

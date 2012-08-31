@@ -15,10 +15,15 @@
 #ifndef INCLUDED_core_scoring_SecondaryStructurePotential_fwd_hh
 #define INCLUDED_core_scoring_SecondaryStructurePotential_fwd_hh
 
+#include <utility/pointer/owning_ptr.hh>
+
 namespace core {
 namespace scoring {
 
 class SecondaryStructurePotential;
+
+typedef utility::pointer::owning_ptr< SecondaryStructurePotential > SecondaryStructurePotentialOP;
+typedef utility::pointer::owning_ptr< SecondaryStructurePotential const > SecondaryStructurePotentialCOP;
 
 } // ns scoring
 } // ns core

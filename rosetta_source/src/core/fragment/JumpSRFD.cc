@@ -149,20 +149,20 @@ bool DownJumpSRFD::steal( pose::Pose const& pose, Size ipos, Frame const& frame 
 }
 
 bool DownJumpSRFD::is_compatible( SingleResidueFragData const& aSRFD) const {
-  DownJumpSRFD const* ptr = dynamic_cast< DownJumpSRFD const* > ( & aSRFD );
-  if ( ptr ) {
-    return true;
-  }
-  return false; //wrong SRFD-type (cast not successfull)
+  //DownJumpSRFD const* ptr = dynamic_cast< DownJumpSRFD const* > ( & aSRFD );
+  //if ( ptr ) {
+  //  return true;
+  //}
+  return dynamic_cast< DownJumpSRFD const* > ( & aSRFD );
 }
 
 
 bool UpJumpSRFD::is_compatible( SingleResidueFragData const& aSRFD) const {
-  UpJumpSRFD const* ptr = dynamic_cast< UpJumpSRFD const* > ( & aSRFD );
-  if ( ptr ) {
-    return true;
-  }
-  return false; //wrong SRFD-type (cast not successfull)
+  //UpJumpSRFD const* ptr = dynamic_cast< UpJumpSRFD const* > ( & aSRFD );
+  //if ( ptr ) {
+  //  return true;
+  //}
+  return dynamic_cast< UpJumpSRFD const* > ( & aSRFD );
 }
 
 bool DownJumpSRFD::is_applicable(

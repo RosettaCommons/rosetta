@@ -219,8 +219,8 @@ namespace devel {
 
       for( Size k = 0; k < segments.size(); ++k ) {
 
-				Residue* lo_res = segments[k].lo_res;
-				Residue* hi_res = segments[k].hi_res;
+				Residue* lo_res = segments[k].lo_res; // apl -- this has got to go
+				Residue* hi_res = segments[k].hi_res; // apl -- this has got to go
 
 				if( segments[k].type == Segment::ORIGINAL ) {
 					ft.add_edge( find_or_throw(clones,lo_res)->seqpos(),
@@ -418,8 +418,8 @@ namespace devel {
 
       //core::conformation::ResidueOPs::iterator iter = pose0->res_begin();
 
-      Residue* r_prev = 0;
-      Residue* r = const_cast< core::conformation::Residue * > ( & pose0->residue( 1 ) );// iter->get();
+      Residue* r_prev = 0; // apl -- this has got to go
+      Residue* r = const_cast< core::conformation::Residue * > ( & pose0->residue( 1 ) );// apl -- this has got to go
 
       Segment segment;
 
@@ -582,8 +582,8 @@ namespace devel {
 
 				for( int i = 0; i < static_cast<int>(size); ++i ) {
 
-					Residue* r0 = const_cast<Residue*>(&(segments[k].pose->residue( segments[k].lo_res->seqpos() + i ) ) );
-					Residue* r1 = const_cast<Residue*>(& (rval->residue(begin + i)) );
+					Residue* r0 = const_cast<Residue*>(&(segments[k].pose->residue( segments[k].lo_res->seqpos() + i ) ) ); // this has got to go
+					Residue* r1 = const_cast<Residue*>(& (rval->residue(begin + i)) ); // this has got to go
 					//cout << "clones: " << r0 << "\t" << r1 << endl;
 					clones[ r0 ] = r1;
 				}

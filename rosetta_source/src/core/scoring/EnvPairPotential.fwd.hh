@@ -15,18 +15,8 @@
 #ifndef INCLUDED_core_scoring_EnvPairPotential_fwd_hh
 #define INCLUDED_core_scoring_EnvPairPotential_fwd_hh
 
-
-// Unit headers
-#include <utility/pointer/owning_ptr.hh>
-
-// Package headers
-
-// Project headers
-
 // Utility headers
-
-// C++
-
+#include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace scoring {
@@ -35,6 +25,9 @@ class CenListInfo;
 typedef utility::pointer::owning_ptr< CenListInfo > CenListInfoOP;
 
 class EnvPairPotential;
+
+typedef utility::pointer::owning_ptr< EnvPairPotential > EnvPairPotentialOP;
+typedef utility::pointer::owning_ptr< EnvPairPotential const > EnvPairPotentialCOP;
 
 } // ns scoring
 } // ns core

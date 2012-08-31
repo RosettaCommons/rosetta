@@ -14,10 +14,16 @@
 #ifndef INCLUDED_core_scoring_orbitals_ORBITALSLOOKUP_FWD_HH
 #define INCLUDED_core_scoring_orbitals_ORBITALSLOOKUP_FWD_HH
 
+#include <utility/pointer/owning_ptr.hh>
+
 namespace core{
 namespace scoring{
 namespace orbitals{
-	class OrbitalsLookup;
+
+class OrbitalsLookup;
+
+typedef  utility::pointer::owning_ptr< OrbitalsLookup > OrbitalsLookupOP;
+typedef  utility::pointer::owning_ptr< OrbitalsLookup const > OrbitalsLookupCOP;
 
 }
 }

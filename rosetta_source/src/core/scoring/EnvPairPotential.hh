@@ -144,7 +144,7 @@ private:
 	bool calculated_;
 };
 
-class EnvPairPotential {
+class EnvPairPotential : public utility::pointer::ReferenceCount {
 
 public:
 	EnvPairPotential();

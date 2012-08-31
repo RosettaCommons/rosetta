@@ -22,15 +22,6 @@
 // Unit headers
 #include <utility/pointer/owning_ptr.hh>
 
-// Package headers
-
-// Project headers
-
-// Utility headers
-
-// C++
-
-
 namespace core {
 namespace scoring {
 
@@ -38,6 +29,8 @@ class Membrane_FAEmbed;
 typedef utility::pointer::owning_ptr< Membrane_FAEmbed > Membrane_FAEmbedOP;
 
 class Membrane_FAPotential;
+typedef  utility::pointer::owning_ptr< Membrane_FAPotential > Membrane_FAPotentialOP;
+typedef  utility::pointer::owning_ptr< Membrane_FAPotential const > Membrane_FAPotentialCOP;
 
 } // ns scoring
 } // ns core

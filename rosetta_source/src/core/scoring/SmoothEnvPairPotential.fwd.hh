@@ -14,7 +14,6 @@
 #ifndef INCLUDED_core_scoring_SmoothEnvPairPotential_fwd_hh
 #define INCLUDED_core_scoring_SmoothEnvPairPotential_fwd_hh
 
-
 #include <utility/pointer/owning_ptr.hh>
 #include <core/types.hh>
 
@@ -31,6 +30,9 @@ typedef utility::pointer::owning_ptr< SigmoidWeightedCenList<Real> > SigmoidWeig
 typedef utility::pointer::owning_ptr< SigmoidWeightedCenList<numeric::xyzVector<Real> > > SigmoidWeightedCenListVectorOP;
 
 class SmoothEnvPairPotential;
+
+typedef utility::pointer::owning_ptr< SmoothEnvPairPotential > SmoothEnvPairPotentialOP;
+typedef utility::pointer::owning_ptr< SmoothEnvPairPotential const > SmoothEnvPairPotentialCOP;
 
 } // ns scoring
 } // ns core

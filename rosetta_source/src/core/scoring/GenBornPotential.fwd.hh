@@ -17,26 +17,26 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-//#include <utility/pointer/ReferenceCount.hh>
-
 namespace core {
 namespace scoring {
 
-	///
+///
 class GenBornResidueInfo;
 typedef utility::pointer::owning_ptr< GenBornResidueInfo > GenBornResidueInfoOP;
 
-	///
+///
 class GenBornPoseInfo;
 typedef utility::pointer::owning_ptr< GenBornPoseInfo > GenBornPoseInfoOP;
 
-	///
+///
 class GenBornRotamerSetInfo;
 typedef utility::pointer::owning_ptr< GenBornRotamerSetInfo > GenBornRotamerSetInfoOP;
 
-	///
+///
 class GenBornPotential;
 
+typedef  utility::pointer::owning_ptr< GenBornPotential > GenBornPotentialOP;
+typedef  utility::pointer::owning_ptr< GenBornPotential const > GenBornPotentialCOP;
 
 
 

@@ -80,8 +80,8 @@ bool SecstructSRFD::steal( pose::Pose const& pose, Size seqpos ) {
 }
 
 bool SecstructSRFD::is_compatible( SingleResidueFragData const& aSRFD) const {
-  SecstructSRFD const* ptr = dynamic_cast< SecstructSRFD const* > ( & aSRFD );
-  return (ptr != NULL); //cast succesful same type
+  //SecstructSRFD const* ptr = dynamic_cast< SecstructSRFD const* > ( & aSRFD );
+  return dynamic_cast< SecstructSRFD const* > ( & aSRFD ); //cast succesful same type
 }
 
 bool SecstructSRFD::is_applicable( kinematics::MoveMap const&, Size) const {

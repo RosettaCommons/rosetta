@@ -224,7 +224,7 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 	for ( utility::vector1< core::fragment::FragSetOP >::const_iterator
 				it = frag_libs().begin(), it_end = frag_libs().end();
 				it != it_end; it++ ) {
-		ClassicFragmentMover *cfm = new ClassicFragmentMover( *it, frag_mover_movemap );
+		ClassicFragmentMoverOP cfm = new ClassicFragmentMover( *it, frag_mover_movemap );
 		cfm->set_check_ss( false );
 		cfm->enable_end_bias_check( false );
 		fragmover.push_back( cfm );

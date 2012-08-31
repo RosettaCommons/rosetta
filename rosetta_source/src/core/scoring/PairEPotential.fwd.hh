@@ -14,10 +14,15 @@
 #ifndef INCLUDED_core_scoring_PairEPotential_fwd_hh
 #define INCLUDED_core_scoring_PairEPotential_fwd_hh
 
+#include <utility/pointer/owning_ptr.hh>
+
 namespace core {
 namespace scoring {
 
 class PairEPotential;
+
+typedef utility::pointer::owning_ptr< PairEPotential > PairEPotentialOP;
+typedef utility::pointer::owning_ptr< PairEPotential const > PairEPotentialCOP;
 
 }
 }
