@@ -92,6 +92,7 @@ static protocols::filters::FilterRegistrator< devel::matdes::SaveResfileToDiskFi
 static protocols::filters::FilterRegistrator< devel::matdes::TaskAwareSASAFilterCreator > TaskAwareSASAFilterCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::matdes::InterfacePackingFilterCreator > InterfacePackingFilterCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::matdes::ClashCheckFilterCreator > ClashCheckFilterCreator_registrator;
+static protocols::filters::FilterRegistrator< devel::matdes::GetRBDOFValuesCreator > GetRBDOFValuesCreator_registrator;
 
 void init( int argc, char * argv [] )
 {
