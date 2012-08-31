@@ -44,7 +44,7 @@ plotmatrix <- function (input_data, mapping = aes(), columns = names(input_data)
 	 geom_point(na.rm = TRUE, size=0.3) + stat_density(aes(x = x, 
 	 y = ..scaled.. * diff(range(x)) + min(x)), data = densities, 
 	 position = "identity", geom = "line") + 
-	 opts(title = paste("Scatterplot matrix for loop anchor transform degrees of freedom for", loop_length, "residue loops.", sep = " " )) +
+	 opts(title = paste("Scatterplot matrix for loop anchor transform degrees of freedom for", loop_length + 1, "residue loops.", sep = " " )) +
 	 scale_y_continuous("Degree of freedom") +
 	 scale_x_continuous("Degree of freedom") +
 	 coord_equal(ratio=1)
@@ -54,17 +54,32 @@ plotmatrix <- function (input_data, mapping = aes(), columns = names(input_data)
   }
 }
 
-statement <- c("SELECT x, y, z, phi, psi, theta, alpha, omega FROM loop_anchor_transforms", "SELECT x, y, z, phi, psi, theta, alpha, omega FROM loop_anchor_transforms_three_res", "SELECT loop_anchor_transforms.x, loop_anchor_transforms.y, loop_anchor_transforms.z, loop_anchor_transforms.phi, loop_anchor_transforms.psi, loop_anchor_transforms.theta, loop_anchor_transforms_three_res.alpha, loop_anchor_transforms_three_res.omega FROM loop_anchor_transforms INNER JOIN loop_anchor_transforms_three_res ON loop_anchor_transforms.struct_id = loop_anchor_transforms_three_res.struct_id AND loop_anchor_transforms.residue_begin = loop_anchor_transforms_three_res.residue_begin AND loop_anchor_transforms.residue_end = loop_anchor_transforms_three_res.residue_end")
+statement <- c(paste("SELECT x, y, z, phi, psi, theta",
+  "FROM loop_anchor_transforms",
+  "WHERE residue_end - residue_begin =", sep = " "),
+  paste("SELECT x, y, z, phi, psi, theta, alpha, omega",
+  "FROM loop_anchor_transforms_three_res",
+  "WHERE residue_end - residue_begin =", sep = " "),
+  paste("SELECT loop_anchor_transforms.x, loop_anchor_transforms.y, loop_anchor_transforms.z,",
+  "loop_anchor_transforms.phi, loop_anchor_transforms.psi, loop_anchor_transforms.theta,",
+  "loop_anchor_transforms_three_res.alpha, loop_anchor_transforms_three_res.omega",
+  "FROM loop_anchor_transforms",
+  "INNER JOIN loop_anchor_transforms_three_res",
+  "ON loop_anchor_transforms.struct_id = loop_anchor_transforms_three_res.struct_id",
+  "AND loop_anchor_transforms.residue_begin = loop_anchor_transforms_three_res.residue_begin",
+  "AND loop_anchor_transforms.residue_end = loop_anchor_transforms_three_res.residue_end",
+  "WHERE loop_anchor_transforms.residue_end - loop_anchor_transforms.residue_begin =", sep = " "))
 file_names <- c("one_res", "three_res", "hybrid")
 scale_phi <- c(TRUE, FALSE, TRUE)
 
-for (j in 1:3) {
+#for (j in 1:3) {
+for (j in 1:1) {
   means_data_frame <- data.frame()
   std_devs_data_frame <- data.frame()
   for (i in 1:30) {
 	 loop_length <- i
 	 # Loop anchor transfrom parameters for all candidate loops of a given length
-	 sele <-paste(statement[j], "WHERE residue_end - residue_begin = ", loop_length, " LIMIT 20000;", sep = " ")
+	 sele <-paste(statement[j], loop_length, "LIMIT 20000;", sep = " ")
 
 	 f <- query_sample_sources(sample_sources, sele)
 
@@ -80,7 +95,7 @@ for (j in 1:3) {
 
 	 p <- plotmatrix(f, aes(colour=sample_source), subset(names(f), data_columns))
 
-	 save_plots(self, paste(file_names[j], "anchor_transform_scatterplot_matrix_for", loop_length,"residue_loops", sep = "_"), sample_sources, output_dir, output_formats)
+	 save_plots(self, paste(file_names[j], "anchor_transform_scatterplot_matrix_for", loop_length + 1,"residue_loops", sep = "_"), sample_sources, output_dir, output_formats)
 
 	 sample_source_names <- levels(unique(f$sample_source))
 
