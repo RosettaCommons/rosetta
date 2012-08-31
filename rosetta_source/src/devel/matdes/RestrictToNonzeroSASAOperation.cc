@@ -29,6 +29,7 @@
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
+#include <ObjexxFCL/format.hh>
 
 // C++ Headers
 
@@ -63,6 +64,7 @@ RestrictToNonzeroSASAOperation::apply( core::pose::Pose const & pose, core::pack
   // Get the SASA for each residue in the monomeric state
 	core::conformation::symmetry::SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 	core::Size res_count = 0;	
+	std::string select_buried_pos("select buried_pos, resi ");
 
 	for (core::Size i = 1; i <= ncomp_; i++) {
 		core::pose::Pose mono = pose.split_by_chain(i); // Extract monomer from each component
@@ -73,11 +75,13 @@ RestrictToNonzeroSASAOperation::apply( core::pose::Pose const & pose, core::pack
 			if( !mono.residue( ir ).is_protein() ) continue;
 			res_count++;
 			if (sc_sasa[ir] <= 0.0) {
-				TR << "resi " << res_count << " will not be repacked because it is buried." << std::endl;
+				select_buried_pos.append(ObjexxFCL::string_of(ir) + "+");   
+				TR.Debug << "resi " << res_count << " will not be repacked because it is buried." << std::endl;
 				task.nonconst_residue_task(res_count).prevent_repacking();
 			}
 		}
 	}
+	TR << select_buried_pos << std::endl;
 }
 
 void

@@ -64,7 +64,7 @@ private:
 	std::string prefix_;
 	std::string suffix_;
   core::Real contact_dist_;
-
+	bool extras_;
 };
 
 } //namespace matdes 

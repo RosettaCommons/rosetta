@@ -30,8 +30,14 @@ public:
 	static SymDofMoverSampler& get_instance();
 	void set_angle_ranges(utility::vector1<Real> angles_range_min, utility::vector1<Real> angles_range_max, utility::vector1<Real> angle_steps);
 	void set_radial_disp_ranges(utility::vector1<Real> radial_disps_range_min, utility::vector1<Real> radial_disps_range_max, utility::vector1<Real> radial_disp_steps );
-	utility::vector1<Real> get_angles() { return current_angles_; }
-	utility::vector1<Real> get_radial_disps() { return current_radial_disps_; }
+	void set_sym_dof_names(utility::vector1<std::string> sym_dof_names );
+	void set_angles(utility::vector1<Real> angles );
+	void set_radial_disps(utility::vector1<Real> radial_disps );
+	utility::vector1<Real> get_angles() { return angles_; }
+	utility::vector1<Real> get_radial_disps() { return radial_disps_; }
+	utility::vector1<Real> get_angle_diffs() { return current_angles_; }
+	utility::vector1<Real> get_radial_disp_diffs() { return current_radial_disps_; }
+	utility::vector1<std::string> get_sym_dof_names() { return sym_dof_names_; }
 	void step();
 
 private:
@@ -42,6 +48,9 @@ private:
 
 
 private:
+	utility::vector1<std::string> sym_dof_names_;
+	utility::vector1<Real> angles_;
+	utility::vector1<Real> radial_disps_;
 	utility::vector1<Real> angles_range_min_;
 	utility::vector1<Real> angles_range_max_;
 	utility::vector1<Real> angle_steps_;

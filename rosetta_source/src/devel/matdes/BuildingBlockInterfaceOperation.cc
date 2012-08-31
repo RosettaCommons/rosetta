@@ -116,7 +116,7 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 						select_comp1_chains.append(pose.pdb_info()->chain( jr ) + "+");
 						comp_chains.push_back(pose.chain(jr));
 					} else if (get_component_of_residue(pose,jr)!='A') {
-						TR << pose.pdb_info()->chain( jr ) << "+" ;
+						TR.Debug << pose.pdb_info()->chain( jr ) << "+" ;
 						select_comp2_chains.append(pose.pdb_info()->chain( jr ) + "+");
 						comp_chains.push_back(pose.chain(jr));
 					}
@@ -127,15 +127,15 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 			}
 			if(pose.residue(ir).xyz(atom_i).distance_squared(pose.residue(jr).xyz(atom_j)) <= contact_dist_sq) {
 				design_pos.push_back(ir);
-				TR << ir << std::endl;
+				TR.Debug << ir << std::endl;
 				select_interface_pos.append(ObjexxFCL::string_of(ir) + "+");   
 				break;
 			}
 		}
 	}
 	TR << select_interface_pos << std::endl;
-	TR << select_comp1_chains << std::endl;
-	TR << select_comp2_chains << std::endl;
+	TR.Debug << select_comp1_chains << std::endl;
+	TR.Debug << select_comp2_chains << std::endl;
 
 	// Here we filter the residues that we are selecting for design
 	// to get rid of those that make intra-building block interactions

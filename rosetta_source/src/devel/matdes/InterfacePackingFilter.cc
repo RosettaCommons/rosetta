@@ -122,7 +122,6 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 
 	using namespace core::pose::symmetry;
 
-//	sub_pose.dump_pdb("subpose");
 	core::pose::Pose sub_pose; 
   core::scoring::packing::HolesParams hp(basic::database::full_name("scoring/rosettaholes/decoy15.params"));
 	core::Real cutoff2 = distance_cutoff_*distance_cutoff_;
@@ -148,7 +147,7 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 		pose.fold_tree().partition_by_jump( sym_aware_jump_id, is_upstream );
 		sub_pose_resis = devel::matdes::get_neighbor_sub_resis(pose, contact_dist_, sym_dof_name);
 		core::io::pdb::pose_from_pose(sub_pose, pose, sub_pose_resis);
-		sub_pose.dump_pdb("sub_pose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
+//		sub_pose.dump_pdb("sub_pose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
 	 	core::scoring::packing::HolesResult hr(core::scoring::packing::compute_holes_score(sub_pose, hp));
 		TR << "computed_holes" << std::endl;
 
@@ -197,7 +196,6 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 				}
 			} // ia
 		} // ir
-		TR.Debug << "subpose " << i << " if_score/count = " << if_score << " / " << count << " = " << (if_score / (Real)count) << std::endl;
 	}
 		TR << "final if_score / count = " << if_score << " / " << count << " = " << (if_score / (Real)count) << std::endl;
 		return if_score / (Real)count;

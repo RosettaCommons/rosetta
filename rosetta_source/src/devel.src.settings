@@ -97,6 +97,7 @@ sources = {
 		"InterfacePackingFilter",
 		"ClashCheckFilter",
 		"ExtractSubpose",
+		"GetRBDOFValues",
         ],
 	"devel/metal_interface": [
 		"AddMetalSiteConstraints",

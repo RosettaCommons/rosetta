@@ -42,6 +42,7 @@
 #include <devel/matdes/TaskAwareSASAFilterCreator.hh>
 #include <devel/matdes/InterfacePackingFilterCreator.hh>
 #include <devel/matdes/ClashCheckFilterCreator.hh>
+#include <devel/matdes/GetRBDOFValuesCreator.hh>
 
 // dataloader creators
 //#include <devel/constrained_sequence_design/SequenceConstraintLoaderCreator.hh>

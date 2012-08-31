@@ -27,6 +27,9 @@ namespace devel {
 namespace matdes {
 
 SymDofMoverSampler::SymDofMoverSampler():
+	sym_dof_names_(),
+	angles_(),
+	radial_disps_(),
 	angles_range_min_(),
 	angles_range_max_(),
 	angle_steps_(),
@@ -43,6 +46,21 @@ SymDofMoverSampler::get_instance()
 {
 	static SymDofMoverSampler instance; // Guaranteed to be destroyed,Instantiated on first use.
 	return instance;
+}
+
+void
+SymDofMoverSampler::set_sym_dof_names( utility::vector1<std::string> sym_dof_names) {
+	sym_dof_names_ = sym_dof_names;
+}
+
+void
+SymDofMoverSampler::set_angles( utility::vector1<Real> angles) {
+	angles_ = angles;
+}
+
+void
+SymDofMoverSampler::set_radial_disps( utility::vector1<Real> radial_disps) {
+	radial_disps_ = radial_disps;
 }
 
 void

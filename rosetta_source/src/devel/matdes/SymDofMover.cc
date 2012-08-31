@@ -99,7 +99,7 @@ SymDofMover::get_angles() {
 	utility::vector1< std::string > sym_dof_names = get_sym_dof_names();
 	utility::vector1<Real> angles;
 	if(sampling_mode_ == "grid" ) {
-		utility::vector1<Real> angle_diffs = SymDofMoverSampler::get_instance().get_angles();
+		utility::vector1<Real> angle_diffs = SymDofMoverSampler::get_instance().get_angle_diffs();
 		for (Size i = 1; i <= sym_dof_names.size(); i++) {
 			angles.push_back(angles_[i] + angle_diffs[i]);
 		}
@@ -115,6 +115,7 @@ SymDofMover::get_angles() {
 			}
 		}
 	}
+	SymDofMoverSampler::get_instance().set_angles(angles);
 	return angles;
 }
 
@@ -123,7 +124,7 @@ SymDofMover::get_radial_disps() {
 	utility::vector1< std::string > sym_dof_names = get_sym_dof_names();
 	utility::vector1<Real> radial_disps;
 	if(sampling_mode_ == "grid" ) {
-		utility::vector1<Real> radial_diffs = SymDofMoverSampler::get_instance().get_radial_disps();
+		utility::vector1<Real> radial_diffs = SymDofMoverSampler::get_instance().get_radial_disp_diffs();
 		for (Size i = 1; i <= sym_dof_names.size(); i++) {
 			radial_disps.push_back(radial_disps_[i] + radial_diffs[i]);
 		}
@@ -139,6 +140,7 @@ SymDofMover::get_radial_disps() {
 			}
 		}
 	}
+	SymDofMoverSampler::get_instance().set_radial_disps(radial_disps);
 	return radial_disps;
 }
 
@@ -261,6 +263,7 @@ SymDofMover::parse_my_tag( TagPtr const tag,
 	auto_range_ = tag->getOption<bool>( "auto_range", false );
 	symm_file_ = tag->getOption<string>( "symm_file" );
 	sym_dof_names_ = utility::string_split( tag->getOption< std::string >( "sym_dof_names" ), ',' );
+	SymDofMoverSampler::get_instance().set_sym_dof_names(sym_dof_names_);
 
 	sampling_mode_ = tag->getOption<std::string>("sampling_mode", "single_dock");
 	TR << "Setting sampling mode to " << sampling_mode_ << std::endl;

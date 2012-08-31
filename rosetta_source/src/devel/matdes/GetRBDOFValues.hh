@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   devel/matdes/ClashCheckFilter.hh
-/// @brief  header file for ClashCheckFilter class
-/// @author Neil King (neilking@u.washington.edu)
+/// @file   devel/matdes/GetRBDOFValues.hh
+/// @brief  header file for GetRBDOFValues class
+/// @author Jacob Bale (balej@u.washington.edu)
 
 
-#ifndef INCLUDED_devel_matdes_ClashCheckFilter_hh
-#define INCLUDED_devel_matdes_ClashCheckFilter_hh
+#ifndef INCLUDED_devel_matdes_GetRBDOFValues_hh
+#define INCLUDED_devel_matdes_GetRBDOFValues_hh
 
 // Unit Headers
-#include <devel/matdes/ClashCheckFilter.fwd.hh>
+#include <devel/matdes/GetRBDOFValues.fwd.hh>
 
 // Package Headers
 #include <protocols/filters/Filter.hh>
@@ -26,18 +26,24 @@
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
+// Utility headers
+#include <utility/vector1.fwd.hh>
+
 // Parser headers
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 //// C++ headers
 
 namespace devel {
 namespace matdes {
 
-class ClashCheckFilter : public protocols::filters::Filter {
+class GetRBDOFValues : public protocols::filters::Filter {
 public:
 
 	typedef protocols::filters::Filter Super;
@@ -56,15 +62,15 @@ public:// constructor/destructor
 
 
 	// @brief default constructor
-	ClashCheckFilter();
+	GetRBDOFValues();
 
 	// @brief constructor with arguments
-	ClashCheckFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const c, std::string const s, core::Size const n, core::Size const t, bool const v, bool const w );
+	GetRBDOFValues( int jump, std::string dof_name, bool verb, char ax, bool disp, bool ang, core::Real init_d, core::Real init_a, bool get_init );
 
 	// @brief copy constructor
-	ClashCheckFilter( ClashCheckFilter const & rval );
+	GetRBDOFValues( GetRBDOFValues const & rval );
 
-	virtual ~ClashCheckFilter();
+	virtual ~GetRBDOFValues();
 
 
 public:// virtual constructor
@@ -80,26 +86,30 @@ public:// virtual constructor
 public:// accessor
 
 	// @brief get name of this filter
-	virtual std::string name() const { return "ClashCheck"; }
+	virtual std::string name() const { return "GetRBDOFValues"; }
 
 public:// setters
 
-	void task_factory( core::pack::task::TaskFactoryOP task_factory );
-	void clash_dist( core::Real const c );
-	void sym_dof_names( std::string const s );
-	void nsub_bblock( core::Size const n );
-	void threshold( core::Size const t );
-	void verbose( bool const v );
-	void write( bool const w );
+	void jump_id( core::Size const jump );
+	void sym_dof_name( std::string const dof_name );
+	void verbose( bool const verb );
+	void axis( char const ax );
+	void radial_disp( bool const disp );
+	void angle( bool const ang );
+	void init_disp( core::Real const init_d );
+	void init_angle( core::Real const init_a );
+	void get_init_value( bool const get_init );
 
 public:// getters
-	core::pack::task::TaskFactoryOP task_factory() const;
-	core::Real clash_dist() const;
-	std::string sym_dof_names() const;
-	core::Size nsub_bblock() const;
-	core::Size threshold() const;
+	core::Size jump_id() const;
+	std::string sym_dof_name() const;
 	bool verbose() const;
-	bool write() const;
+	char axis() const;
+	bool radial_disp() const;
+	bool angle() const;
+	core::Real init_disp() const;
+	core::Real init_angle() const;
+	bool get_init_value() const;
 
 public:// parser
 
@@ -109,31 +119,25 @@ public:// parser
 		Movers_map const &,
 		Pose const & );
 
-
 public:// virtual main operation
 
-	// @brief returns true if the given pose passes the filter, false otherwise.
-  virtual bool apply( core::pose::Pose const & pose ) const;
+	// @brief always returns true.
+  virtual bool apply( Pose const & pose ) const;
 
 	/// @brief
-  virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-  virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
+  virtual core::Real report_sm( Pose const & pose ) const;
+  virtual void report( std::ostream & out, Pose const & pose ) const;
 
-	/// @brief calc oligomeric AverageDegree
-  core::Size compute( core::pose::Pose const & pose, bool const & v, bool const & w ) const;
-
-	void write_to_pdb( std::string const residue_name, core::Size const residue, std::string const atom_name ) const;
-	void write_pymol_string_to_pdb( std::string const pymol_selection ) const;
+	/// @brief get the translation and rotation for a user specified jump
+  core::Real compute( Pose const & pose, bool const & verb, std::string const & dof_name, int const & jump, char const & ax, bool const & disp, bool const & ang, core::Real const & init_d, core::Real const & init_a, bool const & get_init ) const;
 
 private:
 
-  core::pack::task::TaskFactoryOP task_factory_;
-  core::Real clash_dist_;
-	std::string sym_dof_names_;
-	core::Size nsub_bblock_;
-	core::Size threshold_;
-	bool verbose_;
-	bool write_;
+	int jump_id_;
+	std::string sym_dof_name_;
+	bool verbose_, radial_disp_, angle_, get_init_value_;
+	char axis_;
+	core::Real init_disp_, init_angle_;
 
 };
 

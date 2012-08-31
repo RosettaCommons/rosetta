@@ -140,7 +140,7 @@ AverageInterfaceEnergyFilter::compute( core::pose::Pose const & pose ) const{
 		}
 	}
 	core::Real aie = tie / interface_size;
-	TR<<interface_pos<<std::endl;
+	TR.Debug <<interface_pos<<std::endl;
 	return( aie );
 }
 

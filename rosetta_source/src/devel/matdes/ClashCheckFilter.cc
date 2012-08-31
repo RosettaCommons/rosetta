@@ -25,6 +25,8 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/scoring/sasa.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/id/AtomID_Map.hh>
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
@@ -37,6 +39,8 @@
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
+#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/JobDistributor.hh>
 
 // Parser headers
 #include <protocols/filters/Filter.hh>
@@ -58,15 +62,21 @@ ClashCheckFilter::ClashCheckFilter():
   task_factory_( NULL ),
   clash_dist_( 3.5 ),
 	sym_dof_names_( "" ),
-	nsub_bblock_( 1 )
+	nsub_bblock_( 1 ),
+	threshold_( 0 ),
+	verbose_( 0 ),
+	write_( 0 )
 {}
 
 // @brief constructor with arguments
-ClashCheckFilter::ClashCheckFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const c, std::string const s, core::Size const n ):
+ClashCheckFilter::ClashCheckFilter( core::pack::task::TaskFactoryOP task_factory, core::Real const c, std::string const s, core::Size const n, core::Size const t, bool const v, bool const w ):
 	task_factory_( task_factory ),
 	clash_dist_( c ),
 	sym_dof_names_( s ),
-	nsub_bblock_( n )
+	nsub_bblock_( n ),
+	threshold_( t ),
+	verbose_( v ),
+	write_( w )
 {}
 
 // @brief copy constructor
@@ -75,7 +85,10 @@ ClashCheckFilter::ClashCheckFilter( ClashCheckFilter const & rval ):
 	task_factory_( rval.task_factory_ ),
 	clash_dist_( rval.clash_dist_ ),
 	sym_dof_names_( rval.sym_dof_names_ ),
-	nsub_bblock_( rval.nsub_bblock_ )
+	nsub_bblock_( rval.nsub_bblock_ ),
+	threshold_( rval.threshold_ ),
+	verbose_( rval.verbose_ ),
+	write_( rval.write_ )
 {}
 
 // @brief destructor
@@ -96,19 +109,26 @@ core::pack::task::TaskFactoryOP ClashCheckFilter::task_factory() const { return 
 core::Real ClashCheckFilter::clash_dist() const { return clash_dist_; }
 std::string ClashCheckFilter::sym_dof_names() const { return sym_dof_names_; }
 core::Size ClashCheckFilter::nsub_bblock() const { return nsub_bblock_; }
+core::Size ClashCheckFilter::threshold() const { return threshold_; }
+bool ClashCheckFilter::verbose() const { return verbose_; }
+bool ClashCheckFilter::write() const { return write_; }
 
 // @brief setters
 void ClashCheckFilter::task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
 void ClashCheckFilter::clash_dist( core::Real const c ) { clash_dist_ = c; }
 void ClashCheckFilter::sym_dof_names( std::string const s ) { sym_dof_names_ = s; }
 void ClashCheckFilter::nsub_bblock( core::Size const n ) { nsub_bblock_ = n; }
+void ClashCheckFilter::threshold( core::Size const t ) { threshold_ = t; }
+void ClashCheckFilter::verbose( bool const v ) { verbose_ = v; }
+void ClashCheckFilter::write( bool const w ) { write_ = w; }
 
 /// @brief
-core::Real ClashCheckFilter::compute( Pose const & pose ) const
+core::Size ClashCheckFilter::compute( Pose const & pose, bool const & v, bool const & w ) const
 {
 	using namespace core;
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
+	using core::id::AtomID;
 	using namespace utility;
 	typedef vector1<Size> Sizes;
 
@@ -128,13 +148,15 @@ core::Real ClashCheckFilter::compute( Pose const & pose ) const
   core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 
 	utility::vector1<Real> clashing_pos;
-	std::string select_clashing_pos("select clashing_pos, resi ");
+	std::string select_clashing_pos("select clashing_pos, (");
+  Size itype = 5;
+  Size jtype = 5;
+	bool clash = false;
 
 	for(Size ir=1; ir<=sym_info->num_total_residues_without_pseudo(); ir++) {
 		if(sym_info->subunit_index(ir) != 1) continue;
-		std::string atom_i = (pose.residue(ir).name3() == "GLY") ? "CA" : "CB";
+		clash = false;
 		for(Size jr=1; jr<=sym_info->num_total_residues_without_pseudo(); jr++) {
-			std::string atom_j = (pose.residue(jr).name3() == "GLY") ? "CA" : "CB";
 			//If one component, then check for clashes between all residues in primary subunit and subunits with indices > nsub_bb
 			if( sym_dof_names_ == "" ) {
       	if ( sym_info->subunit_index(jr) <= nsub_bblock_ ) continue;
@@ -146,26 +168,77 @@ core::Real ClashCheckFilter::compute( Pose const & pose ) const
 			} else {
 				utility_exit_with_message("Clash check filter currently only works for 1 or 2 component symmetries");
 			}	
-			if(pose.residue(ir).xyz(atom_i).distance_squared(pose.residue(jr).xyz(atom_j)) <= clash_dist_sq) {
-				clashing_pos.push_back(ir);
-				select_clashing_pos.append(ObjexxFCL::string_of(ir) + "+");   
-				break;
+			if (chemical::name_from_aa(pose.aa(ir)) == "GLY") { // Use CAs instead of CBs for GLYs
+				itype = 4;
+			} else {
+				itype = 5;
 			}
+      if (chemical::name_from_aa(pose.aa(jr)) == "GLY") {
+        jtype = 4;
+      } else {
+        jtype = 5;
+      }
+  //    if (pose.xyz(AtomID(itype,ir)).distance_squared(pose.xyz(AtomID(jtype,jr))) <= contact_dist_sq) { // Check if the CBs/CAs are within contact dist
+      for (Size ia=1; ia<=itype; ia++) {
+        for (Size ja=1; ja<=jtype; ja++) {
+          if (pose.xyz(AtomID(ia,ir)).distance_squared(pose.xyz(AtomID(ja,jr))) <= clash_dist_sq) { // Test for clashes
+            if ( (((ia == 1) && (ja == 4)) || ((ia == 4) && (ja == 1))) && (pose.xyz(AtomID(ia,ir)).distance_squared(pose.xyz(AtomID(ja,jr))) >= 6.76) ) { // But don't count bb-bb h-bonds as clashes
+              continue;
+            } else {
+							clash = true;
+							clashing_pos.push_back(ir);
+							if ( w ) { 
+							write_to_pdb( pose.residue(ir).name3(), ir, pose.residue(ir).atom_name(ia) ); 
+							}
+							select_clashing_pos.append( " resi " + ObjexxFCL::string_of(ir) + " and name " + pose.residue(ir).atom_name(ia) + "+" );   
+          	}
+        	}		
+					if ( clash ) break;
+				}
+				if ( clash ) break;
+      }
+//			}
+			if (clash) break;
 		}
 	}
-	TR << select_clashing_pos << std::endl;
+	if ( v ) {
+		select_clashing_pos.erase(select_clashing_pos.end()-2,select_clashing_pos.end());
+		TR << select_clashing_pos << ") and " << protocols::jd2::JobDistributor::get_instance()->current_output_name() << std::endl;
+	}
+	if ( w ) { 
+		write_pymol_string_to_pdb( select_clashing_pos ); 
+	}
   return( clashing_pos.size() );
-
 } // compute
+
+void ClashCheckFilter::write_to_pdb( std::string const residue_name, core::Size const residue, std::string const atom_name ) const
+{
+
+	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
+	std::string filter_name = this->name();
+	std::string user_name = this->get_user_defined_name();
+	std::string unsat_pols_string = filter_name + " " + user_name + ": " + residue_name + ObjexxFCL::string_of(residue) + " " + atom_name ;
+	job->add_string(unsat_pols_string);
+}
+
+void ClashCheckFilter::write_pymol_string_to_pdb( std::string const pymol_selection ) const
+{
+
+	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
+	std::string filter_name = this->name();
+	std::string user_name = this->get_user_defined_name();
+	std::string pymol_string = filter_name + " " + user_name + ": " + pymol_selection + ") and " + protocols::jd2::JobDistributor::get_instance()->current_output_name() ;
+	job->add_string(pymol_string);
+}
 
 // @brief returns true if the set of residues defined by the TaskOperations have a no clashes. False otherwise.
 bool ClashCheckFilter::apply( Pose const & pose ) const
 {
 	// Get the number of clashes from the compute function and filter
-  core::Real const clashes( compute( pose ) );
+  core::Size const clashes( compute( pose, verbose(), write() ) );
 
 	TR<<"# clashing residues: "<< clashes <<". ";
-	if( clashes > 0 ){
+	if( clashes > threshold_ ){
 		TR<<"failing."<<std::endl;
 		return false;
 	}
@@ -189,18 +262,21 @@ ClashCheckFilter::parse_my_tag(
   clash_dist( tag->getOption< core::Real >( "clash_dist", 3.5 ) );
 	sym_dof_names_ = tag->getOption< std::string >( "sym_dof_names", "" );
   nsub_bblock_ = tag->getOption<core::Size>("nsub_bblock", 1);
+	threshold_ = tag->getOption<core::Size>( "cutoff", 0 );
+	verbose_ = tag->getOption< bool >( "verbose", 0 );
+	write_ = tag->getOption< bool >("write2pdb", 0);
 }
 
 core::Real
 ClashCheckFilter::report_sm( core::pose::Pose const & pose ) const
 {
-  return( compute( pose ) );
+  return( compute( pose, false, false ) );
 } 
 
 void
 ClashCheckFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
-  out << "ClashCheckFilter returns " << compute( pose ) << std::endl;
+  out << "ClashCheckFilter returns " << compute( pose, false, false ) << std::endl;
 }
 
 protocols::filters::FilterOP

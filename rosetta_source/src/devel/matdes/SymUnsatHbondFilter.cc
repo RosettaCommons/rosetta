@@ -194,7 +194,7 @@ SymUnsatHbondFilter::compute( core::pose::Pose const & pose, bool const & verb, 
 	}
 	if ( verb ) {
 		select_buried_unsat_polars.erase(select_buried_unsat_polars.end()-2,select_buried_unsat_polars.end());
-		TR << select_buried_unsat_polars << ") and ";
+		TR << select_buried_unsat_polars << ") and " << protocols::jd2::JobDistributor::get_instance()->current_output_name() ;
 		TR << std::endl;
 	}
 	if ( write ) { 
@@ -219,7 +219,7 @@ void SymUnsatHbondFilter::write_pymol_string_to_pdb( std::string const pymol_sel
 	protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
 	std::string filter_name = this->name();
 	std::string user_name = this->get_user_defined_name();
-	std::string pymol_string = filter_name + " " + user_name + ": " + pymol_selection + ") and " ;
+	std::string pymol_string = filter_name + " " + user_name + ": " + pymol_selection + ") and " + protocols::jd2::JobDistributor::get_instance()->current_output_name();
 	job->add_string(pymol_string);
 }
 
