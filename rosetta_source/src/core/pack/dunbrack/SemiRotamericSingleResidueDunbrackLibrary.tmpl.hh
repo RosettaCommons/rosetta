@@ -1939,12 +1939,12 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::read_from_binary( utility::io::i
 			std::cerr << "ERROR: binary file description for " << grandparent::aa() << " contains data for"
 				<< " backbone independent non-rotameric chi scoring,\nbut the instantiated Semirotamer library"
 				<< " was created with backbone dependent non-rotameric chi scoring.\nCheck"
-				<< " semirotameric parameter definitions in RotamerLibrary::initialize_dun08_aa_parameters.";
+				<< " semirotameric parameter definitions in RotamerLibrary::initialize_dun10_aa_parameters.";
 		} else {
 			std::cerr << "ERROR: binary file description for " << grandparent::aa() << " contains data for"
 				<< " backbone dependent non-rotameric chi scoring,\nbut the instantiated Semirotamer library"
 				<< " was created with backbone independent non-rotameric chi scoring.\nCheck"
-				<< " semirotameric parameter definitions in RotamerLibrary::initialize_dun08_aa_parameters.";
+				<< " semirotameric parameter definitions in RotamerLibrary::initialize_dun10_aa_parameters.";
 		}
 		utility_exit();
 	}
@@ -1959,12 +1959,12 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::read_from_binary( utility::io::i
 			std::cerr << "ERROR: binary file description for " << grandparent::aa() << " contains data for"
 				<< " backbone independent non-rotameric chi sampling,\nbut the instantiated Semirotamer library"
 				<< " was created with backbone dependent non-rotameric chi sampling.\nCheck"
-				<< " semirotameric parameter definitions in RotamerLibrary::initialize_dun08_aa_parameters.";
+				<< " semirotameric parameter definitions in RotamerLibrary::initialize_dun10_aa_parameters.";
 		} else {
 			std::cerr << "ERROR: binary file description for " << grandparent::aa() << " contains data for"
 				<< " backbone dependent non-rotameric chi sampling,\nbut the instantiated Semirotamer library"
 				<< " was created with backbone independent non-rotameric chi sampling.\nCheck"
-				<< " semirotameric parameter definitions in RotamerLibrary::initialize_dun08_aa_parameters.";
+				<< " semirotameric parameter definitions in RotamerLibrary::initialize_dun10_aa_parameters.";
 		}
 		utility_exit();
 	}

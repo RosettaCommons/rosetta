@@ -706,7 +706,7 @@ FullChiSampleSet::expand_samples_for_nrchi_wi_nrchi_bin(
 			}
 		}
 	} else {
-		utility_exit_with_message( "Cannot treat chi " + utility::to_string( chi ) + " as non-rotameric; did you forget the -dun08 flag?" );
+		utility_exit_with_message( "Cannot treat chi " + utility::to_string( chi ) + " as non-rotameric; did you forget the -dun10 flag?" );
 	}
 	num_chi_samples_total_ *= nsamps;
 }

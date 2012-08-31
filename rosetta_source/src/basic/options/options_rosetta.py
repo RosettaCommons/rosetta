@@ -1815,7 +1815,6 @@ Options = Option_Group( '',
 			"-corrections::score:p_aa_pp_nogridshift"
 			"-corrections::score:rama_not_squared"
 			"-corrections::score:rama_map scoring/score_functions/rama/Rama.10.2009.yfsong.dat"
-			#"-corrections::score:dun08"
 			"-scoring::hbond_params helix_hb_06_2009"
 			"-corrections::score:hbond_fade 1.9 2.3 2.3 2.6 0.3 0.7 0.0 0.05"
 			"-corrections::score:ch_o_bond_potential scoring/score_functions/carbon_hbond/ch_o_bond_potential_near_min_yf.dat",
@@ -1832,8 +1831,6 @@ Options = Option_Group( '',
 			Option( 'rama_map', 'File', default = 'scoring/score_functions/rama/Rama_smooth_dyn.dat_ss_6.4', desc="Ramachandran file used by rama" ),
 			Option( 'dun10',   'Boolean', desc="Use the 2010 Dunbrack library instead of either the 2008 or the 2002 libraries."  ),
 			Option( 'dun10_dir',   'String', desc="Name of dun10 dir", default="rotamer/ExtendedOpt1-5" ),
-			Option( 'dun08',   'Boolean', desc="Use the 2008 Dunbrack library instead of the 2002 library."  ),
-			Option( 'dun08_dir',   'String', desc="Name of dun08 dir", default="rotamer/dun08" ),
 			Option( 'dun02_file',  'String', desc="Name of dun02 input file", default="rotamer/bbdep02.May.sortlib" ),
 			Option( 'ch_o_bond_potential',   'String', desc="Name of ch_o_bond potential file (search in the local directory first, then look in the database)" , default="scoring/score_functions/carbon_hbond/ch_o_bond_potential.dat" ),
 			Option( 'hack_elec_co_only',   'Boolean', desc="Using only CO-CO interactions in hack_elec_bb_bb", default = 'false' ),

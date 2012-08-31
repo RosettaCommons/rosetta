@@ -562,12 +562,6 @@ init_score_function_corrections(){
 			option[ corrections::score::rama_map ].value("scoring/score_functions/rama/Rama09_noEH_kernel25_it08.dat");
 		}
 		//rotamer library
-		//if ( ! option[ corrections::score::dun08 ].user() ) {
-		//	option[corrections::score::dun08].value( true );
-		//}
-		if ( ! option[ corrections::score::dun08_dir ].user() ) {
-			option[corrections::score::dun08_dir].value( "rotamer/dun08_12.2009_it10" );
-		}
 		if ( ! option[ corrections::score::dun02_file ].user() ) {
 			option[corrections::score::dun02_file].value( "rotamer/bbdep02.May.sortlib-correct.12.2010" );
 		}

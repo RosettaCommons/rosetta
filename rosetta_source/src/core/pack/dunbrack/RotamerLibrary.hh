@@ -77,7 +77,7 @@ rotamer_from_chi(
 
 /// @brief Do not bother calling this function if you're interested in staying
 /// up to date with changes in the rotamer library.  Call rotamer_from_chi instead.
-/// It will eventually call this function iff dun08 is not set to true.
+/// It will eventually call this function iff dun10 is not set to true.
 void
 rotamer_from_chi_02(
 	ChiVector const & chi,
@@ -95,7 +95,7 @@ rotamer_from_chi_02(
 );
 
 /// @brief Find the difference in angles between two chi values using hard-coded
-/// symmetry information for the symmetric amino acids.  Disappears for 2008 library.
+/// symmetry information for the symmetric amino acids.  Disappears for 2010 library.
 Real
 subtract_chi_angles(
 	Real chi1,
@@ -242,7 +242,7 @@ public:
 	void
 	write_to_file( std::string filename ) const;
 
-	/// @brief Public interface to read in dunbrack libraries.  dun08 option checks
+	/// @brief Public interface to read in dunbrack libraries.  dun10 option checks
 	/// are handled inside.
 	void create_fa_dunbrack_libraries();
 
@@ -258,19 +258,16 @@ private:
 	bool decide_read_from_binary() const;
 
 	bool decide_read_from_binary_02() const;
-	bool decide_read_from_binary_08() const;
 	bool decide_read_from_binary_10() const;
 
 	bool binary_is_up_to_date( utility::io::izstream & binlib ) const;
 
 	bool binary_is_up_to_date_02( utility::io::izstream & binlib ) const;
-	bool binary_is_up_to_date_08( utility::io::izstream & binlib ) const;
 	bool binary_is_up_to_date_10( utility::io::izstream & binlib ) const;
 
 	bool decide_write_binary() const;
 
 	bool decide_write_binary_02() const;
-	bool decide_write_binary_08() const;
 	bool decide_write_binary_10() const;
 
 	std::string get_library_name_02() const;
@@ -278,11 +275,9 @@ private:
 	std::string get_binary_name() const;
 
 	std::string get_binary_name_02() const;
-	std::string get_binary_name_08() const;
 	std::string get_binary_name_10() const;
 
 	Size current_binary_format_version_id_02() const;
-	Size current_binary_format_version_id_08() const;
 	Size current_binary_format_version_id_10() const;
 
 	void create_fa_dunbrack_libraries_from_ASCII();
@@ -292,8 +287,6 @@ private:
 	void create_fa_dunbrack_libraries_02_from_ASCII();
 	void create_fa_dunbrack_libraries_02_from_binary();
 
-	void create_fa_dunbrack_libraries_08_from_ASCII();
-	void create_fa_dunbrack_libraries_08_from_binary();
 
 	void create_fa_dunbrack_libraries_10_from_ASCII();
 	void create_fa_dunbrack_libraries_10_from_binary();
@@ -301,7 +294,6 @@ private:
 	void write_binary_fa_dunbrack_libraries() const;
 
 	void write_binary_fa_dunbrack_libraries_02() const;
-	void write_binary_fa_dunbrack_libraries_08() const;
 	void write_binary_fa_dunbrack_libraries_10() const;
 
 	std::string random_tempname( std::string const & prefix ) const;
@@ -386,7 +378,7 @@ private:
 public:
 	static
 	void
-	initialize_dun08_aa_parameters(
+	initialize_dun10_aa_parameters(
 		utility::vector1< chemical::AA > & rotameric_amino_acids,
 		utility::vector1< Size > & rotameric_n_chi,
 		utility::vector1< chemical::AA > & sraa,

@@ -515,9 +515,9 @@ RotamerLibrary::get_library_by_aa( chemical::AA const & aa ) const
 }
 
 
-/// @details Generic decision tree for both 02 and 08 libraries.  Requires
-/// that low-level subroutines dispatch to 02 and 08 versions based on
-/// the dun08 flag.
+/// @details Generic decision tree for both 02 and 2010 libraries.  Requires
+/// that low-level subroutines dispatch to 02 and 2010 versions based on
+/// the dun10 flag.
 void
 RotamerLibrary::create_fa_dunbrack_libraries()
 {
@@ -550,8 +550,6 @@ RotamerLibrary::decide_read_from_binary() const
 	/// Look for specific objections for the 02 or 08 libraries (if any exist!)
 	if ( option[ corrections::score::dun10 ] ) {
 		if ( ! decide_read_from_binary_10() ) return false;
-	} else if ( option[ corrections::score::dun08 ] ) {
-		if ( ! decide_read_from_binary_08() ) return false;
 	} else {
 		if ( ! decide_read_from_binary_02() ) return false;
 	}
@@ -569,15 +567,6 @@ RotamerLibrary::decide_read_from_binary_02() const
 	return true;
 }
 
-/// @details Put specific objections to reading the 08 library from binary here.
-/// This function alone will not answer whether the binary file should be read;
-/// rather, it is called by the more generic "decide_read_from_binary" function.
-bool
-RotamerLibrary::decide_read_from_binary_08() const
-{
-	/// TO DO: check time stamp of ascii files vs time stamp of binary file
-	return true;
-}
 
 /// @details Put specific objections to reading the 10 library from binary here.
 /// This function alone will not answer whether the binary file should be read;
@@ -599,8 +588,6 @@ RotamerLibrary::binary_is_up_to_date( utility::io::izstream & binlib ) const
 
 	if ( option[ corrections::score::dun10 ] ) {
 		return binary_is_up_to_date_10( binlib );
-	} else if ( option[ corrections::score::dun08 ] ) {
-		return binary_is_up_to_date_08( binlib );
 	} else {
 		return binary_is_up_to_date_02( binlib );
 	}
@@ -619,89 +606,13 @@ RotamerLibrary::binary_is_up_to_date_02( utility::io::izstream & binlib ) const
 /// 2. All the hard coded constants for the rotameric and semirotameric libraries
 ///    are the same from the previous hard coded values.
 ///
-/// DANGER DANGER DANGER
+/// DANGER DANGER DANGER - True for dun10 as well? -JAB
 /// When we reopen the binary file in create_fa_dunbrack_libraries_08_from_binary
 /// we will want to skip past all this data; the code in that section assumes that
 /// it will read 8 arrays: 2 representing the rotameric amino acids, and 6
 /// representing the semirotameric amino acids.  The arithmetic it performs depends
 /// on this basic structure not changing, therefore, if you change this structure,
 /// you must also change the seekg arithmetic in the create...08_from_binary function.
-bool
-RotamerLibrary::binary_is_up_to_date_08( utility::io::izstream & binlib ) const
-{
-	/// 1.
-	boost::int32_t version( 0 );
-	binlib.read( (char*) & version, sizeof( boost::int32_t ));
-	if ( static_cast< Size > (version) != current_binary_format_version_id_08() ) return false;
-
-	boost::int32_t nrotameric( 0 );
-	binlib.read( (char*) & nrotameric, sizeof( boost::int32_t ) );
-	boost::int32_t nsemirotameric( 0 );
-	binlib.read( (char*) & nsemirotameric, sizeof( boost::int32_t ) );
-
-	utility::vector1< chemical::AA > rotameric_amino_acids;
-	utility::vector1< Size > rotameric_n_chi;
-
-	utility::vector1< chemical::AA > sraa;
-	utility::vector1< Size > srnchi;
-	utility::vector1< bool > scind;
-	utility::vector1< bool > sampind;
-	utility::vector1< bool > sym;
-	utility::vector1< Real > astr;
-
-	initialize_dun08_aa_parameters(
-		rotameric_amino_acids, rotameric_n_chi,
-		sraa, srnchi, scind, sampind, sym, astr );
-
-	/// 2.
-	if ( static_cast< Size > (nrotameric) != rotameric_amino_acids.size() ) return false;
-	if ( static_cast< Size > (nsemirotameric) != sraa.size() ) return false;
-
-	boost::int32_t * rotaa_bin   = new boost::int32_t[ nrotameric ];
-	boost::int32_t * rot_nchi_bin= new boost::int32_t[ nrotameric ];
-
-	boost::int32_t * sraa_bin    = new boost::int32_t[ nsemirotameric ];
-	boost::int32_t * srnchi_bin  = new boost::int32_t[ nsemirotameric ];
-	boost::int32_t * scind_bin   = new boost::int32_t[ nsemirotameric ];
-	boost::int32_t * sampind_bin = new boost::int32_t[ nsemirotameric ];
-	boost::int32_t * sym_bin     = new boost::int32_t[ nsemirotameric ];
-	Real    * astr_bin   = new Real[    nsemirotameric ];
-
-	binlib.read( (char*) rotaa_bin, nrotameric * sizeof( boost::int32_t  ));
-	binlib.read( (char*) rot_nchi_bin, nrotameric * sizeof( boost::int32_t  ));
-
-	binlib.read( (char*) sraa_bin, nsemirotameric * sizeof( boost::int32_t  ));
-	binlib.read( (char*) srnchi_bin, nsemirotameric * sizeof( boost::int32_t  ));
-	binlib.read( (char*) scind_bin, nsemirotameric * sizeof( boost::int32_t  ));
-	binlib.read( (char*) sampind_bin, nsemirotameric * sizeof( boost::int32_t  ));
-	binlib.read( (char*) sym_bin, nsemirotameric * sizeof( boost::int32_t  ));
-	binlib.read( (char*) astr_bin, nsemirotameric * sizeof( Real  ));
-
-	bool good( true );
-	for ( Size ii = 1; ii <= rotameric_amino_acids.size(); ++ii ) {
-		if ( rotaa_bin[ ii - 1 ] != static_cast< boost::int32_t > ( rotameric_amino_acids[ ii ] ) ) good = false;
-		if ( rot_nchi_bin[ ii - 1 ] != static_cast< boost::int32_t > ( rotameric_n_chi[ ii ] ) ) good = false;
-	}
-	for ( Size ii = 1; ii <= sraa.size(); ++ii ) {
-		if ( sraa_bin[ ii - 1 ] != static_cast< boost::int32_t > ( sraa[ ii ] ) ) good = false;
-		if ( srnchi_bin[ ii - 1 ] != static_cast< boost::int32_t > ( srnchi[ ii ] ) ) good = false;
-		if ( scind_bin[ ii - 1 ] != static_cast< boost::int32_t > ( scind[ ii ] ) ) good = false;
-		if ( sampind_bin[ ii - 1 ] != static_cast< boost::int32_t > ( sampind[ ii ] ) ) good = false;
-		if ( sym_bin[ ii - 1 ] != static_cast< boost::int32_t > ( sym[ ii ] ) ) good = false;
-		if ( astr_bin[ ii - 1 ] !=  astr[ ii ] ) good = false;
-	}
-
-	delete [] rotaa_bin;
-	delete [] rot_nchi_bin;
-	delete [] sraa_bin;
-	delete [] srnchi_bin;
-	delete [] scind_bin;
-	delete [] sampind_bin;
-	delete [] sym_bin;
-	delete [] astr_bin;
-
-	return good;
-}
 
 bool
 RotamerLibrary::binary_is_up_to_date_10( utility::io::izstream & binlib ) const
@@ -726,7 +637,7 @@ RotamerLibrary::binary_is_up_to_date_10( utility::io::izstream & binlib ) const
 	utility::vector1< bool > sym;
 	utility::vector1< Real > astr;
 
-	initialize_dun08_aa_parameters(
+	initialize_dun10_aa_parameters(
 		rotameric_amino_acids, rotameric_n_chi,
 		sraa, srnchi, scind, sampind, sym, astr );
 
@@ -819,8 +730,6 @@ RotamerLibrary::decide_write_binary() const
 	/// check if there are any objections to writing the library
 	if ( option[ corrections::score::dun10 ] ) {
 		if ( ! decide_write_binary_10() ) return false;
-	} else if ( option[ corrections::score::dun08 ] ) {
-		if ( ! decide_write_binary_08() ) return false;
 	} else {
 		if ( ! decide_write_binary_02() ) return false;
 	}
@@ -837,12 +746,6 @@ RotamerLibrary::decide_write_binary_02() const
 	return true;
 }
 
-/// @details Add specific objections to the writing of the 08 library here.
-bool
-RotamerLibrary::decide_write_binary_08() const
-{
-	return true;
-}
 
 /// @details Add specific objections to the writing of the 10 library here.
 bool
@@ -868,8 +771,6 @@ RotamerLibrary::get_binary_name() const
 
 	if ( option[ corrections::score::dun10 ] ) {
 		return get_binary_name_10();
-	} else if ( option[ corrections::score::dun08 ] ) {
-		return get_binary_name_08();
 	} else {
 		return get_binary_name_02();
 	}
@@ -882,14 +783,6 @@ RotamerLibrary::get_binary_name_02() const
 	return get_library_name_02() + ".Dunbrack02.lib.bin";
 }
 
-std::string
-RotamerLibrary::get_binary_name_08() const
-{
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
-	return basic::database::full_name( option[ corrections::score::dun08_dir ] + "/" + "Dunbrack08.lib.bin" );
-}
 
 std::string
 RotamerLibrary::get_binary_name_10() const
@@ -940,24 +833,6 @@ RotamerLibrary::current_binary_format_version_id_02() const
 	return 22;
 }
 
-/// @details Version number for binary format.  See comments for 02 version.
-///
-/// When changing the binary format, document the date of the change in the comment
-/// section below and increment the version number in the function.  Do not delete
-/// old comments from the comment block below.
-///
-/// Version 1: start vesion number.  8/9/08. Andrew Leaver-Fay
-/// Version 2: Limit zero-probability rotamers to the resolution of the library (1e-4).
-///            Also replacing the Jun8 library with the cross-validated Feb24 '09 library.
-///            6/16/2009.  Andrew Leaver-Fay
-/// Version 3: Rotameric residues write out bicubic spline parameters for -log(p(rot|phi,psi)).  3/28/2012.  Andrew Leaver-Fay
-/// Version 4: Tricubic interpolation data for semi-rotameric residues.  3/29/2012.  Andrew Leaver-Fay
-/// Version 5: Generate and write out bicubic spline data for the rotameric portion of the semi-rotameric residues .  3/29/2012.  Andrew Leaver-Fay
-Size
-RotamerLibrary::current_binary_format_version_id_08() const
-{
-	return 5;
-}
 
 /// @details Version number for binary format.  See comments for 02 version.
 ///
@@ -983,8 +858,6 @@ RotamerLibrary::create_fa_dunbrack_libraries_from_ASCII()
 
 	if ( option[ corrections::score::dun10 ] ) {
 		return create_fa_dunbrack_libraries_10_from_ASCII();
-	} else if ( option[ corrections::score::dun08 ] ) {
-		return create_fa_dunbrack_libraries_08_from_ASCII();
 	} else {
 		return create_fa_dunbrack_libraries_02_from_ASCII();
 	}
@@ -998,8 +871,6 @@ RotamerLibrary::create_fa_dunbrack_libraries_from_binary()
 
 	if ( option[ corrections::score::dun10 ] ) {
 		return create_fa_dunbrack_libraries_10_from_binary();
-	} else if ( option[ corrections::score::dun08 ] ) {
-		return create_fa_dunbrack_libraries_08_from_binary();
 	} else {
 		return create_fa_dunbrack_libraries_02_from_binary();
 	}
@@ -1100,234 +971,6 @@ RotamerLibrary::create_fa_dunbrack_libraries_02_from_binary()
 
 }
 
-void
-RotamerLibrary::create_fa_dunbrack_libraries_08_from_ASCII()
-{
-	using namespace chemical;
-	using namespace utility;
-
-	TR << "Reading Dunbrack Libraries" << std::endl;
-
-	clock_t starttime = clock();
-
-	/// Hard code some stuff.
-	/// Rotameric library file names are of the form
-	/// <3lc>.Jun9.bbdep.regular.lib
-	/// Semi-Rotameric library files names are of the form
-	/// 1. <3lc>.Jun9.bbdep.regular.lib
-	/// 2. <3lc>.Jun9.bbdep.contMin.lib
-	/// 3. <3lc>.Jun9.bbind.chi<#>.Definitions.lib
-	/// 4. <3lc>.Jun9.bbind.chi<#>.Probabities.lib
-
-	//std::string const db_subdir = "dun08/";
-	std::string const regular_lib_suffix = ".Feb24.Optim.bbdep.regular.lib";
-	std::string const bbdep_contmin = ".Feb24.Optim.bbdep.contMinim.lib";
-	std::string const bbind_midfix  = ".Feb24.Optim.bbind.chi";
-	std::string const bbind_defs    = ".Definitions.lib";
-	//std::string const bbind_probs   = ".Probabilities.lib";
-
-	////////////////////////////////////////////
-	//// DATA FOR THE ROTAMERIC AMINO ACIDS
-	////////////////////////////////////////////
-	utility::vector1< chemical::AA > rotameric_amino_acids;
-	utility::vector1< Size > rotameric_n_chi;
-	utility::vector1< Size > memory_use_rotameric;
-
-	////////////////////////////////////////////
-	//// DATA FOR THE SEMI-ROTAMERIC AMINO ACIDS
-	////////////////////////////////////////////
-
-	/// AA code for entry i
-	utility::vector1< chemical::AA > sraa;
-	/// Number of rotameric chi for entry i; the index of the non-rotameric chi is +1 of the value stored.
-	utility::vector1< Size > srnchi;
-	/// Decision: SCore the nonrotameric chi in a backbone INDependent manner?
-	utility::vector1< bool > scind;
-	/// Decision: SAMPle the nonrotameric chi in a backbone INDependent manner?
-	utility::vector1< bool > sampind;
-	/// Is there symmetry about the rotameric chi?  If so, periodicity is 180 degrees, else, 360.
-	/// Furthermore, if it's symmetric, then the bbdep sampling is at 5 degree intervals and
-	/// the bbind is at 0.5 degree intervals; otherwise, bbdep is at 10 degrees, and bbind is at 1.
-	utility::vector1< bool > sym;
-	/// At what starting angle does the chi data come from?
-	utility::vector1< Real > astr;
-
-	utility::vector1< Size > memory_use_semirotameric;
-
-	/// Initialize the data.
-
-	initialize_dun08_aa_parameters(
-		rotameric_amino_acids, rotameric_n_chi,
-		sraa, srnchi, scind, sampind, sym, astr
-	);
-
-	for ( Size ii = 1; ii <= rotameric_amino_acids.size(); ++ii ) {
-		std::string next_aa_in_library;
-
-		chemical::AA ii_aa( rotameric_amino_acids[ ii ] );
-		std::string  ii_lc_3lc( chemical::name_from_aa( ii_aa ) );
-		std::transform(ii_lc_3lc.begin(), ii_lc_3lc.end(), ii_lc_3lc.begin(), tolower);
-		std::string library_name = basic::options::option[basic::options::OptionKeys::corrections::score::dun08_dir]() + "/" + ii_lc_3lc + regular_lib_suffix ;
-		utility::io::izstream lib( library_name.c_str() );
-		if ( !lib.good() ) {
-			lib.close();
-			library_name = basic::database::full_name( basic::options::option[basic::options::OptionKeys::corrections::score::dun08_dir]() + "/" + ii_lc_3lc + regular_lib_suffix );
-			lib.open( library_name );
-		}
-		if ( !lib.good() ) {
-			utility_exit_with_message( "Unable to open database file for Dun10 rotamer library: " + library_name );
-		}
-		TR << "Reading " << library_name << std::endl;
-
-		SingleResidueDunbrackLibraryOP newlib = create_rotameric_dunlib(
-			ii_aa, rotameric_n_chi[ ii ], lib, false, next_aa_in_library, false );
-		if ( next_aa_in_library != "" ) {
-			std::cerr << "ERROR: Inappropriate read from dun08 input while reading " << ii_aa
-				<< ": \"" << next_aa_in_library << "\"" << std::endl;
-			utility_exit();
-		}
-
-		memory_use_rotameric.push_back( newlib->memory_usage_in_bytes() );
-
-		libraries_[ ii_aa ] = newlib();
-		aa_libraries_[ ii_aa ] = newlib();
-		libraries_ops_.push_back( newlib );
-	}
-
-	for ( Size ii = 1; ii <= sraa.size(); ++ii ) {
-		chemical::AA ii_aa( sraa[ ii ] );
-		std::string  ii_lc_3lc( chemical::name_from_aa( ii_aa ) );
-		std::transform(ii_lc_3lc.begin(), ii_lc_3lc.end(), ii_lc_3lc.begin(), tolower);
-		Size const nrchi = srnchi[ ii ] + 1;
-
-		std::string reg_lib_name = basic::options::option[basic::options::OptionKeys::corrections::score::dun08_dir]() + "/" + ii_lc_3lc + regular_lib_suffix ;
-		std::string conmin_name  = basic::options::option[basic::options::OptionKeys::corrections::score::dun08_dir]() + "/" + ii_lc_3lc + bbdep_contmin ;
-		std::string rotdef_name  = basic::options::option[basic::options::OptionKeys::corrections::score::dun08_dir]() + "/" + ii_lc_3lc + bbind_midfix + to_string(nrchi) + bbind_defs ;
-		//std::string probs_name   = basic::options::option[basic::options::OptionKeys::corrections::score::dun08_dir]() + "/" + ii_lc_3lc + bbind_midfix + to_string(nrchi) + bbind_probs ;
-
-		utility::io::izstream lib(     reg_lib_name.c_str() );
-		utility::io::izstream contmin( conmin_name.c_str()  );
-		utility::io::izstream defs(    rotdef_name.c_str()  );
-		//utility::io::izstream probs(   probs_name.c_str()   );
-
-		if ( !lib.good() ) {
-			defs.close();
-			lib.close();
-			contmin.close();
-			//probs.close();
-
-			reg_lib_name = basic::database::full_name( basic::options::option[basic::options::OptionKeys::corrections::score::dun08_dir]() + "/" + ii_lc_3lc + regular_lib_suffix );
-			conmin_name  = basic::database::full_name( basic::options::option[basic::options::OptionKeys::corrections::score::dun08_dir]() + "/" + ii_lc_3lc + bbdep_contmin );
-			rotdef_name  = basic::database::full_name( basic::options::option[basic::options::OptionKeys::corrections::score::dun08_dir]() + "/" + ii_lc_3lc + bbind_midfix + to_string(nrchi) + bbind_defs );
-			//probs_name   = basic::database::full_name( basic::options::option[basic::options::OptionKeys::corrections::score::dun08_dir]() + "/" + ii_lc_3lc + bbind_midfix + to_string(nrchi) + bbind_probs );
-
-			lib.open(reg_lib_name);
-			contmin.open(conmin_name);
-			defs.open(rotdef_name);
-			//probs.open(probs_name);
-		}
-		if ( !lib.good()  ) {
-			utility_exit_with_message( "Unable to open database file for Dun10 rotamer library: " + reg_lib_name );
-		}
-		if ( !contmin.good()  ) {
-			utility_exit_with_message( "Unable to open database file for Dun10 rotamer library: " + conmin_name );
-		}
-		if ( !defs.good() ) {
-			utility_exit_with_message( "Unable to open database file for Dun10 rotamer library: " + rotdef_name );
-		}
-
-		TR << "Reading " << reg_lib_name << std::endl;
-		TR << "Reading " << conmin_name << std::endl;
-		TR << "Reading " << rotdef_name << std::endl;
-		//TR << "Reading " << probs_name << std::endl;
-
-		SingleResidueDunbrackLibraryOP newlib = create_semi_rotameric_dunlib(
-			ii_aa, srnchi[ ii ],
-			scind[ ii ], sampind[ ii ],
-			sym[ ii ], astr[ ii ],
-			defs, lib, contmin );
-
-		memory_use_semirotameric.push_back( newlib->memory_usage_in_bytes() );
-
-		libraries_[ ii_aa ] = newlib();
-		aa_libraries_[ ii_aa ] = newlib();
-		libraries_ops_.push_back( newlib );
-	}
-	TR << "Finished reading Dunbrack Libraries" << std::endl;
-
-	clock_t stoptime = clock();
-	TR << "Dunbrack 2008 library took " << ((double)stoptime-starttime)/CLOCKS_PER_SEC << " seconds to load from ASCII" << std::endl;
-
-
-	TR << "Memory usage: " << std::endl;
-	Size total( 0 );
-	for ( Size ii = 1; ii <= memory_use_rotameric.size(); ++ii ) {
-		total += memory_use_rotameric[ ii ];
-		TR << chemical::name_from_aa(rotameric_amino_acids[ ii ]) << " with " << memory_use_rotameric[ ii ] << " bytes" << std::endl;
-	}
-
-	for ( Size ii = 1; ii <= memory_use_semirotameric.size(); ++ii ) {
-		total += memory_use_semirotameric[ ii ];
-		TR << chemical::name_from_aa(sraa[ ii ]) << " with " << memory_use_semirotameric[ ii ] << " bytes" << std::endl;
-	}
-	TR << "Total memory on Dunbrack Libraries: " << total << " bytes." << std::endl;
-
-}
-
-
-void
-RotamerLibrary::create_fa_dunbrack_libraries_08_from_binary()
-{
-	clock_t starttime = clock();
-
-	std::string binary_filename = get_binary_name_08();
-	utility::io::izstream binlib( binary_filename.c_str(), std::ios::in | std::ios::binary );
-
-	if ( ! binlib ) {
-		utility_exit_with_message( "Could not open binary Dunbrack08 file from database -- how did this happen?");
-	}
-
-	/// READ PREABMLE
-	/// Even if binary file should change its structure in the future, version number should always be
-	/// the first piece of data in the file.
-	boost::int32_t version( 0 );
-	binlib.read( (char*) & version, sizeof( boost::int32_t ));
-
-	/// Version 1: write out hard coded parameters for 08 library.  Verify when reading in
-	/// the binary file that the parameters have not changed.
-	/// DANGER DANGER DANGER
-	/// If you change the binary format and adjust the preamble to the binary file,
-	/// change the arithmetic in this function so that the correct number of bytes
-	/// are jumped past.
-
-	boost::int32_t n_rotameric_aas( 0 );
-	binlib.read( (char*) & n_rotameric_aas, sizeof( boost::int32_t ) );
-
-	boost::int32_t n_semirotameric_aas( 0 );
-	binlib.read( (char*) & n_semirotameric_aas, sizeof( boost::int32_t ) );
-
-	Size const n_rotameric_arrays_read_of_int32s = 2;
-	Size const n_semirot_arrays_read_of_int32s = 5;
-	Size const n_semirot_arrays_read_of_Reals = 1;
-	Size const bytes_to_skip =
-		( n_rotameric_arrays_read_of_int32s * n_rotameric_aas +
-		n_semirot_arrays_read_of_int32s * n_semirotameric_aas ) * sizeof( boost::int32_t ) +
-		n_semirot_arrays_read_of_Reals * n_semirotameric_aas * sizeof( Real );
-
-	//binlib.seekg( bytes_to_skip, std::ios::cur ); //seekg not available for izstream...
-
-	char * temp_buffer = new char[ bytes_to_skip ];
-	binlib.read( temp_buffer, bytes_to_skip );
-	delete [] temp_buffer;
-	/// END PREABMLE
-
-
-	read_from_binary( binlib );
-
-	clock_t stoptime = clock();
-	TR << "Dunbrack 2008 library took " << ((double)stoptime-starttime)/CLOCKS_PER_SEC << " seconds to load from binary" << std::endl;
-
-}
 
 void
 RotamerLibrary::create_fa_dunbrack_libraries_10_from_ASCII()
@@ -1348,7 +991,7 @@ RotamerLibrary::create_fa_dunbrack_libraries_10_from_ASCII()
 	/// 3. <3lc>.Jun9.bbind.chi<#>.Definitions.lib
 	/// 4. <3lc>.Jun9.bbind.chi<#>.Probabities.lib
 
-	//std::string const db_subdir = "dun08/";
+	//std::string const db_subdir = "dun10/";
 	std::string const regular_lib_suffix = ".bbdep.rotamers.lib";
 	std::string const bbdep_contmin = ".bbdep.densities.lib";
 	std::string const bbind_midfix  = ".bbind.chi";
@@ -1386,10 +1029,10 @@ RotamerLibrary::create_fa_dunbrack_libraries_10_from_ASCII()
 
 	/// Initialize the data.
 
-	initialize_dun08_aa_parameters(
+	initialize_dun10_aa_parameters(
 		rotameric_amino_acids, rotameric_n_chi,
 		sraa, srnchi, scind, sampind, sym, astr
-	); // use the same parameters as dun08
+	); // use the same parameters as dun08 used to.
 
 	for ( Size ii = 1; ii <= rotameric_amino_acids.size(); ++ii ) {
 		std::string next_aa_in_library;
@@ -1449,7 +1092,7 @@ RotamerLibrary::create_fa_dunbrack_libraries_10_from_ASCII()
 			reg_lib_name = basic::database::full_name( basic::options::option[basic::options::OptionKeys::corrections::score::dun10_dir]() + "/" + ii_lc_3lc + regular_lib_suffix );
 			conmin_name  = basic::database::full_name( basic::options::option[basic::options::OptionKeys::corrections::score::dun10_dir]() + "/" + ii_lc_3lc + bbdep_contmin );
 			rotdef_name  = basic::database::full_name( basic::options::option[basic::options::OptionKeys::corrections::score::dun10_dir]() + "/" + ii_lc_3lc + bbind_midfix + to_string(nrchi) + bbind_defs );
-			//probs_name   = basic::database::full_name( basic::options::option[basic::options::OptionKeys::corrections::score::dun08_dir]() + "/" + ii_lc_3lc + bbind_midfix + to_string(nrchi) + bbind_probs );
+			//probs_name   = basic::database::full_name( basic::options::option[basic::options::OptionKeys::corrections::score::dun10_dir]() + "/" + ii_lc_3lc + bbind_midfix + to_string(nrchi) + bbind_probs );
 
 			lib.open(reg_lib_name);
 			contmin.open(conmin_name);
@@ -1566,8 +1209,6 @@ RotamerLibrary::write_binary_fa_dunbrack_libraries() const
 
 	if ( option[ corrections::score::dun10 ] ) {
 		return write_binary_fa_dunbrack_libraries_10();
-	} else if ( option[ corrections::score::dun08 ] ) {
-		return write_binary_fa_dunbrack_libraries_08();
 	} else {
 		return write_binary_fa_dunbrack_libraries_02();
 	}
@@ -1603,99 +1244,6 @@ RotamerLibrary::write_binary_fa_dunbrack_libraries_02() const
 
 }
 
-void
-RotamerLibrary::write_binary_fa_dunbrack_libraries_08() const
-{
-	std::string binary_filename = get_binary_name_08();
-	std::string tempfilename = random_tempname( "dun08_binary" );
-
-	TR << "Opening file " << tempfilename << " for output." << std::endl;
-
-	utility::io::ozstream binlib( tempfilename.c_str(), std::ios::out | std::ios::binary );
-	if ( binlib ) {
-
-		/// WRITE PREABMLE
-		/// Even if binary file should change its structure in the future, version number should always be
-		/// the first piece of data in the file.
-		boost::int32_t version( current_binary_format_version_id_08() );
-		binlib.write( (char*) & version, sizeof( boost::int32_t ));
-
-		utility::vector1< chemical::AA > rotameric_amino_acids;
-		utility::vector1< Size > rotameric_n_chi;
-
-		utility::vector1< chemical::AA > sraa;
-		utility::vector1< Size > srnchi;
-		utility::vector1< bool > scind;
-		utility::vector1< bool > sampind;
-		utility::vector1< bool > sym;
-		utility::vector1< Real > astr;
-
-		initialize_dun08_aa_parameters(
-			rotameric_amino_acids, rotameric_n_chi,
-			sraa, srnchi, scind, sampind, sym, astr );
-
-		boost::int32_t nrotameric( static_cast< boost::int32_t > (rotameric_amino_acids.size() ));
-		boost::int32_t nsemirotameric( static_cast< boost::int32_t > (sraa.size()) );
-
-		binlib.write( (char*) & nrotameric, sizeof( boost::int32_t ) );
-		binlib.write( (char*) & nsemirotameric, sizeof( boost::int32_t ) );
-
-		/// 2.
-		boost::int32_t * rotaa_bin   = new boost::int32_t[ nrotameric ];
-		boost::int32_t * rot_nchi_bin= new boost::int32_t[ nrotameric ];
-
-		boost::int32_t * sraa_bin    = new boost::int32_t[ nsemirotameric ];
-		boost::int32_t * srnchi_bin  = new boost::int32_t[ nsemirotameric ];
-		boost::int32_t * scind_bin   = new boost::int32_t[ nsemirotameric ];
-		boost::int32_t * sampind_bin = new boost::int32_t[ nsemirotameric ];
-		boost::int32_t * sym_bin     = new boost::int32_t[ nsemirotameric ];
-		Real    * astr_bin    = new Real[    nsemirotameric ];
-
-		for ( Size ii = 1; ii <= rotameric_amino_acids.size(); ++ii ) {
-			rotaa_bin[ ii - 1 ] = static_cast< boost::int32_t > ( rotameric_amino_acids[ ii ] );
-			rot_nchi_bin[ ii - 1 ] = static_cast< boost::int32_t > ( rotameric_n_chi[ ii ] );
-		}
-		for ( Size ii = 1; ii <= sraa.size(); ++ii ) {
-			sraa_bin[ ii - 1 ]    = static_cast< boost::int32_t > ( sraa[ ii ] );
-			srnchi_bin[ ii - 1 ]  = static_cast< boost::int32_t > ( srnchi[ ii ] );
-			scind_bin[ ii - 1 ]   = static_cast< boost::int32_t > ( scind[ ii ] );
-			sampind_bin[ ii - 1 ] = static_cast< boost::int32_t > ( sampind[ ii ] );
-			sym_bin[ ii - 1 ]     = static_cast< boost::int32_t > ( sym[ ii ] );
-			astr_bin[ ii - 1 ]  =  astr[ ii ];
-		}
-
-
-		binlib.write( (char*) rotaa_bin, nrotameric * sizeof( boost::int32_t  ));
-		binlib.write( (char*) rot_nchi_bin, nrotameric * sizeof( boost::int32_t  ));
-
-		binlib.write( (char*) sraa_bin, nsemirotameric * sizeof( boost::int32_t  ));
-		binlib.write( (char*) srnchi_bin, nsemirotameric * sizeof( boost::int32_t  ));
-		binlib.write( (char*) scind_bin, nsemirotameric * sizeof( boost::int32_t  ));
-		binlib.write( (char*) sampind_bin, nsemirotameric * sizeof( boost::int32_t  ));
-		binlib.write( (char*) sym_bin, nsemirotameric * sizeof( boost::int32_t  ));
-		binlib.write( (char*) astr_bin, nsemirotameric * sizeof( Real  ));
-
-		delete [] rotaa_bin;
-		delete [] rot_nchi_bin;
-		delete [] sraa_bin;
-		delete [] srnchi_bin;
-		delete [] scind_bin;
-		delete [] sampind_bin;
-		delete [] sym_bin;
-		delete [] astr_bin;
-
-		/// END PREABMLE
-
-		write_to_binary( binlib );
-		binlib.close();
-
-		// Move the temporary file to its permanent location
-		//std::cerr << "Moving temporary file to " << binary_filename.c_str() << std::endl;
-		rename( tempfilename.c_str(), binary_filename.c_str() );
-	} else {
-		TR << "Unable to open temporary file in rosetta database for writing the binary version of the Dunbrack08 library." << std::endl;
-	}
-}
 
 void
 RotamerLibrary::write_binary_fa_dunbrack_libraries_10() const
@@ -1724,7 +1272,7 @@ RotamerLibrary::write_binary_fa_dunbrack_libraries_10() const
 		utility::vector1< bool > sym;
 		utility::vector1< Real > astr;
 
-		initialize_dun08_aa_parameters(
+		initialize_dun10_aa_parameters(
 			rotameric_amino_acids, rotameric_n_chi,
 			sraa, srnchi, scind, sampind, sym, astr );
 
@@ -2016,8 +1564,8 @@ RotamerLibrary::create_srdl(
 
 	if ( ! initialized ) {
 		/// put a mutex here...
-		if ( option[ corrections::score::dun10 ] || option[ corrections::score::dun08 ] ) {
-			initialize_dun08_aa_parameters(
+		if ( option[ corrections::score::dun10 ] ) {
+			initialize_dun10_aa_parameters(
 				rotameric_amino_acids, rotameric_n_chi,
 				sraa, srnchi, scind, sampind, sym, astr );
 		} else {
@@ -2030,7 +1578,7 @@ RotamerLibrary::create_srdl(
 	Size find_rot_aa = 1;
 	while ( find_rot_aa <= rotameric_amino_acids.size() ) {
 		if ( rotameric_amino_acids[ find_rot_aa ] == aa_in ) {
-			return create_rotameric_dunlib( aa_in, rotameric_n_chi[ find_rot_aa ], ! (option[ corrections::score::dun10 ] || option[ corrections::score::dun08 ] )  );
+			return create_rotameric_dunlib( aa_in, rotameric_n_chi[ find_rot_aa ], ! (option[ corrections::score::dun10 ] )  );
 		}
 		++find_rot_aa;
 	}
@@ -2051,7 +1599,7 @@ RotamerLibrary::create_srdl(
 /// @details Hard code this data in a single place; adjust the booleans for the backbone
 /// independent
 void
-RotamerLibrary::initialize_dun08_aa_parameters(
+RotamerLibrary::initialize_dun10_aa_parameters(
 	utility::vector1< chemical::AA > & rotameric_amino_acids,
 	utility::vector1< Size > & rotameric_n_chi,
 	utility::vector1< chemical::AA > & sraa,

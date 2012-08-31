@@ -8,7 +8,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/match/Mather.hh
+/// @file   protocols/match/Matcher.hh
 /// @brief
 /// @author Alex Zanghellini (zanghell@u.washington.edu)
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com), porting to mini
@@ -644,10 +644,10 @@ Matcher::initialize_from_task(
 ///       # the left and the right of the mean for chi 1"
 ///
 ///       CHI_STRATEGY:: CHI 2 AA HIS NON_ROTAMERIC_CHI_EXPANSION N_SAMPLES 3 REQUISIT_PROBABILITY 0.10
-///       # the line above says that "for histidine chi 2 (which is non-rotameric in the 2008 Dunbrak library)
+///       # the line above says that "for histidine chi 2 (which is non-rotameric in the 2010 Dunbrak library)
 ///       # take 3 extra samples to the left and right of the median chi value inside the non-rotameric chi well
-///       # for rotamer wells that have a probability at least 0.1".  The 2008 Dunbrack library must be active.
-///       # (the -dun08 flag should be on the command line).
+///       # for rotamer wells that have a probability at least 0.1".  The 2010 Dunbrack library must be active.
+///       # (the -dun10 flag should be on the command line).
 ///
 ///       CHI_STRATEGY:: CHI 2 AA HIS NON_ROTAMERIC_CHI_EXPANSION N_SAMPLES 3
 ///       # the line above is similar for the previous command, but leaves off the REQUISIT_PROBABILITY
@@ -901,7 +901,7 @@ void Matcher::initialize_from_file(
 									if ( failed_cast ) {
 										utility_exit_with_message( "While parsing CHI_STRATEGY::NON_ROTAMERIC_CHI_EXPANSION\n"
 											"Failed to find a semi-rotameric rotamer library for " + upres[ jj ]->name() +
-											" (Did you forget the -dun08 flag?)\n"
+											" (Did you forget the -dun10 flag?)\n"
 											"The following amino acids define semi-rotameric rotamer libraries: DEFHNQ" );
 									}
 								} else {

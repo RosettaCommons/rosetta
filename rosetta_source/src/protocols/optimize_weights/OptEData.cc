@@ -1405,7 +1405,7 @@ PNatRotOptEPositionData::process_score(
 
 	static Real const inv_kT( option[ optE::inv_kT_natrot ] );
 
-	static bool const dun08active( option[ corrections::score::dun08 ] );
+	static bool const dun10active( option[ corrections::score::dun10 ] );
 
 	//TR <<  "PNatRotOptEPositionData::print_score" << std::endl;
 
@@ -1447,7 +1447,7 @@ PNatRotOptEPositionData::process_score(
 		}
 
 		Real weighted_energy( 0.0 );
-		if ( count_as_native && dun08active ) {
+		if ( count_as_native && dun10active ) {
 			using namespace core::chemical;
 			/// Entropy bonus for the native rotamer; the semi-rotameric residues
 			/// have fewer wells in the '02 library than they do in the '08 library.

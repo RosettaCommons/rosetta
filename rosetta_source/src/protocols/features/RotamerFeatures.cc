@@ -197,13 +197,7 @@ RotamerFeatures::report_features(
 
   if( option[ corrections::score::dun10 ] ){
     library_name = "dun10";
-		RotamerLibrary::initialize_dun08_aa_parameters(
-			rotameric_amino_acids, rotameric_n_chi,
-			sraa, srnchi, scind, sampind, sym, astr );
-
-  } else if( option[ corrections::score::dun08 ] ){
-    library_name = "dun08";
-		RotamerLibrary::initialize_dun08_aa_parameters(
+		RotamerLibrary::initialize_dun10_aa_parameters(
 			rotameric_amino_acids, rotameric_n_chi,
 			sraa, srnchi, scind, sampind, sym, astr );
 

@@ -230,7 +230,7 @@ public:
 
 	/// @brief, Turns out, when non-rotameric chi are taken out of the picture,
 	/// all remaining chi are binned the same way, except proline. Valid only for
-	/// Dun08 and Dun10 libraries.
+	/// Dun10 libraries.
 	inline
 	Size
 	bin_rotameric_chi(

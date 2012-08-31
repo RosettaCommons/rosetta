@@ -230,7 +230,7 @@ void ScoreMover::register_options() {
 	using namespace basic::options::OptionKeys;
 	option.add_relevant( score::weights          );
 	option.add_relevant( score::patch            );
-	option.add_relevant( corrections::score::dun08);
+	option.add_relevant( corrections::score::dun10);
 	option.add_relevant( score::empty            );
 	option.add_relevant( score::fa_max_dis       );
 	option.add_relevant( score::fa_Hatr          );
