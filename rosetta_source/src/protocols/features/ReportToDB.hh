@@ -99,6 +99,10 @@ public:
 		utility::tag::TagPtr const tag);
 
 	void
+	parse_remove_xray_virt_tag_item(
+		utility::tag::TagPtr const tag);	
+	
+	void
 	parse_name_tag_item(
 		utility::tag::TagPtr const tag);
 
@@ -164,6 +168,8 @@ private:
 	bool use_transactions_;
 
 	core::Size cache_size_;
+	
+	bool remove_xray_virt_;
 
 	core::Size protocol_id_;
 	core::Size batch_id_;

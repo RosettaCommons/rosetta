@@ -38,6 +38,8 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <protocols/features/FeaturesReporterFactory.hh>
 #include <protocols/features/ProteinRMSDFeatures.fwd.hh>
 #include <protocols/features/ProtocolFeatures.hh>
@@ -152,6 +154,7 @@ ReportToDB::ReportToDB():
 	sample_source_("Rosetta: Unknown Protocol"),
 	use_transactions_(true),
 	cache_size_(2000),
+	remove_xray_virt_(false),
 	protocol_id_(0),
 	batch_id_(0),
 	task_factory_(new TaskFactory()),
@@ -168,6 +171,7 @@ ReportToDB::ReportToDB(string const & name):
 	sample_source_("Rosetta: Unknown Protocol"),
 	use_transactions_(true),
 	cache_size_(2000),
+	remove_xray_virt_(false),
 	protocol_id_(0),
 	batch_id_(0),
 	task_factory_(new TaskFactory()),
@@ -189,6 +193,7 @@ ReportToDB::ReportToDB(
 	sample_source_(sample_source),
 	use_transactions_(use_transactions),
 	cache_size_(cache_size),
+	remove_xray_virt_(false),
 	protocol_id_(0),
 	batch_id_(0),
 	task_factory_(new TaskFactory()),
@@ -206,6 +211,7 @@ ReportToDB::ReportToDB( ReportToDB const & src):
 	name_(src.name_),
 	use_transactions_(src.use_transactions_),
 	cache_size_(src.cache_size_),
+	remove_xray_virt_(src.remove_xray_virt_),
 	protocol_id_(src.protocol_id_),
 	batch_id_(src.batch_id_),
 	task_factory_(src.task_factory_),
@@ -297,6 +303,13 @@ ReportToDB::parse_cache_size_tag_item(
 	}
 }
 
+void
+ReportToDB::parse_remove_xray_virt_tag_item(
+									  TagPtr const tag) {
+	if(tag->hasOption("remove_xray_virt")){
+		remove_xray_virt_ = tag->getOption<bool>("remove_xray_virt");
+	}
+}
 
 /// Allow ReportToDB to be called from RosettaScripts
 /// See
@@ -350,6 +363,11 @@ ReportToDB::parse_my_tag(
 	// EXAMPLE: cache_size=1000000  // this uses ~ 1GB of memory
 	// DEFAULT: 2000
 	parse_cache_size_tag_item(tag);
+	
+	// Remove virtual residue attached during xray refine process
+	// EXAMPLE: remove_xray_virt=true
+	// DEFAULT: FALSE
+	parse_remove_xray_virt_tag_item(tag);
 
 	task_factory_ = parse_task_operations(tag, data);
 
@@ -456,9 +474,15 @@ ReportToDB::initialize_pose(
 	Pose & pose
 ) const {
 
+	if (remove_xray_virt_) {
+		TR << "Removing virtual residue left behind by xray refinement" << endl;
+		while (pose.residue( pose.total_residue() ).aa() == core::chemical::aa_vrt )
+			pose.conformation().delete_residue_slow( pose.total_residue() );
+	}
+	
 	PackerTaskCOP task(task_factory_->create_task_and_apply_taskoperations(pose));
 	vector1< bool > relevant_residues(task->repacking_residues());
-
+	
 	TR
 		<< "Reporting features for "
 		<< accumulate(relevant_residues.begin(), relevant_residues.end(), 0)
