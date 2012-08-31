@@ -53,6 +53,9 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <fstream>
+#include <utility/io/izstream.hh>
+#include <sstream>
 
 static basic::Tracer TR("protocols.moves.GenericMonteCarloMover");
 static basic::Tracer TR_energies("protocols.moves.GenericMonteCarloMover.individual_energies");
@@ -102,7 +105,8 @@ GenericMonteCarloMover::GenericMonteCarloMover():
 	mover_stopping_condition_( NULL ),
 	adaptive_movers_( false ),
 	adaptation_period_( 0 ),
-	saved_accept_file_name_( "" )
+	saved_accept_file_name_( "" ),
+	saved_trial_number_file_( "" )
 {
   initialize();
 }
@@ -566,6 +570,36 @@ GenericMonteCarloMover::boltzmann( Pose & pose )
   }
 } // boltzmann
 
+core::Size
+GenericMonteCarloMover::load_trial_number_from_checkpoint() const{
+	if( saved_trial_number_file_ == "" )
+		return 1;
+	utility::io::izstream f( saved_trial_number_file_ );
+	if( !f )
+		return 1;
+	TR<<"Loading trial number from checkpoint"<<std::endl;
+	std::string line;
+	getline( f, line );
+	std::istringstream line_stream( line );
+	core::Size trial;
+	line_stream >> trial;
+	TR<<"Loaded trial number: "<<trial<<std::endl;
+	return trial;
+}
+
+void
+GenericMonteCarloMover::save_trial_number_to_checkpoint( core::Size const i ) const{
+	if( saved_trial_number_file_ == "" )
+		return;
+	std::ofstream f;
+	f.open( saved_trial_number_file_.c_str(), std::ios::out );
+	if( !f.good() )
+		utility_exit_with_message( "Unable to open MC checkpointing file " + saved_trial_number_file_ );
+
+	f<<i;
+	f.close();
+}
+
 /// @Brief
 ///comment
 void
@@ -642,8 +676,8 @@ GenericMonteCarloMover::apply( Pose & pose )
 		runtime_assert( mover_pp->mode() == "single_random" );
 		mover_accepts = utility::vector1< core::Size >( mover_pp->size(), 1 ); /// each mover gets a pseudocount of 1. This ensures that the running probability of each mover never goes to 0
 	}
-  for( Size i=1; i<=maxtrials_; i++ ){
-    TR.Debug <<"Trial number: "<<i<<std::endl;
+  for( Size i=load_trial_number_from_checkpoint(); i<=maxtrials_; i++ ){
+    TR<<"Trial number: "<<i<<std::endl;
 		if( i > 1 && adaptive_movers() && i % adaptation_period() == 0 ){
 /// The probability for each mover within a single-random parsedprotocol is determined by the number of accepts it had during the previous adaptation period:
 /// each mover is assigned a pseducount of 1, and then any additional accept favors it over others. At the adaptation stage, the total number of accepts (including pseudocounts) is used to normalize the individual movers' number of accepts and the probability is the mover's accepts / by the total accepts
@@ -698,6 +732,7 @@ GenericMonteCarloMover::apply( Pose & pose )
 
     // Iterate over the list of triggers, executing each of them in turn
     fire_all_triggers(i, maxtrials_, pose, score_function());
+		save_trial_number_to_checkpoint( i );
   } // i<=maxtrials_
 
 	// Output final diagnositics, for potential tuning
@@ -831,6 +866,7 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, DataMap & data, Filters_
   }
 
 	saved_accept_file_name_ = tag->getOption< std::string >( "saved_accept_file_name", "" );
+	saved_trial_number_file_ = tag->getOption< std::string >( "saved_trial_number_file", "" );
   initialize();
 }
 
@@ -908,5 +944,14 @@ GenericMonteCarloMover::saved_accept_file_name( std::string const s ){
 	saved_accept_file_name_ = s;
 }
 
+std::string
+GenericMonteCarloMover::saved_trial_number_file() const{
+	return saved_trial_number_file_;
+}
+
+void
+GenericMonteCarloMover::saved_trial_number_file( std::string const s ){
+	saved_trial_number_file_ = s;
+}
 } // ns moves
 } // ns protocols

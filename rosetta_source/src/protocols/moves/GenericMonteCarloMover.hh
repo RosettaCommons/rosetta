@@ -269,6 +269,10 @@ public:
 	core::Size adaptation_period() const{ return adaptation_period_; }
 	std::string saved_accept_file_name() const;
 	void saved_accept_file_name( std::string const );
+	std::string saved_trial_number_file() const;
+	void saved_trial_number_file( std::string const );
+	core::Size load_trial_number_from_checkpoint() const;
+	void save_trial_number_to_checkpoint( core::Size const i ) const;
 private:
 	/// @brief evalute pose by ScoreFunctionOP or FilterOP
 	Real scoring( Pose & pose );
@@ -382,6 +386,7 @@ private:
 	bool adaptive_movers_; //dflt false; change the mover probabilities according to the accept rates?; only works if the mover is a ParsedProtocol type with mode=single_random
 	core::Size adaptation_period_; /// dflt max( 10, trials/10 ); only works with adaptive; how often should the run probabilities be adapted?
 	std::string saved_accept_file_name_; // dflt ""; if a file name is specified, after each accept a pdb file is dumped to disk. This is useful for checkpointing
+	std::string saved_trial_number_file_; // dflt ""; if specified checkpoints the current trial number and recovers from it
 };
 
 } // namespace moves
