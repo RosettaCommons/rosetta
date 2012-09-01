@@ -30,13 +30,13 @@ cd %(workdir)s
 
 [ -x %(bin)s/fixbb.%(binext)s ] || exit 1
 
-%(bin)s/fixbb.%(binext)s @flags_fullatom_dun08 -database %(database)s -run:constant_seed -nodelay  2>&1 \
+%(bin)s/fixbb.%(binext)s @flags_fullatom_dun10 -database %(database)s -run:constant_seed -nodelay  2>&1 \
     | egrep -vf ../../ignore_list \
-    > log_fa_dun08
+    > log_fa_dun10
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
-mv 1l2y_0001.pdb 1l2y_dun08_0001.pdb
+mv 1l2y_0001.pdb 1l2y_dun10_0001.pdb
 
 
 %(bin)s/fixbb.%(binext)s @flags_fullatom -database %(database)s -run:constant_seed -nodelay  2>&1 \
