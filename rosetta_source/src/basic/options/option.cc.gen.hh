@@ -632,10 +632,10 @@ option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option gro
 option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
-option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
+option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::seq_sep_stages, "give vector with sequence_separation after stage1, stage3 and stage4" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::reramp_cst_cycles, "in stage2 do xxx cycles where atom_pair_constraint is ramped up" ).def(0);
@@ -824,10 +824,8 @@ option.add( basic::options::OptionKeys::corrections::score::p_aa_pp, "Name of sc
 option.add( basic::options::OptionKeys::corrections::score::p_aa_pp_nogridshift, "the format of p_aa_pp changed from using i*10+5 (5, 15, etc) to i*10 (0,10,etc.) as grid points" );
 option.add( basic::options::OptionKeys::corrections::score::rama_not_squared, "Rama potential calculated as input for both rama and rama2b. By default, the potential is square for (rama+entropy) > 1.0" );
 option.add( basic::options::OptionKeys::corrections::score::rama_map, "Ramachandran file used by rama" ).def("scoring/score_functions/rama/Rama_smooth_dyn.dat_ss_6.4");
-option.add( basic::options::OptionKeys::corrections::score::dun10, "Use the 2010 Dunbrack library instead of either the 2008 or the 2002 libraries." );
+option.add( basic::options::OptionKeys::corrections::score::dun10, "Use the 2010 Dunbrack library instead of either the the 2002 library." );
 option.add( basic::options::OptionKeys::corrections::score::dun10_dir, "Name of dun10 dir" ).def("rotamer/ExtendedOpt1-5");
-option.add( basic::options::OptionKeys::corrections::score::dun08, "Use the 2008 Dunbrack library instead of the 2002 library." );
-option.add( basic::options::OptionKeys::corrections::score::dun08_dir, "Name of dun08 dir" ).def("rotamer/dun08");
 option.add( basic::options::OptionKeys::corrections::score::dun02_file, "Name of dun02 input file" ).def("rotamer/bbdep02.May.sortlib");
 option.add( basic::options::OptionKeys::corrections::score::ch_o_bond_potential, "Name of ch_o_bond potential file (search in the local directory first, then look in the database)" ).def("scoring/score_functions/carbon_hbond/ch_o_bond_potential.dat");
 option.add( basic::options::OptionKeys::corrections::score::hack_elec_co_only, "Using only CO-CO interactions in hack_elec_bb_bb" ).def(false);
@@ -1896,10 +1894,10 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rig
 option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));
-option.add( basic::options::OptionKeys::RBSegmentRelax::cst_seqwidth, "sequence width on constraints" ).def(0);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::edensity::edensity, "edensity option group" ).legal(true).def(true);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::cst_seqwidth, "sequence width on constraints" ).def(0);
+option.add( basic::options::OptionKeys::edensity::edensity, "edensity option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::edensity::debug, "No description" ).def(false);
 option.add( basic::options::OptionKeys::edensity::mapfile, "No description" );
 option.add( basic::options::OptionKeys::edensity::mapreso, "No description" ).def(3.0);

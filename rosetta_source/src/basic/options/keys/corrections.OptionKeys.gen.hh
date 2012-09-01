@@ -35,8 +35,6 @@ namespace corrections { namespace score { extern BooleanOptionKey const rama_not
 namespace corrections { namespace score { extern FileOptionKey const rama_map; } }
 namespace corrections { namespace score { extern BooleanOptionKey const dun10; } }
 namespace corrections { namespace score { extern StringOptionKey const dun10_dir; } }
-namespace corrections { namespace score { extern BooleanOptionKey const dun08; } }
-namespace corrections { namespace score { extern StringOptionKey const dun08_dir; } }
 namespace corrections { namespace score { extern StringOptionKey const dun02_file; } }
 namespace corrections { namespace score { extern StringOptionKey const ch_o_bond_potential; } }
 namespace corrections { namespace score { extern BooleanOptionKey const hack_elec_co_only; } }

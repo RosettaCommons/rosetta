@@ -1,3 +1,4 @@
+namespace fold_cst { BooleanOptionKey const keep_skipped_csts( "fold_cst:keep_skipped_csts" );  }
 namespace fold_cst { BooleanOptionKey const no_minimize( "fold_cst:no_minimize" );  }
 namespace fold_cst { BooleanOptionKey const force_minimize( "fold_cst:force_minimize" );  }
 namespace fold_cst { RealVectorOptionKey const seq_sep_stages( "fold_cst:seq_sep_stages" );  }
@@ -189,8 +190,6 @@ namespace corrections { namespace score { BooleanOptionKey const rama_not_square
 namespace corrections { namespace score { FileOptionKey const rama_map( "corrections:score:rama_map" );  } }
 namespace corrections { namespace score { BooleanOptionKey const dun10( "corrections:score:dun10" );  } }
 namespace corrections { namespace score { StringOptionKey const dun10_dir( "corrections:score:dun10_dir" );  } }
-namespace corrections { namespace score { BooleanOptionKey const dun08( "corrections:score:dun08" );  } }
-namespace corrections { namespace score { StringOptionKey const dun08_dir( "corrections:score:dun08_dir" );  } }
 namespace corrections { namespace score { StringOptionKey const dun02_file( "corrections:score:dun02_file" );  } }
 namespace corrections { namespace score { StringOptionKey const ch_o_bond_potential( "corrections:score:ch_o_bond_potential" );  } }
 namespace corrections { namespace score { BooleanOptionKey const hack_elec_co_only( "corrections:score:hack_elec_co_only" );  } }

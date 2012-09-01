@@ -1,3 +1,4 @@
+namespace RBSegmentRelax { IntegerOptionKey const cst_seqwidth( "RBSegmentRelax:cst_seqwidth" );  }
 namespace edensity { BooleanOptionKey const edensity( "edensity" );  }
 namespace edensity { BooleanOptionKey const debug( "edensity:debug" );  }
 namespace edensity { StringOptionKey const mapfile( "edensity:mapfile" );  }

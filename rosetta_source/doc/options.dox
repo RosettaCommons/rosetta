@@ -3939,21 +3939,12 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-dun10</b> \<Boolean\><dt>
-<dd>Use the 2010 Dunbrack library instead of either the 2008 or the 2002 libraries.</dd><br>
+<dd>Use the 2010 Dunbrack library instead of either the the 2002 library.</dd><br>
 </dl>
 <dl>
 <dt><b>-dun10_dir</b> \<String\><dt>
 <dd>Name of dun10 dir</dd><br>
 <dd>Default: "rotamer/ExtendedOpt1-5"</dd><br>
-</dl>
-<dl>
-<dt><b>-dun08</b> \<Boolean\><dt>
-<dd>Use the 2008 Dunbrack library instead of the 2002 library.</dd><br>
-</dl>
-<dl>
-<dt><b>-dun08_dir</b> \<String\><dt>
-<dd>Name of dun08 dir</dd><br>
-<dd>Default: "rotamer/dun08"</dd><br>
 </dl>
 <dl>
 <dt><b>-dun02_file</b> \<String\><dt>
