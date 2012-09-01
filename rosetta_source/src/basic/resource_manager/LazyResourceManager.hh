@@ -50,7 +50,7 @@ public: // show methods
 	friend
 	std::ostream &
 	operator<< (
-		std::ostream & out, const ResourceConfiguration & resource_configuration );
+		std::ostream & out, ResourceConfiguration const & resource_configuration );
 
 };
 
@@ -202,7 +202,7 @@ public: // Interface to for creating and accessing resources
 	std::ostream &
 	operator<< (
 		std::ostream & out,
-		const LazyResourceManager & resource_manager );
+		LazyResourceManager const & resource_manager );
 
 
 

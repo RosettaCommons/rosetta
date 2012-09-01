@@ -127,7 +127,7 @@ ResourceManager::show(
 std::ostream &
 operator<<(
 	std::ostream & out,
-	const ResourceManager & resource_manager
+	ResourceManager const & resource_manager
 ) {
 	resource_manager.show(out);
 	return out;

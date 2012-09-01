@@ -118,7 +118,7 @@ public:
 
 	friend
 	std::ostream &
-	operator<< ( std::ostream & out, const ResourceManager & resource_manager );
+	operator<< ( std::ostream & out, ResourceManager const & resource_manager );
 
 
 public: // Protocol interface

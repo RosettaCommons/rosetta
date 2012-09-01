@@ -61,7 +61,7 @@ ResourceConfiguration::show(
 std::ostream &
 operator<<(
 	std::ostream & out,
-	const ResourceConfiguration & resource_configuration
+    ResourceConfiguration const & resource_configuration
 ) {
 	resource_configuration.show(out);
 	return out;
@@ -419,6 +419,15 @@ bool
 LazyResourceManager::has_resource_options( ResourceOptionsTag const & resource_options_tag ) const
 {
 	return resource_options_.find( resource_options_tag ) != resource_options_.end();
+}
+
+std::ostream &
+operator<<(
+	std::ostream & out,
+	LazyResourceManager const & lazy_resource_manager
+) {
+	lazy_resource_manager.show(out);
+	return out;
 }
 
 
