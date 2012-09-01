@@ -198,27 +198,15 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
     //setting MoveMap
     kinematics::MoveMapOP cdr_dock_map;
     cdr_dock_map = new kinematics::MoveMap();
-    cdr_dock_map->clear();
-    cdr_dock_map->set_chi( false );
-    cdr_dock_map->set_bb( false );
-    utility::vector1< bool> bb_is_flexible( nres, false );
-    utility::vector1< bool> sc_is_flexible( nres, false );
-    select_loop_residues( pose, *all_loops_, false /*include_neighbors*/, bb_is_flexible);
-    cdr_dock_map->set_bb( bb_is_flexible );
-    select_loop_residues( pose, *all_loops_, true/*include_neighbors*/, sc_is_flexible);
-    cdr_dock_map->set_chi( sc_is_flexible );
-    cdr_dock_map->set_jump( 1, true );
-    for( Size ii = 2; ii <= all_loops_->num_loop() + 1; ii++ )
-        cdr_dock_map->set_jump( ii, false );
-    
-    
+
+	*cdr_dock_map=ab_info_->get_MoveMap_for_LoopsandDock(pose, *ab_info_->get_AllCDRs_in_loopsop(), false, true, 10.0);
+
     //set up minimizer movers
     simple_moves::MinMoverOP min_mover = new simple_moves::MinMover( cdr_dock_map, dock_scorefxn, min_type_, min_threshold, nb_list );
     
     //set up rigid body movers
     rigid::RigidBodyPerturbMoverOP rb_perturb = new rigid::RigidBodyPerturbMover( pose,
                                                                                  *cdr_dock_map, rot_mag_, trans_mag_, rigid::partner_downstream, true );
-    
 
     
     //set up sidechain movers for rigid body jump and loop & neighbors
@@ -228,6 +216,9 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
     using namespace core::pack::task::operation;
     
     // selecting movable c-terminal residues
+	utility::vector1< bool> sc_is_flexible( nres, false );
+    select_loop_residues( pose, *all_loops_, true/*include_neighbors*/, sc_is_flexible);
+	
     ObjexxFCL::FArray1D_bool loop_residues( nres, false );
     for( Size i = 1; i <= nres; i++ )
         loop_residues( i ) = sc_is_flexible[ i ]; // check mapping

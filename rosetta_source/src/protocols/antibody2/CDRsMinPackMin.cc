@@ -143,7 +143,7 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose )
 	using namespace protocols::moves;
 
 	// **************** FoldTree ****************
-	ab_info_->all_cdr_fold_tree( pose );
+	pose.fold_tree( * ab_info_->get_FoldTree_AllCDRs(pose)  );
 	TR<<pose.fold_tree()<<std::endl;
 
 	// adding cutpoint variants for chainbreak score computation
@@ -154,35 +154,17 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose )
 	( *loop_scorefxn_highres_ )( pose );
 
 	//**************** MoveMap ****************
-	utility::vector1< bool> bb_is_flexible( pose.total_residue(), false );
-	utility::vector1< bool> sc_is_flexible( pose.total_residue(), false );
-
-	select_loop_residues( pose, *(ab_info_->get_AllCDRs_in_loopsop()), false /*include_neighbors*/, bb_is_flexible );
-	select_loop_residues( pose, *(ab_info_->get_AllCDRs_in_loopsop()), true /*include_neighbors*/, sc_is_flexible );
-
-	//for (Size kk=1;kk<=sc_is_flexible.size();kk++){
-	//    TR<<kk<<"    "<<sc_is_flexible[kk]<<std::endl;
-	//}
-
 	if(!allcdr_map_){
 		allcdr_map_ = new kinematics::MoveMap();
-		allcdr_map_->clear();
-		allcdr_map_->set_chi( false );
-		allcdr_map_->set_bb( false );
-
-
-		allcdr_map_->set_bb( bb_is_flexible );
-		allcdr_map_->set_chi( sc_is_flexible );
-
-
-		for( Size ii = 1; ii <= ab_info_->get_AllCDRs_in_loopsop()->num_loop(); ii++ ){
-			allcdr_map_->set_jump( ii, false );
-		}//TODO: start from 1 or 2? should have a set function to handle this!
+		*allcdr_map_=ab_info_->get_MoveMap_for_Loops(pose, *ab_info_->get_AllCDRs_in_loopsop(), false, true, 10.0);
 	}
 
 
 	//**************** TaskFactory ****************
 	if(!tf_){
+		utility::vector1< bool> sc_is_flexible( pose.total_residue(), false );
+		select_loop_residues( pose, *(ab_info_->get_AllCDRs_in_loopsop()), true /*include_neighbors*/, sc_is_flexible );
+		
 	  tf_ = setup_packer_task(pose);
 	  tf_->push_back( new RestrictToInterface( sc_is_flexible ) );//TODO: check this, no rb_jump here
 	  //core::pack::task::PackerTaskOP my_task2(tf_->create_task_and_apply_taskoperations(pose));

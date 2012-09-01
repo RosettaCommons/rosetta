@@ -96,32 +96,22 @@ void RefineBetaBarrel::finalize_setup(pose::Pose & pose ){
         
     // ************ MoveMap *************
     cdr_dock_map_ = new kinematics::MoveMap();
-    cdr_dock_map_->clear();
-    cdr_dock_map_->set_chi( false );
-    cdr_dock_map_->set_bb( false );
-    utility::vector1< bool> bb_is_flexible( pose.total_residue(), false );
-    utility::vector1< bool> sc_is_flexible( pose.total_residue(), false );
+	*cdr_dock_map_=ab_info_->get_MoveMap_for_LoopsandDock(pose, *ab_info_->get_AllCDRs_in_loopsop(), false, true, 10.0);
+	
+	
+
         
-    select_loop_residues( pose, *(ab_info_->get_AllCDRs_in_loopsop()), false/*include_neighbors*/, bb_is_flexible);
-    cdr_dock_map_->set_bb( bb_is_flexible );
-    select_loop_residues( pose, *(ab_info_->get_AllCDRs_in_loopsop()), true/*include_neighbors*/, sc_is_flexible);
-    cdr_dock_map_->set_chi( sc_is_flexible );
-        // JQX: the question here is how to update this sc_is_flexible due to the -include_neighbors options
-        //      I think for the L-H docking, it is fine, because the restrict_to_interface for the pack_mover
-        //      will update the interface residues anyway. But for H3 refinement, one need to consider this
-    cdr_dock_map_->set_jump( 1, true );
-    for( Size ii = 2; ii <= ab_info_->get_AllCDRs_in_loopsop()->num_loop() + 1; ii++ )
-        cdr_dock_map_->set_jump( ii, false );
-        
-        
-    // ************ TaskFactory ************ 
+    // ************ TaskFactory ************
     //set up sidechain movers for rigid body jump and loop & neighbors
     using namespace core::pack::task;
     using namespace core::pack::task::operation;
     // selecting movable c-terminal residues
+	utility::vector1< bool> sc_is_flexible( pose.total_residue(), false );
+	select_loop_residues( pose, *(ab_info_->get_AllCDRs_in_loopsop()), true/*include_neighbors*/, sc_is_flexible);
+	
     ObjexxFCL::FArray1D_bool loop_residues( pose.total_residue(), false );
     for( Size i = 1; i <= pose.total_residue(); i++ ) {
-        loop_residues(i) = sc_is_flexible[i]; 
+        loop_residues(i) = sc_is_flexible[i];
     } // check mapping
         
     using namespace protocols::toolbox::task_operations;
@@ -136,8 +126,7 @@ void RefineBetaBarrel::finalize_setup(pose::Pose & pose ){
     
     
     //************  FoldTree ************ 
-    
-    ab_info_ -> all_cdr_VL_VH_fold_tree( pose );
+    pose.fold_tree( * ab_info_->get_FoldTree_AllCDRs_LHDock(pose)   );
     TR<<pose.fold_tree()<<std::endl;
     
     

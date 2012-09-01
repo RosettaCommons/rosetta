@@ -46,12 +46,7 @@ void simple_fold_tree(
     
     
     
-void setup_simple_fold_tree(
-                                core::Size jumppoint1,
-                                core::Size cutpoint,
-                                core::Size jumppoint2,
-                                core::Size nres,
-                                core::pose::Pose & pose_in );
+
     
     
 

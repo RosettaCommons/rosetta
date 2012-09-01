@@ -152,33 +152,7 @@ namespace antibody2{
     
     
     
-	void setup_simple_fold_tree(
-                                          Size jumppoint1,
-                                          Size cutpoint,
-                                          Size jumppoint2,
-                                          Size nres,
-                                          pose::Pose & pose_in ) {
-        
-		using namespace kinematics;
-        
-		TR << "Utility: Setting up simple fold tree" << std::endl;
-        
-		FoldTree f;
-		f.clear();
-        
-		f.add_edge( 1, jumppoint1, Edge::PEPTIDE );
-		f.add_edge( jumppoint1, cutpoint, Edge::PEPTIDE );
-		f.add_edge( cutpoint + 1, jumppoint2, Edge::PEPTIDE );
-		f.add_edge( jumppoint2, nres, Edge::PEPTIDE );
-		f.add_edge( jumppoint1, jumppoint2, 1 );
-		f.reorder( 1 );
-        
-		pose_in.fold_tree( f );
-        
-		TR << "Utility: Done: Setting up simple fold tree" << std::endl;
-        
-	} // setup_simple_fold_tree
-    
+
     
     
     

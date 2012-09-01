@@ -113,7 +113,7 @@ public:
 											 Size right_stem = 0) const;
 	
 	/// @brief return the antibody sequence of LH or just H for camelid
-	vector1<char> get_Ab_Sequence() const {
+	vector1<char> const & get_Ab_Sequence() const {
 		return ab_sequence_;
 	}
     
@@ -132,9 +132,14 @@ public:
 		return framework_info_;
 	}
 	
-    // FoldTrees //TODO: return fold_trees
-    void all_cdr_fold_tree( pose::Pose & pose );
-    void all_cdr_VL_VH_fold_tree( pose::Pose & pose_in);
+    // FoldTrees //TODO: find a way to remove setup_simple_fold_tree
+	kinematics::FoldTreeCOP setup_simple_fold_tree(Size const & jumppoint1,
+												   Size const & cutpoint,
+												   Size const & jumppoint2,
+												   pose::Pose const & pose ) const;
+	
+    kinematics::FoldTreeCOP get_FoldTree_AllCDRs_LHDock( pose::Pose & pose) const;
+	kinematics::FoldTreeCOP get_FoldTree_AllCDRs(pose::Pose const & pose) const;
 	
 	/// @brief SnugDock foldtrees
     kinematics::FoldTree get_FoldTree_LH_A( pose::Pose const & pose ) const;
@@ -215,18 +220,19 @@ private:
 	
 	/// @brief return the numbering scheme: e.g.   numbering[Begin][h1]
 	vector1< vector1<Size> > get_CDR_NumberingInfo(AntibodyNumberingEnum const & numbering_scheme) const;
+
 	
 	/// @brief copy 
 	//void init_for_equal_operator_and_copy_constructor( AntibodyInfo & lhs, AntibodyInfo const & rhs);
 	
 	/// @brief all the static functions
-	static vector1<std::string> get_string_cdr_name(void);
-	static vector1<std::string> get_string_h3_base_type(void);
-	static vector1<std::string> get_string_numbering_scheme(void);
-	static core::scoring::ScoreFunctionOP get_Pack_ScoreFxn(void);
-	static core::scoring::ScoreFunctionOP get_Dock_ScoreFxn(void);
-	static core::scoring::ScoreFunctionOP get_LoopCentral_ScoreFxn(void);
-	static core::scoring::ScoreFunctionOP get_LoopHighRes_ScoreFxn(void);
+	static vector1<std::string> const & get_string_cdr_name(void);
+	static vector1<std::string> const & get_string_h3_base_type(void);
+	static vector1<std::string> const & get_string_numbering_scheme(void);
+	static core::scoring::ScoreFunctionCOP get_Pack_ScoreFxn(void);
+	static core::scoring::ScoreFunctionCOP get_Dock_ScoreFxn(void);
+	static core::scoring::ScoreFunctionCOP get_LoopCentral_ScoreFxn(void);
+	static core::scoring::ScoreFunctionCOP get_LoopHighRes_ScoreFxn(void);
 	
 /// private members
 private:

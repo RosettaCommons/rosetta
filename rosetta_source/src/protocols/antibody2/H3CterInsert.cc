@@ -129,7 +129,7 @@ void H3CterInsert::apply(pose::Pose & pose)
     cutpoint   = ab_info_->get_CDR_loop(h3).cut(); // keep the cutpoint unchanged
     loop_end   = ab_info_->get_CDR_loop(h3).stop()+2; //JQX: to match R2_Antibody
     
-    setup_simple_fold_tree(loop_begin, cutpoint, loop_end, pose.total_residue(), pose);
+    pose.fold_tree( * ab_info_->setup_simple_fold_tree(loop_begin, cutpoint, loop_end, pose) );
     TR<<pose.fold_tree()<<std::endl;
     
     bool success = false;        

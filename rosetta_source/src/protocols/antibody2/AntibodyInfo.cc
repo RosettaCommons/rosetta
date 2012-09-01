@@ -518,12 +518,36 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose 
 ///				provide fold tree utilities for various purpose              ///
 ///                                                                          ///
 ////////////////////////////////////////////////////////////////////////////////
+	
+kinematics::FoldTreeCOP AntibodyInfo::setup_simple_fold_tree(
+								Size const & jumppoint1,
+								Size const & cutpoint,
+								Size const & jumppoint2,
+								pose::Pose const & pose ) const {
+        
+	using namespace kinematics;
+	
+	
+	FoldTreeOP f = new FoldTree();
+	f->clear();
+	
+	f->add_edge( 1, jumppoint1, Edge::PEPTIDE );
+	f->add_edge( jumppoint1, cutpoint, Edge::PEPTIDE );
+	f->add_edge( cutpoint + 1, jumppoint2, Edge::PEPTIDE );
+	f->add_edge( jumppoint2, pose.total_residue(), Edge::PEPTIDE );
+	f->add_edge( jumppoint1, jumppoint2, 1 );
+	f->reorder( 1 );
+		
+	return f;
+        
+}
+    
 
-void AntibodyInfo::all_cdr_fold_tree( pose::Pose & pose ) {
+kinematics::FoldTreeCOP AntibodyInfo::get_FoldTree_AllCDRs (pose::Pose const & pose ) const {
 	using namespace kinematics;
 
-	FoldTree f;
-	f.clear();
+	FoldTreeOP f = new FoldTree();
+	f->clear();
 
 	Size jump_num = 0;
 	for( loops::Loops::const_iterator it=loopsop_having_allcdrs_->begin(), it_end=loopsop_having_allcdrs_->end(), it_next; it < it_end; ++it ) {
@@ -531,20 +555,21 @@ void AntibodyInfo::all_cdr_fold_tree( pose::Pose & pose ) {
 		it_next = it;
 		it_next++;
 
-		if( it == loopsop_having_allcdrs_->begin() ) f.add_edge( 1, it->start()-1, Edge::PEPTIDE );
+		if( it == loopsop_having_allcdrs_->begin() ) f->add_edge( 1, it->start()-1, Edge::PEPTIDE );
 
 		jump_num++;
-		f.add_edge( it->start()-1, it->stop()+1, jump_num );
-		f.add_edge( it->start()-1, it->cut(),  Edge::PEPTIDE );
-		f.add_edge( it->cut()+1, it->stop()+1, Edge::PEPTIDE );
+		f->add_edge( it->start()-1, it->stop()+1, jump_num );
+		f->add_edge( it->start()-1, it->cut(),  Edge::PEPTIDE );
+		f->add_edge( it->cut()+1, it->stop()+1, Edge::PEPTIDE );
 		if( it == (it_end-1) )
-			f.add_edge( it->stop()+1, pose.total_residue(), Edge::PEPTIDE);
+			f->add_edge( it->stop()+1, pose.total_residue(), Edge::PEPTIDE);
 		else
-			f.add_edge( it->stop()+1, it_next->start()-1, Edge::PEPTIDE );
+			f->add_edge( it->stop()+1, it_next->start()-1, Edge::PEPTIDE );
 	}
 
-	f.reorder(1);
-	pose.fold_tree( f );
+	f->reorder(1);
+	
+	return f;
 
 } // all_cdr_fold_tree()
 
@@ -557,13 +582,12 @@ void AntibodyInfo::all_cdr_fold_tree( pose::Pose & pose ) {
 ///
 /// @last_modified 07/13/2010
 ///////////////////////////////////////////////////////////////////////////
-void AntibodyInfo::all_cdr_VL_VH_fold_tree( pose::Pose & pose_in ) 
-{
+kinematics::FoldTreeCOP AntibodyInfo::get_FoldTree_AllCDRs_LHDock( pose::Pose & pose ) const {
        
 	using namespace kinematics;
         
-	Size nres = pose_in.total_residue();
-	pose::PDBInfoCOP pdb_info = pose_in.pdb_info();
+	Size nres = pose.total_residue();
+	pose::PDBInfoCOP pdb_info = pose.pdb_info();
 	char second_chain = 'H';
 	Size rb_cutpoint(0);
         
@@ -574,60 +598,53 @@ void AntibodyInfo::all_cdr_VL_VH_fold_tree( pose::Pose & pose_in )
 		}
 	}
         
-    Size jump_pos1 ( geometry::residue_center_of_mass( pose_in, 1, rb_cutpoint ) );
-    Size jump_pos2 ( geometry::residue_center_of_mass( pose_in,rb_cutpoint+1, nres ) );
+    Size jump_pos1 ( geometry::residue_center_of_mass( pose, 1, rb_cutpoint ) );
+    Size jump_pos2 ( geometry::residue_center_of_mass( pose,rb_cutpoint+1, nres ) );
     //TR<<rb_cutpoint<<std::endl;
     //TR<<jump_pos1<<std::endl;
     //TR<<jump_pos2<<std::endl;
         
     // make sure rb jumps do not reside in the loop region
     for( loops::Loops::const_iterator it= loopsop_having_allcdrs_->begin(), it_end = loopsop_having_allcdrs_->end(); it != it_end; ++it ) {
-        if ( jump_pos1 >= ( it->start() - 1 ) &&
-            jump_pos1 <= ( it->stop() + 1) )
+        if (   jump_pos1 >= ( it->start() - 1 ) && jump_pos1 <= ( it->stop() + 1)   )
             jump_pos1 = it->stop() + 2;
-        if ( jump_pos2 >= ( it->start() - 1 ) &&
-            jump_pos2 <= ( it->stop() + 1) )
+        if (   jump_pos2 >= ( it->start() - 1 ) && jump_pos2 <= ( it->stop() + 1)   )
             jump_pos2 = it->start() - 2;
     }
         
     // make a simple rigid-body jump first
-    setup_simple_fold_tree(jump_pos1,rb_cutpoint,jump_pos2,nres, pose_in );
+    FoldTreeOP f = new FoldTree(* setup_simple_fold_tree(jump_pos1,rb_cutpoint,jump_pos2, pose ));
         
-    // add the loop jump into the current tree,
-    // delete some old edge accordingly
-    FoldTree f( pose_in.fold_tree() );
-        
-    for( loops::Loops::const_iterator it=loopsop_having_allcdrs_->begin(),
-        it_end=loopsop_having_allcdrs_->end(); it != it_end; ++it ) {
+    for( loops::Loops::const_iterator it=loopsop_having_allcdrs_->begin(), it_end=loopsop_having_allcdrs_->end(); it != it_end; ++it ) {
         Size const loop_start ( it->start() );
         Size const loop_stop ( it->stop() );
         Size const loop_cutpoint ( it->cut() );
         Size edge_start(0), edge_stop(0);
         bool edge_found = false;
-        const FoldTree & f_const = f;
+        const FoldTree & f_const = *f;
         Size const num_jump = f_const.num_jump();
-        for( FoldTree::const_iterator it2=f_const.begin(),
-            it2_end=f_const.end(); it2 !=it2_end; ++it2 ) {
+        for( FoldTree::const_iterator it2=f_const.begin(), it2_end=f_const.end(); it2 !=it2_end; ++it2 ) {
+			//TR<<it2->start()<<std::endl;
+			//TR<<it2->stop()<<std::endl;
             edge_start = std::min( it2->start(), it2->stop() );
-            edge_stop = std::max( it2->start(), it2->stop() );
-            if ( ! it2->is_jump() && loop_start > edge_start
-                && loop_stop < edge_stop ) {
+            edge_stop  = std::max( it2->start(), it2->stop() );
+            if ( ! it2->is_jump() && loop_start > edge_start && loop_stop < edge_stop ) {
                 edge_found = true;
                 break;
             }
         }
             
-        f.delete_unordered_edge( edge_start, edge_stop, Edge::PEPTIDE);
-        f.add_edge( loop_start-1, loop_stop+1, num_jump+1 );
-        f.add_edge( edge_start, loop_start-1, Edge::PEPTIDE );
-        f.add_edge( loop_start-1, loop_cutpoint, Edge::PEPTIDE );
-        f.add_edge( loop_cutpoint+1, loop_stop+1, Edge::PEPTIDE );
-        f.add_edge( loop_stop+1, edge_stop, Edge::PEPTIDE );
+        f->delete_unordered_edge( edge_start, edge_stop, Edge::PEPTIDE);
+        f->add_edge( loop_start-1, loop_stop+1, num_jump+1 );
+        f->add_edge( edge_start, loop_start-1, Edge::PEPTIDE );
+        f->add_edge( loop_start-1, loop_cutpoint, Edge::PEPTIDE );
+        f->add_edge( loop_cutpoint+1, loop_stop+1, Edge::PEPTIDE );
+        f->add_edge( loop_stop+1, edge_stop, Edge::PEPTIDE );
     }
         
-    f.reorder(1);
-    pose_in.fold_tree(f);
-} // all_cdr_VL_VH_fold_tree
+    f->reorder(1);
+    return f;
+}
     
     
 ///////////////////////////////////////////////////////////////////////////
@@ -1339,7 +1356,7 @@ vector1<char> AntibodyInfo::get_CDR_Sequence_with_Stem(AntibodyCDRNameEnum const
 }
     
     
-vector1<std::string> AntibodyInfo::get_string_cdr_name(void)  {
+vector1<std::string> const & AntibodyInfo::get_string_cdr_name(void)  {
 	static vector1<std::string> *string_cdr_name = 0; /// JQX: this will only be executed once
 	if(string_cdr_name==0){
 		/// JQX: only the first time you can come here
@@ -1350,7 +1367,7 @@ vector1<std::string> AntibodyInfo::get_string_cdr_name(void)  {
 	return *string_cdr_name;
 }
 
-vector1<std::string> AntibodyInfo::get_string_h3_base_type(void)  {
+vector1<std::string> const & AntibodyInfo::get_string_h3_base_type(void)  {
 	static vector1<std::string> *string_h3_base_type = 0; /// JQX: this will only be executed once
 	if(string_h3_base_type==0){
 		/// JQX: only the first time you can come here
@@ -1362,7 +1379,7 @@ vector1<std::string> AntibodyInfo::get_string_h3_base_type(void)  {
 	return *string_h3_base_type;
 }
 
-vector1<std::string> AntibodyInfo::get_string_numbering_scheme(void)  {
+vector1<std::string> const & AntibodyInfo::get_string_numbering_scheme(void)  {
 	static vector1<std::string> *string_numbering_scheme = 0; /// JQX: this will only be executed once
 	if(string_numbering_scheme==0){
 		/// JQX: only the first time you can come here
@@ -1378,14 +1395,14 @@ vector1<std::string> AntibodyInfo::get_string_numbering_scheme(void)  {
 }
 	
 	
-scoring::ScoreFunctionOP get_Pack_ScoreFxn(void){
+scoring::ScoreFunctionCOP get_Pack_ScoreFxn(void){
 	static scoring::ScoreFunctionOP pack_scorefxn = 0;
 	if(pack_scorefxn == 0){
 		pack_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function("standard" );
 	}
 	return pack_scorefxn;
 }
-scoring::ScoreFunctionOP get_Dock_ScoreFxn(void){
+scoring::ScoreFunctionCOP get_Dock_ScoreFxn(void){
 	static scoring::ScoreFunctionOP dock_scorefxn = 0;
 	if(dock_scorefxn == 0){
 		dock_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
@@ -1394,7 +1411,7 @@ scoring::ScoreFunctionOP get_Dock_ScoreFxn(void){
 	}
 	return dock_scorefxn;
 }
-scoring::ScoreFunctionOP get_LoopCentral_ScoreFxn(void){
+scoring::ScoreFunctionCOP get_LoopCentral_ScoreFxn(void){
 	static scoring::ScoreFunctionOP loopcentral_scorefxn = 0;
 	if(loopcentral_scorefxn == 0){
 		loopcentral_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );
@@ -1402,7 +1419,7 @@ scoring::ScoreFunctionOP get_LoopCentral_ScoreFxn(void){
 	}
 	return loopcentral_scorefxn;
 }
-scoring::ScoreFunctionOP get_LoopHighRes_ScoreFxn(void){
+scoring::ScoreFunctionCOP get_LoopHighRes_ScoreFxn(void){
 	static scoring::ScoreFunctionOP loophighres_scorefxn = 0;
 	if(loophighres_scorefxn == 0){
 		loophighres_scorefxn = scoring::ScoreFunctionFactory::create_score_function("standard", "score12" );

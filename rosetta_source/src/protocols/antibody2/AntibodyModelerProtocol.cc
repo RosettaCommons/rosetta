@@ -312,7 +312,9 @@ void AntibodyModelerProtocol::finalize_setup( pose::Pose & pose )
 
 	set_native_pose( native_pose ); // pass the native pose to the mover.native_pose_
 
-    ab_info_ = new AntibodyInfo(pose); ab_info_->all_cdr_fold_tree(pose);
+    ab_info_ = new AntibodyInfo(pose);
+	
+	pose.fold_tree( * ab_info_->get_FoldTree_AllCDRs(pose) ) ;
     TR<<*ab_info_<<std::endl;
     
     //AntibodyInfoOP native_ab_info = new AntibodyInfo(*native_pose,camelid_);
@@ -428,7 +430,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
     align_to_native( pose, native_pose, ab_info_, native_ab_info );
     
     
-    ab_info_ -> all_cdr_fold_tree(pose);
+	pose.fold_tree( * ab_info_->get_FoldTree_AllCDRs(pose) ) ;
 
 	// Redefining CDR H3 cutpoint variants
     loops::remove_cutpoint_variants( pose, true );
