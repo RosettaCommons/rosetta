@@ -572,11 +572,19 @@ GenericMonteCarloMover::boltzmann( Pose & pose )
 
 core::Size
 GenericMonteCarloMover::load_trial_number_from_checkpoint() const{
+	using namespace std;
 	if( saved_trial_number_file_ == "" )
 		return 1;
-	utility::io::izstream f( saved_trial_number_file_ );
-	if( !f )
+	ifstream f( saved_trial_number_file_.c_str(), ios::in );
+	if( !f.good() )
 		return 1;
+
+	core::Size const begin = f.tellg();
+	f.seekg( 0, ios::end );
+	core::Size const end = f.tellg();
+	if( end - begin == 0 )//file size == 0
+		return 1;
+
 	TR<<"Loading trial number from checkpoint"<<std::endl;
 	std::string line;
 	getline( f, line );
