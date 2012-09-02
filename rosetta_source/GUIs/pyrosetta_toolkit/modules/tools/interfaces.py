@@ -19,15 +19,15 @@ import os
 pwd = os.getcwd()
 
 class around():
-	'''
+	"""
 	Basic vacinity and interface class...
-	'''
+	"""
 	
 	def getVicinity(self, p, LisLoop, infile, cutoff = 5.0):
-		'''
+		"""
 		Get vaccinity around each loop/residue/chain specified in LisLoop.
 		Returns a VacDic: ([res:chain]=atomic contact #)
-		'''
+		"""
 		
 		#Get pdbDic without Whitespace
 		pdbDic = dict()
@@ -69,10 +69,10 @@ class around():
 		return vacDic
 					
 	def getDimerInterface(self, p, chainA, chainB, infile, interDic, cutoff = 5.0):
-		'''
+		"""
 		Gets residues common to your interface of chainA and chainB
 		Returns a VacDic: ([res:chain]=atomic contact #)
-		'''
+		"""
 		
 		#Get pdbDic without Whitespace
 		pdbDic = dict()
@@ -187,12 +187,12 @@ class Antibodies:
 		self.cdrDic["H3"]=(107, 138)
 		
 	def getContactCDRs(self, p, cutoff):
-		'''
+		"""
 		This function gets the residues making contact - any contact - with other residues not in H or L.
 		It returns the residues within the CDR's for use in other things.
 		Must be renumbered antibodies.
 		Should be expanded to get more data and help in analysis of individual CDR residue contacts with other CDRs and the framework/dimer interface.
-		'''
+		"""
 		#First - Find chain(s) making contact with the CDR's.
 		#Make LisLoop, measure with vaccinity, then test whether the vaccinity has any non H or L chains.
 		contactResidues = dict()

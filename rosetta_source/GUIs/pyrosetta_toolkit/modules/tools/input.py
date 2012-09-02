@@ -24,15 +24,15 @@ import re
 
 pwd = os.getcwd()
 
-'''
+"""
 PyRosetta Loading controls with TK
-'''
+"""
 
 
 def tk_get_directory(open):
-    '''
+    """
     Loads a Folder through the tk File Dialog
-    '''
+    """
     dir = os.getcwd()
     if open==0:
         dirname1 = tkFileDialog.askdirectory(initialdir=dir,title='Pick a directory')
@@ -45,9 +45,9 @@ def tk_get_directory(open):
     return dirname1
 
 def tk_get_file():
-    '''
+    """
     Loads a File through the tk File Dialog
-    '''
+    """
     dir = os.getcwd()
     filename1 = tkFileDialog.askopenfilename(initialdir=dir, title='Pick a file')
     if not filenmame1:
@@ -57,18 +57,18 @@ def tk_get_file():
     return filename1
 
 def load_pdb(file):
-    '''
+    """
     Loads a PDB into a pose
-    '''
+    """
     print file
     p = Pose()
     pose_from_pdb(p, file)
     return p
 
 def load_loop_file(pose, filename):
-    '''
+    """
     Loads the loop.  Doesn't work.
-    '''
+    """
     INFILE = open(filename, 'r')
     loops_as_strings = []
     for line in INFILE:
@@ -81,10 +81,10 @@ def load_loop_file(pose, filename):
     return loops_as_strings
 
 def load_vicinity(p, lisloop, vaccinity):
-    '''
+    """
     Takes LisLoop, Vaccinity Settings, and returns the vacDic.
     See vaccinity window module for more.
-    '''
+    """
        
         #Dumps PDB so we can read it and find out what is in the vaccinity through good old python.
     t = time.time()
@@ -101,9 +101,9 @@ def load_vicinity(p, lisloop, vaccinity):
 
 
 def fixFilename(file):
-    '''
+    """
     Rosetta cannot use spaces in the filename...
-    '''
+    """
     
     x=file.split()
     if len(x) > 1:
@@ -116,10 +116,10 @@ def fixFilename(file):
 
 
 def get_pdb_list_from_dir(dir):
-    '''
+    """
     Returns a list of PDB files within a directory.
     check_button_ck if it returns the full path..
-    '''
+    """
     
     directorylist =os.listdir(dir)
     directorylist = list(directorylist) #May already be a list, but I forget.

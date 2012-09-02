@@ -28,9 +28,9 @@ pwd = os.getcwd()
 
 
 def renameandsave(inFolder, outFolder, outName, contains):
-    '''
+    """
     Renames all files in a particular directory recursively from 1 - N. Useful due to some apps not being JD2 compatible!
-    '''
+    """
     
     filenum = 1
     if contains=="all":
@@ -63,26 +63,26 @@ def renameandsave(inFolder, outFolder, outName, contains):
 
     
 def getDist(p, res1, res2, atom1, atom2):
-    '''
+    """
     Gets distance between atom one and two of two residues.
-    '''
+    """
     xyz1 = p.residue(res1).xyz(atom1)
     xyz2 = p.residue(res2).xyz(atom2)
     return self.getDistGen(xyz1, xyz2)
 
 def getDistGen( xyz1, xyz2):
-    '''
+    """
     Gets distance bt two coord vectors(list)
-    '''
+    """
     
     #xyz1 is a list with (x, y, z)
     d = math.sqrt(pow(xyz1[0]-xyz2[0], 2)+pow(xyz1[1]-xyz2[1], 2)+pow(xyz1[2]-xyz2[2], 2))
     return d
 
 def getOS():
-    '''
+    """
     Get OS of the particular platform the toolkit is being run on.
-    '''
+    """
     
     plat = sys.platform
     if re.search("darwin", plat):

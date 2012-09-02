@@ -46,9 +46,9 @@ def toFA(start, p):
 
 
 def bbMover(p, res, chain, phi, psi, omega, score=False):
-    '''
+    """
     Moves individual Phi and Psi angles
-    '''
+    """
     
     res = p.pdb_info().pdb2pose(chain, res)
     if not score:

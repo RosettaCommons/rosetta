@@ -33,9 +33,9 @@ class design_protocols:
         return self.pose
     
     def pack_residue(self, res, chain):
-        '''
+        """
         Packs an individual residue.  Scores before and after.
-        '''
+        """
         
         res = self.pose.pdb_info().pdb2pose(chain, int(res))
         task = TaskFactory.create_packer_task(self.pose)

@@ -13,6 +13,7 @@
 
 from Tkinter import *
 from window_modules import *
+#from window_modules.interactive_terminal import IPython
 from modules.tools import output as output_tools
 from modules.tools import general_tools
 from modules.tools import sequence
@@ -28,7 +29,7 @@ class Menus():
 	self.options_class = Option_System_Manager(self.toolkit.current_directory.get())
     def setTk(self):
 
-	''''
+	"""
     OPTION - Enable Antibodies
 
     #### Antibody Menu ####
@@ -38,7 +39,7 @@ class Menus():
 	self.Antibody.add_command(label="Antibody Design Analysis")
 
 	self.MenBar.add_cascade(label = "Antibodies", menu=self.Antibody)
-	'''
+	"""
 
 
 
@@ -58,7 +59,8 @@ class Menus():
 	self.FineControl.add_command(label="ScoreFxn Control", command =lambda: self.toolkit.ScoreObject.makeWindow(Toplevel(self.main), self.toolkit.pose))
 	self.FineControl.add_separator()
 	self.FineControl.add_command(label="Configure Option System",command = lambda: self.shoOptions())
-	#self.FineControl.add_command(label="Copy Rotamer Library", command = lambda: OptionSystem().cpRotamerBin())
+	self.FineControl.add_command(label="Interactive Terminal", foreground='red',command = lambda: self.shoIPythonWindow())
+	self.FineControl.add_command(label="Jump into Session", foreground='red', command = lambda: embed())
 	#self.FineControl.add_command(label="Constraints")
 
 
@@ -67,15 +69,18 @@ class Menus():
     #### Rosetta Tool Menu ####
 	self.MenRosetta = Menu(self.MenBar, tearoff=0)
 	#self.MenRosetta.add_command(label = "Return Rosetta Numbering", command = lambda: output_tools.return_rosetta_numbering())
-	#self.MenRosetta.add_command(label ="Setup Rosetta Paths", command = lambda: self.shoRosettaSetup())
 	self.MenRosetta.add_command(label ="Setup PDB for Rosetta", command=lambda: FixPDB().runfixPDBWindow(self.main, 0, 0))
+	self.MenRosetta.add_separator()
+	self.MenRosetta.add_command(label ="Enable Constraints", foreground='red')
+	self.MenRosetta.add_command(label ="Enable Symmetry", foreground='red')
+	self.MenRosetta.add_command(label ="Enable Non-Standard Residues", foreground='red')
 	self.MenRosetta.add_separator()
 	##self.MenRosetta.add_command(label= "Rosetta Script Creator")
 	self.MenRosetta.add_command(label= "Rosetta Command-Line Creator", command = lambda: self.shoRosettaProtocolSetup())
 	##self.MenRosetta.add_command(label = "Run PsiPred")
 	self.MenBar.add_cascade(label="Rosetta Tools", menu=self.MenRosetta)
     #### Molecular Dynamics Menu ####
-	''''
+	"""'
 	self.MenMD=Menu(self.MenBar, tearoff=0)
 	self.MenMD.add_command(label="Setup Fixed Atoms")
 	self.MenMD.add_command(label="Setup Harmonic Constraints")
@@ -83,10 +88,10 @@ class Menus():
 	self.MenMD.add_separator()
 	self.MenMD.add_command(label="Run NAMD")
 	self.MenBar.add_cascade(label="Dynamics", menu=self.MenMD)
-	'''''
+	"""''
 
     #### PDB Menu #### NEEDS WORK
-	'''
+	"""
 	self.MenPDB=Menu(self.MenBar, tearoff=0)
 	#self.MenPDB.add_command(label="Load PDB into Python", command = lambda: setPDBdic(tools.pdbs.pdbTools().parsePDB(filename1.get(), pdbDic)))
 	self.MenPDB.add_command(label= "Setup PDB for Rosetta", command=lambda: FixPDB.runfixPDBWindow(self.main, 0, 0))
@@ -117,7 +122,7 @@ class Menus():
 	self.Menddg.add_command(label="Calculate", command=lambda: tools.analysis.interface().analyzeDDG(self.toolkit.pose))
 	##self.MenAnal.add_cascade(label="Calculate ddg", menu=self.Menddg)
 	self.MenBar.add_cascade(label="Analysis", menu=self.MenAnal)
-	'''
+	"""
 
     #### Import Menu #### REMOVE?
 	self.MenFrag=Menu(self.MenBar, tearoff=0)
@@ -159,7 +164,7 @@ class Menus():
 	self.MenTools.add_separator()
 
 	self.MenScore = Menu(self.MenBar, tearoff=0)
-	''' There are scripts in RosettaTools that do this welll...
+	""" There are scripts in RosettaTools that do this welll...
 	self.MenScore.add_command(label = "Rescore PDBList", command = lambda: output_tools.score_PDBLIST(self.toolkit.PDBLIST.get(), self.toolkit.ScoreObject))
 	#self.MenScore.add_command(label = "Load Scores")
 	#self.MenScore.add_command(label = "Filter  PDBList")
@@ -167,7 +172,7 @@ class Menus():
 	#self.MenScore.add_command(label = "Filter  PDBList by E Component")
 
 	self.MenTools.add_cascade(label = "Score", menu=self.MenScore)
-	'''
+	"""
 
 	self.MenSequence = Menu(self.MenBar, tearoff=0)
 	self.MenSequence.add_command(label = "Output FASTA for Each PDB", command = lambda: output_tools.save_FASTA_PDBLIST(self.toolkit.PDBLIST.get(), False, self.toolkit.current_directory.get()))
@@ -213,9 +218,9 @@ class Menus():
     def printPDB(self):
 	print pdbDic
     def savSeq(self):
-	'''
+	"""
 	Saves SCWRL sequence file
-	'''
+	"""
 
 	if not self.toolkit.input_class.loops_as_strings:
 	    tkMessageBox.showerror(title="Loop", message="Please Specify what you would like to remodel...")
@@ -244,9 +249,9 @@ class Menus():
 	    self.toolkit.input_class.loops_listbox.insert(END, string)
 
     def savLoop(self):
-	'''
+	"""
 	Saves a Loop File for Rosetta
-	'''
+	"""
 	if not self.toolkit.input_class.loops_as_strings:
 	    tkMessageBox.showerror(title="Loop", message="Please Specify what you would like to remodel...")
 	    return
@@ -259,17 +264,17 @@ class Menus():
     
 #### WINDOWS ##### (ADD NEW WINDOWS TO THIS) #######
     def shoOptions(self):
-	'''
+	"""
 	Main Design window interacting with options system
-	'''
+	"""
 	#Broken?  What the fuck?
 	WinOptions = Toplevel(self.main)
 	self.options_class.setTk(WinOptions)
 	self.options_class.shoTk()
     def shoDesign1(self):
-	'''
+	"""
 	Main Design window for creating a ResFile
-	'''
+	"""
 	#Broken?  What the fuck?
 	WinDesign1 = Toplevel(self.main)
 	design1 = Design(WinDesign1, self.toolkit.DesignDic, self.toolkit.pose)
@@ -277,24 +282,24 @@ class Menus():
 	design1.shoTk()
 	design1.setTypes()
     def shoAnalyze(self):
-	'''
+	"""
 	Main Analysis window
-	'''
+	"""
 
 	WinAnalyze = Toplevel(self.main); Analyze1 = AnalyzePyRosetta(WinAnalyze)
 	Analyze1.setTk(); Analyze1.shoTk(); Analyze1.setLis()
     def shoPdbTools(self):
-	'''
+	"""
 	PDB Tools for cleaning pdb files, hopfully more stuff in the future..
-	'''
+	"""
 
 	WinPDB = Toplevel(self.main);
 	PDB1 = PdbTools(WinPDB);
 	PDB1.setTk(); PDB1.shoTk()
     def shoCDRAnalysis(self):
-	'''
+	"""
 	CDR Analysis window.  Needs to be optional as 300 mb of pdb is a lot.
-	'''
+	"""
 
 	WinCDRAnal = Toplevel(self.main)
 	CDRWindow = CDR_Analysis.CDRAnalysis(WinCDRAnal, 0, 0)
@@ -310,13 +315,20 @@ class Menus():
 	CDRWindow.grid()
 
     def shoRosettaProtocolSetup(self):
-	'''
+	"""
 	Rosetta Protocols - Used to make commands from lists of possible options.
-	'''
+	"""
 
 	RosProtSet = Toplevel(self.main)
 	ProtSet = RosettaProtocols.ProtocolSetup(RosProtSet)
 	ProtSet.setTk()
 	ProtSet.shoTk(0, 0)
 	ProtSet.setMenu(RosProtSet)
+    
+    def shoIPythonWindow(self):
+	"""
+	IPython Interactive Window.  Isolated from variables for now.
+	"""
+	term = IPythonView(Toplevel(self.main))
+	term.pack()
 	

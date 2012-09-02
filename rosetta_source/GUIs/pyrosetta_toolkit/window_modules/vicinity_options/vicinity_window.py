@@ -16,10 +16,10 @@ from os import getcwd
 
 pwd = getcwd()
 class vicinityrelaxwindow(tkSimpleDialog.Dialog):
-    '''
+    """
     This is the Vaccinity Relax Window to specify options while doing relax.  May be used in other protocols if possible.
     It is set as a tkSimpleDialog, but this can be changed fairly easily to allow more use.
-    '''
+    """
     
     def body(self, main):
         #self.main = Toplevel(main)

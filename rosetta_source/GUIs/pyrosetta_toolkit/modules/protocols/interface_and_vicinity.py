@@ -26,17 +26,17 @@ import os
 
 #packVicinity
 class Interface_and_Vicinity(Loop_Min):
-    '''
+    """
     Needs a lot of work.  Almost abandoned.
-    '''
+    """
     
     def __init__(self, score_object, pose):
         Loop_Min.__init__(score_object, pose)
         
     def packVicinity(self, rounds, LisLoop, ob, type = 0, vaccinity = 5.0, onlyaround=0):
-        '''
+        """
         Packs The Vacinity using either SCWRL, ROSETTA, or by adding to a design file.
-        '''
+        """
         
     #Types: SCWRL, ROSETTA, DESIGN
     
@@ -83,9 +83,9 @@ class Interface_and_Vicinity(Loop_Min):
     
 #relaxVicinity        
     def relaxVicinity(self, rounds, LisLoop, vaccinity, targetSet, vaccinitySet):
-        '''
+        """
         Relaxes The Vacinity Takes options (onlyaround, fixloopbb, fixvacbb).
-        '''
+        """
         
     #Types: SCWRL, ROSETTA, DESIGN
     
@@ -134,9 +134,9 @@ class Interface_and_Vicinity(Loop_Min):
     
 #minVicinity        
     def minVicinity(self, rounds, LisLoop, vaccinity, tolerance, targetSet, vaccinitySet):
-        '''
+        """
         Minimizes The Vacinity
-        '''
+        """
     
         #Sets Defaults:
 

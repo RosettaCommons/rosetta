@@ -13,19 +13,19 @@ class pdbTools:
         self.OneLetterCode["HIS_D"]="H"    
         
     def loadPDB(self, filename):
-        '''
+        """
         Loads PDB/file into an array of lines
-        '''
+        """
         
         FILE = open(filename)
         lines = FILE.readlines()
         FILE.close()
         return lines
     def cleanPDB(self, pdbDic):
-        '''
+        """
         Removes HSD, Waters: Tries to fix atom name inconsistencies.
         Do not USE. Currently, untested for everything, and may not always work.
-        '''
+        """
         if not pdbDic:
             print "Please Load PDB into Python to work on..."
             return
@@ -87,16 +87,16 @@ class pdbTools:
  
         return pdbDic
     def pdbAlias(self, pdbDic, key, Dickey):
-        '''
+        """
         Replaces atomNames with ones Rosetta is happy with.
         Dickey is all of the residues that need to be replaced start:end
-        '''
+        """
         for start in Dickey:
             if pdbDic[key]["atomName"]==start:
                 print pdbDic[key]["ResName"]+":"+pdbDic[key]["atomName"]+":"+ Dickey[start]
                 pdbDic[key]["atomName"]=Dickey[start]
         return pdbDic
-    '''
+    """
     def redoPDB(self, p, start, end, chain, inFile):
         pwd = os.getcwd(); temp=pwd +"/"+"tempDel"; temp2=pwd+"/"+"tempDel2.pdb"
         FILE2 = open(temp2, 'w')
@@ -129,7 +129,7 @@ class pdbTools:
         FILE2.close()
         os.remove(temp); os.remove(temp2)
         return p2
-    '''
+    """
     def outputCDR(self, start, end, chain, inFile, outFile):
         #pwd = os.getcwd(); temp=pwd +"/"+"tempDel"; temp2=pwd+"/"+"tempDel2.pdb"
         FILE2 = open(outFile, 'w')
@@ -162,13 +162,13 @@ class pdbTools:
         #return p2
         
     def pdbData(self, lines, pdbDic, clean = 1, chains=0):
-        '''
+        """
         Reads an array of lines and parses the contents of each line in accordance with pdb structure.
         Returns a dictionary of each line, starting from 1 with each column held exactly as is - With spaces.
         If clean=1, returns a dictionary without whitespace.
         
         Chains is list of chains you would like to extract from the PDB file.
-        '''
+        """
         
         i = 1
         for line in lines:
@@ -241,10 +241,10 @@ class pdbTools:
         
         
     def parsePDB(self, filename, pdbDic, clean=0, chains=0):
-        '''
+        """
         This Reads the PDB using 'loadPDB' and parses it using 'pdbData'
         returns a pdb Dictionary data structure.
-        '''
+        """
         
         lines = self.loadPDB(filename)
         pdbDic = self.pdbData(lines, pdbDic, clean, chains)
@@ -252,9 +252,9 @@ class pdbTools:
         return pdbDic
     
     def RemEle(self, pdbDic):
-        '''
+        """
         Removes the extra stuff in the element column, but not the element itself.
-        '''
+        """
         if not pdbDic:
             print "Please load PDB data into Python to work on...."
             return
@@ -265,12 +265,12 @@ class pdbTools:
         print "Extra stuff in Element Columns Removed"
         return pdbDic
     def RemAlt(self, pdbDic):
-        '''
+        """
         Removes any alternate residue codes and renumbers according to the start of each chain.  If the insertion is at the
         beginning of a chain, starts at residue number one.
         Returns a fixed pdb Dictionary data structure.
         NOT COMPLETELY TESTED.  USE WITH CAUTION.
-        '''
+        """
         if not pdbDic:
             print "Please load PDB data into Python to work on..."
             return
@@ -344,10 +344,10 @@ class pdbTools:
         return pdbDic
     
     def chaOcc(self, pdbDic):
-        '''
+        """
         Changes ALL occupancies in a PDB dictionary to 1.00
         Returns PDB Dictionary.
-        '''
+        """
         if not pdbDic:
             print "Please load PDB file into Python to work on..."
             return
@@ -362,10 +362,10 @@ class pdbTools:
         return pdbDic
     
     def savePDB(self, pdbDic, filename=0):
-        '''
+        """
         Uses a PDB Dictionary to save the data as a PDB file.
         No END or TER is added, but should be in the future.
-        '''
+        """
         if not pdbDic:
             print "No PDB file loaded...."
             return

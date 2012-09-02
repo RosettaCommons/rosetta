@@ -20,10 +20,10 @@ OPTIONS = dict(); #List of options for each application and their descriptions
 APPLICATIONS = dict(); #List of Applications and a description for each known one.
 
 def location():
-        '''
+        """
         Allows the script to be self-aware of it's path.
         So that it can be imported from anywhere.
-        '''
+        """
         
         p = os.path.abspath(__file__)
         pathSP = os.path.split(p)

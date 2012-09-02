@@ -22,11 +22,11 @@ class Protein_Min:
         self.pose = pose
         
     def Relax(self, rounds, classic, movemap = 0):
-        '''
+        """
         Relaxes the pose using either Fast Relax or Classic Relax
         If Classic is anything other then 0, then Fast Relax occurs.
         This is useful as a Tk Checkbutton. (uses self.score_object.score 12 and standard)
-        '''
+        """
         rounds=int(rounds); classic=int(classic)
         self.score_object.score.set_weight(chainbreak, 100)
         print self.score_object.score(self.pose)
@@ -56,10 +56,10 @@ class Protein_Min:
     
     
     def classicMin(self, rounds, tolerance=0.1):
-        '''
+        """
         Does a classic min using Dfpmin and the classic MinMover with a tolerance of .5
         Later will add choices if needs be
-        '''
+        """
         
 
         print self.score_object.score(self.pose)
@@ -79,10 +79,10 @@ class Protein_Min:
         return p
     
     def optimizeRot(self, rounds):
-        '''
+        """
         This optimizes the Side Chain Rotamers of your pose.  It uses the All atom self.score_object.score functions:
         :Standard and self.score_object.score12: Perhaps later, when I learn more about OOP, a self.score_object.score can be given optionally.
-        '''
+        """
 
         print self.score_object.score(self.pose)
         packer_task=standard_packer_task(self.pose)
@@ -102,9 +102,9 @@ class Protein_Min:
     
     def SCWRL(self, rounds):
         
-        '''
+        """
         This uses Scwrl4 to rebuild sidechains of the entire protein.  Ob is not int, rounds is int.
-        '''
+        """
         pwd = os.path.split(os.path.abspath(__file__))[0]
         print self.score_object.score(self.pose)
         tempdir = pwd + "/temp/"

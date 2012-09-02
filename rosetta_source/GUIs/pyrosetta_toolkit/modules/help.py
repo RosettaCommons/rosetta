@@ -17,9 +17,9 @@ import tkSimpleDialog
 #### Collection of help functions. #####
 
 def about():
-    '''
+    """
     This will be a menu pop up
-    '''
+    """
     message = "GUI Originally Created by Jared Adolf-Bryfogle, July 2012.\n"
     message = message + "Roland Dunbrack / FCCC / Drexel College of Medicine.\n"
     message = message + "PyRosetta created by Jeffrey J. Gray, Sergey Lyskov, and the PyRosetta Team at JHU.\n"

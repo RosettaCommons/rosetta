@@ -27,12 +27,12 @@ class Loop_Min:
 
 #classicMinLoop
     def classicMinLoop(self, rounds, loops_as_string_array, tolerance=0.1, movemap=0):
-        '''
+        """
         This is the classic MinMover, with dfpmin for a Loop.
         Not actually defining a loop, only regions in the movemap
         May have a problem if using Centroid....
         If Movemap is given, loops_as_string_array does not matter!!
-        '''
+        """
 
         if movemap ==0:
             movemap=MoveMap()
@@ -55,11 +55,11 @@ class Loop_Min:
         
 #RelaxLoop    
     def RelaxLoop(self, rounds, loops_as_string_array, classic, movemap = 0):
-        '''
+        """
         Classic and Fast Relax for the loop.  Uses the Movemap from this class.
         ClassicRelax=0; FastRelax=1 for classic setting
         If Movemap is give, the loops_as_string_array does not matter...
-        '''
+        """
 
         rounds=int(rounds); classic=int(classic)
 
@@ -86,10 +86,10 @@ class Loop_Min:
         print "Relax Complete"
     
     def relax_residue_and_neighbors(self, rounds, residue, chain, num_neighbors=1, bbonly=False):
-        '''
+        """
         Relaxes a residue and the residues on either side by Rosetta numbering!.
         Does not care if there is a jump between them.  This should change.
-        '''
+        """
         
         res = int(residue)
         res = self.pose.pdb_info().pdb2pose(chain, res)
@@ -113,18 +113,18 @@ class Loop_Min:
         print "Relax Complete"
         
     def relaxLoopBBonly(self, rounds, loops_as_string_array, classic, movemap = 0):
-        '''
+        """
         Relaxes a given loop.  Only BB.
-        '''
+        """
         movemap = MoveMap()
         movemap = loop_tools.loopBBMovemap(self.pose, movemap, loops_as_string_array)
         self.RelaxLoop(rounds, loops_as_string_array, classic, movemap)
         
 
     def optimizeRotLoop(self, rounds, loops_as_string_array):
-        '''
+        """
         Optomizes Loop Rotamers using the PackRotamersMover
-        '''
+        """
         rounds = int(rounds)
         print self.score_object.score(self.pose)
         packer_task=standard_packer_task(self.pose)
@@ -141,10 +141,10 @@ class Loop_Min:
     
 #LoopBackrubRef    
     def LoopBackrubRef(self, rounds, loops_as_string_array):
-        '''
+        """
         Backrubs the loop using the LoopMover_Refine_Backrub Mover
         As far as I know, it does not work.  Though it would be nice.
-        '''
+        """
         movemap=MoveMap()
         ft = self.pose.fold_tree(); ft_o = FoldTree()
         ft_o.assign(ft)

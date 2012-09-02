@@ -21,10 +21,10 @@ from rosetta import *
 
 class ScoreBase():
     def __init__(self, pose, scorefxn):
-        '''
+        """
         Class for quickly scoring more complex things (loops, domains, cores?), switching energy types and (possibly) rotamer libraries on-the-fly
         Not used as a container class.
-        '''
+        """
         
         self.pose = pose
         self.score = scorefxn
@@ -59,16 +59,16 @@ class ScoreBase():
             "dslf_ca_dih":dslf_ca_dih
         }
     def ret_pose_number(self, chain, resNum):
-        '''
+        """
         Returns Pos Numbering.  Takes Chain and Resnum.
-        '''
+        """
         return self.pose.pdb_info().pdb2pose(chain, resNum)
         
     def ret_loop_energy(self, chain, Nter, Cter):
-        '''
+        """
         Returns the total energy for each loop by each residue resNum.
         Weighted! ;)
-        '''
+        """
         
         e = 0
         poseNter = self.ret_pose_number(chain, Nter)
@@ -81,10 +81,10 @@ class ScoreBase():
         return e
     
     def ret_loop_energy_by_type(self, chain, Nter, Cter, type):
-        '''
+        """
         Return weighted energy by type
         Weighted!
-        '''
+        """
         poseNter = self.ret_pose_number(chain, Nter)
         poseCter = self.ret_pose_number(chain, Cter)  
         e=0
@@ -96,13 +96,13 @@ class ScoreBase():
         return e
     
     def ret_loop_neighbor_energy(self, chain, Nter, Cter):
-        '''
+        """
         Returns the neighbor energy of the loop in question.
         neighbor is defined as any residue pair having a non-zero ci_2b energy.
         Divides the sum by two to account for double counting.  This has been checked in the Energies object and is true.
         Weighted!
         NOTE - INLCUDED residue-residue interactions within loop.  Now fixed.
-        '''
+        """
         
         emap = core.scoring.EMapVector()
         e = 0
@@ -127,11 +127,11 @@ class ScoreBase():
         return e
     
     def ret_loop_neighbor_energy_by_type(self, chain, Nter, Cter, type):
-        '''
+        """
         Returns the neighbor energy of the loop in question. Type is not a string!
         Note that hack_elec has hack_elec_bb_bb, hack_elec_sc_sc, and hack_elec_bb_sc.  These add up to hack_elec.  May want to see these...
         Weighted!
-        '''
+        """
         #print "Neighbor: "
         emap = core.scoring.EMapVector()
         e = 0
@@ -145,29 +145,29 @@ class ScoreBase():
                 emap.zero()
                 r2 = self.pose.residue(x)
                 self.score.eval_ci_2b(r1, r2, self.pose, emap)
-                '''
+                """
                 if emap[type]!=0:
                     print "ci_2b "+repr(i)+':'+repr(x)+' '+ repr(self.weights[type]*(emap[type]/2))
                     print "  unweighted "+repr(emap[type]/2)
-                '''
+                """
                 
                 e = e+self.weights[type]*(emap[type]/2)
                 emap.zero()
                 self.score.eval_cd_2b(r1, r2, self.pose, emap)
-                '''
+                """
                 if emap[type]!=0:
                     print "cd_2b "+repr(i)+':'+repr(x)+' '+ repr(self.weights[type]*(emap[type]/2))
                     print "  unweighted "+repr(emap[type]/2)
-                '''
+                """
                 
                 e = e+self.weights[type]*(emap[type]/2)
         #print "Total neighbor energy: "+repr(e)
         return e
     
     def ret_total_weighted_residue_energy(self, poseNum):
-        '''
+        """
         Returns the total energy of the residue, weighted according to scorefunction.
-        '''
+        """
         self.updateweights()
         emap = self.pose.energies().residue_total_energies(poseNum)
         e = 0.0
@@ -175,19 +175,19 @@ class ScoreBase():
             e = e+self.weights[type]*emap[type]
         return e
     def ret_residue_energy(self, poseNum):
-        '''
+        """
         Returns individual residue energies. By EMAP.
         UNWEIGHTED On Purpose
-        '''
+        """
         
         #poseNum = self.ret_pose_number(chain, resNum)
         emap = self.pose.energies().residue_total_energies(poseNum) #UNWEIGHTED!!!
         return emap
         
     def ret_n_hbonds(self):
-        '''
+        """
         Returns Hbonds FOR WHOLE PROTEIN
-        '''
+        """
         self.score(self.pose)
         set = core.scoring.hbonds.HBondSet()
         self.pose.update_residue_neighbors()

@@ -19,9 +19,9 @@ import re
 
 class calibur:
     def __init__(self, caliburPath=set):
-        '''
+        """
         Uses system path, or specified path in calculations.
-        '''
+        """
         
         if caliburPath ==set:
             self.caliburPath = "calibur"
@@ -29,10 +29,10 @@ class calibur:
             self.caliburPath = caliburPath
         
     def run_calibur(self, PDBLIST_Path, chain=False, Nter=False, Cter=False, threshold=0):
-        '''
+        """
         Nter, Cter are not residue numbering - pretty much it is rosetta numbering as far as I can tell...
         Need to do this better with option type thing..
-        '''
+        """
         run = self.caliburPath
         if chain:
             run = run+" -c "+chain
@@ -46,9 +46,9 @@ class calibur:
         return
     
     def ret_centers(self):
-        '''
+        """
         return array of top 2 clusters, and a corresponding array of sizes.
-        '''
+        """
         found = False
         for line in self.output:
             print line
@@ -74,9 +74,9 @@ class calibur:
         return paths, neighbors
     
     def ret_threshold(self):
-        '''
+        """
         Returns threshold used in analysis.
-        '''
+        """
         
         for line in self.output:
             if re.search("Threshold = ", line):

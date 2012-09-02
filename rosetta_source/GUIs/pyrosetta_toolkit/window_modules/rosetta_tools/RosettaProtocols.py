@@ -27,12 +27,12 @@ from ..clean_pdb import fix_pdb_window
 
 
 class ProtocolSetup():
-    '''
+    """
     This allows you to setup a rosetta protocol.  Save it's options file, or run it.
     Very useful to see all the applications, see possible options, and see descriptions for each option.
-    However, manually currated, and the whole program needs to be rewritten to have it otherwise...
+    Implementation of Doxygen integration and options_rosetta.py parsing next.
     
-    '''
+    """
     
     
     def __init__ (self, main):
@@ -122,9 +122,9 @@ class ProtocolSetup():
         scroll_cmd_options.config(command = self.textbox_cmd_options.yview)
         
     def shoTk(self, r, c):
-        '''
+        """
         Grid the Tk objects to the window.
-        '''
+        """
         self._r_ = r; self._c_ = c
 
         self.Photo.grid(row =self._r_, column = self._c_+4)
@@ -185,18 +185,18 @@ class ProtocolSetup():
         self.main.config(menu=self.MenBar)
         
     def set_tracers(self):
-        '''
+        """
         Sets any tracers that the program needs to be aware of.
-        '''
+        """
         self.option.trace_variable('w', self.helpCallback)
         self.chosen_doc_type.trace_variable('w', self.appCallback)
         self.path_builder_check.trace_variable('w', self.pathBuildCallback)
         self.info_type.trace_variable('w', self.info_typeCallback)
 #### CALLBACK ####
     def helpCallback(self, name, index, mode):
-        '''
+        """
         More like option call back.  Inserts option info into documentation_textbox.
-        '''
+        """
         
         varValue = self.option.get()
         try:
@@ -225,9 +225,9 @@ class ProtocolSetup():
             self.shoPathBuilder()
     
     def info_typeCallback(self, name, index, mode):
-        '''
+        """
         Callback for the info type - currated, doxygen info, options_rosetta, etc.
-        '''
+        """
         varValue = self.info_type.get()
         if varValue == "currated":
             self.sho_manually_currated_info()
@@ -242,9 +242,9 @@ class ProtocolSetup():
         return
     
     def populateOptionMenu(self, app):
-        '''
+        """
         What happens after you double click an application.
-        '''
+        """
         
         self.last_app_clicked.set(app)
         self.option_menu_options["menu"].delete(0, END)
@@ -268,18 +268,18 @@ class ProtocolSetup():
             
 #### SHOW OPTION TYPES #### 
     def sho_manually_currated_info(self):
-        '''
+        """
         Loads and shows manually currated info if possible.
-        '''
+        """
         self.specifOPTIONS = pickle.load(open(self.pwd+"/Rosetta3-3.p")); #APP:Descriptions
         self.appDOC = pickle.load(open(self.pwd+"/Rosetta3-3Apps.p")); #No Idea
         self.read_applications_from_directory(self.application_directory.get()); #Populate array_of_applications
         self.populate_applications(self.array_of_applications)
         
     def sho_all_rosetta_options(self):
-        '''
+        """
         Loads data from options_rosetta.py
-        '''
+        """
         pass
         #Need to figure out how to parse the options class.
         option_path = os.path.join(self.source_directory.get(), "src", "basic", "options","options_rosetta.py")
@@ -289,16 +289,16 @@ class ProtocolSetup():
         pass
     
     def sho_doxygen_documentation(self):
-        '''
+        """
         Shows doxygen_documentation
-        '''
+        """
         pass
     
     def sho_app_help_options(self):
-        '''
+        """
         uses app -help to parse and print all info.
         Repopulates the specifOPTIONS dictionary.
-        '''
+        """
         #Note, I have heard popopen fails in 3.0 and less. So -
         
         print "Reading all available options for each application.  This may take a few minutes..."
@@ -337,16 +337,16 @@ class ProtocolSetup():
     #### FUNCTIONS ####
 
     def read_applications_from_directory(self, Apppath):
-        '''
+        """
         Reads all applications from the directory.
         Seperates .linuxgcc.
         -appends the appLIST, sets appRoot
         -Adds the basic options in globalOPTIONS to appLIST
         -sorts the appLIST.
         **DOES NOT UPDATE LISTBOX, etc.**
-        '''
+        """
         
-	#This exception handling does not work!  Fix!
+	#If there is nothing in the directory, we seqfault without error...
         if os.path.exists(Apppath):
             list = os.listdir(Apppath)
         else:
@@ -364,18 +364,18 @@ class ProtocolSetup():
     
 
     def populate_applications(self, array):
-        '''
+        """
         Populates the application listbox with an array of strings.
-        '''
+        """
         
         for string in array:
             self.listbox_applications.insert(END, string)
             
         
     def loadRosettaSettings(self):
-        '''
+        """
         Load Rosetta settings text file.
-        '''
+        """
         
         setup_window = RosettaSetup.SetupRosettaPaths(self.main)
         if not setup_window.result:
@@ -404,10 +404,10 @@ class ProtocolSetup():
            
     
     def saveConfiguration(self, save_as_temp = False):
-        '''
+        """
         Save cmd configuration to file.
         if save_as_tmp, does not do the file dialog.
-        '''
+        """
         
         # Add database and app path to config before saving.
         #check_button_cks to make sure the correct app is selected, so we don't screw up when running on the cluster.
@@ -428,9 +428,9 @@ class ProtocolSetup():
         return
     
     def loadConfiguration(self):
-        '''
+        """
         Load a rosetta cmd config file.
-        '''
+        """
         
         FILE = tkFileDialog.askopenfile(initialdir = self.defaultdir)
         config = FILE.read()
@@ -456,18 +456,18 @@ class ProtocolSetup():
         return
     
     def runConfiguration(self):
-        '''
+        """
         Used for quick run.  Like conversions, scoring, etc.
         popopen doesn't work well, so just freezes system? Needs work.
-        '''
+        """
         self.saveConfiguration(True)
         os.system(self.application_directory.get()+"/"+self.last_app_clicked.get()+'.'+self.appRoot.get()+" @"+self.pwd+"/temp_settings_"+self.last_app_clicked.get()+".txt")
 #### Other Windows ####
 
     def setup_pathbuilder_objects(self):
-        '''
+        """
         Initialized pathbuilder Tk objects.
-        '''
+        """
         self.root = StringVar()
         self.filename = StringVar()
         self.path_builder_check = IntVar(); #variable for if path builder is shown or not.
@@ -528,9 +528,9 @@ class ProtocolSetup():
 #### OTHER FUNCTIONS ####
 
     def makeList(self):
-        '''
+        """
         Makes a list of PDB's from a directory.  Does not walk directory.  This can be an option later.
-        '''
+        """
         
         directory = tkFileDialog.askdirectory(initialdir = self.defaultdir)
         if directory ==None:
@@ -548,10 +548,10 @@ class ProtocolSetup():
         return
     
     def makeRecursiveList(self, directory):
-        '''
+        """
         Makes a list of PDB's from a directory.  Walks Directory
         DOES NOT WORK>
-        '''
+        """
         directory = tkFileDialog.askdirectory(initialdir = self.defaultdir)
         filenum = 1
         if contains=="all":
@@ -567,17 +567,17 @@ class ProtocolSetup():
                     AllFiles.append(p)
         
     def getfile(self):
-        '''
+        """
         simply gets a filename...wish I could do this within the command syntax of tkinter...
-        '''
+        """
         filepath = tkFileDialog.askopenfilename(initialdir = self.defaultdir)
         return filepath
     
     def location(self):
-        '''
+        """
         Allows the script to be self-aware of it's path.
         So that it can be imported from anywhere.
-        '''
+        """
         
         p = os.path.abspath(__file__)
         pathSP = os.path.split(p)

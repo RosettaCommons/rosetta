@@ -23,11 +23,11 @@ from modules.tools import output as output_tools
 
 
 class ScoreFxn():
-    '''
+    """
     This is the class where you can pick from any of rosetta's energy functions and classes, as well as edit them on the fly, save them, and load
     custom built ones.  Useful for testing new scorefunctions.
     Problem is that it's built around Tk instead of having Tk interface be a seperate class....
-    '''
+    """
     
     def __init__(self):
         self.weight_dir = env["PYROSETTA_DATABASE"] +"/scoring/weights/"
@@ -46,9 +46,9 @@ class ScoreFxn():
         
 
     def makeWindow(self, main, p, r=0, c=0):
-        '''
+        """
         Creates the window to edit, analyze, and explore score functions and score terms.
-        '''
+        """
         
         #Listboxes with Labels
         
@@ -110,9 +110,9 @@ class ScoreFxn():
         self.populateScoreList()
         self.updateScoreandTerms()
     def readDefaults(self):
-        '''
+        """
         Opens text file with default settings.
-        '''
+        """
         
         self.ScoreType = StringVar();
         self.ScorePatch = StringVar();
@@ -133,9 +133,9 @@ class ScoreFxn():
         if self.defaultDic.has_key("WD"):
             self.wd.set(self.defaultDic["WD"])
     def saveDefaults(self):
-        '''
+        """
         Saves text with default settings.
-        '''
+        """
         DEFAULT = open(self.wd+"/defaults.txt", 'w')
         if self.ScorePatch.get() ==None:
             DEFAULT.write("SCORE="+self.ScoreType.get())
@@ -145,9 +145,9 @@ class ScoreFxn():
         DEFAULT.close()
         
     def populateScoreList(self):
-        '''
+        """
         Works with PyRosetta 2.011
-        '''
+        """
         
         print "Please Wait, populating score functions..."
         print repr(env["PYROSETTA_DATABASE"])
@@ -263,18 +263,18 @@ class ScoreFxn():
         self.ScorePatch.set("None")
         self.updateScoreandTerms()
     def changeWeight(self, box):
-        '''
+        """
         Changes the weights on the term selected.  Updates the Listbox.  Updates the energy term.  If now NonZero, adds it to the NonZeroList and updates.  ViceVersa.
-        '''
+        """
         term = box.get(box.curselection())
         termSP = term.split(";")
         if len(termSP)>=2:
             print "This should not be empty"
             newWeight = tkSimpleDialog.askfloat(title="New", prompt = "Enter New Weight", initialvalue=float(termSP[1]))
             if newWeight ==None:
-                '''
+                """
                 This is what tkSimpleDialog returns if nothing is selected!!
-                '''
+                """
                 
                 return
             elif newWeight == 0:
@@ -305,9 +305,9 @@ class ScoreFxn():
         return refLine
     
     def saveAS(self):
-        '''
+        """
         Saves New Energy Weights
-        '''
+        """
         f= tkFileDialog.asksaveasfilename(initialdir = self.wd)
         if not f:
             return
@@ -332,26 +332,26 @@ class ScoreFxn():
         self.wd = tkFileDialog.askdirectory(title = "Set WD", initialdir = self.wd)
         
     def updateScoreandTerms(self):
-        '''
+        """
         Updates Term listboxes, and sets the score to the stringvariables scorepatch and scoretype
-        '''
+        """
         self.scoreOption("Set ScoreFunction")
         self.zero, self.nonzero = self.scoreOption("Breakdown ScoreFxn")
         self.populateETerms(self.nonzero, self.zero)
     
     def getRefs(self):
-        '''
+        """
         Loads the name of the ScoreFunction and parses the reference energies as a 1 line string.
         We then write this when outputing the ScoreFunction.
-        '''
+        """
         
         SCOREFILE = open(env["PYROSETTA_DATABASE"] +"/scoring/weights/"+self.ScoreType.get()+".wts")
         self.refLine = SCOREFILE.readline()
     def location(self):
-        '''
+        """
         Allows the script to be self-aware of it's path.
         So that it can be imported/ran from anywhere.
-        '''
+        """
         
         p = os.path.abspath(__file__)
         pathSP = os.path.split(p)

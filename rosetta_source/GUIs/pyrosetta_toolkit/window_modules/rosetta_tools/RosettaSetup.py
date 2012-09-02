@@ -22,10 +22,10 @@ import os.path
 
 
 class SetupRosettaPaths(tkSimpleDialog.Dialog):
-    '''
+    """
     Window to setup rosetta paths for the system.
     Saves a settings file, which is used by subsequent rosetta tools.
-    '''
+    """
             
     def body(self, main):
         #INIT
@@ -105,19 +105,19 @@ class SetupRosettaPaths(tkSimpleDialog.Dialog):
         
         
     def location(self):
-        '''
+        """
         Allows the script to be self-aware of it's path.
         So that it can be imported from anywhere.
-        '''
+        """
         
         p = os.path.abspath(__file__)
         pathSP = os.path.split(p)
         return pathSP
     
     def loadSettings(self):
-        '''
+        """
         Loads settings from an alternative location, saves rosettasettings.txt.
-        '''
+        """
         f = tkFileDialog.askopenfilename(initialdir=self.pwd)
         FILE = open(f, 'r')
         for line in FILE:

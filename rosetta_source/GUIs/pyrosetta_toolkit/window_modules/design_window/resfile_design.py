@@ -107,9 +107,9 @@ class Design:
     #### 'CALLBACKS' ####
     
     def check_residue_callback(self):
-        '''
+        """
         What happens when you click check residue.  Should be a callback, but need both res and chain specified before update.
-        '''
+        """
         
         self.listbox_current_designs.delete(0, END)
         self.current_residueFull = self.current_residue.get().split(":")
@@ -153,9 +153,9 @@ class Design:
                     self.listbox_current_designs.insert(END, residues)
             
     def click_restype_callback(self, ListTypes, ListTypesFull):
-        '''
+        """
         What happens when you click a design type (conserved, polar, etc.)
-        '''
+        """
         
         ListTypesFull.delete(0, END)
         type = ListTypes.get(ListTypes.curselection())
@@ -169,9 +169,9 @@ class Design:
             return
         
     def add_to_current_designs_callback(self, ListTypesFull, check_button_ckList):
-        '''
+        """
         What happens when you add a residue type to the design.  Updates other listboxes, etc.  Needs to be rewritten for clarity in code.
-        '''
+        """
         
         self.current_chainFull = self.current_residue.get().split(":")
         if len(self.current_chainFull) > 1:
@@ -317,9 +317,9 @@ class Design:
                 check_button_ckList.insert(END, residues)
                 
     def remove_from_current_designs_callback(self, check_button_ckList):
-        '''
+        """
         What happens when you double click the bottom listbox to remove a residue.
-        '''
+        """
         
         self.current_residueFull = self.current_residue.get().split(":")
         if len(self.current_residueFull) > 1:
@@ -351,9 +351,9 @@ class Design:
     #### Other GUI Functions ####
     
     def nextRes(self):
-        '''
+        """
         Update functions when residue is +1
-        '''
+        """
         
         self.current_residueFull = self.current_residue.get().split(":")
         if len(self.current_residueFull) < 2:
@@ -364,9 +364,9 @@ class Design:
             print "Please Change selection to get info..."
             
     def prevRes(self):
-        '''
+        """
         Update functions when residue is -1
-        '''
+        """
         
         self.current_residueFull = self.current_residue.get().split(":")
         if len(self.current_residueFull) < 2:
@@ -403,10 +403,10 @@ class Design:
             prot.LisProt1Frag.insert(END, outSP[length-1])
             
     def location(self):
-      '''
+      """
       Allows the script to be self-aware of it's path.
       So that it can be imported/ran from anywhere.
-      '''
+      """
         
       p = os.path.abspath(__file__)
       pathSP = os.path.split(p)

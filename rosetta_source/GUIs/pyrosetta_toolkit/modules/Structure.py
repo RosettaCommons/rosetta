@@ -41,13 +41,13 @@ class Antibody_Structure:
         self.representativeStructures = y[self.pdb.upper()]
             #print "Could not locate CDR Structure.  Please update database."
         self.CDRSTRUCTURES = z[self.pdb.upper()]
-        '''
+        """
         if len(self.CDRSTRUCTURES)!=6:
             print "MISSING CDR CLUSTER DATA FOR ONE OR MORE CDRS"
             print self.CDRSTRUCTURES
             print "RETURNING::::::"
             return
-        '''
+        """
         
         for cdr in self.CDRS:
             for struct in self.CDRSTRUCTURES:
@@ -69,16 +69,16 @@ class Antibody_Structure:
         #x, y, z, should be gone after this.
     
     def setSpecies(self, species):
-        '''
+        """
         Should have a set of species properties.
-        '''
+        """
         
         self.species = species
         
     def createLoopObjects(self, p):
-        '''
+        """
         Creates loop objects for each CDR.
-        '''
+        """
         for cdr in self.CDRS:
             start = p.pdb_info().pdb2pose(cdr.chain, cdr.Nter); end = p.pdb_info().pdb2pose(cdr.chain, cdr.Cter)
             cut = (end - start)/2
@@ -131,9 +131,9 @@ class Residue:
         pass
 ############################################################FUTURE1#############################################################
 class PDB:
-    '''
+    """
     The PDB should have seperate molecules for each chain.
-    '''
+    """
     def __init__(self, filename):
         self.loadPDB()
     def loadPDB(self):
@@ -162,9 +162,9 @@ class protein:
     def __init__(self):
         pass
 class protein_info:
-    '''
+    """
     The protein has protein molecules.  The PDB has a protein.  Need to write this carefully.
-    '''
+    """
     
     def __init__(self, sequence):
         #Were going to take the sequence.  Find the sequence's family.
@@ -200,10 +200,10 @@ class Atom:
     def __init__(self, name):
         pass
     def __add__(self, atom):
-        '''
+        """
         If we add two atoms together.  We create - A molecule, and a bond.
         This would be cool if we could get it to work.
-        '''
+        """
         return Bond(self, atom)
         #self.vdw
         #self.electrons

@@ -16,18 +16,18 @@ import tkFileDialog
 import os
 
 def setdefaultdir(defaultdir, pwddir):
-    '''
+    """
     Sets the default directory as pwd, saves it.
-    '''
+    """
     directory = tkFileDialog.askdirectory(initialdir = defaultdir)
     SETTINGSFILE = open(pwddir+"/ROSETTATOOLS_SETTINGS.txt", 'w')
     SETTINGSFILE.write("DEFAULTDIR=="+directory)
     SETTINGSFILE.close()
 
 def loaddefaultdir(dir):
-    '''
+    """
     Parses the Setting file for defaultdir
-    '''
+    """
     if os.path.exists(dir+"/ROSETTATOOLS_SETTINGS.txt"):
         SETTINGSFILE = open(dir+"/ROSETTATOOLS_SETTINGS.txt", 'r')
         for line in SETTINGSFILE:
@@ -38,7 +38,7 @@ def loaddefaultdir(dir):
     else:
         return dir
     
-'''    
+"""    
 def loadConfiguration(self):
 
     Load a rosetta cmd config file.
@@ -57,4 +57,4 @@ def loadConfiguration(self):
             configSP.pop(ind)
             break
     config = ' '.join(configSP)
-'''
+"""

@@ -11,6 +11,7 @@
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 from Tkinter import *
+from Tkinter import Frame as TkFrame
 from rosetta import *
 import tkFileDialog
 from modules.tools import analysis as analysis_tools
@@ -18,14 +19,14 @@ from modules.tools import input as input_tools
 from modules.tools import loops as loop_tools
 
 
-class simple_analysis():
-    def __init__(self, main, toolkit):
-        self.main = main
+class SimpleAnalysisFrame(TkFrame):
+    def __init__(self, main, toolkit, **options):
+        TkFrame.__init__(self, main, **options)
         self.toolkit = toolkit
         self.basicOPT = StringVar()
         self.basicOPT.set("Basic")
         self.basicOPTIONS = {
-            "Score FA Energies":lambda:self.toolkit.ScoreObject.score.show(self.toolkit.pose),
+            "Score FA Energies":lambda:self.print_full_energy(),
             "Score Loops":lambda: self.score_loops(),
             #"Analyze Interface":"",
             #"Score Loop Residues"
@@ -49,19 +50,22 @@ class simple_analysis():
         self.basicOPT.trace_variable('w', self.basic_option_tracer)
         self.rmsdOPT.trace_variable('w', self.rmsd_option_tracer)
         
-    def setTk(self):
-        self.label_widget=Label(self.main, text="Basic Analysis", font=("Arial"))
-        self.option_menu_basic = OptionMenu(self.main, self.basicOPT, *(sorted(self.basicOPTIONS)))
-        self.option_menu_rmsd = OptionMenu(self.main, self.rmsdOPT, *(sorted(self.rmsdOPTIONS)))
-        self.kickBasic = Button(self.main, text = "Go", command = lambda: self.kickOptions(self.basicOPT.get()))
-        #self.button_Chi = Button(self.main, text="Chi"); self.button_Chi2 = Button(self.main, text="Write to file")
+        self.create_GUI_objects()
+        self.grid_GUI_objects()
+        
+    def create_GUI_objects(self):
+        self.label_widget=Label(self, text="Basic Analysis", font=("Arial"))
+        self.option_menu_basic = OptionMenu(self, self.basicOPT, *(sorted(self.basicOPTIONS)))
+        self.option_menu_rmsd = OptionMenu(self, self.rmsdOPT, *(sorted(self.rmsdOPTIONS)))
+        self.kickBasic = Button(self, text = "Go", command = lambda: self.kickOptions(self.basicOPT.get()))
+        #self.button_Chi = Button(self, text="Chi"); self.button_Chi2 = Button(self, text="Write to file")
     
-    def shoTk(self, r=0, c=0):
-        '''
+    def grid_GUI_objects(self):
+        """
         Columnspan: 2
         Rowspan: 2
-        '''
-        
+        """
+        r=0; c=0;
         self.label_widget.grid(row=r, column=c, columnspan=2,)
         self.option_menu_basic.grid(row=r+1, column=c, sticky=W+E); self.option_menu_rmsd.grid(row = r+1, column=c+1, sticky=W+E)
         
@@ -101,6 +105,9 @@ class simple_analysis():
             n_e = self.toolkit.input_class.ScoreBaseObject.ret_loop_neighbor_energy(chain, int(start), int(end))
             print "Total Neighbor (ci_2b) Interaction energy: %.3f REU"%n_e
     
+    def print_full_energy(self):
+        self.toolkit.ScoreObject.score.show(self.toolkit.pose)
+        
     def print_hbonds(self):
         n = self.toolkit.input_class.ScoreBaseObject.ret_n_hbonds()
         print "Num Hbonds: "+repr(n)

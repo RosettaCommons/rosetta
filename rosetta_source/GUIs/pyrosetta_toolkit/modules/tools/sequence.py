@@ -15,10 +15,10 @@ from rosetta import *
 import loops
 
 def get_sequence(pose, loop_string):
-    '''
+    """
     Returns the sequence of the loop string.
     Works on just chain, or N ter and C ter residues.
-    '''
+    """
     residue_array = loops.return_residue_array(pose, loop_string)
             
 

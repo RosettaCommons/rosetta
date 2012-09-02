@@ -20,10 +20,10 @@ class lowRes_Loop_Modeling:
         
 #default_CCD        
      def default_CCD(self, rounds, loops_as_string_array, ob, fragset, fraglength):
-         '''
+         """
          LoopMover_Perturb_CCD for Low Resolution Loop Modeling
          REQUIRES FRAGSET!!
-         '''
+         """
          
          movemap=MoveMap()
          ft = self.pose.fold_tree(); ft_o = FoldTree()
@@ -48,10 +48,10 @@ class lowRes_Loop_Modeling:
          
 #default_KIC            
      def default_KIC(self, p, rounds, loops_as_string_array, ob, fragset, fraglength):
-         '''
+         """
          LoopMover_Perturb_KIC for Low Resolution Loop Modeling
          REQUIRES FRAGSET!!
-         '''
+         """
          movemap=MoveMap()
          ft = self.pose.fold_tree(); ft_o = FoldTree()
          ft_o.assign(ft)
@@ -76,13 +76,13 @@ class lowRes_Loop_Modeling:
 
 #fragInsert_Anneal            
      def fragInsert_Anneal(self, rounds, loops_as_string_array, ob, fragset, fraglength):
-         '''
+         """
          Anneals a given fragset and a given fraglength using KT from 2 to .8.
          Inner Loop is equal to 50 rounds.  kT is scaled by 1/(inner*outer) for each inner cycle down to .8
          Final kT will become an option later down the road....
          Outer Loop is chosen by user, as well as the scoring function used.
          Applies CcdLoopClosureMover after each frag insert....
-         '''
+         """
 
          print fraglength
          print fragset

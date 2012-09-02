@@ -20,9 +20,9 @@ import re
 
 #### LOOP CLOSURE ####
 def closeLoop_ccd( rounds, loo, movemap):
-    '''
+    """
     Closes Loop using CCD. Loo is a Rosetta Loops object.
-    '''
+    """
     
     ccd_closure = CcdLoopClosureMover(loo, movemap)
     for i in range(1, rounds+1):
@@ -33,11 +33,11 @@ def closeLoop_ccd( rounds, loo, movemap):
 #### LOOP INITIALIZATION ####
 
 def return_residue_array( p, loop_string):
-    '''
+    """
     Returns an array in Rosetta numbering from the loop_string (start:end:chain)
     Works with individual residues, loops, termini, and chains.
     Use this to interact with movemap, packer, etc and loops_as_strings from GUI.
-    '''
+    """
     
     residue_array = []
     loop_stringSP = loop_string.split(":")
@@ -71,10 +71,10 @@ def return_residue_array( p, loop_string):
     return residue_array
 
 def InitializeLoop( start, end, p, chain):
-    '''
+    """
     This Initializes the loop, uses the Pose numbering, returns a loop with a cutpoint in the middle
     Sort of pointless, I know.  Really don't know why it's still here.
-    '''
+    """
     
     #Initializes loop, and makes a cut in middle#
     #start = p.pdb_info().pdb2pose(chain, start); end = p.pdb_info().pdb2pose(chain,end)
@@ -85,9 +85,9 @@ def InitializeLoop( start, end, p, chain):
 
 
 def loopMovemap( p, movemap, loops_as_strings):
-    '''
+    """
     Opens Both Chi and BB for LisLoop.  Does so for Chains, Termini, Loops, and Individual Residues
-    '''
+    """
     for loop_string in loops_as_strings:
         residue_array = return_residue_array(p, loop_string)
         for residue in residue_array:
@@ -98,9 +98,9 @@ def loopMovemap( p, movemap, loops_as_strings):
 
 
 def loopChiMovemap( p, movemap, loops_as_strings):
-    '''
+    """
     Opens Chi for LisLoop.  Works with Chains, Loops, Termini, Individuals.
-    '''
+    """
     
     for loop_string in loops_as_strings:
         residue_array = return_residue_array(p, loop_string)
@@ -110,9 +110,9 @@ def loopChiMovemap( p, movemap, loops_as_strings):
     return movemap
     
 def loopBBMovemap( p, movemap, loops_as_strings):
-    '''
+    """
     Opens BB up for LisLoops.  Works with Chains, Termini, Loops, and Individual Residues
-    '''
+    """
     for loop_string in loops_as_strings:
         residue_array = return_residue_array(p, loop_string)
         for residue in residue_array:
@@ -121,9 +121,9 @@ def loopBBMovemap( p, movemap, loops_as_strings):
     return movemap
     
 def loopChiPacker( p, pack, loops_as_strings):
-    '''
+    """
     Returns a Packer_task open with the chi specified.  Takes in a Packer Task.  Works with chains, loops, termini, individuals.
-    '''
+    """
     for loop_string in loops_as_strings:
         residue_array = return_residue_array(p, loop_string)
         for i in residue_array:
@@ -143,10 +143,10 @@ def setLoopBreak( p, start, end, chain, cut):
     return p
 
 def loopArea( p, loops_as_strings, rosetta=1):
-    '''
+    """
     Takes in the raw Loops List, Returns a new loop list of list.  rosetta=1; list of resdidue_arrays for each loop., or regular of res:chain (rosetta=0)
     Used for creating a sequence file for scwrl.
-    '''
+    """
     
     newList = []
     for loop_string in loops_as_strings:
@@ -166,9 +166,9 @@ def loopArea( p, loops_as_strings, rosetta=1):
         return fulllist
 
 def return_rosetta_Loop(p, loop_string):
-    '''
+    """
     Determines start and end of piece, returns a Rosetta Loop object.
-    '''
+    """
     residue_array = return_residue_array(p, loop_string)
     start = residue_array[0]; end = residue_array[-1]
     cut = start+((end-start)/2)
@@ -176,9 +176,9 @@ def return_rosetta_Loop(p, loop_string):
     return rosetta_loop
 
 def InitializeLoops( p, loops_as_strings, ft=0, movemap=0):
-    '''
+    """
     DEPRECATED? Returns loop information giving a list filled with loops, a movemap, and a new foldtree to apply
-    '''
+    """
     #Movemap for each type works...
     begin = 1
     loopsLis = []
@@ -230,10 +230,10 @@ def InitializeLoops( p, loops_as_strings, ft=0, movemap=0):
 
 
 def RandLoop( p, LisLoops, ob):
-    '''
+    """
     Randomizes the loop.  Completely.  It can get pretty ugly....
     
-    '''
+    """
     for loop in LisLoops:
         loopSP = loop.split(":")
         start=int(loopSP[0]); end= int(loopSP[1]); chain = loopSP[2]; ob = int(ob)
@@ -260,9 +260,9 @@ def RandLoop( p, LisLoops, ob):
     return p
 
 def linearizeLoops( p, LisLoop, ob):
-    '''
+    """
     Linearizes the LisLoop; Only works for real loops!
-    '''
+    """
     for loop in LisLoop:
         loopSp = loop.split(":")
         start = int(loopSp[0]); end = int(loopSp[1]); chain = loopSp[2]
@@ -280,10 +280,10 @@ def linearizeLoops( p, LisLoop, ob):
 #### Loop Editing ####
 
 def delLoop( p, start, end, chain):
-    '''
+    """
     Deletes the Loop from the pdb.
     Soon will output the original residue numbering.
-    '''
+    """
     
     self.obs.add_observer(p)
     start = int(start); end = int(end); print start; print end;
@@ -308,10 +308,10 @@ def delCDRLoops( p):
 
 
 def insertNewLoop( p, seq, start, end, chain):
-    '''
+    """
     Warning:  Does not work well.
     Start-end signifies where between the loop you want to put something.
-    '''
+    """
     
     p2=Pose(); #end=int(end)
     seq = "A"+seq+"A"

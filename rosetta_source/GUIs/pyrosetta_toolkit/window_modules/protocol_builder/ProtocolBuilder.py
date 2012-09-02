@@ -393,9 +393,9 @@ class MainProtocols():
 
 
     def kickProtocol(self):
-        '''
+        """
         Handles kicking off the protocol with number of repeats.
-        '''
+        """
         repeat = int(self.repeats.get())
         count=1
         
@@ -467,9 +467,9 @@ class MainProtocols():
         #print "Added " + repr(LisLoop)
         return LisLoop
     def editProt(self):
-        '''
+        """
         Does Not WORK!!!?
-        '''
+        """
         
         
         index = self.LisSeeProt.curselection()
@@ -534,18 +534,18 @@ class MainProtocols():
         self.shoProt()
         
     def setProt(self):
-        '''
+        """
         Sets up protocol List
-        ''' 
+        """ 
         
         for type in ProtTypes:
             self.LisProtTypes.insert(END, type)
     def setFrag(self):
-        '''
+        """
         Sets Fragment Listbox up.  Should be able to customize this in the future.
         Should be a customize file that tk main looks for.  If found, it loads it.
         Can save configuration on the fly.  
-        '''
+        """
         files = os.listdir(pwd+"/FragSets_Designs")
         for file in files:
             file = file.split("/")

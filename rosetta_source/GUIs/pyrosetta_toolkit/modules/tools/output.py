@@ -26,9 +26,9 @@ import re
 
 
 def dumpPDB(p, file, score):
-    '''
+    """
     Dumps the pose using the Job Distributor
-    '''
+    """
     jd=PyJobDistributor(file, 100000, score); #This number is high so that it outputs a pose even if one with the name already exists...
     #native_pose = Pose()
     #pose_from_pdb(native_pose, infile)
@@ -48,9 +48,9 @@ def showPose(p, observer):
     return p
     
 def savLoop(p, out, loops_as_strings, ask_info=True):
-    '''
+    """
     Saves a Rosetta Loop file.  Also asks to discard residues or not. Should be rewritten.
-    '''
+    """
     newList = loop_tools.loopArea(p, loops_as_strings)
     if ask_info:
         
@@ -111,9 +111,9 @@ def clean_whitespace(obj):
         return obj
         
 def save_resfile_w_designdic(p, ResDic, filename):
-    '''
+    """
     Saves a Design Residue file, readable by PyRosetta and Rosetta.
-    '''
+    """
     
     tot = p.total_residue()
     FILE = open(filename, 'w')
@@ -147,9 +147,9 @@ def save_resfile_w_designdic(p, ResDic, filename):
     print "Res File written...."  
 
 def createSeqFile(p, newList):
-    '''
+    """
     Used in conversion to output scwrl sequence file.
-    '''
+    """
     
     seq = p.sequence()
     print seq
@@ -181,10 +181,10 @@ def saveSeqFile(p, fileout, loopsLis):
     return
 
 def make_PDBLIST(current_directory, directory=""):
-    '''
+    """
     Makes a list of PDB's from a directory.  Does not walk directory.  This can be an option later.
     Later realize could have used find command...
-    '''
+    """
     if directory=="":
         directory = tkFileDialog.askdirectory(initialdir = current_directory)
     if directory ==None:
@@ -247,7 +247,7 @@ def convert_PDBLIST_to_sqlite3db(current_directory, filename=""):
     DB.db.close()
     print "Database written to PDBLIST directory"
 
-'''
+"""
 def extract_pdbs_from_sqlite3db(current_directory, list="", dbfile = ""):
     if list=="":
         filename = tkFileDialog.askopenfilename(initialdir = current_directory, message="PDBLIST")
@@ -265,13 +265,13 @@ def extract_pdbs_from_sqlite3db(current_directory, list="", dbfile = ""):
         return
     
     pdbdb = PDB_database()
-'''
+"""
 
 def score_PDBLIST(pdblist_path, score):
-    '''
+    """
     Outputs a simple pdb vs score for simple analysis.
     if pdblist_path=False, a dialog box opens.
-    '''
+    """
     
     if not pdblist_path:
         pdblist_path = tkFileDialog.askopenfilename(title = "PDBLIST")
@@ -301,11 +301,11 @@ def convert_PDBLIST_to_rosetta_db(current_directory):
 #### FASTA OUTPUT ####
 
 def save_FASTA(pose, base_name, outfilename = False, current_directory=False, loops_as_strings = False ):
-    '''
+    """
     If outfilename is False, will ask for a directory using current_directory.
     If loops_as_strings is given, output FASTA of loops.
     Uses Pyrosetta...
-    '''
+    """
     if not outfilename:
         outfilename = tkFileDialog.asksaveasfilename(initialdir = current_directory, message="Output FASTA to...")
     if not outfilename:
@@ -324,11 +324,11 @@ def save_FASTA(pose, base_name, outfilename = False, current_directory=False, lo
     OUTFILE.close()
     return
 def save_FASTA_PDBLIST(pdblist_path, outfilename=False, current_directory=False, loops_as_strings=False):
-    '''
+    """
     If outfilename is False, will ask for a filename
     Goes through each member of PDBLIST
     Uses pyrosetta, much slower...Could use my PDB class...
-    '''
+    """
     if not outfilename:
         outfilename = tkFileDialog.asksaveasfilename(initialdir = current_directory, message="Output FASTA to...")
     if not outfilename:
@@ -363,9 +363,9 @@ def save_FASTA_PDBLIST(pdblist_path, outfilename=False, current_directory=False,
 
     
 def exportPDBSCORE(self, cwd, score):
-    '''
+    """
     Exports a list of scores.
-    '''
+    """
     PDBLIST = tkFileDialog.askopenfile(title = "PDBLIST", initialdir = cwd)
     OUTFILE = tkFileDialog.asksaveasfile(title = "Save As...", initialdir = cwd)
     

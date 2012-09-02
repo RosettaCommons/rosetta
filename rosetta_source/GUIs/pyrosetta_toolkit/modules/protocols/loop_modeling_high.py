@@ -13,9 +13,9 @@
 from rosetta import *
 
 class highRes_Loop_Modeling:
-    '''
+    """
     Simple class for handling HighRes loop modeling...
-    '''
+    """
     
     def __init__(self, score_object, pose):
         self.score_object = score_object
@@ -23,9 +23,9 @@ class highRes_Loop_Modeling:
     
 #default_CCD        
     def default_CCD(self, rounds, loops_as_string_array):
-        '''
+        """
         Uses LoopMover_Refine_CCD as High Res Mover
-        '''
+        """
         movemap=MoveMap()
         ft = self.posefold_tree(); ft_o = FoldTree()
         ft_o.assign(ft)
@@ -53,9 +53,9 @@ class highRes_Loop_Modeling:
     
 #default_KIC        
     def default_KIC(self, rounds, loops):
-        '''
+        """
         Uses LoopMover_Refine_KIC as High Res Mover
-        '''
+        """
         ob=int(ob); rounds=int(rounds)
         if ob ==1:
             self.obs.add_observer(self.pose)

@@ -20,41 +20,51 @@ import os
 
 
 class AdvancedPyMOL():
-    '''
-    Advance Pymol Visualization Window
+    """
+    Pymol Visualization Window
     Version 2.0 ONLY
-    '''
+    """
 
     def __init__(self, pose):
-	'''
+	"""
 	This object should handle all pymol stuff across the board eventually.
-	'''
+	"""
 
 	self.auto_send = IntVar()
 	self.auto_send.set(0)
 	self.pymover = PyMOL_Mover()
 	self.pymover.keep_history(True)
 	self.observer = PyMOL_Observer()
-	self.observer.pymol.update_energy=True
+	self.observer.pymol.keep_history(True)
+	self.observer.pymol.update_energy(True)
 	#Trace this - Add observer when the value changes, or remove the observer when nessessary.
 	self.auto_send.trace_variable('w', self.auto_change_observer)
 	self.pnum = 0
 	self.pose = pose
+	self.send_label = IntVar();
+	self.send_label.set(0)
 	
+	#Pymol Functions currently in trunk.
 	self.pymol_functions = {
-	"View Residue Energy": lambda:self.pymover.send_energy(self.pose),
-	"Send Hydrogen Bonds": lambda:self.pymover.send_hbonds(self.pose),
-	"Send Polar Identity": lambda:self.pymover.send_polars(self.pose),
-	"View Foldtree":lambda: self.pymover.view_foldtree(self.pose)
+	"Send Residue Energy":lambda:self.pymover.send_energy(self.pose, 'total_score', self.send_label.get()),
+	"View Hydrogen Bonds": lambda:self.pymover.send_hbonds(self.pose),
+	"View Polar Identity": lambda:self.pymover.send_polars(self.pose),
+	"View DSSP SS": lambda:self.pymover.send_polars(self.pose),
+	"View Foldtree":lambda: self.pymover.send_foldtree(self.pose),
+	"View Foldtree Diagram":lambda: self.pymover.view_foldtree_diagram(self.pose)
+	#"View MoveMap": lambda: self.pymover.send_movemap(self.pose)
 	}
 	
     def auto_change_observer(self, name, index, mode):
 	varValue = self.auto_send.get()
 	if not self.auto_send.get():
+	    print "Removed observer"
 	    self.observer.remove_observer(self.pose)
+	    
 	else:
 	    print "Added observer"
 	    self.observer.add_observer(self.pose)
+	    
     def makeWindow(self, row, column, main, ScoreObject):
 
 	self.main = main
@@ -72,11 +82,16 @@ class AdvancedPyMOL():
 	self.scoreList = Listbox(self.main)
 	self.sendbutton_ = Button(self.main, text = "Send Pose", command = lambda: self.SendPose(self.viewList.get(self.viewList.curselection())))
 	self.sendnewbutton_ = Button(self.main, text = "Send New Pose", command = lambda: self.SendNewPose())
-	self.autocheck_button_ck = Checkbutton(self.main, text = "Auto Send Pose as new Object", variable = self.auto_send)
-	self.viewlabel_.grid(row = row+1, column=column); self.scorelabel_.grid(row = row+1, column = column+2)
-	self.viewList.grid(row = row+2, column=column); self.scoreList.grid(row = row+2, column = column+2)
-	self.sendbutton_.grid(row = row+4, column = column+1); self.sendnewbutton_.grid(row = row+3, column = column+1); self.autocheck_button_ck.grid(row = row, column=column+2)
-	for option in self.pymol_functions:
+	self.autocheck_button_ck = Checkbutton(self.main, text = "Send Poses as new Objects", variable = self.auto_send)
+	self.label_energies_checkbutton = Checkbutton(self.main, text = "Label Energies", variable = self.send_label)
+	
+	### Grid ###
+	self.viewlabel_.grid(row = row+1, column=column, padx=5); self.scorelabel_.grid(row = row+1, column = column+2)
+	self.viewList.grid(row = row+2, column=column, padx=5); self.scoreList.grid(row = row+2, column = column+2)
+	self.sendbutton_.grid(row = row+4, column = column+1, sticky=W+E); self.sendnewbutton_.grid(row = row+3, column = column+1, sticky=W+E); self.autocheck_button_ck.grid(row = row, column=column+2)
+	self.label_energies_checkbutton.grid(row=row, column=column, sticky=W+E)
+	
+	for option in sorted(self.pymol_functions):
 	    self.viewList.insert(END, option)
 
 	ZeroTerms, NonZeroTerms = ScoreObject.scoreOption("Breakdown ScoreFxn")
@@ -86,9 +101,9 @@ class AdvancedPyMOL():
 	self.viewList.bind("<Double-Button-1>", lambda event: self.SendPose(self.viewList.get(self.viewList.curselection())))
 	self.scoreList.bind("<Double-Button-1>", lambda event: self.SendEPose(self.scoreList.get(self.scoreList.curselection())))
     def SendPose(self, option):
-	'''
+	"""
 	Sends pose according to option. Will Fix as callback.
-	'''
+	"""
 	print self.score(self.pose)
 	
 	func = self.pymol_functions[option]
@@ -105,11 +120,16 @@ class AdvancedPyMOL():
 	print term
 	#vars()[term]
 	print self.score(self.pose)
-	self.pymover.send_energy(self.pose, term)
+	
+	try:
+	    self.pymover.send_energy(self.pose, term, self.send_label.get())
+	except IOError:
+	    print "Could not send label for the individual energy function."
+	
     def SendNewPose(self):
-	'''
+	"""
 	Changes the name of the pose so that the next thing sent is a new object...
-	'''
+	"""
 	self.pnum = self.pnum+1
 	Newname = os.path.basename(self.pose.pdb_info().name()).split("_")[0]+"_"+repr(self.pnum)
 	self.pose.pdb_info().name(Newname)

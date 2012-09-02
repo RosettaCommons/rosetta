@@ -14,12 +14,14 @@ from modules.protocols.loop_minimization import Loop_Min
 from modules.protocols.protein_minimization import Protein_Min
 from modules.tools import output as output_tools
 from Tkinter import *
+from Tkinter import Frame as TkFrame
 from rosetta import *
 
-class Minimization():
-    def __init__(self, main, toolkit):
-        self.main = main
+class QuickProtocolsFrame(TkFrame):
+    def __init__(self, main, toolkit, **options):
         self.toolkit = toolkit
+        TkFrame.__init__(self, main, **options)
+        
         self.loopCommand = StringVar()
         self.loopCommand.set("Relax Loop(s)") ; #Default loop command
         
@@ -34,7 +36,9 @@ class Minimization():
         self.loop_protocols = Loop_Min(self.toolkit.ScoreObject, self.toolkit.pose)
         self.full_protocols = Protein_Min(self.toolkit.ScoreObject, self.toolkit.pose)
 
-
+        self.create_GUI_objects()
+        self.grid_GUI_objects()
+        
     def set_options_menus(self):
         
         self.LoopMinOPTIONS = {
@@ -53,38 +57,34 @@ class Minimization():
             "Optimize All Rotamers (SCWRL)":lambda: self.full_protocols.SCWRL(int(self.SliHigh.get()))
         }
         
-    def setTk(self):
+    def create_GUI_objects(self):
         
-        #self.button_Save = Button(self.main, text = "Save Pose")
-        self.label_quick_min = Label(self.main, text="Quick Protocols", font=("Arial"))
-        self.check_button_Rand=Checkbutton(self.main, text="Randomize Loops?", variable=self.randomize_loops_bool, command=lambda: self.toolkit.pose.assign(tools.loops.initLoops().RandLoop(self.toolkit.pose, self.toolkit.input_class.loops_as_strings, self.toolkit.output_class.show_pymol.get())))
-        self.check_button_Relax=Checkbutton(self.main, text="Fast Relax?", variable=self.fast_relax_bool)
-        self.button_LoopW=Button(self.main, text="Write New PDB")
+        self.label_quick_min = Label(self, text="Quick Protocols", font=("Arial"))
+        self.check_button_Rand=Checkbutton(self, text="Randomize Loops?", variable=self.randomize_loops_bool, command=lambda: self.toolkit.pose.assign(tools.loops.initLoops().RandLoop(self.toolkit.pose, self.toolkit.input_class.loops_as_strings, self.toolkit.output_class.show_pymol.get())))
+        self.check_button_Relax=Checkbutton(self, text="Fast Relax?", variable=self.fast_relax_bool)
+        self.button_LoopW=Button(self, text="Write New PDB")
         
         ##### CDRS ######
-        self.button_L1=Button(self.main, text="CDR L1", command=lambda: setL1()); self.button_L2=Button(self.main, text="CDR L2", command=lambda: setL2()); self.button_L3=Button(self.main, text="CDR L3", command=lambda: setL3())
-        self.button_H1=Button(self.main, text="CDR H1", command=lambda: setH1()); self.button_H2=Button(self.main, text="CDR H2", command=lambda: setH2()); self.button_H3=Button(self.main, text="CDR H3", command=lambda: setH3())
+        self.button_L1=Button(self, text="CDR L1", command=lambda: setL1()); self.button_L2=Button(self, text="CDR L2", command=lambda: setL2()); self.button_L3=Button(self, text="CDR L3", command=lambda: setL3())
+        self.button_H1=Button(self, text="CDR H1", command=lambda: setH1()); self.button_H2=Button(self, text="CDR H2", command=lambda: setH2()); self.button_H3=Button(self, text="CDR H3", command=lambda: setH3())
         ##### CDRS ######
         
-        self.entry_decoy=Entry(self.main, textvariable=self.toolkit.output_class.decoys, justify=CENTER)
-        self.SliHigh=Scale(self.main, orient=HORIZONTAL, to=100, resolution=1, from_=1, relief=SUNKEN)
+        self.entry_decoy=Entry(self, textvariable=self.toolkit.output_class.decoys, justify=CENTER)
+        self.SliHigh=Scale(self, orient=HORIZONTAL, to=100, resolution=1, from_=1, relief=SUNKEN)
         self.SliHigh.set(1)
-        self.label_Dec=Label(self.main, text="Decoys Desired")
-        self.label_High=Label(self.main, text="Rounds Desired")
-        self.loops_min_options = OptionMenu(self.main, self.loopCommand, *(sorted(self.LoopMinOPTIONS)))
-        self.full_min_options =  OptionMenu(self.main, self.fullCommand, *(sorted(self.FullMinOPTIONS)))
-        self.kickloops_min_options = Button(self.main, text = "Minimize Region(s)", command = lambda: self.kickMinimizationLoop())
-        self.kickfull_min_options =  Button(self.main, text = "Minimize PDB", command = lambda: self.kickMinimizationFull())
+        self.label_Dec=Label(self, text="Decoys Desired")
+        self.label_High=Label(self, text="Rounds Desired")
+        self.loops_min_options = OptionMenu(self, self.loopCommand, *(sorted(self.LoopMinOPTIONS)))
+        self.full_min_options =  OptionMenu(self, self.fullCommand, *(sorted(self.FullMinOPTIONS)))
+        self.kickloops_min_options = Button(self, text = "Minimize Region(s)", command = lambda: self.kickMinimizationLoop())
+        self.kickfull_min_options =  Button(self, text = "Minimize PDB", command = lambda: self.kickMinimizationFull())
         
-    def shoTk(self, r=0, c=0):
-        '''
+    def grid_GUI_objects(self):
+        """
         Rowspan : 5
         Columnspan : 2
-        '''
-        
-        #self.button_L1.grid(row=13, column=0, sticky=W+E); self.button_H1.grid(row=13, column=1, sticky=W+E)
-        #self.button_L2.grid(row=14, column=0, sticky=W+E); self.button_H2.grid(row=14, column=1, sticky=W+E)
-        #self.button_L3.grid(row=15, column=0, sticky=W+E); self.button_H3.grid(row=15, column=1, sticky=W+E)
+        """
+        r = 0; c=0;
         self.label_quick_min.grid(row=r, column=c, columnspan=2, pady=15)
         self.entry_decoy.grid(row=r+3, column=c); self.label_Dec.grid(row=r+3, column=c+1)
         self.SliHigh.grid(row=r+4, column=c, sticky=W+E); self.label_High.grid(row=r+4, column=c+1)
@@ -96,9 +96,9 @@ class Minimization():
         self.kickloops_min_options.grid(row=r+1, column=c+1, sticky=W+E); self.kickfull_min_options.grid(row=r+2, column=c+1, sticky=W+E)
 
     def kickMinimizationLoop(self):
-        '''
+        """
         This kicks the minimization of the loop.
-        '''
+        """
         
         if self.toolkit.output_class.auto_write.get():
             jd=PyJobDistributor(self.toolkit.outdir.get() + "/" + self.toolkit.outname.get(), int(self.entry_decoy.get()), self.toolkit.ScoreObject.score);
@@ -115,9 +115,9 @@ class Minimization():
         return
     
     def kickMinimizationFull(self):
-        '''
+        """
         This kicks the minimization of the protein.
-        '''
+        """
         if self.toolkit.output_class.auto_write.get():
             jd=PyJobDistributor(self.toolkit.outdir.get() + "/" + self.toolkit.outname.get(), int(self.entry_decoy.get()), self.toolkit.ScoreObject.score);
             jd.native_pose = self.toolkit.native_pose

@@ -16,18 +16,18 @@ from modules.tools import pdbs as pdb_tools
 import os
 import re
 class FixPDB:
-     '''
+     """
      Quick and dirty cleaning of PDB.
-     '''
+     """
    
      def runfixPDBWindow(self, m, r, c):
-        '''
+        """
         This First asks for a list of PDB paths.  Then it can do two things, depending on the choices:  Remove HETATM, fix Alternate Residues/Occupancies.
         Gives a GUI, because, well, why not? Should be rewritten a bit and expanded...
         m = Main Window
         r = Row
         c = Column
-        '''
+        """
         self.defaultdir = os.getcwd(); #Needs to get this from toolkit...
         fixWindow = Toplevel(m)
         fixWindow.title("Setup PDBs for Rosetta")
@@ -53,9 +53,9 @@ class FixPDB:
         self.gobutton_.grid(row=r+3, column=c, columnspan = 3, sticky=W+E)
         #fixDictionary: [het, alt, occ]=num
      def runFixPDB(self):
-        '''
+        """
         Runs the fixpdbprotocol using options set in fixDictionary.
-        '''
+        """
         print self.PDBlistPath.get()
         filename = self.PDBlistPath.get()
         outdirectory = tkFileDialog.askdirectory(title = "Output DIR", initialdir = self.defaultdir)
@@ -88,8 +88,8 @@ class FixPDB:
         pdb_tools.pdbTools().savePDB(pdbDic, outdir+"/"+pdbname)
         print "File Saved..."
      def getfile(self):
-        '''
+        """
         simply gets a filename...wish I could do this within the command syntax of tkinter...
-        '''
+        """
         filepath = tkFileDialog.askopenfilename(initialdir = self.defaultdir)
         return filepath

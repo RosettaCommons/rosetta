@@ -23,13 +23,13 @@ import urllib2
 
 class PDB:
     def __init__(self, pdbID, modelID, structID, memory=False, path=False):
-        '''
+        """
         First, we read the PDB. This can then be acessed, etc.
         Later, we will also turn it into a structure.
         Functions include parsing specific information, getting data from uniprot and other sources, saving as a database file once read in.
         modelID does not need to be a number...
         Path specifies the db to load.
-        '''
+        """
         
         if memory:
             self.db = sqlite3.connect(":memory:") #Can always switch this by using a.db = "adsfasdf" to connect to a different database and add information into it.  
@@ -55,12 +55,12 @@ class PDB:
         self.modelID = modelID
         
     def read_pdb_into_database_flat(self, filePath, read_header=False, header_only=False):
-        '''
+        """
         Reads the flat filepath specified into a database structure.
         This can then be parsed using the PDB_Database class.
         if header_only is True, only loads the header.  Useful for just getting specific information.  More useful to D/L it from the pdb if possible.
         If Header only, reads the header into the database.  
-        '''
+        """
         if filePath == "PDB":
             print "Fetching "+pdbID+" from the PDB"
             FILE = urllib2.urlopen(self.pdb_url+'/'+self.pdbID.lower()+'.pdb')
@@ -98,15 +98,15 @@ class PDB:
                         #self.stripped_pdb[line_num]["element"]=line[66:78].strip();        self.stripped_pdb[line_num]["charge"]=line[78:79].strip())
                         
     def read_pdb_into_database_xml(self, filePath, header_only=False):
-        '''
+        """
         Reads the XML file into a pdb database.
-        '''
+        """
         pass
     
     def fetch_and_read_pdb_into_database(self, read_header=False, header_only=False):
-        '''
+        """
         Uses the PDB file specified, grabs it from the PDB, and reads the data in.
-        '''
+        """
         self.read_pdb_into_database_flat("PDB", read_header, header_only)
         
     
@@ -116,11 +116,11 @@ class PDB:
 
                     
 class PDB_database:
-    '''
+    """
     This class is specifically for if we already have a database.
     Note:  This is not a ROSETTA database.  If you need to convert this, use ROSETTA! (Wonder if this is in PyRosetta!)
     Functions are to output the database as a PDB, output specific pieces of protein as a pdb and query the database.
-    '''
+    """
     
     def __init__(self, database):
         self.db = database
@@ -135,10 +135,10 @@ class PDB_database:
         self.cur = self.db.cursor()
         
     def _convert_rosetta_db_to_basic_db(self):
-        '''
+        """
         This MAY eventually convert a Rosetta PDB database into a basic database structure that I am using.
         Why not just go with Rosetta's?  Lol.  
-        '''
+        """
         pass
     def set_output_DIR(self, outDIR):
         self.outDIR = outDIR
@@ -170,10 +170,10 @@ class PDB_database:
         self.cur.execute("SELECT * FROM "+table+" WHERE pdbID=? AND chain=? AND resnum BETWEEN ? AND ?", ( pdbID, chain, start, end))
         
     def scrub(self, table_name):
-        '''
+        """
         This should help protect from sql injection.  Not that it's important now, but...
         Author:OrangeOctopus from stack overflow
-        '''
+        """
         
         return ''.join( chr for chr in table_name if chr.isalnum() )
 
@@ -181,9 +181,9 @@ class PDB_database:
 ################Update on current cursor of the Database######################################################################
 
     def update_modelID_CDRS(self, table):
-        '''
+        """
         Updates modelID to specify L1 through H3 and framework for possible future statistical analysis.
-        '''
+        """
         from modules.Structure import Antibody_Structure
         AB = Antibody_Structure()
         self.cur.execute("UPDATE pdb SET modelID='FRAMEWORK'")
@@ -196,9 +196,9 @@ class PDB_database:
 ################Save PDB database as PDB or database!#########################################################################  
     
     def save_cur_as_pdb(self, filename, seperate_structures=False, supress_modelSep=False):
-        '''
+        """
         Saves the DB at the current cursor to a file. Make sure cursor is on the pdb table.
-        '''
+        """
         if not seperate_structures:
             outPath = self.outDIR+'/'+filename
             FILE = open(outPath, 'w')
@@ -206,22 +206,22 @@ class PDB_database:
             FILE.close()
     
     def save_cur_as_db(self, filename, seperate_structures=False):
-        '''
+        """
         Saves current DB at the current cursor to an sqlite3 db file
         Cursor can be on header, pdb, anything really.
-        '''
+        """
         pass
     
     def save_cur_as_csv(self, filename):
-        '''
+        """
         Saves current DB at the current cursor to a .csv file for easy manipulation, import, graphing, etc.
-        '''
+        """
         pass
     
     def save_whole_db_as_db(self, filename, seperate_structures=False):
-        '''
+        """
         Saves the whole database in MEMORY to a file....
-        '''
+        """
         
         if not seperate_structures:
             outPath = self.outDIR+'/'+filename
@@ -231,9 +231,9 @@ class PDB_database:
         new_db.close()
     
     def _convert_and_save_to_FILE_pdbformat(self, cur, FILE, supress_model_separation=False):
-        '''
+        """
         Saves all information of the current cur to PDB format.
-        '''
+        """
         
 
         rows = cur.fetchall()
@@ -258,11 +258,11 @@ class PDB_database:
         FILE.close()
         
     def _morph_db_row_to_pdb_line(self, row):
-        '''
+        """
         Oh What fun. ;)
         (6,5,4,3,1,4,8,8,8,4,5);
         atomNum INT, atomName TEXT, altLoc TEXT, residue TEXT, chain TEXT, resNum INT, icode TEXT, x REAL, y REAL, z REAL, occupancy REAL, bfactor REAL")
-        '''
+        """
 
         #Create the PDB line.
         line = str(row['type']).ljust(6)+     str(row['atomNum']).rjust(5)+"  "+str(row['atomName']).ljust(3)+ \
@@ -277,16 +277,16 @@ class PDB_database:
 
     
     def _add_new_struct_to_existing_database(self, db, filename):
-        '''
+        """
         Concatonates PDBs in databases. The database should have a unique pdbID+modelID, and not be in Rosetta format
-        '''
+        """
         
         pass
     
 if __name__ == '__main__':
-    '''
+    """
     Specifically for testing ATM.
-    '''
+    """
     pdbID = '2j88'
     modelID = 'FULL'
     outDIR = '/Users/jadolfbr/Desktop/Testing/PDBDB'

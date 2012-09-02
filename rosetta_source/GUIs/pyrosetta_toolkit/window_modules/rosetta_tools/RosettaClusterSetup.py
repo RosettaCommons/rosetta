@@ -73,12 +73,12 @@ class ClusterSetup():
         self.nent = Entry(self.main, textvariable = self.jobname, justify=CENTER);
         
         #self.seedOptions = OptionMenu(self.main, self.seed, *self.SEEDMETHOD)
-        '''
+        """
         Seed uses a constant 1 million + 10 for each job being kicked off on different cpus.
         This should be an option in the future...
         -Also note that qsub directories should be an option in the future as well, as it is specific for the cluster.
         -Next, we want to add the ability to use JD2 options for those applications that require it.
-        '''
+        """
         self.queueOptions = OptionMenu(self.main, self.queue, *self.QUEUEMETHOD)
         self.specQ = Button(self.main, text="Check Q Avalability:", command = lambda: self.checkspecificQ()).grid(row=self.row+4, column=self.column+1, sticky=W+E)
         self.allQ = Button(self.main, text="Show all Q", command = lambda: self.checkallQ()).grid(row=self.row+7, column=self.column, sticky=W+E)
@@ -124,9 +124,9 @@ class ClusterSetup():
         self.qstat.grid(row = self.row+9, column=self.column+3)
     
     def listRepeat(self):
-        '''
+        """
         Allows us to give a list, and repeat the config on a different processor for each protein in list.
-        '''
+        """
         #First, we ask for the list.
         filename = tkFileDialog.askopenfilename(title="PDBList", initialdir = self.pwd)
         self.saveScript(F=1, repeat = filename)
@@ -138,9 +138,9 @@ class ClusterSetup():
         return
     
     def checkspecificQ(self):
-        '''
+        """
         checks the specific Queue for availability
-        '''
+        """
         #self.textHelp.delete(1.0, END)
         #self.textHelp.insert(1.0, os.system('qstat -q '+self.queue.get()))
         os.system('qstat -q '+self.queue.get())
@@ -148,17 +148,17 @@ class ClusterSetup():
         os.system('qstat')
         return
     def checkallQ(self):
-        '''
+        """
         checks all Q available...
-        '''
+        """
         os.system('/usr/local/maui/bin/showq')
     def saveScript(self, F=0, repeat=0):
-        '''
+        """
         Script needs to take in a rosetta protocol file.
         It needs to write a file for each job for the cluster, or at least kick it off.
         It needs take in the protocol file and concatonate it to what it was using.
         I could do this in perl, but I will try to do it in python.
-        '''
+        """
         if repeat!=0:
             List = repeat
             repeat = True
@@ -348,10 +348,10 @@ class ClusterSetup():
             
         
     def location(self):
-        '''
+        """
         Allows the script to be self-aware of it's path.
         So that it can be imported from anywhere.
-        '''
+        """
         
         p = os.path.abspath(__file__)
         pathSP = os.path.split(p)
