@@ -26,6 +26,8 @@
 #include <numeric/interpolation/spline/SplineGenerator.hh>
 #include <utility/io/izstream.hh>
 #include <sstream>
+#include <core/chemical/AA.hh>
+#include <core/chemical/VariantType.hh>
 
 #include <core/chemical/AtomType.hh>
 
@@ -155,6 +157,14 @@ GaussianOverlapEnergy::residue_pair_energy(
                 Real score(0.0);
 
 		 if ( rsd1.seqpos() == rsd2.seqpos() ) return;
+//		 if ( rsd1.is_bonded( rsd2 ) ) return;
+
+	        chemical::AA const aa1( rsd1.aa() );
+		chemical::AA const aa2( rsd2.aa() );
+           if ( aa1 == chemical::aa_cys && aa2 == chemical::aa_cys &&
+                         rsd1.is_bonded( rsd2 ) && rsd1.polymeric_sequence_distance( rsd2 ) > 1 &&
+                         rsd1.has_variant_type( chemical::DISULFIDE ) && rsd2.has_variant_type( chemical::DISULFIDE ) ) return;
+	   if ( aa1 == chemical::aa_pro && aa2 == chemical::aa_pro ) return;
 
                 for ( Size i = 1, i_end = rsd1.nheavyatoms(); i <= i_end; ++i ) {
                         Vector const & i_xyz( rsd1.xyz(i) );
@@ -164,17 +174,22 @@ GaussianOverlapEnergy::residue_pair_energy(
                                 Size const j_type( rsd2.atom_type_index(j) );
 
                                 Real const d2( i_xyz.distance_squared( j_xyz ) );
-
+				
                                 if( d2 <= 150.0 ){
                                         core::Real r1 = rsd1.atom_type(i).lj_radius();
                                         core::Real r2 = rsd2.atom_type(j).lj_radius();
 
                                         r1 = .92*r1; r2 = .92*r2;
-					if( d2 <= .8*(r1+r2) ){
+					if( d2 <= .5*(r1+r2) ){
+						score = 1000;}
+					else if( d2 <= .8*(r1+r2) ){
 					      score = (r1+r2)/(d2*d2*d2*d2*sqrt(d2));}
 					else{ 
                                               score = ((sqrt(3.14158)*r1*r2)/(sqrt(r1*r1+r2*r2)))*(exp(-d2/(r1*r1+r2*r2)));
-                                        emap[ gauss ] += score;}}}}
+                                        emap[ gauss ] += score;}}
+				else{
+					emap[ gauss ] += 0.0;}
+}}
 }
 
 void
@@ -183,7 +198,7 @@ GaussianOverlapEnergy::eval_atom_derivative(
 	pose::Pose const & pose,
 	kinematics::DomainMap const &, // domain_map,
 	ScoreFunction const &,
-	EnergyMap const & weights,
+	EnergyMap const &,
 	Vector & F1,
 	Vector & F2
 ) const
