@@ -92,6 +92,7 @@
 #include <protocols/evaluation/PoseEvaluator.hh>
 #include <protocols/evaluation/EvaluatorFactory.hh>
 #include <protocols/evaluation/PCA.hh>
+#include <protocols/moves/PyMolMover.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/scoring/SS_Killhairpins_Info.hh>
@@ -1806,6 +1807,16 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 
 		// retrieve starting pose
 		pose::Pose fold_pose ( init_pose );
+    // Can we add the PyMOL mover here?
+    if (option[OptionKeys::run::show_simulation_in_pymol].user() 
+			&& option[OptionKeys::run::show_simulation_in_pymol].value() > 0.0)
+		{
+			protocols::moves::AddPyMolObserver(fold_pose,
+					option[OptionKeys::run::keep_pymol_simulation_history](),
+					option[OptionKeys::run::show_simulation_in_pymol].value());
+		}
+
+
 //membrane jumping set up the proper foldtree
 		if( membrane_jumps_ && membrane_jumps_->defined() ) {
 			Size njumps = option[jumps::njumps]();
@@ -1857,6 +1868,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 
 		std::string output_tag = abinitio_protocol.get_current_tag();
 		abinitio_protocol.apply( fold_pose );
+
 		bool loop_closure_failed( false ); //!fold_pose.fold_tree().num_cutpoint() );
 
 		if ( option[ OptionKeys::abinitio::close_loops ]()
