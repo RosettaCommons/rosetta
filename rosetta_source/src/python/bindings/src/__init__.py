@@ -578,7 +578,9 @@ class EnergyMethod:
                     break
 
         def _clone(self):
-            return type(self)()
+            _mem_EnergyMethods_.append( self.__class__() )
+            return _mem_EnergyMethods_[-1]
+            #return type(self)()
 
         def _f_version(self):
             return self.version

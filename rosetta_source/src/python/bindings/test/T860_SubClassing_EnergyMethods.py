@@ -19,6 +19,7 @@ rosetta.init()
 pose = rosetta.pose_from_pdb("test/data/test_in.pdb")
 
 
+some_storage = []
 # rosetta.core.scoring.methods.ContextIndependentOneBodyEnergy sub-classing -----------------------------------
 @rosetta.EnergyMethod(version=2)  # version is optional here
 class MyCI1B_Method(rosetta.core.scoring.methods.ContextIndependentOneBodyEnergy):
@@ -29,7 +30,9 @@ class MyCI1B_Method(rosetta.core.scoring.methods.ContextIndependentOneBodyEnergy
         emap.get().set( self.scoreType, 2.0)
 
     # you can define this functions by hand. And if you don't @EnergyMethod will do that for you
-    #def clone(self): return MyNewCI1B();
+    #def clone(self):
+    #    rosetta._mem_EnergyMethods_.append( self.__class__() )
+    #    return rosetta._mem_EnergyMethods_[-1]
     #def version(self): return 141
     #def indicate_required_context_graphs(self, v): pass
 
@@ -39,4 +42,6 @@ sf_new.set_weight(MyCI1B_Method.scoreType, 1)
 print '---------------------------------------------'
 print 'MyCI1B_Method Score:', sf_new.score(pose)
 
-
+kT = 1.0
+mc = rosetta.MonteCarlo(pose, sf_new, kT)
+print mc
