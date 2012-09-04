@@ -211,6 +211,49 @@ def init(*args, **kargs):
     protocols.init.init(v)
 
 
+# MPI version of init function, use it instead of init(...)
+def mpi_init(*args, **kargs):
+    from mpi4py import MPI
+
+    comm = MPI.COMM_WORLD
+
+    rank = comm.Get_rank()
+    size = comm.Get_size()
+
+    kargs['extra_options'] = kargs.get('extra_options', '') + ' -seed_offset %s' % (rank*10000)
+
+    init(*args, **kargs)
+
+
+def MPIJobDistributor(nstruct, fun):
+    from mpi4py import MPI
+
+    comm = MPI.COMM_WORLD
+
+    rank = comm.Get_rank()
+    size = comm.Get_size()
+
+    if rank == 0:
+        jobs = range(nstruct)
+        jobs.extend( [None]*(size - nstruct % size) )
+        n = len(jobs)/size
+        for i in range(size):
+            queue = []  # list of jobs for individual cpu
+            for j in range(n):
+                queue.append(jobs[j*size+i])
+
+            # now sending the queue to the process
+            TR('Sending %s to node %s' % (queue, i) )
+            comm.send(queue, dest=i)
+
+    # getting decoy lists
+    data = comm.recv(source=0)
+    TR('Node %s, got queue:%s' % (rank, data) )
+    for j in data:
+        if j is not None: fun(j)
+
+
+
 def version():
     return "PyRosetta 2.011 [r" + __version__ + \
            "] retrieved from: %s" % rosetta.core.minirosetta_svn_url() + \
