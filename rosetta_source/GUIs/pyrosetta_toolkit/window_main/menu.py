@@ -20,6 +20,7 @@ from modules.tools import sequence
 from modules import help as help_tools
 from modules.tools import input as input_tools
 from modules import calibur
+from modules import ImportExport
 import webbrowser
 class Menus():
     def __init__(self, main, toolkit):
@@ -41,8 +42,17 @@ class Menus():
 	self.MenBar.add_cascade(label = "Antibodies", menu=self.Antibody)
 	"""
 
-
-
+    #### File Menu ####
+	self.MenDesign=Menu(self.MenBar, tearoff=0)
+	input_object = ImportExport.InputFiles(self, self.toolkit)
+	self.MenDesign.add_command(label="Load PDB", command=lambda: input_object.choose_load_pose())
+	self.MenDesign.add_command(label="Load PDB list", command=lambda: input_object.set_PDBLIST())
+	self.MenDesign.add_command(label="Set Pymol Observer") #this option should be set only once.
+	self.MenDesign.add_command(label="Import Rosetta Options")
+	self.MenDesign.add_command(label="Export Rosetta Files") #export xml, options, command line, etc etc
+	self.MenBar.add_cascade(label="File", menu=self.MenDesign)
+	
+	
     #### Protein Design Menu ####
 	self.MenDesign=Menu(self.MenBar, tearoff=0)
 	self.MenDesign.add_command(label="Design File ToolBox", command=lambda: self.shoDesign1())
@@ -190,6 +200,7 @@ class Menus():
 	self.MenHelp.add_command(label = "License", command = lambda: help_tools.show_license())
 	self.MenHelp.add_command(label="PyRosetta Tutorials", command = lambda: webbrowser.open("http://www.pyrosetta.org/tutorials"))
 	self.MenHelp.add_command(label="Rosetta Manual", command = lambda: webbrowser.open("http://www.rosettacommons.org/manual_guide"))
+	self.MenHelp.add_command(label="Rosetta Glossary", command=lambda: help_tools.print_glossary())
 	self.MenDevel = Menu(self.MenBar, tearoff=0)
 	self.MenDevel.add_command(label = "Wiki Page", command = lambda: webbrowser.open("https://wiki.rosettacommons.org/index.php/PyRosetta_Toolkit"))
 	self.MenHelp.add_cascade(label = "Developers: ", menu = self.MenDevel)

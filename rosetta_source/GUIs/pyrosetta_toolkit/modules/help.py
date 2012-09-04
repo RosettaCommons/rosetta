@@ -46,3 +46,15 @@ def show_license():
     (c) For more information, see http://www.rosettacommons.org. Questions about this can be \n \
     (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu."
     tkMessageBox.showinfo(title="License", message=message)
+    
+def print_glossary():
+    message = "all-atom = in the case of sampling, synonymous with fine movements and often including side chain information; also referred to as high-resolution \n \
+    benchmark = another word for a test of a method, scoring function, algorithm, etc. by comparing results from the method to accepted methods/models \n \
+    binary file = a file in machine-readable language that can be executed to do something in silico \n \
+    BioPython = a set of tools for biological computing written and compatible with Python http://biopython.org/wiki/Biopython \n \
+    build = to compile the source code so it can be used as a program \n \
+    centroid = in Rosetta centroid mode, side chains are represented as unified spheres centered at the residue?s center of mass\n \
+    cluster center \= the geometric center of a cluster, or group, of models \n \
+    clustering \= in this case, grouping models with similar structure together \n \
+    comparative model \= a protein model where the primary sequence from one protein (target) is placed, or threaded, onto the three dimensional coordinates of a protein of known structure (template)language (binary)"
+    tkMessageBox.showinfo(title="Rosetta Glossary from Nature Protocols Paper. Written by Stephanie Hirst DeLuca", message=message)
