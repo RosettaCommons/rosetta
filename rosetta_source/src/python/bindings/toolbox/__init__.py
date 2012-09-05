@@ -11,18 +11,18 @@
 
 Remarks: These methods are useful in PyRosetta and are further intended to
          demonstrate proper syntax for various common activities.
-         
+
          ONLY essential, tested, PyRosetta-exclusive methods should live here!
          Remember, the rest of the Python scripts in "toolbox/" are NOT
          supported, just provided, (ex. environment setup scripts, etc.).
-         
+
          For those interested, Rosetta has a Surface Area calculator and a
          Radius of Gyration calculator; they are EnergyMethods sa and rg,
          respectively. Create an empty ScoreFunction and use
          ScoreFunction.set_weight to use these calculations.
          Other common geometry calculators are CA_rmsd and all_atom_rmsd.
 
-Author:  Evan Baugh 
+Author:  Evan Baugh
 
 Edits:   Labonte
 
@@ -89,7 +89,7 @@ def generate_resfile_from_pdb(pdbfilename, resfilename, input_sc = True ):
 def mutate_residue(pose, resid, new_res):
 	"""
 	Replaces the residue at <resid> in <pose> with <new_res>.
-	
+
 	Note: <new_res> is the single letter name for the desired ResidueType.
 
 	Example:
@@ -130,7 +130,7 @@ def cleanATOM(pdb_file, edit = -4):
     """
     Writes a PDB file from <pdb_file> with all lines not beginning with
     ATOM removed tp <pdb_file>.clean.pdb.
-    
+
     Note: the second argument, <edit>, is for PDB files not ending in .pdb.
 
     Example:
@@ -164,7 +164,7 @@ def cleanCRYS(pdb_file, olig = 2):
     Removes redundant crystal contacts and isolates a monomer by writing a PDB
     file for a monomer of <pdb_file>, if it is an <olig>-mer, to
     <pdb_file>.mono.
-    
+
     Note: This is by simple sequence comparison.
 
     Example:
@@ -275,10 +275,13 @@ def pose_from_rcsb(pdb_code, ATOM = True, CRYS = False):
     return pose
 
 
-def get_secstruct(pose, space = 8, page = 80):
+def get_secstruct(pose, output=True, space=8, page=80):
     """
     Predicts the secondary structure of <pose>, loading this data into
     the pose's secstruct information and printing the prediction to screen.
+
+    <output> determines if the information is printed to the screen or not;
+    <space> and <page> determine formatting.
 
     Example:
         get_secstruct(pose)
@@ -300,7 +303,8 @@ def get_secstruct(pose, space = 8, page = 80):
         num = ''
         for i in range(page * (count - 1) + 1, page * count, space):
             num += str(i).ljust(space)
-        print num + '\n' + seq[:page] + '\n' + sec[:page] + '\n'
+        if output:
+            print num + '\n' + seq[:page] + '\n' + sec[:page] + '\n'
         seq = seq[page:]
         sec = sec[page:]
 
@@ -308,7 +312,7 @@ def get_secstruct(pose, space = 8, page = 80):
 def get_hbonds(pose):
     """
     Returns an HBondSet of the hydrogen bonding in <pose>.
-    
+
     Note: More info can be found in rosetta.core.scoring.hbonds.
 
     Example:
