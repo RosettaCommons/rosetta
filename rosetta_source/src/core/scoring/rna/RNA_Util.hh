@@ -86,6 +86,9 @@ get_watson_crick_base_pair_atoms(
 	 utility::vector1< std::string > & atom_ids2	 );
 
 bool
+is_cutpoint_open( core::pose::Pose const & pose, Size const i );
+
+bool
 is_rna_chainbreak( core::pose::Pose const & pose, Size const i );
 
 

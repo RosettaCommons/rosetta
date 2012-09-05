@@ -16,6 +16,7 @@
 
 // Package headers
 #include <core/conformation/Residue.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/AtomTree.hh>
 // AUTO-REMOVED #include <core/kinematics/util.hh>
@@ -31,6 +32,7 @@
 #include <numeric/constants.hh>
 
 #include <core/kinematics/tree/Atom.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 
@@ -271,6 +273,22 @@ get_watson_crick_base_pair_atoms(
 	}
 
 
+}
+
+//////////////////////////////////////////////////////
+bool
+is_cutpoint_open( core::pose::Pose const & pose, Size const i ) {
+
+	if ( i < 1 ) return true; // user may pass zero -- sometimes checking if we are at a chain terminus, and this would corresponde to n-1 with n=1.
+
+	if ( i >= pose.total_residue() ) return true;
+
+	if ( ! pose.fold_tree().is_cutpoint(i) ) return false;
+
+	if ( pose.residue_type( i   ).has_variant_type( chemical::CUTPOINT_LOWER ) ||
+			 pose.residue_type( i+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) return false;
+
+	return true;
 }
 
 //////////////////////////////////////////////////////
