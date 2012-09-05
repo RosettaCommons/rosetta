@@ -1125,9 +1125,6 @@ void AbrelaxApplication::generate_extended_pose( core::pose::Pose &extended_pose
 		extended_pose.set_psi( pos, 150);
 		extended_pose.set_omega( pos, 180 );
 	}
-	tr.Debug 	<< "CHECK PHI/PSI/OMEGA pos 8: " << extended_pose.phi( 8 ) <<  " "
-						<< extended_pose.psi( 8 ) << " " << extended_pose.omega( 8 )
-						<< std::endl;
 
 #ifdef BOINC_GRAPHICS
 	// attach boinc graphics pose observer
