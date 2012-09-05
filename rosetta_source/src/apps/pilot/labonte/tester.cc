@@ -17,19 +17,20 @@
 
 // includes
 #include <iostream>
-#include <algorithm>
+//#include <algorithm>
 
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
+#include <core/conformation/Residue.hh>
+//#include <core/pose/PDBInfo.hh>
+//#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 //#include <core/kinematics/MoveMap.hh>
 
-#include <utility/vector1.hh>
-#include <utility/vector0.hh>
+//#include <utility/vector1.hh>
+//#include <utility/vector0.hh>
 
 int main(int argc, char *argv[])
 {
@@ -37,7 +38,7 @@ int main(int argc, char *argv[])
 	using namespace core;
 	using namespace import_pose;
 	using namespace pose;
-	using namespace utility;
+	//using namespace utility;
 	//using namespace kinematics;
 
 	// initialize core
@@ -47,14 +48,14 @@ int main(int argc, char *argv[])
 	Pose test_pose;
 
 	// import a test pose
-	pose_from_pdb(test_pose, "/home/labonte/Code/test.pdb");
+	pose_from_pdb(test_pose, "/home/labonte/Workspace/test_input/test.pdb");
 
 
 	// test new set_chi_true_range() method
-	//MoveMap mm = MoveMap();
-	//mm.set_chi_true_range(5, 10);
+	/*MoveMap mm = MoveMap();
+	mm.set_chi_true_range(5, 10);
 
-	//mm.show(20);
+	mm.show(20);*/
 
 
 	// test new vectorL methods
@@ -85,7 +86,6 @@ int main(int argc, char *argv[])
 	}
 	cout << "D was found at " << my_map.index_of('D') << endl;
 
-
 	my_other_map.push_back('E');
 	my_other_map.push_back('F');
 	my_other_map.push_back('G');
@@ -112,9 +112,9 @@ int main(int argc, char *argv[])
 
 	cout << "##########" << endl;*/
 
-	// test new update_pose_chains_from_pdb_chains() method
 
-	for (Size i = 50; i <= 100; ++i) {
+	// test new update_pose_chains_from_pdb_chains() method
+	/*for (Size i = 50; i <= 100; ++i) {
 		test_pose.pdb_info()->chain(i, 'X');
 	}
 
@@ -130,7 +130,16 @@ int main(int argc, char *argv[])
 	new_pose = *pose_collection[2];
 	new_pose.dump_pdb("/home/labonte/Code/split.pdb", "");
 
-	test_pose.dump_pdb("/home/labonte/Code/output.pdb", "");
+	test_pose.dump_pdb("/home/labonte/Code/output.pdb", "");*/
+
+
+	// test atom_name()
+
+	Pose::Residue res2 = test_pose.residue(2);
+
+	cout << res2.atom_name(0) << endl;
+	//cout << res2.atom_type(0) << endl;
+	cout << res2.atom_type_index(0) << endl;
 }
 
 

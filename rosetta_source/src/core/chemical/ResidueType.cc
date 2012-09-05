@@ -73,6 +73,7 @@
 // AUTO-REMOVED #include <utility/io/ozstream.hh>
 // AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
+#include <utility/PyAssert.hh>
 
 // Options and Option key includes (needed for protonated versions of the residues - pH mode)
 #include <basic/options/option.hh>
@@ -269,50 +270,47 @@ ResidueType::set_upper_connect_atom( std::string const & atm_name )
 ///////////////////////////////////////////////////////////////////////////////
 //
 
-/// @brief Get the chemical atom_type for this atom by it indexs number in this residue
+/// @brief Get the chemical atom_type for this atom by it index number in this residue
 ///
-/// @detais If we want the atom_type index (integer), we get this from
+/// @details If we want the atom_type index (integer), we get this from
 /// the conformation::Atom itself, as seen in the code below
 AtomType const &
 ResidueType::atom_type( Size const atomno ) const
 {
+	PyAssert((atomno > 0) && (atomno <= natoms_), "ResidueType::atom_type( Size const atomno ): atomno is not in this ResidueType!");
 	return ( *atom_types_ )[ atom_type_index_[ atomno ] ];
-}
-
-orbitals::OrbitalType const &
-ResidueType::orbital_type(int const orbital_index)const
-{
-	return ( *orbital_types_ )[ orbital_type_index_[ orbital_index ] ];
-
-}
-
-core::Size
-ResidueType::orbital_type_index(Size const orb_index) const
-{
-	return orbital_type_index_[orb_index];
 }
 
 /// @brief Get the chemical atom_type index number for this atom by its index number in this residue
 int
 ResidueType::atom_type_index( Size const atmno ) const
 {
+	PyAssert((atomno > 0) && (atomno <= natoms_), "ResidueType::atom_type_index( Size const atmno ): atomno is not in this ResidueType!");
 	return atom_type_index_[ atmno ];
 }
 
-/// @brief Get the MM atom_type for this atom by its index number in this residue
-MMAtomType const &
-ResidueType::mm_atom_type( Size const atomno ) const
+/// @brief Get the atom name by index
+std::string const &
+ResidueType::atom_name( Size const index ) const
 {
-	return ( *mm_atom_types_ )[ mm_atom_type_index_[ atomno ] ];
+	PyAssert((index > 0) && (index <= natoms_), "ResidueType::atom_name( Size const index ): index is not in this ResidueType!");
+	return atom_name_[ index ];
 }
 
-
-
-/// @brief Get the MM atom_type index number for this atom by its index number in this residue
-int
-ResidueType::mm_atom_type_index( Size const atomno ) const
+/// @brief get index of an atom's base atom
+Size
+ResidueType::atom_base( Size const atomno ) const
 {
-	return mm_atom_type_index_[ atomno ];
+	PyAssert((atomno > 0) && (atomno <= natoms_), "ResidueType::atom_base( Size const atomno ): atomno is not in this ResidueType!");
+	return atom_base_[ atomno ];
+}
+
+/// @brief get index of an atom's second base atom
+Size
+ResidueType::abase2( Size const atomno ) const
+{
+	PyAssert((atomno > 0) && (atomno <= natoms_), "ResidueType::abase2( Size const atomno ): atomno is not in this ResidueType!");
+	return abase2_[ atomno ];
 }
 
 
@@ -406,6 +404,55 @@ ResidueType::add_atom(
 
 }
 
+/// @brief set atom type
+void
+ResidueType::set_atom_type(
+	std::string const & atom_name,
+	std::string const & atom_type_name
+)
+{
+	atom_type_index_[ atom_index( atom_name ) ] = atom_types_->atom_type_index( atom_type_name );
+}
+
+
+/// @brief set mm atom type
+void
+ResidueType::set_mm_atom_type(
+	std::string const & atom_name,
+	std::string const & mm_atom_type_name
+)
+{
+	mm_atom_type_index_[ atom_index( atom_name ) ] = mm_atom_types_->atom_type_index( mm_atom_type_name );
+	mm_atom_name_[ atom_index( atom_name ) ] = mm_atom_type_name;
+}
+
+/// @brief Get the MM atom_type for this atom by its index number in this residue
+MMAtomType const &
+ResidueType::mm_atom_type( Size const atomno ) const
+{
+	return ( *mm_atom_types_ )[ mm_atom_type_index_[ atomno ] ];
+}
+
+/// @brief Get the MM atom_type index number for this atom by its index number in this residue
+int
+ResidueType::mm_atom_type_index( Size const atomno ) const
+{
+	return mm_atom_type_index_[ atomno ];
+}
+
+
+orbitals::OrbitalType const &
+ResidueType::orbital_type(int const orbital_index)const
+{
+	return ( *orbital_types_ )[ orbital_type_index_[ orbital_index ] ];
+
+}
+
+core::Size
+ResidueType::orbital_type_index(Size const orb_index) const
+{
+	return orbital_type_index_[orb_index];
+}
 
 /// @note this does not set xyz coordiates for the added orbital but sets the index of the orbital and maps
 /// it to the type of orbital.
@@ -463,27 +510,6 @@ ResidueType::add_orbital(
 	//orbital_icoor_.push_back( orbitals::OrbitalICoor( 0.0, 0.0, 0.0, orbital_name, orbital_name, orbital_name, *this ) );
 }
 
-/// @brief set atom type
-void
-ResidueType::set_atom_type(
-	std::string const & atom_name,
-	std::string const & atom_type_name
-)
-{
-	atom_type_index_[ atom_index( atom_name ) ] = atom_types_->atom_type_index( atom_type_name );
-}
-
-/// @brief set mm atom type
-void
-ResidueType::set_mm_atom_type(
-	std::string const & atom_name,
-	std::string const & mm_atom_type_name
-)
-{
-	mm_atom_type_index_[ atom_index( atom_name ) ] = mm_atom_types_->atom_type_index( mm_atom_type_name );
-	mm_atom_name_[ atom_index( atom_name ) ] = mm_atom_type_name;
-}
-
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -525,11 +551,6 @@ ResidueType::add_bond(
 	//bondType_vector_[i1].push_back(BondType(i1,i2,SingleBond));
 
 }
-
-
-
-
-
 
 /// @details add a bond between atom1 and atom2 and add a BondType object referencing the bond using the specified bondName
 void ResidueType::add_bond(std::string const & atom_name1, std::string const & atom_name2, BondName bondLabel)
@@ -595,11 +616,6 @@ ResidueType::add_orbital_bond(
 	orbital_bonded_neighbor_[i1].push_back(i2);
 
 }
-
-
-
-
-
 
 /// @details add a cut_bond between atom1 and atom2, which disallows an atom-tree connection,
 ///            though the atoms are really bonded.

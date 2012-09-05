@@ -207,9 +207,6 @@ public:
 	}
 
 	/// @brief Get the chemical atom_type for this atom by it index number in this residue
-	///
-	/// @detais If we want the atom_type index (integer), we get this from
-	/// the conformation::Atom itself, as seen in the code below
 	AtomType const &
 	atom_type( Size const atomno ) const;
 
@@ -467,24 +464,15 @@ public:
 
 	/// @brief get index of an atom's base atom
 	Size
-	atom_base( Size const atomno ) const
-	{
-		return atom_base_[ atomno ];
-	}
+	atom_base( Size const atomno ) const;
 
 	/// @brief get index of an atom's second base atom
 	Size
-	abase2( Size const atomno ) const
-	{
-		return abase2_[ atomno ];
-	}
+	abase2( Size const atomno ) const;
 
 	/// @brief get atom name by index
 	std::string const &
-	atom_name( Size const index ) const
-	{
-		return atom_name_[ index ];
-	}
+	atom_name( Size const index ) const;
 
 
 	/// @brief Check if residue type has an atom by a given atomname
@@ -530,10 +518,10 @@ public:
 	atom_is_backbone( Size const atomno ) const
 	{
 		assert( finalized_ );
+		assert( atomno <= natoms_ );
  		return ( ( atomno <= n_backbone_heavyatoms_ ) ||
  						 ( atomno > nheavyatoms_ && atomno < first_sidechain_hydrogen_ ) );
 	}
-
 
 	/// @brief quick lookup: is the atom with the given index a hydrogen or not?
 	/// Atoms are sorted so that heavy atoms come first and hydrogen atoms come last.
