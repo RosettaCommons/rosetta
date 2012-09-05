@@ -70,7 +70,7 @@ using io::pdb::dump_pdb;
 // these will be available in the top-level OptionKey namespace:
 // i.e., OPT_KEY( Type, key ) -->  OptionKey::key
 // to have them in a namespace use OPT_1GRP_KEY( Type, grp, key ) --> OptionKey::grp::key
-OPT_KEY( String,  seq )
+OPT_KEY( StringVector,  seq )
 OPT_KEY( Boolean,  minimize_all )
 
 /////////////////////////////////////////////////
@@ -92,7 +92,9 @@ rna_build_helix_test(){
 		core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( fasta_file )[1];
 		full_sequence = fasta_sequence->sequence();
 	} else if ( option[ seq ].user() ){
-		full_sequence = option[ seq ]();
+		utility::vector1< std::string > full_sequence_segments = option[ seq ]();
+		full_sequence = "";
+		for (Size n = 1; n <= full_sequence_segments.size(); n++ ) full_sequence += full_sequence_segments[ n ];
 	} else {
 		utility_exit_with_message( "Need to specify -fasta <fasta file> or -seq <sequence>." );
 	}
@@ -164,7 +166,8 @@ main( int argc, char * argv [] )
 {
 	using namespace basic::options;
 
-	NEW_OPT( seq, "Input sequence", "" );
+	utility::vector1< std::string > blank_string_vector;
+	NEW_OPT( seq, "Input sequence", blank_string_vector );
 	NEW_OPT( minimize_all, "minimize all torsions in respone to each base pair addition", false );
 
 	////////////////////////////////////////////////////////////////////////////
