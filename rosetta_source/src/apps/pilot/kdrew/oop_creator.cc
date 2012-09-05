@@ -43,7 +43,7 @@
 #include <protocols/simple_moves/oop/OopPatcher.hh>
 
 // Utility Headers
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 //#include <basic/options/keys/OptionKeys.hh>
@@ -124,7 +124,7 @@ main( int argc, char* argv[] )
 
 	// init command line options
 	//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
-	core::init(argc, argv);
+	devel::init(argc, argv);
 	//basic::options::option[ basic::options::OptionKeys::chemical::include_patches](utility::tools::make_vector1( std::string("patches/oop_pre.txt"), std::string("patches/oop_post.txt") ) );
 
 	//create mover instance

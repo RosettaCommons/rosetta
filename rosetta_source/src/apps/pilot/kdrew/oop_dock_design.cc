@@ -65,7 +65,7 @@
 #include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
 
 // Utility Headers
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -232,7 +232,7 @@ main( int argc, char* argv[] )
 
 	// init command line options
 	//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	//create mover instance
 	OopDockDesignMinimizeMoverOP ODDM_mover( new OopDockDesignMinimizeMover() );
