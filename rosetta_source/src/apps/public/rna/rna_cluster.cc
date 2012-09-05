@@ -106,9 +106,16 @@ int
 main( int argc, char * argv [] )
 {
 	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
+	std::cout << std::endl << "Basic usage:  " << argv[0] << " -in:file:silent <input silent file> -out:file:silent <output silent file> -cluster:radius <RMSD threshold in Angstroms>" << std::endl;
+	std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
+
+	option.add_relevant(  in::file::silent );
+	option.add_relevant(  out::file::silent );
+	option.add_relevant(  cluster::radius );
+	option.add_relevant(  out::nstruct );
 	utility::vector1< Size > blank_size_vector;
-
 	NEW_OPT( score_diff_cut, "score difference cut for clustering", 1000000.0 );
 	NEW_OPT( auto_tune, "autotune rmsd for clustering between 0.1A up to 2.0A", false );
 
