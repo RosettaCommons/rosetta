@@ -212,7 +212,7 @@ public:
 
 	/// @brief Get the chemical atom_type index number for this atom by its index number in this residue
 	int
-	atom_type_index( Size const atmno ) const;
+	atom_type_index( Size const atomno ) const;
 
 	/// @brief number of atoms
 	Size

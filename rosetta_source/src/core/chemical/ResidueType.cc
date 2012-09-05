@@ -283,10 +283,10 @@ ResidueType::atom_type( Size const atomno ) const
 
 /// @brief Get the chemical atom_type index number for this atom by its index number in this residue
 int
-ResidueType::atom_type_index( Size const atmno ) const
+ResidueType::atom_type_index( Size const atomno ) const
 {
-	PyAssert((atomno > 0) && (atomno <= natoms_), "ResidueType::atom_type_index( Size const atmno ): atomno is not in this ResidueType!");
-	return atom_type_index_[ atmno ];
+	PyAssert((atomno > 0) && (atomno <= natoms_), "ResidueType::atom_type_index( Size const atomno ): atomno is not in this ResidueType!");
+	return atom_type_index_[ atomno ];
 }
 
 /// @brief Get the atom name by index
