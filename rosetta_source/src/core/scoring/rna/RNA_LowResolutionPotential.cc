@@ -2300,7 +2300,7 @@ RNA_LowResolutionPotential::check_clear_for_stacking(
 					 (sign * dist_z) <= base_stack_max_height_  &&
 					 rho2 < base_stack_radius2_ ) {
 				//Possible BASE STACK1
-				std::cout << "STACKING ATOM? " << i << "--" << j << " " << res_j.atom_name( m )  << std::endl;
+				tr << "Found stacking atom on base " << i << ": " << j << " " << res_j.atom_name( m )  << std::endl;
 				return false;
 			} //basepair
 
