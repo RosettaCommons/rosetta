@@ -131,6 +131,9 @@ OPT_KEY( String, cst_file )
 OPT_KEY( Integer, seq_offset )
 
 //////////////////////////////////////////////////////////////////
+// Following could probably be replaced with Rosetta's
+// more general fasta reader
+//////////////////////////////////////////////////////////////////
 Size
 read_alignment_fasta_file(
 				utility::vector1< std::string >  & sequences,
@@ -143,8 +146,7 @@ read_alignment_fasta_file(
 
 	utility::io::izstream data_stream( fasta_file );
 
-	if ( data_stream.fail() )		utility_exit_with_message( "Could not find fasta ifile: " + fasta_file  );
-
+	if ( data_stream.fail() )		utility_exit_with_message( "Could not find fasta file: " + fasta_file  );
 
 	std::string line;
 	std::string sequence = "";
@@ -215,7 +217,7 @@ setup_mask(
 
 	///////////////////////////////////////////////////////////////
 	// Second pass -- look for ungapped part that are bracketed by gapped regions
-	bool look_for_fishy_gaps( false ); //this was from protien stuff.
+	bool look_for_fishy_gaps( false ); //this was from protein stuff.
 
 	if (look_for_fishy_gaps ){
 		Size const look_for_gap( 4 );
@@ -273,7 +275,6 @@ setup_alignment_map( utility::vector1< std::map< Size, Size > > & alignment2sequ
 {
 
 	//Figure out mapping of alignment to each sequence.
-
 	Size const alignment_length( sequences[1].size() );
 	for (Size n = 1; n <= sequences.size(); n++ ){
 		Size count( 0 );
@@ -292,84 +293,10 @@ setup_alignment_map( utility::vector1< std::map< Size, Size > > & alignment2sequ
 }
 
 
-////////////////////////////////////////////////////////////////////////////////////
-std::string
-apply_mask(
-					 ObjexxFCL::FArray1D_bool & sequence_mask,
-					 utility::vector1< std::map< Size, Size > > & alignment2sequence,
-					 utility::vector1< std::string > const & pdb_names,
-					 std::string const & which_file,
-					 pose::Pose & pose )
-{
-
-	pose::Pose temp_pose;
-
-	temp_pose.clear();
-
-	// Find which alignment to use, based on input pdb name.
-	Size which_sequence( 0 );
-	for( Size n=1; n<=pdb_names.size(); n++ ){
-		//		std::cout << pdb_names[n] << " " << which_file << std::endl;
-		if ( pdb_names[n] == which_file ) {
-			which_sequence = n;
-			break;
-		}
-	}
-
-	if ( which_sequence == 0 ) utility_exit_with_message( "Problem with finding tag " + which_file + " in fasta file." );
-
-
-	// Create starting pdb, apply mask.
-	Size const alignment_length( alignment2sequence[1].size() );
-	bool in_cutpoint( false );
-	Size count( 0 );
-	for (Size i = 1; i <= alignment_length; i++ ){
-		if (  sequence_mask( i )  ) {
-			Size const pdb_number( alignment2sequence[ which_sequence ][i] );
-			count++;
-			//			std::cout << "MASK " << i << " " << sequence_mask(i) << " " << pdb_number <<  std::endl;
-			if (in_cutpoint) {
-				temp_pose.append_residue_by_jump( pose.residue( pdb_number ), count-1 );
-			} else {
-				temp_pose.append_residue_by_bond( pose.residue( pdb_number ) );
-			}
-
-			temp_pose.set_secstruct( count, pose.secstruct( pdb_number ) );
-			in_cutpoint = false;
-
-		} else {
-			if (count > 0 ) in_cutpoint = true;
-		}
-	}
-
-	std::cout << "FOLD TREE" << temp_pose.fold_tree() << std::endl;
-	pose = temp_pose;
-
-	std::string masked_sequence = pose.sequence();
-	return masked_sequence;
-
-}
-
-
-/////////////////////////////////////////////////////////////////////////////////void
-void
-mask_out_loop( pose::Pose const & pose,
-							 utility::vector1< std::map< Size, Size > > & alignment2sequence,
-							 ObjexxFCL::FArray1D_bool & sequence_mask )
-{
-	Size const alignment_length( alignment2sequence[1].size() );
-	for (Size i = 1; i <= alignment_length; i++ ){
-		if (  sequence_mask( i )  ) {
-			Size const pdb_number( alignment2sequence[1][i] );
-			if ( pose.secstruct( pdb_number ) == 'L' ) {
-				sequence_mask( i ) = false;
-			}
-		}
-	}
-}
-
-
-/////////////////////////////////////////////////////////////////////////////////void
+/////////////////////////////////////////////////////////////////////////////////
+// Would be useful utility to put somewhere else in Rosetta...
+//  perhaps will need for silent output.
+/////////////////////////////////////////////////////////////////////////////////
 std::string
 make_tag_with_dashes( utility::vector1< Size > working_res ){
 
@@ -404,6 +331,9 @@ make_tag_with_dashes( utility::vector1< Size > working_res ){
 
 
 /////////////////////////////////////////////////////////////////////////////////void
+// Would be useful utility to put somewhere else in Rosetta...
+//  perhaps will need for silent output.
+/////////////////////////////////////////////////////////////////////////////////
 std::string
 make_tag( utility::vector1< Size > working_res ){
 
@@ -484,12 +414,15 @@ prepare_full_length_start_model(
 	std::string current_sequence = pose.sequence();
 	std::cout << "DESIRED:" << desired_sequence << std::endl;
 	std::cout << "CURRENT:" << current_sequence << std::endl;
+	utility::vector1< Size > changed_pos;
 
 	//Write over sequence?
 	for (Size i = 1; i <= desired_sequence.size(); i++ ){
 
 		char const new_seq = desired_sequence[i-1];
 		if ( new_seq == current_sequence[i-1] ) continue;
+
+		changed_pos.push_back( i );
 
 		ResidueTypeCOP new_rsd_type( ResidueSelector().set_name1( new_seq ).exclude_variants().select( rsd_set )[1] );
 		ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type, pose.residue( i ), pose.conformation() ) );
@@ -499,14 +432,16 @@ prepare_full_length_start_model(
 
 	}
 
+
+	std::cout << "Changed residues (without offset applied): " << make_tag_with_dashes( changed_pos ) << std::endl;
+
 	///////////////////
 	///////////////////
 	return;
 	///////////////////
 	///////////////////
 
-	// do the following later...
-
+	// do the following later... this is copied from a protein modeling routine, and might be worth keeping in here?
 	std::cout << "ABOUT TO DO LOOPS" << std::endl;
 	//Now need to add in residues that don't exist already. This is tricky. Need to do it segment by segment.
 	//Loop definition
@@ -529,9 +464,7 @@ prepare_full_length_start_model(
 		}
 	}
 
-
 	std::cout << "about to do termini" << std::endl;
-
 	//1. Will need to handle special case for termini -- not coded yet!!
 	//2. Probably will want to randomly move around cutpoint (by "prepending"!).
 	for (Size n = 1; n <= loops.size(); n++ ) {
@@ -549,11 +482,6 @@ prepare_full_length_start_model(
 
 }
 
-
-
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 void
 rna_thread_test(){
@@ -603,7 +531,8 @@ rna_thread_test(){
 	std::cout << "Outputting: " << outfile << std::endl;
 	pose.dump_pdb( outfile );
 
-	// later put in erraser-style refinement of threaded mutated residues?
+	// later put in erraser-style refinement of threaded mutated residues --
+	// kind of an investment of time, though.
 
 }
 
