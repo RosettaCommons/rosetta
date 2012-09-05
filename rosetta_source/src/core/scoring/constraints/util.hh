@@ -118,8 +118,7 @@ void add_fa_constraints_from_cmdline(
 
 /// @brief	handy function for tethering pose to starting coordinates.
 void
-add_coordinate_constraints( core::pose::Pose & pose );
-
+add_coordinate_constraints( core::pose::Pose & pose, core::Real const coord_sdev = 10.0 );
 
 /// @brief call this on your constraints if you have MultiConstraints before running Abinitio -- already done by broker-type application
 void choose_effective_sequence_separation( core::kinematics::ShortestPathInFoldTree const& sp, ConstraintCOPs& in );

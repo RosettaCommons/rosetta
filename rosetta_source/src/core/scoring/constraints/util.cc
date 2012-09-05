@@ -249,13 +249,12 @@ void add_fa_constraints_from_cmdline(
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 void
-add_coordinate_constraints( pose::Pose & pose ) {
+add_coordinate_constraints( pose::Pose & pose, Real const coord_sdev /* = 10.0 */ ) {
 
 	using namespace core::id;
 	using namespace core::conformation;
 	using namespace core::scoring::constraints;
 
-	Real const coord_sdev( 10.0 );
 	Size const my_anchor( 1 ); //anchor atom on first residue?
 
 	ConstraintSetOP cst_set = pose.constraint_set()->clone();
