@@ -35,11 +35,14 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 
+
 #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
+#include <ObjexxFCL/format.hh>
 
+using ObjexxFCL::fmt::I;
 
 static basic::Tracer tr("core.scoring.rna.RNA_VDW_Energy");
 
@@ -156,12 +159,15 @@ RNA_VDW_Energy::residue_pair_energy(
 	for ( Size m = 1; m <= num_vdw_atoms; ++m ) {
 
 		Size const i = atom_numbers1[ m ];
+		if (rsd1.is_virtual(i) ) continue;
+
 		Vector const & i_xyz( rsd1.xyz(i) );
 
 		for ( Size n = 1; n <= num_vdw_atoms; ++n ) {
 
 			utility::vector1< Size > const & atom_numbers2 ( atom_numbers_for_vdw_calculation[ pos2 ]  );
 			Size const j = atom_numbers2[ n ];
+			if (rsd2.is_virtual(j) ) continue;
 
 			Real const bump_dsq( rna_atom_vdw_.bump_parameter( m, n, which_nucleotide1, which_nucleotide2 ) );
 			Real const clash( bump_dsq - i_xyz.distance_squared( rsd2.xyz(j) ) );
