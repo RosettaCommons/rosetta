@@ -89,6 +89,9 @@ namespace rna{
 
 		core::pose::MiniPoseOP const mini_pose( Size const idx ) const;
 
+		bool
+		check_fold_tree_OK(	core::pose::Pose const & pose );
+
 	private:
 
 		void filter_atom_id_map_with_mask( std::map< core::id::AtomID, core::id::AtomID > & atom_id_map ) const;
@@ -104,25 +107,40 @@ namespace rna{
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	class RNA_ChunkLibrary : public utility::pointer::ReferenceCount  {
 	public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~RNA_ChunkLibrary();
 
 		RNA_ChunkLibrary();
 
 		// constructor -- needs a list of silent files. Each silent file
 		//  has solutions for a particular piece of the desired pose.
+		// this will be deprecated soon...
 		RNA_ChunkLibrary( utility::vector1 < std::string > const & silent_files,
 											core::pose::Pose const & pose,
 											std::map< Size, Size > const & connections_in_big_pose /* to figure out mapping to big pose*/
 											);
 
+		// default constructor.
+		RNA_ChunkLibrary(
+								utility::vector1 < std::string > const & pdb_files,
+								utility::vector1 < std::string > const & silent_files,
+								core::pose::Pose const & pose,
+								utility::vector1< core::Size > const & input_res );
+
+		// should not be in use in the future...
 		RNA_ChunkLibrary(
 								utility::vector1 < std::string > const & silent_files,
 								core::pose::Pose const & pose,
 								utility::vector1< core::Size > const & input_res );
 
-		//destructor -- necessary?
-		// ~RNA_ChunkLibrary();
+		//destructor
+		~RNA_ChunkLibrary(){}
+
+		// default constructor.
+		void
+		initialize_rna_chunk_library(
+								utility::vector1 < std::string > const & pdb_files,
+								utility::vector1 < std::string > const & silent_files,
+								core::pose::Pose const & pose,
+								utility::vector1< core::Size > const & input_res );
 
  		Size num_chunk_sets() const { return chunk_sets_.size(); };
 
@@ -138,7 +156,7 @@ namespace rna{
 																 Size const & chunk_list_index,
 																 Size const & chunk_pose_index ) const;
 
-		void
+		bool
 		random_chunk_insertion( core::pose::Pose & pose ) const;
 
 		void
@@ -150,6 +168,12 @@ namespace rna{
 
 		core::Real const & chunk_coverage() const{ return chunk_coverage_; };
 
+		void
+		superimpose_to_first_chunk( core::pose::Pose & pose ) const;
+
+		bool
+		check_fold_tree_OK(	core::pose::Pose const & pose );
+
 	private:
 
 		void
@@ -158,7 +182,10 @@ namespace rna{
 													 core::pose::Pose const & scratch_pose,
 													 Size const domain_num );
 
-
+		bool
+		check_fold_tree_OK( core::pose::ResMap const & res_map,
+												core::pose::Pose const & pose,
+												core::pose::Pose const & scratch_pose );
 		void
 		figure_out_chunk_coverage();
 
@@ -170,8 +197,9 @@ namespace rna{
 							 utility::vector1< core::Size > & sequence_start ) const;
 
 		void
-		process_silent_file( std::string const & silent_file,
-												 utility::vector1< core::pose::PoseOP > & pose_list ) const;
+		process_input_file( std::string const & silent_file,
+												utility::vector1< core::pose::PoseOP > & pose_list,
+												bool is_pdb = false  ) const;
 
 		void
 		figure_out_possible_res_maps(

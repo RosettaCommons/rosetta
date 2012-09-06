@@ -17,6 +17,7 @@
 #include <protocols/toolbox/AllowInsert.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/MiniPose.hh>
 #include <core/pose/MiniPose.fwd.hh>
@@ -58,9 +59,6 @@ static basic::Tracer TR( "protocols.rna.rna_chunk_library" ) ;
 
 namespace protocols{
 namespace rna{
-
-/// @details Auto-generated virtual destructor
-RNA_ChunkLibrary::~RNA_ChunkLibrary() {}
 
 	using namespace core;
 	using namespace ObjexxFCL;
@@ -187,6 +185,8 @@ RNA_ChunkLibrary::~RNA_ChunkLibrary() {}
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	// constructor -- needs a list of silent files. Each silent file
 	//  has solutions for a particular piece of the desired pose.
+	//  THIS SHOULD BE DEPRECATED SOON -- no longer in use?
+	//  Better to explicitly specify '-chunk_res'.
 	RNA_ChunkLibrary::RNA_ChunkLibrary(
 								utility::vector1 < std::string > const & silent_files,
 								core::pose::Pose const & pose,
@@ -207,7 +207,7 @@ RNA_ChunkLibrary::~RNA_ChunkLibrary() {}
 		for ( Size n = 1; n <= silent_files.size(); n++ ) {
 
 			utility::vector1< pose::PoseOP > pose_list;
-			process_silent_file( silent_files[n], pose_list );
+			process_input_file( silent_files[n], pose_list );
 
 			core::pose::Pose const & scratch_pose( *(pose_list[1]) );
 
@@ -242,14 +242,37 @@ RNA_ChunkLibrary::~RNA_ChunkLibrary() {}
 
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	// constructor -- needs a list of silent files. Each silent file
-	//  has solutions for a particular piece of the desired pose.
+	// deprecate soon?
 	RNA_ChunkLibrary::RNA_ChunkLibrary(
 								utility::vector1 < std::string > const & silent_files,
 								core::pose::Pose const & pose,
 								utility::vector1< core::Size > const & input_res )
 	{
+		utility::vector1< std::string > pdb_files_BLANK;
+		initialize_rna_chunk_library( pdb_files_BLANK, silent_files, pose, input_res );
+	}
 
+
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	// constructor -- needs a list of silent files. Each silent file
+	//  has solutions for a particular piece of the desired pose.
+	RNA_ChunkLibrary::RNA_ChunkLibrary(
+								utility::vector1 < std::string > const & pdb_files,
+								utility::vector1 < std::string > const & silent_files,
+								core::pose::Pose const & pose,
+								utility::vector1< core::Size > const & input_res )
+	{
+		initialize_rna_chunk_library( pdb_files, silent_files, pose, input_res );
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	RNA_ChunkLibrary::initialize_rna_chunk_library(
+								utility::vector1 < std::string > const & pdb_files,
+								utility::vector1 < std::string > const & silent_files,
+								core::pose::Pose const & pose,
+								utility::vector1< core::Size > const & input_res )
+	{
 		std::string const & sequence_of_big_pose( pose.sequence() );
 		coarse_rna_ = pose.residue( 1 ).is_coarse();
 
@@ -258,11 +281,22 @@ RNA_ChunkLibrary::~RNA_ChunkLibrary() {}
 		allow_insert_ = new toolbox::AllowInsert( pose );
 		covered_by_chunk_.dimension( sequence_of_big_pose.size(), false );
 
+		utility::vector1< std::string > all_input_files;
+		utility::vector1< bool > is_pdb_file;
+		for ( Size n = 1; n <= pdb_files.size(); n++ ){
+			all_input_files.push_back( pdb_files[n] );
+			is_pdb_file.push_back( true );
+		}
+		for ( Size n = 1; n <= silent_files.size(); n++ ){
+			all_input_files.push_back( silent_files[n] );
+			is_pdb_file.push_back( false );
+		}
+
 		Size count( 0 );
-		for ( Size n = 1; n <= silent_files.size(); n++ ) {
+		for ( Size n = 1; n <= all_input_files.size(); n++ ) {
 
 			utility::vector1< pose::PoseOP > pose_list;
-			process_silent_file( silent_files[n], pose_list );
+			process_input_file( all_input_files[n], pose_list,  is_pdb_file[n] );
 
 			core::pose::Pose const & scratch_pose( *(pose_list[1]) );
 
@@ -272,6 +306,7 @@ RNA_ChunkLibrary::~RNA_ChunkLibrary() {}
 			for ( Size i = 1; i <= scratch_pose.sequence().size(); i++ ) {
 				count++;
 				if ( sequence_of_big_pose[ input_res[ count ] -1 ] != scratch_pose.sequence()[ i - 1 ] ){
+					std::cout << "Problem with input_file: " << all_input_files[n] << std::endl;
 					std::cout << "mismatch in sequence   in  big pose: " << sequence_of_big_pose[ input_res[ count ] -1 ] << input_res[count] <<
 						"  in input pose: " << scratch_pose.sequence()[ i - 1 ]  << i << std::endl;
 					utility_exit_with_message( "mismatch in input_res sequence" );
@@ -283,6 +318,8 @@ RNA_ChunkLibrary::~RNA_ChunkLibrary() {}
 			chunk_sets_.push_back( chunk_set );
 
 			zero_out_allow_insert( res_map, pose, scratch_pose, n );
+
+			//check_fold_tree_OK( res_map, pose, scratch_pose );
 
 		}
 		if ( count != input_res.size() ){
@@ -303,7 +340,7 @@ RNA_ChunkLibrary::~RNA_ChunkLibrary() {}
 
 		utility::vector1< pose::PoseOP > pose_list;
 
-		process_silent_file( silent_file, pose_list );
+		process_input_file( silent_file, pose_list );
 		check_res_map( res_map, *(pose_list[1]), big_pose.sequence() );
 
 		ChunkSetOP chunk_set( new ChunkSet( pose_list, res_map ) );
@@ -322,14 +359,14 @@ RNA_ChunkLibrary::~RNA_ChunkLibrary() {}
 
 
 	//////////////////////////////////////////////////////////////////////////////
-	void
+	bool
 	RNA_ChunkLibrary::random_chunk_insertion( core::pose::Pose & pose ) const{
 
 		Size const chunk_set_index = static_cast <int> ( RG.uniform() * num_chunk_sets() ) + 1;
 
 		ChunkSet const & chunk_set( *chunk_sets_[ chunk_set_index ] );
 
-		if ( chunk_set.num_chunks() < 2 )  return;
+		if ( chunk_set.num_chunks() < 2 )  return false;
 
 		Size const chunk_index = static_cast <int> ( RG.uniform() * chunk_set.num_chunks() ) + 1;
 
@@ -337,6 +374,7 @@ RNA_ChunkLibrary::~RNA_ChunkLibrary() {}
 
 		//		TR << "INSERTED CHUNK " << chunk_index << " FROM SET " << chunk_set_index << std::endl;
 
+		return true;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -380,6 +418,56 @@ RNA_ChunkLibrary::~RNA_ChunkLibrary() {}
 			//			if ( i_scratch == 1 || scratch_pose.fold_tree().is_cutpoint( i_scratch - 1 ) ) allow_insert_->set_phosphate( i, pose, true );
 
 		}
+
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////////
+	bool
+	RNA_ChunkLibrary::check_fold_tree_OK( pose::Pose const & pose ){
+
+		for (Size k = 1; k <= chunk_sets_.size(); k++ )  {
+			ChunkSet & chunk_set = *(chunk_sets_[k]);
+			bool const OK = chunk_set.check_fold_tree_OK( pose );
+			if (!OK){
+				std::cout << "Problem with pose fold tree -- not enough jumps to handle the number of chains in chunk set " << k << std::endl;
+				utility_exit_with_message( "FoldTree in pose does not have the right number of jumps to match chunk_res" );
+			}
+		}
+
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////////
+	bool
+	ChunkSet::check_fold_tree_OK( pose::Pose const & pose ){
+
+		// Check where the chunk is mapped to in the big pose.
+		// There should be at least the same number of jumps in the big pose
+		//  as there are chains in the scratch_pose.
+		utility::vector1< bool > is_chunk_res( pose.total_residue(), false );
+		for ( ResMap::const_iterator
+						it=res_map_.begin(), it_end = res_map_.end(); it != it_end; ++it ) {
+			Size const i = it->first; //Index in big pose.
+			is_chunk_res[ i ] = true;
+		}
+
+		Size const num_jumps_scratch = mini_pose_list_[1]->fold_tree().num_jump(); // number of chains - 1
+
+		Size num_jumps_in_big_pose_in_scratch_region( 0 );
+		for ( Size n = 1; n <= pose.num_jump(); n++ ) {
+			if (! is_chunk_res[ pose.fold_tree().upstream_jump_residue( n ) ] ) continue;
+			if (! is_chunk_res[ pose.fold_tree().downstream_jump_residue( n ) ] ) continue;
+			num_jumps_in_big_pose_in_scratch_region++;
+		}
+
+		if ( num_jumps_scratch != num_jumps_in_big_pose_in_scratch_region ){
+			std::cout << "Number of jumps in chunk pose               : " << num_jumps_scratch << std::endl;
+			std::cout << "Number of jumps in full pose in chunk region: " << num_jumps_in_big_pose_in_scratch_region  << "  out of total jumps " << pose.num_jump() << std::endl;
+			return false;
+		}
+
+		return true;
 
 	}
 
@@ -680,7 +768,7 @@ RNA_ChunkLibrary::~RNA_ChunkLibrary() {}
 
 
 	///////////////////
-	// DELETE FOLLOWING AFTER SHIT WORKS!
+	// DELETE FOLLOWING AFTER STUFF WORKS!
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	RNA_ChunkLibrary::check_res_map_recursively( ResMap const & res_map_old,
@@ -831,24 +919,41 @@ RNA_ChunkLibrary::~RNA_ChunkLibrary() {}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	RNA_ChunkLibrary::process_silent_file( std::string const & silent_file,
-																		 utility::vector1< pose::PoseOP > & pose_list ) const
+	RNA_ChunkLibrary::process_input_file( std::string const & input_file,
+																				utility::vector1< pose::PoseOP > & pose_list,
+																				bool is_pdb /*= false*/ ) const
 	{
-		using namespace  core::io::silent;
+		using namespace core::io::silent;
+		using namespace protocols::rna;
 
 		core::chemical::ResidueTypeSetCAP rsd_set;
 		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA );
 
-		SilentFileData silent_file_data;
-		silent_file_data.read_file( silent_file );
-
-		for ( core::io::silent::SilentFileData::iterator iter = silent_file_data.begin(),
-							end = silent_file_data.end(); iter != end; ++iter ) {
+		if ( is_pdb ){
 
 			pose::PoseOP pose_op( new pose::Pose );
+			core::import_pose::pose_from_pdb( *pose_op, *rsd_set, input_file );
+			ensure_phosphate_nomenclature_matches_mini( *pose_op );
+			figure_out_reasonable_rna_fold_tree( *pose_op );
+			pose_list.push_back( pose_op );
 
-			std::string const tag = iter->decoy_tag();
-			iter->fill_pose( *pose_op );
+		} else { //its a silent file.
+
+			SilentFileData silent_file_data;
+			silent_file_data.read_file( input_file );
+			for ( core::io::silent::SilentFileData::iterator iter = silent_file_data.begin(),
+							end = silent_file_data.end(); iter != end; ++iter ) {
+				pose::PoseOP pose_op( new pose::Pose );
+				iter->fill_pose( *pose_op );
+				pose_list.push_back( pose_op );
+			}
+
+		}
+
+		// further cleanup.
+		for (Size n = 1; n <= pose_list.size(); n++ ){
+
+			pose::PoseOP pose_op = pose_list[ n ];
 
 			remove_cutpoints_closed( *pose_op );
 
@@ -859,12 +964,12 @@ RNA_ChunkLibrary::~RNA_ChunkLibrary() {}
 			}
 
 			virtualize_5prime_phosphates( *pose_op );
-
-			pose_list.push_back( pose_op );
 		}
 
+		// std::cout << "DONE: " << input_file << std::endl;
+
 		if ( pose_list.size() < 1)  {
-			utility_exit_with_message(  "No structure found in silent file  " + silent_file );
+			utility_exit_with_message(  "No structure found in input file  " + input_file );
 		}
 
 	}
@@ -895,6 +1000,14 @@ RNA_ChunkLibrary::~RNA_ChunkLibrary() {}
 
 		//exit( 0 );
 
+	}
+
+	///////////////////////////////////////////////////////////////////////
+	void
+	RNA_ChunkLibrary::superimpose_to_first_chunk( pose::Pose & pose ) const{
+		runtime_assert( chunk_sets_.size() > 0 );
+		ChunkSet const & chunk_set( *chunk_sets_[ 1 ] );
+		align_to_chunk( pose, chunk_set,  1  );
 	}
 
 	///////////////////////////////////////////////////////////////////////
