@@ -123,6 +123,7 @@ centroids_by_jump(
 		}
 
 		for(int jj = 1, jj_end = rsd.natoms(); jj <= jj_end; ++jj) {
+			if ( rsd.is_virtual( jj ) ) continue;
 			ctrd += rsd.xyz(jj);
 			natoms += 1;
 		}
