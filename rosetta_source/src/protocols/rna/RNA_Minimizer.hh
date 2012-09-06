@@ -64,10 +64,15 @@ public:
 
 	void set_do_dump_pdb( bool const setting){ do_dump_pdb_ = setting; }
 
+	void set_move_first_rigid_body( bool const setting){ move_first_rigid_body_ = setting; }
+
 	void set_min_type( std::string const setting){ min_type_ = setting; }
 
 	void
 	set_allow_insert(toolbox::AllowInsertOP allow_insert  );
+
+	void
+	set_extra_minimize_res( utility::vector1< core::Size > setting );
 
 	void
 	set_score_function( core::scoring::ScoreFunctionOP const & scorefxn );
@@ -84,30 +89,27 @@ private:
 	void
 	setup_movemap( core::kinematics::MoveMap & mm, core::pose::Pose & pose );
 
-	//refactored out to ConstrainToIdealMover
-	/*void
-	vary_bond_geometry(
-		core::kinematics::MoveMap & mm,
-		core::pose::Pose & pose,
-		core::pose::Pose const & pose_reference );
-
 	void
-	create_pose_reference(
-		core::pose::Pose const & pose,
-		core::pose::Pose & pose_reference );*/
+	update_allow_insert_with_extra_minimize_res( core::pose::Pose const & pose );
 
 
 	bool deriv_check_;
 	bool use_coordinate_constraints_;
+	core::Real const coord_sdev_;
+	core::Real const coord_cst_weight_;
+	core::Size const rounds_;
 	bool skip_o2star_trials_;
 	bool perform_minimizer_run_;
 	bool vary_bond_geometry_;
 	bool include_default_linear_chainbreak_;
 	bool verbose_;
 	bool do_dump_pdb_;
+	bool move_first_rigid_body_;
 	std::string min_type_;
 
 	toolbox::AllowInsertOP allow_insert_;
+
+	utility::vector1< core::Size > extra_minimize_res_;
 
 	core::scoring::ScoreFunctionOP scorefxn_;
 
