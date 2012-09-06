@@ -80,10 +80,12 @@ static basic::Tracer tr( "protocols.rna.rna_structure_parameters" ) ;
 
 using namespace core;
 
-RNA_StructureParameters::RNA_StructureParameters(){
-	secstruct_defined_ = false;
-	assume_non_stem_is_loop = false;
-}
+RNA_StructureParameters::RNA_StructureParameters():
+	secstruct_defined_( false ),
+	assume_non_stem_is_loop( false ),
+	root_at_first_rigid_body_( false )
+	{
+	}
 
 RNA_StructureParameters::~RNA_StructureParameters() {}
 
@@ -710,6 +712,11 @@ RNA_StructureParameters::setup_fold_tree_and_jumps_and_variants( pose::Pose & po
 	setup_jumps( pose );
 	//	std::cout << "ABOUT TO SET UP CHAINBREAKS " << std::endl;
 	setup_chainbreak_variants( pose );
+
+	tr << pose.annotated_sequence() << std::endl;
+	tr << pose.fold_tree() << std::endl;
+
+
 }
 
 ///////////////////////////////////////////////////////////////
@@ -865,20 +872,31 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 	fill_in_default_jump_atoms( f, pose );
 
 	if ( virtual_anchor_attachment_points_.size() > 0 ){
-		f.reorder( pose.total_residue() ); //reroot so that virtual residue is fixed.
-	}
 
-	// also useful -- if 5' terminus is moving but 3' terminus is fixed, can anchor to 3' terminus. Could also just always use a virtual residue...
-	if ( pose.fold_tree().root() == 1 && allow_insert_->get( 1 ) ){
-		for (Size n = pose.total_residue(); n >= 1; n-- ){
-			if ( !allow_insert_->get( n ) && possible_root(f,n) ) {
-				f.reorder( pose.total_residue() );
+		f.reorder( pose.total_residue() ); //reroot so that virtual residue is fixed.
+
+		if ( root_at_first_rigid_body_ ) {
+			utility::vector1< Size > rigid_body_jumps = get_rigid_body_jumps( pose );
+			runtime_assert( rigid_body_jumps.size() > 0 );
+			Size const anchor_rsd = pose.fold_tree().upstream_jump_residue( rigid_body_jumps[1] );
+			std::cout << "ROOTING AT RSD" << anchor_rsd << std::endl;
+			f.reorder( anchor_rsd ); //reroot so that partner of virtual residue is fixed
+		}
+
+	} else {
+
+		// also useful -- if user has an input pdb, put the root in there, if possible.
+		for (Size n = pose.total_residue(); n >= 1; n-- ){ // not sure why I did this backwards...
+			if ( pose.residue(n).is_RNA() &&
+					 allow_insert_->get_domain( named_atom_id_to_atom_id( id::NamedAtomID( " C1*", n ), pose ) ) == 1 /*1 means the first inputted pose*/ &&
+					 possible_root(f,n) ) {
+				f.reorder( n );
 				break;
 			}
 		}
+
 	}
 
-	//	std::cout << f << std::endl;
 	pose.fold_tree( f );
 
 	bool const random_jumps( true ); // For now this is true... perhaps should also have a more deterministic procedure.
@@ -1090,20 +1108,27 @@ RNA_StructureParameters::check_base_pairs( pose::Pose & pose ) const
 			j = rna_pairing.pos1;
 		}
 
+		// are these part of the pose that is actually being moved?
+		if  ( !allow_insert_->get( named_atom_id_to_atom_id( id::NamedAtomID( "C1*", i ), pose ) ) ) continue;
+		if  ( !allow_insert_->get( named_atom_id_to_atom_id( id::NamedAtomID( "C1*", j ), pose ) ) ) continue;
+
 		if ( !rna_low_resolution_potential.check_forming_base_pair(pose,i,j) ) {
-			std::cout << "MISSING BASE PAIR " << i << " " << j << std::endl;
+			tr << "MISSING BASE PAIR " << i << " " << j << std::endl;
 			return false;
 		}
 
 		if (rna_pairing.edge1 == 'W' && rna_pairing.edge2 == 'W' && rna_pairing.orientation=='A' ) {
-			if ( is_rna_chainbreak(pose, i) || is_rna_chainbreak( pose, j-1) ) {
-				//std::cout << "CHECK1: " << i << " " << j << std::endl;
+
+			if ( is_cutpoint_open(pose, i) && is_cutpoint_open( pose, j-1) ) {
+
 				if ( !rna_low_resolution_potential.check_clear_for_stacking( pose, i, +1 /* sign */)) return false;
 				if ( !rna_low_resolution_potential.check_clear_for_stacking( pose, j, -1 /* sign*/ )) return false;
-			} else if ( is_rna_chainbreak( pose, i-1 ) || is_rna_chainbreak( pose, j) ){
-				//std::cout << "CHECK2: " << i << " " << j << std::endl;
+
+			} else if ( is_cutpoint_open( pose, i-1 ) && is_cutpoint_open( pose, j) ){
+
 				if ( !rna_low_resolution_potential.check_clear_for_stacking( pose, i, -1 /* sign */)) return false;
 				if ( !rna_low_resolution_potential.check_clear_for_stacking( pose, j, +1 /* sign*/ )) return false;
+
 			}
 		}
 
@@ -1118,6 +1143,8 @@ RNA_StructureParameters::check_base_pairs( pose::Pose & pose ) const
 void
 RNA_StructureParameters::setup_base_pair_constraints( core::pose::Pose & pose )
 {
+
+	using namespace core::id;
 
 	utility::vector1< std::pair< Size, Size > > pairings;
 
@@ -1134,11 +1161,15 @@ RNA_StructureParameters::setup_base_pair_constraints( core::pose::Pose & pose )
 			tr <<  "skipping constraints for non-canonical base pair: " << I(3,i) << " " << I(3,j) << " " << rna_pairing.edge1 << " " << rna_pairing.edge2 << " " << rna_pairing.orientation << std::endl;
 			continue;
 		}
+
+		if ( !allow_insert_->get( named_atom_id_to_atom_id( NamedAtomID( "C1*", i ), pose ) ) &&
+				 !allow_insert_->get( named_atom_id_to_atom_id( NamedAtomID( "C1*", j ), pose ) ) ) continue; //assumed to be frozen, so no need to set up constraints?
+
 		pairings.push_back( std::make_pair( i, j ) ) ;
 	}
 
 	// In RNA_ProtocolUtil.cc :
-	protocols::rna::setup_base_pair_constraints( pose, pairings );
+	protocols::rna::setup_base_pair_constraints( pose, pairings, suppress_bp_constraint_ );
 }
 
 /////////////////////////////////////////////////////////////////////
