@@ -59,6 +59,44 @@ namespace toolbox{
 	AllowInsert::~AllowInsert() {}
 
 	//////////////////////////////////////////////////////////////////
+	AllowInsertOP
+	AllowInsert::clone() const
+	{
+		AllowInsertOP new_allow_insert( new AllowInsert( *this ) );
+		return new_allow_insert;
+	}
+
+///////////////////////////////////////////////////////////////////////////////
+	AllowInsert &
+	AllowInsert::operator=( AllowInsert const & src )
+	{
+		if ( this == &src ) return *this;
+
+		allow_insert_ = src.allow_insert_;
+		named_atom_id_map_ = src.named_atom_id_map_;
+		atom_ids_in_res_ = src.atom_ids_in_res_;
+
+		calculated_atom_id_domain_map_ = src.calculated_atom_id_domain_map_;
+
+		map_to_original_ = src.map_to_original_;
+
+		nres_ = src.nres_;
+
+		force_ideal_chainbreak_ = src.force_ideal_chainbreak_;
+
+		return *this;
+	}
+
+///////////////////////////////////////////////////////////////////////////////
+	AllowInsert::AllowInsert( AllowInsert const & src ):
+		ReferenceCount()
+	{
+		*this = src;
+	}
+
+
+
+	//////////////////////////////////////////////////////////////////
 	void
 	AllowInsert::initialize( core::pose::Pose const & pose )
 	{
@@ -135,6 +173,13 @@ namespace toolbox{
 	}
 
 	//////////////////////////////////////////////////////////////////
+	bool
+	AllowInsert::has_domain( core::id::AtomID const & atom_id  ) const{
+		std::map< AtomID, AtomID >::const_iterator it_original =	map_to_original_.find( atom_id );
+		return !( it_original == map_to_original_.end() );
+	}
+
+	//////////////////////////////////////////////////////////////////
 	Size
 	AllowInsert::get_domain( core::id::AtomID const & atom_id  ) const{
 
@@ -162,6 +207,7 @@ namespace toolbox{
 	AllowInsert::set_domain( core::id::AtomID const & atom_id, Size const & setting  ){
 		std::map< AtomID, AtomID >::const_iterator it_original =	map_to_original_.find( atom_id );
 		if ( it_original == map_to_original_.end() ) {
+			std::cerr << "Problem ID: " << atom_id << std::endl;
 			utility_exit_with_message( "Asked allow_insert to set atom_id that cannot be mapped to original pose!" );
 		}
 
@@ -306,6 +352,11 @@ namespace toolbox{
 
 				if ( rsd_offset == +1 && scratch_fold_tree.is_cutpoint( source_pos   ) ) continue;
 				if ( rsd_offset == -1 && scratch_fold_tree.is_cutpoint( source_pos-1 ) ) continue;
+
+				// PUTTING IN MATT'S CRAZY OPTION FOR HOMOLOGY MODELING -- make this an option though!
+				//if ( true ){
+				//					if ( rsd_offset != 0) continue;
+				//				}
 
 				//				if ( source_pos + rsd_offset == 0 ) {
 				//					std::cout << pose.annotated_sequence( true ) << std::endl;

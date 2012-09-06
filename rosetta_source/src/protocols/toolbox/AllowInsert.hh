@@ -54,6 +54,13 @@ public:
 	AllowInsert( core::pose::Pose const & pose );
 	virtual ~AllowInsert();
 
+	AllowInsert &
+	operator=( AllowInsert const & src );
+
+	AllowInsert( AllowInsert const & src );
+
+	virtual AllowInsertOP clone() const;
+
 public:
 
 	bool
@@ -67,6 +74,9 @@ public:
 
 	Size
 	get_domain( Size const & i ) const;
+
+	bool
+	has_domain( core::id::AtomID const & atom_id  ) const;
 
 	Size
 	get_domain( core::id::AtomID const & atom_id  ) const;
