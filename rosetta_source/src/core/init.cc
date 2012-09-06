@@ -940,6 +940,10 @@ void init(int argc, char * argv [])
 
 	//Profiling measures execution performance
 	init_profiling();
+
+	// help out user...
+	if  ( argc == 1 )  TR << std::endl << "USEFUL TIP: Type -help to get the options for this Rosetta executable." << std::endl << std::endl;
+
 }
 
 
