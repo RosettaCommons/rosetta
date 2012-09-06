@@ -26,11 +26,10 @@
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/FadeFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/tree/Atom.hh>
+#include <core/kinematics/MoveMap.hh>
 
 
 #include <core/pose/Pose.hh>
@@ -73,7 +72,7 @@ using namespace ObjexxFCL;
 using namespace ObjexxFCL::fmt;
 using basic::T;
 
-static basic::Tracer TR( "protocols.rna.rna_fragment_mover" ) ;
+static basic::Tracer TR( "protocols.rna.rna_protocol_util" ) ;
 
 namespace protocols {
 namespace rna {
@@ -107,6 +106,8 @@ figure_out_reasonable_rna_fold_tree( pose::Pose & pose )
 		}
 
 		if ( scoring::rna::is_rna_chainbreak( pose, i ) ){
+
+			//std::cout << "CHAINBREAK between " << i << " and " << i+1 << std::endl;
 
 			f.new_jump( i, i+1, i );
 			m++;
@@ -675,19 +676,20 @@ check_base_pair( pose::Pose & pose, FArray1D_int & struct_type )
 void
 setup_base_pair_constraints(
 														pose::Pose & pose,
-														utility::vector1< std::pair< Size, Size > > const &  pairings )
+														utility::vector1< std::pair< Size, Size > > const &  pairings,
+														Real const suppress_factor )
 {
 
 	using namespace core::scoring::constraints;
 	using namespace core::scoring::rna;
 
  	Real const WC_distance( 1.9 );
- 	Real const distance_stddev( 0.25 ); //Hmm. Maybe try linear instead?
+ 	Real const distance_stddev( 0.25 / suppress_factor ); //Hmm. Maybe try linear instead?
 	FuncOP const distance_func( new HarmonicFunc( WC_distance, distance_stddev ) );
 
 	// Need to force base pairing -- not base stacking!
  	Real const C1star_distance( 10.5 );
- 	Real const C1star_distance_stddev( 1.0 ); //Hmm. Maybe try linear instead?
+ 	Real const C1star_distance_stddev( 1.0 / suppress_factor ); //Hmm. Maybe try linear instead?
 	FuncOP const C1star_distance_func( new HarmonicFunc( C1star_distance, C1star_distance_stddev ) );
 
 	for ( Size n = 1; n <= pairings.size(); n++ ) {
@@ -1193,6 +1195,72 @@ possible_root( core::kinematics::FoldTree const & f, core::Size const & n ){
 		return false;
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< Size >
+get_rigid_body_jumps( core::pose::Pose const & pose ) {
+
+	utility::vector1< Size > rigid_body_jumps;
+
+	TR.Debug << "Initialize RigidBodyMover: Is last residue virtual? " <<  pose.residue( pose.total_residue() ).name3()  << std::endl;
+
+	if ( pose.residue( pose.total_residue() ).name3() != "XXX" ) return rigid_body_jumps; // must have a virtual anchor residue.
+
+	for ( Size n = 1; n <= pose.fold_tree().num_jump(); n++ ){
+		TR.Debug << "checking jump: " <<  pose.fold_tree().upstream_jump_residue( n ) << " to " <<  pose.fold_tree().downstream_jump_residue( n ) << std::endl;
+		if ( pose.fold_tree().upstream_jump_residue( n ) == pose.total_residue()  ||
+				 pose.fold_tree().downstream_jump_residue( n ) == pose.total_residue()  ){
+			TR.Debug << "found jump to virtual anchor at: " << n << std::endl;
+
+			rigid_body_jumps.push_back( n );
+			if ( rigid_body_jumps.size() > 1 ) {
+				TR.Debug << "found moveable jump!" << std::endl;
+			}
+		}
+	}
+
+	return rigid_body_jumps;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////
+bool
+let_rigid_body_jumps_move( core::kinematics::MoveMap & movemap,
+													 pose::Pose const & pose,
+													 bool const move_first_rigid_body /* = false */ ){
+
+	utility::vector1< Size > const rigid_body_jumps = get_rigid_body_jumps( pose );
+	Size const found_jumps = rigid_body_jumps.size();
+	if ( found_jumps <= 1 )	 return false; // nothing to rotate/translate relative to another object.
+
+	Size start = ( move_first_rigid_body ) ? 1 : 2;
+	for ( Size n = start; n <= rigid_body_jumps.size(); n++ ) movemap.set_jump( rigid_body_jumps[n], true );
+
+	return true;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+void
+translate_virtual_anchor_to_first_rigid_body( pose::Pose & pose ){
+
+	utility::vector1< Size > const rigid_body_jumps = get_rigid_body_jumps( pose );
+	if ( rigid_body_jumps.size() == 0 ) return;
+
+	Size const nres = pose.total_residue(); // This better be a virtual residue -- checked in get_rigid_body_jumps() above.
+
+	Size anchor_rsd = pose.fold_tree().downstream_jump_residue( rigid_body_jumps[1] );
+	if ( anchor_rsd == nres ) anchor_rsd = pose.fold_tree().upstream_jump_residue( rigid_body_jumps[1] );
+
+	Vector anchor1 = pose.xyz( id::AtomID( 1, anchor_rsd ) );
+	Vector root1   = pose.xyz( id::AtomID( 1, nres ) );
+	Vector const offset = anchor1 - root1;
+
+	for ( Size j = 1; j <= pose.residue( nres ).natoms(); j++ ){
+		id::AtomID atom_id( j, nres );
+		pose.set_xyz( atom_id, pose.xyz( atom_id ) + offset );
+	}
+
+}
 
 } // namespace rna
 } // namespace protocols

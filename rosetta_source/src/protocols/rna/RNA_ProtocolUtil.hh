@@ -21,21 +21,17 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <protocols/rna/RNA_MatchType.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/io/ozstream.fwd.hh>
 
 // Utility headers
 
 // ObjexxFCL headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
-// AUTO-REMOVED #include <vector>
-
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
 
@@ -101,7 +97,8 @@ check_base_pair( core::pose::Pose & pose, ObjexxFCL::FArray1D_int & struct_type 
 void
 setup_base_pair_constraints(
 														core::pose::Pose & pose,
-														utility::vector1< std::pair< core::Size, core::Size > > const &  pairings );
+														utility::vector1< std::pair< core::Size, core::Size > > const &  pairings,
+														core::Real const suppress_factor = 1.0 );
 
 void
 setup_coarse_chainbreak_constraints( core::pose::Pose & pose, core::Size const & n );
@@ -144,6 +141,17 @@ inline bool is_num_in_list ( core::Size const i,
 {
 	return std::find(list.begin(), list.end(), i)!=list.end();
 }
+
+utility::vector1< core::Size >
+get_rigid_body_jumps( core::pose::Pose const & pose );
+
+bool
+let_rigid_body_jumps_move( core::kinematics::MoveMap & movemap,
+													 core::pose::Pose const & pose,
+													 bool const move_first_rigid_body  = false );
+
+void
+translate_virtual_anchor_to_first_rigid_body( core::pose::Pose & pose );
 
 } //rna
 } // protocols
