@@ -615,10 +615,10 @@ namespace loophash {
 		while( runcount++ < 1000 ){
 
 			// pick a random loop length
-			core::Size loop_size = hash_sizes_[ rand() % hash_sizes_.size() ];
+			core::Size loop_size = hash_sizes_[ numeric::random::random_range(0,hash_sizes_.size()-1) ]; // Note that hash_sizes_ is a std::vector, not a vector1
 
 			// pick a starting residue
-			ir = rand() % (nres - loop_size-2) + 2;
+			ir = numeric::random::random_range(2,nres - loop_size - 1);
 			jr = ir + loop_size;
 			if ( ir > nres ) continue;
 			if ( jr > nres ) continue;
@@ -660,7 +660,7 @@ namespace loophash {
 
 			if( filter_leap_index_bucket.size() == 0) continue;
 
-			core::Size loop_choice = rand() % filter_leap_index_bucket.size();
+			core::Size loop_choice = numeric::random::random_range(0, filter_leap_index_bucket.size() - 1);
 
 
 			// APPLY LOOP and return
@@ -792,7 +792,7 @@ namespace loophash {
 				core::Size explore_count = 0;
 				//std::random__shuffle( filter_leap_index_bucket.begin(), filter_leap_index_bucket.end());
 				numeric::random::random_permutation(filter_leap_index_bucket.begin(), filter_leap_index_bucket.end(), numeric::random::RG);
-				
+
 				for(  std::vector < core::Size >::const_iterator it = filter_leap_index_bucket.begin();
 						it != filter_leap_index_bucket.end();
 						++it ){
@@ -971,10 +971,10 @@ namespace loophash {
 		leap_index.index   = index;
 		leap_index.offset = (ir-1)*3;
 		LoopHashMap &hashmap = gethash( loop_size );
-		
+
 		BackboneSegment pose_bs;
 		pose_bs.read_from_pose( pose, ir, loop_size );
-	
+
 		if( deposit ){
 			bbdb_.add_pose( pose, pose.total_residue(), index, NULL );
 
@@ -985,21 +985,21 @@ namespace loophash {
 				<< leap_index.offset
 				<< std::endl;
 			hashmap.add_leap( leap_index, t );
-		
+
 			pose_bs.print();
 		}
 
 		// Now read it back.
-	
+
 		std::vector < core::Size > leap_index_bucket;
 		TR << "Radial lookup ... " << std::endl;
 		hashmap.radial_lookup( 0, t, leap_index_bucket );
-		
+
 		core::Size example_index = leap_index_bucket[0];
 		TR << "Get the actual strucure index (not just the bin index) << " << std::endl;
-	
+
 		LeapIndex cp = hashmap.get_peptide( example_index );
-		
+
 		// Retrieve the actual backbone structure
 		BackboneSegment new_bs;
 		this->backbone_database().get_backbone_segment( cp.index, cp.offset, hashmap.get_loop_size() , new_bs );
@@ -1007,7 +1007,7 @@ namespace loophash {
 
 		bool result = new_bs.compare(pose_bs,0.1);
 
-		if(result) TR << "TEST OK " << std::endl; else TR << "TEST FAIL" << std::endl; 
+		if(result) TR << "TEST OK " << std::endl; else TR << "TEST FAIL" << std::endl;
 		TR << "Done testing!" << std::endl;
 		return result;
 	}

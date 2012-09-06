@@ -64,6 +64,8 @@
 #include <protocols/protein_interface_design/movers/BuildAlaPose.hh>
 
 #include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
+
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/hotspot.OptionKeys.gen.hh>
@@ -616,7 +618,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 	core::pose::Pose const saved_pose( pose ); //saved after minimization
 	saved_prevent_repacking_ = prevent_repacking();
 	saved_placed_stubs_ = placed_stubs_;
-	std::random_shuffle( stub_set_->begin(), stub_set_->end() );// randomly shuffling stubs so that the selection doesn't repeat the same stub order each time
+	numeric::random::random_permutation( stub_set_->begin(), stub_set_->end(), RG );// randomly shuffling stubs so that the selection doesn't repeat the same stub order each time
 	HotspotStubSet::Hs_vec::iterator stub_it( stub_set_->begin() );
 	std::vector< core::Size > host_positions;
 	if( task_factory() ){
@@ -642,7 +644,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 
 		// next, place the stub on a position in the host chain that is close enough
 		// randomize the order of placement on host residues to encourage diversity
-		std::random_shuffle( host_positions.begin(), host_positions.end() );
+		numeric::random::random_permutation( host_positions.begin(), host_positions.end(), RG );
 		for( std::vector< core::Size >::const_iterator host_pos_it = host_positions.begin(); host_pos_it!=host_positions.end(); ++host_pos_it) {
 			using namespace core::conformation;
 			core::Size const res( *host_pos_it );

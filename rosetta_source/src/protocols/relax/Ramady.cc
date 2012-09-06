@@ -36,6 +36,7 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <utility/vector1.hh>
+#include <numeric/random/random.hh>
 
 //Auto Headers
 #include <core/kinematics/Jump.hh>
@@ -177,7 +178,7 @@ void fix_worst_bad_ramas( core::pose::Pose & original_pose, core::Size how_many,
 
 		if ( g >= rama_list.size() ) break;
 
-		if ( ( core::Real( rand() % 100 )/100.0 ) < skip_prob ) continue;
+		if ( numeric::random::uniform() < skip_prob ) continue;
 
 		core::Size i = rama_list[g].first;
 		EnergyMap & emap( energies.onebody_energies( i ) );

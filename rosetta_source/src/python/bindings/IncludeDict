@@ -628,7 +628,6 @@
 'numeric/model_quality' : (False, 999, []),
 'numeric/numeric.functions.hh' : (True, 999, []),
 'numeric/random' : (True, 999, []),
-'numeric/random.functions.hh' : (False, 999, []),
 'numeric/statistics.functions.hh' : (True, 999, []),
 'numeric/trig.functions.hh' : (True, 999, []),
 'numeric/types.hh' : (True, 999, []),

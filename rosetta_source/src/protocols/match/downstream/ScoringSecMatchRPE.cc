@@ -39,6 +39,7 @@
 // AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 // Utility headers
+#include <numeric/random/random.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/string_util.hh>
 
@@ -305,7 +306,7 @@ ScoringSecMatchRPE::evaluate_residues(
 		//debug usage
 		std::string randNum;
 		std::stringstream out;
-		out << rand();
+		out << numeric::random::random_range(0,INT_MAX);
 		randNum = out.str();
 #ifdef _WIN32
 		#ifndef WIN_PYROSETTA

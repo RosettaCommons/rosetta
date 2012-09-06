@@ -1089,7 +1089,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 	} else {
 		set_last_move_status( protocols::moves::FAIL_RETRY );
 		TR << "fail in loop building: EXIT " << std::endl;
-		exit(0); 
+		exit(0);
 	}
 
 	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
@@ -1466,7 +1466,7 @@ void RemodelLoopMover::loophash_stage(
 		TR << std::endl;
 
 		//not doing shuffle for now
-		//std::random_shuffle( leap_index_list.begin(), leap_index_list.end() );
+		//numeric::random::random_permutation( leap_index_list.begin(), leap_index_list.end(), RG );
 
 		TR << "collected " << leap_index_list.size() << " fragments." << std::endl;
 		Size lh_frag_count = leap_index_list.size();
@@ -1554,7 +1554,7 @@ void RemodelLoopMover::loophash_stage(
 						//Size idxresStart = (int)loop.start()-1;  // this is terrible, due to the use of std:vector.  i has to start from 0, but positions offset by 1.
 						//Size idxresStop = (int)loop.start()-1+(seg_length-1);  // this is terrible, due to the use of std:vector.  i has to start from 0, but positions offset by 1.
 						Size idxresStart = 0;  // 0 means starting from the jump position!
-						Size idxresStop = seg_length-1; 
+						Size idxresStop = seg_length-1;
 
 						//special case for DB's test
 						core::util::ABEGOManager AM;
@@ -1569,8 +1569,8 @@ void RemodelLoopMover::loophash_stage(
 							lh_frag_count--;
 							continue;
 						}
-	
-						
+
+
 
 						/*
 						Pose test_segment;
@@ -2411,7 +2411,7 @@ bool RemodelLoopMover::check_closure_criteria(
 	//breakout case if we don't care if the loops are closed
 	if (option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
 		//special case for DB, filtering on close RMS with loophash
-		//only trigger if lh_closure_filter is used before evaluation 
+		//only trigger if lh_closure_filter is used before evaluation
 		if (option[OptionKeys::remodel::lh_closure_filter].user()){
 			TR << "using cbreak filter under bypass_closure." << std::endl;
 		  bool all_loops_pass = true;
@@ -2429,7 +2429,7 @@ bool RemodelLoopMover::check_closure_criteria(
 			}
 			return all_loops_pass;
 		}
-		else {	
+		else {
 			return true;
 		}
 	}

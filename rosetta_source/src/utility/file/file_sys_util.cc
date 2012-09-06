@@ -36,7 +36,6 @@
 // Project headers
 #include <utility/basic_sys_util.hh>
 #include <utility/exit.hh>
-#include <utility/random.functions.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/mpistream.hh>
@@ -73,6 +72,16 @@
 namespace utility {
 namespace file {
 
+void
+rand_sleep()
+{
+	// Use the standard random number system instead of Rosetta's for two reasons.
+	// 1) As we're only calling this function if there's problems with filesystem access,
+	//    we don't want intermittant filesystem problems to influence the scientific trajectory.
+	// 2) The random number system lives in numeric, above utility, so we can't use it even if we wanted to.
+	utility::sys_sleep( (double)std::rand() / (double)RAND_MAX );
+}
+
 
 /// @brief Does File Exist?
 bool
@@ -80,9 +89,9 @@ file_exists( std::string const & path )
 { // NOTE: this is not entirely reliable, stat may fail also when a file does exist
 	#ifdef NATCL
 		utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
-		return provider->file_exists( path ); 
+		return provider->file_exists( path );
 	#endif
-	
+
 	#ifdef _WIN32
 	    /*bool res = false;
 		std::fstream f;
@@ -90,10 +99,10 @@ file_exists( std::string const & path )
 		if( f.is_open() ) res = true;
 		f.close();
 		return res; */
-		
+
 		if( access(path.c_str(), 0) ) return false;
 		else return true;
-				
+
 	#else
 		struct stat buf;
 		return !stat( path.c_str(), &buf ); // stat() returns zero on success
@@ -105,9 +114,6 @@ file_exists( std::string const & path )
 int
 file_delete( std::string const & path )
 {
-	using utility::drand;
-	using utility::sys_sleep;
-
 	if ( !file_exists( path ) ) {
 		return 0;
 	}
@@ -117,7 +123,7 @@ file_delete( std::string const & path )
 	for ( int i = 0; i < 5; ++i ) {
 		retval = remove( path.c_str() );
 		if ( !retval ) break;
-		sys_sleep( drand() ); // avoid lockstep
+		rand_sleep(); // avoid lockstep
 	}
 #else
 	retval = remove( path.c_str() );
@@ -272,8 +278,6 @@ trytry_ifstream_open(
 	using std::ios;
 	using std::ios_base;
 	using std::string;
-	using utility::drand;
-	using utility::sys_sleep;
 
 	ifstream_.close();
 	ifstream_.clear();
@@ -304,7 +308,7 @@ trytry_ifstream_open(
 	// (since the file might be open by FastFind, Diskeeper etc.)
 	if ( !ifstream_ ) {
 		for ( int i = 0; i < 5; ++i ) {
-			utility::sys_sleep( utility::drand() );
+			rand_sleep();
 			ifstream_.open( resolved_name.c_str(), open_mode );
 			if ( ifstream_ && ifstream_.is_open() ) return true;
 		}
@@ -335,8 +339,6 @@ trytry_ofstream_open(
 	using std::ios;
 	using std::ios_base;
 	using std::string;
-	using utility::drand;
-	using utility::sys_sleep;
 
 	ofstream_.close();
 	ofstream_.clear();
@@ -367,7 +369,7 @@ trytry_ofstream_open(
 	// (since the file might be open by FastFind, Diskeeper etc.)
 	if ( !ofstream_ ) {
 		for ( int i = 0; i < 5; ++i ) {
-			utility::sys_sleep( utility::drand() );
+			rand_sleep();
 			ofstream_.open( resolved_name.c_str(), open_mode );
 			if ( ofstream_ && ofstream_.is_open() ) return true;
 		}

@@ -21,6 +21,7 @@
 
 // Numeric headers
 #include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray1A.hh>
@@ -505,7 +506,7 @@ void
 FASTERAnnealer::shuffle_sBR_rotamers()
 {
 	progress_through_sBR_ = -1;
-	std::random_shuffle( sBR_rotamers_.begin(), sBR_rotamers_.end() );
+	numeric::random::random_permutation( sBR_rotamers_.begin(), sBR_rotamers_.end(), RG );
 }
 
 int

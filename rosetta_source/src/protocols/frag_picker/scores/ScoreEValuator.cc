@@ -40,10 +40,14 @@
 
 #include <utility/vector1.hh>
 
+#include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
 
 namespace protocols {
 namespace frag_picker {
 namespace scores {
+
+static numeric::random::RandomGenerator RG(10402);  // Magic Number
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -81,8 +85,8 @@ bool ScoreEValuator::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) 
 	}
 
 	for (Size i_rand = 1; i_rand <= max_rand_; ++i_rand) {
-		std::random_shuffle(columnsQ.begin(), columnsQ.end());
-		std::random_shuffle(columnsV.begin(), columnsV.end());
+		numeric::random::random_permutation(columnsQ.begin(), columnsQ.end(), RG);
+		numeric::random::random_permutation(columnsV.begin(), columnsV.end(), RG);
 		Real s = 0;
 		for (Size i = 1; i <= columnsQ.size(); i++) {
 			s = scores_[columnsQ[i]][columnsV[i]];

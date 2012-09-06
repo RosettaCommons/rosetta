@@ -71,6 +71,7 @@
 #include <ObjexxFCL/format.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
 #include <numeric/model_quality/rms.hh>
 #include <numeric/model_quality/maxsub.hh>
 
@@ -347,7 +348,7 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 	// (c) randomly shuffle, then add each with given prob
 	TR.Debug << "Chunks from all template: " << std::endl;
 	TR.Debug << my_chunks << std::endl;
-	std::random_shuffle ( wted_insertions_to_consider.begin(), wted_insertions_to_consider.end() );
+	numeric::random::random_permutation ( wted_insertions_to_consider.begin(), wted_insertions_to_consider.end(), RG );
 	for (int i=1; i<=wted_insertions_to_consider.size(); ++i) {
 		// ensure the insert is still valid
 		bool uncovered = true;

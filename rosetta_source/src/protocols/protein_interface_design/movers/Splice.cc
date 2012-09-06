@@ -62,6 +62,7 @@
 #include <protocols/protein_interface_design/movers/LoopLengthChange.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 
 #include <fstream>
@@ -122,8 +123,6 @@ Splice::Splice() :
 	dbase_subset_.clear();
 	end_dbase_subset_ = new protocols::moves::DataMapObj< bool >;
 	end_dbase_subset_->obj = false;
-	using namespace std;
-	srand( time( NULL ) ); /// for random_shuffle
 }
 
 Splice::~Splice() {}
@@ -254,7 +253,7 @@ Splice::find_dbase_entry( core::pose::Pose const & pose )
 			return 0;
 		}
 		TR<<"Found "<<dbase_subset_.size()<<" entries in the torsion dbase that match the length criteria"<<std::endl;
-		std::random_shuffle( dbase_subset_.begin(), dbase_subset_.end() );
+		numeric::random::random_permutation( dbase_subset_.begin(), dbase_subset_.end(), RG );
 		current_dbase_entry_ = dbase_subset_.begin();
 		load_from_checkpoint();
 	}

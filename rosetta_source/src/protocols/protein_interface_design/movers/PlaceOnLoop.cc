@@ -50,6 +50,7 @@
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 #include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -201,7 +202,7 @@ PlaceOnLoop::loop_length( core::pose::Pose & pose )
 	core::scoring::constraints::ConstraintCOPs saved_bb_constraints = protocols::hotspot_hashing::remove_hotspot_constraints_from_pose( pose );
 	Pose const saved_pose( pose );
 	curr_loop_end_ = loop_end_;
-	std::random_shuffle( delta_length_.begin(), delta_length_.end() );
+	numeric::random::random_permutation( delta_length_.begin(), delta_length_.end(), RG );
 	bool loop_closed( false );
 	int const delta( *delta_length_.begin() );
 	TR<<"changing loop length by "<<delta<<std::endl;

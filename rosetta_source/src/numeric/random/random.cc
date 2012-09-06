@@ -184,7 +184,8 @@ L1:
 }
 
 
-/// @brief Returns a random int in the range specified by the arguments
+/// @brief Returns a random int in the range specified by the arguments,
+/// with both enpoints being included in the possible output.
 ///
 /// @author XA
 int RandomGenerator::random_range(int low, int high)

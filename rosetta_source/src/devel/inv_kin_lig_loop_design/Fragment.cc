@@ -27,7 +27,7 @@
 #endif
 #include <cmath>
 
-
+#include <numeric/random/random.hh>
 #include <basic/database/open.hh>
 
 namespace {
@@ -148,7 +148,7 @@ namespace devel {
 				}
 
 				const vector<Entry>& vEntries = i->second;
-				return vEntries[ rand() % vEntries.size() ];
+				return vEntries[ numeric::random::random_range(0,vEntries.size()-1) ];
 
       } // File::getEntry
 

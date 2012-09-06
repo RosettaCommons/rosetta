@@ -155,7 +155,7 @@ MPI_LoopHashRefine_Emperor::process_inbound_wus(){
 				// Always send back a structure so the master can continue its life.
 				TR << "Sending a new random structure to master:" << structure_wu->last_received_from() << std::endl;
 				// send back a random ssid. crude way to prevent interference from old returning structures on the master. really crude. sorry, this could be better i know.
-				send_random_library_struct( structure_wu->last_received_from(), (core::Size) rand() % 10000 );
+				send_random_library_struct( structure_wu->last_received_from(), (core::Size) numeric::random::random_range(0,9999) );
 				TR << "Done." << std::endl;
 			}
 		} else {
@@ -187,7 +187,7 @@ MPI_LoopHashRefine_Emperor::add_structures_to_library( SilentStructStore &new_st
 	{
 		runtime_assert( *it );
 		core::io::silent::SilentStruct *pss = &(*(*it));
-		
+
 		// Filter for max_emperor_lib_round_
 
 		if( max_emperor_lib_round_ > 0 ){
@@ -203,7 +203,7 @@ MPI_LoopHashRefine_Emperor::add_structures_to_library( SilentStructStore &new_st
 	}
 
 	// always dump *everything* returned to emperor!
-	dump_structures( new_structs, false ); 
+	dump_structures( new_structs, false );
 
 	limit_library();
 	print_library();

@@ -45,6 +45,7 @@
 
 //Numeric Headers
 #include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
 
 // C++ headers
 #include <map>
@@ -464,7 +465,7 @@ void ParsedProtocol::sequence_protocol(Pose & pose, utility::vector1< mover_filt
 
 
 void ParsedProtocol::random_order_protocol(Pose & pose){
-	std::random_shuffle(movers_.begin(),movers_.end());
+	numeric::random::random_permutation(movers_.begin(),movers_.end(),RG);
 	for(utility::vector1<mover_filter_pair>::const_iterator it = movers_.begin(); it != movers_.end();++it)
 	{
 		if(!apply_mover_filter_pair(pose, *it))

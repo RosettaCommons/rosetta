@@ -39,16 +39,18 @@
 
 #include <core/pack/pack_rotamers.hh>
 
+#include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh>
+
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
-
 
 #define REPORTCYCLES1(c0,m0)                    " Cycles:\t" << c0 << "/" << m0
 #define REPORTCYCLES2(c0,m0,c1,m1)              " Cycles:\t" << c0 << "/" << m0 << "\t" << c1 << "/" << m1
 #define REPORTCYCLES3(c0,m0,c1,m1,c2,m2)        " Cycles:\t" << c0 << "/" << m0 << "\t" << c1 << "/" << m1 << "\t" << c2 << "/" << m2
 #define REPORTCYCLES4(c0,m0,c1,m1,c2,m2,c3,m3)  " Cycles:\t" << c0 << "/" << m0 << "\t" << c1 << "/" << m1 << "\t" << c2 << "/" << m2 << "\t" << c3 << "/" << m3
 
+static numeric::random::RandomGenerator RG(386226);
 
 namespace devel {
 
@@ -152,7 +154,7 @@ namespace devel {
 					(*pose) = (*pose_init);
 
 					vector<Loop> loops_shuffled = loops; // need a list of all loops not just anchored loops
-					random_shuffle(loops_shuffled.begin(),loops_shuffled.end());
+					numeric::random::random_permutation(loops_shuffled.begin(),loops_shuffled.end(),RG);
 
 					//g.setUseNb(false);
 
@@ -235,7 +237,7 @@ namespace devel {
 					pose->energies().show_total_headers( cout ); cout << endl;
 					pose->energies().show_totals( cout ); cout << endl;
 
-					const int k_rand_loop = rand() % loops.size(); // this is biased towards shorter loops
+					const int k_rand_loop = RG.random_range(0,INT_MAX) % loops.size(); // this is biased towards shorter loops
 
 					const Loop& loop = loops[k_rand_loop];
 
@@ -308,7 +310,7 @@ namespace devel {
 
       // let's do this in a random order
       vector<Loop> loops_shuffled = loops;
-      random_shuffle(loops_shuffled.begin(),loops_shuffled.end());
+      numeric::random::random_permutation(loops_shuffled.begin(),loops_shuffled.end(),RG);
 
       Mover mover(pose.get());
       core::optimization::AtomTreeMinimizer atm;

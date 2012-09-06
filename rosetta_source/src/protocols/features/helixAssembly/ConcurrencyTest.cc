@@ -31,6 +31,7 @@
 #include <protocols/features/helixAssembly/HelicalFragment.hh>
 
 //Utility and basic
+#include <numeric/random/random.hh>
 #include <basic/database/sql_utils.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
@@ -56,17 +57,17 @@ namespace helixAssembly {
 
 	void
 	ConcurrencyTest::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
-		
+
 		using namespace basic::database::schema_generator;
-		
+
 		PrimaryKey id(Column("id", DbUUID(), false));
 		Column random_number(Column("description", DbInteger()));
-		
+
 		Schema concurrency_test("concurrency_test", id);
 		concurrency_test.add_column(random_number);
-		
+
 		concurrency_test.write(db_session);
-		
+
 	}
 
 	///@brief collect all the feature data for the pose
@@ -78,12 +79,12 @@ namespace helixAssembly {
 		utility::sql_database::sessionOP db_session
 	){
 
-		
+
 		std::string test_insert =  "INSERT INTO concurrency_test (id, random_num) VALUES (?);";
 		for(int i=1; i<=100000; i++){
 			cppdb::statement test_stmt(basic::database::safely_prepare_statement(test_insert,db_session));
 			test_stmt.bind(1,struct_id);
-			test_stmt.bind(2,rand());
+			test_stmt.bind(2,numeric::random::random_range(0,INT_MAX));
 			basic::database::safely_write_to_database(test_stmt);
 		}
 		return 0;
