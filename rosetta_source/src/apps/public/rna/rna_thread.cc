@@ -34,7 +34,6 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/id/AtomID_Map.Pose.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/kinematics/AtomTree.hh>
@@ -49,23 +48,13 @@
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/options/option.hh>
-#include <core/options/after_opts.hh>
-#include <core/options/util.hh>
 
-#include <core/options/option_macros.hh>
-#include <protocols/idealize.hh>
-#include <protocols/relax_protocols.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 
 #include <protocols/viewer/viewers.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-
-#include <core/util/basic.hh>
-
-#include <core/io/database/open.hh>
 
 #include <devel/init.hh>
 
@@ -92,7 +81,6 @@
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/OptionKeys.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 
