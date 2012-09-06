@@ -347,7 +347,7 @@ FragmentLibrary::~FragmentLibrary() {}
 
 				if ( !allow_insert->get( rna_torsion_id , pose.conformation() ) ) continue;
 
-				//std::cout << "ABOUT TO INSERT: " << position_offset << "      torsion number " << j << std::endl;
+				//				if ( position == 1 ) std::cout << "ABOUT TO INSERT: " << position_offset << "      torsion number " << j << std::endl;
 
 				pose.set_torsion( rna_torsion_id,
 													torsion_set.torsions( j, offset ) );
