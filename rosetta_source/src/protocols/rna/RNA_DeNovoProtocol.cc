@@ -34,6 +34,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/swa/StepWiseUtil.hh> //move this to toolbox/
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
+#include <protocols/rna/RNA_ProtocolUtil.hh>
 
 // Project headers
 #include <protocols/moves/MonteCarlo.hh>
@@ -107,7 +108,6 @@ static basic::Tracer TR( "protocols.rna.rna_denovo_protocol" ) ;
 
 RNA_DeNovoProtocol::RNA_DeNovoProtocol(
 	 Size const nstruct,
-	 Size const monte_carlo_cycles,
 	 std::string const silent_file,
 	 bool const heat_structure /*= true*/,
 	 bool const minimize_structure /*= false*/,
@@ -115,7 +115,9 @@ RNA_DeNovoProtocol::RNA_DeNovoProtocol(
 	 bool const allow_bulge /*=false*/):
     Mover(),
 		nstruct_( nstruct ),
-		monte_carlo_cycles_( monte_carlo_cycles ),
+		monte_carlo_cycles_( 0 ), /* will be reset later */
+		monte_carlo_cycles_max_default_( 100000 ),
+		user_defined_cycles_( false ), /* will change to true if set_monte_carlo_cycles() is called */
 		all_rna_fragments_file_( basic::database::full_name("chemical/rna/RICHARDSON_RNA09.torsions") ),
 		silent_file_( silent_file ),
 		lores_silent_file_( "" ),
@@ -124,7 +126,9 @@ RNA_DeNovoProtocol::RNA_DeNovoProtocol(
 		minimize_structure_( minimize_structure ),
 		relax_structure_( relax_structure ),
 		ignore_secstruct_( false ),
-		close_loops_( false ),
+		do_close_loops_( true ),
+		close_loops_at_end_( true ),
+		close_loops_in_last_round_( true ),
 		close_loops_after_each_move_( false ),
 		simple_rmsd_cutoff_relax_( false ),
 		m_Temperature_( 2.0 ),
@@ -136,6 +140,10 @@ RNA_DeNovoProtocol::RNA_DeNovoProtocol(
 		rna_data_reader_( RNA_DataReaderOP( new RNA_DataReader ) ),
 		output_lores_silent_file_( false ),
 		filter_lores_base_pairs_( false ),
+		filter_lores_base_pairs_early_( false ),
+		filter_chain_closure_( true ),
+		filter_chain_closure_distance_( 6.0 ), /* in Angstroms. This is pretty loose!*/
+		filter_chain_closure_halfway_( true ),
 		vary_bond_geometry_( false ),
 		binary_rna_output_( false ),
 		jump_change_frequency_( 0.1 ),
@@ -145,7 +153,15 @@ RNA_DeNovoProtocol::RNA_DeNovoProtocol(
 		chainbreak_weight_( -1.0 ), /* use rna_lores.wts number unless user specified. -1.0 is never really used. */
 		linear_chainbreak_weight_( -1.0 ),  /* use rna_lores.wts number unless user specified. -1.0 is never really used. */
 		allow_bulge_( allow_bulge ),
-		allow_consecutive_bulges_( false )
+		allow_consecutive_bulges_( false ),
+		titrate_stack_bonus_( true ),
+		move_first_rigid_body_( false ),
+		root_at_first_rigid_body_( false ),
+		output_filters_( false ),
+		lores_score_early_( false ),
+		lores_score_final_( false ),
+		autofilter_( false ),
+		autofilter_score_quantile_( 0.20 )
 {
 	Mover::type("RNA_DeNovoProtocol");
 	rna_loop_closer_ = protocols::rna::RNA_LoopCloserOP( new protocols::rna::RNA_LoopCloser );
@@ -197,6 +213,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 	Pose start_pose = pose;
 
 	monte_carlo_ = new protocols::moves::MonteCarlo( pose, *denovo_scorefxn_, 2.0 );
+	setup_monte_carlo_cycles( pose );
 
 	// Some other silent file setup
 	initialize_lores_silent_file();
@@ -204,7 +221,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 
 
 	Size max_tries( 1 );
-	if (filter_lores_base_pairs_)  max_tries = 10;
+	if (filter_lores_base_pairs_ || filter_chain_closure_ )  max_tries = 10;
 
 	///////////////////////////////////////////////////////////////////////////
 	// Main Loop.
@@ -214,20 +231,28 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 		std::string const out_file_tag = "S_"+lead_zero_string_of( n, 6 );
 		if (tag_is_done_[ out_file_tag ] ) continue;
 
+		bool	do_close_loops_( false );
 		Size ntries( 0 );
 		bool found_good_decoy( false );
+
 		while( ++ntries <= max_tries && !found_good_decoy ) {
 
 			time_t pdb_start_time = time(NULL);
+
+			if ( ntries > 1 ) TR << "Did not pass filters. Trying the model again: trial " << ntries << " out of " << max_tries << std::endl;
 
 			pose = start_pose;
 			rna_structure_parameters_->setup_fold_tree_and_jumps_and_variants( pose );
 			rna_structure_parameters_->setup_base_pair_constraints( pose ); // needs to happen after setting cutpoint variants, etc.
 			rna_chunk_library_->initialize_random_chunks( pose ); //actually not random if only one chunk in each region.
+			if ( close_loops_after_each_move_ ) {
+				rna_loop_closer_->apply( pose );
+				do_close_loops_ = true;
+			}
 
 			if (dump_pdb_) dump_pdb( pose, "start.pdb" );
 
-			if (heat_structure_ ) do_random_fragment_insertions( pose );
+			if (heat_structure_ ) do_random_moves( pose );
 
 			if (dump_pdb_) dump_pdb( pose, "random.pdb" );
 			monte_carlo_->reset( pose );
@@ -238,6 +263,10 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 			frag_size_ = 3;
 
 			for (Size r = 1; r <= rounds; r++ ) {
+
+				TR << "Beginning round " << r << " of " << rounds << std::endl;
+
+				if ( r == rounds && close_loops_in_last_round_ ) do_close_loops_ = true;
 
 				//Keep score function coarse for early rounds.
 				update_denovo_scorefxn_weights( r, rounds );
@@ -272,6 +301,23 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 				monte_carlo_->recover_low( pose );
 				monte_carlo_->show_counters();
 				monte_carlo_->reset_counters();
+
+				if ( r == 2 ) { //special 'early' stage
+					lores_score_early_ = (*denovo_scorefxn_)( pose );
+					if ( filter_lores_base_pairs_early_ ){
+						bool const base_pairs_OK = rna_structure_parameters_->check_base_pairs( pose );
+						TR << "Checking base pairs early! Result: " << base_pairs_OK << std::endl;
+						if (!base_pairs_OK) break;
+					}
+				}
+				if ( r == rounds/2 ){ // halway point
+					if ( filter_chain_closure_halfway_ ){
+						Real const filter_chain_closure_distance_halfway = 2 * filter_chain_closure_distance_;
+						bool const rna_loops_OK = rna_loop_closer_->check_closure( pose, filter_chain_closure_distance_halfway );
+						TR << "Checking loop closure with tolerance of " << filter_chain_closure_distance_halfway << " Angstroms! Result: " << rna_loops_OK << std::endl;
+						if (!rna_loops_OK) break;
+					}
+				}
 			}
 
 			pose = monte_carlo_->lowest_score_pose();
@@ -280,23 +326,24 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 			time_t pdb_end_time = time(NULL);
 			TR << "Finished fragment assembly of " << out_file_tag << " in " << (long)(pdb_end_time - pdb_start_time) << " seconds." << std::endl;
 
-			if (filter_lores_base_pairs_) found_good_decoy = rna_structure_parameters_->check_base_pairs( pose );
-		}
+			if (close_loops_at_end_) rna_loop_closer_->apply( pose, rna_structure_parameters_->connections() );
+
+			found_good_decoy = true;
+			if (filter_chain_closure_)    found_good_decoy = found_good_decoy && rna_loop_closer_->check_closure( pose, filter_chain_closure_distance_ );
+			if (filter_lores_base_pairs_) found_good_decoy = found_good_decoy && rna_structure_parameters_->check_base_pairs( pose );
+
+			lores_score_final_ = (*denovo_scorefxn_)( pose );
+			if ( found_good_decoy /*important!*/ && autofilter_ ) found_good_decoy = found_good_decoy && check_score_filter( lores_score_final_, all_lores_score_final_ );
+		} // ++ntries <= max_tries && !found_good_decoy
 
 		if (output_lores_silent_file_ ) align_and_output_to_silent_file( pose, lores_silent_file_, out_file_tag );
 
-		if (close_loops_) {
-			//rna_loop_closer_->close_loops_carefully( pose, rna_structure_parameters_->connections() );
-			rna_loop_closer_->apply( pose, rna_structure_parameters_->connections() );
-			denovo_scorefxn_->show( std::cout, pose );
-		}
 
 		if (minimize_structure_){
+
 			rna_minimizer_->apply( pose );
 
-			if (close_loops_) {
-				rna_loop_closer_->apply( pose, rna_structure_parameters_->connections() );
-			}
+			if (close_loops_at_end_) rna_loop_closer_->apply( pose, rna_structure_parameters_->connections() );
 		}
 
 		if (relax_structure_)	rna_relaxer_->apply( pose );
@@ -314,7 +361,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 			//Minimize again.
 			if (minimize_structure_ && num_res_virtualized != 0){
 				rna_minimizer_->apply( pose );
-				if (close_loops_) {
+				if (close_loops_at_end_) {
 					rna_loop_closer_->apply( pose, rna_structure_parameters_->connections() );
 				}
 			}
@@ -353,6 +400,7 @@ RNA_DeNovoProtocol::initialize_scorefxn( core::pose::Pose & pose ) {
 	if ( chainbreak_weight_ > -1 ) initial_denovo_scorefxn_->set_weight( chainbreak, chainbreak_weight_ );
 
 	if ( linear_chainbreak_weight_ > -1 ) initial_denovo_scorefxn_->set_weight( linear_chainbreak, linear_chainbreak_weight_ );
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -363,6 +411,7 @@ RNA_DeNovoProtocol::initialize_constraints( core::pose::Pose & pose ) {
 
 	if (pose.constraint_set()->has_constraints() )	{
 		denovo_scorefxn_->set_weight( atom_pair_constraint, 1.0 );
+		denovo_scorefxn_->set_weight( coordinate_constraint, 1.0 ); // now useable in RNA denovo!
 		constraint_set_ = pose.constraint_set()->clone();
 	}
 
@@ -375,18 +424,19 @@ RNA_DeNovoProtocol::initialize_movers( core::pose::Pose & pose ){
 	// all jumping, secondary structure, base pair constraint, allow_insertation
 	// will be stored in a .prm file.
 	rna_structure_parameters_->initialize( pose, rna_params_file_, jump_library_file_, ignore_secstruct_ );
+	rna_structure_parameters_->set_root_at_first_rigid_body( root_at_first_rigid_body_ );
+	rna_structure_parameters_->set_suppress_bp_constraint( suppress_bp_constraint_ );
 
 	// reads in any data on, e.g., exposure of different bases --> saves inside the pose's rna_data_info.
 	rna_data_reader_->initialize( pose, rna_data_file_ );
 
 	all_rna_fragments_ = new FullAtomRNA_Fragments( all_rna_fragments_file_ );
 
-	if ( chunk_res_.size() > 0 ){
-		rna_chunk_library_ = new RNA_ChunkLibrary( chunk_silent_files_, pose, chunk_res_ );
-	} else {
+	if ( input_res_.size() > 0 ){
+		rna_chunk_library_ = new RNA_ChunkLibrary( chunk_pdb_files_, chunk_silent_files_, pose, input_res_ );
+	} else { // deprecate soon?
 		rna_chunk_library_ = new RNA_ChunkLibrary( chunk_silent_files_, pose, rna_structure_parameters_->connections() );
 	}
-
 
 	chunk_coverage_ = rna_chunk_library_->chunk_coverage();
 
@@ -405,12 +455,42 @@ RNA_DeNovoProtocol::initialize_movers( core::pose::Pose & pose ){
 	rna_minimizer_ = new RNA_Minimizer;
 	rna_minimizer_->set_allow_insert( rna_structure_parameters_->allow_insert() );
 	rna_minimizer_->vary_bond_geometry( vary_bond_geometry_ );
+	rna_minimizer_->set_extra_minimize_res( extra_minimize_res_ );
+	rna_minimizer_->set_move_first_rigid_body( move_first_rigid_body_ );
 
 	rna_relaxer_ = new RNA_Relaxer( rna_fragment_mover_, rna_minimizer_);
 	rna_relaxer_->simple_rmsd_cutoff_relax( simple_rmsd_cutoff_relax_ );
 
 	//setup_allowed_bulge_res_to_loop_res( pose );
 
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+RNA_DeNovoProtocol::setup_monte_carlo_cycles( core::pose::Pose const & pose ){
+
+	if (user_defined_cycles_) return;
+
+	// figure out rough number of degrees of freedom.
+
+	// first count up number of residues with allow_insert.
+	Size const nres_move = get_moving_res( pose ).size();
+	TR << "Number of moving residues: " << nres_move << std::endl;
+
+	// then count up rigid bodies that need to be docked.
+	Size nbody_move = protocols::rna::get_rigid_body_jumps( pose ).size();
+	if ( nbody_move > 1 ) nbody_move--; // first rigid body does not move, by convention.
+	if ( nbody_move > 0 ) TR << "Number of moving bodies: " << nbody_move << std::endl;
+
+	monte_carlo_cycles_ = 2000 * nres_move + 20000 * nbody_move;
+
+	if ( monte_carlo_cycles_ > monte_carlo_cycles_max_default_ ){
+		monte_carlo_cycles_ = monte_carlo_cycles_max_default_;
+		TR << "Using maximum default Monte Carlo cycles: " <<  monte_carlo_cycles_ << ". Use -cycles option to change this." << std::endl;
+	}
+
+	TR << "Using " << monte_carlo_cycles_ << " cycles in de novo modeling." << std::endl;
 
 }
 
@@ -436,42 +516,30 @@ RNA_DeNovoProtocol::initialize_tag_is_done()
 
 }
 
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DeNovoProtocol::setup_rigid_body_mover( pose::Pose const & pose, Size const r, Size const rounds ){
 
-
 	core::kinematics::MoveMap movemap;
 	movemap.set_jump( false );
-	TR.Debug << "INITIALIZE RIGID BODY MOVER  --> " <<  pose.residue( pose.total_residue() ).name3()  << std::endl;
 
-	if ( pose.residue( pose.total_residue() ).name3() != "XXX" ) return; // must have a virtual anchor residue.
+	bool rigid_body_moves = protocols::rna::let_rigid_body_jumps_move( movemap, pose, move_first_rigid_body_ );
+
+	if ( !rigid_body_moves ) return;
 
 	if ( !binary_rna_output_ ) utility_exit_with_message( "Asking for virtual anchor -- need to specify -binary_output" );
 
-	Size found_jumps = 0;
+	//Keep moves coarse for early rounds. For the last 1/4 of modeling, plateau to the finest moves.
+	Real suppress  = (r - 1.0)/( static_cast<Real>(rounds) * (3.0/4.0) - 1.0);
+	// Real suppress  = (r - 1.0)/( static_cast<Real>(rounds) - 1.0);
+	if ( suppress > 1.0 ) suppress = 1.0;
 
-	for ( Size n = 1; n <= pose.fold_tree().num_jump(); n++ ){
-		TR.Debug << "checking jump: " <<  pose.fold_tree().upstream_jump_residue( n ) << " to " <<  pose.fold_tree().downstream_jump_residue( n ) << std::endl;
-		if ( pose.fold_tree().upstream_jump_residue( n ) == pose.total_residue()  ||
-				 pose.fold_tree().downstream_jump_residue( n ) == pose.total_residue()  ){
-			TR.Debug << "found jump to virtual anchor at: " << n << std::endl;
-			found_jumps++;
-			if ( found_jumps > 1 ) {
-				TR.Debug << "found moveable jump!" << std::endl;
-				movemap.set_jump( n, true );
-			}
-		}
-	}
-
-	if ( found_jumps <= 1 )	 return; // nothing to rotate/translate relative to another object.
-
-	//Keep moves coarse for early rounds.
-	Real const suppress  = (r - 1.0)/(rounds - 1.0);
-
-	Real const rot_mag_init( 5.0 ), rot_mag_final( 0.2 ), trans_mag_init( 2.5 ), trans_mag_final( 0.1 );
-	Real const rot_mag   = rot_mag_init   +  (rot_mag_final - rot_mag_init ) * ( r - 1 ) / static_cast<Real>( rounds - 1);
-	Real const trans_mag = trans_mag_init +  (trans_mag_final - trans_mag_init ) * ( r - 1 ) / static_cast<Real>( rounds - 1);
+	Real const rot_mag_init( 10.0 ),   rot_mag_final( 0.2 );
+	Real const trans_mag_init( 5.0 ), trans_mag_final( 0.1 );
+	Real const rot_mag   = rot_mag_init   +  (rot_mag_final - rot_mag_init ) * suppress;
+	Real const trans_mag = trans_mag_init +  (trans_mag_final - trans_mag_init ) * suppress;
 
 	rigid_body_mover_ = new protocols::rigid::RigidBodyPerturbMover( pose, movemap, rot_mag, trans_mag, protocols::rigid::partner_upstream /*because virtual anchor should be root*/ );
 	jump_change_frequency_ = 0.5; /* up from default of 0.1*/
@@ -535,6 +603,11 @@ RNA_DeNovoProtocol::output_silent_struct(
 	TR << "ADD_NUMBER_NATIVE_BASE_PAIRS" << std::endl;
 	if ( get_native_pose() ) add_number_native_base_pairs( pose, s );
 
+	if ( output_filters_ ){
+	  s.add_energy( "lores_early", lores_score_early_ ) ;
+	  if ( minimize_structure_ ) s.add_energy( "lores_final", lores_score_final_ ) ;
+	}
+
 	TR << "Outputting to silent file: " << silent_file << std::endl;
 	silent_file_data.write_silent_struct( s, silent_file, score_only );
 
@@ -568,21 +641,40 @@ RNA_DeNovoProtocol::output_to_silent_file( core::pose::Pose & pose, std::string 
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< Size >
+RNA_DeNovoProtocol::get_moving_res( core::pose::Pose const & pose ) const {
+
+	utility::vector1< Size > moving_res;
+
+	protocols::toolbox::AllowInsertOP const & allow_insert = rna_structure_parameters_->allow_insert();
+
+	for( Size n = 1; n <= pose.total_residue(); n++ ){
+		if ( allow_insert->get( n ) ) {
+			moving_res.push_back( n );
+		}
+	}
+
+	return moving_res;
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DeNovoProtocol::align_and_output_to_silent_file( core::pose::Pose & pose, std::string const & silent_file, std::string const & out_file_tag ) const
 {
 
-	if ( get_native_pose() ){
+	// if input pdbs were specified with -s or -silent, then automatic alignment to first of these input chunks.
+	// otherwise, align to native pose, if specified.
+	if ( input_res_.size() > 0 ){
+
+		rna_chunk_library_->superimpose_to_first_chunk( pose );
+
+	} else if ( get_native_pose() ){
 		Pose const & native_pose = *get_native_pose();
 
 		//realign to native for ease of viewing.
 		// check for any fixed domains.
-		utility::vector1< Size > superimpose_res;
-
-		protocols::toolbox::AllowInsertOP const & allow_insert = rna_structure_parameters_->allow_insert();
-		for( Size n = 1; n <= pose.total_residue(); n++ ){
-			if ( !allow_insert->get( n ) ) superimpose_res.push_back( n );
-		}
+		utility::vector1< Size > superimpose_res = get_moving_res( pose );
 
 		// if no fixed domains, just superimpose over all residues.
 		if ( superimpose_res.size() == 0 ){
@@ -606,8 +698,9 @@ RNA_DeNovoProtocol::align_and_output_to_silent_file( core::pose::Pose & pose, st
 
 ////////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_DeNovoProtocol::do_random_fragment_insertions( core::pose::Pose & pose ) {
+RNA_DeNovoProtocol::do_random_moves( core::pose::Pose & pose ) {
 
+	rna_chunk_library_->check_fold_tree_OK( pose );
 	rna_chunk_library_->initialize_random_chunks( pose );
 
 	if (dump_pdb_) pose.dump_pdb( "add_chunks.pdb" );
@@ -619,13 +712,59 @@ RNA_DeNovoProtocol::do_random_fragment_insertions( core::pose::Pose & pose ) {
 		rna_fragment_mover_->random_fragment_insertion( pose, 1 /*frag_size*/ );
 	}
 
-	if (dump_pdb_) 	pose.dump_pdb( "random_frag1.pdb" );
+	if (dump_pdb_) 	pose.dump_pdb( "random_moves1.pdb" );
 
 	rna_chunk_library_->initialize_random_chunks( pose );
 
-	if (dump_pdb_) 	pose.dump_pdb( "random_frag2.pdb" );
+	if (dump_pdb_) 	pose.dump_pdb( "random_moves2.pdb" );
+
+	translate_virtual_anchor_to_first_rigid_body( pose ); //useful for graphics viewing & final output
+
+	if (dump_pdb_) 	pose.dump_pdb( "random_moves3.pdb" );
+
+	randomize_rigid_body_orientations( pose );
+
+	if (dump_pdb_) 	pose.dump_pdb( "random_moves4.pdb" );
 
 }
+
+////////////////////////////////////////////////////////////////////////////////////////
+void
+RNA_DeNovoProtocol::randomize_rigid_body_orientations( pose::Pose & pose ){
+
+	using namespace protocols::rigid;
+	using namespace protocols::rna;
+	using namespace kinematics;
+
+	utility::vector1< Size > const rigid_body_jumps = get_rigid_body_jumps( pose );
+	Size const found_jumps = rigid_body_jumps.size();
+	if ( found_jumps <= 1 )	 return; // nothing to rotate/translate relative to another object.
+
+	// translation to first, fixed rigid body.
+	Vector first_rigid_body_position = pose.jump( rigid_body_jumps[ 1 ] ).get_translation();
+
+	for ( Size n = 2; n <= rigid_body_jumps.size(); n++ ) {
+		Size const i = rigid_body_jumps[ n ];
+
+		// randomize orientation.
+		RigidBodyRandomizeMover rigid_body_randomize_mover( pose, i, partner_upstream );
+		rigid_body_randomize_mover.apply( pose );
+
+		// randomize translation.
+		// how far out should we push this segment?
+		// For now, hard-wire a value, but later may want to take into account radius of gyration of the chunk.
+		Jump jump = pose.jump( i );
+		jump.set_translation( first_rigid_body_position );
+		pose.set_jump( i, jump ); // move to 'origin' -- position of first rigid body.
+
+		Real const translation_magnitude( 20.0 );
+		RigidBodyPerturbMover rigid_body_perturb_mover( i, 0.0 /*rot_mag_in*/, translation_magnitude, partner_upstream );
+		rigid_body_perturb_mover.apply( pose );
+	}
+
+
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -639,16 +778,27 @@ RNA_DeNovoProtocol::update_denovo_scorefxn_weights( Size const & r, Size const &
 	Real const linear_chainbreak_final_weight    = initial_denovo_scorefxn_->get_weight( linear_chainbreak );
 	Real const chainbreak_final_weight    = initial_denovo_scorefxn_->get_weight( chainbreak );
 	Real const atom_pair_constraint_final_weight = initial_denovo_scorefxn_->get_weight( atom_pair_constraint );
+	Real const coordinate_constraint_final_weight = initial_denovo_scorefxn_->get_weight( coordinate_constraint );
 
 	//Keep score function coarse for early rounds.
-	Real const suppress  = (r - 1.0)/(rounds - 1.0);
+	// Real const suppress  = (r - 1.0) / (rounds - 1.0);
+	Real const suppress  = r / static_cast<Real>( rounds );
 
 	denovo_scorefxn_->set_weight( rna_base_axis,      suppress*rna_base_axis_final_weight  );
 	denovo_scorefxn_->set_weight( rna_base_stagger,   suppress*rna_base_stagger_final_weight  );
-	denovo_scorefxn_->set_weight( rna_base_stack_axis,suppress*rna_base_stack_axis_final_weight  );
+	if ( titrate_stack_bonus_ ) denovo_scorefxn_->set_weight( rna_base_stack_axis,suppress*rna_base_stack_axis_final_weight  );
+	denovo_scorefxn_->set_weight( atom_pair_constraint,  suppress*atom_pair_constraint_final_weight  );
+	denovo_scorefxn_->set_weight( coordinate_constraint,  suppress*coordinate_constraint_final_weight  );
+
+
+	// keep chainbreak extra low for early rounds... seems to be important for rigid body sampling.
+	Real suppress_chainbreak  = ( r - (rounds/3.0) )/ ( static_cast<Real>(rounds) - (rounds/3.0) );
+	Real const suppress_chainbreak_min = 1 / static_cast< Real >( rounds );
+	if ( suppress_chainbreak < suppress_chainbreak_min ) suppress_chainbreak = suppress_chainbreak_min;
+
 	denovo_scorefxn_->set_weight( linear_chainbreak,  suppress*linear_chainbreak_final_weight  );
 	denovo_scorefxn_->set_weight( chainbreak,  suppress*chainbreak_final_weight  );
-	denovo_scorefxn_->set_weight( atom_pair_constraint,  suppress*atom_pair_constraint_final_weight  );
+
 }
 
 
@@ -734,11 +884,17 @@ RNA_DeNovoProtocol::RNA_move_trial( pose::Pose & pose ) {
 
 	//Following returns early if there are no jumps.
 	if  ( RG.uniform() < jump_change_frequency_ )  {
+
 		random_jump_trial( pose );
+
 	} else {
+
+		bool did_a_trial( false );
 		if ( RG.uniform() < chunk_coverage_ ) {
-			random_chunk_trial( pose );
-		} else {
+			did_a_trial = random_chunk_trial( pose );
+		}
+
+		if ( !did_a_trial ){
 			random_fragment_trial( pose );
 		}
 	}
@@ -753,6 +909,11 @@ RNA_DeNovoProtocol::random_jump_trial( pose::Pose & pose ) {
 	bool success( false );
 	std::string move_type( "" );
 
+	//	pose.dump_pdb( "BEFORE.pdb" );
+	//	std::cout << "BEFORE!" << std::endl;
+	//	(*denovo_scorefxn_)( pose );
+	//	denovo_scorefxn_->show( std::cout, pose );
+
 	if ( rigid_body_mover_ &&  RG.uniform() < 0.8 /*totally arbitrary*/ ){
 		rigid_body_mover_->apply( pose );
 		success = true; /* rigid body mover is from docking  */
@@ -764,7 +925,13 @@ RNA_DeNovoProtocol::random_jump_trial( pose::Pose & pose ) {
 
 	if (!success) return;
 
-	if ( close_loops_after_each_move_ ) rna_loop_closer_->apply( pose );
+	if ( do_close_loops_ ) rna_loop_closer_->apply( pose );
+
+	//	pose.dump_pdb( "AFTER.pdb" );
+	//	std::cout << "AFTER!" << std::endl;
+	//	(*denovo_scorefxn_)( pose );
+	//	denovo_scorefxn_->show( std::cout, pose );
+	//	exit( 0 );
 
 	monte_carlo_->boltzmann( pose, move_type );
 
@@ -775,14 +942,14 @@ void
 RNA_DeNovoProtocol::random_fragment_trial( pose::Pose & pose ) {
 
 	rna_fragment_mover_->random_fragment_insertion( pose, frag_size_ );
-	if ( close_loops_after_each_move_ ) rna_loop_closer_->apply( pose );
+	if ( do_close_loops_ ) rna_loop_closer_->apply( pose );
 
 	monte_carlo_->boltzmann( pose, "frag" + SS(frag_size_) );
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
-void
+bool
 RNA_DeNovoProtocol::random_chunk_trial( pose::Pose & pose ) {
 
 	//	if ( frag_size_ == 2 ) {
@@ -791,7 +958,8 @@ RNA_DeNovoProtocol::random_chunk_trial( pose::Pose & pose ) {
 	//		denovo_scorefxn_->show( std::cout, pose  );
 	//	}
 
-	rna_chunk_library_->random_chunk_insertion( pose );
+	bool const did_an_insertion = rna_chunk_library_->random_chunk_insertion( pose );
+	if ( !did_an_insertion ) return false;
 
 	//	if ( frag_size_ == 2 ) {
 	//		pose.dump_pdb( "after_chunk.pdb" );
@@ -799,13 +967,11 @@ RNA_DeNovoProtocol::random_chunk_trial( pose::Pose & pose ) {
 	//		denovo_scorefxn_->show( std::cout, pose );
 	// 	}
 
-	if ( close_loops_after_each_move_ ) rna_loop_closer_->apply( pose );
+	if ( do_close_loops_ ) rna_loop_closer_->apply( pose );
 
 	monte_carlo_->boltzmann( pose, "chunk" );
 
-	//	if ( frag_size_ == 2 ) {
-	//		utility_exit_with_message(  "After chunk." );
-	//	}
+	return true /*did an insertion*/;
 
 }
 
@@ -980,6 +1146,34 @@ RNA_DeNovoProtocol::add_number_native_base_pairs(pose::Pose & pose, io::silent::
 
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////
+void
+RNA_DeNovoProtocol::set_extra_minimize_res( utility::vector1< core::Size > setting ){
+	extra_minimize_res_ = setting;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+bool
+RNA_DeNovoProtocol::check_score_filter( Real const lores_score, std::list< Real > & all_lores_score ){
+
+	all_lores_score.push_back( lores_score );
+
+	all_lores_score.sort(); // nice -- can do this with a list!
+
+	// note that if autofilter_score_quantile_ = 0.20, the first decoy will be 'passed' for free.
+	Size const n = all_lores_score.size();
+	Size const cutoff_index = static_cast< Size >( n * autofilter_score_quantile_ ) + 1;
+
+	// the one pain with lists -- need to iterate through to find the element corresponding to the quantile score.
+	Real all_lores_score_cutoff = all_lores_score.front();
+	Size i( 1 );
+	for ( std::list< Real >::const_iterator iter = all_lores_score.begin();	iter != all_lores_score.end(); iter++, i++ ){
+		if ( i == cutoff_index ) all_lores_score_cutoff = *iter;
+	}
+
+	TR << "Comparing current lores score " << lores_score << " to automatically determined cutoff: " << all_lores_score_cutoff << " based on " << autofilter_score_quantile_ << " quantile from "  << n << " models so far" << std::endl;
+	return ( lores_score <= all_lores_score_cutoff );
+}
 
 } // namespace rna
 } // namespace protocols

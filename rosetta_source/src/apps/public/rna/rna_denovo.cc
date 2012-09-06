@@ -74,6 +74,8 @@ OPT_KEY( Boolean, output_lores_silent_file )
 OPT_KEY( Boolean, binary_output )
 OPT_KEY( Boolean, ignore_secstruct )
 OPT_KEY( Boolean, filter_lores_base_pairs )
+OPT_KEY( Boolean, filter_lores_base_pairs_early )
+OPT_KEY( Boolean, filter_chain_closure )
 OPT_KEY( Boolean, use_1jj2_torsions )
 OPT_KEY( String, lores_scorefxn )
 OPT_KEY( Boolean, vary_geometry )
@@ -85,15 +87,24 @@ OPT_KEY( Real, rna_lores_linear_chainbreak_weight )
 OPT_KEY( Real, rna_lores_chainbreak_weight )
 OPT_KEY( Integer, cycles )
 OPT_KEY( Real, jump_change_frequency )
+OPT_KEY( Real, suppress_bp_constraint )
 OPT_KEY( String,  vall_torsions )
 OPT_KEY( String,  jump_library_file )
 OPT_KEY( String,  params_file )
 OPT_KEY( String,  data_file )
 OPT_KEY( String,  cst_file )
-OPT_KEY( IntegerVector, chunk_res )
+OPT_KEY( IntegerVector, chunk_res ) // deprecated
+OPT_KEY( IntegerVector, input_res )
 OPT_KEY( Boolean, allow_bulge )
 OPT_KEY( Boolean, allow_consecutive_bulges )
 OPT_KEY( IntegerVector, allowed_bulge_res )
+OPT_KEY( IntegerVector, extra_minimize_res )
+OPT_KEY( Boolean, root_at_first_rigid_body )
+OPT_KEY( Boolean, move_first_rigid_body )
+OPT_KEY( Boolean, output_filters )
+OPT_KEY( Boolean, autofilter )
+OPT_KEY( Real, filter_chain_closure_distance )
+OPT_KEY( Boolean, filter_chain_closure_halfway )
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -159,31 +170,27 @@ rna_denovo_test()
 	pose = extended_pose;
 
 	//	set_ideal_geometry( pose, extended_pose, rsd_set ); //by default, does nothing.
-	bool input_pose( false );
-	if ( option[in::file::s].user() ) {
-		std::string const pdb_file = option[in::file::s][1];
-		core::import_pose::pose_from_pdb( pose, *rsd_set, in_path + pdb_file );
-		ensure_phosphate_nomenclature_matches_mini( pose );
-		input_pose = true;
-	}
 
-	//	dump_pdb( pose, "start.pdb" );
-	//	(*scorefxn)(pose);
-	//	scorefxn->show( std::cout,pose );
+	//  Following is deprecated -- will use "chunk_silent_file" machinery for input.
+	//	bool input_pose( false );
+	//	if ( option[in::file::s].user() ) {
+	//		std::string const pdb_file = option[in::file::s][1];
+	//		core::import_pose::pose_from_pdb( pose, *rsd_set, in_path + pdb_file );
+	//		ensure_phosphate_nomenclature_matches_mini( pose );
+	//		input_pose = true;
+	//	}
 
 	//Read in Torsion Library. Here go ahead and use my personal fragment class
 	// because other instances of fragments in mini-rosetta (e.g., loop-modeling or ab initio)
 	// are protein-specific!
 	Size const nstruct = option[ out::nstruct ];
-	Size const monte_carlo_cycles = option[ cycles ];
-
 	std::string const silent_file = option[ out::file::silent  ]();
-	bool const heat_structure( !input_pose || option[ heat ] );
+	bool const heat_structure( true ); // hmm... ( !input_pose || option[ heat ] );
 	bool const minimize_structure = option[ minimize_rna ];
 	bool const relax_structure = option[ relax_rna ];
 	bool const is_allow_bulge = option[ allow_bulge ];
 
-	protocols::rna::RNA_DeNovoProtocol rna_de_novo_protocol( nstruct, monte_carlo_cycles,
+	protocols::rna::RNA_DeNovoProtocol rna_de_novo_protocol( nstruct,
 																													 silent_file,
 																													 heat_structure,
 																													 minimize_structure,
@@ -191,7 +198,7 @@ rna_denovo_test()
 																													 is_allow_bulge );
 
 	if (native_exists) rna_de_novo_protocol.set_native_pose( native_pose_OP );
-
+	if ( option[ cycles ].user() )	rna_de_novo_protocol.set_monte_carlo_cycles( option[ cycles ]() );
 	if ( option[ jump_library_file ].user() )	rna_de_novo_protocol.set_jump_library_file( in_path + option[ jump_library_file] );
  	if ( option[ vall_torsions ].user() )	{
 		// check in database first
@@ -206,6 +213,7 @@ rna_denovo_test()
 	if ( option[ rna_lores_linear_chainbreak_weight ].user() ) rna_de_novo_protocol.set_linear_chainbreak_weight( option[ rna_lores_linear_chainbreak_weight ]() );
 	if ( option[ rna_lores_chainbreak_weight ].user() ) rna_de_novo_protocol.set_chainbreak_weight( option[ rna_lores_chainbreak_weight ]() );
 
+	rna_de_novo_protocol.set_temperature( option[ temperature ] );
 	rna_de_novo_protocol.ignore_secstruct( option[ ignore_secstruct ] );
 	rna_de_novo_protocol.jump_change_frequency( option[ jump_change_frequency ] );
 	rna_de_novo_protocol.set_close_loops( option[ close_loops] );
@@ -214,14 +222,34 @@ rna_denovo_test()
 	rna_de_novo_protocol.set_dump_pdb( option[ dump ] ) ;
 	rna_de_novo_protocol.set_staged_constraints( option[ staged_constraints ] ) ;
 	rna_de_novo_protocol.set_filter_lores_base_pairs(  option[ filter_lores_base_pairs] );
+	rna_de_novo_protocol.set_filter_lores_base_pairs_early(  option[ filter_lores_base_pairs_early] );
+	rna_de_novo_protocol.set_suppress_bp_constraint(  option[ suppress_bp_constraint]() );
+	rna_de_novo_protocol.set_filter_chain_closure(  option[ filter_chain_closure ]() );
+	rna_de_novo_protocol.set_filter_chain_closure_distance(  option[ filter_chain_closure_distance ]() );
+	rna_de_novo_protocol.set_filter_chain_closure_halfway(  option[ filter_chain_closure_halfway ]() );
 	rna_de_novo_protocol.set_vary_bond_geometry(  option[ vary_geometry ] );
+	rna_de_novo_protocol.set_move_first_rigid_body(  option[ move_first_rigid_body ] );
+	rna_de_novo_protocol.set_root_at_first_rigid_body(  option[ root_at_first_rigid_body ] );
+	rna_de_novo_protocol.set_output_filters(  option[ output_filters ] );
+	rna_de_novo_protocol.set_autofilter(  option[ autofilter ] );
 	if ( option[ in::file::silent_struct_type ]() == "binary_rna"  || option[ binary_output ]() )	rna_de_novo_protocol.set_binary_rna_output( true );
 
 	rna_de_novo_protocol.simple_rmsd_cutoff_relax( option[ simple_relax ] );
-	if ( option[ in::file::silent ].user()	) 	rna_de_novo_protocol.set_chunk_silent_files( option[ in::file::silent ]() );
-	rna_de_novo_protocol.set_chunk_res( option[ chunk_res ]() ) ;
+	if ( option[ in::file::s ].user() ) rna_de_novo_protocol.set_chunk_pdb_files( option[ in::file::s ]() );
+	if ( option[ in::file::silent ].user() ) 	rna_de_novo_protocol.set_chunk_silent_files( option[ in::file::silent ]() );
+
+	runtime_assert( ! (option[ chunk_res].user() && option[ input_res ].user() ) ); // let's deprecate chunk_res soon
+	if ( option[ chunk_res ].user() ) {
+		std::cout << "WARNING! WARNING! WARNING! -chunk_res will be deprecated soon. Use -input_res instead!" << std::endl;
+		std::cerr << "WARNING! WARNING! WARNING! -chunk_res will be deprecated soon. Use -input_res instead!" << std::endl;
+		rna_de_novo_protocol.set_input_res( option[ chunk_res ]() ) ;
+	}
+
+	if ( option[ input_res ].user() )  rna_de_novo_protocol.set_input_res( option[ input_res ]() ) ;
+
 	rna_de_novo_protocol.set_allow_consecutive_bulges( option[ allow_consecutive_bulges ]() ) ;
 	rna_de_novo_protocol.set_allowed_bulge_res( option[ allowed_bulge_res ]() ) ;
+	rna_de_novo_protocol.set_extra_minimize_res( option[ extra_minimize_res ]() ) ;
 
 		//Constraints?
 	if ( option[ cst_file ].user() ) {
@@ -229,7 +257,7 @@ rna_denovo_test()
 		pose.constraint_set( cst_set );
 	}
 
-	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 600, 600 );
 
 	//	protocols::moves::AddPyMolObserver( pose, false, 0.01);
 
@@ -264,13 +292,17 @@ main( int argc, char * argv [] )
 	NEW_OPT( ignore_secstruct, "Ignore sec struct in input file",false );
 	NEW_OPT( lores_scorefxn, "Low resolution scorefunction weights file", "rna_lores.wts" );
 	NEW_OPT( filter_lores_base_pairs, "Filter for models that satisfy structure parameters",false );
+	NEW_OPT( filter_lores_base_pairs_early, "Filter for models that satisfy structure parameters at round 2 of 10",false );
+	NEW_OPT( filter_chain_closure, "Filter for models that have closed chains after lores before minimize",true );
+	NEW_OPT( filter_chain_closure_halfway, "Filter for models that have closed chains after lores before minimize at round 5 of 10",false );
+	NEW_OPT( filter_chain_closure_distance, "Mean distance across 3 chainbreak atoms to filter models that have closed chains after lores", 6.0 );
 	NEW_OPT( vary_geometry, "Let bond lengths and angles vary from ideal",false );
-	NEW_OPT( cycles, "Default number of Monte Carlo cycles", 10000 );
+	NEW_OPT( cycles, "Default number of Monte Carlo cycles", 0 ); // now default is set based on the number of moving residues.
 	NEW_OPT( vall_torsions, "Torsions file?", "chemical/rna/1jj2.torsions" );
-	NEW_OPT( temperature, "temperature", 0.3 );
+	NEW_OPT( temperature, "temperature", 2.0 );
 	NEW_OPT( jump_change_frequency, "jump change frequency", 0.1 );
-	NEW_OPT( close_loops, "close loops during frag insertion and jump mover", false );
-	NEW_OPT( close_loops_after_each_move, "close loops during frag insertion and jump mover", false );
+	NEW_OPT( close_loops, "close loops after de novo protocol and again after minimization", true ); /* this should always be on. */
+	NEW_OPT( close_loops_after_each_move, "close loops during frag insertion and jump mover -- can be expensive", false );
 	NEW_OPT( output_lores_silent_file, "output lores stuff", false );
 	NEW_OPT( heat, "Heat (random frag insertions)", false );
 	NEW_OPT( dump, "Dump pdb", false );
@@ -279,14 +311,21 @@ main( int argc, char * argv [] )
 	NEW_OPT( params_file, "Input file for pairings", "default.prm" );
 	NEW_OPT( data_file, "Input file for RNA exposure data", "" );
 	NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );
-	NEW_OPT( chunk_res, "Input residues for chunk libraries (specified by -in:file:silent)", blank_size_vector );
+	NEW_OPT( chunk_res, "Input residues for chunk libraries (specified by -in:file:silent or -s)", blank_size_vector );
+	NEW_OPT( input_res, "Input residues for chunk libraries (specified by -in:file:silent or -s)", blank_size_vector );
 	NEW_OPT( use_1jj2_torsions, "Use original (ribosome) fragments, 1JJ2", false );
 	NEW_OPT( rna_lores_chainbreak_weight, "chainbreak weight for lo res sampling", 0.0 );
 	NEW_OPT( rna_lores_linear_chainbreak_weight, "linear chainbreak weight for lo res sampling", 0.0 );
   NEW_OPT( allow_bulge , "Automatically virtualize residues that are not energetically stable", false );
   NEW_OPT( allowed_bulge_res, "Use with allow_bulge, allowable pos for virtualization", blank_size_vector  );
+  NEW_OPT( extra_minimize_res, "Extra residues during minimize step", blank_size_vector  );
   NEW_OPT( allow_consecutive_bulges, "allow_consecutive_bulges", false );
   NEW_OPT( binary_output, "force output to binary rna silentstruct", false );
+  NEW_OPT( move_first_rigid_body, "first_rigid_body is usually kept frozen, but might be useful to sample it.", false );
+  NEW_OPT( root_at_first_rigid_body, "places coordinate system away from the usual last virtual residue and puts it on the first rigid body. useful if this rigidbody needs to be fixed, but other bodies need to move as if this one is moving. Use with -move_first_rigid_body. ", false );
+  NEW_OPT( suppress_bp_constraint, "Factor by which to lower base pair constraint weight. ", 1.0 );
+  NEW_OPT( output_filters, "output lores scores at early stage (round  2 of 10) and at end -- could be useable for early termination of unpromising early starts", false );
+  NEW_OPT( autofilter, "Automatically skip output/minimize if lores score is worse than 20th percentile, updated on the fly.", false );
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup
