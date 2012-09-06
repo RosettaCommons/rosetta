@@ -50,7 +50,7 @@ namespace options {
 
 	void std_exit_wrapper( const int error_code ){
 		#ifdef NATCL
-			throw( std::string( "std::exit() was called" ) );	
+			throw( std::string( "std::exit() was called" ) );
 			return;
 		#endif
 		std::exit( error_code );
@@ -152,7 +152,7 @@ namespace options {
 	{
 		using std::string;
 		typedef  std::string::size_type  size_type;
-					
+
 		// Put the arguments strings in a list
 		ValueStrings arg_strings;
 		for ( int iarg = 1; iarg < argc; ++iarg ) {
@@ -166,7 +166,7 @@ namespace options {
 			while ( ! arg_strings.empty() ) { // Process the next option
 				string arg_string( arg_strings.front() ); // Lead argument string
 				arg_strings.pop_front(); // Remove lead argument
-				
+
 				char const arg_first( arg_string[ 0 ] );
 				if ( ( arg_first == '-' ) && ( ! ObjexxFCL::is_double( arg_string ) ) ) { // - prefix: Treat as an option
 
@@ -524,7 +524,7 @@ void OptionCollection::load_option_from_file(
 		string group; // Previous option group name
 
 		if( relevant_.size() > 0 ) {
-			stream << "\nShowing only relevant options...\n";
+			stream << "\nShowing only relevant options...";
 			for( unsigned int i=0; i<relevant_.size(); i++) {
 				OptionKey const & key( *relevant_[i] );
 				show_option_help(key, group, stream);
@@ -538,8 +538,8 @@ void OptionCollection::load_option_from_file(
 		}
 	}
 
-#define COL1 15
-#define COL2 10
+#define COL1 30
+#define COL2 25
 #define COL3 30
 
 	void OptionCollection::show_option_help_heir(OptionKey const &key, std::string &group, std::ostream & stream ) const
@@ -555,12 +555,18 @@ void OptionCollection::load_option_from_file(
 			group = opt_group;
 
 			using namespace ObjexxFCL::fmt;
+
+			std::ostringstream empty_separator;
+			empty_separator << RJ( COL1-3, "" )<<" " << RJ( 3, "" ) << "| " << A( COL2, "" ) << " | " << A(3,"") << "|";
 			if ( bShowGrp ) {
-				stream << RJ( COL1-3, opt_group )<<":" << RJ( 3, "" ) << "| " << A( COL2, "" ) << " | " << A(3,"") << "| \n";
+				stream << empty_separator.str() << "\n";
+				if ( opt_group.size() > 0 ) {
+					stream << RJ( COL1-3, opt_group )<<":" << RJ( 3, "" ) << "| " << A( COL2, "" ) << " | " << A(3,"") << "| \n";
+				}
 			};
 			stream << RJ( COL1, opt_str ) << " | "  << A( COL2, opt.value_string() ) //<< A( COL2/2, opt.default_string() )
 						 << " |" + A(4,opt.type_string())+ "| "
-						 <<  wrapped( opt.description(),  COL2+COL1+15, 80 ) << "\n";
+						 <<  wrapped( opt.description(), 2, COL3, empty_separator.str() ) << "\n";
 
 			//stream << RJ( COL1, "" ) << " | " << A( COL2, "" ) << " | " << A(3,"") << " | \n";
 
@@ -1466,7 +1472,8 @@ void OptionCollection::load_option_from_file(
 	OptionCollection::wrapped(
 		std::string const & s, // String to wrap
 		std::string::size_type const indent, // Width to indent continuation lines
-		std::string::size_type const width // Column width to wrap at [80]
+		std::string::size_type const width, // Column width to wrap at [80]
+		std::string const header_for_extra_lines // put this before each new line (default is empty)
 	)
 	{
 		using std::string;
@@ -1488,7 +1495,7 @@ void OptionCollection::load_option_from_file(
 			if ( l + 1 >= width ) { // Wrap
 				while ( ( i < e ) && ( is_any_of( s[ i ], ws ) ) ) ++i;
 				if ( i < e ) { // Indent and add next non-whitespace character
-					w += nl + string( indent, ' ' ) + s[ i ];
+					w += nl + header_for_extra_lines + string( indent, ' ' ) + s[ i ];
 					l = indent + 1;
 				} else { // Nothing left
 					l = 0;
@@ -1513,7 +1520,7 @@ void OptionCollection::load_option_from_file(
 			} else { // Add next character to line
 				size_type const b( std::min( s.find_first_of( ws, i ), s.length() ) ); // Next whitespace break
 				if ( ( l + 1 + b - i >= width ) && ( b - i < width - indent ) ) { // Token won't fit: Wrap
-					w += nl + string( indent, ' ' ) + s[ i ];
+					w += nl + header_for_extra_lines + string( indent, ' ' ) + s[ i ];
 					l = indent + 1;
 				} else { // Add the character
 					w += s[ i ];
