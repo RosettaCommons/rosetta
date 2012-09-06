@@ -90,7 +90,7 @@ RNA_LoopCloser::RNA_LoopCloser():
 	absolute_ccd_tolerance_( 0.01 ),
 	attempt_closure_cutoff_( 20.0 ),
 	gap_distance_cutoff_( 8.0 ),
-	fast_scan_( false )
+	fast_scan_( true )
 {
 	Mover::type("RNA_LoopCloser");
 }
@@ -115,7 +115,7 @@ void RNA_LoopCloser::apply( core::pose::Pose & pose, std::map< Size, Size> const
 
 	// Loop through all residues and look for potential chainbreaks to close --
 	// marked by CUTPOINT_LOWER and CUTPOINT_UPPER variants.
-	for (Size i = 1; i <= pose.total_residue(); i++ ) {
+	for (Size i = 1; i < pose.total_residue(); i++ ) {
 
 		if ( !pose.residue( i   ).has_variant_type( chemical::CUTPOINT_LOWER )  ) continue;
 		if ( !pose.residue( i+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  ) continue;
@@ -206,6 +206,27 @@ RNA_LoopCloser::passes_fast_scan( core::pose::Pose & pose, Size const i ) const
 	return true;
 }
 
+////////////////////////////////////////////////////////////////////////////
+bool
+RNA_LoopCloser::check_closure( core::pose::Pose & pose, Real ccd_tolerance )
+{
+
+	if ( ccd_tolerance <= 0.0 ) ccd_tolerance = absolute_ccd_tolerance_;
+
+	// Loop through all residues and look for potential chainbreaks to close --
+	// marked by CUTPOINT_LOWER and CUTPOINT_UPPER variants.
+	for (Size i = 1; i < pose.total_residue(); i++ ) {
+
+		if ( !pose.residue( i   ).has_variant_type( chemical::CUTPOINT_LOWER )  ) continue;
+		if ( !pose.residue( i+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  ) continue;
+
+		Real const current_dist_err =   get_dist_err( pose, i );
+		if ( current_dist_err > ccd_tolerance )	 return false;
+
+	}
+
+	return true;
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

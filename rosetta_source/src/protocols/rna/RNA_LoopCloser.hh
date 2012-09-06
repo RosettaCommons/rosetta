@@ -76,6 +76,9 @@ public:
 	//	void
 	//	close_loops_carefully_one_round( core::pose::Pose & pose, core::scoring::ScoreFunctionOP const & scorefxn );
 
+	bool
+	check_closure( core::pose::Pose & pose, core::Real ccd_tolerance = 0.0 /* 0.0 means use absolute_ccd_tolerance_*/ );
+
 private:
 
 	bool
