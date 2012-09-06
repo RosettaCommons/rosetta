@@ -51,12 +51,12 @@ else :
 if is_remake :
     subprocess.check_call("cmake -G Ninja", shell=True)
 
-try:
-    subprocess.check_call("ninja")
-except subprocess.CalledProcessError:
-    print "----------------------------------------------------------------------------------------------------"
-    print "----- Ninja error: Did you not call with the remake option the first time you ran this build? ------"
-    print "----------------------------------------------------------------------------------------------------"
-    raise
+if not os.path.exists("build.ninja"):
+    print "------------------------------------------------------------------------------------------------------"
+    print "----- File build.ninja not found: Call with the 'remake' option the first time running a build. ------"
+    print "------------------------------------------------------------------------------------------------------"
+    sys.exit(1)
+
+subprocess.check_call("ninja")
 
 print "DONE!...Total time = %f s" % ( time.time() - start_time )
