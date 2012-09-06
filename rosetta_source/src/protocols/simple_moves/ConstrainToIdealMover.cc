@@ -122,7 +122,8 @@ ConstrainToIdealMover & ConstrainToIdealMover::operator=( ConstrainToIdealMover 
 	//abort self-assignment
 	if (this == &rhs) return *this;
 
-	allow_insert_ = rhs.get_AllowInsert(); //would prefer to clone, but that class author offered no way to do it
+	//	allow_insert_ = rhs.get_AllowInsert(); //would prefer to clone, but that class author offered no way to do it
+	allow_insert_ = rhs.get_AllowInsert()->clone(); //OK stephen, I did it. --Rhiju
 	mm_ = rhs.get_movemap()->clone();
 	supplied_movemap_ = rhs.supplied_movemap_;
 	return *this;
