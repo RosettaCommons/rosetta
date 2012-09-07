@@ -50,13 +50,11 @@ ResFilterComposition::ResFilterComposition(utility::vector1<ResFilterCOP> const 
 
 void ResFilterComposition::parse_tag(TagPtr tag)
 {
-	TR.Warning << *tag;
-
 	parse_sub_filters_tag(tag);
 
 	if (sub_filters_.size() == 0)
 	{
-		TR.Warning << "ResFilterComposition without sub-filters defined: " << *tag;
+		TR.Debug << "ResFilterComposition without sub-filters defined: " << *tag << std::endl;
 	}
 }
 
