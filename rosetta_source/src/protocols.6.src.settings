@@ -96,6 +96,7 @@ sources = {
 		"util",
 	],
 	"protocols/protein_interface_design/filters": [
+		"AtomicContactCountFilter",
 		"AverageDegreeFilter",
 		"BindingStrainFilter",
 		"BoltzmannFilter",

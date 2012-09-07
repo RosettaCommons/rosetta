@@ -54,6 +54,7 @@ static FilterRegistrator< protocols::ligand_docking::HBondDonorFilterCreator > r
 static FilterRegistrator< protocols::ligand_docking::MolecularMassFilterCreator > reg_MolecularMassFilterCreator;
 static FilterRegistrator< protocols::ligand_docking::MolarMassFilterCreator > reg_MolarMassFilterCreator;
 
+static FilterRegistrator< protocols::protein_interface_design::filters::AtomicContactCountFilterCreator > reg_AtomicContactCountFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::AverageDegreeFilterCreator > reg_AverageFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::BindingStrainFilterCreator > reg_BindingStrainFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::BoltzmannFilterCreator > reg_BoltzmannCreator;

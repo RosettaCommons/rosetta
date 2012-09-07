@@ -40,6 +40,7 @@
 #include <protocols/ligand_docking/MolecularMassFilterCreator.hh>
 #include <protocols/ligand_docking/MolarMassFilterCreator.hh>
 
+#include <protocols/protein_interface_design/filters/AtomicContactCountFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/AverageDegreeFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/BindingStrainFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/BoltzmannFilterCreator.hh>
