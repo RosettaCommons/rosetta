@@ -25,6 +25,7 @@
 #include <utility/vector1.hh>
 
 #include <string>
+#include <set>
 
 
 namespace core {
@@ -32,8 +33,73 @@ namespace pack {
 namespace task {
 namespace operation {
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
+class ResFilterComposition : public ResFilter
+{
+	public:
+		typedef ResFilter parent;
 
+	public:
+		ResFilterComposition();
+		ResFilterComposition(utility::vector1<ResFilterCOP> const &);
+
+		virtual void parse_tag( TagPtr );
+
+	protected:
+		utility::vector1<ResFilterCOP> sub_filters_;
+	  void parse_sub_filters_tag( TagPtr );
+};
+
+class AnyResFilter : public ResFilterComposition
+{
+public:
+	typedef ResFilterComposition parent;
+
+	AnyResFilter();
+	AnyResFilter(utility::vector1<ResFilterCOP> const &);
+	virtual bool operator() ( Pose const &, Size ) const;
+	virtual ResFilterOP clone() const;
+};
+
+class AllResFilter : public ResFilterComposition
+{
+public:
+	typedef ResFilterComposition parent;
+
+	AllResFilter();
+	AllResFilter(utility::vector1<ResFilterCOP> const &);
+	virtual bool operator() ( Pose const &, Size ) const;
+	virtual ResFilterOP clone() const;
+};
+
+class NoResFilter : public ResFilterComposition
+{
+public:
+	typedef ResFilterComposition parent;
+
+	NoResFilter();
+	NoResFilter(utility::vector1<ResFilterCOP> const &);
+	virtual bool operator() ( Pose const &, Size ) const;
+	virtual ResFilterOP clone() const;
+};
+
+// @brief Convenience filter to filter by residue type (polar, apolar, aromatic, charged)
+class ResidueTypeFilter : public ResFilter
+{
+public:
+	typedef ResFilter parent;
+
+	ResidueTypeFilter();
+	ResidueTypeFilter(bool polar, bool apolar, bool aromatic, bool charged);
+
+	virtual bool operator() ( Pose const &, Size ) const;
+	virtual ResFilterOP clone() const;
+	virtual void parse_tag( TagPtr );
+
+private:
+	bool polar_, apolar_, aromatic_, charged_;
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // NOTE: in most cases, each 'Inst' class inherits largely from its corresponding 'Is' class
 
 class ResidueHasProperty : public ResFilter {
@@ -66,12 +132,12 @@ public:
 public:
 	ResidueName3Is();
 	ResidueName3Is( std::string const & );
+	ResidueName3Is( std::set<std::string> const & );
 	virtual bool operator() ( Pose const &, Size ) const;
 	virtual ResFilterOP clone() const;
 	virtual void parse_tag( TagPtr );
-	virtual std::string const & name3() const { return name3_; }
 private:
-	std::string name3_;
+	std::set<std::string> name3_set;
 };
 
 class ResidueName3Isnt : public ResidueName3Is {
@@ -80,6 +146,7 @@ public:
 public:
 	ResidueName3Isnt();
 	ResidueName3Isnt( std::string const & );
+	ResidueName3Isnt( std::set<std::string> const & );
 	virtual bool operator() ( Pose const &, Size ) const;
 	virtual ResFilterOP clone() const;
 };

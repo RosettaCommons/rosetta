@@ -14,9 +14,11 @@
 // Unit Headers
 #include <core/pack/task/operation/ResFilters.hh>
 #include <core/pack/task/operation/ResFilterCreators.hh>
+#include <core/pack/task/operation/ResFilterFactory.hh>
 
 // Project Headers
 #include <core/chemical/ResidueType.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
@@ -26,6 +28,7 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <set>
 
 
 namespace core {
@@ -34,6 +37,169 @@ namespace task {
 namespace operation {
 
 static basic::Tracer TR("core.pack.task.operation.ResFilters");
+
+ResFilterComposition::ResFilterComposition() :
+	parent(),
+	sub_filters_()
+{}
+
+ResFilterComposition::ResFilterComposition(utility::vector1<ResFilterCOP> const & sub_filters) :
+	parent(),
+	sub_filters_(sub_filters)
+{}
+
+void ResFilterComposition::parse_tag(TagPtr tag)
+{
+	TR.Warning << *tag;
+
+	parse_sub_filters_tag(tag);
+
+	if (sub_filters_.size() == 0)
+	{
+		TR.Warning << "ResFilterComposition without sub-filters defined: " << *tag;
+	}
+}
+
+void ResFilterComposition::parse_sub_filters_tag(TagPtr tag)
+{
+  utility::vector0< TagPtr > const subtags( tag->getTags() );
+
+  for (utility::vector0< TagPtr >::const_iterator subtag( subtags.begin() ), end( subtags.end() );
+			subtag != end;
+			++subtag )
+	{
+		std::string const type( (*subtag)->getName() );
+
+		ResFilterFactory * res_filter_factory = ResFilterFactory::get_instance();
+		if ( res_filter_factory && res_filter_factory->has_type( type ) ) {
+			ResFilterOP filter = res_filter_factory->newResFilter( type );
+			filter->parse_tag( *subtag );
+			sub_filters_.push_back(filter);
+
+			continue;
+		}
+	}
+}
+
+AnyResFilter::AnyResFilter() :
+	parent()
+{}
+
+AnyResFilter::AnyResFilter(utility::vector1<ResFilterCOP> const & sub_filters) :
+	parent(sub_filters)
+{}
+
+ResFilterOP AnyResFilter::clone() const { return new AnyResFilter( *this ); }
+
+bool AnyResFilter::operator() ( Pose const & pose, Size index ) const
+{
+	for (core::Size i = 1; i <= sub_filters_.size(); ++i)
+	{
+		if((*(sub_filters_[i]))(pose, index))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+ResFilterOP AnyResFilterCreator::create_res_filter() const
+{
+	return new AnyResFilter();
+}
+
+AllResFilter::AllResFilter() :
+	parent()
+{}
+
+AllResFilter::AllResFilter(utility::vector1<ResFilterCOP> const & sub_filters) :
+	parent(sub_filters)
+{}
+
+ResFilterOP AllResFilter::clone() const { return new AllResFilter( *this ); }
+
+bool AllResFilter::operator() ( Pose const & pose, Size index ) const
+{
+	for (core::Size i = 1; i <= sub_filters_.size(); ++i)
+	{
+		if(!(*(sub_filters_[i]))(pose, index))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+ResFilterOP AllResFilterCreator::create_res_filter() const
+{
+	return new AllResFilter();
+}
+
+NoResFilter::NoResFilter() :
+	parent()
+{}
+
+NoResFilter::NoResFilter(utility::vector1<ResFilterCOP> const & sub_filters) :
+	parent(sub_filters)
+{}
+
+ResFilterOP NoResFilter::clone() const { return new NoResFilter( *this ); }
+
+bool NoResFilter::operator() ( Pose const & pose, Size index ) const
+{
+	for (core::Size i = 1; i <= sub_filters_.size(); ++i)
+	{
+		if((*(sub_filters_[i]))(pose, index))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+ResFilterOP NoResFilterCreator::create_res_filter() const
+	{
+	return new NoResFilter();
+}
+
+ResidueTypeFilter::ResidueTypeFilter() :
+	parent(),
+	polar_(false), apolar_(false), aromatic_(false), charged_(false)
+{}
+
+ResidueTypeFilter::ResidueTypeFilter(bool polar, bool apolar, bool aromatic, bool charged) :
+	parent(),
+	polar_(polar), apolar_(apolar), aromatic_(aromatic), charged_(charged)
+{}
+
+ResFilterOP ResidueTypeFilter::clone() const { return new ResidueTypeFilter( *this ); }
+
+bool ResidueTypeFilter::operator() ( Pose const & pose, Size index ) const
+{
+	runtime_assert( index > 0 && index <= pose.total_residue() );
+	core::conformation::Residue const & residue = pose.residue(index);
+
+	return  (polar_ && residue.is_polar()) ||
+					(apolar_ && residue.is_apolar()) ||
+					(aromatic_ && residue.is_aromatic()) ||
+					(charged_ && residue.is_charged());
+}
+
+void ResidueTypeFilter::parse_tag( TagPtr tag )
+{
+	if ( tag->hasOption("polar") ) polar_ = tag->getOption<bool>("polar");
+	if ( tag->hasOption("apolar") ) apolar_ = tag->getOption<bool>("apolar");
+	if ( tag->hasOption("aromatic") ) aromatic_ = tag->getOption<bool>("aromatic");
+	if ( tag->hasOption("charged") ) charged_ = tag->getOption<bool>("charged");
+}
+
+ResFilterOP ResidueTypeFilterCreator::create_res_filter() const
+	{
+	return new ResidueTypeFilter();
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // begin ResidueHasProperty
@@ -88,18 +254,26 @@ ResFilterOP ResidueLacksProperty::clone() const { return new ResidueLacksPropert
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // begin ResidueName3Is
 ResidueName3Is::ResidueName3Is()
-	: parent()
+	: parent(),
+	  name3_set()
 {}
 
 ResidueName3Is::ResidueName3Is( std::string const & str )
 	: parent(),
-		name3_( str )
+		name3_set()
+{
+	name3_set.insert(str);
+}
+
+ResidueName3Is::ResidueName3Is( std::set<std::string> const & strs )
+	: parent(),
+		name3_set(strs)
 {}
 
 bool ResidueName3Is::operator() ( Pose const & pose, Size index ) const
 {
 	runtime_assert( index > 0 && index <= pose.total_residue() );
-	return pose.residue_type(index).name3() == name3_;
+	return name3_set.count(pose.residue_type(index).name3()) != 0;
 }
 
 ResFilterOP
@@ -111,7 +285,11 @@ ResFilterOP ResidueName3Is::clone() const { return new ResidueName3Is( *this ); 
 
 void ResidueName3Is::parse_tag( TagPtr tag )
 {
-	if ( tag->hasOption("name3") ) name3_ = tag->getOption<std::string>("name3");
+	if ( tag->hasOption("name3") )
+	{
+		utility::vector1<std::string> names = utility::string_split(tag->getOption<std::string>("name3"), ',');
+		name3_set.insert(names.begin(), names.end());
+	}
 }
 
 // begin ResidueName3Isnt
@@ -121,6 +299,10 @@ ResidueName3Isnt::ResidueName3Isnt()
 
 ResidueName3Isnt::ResidueName3Isnt( std::string const & str )
 	: parent( str )
+{}
+
+ResidueName3Isnt::ResidueName3Isnt( std::set<std::string> const & strs )
+	: parent( strs )
 {}
 
 bool ResidueName3Isnt::operator() ( Pose const & pose, Size index ) const

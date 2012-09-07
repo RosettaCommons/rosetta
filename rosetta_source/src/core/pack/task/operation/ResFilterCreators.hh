@@ -27,6 +27,30 @@ namespace pack {
 namespace task {
 namespace operation {
 
+class AnyResFilterCreator : public ResFilterCreator {
+public:
+	virtual ResFilterOP create_res_filter() const;
+	virtual std::string keyname() const { return "AnyResFilter"; }
+};
+
+class AllResFilterCreator : public ResFilterCreator {
+public:
+	virtual ResFilterOP create_res_filter() const;
+	virtual std::string keyname() const { return "AllResFilter"; }
+};
+
+class NoResFilterCreator : public ResFilterCreator {
+public:
+	virtual ResFilterOP create_res_filter() const;
+	virtual std::string keyname() const { return "NoResFilter"; }
+};
+
+class ResidueTypeFilterCreator : public ResFilterCreator {
+public:
+	virtual ResFilterOP create_res_filter() const;
+	virtual std::string keyname() const { return "ResidueType"; }
+};
+
 class ResidueHasPropertyCreator : public ResFilterCreator {
 public:
 	virtual ResFilterOP create_res_filter() const;

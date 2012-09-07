@@ -469,6 +469,10 @@ static ResFilterRegistrator< ResiduePDBIndexIsCreator > ResiduePDBIndexIsCreator
 static ResFilterRegistrator< ResiduePDBIndexIsntCreator > ResiduePDBIndexIsntCreator_registrator;
 static ResFilterRegistrator< ChainIsCreator > ChainIsCreator_registrator;
 static ResFilterRegistrator< ChainIsntCreator > ChainIsntCreator_registrator;
+static ResFilterRegistrator< AnyResFilterCreator > AnyResFilterCreator_registrator;
+static ResFilterRegistrator< AllResFilterCreator > AllResFilterCreator_registrator;
+static ResFilterRegistrator< NoResFilterCreator > NoResFilterCreator_registrator;
+static ResFilterRegistrator< ResidueTypeFilterCreator > ResidueTypeResFilterCreator_registrator;
 
 using basic::resource_manager::ResourceLoaderRegistrator;
 static ResourceLoaderRegistrator< core::conformation::symmetry::SymmDataLoaderCreator > SymmDataLoaderCreator_registrator;
