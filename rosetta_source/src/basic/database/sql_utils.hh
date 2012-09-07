@@ -26,6 +26,7 @@
 #include <utility/pointer/owning_ptr.functions.hh>
 #include <utility/pointer/owning_ptr.fwd.hh>
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/tag/Tag.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/vector1.hh>
 #include <cassert>
@@ -41,12 +42,13 @@ namespace basic {
 namespace database {
 
 ///@brief Aquire a database session using the command line options
+/// transaction type is set to standard
 utility::sql_database::sessionOP
 get_db_session();
 
 ///@brief Aquire a database session using the command line parameters
 /// For postgres databases, the pq_schema acts like a namespace in the
-/// database
+/// database. Transaction type set to standard
 utility::sql_database::sessionOP
 get_db_session(
 	std::string const & db_name,
@@ -57,7 +59,25 @@ get_db_session(
 /// database
 utility::sql_database::sessionOP
 get_db_session(
+	std::string const & db_name,
+	utility::sql_database::TransactionMode::e transaction_mode,
+	platform::Size chunk_size,
+	std::string const & pq_schema="");
+	
+utility::sql_database::sessionOP
+get_db_session(
 	utility::sql_database::DatabaseMode::e db_mode,
+	std::string const & db_name,
+	std::string const & pq_schema="");
+
+///@brief Aquire a database session using the command line parameters
+/// For postgres databases, the pq_schema acts like a namespace in the
+/// database
+utility::sql_database::sessionOP
+get_db_session(
+	utility::sql_database::DatabaseMode::e db_mode,
+	utility::sql_database::TransactionMode::e transaction_mode,
+	platform::Size chunk_size,
 	std::string const & db_name,
 	std::string const & pq_schema="");
 
@@ -109,8 +129,11 @@ std::string make_compound_statement(
 	std::vector<std::string> const & column_names,
 	platform::Size const & row_count);
 
-
+utility::sql_database::sessionOP
+parse_database_connection(
+	utility::tag::TagPtr const tag);
 }
+
 }
 
 #endif /* INCLUDED_basic_database_sql_utils_HH */

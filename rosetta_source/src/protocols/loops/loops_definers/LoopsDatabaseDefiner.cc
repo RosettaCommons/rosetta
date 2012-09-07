@@ -22,10 +22,12 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/DataMap.hh>
-#include <protocols/rosetta_scripts/util.hh>
 
 // Utility Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
+
+// Basic Headers
+#include <basic/database/sql_utils.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -43,7 +45,7 @@ using core::pose::Pose;
 using protocols::moves::DataMap;
 using utility::sql_database::sessionOP;
 using protocols::jd2::JobDistributor;
-using protocols::rosetta_scripts::parse_database_connection;
+using basic::database::parse_database_connection;
 using cppdb::result;
 
 namespace protocols {

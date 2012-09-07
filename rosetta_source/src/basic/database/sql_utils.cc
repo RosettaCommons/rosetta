@@ -190,9 +190,10 @@ get_db_session() {
 
 	return get_db_session(
 		option[inout::dbms::database_name],
+		utility::sql_database::TransactionMode::standard,
+		0,
 		option[inout::dbms::pq_schema]);
 }
-
 
 
 sessionOP
@@ -205,6 +206,40 @@ get_db_session(
 
 	return get_db_session(
 		database_mode_from_name(option[inout::dbms::mode]),
+		utility::sql_database::TransactionMode::standard,
+		0,
+		db_name,
+		pq_schema);
+}
+	
+sessionOP
+get_db_session(
+	string const & db_name,
+	TransactionMode::e transaction_mode,
+	Size chunk_size,
+	string const & pq_schema
+){
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	return get_db_session(
+		database_mode_from_name(option[inout::dbms::mode]),
+		transaction_mode,
+		chunk_size,
+		db_name,
+		pq_schema);
+}
+
+utility::sql_database::sessionOP
+get_db_session(
+	utility::sql_database::DatabaseMode::e db_mode,
+	std::string const & db_name,
+	std::string const & pq_schema){
+	
+	return get_db_session(
+		db_mode,
+		utility::sql_database::TransactionMode::standard,
+		0,
 		db_name,
 		pq_schema);
 }
@@ -212,6 +247,8 @@ get_db_session(
 sessionOP
 get_db_session(
 	DatabaseMode::e db_mode,
+	TransactionMode::e transaction_mode,
+	Size chunk_size,
 	string const & db_name,
 	string const & pq_schema
 ) {
@@ -242,6 +279,8 @@ get_db_session(
 
 		return DatabaseSessionManager::get_instance()->get_session_sqlite3(
 			db_name,
+			transaction_mode,
+			chunk_size,
 			option[inout::dbms::readonly],
 			option[inout::dbms::separate_db_per_mpi_process]);
 
@@ -280,6 +319,8 @@ get_db_session(
 
 		return DatabaseSessionManager::get_instance()->get_session_mysql(
 			db_name,
+			transaction_mode,
+			chunk_size,
 			option[inout::dbms::host],
 			option[inout::dbms::user],
 			option[inout::dbms::password],
@@ -314,6 +355,8 @@ get_db_session(
 
 		return DatabaseSessionManager::get_instance()->get_session_postgres(
 			db_name,
+			transaction_mode,
+			chunk_size,
 			pq_schema,
 			option[inout::dbms::host],
 			option[inout::dbms::user],
@@ -703,10 +746,174 @@ std::string make_compound_statement(
 		if(i != row_count-1)
 		{
 			value_list += ", ";
-		}
-	}
+		} }
 
 	return "INSERT INTO "+table_definition+ " VALUES " + value_list +";";
+}
+
+///@detail build database connection from options in a tag, this is useful make sure the fields for
+///constructing a database connection are consistent across different tags.
+utility::sql_database::sessionOP
+parse_database_connection(
+	utility::tag::TagPtr const tag
+){
+	using std::endl;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::inout;
+	using utility::sql_database::DatabaseSessionManager;
+	
+	utility::sql_database::TransactionMode::e transaction_mode;
+	if(tag->hasOption("transaction_mode")){
+		transaction_mode = utility::sql_database::transaction_mode_from_name(
+			tag->getOption<string>("transaction_mode"));
+	} else {
+		transaction_mode = utility::sql_database::TransactionMode::standard;
+	}
+	
+	Size chunk_size;
+	switch(transaction_mode){
+		case(utility::sql_database::TransactionMode::none):
+			if(tag->hasOption("chunk_size")){
+				TR << "WARNING: You must specify 'transaction_mode=chunk' ";
+				TR << "to use the 'chunk size' tag." << endl;
+			}
+			chunk_size=0;
+			break;
+		case(utility::sql_database::TransactionMode::standard):
+			if(tag->hasOption("chunk_size")){
+				TR << "WARNING: You must specify 'transaction_mode=chunk' ";
+				TR << "to use the 'chunk size' tag." << endl;
+			}
+			chunk_size=0;
+			break;
+		case(utility::sql_database::TransactionMode::chunk):
+			if(!tag->hasOption("chunk_size")){
+				utility_exit_with_message(
+					"Must specify chunk_size if using the chunk transaction mode");
+			}
+			chunk_size=
+				tag->getOption<Size>("chunk_size");
+			break;
+		default:
+			utility_exit_with_message(
+				"Unrecognized transaction mode: '" +
+				name_from_transaction_mode(transaction_mode) + "'");
+	}
+	
+	utility::sql_database::DatabaseMode::e database_mode;
+	if(tag->hasOption("database_mode")){
+		database_mode = utility::sql_database::database_mode_from_name(
+			tag->getOption<string>("database_mode"));
+	} else {
+		database_mode = utility::sql_database::database_mode_from_name(
+			option[dbms::mode]);
+	}
+	
+	std::string database_name;
+	if(tag->hasOption("database_name")){
+		database_name = tag->getOption<string>("database_name");
+	} else {
+		database_name = option[dbms::database_name];
+	}
+	
+	std::string database_pq_schema;
+	if(tag->hasOption("database_pq_schema")){
+		database_pq_schema = tag->getOption<string>("database_pq_schema");
+	} else {
+		database_pq_schema = option[dbms::pq_schema];
+	}
+	
+	switch(database_mode){
+			
+		case utility::sql_database::DatabaseMode::mysql:
+			if(tag->hasOption("database_pq_schema")){
+				TR << "WARNING: You must specify 'database_mode=postgres' ";
+				TR << "to use the 'database_pq_schema' tag." << endl;
+			}
+			break;
+		case utility::sql_database::DatabaseMode::postgres:
+			if(tag->hasOption("database_separate_db_per_mpi_process")){
+				TR << "WARNING: You must specify 'database_mode=sqlite3' ";
+				TR << "to use the 'database_separate_db_per_mpi_process' tag." << endl;
+			}
+			if(tag->hasOption("database_read_only")){
+				TR << "WARNING: You must specify 'database_mode=sqlite3' ";
+				TR << "to use the 'database_read_only' tag." << endl;
+			}
+			break;
+			
+		case utility::sql_database::DatabaseMode::sqlite3:
+			if(tag->hasOption("database_host")){
+				TR << "WARNING: You must specify either 'database_mode=mysql' ";
+				TR << "or database_mode=postgres' to use the 'database_host' tag." << endl;
+			}
+			
+			if(tag->hasOption("database_user")){
+				TR << "WARNING: You must specify either 'database_mode=mysql' ";
+				TR << "or database_mode=postgres' to use the 'database_user' tag." << endl;
+			}
+			
+			if(tag->hasOption("database_password")){
+				TR << "WARNING: You must specify either 'database_mode=mysql' ";
+				TR << "or database_mode=postgres' to use the 'database_password' tag." << endl;
+			}
+			
+			if(tag->hasOption("database_port")){
+				TR << "WARNING: You must specify either 'database_mode=mysql' ";
+				TR << "or database_mode=postgres' to use the 'database_port' tag." << endl;
+			}
+			break;
+		default:
+			utility_exit_with_message(
+				"Unrecognized database mode: '" +
+				name_from_database_mode(database_mode) + "'");
+	}
+	
+	switch(database_mode){
+		case utility::sql_database::DatabaseMode::sqlite3:
+			return DatabaseSessionManager::get_instance()->get_db_session(
+				database_mode, transaction_mode, chunk_size,
+				database_name, "", "", "", "", 0,
+				tag->getOption("database_read_only", false),
+				tag->getOption("database_separate_db_per_mpi_process", false));
+			
+		case utility::sql_database::DatabaseMode::mysql:
+		case utility::sql_database::DatabaseMode::postgres:
+			
+			if(!tag->hasOption("database_host") && !option[dbms::host].user()){
+				TR << "WARNING: To connect to a postgres or mysql database you must set ";
+				TR << "the database_host tag or specify -dbms:host on the command line." << endl;
+			}
+			
+			if(tag->hasOption("database_user") && !option[dbms::user].user()){
+				TR << "WARNING: To connect to a postgres or mysql database you must set ";
+				TR << "the database_user tag or specify -dbms:user on the command line." << endl;
+			}
+			
+			if(tag->hasOption("database_password") && !option[dbms::password].user()){
+				TR << "WARNING: To connect to a postgres or mysql database you must set ";
+				TR << "the database_password tag or specify -dbms:password on the command line." << endl;
+			}
+			
+			if(tag->hasOption("database_port") && !option[dbms::port].user()){
+				TR << "WARNING: To connect to a postgres or mysql database you must set ";
+				TR << "the database_port tag or specify -dbms:port on the command line." << endl;
+			}
+			
+			return DatabaseSessionManager::get_instance()->get_db_session(
+				database_mode, transaction_mode, chunk_size,
+				database_name, database_pq_schema,
+				tag->getOption<string>("database_host", option[dbms::host]),
+				tag->getOption<string>("database_user", option[dbms::user]),
+				tag->getOption<string>("database_password", option[dbms::password]),
+				tag->getOption<Size>("database_port", option[dbms::port]));
+			
+		default:
+			utility_exit_with_message(
+				"Unrecognized database mode: '" +
+				name_from_database_mode(database_mode) + "'");
+	}
+	return 0;
 }
 
 }

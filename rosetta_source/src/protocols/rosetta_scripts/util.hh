@@ -29,7 +29,6 @@
 // Utillity Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.fwd.hh>
-#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 // C++ headers
 #include <string>
@@ -77,10 +76,6 @@ parse_mover( std::string const mover_name, protocols::moves::Movers_map const & 
 
 numeric::xyzVector< core::Real >
 parse_xyz_vector( utility::tag::TagPtr const xyz_vector_tag );
-
-utility::sql_database::sessionOP
-parse_database_connection(
-	utility::tag::TagPtr const tag);
 
 
 /// @brief find source residue that is nearest to res on source. If distance is greater than 2.0A, return 0. chain=0, search all chains, chain=1,2,3 etc. search only that chain

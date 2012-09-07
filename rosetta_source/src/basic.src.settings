@@ -22,6 +22,8 @@ sources = {
 		"TracerToFile",
 	],
 	"basic/database": [
+		"DatabaseSessionLoader",
+		"DatabaseSessionOptions",
 		"open",
 		"sql_utils",
 	],
@@ -83,6 +85,7 @@ sources = {
     "ResourceOptionsFactory",
   ],
   "basic/resource_manager/locator" : [
+    "NullResourceLocator",
     "FileSystemResourceLocator",
   ],
 	"basic/svd": [

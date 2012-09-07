@@ -15,8 +15,8 @@
 // Unit Headers
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pack/task/PackerTask.hh>
-// Project Headers
 
+// Project Headers
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -33,25 +33,18 @@
 #include <protocols/moves/Mover.hh>
 #include <core/id/types.hh>
 
-
 // Basic Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
-
 
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/sql_database/types.hh>
 #include <utility/vector0.hh>
 
-
-
-
-// C++ headers
 
 static basic::Tracer TR( "protocols.RosettaScripts.util" );
 
@@ -352,130 +345,6 @@ parse_xyz_vector( utility::tag::TagPtr const xyz_vector_tag ){
 	return xyz_v;
 
 }
-
-///@detail build database connection from options in a tag, this is useful make sure the fields for constructing a database connection are consistent across different tags.
-utility::sql_database::sessionOP
-parse_database_connection(
-	utility::tag::TagPtr const tag
-) {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys::inout;
-	using utility::sql_database::DatabaseSessionManager;
-
-	utility::sql_database::DatabaseMode::e database_mode;
-	if(tag->hasOption("database_mode")){
-		database_mode = utility::sql_database::database_mode_from_name(
-			tag->getOption<string>("database_mode"));
-	} else {
-		database_mode = utility::sql_database::database_mode_from_name(
-			option[dbms::mode]);
-	}
-
-	std::string database_name;
-	if(tag->hasOption("database_name")){
-		database_name = tag->getOption<string>("database_name");
-	} else {
-		database_name = option[dbms::database_name];
-	}
-
-	std::string database_pq_schema;
-	if(tag->hasOption("database_pq_schema")){
-		database_pq_schema = tag->getOption<string>("database_pq_schema");
-	} else {
-		database_pq_schema = option[dbms::pq_schema];
-	}
-
-	switch(database_mode){
-
-	case utility::sql_database::DatabaseMode::mysql:
-		if(tag->hasOption("database_pq_schema")){
-			TR << "WARNING: You must specify 'database_mode=postgres' ";
-			TR << "to use the 'database_pq_schema' tag." << endl;
-		}
-		break;
-	case utility::sql_database::DatabaseMode::postgres:
-		if(tag->hasOption("database_separate_db_per_mpi_process")){
-			TR << "WARNING: You must specify 'database_mode=sqlite3' ";
-			TR << "to use the 'database_separate_db_per_mpi_process' tag." << endl;
-		}
-		if(tag->hasOption("database_read_only")){
-			TR << "WARNING: You must specify 'database_mode=sqlite3' ";
-			TR << "to use the 'database_read_only' tag." << endl;
-		}
-		break;
-
-	case utility::sql_database::DatabaseMode::sqlite3:
-		if(tag->hasOption("database_host")){
-			TR << "WARNING: You must specify either 'database_mode=mysql' ";
-			TR << "or database_mode=postgres' to use the 'database_host' tag." << endl;
-		}
-
-		if(tag->hasOption("database_user")){
-			TR << "WARNING: You must specify either 'database_mode=mysql' ";
-			TR << "or database_mode=postgres' to use the 'database_user' tag." << endl;
-		}
-
-		if(tag->hasOption("database_password")){
-			TR << "WARNING: You must specify either 'database_mode=mysql' ";
-			TR << "or database_mode=postgres' to use the 'database_password' tag." << endl;
-		}
-
-		if(tag->hasOption("database_port")){
-			TR << "WARNING: You must specify either 'database_mode=mysql' ";
-			TR << "or database_mode=postgres' to use the 'database_port' tag." << endl;
-		}
-		break;
-	default:
-		utility_exit_with_message(
-			"Unrecognized database mode: '" +
-			name_from_database_mode(database_mode) + "'");
-	}
-
-	switch(database_mode){
-	case utility::sql_database::DatabaseMode::sqlite3:
-		return DatabaseSessionManager::get_instance()->get_db_session(
-			database_mode, database_name, "", "", "", "", 0,
-			tag->getOption("database_read_only", false),
-			tag->getOption("database_separate_db_per_mpi_process", false));
-
-	case utility::sql_database::DatabaseMode::mysql:
-	case utility::sql_database::DatabaseMode::postgres:
-
-		if(!tag->hasOption("database_host") && !option[dbms::host].user()){
-			TR << "WARNING: To connect to a postgres or mysql database you must set ";
-			TR << "the database_host tag or specify -dbms:host on the command line." << endl;
-		}
-
-		if(tag->hasOption("database_user") && !option[dbms::user].user()){
-			TR << "WARNING: To connect to a postgres or mysql database you must set ";
-			TR << "the database_user tag or specify -dbms:user on the command line." << endl;
-		}
-
-		if(tag->hasOption("database_password") && !option[dbms::password].user()){
-			TR << "WARNING: To connect to a postgres or mysql database you must set ";
-			TR << "the database_password tag or specify -dbms:password on the command line." << endl;
-		}
-
-		if(tag->hasOption("database_port") && !option[dbms::port].user()){
-			TR << "WARNING: To connect to a postgres or mysql database you must set ";
-			TR << "the database_port tag or specify -dbms:port on the command line." << endl;
-		}
-
-		return DatabaseSessionManager::get_instance()->get_db_session(
-			database_mode, database_name, database_pq_schema,
-			tag->getOption<string>("database_host", option[dbms::host]),
-			tag->getOption<string>("database_user", option[dbms::user]),
-			tag->getOption<string>("database_password", option[dbms::password]),
-			tag->getOption<Size>("database_port", option[dbms::port]));
-
-	default:
-		utility_exit_with_message(
-			"Unrecognized database mode: '" +
-			name_from_database_mode(database_mode) + "'");
-	}
-	return 0;
-}
-
 
 /// @brief Return the number of the residue on source that is nearest to res on target. If the distance
 /// is greater than 2.0 returns 0 to indicate error

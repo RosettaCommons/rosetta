@@ -14,4 +14,5 @@
 //Resource #includes
 #include <basic/resource_manager/ResourceLoaderRegistrator.hh>
 
+#include <basic/database/DatabaseSessionLoaderCreator.hh>
 #include <protocols/loops/LoopsFileLoaderCreator.hh>

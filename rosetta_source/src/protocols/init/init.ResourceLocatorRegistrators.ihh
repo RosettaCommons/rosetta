@@ -18,6 +18,7 @@ namespace protocols {
 using basic::resource_manager::ResourceLocatorRegistrator;
 
 static ResourceLocatorRegistrator< basic::resource_manager::locator::FileSystemResourceLocatorCreator > FileSystemResourceLocatorCreator_registrator;
+static ResourceLocatorRegistrator< basic::resource_manager::locator::NullResourceLocatorCreator > NullResourceLocatorCreator_registrator;
 
 
 } //namespace protocols

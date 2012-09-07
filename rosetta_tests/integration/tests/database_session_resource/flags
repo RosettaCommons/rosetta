@@ -1,0 +1,12 @@
+-out
+ -nooutput
+-overwrite
+-in:path ../../tests/make_symmdef_file/inputs
+-resource_definition_files resources.xml
+-parser:protocol parser_script.xml
+-mute protocols.jd2.PDBJobInputter
+-mute core.scoring.etable
+-mute basic.io.database
+-mute core.io
+-mute core.conformation
+-mute core.pack

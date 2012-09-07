@@ -153,7 +153,7 @@ ReadResfileFromDB::parse_tag( TagPtr tag )
 		database_table_ = tag->getOption<string>("table");
 	}
 
-	db_session_ = protocols::rosetta_scripts::parse_database_connection(tag);
+	db_session_ = basic::database::parse_database_connection(tag);
 }
 
 } //namespace task_operations

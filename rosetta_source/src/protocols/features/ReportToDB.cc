@@ -58,6 +58,8 @@
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
+#include <basic/resource_manager/ResourceManager.hh>
+#include <basic/resource_manager/util.hh>
 
 // Numeric Headers
 #include <numeric>
@@ -132,7 +134,7 @@ using protocols::moves::DataMap;
 using protocols::moves::Movers_map;
 using protocols::rosetta_scripts::parse_task_operations;
 using protocols::rosetta_scripts::parse_score_function;
-using protocols::rosetta_scripts::parse_database_connection;
+using basic::database::parse_database_connection;
 using std::string;
 using std::endl;
 using std::accumulate;
@@ -336,7 +338,19 @@ ReportToDB::parse_my_tag(
 	// Name of output features database:
 	// EXAMPLE: db=features_<sample_source>.db3
 	// REQUIRED
-	db_session_ = parse_database_connection(tag);
+	if(tag->hasOption("resource_description")){
+		std::string resource_description = tag->getOption<string>("resource_description");
+		if ( ! basic::resource_manager::ResourceManager::get_instance()->has_resource_with_description( resource_description ) )
+		{
+			throw utility::excn::EXCN_Msg_Exception
+				( "You specified a resource_description of " + resource_description +
+					" for report to db, but don't have a resource with that description" );
+		}
+		db_session_ = basic::resource_manager::get_resource< utility::sql_database::session >( resource_description );
+	}
+	else{
+		db_session_ = parse_database_connection(tag);
+	}
 
 	// Description of features database
 	// EXAMPLE: sample_source="This is a description of the sample source."
@@ -443,7 +457,7 @@ ReportToDB::initialize_reporters()
 {
 	// the protocols, batches, and structure features are special
 	protocol_features_ = new ProtocolFeatures();
-		batch_features_ = new BatchFeatures();
+	batch_features_ = new BatchFeatures();
 	structure_features_ = new StructureFeatures();
 }
 

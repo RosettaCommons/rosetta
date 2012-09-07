@@ -54,6 +54,51 @@ boost::thread_specific_pointer< DatabaseSessionManager > DatabaseSessionManager:
 boost::scoped_ptr< DatabaseSessionManager > DatabaseSessionManager::instance_;
 #endif
 
+void
+session::begin(){
+	switch(transaction_mode_){
+		case(TransactionMode::none):
+			//do nothing
+			break;
+		case(TransactionMode::standard):
+			cppdb::session::begin();
+			break;
+		case(TransactionMode::chunk):
+			cppdb::session::begin();
+			break;
+		default:
+			utility_exit_with_message(
+				"Unrecognized transaction mode: '" +
+				name_from_transaction_mode(transaction_mode_) + "'");
+	}
+}
+
+void
+session::commit(){
+	switch(transaction_mode_){
+		case(TransactionMode::none):
+			//do nothing
+			break;
+		case(TransactionMode::standard):
+			cppdb::session::commit();
+			break;
+		case(TransactionMode::chunk):
+			if(transaction_counter_==chunk_size_){
+				cppdb::session::commit();
+				transaction_counter_=0;
+			}
+			else{
+				++transaction_counter_;
+			}
+			cppdb::session::commit();
+			break;
+		default:
+			utility_exit_with_message(
+				"Unrecognized transaction mode: '" +
+				name_from_transaction_mode(transaction_mode_) + "'");
+	}
+}
+	
 DatabaseSessionManager *
 DatabaseSessionManager::get_instance(){
 	if( instance_.get() == 0 ){
@@ -70,9 +115,12 @@ const DatabaseSessionManager &
 
 DatabaseSessionManager::~DatabaseSessionManager() {}
 
+
 sessionOP
 DatabaseSessionManager::get_db_session(
 	DatabaseMode::e db_mode,
+	TransactionMode::e transaction_mode,
+	Size chunk_size,
 	string const & db_name,
 	string const & pq_schema,
 	string const & host,
@@ -85,12 +133,15 @@ DatabaseSessionManager::get_db_session(
 
 	switch(db_mode){
 	case DatabaseMode::sqlite3:
-		return get_session_sqlite3(db_name, readonly, separate_db_per_mpi_process);
+		return get_session_sqlite3(db_name, transaction_mode,
+			chunk_size, readonly, separate_db_per_mpi_process);
 	case DatabaseMode::mysql:
-		return get_session_mysql(db_name, host, user, password, port);
+		return get_session_mysql(db_name, transaction_mode,
+			chunk_size, host, user, password, port);
 	case DatabaseMode::postgres:
 		return get_session_postgres(
-			db_name, pq_schema, host, user, password, port);
+			db_name, transaction_mode,
+				chunk_size, pq_schema, host, user, password, port);
 	default:
 		utility_exit_with_message(
 			"Unrecognized database mode: '" + name_from_database_mode(db_mode) + "'");
@@ -106,11 +157,15 @@ DatabaseSessionManager::get_db_session(
 sessionOP
 DatabaseSessionManager::get_session_sqlite3(
 	string const & database,
+	TransactionMode::e transaction_mode,
+	Size chunk_size,
 	bool const readonly /* = false */,
 	bool const MPI_ONLY( separate_db_per_mpi_process ) /* = false */
 ){
 	sessionOP s(new session());
 	s->set_db_mode(DatabaseMode::sqlite3);
+	s->set_transaction_mode(transaction_mode);
+	s->set_chunk_size(chunk_size);
 	s->set_db_name(database);
 
 #ifdef USEMPI
@@ -148,10 +203,12 @@ DatabaseSessionManager::get_session_sqlite3(
 sessionOP
 DatabaseSessionManager::get_session_mysql(
 	string const & MYSQL_ONLY(database),
+	TransactionMode::e MYSQL_ONLY(transaction_mode),
+	Size MYSQL_ONLY(chunk_size),
 	string const & MYSQL_ONLY(host),
 	string const & MYSQL_ONLY(user),
 	string const & MYSQL_ONLY(password),
-  Size MYSQL_ONLY(port)
+	Size MYSQL_ONLY(port)
 ){
 
 #ifndef USEMYSQL
@@ -162,6 +219,8 @@ DatabaseSessionManager::get_session_mysql(
 
 	sessionOP s(new session());
 	s->set_db_mode(DatabaseMode::mysql);
+	s->set_transaction_mode(transaction_mode);
+	s->set_chunk_size(chunk_size);
 	s->set_db_name(database);
 
 	stringstream connection_string;
@@ -196,11 +255,13 @@ DatabaseSessionManager::get_session_mysql(
 sessionOP
 DatabaseSessionManager::get_session_postgres(
 	string const & POSTGRES_ONLY(database),
+	TransactionMode::e POSTGRES_ONLY(transaction_mode),
+	Size POSTGRES_ONLY(chunk_size),
 	string const & POSTGRES_ONLY(pq_schema),
 	string const & POSTGRES_ONLY(host),
 	string const & POSTGRES_ONLY(user),
 	string const & POSTGRES_ONLY(password),
-  Size POSTGRES_ONLY(port)
+	Size POSTGRES_ONLY(port)
 ){
 
 #ifndef USEPOSTGRES
@@ -211,6 +272,8 @@ DatabaseSessionManager::get_session_postgres(
 
 	sessionOP s(new session());
 	s->set_db_mode(DatabaseMode::postgres);
+	s->set_transaction_mode(transaction_mode);
+	s->set_chunk_size(chunk_size);
 	s->set_db_name(database);
 	s->set_pq_schema(pq_schema);
 
