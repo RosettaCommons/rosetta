@@ -14,6 +14,7 @@
 #ifndef INCLUDED_protocols_simple_filters_InterfaceSasaFilter_hh
 #define INCLUDED_protocols_simple_filters_InterfaceSasaFilter_hh
 
+#include <utility/vector1.hh>
 #include <protocols/simple_filters/InterfaceSasaFilter.fwd.hh>
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
@@ -31,6 +32,7 @@ class InterfaceSasaFilter : public filters::Filter
 public:
 	InterfaceSasaFilter();
 	InterfaceSasaFilter( core::Real const lower_threshold, bool const hydrophobic=false, bool const polar=false, core::Real const upper_threshold=100000000.0, std::string const sym_dof_names="" );
+
 	bool apply( core::pose::Pose const & pose ) const;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	core::Real report_sm( core::pose::Pose const & pose ) const;
@@ -40,16 +42,20 @@ public:
 
 	virtual ~InterfaceSasaFilter();
 	void jump( core::Size const jump );
-	core::Size jump() const;
+	void add_jump( core::Size const jump );
+	void jumps( utility::vector1<core::Size> const jumps );
+
 	void sym_dof_names( std::string const sym_dof_names );
-	std::string sym_dof_names() const;
+	void sym_dof_names( utility::vector1<std::string> const sym_dof_names );
+	void add_sym_dof_name( std::string const sym_dof_name );
+
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	core::Real lower_threshold_;
 	core::Real upper_threshold_;
 	bool hydrophobic_, polar_; /// count only hydrophobics? polars?
-	core::Size jump_; // dflt 1; across which jump to compute sasa
-	std::string sym_dof_names_; // dflt 1; sym_dof_names for jumps across which to compute sasa
+	utility::vector1<core::Size> jumps_; // dflt 1; across which jumps to compute sasa
+	utility::vector1<std::string> sym_dof_names_; // dflt 1; sym_dof_names for jumps across which to compute sasa
 };
 	
 }

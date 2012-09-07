@@ -11,6 +11,11 @@
 /// @brief
 /// @author Sarel Fleishman (sarelf@u.washington.edu), Jacob Corn (jecorn@u.washington.edu)
 
+#include <algorithm>
+#include <boost/lexical_cast.hpp>
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 #include <protocols/simple_filters/InterfaceSasaFilter.hh>
 #include <protocols/simple_filters/InterfaceSasaFilterCreator.hh>
 #include <core/pose/Pose.hh>
@@ -30,10 +35,11 @@
 // Project Headers
 #include <core/types.hh>
 
+
 namespace protocols {
 namespace simple_filters {
 
-static basic::Tracer interface_sasa_filter_tracer( "protocols.simple_filters.InterfaceSasaFilter" );
+static basic::Tracer TR( "protocols.simple_filters.InterfaceSasaFilter" );
 
 protocols::filters::FilterOP
 InterfaceSasaFilterCreator::create_filter() const { return new InterfaceSasaFilter; }
@@ -47,10 +53,12 @@ InterfaceSasaFilter::InterfaceSasaFilter() :
 	lower_threshold_( 0.0 ),
 	hydrophobic_( false ),
 	polar_( false ),
-	jump_( 1 ),
-	sym_dof_names_( "" ),
-	upper_threshold_(100000000000.0)
-{}
+	upper_threshold_(100000000000.0),
+	jumps_(),
+	sym_dof_names_()
+{
+	jump(1);
+}
 
 InterfaceSasaFilter::InterfaceSasaFilter( core::Real const lower_threshold, bool const hydrophobic/*=false*/, bool const polar/*=false*/, core::Real upper_threshold, std::string sym_dof_names ) :
 	Filter( "Sasa" ),
@@ -58,8 +66,18 @@ InterfaceSasaFilter::InterfaceSasaFilter( core::Real const lower_threshold, bool
 	hydrophobic_( hydrophobic ),
 	polar_( polar ),
 	upper_threshold_(upper_threshold),
-	sym_dof_names_(sym_dof_names)
-{}
+	jumps_(),
+	sym_dof_names_()
+{
+	if (sym_dof_names != "")
+	{
+		this->sym_dof_names(sym_dof_names);
+	}
+	else
+	{
+		jump(1);
+	}
+}
 
 InterfaceSasaFilter::~InterfaceSasaFilter(){}
 
@@ -78,33 +96,84 @@ InterfaceSasaFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMa
 {
 	lower_threshold_ = tag->getOption<core::Real>( "threshold", 800 );
 	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 1000000);
-	jump( tag->getOption< core::Size >( "jump", 1 ));
-	sym_dof_names( tag->getOption< std::string >( "sym_dof_names" , "" ) );
+
+	std::string specified_jumps = tag->getOption< std::string >( "jump", "" );
+	std::string specified_sym_dof_names = tag->getOption< std::string >( "sym_dof_names", "" );
+
+	if(specified_jumps != "" && specified_sym_dof_names != "")
+	{
+		TR.Error << "Can not specify 'jump' and 'sym_dof_names' in InterfaceSasaFilter" << tag << std::endl;
+		utility_exit_with_message( "Can not specify 'jump' and 'sym_dof_names' in InterfaceSasaFilter" );
+	}
+	else if(specified_jumps != "")
+	{
+		// Populate jumps_ with str->int converstions of the jump list.
+		TR.Debug << "Reading jump list: " << specified_jumps << std::endl;
+
+		jumps_.resize(0);
+
+		utility::vector1<std::string> jump_strings = utility::string_split( specified_jumps, ',' );
+		for(core::Size i = 1; i <= jump_strings.size(); ++i)
+		{
+			jumps_.push_back( boost::lexical_cast<core::Size>(jump_strings[i]));
+		}
+
+		sym_dof_names_.resize(0);
+	}
+	else if(specified_sym_dof_names != "")
+	{
+		TR.Debug << "Reading sym_dof_name list: " << specified_sym_dof_names << std::endl;
+
+		jumps_.resize(0);
+		sym_dof_names_ = utility::string_split( specified_sym_dof_names, ',');
+	}
+	else
+	{
+		TR.Debug << "Defaulting to jump 1. " << std::endl;
+
+		jump(1);
+	}
+
 	hydrophobic_ = tag->getOption<bool>( "hydrophobic", false );
 	polar_ = tag->getOption<bool>( "polar", false );
-	runtime_assert( !hydrophobic_ || !polar_ );
-	if( jump() != 1 && ( polar_ || hydrophobic_ ) )
-		utility_exit_with_message( "ERROR: presently, only total sasa is supported across a jump other than 1. Remove polar and hydrophobic flags and try again." );
 
-	interface_sasa_filter_tracer<<"SasaFilter with lower threshold of "<<lower_threshold_<<" Ang^2 and jump "<<jump()<<'\n';
-	if( hydrophobic_ )
-		interface_sasa_filter_tracer<<"Only reporting hydrophobic sasa\n";
-	if( polar_ )
-		interface_sasa_filter_tracer<<"Only reporting polar sasa\n";
-	interface_sasa_filter_tracer.flush();
+	if( polar_ && hydrophobic_ )
+	{
+		TR.Error << "Polar and hydrophobic flags specified in Sasa filter: " << tag << std::endl;
+		utility_exit_with_message( "Polar and hydrophobic flags specified in Sasa filter." );
+	}
+
+	if( ( polar_ || hydrophobic_ ) && (jumps_.size() != 1 || jumps_[0] != 1))
+	{
+		TR.Error << "Only total sasa is supported across a jump other than 1. Remove polar and hydrophobic flags and try again: " << tag << std::endl;
+		utility_exit_with_message( "Only total sasa is supported across a jump other than 1. Remove polar and hydrophobic flags and try again." );
+	}
+
+	TR.Debug << "Parsed Sasa Filter: <Sasa" <<
+		" threshold=" << lower_threshold_ <<
+		" upper_threshold=" << upper_threshold_ <<
+		" jump=";
+	std::copy(jumps_.begin(), jumps_.end(), std::ostream_iterator<core::Size>(TR.Debug, ","));
+	TR.Debug <<
+		" sym_dof_names=";
+	std::copy(sym_dof_names_.begin(), sym_dof_names_.end(), std::ostream_iterator<std::string>(TR.Debug, ","));
+	TR.Debug <<
+		" hydrophobic=" << hydrophobic_ <<
+		" polar=" << polar_ <<
+		" />" << std::endl;
 }
 
 bool
 InterfaceSasaFilter::apply( core::pose::Pose const & pose ) const {
 	core::Real const sasa( compute( pose ) );
 
-	interface_sasa_filter_tracer<<"sasa is "<<sasa<<". ";
+	TR<<"sasa is "<<sasa<<". ";
 	if( sasa >= lower_threshold_ && sasa <= upper_threshold_ ){
-		interface_sasa_filter_tracer<<"passing." <<std::endl;
+		TR<<"passing." <<std::endl;
 		return true;
 	}
 	else {
-		interface_sasa_filter_tracer<<"failing."<<std::endl;
+		TR<<"failing."<<std::endl;
 		return false;
 	}
 }
@@ -124,25 +193,38 @@ InterfaceSasaFilter::report_sm( core::pose::Pose const & pose ) const {
 void
 InterfaceSasaFilter::jump( core::Size const jump )
 {
-	jump_ = jump;
+	jumps_.resize(0);
+	jumps_.push_back(jump);
+	sym_dof_names_.resize(0);
 }
 
-core::Size
-InterfaceSasaFilter::jump() const
+void
+InterfaceSasaFilter::add_jump( core::Size const jump )
 {
-	return jump_;
+	jumps_.push_back(jump);
+}
+
+void InterfaceSasaFilter::jumps( utility::vector1<core::Size> const jumps )
+{
+	jumps_ = jumps;
 }
 
 void
 InterfaceSasaFilter::sym_dof_names( std::string const sym_dof_names )
 {
-	sym_dof_names_ = sym_dof_names;
+	sym_dof_names_ = utility::string_split(sym_dof_names, ',');
 }
 
-std::string
-InterfaceSasaFilter::sym_dof_names() const
+void
+InterfaceSasaFilter::add_sym_dof_name( std::string const sym_dof_name )
 {
-	return sym_dof_names_;
+	sym_dof_names_.push_back(sym_dof_name);
+}
+
+void
+InterfaceSasaFilter::sym_dof_names( utility::vector1<std::string> const sym_dof_names )
+{
+	sym_dof_names_ = sym_dof_names;
 }
 
 core::Real
@@ -153,41 +235,56 @@ InterfaceSasaFilter::compute( core::pose::Pose const & pose ) const {
 	using namespace protocols::moves;
 
 	core::pose::Pose split_pose( pose );
-	// JBB 120819
-	int sym_aware_jump_id = 0;
-	if ( sym_dof_names() != "" ) {
-		utility::vector1<std::string> sym_dof_name_list;
-		sym_dof_name_list = utility::string_split( sym_dof_names() , ',' );
-		for (Size i = 1; i <= sym_dof_name_list.size(); i++) {
-			sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( split_pose, sym_dof_name_list[i] );
-			protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( split_pose, sym_aware_jump_id ) );
-			translate->step_size( 1000.0 );
-			translate->apply( split_pose );
-		}
-	} else {
-		sym_aware_jump_id = core::pose::symmetry::get_sym_aware_jump_num( split_pose, jump() );
+	std::set<core::Size> sym_aware_jump_ids;
+
+	for (Size i = 1; i <= sym_dof_names_.size(); i++)
+	{
+		sym_aware_jump_ids.insert(core::pose::symmetry::sym_dof_jump_num( split_pose, sym_dof_names_[i] ));
+	}
+
+	for (Size i = 1; i <= jumps_.size(); i++)
+	{
+		sym_aware_jump_ids.insert(core::pose::symmetry::get_sym_aware_jump_num( split_pose, jumps_[i] ));
+	}
+
+	runtime_assert( !sym_aware_jump_ids.empty() );
+
+	foreach (Size sym_aware_jump_id, sym_aware_jump_ids)
+	{
+		TR.Debug << "Moving jump id: " << sym_aware_jump_id << std::endl;
+
 		protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( split_pose, sym_aware_jump_id ) );
 		translate->step_size( 1000.0 );
 		translate->apply( split_pose );
 	}
-	//split_pose.dump_pdb("split_pose.pdb");
-	// JBB 120819
 
 	runtime_assert( !hydrophobic_ || !polar_ );
-	if( !hydrophobic_ && !polar_ ){
+	if( !hydrophobic_ && !polar_ )
+	{
 		MetricValue< core::Real > mv_sasa;
 
 		pose.metric( "sasa", "total_sasa", mv_sasa);
 		core::Real const bound_sasa( mv_sasa.value() );
+		TR.Debug << "Bound sasa: " << bound_sasa << std::endl;
+
 		split_pose.metric( "sasa", "total_sasa", mv_sasa );
 		core::Real const unbound_sasa( mv_sasa.value() );
-		if( core::pose::symmetry::is_symmetric( pose )) {
+		TR.Debug << "Unbound sasa: " << unbound_sasa << std::endl;
+
+		if( core::pose::symmetry::is_symmetric( pose ))
+		{
+
 			core::conformation::symmetry::SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 			core::Real const buried_sasa( (unbound_sasa - bound_sasa) /(sym_info->subunits()));
-			interface_sasa_filter_tracer << "subunits: " << sym_info->subunits() << std::endl;
+
+			TR.Debug << "Normalizing calculated sasa by subunits: " << sym_info->subunits() << std::endl;
+			TR.Debug << "Buried sasa: " << buried_sasa << std::endl;
+
 			return( buried_sasa );
 		} else {
 			core::Real const buried_sasa(unbound_sasa - bound_sasa);
+
+			TR.Debug << "Buried sasa: " << buried_sasa << std::endl;
 			return( buried_sasa );
 		}
 	}
