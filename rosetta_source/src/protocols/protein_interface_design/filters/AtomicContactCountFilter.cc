@@ -41,8 +41,8 @@ namespace filters {
 AtomicContactCountFilter::AtomicContactCountFilter() :
 	protocols::filters::Filter( "AtomicContactCount" ),
 	task_factory_(NULL),
-	jump_(0),
-	distance_cutoff_(0),
+	jump_(1),
+	distance_cutoff_(4.5),
 	normalize_by_sasa_(false)
 {
 }
@@ -84,7 +84,7 @@ void AtomicContactCountFilter::parse_my_tag(
 {
 	task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
 	jump_ = tag->getOption< core::Size >( "jump", 1 );
-	distance_cutoff_ = tag->getOption< core::Real >( "distance_cutoff", 4.5 );
+	distance_cutoff_ = tag->getOption< core::Real >( "distance", 4.5 );
 	normalize_by_sasa_ = tag->getOption< bool >( "normalize_by_sasa", false );
 }
 
@@ -109,7 +109,7 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 	{
 		task = core::pack::make_new_symmetric_PackerTask_by_requested_method(pose, task);
 	}
-
+	
 	// Create lookup of target residues
 	utility::vector1<core::Size> target;
 	for (core::Size resi = 1; resi <= pose.n_residue(); resi++)
@@ -166,7 +166,14 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 
 		core::Real interface_sasa = sasa_filter.compute(pose);
 
-		return contact_count / interface_sasa;
+		if (interface_sasa != 0)
+		{
+			return contact_count / interface_sasa;
+		}
+		else
+		{
+			return 0;
+		}
 	}
 	else
 	{

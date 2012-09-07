@@ -126,6 +126,10 @@ sources = {
 		"InvrotTree",
 	],
 
+  "protein_interface_design" : [
+    "protein_interface_design",
+  ],
+
 	"rigid" : [
 		"RigidBodyMover",
 	],
