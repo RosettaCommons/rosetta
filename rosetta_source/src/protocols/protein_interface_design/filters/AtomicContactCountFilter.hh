@@ -36,12 +36,7 @@ class AtomicContactCountFilter : public protocols::filters::Filter
 {
 	public:
 		AtomicContactCountFilter();
-		AtomicContactCountFilter(
-			core::pack::task::TaskFactoryOP task_factory,
-			core::Size jump,
-      core::Real distance_cutoff,
-			bool normalize_by_sasa);
-
+		AtomicContactCountFilter(core::Real distance_cutoff);
     AtomicContactCountFilter( AtomicContactCountFilter const & copy );
 
     virtual protocols::filters::FilterOP clone() const;
@@ -50,6 +45,12 @@ class AtomicContactCountFilter : public protocols::filters::Filter
 
     // @brief Filter name
     virtual std::string name() const { return "AtomicContactCountFilter"; }
+
+		void initialize_all_atoms(core::pack::task::TaskFactoryOP task_factory = NULL);
+
+		void initialize_cross_jump(core::Size jump, core::pack::task::TaskFactoryOP task_factory = NULL, bool normalize_by_sasa = false);
+
+		void initialize_cross_chain(core::pack::task::TaskFactoryOP task_factory = NULL, bool normalize_by_sasa = false, bool detect_chains_for_interface_by_task = false);
 
     void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	
@@ -63,10 +64,18 @@ class AtomicContactCountFilter : public protocols::filters::Filter
 		core::Real compute( core::pose::Pose const &) const;
 		
 	private:
+		//TODO Alex Ford Add support for specified chain mode, need to add chain-id resolution to tag parsing.
+		//TODO Alex Ford Likely even better to abstract chain detection & jump code into an interface sasa calculator
+		// and compute the sasa value there.
+		enum Mode { ALL, CROSS_CHAIN_DETECTED, CROSS_CHAIN_ALL, CROSS_JUMP };
+
 		core::pack::task::TaskFactoryOP task_factory_;
-		core::Size jump_;
 		core::Real distance_cutoff_;
+
+		Mode filter_mode_;
 		bool normalize_by_sasa_;
+
+		core::Size jump_;
 };
 
 }
