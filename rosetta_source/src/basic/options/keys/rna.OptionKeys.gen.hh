@@ -24,6 +24,11 @@ namespace OptionKeys {
 namespace rna { extern BooleanOptionKey const rna; }
 namespace rna { extern IntegerOptionKey const minimize_rounds; }
 namespace rna { extern BooleanOptionKey const corrected_geo; }
+namespace rna { extern BooleanOptionKey const vary_geometry; }
+namespace rna { extern BooleanOptionKey const skip_coord_constraints; }
+namespace rna { extern BooleanOptionKey const skip_o2star_trials; }
+namespace rna { extern StringOptionKey const vall_torsions; }
+namespace rna { extern StringOptionKey const jump_database; }
 
 } // namespace OptionKeys
 } // namespace options

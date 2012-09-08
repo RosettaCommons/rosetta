@@ -264,7 +264,7 @@ Options = Option_Group( '',
 			Option( 'obey_ENDMDL', 'Boolean', desc='Stop reading a PDB after ENDMDL card; effectively read only first model in multimodel NMR PDBs', default = 'false'),
 			Option( 'new_chain_order', 'Boolean', desc='ensures chain from different MODEL records have differnet mini chains', default = 'false'),
 			Option( 'ddg_predictions_file', 'File', desc = 'File that contains mutational ddG information. Used by ddG task operation/filter.', default = ''),
-
+			Option( 'input_res','IntegerVector',desc='Residues already present in starting file'),
 		), # file
 		Option_Group( 'rdf',
 			Option( 'sep_bb_ss', 'Boolean',
@@ -2054,6 +2054,8 @@ Options = Option_Group( '',
 		Option( 'K_redundant', "Boolean", desc='Keep all the higher level center structure in sub-pools', default = 'true'),
 		Option( 'K_not_fit_xyz', "Boolean", desc='Do not rotate xyz when calculate rmsd', default = 'false'),
 		Option( 'K_save_headers', "Boolean", desc='Save headers in silent file', default = 'false'),
+		Option( 'score_diff_cut','Real',desc='score difference cut for RNA and SWA clustering', default = '1000000.0' ),
+		Option( 'auto_tune', 'Boolean', desc='autotune rmsd for clustering between 0.1A up to 2.0A, for SWA clusterer', default='false' ),
 	),
 
 	# rescore mode -----------------------------------------------------------
@@ -3205,6 +3207,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	Option_Group( 'rna',
 		Option( 'minimize_rounds', 'Integer', desc='The number of rounds of minimization.', default = '2' ),
 		Option( 'corrected_geo', 'Boolean', desc="Use PHENIX-based RNA sugar close energy and params files", default='false'),
+		Option( 'vary_geometry','Boolean', desc='Let bond lengths and angles vary from ideal in minimizer', default='false' ),
+		Option( 'skip_coord_constraints', 'Boolean', desc='Skip first stage of minimize with coordinate constraints',default='false' ),
+		Option( 'skip_o2star_trials', 'Boolean', desc='No O2* packing in minimizer',default='false' ),
+		Option( 'vall_torsions', 'String', desc='Torsions file containing information on fragments from RNA models', default='rna.torsions' ),
+	  Option( 'jump_database', 'String', desc='Generate a database of jumps extracted from base pairings from a big RNA file', default='rna_jumps.txt' ),
 	),
 	Option_Group( 'cm', # comparative modeling
     Option_Group('sanitize',
@@ -4640,7 +4647,6 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'slice_res2', 'IntegerVector',desc='Residues to slice out of starting file'),
 		Option( 'input_res1', 'IntegerVector',desc='Residues already present in starting file'),
 		Option( 'input_res2', 'IntegerVector',desc='Residues already present in starting file2'),
-		Option( 'input_res' , 'IntegerVector',desc='Residues already present in starting file'),
 		Option( 'backbone_only1', 'Boolean', desc="just copy protein backbone DOFS, useful for homology modeling"),
 		Option( 'backbone_only2', 'Boolean', desc="just copy protein backbone DOFS, useful for homology modeling"),
 	),

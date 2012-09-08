@@ -323,6 +323,9 @@ main( int argc, char * argv [] )
 {
 	using namespace basic::options;
 
+	std::cout << std::endl << "Basic usage:  " << argv[0] << "  -s <pdb file> [ -resfile <resfile>] " << std::endl;
+	std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
+
 	//Uh, options? MOVE THESE TO OPTIONS NAMESPACE INSIDE CORE/OPTIONS.
 	NEW_OPT( disable_o2star_rotamers, "In designing, don't sample 2'-OH",false);
 	NEW_OPT( disable_include_current, "In designing, don't include current",false);

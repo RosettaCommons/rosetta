@@ -133,6 +133,7 @@ option.add( basic::options::OptionKeys::in::file::fold_tree, "User defined fold 
 option.add( basic::options::OptionKeys::in::file::obey_ENDMDL, "Stop reading a PDB after ENDMDL card; effectively read only first model in multimodel NMR PDBs" ).def(false);
 option.add( basic::options::OptionKeys::in::file::new_chain_order, "ensures chain from different MODEL records have differnet mini chains" ).def(false);
 option.add( basic::options::OptionKeys::in::file::ddg_predictions_file, "File that contains mutational ddG information. Used by ddG task operation/filter." ).def("");
+option.add( basic::options::OptionKeys::in::file::input_res, "Residues already present in starting file" );
 option.add( basic::options::OptionKeys::in::rdf::rdf, "rdf option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::in::rdf::sep_bb_ss, "separate RDFs by SS for backbone atypes " ).def(true);
 option.add( basic::options::OptionKeys::MM::MM, "MM option group" ).legal(true).def(true);
@@ -632,10 +633,10 @@ option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option gro
 option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
+option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
-option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::seq_sep_stages, "give vector with sequence_separation after stage1, stage3 and stage4" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::reramp_cst_cycles, "in stage2 do xxx cycles where atom_pair_constraint is ramped up" ).def(0);
@@ -1019,6 +1020,8 @@ option.add( basic::options::OptionKeys::cluster::K_deque_level, "Provide deque i
 option.add( basic::options::OptionKeys::cluster::K_redundant, "Keep all the higher level center structure in sub-pools" ).def(true);
 option.add( basic::options::OptionKeys::cluster::K_not_fit_xyz, "Do not rotate xyz when calculate rmsd" ).def(false);
 option.add( basic::options::OptionKeys::cluster::K_save_headers, "Save headers in silent file" ).def(false);
+option.add( basic::options::OptionKeys::cluster::score_diff_cut, "score difference cut for RNA and SWA clustering" ).def(1000000.0);
+option.add( basic::options::OptionKeys::cluster::auto_tune, "autotune rmsd for clustering between 0.1A up to 2.0A, for SWA clusterer" ).def(false);
 option.add( basic::options::OptionKeys::rescore::rescore, "rescore option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::rescore::pose_metrics, "Do pose metrics calc" );
 option.add( basic::options::OptionKeys::rescore::skip, "Dont actually call scoring function (i.e. get evaluators only)" );
@@ -1263,10 +1266,10 @@ option.add( basic::options::OptionKeys::lh::mpi_loophash_split_size    , "No des
 option.add( basic::options::OptionKeys::lh::mpi_metropolis_temp, "No description" ).def(1000000.0);
 option.add( basic::options::OptionKeys::lh::mpi_save_state_interval, "No description" ).def(1200);
 option.add( basic::options::OptionKeys::lh::mpi_master_save_score_only, "No description" ).def(true);
+option.add( basic::options::OptionKeys::lh::max_loophash_per_structure, "No description" ).def(1);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_loophash_per_structure, "No description" ).def(1);
-option.add( basic::options::OptionKeys::lh::rms_limit, "How to deal with returned relaxed structures" ).def(2.0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::rms_limit, "How to deal with returned relaxed structures" ).def(2.0);
 option.add( basic::options::OptionKeys::lh::centroid_only, "false" ).def(false);
 option.add( basic::options::OptionKeys::lh::write_centroid_structs, "Output raw loophashed decoys as well as relaxed ones" ).def(false);
 option.add( basic::options::OptionKeys::lh::write_all_fa_structs, "Write out all structures returned from batch relax" ).def(false);
@@ -1587,6 +1590,11 @@ option.add( basic::options::OptionKeys::fldsgn::run_flxbb, "run flxbb at the giv
 option.add( basic::options::OptionKeys::rna::rna, "rna option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::rna::minimize_rounds, "The number of rounds of minimization." ).def(2);
 option.add( basic::options::OptionKeys::rna::corrected_geo, "Use PHENIX-based RNA sugar close energy and params files" ).def(false);
+option.add( basic::options::OptionKeys::rna::vary_geometry, "Let bond lengths and angles vary from ideal in minimizer" ).def(false);
+option.add( basic::options::OptionKeys::rna::skip_coord_constraints, "Skip first stage of minimize with coordinate constraints" ).def(false);
+option.add( basic::options::OptionKeys::rna::skip_o2star_trials, "No O2* packing in minimizer" ).def(false);
+option.add( basic::options::OptionKeys::rna::vall_torsions, "Torsions file containing information on fragments from RNA models" ).def("rna.torsions");
+option.add( basic::options::OptionKeys::rna::jump_database, "Generate a database of jumps extracted from base pairings from a big RNA file" ).def("rna_jumps.txt");
 option.add( basic::options::OptionKeys::cm::cm, "cm option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cm::sanitize::sanitize, "sanitize option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cm::sanitize::bound_delta, "Distance in Angstroms from aligned position before a penalty is incurred" ).def(0.5);
@@ -1892,11 +1900,11 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "om
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
-option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
-option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::cst_seqwidth, "sequence width on constraints" ).def(0);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
+option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));
+option.add( basic::options::OptionKeys::RBSegmentRelax::cst_seqwidth, "sequence width on constraints" ).def(0);
 option.add( basic::options::OptionKeys::edensity::edensity, "edensity option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::edensity::debug, "No description" ).def(false);
 option.add( basic::options::OptionKeys::edensity::mapfile, "No description" );
@@ -2371,7 +2379,6 @@ option.add( basic::options::OptionKeys::swa::slice_res1, "Residues to slice out 
 option.add( basic::options::OptionKeys::swa::slice_res2, "Residues to slice out of starting file" );
 option.add( basic::options::OptionKeys::swa::input_res1, "Residues already present in starting file" );
 option.add( basic::options::OptionKeys::swa::input_res2, "Residues already present in starting file2" );
-option.add( basic::options::OptionKeys::swa::input_res, "Residues already present in starting file" );
 option.add( basic::options::OptionKeys::swa::backbone_only1, "just copy protein backbone DOFS, useful for homology modeling" );
 option.add( basic::options::OptionKeys::swa::backbone_only2, "just copy protein backbone DOFS, useful for homology modeling" );
 option.add( basic::options::OptionKeys::ufv::ufv, "ufv option group" ).legal(true).def(true);

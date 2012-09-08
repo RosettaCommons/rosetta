@@ -15,51 +15,33 @@
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED
 #include <core/scoring/Energies.hh>
-//#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rna/RNA_Util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
-// AUTO-REMOVED #include <core/sequence/util.hh>
-// AUTO-REMOVED #include <core/io/silent/RNA_SilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <basic/basic.hh>
-// AUTO-REMOVED #include <basic/database/open.hh>
 #include <core/init.hh>
 
 #include <core/io/pdb/pose_io.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 
 #include <numeric/conversions.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 
 //RNA stuff.
-// AUTO-REMOVED #include <protocols/rna/RNA_DeNovoProtocol.hh>
-// AUTO-REMOVED #include <protocols/rna/RNA_StructureParameters.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 
 
 // C++ headers
-//#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -69,6 +51,7 @@
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/Jump.hh>
@@ -80,8 +63,6 @@
 //Auto using namespaces
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
 //Auto using namespaces end
-
-
 
 using namespace core;
 using namespace protocols;
@@ -111,8 +92,10 @@ create_rna_vall_torsions_test( ){
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 
 	utility::vector1 < std::string >  infiles  = option[ in::file::s ]();
-	std::string outfile  = option[ out::file::o ];
+	std::string outfile  = option[ basic::options::OptionKeys::rna::vall_torsions ]();
 	utility::vector1< core::Size > const exclude_res_list = option[exclude_res]();
+
+	if ( option[ out::file::o ].user() ) outfile = option[ out::file::o ](); // old syntax -- should deprecate.
 
 	utility::io::ozstream torsions_out( outfile );
 
@@ -400,7 +383,7 @@ my_main( void* )
 
 	if ( option[ jump_database ] ) {
 		create_bp_jump_database_test();
-	} else if ( option[ vall_torsions ] ) {
+	} else if ( option[ vall_torsions ].user() ) {
 		create_rna_vall_torsions_test();
 	} else {
 		std::cout << std::endl;
@@ -421,10 +404,14 @@ main( int argc, char * argv [] )
 	using namespace basic::options;
 	utility::vector1< Size > blank_size_vector;
 
-	//Uh, options? MOVE THESE TO OPTIONS NAMESPACE INSIDE CORE/OPTIONS.
-	NEW_OPT( vall_torsions, "Generate a torsions file from a big RNA file", false );
-	NEW_OPT( jump_database, "Generate a database of jumps extracted from base pairings from a big RNA file", false );
+
+	std::cout << std::endl << "Basic usage:  " << argv[0] << "  -s <pdb1> [... <more pdbs>] -vall_torsions [name of output torsions file to create] " << std::endl;
+	std::cout <<              "              " << argv[0] << "  -s <pdb1> [... <more pdbs>] -jump_database [name of rigid-body orientation database to create] " << std::endl;
+	std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
+
 	NEW_OPT( exclude_res, "Residues exlcuded for database creation (works for one file only)", blank_size_vector );
+	option.add_relevant( basic::options::OptionKeys::rna::vall_torsions );
+	option.add_relevant( basic::options::OptionKeys::rna::jump_database );
 
 
 	////////////////////////////////////////////////////////////////////////////

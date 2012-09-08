@@ -47,6 +47,7 @@
 // option key includes
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
@@ -78,7 +79,6 @@ OPT_KEY( Boolean, filter_lores_base_pairs_early )
 OPT_KEY( Boolean, filter_chain_closure )
 OPT_KEY( Boolean, use_1jj2_torsions )
 OPT_KEY( String, lores_scorefxn )
-OPT_KEY( Boolean, vary_geometry )
 OPT_KEY( Boolean, heat )
 OPT_KEY( Boolean, dump )
 OPT_KEY( Boolean, staged_constraints )
@@ -88,13 +88,11 @@ OPT_KEY( Real, rna_lores_chainbreak_weight )
 OPT_KEY( Integer, cycles )
 OPT_KEY( Real, jump_change_frequency )
 OPT_KEY( Real, suppress_bp_constraint )
-OPT_KEY( String,  vall_torsions )
 OPT_KEY( String,  jump_library_file )
 OPT_KEY( String,  params_file )
 OPT_KEY( String,  data_file )
 OPT_KEY( String,  cst_file )
 OPT_KEY( IntegerVector, chunk_res ) // deprecated
-OPT_KEY( IntegerVector, input_res )
 OPT_KEY( Boolean, allow_bulge )
 OPT_KEY( Boolean, allow_consecutive_bulges )
 OPT_KEY( IntegerVector, allowed_bulge_res )
@@ -200,10 +198,10 @@ rna_denovo_test()
 	if (native_exists) rna_de_novo_protocol.set_native_pose( native_pose_OP );
 	if ( option[ cycles ].user() )	rna_de_novo_protocol.set_monte_carlo_cycles( option[ cycles ]() );
 	if ( option[ jump_library_file ].user() )	rna_de_novo_protocol.set_jump_library_file( in_path + option[ jump_library_file] );
- 	if ( option[ vall_torsions ].user() )	{
+ 	if ( option[ basic::options::OptionKeys::rna::vall_torsions ].user() )	{
 		// check in database first
-		std::string vall_torsions_file = basic::database::full_name("/chemical/rna/" + option[ vall_torsions ]() );
-		if (!utility::file::file_exists( vall_torsions_file ) && !utility::file::file_exists( vall_torsions_file + ".gz" ) )  vall_torsions_file = in_path + option[ vall_torsions ]();
+		std::string vall_torsions_file = basic::database::full_name("/chemical/rna/" + option[ basic::options::OptionKeys::rna::vall_torsions ]() );
+		if (!utility::file::file_exists( vall_torsions_file ) && !utility::file::file_exists( vall_torsions_file + ".gz" ) )  vall_torsions_file = in_path + option[ basic::options::OptionKeys::rna::vall_torsions ]();
 		rna_de_novo_protocol.set_vall_torsions_file( vall_torsions_file );
 	}
 	if ( option[ use_1jj2_torsions ]() ) rna_de_novo_protocol.set_vall_torsions_file( basic::database::full_name("chemical/rna/1jj2.torsions") );
@@ -227,7 +225,7 @@ rna_denovo_test()
 	rna_de_novo_protocol.set_filter_chain_closure(  option[ filter_chain_closure ]() );
 	rna_de_novo_protocol.set_filter_chain_closure_distance(  option[ filter_chain_closure_distance ]() );
 	rna_de_novo_protocol.set_filter_chain_closure_halfway(  option[ filter_chain_closure_halfway ]() );
-	rna_de_novo_protocol.set_vary_bond_geometry(  option[ vary_geometry ] );
+	rna_de_novo_protocol.set_vary_bond_geometry(  option[ basic::options::OptionKeys::rna::vary_geometry ] );
 	rna_de_novo_protocol.set_move_first_rigid_body(  option[ move_first_rigid_body ] );
 	rna_de_novo_protocol.set_root_at_first_rigid_body(  option[ root_at_first_rigid_body ] );
 	rna_de_novo_protocol.set_output_filters(  option[ output_filters ] );
@@ -238,14 +236,14 @@ rna_denovo_test()
 	if ( option[ in::file::s ].user() ) rna_de_novo_protocol.set_chunk_pdb_files( option[ in::file::s ]() );
 	if ( option[ in::file::silent ].user() ) 	rna_de_novo_protocol.set_chunk_silent_files( option[ in::file::silent ]() );
 
-	runtime_assert( ! (option[ chunk_res].user() && option[ input_res ].user() ) ); // let's deprecate chunk_res soon
+	runtime_assert( ! (option[ chunk_res].user() && option[ in::file::input_res ].user() ) ); // let's deprecate chunk_res soon
 	if ( option[ chunk_res ].user() ) {
 		std::cout << "WARNING! WARNING! WARNING! -chunk_res will be deprecated soon. Use -input_res instead!" << std::endl;
 		std::cerr << "WARNING! WARNING! WARNING! -chunk_res will be deprecated soon. Use -input_res instead!" << std::endl;
 		rna_de_novo_protocol.set_input_res( option[ chunk_res ]() ) ;
 	}
 
-	if ( option[ input_res ].user() )  rna_de_novo_protocol.set_input_res( option[ input_res ]() ) ;
+	if ( option[ in::file::input_res ].user() )  rna_de_novo_protocol.set_input_res( option[ in::file::input_res ]() ) ;
 
 	rna_de_novo_protocol.set_allow_consecutive_bulges( option[ allow_consecutive_bulges ]() ) ;
 	rna_de_novo_protocol.set_allowed_bulge_res( option[ allowed_bulge_res ]() ) ;
@@ -283,9 +281,14 @@ main( int argc, char * argv [] )
 {
 	using namespace basic::options;
 
+
+	std::cout << std::endl << "Basic usage:  " << argv[0] << "  -fasta <fasta file with sequence>  [ -native <native pdb file> ] " << std::endl;
+	std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
+
 	utility::vector1< Size > blank_size_vector;
 
-	//Uh, options? MOVE THESE TO OPTIONS NAMESPACE INSIDE CORE/OPTIONS.
+	option.add_relevant( in::file::input_res );
+
 	NEW_OPT( minimize_rna, "Minimize RNA after fragment assembly",false );
 	NEW_OPT( relax_rna, "Relax RNA after fragment assembly",false );
 	NEW_OPT( simple_relax, "Relax by minimizing after any fragment insertion",false );
@@ -296,9 +299,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( filter_chain_closure, "Filter for models that have closed chains after lores before minimize",true );
 	NEW_OPT( filter_chain_closure_halfway, "Filter for models that have closed chains after lores before minimize at round 5 of 10",false );
 	NEW_OPT( filter_chain_closure_distance, "Mean distance across 3 chainbreak atoms to filter models that have closed chains after lores", 6.0 );
-	NEW_OPT( vary_geometry, "Let bond lengths and angles vary from ideal",false );
 	NEW_OPT( cycles, "Default number of Monte Carlo cycles", 0 ); // now default is set based on the number of moving residues.
-	NEW_OPT( vall_torsions, "Torsions file?", "chemical/rna/1jj2.torsions" );
 	NEW_OPT( temperature, "temperature", 2.0 );
 	NEW_OPT( jump_change_frequency, "jump change frequency", 0.1 );
 	NEW_OPT( close_loops, "close loops after de novo protocol and again after minimization", true ); /* this should always be on. */
@@ -311,8 +312,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( params_file, "Input file for pairings", "default.prm" );
 	NEW_OPT( data_file, "Input file for RNA exposure data", "" );
 	NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );
-	NEW_OPT( chunk_res, "Input residues for chunk libraries (specified by -in:file:silent or -s)", blank_size_vector );
-	NEW_OPT( input_res, "Input residues for chunk libraries (specified by -in:file:silent or -s)", blank_size_vector );
+	NEW_OPT( chunk_res, "Input residues for chunk libraries (specified by -in:file:silent or -s) ... use -input_res instead!", blank_size_vector );
 	NEW_OPT( use_1jj2_torsions, "Use original (ribosome) fragments, 1JJ2", false );
 	NEW_OPT( rna_lores_chainbreak_weight, "chainbreak weight for lo res sampling", 0.0 );
 	NEW_OPT( rna_lores_linear_chainbreak_weight, "linear chainbreak weight for lo res sampling", 0.0 );
@@ -326,6 +326,9 @@ main( int argc, char * argv [] )
   NEW_OPT( suppress_bp_constraint, "Factor by which to lower base pair constraint weight. ", 1.0 );
   NEW_OPT( output_filters, "output lores scores at early stage (round  2 of 10) and at end -- could be useable for early termination of unpromising early starts", false );
   NEW_OPT( autofilter, "Automatically skip output/minimize if lores score is worse than 20th percentile, updated on the fly.", false );
+	option.add_relevant( basic::options::OptionKeys::rna::vary_geometry );
+	option.add_relevant( basic::options::OptionKeys::rna::vall_torsions );
+	//	option.add_relevant( basic::options::OptionKeys::rna::jump_database );
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup

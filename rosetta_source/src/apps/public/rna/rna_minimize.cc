@@ -13,7 +13,6 @@
 
 // libRosetta headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -45,6 +44,7 @@
 // option key includes
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
 
 
 using namespace core;
@@ -58,10 +58,6 @@ using io::pdb::dump_pdb;
 // i.e., OPT_KEY( Type, key ) -->  OptionKey::key
 // to have them in a namespace use OPT_1GRP_KEY( Type, grp, key ) --> OptionKey::grp::key
 OPT_KEY( Boolean, deriv_check )
-OPT_KEY( Boolean, skip_coord_constraints )
-OPT_KEY( Boolean, skip_o2star_trials )
-OPT_KEY( Boolean, filter_lores_base_pairs )
-OPT_KEY( Boolean, vary_geometry )
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -107,9 +103,9 @@ rna_fullatom_minimize_test()
 	// minimizer setup
 	protocols::rna::RNA_Minimizer rna_minimizer;
 	rna_minimizer.deriv_check( option[ deriv_check ] );
-	rna_minimizer.use_coordinate_constraints( !option[ skip_coord_constraints]() );
-	rna_minimizer.skip_o2star_trials( option[ skip_o2star_trials] );
-	rna_minimizer.vary_bond_geometry( option[ vary_geometry ] );
+	rna_minimizer.use_coordinate_constraints( !option[ basic::options::OptionKeys::rna::skip_coord_constraints]() );
+	rna_minimizer.skip_o2star_trials( option[ basic::options::OptionKeys::rna::skip_o2star_trials] );
+	rna_minimizer.vary_bond_geometry( option[ basic::options::OptionKeys::rna::vary_geometry ] );
 
 
 	// Silent file output setup
@@ -177,12 +173,16 @@ int
 main( int argc, char * argv [] )
 {
 	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	std::cout << std::endl << "Basic usage:  " << argv[0] << "  -s <pdb file> " << std::endl;
+	std::cout              << "              " << argv[0] << "  -in:file:silent <silent file> " << std::endl;
+	std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
 
 	NEW_OPT( deriv_check, "Check analytical vs. numerical derivatives",false );
-	NEW_OPT( skip_coord_constraints, "Skip first stage of minimize with coordinate constraints",false );
-	NEW_OPT( skip_o2star_trials, "No O2* packing in minimizer",false );
-	NEW_OPT( filter_lores_base_pairs, "Filter for models that satisfy structure parameters",false );
-	NEW_OPT( vary_geometry, "Let bond lengths and angles vary from ideal",false );
+	option.add_relevant( basic::options::OptionKeys::rna::vary_geometry );
+	option.add_relevant( basic::options::OptionKeys::rna::skip_coord_constraints );
+	option.add_relevant( basic::options::OptionKeys::rna::skip_o2star_trials );
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup

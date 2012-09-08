@@ -128,6 +128,7 @@ namespace in { namespace file { FileOptionKey const fold_tree( "in:file:fold_tre
 namespace in { namespace file { BooleanOptionKey const obey_ENDMDL( "in:file:obey_ENDMDL" );  } }
 namespace in { namespace file { BooleanOptionKey const new_chain_order( "in:file:new_chain_order" );  } }
 namespace in { namespace file { FileOptionKey const ddg_predictions_file( "in:file:ddg_predictions_file" );  } }
+namespace in { namespace file { IntegerVectorOptionKey const input_res( "in:file:input_res" );  } }
 namespace in { namespace rdf { BooleanOptionKey const rdf( "in:rdf" );  } }
 namespace in { namespace rdf { BooleanOptionKey const sep_bb_ss( "in:rdf:sep_bb_ss" );  } }
 namespace MM { BooleanOptionKey const MM( "MM" );  }
@@ -627,3 +628,4 @@ namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
 namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constraint_skip_rate" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }
+namespace fold_cst { BooleanOptionKey const keep_skipped_csts( "fold_cst:keep_skipped_csts" );  }

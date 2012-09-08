@@ -113,11 +113,10 @@ main( int argc, char * argv [] )
 
 	option.add_relevant(  in::file::silent );
 	option.add_relevant(  out::file::silent );
-	option.add_relevant(  cluster::radius );
 	option.add_relevant(  out::nstruct );
-	utility::vector1< Size > blank_size_vector;
-	NEW_OPT( score_diff_cut, "score difference cut for clustering", 1000000.0 );
-	NEW_OPT( auto_tune, "autotune rmsd for clustering between 0.1A up to 2.0A", false );
+	option.add_relevant(  cluster::radius );
+	option.add_relevant(  cluster::score_diff_cut );
+	option.add_relevant(  cluster::auto_tune );
 
 
 	////////////////////////////////////////////////////////////////////////////

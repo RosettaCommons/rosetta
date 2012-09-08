@@ -133,6 +133,7 @@ namespace in { namespace file { extern FileOptionKey const fold_tree; } }
 namespace in { namespace file { extern BooleanOptionKey const obey_ENDMDL; } }
 namespace in { namespace file { extern BooleanOptionKey const new_chain_order; } }
 namespace in { namespace file { extern FileOptionKey const ddg_predictions_file; } }
+namespace in { namespace file { extern IntegerVectorOptionKey const input_res; } }
 namespace in { namespace rdf { extern BooleanOptionKey const rdf; } }
 namespace in { namespace rdf { extern BooleanOptionKey const sep_bb_ss; } }
 

@@ -1,3 +1,5 @@
+namespace RBSegmentRelax { RealVectorOptionKey const strand_movement_params( "RBSegmentRelax:strand_movement_params" );  }
+namespace RBSegmentRelax { RealVectorOptionKey const default_movement_params( "RBSegmentRelax:default_movement_params" );  }
 namespace RBSegmentRelax { IntegerOptionKey const cst_seqwidth( "RBSegmentRelax:cst_seqwidth" );  }
 namespace edensity { BooleanOptionKey const edensity( "edensity" );  }
 namespace edensity { BooleanOptionKey const debug( "edensity:debug" );  }
@@ -473,7 +475,6 @@ namespace swa { IntegerVectorOptionKey const slice_res1( "swa:slice_res1" );  }
 namespace swa { IntegerVectorOptionKey const slice_res2( "swa:slice_res2" );  }
 namespace swa { IntegerVectorOptionKey const input_res1( "swa:input_res1" );  }
 namespace swa { IntegerVectorOptionKey const input_res2( "swa:input_res2" );  }
-namespace swa { IntegerVectorOptionKey const input_res( "swa:input_res" );  }
 namespace swa { BooleanOptionKey const backbone_only1( "swa:backbone_only1" );  }
 namespace swa { BooleanOptionKey const backbone_only2( "swa:backbone_only2" );  }
 namespace ufv { BooleanOptionKey const ufv( "ufv" );  }

@@ -166,9 +166,12 @@ main( int argc, char * argv [] )
 {
 	using namespace basic::options;
 
+	std::cout << std::endl << "Basic usage:  " << argv[0] << "  -seq <sequence of first strand> <sequence of second strand>   -o <name of output pdb file> " << std::endl;
+	std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
+
 	utility::vector1< std::string > blank_string_vector;
 	NEW_OPT( seq, "Input sequence", blank_string_vector );
-	NEW_OPT( minimize_all, "minimize all torsions in respone to each base pair addition", false );
+	NEW_OPT( minimize_all, "minimize all torsions in response to each base pair addition", false );
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup

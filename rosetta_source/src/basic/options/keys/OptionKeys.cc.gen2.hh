@@ -1,4 +1,3 @@
-namespace lh { IntegerOptionKey const max_loophash_per_structure( "lh:max_loophash_per_structure" );  }
 namespace lh { RealOptionKey const rms_limit( "lh:rms_limit" );  }
 namespace lh { BooleanOptionKey const centroid_only( "lh:centroid_only" );  }
 namespace lh { BooleanOptionKey const write_centroid_structs( "lh:write_centroid_structs" );  }
@@ -320,6 +319,11 @@ namespace fldsgn { IntegerOptionKey const run_flxbb( "fldsgn:run_flxbb" );  }
 namespace rna { BooleanOptionKey const rna( "rna" );  }
 namespace rna { IntegerOptionKey const minimize_rounds( "rna:minimize_rounds" );  }
 namespace rna { BooleanOptionKey const corrected_geo( "rna:corrected_geo" );  }
+namespace rna { BooleanOptionKey const vary_geometry( "rna:vary_geometry" );  }
+namespace rna { BooleanOptionKey const skip_coord_constraints( "rna:skip_coord_constraints" );  }
+namespace rna { BooleanOptionKey const skip_o2star_trials( "rna:skip_o2star_trials" );  }
+namespace rna { StringOptionKey const vall_torsions( "rna:vall_torsions" );  }
+namespace rna { StringOptionKey const jump_database( "rna:jump_database" );  }
 namespace cm { BooleanOptionKey const cm( "cm" );  }
 namespace cm { namespace sanitize { BooleanOptionKey const sanitize( "cm:sanitize" );  } }
 namespace cm { namespace sanitize { RealOptionKey const bound_delta( "cm:sanitize:bound_delta" );  } }
@@ -625,5 +629,3 @@ namespace RBSegmentRelax { BooleanOptionKey const skip_fragment_moves( "RBSegmen
 namespace RBSegmentRelax { BooleanOptionKey const skip_seqshift_moves( "RBSegmentRelax:skip_seqshift_moves" );  }
 namespace RBSegmentRelax { BooleanOptionKey const skip_rb_moves( "RBSegmentRelax:skip_rb_moves" );  }
 namespace RBSegmentRelax { RealVectorOptionKey const helical_movement_params( "RBSegmentRelax:helical_movement_params" );  }
-namespace RBSegmentRelax { RealVectorOptionKey const strand_movement_params( "RBSegmentRelax:strand_movement_params" );  }
-namespace RBSegmentRelax { RealVectorOptionKey const default_movement_params( "RBSegmentRelax:default_movement_params" );  }

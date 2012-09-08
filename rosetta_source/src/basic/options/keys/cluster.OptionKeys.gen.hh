@@ -59,6 +59,8 @@ namespace cluster { extern IntegerOptionKey const K_deque_level; }
 namespace cluster { extern BooleanOptionKey const K_redundant; }
 namespace cluster { extern BooleanOptionKey const K_not_fit_xyz; }
 namespace cluster { extern BooleanOptionKey const K_save_headers; }
+namespace cluster { extern RealOptionKey const score_diff_cut; }
+namespace cluster { extern BooleanOptionKey const auto_tune; }
 
 } // namespace OptionKeys
 } // namespace options

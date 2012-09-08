@@ -15,7 +15,7 @@
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/pose/util.hh> 
+#include <core/pose/util.hh>
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -129,6 +129,9 @@ main( int argc, char * argv [] )
 {
 
 	using namespace basic::options;
+
+	std::cout << std::endl << "Basic usage:  " << argv[0] << "  -in::file::silent <silent file> -tags <model tag like S_00001> " << std::endl;
+	std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
 
 	NEW_OPT( remove_variant_cutpoint_atoms , "remove_variant_cutpoint_atoms", false );
 	////////////////////////////////////////////////////////////////////////////

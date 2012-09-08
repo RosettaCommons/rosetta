@@ -32,7 +32,6 @@ namespace swa { extern IntegerVectorOptionKey const slice_res1; }
 namespace swa { extern IntegerVectorOptionKey const slice_res2; }
 namespace swa { extern IntegerVectorOptionKey const input_res1; }
 namespace swa { extern IntegerVectorOptionKey const input_res2; }
-namespace swa { extern IntegerVectorOptionKey const input_res; }
 namespace swa { extern BooleanOptionKey const backbone_only1; }
 namespace swa { extern BooleanOptionKey const backbone_only2; }
 

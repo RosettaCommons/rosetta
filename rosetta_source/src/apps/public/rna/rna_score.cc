@@ -169,6 +169,10 @@ main( int argc, char * argv [] )
 {
 	using namespace basic::options;
 
+	std::cout << std::endl << "Basic usage:  " << argv[0] << "  -s <pdb file> " << std::endl;
+	std::cout              << "              " << argv[0] << "  -in:file:silent <silent file> " << std::endl;
+	std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
+
 	NEW_OPT( just_calc_rmsd, "Just calculate rmsd -- do not replace score.",false );
 
 	////////////////////////////////////////////////////////////////////////////
