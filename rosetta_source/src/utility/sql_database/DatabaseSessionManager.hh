@@ -130,8 +130,8 @@ public:
 	sessionOP
 	get_session_sqlite3(
 		std::string const & database,
-		TransactionMode::e transaction_mode,
-		platform::Size chunk_size,
+		TransactionMode::e transaction_mode=TransactionMode::standard,
+		platform::Size chunk_size=0,
 		bool const readonly=false,
 		bool const separate_db_per_mpi_process=false);
 
