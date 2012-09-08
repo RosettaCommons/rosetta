@@ -125,7 +125,7 @@ namespace swa {
 				if ( option[ backbone_only2 ]() ) stream2->set_backbone_only( true );
 				input_streams.push_back( stream2 );
 			}
-		} else if ( option[ input_res ].user() ) {  //old style
+		} else if ( option[ in::file::input_res ].user() ) {  //old style
 			utility::vector1< std::string > silent_files_in, pdb_tags;
 
 			// First read in any information on pdb read in from silent files.
@@ -145,7 +145,7 @@ namespace swa {
 			assert( pdb_tags.size() > 0 );
 			initialize_input_streams_with_residue_info( input_streams,
 																									pdb_tags, silent_files_in,
-																									option[ input_res ](), option[ input_res2 ]() );
+																									option[ in::file::input_res ](), option[ input_res2 ]() );
 		}
 
 	}
