@@ -8,13 +8,24 @@
 
 # For help, run with -h.  Requires Python 2.4+, like the unit tests.
 
-import sys
+import sys, thread, commands
 if not hasattr(sys, "version_info") or sys.version_info < (2,4):
     raise ValueError("Script requires Python 2.4 or higher!")
 
 import os, shutil, threading, subprocess, signal, time, re, random, datetime
 from os import path
 from optparse import OptionParser, IndentedHelpFormatter
+
+
+class NT:  # named tuple
+    def __init__(self, **entries): self.__dict__.update(entries)
+    def __repr__(self):
+        r = '|'
+        for i in dir(self):
+            if not i.startswith('__'): r += '%s --> %s, ' % (i, getattr(self, i))
+        return r[:-2]+'|'
+
+Jobs = []  # Global list of NameTuples  (pid, tag, start_time, out_dir,...)
 
 
 def main(argv):
@@ -68,11 +79,16 @@ rm -r ref/; ./integration.py    # create reference results using only default se
       default= path.join( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ), 'rosetta_source'),
       help="Directory where Mini is found (default: ../../rosetta_source/)",
     )
-    parser.add_option("-j", "--num_procs",
+    parser.add_option("-j", "--jobs",
       default=1,
       type="int",
       help="number of processors to use on local machine (default: 1)",
     )
+
+    parser.add_option("--fork", action="store_true", dest="fork", default=False,
+      help="Use Unix fork() instead of Python subprocess module. (off by default)"
+    )
+
     parser.add_option("--host",
       default=[],
       action="append",
@@ -144,8 +160,9 @@ rm -r ref/; ./integration.py    # create reference results using only default se
       help="For testing relational databases: the name of the user. (default: '')",
     )
 
-
     (options, args) = parser.parse_args(args=argv)
+    global Options;  Options = options
+    Options.num_procs = Options.jobs
 
     options.mini_home = path.abspath( options.mini_home )
     print 'Using Rosetta source dir at:', options.mini_home
@@ -211,30 +228,93 @@ rm -r ref/; ./integration.py    # create reference results using only default se
             copytree( path.join("tests", test), path.join(outdir, test),
                 accept=lambda src, dst: path.basename(src) != '.svn' )
 
-        # Start worker thread(s)
-        for i in range(options.num_procs):
-            worker = Worker(queue, outdir, options, timeout_minutes=options.timeout)
-            thread = threading.Thread(target=worker.work)
-            #thread.setDaemon(True) # shouldn't be necessary here
-            thread.start()
-        for host in options.host:
-            if host.count('/') > 1:
-              sys.exit("only one forward slash per host specification")
-            parts = host.split('/')
-            nodes=None
-            if len(parts) == 1:
-              nodes=1
-            if len(parts) == 2:
-              host= parts[0]
-              nodes= int(parts[1])
-            for node in range(nodes):
-              worker = Worker(queue, outdir, options, host=host, timeout_minutes=options.timeout)
-              thread = threading.Thread(target=worker.work)
-              #thread.setDaemon(True) # shouldn't be necessary here
-              thread.start()
+        if Options.fork or Options.jobs==1:
+            def signal_handler(signal_, f):
+                print 'Ctrl-C pressed... killing child jobs...'
+                for nt in Jobs:
+                    os.killpg(os.getpgid(nt.pid), signal.SIGKILL)
 
-        # Wait for them to finish
-        queue.join()
+            signal.signal(signal.SIGINT, signal_handler)
+
+            while not queue.empty():
+                test = queue.get()
+                if test is None: break
+
+                cmd_line_sh, workdir = generateIntegrationTestCommandline(test, outdir);
+
+                def timeout_finish():
+                    error_string = "*** Test %s exceeded the timeout=%s  and will be killed! [%s]\n" % (test, Options.timeout, datetime.datetime.now())
+                    file(path.join(workdir, ".test_got_timeout_kill.log"), 'w').write(error_string)
+                    print error_string,
+
+                def run():
+                    #execute('Running Test %s' % test, 'bash ' + cmd_line_sh)
+                    extra = 'ulimit -t%s && ' % Options.timeout  if Options.timeout else ''
+                    res = execute('Running Test %s' % test, '%sbash %s' % (extra, cmd_line_sh), return_=True)
+                    if res:
+                        error_string = "*** Test %s did not run!  Check your --mode flag and paths. [%s]\n" % (test, datetime.datetime.now())
+                        file(path.join(nt.workdir, ".test_did_not_run.log"), 'w').write(error_string)
+                        print error_string,
+
+                    #execute('Just sleeeping %s...' % test, 'ulimit -t%s && sleep 60 && echo "Done!"' % Options.timeout)
+                    #execute('Just echo %s...' % test, 'echo "%s Done!"' % test)
+                    #print 'Not even echo %s... ' % test
+
+                def normal_finish(nt):
+                    queue.task_done()
+                    percent = (100* (queue.TotalNumberOfTasks-queue.qsize())) / queue.TotalNumberOfTasks
+                    print "Finished %-40s in %3i seconds\t [~%4s test (%s%%) started, %4s in queue, %4d running]" % (nt.test, time.time() - nt.start_time, queue.TotalNumberOfTasks-queue.qsize(), percent, queue.qsize(), queue.unfinished_tasks-queue.qsize() )
+
+                def error_finish(nt):
+                    error_string = "*** Test %s did not run!  Check your --mode flag and paths. [%s]\n" % (test, datetime.datetime.now())
+                    file(path.join(nt.workdir, ".test_did_not_run.log"), 'w').write(error_string)
+                    print error_string,
+                    normal_finish(nt)
+
+                def timeout_finish(nt):
+                    error_string = "*** Test %s exceeded the timeout=%s  and will be killed! [%s]\n" % (test, Options.timeout, datetime.datetime.now())
+                    file(path.join(nt.workdir, ".test_got_timeout_kill.log"), 'w').write(error_string)
+                    print error_string,
+                    normal_finish(nt)
+
+                if Options.jobs > 1:
+                    pid, nt = mFork(test=test, workdir=workdir, queue=queue, timeout=Options.timeout, normal_finish=normal_finish, error_finish=error_finish, timeout_finish=timeout_finish)
+                    if not pid:  # we are child process
+                        signal.signal(signal.SIGINT, signal.SIG_DFL)
+                        run()
+                        sys.exit(0)
+                else:
+                    nt = NT(test=test, workdir=workdir, queue=queue, start_time=time.time(), timeout=Options.timeout, normal_finish=normal_finish, error_finish=error_finish, timeout_finish=timeout_finish2)
+                    run()
+                    normal_finish(nt)
+
+            mWait(all_=True)  # waiting for all jobs to finish before movinf in to next phase
+
+        else:
+            # Start worker thread(s)
+            for i in range(options.num_procs):
+                worker = Worker(queue, outdir, options, timeout_minutes=options.timeout)
+                thread = threading.Thread(target=worker.work)
+                #thread.setDaemon(True) # shouldn't be necessary here
+                thread.start()
+            for host in options.host:
+                if host.count('/') > 1:
+                  sys.exit("only one forward slash per host specification")
+                parts = host.split('/')
+                nodes=None
+                if len(parts) == 1:
+                  nodes=1
+                if len(parts) == 2:
+                  host= parts[0]
+                  nodes= int(parts[1])
+                for node in range(nodes):
+                  worker = Worker(queue, outdir, options, host=host, timeout_minutes=options.timeout)
+                  thread = threading.Thread(target=worker.work)
+                  #thread.setDaemon(True) # shouldn't be necessary here
+                  thread.start()
+
+            # Wait for them to finish
+            queue.join()
 
     # Analyze results
     print
@@ -369,6 +449,181 @@ def wrapNewLine(s):
     r = ''
 
 
+# -------------------------------------
+def execute(message, command_line, return_=False, untilSuccesses=False, print_output=True, verbose=True):
+    if verbose:
+        print message
+        print command_line
+
+    while True:
+        #(res, output) = commands.getstatusoutput(commandline)
+
+        po = subprocess.Popen(command_line+ ' 1>&2', bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        #po = subprocess.Popen(command_line+ ' 1>&2', bufsize=0, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        f = po.stderr
+        output = ''
+        for line in f:
+            #po.poll()
+            if print_output: print line,
+            output += line
+            sys.stdout.flush()
+        f.close()
+        while po.returncode is None: po.wait()
+        res = po.returncode
+        #print '_____________________', res
+
+
+        '''
+        po = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderror = po.communicate()
+        output = stdout + stderror
+        res = po.returncode
+        '''
+        #print output
+
+        if res and untilSuccesses: pass  # Thats right - redability COUNT!
+        else: break
+
+        print "Error while executing %s: %s\n" % (message, output)
+        print "Sleeping 60s... then I will retry..."
+        time.sleep(60)
+
+    if res:
+        if print_output: print "\nEncounter error while executing: " + command_line
+        if not return_: sys.exit(1)
+
+    if return_ == 'output': return output
+    else: return res
+
+def print_(msg, color=None, background=None, bright=False, blink=False, action='print', endline=True):
+    ''' print string with color and background. Avoid printing and return results str instead if action is 'return'. Also check for 'Options.no_color'
+    '''
+    colors = dict(black=0, red=1, green=2, yellow=3, blue=4, magenta=5, cyan=6, white=7)  # standard ASCII colors
+
+    if 'Options' in globals()  and  hasattr(Options, 'color')  and  not Options.color: s = str(msg)
+    else:
+        s  = ['3%s' % colors[color] ] if color else []
+        s += ['4%s' % colors[background] ] if background else []
+        s += ['1'] if bright else []
+        s += ['5'] if blink else []
+
+        s = '\033[%sm%s\033[0m%s' % (';'.join(s), msg, '\n' if endline else '')
+
+    if action == 'print': sys.stdout.write(s)
+    else: return s
+
+
+def mFork(tag=None, overhead=0, **args):
+    ''' Check if number of child process is below Options.jobs. And if it is - fork the new pocees and return its pid.
+    '''
+    #print_('Groups:%s' % os.getgroups(), color='cyan')
+    while len(Jobs) >= Options.jobs + overhead:
+        for j in Jobs[:] :
+            r = os.waitpid(j.pid, os.WNOHANG)
+            if r == (j.pid, 0):  # process have ended without error
+                normal_finish = getattr(j, 'normal_finish', lambda x: None)
+                normal_finish(j)
+                Jobs.remove(j)
+
+            elif r[0] == j.pid :
+                error_finish = getattr(j, 'error_finish', lambda x: None)
+                error_finish(j)
+                Jobs.remove(j)
+
+            else:
+                #pass
+                if j.timeout:
+                    if time.time() - j.start_time > j.timeout :
+                        #print '~~~~~~~~~~~ pids:', j.pid, os.getpid(), os.getppid()
+                        #print '~~~~~~~~~~~ groups:', os.getpgid(j.pid), os.getpgrp()
+                        os.kill(j.pid, signal.SIGKILL)  #
+                        #os.killpg(os.getpgid(j.pid), signal.SIGKILL)
+                        timeout_finish = getattr(j, 'timeout_finish', lambda x: None)
+                        timeout_finish(j)
+                        Jobs.remove(j)
+                        break
+
+        if len(Jobs) >= Options.jobs + overhead: time.sleep(.2)
+
+    sys.stdout.flush();  sys.stderr.flush();
+    pid = os.fork()
+    if pid: pass # We are parent!
+    Jobs.append( NT(pid=pid, tag=tag, start_time=time.time(), **args) )
+    return pid, Jobs[-1]
+
+
+def mWait(tag=None, all_=False, timeout=0):
+    ''' Wait for process tagged with 'tag' for completion
+    '''
+    while True :
+        #print 'Waiting for %s: ' % tag, Jobs
+
+        for j in [ x for x in Jobs if x.tag==tag or all_==True]:
+            #print 'Waiting2: ', Jobs
+            #try:
+            r = os.waitpid(j.pid, os.WNOHANG)
+            if r == (j.pid, 0):  # process have ended without error
+                normal_finish = getattr(j, 'normal_finish', lambda x: None)
+                normal_finish(j)
+                Jobs.remove(j)
+
+            elif r[0] == j.pid :  # process ended but with error, special case we will have to wait for all process to terminate and call system exit.
+                error_finish = getattr(j, 'error_finish', lambda x: None)
+                error_finish(j)
+                Jobs.remove(j)
+
+            elif j.timeout:
+                if time.time() - j.start_time > j.timeout :
+                    os.kill(j.pid, signal.SIGKILL)  #os.killpg(os.getpgid(j.pid), signal.SIGKILL)
+                    timeout_finish = getattr(j, 'timeout_finish', lambda x: None)
+                    timeout_finish(j)
+                    Jobs.remove(j)
+
+        time.sleep(.2)
+        if not Jobs: return
+
+
+def generateIntegrationTestCommandline(test, outdir, host=None):
+    ''' Generate and write command.sh and return command line that will run given integration test
+    '''
+    # Variables that may be referrenced in the cmd string:
+    python = sys.executable
+    workdir = path.abspath( path.join(outdir, test) )
+    minidir = Options.mini_home
+    database = Options.database
+    bin = path.join(minidir, "bin")
+    pyapps = path.join(minidir, "src", "python", "apps")
+    if sys.platform.startswith("linux"): platform = "linux" # can be linux1, linux2, etc
+    elif sys.platform == "darwin": platform = "macos"
+    elif sys.platform == "cygwin": platform = "cygwin"
+    else: platform = "_unknown_"
+    compiler = Options.compiler
+    mode = Options.mode
+    extras = Options.extras
+    binext = Options.extras+"."+platform+compiler+mode
+    dbms_database_name = Options.dbms_database_name % { 'test': test }
+    dbms_pq_schema = Options.dbms_pq_schema % { 'test': test }
+    dbms_host = Options.dbms_host
+    dbms_user = Options.dbms_user
+    dbms_port = Options.dbms_port
+    # Read the command from the file "command"
+    cmd=''
+    # A horrible hack b/c SSH doesn't honor login scripts like .bash_profile
+    # when executing specific remote commands.
+    # This causes problems with e.g. the custom Python install on the Whips.
+    # So we replace the default remote PATH with the current local one.
+    if host is not None:
+      cmd = 'PATH="%s"\n%s' % (os.environ["PATH"], cmd)
+    cmd += '\n'
+    cmd += file(path.join(workdir, "command")).read().strip()
+    cmd = cmd % vars() # variable substitution using Python printf style
+    cmd_line_sh = path.join(workdir, "command.sh")
+    f = file(cmd_line_sh, 'w');  f.write(cmd);  f.close() # writing back so test can be easily re-run by user lately...
+    #if "'" in cmd: raise ValueError("Can't use single quotes in command strings!")
+    #print cmd; print
+
+    return cmd_line_sh, workdir
+
 
 class Worker:
     def __init__(self, queue, outdir, opts, host=None, timeout_minutes=0):
@@ -386,41 +641,8 @@ class Worker:
                 try: # Actually catch exception and ignore it.  Python 2.4 can't use "except" and "finally" together.
                     start = time.time() # initial guess at start time, in case of exception
                     try: # Make sure job is marked done even if we throw an exception
-                        # Variables that may be referrenced in the cmd string:
-                        python = sys.executable
-                        workdir = path.abspath( path.join(self.outdir, test) )
-                        minidir = self.opts.mini_home
-                        database = self.opts.database
-                        bin = path.join(minidir, "bin")
-                        pyapps = path.join(minidir, "src", "python", "apps")
-                        if sys.platform.startswith("linux"): platform = "linux" # can be linux1, linux2, etc
-                        elif sys.platform == "darwin": platform = "macos"
-                        elif sys.platform == "cygwin": platform = "cygwin"
-                        else: platform = "_unknown_"
-                        compiler = self.opts.compiler
-                        mode = self.opts.mode
-                        extras = self.opts.extras
-                        binext = self.opts.extras+"."+platform+compiler+mode
-                        dbms_database_name = self.opts.dbms_database_name % { 'test': test }
-                        dbms_pq_schema = self.opts.dbms_pq_schema % { 'test': test }
-                        dbms_host = self.opts.dbms_host
-                        dbms_user = self.opts.dbms_user
-                        dbms_port = self.opts.dbms_port
-                        # Read the command from the file "command"
-                        cmd=''
-                        # A horrible hack b/c SSH doesn't honor login scripts like .bash_profile
-                        # when executing specific remote commands.
-                        # This causes problems with e.g. the custom Python install on the Whips.
-                        # So we replace the default remote PATH with the current local one. 
-                        if self.host is not None:
-                          cmd = 'PATH="%s"\n%s' % (os.environ["PATH"], cmd)
-                        cmd += '\n'
-                        cmd += file(path.join(workdir, "command")).read().strip()
-                        cmd = cmd % vars() # variable substitution using Python printf style
-                        cmd_line_sh = path.join(workdir, "command.sh")
-                        f = file(cmd_line_sh, 'w');  f.write(cmd);  f.close() # writing back so test can be easily re-run by user lately...
-                        #if "'" in cmd: raise ValueError("Can't use single quotes in command strings!")
-                        #print cmd; print
+                        cmd_line_sh, workdir = generateIntegrationTestCommandline(test, self.outdir, host=self.host)
+
                         if self.host is None:
                             print "Running  %-40s on localhost ..." % test
                             proc = subprocess.Popen(["bash",  cmd_line_sh], preexec_fn=os.setpgrp)
