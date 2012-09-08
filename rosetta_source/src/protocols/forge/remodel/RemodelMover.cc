@@ -146,7 +146,7 @@ RemodelMover::RemodelMover() :
 	Super( "RemodelMover" ),
 //	use_fullmer_( false ),
 //	use_sequence_bias_( false ),
-	max_linear_chainbreak_( 0.07 ),
+	max_linear_chainbreak_( basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::max_linear_chainbreak]),
 //	max_linear_chainbreak_( 0.15 ),
 	//centroid_loop_mover_str_( "quick_ccd" ),
 	centroid_loop_mover_str_( "RemodelLoopMover" ),
@@ -362,16 +362,16 @@ void RemodelMover::apply( Pose & pose ) {
 	protocols::forge::remodel::RemodelData remodel_data;
 	protocols::forge::remodel::WorkingRemodelSet working_model;
 	// read blueprint
-	
+
 	//TR << "blueprint value 0 is " << blueprint_ << std::endl;
 
-	if (blueprint_ == "") { 
+	if (blueprint_ == "") {
 		//TR << "blueprint value 1 is " << blueprint_ << std::endl;
-		blueprint_ = option[basic::options::OptionKeys::remodel::blueprint](); 
+		blueprint_ = option[basic::options::OptionKeys::remodel::blueprint]();
 		//TR << "blueprint value 2 is " << blueprint_ << std::endl;
-	} 
+	}
 
-	remodel_data.getLoopsToBuildFromFile(blueprint_); 
+	remodel_data.getLoopsToBuildFromFile(blueprint_);
 
 	TR << pose.total_residue() << std::endl;
 	ObjexxFCL::FArray1D_char dsspSS( pose.total_residue() );
@@ -422,6 +422,25 @@ void RemodelMover::apply( Pose & pose ) {
 		TR << *i <<  " UUP" <<  std::endl;
 	}
 	*/
+
+  if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
+		//for cases involve jxn, need to make pose longer so manager won't complain
+		//about missing residues
+		if (pose.total_residue() < 2*remodel_data.sequence.length()){
+			std::cout << "grow pose" << std::endl;
+			Size len_diff = (2*remodel_data_.sequence.length()) - pose.total_residue();
+      // append a tail of the same length
+      for (int i = 1; i<= len_diff; i++){
+        core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(1).residue_type_set());
+        core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
+        pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
+        pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
+        pose.set_omega(pose.total_residue()-1,180);
+      }
+		}
+	}
+
+
 //
 //	Pose testArc;
 //	testArc = pose;
@@ -681,7 +700,7 @@ TR << "ORIGINAL TREE: " << pose.fold_tree() << std::endl;
 					std::cout << "bb at " << i << " " << cmmop->get_bb(i) << std::endl;
 				}
 
-				//adding angles and bonds dof 
+				//adding angles and bonds dof
 			//	cmmop->set(core::id::THETA, true);
 			//	cmmop->set(core::id::D, true);
 
@@ -692,7 +711,7 @@ TR << "ORIGINAL TREE: " << pose.fold_tree() << std::endl;
 								cmmop->set(core::id::DOF_ID(core::id::AtomID(j,i),core::id::D),true);
 							}
 						}
-					} 
+					}
 
 
 				//core::scoring::ScoreFunctionOP cen_min_sfxn = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth");
@@ -770,7 +789,7 @@ TR << "ORIGINAL TREE: " << pose.fold_tree() << std::endl;
 
 				//reset cen_hb to 0
 				centroid_sfx_->set_weight( core::scoring::cen_hb, 0.0);
-				//switch back the foldtree 
+				//switch back the foldtree
 				//pose.fold_tree(cenFT);
 
 				// flip residue type set back, for repeat builds, currently don't do
@@ -815,7 +834,11 @@ TR << "ORIGINAL TREE: " << pose.fold_tree() << std::endl;
 		}
 		i--;
 	}
-
+/* DONT USE THIS FOR NOW...
+	if (get_last_move_status() == FAIL_RETRY){
+		return;
+	}
+*/
 	//take the lowest member and the cluster center
 	//accumulator.shrink_cluster();
 	std::vector<core::pose::PoseOP> results;
@@ -1038,7 +1061,7 @@ bool RemodelMover::centroid_build(
 	vlb_->scorefunction( centroid_sfx_ );
 	vlb_->vall_memory_usage( VLB_VallMemoryUsage::CLEAR_IF_CACHING_FRAGMENTS );
 	vlb_->use_fullmer( option[OptionKeys::remodel::use_same_length_fragments] );
-//	vlb_->max_linear_chainbreak( max_linear_chainbreak_ );
+	vlb_->max_linear_chainbreak( max_linear_chainbreak_ );
 	vlb_->loop_mover_str( centroid_loop_mover_str_ );
 	vlb_->restart_mode(true);
   vlb_->new_secondary_structure_override(working_model_.ss);
@@ -1110,7 +1133,6 @@ bool RemodelMover::centroid_build(
 		pose = archive_pose;
 
 	}
-
 	return false; // false if loop not closed
 }
 

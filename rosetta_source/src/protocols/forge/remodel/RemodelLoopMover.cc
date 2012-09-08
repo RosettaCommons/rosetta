@@ -407,6 +407,10 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 	  } else {
 		  f.simple_tree(repeat_pose.total_residue());
 	  }
+		FoldTree PFT = pose.fold_tree();
+		PFT.reorder(1);
+		pose.fold_tree(PFT);
+		f.reorder(1);
     repeat_pose.fold_tree(f);
 		TR << repeat_pose.fold_tree() << std::endl;
 
@@ -419,22 +423,43 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 			}
     }
 	}
-/*
+
+		if (option[OptionKeys::remodel::no_jumps].user()){
+			remove_cutpoint_variants( pose );
+			remove_cutpoint_variants( repeat_pose );
+			FoldTree FT;
+			FT.simple_tree(repeat_pose.total_residue());
+			repeat_pose.fold_tree(FT);
+
+			FoldTree PFT;
+			PFT.simple_tree(pose.total_residue());
+			pose.fold_tree(PFT);
+
+			return;
+		}
+
 		//take the jumps and set repeating RT
-		Size jump_offset = pose.num_jump();
-		for (Size rep = 1; rep < repeat_number; rep++){
-			for (Size i = 1; i<= pose.num_jump(); i++){
-				numeric::xyzMatrix< Real > Rot = pose.jump(i).get_rotation();
-				numeric::xyzVector< Real > Trx = pose.jump(i).get_translation();
-				TR <<  pose.fold_tree() << std::endl;
-				TR <<  repeat_pose.fold_tree() << std::endl;
-				TR <<  "set ROT-TRANS from " << i << " to " << i+jump_offset*rep << std::endl;
-				Jump tempJump = repeat_pose.jump(i+(jump_offset*rep));
+		Size jump_offset = pose.num_jump(); //pose at this stage should at most have only one jump;
+		//for (Size rep = 1; rep < repeat_number; rep++){
+			for (Size i = 1; i<= repeat_pose.num_jump(); i++){
+				numeric::xyzMatrix< Real > Rot = pose.jump(1).get_rotation();
+				numeric::xyzVector< Real > Trx = pose.jump(1).get_translation();
+				TR <<  "pose FT: " << pose.fold_tree() << std::endl;
+				TR <<  "rpps FT: " << repeat_pose.fold_tree() << std::endl;
+				TR <<  "set ROT-TRANS from " << 1 << " to " << i << std::endl;
+				FoldTree FT = repeat_pose.fold_tree();
+
+			  FT.set_jump_atoms( i , pose.fold_tree().jump_edge(1).upstream_atom(), pose.fold_tree().jump_edge(1).downstream_atom());
+			  repeat_pose.fold_tree(FT);
+
+				Jump tempJump = repeat_pose.jump(i);
 				tempJump.set_rotation( Rot );
 				tempJump.set_translation( Trx );
-				repeat_pose.conformation().set_jump_now( i+(jump_offset*rep), tempJump );
+				repeat_pose.conformation().set_jump_now( i, tempJump );
 			}
-		}*/
+
+
+		//}
 		//check tree:
 		//TR << f << std::endl;
 /*
@@ -699,6 +724,14 @@ void RemodelLoopMover::repeat_sync( //utility function
 					}
 				}
 				else if (res > segment_length ){ //for spanning builds
+
+					//spanning, update the equivalent copy in the first section with
+					//new first
+					repeat_pose.set_phi(res-segment_length, repeat_pose.phi(res));
+					repeat_pose.set_psi(res-segment_length, repeat_pose.psi(res));
+					repeat_pose.set_omega(res-segment_length, repeat_pose.omega(res));
+
+					//then propagate
 					loop_phi = repeat_pose.phi(res-segment_length);
 					loop_psi = repeat_pose.psi(res-segment_length);
 					loop_omega = repeat_pose.omega(res-segment_length);
@@ -738,6 +771,9 @@ void RemodelLoopMover::repeat_propagation( //utility function
 
   core::kinematics::FoldTree f;
 
+	bool build_across_jxn = false;
+	Size residues_beyond_jxn = 0;
+
 	LoopsOP repeat_loops = new Loops();
   std::set< Size > lower_termini;
   std::set< Size > upper_termini;
@@ -751,6 +787,15 @@ void RemodelLoopMover::repeat_propagation( //utility function
     if (loop.start() == 1 && loop.stop() == segment_length){
       break;  //don't need to do anything about foldtree if fully de novo
     } else {
+
+			// if any of the loops build go beyond the junction, keep track of it and
+			// update the first segment accordingly
+			if (loop.start() <= segment_length && loop.stop() > segment_length){
+				//std::cout << "build across jxn: " << loop.start() << " " << loop.stop() << std::endl;
+				build_across_jxn = true;
+				residues_beyond_jxn = loop.stop() - segment_length;
+				//std::cout << "build across jxn leftover: " << residues_beyond_jxn << std::endl;
+			}
 
     repeat_loops->push_back(loop); //load the first guy
     //TR << loop.start() << " " << loop.stop() << " " << loop.cut() << std::endl;
@@ -799,7 +844,7 @@ void RemodelLoopMover::repeat_propagation( //utility function
 		}
 	}
 */
-	if (!repeat_loops->empty()){
+	if (!repeat_loops->empty() && !basic::options::option[basic::options::OptionKeys::remodel::no_jumps].user()){
 		f = protocols::forge::methods::fold_tree_from_loops(repeat_pose, *repeat_loops);
 	} else {
 		f.simple_tree(repeat_pose.total_residue());
@@ -837,6 +882,17 @@ void RemodelLoopMover::repeat_propagation( //utility function
 		//TR << f << std::endl;
 */
 	//repeat_pose.dump_pdb("repeatPose_in_rep_propagate_setJump.pdb");
+
+	//take care of the start if build across jxn
+	if (build_across_jxn){
+		while (residues_beyond_jxn){
+			pose.set_phi(residues_beyond_jxn, pose.phi(residues_beyond_jxn+segment_length));
+			pose.set_psi(residues_beyond_jxn, pose.psi(residues_beyond_jxn+segment_length));
+			pose.set_omega(residues_beyond_jxn, pose.omega(residues_beyond_jxn+segment_length));
+			residues_beyond_jxn--;
+		}
+	}
+
 
 	for (Size rep = 0; rep < repeat_number; rep++){
 		for (Size res = 1; res <= segment_length; res++){
@@ -1755,10 +1811,14 @@ void RemodelLoopMover::simultaneous_stage(
 	}
 
 	// add cutpoint variants
-	add_cutpoint_variants( pose );
+	if (pose.num_jump() >0){
+		add_cutpoint_variants( pose );
+	}
 	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 		repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
-	add_cutpoint_variants( repeat_pose_ );
+			if (repeat_pose_.num_jump()>0){
+				add_cutpoint_variants( repeat_pose_ );
+			}
 		mc.reset(repeat_pose_);
 	}	else{
 	mc.reset( pose );

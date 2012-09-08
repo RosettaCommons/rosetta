@@ -245,13 +245,17 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 	}
 
 	if (option[ OptionKeys::remodel::repeat_structure].user()){ // repeat structure loop over a second time; merge sections and update index
+		//need to know the original index of the last element, for building
+		//extensions or deletions across jxn points
+		LineObject lastLO = data.blueprint.back();
+
 		for (int i = 0, ie = (int)data.blueprint.size(); i < ie; i++){
 			if (data.blueprint[i].sstype != ".") { // first find the segments to be remodeled
 				LineObject LO = data.blueprint[i];
 				//update indeces
 				LO.index = LO.index + (int)data.blueprint.size();
 				if (LO.original_index != 0){ //in de novo case, the extension uses 0, don't increment.
-					LO.original_index = LO.original_index + (int)data.blueprint.size();
+					LO.original_index = LO.original_index + (int)lastLO.original_index;
 				}
 				//TR << "LO object second time " << LO.index << " " << LO.original_index << std::endl;
 				temp.push_back(LO);
@@ -403,7 +407,7 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 		core::Size head = -1, tail = -1, headNew = -1, tailNew = -1; //safety, init to negative values
 
 		//use temp_For_copy to identify if it's de novo build; not empty means it's a loop case.
-		if ( option[ OptionKeys::remodel::repeat_structure].user() && !temp_for_copy.empty()) { 
+		if ( option[ OptionKeys::remodel::repeat_structure].user() && !temp_for_copy.empty()) {
 			//duplicate length of dssp and aastring
 			DSSP += DSSP;
 			aa += aa;
@@ -425,7 +429,7 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 					idBack = idBack-1;
 				}
 				head = data.blueprint[ idFront-1 ].original_index;
-				tail = data.blueprint[ idBack-seg_size-1 ].original_index + seg_size;
+				tail = data.blueprint[ idBack-seg_size-1 ].original_index + data.blueprint.back().original_index;
 				headNew = data.blueprint[ idFront-1 ].index;
 				tailNew = data.blueprint[ idBack-seg_size-1 ].index + seg_size;
 			} else { //normal build in the first segment

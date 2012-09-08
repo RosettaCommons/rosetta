@@ -306,34 +306,6 @@ void VarLengthBuild::apply( Pose & pose ) {
 
 	utility::vector1<Real> cached_phi, cached_psi, cached_omega;
 
-  if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
-
-		Size len_start = remodel_data_.sequence.length();
-
-		// length should honor the blueprint length, and subsequently if the input
-		// pose is longer than blueprint, allow copying of phi-psi beyond the last
-		// residue. only for repeats with matching blueprint and pdb lengths.
-		//cache the phi psi angles
-		if (len_start < pose.total_residue() && len_start * (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure]) == pose.total_residue() ){
-			for (Size i = len_start+1; i <= pose.total_residue(); i++){
-				cached_phi.push_back( pose.phi( i ) );
-				cached_psi.push_back( pose.psi( i ) );
-				cached_omega.push_back( pose.omega( i ));
-			}
-
-			Size max_pdb_index = remodel_data_.blueprint.size()*2;
-
-			while (pose.total_residue() != max_pdb_index){
-				pose.delete_polymer_residue(pose.total_residue());
-			}
-
-			//similarly update archive pose in repeat cases
-			while (archive_pose.total_residue() != max_pdb_index){
-				archive_pose.delete_polymer_residue(archive_pose.total_residue());
-			}
-		}
-	}
-
 	// alter pose
 	Original2Modified original2modified; // keep track of old -> new mapping
 	if ( get_last_move_status() == MS_SUCCESS ) {
@@ -367,6 +339,39 @@ void VarLengthBuild::apply( Pose & pose ) {
 			original2modified = manager_.modify( pose );
 		}
 	}
+  if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
+
+		Size len_start = remodel_data_.sequence.length();
+
+		// length should honor the blueprint length, and subsequently if the input
+		// pose is longer than blueprint, allow copying of phi-psi beyond the last
+		// residue. only for repeats with matching blueprint and pdb lengths.
+		//cache the phi psi angles
+		//if (len_start < pose.total_residue() && len_start * (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure]) == pose.total_residue() ){
+		if (len_start < pose.total_residue()){
+			for (Size i = len_start+1; i <= pose.total_residue(); i++){
+				std::cout << "index: " << i << std::endl;
+				cached_phi.push_back( pose.phi( i ) );
+				cached_psi.push_back( pose.psi( i ) );
+				cached_omega.push_back( pose.omega( i ));
+			}
+	std::cout << "HERE1-1" << std::endl;
+
+			Size max_pdb_index = remodel_data_.blueprint.size()*2;
+	std::cout << "max_pdb index" << max_pdb_index <<  std::endl;
+
+			while (pose.total_residue() != max_pdb_index){
+	std::cout << "pose total" << pose.total_residue() <<  std::endl;
+				pose.conformation().delete_residue_slow(pose.total_residue());
+			}
+
+			//similarly update archive pose in repeat cases
+			while (archive_pose.total_residue() != max_pdb_index){
+				archive_pose.conformation().delete_residue_slow(archive_pose.total_residue());
+			}
+		}
+	}
+
 	// REPEAT: used for fragment picking and others
 	repeat_tail_length_ =0;
   if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
@@ -383,6 +388,13 @@ void VarLengthBuild::apply( Pose & pose ) {
 				pose.set_omega(pose.total_residue()-1,180);
 			}
 		}
+
+		else if ( pose.total_residue() > (remodel_data_.sequence.length()*2)){
+			while (pose.total_residue() != (2* remodel_data_.sequence.length())){
+				pose.conformation().delete_residue_slow(pose.total_residue());
+			}
+		}
+
 		assert( pose.total_residue() == (2* remodel_data_.sequence.length()));
 		repeat_tail_length_ = remodel_data_.sequence.length();
 
@@ -713,7 +725,7 @@ bool VarLengthBuild::centroid_build(
 	for ( Loops::const_iterator l = loops->begin(), le = loops->end(); l != le && cbreaks_pass; ++l ) {
 		if ( l->cut() > 0 ) {
 			Real const c = linear_chainbreak( pose, l->cut() );
-			TR << "centroid_build: final chainbreak at " << l->cut() << " = " << c << std::endl;
+			TR << "centroid_build: final chainbreak at " << l->cut() << " = " << c << " max tolerance " << max_linear_chainbreak_ <<  std::endl;
 			cbreaks_pass = c <= max_linear_chainbreak_;
 		}
 	}
