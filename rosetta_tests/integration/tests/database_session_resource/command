@@ -35,8 +35,8 @@ cd %(workdir)s
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
 
 if type -P sqlite3 &>/dev/null; then
-   sqlite3 scores.db3 < scores.sql > scores.csv
+   sqlite3 score.db3 < scores.sql > scores.csv
 else
    echo "Please install the sqlite3 command line application to correctly run this test." > log
 fi
-rm -rf scores.db3
+rm -rf score.db3
