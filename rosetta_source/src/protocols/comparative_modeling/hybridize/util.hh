@@ -82,6 +82,15 @@ core::Size atom_map_valid_size(
 
 void
 partial_align(
+		core::pose::Pose & pose,
+		core::pose::Pose const & ref_pose,
+		core::id::AtomID_Map< core::id::AtomID > const & atom_map,
+		bool iterate_convergence,
+		utility::vector1<core::Real> distance_thresholds,
+		core::Real min_coverage );
+
+void
+partial_align(
 			  core::pose::Pose & pose,
 			  core::pose::Pose const & ref_pose,
 			  core::id::AtomID_Map< core::id::AtomID > const & atom_map,

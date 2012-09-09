@@ -282,6 +282,24 @@ partial_align(
 		core::pose::Pose & pose,
 		core::pose::Pose const & ref_pose,
 		id::AtomID_Map< id::AtomID > const & atom_map,
+		bool iterate_convergence,
+		utility::vector1<core::Real> distance_thresholds,
+		core::Real min_coverage )
+{
+	std::list <core::Size> residue_list;
+	for ( Size ires=1; ires<= pose.total_residue(); ++ires ) {
+		if ( !pose.residue(ires).is_protein() ) continue;
+		residue_list.push_back(ires);
+	}
+
+	partial_align( pose, ref_pose, atom_map, residue_list, iterate_convergence, distance_thresholds, min_coverage );
+}
+
+void
+partial_align(
+		core::pose::Pose & pose,
+		core::pose::Pose const & ref_pose,
+		id::AtomID_Map< id::AtomID > const & atom_map,
 		std::list <Size> const & residue_list,
 		bool iterate_convergence,
 		utility::vector1<core::Real> distance_thresholds,
