@@ -43,23 +43,45 @@ class Menus():
 	"""
 
     #### File Menu ####
-	self.MenDesign=Menu(self.MenBar, tearoff=0)
+	self.MenFile=Menu(self.MenBar, tearoff=0)
 	input_object = ImportExport.InputFiles(self, self.toolkit)
-	self.MenDesign.add_command(label="Load PDB", command=lambda: input_object.choose_load_pose())
-	self.MenDesign.add_command(label="Load PDB list", command=lambda: input_object.set_PDBLIST())
-	self.MenDesign.add_command(label="Set Pymol Observer") #this option should be set only once.
-	self.MenDesign.add_command(label="Import Rosetta Options")
-	self.MenDesign.add_command(label="Export Rosetta Files") #export xml, options, command line, etc etc
-	self.MenBar.add_cascade(label="File", menu=self.MenDesign)
+	self.MenFile.add_command(label="Load PDB", command=lambda: input_object.choose_load_pose())
+	self.MenFile.add_command(label="Load PDB list", command=lambda: input_object.set_PDBLIST())
+	self.MenFile.add_checkbutton(label="Set Pymol Observer", variable=self.toolkit.PyMOLObject.auto_send) #this option should be set only once.
+	self.MenFile.add_command(label="Configure Option System",command = lambda: self.shoOptions())
+	self.MenFile.add_command(label ="Setup PDB for Rosetta", command=lambda: FixPDB().runfixPDBWindow(self.main, 0, 0))
+	self.MenFile.add_command(label ="Enable Constraints", foreground='red')
+	self.MenFile.add_command(label ="Enable Symmetry", foreground='red')
+	self.MenFile.add_command(label ="Enable Non-Standard Residues", foreground='red')
+	
+      #### Import ####
+	self.MenImport = Menu(self.MenBar, tearoff=0)
+	self.MenImport.add_command(label="Loop File", command = lambda: self.load_loop())
+	self.MenFile.add_cascade(label="Import", menu=self.MenImport)
+	
+      #### Export ####
+	self.MenExport = Menu(self.MenBar, tearoff=0)
+	self.MenExport.add_command(label="SCWRL seq File", command=lambda: self.savSeq())
+	self.MenExport.add_separator()
+	self.MenExport.add_command(label="Rosetta Loop File", foreground = 'red', command = lambda: self.savLoop())
+	self.MenExport.add_command(label="Rosetta ResFile", foreground='red')
+	self.MenExport.add_command(label="Rosetta Blueprint File", foreground='red')
+	self.MenExport.add_separator()
+	self.MenExport.add_command(label = "FASTA (Pose)", command=lambda: output_tools.save_FASTA(self.toolkit.pose, self.toolkit.outname.get(), False, self.toolkit.current_directory.get() ))
+	self.MenExport.add_command(label = "FASTA (Loops)", command = lambda: output_tools.save_FASTA(self.toolkit.pose, self.toolkit.outname.get(), False, self.toolkit.current_directory.get(), self.toolkit.loops_as_strings))
+	#self.MenExport.add_command(label="Save Database")
+	#self.MenExport.add_command(label="Save loops as new PDBs")
+	
+	self.MenFile.add_cascade(label="Export", menu=self.MenExport) #export xml, options, command line, etc etc
+	self.MenFile.add_separator()
+	self.MenFile.add_command(label= "Rosetta Command-Line Creator", command = lambda: self.shoRosettaProtocolSetup())
+	self.MenBar.add_cascade(label="File", menu=self.MenFile)
 	
 	
     #### Protein Design Menu ####
 	self.MenDesign=Menu(self.MenBar, tearoff=0)
 	self.MenDesign.add_command(label="Design File ToolBox", command=lambda: self.shoDesign1())
-	#self.MenDesign.add_command(label="Design Ab Initio", command=lambda: self.shoProAb())
-	#self.MenDesign.add_command(label="Loop Ab Initio")
-	#self.MenDesign.add_command(label="Constraint File ToolBox")
-	#self.MenDesign.add_command(label="Full Control ToolBox", command=lambda: self.shoFull())
+	self.MenDesign.add_command(label="Remodel Protein", foreground='red')
 	self.MenBar.add_cascade(label="Protein Design", menu=self.MenDesign)
 
     #### Advanced Control Menu ####
@@ -68,95 +90,11 @@ class Menus():
 	self.FineControl.add_command(label="Full Control Toolbox", command=lambda: self.toolkit.FullControlObject.makeWindow(Toplevel(self.main)))
 	self.FineControl.add_command(label="ScoreFxn Control", command =lambda: self.toolkit.ScoreObject.makeWindow(Toplevel(self.main), self.toolkit.pose))
 	self.FineControl.add_separator()
-	self.FineControl.add_command(label="Configure Option System",command = lambda: self.shoOptions())
 	self.FineControl.add_command(label="Interactive Terminal", foreground='red',command = lambda: self.shoIPythonWindow())
 	self.FineControl.add_command(label="Jump into Session", foreground='red', command = lambda: embed())
-	#self.FineControl.add_command(label="Constraints")
-
-
 	self.MenBar.add_cascade(label = "Advanced", menu = self.FineControl)
 
-    #### Rosetta Tool Menu ####
-	self.MenRosetta = Menu(self.MenBar, tearoff=0)
-	#self.MenRosetta.add_command(label = "Return Rosetta Numbering", command = lambda: output_tools.return_rosetta_numbering())
-	self.MenRosetta.add_command(label ="Setup PDB for Rosetta", command=lambda: FixPDB().runfixPDBWindow(self.main, 0, 0))
-	self.MenRosetta.add_separator()
-	self.MenRosetta.add_command(label ="Enable Constraints", foreground='red')
-	self.MenRosetta.add_command(label ="Enable Symmetry", foreground='red')
-	self.MenRosetta.add_command(label ="Enable Non-Standard Residues", foreground='red')
-	self.MenRosetta.add_separator()
-	##self.MenRosetta.add_command(label= "Rosetta Script Creator")
-	self.MenRosetta.add_command(label= "Rosetta Command-Line Creator", command = lambda: self.shoRosettaProtocolSetup())
-	##self.MenRosetta.add_command(label = "Run PsiPred")
-	self.MenBar.add_cascade(label="Rosetta Tools", menu=self.MenRosetta)
-    #### Molecular Dynamics Menu ####
-	"""'
-	self.MenMD=Menu(self.MenBar, tearoff=0)
-	self.MenMD.add_command(label="Setup Fixed Atoms")
-	self.MenMD.add_command(label="Setup Harmonic Constraints")
-	self.MenMD.add_command(label="Setup User-Defined Forces")
-	self.MenMD.add_separator()
-	self.MenMD.add_command(label="Run NAMD")
-	self.MenBar.add_cascade(label="Dynamics", menu=self.MenMD)
-	"""''
-
-    #### PDB Menu #### NEEDS WORK
-	"""
-	self.MenPDB=Menu(self.MenBar, tearoff=0)
-	#self.MenPDB.add_command(label="Load PDB into Python", command = lambda: setPDBdic(tools.pdbs.pdbTools().parsePDB(filename1.get(), pdbDic)))
-	self.MenPDB.add_command(label= "Setup PDB for Rosetta", command=lambda: FixPDB.runfixPDBWindow(self.main, 0, 0))
-	#self.MenPDB.add_separator()
-	#self.MenPDB.add_command(label = "Meiler label_'s Clean PDB", command = lambda: self.printPDB())
-	#self.MenPDB.add_command(label = "Clean MD File", command = lambda: setPDBdic(tools.pdbs.pdbTools().cleanPDB(pdbDic)))
-	#self.MenPDB.add_separator()
-	#self.MenPDB.add_command(label= "Change Occupancy to 1.0", command= lambda: tools.pdbs.pdbTools().chaOcc(pdbDic))
-	#self.MenPDB.add_command(label= "Remove Alternate Residues", command = lambda: tools.pdbs.pdbTools().RemAlt(pdbDic))
-	#self.MenPDB.add_command(label= "Remove Element Column", command = lambda: tools.pdbs.pdbTools().RemEle(pdbDic))
-	#self.MenPDB.add_separator()
-	#self.MenPDB.add_command(label = "Save PDB File", command = lambda: setPDBdic(tools.pdbs.pdbTools().savePDB(pdbDic)))
-	#self.MenBar.add_cascade(label = "PDB Tools", menu = self.MenPDB)
-	self.MenRel=Menu(self.MenBar, tearoff=0)
-	self.RelClose=Menu(self.MenBar, tearoff=0)
-
-    #### Analysis Menu #### NEEDS WORK
-	self.MenAnal=Menu(self.MenBar, tearoff=0)
-	self.MenCluster = Menu(self.MenBar, tearoff=0)
-	##self.MenCluster.add_command(label = "Cluster PDBList using Rosetta")
-	##self.MenCluster.add_command(label = "Cluster PDBList using Calibur (Recommended)")
-	##self.MenAnal.add_cascade(label = "Cluster", menu = self.MenCluster)
-	##self.MenAnal.add_command(label="Analysis Menu", command=lambda: self.shoAnalyze())
-	#self.MenAnal.add_command(label="Pose Management")
-	self.MenAnal.add_separator()
-	self.Menddg=Menu(self.MenBar, tearoff=0)
-	##self.Menddg.add_checkbutton(label="Save To File")
-	self.Menddg.add_command(label="Calculate", command=lambda: tools.analysis.interface().analyzeDDG(self.toolkit.pose))
-	##self.MenAnal.add_cascade(label="Calculate ddg", menu=self.Menddg)
-	self.MenBar.add_cascade(label="Analysis", menu=self.MenAnal)
-	"""
-
-    #### Import Menu #### REMOVE?
-	self.MenFrag=Menu(self.MenBar, tearoff=0)
-	self.MenFrag.add_command(label="Loop File", command = lambda: self.load_loop())
-	##self.MenFrag.add_command(label="Design Resfile")
-	#self.MenFrag.add_separator()
-	#self.MenBar.add_cascade(label="Import", menu=self.MenFrag)
-
-    #### Export Menu ####
-	self.MenExport = Menu(self.MenBar, tearoff=0)
-	self.MenExport.add_command(label="Save SCWRL seq File", command=lambda: self.savSeq())
-	self.MenExport.add_separator()
-	self.MenExport.add_command(label="Save Rosetta Loop File", foreground = 'red', command = lambda: self.savLoop())
-	##self.MenExport.add_command(label="Save Rosetta ResFile",command=lambda: Design1.saveDesign())
-	##self.MenExport.add_command(label="Save Rosetta Blueprint File")
-	self.MenExport.add_separator()
-	self.MenExport.add_command(label = "Save FASTA (Pose)", command=lambda: output_tools.save_FASTA(self.toolkit.pose, self.toolkit.outname.get(), False, self.toolkit.current_directory.get() ))
-	self.MenExport.add_command(label = "Save FASTA (Loops)", command = lambda: output_tools.save_FASTA(self.toolkit.pose, self.toolkit.outname.get(), False, self.toolkit.current_directory.get(), self.toolkit.loops_as_strings))
-	self.MenExport.add_separator()
-	#self.MenExport.add_command(label="Save Database")
-	#self.MenExport.add_command(label="Save loops as new PDBs")
-	self.MenBar.add_cascade(label="Export", menu=self.MenExport)
 	
-
     #### Tools Menu ####
 	self.MenTools = Menu(self.MenBar, tearoff=0)
 

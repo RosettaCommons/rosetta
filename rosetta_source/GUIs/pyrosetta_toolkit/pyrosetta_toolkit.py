@@ -114,12 +114,13 @@ class main_window:
       self.FullControlObject = FullControl(self.ScoreObject, self.pose); #Handles full control of protein.  This way, everything is saved...which is sorta cool.
    
    def _init_input_variables(self):
-      self.input_class = InputFrame(self._tk_, self)
+      self.input_class = ImportExport.InputFiles(self, self.toolkit)
+      self.input_frame = InputFrame(self._tk_, self)
       self.input_class.current_directory.set(self.pwd)
       self.current_directory= self.input_class.current_directory
       self.filename = self.input_class.filename
       self.PDBLIST = self.input_class.PDBLIST
-      self.loops_as_strings = self.input_class.loops_as_strings
+      self.loops_as_strings = self.input_frame.loops_as_strings
       
       
    def _init_output_variables(self):
