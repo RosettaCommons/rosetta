@@ -26,8 +26,8 @@ namespace filters {
 class AtomicContactCountFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< AtomicContactCountFilter >  AverageDegreeFilterOP;
-typedef utility::pointer::owning_ptr< AtomicContactCountFilter const >  AverageDegreeFilterCOP;
+typedef utility::pointer::owning_ptr< AtomicContactCountFilter >  AverageDegreeCountFilterOP;
+typedef utility::pointer::owning_ptr< AtomicContactCountFilter const >  AverageDegreeCountFilterCOP;
 
 } // namespace filters
 } //namespace protein_interface_design
