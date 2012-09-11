@@ -34,6 +34,12 @@ send_data_to_head_node(
 	listener_tags listener_tag,
 	std::string const & data);
 
+std::string
+listener_tag_to_name(listener_tags tag);
+
+listener_tags
+name_to_listener_tag(std::string const & listener_tag_name);
+
 
 } // namespace
 } // namespace

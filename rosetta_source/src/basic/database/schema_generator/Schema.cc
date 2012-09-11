@@ -215,25 +215,7 @@ void
 Schema::write(
 	sessionOP db_session
 ) {
-	// Ask the head node if the table has been created
-	string table_exists_tag;
-	if(mpi_rank() !=0){
-		table_exists_tag = request_data_from_head_node(
-			DATABASE_SCHEMA_GENERATOR_TAG, table_name_);
-	} else {
-		MessageListenerOP listener(
-			MessageListenerFactory::get_instance()->get_listener(
-				DATABASE_SCHEMA_GENERATOR_TAG));
-		listener->request(table_name_, table_exists_tag);
-	}
-
-	if(table_exists_tag == TABLE_EXISTS){
-		return;
-	}
-
-	// Since the table hasn't been created, see if it already exists
-	// and if it doesn't y to create it
-	if(!table_exists(db_session, table_name_)){
+	if(database_mode_ != utility::sql_database::DatabaseMode::postgres){
 		try{
 			statement stmt = (*db_session) << print();
 			safely_write_to_database(stmt);
@@ -245,27 +227,68 @@ Schema::write(
 				<< print() << std::endl;
 			TR.Error << e.what() << std::endl;
 			TR.flush();
-			std::cerr
-				<< "ERROR2 reading schema \n"
-				<< print() << std::endl;
 			utility_exit();
 		}
 	} else {
-		TR << "Table " << table_name_ << " exists, so I'm not creating it." << std::endl;
-	}
+		// postgres doesn't have create table if not exists, so coordinate
+		// with head node to prevent race
 
-	// Either the database already existed or it was just created--so
-	// let the head node that the table has been created
-	if(mpi_rank() != 0){
-		std::cout.flush();
-		send_data_to_head_node(
-			DATABASE_SCHEMA_GENERATOR_TAG,
-			table_name_);
-	} else {
-		MessageListenerOP listener(
-			MessageListenerFactory::get_instance()->get_listener(
-				DATABASE_SCHEMA_GENERATOR_TAG));
-		listener->receive(table_name_);
+		// Ask the head node if the table has been created
+		string table_exists_tag;
+		TR.Debug << "Node " << mpi_rank() << ": request to write table '" << table_name_ << "' to database." << endl;
+		if(mpi_rank() !=0){
+			table_exists_tag = request_data_from_head_node(
+				DATABASE_SCHEMA_GENERATOR_TAG, table_name_);
+		} else {
+			MessageListenerOP listener(
+				MessageListenerFactory::get_instance()->get_listener(
+					DATABASE_SCHEMA_GENERATOR_TAG));
+			listener->request(table_name_, table_exists_tag);
+		}
+		if(table_exists_tag == TABLE_EXISTS){
+			TR.Debug << "Node " << mpi_rank() << ": the head node says the table already exists." << endl;
+			return;
+		}
+
+		//////////////////////////////////////////////////////////////
+		// We've got the schema write token, make all other nodes wait
+
+		// Since the table hasn't been created, see if it already exists
+		// and if it doesn't y to create it
+		if(!table_exists(db_session, table_name_)){
+			try{
+				statement stmt = (*db_session) << print();
+				safely_write_to_database(stmt);
+				TR.Debug << "Writing table " << table_name_ << ": " << print() << std::endl;
+				TR.Debug.flush();
+			} catch (cppdb::cppdb_error e) {
+				TR.Error
+					<< "ERROR reading schema \n"
+					<< print() << std::endl;
+				TR.Error << e.what() << std::endl;
+				TR.flush();
+				utility_exit();
+			}
+		} else {
+			TR << "Table " << table_name_ << " actually does exists, so I'm not creating it." << std::endl;
+		}
+
+		// Either the database already existed or it was just created--so
+		// let the head node that the table has been created
+		if(mpi_rank() != 0){
+			std::cout.flush();
+			send_data_to_head_node(
+				DATABASE_SCHEMA_GENERATOR_TAG,
+				table_name_);
+		} else {
+			MessageListenerOP listener(
+				MessageListenerFactory::get_instance()->get_listener(
+					DATABASE_SCHEMA_GENERATOR_TAG));
+			listener->receive(table_name_);
+		}
+
+		// give up databse schema write token, let other nodes proceed.
+		//////////////////////////////////////////////////////////////
 	}
 }
 #endif

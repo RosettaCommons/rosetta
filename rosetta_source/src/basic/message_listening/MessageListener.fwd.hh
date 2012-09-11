@@ -22,6 +22,8 @@
 namespace basic {
 namespace message_listening {
 
+///@brief MessageListener id tags
+///note: please add string conversion to util.cc/hh
 enum listener_tags {
 	DATABASE_PROTOCOL_AND_BATCH_ID_TAG = 42,
 	DATABASE_SCHEMA_GENERATOR_TAG = 52

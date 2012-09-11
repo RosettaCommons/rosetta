@@ -43,7 +43,9 @@ DatabaseSchemaGeneratorListener::receive(
 ///@details
 /// Answer the question, "does the table with the given name exist?"
 /// Input: table_name
-/// Output: There is a table with that name in the database
+/// Output:
+///    return_data variable: There is a table with that name in the database
+///    return value: Request more information from slave?
 bool
 DatabaseSchemaGeneratorListener::request(
 	std::string const & table_name,
