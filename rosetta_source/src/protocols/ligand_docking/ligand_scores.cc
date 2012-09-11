@@ -153,6 +153,10 @@ void append_ligand_grid_scores(
 		return;
 	}
 
+	core::Vector const center(protocols::geometry::downstream_centroid_by_jump(after,jump_id));
+	grid_manager->initialize_all_grids(center);
+	grid_manager->update_grids(after,center);
+
 	core::Size const chain_id = core::pose::get_chain_id_from_jump_id(jump_id,after);
 	core::Real total_score = grid_manager->total_score(after,chain_id);
 	char const ligand_chain=core::pose::get_chain_from_jump_id(jump_id,after);
