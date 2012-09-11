@@ -23,11 +23,13 @@
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
+#include <utility/exit.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/matdes.OptionKeys.gen.hh>
+#include <core/pose/symmetry/util.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
@@ -168,6 +170,12 @@ core::Size ShapeComplementarityFilter::compute( Pose const & pose ) const
 
 	tr << "Shape complementarity: " << r.sc << std::endl;
 	tr << "Interface area: " << r.area << std::endl;
+	if ( ( sym_dof_name() != "" ) && basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block].user() )
+		utility_exit_with_message("Shape complementarity filter currently works properly for one component symmetries only if the command line option num_subs_building_block is set and a symdofname is not passed.");
+	if ( sym_dof_name() != "" )	{
+		utility::vector1<Size> subs = core::pose::symmetry::get_jump_name_to_subunits( pose, sym_dof_name() );	
+		tr << "Area per monomer: " << ( (core::Real) r.area / subs.size() ) << std::endl ;
+	}
 	if ( basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block].user() )
 		tr << "Area per monomer: " << ( (core::Real) r.area / basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block]() ) << std::endl;
 	tr << "Interface seperation: " << r.distance << std::endl;
@@ -188,6 +196,12 @@ core::Real ShapeComplementarityFilter::report_sm( Pose const & pose ) const
 			protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
 			std::string column_header = this->get_user_defined_name() + "_int_area";
 			core::Real int_area = scc_.GetResults().area ;
+			if ( ( sym_dof_name() != "" ) && basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block].user() )
+				utility_exit_with_message("Shape complementarity filter currently works properly for one component symmetries only if the command line option num_subs_building_block is set and a symdofname is not passed.");
+			if ( sym_dof_name() != "" )	{
+				utility::vector1<Size> subs = core::pose::symmetry::get_jump_name_to_subunits( pose, sym_dof_name() );	
+				int_area = int_area / subs.size() ;
+			}
 			if ( basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block].user() )
 				int_area = int_area / basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block]();
 			job->add_string_real_pair(column_header, int_area);
