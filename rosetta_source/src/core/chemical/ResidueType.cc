@@ -277,7 +277,7 @@ ResidueType::set_upper_connect_atom( std::string const & atm_name )
 AtomType const &
 ResidueType::atom_type( Size const atomno ) const
 {
-	PyAssert((atomno > 0) && (atomno <= natoms_), "ResidueType::atom_type( Size const atomno ): atomno is not in this ResidueType!");
+	//PyAssert((atomno > 0) && (atomno <= natoms_), "ResidueType::atom_type( Size const atomno ): atomno is not in this ResidueType!");
 	return ( *atom_types_ )[ atom_type_index_[ atomno ] ];
 }
 
@@ -285,7 +285,7 @@ ResidueType::atom_type( Size const atomno ) const
 int
 ResidueType::atom_type_index( Size const atomno ) const
 {
-	PyAssert((atomno > 0) && (atomno <= natoms_), "ResidueType::atom_type_index( Size const atomno ): atomno is not in this ResidueType!");
+	//PyAssert((atomno > 0) && (atomno <= natoms_), "ResidueType::atom_type_index( Size const atomno ): atomno is not in this ResidueType!");
 	return atom_type_index_[ atomno ];
 }
 
@@ -293,7 +293,7 @@ ResidueType::atom_type_index( Size const atomno ) const
 std::string const &
 ResidueType::atom_name( Size const index ) const
 {
-	PyAssert((index > 0) && (index <= natoms_), "ResidueType::atom_name( Size const index ): index is not in this ResidueType!");
+	//PyAssert((index > 0) && (index <= natoms_), "ResidueType::atom_name( Size const index ): index is not in this ResidueType!");
 	return atom_name_[ index ];
 }
 
@@ -301,7 +301,7 @@ ResidueType::atom_name( Size const index ) const
 Size
 ResidueType::atom_base( Size const atomno ) const
 {
-	PyAssert((atomno > 0) && (atomno <= natoms_), "ResidueType::atom_base( Size const atomno ): atomno is not in this ResidueType!");
+	//PyAssert((atomno > 0) && (atomno <= natoms_), "ResidueType::atom_base( Size const atomno ): atomno is not in this ResidueType!");
 	return atom_base_[ atomno ];
 }
 
@@ -309,7 +309,7 @@ ResidueType::atom_base( Size const atomno ) const
 Size
 ResidueType::abase2( Size const atomno ) const
 {
-	PyAssert((atomno > 0) && (atomno <= natoms_), "ResidueType::abase2( Size const atomno ): atomno is not in this ResidueType!");
+	//PyAssert((atomno > 0) && (atomno <= natoms_), "ResidueType::abase2( Size const atomno ): atomno is not in this ResidueType!");
 	return abase2_[ atomno ];
 }
 
