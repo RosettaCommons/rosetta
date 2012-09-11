@@ -49,7 +49,6 @@ sources = {
 	],
 	"basic/message_listening": [
 		"DbMoverMessageListener",
-		"DatabaseSchemaGeneratorListener",
 		"MessageListenerFactory",
 		"util",
 	],

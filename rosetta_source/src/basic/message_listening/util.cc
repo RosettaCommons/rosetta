@@ -93,8 +93,6 @@ listener_tag_to_name(listener_tags tag){
   switch(tag){
   case DATABASE_PROTOCOL_AND_BATCH_ID_TAG:
     return "DATABAASE_PROTOCOL_AND_BATCH_ID_TAG";
-  case DATABASE_SCHEMA_GENERATOR_TAG:
-    return "DATABASE_SCHEMA_GENERATOR_TAG";
   default:
     return "Unrecognized listener_tag: " + tag;
   }
@@ -104,10 +102,8 @@ listener_tag_to_name(listener_tags tag){
 
 listener_tags
 name_to_listener_tag(std::string const & listener_tag_name){
-  if(listener_tag_name == "DATABAASE_PROTOCOL_AND_BATCH_ID_TAG"){
+  if(listener_tag_name == "DATABASE_PROTOCOL_AND_BATCH_ID_TAG"){
     return DATABASE_PROTOCOL_AND_BATCH_ID_TAG;
-  } else if (listener_tag_name == "DATABASE_SCHEMA_GENERATOR_TAG"){
-    return DATABASE_SCHEMA_GENERATOR_TAG;
   } else {
     utility_exit_with_message("Unknown listener tag name '" + listener_tag_name + "'");
   }

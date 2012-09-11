@@ -14,7 +14,6 @@
 
 #include <basic/message_listening/MessageListener.fwd.hh>
 #include <basic/message_listening/DbMoverMessageListener.hh>
-#include <basic/message_listening/DatabaseSchemaGeneratorListener.hh>
 #include <basic/message_listening/MessageListenerFactory.hh>
 
 #include <utility/exit.hh>
@@ -60,11 +59,6 @@ MessageListenerFactory::get_listener(
 		case DATABASE_PROTOCOL_AND_BATCH_ID_TAG:
 			TR.Debug << "Creating a new DbMoverMessageListener" << std::endl;
 			listener = new DbMoverMessageListener();
-			break;
-
-		case DATABASE_SCHEMA_GENERATOR_TAG:
-			TR.Debug << "Creating a new DatabaseSchemaGeneratorListener" << std::endl;
-			listener = new DatabaseSchemaGeneratorListener();
 			break;
 
 		default:

@@ -22,7 +22,6 @@
 #include <basic/database/sql_utils.hh>
 
 #include <basic/message_listening/MessageListenerFactory.hh>
-#include <basic/message_listening/DatabaseSchemaGeneratorListener.hh>
 #include <basic/message_listening/util.hh>
 
 // Basic Headers
@@ -53,8 +52,6 @@ using std::stringstream;
 using utility::sql_database::sessionOP;
 using basic::message_listening::MessageListenerOP;
 using basic::message_listening::MessageListenerFactory;
-using basic::message_listening::TABLE_EXISTS;
-using basic::message_listening::DATABASE_SCHEMA_GENERATOR_TAG;
 using basic::message_listening::request_data_from_head_node;
 using basic::message_listening::send_data_to_head_node;
 using basic::database::table_exists;
@@ -149,18 +146,7 @@ Schema::add_index(
 
 std::string Schema::print(){
 	stringstream schema_string;
-	switch(database_mode_){
-	case utility::sql_database::DatabaseMode::postgres:
-		schema_string << "CREATE TABLE " << table_name_ << "(\n\t";
-		break;
-	case utility::sql_database::DatabaseMode::mysql:
-	case utility::sql_database::DatabaseMode::sqlite3:
-		schema_string << "CREATE TABLE IF NOT EXISTS " << table_name_ << "(\n\t";
-		break;
-	default:
-		utility_exit_with_message(
-			"Unrecognized database mode: '" + name_from_database_mode(database_mode_) + "'");
-	}
+	schema_string << "CREATE TABLE IF NOT EXISTS " << table_name_ << "(\n\t";
 
 	for (Columns::const_iterator it=columns_.begin(); it!=columns_.end(); it++){
 		if(it!=columns_.begin()){
@@ -215,80 +201,18 @@ void
 Schema::write(
 	sessionOP db_session
 ) {
-	if(database_mode_ != utility::sql_database::DatabaseMode::postgres){
-		try{
-			statement stmt = (*db_session) << print();
-			safely_write_to_database(stmt);
-			TR.Debug << "Writing table " << table_name_ << ": " << print() << std::endl;
-			TR.Debug.flush();
-		} catch (cppdb::cppdb_error e) {
-			TR.Error
-				<< "ERROR reading schema \n"
-				<< print() << std::endl;
-			TR.Error << e.what() << std::endl;
-			TR.flush();
-			utility_exit();
-		}
-	} else {
-		// postgres doesn't have create table if not exists, so coordinate
-		// with head node to prevent race
-
-		// Ask the head node if the table has been created
-		string table_exists_tag;
-		TR.Debug << "Node " << mpi_rank() << ": request to write table '" << table_name_ << "' to database." << endl;
-		if(mpi_rank() !=0){
-			table_exists_tag = request_data_from_head_node(
-				DATABASE_SCHEMA_GENERATOR_TAG, table_name_);
-		} else {
-			MessageListenerOP listener(
-				MessageListenerFactory::get_instance()->get_listener(
-					DATABASE_SCHEMA_GENERATOR_TAG));
-			listener->request(table_name_, table_exists_tag);
-		}
-		if(table_exists_tag == TABLE_EXISTS){
-			TR.Debug << "Node " << mpi_rank() << ": the head node says the table already exists." << endl;
-			return;
-		}
-
-		//////////////////////////////////////////////////////////////
-		// We've got the schema write token, make all other nodes wait
-
-		// Since the table hasn't been created, see if it already exists
-		// and if it doesn't y to create it
-		if(!table_exists(db_session, table_name_)){
-			try{
-				statement stmt = (*db_session) << print();
-				safely_write_to_database(stmt);
-				TR.Debug << "Writing table " << table_name_ << ": " << print() << std::endl;
-				TR.Debug.flush();
-			} catch (cppdb::cppdb_error e) {
-				TR.Error
-					<< "ERROR reading schema \n"
-					<< print() << std::endl;
-				TR.Error << e.what() << std::endl;
-				TR.flush();
-				utility_exit();
-			}
-		} else {
-			TR << "Table " << table_name_ << " actually does exists, so I'm not creating it." << std::endl;
-		}
-
-		// Either the database already existed or it was just created--so
-		// let the head node that the table has been created
-		if(mpi_rank() != 0){
-			std::cout.flush();
-			send_data_to_head_node(
-				DATABASE_SCHEMA_GENERATOR_TAG,
-				table_name_);
-		} else {
-			MessageListenerOP listener(
-				MessageListenerFactory::get_instance()->get_listener(
-					DATABASE_SCHEMA_GENERATOR_TAG));
-			listener->receive(table_name_);
-		}
-
-		// give up databse schema write token, let other nodes proceed.
-		//////////////////////////////////////////////////////////////
+	try{
+		statement stmt = (*db_session) << print();
+		safely_write_to_database(stmt);
+		TR.Debug << "Writing table " << table_name_ << ": " << print() << std::endl;
+		TR.Debug.flush();
+	} catch (cppdb::cppdb_error e) {
+		TR.Error
+			<< "ERROR reading schema \n"
+			<< print() << std::endl;
+		TR.Error << e.what() << std::endl;
+		TR.flush();
+		utility_exit();
 	}
 }
 #endif
