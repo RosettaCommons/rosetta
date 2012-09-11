@@ -53,10 +53,10 @@ public:
 private:
 };
 
-DummyClassOP PyReturnValuePolicyTest_DummyClassOP(void) { return DummyClass::create(); };
-DummyClassCOP PyReturnValuePolicyTest_DummyClassCOP(void) { return DummyClass::create(); };
-DummyClassAP PyReturnValuePolicyTest_DummyClassAP(void)  { return DummyClass::create(); };
-DummyClassCAP PyReturnValuePolicyTest_DummyClassCAP(void)  { return DummyClass::create(); };
+inline DummyClassOP PyReturnValuePolicyTest_DummyClassOP(void) { return DummyClass::create(); };
+inline DummyClassCOP PyReturnValuePolicyTest_DummyClassCOP(void) { return DummyClass::create(); };
+inline DummyClassAP PyReturnValuePolicyTest_DummyClassAP(void)  { return DummyClass::create(); };
+inline DummyClassCAP PyReturnValuePolicyTest_DummyClassCAP(void)  { return DummyClass::create(); };
 
 
 class SF_Replica;
@@ -95,20 +95,20 @@ private:
 	int some_private_int_;
 };
 
-SF_ReplicaOP PyReturnValuePolicyTest_SF_ReplicaOP(void) { return new SF_Replica; };
-SF_ReplicaCOP PyReturnValuePolicyTest_SF_ReplicaCOP(void) { return new SF_Replica; };
-SF_ReplicaAP PyReturnValuePolicyTest_SF_ReplicaAP(void)  { return new SF_Replica; };
-SF_ReplicaCAP PyReturnValuePolicyTest_SF_ReplicaCAP(void)  { return new SF_Replica; };
+inline SF_ReplicaOP PyReturnValuePolicyTest_SF_ReplicaOP(void) { return new SF_Replica; };
+inline SF_ReplicaCOP PyReturnValuePolicyTest_SF_ReplicaCOP(void) { return new SF_Replica; };
+inline SF_ReplicaAP PyReturnValuePolicyTest_SF_ReplicaAP(void)  { return new SF_Replica; };
+inline SF_ReplicaCAP PyReturnValuePolicyTest_SF_ReplicaCAP(void)  { return new SF_Replica; };
 
 
-core::pose::PoseOP PyReturnValuePolicyTest_PoseOP(void) { return new core::pose::Pose(); };
-core::pose::PoseCOP PyReturnValuePolicyTest_PoseCOP(void) { return new core::pose::Pose(); };
-core::pose::PoseAP PyReturnValuePolicyTest_PoseAP(void)  { return new core::pose::Pose(); };
-core::pose::PoseCAP PyReturnValuePolicyTest_PoseCAP(void)  { return new core::pose::Pose(); };
+inline core::pose::PoseOP PyReturnValuePolicyTest_PoseOP(void) { return new core::pose::Pose(); };
+inline core::pose::PoseCOP PyReturnValuePolicyTest_PoseCOP(void) { return new core::pose::Pose(); };
+inline core::pose::PoseAP PyReturnValuePolicyTest_PoseAP(void)  { return new core::pose::Pose(); };
+inline core::pose::PoseCAP PyReturnValuePolicyTest_PoseCAP(void)  { return new core::pose::Pose(); };
 
-core::scoring::ScoreFunctionOP PyReturnValuePolicyTest_ScoreFunctionOP(void) { return core::scoring::ScoreFunctionFactory::create_score_function("standard"); };
-core::scoring::ScoreFunctionCOP PyReturnValuePolicyTest_ScoreFunctionCOP(void) { return core::scoring::ScoreFunctionFactory::create_score_function("standard"); };
-core::scoring::ScoreFunctionCOP PyReturnValuePolicyTest_ScoreFunctionCOP2(void) { return new core::scoring::ScoreFunction(); };
+inline core::scoring::ScoreFunctionOP PyReturnValuePolicyTest_ScoreFunctionOP(void) { return core::scoring::ScoreFunctionFactory::create_score_function("standard"); };
+inline core::scoring::ScoreFunctionCOP PyReturnValuePolicyTest_ScoreFunctionCOP(void) { return core::scoring::ScoreFunctionFactory::create_score_function("standard"); };
+inline core::scoring::ScoreFunctionCOP PyReturnValuePolicyTest_ScoreFunctionCOP2(void) { return new core::scoring::ScoreFunction(); };
 
 //core::scoring::ScoreFunctionAP PyReturnValuePolicyTest_ScoreFunctionAP(void) { return core::scoring::ScoreFunctionFactory::create_score_function("standard"); };
 //core::scoring::ScoreFunctionCAP PyReturnValuePolicyTest_ScoreFunctionCOP(void) { return core::scoring::ScoreFunctionFactory::create_score_function("standard"); };
