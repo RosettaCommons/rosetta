@@ -48,6 +48,7 @@
 #include <core/util/kinematics_util.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.hh>
+#include <core/fragment/SecondaryStructure.hh>
 
 // symmetry
 #include <core/pose/symmetry/util.hh>
@@ -283,11 +284,19 @@ protocols::loops::Loops FoldTreeHybridize::renumber_template_chunks(
 
 void
 FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
-	//if (!option[ OptionKeys::in::file::psipred_ss2 ].user() ) {
-	//	utility_exit_with_message("Error in reading psipred_ss2 file, is the -in:file:psipred_ss2 flag set correctly?");
-	//}
-	//bool check_psipred = set_secstruct_from_psipred_ss2(pose);
-	//assert (check_psipred);
+	// add SS to pose
+	bool ok = false;
+	if ( option[ OptionKeys::in::file::psipred_ss2 ].user() )
+		ok = set_secstruct_from_psipred_ss2(pose);
+	if (!ok) {
+		core::fragment::SecondaryStructureOP ss_def = new core::fragment::SecondaryStructure( *frag_libs_[1], false );
+		for ( core::Size i = 1; i<=pose.total_residue(); ++i )
+			pose.set_secstruct( i, ss_def->secstruct(i) );
+		TR.Info << "Secondary structure from fragments: " << pose.secstruct() << std::endl;
+	} else {
+		TR.Info << "Secondary structure from psipred_ss2: " << pose.secstruct() << std::endl;
+	}
+
 
 	// combine:
 	// (a) contigs in the current template
