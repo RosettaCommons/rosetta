@@ -613,7 +613,7 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 			}
 			desc_found = true;
 			desc = opt_iter->second;
-		} else if ( opt_iter->first == "resource" ) {
+		} else if ( opt_iter->first == "resource_tag" ) {
 			resource_found = true;
 			rname = opt_iter->second;
 		} else if ( opt_iter->first == "pdb" ) {
@@ -626,7 +626,7 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 	std::ostringstream err;
 	if ( ! desc_found ) {
 		in_error = true;
-		err << "Failed to find a data description (desc) amongst the options pairs listed reading a 'Data' tag in a Job tag.\n A desc option must always be given\n";
+		err << "Failed to find a data description (desc) amongst the options pairs listed reading a 'Data' tag in a Job tag.\n A desc option must always be given.\n";
 	}
 	if ( rname.size() == 0 ) {
 		in_error = true;
@@ -634,14 +634,14 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 	}
 	if ( resource_found && pdb_found ) {
 		in_error = true;
-		err << "Error: Both a 'resource' and a 'pdb' tag were found for a 'Data' tag in the Job tag";
+		err << "Error: Both a 'resource_tag' and a 'pdb' tag were found for a 'Data' tag in the Job tag." << std::endl;
 	} else if ( resource_found && ! jd2rm->has_resource_configuration( rname )) {
 		in_error = true;
 		err << "Error: In Data subtag with descr='" << desc << "', the ResourceManager has no resource configuration for ResourceTag '" << rname << "'.\n";
 	}
 	if ( ! local_startstruct_found && pdb_found ) {
 		in_error = true;
-		err << "Error:  'pdb' tag given for a non-'startstruct' option in the 'Data' tag of a Job tag";
+		err << "Error:  'pdb' tag given for a non-'startstruct' option in the 'Data' tag of a Job tag." << std::endl;
 	}
 	if ( resources_for_job.find( desc ) != resources_for_job.end() ) {
 		in_error = true;

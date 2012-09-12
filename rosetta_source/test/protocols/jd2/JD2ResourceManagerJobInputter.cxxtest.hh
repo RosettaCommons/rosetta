@@ -75,9 +75,8 @@ public:
 			TS_ASSERT( false ); // should throw an exception
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::string expected_error =
-				"Failed to find a data description (desc) amongst the options pairs listed reading a 'Data' tag in a Job tag.\n"
-				" A desc option must always be given\n"
-				"Error:  'pdb' tag given for a non-'startstruct' option in the 'Data' tag of a Job tagProblem encountered for job named 'firstjob'.\n"
+				"Failed to find a data description (desc) amongst the options pairs listed reading a 'Data' tag in a Job tag.\n A desc option must always be given.\n"
+				"Error:  'pdb' tag given for a non-'startstruct' option in the 'Data' tag of a Job tag.\nProblem encountered for job named 'firstjob'.\n"
 				"Options given:\n"
 				"	(pdb, 1ten.pdb)\n"
 				"Thrown from protocols::jd2::JD2ResourceManagerJobInputter::parse_job_tag\n";
@@ -127,7 +126,7 @@ public:
 			"<JD2ResourceManagerJobInputter>\n"
 			"  <Jobs>\n"
 			"    <Job name=firstjob nstruct=10 >\n"
-			"      <Data desc=startstruct pdb=1ten.pdb resource=1ten_native/>\n"
+			"      <Data desc=startstruct pdb=1ten.pdb resource_tag=1ten_native/>\n"
 			"      <Option in:file:native=1ten.pdb />\n"
 			"    </Job>\n"
 			"  </Jobs>\n"
@@ -140,11 +139,11 @@ public:
 			TS_ASSERT( false ); // should throw an exception
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::string expected_error =
-				"Error: Both a 'resource' and a 'pdb' tag were found for a 'Data' tag in the Job tagProblem encountered for job named 'firstjob'.\n"
+				"Error: Both a 'resource_tag' and a 'pdb' tag were found for a 'Data' tag in the Job tag.\nProblem encountered for job named 'firstjob'.\n"
 				"Options given:\n"
 				"	(desc, startstruct)\n"
 				"	(pdb, 1ten.pdb)\n"
-				"	(resource, 1ten_native)\n"
+				"	(resource_tag, 1ten_native)\n"
 				"Thrown from protocols::jd2::JD2ResourceManagerJobInputter::parse_job_tag\n";
 			if ( e.msg() != expected_error ) {
 				std::cout << "expected error: '" << expected_error << "'" << std::endl;
@@ -174,7 +173,7 @@ public:
 			TS_ASSERT( false ); // should throw an exception
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::string expected_error =
-				"Error:  'pdb' tag given for a non-'startstruct' option in the 'Data' tag of a Job tagProblem encountered for job named 'firstjob'.\n"
+				"Error:  'pdb' tag given for a non-'startstruct' option in the 'Data' tag of a Job tag.\nProblem encountered for job named 'firstjob'.\n"
 				"Options given:\n"
 				"	(desc, whatever)\n"
 				"	(pdb, 1ten.pdb)\n"

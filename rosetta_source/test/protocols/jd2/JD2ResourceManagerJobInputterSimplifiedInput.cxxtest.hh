@@ -52,7 +52,7 @@ public:
 			"  <Jobs>\n"
 			"    <Job name=1xu1>\n"
 			"      <Data desc=startstruct pdb=1xu1FH_D.pdb/>\n"
-			"      <Data desc=symmdata resource=1xu1FH_D.symm/>\n"
+			"      <Data desc=symmdata resource_tag=1xu1FH_D.symm/>\n"
 			"    </Job>\n"
 			"  </Jobs>\n"
 			"</JD2ResourceManagerJobInputter>\n";
@@ -70,7 +70,7 @@ public:
 			"  <Jobs>\n"
 			"    <Job name=1xu1>\n"
 			"      <Data desc=startstruct pdb=1xu1FH_D.pdb/>\n"
-			"      <Data desc=symmdata resource=1xu1FH_D.symm/>\n"
+			"      <Data desc=symmdata resource_tag=1xu1FH_D.symm/>\n"
 			"    </Job>\n"
 			"  </Jobs>\n"
 			"</JD2ResourceManagerJobInputter>\n";
@@ -85,7 +85,7 @@ public:
 			"  <Jobs>\n"
 			"    <Job name=1xu1>\n"
 			"      <Data desc=startstruct pdb=1xu1FH_D.pdb/>\n"
-			"      <Data desc=symmdata resource=1xu1FH_D.symm/>\n"
+			"      <Data desc=symmdata resource_tag=1xu1FH_D.symm/>\n"
 			"    </Job>\n"
 			"  </Jobs>\n"
 			"</JD2ResourceManagerJobInputter>\n";
@@ -100,7 +100,7 @@ public:
 			"  <Jobs>\n"
 			"    <Job name=1xu1>\n"
 			"      <Data desc=startstruct pdb=1xu1FH_D.pdb/>\n"
-			"      <Data desc=symmdata resource=1xu1FH_D.symm/>\n"
+			"      <Data desc=symmdata resource_tag=1xu1FH_D.symm/>\n"
 			"    </Job>\n"
 			"  </Jobs>\n"
 			"</JD2ResourceManagerJobInputter>\n";
@@ -115,7 +115,7 @@ public:
 			"  <Jobs>\n"
 			"    <Job name=1xu1>\n"
 			"      <Data desc=startstruct pdb=1xu1FH_D.pdb/>\n"
-			"      <Data desc=symmdata resource=1xu1FH_D.symm/>\n"
+			"      <Data desc=symmdata resource_tag=1xu1FH_D.symm/>\n"
 			"    </Job>\n"
 			"  </Jobs>\n"
 			"</JD2ResourceManagerJobInputter>\n";

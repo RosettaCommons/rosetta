@@ -51,7 +51,7 @@ ElectronDensityLoaderCreator::create_resource_loader() const {
 
 string
 ElectronDensityLoaderCreator::loader_type() const {
-	return "ElectronDensityLoader";
+	return "ElectronDensity";
 }
 
 //// ElectronDensityLoader /////

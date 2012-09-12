@@ -9,8 +9,7 @@
 /// @file   utility/sql_database/DatabaseSessionManager.hh
 /// @author Matthew O'Meara
 /// @author Sam Deluca
-/// @author Chris Miles
-
+/// @author Tim Jacobs
 
 #ifndef INCLUDED_utility_sql_database_DatabaseSessionManager_HH
 #define INCLUDED_utility_sql_database_DatabaseSessionManager_HH
@@ -47,21 +46,21 @@ public:
 
 	DatabaseMode::e
 	get_db_mode() const { return db_mode_; }
-	
+
 	void
 	set_transaction_mode(
 		TransactionMode::e const transaction_mode) { transaction_mode_ = transaction_mode; }
 
 	TransactionMode::e
 	get_transaction_mode() const { return transaction_mode_; }
-	
+
 	void
 	set_chunk_size(
 		platform::Size const chunk_size) { chunk_size_ = chunk_size; }
-		
+
 	platform::Size
 	get_chunk_size() { return chunk_size_; }
-		
+
 	void
 	set_db_name(
 		std::string const & db_name) { db_name_ = db_name; }
@@ -75,10 +74,13 @@ public:
 
 	std::string const &
 	get_pq_schema() const { return pq_schema_; }
-	
+
 	void
 	begin();
-	
+
+	///@brief indicate that a transaction block has completed. NOTE:
+	///When in chunk transaction mode, this may not actually write to
+	///the database.
 	void
 	commit();
 

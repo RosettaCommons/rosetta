@@ -70,14 +70,15 @@ save_plots <- function(
 			"because the 'output_formats' parameter is not valid.\n",
 			e, sep=""))
 	})
+	plot_formats <- output_formats[output_formats$type == "plot",]
 
-	if(nrow(output_formats)==0){
+	if(nrow(plot_formats)==0){
 		stop(paste(
 			"ERROR: Unable to save the plot '", plot_id, "' ",
 			"because no output formats were specified.", sep=""))
 	}
 
-	a_ply(output_formats, 1, function(fmt){
+	a_ply(plot_formats, 1, function(fmt){
 		full_output_dir <- file.path(output_dir, features_analysis@id, fmt$id)
 		if(!file.exists(full_output_dir)){
 			dir.create(full_output_dir, recursive=TRUE)

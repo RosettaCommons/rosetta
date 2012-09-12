@@ -6,17 +6,17 @@
                 <ExtraRotamersGeneric name=extra_chi ex1=1 ex2=1 extrachi_cutoff=0/>
         </TASKOPERATIONS>
         <MOVERS>
-		<ReportToDB name=features_reporter db="outputs/features_sp2.db3" sample_source="Rotamer Recovery for the Sp2 Correction">
+		<ReportToDB name=features_reporter database_name="outputs/features_sp2.db3" sample_source="Rotamer Recovery for the Sp2 Correction">
 			<feature name=ResidueFeatures/>
 			
 			# B-Factors for filtering  and PDB identification for looking at the structures
 			<feature name=PdbDataFeatures/>
 
 			# The RTMin protocol repacks one sidechain at a time (in its native environment)
-			<feature name=RotamerRecoveryFeatures scorefxn=s protocol=RRProtocolTRMin comparer=RRComparerRotBins task_operations=extra_chi/>
+			<feature name=RotamerRecoveryFeatures scorefxn=s protocol=RRProtocolRTMin comparer=RRComparerRotBins task_operations=extra_chi/>
 
 			# The MinPack protocol repacks all the sidechains at once
-			feature name=RotamerRecoveryFeatures scorefxn=s protocol=RRProtocolMinPack comparer=RRComparerRotBins
+			feature name=RotamerRecoveryFeatures scorefxn=s protocol=RRProtocolMinPack comparer=RRComparerRotBins/>
                 </ReportToDB>
         </MOVERS>
         <PROTOCOLS>

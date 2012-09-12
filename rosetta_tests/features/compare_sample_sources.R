@@ -188,6 +188,7 @@ initialize_method_scripts <- function(base_dir) {
 		"scripts/methods/instancer.R",
 		"scripts/methods/output_formats.R",
 		"scripts/methods/save_plots.R",
+		"scripts/methods/save_tables.R",
 		"scripts/methods/coordinate_normalizations.R",
 		"scripts/methods/comparison_statistics.R",
 		"scripts/methods/generate_plot_webpage.R",

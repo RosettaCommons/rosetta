@@ -24,7 +24,7 @@ ____________________________________________________
 
 1) Download input structures
 
-   cd %(minidir)s/tests/rotamer_recovery
+   cd %(minidir)s/tests/rotamer_recovery_sp2
    svn checkout https://svn.rosettacommons.org/source/trunk/mini.data/tests/scientific/tests/rotamer_recovery/inputs inputs
 
 

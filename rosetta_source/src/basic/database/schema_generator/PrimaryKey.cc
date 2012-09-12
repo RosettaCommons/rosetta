@@ -45,7 +45,7 @@ PrimaryKey::columns() const {
 
 std::string
 PrimaryKey::print(
-	utility::sql_database::sessionOP db_session
+	utility::sql_database::sessionOP /*db_session*/
 ) const {
 	std::string primary_key_string = "PRIMARY KEY (";
 

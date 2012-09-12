@@ -11,7 +11,7 @@
 	<Jobs>
 		<Job name=1xu1FH_D>
 			<Data desc=startstruct pdb="1xu1FH_D.pdb"/>
-			<Data desc=database_session resource=db/>
+			<Data desc=database_session resource_tag=db/>
 		</Job>
 	</Jobs>
 </JD2ResourceManagerJobInputter>

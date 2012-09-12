@@ -94,6 +94,11 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
       default="release",
       help="In selecting binaries, which mode was used? (default: release)",
     )
+    parser.add_option("--extras",
+      default="default",
+      dest="extras",
+      help="in selecting binaries, which options were specified? (default: default)",
+    )
     parser.add_option("--daemon", action="store_true", dest="daemon", default=False,
       help="generate daemon friendly output (off by default)"
     )
@@ -105,6 +110,11 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
       default="biweekly_statistics",
       #dest="outdir",
       help="Where the output results should be written. (default: biweekly_statistics)"
+    )
+    parser.add_option("--clean-output-dir",
+      default=True,
+      dest="clean_outdir",
+      help="If the output directory exists should it be cleaned before running the test? (default: True)"
     )
 
     (options, args) = parser.parse_args(args=argv)
@@ -146,7 +156,7 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
     outdir = options.output_dir
     if not path.isdir(outdir): os.mkdir(outdir)
     else:
-        if path.isdir(outdir): shutil.rmtree(outdir)
+        if path.isdir(outdir) and options.clean_outdir: shutil.rmtree(outdir)
         os.mkdir(outdir)
 
     # Each test consists of a directory with a "command" file in it.
@@ -159,6 +169,7 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
     queue = Queue()
     for test in tests:
         queue.put(test)
+        if path.isdir(path.join(outdir, test)): shutil.rmtree(path.join(outdir, test))
         copytree( path.join("biweekly", test), path.join(outdir, test),
                   accept=lambda src, dst: path.basename(src) != '.svn' )
 
@@ -247,10 +258,13 @@ class Worker:
                         else: platform = "_unknown_"
                         compiler = self.opts.compiler
                         mode = self.opts.mode
-                        binext = platform+compiler+mode
+                        extras = self.opts.extras
+                        binext = extras+"."+platform+compiler+mode
                         # Read the command from the file "command"
                         cmd = file(path.join(workdir, "command")).read().strip()
                         cmd = cmd % vars() # variable substitution using Python printf style
+                        cmd_line_sh = path.join(workdir, "command.sh")
+                        f = file(cmd_line_sh, 'w');  f.write(cmd);  f.close() # writing back so test can be easily re-run by user lately...
                         #if "'" in cmd: raise ValueError("Can't use single quotes in command strings!")
                         #print cmd; print
                         if self.host is None:
