@@ -83,10 +83,10 @@ void
 ResidueFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id",DbUUID(), false);
-	Column resNum("resNum",DbInteger(), false);
-	Column name3("name3",DbText(), false);
-	Column res_type("res_type",DbText(), false);
+	Column struct_id("struct_id", new DbUUID(), false);
+	Column resNum("resNum", new DbInteger(), false);
+	Column name3("name3", new DbText(), false);
+	Column res_type("res_type", new DbText(), false);
 
 	utility::vector1<Column> residues_pkey_cols;
 	residues_pkey_cols.push_back(struct_id);

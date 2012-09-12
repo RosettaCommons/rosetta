@@ -13,7 +13,8 @@
 /// @author Tim Jacobs
 
 #include <basic/database/schema_generator/PrimaryKey.hh>
-//#include <basic/database/schema_generator/Column.hh>
+#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <basic/database/schema_generator/Column.hh>
 
 //C++ Headers
 #include <string>
@@ -42,7 +43,10 @@ PrimaryKey::columns() const {
 	return columns_;
 }
 
-std::string PrimaryKey::print(){
+std::string
+PrimaryKey::print(
+	utility::sql_database::sessionOP db_session
+) const {
 	std::string primary_key_string = "PRIMARY KEY (";
 
 	for(Columns::const_iterator it=columns_.begin(); it != columns_.end(); ++it){

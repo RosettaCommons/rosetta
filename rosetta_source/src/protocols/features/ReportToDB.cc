@@ -517,7 +517,7 @@ ReportToDB::write_features_reporters_table() const {
 
 	Schema features_reporters(
 		"features_reporters",
-		PrimaryKey( Column("report_name", DbTextKey())));
+		PrimaryKey( Column("report_name", new DbTextKey())));
 
 	features_reporters.write(db_session_);
 
@@ -550,8 +550,8 @@ ReportToDB::write_batch_reports_table() const {
 	using namespace basic::database::schema_generator;
 
 	Schema batch_reports("batch_reports");
-	Column report_name("report_name", DbTextKey());
-	Column batch_id("batch_id",DbInteger());
+	Column report_name("report_name", new DbTextKey());
+	Column batch_id("batch_id", new DbInteger());
 
 	batch_reports.add_foreign_key(
 		ForeignKey(batch_id, "batches", "batch_id", true /*defer*/));

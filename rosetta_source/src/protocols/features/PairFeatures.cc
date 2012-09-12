@@ -79,13 +79,13 @@ PairFeatures::write_residue_pairs_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbUUID());
-	Column resNum1("resNum1", DbInteger());
-	Column resNum2("resNum2", DbInteger());
-	Column res1_10A_neighbors("res1_10A_neighbors", DbInteger());
-	Column res2_10A_neighbors("res2_10A_neighbors", DbInteger());
-	Column actcoord_dist("actcoord_dist", DbReal());
-	Column polymeric_sequence_dist("polymeric_sequence_dist", DbInteger());
+	Column struct_id("struct_id", new DbUUID());
+	Column resNum1("resNum1", new DbInteger());
+	Column resNum2("resNum2", new DbInteger());
+	Column res1_10A_neighbors("res1_10A_neighbors", new DbInteger());
+	Column res2_10A_neighbors("res2_10A_neighbors", new DbInteger());
+	Column actcoord_dist("actcoord_dist", new DbReal());
+	Column polymeric_sequence_dist("polymeric_sequence_dist", new DbInteger());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);

@@ -81,27 +81,27 @@ ProtocolFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 
 	if(protocol_id_mode){
 
-		Column protocol_id("protocol_id",DbInteger());
+		Column protocol_id("protocol_id", new DbInteger());
 		Schema protocols("protocols", PrimaryKey(protocol_id));
 
-		protocols.add_column( Column("specified_options", DbText()) );
-		protocols.add_column( Column("command_line", DbText()) );
-		protocols.add_column( Column("svn_url", DbText()) );
-		protocols.add_column( Column("svn_version", DbText()) );
-		protocols.add_column( Column("script", DbText()) );
+		protocols.add_column( Column("specified_options", new DbText()) );
+		protocols.add_column( Column("command_line", new DbText()) );
+		protocols.add_column( Column("svn_url", new DbText()) );
+		protocols.add_column( Column("svn_version", new DbText()) );
+		protocols.add_column( Column("script", new DbText()) );
 		protocols.write(db_session);
 	}
 
 	else{
 
-		Column protocol_id("protocol_id",DbInteger(), false /*not null*/, true /*autoincrement*/);
+		Column protocol_id("protocol_id", new DbInteger(), false /*not null*/, true /*autoincrement*/);
 		Schema protocols("protocols", PrimaryKey(protocol_id));
 
-		protocols.add_column( Column("specified_options", DbText()) );
-		protocols.add_column( Column("command_line", DbText()) );
-		protocols.add_column( Column("svn_url", DbText()) );
-		protocols.add_column( Column("svn_version", DbText()) );
-		protocols.add_column( Column("script", DbText()) );
+		protocols.add_column( Column("specified_options", new DbText()) );
+		protocols.add_column( Column("command_line", new DbText()) );
+		protocols.add_column( Column("svn_url", new DbText()) );
+		protocols.add_column( Column("svn_version", new DbText()) );
+		protocols.add_column( Column("script", new DbText()) );
 		protocols.write(db_session);
 	}
 }

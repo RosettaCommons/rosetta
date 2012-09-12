@@ -111,15 +111,15 @@ PoseConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP db
 
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id",DbUUID(), false /*not null*/, false /*don't autoincrement*/);
+	Column struct_id("struct_id", new DbUUID(), false /*not null*/, false /*don't autoincrement*/);
 
 	/******pose_conformations******/
 	Schema pose_conformations("pose_conformations");
 	pose_conformations.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
 
-	pose_conformations.add_column( Column("annotated_sequence", DbText()) );
-	pose_conformations.add_column( Column("total_residue", DbInteger()) );
-	pose_conformations.add_column( Column("fullatom", DbInteger()) );
+	pose_conformations.add_column( Column("annotated_sequence", new DbText()) );
+	pose_conformations.add_column( Column("total_residue", new DbInteger()) );
+	pose_conformations.add_column( Column("fullatom", new DbInteger()) );
 
 	pose_conformations.write(db_session);
 
@@ -127,38 +127,38 @@ PoseConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP db
 	Schema fold_trees("fold_trees");
 	fold_trees.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
 
-	fold_trees.add_column( Column("start_res", DbInteger()) );
-	fold_trees.add_column( Column("start_atom", DbText()) );
-	fold_trees.add_column( Column("stop_res", DbInteger()) );
-	fold_trees.add_column( Column("stop_atom", DbText()) );
-	fold_trees.add_column( Column("label", DbInteger()) );
-	fold_trees.add_column( Column("keep_stub_in_residue", DbInteger()) );
+	fold_trees.add_column( Column("start_res", new DbInteger()) );
+	fold_trees.add_column( Column("start_atom", new DbText()) );
+	fold_trees.add_column( Column("stop_res", new DbInteger()) );
+	fold_trees.add_column( Column("stop_atom", new DbText()) );
+	fold_trees.add_column( Column("label", new DbInteger()) );
+	fold_trees.add_column( Column("keep_stub_in_residue", new DbInteger()) );
 
 	fold_trees.write(db_session);
 
 	/******jumps******/
 	Schema jumps("jumps");
 	jumps.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
-	jumps.add_column( Column("jump_id", DbInteger()) );
-	jumps.add_column( Column("xx", DbDouble()) );
-	jumps.add_column( Column("xy", DbDouble()) );
-	jumps.add_column( Column("xz", DbDouble()) );
-	jumps.add_column( Column("yx", DbDouble()) );
-	jumps.add_column( Column("yy", DbDouble()) );
-	jumps.add_column( Column("yz", DbDouble()) );
-	jumps.add_column( Column("zx", DbDouble()) );
-	jumps.add_column( Column("zy", DbDouble()) );
-	jumps.add_column( Column("zz", DbDouble()) );
-	jumps.add_column( Column("x", DbDouble()) );
-	jumps.add_column( Column("y", DbDouble()) );
-	jumps.add_column( Column("z", DbDouble()) );
+	jumps.add_column( Column("jump_id", new DbInteger()) );
+	jumps.add_column( Column("xx", new DbDouble()) );
+	jumps.add_column( Column("xy", new DbDouble()) );
+	jumps.add_column( Column("xz", new DbDouble()) );
+	jumps.add_column( Column("yx", new DbDouble()) );
+	jumps.add_column( Column("yy", new DbDouble()) );
+	jumps.add_column( Column("yz", new DbDouble()) );
+	jumps.add_column( Column("zx", new DbDouble()) );
+	jumps.add_column( Column("zy", new DbDouble()) );
+	jumps.add_column( Column("zz", new DbDouble()) );
+	jumps.add_column( Column("x", new DbDouble()) );
+	jumps.add_column( Column("y", new DbDouble()) );
+	jumps.add_column( Column("z", new DbDouble()) );
 
 	jumps.write(db_session);
 
 	/******chain_endings******/
 	Schema chain_endings("chain_endings");
 	chain_endings.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
-	chain_endings.add_column( Column("end_pos", DbInteger()) );
+	chain_endings.add_column( Column("end_pos", new DbInteger()) );
 
 	chain_endings.write(db_session);
 }

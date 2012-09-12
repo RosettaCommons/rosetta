@@ -124,19 +124,19 @@ StrandBundleFeatures::write_schema_to_db(utility::sql_database::sessionOP db_ses
 
 		// PrimaryKey
 			// id of strand_pairs
-			Column pairs_id              ("pairs_id",               DbInteger(), false /*not null*/, true /*autoincrement*/);
+			Column pairs_id              ("pairs_id",               new DbInteger(), false /*not null*/, true /*autoincrement*/);
 
 			// bool_parallel is PrimaryKey just because it doesn't point to any foreign values
-			Column bool_parallel         ("bool_parallel",          DbInteger(), false /*not null*/, false /*don't autoincrement*/);
+			Column bool_parallel         ("bool_parallel",          new DbInteger(), false /*not null*/, false /*don't autoincrement*/);
 
 		// unique key of original PDB file
-			Column struct_id             ("struct_id",              DbUUID(),    false /*not null*/, false /*don't autoincrement*/);
+			Column struct_id             ("struct_id",              new DbUUID(),    false /*not null*/, false /*don't autoincrement*/);
 
 		// ForeignKey
-			Column i_strand_residue_start("i_strand_residue_start", DbInteger(), false /*not null*/, false /*don't autoincrement*/);
-			Column i_strand_residue_end  ("i_strand_residue_end",   DbInteger(), false /*not null*/, false /*don't autoincrement*/);
-			Column j_strand_residue_start("j_strand_residue_start", DbInteger(), false /*not null*/, false /*don't autoincrement*/);
-			Column j_strand_residue_end  ("j_strand_residue_end",   DbInteger(), false /*not null*/, false /*don't autoincrement*/);
+			Column i_strand_residue_start("i_strand_residue_start", new DbInteger(), false /*not null*/, false /*don't autoincrement*/);
+			Column i_strand_residue_end  ("i_strand_residue_end",   new DbInteger(), false /*not null*/, false /*don't autoincrement*/);
+			Column j_strand_residue_start("j_strand_residue_start", new DbInteger(), false /*not null*/, false /*don't autoincrement*/);
+			Column j_strand_residue_end  ("j_strand_residue_end",   new DbInteger(), false /*not null*/, false /*don't autoincrement*/);
 
 		// Schema
 		// PrimaryKey
@@ -188,25 +188,25 @@ StrandBundleFeatures::write_schema_to_db(utility::sql_database::sessionOP db_ses
 	/****** write sheet_pairs ******/
 
 		// PrimaryKey
-			Column sheet_pairs_id              ("sheet_pairs_id", DbInteger(), false /*not null*/, true /*autoincrement*/);
+			Column sheet_pairs_id              ("sheet_pairs_id", new DbInteger(), false /*not null*/, true /*autoincrement*/);
 
 		// group1 (g1) should be close pair with each other, group2 should be close pair with each other
 		// ForeignKey
 			// group 1
 				// strand 1
-			Column g1_strand_1_res_start  ("g1_strand_1_res_start", DbInteger(), false /*not null*/, false /*don't autoincrement*/);
-			Column g1_strand_1_res_end    ("g1_strand_1_res_end",   DbInteger(), false /*not null*/, false /*don't autoincrement*/);
+			Column g1_strand_1_res_start  ("g1_strand_1_res_start", new DbInteger(), false /*not null*/, false /*don't autoincrement*/);
+			Column g1_strand_1_res_end    ("g1_strand_1_res_end",   new DbInteger(), false /*not null*/, false /*don't autoincrement*/);
 				// strand 2			
-			Column g1_strand_2_res_start  ("g1_strand_2_res_start", DbInteger(), false /*not null*/, false /*don't autoincrement*/);
-			Column g1_strand_2_res_end    ("g1_strand_2_res_end",   DbInteger(), false /*not null*/, false /*don't autoincrement*/);
+			Column g1_strand_2_res_start  ("g1_strand_2_res_start", new DbInteger(), false /*not null*/, false /*don't autoincrement*/);
+			Column g1_strand_2_res_end    ("g1_strand_2_res_end",   new DbInteger(), false /*not null*/, false /*don't autoincrement*/);
 			
 			// group 2
-			Column g2_strand_1_res_start  ("g2_strand_1_res_start", DbInteger(), false /*not null*/, false /*don't autoincrement*/);
-			Column g2_strand_1_res_end    ("g2_strand_1_res_end",   DbInteger(), false /*not null*/, false /*don't autoincrement*/);
-			Column g2_strand_2_res_start  ("g2_strand_2_res_start", DbInteger(), false /*not null*/, false /*don't autoincrement*/);
-			Column g2_strand_2_res_end    ("g2_strand_2_res_end",   DbInteger(), false /*not null*/, false /*don't autoincrement*/);
+			Column g2_strand_1_res_start  ("g2_strand_1_res_start", new DbInteger(), false /*not null*/, false /*don't autoincrement*/);
+			Column g2_strand_1_res_end    ("g2_strand_1_res_end",   new DbInteger(), false /*not null*/, false /*don't autoincrement*/);
+			Column g2_strand_2_res_start  ("g2_strand_2_res_start", new DbInteger(), false /*not null*/, false /*don't autoincrement*/);
+			Column g2_strand_2_res_end    ("g2_strand_2_res_end",   new DbInteger(), false /*not null*/, false /*don't autoincrement*/);
 
-			Column shortest_sc_dis	("shortest_sc_dis",	DbDouble(), false /*not null*/, false /*don't autoincrement*/);
+			Column shortest_sc_dis	("shortest_sc_dis",	new DbDouble(), false /*not null*/, false /*don't autoincrement*/);
 
 		// Schema
 		// PrimaryKey

@@ -18,6 +18,7 @@
 
 #include <basic/database/schema_generator/Column.hh>
 #include <utility/vector1.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 //C++ Header
 #include <string>
@@ -41,7 +42,10 @@ public:
 
 	Columns const & columns() const;
 
-	std::string print();
+	std::string
+	print(
+		utility::sql_database::sessionOP db_session
+	) const;
 
 private:
 	Columns columns_;

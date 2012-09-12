@@ -104,12 +104,12 @@ ResidueScoresFeatures::write_residue_scores_1b_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column batch_id("batch_id", DbInteger());
-	Column struct_id("struct_id", DbUUID());
-	Column resNum("resNum", DbInteger());
-	Column score_type_id("score_type_id", DbInteger());
-	Column score_value("score_value", DbReal());
-	Column context_dependent("context_dependent", DbInteger());
+	Column batch_id("batch_id", new DbInteger());
+	Column struct_id("struct_id", new DbUUID());
+	Column resNum("resNum", new DbInteger());
+	Column score_type_id("score_type_id", new DbInteger());
+	Column score_value("score_value", new DbReal());
+	Column context_dependent("context_dependent", new DbInteger());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(batch_id);
@@ -150,13 +150,13 @@ ResidueScoresFeatures::write_residue_scores_2b_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column batch_id("batch_id", DbInteger());
-	Column struct_id("struct_id", DbUUID());
-	Column resNum1("resNum1", DbInteger());
-	Column resNum2("resNum2", DbInteger());
-	Column score_type_id("score_type_id", DbInteger());
-	Column score_value("score_value", DbReal());
-	Column context_dependent("context_dependent", DbInteger());
+	Column batch_id("batch_id", new DbInteger());
+	Column struct_id("struct_id", new DbUUID());
+	Column resNum1("resNum1", new DbInteger());
+	Column resNum2("resNum2", new DbInteger());
+	Column score_type_id("score_type_id", new DbInteger());
+	Column score_value("score_value", new DbReal());
+	Column context_dependent("context_dependent", new DbInteger());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(batch_id);

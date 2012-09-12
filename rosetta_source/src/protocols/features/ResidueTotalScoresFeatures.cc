@@ -109,9 +109,9 @@ ResidueTotalScoresFeatures::write_residue_total_scores_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbUUID());
-	Column resNum("resNum", DbInteger());
-	Column score_value("score_value", DbReal());
+	Column struct_id("struct_id", new DbUUID());
+	Column resNum("resNum", new DbInteger());
+	Column score_value("score_value", new DbReal());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);

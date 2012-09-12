@@ -60,8 +60,8 @@ namespace helixAssembly {
 
 		using namespace basic::database::schema_generator;
 
-		PrimaryKey id(Column("id", DbUUID(), false));
-		Column random_number(Column("description", DbInteger()));
+		PrimaryKey id(Column("id", new DbUUID(), false));
+		Column random_number(Column("description", new DbInteger()));
 
 		Schema concurrency_test("concurrency_test", id);
 		concurrency_test.add_column(random_number);

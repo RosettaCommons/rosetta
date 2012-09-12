@@ -78,17 +78,17 @@ ResidueDatabaseIO::write_residue_type_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column residue_type_set_name("residue_type_set_name", DbText(255));
-	Column version("version", DbText());
-	Column name("name", DbText(255));
-	Column name3("name3", DbText(3));
-	Column name1("name1", DbText(2)); // TODO Fix ccpdb to allow putting in just a single character rather then a one character string.
-	Column aa("aa", DbInteger());
-	Column lower_connect("lower_connect", DbInteger());
-	Column upper_connect("upper_connect", DbInteger());
-	Column nbr_atom("nbr_atom", DbInteger());
-	Column nbr_radius("nbr_radius", DbReal());
-	Column rotamer_library("rotamer_library", DbText());
+	Column residue_type_set_name("residue_type_set_name", new DbText(255));
+	Column version("version", new DbText());
+	Column name("name", new DbText(255));
+	Column name3("name3", new DbText(3));
+	Column name1("name1", new DbText(2)); // TODO Fix ccpdb to allow putting in just a single character rather then a one character string.
+	Column aa("aa", new DbInteger());
+	Column lower_connect("lower_connect", new DbInteger());
+	Column upper_connect("upper_connect", new DbInteger());
+	Column nbr_atom("nbr_atom", new DbInteger());
+	Column nbr_radius("nbr_radius", new DbReal());
+	Column rotamer_library("rotamer_library", new DbText());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(residue_type_set_name);
@@ -115,14 +115,14 @@ ResidueDatabaseIO::write_residue_type_atom_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column residue_type_set_name("residue_type_set_name", DbText(255));
-	Column residue_type_name("residue_type_name", DbText(255));
-	Column atom_index("atom_index", DbInteger());
-	Column atom_name("atom_name", DbText());
-	Column atom_type_name("atom_type_name", DbText());
-	Column mm_atom_type_name("mm_atom_type_name", DbText());
-	Column charge("charge", DbReal());
-	Column is_backbone("is_backbone", DbInteger());
+	Column residue_type_set_name("residue_type_set_name", new DbText(255));
+	Column residue_type_name("residue_type_name", new DbText(255));
+	Column atom_index("atom_index", new DbInteger());
+	Column atom_name("atom_name", new DbText());
+	Column atom_type_name("atom_type_name", new DbText());
+	Column mm_atom_type_name("mm_atom_type_name", new DbText());
+	Column charge("charge", new DbReal());
+	Column is_backbone("is_backbone", new DbInteger());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(residue_type_set_name);
@@ -163,11 +163,11 @@ ResidueDatabaseIO::write_residue_type_bond_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column residue_type_set_name("residue_type_set_name", DbText(255));
-	Column residue_type_name("residue_type_name", DbText(255));
-	Column atom1("atom1", DbInteger());
-	Column atom2("atom2", DbInteger());
-	Column bond_type("bond_type", DbInteger());
+	Column residue_type_set_name("residue_type_set_name", new DbText(255));
+	Column residue_type_name("residue_type_name", new DbText(255));
+	Column atom1("atom1", new DbInteger());
+	Column atom2("atom2", new DbInteger());
+	Column bond_type("bond_type", new DbInteger());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(residue_type_set_name);
@@ -199,10 +199,10 @@ ResidueDatabaseIO::write_residue_type_cut_bond_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column residue_type_set_name("residue_type_set_name", DbText(255));
-	Column residue_type_name("residue_type_name", DbText(255));
-	Column atom1("atom1", DbInteger());
-	Column atom2("atom2", DbInteger());
+	Column residue_type_set_name("residue_type_set_name", new DbText(255));
+	Column residue_type_name("residue_type_name", new DbText(255));
+	Column atom1("atom1", new DbInteger());
+	Column atom2("atom2", new DbInteger());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(residue_type_set_name);
@@ -232,13 +232,13 @@ ResidueDatabaseIO::write_residue_type_chi_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column residue_type_set_name("residue_type_set_name", DbText(255));
-	Column residue_type_name("residue_type_name", DbText(255));
-	Column chino("chino", DbInteger());
-	Column atom1("atom1", DbText());
-	Column atom2("atom2", DbText());
-	Column atom3("atom3", DbText());
-	Column atom4("atom4", DbText());
+	Column residue_type_set_name("residue_type_set_name", new DbText(255));
+	Column residue_type_name("residue_type_name", new DbText(255));
+	Column chino("chino", new DbInteger());
+	Column atom1("atom1", new DbText());
+	Column atom2("atom2", new DbText());
+	Column atom3("atom3", new DbText());
+	Column atom4("atom4", new DbText());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(residue_type_set_name);
@@ -274,11 +274,11 @@ ResidueDatabaseIO::write_residue_type_chi_rotamer_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column residue_type_set_name("residue_type_set_name", DbText(255));
-	Column residue_type_name("residue_type_name", DbText(255));
-	Column chino("chino", DbInteger());
-	Column mean("mean", DbReal());
-	Column sdev("sdev", DbReal());
+	Column residue_type_set_name("residue_type_set_name", new DbText(255));
+	Column residue_type_name("residue_type_name", new DbText(255));
+	Column chino("chino", new DbInteger());
+	Column mean("mean", new DbReal());
+	Column sdev("sdev", new DbReal());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(residue_type_set_name);
@@ -309,11 +309,11 @@ ResidueDatabaseIO::write_residue_type_proton_chi_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column residue_type_set_name("residue_type_set_name", DbText(255));
-	Column residue_type_name("residue_type_name", DbText(255));
-	Column chino("chino", DbInteger());
-	Column sample("sample", DbReal());
-	Column is_extra("is_extra", DbInteger());
+	Column residue_type_set_name("residue_type_set_name", new DbText(255));
+	Column residue_type_name("residue_type_name", new DbText(255));
+	Column chino("chino", new DbInteger());
+	Column sample("sample", new DbReal());
+	Column is_extra("is_extra", new DbInteger());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(residue_type_set_name);
@@ -344,9 +344,9 @@ ResidueDatabaseIO::write_residue_type_property_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column residue_type_set_name("residue_type_set_name", DbText(255));
-	Column residue_type_name("residue_type_name", DbText(255));
-	Column property("property", DbText());
+	Column residue_type_set_name("residue_type_set_name", new DbText(255));
+	Column residue_type_name("residue_type_name", new DbText(255));
+	Column property("property", new DbText());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(residue_type_set_name);
@@ -375,9 +375,9 @@ ResidueDatabaseIO::write_residue_type_variant_type_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column residue_type_set_name("residue_type_set_name", DbText(255));
-	Column residue_type_name("residue_type_name", DbText(255));
-	Column variant_type("variant_type", DbText());
+	Column residue_type_set_name("residue_type_set_name", new DbText(255));
+	Column residue_type_name("residue_type_name", new DbText(255));
+	Column variant_type("variant_type", new DbText());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(residue_type_set_name);
@@ -406,16 +406,16 @@ ResidueDatabaseIO::write_residue_type_icoor_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column residue_type_set_name("residue_type_set_name", DbText(255));
-	Column residue_type_name("residue_type_name", DbText(255));
-	Column icoor_sequence("icoor_sequence", DbInteger());
-	Column child_atom("child_atom", DbText());
-	Column phi("phi", DbReal());
-	Column theta("theta", DbReal());
-	Column distance("distance", DbReal());
-	Column parent_atom("parent_atom", DbText());
-	Column angle_atom("angle_atom", DbText());
-	Column torsion_atom("torsion_atom", DbText());
+	Column residue_type_set_name("residue_type_set_name", new DbText(255));
+	Column residue_type_name("residue_type_name", new DbText(255));
+	Column icoor_sequence("icoor_sequence", new DbInteger());
+	Column child_atom("child_atom", new DbText());
+	Column phi("phi", new DbReal());
+	Column theta("theta", new DbReal());
+	Column distance("distance", new DbReal());
+	Column parent_atom("parent_atom", new DbText());
+	Column angle_atom("angle_atom", new DbText());
+	Column torsion_atom("torsion_atom", new DbText());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(residue_type_set_name);

@@ -127,10 +127,10 @@ StructureScoresFeatures::write_schema_to_db(
 	using namespace basic::database::schema_generator;
 
 	//******structure_scores******//
-	Column batch_id("batch_id", DbInteger(), false);
-	Column struct_id("struct_id", DbUUID(), false);
-	Column score_type_id("score_type_id", DbInteger(), false);
-	Column score_value("score_value", DbInteger(), false);
+	Column batch_id("batch_id", new DbInteger(), false);
+	Column struct_id("struct_id", new DbUUID(), false);
+	Column score_type_id("score_type_id", new DbInteger(), false);
+	Column score_value("score_value", new DbInteger(), false);
 
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(batch_id);

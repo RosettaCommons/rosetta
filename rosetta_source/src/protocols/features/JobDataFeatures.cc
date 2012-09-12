@@ -68,8 +68,8 @@ void
 JobDataFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 
 	using namespace basic::database::schema_generator;
-	Column struct_id("struct_id",DbUUID(), false /*not null*/, false /*don't autoincrement*/);
-	Column data_key("data_key",DbText(255));
+	Column struct_id("struct_id", new DbUUID(), false /*not null*/, false /*don't autoincrement*/);
+	Column data_key("data_key", new DbText(255));
 
 	utility::vector1<Column> primary_columns;
 	primary_columns.push_back(struct_id);
@@ -83,13 +83,13 @@ JobDataFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session)
 
 	Schema job_string_string_data("job_string_string_data",primary_key);
 	job_string_string_data.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
-	job_string_string_data.add_column(Column("data_value",DbText()));
+	job_string_string_data.add_column(Column("data_value", new DbText()));
 
 	job_string_string_data.write(db_session);
 
 	Schema job_string_real_data("job_string_real_data",primary_key);
 	job_string_real_data.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
-	job_string_real_data.add_column(Column("data_value",DbReal()));
+	job_string_real_data.add_column(Column("data_value", new DbReal()));
 
 	job_string_real_data.write(db_session);
 

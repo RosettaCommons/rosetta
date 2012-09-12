@@ -132,10 +132,10 @@ ScoreFunctionFeatures::write_score_function_weights_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column batch_id("batch_id", DbInteger(), true);
-	Column score_function_name("score_function_name", DbText(), true);
-	Column score_type_id("score_type_id", DbInteger(), true);
-	Column weight("weight", DbReal(), true);
+	Column batch_id("batch_id", new DbInteger(), true);
+	Column score_function_name("score_function_name", new DbText(), true);
+	Column score_type_id("score_type_id", new DbInteger(), true);
+	Column weight("weight", new DbReal(), true);
 
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(batch_id);

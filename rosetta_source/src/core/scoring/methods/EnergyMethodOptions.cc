@@ -409,10 +409,10 @@ EnergyMethodOptions::write_score_function_method_options_table_schema(
 ) {
 	using namespace basic::database::schema_generator;
 
-	Column batch_id("batch_id", DbInteger(), true);
-	Column score_function_name("score_function_name", DbText(), true);
-	Column option_key("option_key", DbText(), true);
-	Column option_value("option_value", DbText(), true);
+	Column batch_id("batch_id", new DbInteger(), true);
+	Column score_function_name("score_function_name", new DbText(), true);
+	Column option_key("option_key", new DbText(), true);
+	Column option_value("option_value", new DbText(), true);
 
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(batch_id);

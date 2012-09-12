@@ -75,8 +75,8 @@ ResidueSecondaryStructureFeatures::write_schema_to_db(utility::sql_database::ses
 	using namespace basic::database;
 	using namespace boost::assign;
 
-	Column code("code", DbText(1), false);
-	Column label("label", DbText(), false);
+	Column code("code", new DbText(1), false);
+	Column label("label", new DbText(), false);
 	Schema dssp_codes("dssp_codes", PrimaryKey(code));
 	dssp_codes.add_column(label);
 
@@ -93,9 +93,9 @@ ResidueSecondaryStructureFeatures::write_schema_to_db(utility::sql_database::ses
 	insert_or_ignore("dssp_codes", dssp_cols, list_of("' '")("'Irregular'"), db_session);
 
 	/******residue_secondary_structure******/
-	Column struct_id("struct_id",DbUUID(), false);
-	Column resNum("resNum",DbInteger(), false);
-	Column dssp("dssp",DbText(1));
+	Column struct_id("struct_id", new DbUUID(), false);
+	Column resNum("resNum", new DbInteger(), false);
+	Column dssp("dssp", new DbText(1));
 
 	utility::vector1<Column> sec_struct_pkey_cols;
 	sec_struct_pkey_cols.push_back(struct_id);
@@ -123,9 +123,9 @@ ResidueSecondaryStructureFeatures::write_schema_to_db(utility::sql_database::ses
 	residue_secondary_structure.write(db_session);
 
 	/******helix_segments******/
-	Column helix_id("helix_id",DbInteger(), false);
-	Column residue_begin("residue_begin",DbInteger(), false);
-	Column residue_end("residue_end",DbInteger(), false);
+	Column helix_id("helix_id", new DbInteger(), false);
+	Column residue_begin("residue_begin", new DbInteger(), false);
+	Column residue_end("residue_end", new DbInteger(), false);
 
 	utility::vector1<Column> helix_pkey_cols;
 	helix_pkey_cols.push_back(struct_id);
@@ -152,7 +152,7 @@ ResidueSecondaryStructureFeatures::write_schema_to_db(utility::sql_database::ses
 	helix_segments.write(db_session);
 
 	/******beta_segments******/
-	Column beta_id("beta_id",DbInteger(), false);
+	Column beta_id("beta_id", new DbInteger(), false);
 
 	utility::vector1<Column> beta_pkey_cols;
 	beta_pkey_cols.push_back(struct_id);

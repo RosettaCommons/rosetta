@@ -91,14 +91,14 @@ ResidueBurialFeatures::write_residue_burial_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbUUID());
-	Column resNum("resNum", DbInteger());
-	Column ten_a_neighbors("ten_a_neighbors", DbInteger());
-	Column twelve_a_neighbors("twelve_a_neighbors", DbInteger());
-	Column neigh_vect_raw("neigh_vect_raw", DbReal());
-	Column sasa_r100("sasa_r100", DbReal());
-	Column sasa_r140("sasa_r140", DbReal());
-	Column sasa_r200("sasa_r200", DbReal());
+	Column struct_id("struct_id", new DbUUID());
+	Column resNum("resNum", new DbInteger());
+	Column ten_a_neighbors("ten_a_neighbors", new DbInteger());
+	Column twelve_a_neighbors("twelve_a_neighbors", new DbInteger());
+	Column neigh_vect_raw("neigh_vect_raw", new DbReal());
+	Column sasa_r100("sasa_r100", new DbReal());
+	Column sasa_r140("sasa_r140", new DbReal());
+	Column sasa_r200("sasa_r200", new DbReal());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);

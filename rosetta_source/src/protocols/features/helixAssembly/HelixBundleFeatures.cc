@@ -16,6 +16,8 @@
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
+#include <core/scoring/sasa.hh>
+#include <core/pose/util.hh>
 
 //External
 #include <boost/uuid/uuid.hpp>
@@ -24,9 +26,9 @@
 #include <protocols/features/helixAssembly/HelixBundleFeatures.hh>
 #include <protocols/features/helixAssembly/HelicalFragment.hh>
 
-//Utility and basic
-#include <basic/database/sql_utils.hh>
+//Utility
 #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/tag/Tag.hh>
 
 //C++
 #include <string>
@@ -36,6 +38,7 @@
 #include <cppdb/frontend.h>
 
 //Basic
+#include <basic/database/sql_utils.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/util.hh>
 #include <basic/options/keys/helixAssembly.OptionKeys.gen.hh>
@@ -44,8 +47,6 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/schema_generator/Constraint.hh>
-
-
 
 static basic::Tracer TR("protocols.features.helixAssembly.HelixBundleFeatures");
 
@@ -62,29 +63,14 @@ using cppdb::statement;
 using cppdb::result;
 
 HelixBundleFeatures::HelixBundleFeatures() :
-helix_cap_dist_cutoff_(12.0),
-helix_contact_dist_cutoff_(14.0),
-min_helix_size_(14)
-{
-	init_from_options();
-}
-
-void HelixBundleFeatures::init_from_options(){
-	using namespace basic::options;
-
-	if(option[OptionKeys::helixAssembly::min_helix_size].user()){
-		min_helix_size_ = option[OptionKeys::helixAssembly::min_helix_size];
-	}
-	if(option[OptionKeys::helixAssembly::helix_contact_dist_cutoff].user()){
-		helix_contact_dist_cutoff_ = option[OptionKeys::helixAssembly::helix_contact_dist_cutoff];
-	}
-	if(option[OptionKeys::helixAssembly::helix_cap_dist_cutoff].user()){
-		helix_cap_dist_cutoff_ = option[OptionKeys::helixAssembly::helix_cap_dist_cutoff];
-	}
-}
+bundle_size_(3),
+helix_size_(14),
+helix_cap_dist_cutoff_(12.0)
+{}
 
 utility::vector1<std::string>
-HelixBundleFeatures::features_reporter_dependencies() const {
+HelixBundleFeatures::features_reporter_dependencies() const
+{
 	utility::vector1<std::string> dependencies;
 	dependencies.push_back("ResidueFeatures");
 	dependencies.push_back("ProteinResidueConformationFeatures");
@@ -93,28 +79,35 @@ HelixBundleFeatures::features_reporter_dependencies() const {
 }
 
 void
-HelixBundleFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
+HelixBundleFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const
+{
 	using namespace basic::database::schema_generator;
 
 	/******helix_bundles******/
-	Column bundle_id("bundle_id",DbInteger(), false /*not null*/, true /*autoincrement*/);
-	Column struct_id("struct_id",DbUUID(), false /*not null*/, false /*don't autoincrement*/);
-
+	Column bundle_id("bundle_id", new DbInteger(), false /*not null*/, true /*autoincrement*/);
+	Column struct_id("struct_id", new DbUUID(), false /*not null*/, false /*don't autoincrement*/);
+	Column bundle_size("bundle_size", new DbInteger(), false, false);
+	Column helix_size("helix_size", new DbInteger(), false, false);
+	
 	Schema helix_bundles("helix_bundles", PrimaryKey(bundle_id));
+	helix_bundles.add_column(bundle_size);
+	helix_bundles.add_column(helix_size);
 	helix_bundles.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
 
 	helix_bundles.write(db_session);
 
 	/******bundle_helices******/
-	Column helix_id("helix_id",DbInteger(), false /*not null*/, true /*autoincrement*/);
-	Column flipped("flipped",DbInteger());
+	Column helix_id("helix_id", new DbInteger(), false /*not null*/, true /*autoincrement*/);
+	Column flipped("flipped", new DbInteger());
+	Column sasa("sasa", new DbReal());
 	Schema bundle_helices("bundle_helices", PrimaryKey(helix_id));
 
 	bundle_helices.add_column(struct_id);
 	bundle_helices.add_column(flipped);
+	bundle_helices.add_column(sasa);
 
-	Column residue_begin("residue_begin",DbInteger());
-	Column residue_end("residue_end",DbInteger());
+	Column residue_begin("residue_begin", new DbInteger());
+	Column residue_end("residue_end", new DbInteger());
 
 
 	utility::vector1<std::string> fkey_reference_cols;
@@ -129,38 +122,18 @@ HelixBundleFeatures::write_schema_to_db(utility::sql_database::sessionOP db_sess
 	fkey_cols_end.push_back(struct_id);
 	fkey_cols_end.push_back(residue_end);
 
-	ForeignKey bundle_id_fkey(Column("bundle_id",DbInteger(),false), "helix_bundles", "bundle_id");
+	ForeignKey bundle_id_fkey(Column("bundle_id", new DbInteger(),false), "helix_bundles", "bundle_id");
 
 	bundle_helices.add_foreign_key(bundle_id_fkey);
 	bundle_helices.add_foreign_key(ForeignKey(fkey_cols_begin, "residues", fkey_reference_cols, true /*defer*/));
 	bundle_helices.add_foreign_key(ForeignKey(fkey_cols_end, "residues", fkey_reference_cols, true /*defer*/));
 
 	bundle_helices.write(db_session);
-
-//	"CREATE TABLE IF NOT EXISTS helix_bundles (\n"
-//	"	bundle_id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-//	"	struct_id BLOB,\n"
-//	"	FOREIGN KEY(struct_id)\n"
-//	"		REFERENCES structures(struct_id)\n"
-//	"		DEFERRABLE INITIALLY DEFERRED);"
-//
-//	//does this need to be keyed on struct_id too?
-//	"CREATE TABLE IF NOT EXISTS bundle_helices (\n"
-//	"	helix_id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-//	"	bundle_id INTEGER,\n"
-//	"	residue_begin INTEGER,\n"
-//	"	residue_end INTEGER,\n"
-//	"	FOREIGN KEY(bundle_id)\n"
-//	"		REFERENCES helix_bundles(bundle_id)\n"
-//	"		DEFERRABLE INITIALLY DEFERRED,\n"
-//	"	FOREIGN KEY(residue_begin,residue_end)\n"
-//	"		REFERENCES residues(resNum,resNum)\n"
-//	"		DEFERRABLE INITIALLY DEFERRED);"
-//	;
 }
 
 //Select all helical segments reported by the ResidueSecondaryStructureFeatures and save them in a vector
-utility::vector1<HelicalFragment> HelixBundleFeatures::get_full_helices(boost::uuids::uuid struct_id, sessionOP db_session){
+utility::vector1<HelicalFragmentOP> HelixBundleFeatures::get_helix_fragments(boost::uuids::uuid struct_id, sessionOP db_session)
+{
 	std::string select_string =
 	"SELECT\n"
 	"	helices.helix_id,\n"
@@ -169,73 +142,221 @@ utility::vector1<HelicalFragment> HelixBundleFeatures::get_full_helices(boost::u
 	"FROM\n"
 	"	helix_segments as helices\n"
 	"WHERE\n"
-	"	helices.struct_id = ?;";
+	"	helices.struct_id = ?\n"
+	"ORDER BY residue_begin;";
 
 	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
 	select_statement.bind(1,struct_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	utility::vector1<HelicalFragment> all_helices;
-	while(res.next()){
+	utility::vector1<HelicalFragmentOP> all_helices;
+	
+	core::Size prev_residue_begin;
+	core::Size prev_residue_end;
+	while(res.next())
+	{
 		Size helix_id, residue_begin, residue_end;
 		res >> helix_id >> residue_begin >> residue_end;
-		all_helices.push_back(HelicalFragment(residue_begin, residue_end));
+		
+		if(residue_begin - prev_residue_end == 2 && all_helices.size() > 0)
+		{
+			all_helices.pop_back();
+			all_helices.push_back(new HelicalFragment(prev_residue_begin, residue_end));
+			TR  << "combining helix segments: " << prev_residue_begin << "-" << prev_residue_end
+				<< " and " << residue_begin << "-" << residue_end << std::endl;
+		}
+		else
+		{
+			all_helices.push_back(new HelicalFragment(residue_begin, residue_end));
+		}
+		prev_residue_begin=residue_begin;
+		prev_residue_end=residue_end;
 	}
 
-	return all_helices;
+	TR << "number of uninterrupted helix_segments: " << all_helices.size() << std::endl;
+	utility::vector1<HelicalFragmentOP> all_helix_fragments;
+	for(core::Size i=1; i<=all_helices.size(); ++i)
+	{
+		HelicalFragmentOP cur_helix=all_helices[i];
+		
+		if(cur_helix->end() >= helix_size_)
+		{
+			for(core::Size start_res=cur_helix->start();
+				start_res<=cur_helix->end()-helix_size_+1;
+				++start_res)
+			{
+				
+				core::Size end_res = start_res+helix_size_-1;
+				
+				HelicalFragmentOP frag_1 = new HelicalFragment(start_res, end_res);//normal direction
+				HelicalFragmentOP frag_2 = new HelicalFragment(end_res, start_res);//reversed
+													
+				all_helix_fragments.push_back(frag_1);
+				all_helix_fragments.push_back(frag_2);
+			}
+		}
+	}
+
+	return all_helix_fragments;
 }
 
-//Check three helical fragments to ensure they make contacts with eachother. The requirement here is that each helical residue must have at least
-//half of its residues within 10 angstroms to any residue on each of the other two helices
-bool HelixBundleFeatures::checkHelixContacts(Pose const & pose, HelicalFragment helix_1, HelicalFragment helix_2, HelicalFragment helix_3){
-
-	Size dist_sq_cutoff = (Size)pow((double)helix_contact_dist_cutoff_, 2);
-
-	core::Size helix_1_and_2_contacts = 0;
-	core::Size helix_1_and_3_contacts = 0;
-
-	for(Size i=helix_1.get_start(); i<=helix_1.get_end(); i++){
-
-		//bool helix_2_pass=false;
-		for(Size j=helix_2.get_start(); j<=helix_2.get_end(); j++){
-			if(pose.residue(i).atom("CA").xyz().distance_squared(pose.residue(j).atom("CA").xyz()) < dist_sq_cutoff){
-				helix_1_and_2_contacts++;
-				break;
-			}
+void
+HelixBundleFeatures::record_helix_sasas(
+	core::pose::Pose const & pose,
+	utility::vector1<HelicalFragmentOP> & bundle_fragments
+){
+	utility::vector1<core::Size> positions;
+	utility::vector1< std::pair<core::Size, core::Size> > helix_ends;
+	core::Size prev_end=0;
+	for(core::Size i=1; i<=bundle_fragments.size(); ++i)
+	{
+		//Record residues from the starting pose for this bundle
+		for(core::Size cur_res=bundle_fragments[i]->seq_start();
+			cur_res<=bundle_fragments[i]->seq_end();
+			++cur_res)
+		{
+			positions.push_back(cur_res);
 		}
+		
+		//Get the ends of each helix in the new bundle
+		core::Size new_start=prev_end+1;
+		core::Size new_end=new_start+helix_size_-1;
+		helix_ends.push_back(std::make_pair(new_start, new_end));
+		prev_end=new_end;
+	}
+	
+	assert(helix_ends.size()==bundle_fragments.size());
+	
+	core::pose::Pose bundle_pose;
+	for(core::Size j=1; j<=helix_ends.size(); ++j)
+	{
+		kinematics::FoldTree ft;
+		core::Size jump_counter=1;
+		if(j!=1)
+		{
+			//peptide edge from 1->residue before helix to be separated
+			ft.add_edge(1, helix_ends[j-1].second, kinematics::Edge::PEPTIDE);
+		
+			//jump from 1 to the edge to be separated
+			ft.add_edge(1, helix_ends[j].first, jump_counter);
+			jump_counter++;
+		}
+		
+		//peptide edge for the helix to be separated
+		ft.add_edge(helix_ends[j].first, helix_ends[j].second, kinematics::Edge::PEPTIDE);
+		
+		//add jump and peptide edge for the remainder of the bundle if the helix to be separated isn't the last one
+		if(j!=helix_ends.size())
+		{
+			ft.add_edge(1, helix_ends[j+1].first, jump_counter);
+			ft.add_edge(helix_ends[j+1].first, helix_ends[helix_ends.size()].second, kinematics::Edge::PEPTIDE);
+		}
+		
+		ft.reorder(1);
+		TR << "Fold tree " << j << ": " << ft << std::endl;
+		
+		//Only make the pose the first time, otherwise just change the fold tree
+		if(j==1)
+		{
+			core::pose::create_subpose(pose, positions, ft, bundle_pose);
+		}
+		else
+		{
+			bundle_pose.fold_tree(ft);
+		}
+				
+		sasa_filter_.jump(1);
+		core::Real dSasa = sasa_filter_.compute(bundle_pose);
+		bundle_fragments[j]->sasa(dSasa);
+	}
+}
 
-		//bool helix_3_pass=false;
-		for(Size j=helix_3.get_start(); j<helix_3.get_end(); j++){
-			if(pose.residue(i).atom("CA").xyz().distance_squared(pose.residue(j).atom("CA").xyz()) < dist_sq_cutoff){
-				helix_1_and_3_contacts++;
-				break;
+void
+HelixBundleFeatures::generate_comparison_list(
+	utility::vector1<HelicalFragmentOP> all_helix_fragments,
+	core::Size prev_index,
+	utility::vector1<HelicalFragmentOP> fragment_list
+){
+	if(fragment_list.size()==bundle_size_)
+	{
+		comparison_list_.push_back(fragment_list);
+	}
+	else
+	{
+		for(core::Size i=prev_index+1; i<=all_helix_fragments.size(); ++i)
+		{
+			bool overlapping=false;
+			for(core::Size j=1; j<=fragment_list.size(); ++j){
+				if((all_helix_fragments[i]->seq_start() >= fragment_list[j]->seq_start() &&
+					all_helix_fragments[i]->seq_start() <= fragment_list[j]->seq_end()) ||
+				   (all_helix_fragments[i]->seq_end() >= fragment_list[j]->seq_start() &&
+					all_helix_fragments[i]->seq_end() <= fragment_list[j]->seq_end()))
+				{
+					overlapping=true;
+					break;
+				}
+					 
+			}
+			
+			//don't allow fragment lists with two overlapping helices, or fragment
+			//lists that start with a reversed helix (this prevents double reporting)
+			if( !overlapping &&
+				(fragment_list.size()>0 || !all_helix_fragments[i]->reversed()))
+			{
+				fragment_list.push_back(all_helix_fragments[i]);
+				generate_comparison_list(all_helix_fragments, i, fragment_list);
+				fragment_list.pop_back();
 			}
 		}
 	}
+}
 
-	if(helix_1_and_2_contacts < (helix_1.get_size()/2) || helix_1_and_3_contacts < (helix_1.get_size()/2)){
-		return false;
-	}
-
-	//Now check interactions between helices 2 and 3
-	core::Size helix_2_and_3_contacts = 0;
-	for(Size i=helix_2.get_start(); i<=helix_2.get_end(); i++){
-
-		//bool helix_2_pass=false;
-		for(Size j=helix_3.get_start(); j<=helix_3.get_end(); j++){
-			if(pose.residue(i).atom("CA").xyz().distance_squared(pose.residue(j).atom("CA").xyz()) < dist_sq_cutoff){
-				helix_2_and_3_contacts++;
-				break;
+bool
+HelixBundleFeatures::check_cap_distances(
+	core::pose::Pose const & pose,
+	utility::vector1<HelicalFragmentOP> frag_set
+){
+	core::Real dist_sq_cutoff = pow(helix_cap_dist_cutoff_, 2);
+	for(core::Size i=1; i<=frag_set.size(); ++i){
+			
+		for(core::Size j=i+1; j<=frag_set.size(); ++j){
+			
+			core::Real helix_start_dist_sq = pose.residue(frag_set[i]->start()).atom("CA").xyz().distance_squared(
+				pose.residue(frag_set[j]->start()).atom("CA").xyz());
+			
+			core::Real helix_end_dist_sq = pose.residue(frag_set[i]->end()).atom("CA").xyz().distance_squared(
+				pose.residue(frag_set[j]->end()).atom("CA").xyz());
+				
+			if(helix_start_dist_sq > dist_sq_cutoff || helix_end_dist_sq > dist_sq_cutoff){
+				return false;
 			}
 		}
-	}
-	if(helix_2_and_3_contacts < (helix_2.get_size()/2)){
-		return false;
 	}
 	return true;
 }
 
-///@brief collect all the feature data for the pose
+
+void
+HelixBundleFeatures::parse_my_tag(
+	utility::tag::TagPtr const tag,
+	protocols::moves::DataMap & data,
+	protocols::filters::Filters_map const & /*filters*/,
+	protocols::moves::Movers_map const & /*movers*/,
+	core::pose::Pose const & pose
+){
+	runtime_assert(tag->getOption<string>("name") == type_name());
+	
+	if(tag->hasOption("bundle_size")){
+		bundle_size_ = tag->getOption<core::Size>("bundle_size");
+	}
+	if(tag->hasOption("helix_size")){
+		helix_size_ = tag->getOption<core::Size>("helix_size");
+	}
+	if(tag->hasOption("helix_cap_dist_cutoff")){
+		helix_cap_dist_cutoff_ = tag->getOption<core::Real>("helix_cap_dist_cutoff");
+	}
+}
+	
 core::Size
 HelixBundleFeatures::report_features(
 	core::pose::Pose const & pose,
@@ -243,558 +364,54 @@ HelixBundleFeatures::report_features(
 	boost::uuids::uuid struct_id,
 	utility::sql_database::sessionOP db_session
 ){
-
-	utility::vector1<HelicalFragment> all_helices = get_full_helices(struct_id, db_session);
-
-	//This function gets really ugly right here and should probably be further functionalized
-	core::Size bundle_counter=0;
-	Size dist_sq_cutoff = (Size)pow((double)helix_cap_dist_cutoff_, 2);
-
-	for(Size i=1; i<=all_helices.size(); ++i){
-		for(Size j=i+1; j<=all_helices.size(); ++j){
-			for(Size k=j+1; k<=all_helices.size(); ++k){
-
-				core::Size max_bundle_residues=0;
-
-				//Helical fragment holders for final 3-helix bundle
-				HelicalFragment helix_i(0,0);
-				HelicalFragment helix_j(0,0);
-				HelicalFragment helix_k(0,0);
-
-				bool helix_i_flipped=false;
-				bool helix_j_flipped=false;
-				bool helix_k_flipped=false;
-
-
-				//If all three helices are parallel (Note: This code could potentially be much faster if I only loop over each helical residue once,
-				//but for ease and because this will only be run once, I'm not doing it that way)
-				bool found_start=false;
-				bool found_end=false;
-				bool broke=false;
-
-				core::Size helix_i_start=0;
-				core::Size helix_j_start=0;
-				core::Size helix_k_start=0;
-
-				core::Size helix_i_end=0;
-				core::Size helix_j_end=0;
-				core::Size helix_k_end=0;
-
-				for(Size helix_i_offset=0; helix_i_offset<all_helices[i].get_size(); helix_i_offset++){
-					if(broke){break;}
-					for(Size helix_j_offset=0; helix_j_offset<all_helices[j].get_size(); helix_j_offset++){
-						if(broke){break;}
-						for(Size helix_k_offset=0; helix_k_offset<all_helices[k].get_size(); helix_k_offset++){
-
-							//If we haven't found a suitable start position for the 3 helices, check distances between current helical residues
-							if(!found_start){
-								//distance between n-term of helix-i and n-term of helix-j
-								DistanceSquared start_distance_1 = pose.residue(all_helices[i].get_start()+helix_i_offset).atom("CA").xyz().distance_squared(
-									pose.residue(all_helices[j].get_start()+helix_j_offset).atom("CA").xyz());
-
-								//distance between n-term of helix-i and n-term of helix-k
-								DistanceSquared start_distance_2 = pose.residue(all_helices[i].get_start()+helix_i_offset).atom("CA").xyz().distance_squared(
-									pose.residue(all_helices[k].get_start()+helix_k_offset).atom("CA").xyz());
-
-								//distance between n-term of helix-j and n-term of helix-k
-								DistanceSquared start_distance_3 = pose.residue(all_helices[j].get_start()+helix_j_offset).atom("CA").xyz().distance_squared(
-									pose.residue(all_helices[k].get_start()+helix_k_offset).atom("CA").xyz());
-
-								if(start_distance_1 <= dist_sq_cutoff && start_distance_2 <= dist_sq_cutoff && start_distance_3 <= dist_sq_cutoff){
-									found_start = true;
-									helix_i_start=(all_helices[i].get_start()+helix_i_offset);
-									helix_j_start=(all_helices[j].get_start()+helix_j_offset);
-									helix_k_start=(all_helices[k].get_start()+helix_k_offset);
-								}
-							}
-
-							if(!found_end){
-								//distance between c-term of helix-i and c-term of helix-j
-								DistanceSquared end_distance_1 = pose.residue(all_helices[i].get_end()-helix_i_offset).atom("CA").xyz().distance_squared(
-									pose.residue(all_helices[j].get_end()-helix_j_offset).atom("CA").xyz());
-
-								//distance between c-term of helix-i and c-term of helix-k
-								DistanceSquared end_distance_2 = pose.residue(all_helices[i].get_end()-helix_i_offset).atom("CA").xyz().distance_squared(
-									pose.residue(all_helices[k].get_end()-helix_k_offset).atom("CA").xyz());
-
-								//distance between c-term of helix-j and c-term of helix-k
-								DistanceSquared end_distance_3 = pose.residue(all_helices[j].get_end()-helix_j_offset).atom("CA").xyz().distance_squared(
-									pose.residue(all_helices[k].get_end()-helix_k_offset).atom("CA").xyz());
-
-								if(end_distance_1 <= dist_sq_cutoff && end_distance_2 <= dist_sq_cutoff && end_distance_3 <= dist_sq_cutoff){
-									found_end = true;
-									helix_i_end=(all_helices[i].get_end()-helix_i_offset);
-									helix_j_end=(all_helices[j].get_end()-helix_j_offset);
-									helix_k_end=(all_helices[k].get_end()-helix_k_offset);
-								}
-							}
-
-							//If we found start and end residues that satisfy cap distance requirements, then check helix contacts
-							if(found_start && found_end){
-								HelicalFragment temp_helix_i(min(helix_i_start, helix_i_end), max(helix_i_start, helix_i_end));
-								HelicalFragment temp_helix_j(min(helix_j_start, helix_j_end), max(helix_j_start, helix_j_end));
-								HelicalFragment temp_helix_k(min(helix_k_start, helix_k_end), max(helix_k_start, helix_k_end));
-
-								TR.Debug << "Unchecked parallel helix found: \ni:" << temp_helix_i.get_start() << "," << temp_helix_i.get_end()
-								<< "\n j:" << temp_helix_j.get_start() << "," << temp_helix_j.get_end()
-								<< "\n k:" << temp_helix_k.get_start() << "," << temp_helix_k.get_end() << endl;
-
-								if(temp_helix_i.get_size() >= min_helix_size_ &&
-									 temp_helix_j.get_size() >= min_helix_size_ &&
-									 temp_helix_k.get_size() >= min_helix_size_){
-
-									TR.Debug << "Size check passed!" << endl;
-
-									//If the found start and ends don't satisfy this closeness check then we want to keep looking in these
-									//helices for different starts and ends
-									if(!checkHelixContacts(pose, temp_helix_i, temp_helix_j, temp_helix_k)){
-										found_start=false;
-										found_end=false;
-
-										TR.Debug << "Close helix contacts failed!" << endl;
-									}
-
-									//Only take these helices if they are bigger than helices from other
-									else if(temp_helix_i.get_size() + temp_helix_j.get_size() + temp_helix_k.get_size() > max_bundle_residues){
-										helix_i=temp_helix_i;
-										helix_j=temp_helix_j;
-										helix_k=temp_helix_k;
-
-										helix_i_flipped=helix_i_start > helix_i_end;
-										helix_j_flipped=helix_j_start > helix_j_end;
-										helix_k_flipped=helix_k_start > helix_k_end;
-
-										max_bundle_residues=temp_helix_i.get_size() + temp_helix_j.get_size() + temp_helix_k.get_size();
-										TR.Debug << "Found new parallel bundle i-" << temp_helix_i.get_size() << " j-" << temp_helix_j.get_size()
-										<< " k-" << temp_helix_k.get_size() << endl;
-										broke=true;
-										break;
-									}
-								}
-								else{
-									broke=true;
-									break;
-								}
-							}
-						}
-					}
-				}
-
-
-
-				//If helix-j is antiparallel to helix-i and helix-k
-				found_start=false;
-				found_end=false;
-				broke=false;
-
-				helix_i_start=0;
-				helix_j_start=0;
-				helix_k_start=0;
-
-				helix_i_end=0;
-				helix_j_end=0;
-				helix_k_end=0;
-
-				for(Size helix_i_offset=0; helix_i_offset<all_helices[i].get_size(); helix_i_offset++){
-					if(broke){break;}
-					for(Size helix_j_offset=0; helix_j_offset<all_helices[j].get_size(); helix_j_offset++){
-						if(broke){break;}
-						for(Size helix_k_offset=0; helix_k_offset<all_helices[k].get_size(); helix_k_offset++){
-
-							//If we haven't found a suitable start position for the 3 helices, check distances between current helical residues
-							if(!found_start){
-								//distance between n-term of helix-i and c-term of helix-j
-								DistanceSquared start_distance_1 = pose.residue(all_helices[i].get_start()+helix_i_offset).atom("CA").xyz().distance_squared(
-									pose.residue(all_helices[j].get_end()-helix_j_offset).atom("CA").xyz());
-
-								//distance between n-term of helix-i and n-term of helix-k
-								DistanceSquared start_distance_2 = pose.residue(all_helices[i].get_start()+helix_i_offset).atom("CA").xyz().distance_squared(
-									pose.residue(all_helices[k].get_start()+helix_k_offset).atom("CA").xyz());
-
-								//distance between c-term of helix-j and n-term of helix-k
-								DistanceSquared start_distance_3 = pose.residue(all_helices[j].get_end()-helix_j_offset).atom("CA").xyz().distance_squared(
-									pose.residue(all_helices[k].get_start()+helix_k_offset).atom("CA").xyz());
-
-								if(start_distance_1 <= dist_sq_cutoff && start_distance_2 <= dist_sq_cutoff && start_distance_3 <= dist_sq_cutoff){
-									found_start = true;
-									helix_i_start=(all_helices[i].get_start()+helix_i_offset);
-									helix_j_start=(all_helices[j].get_end()-helix_j_offset);
-									helix_k_start=(all_helices[k].get_start()+helix_k_offset);
-								}
-							}
-
-							if(!found_end){
-								//distance between c-term of helix-i and n-term of helix-j
-								DistanceSquared end_distance_1 = pose.residue(all_helices[i].get_end()-helix_i_offset).atom("CA").xyz().distance_squared(
-									pose.residue(all_helices[j].get_start()+helix_j_offset).atom("CA").xyz());
-
-								//distance between c-term of helix-i and c-term of helix-k
-								DistanceSquared end_distance_2 = pose.residue(all_helices[i].get_end()-helix_i_offset).atom("CA").xyz().distance_squared(
-									pose.residue(all_helices[k].get_end()-helix_k_offset).atom("CA").xyz());
-
-								//distance between c-term of helix-j and c-term of helix-k
-								DistanceSquared end_distance_3 = pose.residue(all_helices[j].get_end()-helix_j_offset).atom("CA").xyz().distance_squared(
-									pose.residue(all_helices[k].get_end()-helix_k_offset).atom("CA").xyz());
-
-								if(end_distance_1 <= dist_sq_cutoff && end_distance_2 <= dist_sq_cutoff && end_distance_3 <= dist_sq_cutoff){
-									found_end = true;
-									helix_i_end=(all_helices[i].get_end()-helix_i_offset);
-									helix_j_end=(all_helices[j].get_start()+helix_j_offset);
-									helix_k_end=(all_helices[k].get_end()-helix_k_offset);
-								}
-							}
-
-							//If we found start and end residues that satisfy cap distance requirements, then check helix contacts
-							if(found_start && found_end){
-								HelicalFragment temp_helix_i(min(helix_i_start, helix_i_end), max(helix_i_start, helix_i_end));
-								HelicalFragment temp_helix_j(min(helix_j_start, helix_j_end), max(helix_j_start, helix_j_end));
-								HelicalFragment temp_helix_k(min(helix_k_start, helix_k_end), max(helix_k_start, helix_k_end));
-
-								TR.Debug << "Unchecked j-flipped helix found: \ni:" << temp_helix_i.get_start() << "," << temp_helix_i.get_end()
-								<< "\n j:" << temp_helix_j.get_start() << "," << temp_helix_j.get_end()
-								<< "\n k:" << temp_helix_k.get_start() << "," << temp_helix_k.get_end() << endl;
-
-								if(temp_helix_i.get_size() >= min_helix_size_ &&
-									 temp_helix_j.get_size() >= min_helix_size_ &&
-									 temp_helix_k.get_size() >= min_helix_size_){
-
-									TR.Debug << "Size check passed!" << endl;
-
-									//If the found start and ends don't satisfy this closeness check then we want to keep looking in these
-									//helices for different starts and ends
-									if(!checkHelixContacts(pose, temp_helix_i, temp_helix_j, temp_helix_k)){
-										found_start=false;
-										found_end=false;
-										TR.Debug << "Close helix contacts failed!" << endl;
-									}
-
-									//Only take these helices if they are bigger than helices from other
-									else if(temp_helix_i.get_size() + temp_helix_j.get_size() + temp_helix_k.get_size() > max_bundle_residues){
-										helix_i=temp_helix_i;
-										helix_j=temp_helix_j;
-										helix_k=temp_helix_k;
-
-										helix_i_flipped=helix_i_start > helix_i_end;
-										helix_j_flipped=helix_j_start > helix_j_end;
-										helix_k_flipped=helix_k_start > helix_k_end;
-
-										max_bundle_residues=temp_helix_i.get_size() + temp_helix_j.get_size() + temp_helix_k.get_size();
-										TR.Debug << "Found new j-flipped bundle i-" << temp_helix_i.get_size() << " j-" << temp_helix_j.get_size()
-										<< " k-" << temp_helix_k.get_size() << endl;
-										broke=true;
-										break;
-									}
-								}
-								else{
-									broke=true;
-									break;
-								}
-							}
-						}
-					}
-				}
-
-
-				//If helix-k is antiparallel to helix-i and helix-j
-				found_start=false;
-				found_end=false;
-				broke=false;
-
-				helix_i_start=0;
-				helix_j_start=0;
-				helix_k_start=0;
-
-				helix_i_end=0;
-				helix_j_end=0;
-				helix_k_end=0;
-
-				for(Size helix_i_offset=0; helix_i_offset<all_helices[i].get_size(); helix_i_offset++){
-					if(broke){break;}
-					for(Size helix_j_offset=0; helix_j_offset<all_helices[j].get_size(); helix_j_offset++){
-						if(broke){break;}
-						for(Size helix_k_offset=0; helix_k_offset<all_helices[k].get_size(); helix_k_offset++){
-
-							//If we haven't found a suitable start position for the 3 helices, check distances between current helical residues
-							if(!found_start){
-								//distance between n-term of helix-i and n-term of helix-j
-								DistanceSquared start_distance_1 = pose.residue(all_helices[i].get_start()+helix_i_offset).atom("CA").xyz().distance_squared(
-									pose.residue(all_helices[j].get_start()+helix_j_offset).atom("CA").xyz());
-
-								//distance between n-term of helix-i and c-term of helix-k
-								DistanceSquared start_distance_2 = pose.residue(all_helices[i].get_start()+helix_i_offset).atom("CA").xyz().distance_squared(
-									pose.residue(all_helices[k].get_end()-helix_k_offset).atom("CA").xyz());
-
-								//distance between n-term of helix-j and c-term of helix-k
-								DistanceSquared start_distance_3 = pose.residue(all_helices[j].get_start()+helix_j_offset).atom("CA").xyz().distance_squared(
-									pose.residue(all_helices[k].get_end()-helix_k_offset).atom("CA").xyz());
-
-								if(start_distance_1 <= dist_sq_cutoff && start_distance_2 <= dist_sq_cutoff && start_distance_3 <= dist_sq_cutoff){
-									found_start = true;
-									helix_i_start=(all_helices[i].get_start()+helix_i_offset);
-									helix_j_start=(all_helices[j].get_start()+helix_j_offset);
-									helix_k_start=(all_helices[k].get_end()-helix_k_offset);
-								}
-							}
-
-							if(!found_end){
-								//distance between c-term of helix-i and c-term of helix-j
-								DistanceSquared end_distance_1 = pose.residue(all_helices[i].get_end()-helix_i_offset).atom("CA").xyz().distance_squared(
-									pose.residue(all_helices[j].get_end()-helix_j_offset).atom("CA").xyz());
-
-								//distance between c-term of helix-i and n-term of helix-k
-								DistanceSquared end_distance_2 = pose.residue(all_helices[i].get_end()-helix_i_offset).atom("CA").xyz().distance_squared(
-									pose.residue(all_helices[k].get_start()+helix_k_offset).atom("CA").xyz());
-
-								//distance between c-term of helix-j and n-term of helix-k
-								DistanceSquared end_distance_3 = pose.residue(all_helices[j].get_end()-helix_j_offset).atom("CA").xyz().distance_squared(
-									pose.residue(all_helices[k].get_start()+helix_k_offset).atom("CA").xyz());
-
-								if(end_distance_1 <= dist_sq_cutoff && end_distance_2 <= dist_sq_cutoff && end_distance_3 <= dist_sq_cutoff){
-									found_end = true;
-									helix_i_end=(all_helices[i].get_end()-helix_i_offset);
-									helix_j_end=(all_helices[j].get_end()-helix_j_offset);
-									helix_k_end=(all_helices[k].get_start()+helix_k_offset);
-								}
-							}
-
-							//If we found start and end residues that satisfy cap distance requirements, then check helix contacts
-							if(found_start && found_end){
-								HelicalFragment temp_helix_i(min(helix_i_start, helix_i_end), max(helix_i_start, helix_i_end));
-								HelicalFragment temp_helix_j(min(helix_j_start, helix_j_end), max(helix_j_start, helix_j_end));
-								HelicalFragment temp_helix_k(min(helix_k_start, helix_k_end), max(helix_k_start, helix_k_end));
-
-								TR.Debug << "Unchecked k-flipped helix found: \ni:" << temp_helix_i.get_start() << "," << temp_helix_i.get_end()
-								<< "\n j:" << temp_helix_j.get_start() << "," << temp_helix_j.get_end()
-								<< "\n k:" << temp_helix_k.get_start() << "," << temp_helix_k.get_end() << endl;
-
-								if(temp_helix_i.get_size() >= min_helix_size_ &&
-									 temp_helix_j.get_size() >= min_helix_size_ &&
-									 temp_helix_k.get_size() >= min_helix_size_){
-
-									TR.Debug << "Size check passed!" << endl;
-
-									//If the found start and ends don't satisfy this closeness check then we want to keep looking in these
-									//helices for different starts and ends
-									if(!checkHelixContacts(pose, temp_helix_i, temp_helix_j, temp_helix_k)){
-										found_start=false;
-										found_end=false;
-										TR.Debug << "Close helix contacts failed!" << endl;
-									}
-
-									//Only take these helices if they are bigger than helices from other
-									else if(temp_helix_i.get_size() + temp_helix_j.get_size() + temp_helix_k.get_size() > max_bundle_residues){
-										helix_i=temp_helix_i;
-										helix_j=temp_helix_j;
-										helix_k=temp_helix_k;
-
-										helix_i_flipped=helix_i_start > helix_i_end;
-										helix_j_flipped=helix_j_start > helix_j_end;
-										helix_k_flipped=helix_k_start > helix_k_end;
-
-										max_bundle_residues=temp_helix_i.get_size() + temp_helix_j.get_size() + temp_helix_k.get_size();
-										TR.Debug << "Found new k-flipped bundle i-" << temp_helix_i.get_size() << " j-" << temp_helix_j.get_size()
-										<< " k-" << temp_helix_k.get_size() << endl;
-										broke=true;
-										break;
-									}
-								}
-								else{
-									broke=true;
-									break;
-								}
-							}
-						}
-					}
-				}
-
-
-				//If helix-j & helix-k are both antiparallel to helix-i
-				found_start=false;
-				found_end=false;
-				broke=false;
-
-				helix_i_start=0;
-				helix_j_start=0;
-				helix_k_start=0;
-
-				helix_i_end=0;
-				helix_j_end=0;
-				helix_k_end=0;
-
-				for(Size helix_i_offset=0; helix_i_offset<all_helices[i].get_size(); helix_i_offset++){
-					if(broke){break;}
-					for(Size helix_j_offset=0; helix_j_offset<all_helices[j].get_size(); helix_j_offset++){
-						if(broke){break;}
-						for(Size helix_k_offset=0; helix_k_offset<all_helices[k].get_size(); helix_k_offset++){
-
-							//If we haven't found a suitable start position for the 3 helices, check distances between current helical residues
-							if(!found_start){
-								//distance between n-term of helix-i and c-term of helix-j
-								DistanceSquared start_distance_1 = pose.residue(all_helices[i].get_start()+helix_i_offset).atom("CA").xyz().distance_squared(
-									pose.residue(all_helices[j].get_end()-helix_j_offset).atom("CA").xyz());
-
-								//distance between n-term of helix-i and c-term of helix-k
-								DistanceSquared start_distance_2 = pose.residue(all_helices[i].get_start()+helix_i_offset).atom("CA").xyz().distance_squared(
-									pose.residue(all_helices[k].get_end()-helix_k_offset).atom("CA").xyz());
-
-								//distance between c-term of helix-j and c-term of helix-k
-								DistanceSquared start_distance_3 = pose.residue(all_helices[j].get_end()-helix_j_offset).atom("CA").xyz().distance_squared(
-									pose.residue(all_helices[k].get_end()-helix_k_offset).atom("CA").xyz());
-
-								if(start_distance_1 <= dist_sq_cutoff && start_distance_2 <= dist_sq_cutoff && start_distance_3 <= dist_sq_cutoff){
-									found_start = true;
-									helix_i_start=(all_helices[i].get_start()+helix_i_offset);
-									helix_j_start=(all_helices[j].get_end()-helix_j_offset);
-									helix_k_start=(all_helices[k].get_end()-helix_k_offset);
-								}
-							}
-
-							if(!found_end){
-								//distance between c-term of helix-i and n-term of helix-j
-								DistanceSquared end_distance_1 = pose.residue(all_helices[i].get_end()-helix_i_offset).atom("CA").xyz().distance_squared(
-									pose.residue(all_helices[j].get_start()+helix_j_offset).atom("CA").xyz());
-
-								//distance between c-term of helix-i and n-term of helix-k
-								DistanceSquared end_distance_2 = pose.residue(all_helices[i].get_end()-helix_i_offset).atom("CA").xyz().distance_squared(
-									pose.residue(all_helices[k].get_start()+helix_k_offset).atom("CA").xyz());
-
-								//distance between c-term of helix-j and n-term of helix-k
-								DistanceSquared end_distance_3 = pose.residue(all_helices[j].get_start()+helix_j_offset).atom("CA").xyz().distance_squared(
-									pose.residue(all_helices[k].get_start()+helix_k_offset).atom("CA").xyz());
-
-								if(end_distance_1 <= dist_sq_cutoff && end_distance_2 <= dist_sq_cutoff && end_distance_3 <= dist_sq_cutoff){
-									found_end = true;
-									helix_i_end=(all_helices[i].get_end()-helix_i_offset);
-									helix_j_end=(all_helices[j].get_start()+helix_j_offset);
-									helix_k_end=(all_helices[k].get_start()+helix_k_offset);
-								}
-							}
-
-							//If we found start and end residues that satisfy cap distance requirements, then check helix contacts
-							if(found_start && found_end){
-								HelicalFragment temp_helix_i(min(helix_i_start, helix_i_end), max(helix_i_start, helix_i_end));
-								HelicalFragment temp_helix_j(min(helix_j_start, helix_j_end), max(helix_j_start, helix_j_end));
-								HelicalFragment temp_helix_k(min(helix_k_start, helix_k_end), max(helix_k_start, helix_k_end));
-
-								TR.Debug << "Unchecked j&k flipped helix found: \ni:" << temp_helix_i.get_start() << "," << temp_helix_i.get_end()
-								<< "\n j:" << temp_helix_j.get_start() << "," << temp_helix_j.get_end()
-								<< "\n k:" << temp_helix_k.get_start() << "," << temp_helix_k.get_end() << endl;
-
-								//Quit here if any of the helices are too small (they only get smaller)
-								if(temp_helix_i.get_size() >= min_helix_size_ &&
-									 temp_helix_j.get_size() >= min_helix_size_ &&
-									 temp_helix_k.get_size() >= min_helix_size_){
-
-									TR.Debug << "Size check passed!" << endl;
-
-									//If the found start and ends don't satisfy this closeness check then we want to keep looking in these
-									//helices for different starts and ends
-									if(!checkHelixContacts(pose, temp_helix_i, temp_helix_j, temp_helix_k)){
-										found_start=false;
-										found_end=false;
-										TR.Debug << "Close helix contacts failed!" << endl;
-									}
-
-									//Only take these helices if they are bigger than helices from other
-									else if(temp_helix_i.get_size() + temp_helix_j.get_size() + temp_helix_k.get_size() > max_bundle_residues){
-										helix_i=temp_helix_i;
-										helix_j=temp_helix_j;
-										helix_k=temp_helix_k;
-
-										helix_i_flipped=helix_i_start > helix_i_end;
-										helix_j_flipped=helix_j_start > helix_j_end;
-										helix_k_flipped=helix_k_start > helix_k_end;
-
-										max_bundle_residues=temp_helix_i.get_size() + temp_helix_j.get_size() + temp_helix_k.get_size();
-										TR.Debug << "Found new j&k flipped bundle i-" << temp_helix_i.get_size() << " j-" << temp_helix_j.get_size()
-										<< " k-" << temp_helix_k.get_size() <<endl;
-										broke=true;
-										break;
-									}
-								}
-								else{
-									broke=true;
-									break;
-								}
-							}
-						}
-					}
-				}
-
-				//If any of the different orientations produced a bundle, print it
-				if(helix_i.get_size() > 0){
-
-					//break bundle into bundle "windows" of a particular size
-					core::Size bundle_size = min(min(helix_i.get_size(), helix_j.get_size()), helix_k.get_size());
-
-					for(core::Size window_offset = 0; window_offset < bundle_size-min_helix_size_; ++window_offset){
-						HelicalFragment helix_i_window(0,0);
-						HelicalFragment helix_j_window(0,0);
-						HelicalFragment helix_k_window(0,0);
-
-						if(helix_i_flipped){
-							helix_i_window = HelicalFragment(helix_i.get_end()-window_offset-(min_helix_size_-1), helix_i.get_end()-window_offset);
-						}else{
-							helix_i_window = HelicalFragment(helix_i.get_start()+window_offset, helix_i.get_start()+window_offset+(min_helix_size_-1));
-						}
-
-						if(helix_j_flipped){
-							helix_j_window = HelicalFragment(helix_j.get_end()-window_offset-(min_helix_size_-1), helix_j.get_end()-window_offset);
-						}else{
-							helix_j_window = HelicalFragment(helix_j.get_start()+window_offset, helix_j.get_start()+window_offset+(min_helix_size_-1));
-						}
-
-						if(helix_k_flipped){
-							helix_k_window = HelicalFragment(helix_k.get_end()-window_offset-(min_helix_size_-1), helix_k.get_end()-window_offset);
-						}else{
-							helix_k_window = HelicalFragment(helix_k.get_start()+window_offset, helix_k.get_start()+window_offset+(min_helix_size_-1));
-						}
-
-						bundle_counter++;
-						TR << "saving bundle: " << bundle_counter << endl;
-
-						string bundle_insert =  "INSERT INTO helix_bundles (struct_id)  VALUES (?);";
-						statement bundle_insert_stmt(basic::database::safely_prepare_statement(bundle_insert,db_session));
-						bundle_insert_stmt.bind(1,struct_id);
-						basic::database::safely_write_to_database(bundle_insert_stmt);
-
-						TR << "Saving helices" << endl;
-						//Get bundle primary key
-						core::Size bundle_id(bundle_insert_stmt.sequence_last("helix_bundles_bundle_id_seq"));
-
-						TR << "Bundle saved and given id: " << bundle_id << endl;
-
-						string helix_insert =  "INSERT INTO bundle_helices (bundle_id, struct_id, residue_begin, residue_end, flipped) VALUES (?,?,?,?,?);";
-						statement helix_insert_stmt(basic::database::safely_prepare_statement(helix_insert,db_session));
-						helix_insert_stmt.bind(1,bundle_id);
-						helix_insert_stmt.bind(2,struct_id);
-						helix_insert_stmt.bind(3,helix_i_window.get_start());
-						helix_insert_stmt.bind(4,helix_i_window.get_end());
-						helix_insert_stmt.bind(5,helix_i_flipped);
-						basic::database::safely_write_to_database(helix_insert_stmt);
-
-						helix_insert_stmt.bind(1,bundle_id);
-						helix_insert_stmt.bind(2,struct_id);
-						helix_insert_stmt.bind(3,helix_j_window.get_start());
-						helix_insert_stmt.bind(4,helix_j_window.get_end());
-						helix_insert_stmt.bind(5,helix_j_flipped);
-						basic::database::safely_write_to_database(helix_insert_stmt);
-
-						helix_insert_stmt.bind(1,bundle_id);
-						helix_insert_stmt.bind(2,struct_id);
-						helix_insert_stmt.bind(3,helix_k_window.get_start());
-						helix_insert_stmt.bind(4,helix_k_window.get_end());
-						helix_insert_stmt.bind(5,helix_k_flipped);
-						basic::database::safely_write_to_database(helix_insert_stmt);
-
-					}
-				}
+	utility::vector1<HelicalFragmentOP> all_helix_fragments = get_helix_fragments(struct_id, db_session);
+	TR << "Total helical fragments of size " << helix_size_ << ": " << all_helix_fragments.size() << std::endl;
+	
+	utility::vector1<HelicalFragmentOP> empty_frag_list;
+	generate_comparison_list(all_helix_fragments, 0, empty_frag_list);
+	
+	TR << "Comparison list size: " << comparison_list_.size() << std::endl;
+	
+	for(core::Size cur_compare_index=1;
+		cur_compare_index<=comparison_list_.size();
+		++cur_compare_index)
+	{
+		
+		utility::vector1<HelicalFragmentOP> cur_frag_set = comparison_list_[cur_compare_index];
+		if(check_cap_distances(pose, cur_frag_set))
+		{
+			//record the dSasa for each helix
+			record_helix_sasas(pose, cur_frag_set);
+			
+			string bundle_insert =  "INSERT INTO helix_bundles (struct_id, bundle_size, helix_size)  VALUES (?, ?, ?);";
+			statement bundle_insert_stmt(basic::database::safely_prepare_statement(bundle_insert,db_session));
+			bundle_insert_stmt.bind(1,struct_id);
+			bundle_insert_stmt.bind(2,bundle_size_);
+			bundle_insert_stmt.bind(3,helix_size_);
+			basic::database::safely_write_to_database(bundle_insert_stmt);
+			
+			//Get bundle primary key
+			core::Size bundle_id(bundle_insert_stmt.sequence_last("helix_bundles_bundle_id_seq"));
+			
+			string helix_insert =  "INSERT INTO bundle_helices (bundle_id, struct_id, residue_begin, residue_end, flipped, sasa) VALUES (?,?,?,?,?,?);";
+			statement helix_insert_stmt(basic::database::safely_prepare_statement(helix_insert,db_session));
+			TR << "Saving helices" << endl;
+			
+			for(core::Size frag_index=1;
+				frag_index <= cur_frag_set.size();
+				++frag_index)
+			{
+				helix_insert_stmt.bind(1,bundle_id);
+				helix_insert_stmt.bind(2,struct_id);
+				helix_insert_stmt.bind(3,cur_frag_set[frag_index]->seq_start());
+				helix_insert_stmt.bind(4,cur_frag_set[frag_index]->seq_end());
+				helix_insert_stmt.bind(5,cur_frag_set[frag_index]->reversed());
+				helix_insert_stmt.bind(6,cur_frag_set[frag_index]->sasa());
+				basic::database::safely_write_to_database(helix_insert_stmt);
 			}
+			TR << "Done saving helices" << endl;			
 		}
 	}
-
-	TR << "Done saving helices" << endl;
-
 	return 0;
 }
 

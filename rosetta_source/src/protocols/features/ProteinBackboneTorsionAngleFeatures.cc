@@ -69,11 +69,11 @@ ProteinBackboneTorsionAngleFeatures::write_protein_backbone_torsion_angles_table
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbUUID());
-	Column resNum("resNum", DbInteger());
-	Column phi("phi", DbReal());
-	Column psi("psi", DbReal());
-	Column omega("omega", DbReal());
+	Column struct_id("struct_id", new DbUUID());
+	Column resNum("resNum", new DbInteger());
+	Column phi("phi", new DbReal());
+	Column psi("psi", new DbReal());
+	Column omega("omega", new DbReal());
 
 
 	Columns primary_key_columns;

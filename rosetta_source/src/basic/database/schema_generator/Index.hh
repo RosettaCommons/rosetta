@@ -17,6 +17,7 @@
 
 #include <utility/vector1.hh>
 #include <utility/sql_database/types.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <basic/database/schema_generator/Column.hh>
 
 //C++ Headers
@@ -40,9 +41,6 @@ public:
 	Index(
 		Index const & src);
 
-	void
-	init_db_mode();
-
   Columns
 	columns();
 
@@ -51,11 +49,12 @@ public:
 
 	std::string
 	print(
-		std::string const & table_name);
+		std::string const & table_name,
+		utility::sql_database::sessionOP db_session
+	) const ;
 
 private:
 	bool unique_;
-	utility::sql_database::DatabaseMode::e database_mode_;
 	Columns columns_;
 };
 

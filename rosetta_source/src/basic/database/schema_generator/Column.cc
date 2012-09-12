@@ -22,38 +22,33 @@
 
 // Utility Headers
 #include <utility/exit.hh>
+#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/sql_database/types.hh>
 
 namespace basic{
 namespace database{
 namespace schema_generator{
 
-Column::Column(std::string name, DbDataType type) :
+Column::Column(std::string name, DbDataTypeOP type) :
 	name_(name),
 	type_(type),
 	allow_null_(true),
 	auto_increment_(false)
-{
-	init_db_mode();
-}
+{}
 
-Column::Column(std::string name, DbDataType type, bool allow_null) :
+Column::Column(std::string name, DbDataTypeOP type, bool allow_null) :
 	name_(name),
 	type_(type),
 	allow_null_(allow_null),
 	auto_increment_(false)
-{
-	init_db_mode();
-}
+{}
 
-Column::Column(std::string name, DbDataType type, bool allow_null, bool auto_increment) :
+Column::Column(std::string name, DbDataTypeOP type, bool allow_null, bool auto_increment) :
 	name_(name),
 	type_(type),
 	allow_null_(allow_null),
 	auto_increment_(auto_increment)
-{
-	init_db_mode();
-}
+{}
 
 Column::Column(Column const & src) :
 	ReferenceCount(),
@@ -61,17 +56,9 @@ Column::Column(Column const & src) :
 	type_(src.type_),
 	allow_null_(src.allow_null_),
 	auto_increment_(src.auto_increment_)
-{
-	init_db_mode();
-}
+{}
 
 Column::~Column() {}
-
-void Column::init_db_mode(){
-	database_mode_ =
-		utility::sql_database::database_mode_from_name(
-			basic::options::option[basic::options::OptionKeys::inout::dbms::mode]);
-}
 
 std::string Column::name() const{
 	return name_;
@@ -81,17 +68,17 @@ bool Column::auto_increment() const{
 	return this->auto_increment_;
 }
 
-std::string Column::print() const{
+std::string Column::print(utility::sql_database::sessionOP db_session) const{
 	std::string column_string = "";
 	if(auto_increment_){
 		column_string += name_ + " ";
-		switch(database_mode_) {
+		switch(db_session->get_db_mode()) {
 		case utility::sql_database::DatabaseMode::sqlite3:
-			column_string += this->type_.print() + " PRIMARY KEY AUTOINCREMENT"; //only way to autoincrement in SQLite is with a primary key
-			name_ + " " + type_.print();
+			column_string += this->type_->print(db_session) + " PRIMARY KEY AUTOINCREMENT"; //only way to autoincrement in SQLite is with a primary key
+			name_ + " " + type_->print(db_session);
 			break;
 		case utility::sql_database::DatabaseMode::mysql:
-			column_string += this->type_.print() + " AUTO_INCREMENT";
+			column_string += this->type_->print(db_session) + " AUTO_INCREMENT";
 			break;
 		case utility::sql_database::DatabaseMode::postgres:
 			column_string += "BIGSERIAL";
@@ -101,7 +88,7 @@ std::string Column::print() const{
 		}
 	}
 	else{
-		column_string += this->name_ + " " + this->type_.print();
+		column_string += this->name_ + " " + this->type_->print(db_session);
 	}
 
 	if(!allow_null_){

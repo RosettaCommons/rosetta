@@ -14,6 +14,7 @@
 
 #include <basic/database/schema_generator/Constraint.hh>
 #include <basic/database/schema_generator/Column.hh>
+#include <utility/sql_database/DatabaseSessionManager.hh>
 
 #include <platform/types.hh>
 
@@ -62,8 +63,10 @@ UniqueConstraint::UniqueConstraint(
 	Constraint(columns)
 {}
 
-string
-UniqueConstraint::print(){
+std::string
+UniqueConstraint::print(
+	utility::sql_database::sessionOP /*database_session*/
+) const {
 	stringstream constraint;
 
 	constraint << "UNIQUE (";
@@ -87,8 +90,10 @@ GreaterThanConstraint::GreaterThanConstraint(
 	value_(value)
 {}
 
-string
-GreaterThanConstraint::print(){
+std::string
+GreaterThanConstraint::print(
+	utility::sql_database::sessionOP /*database_session*/
+) const {
 	stringstream constraint;
 
 	assert(columns_.size() == 1);

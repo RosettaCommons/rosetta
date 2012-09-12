@@ -109,16 +109,16 @@ ChargeChargeFeatures::write_schema_to_db(
 
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbUUID(), false);
-	Column q1_site_id("q1_site_id", DbInteger(), false);
-	Column q2_site_id("q2_site_id", DbInteger(), false);
-	Column q1_charge("q1_charge", DbInteger(), false);
-	Column q2_charge("q2_charge", DbInteger(), false);
-	Column B1q1q2_angle("B1q1q2_angle", DbReal(), false);
-	Column B2q2q1_angle("B2q2q1_angle", DbReal(), false);
-	Column q1q2_distance("q1q2_distance", DbReal(), false);
-	Column B1q1_torsion("B1q1_torsion", DbReal(), false);
-	Column B2q2_torsion("B2q2_torsion", DbReal(), false);
+	Column struct_id("struct_id", new DbUUID(), false);
+	Column q1_site_id("q1_site_id", new DbInteger(), false);
+	Column q2_site_id("q2_site_id", new DbInteger(), false);
+	Column q1_charge("q1_charge", new DbInteger(), false);
+	Column q2_charge("q2_charge", new DbInteger(), false);
+	Column B1q1q2_angle("B1q1q2_angle", new DbReal(), false);
+	Column B2q2q1_angle("B2q2q1_angle", new DbReal(), false);
+	Column q1q2_distance("q1q2_distance", new DbReal(), false);
+	Column B1q1_torsion("B1q1_torsion", new DbReal(), false);
+	Column B2q2_torsion("B2q2_torsion", new DbReal(), false);
 
 	utility::vector1<Column> pkeys;
 	pkeys.push_back(struct_id);

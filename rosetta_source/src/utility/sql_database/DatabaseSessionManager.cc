@@ -90,7 +90,6 @@ session::commit(){
 			else{
 				++transaction_counter_;
 			}
-			cppdb::session::commit();
 			break;
 		default:
 			utility_exit_with_message(
@@ -276,7 +275,6 @@ DatabaseSessionManager::get_session_postgres(
 	s->set_chunk_size(chunk_size);
 	s->set_db_name(database);
 	s->set_pq_schema(pq_schema);
-
 
 	stringstream connection_string;
 	connection_string

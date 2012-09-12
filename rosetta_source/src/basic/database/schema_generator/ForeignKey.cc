@@ -14,6 +14,7 @@
 
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
+#include <utility/sql_database/DatabaseSessionManager.hh>
 
 // Basic Headers
 #include <basic/options/option.hh>
@@ -43,7 +44,6 @@ ForeignKey::ForeignKey(
 	Column column,
 	std::string reference_table,
 	std::string reference_column) :
-	database_mode_(),
 	columns_(),
 	reference_columns_(),
 	reference_table_(reference_table),
@@ -51,7 +51,6 @@ ForeignKey::ForeignKey(
 {
 	columns_.push_back(column);
 	reference_columns_.push_back(reference_column);
-	init_db_mode();
 }
 
 ForeignKey::ForeignKey(
@@ -59,7 +58,6 @@ ForeignKey::ForeignKey(
 	string reference_table,
 	string reference_column,
 	bool defer) :
-	database_mode_(),
 	columns_(),
 	reference_columns_(),
 	reference_table_(reference_table),
@@ -67,7 +65,6 @@ ForeignKey::ForeignKey(
 {
 	columns_.push_back(column);
 	reference_columns_.push_back(reference_column);
-	init_db_mode();
 }
 
 ForeignKey::ForeignKey(
@@ -75,25 +72,20 @@ ForeignKey::ForeignKey(
 	string reference_table,
 	vector1<string> reference_columns,
 	bool defer) :
-	database_mode_(),
 	columns_(columns),
 	reference_columns_(reference_columns),
 	reference_table_(reference_table),
 	defer_(defer)
-{
-	init_db_mode();
-}
-
-void ForeignKey::init_db_mode(){
-	database_mode_ =
-		basic::options::option[basic::options::OptionKeys::inout::dbms::mode];
-}
+{}
 
 Columns ForeignKey::columns(){
 	return this->columns_;
 }
 
-std::string ForeignKey::print(){
+std::string
+ForeignKey::print(
+	utility::sql_database::sessionOP db_session
+) const {
 	std::string foreign_key_string = "FOREIGN KEY (";
 
 	for(size_t i=1; i<=columns_.size(); ++i){
@@ -113,15 +105,19 @@ std::string ForeignKey::print(){
 	foreign_key_string += ")";
 
 	if(defer_){
-
-		if(this->database_mode_.compare("sqlite3") == 0 || this->database_mode_.compare("postgres") == 0){
-			foreign_key_string += " DEFERRABLE INITIALLY DEFERRED";
-		}
-		else if(this->database_mode_.compare("mysql") == 0){
-			//MySQL does not support deferring foreign keys.
-		}
-		else{
-			utility_exit_with_message("ERROR:Please specify the database mode using -inout::dbms::mode. Valid options are: 'sqlite3', 'mysql', or 'postgres'");
+		switch(db_session->get_db_mode()) {
+			case utility::sql_database::DatabaseMode::mysql:
+				//MySQL does not support deferring foreign keys.
+				break;
+			case utility::sql_database::DatabaseMode::postgres:
+				foreign_key_string += " DEFERRABLE INITIALLY DEFERRED";
+				break;
+			case utility::sql_database::DatabaseMode::sqlite3:
+				foreign_key_string += " DEFERRABLE INITIALLY DEFERRED";
+				break;
+			default:
+				utility_exit_with_message(
+					"Unrecognized database mode: '" + name_from_database_mode(db_session->get_db_mode()) + "'");
 		}
 	}
 	return foreign_key_string;

@@ -98,9 +98,9 @@ RotamerBoltzmannWeightFeatures::write_rotamer_boltzmann_weight_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbUUID());
-	Column resNum("resNum", DbInteger());
-	Column boltzmann_weight("boltzmann_weight", DbReal());
+	Column struct_id("struct_id", new DbUUID());
+	Column resNum("resNum", new DbInteger());
+	Column boltzmann_weight("boltzmann_weight", new DbReal());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);

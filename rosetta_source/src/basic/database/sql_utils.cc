@@ -506,10 +506,6 @@ table_exists(
 	// option system, can someone with mysql try this and see if it
 	// works?
 	// "SHOW TABLES IN database();"
-	string db_name(
-		basic::options::option[
-			basic::options::OptionKeys::inout::dbms::database_name].value_string());
-
 	string statement_string;
 	statement stmt;
 	Size i(1);
@@ -519,7 +515,7 @@ table_exists(
 		stmt = safely_prepare_statement(statement_string,db_session);
 		break;
 	case DatabaseMode::mysql:
-		statement_string = "SHOW TABLES WHERE Tables_in_"+db_name+" = ?;";
+		statement_string = "SHOW TABLES WHERE Tables_in_"+db_session->get_db_name()+" = ?;";
 		stmt = safely_prepare_statement(statement_string,db_session);
 		break;
 	case DatabaseMode::postgres:
@@ -574,72 +570,13 @@ insert_or_ignore(
 	string table_name,
 	std::vector<string> column_names,
 	std::vector<string> values,
-	sessionOP db_session){
+	sessionOP db_session
+){
 
-	string db_mode(
-		basic::options::option[basic::options::OptionKeys::inout::dbms::mode]);
 	string statement_string="";
-
-	if(db_mode == "sqlite3")
-	{
-		statement_string = "INSERT OR IGNORE into "+table_name+"(";
-		for(size_t i=0; i<column_names.size(); i++){
-			statement_string+=column_names[i];
-			if(i != column_names.size()-1){
-			 statement_string+=",";
-			}
-		}
-
-		statement_string+=") VALUES(";
-		for(size_t i=0; i<values.size(); i++){
-			statement_string+=values[i];
-			if(i != column_names.size()-1){
-				statement_string+=",";
-			}
-		}
-		statement_string+=");";
-
-		statement stmt = (*db_session) << statement_string;
-		safely_write_to_database(stmt);
-	}else if(db_mode == "mysql")
-	{
-		statement_string = "INSERT IGNORE into "+table_name+"(";
-		for(size_t i=0; i<column_names.size(); i++){
-			statement_string+=column_names[i];
-			if(i != column_names.size()-1){
-				statement_string+=",";
-			}
-		}
-
-		statement_string+=") VALUES(";
-		for(size_t i=0; i<values.size(); i++){
-			statement_string+=values[i];
-			if(i != column_names.size()-1){
-				statement_string+=",";
-			}
-		}
-		statement_string+=");";
-
-		statement stmt = (*db_session) << statement_string;
-		safely_write_to_database(stmt);
-	}
-	else if(db_mode == "postgres")
-	{
-		//This is a dirty postgres hack and seems to be the easiest workaround for lack of INSERT IGNORE support in postgres
-		string select_statement_string = "SELECT * FROM "+table_name+" WHERE ";
-		for(size_t i=0; i<column_names.size(); i++){
-			select_statement_string+=column_names[i] + "=" + values[i];
-			if(i != column_names.size()-1){
-				select_statement_string+=" AND ";
-			}
-		}
-		select_statement_string+=";";
-
-		statement select_stmt = (*db_session) << select_statement_string;
-		result res = safely_read_from_database(select_stmt);
-
-		if(!res.next()){
-			statement_string += "INSERT into "+table_name+"(";
+	switch(db_session->get_db_mode()){
+		case utility::sql_database::DatabaseMode::mysql:{
+			statement_string = "INSERT IGNORE into "+table_name+"(";
 			for(size_t i=0; i<column_names.size(); i++){
 				statement_string+=column_names[i];
 				if(i != column_names.size()-1){
@@ -655,31 +592,74 @@ insert_or_ignore(
 				}
 			}
 			statement_string+=");";
+
 			statement stmt = (*db_session) << statement_string;
 			safely_write_to_database(stmt);
+			break;
 		}
+		case utility::sql_database::DatabaseMode::postgres:{
+			//This is a dirty postgres hack and seems to be the easiest workaround for lack of INSERT IGNORE support in postgres
+			string select_statement_string = "SELECT * FROM "+table_name+" WHERE ";
+			for(size_t i=0; i<column_names.size(); i++){
+				select_statement_string+=column_names[i] + "=" + values[i];
+				if(i != column_names.size()-1){
+					select_statement_string+=" AND ";
+				}
+			}
+			select_statement_string+=";";
+
+			statement select_stmt = (*db_session) << select_statement_string;
+			result res = safely_read_from_database(select_stmt);
+
+			if(!res.next()){
+				statement_string += "INSERT into "+table_name+"(";
+				for(size_t i=0; i<column_names.size(); i++){
+					statement_string+=column_names[i];
+					if(i != column_names.size()-1){
+						statement_string+=",";
+					}
+				}
+
+				statement_string+=") VALUES(";
+				for(size_t i=0; i<values.size(); i++){
+					statement_string+=values[i];
+					if(i != column_names.size()-1){
+						statement_string+=",";
+					}
+				}
+				statement_string+=");";
+				statement stmt = (*db_session) << statement_string;
+				safely_write_to_database(stmt);
+			}
+			break;
+		}
+		case utility::sql_database::DatabaseMode::sqlite3:{
+			statement_string = "INSERT OR IGNORE into "+table_name+"(";
+			for(size_t i=0; i<column_names.size(); i++){
+				statement_string+=column_names[i];
+				if(i != column_names.size()-1){
+				 statement_string+=",";
+				}
+			}
+
+			statement_string+=") VALUES(";
+			for(size_t i=0; i<values.size(); i++){
+				statement_string+=values[i];
+				if(i != column_names.size()-1){
+					statement_string+=",";
+				}
+			}
+			statement_string+=");";
+
+			statement stmt = (*db_session) << statement_string;
+			safely_write_to_database(stmt);
+			break;
+		}
+		default:
+			utility_exit_with_message(
+				"Unrecognized database mode: '" +
+				name_from_database_mode(db_session->get_db_mode()) + "'");
 	}
-	else
-	{
-		utility_exit_with_message("unknown database mode");
-	}
-//	boost::char_separator< char > sep(";");
-//	boost::tokenizer< boost::char_separator< char > > tokens( statement_string, sep );
-//	foreach( std::string const & stmt_str, tokens){
-//		std::string trimmed_stmt_str(utility::trim(stmt_str, " \n\t"));
-//		if(trimmed_stmt_str.size()){
-//			try{
-//				cppdb::statement stmt = (*db_session) << trimmed_stmt_str + ";";
-//				safely_write_to_database(stmt);
-//			} catch (cppdb::cppdb_error e) {
-//				TR.Error
-//				<< "ERROR reading schema \n"
-//				<< trimmed_stmt_str << std::endl;
-//				TR.Error << e.what() << std::endl;
-//				utility_exit();
-//			}
-//		}
-//	}
 }
 
 void write_schema_to_database(
@@ -878,36 +858,76 @@ parse_database_connection(
 				tag->getOption("database_separate_db_per_mpi_process", false));
 			
 		case utility::sql_database::DatabaseMode::mysql:
-		case utility::sql_database::DatabaseMode::postgres:
+		case utility::sql_database::DatabaseMode::postgres:{
 			
+			std::string database_host;
 			if(!tag->hasOption("database_host") && !option[dbms::host].user()){
-				TR << "WARNING: To connect to a postgres or mysql database you must set ";
-				TR << "the database_host tag or specify -dbms:host on the command line." << endl;
+				if(!option[dbms::host].user()){
+					utility_exit_with_message(
+						"WARNING: To connect to a postgres or mysql database you must set"
+						"the database_host tag or specify -dbms:host on the command line.");
+				}
+				else{
+					database_host=option[dbms::host];
+				}
+			}
+			else{
+				database_host=tag->getOption<string>("database_host");
 			}
 			
-			if(tag->hasOption("database_user") && !option[dbms::user].user()){
-				TR << "WARNING: To connect to a postgres or mysql database you must set ";
-				TR << "the database_user tag or specify -dbms:user on the command line." << endl;
+			std::string database_user;
+			if(!tag->hasOption("database_user") && !option[dbms::user].user()){
+				if(!option[dbms::user].user()){
+					utility_exit_with_message(
+						"WARNING: To connect to a postgres or mysql database you must set"
+						"the database_user tag or specify -dbms:user on the command line.");
+				}
+				else{
+					database_user=option[dbms::user];
+				}
+			}
+			else{
+				database_user=tag->getOption<string>("database_user");
 			}
 			
-			if(tag->hasOption("database_password") && !option[dbms::password].user()){
-				TR << "WARNING: To connect to a postgres or mysql database you must set ";
-				TR << "the database_password tag or specify -dbms:password on the command line." << endl;
+			std::string database_password;
+			if(!tag->hasOption("database_password") && !option[dbms::password].user()){
+				if(!option[dbms::password].user()){
+					utility_exit_with_message(
+						"WARNING: To connect to a postgres or mysql database you must set"
+						"the database_password tag or specify -dbms:password on the command line.");
+				}
+				else{
+					database_password=option[dbms::password];
+				}
+			}
+			else{
+				database_password=tag->getOption<string>("database_password");
 			}
 			
-			if(tag->hasOption("database_port") && !option[dbms::port].user()){
-				TR << "WARNING: To connect to a postgres or mysql database you must set ";
-				TR << "the database_port tag or specify -dbms:port on the command line." << endl;
+			Size database_port;
+			if(!tag->hasOption("database_port") && !option[dbms::port].user()){
+				if(!option[dbms::port].user()){
+					utility_exit_with_message(
+						"WARNING: To connect to a postgres or mysql database you must set"
+						"the database_port tag or specify -dbms:port on the command line.");
+				}
+				else{
+					database_port=option[dbms::port];
+				}
+			}
+			else{
+				database_port=tag->getOption<Size>("database_port");
 			}
 			
 			return DatabaseSessionManager::get_instance()->get_db_session(
 				database_mode, transaction_mode, chunk_size,
 				database_name, database_pq_schema,
-				tag->getOption<string>("database_host", option[dbms::host]),
-				tag->getOption<string>("database_user", option[dbms::user]),
-				tag->getOption<string>("database_password", option[dbms::password]),
-				tag->getOption<Size>("database_port", option[dbms::port]));
-			
+				database_host,
+				database_user,
+				database_password,
+				database_port);
+		}
 		default:
 			utility_exit_with_message(
 				"Unrecognized database mode: '" +

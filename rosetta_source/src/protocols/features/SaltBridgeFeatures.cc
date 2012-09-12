@@ -115,13 +115,13 @@ SaltBridgeFeatures::write_salt_bridges_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbUUID());
-	Column don_resNum("don_resNum", DbInteger());
-	Column acc_id("acc_id", DbInteger());
-	Column psi("psi", DbReal());
-	Column theta("theta", DbReal());
-	Column rho("rho", DbReal());
-	Column orbital("orbital", DbText());
+	Column struct_id("struct_id", new DbUUID());
+	Column don_resNum("don_resNum", new DbInteger());
+	Column acc_id("acc_id", new DbInteger());
+	Column psi("psi", new DbReal());
+	Column theta("theta", new DbReal());
+	Column rho("rho", new DbReal());
+	Column orbital("orbital", new DbText());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);

@@ -18,6 +18,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <basic/database/schema_generator/Constraint.fwd.hh>
 #include <utility/vector1.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 #include <basic/database/schema_generator/Column.hh>
 
@@ -38,7 +39,10 @@ public:
 
 	Constraint(Columns columns);
 
-	virtual std::string print() = 0;
+	virtual std::string
+	print(
+		utility::sql_database::sessionOP
+	) const=0;
 
 protected:
 
@@ -74,8 +78,11 @@ public:
 
 	UniqueConstraint(Column column);
 	UniqueConstraint(Columns columns);
-	virtual std::string print();
-
+	
+	std::string
+	print(
+		utility::sql_database::sessionOP
+	) const;
 };
 
 class GreaterThanConstraint : public Constraint {
@@ -85,10 +92,11 @@ public:
 		Column column,
 		platform::Real value);
 
-	virtual
 	std::string
-	print();
-
+	print(
+		utility::sql_database::sessionOP
+	) const;
+	
 private:
 	platform::Real value_;
 };

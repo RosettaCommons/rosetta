@@ -22,6 +22,7 @@
 
 // Unit Headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/sql_database/types.hh>
 
 //C++ Headers
@@ -34,31 +35,28 @@ namespace schema_generator{
 class Column : public utility::pointer::ReferenceCount {
 public:
 
-	Column(std::string name, DbDataType type);
+	Column(std::string name, DbDataTypeOP type);
 
-	Column(std::string name, DbDataType type, bool allow_null);
+	Column(std::string name, DbDataTypeOP type, bool allow_null);
 
-	Column(std::string name, DbDataType type, bool allow_null, bool auto_increment);
+	Column(std::string name, DbDataTypeOP type, bool allow_null, bool auto_increment);
 
 	Column(Column const & src);
 
 	virtual ~Column();
 
-	void init_db_mode();
-
 	std::string name() const;
 
 	bool auto_increment() const;
 
-	std::string print() const;
-
+	std::string print(utility::sql_database::sessionOP db_session) const;
+	
 	bool operator==(const Column &other) const;
 
 private:
 
-	utility::sql_database::DatabaseMode::e database_mode_;
 	std::string name_;
-	DbDataType type_;
+	DbDataTypeOP type_;
 	bool allow_null_;
 	bool auto_increment_;
 };

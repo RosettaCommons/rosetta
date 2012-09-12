@@ -68,8 +68,8 @@ RadiusOfGyrationFeatures::write_radius_of_gyration_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbUUID());
-	Column radius_of_gyration("radius_of_gyration", DbReal());
+	Column struct_id("struct_id", new DbUUID());
+	Column radius_of_gyration("radius_of_gyration", new DbReal());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);

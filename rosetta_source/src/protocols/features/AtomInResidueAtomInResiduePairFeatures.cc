@@ -85,13 +85,13 @@ AtomInResidueAtomInResiduePairFeatures::write_atom_in_residue_pairs_table_schema
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbUUID());
-	Column residue_type1("residue_type1", DbText());
-	Column atom_type1("atom_type1", DbText());
-	Column residue_type2("residue_type2", DbText());
-	Column atom_type2("atom_type2", DbText());
-	Column distance_bin("distance_bin", DbText());
-	Column count("count", DbInteger());
+	Column struct_id("struct_id", new DbUUID());
+	Column residue_type1("residue_type1", new DbText());
+	Column atom_type1("atom_type1", new DbText());
+	Column residue_type2("residue_type2", new DbText());
+	Column atom_type2("atom_type2", new DbText());
+	Column distance_bin("distance_bin", new DbText());
+	Column count("count", new DbInteger());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);

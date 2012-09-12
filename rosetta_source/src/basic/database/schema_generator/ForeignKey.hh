@@ -17,6 +17,7 @@
 
 #include <utility/vector1.hh>
 #include <basic/database/schema_generator/Column.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 //C++ Headers
 #include <string>
@@ -46,17 +47,13 @@ public:
 		utility::vector1<std::string> reference_columns,
 		bool defer);
 
-	void
-	init_db_mode();
-
-  Columns
+	Columns
 	columns();
 
-	std::string print();
+	std::string print(utility::sql_database::sessionOP) const;
 
 private:
 
-	std::string database_mode_;
 	Columns columns_;
 	utility::vector1<std::string> reference_columns_;
 	std::string reference_table_;

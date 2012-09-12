@@ -77,7 +77,6 @@ primary_key_(primary_key)
 Schema::Schema(
 	Schema const & src
 ) :
-	database_mode_(src.database_mode_),
 	primary_key_(src.primary_key_),
 	columns_(src.columns_),
 	foreign_keys_(src.foreign_keys_),
@@ -87,10 +86,6 @@ Schema::Schema(
 
 void
 Schema::init(){
-	database_mode_ =
-		utility::sql_database::database_mode_from_name(
-			basic::options::option[basic::options::OptionKeys::inout::dbms::mode]);
-
 	//Add primary key columns to schema list
 	Columns key_columns = primary_key_.columns();
 	this->columns_.insert( columns_.end(), key_columns.begin(), key_columns.end() );
@@ -99,7 +94,6 @@ Schema::init(){
 	std::transform(
 		table_name_.begin(), table_name_.end(), table_name_.begin(),
 		(int(*)(int)) std::tolower);
-
 }
 
 void
@@ -144,7 +138,9 @@ Schema::add_index(
 	indices_.push_back(index);
 }
 
-std::string Schema::print(){
+std::string Schema::print(
+	sessionOP db_session
+) const{
 	stringstream schema_string;
 	schema_string << "CREATE TABLE IF NOT EXISTS " << table_name_ << "(\n\t";
 
@@ -152,42 +148,42 @@ std::string Schema::print(){
 		if(it!=columns_.begin()){
 			schema_string << ",\n\t";
 		}
-		schema_string << it->print();
+		schema_string << it->print(db_session);
 	}
 
 	for(size_t i=1; i<=foreign_keys_.size(); i++){
-		schema_string << ",\n\t" << foreign_keys_[i].print();
+		schema_string << ",\n\t" << foreign_keys_[i].print(db_session);
 	}
 
 	Columns const & keys(primary_key_.columns());
 
 	if(keys.size() > 0){
-		switch(database_mode_) {
+		switch(db_session->get_db_mode()) {
 		case utility::sql_database::DatabaseMode::mysql:
 		case utility::sql_database::DatabaseMode::postgres:
-			schema_string << ",\n\t" << primary_key_.print();
+			schema_string << ",\n\t" << primary_key_.print(db_session);
 			break;
 		case utility::sql_database::DatabaseMode::sqlite3:
 			//Prevent adding the primary key twice - this will happen if you have an autoincrementing primary key in sqlite3
 
 			if(!(keys.size()==1 && keys.begin()->auto_increment())){
-				schema_string << ",\n\t" << primary_key_.print();
+				schema_string << ",\n\t" << primary_key_.print(db_session);
 			}
 			break;
 		default:
 			utility_exit_with_message(
-				"Unrecognized database mode: '" + name_from_database_mode(database_mode_) + "'");
+				"Unrecognized database mode: '" + name_from_database_mode(db_session->get_db_mode()) + "'");
 		}
 	}
 
 	for(size_t i=1; i<=constraints_.size(); i++){
-		schema_string << ",\n\t" << constraints_[i]->print();
+		schema_string << ",\n\t" << constraints_[i]->print(db_session);
 	}
 
 	schema_string << ");\n";
 
 	for(Size i=1; i <= indices_.size(); ++i){
-		schema_string << indices_[i].print(table_name_);
+		schema_string << indices_[i].print(table_name_, db_session);
 		schema_string << "\n";
 	}
 
@@ -225,18 +221,18 @@ Schema::write(
 ){
 
 	// Older versions of postgres don't have "create table if not exists"
-	if(database_mode_ == utility::sql_database::DatabaseMode::postgres &&
+	if(db_session->get_db_mode() == utility::sql_database::DatabaseMode::postgres &&
 		table_exists(db_session, table_name_)){
 		return;
 	}
 
 	try{
-		statement stmt = (*db_session) << print();
+		statement stmt = (*db_session) << print(db_session);
 		safely_write_to_database(stmt);
 	} catch (cppdb::cppdb_error e) {
 		TR.Error
 		<< "ERROR reading schema \n"
-		<< print() << std::endl;
+		<< print(db_session) << std::endl;
 		TR.Error << e.what() << std::endl;
 		utility_exit();
 	}

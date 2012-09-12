@@ -88,16 +88,16 @@ ProteinResidueConformationFeatures::write_schema_to_db(utility::sql_database::se
 	using namespace basic::database::schema_generator;
 
 	//******protein_residue_conformation******//
-	Column struct_id("struct_id",DbUUID(), false);
-	Column seqpos("seqpos",DbInteger(), false);
-	Column secstruct("secstruct",DbText(), false);
-	Column phi("phi",DbDouble(), false);
-	Column psi("psi",DbDouble(), false);
-	Column omega("omega",DbDouble(), false);
-	Column chi1("chi1",DbDouble(), false);
-	Column chi2("chi2",DbDouble(), false);
-	Column chi3("chi3",DbDouble(), false);
-	Column chi4("chi4",DbDouble(), false);
+	Column struct_id("struct_id", new DbUUID(), false);
+	Column seqpos("seqpos", new DbInteger(), false);
+	Column secstruct("secstruct", new DbText(), false);
+	Column phi("phi", new DbDouble(), false);
+	Column psi("psi", new DbDouble(), false);
+	Column omega("omega", new DbDouble(), false);
+	Column chi1("chi1", new DbDouble(), false);
+	Column chi2("chi2", new DbDouble(), false);
+	Column chi3("chi3", new DbDouble(), false);
+	Column chi4("chi4", new DbDouble(), false);
 
 
 	utility::vector1<Column> prot_res_pkeys;
@@ -128,10 +128,10 @@ ProteinResidueConformationFeatures::write_schema_to_db(utility::sql_database::se
 	protein_residue_conformation.write(db_session);
 
 	//******residue_atom_coords******//
-	Column atomno("atomno",DbInteger(), false);
-	Column x("x",DbDouble(), false);
-	Column y("y",DbDouble(), false);
-	Column z("z",DbDouble(), false);
+	Column atomno("atomno", new DbInteger(), false);
+	Column x("x", new DbDouble(), false);
+	Column y("y", new DbDouble(), false);
+	Column z("z", new DbDouble(), false);
 
 	utility::vector1<Column> res_atm_coords_pkeys;
 	res_atm_coords_pkeys.push_back(struct_id);

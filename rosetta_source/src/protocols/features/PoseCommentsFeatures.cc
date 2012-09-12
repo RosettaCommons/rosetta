@@ -88,9 +88,9 @@ PoseCommentsFeatures::write_schema_to_db(utility::sql_database::sessionOP db_ses
 	using namespace basic::database::schema_generator;
 
 	//******pose_comments******//
-	Column struct_id("struct_id",DbUUID(), false);
-	Column comment_key("comment_key",DbTextKey(), false);
-	Column value("value",DbText(), false);
+	Column struct_id("struct_id", new DbUUID(), false);
+	Column comment_key("comment_key", new DbTextKey(), false);
+	Column value("value", new DbText(), false);
 
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(struct_id);

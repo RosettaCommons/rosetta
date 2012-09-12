@@ -130,10 +130,10 @@ UnrecognizedAtomFeatures::write_unrecognized_residues_table_schema(
 
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbUUID());
-	Column residue_number("residue_number", DbInteger());
-	Column name3("name3", DbText());
-	Column max_temperature("max_temperature", DbReal());
+	Column struct_id("struct_id", new DbUUID());
+	Column residue_number("residue_number", new DbInteger());
+	Column name3("name3", new DbText());
+	Column max_temperature("max_temperature", new DbReal());
 
 	Columns residues_pkey_cols;
 	residues_pkey_cols.push_back(struct_id);
@@ -160,13 +160,13 @@ UnrecognizedAtomFeatures::write_unrecognized_atoms_table_schema(
 
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbUUID());
-	Column residue_number("residue_number", DbInteger());
-	Column atom_name("atom_name", DbText());
-	Column coord_x("coord_x", DbReal());
-	Column coord_y("coord_y", DbReal());
-	Column coord_z("coord_z", DbReal());
-	Column temperature("temperature", DbReal());
+	Column struct_id("struct_id", new DbUUID());
+	Column residue_number("residue_number", new DbInteger());
+	Column atom_name("atom_name", new DbText());
+	Column coord_x("coord_x", new DbReal());
+	Column coord_y("coord_y", new DbReal());
+	Column coord_z("coord_z", new DbReal());
+	Column temperature("temperature", new DbReal());
 
 	Columns residues_pkey_cols;
 	residues_pkey_cols.push_back(struct_id);
@@ -195,10 +195,10 @@ UnrecognizedAtomFeatures::write_unrecognized_neighbors_table_schema(
 
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbUUID(), false);
-	Column residue_number("residue_number", DbInteger(), false);
-	Column unrecognized_residue_number("unrecognized_residue_number", DbReal(), false);
-	Column closest_contact("closest_contact", DbReal(), false);
+	Column struct_id("struct_id", new DbUUID(), false);
+	Column residue_number("residue_number", new DbInteger(), false);
+	Column unrecognized_residue_number("unrecognized_residue_number", new DbReal(), false);
+	Column closest_contact("closest_contact", new DbReal(), false);
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);

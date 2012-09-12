@@ -81,11 +81,11 @@ ResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP
 	using namespace basic::database::schema_generator;
 
 	//******nonprotein_residue_conformation******//
-	Column struct_id("struct_id",DbUUID(), false);
-	Column seqpos("seqpos",DbInteger(), false);
-	Column phi("phi",DbDouble(), false);
-	Column psi("psi",DbDouble(), false);
-	Column omega("omega",DbDouble(), false);
+	Column struct_id("struct_id", new DbUUID(), false);
+	Column seqpos("seqpos", new DbInteger(), false);
+	Column phi("phi", new DbDouble(), false);
+	Column psi("psi", new DbDouble(), false);
+	Column omega("omega", new DbDouble(), false);
 
 	utility::vector1<Column> non_prot_res_pkeys;
 	non_prot_res_pkeys.push_back(struct_id);
@@ -112,8 +112,8 @@ ResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP
 	nonprotein_residue_conformation.write(db_session);
 
 	//******nonprotein_residue_angles******//
-	Column chinum("chinum",DbInteger(), false);
-	Column chiangle("chiangle",DbDouble(), false);
+	Column chinum("chinum", new DbInteger(), false);
+	Column chiangle("chiangle", new DbDouble(), false);
 
 	utility::vector1<Column> non_prot_res_angle_keys;
 	non_prot_res_angle_keys.push_back(struct_id);
@@ -130,10 +130,10 @@ ResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP
 	nonprotein_residue_angles.write(db_session);
 
 	//******residue_atom_coords******//
-	Column atomno("atomno",DbInteger(), false);
-	Column x("x",DbDouble(), false);
-	Column y("y",DbDouble(), false);
-	Column z("z",DbDouble(), false);
+	Column atomno("atomno", new DbInteger(), false);
+	Column x("x", new DbDouble(), false);
+	Column y("y", new DbDouble(), false);
+	Column z("z", new DbDouble(), false);
 
 	utility::vector1<Column> res_atm_coords_pkeys;
 	res_atm_coords_pkeys.push_back(struct_id);

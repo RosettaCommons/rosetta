@@ -119,16 +119,16 @@ ProteinRMSDFeatures::write_protein_rmsd_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbUUID());
-	Column reference_tag("reference_tag", DbText());
-	Column protein_CA("protein_CA", DbReal());
-	Column protein_CA_or_CB("protein_CA_or_CB", DbReal());
-	Column protein_backbone("protein_backbone", DbReal());
-	Column protein_backbone_including_O("protein_backbone_including_O", DbReal());
-	Column protein_backbone_sidechain_heavyatom("protein_backbone_sidechain_heavyatom", DbReal());
-	Column heavyatom("heavyatom", DbReal());
-	Column nbr_atom("nbr_atom", DbReal());
-	Column all_atom("all_atom", DbReal());
+	Column struct_id("struct_id", new DbUUID());
+	Column reference_tag("reference_tag", new DbText());
+	Column protein_CA("protein_CA", new DbReal());
+	Column protein_CA_or_CB("protein_CA_or_CB", new DbReal());
+	Column protein_backbone("protein_backbone", new DbReal());
+	Column protein_backbone_including_O("protein_backbone_including_O", new DbReal());
+	Column protein_backbone_sidechain_heavyatom("protein_backbone_sidechain_heavyatom", new DbReal());
+	Column heavyatom("heavyatom", new DbReal());
+	Column nbr_atom("nbr_atom", new DbReal());
+	Column all_atom("all_atom", new DbReal());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);

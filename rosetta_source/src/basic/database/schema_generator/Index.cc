@@ -14,6 +14,7 @@
 
 #include <basic/database/schema_generator/Index.hh>
 #include <basic/database/schema_generator/Column.hh>
+#include <utility/sql_database/DatabaseSessionManager.hh>
 
 // Basic Headers
 #include <basic/options/option.hh>
@@ -45,11 +46,9 @@ Index::Index(
 	bool unique
 ) :
 	unique_(unique),
-	database_mode_(),
 	columns_()
 {
 	columns_.push_back(column);
-	init_db_mode();
 }
 
 Index::Index(
@@ -57,26 +56,15 @@ Index::Index(
 	bool unique
 ) :
 	unique_(unique),
-	database_mode_(),
 	columns_(columns)
-{
-	init_db_mode();
-}
+{}
 
 Index::Index(
 	Index const & src
 ) :
 	unique_(src.unique_),
-	database_mode_(src.database_mode_),
 	columns_(src.columns_)
 {}
-
-void
-Index::init_db_mode(){
-	database_mode_ =
-		utility::sql_database::database_mode_from_name(
-			basic::options::option[basic::options::OptionKeys::inout::dbms::mode]);
-}
 
 Columns
 Index::columns(){
@@ -85,34 +73,45 @@ Index::columns(){
 
 string
 Index::print(
-	string const & table_name
-){
+	string const & table_name,
+	utility::sql_database::sessionOP db_session
+) const {
 	stringstream s;
-
-	if(database_mode_ == utility::sql_database::DatabaseMode::sqlite3){
-		s << "CREATE ";
-		if(unique_){
-			s << "UNIQUE ";
-		}
-		s << "INDEX IF NOT EXISTS\n\t";
-		s << table_name;
-		for(Size i=1; i <= columns_.size(); ++i){
-			s << "_" << columns_[i].name();
-		}
-		s << " ON\n\t";
-		s << " " << table_name << " ( ";
-		for(Size i=1; i <= columns_.size(); ++i){
-			if(i != 1){
-				s << ", ";
+	
+	switch(db_session->get_db_mode()) {
+		case utility::sql_database::DatabaseMode::mysql:
+			return "";
+			break;
+		case utility::sql_database::DatabaseMode::postgres:
+			return "";
+			break;
+		case utility::sql_database::DatabaseMode::sqlite3:{
+			s << "CREATE ";
+			if(unique_){
+				s << "UNIQUE ";
 			}
-			s << columns_[i].name();
+			s << "INDEX IF NOT EXISTS\n\t";
+			s << table_name;
+			for(Size i=1; i <= columns_.size(); ++i){
+				s << "_" << columns_[i].name();
+			}
+			s << " ON\n\t";
+			s << " " << table_name << " ( ";
+			for(Size i=1; i <= columns_.size(); ++i){
+				if(i != 1){
+					s << ", ";
+				}
+				s << columns_[i].name();
+			}
+			s << " );\n";
+
+			return s.str();
+			break;
 		}
-		s << " );\n";
-
-		return s.str();
+		default:
+			utility_exit_with_message(
+				"Unrecognized database mode: '" + name_from_database_mode(db_session->get_db_mode()) + "'");
 	}
-
-	return "";
 }
 
 

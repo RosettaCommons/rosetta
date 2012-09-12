@@ -97,10 +97,10 @@ StructureFeatures::write_schema_to_db(
 	using namespace basic::database::schema_generator;
 
 	//Don't autoincrement the struct_id because it is a UUID generated here
-	Column struct_id("struct_id",DbUUID(), false /*not null*/, false /*don't autoincrement*/);
-	Column batch_id("batch_id",DbInteger());
-	Column tag("tag", DbText(255));
-	Column input_tag("input_tag", DbText());
+	Column struct_id("struct_id", new DbUUID(), false /*not null*/, false /*don't autoincrement*/);
+	Column batch_id("batch_id", new DbInteger());
+	Column tag("tag", new DbText(255));
+	Column input_tag("input_tag", new DbText());
 
 	/***structures***/
 	Schema structures("structures", PrimaryKey(struct_id));

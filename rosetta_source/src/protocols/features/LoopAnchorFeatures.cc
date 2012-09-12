@@ -99,9 +99,9 @@ LoopAnchorFeatures::write_loop_anchors_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbUUID());
-	Column residue_begin("residue_begin", DbInteger());
-	Column residue_end("residue_end", DbInteger());
+	Column struct_id("struct_id", new DbUUID());
+	Column residue_begin("residue_begin", new DbInteger());
+	Column residue_end("residue_end", new DbInteger());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -138,17 +138,17 @@ LoopAnchorFeatures::write_loop_anchor_transforms_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbUUID());
-	Column residue_begin("residue_begin", DbInteger());
-	Column residue_end("residue_end", DbInteger());
-	Column x("x", DbReal());
-	Column y("y", DbReal());
-	Column z("z", DbReal());
-	Column phi("phi", DbReal());
-	Column psi("psi", DbReal());
-	Column theta("theta", DbReal());
-	Column alpha("alpha", DbReal());
-	Column omega("omega", DbReal());
+	Column struct_id("struct_id", new DbUUID());
+	Column residue_begin("residue_begin", new DbInteger());
+	Column residue_end("residue_end", new DbInteger());
+	Column x("x", new DbReal());
+	Column y("y", new DbReal());
+	Column z("z", new DbReal());
+	Column phi("phi", new DbReal());
+	Column psi("psi", new DbReal());
+	Column theta("theta", new DbReal());
+	Column alpha("alpha", new DbReal());
+	Column omega("omega", new DbReal());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -186,17 +186,17 @@ LoopAnchorFeatures::write_loop_anchor_transforms_three_res_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbUUID());
-	Column residue_begin("residue_begin", DbInteger());
-	Column residue_end("residue_end", DbInteger());
-	Column x("x", DbReal());
-	Column y("y", DbReal());
-	Column z("z", DbReal());
-	Column phi("phi", DbReal());
-	Column psi("psi", DbReal());
-	Column theta("theta", DbReal());
-	Column alpha("alpha", DbReal());
-	Column omega("omega", DbReal());
+	Column struct_id("struct_id", new DbUUID());
+	Column residue_begin("residue_begin", new DbInteger());
+	Column residue_end("residue_end", new DbInteger());
+	Column x("x", new DbReal());
+	Column y("y", new DbReal());
+	Column z("z", new DbReal());
+	Column phi("phi", new DbReal());
+	Column psi("psi", new DbReal());
+	Column theta("theta", new DbReal());
+	Column alpha("alpha", new DbReal());
+	Column omega("omega", new DbReal());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);

@@ -23,6 +23,7 @@
 
 //Protocols
 #include <protocols/features/FeaturesReporter.hh>
+#include <protocols/simple_filters/InterfaceSasaFilter.hh>
 
 //Devel
 #include <protocols/features/helixAssembly/HelicalFragment.hh>
@@ -34,7 +35,8 @@ namespace protocols {
 namespace features {
 namespace helixAssembly {
 
-class HelixBundleFeatures : public protocols::features::FeaturesReporter {
+class HelixBundleFeatures : public protocols::features::FeaturesReporter
+{
 
 public:
 
@@ -46,36 +48,83 @@ public:
 	std::string
 	type_name() const  {
 		return "HelixBundleFeatures";
-	}
+	};
 
 	///@brief generate the table schemas and write them to the database
-	virtual void
-	write_schema_to_db(utility::sql_database::sessionOP db_session) const;
+	virtual
+	void
+	write_schema_to_db(
+		utility::sql_database::sessionOP db_session
+	) const;
+
+	virtual
+	void
+	parse_my_tag(
+		utility::tag::TagPtr const tag,
+		protocols::moves::DataMap & data,
+		protocols::filters::Filters_map const & /*filters*/,
+		protocols::moves::Movers_map const & /*movers*/,
+		core::pose::Pose const & pose
+	);
 
 	///@brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>
 	features_reporter_dependencies() const;
+	
+	void
+	generate_comparison_list(
+		utility::vector1<HelicalFragmentOP> all_helix_fragments,
+		core::Size prev_index,
+		utility::vector1<HelicalFragmentOP> fragment_list
+	);
+
+	bool
+	check_cap_distances(
+		core::pose::Pose const & pose,
+		utility::vector1<HelicalFragmentOP> frag_set
+	);
 
 	///@brief collect all the feature data for the pose
 	virtual
 	core::Size
 	report_features(
-					core::pose::Pose const & pose,
-					utility::vector1<bool> const & relevant_residues,
-					boost::uuids::uuid struct_id,
-					utility::sql_database::sessionOP db_session
-					);
+		core::pose::Pose const & pose,
+		utility::vector1<bool> const & relevant_residues,
+		boost::uuids::uuid struct_id,
+		utility::sql_database::sessionOP db_session
+	);
 
-	utility::vector1<HelicalFragment> get_full_helices(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session);
+	utility::vector1<HelicalFragmentOP>
+	get_helix_fragments(
+		boost::uuids::uuid struct_id,
+		utility::sql_database::sessionOP db_session
+	);
 
-	bool checkHelixContacts(core::pose::Pose const & pose, HelicalFragment helix_1, HelicalFragment helix_2, HelicalFragment helix_3);
+	///@brief create a bundle-pose from the combination of fragments
+	/// and record the "interface" SASA for each helix against the
+	/// rest of the bundle
+	void
+	record_helix_sasas(
+		core::pose::Pose const & pose,
+		utility::vector1<HelicalFragmentOP> & bundle_fragments
+	);
 
 private:
 
+	//Maximum allowable distance, in angstroms, between any two helix ends
 	core::Real helix_cap_dist_cutoff_;
-	core::Real helix_contact_dist_cutoff_;
-	core::Size min_helix_size_;
+	
+	//number of helices in the bundle
+	core::Size bundle_size_;
+	
+	//number of residues in each helix
+	core::Size helix_size_;
+	
+	//List of all sublists of size bundle_size from the total number of helix fragments
+	utility::vector1< utility::vector1<HelicalFragmentOP> > comparison_list_;
+	
+	protocols::simple_filters::InterfaceSasaFilter sasa_filter_;
 
 };
 

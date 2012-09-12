@@ -97,17 +97,17 @@ void
 PdbDataFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id",DbUUID(), false);
-	Column residue_number("residue_number",DbInteger(), false);
+	Column struct_id("struct_id", new DbUUID(), false);
+	Column residue_number("residue_number", new DbInteger(), false);
 
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(struct_id);
 	pkey_cols.push_back(residue_number);
 
 	//******residue_pdb_identification******//
-	Column chain_id("chain_id",DbText(), false);
-	Column insertion_code("insertion_code",DbText(), false);
-	Column pdb_residue_number("pdb_residue_number",DbInteger(), false);
+	Column chain_id("chain_id", new DbText(), false);
+	Column insertion_code("insertion_code", new DbText(), false);
+	Column pdb_residue_number("pdb_residue_number", new DbInteger(), false);
 
 	utility::vector1<std::string> fkey_reference_cols;
 	fkey_reference_cols.push_back("struct_id");
@@ -126,12 +126,12 @@ PdbDataFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session)
 
 
 	//******residue_pdb_confidence******//
-	Column max_temperature("max_temperature",DbReal(), false);
-	Column max_bb_temperature("max_bb_temperature",DbReal(), false);
-	Column max_sc_temperature("max_sc_temperature",DbReal(), false);
-	Column min_occupancy("min_occupancy",DbReal(), false);
-	Column min_bb_occupancy("min_bb_occupancy",DbReal(), false);
-	Column min_sc_occupancy("min_sc_occupancy",DbReal(), false);
+	Column max_temperature("max_temperature", new DbReal(), false);
+	Column max_bb_temperature("max_bb_temperature", new DbReal(), false);
+	Column max_sc_temperature("max_sc_temperature", new DbReal(), false);
+	Column min_occupancy("min_occupancy", new DbReal(), false);
+	Column min_bb_occupancy("min_bb_occupancy", new DbReal(), false);
+	Column min_sc_occupancy("min_sc_occupancy", new DbReal(), false);
 
 	utility::vector1<Column> pdb_ident_pkeys;
 	pdb_ident_pkeys.push_back(struct_id);

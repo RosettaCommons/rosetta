@@ -15,23 +15,30 @@
 #ifndef INCLUDED_basic_database_schema_generator_DbDataType_HH
 #define INCLUDED_basic_database_schema_generator_DbDataType_HH
 
-//C++
+#include <basic/database/schema_generator/DbDataType.fwd.hh>
 #include <string>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/sql_database/types.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 namespace basic{
 namespace database{
 namespace schema_generator{
 
 //Class definitions for datatypes
-class DbDataType {
-
+class DbDataType : public utility::pointer::ReferenceCount {
+	
 public:
 	DbDataType();
-	std::string print() const;
+	DbDataType(int size);
+	
+	virtual
+	std::string print(
+		utility::sql_database::sessionOP
+	) const = 0;
 
 protected:
-	utility::sql_database::DatabaseMode::e database_mode_;
+	int size_;
 	std::string type_string_;
 };
 
@@ -39,21 +46,21 @@ protected:
 class DbText : public  DbDataType {
 public:
 	DbText();
-
 	DbText(int size);
+	std::string print(utility::sql_database::sessionOP) const;
 };
 
 class DbTextKey : public  DbDataType {
 public:
 	DbTextKey();
+	std::string print(utility::sql_database::sessionOP) const;
 };
 
 //General integer data type
 class DbInteger : public DbDataType {
 public:
 	DbInteger();
-
-	DbInteger(int size);
+	std::string print(utility::sql_database::sessionOP) const;
 };
 
 /// DOES NOT WORK WITH CPPDB - USE INTEGER INSTEAD
@@ -67,25 +74,28 @@ public:
 class DbBigInt : public DbDataType {
 public:
 	DbBigInt();
-
+	std::string print(utility::sql_database::sessionOP) const;
 };
 
 //Double data type
 class DbDouble : public DbDataType {
 public:
 	DbDouble();
+	std::string print(utility::sql_database::sessionOP) const;
 };
 
 //Real data type
 class DbReal : public DbDataType {
 public:
 	DbReal();
+	std::string print(utility::sql_database::sessionOP) const;
 };
 
 //Struct Id has its own type due to incompatibilities between backends in regards to unsigned long longs
 class DbUUID : public DbDataType {
 public:
 	DbUUID();
+	std::string print(utility::sql_database::sessionOP) const;
 };
 
 } // schema_generator

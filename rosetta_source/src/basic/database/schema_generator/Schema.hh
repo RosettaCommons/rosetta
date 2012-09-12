@@ -55,15 +55,13 @@ public:
 
 	void add_index(Index index);
 
-	std::string print();
+	std::string print(utility::sql_database::sessionOP db_session) const;
 
 	void write(utility::sql_database::sessionOP db_session);
 
 private:
 
 	void init();
-
-	utility::sql_database::DatabaseMode::e database_mode_;
 
 	std::string table_name_;
 	PrimaryKey primary_key_;

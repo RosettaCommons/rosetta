@@ -898,13 +898,13 @@ HBondDatabase::write_hbond_fade_interval_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column database_tag("database_tag", DbText());
-	Column name("name", DbText());
-	Column junction_type("junction_type", DbText());
-	Column min0("min0", DbReal());
-	Column fmin("fmin", DbReal());
-	Column fmax("fmax", DbReal());
-	Column max0("max0", DbReal());
+	Column database_tag("database_tag", new DbText());
+	Column name("name", new DbText());
+	Column junction_type("junction_type", new DbText());
+	Column min0("min0", new DbReal());
+	Column fmin("fmin", new DbReal());
+	Column fmax("fmax", new DbReal());
+	Column max0("max0", new DbReal());
 
 
 	Columns primary_key_columns;
@@ -928,27 +928,27 @@ HBondDatabase::write_hbond_polynomial_1d_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column database_tag("database_tag", DbText());
-	Column name("name", DbText());
-	Column dimension("dimension", DbText());
-	Column xmin("xmin", DbReal());
-	Column xmax("xmax", DbReal());
-	Column min_val("min_val", DbReal());
-	Column max_val("max_val", DbReal());
-	Column root1("root1", DbReal());
-	Column root2("root2", DbReal());
-	Column degree("degree", DbInteger());
-	Column c_a("c_a", DbReal());
-	Column c_b("c_b", DbReal());
-	Column c_c("c_c", DbReal());
-	Column c_d("c_d", DbReal());
-	Column c_e("c_e", DbReal());
-	Column c_f("c_f", DbReal());
-	Column c_g("c_g", DbReal());
-	Column c_h("c_h", DbReal());
-	Column c_i("c_i", DbReal());
-	Column c_j("c_j", DbReal());
-	Column c_k("c_k", DbReal());
+	Column database_tag("database_tag", new DbText());
+	Column name("name", new DbText());
+	Column dimension("dimension", new DbText());
+	Column xmin("xmin", new DbReal());
+	Column xmax("xmax", new DbReal());
+	Column min_val("min_val", new DbReal());
+	Column max_val("max_val", new DbReal());
+	Column root1("root1", new DbReal());
+	Column root2("root2", new DbReal());
+	Column degree("degree", new DbInteger());
+	Column c_a("c_a", new DbReal());
+	Column c_b("c_b", new DbReal());
+	Column c_c("c_c", new DbReal());
+	Column c_d("c_d", new DbReal());
+	Column c_e("c_e", new DbReal());
+	Column c_f("c_f", new DbReal());
+	Column c_g("c_g", new DbReal());
+	Column c_h("c_h", new DbReal());
+	Column c_i("c_i", new DbReal());
+	Column c_j("c_j", new DbReal());
+	Column c_k("c_k", new DbReal());
 
 
 	Columns primary_key_columns;
@@ -986,20 +986,20 @@ HBondDatabase::write_hbond_evaluation_types_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column database_tag("database_tag", DbText());
-	Column don_chem_type("don_chem_type", DbText());
-	Column acc_chem_type("acc_chem_type", DbText());
-	Column separation("separation", DbText());
-	Column AHdist_short_fade("AHdist_short_fade", DbText());
-	Column AHdist_long_fade("AHdist_long_fade", DbText());
-	Column cosBAH_fade("cosBAH_fade", DbText());
-	Column cosAHD_fade("cosAHD_fade", DbText());
-	Column AHdist("AHdist", DbText());
-	Column cosBAH_short("cosBAH_short", DbText());
-	Column cosBAH_long("cosBAH_long", DbText());
-	Column cosAHD_short("cosAHD_short", DbText());
-	Column cosAHD_long("cosAHD_long", DbText());
-	Column weight_type("weight_type", DbText());
+	Column database_tag("database_tag", new DbText());
+	Column don_chem_type("don_chem_type", new DbText());
+	Column acc_chem_type("acc_chem_type", new DbText());
+	Column separation("separation", new DbText());
+	Column AHdist_short_fade("AHdist_short_fade", new DbText());
+	Column AHdist_long_fade("AHdist_long_fade", new DbText());
+	Column cosBAH_fade("cosBAH_fade", new DbText());
+	Column cosAHD_fade("cosAHD_fade", new DbText());
+	Column AHdist("AHdist", new DbText());
+	Column cosBAH_short("cosBAH_short", new DbText());
+	Column cosBAH_long("cosBAH_long", new DbText());
+	Column cosAHD_short("cosAHD_short", new DbText());
+	Column cosAHD_long("cosAHD_long", new DbText());
+	Column weight_type("weight_type", new DbText());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(database_tag);

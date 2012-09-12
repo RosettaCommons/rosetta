@@ -173,8 +173,8 @@ RRReporterSQLite::write_nchi_table_schema(
 	using namespace basic::database;
 	using namespace boost::assign;
 
-	Column name3("name3", DbText());
-	Column nchi("nchi", DbInteger());
+	Column name3("name3", new DbText());
+	Column nchi("nchi", new DbInteger());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(name3);
@@ -218,21 +218,21 @@ RRReporterSQLite::write_rotamer_recovery_full_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct1_name("struct1_name", DbText());
-	Column name1("name1", DbText());
-	Column name3("name3", DbText());
-	Column residue_type("residue_type", DbText());
-	Column chain1("chain1", DbText());
-	Column res1("res1", DbInteger());
-	Column struct2_name("struct_name2", DbText());
-	Column chain2("chain2", DbText());
-	Column res2("res2", DbInteger());
-	Column protocol_name("protocol_name", DbText());
-	Column protocol_params("protocol_params", DbText());
-	Column comparer_name("comparer_name", DbText());
-	Column comparer_params("comparer_params", DbText());
-	Column score("score", DbReal());
-	Column recovered("recovered", DbInteger());
+	Column struct1_name("struct1_name", new DbText());
+	Column name1("name1", new DbText());
+	Column name3("name3", new DbText());
+	Column residue_type("residue_type", new DbText());
+	Column chain1("chain1", new DbText());
+	Column res1("res1", new DbInteger());
+	Column struct2_name("struct_name2", new DbText());
+	Column chain2("chain2", new DbText());
+	Column res2("res2", new DbInteger());
+	Column protocol_name("protocol_name", new DbText());
+	Column protocol_params("protocol_params", new DbText());
+	Column comparer_name("comparer_name", new DbText());
+	Column comparer_params("comparer_params", new DbText());
+	Column score("score", new DbReal());
+	Column recovered("recovered", new DbInteger());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct1_name);
@@ -264,10 +264,10 @@ RRReporterSQLite::write_rotamer_recovery_features_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", DbUUID());
-	Column resNum("resNum", DbInteger());
-	Column divergence("divergence", DbReal());
-	Column recovered("recovered", DbInteger());
+	Column struct_id("struct_id", new DbUUID());
+	Column resNum("resNum", new DbInteger());
+	Column divergence("divergence", new DbReal());
+	Column recovered("recovered", new DbInteger());
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
