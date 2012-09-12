@@ -23,6 +23,7 @@
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -42,10 +43,13 @@ public:
 
 	virtual ~BuriedUnsatHbondFilter();
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void task_factory( core::pack::task::TaskFactoryOP tf );
+	core::pack::task::TaskFactoryOP task_factory() const;
 private:
 	core::scoring::ScoreFunctionCOP sfxn_;
 	core::Size upper_threshold_;
 	core::Size jump_num_;
+	core::pack::task::TaskFactoryOP task_factory_; // dflt NULL; only residues defined as packable by the taskoperations will be tested for burial
 };
 
 }

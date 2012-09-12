@@ -24,6 +24,10 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/MetricValue.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <utility/string_util.hh>
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace simple_filters {
@@ -39,7 +43,8 @@ BuriedUnsatHbondFilterCreator::keyname() const { return "BuriedUnsatHbonds"; }
 BuriedUnsatHbondFilter::BuriedUnsatHbondFilter( core::Size const upper_threshold, core::Size const jump_num ) :
 	Filter( "BuriedUnsatHbonds" ),
 	upper_threshold_( upper_threshold ),
-	jump_num_( jump_num )
+	jump_num_( jump_num ),
+	task_factory_( NULL )
 { }
 
 BuriedUnsatHbondFilter::BuriedUnsatHbondFilter() : filters::Filter( "BuriedUnsatHbonds" ) {}
@@ -58,6 +63,7 @@ BuriedUnsatHbondFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::Dat
 	} else {
 		sfxn_ = core::scoring::getScoreFunction();
 	}
+	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
 
 	buried_unsat_hbond_filter_tracer<<"Buried Unsatisfied Hbond filter over jump number " << jump_num_ << " with cutoff " << upper_threshold_ << std::endl;
 }
@@ -119,7 +125,8 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 	// Despite the name, it's counting H-bonders, not any old polars.
 	BuriedUnsatisfiedPolarsCalculator calc_bound("default", "default"), calc_unbound("default", "default");
 	calc_bound.get("all_bur_unsat_polars", mv_bound, bound);
-	std::string bound_string = calc_bound.get( "residue_bur_unsat_polars", bound );
+	std::string bound_string(""), unbound_string("");
+	bound_string = calc_bound.get( "residue_bur_unsat_polars", bound );
 	buried_unsat_hbond_filter_tracer << "BOUND: " << bound_string << std::endl;
 
 	core::Real unsat_hbonds( 0.0 );
@@ -127,11 +134,33 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 		calc_unbound.get("all_bur_unsat_polars", mv_unbound, unbound);
 		unsat_hbonds = mv_bound.value() - mv_unbound.value();
 		buried_unsat_hbond_filter_tracer << "unbound_unsat=" << mv_unbound.value() << "    " << "bound_unsat=" << mv_bound.value() << std::endl;
-		std::string unbound_string = calc_unbound.get( "residue_bur_unsat_polars", unbound );
+		unbound_string = calc_unbound.get( "residue_bur_unsat_polars", unbound );
 		buried_unsat_hbond_filter_tracer << "UNBOUND: " << unbound_string << std::endl;
 	}
 	else unsat_hbonds = mv_bound.value();
+	if( task_factory_() != NULL ){
+		std::string unbound_tmp, bound_tmp;
 
+/// clean the silly stuff in the string. Unfortunately the calculators are organized in such a way that there's no direct access to the values they report so this hack uses the string output...
+		for( core::Size i=0; i<unbound_string.length(); ++i ){
+			if( unbound_string.c_str()[ i ]<='9' && unbound_string.c_str()[ i ]>='0' )
+				unbound_tmp+=unbound_string.c_str()[i];
+		}
+		for( core::Size i=0; i<bound_string.length(); ++i ){
+			if( bound_string.c_str()[ i ]<='9' && bound_string.c_str()[ i ]>='0' )
+				bound_tmp+=bound_string.c_str()[i];
+		}
+/// which residues does the taskfactory mention
+		utility::vector1< core::Size > const selected_residues( protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, true/*packable*/ ) );
+		core::Size total_in_selected_residues( 0 );
+		if( selected_residues.size() == 0 )
+			return 0;
+		foreach( core::Size const sr, selected_residues ){
+//			buried_unsat_hbond_filter_tracer<<sr<<": "<<(bound_tmp[ sr-1 ])<<" "<<(unbound_tmp[ sr-1 ])<<" "<<(bound_tmp[ sr-1 ]) - (unbound_tmp[ sr-1 ])<<std::endl;
+			total_in_selected_residues += std::max( (bound_tmp[ sr-1 ]) - (unbound_tmp[ sr-1 ]), 0 );
+		}
+		return( total_in_selected_residues );
+	}
 
 	return( unsat_hbonds );
 }
@@ -142,6 +171,16 @@ filters::FilterOP BuriedUnsatHbondFilter::clone() const {
 
 filters::FilterOP BuriedUnsatHbondFilter::fresh_instance() const{
 	return new BuriedUnsatHbondFilter();
+}
+
+void
+BuriedUnsatHbondFilter::task_factory( core::pack::task::TaskFactoryOP tf ){
+	task_factory_ = tf;
+}
+
+core::pack::task::TaskFactoryOP
+BuriedUnsatHbondFilter::task_factory() const {
+	return task_factory_;
 }
 
 }
