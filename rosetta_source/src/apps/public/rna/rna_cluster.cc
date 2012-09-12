@@ -48,9 +48,6 @@ using utility::vector1;
 // these will be available in the top-level OptionKey namespace:
 // i.e., OPT_KEY( Type, key ) -->  OptionKey::key
 // to have them in a namespace use OPT_1GRP_KEY( Type, grp, key ) --> OptionKey::grp::key
-OPT_KEY( Real, score_diff_cut )
-OPT_KEY( Boolean, auto_tune )
-
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
@@ -59,6 +56,7 @@ cluster_test(){
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	using namespace basic::options::OptionKeys::cluster;
 
 
 	if ( ! option[ in::file::silent ].user() ) utility_exit_with_message( "The rna_cluster executable requires silent input [with -in:file:silent], and models need to be scored. The clustering algorithm starts with the lowest scoring models and works its way up." );
