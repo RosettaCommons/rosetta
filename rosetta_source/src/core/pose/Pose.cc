@@ -634,43 +634,114 @@ Pose::residue_type(
 	return conformation_->residue_type( seqpos );
 }
 
+// backbone torsions
+
+/// @details  For proteins, phi is defined as C(n-1)-N(n)-CA(n)-C(n).
+/// For pyranosyl carbohydrates, phi is defined as O5(n)-C1(n)-O4(n-1)-C4(n-1).
 Real
 Pose::phi( Size const seqpos ) const
 {
-	assert( residue_type(seqpos).is_protein() );
-	PyAssert( (seqpos<=total_residue()), "Pose::phi( Size const seqpos ): variable seqpos is out of range!" );
-	PyAssert( (residue_type(seqpos).is_protein()), "Pose::phi( Size const seqpos ): residue seqpos is not part of a protein!" );
-	return residue(seqpos).mainchain_torsion(1);
+	assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate() );
+	PyAssert( (seqpos<=total_residue()),
+			"Pose::phi( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate()),
+			"Pose::phi( Size const seqpos ): residue seqpos is not part of a protein or carbohydrate!" );
+	if (residue_type(seqpos).is_protein()) {
+		return residue(seqpos).mainchain_torsion(1);
+	} else if (residue_type(seqpos).is_carbohydrate()) {
+		// phi(n) for a pyranosyl residue is defined as:
+		// O5(n)-C1(n)-O4(n-1)-C4(n-1)
+		// BB 5 is:
+		// C4-O4-UPPER1-UPPER2
+		// Thus, the value from the previous residue is returned.  It needs to
+		// be modified, but I'll need a virtual atom for that and will fix it
+		// later.
+		// I'll add code for other saccharide types at a later date.
+		// ~ Labonte
+		PyAssert((seqpos != 1),
+				"Pose::phi( Size const seqpos ): variable seqpos is out of range for carbohydrates!");
+		return residue(seqpos - 1).mainchain_torsion(5);
+	}
 }
 
-///
+/// @details  For proteins, phi is defined as C(n-1)-N(n)-CA(n)-C(n).
+/// For pyranosyl carbohydrates, phi is defined as O5(n)-C1(n)-O4(n-1)-C4(n-1).
 void
 Pose::set_phi( Size const seqpos, Real const setting )
 {
-	assert( residue_type(seqpos).is_protein() );
-	PyAssert( (seqpos<=total_residue()), "Pose::set_phi( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
-	PyAssert( (residue_type(seqpos).is_protein()), "Pose::set_phi( Size const seqpos , Real const setting ): residue seqpos is not part of a protein!" );
-	conformation_->set_torsion( TorsionID( seqpos, id::BB, 1 ), setting );
+	assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate() );
+	PyAssert( (seqpos<=total_residue()),
+			"Pose::set_phi( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
+	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate()),
+			"Pose::set_phi( Size const seqpos , Real const setting ): residue seqpos is not part of a protein or carbohydrate!" );
+	if (residue_type(seqpos).is_protein()) {
+		conformation_->set_torsion( TorsionID( seqpos, id::BB, 1 ), setting );
+	} else if (residue_type(seqpos).is_carbohydrate()) {
+		// phi(n) for a pyranosyl residue is defined as:
+		// O5(n)-C1(n)-O4(n-1)-C4(n-1)
+		// BB 5 is:
+		// C4-O4-UPPER1-UPPER2
+		// Thus, the value is set on the previous residue.  It needs to
+		// be modified, but I'll need a virtual atom for that and will fix it
+		// later.
+		// I'll add code for other saccharide types at a later date.
+		// ~ Labonte
+		PyAssert((seqpos != 1),
+				"Pose::set_phi( Size const seqpos, Real const setting ): variable seqpos is out of range for carbohydrates!");
+		conformation_->set_torsion(TorsionID(seqpos - 1, id::BB, 5), setting);
+	}
 }
 
-///
+/// @details  For proteins, psi is defined as N(n-1)-CA(n)-C(n)-N(n).
+/// For pyranosyl carbohydrates, psi is defined as C1(n)-O4(n-1)-C4(n-1)-C3(n-1).
 Real
 Pose::psi( Size const seqpos ) const
 {
-	assert( residue_type(seqpos).is_protein() );
-	PyAssert( (seqpos<=total_residue()), "Pose::psi( Size const seqpos ): variable seqpos is out of range!" );
-	PyAssert( (residue_type(seqpos).is_protein()), "Pose::psi( Size const seqpos ): residue seqpos is not part of a protein!" );
-	return residue(seqpos).mainchain_torsion(2);
+	assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate() );
+	PyAssert( (seqpos<=total_residue()),
+			"Pose::psi( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate()),
+			"Pose::psi( Size const seqpos ): residue seqpos is not part of a protein or carbohydrate!" );
+	if (residue_type(seqpos).is_protein()) {
+		return residue(seqpos).mainchain_torsion(2);
+	} else if (residue_type(seqpos).is_carbohydrate()) {
+		// psi(n) for a pyranosyl residue is defined as:
+		// C1(n)-O4(n-1)-C4(n-1)-C3(n-1)
+		// BB 4 is:
+		// C3-C4-O4-UPPER
+		// Thus, the value from the previous residue is returned.
+		// I'll add code for other saccharide types at a later date.
+		// ~ Labonte
+		PyAssert((seqpos != 1),
+				"Pose::psi( Size const seqpos ): variable seqpos is out of range for carbohydrates!");
+		return residue(seqpos - 1).mainchain_torsion(4);
+	}
 }
 
-///
+/// @details  For proteins, psi is defined as N(n-1)-CA(n)-C(n)-N(n).
+/// For pyranosyl carbohydrates, psi is defined as C1(n)-O4(n-1)-C4(n-1)-C3(n-1).
 void
 Pose::set_psi( Size const seqpos, Real const setting )
 {
-	assert( residue_type(seqpos).is_protein() );
-	PyAssert( (seqpos<=total_residue()), "Pose::set_psi( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
-	PyAssert( (residue_type(seqpos).is_protein()), "Pose::set_psi( Size const seqpos , Real const setting ): residue seqpos is not part of a protein!" );
-	conformation_->set_torsion( TorsionID( seqpos, id::BB, 2 ), setting);
+	assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate() );
+	PyAssert( (seqpos<=total_residue()),
+			"Pose::set_psi( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
+	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate()),
+			"Pose::set_psi( Size const seqpos , Real const setting ): residue seqpos is not part of a protein or carbohydrate!" );
+	if (residue_type(seqpos).is_protein()) {
+		conformation_->set_torsion( TorsionID( seqpos, id::BB, 2 ), setting);
+	} else if (residue_type(seqpos).is_carbohydrate()) {
+		// psi(n) for a pyranosyl residue is defined as:
+		// C1(n)-O4(n-1)-C4(n-1)-C3(n-1)
+		// BB 4 is:
+		// C3-C4-O4-UPPER
+		// Thus, the value is set on the previous residue.
+		// I'll add code for other saccharide types at a later date.
+		// ~ Labonte
+		PyAssert((seqpos != 1),
+				"Pose::set_psi( Size const seqpos, Real const setting ): variable seqpos is out of range for carbohydrates!");
+		conformation_->set_torsion(TorsionID(seqpos - 1, id::BB, 4), setting);
+	}
 }
 
 ///

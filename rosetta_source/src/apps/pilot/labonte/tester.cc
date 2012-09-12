@@ -25,7 +25,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 //#include <core/pose/PDBInfo.hh>
-//#include <core/pose/util.hh>
+#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 //#include <core/kinematics/MoveMap.hh>
 
@@ -38,18 +38,21 @@ int main(int argc, char *argv[])
 	using namespace core;
 	using namespace import_pose;
 	using namespace pose;
-	//using namespace utility;
+	using namespace utility;
 	//using namespace kinematics;
 
 	// initialize core
 	devel::init(argc, argv);
 
 	// declare variables
-	Pose test_pose;
+	Pose pose;
 
 	// import a test pose
-	pose_from_pdb(test_pose, "/home/labonte/Workspace/test_input/test.pdb");
+	pose_from_pdb(pose, "/home/labonte/Workspace/test_input/test.pdb");
 
+	/*pose_from_pdb(pose,
+			"/home/labonte/Workspace/CAPRI/heparin-6-mer_final.pdb");
+	*/
 
 	// test new set_chi_true_range() method
 	/*MoveMap mm = MoveMap();
@@ -134,12 +137,28 @@ int main(int argc, char *argv[])
 
 
 	// test atom_name()
-
-	Pose::Residue res2 = test_pose.residue(2);
+	/*Pose::Residue res2 = test_pose.residue(2);
 
 	cout << res2.atom_name(0) << endl;
 	//cout << res2.atom_type(0) << endl;
-	cout << res2.atom_type_index(0) << endl;
+	cout << res2.atom_type_index(0) << endl;*/
+
+	// test carbohydrate methods
+	Pose::Residue res1 = pose.residue(1);
+
+	cout << pose << endl;
+
+	cout << res1 << endl;
+
+	cout << "Start: Psi of residue 2: " << pose.psi(2) << endl;
+	pose.set_psi(2, 75.0);
+	cout << "End: Psi of residue 2: " << pose.psi(2) << endl;
+
+	cout << "Start: Phi of residue 2: " << pose.phi(2) << endl;
+	pose.set_phi(2, 95.0);
+	cout << "End: Phi of residue 2: " << pose.phi(2) << endl;
+
+	//pose.dump_pdb("/home/labonte/Workspace/CAPRI/modified_sugar.pdb", "");
 }
 
 

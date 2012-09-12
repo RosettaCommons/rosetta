@@ -1561,6 +1561,13 @@ public:
 		return rsd_type_.is_NA();
 	}
 
+	/// @brief Returns true if this residue is a carbohydrate
+	bool
+	is_carbohydrate() const
+	{
+		return rsd_type_.is_carbohydrate();
+	}
+
 	/// @brief Returns true if this residue is a ligand
 	bool
 	is_ligand() const

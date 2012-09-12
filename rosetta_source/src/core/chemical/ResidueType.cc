@@ -142,6 +142,7 @@ ResidueType::ResidueType(
 	is_DNA_( false ),
 	is_RNA_( false ),
 	is_NA_( false ),
+	is_carbohydrate_( false ),
 	is_ligand_( false ),
 	is_surface_( false ),
 	is_terminus_( false ),
@@ -809,6 +810,8 @@ ResidueType::add_property( std::string const & property )
 		is_RNA_ = true;
 		is_NA_ = true;
 		is_polymer_ = true;
+	} else if ( property == "CARBOHYDRATE") {
+		is_carbohydrate_ = true;
 	} else if ( property == "LIGAND" ) {
 		is_ligand_ = true;
   } else if ( property == "SURFACE" ) {
@@ -867,6 +870,8 @@ ResidueType::delete_property( std::string const & property )
 		is_DNA_ = false;
 	} else if ( property == "RNA" ) {
 		is_RNA_ = false;
+	} else if ( property == "CARBOHYDRATE") {
+		is_carbohydrate_ = false;
 	} else if ( property == "LIGAND" ) {
 		is_ligand_ = false;
 	} else if ( property == "SURFACE" ) {

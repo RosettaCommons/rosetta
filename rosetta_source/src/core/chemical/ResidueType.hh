@@ -1299,6 +1299,13 @@ public:
 		return is_NA_;
 	}
 
+	/// @brief is carbohydrate?
+	bool
+	is_carbohydrate() const
+	{
+		return is_carbohydrate_;
+	}
+
 	bool
 	is_ligand() const
 	{
@@ -2056,6 +2063,7 @@ private:
 	bool is_DNA_;
 	bool is_RNA_;
 	bool is_NA_;
+	bool is_carbohydrate_;
 	bool is_ligand_;
 	bool is_surface_;
 	bool is_terminus_; // last or first residue in a chain; set to TRUE during terminus patching
