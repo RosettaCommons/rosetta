@@ -461,10 +461,20 @@ namespace rna{
 			num_jumps_in_big_pose_in_scratch_region++;
 		}
 
-		if ( num_jumps_scratch != num_jumps_in_big_pose_in_scratch_region ){
+		if ( num_jumps_scratch > num_jumps_in_big_pose_in_scratch_region ){
 			std::cout << "Number of jumps in chunk pose               : " << num_jumps_scratch << std::endl;
 			std::cout << "Number of jumps in full pose in chunk region: " << num_jumps_in_big_pose_in_scratch_region  << "  out of total jumps " << pose.num_jump() << std::endl;
 			return false;
+		}
+
+		if ( num_jumps_scratch < num_jumps_in_big_pose_in_scratch_region ){
+			std::cout << "WARNING! WARNING! WARNING! WARNING! WARNING! WARNING!" << std::endl;
+			std::cout << "Number of jumps in chunk pose               : " << num_jumps_scratch << std::endl;
+			std::cout << "Does not match:" << std::endl;
+			std::cout << "Number of jumps in full pose in chunk region: " << num_jumps_in_big_pose_in_scratch_region  << "  out of total jumps " << pose.num_jump() << std::endl;
+			std::cout << "WARNING! WARNING! WARNING! WARNING! WARNING! WARNING!" << std::endl;
+			// Just a warning
+			//return false;
 		}
 
 		return true;
