@@ -55,7 +55,7 @@ public:
 	core::Size seq_start() const;
 	core::Size seq_end() const;
 	core::Size end() const;
-	std::string get_pdb_source() const;
+	// Undefined, commenting out to fix PyRosetta build.  std::string get_pdb_source() const;
 	core::Size start() const;
 	core::Size size() const;
 	bool reversed() const;

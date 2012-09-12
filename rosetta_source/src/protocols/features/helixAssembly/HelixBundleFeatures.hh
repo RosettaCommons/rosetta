@@ -42,7 +42,7 @@ public:
 
 	HelixBundleFeatures();
 
-	void init_from_options();
+	// Undefined, commenting out to fix PyRosetta build.  void init_from_options();
 
 	virtual
 	std::string
