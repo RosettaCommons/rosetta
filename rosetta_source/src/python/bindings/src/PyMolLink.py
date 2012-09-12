@@ -247,7 +247,7 @@ class PySocketClient:
 
 
 ###############################################################################
-class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
+class PyMOLMover(rosetta.protocols.moves.PyMolMover):
     def __init__(self, keep_history=False, update_energy=False,
                  energy_type=rosetta.core.scoring.total_score):
         rosetta.protocols.moves.PyMolMover.__init__(self)
@@ -256,7 +256,7 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
         self.energy_type(energy_type)
         self.link = PySocketClient()
 
-    # Private methods. 
+    # Private methods.
     def _get_pose_name(self, pose):
         #if 'name' in pose.__dict__:
         #    return pose.name[:255]
@@ -265,22 +265,22 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
         else:
             p1, p2, p3 = pose.pdb_info().name().rpartition('.pdb')
             name = p1 or p3
-            
+
             # Workaround for annoying issue with paths as the name.
             if '/' in name:
                 print 'The name "' + name + '" may cause problems for PyMOL.'
-                print 'The displayed name will be different in PyMOL.' 
+                print 'The displayed name will be different in PyMOL.'
                 print 'You can change the Pose (PDBInfo) name using:'
                 print 'pose.pdb_info().name(<new_name>)'
 
                 name = name.split( '/' )[-1]
-            
+
             return name[:255]
-            
+
     def _find_variable_name(target, main_vars):
         """
         Returns all variables in workspace matching target.
-        
+
         main_vars must be globals() or vars() when called.
         i.e., pose = Pose(); target = pose will return matches = ['pose']
         """
@@ -297,7 +297,7 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
     def _scale_list(self, input_list):
         """
         Scales an array from 0 to 255.
-        
+
         Used for scaling a list of values, particularly for coloring.
         """
         mi = min(input_list)
@@ -316,11 +316,11 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
         """
         message = ''
         info = pose.pdb_info()
-        
+
         # Handy scaling, since we are using hex.
         if autoscale:
             per_residue_values = self._scale_list(per_residue_values)
-        
+
         # Check if the PDBInfo exists.
         if info is not None and info.nres() != 0:
             # The PDBInfo is defined.
@@ -339,12 +339,12 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
                 message += '%s%4d %02x' % (chain, res, per_residue_values[i])
 
         return message
-    
+
     def _get_energies(self, pose, energy_type):
-        """Returns a list of energies of type <energy_type> from the pose."""    
+        """Returns a list of energies of type <energy_type> from the pose."""
         # Check to make sure the energies are available.
         if not pose.energies().energies_updated():
-            raise IOError('PyMOL_Mover::send_specific_energy: ' + 
+            raise IOError('PyMOL_Mover::send_specific_energy: ' +
                          'Energy is not updated; please score the pose first!')
 
         # Get the proper score type.
@@ -370,11 +370,11 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
             energies = self._scale_list(energies)
 
         e = self._get_hex_per_residue_message(pose, energies, autoscale)
-        
+
         message = 'Ener.bz2' + chr(self.keep_history()) + chr(len(name)) + \
                    name + chr(len(energy_type)) + energy_type + bz2.compress(e)
         self.link.send_message(message)
-        
+
     def _send_any(self, ptype, pose, data, size=6):
         """
         A generic message sender.
@@ -413,7 +413,7 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
     # Send the structure.
     def apply(self, input_pose):
         pose = input_pose.get()  # Necessary for use in Mover containers.
-    
+
         #print 'This PyMOL_Mover applies...', pose
 
         name = self._get_pose_name(pose)
@@ -438,13 +438,13 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
                     label=False, sigs=6):
         """
         Sends cummulative energy score to PyMOL.
-        
+
         This method will color a pose in PyMOL based on relative residue
         energies.  <energy_type> is a string representation of a specific
         scoring component.
         The <label> option displays <sigs> number of characters for each energy
         with labels on the CA of each residue.
-                
+
         Examples:
             pymol.send_energy(pose, 'fa_atr')
             pymol.send_energy(pose, label=True)
@@ -453,20 +453,20 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
         self._send_raw_energies(input_pose, energy_type, energy_list)
         if label:
             self._send_any('lbE1.bz2', input_pose, energy_list, sigs)
-        
+
 
     # Personalized coloring.
     def send_colors(self, pose, colors={}, default_color='blue'):
         """
         Colors protein, using a color dictionary as map.
-        
+
         The color dictionary keys are pose residue numbers.  Colors are
         strings.  The default color for any residue not in the dictionary is
         "blue" but can be set to any desired color.
-        
+
         Examples:
             pymol.send_colors(pose)  # Colors the protein blue.
-            
+
             color_map = {1:"blue", 2:"red", 5:"purple"}
             pymol.send_colors(pose, color_map)
         """
@@ -495,42 +495,42 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
         """
         Displays <sigs> number of characters for each energy with labels on CA.
         """
-        energy_list = self._get_energies(input_pose, energy_type)    
+        energy_list = self._get_energies(input_pose, energy_type)
         self._send_any('lbE1.bz2', input_pose, energy_list, sigs)
-    
+
     # H-bonds.
     def send_hbonds(self, pose):
         """
         Sends list of hydrogen bonds and displays them in PyMOL.
-        
+
         Makes use of PyMOL's "distance" function.
         """
         # Check that the energies are updated.
         if not pose.energies().energies_updated():
             raise IOError('PyMOL_Mover::send_hbonds: Energy is not updated;' +
                                                 'please score the pose first!')
-        
+
         # Get the H-bonds.
         hbset = rosetta.core.scoring.hbonds.HBondSet()
         rosetta.core.scoring.hbonds.fill_hbond_set(pose, False, hbset)
 
         to_send = str(hbset.nhbonds()).rjust(5)
         info = pose.pdb_info()
-        
+
         # Get the energies.
-        energy_list = [hbset.hbond(i + 1).energy() 
+        energy_list = [hbset.hbond(i + 1).energy()
                                               for i in xrange(hbset.nhbonds())]
-        
+
         if energy_list:
 
             max_e = max(energy_list)
             min_e = min(energy_list)
-            
+
             for i in xrange(1, hbset.nhbonds() + 1):
                 hb = hbset.hbond(i)
                 accatm = pose.residue(hb.acc_res()).atom_name(hb.acc_atm())
                 donatm = pose.residue(hb.don_res()).atom_name(hb.don_hatm())
-                
+
                 # Each H-bond is 6 + 4 + 6 + 4 + 2 = 22 chars.
                 if info is not None and info.nres() != 0:
                     acc_res = str(info.number(hb.acc_res()))
@@ -544,7 +544,7 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
                                accatm + \
                                (don_res + don_icode + don_chain).rjust(6) + \
                                donatm + \
-                               ('%02x' % int((energy_list[i - 1] - min_e) * 255. 
+                               ('%02x' % int((energy_list[i - 1] - min_e) * 255.
                                                                 / (max_e - min_e)))
                 else:
                     to_send += str(hb.acc_res()).rjust(5) + \
@@ -552,7 +552,7 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
                                str(hb.don_res()).rjust(5) + \
                                donatm + \
                                str(hb.energy).rjust(5)
-                               
+
             name = self._get_pose_name(pose)
             message = 'hbd.bz2 ' + chr(self.keep_history()) + chr(len(name)) + \
                                                        name + bz2.compress(to_send)
@@ -564,7 +564,7 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
     def send_ss(self, pose, ss=''):
         """
         Sends the DSSP assignment for pose to PyMOL and shows as a cartoon.
-        
+
         Useful for when you are making moves to a pose that change secondary
         structure, and you wish for PyMOL to display the changes.
         """
@@ -573,7 +573,7 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
             dssp = rosetta.core.scoring.dssp.Dssp(pose)
             dssp.insert_ss_into_pose(pose)
             ss = pose.secstruct()
-        
+
         # Send it!
         self._send_any(' ss.bz2 ', pose, ss, 1)
 
@@ -593,7 +593,7 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
         """
         Colors movable regions green and non-movable regions red.
         """
-        data = [0] * pose.total_residue()  
+        data = [0] * pose.total_residue()
         # First digit is for bb, second for sc -- 1 = off, 2 = on.
         for i in xrange(1 , pose.total_residue() + 1):
             data[i - 1] = 11 + int(movemap.get_bb(i)) * 10 + \
@@ -604,29 +604,29 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
     def send_foldtree(self, pose, foldtree=''):
         """
         Colors the pose by fold tree information.
-        
+
         Cutpoints (e.g., the C-termini of protein chains) are colored red.
         Jump points are colored orange. (Unfortunately, no indication of which
         jump point connects to which jump point is given at this time.)
         Loops are colored an assortment of colors other than red or orange.
         All other residues are colored gray.
-        
+
         See also:
             PyMOL_Mover.view_foldtree_diagram()
         """
         # If not sent, use pose's FoldTree.
         if not foldtree:
             foldtree = pose.fold_tree()
-            
+
         data = [0] * pose.total_residue()
-        
+
         # Remove jump data for identification later.
         njump = foldtree.num_jump()
         starts = [0] * njump
         stops = [0] * njump
-        
+
         in_loops = []
-        
+
         # List of start and stop of jump edges, i.e., loops.
         for x in range(0, njump):
             loop = foldtree.jump_edge(x + 1)
@@ -645,7 +645,7 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
             # Keeps the identity relative to the jump, not entry.
             if foldtree.is_jump_point(i):  # Jump point residue: color 1.
                 data[i - 1] = 1
-                
+
                 # After this point, we will either be entering a loop or
                 # leaving a loop.
                 for j in range(0 , len(starts)):
@@ -671,14 +671,14 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
     def view_foldtree_diagram(self, pose, foldtree=None, scale=10, r=3):
         """
         Draws a 3-D fold tree diagram in the PyMOL viewer window.
-        
+
         Chains are indicated with a straight line and colored by chain.
         Jumps are represented by "bridges" in unique colors that connect to the
         start and stop jump points on the line, and the bridge is labeled with
         start and stop residues and the jump number.
         Cutpoints are represented by a white and red line bisecting the chain
         and are labeled with the residue number.
-        
+
         See also:
             PyMOL_Mover.send_foldtree()
         """
@@ -687,13 +687,13 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
             foldtree = pose.fold_tree()
         # Check the pose name.
         name = self._get_pose_name(pose)
-        
+
         # Geometry
         to_send = str(scale).rjust(2)[:2] + str(r)[0]
-        
+
         # Start with total length -- needed for scaling.
         to_send += str(pose.total_residue()).rjust(4)
-        
+
         # First, send the chain info.
         # Get the unique chains and indices.
         chain_string = ''.join([pose.pdb_info().chain(i + 1)
@@ -708,11 +708,11 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
         to_send += str(len(chains)).rjust(2)  # How many chains
         for i in chains.keys():
             to_send += str(chains[i]).rjust(4)
-        
+
         # Then, add the jump info.
         njump = foldtree.num_jump()
         to_send += str(njump).rjust(2)
-        
+
         # Add the message.
         # 2 + j*9, where the 2 tells j.
         for j in xrange(njump):
@@ -720,7 +720,7 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
             jump_start = str(jump.start())
             jump_stop = str(jump.stop())
             jump_cut = str(foldtree.cutpoint_by_jump(j + 1))
-            
+
             to_send += jump_start.rjust(3) + jump_stop.rjust(3) + \
                                                               jump_cut.rjust(3)
 
@@ -733,15 +733,15 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
                    scale=True, axis_color='blue', num=0):
         """
         Plots a list of points in PyMOL and draws axes.
-        
+
         name is the name of the object in PyMOL.
         connect is as a color string or empty ('') for no color/connection.
         scale turns aces on or off.
         axis_color colors the axes.
         num is the number of internal numberings on the scale.
-        
+
         The length of the given lists/arrays must be equal.
-        
+
         Example:
             pymol.plot_graph("Line", "white", [0, 1, 2, 3, 4], [0, 2, 4, 6, 8])
         See also:
@@ -767,13 +767,13 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
                    scale=True, axis_color='blue', num=0, banner=''):
         """
         Sends a point to add to a plot already drawn in PyMOL
-        
+
         Be sure to call PyMOL_Mover.send_graph() first!
         Options are similar to those for PyMOL_Mover.send_graph(); see the
         documentation for that method.
         banner is the point label, if desired.
         rescale determines if the axes are redrawn due to the additional point.
-        
+
         Example:
             pymol.plot_graph("Line", "white", [0, 1, 2, 3, 4], [0, 2, 4, 6, 8])
             pymol.send_point("Line", "white", 5, 10)
@@ -789,21 +789,21 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
         message = 'pnt.bz2 ' + chr(self.keep_history()) + chr(len(name)) + \
                                                    name + bz2.compress(to_send)
         self.link.send_message(message)
-    
+
 
 ###############################################################################
-class PyMOL_Observer(rosetta.core.pose.PosePyObserver):
+class PyMOLObserver(rosetta.core.pose.PosePyObserver):
     """Responds to general events (changes of geometry and energies) to pose
     and sends updates to PyMOL.
-    
+
     WARNING: This will slow up resources and cause PyMOL to crawl if enabled
     during protocols with large numbers of moves to pose.
-    
+
     Usage:
     observer = PyMOL_Observer(pose)  # Construct observer and begin observing.
     observer.add_observer(pose2)  # Begin watching pose 2 also.
     observer.remove_observer(pose)  # Stop watching pose.
-    
+
     """
     def __init__(self, pose_to_observe=None, keep_history=False,
                  update_energy=False,
@@ -821,7 +821,7 @@ class PyMOL_Observer(rosetta.core.pose.PosePyObserver):
         #print 'PyMOL_Observer:generalEvent', event.pose
         self.pymol.apply(event.getPose())
 
-        
+
 ###############################################################################
 # Helper methods.
 def list_valid_PyMOL_colors():
@@ -833,4 +833,8 @@ def list_valid_PyMOL_colors():
     colors.sort()
     for color in colors:
         print color
-    
+
+
+# Providing old names for compatability
+PyMOL_Mover = PyMOLMover
+PyMOL_Observer = PyMOLObserver
