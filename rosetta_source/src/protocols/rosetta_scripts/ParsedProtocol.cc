@@ -37,7 +37,8 @@
 
 // JD2 headers
 #include <protocols/jd2/JobDistributor.hh>
-
+#include <protocols/jd2/JobOutputter.hh>
+#include <protocols/jd2/Job.hh>
 // Utility Headers
 
 // AUTO-REMOVED #include <core/pose/symmetry/util.hh>
@@ -64,6 +65,7 @@ namespace protocols {
 namespace rosetta_scripts {
 
 static basic::Tracer TR( "protocols.rosetta_scripts.ParsedProtocol" );
+static basic::Tracer TR_call_order( "protocols.rosetta_scripts.ParsedProtocol_call_order" );
 static basic::Tracer TR_report( "protocols.rosetta_scripts.ParsedProtocol.REPORT" );
 static numeric::random::RandomGenerator RG(48569);
 
@@ -94,7 +96,8 @@ ParsedProtocol::ParsedProtocol() :
 	protocols::moves::Mover( "ParsedProtocol" ),
 	final_scorefxn_( 0 ), // By default, don't rescore with any scorefunction.
 	mode_("sequence"),
-	last_attempted_mover_idx_( 0 )
+	last_attempted_mover_idx_( 0 ),
+	report_call_order_( false )
 {}
 
 /// @detailed Takes care of the docking, design and filtering moves. pre_cycle and pose_cycle can
@@ -111,11 +114,11 @@ ParsedProtocol::apply( Pose & pose )
 	if(mode_ == "sequence")
 	{
 		for ( rmover_it=movers_.rbegin() ; rmover_it != movers_crend; ++rmover_it ) {
-			core::pose::PoseOP checkpoint = (*rmover_it).first->get_additional_output();
+			core::pose::PoseOP checkpoint = (*rmover_it).first.first->get_additional_output();
 
 			// otherwise continue where we left off
 			if (checkpoint) {
-				std::string const mover_name( rmover_it->first->get_name() );
+				std::string const mover_name( rmover_it->first.first->get_name() );
 
 				// if mode_ is not 'sequence' then checkpointing is unsupported
 				if (checkpoint && mode_ != "sequence")
@@ -157,10 +160,10 @@ ParsedProtocol::get_name() const {
 /// state information. Filters are safe and are therefore merely registered.
 /// Under this state of affairs, a mover or filter may be called many times in the protocol, and it will be
 /// guaranteed to have no state accumulation.
-void ParsedProtocol::add_mover( protocols::moves::MoverCOP mover, protocols::filters::FilterOP filter ) {
+void ParsedProtocol::add_mover( protocols::moves::MoverCOP mover, std::string const mover_name, protocols::filters::FilterOP filter ) {
 	protocols::moves::MoverOP mover_p = mover->clone();
 	protocols::filters::FilterOP filter_p = filter;
-	mover_filter_pair p( mover_p, filter_p );
+	mover_filter_pair p( std::pair< protocols::moves::MoverOP, std::string > ( mover_p, mover_name ), filter_p );
 	movers_.push_back( p );
 }
 
@@ -245,7 +248,7 @@ void
 ParsedProtocol::set_resid( core::Size const resid ){
 	for( iterator it( movers_.begin() ); it!=movers_.end(); ++it ){
 		using namespace protocols::moves;
-		modify_ResId_based_object( it->first, resid );
+		modify_ResId_based_object( it->first.first, resid );
 		modify_ResId_based_object( it->second, resid );
 	}
 }
@@ -333,7 +336,7 @@ ParsedProtocol::parse_my_tag(
 		} else {
 			filter_to_add = new protocols::filters::TrueFilter;
 		}
-		add_mover( mover_to_add, filter_to_add );
+		add_mover( mover_to_add, mover_name, filter_to_add );
 		TR << "added mover \"" << mover_name << "\" with filter \"" << filter_name << "\"\n";
 		if( mode_ == "single_random" ){
 			a_probability[ count ] = tag_ptr->getOption< core::Real >( "apply_probability", 1.0/dd_tags.size() );
@@ -343,6 +346,7 @@ ParsedProtocol::parse_my_tag(
 	}
 	if( mode_ == "single_random" )
 		apply_probability( a_probability );
+	report_call_order( tag->getOption< bool >( "report_call_order", false ) );
 	TR.flush();
 }
 
@@ -356,9 +360,9 @@ ParsedProtocol::get_additional_output( )
 	utility::vector1< mover_filter_pair >::const_reverse_iterator rmover_it;
 	const utility::vector1< mover_filter_pair >::const_reverse_iterator movers_crend = movers_.rend();
 	for ( rmover_it=movers_.rbegin() ; rmover_it != movers_crend; ++rmover_it ) {
-		core::pose::PoseOP checkpoint = (*rmover_it).first->get_additional_output();
+		core::pose::PoseOP checkpoint = (*rmover_it).first.first->get_additional_output();
 		if (checkpoint) {
-			std::string const mover_name( rmover_it->first->get_name() );
+			std::string const mover_name( rmover_it->first.first->get_name() );
 			TR<<"=======================RESUMING FROM "<<mover_name<<"======================="<<std::endl;
 			pose = checkpoint;
 
@@ -400,11 +404,11 @@ ParsedProtocol::get_additional_output( )
 
 bool ParsedProtocol::apply_mover_filter_pair(Pose & pose, mover_filter_pair const & mover_pair)
 {
-	std::string const mover_name( mover_pair.first->get_name() );
+	std::string const mover_name( mover_pair.first.first->type() );
 
-	mover_pair.first->set_native_pose( get_native_pose() );
+	mover_pair.first.first->set_native_pose( get_native_pose() );
 	TR<<"=======================BEGIN MOVER "<<mover_name<<"=======================\n{"<<std::endl;
-	mover_pair.first->apply( pose );
+	mover_pair.first.first->apply( pose );
 	TR<<"\n}\n=======================END MOVER "<<mover_name<<"======================="<<std::endl;
 
 	// Split out filter application in seperate function to allow for reuse in resuming from additional output pose cases.
@@ -416,14 +420,14 @@ bool ParsedProtocol::apply_filter(Pose & pose, mover_filter_pair const & mover_p
 	std::string const filter_name( mover_pair.second->get_user_defined_name() );
 
 	TR<<"=======================BEGIN FILTER "<<filter_name<<"=======================\n{"<<std::endl;
-	info().insert( info().end(), mover_pair.first->info().begin(), mover_pair.first->info().end() );
+	info().insert( info().end(), mover_pair.first.first->info().begin(), mover_pair.first.first->info().end() );
 	pose.update_residue_neighbors();
-	moves::MoverStatus status( mover_pair.first->get_last_move_status() );
+	moves::MoverStatus status( mover_pair.first.first->get_last_move_status() );
 	bool const pass( status==protocols::moves::MS_SUCCESS  && mover_pair.second->apply( pose ) );
 	TR<<"\n}\n=======================END FILTER "<<filter_name<<"======================="<<std::endl;
 	if( !pass ) {
 		if( status != protocols::moves::MS_SUCCESS ) {
-			TR << "Mover " << mover_pair.first->get_name() << " reports failure!" << std::endl;
+			TR << "Mover " << mover_pair.first.first->get_name() << " reports failure!" << std::endl;
 			protocols::moves::Mover::set_last_move_status( status );
 		} else {
 			TR << "Filter " << filter_name << " reports failure!" << std::endl;
@@ -442,9 +446,20 @@ void ParsedProtocol::finish_protocol(Pose & pose) {
 	report_filters_to_job( pose );
 	// report filter values to tracer output
 	report_all( pose );
+
+  using namespace protocols::jd2;
+	protocols::jd2::JobOP job2 = jd2::JobDistributor::get_instance()->current_job();
+	std::string job_name (JobDistributor::get_instance()->job_outputter()->output_name( job2 ) );
+	if( report_call_order() ){
+		TR_call_order << job_name<<" ";
+		foreach( mover_filter_pair const p, movers_ )
+			TR_call_order<<p.first.second<<" ";
+		TR_call_order<<std::endl;
+	}
 	// rescore the pose with either score12 or a user-specified scorefunction. this ensures that all output files end up with scores.
 //	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
 //	(*scorefxn)(pose);
+
 }
 
 

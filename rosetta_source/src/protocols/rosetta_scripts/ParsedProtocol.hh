@@ -43,7 +43,7 @@ class ParsedProtocol : public protocols::moves::Mover, public protocols::moves::
 public:
 	typedef core::Real Real;
 	typedef core::pose::Pose Pose;
-	typedef std::pair< protocols::moves::MoverOP, protocols::filters::FilterOP > mover_filter_pair;
+	typedef std::pair< std::pair< protocols::moves::MoverOP, std::string >, protocols::filters::FilterOP > mover_filter_pair;
 	typedef utility::vector1< mover_filter_pair > MoverFilterVector;
 	typedef MoverFilterVector::iterator iterator;
 	typedef MoverFilterVector::const_iterator const_iterator;
@@ -56,7 +56,7 @@ public:
 	/// state information. Filters are safe and are therefore merely registered.
 	/// Under this state of affairs, a mover or filter may be called many times in the protocol, and it will be
 	/// guaranteed to have no state accumulation.
-	void add_mover( protocols::moves::MoverCOP mover, protocols::filters::FilterOP filter );
+	void add_mover( protocols::moves::MoverCOP mover, std::string const mover_name, protocols::filters::FilterOP filter );
 	void final_scorefxn( core::scoring::ScoreFunctionCOP scorefxn );
 	core::scoring::ScoreFunctionCOP final_scorefxn() const;
 	void final_score(core::pose::Pose & pose) const;
@@ -65,7 +65,7 @@ public:
 	void report_all_sm( std::map< std::string, core::Real > & score_map, Pose const & pose ) const; // ditto, but outputs filter values into score_map object
 	protocols::moves::MoverCOP get_mover( core::Size const mover_number ) const {
 		runtime_assert( movers_.size() >= mover_number && mover_number > 0 );
-		return( movers_[ mover_number ].first );
+		return( movers_[ mover_number ].first.first );
 	}
 	void set_resid( core::Size const resid );
 	protocols::moves::MoverOP clone() const;
@@ -83,6 +83,9 @@ public:
 	core::Size size() { return movers_.size(); }
 	core::Size last_attempted_mover_idx() { return last_attempted_mover_idx_; }
 	void last_attempted_mover_idx( core::Size const s ){ last_attempted_mover_idx_ = s;}
+	bool report_call_order() const { return report_call_order_; }
+	void report_call_order( bool const c ) { report_call_order_ = c; }
+	std::string call_order() const{ return call_order_; }
 private:
 	void finish_protocol(Pose & pose);
 	bool apply_mover_filter_pair(Pose & pose, mover_filter_pair const & mover_pair);
@@ -91,7 +94,6 @@ private:
 	void sequence_protocol(Pose & pose, utility::vector1< mover_filter_pair >::const_iterator mover_it_in);
 	void random_order_protocol(Pose & pose);
 	void random_single_protocol(Pose & pose);
-
 private:
 
 	MoverFilterVector movers_;
@@ -99,6 +101,8 @@ private:
 	std::string mode_;
 	utility::vector1< core::Real > apply_probability_; // if mode_="single_random", assigns a probability of execution to each mover/filter pair. Defaults to equal probabilities to all.
 	core::Size last_attempted_mover_idx_; //index to last attempted mover; useful for adaptive monte carlo
+	bool report_call_order_; //dflt false; At the end of the run, write to out the sequence of mover/filter calls (good for stochastic application
+	std::string call_order_; // saved call order, not writeable
 
 };
 
