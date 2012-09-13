@@ -495,7 +495,11 @@ RotamerLibrary::get_rsd_library( chemical::ResidueType const & rsd_type ) const
 		return libraries_.find( rsd_type.rotamer_aa() )->second;
 	}
 
-	if ( rsd_type.is_ligand() && rsd_type.get_RotamerLibraryName() != "" ) {
+	if ( rsd_type.get_RotamerLibraryName() != "" ) {
+        if ( !rsd_type.is_ligand() ) {
+        TR.Debug << "Warning: using PDB_ROTAMERS for non-ligand ResidueType!" << std::endl;
+        }
+    
 		TR.Debug << "Initializing conformer library for " << rsd_type.get_RotamerLibraryName() << std::endl;
 		SingleLigandRotamerLibraryOP pdb_rotamers = new SingleLigandRotamerLibrary();
 		pdb_rotamers->init_from_file( rsd_type.get_RotamerLibraryName(), &rsd_type );
