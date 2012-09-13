@@ -198,14 +198,14 @@ Schema::write(
 	sessionOP db_session
 ) {
 	try{
-		statement stmt = (*db_session) << print();
+		statement stmt = (*db_session) << print(db_session);
 		safely_write_to_database(stmt);
-		TR.Debug << "Writing table " << table_name_ << ": " << print() << std::endl;
+		TR.Debug << "Writing table " << table_name_ << ": " << print(db_session) << std::endl;
 		TR.Debug.flush();
 	} catch (cppdb::cppdb_error e) {
 		TR.Error
 			<< "ERROR reading schema \n"
-			<< print() << std::endl;
+			<< print(db_session) << std::endl;
 		TR.Error << e.what() << std::endl;
 		TR.flush();
 		utility_exit();
