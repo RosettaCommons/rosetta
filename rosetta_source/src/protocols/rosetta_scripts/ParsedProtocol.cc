@@ -404,7 +404,7 @@ ParsedProtocol::get_additional_output( )
 
 bool ParsedProtocol::apply_mover_filter_pair(Pose & pose, mover_filter_pair const & mover_pair)
 {
-	std::string const mover_name( mover_pair.first.first->type() );
+	std::string const mover_name( mover_pair.first.first->get_name() );
 
 	mover_pair.first.first->set_native_pose( get_native_pose() );
 	TR<<"=======================BEGIN MOVER "<<mover_name<<"=======================\n{"<<std::endl;
