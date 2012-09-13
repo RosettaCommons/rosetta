@@ -738,13 +738,15 @@ public:
 	///@brief this is nt a good test --Doug
 	bool is_centroid() const;
 
+
 	///////////////////////////////////////////////////////////////////////////
-	// convenience access for protein residues
+	// convenience access for torsion angles
 
-
+	// backbone torsions
+	// peptides and saccharides
 
 	/// @brief Returns the phi torsion angle of residue  <seqpos>
-	/// @note assumes the residue is an amino acid
+	/// @note assumes the residue is an amino acid or monosaccharide
 	///
 	/// example(s):
 	///     pose.phi(1)
@@ -757,7 +759,7 @@ public:
 	phi( Size const seqpos ) const;
 
 	/// @brief Sets the phi torsion angle of residue  <seqpos> to  <setting>
-	/// @note  <setting>  must be in degrees, assumes residue is an amino acid
+	/// @note  <setting>  must be in degrees, assumes residue is an amino acid or monosaccharide
 	///
 	/// example(s):
 	///     pose.set_phi(1)
@@ -770,7 +772,7 @@ public:
 	set_phi( Size const seqpos, Real const setting );
 
 	/// @brief Returns the psi torsion angle of residue  <seqpos>
-	/// Note: assumes the residue is an amino acid
+	/// Note: assumes the residue is an amino acid or monosaccharide
 	///
 	/// example(s):
 	///     pose.psi(2)
@@ -783,7 +785,7 @@ public:
 	psi( Size const seqpos ) const;
 
 	/// @brief Sets the psi torsion angle of residue  <seqpos>  to  <setting>
-	/// @note  <setting>  must be in degrees, assumes residue is an amino acid
+	/// @note  <setting>  must be in degrees, assumes residue is an amino acid or monosaccharide
 	///
 	/// example(s):
 	///     pose.set_psi(2)
@@ -796,7 +798,7 @@ public:
 	set_psi( Size const seqpos, Real const setting );
 
 	/// @brief Returns the omega torsion angle of residue  <seqpos>
-	/// @note assumes the residue is an amino acid
+	/// @note assumes the residue is an amino acid or monosaccharide
 	///
 	/// example(s):
 	///     pose.omega(3)
@@ -808,7 +810,7 @@ public:
 	Real omega( Size const seqpos ) const;
 
 	/// @brief Sets the omega torsion angle of residue  <seqpos>  to  <setting>
-	/// @note  <setting>  must be in degrees, assumes residue is an amino acid
+	/// @note  <setting>  must be in degrees, assumes residue is an amino acid or monosaccharide
 	///
 	/// example(s):
 	///     pose.set_omega(3)
@@ -820,10 +822,8 @@ public:
 	void
 	set_omega( Size const seqpos, Real const setting );
 
-	///////////////////////////////////////////////////////////////////////////
-	// convenience access for nucleic acid residues
 
-
+	// nucleic acids
 
 	/// @brief Returns the alpha torsion angle of residue  <seqpos>
 	/// @note assumes the residue is an nucleic acid
@@ -979,6 +979,45 @@ public:
 	void
 	set_zeta( Size const seqpos, Real const setting );
 
+
+	// sidechain torsions
+	// peptides and saccharides
+
+	/// @brief Returns the  <chino>  chi torsion angle of residue  <seqpos>
+	/// @note assumes the residue is an amino acid or monosaccharide
+	///
+	/// example(s):
+	///     pose.chi(1,7)
+	/// See also:
+	///     Pose
+	///     Pose.set_chi
+	///     Pose.residue
+	///     Residue
+	Real
+	chi(
+		int const chino,
+		Size const seqpos
+	) const;
+
+	/// @brief Sets the  <chino>  chi torsion angle of residue  <seqpos>  to  <setting>
+	/// @note  <setting>  must be in degrees, assumes residue is an amino acid or monosaccharide
+	///
+	/// example(s):
+	///     pose.set_chi(1,7,120)
+	/// See also:
+	///     Pose
+	///     Pose.chi
+	///     Pose.residue
+	///     Residue
+	void
+	set_chi(
+		int const chino,
+		Size const seqpos,
+		Real const setting
+	);
+
+	// nucleic acids
+
 	/// @brief Returns the chi torsion angle of residue  <seqpos>
 	/// @note assumes the residue is an nucleic acid
 	///
@@ -1004,10 +1043,9 @@ public:
 	void
 	set_chi( Size const seqpos, Real const setting );
 
+
 	/////////////////////////////////////////////////////////////////////////////
 	// jumps
-
-
 
 	/// @brief Sets the pose FoldTree Jump  <jump_number>  to  <new_jump>
 	///
@@ -1090,43 +1128,9 @@ public:
 	kinematics::Jump const &
 	jump( AtomID const & id ) const;
 
+
 	/////////////////////////////////////////////////////////////////////////////
 	// generic torsion-angle access
-
-
-
-	/// @brief Returns the  <chino>  chi torsion angle of residue  <seqpos>
-	/// @note assumes the residue is an amino acid
-	///
-	/// example(s):
-	///     pose.chi(1,7)
-	/// See also:
-	///     Pose
-	///     Pose.set_chi
-	///     Pose.residue
-	///     Residue
-	Real
-	chi(
-		int const chino,
-		Size const seqpos
-	) const;
-
-	/// @brief Sets the  <chino>  chi torsion angle of residue  <seqpos>  to  <setting>
-	/// @note  <setting>  must be in degrees, assumes residue is an amino acid
-	///
-	/// example(s):
-	///     pose.set_chi(1,7,120)
-	/// See also:
-	///     Pose
-	///     Pose.chi
-	///     Pose.residue
-	///     Residue
-	void
-	set_chi(
-		int const chino,
-		Size const seqpos,
-		Real const setting
-	);
 
 	/// @brief Returns the Conformation torsion angle identified by  <id>
 	///
@@ -1145,10 +1149,9 @@ public:
 	void
 	set_torsion( TorsionID const & id, Real const setting );
 
+
 	///////////////////////////////////////////////////////////////////////////
 	// access atomtree dof's
-
-
 
 	/// @brief Returns the value of the AtomTree DOF  <id>
 	///

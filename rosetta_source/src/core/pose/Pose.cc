@@ -635,9 +635,11 @@ Pose::residue_type(
 }
 
 // backbone torsions
+// peptides and saccharides
 
 /// @details  For proteins, phi is defined as C(n-1)-N(n)-CA(n)-C(n).
-/// For pyranosyl carbohydrates, phi is defined as O5(n)-C1(n)-O4(n-1)-C4(n-1).
+/// For pyranosyl carbohydrates, phi is defined as O5(n)-C1(n)-OX(n-1)-CX(n-1),
+/// where X is the position of the glycosidic linkage.
 Real
 Pose::phi( Size const seqpos ) const
 {
@@ -653,19 +655,24 @@ Pose::phi( Size const seqpos ) const
 		// O5(n)-C1(n)-O4(n-1)-C4(n-1)
 		// BB 5 is:
 		// C4-O4-UPPER1-UPPER2
-		// Thus, the value from the previous residue is returned.  It needs to
-		// be modified, but I'll need a virtual atom for that and will fix it
-		// later.
+		// Thus, the value from the previous residue is returned.
+		// However, CHI 1 is O5-C1-O1-HO1, which for an internal residue with
+		// virtual atoms for O1 and HO1, and is the same as phi(n), provided
+		// the virtual atoms are made to move with any rotation of BB 5.
 		// I'll add code for other saccharide types at a later date.
 		// ~ Labonte
 		PyAssert((seqpos != 1),
 				"Pose::phi( Size const seqpos ): variable seqpos is out of range for carbohydrates!");
+		// Why is CHI 1 NAN? because of virtual atoms?
+		// Why does CHI 4 work then?
+		//return torsion(TorsionID(seqpos, id::CHI, 1));
 		return residue(seqpos - 1).mainchain_torsion(5);
 	}
 }
 
 /// @details  For proteins, phi is defined as C(n-1)-N(n)-CA(n)-C(n).
-/// For pyranosyl carbohydrates, phi is defined as O5(n)-C1(n)-O4(n-1)-C4(n-1).
+/// For pyranosyl carbohydrates, phi is defined as O5(n)-C1(n)-OX(n-1)-CX(n-1),
+/// where X is the position of the glycosidic linkage.
 void
 Pose::set_phi( Size const seqpos, Real const setting )
 {
@@ -692,8 +699,9 @@ Pose::set_phi( Size const seqpos, Real const setting )
 	}
 }
 
-/// @details  For proteins, psi is defined as N(n-1)-CA(n)-C(n)-N(n).
-/// For pyranosyl carbohydrates, psi is defined as C1(n)-O4(n-1)-C4(n-1)-C3(n-1).
+/// @details  For proteins, psi is defined as N(n)-CA(n)-C(n)-N(n+1).
+/// For pyranosyl carbohydrates, psi is defined as C1(n)-OX(n-1)-CX(n-1)-CX-1(n-1),
+/// where X is the position of the glycosidic linkage.
 Real
 Pose::psi( Size const seqpos ) const
 {
@@ -718,8 +726,9 @@ Pose::psi( Size const seqpos ) const
 	}
 }
 
-/// @details  For proteins, psi is defined as N(n-1)-CA(n)-C(n)-N(n).
-/// For pyranosyl carbohydrates, psi is defined as C1(n)-O4(n-1)-C4(n-1)-C3(n-1).
+/// @details  For proteins, psi is defined as N(n)-CA(n)-C(n)-N(n+1).
+/// For pyranosyl carbohydrates, psi is defined as C1(n)-OX(n-1)-CX(n-1)-CX-1(n-1),
+/// where X is the position of the glycosidic linkage.
 void
 Pose::set_psi( Size const seqpos, Real const setting )
 {
@@ -744,7 +753,11 @@ Pose::set_psi( Size const seqpos, Real const setting )
 	}
 }
 
-///
+/// @details  For proteins, omega is defined as CA(n)-C(n)-N(n+1)-CA(n+1).
+/// For pyranosyl carbohydrates glycosylated at an exocyclic position,
+/// omega of residue n is defined as OX(n-1)-CX(n-1)-CX-1(n-1)-OX-1(n-1),
+/// where X is the position of the glycosidic linkage.  (Note that every atom
+/// defining this torsion comes from the previous residue!)
 Real Pose::omega( Size const seqpos ) const
 {
 	assert( residue_type(seqpos).is_protein() );
@@ -753,7 +766,11 @@ Real Pose::omega( Size const seqpos ) const
 	return residue(seqpos).mainchain_torsion(3);
 }
 
-///
+/// @details  For proteins, omega is defined as CA(n)-C(n)-N(n+1)-CA(n+1).
+/// For pyranosyl carbohydrates glycosylated at an exocyclic position,
+/// omega of residue n is defined as OX(n-1)-CX(n-1)-CX-1(n-1)-OX-1(n-1),
+/// where X is the position of the glycosidic linkage.  (Note that every atom
+/// defining this torsion comes from the previous residue!)
 void
 Pose::set_omega( Size const seqpos, Real const setting )
 {
@@ -763,8 +780,9 @@ Pose::set_omega( Size const seqpos, Real const setting )
 	conformation_->set_torsion( TorsionID( seqpos, id::BB, 3 ),  setting);
 }
 
+// nucleic acids
 
-	///
+///
 Real
 Pose::alpha( Size const seqpos ) const{
 	assert( residue_type( seqpos ).is_NA() );
@@ -878,6 +896,40 @@ Pose::set_zeta( Size const seqpos, Real const setting )
 	conformation_->set_torsion( TorsionID( seqpos, id::BB, 6 ), setting );
 }
 
+// sidechain torsions
+// peptides and saccharides
+
+///
+Real
+Pose::chi(
+	int const chino,
+	Size const seqpos
+) const
+{
+	PyAssert( (seqpos<=total_residue()), "Pose::chi( int const chino , Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate() ),
+			"Pose::chi( int const chino , Size const seqpos ): residue seqpos is not part of a protein or carbohydrate!" );
+	PyAssert( (chino>0) && (chino<=residue(seqpos).nchi()), "Pose::chi( int const chino , Size const seqpos ): variable chino innappropriate for this residue!" );
+	return residue( seqpos ).chi( chino );
+}
+
+///
+void
+Pose::set_chi(
+	int const chino,
+	Size const seqpos,
+	Real const setting
+)
+{
+	PyAssert( (seqpos<=total_residue()), "Pose::set_chi( int const chino , Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate() ),
+			"Pose::set_chi( int const chino , Size const seqpos , Real const setting ): residue seqpos is not part of a protein or carbohydrate!" );
+	PyAssert( (chino>0) && (chino<=residue(seqpos).nchi()), "Pose::set_chi( int const chino , Size const seqpos ): variable chino innappropriate for this residue!" );
+	conformation_->set_torsion( TorsionID(seqpos, id::CHI, chino), setting);
+}
+
+// nucleic acids
+
 ///
 Real
 Pose::chi( Size const seqpos ) const{
@@ -897,6 +949,23 @@ Pose::set_chi( Size const seqpos, Real const setting )
 	conformation_->set_torsion( TorsionID( seqpos, id::CHI, 1 ), setting );
 }
 
+
+/////////////////////////////////////////////////////////////////////////////
+// generic torsion-angle access
+
+/// @brief  get the torsion angle identified by id
+Real
+Pose::torsion( TorsionID const & id ) const
+{
+	return conformation_->torsion( id );
+}
+
+/// @brief  set the torsion angle identified by id
+void
+Pose::set_torsion( TorsionID const & id, Real const setting )
+{
+	conformation_->set_torsion( id, setting );
+}
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -944,51 +1013,6 @@ kinematics::Jump const &
 Pose::jump( AtomID const & id ) const
 {
 	return conformation_->jump( id );
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// generic torsion-angle access
-
-///
-Real
-Pose::chi(
-	int const chino,
-	Size const seqpos
-) const
-{
-	PyAssert( (seqpos<=total_residue()), "Pose::chi( int const chino , Size const seqpos ): variable seqpos is out of range!" );
-	PyAssert( (residue_type(seqpos).is_protein()), "Pose::chi( int const chino , Size const seqpos ): residue seqpos is not part of a protein!" );
-	PyAssert( (chino>0) && (chino<=residue(seqpos).nchi()), "Pose::chi( int const chino , Size const seqpos ): variable chino innappropriate for this residue!" );
-	return residue( seqpos ).chi( chino );
-}
-
-///
-void
-Pose::set_chi(
-	int const chino,
-	Size const seqpos,
-	Real const setting
-)
-{
-	PyAssert( (seqpos<=total_residue()), "Pose::set_chi( int const chino , Size const seqpos ): variable seqpos is out of range!" );
-	PyAssert( (residue_type(seqpos).is_protein()), "Pose::set_chi( int const chino , Size const seqpos , Real const setting ): residue seqpos is not part of a protein!" );
-	PyAssert( (chino>0) && (chino<=residue(seqpos).nchi()), "Pose::set_chi( int const chino , Size const seqpos ): variable chino innappropriate for this residue!" );
-	conformation_->set_torsion( TorsionID(seqpos,id::CHI,chino),setting);
-}
-
-
-/// get the torsion angle identified by id
-Real
-Pose::torsion( TorsionID const & id ) const
-{
-	return conformation_->torsion( id );
-}
-
-/// set the torsion angle identified by id
-void
-Pose::set_torsion( TorsionID const & id, Real const setting )
-{
-	conformation_->set_torsion( id, setting );
 }
 
 

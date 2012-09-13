@@ -48,11 +48,9 @@ int main(int argc, char *argv[])
 	Pose pose;
 
 	// import a test pose
-	pose_from_pdb(pose, "/home/labonte/Workspace/test_input/test.pdb");
+	//pose_from_pdb(pose, "/home/labonte/Workspace/test_input/test.pdb");
 
-	/*pose_from_pdb(pose,
-			"/home/labonte/Workspace/CAPRI/heparin-6-mer_final.pdb");
-	*/
+	pose_from_pdb(pose, "/home/labonte/Workspace/CAPRI/heparin-6-mer_final.pdb");
 
 	// test new set_chi_true_range() method
 	/*MoveMap mm = MoveMap();
@@ -144,21 +142,59 @@ int main(int argc, char *argv[])
 	cout << res2.atom_type_index(0) << endl;*/
 
 	// test carbohydrate methods
-	Pose::Residue res1 = pose.residue(1);
 
-	cout << pose << endl;
+	Pose::Residue res2 = pose.residue(2);
 
-	cout << res1 << endl;
+	//cout << pose << endl;
 
-	cout << "Start: Psi of residue 2: " << pose.psi(2) << endl;
+	//cout << res2 << endl;
+
+	/*cout << "Start: Psi of residue 2: " << pose.psi(2) << endl;
 	pose.set_psi(2, 75.0);
-	cout << "End: Psi of residue 2: " << pose.psi(2) << endl;
+	cout << "End: Psi of residue 2: " << pose.psi(2) << endl;*/
 
-	cout << "Start: Phi of residue 2: " << pose.phi(2) << endl;
+	/*cout << "Start: Phi of residue 2: " << pose.phi(2) << endl;
 	pose.set_phi(2, 95.0);
-	cout << "End: Phi of residue 2: " << pose.phi(2) << endl;
+	cout << "End: Phi of residue 2: " << pose.phi(2) << endl;*/
 
-	//pose.dump_pdb("/home/labonte/Workspace/CAPRI/modified_sugar.pdb", "");
+	cout << "Residue: 1" << endl;
+
+	cout << " Chis:" << endl;
+	cout << "  1 " << pose.chi(1, 1) << endl;
+	cout << "  2 " << pose.chi(2, 1) << endl;
+	cout << "  3 " << pose.chi(3, 1) << endl;
+	cout << "  4 " << pose.chi(4, 1);
+	cout << " (should equal psi(n+1): " << pose.psi(2) << ")" << endl;
+	cout << "  5 " << pose.chi(5, 1) << endl;
+
+	for (int i = 2; i <= pose.total_residue() - 1; ++i) {
+		cout << "Residue: " << i << endl;
+		cout << " Phi: " << pose.phi(i) << endl;
+		cout << " Psi: " << pose.psi(i) << endl;
+
+		cout << " Chis:" << endl;
+		cout << "  1 " << pose.chi(1, i);
+		cout << " (should equal phi: " << pose.phi(i) << ")" << endl;
+		cout << "  2 " << pose.chi(2, i) << endl;
+		cout << "  3 " << pose.chi(3, i) << endl;
+		cout << "  4 " << pose.chi(4, i);
+		cout << " (should equal psi(n+1): " << pose.psi(i + 1) << ")" << endl;
+		cout << "  5 " << pose.chi(5, i) << endl;
+	}
+
+	cout << "Residue: " << 6 << endl;
+	cout << " Phi: " << pose.phi(6) << endl;
+	cout << " Psi: " << pose.psi(6) << endl;
+
+	cout << " Chis:" << endl;
+	cout << "  1 " << pose.chi(1, 6);
+	cout << " (should equal phi: " << pose.phi(6) << ")" << endl;
+	cout << "  2 " << pose.chi(2, 6) << endl;
+	cout << "  3 " << pose.chi(3, 6) << endl;
+	cout << "  4 " << pose.chi(4, 6) << endl;
+	cout << "  5 " << pose.chi(5, 6) << endl;
+
+	pose.dump_pdb("/home/labonte/Workspace/CAPRI/modified_sugar.pdb", "");
 }
 
 
