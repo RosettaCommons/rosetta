@@ -470,6 +470,7 @@ namespace evaluation { IntegerOptionKey const score_sscore_short_helix( "evaluat
 namespace evaluation { IntegerOptionKey const score_sscore_maxloop( "evaluation:score_sscore_maxloop" );  }
 namespace evaluation { BooleanOptionKey const rpf( "evaluation:rpf" );  }
 namespace evaluation { IntegerOptionKey const window_size( "evaluation:window_size" );  }
+namespace evaluation { StringOptionKey const I_sc( "evaluation:I_sc" ); }
 namespace filters { BooleanOptionKey const filters( "filters" );  }
 namespace filters { BooleanOptionKey const disable_all_filters( "filters:disable_all_filters" );  }
 namespace filters { BooleanOptionKey const disable_rg_filter( "filters:disable_rg_filter" );  }

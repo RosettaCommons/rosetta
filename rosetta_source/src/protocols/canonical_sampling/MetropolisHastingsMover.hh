@@ -26,6 +26,7 @@
 
 // Utility Headers
 #include <core/types.hh>
+#include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 #include <protocols/canonical_sampling/ThermodynamicMover.fwd.hh>
@@ -129,8 +130,17 @@ public:
 	bool
 	finished() const;
 
+	virtual
 	ThermodynamicMoverOP
 	random_mover();
+
+	virtual
+	void
+	add_mover(
+		ThermodynamicMoverOP mover,
+		core::Real weight,
+		utility::tag::TagPtr const& subtag
+	);
 
 	virtual void
 	add_mover(
@@ -187,6 +197,12 @@ protected:
 
 	TemperatureControllerOP const&
 	tempering() { return tempering_; }
+
+	ThermodynamicMoverOP
+	mover_by_index(numeric::Size idx) const
+	{
+		return movers_[idx];
+	}
 
 	void wind_down_simulation( core::pose::Pose& pose);
 

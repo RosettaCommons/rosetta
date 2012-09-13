@@ -17,10 +17,13 @@
 /// @author Monica Berrondo
 
 #include <protocols/docking/DockingInitialPerturbation.hh>
+#include <protocols/docking/DockingInitialPerturbationCreator.hh> // zhe
 
 // Rosetta Headers
 #include <protocols/moves/Mover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
+#include <protocols/docking/RigidBodyInfo.hh> // zhe
+#include <protocols/moves/DataMap.hh> // zhe
 
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -46,6 +49,7 @@
 
 #include <basic/Tracer.hh>
 #include <utility/tools/make_vector1.hh>
+#include <utility/tag/Tag.hh>
 using basic::T;
 
 // option key includes
@@ -66,6 +70,26 @@ namespace protocols {
 namespace docking {
 
 
+// Creator part for DockingInitialPerturbation, used in scripts
+std::string
+DockingInitialPerturbationCreator::keyname() const
+{
+	return DockingInitialPerturbationCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+DockingInitialPerturbationCreator::create_mover() const
+{
+	return new DockingInitialPerturbation;
+}
+
+std::string
+DockingInitialPerturbationCreator::mover_name()
+{
+	return "DockingInitialPerturbation";
+}
+
+
 // initial perturbation on one of the partners
 // the type of perturbation is defined in the options
 // some of the options are randomize1 (randomizes the first partner)
@@ -80,7 +104,11 @@ namespace docking {
 
 
 //constructors
-DockingInitialPerturbation::DockingInitialPerturbation(): Mover(), slide_( true )
+DockingInitialPerturbation::DockingInitialPerturbation()
+ :
+	Mover(),
+	slide_( true ),
+	rigid_body_info_( NULL )
 {
 	Mover::type( "DockingInitialPerturbation" );
 	movable_jumps_ = utility::tools::make_vector1<core::Size>(1);
@@ -91,7 +119,10 @@ DockingInitialPerturbation::DockingInitialPerturbation(): Mover(), slide_( true 
 DockingInitialPerturbation::DockingInitialPerturbation(
 		core::Size const rb_jump,
 		bool const slide
-) : Mover(), slide_(slide)
+) :
+	Mover(),
+	slide_(slide),
+	rigid_body_info_( NULL )
 {
 	Mover::type( "DockingInitialPerturbation" );
 	movable_jumps_ = utility::tools::make_vector1<core::Size>(rb_jump);
@@ -102,7 +133,11 @@ DockingInitialPerturbation::DockingInitialPerturbation(
 DockingInitialPerturbation::DockingInitialPerturbation(
 		DockJumps const movable_jumps,
 		bool const slide
-): Mover(), slide_(slide), movable_jumps_(movable_jumps)
+) :
+	Mover(),
+	slide_( slide ),
+	movable_jumps_( movable_jumps ),
+	rigid_body_info_( NULL )
 {
 	Mover::type( "DockingInitialPerturbation" );
 	if ( movable_jumps_.size() > 1 ) multiple_jumps_ = true;
@@ -114,8 +149,7 @@ void
 DockingInitialPerturbation::init()
 {
 	set_default();
-	register_options();
-	init_from_options();
+ 	init_from_options();  // put this into apply in case scripts is used, then this will not be needed.
 }
 
 void
@@ -131,6 +165,10 @@ DockingInitialPerturbation::set_default()
 	//	uniform_trans_ = NULL;
 }
 
+protocols::moves::MoverOP
+DockingInitialPerturbation::clone() const {
+	return new DockingInitialPerturbation( *this );
+}
 
 //destructor
 DockingInitialPerturbation::~DockingInitialPerturbation() {}
@@ -199,8 +237,20 @@ DockingInitialPerturbation::register_options()
 /////////////////////////////////////////////////////////////////////////////////
 void DockingInitialPerturbation::apply( core::pose::Pose & pose )
 {
+	if ( rigid_body_info_ ) {
+		movable_jumps_ = rigid_body_info_->movable_jumps();
+		TR.Debug << "finished reading movable_jumps_ from RigidBodyInfo" << std::endl;
+		if ( movable_jumps_.empty() ) {
+			utility_exit_with_message( "DockSetupMover has to be applied before DockingInitialPerturbation !" );
+		}
+	}
+
+
+	runtime_assert( !movable_jumps_.empty() );
+
 	for ( DockJumps::const_iterator it=movable_jumps_.begin(); it != movable_jumps_.end(); ++it){
-		apply_body(pose, *it);
+		apply_body( pose, *it );
+		TR.Debug <<"movable_jumps_ value in apply:" << *it << std::endl;
 	}
 }
 
@@ -209,17 +259,17 @@ DockingInitialPerturbation::apply_body(core::pose::Pose & pose, core::Size jump_
 {
 	using namespace moves;
 
-	if( randomize1_ ) {
+	if ( randomize1_ ) {
 		TR << "randomize1: true" << std::endl;
 		rigid::RigidBodyRandomizeMover mover( pose, jump_number, rigid::partner_upstream );
 		mover.apply( pose );
 	}
-	if( randomize2_ ) {
+	if ( randomize2_ ) {
 		TR << "randomize2: true" << std::endl;
 		rigid::RigidBodyRandomizeMover mover( pose, jump_number, rigid::partner_downstream );
 		mover.apply( pose );
 	}
-	if( if_dock_pert_ ) {
+	if ( if_dock_pert_ ) {
 		// DO NOT supply default values for this option -- reasonable values differ for protein and ligand protocols.
 		// Also, default values will cause a perturbation to *always* occur, even with no command line flags -- very surprising.
 		// Adding defaults WILL BREAK existing protocols in unexpected ways.
@@ -240,22 +290,28 @@ DockingInitialPerturbation::apply_body(core::pose::Pose & pose, core::Size jump_
 		mover->apply( pose );
 	}
 
-	if( if_uniform_trans_ ) {
+	if ( if_uniform_trans_ ) {
 		core::Real mag( uniform_trans_ );
 		TR << "uniform_trans: " << mag << std::endl;
 		rigid::UniformSphereTransMover mover( jump_number, mag );
 		mover.apply( pose );
 	}
-	if( spin_ ) {
+	if ( spin_ ) {
 		TR << "axis_spin: true" << std::endl;
 		rigid::RigidBodySpinMover mover( jump_number );
 		mover.apply( pose );
 	}
 	// DO NOT do this for e.g. ligand docking
-	if ( slide_ ) {
+	if ( slide_ && !pose.is_fullatom() ) {
 		DockingSlideIntoContact slide( jump_number );
 		slide.apply( pose );
+		TR.Debug << "centroid mode, DockingSlideIntoContact applied" << std::endl;
+	} else if ( slide_ ) {
+		FaDockingSlideIntoContact slide( jump_number );
+		slide.apply( pose );
+		TR.Debug << "fa-standard mode, FaDockingSlideIntoContact applied" << std::endl;
 	}
+
 
 }
 std::string
@@ -263,6 +319,52 @@ DockingInitialPerturbation::get_name() const {
 	return "DockingInitialPerturbation";
 }
 
+void
+DockingInitialPerturbation::parse_my_tag(
+	utility::tag::TagPtr const tag,
+	protocols::moves::DataMap & data_map,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &
+) {
+	if ( !data_map.has( "RigidBodyInfo", "docking_setup" ) ) {
+		TR << "RigidBodyInfo not found in DataMap" << std::endl;
+		rigid_body_info_ = new protocols::docking::RigidBodyInfo;
+		data_map.add( "RigidBodyInfo", "docking_setup", rigid_body_info_ );
+		//		utility_exit_with_message( "RigidBodyInfo not found in DataMap, DockingInitialPerturbation can not be done, so exit here!" );
+	} else {
+		rigid_body_info_ = data_map.get< protocols::docking::RigidBodyInfo* >( "RigidBodyInfo", "docking_setup" );
+		TR.Debug << "get RigidBodyInfo pointer from DataMap" << std::endl;
+	}
+
+	if ( tag->hasOption( "randomize1" ) ) {
+		set_randomize1( tag->getOption<bool>( "randomize1" ) );
+	}
+
+	if ( tag->hasOption( "randomize2" ) ) {
+		set_randomize2( tag->getOption<bool>( "randomize2" ) );
+	}
+
+	if ( tag->hasOption( "dock_pert" ) && tag->getOption<bool>( "dock_pert" ) ) {
+		dock_pert_.push_back( tag->getOption<core::Real>("trans" ) );
+		dock_pert_.push_back( tag->getOption<core::Real>( "rot" ) );
+		set_dock_pert( dock_pert_ );
+	}
+
+	if ( tag->hasOption( "uniform_trans" ) ) {
+		set_uniform_trans( tag->getOption<core::Real>( "uniform_trans" ) );
+	}
+
+	if ( tag->hasOption( "spin" ) ) {
+		set_spin( tag->getOption<bool>( "spin" ) );
+	}
+
+	if ( tag->hasOption( "center_at_interface" ) ) {
+		set_center( tag->getOption<bool>( "center_at_interface" ) );
+	}
+
+	slide_ = tag->getOption<bool>( "slide", true );
+}
 ////////////////////////////////////////// DockingSlideIntoContact ////////////////////////////////
 
 // default constructor

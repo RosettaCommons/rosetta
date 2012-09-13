@@ -49,6 +49,7 @@ public:
 	{
 		rb_jump_.push_back( 1 );
 		distance_ = 6.0; //default
+		initialize();
 	}
 
 	///@brief Constructor with arguments for non-default rb jump
@@ -56,6 +57,7 @@ public:
 	{
 		rb_jump_.push_back( rb_jump_in );
 		distance_ = 6.0; //default
+		initialize();
 	}
 
 	///@brief Constructor with arguments for multiple jumps
@@ -63,6 +65,7 @@ public:
 	{
 		rb_jump_ = rb_jump_in;
 		distance_ = 6.0; //default
+		initialize();
 	}
 
 	InterfaceInfo( InterfaceInfo const & src );
@@ -122,6 +125,8 @@ public:
 
 	core::Size
 	closest_interface_residue( core::pose::Pose const & pose, core::Size src_rsd, core::Real & distance ) const;
+
+	InterfaceCOP interface( core::Size interface_num ) const;
 
 private:
 	bool calculated_;

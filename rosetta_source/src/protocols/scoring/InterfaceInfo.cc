@@ -66,6 +66,7 @@ InterfaceInfo::InterfaceInfo( InterfaceInfo const & src ) :
 	distance_ = src.distance_;
 
 	interface_list_ = src.interface_list_;
+	initialize();
 }
 
 void
@@ -120,6 +121,11 @@ core::Size
 InterfaceInfo::interface_nres( core::Size jump_num ) const
 {
 	return interface_list_[jump_num]->interface_nres();
+}
+
+InterfaceCOP
+InterfaceInfo::interface( core::Size interface_num ) const {
+	return interface_list_[ interface_num ];
 }
 
 void

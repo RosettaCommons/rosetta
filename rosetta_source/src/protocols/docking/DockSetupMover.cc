@@ -20,6 +20,8 @@
 #include <protocols/docking/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <protocols/docking/RigidBodyInfo.hh>
+#include <protocols/moves/DataMap.hh>
 //Project Headers
 #include <core/pose/Pose.hh>
 
@@ -82,18 +84,26 @@ void DockSetupMover::copy(DockSetupMover & lhs, DockSetupMover const & rhs) {
 	lhs.partners_ = rhs.partners_;
 	lhs.rb_mover_ = rhs.rb_mover_;
 	lhs.movable_jumps_ = rhs.movable_jumps_;
+	lhs.rigid_body_info_ = rhs.rigid_body_info_;
 }
 
 //// ----------------------------------- END CONSTRUCTORS --------------------------------------------------
 void
 DockSetupMover::apply( pose::Pose & pose ) {
 	docking::setup_foldtree( pose, partners_, movable_jumps_ );
-	runtime_assert( rb_mover_ );
-	rb_mover_->clear_jumps(); //this doesn't work because of cloning --- have to communicate via data-map !
-	for ( Size i=1; i<=pose.num_jump(); ++i ) {
-		// should honor movemap or movable_jumps_ here...
-		rb_mover_->add_jump( i );
+	//	runtime_assert( rb_mover_ );
+	//	rb_mover_->clear_jumps(); //this doesn't work because of cloning --- have to communicate via data-map !
+	//	for ( Size i=1; i<=pose.num_jump(); ++i ) {
+	  // should honor movemap or movable_jumps_ here...
+	for ( Size i=1; i<=movable_jumps_.size(); ++i ) {
+		rigid_body_info_->add_jump( movable_jumps_[i] );
+		if ( rb_mover_ ) {
+			rb_mover_->add_jump( movable_jumps_[i] );
+		}
 	}
+ 	if ( rigid_body_info_->movable_jumps().empty() ) {
+ 		utility_exit_with_message( "RigidBodyInfo was not correctly set!" );
+ 	}
 }
 
 //// --------------------------------- Setters -------------------------------------------------
@@ -140,7 +150,7 @@ DockSetupMover::set_defaults()
 void
 DockSetupMover::parse_my_tag(
   TagPtr const tag,
-	moves::DataMap&,
+	moves::DataMap& data_map,
 	protocols::filters::Filters_map const&,
 	moves::Movers_map const& movers,
 	core::pose::Pose const&
@@ -153,15 +163,26 @@ DockSetupMover::parse_my_tag(
 	}
 	moves::MoverOP mover = rosetta_scripts::parse_mover( tag->getOption< std::string >( "rb_mover", "null" ), movers );
 	rb_mover_ = dynamic_cast< rigid::RigidBodyPerturbNoCenterMover* >( mover() );
-	if ( !rb_mover_ ) {
-		utility_exit_with_message( "DockSetupMover requires an rb_mover argument" );
-	}
+// 	if ( !rb_mover_ ) {
+// 		utility_exit_with_message( "DockSetupMover requires an rb_mover argument" );
+// 	}
 	movable_jumps_.clear();
 	if ( tag->hasOption( "moveable_jump" ) ) {
 		movable_jumps_.push_back( tag->getOption< core::Size >( "moveable_jump" ));
 	}
 	if (partners_ == "_" && movable_jumps_.size()<1 ) {
 		movable_jumps_.push_back( 1 );
+	}
+	// using RigidBodyInfo to store movable_jumps, then rb_mover is free from DockSetupMover
+	if ( !data_map.has( "RigidBodyInfo", "docking_setup" ) ) {
+		// as member variable: RigidBodyInfoOP rigid_body_info_;
+		rigid_body_info_ = new protocols::docking::RigidBodyInfo;
+		data_map.add( "RigidBodyInfo", "docking_setup", rigid_body_info_ );
+		tr.Debug << "added RigidBodyInfo into DataMap" << std::endl;
+	} else {
+		rigid_body_info_ = data_map.get< protocols::docking::RigidBodyInfo* >( "RigidBodyInfo", "docking_setup" );
+		assert( rigid_body_info_ );
+		tr.Debug << "RigidBodyInfo supposed to be in DataMap, but somehow failed to get it from DataMap" << std::endl;
 	}
 }//end parse_my_tag
 

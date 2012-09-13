@@ -52,6 +52,7 @@ static MoverRegistrator< dna::SeparateDnaFromNonDnaCreator > reg_SeparateDnaFrom
 static MoverRegistrator< docking::ConformerSwitchMoverCreator > reg_ConformerSwitchMoverCreator;
 static MoverRegistrator< docking::DockingProtocolCreator > DockingProtocolCreator;
 static MoverRegistrator< docking::DockSetupMoverCreator > reg_DockSetupMoverCreator;
+static MoverRegistrator< docking::DockingInitialPerturbationCreator > reg_DockingInitialPerturbationCreator;
 
 static MoverRegistrator< electron_density::SetupForDensityScoringMoverCreator > reg_SetupForDensityScoringMoverCreator;
 

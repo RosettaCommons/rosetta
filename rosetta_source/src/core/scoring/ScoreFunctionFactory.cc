@@ -16,6 +16,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/DockingScoreFunction.hh>
+#include <core/scoring/MinScoreScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/chemical/AA.hh>
@@ -115,6 +116,9 @@ ScoreFunctionFactory::create_score_function( std::string weights_tag, utility::v
 	}
 	if ( basic::options::option[ basic::options::OptionKeys::score::docking_interface_score ]() ) {
 		scorefxn = new DockingScoreFunction( scorefxn );
+	}
+	if ( basic::options::option[ basic::options::OptionKeys::score::min_score_score ].user() ) {
+		scorefxn = new MinScoreScoreFunction( scorefxn, basic::options::option[ basic::options::OptionKeys::score::min_score_score ]() );
 	}
 	scorefxn->name( weights_tag );
 	return scorefxn;

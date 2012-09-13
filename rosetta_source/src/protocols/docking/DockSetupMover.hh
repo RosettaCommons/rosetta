@@ -30,6 +30,7 @@
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
 #include <protocols/canonical_sampling/TemperingBase.fwd.hh>
+#include <protocols/docking/RigidBodyInfo.fwd.hh>
 
 #include <utility/tag/Tag.fwd.hh>
 
@@ -97,8 +98,9 @@ protected:
 private:
 	/// --- configurables -----
 	std::string partners_;
-	protocols::rigid::RigidBodyPerturbNoCenterMoverOP rb_mover_;
+ 	protocols::rigid::RigidBodyPerturbNoCenterMoverOP rb_mover_;
 	DockJumps movable_jumps_; //vector1_int
+	protocols::docking::RigidBodyInfoOP rigid_body_info_;
 
 	/// --- state ----
 	//	core::kinematics::FoldTree fold_tree_;

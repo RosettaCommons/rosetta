@@ -23,11 +23,11 @@
 #include <core/pose/Pose.hh>
 
 
-
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <utility/exit.hh>
+#include <utility/tag/Tag.hh>
 
 // C++ Headers
 
@@ -75,12 +75,13 @@ TrialCounterObserver::clone() const {
 
 void
 TrialCounterObserver::parse_my_tag(
-       utility::tag::TagPtr const,
+       utility::tag::TagPtr const tag,
        protocols::moves::DataMap &,
        protocols::filters::Filters_map const &,
        protocols::moves::Movers_map const &,
        core::pose::Pose const &
 ) { //no options ...
+	file_ = tag->getOption< std::string >("file","trial.stats");
 }
 
 
@@ -114,7 +115,7 @@ TrialCounterObserver::finalize_simulation(
 )
 {
 	counters_.show( tr.Info );
-	counters_.write_to_file( "trial_counts.stats", mhm.output_name() );
+	counters_.write_to_file( file_, mhm.output_name() );
 }
 
 } //moves

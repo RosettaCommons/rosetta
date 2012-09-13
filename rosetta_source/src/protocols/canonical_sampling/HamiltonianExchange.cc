@@ -511,6 +511,7 @@ bool HamiltonianExchange::initialize_from_file( std::string const& filename ) {
 		std::istringstream tag_stream( line );
 		std::string tag;
 		tag_stream >> tag;
+		tr << "tag: " << tag << std::endl;   //zhe
 		if ( tag_stream.good() && tag == "GRID_DIM" ) {
 			if ( exchange_grid_dimension_ ) {
 				utility_exit_with_message( "GRID_DIM statement has to come before any score-function definitions" );

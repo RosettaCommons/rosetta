@@ -25,6 +25,7 @@ sources = {
 		"DockMCMProtocol",
 		"DockMinMover",
 		"DockSetupMover",
+                "RigidBodyInfo",
 		"DockTaskFactory",
 		"metrics",
 		"SidechainMinMover",

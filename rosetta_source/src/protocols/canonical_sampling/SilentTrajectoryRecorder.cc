@@ -30,6 +30,8 @@
 #include <protocols/jd2/util.hh>
 #include <utility/string_util.hh>
 
+#include <core/scoring/constraints/ConstraintSet.hh>
+
 // just for tracer output
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/util.hh>
@@ -146,6 +148,8 @@ SilentTrajectoryRecorder::restart_simulation(
 			 core::Size& temp_level,
 			 core::Real& temperature
 ) {
+	core::scoring::constraints::ConstraintCOPs csts = pose.constraint_set()->get_all_constraints(); // copy cst info before restart
+
 	std::string filename( metropolis_hastings_mover.output_file_name(file_name(), cumulate_jobs(), cumulate_replicas()) );
 	utility::file::FileName jd2_filename( jd2::current_output_filename() );
 	std::string physical_filename( jd2_filename.base()+"_"+filename );
@@ -169,6 +173,9 @@ SilentTrajectoryRecorder::restart_simulation(
 		runtime_assert( sfd.size() == 1 );
 		sfd.begin()->fill_pose( pose );
 
+		pose.data().clear(); // otherwise the order of score options will change after restart
+		pose.add_constraints( csts ); // recover cst from the copy
+
 		std::string decoy_tag=matched_tags_in_file.front();
 		Size ind=decoy_tag.find_last_of( '_' );
 		cycle = utility::string2int(decoy_tag.substr( ind+1 ) )*stride();
@@ -178,6 +185,7 @@ SilentTrajectoryRecorder::restart_simulation(
 		if ( sfd.begin()->has_energy( "temperature" )) {
 			temperature = sfd.begin()->get_energy( "temperature" );
 		}
+		sfd.begin()->print_scores( tr.Info );
 	}
 	return found;
 }

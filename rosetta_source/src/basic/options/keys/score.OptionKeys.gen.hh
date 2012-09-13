@@ -27,6 +27,7 @@ namespace score { extern StringOptionKey const weights; }
 namespace score { extern StringOptionKey const pack_weights; }
 namespace score { extern StringOptionKey const soft_wts; }
 namespace score { extern BooleanOptionKey const docking_interface_score; }
+namespace score { extern RealOptionKey const min_score_score; }
 namespace score { extern StringOptionKey const custom_atom_pair; }
 namespace score { extern FileVectorOptionKey const patch; }
 namespace score { extern BooleanOptionKey const empty; }

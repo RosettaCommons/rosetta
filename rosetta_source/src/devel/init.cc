@@ -19,19 +19,23 @@
 // Factories
 #include <core/pack/task/operation/TaskOperationRegistrator.hh>
 #include <core/pack/task/operation/TaskOperationFactory.hh>
-#include <protocols/filters/FilterFactory.hh> 
+#include <protocols/filters/FilterFactory.hh>
+#include <protocols/evaluation/EvaluatorFactory.hh>
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/jd2/parser/DataLoaderFactory.hh>
 //#include <devel/constrained_sequence_design/SequenceConstraintFactory.hh>
 
 //mover creators
 #include <devel/enzdes/EnzdesRemodelMoverCreator.hh>
-//#include <devel/constrained_sequence_design/ConstrainedDesignMoverCreator.hh>
 #include <devel/matdes/SymmetrizerMoverCreator.hh>
 #include <devel/matdes/TaskAwareSymMinMoverCreator.hh>
 #include <devel/matdes/StoreTaskMoverCreator.hh>
 #include <devel/matdes/SymDofMoverCreator.hh>
 #include <devel/matdes/ExtractSubpose.hh>
+#include <devel/replica_docking/AddEncounterConstraintMoverCreator.hh>
+#include <devel/replica_docking/ThermodynamicRigidBodyMoverCreator.hh>
+#include <devel/replica_docking/TempWeightedMetropolisHastingsMoverCreator.hh>
+#include <devel/replica_docking/ModulatedMoverCreator.hh>
 
 // Filter creators
 #include <devel/matdes/OligomericAverageDegreeFilterCreator.hh>
@@ -43,6 +47,9 @@
 #include <devel/matdes/InterfacePackingFilterCreator.hh>
 #include <devel/matdes/ClashCheckFilterCreator.hh>
 #include <devel/matdes/GetRBDOFValuesCreator.hh>
+#include <devel/replica_docking/InteractionScoreFilterCreator.hh>
+
+#include <devel/replica_docking/WrapFilterAsEvaluatorCreator.hh>
 
 // dataloader creators
 //#include <devel/constrained_sequence_design/SequenceConstraintLoaderCreator.hh>
@@ -62,7 +69,6 @@
 
 #include <utility/vector1.hh>
 
-
 namespace devel {
 
 // Mover creators
@@ -75,6 +81,10 @@ static protocols::moves::MoverRegistrator< devel::matdes::TaskAwareSymMinMoverCr
 static protocols::moves::MoverRegistrator< devel::matdes::StoreTaskMoverCreator > reg_StoreTaskMoverCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::SymDofMoverCreator > reg_SymDofMoverCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::ExtractSubposeCreator > reg_ExtractSubposeCreator;
+static protocols::moves::MoverRegistrator< replica_docking::AddEncounterConstraintMoverCreator > reg_AddEncounterConstraintMoverCreator;
+static protocols::moves::MoverRegistrator< replica_docking::ModulatedMoverCreator > reg_ModulatedMoverCreator;
+static protocols::moves::MoverRegistrator< replica_docking::ThermodynamicRigidBodyPerturbNoCenterMoverCreator > reg_ThermodynamicRigidBodyPerturbNoCenterMoverCreator;
+static protocols::moves::MoverRegistrator< replica_docking::TempWeightedMetropolisHastingsMoverCreator > reg_TempWeightedMetropolisHastingsMoverCreator;
 
 // Task creators
 core::pack::task::operation::TaskOperationRegistrator< devel::znhash::DisableZnCoordinationResiduesTaskOpCreator > reg_DisableZnCoordinationResiduesTaskOpCreator;
@@ -82,8 +92,8 @@ static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::Bui
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RestrictToNonzeroSASAOperationCreator > RestrictToNonzeroSASAOperationCreator_registrator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RestrictIdentitiesOperationCreator > RestrictIdentitiesOperationCreator_registrator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RetrieveStoredTaskOperationCreator > RetrieveStoredTaskOperationCreator_registrator;
- 
-// Filter creators 
+
+// Filter creators
 static protocols::filters::FilterRegistrator< devel::matdes::OligomericAverageDegreeFilterCreator > OligomericAverageDegreeFilterCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::matdes::SymUnsatHbondFilterCreator > SymUnsatHbondFilterCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::matdes::AverageInterfaceEnergyFilterCreator > AverageInterfaceEnergyFilterCreator_registrator;
@@ -93,6 +103,9 @@ static protocols::filters::FilterRegistrator< devel::matdes::TaskAwareSASAFilter
 static protocols::filters::FilterRegistrator< devel::matdes::InterfacePackingFilterCreator > InterfacePackingFilterCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::matdes::ClashCheckFilterCreator > ClashCheckFilterCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::matdes::GetRBDOFValuesCreator > GetRBDOFValuesCreator_registrator;
+static protocols::filters::FilterRegistrator< devel::replica_docking::InteractionScoreFilterCreator > IscCreator_registrator;
+
+static protocols::evaluation::EvaluatorRegistrator< devel::replica_docking::WrapFilterAsEvaluatorCreator > reg_WrapFilterAsEvaluatorCreator;
 
 void init( int argc, char * argv [] )
 {

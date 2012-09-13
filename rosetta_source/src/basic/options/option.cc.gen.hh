@@ -475,6 +475,7 @@ option.add( basic::options::OptionKeys::evaluation::score_sscore_short_helix, "d
 option.add( basic::options::OptionKeys::evaluation::score_sscore_maxloop, "defines the maximum length of a loop that is still considered for the sscore - score" ).def(3);
 option.add( basic::options::OptionKeys::evaluation::rpf, "will compute RPF score with distance cutoff 5 and store in column rpf_score" ).def(false);
 option.add( basic::options::OptionKeys::evaluation::window_size, "Window size for local RMSD calculations in windowed_rmsd app" ).def(5);
+option.add( basic::options::OptionKeys::evaluation::I_sc, "Interaction score for docking" );
 option.add( basic::options::OptionKeys::filters::filters, "filters option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::filters::disable_all_filters, "turn off all centroid filters: RG, CO, and Sheet" ).def(false);
 option.add( basic::options::OptionKeys::filters::disable_rg_filter, "turn off RG filter" ).def(false);
@@ -739,6 +740,7 @@ option.add( basic::options::OptionKeys::score::weights, "Name of weights file (w
 option.add( basic::options::OptionKeys::score::pack_weights, "Name of packing weights file (without extension .wts)" ).def("standard");
 option.add( basic::options::OptionKeys::score::soft_wts, "Name of the 'soft' weights file, for protocols which use it." ).def("soft_rep");
 option.add( basic::options::OptionKeys::score::docking_interface_score, "the score is computed as difference between bound and unbound pose" ).def(false);
+option.add( basic::options::OptionKeys::score::min_score_score, "do not consider scores lower than min-score in monte-carlo criterion" ).def(0.0);
 option.add( basic::options::OptionKeys::score::custom_atom_pair, "filename for custom atom pair constraints" ).def("empty");
 option.add( basic::options::OptionKeys::score::patch, "Name of patch file (without extension)" ).def("");
 option.add( basic::options::OptionKeys::score::empty, "Make an empty score - i.e. NO scoring" );

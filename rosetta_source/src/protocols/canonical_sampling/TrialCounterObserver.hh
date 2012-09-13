@@ -88,6 +88,7 @@ public:
 
 private:
 	protocols::canonical_sampling::MultiTemperatureTrialCounter counters_;
+	std::string file_;
 }; //end protocols::canonical_sampling::TrialCounterObserver
 
 } //namespace canonical_sampling

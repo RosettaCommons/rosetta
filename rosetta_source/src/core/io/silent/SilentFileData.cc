@@ -124,9 +124,11 @@ SilentFileData::matched_tags(
 	//open file
 	utility::io::izstream data( filename().c_str() );
 	if ( !data.good() ) {
-		utility_exit_with_message(
-			"ERROR: Unable to open silent_input file: '" + filename() + "'"
-		);
+// 		utility_exit_with_message(
+// 			"ERROR: Unable to open silent_input file: '" + filename() + "'"
+// 		);
+		tr.Info << "file: " << filename() << " not found" << std::endl;
+		return false;
 	}
 
 	//figure out search mode
@@ -143,22 +145,25 @@ SilentFileData::matched_tags(
 	//search the tags
 	std::string line;
 	std::string current_tag;
+	std::string final_tag;
 	bool ignore_this_decoy = true;
 	utility::vector1< std::string > the_lines;
 	while( getline(data,line) ) {
 		//find a line with SCORE: but without "score"
 		if ( line.substr(0,7) == "SCORE: " && line.substr(8,20).find( "score" ) == std::string::npos ) {
-
+			tr.Info << "reading the lines in file:\n" << line << std::endl;
 			//find last word in line -> current_tag
 			std::istringstream l( line );
 			while ( !l.fail() ) {
 				l >> current_tag;
 			}
-
+			tr.Info << "current_tag:" << current_tag << std::endl;
 			//does it match ?
 			if ( current_tag.find(expression)!=std::string::npos ) {
 				//				ignore_this_decoy = ignore_decoys;
-				if ( !return_last ) tags_in_file.push_back( current_tag );
+ 				if ( !return_last ) {
+					tags_in_file.push_back( current_tag );
+				} else final_tag = current_tag;
 				if ( return_first ) return true;  //if we want decoys this will be wrong
 			}
 		} // SCORE: header of decoy
@@ -166,9 +171,15 @@ SilentFileData::matched_tags(
 		//			utility_exit_with_message( "SilentFileData::matched_tag() function stubbed out -- cannot return decoys yet" );
 		//		}
 	} // while( getline(data,line) )
+// 	if ( return_last ) {
+// 		if ( current_tag.find(expression)!=std::string::npos ) {
+// 			tags_in_file.push_back( current_tag );
+// 			return true;
+// 		}
+// 	}
 	if ( return_last ) {
-		if ( current_tag.find(expression)!=std::string::npos ) {
-			tags_in_file.push_back( current_tag );
+		if ( final_tag.find( expression ) != std::string::npos ) {
+			tags_in_file.push_back( final_tag );
 			return true;
 		}
 	}

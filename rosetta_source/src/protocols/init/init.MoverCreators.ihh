@@ -47,6 +47,7 @@
 #include <protocols/docking/ConformerSwitchMoverCreator.hh>
 #include <protocols/docking/DockingProtocolCreator.hh>
 #include <protocols/docking/DockSetupMoverCreator.hh>
+#include <protocols/docking/DockingInitialPerturbationCreator.hh>
 
 #include <protocols/electron_density/SetupForDensityScoringMoverCreator.hh>
 

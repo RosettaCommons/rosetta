@@ -112,6 +112,7 @@ sources = {
 		"ScoreFunction",
 		"ScoreFunctionFactory",
                 "DockingScoreFunction",
+                "MinScoreScoreFunction",
 		"ScoreFunctionInfo",
 		"ScoreType",
 		"ScoreTypeManager",

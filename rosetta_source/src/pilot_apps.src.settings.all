@@ -383,6 +383,9 @@ sources = {
                 "r_dock_tempered",
                 "r_tempered_sidechains",
 	],
+	"pilot/zhezhang" : [
+		"extract_CA_coords",
+	],
 	"pilot/neil" : [
 		#"enumeration_test",
 		#"design_symm",

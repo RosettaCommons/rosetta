@@ -79,6 +79,11 @@ public:
 	}
 
 	void jump( Size const jump_number);
+
+	core::Size jump_id() const {
+		return jump_number_;
+	}
+
 	void calculate( core::pose::Pose const & pose );
 	void print( core::pose::Pose const & pose );
 	void show( core::pose::Pose const & pose );

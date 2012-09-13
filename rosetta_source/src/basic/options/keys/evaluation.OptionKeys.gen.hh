@@ -62,6 +62,7 @@ namespace evaluation { extern IntegerOptionKey const score_sscore_short_helix; }
 namespace evaluation { extern IntegerOptionKey const score_sscore_maxloop; }
 namespace evaluation { extern BooleanOptionKey const rpf; }
 namespace evaluation { extern IntegerOptionKey const window_size; }
+namespace evaluation { extern StringOptionKey const I_sc; }
 
 } // namespace OptionKeys
 } // namespace options

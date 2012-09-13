@@ -32,6 +32,10 @@
 #include <protocols/canonical_sampling/ThermodynamicObserver.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
+// #include <core/scoring/constraints/ConstraintIO.hh>
+// #include <core/scoring/constraints/ConstraintSet.hh>
+// #include <core/scoring/constraints/ConstraintSet.fwd.hh>
+
 // core headers
 #include <core/kinematics/MoveMap.hh>
 // AUTO-REMOVED #include <basic/options/option_macros.hh>
@@ -141,11 +145,11 @@ MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
 	core::Size cycle_number = 0;
 	Size temp_level = 0;
 	Real temperature = -1.0;
-//	for (core::Size i = 1; i <= observers_.size() && !restart; ++i) {
-//		TR << "Attempting restart using " << observers_[i]->get_name() << std::endl;
-//		restart = observers_[i]->restart_simulation(pose, *this, cycle_number, temp_level, temperature );
-//		if ( restart ) TR << "Restarted using " << observers_[i]->get_name() << std::endl;
-//	}
+// 	for (core::Size i = 1; i <= observers_.size() && !restart; ++i) {
+// 		TR << "Attempting restart using " << observers_[i]->get_name() << std::endl;
+// 		restart = observers_[i]->restart_simulation(pose, *this, cycle_number, temp_level, temperature );
+// 		if ( restart ) TR << "Restarted using " << observers_[i]->get_name() << std::endl;
+// 	}
 
 	if ( !restart ) {
 		cycle_number = 0; //make sure this is zero if we don't have a restart.
@@ -196,10 +200,16 @@ MetropolisHastingsMover::apply( core::pose::Pose& pose ) {
 		set_last_accepted( accepted );
 		tempering_->temperature_move( pose, monte_carlo_->last_accepted_score() );
 		mover->observe_after_metropolis(*this);
-
+		TR.Debug << "current move accepted " << accepted <<std::endl;
 		for (core::Size i = 1; i <= observers_.size(); ++i) {
 			observers_[i]->observe_after_metropolis(*this);
 		}
+// 		core::scoring::constraints::ConstraintSetCOP cst_set = pose.constraint_set();
+// 		if ( !cst_set->has_constraints() )
+// 			utility_exit_with_message("cst_set is empty!");
+// 		if ( trial_ % 500 == 0 ) {
+// 			cst_set->show_violations(TR.Info, pose, 76, 1);
+// 		}
 	}
 
 	wind_down_simulation( pose );
@@ -293,7 +303,8 @@ MetropolisHastingsMover::parse_my_tag(
 		//figure out if ThermodynamicMover or ThermodynamicObserver
 		if ( th_mover ) { //its a mover
 			core::Real const weight( subtag->getOption< core::Real >( "sampling_weight", 1 ) );
-			add_mover( th_mover, weight );
+			add_mover( th_mover, weight, subtag );
+			// 			add_mover( th_mover, weight );
 		} else if ( th_observer ) { //its an observer
 			//it might also be a tempering module...
 			if ( temp_controller ) { // it is a temperature controller
@@ -423,6 +434,16 @@ MetropolisHastingsMover::add_mover(
 	mover->set_preserve_detailed_balance(true);
 	movers_.push_back(mover);
 	weighted_sampler_.add_weight(weight);
+}
+
+void
+MetropolisHastingsMover::add_mover(
+        ThermodynamicMoverOP mover,
+        core::Real weight,
+        utility::tag::TagPtr const&
+        )
+{
+        add_mover( mover, weight );
 }
 
 void

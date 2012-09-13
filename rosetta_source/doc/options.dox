@@ -3532,6 +3532,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-min_score_score</b> \<Real\><dt>
+<dd>do not consider scores lower than min-score in monte-carlo criterion</dd><br>
+<dd>Default: 0.0</dd><br>
+</dl>
+<dl>
 <dt><b>-custom_atom_pair</b> \<String\><dt>
 <dd>filename for custom atom pair constraints</dd><br>
 <dd>Default: "empty"</dd><br>

@@ -28,7 +28,11 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
+#include <protocols/filters/Filter.fwd.hh>
+#include <protocols/docking/RigidBodyInfo.fwd.hh>
+#include <protocols/moves/DataMap.hh>
 
+#include <utility/tag/Tag.fwd.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
 #include <string>
@@ -74,7 +78,7 @@ public:
 	void set_default();
 
 	/// @brief Associates relevant options with the DockingInitialPerturbation class
-	void register_options();
+	static void register_options();
 
 	/// @brief Assigns user specified values to primitive members using command line options
 	void init_from_options();
@@ -93,6 +97,16 @@ public:
 	void set_spin( bool spin){ spin_ = spin;}
 	void set_center( bool center) { center_at_interface_ = center;}
 
+	/// zhe for rosetta_scripts
+	void parse_my_tag(
+										utility::tag::TagPtr const tag,
+										protocols::moves::DataMap &,
+										protocols::filters::Filters_map const &,
+										protocols::moves::Movers_map const &,
+										core::pose::Pose const &
+	);
+	virtual protocols::moves::MoverOP clone() const; //zhe for scripts
+
 private:
 	/// do slide into context?
 	bool slide_;
@@ -110,6 +124,8 @@ private:
 
 	utility::vector1< core::Real > dock_pert_;
 	core::Real uniform_trans_;
+
+	protocols::docking::RigidBodyInfoOP rigid_body_info_;
 };
 
 /// @brief Contrary to the name, slides things apart first, then together.
