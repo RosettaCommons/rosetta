@@ -6,7 +6,7 @@
 #include "stdlib.h"
 #include "math.h"
 
-int main (int argc, char const *argv[]) 
+int main (int argc, char const *argv[])
 {
 	int i,n,icoef;
 	
@@ -25,7 +25,7 @@ int main (int argc, char const *argv[])
 	
 	scanf("%s",buf);
 	if( strncmp(buf,"NPOINTS",7) ) {
-		printf("ERROR: expectingN'NPOINTS'\n");
+		printf("ERROR: expecting 'NPOINTS'\n");
 		exit(-1);
 	}
 	n = scanf("%i",&npoints);
@@ -33,7 +33,7 @@ int main (int argc, char const *argv[])
 		printf("ERROR: reading npoints\n");
 		exit(-1);
 	}
-	//printf("reading %i coords from stdin\n",npoints);
+	// printf("reading %i coords from stdin\n",npoints);
 	n = scanf("%s",buf);
 	if( 1 != n ) {
 		printf("ERROR: reading 'COORDS'\n");
@@ -43,10 +43,8 @@ int main (int argc, char const *argv[])
 		printf("ERROR: expecting 'COORDS'\n");
 		exit(-1);
 	}
-
 	double x,y,z,r;
 	for(i=0;i<npoints;i++) {
-   //printf("%d %d\n",i,npoints);
 		n = scanf("%lf %lf %lf %lf",&x,&y,&z,&r);
 		if( 4 != n ) {
 			printf("ERROR: reading x, y, z, r\n");
@@ -56,7 +54,7 @@ int main (int argc, char const *argv[])
 		coords[3*i+1] = y;
 		coords[3*i+2] = z;
 		radius[i] = r;
-  //printf("%i %i %f %f %f %f\n",i,n,x,y,z,r);
+		// printf("%i %i %f %f %f %f\n",i,n,x,y,z,r);
 	}
 	
 	if( READ_WEIGHTS ) {

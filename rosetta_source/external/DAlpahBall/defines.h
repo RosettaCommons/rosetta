@@ -57,7 +57,7 @@
 #endif
 
 #ifndef MAX_ATOM
-#define MAX_ATOM 40000
+#define MAX_ATOM 25000
 #endif
 
 #ifndef MAX_COORD
