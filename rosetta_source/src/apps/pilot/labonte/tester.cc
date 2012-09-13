@@ -27,10 +27,12 @@
 //#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
-//#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.hh>
 
 //#include <utility/vector1.hh>
 //#include <utility/vector0.hh>
+
+#include <protocols/simple_moves/BackboneMover.hh>
 
 int main(int argc, char *argv[])
 {
@@ -39,7 +41,8 @@ int main(int argc, char *argv[])
 	using namespace import_pose;
 	using namespace pose;
 	using namespace utility;
-	//using namespace kinematics;
+	using namespace kinematics;
+	using namespace protocols;
 
 	// initialize core
 	devel::init(argc, argv);
@@ -142,8 +145,7 @@ int main(int argc, char *argv[])
 	cout << res2.atom_type_index(0) << endl;*/
 
 	// test carbohydrate methods
-
-	Pose::Residue res2 = pose.residue(2);
+	//Pose::Residue res2 = pose.residue(2);
 
 	//cout << pose << endl;
 
@@ -156,6 +158,55 @@ int main(int argc, char *argv[])
 	/*cout << "Start: Phi of residue 2: " << pose.phi(2) << endl;
 	pose.set_phi(2, 95.0);
 	cout << "End: Phi of residue 2: " << pose.phi(2) << endl;*/
+
+	MoveMapOP mm = new MoveMap();
+	mm->set_bb_true_range(2, 6);
+
+	simple_moves::ShearMover mover;
+
+	mover.movemap(mm);
+
+	cout << "BEFORE MOVE" << endl;
+	cout << "Residue: 1" << endl;
+
+	cout << " Chis:" << endl;
+	cout << "  1 " << pose.chi(1, 1) << endl;
+	cout << "  2 " << pose.chi(2, 1) << endl;
+	cout << "  3 " << pose.chi(3, 1) << endl;
+	cout << "  4 " << pose.chi(4, 1);
+	cout << " (should equal psi(n+1): " << pose.psi(2) << ")" << endl;
+	cout << "  5 " << pose.chi(5, 1) << endl;
+
+	for (int i = 2; i <= pose.total_residue() - 1; ++i) {
+		cout << "Residue: " << i << endl;
+		cout << " Phi: " << pose.phi(i) << endl;
+		cout << " Psi: " << pose.psi(i) << endl;
+
+		cout << " Chis:" << endl;
+		cout << "  1 " << pose.chi(1, i);
+		cout << " (should equal phi: " << pose.phi(i) << ")" << endl;
+		cout << "  2 " << pose.chi(2, i) << endl;
+		cout << "  3 " << pose.chi(3, i) << endl;
+		cout << "  4 " << pose.chi(4, i);
+		cout << " (should equal psi(n+1): " << pose.psi(i + 1) << ")" << endl;
+		cout << "  5 " << pose.chi(5, i) << endl;
+	}
+
+	cout << "Residue: " << 6 << endl;
+	cout << " Phi: " << pose.phi(6) << endl;
+	cout << " Psi: " << pose.psi(6) << endl;
+
+	cout << " Chis:" << endl;
+	cout << "  1 " << pose.chi(1, 6);
+	cout << " (should equal phi: " << pose.phi(6) << ")" << endl;
+	cout << "  2 " << pose.chi(2, 6) << endl;
+	cout << "  3 " << pose.chi(3, 6) << endl;
+	cout << "  4 " << pose.chi(4, 6) << endl;
+	cout << "  5 " << pose.chi(5, 6) << endl;
+
+	mover.apply(pose);
+
+	cout << "AFTER MOVE" << endl;
 
 	cout << "Residue: 1" << endl;
 

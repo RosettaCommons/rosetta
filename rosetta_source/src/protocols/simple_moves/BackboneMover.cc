@@ -297,7 +297,7 @@ void SmallMover::setup_list( core::pose::Pose & pose )
 	using namespace id;
 	for ( int i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
 		conformation::Residue const & rsd( pose.residue( i ) );
-		//Checks that the residue is protein and has a free psi and phi angle as determined by the move map
+		//Checks if the residue is protein and has a free psi and phi angle as determined by the move map
 		if ( rsd.is_protein() && movemap_->get( TorsionID( i, BB, phi_torsion ) ) &&
 				 movemap_->get( TorsionID( i, BB, psi_torsion ) ) ) {
 			//Gets the secondary structure nature of the residue
@@ -309,6 +309,14 @@ void SmallMover::setup_list( core::pose::Pose & pose )
 				if ( mx > 0.0 ) {
 					pos_list_.push_back( std::make_pair( i, mx ) );
 				}
+			}
+		// Check if the residue is a monosaccharide and has a free phi (BB 5) and psi (BB 4).
+		} else if (rsd.is_carbohydrate() && movemap_->get(TorsionID(i, BB, 4)) &&
+				movemap_->get(TorsionID(i, BB, 5))) {
+			// Carbohydrates are always considered loops for now.
+			Real const mx = angle_max_.find('L')->second;
+			if (mx > 0.0) {
+				pos_list_.push_back(std::make_pair(i, mx));
 			}
 		}
 	}
@@ -367,11 +375,14 @@ bool SmallMover::make_move( core::pose::Pose & pose )
 	old_psi_ = pose.psi(resnum_);
 	new_psi_ = basic::periodic_range( old_psi_ - small_angle_ + RG.uniform() * big_angle_, 360.0 );
 
-	old_rama_score_ = rama.eval_rama_score_residue( current_rsd.aa(), old_phi_, old_psi_ );
-	new_rama_score_ = rama.eval_rama_score_residue( current_rsd.aa(), new_phi_, new_psi_ );
+	// Always accept carbohydrate moves for now....
+	if (current_rsd.is_protein()) {
+		old_rama_score_ = rama.eval_rama_score_residue( current_rsd.aa(), old_phi_, old_psi_ );
+		new_rama_score_ = rama.eval_rama_score_residue( current_rsd.aa(), new_phi_, new_psi_ );
 
-	// decide whether to accept the move
-	if ( !check_rama() ) return( false );
+		// decide whether to accept the move
+		if ( !check_rama() ) return( false );
+	}
 
 	// set the new values for residue resnum
 	pose.set_phi( resnum_, new_phi_ );
@@ -437,6 +448,7 @@ void protocols::simple_moves::ShearMover::setup_list( core::pose::Pose & pose )
 {
 	using namespace id;
 
+	// Compare code below to that for SmallMover above.
 	for ( int i=2, i_end = pose.total_residue(); i<= i_end; ++i ) {
 		conformation::Residue const & rsd( pose.residue( i ) );
 		if ( rsd.is_protein() && movemap_->get( TorsionID( i, BB, phi_torsion ) /*phi of i*/) &&
@@ -447,6 +459,14 @@ void protocols::simple_moves::ShearMover::setup_list( core::pose::Pose & pose )
 				if ( mx > 0.0 ) {
 					pos_list_.push_back( std::make_pair( i, mx ) );
 				}
+			}
+		// Check if the residue is a monosaccharide and has a free phi (BB 5) and psi (BB 4).
+		} else if (rsd.is_carbohydrate() && movemap_->get(TorsionID(i - 1, BB, 4)) &&
+				movemap_->get(TorsionID(i, BB, 5))) {
+			// Carbohydrates are always considered loops for now.
+			Real const mx = angle_max_.find('L')->second;
+			if (mx > 0.0) {
+				pos_list_.push_back(std::make_pair(i, mx));
 			}
 		}
 	}
@@ -507,22 +527,27 @@ bool protocols::simple_moves::ShearMover::make_move( core::pose::Pose & pose )
 	old_phi_ = pose.phi(resnum_);
 	new_phi_ = basic::periodic_range( old_phi_ - shear_delta, 360.0 );
 
-	// rama for phi of resnum and psi of resnum-1
-	old_rama_score_ =  rama.eval_rama_score_residue( current_rsd.aa(), old_phi_, pose.psi(resnum_));
-	new_rama_score_ =  rama.eval_rama_score_residue( current_rsd.aa(), new_phi_, pose.psi(resnum_));
+	// Always accept carbohydrate moves for now....
+	if (current_rsd.is_protein()) {
+		// rama for phi of resnum and psi of resnum-1
+		old_rama_score_ =  rama.eval_rama_score_residue( current_rsd.aa(), old_phi_, pose.psi(resnum_));
+		new_rama_score_ =  rama.eval_rama_score_residue( current_rsd.aa(), new_phi_, pose.psi(resnum_));
 
-	// decide whether to accept the move
-	if ( !check_rama() ) return( false );
+		// decide whether to accept the move
+		if ( !check_rama() ) return( false );
+	}
 
 	old_psi_ = pose.psi(resnum_-1);
 	new_psi_ = basic::periodic_range( old_psi_ + shear_delta, 360.0 );
 
-	// rama for residue resnum-1
-	old_rama_score_ =  rama.eval_rama_score_residue( prev_rsd.aa(), pose.phi(resnum_-1), old_psi_ );
-	new_rama_score_ =  rama.eval_rama_score_residue( prev_rsd.aa(), pose.phi(resnum_-1), new_psi_ );
+	if (current_rsd.is_protein()) {
+		// rama for residue resnum-1
+		old_rama_score_ =  rama.eval_rama_score_residue( prev_rsd.aa(), pose.phi(resnum_-1), old_psi_ );
+		new_rama_score_ =  rama.eval_rama_score_residue( prev_rsd.aa(), pose.phi(resnum_-1), new_psi_ );
 
-	// decide whether to accept the move
-	if ( !check_rama() ) return( false );
+		// decide whether to accept the move
+		if ( !check_rama() ) return( false );
+	}
 
 	// set the new values phi of resnum and psi of resnum-1
 	pose.set_phi( resnum_, new_phi_ );
