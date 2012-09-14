@@ -87,13 +87,13 @@ using numeric::random::uniform;
 void switch_to_fa(core::pose::Pose & pose) {
 	protocols::toolbox::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
 	pose.set_dof(core::id::DOF_ID(core::id::AtomID(6,2),core::id::PHI  ),0);
-	pose.set_dof(core::id::DOF_ID(core::id::AtomID(6,2),core::id::THETA),3.14159);
+	pose.set_dof(core::id::DOF_ID(core::id::AtomID(6,2),core::id::THETA),PI);
 }
 
 void switch_to_cen(core::pose::Pose & pose) {
 	protocols::toolbox::switch_to_residue_type_set( pose, core::chemical::CENTROID );
 	pose.set_dof(core::id::DOF_ID(core::id::AtomID(6,2),core::id::PHI  ),0);
-	pose.set_dof(core::id::DOF_ID(core::id::AtomID(6,2),core::id::THETA),3.14159);
+	pose.set_dof(core::id::DOF_ID(core::id::AtomID(6,2),core::id::THETA),PI);
 }
 
 void minimize(core::pose::Pose & pose, ScoreFunctionOP sf) {
@@ -232,7 +232,7 @@ core::pose::Pose make_pose(std::string seq) {
 	core::pose::remove_upper_terminus_type_from_pose_residue(pose,2);
 	core::pose::add_variant_type_to_pose_residue(pose,"VIRTUAL_NTERM",2);
 	pose.set_dof(id::DOF_ID(id::AtomID(6,2),id::PHI  ),0);
-	pose.set_dof(id::DOF_ID(id::AtomID(6,2),id::THETA),3.14159);
+	pose.set_dof(id::DOF_ID(id::AtomID(6,2),id::THETA),PI);
 	for( Size i = 3; i <= nres; ++i ){
 		std::string name3 = name_from_aa(aa_from_oneletter_code(seq[i-1]));
 		pose.append_residue_by_bond(*ResidueFactory::create_residue(residue_set->name_map(name3)),true);
@@ -246,7 +246,7 @@ core::pose::Pose make_pose(std::string seq) {
 	}
 	pose.fold_tree(ft);
 	pose.set_dof(id::DOF_ID(id::AtomID(6,2),id::PHI  ),0);
-	pose.set_dof(id::DOF_ID(id::AtomID(6,2),id::THETA),3.14159);
+	pose.set_dof(id::DOF_ID(id::AtomID(6,2),id::THETA),PI);
 	for( Size i = 2; i <= seq.size(); i++ ) {
 		pose.set_phi  (i,-60.16731);
 		pose.set_psi  (i,-45.19451);
@@ -525,6 +525,8 @@ main( int argc, char * argv [] )
 	std::ostringstream oss;
 	std::map<std::string, utility::vector1<core::fragment::FragDataOP> > fds = get_frags_map( true );
 
+  const Real PI = numeric::NumericTraits<Real>::pi();
+
 	while(true) {
 
 		std::string SS = make_rand_ss();
@@ -550,7 +552,7 @@ main( int argc, char * argv [] )
 
 		switch_to_fa(pose);
 		pose.set_dof(id::DOF_ID(id::AtomID(6,2),id::PHI  ),0);
-		pose.set_dof(id::DOF_ID(id::AtomID(6,2),id::THETA),3.14159);
+		pose.set_dof(id::DOF_ID(id::AtomID(6,2),id::THETA),PI);
 		core::pose::add_variant_type_to_pose_residue(pose,"VIRTUAL_NTERM",2);
 
 		ScoreFunctionOP sf_fa = fa_refine_and_design(pose,NFA);

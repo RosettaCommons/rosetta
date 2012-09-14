@@ -59,6 +59,8 @@
 // Utility headers
 #include <utility/vector1.hh>
 
+#include <numeric/NumericTraits.hh>
+
 // GLUT
 #if defined GL_GRAPHICS || defined BOINC_GRAPHICS
 
@@ -978,14 +980,16 @@ Vector get_CA_segment( const Vector & prev_CA, const Vector & current_CA,
 
 
 float get_half_width( const std::string & taper, const float & secstruct_half_width, const float & p ) {
+        const Real PI = numeric::NumericTraits<Real>::pi();
+
 	core::Real half_width = secstruct_half_width;
 	if (taper == "start"){
 		half_width = graphics::COILRADIUS + (secstruct_half_width - graphics::COILRADIUS)*
-		0.5 * ( - cos( 3.14159 * p )  + 1.0 );
+		0.5 * ( - cos( PI * p )  + 1.0 );
 	}
 	if (taper == "end"){
 		half_width = graphics::COILRADIUS + (secstruct_half_width - graphics::COILRADIUS)*
-		0.5 * ( cos( 3.14159 * p )  + 1.0 );
+		0.5 * ( cos( PI * p )  + 1.0 );
 	}
 	if (taper == "strand_ultimate"){
 		half_width = graphics::COILRADIUS + (2*secstruct_half_width - graphics::COILRADIUS) * (1 - p);

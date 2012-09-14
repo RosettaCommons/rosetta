@@ -62,7 +62,7 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
-
+#include <numeric/NumericTraits.hh>
 
 
 using core::Real;
@@ -413,6 +413,8 @@ int main (int argc, char *argv[])
   using namespace basic::options::OptionKeys;
   using namespace utility;
 
+  const Real PI = numeric::NumericTraits<Real>::pi();
+
   // test_io();
 
 	// test_sasa_dots();
@@ -596,8 +598,8 @@ int main (int argc, char *argv[])
 //
 // 	ostringstream cav_info;
 // 	for( CavBallIter i = cavballs.begin(); i != cavballs.end(); ++i ) {
-// 		// PackstatReal maxa = i->radius() * i->radius() * 4.0 * 3.14159 * 1.00;
-// 		// PackstatReal maxv = i->radius() * i->radius() * i->radius() * 4.0/3.0 * 3.14159 * 1.00;
+// 		// PackstatReal maxa = i->radius() * i->radius() * 4.0 * PI * 1.00;
+// 		// PackstatReal maxv = i->radius() * i->radius() * i->radius() * 4.0/3.0 * PI * 1.00;
 // 		cav_info << F( 7, 3, i->radius() ) << " "
 // 		         << F( 7, 3, i->exposed_radius ) << " "
 // 		         << F( 7, 3, i->area     ) << " "
@@ -686,7 +688,7 @@ int main (int argc, char *argv[])
 // 	using namespace numeric::random;
 // 	xyzVector<PackstatReal> axis(uniform(),uniform(),uniform());
 // 	while( axis.length() > 1 ) axis = xyzVector<PackstatReal>(uniform(),uniform(),uniform());
-// 	return rotation_matrix<PackstatReal>( axis, uniform() * 2 * 3.14159 );
+// 	return rotation_matrix<PackstatReal>( axis, uniform() * 2 * PI );
 // }
 //
 // void test_sasa_dots() {

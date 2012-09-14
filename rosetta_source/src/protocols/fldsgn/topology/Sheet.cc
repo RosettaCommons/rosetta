@@ -37,7 +37,7 @@
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
 
-#define PI 3.141592
+#include <numeric/NumericTraits.hh>
 
 static basic::Tracer TR( "protocols.topology.Sheet" );
 
@@ -212,7 +212,7 @@ Sheet::calc_geometry( SS_Info2_COP const ssinfo )
 		ca_cb_orients_[ ii ] = 0;
 	}
 
-	Real half_pi = PI/2.0;
+	Real half_pi = numeric::NumericTraits<Real>::pi()/2.0;
 	utility::vector1< Size > anchor;
 	anchor.resize( strands.size(), 0 );
 	for( Size ii=1; ii<=order_strands_.size(); ii++ ) {

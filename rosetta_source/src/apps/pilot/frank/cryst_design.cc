@@ -69,6 +69,7 @@
 
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
+#include <numeric/NumericTraits.hh>
 
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
@@ -421,7 +422,7 @@ public:
 	// helper func
 	//    euler angles (degrees) to rotation matrix
 	void euler2rot( core::Real a, core::Real b, core::Real g, numeric::xyzMatrix<core::Real> &R) {
-		core::Real deg2rad = 3.14159265/180.0;
+		const core::Real deg2rad = numeric::NumericTraits<Real>::pi()/180.0;
 		R.xx() = -sin(deg2rad*a)*cos(deg2rad*b)*sin(deg2rad*g) + cos(deg2rad*a)*cos(deg2rad*g);
 		R.xy() =  cos(deg2rad*a)*cos(deg2rad*b)*sin(deg2rad*g) + sin(deg2rad*a)*cos(deg2rad*g);
 		R.xz() =  sin(deg2rad*b)*sin(deg2rad*g);

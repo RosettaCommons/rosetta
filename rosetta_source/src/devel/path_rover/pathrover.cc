@@ -49,8 +49,6 @@
 #include <stdio.h>
 #include <vector>
 
-#define PI 3.141592653 // TODO: use numeric
-
 namespace protocols{
 namespace pathrover{
 

@@ -44,6 +44,7 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#include <numeric/NumericTraits.hh>
 
 using core::Real;
 using core::Size;
@@ -62,7 +63,7 @@ public:
 
 		Real x0 = 20.;
 		Real res = 0.;
-		const Real PI = 3.141592653589;
+		const Real PI = numeric::NumericTraits<Real>::pi();
 
 		for(Size i=1; i<=v.size(); i++) {
 			Real x = v[i] - x0;

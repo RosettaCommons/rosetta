@@ -340,6 +340,9 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
 	using namespace core::conformation::symmetry;
 	using namespace core::pack::task;
 	using namespace core::scoring::constraints;
+
+  const core::Real PI = numeric::NumericTraits<Real>::pi();
+
 	ScoreFunctionOP sf = core::scoring::getScoreFunction();
 	sf->set_weight(core::scoring::atom_pair_constraint ,10.0);
 	sf->set_weight(core::scoring::angle_constraint		 ,10.0);
@@ -414,7 +417,7 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
 		pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+0*sym_info->num_independent_residues()),
 																							AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy+0*sym_info->num_independent_residues()),
 																							AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+1*sym_info->num_independent_residues()),
-																							new HarmonicFunc(3.14159,0.1) ) );
+																							new HarmonicFunc(PI,0.1) ) );
 		pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+0*sym_info->num_independent_residues()),
 																							AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy+0*sym_info->num_independent_residues()),
 																							AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+2*sym_info->num_independent_residues()),
@@ -435,7 +438,7 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
 		pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+0*sym_info->num_independent_residues()),
 																							AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy+0*sym_info->num_independent_residues()),
 																							AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+2*sym_info->num_independent_residues()),
-																							new HarmonicFunc(3.14159,0.1) ) );
+																							new HarmonicFunc(PI,0.1) ) );
 		pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+0*sym_info->num_independent_residues()),
 																							AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy+0*sym_info->num_independent_residues()),
 																							AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+2*sym_info->num_independent_residues()),
@@ -475,7 +478,7 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
 		pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+0*sym_info->num_independent_residues()),
 																							AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy+0*sym_info->num_independent_residues()),
 																							AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+1*sym_info->num_independent_residues()),
-																							new HarmonicFunc(3.14159,0.1) ) );
+																							new HarmonicFunc(PI,0.1) ) );
 		pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+0*sym_info->num_independent_residues()),
 																							AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy+0*sym_info->num_independent_residues()),
 																							AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+2*sym_info->num_independent_residues()),
@@ -496,7 +499,7 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
 		pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+0*sym_info->num_independent_residues()),
 																							AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy+0*sym_info->num_independent_residues()),
 																							AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+2*sym_info->num_independent_residues()),
-																							new HarmonicFunc(3.14159,0.1) ) );
+																							new HarmonicFunc(PI,0.1) ) );
 		pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+0*sym_info->num_independent_residues()),
 																							AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy+0*sym_info->num_independent_residues()),
 																							AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+2*sym_info->num_independent_residues()),

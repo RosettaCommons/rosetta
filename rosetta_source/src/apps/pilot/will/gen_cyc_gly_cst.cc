@@ -38,6 +38,7 @@
 #include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyz.io.hh>
+#include <numeric/NumericTraits.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/simple_moves/MinMover.hh>
@@ -152,6 +153,8 @@ int main( int argc, char * argv [] ) {
   using namespace basic::options::OptionKeys;
   using namespace core::scoring::constraints;
 
+  const Real PI = numeric::NumericTraits<Real>::pi();
+
   devel::init(argc,argv);
 
   std::string seq = "G"; while((int)seq.size() < option[cyclic::nres]()) seq += "G";
@@ -183,7 +186,7 @@ int main( int argc, char * argv [] ) {
 			pose.add_constraint(new AtomPairConstraint(            AtomID(1,1),AtomID(3,N)            ,new core::scoring::constraints::HarmonicFunc(1.3       ,0.001)));
 			pose.add_constraint(new AngleConstraint   (AtomID(5,1),AtomID(1,1),AtomID(3,N)            ,new core::scoring::constraints::HarmonicFunc(2.08      ,0.0001)));
 			pose.add_constraint(new AngleConstraint   (            AtomID(1,1),AtomID(3,N),AtomID(4,N),new core::scoring::constraints::HarmonicFunc(2.1467    ,0.0001)));
-			pose.add_constraint(new DihedralConstraint(AtomID(5,1),AtomID(1,1),AtomID(3,N),AtomID(4,N),new core::scoring::constraints::HarmonicFunc(3.14159   ,0.0001)));
+			pose.add_constraint(new DihedralConstraint(AtomID(5,1),AtomID(1,1),AtomID(3,N),AtomID(4,N),new core::scoring::constraints::HarmonicFunc(PI   ,0.0001)));
 
       // gen structure
       for(Size i = 1; i <= pose.n_residue(); ++i) pose.set_omega(i,180.0);

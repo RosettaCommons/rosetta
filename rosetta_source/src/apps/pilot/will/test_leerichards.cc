@@ -191,7 +191,7 @@ numeric::xyzMatrix<Real> rand_rot()
 	using numeric::random::uniform;
 	numeric::xyzVector<core::Real> axis(uniform(),uniform(),uniform());
 	while( axis.length() > 1.0 ) axis = numeric::xyzVector<core::Real>(uniform(),uniform(),uniform());
-	core::Real mag = uniform() * 2.0 * 3.14159;
+	core::Real mag = uniform() * 2.0 * numeric::NumericTraits<Real>::pi();
 	return numeric::rotation_matrix<core::Real>( axis, mag );
 }
 

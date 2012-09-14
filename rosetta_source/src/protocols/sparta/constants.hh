@@ -27,9 +27,6 @@
 #define INCLUDE_src_protocols_sparta_constants_hh
 
 #define SPARTA_MAX_NUM          9999.000
-
-#define SPARTA_PI              3.14159265358979323846
-#define SPARTA_RAD             57.29577951
 #define SPARTA_MAXNUM          9999
 
 #endif

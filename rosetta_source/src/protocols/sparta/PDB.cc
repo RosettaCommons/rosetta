@@ -28,11 +28,13 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+#include <numeric/NumericTraits.hh>
 
 namespace protocols {
 namespace sparta {
 
 static basic::Tracer tr("protocols.sparta");
+using namespace core;
 
 using namespace std;
 
@@ -234,7 +236,7 @@ float PDB::getBondAngle(Vec3 A, Vec3 B, Vec3 C)
   Vec3Cross(v1, v2); // cross product
   float s = Vec3Abs(v1);
 
-  return atan2f(s, c)*SPARTA_RAD;
+  return atan2f(s, c)*180.0/numeric::NumericTraits<Real>::pi();
 }
 
 
@@ -266,7 +268,7 @@ float PDB::getDihedralAngle(PDB_Entry a, PDB_Entry b, PDB_Entry c, PDB_Entry d)
     sqrt( (TEMP*TEMP + TEMP1*TEMP1 + TEMP2*TEMP2)*(TEMP3*TEMP3 + TEMP4*TEMP4 + TEMP5*TEMP5) ) );
   // cos(a-b-c-d) = |n1.n2|/|n1|.|n2|
 
-  return SPARTA_RAD*(arccos_(co)*
+  return 180./numeric::NumericTraits<Real>::pi()*(arccos_(co)*
     sgn( (float)( (n1[1]*n2[2] - n1[2]*n2[1])*cb[0] + (n1[2]*n2[0] - n1[0]*n2[2])*cb[1] + (n1[0]*n2[1] - n1[1]*n2[0])*cb[2]) ) );
 }
 
@@ -796,6 +798,7 @@ long PDB::sgn(float x)
 
 float PDB::arccos_(float x)
 {
+  const Real SPARTA_PI = numeric::NumericTraits<Real>::pi();
   if (x > 1.0) x = 1.0;
   else if (x < -1.0) x = -1.0;
 
@@ -967,6 +970,7 @@ void PDB::Vec3ScaleAdd(Vec3 v1, float s, Vec3 v2)
 
 void PDB::calcSurface( float rad_sol )
 {
+  const Real SPARTA_PI = numeric::NumericTraits<Real>::pi();
   Mol conf = Conformers[1];
   Mol::iterator it;
 
@@ -1402,6 +1406,7 @@ void PDB::calc_HN_S2( )
 // calculate electric field effects
 void PDB::calc_ElectricField()
 {
+  const Real SPARTA_PI = numeric::NumericTraits<Real>::pi();
   Mol conf = Conformers[1];
   Mol::iterator it;
 
@@ -1468,6 +1473,9 @@ void PDB::collect_HN_S2_and_EF( )
 
   ElectricField.clear();
 
+  const Real SPARTA_PI = numeric::NumericTraits<Real>::pi();
+  const Real RADS_PER_DEG = SPARTA_PI / 180.;
+
   boost::unordered_map<string, string> targetAtomList;
   boost::unordered_map<string, string>::iterator itT;
   targetAtomList["HN"]="N";
@@ -1531,10 +1539,10 @@ void PDB::collect_HN_S2_and_EF( )
 	      //cout << resID << "\t" << resName << "\t" << target.atomName << "\t" << target.resNum << "\t" << atomName2 << endl;
 	      if( atomName2=="O" || atomName2.substr(0,2)=="OD" || atomName2.substr(0,2)=="OE" || atomName2=="C" || atomName2=="N")
 		{
-		  //float c = cos(getBondAngle(EF_partner_HA,EF_target_HA,b)*SPARTA_PI/180.0);
+		  //float c = cos(getBondAngle(EF_partner_HA,EF_target_HA,b)*RADS_PER_DEG);
 		  float dist = getDist(EF_target_HA,b);
 		  if( dist <= 3.0 ) //continue;
-		    ElectricField[resID]["HA"] += Qlist[atomName2.substr(0,1)]*cos(getBondAngle(EF_partner_HA,EF_target_HA,b)*SPARTA_PI/180.0)/(dist*dist);
+		    ElectricField[resID]["HA"] += Qlist[atomName2.substr(0,1)]*cos(getBondAngle(EF_partner_HA,EF_target_HA,b)*RADS_PER_DEG)/(dist*dist);
 		  //cout << resName << "\t" << resID << "\t" << target.atomName << "\t" << b.atomName << "\t" << resID2;
 		  //cout << "\t" << c << "\t" << dist << "\t" <<  ElectricField[resID][target.atomName] << endl;
 		}
@@ -1544,10 +1552,10 @@ void PDB::collect_HN_S2_and_EF( )
 	      //cout << resID << "\t" << resName << "\t" << EF_target_HN.atomName << "\t" << EF_target_HN.resNum << "\t" << atomName2 << endl;
 	      if( atomName2.substr(0,2)=="OD" || atomName2.substr(0,2)=="OE" || atomName2=="C" || atomName2=="N")
 		{
-		  //float c = cos(getBondAngle(EF_partner_HN,EF_target_HN,b)*SPARTA_PI/180.0);
+		  //float c = cos(getBondAngle(EF_partner_HN,EF_target_HN,b)*RADS_PER_DEG);
 		  float dist = getDist(EF_target_HN,b);
 		  if( dist <= 3.0 ) //continue;
-		    ElectricField[resID]["HN"] += Qlist[atomName2.substr(0,1)]*cos(getBondAngle(EF_partner_HN,EF_target_HN,b)*SPARTA_PI/180.0)/(dist*dist);
+		    ElectricField[resID]["HN"] += Qlist[atomName2.substr(0,1)]*cos(getBondAngle(EF_partner_HN,EF_target_HN,b)*RADS_PER_DEG)/(dist*dist);
 		  //cout << resName << "\t" << resID << "\t" << EF_target_HN.atomName << "\t" << b.atomName << "\t" << resID2;
 		  //cout << "\t" << c << "\t" << dist << "\t" <<  ElectricField[resID][EF_target_HN.atomName] << endl;
 		}

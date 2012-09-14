@@ -148,6 +148,8 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
+#include <numeric/NumericTraits.hh>
+
  static numeric::random::RandomGenerator RG(16621);
 
 using namespace core;
@@ -427,7 +429,7 @@ shift_angles(
 	vector1< Real > & angles
 )
 {
-	Real pi( 3.14159 );
+	const Real pi = numeric::NumericTraits<Real>::pi();
 	Size n_angles( angles.size() );
 
 	vector1< Real > pos_angles; 

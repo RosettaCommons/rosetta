@@ -116,6 +116,8 @@ using core::util::T;
 //Auto Headers
 #include <core/io/atom_tree_diffs/atom_tree_diff.hh>
 
+#include <numeric/NumericTraits.hh>
+
 //Auto using namespaces
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
 //Auto using namespaces end
@@ -327,7 +329,7 @@ create_random_pose( pose::Pose & pose ){
 	Real const r = 2.5 + 1.0*uniform();
 	Real const cos_theta = 2 * uniform() - 1;
 	Real const sin_theta = std::sqrt( 1 - cos_theta*cos_theta );
-	Real const phi = uniform() * 2 * 3.141592654;
+	Real const phi = uniform() * 2 * numeric::NumericTraits<Real>::pi();
 	Vector const rand_displacement = r * Vector( cos_theta, sin_theta*cos( phi ), sin_theta*sin( phi ) );
 	j.set_translation( rand_displacement );
 	pose.set_jump( 1, j );

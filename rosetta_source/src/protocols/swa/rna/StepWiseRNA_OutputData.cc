@@ -61,6 +61,7 @@
 #include <ObjexxFCL/FArray2D.hh>
 
 #include <numeric/conversions.hh>
+#include <numeric/NumericTraits.hh>
 
 #include <iostream>
 #include <fstream>
@@ -98,6 +99,7 @@ namespace rna {
 
 		std::string const debug_silent_file=silent_file+"_CONVERSION_DEBUG";
 		std::string const debug_tag=tag+"_CONVERSION_DEBUG";
+                const Real RADS_PER_DEG = numeric::NumericTraits<Real>::pi() / 180.;
 
 		SilentFileData silent_file_data;
 
@@ -148,8 +150,8 @@ namespace rna {
 
 				Matrix rotation_matrix;
 
-				euler_angles.alpha=(0.25*trail_num)*local_angle_bin_size*(PI/180); 
-				euler_angles.gamma=(0.25*trail_num)*local_angle_bin_size*(PI/180); 
+				euler_angles.alpha=(0.25*trail_num)*local_angle_bin_size*(RADS_PER_DEG); 
+				euler_angles.gamma=(0.25*trail_num)*local_angle_bin_size*(RADS_PER_DEG); 
 
 				euler_angles.z=(0.25*trail_num)*local_z_bin_size;	//MAKE SURE THIS DOESN'T GET OUT OF BOUND!
 				euler_angles.beta=acos(euler_angles.z);

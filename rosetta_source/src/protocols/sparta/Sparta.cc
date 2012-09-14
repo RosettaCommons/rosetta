@@ -67,6 +67,7 @@
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 #include <basic/database/open.hh>
 
+#include <numeric/NumericTraits.hh>
 
 namespace protocols {
 namespace sparta {
@@ -270,6 +271,11 @@ void Sparta::SpartaLib::init() {
 //**************** NOT ABLE TO HANDLE PROTEIN WITH MULTIPLE CHAINS ****************
 void Sparta::SpartaLib::getResInfo( bool create_output )
 {
+  const Real SPARTA_PI = numeric::NumericTraits<Real>::pi();
+  const Real SPARTA_RADS_PER_DEG = SPARTA_PI / 180.0;
+  const Real SIN_PI = sin(SPARTA_PI);
+  const Real COS_PI = cos(SPARTA_PI);
+
   inTab.Entries.clear();
 
   // allocation
@@ -477,14 +483,14 @@ void Sparta::SpartaLib::getResInfo( bool create_output )
 		string resName=residList[i-1]; if(resName=="c") resName="C";
 		temp.insert(temp.end(), BLOSUM_62[resName].begin(), BLOSUM_62[resName].end());
 		float phi = U_ANGLES[index][1], psi = U_ANGLES[index][2], chi1 = U_ANGLES[index][3], chi2 = CHI2_ANGLES[i-1];//, omega=OMEGA_ANGLES[i-1];
-		if( phi<999 ) { temp.push_back(sin(phi*SPARTA_PI/180.0)); temp.push_back(cos(phi*SPARTA_PI/180.0));}//phi
-		else { temp.push_back(sin(SPARTA_PI)); temp.push_back(cos(SPARTA_PI));}
-		if( psi<999 ) { temp.push_back(sin(psi*SPARTA_PI/180.0)); temp.push_back(cos(psi*SPARTA_PI/180.0));}//psi
-		else { temp.push_back(sin(SPARTA_PI)); temp.push_back(cos(SPARTA_PI));}
-		if( chi1<999 ) { temp.push_back(sin(chi1*SPARTA_PI/180.0)); temp.push_back(cos(chi1*SPARTA_PI/180.0));}//chi1
+		if( phi<999 ) { temp.push_back(sin(phi*SPARTA_RADS_PER_DEG)); temp.push_back(cos(phi*SPARTA_RADS_PER_DEG));}//phi
+		else { temp.push_back(SIN_PI); temp.push_back(COS_PI);}
+		if( psi<999 ) { temp.push_back(sin(psi*SPARTA_RADS_PER_DEG)); temp.push_back(cos(psi*SPARTA_RADS_PER_DEG));}//psi
+		else { temp.push_back(SIN_PI); temp.push_back(COS_PI);}
+		if( chi1<999 ) { temp.push_back(sin(chi1*SPARTA_RADS_PER_DEG)); temp.push_back(cos(chi1*SPARTA_RADS_PER_DEG));}//chi1
 		else { temp.push_back(0); temp.push_back(0);}
 		temp.push_back(chi1<999);
-		if( chi2<999 ) { temp.push_back(sin(chi2*SPARTA_PI/180.0)); temp.push_back(cos(chi2*SPARTA_PI/180.0));}//chi2
+		if( chi2<999 ) { temp.push_back(sin(chi2*SPARTA_RADS_PER_DEG)); temp.push_back(cos(chi2*SPARTA_RADS_PER_DEG));}//chi2
 		else { temp.push_back(0); temp.push_back(0);}
 		temp.push_back(chi2<999);
 
@@ -492,14 +498,14 @@ void Sparta::SpartaLib::getResInfo( bool create_output )
 		resName=residList[i]; if(resName=="c") resName="C";
 		temp.insert(temp.end(), BLOSUM_62[resName].begin(), BLOSUM_62[resName].end());
 		phi = U_ANGLES[index][4]; psi = U_ANGLES[index][5]; chi1 = U_ANGLES[index][6]; chi2 = CHI2_ANGLES[i];//, omega=OMEGA_ANGLES[i];
-		if( phi<999 ) { temp.push_back(sin(phi*SPARTA_PI/180.0)); temp.push_back(cos(phi*SPARTA_PI/180.0));}//phi
-		else { temp.push_back(sin(SPARTA_PI)); temp.push_back(cos(SPARTA_PI));}
-		if( psi<999 ) { temp.push_back(sin(psi*SPARTA_PI/180.0)); temp.push_back(cos(psi*SPARTA_PI/180.0));}//psi
-		else { temp.push_back(sin(SPARTA_PI)); temp.push_back(cos(SPARTA_PI));}
-		if( chi1<999 ) { temp.push_back(sin(chi1*SPARTA_PI/180.0)); temp.push_back(cos(chi1*SPARTA_PI/180.0));}//chi1
+		if( phi<999 ) { temp.push_back(sin(phi*SPARTA_RADS_PER_DEG)); temp.push_back(cos(phi*SPARTA_RADS_PER_DEG));}//phi
+		else { temp.push_back(SIN_PI); temp.push_back(COS_PI);}
+		if( psi<999 ) { temp.push_back(sin(psi*SPARTA_RADS_PER_DEG)); temp.push_back(cos(psi*SPARTA_RADS_PER_DEG));}//psi
+		else { temp.push_back(SIN_PI); temp.push_back(COS_PI);}
+		if( chi1<999 ) { temp.push_back(sin(chi1*SPARTA_RADS_PER_DEG)); temp.push_back(cos(chi1*SPARTA_RADS_PER_DEG));}//chi1
 		else { temp.push_back(0); temp.push_back(0);}
 		temp.push_back(chi1<999);
-		if( chi2<999 ) { temp.push_back(sin(chi2*SPARTA_PI/180.0)); temp.push_back(cos(chi2*SPARTA_PI/180.0));}//chi2
+		if( chi2<999 ) { temp.push_back(sin(chi2*SPARTA_RADS_PER_DEG)); temp.push_back(cos(chi2*SPARTA_RADS_PER_DEG));}//chi2
 		else { temp.push_back(0); temp.push_back(0);}
 		temp.push_back(chi2<999);
 
@@ -507,41 +513,41 @@ void Sparta::SpartaLib::getResInfo( bool create_output )
 		resName=residList[i+1]; if(resName=="c") resName="C";
 		temp.insert(temp.end(), BLOSUM_62[resName].begin(), BLOSUM_62[resName].end());
 		phi = U_ANGLES[index][7]; psi = U_ANGLES[index][8]; chi1 = U_ANGLES[index][9]; chi2 = CHI2_ANGLES[i+1];//, omega=OMEGA_ANGLES[i+1];
-		if( phi<999 ) { temp.push_back(sin(phi*SPARTA_PI/180.0)); temp.push_back(cos(phi*SPARTA_PI/180.0));}//phi
-		else { temp.push_back(sin(SPARTA_PI)); temp.push_back(cos(SPARTA_PI));}
-		if( psi<999 ) { temp.push_back(sin(psi*SPARTA_PI/180.0)); temp.push_back(cos(psi*SPARTA_PI/180.0));}//psi
-		else { temp.push_back(sin(SPARTA_PI)); temp.push_back(cos(SPARTA_PI));}
-		if( chi1<999 ) { temp.push_back(sin(chi1*SPARTA_PI/180.0)); temp.push_back(cos(chi1*SPARTA_PI/180.0));}//chi1
+		if( phi<999 ) { temp.push_back(sin(phi*SPARTA_RADS_PER_DEG)); temp.push_back(cos(phi*SPARTA_RADS_PER_DEG));}//phi
+		else { temp.push_back(SIN_PI); temp.push_back(COS_PI);}
+		if( psi<999 ) { temp.push_back(sin(psi*SPARTA_RADS_PER_DEG)); temp.push_back(cos(psi*SPARTA_RADS_PER_DEG));}//psi
+		else { temp.push_back(SIN_PI); temp.push_back(COS_PI);}
+		if( chi1<999 ) { temp.push_back(sin(chi1*SPARTA_RADS_PER_DEG)); temp.push_back(cos(chi1*SPARTA_RADS_PER_DEG));}//chi1
 		else { temp.push_back(0); temp.push_back(0);}
 		temp.push_back(chi1<999);
-		if( chi2<999 ) { temp.push_back(sin(chi2*SPARTA_PI/180.0)); temp.push_back(cos(chi2*SPARTA_PI/180.0));}//chi2
+		if( chi2<999 ) { temp.push_back(sin(chi2*SPARTA_RADS_PER_DEG)); temp.push_back(cos(chi2*SPARTA_RADS_PER_DEG));}//chi2
 		else { temp.push_back(0); temp.push_back(0);}
 		temp.push_back(chi2<999);
 
 
 		float hb = inPDB.HBDistList[i-1]["O"];
 		if(hb>0) {
-			temp.push_back(1.0); temp.push_back(hb); temp.push_back( cos(inPDB.HB_DHO_AngleList[i-1]["O"]*SPARTA_PI/180.0) ); temp.push_back( cos(inPDB.HB_HOA_AngleList[i-1]["O"]*SPARTA_PI/180.0) );
+			temp.push_back(1.0); temp.push_back(hb); temp.push_back( cos(inPDB.HB_DHO_AngleList[i-1]["O"]*SPARTA_RADS_PER_DEG) ); temp.push_back( cos(inPDB.HB_HOA_AngleList[i-1]["O"]*SPARTA_RADS_PER_DEG) );
 		}
 		else {temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0);}
 		hb = inPDB.HBDistList[i]["HN"];
 		if(hb>0) {
-			temp.push_back(1.0); temp.push_back(hb); temp.push_back( cos(inPDB.HB_DHO_AngleList[i]["HN"]*SPARTA_PI/180.0) ); temp.push_back( cos(inPDB.HB_HOA_AngleList[i]["HN"]*SPARTA_PI/180.0) );
+			temp.push_back(1.0); temp.push_back(hb); temp.push_back( cos(inPDB.HB_DHO_AngleList[i]["HN"]*SPARTA_RADS_PER_DEG) ); temp.push_back( cos(inPDB.HB_HOA_AngleList[i]["HN"]*SPARTA_RADS_PER_DEG) );
 		}
 		else {temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0);}
 		hb = inPDB.HBDistList[i]["HA"];
 		if(hb>0) {
-			temp.push_back(1.0); temp.push_back(hb); temp.push_back( cos(inPDB.HB_DHO_AngleList[i]["HA"]*SPARTA_PI/180.0) ); temp.push_back( cos(inPDB.HB_HOA_AngleList[i]["HA"]*SPARTA_PI/180.0) );
+			temp.push_back(1.0); temp.push_back(hb); temp.push_back( cos(inPDB.HB_DHO_AngleList[i]["HA"]*SPARTA_RADS_PER_DEG) ); temp.push_back( cos(inPDB.HB_HOA_AngleList[i]["HA"]*SPARTA_RADS_PER_DEG) );
 		}
 		else {temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0);}
 		hb = inPDB.HBDistList[i]["O"];
 		if(hb>0) {
-			temp.push_back(1.0); temp.push_back(hb); temp.push_back( cos(inPDB.HB_DHO_AngleList[i]["O"]*SPARTA_PI/180.0) ); temp.push_back( cos(inPDB.HB_HOA_AngleList[i]["O"]*SPARTA_PI/180.0) );
+			temp.push_back(1.0); temp.push_back(hb); temp.push_back( cos(inPDB.HB_DHO_AngleList[i]["O"]*SPARTA_RADS_PER_DEG) ); temp.push_back( cos(inPDB.HB_HOA_AngleList[i]["O"]*SPARTA_RADS_PER_DEG) );
 		}
 		else {temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0);}
 		hb = inPDB.HBDistList[i+1]["HN"];
 		if(hb>0) {
-			temp.push_back(1.0); temp.push_back(hb); temp.push_back( cos(inPDB.HB_DHO_AngleList[i+1]["HN"]*SPARTA_PI/180.0) ); temp.push_back( cos(inPDB.HB_HOA_AngleList[i+1]["HN"]*SPARTA_PI/180.0) );
+			temp.push_back(1.0); temp.push_back(hb); temp.push_back( cos(inPDB.HB_DHO_AngleList[i+1]["HN"]*SPARTA_RADS_PER_DEG) ); temp.push_back( cos(inPDB.HB_HOA_AngleList[i+1]["HN"]*SPARTA_RADS_PER_DEG) );
 		}	else {temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0); temp.push_back(0.0);}
 
 		temp.push_back(inPDB.HN_S2[i-1]);

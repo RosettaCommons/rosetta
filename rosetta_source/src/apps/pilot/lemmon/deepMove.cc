@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
 		}
 		int alphaAxis=4;// 5&6 are beta and gamma (euler angles)
 		{
-			core::Real const radians=3.14159;// not sure if this is degree or radians
+			core::Real const radians=numeric::NumericTraits<Real>::pi();// not sure if this is degree or radians
 			jump.set_rb_delta(alphaAxis, downstream, radians);
 		}
 		jump.fold_in_rb_deltas();// adjusts the center accordingly

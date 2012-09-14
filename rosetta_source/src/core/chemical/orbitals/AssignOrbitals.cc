@@ -18,6 +18,7 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <numeric/conversions.hh>
 #include <numeric/constants.hh>
+#include <numeric/NumericTraits.hh>
 
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
 
@@ -118,7 +119,7 @@ void AssignOrbitals::assign_orbitals( )
 					}else
 					{
 						theta =  numeric::angle_radians<core::Real>(pi_orbital_xyz_vector[vector_index],stub1_xyz,stub2_xyz);
-						if( (theta < 1e-2) || (theta > 3.14-1e-2) )
+						if( (theta < 1e-2) || (theta > numeric::NumericTraits<Real>::pi()-1e-2) )
 						{
 							phi = 0.0;
 						}else
@@ -534,7 +535,7 @@ void AssignOrbitals::calculate_orbital_icoor(
 	}else
 	{
 		theta =  numeric::angle_radians<core::Real>(orbital_xyz,stub1_xyz,stub2_xyz);
-		if( (theta < 1e-2) || (theta > 3.14-1e-2) )
+		if( (theta < 1e-2) || (theta > numeric::NumericTraits<Real>::pi()-1e-2) )
 		{
 			phi = 0.0;
 		}else

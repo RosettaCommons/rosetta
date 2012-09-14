@@ -28,6 +28,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/id/DOF_ID.hh>
 
+#include <numeric/NumericTraits.hh>
 
 using namespace core;
 using namespace coarse;
@@ -413,7 +414,7 @@ void coarse_rotamer(
 	ChiVector &chi,
 	AngleVector &angle
 ) {
-	const Real Pi (3.14159); // EVIL -- use numeric::d::constants
+	const Real Pi = numeric::NumericTraits<Real>::pi(); 
 
 	pose::PoseOP pose ( create_rotamer(map, fine_res_type, rotamer) );
 	for ( Size jj = 1; jj<=nchi; ++jj) {
@@ -438,7 +439,7 @@ void average_rotamers(
 	AngleVector &angle_std
 )
 {
-	const Real Pi ( 3.14159 );  //EVIL
+	const Real Pi = numeric::NumericTraits<Real>::pi(); 
 	//run thru all rotamers to get sdev's
 
 	Real pnew( 0.0 );

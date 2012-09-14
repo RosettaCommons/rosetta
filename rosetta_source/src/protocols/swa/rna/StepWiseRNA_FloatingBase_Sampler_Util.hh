@@ -49,9 +49,6 @@
 #define centroid_bin_size 1.0
 #define euler_angle_bin_size 20
 #define euler_z_bin_size 0.05
-#define PI 3.14159265
-
-
 
 
 typedef  numeric::xyzMatrix< core::Real > Matrix;

@@ -24,6 +24,7 @@
 //#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <numeric/interpolation/spline/SplineGenerator.hh>
+#include <numeric/NumericTraits.hh>
 #include <utility/io/izstream.hh>
 #include <sstream>
 #include <core/chemical/AA.hh>
@@ -185,7 +186,7 @@ GaussianOverlapEnergy::residue_pair_energy(
 					else if( d2 <= .8*(r1+r2) ){
 					      score = (r1+r2)/(d2*d2*d2*d2*sqrt(d2));}
 					else{ 
-                                              score = ((sqrt(3.14158)*r1*r2)/(sqrt(r1*r1+r2*r2)))*(exp(-d2/(r1*r1+r2*r2)));
+                                              score = ((sqrt(numeric::NumericTraits<Real>::pi())*r1*r2)/(sqrt(r1*r1+r2*r2)))*(exp(-d2/(r1*r1+r2*r2)));
                                         emap[ gauss ] += score;}}
 				else{
 					emap[ gauss ] += 0.0;}

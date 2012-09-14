@@ -1,3 +1,4 @@
+  // const core::Real PI = numeric::NumericTraits<Real>::pi();
   // //#ifdef USE_OPENMP
   // //#pragma omp parallel for schedule(dynamic,1)
   // //#endif
@@ -71,18 +72,18 @@
   //                 // TR << "n12 " << tmp.residue(1).atom_name(n12) << " c12 " << tmp.residue(5).atom_name(c12) << std::endl;
   //                 // TR << "n21 " << tmp.residue(3).atom_name(n21) << " c21 " << tmp.residue(5).atom_name(c21) << std::endl;
   //                 // TR << "n22 " << tmp.residue(3).atom_name(n22) << " c22 " << tmp.residue(5).atom_name(c22) << std::endl;
-  //                 tmp.add_constraint( new AngleConstraint( AtomID(tmp.residue(5).atom_index("C2"),5),AtomID(tmp.residue(5).atom_index("C7"),5),AtomID(9,1),               new HarmonicFunc(3.14159,0.2)) );
-  //                 tmp.add_constraint( new AngleConstraint(                                           AtomID(tmp.residue(5).atom_index("C7"),5),AtomID(9,1),AtomID(n1a,1), new HarmonicFunc(3.14159,0.2)) );
-  //                 tmp.add_constraint( new AngleConstraint( AtomID(tmp.residue(5).atom_index("C8"),5),AtomID(tmp.residue(5).atom_index("C9"),5),AtomID(9,3),               new HarmonicFunc(3.14159,0.2)) );
-  //                 tmp.add_constraint( new AngleConstraint(                                           AtomID(tmp.residue(5).atom_index("C9"),5),AtomID(9,3),AtomID(n2a,3), new HarmonicFunc(3.14159,0.2)) );
+  //                 tmp.add_constraint( new AngleConstraint( AtomID(tmp.residue(5).atom_index("C2"),5),AtomID(tmp.residue(5).atom_index("C7"),5),AtomID(9,1),               new HarmonicFunc(PI,0.2)) );
+  //                 tmp.add_constraint( new AngleConstraint(                                           AtomID(tmp.residue(5).atom_index("C7"),5),AtomID(9,1),AtomID(n1a,1), new HarmonicFunc(PI,0.2)) );
+  //                 tmp.add_constraint( new AngleConstraint( AtomID(tmp.residue(5).atom_index("C8"),5),AtomID(tmp.residue(5).atom_index("C9"),5),AtomID(9,3),               new HarmonicFunc(PI,0.2)) );
+  //                 tmp.add_constraint( new AngleConstraint(                                           AtomID(tmp.residue(5).atom_index("C9"),5),AtomID(9,3),AtomID(n2a,3), new HarmonicFunc(PI,0.2)) );
   //                 // TR << "C2 C7 " << tmp.residue(1).atom_name(9) << " " << tmp.residue(1).atom_name(n1a) << std::endl;
   //                 // TR << "C8 C9 " << tmp.residue(3).atom_name(9) << " " << tmp.residue(3).atom_name(n2a) << std::endl;
   //                 Size bk11 = (tmp.residue(2).aa()==core::chemical::aa_glu)?6:5, bk12 = (tmp.residue(2).aa()==core::chemical::aa_glu)?7:6, bk13 = 9, bk14=n11;
-  //                 tmp.add_constraint( new AngleConstraint( AtomID(bk11,2),AtomID(bk12,2),AtomID(bk13,1),                new HarmonicFunc(3.14159,0.2)) );
-  //                 tmp.add_constraint( new AngleConstraint(                AtomID(bk12,2),AtomID(bk13,1),AtomID(bk14,1), new HarmonicFunc(3.14159,0.2)) );
+  //                 tmp.add_constraint( new AngleConstraint( AtomID(bk11,2),AtomID(bk12,2),AtomID(bk13,1),                new HarmonicFunc(PI,0.2)) );
+  //                 tmp.add_constraint( new AngleConstraint(                AtomID(bk12,2),AtomID(bk13,1),AtomID(bk14,1), new HarmonicFunc(PI,0.2)) );
   //                 Size bk21 = (tmp.residue(4).aa()==core::chemical::aa_glu)?6:5, bk22 = (tmp.residue(4).aa()==core::chemical::aa_glu)?7:6, bk23 = 9, bk24=n21;
-  //                 tmp.add_constraint( new AngleConstraint( AtomID(bk21,4),AtomID(bk22,4),AtomID(bk23,3),                new HarmonicFunc(3.14159,0.2)) );
-  //                 tmp.add_constraint( new AngleConstraint(                AtomID(bk22,4),AtomID(bk23,3),AtomID(bk24,3), new HarmonicFunc(3.14159,0.2)) );
+  //                 tmp.add_constraint( new AngleConstraint( AtomID(bk21,4),AtomID(bk22,4),AtomID(bk23,3),                new HarmonicFunc(PI,0.2)) );
+  //                 tmp.add_constraint( new AngleConstraint(                AtomID(bk22,4),AtomID(bk23,3),AtomID(bk24,3), new HarmonicFunc(PI,0.2)) );
 
   //                 static vector1<bool> seenit(16,false);
   //                 int type = 1 + 1*(int)rhit.frnt + 2*(int)rhit.nego + 4*(int)shit.frnt + 8*(int)shit.nego;
@@ -229,18 +230,18 @@
   //       // TR << "n12 " << tmp.residue(1).atom_name(n12) << " c12 " << tmp.residue(5).atom_name(c12) << std::endl;
   //       // TR << "n21 " << tmp.residue(3).atom_name(n21) << " c21 " << tmp.residue(5).atom_name(c21) << std::endl;
   //       // TR << "n22 " << tmp.residue(3).atom_name(n22) << " c22 " << tmp.residue(5).atom_name(c22) << std::endl;
-  //       tmp.add_constraint( new AngleConstraint( AtomID(tmp.residue(5).atom_index("C2"),5),AtomID(tmp.residue(5).atom_index("C7"),5),AtomID(9,1),               new HarmonicFunc(3.14159,0.2)) );
-  //       tmp.add_constraint( new AngleConstraint(                                           AtomID(tmp.residue(5).atom_index("C7"),5),AtomID(9,1),AtomID(n1a,1), new HarmonicFunc(3.14159,0.2)) );
-  //       tmp.add_constraint( new AngleConstraint( AtomID(tmp.residue(5).atom_index("C8"),5),AtomID(tmp.residue(5).atom_index("C9"),5),AtomID(9,3),               new HarmonicFunc(3.14159,0.2)) );
-  //       tmp.add_constraint( new AngleConstraint(                                           AtomID(tmp.residue(5).atom_index("C9"),5),AtomID(9,3),AtomID(n2a,3), new HarmonicFunc(3.14159,0.2)) );
+  //       tmp.add_constraint( new AngleConstraint( AtomID(tmp.residue(5).atom_index("C2"),5),AtomID(tmp.residue(5).atom_index("C7"),5),AtomID(9,1),               new HarmonicFunc(PI,0.2)) );
+  //       tmp.add_constraint( new AngleConstraint(                                           AtomID(tmp.residue(5).atom_index("C7"),5),AtomID(9,1),AtomID(n1a,1), new HarmonicFunc(PI,0.2)) );
+  //       tmp.add_constraint( new AngleConstraint( AtomID(tmp.residue(5).atom_index("C8"),5),AtomID(tmp.residue(5).atom_index("C9"),5),AtomID(9,3),               new HarmonicFunc(PI,0.2)) );
+  //       tmp.add_constraint( new AngleConstraint(                                           AtomID(tmp.residue(5).atom_index("C9"),5),AtomID(9,3),AtomID(n2a,3), new HarmonicFunc(PI,0.2)) );
   //       //        TR << "C2 C7 " << tmp.residue(1).atom_name(9) << " " << tmp.residue(1).atom_name(n1a) << std::endl;
   //       //        TR << "C8 C9 " << tmp.residue(3).atom_name(9) << " " << tmp.residue(3).atom_name(n2a) << std::endl;
   //       Size bk11 = (tmp.residue(2).aa()==core::chemical::aa_glu)?6:5, bk12 = (tmp.residue(2).aa()==core::chemical::aa_glu)?7:6, bk13 = 9, bk14=n11;
-  //       tmp.add_constraint( new AngleConstraint( AtomID(bk11,2),AtomID(bk12,2),AtomID(bk13,1),                new HarmonicFunc(3.14159,0.2)) );
-  //       tmp.add_constraint( new AngleConstraint(                AtomID(bk12,2),AtomID(bk13,1),AtomID(bk14,1), new HarmonicFunc(3.14159,0.2)) );
+  //       tmp.add_constraint( new AngleConstraint( AtomID(bk11,2),AtomID(bk12,2),AtomID(bk13,1),                new HarmonicFunc(PI,0.2)) );
+  //       tmp.add_constraint( new AngleConstraint(                AtomID(bk12,2),AtomID(bk13,1),AtomID(bk14,1), new HarmonicFunc(PI,0.2)) );
   //       Size bk21 = (tmp.residue(4).aa()==core::chemical::aa_glu)?6:5, bk22 = (tmp.residue(4).aa()==core::chemical::aa_glu)?7:6, bk23 = 9, bk24=n21;
-  //       tmp.add_constraint( new AngleConstraint( AtomID(bk21,4),AtomID(bk22,4),AtomID(bk23,3),                new HarmonicFunc(3.14159,0.2)) );
-  //       tmp.add_constraint( new AngleConstraint(                AtomID(bk22,4),AtomID(bk23,3),AtomID(bk24,3), new HarmonicFunc(3.14159,0.2)) );
+  //       tmp.add_constraint( new AngleConstraint( AtomID(bk21,4),AtomID(bk22,4),AtomID(bk23,3),                new HarmonicFunc(PI,0.2)) );
+  //       tmp.add_constraint( new AngleConstraint(                AtomID(bk22,4),AtomID(bk23,3),AtomID(bk24,3), new HarmonicFunc(PI,0.2)) );
   //       minm.apply(tmp);
   //       {
   //         bool clash = false;

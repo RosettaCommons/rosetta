@@ -59,6 +59,7 @@
 #include <core/scoring/constraints/util.hh>
 #include <set>
 #include <numeric/conversions.hh>
+#include <numeric/NumericTraits.hh>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -508,6 +509,8 @@ namespace rna {
 	void 
 	Analyze_base_bin_map(std::map<Base_bin , int , compare_base_bin> const & base_bin_map, std::string const foldername){
 
+                const Real DEGS_PER_RAD = 180. / numeric::NumericTraits<Real>::pi();
+
 		Analyze_base_bin_map(base_bin_map, "x", "y", foldername);
 		Analyze_base_bin_map(base_bin_map, "x", "z", foldername);
 		Analyze_base_bin_map(base_bin_map, "x", "alpha", foldername);
@@ -541,11 +544,12 @@ namespace rna {
 	Get_euler_angles( numeric::xyzMatrix< core::Real > const & coordinate_matrix){ 
 
 		numeric::xyzMatrix< core::Real > const & M = coordinate_matrix;
+                const Real DEGS_PER_RAD = 180. / numeric::NumericTraits<Real>::pi();
 
 		Euler_angles euler_angles;
-		euler_angles.alpha= atan2(M.xz(),-M.yz()) * 180 / PI ;
+		euler_angles.alpha= atan2(M.xz(),-M.yz()) * DEGS_PER_RAD;
 		euler_angles.z= M.zz();
-		euler_angles.gamma= atan2(M.zx(), M.zy()) * 180 / PI ;  //tan2(y,x)=gamma
+		euler_angles.gamma= atan2(M.zx(), M.zy()) * DEGS_PER_RAD ;  //tan2(y,x)=gamma
 
 //    float atan2 (       float y,       float x );
 //principal arc tangent of y/x, in the interval [-pi,+pi] radians.
@@ -553,10 +557,10 @@ namespace rna {
 		//Implement a check here to make sure that the euler_angles are be used to recalculate the coordiante May 2, 2010....
 
 /* Defination of rotation matrix at mathworld is actually the inverse of the rotation matrix....also did not correctly input the coefficient of arctan2
-		euler_angles.alpha = (-1)* atan2(M.zy(), M.zx()) * 180 / PI; //Is this correct?? Ambuiguity with the minus sign...return in the [-Pi, Pi] range. atan2(y-value, x-value)
-		euler_angles.beta  = acos(M.zz()) * 180 / PI;  // rerun in the [0,Pi] range     
+		euler_angles.alpha = (-1)* atan2(M.zy(), M.zx()) * DEGS_PER_RAD; //Is this correct?? Ambuiguity with the minus sign...return in the [-Pi, Pi] range. atan2(y-value, x-value)
+		euler_angles.beta  = acos(M.zz()) * DEGS_PER_RAD;  // rerun in the [0,Pi] range     
 		euler_angles.z= M.zz(); //Use z instead of beta to make space uniform               
-		euler_angles.gamma = atan2(M.yz(), M.xz()) * 180 / PI; //return in the [-Pi, Pi] range. atan2(y-value, x-value)
+		euler_angles.gamma = atan2(M.yz(), M.xz()) * DEGS_PER_RAD; //return in the [-Pi, Pi] range. atan2(y-value, x-value)
 */
 
 		return euler_angles;

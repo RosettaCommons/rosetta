@@ -64,8 +64,6 @@ using std::vector;
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
-#define PI 3.14159265
-
 using namespace core;
 using namespace basic::options;
 using namespace core::scoring;
@@ -91,6 +89,10 @@ core::Real Find_Intersect(core::SSize const & phiAngle, core::SSize const & psiA
 
 int main( int argc, char * argv [] )
 {
+        const core::Real PI = numeric::NumericTraits<Real>::pi();
+        const core::Real RADS_PER_DEG = PI / 180.;
+        const core::Real DEGS_PER_RAD = 180./PI;
+
 	devel::init(argc, argv);
 	// std::string const output_tag = option[ OptionKeys::out::output_tag ]();
 	pose::Pose input_pose;
@@ -178,7 +180,7 @@ int main( int argc, char * argv [] )
 
 	for (core::Real Cphi = 1.0; Cphi > -1.05; Cphi+= -0.05){
 	for (core::SSize psiAngle = -180; psiAngle <= 180; psiAngle+=5){
-	phiAngle = acos(Cphi) * 180.0 / PI;
+	phiAngle = acos(Cphi) * DEGS_PER_PI;
 	Find_Intersect(phiAngle,psiAngle,atomX,atomY,atomZ,atom_radius);
 
 	      }
@@ -199,7 +201,7 @@ int main( int argc, char * argv [] )
 
 	for (core::Real Cphi = 1.0; Cphi > -1.05; Cphi+= -0.05){
         for (core::SSize psiAngle = -180; psiAngle <= 180; psiAngle+=5){
-	phiAngle = acos(Cphi) * 180.0 / PI;
+	phiAngle = acos(Cphi) * DEGS_PER_RAD;
 	if (MaxDist[phiAngle][psiAngle] != 0)
 	{
 	f1_tmp<<"ATOM      1  I   SUR     1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<Xpoint[phiAngle][psiAngle]+comx<<std::setw(8)<<std::fixed<<std::setprecision(3)<<Ypoint[phiAngle][psiAngle]+comy<<std::setw(8)<<std::fixed<<std::setprecision(3)<<Zpoint[phiAngle][psiAngle]+comz<<std::endl;
@@ -269,14 +271,17 @@ std::vector<std::string> split(const std::string &s, char delim) {
 
 core::Real Find_Intersect(core::SSize const & phiAngle , core::SSize const & psiAngle, core::Real const & atomX, core::Real const & atomY, core::Real const & atomZ, core::Real const & atom_radius){
 
+        const core::Real PI = numeric::NumericTraits<Real>::pi();
+        const core::Real RADS_PER_DEG = PI / 180.;
+        const core::Real DEGS_PER_RAD = 180. / PI;
 	core::Real const CoMX = 0.0;	core::Real const CoMY = 0.0;	core::Real const CoMZ = 0.0;
 	core::Real RandomDist,dirX,dirY,dirZ,dot_direction;
 
 	// compute this from phi/psi, relative to CoM
 	RandomDist = rand() % (80-30-1) + 30 + 1;
-	dirX = RandomDist*sin(phiAngle*(PI/180))*cos(psiAngle*(PI/180));
-	dirY = RandomDist*sin(phiAngle*(PI/180))*sin(psiAngle*(PI/180));
-	dirZ = RandomDist*cos(phiAngle*(PI/180));
+	dirX = RandomDist*sin(phiAngle*(RADS_PER_DEG))*cos(psiAngle*(RADS_PER_DEG));
+	dirY = RandomDist*sin(phiAngle*(RADS_PER_DEG))*sin(psiAngle*(RADS_PER_DEG));
+	dirZ = RandomDist*cos(phiAngle*(RADS_PER_DEG));
 //	std::cout<<RandomDist<<std::endl;
 //	std::cout<<phiAngle<<" " <<psiAngle<<std::endl;
 

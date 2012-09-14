@@ -114,6 +114,7 @@
  #include <numeric/xyzVector.hh>
  #include <numeric/random/random.hh>
  #include <numeric/random/random_permutation.hh>
+ #include <numeric/NumericTraits.hh>
  #include <ObjexxFCL/string.functions.hh>
 
 // //REMOVE LATER!
@@ -427,7 +428,7 @@ shift_angles(
 	vector1< Real > & angles
 )
 {
-	Real pi( 3.14159 );
+	const Real pi = numeric::NumericTraits<Real>::pi();
 	Size n_angles( angles.size() );
 
 	vector1< Real > pos_angles; 

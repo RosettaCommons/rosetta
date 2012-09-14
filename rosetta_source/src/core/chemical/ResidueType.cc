@@ -61,6 +61,7 @@
 #include <core/chemical/orbitals/OrbitalTypeSet.hh>
 
 #include <numeric/xyz.functions.hh>
+#include <numeric/NumericTraits.hh>
 
 //#include <core/scoring/ScoringManager.hh>
 
@@ -2060,7 +2061,7 @@ void ResidueType::calculate_icoor(std::string const & child,
 	}else
 	{
 		theta = numeric::angle_radians<core::Real>(child_xyz,stub1_xyz,stub2_xyz);
-		if( (theta < 1e-2) || (theta > 3.14-1e-2) )
+		if( (theta < 1e-2) || (theta > numeric::NumericTraits<Real>::pi()-1e-2) )
 		{
 			phi = 0.0;
 		}else

@@ -74,6 +74,8 @@
 #include <protocols/simple_moves/GreenPacker.hh>
 #include <protocols/simple_moves/GreenPacker.fwd.hh>
 
+#include <numeric/NumericTraits.hh>
+
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
@@ -430,6 +432,8 @@ namespace rna {
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+                const Real RADS_PER_DEG = numeric::NumericTraits<Real>::pi() / 180.;
+
 		SilentFileData silent_file_data;
 
 		Size const moving_res(  job_parameters_->working_moving_res() ); // Might not corresponds to user input.
@@ -742,11 +746,11 @@ namespace rna {
 			if(integration_test_mode_ && count_data_.rmsd_count>=10) break;
 
 			Matrix O_frame_rotation;
-			euler_angles.alpha=(base_bin.euler_alpha+0.5)*euler_angle_bin_size*(PI/180); //convert to radians
+			euler_angles.alpha=(base_bin.euler_alpha+0.5)*euler_angle_bin_size*(RADS_PER_DEG); //convert to radians
 			euler_angles.z=(base_bin.euler_z)*euler_z_bin_size;				
 			euler_angles.beta=acos(euler_angles.z);
 			euler_angles.gamma=0;
-//			euler_angles.gamma=(base_bin.euler_gamma+0.5)*euler_angle_bin_size*(PI/180); //convert to radians
+//			euler_angles.gamma=(base_bin.euler_gamma+0.5)*euler_angle_bin_size*(RADS_PER_DEG); //convert to radians
 
 			convert_euler_to_coordinate_matrix(euler_angles, O_frame_rotation);
 
@@ -780,7 +784,7 @@ namespace rna {
 
 			count_data_.tot_rotamer_count++;	
 
-			euler_angles.gamma=(base_bin.euler_gamma+0.5)*euler_angle_bin_size*(PI/180); //convert to radians
+			euler_angles.gamma=(base_bin.euler_gamma+0.5)*euler_angle_bin_size*(RADS_PER_DEG); //convert to radians
 
 
 			convert_euler_to_coordinate_matrix(euler_angles, O_frame_rotation);

@@ -60,7 +60,7 @@
 
 #include <utility/vector1.hh>
 #include <numeric/random/random.fwd.hh>
-
+#include <numeric/NumericTraits.hh>
 
 static basic::Tracer tr("core.scoring.ResidualDipolarCoupling");
 
@@ -991,9 +991,9 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
 	 	        //random starting value
 	 	 	 	 	  par[ex*n_par+0]=numeric::random::uniform();//Ax
 	 	 	 	 	  par[ex*n_par+1]=numeric::random::uniform();//Ay
-	 	 	 	 	  par[ex*n_par+2]=2.0*3.1415*numeric::random::uniform();//alpha
-	 	 	 	 	  par[ex*n_par+3]=2.0*3.1415*numeric::random::uniform();//beta
-	 	 	 	 	  par[ex*n_par+4]=2.0*3.1415*numeric::random::uniform();//gamma
+	 	 	 	 	  par[ex*n_par+2]=2.0*numeric::NumericTraits<Real>::pi()*numeric::random::uniform();//alpha
+	 	 	 	 	  par[ex*n_par+3]=2.0*numeric::NumericTraits<Real>::pi()*numeric::random::uniform();//beta
+	 	 	 	 	  par[ex*n_par+4]=2.0*numeric::NumericTraits<Real>::pi()*numeric::random::uniform();//gamma
 	 	 	 	 	  //call lmmin
 	 	 	 	 	  numeric::nls::lmmin( n_par, &par[ex*n_par], lenex_[ex+1], (const void*) &data, evaluaterdc, &status,numeric::nls::lm_printout_std);
    	 				if ( tr.Trace.visible() ) {
@@ -1066,9 +1066,9 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
 	 	 		tr.Trace << "ex: " << ex << std::endl;
 	 	 		tr.Trace << "Ax: " << Ax << std::endl;
 	 	 		tr.Trace << "Ay: " << Ay << std::endl;
-	 	 		tr.Trace << "alpha: " << par[ex*n_par+2]*180/3.1415926<< std::endl;
-   	 		tr.Trace << "beta: " << par[ex*n_par+3]*180/3.1415926<< std::endl;
-	 	 		tr.Trace << "gamma:" << par[ex*n_par+4]*180/3.1415926<< std::endl;
+	 	 		tr.Trace << "alpha: " << par[ex*n_par+2]*180/numeric::NumericTraits<Real>::pi()<< std::endl;
+   	 		tr.Trace << "beta: " << par[ex*n_par+3]*180/numeric::NumericTraits<Real>::pi()<< std::endl;
+	 	 		tr.Trace << "gamma:" << par[ex*n_par+4]*180/numeric::NumericTraits<Real>::pi()<< std::endl;
 	 	 		tr.Trace << "Da:" << 1.0/2.0*(-Ax-Ay)*32.45628<< std::endl;
 	 	 		tr.Trace << "R:" << 2.0/3.0*(Ay-Ax)/(Ax+Ay)<< std::endl;
 	 	 		tr.Trace << "norm:" << bestnorm<<std::endl;
@@ -1344,9 +1344,9 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
 	    for (j = 0; j < nrepeat; j++) {
 	 	        //random starting value
 	 	 	 	 	  par[ex*n_par+0]=numeric::random::uniform();//R
-	 	 	 	 	  par[ex*n_par+1]=2.0*3.1415*numeric::random::uniform();//alpha
-	 	 	 	 	  par[ex*n_par+2]=2.0*3.1415*numeric::random::uniform();//beta
-	 	 	 	 	  par[ex*n_par+3]=2.0*3.1415*numeric::random::uniform();//gamma
+	 	 	 	 	  par[ex*n_par+1]=2.0*numeric::NumericTraits<Real>::pi()*numeric::random::uniform();//alpha
+	 	 	 	 	  par[ex*n_par+2]=2.0*numeric::NumericTraits<Real>::pi()*numeric::random::uniform();//beta
+	 	 	 	 	  par[ex*n_par+3]=2.0*numeric::NumericTraits<Real>::pi()*numeric::random::uniform();//gamma
 	 	 	 	 	  //call lmmin
 	 	 	 	 	  numeric::nls::lmmin( n_par, &par[ex*n_par], lenex_[ex+1], (const void*) &data, evaluaterdcDa, &status,numeric::nls::lm_printout_std);
    	 				if ( tr.Trace.visible() ) {
@@ -1609,9 +1609,9 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
 	    for (j = 0; j < nrepeat; j++) {
 	 	        //random starting value
 	 	 	 	 	  par[ex*n_par+0]=numeric::random::uniform();//Da
-	 	 	 	 	  par[ex*n_par+1]=2.0*3.1415*numeric::random::uniform();//alpha
-	 	 	 	 	  par[ex*n_par+2]=2.0*3.1415*numeric::random::uniform();//beta
-	 	 	 	 	  par[ex*n_par+3]=2.0*3.1415*numeric::random::uniform();//gamma
+	 	 	 	 	  par[ex*n_par+1]=2.0*numeric::NumericTraits<Real>::pi()*numeric::random::uniform();//alpha
+	 	 	 	 	  par[ex*n_par+2]=2.0*numeric::NumericTraits<Real>::pi()*numeric::random::uniform();//beta
+	 	 	 	 	  par[ex*n_par+3]=2.0*numeric::NumericTraits<Real>::pi()*numeric::random::uniform();//gamma
 	 	 	 	 	  //call lmmin
 	 	 	 	 	  numeric::nls::lmmin( n_par, &par[ex*n_par], lenex_[ex+1], (const void*) &data, evaluaterdcR, &status,numeric::nls::lm_printout_std);
    	 				if ( tr.Trace.visible() ) {
@@ -1876,9 +1876,9 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
 
 	    for (j = 0; j < nrepeat; j++) {
 	 	        //random starting value
-	 	 	 	 	  par[ex*n_par+0]=2.0*3.1415*numeric::random::uniform();//alpha
-	 	 	 	 	  par[ex*n_par+1]=2.0*3.1415*numeric::random::uniform();//beta
-	 	 	 	 	  par[ex*n_par+2]=2.0*3.1415*numeric::random::uniform();//gamma
+	 	 	 	 	  par[ex*n_par+0]=2.0*numeric::NumericTraits<Real>::pi()*numeric::random::uniform();//alpha
+	 	 	 	 	  par[ex*n_par+1]=2.0*numeric::NumericTraits<Real>::pi()*numeric::random::uniform();//beta
+	 	 	 	 	  par[ex*n_par+2]=2.0*numeric::NumericTraits<Real>::pi()*numeric::random::uniform();//gamma
 	 	 	 	 	  //call lmmin
 	 	 	 	 	  numeric::nls::lmmin( n_par, &par[ex*n_par], lenex_[ex+1], (const void*) &data, evaluaterdcDaR, &status,numeric::nls::lm_printout_std);
    	 				if ( tr.Trace.visible() ) {

@@ -114,6 +114,8 @@
 #include <apps/pilot/will/mynamespaces.ihh>
 #include <apps/pilot/will/will_util.ihh>
 
+#include <numeric/NumericTraits.hh>
+
 using core::kinematics::Stub;
 using protocols::scoring::ImplicitFastClashCheck;
 
@@ -313,6 +315,7 @@ void run(std::string fname) {
 
   // Size ANGLE_INCR=30;
 
+  const Real PI = numeric::NumericTraits<Real>::pi();
   // setup stuff
   ResidueTypeSetCAP frs=ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
   ResidueTypeSetCAP crs=ChemicalManager::get_instance()->residue_type_set( CENTROID );
@@ -350,7 +353,7 @@ void run(std::string fname) {
   for(Size ir=1; ir<=nres; ++ir) {
     cysp.replace_residue(ir,cys.residue(1),true);
     // set HG as other SG for disulf
-    cysp.set_dof( DOF_ID(AtomID(11,ir),PHI  ), 3.141593);
+    cysp.set_dof( DOF_ID(AtomID(11,ir),PHI  ), PI);
     cysp.set_dof( DOF_ID(AtomID(11,ir),THETA), 1.368997);
     cysp.set_dof( DOF_ID(AtomID(11,ir),D    ), 2.020   );
   }

@@ -867,6 +867,8 @@ void run(std::string fname) {
 
   // Size ANGLE_INCR=30;
 
+  const Real PI = numeric::NumericTraits<Real>::pi();
+
   // setup stuff
   ResidueTypeSetCAP frs=ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
   ResidueTypeSetCAP crs=ChemicalManager::get_instance()->residue_type_set( CENTROID );
@@ -907,7 +909,7 @@ void run(std::string fname) {
   for(Size ir=1; ir<=nres; ++ir) {
     hisp.replace_residue(ir,his.residue(1),true);
     // set HG as other SG for disulf
-    //hisp.set_dof( DOF_ID(AtomID(11,ir),PHI  ), 3.141593);
+    //hisp.set_dof( DOF_ID(AtomID(11,ir),PHI  ), PI);
     //hisp.set_dof( DOF_ID(AtomID(11,ir),THETA), 1.368997);
     //hisp.set_dof( DOF_ID(AtomID(11,ir),D    ), 2.020   );
     hisp.set_dof(core::id::DOF_ID(AtomID(hisp.residue(ir).atom_index("HE2"),ir),D ),2.1);

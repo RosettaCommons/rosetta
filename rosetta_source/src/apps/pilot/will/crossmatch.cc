@@ -65,6 +65,7 @@
 #include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyz.io.hh>
+#include <numeric/NumericTraits.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -586,6 +587,7 @@ struct Tet4HMatchAligner : public MatchAligner {
 		}
 	}
 	MatchAlignInfo align_info(Pose const & lig ) {
+    const Real PI = numeric::NumericTraits<Real>::pi();
 		MatchAlignInfo mai;
 		Size in1 = bondedN(lig,1);
 		Size in2 = bondedN(lig,2);
@@ -635,11 +637,11 @@ struct Tet4HMatchAligner : public MatchAligner {
 		Vec axis = mi2.axis.cross(mi1.axis);
 		while( axis.length() < 0.001 ) {
 			// axis = mi2.axis.cross(Vec(uniform(),uniform(),uniform()));			
-			axis = mi2.axis.cross(Vec(1,1,1).normalized());			
+			axis = mi2.axis.cross(Vec(1,1,1).normalized());
 		}
 		axis = axis.normalized();
-		Real ang1 = 180.0-acos(max(-1.0,min(1.0,mi2.axis .dot(                                   mi1.axis ))))*180.0/3.14159;
-	   	Real ang2 =      -acos(max(-1.0,min(1.0,mi2.ortho.dot(rotation_matrix_degrees(axis,ang1)*mi1.ortho))))*180.0/3.14159;
+		Real ang1 = 180.0-acos(max(-1.0,min(1.0,mi2.axis .dot(                                   mi1.axis ))))*180.0/PI;
+	   	Real ang2 =      -acos(max(-1.0,min(1.0,mi2.ortho.dot(rotation_matrix_degrees(axis,ang1)*mi1.ortho))))*180.0/PI;
 		Vec axis2 = mi2.ortho.cross(rotation_matrix_degrees(axis,ang1)*mi1.ortho);
 		// TR << "ANG2 " << ang2 << std::endl;
 		// TR << "AXIS1 " <<     axis << " " << ang1 << std::endl;
