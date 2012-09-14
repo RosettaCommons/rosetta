@@ -1046,13 +1046,13 @@ bool RemodelMover::centroid_build(
 	if ( !vlb_.get() ) {
 		vlb_ = new VarLengthBuild( manager_ , remodel_data_ );
 	}
-
-	if (!remodel_data_.abego.empty()){
+	std::cout << "abeg length " << working_model_.abego.length() << " ss length " << working_model_.ss.length() << std::endl;
+	if (!working_model_.abego.empty()){
 		//the following block simply packages the string to feed to vlb
 		utility::vector1<std::string> abego_vec;
-		for (Size i = 0; i <= remodel_data_.abego.length(); i++){
+		for (Size i = 0; i < working_model_.abego.length(); i++){
 			std::string buffer;
-			buffer.push_back(remodel_data_.abego[i]);
+			buffer.push_back(working_model_.abego[i]);
 			abego_vec.push_back(buffer);
 		}
 		vlb_->set_abego(abego_vec);

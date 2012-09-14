@@ -37,6 +37,7 @@ namespace remodel{
 					int safe_root_;
           std::string sequence;
           std::string ss;
+          std::string abego;
           std::map<int,int> translate_index;
           std::vector<int> begin;
           std::vector<int> end;

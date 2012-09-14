@@ -394,7 +394,7 @@ protocols::forge::remodel::RemodelData::translateDSSP_ABEGO(std::string & ss, st
 	
 	if (abego_switch){ //need to make a new string with DSSP assignment and swap
 		found_idx = ss.find_first_of("abegoABEGO"); // this substitution use all 5 regions
-		for (int idx = 0; idx <= ss.length(); idx++){
+		for (int idx = 0; idx < ss.length(); idx++){
 			if (ss[idx] == 'A' || ss[idx] == 'a'){
 				trans_ss.push_back('H');
 			}
@@ -440,7 +440,7 @@ protocols::forge::remodel::RemodelData::updateWithDsspAssignment(ObjexxFCL::FArr
 	}
 	//turn upper case if not already so
 	std::transform(dssp_updated_ss.begin(), dssp_updated_ss.end(), dssp_updated_ss.begin(), ::toupper);
-	TR_REMODEL << "dssp_updated_ss:" << std::endl << dssp_updated_ss << std::endl;
+	TR_REMODEL << "dssp_updated_ss: lengths = "  << dssp_updated_ss.length() << std::endl << dssp_updated_ss << std::endl;
 }
 
 void

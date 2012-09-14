@@ -441,21 +441,23 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 		//take the jumps and set repeating RT
 		Size jump_offset = pose.num_jump(); //pose at this stage should at most have only one jump;
 		//for (Size rep = 1; rep < repeat_number; rep++){
-			for (Size i = 1; i<= repeat_pose.num_jump(); i++){
-				numeric::xyzMatrix< Real > Rot = pose.jump(1).get_rotation();
-				numeric::xyzVector< Real > Trx = pose.jump(1).get_translation();
-				TR <<  "pose FT: " << pose.fold_tree() << std::endl;
-				TR <<  "rpps FT: " << repeat_pose.fold_tree() << std::endl;
-				TR <<  "set ROT-TRANS from " << 1 << " to " << i << std::endl;
-				FoldTree FT = repeat_pose.fold_tree();
+			for (Size i = 1; i<= repeat_pose.num_jump();){
+				for (Size j = 1; j<= pose.num_jump(); j++, i++){
+								numeric::xyzMatrix< Real > Rot = pose.jump(j).get_rotation();
+								numeric::xyzVector< Real > Trx = pose.jump(j).get_translation();
+								TR <<  "pose FT: " << pose.fold_tree() << std::endl;
+								TR <<  "rpps FT: " << repeat_pose.fold_tree() << std::endl;
+								TR <<  "set ROT-TRANS from " << j << " to " << i << std::endl;
+								FoldTree FT = repeat_pose.fold_tree();
 
-			  FT.set_jump_atoms( i , pose.fold_tree().jump_edge(1).upstream_atom(), pose.fold_tree().jump_edge(1).downstream_atom());
-			  repeat_pose.fold_tree(FT);
+								FT.set_jump_atoms( i , pose.fold_tree().jump_edge(j).upstream_atom(), pose.fold_tree().jump_edge(j).downstream_atom());
+								repeat_pose.fold_tree(FT);
 
-				Jump tempJump = repeat_pose.jump(i);
-				tempJump.set_rotation( Rot );
-				tempJump.set_translation( Trx );
-				repeat_pose.conformation().set_jump_now( i, tempJump );
+								Jump tempJump = repeat_pose.jump(i);
+								tempJump.set_rotation( Rot );
+								tempJump.set_translation( Trx );
+								repeat_pose.conformation().set_jump_now( i, tempJump );
+				}
 			}
 
 

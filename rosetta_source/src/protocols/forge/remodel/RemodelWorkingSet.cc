@@ -114,6 +114,7 @@ WorkingRemodelSet::WorkingRemodelSet(WorkingRemodelSet const & rval):
 {
 	sequence = rval.sequence;
 	ss = rval.ss;
+	abego = rval.abego;
 	hasInsertion= hasInsertion;
 }
 
@@ -122,6 +123,7 @@ WorkingRemodelSet & WorkingRemodelSet::operator = ( WorkingRemodelSet const & rv
 		loops =  rval.loops ;
 		sequence = rval.sequence;
 		ss = rval.ss;
+		abego = rval.abego;
 		translate_index = rval.translate_index;
 		begin = rval.begin ;
 		end =rval.end;
@@ -157,10 +159,12 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 
 	// copy ss/seq from RemodelData so it can be passed elsewhere later
 	this->ss = data.dssp_updated_ss;
+	this->abego = data.abego;
 
 	//this is purely experimental for matching fragment set
 	if (option[ OptionKeys::remodel::repeat_structure].user()){
 		this->ss.append(this->ss);
+		this->abego.append(this->abego);
 	} else {
 		//this->ss.append("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
 	}
