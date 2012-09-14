@@ -28,6 +28,8 @@
 
 // C++ Headers
 #include <iomanip>
+#include <set>
+#include <list>
 
 namespace basic {
 namespace resource_manager {
@@ -109,10 +111,32 @@ public:
 		JobTag const & job_tag);
 
 	virtual
+	std::list<ResourceTag>
+	get_resource_tags_for_job_tag(
+		JobTag const & job_tag) const;
+
+	virtual
+	platform::Size
+	get_count_of_jobs_associated_with_resource_tag(
+		ResourceTag const & resource_tag) const;
+
+	/// @brief remove the Job tag from incomplete_job_sets_ for each resource
+	virtual
+	void
+	mark_job_tag_as_complete(
+		JobTag const & job_tag);
+
+	virtual
 	void
 	free_resource_by_job_tag(
 		ResourceDescription const & resource_description,
 		JobTag const & job_tag);
+
+	virtual
+	void
+	free_resource_by_tag(
+		ResourceTag const & resource_tag
+		);
 
 	/// @brief wipe out all data; useful for unit testing, but hard to fathom how it would be useful
 	/// otherwise.
@@ -218,6 +242,12 @@ private: // Data members
 
 	typedef std::map< std::pair< ResourceDescription, JobTag >,	ResourceTag > ResourceTagsMap;
 	ResourceTagsMap resource_tags_;
+
+	typedef std::map<JobTag,std::list<ResourceTag> > JobResourceMap;
+	JobResourceMap resource_tag_lists_;
+
+	typedef std::map<ResourceTag,std::set<JobTag> > ResourceJobMap;
+	ResourceJobMap incomplete_job_sets_;
 
 	typedef std::map< ResourceTag, JobOptionsOP > JobOptionsMap;
 	JobOptionsMap job_options_;

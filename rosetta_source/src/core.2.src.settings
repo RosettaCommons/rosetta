@@ -30,6 +30,8 @@ sources = {
 		"ResConnID",
 		"residue_io",
 		"ResidueDatabaseIO",
+		"ResidueLoader",
+		"ResidueLoaderOptions",
 		"ResidueSelector",
 		"ResidueSupport",
 		"ResidueType",

@@ -24,6 +24,10 @@
 // Project headers
 #include <core/pose/Pose.hh>
 
+#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+
 // Utility Headers
 #include <utility/io/izstream.hh>
 #include <utility/excn/Exceptions.hh>
@@ -102,9 +106,24 @@ JD2ResourceManagerJobInputter::pose_from_job(
 		JD2ResourceManager * jd2_resource_manager(
 			JD2ResourceManager::get_jd2_resource_manager_instance());
 		ResourceOP resource;
+
+		//Check to see if we have a Residue resource, if so load it into the chemical manager if it hasn't already been loaded
+		if(jd2_resource_manager->has_resource_tag_by_job_tag("residue",job->inner_job()->input_tag()))
+		{
+			ResourceOP residue_resource = jd2_resource_manager->get_resource_by_job_tag("residue",job->inner_job()->input_tag());
+
+			core::chemical::ResidueTypeOP new_residue(dynamic_cast<core::chemical::ResidueType *>(residue_resource()));
+			std::string type_set_name(new_residue->residue_type_set().name());
+			if(!core::chemical::ChemicalManager::get_instance()->residue_type_set(type_set_name)->has_name(new_residue->name()))
+			{
+				tr << "loading residue " << new_residue->name() << " into " << type_set_name <<" residue_type_set" <<std::endl;
+				core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set(type_set_name).add_residue_type(new_residue);
+			}
+		}
+
 		try {
 			tr << "Loading startstruct " << jd2_resource_manager->find_resource_tag_by_job_tag( "startstruct", job->inner_job()->input_tag() ) << " for job " <<
-				job->inner_job()->input_tag();
+				job->inner_job()->input_tag() <<std::endl;
 			 resource = jd2_resource_manager->get_resource_by_job_tag(
 			"startstruct", job->inner_job()->input_tag() );
 		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
@@ -163,6 +182,38 @@ JD2ResourceManagerJobInputter::fill_jobs( Jobs & jobs )
 		tr.Debug << "Reading from resource definition file " << resource_definition_files[ii] << std::endl;
 		utility::io::izstream instream( resource_definition_files[ii]().c_str() );
 		fill_jobs_from_stream( instream, jobs );
+	}
+}
+
+void JD2ResourceManagerJobInputter::cleanup_input_after_job_completion(JobOP current_job)
+{
+	JD2ResourceManager * jd2_resource_manager(
+				JD2ResourceManager::get_jd2_resource_manager_instance());
+	std::string job_tag(current_job->inner_job()->input_tag());
+	jd2_resource_manager->mark_job_tag_as_complete(job_tag);
+	std::list<ResourceTag> resources_for_job(jd2_resource_manager->get_resource_tags_for_job_tag(job_tag));
+
+	std::list<ResourceTag>::iterator resource_list_it = resources_for_job.begin();
+	for(; resource_list_it != resources_for_job.end(); ++resource_list_it)
+	{
+		core::Size job_count(jd2_resource_manager->get_count_of_jobs_associated_with_resource_tag(*resource_list_it));
+		if(job_count == 0)
+		{
+			//This might be a ResidueType.  if it is, we should delete the residue from the resource from the ChemicalManager
+			ResourceOP current_residue = jd2_resource_manager->find_resource(*resource_list_it);
+			core::chemical::ResidueTypeOP new_residue(dynamic_cast<core::chemical::ResidueType *>(current_residue()));
+
+			if(new_residue)
+			{
+				std::string residue_type_set = new_residue->residue_type_set().name();
+				core::chemical::ChemicalManager::get_instance()->
+					ChemicalManager::nonconst_residue_type_set(residue_type_set).remove_residue_type(new_residue->name());
+			}
+
+			tr << "Deleting resource " << *resource_list_it <<std::endl;
+
+			jd2_resource_manager->free_resource_by_tag(*resource_list_it);
+		}
 	}
 }
 

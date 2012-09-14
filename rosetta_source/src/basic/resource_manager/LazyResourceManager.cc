@@ -32,6 +32,7 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <list>
 
 namespace basic {
 namespace resource_manager {
@@ -78,6 +79,7 @@ void
 LazyResourceManager::clear()
 {
 	resource_tags_.clear();
+	resource_tag_lists_.clear();
 	job_options_.clear();
 	resource_configurations_.clear();
 	resource_locators_.clear();
@@ -116,6 +118,29 @@ LazyResourceManager::add_resource_tag_by_job_tag(
 )
 {
 	resource_tags_[make_pair(resource_description, job_tag)] = resource_tag;
+
+	ResourceJobMap::iterator job_set_it(incomplete_job_sets_.find(resource_tag));
+	if(job_set_it == incomplete_job_sets_.end())
+	{
+		std::set<JobTag> new_set;
+		new_set.insert(job_tag);
+		incomplete_job_sets_[resource_tag]= new_set;
+	}else
+	{
+		job_set_it->second.insert(job_tag);
+	}
+
+	JobResourceMap::iterator resource_list_it(resource_tag_lists_.find(job_tag));
+	if(resource_list_it == resource_tag_lists_.end())
+	{
+		std::list<ResourceTag> new_list;
+		new_list.push_back(resource_tag);
+		resource_tag_lists_[job_tag] = new_list;
+	}else
+	{
+		resource_list_it->second.push_back(resource_tag);
+	}
+
 }
 
 bool
@@ -161,6 +186,63 @@ LazyResourceManager::get_resource_by_job_tag(
 		add_resource(resource_tag, new_resource);
 		return new_resource;
 	}
+}
+
+std::list<ResourceTag>
+LazyResourceManager::get_resource_tags_for_job_tag(
+	JobTag const & job_tag
+) const{
+	JobResourceMap::const_iterator resource_list_it(resource_tag_lists_.find(job_tag));
+	if(resource_list_it == resource_tag_lists_.end())
+	{
+		stringstream err_msg;
+		err_msg
+			<< "Unable to find job tag " <<job_tag <<std::endl;
+		utility_exit_with_message(err_msg.str());
+	}
+	return resource_list_it->second;
+}
+
+
+platform::Size
+LazyResourceManager::get_count_of_jobs_associated_with_resource_tag(
+	ResourceTag const & resource_tag) const
+{
+	ResourceJobMap::const_iterator job_set_it(incomplete_job_sets_.find(resource_tag));
+	if(job_set_it == incomplete_job_sets_.end())
+	{
+		stringstream err_msg;
+		err_msg
+			<< "Unable to find resource tag " << resource_tag <<std::endl;
+		utility_exit_with_message(err_msg.str());
+	}
+	return job_set_it->second.size();
+}
+
+void
+LazyResourceManager::mark_job_tag_as_complete(
+	JobTag const & job_tag)
+{
+
+
+	std::list<ResourceTag> tag_list( get_resource_tags_for_job_tag(job_tag) );
+	std::list<ResourceTag>::iterator tag_list_it(tag_list.begin());
+	for(;tag_list_it != tag_list.end();++tag_list_it)
+	{
+		ResourceJobMap::iterator job_set_it(incomplete_job_sets_.find(*tag_list_it));
+		std::set<JobTag>::iterator job_tag_it(job_set_it->second.find(job_tag));
+		if(job_tag_it != job_set_it->second.end())
+		{
+			job_set_it->second.erase(job_tag_it);
+		}
+	}
+}
+
+void
+LazyResourceManager::free_resource_by_tag(
+	ResourceTag const & resource_tag
+) {
+	free_resource(resource_tag);
 }
 
 void

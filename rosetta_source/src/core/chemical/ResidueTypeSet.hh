@@ -138,6 +138,10 @@ public:
 	void
 	add_residue_type( ResidueTypeOP new_type );
 
+	/// @brief delete a residue type from the set (Use with care)
+	void
+	remove_residue_type(std::string const & name);
+
 	/// @brief Create correct combinations of adducts for a residue type
 	void create_adduct_combinations(
 		ResidueType const & rsd,
@@ -289,7 +293,8 @@ private:
 	void
 	add_residue_type_to_maps( ResidueTypeOP rsd );
 
-
+	void
+	remove_residue_type_from_maps(ResidueTypeOP rsd);
 
 	//////////////////
 	// data

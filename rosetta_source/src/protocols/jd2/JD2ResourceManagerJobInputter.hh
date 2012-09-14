@@ -48,6 +48,9 @@ public:
 	///  using
 	virtual JobInputterInputSource::Enum input_source() const;
 
+	/// @brief Delete the Resources associated with a job
+	virtual void cleanup_input_after_job_completion(JobOP current_job);
+
 	void
 	fill_jobs_from_stream(
 		std::istream & instream,

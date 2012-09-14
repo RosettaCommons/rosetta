@@ -137,5 +137,21 @@ public:
 
 	}
 
+	void test_delete_residue() {
+		using namespace core::chemical;
+
+		std::vector< std::string > extra_params_files( 1, "core/chemical/1pqc.params");
+		std::vector< std::string > extra_patch_files;
+		ResidueTypeSet rtset( FA_STANDARD, basic::database::full_name( "chemical/residue_type_sets/"+FA_STANDARD+"/" ), extra_params_files, extra_patch_files );
+
+		TS_ASSERT(rtset.has_name("QC1"));
+		TS_ASSERT(rtset.has_name3("QC1"));
+
+		rtset.remove_residue_type("QC1");
+
+		TS_ASSERT(!rtset.has_name("QC1"));
+		TS_ASSERT(!rtset.has_name3("QC1"));
+	}
+
 
 };

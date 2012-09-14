@@ -61,6 +61,7 @@
 #include <string>
 #include <sstream>
 #include <set>
+#include <algorithm>
 
 // option key includes
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
@@ -73,8 +74,8 @@
 #include <boost/foreach.hpp>
 
 #include <utility/vector1.hh>
-
 #define foreach BOOST_FOREACH
+
 
 namespace core {
 namespace chemical {
@@ -458,6 +459,48 @@ ResidueTypeSet::add_residue_type_to_maps( ResidueTypeOP rsd_ptr )
 
 }
 
+void
+ResidueTypeSet::remove_residue_type_from_maps(ResidueTypeOP rsd)
+{
+	//Assert rather than utility exit, because this should have been called by remove residue, which utility exits
+	assert(has_name(rsd->name()));
+	ResidueTypeCOPs::iterator const_res_it(std::find(residue_types_const_.begin(),residue_types_const_.end(),rsd));
+	residue_types_const_.erase(const_res_it);
+
+	name_map_.erase(rsd->name());
+	nonconst_name_map_.erase(rsd->name());
+	if(rsd->aa() != aa_unk)
+	{
+		ResidueTypeCOPs::iterator aa_it(std::find(aa_map_[rsd->aa()].begin(),aa_map_[rsd->aa()].end(),rsd));
+		aa_map_[rsd->aa()].erase(aa_it);
+		if(aa_map_[rsd->aa()].size() == 0)
+		{
+			aa_map_.erase(rsd->aa());
+		}
+	}
+
+	std::list<AA>::iterator aa_it(std::find(aas_defined_.begin(),aas_defined_.end(),rsd->aa()));
+	aas_defined_.erase(aa_it);
+
+	ResidueTypeCOPs::iterator name3_it(std::find(name3_map_[rsd->name3()].begin(),name3_map_[rsd->name3()].end(),rsd));
+	name3_map_[rsd->name3()].erase(name3_it);
+	if(name3_map_[rsd->name3()].size() == 0)
+	{
+		name3_map_.erase(rsd->name3());
+	}
+
+	if(rsd->name3() != rsd->name().substr(0,3))
+	{
+		name3_it = std::find(name3_map_[rsd->name3().substr(0,3)].begin(),name3_map_[rsd->name3().substr(0,3)].end(),rsd);
+		name3_map_[rsd->name3().substr(0,3)].erase(name3_it);
+		if(name3_map_[rsd->name3().substr(0,3)].size() == 0)
+		{
+			name3_map_.erase(rsd->name3().substr(0,3));
+		}
+	}
+
+}
+
 	///@brief beginning of aas_defined_ list
 std::list< AA >::const_iterator
 ResidueTypeSet::aas_defined_begin() const
@@ -627,6 +670,22 @@ ResidueTypeSet::add_residue_type( ResidueTypeOP new_type )
 	add_residue_type_to_maps( new_type );
 	aas_defined_.sort();
 	aas_defined_.unique();
+}
+
+void ResidueTypeSet::remove_residue_type(std::string const & name)
+{
+
+	if(!has_name(name))
+	{
+		utility_exit_with_message("ResidueTypeSet does not have a residue called "+name+ " so it cannot be deleted.");
+	}
+
+	//See, this is why using vectors everywhere is annoying
+	ResidueTypeOP type_to_remove(nonconst_name_map(name));
+
+	ResidueTypeOPs::iterator res_it(std::find(residue_types_.begin(),residue_types_.end(),type_to_remove));
+	residue_types_.erase(res_it);
+	remove_residue_type_from_maps(type_to_remove);
 }
 
 /// @brief Create correct combinations of adducts for a residue type
