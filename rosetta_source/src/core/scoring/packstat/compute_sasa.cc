@@ -33,6 +33,7 @@
 #include <fstream>
 #include <iostream>
 #include <numeric/numeric.functions.hh>
+#include <numeric/NumericTraits.hh>
 // AUTO-REMOVED #include <numeric/random/random.hh>
 // AUTO-REMOVED #include <numeric/xyz.io.hh>
 #include <ObjexxFCL/FArray1D.hh>
@@ -181,7 +182,7 @@ RotPair rand_rot() {
 	using namespace numeric::random;
 	xyzVector<PackstatReal> axis(uniform(),uniform(),uniform());
 	while( axis.length() > 1 ) axis = xyzVector<PackstatReal>(uniform(),uniform(),uniform());
-	PackstatReal mag = uniform() * 2 * 3.14159;
+	PackstatReal mag = uniform() * 2 * numeric::NumericTraits<Real>::pi();
 	return RotPair( rotation_matrix<PackstatReal>( axis, mag ), rotation_matrix<PackstatReal>( axis, -mag ) );
 }
 
@@ -250,7 +251,7 @@ compute_sasa(
 
 	input_sasa_dats();
 
-	SphereIter i = spheres.begin();
+	//SphereIter i = spheres.begin();
 	// PackstatReal prev_x = i->xyz.x();
 	// bool must_sort = false;
 	// for( i = i+1; i != spheres.end(); ++i ) {
@@ -739,7 +740,7 @@ Real overlap(CavityBall const & cb1, CavityBall const & cb2) {
 	if( d > r1+r2 ) return 0.0;
 	core::Real alpha = r2*sin( acos( (d*d + r2*r2 - r1*r1) / ( 2*d*r2 ) ) );
 	// std::cerr << r1 << " " << r2 << " " << d << " " << alpha << std::endl;
-	return alpha*alpha*3.14159;
+	return alpha*alpha*numeric::NumericTraits<Real>::pi();
 }
 
 vector1< CavityBallCluster >
