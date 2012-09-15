@@ -355,18 +355,18 @@ void VarLengthBuild::apply( Pose & pose ) {
 				cached_psi.push_back( pose.psi( i ) );
 				cached_omega.push_back( pose.omega( i ));
 			}
-	std::cout << "HERE1-1" << std::endl;
+	//std::cout << "HERE1-1" << std::endl;
 
 			Size max_pdb_index = remodel_data_.blueprint.size()*2;
-	std::cout << "max_pdb index" << max_pdb_index <<  std::endl;
+	//std::cout << "max_pdb index" << max_pdb_index <<  std::endl;
 
-			while (pose.total_residue() != max_pdb_index){
-	std::cout << "pose total" << pose.total_residue() <<  std::endl;
+			while (pose.total_residue() >= max_pdb_index){
+	//std::cout << "pose total" << pose.total_residue() <<  std::endl;
 				pose.conformation().delete_residue_slow(pose.total_residue());
 			}
 
 			//similarly update archive pose in repeat cases
-			while (archive_pose.total_residue() != max_pdb_index){
+			while (archive_pose.total_residue() >= max_pdb_index){
 				archive_pose.conformation().delete_residue_slow(archive_pose.total_residue());
 			}
 		}
@@ -894,7 +894,7 @@ VarLengthBuild::FrameList VarLengthBuild::pick_fragments(
 		} else {
 			aa_sub = "";
 		}
-
+		//std::cout << "complete_ss length: " << complete_ss.length() << " complete_abego size: " << complete_abego.size() << std::endl;
 		utility::vector1< String > abego_sub;
 		if ( complete_abego.size() > 0 ) {
 			runtime_assert( complete_ss.length() == complete_abego.size() );
