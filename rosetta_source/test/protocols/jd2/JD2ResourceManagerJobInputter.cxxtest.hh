@@ -107,7 +107,7 @@ public:
 			TS_ASSERT( false ); // should throw an exception
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::string expected_error =
-				"Failed to find a resource name or a pdb name reading a 'Data' tag in a Job tag.  Either a 'resource' or a 'pdb' option must be provided.\n"
+				"Failed to find a resource name or a pdb name reading a 'Data' tag in a Job tag.  Either a 'resource_tag' or a 'pdb' option must be provided.\n"
 				"Problem encountered for job named 'firstjob'.\n"
 				"Options given:\n"
 				"	(desc, startstruct)\n"

@@ -681,7 +681,7 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 	}
 	if ( rname.size() == 0 ) {
 		in_error = true;
-		err << "Failed to find a resource name or a pdb name reading a 'Data' tag in a Job tag.  Either a 'resource' or a 'pdb' option must be provided.\n";
+		err << "Failed to find a resource name or a pdb name reading a 'Data' tag in a Job tag.  Either a 'resource_tag' or a 'pdb' option must be provided.\n";
 	}
 	if ( resource_found && pdb_found ) {
 		in_error = true;
