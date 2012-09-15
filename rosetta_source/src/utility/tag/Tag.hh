@@ -26,6 +26,7 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector0.hh>
+#include <boost/lexical_cast.hpp>
 
 namespace utility {
 namespace tag {
@@ -77,9 +78,13 @@ public:
 			return t_default;
 		}
 		accessed_options_[key]= i->second;
-		std::istringstream in(i->second);
 		T t;
-		in >> t;
+		try{
+			t = boost::lexical_cast<T>(i->second);
+		} catch(boost::bad_lexical_cast &) {
+			std::cerr << "getOption: key= " << key << " stream extraction failed! Tried to parse '" << i->second <<
+				"' returning uninitialized value: '" << t << "'" << std::endl;
+		}
 		return t;
 	}
 
@@ -92,12 +97,12 @@ public:
 			runtime_assert( false );
 		}
 		accessed_options_[key]= i->second;
-		std::istringstream in(i->second);
 		T t;
-		in >> t;
-		if ( in.fail() ) {
-			std::cerr << "getOption: key= " << key << " stream extraction failed! Tried to parse " << i->second <<
-				" returning uninitialized value: " << t << std::endl;
+		try{
+			t = boost::lexical_cast<T>(i->second);
+		} catch(boost::bad_lexical_cast &) {
+			std::cerr << "getOption: key= " << key << " stream extraction failed! Tried to parse '" << i->second <<
+				"' returning uninitialized value: '" << t << "'" << std::endl;
 		}
 		return t;
 	}

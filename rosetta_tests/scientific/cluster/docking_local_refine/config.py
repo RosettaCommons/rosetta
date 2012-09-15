@@ -8,7 +8,7 @@
         "energy_function_flags.description": "Indicate energy function parameters",
         "energy_function_flags": "",
 
-	"svn_benchmar_path.description" : "svn path to the docking benchmark set and where it should get checked out",
+	"svn_benchmark_path.description" : "svn path to the docking benchmark set and where it should get checked out",
 	"svn_benchmark_path": "https://svn.rosettacommons.org/source/trunk/mini.data/tests/scientific/cluster/docking",
 
 	"benchmark_data_path.description": "Where the input data should be prepared",

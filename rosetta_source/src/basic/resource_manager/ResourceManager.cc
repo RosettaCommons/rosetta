@@ -73,7 +73,7 @@ ResourceManager::has_resource(
 ResourceOP
 ResourceManager::find_resource(
 	ResourceTag const & resource_tag
-) const {
+) {
 	ResourcesMap::const_iterator resource(
 		resources_.find(resource_tag));
 	if(resource == resources_.end()){

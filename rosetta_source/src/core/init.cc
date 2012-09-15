@@ -229,6 +229,7 @@ using basic::Warning;
 #include <core/conformation/symmetry/SymmDataLoaderCreator.hh>
 #include <core/conformation/symmetry/SymmDataOptionsCreator.hh>
 #include <core/import_pose/PoseFromPDBLoaderCreator.hh>
+#include <core/import_pose/import_pose_options_creator.hh>
 #include <basic/resource_manager/ResourceOptionsRegistrator.hh>
 #include <core/scoring/electron_density/ElectronDensityLoaderCreator.hh>
 #include <core/scoring/electron_density/ElectronDensityOptionsCreator.hh>
@@ -483,6 +484,7 @@ static ResourceLoaderRegistrator< core::scoring::electron_density::ElectronDensi
 static ResourceLoaderRegistrator< core::chemical::ResidueLoaderCreator > ResidueLoaderCreator_registrator;
 
 using basic::resource_manager::ResourceOptionsRegistrator;
+static ResourceOptionsRegistrator< core::import_pose::ImportPoseOptionsCreator > ImportPoseOptionsCreator_registrator;
 static ResourceOptionsRegistrator< core::conformation::symmetry::SymmDataOptionsCreator > SymmDataOptionsCreator_registrator;
 static ResourceOptionsRegistrator< core::scoring::electron_density::ElectronDensityOptionsCreator > ElectronDensityOptionsCreator_registrator;
 static ResourceOptionsRegistrator< core::chemical::ResidueLoaderOptionsCreator > ResiudeLoaderOptionsCreator_registrator;

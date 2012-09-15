@@ -198,6 +198,18 @@ public: // helper functions relating to resource configuration and creation
 	find_resource_options(
 		ResourceOptionsTag const & resource_options_tag) const;
 
+	/// @brief Does a resource with a given name exist?
+	virtual
+	bool
+	has_resource(
+		ResourceTag const & resource_tag) const;
+
+	/// @brief Get a resource with a given name.
+	virtual
+	ResourceOP
+	find_resource(
+		ResourceTag const & resource_tag);
+
 	virtual
 	ResourceOP
 	create_resource(

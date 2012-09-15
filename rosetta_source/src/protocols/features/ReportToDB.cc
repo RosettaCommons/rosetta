@@ -377,7 +377,7 @@ ReportToDB::parse_my_tag(
 	// EXAMPLE: cache_size=1000000  // this uses ~ 1GB of memory
 	// DEFAULT: 2000
 	parse_cache_size_tag_item(tag);
-	
+
 	// Remove virtual residue attached during xray refine process
 	// EXAMPLE: remove_xray_virt=true
 	// DEFAULT: FALSE

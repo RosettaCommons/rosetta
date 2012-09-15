@@ -15,6 +15,7 @@
 
 // Unit headers
 #include <core/import_pose/import_pose_options.hh>
+#include <core/import_pose/import_pose_options_creator.hh>
 
 // Basic headers
 #include <basic/options/option.hh>
@@ -34,6 +35,26 @@ namespace core {
 namespace import_pose {
 
 basic::Tracer tr("core.import_pose.import_pose_options");
+
+
+///// ImportPoseOptionsCreator /////
+ImportPoseOptionsCreator::ImportPoseOptionsCreator() {}
+
+ImportPoseOptionsCreator::~ImportPoseOptionsCreator() {}
+
+basic::resource_manager::ResourceOptionsOP
+ImportPoseOptionsCreator::create_options() const {
+	return new ImportPoseOptions;
+}
+
+///@detail NOTE: This creator creates an options type called
+///'PoseFromPDBOptions' to make it consistent with
+///'PoseFromPDBLoader'.
+std::string
+ImportPoseOptionsCreator::options_type() const {
+	return "PoseFromPDBOptions";
+}
+
 
 ImportPoseOptions::ImportPoseOptions() { init_from_options(); }
 

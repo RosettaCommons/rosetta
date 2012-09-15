@@ -324,9 +324,9 @@ LoopHashMoverWrapper::parse_my_tag( TagPtr const tag,
 
 	start_res_ = 2;
 	stop_res_ = 0;
-	if ( tag->hasOption( "start_res_num" ))
+	if ( tag->hasOption( "start_res_num" ) || tag->hasOption( "start_pdb_num"))
 		start_res_ = core::pose::get_resnum( tag, pose, "start_" );
-	if ( tag->hasOption( "stop_res_num" ))
+	if ( tag->hasOption( "stop_res_num" ) || tag->hasOption( "stop_pdb_num"))
 		stop_res_ = core::pose::get_resnum( tag, pose, "stop_" );
 
 	string const loop_sizes_str( tag->getOption< string >( "loop_sizes" ) );

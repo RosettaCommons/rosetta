@@ -104,7 +104,7 @@ public:
 	virtual
 	ResourceOP
 	find_resource(
-		ResourceTag const & resource_tag) const;
+		ResourceTag const & resource_tag);
 
 	/// @brief wipe out all data; useful for unit testing, but hard to
 	/// fathom how it would be useful otherwise.

@@ -63,7 +63,9 @@ private:
 	static ResourceOptionsFactory * instance_;
 
 	bool throw_on_double_registration_;
-	std::map< std::string, ResourceOptionsCreatorOP > creator_map_;
+
+	typedef std::map< std::string, ResourceOptionsCreatorOP > ResourceOptionsCreatorMap;
+	ResourceOptionsCreatorMap creator_map_;
 
 };
 

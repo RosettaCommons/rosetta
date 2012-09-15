@@ -31,7 +31,7 @@ This protocol finds loop conformations that are compatible with binding the doub
 				</MoveMap>
 			</FastRelax>
 			<PackRotamersMover name=make_ala_loop task_operations=ala_loop/>
-			<LoopHash name=loophash_H2 start_res_num=25H stop_res_num=32H loop_sizes=3 ncentroid=32 db_path="./"/> batch_size=8 relax_move=relax
+			<LoopHash name=loophash_H2 start_pdb_num=25H stop_pdb_num=32H loop_sizes=3 ncentroid=32 db_path="./"/> batch_size=8 relax_move=relax
 			<build_Ala_pose name=alapose partner1=1 partner2=1/>
      </MOVERS>
 	<PROTOCOLS>

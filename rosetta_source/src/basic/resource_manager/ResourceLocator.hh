@@ -44,7 +44,15 @@ public:
 class ResourceLocator : public utility::pointer::ReferenceCount
 {
 public:
+	ResourceLocator();
+
+	ResourceLocator(
+		std::string const & locator_tag);
+
+	ResourceLocator( ResourceLocator const & src );
+
 	virtual ~ResourceLocator();
+
 
 	/// @brief Create a ResourceStream object from the given resource
 	/// source, so that its stream can be passed to the ResourceLoader
@@ -62,15 +70,26 @@ public:
 
 	virtual
 	void
+	locator_tag( std::string const & locator_tag );
+
+	virtual
+	std::string
+	locator_tag() const;
+
+	virtual
+	void
 	show(
 		std::ostream & out
 	) const = 0;
 
-	/// @brief The class name for a particular ResourceOptions instance.
+	/// @brief The class name for a particular ResourceLocator instance.
 	/// This function allows for better error message delivery.
 	virtual
 	std::string
 	type() const = 0;
+
+private:
+	std::string locator_tag_;
 
 };
 

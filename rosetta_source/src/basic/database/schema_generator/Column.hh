@@ -50,7 +50,7 @@ public:
 	bool auto_increment() const;
 
 	std::string print(utility::sql_database::sessionOP db_session) const;
-	
+
 	bool operator==(const Column &other) const;
 
 private:

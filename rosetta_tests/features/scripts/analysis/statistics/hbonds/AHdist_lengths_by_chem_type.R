@@ -43,44 +43,29 @@ f <- query_sample_sources(sample_sources, sele)
 
 print(summary(f))
 
+
+table_id <- "AHdist_lengths_by_sample_source"
 all_modes <- estimate_primary_modes_1d(f,
   c("sample_source"), "AHdist")
-print(all_modes)
+save_tables(self, all_modes, table_id, sample_sources, output_dir, output_formats)
+
 
 acc_modes <- estimate_primary_modes_1d(f,
   c("sample_source", "acc_chem_type"), "AHdist")
-print(acc_modes)
+table_id <- "AHdist_lengths_by_acc_chem_type_sample_source"
+acc_modes_wide <- cast(acc_modes, acc_chem_type ~ sample_source, value="mode_location")
+save_tables(self, acc_modes_wide, table_id, sample_sources, output_dir, output_formats)
 
 don_modes <- estimate_primary_modes_1d(f,
   c("sample_source", "don_chem_type"), "AHdist")
-print(don_modes)
+table_id <- "AHdist_lengths_by_don_chem_type_sample_source"
+don_modes_wide <- cast(don_modes, don_chem_type ~ sample_source, value="mode_location")
+save_tables(self, don_modes_wide, table_id, sample_sources, output_dir, output_formats)
 
 each_modes <- estimate_primary_modes_1d(f,
   c("sample_source", "don_chem_type", "acc_chem_type"), "AHdist")
-print(each_modes)
-
-z <- data.frame(
-	AHdist=each_modes$mode_location,
-	acc=each_modes$acc_chem_type,
-	don=each_modes$don_chem_type,
-	each_counts=each_modes$counts)
-
-z <- merge(z,
-	data.frame(
-		acc=acc_modes$acc_chem_type,
-		acc_AHdist=acc_modes$mode_location,
-		acc_counts=acc_modes$counts))
-
-z <- merge(z,
-	data.frame(
-		don=don_modes$don_chem_type,
-		don_AHdist=don_modes$mode_location,
-		don_counts=don_modes$counts))
-
-z <- merge(z,
-	data.frame(
-		all_AHdist=all_modes$mode_location))
-
-print(summary(z))
+table_id <- "AHdist_lengths_by_don_chem_type_acc_chem_type_sample_source"
+each_modes_wide <- cast(each_modes, don_chem_type + acc_chem_type ~ sample_source, value="mode_location")
+save_tables(self, each_modes_wide, table_id, sample_sources, output_dir, output_formats)
 
 })) # end FeaturesAnalysis

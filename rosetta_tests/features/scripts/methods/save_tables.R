@@ -19,7 +19,7 @@ date_code <- function(d=NA){
 
 
 # Save a data.frame as a table. For each output format,
-# generate a plot and put in the output directory
+# generate a table and put in the output directory
 save_tables <- function(
 	features_analysis,
 	table,
@@ -37,27 +37,27 @@ save_tables <- function(
 
 	tryCatch(features_analysis, error=function(e){
 		stop(paste(
-			"ERROR: Unable to save the plot '", plot_id,"' ",
+			"ERROR: Unable to save the table '", table_id,"' ",
 			"because the specified 'features_analysis' is not valid.\n",
 			e, sep=""))
 	})
 
 	tryCatch(sample_sources, error=function(e){
 		stop(paste(
-			"ERROR: Unable to save the plot '", plot_id, "' ",
+			"ERROR: Unable to save the table '", table_id, "' ",
 			"because the specified 'sample_sources' is not valid.\n",
 			e, sep=""))
 	})
 
 	if(nrow(sample_sources)==0){
 		stop(paste(
-			"ERROR: Unable to save the plot '", plot_id, "' ",
+			"ERROR: Unable to save the table '", table_id, "' ",
 			"because no sample_sources were specified.\n", e, sep=""))
 	}
 
 	tryCatch(output_dir, error=function(e){
 		stop(paste(
-			"ERROR: Unable to save the plot '", plot_id, "' ",
+			"ERROR: Unable to save the table '", table_id, "' ",
 			"because the specified 'output_dir' ",
 			"is not a valid variable.\n",
 			e, sep=""))
@@ -65,7 +65,7 @@ save_tables <- function(
 
 	tryCatch(output_formats, error=function(e){
 		stop(paste(
-			"ERROR: Unable to save the plot '", plot_id, "' ",
+			"ERROR: Unable to save the table '", table_id, "' ",
 			"because the 'output_formats' parameter is not valid.\n",
 			e, sep=""))
 	})
@@ -73,7 +73,7 @@ save_tables <- function(
 
 	if(nrow(table_formats)==0){
 		stop(paste(
-			"ERROR: Unable to save the plot '", plot_id, "' ",
+			"ERROR: Unable to save the table '", table_id, "' ",
 			"because no output formats were specified.", sep=""))
 	}
 
@@ -83,7 +83,7 @@ save_tables <- function(
 			dir.create(full_output_dir, recursive=TRUE)
 		}
 		date <- date_code()
-		fname <- paste(plot_id, date, sep="_")
+		fname <- paste(table_id, date, sep="_")
 		full_path <- file.path(full_output_dir, paste(fname, fmt$extension, sep=""))
 		type <- substring(fmt$extension, 2)
 		cat("Saving Table of type ", type, ": ", full_path, sep="")

@@ -19,7 +19,30 @@ namespace resource_manager {
 
 ResourceStream::~ResourceStream() {}
 
+ResourceLocator::ResourceLocator() :
+	locator_tag_("")
+{}
+
+ResourceLocator::ResourceLocator(
+	std::string const & locator_tag
+) :
+	locator_tag_(locator_tag)
+{}
+
 ResourceLocator::~ResourceLocator() {}
+
+void
+ResourceLocator::locator_tag(
+	std::string const & locator_tag
+) {
+	locator_tag_ = locator_tag;
+}
+
+std::string
+ResourceLocator::locator_tag() const {
+	return locator_tag_;
+}
+
 
 } // namespace resource_manager
 } // namespace basic

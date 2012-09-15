@@ -37,6 +37,7 @@ public:
 	ResourceLocatorOP
 	create_resource_locator(
 		std::string const & locator_type,
+		std::string const & locator_tag,
 		utility::tag::TagPtr tags
 	) const;
 

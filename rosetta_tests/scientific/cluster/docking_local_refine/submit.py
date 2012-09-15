@@ -36,13 +36,10 @@ def prepare_input_targets(targets, m_vars):
 	print "Preparing input structures..."
 	print "\tChecking if the input partners exist..."
 	all_input_partners_exist = True
-	receptor_fnames = []
-	ligand_fnames = []
 	for target in targets:
 		receptor_fname = m_vars["benchmark_data_path"] + "/"
 		receptor_fname += m_vars["benchmark_data_set"] + "/"
 		receptor_fname += target + m_vars["receptor_target_extension"]
-		receptor_fnames.append(receptor_fname)
 		if not os.path.isfile(receptor_fname):
 			if all_input_partners_exist:
 				print "\tThe input receptor partner '%s' does not exist." % receptor_fname
@@ -51,7 +48,6 @@ def prepare_input_targets(targets, m_vars):
 		ligand_fname = m_vars["benchmark_data_path"] + "/"
 		ligand_fname += m_vars["benchmark_data_set"] + "/"
 		ligand_fname += target + m_vars["ligand_target_extension"]
-		ligand_fnames.append(ligand_fname)
 		if not os.path.isfile(receptor_fname):
 			if all_input_partners_exist:
 				print "\tThe input ligand partner '%s' does not exist." % ligand_fname

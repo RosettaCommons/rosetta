@@ -31,9 +31,14 @@ ResourceLocatorFactory::~ResourceLocatorFactory() {}
 
 ResourceLocatorFactory * ResourceLocatorFactory::instance_( 0 );
 
+///@details Create a resource locator from a tags object
+///@input locator_type This is the type of the resource locator, e.g., DatabaseResourceLocator
+///@input locator_tag This is the name of the instance of the the resource locator, e.g., coming from the 'tag' field in the ResourceLocator tag 'stage_1_resfiles'.
+///@input tags this is the tag structure that is parsed by the ResourceLocator to initialize itself.
 ResourceLocatorOP
 ResourceLocatorFactory::create_resource_locator(
 	std::string const & locator_type,
+	std::string const & locator_tag,
 	utility::tag::TagPtr tags
 ) const
 {
@@ -42,6 +47,7 @@ ResourceLocatorFactory::create_resource_locator(
 		throw utility::excn::EXCN_Msg_Exception( "No ResourceLocatorCreator resposible for the ResourceLocator named " + locator_type + " was found in the ResourceLocatorFactory.  Was it correctly registered?" );
 	}
 	ResourceLocatorOP locator = iter->second->create_resource_locator();
+	locator->locator_tag( locator_tag );
 	locator->parse_my_tag( tags );
 	return locator;
 }

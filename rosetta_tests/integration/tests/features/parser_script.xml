@@ -25,7 +25,7 @@
 			<feature name=ResidueSecondaryStructureFeatures/>
 
 			Two-Body
-			<feature name=AtomAtomPairFeatures min_dist=0, max_dist=3, nbins=2/>
+			<feature name=AtomAtomPairFeatures min_dist=0 max_dist=3 nbins=2/>
 			<feature name=HBondFeatures scorefxn=s definition_type=AHdist definition_threshold=1.8/>
 			<feature name=ChargeChargeFeatures/>
 			<feature name=LoopAnchorFeatures min_loop_length=5 max_loop_length=7/>

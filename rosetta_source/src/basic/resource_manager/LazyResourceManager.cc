@@ -92,7 +92,8 @@ LazyResourceManager::clear()
 void
 LazyResourceManager::add_default_resource_locator()
 {
-	resource_locators_[""] = ResourceLocatorFactory::get_instance()->create_resource_locator( "FileSystemResourceLocator", 0 );
+	resource_locators_[""] = ResourceLocatorFactory::get_instance()->create_resource_locator( "FileSystemResourceLocator", "default_locator", 0 );
+	resource_locators_["NULL"] = ResourceLocatorFactory::get_instance()->create_resource_locator( "NullResourceLocator", "default_locator", 0 );
 }
 
 
@@ -178,14 +179,7 @@ LazyResourceManager::get_resource_by_job_tag(
 ) {
 	ResourceTag resource_tag(find_resource_tag_by_job_tag(
 			resource_description, job_tag));
-
-	if(has_resource(resource_tag)){
-		return find_resource(resource_tag);
-	} else {
-		ResourceOP new_resource(create_resource(resource_tag));
-		add_resource(resource_tag, new_resource);
-		return new_resource;
-	}
+	return find_resource(resource_tag);
 }
 
 std::list<ResourceTag>
@@ -373,6 +367,37 @@ LazyResourceManager::find_resource_options(
 	}
 	return resource_options->second;
 }
+
+bool
+LazyResourceManager::has_resource(
+	ResourceTag const & resource_tag
+) const {
+	if(ResourceManager::has_resource(resource_tag)){
+		return true;
+	} else if( has_resource_configuration(resource_tag)){
+		return true;
+	} else {
+		return false;
+	}
+}
+
+ResourceOP
+LazyResourceManager::find_resource(
+	ResourceTag const & resource_tag
+) {
+	if(ResourceManager::has_resource(resource_tag)){
+		return ResourceManager::find_resource(resource_tag);
+	} else if( has_resource_configuration(resource_tag)){
+		ResourceOP new_resource(create_resource(resource_tag));
+		add_resource(resource_tag, new_resource);
+		return new_resource;
+	} else {
+		stringstream err_msg;
+		err_msg
+			<< "Unable to find resource with tag '" << resource_tag << "'." << endl;
+	}
+}
+
 
 ResourceOP
 LazyResourceManager::create_resource(

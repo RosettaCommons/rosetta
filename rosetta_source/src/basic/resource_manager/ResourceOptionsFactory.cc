@@ -24,7 +24,12 @@
 #include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 //C++ headers
+#include <sstream>
 
 namespace basic {
 namespace resource_manager {
@@ -39,9 +44,21 @@ ResourceOptionsFactory::create_resource_options(
 	utility::tag::TagPtr tag
 ) const
 {
-	std::map< std::string, ResourceOptionsCreatorOP >::const_iterator iter = creator_map_.find( options_type );
+	ResourceOptionsCreatorMap::const_iterator iter = creator_map_.find( options_type );
 	if ( iter == creator_map_.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "No ResourceOptionsCreator responsible for instantiating the ResourceOptions named " + options_type + " was found in the ResourceOptionsFactory.  Was it correctly registered?" );
+		std::stringstream error_msg;
+		error_msg
+			<< "Attempting to create unrecognized ResourceOptions "
+			<< "'" << options_type << "'." << std::endl
+			<< "Check the spelling or "
+			<< "register a new ResourceOptionsCreator with the ResourceOptionsFactory." << std::endl
+			<< "Known ResourceOptions types are:" << std::endl;
+
+		foreach(const ResourceOptionsCreatorMap::value_type& type, creator_map_){
+			error_msg << "\t" << type.first << std::endl;
+		}
+
+		throw utility::excn::EXCN_Msg_Exception(error_msg.str());
 	}
 	ResourceOptionsOP resource_options = (*iter).second->create_options();
 	resource_options->parse_my_tag( tag );

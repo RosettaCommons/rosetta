@@ -118,12 +118,12 @@ void JD2ResourceManager::read_resource_locators_tags( utility::tag::TagPtr tags 
 			tag_iter = tags->getTags().begin(),
 			tag_iter_end = tags->getTags().end();
 			tag_iter != tag_iter_end; ++tag_iter ) {
-		std::string const & tagname = (*tag_iter)->getName();
+		std::string const & locator_type = (*tag_iter)->getName();
 
 		/// 1. Make sure the resource locator has been given a tag.
 		if ( ! (*tag_iter)->hasOption( "tag" ) ) {
 			std::ostringstream err;
-			err << "Unable to find a 'tag' for a ResourceLocator of type '" << tagname << "'\n";
+			err << "Unable to find a 'tag' for a ResourceLocator of type '" << locator_type << "'\n";
 			throw MsgException( err.str() );
 		}
 		LocatorTag locator_tag = (*tag_iter)->getOption< LocatorTag >( "tag" );
@@ -132,26 +132,26 @@ void JD2ResourceManager::read_resource_locators_tags( utility::tag::TagPtr tags 
 		if ( LazyResourceManager::has_resource_locator( locator_tag ) ) {
 			std::ostringstream err;
 			err << "Duplicated tag, '" << locator_tag <<"' assigned to a ResourceLocator object with type '";
-			err << tagname << "'.\n";
+			err << locator_type << "'.\n";
 			err << "Prevous ResourceLocator object with this tag was of type '";
 			err << LazyResourceManager::find_resource_locator( locator_tag )->type() << "'\n";
 			throw MsgException( err.str() );
 		}
 
 		/// 3. Try to create this ResourceLocator object; the factory may throw.  Catch any thrown MsgException and
-		/// append to its message the tagname and options_tag for the ResourceOptions being read.
-		ResourceLocatorOP resource_options;
+		/// append to its message the locator_type and locator_tag for the ResourceLocator being read.
+		ResourceLocatorOP resource_locator;
 		try {
-			resource_options = ResourceLocatorFactory::get_instance()->create_resource_locator( tagname, *tag_iter );
+			resource_locator = ResourceLocatorFactory::get_instance()->create_resource_locator( locator_type, locator_tag, *tag_iter );
 		} catch ( MsgException const & e ) {
 			std::ostringstream err;
 			err << e.msg() << "\n";
 			err << "Exception thrown while trying to initialize a ResourceLocator of type '";
-			err << tagname << "' with a tag of '" << locator_tag << "'\n";
+			err << locator_type << "' with a tag of '" << locator_tag << "'\n";
 			err << "from JD2ResourceManager::read_resource_locators_tags\n";
 			throw MsgException( err.str() );
 		}
-		LazyResourceManager::add_resource_locator( locator_tag, resource_options );
+		LazyResourceManager::add_resource_locator( locator_tag, resource_locator );
 	}
 
 }
@@ -297,6 +297,10 @@ JD2ResourceManager::read_resource_locator_items(
 				<< " But specifying a file is only compatible with the"
 				<< " FileSystemResourceLocator." << std::endl;
 			throw MsgException(err.str());
+		}
+		if( locator_tag == "NULL" ){
+			locator_id = "";
+			return locator_tag;
 		}
 	} else {
 		locator_tag = "";
