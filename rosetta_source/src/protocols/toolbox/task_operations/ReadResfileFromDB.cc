@@ -20,6 +20,8 @@
 #include <basic/database/sql_utils.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
+#include <basic/resource_manager/ResourceManager.hh>
+#include <basic/resource_manager/util.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -136,6 +138,8 @@ ReadResfileFromDB::database_table() const {
 void
 ReadResfileFromDB::parse_tag( TagPtr tag )
 {
+	using namespace basic::resource_manager;
+
 	if(tag->hasOption("db")){
 		utility_exit_with_message(
 			"The 'db' tag has been deprecated. Please use 'database_name' instead.");
@@ -153,7 +157,21 @@ ReadResfileFromDB::parse_tag( TagPtr tag )
 		database_table_ = tag->getOption<string>("table");
 	}
 
-	db_session_ = basic::database::parse_database_connection(tag);
+	if(tag->hasOption("resource_description")){
+		std::string resource_description = tag->getOption<string>("resource_description");
+		if(!ResourceManager::get_instance()->has_resource_with_description(
+				resource_description))
+		{
+			throw utility::excn::EXCN_Msg_Exception
+				( "You specified a resource_description of " + resource_description +
+					" for ReadResfileFromDB, but the ResourceManager doesn't have a resource with that description" );
+		}
+		db_session_ = get_resource< utility::sql_database::session >( resource_description );
+	}
+	else{
+		db_session_ = basic::database::parse_database_connection(tag);
+	}
+
 }
 
 } //namespace task_operations

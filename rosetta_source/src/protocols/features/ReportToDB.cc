@@ -344,7 +344,7 @@ ReportToDB::parse_my_tag(
 		{
 			throw utility::excn::EXCN_Msg_Exception
 				( "You specified a resource_description of " + resource_description +
-					" for report to db, but don't have a resource with that description" );
+					" for ReportToDB, but the ResourceManager doesn't have a resource with that description" );
 		}
 		db_session_ = basic::resource_manager::get_resource< utility::sql_database::session >( resource_description );
 	}
