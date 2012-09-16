@@ -442,13 +442,18 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 		Size jump_offset = pose.num_jump(); //pose at this stage should at most have only one jump;
 		//for (Size rep = 1; rep < repeat_number; rep++){
 			for (Size i = 1; i<= repeat_pose.num_jump();){
-				for (Size j = 1; j<= pose.num_jump(); j++, i++){
+				for (Size j = 1; j<= pose.num_jump(); j++,i++){
+								if (i > repeat_pose.num_jump()){
+									break;
+								}
+								FoldTree FT = repeat_pose.fold_tree();
+								FT.renumber_jumps();
+
 								numeric::xyzMatrix< Real > Rot = pose.jump(j).get_rotation();
 								numeric::xyzVector< Real > Trx = pose.jump(j).get_translation();
 								TR <<  "pose FT: " << pose.fold_tree() << std::endl;
 								TR <<  "rpps FT: " << repeat_pose.fold_tree() << std::endl;
 								TR <<  "set ROT-TRANS from " << j << " to " << i << std::endl;
-								FoldTree FT = repeat_pose.fold_tree();
 
 								FT.set_jump_atoms( i , pose.fold_tree().jump_edge(j).upstream_atom(), pose.fold_tree().jump_edge(j).downstream_atom());
 								repeat_pose.fold_tree(FT);

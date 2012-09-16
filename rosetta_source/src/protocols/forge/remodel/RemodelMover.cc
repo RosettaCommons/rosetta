@@ -427,7 +427,6 @@ void RemodelMover::apply( Pose & pose ) {
 		//for cases involve jxn, need to make pose longer so manager won't complain
 		//about missing residues
 		if (pose.total_residue() < 2*remodel_data.sequence.length()){
-			std::cout << "grow pose" << std::endl;
 			Size len_diff = (2*remodel_data_.sequence.length()) - pose.total_residue();
       // append a tail of the same length
       for (int i = 1; i<= len_diff; i++){
@@ -1046,7 +1045,6 @@ bool RemodelMover::centroid_build(
 	if ( !vlb_.get() ) {
 		vlb_ = new VarLengthBuild( manager_ , remodel_data_ );
 	}
-	std::cout << "abeg length " << working_model_.abego.length() << " ss length " << working_model_.ss.length() << std::endl;
 	if (!working_model_.abego.empty()){
 		//the following block simply packages the string to feed to vlb
 		utility::vector1<std::string> abego_vec;
