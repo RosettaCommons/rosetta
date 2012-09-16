@@ -350,7 +350,6 @@ void VarLengthBuild::apply( Pose & pose ) {
 		//if (len_start < pose.total_residue() && len_start * (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure]) == pose.total_residue() ){
 		if (len_start < pose.total_residue()){
 			for (Size i = len_start+1; i <= pose.total_residue(); i++){
-				std::cout << "index: " << i << std::endl;
 				cached_phi.push_back( pose.phi( i ) );
 				cached_psi.push_back( pose.psi( i ) );
 				cached_omega.push_back( pose.omega( i ));
@@ -440,6 +439,18 @@ void VarLengthBuild::apply( Pose & pose ) {
 	  } else {
 		//remove the added residue
 		//pose.conformation().delete_residue_slow(pose.total_residue());
+
+    //need to extend the archive pose, otherwise the connectivity is wrong
+    	using namespace protocols::loops;
+    	using protocols::forge::methods::intervals_to_loops;
+    	std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
+    	LoopsOP loops = new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) );
+
+    	Pose bufferPose(archive_pose);
+    	protocols::forge::remodel::RemodelLoopMover RLM(loops);
+    	RLM.set_repeat_tail_length(repeat_tail_length_);
+    	RLM.repeat_generation_with_additional_residue( bufferPose, archive_pose );
+
 	  }
 	}
 
