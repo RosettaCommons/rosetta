@@ -13,7 +13,7 @@
 @page FloppyTail Documentation for FloppyTail application
 
 @section metadata Metadata
-Last edited 3/23/12.  Code by Steven Lewis.  Corresponding PI Brian Kuhlman bkuhlman@email.unc.edu.
+Last edited 9/17/12.  Code by Steven Lewis.  Corresponding PI Brian Kuhlman bkuhlman@email.unc.edu.
 
 @section code_demos Code and Demo
 The code is at <code>rosetta/rosetta_source/src/apps/public/scenarios/FloppyTail/</code>; there's an integration test+demo at <code>rosetta/rosetta_source/test/integration/tests/FloppyTail/</code>.  Note that the integration test is vastly under-cycled relative to getting it to do anything useful: the number of cycles it demonstrates should be sufficient to show some remodeling but not enough to get anywhere useful.  To run that demo, go to that directory and run <code> [path to executeable] -database [path to database] (at-symbol)options</code>
@@ -60,6 +60,7 @@ This code was intended for a single purpose, but it may work if you have a simil
 @li If you have a single chain (one protein), if the flexible region is closer to the N-terminus than the C-terminus, use the C_root option to make computation faster.  It reroots the fold tree on the C terminus, obviating a lot of useless recalculation of coordinates for the rigid part of the protein (if the N part is moving).
 @li You must use the C_root option (or pass a flexible_start_resnum of zero) when using an N-terminal tail.  Otherwise, the first residue of the tail will have no motion in phi (undefined at an N-terminus), and the residue will remain fixed in space in a probably undesired fashion.
 @li If you are modeling a complex, ensure that the flexible region has either the highest or lowest residue numbers possible: if it is a N-terminus, put its subcomponent first in the PDB file, or vice-versa if it is C-terminal.  Use the C_root option if your flexible region is a lower residue number, and do not if it is higher.  If you have more than two components in your complex, and are modeling a linker between them, then the linker's chain must come between the groups of internally rigid parts in the input PDB file.
+@li force_linear_fold_tree combines with C_root in the quest for perfect control over the kinematics of the system.  Use force_linear_fold_tree when you need folding to proceed C to N between chains, instead of jumping around.
 @li FloppyTail now fully supports modeling internal linker regions (to do domain assembly).  It detects interfaces between the internally rigid portions and packs accordingly.
 
 @section ft_options Options

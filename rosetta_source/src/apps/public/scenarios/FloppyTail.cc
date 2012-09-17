@@ -104,6 +104,7 @@ basic::options::RealOptionKey const short_tail_off("short_tail_off");
 basic::options::BooleanOptionKey const pair_off("pair_off");
 basic::options::BooleanOptionKey const publication("publication");
 basic::options::BooleanOptionKey const C_root("C_root");
+basic::options::BooleanOptionKey const force_linear_fold_tree("force_linear_fold_tree");
 }}}//basic::options::OptionKeys
 
 ///@details This function is specific to the original system for which this code was written - if you are not trying to duplicate the initial results you should remove it!
@@ -265,7 +266,7 @@ public:
 
 		//We want to linearize the fold_tree so that internal linkers with noncovalent attachments on both sides will work properly; it will have no effect on terminal tails
 		foldtree_ = new core::kinematics::FoldTree(pose.fold_tree()); //store original fold tree; if we enter neither option below it stays valid
-		if( !((stop_ == pose.total_residue()) || (start_ == 1)) ){
+		if( !((stop_ == pose.total_residue()) || (start_ == 1)) || basic::options::option[ basic::options::OptionKeys::force_linear_fold_tree].value() ){
 			TR << "non-terminal or N-terminal (C-rooted) floppy section, using a linear fold tree to try to ensure downstream residues follow \nOld tree: " << pose.fold_tree();
 			foldtree_ = new core::kinematics::FoldTree(core::kinematics::linearize_fold_tree(*foldtree_));
 			TR << "new tree: " << *foldtree_ << std::endl;
@@ -639,6 +640,7 @@ int main( int argc, char* argv[] )
 	option.add( pair_off, "turn off Epair electrostatics term").def(false);
 	option.add( publication, "output statistics used in publication.  TURN OFF if not running publication demo.").def(false);
 	option.add( C_root, "Reroot the fold_tree to the C-terminus.  If your flexible region is N-terminal, or closer to the first half of the pose, this will speed computation.").def(false);
+	option.add( force_linear_fold_tree, "Force a linear fold tree.  Used in combination with C_root and reordering the chains in your input PDB to ensure you get exactly the right kinematics").def(false);
 
 	devel::init(argc, argv);
 
