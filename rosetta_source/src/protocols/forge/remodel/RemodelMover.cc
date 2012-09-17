@@ -1101,8 +1101,10 @@ bool RemodelMover::centroid_build(
 				std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
 				LoopsOP loops = new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) );
 				RemodelLoopMover RLM(loops);
+				RLM.set_repeat_tail_length(remodel_data_.sequence.length());
 				Pose bufferPose(modified_archive_pose);
-				RLM.repeat_generation( bufferPose, modified_archive_pose );
+				//due to code change, modified_archive_pose would always be 2x length now
+				RLM.repeat_generation_with_additional_residue( bufferPose, modified_archive_pose );
 			}
 		}
 

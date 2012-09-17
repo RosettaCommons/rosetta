@@ -253,6 +253,14 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 		//extensions or deletions across jxn points
 		LineObject lastLO = data.blueprint.back();
 
+		bool denovo = true;
+		//have to loop to identify denovo case
+		for (int i = 0, ie = (int)data.blueprint.size(); i < ie; i++){
+			if (data.blueprint[i].sstype == "."){ //if anywhere hits this assignment, not de novo
+				denovo = false;
+			}
+		}
+
 		for (int i = 0, ie = (int)data.blueprint.size(); i < ie; i++){
 			if (data.blueprint[i].sstype != ".") { // first find the segments to be remodeled
 				LineObject LO = data.blueprint[i];
@@ -261,6 +269,13 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 				if (LO.original_index != 0){ //in de novo case, the extension uses 0, don't increment.
 					LO.original_index = LO.original_index + (int)lastLO.original_index;
 				}
+				else if (LO.original_index == 0 && !denovo){
+					LO.original_index = LO.original_index + (int)data.blueprint.size();
+				}
+				else {
+				// de novo case don't increment
+				}
+
 				//TR << "LO object second time " << LO.index << " " << LO.original_index << std::endl;
 				temp.push_back(LO);
 			}
@@ -434,6 +449,9 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 				}
 				head = data.blueprint[ idFront-1 ].original_index;
 				tail = data.blueprint[ idBack-seg_size-1 ].original_index + data.blueprint.back().original_index;
+				if (data.blueprint.back().original_index == 0){ //an extension
+					tail = data.blueprint[ idBack-seg_size-1 ].original_index + seg_size;
+				}
 				headNew = data.blueprint[ idFront-1 ].index;
 				tailNew = data.blueprint[ idBack-seg_size-1 ].index + seg_size;
 			} else { //normal build in the first segment
