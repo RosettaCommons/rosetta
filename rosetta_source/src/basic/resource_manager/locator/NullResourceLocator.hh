@@ -59,7 +59,7 @@ class NullResourceLocator : public basic::resource_manager::ResourceLocator
 public:
 	NullResourceLocator();
 
-	// Undefined, commenting out to fix PyRosetta build  NullResourceLocator(NullResourceLocator const & src);
+	NullResourceLocator(NullResourceLocator const & src);
 
 	virtual ~NullResourceLocator();
 

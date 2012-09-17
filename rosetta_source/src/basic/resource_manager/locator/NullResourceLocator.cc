@@ -50,6 +50,7 @@ static Tracer TR("basic.resource_manager.locator.NullResourceLocator");
 ///// NullResourceLocatorCreator /////
 NullResourceLocatorCreator::NullResourceLocatorCreator() {}
 
+
 NullResourceLocatorCreator::~NullResourceLocatorCreator() {}
 
 ResourceLocatorOP
@@ -77,6 +78,8 @@ NullStream::stream() {
 ///// NullResourceLocator /////
 
 NullResourceLocator::NullResourceLocator(){}
+
+NullResourceLocator::NullResourceLocator(NullResourceLocator const & src) : basic::resource_manager::ResourceLocator(src) {}
 
 void
 NullResourceLocator::show(
