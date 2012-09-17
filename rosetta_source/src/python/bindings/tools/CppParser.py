@@ -240,7 +240,8 @@ class CppVariable:
 
 
 class CppFunction:
-    OperatorToCppNameMap = {'=':'assign', '()':'__call__', '[]':'__getitem__', '*':'__mul__'}
+    OperatorToCppNameMap = {'=':'assign', '()':'__call__', '[]':'__getitem__',
+        '*':'__mul__', '+':'__add__', '-':'__sub__', '/':'__div__', '%':'__mod__', '^':'__pow__',}
     def __init__(self, node, context, returnType, refSection, memberFunction=False, const=False, constructor=False, const_overloaded=False):
         self.name = node.getAttribute('name')
         self.context = context
