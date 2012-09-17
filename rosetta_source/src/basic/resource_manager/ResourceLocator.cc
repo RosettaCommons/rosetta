@@ -29,6 +29,13 @@ ResourceLocator::ResourceLocator(
 	locator_tag_(locator_tag)
 {}
 
+ResourceLocator::ResourceLocator(
+	ResourceLocator const & src
+) :
+	utility::pointer::ReferenceCount(),
+	locator_tag_( src.locator_tag() )
+{}
+
 ResourceLocator::~ResourceLocator() {}
 
 void
