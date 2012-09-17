@@ -591,6 +591,8 @@ private:
 class HomogeneousTransform_Double : public HomogeneousTransform<double>
 {
 public:
+	HomogeneousTransform_Double() {}
+
 	HomogeneousTransform_Double(
 		xyzVector< double > const & p1,
 		xyzVector< double > const & p2,
@@ -606,9 +608,7 @@ public:
 	HomogeneousTransform_Double(
 		xyzMatrix< double > const & axes,
 		xyzVector< double > const & point) : HomogeneousTransform<double>(axes, point) {}
-
 };
-
 
 }
 
