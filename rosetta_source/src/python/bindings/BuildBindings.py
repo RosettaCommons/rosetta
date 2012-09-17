@@ -365,14 +365,15 @@ def Sleep(time_, message, dict_={}):
 
 def SleepPrecise(time_, message, dict_={}):
     ''' Fancy sleep function '''
-    len_ = 0
-    msg = message % dict(dict_, time=time_)
-    print msg,
-    len_ = max(len_, len(msg))
-    sys.stdout.flush()
-    time.sleep(time_)
+    if time_ > 0:
+        len_ = 0
+        msg = message % dict(dict_, time=time_)
+        print msg,
+        len_ = max(len_, len(msg))
+        sys.stdout.flush()
+        time.sleep(time_)
 
-    print ' '*len_ + '\r',  # erazing sleep message
+        print ' '*len_ + '\r',  # erazing sleep message
 
 
 def execute(message, command_line, return_=False, untilSuccesses=False, print_output=True, verbose=True):
