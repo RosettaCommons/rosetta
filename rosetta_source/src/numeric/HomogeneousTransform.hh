@@ -590,6 +590,23 @@ private:
 // PyRosetta WorkAround
 class HomogeneousTransform_Double : public HomogeneousTransform<double>
 {
+public:
+	HomogeneousTransform_Double(
+		xyzVector< double > const & p1,
+		xyzVector< double > const & p2,
+		xyzVector< double > const & p3
+	) : HomogeneousTransform<double>(p1, p2, p3) {}
+
+	HomogeneousTransform_Double(
+		xyzVector< double > const & xaxis,
+		xyzVector< double > const & yaxis,
+		xyzVector< double > const & zaxis,
+		xyzVector< double > const & point) : HomogeneousTransform<double>(xaxis,yaxis,zaxis,point) {}
+
+	HomogeneousTransform_Double(
+		xyzMatrix< double > const & axes,
+		xyzVector< double > const & point) : HomogeneousTransform<double>(axes, point) {}
+
 };
 
 
