@@ -74,7 +74,8 @@ SymDofMoverCreator::mover_name()
 // -------------  Mover Creator -------------
 
 SymDofMover::SymDofMover() :
-	axis_("z"),
+	axis_('z'),
+	flip_about_axis_(""),
 	align_axis_(true),
 	auto_range_(false)
 { }
@@ -196,7 +197,8 @@ SymDofMover::apply(Pose & pose) {
 	utility::vector1<Real> radial_disps = get_radial_disps();
 	utility::vector1<Real> angles = get_angles();
 	std::string symm_file = symm_file_;
-	std::string axis = axis_;
+	char axis = axis_;
+	utility::vector1< std::string > flip_about_axis = utility::string_split( flip_about_axis_, ',' );
 	bool align_axis = align_axis_;
 
 // Read in symmetry info from symmetry definition file //
@@ -210,16 +212,23 @@ SymDofMover::apply(Pose & pose) {
 
 		core::Size sub_start= pose.conformation().chain_begin(i);
 		core::Size sub_end= pose.conformation().chain_end(i);
-	
+
+// Rotate subtunit 180 degrees about the specified axis. ie, "reverse" the component before further manipulation.	
+		if ( flip_about_axis_ != "" ) {
+			if (flip_about_axis[i] == "z" ) rot_pose(pose,Vec(0,0,1),180,sub_start,sub_end);
+			else if (flip_about_axis[i] == "x" ) rot_pose(pose,Vec(1,0,0),180,sub_start,sub_end);
+			else if (flip_about_axis[i] == "y" ) rot_pose(pose,Vec(0,1,0),180,sub_start,sub_end);
+		}
+
 // translate each subunit along the specified axis by user defined values //
-		if ( axis == "z") trans_pose(pose,Vec(0,0,radial_disps[i]),sub_start,sub_end);
-		else if ( axis == "x") trans_pose(pose,Vec(radial_disps[i],0,0),sub_start,sub_end);
-		else if ( axis == "y") trans_pose(pose,Vec(0,radial_disps[i],0),sub_start,sub_end);
+		if ( axis == 'z') trans_pose(pose,Vec(0,0,radial_disps[i]),sub_start,sub_end);
+		else if ( axis == 'x') trans_pose(pose,Vec(radial_disps[i],0,0),sub_start,sub_end);
+		else if ( axis == 'y') trans_pose(pose,Vec(0,radial_disps[i],0),sub_start,sub_end);
 		else utility_exit_with_message("Specified axis does not match with either x, y, or z");
 
 // rotate each subunit along the specified axis by user defined values //
-		if (axis == "z" ) rot_pose(pose,Vec(0,0,1),angles[i],sub_start,sub_end);
-		else if (axis == "x" ) rot_pose(pose,Vec(1,0,0),angles[i],sub_start,sub_end);
+		if (axis == 'z' ) rot_pose(pose,Vec(0,0,1),angles[i],sub_start,sub_end);
+		else if (axis == 'x' ) rot_pose(pose,Vec(1,0,0),angles[i],sub_start,sub_end);
 		else rot_pose(pose,Vec(0,1,0),angles[i],sub_start,sub_end);
 
 // read in the axes for each subunit //
@@ -230,8 +239,8 @@ SymDofMover::apply(Pose & pose) {
 // align the specified axis of each subunit with the appropriate axis of the symdof jump from the symmetry definition file //
 		if ( align_axis ) { 
 			TR << "aligned_axis" << std::endl;
-			if ( axis == "z" ) alignaxis(pose,virt_coord.get_x(),Vec(0,0,1),Vec(0,0,0),sub_start,sub_end);
-			else if ( axis == "x" ) alignaxis(pose,virt_coord.get_x(),Vec(1,0,0),Vec(0,0,0),sub_start,sub_end);
+			if ( axis == 'z' ) alignaxis(pose,virt_coord.get_x(),Vec(0,0,1),Vec(0,0,0),sub_start,sub_end);
+			else if ( axis == 'x' ) alignaxis(pose,virt_coord.get_x(),Vec(1,0,0),Vec(0,0,0),sub_start,sub_end);
 			else alignaxis(pose,virt_coord.get_x(),Vec(0,1,0),Vec(0,0,0),sub_start,sub_end);
 		}
 	}
@@ -258,7 +267,8 @@ SymDofMover::parse_my_tag( TagPtr const tag,
 	basic::options::option[basic::options::OptionKeys::symmetry::symmetry_definition].value( "dummy" );
 
 	using std::string;
-	axis_ = tag->getOption<string>( "axis", "z" );
+	axis_ = tag->getOption<char>( "axis", 'z' );
+	flip_about_axis_ = tag->getOption<string>( "flip_about_axis", "" );
 	align_axis_ = tag->getOption<bool>( "align_axis", true );
 	auto_range_ = tag->getOption<bool>( "auto_range", false );
 	symm_file_ = tag->getOption<string>( "symm_file" );

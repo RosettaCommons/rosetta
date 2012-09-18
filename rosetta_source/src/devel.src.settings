@@ -98,6 +98,8 @@ sources = {
 		"ClashCheckFilter",
 		"ExtractSubpose",
 		"GetRBDOFValues",
+		"MutationsFilter",
+		"StoreCombinedStoredTasksMover",
         ],
 	"devel/metal_interface": [
 		"AddMetalSiteConstraints",

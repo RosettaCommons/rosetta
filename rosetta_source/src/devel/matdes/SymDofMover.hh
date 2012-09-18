@@ -31,6 +31,7 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
+#include <string>
 
 namespace devel {
 namespace matdes {
@@ -82,7 +83,8 @@ private:
 	utility::vector1<Real> get_angles();
 
 private:
-	std::string axis_;
+	char axis_;
+	std::string flip_about_axis_;
 	bool align_axis_;
 	bool auto_range_;
 	std::string symm_file_;

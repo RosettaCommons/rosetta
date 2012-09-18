@@ -36,6 +36,7 @@
 #include <devel/replica_docking/ThermodynamicRigidBodyMoverCreator.hh>
 #include <devel/replica_docking/TempWeightedMetropolisHastingsMoverCreator.hh>
 #include <devel/replica_docking/ModulatedMoverCreator.hh>
+#include <devel/matdes/StoreCombinedStoredTasksMoverCreator.hh>
 
 // Filter creators
 #include <devel/matdes/OligomericAverageDegreeFilterCreator.hh>
@@ -48,6 +49,7 @@
 #include <devel/matdes/ClashCheckFilterCreator.hh>
 #include <devel/matdes/GetRBDOFValuesCreator.hh>
 #include <devel/replica_docking/InteractionScoreFilterCreator.hh>
+#include <devel/matdes/MutationsFilterCreator.hh>
 
 #include <devel/replica_docking/WrapFilterAsEvaluatorCreator.hh>
 
@@ -85,6 +87,7 @@ static protocols::moves::MoverRegistrator< replica_docking::AddEncounterConstrai
 static protocols::moves::MoverRegistrator< replica_docking::ModulatedMoverCreator > reg_ModulatedMoverCreator;
 static protocols::moves::MoverRegistrator< replica_docking::ThermodynamicRigidBodyPerturbNoCenterMoverCreator > reg_ThermodynamicRigidBodyPerturbNoCenterMoverCreator;
 static protocols::moves::MoverRegistrator< replica_docking::TempWeightedMetropolisHastingsMoverCreator > reg_TempWeightedMetropolisHastingsMoverCreator;
+static protocols::moves::MoverRegistrator< devel::matdes::StoreCombinedStoredTasksMoverCreator > reg_StoreCombinedStoredTasksMoverCreator;
 
 // Task creators
 core::pack::task::operation::TaskOperationRegistrator< devel::znhash::DisableZnCoordinationResiduesTaskOpCreator > reg_DisableZnCoordinationResiduesTaskOpCreator;
@@ -104,6 +107,7 @@ static protocols::filters::FilterRegistrator< devel::matdes::InterfacePackingFil
 static protocols::filters::FilterRegistrator< devel::matdes::ClashCheckFilterCreator > ClashCheckFilterCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::matdes::GetRBDOFValuesCreator > GetRBDOFValuesCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::replica_docking::InteractionScoreFilterCreator > IscCreator_registrator;
+static protocols::filters::FilterRegistrator< devel::matdes::MutationsFilterCreator > MutationsFilterCreator_registrator;
 
 static protocols::evaluation::EvaluatorRegistrator< devel::replica_docking::WrapFilterAsEvaluatorCreator > reg_WrapFilterAsEvaluatorCreator;
 
