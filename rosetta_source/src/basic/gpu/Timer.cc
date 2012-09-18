@@ -42,20 +42,18 @@ Timer::Timer(basic::Tracer::TracerProxy& t, const char *tag) {
 	Reset();
 }
 
-/*
- * High-resolution (real-time) version on Linux with OpenCL only
- *
-
+#ifdef WIN32
 void Timer::Reset() {
-	clock_gettime(CLOCK_REALTIME, &start);
+	start = clock();
 }
 
 double Timer::GetTime() {
-	clock_gettime(CLOCK_REALTIME, &end);
-	double time = ((end.tv_sec - start.tv_sec)*1000 + (end.tv_nsec - start.tv_nsec)/1000000.);
+	end = clock();
+	double time = 1000 * (end-start) / CLOCKS_PER_SEC;
 	return time;
 }
-*/
+
+#else
 
 void Timer::Reset() {
 	gettimeofday(&start, NULL);
@@ -66,6 +64,7 @@ double Timer::GetTime() {
 	double time = ((end.tv_sec - start.tv_sec)*1000 + (end.tv_usec - start.tv_usec)/1000.);
 	return time;
 }
+#endif
 
 void Timer::Report(const char *tag) {
 

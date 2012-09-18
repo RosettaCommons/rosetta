@@ -8,14 +8,17 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   basic/gpu/Timer.hh
-/// @brief  High-resolution Timer (ns resolution)
+/// @brief  High-resolution Timer (ns resolution, but on *nix only)
 /// @author Luki Goldschmidt (luki@mbi.ucla.edu)
 
 #ifndef INCLUDED_basic_gpu_Timer_hh
 #define INCLUDED_basic_gpu_Timer_hh
 
-// #include <time.h>
+#ifdef WIN32
+#include <time.h>
+#else
 #include <sys/time.h>
+#endif
 
 #include <basic/Tracer.hh>
 
@@ -23,8 +26,11 @@ namespace basic {
 namespace gpu {
 
 class Timer {
-	// timespec start, end;
+#ifdef WIN32
+	clock_t start, end;
+#else
 	struct timeval start, end;
+#endif
 	const char *tag_;
 	basic::Tracer::TracerProxy *t_;
 public:
