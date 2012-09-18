@@ -385,7 +385,9 @@ class CppFunction:
             #if self.returnType.T() != self.context[:-2] + ' &'  or self.argsTypes[0].type_.T() != self.context[:-2] + ' const &': return False
             #print self.name, '= C=%s, N=%s, T=%s' % (self.context, self.name, self.argsTypes[0].type_.T())
 
-        if self.operator  and  (self.name not in self.OperatorToCppNameMap): return False
+        if self.operator:
+            if self.name not in self.OperatorToCppNameMap: return False
+            if not self.memberFunction: return False
 
         return True
 
