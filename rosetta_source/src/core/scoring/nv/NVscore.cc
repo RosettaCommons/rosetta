@@ -152,10 +152,10 @@ void NVscore::residue_energy( conformation::Residue const &current_residue,  pos
 	{
 		//get the residue to compare to the current residue
 		core::Size comparison_residue_index((*node_index)->get_other_ind(current_residue.seqpos()));
-		conformation::Residue comparison_residue(pose.residue(comparison_residue_index));
+		conformation::ResidueCOP comparison_residue(&pose.residue(comparison_residue_index));
 		//you don't want to compare a residue to itself
-		if(current_residue.seqpos() == comparison_residue.seqpos()) continue;
-		Vector comparison_vector(comparison_residue.nbr_atom_xyz());
+		if(current_residue.seqpos() == comparison_residue->seqpos()) continue;
+		Vector comparison_vector(comparison_residue->nbr_atom_xyz());
 		//calculate the distance between the two residues
 		Vector::Value distance = current_vector.distance(comparison_vector);
 		//get the weighted neighbor count
