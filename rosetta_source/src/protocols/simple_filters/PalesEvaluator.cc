@@ -40,7 +40,7 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#ifdef NATCL
+#ifdef  __native_client__ 
 #define system(a) 1
 #endif
 

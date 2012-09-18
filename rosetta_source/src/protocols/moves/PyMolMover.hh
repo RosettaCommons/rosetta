@@ -31,7 +31,7 @@
 
 
 // REQUIRED FOR WINDOWS
-#ifndef NATCL
+#ifndef __native_client__
 	#ifdef WIN32
 		#include <winsock.h>
 		#undef min
@@ -43,7 +43,7 @@
 	#endif
 #endif
 
-#ifdef NATCL
+#ifdef __native_client__
   typedef int sockaddr_in;
 #endif
 

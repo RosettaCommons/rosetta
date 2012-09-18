@@ -29,7 +29,7 @@
 
 // Project headers
 #include <utility/file/gzip_util.hh>
-#ifdef NATCL
+#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 #include <utility/inline_file_provider.hh>
 #endif
 
@@ -82,7 +82,7 @@ public: // Creation
 		char_buffer_p_( NULL ),
 		zip_stream_p_( 0 ),
 		mpi_stream_p_( 0 )
-#ifdef NATCL	
+#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )	
 		,file_provider_stream( &bad_stream ) 
 #endif
 
@@ -104,7 +104,7 @@ public: // Creation
 		char_buffer_p_( NULL ),
 		zip_stream_p_( 0 ),
 		mpi_stream_p_( 0 )
-#ifdef NATCL		
+#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )		
 		,file_provider_stream( &bad_stream )
 #endif
 
@@ -130,7 +130,7 @@ public: // Methods: conversion
 	inline
 	operator bool() const
 	{
-		#ifdef NATCL
+		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 			return file_provider_stream->good();
 		#endif
 		return ( zip_stream_p_ ? !zip_stream_p_->fail() : ( mpi_stream_p_ ? !mpi_stream_p_->fail() : !!of_stream_ ));
@@ -141,7 +141,7 @@ public: // Methods: conversion
 	inline
 	operator std::ostream const &() const
 	{
-		#ifdef NATCL
+		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 			return *file_provider_stream;
 		#endif
 		return ( zip_stream_p_
@@ -156,7 +156,7 @@ public: // Methods: conversion
 	inline
 	operator std::ostream &()
 	{
-		#ifdef NATCL
+		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 			return *file_provider_stream;
 		#endif
 		return ( zip_stream_p_
@@ -176,7 +176,7 @@ public: // Methods: formatting
 	ozstream &
 	operator <<( T const & t )
 	{
-		#ifdef NATCL
+		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 			(*file_provider_stream) << t;
 			return *this;
 		#endif
@@ -200,7 +200,7 @@ public: // Methods: formatting
 		static manipulator const std_endl = std::endl;
 		static manipulator const std_flush = std::flush;
 		if ( m == std_endl && ( mpi_stream_p_ || zip_stream_p_ ) )  {
-			#ifdef NATCL
+			#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 				(*file_provider_stream) << '\n';
 				return *this;
 			#endif
@@ -210,13 +210,13 @@ public: // Methods: formatting
 				(*mpi_stream_p_) << '\n';
 			}
 		} else if ( ( m == std_flush ) && ( zip_stream_p_ || mpi_stream_p_) ) {
-			#ifdef NATCL
+			#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 				file_provider_stream->flush();
 				return *this;
 			#endif
 			flush(); // ozstream::flush()
 		} else {
-			#ifdef NATCL
+			#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 				(*file_provider_stream) << m;
 				return *this;
 			#endif
@@ -250,7 +250,7 @@ public: // Methods: i/o
 	ozstream &
 	put( char const c )
 	{
-		#ifdef NATCL
+		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 			file_provider_stream->put( c );
 			return *this;
 		#endif
@@ -271,7 +271,7 @@ public: // Methods: i/o
 	ozstream &
 	write( char const * str, std::streamsize const count )
 	{
-		#ifdef NATCL
+		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 			file_provider_stream->write( str, count );
 			return *this;
 		#endif
@@ -312,7 +312,7 @@ public: // Methods: i/o
 	ozstream &
 	flush()
 	{
-		#ifdef NATCL
+		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 			file_provider_stream->flush();
 			return *this;
 		#endif
@@ -340,7 +340,7 @@ public: // Methods: i/o
 	ozstream &
 	flush_finalize()
 	{
-		#ifdef NATCL
+		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 			file_provider_stream->flush();
 			return *this;
 		#endif
@@ -360,7 +360,7 @@ public: // Methods: i/o
 	void
 	zflush()
 	{
-		#ifdef NATCL
+		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 			return;
 		#endif
 		if ( zip_stream_p_ ) zip_stream_p_->zflush();
@@ -378,7 +378,7 @@ public: // Methods: i/o
 	void
 	zflush_finalize()
 	{
-		#ifdef NATCL
+		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 			return;
 		#endif
 		if ( zip_stream_p_ ) zip_stream_p_->zflush_finalize();
@@ -389,7 +389,7 @@ public: // Methods: i/o
 	void
 	clear()
 	{
-		#ifdef NATCL
+		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 			file_provider_stream->clear();
 			return;
 		#endif
@@ -404,7 +404,7 @@ public: // Methods: i/o
 	void
 	close()
 	{
-		#ifdef NATCL
+		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 			return;
 		#endif
 		if ( zip_stream_p_ ) {
@@ -434,7 +434,7 @@ public: // Properties
 	std::ostream const &
 	operator ()() const
 	{
-		#ifdef NATCL
+		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 		  return (*file_provider_stream);
 		#endif
 		return ( zip_stream_p_
@@ -449,7 +449,7 @@ public: // Properties
 	std::ostream &
 	operator ()()
 	{
-		#ifdef NATCL
+		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 		  return (*file_provider_stream);
 		#endif
 		return ( zip_stream_p_
@@ -464,7 +464,7 @@ public: // Properties
 	std::ostream const &
 	stream() const
 	{
-		#ifdef NATCL
+		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 		  return (*file_provider_stream);
 		#endif
 		return ( zip_stream_p_
@@ -479,7 +479,7 @@ public: // Properties
 	std::ostream &
 	stream()
 	{
-		#ifdef NATCL
+		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 		  return (*file_provider_stream);
 		#endif
 		return ( zip_stream_p_
@@ -727,7 +727,7 @@ private: // Fields
 	static bool bMPI_reroute_stream_;
 	static int mpi_FileBuf_master_rank_;
 
-#ifdef NATCL 
+#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER ) 
 	std::ostream *file_provider_stream;
 	std::stringstream bad_stream;
 #endif

@@ -30,7 +30,7 @@
 //utility headers
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
-#ifdef NATCL
+#ifdef  __native_client__ 
 #define WIN32
 #endif
 

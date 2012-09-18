@@ -93,7 +93,7 @@ namespace basic {
 
 /// it turns out LINUX kernel do not support getrusage() ...
 void get_usage_from_procfilesystem( std::ostream& mem_report ) {
-#if defined(_WIN32) || defined(NATCL) 
+#if defined(_WIN32) || defined( __native_client__ ) 
 	return;  // disabled on windows
 #else
 	char buf[30];

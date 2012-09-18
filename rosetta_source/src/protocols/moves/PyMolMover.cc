@@ -81,7 +81,7 @@ numeric::random::uniform_RG_OP getRG()
 
 UDPSocketClient::UDPSocketClient() : sentCount_(0)
 {
-#ifndef NATCL
+#ifndef  __native_client__ 
     /*
 	#ifdef __APPLE__
 		max_packet_size_ = 8192-512-2;  // ← MacOS X kernel can send only small packets even locally.
@@ -141,7 +141,7 @@ void UDPSocketClient::sendMessage(std::string msg)
 
 void UDPSocketClient::sendRAWMessage(int globalPacketID, int packetI, int packetCount, char * msg_begin, char *msg_end)
 {
-	#ifndef NATCL
+	#ifndef  __native_client__ 
 		std::string buf(msg_end - msg_begin + sizeof(uuid_.bytes_) + sizeof(short)*3, 0);
 		int i = 0;
 

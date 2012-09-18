@@ -143,7 +143,7 @@ void nice_header (FILE *out,const char *fn)
 	#ifndef __CYGWIN__
 	uid = getuid();
 	pw  = getpwuid(uid);
-	#ifndef NATCL
+	#ifndef __native_client__
 	gh  = gethostname(buf,255);
 	#endif
 

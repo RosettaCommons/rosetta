@@ -20,7 +20,7 @@
 
 // Project headers
 #include <utility/file/file_sys_util.hh>
-#ifdef NATCL
+#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 #include <utility/inline_file_provider.hh>
 #endif
 #include <utility/exit.hh>
@@ -72,7 +72,7 @@ ozstream::open(
 		using zlib_stream::zip_ostream;
 
 
-	#ifdef NATCL
+	#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 		utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
 
 		if(!provider->get_ostream( filename_a , &file_provider_stream )){

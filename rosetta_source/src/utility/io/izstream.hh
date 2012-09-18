@@ -27,7 +27,7 @@
 // Project headers
 #include <utility/file/gzip_util.hh>
 #include <utility/vector1.hh>
-#ifdef NATCL
+#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 #include <utility/inline_file_provider.hh>
 #endif
 
@@ -72,7 +72,7 @@ public: // Creation
 	izstream() :
 		compression_( NONE ),
 		zip_stream_p_( 0 )
-#ifdef NATCL
+#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 		,file_provider_stream( &bad_stream )
 #endif
 
@@ -88,7 +88,7 @@ public: // Creation
 	) :
 		compression_( NONE ),
 		zip_stream_p_( 0 )
-#ifdef NATCL		
+#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )		
 		,file_provider_stream( &bad_stream )
 #endif
 
@@ -115,7 +115,7 @@ public: // Methods: conversion
 	inline
 	operator bool() const
 	{
-		#ifdef NATCL
+		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 			return file_provider_stream->good();
 		#endif
 		//return ( zip_stream_p_ ? zip_stream_p_->good() : if_stream_.good() );
@@ -128,7 +128,7 @@ public: // Methods: conversion
 	inline
 	operator std::istream const &() const
 	{
-		#ifdef NATCL
+		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 			return *file_provider_stream;
 		#endif
 		return ( zip_stream_p_
@@ -141,7 +141,7 @@ public: // Methods: conversion
 	inline
 	operator std::istream &()
 	{
-		#ifdef NATCL
+		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 			return *file_provider_stream;
 		#endif
 		return ( zip_stream_p_
@@ -197,7 +197,7 @@ public: // Methods: i/o
 	void
 	clear()
 	{
-	 	#ifdef NATCL
+	 	#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 	  file_provider_stream->clear();
 		return;
 		#endif
@@ -211,7 +211,7 @@ public: // Methods: i/o
 	void
 	close()
 	{
-	 	#ifdef NATCL
+	 	#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 	  //file_provider_stream->clear();
 		return;
 		#endif
@@ -228,7 +228,7 @@ public: // Methods: i/o
 	void
 	seek_beg()
 	{
-	 	#ifdef NATCL
+	 	#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 	  file_provider_stream->clear();
 		file_provider_stream->seekg( std::ios_base::beg );
 	  file_provider_stream->clear();
@@ -466,7 +466,7 @@ public: // Properties
 	std::istream const &
 	operator ()() const
 	{
-		#ifdef NATCL
+		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 			return *file_provider_stream;
 		#endif
 		return ( zip_stream_p_
@@ -480,7 +480,7 @@ public: // Properties
 	std::istream &
 	operator ()()
 	{
-		#ifdef NATCL
+		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 			return *file_provider_stream;
 		#endif
 		return ( zip_stream_p_
@@ -494,7 +494,7 @@ public: // Properties
 	std::istream const &
 	stream() const
 	{
-		#ifdef NATCL
+		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 			return *file_provider_stream;
 		#endif
 		return ( zip_stream_p_
@@ -508,7 +508,7 @@ public: // Properties
 	std::istream &
 	stream()
 	{
-		#ifdef NATCL
+		#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 			return *file_provider_stream;
 		#endif
 		return ( zip_stream_p_
@@ -704,7 +704,7 @@ private: // Fields
 	/// library comes before the basic library), so setting the
 	/// alternate search paths is it the responsibility of core::init()
 	static vector1< std::string > alternative_search_paths_;
-#ifdef NATCL 
+#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER ) 
 	std::istream *file_provider_stream;
 	std::stringstream bad_stream;
 #endif

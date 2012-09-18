@@ -36,7 +36,7 @@
 // AUTO-REMOVED #include <stdlib.h>
 
 #ifndef WIN32
-#ifndef NATCL
+#ifndef  __native_client__ 
 #include <pstream.h>
 
 //Auto Headers
@@ -58,7 +58,7 @@ HolesResult::~HolesResult() {}
 void compute_holes_surfs(PoseBalls & pb, std::string ) {
 
 #ifndef WIN32
-#ifndef NATCL
+#ifndef  __native_client__ 
 
 	using namespace std;
   using namespace basic::options;
@@ -314,7 +314,7 @@ compute_holes_deriv(
    HolesResult result;
 
 #ifndef WIN32
-#ifndef NATCL
+#ifndef  __native_client__ 
    using namespace std;
    using namespace basic::options;
 

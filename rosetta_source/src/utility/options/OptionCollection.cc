@@ -49,7 +49,7 @@ namespace options {
 
 
 	void std_exit_wrapper( const int error_code ){
-		#ifdef NATCL
+		#ifdef  __native_client__ 
 			throw( std::string( "std::exit() was called" ) );
 			return;
 		#endif

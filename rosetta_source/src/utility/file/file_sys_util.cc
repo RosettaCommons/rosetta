@@ -87,7 +87,7 @@ rand_sleep()
 bool
 file_exists( std::string const & path )
 { // NOTE: this is not entirely reliable, stat may fail also when a file does exist
-	#ifdef NATCL
+	#ifdef __native_client__ && USE_FILE_PROVIDER
 		utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
 		return provider->file_exists( path );
 	#endif
@@ -231,7 +231,7 @@ create_directory(
 	std::string const & dir_path
 )
 {
-#ifndef NATCL
+#if !defined( __native_client__ ) 
 #if (defined WIN32)
 	// Windows code
 	return !mkdir(dir_path.c_str());

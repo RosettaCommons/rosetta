@@ -19,7 +19,7 @@
 // Project headers
 #include <utility/file/file_sys_util.hh>
 
-#ifdef NATCL
+#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 #include <utility/inline_file_provider.hh>
 #endif
 
@@ -42,7 +42,7 @@ namespace io {
 		using zlib_stream::zip_istream;
 
 
-#ifdef NATCL
+#if defined( __native_client__ ) && defined( USE_FILE_PROVIDER )
 	utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
 	
 	if( (open_mode & std::ios_base::out ) ){

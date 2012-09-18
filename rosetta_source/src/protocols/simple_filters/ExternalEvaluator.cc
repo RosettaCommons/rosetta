@@ -53,7 +53,7 @@
 
 
 
-#ifdef NATCL
+#ifdef  __native_client__ 
 #define system(a) 1
 #endif
 
@@ -77,7 +77,7 @@ ExternalEvaluator::ExternalEvaluator( std::string tag, std::string command )
 // this probably shouldn't go on BOINC
 #ifndef WIN32
 #ifndef BOINC
-#ifndef NATCL
+#ifndef  __native_client__ 
 
 	using namespace basic::options;
 	if ( !option[ OptionKeys::out::path::scratch ].user() ) {

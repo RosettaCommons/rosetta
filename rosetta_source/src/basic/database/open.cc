@@ -70,7 +70,7 @@ open(
 		return true;
 	} else { // Open failed
 		TR.Error << "Database file open failed for: " << db_stream.filename() << std::endl;
-#ifdef NATCL
+#ifdef __native_client__ 
 		throw( "ERROR: Database file open failed for: " + db_file );
 #endif
 		db_stream.close();

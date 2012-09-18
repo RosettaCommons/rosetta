@@ -48,7 +48,7 @@ namespace simple_filters {
 
 using namespace core;
 
-#ifdef NATCL
+#ifdef  __native_client__ 
 #define system(a) 1
 #endif
 

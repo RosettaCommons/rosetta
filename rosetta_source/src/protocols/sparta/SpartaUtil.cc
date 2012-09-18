@@ -302,7 +302,7 @@ char * ftoa( float n, char *buff, char f, int prec )
 
 int MKDIR(const char *dirName)
 {
-#ifndef NATCL
+#ifndef  __native_client__ 
 #ifdef WIN32
 	return mkdir(dirName);
 #else

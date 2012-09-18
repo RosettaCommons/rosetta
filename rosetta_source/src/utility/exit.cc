@@ -99,7 +99,7 @@ exit(
 	int const status
 )
 {
-	#ifdef NATCL
+	#ifdef __native_client__ 
 	  throw ( std::string( file + ":" + message ) );
 	#endif
 	// Calling all preset exit-callback's
