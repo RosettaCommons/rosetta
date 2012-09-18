@@ -1420,7 +1420,11 @@ void RemodelLoopMover::loophash_stage(
 			if ( core::pose::symmetry::is_symmetric( pose ) ) {
 				protocols::loops::set_single_loop_fold_tree( pose, loop );
 			} else {
-				protocols::forge::methods::set_single_loop_fold_tree( pose, loop );
+				if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+					//do nothing. remake foldtree will destroy the pose when propagate across unconnected segments
+				} else {
+					protocols::forge::methods::set_single_loop_fold_tree( pose, loop );
+				}
 			}
 		}
 
@@ -2046,7 +2050,11 @@ void RemodelLoopMover::independent_stage(
 			if ( core::pose::symmetry::is_symmetric( pose ) ) {
 				protocols::loops::set_single_loop_fold_tree( pose, loop );
 			} else {
-				protocols::forge::methods::set_single_loop_fold_tree( pose, loop );
+				if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+					//do nothing. remake foldtree will destroy the pose when propagate across unconnected segments
+				} else {
+					protocols::forge::methods::set_single_loop_fold_tree( pose, loop );
+				}
 			}
 		}
 
@@ -2285,7 +2293,11 @@ void RemodelLoopMover::boost_closure_stage(
 			if ( core::pose::symmetry::is_symmetric( pose ) ) {
 				protocols::loops::set_single_loop_fold_tree( pose, loop );
 			} else {
-				protocols::forge::methods::set_single_loop_fold_tree( pose, loop );
+				if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+					//do nothing. remake foldtree will destroy the pose when propagate across unconnected segments
+				} else {
+					protocols::forge::methods::set_single_loop_fold_tree( pose, loop );
+				}
 			}
 		}
 		// add cutpoint variants
