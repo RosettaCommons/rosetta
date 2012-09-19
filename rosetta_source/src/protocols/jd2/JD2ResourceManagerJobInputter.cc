@@ -293,7 +293,9 @@ JD2ResourceManagerJobInputter::parse_job_tag(
 			read_Option_subtag_for_job( *tag_iter, job_options );
 		} else if ( tagname == "Data" ) {
 			read_Data_for_subtag( *tag_iter, jobname, input_tag, startstruct_found, resources_for_job );
-		} // are there other kinds of tags?
+		} else if (tagname == "ResidueType") {
+			read_ResidueType_for_subtag(*tag_iter, jobname, input_tag, startstruct_found, resources_for_job);
+        }// are there other kinds of tags?
 	}
 
 	if ( ! startstruct_found ) {
@@ -627,6 +629,39 @@ JD2ResourceManagerJobInputter::read_StringVectorOption_subtag_for_job(
 	job_options->add_option( strinvectopt, vals );
 }
 
+    
+void
+JD2ResourceManagerJobInputter::read_ResidueType_for_subtag(
+	utility::tag::TagPtr options_tag,
+	std::string const & jobname,
+	std::string & input_tag,
+	bool & startstruct_found,
+	std::map< std::string, std::string > & resources_for_job
+)
+{
+
+	std::string rname;
+
+	std::ostringstream err;
+	if(!options_tag->hasOption("resource_tag"))
+	{
+		err << "you must specify the resource_tag option when using a ResidueType tag";
+		err <<std::endl;
+		throw EXCN_Msg_Exception( err.str() );
+	}
+	for ( utility::tag::Tag::options_t::const_iterator
+			opt_iter = options_tag->getOptions().begin(),
+			opt_iter_end = options_tag->getOptions().end();
+			opt_iter != opt_iter_end; ++opt_iter ) {
+		if(opt_iter->first == "resource_tag")
+		{
+			rname = opt_iter->second;
+			resources_for_job["residue"] = rname;
+		}
+	}
+
+
+}
 
 ///@details Read the <Data/> subtag of the <Job/>
 ///

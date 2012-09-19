@@ -41,7 +41,7 @@ utility::pointer::ReferenceCountOP
 ResidueLoader::create_resource(
 	basic::resource_manager::ResourceOptions const & options,
 	basic::resource_manager::LocatorID const & locator_id,
-	std::istream &
+	std::istream & istream
 ) const
 {
 	if ( ! dynamic_cast< ResidueLoaderOptions const * > ( &options ) ) {

@@ -189,6 +189,15 @@ private:
 		bool & startstruct_found,
 		std::map< std::string, std::string > & resources_for_job
 	);
+    
+    void
+    read_ResidueType_for_subtag(
+        utility::tag::TagPtr options_tag,
+        std::string const & jobname,
+        std::string & input_tag,
+        bool & startstruct_found,
+        std::map< std::string, std::string > & resources_for_job
+    );
 
 
 };

@@ -124,6 +124,28 @@ atom_id_from_icoor_line(
 	return id::BOGUS_ATOM_ID;
 }
 
+
+ResidueTypeOP
+read_topology_file(
+	std::string const & filename,
+	chemical::AtomTypeSetCAP atom_types,
+	chemical::ElementSetCAP elements,
+	chemical::MMAtomTypeSetCAP mm_atom_types,
+	chemical::orbitals::OrbitalTypeSetCAP orbital_atom_types,
+//	chemical::CSDAtomTypeSetCAP csd_atom_types kwk commenting out csd_atom_types until I have a chance to fully implement them.
+	chemical::ResidueTypeSetCAP rsd_type_set
+)
+{
+	if( ! utility::file::file_exists( filename ) ) {
+		utility_exit_with_message("Cannot find file '"+filename+"'");
+	}
+	utility::io::izstream data( filename.c_str() );
+	if ( !data.good() ) {
+		utility_exit_with_message("Cannot open file '"+filename+"'");
+	}
+	return read_topology_file(data,atom_types,elements,mm_atom_types,orbital_atom_types,rsd_type_set);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 /// @details	 construct a ResidueType from a file. Example files are currently in
 ///	 minirosetta_database/chemical/residue_type_sets/fa_standard/residue_types/???.params
@@ -133,7 +155,7 @@ atom_id_from_icoor_line(
 
 ResidueTypeOP
 read_topology_file(
-	std::string const & filename,
+	utility::io::izstream & data,
 	chemical::AtomTypeSetCAP atom_types,
 	chemical::ElementSetCAP elements,
 	chemical::MMAtomTypeSetCAP mm_atom_types,
@@ -149,17 +171,11 @@ read_topology_file(
 
 	using namespace basic;
 
+	std::string filename = data.filename();
 	// read the file
+    std::string line;
 	utility::vector1< std::string > lines;
 	{
-		std::string line;
-		if( ! utility::file::file_exists( filename ) ) {
-			utility_exit_with_message("Cannot find file '"+filename+"'");
-		}
-		utility::io::izstream data( filename.c_str() );
-		if ( !data.good() ) {
-			utility_exit_with_message("Cannot open file '"+filename+"'");
-		}
 // 		utility::io::izstream data( filename );
 		while ( getline( data, line ) ) {
 			std::istringstream l( line );

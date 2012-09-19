@@ -5,11 +5,11 @@
 	<Jobs>
 		<Job name="7cpa">
 			<Data desc="startstruct" pdb="7cpa_input.pdb.gz"/>
-			<Data desc="residue" resource_tag="7cpa.params"/>
+			<ResidueType resource_tag="7cpa.params"/>
 		</Job>
 		<Job name="7cpa2">
 			<Data desc="startstruct" pdb="7cpa_input.pdb.gz"/>
-			<Data desc="residue" resource_tag="7cpa.params"/>
+			<ResidueType resource_tag="7cpa.params"/>
 		</Job>
 	</Jobs>
 </JD2ResourceManagerJobInputter>

@@ -21,6 +21,7 @@
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
+#include <utility/io/izstream.fwd.hh>
 
 // C++ headers
 #include <string>
@@ -32,6 +33,17 @@ namespace chemical {
 ResidueTypeOP
 read_topology_file(
 	std::string const & filename,
+	chemical::AtomTypeSetCAP atom_types,
+	chemical::ElementSetCAP elements,
+	chemical::MMAtomTypeSetCAP mm_atom_types,
+	chemical::orbitals::OrbitalTypeSetCAP orbital_atom_types,
+//	chemical::CSDAtomTypeSetCAP csd_atom_types kwk commenting out csd_atom_types until I have a chance to fully implement them.
+	chemical::ResidueTypeSetCAP rsd_type_set
+);
+
+ResidueTypeOP
+read_topology_file(
+	utility::io::izstream & istream,
 	chemical::AtomTypeSetCAP atom_types,
 	chemical::ElementSetCAP elements,
 	chemical::MMAtomTypeSetCAP mm_atom_types,
