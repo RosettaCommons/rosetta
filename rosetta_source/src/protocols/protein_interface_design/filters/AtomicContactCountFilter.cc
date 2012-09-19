@@ -36,6 +36,7 @@
 
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pack/make_symmetric_task.hh>
 
 #include <protocols/simple_filters/InterfaceSasaFilter.hh>
@@ -69,6 +70,7 @@ AtomicContactCountFilter::AtomicContactCountFilter( AtomicContactCountFilter con
 	distance_cutoff_(src.distance_cutoff_),
 	filter_mode_(src.filter_mode_),
 	normalize_by_sasa_(src.normalize_by_sasa_),
+	sym_dof_name_(src.sym_dof_name_),
 	jump_(src.jump_)
 {
 }
@@ -82,15 +84,17 @@ void AtomicContactCountFilter::initialize_all_atoms(core::pack::task::TaskFactor
 {
 	task_factory_ = task_factory;
 	jump_ = 0;
+	sym_dof_name_ = "";
 	normalize_by_sasa_ = false;
 
 	filter_mode_ = ALL;
 }
 
-void AtomicContactCountFilter::initialize_cross_jump(core::Size jump, core::pack::task::TaskFactoryOP task_factory, bool normalize_by_sasa)
+void AtomicContactCountFilter::initialize_cross_jump(core::Size jump, std::string sym_dof_name, core::pack::task::TaskFactoryOP task_factory, bool normalize_by_sasa)
 {
 	task_factory_ = task_factory;
 	jump_ = jump;
+	sym_dof_name_ = sym_dof_name;
 	normalize_by_sasa_ = normalize_by_sasa;
 
 	filter_mode_ = CROSS_JUMP;
@@ -100,6 +104,7 @@ void AtomicContactCountFilter::initialize_cross_chain(core::pack::task::TaskFact
 {
 	task_factory_ = task_factory;
 	jump_ = 0;
+	sym_dof_name_ = "";
 	normalize_by_sasa_ = normalize_by_sasa;
 	
 	filter_mode_ = detect_chains_for_interface ? CROSS_CHAIN_DETECTED : CROSS_CHAIN_ALL;
@@ -126,6 +131,7 @@ void AtomicContactCountFilter::parse_my_tag(
 	{
 		initialize_cross_jump(
 				tag->getOption< core::Size >( "jump", 1 ),
+				tag->getOption< std::string >( "sym_dof_name", "" ),
 				protocols::rosetta_scripts::parse_task_operations( tag, data ),
 				specified_normalized_by_sasa != "0");
 	}
@@ -166,7 +172,9 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 		TR.Debug << "No packer task specified, using default task." << std::endl;
   }
 
-	if (core::pose::symmetry::is_symmetric( pose ))
+	bool symmetric = core::pose::symmetry::is_symmetric( pose );
+
+	if ( symmetric )
 	{
 		task = core::pack::make_new_symmetric_PackerTask_by_requested_method(pose, task);
 	}
@@ -215,7 +223,11 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 		TR.Debug << "Partitioning by jump." << std::endl; 
 
 		// Lookup symmetry-aware jump identifier
-		target_jump = core::pose::symmetry::get_sym_aware_jump_num( pose, jump_ );
+		if ( sym_dof_name_ != "" ) {
+			target_jump = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name_ );
+		} else {
+			target_jump = core::pose::symmetry::get_sym_aware_jump_num( pose, jump_ );
+		}
 
 		// Partition pose by jump
 		ObjexxFCL::FArray1D<bool> jump_partition ( pose.total_residue(), false );
@@ -239,9 +251,22 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 
 	// Count all cross-partition contacts
 	core::Size contact_count = 0;
+  utility::vector1<bool>  indy_resis;
+	if ( symmetric ) 
+	{
+  	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
+		indy_resis = symm_info->independent_residues();
+	}
 
 	for (core::Size i = 1; i <= target.size(); i++)
 	{
+		if ( symmetric && (filter_mode_ == CROSS_JUMP) )
+		{
+			// TODO: ALEX FORD: Fix so that can take multiple tasks.  One that specifies the residues for which counts are analyzed and the other task specifies all of the other residues with which to look for interactions.
+			// The residue_partition logic works in this case, but may not make sense for symmetric assemblies in cross_chain mode.
+			// For multicomponent systems we only want to count contacts from residues in the primary subunit corresponding to the user-specified symdof
+			if (!indy_resis[target[i]] || residue_partition[target[i]]) continue;
+		}
 		for (core::Size j = i+1; j <= target.size(); j++)
 		{
 			if (residue_partition[target[i]] != residue_partition[target[j]])
@@ -265,6 +290,7 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 
 						if (residue_i.xyz(atom_i).distance(residue_j.xyz(atom_j)) <= distance_cutoff_)
 						{
+							TR.Debug << "select (resi " << target[i] << " and name " << residue_i.atom_name(atom_i) << ") + (resi " << target[j] << "and name " << residue_j.atom_name(atom_j) << ")" << std::endl; 
 							contact_count += 1;
 						}
 					}
@@ -361,7 +387,6 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 					sasa_jumps.push_back(i);
 				}
 				sasa_filter.jumps(sasa_jumps);
-
 				interface_sasa = sasa_filter.compute(pose);
 			}
 		}
@@ -373,8 +398,14 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 			protocols::simple_filters::InterfaceSasaFilter sasa_filter;
 
 			TR.Debug << "Adding jump to sasa filter: " << target_jump << std::endl;
-			sasa_filter.jump(target_jump);
-
+			if ( symmetric && (sym_dof_name_ != ""))
+			{
+				sasa_filter.sym_dof_names(sym_dof_name_);
+			}
+			else
+			{
+				sasa_filter.jump(target_jump);
+			}
 			interface_sasa = sasa_filter.compute(pose);
 		}
 

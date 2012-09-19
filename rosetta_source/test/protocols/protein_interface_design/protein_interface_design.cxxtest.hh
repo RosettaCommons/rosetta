@@ -203,7 +203,7 @@ namespace
 				core::Real jump2_sasa = sasafilter2.compute(testpose);
 
 				AtomicContactCountFilter sasanorm_filter;
-				sasanorm_filter.initialize_cross_jump(1, NULL, true);
+				sasanorm_filter.initialize_cross_jump(1, "", NULL, true);
 				core::Real sasanorm_count = sasanorm_filter.compute(testpose);
 				TS_ASSERT_DELTA(9 / jump1_sasa, sasanorm_count, 1e-6);
 

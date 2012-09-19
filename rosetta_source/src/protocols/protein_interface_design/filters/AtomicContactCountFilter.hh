@@ -25,6 +25,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
+#include <string>
 
 #include <protocols/protein_interface_design/filters/AtomicContactCountFilter.fwd.hh>
 
@@ -48,7 +49,7 @@ class AtomicContactCountFilter : public protocols::filters::Filter
 
 		void initialize_all_atoms(core::pack::task::TaskFactoryOP task_factory = NULL);
 
-		void initialize_cross_jump(core::Size jump, core::pack::task::TaskFactoryOP task_factory = NULL, bool normalize_by_sasa = false);
+		void initialize_cross_jump(core::Size jump, std::string sym_dof_name = "", core::pack::task::TaskFactoryOP task_factory = NULL, bool normalize_by_sasa = false);
 
 		void initialize_cross_chain(core::pack::task::TaskFactoryOP task_factory = NULL, bool normalize_by_sasa = false, bool detect_chains_for_interface_by_task = false);
 
@@ -76,6 +77,7 @@ class AtomicContactCountFilter : public protocols::filters::Filter
 		bool normalize_by_sasa_;
 
 		core::Size jump_;
+		std::string sym_dof_name_;
 };
 
 }

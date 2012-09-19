@@ -154,7 +154,11 @@ DesignableResiduesFilter::compute( core::pose::Pose const & pose ) const{
 		TR<<"Number of repackable positions: "<<packable_pos<<std::endl;
 		TR<<select_packable_pos<<std::endl;
 	}
-	return( design_pos );
+	if( designable() && !packable()) {
+		return( design_pos );
+	} else {
+		return( packable_pos);
+	}
 }
 
 core::Real

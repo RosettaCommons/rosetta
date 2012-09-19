@@ -213,6 +213,7 @@ void
 InterfaceSasaFilter::sym_dof_names( std::string const sym_dof_names )
 {
 	sym_dof_names_ = utility::string_split(sym_dof_names, ',');
+	jumps_.resize(0);
 }
 
 void
@@ -239,11 +240,13 @@ InterfaceSasaFilter::compute( core::pose::Pose const & pose ) const {
 
 	for (Size i = 1; i <= sym_dof_names_.size(); i++)
 	{
+		TR.Debug << "getting sym_aware_jump_id from " << sym_dof_names_[i] << std::endl;
 		sym_aware_jump_ids.insert(core::pose::symmetry::sym_dof_jump_num( split_pose, sym_dof_names_[i] ));
 	}
 
 	for (Size i = 1; i <= jumps_.size(); i++)
 	{
+		TR.Debug << "getting sym_aware_jump_id from " << jumps_[i] << std::endl;
 		sym_aware_jump_ids.insert(core::pose::symmetry::get_sym_aware_jump_num( split_pose, jumps_[i] ));
 	}
 
@@ -257,7 +260,7 @@ InterfaceSasaFilter::compute( core::pose::Pose const & pose ) const {
 		translate->step_size( 1000.0 );
 		translate->apply( split_pose );
 	}
-
+	//split_pose.dump_pdb("Interface_SASA_split.pdb");
 	runtime_assert( !hydrophobic_ || !polar_ );
 	if( !hydrophobic_ && !polar_ )
 	{
