@@ -642,8 +642,8 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 
     //compute derivatives
 		//prefactor used in derivative calculations
-		core::Real pfac = weight* rdc.Dconst() * invr2 * invr2 * invr;
-    core::Real const pfac_NH = weight * 36.5089/1.04/1.04/1.04/1.04/1.04;
+		core::Real pfac = weight* rdc.Dconst() * invr2 * invr;
+    core::Real const pfac_NH = weight * 36.5089/1.04/1.04/1.04;
 
 		if (bReduced) {
 			if ( tr.Trace.visible() ) tr.Trace << "reducing coupling for " << rdc << " dev: " << dev
@@ -1110,8 +1110,8 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
     core::Real invr = 1.0 / sqrt(r2);
     core::Real invr2 = sqr(invr);
 		//prefactor used in derivative calculations
-    core::Real pfac = rdc.Dconst() * invr2 * invr2 * invr * weight;
-    core::Real const pfac_NH = weight * 36.5089/1.04/1.04/1.04/1.04/1.04;
+    core::Real pfac = rdc.Dconst() * invr2 * invr * weight;
+    core::Real const pfac_NH = weight * 36.5089/1.04/1.04/1.04;
 		if (bReduced) {
 			if ( tr.Trace.visible() )
 					tr.Trace << "reducing coupling for " << rdc << " dev: " << dev << " pfac: " << pfac << " pfac_NH " << pfac_NH;
@@ -1411,8 +1411,8 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
     core::Real invr = 1.0 / sqrt(r2);
     core::Real invr2 = sqr(invr);
 		//prefactor used in derivative calculations
-    core::Real pfac = rdc.Dconst() * invr2 * invr2 * invr * weight;
-    core::Real const pfac_NH = weight * 36.5089/1.04/1.04/1.04/1.04/1.04;
+    core::Real pfac = rdc.Dconst() * invr2  * invr * weight;
+    core::Real const pfac_NH = weight * 36.5089/1.04/1.04/1.04;
 		if (bReduced) {
 			if ( tr.Trace.visible() )
 					tr.Trace << "reducing coupling for " << rdc << " dev: " << dev << " pfac: " << pfac << " pfac_NH " << pfac_NH;
@@ -1676,8 +1676,8 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
     core::Real invr = 1.0 / sqrt(r2);
     core::Real invr2 = sqr(invr);
 		//prefactor used in derivative calculations
-    core::Real pfac = rdc.Dconst() * invr2 * invr2 * invr * weight;
-    core::Real const pfac_NH = weight * 36.5089/1.04/1.04/1.04/1.04/1.04;
+    core::Real pfac = rdc.Dconst() * invr2 * invr * weight;
+    core::Real const pfac_NH = weight * 36.5089/1.04/1.04/1.04;
 		if (bReduced) {
 			if ( tr.Trace.visible() )
 					tr.Trace << "reducing coupling for " << rdc << " dev: " << dev << " pfac: " << pfac << " pfac_NH " << pfac_NH;
@@ -1949,8 +1949,8 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
     core::Real invr = 1.0 / sqrt(r2);
     core::Real invr2 = sqr(invr);
 		//prefactor used in derivative calculations
-    core::Real pfac = rdc.Dconst() * invr2 * invr2 * invr * weight;
-    core::Real const pfac_NH = weight * 36.5089/1.04/1.04/1.04/1.04/1.04;
+    core::Real pfac = rdc.Dconst() * invr2  * invr * weight;
+    core::Real const pfac_NH = weight * 36.5089/1.04/1.04/1.04;
 		if (bReduced) {
 			if ( tr.Trace.visible() )
 					tr.Trace << "reducing coupling for " << rdc << " dev: " << dev << " pfac: " << pfac << " pfac_NH " << pfac_NH;
