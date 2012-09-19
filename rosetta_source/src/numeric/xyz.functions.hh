@@ -33,6 +33,9 @@
 #include <cstdlib>
 #include <vector>
 
+// External headers
+#include <Eigen/Eigen>
+#include <boost/bind.hpp>
 
 namespace numeric {
 
@@ -54,6 +57,109 @@ operator *( xyzMatrix< T > const & m, xyzVector< T > const & v )
 	);
 }
 
+/// @brief return a matrix containing the 3 principal components
+/// of the given set of points
+template< typename T >
+inline
+xyzVector< T >
+first_principal_component( utility::vector1< xyzVector< T > > const & coords ){
+	return principal_components(coords).col(1);
+}
+
+/// @brief return a matrix containing the 3 principal components
+/// of the given set of points
+template< typename T >
+inline
+xyzMatrix< T >
+principal_components( utility::vector1< xyzVector< T > > const & coords )
+{
+	using namespace Eigen;
+	
+	Size n = coords.size();
+	MatrixXd data_points = MatrixXd::Zero(3, n);//3 dimensions x # of points
+	for(Size i=1; i<=coords.size(); ++i)
+	{
+		data_points(0,i-1)=coords[i].x();
+		data_points(1,i-1)=coords[i].y();
+		data_points(2,i-1)=coords[i].z();
+	}
+		
+	MatrixXd mean_subtracted_data = data_points;
+	for (int i = 0; i < 3; ++i)
+	{
+		T mean = (mean_subtracted_data.row(i).sum())/n; //compute mean of each dimension (x,y,z)
+		VectorXd meanVector  = VectorXd::Constant(n,mean); //create a vector with constant value = mean
+		mean_subtracted_data.row(i) -= meanVector; //subtract mean from every point for the current dimension
+	}
+		
+	// get the covariance matrix
+	MatrixXd Covariance = MatrixXd::Zero(3, 3);
+	Covariance = (1 / (T)n) * mean_subtracted_data * mean_subtracted_data.transpose();
+		
+	// compute the eigenvalue on the Cov Matrix
+	EigenSolver<MatrixXd> m_solve(Covariance);
+	VectorXd eigenvalues = VectorXd::Zero(3);
+	eigenvalues = m_solve.eigenvalues().real();
+		
+	MatrixXd eigenvectors = MatrixXd::Zero(n, 3);
+	eigenvectors = m_solve.eigenvectors().real();
+		
+	//Create a mapping between eigenvalues and eigenvectors
+	utility::vector1< std::pair<T, VectorXd > > value_vector_pairs;
+	for (Size i = 1 ; i <= 3; ++i)
+	{
+		value_vector_pairs.push_back(std::make_pair(eigenvalues(i-1), eigenvectors.col(i-1)));//eigenvalues is 0-indexed
+	}
+	
+	//Sort eigenvectors highest to lowest based on eigenvalues
+	sort(value_vector_pairs.begin(), value_vector_pairs.end(),
+		 boost::bind(&std::pair<T, VectorXd>::first, _1) >
+		 boost::bind(&std::pair<T, VectorXd>::first, _2));
+
+	//Convert to xyzMatrix
+	xyzMatrix<T> sorted_eigenvectors;
+	for (int i = 0; i < 3; i++)
+	{
+		numeric::xyzVector<T> xyz_eigenvector(
+			value_vector_pairs[i+1].second(0),
+			value_vector_pairs[i+1].second(1),
+			value_vector_pairs[i+1].second(2));
+		sorted_eigenvectors.col(i+1, xyz_eigenvector);
+	}
+	
+	return sorted_eigenvectors;
+}
+
+/// @brief return the point closest to point p3 that lies on the line
+/// defined by p1 and p2
+template< typename T >
+inline
+xyzVector< T >
+closest_point_on_line( xyzVector< T > const & p1, xyzVector< T > const & p2, xyzVector< T > const & q )
+{
+	xyzVector<T> u = p2-p1;
+	xyzVector<T> pq = q-p1;
+	xyzVector<T> w2 = pq-(u*(dot_product(pq,u)/u.magnitude_squared()));
+	xyzVector<T> point = q-w2;
+	return point;
+}
+
+/// @brief calculate center of mass for coordinates
+template< typename T >
+inline
+xyzVector< T >
+center_of_mass( utility::vector1< xyzVector< T > > const & coords )
+{
+	xyzVector< T > center_of_mass( 0.0, 0.0, 0.0 );
+	for(typename utility::vector1< xyzVector< T > >::const_iterator it = coords.begin();
+		it != coords.end();
+		++it)
+	{
+		center_of_mass += *it;
+	}
+	center_of_mass /= coords.size();
+	return center_of_mass;
+}
 
 /// @brief xyzMatrix * xyzVector product
 /// @note  Same as xyzMatrix * xyzVector
@@ -243,6 +349,44 @@ angle_degrees(
 	return conversions::degrees(angle);
 }
 
+/// @brief Angle between two vectors in radians
+/// @note  Given two vectors (p1->p2 & p3->p4),
+/// calculate the angle between them
+/// @note  Angle returned is on [ 0, pi ]
+template< typename T >
+inline
+T // Angle (radians)
+angle_radians(
+	xyzVector< T > const & p1,
+	xyzVector< T > const & p2,
+	xyzVector< T > const & p3,
+	xyzVector< T > const & p4
+)
+{
+	xyzVector< T > const a( ( p2 - p1 ).normalize_or_zero() );
+	xyzVector< T > const b( ( p4 - p3 ).normalize_or_zero() );
+	
+	T angle = std::acos( sin_cos_range( dot(a, b) ) );
+	return angle;
+}
+
+/// @brief Angle between two vectors in radians
+/// @note  Given two vectors (p1->p2 & p3->p4),
+///	calculate the angle between them
+/// @note  Angle returned is on [ 0, pi ]
+template< typename T >
+inline
+T // Angle (radians)
+angle_degrees(
+	xyzVector< T > const & p1,
+	xyzVector< T > const & p2,
+	xyzVector< T > const & p3,
+	xyzVector< T > const & p4
+)
+{
+	T angle = angle_radians( p1, p2, p3, p4 );
+	return conversions::degrees(angle);
+}
 
 /// @brief Dihedral (torsion) angle in radians: angle value passed
 /// @note  Given four positions in a chain ( p1, p2, p3, p4 ), calculates the dihedral

@@ -23,6 +23,8 @@
 			<feature name=ProteinResidueConformationFeatures/>
 			<feature name=ResidueBurialFeatures/>
 			<feature name=ResidueSecondaryStructureFeatures/>
+			<feature name=SecondaryStructureSegmentFeatures/>
+			<feature name=SmotifFeatures/>
 
 			Two-Body
 			<feature name=AtomAtomPairFeatures min_dist=0 max_dist=3 nbins=2/>
