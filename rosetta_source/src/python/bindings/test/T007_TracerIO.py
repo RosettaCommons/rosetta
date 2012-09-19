@@ -13,9 +13,10 @@ import rosetta
 
 
 T = rosetta.basic.PyTracer()
-rosetta.basic.Tracer.set_ios_hook(T, rosetta.basic.Tracer.get_AllChannels_string())
+rosetta.basic.Tracer.set_ios_hook(T, rosetta.basic.Tracer.get_AllChannels_string(), False)
 
 rosetta.init()
+pose = rosetta.pose_from_pdb("test/data/test_in.pdb")
 
 print '\nCaptured IO:'
 print T.buf()
