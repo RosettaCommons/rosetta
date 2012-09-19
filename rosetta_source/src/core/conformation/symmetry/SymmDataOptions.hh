@@ -23,7 +23,12 @@
 
 //utility headers
 #include <utility/pointer/ReferenceCount.hh>
+
+#ifdef WIN32
+#include <utility/tag/Tag.hh>
+#else
 #include <utility/tag/Tag.fwd.hh>
+#endif
 
 //C++ headers
 #include <istream>

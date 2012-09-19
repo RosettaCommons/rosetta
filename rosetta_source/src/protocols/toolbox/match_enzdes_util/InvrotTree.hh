@@ -36,7 +36,7 @@
 #include <utility/vector1.fwd.hh>
 
 
-#ifdef PYROSETTA
+#if defined PYROSETTA || defined WIN32
 	#include <protocols/toolbox/match_enzdes_util/InvrotTarget.hh>
 	#include <core/scoring/constraints/Constraint.hh>
 #endif
