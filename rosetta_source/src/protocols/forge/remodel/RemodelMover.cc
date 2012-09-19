@@ -675,6 +675,7 @@ TR << "ORIGINAL TREE: " << pose.fold_tree() << std::endl;
 			bool disulfPass = false;
 			disulfPass = designMover.find_disulfides_in_the_neighborhood(pose, disulf_partners);
 			if (disulfPass != true){
+				i--; //for now control disulf with num_trajectory flag, too.
 				continue;
 			}
 
