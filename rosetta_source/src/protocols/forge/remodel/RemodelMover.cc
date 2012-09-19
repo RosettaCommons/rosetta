@@ -426,7 +426,11 @@ void RemodelMover::apply( Pose & pose ) {
   if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
 		//for cases involve jxn, need to make pose longer so manager won't complain
 		//about missing residues
-		if (pose.total_residue() < 2*remodel_data.sequence.length()){
+
+		//this is pre modify, so simply extend to 2x blueprint length,
+		//with extensions, the pose will go beyond the correct length.  need to fix
+		//that after modify. Residues beyond first copy+ jxn doesn't really matter
+		if (pose.total_residue() < 2*remodel_data.sequence.length()){ //just making sure it's shorter before grow, input pose can be longer
 			Size len_diff = (2*remodel_data_.sequence.length()) - pose.total_residue();
       // append a tail of the same length
       for (int i = 1; i<= len_diff; i++){
@@ -462,6 +466,31 @@ if (working_model.manager.size()!= 0){
 	);
 
 }
+
+//finally recheck length to ensure blueprint compliance
+if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
+	Size max_pdb_index = remodel_data_.blueprint.size()*2;
+  while (pose.total_residue() >= max_pdb_index){
+		pose.conformation().delete_residue_slow(pose.total_residue());
+  }
+
+	if ( pose.total_residue() < (remodel_data_.sequence.length()*2) ) {
+      Size len_diff = (2*remodel_data_.sequence.length()) - pose.total_residue();
+      // append a tail of the same length
+      for (int i = 1; i<= len_diff; i++){
+        core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(1).residue_type_set());
+        core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
+        pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
+        pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
+        pose.set_omega(pose.total_residue()-1,180);
+      }
+  }
+
+}
+
+
+
+
 /*
 	up = working_model.manager.undefined_positions();
   for ( std::set<core::Size>::iterator i = up.begin(); i!=up.end(); i++){

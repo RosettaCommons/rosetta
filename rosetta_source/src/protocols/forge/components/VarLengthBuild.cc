@@ -394,6 +394,28 @@ void VarLengthBuild::apply( Pose & pose ) {
 			}
 		}
 
+		// similarly for archive_pose, process the same way for length
+		// adding a tail to the starter monomer pose
+		if ( archive_pose.total_residue() < (remodel_data_.sequence.length()*2) ) {
+
+			Size len_diff = (2*remodel_data_.sequence.length()) - archive_pose.total_residue();
+			// append a tail of the same length
+			for (int i = 1; i<= len_diff; i++){
+				core::chemical::ResidueTypeSet const & rsd_set = (archive_pose.residue(1).residue_type_set());
+				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
+				archive_pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,archive_pose.total_residue(), true);
+				archive_pose.conformation().insert_ideal_geometry_at_polymer_bond(archive_pose.total_residue()-1);
+				archive_pose.set_omega(archive_pose.total_residue()-1,180);
+			}
+		}
+
+		else if ( archive_pose.total_residue() > (remodel_data_.sequence.length()*2)){
+			while (archive_pose.total_residue() != (2* remodel_data_.sequence.length())){
+				archive_pose.conformation().delete_residue_slow(archive_pose.total_residue());
+			}
+		}
+
+
 		assert( pose.total_residue() == (2* remodel_data_.sequence.length()));
 		repeat_tail_length_ = remodel_data_.sequence.length();
 
@@ -428,7 +450,9 @@ void VarLengthBuild::apply( Pose & pose ) {
 		if ( centroid_build( pose ) ) {
 			set_last_move_status( MS_SUCCESS );
 		} else {
+			pose=archive_pose;
 			set_last_move_status( FAIL_DO_NOT_RETRY );
+			return;
 		}
 	}
 	//pose.dump_pdb("vlb_aft_centroid_build.pdb");
@@ -441,15 +465,15 @@ void VarLengthBuild::apply( Pose & pose ) {
 		//pose.conformation().delete_residue_slow(pose.total_residue());
 
     //need to extend the archive pose, otherwise the connectivity is wrong
-    	using namespace protocols::loops;
-    	using protocols::forge::methods::intervals_to_loops;
-    	std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
-    	LoopsOP loops = new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) );
+      using namespace protocols::loops;
+      using protocols::forge::methods::intervals_to_loops;
+      std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
+      LoopsOP loops = new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) );
 
-    	Pose bufferPose(archive_pose);
-    	protocols::forge::remodel::RemodelLoopMover RLM(loops);
-    	RLM.set_repeat_tail_length(repeat_tail_length_);
-    	RLM.repeat_generation_with_additional_residue( bufferPose, archive_pose );
+      Pose bufferPose(archive_pose);
+      protocols::forge::remodel::RemodelLoopMover RLM(loops);
+      RLM.set_repeat_tail_length(repeat_tail_length_);
+      RLM.repeat_generation_with_additional_residue( bufferPose, archive_pose );
 
 	  }
 	}
@@ -469,7 +493,11 @@ void VarLengthBuild::apply( Pose & pose ) {
 			if (core::pose::symmetry::is_symmetric(pose) ) {
 				pose.fold_tree ( core::pose::symmetry::sealed_symmetric_fold_tree( pose ) );
 			} else {
-				pose.fold_tree( fold_tree_from_pose( pose, pose.fold_tree().root(), MoveMap() ) );
+				if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()){
+				}
+				else {
+					pose.fold_tree( fold_tree_from_pose( pose, pose.fold_tree().root(), MoveMap() ) );
+				}
 			}
 		}
 	} else if ( recover_original_on_failure_ ) {

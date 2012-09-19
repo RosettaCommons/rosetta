@@ -1150,9 +1150,34 @@ void RemodelLoopMover::apply( Pose & pose ) {
 
 		set_last_move_status( protocols::moves::MS_SUCCESS );
 	} else {
+
+		// if use bypass_closure flag, all failure is passed as success.  the
+		// problem is that the subsequent restore_sidechain function won't know if
+		// it's fail or success.  although it doesn't matter if simply
+		// bypass_closure, it is a problem when we use lh_filter for testing the
+		// likeliness of a backbone structure.  In this case, a failed criteria
+		// should exit. otherwise the length would all be messed up.  Since masking pose
+		// as built successfully, pass it on as a repeat, not a monomer in this
+		// case
+
+		//but hold on.. the filter failure should be the only reason monomer is
+		//passed on.  so maybe we don't need to grow it afterall
+		/*
+		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user() && basic::options::option[ OptionKeys::remodel::bypass_closure].user()){
+				pose = *( accumulator.begin()->second );
+				repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
+				(*sfxOP)(repeat_pose_);
+				pose = repeat_pose_;
+		}
+		*/
 		set_last_move_status( protocols::moves::FAIL_RETRY );
-		TR << "fail in loop building: EXIT " << std::endl;
-		exit(0);
+			if (basic::options::option[ OptionKeys::remodel::RemodelLoopMover::bypass_closure].user() &&
+					basic::options::option[ OptionKeys::remodel::lh_filter_string].user()){
+				//activates lh_filter for plausible backbone, in this case, a failed
+				//loop should exit.
+				TR << "fail in loop building: EXIT " << std::endl;
+				exit(0);
+		}
 	}
 
 	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
@@ -1330,6 +1355,7 @@ void RemodelLoopMover::loophash_stage(
 
 	Pose const constantPose(pose); //needed this because get_rt function for loophash doesn't honor the cut positions needed to build the loop.
 
+	utility::vector1< std::string > filter_target = basic::options::option[ OptionKeys::remodel::lh_filter_string];
 
 	// setup loops
 	loops::LoopsOP loops_to_model = new loops::Loops();
@@ -1346,6 +1372,12 @@ void RemodelLoopMover::loophash_stage(
 	}
 
 	TR << "   n_loops = " << loops_to_model->size() << std::endl;
+
+	// if filter is used, make sure the number of strings specified agree with
+	// num loops.
+	if (basic::options::option[ OptionKeys::remodel::lh_filter_string].user()){
+		runtime_assert(filter_target.size() == loops_to_model->size());
+	}
 
 	if ( loops_to_model->size() == 0 ) { // nothing to do...
 		return;
@@ -1371,7 +1403,10 @@ void RemodelLoopMover::loophash_stage(
 	//	Size const max_outer_cycles = 1;
 
 	// per-loop frag + ccd_move
-	for ( Loops::iterator l = loops_to_model->v_begin(), le = loops_to_model->v_end(); l != le; ++l ) {
+
+	Size loop_number = 1; // for lh_filter_string index
+
+	for ( Loops::iterator l = loops_to_model->v_begin(), le = loops_to_model->v_end(); l != le; ++l, loop_number++ ) {
 		Loop & loop = *l;
 
 
@@ -1464,7 +1499,7 @@ void RemodelLoopMover::loophash_stage(
 		// reset counters
 		mc.reset_counters();
 
-		Size loopsize = loopsizes[1];
+		Size loopsize = loopsizes[loop_number];
 
 		loop_hash_library->load_mergeddb();
 
@@ -1626,12 +1661,12 @@ void RemodelLoopMover::loophash_stage(
 						//special case for DB's test
 						core::util::ABEGOManager AM;
 						std::string alphabet;
-						std::string target = basic::options::option[ OptionKeys::remodel::lh_filter_string];
+						std::string target = filter_target[loop_number];
 						for (Size idx = idxresStart; idx <= idxresStop; idx++){
 							alphabet += AM.index2symbol( AM.torsion2index(phi[idx],psi[idx], omega[idx],1));
 						}
 						runtime_assert(alphabet.length() == target.length());
-						if ( alphabet.compare( basic::options::option[ OptionKeys::remodel::lh_filter_string] ) != 0 ){
+						if ( alphabet.compare( target ) != 0 ){
 							std::cout << "lh frag at " << idxresStart << " and " << idxresStop << " not as " << target <<  ": " <<  alphabet << std::endl;
 							lh_frag_count--;
 							continue;
