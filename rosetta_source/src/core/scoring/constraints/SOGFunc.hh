@@ -38,9 +38,9 @@ public:
 	SOGFunc() {}
 
 	SOGFunc(
-		utility::vector1< core::Real > const means,
-		utility::vector1< core::Real > const sdevs,
-		utility::vector1< core::Real > const weights
+		const utility::vector1< core::Real >& means,
+		const utility::vector1< core::Real >& sdevs,
+		const utility::vector1< core::Real >& weights
 	);
 
 	SOGFunc( core::Real mean, core::Real sdev );
@@ -56,7 +56,7 @@ public:
 
 	void check_bounds( Real const x, Real const val ) const;
 
-	/// @brief show the definitio of this SOGFunc to the specified output stream.
+	/// @brief show the definition of this SOGFunc to the specified output stream.
 	virtual void show_definition( std::ostream &out ) const;
 
 	/// @brief Calls show( out ) on this SOGFunc.

@@ -39,9 +39,9 @@ public:
 	 */
 
 	SOGFunc_Impl(
-		utility::vector1< core::Real > const means,
-		utility::vector1< core::Real > const sdevs,
-		utility::vector1< core::Real > const weights
+		const utility::vector1< core::Real >& means,
+		const utility::vector1< core::Real >& sdevs,
+		const utility::vector1< core::Real >& weights
 	) :
 		means_  ( means   ),
 		sdevs_  ( sdevs   ),

@@ -29,9 +29,9 @@ namespace scoring {
 namespace constraints {
 
 SOGFunc::SOGFunc(
-	utility::vector1< core::Real > const means,
-	utility::vector1< core::Real > const sdevs,
-	utility::vector1< core::Real > const weights
+	const utility::vector1< core::Real >& means,
+	const utility::vector1< core::Real >& sdevs,
+	const utility::vector1< core::Real >& weights
 ) : member_(means, sdevs, weights) {}
 
 SOGFunc::SOGFunc(
