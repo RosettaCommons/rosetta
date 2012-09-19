@@ -57,7 +57,7 @@ namespace remodel { extern IntegerOptionKey const dr_cycles; }
 namespace remodel { extern IntegerOptionKey const two_chain_tree; }
 namespace remodel { extern IntegerOptionKey const repeat_structure; }
 namespace remodel { extern IntegerOptionKey const lh_ex_limit; }
-namespace remodel { extern StringOptionKey const lh_filter_string; }
+namespace remodel { extern StringVectorOptionKey const lh_filter_string; }
 namespace remodel { extern IntegerOptionKey const lh_cbreak_selection; }
 namespace remodel { extern BooleanOptionKey const lh_closure_filter; }
 namespace remodel { extern BooleanOptionKey const cen_minimize; }

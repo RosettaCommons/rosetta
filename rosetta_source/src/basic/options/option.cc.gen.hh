@@ -475,7 +475,7 @@ option.add( basic::options::OptionKeys::evaluation::score_sscore_short_helix, "d
 option.add( basic::options::OptionKeys::evaluation::score_sscore_maxloop, "defines the maximum length of a loop that is still considered for the sscore - score" ).def(3);
 option.add( basic::options::OptionKeys::evaluation::rpf, "will compute RPF score with distance cutoff 5 and store in column rpf_score" ).def(false);
 option.add( basic::options::OptionKeys::evaluation::window_size, "Window size for local RMSD calculations in windowed_rmsd app" ).def(5);
-option.add( basic::options::OptionKeys::evaluation::I_sc, "Interaction score for docking" );
+option.add( basic::options::OptionKeys::evaluation::I_sc, "score function name used to calculate I_sc" ).def("score12");
 option.add( basic::options::OptionKeys::filters::filters, "filters option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::filters::disable_all_filters, "turn off all centroid filters: RG, CO, and Sheet" ).def(false);
 option.add( basic::options::OptionKeys::filters::disable_rg_filter, "turn off RG filter" ).def(false);
@@ -634,10 +634,10 @@ option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option gro
 option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
-option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
+option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::seq_sep_stages, "give vector with sequence_separation after stage1, stage3 and stage4" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::reramp_cst_cycles, "in stage2 do xxx cycles where atom_pair_constraint is ramped up" ).def(0);
@@ -1267,11 +1267,11 @@ option.add( basic::options::OptionKeys::lh::mpi_outbound_wu_buffer_size, "No des
 option.add( basic::options::OptionKeys::lh::mpi_loophash_split_size    , "No description" ).def(50);
 option.add( basic::options::OptionKeys::lh::mpi_metropolis_temp, "No description" ).def(1000000.0);
 option.add( basic::options::OptionKeys::lh::mpi_save_state_interval, "No description" ).def(1200);
-option.add( basic::options::OptionKeys::lh::mpi_master_save_score_only, "No description" ).def(true);
-option.add( basic::options::OptionKeys::lh::max_loophash_per_structure, "No description" ).def(1);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::rms_limit, "How to deal with returned relaxed structures" ).def(2.0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::mpi_master_save_score_only, "No description" ).def(true);
+option.add( basic::options::OptionKeys::lh::max_loophash_per_structure, "No description" ).def(1);
+option.add( basic::options::OptionKeys::lh::rms_limit, "How to deal with returned relaxed structures" ).def(2.0);
 option.add( basic::options::OptionKeys::lh::centroid_only, "false" ).def(false);
 option.add( basic::options::OptionKeys::lh::write_centroid_structs, "Output raw loophashed decoys as well as relaxed ones" ).def(false);
 option.add( basic::options::OptionKeys::lh::write_all_fa_structs, "Write out all structures returned from batch relax" ).def(false);
@@ -1900,11 +1900,11 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number 
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of rigid-body moves" ).def("score5");
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);
-option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
-option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::skip_rb_moves, "omit rigid-body moves" ).def(false);
+option.add( basic::options::OptionKeys::RBSegmentRelax::helical_movement_params, "helical-axis-rotation, helical-axis-translation, off-axis-rotation, off-axis-translation" ).def(utility::vector1<float>(4,0.0));
+option.add( basic::options::OptionKeys::RBSegmentRelax::strand_movement_params, "strand-in-plane-rotation, strand-in-plane-translation, out-of-plane-rotation, out-of-plane-translationn" ).def(utility::vector1<float>(4,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::default_movement_params, "default-rotation, default-translation" ).def(utility::vector1<float>(2,0.0));
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_seqwidth, "sequence width on constraints" ).def(0);
 option.add( basic::options::OptionKeys::edensity::edensity, "edensity option group" ).legal(true).def(true);
@@ -2101,7 +2101,7 @@ option.add( basic::options::OptionKeys::remodel::dr_cycles, "number of design-re
 option.add( basic::options::OptionKeys::remodel::two_chain_tree, "label the start of the second chain" );
 option.add( basic::options::OptionKeys::remodel::repeat_structure, "build identical repeats this many times" ).def(1);
 option.add( basic::options::OptionKeys::remodel::lh_ex_limit, "loophasing neighboring bin expansion limit" ).def(5);
-option.add( basic::options::OptionKeys::remodel::lh_filter_string, "loophash ABEGO filter target fragment type" ).def("");
+option.add( basic::options::OptionKeys::remodel::lh_filter_string, "loophash ABEGO filter target fragment type. list sequentially for each loop" );
 option.add( basic::options::OptionKeys::remodel::lh_cbreak_selection, "loophash with cbreak dominant weight" ).def(10);
 option.add( basic::options::OptionKeys::remodel::lh_closure_filter, "filter for close rms when bypass_closure is used" ).def(false);
 option.add( basic::options::OptionKeys::remodel::cen_minimize, "centroid minimization after fragment building" ).def(false);

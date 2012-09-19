@@ -4075,7 +4075,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option(  'two_chain_tree', 'Integer', desc='label the start of the second chain'),
                 Option(  'repeat_structure', 'Integer', desc='build identical repeats this many times', default='1'),
                 Option(  'lh_ex_limit', 'Integer', desc='loophasing neighboring bin expansion limit', default='5'),
-                Option(  'lh_filter_string', 'String', desc='loophash ABEGO filter target fragment type', default=''),
+                Option(  'lh_filter_string', 'StringVector', desc='loophash ABEGO filter target fragment type. list sequentially for each loop'),
                 Option(  'lh_cbreak_selection', 'Integer', desc='loophash with cbreak dominant weight', default='10'),
                 Option(  'lh_closure_filter', 'Boolean', desc='filter for close rms when bypass_closure is used', default='false'),
                 Option(  'cen_minimize', 'Boolean' , desc= 'centroid minimization after fragment building', default = 'false'),

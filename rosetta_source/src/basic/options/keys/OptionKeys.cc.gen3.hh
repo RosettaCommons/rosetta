@@ -1,3 +1,5 @@
+namespace RBSegmentRelax { BooleanOptionKey const skip_rb_moves( "RBSegmentRelax:skip_rb_moves" );  }
+namespace RBSegmentRelax { RealVectorOptionKey const helical_movement_params( "RBSegmentRelax:helical_movement_params" );  }
 namespace RBSegmentRelax { RealVectorOptionKey const strand_movement_params( "RBSegmentRelax:strand_movement_params" );  }
 namespace RBSegmentRelax { RealVectorOptionKey const default_movement_params( "RBSegmentRelax:default_movement_params" );  }
 namespace RBSegmentRelax { IntegerOptionKey const cst_seqwidth( "RBSegmentRelax:cst_seqwidth" );  }
@@ -195,7 +197,7 @@ namespace remodel { IntegerOptionKey const dr_cycles( "remodel:dr_cycles" );  }
 namespace remodel { IntegerOptionKey const two_chain_tree( "remodel:two_chain_tree" );  }
 namespace remodel { IntegerOptionKey const repeat_structure( "remodel:repeat_structure" );  }
 namespace remodel { IntegerOptionKey const lh_ex_limit( "remodel:lh_ex_limit" );  }
-namespace remodel { StringOptionKey const lh_filter_string( "remodel:lh_filter_string" );  }
+namespace remodel { StringVectorOptionKey const lh_filter_string( "remodel:lh_filter_string" );  }
 namespace remodel { IntegerOptionKey const lh_cbreak_selection( "remodel:lh_cbreak_selection" );  }
 namespace remodel { BooleanOptionKey const lh_closure_filter( "remodel:lh_closure_filter" );  }
 namespace remodel { BooleanOptionKey const cen_minimize( "remodel:cen_minimize" );  }
