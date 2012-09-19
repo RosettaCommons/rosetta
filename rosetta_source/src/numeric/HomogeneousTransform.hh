@@ -21,11 +21,14 @@
 #ifndef INCLUDED_numeric_HomogeneousTransform_hh
 #define INCLUDED_numeric_HomogeneousTransform_hh
 
+#include <numeric/HomogeneousTransform.fwd.hh>
 #include <numeric/constants.hh>
+#include <numeric/IOTraits.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyz.functions.hh>
 
+#include <iostream>
 
 namespace numeric {
 
@@ -532,6 +535,39 @@ public:
 		from_euler_angles_rad( euler_rad );
 	}
 
+public:
+	std::ostream &
+	show_stream( std::ostream & stream = std::cout) const
+	{
+		// Types
+		using std::setw;
+		typedef IOTraits< T >  Traits;
+
+		// Save current stream state and set persistent state
+		std::ios_base::fmtflags const old_flags = stream.flags();
+		int const old_precision = stream.precision( Traits::precision() );
+		stream << std::right << std::showpoint << std::uppercase;
+
+		// Output xyzVector
+		int const w = Traits::width();
+		stream << setw( w ) << xx() << ' ' << setw( w ) << yx() << ' ' << setw( w ) << zx() << setw( w ) << px() << std::endl;
+		stream << setw( w ) << xy() << ' ' << setw( w ) << yy() << ' ' << setw( w ) << zy() << setw( w ) << py() << std::endl;
+		stream << setw( w ) << xz() << ' ' << setw( w ) << yz() << ' ' << setw( w ) << zz() << setw( w ) << pz() << std::endl;
+
+
+		// Restore previous stream state
+		stream.precision( old_precision );
+		stream.flags( old_flags );
+
+		return stream;
+	}
+	
+	void
+	show(std::ostream & stream = std::cout) const
+	{
+		stream << show_stream( stream );
+	}
+
 private:
 
 	bool
@@ -587,6 +623,13 @@ private:
 
 };
 
+template< typename T >
+std::ostream &
+operator <<( std::ostream & stream, HomogeneousTransform< T > const & ht )
+{
+	return ht.show_stream( stream );
+}
+
 // PyRosetta WorkAround
 class HomogeneousTransform_Double : public HomogeneousTransform<double>
 {
@@ -609,6 +652,12 @@ public:
 		xyzMatrix< double > const & axes,
 		xyzVector< double > const & point) : HomogeneousTransform<double>(axes, point) {}
 };
+
+std::ostream &
+operator << ( std::ostream & stream, HomogeneousTransform< double > const & ht )
+{
+	return ht.show_stream( stream );
+}
 
 }
 
