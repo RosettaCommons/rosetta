@@ -53,6 +53,10 @@ Angle between Atom2->Atom1 vector and Atom2->Atom3 vector; the angle (passed as 
 <tt>Atom1_Name Atom1_ResNum Atom2_Name Atom2_ResNum Atom3_Name Atom3_ResNum Atom4_Name Atom4_ResNum Func_Type Func_Def</tt><br>
 Dihedral angle of Atom1->Atom2->Atom3->Atom4.  Dihedral is measured in radians on -pi -> pi.
 
+@li @ref SiteConstraint "SiteConstraint":
+<tt>Atom1_Name Atom1_ResNum Opposing_chain Func_Type Func_Def</tt><br>
+Constraint that a residue interacts with some other chain - roughly, that it is (or is not) in a binding site.  The atom and resnum identify which atom is being checked for interactions with the opposing chain.  Notice that "Constraint" is irregularly in its tag.
+
 @li @ref BigBinConstraint "BigBin":
 <tt>ResNum Bin</tt>
 
@@ -135,6 +139,8 @@ f(x) = \left \{
 \end{array} \right.
 @f]
 
+@li @ref SigmoidFunc "SIGMOID": <tt> x0 m </tt>
+Two arguments; x0 is the center of the sigmoid func and m is its slope.  It has hardcoded min/max of 0.5.  The functional form is (1/(1+exp(-m*( x-x0 ))) - 0.5.
 
 Function types are all implemented as subclasses of the core::scoring::constraints::Func class.
 
@@ -157,6 +163,12 @@ Angle CD2 13 NE2 13 ZN 32 HARMONIC 2.09 0.35
 Dihedral CG 13 CD2 13 NE2 13 ZN 32 CIRCULARHARMONIC 3.14 0.35
 AtomPair SG 18 V4 32 HARMONIC 0.0 0.2
 Angle CB 18 SG 18 ZN 32 HARMONIC 1.95 0.35
+@endverbatim
+
+@verbatim
+#discourages residue 16, chain B, from interacting with chain A; encourages residue 47
+SiteConstraint CA 16B A SIGMOID 5.0 -2.0
+SiteConstraint CA 47B A SIGMOID 5.0 2.0
 @endverbatim
 
 @verbatim
