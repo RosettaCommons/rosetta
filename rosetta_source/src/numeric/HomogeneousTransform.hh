@@ -653,7 +653,7 @@ public:
 		xyzVector< double > const & point) : HomogeneousTransform<double>(axes, point) {}
 };
 
-std::ostream &
+inline std::ostream &
 operator << ( std::ostream & stream, HomogeneousTransform< double > const & ht )
 {
 	return ht.show_stream( stream );
