@@ -435,6 +435,10 @@ namespace rna{
 			}
 		}
 
+		// A return value is required. Please fix this.
+#ifdef WIN32
+		return true;
+#endif
 	}
 
 

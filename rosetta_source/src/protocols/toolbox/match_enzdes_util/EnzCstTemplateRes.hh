@@ -45,6 +45,7 @@
 
 #ifdef WIN32
 	#include <core/id/AtomID.hh>
+	#include <core/chemical/ResidueType.hh>
 #endif
 
 

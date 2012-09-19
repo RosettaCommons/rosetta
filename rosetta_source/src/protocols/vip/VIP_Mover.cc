@@ -41,6 +41,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <iterator>
 
 core::Size num_stored_poses( 0 );
 
@@ -219,7 +220,7 @@ namespace vip {
 		utility::vector1<core::Size>::iterator new_end_itr = std::unique( mm_res.begin(), mm_res.end() );
 
 		utility::vector1<core::Size> unique_mm_res;
-		std::copy( mm_res.begin(), new_end_itr, back_inserter( unique_mm_res ) );
+		std::copy( mm_res.begin(), new_end_itr, std::back_inserter( unique_mm_res ) );
 
 		void_mutatables = unique_mm_res;
 	}
