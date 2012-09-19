@@ -17,8 +17,8 @@
 #endif
 
 #include <protocols/wum/SilentStructStore.hh>
-#include <protocols/frag_picker/VallChunk.hh>
-#include <protocols/frag_picker/VallProvider.hh>
+//#include <protocols/frag_picker/VallChunk.hh>
+//#include <protocols/frag_picker/VallProvider.hh>
 
 // AUTO-REMOVED #include <boost/cstdint.hpp>
 // AUTO-REMOVED #include <boost/unordered_map.hpp>
@@ -84,7 +84,7 @@
 
 using namespace core;
 using namespace kinematics;
-using namespace protocols::frag_picker;
+//using namespace protocols::frag_picker;
 using namespace core::io::silent;
 using namespace core::pose;
 using namespace core::scoring;
