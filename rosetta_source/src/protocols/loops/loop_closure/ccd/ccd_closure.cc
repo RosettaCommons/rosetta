@@ -1024,6 +1024,7 @@ ccd_moves(
 
 			scoring::RamachandranCOP rama(0);
 			if ( rama_check ) {
+				rama = &(scoring::ScoringManager::get_instance()->get_Ramachandran());
 				assert( nbb == 3 );
 				//////////////////////////////////////
 				// evaluate the rama score difference:
