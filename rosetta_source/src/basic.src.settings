@@ -89,6 +89,9 @@ sources = {
 		"NullResourceLocator",
 		"StringResourceStream",
 	],
+	"basic/resource_manager/fallback_configuration" : [
+		"NativeFallbackConfiguration",
+	],
 	"basic/svd": [
 		"SVD_Solver",
 	],

@@ -45,6 +45,10 @@ f <- transform(f,
 	ADdist = vector_distance(cbind(dx, dy, dz), cbind(ax, ay, az)))
 
 
+# This shouldn't happend, but if it does get rid of them
+f <- f[f$ADdist < 5,]
+
+
 f$seq_sep <- factor(f$seq_sep,
 	levels = c("-4", "-3", "-2", "-1", "2", "3", "4", "5", "long"),
 	labels = c("-4", "-3", "-2", "-1", "2", "3", "4", "5", "long"))
@@ -61,7 +65,7 @@ p <- ggplot(data=dens) + theme_bw() +
 	facet_wrap( ~ seq_sep ) +
 	opts(title = "Backbone-Backbone HBonds A-D Distance by Sequence Separation\n(DonRes - AccRes) normalized for equal weight per unit distance") +
 	scale_x_ADdist +
-	scale_y_continuous("FeatureDensity)", limits=c(0,6), breaks=c(1,3,5))
+	scale_y_continuous("FeatureDensity", limits=c(0,6), breaks=c(1,3,5))
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }

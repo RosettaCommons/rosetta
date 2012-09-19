@@ -23,6 +23,8 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <basic/resource_manager/ResourceManager.hh>
+#include <basic/resource_manager/util.hh>
 
 // Utility Headers
 #include <utility/exit.hh>
@@ -89,6 +91,22 @@ RRProtocolReferenceStructure::run(
   PackerTask const & packer_task
 ) {
 	// Assume score_function.setup_for_scoring(pose) has already been called.
+
+	using namespace basic::resource_manager;
+
+	if(!reference_pose_){
+		if(ResourceManager::get_instance()->
+			has_resource_with_description("native")){
+			reference_pose_ = get_resource< Pose >("native");
+		} else {
+			stringstream err_msg;
+			err_msg
+				<< "Attempting to run the Rotamer Recovery against a Reference Structure, "
+				<< "but no pose with resource decription could be found.";
+			utility_exit_with_message(err_msg.str());
+		}
+	}
+
 
 	if(pose.total_residue() != reference_pose_->total_residue()){
 		stringstream err_msg;

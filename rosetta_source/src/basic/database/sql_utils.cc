@@ -211,7 +211,7 @@ get_db_session(
 		db_name,
 		pq_schema);
 }
-	
+
 sessionOP
 get_db_session(
 	string const & db_name,
@@ -235,7 +235,7 @@ get_db_session(
 	utility::sql_database::DatabaseMode::e db_mode,
 	std::string const & db_name,
 	std::string const & pq_schema){
-	
+
 	return get_db_session(
 		db_mode,
 		utility::sql_database::TransactionMode::standard,
@@ -741,7 +741,7 @@ parse_database_connection(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys::inout;
 	using utility::sql_database::DatabaseSessionManager;
-	
+
 	utility::sql_database::TransactionMode::e transaction_mode;
 	if(tag->hasOption("transaction_mode")){
 		transaction_mode = utility::sql_database::transaction_mode_from_name(
@@ -749,7 +749,7 @@ parse_database_connection(
 	} else {
 		transaction_mode = utility::sql_database::TransactionMode::standard;
 	}
-	
+
 	Size chunk_size;
 	switch(transaction_mode){
 		case(utility::sql_database::TransactionMode::none):
@@ -779,7 +779,7 @@ parse_database_connection(
 				"Unrecognized transaction mode: '" +
 				name_from_transaction_mode(transaction_mode) + "'");
 	}
-	
+
 	utility::sql_database::DatabaseMode::e database_mode;
 	if(tag->hasOption("database_mode")){
 		database_mode = utility::sql_database::database_mode_from_name(
@@ -788,23 +788,23 @@ parse_database_connection(
 		database_mode = utility::sql_database::database_mode_from_name(
 			option[dbms::mode]);
 	}
-	
+
 	std::string database_name;
 	if(tag->hasOption("database_name")){
 		database_name = tag->getOption<string>("database_name");
 	} else {
 		database_name = option[dbms::database_name];
 	}
-	
+
 	std::string database_pq_schema;
 	if(tag->hasOption("database_pq_schema")){
 		database_pq_schema = tag->getOption<string>("database_pq_schema");
 	} else {
 		database_pq_schema = option[dbms::pq_schema];
 	}
-	
+
 	switch(database_mode){
-			
+
 		case utility::sql_database::DatabaseMode::mysql:
 			if(tag->hasOption("database_pq_schema")){
 				TR << "WARNING: You must specify 'database_mode=postgres' ";
@@ -821,23 +821,23 @@ parse_database_connection(
 				TR << "to use the 'database_read_only' tag." << endl;
 			}
 			break;
-			
+
 		case utility::sql_database::DatabaseMode::sqlite3:
 			if(tag->hasOption("database_host")){
 				TR << "WARNING: You must specify either 'database_mode=mysql' ";
 				TR << "or database_mode=postgres' to use the 'database_host' tag." << endl;
 			}
-			
+
 			if(tag->hasOption("database_user")){
 				TR << "WARNING: You must specify either 'database_mode=mysql' ";
 				TR << "or database_mode=postgres' to use the 'database_user' tag." << endl;
 			}
-			
+
 			if(tag->hasOption("database_password")){
 				TR << "WARNING: You must specify either 'database_mode=mysql' ";
 				TR << "or database_mode=postgres' to use the 'database_password' tag." << endl;
 			}
-			
+
 			if(tag->hasOption("database_port")){
 				TR << "WARNING: You must specify either 'database_mode=mysql' ";
 				TR << "or database_mode=postgres' to use the 'database_port' tag." << endl;
@@ -848,7 +848,7 @@ parse_database_connection(
 				"Unrecognized database mode: '" +
 				name_from_database_mode(database_mode) + "'");
 	}
-	
+
 	switch(database_mode){
 		case utility::sql_database::DatabaseMode::sqlite3:
 			return DatabaseSessionManager::get_instance()->get_db_session(
@@ -856,16 +856,16 @@ parse_database_connection(
 				database_name, "", "", "", "", 0,
 				tag->getOption("database_read_only", false),
 				tag->getOption("database_separate_db_per_mpi_process", false));
-			
+
 		case utility::sql_database::DatabaseMode::mysql:
 		case utility::sql_database::DatabaseMode::postgres:{
-			
+
 			std::string database_host;
 			if(!tag->hasOption("database_host") && !option[dbms::host].user()){
 				if(!option[dbms::host].user()){
 					utility_exit_with_message(
 						"WARNING: To connect to a postgres or mysql database you must set"
-						"the database_host tag or specify -dbms:host on the command line.");
+						" the database_host tag or specify -dbms:host on the command line.");
 				}
 				else{
 					database_host=option[dbms::host];
@@ -874,7 +874,7 @@ parse_database_connection(
 			else{
 				database_host=tag->getOption<string>("database_host");
 			}
-			
+
 			std::string database_user;
 			if(!tag->hasOption("database_user") && !option[dbms::user].user()){
 				if(!option[dbms::user].user()){
@@ -889,7 +889,7 @@ parse_database_connection(
 			else{
 				database_user=tag->getOption<string>("database_user");
 			}
-			
+
 			std::string database_password;
 			if(!tag->hasOption("database_password") && !option[dbms::password].user()){
 				if(!option[dbms::password].user()){
@@ -904,7 +904,7 @@ parse_database_connection(
 			else{
 				database_password=tag->getOption<string>("database_password");
 			}
-			
+
 			Size database_port;
 			if(!tag->hasOption("database_port") && !option[dbms::port].user()){
 				if(!option[dbms::port].user()){
@@ -919,7 +919,7 @@ parse_database_connection(
 			else{
 				database_port=tag->getOption<Size>("database_port");
 			}
-			
+
 			return DatabaseSessionManager::get_instance()->get_db_session(
 				database_mode, transaction_mode, chunk_size,
 				database_name, database_pq_schema,

@@ -71,6 +71,7 @@ WHERE
 	don_atoms.struct_id = hb.struct_id AND don_atoms.site_id = hb.don_id AND
 	acc_atoms.struct_id = hb.struct_id AND acc_atoms.site_id = hb.acc_id;"
 
+
 # Execute the SQL query on each sample source.
 f <- query_sample_sources(sample_sources, sele)
 
@@ -79,6 +80,9 @@ f <- query_sample_sources(sample_sources, sele)
 # bonding atoms.
 f <- transform(f,
 	ADdist = vector_distance(cbind(dx, dy, dz), cbind(ax, ay, az)))
+
+# This shouldn't happend, but if it does get rid of them
+f <- f[f$ADdist < 5,]
 
 # Order the plots better and give more descriptive labels
 f$don_chem_type <- factor(f$don_chem_type,
