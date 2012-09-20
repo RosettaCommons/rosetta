@@ -18,7 +18,7 @@
 #include <core/pose/selection.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-
+#include <core/conformation/Conformation.hh>
 // Project Headers
 #include <core/pose/Pose.hh>
 
@@ -101,7 +101,7 @@ RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::
 		TR<<"Repackable residues: ";
 	else
 		TR<<"Prevent repacking on: ";
-	for( core::Size i = 1; i<=pose.total_residue(); ++i ){
+	for( core::Size i = pose.conformation().chain_begin( chain() ); i<=pose.conformation().chain_end( chain() ); ++i ){
 		if( std::find( designable.begin(), designable.end(), i ) == designable.end() ){
 			TR<<i<<",";
 			outside.push_back( i );
