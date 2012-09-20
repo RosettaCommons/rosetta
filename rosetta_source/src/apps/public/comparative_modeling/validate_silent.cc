@@ -28,8 +28,10 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/sequence/util.hh>
 
-#define PCT_THRESHOLD 0.9
+// External headers
+#include <boost/algorithm/string/predicate.hpp>
 
+#define PCT_THRESHOLD 0.9
 using namespace std;
 
 int main(int argc, char* argv[]) {
@@ -63,30 +65,38 @@ int main(int argc, char* argv[]) {
   SilentFileData sfd_in, sfd_out;
   sfd_in.read_file(input_file);
 
-  size_t num_good = 0, num_bad = 0;
+  size_t num_good = 0, num_failed = 0, num_mismatch = 0;
 
   utility::vector1<string> tags = sfd_in.tags();
   for (utility::vector1<string>::const_iterator i = tags.begin(); i != tags.end(); ++i) {
     SilentStructOP decoy = sfd_in[*i];
+    string decoy_id = *i;
     string sequence = decoy->sequence().one_letter_sequence();
 
-    bool matches = ref_sequence.compare(0, ref_sequence.length(), sequence, 0, ref_sequence.length()) == 0;
-    if (matches) {
+    // Because we're not using jd2, we're responsible for removing failed simulations
+    bool failed_simulation = boost::starts_with(decoy_id, "W_");
+    bool sequence_mismatch = ref_sequence.compare(0, ref_sequence.length(), sequence, 0, ref_sequence.length()) != 0;
+
+    if (failed_simulation) {
+      cerr << "Removed tag " << decoy_id << " (failed simulation)" << endl;
+      ++num_failed;
+    } else if (sequence_mismatch) {
+      cerr << "Removed tag " << decoy_id << " (sequence mismatch)" << endl;
+      ++num_mismatch;
+    } else {
       sfd_out.write_silent_struct(*decoy, output_file, false);
       ++num_good;
-    } else {
-      cerr << "Removed tag: " << *i << " seq: " << sequence << endl;
-      ++num_bad;
     }
   }
 
   // print summary statistics
-  double total = num_good + num_bad;
+  double total = num_good + num_failed + num_mismatch;
   double pct_good = num_good / total;
-  double pct_bad = num_bad / total;
-  cout << "pct_good: " << pct_good << " pct_bad: " << pct_bad << endl;
+  double pct_failed = num_failed / total;
+  double pct_mismatch = num_mismatch / total;
+  cout << "pct_good: " << pct_good << " pct_failed: " << pct_failed << " pct_mismatch: " << pct_mismatch << endl;
 
-  // if the percentage of failures exceeds a threshold, flag the file as corrupt
-  // to external callers through return codes
+  // If the percentage of failures exceeds a threshold, signal
+  // failure to external callers using the return code
   return (pct_good >= PCT_THRESHOLD) ? 0 : 1;
 }
