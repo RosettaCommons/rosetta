@@ -51,8 +51,30 @@ public:
 		try {
 			inputter.fill_jobs_from_stream( jobstream, jobvector );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			TS_ASSERT( false );
 			std::cerr << "Raised exception " << e.msg() << std::endl;
+			TS_ASSERT( false );
+		}
+		TS_ASSERT( jobvector.size() == 10 );
+	}
+
+	void test_JD2ResourceManagerJobInputter_read_job_w_nstruct_10_option_without_namespace() {
+		std::string xmlfile =
+			"<JD2ResourceManagerJobInputter>\n"
+			"  <Jobs>\n"
+			"    <Job name=firstjob nstruct=10 >\n"
+			"      <Data desc=startstruct pdb=1ten.pdb />\n"
+			"      <Option native=1ten.pdb />\n"
+			"    </Job>\n"
+			"  </Jobs>\n"
+			"</JD2ResourceManagerJobInputter>\n";
+		std::istringstream jobstream( xmlfile );
+		JD2ResourceManagerJobInputter inputter;
+		Jobs jobvector;
+		try {
+			inputter.fill_jobs_from_stream( jobstream, jobvector );
+		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+			std::cerr << "Raised exception " << e.msg() << std::endl;
+			TS_ASSERT( false );
 		}
 		TS_ASSERT( jobvector.size() == 10 );
 	}
@@ -392,10 +414,7 @@ public:
 			TS_ASSERT( false ); // should throw an exception
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::string expected_error =
-				"Error: option 'packing::ex1' does not match any existing option in Rosetta.\n"
-				"Options must be fully namespaced (e.g. 'ex1' will not work, but 'packing:ex1' would work.\n"
-				"Please remember to use only one colon when giving options.\n"
-				"Thrown from JD2ResourceManagerJobInputter::parse_job_tag\n";
+				"Error: Option key 'packing::ex1' not found. Please remember to use only one colon when giving options.\n";
 			if ( e.msg() != expected_error ) {
 				std::cout << "expected error: '" << expected_error << "'" << std::endl;
 				std::cout << "actual error:   '" << e.msg() << "'" << std::endl;
@@ -421,19 +440,8 @@ public:
 		Jobs jobvector;
 		try {
 			inputter.fill_jobs_from_stream( jobstream, jobvector );
-			TS_ASSERT( false ); // should throw an exception
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			std::string expected_error =
-				"Error: option 'ex1' does not match any existing option in Rosetta.\n"
-				"Options must be fully namespaced (e.g. 'ex1' will not work, but 'packing:ex1' would work.\n"
-				"Please remember to use only one colon when giving options.\n"
-				"Thrown from JD2ResourceManagerJobInputter::parse_job_tag\n";
-			if ( e.msg() != expected_error ) {
-				std::cout << "expected error: '" << expected_error << "'" << std::endl;
-				std::cout << "actual error:   '" << e.msg() << "'" << std::endl;
-			}
-
-			TS_ASSERT( e.msg() == expected_error );
+			TS_ASSERT( false ); // shouldn't throw an exception
 		}
 
 	}

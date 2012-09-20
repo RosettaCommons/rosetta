@@ -41,15 +41,21 @@
 #include <utility/options/keys/RealOptionKey.hh>
 #include <utility/options/keys/StringOptionKey.hh>
 #include <utility/string_util.hh>
+#include <utility/sql_database/DatabaseSessionManager.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/database/sql_utils.hh>
 
 // Boost headers
 #include <boost/lexical_cast.hpp>
+
+// External headers
+#include <cppdb/frontend.h>
 
 //C++ headers
 #include <istream>
@@ -69,7 +75,8 @@ using core::pose::PoseOP;
 using core::pose::Pose;
 
 using std::endl;
-
+using std::string;
+using std::stringstream;
 
 static basic::Tracer tr("protocols.jd2.JD2ResourceManagerJobInputter");
 
@@ -255,6 +262,8 @@ JD2ResourceManagerJobInputter::parse_jobs_tags(
 		std::string const & tagname = (*tag_iter)->getName();
 		if ( tagname == "Job" ) {
 			parse_job_tag( *tag_iter, jobs );
+		} else if( tagname == "JobsTable"){
+			parse_jobs_table_tag( *tag_iter, jobs );
 		} else {
 			std::ostringstream err;
 			err << "Error parsing jobs tags in JD2ResourceManagerJobInputter: unrecognized tag '" << tagname << "'";
@@ -295,12 +304,19 @@ JD2ResourceManagerJobInputter::parse_job_tag(
 			read_Data_for_subtag( *tag_iter, jobname, input_tag, startstruct_found, resources_for_job );
 		} else if (tagname == "ResidueType") {
 			read_ResidueType_for_subtag(*tag_iter, jobname, input_tag, startstruct_found, resources_for_job);
-        }// are there other kinds of tags?
+		}// are there other kinds of tags?
 	}
 
 	if ( ! startstruct_found ) {
 		std::string errmsg( "Error: Job given without a 'startstruct'" );
 		throw EXCN_Msg_Exception( errmsg );
+	}
+
+	if(jobs_tag->hasOption("nstruct")){
+		// if it's not specified here, it can be specified in an <Option/>
+		// tag or default to 1.
+		parse_options_name_and_value(
+			"nstruct", jobs_tag->getOption<string>("nstruct"), job_options);
 	}
 
 	if ( jobname.size() == 0 ) {
@@ -317,32 +333,195 @@ JD2ResourceManagerJobInputter::parse_job_tag(
 		jobname = input_tag;
 	}
 
-	int nstruct( 1 );
-	if ( jobs_tag->hasOption( "nstruct" )) {
-		std::string nstruct_string( jobs_tag->getOption< std::string >( "nstruct" ));
-		try {
-			nstruct = boost::lexical_cast< int >( nstruct_string );
-		} catch ( boost::bad_lexical_cast const& ) {
-			std::ostringstream err;
-			err << "Error converting value '" << nstruct_string << "' given for job '" << jobname << "' for the nstruct option of the Job tag from JD2ResourceManagerJobInputter::parse_job_tag\n";
-			throw EXCN_Msg_Exception( err.str() );
+	record_job(jobname, resources_for_job, job_options, jobs);
+}
+
+void
+JD2ResourceManagerJobInputter::parse_jobs_table_tag(
+	utility::tag::TagPtr tag,
+	Jobs & jobs
+) {
+	using namespace basic::database;
+
+	utility::sql_database::sessionOP db_session = parse_database_connection(tag);
+
+	string sql_command;
+	if(tag->hasOption("sql_command")){
+		sql_command = tag->getOption<string>("sql_command");
+		check_statement_sanity(sql_command);
+	} else {
+		stringstream err_msg;
+		err_msg
+			<< "The JobsTable tag requires a 'sql_command' tag that "
+			<< "is an SQL SELECT statement that returns the following column formats" << endl
+			<< "ordered by <job_name>:" << endl
+			<< "\t(<job_name>, 'Resource', <desc>, <resource_tag>)" << endl
+			<< "\t(<job_name>, 'Option', <option_key>, <option_value>)" << endl;
+		throw utility::excn::EXCN_Msg_Exception(err_msg.str());
+	}
+
+	cppdb::statement select_stmt(safely_prepare_statement(sql_command, db_session));
+	cppdb::result res(safely_read_from_database(select_stmt));
+
+	std::string job_table_schema =
+		"Each row of the jobs table should have one of the following formats\n"
+		"\n"
+		"    job_name, 'Resource', desc, resource_tag\n"
+		"    job_name, 'Option', option_key, option_value\n"
+		"\n"
+		" * The table should 'ORDER BY job_name', to have data for a\n"
+    "   specific job adjacent in the table\n"
+		"\n"
+		" * Each job should have a 'startstruct' resource that is used as the primary input\n"
+		"\n"
+		" * desc: A job-agnostic description for a resource like 'native' or 'symm_data'\n"
+		"   that can be referenced in the protocol.\n"
+		"\n"
+		" * resource_tag: The tag of a resource described in the <Resources/> block.\n"
+		"\n"
+		" * option_key: An optionally namespaced option key (string) for the options\n"
+    "   system like 'in:file:native'\n"
+		"\n"
+		" * option_value: A value or list of values that processed into the option system\n";
+
+	if(res.cols() != 4){
+		stringstream err_msg;
+		err_msg
+			<< "The JobsTable tag requires a 'sql_command' tag" << endl
+			<< job_table_schema << endl
+			<< "Instead, the query returned " << res.cols() << ":" << endl
+			<< "SQL query:" << endl
+			<< sql_command << endl;
+		throw utility::excn::EXCN_Msg_Exception(err_msg.str());
+	}
+
+	Size row_number(0);
+	string previous_job_name("");
+	bool startstruct_found(false);
+	string input_tag;
+	std::map< string, string > resources_for_job;
+	JobOptionsOP job_options = new JobOptions;
+	while(res.next()){
+		row_number++;
+
+		string job_name, resource_type, key, value;
+		res >> job_name >> resource_type >> key >> value;
+
+		if(row_number != 1 && previous_job_name != job_name){
+			// we've just finished collecting information for the job,
+			// record job and reset the invariants
+			if(!startstruct_found){
+				stringstream err_msg;
+				err_msg
+					<< "No 'startstruct' resource was provided "
+					<< "for Job with name '" << previous_job_name << "'" << endl
+					<< "The JobsTable tag requires a 'sql_command' tag" << endl
+					<< job_table_schema << endl
+					<< "SQL query:" << endl
+					<< sql_command << endl;
+					throw EXCN_Msg_Exception(err_msg.str());
+			}
+
+			record_job(previous_job_name, resources_for_job, job_options, jobs);
+			resources_for_job.clear();
+			job_options = new JobOptions;
+			startstruct_found = false;
+			previous_job_name = job_name;
+
+		}
+
+
+		if(resource_type == "Resource"){
+			if(key == "startstruct") {
+				startstruct_found = true;
+			}
+			resources_for_job[ key ] = value;
+		} else if (resource_type == "Option"){
+			parse_options_name_and_value(key, value, job_options);
+		} else {
+			stringstream err_msg;
+			err_msg
+				<< "Unrecognized data type '" << resource_type << "' for job '" << job_name << "'" << endl
+				<< "The JobsTable tag requires a 'sql_command' tag" << endl
+				<< job_table_schema << endl
+				<< endl
+				<< "SQL query:" << endl
+				<< sql_command << endl
+				<< endl
+				<< "Resources:" << endl;
+			for(std::map<string,string>::const_iterator i=resources_for_job.begin(), ie=resources_for_job.end(); i != ie; ++i){
+				err_msg << "\t '" << i->first << "' <- '" << i->second << "'" << endl;
+			}
+			err_msg
+				<< "Options:" << endl
+				<< job_options << endl;
+
+			throw EXCN_Msg_Exception(err_msg.str());
+		}
+
+		if(previous_job_name.empty()){
+			previous_job_name = job_name;
 		}
 	}
 
-	/// OK: let's inform the JD2ResourceManager about all the resources required by this job
-	for ( std::map< std::string, std::string >::const_iterator
+	if(row_number == 0){
+		tr.Warning << "JobsTable returned no rows." << endl;
+	}
+
+	if(!startstruct_found){
+		stringstream err_msg;
+		err_msg
+			<< "No 'startstruct' resource was provided "
+			<< "for Job with name '" << previous_job_name << "'" << endl
+			<< "The JobsTable tag requires a 'sql_command' tag" << endl
+			<< job_table_schema << endl
+			<< endl
+			<< "SQL query:" << endl
+			<< sql_command << endl
+			<< endl
+			<< "Resources:" << endl;
+		for(std::map<string,string>::const_iterator i=resources_for_job.begin(), ie=resources_for_job.end(); i != ie; ++i){
+			err_msg << "\t '" << i->first << "' <- '" << i->second << "'" << endl;
+		}
+		err_msg
+			<< "Options:" << endl
+			<< job_options << endl;
+		throw EXCN_Msg_Exception(err_msg.str());
+	}
+
+	record_job(previous_job_name, resources_for_job, job_options, jobs);
+}
+
+void
+JD2ResourceManagerJobInputter::record_job(
+	string const & job_name,
+	std::map< string, string > resources_for_job,
+	JobOptionsOP job_options,
+	Jobs & jobs
+) {
+
+  JD2ResourceManager * jd2rm(
+		JD2ResourceManager::get_jd2_resource_manager_instance());
+
+	using namespace basic::options;
+
+	Size nstruct(1);
+	if(job_options->has_option(OptionKeys::out::nstruct)){
+		nstruct = job_options->get_option(OptionKeys::out::nstruct);
+	}
+
+	for ( std::map< string, string >::const_iterator
 			iter = resources_for_job.begin(), iter_end = resources_for_job.end();
 			iter != iter_end; ++iter ) {
-		jd2rm->add_resource_tag_by_job_tag( iter->first, jobname, iter->second );
+		jd2rm->add_resource_tag_by_job_tag( iter->first, job_name, iter->second );
 	}
 
-	InnerJobOP inner_job = new InnerJob( jobname, nstruct );
+	InnerJobOP inner_job = new InnerJob( job_name, nstruct );
 	JD2ResourceManager::get_jd2_resource_manager_instance()->add_job_options(
-		jobname, job_options);
-	for ( int ii = 1; ii <= nstruct; ++ii ) {
+		job_name, job_options);
+	for ( Size ii = 1; ii <= nstruct; ++ii ) {
 		jobs.push_back( new Job( inner_job, ii ));
 	}
-
 }
 
 void
@@ -351,68 +530,88 @@ JD2ResourceManagerJobInputter::read_Option_subtag_for_job(
 	JobOptionsOP job_options
 )
 {
-	using namespace basic::options;
 	for ( utility::tag::Tag::options_t::const_iterator
 			opt_iter = options_tag->getOptions().begin(),
 			opt_iter_end = options_tag->getOptions().end();
 			opt_iter != opt_iter_end; ++opt_iter ) {
 		std::string const & optname = opt_iter->first;
 		std::string const & val = opt_iter->second;
-		if ( basic::options::OptionKeys::has( optname ) ) {
-			OptionKey const & opt( basic::options::OptionKeys::key( optname ));
-			if ( opt.scalar() ) {
-				// scalar options
-				if ( dynamic_cast< BooleanOptionKey const * > (&opt) ) {
-					BooleanOptionKey const & boolopt( static_cast< BooleanOptionKey const & > (opt) );
-					read_BooleanOption_subtag_for_job( boolopt, optname, val, job_options );
-				} else if ( dynamic_cast< FileOptionKey const * > (&opt) ) {
-					FileOptionKey const & fileopt( static_cast< FileOptionKey const & > (opt) );
-					read_FileOption_subtag_for_job( fileopt, optname, val, job_options );
-				} else if ( dynamic_cast< IntegerOptionKey const * > (&opt) ) {
-					IntegerOptionKey const & iopt( static_cast< IntegerOptionKey const & > (opt) );
-					read_IntegerOption_subtag_for_job( iopt, optname, val, job_options );
-				} else if ( dynamic_cast< PathOptionKey const * > (&opt) ) {
-					PathOptionKey const & pathopt( static_cast< PathOptionKey const & > (opt) );
-					read_PathOption_subtag_for_job( pathopt, optname, val, job_options );
-				} else if ( dynamic_cast< RealOptionKey const * > (&opt) ) {
-					RealOptionKey const & ropt( static_cast< RealOptionKey const & > (opt) );
-					read_RealOption_subtag_for_job( ropt, optname, val, job_options );
-				} else if ( dynamic_cast< StringOptionKey const * > (&opt) ) {
-					StringOptionKey const & stopt( static_cast< StringOptionKey const & > (opt) );
-					read_StringOption_subtag_for_job( stopt, optname, val, job_options );
-				}
+		parse_options_name_and_value(optname, val, job_options);
+	}
+}
 
-			} else {
-				/// vector option
-				utility::vector1< std::string > vals = utility::string_split( val, ',' );
-				if ( dynamic_cast< BooleanVectorOptionKey const * > (&opt) ) {
-					BooleanVectorOptionKey const & boolvectopt( static_cast< BooleanVectorOptionKey const & > (opt) );
-					read_BooleanVectorOption_subtag_for_job( boolvectopt, optname, val, vals, job_options );
-				} else if ( dynamic_cast< FileVectorOptionKey const * > (&opt) ) {
-					FileVectorOptionKey const & filevectopt( static_cast< FileVectorOptionKey const & > (opt) );
-					read_FileVectorOption_subtag_for_job( filevectopt, optname, val, vals, job_options );
-				} else if ( dynamic_cast< IntegerVectorOptionKey const * > (&opt) ) {
-					IntegerVectorOptionKey const & ivectopt( static_cast< IntegerVectorOptionKey const & > (opt) );
-					read_IntegerVectorOption_subtag_for_job( ivectopt, optname, val, vals, job_options );
-				} else if ( dynamic_cast< PathVectorOptionKey const * > (&opt) ) {
-					PathVectorOptionKey const & pathvectopt( static_cast< PathVectorOptionKey const & > (opt) );
-					read_PathVectorOption_subtag_for_job( pathvectopt, optname, val, vals, job_options );
-				} else if ( dynamic_cast< RealVectorOptionKey const * > (&opt) ) {
-					RealVectorOptionKey const & rvectopt( static_cast< RealVectorOptionKey const & > (opt) );
-					read_RealVectorOption_subtag_for_job( rvectopt, optname, val, vals, job_options );
-				} else if ( dynamic_cast< StringVectorOptionKey const * > (&opt) ) {
-					StringVectorOptionKey const & stvectopt( static_cast< StringVectorOptionKey const & > (opt) );
-					read_StringVectorOption_subtag_for_job( stvectopt, optname, val, vals, job_options );
-				}
+
+void
+JD2ResourceManagerJobInputter::parse_options_name_and_value(
+	std::string const & optname,
+	std::string const & val,
+	JobOptionsOP job_options
+)
+{
+	using namespace basic::options;
+
+	std::string full_key;
+	try{
+		full_key = option.find_key_cl(optname, "", true);
+	} catch (...) {
+		std::stringstream err_msg;
+		err_msg
+			<< "Error: Option key '" << optname << "' not found. Please remember to use only one colon when giving options." << endl;
+		throw EXCN_Msg_Exception( err_msg.str() );
+	}
+
+	if ( basic::options::OptionKeys::has( full_key ) ) {
+		OptionKey const & opt( basic::options::OptionKeys::key( full_key ));
+		if ( opt.scalar() ) {
+			// scalar options
+			if ( dynamic_cast< BooleanOptionKey const * > (&opt) ) {
+				BooleanOptionKey const & boolopt( static_cast< BooleanOptionKey const & > (opt) );
+				read_BooleanOption_subtag_for_job( boolopt, full_key, val, job_options );
+			} else if ( dynamic_cast< FileOptionKey const * > (&opt) ) {
+				FileOptionKey const & fileopt( static_cast< FileOptionKey const & > (opt) );
+				read_FileOption_subtag_for_job( fileopt, full_key, val, job_options );
+			} else if ( dynamic_cast< IntegerOptionKey const * > (&opt) ) {
+				IntegerOptionKey const & iopt( static_cast< IntegerOptionKey const & > (opt) );
+				read_IntegerOption_subtag_for_job( iopt, full_key, val, job_options );
+			} else if ( dynamic_cast< PathOptionKey const * > (&opt) ) {
+				PathOptionKey const & pathopt( static_cast< PathOptionKey const & > (opt) );
+				read_PathOption_subtag_for_job( pathopt, full_key, val, job_options );
+			} else if ( dynamic_cast< RealOptionKey const * > (&opt) ) {
+				RealOptionKey const & ropt( static_cast< RealOptionKey const & > (opt) );
+				read_RealOption_subtag_for_job( ropt, full_key, val, job_options );
+			} else if ( dynamic_cast< StringOptionKey const * > (&opt) ) {
+				StringOptionKey const & stopt( static_cast< StringOptionKey const & > (opt) );
+				read_StringOption_subtag_for_job( stopt, full_key, val, job_options );
 			}
+
 		} else {
-			std::ostringstream err;
-			err << "Error: option '" << optname << "' does not match any existing option in Rosetta.\n";
-			err << "Options must be fully namespaced (e.g. 'ex1' will not work, but 'packing:ex1' would work.\n";
-			err << "Please remember to use only one colon when giving options.\n";
-			err << "Thrown from JD2ResourceManagerJobInputter::parse_job_tag\n";
-			throw EXCN_Msg_Exception( err.str() );
+			/// vector option
+			utility::vector1< std::string > vals = utility::string_split( val, ',' );
+			if ( dynamic_cast< BooleanVectorOptionKey const * > (&opt) ) {
+				BooleanVectorOptionKey const & boolvectopt( static_cast< BooleanVectorOptionKey const & > (opt) );
+				read_BooleanVectorOption_subtag_for_job( boolvectopt, full_key, val, vals, job_options );
+			} else if ( dynamic_cast< FileVectorOptionKey const * > (&opt) ) {
+				FileVectorOptionKey const & filevectopt( static_cast< FileVectorOptionKey const & > (opt) );
+				read_FileVectorOption_subtag_for_job( filevectopt, full_key, val, vals, job_options );
+			} else if ( dynamic_cast< IntegerVectorOptionKey const * > (&opt) ) {
+				IntegerVectorOptionKey const & ivectopt( static_cast< IntegerVectorOptionKey const & > (opt) );
+				read_IntegerVectorOption_subtag_for_job( ivectopt, full_key, val, vals, job_options );
+			} else if ( dynamic_cast< PathVectorOptionKey const * > (&opt) ) {
+				PathVectorOptionKey const & pathvectopt( static_cast< PathVectorOptionKey const & > (opt) );
+				read_PathVectorOption_subtag_for_job( pathvectopt, full_key, val, vals, job_options );
+			} else if ( dynamic_cast< RealVectorOptionKey const * > (&opt) ) {
+				RealVectorOptionKey const & rvectopt( static_cast< RealVectorOptionKey const & > (opt) );
+				read_RealVectorOption_subtag_for_job( rvectopt, full_key, val, vals, job_options );
+			} else if ( dynamic_cast< StringVectorOptionKey const * > (&opt) ) {
+				StringVectorOptionKey const & stvectopt( static_cast< StringVectorOptionKey const & > (opt) );
+				read_StringVectorOption_subtag_for_job( stvectopt, full_key, val, vals, job_options );
+			}
 		}
+	} else {
+		std::ostringstream err;
+		err << "Error: option '" << optname << "' corresponding to the full key '" << full_key << "' does not match any existing option in Rosetta.\n";
+		err << "Thrown from JD2ResourceManagerJobInputter::parse_job_tag\n";
+		throw EXCN_Msg_Exception( err.str() );
 	}
 }
 

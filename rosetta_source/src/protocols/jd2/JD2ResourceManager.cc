@@ -38,6 +38,7 @@
 #include <basic/resource_manager/ResourceLocatorFactory.hh>
 #include <basic/resource_manager/ResourceOptions.hh>
 #include <basic/resource_manager/ResourceOptionsFactory.hh>
+#include <basic/database/sql_utils.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -45,10 +46,14 @@
 #include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>
+#include <utility/sql_database/DatabaseSessionManager.hh>
 
 // Boost Headers
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
+
+// External Headers
+#include <cppdb/frontend.h>
 
 //C++ headers
 #include <string>
@@ -57,8 +62,10 @@
 namespace protocols {
 namespace jd2 {
 
+using std::endl;
 using std::stringstream;
 using std::string;
+using platform::Size;
 using basic::Tracer;
 using basic::resource_manager::ResourceManager;
 using basic::resource_manager::ResourceDescription;
@@ -208,14 +215,12 @@ void JD2ResourceManager::read_resource_options_tags( utility::tag::TagPtr tags )
 
 }
 
-///@detail Create the loader type from the name of the resource tag
-LoaderType
-JD2ResourceManager::read_resource_loader_type_item(
-	utility::tag::TagPtr tag
+///@detail Check if the loader type is defined with the ResourceLoaderFactory
+void
+JD2ResourceManager::check_resource_loader_type(
+	LoaderType const & loader_type
 ) {
 	typedef utility::excn::EXCN_Msg_Exception MsgException;
-
-	LoaderType loader_type = tag->getName();
 
 	/// 1. Make sure this is an allowed resource type / loader type
 	if ( ! ResourceLoaderFactory::get_instance()->has_resource_loader( loader_type ) ) {
@@ -228,7 +233,6 @@ JD2ResourceManager::read_resource_loader_type_item(
 		}
 		throw MsgException( err.str() );
 	}
-	return loader_type;
 }
 
 ///@details make sure the resource object has been given a tag and
@@ -368,7 +372,13 @@ void JD2ResourceManager::read_resources_tags( utility::tag::TagPtr tags )
 			tag_iter_end = tags->getTags().end();
 			tag_iter != tag_iter_end; ++tag_iter ) {
 
-		LoaderType loader_type(read_resource_loader_type_item(*tag_iter));
+		LoaderType loader_type((*tag_iter)->getName());
+		if( loader_type == "ResourceTable" ){
+			read_resource_table_tag(*tag_iter);
+			continue;
+		}
+
+		check_resource_loader_type(loader_type);
 
 		LocatorID locator_id;
 		LocatorTag locator_tag(
@@ -395,6 +405,106 @@ void JD2ResourceManager::read_resources_tags( utility::tag::TagPtr tags )
 
 }
 
+void
+JD2ResourceManager::read_resource_table_tag(
+	utility::tag::TagPtr tag
+) {
+	using namespace basic::database;
+
+	utility::sql_database::sessionOP db_session = parse_database_connection(tag);
+
+	std::string sql_command;
+	if(tag->hasOption("sql_command")){
+		sql_command = tag->getOption<string>("sql_command");
+		check_statement_sanity(sql_command);
+	} else {
+		stringstream err_msg;
+		err_msg
+			<< "The ResourceTable tag requires a 'sql_command' tag that "
+			<< "is an SQL SELECT statement that returns the following columns:" << endl
+			<< "\tresource_tag" << endl
+			<< "\tlocator_tag" << endl
+			<< "\tlocator_id" << endl
+			<< "\tloader_type" << endl
+			<< "\toptions_tag" << endl;
+		throw utility::excn::EXCN_Msg_Exception(err_msg.str());
+	}
+
+	cppdb::statement select_stmt(safely_prepare_statement(sql_command, db_session));
+	cppdb::result res(safely_read_from_database(select_stmt));
+
+	if(res.cols() != 5){
+		stringstream err_msg;
+		err_msg
+			<< "The ResourceTable tag requires a 'sql_command' tag that "
+			<< "is an SQL SELECT statement that returns the following columns:" << endl
+			<< "\tresource_tag" << endl
+			<< "\tlocator_tag" << endl
+			<< "\tlocator_id" << endl
+			<< "\tloader_type" << endl
+			<< "\tresource_options_tag" << endl
+			<< "Instead, the query returned " << res.cols() << ":" << endl
+			<< sql_command << endl;
+		throw utility::excn::EXCN_Msg_Exception(err_msg.str());
+	}
+
+	Size row_number(0);
+	while(res.next()){
+		row_number++;
+
+		ResourceTag resource_tag;
+		LocatorTag locator_tag;
+		LocatorID locator_id;
+		LoaderType loader_type;
+		ResourceOptionsTag resource_options_tag;
+		res >> resource_tag;
+		res >> locator_tag;
+		res >> locator_id;
+		res >> loader_type;
+		res >> resource_options_tag;
+
+		if(!LazyResourceManager::has_resource_locator(locator_tag)){
+			std::stringstream err;
+			err
+				<< "Row " << row_number << " in the  ResoureTable "
+				<< "has an unrecognized locator_tag: '" << locator_tag << "' " << endl
+				<< "locator_tag, locator_id, loader_type, resource_options_tag" << endl
+				<< "'" << locator_tag << ", '" << locator_id << "', '" << loader_type << "', '" << resource_options_tag << "'" << endl
+				<< "SQL comand: " << endl
+				<< sql_command;
+			throw utility::excn::EXCN_Msg_Exception( err.str() );
+		}
+
+		check_resource_loader_type(loader_type);
+
+		if(!resource_options_tag.empty() && !LazyResourceManager::has_resource_options(resource_options_tag)){
+			std::stringstream err;
+			err
+				<< "Row " << row_number << "in the  ResoureTable "
+				<< "has an unrecognized resource_options_tag: '" << resource_options_tag << "' " << endl
+				<< "locator_tag\tlocator_id\tloader_type\tresource_options_tag" << endl
+				<< locator_tag << "\t" << locator_id << "\t" << loader_type << "\t" << resource_options_tag << endl
+				<< "SQL comand: " << endl
+				<< sql_command;
+			throw utility::excn::EXCN_Msg_Exception( err.str() );
+		}
+
+		ResourceConfiguration resource_configuration;
+		resource_configuration.loader_type            = loader_type;
+		resource_configuration.resource_tag           = resource_tag;
+		resource_configuration.locator_tag            = locator_tag;
+		resource_configuration.locator_id             = locator_id;
+		resource_configuration.resource_options_tag   = resource_options_tag;
+
+		LazyResourceManager::add_resource_configuration(
+			resource_tag, resource_configuration );
+	}
+
+	if(row_number == 0){
+		TR.Warning << "ResourceTable returned no rows." << endl;
+	}
+
+}
 
 JD2ResourceManager *
 JD2ResourceManager::get_jd2_resource_manager_instance(

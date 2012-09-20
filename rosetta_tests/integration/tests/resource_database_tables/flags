@@ -1,0 +1,3 @@
+-overwrite
+-resource_definition_files resources.xml
+-parser:protocol parser_script.xml

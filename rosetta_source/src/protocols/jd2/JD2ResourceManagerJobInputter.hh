@@ -73,8 +73,29 @@ private:
 	);
 
 	void
+	parse_jobs_table_tag(
+		utility::tag::TagPtr tag,
+		Jobs & jobs
+	);
+
+	void
+	record_job(
+		std::string const & job_name,
+		std::map< std::string, std::string > resources_for_job,
+		basic::resource_manager::JobOptionsOP job_options,
+		Jobs & jobs
+	);
+
+	void
 	read_Option_subtag_for_job(
 		utility::tag::TagPtr options_tag,
+		basic::resource_manager::JobOptionsOP job_options
+	);
+
+	void
+	parse_options_name_and_value(
+		std::string const & optname,
+		std::string const & value,
 		basic::resource_manager::JobOptionsOP job_options
 	);
 

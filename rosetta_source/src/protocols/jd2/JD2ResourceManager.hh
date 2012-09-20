@@ -77,15 +77,20 @@ public:
 private:
 	// Functions to help parsing
 
-	basic::resource_manager::LoaderType
-	read_resource_loader_type_item(
-		utility::tag::TagPtr tags);
+	void
+	check_resource_loader_type(
+		basic::resource_manager::LoaderType const & loader_type);
 
 	basic::resource_manager::ResourceTag
 	read_resource_tag_item(
 		utility::tag::TagPtr tags,
 		basic::resource_manager::LoaderType const & loader_type,
 		basic::resource_manager::LocatorID const & locator_id);
+
+	void
+	read_resource_table_tag(
+		utility::tag::TagPtr tags);
+
 
 	basic::resource_manager::LocatorTag
 	read_resource_locator_items(
