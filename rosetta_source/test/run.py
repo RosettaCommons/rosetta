@@ -226,6 +226,10 @@ class Tester:
             self.all_tests_by_lib[lib] = tests
 
         if Options.one:  # or Options.jobs < 5:
+            if Options.one not in [s for (l,s) in tests]:
+                print 'Test suite %s not found!' % Options.one
+                sys.exit(1)
+
             for lib in UnitTestExecutable:
                 log_file = self.testpath + '/' + lib + '.log'
                 yaml_file = self.testpath + '/' + lib + '.yaml'
@@ -419,6 +423,11 @@ def main(args):
     )
 
     (options, args) = parser.parse_args(args=args[1:])
+
+    if len(args) > 0:
+        print 'Uknow options:', args
+        sys.exit(1)
+
 
     if options.database == parser.get_default_values().database:
         if os.environ.get('ROSETTA3_DB') is not None and \
