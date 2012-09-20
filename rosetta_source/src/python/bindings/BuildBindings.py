@@ -1063,7 +1063,7 @@ class ModuleBuilder:
         elif Platform == "macos": self.cpp_defines += ' -I../src/platform/macos'
         else: self.cpp_defines += ' -I../src/platform/linux'
 
-        self.gccxml_options = '--gccxml-compiler llvm-g++-4.2' if Platform == "macos" else ''
+        self.gccxml_options = '--gccxml-compiler llvm-g++-4.2 -march=nocona' if Platform == "macos" else ''
 
         self.cc_files = []
         self.add_option  = getCompilerOptions()
@@ -1365,7 +1365,7 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
     elif Platform == "macos": cpp_defines += ' -I../src/platform/macos'
     else: cpp_defines += ' -I../src/platform/linux'
 
-    gccxml_options = '--gccxml-compiler llvm-g++-4.2' if Platform == "macos" else ''
+    gccxml_options = '--gccxml-compiler llvm-g++-4.2 -march=nocona' if Platform == "macos" else ''
 
     cc_files = []
     add_option  = getCompilerOptions()
