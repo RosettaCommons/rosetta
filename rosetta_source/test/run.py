@@ -226,7 +226,7 @@ class Tester:
             self.all_tests_by_lib[lib] = tests
 
         if Options.one:  # or Options.jobs < 5:
-            if Options.one not in [s for (l,s) in tests]:
+            if Options.one not in [s for (l,s) in self.all_tests]:
                 print 'Test suite %s not found!' % Options.one
                 sys.exit(1)
 
