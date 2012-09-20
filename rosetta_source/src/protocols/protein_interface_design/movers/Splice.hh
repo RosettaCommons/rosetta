@@ -148,6 +148,10 @@ public:
 
 	void load_from_checkpoint(); // load relevant internal data during a checkpoint recovery
 	void save_to_checkpoint() const; // save relevant data for future checkpoint recovery
+
+	std::string loop_dbase_file_name() const;
+	void loop_dbase_file_name( std::string const f );
+
 private:
 	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
 	void retrieve_values(); // call at end of apply
@@ -178,6 +182,7 @@ private:
 	utility::pointer::owning_ptr< protocols::moves::DataMapObj < utility::vector1< core::Size > > > locked_res_; // dflt NULL; a residue that serves as the root for a fold tree jump to the other chain. This residue is expected to be within the loop span, and allows the loop to be refined while keeping the rigid body jump between the two chains; it's a only ostensibly a vector, as it has to be compatible with placestub, but it only looks at the first element of that vector
 	char locked_res_id_; // dflt ''; the one-letter code for the locked residue
 	std::string checkpointing_file_; // dflt ""; a file that contains checkpointing information to recover from job termination when iterating over a loop database
+	std::string loop_dbase_file_name_; //dflt ""; a file name into which the loop database is dumped
 };
 
 

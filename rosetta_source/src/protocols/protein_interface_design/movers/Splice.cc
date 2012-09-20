@@ -116,7 +116,8 @@ Splice::Splice() :
 	first_pass_( true ),
 	locked_res_id_( ' ' ),
 	locked_res_( NULL ),
-	checkpointing_file_ ( "" )
+	checkpointing_file_ ( "" ),
+	loop_dbase_file_name_( "" )
 {
 	torsion_database_.clear();
 	delta_lengths_.clear();
@@ -611,6 +612,16 @@ Splice::apply( core::pose::Pose & pose )
 		torsion.apply( pose );
 		core::Size const stop_on_template( startc + res_move() - 1 - residue_diff );
 		TR_ccd << "start, stop, cut: "<<startn<<" "<<stop_on_template<<" "<<cut_site<<std::endl; /// used for the dbase
+
+/// Now write to dbase disk file
+		if( loop_dbase_file_name_ != "" ){
+			std::ofstream dbase_file;
+			dbase_file.open( loop_dbase_file_name_.c_str(), std::ios::app );
+			for( core::Size i = startn; i <= startc + res_move() - 1; ++i )
+				dbase_file << pose.phi( i )<<' '<<pose.psi( i )<<' '<<pose.omega( i )<<' '<<pose.residue( i ).name3()<<' ';
+			dbase_file << startn<<' '<<stop_on_template<<' '<<cut_site<<std::endl;
+			dbase_file.close();
+		}
 	}// fi ccd
 	else{ // if no ccd, still need to thread sequence
 		PackerTaskOP ptask = tf()->create_task_and_apply_taskoperations( pose );
@@ -729,7 +740,8 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 		TR<<"locking residue "<<locked_res()<<" of identity "<<locked_res_id()<<std::endl;
 	}
 	checkpointing_file( tag->getOption< std::string > ( "checkpointing_file", "" ) );
-	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" dbase_iterate: "<<dbase_iterate()<<" randomize_cut: "<<randomize_cut()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<" checkpointing_file: "<<checkpointing_file_<<std::endl;
+	loop_dbase_file_name( tag->getOption< std::string > ( "loop_dbase_file_name", "" ) );
+	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" dbase_iterate: "<<dbase_iterate()<<" randomize_cut: "<<randomize_cut()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<" checkpointing_file: "<<checkpointing_file_<<" loop_dbase_file_name: "<<loop_dbase_file_name_<<std::endl;
 }
 
 protocols::moves::MoverOP
@@ -905,6 +917,16 @@ Splice::checkpointing_file() const { return checkpointing_file_; }
 
 void
 Splice::checkpointing_file( std::string const cf ){ checkpointing_file_ = cf; }
+
+void
+Splice::loop_dbase_file_name( std::string const s ){
+	loop_dbase_file_name_ = s;
+}
+
+std::string
+Splice::loop_dbase_file_name() const{
+	return loop_dbase_file_name_;
+}
 
 } //movers
 } //protein_interface_design
