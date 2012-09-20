@@ -61,7 +61,9 @@ ProteinInterfaceDesignOperation::ProteinInterfaceDesignOperation() :
 	allow_all_aas_( 0 ),
 	design_all_aas_( 0 ),
 	interface_distance_cutoff_( 8.0 ),
-	jump_( 1 )
+	jump_( 1 ),
+	modify_before_jump_( true ),
+	modify_after_jump_ ( true )
 {}
 
 ProteinInterfaceDesignOperation::~ProteinInterfaceDesignOperation() {}
@@ -96,25 +98,27 @@ ProteinInterfaceDesignOperation::apply( core::pose::Pose const & pose, core::pac
 		else
 			dao2.include_residue( resi );
 	}
-	dao1.apply( pose, task );
-	dao2.apply( pose, task );
+	if( modify_after_jump() )
+		dao1.apply( pose, task );
+	if( modify_before_jump() )
+		dao2.apply( pose, task );
 
 	for( core::Size chain=1; chain<=chains; ++chain ){
 		PreventChainFromRepackingOperation pcfr;
-		if( chain<=jump() && !repack_chain1_ ){
+		if( chain<=jump() && !repack_chain1_ && modify_before_jump() ){
 			pcfr.chain( chain );
 			pcfr.apply( pose, task );
 		}
-		if( chain > jump() && !repack_chain2_ ){
+		if( chain > jump() && !repack_chain2_ && modify_after_jump() ){
 			pcfr.chain( chain );
 			pcfr.apply( pose, task );
 		}
 		RestrictChainToRepackingOperation rctr;
-		if( chain<=jump() && !design_chain1_ ){
+		if( chain<=jump() && !design_chain1_ && modify_before_jump() ){
 			rctr.chain( chain );
 			rctr.apply( pose, task );
 		}
-		if( chain > jump() && !design_chain2_ ){
+		if( chain > jump() && !design_chain2_ && modify_after_jump() ){
 			rctr.chain( chain );
 			rctr.apply( pose, task );
 		}
@@ -211,6 +215,8 @@ ProteinInterfaceDesignOperation::parse_tag( TagPtr tag )
 	design_all_aas( tag->getOption< core::Size >( "design_all_aas", 0 ) );
 	jump( tag->getOption< core::Size >( "jump", 1 ) );
   interface_distance_cutoff( tag->getOption< core::Real >( "interface_distance_cutoff", 8.0 ) );
+	modify_before_jump( tag->getOption< bool >( "modify_before_jump", 1 ) );
+	modify_after_jump(  tag->getOption< bool >( "modify_after_jump",  1 ) );
 }
 
 } //namespace protocols

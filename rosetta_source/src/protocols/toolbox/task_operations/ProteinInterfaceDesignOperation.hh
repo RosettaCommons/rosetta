@@ -68,12 +68,18 @@ public:
 
 	virtual void parse_tag( TagPtr );
 
+	bool modify_before_jump() const{ return modify_before_jump_; }
+	void modify_before_jump( bool const m ) { modify_before_jump_ = m; }
+	bool modify_after_jump() const{ return   modify_after_jump_; }
+	void modify_after_jump( bool const m ) { modify_after_jump_ = m; }
+
 private:
 	bool repack_chain1_, repack_chain2_;
 	bool design_chain1_, design_chain2_;
 	bool allow_all_aas_, design_all_aas_;
 	core::Real interface_distance_cutoff_;
 	core::Size jump_;//dflt 1; the jump below which it is chain1, and above which it is chain2
+	bool modify_before_jump_, modify_after_jump_; //dflt true,true; set to false to prevent this taskoperation from modifying one of the sides of the jump. This is useful, if, e.g., you want to only restrict the interface on chain2
 };
 
 } //namespace protocols
