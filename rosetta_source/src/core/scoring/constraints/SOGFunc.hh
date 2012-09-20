@@ -17,6 +17,7 @@
 #include <core/scoring/constraints/Func.hh>
 #include <core/types.hh>
 
+#include <core/scoring/constraints/SOGFunc.fwd.hh>
 #include <core/scoring/constraints/SOGFunc_Impl.hh>
 
 // C++ Headers

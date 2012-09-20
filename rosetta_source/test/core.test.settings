@@ -155,6 +155,7 @@ sources = {
 		"BoundConstraint",
 		"ScalarWeightedFunc",
 		"SiteConstraint",
+                "SOGFunc",
 	],
 	"scoring/disulfides" : [
 		"FullatomDisulfideEnergy",

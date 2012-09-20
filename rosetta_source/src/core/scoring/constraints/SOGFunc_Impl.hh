@@ -14,6 +14,7 @@
 #ifndef INCLUDED_core_scoring_constraints_SOGFunc_Impl_hh
 #define INCLUDED_core_scoring_constraints_SOGFunc_Impl_hh
 
+#include <core/scoring/constraints/SOGFunc_Impl.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <core/types.hh>
 

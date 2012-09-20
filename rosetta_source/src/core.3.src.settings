@@ -198,6 +198,7 @@ sources = {
 		"SquareWell2Func",
 		"SumFunc",
 		"TopOutFunc",
+		"USOGFunc",
 		"util",
 		"XYZ_Func",
 	],

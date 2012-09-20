@@ -18,6 +18,7 @@
 // Package headers
 #include <core/scoring/constraints/SumFunc.hh>
 #include <core/scoring/constraints/SOGFunc.hh>
+#include <core/scoring/constraints/USOGFunc.hh>
 #include <core/scoring/constraints/SoedingFunc.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/SigmoidFunc.hh>
@@ -40,27 +41,17 @@
 #include <core/scoring/constraints/TopOutFunc.hh>
 
 #include <utility/exit.hh>
-//#include <basic/Tracer.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
-//#include <utility/io/util.hh>
-//#include <utility/io/izstream.hh>
-//#include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
-
-//static
-//basic::Tracer TR( "core.scoring.constraints.FuncFactory");
 
 using namespace core::scoring::constraints;
 
-void
-FuncFactory::add_type( std::string type_name, FuncOP new_func ) {
+void FuncFactory::add_type( std::string type_name, FuncOP new_func ) {
 	func_types_[ type_name ] = new_func;
-//	TR << " added func " << type_name << std::endl;
 }
 
-FuncOP
-FuncFactory::new_func( std::string const& type ) const {
+FuncOP FuncFactory::new_func( std::string const& type ) const {
 	FuncTypes::const_iterator iter = func_types_.find( type );
 	if ( iter != func_types_.end() ) {
 		return iter->second->clone();
@@ -70,9 +61,8 @@ FuncFactory::new_func( std::string const& type ) const {
 	}
 }
 
+// initialization of functions which this factory knows how to instantiate
 FuncFactory::FuncFactory(void) {
-	// initialization of functions which this factory knows how to instantiate
-//	TR << "constructing funcfactory " <<std::endl;
 	FuncFactory::add_type( "HARMONIC", new HarmonicFunc(0,0) );
 	FuncFactory::add_type( "SIGMOID", new SigmoidFunc(0,1) );
 	FuncFactory::add_type( "CIRCULARHARMONIC", new CircularHarmonicFunc(0,0) );
@@ -87,6 +77,7 @@ FuncFactory::FuncFactory(void) {
 	FuncFactory::add_type( "OFFSETPERIODICBOUNDED", new OffsetPeriodicBoundFunc(0,0,0,"dummy",6.28,0.0) );
 	FuncFactory::add_type( "SUMFUNC", new SumFunc() );
 	FuncFactory::add_type( "SOGFUNC", new SOGFunc() );
+	FuncFactory::add_type( "USOGFUNC", new USOGFunc() );
 	FuncFactory::add_type( "SOEDINGFUNC", new SoedingFunc() );
 	FuncFactory::add_type( "SPLINE", new SplineFunc() );
 	FuncFactory::add_type( "SQUARE_WELL", new SquareWellFunc(0,0) );
@@ -98,4 +89,3 @@ FuncFactory::FuncFactory(void) {
   FuncFactory::add_type( "FLAT_HARMONIC", new FlatHarmonicFunc( 0, 0, 0 ) );
   FuncFactory::add_type( "TOPOUT", new TopOutFunc( 0, 0, 0 ) );
 }
-
