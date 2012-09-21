@@ -21,6 +21,14 @@
 #include <Eigen/Eigen>
 
 namespace numeric {
+
+	/// @brief a function to sort pairs that doesn't require
+	/// operators for the second element in the pair. This is
+	/// needed below
+	bool
+	compare_first_only(const std::pair<double,Eigen::VectorXd> &left, const std::pair<double,Eigen::VectorXd> &right){
+			return left.first < right.first;
+	}
 	
 	/// @brief return the first principal component
 	/// of the given set of points
@@ -77,15 +85,7 @@ namespace numeric {
 		}
 		
 		//Sort eigenvectors highest to lowest based on eigenvalues
-		//Note: standard sort doesn't work out of the box here
-		//because Eigen's VectorXd doesn't have the right operators
-		//defined.
-		struct sort_first_only {
-			bool operator()(const std::pair<double,VectorXd> &left, const std::pair<double,VectorXd> &right) {
-				return left.first < right.first;
-			}
-		};
-		sort(value_vector_pairs.begin(), value_vector_pairs.end(), sort_first_only());
+		sort(value_vector_pairs.begin(), value_vector_pairs.end(), compare_first_only);
 		
 		//Convert to xyzMatrix
 		xyzMatrix<T> sorted_eigenvectors;
