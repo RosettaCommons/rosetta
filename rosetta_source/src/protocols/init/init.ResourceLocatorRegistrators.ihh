@@ -20,6 +20,7 @@ using basic::resource_manager::ResourceLocatorRegistrator;
 static ResourceLocatorRegistrator< basic::resource_manager::locator::DatabaseResourceLocatorCreator > DatabaseResourceLocatorCreator_registrator;
 static ResourceLocatorRegistrator< basic::resource_manager::locator::FileSystemResourceLocatorCreator > FileSystemResourceLocatorCreator_registrator;
 static ResourceLocatorRegistrator< basic::resource_manager::locator::NullResourceLocatorCreator > NullResourceLocatorCreator_registrator;
+static ResourceLocatorRegistrator< basic::resource_manager::locator::FileListResourceLocatorCreator > FileListResourceLocatorCreator_registrator;
 
 
 } //namespace protocols

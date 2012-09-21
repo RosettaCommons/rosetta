@@ -16,4 +16,5 @@
 
 #include <basic/resource_manager/locator/DatabaseResourceLocatorCreator.hh>
 #include <basic/resource_manager/locator/FileSystemResourceLocatorCreator.hh>
+#include <basic/resource_manager/locator/FileListResourceLocatorCreator.hh>
 #include <basic/resource_manager/locator/NullResourceLocatorCreator.hh>

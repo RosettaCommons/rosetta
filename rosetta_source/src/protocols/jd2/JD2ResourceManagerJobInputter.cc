@@ -197,6 +197,11 @@ void JD2ResourceManagerJobInputter::cleanup_input_after_job_completion(JobOP cur
 	JD2ResourceManager * jd2_resource_manager(
 				JD2ResourceManager::get_jd2_resource_manager_instance());
 	std::string job_tag(current_job->inner_job()->input_tag());
+	if(current_job->nstruct_index() < current_job->nstruct_max())
+	{
+		//If this is the case we aren't done with the nstructs yet.
+		return;
+	}
 	jd2_resource_manager->mark_job_tag_as_complete(job_tag);
 	std::list<ResourceTag> resources_for_job(jd2_resource_manager->get_resource_tags_for_job_tag(job_tag));
 
@@ -887,6 +892,7 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 	bool pdb_found( false );
 	std::string desc;
 	std::string rname;
+	std::string locator = "";
 	for ( utility::tag::Tag::options_t::const_iterator
 			opt_iter = data_tag->getOptions().begin(),
 			opt_iter_end = data_tag->getOptions().end();
@@ -904,8 +910,12 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 		} else if ( opt_iter->first == "pdb" ) {
 			pdb_found = true;
 			rname = opt_iter->second;
+		} else if (opt_iter->first == "locator")
+		{
+			locator = opt_iter->second;
 		}
 	}
+
 	/// now let's make sure the provided data is consistent and complete
 	bool in_error = false;
 	std::ostringstream err;
@@ -965,7 +975,7 @@ JD2ResourceManagerJobInputter::read_Data_for_subtag(
 			tr << "Adding implicit resource '" << pdb_resource_name << "' for job whose startstruct is given as pdb='" << rname << "'.";
 			basic::resource_manager::ResourceConfiguration rconfig;
 			rconfig.resource_tag         = pdb_resource_name;
-			rconfig.locator_tag          = ""; // <--- default
+			rconfig.locator_tag          = locator; // <--- default
 			rconfig.locator_id           = rname;
 			rconfig.loader_type          = "PoseFromPDB";
 			rconfig.resource_options_tag = ""; // <-- default PoseFromPDB options

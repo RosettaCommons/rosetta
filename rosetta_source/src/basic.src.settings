@@ -85,6 +85,7 @@ sources = {
 	],
 	"basic/resource_manager/locator" : [
 		"DatabaseResourceLocator",
+		"FileListResourceLocator",
 		"FileSystemResourceLocator",
 		"NullResourceLocator",
 		"StringResourceStream",

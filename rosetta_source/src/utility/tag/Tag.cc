@@ -362,12 +362,32 @@ void Tag::read(std::istream& in ) {
 	string str;
 	string line;
 	while( getline( in, line ) ){ // get rid of anything but the internal most < > statement on each line. This allows for writing comments in xml files
+		//There are two other kinds of lines we need to ignore, <?xml ?> lines represent the xml encoding header
+		// and <!-- --> lines represent real xml comments.
+
+		platform::Size const header_begin( line.find("<?xml"));
+		platform::Size const header_end((line.find("?>")));
+		if(header_begin != line.npos && header_end != line.npos){
+			continue;
+		}
+
+		platform::Size const comment_begin(line.find("<!--"));
+		platform::Size const comment_end(line.find("-->"));
+		if(comment_begin != line.npos && comment_end != line.npos) {
+			continue;
+		}
+
 		platform::Size const bra( line.find_last_of( "<" ) );
 		platform::Size const ket( line.find_first_of(  ">" ) - bra + 1);
+
 		if( bra != line.npos && ket != line.npos ){
 			str.append( line.substr( bra, ket ) );
 			str.push_back( '\n' );
 		}
+
+
+
+
 	}
 
 	typedef position_iterator<char const*> iterator_t;
