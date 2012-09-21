@@ -48,6 +48,8 @@
 #include <protocols/features/RotamerRecoveryFeaturesCreator.hh>
 #include <protocols/features/SaltBridgeFeaturesCreator.hh>
 #include <protocols/features/ScoreTypeFeaturesCreator.hh>
+#include <protocols/features/SecondaryStructureSegmentFeaturesCreator.hh>
+#include <protocols/features/SmotifFeaturesCreator.hh>
 #include <protocols/features/StructureFeaturesCreator.hh>
 #include <protocols/features/StructureScoresFeaturesCreator.hh>
 #include <protocols/features/ScoreFunctionFeaturesCreator.hh>

@@ -10,13 +10,14 @@
 sources = {
 	"" : [
 		"color_util",
-                "interpolate",
+		"interpolate",
 		"util",
 		"conversions",
 		"HomogeneousTransform",
 		"MultiDimensionalHistogram",
 		"numeric.functions",
-                "prob_util",
+		"PCA",
+    "prob_util",
 		"statistics.functions",
 		"sphericalVector",
 		"Quaternion",
