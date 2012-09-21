@@ -25,6 +25,7 @@
 #include <protocols/protein_interface_design/filters/TorsionFilter.hh>
 #include <protocols/protein_interface_design/util.hh>
 #include <boost/foreach.hpp>
+#include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #define foreach BOOST_FOREACH
 // Package headers
@@ -504,6 +505,11 @@ Splice::apply( core::pose::Pose & pose )
 		tf = new TaskFactory;
 	else
 		tf = new TaskFactory( *design_task_factory() );
+
+	for( core::Size i = 2; i <= pose.conformation().num_chains(); ++i ){
+		TR<<"Restricting chain "<<i<<" to repacking only"<<std::endl;
+		tf->push_back( new protocols::toolbox::task_operations::RestrictChainToRepackingOperation( i ) );
+	}
 
 	tf->push_back( new operation::InitializeFromCommandline );
 	tf->push_back( new operation::NoRepackDisulfides );
