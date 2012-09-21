@@ -33,7 +33,6 @@
 #include <cstdlib>
 #include <vector>
 
-
 namespace numeric {
 
 
@@ -54,6 +53,36 @@ operator *( xyzMatrix< T > const & m, xyzVector< T > const & v )
 	);
 }
 
+/// @brief return the point closest to point p3 that lies on the line
+/// defined by p1 and p2
+template< typename T >
+inline
+xyzVector< T >
+closest_point_on_line( xyzVector< T > const & p1, xyzVector< T > const & p2, xyzVector< T > const & q )
+{
+	xyzVector<T> u = p2-p1;
+	xyzVector<T> pq = q-p1;
+	xyzVector<T> w2 = pq-(u*(dot_product(pq,u)/u.magnitude_squared()));
+	xyzVector<T> point = q-w2;
+	return point;
+}
+
+/// @brief calculate center of mass for coordinates
+template< typename T >
+inline
+xyzVector< T >
+center_of_mass( utility::vector1< xyzVector< T > > const & coords )
+{
+	xyzVector< T > center_of_mass( 0.0, 0.0, 0.0 );
+	for(typename utility::vector1< xyzVector< T > >::const_iterator it = coords.begin();
+		it != coords.end();
+		++it)
+	{
+		center_of_mass += *it;
+	}
+	center_of_mass /= coords.size();
+	return center_of_mass;
+}
 
 /// @brief xyzMatrix * xyzVector product
 /// @note  Same as xyzMatrix * xyzVector
@@ -243,6 +272,44 @@ angle_degrees(
 	return conversions::degrees(angle);
 }
 
+/// @brief Angle between two vectors in radians
+/// @note  Given two vectors (p1->p2 & p3->p4),
+/// calculate the angle between them
+/// @note  Angle returned is on [ 0, pi ]
+template< typename T >
+inline
+T // Angle (radians)
+angle_radians(
+	xyzVector< T > const & p1,
+	xyzVector< T > const & p2,
+	xyzVector< T > const & p3,
+	xyzVector< T > const & p4
+)
+{
+	xyzVector< T > const a( ( p2 - p1 ).normalize_or_zero() );
+	xyzVector< T > const b( ( p4 - p3 ).normalize_or_zero() );
+	
+	T angle = std::acos( sin_cos_range( dot(a, b) ) );
+	return angle;
+}
+
+/// @brief Angle between two vectors in radians
+/// @note  Given two vectors (p1->p2 & p3->p4),
+///	calculate the angle between them
+/// @note  Angle returned is on [ 0, pi ]
+template< typename T >
+inline
+T // Angle (radians)
+angle_degrees(
+	xyzVector< T > const & p1,
+	xyzVector< T > const & p2,
+	xyzVector< T > const & p3,
+	xyzVector< T > const & p4
+)
+{
+	T angle = angle_radians( p1, p2, p3, p4 );
+	return conversions::degrees(angle);
+}
 
 /// @brief Dihedral (torsion) angle in radians: angle value passed
 /// @note  Given four positions in a chain ( p1, p2, p3, p4 ), calculates the dihedral

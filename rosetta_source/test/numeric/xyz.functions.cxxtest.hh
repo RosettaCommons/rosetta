@@ -26,7 +26,6 @@
 #include <numeric/xyzMatrix.io.hh>
 #include <numeric/constants.hh>
 
-
 // --------------- Test Class --------------- //
 
 class XYZFunctionsTests : public CxxTest::TestSuite {
@@ -75,6 +74,32 @@ class XYZFunctionsTests : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS( u2, xyzVector_float( 19.0, 38.0, 57.0 ) ); // equality here
 	}
 
+	/// @brief test closest point on line computations
+	void  test_xyz_functions_closest_point_on_line() {
+		using numeric::xyzVector_float;
+
+		xyzVector_float v1( 1.0, 2.0, 3.0 );
+		xyzVector_float v2( 4.0, 5.0, 6.0 );
+		xyzVector_float v3( 9.0, 8.0, 7.0 );
+
+		xyzVector_float point=closest_point_on_line(v1, v2, v3);
+
+		TS_ASSERT_EQUALS(point, xyzVector_float( 7.0, 8.0, 9.0 ) );
+	}
+
+	/// @brief test center of mass computations
+	void  test_xyz_functions_center_of_mass() {
+		using numeric::xyzVector_float;
+
+		utility::vector1<xyzVector_float> points;
+		points.push_back( xyzVector_float( 1.0, 2.0, 3.0 ) );
+		points.push_back( xyzVector_float( 4.0, 5.0, 6.0 ) );
+		points.push_back( xyzVector_float( 7.0, 8.0, 9.0 ) );
+
+		xyzVector_float com = center_of_mass(points);
+
+		TS_ASSERT_EQUALS(com, xyzVector_float( 4.0, 5.0, 6.0 ) );
+	}
 
 	/// @brief test eigenvalue/eigenvector computations
 	void  test_xyz_functions_Eigenvalues() {
