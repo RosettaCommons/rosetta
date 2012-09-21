@@ -19,6 +19,8 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
+#include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
+#include <core/pack/task/TaskFactory.hh>
 // Project Headers
 #include <core/pose/Pose.hh>
 
@@ -59,8 +61,8 @@ RestrictToAlignedSegmentsOperation::RestrictToAlignedSegmentsOperation()
 	source_pose_.clear();
 	start_res_.clear();
 	stop_res_.clear();
-	repack_outside_ = true;
 	chain_ = 1;
+	repack_shell_ = 6.0;
 }
 
 RestrictToAlignedSegmentsOperation::~RestrictToAlignedSegmentsOperation() {}
@@ -94,30 +96,49 @@ RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::
 		for( core::Size position = nearest_to_from; position <= nearest_to_to; ++position )
 			designable.insert( position );
   }
+/// in the following we use dao to compute the residues that surround the aligned region. We then go over these residues to make sure they're within the target chain
+	DesignAroundOperationOP dao = new DesignAroundOperation;
+	dao->design_shell( 0.1 );
+	dao->repack_shell( repack_shell() );
+	foreach( core::Size const d, designable ){
+		dao->include_residue( d );
+	}
+	core::pack::task::TaskFactoryOP dao_tf = new core::pack::task::TaskFactory;
+	dao_tf->push_back( dao );
 
-	utility::vector1< core::Size > outside;
-	outside.clear();
-	if( repack_outside() )
-		TR<<"Repackable residues: ";
-	else
-		TR<<"Prevent repacking on: ";
+	utility::vector1< core::Size > const surrounding_shell( protocols::rosetta_scripts::residue_packer_states( pose, dao_tf, false/*designable*/, true/*packable*/ ) );
+	utility::vector1< core::Size > const designed_residues( protocols::rosetta_scripts::residue_packer_states( pose, dao_tf, true/*designable*/, false/*packable*/ ) );
+
+	utility::vector1< core::Size > repackable, immutable;
+	repackable.clear(); immutable.clear();
 	for( core::Size i = pose.conformation().chain_begin( chain() ); i<=pose.conformation().chain_end( chain() ); ++i ){
-		if( std::find( designable.begin(), designable.end(), i ) == designable.end() ){
-			TR<<i<<",";
-			outside.push_back( i );
-		}
+		if( std::find( designed_residues.begin(), designed_residues.end(), i ) != designed_residues.end() ) // don't change designed residues
+			continue;
+		if( std::find( surrounding_shell.begin(), surrounding_shell.end(), i ) == surrounding_shell.end() )
+			immutable.push_back( i );
+		else
+			repackable.push_back( i );
 	}
 ///for some unfathomable reason OperateOnCertainResidues defaults to applying to all residues if none are defined, so you have to be careful here...
-	OperateOnCertainResidues oocr_outside;
-	if( outside.size() ){
-		if( repack_outside() )
-			oocr_outside.op( new RestrictToRepackingRLT );
-		else
-			oocr_outside.op( new PreventRepackingRLT );
-		oocr_outside.residue_indices( outside );
-		oocr_outside.apply( pose, task );
+	OperateOnCertainResidues oocr_repackable, oocr_immutable;
+	oocr_immutable.op( new PreventRepackingRLT );
+	oocr_repackable.op( new RestrictToRepackingRLT );
+	if( repackable.size() ){
+		oocr_repackable.residue_indices( repackable );
+		oocr_repackable.apply( pose, task );
+		TR<<"allowing repacking in: ";
+		foreach( core::Size const r, repackable )
+			TR<<r<<' ';
+		TR<<std::endl;
 	}
-	TR<<std::endl;
+	if( immutable.size() ){
+		oocr_immutable.residue_indices( immutable );
+		oocr_immutable.apply( pose, task );
+		TR<<"no repack in: ";
+		foreach( core::Size const i, immutable )
+			TR<<i<<' ';
+		TR<<std::endl;
+	}
 }
 
 void
@@ -157,7 +178,7 @@ RestrictToAlignedSegmentsOperation::parse_tag( TagPtr tag )
 		start_res_.push_back( parsed_start );
 		stop_res_. push_back( parsed_stop );
 	}
-	repack_outside( tag->getOption< bool >( "repack_outside", 1 ) );
+	repack_shell( tag->getOption< core::Real >( "repack_shell", 6.0 ));
 }
 } //namespace protocols
 } //namespace toolbox
