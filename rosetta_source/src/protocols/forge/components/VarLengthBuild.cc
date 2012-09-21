@@ -38,6 +38,7 @@
 #include <core/pose/symmetry/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
@@ -871,15 +872,24 @@ void VarLengthBuild::pick_all_fragments(
 	if ( !frag9_.get() ) {
 		frag9_ = new ConstantLengthFragSet( 9 );
 	}
-	frag9_->add( pick_fragments( complete_ss, complete_aa, complete_abego, interval, 9, n_frags ) );
+	if ( basic::options::option[basic::options::OptionKeys::in::file::frag9].user() ){
+    frag9_->read_fragment_file( basic::options::option[basic::options::OptionKeys::in::file::frag9]());
+  } else {    
+		frag9_->add( pick_fragments( complete_ss, complete_aa, complete_abego, interval, 9, n_frags ) );
+	}
 
 	// pick 3-mers
 	if ( !frag3_.get() ) {
 		frag3_ = new ConstantLengthFragSet( 3 );
 	}
 	ConstantLengthFragSetOP tmp_frag3 = new ConstantLengthFragSet( 3 );
-	tmp_frag3->add( pick_fragments( complete_ss, complete_aa, complete_abego, interval, 3, n_frags ) );
-	frag3_->add( *tmp_frag3 );
+	if ( basic::options::option[basic::options::OptionKeys::in::file::frag3].user() ){
+    tmp_frag3->read_fragment_file( basic::options::option[basic::options::OptionKeys::in::file::frag3]());
+    frag3_->read_fragment_file( basic::options::option[basic::options::OptionKeys::in::file::frag3]());
+  } else {
+    tmp_frag3->add( pick_fragments( complete_ss, complete_aa, complete_abego, interval, 3, n_frags ) );  
+    frag3_->add( *tmp_frag3 );  
+  } 
 
 	// make 1-mers from 3-mers
 	if ( !frag1_.get() ) {

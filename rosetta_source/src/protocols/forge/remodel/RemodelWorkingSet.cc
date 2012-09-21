@@ -520,7 +520,15 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 			gap = (int)data.blueprint.size()-segmentStorageVector[i].residues.front()+1;
 			this->manager.add( new SegmentRebuild( Interval(head,input_pose.total_residue()), DSSP.substr( segmentStorageVector[i].residues.front()-1, gap ), aa.substr( segmentStorageVector[i].residues.front()-1, gap )) );
 		}
-		else {
+		else if (head != 0 && headNew == 1 && segmentStorageVector[i].residues.front() == 1 ){ // N-term deletion
+		  TR << "debug: N-term deletion" << std::endl;
+			this->manager.add( new SegmentRebuild( Interval(1,tail),  DSSP.substr( headNew-1, gap ), aa.substr( headNew-1,gap )) );
+		} 
+		else if (tail != input_pose.total_residue() && tailNew == model_length && headNew == 1 && segmentStorageVector[i].residues.back() == model_length ){ // C-term deletion
+			gap = (int)data.blueprint.size()-segmentStorageVector[i].residues.front()+1;
+		  TR << "debug: C-term deletion" << std::endl;
+			this->manager.add( new SegmentRebuild( Interval(head,input_pose.total_residue()), DSSP.substr( segmentStorageVector[i].residues.front()-1, gap ), aa.substr( segmentStorageVector[i].residues.front()-1, gap )) );
+		} else {
 			TR << "debug: normal rebuild" << std::endl;
 			this->manager.add( new SegmentRebuild( Interval(head, tail),  DSSP.substr( headNew-1, gap ), aa.substr( headNew-1, gap )) );
 		}
