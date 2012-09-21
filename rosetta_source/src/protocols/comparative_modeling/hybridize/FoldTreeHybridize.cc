@@ -284,15 +284,28 @@ protocols::loops::Loops FoldTreeHybridize::renumber_template_chunks(
 
 void
 FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
-	// add SS to pose
+	// Add secondary structure information to the pose. Because the number of residues
+	// in the pose and secondary structure differ (because of virtual residues), we need
+	// to compute this quantity explicitly.
+	core::Size num_residues_nonvirt = 0;
+
+	for (core::Size i = 1; i <= pose.total_residue(); ++i) {
+		if (!pose.residue_type(i).is_virtual_residue()) {
+			++num_residues_nonvirt;
+		}
+	}
+
 	bool ok = false;
-	if ( option[ OptionKeys::in::file::psipred_ss2 ].user() )
+	if ( option[ OptionKeys::in::file::psipred_ss2 ].user() ) {
 		ok = set_secstruct_from_psipred_ss2(pose);
+	}
+
 	if (!ok) {
-		core::fragment::SecondaryStructureOP ss_def = new core::fragment::SecondaryStructure( *frag_libs_[1], false );
-		for ( core::Size i = 1; i<=pose.total_residue(); ++i )
-			pose.set_secstruct( i, ss_def->secstruct(i) );
 		TR.Info << "Secondary structure from fragments: " << pose.secstruct() << std::endl;
+		core::fragment::SecondaryStructureOP ss_def = new core::fragment::SecondaryStructure( *frag_libs_[1], num_residues_nonvirt, false );
+		for ( core::Size i = 1; i<= num_residues_nonvirt; ++i ) {
+			pose.set_secstruct( i, ss_def->secstruct(i) );
+		}
 	} else {
 		TR.Info << "Secondary structure from psipred_ss2: " << pose.secstruct() << std::endl;
 	}
