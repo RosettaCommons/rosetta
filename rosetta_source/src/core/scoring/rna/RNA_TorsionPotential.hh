@@ -123,7 +123,7 @@ private:
 	zeta_alpha_sc_plus_potential_, zeta_alpha_ap_potential_, nu2_north_potential_, nu2_south_potential_,
 	nu1_north_potential_, nu1_south_potential_, chi_north_potential_others_, chi_south_potential_others_,
 	chi_north_potential_guanosine_, chi_south_potential_guanosine_, chi_purine_north_potential_, chi_purine_south_potential_,
-	chi_pyrimidine_north_potential_, chi_pyrimidine_south_potential_;
+	chi_pyrimidine_north_potential_, chi_pyrimidine_south_potential_, o2h_north_potential_, o2h_south_potential_;
 
 	core::scoring::constraints::FuncOP fade_delta_north_, fade_delta_south_;
 	core::scoring::constraints::FuncOP fade_alpha_sc_minus_, fade_alpha_sc_plus_;

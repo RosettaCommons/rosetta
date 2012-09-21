@@ -174,6 +174,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 		Real const chi= numeric::principal_angle_degrees(  rsd.chi( CHI - NUM_RNA_MAINCHAIN_TORSIONS ) );
 		Real const nu2= numeric::principal_angle_degrees(  rsd.chi( NU2 - NUM_RNA_MAINCHAIN_TORSIONS ) );
 		Real const nu1= numeric::principal_angle_degrees(  rsd.chi( NU1 - NUM_RNA_MAINCHAIN_TORSIONS ) );
+		Real const o2h = numeric::principal_angle_degrees(  rsd.chi( O2H - NUM_RNA_MAINCHAIN_TORSIONS ) );
 
 		if(verbose_) std::cout << "Beta torsion" << std::endl;
 
@@ -215,7 +216,6 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 									 fade_delta_south_->func( delta ) * chi_south_potential_others_->func( chi ) ); //chi
 				}
 			}
-
 		}
 
 		if(verbose_)  std::cout << "nu2 torsion" << std::endl;
@@ -230,6 +230,11 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 		if(Should_score_torsion(pose, TorsionID( rsd.seqpos(), id::CHI, NU1 - NUM_RNA_MAINCHAIN_TORSIONS ) ) ) {
 			score += ( fade_delta_north_->func( delta ) * nu1_north_potential_->func( nu1 ) +
 							 fade_delta_south_->func( delta ) * nu1_south_potential_->func( nu1 ) ); //nu1
+		}
+
+		if(use_new_potential_ && Should_score_torsion(pose, TorsionID( rsd.seqpos(), id::CHI, O2H - NUM_RNA_MAINCHAIN_TORSIONS ) ) ) {
+			score += ( fade_delta_north_->func( delta ) * o2h_north_potential_->func( o2h ) +
+							 fade_delta_south_->func( delta ) * o2h_south_potential_->func( o2h ) ); //o2h
 		}
 
 		return score;
@@ -370,6 +375,8 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 			Real const chi  = numeric::principal_angle_degrees(   rsd.chi( CHI - NUM_RNA_MAINCHAIN_TORSIONS ) );
 			Real const nu2  = numeric::principal_angle_degrees(   rsd.chi( NU2 - NUM_RNA_MAINCHAIN_TORSIONS ) );
 			Real const nu1  = numeric::principal_angle_degrees(   rsd.chi( NU1 - NUM_RNA_MAINCHAIN_TORSIONS ) );
+			Real const o2h  = numeric::principal_angle_degrees(   rsd.chi( O2H - NUM_RNA_MAINCHAIN_TORSIONS ) );
+
 			Vector f1( 0.0 ), f2( 0.0 );
 
 			///////////////////////////////ALPHA//////////////////////////////
@@ -508,8 +515,17 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 				F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f1;
 				F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f2;
 			}
-		}
 
+			/////////////////////////////////O2H/////////////////////////////////////////////////////////
+			if ( use_new_potential_ &&  
+			     get_f1_f2( id::TorsionID( seqpos, id::CHI, O2H - NUM_RNA_MAINCHAIN_TORSIONS ),	pose, id, f1, f2 ) ){
+				Real const dE_dtorsion = ( fade_delta_north_->func( delta ) * o2h_north_potential_->dfunc( o2h ) +
+																	 fade_delta_south_->func( delta ) * o2h_south_potential_->dfunc( o2h ) );
+
+				F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f1;
+				F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f2;
+			}
+		}
 	}
 
 
@@ -555,6 +571,8 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 			initialize_potential_from_file( chi_purine_south_potential_, "chi_purine_south_potential.txt" );
 			initialize_potential_from_file( chi_pyrimidine_north_potential_, "chi_pyrimidine_north_potential.txt" );
 			initialize_potential_from_file( chi_pyrimidine_south_potential_, "chi_pyrimidine_south_potential.txt" );
+			initialize_potential_from_file( o2h_north_potential_, "o2h_north_potential.txt" );
+			initialize_potential_from_file( o2h_south_potential_, "o2h_south_potential.txt" );
 		} else {
 			initialize_potential_from_file( chi_north_potential_guanosine_, "chi_north_potential_guanosine.txt" );
 			initialize_potential_from_file( chi_south_potential_guanosine_, "chi_south_potential_guanosine.txt" );

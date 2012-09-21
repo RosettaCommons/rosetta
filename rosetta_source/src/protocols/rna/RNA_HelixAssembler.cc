@@ -133,9 +133,9 @@ void RNA_HelixAssembler::use_phenix_geo( bool const setting )
 {
 	use_phenix_geo_ = setting;
 	if (setting) {
-		core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna_phenix" );
+		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna_phenix" );
 	} else {
-		core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA );
+		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA );
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -238,8 +238,6 @@ RNA_HelixAssembler::build_on_base_pair( pose::Pose & pose, Size const & n, char 
  	using namespace core::conformation;
  	using namespace core::chemical;
  	using namespace core::id;
-
-	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 
 	/////////////////////////////////////
 	ResidueOP rsd1( ResidueFactory::create_residue( *(rsd_set->aa_map( aa_from_oneletter_code( seq1 ) )[1] ) ) );
