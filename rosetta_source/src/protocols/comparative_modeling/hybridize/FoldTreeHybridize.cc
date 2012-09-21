@@ -301,15 +301,12 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 	}
 
 	if (!ok) {
-		TR.Info << "Secondary structure from fragments: " << pose.secstruct() << std::endl;
 		core::fragment::SecondaryStructureOP ss_def = new core::fragment::SecondaryStructure( *frag_libs_[1], num_residues_nonvirt, false );
 		for ( core::Size i = 1; i<= num_residues_nonvirt; ++i ) {
 			pose.set_secstruct( i, ss_def->secstruct(i) );
 		}
-	} else {
-		TR.Info << "Secondary structure from psipred_ss2: " << pose.secstruct() << std::endl;
 	}
-
+	TR.Info << "Secondary structure: " << pose.secstruct() << std::endl;
 
 	// combine:
 	// (a) contigs in the current template
