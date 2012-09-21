@@ -438,7 +438,11 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	set_task_factory( tf );
 	//RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover( scorefxn_pack(), task_factory() );
 
-	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover( scorefxn_pack(), task_factory() );
+ 	//need to explicitly convert to COP from OP in order for SidechainMinMover to work
+ 	//besides, need to use init_task_factory_, which is otherwise not used from task_factory()
+ 	core::pack::task::TaskFactoryCOP ctf=init_task_factory_;
+
+	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover( scorefxn_pack(), ctf );
 	SequenceMoverOP interface_repack_and_move_loops = new moves::SequenceMover;
 
 	std::string const flex_bb_docking_type = option[ OptionKeys::docking::flexible_bb_docking ]();
@@ -446,14 +450,14 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 		// Call pack_rotamers, no backbone movement
 		protocols::simple_moves::PackRotamersMoverOP pack_interface_repack = new protocols::simple_moves::PackRotamersMover( scorefxn_pack() );
 		//pack_interface_repack->task_factory( task_factory() );
-		pack_interface_repack->task_factory( task_factory() );
+		pack_interface_repack->task_factory( ctf );
 		interface_repack_and_move_loops->add_mover( pack_interface_repack );
 	} else {
 
 		// Call pack_rotamer before and after loop movement
 		protocols::simple_moves::PackRotamersMoverOP pack_interface_repack = new protocols::simple_moves::PackRotamersMover( scorefxn_pack() );
 		//pack_interface_repack->task_factory( task_factory() );
-		pack_interface_repack->task_factory( task_factory() );
+		pack_interface_repack->task_factory( ctf );
 		interface_repack_and_move_loops->add_mover( pack_interface_repack );
 
 		if ( ( flex_bb_docking_type == "ccd" ) || ( flex_bb_docking_type == "kic" ) ||  ( flex_bb_docking_type == "backrub" ) ) {
@@ -514,11 +518,11 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 
 	TrialMoverOP pack_interface_and_move_loops_trial = new TrialMover( interface_repack_and_move_loops, mc_ );
 
-	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn_pack(), task_factory() );
+	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn_pack(), ctf );
 	TrialMoverOP rtmin_trial = new TrialMover( rtmin, mc_ );
 
 	//InterfaceSidechainMinMoverOP scmin_mover = new InterfaceSidechainMinMover(rb_jump_, scorefxn_pack() );
-	SidechainMinMoverOP scmin_mover = new protocols::docking::SidechainMinMover( scorefxn_pack(), task_factory() );
+	SidechainMinMoverOP scmin_mover = new protocols::docking::SidechainMinMover( scorefxn_pack(), ctf );
 	TrialMoverOP scmin_trial = new TrialMover( scmin_mover, mc_ );
 
 	// the standard mcm cycle : rb perturbation->rotamer trials->minimization->MC accept
