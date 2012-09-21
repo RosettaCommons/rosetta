@@ -103,6 +103,7 @@ Splice::Splice() :
 	res_move_( 4 ),
 	randomize_cut_( false ),
 	task_factory_( NULL ),
+	design_task_factory_( NULL ),
 	torsion_database_fname_( "" ),
 	database_entry_( 0 ),
 	template_file_( "" ),
@@ -496,15 +497,20 @@ Splice::apply( core::pose::Pose & pose )
 	ThreadSequenceOperationOP tso = new ThreadSequenceOperation;
 	tso->target_sequence( threaded_seq );
 	tso->start_res( from_res() );
-	tso->allow_design_around( false );
+	tso->allow_design_around( true ); // 21Sep12: from now on the design shell is determined downstream //false );
 	TR<<"Threading sequence: "<<threaded_seq<<" starting from "<<from_res()<<std::endl;
-	TaskFactoryOP tf = new TaskFactory;
+	TaskFactoryOP tf;
+	if( design_task_factory()() == NULL )
+		tf = new TaskFactory;
+	else
+		tf = new TaskFactory( *design_task_factory() );
+
 	tf->push_back( new operation::InitializeFromCommandline );
 	tf->push_back( new operation::NoRepackDisulfides );
 	tf->push_back( tso );
 	DesignAroundOperationOP dao = new DesignAroundOperation;
-	dao->design_shell( 1.0 ); // threaded sequence operation needs to design, and will restrict design to the loop only
-	dao->repack_shell( 8.0 );
+	dao->design_shell( (design_task_factory()() == NULL ? 0.0 : 4.0 ) ); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
+	dao->repack_shell( 6.0 );
 	for( core::Size i = from_res() - 1; i <= from_res() + total_residue_new + 1; ++i ){
 		if( !pose.residue( i ).has_variant_type( DISULFIDE ) )
 			dao->include_residue( i );
@@ -667,6 +673,10 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 		from_res( core::pose::parse_resnum( tag->getOption< std::string >( "from_res", "0" ), pose ) );
 		to_res( core::pose::parse_resnum( tag->getOption< std::string >( "to_res", "0" ), pose ) );
 	}
+	if( tag->hasOption( "design_task_operations" ) ){
+		TR<<"Defined design_task_factory, which will be used during splice design"<<std::endl;
+		design_task_factory( protocols::rosetta_scripts::parse_task_operations( tag->getOption< std::string >( "design_task_operations" ), data ) );
+	}
 	if( tag->hasOption( "residue_numbers_setter" ) ){
 		runtime_assert( !tag->hasOption( "locked_res" ) );
 		locked_res_ = protocols::moves::get_set_from_datamap< protocols::moves::DataMapObj< utility::vector1< core::Size > > >( "residue_numbers", tag->getOption< std::string >( "residue_numbers_setter" ), data );
@@ -764,6 +774,12 @@ Splice::task_factory() const{ return task_factory_; }
 
 void
 Splice::task_factory( core::pack::task::TaskFactoryOP tf ){ task_factory_ = tf; }
+
+core::pack::task::TaskFactoryOP
+Splice::design_task_factory() const{ return design_task_factory_; }
+
+void
+Splice::design_task_factory( core::pack::task::TaskFactoryOP tf ){ design_task_factory_ = tf; }
 
 
 /// the torsion dbase should have the following structure:
