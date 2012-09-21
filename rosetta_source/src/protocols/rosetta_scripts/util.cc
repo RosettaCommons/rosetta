@@ -67,10 +67,21 @@ parse_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap
 
   TaskFactoryOP new_task_factory( new TaskFactory );
   if ( ! tag->hasOption("task_operations") ) return new_task_factory;
-  std::string const t_o_val( tag->getOption<std::string>("task_operations") );
+	TR<<"Object "<<tag->getOption< std::string >( "name", "no_name" )<<" reading the following task_operations: ";
+	return( parse_task_operations( tag->getOption< std::string >( "task_operations"), data ) );
+}
+
+core::pack::task::TaskFactoryOP
+parse_task_operations( std::string const task_list, protocols::moves::DataMap const & data )
+{
+	using namespace core::pack::task;
+	using namespace core::pack::task::operation;
+
+  TaskFactoryOP new_task_factory( new TaskFactory );
+  std::string const t_o_val( task_list );
   typedef utility::vector1< std::string > StringVec;
   StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
-	TR<<"Adding the following task operations to mover "<<tag->getName()<<" called "<<tag->getOption<std::string>( "name", "no_name" )<<":\n";
+	TR<<"Adding the following task operations\n";
   for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
         t_o_key != end; ++t_o_key ) {
     if ( data.has( "task_operations", *t_o_key ) ) {
@@ -83,7 +94,6 @@ parse_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap
 	TR<<std::endl;
   return new_task_factory;
 }
-
 
 ///option to add or refer to a Taskfactory through the datamap, similar to how to add/refer to movemap OPs (EMS)
 core::pack::task::TaskFactoryOP

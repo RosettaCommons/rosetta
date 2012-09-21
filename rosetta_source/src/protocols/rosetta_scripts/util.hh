@@ -53,6 +53,9 @@ parse_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap
 core::pack::task::TaskFactoryOP
 parse_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap /*const*/ & data, core::pack::task::TaskFactoryOP & task_factory );
 
+core::pack::task::TaskFactoryOP
+parse_task_operations( std::string const task_list, protocols::moves::DataMap const & data );
+
 core::scoring::ScoreFunctionOP
 parse_score_function( utility::tag::TagPtr const tag, protocols::moves::DataMap const & data, std::string const dflt_key="score12" );
 
