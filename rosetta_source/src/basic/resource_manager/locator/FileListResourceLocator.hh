@@ -11,6 +11,10 @@
 /// @brief
 /// @author
 
+#ifndef INCLUDED_basic_resource_manager_locator_FileListResourceLocator_hh
+#define INCLUDED_basic_resource_manager_locator_FileListResourceLocator_hh
+
+
 #include <basic/resource_manager/ResourceLocator.hh>
 #include <basic/resource_manager/locator/FileListResourceLocator.fwd.hh>
 
@@ -66,3 +70,5 @@ private:
 }
 }
 }
+
+#endif // INCLUDED_basic_resource_manager_locator_FileListResourceLocator_hh

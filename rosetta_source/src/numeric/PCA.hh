@@ -12,6 +12,9 @@
 /// @brief
 /// @author Tim Jacobs
 
+#ifndef INCLUDED_numeric_PCA_hh
+#define INCLUDED_numeric_PCA_hh
+
 // Unit headers
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
@@ -29,7 +32,7 @@ namespace numeric {
 	compare_first_only(const std::pair<double,Eigen::VectorXd> &left, const std::pair<double,Eigen::VectorXd> &right){
 			return left.first < right.first;
 	}
-	
+
 	/// @brief return the first principal component
 	/// of the given set of points
 	template< typename T >
@@ -38,7 +41,7 @@ namespace numeric {
 	first_principal_component( utility::vector1< xyzVector< T > > const & coords ){
 		return principal_components(coords).col(1);
 	}
-	
+
 	/// @brief return a matrix containing the 3 principal components
 	/// of the given set of points
 	template< typename T >
@@ -47,7 +50,7 @@ namespace numeric {
 	principal_components( utility::vector1< xyzVector< T > > const & coords )
 	{
 		using namespace Eigen;
-		
+
 		Size n = coords.size();
 		MatrixXd data_points = MatrixXd::Zero(3, n);//3 dimensions x # of points
 		for(Size i=1; i<=coords.size(); ++i)
@@ -56,7 +59,7 @@ namespace numeric {
 			data_points(1,i-1)=coords[i].y();
 			data_points(2,i-1)=coords[i].z();
 		}
-		
+
 		MatrixXd mean_subtracted_data = data_points;
 		for (int i = 0; i < 3; ++i)
 		{
@@ -64,29 +67,29 @@ namespace numeric {
 			VectorXd meanVector  = VectorXd::Constant(n,mean); //create a vector with constant value = mean
 			mean_subtracted_data.row(i) -= meanVector; //subtract mean from every point for the current dimension
 		}
-		
+
 		// get the covariance matrix
 		MatrixXd Covariance = MatrixXd::Zero(3, 3);
 		Covariance = (1 / (T)n) * mean_subtracted_data * mean_subtracted_data.transpose();
-		
+
 		// compute the eigenvalue on the Cov Matrix
 		EigenSolver<MatrixXd> m_solve(Covariance);
 		VectorXd eigenvalues = VectorXd::Zero(3);
 		eigenvalues = m_solve.eigenvalues().real();
-		
+
 		MatrixXd eigenvectors = MatrixXd::Zero(n, 3);
 		eigenvectors = m_solve.eigenvectors().real();
-		
+
 		//Create a mapping between eigenvalues and eigenvectors
 		utility::vector1< std::pair<double, VectorXd > > value_vector_pairs;
 		for (Size i = 1 ; i <= 3; ++i)
 		{
 			value_vector_pairs.push_back(std::make_pair(eigenvalues(i-1), eigenvectors.col(i-1)));//eigenvalues is 0-indexed
 		}
-		
+
 		//Sort eigenvectors highest to lowest based on eigenvalues
 		sort(value_vector_pairs.begin(), value_vector_pairs.end(), compare_first_only);
-		
+
 		//Convert to xyzMatrix
 		xyzMatrix<T> sorted_eigenvectors;
 		for (int i = 0; i < 3; i++)
@@ -97,8 +100,10 @@ namespace numeric {
 				value_vector_pairs[i+1].second(2));
 			sorted_eigenvectors.col(i+1, xyz_eigenvector);
 		}
-		
+
 		return sorted_eigenvectors;
 	}
-	
+
 }//namespace
+
+#endif  // #define INCLUDED_numeric_PCA_hh

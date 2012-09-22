@@ -11,8 +11,8 @@
 /// @brief  forward header for FileListResourceLocator
 /// @author Sam DeLuca <samuel.l.deluca@vanderbilt.edu>
 
-#ifndef INCLUDED_basic_resource_manager_locator_FileSystemResourceLocator_fwd_hh
-#define INCLUDED_basic_resource_manager_locator_FileSystemResourceLocator_fwd_hh
+#ifndef INCLUDED_basic_resource_manager_locator_FileListResourceLocator_fwd_hh
+#define INCLUDED_basic_resource_manager_locator_FileListResourceLocator_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -29,4 +29,4 @@ typedef utility::pointer::owning_ptr< FileListResourceLocator const > FileListRe
 }// namespace
 }// namespace
 
-#endif // include guard
+#endif // include guard INCLUDED_basic_resource_manager_locator_FileListResourceLocator_fwd_hh
