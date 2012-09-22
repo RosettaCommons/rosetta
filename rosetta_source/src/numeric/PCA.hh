@@ -28,8 +28,8 @@ namespace numeric {
 	/// @brief a function to sort pairs that doesn't require
 	/// operators for the second element in the pair. This is
 	/// needed below
-	bool
-	compare_first_only(const std::pair<double,Eigen::VectorXd> &left, const std::pair<double,Eigen::VectorXd> &right){
+	inline bool
+	compare_first_only(const std::pair<double,Eigen::VectorXd> &left, const std::pair<double,Eigen::VectorXd> &right) {
 			return left.first < right.first;
 	}
 
@@ -106,4 +106,4 @@ namespace numeric {
 
 }//namespace
 
-#endif  // #define INCLUDED_numeric_PCA_hh
+#endif  // INCLUDED_numeric_PCA_hh
