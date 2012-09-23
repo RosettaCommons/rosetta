@@ -136,6 +136,12 @@ def main(args):
       help="Default compiler that will be used to build PyRosetta. Default is 'gcc'.",
       )
 
+    parser.add_option("--gccxml-compiler",
+      default='',
+      action="store",
+      help="Default compiler that will be used in GCCXML. Default is empty string which usually imply 'gcc'.",
+      )
+
 
     parser.add_option("--py-plus-plus", action="store_true", dest="py_plus_plus", default=False,
       help="Use Py++/PyGccXML parser and Python buildes to build PyRosetta [depricated]."
@@ -1063,7 +1069,11 @@ class ModuleBuilder:
         elif Platform == "macos": self.cpp_defines += ' -I../src/platform/macos'
         else: self.cpp_defines += ' -I../src/platform/linux'
 
-        self.gccxml_options = '--gccxml-compiler llvm-g++-4.2 -march=nocona' if Platform == "macos" else ''
+        #self.gccxml_options = '--gccxml-compiler llvm-g++-4.2 -march=nocona' if Platform == "macos" else ''
+        self.gccxml_options = ''
+        if Options.gccxml_compiler: self.gccxml_options += '--gccxml-compiler ' + Options.gccxml_compiler
+        elif Platform == 'macos': self.gccxml_options += '--gccxml-compiler llvm-g++-4.2'
+        if Platform == 'macos': self.gccxml_options += '-march=nocona'
 
         self.cc_files = []
         self.add_option  = getCompilerOptions()
