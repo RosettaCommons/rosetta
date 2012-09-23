@@ -897,7 +897,7 @@ parse_database_connection(
 		case utility::sql_database::DatabaseMode::postgres:{
 
 			std::string database_host;
-			if(!tag->hasOption("database_host") && !option[dbms::host].user()){
+			if(!tag->hasOption("database_host")){
 				if(!option[dbms::host].user()){
 					utility_exit_with_message(
 						"WARNING: To connect to a postgres or mysql database you must set"
@@ -912,7 +912,7 @@ parse_database_connection(
 			}
 
 			std::string database_user;
-			if(!tag->hasOption("database_user") && !option[dbms::user].user()){
+			if(!tag->hasOption("database_user")){
 				if(!option[dbms::user].user()){
 					utility_exit_with_message(
 						"WARNING: To connect to a postgres or mysql database you must set"
@@ -927,7 +927,7 @@ parse_database_connection(
 			}
 
 			std::string database_password;
-			if(!tag->hasOption("database_password") && !option[dbms::password].user()){
+			if(!tag->hasOption("database_password")){
 				if(!option[dbms::password].user()){
 					utility_exit_with_message(
 						"WARNING: To connect to a postgres or mysql database you must set"
@@ -942,7 +942,7 @@ parse_database_connection(
 			}
 
 			Size database_port;
-			if(!tag->hasOption("database_port") && !option[dbms::port].user()){
+			if(!tag->hasOption("database_port")){
 				if(!option[dbms::port].user()){
 					utility_exit_with_message(
 						"WARNING: To connect to a postgres or mysql database you must set"
