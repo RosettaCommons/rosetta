@@ -177,7 +177,7 @@ void SnugDockProtocol::init()
 	type( "SnugDockProtocol" );
 	
 	/// TODO: Allow the refinement method to be set via a mutator and from the options system
-	loop_refinement_method_ = "refine_ccd";
+	loop_refinement_method_ = "refine_kic";
 }
 
 void SnugDockProtocol::init_for_equal_operator_and_copy_constructor(

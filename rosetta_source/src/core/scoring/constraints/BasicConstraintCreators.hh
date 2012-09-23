@@ -176,6 +176,17 @@ public:
     virtual std::string keyname() const;
 };
 
+/// @brief Mover creator for the FabConstraint constraint
+class FabConstraintCreator : public ConstraintCreator
+{
+public:
+    FabConstraintCreator();
+    virtual ~FabConstraintCreator();
+
+    virtual ConstraintOP create_constraint() const;
+    virtual std::string keyname() const;
+};
+
 } //namespace constraints
 } //namespace scoring
 } //namespace core

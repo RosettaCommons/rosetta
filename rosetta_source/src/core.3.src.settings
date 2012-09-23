@@ -164,6 +164,7 @@ sources = {
 		"DihedralPairConstraint",
 		"DistancePairConstraint",
 		"EtableFunc",
+		"FabConstraint",
 		"FadeFunc",
 		"FlatHarmonicFunc",
 		"FourPointsFunc",

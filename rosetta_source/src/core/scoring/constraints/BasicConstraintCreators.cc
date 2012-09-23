@@ -30,6 +30,7 @@
 #include <core/scoring/constraints/MultiConstraint.hh>
 #include <core/scoring/constraints/SiteConstraint.hh>
 #include <core/scoring/constraints/SiteConstraintResidues.hh>
+#include <core/scoring/constraints/FabConstraint.hh>
 
 #include <utility/vector1.hh>
 
@@ -208,6 +209,18 @@ ConstraintOP SiteConstraintResiduesCreator::create_constraint() const {
 std::string SiteConstraintResiduesCreator::keyname() const
 {
     return "SiteConstraintResidues";
+}
+
+FabConstraintCreator::FabConstraintCreator() {}
+FabConstraintCreator::~FabConstraintCreator() {}
+
+ConstraintOP FabConstraintCreator::create_constraint() const {
+    return new FabConstraint;
+}
+
+std::string FabConstraintCreator::keyname() const
+{
+    return "FabConstraint";
 }
 
 } //namespace constraints
