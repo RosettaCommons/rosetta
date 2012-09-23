@@ -123,11 +123,11 @@ void SnugDock::apply( Pose & pose )
 	TR << "Beginning apply function of " + get_name() + "." << std::endl;
 	show( TR );
 	
-	if ( ! high_resolution_step_ ) { // this if statement makes sure only do setup_object once
-		CDRsMinPackMinOP minimize_all_cdr_loops_once = new CDRsMinPackMin( antibody_info_ );
-		minimize_all_cdr_loops_once->apply(pose);
-		setup_objects( pose );
-	}
+	if ( ! high_resolution_step_ ) setup_objects( pose );
+	
+	/// minimize the CDRs before move to full-atom SnugDock cycle. Remove clashes which may dissociate L-H
+	pre_minimization_->apply(pose);
+	
 	TR << "Reinitializing the shared MC object before applying the high resolution phase of " + get_name() + "."
 		<< std::endl;
 
@@ -142,7 +142,8 @@ void SnugDock::apply( Pose & pose )
 	TR << "Setting the structure to the state with the best score observed during the simulation" << std::endl;
 	mc_->recover_low( pose );
 	
-	pose.fold_tree(antibody_info_->get_FoldTree_LH_A(pose)); // JQX: need to make the foldtree like LH_A
+	/// Set the pose's foldtree to Ab-Ag docking (LH_A) to ensure the correct interface.
+	pose.fold_tree(antibody_info_->get_FoldTree_LH_A(pose)); 
 }
 
 Size SnugDock::number_of_high_resolution_cycles() const
@@ -180,6 +181,10 @@ void SnugDock::setup_objects( Pose const & pose )
 	/// AntibodyInfo is used to store information about the Ab-Ag complex and to generate useful helper objects based on
 	/// that information (e.g. the various FoldTrees that are needed for SnugDock).
 	if ( ! antibody_info_ ) antibody_info_ = new AntibodyInfo( pose );
+	
+	///
+	pre_minimization_ = new CDRsMinPackMin( antibody_info_ );
+	
 
 	/// A vanilla DockMCMCycle can be used because AntibodyInfo will always make the first jump in the FoldTree dockable.
 	DockMCMCycleOP standard_dock_cycle = new DockMCMCycle;
@@ -242,7 +247,7 @@ void SnugDock::init()
 	type( "SnugDock" );
 	
 	/// TODO: Allow the refinement method to be set via a mutator and from the options system
-	loop_refinement_method_ = "refine_kic";
+	loop_refinement_method_ = "refine_ccd";
 	number_of_high_resolution_cycles( 50 );
 
 	init_options();

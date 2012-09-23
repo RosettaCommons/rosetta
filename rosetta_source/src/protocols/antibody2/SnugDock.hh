@@ -27,6 +27,8 @@
 // Package headers
 #include <protocols/antibody2/AntibodyInfo.fwd.hh>
 #include <protocols/antibody2/RefineOneCDRLoop.fwd.hh>
+#include <protocols/antibody2/CDRsMinPackMin.fwd.hh>
+
 
 // Project headers
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -88,6 +90,7 @@ private: // data
 	// Movers
 	moves::RandomMoverOP high_resolution_step_;
 	std::string loop_refinement_method_;
+	antibody2::CDRsMinPackMinOP pre_minimization_;
 
 private:
 	Size number_of_high_resolution_cycles_;
