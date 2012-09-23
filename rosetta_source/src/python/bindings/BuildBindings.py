@@ -1073,7 +1073,7 @@ class ModuleBuilder:
         self.gccxml_options = ''
         if Options.gccxml_compiler: self.gccxml_options += '--gccxml-compiler ' + Options.gccxml_compiler
         elif Platform == 'macos': self.gccxml_options += '--gccxml-compiler llvm-g++-4.2'
-        if Platform == 'macos': self.gccxml_options += '-march=nocona'
+        if Platform == 'macos': self.gccxml_options += ' -march=nocona'
 
         self.cc_files = []
         self.add_option  = getCompilerOptions()
