@@ -1,9 +1,13 @@
+#! /usr/bin/env python
+
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
 import os
+import re
 import sys
 
 proj = sys.argv[1].rstrip()
@@ -26,11 +30,13 @@ for vsLine in vsLines:
 		if addTo == 2:
 			vsPostLines.append(vsLine)
 
-#for vsLine in vsPreLines:
-#	print vsLine,
-#print
-#for vsLine in vsPostLines:
-#	print vsLine,
+# Additional include directories
+pattern = re.compile('AdditionalIncludeDirectories="(.*)"')
+for (i, line) in enumerate(vsPreLines):
+	match = pattern.search(line)
+	if match:
+		setting = match.group(1) + ';..\..\..\external\dbio;'
+		vsPreLines[i] = 'AdditionalIncludeDirectories="%s"\n' % setting
 
 vsFileLines = []
 vsFileLines += ['\t<Files>\r\n']
@@ -47,7 +53,7 @@ for dir, srcfiles in sources.iteritems():
 	hdrfiles = os.listdir(prefixdir + '/' + dir)
 	hdrfiles = [hdrfile for hdrfile in hdrfiles if hdrfile.find('.h') >= 0]
 
-	srcfiles = [srcfile + '.cc' for srcfile in srcfiles]
+	srcfiles = [srcfile + '.cc' for srcfile in srcfiles if not srcfile.endswith('.cu')]
 
 	allfiles = sorted(hdrfiles + srcfiles)
 
@@ -82,7 +88,4 @@ for dir, srcfiles in sources.iteritems():
 vsFileLines += ['\t</Files>\r\n']
 
 lines = vsPreLines + vsFileLines + vsPostLines
-#for fl in lines:
-#	print fl,
-
 open(vsFileName, 'w').writelines(lines)
