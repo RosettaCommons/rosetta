@@ -22,6 +22,10 @@
 #include <core/types.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
+#ifdef WIN32
+#include <core/scoring/ScoreFunction.hh>
+#endif
+
 //Basic Headers
 #include <basic/database/sql_utils.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
