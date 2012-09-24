@@ -316,6 +316,9 @@ void DockingProtocol::sync_objects_with_flags()
 			}
 			if ( !docking_highres_mover_ ) {
 				docking_highres_mover_ = new DockingHighResLegacy( movable_jumps_, docking_scorefxn_high_, docking_scorefxn_pack_ );
+				docking_highres_mover_->set_rt_min( rt_min_ );
+				docking_highres_mover_->set_sc_min( sc_min_ );
+				docking_highres_mover_->set_partners( partners_ );
 			}
 		}
 		else {
