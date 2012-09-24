@@ -1,3 +1,26 @@
+<<<<<<< HEAD
+namespace lh { RealOptionKey const grid_space_multiplier( "lh:grid_space_multiplier" );  }
+namespace lh { RealOptionKey const grid_angle_multiplier( "lh:grid_angle_multiplier" );  }
+namespace lh { IntegerOptionKey const skim_size( "lh:skim_size" );  }
+namespace lh { IntegerOptionKey const rounds( "lh:rounds" );  }
+namespace lh { StringOptionKey const jobname( "lh:jobname" );  }
+namespace lh { IntegerOptionKey const max_lib_size( "lh:max_lib_size" );  }
+namespace lh { IntegerOptionKey const max_emperor_lib_size( "lh:max_emperor_lib_size" );  }
+namespace lh { IntegerOptionKey const max_emperor_lib_round( "lh:max_emperor_lib_round" );  }
+namespace lh { IntegerOptionKey const library_expiry_time( "lh:library_expiry_time" );  }
+namespace lh { StringOptionKey const objective_function( "lh:objective_function" );  }
+namespace lh { IntegerOptionKey const expire_after_rounds( "lh:expire_after_rounds" );  }
+namespace lh { StringOptionKey const mpi_resume( "lh:mpi_resume" );  }
+namespace lh { StringOptionKey const mpi_feedback( "lh:mpi_feedback" );  }
+namespace lh { IntegerOptionKey const mpi_batch_relax_chunks( "lh:mpi_batch_relax_chunks" );  }
+namespace lh { IntegerOptionKey const mpi_batch_relax_absolute_max( "lh:mpi_batch_relax_absolute_max" );  }
+namespace lh { IntegerOptionKey const mpi_outbound_wu_buffer_size( "lh:mpi_outbound_wu_buffer_size" );  }
+namespace lh { IntegerOptionKey const mpi_loophash_split_size    ( "lh:mpi_loophash_split_size    " );  }
+namespace lh { RealOptionKey const mpi_metropolis_temp( "lh:mpi_metropolis_temp" );  }
+namespace lh { IntegerOptionKey const mpi_save_state_interval( "lh:mpi_save_state_interval" );  }
+namespace lh { BooleanOptionKey const mpi_master_save_score_only( "lh:mpi_master_save_score_only" );  }
+=======
+>>>>>>> master
 namespace lh { IntegerOptionKey const max_loophash_per_structure( "lh:max_loophash_per_structure" );  }
 namespace lh { RealOptionKey const rms_limit( "lh:rms_limit" );  }
 namespace lh { BooleanOptionKey const centroid_only( "lh:centroid_only" );  }
@@ -621,6 +644,8 @@ namespace RBSegmentRelax { BooleanOptionKey const RBSegmentRelax( "RBSegmentRela
 namespace RBSegmentRelax { FileOptionKey const input_pdb( "RBSegmentRelax:input_pdb" );  }
 namespace RBSegmentRelax { FileOptionKey const rb_file( "RBSegmentRelax:rb_file" );  }
 namespace RBSegmentRelax { RealOptionKey const cst_wt( "RBSegmentRelax:cst_wt" );  }
+<<<<<<< HEAD
+=======
 namespace RBSegmentRelax { RealOptionKey const cst_width( "RBSegmentRelax:cst_width" );  }
 namespace RBSegmentRelax { StringOptionKey const cst_pdb( "RBSegmentRelax:cst_pdb" );  }
 namespace RBSegmentRelax { IntegerOptionKey const nrbmoves( "RBSegmentRelax:nrbmoves" );  }
@@ -630,3 +655,4 @@ namespace RBSegmentRelax { BooleanOptionKey const skip_fragment_moves( "RBSegmen
 namespace RBSegmentRelax { BooleanOptionKey const skip_seqshift_moves( "RBSegmentRelax:skip_seqshift_moves" );  }
 namespace RBSegmentRelax { BooleanOptionKey const skip_rb_moves( "RBSegmentRelax:skip_rb_moves" );  }
 namespace RBSegmentRelax { RealVectorOptionKey const helical_movement_params( "RBSegmentRelax:helical_movement_params" );  }
+>>>>>>> master

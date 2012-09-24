@@ -5010,6 +5010,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-centroid_mode</b> \<Boolean\><dt>
+<dd>Use centroid relax protocol</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-default_repeats</b> \<Integer\><dt>
 <dd>Default number of repeats done by FastRelax. Has no effect if a custom script is used!</dd><br>
 <dd>Default: 5</dd><br>
@@ -5260,6 +5265,57 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-filter_stage2_end</b> \<Real\><dt>
 <dd>FArelax score filter</dd><br>
 <dd>Default: 99999999.00</dd><br>
+</dl>
+ </li>
+<li><h2>relax:centroid</h2>
+<dl>
+<dt><b>-centroid</b> \<Boolean\><dt>
+<dd>centroid option group</dd><br>
+</dl>
+<dl>
+<dt><b>-weights</b> \<String\><dt>
+<dd>Weights to use for centroid minimization</dd><br>
+<dd>Default: "score4_smooth_cen_relax"</dd><br>
+</dl>
+<dl>
+<dt><b>-ramp_vdw</b> \<Boolean\><dt>
+<dd>Ramp up the VDW weight</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-ramp_rama</b> \<Boolean\><dt>
+<dd>Ramp up the rama/rama2b</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-parameters</b> \<String\><dt>
+<dd>Database file for ramp/min parameter</dd><br>
+<dd>Default: "sampling/cen_relax/default_relax_parameters.txt"</dd><br>
+</dl>
+<dl>
+<dt><b>-centroid_only_mode</b> \<Boolean\><dt>
+<dd>Only use centroid throughout entire protocol.  Nessessary if passing centroid PDB from cmd line</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-do_inter_repacks</b> \<Boolean\><dt>
+<dd>Do an intermittent repack at end of each repeat.  Use this energy for MonteCarlo.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-do_final_min_fa</b> \<Boolean\><dt>
+<dd>Do an all atom minimization before return of pose</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-do_final_repack</b> \<Boolean\><dt>
+<dd>Repack SideChains after switching back to fa_representation</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-do_final_min_sc</b> \<Boolean\><dt>
+<dd>Minimize the sidechains after Repack (can go off rotamer)</dd><br>
+<dd>Default: true</dd><br>
 </dl>
  </li>
 <li><h2>enzdes</h2>

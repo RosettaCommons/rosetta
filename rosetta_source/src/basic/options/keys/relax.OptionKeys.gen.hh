@@ -25,6 +25,7 @@ namespace relax { extern BooleanOptionKey const relax; }
 namespace relax { extern BooleanOptionKey const fast; }
 namespace relax { extern BooleanOptionKey const thorough; }
 namespace relax { extern BooleanOptionKey const membrane; }
+namespace relax { extern BooleanOptionKey const centroid_mode; }
 namespace relax { extern IntegerOptionKey const default_repeats; }
 namespace relax { extern BooleanOptionKey const ramady; }
 namespace relax { extern RealOptionKey const ramady_rms_limit; }
@@ -76,6 +77,16 @@ namespace relax { extern RealOptionKey const filter_stage2_beginning; }
 namespace relax { extern RealOptionKey const filter_stage2_quarter; }
 namespace relax { extern RealOptionKey const filter_stage2_half; }
 namespace relax { extern RealOptionKey const filter_stage2_end; }
+namespace relax { namespace centroid { extern BooleanOptionKey const centroid; } }
+namespace relax { namespace centroid { extern StringOptionKey const weights; } }
+namespace relax { namespace centroid { extern BooleanOptionKey const ramp_vdw; } }
+namespace relax { namespace centroid { extern BooleanOptionKey const ramp_rama; } }
+namespace relax { namespace centroid { extern StringOptionKey const parameters; } }
+namespace relax { namespace centroid { extern BooleanOptionKey const centroid_only_mode; } }
+namespace relax { namespace centroid { extern BooleanOptionKey const do_inter_repacks; } }
+namespace relax { namespace centroid { extern BooleanOptionKey const do_final_min_fa; } }
+namespace relax { namespace centroid { extern BooleanOptionKey const do_final_repack; } }
+namespace relax { namespace centroid { extern BooleanOptionKey const do_final_min_sc; } }
 
 } // namespace OptionKeys
 } // namespace options

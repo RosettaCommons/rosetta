@@ -216,6 +216,7 @@ sources = {
 	    "LoopMover_KIC",
 	],
 	"protocols/relax": [
+                "CentroidRelax",
 		"ClassicRelax",
 		"cst_util",
 		"FastRelax",

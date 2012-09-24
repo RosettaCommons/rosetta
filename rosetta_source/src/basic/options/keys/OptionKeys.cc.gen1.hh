@@ -405,6 +405,7 @@ namespace relax { BooleanOptionKey const relax( "relax" );  }
 namespace relax { BooleanOptionKey const fast( "relax:fast" );  }
 namespace relax { BooleanOptionKey const thorough( "relax:thorough" );  }
 namespace relax { BooleanOptionKey const membrane( "relax:membrane" );  }
+namespace relax { BooleanOptionKey const centroid_mode( "relax:centroid_mode" );  }
 namespace relax { IntegerOptionKey const default_repeats( "relax:default_repeats" );  }
 namespace relax { BooleanOptionKey const ramady( "relax:ramady" );  }
 namespace relax { RealOptionKey const ramady_rms_limit( "relax:ramady_rms_limit" );  }
@@ -456,6 +457,16 @@ namespace relax { RealOptionKey const filter_stage2_beginning( "relax:filter_sta
 namespace relax { RealOptionKey const filter_stage2_quarter( "relax:filter_stage2_quarter" );  }
 namespace relax { RealOptionKey const filter_stage2_half( "relax:filter_stage2_half" );  }
 namespace relax { RealOptionKey const filter_stage2_end( "relax:filter_stage2_end" );  }
+namespace relax { namespace centroid { BooleanOptionKey const centroid( "relax:centroid" );  } }
+namespace relax { namespace centroid { StringOptionKey const weights( "relax:centroid:weights" );  } }
+namespace relax { namespace centroid { BooleanOptionKey const ramp_vdw( "relax:centroid:ramp_vdw" );  } }
+namespace relax { namespace centroid { BooleanOptionKey const ramp_rama( "relax:centroid:ramp_rama" );  } }
+namespace relax { namespace centroid { StringOptionKey const parameters( "relax:centroid:parameters" );  } }
+namespace relax { namespace centroid { BooleanOptionKey const centroid_only_mode( "relax:centroid:centroid_only_mode" );  } }
+namespace relax { namespace centroid { BooleanOptionKey const do_inter_repacks( "relax:centroid:do_inter_repacks" );  } }
+namespace relax { namespace centroid { BooleanOptionKey const do_final_min_fa( "relax:centroid:do_final_min_fa" );  } }
+namespace relax { namespace centroid { BooleanOptionKey const do_final_repack( "relax:centroid:do_final_repack" );  } }
+namespace relax { namespace centroid { BooleanOptionKey const do_final_min_sc( "relax:centroid:do_final_min_sc" );  } }
 namespace enzdes { BooleanOptionKey const enzdes( "enzdes" );  }
 namespace enzdes { StringOptionKey const checkpoint( "enzdes:checkpoint" );  }
 namespace enzdes { BooleanOptionKey const enz_score( "enzdes:enz_score" );  }
@@ -610,6 +621,8 @@ namespace lh { BooleanOptionKey const filter_by_phipsi( "lh:filter_by_phipsi" );
 namespace lh { IntegerOptionKey const max_radius( "lh:max_radius" );  }
 namespace lh { IntegerOptionKey const max_struct( "lh:max_struct" );  }
 namespace lh { IntegerOptionKey const max_struct_per_radius( "lh:max_struct_per_radius" );  }
+<<<<<<< HEAD
+=======
 namespace lh { RealOptionKey const grid_space_multiplier( "lh:grid_space_multiplier" );  }
 namespace lh { RealOptionKey const grid_angle_multiplier( "lh:grid_angle_multiplier" );  }
 namespace lh { IntegerOptionKey const skim_size( "lh:skim_size" );  }
@@ -630,3 +643,4 @@ namespace lh { IntegerOptionKey const mpi_loophash_split_size    ( "lh:mpi_looph
 namespace lh { RealOptionKey const mpi_metropolis_temp( "lh:mpi_metropolis_temp" );  }
 namespace lh { IntegerOptionKey const mpi_save_state_interval( "lh:mpi_save_state_interval" );  }
 namespace lh { BooleanOptionKey const mpi_master_save_score_only( "lh:mpi_master_save_score_only" );  }
+>>>>>>> master

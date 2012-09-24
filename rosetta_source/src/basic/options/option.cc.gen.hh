@@ -1044,6 +1044,7 @@ option.add( basic::options::OptionKeys::relax::relax, "relax option group" ).leg
 option.add( basic::options::OptionKeys::relax::fast, "Do a preset, small cycle number FastRelax" );
 option.add( basic::options::OptionKeys::relax::thorough, "Do a preset, large cycle number FastRelax" );
 option.add( basic::options::OptionKeys::relax::membrane, "Do membrane relax" ).def(false);
+option.add( basic::options::OptionKeys::relax::centroid_mode, "Use centroid relax protocol" ).def(false);
 option.add( basic::options::OptionKeys::relax::default_repeats, "Default number of repeats done by FastRelax. Has no effect if a custom script is used!" ).def(5);
 option.add( basic::options::OptionKeys::relax::ramady, "Run ramady code which aleviates stuck bad ramachandran energies" ).def(false);
 option.add( basic::options::OptionKeys::relax::ramady_rms_limit, "(ramady-only) Reject rama changes which perturb structure by more than this" ).def(0.5);
@@ -1095,6 +1096,16 @@ option.add( basic::options::OptionKeys::relax::filter_stage2_beginning, "FArelax
 option.add( basic::options::OptionKeys::relax::filter_stage2_quarter, "FArelax score filter" ).def(99999999.00);
 option.add( basic::options::OptionKeys::relax::filter_stage2_half, "FArelax score filter" ).def(99999999.00);
 option.add( basic::options::OptionKeys::relax::filter_stage2_end, "FArelax score filter" ).def(99999999.00);
+option.add( basic::options::OptionKeys::relax::centroid::centroid, "centroid option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::relax::centroid::weights, "Weights to use for centroid minimization" ).def("score4_smooth_cen_relax");
+option.add( basic::options::OptionKeys::relax::centroid::ramp_vdw, "Ramp up the VDW weight" ).def(true);
+option.add( basic::options::OptionKeys::relax::centroid::ramp_rama, "Ramp up the rama/rama2b" ).def(false);
+option.add( basic::options::OptionKeys::relax::centroid::parameters, "Database file for ramp/min parameter" ).def("sampling/cen_relax/default_relax_parameters.txt");
+option.add( basic::options::OptionKeys::relax::centroid::centroid_only_mode, "Only use centroid throughout entire protocol.  Nessessary if passing centroid PDB from cmd line" ).def(false);
+option.add( basic::options::OptionKeys::relax::centroid::do_inter_repacks, "Do an intermittent repack at end of each repeat.  Use this energy for MonteCarlo." ).def(false);
+option.add( basic::options::OptionKeys::relax::centroid::do_final_min_fa, "Do an all atom minimization before return of pose" ).def(true);
+option.add( basic::options::OptionKeys::relax::centroid::do_final_repack, "Repack SideChains after switching back to fa_representation" ).def(true);
+option.add( basic::options::OptionKeys::relax::centroid::do_final_min_sc, "Minimize the sidechains after Repack (can go off rotamer)" ).def(true);
 option.add( basic::options::OptionKeys::enzdes::enzdes, "enzdes option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::enzdes::checkpoint, "write/read checkpoint files to the desired filename." ).def("");
 option.add( basic::options::OptionKeys::enzdes::enz_score, "prevent repacking in enzyme design calculation" ).def(false);
@@ -1249,7 +1260,9 @@ option.add( basic::options::OptionKeys::lh::filter_by_phipsi, "No description" )
 option.add( basic::options::OptionKeys::lh::max_radius, "No description" ).def(4);
 option.add( basic::options::OptionKeys::lh::max_struct, "No description" ).def(10);
 option.add( basic::options::OptionKeys::lh::max_struct_per_radius, "No description" ).def(10);
-option.add( basic::options::OptionKeys::lh::grid_space_multiplier, "No description" ).def(1);
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::grid_space_multiplier, "No description" ).def(1);
 option.add( basic::options::OptionKeys::lh::grid_angle_multiplier, "No description" ).def(2.5);
 option.add( basic::options::OptionKeys::lh::skim_size, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::rounds, "No description" ).def(100);
@@ -1894,7 +1907,13 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegme
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
+<<<<<<< HEAD
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
+=======
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
+>>>>>>> master
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);

@@ -2097,6 +2097,7 @@ Options = Option_Group( '',
 		Option( 'fast',                      'Boolean', desc='Do a preset, small cycle number FastRelax' ),
 		Option( 'thorough',                  'Boolean', desc='Do a preset, large cycle number FastRelax' ),
 		Option( 'membrane',                  'Boolean', desc='Do membrane relax', default='false' ),
+		Option( 'centroid_mode',             'Boolean', desc="Use centroid relax protocol", default='false'),
 		Option( 'default_repeats',            'Integer', desc='Default number of repeats done by FastRelax. Has no effect if a custom script is used!', default='5' ),
 
 		## Options for Sequence Relax
@@ -2161,6 +2162,18 @@ Options = Option_Group( '',
 		Option( 'filter_stage2_half',        'Real',    desc='FArelax score filter', default='99999999.00'),
 		Option( 'filter_stage2_end',         'Real',    desc='FArelax score filter', default='99999999.00'),
 
+		## Options for CentroidRelax
+		Option_Group('centroid',
+			Option( 'weights',           'String', desc = "Weights to use for centroid minimization", default='score4_smooth_cen_relax'),
+			Option( 'ramp_vdw',          'Boolean', desc="Ramp up the VDW weight", default='true'),
+			Option( 'ramp_rama',         'Boolean', desc="Ramp up the rama/rama2b", default='false'),
+			Option( 'parameters',        'String', desc="Database file for ramp/min parameter", default='sampling/cen_relax/default_relax_parameters.txt'),
+			Option( 'centroid_only_mode','Boolean', desc = "Only use centroid throughout entire protocol.  Nessessary if passing centroid PDB from cmd line", default='false'),
+			Option( 'do_inter_repacks',        'Boolean', desc="Do an intermittent repack at end of each repeat.  Use this energy for MonteCarlo.", default='false'),
+			Option( 'do_final_min_fa' ,  'Boolean', desc="Do an all atom minimization before return of pose", default = 'true'),
+			Option( 'do_final_repack',   'Boolean', desc="Repack SideChains after switching back to fa_representation", default='true'),
+			Option( 'do_final_min_sc',   'Boolean', desc="Minimize the sidechains after Repack (can go off rotamer)", default='true'),
+		),
 	),
 
 	## options for enzyme design

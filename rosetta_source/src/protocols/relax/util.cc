@@ -17,7 +17,7 @@
 #include <protocols/relax/ClassicRelax.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/MiniRelax.hh>
-
+#include <protocols/relax/CentroidRelax.hh>
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
@@ -105,6 +105,8 @@ generate_relax_from_cmd( bool NULL_if_no_flag ) {
 		protocol = new ClassicRelax ( scorefxn );
 	} else if ( option[ OptionKeys::relax::mini ]() ) {
 		protocol = new MiniRelax( scorefxn );
+	} else if ( option[ OptionKeys::relax::centroid_mode ]()) {
+                protocol = new CentroidRelax();
 	} else {
 		// default relax should be a quick sequence relax
 		if ( NULL_if_no_flag ){

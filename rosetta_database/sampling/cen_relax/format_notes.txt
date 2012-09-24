@@ -1,0 +1,6 @@
+Format for Controlling Centroid Relax parameters:
+
+Columns: vdw_ramp rama_ramp min_tol cst_ramp
+
+Must give values for each column in each row.  If ramping, the number of ramps will increase with the number of row.  
+Note that the default parameters are adopted from the FastRelax application by Mike Tyka.
