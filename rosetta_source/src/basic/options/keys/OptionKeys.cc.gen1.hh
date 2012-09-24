@@ -1,4 +1,3 @@
-namespace fold_cst { BooleanOptionKey const keep_skipped_csts( "fold_cst:keep_skipped_csts" );  }
 namespace fold_cst { BooleanOptionKey const no_minimize( "fold_cst:no_minimize" );  }
 namespace fold_cst { BooleanOptionKey const force_minimize( "fold_cst:force_minimize" );  }
 namespace fold_cst { RealVectorOptionKey const seq_sep_stages( "fold_cst:seq_sep_stages" );  }
@@ -128,6 +127,7 @@ namespace score { StringOptionKey const NV_table( "score:NV_table" );  }
 namespace score { BooleanOptionKey const disable_orientation_dependent_rna_ch_o_bonds( "score:disable_orientation_dependent_rna_ch_o_bonds" );  }
 namespace score { StringOptionKey const rna_torsion_potential( "score:rna_torsion_potential" );  }
 namespace score { BooleanOptionKey const rna_torsion_skip_chainbreak( "score:rna_torsion_skip_chainbreak" );  }
+namespace score { BooleanOptionKey const use_2prime_OH_potential( "score:use_2prime_OH_potential" );  }
 namespace score { BooleanOptionKey const include_neighbor_base_stacks( "score:include_neighbor_base_stacks" );  }
 namespace score { BooleanOptionKey const find_neighbors_3dgrid( "score:find_neighbors_3dgrid" );  }
 namespace score { BooleanOptionKey const find_neighbors_stripehash( "score:find_neighbors_stripehash" );  }
@@ -629,3 +629,4 @@ namespace lh { IntegerOptionKey const mpi_outbound_wu_buffer_size( "lh:mpi_outbo
 namespace lh { IntegerOptionKey const mpi_loophash_split_size    ( "lh:mpi_loophash_split_size    " );  }
 namespace lh { RealOptionKey const mpi_metropolis_temp( "lh:mpi_metropolis_temp" );  }
 namespace lh { IntegerOptionKey const mpi_save_state_interval( "lh:mpi_save_state_interval" );  }
+namespace lh { BooleanOptionKey const mpi_master_save_score_only( "lh:mpi_master_save_score_only" );  }

@@ -53,6 +53,7 @@ namespace score { extern StringOptionKey const NV_table; }
 namespace score { extern BooleanOptionKey const disable_orientation_dependent_rna_ch_o_bonds; }
 namespace score { extern StringOptionKey const rna_torsion_potential; }
 namespace score { extern BooleanOptionKey const rna_torsion_skip_chainbreak; }
+namespace score { extern BooleanOptionKey const use_2prime_OH_potential; }
 namespace score { extern BooleanOptionKey const include_neighbor_base_stacks; }
 namespace score { extern BooleanOptionKey const find_neighbors_3dgrid; }
 namespace score { extern BooleanOptionKey const find_neighbors_stripehash; }

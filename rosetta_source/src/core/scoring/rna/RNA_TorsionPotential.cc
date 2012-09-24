@@ -117,6 +117,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 		delta_fade_( 10.0 ),
 		alpha_fade_( 10.0 ),
 		skip_chainbreak_torsions_( basic::options::option[ basic::options::OptionKeys::score::rna_torsion_skip_chainbreak ]() ),
+		use_2prime_OH_potential_( basic::options::option[ basic::options::OptionKeys::score::use_2prime_OH_potential ]() ),
 		verbose_( false ),
 		use_new_potential_( false )
 	{
@@ -232,7 +233,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 							 fade_delta_south_->func( delta ) * nu1_south_potential_->func( nu1 ) ); //nu1
 		}
 
-		if(use_new_potential_ && Should_score_torsion(pose, TorsionID( rsd.seqpos(), id::CHI, O2H - NUM_RNA_MAINCHAIN_TORSIONS ) ) ) {
+		if(use_2prime_OH_potential_ && use_new_potential_ && Should_score_torsion(pose, TorsionID( rsd.seqpos(), id::CHI, O2H - NUM_RNA_MAINCHAIN_TORSIONS ) ) ) {
 			score += ( fade_delta_north_->func( delta ) * o2h_north_potential_->func( o2h ) +
 							 fade_delta_south_->func( delta ) * o2h_south_potential_->func( o2h ) ); //o2h
 		}
@@ -517,7 +518,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 			}
 
 			/////////////////////////////////O2H/////////////////////////////////////////////////////////
-			if ( use_new_potential_ &&  
+			if ( use_2prime_OH_potential_ && use_new_potential_ &&  
 			     get_f1_f2( id::TorsionID( seqpos, id::CHI, O2H - NUM_RNA_MAINCHAIN_TORSIONS ),	pose, id, f1, f2 ) ){
 				Real const dE_dtorsion = ( fade_delta_north_->func( delta ) * o2h_north_potential_->dfunc( o2h ) +
 																	 fade_delta_south_->func( delta ) * o2h_south_potential_->dfunc( o2h ) );

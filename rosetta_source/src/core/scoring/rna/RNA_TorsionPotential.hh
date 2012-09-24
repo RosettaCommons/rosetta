@@ -132,6 +132,7 @@ private:
 	bool const skip_chainbreak_torsions_;
 	bool const verbose_;
 	bool use_new_potential_;
+	bool const use_2prime_OH_potential_;
 
 };
 
