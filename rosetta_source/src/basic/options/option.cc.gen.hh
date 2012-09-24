@@ -1260,9 +1260,7 @@ option.add( basic::options::OptionKeys::lh::filter_by_phipsi, "No description" )
 option.add( basic::options::OptionKeys::lh::max_radius, "No description" ).def(4);
 option.add( basic::options::OptionKeys::lh::max_struct, "No description" ).def(10);
 option.add( basic::options::OptionKeys::lh::max_struct_per_radius, "No description" ).def(10);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::grid_space_multiplier, "No description" ).def(1);
+option.add( basic::options::OptionKeys::lh::grid_space_multiplier, "No description" ).def(1);
 option.add( basic::options::OptionKeys::lh::grid_angle_multiplier, "No description" ).def(2.5);
 option.add( basic::options::OptionKeys::lh::skim_size, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::rounds, "No description" ).def(100);
@@ -1907,13 +1905,7 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegme
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
-<<<<<<< HEAD
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
-=======
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
->>>>>>> master
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);

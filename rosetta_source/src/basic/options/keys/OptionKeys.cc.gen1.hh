@@ -621,8 +621,6 @@ namespace lh { BooleanOptionKey const filter_by_phipsi( "lh:filter_by_phipsi" );
 namespace lh { IntegerOptionKey const max_radius( "lh:max_radius" );  }
 namespace lh { IntegerOptionKey const max_struct( "lh:max_struct" );  }
 namespace lh { IntegerOptionKey const max_struct_per_radius( "lh:max_struct_per_radius" );  }
-<<<<<<< HEAD
-=======
 namespace lh { RealOptionKey const grid_space_multiplier( "lh:grid_space_multiplier" );  }
 namespace lh { RealOptionKey const grid_angle_multiplier( "lh:grid_angle_multiplier" );  }
 namespace lh { IntegerOptionKey const skim_size( "lh:skim_size" );  }
@@ -643,4 +641,3 @@ namespace lh { IntegerOptionKey const mpi_loophash_split_size    ( "lh:mpi_looph
 namespace lh { RealOptionKey const mpi_metropolis_temp( "lh:mpi_metropolis_temp" );  }
 namespace lh { IntegerOptionKey const mpi_save_state_interval( "lh:mpi_save_state_interval" );  }
 namespace lh { BooleanOptionKey const mpi_master_save_score_only( "lh:mpi_master_save_score_only" );  }
->>>>>>> master
