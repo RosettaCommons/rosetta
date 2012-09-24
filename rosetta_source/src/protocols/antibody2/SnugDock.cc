@@ -247,7 +247,7 @@ void SnugDock::init()
 	type( "SnugDock" );
 	
 	/// TODO: Allow the refinement method to be set via a mutator and from the options system
-	loop_refinement_method_ = "refine_ccd";
+	loop_refinement_method_ = "refine_kic";
 	number_of_high_resolution_cycles( 50 );
 
 	init_options();
