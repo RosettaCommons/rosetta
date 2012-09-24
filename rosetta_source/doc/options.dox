@@ -594,6 +594,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>File that contains mutational ddG information. Used by ddG task operation/filter.</dd><br>
 <dd>Default: ""</dd><br>
 </dl>
+<dl>
+<dt><b>-input_res</b> \<IntegerVector\><dt>
+<dd>Residues already present in starting file</dd><br>
+</dl>
  </li>
 <li><h2>in:rdf</h2>
 <dl>
@@ -2232,6 +2236,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Window size for local RMSD calculations in windowed_rmsd app</dd><br>
 <dd>Default: 5</dd><br>
 </dl>
+<dl>
+<dt><b>-I_sc</b> \<String\><dt>
+<dd>score function name used to calculate I_sc</dd><br>
+<dd>Default: "score12"</dd><br>
+</dl>
  </li>
 <li><h2>filters</h2>
 <dl>
@@ -3652,6 +3661,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: true</dd><br>
 </dl>
 <dl>
+<dt><b>-use_2prime_OH_potential</b> \<Boolean\><dt>
+<dd>Use torsional potential for RNA 2prime OH.</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
 <dt><b>-include_neighbor_base_stacks</b> \<Boolean\><dt>
 <dd>In RNA score calculation, include stacks between i,i+1</dd><br>
 <dd>Default: false</dd><br>
@@ -4893,6 +4907,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-K_save_headers</b> \<Boolean\><dt>
 <dd>Save headers in silent file</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-score_diff_cut</b> \<Real\><dt>
+<dd>score difference cut for RNA and SWA clustering</dd><br>
+<dd>Default: 1000000.0</dd><br>
+</dl>
+<dl>
+<dt><b>-auto_tune</b> \<Boolean\><dt>
+<dd>autotune rmsd for clustering between 0.1A up to 2.0A, for SWA clusterer</dd><br>
 <dd>Default: false</dd><br>
 </dl>
  </li>
@@ -7682,6 +7706,31 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Use PHENIX-based RNA sugar close energy and params files</dd><br>
 <dd>Default: false</dd><br>
 </dl>
+<dl>
+<dt><b>-vary_geometry</b> \<Boolean\><dt>
+<dd>Let bond lengths and angles vary from ideal in minimizer</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-skip_coord_constraints</b> \<Boolean\><dt>
+<dd>Skip first stage of minimize with coordinate constraints</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-skip_o2star_trials</b> \<Boolean\><dt>
+<dd>No O2* packing in minimizer</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-vall_torsions</b> \<String\><dt>
+<dd>Torsions file containing information on fragments from RNA models</dd><br>
+<dd>Default: "rna.torsions"</dd><br>
+</dl>
+<dl>
+<dt><b>-jump_database</b> \<String\><dt>
+<dd>Generate a database of jumps extracted from base pairings from a big RNA file</dd><br>
+<dd>Default: "rna_jumps.txt"</dd><br>
+</dl>
  </li>
 <li><h2>cm</h2>
 <dl>
@@ -10118,9 +10167,8 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 5</dd><br>
 </dl>
 <dl>
-<dt><b>-lh_filter_string</b> \<String\><dt>
-<dd>loophash ABEGO filter target fragment type</dd><br>
-<dd>Default: ""</dd><br>
+<dt><b>-lh_filter_string</b> \<StringVector\><dt>
+<dd>loophash ABEGO filter target fragment type. list sequentially for each loop</dd><br>
 </dl>
 <dl>
 <dt><b>-lh_cbreak_selection</b> \<Integer\><dt>
@@ -11492,10 +11540,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-input_res2</b> \<IntegerVector\><dt>
 <dd>Residues already present in starting file2</dd><br>
-</dl>
-<dl>
-<dt><b>-input_res</b> \<IntegerVector\><dt>
-<dd>Residues already present in starting file</dd><br>
 </dl>
 <dl>
 <dt><b>-backbone_only1</b> \<Boolean\><dt>
