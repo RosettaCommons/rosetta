@@ -20,6 +20,9 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/types.hh>
 
+// Utility headers
+#include <utility/vector1.hh>
+
 // External headers
 #include <Eigen/Eigen>
 
