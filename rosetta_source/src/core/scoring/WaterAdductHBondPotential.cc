@@ -223,7 +223,7 @@ WaterAdductHBondPotential::fill_h2o_hbond_set(
 	 and evaluates the derivative
 **/
 
-inline
+
 void
 WaterAdductHBondPotential::get_residue_residue_h2o_hbonds_1way(
 	// input
