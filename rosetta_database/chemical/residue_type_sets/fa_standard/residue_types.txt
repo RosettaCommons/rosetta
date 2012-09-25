@@ -54,6 +54,8 @@ residue_types/metal_ions/NA.params
 #residue_types/metal_ions/NI.params
 residue_types/metal_ions/ZN.params
 
+## Spin label types
+residue_types/spin_labels/R1A.params
 ## Mineral Surface 
 #residue_types/mineral_surface/PHA.params
 #residue_types/mineral_surface/HHA.params
