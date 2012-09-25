@@ -30,7 +30,7 @@ for line in file('input/sources.txt'):
 # Prepack...
 prepack_template = '%(bin)s/docking_prepack_protocol.%(binext)s -database %(database)s \
 -s input/%(target)s.u.opt.pdb -out::path:pdb output/%(target)s/prepack/ \
--partners %(partners)s -dock_ppk -ex1 -ex2aro -unboundrot input/%(target)s.u.opt.pdb'
+-partners %(partners)s -dock_ppk -ex1 -ex2aro -unboundrot input/%(target)s.u.opt.pdb -out:level 200'
 
 for t in targets:
     os.mkdir('output/'+t);  os.mkdir('output/'+t+'/prepack')
