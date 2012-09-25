@@ -89,6 +89,14 @@ public:
 	void disulfides(
 		utility::vector1< std::pair<core::Size,core::Size> > & disulfides,
 		core::pose::Pose const& pose ) const;
+    
+	/// @brief Get a list of disulfide bonds declared in the file
+	///        (renumbered to rosetta numbering if necessary)
+    /// also manually set the disulfides in the conformation of the provided pose
+    /// (this is a necessary workaround for dealing with multiple disulfide specification
+    /// files in PyRosetta
+    void read_in_and_set_disulfides(
+        core::pose::Pose &pose );
 private:
 	/// @brief helper function to read in the file
 	void parse_disulf_file() const;
