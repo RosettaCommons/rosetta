@@ -135,4 +135,26 @@ public:
 		TS_ASSERT_DELTA(sc_exc2, sc, .0000001);
 	}
 
+	///@detail the long range terms maintain their own neighbor maps, so
+	///require iterating over the energy methods then over the residue
+	///pairs rather then the other way around.
+	void test_get_sub_score_exclude_res_long_range_terms() {
+
+		ScoreFunction scfxn;
+
+		//CartesianBondedEnergy is a ContextIndependentLRTwoBodyEnergy
+		scfxn.set_weight(core::scoring::cart_bonded, 1);
+
+		core::pose::Pose pose = create_trpcage_ideal_pose();
+		Real sc(scfxn(pose));
+
+		utility::vector1< Size > exclude_list;
+		Real sc_exc1(scfxn.get_sub_score_exclude_res(pose, exclude_list));
+		TS_ASSERT_DELTA(sc_exc1, sc, .0000001);
+
+		utility::vector1< bool > residue_mask(pose.total_residue(), true);
+		Real sc_exc2(scfxn.get_sub_score(pose, residue_mask));
+		TS_ASSERT_DELTA(sc_exc2, sc, .0000001);
+	}
+
 };

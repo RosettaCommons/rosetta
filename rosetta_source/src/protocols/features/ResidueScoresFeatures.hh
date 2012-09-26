@@ -71,6 +71,11 @@ private:
 	write_residue_scores_2b_table_schema(
 		utility::sql_database::sessionOP db_session) const;
 
+	///@brief generate the residue_scores_2b table schema
+	void
+	write_residue_scores_lr_2b_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
 public:
 	///@brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
@@ -100,6 +105,30 @@ private:
 	insert_residue_scores_rows(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
+		boost::uuids::uuid const struct_id,
+		utility::sql_database::sessionOP db_session);
+
+	void
+	insert_one_body_residue_score_rows(
+		core::pose::Pose const & pose,
+		utility::vector1< bool > const & relevant_residues,
+		Size const batch_id,
+		boost::uuids::uuid const struct_id,
+		utility::sql_database::sessionOP db_session);
+
+	void
+	insert_two_body_residue_score_rows(
+		core::pose::Pose const & pose,
+		utility::vector1< bool > const & relevant_residues,
+		Size const batch_id,
+		boost::uuids::uuid const struct_id,
+		utility::sql_database::sessionOP db_session);
+
+	void
+	insert_two_body_long_range_residue_score_rows(
+		core::pose::Pose const & pose,
+		utility::vector1< bool > const & relevant_residues,
+		Size const batch_id,
 		boost::uuids::uuid const struct_id,
 		utility::sql_database::sessionOP db_session);
 

@@ -31,6 +31,7 @@
 // Platform Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
@@ -77,6 +78,7 @@ using core::scoring::ScoreTypeManager;
 using core::scoring::ScoreType;
 using core::scoring::ScoreFunctionOP;
 using core::scoring::ScoreFunction;
+using core::chemical::aa_vrt;
 using core::scoring::hbonds::HBondSet;
 using core::scoring::hbonds::get_hbond_energies;
 using core::scoring::EnergiesCacheableDataType::HBOND_SET;
@@ -228,21 +230,28 @@ StructureScoresFeatures::compute_energies(
 	Pose pose = pose_in;
 	(*scfxn_)(pose);
 
+	vector1<bool> relevant_and_virtual_residues(relevant_residues);
+
 	// if relevant residues includes all of the residues, then include
 	// the whole structure scores, otherwise just the one-body and
 	// two-body scores.
 	bool all_residues(true);
-	for(vector1<bool>::const_iterator
-				i=relevant_residues.begin(), ie=relevant_residues.end(); i != ie; ++i){
-		if(*i == false){
+
+	// Since some scores terms, such as elec_dens_fast and constraints,
+	// use virtual residues to be compatible with the two-body scoring
+	// framework, include virtual residues with the relevant residues so
+	// these scores get computed.
+	for(Size i = 1; i <= pose.total_residue(); ++i){
+		if(pose.residue( i ).aa() == aa_vrt){
+			relevant_and_virtual_residues[i] = true;
+		} else if (relevant_and_virtual_residues[i] == false){
 			all_residues = false;
-			break;
 		}
 	}
 	if(all_residues){
 		emap = pose.energies().total_energies();
 	} else {
-		scfxn_->get_sub_score(pose, relevant_residues, emap);
+		scfxn_->get_sub_score(pose, relevant_and_virtual_residues, emap);
 	}
 }
 

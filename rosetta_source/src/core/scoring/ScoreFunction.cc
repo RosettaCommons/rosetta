@@ -828,6 +828,53 @@ ScoreFunction::get_sub_score(
 		total += weights_[hbond_lr_bb] * hbond_emap[hbond_lr_bb];
 	}
 
+	//////////////////////////////////////////////////
+	///  Context Independent Long Range 2Body methods
+
+	for(CI_LR_2B_Methods::const_iterator iter = ci_lr_2b_methods_.begin(),
+				iter_end = ci_lr_2b_methods_.end(); iter != iter_end; ++iter ) {
+		LREnergyContainerCOP lrec = pose.energies().long_range_container( (*iter)->long_range_type() );
+		if( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
+
+		// Potentially O(N^2) operation...
+		for( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			if(!residue_mask[ii]) continue;
+
+			for( ResidueNeighborConstIteratorOP
+						 rni = lrec->const_upper_neighbor_iterator_begin( ii ),
+						 rniend = lrec->const_upper_neighbor_iterator_end( ii );
+					 (*rni) != (*rniend); ++(*rni) ) {
+				if(!residue_mask[rni->upper_neighbor_id()]) continue;
+
+				EnergyMap emap;
+				rni->retrieve_energy( emap ); // pbmod
+				total += weights_.dot( emap, ci_lr_2b_types() );
+			}
+		}
+	}
+	/////////////////////////////////////////////////////
+	///  Context Independent Long Range twobody methods
+
+	for( CD_LR_2B_Methods::const_iterator iter = cd_lr_2b_methods_.begin(),
+				 iter_end = cd_lr_2b_methods_.end(); iter != iter_end; ++iter ) {
+		LREnergyContainerCOP lrec =
+			pose.energies().long_range_container( (*iter)->long_range_type() );
+		// Potentially O(N^2) operation...
+		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			if(!residue_mask[ii]) continue;
+			for ( ResidueNeighborConstIteratorOP
+							rni = lrec->const_upper_neighbor_iterator_begin( ii ),
+							rniend = lrec->const_upper_neighbor_iterator_end( ii );
+						(*rni) != (*rniend); ++(*rni) ) {
+				if(!residue_mask[rni->upper_neighbor_id()]) continue;
+
+				EnergyMap emap;
+					rni->retrieve_energy( emap ); // pbmod
+					total += weights_.dot( emap, cd_lr_2b_types() );
+			}
+		}
+	}
+
 	return total;
 }
 
@@ -837,7 +884,7 @@ ScoreFunction::get_sub_score(
 	utility::vector1< bool > const & residue_mask
 ) const {
 	//If the energies are not up-to-date score the pose
-	if(pose.energies().energies_updated()) (*this)(pose);
+	if(!pose.energies().energies_updated()) (*this)(pose);
 
 	return get_sub_score(const_cast<pose::Pose const &>(pose), residue_mask);
 }
@@ -912,6 +959,55 @@ ScoreFunction::get_sub_score(
 		emap[hbond_lr_bb] += weights_[hbond_lr_bb] * hbond_emap[hbond_lr_bb];
 	}
 
+	//////////////////////////////////////////////////
+	///  Context Independent Long Range 2Body methods
+
+	for(CI_LR_2B_Methods::const_iterator iter = ci_lr_2b_methods_.begin(),
+				iter_end = ci_lr_2b_methods_.end(); iter != iter_end; ++iter ) {
+		LREnergyContainerCOP lrec =
+			pose.energies().long_range_container((*iter)->long_range_type());
+		if( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
+
+		// Potentially O(N^2) operation...
+		for( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+			if(!residue_mask[ii]) continue;
+
+			for( ResidueNeighborConstIteratorOP
+						 rni = lrec->const_upper_neighbor_iterator_begin( ii ),
+						 rniend = lrec->const_upper_neighbor_iterator_end( ii );
+					 (*rni) != (*rniend); ++(*rni) ) {
+				if(!residue_mask[rni->upper_neighbor_id()]) continue;
+
+				EnergyMap lr_emap;
+				rni->retrieve_energy( lr_emap ); // pbmod
+				emap += lr_emap;
+			}
+		}
+
+		/////////////////////////////////////////////////////
+		///  Context Independent Long Range twobody methods
+
+		for( CD_LR_2B_Methods::const_iterator iter = cd_lr_2b_methods_.begin(),
+						iter_end = cd_lr_2b_methods_.end(); iter != iter_end; ++iter ) {
+			LREnergyContainerCOP lrec =
+				pose.energies().long_range_container((*iter)->long_range_type());
+			// Potentially O(N^2) operation...
+			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+				if(!residue_mask[ii]) continue;
+				for ( ResidueNeighborConstIteratorOP
+								rni = lrec->const_upper_neighbor_iterator_begin( ii ),
+								rniend = lrec->const_upper_neighbor_iterator_end( ii );
+							(*rni) != (*rniend); ++(*rni) ) {
+					if(!residue_mask[rni->upper_neighbor_id()]) continue;
+
+					EnergyMap lr_emap;
+					rni->retrieve_energy( lr_emap ); // pbmod
+					emap += lr_emap;
+
+				}
+			}
+		}
+	}
 }
 
 void
@@ -921,38 +1017,44 @@ ScoreFunction::get_sub_score(
 	EnergyMap & emap
 ) const {
 	//If the energies are not up-to-date score the pose
-	if(pose.energies().energies_updated()) (*this)(pose);
+	if(!pose.energies().energies_updated()) (*this)(pose);
 	return get_sub_score(const_cast<pose::Pose const &>(pose), residue_mask, emap);
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
-core::Real
+Real
 ScoreFunction::get_sub_score_exclude_res(
 	pose::Pose const & pose,
-	utility::vector1< core::Size > const &
+	utility::vector1< Size > const & exclude_res
 ) const {
 
-	utility::vector1< bool > residue_mask(true, pose.total_residue());
-	for(Size i=1, ie=pose.total_residue(); i <= ie; ++i){
-		residue_mask[i]=false;
+	utility::vector1< bool > residue_mask(pose.total_residue(), true);
+	for(
+		utility::vector1< Size >::const_iterator
+			ii = exclude_res.begin(), ie = exclude_res.end();
+		ii != ie; ++ii){
+		residue_mask[*ii] = false;
 	}
 	return get_sub_score(pose, residue_mask);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-core::Real
+Real
 ScoreFunction::get_sub_score_exclude_res(
 	pose::Pose & pose,
-	utility::vector1< core::Size > const &
+	utility::vector1< Size > const & exclude_res
 ) const {
 
 	//If the energies are not up-to-date score the pose
-	if(pose.energies().energies_updated()) (*this)(pose);
+	if(!pose.energies().energies_updated()) (*this)(pose);
 
 	utility::vector1< bool > residue_mask(pose.total_residue(), true);
-	for(Size i=1, ie=pose.total_residue(); i <= ie; ++i){
-		residue_mask[i]=false;
+	for(
+		utility::vector1< Size >::const_iterator
+			ii = exclude_res.begin(), ie = exclude_res.end();
+		ii != ie; ++ii){
+		residue_mask[*ii] = false;
 	}
 	return get_sub_score(const_cast<pose::Pose const &>(pose), residue_mask);
 }
@@ -963,12 +1065,15 @@ ScoreFunction::get_sub_score_exclude_res(
 void
 ScoreFunction::get_sub_score_exclude_res(
 	pose::Pose const & pose,
-	utility::vector1< core::Size > const &,
+	utility::vector1< core::Size > const & exclude_res,
 	EnergyMap & emap
 ) const {
-	utility::vector1< bool > residue_mask(true, pose.total_residue());
-	for(Size i=1, ie=pose.total_residue(); i <= ie; ++i){
-		residue_mask[i]=false;
+	utility::vector1< bool > residue_mask(pose.total_residue(), true);
+	for(
+		utility::vector1< Size >::const_iterator
+			ii = exclude_res.begin(), ie = exclude_res.end();
+		ii != ie; ++ii){
+		residue_mask[*ii] = false;
 	}
 	get_sub_score(pose, residue_mask, emap);
 }
@@ -977,16 +1082,19 @@ ScoreFunction::get_sub_score_exclude_res(
 void
 ScoreFunction::get_sub_score_exclude_res(
 	pose::Pose & pose,
-	utility::vector1< core::Size > const &,
+	utility::vector1< core::Size > const & exclude_res,
 	EnergyMap & emap
 ) const {
 
 	//If the energies are not up-to-date score the pose
-	if(pose.energies().energies_updated()) (*this)(pose);
+	if(!pose.energies().energies_updated()) (*this)(pose);
 
-	utility::vector1< bool > residue_mask(true, pose.total_residue());
-	for(Size i=1, ie=pose.total_residue(); i <= ie; ++i){
-		residue_mask[i]=false;
+	utility::vector1< bool > residue_mask(pose.total_residue(), true);
+	for(
+		utility::vector1< Size >::const_iterator
+			ii = exclude_res.begin(), ie = exclude_res.end();
+		ii != ie; ++ii){
+		residue_mask[*ii] = false;
 	}
 	get_sub_score(const_cast<pose::Pose const &>(pose), residue_mask, emap);
 }
