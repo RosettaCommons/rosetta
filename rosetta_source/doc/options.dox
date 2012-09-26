@@ -11018,7 +11018,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-fit_method</b> \<String\><dt>
 <dd>No description</dd><br>
-<dd>Default: "svd"</dd><br>
+<dd>Default: "nls"</dd><br>
 </dl>
 <dl>
 <dt><b>-fixDa</b> \<RealVector\><dt>
