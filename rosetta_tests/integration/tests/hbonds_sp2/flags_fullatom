@@ -1,0 +1,9 @@
+-s 1l2y.pdb
+-packing:linmem_ig 10
+
+-score:weights sp2_correction
+-hbond_params sp2_params
+-hbond_measure_sp3acc_BAH_from_hvy
+-corrections:score:hb_sp2_chipen
+-lj_hbond_hdis 1.75
+-lj_hbond_OH_donor_dis 2.6
