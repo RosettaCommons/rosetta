@@ -468,9 +468,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 
 
 		++nrow;
-		numeric::xyzVector<Real> r(
-				pose.residue(it->res1()).atom(it->atom1()).xyz()
-						- pose.residue(it->res2()).atom(it->atom2()).xyz());
+		numeric::xyzVector<Real> r( pose.residue(it->res1()).atom(it->atom1()).xyz() - pose.residue(it->res2()).atom(it->atom2()).xyz());
 
     core::Real r2 = r.norm_squared();
     core::Real scale_to_NH = 36.5089/1.042/1.042/1.042;
@@ -489,13 +487,13 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 		}
 		Size const d(nrow - 1);
 
-	//this is doing nothing!!!!
-	  r.normalized();
+	//put a length there should change it
+	  //r.normalized(1);
 
-		D_[d][0] = pfac * (2* r [0] * r[0] + r[1] * r[1] - r2);
+		D_[d][0] = pfac * (2* r [0] * r[0] + r[1] * r[1] - r.norm_squared());
 		D_[d][1] = pfac * (2* r [0] * r[1]);
 		D_[d][2] = pfac * (2* r [0] * r[2]);
-		D_[d][3] = pfac * (2* r [1] * r[1] + r[0] * r[0] - r2);
+		D_[d][3] = pfac * (2* r [1] * r[1] + r[0] * r[0] - r.norm_squared());
 		D_[d][4] = pfac * (2* r [1] * r[2]);
 		// 			Real umn_x = umn.x()/it->fixed_dist();
 		// 			Real umn_y = umn.y()/it->fixed_dist();
@@ -635,9 +633,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 		//    pfac *= invr;
 		//Size const power(3); //this will be 0 for CSA see above
 		RDC& rdc = *it;
-		numeric::xyzVector<Real> r(
-				pose.residue(rdc.res1()).atom(rdc.atom1()).xyz()
-						- pose.residue(rdc.res2()).atom(rdc.atom2()).xyz());
+		numeric::xyzVector<Real> r( pose.residue(rdc.res1()).atom(rdc.atom1()).xyz() - pose.residue(rdc.res2()).atom(rdc.atom2()).xyz());
 		core::Real r2 = r.norm_squared();
 		core::Real invr = 1.0 / sqrt(r2);
 		core::Real invr2 = sqr(invr);
