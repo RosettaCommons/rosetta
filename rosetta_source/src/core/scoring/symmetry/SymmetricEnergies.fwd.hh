@@ -31,5 +31,8 @@ typedef utility::pointer::owning_ptr< SymmetricEnergies const > SymmetricEnergie
 } // namespace pose
 } // namespace core
 
+#ifdef USEBOOSTSERIALIZE
+#include <boost/serialization/base_object.hpp>
+#endif
 
 #endif // INCLUDED_core_pose_symmetry_SymmetricEnergies_FWD_HH

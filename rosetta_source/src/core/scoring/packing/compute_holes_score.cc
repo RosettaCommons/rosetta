@@ -41,6 +41,8 @@
 
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
+#include <boost/math/special_functions/fpclassify.hpp>
+
 
 #endif
 #endif
@@ -87,7 +89,7 @@ void compute_holes_surfs(PoseBalls & pb, std::string ) {
 				std::string val;
 				proc >> ialpha >> index >> val;
 				Real rval = atof(val.c_str());
-				if(isnan(rval)) rval = 0.0;
+				if(boost::math::isnan(rval)) rval = 0.0;
 				//TR << "DAlphaBall output index " << ialpha << " " << a << "   " << index << " " << i << std::endl;
 				if( i != index || a != ialpha ) {
 					TR << "DAlphaBall output index mismatch " << ialpha << " " << a << "   " << index << " " << i << std::endl;

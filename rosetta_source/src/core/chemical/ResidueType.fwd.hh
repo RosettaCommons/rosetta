@@ -61,6 +61,8 @@ enum BondName
 } // chemical
 } // core
 
-
+#ifdef USEBOOSTSERIALIZE
+#include <boost/serialization/access.hpp>
+#endif
 
 #endif // INCLUDED_core_chemical_Residues_HH

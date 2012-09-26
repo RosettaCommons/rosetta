@@ -50,6 +50,9 @@ public:
 	void add_sym_dof_name( std::string const sym_dof_name );
 
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_def( utility::lua::LuaObject const & def,
+					utility::lua::LuaObject const & score_fxns,
+					utility::lua::LuaObject const & tasks );
 private:
 	core::Real lower_threshold_;
 	core::Real upper_threshold_;
@@ -57,7 +60,7 @@ private:
 	utility::vector1<core::Size> jumps_; // dflt 1; across which jumps to compute sasa
 	utility::vector1<std::string> sym_dof_names_; // dflt 1; sym_dof_names for jumps across which to compute sasa
 };
-	
+
 }
 }
 

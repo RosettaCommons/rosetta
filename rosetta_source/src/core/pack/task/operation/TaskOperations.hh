@@ -60,6 +60,7 @@ public:
 	apply( pose::Pose const & pose, PackerTask & task ) const;
 
 	virtual void parse_tag( TagPtr );
+	virtual void parse_def( utility::lua::LuaObject const & def);
 
 };
 
@@ -144,6 +145,7 @@ public:
 	void restrict_to_residue( core::Size const & resid);
 	void restrict_to_residue( utility::vector1< core::Size > const & residues);
 	virtual void parse_tag( TagPtr );
+	virtual void parse_def( utility::lua::LuaObject const & def);
 
 
 private:
@@ -188,6 +190,7 @@ public:
 	apply( pose::Pose const &, PackerTask & ) const;
 
 	virtual void parse_tag( TagPtr ); //parses nothing
+	virtual void parse_def( utility::lua::LuaObject const & def);
 };
 
 class InitializeExtraRotsFromCommandline : public TaskOperation
@@ -219,6 +222,7 @@ public:
 	virtual
 	void
 	apply( pose::Pose const &, PackerTask & ) const;
+	virtual void parse_def( utility::lua::LuaObject const & def);
 
 };
 
@@ -286,6 +290,7 @@ public:
 	std::string const & filename() const;
 
 	virtual void parse_tag( TagPtr );
+	virtual void parse_def( utility::lua::LuaObject const & def);
 
 private:
 	std::string resfile_filename_;

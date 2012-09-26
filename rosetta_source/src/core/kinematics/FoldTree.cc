@@ -955,10 +955,10 @@ FoldTree::delete_extra_vertices()
 // 							 << is_cutpoint_( it->stop() ) << " " << is_cutpoint_( it->stop()-1 ) << std::endl;
 // 			TR.Trace << "isroot: " << ( _root == it->start() ) << " " << ( _root == it->stop() ) << std::endl;
 			if ( it->start() != _root &&
-					 !is_jump_point_( it->start() ) &&
+					 !is_jump_point_[ it->start() ] &&
 					 !is_cutpoint_  ( it->start() ) &&
 					 !is_cutpoint_  ( it->start()-1 ) ) kill_vertex = it->start();
-			if ( !is_jump_point_( it->stop() ) &&
+			if ( !is_jump_point_[ it->stop() ] &&
 					 !is_cutpoint_  ( it->stop() ) &&
 					 !is_cutpoint_  ( it->stop()-1  ) ) kill_vertex = it->stop();
 			if ( kill_vertex ) break;
@@ -1520,7 +1520,7 @@ FoldTree::cutpoints() const
 	check_topology();
 	utility::vector1< int > cuts;
 	for( int i=1; i<= num_cutpoint_; ++i ) {
-		cuts.push_back( cutpoint_(i) );
+		cuts.push_back( cutpoint_[i] );
 	}
 	return cuts;
 }
@@ -1752,7 +1752,7 @@ FoldTree::partition_by_jump(
 	assert( int(partner1.size1()) >= nres_ );
 
 	// find n-terminal jump vertex
-	int const pos1( jump_point_(1,jump_number ) );
+	int const pos1( jump_point_[jump_number ].first );
 
 	// mark start vertex as linked:
 	partner1 = false;
@@ -1890,7 +1890,14 @@ FoldTree::jump_point(
 	PyAssert(((jump_number > 0) || (jump_number <= num_jump_)),
 			"FoldTree::jump_point( int const lower_higher, int const jump_number ): Input variable jump_number is not a valid value.");
 	check_topology();
-	return jump_point_( lower_higher, jump_number );
+	if( lower_higher == 1 ) {
+		return jump_point_[jump_number].first;
+	} else if( lower_higher == 2 ) {
+		return jump_point_[jump_number].second;
+	} else {
+		std::cout << "FoldTree::jump_point() lower_higher needs to be 1 or 2" << std::endl;
+		std::exit(9);
+	}
 }
 
 
@@ -1947,16 +1954,14 @@ void
 FoldTree::setup_edge_counts() const
 {
 	// redimension?
-	if ( int ( edge_count.size1() ) != nres_ ) {
-		edge_count.dimension( nres_ );
+	if ( edge_count.size() != nres_ ) {
+		edge_count = utility::vector1<int>(nres_, 0);
 	}
-	if ( int( jump_edge_count.size1() ) != num_jump_ ) {
-		jump_edge_count.dimension( num_jump_ );
+	if ( jump_edge_count.size() != num_jump_ ) {
+		jump_edge_count = utility::vector1<int>(num_jump_, -1);
 	}
 
 	min_edge_count = nres_;
-	edge_count = 0; // 0's are kept at positions: {cutpoint+1}
-	jump_edge_count = -1;
 
 	const_iterator const it_begin ( edge_list_.begin() );
 	const_iterator const it_end   ( edge_list_.end()   );
@@ -1997,23 +2002,23 @@ FoldTree::setup_edge_counts() const
 		if ( it->is_jump() ) {
 			// jump
 			int const jump_number ( it->label() );
-			jump_edge_count( jump_number ) = link_count + 1;
+			jump_edge_count[ jump_number ] = link_count + 1;
 			min_edge_count = std::min( min_edge_count, std::max(
-																	 jump_edge_count( jump_number ),
-																	 nres_ - jump_edge_count( jump_number ) ) );
+																	 jump_edge_count[ jump_number ],
+																	 nres_ - jump_edge_count[ jump_number ] ) );
 		} else {
 			// peptide edge
 			int const end_res  ( std::max(it->start(), it->stop()) );
 
 			for ( int i= begin_res+1; i<= end_res; ++i ) {
-				edge_count(i) = link_count + i - begin_res;
+				edge_count[i] = link_count + i - begin_res;
 				min_edge_count = std::min( min_edge_count, std::max(
-																		 edge_count(i), nres_ - edge_count(i) ) );
+																		 edge_count[i], nres_ - edge_count[i] ) );
 			}
 		}
 	}
 
-	for ( int i=1; i<= num_jump_; ++i ) assert( jump_edge_count( i ) >= 1 );
+	for ( int i=1; i<= num_jump_; ++i ) assert( jump_edge_count[ i ] >= 1 );
 
 } // FoldTree::setup_edge_counts(...)
 
@@ -2064,7 +2069,7 @@ FoldTree::jump_edge( int const jump_number ) const
 	PyAssert(((jump_number > 0) || (jump_number <= num_jump_)),
 			"FoldTree::jump_edge( int const jump_number ): Input variable jump_number is not a valid value.");
 	check_order();
-	return edge_list_[ jump_edge_( jump_number ) ];
+	return edge_list_[ jump_edge_[ jump_number ] ];
 }
 
 
@@ -2074,7 +2079,7 @@ FoldTree::jump_edge( int const jump_number )
 	PyAssert(((jump_number > 0) || (jump_number <= num_jump_)),
 			"FoldTree::jump_edge( int const jump_number ): Input variable jump_number is not a valid value.");
 	check_order();
-	return edge_list_[ jump_edge_( jump_number ) ];
+	return edge_list_[ jump_edge_[ jump_number ] ];
 }
 
 
@@ -2167,15 +2172,13 @@ FoldTree::update_cutpoints() const
 	}
 
 	// now cutpoint_ and cutpoint_map_ (which are inverses)
-	cutpoint_.dimension( num_cutpoint_ );
-	cutpoint_map_.dimension( nres_ );
-
-	cutpoint_map_ = 0;
+	cutpoint_ = utility::vector1<int>( num_cutpoint_, 0);
+	cutpoint_map_ = utility::vector1<int>( nres_, 0);
 
 	for ( int i = 1, cut=0; i < nres_; ++i ) {
 		if ( is_cutpoint_(i) ) {
-			cutpoint_( ++cut ) = i;
-			cutpoint_map_( i ) = cut;
+			cutpoint_[ ++cut ] = i;
+			cutpoint_map_[ i ] = cut;
 		}
 		assert( i<nres_-1 || cut == num_cutpoint_ );
 	}
@@ -2240,30 +2243,29 @@ void
 FoldTree::update_jump_points() const
 {
 	// re-dimension?
-	if ( int (is_jump_point_.size1()) != nres_ ) {
-		is_jump_point_.dimension( nres_ );
+	if ( is_jump_point_.size() != nres_ ) {
+		is_jump_point_ = utility::vector1<bool>(nres_, false);
 	}
-	if ( int ( jump_point_.size2() ) != num_jump_ ) {
-		jump_point_.dimension( 2, num_jump_ );
+	if ( jump_point_.size() != num_jump_ ) {
+		jump_point_ = utility::vector1<std::pair<int,int> >(num_jump_);
 	}
 
-	is_jump_point_ = false; //array init
 	for ( const_iterator it = edge_list_.begin(), it_end = edge_list_.end();
 				it != it_end; ++it ) {
 		if ( it->is_jump() ) {
 			int const jump_number ( it->label() );
 			assert( jump_number <= num_jump_ );
 
-			is_jump_point_( it->start() ) = true;
-			is_jump_point_( it->stop () ) = true;
+			is_jump_point_[ it->start() ] = true;
+			is_jump_point_[ it->stop () ] = true;
 
-			jump_point_(1,jump_number) = std::min( it->start(), it->stop());
-			jump_point_(2,jump_number) = std::max( it->start(), it->stop());
+			jump_point_[jump_number].first = std::min( it->start(), it->stop());
+			jump_point_[jump_number].second = std::max( it->start(), it->stop());
 		} else if ( it->is_chemical_bond() ) {
 			// this is a little hacky -- calling chemical bond connections jump_points
 			// need this for internal use, eg operations like insert_polymer_residue and delete_extra_vertices
-			is_jump_point_( it->start() ) = true;
-			is_jump_point_( it->stop () ) = true;
+			is_jump_point_[ it->start() ] = true;
+			is_jump_point_[ it->stop () ] = true;
 		}
 	}
 }
@@ -2282,11 +2284,9 @@ FoldTree::update_jump_points() const
 void
 FoldTree::update_jump_edge() const
 {
-	if ( int( jump_edge_.size1() ) != num_jump_ ) {
-		jump_edge_.dimension( num_jump_ );
+	if ( jump_edge_.size() != num_jump_ ) {
+		jump_edge_ = utility::vector1<int>(num_jump_, 0);
 	}
-
-	jump_edge_ = 0;
 	int jump_index(0);
 	for ( const_iterator it = edge_list_.begin(), it_end = edge_list_.end();
 				it != it_end; ++it, ++jump_index ) {
@@ -2295,7 +2295,7 @@ FoldTree::update_jump_edge() const
 			assert( jump_number <= num_jump_ );
 			assert( edge_list_[ jump_index ] == *it );
 
-			jump_edge_( jump_number ) = jump_index;
+			jump_edge_[ jump_number ] = jump_index;
 		}
 	}
 }
@@ -2558,14 +2558,14 @@ FoldTree::count_fixed_residues(
 
 	int best = 0;
 	if ( ! is_cutpoint_( begin_res-1 ) ) {
-		int const n_fixed ( edge_count( begin_res ) );
+		int const n_fixed ( edge_count[ begin_res ] );
 		if ( n_fixed > best ) {
 			best = n_fixed;
 		}
 	}
 
 	if ( ! is_cutpoint_( end_res ) ) {
-		int const c_fixed ( nres_ - edge_count( end_res + 1) );
+		int const c_fixed ( nres_ - edge_count[ end_res + 1] );
 		if ( c_fixed > best ) {
 			best = c_fixed;
 		}
@@ -2573,11 +2573,11 @@ FoldTree::count_fixed_residues(
 
 	// how to test this stuff?
 	for ( int i = 1; i<= num_jump_; ++i ) {
-		for ( int j=1; j<= 2; ++j ) {
-			Size const pos ( jump_point_(j,i) );
+		for (int j = 1; j <= 2; ++j ) {
+		  Size const pos = j == 1 ? jump_point_[i].first : jump_point_[i].second;
 			if ( begin_res <= pos && pos <= end_res ) {
 				int const fixed
-					( j==1 ? nres_ - jump_edge_count( i ) : jump_edge_count( i ) );
+					( j==1 ? nres_ - jump_edge_count[ i ] : jump_edge_count[ i ] );
 				if ( fixed > best ) {
 					best = fixed;
 				}

@@ -25,6 +25,9 @@ typedef utility::vector1< Atom > Atoms;
 } // pose
 } // core
 
+#ifdef USEBOOSTSERIALIZE
+#include <boost/serialization/vector.hpp>
+#endif
 
 
 #endif

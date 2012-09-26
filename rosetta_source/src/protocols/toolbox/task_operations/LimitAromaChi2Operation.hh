@@ -116,6 +116,16 @@ private: // data
 
 	/// @brief min chi2 for picking rotamers of YFH
 	Real chi2min_;
+#ifdef USEBOOSTSERIALIZE
+	friend class boost::serialization::access;
+
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+			ar & boost::serialization::base_object<core::pack::rotamer_set::RotamerSetOperation>(*this);
+			ar & chi2max_;
+			ar & chi2min_;
+	}
+#endif
 
 	/// @brief include TRP ? ( default false )
 	bool include_trp_;
@@ -205,6 +215,7 @@ public:
 
 
 	void parse_tag( TagPtr tag );
+	void parse_def( utility::lua::LuaObject const & def );
 
 
 private: // data

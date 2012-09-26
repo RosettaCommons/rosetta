@@ -125,6 +125,18 @@ public:
 	void index( int index_in ) { index_ = index_in; }
 
 private:
+
+#ifdef USEBOOSTSERIALIZE
+	friend class boost::serialization::access;
+
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+			ar & atomno_;
+			ar & icoor_;
+			ar & index_;
+	}
+#endif
+
 	/// atom index number
 	int atomno_;
 	/// atom AtomICoor

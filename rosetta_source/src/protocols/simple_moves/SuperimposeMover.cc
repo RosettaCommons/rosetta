@@ -122,7 +122,7 @@ SuperimposeMover::superimpose(
 		core::id::AtomID const id1( mod_pose.residue(i_target).atom_index("CA"), i_target );
 		core::id::AtomID const id2( ref_pose.residue(i_ref).atom_index("CA"), i_ref );
 		atom_map.set( id1, id2 );
-		atom_id_map.insert( std::make_pair<core::id::AtomID, core::id::AtomID>(id1, id2) );
+		atom_id_map.insert( std::make_pair(id1, id2) );
 
 	}
 	return core::scoring::superimpose_pose( mod_pose, ref_pose, atom_map );

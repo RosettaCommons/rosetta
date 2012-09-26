@@ -268,7 +268,7 @@ MultistateFitnessFunction::update_entity_history( Entity const & ent )
 		}
 
 		StateEnergiesAndNPDs seanpd = make_pair( state_energies_, npd_properties_ );
-		top_entities_.push_back( std::make_pair< EntityOP, StateEnergiesAndNPDs > ( new Entity( ent ), seanpd ) );
+		top_entities_.push_back( std::make_pair( new Entity( ent ), seanpd ) );
 		std::push_heap( top_entities_.begin(), top_entities_.end(), EntityHistoryLT() );
 		instruct_daemons_to_keep_last_entity();
 
@@ -317,7 +317,7 @@ MultistateFitnessFunction::update_entity_history( Entity const & ent )
 
 		}
 		StateEnergiesAndNPDs seanpd = make_pair( state_energies_, npd_properties_ );
-		top_entities_.push_back( std::make_pair< EntityOP, StateEnergiesAndNPDs > ( new Entity( ent ), seanpd ) );
+		top_entities_.push_back( std::make_pair( new Entity( ent ), seanpd ) );
 		std::push_heap( top_entities_.begin(), top_entities_.end(), EntityHistoryLT() );
 		instruct_daemons_to_keep_last_entity();
 	}

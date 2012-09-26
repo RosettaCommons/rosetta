@@ -47,6 +47,7 @@ public:
 	typedef operation::TaskOperation TaskOperation;
 	typedef operation::TaskOperationOP TaskOperationOP;
 	typedef operation::TaskOperationCOP TaskOperationCOP;
+	typedef operation::TaskOperationSP TaskOperationSP;
 	typedef std::list< TaskOperationOP > OperationList;
 	typedef OperationList::const_iterator const_iterator;
 
@@ -67,6 +68,9 @@ public:
 	/// @brief clones the input task, and pushes it back into the list
 	void
 	push_back( TaskOperationCOP );
+
+	void
+	push_back( TaskOperationSP );
 
 	/// @brief begin iterator of operations_
 	const_iterator

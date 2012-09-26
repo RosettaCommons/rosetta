@@ -51,6 +51,7 @@
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <protocols/elscripts/util.hh>
 #include <core/pose/selection.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/ChargeCalculator.hh>
@@ -425,6 +426,21 @@ LigInterfaceEnergyFilter::parse_my_tag( TagPtr const tag, DataMap & data, Filter
   rb_jump_ = tag->getOption<core::Size>( "jump_number", pose.num_jump() ); //assume ligand is connected by last jump
   interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_distance_cutoff" , 8.0 );
 
+}
+void LigInterfaceEnergyFilter::parse_def( utility::lua::LuaObject const & def,
+				utility::lua::LuaObject const & score_fxns,
+				utility::lua::LuaObject const & tasks ){
+  using namespace core::scoring;
+
+	if( def["scorefxn"] ) {
+		scorefxn_ = new ScoreFunction( *(protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns ) ) );
+	} else {
+		scorefxn_ = new ScoreFunction( *(score_fxns["score12"].to<ScoreFunctionSP>()) );
+	}
+  threshold_ = def["threshold"] ? def["threshold"].to<core::Real>() : 0.0;
+  include_cstE_ = def["include_cstE"] ? def["include_cstE"].to<bool>() : false;
+  rb_jump_ = def["jump_number"] ? def["jump_number"].to<core::Size>() : 0;
+  interface_distance_cutoff_ = def["interface_distance_cutoff"] ? def["interface_distance_cutoff"].to<core::Real>() : 8.0;
 }
 
 LigInterfaceEnergyFilter::~LigInterfaceEnergyFilter() {}

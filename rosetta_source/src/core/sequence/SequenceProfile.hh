@@ -148,6 +148,15 @@ public:
 	utility::vector1< Real > const &
 	prof_row( Size pos ) const;
 
+	/// @brief Sets the 1D vector1 of Real values representing this profile at pos X.
+	void prof_row(
+		utility::vector1< Real > const & new_prof_row, core::Size pos 
+	);
+
+	Size size() const { 
+		return profile_.size();
+	}
+
 	/// @brief Returns true if negative values are better identities.
 	/// @details The "default" use case is for storing log likelihood values
 	/// where positive is better. If you're using this class to store energy-like

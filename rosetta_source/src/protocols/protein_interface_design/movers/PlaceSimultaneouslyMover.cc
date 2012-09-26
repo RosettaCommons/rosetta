@@ -561,7 +561,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagPtr const tag,
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
 						runtime_assert( drSOP );
 					}//done cast check
-					minimization_movers_.push_back( std::make_pair< simple_moves::DesignRepackMoverOP, Real >( drSOP, bb_stub_constraint_weight) );
+					minimization_movers_.push_back( std::make_pair( drSOP, bb_stub_constraint_weight) );
 					TR<<"added stub minimize mover "<<stub_mover_name<<" to minimize towards the stub. Using this weight for the bb stub constraints: "<< bb_stub_constraint_weight<<'\n';
 				}
 			}
@@ -581,7 +581,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagPtr const tag,
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
 						runtime_assert( drOP );
 					}
-					design_movers_.push_back( std::make_pair< simple_moves::DesignRepackMoverOP, core::Real >( drOP, ( apply_coord_constraints ? coord_cst_std : -1 ) ) );
+					design_movers_.push_back( std::make_pair( drOP, ( apply_coord_constraints ? coord_cst_std : -1 ) ) );
 					TR<<"added design mover "<<mover_name<<" to place simultaneously ";
 					if( apply_coord_constraints )
 						TR<<"with with std "<< coord_cst_std<< '\n';

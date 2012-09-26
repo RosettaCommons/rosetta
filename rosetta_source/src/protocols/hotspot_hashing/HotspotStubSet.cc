@@ -979,7 +979,7 @@ HotspotStubSet::handshake_stub_sets(){
 		std::multimap<core::Real,HotspotStubOP >::iterator hs_it;
 		hs_it = stubset_it->second.begin();
 		for( hs_it = stubset_it->second.begin(); hs_it!=stubset_it->second.end(); ++hs_it ){
-			stub_set_vec_.push_back( std::make_pair<  std::string, std::pair< core::Real, HotspotStubOP > >( stubset_it->first, std::make_pair< core::Real, HotspotStubOP >( hs_it->first, hs_it->second ) ));
+			stub_set_vec_.push_back( std::make_pair( stubset_it->first, std::make_pair( hs_it->first, hs_it->second ) ));
 		}
 	}
 }

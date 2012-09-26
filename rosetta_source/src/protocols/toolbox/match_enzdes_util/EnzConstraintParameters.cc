@@ -644,6 +644,8 @@ EnzConstraintParameters::make_constraint_covalent_helper(
 				}
 
 				//finalize again just to make sure
+				mod_res->nondefault(true);
+				mod_res->base_restype_name( base_name );
 				mod_res->finalize();
 
 				mod_restype_set->add_residue_type( mod_res );

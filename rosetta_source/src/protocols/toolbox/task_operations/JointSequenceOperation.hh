@@ -69,6 +69,7 @@ public:
 public:
 
 	void parse_tag( TagPtr tag );
+	void parse_def( utility::lua::LuaObject const & def );
 
 	/// @brief apply
 	virtual void apply( Pose const & pose, PackerTask & task ) const;

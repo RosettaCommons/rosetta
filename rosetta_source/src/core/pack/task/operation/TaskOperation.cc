@@ -31,6 +31,24 @@ namespace pack {
 namespace task {
 namespace operation {
 
+#ifdef USELUA
+void lregister_TaskOperation( lua_State * lstate ) {
+	luabind::module(lstate, "core")
+	[
+		luabind::namespace_("pack")
+		[
+			luabind::namespace_("task")
+			[
+				luabind::namespace_("operation")
+				[
+					luabind::class_<TaskOperation>("TaskOperation")
+				]
+			]
+		]
+	];
+}
+#endif
+
 static basic::Tracer TR("core.pack.task.operation.TaskOperation");
 
 TaskOperation::~TaskOperation() {}
@@ -40,6 +58,10 @@ void TaskOperation::parse_tag( TagPtr tag )
 	TR << "TaskOperation::parse_tag method called with no effect";
 	if ( tag.get() != NULL ) TR << " for Tag with type " << tag->getName();
 	TR << ". Probably due to (un/mis)implemented virtual method in derived class." << std::endl;
+}
+
+void TaskOperation::parse_def( utility::lua::LuaObject const & def ) {
+	utility_exit_with_message("This TaskOperation has not implemented parse_def()");
 }
 
 } //namespace operation

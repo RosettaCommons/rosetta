@@ -51,9 +51,9 @@ InterfaceSasaFilterCreator::keyname() const { return "Sasa"; }
 InterfaceSasaFilter::InterfaceSasaFilter() :
 	Filter( "Sasa" ),
 	lower_threshold_( 0.0 ),
+	upper_threshold_(100000000000.0),
 	hydrophobic_( false ),
 	polar_( false ),
-	upper_threshold_(100000000000.0),
 	jumps_(),
 	sym_dof_names_()
 {
@@ -63,9 +63,9 @@ InterfaceSasaFilter::InterfaceSasaFilter() :
 InterfaceSasaFilter::InterfaceSasaFilter( core::Real const lower_threshold, bool const hydrophobic/*=false*/, bool const polar/*=false*/, core::Real upper_threshold, std::string sym_dof_names ) :
 	Filter( "Sasa" ),
 	lower_threshold_( lower_threshold ),
+	upper_threshold_(upper_threshold),
 	hydrophobic_( hydrophobic ),
 	polar_( polar ),
-	upper_threshold_(upper_threshold),
 	jumps_(),
 	sym_dof_names_()
 {
@@ -161,6 +161,32 @@ InterfaceSasaFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMa
 		" hydrophobic=" << hydrophobic_ <<
 		" polar=" << polar_ <<
 		" />" << std::endl;
+}
+void InterfaceSasaFilter::parse_def(
+	utility::lua::LuaObject const & def,
+	utility::lua::LuaObject const & /*score_fxns*/,
+	utility::lua::LuaObject const & /*tasks*/
+)
+{
+	lower_threshold_ = def["threshold"] ? def["threshold"].to<core::Real>() : 800;
+	upper_threshold_ = def["upper_threshold"] ? def["upper_threshold"].to<core::Real>() : 1000000;
+	jump( def["jump"] ? def["jump"].to<core::Size>() : 1 ); // APL NOTE: this class now supports a vector of jump indices
+	hydrophobic_ = def["hydrophobic"] ? def["hydrophobic"].to<bool>() : false;
+	polar_ = def["polar"] ? def["polar"].to<bool>() : false;
+	runtime_assert( !hydrophobic_ || !polar_ );
+	if( jumps_.size() == 1 && jumps_[1] != 1 && ( polar_ || hydrophobic_ ) ) {
+		// APL this is an unfortunate restriction
+		utility_exit_with_message( "ERROR: presently, only total sasa is supported across a jump other than 1. Remove polar and hydrophobic flags and try again." );
+	}
+
+	TR << "SasaFilter with lower threshold of "<<lower_threshold_<<" Ang^2 and jump "<<jumps_[1]<<'\n';
+	if( hydrophobic_ ) {
+		TR << "Only reporting hydrophobic sasa\n";
+	}
+	if( polar_ ) {
+		TR << "Only reporting polar sasa\n";
+	}
+	TR.flush();
 }
 
 bool

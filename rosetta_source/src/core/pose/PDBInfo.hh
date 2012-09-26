@@ -151,6 +151,18 @@ private: // structs
 		Real occupancy;
 		/// @brief temperature factor
 		Real temperature;
+#ifdef USEBOOSTSERIALIZE
+		friend class boost::serialization::access;
+
+		// lazy as hell, only serializing remarks + pdb2posemap now
+		template<class Archive>
+		void serialize(Archive & ar, const unsigned int version) {
+				ar & isHet;
+				ar & altLoc;
+				ar & occupancy;
+				ar & temperature;
+		}
+#endif
 	};
 
 
@@ -172,6 +184,18 @@ private: // structs
 		/// @brief vector of AtomRecord
 		/// @details sized the same as number of atoms for a given instance of core::conformation::Residue
 		AtomRecords atomRec;
+#ifdef USEBOOSTSERIALIZE
+		friend class boost::serialization::access;
+
+		// lazy as hell, only serializing remarks + pdb2posemap now
+		template<class Archive>
+		void serialize(Archive & ar, const unsigned int version) {
+				ar & chainID;
+				ar & resSeq;
+				ar & iCode;
+				ar & atomRec;
+		}
+#endif
 	};
 
 
@@ -1144,6 +1168,19 @@ private: // methods
 	///  residue/atom methods
 	void
 	check_residue_records_size( Size const size ) const;
+
+#ifdef USEBOOSTSERIALIZE
+	friend class boost::serialization::access;
+
+	// lazy as hell, only serializing remarks + pdb2posemap now
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+			ar & remarks_;
+			ar & pdb2pose_;
+			ar & residue_rec_;
+			ar & obsolete_;
+	}
+#endif
 
 
 private: // data

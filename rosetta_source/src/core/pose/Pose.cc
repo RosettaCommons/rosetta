@@ -1489,6 +1489,25 @@ std::ostream & operator << ( std::ostream & os, Pose const & pose)
 	return os;
 }
 
+#ifdef USELUA
+PoseSP clone( PoseSP p ) {
+	PoseSP pp( new Pose( *p ) );	
+	return pp;
+}
+
+void lregister_Pose( lua_State * lstate ) {
+	luabind::module(lstate, "core")
+	[
+		luabind::namespace_("pose")
+		[
+			luabind::class_<Pose>("Pose")
+				.def("total_residue", &Pose::total_residue)
+				.def("sequence", &Pose::sequence)
+				.def("clone", (PoseSP (*) (PoseSP)) &clone )
+		]
+	];
+}
+#endif
 
 } // pose
 } // core

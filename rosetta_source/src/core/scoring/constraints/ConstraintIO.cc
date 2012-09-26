@@ -458,20 +458,13 @@ ConstraintIO::read_cst_bindingsites(
 	next_section_name = "";
 }
 
-
-ConstraintSetOP
-ConstraintIO::read_constraints(
-	std::string const & fname,
+ConstraintSetOP ConstraintIO::read_constraints(
+	std::istream & data,
 	ConstraintSetOP cset,
-	pose::Pose const & pose
+	pose::Pose const& pose
 ) {
-	utility::io::izstream data( fname.c_str() );
-	tr.Info << "read constraints from " << fname << std::endl;
-	if ( !data ) {
-		utility_exit_with_message( "[ERROR] Unable to open constraints file: "+ fname );
-	}
-
 	std::string line;
+	std::streampos original_pos = data.tellg();
 	getline(data,line); // header line
 	std::string section = get_section_name ( line );
 	std::string pre_read;
@@ -488,10 +481,17 @@ ConstraintIO::read_constraints(
 		} else if ( section == "NO_SECTION" ) {
 			tr.Info << " no section header [ xxx ] found, try reading line-based format... DON'T MIX"
 							<< std::endl;
-			return read_constraints_new( fname, cset, pose );
+			/// izstreams cannot be rewound with seekg()
+			/// never call this function if you have constructed an izstream
+			/// and you haven't deteremined that indeed the file format its representing
+			/// is the old style (as opposed to the new style) constraint format.
+			assert( dynamic_cast< zlib_stream::zip_istream * > ( &data ) == 0 );
+
+			data.seekg( original_pos );
+			return read_constraints_new( data, cset, pose );
 		} else { //section header, but unknown name
 			utility_exit_with_message(
-				"constraint-file: " + fname + " section " + section + " not recognized!"
+				"constraint-file: section " + section + " not recognized!"
 			);
 		}
 		tr.Trace << "pre_read: " << pre_read << std::endl;
@@ -499,6 +499,36 @@ ConstraintIO::read_constraints(
 	}
 //	pose.constraint_set( cset );
 	return cset;
+}
+
+/// @details All the heavy lifting is done by read_constraints( istream &, ConstraintSetOP, Pose const & ), or
+/// by read_constraints_new( istream &, ConstraintSetOP, Pose const & ), but the logic for deciding which of
+/// two execution paths to follow that lives inside read_constraints( isteam &, ... ) will not work if given
+/// an izstream constructed from a zipped file.  SO instead, we check the file format of the input constraint
+/// file here and then rewind to the beginning of the file using the izstream seek_beg() function.
+ConstraintSetOP
+ConstraintIO::read_constraints(
+	std::string const & fname,
+	ConstraintSetOP cset,
+	pose::Pose const & pose
+) {
+	utility::io::izstream data( fname.c_str() );
+	tr.Info << "read constraints from " << fname << std::endl;
+	if ( !data ) {
+		utility_exit_with_message( "[ERROR] Unable to open constraints file: "+ fname );
+	}
+
+	std::string line;
+  getline(data,line); // header line
+	std::string section = get_section_name( line );
+	data.seek_beg();
+	if ( section == "NO_SECTION" ) {
+		return read_constraints_new( data, cset, pose );
+	} else {
+		return read_constraints( data, cset, pose );
+	}
+
+	return read_constraints( data, cset, pose );
 } // read_constraints
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -514,18 +544,28 @@ ConstraintIO::read_constraints_new(
 	if ( !data ) {
 		utility_exit_with_message("[ERROR] Unable to open constraints file: " + fname );
 	}
-
+	return read_constraints_new( data, cset, pose );
+}
+ConstraintSetOP
+ConstraintIO::read_constraints_new(
+	std::istream & data,
+	ConstraintSetOP cset,
+	pose::Pose const & pose
+) {
+	Size count_constraints(0);
 	while( data.good() ) { // check if we reach the end of file or not
 		// read in each constraint and add it constraint_set
 		ConstraintOP cst_op;
 		cst_op = read_individual_constraint_new( data, pose, get_func_factory() );
 		if ( cst_op ) {
+			++count_constraints;
 			cset->add_constraint( cst_op );
 		} else if ( ! data.eof() ) { // not end of line
-			tr.Error << "ERROR: reading constraints from file" << fname << std::endl;
+			tr.Error << "ERROR: reading constraints from file" << std::endl;
 			break;
 		}
 	} // while
+	tr.Info << "Read in " << count_constraints << " constraints" << std::endl;
 	return cset;
 } // read_constraints_new
 

@@ -1937,6 +1937,17 @@ private: // Methods
 		return t * t;
 	}
 
+#ifdef USEBOOSTSERIALIZE
+	friend class boost::serialization::access;
+
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+			ar & x_;
+			ar & y_;
+			ar & z_;
+	}
+#endif
+
 
 private: // Fields
 

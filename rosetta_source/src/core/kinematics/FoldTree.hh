@@ -23,7 +23,7 @@
 // utility headers
 #include <core/types.hh>
 #include <core/id/SequenceMapping.fwd.hh>
-#include <utility/vector1.fwd.hh>
+#include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // ObjexxFCL Headers
@@ -36,6 +36,7 @@
 // // C++ Headers
 #include <string>
 #include <vector>
+#include <iostream>
 
 #ifdef PYROSETTA
 #include <core/id/SequenceMapping.hh>
@@ -857,6 +858,32 @@ private:
 			int const nres_in
 	);
 
+#ifdef USEBOOSTSERIALIZE
+	friend class boost::serialization::access;
+
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+			ar & edge_list_;
+			ar & new_topology;
+			ar & new_order;
+			ar & nres_;
+			ar & num_jump_;
+			ar & num_cutpoint_;
+			ar & min_edge_count;
+			ar & jump_point_;
+			ar & is_jump_point_;
+			ar & cutpoint_;
+			ar & cutpoint_map_;
+			//ar & is_cutpoint_;
+			update_cutpoints(); // this is because I feel like serializing is_cutpoint_
+			// this also overwrites cutpoint_ and cutpoint_map_ but whatever
+			ar & jump_edge_;
+			ar & edge_count;
+			ar & jump_edge_count;
+	}
+	
+#endif
+
 	/////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////
 	// data
@@ -890,23 +917,23 @@ private:
 	/// @note number_cutpoint_ == num_jump_ (if a connected tree)
 	mutable int num_cutpoint_;
 	/// @brief jump number to jump residue number. dimensioned as (2,num_jump_)
-	mutable ObjexxFCL::FArray2D_int jump_point_; // num_jump
+	mutable utility::vector1< std::pair< int, int > > jump_point_;
 	/// @brief whehter a residue is a jump_point, dimensioned as nres_
-	mutable ObjexxFCL::FArray1D_bool is_jump_point_; // nres
+	mutable utility::vector1<bool> is_jump_point_;
 	/// @brief cutpoint number to cutpoint residue number, dimesioned as num_cutpoint_.
-	mutable ObjexxFCL::FArray1D_int cutpoint_; // num_fold_tree_cutpoint
+	mutable utility::vector1<int> cutpoint_;
 	/// @brief residue number of cutpoint number, 0 if it is not a cutpoint. dimensioned as nres_.
-	mutable ObjexxFCL::FArray1D_int cutpoint_map_; // nres
+	mutable utility::vector1<int> cutpoint_map_;
 	/// @brief whether a residue is a cutpoint, dimensioned as nres_
 	mutable ObjexxFCL::FArray1D_bool is_cutpoint_; // nres
 	/// @brief jump number to edge index number in the edge_list_, dimensioned as num_jump_.
-	mutable ObjexxFCL::FArray1D_int jump_edge_;
+	mutable utility::vector1<int> jump_edge_;
 	/// @brief dimensioned as nres_, see setup_edge_counts for more info
-	mutable ObjexxFCL::FArray1D_int edge_count; // nres
+	mutable utility::vector1<int> edge_count;
 	/// @brief the minimum number in edge_count and jump_edge_count.
 	mutable int min_edge_count;
 	/// @brief dimensioned as num_jump, see setup_edge_counts for more info
-	mutable ObjexxFCL::FArray1D_int jump_edge_count; // num_jump
+	mutable utility::vector1<int> jump_edge_count;
 	//mutable std::map< int, std::pair< int, int > > jump_atoms;
 
 	// @brief computes fixed-size identifier for a string input
@@ -990,7 +1017,7 @@ bool
 FoldTree::is_jump_point( int const seqpos ) const
 {
 	check_topology();
-	return is_jump_point_(seqpos);
+	return is_jump_point_[seqpos];
 }
 
 
@@ -1000,7 +1027,7 @@ int
 FoldTree::cutpoint( int const cut ) const
 {
 	check_topology();
-	return cutpoint_(cut);
+	return cutpoint_[cut];
 }
 
 
@@ -1038,10 +1065,10 @@ FoldTree::cutpoint_map( int const seqpos ) const
 {
 	check_topology();
 	// sanity
-	assert( (  is_cutpoint_(seqpos) && cutpoint_map_(seqpos)  > 0 &&
-			cutpoint_(cutpoint_map_(seqpos)) == seqpos ) ||
-			( !is_cutpoint_(seqpos) && cutpoint_map_(seqpos) == 0 ) );
-	return cutpoint_map_(seqpos);
+	assert( (  is_cutpoint_(seqpos) && cutpoint_map_[seqpos]  > 0 &&
+			cutpoint_[cutpoint_map_[seqpos]] == seqpos ) ||
+			( !is_cutpoint_(seqpos) && cutpoint_map_[seqpos] == 0 ) );
+	return cutpoint_map_[seqpos];
 }
 
 
@@ -1055,9 +1082,9 @@ FoldTree::is_cutpoint( int const seqpos ) const
 	if ( seqpos > 0 && seqpos < nres_ ) {
 		// 0 and nres count as cutpoints for is_cutpoint but they aren't internal cutpoints
 		// in the foldtree so they dont appear in cutpoint_map_
-		assert( (  is_cutpoint_(seqpos) && cutpoint_map_(seqpos)  > 0 &&
-				cutpoint_(cutpoint_map_(seqpos)) == seqpos ) ||
-				( !is_cutpoint_(seqpos) && cutpoint_map_(seqpos) == 0 ) );
+		assert( (  is_cutpoint_(seqpos) && cutpoint_map_[seqpos]  > 0 &&
+				cutpoint_[cutpoint_map_[seqpos]] == seqpos ) ||
+				( !is_cutpoint_(seqpos) && cutpoint_map_[seqpos] == 0 ) );
 	}
 	return is_cutpoint_(seqpos);
 }

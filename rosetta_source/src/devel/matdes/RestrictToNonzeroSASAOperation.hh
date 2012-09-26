@@ -44,6 +44,7 @@ public:
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
 	void parse_tag( TagPtr tag );
+	void parse_def( utility::lua::LuaObject const & def );
 
 private:
 

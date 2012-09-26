@@ -1783,6 +1783,16 @@ core::Real energy_from_pose(
 	return pose.energies().total_energies()[ sc_type ];
 }
 
+core::Real energy_from_pose(
+	core::pose::Pose & pose, std::string const & sc_type
+) {
+	return pose.energies().total_energies()[ core::scoring::score_type_from_name( sc_type ) ];
+}
+
+core::Real total_energy_from_pose( core::pose::Pose & pose ) {
+	return pose.energies().total_energy();
+}
+
 void
 transfer_phi_psi( const core::pose::Pose& srcpose, core::pose::Pose& tgtpose, core::Size ir, core::Size jr )
 {
@@ -2556,6 +2566,22 @@ core::Size noncanonical_chi_count(core::pose::Pose const & pose)
 	}
 	return count;
 }
+#ifdef USELUA
+void lregister_util( lua_State * lstate ) {
+	luabind::module(lstate, "core")
+	[
+		luabind::namespace_("pose")
+		[
+			luabind::def("getExtraScore", &getPoseExtraScores, luabind::pure_out_value(_3)),
+			luabind::def("setExtraScore", &setPoseExtraScores),
+			luabind::def("get_comment", &get_comment, luabind::pure_out_value(_3)),
+			luabind::def("add_comment", &add_comment),
+			luabind::def("getScore", (core::Real (*) (core::pose::Pose &, std::string const & ) ) &energy_from_pose),
+			luabind::def("getTotalScore", (core::Real (*) (core::pose::Pose & ) ) &total_energy_from_pose)
+		]
+	];
+}
+#endif
 
 } // pose
 } // core

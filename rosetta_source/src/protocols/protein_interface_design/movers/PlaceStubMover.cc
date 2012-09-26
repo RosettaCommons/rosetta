@@ -1087,7 +1087,7 @@ PlaceStubMover::parse_my_tag( TagPtr const tag,
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
 						runtime_assert( drSOP );
 					}//done cast check
-					stub_minimize_movers_.push_back( std::make_pair< simple_moves::DesignRepackMoverOP, Real >( drSOP, bb_stub_constraint_weight) );
+					stub_minimize_movers_.push_back( std::make_pair( drSOP, bb_stub_constraint_weight) );
 					TR<<"added stub minimize mover "<<stub_mover_name<<" to minimize towards the stub. Using this weight for the bb stub constraints: "<< bb_stub_constraint_weight<<'\n';
 				}
 			}
@@ -1108,7 +1108,7 @@ PlaceStubMover::parse_my_tag( TagPtr const tag,
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
 						runtime_assert( drOP );
 					}
-					design_movers_.push_back( std::make_pair< simple_moves::DesignRepackMoverOP, bool >( drOP, apply_coord_constraints ) );
+					design_movers_.push_back( std::make_pair( drOP, apply_coord_constraints ) );
 					coord_cst_std_.push_back( coord_cst_std );
 					TR<<"added design mover "<<mover_name<<" to place stub with apply_coord_constraints switched to "<< apply_coord_constraints<<" with std "<< coord_cst_std<< " and hurry=" << hurry_ << '\n';
 				}

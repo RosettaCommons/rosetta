@@ -62,6 +62,10 @@ public:
 		protocols::filters::Filters_map const &,
 		moves::Movers_map const &,
 		Pose const & );
+  void parse_def( utility::lua::LuaObject const & def,
+		utility::lua::LuaObject const & score_fxns,
+		utility::lua::LuaObject const & tasks,
+		protocols::moves::MoverCacheSP cache );
 
 	static void register_options();
 

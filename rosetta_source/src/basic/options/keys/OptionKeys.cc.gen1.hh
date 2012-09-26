@@ -1,5 +1,3 @@
-namespace fold_cst { BooleanOptionKey const no_minimize( "fold_cst:no_minimize" );  }
-namespace fold_cst { BooleanOptionKey const force_minimize( "fold_cst:force_minimize" );  }
 namespace fold_cst { RealVectorOptionKey const seq_sep_stages( "fold_cst:seq_sep_stages" );  }
 namespace fold_cst { IntegerOptionKey const reramp_cst_cycles( "fold_cst:reramp_cst_cycles" );  }
 namespace fold_cst { RealOptionKey const reramp_start_cstweight( "fold_cst:reramp_start_cstweight" );  }
@@ -603,6 +601,15 @@ namespace wum { StringOptionKey const extra_scorefxn( "wum:extra_scorefxn" );  }
 namespace wum { FileOptionKey const extra_scorefxn_ref_structure( "wum:extra_scorefxn_ref_structure" );  }
 namespace wum { IntegerOptionKey const extra_scorefxn_relax( "wum:extra_scorefxn_relax" );  }
 namespace wum { RealOptionKey const trim_proportion( "wum:trim_proportion" );  }
+namespace els { BooleanOptionKey const els( "els" );  }
+namespace els { IntegerOptionKey const master_wu_per_send( "els:master_wu_per_send" );  }
+namespace els { StringOptionKey const vars( "els:vars" );  }
+namespace els { FileOptionKey const script( "els:script" );  }
+namespace els { IntegerOptionKey const num_traj( "els:num_traj" );  }
+namespace els { IntegerOptionKey const traj_per_master( "els:traj_per_master" );  }
+namespace els { IntegerOptionKey const shortest_wu( "els:shortest_wu" );  }
+namespace els { BooleanOptionKey const pool( "els:pool" );  }
+namespace els { BooleanOptionKey const singlenode( "els:singlenode" );  }
 namespace lh { BooleanOptionKey const lh( "lh" );  }
 namespace lh { StringOptionKey const db_prefix( "lh:db_prefix" );  }
 namespace lh { IntegerVectorOptionKey const loopsizes( "lh:loopsizes" );  }
@@ -636,8 +643,3 @@ namespace lh { StringOptionKey const mpi_resume( "lh:mpi_resume" );  }
 namespace lh { StringOptionKey const mpi_feedback( "lh:mpi_feedback" );  }
 namespace lh { IntegerOptionKey const mpi_batch_relax_chunks( "lh:mpi_batch_relax_chunks" );  }
 namespace lh { IntegerOptionKey const mpi_batch_relax_absolute_max( "lh:mpi_batch_relax_absolute_max" );  }
-namespace lh { IntegerOptionKey const mpi_outbound_wu_buffer_size( "lh:mpi_outbound_wu_buffer_size" );  }
-namespace lh { IntegerOptionKey const mpi_loophash_split_size    ( "lh:mpi_loophash_split_size    " );  }
-namespace lh { RealOptionKey const mpi_metropolis_temp( "lh:mpi_metropolis_temp" );  }
-namespace lh { IntegerOptionKey const mpi_save_state_interval( "lh:mpi_save_state_interval" );  }
-namespace lh { BooleanOptionKey const mpi_master_save_score_only( "lh:mpi_master_save_score_only" );  }

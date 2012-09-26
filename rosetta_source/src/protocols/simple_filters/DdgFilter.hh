@@ -51,6 +51,9 @@ public:
 	core::Real compute( core::pose::Pose const & pose ) const;
 	virtual ~DdgFilter();
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_def( utility::lua::LuaObject const & def,
+					utility::lua::LuaObject const & score_fxns,
+					utility::lua::LuaObject const & tasks );
 	void relax_mover( protocols::moves::MoverOP m );
 	protocols::moves::MoverOP relax_mover() const;
 private:

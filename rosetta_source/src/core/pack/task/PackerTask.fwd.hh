@@ -33,4 +33,10 @@ typedef utility::pointer::owning_ptr< PackerTask const > PackerTaskCOP;
 }
 }
 
+#ifdef USEBOOSTSERIALIZE
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/assume_abstract.hpp>
+BOOST_SERIALIZATION_ASSUME_ABSTRACT(core::pack::task::PackerTask)
+#endif
+
 #endif

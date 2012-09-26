@@ -96,6 +96,18 @@ private: // structs
 		int resSeq;
 		/// @brief insertion code
 		char iCode;
+
+#ifdef USEBOOSTSERIALIZE
+		private:
+		friend class boost::serialization::access;
+
+		template<class Archive>
+		void serialize(Archive & ar, const unsigned int version) {
+				ar & chainID;
+				ar & resSeq;
+				ar & iCode;
+		}
+#endif
 	};
 
 
@@ -221,6 +233,17 @@ public: // methods
 	/// @note does not clear any currently existing mapping data
 	void
 	fill( PDBInfo const & info );
+
+private: // methods
+
+#ifdef USEBOOSTSERIALIZE
+	friend class boost::serialization::access;
+
+	template<class Archive>
+	void serialize(Archive & ar, const unsigned int version) {
+			ar & pdb2pose_;
+	}
+#endif
 
 
 private: // data

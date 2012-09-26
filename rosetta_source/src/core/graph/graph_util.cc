@@ -78,7 +78,7 @@ find_connected_components( Graph const & g )
 	// Prepare output descriptions
 	vector1< std::pair< platform::Size, platform::Size > > cc_descriptions( representative.size() );
 	for ( platform::Size ii = 1; ii <= representative.size(); ++ii ) {
-		cc_descriptions[ ii ] = std::make_pair< platform::Size, platform::Size >( representative[ ii ], cc_nelements[ ii ] );
+		cc_descriptions[ ii ] = std::make_pair( representative[ ii ], cc_nelements[ ii ] );
 	}
 	return cc_descriptions;
 }

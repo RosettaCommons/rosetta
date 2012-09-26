@@ -18,6 +18,7 @@
 // C++ headers
 #include <iostream>
 #include <fstream>
+#include <string>
 
 class IZStreamTests : public CxxTest::TestSuite {
 
@@ -85,6 +86,47 @@ class IZStreamTests : public CxxTest::TestSuite {
 		TS_ASSERT(can_find);
 
 		izstream::set_alternative_search_paths(current_alternative_paths);
+	}
+
+	void test_izstream_read_from_zipped_file() {
+		using namespace utility::io;
+		izstream is( "utility/io/zipped_file.txt.gz" );
+		std::istream & stdistream( is() );
+
+		std::string line;
+		std::getline( stdistream, line );
+		//std::cout << "line: '" << line << "'" << std::endl;
+		TS_ASSERT( line == "this is a file" );
+		std::getline( stdistream, line );
+		//std::cout << "line2: '" << line << "'" << std::endl;
+		TS_ASSERT( line == "created with utmost care" );
+		std::getline( stdistream, line );
+		//std::cout << "line3: '" << line << "'" << std::endl;
+		TS_ASSERT( line == "to be compacted" );
+	}
+
+	/// izstream does not support seekg.  This is good to know.
+	void dont_test_izstream_seekg() {
+		using namespace utility::io;
+		izstream is( "utility/io/zipped_file.txt.gz" );
+		std::istream & stdistream( is() );
+
+		std::streampos beginning( stdistream.tellg() );
+		std::string line;
+		std::getline( stdistream, line );
+		std::cout << "line: '" << line << "' is good? " << is.good() << std::endl;
+		TS_ASSERT( line == "this is a file" );
+		std::streampos mid( stdistream.tellg() );
+		stdistream.seekg( beginning );
+		std::getline( stdistream, line );
+		std::cout << "line, rewound: '" << line << "' is good? " << is.good() << std::endl;
+		TS_ASSERT( line == "this is a file" );
+		std::getline( stdistream, line );
+		std::cout << "line2: '" << line << "' is good? " << is.good()  << std::endl;
+		TS_ASSERT( line == "created with utmost care" );
+		std::getline( stdistream, line );
+		std::cout << "line3: '" << line << "' is good? " << is.good() << std::endl;
+		TS_ASSERT( line == "to be compacted" );
 	}
 };
 

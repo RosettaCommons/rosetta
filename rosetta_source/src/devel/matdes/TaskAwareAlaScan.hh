@@ -89,6 +89,9 @@ public :
 	// Parse xml
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	void parse_ddG_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap const & data );
+	void parse_def( utility::lua::LuaObject const & def,
+				utility::lua::LuaObject const & score_fxns,
+				utility::lua::LuaObject const & tasks );
 
 	// Effector functions
 	core::Real ddG_for_single_residue( core::pose::Pose const & const_pose, core::Size const resi ) const;

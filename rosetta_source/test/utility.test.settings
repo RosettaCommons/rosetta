@@ -70,5 +70,6 @@ libraries    = [ "sqlite3", "cppdb", "utility", "ObjexxFCL", "z", ]
 subprojects  = []
 testinputfiles = [
     "io/no_final_newline.txt",
+    "io/zipped_file.txt.gz",
 ]
 
