@@ -27,8 +27,13 @@
 #include <basic/options/option.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <basic/Tracer.hh>
 #include <core/scoring/rms_util.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/EnergyMap.hh>
+#include <core/scoring/ScoreType.hh>
+#include <core/scoring/ScoreTypeManager.hh>
+
+#include <basic/Tracer.hh>
 
 #include <devel/init.hh>
 #include <protocols/relax/FastRelax.hh>
@@ -236,6 +241,34 @@ class CurlPost {
   std::string writebuffer;  
 };
 
+
+void pose_energies_to_json( core::pose::Pose const & pose, Json::Value &root ) {
+  using namespace core::pose::datacache;
+	
+  core::scoring::EnergyMap const emap = pose.energies().total_energies();
+	core::scoring::EnergyMap const wts  = pose.energies().weights();
+
+  core::scoring::EnergyMap::const_iterator emap_iter, wts_iter;
+	for ( emap_iter = emap.begin(), wts_iter = wts.begin();
+			emap_iter != emap.end() && wts_iter!= wts.end();
+			++emap_iter && ++wts_iter
+	) {
+
+		// only grab scores that have non-zero weights.
+		if ( *wts_iter != 0.0 ) {
+			core::scoring::ScoreType sc_type
+				= core::scoring::ScoreType( emap_iter - emap.begin() + 1 );
+			std::string name = core::scoring::name_from_score_type( sc_type );
+
+		  root[ name ] = Json::Value( (*emap_iter) * (*wts_iter) );
+
+		} // if ( *wts_iter != 0.0 )
+	} // for ( emap_iter ...)
+
+} 
+
+
+
 class ServerInfo {
  public:
     ServerInfo(): 
@@ -276,12 +309,15 @@ class RosettaJob {
       }
 
       // break down the input data
-
+      //std::cout <<  data << std::endl;
+      
       Json::Value values;
       Json::Reader reader;
       reader.parse( data, values);
+      
       std::string payload = values.get("payload","").asString();
-      //std::cout << "Payload: " << payload << std::endl;
+      taskname_ = values.get("name","defaulttaskname").asString();
+      
 
       Json::Value payload_values;
       Json::Reader payload_reader;
@@ -290,17 +326,16 @@ class RosettaJob {
       hash_ = payload_values.get("hash","").asString();
       key_  = payload_values.get("key","").asString();
      
-      std::cout << "NEW JOB: Hash: " << hash_ << " KEY: " << key_ << std::endl;
-      std::string inputdata_string = payload_values.get("inputdata","").asString();
+      std::cout << "NEW JOB: Hash: " << hash_ << " KEY: " << key_ << " TASKNAME: " << taskname_ << std::endl;
+      std::string inputdata_string = payload_values.get("pdbdata","").asString();
       //std::cout << "Inputdata: " << inputdata_string << std::endl;
 
       Json::Value inputdata_values;
       Json::Reader inputdata_reader;
       inputdata_reader.parse( inputdata_string , inputdata_values);
       
-      Json::Value rosetta_script = inputdata_values.get("rosetta_script","");
-      std::string rosetta_script_string = rosetta_script.asString();
-      std::cout << "Rosetta script string: " << rosetta_script_string << std::endl;
+      std::string rosetta_script_ = inputdata_values.get("rosetta_script","").asString();
+      std::cout << "Rosetta script string: " << rosetta_script_ << std::endl;
       
       Json::Value pdbdata = inputdata_values.get("pdbdata","");
       std::string pdbdata_string = pdbdata.asString();
@@ -319,10 +354,19 @@ class RosettaJob {
    
 
     bool return_results_to_server( const ServerInfo & server_info ){ 
-        
+      
+
+      
+      // do some basic measurements
+      Json::Value energies;
+	    core::scoring::ScoreFunctionOP fascorefxn = core::scoring::getScoreFunction();
+      energies[ "score" ] = (*fascorefxn)(outputpose_);
+      energies[ "irms" ] = core::scoring::CA_rmsd( inputpose_, outputpose_ );
+      pose_energies_to_json( outputpose_, energies );
+
+      // Now send back results to server.
       std::stringstream pdbdatastream;
       outputpose_.dump_pdb( pdbdatastream );
-      // Now send back results to server.
 
       // assemble the json structure needed.
       Json::Value root;
@@ -330,13 +374,17 @@ class RosettaJob {
       // set the output values
       root["parental_key"] = Json::Value( key_ );   // the key and hash become parental_  key and hash
       root["parental_hash"] = Json::Value( hash_ ); // so we can keep track of the geneaology of structures
+      std::cout << "Finished TaskName: " << taskname_ << std::endl; 
+      root["taskname"] = Json::Value( taskname_ ); // so we can keep track of the geneaology of structures
       root["pdbdata"] = Json::Value( pdbdatastream.str() ); // the PDB data itself of course
       root["workerinfo"] = Json::Value(  "Rosetta Backend 0.1" ); 
+      root["energies"] = energies; 
+      
       // add energy info etc other goodies here
 
-      Json::StyledWriter writer;
+      Json::FastWriter writer;
       std::string output_json = "output=" + writer.write( root );
-
+      std::cout << writer.write( energies ) << std::endl;
       // now do a POST on the server to hand back the data.
       
       CurlPost cg;
@@ -353,11 +401,11 @@ class RosettaJob {
         protocols::moves::MoverOP protocol = protocols::relax::generate_relax_from_cmd();
        
         // skip this for now -
-        //protocol->apply( outputpose_ );
-        for( int ir = 1; ir <= outputpose_.total_residue(); ir ++ ){
-          outputpose_.set_phi( ir, 65 );
-          outputpose_.set_psi( ir, 46 );
-        }
+        protocol->apply( outputpose_ );
+//        for( int ir = 1; ir <= outputpose_.total_residue(); ir ++ ){
+//          outputpose_.set_phi( ir, 65 );
+//          outputpose_.set_psi( ir, 46 );
+//        }
 
     }
 
@@ -365,8 +413,10 @@ class RosettaJob {
 
   core::pose::Pose inputpose_;
   core::pose::Pose outputpose_;
+  std::string taskname_; 
   std::string hash_; 
   std::string key_; 
+  std::string rosetta_script_;
   bool initialized_;
 };
 
@@ -380,14 +430,15 @@ class RosettaBackend {
  public:
 
     void run(){
-      // do{ 
+      do{ 
         RosettaJob newjob;
         core::Size wait_count = 0;
         
         while( !newjob.request_job_from_server( default_server_info ) ){
-          core::Size waittime =  1.5f*exp( (float) wait_count ) * 1000; // in microseconds  
-          std::cout << "No work. Waiting " << waittime/1000.0 << " seconds before retrying." << std::endl;
+          core::Real waittime =  std::min( (double)10.0f, 0.5f* pow( (float)1.3, (float) wait_count )); // in seconds  
+          std::cout << "No work. Waiting " << waittime << " seconds before retrying." << std::endl;
           sleep( waittime );
+          wait_count ++;
         };
 
         // execute the run
@@ -395,7 +446,8 @@ class RosettaBackend {
 
         // now return the results to the server
         newjob.return_results_to_server( default_server_info );
-      //} while (true)
+      } while (true);
+
     };
 
 
