@@ -707,6 +707,8 @@ sources = {
 		#"oop_puck_energy_calc_mc",
 		#"oop_dimer_rama_calc",
 		],
+	#"pilot/shilei" : [ "docking_parallel"
+	],
 
 }
 

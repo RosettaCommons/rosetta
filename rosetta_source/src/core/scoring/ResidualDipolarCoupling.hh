@@ -201,6 +201,7 @@ private:
 	core::Real* r2_;
 	core::Real* exprdc_;
 	core::Real* rdcconst_;
+	core::Real* rdcweight_;
 	core::Size* lenex_;
 };
 
@@ -268,9 +269,9 @@ public:
 	inline Real fixed_dist() const {
 		runtime_assert( 0 ); ///don't use this
 		if (type() == RDC_TYPE_NH)
-			return 1.02;
+			return 1.042;
 		else if (type() == RDC_TYPE_NC)
-			return 1.341;
+			return 1.329;
 		else if (type() == RDC_TYPE_CH)
 			return 1.08;
 		else if (type() == RDC_TYPE_CC)
