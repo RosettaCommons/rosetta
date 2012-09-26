@@ -99,6 +99,8 @@ BannedFiles = ['utility/PyHelper.hh', 'utility/keys', 'utility/options', 'utilit
 
     'protocols/medal/MedalMain.hh',  # void* (void*) declaration
 
+    'protocols/wum2/EndPoint.hh',  # Function returning a function
+
     #'protocols/frag_picker', # whole dir not in scons (ie been moved now), temporary
 
 # Lion workarround

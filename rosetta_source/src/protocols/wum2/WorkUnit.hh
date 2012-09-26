@@ -49,7 +49,7 @@ class WorkUnit {
 		// boost serialize requires empty constructor
 		WorkUnit(){}
 		// mpi rank of master node, index of trajectory on that master node
-		WorkUnit( core::Size master, 
+		WorkUnit( core::Size master,
 				core::Size trajectory_idx );
 
     virtual ~WorkUnit (){}
@@ -189,7 +189,7 @@ class WorkUnit_ElScripts : public WorkUnit {
 		}
 
 		// just renames pipes from old name to new name
-		void rename_pipes( core::io::serialization::PipeMapSP p, std::map< std::string, std::string > new_names );
+		// Undefined, commenting out to fix PyRosetta build  void rename_pipes( core::io::serialization::PipeMapSP p, std::map< std::string, std::string > new_names );
 
 		std::string name() { return name_; }
 		void name( std::string name ) { name_ = name; }
