@@ -43,6 +43,9 @@ namespace toolbox {
 namespace task_operations {
 
 using basic::database::get_db_session;
+using basic::database::check_statement_sanity;
+using basic::database::safely_prepare_statement;
+using basic::database::safely_read_from_database;
 using core::pose::Pose;
 using core::pack::task::parse_resfile_string;
 using core::pack::task::ResfileReaderException;
@@ -96,13 +99,16 @@ ReadResfileFromDB::apply( Pose const & pose, PackerTask & task ) const {
 	sql_stmt
 		<< "SELECT resfile FROM " << database_table_
 		<< " WHERE tag='" << tag << "';";
-	result res = (*db_session_) << sql_stmt.str();
+	string sql(sql_stmt.str());
+	check_statement_sanity(sql);
+	statement select_stmt(safely_prepare_statement(sql, db_session_));
+	result res(safely_read_from_database(select_stmt));
 	if(!res.next()){
 		stringstream error_message;
 		error_message
 			<< "Unable to locate resfile for job distributor input tag '"
 			<< tag << "' in the database." << endl;
-		utility_exit_with_message(error_message.str());
+		throw utility::excn::EXCN_Msg_Exception(error_message.str());
 	}
 	string resfile;
 	res >> resfile;
@@ -114,7 +120,7 @@ ReadResfileFromDB::apply( Pose const & pose, PackerTask & task ) const {
 			<< "Failed to process resfile stored for input tag '" << tag << "'" << endl
 			<< "RESFILE:" << endl
 			<< resfile << endl;
-		utility_exit_with_message(error_message.str());
+		throw utility::excn::EXCN_Msg_Exception(error_message.str());
 	}
 }
 
