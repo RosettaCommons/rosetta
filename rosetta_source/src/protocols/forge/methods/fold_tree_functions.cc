@@ -1155,7 +1155,8 @@ void make_star_foldtree(
 		if ( start_is_cut && end_is_cut && prev_cut != loop_start-1 ) {
 			// need to add two cuts for this loop
 			this_cut   = loop_start-1;
-			out_midpt  = (prev_cut + this_cut+1)/2;
+			//out_midpt  = (prev_cut + this_cut+1)/4;
+			out_midpt  = prev_cut +1; // try to root the jump at beginning
 			newF.add_edge( nres+1, out_midpt, njump );
 			if (out_midpt != prev_cut+1)
 				newF.add_edge( out_midpt, prev_cut+1, Edge::PEPTIDE );
@@ -1173,7 +1174,8 @@ void make_star_foldtree(
 		else
 			this_cut = loops[i].cut();
 
-		out_midpt  = (prev_cut + this_cut+1)/2;
+		//out_midpt  = (prev_cut + this_cut+1)/2;
+		out_midpt = prev_cut + 1; //try to root the jump at beginning.
 
 		if ( !start_is_cut && !end_is_cut ) {
 			core::pose::add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, this_cut   );

@@ -2038,6 +2038,10 @@ void RemodelLoopMover::independent_stage(
 
 	// setup loops
 	loops::LoopsOP loops_to_model = determine_loops_to_model( pose );
+	if (option[OptionKeys::remodel::no_jumps].user()){
+		// if using no_jumps, chainbreak based loop determination will skip this stage, but we obviously wants to build something...
+		loops_to_model = loops_;
+	}
 	TR << "   n_loops = " << loops_to_model->size() << std::endl;
 
 	if ( loops_to_model->size() == 0 ) { // nothing to do...
@@ -2116,6 +2120,10 @@ void RemodelLoopMover::independent_stage(
 			);
 
 			if (option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
+				sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
+			}
+
+			if (option[OptionKeys::remodel::no_jumps].user() && option[OptionKeys::remodel::two_chain_tree].user()){
 				sfxOP->set_weight( core::scoring::linear_chainbreak, 0);
 			}
 
