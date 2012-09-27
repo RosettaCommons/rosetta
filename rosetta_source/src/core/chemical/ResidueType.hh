@@ -12,7 +12,7 @@
 /// @brief
 /// A class for defining residue
 ///
-/// @detailed
+/// @details
 /// This class contains the "chemical" information for residues. This does not contain the actual
 /// xyz coordinates of the class (xyz found in core/conformation/Residue.hh). A residue in Rosetta
 /// can be a ligand, DNA, amino acid, or basically anything. A residue is read in through residue_io.cc
@@ -39,7 +39,7 @@
 /// havent figured out how to get the reverse to work because of the seperate indices. Orbital xyz coordinates are not updated when atom coordinates are.
 /// This is to keep speed consistent with just having atoms. To output the orbitals, use the flag -output_orbitals
 ///
-/// @authors
+/// @author
 /// Phil Bradley
 /// Steven Combs - these comments
 ///
@@ -66,6 +66,7 @@
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/sdf/MolData.hh>
 #include <core/chemical/rna/RNA_ResidueType.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 // AUTO-REMOVED #include <core/chemical/VariantType.hh>
 
 // Project headers
@@ -1762,6 +1763,8 @@ public:
 
 	}
 
+    /// @brief  Return the CarbohydrateInfo object containing sugar-specific properties for this residue.
+    core::chemical::carbohydrates::CarbohydrateInfoCOP carbohydrate_info() const;
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -2174,6 +2177,9 @@ private:
 	////////////////
 	core::chemical::rna::RNA_ResidueType rna_residuetype_;
 
+    // A container for residue properties unique to carbohydrates.
+    core::chemical::carbohydrates::CarbohydrateInfoOP carbohydrate_info_;
+
 	////////////////
 	/// status
 	bool finalized_;
@@ -2220,4 +2226,3 @@ private:
 
 
 #endif // INCLUDED_core_chemical_Residues_HH
-

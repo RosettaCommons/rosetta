@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
+/// @file   Residue.hh
 /// @author Phil Bradley
 
 
@@ -33,8 +33,9 @@
 #include <core/chemical/ResidueType.hh> // also defines AtomIndices == vector1< Size >
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh> 
+#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfo.fwd.hh>
 #include <core/types.hh>
 
 // Utility headers
@@ -1021,7 +1022,7 @@ public:
 	}
 
 	Size
-	orbital_type_index( Size const orbital_index ) const 
+	orbital_type_index( Size const orbital_index ) const
 	{
 		return orbitals_[ orbital_index ].type();
 	}
@@ -1821,6 +1822,10 @@ public:
 		return rsd_type_.RNA_type();
 	}
 
+	/// @brief  Return the CarbohydrateInfo object containing sugar-specific properties for this residue.
+	core::chemical::carbohydrates::CarbohydrateInfoCOP carbohydrate_info() const;
+
+
 #ifdef USEBOOSTSERIALIZE
 	/// unfortunate, but we must use const_cast here to turn off the serialize flag in restype
 	void serialized(bool) {
@@ -1833,12 +1838,13 @@ public:
 		while( current_res->serialized_ ) {
 			current_res->serialized_ = false;
 			// check the base_restype of current restype
-			if( current_res->base_restype_name() == "" ) 
+			if( current_res->base_restype_name() == "" )
 				break;
 			current_res = &(restype_set->name_map( current_res->base_restype_name()));
 		}
 	}
 #endif
+
 
 	/////////////////////////////////////////////////////////////////////////////
 	// private methods
@@ -1958,13 +1964,13 @@ inline void save_construct_data(
 	// also, each restype can be already serialized, so we should check for that
 	// recursion would be nice, but we have a lot of permissions issues and templating issues
 
-  // check if top level restype is 1) not part of a set and 2) is not already serialized	
+  // check if top level restype is 1) not part of a set and 2) is not already serialized
 	std::vector< ResidueType const * > serialized_restypes;
 	ResidueType const * current_res = &(t->rsd_type_);
 	while( current_res->nondefault_ && !current_res->serialized_ ) {
 		serialized_restypes.push_back( current_res );
 		// check the base_restype of current restype
-		if( current_res->base_restype_name_ == "" ) 
+		if( current_res->base_restype_name_ == "" )
 			break;
 		current_res = &(restype_set->name_map( current_res->base_restype_name_));
 	}

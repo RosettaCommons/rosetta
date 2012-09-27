@@ -12,7 +12,7 @@
 /// @brief
 /// A class for defining residue
 ///
-/// @detailed
+/// @details
 /// This class contains the "chemical" information for residues. This does not contain the actual
 /// xyz coordinates of the class (xyz found in core/conformation/Residue.hh). A residue in Rosetta
 /// can be a ligand, DNA, amino acid, or basically anything. A residue is read in through residue_io.cc
@@ -39,7 +39,7 @@
 /// havent figured out how to get the reverse to work because of the seperate indices. Orbital xyz coordinates are not updated when atom coordinates are.
 /// This is to keep speed consistent with just having atoms. To output the orbitals, use the flag -output_orbitals
 ///
-/// @authors
+/// @author
 /// Phil Bradley
 /// Steven Combs - these comments
 ///
@@ -56,6 +56,7 @@
 #include <core/chemical/ResidueSupport.hh>
 // AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/AtomTypeSet.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/chemical/ElementSet.hh>
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.hh>
@@ -165,11 +166,10 @@ ResidueType::ResidueType(
 	upper_connect_id_( 0 ),
 	n_non_polymeric_residue_connections_( 0 ),
 	n_polymeric_residue_connections_( 0 ),
+	carbohydrate_info_(NULL),
 	nondefault_(false),
 	base_restype_name_(""),
 	serialized_(false)
-
-
 {}
 
 ResidueType::~ResidueType()
@@ -837,6 +837,18 @@ ResidueType::add_property( std::string const & property )
 		is_terminus_ = true;
 		is_upper_terminus_ = true;
 		is_methylated_cterminus_ = true;
+    } else if (
+            (property == "ALDOSE") ||
+            (property == "KETOSE") ||
+            (property == "L_SUGAR") ||
+            (property == "D_SUGAR") ||
+            (property == "FURANOSE") ||
+            (property == "PYRANOSE") ||
+            (property == "SEPTANOSE") ||
+            (property == "ALPHA_SUGAR") ||
+            (property == "BETA_SUGAR") ||
+            (property == "URONIC_ACID")) {
+        ;  // Null statement -- these properties will be added to carbohydrate_info_ by update_derived_data().
 	} else {
 		tr.Warning << "WARNING:: unrecognized residuetype property: " << property << std::endl;
 	}
@@ -1342,8 +1354,8 @@ ResidueType::update_derived_data()
 			Hpos_apolar_.push_back( i );
 		}
 
-		/// Which atoms are backbone and which are sidechain; sometimes nice to just get
-		/// lists instead of iterating over the subranges.
+		// Which atoms are backbone and which are sidechain; sometimes nice to just get
+		// lists instead of iterating over the subranges.
 		if ( type.is_hydrogen() ) {
 			if ( i < first_sidechain_hydrogen_ ) {
 				all_bb_atoms_.push_back( i );
@@ -1360,8 +1372,8 @@ ResidueType::update_derived_data()
 
 	}
 
-	/// donor heavy atoms, acceptor heavy atoms, donor hydrogen atoms setup.
-	/// Must be executed after Hpos_polar_ and accpt_pos_ have been updated.
+	// donor heavy atoms, acceptor heavy atoms, donor hydrogen atoms setup.
+	// Must be executed after Hpos_polar_ and accpt_pos_ have been updated.
 	heavyatom_has_polar_hydrogens_.resize( natoms_ );
 	heavyatom_is_an_acceptor_.resize( natoms_ );
 	atom_is_polar_hydrogen_.resize( natoms_ );
@@ -1499,11 +1511,11 @@ ResidueType::update_derived_data()
 		}
 	}
 
-	/// Now for inter-residue connections, find the sets of atoms that are within one and within two bonds
-	/// of a residue connection point.  From these sets, all inter-residue bond angle and bond torsions may
-	/// be enumerated when evaluating residue pair energies.  Also compute the backwards mapping: a list for
-	/// each atom of the within-1-bond and within-2-bond sets that the atom is listed as being part of. These
-	/// lists are needed when evaluating atom derivatives wrt the bond dihedrals and angles.
+	// Now for inter-residue connections, find the sets of atoms that are within one and within two bonds
+	// of a residue connection point.  From these sets, all inter-residue bond angle and bond torsions may
+	// be enumerated when evaluating residue pair energies.  Also compute the backwards mapping: a list for
+	// each atom of the within-1-bond and within-2-bond sets that the atom is listed as being part of. These
+	// lists are needed when evaluating atom derivatives wrt the bond dihedrals and angles.
 	atoms_within_one_bond_of_a_residue_connection_.resize( residue_connections_.size() );
 	for ( Size ii = 1; ii <= residue_connections_.size(); ++ii ) atoms_within_one_bond_of_a_residue_connection_[ ii ].clear();
 
@@ -1525,12 +1537,12 @@ ResidueType::update_derived_data()
 		for ( Size jj = 1; jj <= ii_num_bonded_neighbors; ++jj ) {
 			Size const jj_atom = ii_bonded_neighbors[ jj ];
 
-			/// Record that ii_resconn_atom and jj_atom are within a single bond of residue connection ii.
+			// Record that ii_resconn_atom and jj_atom are within a single bond of residue connection ii.
 			two_atom_set wi1( ii_resconn_atom, jj_atom );
 			atoms_within_one_bond_of_a_residue_connection_[ ii ].push_back( wi1 );
 
-			/// For atoms ii_resconn_atom and jj_atom, mark residue connection ii as a
-			/// connection point the are within one bond of.
+			// For atoms ii_resconn_atom and jj_atom, mark residue connection ii as a
+			// connection point the are within one bond of.
 			Size const which_wi1 = atoms_within_one_bond_of_a_residue_connection_[ ii ].size();
 			within1bonds_sets_for_atom_[ ii_resconn_atom ].push_back( std::make_pair( ii, which_wi1 ) );
 			within1bonds_sets_for_atom_[ jj_atom ].push_back( std::make_pair( ii, which_wi1 ));
@@ -1555,9 +1567,8 @@ ResidueType::update_derived_data()
 
 
 	if(is_RNA_){ //reinitialize and RNA derived data.
-
 		//Reinitialize rna_residuetype_ object! This also make sure rna_residuetype_ didn't inherit anything from the previous update!
-		//It appears that the rna_residuetype_ is shared across multiple ResidueType object, if the rna_residuetype_ is not reinitialized here!	
+		//It appears that the rna_residuetype_ is shared across multiple ResidueType object, if the rna_residuetype_ is not reinitialized here!
 
 		rna_residuetype_ = *( core::chemical::rna::RNA_ResidueTypeOP( new core::chemical::rna::RNA_ResidueType ) );
 
@@ -1565,11 +1576,12 @@ ResidueType::update_derived_data()
 		rna_residuetype_.rna_update_last_controlling_chi(this, last_controlling_chi_, atoms_last_controlled_by_chi_);
 
 		rna_residuetype_.update_derived_rna_data(this);
-
-	}else{
+    } else if (is_carbohydrate_) {
+        carbohydrate_info_ = new chemical::carbohydrates::CarbohydrateInfo(this);
+        update_last_controlling_chi();
+	} else {
 		update_last_controlling_chi();
 	}
-
 
 
 // 	// fill mm_atom_type_index vector
@@ -1580,7 +1592,6 @@ ResidueType::update_derived_data()
 // 		}
 
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2077,6 +2088,15 @@ void ResidueType::calculate_icoor(std::string const & child,
 	//tr << child << " " << stub_atom1 << " "<< stub_atom2 << " " <<stub_atom3 << " " <<distance << " " << phi << " " << theta <<std::endl;
 	set_icoor(child,phi,theta,distance,stub_atom1,stub_atom2,stub_atom3);
 }
+
+
+// Return the CarbohydrateInfo object containing sugar-specific properties for this residue.
+core::chemical::carbohydrates::CarbohydrateInfoCOP
+ResidueType::carbohydrate_info() const
+{
+    return carbohydrate_info_;
+}
+
 
 /// @details as non-member so it has not to show up in the header
 //void

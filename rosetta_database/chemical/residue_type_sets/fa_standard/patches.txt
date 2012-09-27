@@ -52,6 +52,6 @@ patches/tyr_diiodinated.txt
 patches/N_acetylated.txt
 patches/C_methylamidated.txt
 
-## patchs for the MakeRotLib protocol
+## patches for the MakeRotLib protocol
 patches/MethylatedProteinCterm.txt
 patches/ActeylatedProteinNterm.txt

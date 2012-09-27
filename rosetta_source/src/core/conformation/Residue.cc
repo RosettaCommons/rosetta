@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
+/// @file   Residue.cc
 /// @brief
 /// @author Phil Bradley
 
@@ -27,6 +27,7 @@
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 
 // ObjexxFCL headers
 // AUTO-REMOVED #include <ObjexxFCL/ObjexxFCL.hh>
@@ -37,6 +38,7 @@
 
 // Utility Headers
 #include <utility/assert.hh>
+#include <utility/PyAssert.hh>
 
 // C++ Headers
 #include <iostream>
@@ -198,6 +200,17 @@ ResidueOP
 Residue::clone() const
 {
 	return new Residue( *this );
+}
+
+
+// Return the CarbohydrateInfo object containing sugar-specific properties for this residue.
+core::chemical::carbohydrates::CarbohydrateInfoCOP
+Residue::carbohydrate_info() const
+{
+	assert(rsd_type_.is_carbohydrate());
+	PyAssert(rsd_type_.is_carbohydrate(), "Residue::carbohydrate_info(): This residue is not a carbohydrate!");
+
+	return rsd_type_.carbohydrate_info();
 }
 
 
@@ -932,8 +945,7 @@ Residue::set_pseudobonds_to_residue( Size resid, PseudoBondCollectionCOP pbs )
 
 
 
-/// @detailed
-/// determine how many atoms n the residue and adjacent residues are bonded to the given atom
+/// @details determine how many atoms n the residue and adjacent residues are bonded to the given atom
 /// (by default, intraresidue virtual atoms are excluded)
 Size
 Residue::n_bonded_neighbor_all_res(

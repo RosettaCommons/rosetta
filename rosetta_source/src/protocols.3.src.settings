@@ -412,6 +412,9 @@ sources = {
 		"AsymFoldandDockMoveRbJumpMover",
 		"AsymFoldandDockRbTrialMover",
 	],
+	    "protocols/simple_moves/carbohydrates": [
+        "RingConformationMover"
+    ],
 	"protocols/simple_moves/oop": [
 		"OopPuckMover",
 		"OopMover",

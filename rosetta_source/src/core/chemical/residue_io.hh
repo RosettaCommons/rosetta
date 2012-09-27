@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
+/// @file   residue_io.hh
 /// @author Phil Bradley
 
 
@@ -58,12 +58,7 @@ write_topology_file(
 	ResidueType const & rsd
 );
 
-
-
-
 } // chemical
 } // core
-
-
 
 #endif

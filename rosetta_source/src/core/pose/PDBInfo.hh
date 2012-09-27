@@ -1199,7 +1199,7 @@ private: // data
 	String modeltag_;
 
 
-	/// @breif header information
+	/// @brief header information
 	io::pdb::HeaderInformationOP header_information_;
 
 	/// @brief pdb remarks

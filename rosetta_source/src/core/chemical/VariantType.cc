@@ -12,7 +12,7 @@
 /// @brief
 /// VariantTypes are used by Patches.
 ///
-/// @detailed
+/// @details
 /// VariantTypes are utilized by Patches. All the type does is adds a name
 /// that can be used later on in different protocols. It also helps the patch
 /// system keep track of what residues are patched with what type. The type has

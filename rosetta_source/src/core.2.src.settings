@@ -44,6 +44,9 @@ sources = {
 		"RNA_ResidueType",
 	],
 
+	"core/chemical/carbohydrates": [
+        "CarbohydrateInfo",
+    ],
 
 	"core/chemical/orbitals": [
 		"AssignOrbitals",

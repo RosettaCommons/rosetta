@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
+/// @file   residue_io.cc
 /// @brief
 /// @author Phil Bradley
 
@@ -152,6 +152,7 @@ read_topology_file(
 ///  These files contain information
 ///	 about each basic ResidueType which can be patched to created various
 ///	 variant types.
+// The above file doesn't seem to exist anymore. ~Labonte
 
 ResidueTypeOP
 read_topology_file(
@@ -206,6 +207,31 @@ read_topology_file(
 	// before we start adding bonds, icoor, etc. This allows to provide checks to make sure certain
 	// things are being assigned correctly, ie adding bonds correctly, setting icoor values with correct placement
 	// of stub atoms, etc etc.
+
+	// TODO: If I decide to make a CarbohydrateResidueType instead of using CarbohydrateInfo (for which the latter is
+	// analogous to RNA_ResidueType, not the former), the first thing to do would be to check for the CARBOHYDRATE
+	// property, as in the code commented out below:
+	/*ResidueTypeOP rsd(new ResidueType(atom_types, elements, mm_atom_types, orbital_atom_types));
+	Size const nlines(lines.size());
+	for (Size i = 1; i <= nlines; ++i) {
+		std::string const & line(lines[i]);
+		std::istringstream l(line);
+		std::string tag
+		l >> tag;
+		if (tag == "PROPERTIES") {
+			l >> tag;
+			while (!l.fail()) {
+				if (tag == "CARBOHYDRATE") {
+					// Overwrite the old rsd object with this specialized variety, however one does that in C++.
+					rsd = new CarbohydrateResidueType(atom_types, elements, mm_atom_types, orbital_atom_types);
+					break;
+				}
+				l >> tag;
+			}
+		}
+	}*/
+	// ~Labonte
+
 	ResidueTypeOP rsd( new ResidueType( atom_types, elements, mm_atom_types, orbital_atom_types ) ); //kwk commenting out until atom types are fully implemented , csd_atom_types ) );
 	rsd->residue_type_set( rsd_type_set ); // give this rsd_type a backpointer to its set
 

@@ -562,7 +562,8 @@ sources = {
 		#"hbond_param_sweep",
 	],
 	"pilot/labonte" : [
-		"tester" # /* generic testing source */
+		"tester",  # /* generic testing source */
+		"test_RingConformationMover"
 	],
 	"pilot/mpacella" : [
                 "surface_docking_jd2",
