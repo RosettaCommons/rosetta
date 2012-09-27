@@ -23,6 +23,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/file/PathName.hh>
+#include <utility/excn/Exceptions.hh>
 
 // C++ headers
 #include <cstdlib>
@@ -47,30 +48,38 @@ namespace database {
 
 static basic::Tracer TR("basic.io.database");
 
+
 /// @brief Open a database file on a provided stream
 bool
 open(
 	utility::io::izstream & db_stream,
-	std::string const & db_file
+	std::string const & db_file,
+	bool warn /* = true */
 )
 {
+	using namespace utility::excn;
+
 	if(db_stream.good()){
 		db_stream.close();
 		db_stream.clear();
 	}
 	if(db_file.length() == 0){
-		TR.Error
-			<< "Unable to open database file because no file name was provided." << std::endl;
+		throw EXCN_Msg_Exception("Unable to open database file ''");
 		return false;
 	}
-	db_stream.open( full_name( db_file ) );
+
+	db_stream.open( full_name( db_file, warn ) );
 
 	if ( db_stream ) { // Open succeeded
 		TR << "Database file opened: " << db_file << std::endl;
 		return true;
 	} else { // Open failed
-		TR.Error << "Database file open failed for: " << db_stream.filename() << std::endl;
-#ifdef __native_client__ 
+		std::stringstream err_msg;
+		err_msg
+			<< "Database file open failed for: " << db_stream.filename() << std::endl;
+		throw EXCN_Msg_Exception(err_msg.str());
+
+#ifdef __native_client__
 		throw( "ERROR: Database file open failed for: " + db_file );
 #endif
 		db_stream.close();

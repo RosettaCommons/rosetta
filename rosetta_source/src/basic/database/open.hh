@@ -26,14 +26,19 @@
 namespace basic {
 namespace database {
 
+/// @brief Does a database file exist?
+bool
+exists(
+	std::string const & db_file
+);
 
 /// @brief Open a database file on a provided stream
 bool
 open(
 	utility::io::izstream & db_stream,
-	std::string const & db_file
+	std::string const & db_file,
+	bool warn = true
 );
-
 
 /// @brief Full-path database file name
 std::string
