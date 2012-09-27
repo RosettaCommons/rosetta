@@ -618,6 +618,13 @@ TR << "ORIGINAL TREE: " << pose.fold_tree() << std::endl;
 			}
 		}
 
+		core::pose::renumber_pdbinfo_based_on_conf_chains(
+				pose,
+		    true ,  // fix chain
+			  true, // start_from_existing_numbering
+			  false, // keep_insertion_code
+		    false // rotate_chain_id
+		 );
 
 		//test
 		//pose.dump_pdb("check.pdb");
