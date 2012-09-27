@@ -27,10 +27,11 @@ namespace basic {
 namespace database {
 
 /// @brief Does a database file exist?
+/* Undefinded, commenting out to fix PyRosetta build
 bool
 exists(
 	std::string const & db_file
-);
+); */
 
 /// @brief Open a database file on a provided stream
 bool
