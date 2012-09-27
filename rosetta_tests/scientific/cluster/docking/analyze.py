@@ -6,7 +6,7 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-import os.path, commands
+import os.path, sys, commands
 
 #import yaml
 import json
@@ -17,7 +17,23 @@ class CD:
 
 results = {}
 
-results['num_of_passed_targets'] = 1
+res, output = commands.getstatusoutput('./post_process.sh')
+print output
+if res:
+    print 'Abnormal termination in: ./post_process.sh, code:', res
+    sys.exit(res)
+
+lines = file('./output/results.txt').read().split('\n')
+
+mean_n5_index = lines[0].split(';').index('mean_n5')
+
+num_of_passed_targets = 0
+for l in lines[1:]:
+    fields = l.split(';')
+    if len(fields) > mean_n5_index  and  float(fields[mean_n5_index]) > 3.0 : num_of_passed_targets += 1
+
+
+results['num_of_passed_targets'] = num_of_passed_targets
 results['_isTestPassed'] = True
 
 

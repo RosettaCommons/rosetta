@@ -63,7 +63,7 @@ T_condor_job_target = '''
 ## now looprelax jobs
 Error   = output/%(target)s.logerr
 Output  = output/%(target)s.logout
-arguments = -database %(database)s -in::file::s output/%(target)s/prepack/%(target)s.u.opt_0001.pdb -nstruct 100 \
+arguments = -database %(database)s -in::file::s output/%(target)s/prepack/%(target)s.u.opt_0001.pdb -nstruct 1000 \
             -dock_pert 3 8 -spin -out::path:pdb output/%(target)s/ -partners %(partners)s -ex1 -ex2aro \
             -unboundrot input/%(target)s.u.opt.pdb -native input/%(target)s.b.opt.pdb \
             -run:multiple_processes_writing_to_one_directory -out:file:scorefile ./output/%(target)s/%(target)s.fasc \
