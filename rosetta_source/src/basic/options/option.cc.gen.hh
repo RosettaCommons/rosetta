@@ -2262,7 +2262,7 @@ option.add( basic::options::OptionKeys::canonical_sampling::sampling::dump_loops
 option.add( basic::options::OptionKeys::canonical_sampling::out::out, "out option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::canonical_sampling::out::new_structures, "" ).def("discovered_decoys.out");
 option.add( basic::options::OptionKeys::rdc::rdc, "rdc option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::rdc::correct_NH_length, "fix N-H bond-vector to 1.04 as measured in ottiger&bax 98" ).def(false);
+option.add( basic::options::OptionKeys::rdc::correct_NH_length, "fix N-H bond-vector to 1.04 as measured in ottiger&bax 98" ).def(true);
 option.add( basic::options::OptionKeys::rdc::reduced_couplings, "gives more equal weights to different bond-vectors" ).def(false);
 option.add( basic::options::OptionKeys::rdc::weights, "specify weights for individual residues ( works for all couplings at this reside)" );
 option.add( basic::options::OptionKeys::rdc::iterate_weights, "do a wRDC computation, i.e., iterate tensor calculation until weights are ~exp ( -dev2/sigma )" ).def(1);

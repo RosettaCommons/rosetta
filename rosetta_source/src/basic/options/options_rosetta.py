@@ -4300,7 +4300,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 ############################################################################
 # CS-Rosetta options
    Option_Group('rdc',
-	Option( 'correct_NH_length', 'Boolean', desc='fix N-H bond-vector to 1.04 as measured in ottiger&bax 98', default='false'),
+	Option( 'correct_NH_length', 'Boolean', desc='fix N-H bond-vector to 1.04 as measured in ottiger&bax 98', default='true'),
 	Option( 'reduced_couplings', 'Boolean', desc='gives more equal weights to different bond-vectors', default='false'),
 	Option( 'weights', 'File', desc='specify weights for individual residues ( works for all couplings at this reside)' ),
 	Option( 'iterate_weights', 'Real', desc='do a wRDC computation, i.e., iterate tensor calculation until weights are ~exp ( -dev2/sigma )', default='1' ),
