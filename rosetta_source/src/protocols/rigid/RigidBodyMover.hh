@@ -327,10 +327,38 @@ public:
 	virtual std::string get_name() const;
 	friend std::ostream &operator<< ( std::ostream &os, RigidBodySpinMover const &spinmover );
 
-private:
+protected:
 	core::Vector spin_axis_;
 	bool update_spin_axis_;
 
+};
+    
+    
+class RigidBodyDeterministicSpinMover : public RigidBodySpinMover {
+public:
+    typedef RigidBodySpinMover parent;
+public:
+    //default ctor
+    RigidBodyDeterministicSpinMover();
+        
+    ///@brief constructor with arguments
+    /// spin axis is initialized to 0 then calculated during apply()
+    /// if spin_axis is not already set
+    RigidBodyDeterministicSpinMover( int const rb_jump_in, core::Vector spin_axis, core::Vector rotation_center, float angle_magnitude );
+        
+        
+    //copy ctor
+    RigidBodyDeterministicSpinMover( RigidBodyDeterministicSpinMover const & src );
+        
+    //dtor
+    ~RigidBodyDeterministicSpinMover();
+    void angle_magnitude( float angle_magnitude );
+    virtual void apply( core::pose::Pose & pose );
+    virtual std::string get_name() const;
+    friend std::ostream &operator<< ( std::ostream &os, RigidBodySpinMover const & spinmover );
+        
+private:
+    float angle_magnitude_;
 };
 
 // translate down an axis

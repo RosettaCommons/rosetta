@@ -592,6 +592,82 @@ std::ostream &operator<< ( std::ostream &os, RigidBodySpinMover const &spinmover
 	return os;
 }
 
+RigidBodyDeterministicSpinMover::RigidBodyDeterministicSpinMover() : parent()
+{
+    moves::Mover::type( "RigidBodyDeterministicSpin" );
+    angle_magnitude_ = 0.0;
+        
+}
+    
+///@brief constructor with arguments
+///       takes a complete set of arguments needed for apply
+RigidBodyDeterministicSpinMover::RigidBodyDeterministicSpinMover( int const rb_jump_in, core::Vector spin_axis, core::Vector rot_center, float angle_magnitude ):
+parent( rb_jump_in )
+{
+    moves::Mover::type( "RigidBodyDeterministicSpin" );
+    spin_axis_ = spin_axis;
+    rot_center_ = rot_center;
+    angle_magnitude_ = angle_magnitude;
+    update_spin_axis_ = false;
+}
+    
+RigidBodyDeterministicSpinMover::RigidBodyDeterministicSpinMover( RigidBodyDeterministicSpinMover const & src ) :
+parent( src ),
+angle_magnitude_( src.angle_magnitude_)
+{}
+    
+RigidBodyDeterministicSpinMover::~RigidBodyDeterministicSpinMover() {}
+    
+void RigidBodyDeterministicSpinMover::angle_magnitude( float angle_magnitude )
+{
+    angle_magnitude_ = angle_magnitude;
+}
+    
+    
+void RigidBodyDeterministicSpinMover::apply( core::pose::Pose & pose )
+{
+    core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );
+    TRBM << "Spin: " << "Jump (before): " << flexible_jump << std::endl;
+    core::kinematics::Stub upstream_stub = pose.conformation().upstream_jump_stub( rb_jump_ );
+    core::kinematics::Stub downstream_stub = pose.conformation().downstream_jump_stub( rb_jump_ );
+        
+    core::Vector dummy_up, dummy_down;
+    if ( update_spin_axis_ ){
+        protocols::geometry::centroids_by_jump(pose, rb_jump_, dummy_up, dummy_down);
+        rot_center_ = dummy_down;
+        spin_axis_ = dummy_up - rot_center_;
+    }
+        
+    TRBM << "Spin: " << "Rot (before: "
+    << rot_center_.x() << " "
+    << rot_center_.y() << " "
+    << rot_center_.z() << std::endl;
+    // comments for set_rb_center() explain which stub to use when!
+    flexible_jump.set_rb_center( dir_, downstream_stub, rot_center_ );
+    flexible_jump.rotation_by_axis( upstream_stub, spin_axis_, rot_center_, angle_magnitude_ );
+    TRBM << "Spin: " << "Jump (after):  " << flexible_jump << std::endl;
+    pose.set_jump( rb_jump_, flexible_jump );
+    protocols::geometry::centroids_by_jump(pose, rb_jump_, dummy_up, dummy_down);
+    rot_center_ = dummy_down;
+    TRBM << "Spin: " << "Rot  (after): "
+    << rot_center_.x() << " "
+    << rot_center_.y() << " "
+    << rot_center_.z() << std::endl;
+    TRBM << "Spin: " << "---" << std::endl;
+}
+    
+std::string
+RigidBodyDeterministicSpinMover::get_name() const {
+    return "RigidBodyDeterministicSpinMover";
+}
+    
+std::ostream &operator<< ( std::ostream &os, RigidBodyDeterministicSpinMover const &spinmover )
+{
+    moves::operator<<(os, spinmover);
+    os << "Jump number: " << spinmover.rb_jump() << std::endl;
+    return os;
+}
+    
 RigidBodyTransMover::RigidBodyTransMover() : RigidBodyMover()
 {
 	moves::Mover::type( "RigidBodyTrans" );
