@@ -78,6 +78,14 @@ private:
 	// Functions to help parsing
 
 	void
+	read_resource_options_table_tag(
+		utility::tag::TagPtr tag);
+
+	void
+	read_resource_option_item(
+		utility::tag::TagPtr tag);
+
+	void
 	check_resource_loader_type(
 		basic::resource_manager::LoaderType const & loader_type);
 

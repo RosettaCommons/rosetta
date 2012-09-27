@@ -80,6 +80,7 @@ using basic::resource_manager::ResourceOptionsTag;
 using basic::resource_manager::ResourceLoaderFactory;
 using basic::resource_manager::ResourceTag;
 using utility::tag::Tag;
+using utility::tag::TagPtr;
 
 static Tracer TR("protocols.resource_manager.planner.JD2ResourceManager");
 
@@ -113,7 +114,7 @@ JD2ResourceManager::~JD2ResourceManager() {}
 /// @details instantiate all the resource locators given in the input tags, and
 /// put them into the base class.  Make sure no two resource locators share a common
 /// name.
-void JD2ResourceManager::read_resource_locators_tags( utility::tag::TagPtr tags )
+void JD2ResourceManager::read_resource_locators_tags( TagPtr tags )
 {
 	using basic::resource_manager::ResourceLocatorFactory;
 	using basic::resource_manager::ResourceLocatorOP;
@@ -165,11 +166,8 @@ void JD2ResourceManager::read_resource_locators_tags( utility::tag::TagPtr tags 
 
 /// @details instantiate all the resource options and put them in the base class.
 /// Make sure no two resource options are given the same name.
-void JD2ResourceManager::read_resource_options_tags( utility::tag::TagPtr tags )
+void JD2ResourceManager::read_resource_options_tags( TagPtr tags )
 {
-	using basic::resource_manager::ResourceOptionsFactory;
-	using basic::resource_manager::ResourceOptionsOP;
-	using basic::resource_manager::ResourceOptionsTag;
 	using utility::tag::Tag;
 	typedef utility::excn::EXCN_Msg_Exception MsgException;
 
@@ -179,41 +177,142 @@ void JD2ResourceManager::read_resource_options_tags( utility::tag::TagPtr tags )
 			tag_iter != tag_iter_end; ++tag_iter ) {
 		std::string const & tagname = (*tag_iter)->getName();
 
-		/// 1. Make sure this resource_options object has been declared.
-		if ( ! (*tag_iter)->hasOption( "tag" ) ) {
-			std::ostringstream err;
-			err << "Unable to find a 'tag' for a ResourceOption of type '" << tagname << "'\n";
-			throw MsgException( err.str() );
+		if(tagname == "OptionsTable") {
+			read_resource_options_table_tag(*tag_iter);
+			continue;
+		} else {
+			read_resource_option_item(*tag_iter);
 		}
-		ResourceOptionsTag options_tag = (*tag_iter)->getOption< ResourceOptionsTag >( "tag" );
+	}
+}
 
-		// 2. Make sure no other resource_options object has been declared with this name
-		if ( LazyResourceManager::has_resource_options( options_tag ) ) {
-			std::ostringstream err;
-			err << "Duplicated tag, '" << options_tag <<"' assigned to a ResourceOptions object with type '";
-			err << tagname << "'.\n";
-			err << "Prevous ResourceOptions object with this tag was of type '";
-			err << LazyResourceManager::find_resource_options( options_tag )->type() << "'\n";
-			throw MsgException( err.str() );
-		}
+void
+JD2ResourceManager::read_resource_options_table_tag(
+	TagPtr tag
+) {
+		using namespace basic::database;
 
-		/// 3. Try to create this ResourceOptions object; the factory may throw.  Catch any thrown MsgException and
-		/// append to its message the tagname and options_tag for the ResourceOptions being read.
-		ResourceOptionsOP resource_options;
-		try {
-			resource_options = ResourceOptionsFactory::get_instance()->create_resource_options( tagname, *tag_iter );
-		} catch ( MsgException const & e ) {
-			std::ostringstream err;
-			err << e.msg() << "\n";
-			err << "Exception thrown while trying to initialize a ResourceOption of type '";
-			err << tagname << "' with a tag of '" << options_tag << "'\n";
-			err << "from JD2ResourceManager::read_resource_options_tags\n";
-			throw MsgException( err.str() );
-		}
-		LazyResourceManager::add_resource_options( options_tag, resource_options );
+	utility::sql_database::sessionOP db_session = parse_database_connection(tag);
+
+	string sql_command;
+	if(tag->hasOption("sql_command")){
+		sql_command = tag->getOption<string>("sql_command");
+		check_statement_sanity(sql_command);
+	} else {
+		stringstream err_msg;
+		err_msg
+			<< "The OptionsTable Table tag requires a 'sql_command' tag that "
+			<< "is an SQL SELECT statement that returns the following column formats" << endl
+			<< "ordered by <job_name>:" << endl
+			<< "\t(<resource_options_tag>, <resource_options_type>, <resource_option_key>, resource_option_value>)" << endl;
+		throw utility::excn::EXCN_Msg_Exception(err_msg.str());
 	}
 
+	cppdb::statement select_stmt(safely_prepare_statement(sql_command, db_session));
+	cppdb::result res(safely_read_from_database(select_stmt));
+
+	std::string table_schema =
+		"Each row of the resource options table should have the following format\n"
+		"\n"
+		"    resource_options_tag, resource_options_type, resource_option_key, resource_option_value\n"
+		"\n"
+		" * The table should 'ORDER BY job_name', to have data for a\n"
+    "   specific job adjacent in the table\n"
+		"\n"
+		" * resource_option_{key, value}: Each resource options takes set of key value pairs (string -> string)\n"
+    "   for example, for PoseFromPDBOptions, has the key 'exit_if_missing_heavy_atoms' and takes '1' for true or '0' for false.\n";
+
+	if(res.cols() != 4){
+		stringstream err_msg;
+		err_msg
+			<< "The OptionsTable tag requires a 'sql_command' tag" << endl
+			<< table_schema << endl
+			<< "Instead, the query returned " << res.cols() << ":" << endl
+			<< "SQL query:" << endl
+			<< sql_command << endl;
+		throw utility::excn::EXCN_Msg_Exception(err_msg.str());
+	}
+
+	Size row_number(0);
+	std::map< string, TagPtr > tags;
+	while(res.next()){
+		row_number++;
+
+		string tag, type, key, value;
+		res >> tag >> type >> key >> value;
+
+		std::map< string, TagPtr >::iterator t(tags.find(tag));
+		if(t == tags.end()){
+			TagPtr newtag = new Tag();
+			newtag->setOption("tag", tag);
+			newtag->setName(type);
+			if(!key.empty()){
+				newtag->setOption(key, value);
+			}
+			tags[tag] = newtag;
+		} else {
+			t->second->setOption("tag", tag);
+		}
+	}
+
+	if(row_number == 0){
+		TR.Warning << "JobsTable returned no rows." << endl;
+	}
+
+	for(
+		std::map<string, TagPtr>::const_iterator t=tags.begin(), te=tags.end();
+		t != te; ++t){
+		read_resource_option_item(t->second);
+	}
 }
+
+
+void
+JD2ResourceManager::read_resource_option_item(
+	TagPtr tag
+) {
+	using basic::resource_manager::ResourceOptionsFactory;
+	using basic::resource_manager::ResourceOptionsOP;
+	using basic::resource_manager::ResourceOptionsTag;
+	typedef utility::excn::EXCN_Msg_Exception MsgException;
+
+	std::string const & tagname = tag->getName();
+
+	/// 1. Make sure this resource_options object has been declared.
+	if ( ! tag->hasOption( "tag" ) ) {
+		std::ostringstream err;
+		err << "Unable to find a 'tag' for a ResourceOption of type '" << tagname << "'\n";
+		throw MsgException( err.str() );
+	}
+	ResourceOptionsTag options_tag = tag->getOption< ResourceOptionsTag >( "tag" );
+
+	// 2. Make sure no other resource_options object has been declared with this name
+	if ( LazyResourceManager::has_resource_options( options_tag ) ) {
+		std::ostringstream err;
+		err << "Duplicated tag, '" << options_tag <<"' assigned to a ResourceOptions object with type '";
+		err << tagname << "'.\n";
+		err << "Prevous ResourceOptions object with this tag was of type '";
+		err << LazyResourceManager::find_resource_options( options_tag )->type() << "'\n";
+		throw MsgException( err.str() );
+	}
+
+	/// 3. Try to create this ResourceOptions object; the factory may throw.  Catch any thrown MsgException and
+	/// append to its message the tagname and options_tag for the ResourceOptions being read.
+	ResourceOptionsOP resource_options;
+	try {
+		resource_options = ResourceOptionsFactory::get_instance()->create_resource_options( tagname, tag );
+	} catch ( MsgException const & e ) {
+		std::ostringstream err;
+		err << e.msg() << "\n";
+		err << "Exception thrown while trying to initialize a ResourceOption of type '";
+		err << tagname << "' with a tag of '" << options_tag << "'\n";
+		err << "from JD2ResourceManager::read_resource_options_tags\n";
+		throw MsgException( err.str() );
+	}
+	LazyResourceManager::add_resource_options( options_tag, resource_options );
+}
+
+
 
 ///@detail Check if the loader type is defined with the ResourceLoaderFactory
 void
@@ -239,7 +338,7 @@ JD2ResourceManager::check_resource_loader_type(
 ///that no other resource object has been delecared with the same name.
 ResourceTag
 JD2ResourceManager::read_resource_tag_item(
-	utility::tag::TagPtr tag,
+	TagPtr tag,
 	LoaderType const & loader_type,
 	LocatorID const & locator_id
 ) {
@@ -272,7 +371,7 @@ JD2ResourceManager::read_resource_tag_item(
 ///   locatorID item (&string):
 LocatorTag
 JD2ResourceManager::read_resource_locator_items(
-	utility::tag::TagPtr tag,
+	TagPtr tag,
 	LoaderType const & loader_type,
 	LocatorID & locator_id
 ) {
@@ -340,7 +439,7 @@ JD2ResourceManager::read_resource_locator_items(
 
 ResourceOptionsTag
 JD2ResourceManager::read_resource_options_tag_item(
-	utility::tag::TagPtr tag,
+	TagPtr tag,
 	LoaderType const & loader_type,
 	ResourceTag const & resource_tag
 ) {
@@ -364,7 +463,7 @@ JD2ResourceManager::read_resource_options_tag_item(
 /// @details read through all the resources, and put them into the base class
 /// for later instantiation.  Make sure each resource is named, that it is the
 /// only resource that has been declared with this name, and that
-void JD2ResourceManager::read_resources_tags( utility::tag::TagPtr tags )
+void JD2ResourceManager::read_resources_tags( TagPtr tags )
 {
 
 	for ( Tag::tags_t::const_iterator
@@ -407,7 +506,7 @@ void JD2ResourceManager::read_resources_tags( utility::tag::TagPtr tags )
 
 void
 JD2ResourceManager::read_resource_table_tag(
-	utility::tag::TagPtr tag
+	TagPtr tag
 ) {
 	using namespace basic::database;
 
@@ -466,7 +565,7 @@ JD2ResourceManager::read_resource_table_tag(
 		if(!LazyResourceManager::has_resource_locator(locator_tag)){
 			std::stringstream err;
 			err
-				<< "Row " << row_number << " in the  ResoureTable "
+				<< "Row " << row_number << " in the  ResourceTable "
 				<< "has an unrecognized locator_tag: '" << locator_tag << "' " << endl
 				<< "locator_tag, locator_id, loader_type, resource_options_tag" << endl
 				<< "'" << locator_tag << ", '" << locator_id << "', '" << loader_type << "', '" << resource_options_tag << "'" << endl
@@ -480,7 +579,7 @@ JD2ResourceManager::read_resource_table_tag(
 		if(!resource_options_tag.empty() && !LazyResourceManager::has_resource_options(resource_options_tag)){
 			std::stringstream err;
 			err
-				<< "Row " << row_number << "in the  ResoureTable "
+				<< "Row " << row_number << "in the  ResourceTable "
 				<< "has an unrecognized resource_options_tag: '" << resource_options_tag << "' " << endl
 				<< "locator_tag\tlocator_id\tloader_type\tresource_options_tag" << endl
 				<< locator_tag << "\t" << locator_id << "\t" << loader_type << "\t" << resource_options_tag << endl
@@ -592,7 +691,7 @@ JD2ResourceManager::get_resource(
 
 		std::ostringstream errmsg;
 		errmsg << "JD2ResourceManager does not have a resource "
-			"corresponding to the resource description '" + resource_description + ".' for job '" +
+			"corresponding to the resource description '" + resource_description + "'. for job '" +
 			jobtag + "'.\n";
 		errmsg << "Resources may be specified on the command line or through the JD2ResourceManagerJobInputter resource-declaration file.\n";
 

@@ -852,7 +852,7 @@ public:
 			TS_ASSERT( false );
 		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
 			std::string expected_error =
-				"JD2ResourceManager does not have a resource corresponding to the resource description 'DummyResource2.' for job 'EMPTY_JOB_use_jd2'.\n"
+				"JD2ResourceManager does not have a resource corresponding to the resource description 'DummyResource2'. for job 'EMPTY_JOB_use_jd2'.\n"
 				"Resources may be specified on the command line or through the JD2ResourceManagerJobInputter resource-declaration file.\n"
 				"The FallbackConfiguration for this resource description gives this error:\n"
 				"test error message\n"
@@ -882,7 +882,7 @@ public:
 			TS_ASSERT( false );
 		} catch ( utility::excn::EXCN_Msg_Exception const & e ) {
 			std::string expected_error =
-				"JD2ResourceManager does not have a resource corresponding to the resource description 'DummyResource3.' for job 'EMPTY_JOB_use_jd2'.\n"
+				"JD2ResourceManager does not have a resource corresponding to the resource description 'DummyResource3'. for job 'EMPTY_JOB_use_jd2'.\n"
 				"Resources may be specified on the command line or through the JD2ResourceManagerJobInputter resource-declaration file.\n"
 				"This resource description does not have a FallbackConfiguration defined.\n"
 				"Thrown from JD2ResourceManager::get_resource\n";
