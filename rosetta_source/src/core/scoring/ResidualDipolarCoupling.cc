@@ -1129,6 +1129,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
     //compute derivatives
     RDC& rdc = *it;
     numeric::xyzVector<Real> r( pose.residue(rdc.res1()).atom(rdc.atom1()).xyz() - pose.residue(rdc.res2()).atom(rdc.atom2()).xyz());
+    numeric::xyzVector<Real> r_copy( pose.residue(rdc.res1()).atom(rdc.atom1()).xyz() - pose.residue(rdc.res2()).atom(rdc.atom2()).xyz());
     core::Real r2 = r.norm_squared();
     core::Real invr = 1.0 / sqrt(r2);
 
@@ -1159,7 +1160,8 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
 
 		//prefactor used in derivative calculations
 		Real weight = it->weight()*Smax[ex]; //force constant
-    core::Real pfac = scale_to_NH*invr2* weight;
+    //core::Real pfac = scale_to_NH*invr2* weight;
+    core::Real pfac = scale_to_NH*(1/r.length())*(1/r_copy.length())*weight;
     Real obs = rdc.Jdipolar()*(scale_to_NH)/(rdc.Dconst() * invr2 * invr);
 		Real dev = computed_coupling - obs;
 		//scale Jdipolar_computed_ back
@@ -1463,6 +1465,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
     //compute derivatives
     RDC& rdc = *it;
     numeric::xyzVector<Real> r( pose.residue(rdc.res1()).atom(rdc.atom1()).xyz() - pose.residue(rdc.res2()).atom(rdc.atom2()).xyz());
+    numeric::xyzVector<Real> r_copy( pose.residue(rdc.res1()).atom(rdc.atom1()).xyz() - pose.residue(rdc.res2()).atom(rdc.atom2()).xyz());
     core::Real r2 = r.norm_squared();
     core::Real invr = 1.0 / sqrt(r2);
 
@@ -1493,7 +1496,8 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
 
 		//prefactor used in derivative calculations
 		Real weight = it->weight()*Smax[ex]; //force constant
-    core::Real pfac = scale_to_NH*invr2* weight;
+    //core::Real pfac = scale_to_NH*invr2* weight;
+    core::Real pfac = scale_to_NH*(1/r.length())*(1/r_copy.length())*weight;
 		Real obs = rdc.Jdipolar()*(scale_to_NH)/(rdc.Dconst() * invr2 * invr);
 		Real dev = computed_coupling - obs;
 		it->Jdipolar_computed_ = computed_coupling/((scale_to_NH)/(rdc.Dconst() * invr2 * invr));
@@ -1762,6 +1766,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
     //compute derivatives
     RDC& rdc = *it;
     numeric::xyzVector<Real> r( pose.residue(rdc.res1()).atom(rdc.atom1()).xyz() - pose.residue(rdc.res2()).atom(rdc.atom2()).xyz());
+    numeric::xyzVector<Real> r_copy( pose.residue(rdc.res1()).atom(rdc.atom1()).xyz() - pose.residue(rdc.res2()).atom(rdc.atom2()).xyz());
     core::Real r2 = r.norm_squared();
     core::Real invr = 1.0 / sqrt(r2);
 
@@ -1791,7 +1796,8 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
 
 		//prefactor used in derivative calculations
 		Real weight = it->weight()*Smax[ex]; //force constant
-    core::Real pfac = scale_to_NH*invr2* weight;
+    //core::Real pfac = scale_to_NH*invr2* weight;
+    core::Real pfac = scale_to_NH*(1/r.length())*(1/r_copy.length())*weight;
 		Real obs = rdc.Jdipolar()*(scale_to_NH)/(rdc.Dconst() * invr2 * invr);
 		Real dev = computed_coupling - obs;
     it->Jdipolar_computed_ = computed_coupling/((scale_to_NH)/(rdc.Dconst() * invr2 * invr));
@@ -2069,6 +2075,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
     //compute derivatives
     RDC& rdc = *it;
     numeric::xyzVector<Real> r( pose.residue(rdc.res1()).atom(rdc.atom1()).xyz() - pose.residue(rdc.res2()).atom(rdc.atom2()).xyz());
+    numeric::xyzVector<Real> r_copy( pose.residue(rdc.res1()).atom(rdc.atom1()).xyz() - pose.residue(rdc.res2()).atom(rdc.atom2()).xyz());
     core::Real r2 = r.norm_squared();
     core::Real invr = 1.0 / sqrt(r2);
 
@@ -2099,7 +2106,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
 
 		//prefactor used in derivative calculations
 		Real weight = it->weight()*Smax[ex]; //force constant
-    core::Real pfac = scale_to_NH*invr2* weight;
+    core::Real pfac = scale_to_NH*(1/r.length())*(1/r_copy.length())*weight;
     Real obs = rdc.Jdipolar()*(scale_to_NH)/(rdc.Dconst() * invr2 * invr);
 		Real dev = computed_coupling - obs;
     it->Jdipolar_computed_ = computed_coupling/((scale_to_NH)/(rdc.Dconst() * invr2 * invr));
