@@ -1541,12 +1541,15 @@ void RemodelLoopMover::loophash_stage(
 
 		get_rt_over_leap_fast( *pose_for_rt, loop.start()-1, loop.stop()+1, loop_transform);
 
-		/*
+/*
 		std::cout << sqrt((loop_transform[1]* loop_transform[1]) + (loop_transform[2]*loop_transform[2]) + (loop_transform[3]*loop_transform[3])) << std::endl;
 		std::cout << loop_transform[1] << std::endl;
 		std::cout << loop_transform[2] << std::endl;
 		std::cout << loop_transform[3] << std::endl;
-		 */
+		std::cout << loop_transform[4] << std::endl;
+		std::cout << loop_transform[5] << std::endl;
+		std::cout << loop_transform[6] << std::endl;
+*/
 
 
 		BackboneSegment backbone_;
@@ -1558,7 +1561,7 @@ void RemodelLoopMover::loophash_stage(
 		TR << "radius = ";
 		for (Size radius = 0; radius <= lh_ex_limit ; radius++ ){
 			hashmap.radial_lookup( radius, loop_transform, leap_index_list );
-			TR << radius << "... " << std::endl;
+			TR << radius << "... " << leap_index_list.size() << std::endl;
 			if (leap_index_list.size() < 1000){ //making sure at least harvest one segment to build.
 				continue;
 			} else {
@@ -1667,7 +1670,7 @@ void RemodelLoopMover::loophash_stage(
 						}
 						runtime_assert(alphabet.length() == target.length());
 						if ( alphabet.compare( target ) != 0 ){
-							std::cout << "lh frag at " << idxresStart << " and " << idxresStop << " not as " << target <<  ": " <<  alphabet << std::endl;
+							//std::cout << "lh frag at " << idxresStart << " and " << idxresStop << " not as " << target <<  ": " <<  alphabet << std::endl;
 							lh_frag_count--;
 							continue;
 						}
@@ -1816,9 +1819,23 @@ void RemodelLoopMover::simultaneous_stage(
 
 	TR << "** simultaneous_stage" << std::endl;
 
-	// Make a local copy of the Loops list.  At this stage all loops
-	// are malleable so we don't use determine_loops_to_model().
-	loops::LoopsOP loops_to_model = new loops::Loops( *loops_ );
+ // setup loops
+  loops::LoopsOP pre_loops_to_model = determine_loops_to_model( pose );
+  loops::LoopsOP loops_to_model = new loops::Loops();
+
+  // filter for non-terminal loops
+  for ( Loops::const_iterator l = pre_loops_to_model->begin(), le = pre_loops_to_model->end(); l != le; ++l ) {
+    if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+      //take out the terminal loop in repeat cases
+      if ( !l->is_terminal( pose ) ) {
+          loops_to_model->add_loop( *l );
+      }
+    }
+    else {
+        loops_to_model->add_loop( *l );
+    }
+  }
+
 	TR << "   n_loops = " << loops_to_model->size() << std::endl;
 
 	if ( loops_to_model->size() == 0 ) { // nothing to do...
@@ -2037,7 +2054,22 @@ void RemodelLoopMover::independent_stage(
 	TR << "** independent_stage" << std::endl;
 
 	// setup loops
-	loops::LoopsOP loops_to_model = determine_loops_to_model( pose );
+	loops::LoopsOP pre_loops_to_model = determine_loops_to_model( pose );
+	loops::LoopsOP loops_to_model = new loops::Loops();
+
+	// filter for non-terminal loops
+	for ( Loops::const_iterator l = pre_loops_to_model->begin(), le = pre_loops_to_model->end(); l != le; ++l ) {
+		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+			//take out the terminal loop in repeat cases
+			if ( !l->is_terminal( pose ) ) {
+					loops_to_model->add_loop( *l );
+			}
+		}
+		else {
+				loops_to_model->add_loop( *l );
+		}
+	}
+
 	if (option[OptionKeys::remodel::no_jumps].user()){
 		// if using no_jumps, chainbreak based loop determination will skip this stage, but we obviously wants to build something...
 		loops_to_model = loops_;
