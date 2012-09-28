@@ -45,6 +45,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/sdf/mol_parser.hh>
 #include <core/chemical/ResidueDatabaseIO.hh>
+#include <core/chemical/util.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
@@ -100,6 +101,9 @@ ChemicalManager::atom_type_set( std::string const & tag )
 		// read from file
 		std::string const directory( basic::database::full_name( "chemical/atom_type_sets/"+tag+"/" ) );
 		AtomTypeSetOP new_set( new AtomTypeSet( directory ) );
+		// optionally add extra parameters from files given on the command line (see util.hh)
+		add_atom_type_set_parameters_from_command_line( tag, *new_set );
+		// store the new atom type set
 		iter = atom_type_sets_.insert( std::make_pair( tag, new_set ) ).first;
 	}
 	return iter->second();

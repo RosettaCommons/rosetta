@@ -3509,6 +3509,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Use larger LJ_WDEPTH for Hs to avoid RNA clashes</dd><br>
 <dd>Default: false</dd><br>
 </dl>
+<dl>
+<dt><b>-add_atom_type_set_parameters</b> \<StringVector\><dt>
+<dd>Additional AtomTypeSet extra-parameter files that should be read; format is a sequence of paired strings: <atom-type-set-tag1> <filename1> <atom-type-set-tag2> <filename2> ...</dd><br>
+</dl>
  </li>
 <li><h2>score</h2>
 <dl>

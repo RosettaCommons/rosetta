@@ -67,7 +67,7 @@ AtomTypeSet::AtomTypeSet( std::string const & directory )
 		}
 	}
 	data.close();
-	
+
 	if ( basic::options::option[ basic::options::OptionKeys::chemical::enlarge_H_lj ] ) {
 		enlarge_h_lj_wdepth();
 	}
@@ -249,9 +249,15 @@ AtomTypeSet::get_default_parameter( std::string const & param_name, std::string 
 
 		if ( param_name == "LJ_RADIUS" ) {
 			return atom_type.lj_radius();
-
-		} /// etc etc add LJ_WDEPTH, LK_***
-
+		} else if ( param_name == "LJ_WDEPTH" ) {
+			return atom_type.lj_wdepth();
+		} else if ( param_name == "LK_VOLUME" ) {
+			return atom_type.lk_volume();
+		} else if ( param_name == "LK_DGFREE" ) {
+			return atom_type.lk_dgfree();
+		} else if ( param_name == "LK_LAMBDA" ) {
+			return atom_type.lk_lambda();
+		}
 	}
 	utility_exit_with_message( "unrecognized parameter type: "+param_name );
 	return 0.0; // appease compiler
@@ -346,15 +352,19 @@ AtomTypeSet::add_parameters_from_file( std::string const & filename )
 		std::map< std::string, utility::vector1< Real > >::const_iterator iter2( all_parameters.find( name ) );
 		utility::vector1< Real > params;
 
+		std::string paramsrc("UNK");
 		if ( iter2 == all_parameters.end() ) {
 			if ( !default_parameter_names.empty() ) {
+				paramsrc = "from_defaults";
 				for ( Size i=1; i<= default_parameter_names.size(); ++i ) {
 					Real const default_param( get_default_parameter( default_parameter_names[i], name ) );
+					// this output doesnt seem to get written out!? so I added more verbose output below (PB)
 					basic::T("core.chemical.AtomTypeSet") << "Using default parameter " << default_parameter_names[i] << " = " <<
 						default_param << " in place of " << tags[i] << " for atomtype " << name << '\n';
 					params.push_back( default_param );
 				}
 			} else {
+				paramsrc = "from_****";
 				iter2 = all_parameters.find( "****" );
 				if ( iter2 == all_parameters.end() ) {
 					utility_exit_with_message( "no parameters specified for atom type: "+name+" in file "+filename );
@@ -362,13 +372,16 @@ AtomTypeSet::add_parameters_from_file( std::string const & filename )
 				params = iter2->second;
 			}
 		} else {
+			paramsrc = "from_file";
 			params = iter2->second;
       //pbadebug
       //std::cout << "params " << params << std::endl;
 		}
 		//utility::vector1< Real > const & params( iter2->second );
-		assert( params.size() == tags.size() );
+		runtime_assert( params.size() == tags.size() );
 		for ( Size i=1; i<= tags.size(); ++i ) {
+			tr.Trace << "setting extra parameter: " << tags[i] << ' ' <<atoms_[ atom_index ]->name() << ' ' <<
+				paramsrc << ' ' << params[i] << std::endl;
 			atoms_[ atom_index ]->set_extra_parameter( i + index_offset, params[i] );
 		}
 	} // loop over atom names in this AtomTypeSet

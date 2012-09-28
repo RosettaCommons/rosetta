@@ -19,12 +19,20 @@
 
 // Unit headers
 #include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/chemical/AtomTypeSet.fwd.hh>
 
+#include <string>
 
 namespace core {
 namespace chemical {
 
 core::chemical::ResidueTypeSetCAP rsd_set_from_cmd_line();
+
+void
+add_atom_type_set_parameters_from_command_line(
+																							 std::string const & atom_type_set_tag,
+																							 AtomTypeSet & atom_type_set
+																							 );
 
 } // namespace chemical
 } // namespace core

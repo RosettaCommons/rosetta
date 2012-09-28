@@ -90,6 +90,7 @@ namespace chemical { BooleanOptionKey const chemical( "chemical" );  }
 namespace chemical { StringVectorOptionKey const exclude_patches( "chemical:exclude_patches" );  }
 namespace chemical { StringVectorOptionKey const include_patches( "chemical:include_patches" );  }
 namespace chemical { BooleanOptionKey const enlarge_H_lj( "chemical:enlarge_H_lj" );  }
+namespace chemical { StringVectorOptionKey const add_atom_type_set_parameters( "chemical:add_atom_type_set_parameters" );  }
 namespace score { BooleanOptionKey const score_pose_cutpoint_variants( "score:score_pose_cutpoint_variants" );  }
 namespace score { BooleanOptionKey const score( "score" );  }
 namespace score { StringOptionKey const weights( "score:weights" );  }
@@ -634,4 +635,3 @@ namespace lh { IntegerOptionKey const max_lib_size( "lh:max_lib_size" );  }
 namespace lh { IntegerOptionKey const max_emperor_lib_size( "lh:max_emperor_lib_size" );  }
 namespace lh { IntegerOptionKey const max_emperor_lib_round( "lh:max_emperor_lib_round" );  }
 namespace lh { IntegerOptionKey const library_expiry_time( "lh:library_expiry_time" );  }
-namespace lh { StringOptionKey const objective_function( "lh:objective_function" );  }
