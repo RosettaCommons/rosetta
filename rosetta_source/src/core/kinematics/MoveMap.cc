@@ -11,6 +11,7 @@
 /// @brief  Move map
 /// @author Phil Bradley
 /// @author Christopher Miles (cmiles@uw.edu)
+/// @author Roland A. Pache
 
 // Unit headers
 #include <core/kinematics/MoveMap.hh>
@@ -429,7 +430,7 @@ MoveMap::init_from_file( std::string const & filename ) {
 						}
 					}
 				} else {
-					core::Size jump_num = (core::Size) atoi(tokens[1].c_str());
+					core::Size jump_num = (core::Size) atoi(tokens[2].c_str());
 					if ( tokens.size() < 3 || tokens[3] == "YES" || tokens[3] == "yes" ) {
 						set_jump( jump_num, true );
 					} else if (tokens[3] == "NO" || tokens[3] == "no" ){
