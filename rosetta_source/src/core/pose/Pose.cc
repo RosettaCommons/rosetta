@@ -637,7 +637,7 @@ Pose::residue_type(
 // backbone torsions
 // peptides and saccharides
 
-/// @details  For proteins, phi is defined as C(n-1)-N(n)-CA(n)-C(n).
+/// @details  For proteins, phi is defined as C(n-1)-N(n)-CA(n)-C(n).\n
 /// For pyranosyl carbohydrates, phi is defined as O5(n)-C1(n)-OX(n-1)-CX(n-1),
 /// where X is the position of the glycosidic linkage.
 Real
@@ -651,7 +651,7 @@ Pose::phi( Size const seqpos ) const
 	if (residue_type(seqpos).is_protein()) {
 		return residue(seqpos).mainchain_torsion(1);
 	} else if (residue_type(seqpos).is_carbohydrate()) {
-		// phi(n) for a pyranosyl residue is defined as:
+		// phi(n) for a (1->4) pyranosyl residue is defined as:
 		// O5(n)-C1(n)-O4(n-1)-C4(n-1)
 		// BB 5 is:
 		// C4-O4-UPPER1-UPPER2
@@ -670,7 +670,7 @@ Pose::phi( Size const seqpos ) const
 	}
 }
 
-/// @details  For proteins, phi is defined as C(n-1)-N(n)-CA(n)-C(n).
+/// @details  For proteins, phi is defined as C(n-1)-N(n)-CA(n)-C(n).\n
 /// For pyranosyl carbohydrates, phi is defined as O5(n)-C1(n)-OX(n-1)-CX(n-1),
 /// where X is the position of the glycosidic linkage.
 void
@@ -699,8 +699,8 @@ Pose::set_phi( Size const seqpos, Real const setting )
 	}
 }
 
-/// @details  For proteins, psi is defined as N(n)-CA(n)-C(n)-N(n+1).
-/// For pyranosyl carbohydrates, psi is defined as C1(n)-OX(n-1)-CX(n-1)-CX-1(n-1),
+/// @details  For proteins, psi is defined as N(n)-CA(n)-C(n)-N(n+1).\n
+/// For carbohydrates where the anomeric carbon is C1, psi is defined as C1(n)-OX(n-1)-CX(n-1)-CX-1(n-1),
 /// where X is the position of the glycosidic linkage.
 Real
 Pose::psi( Size const seqpos ) const
@@ -713,21 +713,20 @@ Pose::psi( Size const seqpos ) const
 	if (residue_type(seqpos).is_protein()) {
 		return residue(seqpos).mainchain_torsion(2);
 	} else if (residue_type(seqpos).is_carbohydrate()) {
-		// psi(n) for a pyranosyl residue is defined as:
-		// C1(n)-O4(n-1)-C4(n-1)-C3(n-1)
-		// BB 4 is:
-		// C3-C4-O4-UPPER
+		// TODO: Fix the rest of the accessors/mutators as done here.
+		// psi(n) is defined as: C1(n)-OX(n-1)-CX(n-1)-CX-1(n-1)
+		// BB X is: CX-1-CX-OX-UPPER
 		// Thus, the value from the previous residue is returned.
-		// I'll add code for other saccharide types at a later date.
-		// ~ Labonte
 		PyAssert((seqpos != 1),
 				"Pose::psi( Size const seqpos ): variable seqpos is out of range for carbohydrates!");
-		return residue(seqpos - 1).mainchain_torsion(4);
+
+		Size x = residue_type(seqpos).carbohydrate_info()->mainchain_glycosidic_bond_acceptor();
+		return residue(seqpos - 1).mainchain_torsion(x);
 	}
 }
 
-/// @details  For proteins, psi is defined as N(n)-CA(n)-C(n)-N(n+1).
-/// For pyranosyl carbohydrates, psi is defined as C1(n)-OX(n-1)-CX(n-1)-CX-1(n-1),
+/// @details  For proteins, psi is defined as N(n)-CA(n)-C(n)-N(n+1).\n
+/// For carbohydrates where the anomeric carbon is C1, psi is defined as C1(n)-OX(n-1)-CX(n-1)-CX-1(n-1),
 /// where X is the position of the glycosidic linkage.
 void
 Pose::set_psi( Size const seqpos, Real const setting )
@@ -740,16 +739,13 @@ Pose::set_psi( Size const seqpos, Real const setting )
 	if (residue_type(seqpos).is_protein()) {
 		conformation_->set_torsion( TorsionID( seqpos, id::BB, 2 ), setting);
 	} else if (residue_type(seqpos).is_carbohydrate()) {
-		// psi(n) for a pyranosyl residue is defined as:
-		// C1(n)-O4(n-1)-C4(n-1)-C3(n-1)
-		// BB 4 is:
-		// C3-C4-O4-UPPER
+		// psi(n) is defined as: C1(n)-OX(n-1)-CX(n-1)-CX-1(n-1)
+		// BB X is: CX-1-CX-OX-UPPER
 		// Thus, the value is set on the previous residue.
-		// I'll add code for other saccharide types at a later date.
-		// ~ Labonte
 		PyAssert((seqpos != 1),
 				"Pose::set_psi( Size const seqpos, Real const setting ): variable seqpos is out of range for carbohydrates!");
-		conformation_->set_torsion(TorsionID(seqpos - 1, id::BB, 4), setting);
+		Size x = residue_type(seqpos).carbohydrate_info()->mainchain_glycosidic_bond_acceptor();
+		conformation_->set_torsion(TorsionID(seqpos - 1, id::BB, x), setting);
 	}
 }
 

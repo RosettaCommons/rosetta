@@ -66,6 +66,7 @@
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/sdf/MolData.hh>
 #include <core/chemical/rna/RNA_ResidueType.hh>
+// only compiles with the .hh below; anyone know why I can't use the .fwd.hh here? ~Labonte
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 // AUTO-REMOVED #include <core/chemical/VariantType.hh>
 

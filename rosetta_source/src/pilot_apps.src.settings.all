@@ -563,7 +563,8 @@ sources = {
 	],
 	"pilot/labonte" : [
 		"tester",  # /* generic testing source */
-		"test_RingConformationMover"
+		"test_RingConformationMover",
+		"test_CarbohydrateInfo"
 	],
 	"pilot/mpacella" : [
                 "surface_docking_jd2",

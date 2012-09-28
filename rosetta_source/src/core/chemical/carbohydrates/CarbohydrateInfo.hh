@@ -36,10 +36,6 @@ namespace core {
 namespace chemical {
 namespace carbohydrates {
 
-/// @remarks  For now, this class functions in a similar manner as RNA_ResidueType, which is not a ResidueType at all,
-/// but rather a container of properties specific to RNA.  In the future, I may copy over the functionality in this
-/// class to a CarbohydrateResidueType class that derives from ResidueType.  This seems a smarter way to do things.
-/// (Thanks, Brian, for the idea!) ~Labonte
 class CarbohydrateInfo : public utility::pointer::ReferenceCount {
 public:
 	// Standard methods ////////////////////////////////////////////////////////
@@ -71,7 +67,8 @@ public:
 	// Nomenclature
 	/// @brief  Return the full IUPAC name of the monosaccharide.
 	std::string
-	full_name() const {
+	full_name() const
+	{
 		return full_name_;
 	}
 
@@ -79,13 +76,15 @@ public:
 	// Oxidation type
 	/// @brief  Return true if the monosaccharide is an aldose.
 	bool
-	is_aldose() const {
+	is_aldose() const
+	{
 		return is_aldose_;
 	}
 
 	/// @brief  Return true if the monosaccharide is a ketose.
 	bool
-	is_ketose() const {
+	is_ketose() const
+	{
 		return !is_aldose_;
 	}
 
@@ -93,13 +92,15 @@ public:
 	// Size
 	/// @brief  Get the number of carbons in the monosaccharide.
 	core::Size
-	n_carbons() const {
+	n_carbons() const
+	{
 		return n_carbons_;
 	}
 
 	/// @brief  Return true if the monosaccharide is a triose.
 	bool
-	is_triose() const {
+	is_triose() const
+	{
 		if (n_carbons_ == 3) {
 			return true;
 		}
@@ -108,7 +109,8 @@ public:
 
 	/// @brief  Return true if the monosaccharide is a tetrose.
 	bool
-	is_tetrose() const {
+	is_tetrose() const
+	{
 		if (n_carbons_ == 4) {
 			return true;
 		}
@@ -117,7 +119,8 @@ public:
 
 	/// @brief  Return true if the monosaccharide is a pentose.
 	bool
-	is_pentose() const {
+	is_pentose() const
+	{
 		if (n_carbons_ == 5) {
 			return true;
 		}
@@ -126,7 +129,8 @@ public:
 
 	/// @brief  Return true if the monosaccharide is a hexose.
 	bool
-	is_hexose() const {
+	is_hexose() const
+	{
 		if (n_carbons_ == 6) {
 			return true;
 		}
@@ -135,7 +139,8 @@ public:
 
 	/// @brief  Return true if the monosaccharide is a heptose.
 	bool
-	is_heptose() const {
+	is_heptose() const
+	{
 		if (n_carbons_ == 7) {
 			return true;
 		}
@@ -147,13 +152,15 @@ public:
 	/// @brief   Get the stereochemical designation for the monosaccharide.
 	/// @return  'L' or 'D'
 	char
-	stereochem() const {
+	stereochem() const
+	{
 		return stereochem_;
 	}
 
 	/// @brief  Return true if the monosaccharide is an L-sugar.
 	bool
-	is_L_sugar() const {
+	is_L_sugar() const
+	{
 		if (stereochem_ == 'L') {
 			return true;
 		}
@@ -162,7 +169,8 @@ public:
 
 	/// @brief  Return true if the monosaccharide is a D-sugar.
 	bool
-	is_D_sugar() const {
+	is_D_sugar() const
+	{
 		if (stereochem_ == 'D') {
 			return true;
 		}
@@ -174,13 +182,15 @@ public:
 	/// @brief    Get the size of the carbohydrate ring.
 	/// @details  A linear monosaccharide has a ring size of zero.
 	core::Size
-	ring_size() const {
+	ring_size() const
+	{
 		return ring_size_;
 	}
 
 	/// @brief  Return true if the monosaccharide is linear.
 	bool
-	is_acyclic() const {
+	is_acyclic() const
+	{
 		if (ring_size_ == 0) {
 			return true;
 		}
@@ -189,13 +199,15 @@ public:
 
 	/// @brief  Return true if the monosaccharide is a ring.
 	bool
-	is_cyclic() const {
+	is_cyclic() const
+	{
 		return !is_acyclic();
 	}
 
 	/// @brief  Return true if the monosaccharide is a furanose.
 	bool
-	is_furanose() const {
+	is_furanose() const
+	{
 		if (ring_size_ == 5) {
 			return true;
 		}
@@ -204,7 +216,8 @@ public:
 
 	/// @brief  Return true if the monosaccharide is a pyranose.
 	bool
-	is_pyranose() const {
+	is_pyranose() const
+	{
 		if (ring_size_ == 6) {
 			return true;
 		}
@@ -213,7 +226,8 @@ public:
 
 	/// @brief  Return true if the monosaccharide is a septanose.
 	bool
-	is_septanose() const {
+	is_septanose() const
+	{
 		if (ring_size_ == 7) {
 			return true;
 		}
@@ -225,13 +239,15 @@ public:
 	/// @brief   Get the anomeric form for the monosaccharide.
 	/// @return  "alpha", "beta", or ""
 	std::string
-	anomer() const {
+	anomer() const
+	{
 		return anomer_;
 	}
 
 	/// @brief  Return true if the cyclic monosaccharide is an alpha sugar.
 	bool
-	is_alpha_sugar() const {
+	is_alpha_sugar() const
+	{
 		if (anomer_ == "alpha") {
 			return true;
 		}
@@ -240,7 +256,8 @@ public:
 
 	/// @brief  Return true if the cyclic monosaccharide is a beta sugar.
 	bool
-	is_beta_sugar() const {
+	is_beta_sugar() const
+	{
 		if (anomer_ == "beta") {
 			return true;
 		}
@@ -248,18 +265,51 @@ public:
 	}
 
 
-	// Polymer
+	// Polymer info
 	/// @brief    Return true if the monosaccharide is attached to something at the anomeric carbon.
 	/// @remarks  not yet implemented
 	bool
-	is_glycoside() const {
+	is_glycoside() const
+	{
 		return is_glycoside_;
 	}
 
-	// TODO: Determine a good way to store connectivity and branching.
-	// maybe pairs: (1->4), (1->2), where first designates the anomeric carbon and second the position on the
-	// previous residue to which it attaches?
-	// But we'll need a forward way also so that a residue knows what is connected to it.
+	/// @brief    Return the attachment point of the downstream saccharide residue of the main chain.
+	/// @return   an integer n of (1->n) of polysaccharide nomenclature, where n specifies the attachment point on the
+	/// upstream monosaccharide residue; e.g., 4 specifies O4; n = 0 specifies an upper terminus
+	/// @details  A monosaccharide with a group linked to it at one position is a distinct residue type from the same
+	/// monosaccharide with the same group linked to it at another position.  For example, Rosetta treats (1->4)-beta-
+	/// D-glucopyranose as an entirely distinct residue type from (1->3)-beta-D-glucopyranose, with separate .params
+	/// files for each.\n
+	/// \n
+	/// See also:\n
+	///  CarbohydrateInfo.n_branches()\n
+	///  CarbohydrateInfo.branch_point()
+	core::Size
+	mainchain_glycosidic_bond_acceptor() const
+	{
+		return mainchain_glycosidic_bond_acceptor_;
+	}
+
+	/// @brief    Return the number of branches off of this residue.
+	/// @details  A monosaccharide with a group linked to it at one position is a distinct residue type from the same
+	/// monosaccharide with the same group linked to it at another position.  For example, Rosetta treats (1->4)-beta-
+	/// D-glucopyranose as an entirely distinct residue type from (1->3)-beta-D-glucopyranose, with separate .params
+	/// files for each.\n
+	/// \n
+	/// See also:\n
+	///  CarbohydrateInfo.mainchain_glycosidic_bond_acceptor()\n
+	///  CarbohydrateInfo.branch_point()
+	/// @remarks  Branches are not yet implemented.
+	core::Size
+	n_branches() const
+	{
+		return branch_points_.size();
+	}
+
+	/// @brief  Return the attachment point of the downstream saccharide residue attached to ith branch off of this
+	/// residue.
+	core::Size branch_point(core::Size i) const;
 
 
 	// Side-chain modifications
@@ -283,11 +333,14 @@ private:
 	void copy_data(CarbohydrateInfo object_to_copy_to, CarbohydrateInfo object_to_copy_from);
 
 	// Return the number of carbon atoms (not counting R groups) in the ResidueType.
-	core::Size get_n_carbons();
+	core::Size get_n_carbons() const;
 
 	// Read through all the properties.  Check for impossible cases.  If any property type is not set, the default
 	// value will be maintained.
 	void read_and_set_properties();
+
+	// Get connection data from the residue type.
+	void determine_polymer_connections();
 
 	// If cyclic, define nu angles in terms of CHI ids.
 	void define_nu_ids();
@@ -303,10 +356,17 @@ private:
 	bool is_glycoside_;
 	bool is_uronic_acid_;
 
+	// Glycosidic bond attachment points, i.e., the second integer in (1->n) notations.
+	core::Size mainchain_glycosidic_bond_acceptor_;  // 0 if N/A, i.e., if residue type is an upper terminus
+	utility::vector1<core::Size> branch_points_;
+
 	// Definitions of nu angles in terms of Rosetta 3 CHI angles for this particular sugar.
 	// The nu angles should always be the last CHI angles defined in the param file or by a patch file.
 	utility::vector1<std::pair<core::id::TorsionType, core::Size> > nu_id_;
 
+	// Constants.
+	static const core::Size MAX_C_SIZE_LIMIT;  // maximum size of a carbohydrate carbon chain in Rosetta
+	static const core::Size MIN_C_SIZE_LIMIT;
 };  // class CarbohydrateInfo
 
 }  // namespace carbohydrates

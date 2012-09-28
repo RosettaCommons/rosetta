@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 	// import a test pose
 	//pose_from_pdb(pose, "/home/labonte/Workspace/test_input/test.pdb");
 
-	pose_from_pdb(pose, "/home/labonte/Workspace/CAPRI/heparin-6-mer_final.pdb");
+	pose_from_pdb(pose, "/home/labonte/Workspace/Carbohydrates/heparin-6-mer.pdb");
 
 	// test new set_chi_true_range() method
 	/*MoveMap mm = MoveMap();
@@ -162,7 +162,7 @@ int main(int argc, char *argv[])
 	MoveMapOP mm = new MoveMap();
 	mm->set_bb_true_range(2, 6);
 
-	simple_moves::ShearMover mover;
+	simple_moves::SmallMover mover;
 
 	mover.movemap(mm);
 
@@ -245,7 +245,7 @@ int main(int argc, char *argv[])
 	cout << "  4 " << pose.chi(4, 6) << endl;
 	cout << "  5 " << pose.chi(5, 6) << endl;
 
-	pose.dump_pdb("/home/labonte/Workspace/CAPRI/modified_sugar.pdb", "");
+	pose.dump_pdb("/home/labonte/Workspace/test_output/modified_sugar.pdb", "");
 }
 
 

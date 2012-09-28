@@ -36,7 +36,14 @@ namespace core {
 namespace chemical {
 namespace carbohydrates {
 
+// Define static data.
+// If we ever add rare sugars larger than 7 carbons, increase the value.
+const core::Size CarbohydrateInfo::MAX_C_SIZE_LIMIT = 7;
+const core::Size CarbohydrateInfo::MIN_C_SIZE_LIMIT = 3;
+
+
 using namespace core;
+
 
 // Public methods //////////////////////////////////////////////////////////////
 // Standard methods ////////////////////////////////////////////////////////////
@@ -126,7 +133,7 @@ CarbohydrateInfo::show(std::ostream & output) const
 	}
 	// TODO: Add more modifications.
 	if (modifications == "") {
-		modifications = "  none";
+		modifications = "  none\n";
 	}
 
 	// Produce output.
@@ -139,10 +146,41 @@ CarbohydrateInfo::show(std::ostream & output) const
 		output << " Anomeric Form: " << anomer_ << endl;
 	}
 	output << " Modifications: " << endl << modifications << endl;
+	output << " Polymeric Information:" << endl;
+	if (mainchain_glycosidic_bond_acceptor_) {
+		output << "  Main chain connection: (1->" << mainchain_glycosidic_bond_acceptor_ << ')' << endl;
+	} else {
+		output << "  Main chain connection: N/A" << endl;
+	}
+	output << "  Branch connections: " << "branches not yet implemented" << endl;
 }
-	
+
 
 // Accessors/Mutators
+// Return the attachment point of the downstream saccharide residue attached to ith branch off of this residue.
+/// @param    <i>: the branch point index
+/// @return   an integer n of (1->n) of polysaccharide nomenclature, where n specifies the attachment point on the
+/// upstream monosaccharide residue; e.g., 4 specifies O4
+/// @details  A monosaccharide with a group linked to it at one position is a distinct residue type from the same
+/// monosaccharide with the same group linked to it at another position.  For example, Rosetta treats (1->4)-beta-
+/// D-glucopyranose as an entirely distinct residue type from (1->3)-beta-D-glucopyranose, with separate .params
+/// files for each.\n
+/// \n
+/// See also:\n
+///  CarbohydrateInfo.mainchain_glycosidic_bond_acceptor()\n
+///  CarbohydrateInfo.n_branches()
+/// @remarks  Branches are not yet implemented.
+core::Size
+CarbohydrateInfo::branch_point(core::Size i) const
+{
+	assert((i > 0) && (i <= n_branches()));
+	PyAssert((i > 0) && (i <= n_branches()),
+			"CarbohydrateInfo::branch_point(core::Size i): "
+			"There is no ith branch point on this carbohydrate residue.");
+
+	return branch_points_[i];
+}
+
 // Return the CHI identifier for the requested nu (internal ring torsion) angle.
 /// @param    <subscript>: the subscript for nu, which must be between 1 and 2 less than the ring size, inclusive
 /// @return	  a pair of values corresponding to the atom tree torsion definitions, in which the first element is
@@ -158,7 +196,9 @@ std::pair<core::id::TorsionType, core::Size>
 CarbohydrateInfo::nu_id(core::Size subscript) const
 {
 	assert((subscript > 0) && (subscript <= ring_size_ - 2));
-	PyAssert((subscript > 0) && (subscript <= ring_size_ - 2), "CarbohydrateInfo::nu_id(core::Size subscript): nu(subscript) does not have a CHI identifier.");
+	PyAssert((subscript > 0) && (subscript <= ring_size_ - 2),
+			"CarbohydrateInfo::nu_id(core::Size subscript): "
+			"nu(subscript) does not have a CHI identifier.");
 
 	return nu_id_[subscript];
 }
@@ -179,8 +219,10 @@ CarbohydrateInfo::init(core::chemical::ResidueTypeCOP residue_type)
 	anomer_ = "";  // assumes linear
 	is_glycoside_ = true;  // TEMP: not yet implemented
 	is_uronic_acid_ = false;
-	
+
 	read_and_set_properties();
+
+	determine_polymer_connections();
 
 	define_nu_ids();
 }
@@ -205,12 +247,11 @@ CarbohydrateInfo::copy_data(
 
 // Return the number of carbon atoms (not counting R groups) in the ResidueType.
 core::Size
-CarbohydrateInfo::get_n_carbons()
+CarbohydrateInfo::get_n_carbons() const
 {
 	using namespace std;
 
-	// If we ever add rare sugars larger than 7 carbons, increase the initial i value.
-	for (Size carbon_num = 7; carbon_num >= 3; --carbon_num) {
+	for (Size carbon_num = MAX_C_SIZE_LIMIT; carbon_num >= MIN_C_SIZE_LIMIT; --carbon_num) {
 		char carbon_num_char = '0' + carbon_num;  // quick way to convert int to char
 		if (residue_type_->has(string(1, 'C') + string(1, carbon_num_char) /*convert chars to strings to concatenate*/)) {
 			return carbon_num;
@@ -311,6 +352,25 @@ CarbohydrateInfo::read_and_set_properties()
 	if ((ring_size_ == 0) && (anomer_ != "")) {
 		utility_exit_with_message("An acyclic sugar cannot be alpha or beta; check the .param file.");
 	}
+}
+
+// Get connection data from the residue type.
+void
+CarbohydrateInfo::determine_polymer_connections()
+{
+	using namespace std;
+
+	if (!residue_type_->is_upper_terminus()) {
+		Size upper_atom_index = residue_type_->upper_connect_atom();
+		string atom_name = residue_type_->atom_name(upper_atom_index);
+		//char atom_number = atom_name[2];
+		mainchain_glycosidic_bond_acceptor_ = atoi(&atom_name[2]);
+		//Size position = atom_number - '0';
+	} else {
+		mainchain_glycosidic_bond_acceptor_ = 0;
+	}
+
+	// TODO: Implement branching.
 }
 
 // If cyclic, define nu angles in terms of CHI ids.
