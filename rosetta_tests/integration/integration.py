@@ -85,7 +85,11 @@ rm -r ref/; ./integration.py    # create reference results using only default se
       help="number of processors to use on local machine (default: 1)",
     )
 
-    parser.add_option("--fork", action="store_true", dest="fork", default=False,
+    parser.add_option("--fork", action="store_true", dest="fork", default=True,
+      help="Use Unix fork() instead of Python subprocess module. (off by default)"
+    )
+
+    parser.add_option("--disable-fork", action="store_false", dest="fork",
       help="Use Unix fork() instead of Python subprocess module. (off by default)"
     )
 
@@ -163,6 +167,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
     (options, args) = parser.parse_args(args=argv)
     global Options;  Options = options
     Options.num_procs = Options.jobs
+
 
     options.mini_home = path.abspath( options.mini_home )
     print 'Using Rosetta source dir at:', options.mini_home
