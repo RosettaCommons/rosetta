@@ -1,0 +1,20 @@
+-run
+ -constant_seed
+ -rng mt19937
+-in
+ -file
+  -s inputs/7cpa_7cpa_input.pdb
+  -extra_res_fa inputs/7cpa.params inputs/ZN1.params
+
+-out
+ -nooutput
+
+-overwrite
+
+-parser
+ -protocol ligand_dock.xml
+
+-mute protocols.jobdist
+-mute core.io
+-mute core.conformation
+-mute core.pack

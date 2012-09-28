@@ -55,7 +55,7 @@ std::string AtrGridCreator::grid_name()
 
 
 AtrGrid::AtrGrid() :
-		SingleGrid("AtrGrid",0.0),
+		SingleGrid("AtrGrid"),
 		inner_radius_(2.25),
 		outer_radius_(4.75),
 		bb_(-1),
@@ -63,17 +63,6 @@ AtrGrid::AtrGrid() :
 		ligand_(-1)
 {
 	//
-}
-
-AtrGrid::AtrGrid(core::Real weight) :
-		SingleGrid("AtrGrid",weight),
-		inner_radius_(2.25),
-		outer_radius_(4.75),
-		bb_(-1),
-		sc_(-1),
-		ligand_(-1)
-{
- //
 }
 
 void
@@ -97,11 +86,6 @@ AtrGrid::parse_my_tag(utility::tag::TagPtr const tag){
 		inner_radius_= tag->getOption<core::Real>("inner_radius");
 		outer_radius_= tag->getOption<core::Real>("outer_radius");
 	}
-
-	if (!tag->hasOption("weight")){
-		utility_exit_with_message("Could not make AtrGrid: you must specify a weight when making a new grid");
-	}
-	set_weight( tag->getOption<core::Real>("weight") );
 }
 
 utility::json_spirit::Value AtrGrid::serialize()

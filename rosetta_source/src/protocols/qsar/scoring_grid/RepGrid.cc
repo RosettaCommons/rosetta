@@ -52,13 +52,9 @@ std::string RepGridCreator::grid_name()
 	return "RepGrid";
 }
 
-RepGrid::RepGrid() : SingleGrid("RepGrid",0.0), radius_(2.25), bb_(1), sc_(0), ligand_(1)
+RepGrid::RepGrid() : SingleGrid("RepGrid"), radius_(2.25), bb_(1), sc_(0), ligand_(1)
 {
 
-}
-
-RepGrid::RepGrid(core::Real weight) : SingleGrid("RepGrid",weight), radius_(2.25)
-{
 }
 
 utility::json_spirit::Value RepGrid::serialize()
@@ -99,11 +95,6 @@ RepGrid::parse_my_tag(utility::tag::TagPtr const tag){
 			ligand_= tag->getOption<core::Real>("ligand");
 		}
 	}
-
-	if (!tag->hasOption("weight")){
-		utility_exit_with_message("Could not make RepGrid: you must specify a weight when making a new grid");
-	}
-	set_weight( tag->getOption<core::Real>("weight") );
 }
 
 void RepGrid::refresh( core::pose::Pose const & pose,  core::Vector const & )

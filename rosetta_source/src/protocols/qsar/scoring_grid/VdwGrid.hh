@@ -30,7 +30,6 @@ class VdwGrid : public SingleGrid
 public:
 
 	VdwGrid();
-	VdwGrid(core::Real weight);
 	virtual ~VdwGrid();
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & );
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center);
@@ -39,6 +38,8 @@ public:
 	void parse_my_tag(utility::tag::TagPtr const tag);
 
 	virtual core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map);
+	/// @brief return the current score of an atom using the current grid
+	virtual core::Real atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map);
 
 	/// @brief serialize the Interpolator to a json_spirit object
 	virtual utility::json_spirit::Value serialize();

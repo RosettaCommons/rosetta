@@ -102,6 +102,7 @@ sources = {
 		"RepGrid",
 		"ScoringGridLoader",
 		"VdwGrid",
+		"ResidueGridScoresFeatures",
 		"SolvationGrid",
 		"SolvationMetaGrid"
 	],

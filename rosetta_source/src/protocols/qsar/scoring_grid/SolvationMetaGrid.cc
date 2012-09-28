@@ -50,7 +50,7 @@ std::string SolvationMetaGridCreator::grid_name()
 	return "SolvationMetaGrid";
 }
 
-SolvationMetaGrid::SolvationMetaGrid() :type_("SolvationMetaGrid"),weight_(1.0)
+SolvationMetaGrid::SolvationMetaGrid() :type_("SolvationMetaGrid")
 {
 
 }
@@ -98,10 +98,6 @@ void SolvationMetaGrid::refresh(core::pose::Pose const & pose, core::Vector cons
 
 void SolvationMetaGrid::parse_my_tag(utility::tag::TagPtr const tag)
 {
-    if (!tag->hasOption("weight")){
-		utility_exit_with_message("Could not make VdwGrid: you must specify a weight when making a new grid");
-	}
-	weight_ = tag->getOption<core::Real>("weight") ;
 }
 
 core::Real SolvationMetaGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP)
@@ -121,7 +117,20 @@ core::Real SolvationMetaGrid::score(core::conformation::Residue const & residue,
 		total_score += current_grid->get_point(current_atom.xyz());
 	}
 
-	return total_score*weight_;
+	return total_score;
+}
+
+core::Real SolvationMetaGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map)
+{
+	core::conformation::Atom current_atom(residue.atom(atomno));
+	std::map<core::ShortSize,SingleGridOP>::iterator grid_iterator(grid_map_.find(current_atom.type()));
+	if(grid_iterator == grid_map_.end())
+	{
+		utility_exit_with_message("Ligands must be parameterized with the FA_STANDARD atom type set for use in the SolvationMetaGrid");
+	}
+
+	SingleGridOP current_grid = grid_iterator->second;
+	return  current_grid->get_point(current_atom.xyz());
 }
 
 std::string SolvationMetaGrid::get_type()
@@ -149,7 +158,6 @@ utility::json_spirit::Value SolvationMetaGrid::serialize()
 	using utility::json_spirit::Pair;
 
 	Pair type_record("type",Value(type_));
-	Pair weight_data("weight",weight_);
 	std::vector<Value> grid_map_vector;
 
 	for(std::map<core::ShortSize,SingleGridOP>::iterator it = grid_map_.begin();it != grid_map_.end();++it)
@@ -164,14 +172,13 @@ utility::json_spirit::Value SolvationMetaGrid::serialize()
 		Value _;  return _;
 	#endif
 
-	return Value(utility::tools::make_vector(type_record,weight_data,grid_map_data));
+	return Value(utility::tools::make_vector(type_record,grid_map_data));
 
 }
 
 void SolvationMetaGrid::deserialize(utility::json_spirit::mObject data)
 {
 	type_ = data["type"].get_str();
-	weight_ = data["weight"].get_real();
 	utility::json_spirit::mArray grid_map_data(data["grids"].get_array());
 	for(utility::json_spirit::mArray::iterator it = grid_map_data.begin();it != grid_map_data.end();++it)
 	{

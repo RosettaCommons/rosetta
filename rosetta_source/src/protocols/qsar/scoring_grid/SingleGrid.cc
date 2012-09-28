@@ -35,7 +35,7 @@ namespace scoring_grid {
 static basic::Tracer GridBaseTracer("protocols.qsar.scoring_grid.SingleGrid");
 
 
-SingleGrid::SingleGrid(std::string type, core::Real weight) : type_(type), weight_(weight),chain_('A')
+SingleGrid::SingleGrid(std::string type) : type_(type),chain_('A')
 {
 
 }
@@ -69,12 +69,11 @@ utility::json_spirit::Value SingleGrid::serialize()
 	using utility::json_spirit::Pair;
 
 	Pair type_record("type",Value(type_));
-	Pair weight_record("weight",Value(weight_));
 	Pair center_record("center",numeric::serialize(center_));
 	Pair chain_record("chain",Value(chain_));
 	Pair grid_record("grid_data",grid_.serialize());
 
-	return Value(utility::tools::make_vector(type_record,weight_record,center_record,chain_record,grid_record));
+	return Value(utility::tools::make_vector(type_record,center_record,chain_record,grid_record));
 
 }
 
@@ -83,7 +82,6 @@ void SingleGrid::deserialize(utility::json_spirit::mObject data)
 
 
 	type_ = data["type"].get_str();
-	weight_ = data["weight"].get_real();
 	center_ = numeric::deserialize<core::Real>(data["center"].get_array());
 
 	grid_.deserialize(data["grid_data"].get_obj());
@@ -113,16 +111,6 @@ void SingleGrid::set_type(std::string type)
 std::string SingleGrid::get_type()
 {
 	return type_;
-}
-
-void SingleGrid::set_weight(core::Real weight)
-{
-	weight_ = weight;
-}
-
-core::Real SingleGrid::get_weight()
-{
-	return weight_;
 }
 
 void SingleGrid::set_center(core::Vector center)
@@ -205,8 +193,24 @@ core::Real SingleGrid::score(core::conformation::Residue const & residue, core::
 		//}
 
 	}
-	return score*weight_;
+	return score;
 }
+
+core::Real SingleGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map)
+{
+	core::Vector const & atom = residue.xyz(atomno);
+	if(grid_.is_in_grid(atom.x(),atom.y(), atom.z()))
+	{
+
+		core::Real grid_score = grid_.getValue(atom.x(),atom.y(),atom.z());
+		return grid_score;
+	}else
+	{
+		return 0;
+	}
+
+}
+
 
 std::list<std::pair<core::Vector, core::Real> >
 SingleGrid::get_point_value_list_within_range(

@@ -56,12 +56,7 @@ std::string SolvationGridCreator::grid_name()
     return "SolvationGrid";
 }
     
-SolvationGrid::SolvationGrid() :SingleGrid("SolvationGrid",1.0)
-{
-    
-}
-
-SolvationGrid::SolvationGrid(core::Real weight) :SingleGrid("SolvationGrid",weight)
+SolvationGrid::SolvationGrid() :SingleGrid("SolvationGrid")
 {
     
 }
@@ -141,10 +136,7 @@ void SolvationGrid::refresh(core::pose::Pose const & pose, core::Vector const & 
 
 void SolvationGrid::parse_my_tag(utility::tag::TagPtr const tag)
 {
-    if (!tag->hasOption("weight")){
-		utility_exit_with_message("Could not make VdwGrid: you must specify a weight when making a new grid");
-	}
-	set_weight( tag->getOption<core::Real>("weight") );
+
 }
 
 

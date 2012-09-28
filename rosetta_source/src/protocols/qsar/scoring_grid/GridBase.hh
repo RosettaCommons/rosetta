@@ -43,6 +43,8 @@ public:
 	virtual void parse_my_tag(utility::tag::TagPtr const tag)=0;
 	/// @brief return the current score of a residue using the current grid
 	virtual core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map) = 0;
+	/// @brief return the current score of an atom using the current grid
+	virtual core::Real atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map) = 0;
 	/// @brief get the type of the grid
 	virtual std::string get_type() = 0;
 	/// @brief set the chain the grid applies to

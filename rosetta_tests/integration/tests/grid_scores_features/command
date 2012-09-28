@@ -1,0 +1,16 @@
+cd %(workdir)s
+[ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
+%(bin)s/rosetta_scripts.%(binext)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
+    | egrep -vf ../../ignore_list \
+    > log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
+
+if type -P sqlite3 &>/dev/null; then
+   sqlite3 residue_grids.db3 'UPDATE protocols SET svn_url = "";'
+   sqlite3 residue_grids.db3 'UPDATE protocols SET svn_version = "";'
+   sqlite3 residue_grids.db3 '.dump' > residue_grids.db3.dump 
+else
+   echo "Please install the sqlite3 command line application to correctly run this test." > log_db_output
+fi
+rm -rf residue_grids.db3

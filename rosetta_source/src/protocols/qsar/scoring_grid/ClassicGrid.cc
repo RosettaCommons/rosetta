@@ -46,12 +46,7 @@ std::string ClassicGridCreator::grid_name()
 	return "ClassicGrid";
 }
 
-ClassicGrid::ClassicGrid(): SingleGrid("ClassicGrid",1.0), atr_radius_(4.75), rep_radius_(2.25)
-{
-	//
-}
-
-ClassicGrid::ClassicGrid(core::Real weight) : SingleGrid("ClassicGrid",weight),  atr_radius_(4.75), rep_radius_(2.25)
+ClassicGrid::ClassicGrid(): SingleGrid("ClassicGrid"), atr_radius_(4.75), rep_radius_(2.25)
 {
 	//
 }
@@ -78,11 +73,7 @@ void ClassicGrid::deserialize(utility::json_spirit::mObject data)
 
 void ClassicGrid::parse_my_tag(utility::tag::TagPtr const tag)
 {
-	if(!tag->hasOption("weight"))
-	{
-		utility_exit_with_message("Could not make ClassicGrid: you must specify a weight when making a new grid");
-	}
-	set_weight(tag->getOption<core::Real>("weight"));
+
 }
 
 void ClassicGrid::refresh(core::pose::Pose const & pose, core::Vector const & )

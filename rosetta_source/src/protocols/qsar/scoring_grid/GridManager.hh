@@ -71,6 +71,8 @@ public:
 	core::Real total_score(core::conformation::Residue const & residue);
 	///@brief return the total score of a chain on the grid
 	core::Real total_score(core::pose::Pose const & pose, core::Size const chain_id);
+	///@brief get a map of scoring terms and scores for each term given a residue and atom number
+	std::map<std::string,core::Real> atom_score(core::pose::Pose const & pose, core::conformation::Residue const & residue, core::Size atomindex );
 	///@brief recalculate all grids for a pose.  This must be called if the backbone or sidechain conformations change!
 	void update_grids(core::pose::Pose const & pose, core::Vector const & center, core::Size const & ligand_chain_id_to_exclude);
 	///@brief recalculate all grids for a pose.  This must be called if the backbone or sidechain conformations change!
@@ -105,6 +107,8 @@ private:
 	static GridManager * instance_;
 
 	std::map<std::string,GridMap> grid_map_cache_;
+
+	std::map<std::string,core::Real> grid_weights_;
 
 	GridMap grid_map_;
 	ScoreMap score_map_;

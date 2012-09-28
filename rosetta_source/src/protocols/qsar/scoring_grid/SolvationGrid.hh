@@ -29,7 +29,6 @@ class SolvationGrid : public SingleGrid
 public:
     
     SolvationGrid();
-    SolvationGrid(core::Real weight);
     virtual ~SolvationGrid();
     virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & );
     virtual void refresh(core::pose::Pose const & pose, core::Vector const & center);

@@ -52,8 +52,7 @@ class ChargeGrid : public SingleGrid
 {
 public:
 	ChargeGrid();
-	ChargeGrid(core::Real charge, core::Real weight);
-	ChargeGrid(core::Real weight);
+	ChargeGrid(core::Real charge);
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & ligand_chain_id_to_exclude);
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center);
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, utility::vector1<core::Size> ligand_chain_ids_to_exclude);
@@ -63,6 +62,9 @@ public:
 	virtual void deserialize(utility::json_spirit::mObject data);
 	void parse_my_tag(utility::tag::TagPtr const tag);
     virtual core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map);
+	/// @brief return the current score of an atom using the current grid
+	virtual core::Real atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map);
+
 private:
 
 	/// @brief calculate nominal depth based on atom count within 4 Angstroms. See

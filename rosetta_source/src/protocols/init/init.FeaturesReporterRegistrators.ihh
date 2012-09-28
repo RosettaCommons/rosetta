@@ -62,4 +62,6 @@ static FeaturesReporterRegistrator< helixAssembly::ConcurrencyTestCreator > Conc
 static FeaturesReporterRegistrator< strand_assembly::StrandBundleFeaturesCreator > StrandBundleFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< BatchFeaturesCreator > BatchFeaturesCreator_registrator;
 
+static FeaturesReporterRegistrator< protocols::qsar::scoring_grid::ResidueGridScoresFeaturesCreator >  ResidueGridScoresFeaturesCreator_registrator;
+
 } //namespace protocols

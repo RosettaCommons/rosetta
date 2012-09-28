@@ -51,13 +51,7 @@ std::string HbdGridCreator::grid_name()
 	return "HbdGrid";
 }
 
-HbdGrid::HbdGrid(): SingleGrid ("HbdGrid",1.0)
-{
-	std::string lj_file(basic::database::full_name("scoring/qsar/hb_table.txt"));
-	lj_spline_ = numeric::interpolation::spline_from_file(lj_file,0.05).get_interpolator();
-}
-
-HbdGrid::HbdGrid(core::Real weight) : SingleGrid ("HbdGrid",weight)
+HbdGrid::HbdGrid(): SingleGrid ("HbdGrid")
 {
 	std::string lj_file(basic::database::full_name("scoring/qsar/hb_table.txt"));
 	lj_spline_ = numeric::interpolation::spline_from_file(lj_file,0.05).get_interpolator();
@@ -93,11 +87,6 @@ void HbdGrid::deserialize(utility::json_spirit::mObject data)
 void
 HbdGrid::parse_my_tag(utility::tag::TagPtr const tag)
 {
-	if (!tag->hasOption("weight"))
-	{
-		utility_exit_with_message("Could not make HbdGrid: you must specify a weight when making a new grid");
-	}
-	set_weight( tag->getOption<core::Real>("weight") );
 }
 
 void HbdGrid::refresh(core::pose::Pose const & pose, core::Vector const & )
@@ -161,7 +150,22 @@ core::Real HbdGrid::score(core::conformation::Residue const & residue, core::Rea
 		}
 	}
 
-	return score*this->get_weight();
+	return score;
+}
+
+core::Real HbdGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map)
+{
+	core::Vector const & atom_coord(residue.xyz(atomno));
+	if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
+	{
+		core::chemical::AtomType atom_type(residue.atom_type(atomno));
+		if(atom_type.is_acceptor())
+		{
+			core::Real grid_value = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
+			return grid_value;
+		}
+	}
+	return 0;
 }
 
 }

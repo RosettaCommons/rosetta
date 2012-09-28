@@ -62,13 +62,7 @@ std::string VdwGridCreator::grid_name()
 	return "VdwGrid";
 }
 
-VdwGrid::VdwGrid() : SingleGrid("VdwGrid",1.0), cutoff_(10.0)
-{
-	std::string lj_file(basic::database::full_name("scoring/qsar/lj_table.txt"));
-	lj_spline_ = numeric::interpolation::spline_from_file(lj_file,0.01).get_interpolator();
-}
-
-VdwGrid::VdwGrid(core::Real weight) : SingleGrid ("VdwGrid",weight), cutoff_(10.0)
+VdwGrid::VdwGrid() : SingleGrid("VdwGrid"), cutoff_(10.0)
 {
 	std::string lj_file(basic::database::full_name("scoring/qsar/lj_table.txt"));
 	lj_spline_ = numeric::interpolation::spline_from_file(lj_file,0.01).get_interpolator();
@@ -76,10 +70,7 @@ VdwGrid::VdwGrid(core::Real weight) : SingleGrid ("VdwGrid",weight), cutoff_(10.
 
 void
 VdwGrid::parse_my_tag(utility::tag::TagPtr const tag){
-	if (!tag->hasOption("weight")){
-		utility_exit_with_message("Could not make VdwGrid: you must specify a weight when making a new grid");
-	}
-	set_weight( tag->getOption<core::Real>("weight") );
+
 }
 
 
@@ -149,6 +140,23 @@ core::Real VdwGrid::score(core::conformation::Residue const & residue, core::Rea
 		}
 	}
 	return score;
+}
+
+core::Real VdwGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map)
+{
+	core::Vector const & atom_coord(residue.xyz(atomno));
+	core::Real const & radius(residue.atom_type(atomno).lj_radius());
+	if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
+	{
+		core::Real max_radius = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
+		core::Real spline_score = 0.0;
+		core::Real spline_score_deriv = 0.0;
+
+		lj_spline_->interpolate(max_radius-radius,spline_score,spline_score_deriv);
+
+		return spline_score;
+	}
+	return 0;
 }
 
 utility::json_spirit::Value VdwGrid::serialize()

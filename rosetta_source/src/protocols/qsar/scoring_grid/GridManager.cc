@@ -127,17 +127,17 @@ void GridManager::make_new_grid(utility::tag::TagPtr const tag)
 {
 
 	std::string name= tag->getName();
+	core::Real weight = tag->getOption<core::Real>("weight");
+	grid_weights_.insert(std::make_pair(name,weight));
 	GridManagerTracer.Debug << name <<std::endl;
 	GridBaseOP new_grid(GridFactory::get_instance()->new_grid(tag));
 	insert_grid(name, new_grid);
+
 
 }
 
 void GridManager::insert_grid(std::string const name, GridBaseOP const grid)
 {
-	//if(grid_map_.find(name) != grid_map_.end()){
-	//	utility_exit_with_message("2 grids with the same name!");
-	//}
 	grid_map_[name] = grid;
 }
 
@@ -187,6 +187,8 @@ core::Real GridManager::total_score(core::conformation::Residue const & residue)
 	return total_score;
 }
 
+
+
 core::Real GridManager::total_score(core::pose::Pose const & pose, core::Size const chain_id)
 {
 	score_map_.clear();
@@ -200,16 +202,14 @@ core::Real GridManager::total_score(core::pose::Pose const & pose, core::Size co
 	{
 		core::Real component_score = 0;
 		GridBaseOP current_grid(*map_iterator->second);
+		core::Real weight(grid_weights_[map_iterator->first]);
 		for(core::Size residue_count = 1; residue_count <= residue_vector.size(); ++residue_count )
 		{
 			core::conformation::ResidueCOP residue(residue_vector[residue_count]);
-			//for(core::Size atom_index = 1; atom_index <= residue->nheavyatoms(); ++atom_index)
-			//{
 			core::Real current_score(current_grid->score(*residue,max_score,qsar_map_));
 			component_score += current_score;
-			//}
 		}
-		total_score += component_score;
+		total_score += component_score*weight;
 		std::pair<std::string, core::Real> new_score(current_grid->get_type(),component_score);
 		score_map_.insert(new_score);
 	}
@@ -226,6 +226,22 @@ core::Real GridManager::total_score(core::pose::Pose const & pose, core::Size co
 
 	return total_score;
 
+}
+
+
+std::map<std::string,core::Real> GridManager::atom_score(core::pose::Pose const & pose, core::conformation::Residue const & residue, core::Size atomindex )
+{
+	std::map<std::string,core::Real> score_map;
+	std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
+	for(;map_iterator != grid_map_.end();++map_iterator)
+	{
+		GridBaseOP current_grid(*map_iterator->second);
+		core::Real weight(grid_weights_[map_iterator->first]);
+		core::Real atom_score = current_grid->atom_score(residue,atomindex,qsar_map_);
+		std::string grid_type = current_grid->get_type();
+		score_map.insert(std::make_pair(grid_type,atom_score*weight));
+	}
+	return score_map;
 }
 
 void GridManager::update_grids(core::pose::Pose const & pose, core::Vector const & center,utility::vector1<core::Size> ligand_chain_ids_to_exclude)

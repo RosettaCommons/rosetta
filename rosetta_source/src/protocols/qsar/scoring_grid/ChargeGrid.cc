@@ -77,7 +77,7 @@ std::string ChargeGridCreator::grid_name()
 }
 
 ChargeGrid::ChargeGrid() :
-	SingleGrid("ChargeGrid",1.0),
+	SingleGrid("ChargeGrid"),
 	zeta_(4.0),
 	epsilon_(80.0),
 	indirect_numerator_( (4.0 - 80.0) / (4.0 + 80.0) ),
@@ -86,18 +86,8 @@ ChargeGrid::ChargeGrid() :
 	//
 }
 
-ChargeGrid::ChargeGrid(core::Real charge,core::Real weight) :
-	SingleGrid("ChargeGrid",weight),
-	zeta_(4.0),
-	epsilon_(80),
-	indirect_numerator_( (4.0 - 80.0) / (4.0 + 80.0) ),
-	epsilon_0_(8.854187817E-12)
-{
-	//
-}
-
-ChargeGrid::ChargeGrid(core::Real weight) :
-	SingleGrid("ChargeGrid",weight),
+ChargeGrid::ChargeGrid(core::Real charge) :
+	SingleGrid("ChargeGrid"),
 	zeta_(4.0),
 	epsilon_(80),
 	indirect_numerator_( (4.0 - 80.0) / (4.0 + 80.0) ),
@@ -202,11 +192,7 @@ void ChargeGrid::refresh(core::pose::Pose const & pose, core::Vector const & cen
 
 void ChargeGrid::parse_my_tag(utility::tag::TagPtr const tag)
 {
-	if(!tag->hasOption("weight"))
-	{
-		utility_exit_with_message("Could not make ClassicGrid: you must specify a weight when making a new grid");
-	}
-	set_weight(tag->getOption<core::Real>("weight"));
+
 }
     
 core::Real ChargeGrid::score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map)
@@ -225,6 +211,19 @@ core::Real ChargeGrid::score(core::conformation::Residue const & residue, core::
 		}
 	}
 	return score;
+}
+
+core::Real ChargeGrid::atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map)
+{
+	core::Vector const & atom_coord(residue.xyz(atomno));
+	if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
+	{
+		core::Real protein_charge = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
+		return protein_charge*residue.atomic_charge(atomno);
+	}else
+	{
+		return 0;
+	}
 }
 
 core::Real ChargeGrid::nominal_depth(core::Size const & n_atoms) const

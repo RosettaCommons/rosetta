@@ -26,7 +26,6 @@ class ClassicGrid : public SingleGrid
 {
 public:
 	ClassicGrid();
-	ClassicGrid(core::Real weight);
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & ligand_chain_id_to_exclude);
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center);
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, utility::vector1<core::Size> ligand_chain_ids_to_exclude);

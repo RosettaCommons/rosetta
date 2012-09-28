@@ -44,7 +44,7 @@ class SingleGrid : public GridBase
 {
 public:
 
-	SingleGrid(std::string type, core::Real weight);
+	SingleGrid(std::string type);
 	virtual ~SingleGrid();
 	/// @brief initialize a grid of zeros with a given centerpoint, width and resolution (in angstroms).
 	virtual void initialize(core::Vector const & center, core::Real width, core::Real resolution);
@@ -70,10 +70,6 @@ public:
 	void set_type(std::string type);
 	/// @brief return the grids type
 	virtual std::string get_type();
-	/// @brief set the weight of the grid
-	void set_weight(core::Real weight);
-	/// @brief get the weight of the grid
-	core::Real get_weight();
 	/// @brief set the center of the grid
 	void set_center(core::Vector center);
 	/// @brief get the center of the grid
@@ -94,6 +90,8 @@ public:
 	core::Vector get_pdb_coords(core::grid::CartGrid<core::Real>::GridPt gridpt);
 	/// @brief return the current score of a residue using the current grid
 	virtual core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map);
+	/// @brief return the current score of an atom using the current grid
+	virtual core::Real atom_score(core::conformation::Residue const & residue, core::Size atomno, qsarMapOP qsar_map);
 	void grid_to_kin(utility::io::ozstream & out, core::Real min_val, core::Real max_val, core::Size stride);
 	//void grid_rotamer_trials(core::pose::Pose &  pose, core::Size residue_id, int const min_score);
     /// @brief check to see if residue is in grid
@@ -121,7 +119,6 @@ public:
 private:
 	core::grid::CartGrid<core::Real> grid_;
 	std::string type_;
-	core::Real weight_;
 	core::Vector center_;
 	char chain_;
 
