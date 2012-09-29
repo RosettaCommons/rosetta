@@ -108,10 +108,13 @@ void
 SymMinMover::apply( pose::Pose & pose )
 {
 	// lazy default initialization
-	if ( ! movemap() ) symmetric_movemap_ =  new MoveMap;
-	else symmetric_movemap_ = movemap()->clone();
+	core::kinematics::MoveMapOP symmetric_movemap;
+	if ( ! movemap() ) symmetric_movemap =  new MoveMap;
+	else symmetric_movemap = movemap()->clone();
 
-	core::pose::symmetry::make_symmetric_movemap( pose, *symmetric_movemap_ ); // we do this here since this is the first time we meet the symmetric pose
+	apply_dof_tasks_to_movemap(pose, *symmetric_movemap);
+
+	core::pose::symmetry::make_symmetric_movemap( pose, *symmetric_movemap ); // we do this here since this is the first time we meet the symmetric pose
 
 	//{ // scope APL debug:
 	//	std::cout << "SymMinMover free DOFs" << std::endl;
@@ -119,7 +122,7 @@ SymMinMover::apply( pose::Pose & pose )
 	//		dynamic_cast< core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation()) );
 	//	core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 	//	for (int jump_nbr = 1; jump_nbr <= (int)pose.num_jump(); ++jump_nbr) {
-	//		if ( symmetric_movemap_->get_jump( jump_nbr ) ) {
+	//		if ( symmetric_movemap->get_jump( jump_nbr ) ) {
 	//			std::cout << "SymMinMover jump " << jump_nbr << " is free" << std::endl;
 	//		}
 	//	}
@@ -135,14 +138,14 @@ SymMinMover::apply( pose::Pose & pose )
 		//TR << std::endl;
 		core::optimization::symmetry::SymAtomTreeMinimizer minimizer;
 		(*score_function())(pose);
-		minimizer.run( pose, *symmetric_movemap_, *score_function(), *min_options() );
+		minimizer.run( pose, *symmetric_movemap, *score_function(), *min_options() );
 		//TR << "After minimization" << std::endl;
 		//score_function()->show( TR, pose );
 		//TR << std::endl;
 	} else {
 		core::optimization::CartesianMinimizer minimizer;
 		(*score_function())(pose);
-		minimizer.run( pose, *symmetric_movemap_, *score_function(), *min_options() );
+		minimizer.run( pose, *symmetric_movemap, *score_function(), *min_options() );
 	}
 	PROF_STOP( basic::MINMOVER_APPLY );
 }

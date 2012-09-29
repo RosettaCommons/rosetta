@@ -71,15 +71,12 @@ public:
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
-	virtual void parse_my_tag( 
+	virtual void parse_my_tag(
 			utility::tag::TagPtr const tag,
 			moves::DataMap &data,
 			filters::Filters_map const &filters,
 			moves::Movers_map const &movers,
 			core::pose::Pose const & pose );
-
-private:
-	core::kinematics::MoveMapOP symmetric_movemap_;
 
 };
 

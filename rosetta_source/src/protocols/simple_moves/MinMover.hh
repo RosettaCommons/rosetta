@@ -21,12 +21,13 @@
 
 #include <protocols/filters/Filter.fwd.hh>
 
-
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/optimization/MinimizerOptions.fwd.hh>
+#include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
+#include <core/id/types.hh>
 
 #include <utility/vector1.hh>
 
@@ -58,6 +59,15 @@ public:
 	typedef core::optimization::MinimizerOptionsOP MinimizerOptionsOP;
 	typedef core::optimization::MinimizerOptionsCOP MinimizerOptionsCOP;
 	typedef core::Real Real;
+
+private:
+	// This type needs both DOF_Type and Torsion type to handle both
+	// backbone torsion angles and bond angles and bond lengths.
+	typedef
+		std::map<
+			std::pair< core::id::DOF_Type, core::id::TorsionType >,
+			core::pack::task::TaskFactoryOP >
+		DOF_TaskMap;
 
 public:
 
@@ -94,12 +104,23 @@ public:
 
 	void parse_opts(
 		TagPtr const,
-		protocols::moves::DataMap &,
+		protocols::moves::DataMap & data_map,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const & );
 
 	void parse_chi_and_bb( TagPtr const );
+
+	void parse_dof_tasks(
+		TagPtr const tag,
+		protocols::moves::DataMap & data);
+
+	void parse_dof_task_type(
+		std::string const & tag_name,
+		core::id::DOF_Type dof_type,
+		core::id::TorsionType torsion_type,
+		TagPtr const tag,
+		protocols::moves::DataMap & data);
 
   virtual void parse_def_opts( utility::lua::LuaObject const & def,
 		utility::lua::LuaObject const & score_fxns,
@@ -152,6 +173,15 @@ public:
 	bool nb_list() const;
 	bool deriv_check() const;
 
+protected:
+	///@brief for use with RosettaScripts current method of using
+	///TaskOperations to specify residue sets.
+	void
+	apply_dof_tasks_to_movemap(
+		core::pose::Pose const & pose,
+		core::kinematics::MoveMap & movemap) const;
+
+public:
 
 	//	void threshold( Real threshold_in ) { threshold_ = threshold_in; } // TODO: can be deleted?
 	//	Real threshold() { return threshold_; } // TODO: can be deleted?
@@ -178,6 +208,19 @@ private:
 	MinimizerOptionsOP min_options_;
 	Real threshold_;
 	bool cartesian_;
+
+	///@detail Until ResidueSubsetOperations are implemented,
+	///RosettaScripts uses TaskOperations as a generic way to specify
+	///sets of residues, so it is necessary to have a method of
+	///controling a movemap from a set of task operations. This is not
+	///suppose to be a general interface for MinMover, so only expose it
+	///through the parse_my_tag. Another small complication is that
+	///TaskOperations must be defined in the context of a pose, so hang
+	///on to it here until the apply. In case MinMover is applied
+	///multiple times, to avoid accumulating state, reset the move map
+	///to before the task operations were applied at the end of apply.
+
+	DOF_TaskMap dof_tasks_;
 };
 
 std::ostream &operator<< (std::ostream &os, MinMover const &mover);

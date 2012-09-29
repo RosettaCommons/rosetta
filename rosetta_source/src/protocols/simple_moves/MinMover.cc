@@ -23,6 +23,8 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/CartesianMinimizer.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh> // getScoreFunction
 #include <core/pose/Pose.fwd.hh>
@@ -50,6 +52,10 @@ using namespace core;
 using namespace kinematics;
 using namespace optimization;
 using namespace scoring;
+using core::pack::task::PackerTaskOP;
+
+
+
 
 static basic::Tracer TR("protocols.simple_moves.MinMover");
 
@@ -77,7 +83,8 @@ MinMover::MinMover()
 		movemap_(0),
 		scorefxn_(0),
 		min_options_(0),
-		cartesian_(false)
+		cartesian_(false),
+		dof_tasks_()
 		//		threshold_(1000000.0) // TODO: line can be deleted?
 {
 	min_options_ = new MinimizerOptions( "linmin", 0.01, true, false, false );
@@ -88,7 +95,8 @@ MinMover::MinMover( std::string const & name )
 		movemap_(0),
 		scorefxn_(0),
 		min_options_(0),
-		cartesian_(false)
+		cartesian_(false),
+		dof_tasks_()
 		//		threshold_(1000000.0) // TODO: line can be deleted?
 {
 	min_options_ = new MinimizerOptions( "linmin", 0.01, true, false, false );
@@ -110,7 +118,8 @@ MinMover::MinMover(
 		scorefxn_( scorefxn_in ),
 		min_options_(0),
 		threshold_(1000000.0), // TODO: line can be deleted?
-		cartesian_(false)
+		cartesian_(false),
+		dof_tasks_()
 {
 	min_options_ = new MinimizerOptions(
 		min_type_in, tolerance_in, use_nb_list_in, deriv_check_in, deriv_check_verbose_in );
@@ -175,27 +184,71 @@ bool MinMover::nb_list() const { return min_options_->use_nblist(); }
 void MinMover::deriv_check( bool deriv_check_in ) { min_options_->deriv_check( deriv_check_in ); }
 bool MinMover::deriv_check() const { return min_options_->deriv_check(); }
 
+
+///@detail restrict the move map by the packer task:
+///If a residue is not designable, the backbone is fixes
+///If a residue is not packable, the sidechain is fixed
+///
+///WARNING: This is extending the abuse of using task operations for
+///general ResidueSubsets
+///
+///When TaskOperations replaced with ResidueSetOperations please
+///change this too!
 void
-MinMover::apply( pose::Pose & pose_ )
-{
+MinMover::apply_dof_tasks_to_movemap(
+	core::pose::Pose const & pose,
+	MoveMap & movemap
+) const {
+
+	for(
+		DOF_TaskMap::const_iterator t=dof_tasks_.begin(), te=dof_tasks_.end();
+		t != te; ++t){
+		//generate task
+		PackerTaskOP task( t->second->create_task_and_apply_taskoperations( pose ) );
+
+		//modify movemap by task
+		Size const nres( task->total_residue() );
+
+		for ( Size i(1); i <= nres; ++i ) {
+			if ( !task->pack_residue( i ) ){
+				if( t->first.first == core::id::PHI ){
+					movemap.set( t->first.second, false );
+				} else {
+					movemap.set( t->first.first, false );
+				}
+			}
+		}
+	}
+}
+
+void
+MinMover::apply(
+	pose::Pose & pose
+) {
 	// lazy default initialization
-	if ( ! movemap_ ) movemap_ = new MoveMap;
+	MoveMapOP active_movemap;
+	if ( ! movemap() ) movemap() = new MoveMap;
+	else active_movemap = movemap()->clone();
+
+	apply_dof_tasks_to_movemap(pose, *active_movemap);
+
+
 	if ( ! scorefxn_ ) scorefxn_ = getScoreFunction(); // get a default (INITIALIZED!) ScoreFunction
 
 	PROF_START( basic::MINMOVER_APPLY );
 	if (!cartesian( )) {
 		AtomTreeMinimizer minimizer;
-		(*scorefxn_)(pose_);
-		minimizer.run( pose_, *movemap_, *scorefxn_, *min_options_ );
+		(*scorefxn_)(pose);
+		minimizer.run( pose, *active_movemap, *scorefxn_, *min_options_ );
 	} else {
 		CartesianMinimizer minimizer;
-		(*scorefxn_)(pose_);
-		minimizer.run( pose_, *movemap_, *scorefxn_, *min_options_ );
+		(*scorefxn_)(pose);
+		minimizer.run( pose, *active_movemap, *scorefxn_, *min_options_ );
 	}
 	PROF_STOP( basic::MINMOVER_APPLY );
 
   // emit statistics
-  scorefxn_->show(TR.Debug, pose_);
+  scorefxn_->show(TR.Debug, pose);
   TR.Debug << std::endl;
 }
 
@@ -209,8 +262,8 @@ protocols::moves::MoverOP MinMover::fresh_instance() const { return new MinMover
 
 void MinMover::parse_def_opts( utility::lua::LuaObject const & def,
 	utility::lua::LuaObject const & score_fxns,
-	utility::lua::LuaObject const & tasks,
-	protocols::moves::MoverCacheSP cache ) {
+	utility::lua::LuaObject const & /*tasks*/,
+	protocols::moves::MoverCacheSP /*cache*/ ) {
 	if( def["scorefxn"] ) {
 		score_function( protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns ) );
 	} else {
@@ -240,6 +293,8 @@ void MinMover::parse_def_opts( utility::lua::LuaObject const & def,
 	if ( cartesian() && ! def["type"] ) {
 		min_type( "lbfgs_armijo_nonmonotone" );
 	}
+
+	// TODO: Add parsing of task operations?
 }
 
 void MinMover::parse_def( utility::lua::LuaObject const & def,
@@ -270,11 +325,13 @@ void MinMover::parse_my_tag(
 	if ( ! movemap_ ) movemap_ = new MoveMap;
 	parse_opts( tag, data, filters, movers, pose );
 	parse_chi_and_bb( tag );
+	parse_dof_tasks( tag, data );
 
 /// parse_movemap will reset the movemap to minimize all if nothing is stated on it. The following section ensures that the protocol specifies a MoveMap before going that way
 //	utility::vector1< TagPtr > const branch_tags( tag->getTags() );
 //	utility::vector1< TagPtr >::const_iterator tag_it;
 	protocols::rosetta_scripts::parse_movemap( tag, pose, movemap_, data, false );
+
 }
 
 void MinMover::parse_opts(
@@ -311,6 +368,7 @@ void MinMover::parse_opts(
 	if ( cartesian() && !tag->hasOption("type") ) {
 		min_type( "lbfgs_armijo_nonmonotone" );
 	}
+
 }
 
 void MinMover::parse_chi_and_bb( TagPtr const tag )
@@ -330,6 +388,73 @@ void MinMover::parse_chi_and_bb( TagPtr const tag )
 	}
 }
 
+///@detail helper function for parse_of_tasks
+void
+MinMover::parse_dof_task_type(
+	std::string const & tag_name,
+	core::id::DOF_Type dof_type,
+	core::id::TorsionType torsion_type,
+	TagPtr const tag,
+	protocols::moves::DataMap & data
+) {
+
+	if(!tag->hasOption(tag_name)){
+		return;
+	}
+
+  using namespace core::pack::task;
+  using namespace core::pack::task::operation;
+	using std::string;
+  typedef utility::vector1< std::string > StringVec;
+
+	TaskFactoryOP task_factory(new TaskFactory());
+	string const t_o_val( tag->getOption<string>(tag_name) );
+	StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
+
+	foreach( string t_o_key, t_o_keys ){
+		if ( data.has( "task_operations", t_o_key ) ) {
+			task_factory->push_back( data.get< TaskOperation * >( "task_operations", t_o_key ) );
+			TR << "\t " << tag_name << ": " << t_o_key << std::endl;
+		} else {
+			utility_exit_with_message("TaskOperation " + t_o_key + " not found in DataMap.");
+		}
+	}
+	dof_tasks_[
+		std::make_pair<core::id::DOF_Type, core::id::TorsionType>(
+			dof_type, torsion_type)] =
+		task_factory;
+}
+
+void
+MinMover::parse_dof_tasks(
+	TagPtr const tag,
+	protocols::moves::DataMap & data
+) {
+
+	if(
+		tag->hasOption("bb_task_operations") ||
+		tag->hasOption("chi_task_operations") ||
+		tag->hasOption("bondangle_task_operations") ||
+		tag->hasOption("bondlength_task_operations")){
+		TR
+			<< "Adding the following task operations to mover " << tag->getName() << " "
+			<< "called " << tag->getOption<std::string>( "name", "no_name" ) << ":" << std::endl;
+	}
+
+	parse_dof_task_type( "bb_task_operations", core::id::PHI, core::id::BB, tag, data );
+	parse_dof_task_type( "chi_task_operations", core::id::PHI, core::id::CHI, tag, data );
+	parse_dof_task_type(
+		"bondangle_task_operations",
+		core::id::THETA,
+		core::id::BB, // (dummy parameter)
+		tag, data );
+
+	parse_dof_task_type(
+		"bondlength_task_operations",
+		core::id::D,
+		core::id::BB, // (dummy parameter)
+		tag, data );
+}
 
 std::ostream &operator<< (std::ostream &os, MinMover const &mover)
 {
