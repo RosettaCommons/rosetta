@@ -251,7 +251,7 @@ JD2ResourceManager::read_resource_options_table_tag(
 			}
 			tags[tag] = newtag;
 		} else {
-			t->second->setOption("tag", tag);
+			t->second->setOption(key, value);
 		}
 	}
 
