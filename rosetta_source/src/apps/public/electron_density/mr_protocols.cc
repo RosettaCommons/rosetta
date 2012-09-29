@@ -21,8 +21,6 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-//#include <protocols/loops/LoopMover.fwd.hh>
-//#include <protocols/loops/LoopMover.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCD.hh>
 #include <protocols/comparative_modeling/LoopRelaxMover.hh>
 
@@ -64,6 +62,8 @@
 
 #include <core/conformation/Residue.hh>
 
+#include <utility/string_util.hh>
+
 //options
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
@@ -79,7 +79,6 @@
 //
 #include <iostream>
 #include <string>
-// AUTO-REMOVED #include <fstream>
 #include <sstream>
 
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
@@ -101,11 +100,31 @@
 OPT_1GRP_KEY(Integer, MR, max_gaplength_to_model)
 OPT_1GRP_KEY(Integer, MR, nrebuildcycles)
 OPT_1GRP_KEY(Real, MR, cen_dens_wt)
+OPT_1GRP_KEY(StringVector, MR, disulf)
 OPT_1GRP_KEY(Boolean, MR, debug)
 OPT_1GRP_KEY(Boolean, MR, smart_foldtree)
 OPT_1GRP_KEY(String, MR, mode)
 
+
 static basic::Tracer TR("rosetta_MR");
+///////////////////////////////////////////////////////////////////////////////
+// helper func
+core::Size
+parse_res( core::pose::Pose const &pose, std::string resnum ) {
+	core::Size num;
+	char chain;
+	std::string::const_iterator input_end = resnum.end(), number_start = resnum.begin(), number_end = resnum.begin();
+	while( number_end != input_end && *number_end >= '0' && *number_end <= '9' )
+		++number_end;
+	std::string num_str(number_start,number_end);
+	num = std::atoi( num_str.c_str() );
+	if (number_end == input_end) {
+		chain = pose.pdb_info()->chain(1);
+	} else {
+		chain = *number_end;
+	}
+	return pose.pdb_info()->pdb2pose( chain, num );
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -118,6 +137,7 @@ private:
 	core::scoring::ScoreFunctionOP fa_scorefxn_;
 
 	utility::vector1< core::fragment::FragSetOP > frag_libs_;
+	utility::vector1<std::string> disulfs_;
 	core::Size nrebuildcycles;
 
 public:
@@ -135,6 +155,10 @@ public:
 		core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *fadens_scorefxn_ );
 		core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *densonly_scorefxn_ );
 		core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *cendens_scorefxn_ );
+
+		if (option[ OptionKeys::MR::disulf ].user()) {
+			disulfs_ = option[ OptionKeys::MR::disulf ]();
+		}
 
 		// use fastdens
 		if (option[ OptionKeys::edensity::mapfile ].user())
@@ -598,7 +622,20 @@ public:
 		}
 
 		// find disulfides conserved from template
-		pose.conformation().detect_disulfides();
+		if (disulfs_.size() > 0) {
+			utility::vector1< std::pair<Size,Size> > disulfides;
+			core::Size ndisulf = disulfs_.size();
+			for (int i=1; i<=ndisulf; ++i) {
+				utility::vector1<std::string> pair_i = utility::string_split( disulfs_[i], ':');
+				runtime_assert( pair_i.size() == 2 );
+				core::Size lres=parse_res( pose, pair_i[1] );
+				core::Size ures=parse_res( pose, pair_i[2] );
+				disulfides.push_back(std::make_pair(lres,ures));
+			}
+			pose.conformation().fix_disulfides( disulfides );
+		} else {
+			pose.conformation().detect_disulfides();
+		}
 
 		// pack all missing SCs
 		pack_missing_sidechains( pose );
@@ -737,6 +774,7 @@ main( int argc, char * argv [] ) {
 	NEW_OPT(MR::max_gaplength_to_model, "max gaplength to rebuild", true);
     NEW_OPT(MR::mode, "mode", "cm");
     NEW_OPT(MR::cen_dens_wt, "centroid density weight", 4.0);
+    NEW_OPT(MR::disulf, "disulf patterning", utility::vector1<std::string>());
     NEW_OPT(MR::smart_foldtree, "mode", false);
 	NEW_OPT(MR::debug, "output debug pdbs?", false);
 	devel::init( argc, argv );
