@@ -17,7 +17,7 @@ sources = {
 		"FlexPepDockingPoseMetrics",
 		"FlexPepDockingProtocol",
 	],
-	"protocols/comparative_modeling/hybridize" : [
+	"protocols/hybridization" : [
 		"CartesianHybridize",
 		"CartesianSampler",
 		"ChunkTrialMover",
@@ -29,6 +29,7 @@ sources = {
 		"InsertChunkMover",
 		"TemplateHistory",
 		"WeightedFragmentTrialMover",
+		#"coord_util",
 		"util",
 	],
 }
