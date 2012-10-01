@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/qsar/scoring_grid/ResidueGridScoresFeatures.cc
+/// @file   protocols/features/ResidueGridScoresFeatures.cc
 /// @brief detailed per atom scores of Scoring Grids
 /// @author Sam DeLuca
 
-#include <protocols/qsar/scoring_grid/ResidueGridScoresFeatures.hh>
-#include <protocols/qsar/scoring_grid/ResidueGridScoresFeaturesCreator.hh>
+#include <protocols/features/ResidueGridScoresFeatures.hh>
+#include <protocols/features/ResidueGridScoresFeaturesCreator.hh>
 #include <protocols/qsar/scoring_grid/GridManager.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
@@ -30,8 +30,7 @@
 #include <core/pose/util.hh>
 
 namespace protocols {
-namespace qsar{
-namespace scoring_grid {
+namespace features{
 
 ResidueGridScoresFeaturesCreator::ResidueGridScoresFeaturesCreator()
 {
@@ -190,7 +189,5 @@ void ResidueGridScoresFeatures::parse_my_tag(
 
 }
 
-
-}
 }
 }

@@ -82,30 +82,6 @@ sources = {
 		"Interface",
 		"interface_distance_functions",
 	],
-	"protocols/qsar": [
-		"qsarMap",
-		"qsarMover",
-		"qsarOptFunc",
-		"RenderGridsToKinemage",
-	],
-	"protocols/qsar/scoring_grid": [
-		"GridInitMover",
-		"AtrGrid",
-		"SingleGrid",
-		"GridCreator",
-		"GridFactory",
-		"GridManager",
-        "ClassicGrid",
-		"ChargeGrid",
-		"HbaGrid",
-		"HbdGrid",
-		"RepGrid",
-		"ScoringGridLoader",
-		"VdwGrid",
-		"ResidueGridScoresFeatures",
-		"SolvationGrid",
-		"SolvationMetaGrid"
-	],
 }
 include_path = [
 ]

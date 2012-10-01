@@ -11,14 +11,13 @@
 /// @brief detailed per atom scores of Scoring Grids
 /// @author Sam DeLuca
 
-#ifndef INCLUDED_protocols_qsar_scoring_grid_features_ResidueGridScoresFeaturesCreator_hh
-#define INCLUDED_protocols_qsar_scoring_grid_features_ResidueGridScoresFeaturesCreator_hh
+#ifndef INCLUDED_protocols_features_ResidueGridScoresFeaturesCreator_hh
+#define INCLUDED_protocols_features_ResidueGridScoresFeaturesCreator_hh
 
 #include <protocols/features/FeaturesReporterCreator.hh>
 
 namespace protocols {
-namespace qsar{
-namespace scoring_grid {
+namespace features{
 
 /// @brief creator for the ResidueGridScoresFeatures class
 class ResidueGridScoresFeaturesCreator : public protocols::features::FeaturesReporterCreator
@@ -32,7 +31,6 @@ public:
 };
 
 
-}
 }
 }
 

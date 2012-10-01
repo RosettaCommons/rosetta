@@ -11,20 +11,18 @@
 /// @brief detailed per atom scores of Scoring Grids
 /// @author Sam DeLuca
 
-#ifndef INCLUDED_protocols_qsar_scoring_grid_ResidueGridScoresFeatures_fwd_hh
-#define INCLUDED_protocols_qsar_scoring_grid_ResidueGridScoresFeatures_fwd_hh
+#ifndef INCLUDED_protocols_features_ResidueGridScoresFeatures_fwd_hh
+#define INCLUDED_protocols_features_ResidueGridScoresFeatures_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
-namespace qsar{
-namespace scoring_grid {
+namespace features{
 
 class ResidueGridScoresFeatures;
 typedef utility::pointer::owning_ptr< ResidueGridScoresFeatures > ResidueGridScoresFeaturesOP;
 typedef utility::pointer::owning_ptr< ResidueGridScoresFeatures const > ResidueGridScoresFeaturesCOP;
 
-}
 }
 }
 

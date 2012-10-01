@@ -11,11 +11,11 @@
 /// @brief detailed per atom scores of Scoring Grids
 /// @author Sam DeLuca
 
-#ifndef INCLUDED_protocols_qsar_scoring_grid_ResidueGridScoresFeatures_hh
-#define INCLUDED_protocols_qsar_scoring_grid_ResidueGridScoresFeatures_hh
+#ifndef INCLUDED_protocols_features_ResidueGridScoresFeatures_hh
+#define INCLUDED_protocols_features_ResidueGridScoresFeatures_hh
 
 #include <protocols/features/FeaturesReporter.hh>
-#include <protocols/qsar/scoring_grid/ResidueGridScoresFeatures.fwd.hh>
+#include <protocols/features/ResidueGridScoresFeatures.fwd.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -26,8 +26,7 @@
 
 
 namespace protocols {
-namespace qsar{
-namespace scoring_grid {
+namespace features{
 
 class ResidueGridScoresFeatures : public protocols::features::FeaturesReporter {
 public:
@@ -73,7 +72,6 @@ private:
 
 };
 
-}
 }
 }
 

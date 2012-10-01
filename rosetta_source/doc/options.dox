@@ -6308,6 +6308,26 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>list of pdbs to be processed</dd><br>
 </dl>
  </li>
+<li><h2>rbe</h2>
+<dl>
+<dt><b>-rbe</b> \<Boolean\><dt>
+<dd>rbe option group</dd><br>
+</dl>
+<dl>
+<dt><b>-server_url</b> \<String\><dt>
+<dd>serverurl for rosetta backend</dd><br>
+</dl>
+<dl>
+<dt><b>-server_port</b> \<String\><dt>
+<dd>port for rosetta backend</dd><br>
+<dd>Default: "80"</dd><br>
+</dl>
+<dl>
+<dt><b>-poll_frequency</b> \<Real\><dt>
+<dd>No description</dd><br>
+<dd>Default: 1.0</dd><br>
+</dl>
+ </li>
 <li><h2>blivens</h2>
 <dl>
 <dt><b>-blivens</b> \<Boolean\><dt>
