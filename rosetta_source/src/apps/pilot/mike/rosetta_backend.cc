@@ -28,6 +28,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/rms_util.hh>
+#include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
@@ -39,6 +40,7 @@
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/match/Hit.fwd.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/loophash/LoopHashRelaxProtocol.hh>
 #include <utility/exit.hh>
 
 #include <core/io/silent/SilentStruct.fwd.hh>
@@ -52,6 +54,8 @@
 #include <protocols/evaluation/EvaluatorFactory.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
 
+#include <protocols/loophash/LoopHashLibrary.hh>
+#include <protocols/loophash/LoopHashRelaxProtocol.hh>
 
 // C++ headers
 //#include <cstdlib>
@@ -63,6 +67,8 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/batch_relax.OptionKeys.gen.hh>
+#include <basic/options/keys/rbe.OptionKeys.gen.hh>
+#include <basic/options/keys/lh.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector1.hh>
@@ -241,6 +247,14 @@ class CurlPost {
   std::string writebuffer;  
 };
 
+  
+  
+  
+// Read to go protocols - these are slow to init:
+protocols::loophash::LoopHashLibraryOP loop_hash_library;
+
+
+
 
 void pose_energies_to_json( core::pose::Pose const & pose, Json::Value &root ) {
   using namespace core::pose::datacache;
@@ -271,17 +285,22 @@ void pose_energies_to_json( core::pose::Pose const & pose, Json::Value &root ) {
 
 class ServerInfo {
  public:
-    ServerInfo(): 
-      url_gettask_("localhost:8082/task/get"),
-      url_putresult_("localhost:8082/structure/put")
-    {}
-   const std::string &url_gettask() const { return url_gettask_; };
-   const std::string &url_putresult() const { return url_putresult_; };
+    ServerInfo( std::string server_url, std::string server_port, core::Real poll_frequency ): 
+      server_url_(server_url), 
+      server_port_(server_port),
+      poll_frequency_(poll_frequency)
+    {
+    
+    }
+ 
+   const std::string &url_gettask()   const { return full_url() + "/task/get";      };
+   const std::string &url_putresult() const { return full_url() + "/structure/put"; };
+   const std::string full_url() const { return server_url_ + ":" + server_port_; }
  private:
-   std::string url_gettask_;
-   std::string url_putresult_;
-
-} default_server_info;
+   std::string server_url_; 
+   std::string server_port_;
+   core::Real poll_frequency_;
+};
 
 
 class RosettaJob {
@@ -334,8 +353,11 @@ class RosettaJob {
       Json::Reader inputdata_reader;
       inputdata_reader.parse( inputdata_string , inputdata_values);
       
-      std::string rosetta_script_ = inputdata_values.get("rosetta_script","").asString();
+      rosetta_script_ = inputdata_values.get("rosetta_script","").asString();
       std::cout << "Rosetta script string: " << rosetta_script_ << std::endl;
+      
+      command_ = inputdata_values.get("command","").asString();
+      std::cout << "Rosetta command: " << command_ << std::endl;
       
       Json::Value pdbdata = inputdata_values.get("pdbdata","");
       std::string pdbdata_string = pdbdata.asString();
@@ -356,17 +378,22 @@ class RosettaJob {
     bool return_results_to_server( const ServerInfo & server_info ){ 
       
 
+
       
       // do some basic measurements
       Json::Value energies;
 	    core::scoring::ScoreFunctionOP fascorefxn = core::scoring::getScoreFunction();
       energies[ "score" ] = (*fascorefxn)(outputpose_);
-      energies[ "irms" ] = core::scoring::CA_rmsd( inputpose_, outputpose_ );
+      core::scoring::calpha_superimpose_pose( outputpose_, inputpose_ );
+      energies[ "irms" ] = core::scoring::rmsd_with_super(inputpose_, outputpose_  , core::scoring::is_protein_backbone_including_O ); 
+
       pose_energies_to_json( outputpose_, energies );
 
       // Now send back results to server.
       std::stringstream pdbdatastream;
       outputpose_.dump_pdb( pdbdatastream );
+      
+      outputpose_.dump_pdb( "output.pdb" );
 
       // assemble the json structure needed.
       Json::Value root;
@@ -398,14 +425,23 @@ class RosettaJob {
     }
 
     void run(){
-        protocols::moves::MoverOP protocol = protocols::relax::generate_relax_from_cmd();
-       
-        // skip this for now -
-        protocol->apply( outputpose_ );
-//        for( int ir = 1; ir <= outputpose_.total_residue(); ir ++ ){
-//          outputpose_.set_phi( ir, 65 );
-//          outputpose_.set_psi( ir, 46 );
-//        }
+        std::cout << "Executing: " << command_ << std::endl;
+        TR << "Executing: " << command_ << std::endl;
+      
+        if( command_ == "relax" ){
+          protocols::moves::MoverOP protocol = protocols::relax::generate_relax_from_cmd();
+          protocol->apply( outputpose_ );
+        }
+        if( command_ == "loophash" ){
+          TR << "LOOPHASH!!" << std::endl;
+          protocols::loophash::LoopHashRelaxProtocolOP lh_protocol = new protocols::loophash::LoopHashRelaxProtocol( loop_hash_library );
+          lh_protocol->manual_call( outputpose_ );
+        }
+  
+
+
+
+
 
     }
 
@@ -417,12 +453,15 @@ class RosettaJob {
   std::string hash_; 
   std::string key_; 
   std::string rosetta_script_;
+  std::string command_;
   bool initialized_;
+
+
 };
 
 class RosettaBackend {
  public:
-    RosettaBackend() 
+    RosettaBackend( ServerInfo &serverinfo) : serverinfo_(serverinfo) 
     {}
 
  private:
@@ -434,8 +473,12 @@ class RosettaBackend {
         RosettaJob newjob;
         core::Size wait_count = 0;
         
-        while( !newjob.request_job_from_server( default_server_info ) ){
+        while( !newjob.request_job_from_server( serverinfo_ ) ){
           core::Real waittime =  std::min( (double)10.0f, 0.5f* pow( (float)1.3, (float) wait_count )); // in seconds  
+          
+          // HACK!
+          waittime = 1.5;
+          
           std::cout << "No work. Waiting " << waittime << " seconds before retrying." << std::endl;
           sleep( waittime );
           wait_count ++;
@@ -445,14 +488,14 @@ class RosettaBackend {
         newjob.run();
 
         // now return the results to the server
-        newjob.return_results_to_server( default_server_info );
+        newjob.return_results_to_server( serverinfo_ );
       } while (true);
 
     };
 
 
  private:
-
+  ServerInfo serverinfo_;
 };
 
 int
@@ -460,6 +503,7 @@ main( int argc, char * argv [] )
 {
  	using namespace core;
  	using namespace protocols;
+ 	using namespace protocols::loophash;
  	using namespace protocols::jd2;
  	using namespace basic::options;
  	using namespace basic::options::OptionKeys;
@@ -473,8 +517,17 @@ main( int argc, char * argv [] )
   evaluation::PoseEvaluatorsOP evaluators_( new protocols::evaluation::PoseEvaluators() );
   evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluators_);
 
-  RosettaBackend backend;
-        
+  // initialize all the protocols 
+  // these are slow so only do them once at start up not when the job is requested for lower latency.
+	utility::vector1 < core::Size > loop_sizes = option[lh::loopsizes]();
+	loop_hash_library = new LoopHashLibrary( loop_sizes );
+  loop_hash_library->load_db();
+
+
+  // set up the application server information package
+  ServerInfo server( option[rbe::server_url](), option[rbe::server_port](), option[rbe::poll_frequency ]() ); 
+
+  RosettaBackend backend( server );
 
 
   backend.run();

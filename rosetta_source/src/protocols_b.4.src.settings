@@ -63,6 +63,7 @@ sources = {
 		"LoopHashMap",
 		"LoopHashMoverWrapper",
 		"LoopHashSampler",
+		"LoopHashRelaxProtocol",
 		"Mover_LoopHashRefine",
 		"MPI_LoopHashRefine",
 		"MPI_LoopHashRefine_Emperor",

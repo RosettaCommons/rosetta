@@ -87,6 +87,7 @@
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>
 #include <basic/options/keys/casp.OptionKeys.gen.hh>
 #include <basic/options/keys/ms.OptionKeys.gen.hh>
+#include <basic/options/keys/rbe.OptionKeys.gen.hh>
 #include <basic/options/keys/dwkulp.OptionKeys.gen.hh>
 #include <basic/options/keys/canonical_sampling.OptionKeys.gen.hh>
 #include <basic/options/keys/parser.OptionKeys.gen.hh>

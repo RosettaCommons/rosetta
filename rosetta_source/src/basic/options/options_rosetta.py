@@ -2839,6 +2839,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		),
 	),
 
+	Option_Group( 'rbe',
+		Option( 'server_url', 'String', desc='serverurl for rosetta backend' ),
+		Option( 'server_port', 'String', default = '80', desc='port for rosetta backend' ),
+		Option( 'poll_frequency', 'Real', default='1.0' ),
+  ),
 
 	## Options for Spencer Bliven's apps
 	Option_Group( 'blivens',
