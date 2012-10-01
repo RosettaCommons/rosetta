@@ -1084,38 +1084,38 @@ ResidueLevelTask_::append_rotamerset_operation(
 void
 ResidueLevelTask_::update_union( ResidueLevelTask const & t )
 {
-	T << "ResidueLevelTask_::update_union" << std::endl;
+	//T << "ResidueLevelTask_::update_union" << std::endl;
 	ResidueLevelTask_ const & o(dynamic_cast<ResidueLevelTask_ const &>(t));
 
 	for(utility::vector1<std::string>::const_iterator i = o.behaviors_.begin(); i != o.behaviors_.end(); ++i){
 		if( std::find(behaviors_.begin(),behaviors_.end(),*i) == behaviors_.end() ) {
-			std::cout << "behaviors_ add " << *i;
+			//std::cout << "behaviors_ add " << *i;
 			behaviors_.push_back(*i);
 		}
 	}
 	for(rotamer_set::RotamerOperations::const_iterator i = o.rotamer_operations_.begin(); i != o.rotamer_operations_.end(); ++i){
 		if( std::find(rotamer_operations_.begin(),rotamer_operations_.end(),*i) == rotamer_operations_.end() ) {
-			std::cout << "rotamer_operations_ add " << *i;
+			//std::cout << "rotamer_operations_ add " << *i;
 			rotamer_operations_.push_back(*i);
 		}
 	}
 	for(rotamer_set::RotSetOperationList::const_iterator i = o.rotsetops_.begin(); i != o.rotsetops_.end(); ++i){
 		if( std::find(rotsetops_.begin(),rotsetops_.end(),*i) == rotsetops_.end() ) {
-			std::cout << "rotsetops_ add " << *i;
+			//std::cout << "rotsetops_ add " << *i;
 			rotsetops_.push_back(*i);
 		}
 	}
 	for(std::vector<std::string>::const_iterator i = o.mode_tokens_.begin(); i != o.mode_tokens_.end(); ++i){
 		if( std::find(mode_tokens_.begin(),mode_tokens_.end(),*i) == mode_tokens_.end() ) {
-			std::cout << "mode_tokens_ add " << *i;
+			//std::cout << "mode_tokens_ add " << *i;
 			mode_tokens_.push_back(*i);
 		}
 	}
 	for(ResidueTypeCOPList::const_iterator i = o.allowed_residue_types_.begin(); i != o.allowed_residue_types_.end(); ++i){
 		if( std::find(allowed_residue_types_.begin(),allowed_residue_types_.end(),*i) == allowed_residue_types_.end() ) {
-			std::cout << "allowed_residue_types_ add " << (*i)->name();
+			//std::cout << "allowed_residue_types_ add " << (*i)->name();
 			allowed_residue_types_.push_back(*i);
-			std::cout << " set disabled false ";
+			//std::cout << " set disabled false ";
 
 		}
 	}
@@ -1162,7 +1162,7 @@ ResidueLevelTask_::update_union( ResidueLevelTask const & t )
 void
 ResidueLevelTask_::update_intersection( ResidueLevelTask const & t )
 {
-	T << "ResidueLevelTask_::update_union" << std::endl;
+	//T << "ResidueLevelTask_::update_union" << std::endl;
 	ResidueLevelTask_ const & o(dynamic_cast<ResidueLevelTask_ const &>(t));
 
 	utility::vector1<std::string> new_behaviors;
@@ -1178,7 +1178,7 @@ ResidueLevelTask_::update_intersection( ResidueLevelTask const & t )
 	for(rotamer_set::RotamerOperations::const_iterator i = o.rotamer_operations_.begin(); i != o.rotamer_operations_.end(); ++i){
 		if( std::find(  rotamer_operations_.begin(),  rotamer_operations_.end(),*i) !=   rotamer_operations_.end() &&
 			std::find(o.rotamer_operations_.begin(),o.rotamer_operations_.end(),*i) != o.rotamer_operations_.end() ){
-			rotamer_operations_.push_back(*i);
+			new_rotamer_operations.push_back(*i);
 		}
 	}
 	rotamer_operations_ = new_rotamer_operations;
@@ -1189,25 +1189,25 @@ ResidueLevelTask_::update_intersection( ResidueLevelTask const & t )
 	for(rotamer_set::RotSetOperationList::const_iterator i = o.rotsetops_.begin(); i != o.rotsetops_.end(); ++i){
 		if( std::find(  rotsetops_.begin(),  rotsetops_.end(),*i) !=   rotsetops_.end() &&
 			std::find(o.rotsetops_.begin(),o.rotsetops_.end(),*i) != o.rotsetops_.end() ){
-			rotsetops_.push_back(*i);
+			new_rotsetops.push_back(*i);
 		}
 	}
 	rotsetops_ = new_rotsetops;
 
-	std::vector<std::string> new_mode_tokens_;
+	std::vector<std::string> new_mode_tokens;
 	for(std::vector<std::string>::const_iterator i = o.mode_tokens_.begin(); i != o.mode_tokens_.end(); ++i){
 		if( std::find(  mode_tokens_.begin(),  mode_tokens_.end(),*i) !=   mode_tokens_.end() &&
 			std::find(o.mode_tokens_.begin(),o.mode_tokens_.end(),*i) != o.mode_tokens_.end() ){
-			mode_tokens_.push_back(*i);
+			new_mode_tokens.push_back(*i);
 		}
 	}
-	mode_tokens_ = new_mode_tokens_;
+	mode_tokens_ = new_mode_tokens;
 
 	ResidueTypeCOPList new_allowed_residue_types;
 	for(ResidueTypeCOPList::const_iterator i = o.allowed_residue_types_.begin(); i != o.allowed_residue_types_.end(); ++i){
 		if( std::find(  allowed_residue_types_.begin(),  allowed_residue_types_.end(),*i) !=   allowed_residue_types_.end() &&
 			std::find(o.allowed_residue_types_.begin(),o.allowed_residue_types_.end(),*i) != o.allowed_residue_types_.end() ){
-			allowed_residue_types_.push_back(*i);
+			new_allowed_residue_types.push_back(*i);
 		}
 	}
 	allowed_residue_types_ = new_allowed_residue_types;

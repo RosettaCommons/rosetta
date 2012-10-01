@@ -23,8 +23,11 @@
 
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/sequence/SequenceProfile.hh>
 
 #include <core/io/ddg/PositionDdGInfo.hh>
@@ -58,7 +61,8 @@ SeqprofConsensusOperation::SeqprofConsensusOperation():
 	seqprof_filename_( basic::options::option[ basic::options::OptionKeys::in::file::pssm ][1] ),
 	seqprof_(NULL),
 	min_aa_probability_(0.0),
-	prob_larger_current_(true)
+	prob_larger_current_(true),
+	ignore_pose_profile_length_mismatch_(false)
 {
 	if( utility::file::file_exists( seqprof_filename_ ) ){
 		core::sequence::SequenceProfileOP seqprof = new core::sequence::SequenceProfile( seqprof_filename_ );
@@ -80,12 +84,28 @@ SeqprofConsensusOperation::clone() const {
 /// @brief all AA that have a higher probability in the seqprofile
 /// than the native residue are allowed. probability also
 /// needs to be higher than min_aa_probability_
+/// @details NOTE ON SYMMETRIC POSE BEHAVIOR:
+/// pssm files are usually for one chain only, therefore
+/// this task operation will only set the residue behavior for
+/// the first chain/asymetric unit.
+/// it could be possible to handle the symmetry setup here, i.e.
+/// set up the residue level task for every symmetric copy, but
+/// it's prolly better to let the symmetry machinery deal with that
+/// mode of packer task symmetrization should be intersection
 void
 SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 {
 	if( !seqprof_) utility_exit_with_message("No sequence profile set. option -in:file:pssm not specified? no filename in tag specified?");
 
-	for( core::Size i = 1; i <= pose.total_residue(); ++i){
+	core::Size asymmetric_unit_res( pose.total_residue() );
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+    core::conformation::symmetry::SymmetricConformation const & SymmConf (
+      dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
+    asymmetric_unit_res = SymmConf.Symmetry_Info()->num_independent_residues();
+		task.request_symmetrize_by_intersection();
+  }
+	core::Size last_res (asymmetric_unit_res <= seqprof_->profile().size() ? pose.total_residue() : seqprof_->profile().size() );
+	for( core::Size i = 1; i <= last_res; ++i){
 
 		if( !pose.residue_type( i ).is_protein() ) continue;
 		//std::cout << "SCO at pos " << i << " allows the following residues: ";
@@ -108,7 +128,19 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 
 		task.nonconst_residue_task(i).restrict_absent_canonical_aas( keep_aas );
 
-	} //loop over all residues
+	} //loop over all residues for which profile information exists
+
+	bool prot_res_without_profile_information_exist(false);
+	for( core::Size i = last_res + 1; i <= asymmetric_unit_res; ++i){
+		task.nonconst_residue_task(i).restrict_to_repacking();
+		if( pose.residue_type( i ).is_protein() ) prot_res_without_profile_information_exist = true;
+	}
+
+	if( prot_res_without_profile_information_exist ){
+		if( ignore_pose_profile_length_mismatch_ ) tr << "WARNING WARNING: the passed in pose is longer than the sequence profile specified. Double check whether the used sequence profile is correct. Setting every excess pose residue to repacking.";
+
+		else utility_exit_with_message("The passed in pose is longer than the sequence profile specified. Double check whether the used sequence profile is correct.");
+	}
 } // apply
 
 void
@@ -122,6 +154,8 @@ SeqprofConsensusOperation::parse_tag( TagPtr tag )
 	}
 	if( tag->hasOption("min_aa_probability") ) min_aa_probability_ = tag->getOption< Real >("min_aa_probability" );
 	if( tag->hasOption("probability_larger_than_current") ) prob_larger_current_ = tag->getOption< bool >("probability_larger_than_current");
+
+	if( tag->hasOption("ignore_pose_profile_length_mismatch") ) ignore_pose_profile_length_mismatch_ = tag->getOption< bool >("ignore_pose_profile_length_mismatch");
 }
 
 core::sequence::SequenceProfileCOP

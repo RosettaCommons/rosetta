@@ -20,10 +20,12 @@
 
 #include <core/chemical/ResidueType.hh>
 #include <core/id/AtomID_Map.hh>
+#include <core/pack/make_symmetric_task.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/PackerTask_.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/sequence/SequenceProfile.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -32,6 +34,7 @@
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/toolbox/task_operations/SeqprofConsensusOperation.hh>
 
@@ -79,7 +82,7 @@ ConsensusDesignMover::ConsensusDesignMover()
 : ptask_(NULL), task_factory_(NULL),
 	sfxn_(NULL), invert_task_(false),
 	use_seqprof_constraints_(false), sasa_cutoff_(0.0),
-	seqprof_(NULL)
+	seqprof_(NULL), ignore_pose_profile_length_mismatch_(false)
 {}
 
 ConsensusDesignMover::ConsensusDesignMover(
@@ -89,7 +92,7 @@ ConsensusDesignMover::ConsensusDesignMover(
 	: ptask_(ptask), task_factory_(NULL),
 	sfxn_(sfxn), invert_task_(false),
 	use_seqprof_constraints_(false), sasa_cutoff_(0.0),
-	seqprof_(NULL)
+	seqprof_(NULL), ignore_pose_profile_length_mismatch_(false)
 {}
 
 ConsensusDesignMover::~ConsensusDesignMover(){}
@@ -123,7 +126,6 @@ ConsensusDesignMover::apply( core::pose::Pose & pose )
 	}
 
 	core::pack::task::PackerTaskCOP task = create_consensus_design_task( pose );
-	protocols::simple_moves::PackRotamersMover packer( sfxn_, task );
 
 	core::scoring::constraints::ConstraintCOPs seqprof_constraints;
 
@@ -131,7 +133,14 @@ ConsensusDesignMover::apply( core::pose::Pose & pose )
 		seqprof_constraints = pose.add_constraints( create_sequence_profile_constraints( pose, *task ) );
 	}
 
-	packer.apply( pose );
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		protocols::simple_moves::symmetry::SymPackRotamersMover packer( sfxn_, task );
+		packer.apply( pose );
+	}
+	else{
+		protocols::simple_moves::PackRotamersMover packer( sfxn_, task );
+		packer.apply( pose );
+	}
 
 	if( use_seqprof_constraints_ ){
 		if( !pose.remove_constraints( seqprof_constraints ) ) utility_exit_with_message("Couldn't remove sequence profile constraints after ConsensusDesignMover packing step.");
@@ -149,6 +158,7 @@ ConsensusDesignMover::create_consensus_design_task(
 	core::pose::Pose const & pose
 )
 {
+
 	if( !ptask_ ){
 		if( task_factory_ ) ptask_ = task_factory_->create_task_and_apply_taskoperations( pose );
 		else{
@@ -160,8 +170,14 @@ ConsensusDesignMover::create_consensus_design_task(
 	core::pack::task::PackerTaskOP consensus_task = new core::pack::task::PackerTask_( pose );
 	consensus_task->initialize_from_command_line();
 	toolbox::task_operations::SeqprofConsensusOperation seqprof_to;
+	seqprof_to.set_ignore_pose_profile_length_mismatch( ignore_pose_profile_length_mismatch_);
 	seqprof_to.apply( pose, *consensus_task );
 	if( use_seqprof_constraints_ ) seqprof_ = seqprof_to.seqprof();
+
+	if( core::pose::symmetry::is_symmetric(pose) ){
+		consensus_task = core::pack::make_new_symmetric_PackerTask_by_requested_method( pose, consensus_task );
+		ptask_ = core::pack::make_new_symmetric_PackerTask_by_requested_method( pose, ptask_ );
+	}
 
 	utility::vector1< core::Real > residue_sasa;
 	bool use_sasa( sasa_cutoff_ > 0.0 );
@@ -220,7 +236,10 @@ ConsensusDesignMover::parse_my_tag( utility::tag::TagPtr const tag, protocols::m
 	if( tag->hasOption("invert_task") ) invert_task_ = tag->getOption< bool >("invert_task",1);
 	if( tag->hasOption("use_seqprof_constraints") ) use_seqprof_constraints_ = tag->getOption< bool >("use_seqprof_constraints",1);
 	if( tag->hasOption("sasa_cutoff") ) sasa_cutoff_ = tag->getOption< core::Real >("sasa_cutoff",1.0);
-	if( tag->hasOption("scorefxn") ) sfxn_ = new core::scoring::ScoreFunction( *data_map.get< core::scoring::ScoreFunction * >("scorefxns", tag->getOption< std::string >("scorefxn")) );
+	//if( tag->hasOption("scorefxn") ) sfxn_ = new core::scoring::ScoreFunction( *data_map.get< core::scoring::ScoreFunction * >("scorefxns", tag->getOption< std::string >("scorefxn")) );
+	if( tag->hasOption("scorefxn") ) sfxn_ = protocols::rosetta_scripts::parse_score_function( tag, data_map );
+
+	if( tag->hasOption("ignore_pose_profile_length_mismatch") ) ignore_pose_profile_length_mismatch_ = tag->getOption< bool >("ignore_pose_profile_length_mismatch");
 }
 
 }  // namespace simple_moves

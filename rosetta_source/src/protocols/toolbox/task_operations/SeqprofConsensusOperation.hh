@@ -76,6 +76,10 @@ public:
 	core::sequence::SequenceProfileCOP
 	seqprof() const;
 
+	void
+	set_ignore_pose_profile_length_mismatch( bool const setting ) {
+		ignore_pose_profile_length_mismatch_ = setting; }
+
 	/// @brief Set the sequence profile. If reweight is true, convert the profile into per-residue probabilities first
 	void
 	set_seqprof( core::sequence::SequenceProfileCOP seqprof, bool reweight = false );
@@ -89,6 +93,12 @@ private:
 	core::Real min_aa_probability_;
 	/// @brief whether probability of a given aa to be included needs to be higher than the probability of the aa in the input pose
 	bool prob_larger_current_;
+
+	/// @default false. if true, every pose seqpos that is bigger
+	/// than the size of the sequence_profile will be set to repacking
+	/// allows using this taskop in situations where one wants to
+	/// do consensus design on one chain of a protein/protein interface
+	bool ignore_pose_profile_length_mismatch_;
 
 };
 

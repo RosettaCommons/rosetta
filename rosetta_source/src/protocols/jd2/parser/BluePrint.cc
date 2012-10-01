@@ -107,7 +107,7 @@ BluePrint::total_residue_wolig() const
 	return total_residue_wolig_;
 }
 
-	
+
 /// @brief sequence defined in blueprint file
 BluePrint::String
 BluePrint::sequence() const
@@ -289,6 +289,14 @@ BluePrint::read_blueprint( std::string const & filename )
 
 			// read the line where residue number, amino acid type, secondary structure and build type are written
 			// don't need to specify build type in blueprint
+			//flo aug 2012:
+			//it would be nice to be able to put comments behind bluerint lines...
+			for( core::Size i(1); i <= tokens.size(); ++i ){
+				if( tokens[i][0] == '#' ){
+					tokens.resize( i - 1 );
+					break;
+				}
+			}
 			runtime_assert( tokens.size() == 3 || tokens.size() == 4 || tokens.size() == 5 );
 
 			count ++;

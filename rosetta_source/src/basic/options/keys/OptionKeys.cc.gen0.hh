@@ -511,6 +511,7 @@ namespace frags { RealOptionKey const seqsim_E( "frags:seqsim_E" );  }
 namespace frags { RealOptionKey const seqsim_L( "frags:seqsim_L" );  }
 namespace frags { RealOptionKey const rama_norm( "frags:rama_norm" );  }
 namespace frags { StringOptionKey const describe_fragments( "frags:describe_fragments" );  }
+namespace frags { RealOptionKey const picking_old_max_score( "frags:picking_old_max_score" );  }
 namespace frags { BooleanOptionKey const write_sequence_only( "frags:write_sequence_only" );  }
 namespace frags { BooleanOptionKey const output_silent( "frags:output_silent" );  }
 namespace frags { BooleanOptionKey const score_output_silent( "frags:score_output_silent" );  }
@@ -634,4 +635,3 @@ namespace fold_cst { BooleanOptionKey const no_minimize( "fold_cst:no_minimize" 
 namespace fold_cst { BooleanOptionKey const force_minimize( "fold_cst:force_minimize" );  }
 namespace fold_cst { RealVectorOptionKey const seq_sep_stages( "fold_cst:seq_sep_stages" );  }
 namespace fold_cst { IntegerOptionKey const reramp_cst_cycles( "fold_cst:reramp_cst_cycles" );  }
-namespace fold_cst { RealOptionKey const reramp_start_cstweight( "fold_cst:reramp_start_cstweight" );  }

@@ -2441,6 +2441,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: ""</dd><br>
 </dl>
 <dl>
+<dt><b>-picking_old_max_score</b> \<Real\><dt>
+<dd>maximal score allowed for fragments picked by the old vall (used by RosettaRemodel).</dd><br>
+<dd>Default: 1000000.0</dd><br>
+</dl>
+<dl>
 <dt><b>-write_sequence_only</b> \<Boolean\><dt>
 <dd>Fragment picker will output fragment sequences only. This option is for creating structure based sequence profiles using the FragmentCrmsdResDepth score.</dd><br>
 <dd>Default: false</dd><br>
@@ -7706,6 +7711,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-constraints_sheet</b> \<Real\><dt>
 <dd>weight constraints between Ca atoms in beta sheet</dd><br>
+</dl>
+<dl>
+<dt><b>-constraints_sheet_include_cacb_pseudotorsion</b> \<Boolean\><dt>
+<dd>puts an additional constraint on two residues paired in a beta-sheet to ensure their CA-CB vectors are pointing the same way.</dd><br>
+<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-constraints_NtoC</b> \<Real\><dt>

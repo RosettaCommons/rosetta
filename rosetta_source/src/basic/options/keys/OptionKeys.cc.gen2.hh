@@ -1,3 +1,4 @@
+namespace lh { IntegerOptionKey const library_expiry_time( "lh:library_expiry_time" );  }
 namespace lh { StringOptionKey const objective_function( "lh:objective_function" );  }
 namespace lh { IntegerOptionKey const expire_after_rounds( "lh:expire_after_rounds" );  }
 namespace lh { StringOptionKey const mpi_resume( "lh:mpi_resume" );  }
@@ -308,6 +309,7 @@ namespace flxbb { BooleanOptionKey const flxbb( "flxbb" );  }
 namespace flxbb { BooleanOptionKey const view( "flxbb:view" );  }
 namespace flxbb { IntegerOptionKey const ncycle( "flxbb:ncycle" );  }
 namespace flxbb { RealOptionKey const constraints_sheet( "flxbb:constraints_sheet" );  }
+namespace flxbb { BooleanOptionKey const constraints_sheet_include_cacb_pseudotorsion( "flxbb:constraints_sheet_include_cacb_pseudotorsion" );  }
 namespace flxbb { RealOptionKey const constraints_NtoC( "flxbb:constraints_NtoC" );  }
 namespace flxbb { IntegerOptionKey const filter_trial( "flxbb:filter_trial" );  }
 namespace flxbb { StringOptionKey const filter_type( "flxbb:filter_type" );  }
@@ -633,5 +635,3 @@ namespace RBSegmentRelax { FileOptionKey const input_pdb( "RBSegmentRelax:input_
 namespace RBSegmentRelax { FileOptionKey const rb_file( "RBSegmentRelax:rb_file" );  }
 namespace RBSegmentRelax { RealOptionKey const cst_wt( "RBSegmentRelax:cst_wt" );  }
 namespace RBSegmentRelax { RealOptionKey const cst_width( "RBSegmentRelax:cst_width" );  }
-namespace RBSegmentRelax { StringOptionKey const cst_pdb( "RBSegmentRelax:cst_pdb" );  }
-namespace RBSegmentRelax { IntegerOptionKey const nrbmoves( "RBSegmentRelax:nrbmoves" );  }

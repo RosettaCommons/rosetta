@@ -21,6 +21,9 @@
 #include <protocols/jd2/parser/BluePrint.hh>
 
 // Project headers
+#include <basic/options/option.hh>
+#include <basic/options/keys/flxbb.OptionKeys.gen.hh>
+
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/SS_Info.hh>
@@ -30,6 +33,7 @@
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
+#include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/ScalarWeightedFunc.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
@@ -82,8 +86,16 @@ constraints_sheet( Pose const & pose, BluePrintOP const & blueprint, Real const 
 	String tag( "constraints_in_beta_sheet" );
 	ScalarWeightedFuncOP cstfunc = new ScalarWeightedFunc( coef, new BoundFunc( lb, ub, sd, tag ) );
 
+	//flo sep '12 add more accurate constraints by also constraining the dihedral
+	core::scoring::constraints::FuncOP dihedral_func = new core::scoring::constraints::OffsetPeriodicBoundFunc(-0.9,0.9, sqrt(1.0/42.0), "dihed_cacb", 6.28, 0.0 );
+
 	// set constraints to csts
   Size nres( pose.total_residue() );
+	//flo sep '12 in case we have ligands in the pose, don't count them
+	for( core::Size i = nres; i != 0; i-- ){
+		if( pose.residue_type(i).is_ligand() ) nres--;
+		else break;
+	}
 	runtime_assert( nres == blueprint->total_residue() );
 
 	TR << "Blueprint file is used for determining constrained residue pairs.  " << std::endl;
@@ -102,6 +114,14 @@ constraints_sheet( Pose const & pose, BluePrintOP const & blueprint, Real const 
 			core::id::AtomID atom1( pose.residue_type( iaa ).atom_index( "CA" ), iaa );
 			core::id::AtomID atom2( pose.residue_type( jaa ).atom_index( "CA" ), jaa );
 			csts.push_back( new AtomPairConstraint( atom1, atom2, cstfunc ) );
+			//flo sep '12: constrain dihedral, might be more accurate
+			if( basic::options::option[ basic::options::OptionKeys::flxbb::constraints_sheet_include_cacb_pseudotorsion ].value() ){
+				if( (pose.residue_type( iaa ).name3() == "GLY") || (pose.residue_type( jaa ).name3() == "GLY" ) ) continue; // don't bother with gly
+				core::id::AtomID resi_cb( pose.residue_type( iaa ).atom_index( "CB" ), iaa );
+      	core::id::AtomID resj_cb( pose.residue_type( jaa ).atom_index( "CB" ), jaa );
+				csts.push_back( new core::scoring::constraints::DihedralConstraint( resi_cb, atom1, atom2, resj_cb, dihedral_func ) );
+			}
+			// flo sep '12 over
 		} // for( Size i=1 )
 
 	} // StrandPairingOP

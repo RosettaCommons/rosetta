@@ -448,7 +448,7 @@ core::pose::Pose & pose,
 utility::vector1< bool > allow_move_bb,
 core::Size jump_id ) const
 {
-	core::Size const lig_id = get_ligand_id(pose, jump_id);
+	core::Size const lig_id = jump_id !=0 ? get_ligand_id(pose, jump_id): 0;
   //restraining function for Calphas. should allow fairly liberal movement ~0.1A from the original position,
   //but severly limits movement beyond this
   core::scoring::constraints::FuncOP ss_ca_restr_func = new core::scoring::constraints::BoundFunc( 0, bb_min_allowed_dev_, 0.1, "CAdis");

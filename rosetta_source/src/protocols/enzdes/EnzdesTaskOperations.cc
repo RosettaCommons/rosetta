@@ -37,6 +37,7 @@
 #include <protocols/toolbox/rotamer_set_operations/RigidBodyMoveRotSetOps.hh>
 
 #include <core/conformation/Residue.hh>
+#include <core/conformation/symmetry/util.hh>
 #include <core/kinematics/FoldTree.hh>
 // AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
@@ -45,6 +46,7 @@
 #include <core/pack/task/IGEdgeReweightContainer.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/ObserverCache.hh>
 #include <basic/options/option.hh>
@@ -304,7 +306,7 @@ PackerTask & task) const
 		}
 
 		std::set< core::Size > interface_target_res = design_target_res_;
-		
+
 		// if picking neighbors of particular cstids only
 		if ( ( interface_target_res.size() == 0 ) && use_cstid_list_ ){
 			utility::vector1< core::Size > trg_res;
@@ -325,14 +327,20 @@ PackerTask & task) const
 
 		if( add_observer_cache_segs_to_interface_ ) add_observer_cache_segments_to_set( pose, interface_target_res );
 
-		if( interface_target_res.size() ==0 && !catres_only_ ) interface_target_res.insert( pose.fold_tree().downstream_jump_residue( pose.num_jump() ) );
-		
+		if( interface_target_res.size() ==0 && !catres_only_ ){
+			if( core::pose::symmetry::is_symmetric(pose) ){
+				core::kinematics::FoldTree asymm_ft( core::conformation::symmetry::get_asymm_unit_fold_tree( pose.conformation() ) );
+				interface_target_res.insert( asymm_ft.downstream_jump_residue( asymm_ft.num_jump() ) );
+			}
+			else interface_target_res.insert( pose.fold_tree().downstream_jump_residue( pose.num_jump() ) );
+		}
+
 		tr.Info << "Choosing the following residues as targets for detecting interface: ";
 		for( std::set< core::Size >::const_iterator targ_it( interface_target_res.begin()),targ_end(interface_target_res.end());targ_it != targ_end; ++targ_it ){
 				tr.Info << *targ_it << "+";
 		}
 		tr.Info <<  std::endl;
-		
+
 		// initialize detect_res vector, specifies whether the designability of a residue should be decided by find_design_interface
 		for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i){
 			if( ! resfilename_.empty() ){
@@ -414,6 +422,8 @@ PackerTask & task) const
 	}
 	tr.Info << std::endl;
 
+	//lastly, in case of symmetry the task should be symmetrized by union
+	if( core::pose::symmetry::is_symmetric(pose) ) task.request_symmetrize_by_union();
 } //apply
 
 void

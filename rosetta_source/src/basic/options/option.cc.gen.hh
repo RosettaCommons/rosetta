@@ -516,6 +516,7 @@ option.add( basic::options::OptionKeys::frags::seqsim_E, "Secondary structure ty
 option.add( basic::options::OptionKeys::frags::seqsim_L, "Secondary structure type prediction multiplier, for use in fragment picking" ).def(1.0);
 option.add( basic::options::OptionKeys::frags::rama_norm, "Used to multiply rama table values after normalization, default (0.0) means use raw counts (unnormalized)" ).def(0.0);
 option.add( basic::options::OptionKeys::frags::describe_fragments, "Writes scores for all fragments into a file" ).def("");
+option.add( basic::options::OptionKeys::frags::picking_old_max_score, "maximal score allowed for fragments picked by the old vall (used by RosettaRemodel)." ).def(1000000.0);
 option.add( basic::options::OptionKeys::frags::write_sequence_only, "Fragment picker will output fragment sequences only. This option is for creating structure based sequence profiles using the FragmentCrmsdResDepth score." ).def(false);
 option.add( basic::options::OptionKeys::frags::output_silent, "Fragment picker will output fragments into a silent file." ).def(false);
 option.add( basic::options::OptionKeys::frags::score_output_silent, "Fragment picker will output fragments into a silent file. Scores of relaxed fragments are added to the silent file." ).def(false);
@@ -639,10 +640,10 @@ option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization 
 option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::seq_sep_stages, "give vector with sequence_separation after stage1, stage3 and stage4" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::reramp_cst_cycles, "in stage2 do xxx cycles where atom_pair_constraint is ramped up" ).def(0);
-option.add( basic::options::OptionKeys::fold_cst::reramp_start_cstweight, "drop cst_weight to this value and ramp to 1.0 in stage2 -- needs reramp_cst_cycles > 0" ).def(0.01);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::reramp_iterations, "do X loops of annealing cycles" ).def(1);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::reramp_start_cstweight, "drop cst_weight to this value and ramp to 1.0 in stage2 -- needs reramp_cst_cycles > 0" ).def(0.01);
+option.add( basic::options::OptionKeys::fold_cst::reramp_iterations, "do X loops of annealing cycles" ).def(1);
 option.add( basic::options::OptionKeys::fold_cst::skip_on_noviolation_in_stage1, "if constraints report no violations --- skip cycles" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::stage1_ramp_cst_cycle_factor, "spend x*<standard cycles> on each step of sequence separation" ).def(0.25);
 option.add( basic::options::OptionKeys::fold_cst::stage2_constraint_threshold, "stop runs that violate this threshold at end of stage2" ).def(0);
@@ -1278,10 +1279,10 @@ option.add( basic::options::OptionKeys::lh::jobname, "Prefix (Ident string) !" )
 option.add( basic::options::OptionKeys::lh::max_lib_size, "No description" ).def(2);
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No description" ).def(25);
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
-option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
+option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
 option.add( basic::options::OptionKeys::lh::expire_after_rounds, "If set to > 0 this causes the Master to expire a structure after it has gone through this many cycles" ).def(0);
 option.add( basic::options::OptionKeys::lh::mpi_resume, "Prefix (Ident string) for resuming a previous job!" );
 option.add( basic::options::OptionKeys::lh::mpi_feedback, "No description" ).legal("no").legal("add_n_limit").legal("add_n_replace").legal("single_replace").legal("single_replace_rounds").def("no");
@@ -1591,6 +1592,7 @@ option.add( basic::options::OptionKeys::flxbb::flxbb, "flxbb option group" ).leg
 option.add( basic::options::OptionKeys::flxbb::view, "viewing pose during protocol" );
 option.add( basic::options::OptionKeys::flxbb::ncycle, "number of cycles of design and relax" );
 option.add( basic::options::OptionKeys::flxbb::constraints_sheet, "weight constraints between Ca atoms in beta sheet" );
+option.add( basic::options::OptionKeys::flxbb::constraints_sheet_include_cacb_pseudotorsion, "puts an additional constraint on two residues paired in a beta-sheet to ensure their CA-CB vectors are pointing the same way." ).def(false);
 option.add( basic::options::OptionKeys::flxbb::constraints_NtoC, "weight constraints between N- and C- terminal CA atoms" );
 option.add( basic::options::OptionKeys::flxbb::filter_trial, "number of filtering trial " );
 option.add( basic::options::OptionKeys::flxbb::filter_type, "filter type name, currently only packstat is available" );
@@ -1916,11 +1918,11 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb fi
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
-option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
-option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
+option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
+option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of rigid-body moves" ).def("score5");
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_seqshift_moves, "omit sequence shifting moves" ).def(false);

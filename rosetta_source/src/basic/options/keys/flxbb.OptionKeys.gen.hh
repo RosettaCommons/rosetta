@@ -25,6 +25,7 @@ namespace flxbb { extern BooleanOptionKey const flxbb; }
 namespace flxbb { extern BooleanOptionKey const view; }
 namespace flxbb { extern IntegerOptionKey const ncycle; }
 namespace flxbb { extern RealOptionKey const constraints_sheet; }
+namespace flxbb { extern BooleanOptionKey const constraints_sheet_include_cacb_pseudotorsion; }
 namespace flxbb { extern RealOptionKey const constraints_NtoC; }
 namespace flxbb { extern IntegerOptionKey const filter_trial; }
 namespace flxbb { extern StringOptionKey const filter_type; }

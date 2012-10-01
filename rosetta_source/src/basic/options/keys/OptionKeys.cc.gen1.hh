@@ -1,3 +1,4 @@
+namespace fold_cst { RealOptionKey const reramp_start_cstweight( "fold_cst:reramp_start_cstweight" );  }
 namespace fold_cst { IntegerOptionKey const reramp_iterations( "fold_cst:reramp_iterations" );  }
 namespace fold_cst { BooleanOptionKey const skip_on_noviolation_in_stage1( "fold_cst:skip_on_noviolation_in_stage1" );  }
 namespace fold_cst { RealOptionKey const stage1_ramp_cst_cycle_factor( "fold_cst:stage1_ramp_cst_cycle_factor" );  }
@@ -634,4 +635,3 @@ namespace lh { StringOptionKey const jobname( "lh:jobname" );  }
 namespace lh { IntegerOptionKey const max_lib_size( "lh:max_lib_size" );  }
 namespace lh { IntegerOptionKey const max_emperor_lib_size( "lh:max_emperor_lib_size" );  }
 namespace lh { IntegerOptionKey const max_emperor_lib_round( "lh:max_emperor_lib_round" );  }
-namespace lh { IntegerOptionKey const library_expiry_time( "lh:library_expiry_time" );  }

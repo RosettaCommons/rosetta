@@ -16,6 +16,7 @@
 
 /// Project headers
 #include <core/pose/Pose.hh>
+#include <core/chemical/ResidueType.hh>
 #include <basic/datacache/CacheableData.hh>
 
 /// C++ Headers
@@ -345,6 +346,18 @@ SS_Info2::initialize( Pose const & pose, String const & secstruct )
 {
 	bbpos_is_set_ = true;
 
+	//flo sep'12
+	//not clear what to do if the pose has ligands
+	//ideally the class should be initalized with the ligand positions,
+	//but obviously the ligands don't have any secondary structure
+	//attempt at getting desired behavior: initialize with pose length,
+	//but make sure that secondary structure is according to number
+	//of protein res
+	core::Size num_protein_res( pose.total_residue() );
+	for( core::Size i = pose.total_residue(); i != 0; i--){
+		if( !pose.residue_type( i ).is_protein() ) num_protein_res--;
+	}
+
 	// data all clear
 	clear_data();
 	// set strands and helices
@@ -352,7 +365,7 @@ SS_Info2::initialize( Pose const & pose, String const & secstruct )
 		secstruct_ = pose.secstruct();
 	}else{
 		secstruct_ = secstruct;
-		runtime_assert( pose.total_residue() == secstruct_.length() );
+		runtime_assert( num_protein_res == secstruct_.length() ); //flo sep'12 changed from pose.total_residue() to num_protein_res
 	}
 	resize( pose.total_residue() );
 	identify_ss( secstruct_ );

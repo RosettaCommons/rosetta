@@ -220,12 +220,14 @@ make_continuous_true_regions_in_bool_vector(
 			//tr << "cont region begin at " << i << ", ";
 		}
 
-		if ( in_cont_region && ( the_vector[ i ]==false ) ){
+		if ( in_cont_region &&  (the_vector[ i ]==false ) ){
 			continuous_regions.push_back( std::pair< core::Size, core::Size > ( last_cont_begin, (i - 1) ));
 			in_cont_region = false;
 			//tr << "cont_region end at " << (i-1) << " with last_cont_begin "<< last_cont_begin << std::endl;
 		}
 	}
+	//in case the last residue in the vector is set to true
+	if( in_cont_region ) continuous_regions.push_back( std::pair< core::Size, core::Size > (last_cont_begin, the_vector.size() ) );
 
 	if( continuous_regions.size() == 0 ){
 		utility_exit_with_message("The passed in vector doesn't have a single element set to true.\n");

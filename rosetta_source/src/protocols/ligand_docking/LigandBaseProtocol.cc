@@ -820,7 +820,7 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 
 	// Attach ligand to nearest CA that is not mobile!
 	// This used to be activated by the -shorten_jump flag, but now is the default
-	{
+	if( lig_id != 0 ){ //flo sept '12this function now can also  be used to modify fold trees for poses that contain new ligands
 		Size attach_pt = 1; // for now, attach ligand to residue 1
 		core::Real shortest_dist2 = 1e99;
 		core::Vector lig_nbr_atom = pose.residue(lig_id).nbr_atom_xyz();
@@ -956,7 +956,7 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 	pose.fold_tree( f );
 
 	//core::kinematics::dump_pose_kinemage("final_foldtree.kin", pose);
-	runtime_assert( lig_id == get_ligand_id(pose, jump_id) ); // runtime_assert ligand ID hasn't changed
+	if( lig_id != 0 ) runtime_assert( lig_id == get_ligand_id(pose, jump_id) ); // runtime_assert ligand ID hasn't changed
 
 
 

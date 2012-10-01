@@ -105,7 +105,7 @@ private:
 	bool use_seqprof_constraints_; // add a sequence profile constraint during the packing step
 	core::Real sasa_cutoff_; //only residues that have sasa above the cutoff will be touched
 	core::sequence::SequenceProfileCOP seqprof_;
-
+	bool ignore_pose_profile_length_mismatch_;
 };
 
 
