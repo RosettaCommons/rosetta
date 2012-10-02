@@ -758,7 +758,6 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 	for (Size n = 1; n<= num_cuts_open  ; n++ ) 		obligate_cut_points.push_back( cutpoints_open_[n] );
 	// for (Size n = 1; n <= num_cuts_total; n++ ) std::cout << "CUT " << obligate_cut_points[ n-1 ]  << std::endl;
 
-
 	//////////////////////////////////////////////////////////////////////
 	// If a cut needs to be randomly chosen, will generally try to
 	// place it in a loopy region.
@@ -1161,6 +1160,9 @@ RNA_StructureParameters::setup_base_pair_constraints( core::pose::Pose & pose )
 			tr <<  "skipping constraints for non-canonical base pair: " << I(3,i) << " " << I(3,j) << " " << rna_pairing.edge1 << " " << rna_pairing.edge2 << " " << rna_pairing.orientation << std::endl;
 			continue;
 		}
+
+		if ( !pose.residue(i).is_RNA() ) continue;
+		if ( !pose.residue(j).is_RNA() ) continue;
 
 		if ( !allow_insert_->get( named_atom_id_to_atom_id( NamedAtomID( "C1*", i ), pose ) ) &&
 				 !allow_insert_->get( named_atom_id_to_atom_id( NamedAtomID( "C1*", j ), pose ) ) ) continue; //assumed to be frozen, so no need to set up constraints?

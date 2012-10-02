@@ -27,8 +27,6 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/scoring/rms_util.hh>
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <numeric/random/random.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Stub.hh>
@@ -98,9 +96,17 @@ namespace rna{
 
 		core::pose::Pose const & pose = *( pose_list[1] );
 		for ( Size i = 1; i <= pose.total_residue(); i++ ){
+
 			core::conformation::Residue rsd = pose.residue( i );
+
 			for ( Size j = 1; j <= rsd.natoms(); j++ ){
 				atom_id_mask_[ core::id::AtomID( j, i ) ] = !rsd.is_virtual( j );
+			}
+
+			// special case for magnesium, which has a couple virtual atoms that need to get moved around and to define stubs.
+			// not elegant, but I want to get this working.
+			if ( rsd.name3() == " MG" ){
+				for ( Size j = 1; j <= rsd.natoms(); j++ ) 	atom_id_mask_[ core::id::AtomID( j, i ) ] = true;
 			}
 		}
 

@@ -714,7 +714,7 @@ RNA_DeNovoProtocol::do_random_moves( core::pose::Pose & pose ) {
 
 	if (dump_pdb_) 	pose.dump_pdb( "random_moves1.pdb" );
 
-	rna_chunk_library_->initialize_random_chunks( pose );
+	rna_chunk_library_->initialize_random_chunks( pose, dump_pdb_ );
 
 	if (dump_pdb_) 	pose.dump_pdb( "random_moves2.pdb" );
 

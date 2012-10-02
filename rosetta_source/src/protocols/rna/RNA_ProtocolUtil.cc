@@ -697,6 +697,9 @@ setup_base_pair_constraints(
 		Size const & i = pairings[n].first;
 		Size const & j = pairings[n].second;
 
+		if ( !pose.residue(i).is_RNA() ) continue;
+		if ( !pose.residue(j).is_RNA() ) continue;
+
 
 		if ( !pose.residue(i).is_coarse() ) { //fullatom
 			Size const atom1 = pose.residue(i).type().atom_index( " C1*" ) ;
