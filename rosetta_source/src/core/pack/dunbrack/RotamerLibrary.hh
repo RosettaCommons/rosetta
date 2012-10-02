@@ -204,6 +204,13 @@ public:
 		RotamerLibraryScratchSpace & scratch
 	) const;
 
+  Real
+  best_rotamer_energy(
+    Residue const & rsd,
+    bool curr_rotamer_only,
+    RotamerLibraryScratchSpace & scratch
+  ) const;
+
 	/// to do:
 	Real
 	rotamer_energy_deriv(

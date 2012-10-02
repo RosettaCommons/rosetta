@@ -366,6 +366,25 @@ RotamerLibrary::rotamer_energy(
 }
 
 Real
+RotamerLibrary::best_rotamer_energy(
+  Residue const & rsd,
+  bool curr_rotamer_only,
+  RotamerLibraryScratchSpace & scratch
+) const
+{
+  SingleResidueRotamerLibraryCAP const library( get_rsd_library( rsd.type() ) );
+
+  if ( library ) {
+		if ( curr_rotamer_only )
+    	return library->best_rotamer_energy( rsd, true,scratch );
+		else
+    	return library->best_rotamer_energy( rsd, false,scratch );
+  } else {
+			return 0.0;
+	}
+}
+
+Real
 RotamerLibrary::rotamer_energy_deriv(
 	Residue const & rsd,
 	RotamerLibraryScratchSpace & scratch

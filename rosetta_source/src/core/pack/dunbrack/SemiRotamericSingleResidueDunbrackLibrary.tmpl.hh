@@ -480,7 +480,6 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::rotamer_energy_deriv_bbdep(
 
 	parent::eval_rotameric_energy_deriv( rsd, scratch, eval_deriv );
 
-
 	Real chidevpen_score( 0.0 );
 	for ( Size ii = 1; ii <= T; ++ii ) {
 		chidevpen_score += scratch.chidevpen()[ ii ];
@@ -629,7 +628,6 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::bbdep_nrchi_score(
 	Real nrchi = rsd.chi( T + 1 );
 	Size nrchi_bin, nrchi_bin_next;
 	Real nrchi_alpha;
-
 	get_bbdep_nrchi_bin( nrchi, nrchi_bin, nrchi_bin_next, nrchi_alpha );
 
 	Real phi( parent::get_phi_from_rsd( rsd ) );
@@ -738,13 +736,67 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::bbdep_nrchi_score(
 template < Size T >
 Real
 SemiRotamericSingleResidueDunbrackLibrary< T >::best_rotamer_energy(
-	conformation::Residue const &,// rsd,
-	bool,// curr_rotamer_only,
-	RotamerLibraryScratchSpace & //scratch
+	conformation::Residue const & rsd,
+	bool curr_rotamer_only,
+	RotamerLibraryScratchSpace & scratch
 ) const
 {
-	utility_exit_with_message( "ERROR:: semi-rotameric single residue dunbrack library::best_rotamer_energy stubbed out!");
-	return 0.0;
+		assert( rsd.nchi() == T+1 ); 
+    Real nrchi_score( 0 );
+  if ( curr_rotamer_only ) {
+	      Real dnrchiscore_dchi, dnrchiscore_dphi, dnrchiscore_dpsi;
+				Real rotameric_score = parent::eval_rotameric_energy_deriv( rsd, scratch, false);
+
+        nrchi_score = bbdep_nrchi_score( rsd, scratch, dnrchiscore_dchi, dnrchiscore_dphi, dnrchiscore_dpsi );	
+				core::conformation::Residue rsd_copy (rsd);
+				utility::vector1< Real > rsd_chi=rsd.chi();
+
+				for ( Size jj = 0; jj <= bbdep_nrchi_nbins_; ++jj ) {
+							rsd_chi[rsd_copy.nchi()]=nrchi_lower_angle_+bbdep_nrchi_binsize_*jj;
+							rsd_copy.chi(rsd_chi);
+							parent::eval_rotameric_energy_deriv( rsd_copy, scratch, false);
+							Real tmp_nrchi_score=bbdep_nrchi_score( rsd_copy, scratch, dnrchiscore_dchi, dnrchiscore_dphi, dnrchiscore_dpsi );
+							if ( tmp_nrchi_score < nrchi_score)
+										nrchi_score=tmp_nrchi_score;
+					}
+
+  } else {
+				core::pack::dunbrack::SingleResidueRotamerLibraryCAP rotlib = RotamerLibrary::get_instance().get_rsd_library( rsd.type() );
+				core::pack::dunbrack::SingleResidueDunbrackLibraryCAP dunlib( static_cast< SingleResidueDunbrackLibrary const * > ( rotlib() ));
+
+				Real const phi( parent::get_phi_from_rsd( rsd ) );
+    		Real const psi( parent::get_psi_from_rsd( rsd ) );
+
+				utility::vector1< DunbrackRotamerSampleData > rotamer_samples=dunlib->get_all_rotamer_samples( phi, psi);
+				//this could be smarter since the T+1 position of the sc_torsions are not used
+
+				Real dnrchiscore_dchi, dnrchiscore_dphi, dnrchiscore_dpsi;
+				parent::eval_rotameric_energy_deriv( rsd, scratch, false);
+        nrchi_score = bbdep_nrchi_score( rsd, scratch, dnrchiscore_dchi, dnrchiscore_dphi, dnrchiscore_dpsi );	
+				Real tmp_nrchi_score;
+				//search the space of terminal chiT
+				core::conformation::Residue rsd_copy (rsd);
+				utility::vector1< Real > rsd_chi=rsd.chi();
+
+				for ( Size jj = 1; jj <= rotamer_samples.size(); ++jj ) {
+						
+						for ( Size ii = 1; ii <= T; ++ii ) {
+              		rsd_chi[ii]=rotamer_samples[jj].chi_mean()[ii];
+						}
+
+        		for ( Size kk = 0; kk <= bbdep_nrchi_nbins_; ++kk ) {
+              		rsd_chi[rsd_copy.nchi()]=nrchi_lower_angle_+bbdep_nrchi_binsize_*kk;
+              		rsd_copy.chi(rsd_chi);
+              		parent::eval_rotameric_energy_deriv( rsd_copy, scratch, false);
+              		tmp_nrchi_score=bbdep_nrchi_score( rsd_copy, scratch, dnrchiscore_dchi, dnrchiscore_dphi, dnrchiscore_dpsi );
+              		if ( tmp_nrchi_score < nrchi_score)
+                    		nrchi_score=tmp_nrchi_score;
+          		}
+
+				}
+	}
+
+	return nrchi_score;
 }
 
 

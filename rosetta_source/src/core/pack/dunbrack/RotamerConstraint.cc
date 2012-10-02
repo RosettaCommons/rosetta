@@ -178,7 +178,7 @@ RotamerConstraint::score(
 			Real const best_rotE = rotlib_->best_rotamer_energy(rsd, false /* => global min */, scratch);
 			Real const this_rotE = rotlib_->best_rotamer_energy(rsd, true /* => local min */, scratch);
 			assert( best_rotE <= this_rotE );
-			//std::cout << "rotamer constraint active for " << seqpos_ << " thisE = " << this_rotE << " bestE = " << best_rotE << " dE = " << ( best_rotE - this_rotE ) << std::endl;
+			TR << "rotamer constraint active for " << seqpos_ << " thisE = " << this_rotE << " bestE = " << best_rotE << " dE = " << ( best_rotE - this_rotE ) << std::endl;
 			emap[ this->score_type() ] +=  ( best_rotE - this_rotE );
 			return; // quit once we find a match
 		}
