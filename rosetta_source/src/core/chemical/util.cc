@@ -19,6 +19,7 @@
 // AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.hh>
+#include <core/chemical/AtomType.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -49,6 +50,7 @@ rsd_set_from_cmd_line() {
 }
 
 
+/// @brief  Add additional parameter files not present in <atom-set-name>/extras.txt. Called by ChemicalManager at time of AtomTypeSet creation.
 
 void
 add_atom_type_set_parameters_from_command_line(
@@ -77,6 +79,63 @@ add_atom_type_set_parameters_from_command_line(
 			TR.Trace << "add_atom_type_set_parameters_from_command_line: tag= " << tag << " filename= " << filename <<
 				std::endl;
 			atom_type_set.add_parameters_from_file( filename );
+		}
+	}
+}
+
+
+/// @brief Modify atom_type properties from the command line. Called by ChemicalManager at time of AtomTypeSet creation.
+void
+modify_atom_properties_from_command_line(
+																				 std::string const & atom_type_set_tag,
+																				 AtomTypeSet & atom_type_set
+																				 )
+{
+
+
+	if ( basic::options::option[ basic::options::OptionKeys::chemical::set_atom_properties ].user() ) {
+		utility::vector1< std::string > const & mods
+			( basic::options::option[ basic::options::OptionKeys::chemical::set_atom_properties ]);
+
+		std::string const errmsg( "-set_atom_properties format should be:: -set_atom_properties <set1>:<atom1>:<param1>:<setting1> <set2>:<atom2>:<param2>:<setting2> ...; for example: '-chemical:set_atom_properties fa_standard:OOC:LK_DGFREE:-5 fa_standard:ONH2:LJ_RADIUS:0.5' ");
+
+		for ( Size i=1; i<= mods.size(); ++i ) {
+			///
+			/// mod should look like (for example):  "fa_standard:OOC:LK_RADIUS:4.5"
+			///
+			std::string const & mod( mods[i] );
+
+			Size const pos1( mod.find(":") );
+			if ( pos1 == std::string::npos ) utility_exit_with_message(errmsg);
+			std::string const atomset_tag( mod.substr(0,pos1) );
+			if ( atomset_tag != atom_type_set_tag ) continue;
+
+			Size const pos2( mod.substr(pos1+1).find(":") );
+			if ( pos2 == std::string::npos ) utility_exit_with_message(errmsg);
+			std::string const atom_name( mod.substr(pos1+1,pos2) );
+			if ( !atom_type_set.has_atom( atom_name ) ) utility_exit_with_message(errmsg+". Nonexistent atomname: "+atom_name);
+
+			Size const pos3( mod.substr(pos1+1+pos2+1).find(":") );
+			if ( pos3 == std::string::npos ) utility_exit_with_message(errmsg);
+			std::string const param( mod.substr(pos1+1+pos2+1,pos3) );
+
+			std::string const stringsetting( mod.substr(pos1+1+pos2+1+pos3+1) );
+			if ( !ObjexxFCL::is_float( stringsetting ) ) utility_exit_with_message(errmsg);
+			Real const setting( ObjexxFCL::float_of( stringsetting ) );
+
+			TR.Trace << "modify_atom_properties_from_command_line: setting " << atomset_tag << ' ' << atom_name << ' ' <<
+				param << ' ' << setting << std::endl;
+
+			Size const atom_index( atom_type_set.atom_type_index( atom_name ) );
+
+			/// I would like to uncomment the following if-check, but right now there is an extra parameter file
+			/// that defines a parameter with the name LK_DGFREE (memb_fa_params.txt). That's kind of confusing...
+			///
+			// if ( atom_type_set.has_extra_parameter( param ) ) {
+			// 	Size const param_index( atom_type_set.extra_parameter_index( param ) );
+			// 	atom_type_set[ atom_index ].set_extra_parameter( param_index, setting );
+			// } else {
+			atom_type_set[ atom_index ].set_parameter( param, setting );
 		}
 	}
 }

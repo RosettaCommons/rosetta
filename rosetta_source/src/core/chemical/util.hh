@@ -34,6 +34,13 @@ add_atom_type_set_parameters_from_command_line(
 																							 AtomTypeSet & atom_type_set
 																							 );
 
+void
+modify_atom_properties_from_command_line(
+																				 std::string const & atom_type_set_tag,
+																				 AtomTypeSet & atom_type_set
+																				 );
+
+
 } // namespace chemical
 } // namespace core
 

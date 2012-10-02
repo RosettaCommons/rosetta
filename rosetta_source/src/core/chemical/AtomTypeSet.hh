@@ -93,6 +93,13 @@ public:
 		return directory_;
 	}
 
+	/// @brief Check if atom is present
+	bool
+	has_atom( std::string const & atom_type_name ) const
+	{
+		return ( atom_type_index_.find( atom_type_name ) != atom_type_index_.end() );
+	}
+
 	/// @brief lookup the atom_type by the atom_type_name string
 	int
 	atom_type_index( std::string const & atom_type_name ) const
@@ -112,6 +119,16 @@ public:
 	///
 	AtomType const &
 	operator[] ( Size const index ) const
+	{
+		return *( atoms_[ index ] );
+	}
+
+	/// @brief [ ] operator, simulating vector index behavior, non-const version
+	///
+	/// @details look up an AtomTypeSet by 1-based indexing
+	///
+	AtomType &
+	operator[] ( Size const index )
 	{
 		return *( atoms_[ index ] );
 	}
@@ -194,7 +211,7 @@ private:
 	//Fang-Chieh Chou 8/10/2012
 	//Use larger LJ_WDEPTH for protons to avoid clashes in RNA
 	void enlarge_h_lj_wdepth();
-	
+
 };
 
 } // chemical

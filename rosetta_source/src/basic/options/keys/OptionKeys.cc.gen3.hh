@@ -1,3 +1,4 @@
+namespace RBSegmentRelax { StringOptionKey const cst_pdb( "RBSegmentRelax:cst_pdb" );  }
 namespace RBSegmentRelax { IntegerOptionKey const nrbmoves( "RBSegmentRelax:nrbmoves" );  }
 namespace RBSegmentRelax { IntegerOptionKey const nrboutercycles( "RBSegmentRelax:nrboutercycles" );  }
 namespace RBSegmentRelax { StringOptionKey const rb_scorefxn( "RBSegmentRelax:rb_scorefxn" );  }

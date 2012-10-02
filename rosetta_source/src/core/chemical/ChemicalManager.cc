@@ -102,6 +102,8 @@ ChemicalManager::atom_type_set( std::string const & tag )
 		std::string const directory( basic::database::full_name( "chemical/atom_type_sets/"+tag+"/" ) );
 		AtomTypeSetOP new_set( new AtomTypeSet( directory ) );
 		// optionally add extra parameters from files given on the command line (see util.hh)
+		modify_atom_properties_from_command_line( tag, *new_set );
+		// optionally add extra parameters from files given on the command line (see util.hh)
 		add_atom_type_set_parameters_from_command_line( tag, *new_set );
 		// store the new atom type set
 		iter = atom_type_sets_.insert( std::make_pair( tag, new_set ) ).first;

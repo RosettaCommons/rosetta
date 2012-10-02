@@ -736,6 +736,7 @@ option.add( basic::options::OptionKeys::chemical::exclude_patches, "Names of the
 option.add( basic::options::OptionKeys::chemical::include_patches, "Names of the residue-type-set patches which should be applied even if excluded/commented out in patches.txt; useful for testing non-default patches" );
 option.add( basic::options::OptionKeys::chemical::enlarge_H_lj, "Use larger LJ_WDEPTH for Hs to avoid RNA clashes" ).def(false);
 option.add( basic::options::OptionKeys::chemical::add_atom_type_set_parameters, "Additional AtomTypeSet extra-parameter files that should be read; format is a sequence of paired strings: <atom-type-set-tag1> <filename1> <atom-type-set-tag2> <filename2> ..." );
+option.add( basic::options::OptionKeys::chemical::set_atom_properties, "Modify atom properties (the ones in <atom-set>/atom_properties.txt) from the command line. Happens at time of AtomTypeSet creation inside ChemicalManager.cc. Format is: -chemical:set_atom_properties <atom-set1>:<atom_name1>:<param1>:<setting1> <atom-set2>:<atom2>:<param2>:<setting2> ... For example: '-chemical:set_atom_properties fa_standard:OOC:LK_DGFREE:-5 fa_standard:ONH2:LJ_RADIUS:0.5' " );
 option.add( basic::options::OptionKeys::score::score_pose_cutpoint_variants, "Include cutpoint variants in the pose during linear chainbreak" ).def(false);
 option.add( basic::options::OptionKeys::score::score, "scorefunction option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::score::weights, "Name of weights file (without extension .wts)" ).def("standard");
@@ -1282,10 +1283,10 @@ option.add( basic::options::OptionKeys::lh::max_emperor_lib_size, "No descriptio
 option.add( basic::options::OptionKeys::lh::max_emperor_lib_round, "No description" ).def(0);
 option.add( basic::options::OptionKeys::lh::library_expiry_time, "No description" ).def(2400);
 option.add( basic::options::OptionKeys::lh::objective_function, "What to use as the objective function" ).def("score");
-option.add( basic::options::OptionKeys::lh::expire_after_rounds, "If set to > 0 this causes the Master to expire a structure after it has gone through this many cycles" ).def(0);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::mpi_resume, "Prefix (Ident string) for resuming a previous job!" );
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::expire_after_rounds, "If set to > 0 this causes the Master to expire a structure after it has gone through this many cycles" ).def(0);
+option.add( basic::options::OptionKeys::lh::mpi_resume, "Prefix (Ident string) for resuming a previous job!" );
 option.add( basic::options::OptionKeys::lh::mpi_feedback, "No description" ).legal("no").legal("add_n_limit").legal("add_n_replace").legal("single_replace").legal("single_replace_rounds").def("no");
 option.add( basic::options::OptionKeys::lh::mpi_batch_relax_chunks, "No description" ).def(100);
 option.add( basic::options::OptionKeys::lh::mpi_batch_relax_absolute_max, "No description" ).def(300);
@@ -1923,10 +1924,10 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb fi
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
-option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
+option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_scorefxn, "number of rigid-body moves" ).def("score5");
 option.add( basic::options::OptionKeys::RBSegmentRelax::skip_fragment_moves, "omit fragment insertions (in SS elements)" ).def(false);

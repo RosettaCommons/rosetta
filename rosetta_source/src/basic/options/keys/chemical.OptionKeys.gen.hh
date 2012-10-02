@@ -26,6 +26,7 @@ namespace chemical { extern StringVectorOptionKey const exclude_patches; }
 namespace chemical { extern StringVectorOptionKey const include_patches; }
 namespace chemical { extern BooleanOptionKey const enlarge_H_lj; }
 namespace chemical { extern StringVectorOptionKey const add_atom_type_set_parameters; }
+namespace chemical { extern StringVectorOptionKey const set_atom_properties; }
 
 } // namespace OptionKeys
 } // namespace options

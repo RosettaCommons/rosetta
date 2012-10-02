@@ -1720,6 +1720,7 @@ Options = Option_Group( '',
 		Option( 'include_patches', 'StringVector', desc="Names of the residue-type-set patches which should be applied even if excluded/commented out in patches.txt; useful for testing non-default patches", ),
 		Option( 'enlarge_H_lj', 'Boolean', desc="Use larger LJ_WDEPTH for Hs to avoid RNA clashes", default='false'),
 		Option( 'add_atom_type_set_parameters', 'StringVector', desc="Additional AtomTypeSet extra-parameter files that should be read; format is a sequence of paired strings: <atom-type-set-tag1> <filename1> <atom-type-set-tag2> <filename2> ..." ),
+		Option( 'set_atom_properties', 'StringVector', desc="Modify atom properties (the ones in <atom-set>/atom_properties.txt) from the command line. Happens at time of AtomTypeSet creation inside ChemicalManager.cc. Format is: -chemical:set_atom_properties <atom-set1>:<atom_name1>:<param1>:<setting1> <atom-set2>:<atom2>:<param2>:<setting2> ... For example: '-chemical:set_atom_properties fa_standard:OOC:LK_DGFREE:-5 fa_standard:ONH2:LJ_RADIUS:0.5' " ),
 	),
 	# score function settings  -----------------------------------------------------------
 	Option_Group( 'score',
