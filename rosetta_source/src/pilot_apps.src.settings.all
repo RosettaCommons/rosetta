@@ -15,6 +15,9 @@
 #Remember also to setup the devel.src.settings file to include any experimental #files that your pilot application needs
 
 sources = {
+	"pilot/amelie" : [
+		"detect_tight_clusters", # /* Amelie Stein, documentation see comments in file */
+        ],
 	"pilot/andrew" : [
 		#"optest",
 		#"mpi_msd",
