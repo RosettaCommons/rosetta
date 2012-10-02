@@ -16,5 +16,6 @@ residue_types/URA.params
 
 ## water & metal ions
 #../fa_standard/residue_types/water/TP3.params
-#../fa_standard/residue_types/metal_ions/MG.params
+# for now, following matches what is in fa_standard
+residue_types/MG.params
 
