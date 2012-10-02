@@ -327,6 +327,7 @@ sources = {
 		"RdcEvaluatorCreator",
 		"RdcSelectEvaluatorCreator",
 		"RdcTargetEvaluatorCreator",
+		"ReportFilter",
 		"ResidueBurialFilter",
 		"ResidueDistanceFilter",
 		"ResidueIEFilter",
