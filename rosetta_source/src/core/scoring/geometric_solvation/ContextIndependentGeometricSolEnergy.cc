@@ -42,6 +42,8 @@
 #include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <core/chemical/AtomType.hh>
@@ -49,13 +51,16 @@
 #include <ObjexxFCL/FArray3D.hh>
 
 
-static basic::Tracer tr("core.scoring.geometric_solvation.ContextIndependentGeomtricSolEnergy" );
+static basic::Tracer tr("core.scoring.geometric_solvation.ContextIndependentGeometricSolEnergy" );
 
 
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
 // Added on July. 22, 2011, Parin Sripakdeevong (sripakpa@stanford.edu).
-
+//
+// This copies huge amounts of code from GeometricSolEnergy.cc.
+// Should instead make a GeometricSolPotential.cc, which holds *all* the core functions,
+// and then GeometricSolEnergy and ContextIndependentGeometricSolEnergy can both call those core functions.
 ///////////////////////////////////////////////////
 
 namespace core {
@@ -91,13 +96,14 @@ ContextIndependentGeometricSolEnergy::ContextIndependentGeometricSolEnergy( meth
 	hb_database_( HBondDatabase::get_database( opts.hbond_options().params_database_tag() )),
 	dist_cut2_( 27.0 ),   // 5.2*5.2
 	geometric_sol_scale_( 0.4 * 1.17 / 0.65 ),
+	correct_geom_sol_acceptor_base_( basic::options::option[ basic::options::OptionKeys::score::geom_sol_correct_acceptor_base ]() ),
 	verbose_( false )
 {
 	options_->exclude_DNA_DNA( false 	/*GEOMETRIC SOLVATION NOT COMPATIBLE WITH EXCLUDE_DNA_DNA FLAG YET*/ ); //REMOVE?
 
 	// override command line. Copy from GeometricSolEnergy on Jan 09, 2012. This is necessary to reproduce Parin's branch result
-	options_->hbond_options().use_incorrect_deriv( true );  
-	options_->hbond_options().use_sp2_chi_penalty( false ); 
+	options_->hbond_options().use_incorrect_deriv( true );
+	options_->hbond_options().use_sp2_chi_penalty( false );
 	// override command line. Copy from GeometricSolEnergy on Jan 09, 2012. This is necessary to reproduce Parin's branch result
 
 }
@@ -109,6 +115,7 @@ ContextIndependentGeometricSolEnergy::ContextIndependentGeometricSolEnergy( Cont
 	hb_database_( src.hb_database_ ),
 	dist_cut2_( src.dist_cut2_ ),   // 5.2*5.2
 	geometric_sol_scale_( src.geometric_sol_scale_ ),
+	correct_geom_sol_acceptor_base_( src.correct_geom_sol_acceptor_base_ ),
 	verbose_( src.verbose_ )
 {}
 
@@ -142,12 +149,12 @@ void
 ContextIndependentGeometricSolEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
 {
 
-	 
+
 	pose.update_residue_neighbors();
 	//RNA implementation doesn't not actually require the hbond_set?
 
 
-	using core::scoring::EnergiesCacheableDataType::HBOND_SET; 	
+	using core::scoring::EnergiesCacheableDataType::HBOND_SET;
 
 	hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( options_->hbond_options() ) );
 	hbonds::fill_hbond_set( pose, true /*calc derivs*/, *hbond_set );
@@ -172,10 +179,10 @@ ContextIndependentGeometricSolEnergy::residue_pair_energy(
 ) const
 {
 
-	//std::cout << "ContextIndependentGeometricSolEnergy::residue_pair_energy rsd1.seqpos()= " << rsd1.seqpos() << " , rsd2.seqpos()= " << rsd2.seqpos() << std::endl; 
+	//std::cout << "ContextIndependentGeometricSolEnergy::residue_pair_energy rsd1.seqpos()= " << rsd1.seqpos() << " , rsd2.seqpos()= " << rsd2.seqpos() << std::endl;
 
-	if( rsd1.is_RNA()==false ) utility_exit_with_message("rsd1.is_RNA()==false"); //This code has been tested only for RNA!
-	if( rsd2.is_RNA()==false ) utility_exit_with_message("rsd2.is_RNA()==false"); //This code has been tested only for RNA!
+	//	if( rsd1.is_RNA()==false ) utility_exit_with_message("rsd1.is_RNA()==false"); //This code has been tested only for RNA!
+	//	if( rsd2.is_RNA()==false ) utility_exit_with_message("rsd2.is_RNA()==false"); //This code has been tested only for RNA!
 
 	if ( rsd1.seqpos() == rsd2.seqpos() ) utility_exit_with_message("rsd1.seqpos() == rsd2.seqpos()");
 
@@ -310,7 +317,7 @@ ContextIndependentGeometricSolEnergy::occluded_water_hbond_penalty(
 	//Craziness... create an artifical atom to complete "water molecule".
 	Vector water_base_atm;
 	static Distance const water_O_H_distance( 0.958 );
-	Real const environment_weight= 1.0; //NO CONTEXT DEPENDENCE! 
+	Real const environment_weight= 1.0; //NO CONTEXT DEPENDENCE!
 
 	//Might be cleaner to separate this into two functions, one for donor, one for acceptor?
 	if ( is_donor ) {
@@ -519,6 +526,35 @@ ContextIndependentGeometricSolEnergy::get_atom_atom_geometric_solvation_for_dono
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 inline
+Vector
+ContextIndependentGeometricSolEnergy::get_acceptor_base_atm_xyz( conformation::Residue const & acc_rsd, Size const & acc_atm ) const{
+
+	Vector base_atm_xyz;
+
+	if ( correct_geom_sol_acceptor_base_ ) {
+		// following handles the special case in which acceptor has two base residues -- occurs for
+		//  N inside rings.
+		// This matches machinery in hbonds_geom.cc.  That doesn't mean that the base atom is set
+		//  totally correctly -- water (TIP3.params) and O4* in nucleic acids still have weird base atoms,
+		//  but at least the hbonds and geom_sol match up.
+		Vector dummy;
+		chemical::Hybridization acc_hybrid( acc_rsd.atom_type( acc_atm ).hybridization());
+		make_hbBasetoAcc_unitvector(
+			options_->hbond_options(),
+			acc_hybrid,
+			acc_rsd.atom( acc_atm ).xyz(),
+			acc_rsd.xyz( acc_rsd.atom_base( acc_atm ) ),
+			acc_rsd.xyz( acc_rsd.abase2( acc_atm ) ),
+			base_atm_xyz, dummy );
+	} else {
+		base_atm_xyz = acc_rsd.atom( acc_rsd.atom_base( acc_atm ) ).xyz();
+	}
+	return base_atm_xyz;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+inline
 void
 ContextIndependentGeometricSolEnergy::get_atom_atom_geometric_solvation_for_acceptor(
 	Size const & acc_atm,
@@ -545,7 +581,9 @@ ContextIndependentGeometricSolEnergy::get_atom_atom_geometric_solvation_for_acce
 	Size const base_atm ( acc_rsd.atom_base( acc_atm ) );
 
 	Vector const & acc_atm_xyz( acc_rsd.atom( acc_atm ).xyz() );
-	Vector const & base_atm_xyz( acc_rsd.atom( base_atm ).xyz() );
+	//Vector const & base_atm_xyz( acc_rsd.atom( base_atm ).xyz() );
+
+	Vector base_atm_xyz = get_acceptor_base_atm_xyz( acc_rsd, acc_atm );
 
 	////////////////////////////Parin S June 26, 2011////////////////////////////////////
 	if(occ_rsd.is_virtual(occ_atm)) return;
@@ -685,7 +723,7 @@ ContextIndependentGeometricSolEnergy::eval_atom_derivative_intra_RNA(
 		 Vector & F1,
 		 Vector & F2
 ) const
-{ 
+{
 
 	Size const i( atom_id.rsd() );
 
@@ -693,8 +731,8 @@ ContextIndependentGeometricSolEnergy::eval_atom_derivative_intra_RNA(
 	conformation::Residue const &   other_rsd( pose.residue( i ) );
 
 	//Ok right now intrares energy is define only for the RNA case. Parin Sripakdeevong, June 26, 2011.
-	if(current_rsd.is_RNA()==false) return; 
-	if(other_rsd.is_RNA()==false) return; //no effect!
+	//	if(current_rsd.is_RNA()==false) return;
+	//	if(other_rsd.is_RNA()==false) return; //no effect!
 
 	static bool const update_deriv( true );
 
@@ -782,7 +820,7 @@ ContextIndependentGeometricSolEnergy::eval_atom_derivative(
 	Real energy( 0.0 );
 	hbonds::HBondDerivs deriv;
 
-	eval_atom_derivative_intra_RNA(atom_id, pose, weights, F1, F2);
+		eval_atom_derivative_intra_RNA(atom_id, pose, weights, F1, F2);
 
 	conformation::Residue const & current_rsd( pose.residue( atom_id.rsd() ) );
 
@@ -940,7 +978,7 @@ ContextIndependentGeometricSolEnergy::defines_intrares_energy( EnergyMap const &
 	//bool method_1= (weights[CI_geom_sol_intra_RNA]>0.0) ? true : false;
 
 	bool condition_1= (weights[CI_geom_sol_intra_RNA]>0.0001) ? true : false; //Change to this on Feb 06, 2012. Ensure that the function returns false if weights[CI_geom_sol_intra_RNA]==0.0
-	
+
 	return condition_1;
 }
 
@@ -952,9 +990,9 @@ ContextIndependentGeometricSolEnergy::eval_intrares_energy(
 	pose::Pose const & pose,
 	ScoreFunction const & ,
 	EnergyMap & emap
-) const{ 
+) const{
 
-	if(rsd.is_RNA()==false) return;
+	//	if(rsd.is_RNA()==false) return;
 
 	Real geo_solE_intra_RNA =
 		   donorRes_occludingRes_geometric_sol_RNA_intra( rsd, pose ) +
@@ -985,7 +1023,7 @@ ContextIndependentGeometricSolEnergy::donorRes_occludingRes_geometric_sol_RNA_in
 		for ( Size occ_atm = 1; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
 
 			if(core::scoring::rna::Is_base_phosphate_atom_pair(rsd, rsd, occ_atm, don_h_atm)==false) continue;
-			
+
 			get_atom_atom_geometric_solvation_for_donor( don_h_atm, don_rsd, occ_atm, occ_rsd, pose, energy );
 			res_solE += energy;
 		}
