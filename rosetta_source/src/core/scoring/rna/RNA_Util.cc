@@ -155,10 +155,20 @@ Size chi1_torsion_atom_index( conformation::Residue const & rsd ) {
 
 ///////////////////////////////////////////////////////////////////////////////
 std::string const	default_jump_atom( conformation::Residue const & rsd ) {
-	if ( rsd.is_RNA() && !rsd.is_coarse() ){
-		return chi1_torsion_atom( rsd );
+	if ( rsd.is_RNA() ){
+		if ( !rsd.is_coarse() ){
+			return chi1_torsion_atom( rsd );
+		} else {
+			return " Y  ";
+		}
 	}
-	return " Y  ";
+	if ( rsd.name3() == " MG" )		return "MG  ";
+	if ( rsd.is_virtual_residue() )	return " Y  ";
+
+	std::cerr << "Residue ??? " << rsd.name3() << std::endl;
+	utility_exit_with_message( "Do not know jump atom for this residue" );
+
+	return "????";
 }
 
 ///////////////////////////////////////////////////////////////////////////////
