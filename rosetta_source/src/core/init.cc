@@ -149,6 +149,7 @@
 #include <core/scoring/rna/RNA_SugarCloseEnergyCreator.hh>
 #include <core/scoring/rna/RNA_TorsionEnergyCreator.hh>
 #include <core/scoring/rna/RNA_VDW_EnergyCreator.hh>
+#include <core/scoring/rna/RNA_Mg_EnergyCreator.hh>
 #include <core/scoring/rna/RNA_FullAtomVDW_BasePhosphateCreator.hh>
 #include <core/scoring/sym_e/symECreator.hh>
 #include <core/scoring/saxs/FastSAXSEnergyCreator.hh>
@@ -381,6 +382,7 @@ static EnergyMethodRegistrator< scoring::rna::RNA_PairwiseLowResolutionEnergyCre
 static EnergyMethodRegistrator< scoring::rna::RNA_SugarCloseEnergyCreator > RNA_SugarCloseEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_TorsionEnergyCreator > RNA_TorsionEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_VDW_EnergyCreator > RNA_VDW_EnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::rna::RNA_Mg_EnergyCreator > RNA_Mg_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_FullAtomVDW_BasePhosphateCreator > RNA_FullAtomVDW_BasePhosphateCreator_registrator;
 static EnergyMethodRegistrator< scoring::sym_e::symECreator > symECreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::PoissonBoltzmannEnergyCreator > PoissonBoltzmannEnergyCreator_registrator;
