@@ -14,6 +14,7 @@
 #define INCLUDED_core_scoring_rna_RNA_FittedTorsionInfo_HH
 
 #include <core/types.hh>
+#include <core/scoring/rna/Gaussian_parameter.hh>
 
 // Project headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -26,29 +27,6 @@ namespace scoring {
 namespace rna {
 
 enum _RNA_FittedTorsionInfo_ { WHATEVER, ALPHA, BETA, GAMMA, DELTA, EPSILON, ZETA, CHI, NU2, NU1, O2H};
-
-class Gaussian_parameter {
-public:
-	Real amplitude, center, width;
-
-	Gaussian_parameter ( Real const amplitude_in, Real const center_in, Real const width_in ):
-		amplitude( amplitude_in ),
-		center   ( center_in ),
-		width    ( width_in )
-	{}
-
-	//
-	Gaussian_parameter &
-	operator=( Gaussian_parameter const & src )
-	{
-		amplitude = src.amplitude;
-		center = src.center;
-		width = src.width;
-		return *this;
-	}
-
-
-};
 
 typedef utility::vector1< Gaussian_parameter > Gaussian_parameter_set;
 
