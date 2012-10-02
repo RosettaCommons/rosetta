@@ -452,15 +452,15 @@ SilentFileData::_read_file(
 		tr.Debug << "selected " << tags_wanted.size() << " tags from " <<
 			all_tags.size() << std::endl;
 	}
-	
+
 	if ( option[ in::file::silent_select_range_start ]() >= 0 ) {
-    
+
     // get start index and limit to size of silent file (all_tags.size() ) by wrapping around (rather then by throwing an error)
     int range_start = option[ in::file::silent_select_range_start ]() % all_tags.size();
     int range_end   = range_start + option[ in::file::silent_select_range_len ]();
 
     // setting in::file::silent_select_range_len to -1 means run to the end.
-    if( option[ in::file::silent_select_range_len ]() < 0 ) range_end = all_tags.size();   
+    if( option[ in::file::silent_select_range_len ]() < 0 ) range_end = all_tags.size();
 
     // do a range check just in case.
     range_end = std::min( (int)range_end, (int)all_tags.size() );
@@ -471,7 +471,7 @@ SilentFileData::_read_file(
     }
 
   }
-  
+
   if( all_tags.size() == 0 ) return true;
 
 	bool success = _read_file( filename, tags_wanted, throw_exception_on_bad_structs  );
@@ -594,7 +594,7 @@ SilentFileData::read_stream(
 			//we have just read the two SEQUENCE: and SCORE: header lines and a new header starts... ignore this
 			mylines.clear();
 		}
-		if ( ( line.substr(0,7) == "SCORE: " || line.substr(0,10) == "SEQUENCE: " ) && mylines.size() > 3 ) {
+		if ( ( line.substr(0,7) == "SCORE: " || line.substr(0,10) == "SEQUENCE: " ) && mylines.size() > 1 /*used to be 3. What's wrong with a one-residue structure?*/ ) {
 			bool init_good = tmp_struct->init_from_lines( mylines, *this );
 			if ( !init_good && throw_exception_on_bad_structs ) {
 				 	throw utility::excn::EXCN_BadInput(

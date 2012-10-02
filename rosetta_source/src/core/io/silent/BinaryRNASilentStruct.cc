@@ -239,8 +239,6 @@ bool BinaryRNASilentStruct::init_from_lines(
 			continue;  // skip comments if record_old_remarks==false
 		}
 
-
-
 		if ( iter->substr(0,7) == "SCORE: " ) {
 			// SCORE: line with values from this structure.
 			Size nres = one_letter_sequence().length();
@@ -410,8 +408,8 @@ void BinaryRNASilentStruct::fill_pose (
 ) const {
 	using namespace core::chemical;
 	ResidueTypeSetCAP residue_set;
-	//std::cout << "RESIDUE TYPE SET RNA " << std::endl;
-	if ( atm_coords_[1].size() < 8 ) { //hmm, may be dangerous.
+	//	std::cout << "RESIDUE TYPE SET RNA " << std::endl;
+	if ( one_letter_sequence()[0] != 'Z' /* Mg(2+) */ && atm_coords_[1].size() < 8 ) { //hmm, may be dangerous.
 		residue_set = ChemicalManager::get_instance()->residue_type_set( COARSE_RNA );
 	} else {
 		residue_set = ChemicalManager::get_instance()->residue_type_set( RNA );
