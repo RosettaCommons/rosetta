@@ -381,7 +381,10 @@ guess_disulfides).
 # parser object for managing input options
 # all defaults are for the example using "test_in.pdb" with reduced
 #    cycles/jobs to provide results quickly
+
+
 parser = optparse.OptionParser()
+
 parser.add_option( '--pdb_filename', dest = 'pdb_filename',
     default = 'test/data/test_in.pdb',    # default example PDB
     help = 'the PDB file containing the protein to fold')
@@ -432,10 +435,6 @@ parser.add_option('--job_output', dest = 'job_output',
 # the user may input a PDB file, fasta file, or sequence directly
 # PDB file option
 pose = Pose()
-pdb_filename = options.pdb_filename
-if pdb_filename:    # the default behavior or if you use a PDB file
-    pose_from_pdb(pose, pdb_filename)
-    sequence = pose.sequence()
 # Fasta file option
 fasta_filename = options.fasta_filename
 if fasta_filename:    # defaults to off, empty string
@@ -445,12 +444,13 @@ if fasta_filename:    # defaults to off, empty string
     # removing the trailing "\n" and any header lines
     sequence = [line.strip() for line in sequence if not '>' in line]
     sequence = ''.join( sequence )    # combine into a single sequence
-# direct sequence option
-# notice that each successive assignment to the variable sequence overwrites
-#     the previous, thus supplying more than one form of the sequence is
-#     useless but does have a priority based on which flag is used
-if options.sequence:
+elif options.sequence:
     sequence = options.sequence
+else:
+    pdb_filename = options.pdb_filename; #Default is the test PDB, not an empty string.
+    pose_from_pdb(pose, pdb_filename)
+    sequence = pose.sequence()
+#Checks for the sequence in a fasta, then direct, and finally from a PDB file.  If no PDB file is given, it will load the default.
 
 # fragment files options
 long_frag_filename = options.long_frag_filename
