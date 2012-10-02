@@ -1,4 +1,3 @@
-namespace fold_cst { IntegerOptionKey const reramp_iterations( "fold_cst:reramp_iterations" );  }
 namespace fold_cst { BooleanOptionKey const skip_on_noviolation_in_stage1( "fold_cst:skip_on_noviolation_in_stage1" );  }
 namespace fold_cst { RealOptionKey const stage1_ramp_cst_cycle_factor( "fold_cst:stage1_ramp_cst_cycle_factor" );  }
 namespace fold_cst { RealOptionKey const stage2_constraint_threshold( "fold_cst:stage2_constraint_threshold" );  }
@@ -94,6 +93,7 @@ namespace chemical { StringVectorOptionKey const add_atom_type_set_parameters( "
 namespace score { BooleanOptionKey const score_pose_cutpoint_variants( "score:score_pose_cutpoint_variants" );  }
 namespace score { BooleanOptionKey const score( "score" );  }
 namespace score { StringOptionKey const weights( "score:weights" );  }
+namespace score { StringVectorOptionKey const set_weights( "score:set_weights" );  }
 namespace score { StringOptionKey const pack_weights( "score:pack_weights" );  }
 namespace score { StringOptionKey const soft_wts( "score:soft_wts" );  }
 namespace score { BooleanOptionKey const docking_interface_score( "score:docking_interface_score" );  }
@@ -636,3 +636,4 @@ namespace lh { IntegerOptionKey const max_emperor_lib_size( "lh:max_emperor_lib_
 namespace lh { IntegerOptionKey const max_emperor_lib_round( "lh:max_emperor_lib_round" );  }
 namespace lh { IntegerOptionKey const library_expiry_time( "lh:library_expiry_time" );  }
 namespace lh { StringOptionKey const objective_function( "lh:objective_function" );  }
+namespace lh { IntegerOptionKey const expire_after_rounds( "lh:expire_after_rounds" );  }

@@ -24,6 +24,7 @@ namespace OptionKeys {
 namespace score { extern BooleanOptionKey const score_pose_cutpoint_variants; }
 namespace score { extern BooleanOptionKey const score; }
 namespace score { extern StringOptionKey const weights; }
+namespace score { extern StringVectorOptionKey const set_weights; }
 namespace score { extern StringOptionKey const pack_weights; }
 namespace score { extern StringOptionKey const soft_wts; }
 namespace score { extern BooleanOptionKey const docking_interface_score; }

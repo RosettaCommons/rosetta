@@ -3535,6 +3535,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: "standard"</dd><br>
 </dl>
 <dl>
+<dt><b>-set_weights</b> \<StringVector\><dt>
+<dd>Modification to weights via the command line. Applied in ScoreFunctionFactory::create_score_function inside the function apply_user_defined_reweighting_. Format is a list of paired strings: -score::set_weights <score_type1> <setting1> <score_type2> <setting2> ...</dd><br>
+</dl>
+<dl>
 <dt><b>-pack_weights</b> \<String\><dt>
 <dd>Name of packing weights file (without extension .wts)</dd><br>
 <dd>Default: "standard"</dd><br>
