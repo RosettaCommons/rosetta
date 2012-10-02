@@ -20,28 +20,20 @@
 
 //////////////////////////////////
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Conformation.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/pose/Pose.hh>
 
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.tmpl.hh>
 #include <core/pose/util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/rna/RNA_Util.hh>
 #include <core/id/SequenceMapping.hh>
@@ -49,7 +41,6 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.hh>
 #include <utility/tools/make_vector1.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
 
 #include <iostream>
