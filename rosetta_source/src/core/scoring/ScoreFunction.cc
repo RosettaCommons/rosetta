@@ -286,6 +286,16 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 			std::string type;
 			l >> type;
 			energy_method_options_->unfolded_energies_type( type );
+		} else if ( tag == "HACK_ELEC_MIN_DIS" ) {
+			Real value;
+			l >> value;
+			energy_method_options_->hackelec_min_dis( value );
+		} else if ( tag == "HACK_ELEC_MAX_DIS" ) {
+			Real value;
+			l >> value;
+			energy_method_options_->hackelec_max_dis( value );
+		} else if ( tag == "HACK_ELEC_NO_DIS_DEP_DIE" ) {
+			energy_method_options_->hackelec_no_dis_dep_die( true );
 		} else {
 
 	// //////////// Regular Weights ///////////////////////
