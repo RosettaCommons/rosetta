@@ -42,6 +42,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/loophash/LoopHashRelaxProtocol.hh>
 #include <utility/exit.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -342,8 +343,9 @@ class RosettaJob {
       Json::Reader payload_reader;
       reader.parse( payload, payload_values);
       
-      hash_ = payload_values.get("hash","").asString();
-      key_  = payload_values.get("key","").asString();
+      hash_      = payload_values.get("hash","").asString();
+      key_       = payload_values.get("key","").asString();
+      operation_ = payload_values.get("operation","").asString();
      
       std::cout << "NEW JOB: Hash: " << hash_ << " KEY: " << key_ << " TASKNAME: " << taskname_ << std::endl;
       std::string inputdata_string = payload_values.get("pdbdata","").asString();
@@ -353,7 +355,10 @@ class RosettaJob {
       Json::Reader inputdata_reader;
       inputdata_reader.parse( inputdata_string , inputdata_values);
       
-      rosetta_script_ = inputdata_values.get("rosetta_script","").asString();
+      Json::Reader rosetta_script_reader;
+      Json::Value rosetta_script_value;
+      //rosetta_script_ = inputdata_values.get("rosetta_script","").asString();
+      rosetta_script_ = "";
       std::cout << "Rosetta script string: " << rosetta_script_ << std::endl;
       
       command_ = inputdata_values.get("command","").asString();
@@ -364,8 +369,16 @@ class RosettaJob {
       //std::cout << pdbdata_string << std::endl;
   
       // create the pose 
-      core::import_pose::pose_from_pdbstring( inputpose_, pdbdata_string );
-      
+      try {
+        core::import_pose::pose_from_pdbstring( inputpose_, pdbdata_string );
+      } 
+      catch ( utility::excn::EXCN_Base& excn ) {
+				excn.show( std::cerr );
+        // return error or empty pose
+        outputpose_ = inputpose_;
+        return_error_to_server( server_info );
+        return false;
+      }
       // since a null operation would leave the pose unchanged: 
       outputpose_ = inputpose_;
       
@@ -374,11 +387,39 @@ class RosettaJob {
       return true;
     }
    
+    bool return_error_to_server( const ServerInfo & server_info ){ 
+      // do some basic measurements
+      Json::Value energies;
+      energies[ "score" ] = 0; 
+      energies[ "irms" ] = 0; 
+
+      // assemble the json structure needed.
+      Json::Value root;
+      
+      // set the output values
+      root["parental_key"] = Json::Value( key_ );   // the key and hash become parental_  key and hash
+      root["parental_hash"] = Json::Value( hash_ ); // so we can keep track of the geneaology of structures
+      root["operation"] = Json::Value( operation_ ); // so we can keep track of the geneaology of structures
+      root["taskname"] = Json::Value( taskname_ ); // so we can keep track of the geneaology of structures
+      root["pdbdata"] = Json::Value( "" ); // the PDB data itself of course
+      root["workerinfo"] = Json::Value(  "Rosetta Backend 0.1" ); 
+      root["energies"] = energies; 
+      
+      // add energy info etc other goodies here
+
+      Json::FastWriter writer;
+      std::string output_json = "output=" + writer.write( root );
+      
+      CurlPost cg;
+      try {
+        std::string return_data = cg.post( server_info.url_putresult() , "", output_json );
+        std::cout << "POST " << server_info.url_putresult() << " : " << return_data << std::endl;
+      } catch ( std::string error ){
+        std::cerr << "ERROR returning results:" << error << std::endl;
+      }
+    }
 
     bool return_results_to_server( const ServerInfo & server_info ){ 
-      
-
-
       
       // do some basic measurements
       Json::Value energies;
@@ -401,6 +442,7 @@ class RosettaJob {
       // set the output values
       root["parental_key"] = Json::Value( key_ );   // the key and hash become parental_  key and hash
       root["parental_hash"] = Json::Value( hash_ ); // so we can keep track of the geneaology of structures
+      root["operation"] = Json::Value( operation_ ); // so we can keep track of the geneaology of structures
       std::cout << "Finished TaskName: " << taskname_ << std::endl; 
       root["taskname"] = Json::Value( taskname_ ); // so we can keep track of the geneaology of structures
       root["pdbdata"] = Json::Value( pdbdatastream.str() ); // the PDB data itself of course
@@ -411,7 +453,7 @@ class RosettaJob {
 
       Json::FastWriter writer;
       std::string output_json = "output=" + writer.write( root );
-      std::cout << writer.write( energies ) << std::endl;
+      //std::cout << writer.write( root ) << std::endl;
       // now do a POST on the server to hand back the data.
       
       CurlPost cg;
@@ -428,12 +470,14 @@ class RosettaJob {
         std::cout << "Executing: " << command_ << std::endl;
         TR << "Executing: " << command_ << std::endl;
       
+        if( command_ == "score" ){
+        }
         if( command_ == "relax" ){
           protocols::moves::MoverOP protocol = protocols::relax::generate_relax_from_cmd();
           protocol->apply( outputpose_ );
         }
         if( command_ == "loophash" ){
-          TR << "LOOPHASH!!" << std::endl;
+          TR << "LOOPHASH!!  " << rosetta_script_ << std::endl;
           protocols::loophash::LoopHashRelaxProtocolOP lh_protocol = new protocols::loophash::LoopHashRelaxProtocol( loop_hash_library );
           lh_protocol->manual_call( outputpose_ );
         }
@@ -452,6 +496,7 @@ class RosettaJob {
   std::string taskname_; 
   std::string hash_; 
   std::string key_; 
+  std::string operation_; 
   std::string rosetta_script_;
   std::string command_;
   bool initialized_;
