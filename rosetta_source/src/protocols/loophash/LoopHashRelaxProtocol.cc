@@ -28,7 +28,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <utility/string_util.hh>
 #include <protocols/relax/FastRelax.hh>
-#include <protocols/match/Hit.fwd.hh>
+//#include <protocols/match/Hit.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <utility/exit.hh>
 #include <utility/fixedsizearray1.hh>
