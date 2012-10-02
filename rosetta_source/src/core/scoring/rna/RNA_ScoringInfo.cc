@@ -55,7 +55,12 @@ RNA_ScoringInfo::RNA_ScoringInfo( RNA_ScoringInfo const & src ) :
 	rna_centroid_info_( src.rna_centroid_info_ ),
 	rna_raw_base_base_info_( src.rna_raw_base_base_info_ ),
 	rna_filtered_base_base_info_( src.rna_filtered_base_base_info_ ),
-	rna_data_info_( src.rna_data_info_ )
+	rna_data_info_( src.rna_data_info_ ),
+	atom_numbers_for_vdw_calculation_( src.atom_numbers_for_vdw_calculation_ ),
+	atom_numbers_for_mg_calculation_( src.atom_numbers_for_mg_calculation_ ),
+	is_magnesium_( src.is_magnesium_ ),
+	vdw_calculation_annotated_sequence_( src.vdw_calculation_annotated_sequence_ ),
+	mg_calculation_annotated_sequence_( src.mg_calculation_annotated_sequence_ )
 {
 }
 

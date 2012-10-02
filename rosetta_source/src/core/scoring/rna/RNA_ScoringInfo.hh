@@ -76,11 +76,24 @@ public:
 						 rna_raw_base_base_info_.calculated() &&
 						 rna_filtered_base_base_info_.calculated() );
   }
-	utility::vector1< utility::vector1< Size > > const &
+
+ 	utility::vector1< utility::vector1< Size > > const &
 	atom_numbers_for_vdw_calculation() const { return atom_numbers_for_vdw_calculation_; }
-	
+
 	utility::vector1< utility::vector1< Size > > &
 	nonconst_atom_numbers_for_vdw_calculation() { return atom_numbers_for_vdw_calculation_; }
+
+ 	utility::vector1< utility::vector1< Size > > const &
+	atom_numbers_for_mg_calculation() const { return atom_numbers_for_mg_calculation_; }
+
+	utility::vector1< utility::vector1< Size > > &
+	nonconst_atom_numbers_for_mg_calculation() { return atom_numbers_for_mg_calculation_; }
+
+	utility::vector1< bool > const &
+	is_magnesium() const { return is_magnesium_; }
+
+	utility::vector1< bool > &
+	nonconst_is_magnesium() { return is_magnesium_; }
 
 	RNA_CentroidInfo &
 	rna_centroid_info() { return rna_centroid_info_; }
@@ -106,17 +119,17 @@ public:
 	rna::RNA_DataInfo const &
 	rna_data_info() const { return rna_data_info_; }
 
-	//ObjexxFCL::FArray2D< Size > &
-	//atom_numbers_for_vdw_calculation() { return atom_numbers_for_vdw_calculation_; }
+	void
+	set_mg_calculation_annotated_sequence( std::string const sequence ){ mg_calculation_annotated_sequence_ = sequence; }
 
-	//ObjexxFCL::FArray2D< Size > const &
-	//atom_numbers_for_vdw_calculation() const { return atom_numbers_for_vdw_calculation_; }
+	std::string
+	mg_calculation_annotated_sequence() const { return mg_calculation_annotated_sequence_; }
 
-	//ObjexxFCL::FArray2D< Size > &
-	//atom_numbers_for_backbone_score_calculations() { return atom_numbers_for_backbone_score_calculations_; }
+	void
+	set_vdw_calculation_annotated_sequence( std::string const sequence ){ vdw_calculation_annotated_sequence_ = sequence; }
 
-	//ObjexxFCL::FArray2D< Size > const &
-	//atom_numbers_for_backbone_score_calculations() const { return atom_numbers_for_backbone_score_calculations_; }
+	std::string
+	vdw_calculation_annotated_sequence() const { return vdw_calculation_annotated_sequence_; }
 
 private:
 
@@ -124,11 +137,16 @@ private:
 	rna::RNA_RawBaseBaseInfo rna_raw_base_base_info_;
 	rna::RNA_FilteredBaseBaseInfo rna_filtered_base_base_info_;
 	rna::RNA_DataInfo rna_data_info_;
-	
+
+	// for rna low-res VDW calculations
 	utility::vector1< utility::vector1< Size > > atom_numbers_for_vdw_calculation_;
 
-	//ObjexxFCL::FArray2D< Size > atom_numbers_for_vdw_calculation_;
-	//ObjexxFCL::FArray2D< Size > atom_numbers_for_backbone_score_calculations_;
+	// for rna low-res magnesium calculations
+	utility::vector1< utility::vector1< Size > >	atom_numbers_for_mg_calculation_;
+	utility::vector1< bool >	is_magnesium_;
+
+	std::string vdw_calculation_annotated_sequence_;
+	std::string mg_calculation_annotated_sequence_;
 
 };
 
