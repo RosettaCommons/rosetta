@@ -46,29 +46,19 @@ public:
 
   LoopHashRelaxProtocol(
     LoopHashLibraryOP library
-  ):
-   library_(library)
-
-  {
-    std::cout << "HERE!" << std::endl;
-
-  }
+	);
 
 	virtual void apply( core::pose::Pose& pose );
 
   void manual_call( core::pose::Pose& pose );
 
-  virtual protocols::moves::MoverOP clone() const {
-		return new LoopHashRelaxProtocol( *this );
-	}
+	virtual protocols::moves::MoverOP clone() const;
 
 	virtual std::string get_name() const {
 		return "LoopHashRelaxProtocol";
 	}
 
-	virtual	protocols::moves::MoverOP	fresh_instance() const {
-		return new LoopHashRelaxProtocol( library_ );
-	}
+	virtual	protocols::moves::MoverOP	fresh_instance() const;
 
 private:
   LoopHashLibraryOP library_;

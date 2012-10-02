@@ -88,6 +88,10 @@ static numeric::random::RandomGenerator RG(7590021);  // <- Magic number, do not
 
 namespace protocols {
 namespace loophash {
+	LoopHashRelaxProtocol::LoopHashRelaxProtocol( LoopHashLibraryOP library	) : library_(library)
+	{
+		std::cout << "HERE!" << std::endl;
+	}
 
   void
   LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
@@ -255,6 +259,14 @@ namespace loophash {
   LoopHashRelaxProtocol::apply( core::pose::Pose& pose )
   {
   }
+
+  protocols::moves::MoverOP LoopHashRelaxProtocol::clone() const {
+		return new LoopHashRelaxProtocol( *this );
+	}
+
+	protocols::moves::MoverOP	LoopHashRelaxProtocol::fresh_instance() const {
+		return new LoopHashRelaxProtocol( library_ );
+	}
 
 } // namespace loops
 } // namespace protocols
