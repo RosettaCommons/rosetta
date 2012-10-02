@@ -204,6 +204,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "envsmooth" ] = envsmooth;
 	name2score_type_[ "e_pH" ] = e_pH;
 	name2score_type_[ "rna_bulge"] = rna_bulge;
+	name2score_type_[ "mg_ref"] = mg_ref;
 	// Variant type to flag rotamers for alternative scoring with varying weight
 	name2score_type_[ "special_rot"] = special_rot;
 
@@ -275,6 +276,10 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "rna_base_stack_axis"] = rna_base_stack_axis;
 	name2score_type_[ "rna_data_base"] = rna_data_base;
 	name2score_type_[ "rna_data_backbone"] = rna_data_backbone;
+	name2score_type_[ "rna_mg"] = rna_mg;
+	name2score_type_[ "rna_mg_rep"] = rna_mg_rep;
+	name2score_type_[ "rna_mg_indirect"] = rna_mg_indirect;
+	name2score_type_[ "mg_chem_pot"] = mg_chem_pot;
 
 	//Will these ever really be used?
 	name2score_type_[ "rna_base_pair_pairwise"] = rna_base_pair_pairwise;
@@ -295,11 +300,11 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "rna_fa_rep_base"] = rna_fa_rep_base;
 
 	////////////Intra-res RNA specific score terms//////////////////
-	name2score_type_[ "lk_polar_intra_RNA" ] = lk_polar_intra_RNA;       
-	name2score_type_[ "lk_nonpolar_intra_RNA" ] = lk_nonpolar_intra_RNA; 
-	name2score_type_[ "fa_intra_RNA_base_phos_atr" ] = fa_intra_RNA_base_phos_atr;  
-	name2score_type_[ "fa_intra_RNA_base_phos_rep" ] = fa_intra_RNA_base_phos_rep;  
-	name2score_type_[ "fa_intra_RNA_base_phos_sol" ] = fa_intra_RNA_base_phos_sol;  
+	name2score_type_[ "lk_polar_intra_RNA" ] = lk_polar_intra_RNA;
+	name2score_type_[ "lk_nonpolar_intra_RNA" ] = lk_nonpolar_intra_RNA;
+	name2score_type_[ "fa_intra_RNA_base_phos_atr" ] = fa_intra_RNA_base_phos_atr;
+	name2score_type_[ "fa_intra_RNA_base_phos_rep" ] = fa_intra_RNA_base_phos_rep;
+	name2score_type_[ "fa_intra_RNA_base_phos_sol" ] = fa_intra_RNA_base_phos_sol;
 	name2score_type_[ "hbond_intra" ] = hbond_intra; //Currently affects only RNA.
 	name2score_type_[ "geom_sol_intra_RNA"    ] = geom_sol_intra_RNA;
 	name2score_type_[ "CI_geom_sol"    ] = CI_geom_sol;

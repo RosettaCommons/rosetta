@@ -149,6 +149,10 @@ enum ScoreType {
 	rna_base_stack,   // Stacking interactions
 	rna_base_stack_axis,   // Stacking interactions should involve parallel bases.
 
+  rna_mg, //knowledge-based term for mg(2+)/RNA interactions for use in low res modeling.
+  rna_mg_rep, // ad-hoc, empirically validated term to prevent uncommon mg(2+)/atom interactions.
+  rna_mg_indirect, //knowledge-based term for mg(2+)/RNA interactions for use in low res modeling.
+	mg_chem_pot, // chemical potential ('mu') of instantiating an explicit mg(2+) ion. Actually a simple one-body term.
 
 	// High resolution
 	rna_torsion,       // RNA torsional potential.
@@ -158,11 +162,8 @@ enum ScoreType {
 	//	fa_stack_pyrimidine,          // stacking interaction modeled as pairwise atom-atom interactions FOR PYRIMIDINE
 	fa_stack_aro,
 
-
 	CI_geom_sol,           //Context independent version. Currently tested only for RNA case.
 	CI_geom_sol_intra_RNA, //RNA specific score term
-
-
 
 	fa_cust_pair_dist,  // custom short range 2b
 	custom_atom_pair,
@@ -275,6 +276,7 @@ enum ScoreType {
 	envsmooth,
 	e_pH,
 	rna_bulge,
+  mg_ref,  // chemical potential for mg(2+) ('reference weight' in Rosetta lingo)
 	special_rot,
 
 	// PB potential
@@ -388,7 +390,7 @@ enum ScoreType {
 	elec_dens_fast,
 	elec_dens_window,
 	elec_dens_whole_structure_ca,
-	elec_dens_whole_structure_allatom,	
+	elec_dens_whole_structure_allatom,
 	elec_dens_atomwise,
 
 	// patterson correlation
