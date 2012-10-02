@@ -16,7 +16,6 @@
 #define INCLUDED_core_scoring_rna_RNA_Mg_Energy_hh
 
 // Unit Headers
-#include <core/scoring/rna/RNA_Mg_Energy.fwd.hh>
 #include <core/scoring/rna/RNA_Mg_KnowledgeBasedPotential.fwd.hh>
 
 // Package headers
