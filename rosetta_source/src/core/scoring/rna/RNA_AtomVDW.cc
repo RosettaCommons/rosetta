@@ -9,7 +9,6 @@
 
 /// @file   core/scoring/methods/AtomVDW.hh
 /// @brief
-/// @author Phil Bradley
 /// @author Rhiju Das
 
 
@@ -21,7 +20,6 @@
 // Project headers
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 
 #include <basic/database/open.hh>
@@ -31,7 +29,10 @@
 
 #include <core/chemical/ResidueType.hh>
 #include <utility/vector1.hh>
+#include <basic/Tracer.hh>
 
+
+static basic::Tracer tr("core.scoring.rna.RNA_AtomVDW");
 
 namespace core {
 namespace scoring {
@@ -44,6 +45,9 @@ rna_residue_name_to_num( char const c )
 	if ( c == 'c') return 2;
 	if ( c == 'g') return 3;
 	if ( c == 'u') return 4;
+	if ( c == 'Z') return 5; // Mg(2+)
+	tr << "What is this? " << c << std::endl;
+	utility_exit_with_message( "Asked for rna_residue_name_to_num for unknown residue_name" );
 	return 0;
 }
 
@@ -68,7 +72,8 @@ RNA_AtomVDW::RNA_AtomVDW()
 	utility::io::izstream stream;
 	basic::database::open( stream, "chemical/rna/rna_atom_vdw.txt" );
 
-	rna_vdw_parameter_.dimension( 10, 10, 4, 4 );
+	rna_vdw_parameter_.dimension( 9, 9, 5, 5 );  // 5 = a,c,g,u,Z (Mg2+)
+	rna_vdw_parameter_ = 0.0; // zero everything out.
 
 	if ( !stream.good() ) utility_exit_with_message( "Unable to open rna_scoring/AtomVDW/atom_vdw.txt!" );
 
@@ -87,77 +92,41 @@ RNA_AtomVDW::RNA_AtomVDW()
 		Size const pos1 = get_position_in_vector( rna_vdw_atom_[which_residue1], atom_name1 );
 		Size const pos2 = get_position_in_vector( rna_vdw_atom_[which_residue2], atom_name2 );
 
+		runtime_assert( pos1 <= rna_vdw_parameter_.size1() );
+		runtime_assert( pos1 <= rna_vdw_parameter_.size2() );
+
 		rna_vdw_parameter_( pos1,
 												pos2,
 												rna_residue_name_to_num( which_residue1 ),
 												rna_residue_name_to_num( which_residue2 ) ) = input_bump_parameter;
+		//perhaps we should explicitly force symmetry here?
 
 	}
 
-	num_rna_vdw_atoms_check_ = rna_vdw_atom_['g'].size();
-
-	initialize_atom_numbers(); // For fast look up of atom indices
-
-}
-
-///////////////////////////////////////////////
-void
-RNA_AtomVDW::initialize_atom_numbers()
-{
-
-	using namespace core::chemical;
-	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
-
-	initialize_atom_numbers( rsd_set, na_rad );
-	initialize_atom_numbers( rsd_set, na_rgu );
-	initialize_atom_numbers( rsd_set, na_rcy );
-	initialize_atom_numbers( rsd_set, na_ura );
+	//	for ( Size i = 1; i <= 9; i++ ) {
+	//		for ( Size j = 1; j <= 9; j++ ) {
+	//			for ( Size m = 1; m <= 5; m++ ) {
+	//				for ( Size n = 1; n <= 5; n++ ) {
+					//					std::cout << "BUMP PARAM: " << i << " " << j << " " << m << " " << n << " " << rna_vdw_parameter_( i, j, m, n ) << std::endl;
+	//				}
+	//			}
+	//		}
+	//	}
 
 }
-
-///////////////////////////////////////////////
-void
-RNA_AtomVDW::initialize_atom_numbers( chemical::ResidueTypeSetCAP & rsd_set, chemical::AA const & aa )
-{
-	using namespace core::chemical;
-
-	ResidueTypeCOPs const & rsd_types( rsd_set->aa_map( aa ) );
-
-	if ( rsd_types.size() < 1) {
-		std::cout << "PROBLEM FINDING RESIDUE: " << name_from_aa( aa ) << std::endl;
-		return;
-	}
-
-	ResidueTypeCOP const & rsd_type( rsd_types[1] );
-	char const which_nucleotide( rsd_type->name1() ) ;
-
-	utility::vector1 < Size > atom_numbers_temp;
-
-	for (Size i = 1; i <= num_rna_vdw_atoms_check_; i++ ) {
-		atom_numbers_temp.push_back( rsd_type->atom_index( rna_vdw_atom_[ which_nucleotide ][i] ) );
-	}
-
-	atom_numbers_[ which_nucleotide ] =  atom_numbers_temp;
-
-}
-
-
-// std::string
-// RNA_AtomVDW::check_atom( Size const atom_index, char const which_nucleotide ) const
-// {
-// 	// Following doesn't work, unfortunately -- not actually a const operation for maps.
-// 	//	return rna_vdw_atom_[ which_nucleotide ][ atom_index ];
-
-// 	AtomList::const_iterator iter = rna_vdw_atom_.find( which_nucleotide );
-//   return (iter->second)[ atom_index ];
-// }
 
 //////////////////////////////////////////////
 utility::vector1 < std::string > const
 RNA_AtomVDW::vdw_atom_list( char const which_nucleotide ) const
 {
 	AtomList::const_iterator iter = rna_vdw_atom_.find( which_nucleotide );
+
+	if ( iter == rna_vdw_atom_.end() ) {
+		tr << "WARNING! Asked for vdw_atom_list for " << which_nucleotide << " and it did not exist! " << std::endl;
+		utility::vector1< std::string > blank_vector;
+		return blank_vector;
+	}
+
 	return (iter->second);
 }
 
@@ -170,13 +139,6 @@ RNA_AtomVDW::bump_parameter( Size const atom1, Size const atom2,
 														 rna_residue_name_to_num( which_residue2 ) );
 }
 
-//////////////////////////////////////////////
-utility::vector1< Size > const &
-RNA_AtomVDW::atom_numbers_for_vdw_calculation( char const which_nucleotide ) const
-{
-	AtomNumberList::const_iterator iter = atom_numbers_.find( which_nucleotide );
-	return (iter->second);
-}
 
 
 } // namespace rna
