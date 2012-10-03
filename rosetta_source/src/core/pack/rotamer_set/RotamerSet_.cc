@@ -48,6 +48,7 @@
 
 #include <core/pack/dunbrack/ChiSet.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
+#include <set>
 
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 // AUTO-REMOVED #include <basic/database/open.hh>
@@ -141,18 +142,23 @@ RotamerSet_::add_rotamer(
 	//n_rotamers_for_restype_.push_back( 1 );
 	//rotamers_.push_back( rotamer.clone() );
 
-	declare_new_residue_type();
-	push_back_rotamer( rotamer.clone() );
+	if (current_residue_types_names_.find(rotamer.name3())!=current_residue_types_names_.end()) {
+	assert(current_residue_types_names_.size()==1);
+	rotamers_.push_back( rotamer.clone() );
+	residue_type_for_rotamers_.push_back( n_residue_types_ );
+	n_rotamers_for_restype_[1]++;
+	//residue_type_rotamers_begin_ does not change
+
+		} else {
+			declare_new_residue_type();
+			push_back_rotamer( rotamer.clone() );
+		}
 }
-
-
 
 Size
 RotamerSet_::get_n_residue_types() const
 {
-	//std::cout << "B get_n_residue_types: " << n_residue_types_ << std::endl;
 	update_rotamer_offsets();
-	//std::cout << "A get_n_residue_types: " << n_residue_types_ << std::endl;
 	return n_residue_types_;
 }
 
@@ -982,6 +988,9 @@ RotamerSet_::push_back_rotamer( conformation::ResidueOP rotamer )
 	rotamers_.push_back( rotamer );
 	residue_type_for_rotamers_.push_back( n_residue_types_ );
 	++n_rotamers_for_restype_[ n_residue_types_ ];
+
+	//save all the current residue types
+	current_residue_types_names_.insert( rotamer->name3() );
 }
 
 void RotamerSet_::build_dependent_rotamers(

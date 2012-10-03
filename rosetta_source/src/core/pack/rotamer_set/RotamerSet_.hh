@@ -41,6 +41,8 @@
 #include <core/scoring/trie/RotamerTrieBase.fwd.hh>
 #include <utility/vector1.hh>
 
+#include <set>
+#include <map>
 
 namespace core {
 namespace pack {
@@ -304,6 +306,10 @@ private:
 
 	ResidueOP current_rotamer_copy_;
 	mutable bool rotamer_offsets_require_update_;
+
+	//current residue types
+	mutable std::set< std::string > current_residue_types_names_;
+
 };
 
 } // namespace rotamer_set
