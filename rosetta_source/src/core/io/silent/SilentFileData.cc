@@ -594,7 +594,7 @@ SilentFileData::read_stream(
 			//we have just read the two SEQUENCE: and SCORE: header lines and a new header starts... ignore this
 			mylines.clear();
 		}
-		if ( ( line.substr(0,7) == "SCORE: " || line.substr(0,10) == "SEQUENCE: " ) && mylines.size() > 1 /*used to be 3. What's wrong with a one-residue structure?*/ ) {
+		if ( ( line.substr(0,7) == "SCORE: " || line.substr(0,10) == "SEQUENCE: " ) && mylines.size() > 3 ) {
 			bool init_good = tmp_struct->init_from_lines( mylines, *this );
 			if ( !init_good && throw_exception_on_bad_structs ) {
 				 	throw utility::excn::EXCN_BadInput(
