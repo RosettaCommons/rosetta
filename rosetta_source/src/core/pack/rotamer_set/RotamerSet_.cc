@@ -142,7 +142,7 @@ RotamerSet_::add_rotamer(
 	//n_rotamers_for_restype_.push_back( 1 );
 	//rotamers_.push_back( rotamer.clone() );
 
-	if (current_residue_types_names_.find(rotamer.name3())!=current_residue_types_names_.end()) {
+	if (current_residue_types_names_.find(rotamer.name())!=current_residue_types_names_.end()) {
 	assert(current_residue_types_names_.size()==1);
 	rotamers_.push_back( rotamer.clone() );
 	residue_type_for_rotamers_.push_back( n_residue_types_ );
@@ -990,7 +990,7 @@ RotamerSet_::push_back_rotamer( conformation::ResidueOP rotamer )
 	++n_rotamers_for_restype_[ n_residue_types_ ];
 
 	//save all the current residue types
-	current_residue_types_names_.insert( rotamer->name3() );
+	current_residue_types_names_.insert( rotamer->name() );
 }
 
 void RotamerSet_::build_dependent_rotamers(
