@@ -294,8 +294,8 @@ class ServerInfo {
     
     }
  
-   const std::string &url_gettask()   const { return full_url() + "/task/get";      };
-   const std::string &url_putresult() const { return full_url() + "/structure/put"; };
+   const std::string url_gettask()   const { return full_url() + "/task/get";      };
+   const std::string url_putresult() const { return full_url() + "/structure/put"; };
    const std::string full_url() const { return server_url_ + ":" + server_port_; }
  private:
    std::string server_url_; 
@@ -315,11 +315,12 @@ class RosettaJob {
       
       CurlPost cg;
       std::string data;
-
+      std::cout << "URL: " << server_info.url_gettask() << std::endl;
       try {
         data = cg.post( server_info.url_gettask() , "", "lease_time=100"  );
       } catch ( std::string error ){
-        std::cerr << "ERROR:" << error << std::endl;
+        std::cerr << "ERROR(" << server_info.url_gettask() << std::endl;
+        std::cerr << "):" << error << std::endl;
         return false;
       }
     
@@ -564,14 +565,15 @@ main( int argc, char * argv [] )
 
   // initialize all the protocols 
   // these are slow so only do them once at start up not when the job is requested for lower latency.
-	utility::vector1 < core::Size > loop_sizes = option[lh::loopsizes]();
-	loop_hash_library = new LoopHashLibrary( loop_sizes );
-  loop_hash_library->load_db();
-
+	if( option[lh::db_path].user() ){
+    utility::vector1 < core::Size > loop_sizes = option[lh::loopsizes]();
+    loop_hash_library = new LoopHashLibrary( loop_sizes );
+    loop_hash_library->load_db();
+  }
 
   // set up the application server information package
   ServerInfo server( option[rbe::server_url](), option[rbe::server_port](), option[rbe::poll_frequency ]() ); 
-
+  std::cout << "server: " << server.url_gettask() << std::endl;
   RosettaBackend backend( server );
 
 
