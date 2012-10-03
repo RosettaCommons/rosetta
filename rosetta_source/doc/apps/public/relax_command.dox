@@ -18,7 +18,7 @@
 @page relax_commands Commands for the relax application
 
 @section metadata Metadata
-This document was edited May 25th 2010 by Mike Tyka. This application in mini was created and documented by Mike Tyka, et al.
+This document was last edited October 2nd 2012 by Roland A. Pache. This application in mini was created and documented by Mike Tyka, et al.
 
 @section purpose_algorithm  Purpose and Algorithm
 The "relax" application in Rosetta carries out the task of simple structural refinement of fullatom Rosetta models. It can also read Centroid models, in which case it will convert the model into a fullatom model and pack the sidechains.
@@ -57,8 +57,11 @@ Options specific to relax
    Advanced Options:
    -relax:script <file>      Do custom script relax (you can supply a custom script file)
 
-   Constraints: If you want constraints on for the entire relax run, set ramp_constraints to false (below) along with the other constraint flags. Built in options include backbone coordinate constraints, sidechain coordinate constraints and sidechain pairwise constraints. 
-   -constraints:cst_fa_file  <filename>      Add constraints from the constraint file(*)
+   Constraints: If you want constraints on for the entire relax run, set ramp_constraints to false (below) along with the other constraint flags. Constraints can be provided using either the cst_fa_file or cst_file options. If both options are used, priority will be given to the cst_fa_file constraints. Default weights for the constraints are 0. Built in options include backbone coordinate constraints, sidechain coordinate constraints and sidechain pairwise constraints. 
+   -constraints:cst_fa_file  <filename>      Add constraints from the fullatom constraint file(*)
+	 -constraints:cst_fa_weight <weight>       Weight to be used for the constraints in the cst_fa_file.
+	 -constraints:cst_file  <filename>         Add constraints from the constraint file(*)
+	 -constraints:cst_weight   <weight>        Weight to be used for the constraints in the cst_file.
    -relax:constrain_relax_to_start_coords    Add coordinate constraints to backbone heavy atoms, based on the input structure.
    -relax:constrain_relax_to_native_coords   Add coordinate constraints to backbone heavy atoms, based on the structure passed to -in:file:native.
    -relax:coord_constrain_sidechains         Also add coordinate constraints to sidechain heavy atoms (requires one of previous two options)

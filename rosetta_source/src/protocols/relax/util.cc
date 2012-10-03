@@ -11,6 +11,7 @@
 /// @brief protocols that are specific to relax
 /// @detailed
 /// @author Mike Tyka, Monica Berrondo
+/// @author Roland A. Pache
 
 
 #include <protocols/relax/RelaxProtocolBase.hh>
@@ -38,7 +39,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
@@ -80,7 +81,7 @@ generate_relax_from_cmd( bool NULL_if_no_flag ) {
 
 	core::scoring::ScoreFunctionOP scorefxn;
 	scorefxn = core::scoring::getScoreFunction();
-	if ( option[ in::file::fullatom ]() )
+	if ( option[ in::file::fullatom ]() || option[ OptionKeys::constraints::cst_fa_file ].user())
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *scorefxn );
 	else
 		core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn( *scorefxn );

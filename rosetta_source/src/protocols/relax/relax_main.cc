@@ -11,6 +11,7 @@
 /// @brief protocols that are specific to relax
 /// @detailed
 /// @author Mike Tyka, Monica Berrondo
+/// @author Roland A. Pache
 
 
 #include <protocols/relax/RelaxProtocolBase.hh>
@@ -78,11 +79,15 @@ Relax_main( bool ) {
 	protocols::jd2::set_native_in_mover( *protocol );
 
 	// add constraints from cmd line
-	if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
+	if ( option[ OptionKeys::constraints::cst_fa_file ].user() || option[ OptionKeys::constraints::cst_file ].user()) {
 			protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
 			protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
-			loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );
-			seqmov->add_mover( loadCsts );
+            if (option[ OptionKeys::constraints::cst_fa_file ].user()) {
+                loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );
+            } else {
+                loadCsts->constraint_file( core::scoring::constraints::get_cst_file_option() );
+            }
+            seqmov->add_mover( loadCsts );
 			seqmov->add_mover( protocol );
 			protocol = seqmov;
 	}

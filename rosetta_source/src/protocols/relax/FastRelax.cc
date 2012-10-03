@@ -11,6 +11,7 @@
 /// @brief The FastRelax Protocol
 /// @detailed
 /// @author Mike Tyka
+/// @author Roland A. Pache
 
 /*
 Format for relax script file
@@ -352,7 +353,7 @@ FastRelax::parse_my_tag(
 	core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
 	mm->set_chi( true );
 	mm->set_bb( true );
-	mm->set_jump( true );
+	mm->set_jump( false );
 
 	set_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 
