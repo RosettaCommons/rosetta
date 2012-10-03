@@ -50,6 +50,7 @@
 #include <utility/vector1.hh>
 
 #include <string>
+#include <map>
 
 
 // Utility Headers
@@ -71,9 +72,12 @@ public:
 	typedef core::pack::task::operation::TaskOperationOP TaskOperationOP;
 	typedef TaskOperation parent;
 	typedef utility::tag::TagPtr TagPtr;
+	typedef std::map< std::string, TaskOperationOP > TaskLayers;
 
-	//typedef protocols::toolbox::SelectResiduesByLayer SelectResiduesByLayer;
-	//typedef protocols::toolbox::SelectResiduesByLayerOP SelectResiduesByLayerOP;
+	// map of maps, the first key is the layer(core, boundary, intermediate) and the second key
+	// is the secondary structure (L,E,H). The values are string of one letter code aminoacids to
+	// be used in each layer.
+	typedef std::map< std::string, std::map< std::string, std::string > > LayerResidues;
 
 public:
 
@@ -131,9 +135,12 @@ public:
 	/// @brief apply
 	virtual void apply( Pose const & pose, PackerTask & task ) const;
 
+private:
+	utility::vector1<bool> get_restrictions(std::string const & layer, std::string const & default_layer, std::string const &  ss_type) const;
+	void set_default_layer_residues();
+
 
 private:
-
 
 	/// @brief add helix capping ?
 	bool add_helix_capping_;
@@ -144,8 +151,12 @@ private:
 	/// @brief
 	bool verbose_;
 
-	/// @brief
 	bool restrict_restypes_;
+
+	LayerResidues layer_residues_;
+	std::map< std::string, bool > design_layer_;
+
+	TaskLayers task_layers_;
 
 	// define the layer each residue belong to
 	toolbox::SelectResiduesByLayerOP srbl_;

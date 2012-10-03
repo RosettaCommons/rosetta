@@ -543,7 +543,7 @@ void FlxbbDesign::apply( pose::Pose & pose )
 	}
 
 	// make pose to all ala
-	// altert !! we might want to have the functionality to keep_disulfide or not
+	// alert !! we might want to have the functionality to keep_disulfide or not
 	if( clear_all_residues_ ) {
 		MakePolyXMover bap( "ALA", false/*kee_pro*/, true /*keep_gly*/, false /*keep_disulfide_cys*/ );
 		bap.apply( pose );

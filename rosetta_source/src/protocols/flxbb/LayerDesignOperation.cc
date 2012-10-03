@@ -39,16 +39,13 @@
 #include <protocols/flxbb/LayerDesignOperationCreator.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 #include <core/pose/Pose.hh>
+#include <core/pack/task/PackerTask_.hh>
 #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask_.hh>
 #include <core/scoring/dssp/Dssp.hh>
-// AUTO-REMOVED #include <core/scoring/sasa.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
+#include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <basic/Tracer.hh>
 #include <protocols/toolbox/SelectResiduesByLayer.hh>
-
 
 // Utility Headers
 #include <utility/string_util.hh>
@@ -64,6 +61,12 @@ using basic::Warning;
 #include <utility/vector0.hh>
 #include <ObjexxFCL/format.hh>
 #include <basic/options/keys/OptionKeys.hh>
+
+#include <boost/assign/list_inserter.hpp> 
+#include <boost/assign/list_of.hpp> 
+#include <boost/foreach.hpp>
+
+
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -89,8 +92,9 @@ LayerDesignOperation::LayerDesignOperation():
 	verbose_( false ),
 	restrict_restypes_( true ),
 	srbl_( new toolbox::SelectResiduesByLayer )
-{}
-
+{
+	set_default_layer_residues();
+}
 
 /// @brief value constructor
 LayerDesignOperation::LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, bool dsgn_surface ):
@@ -102,18 +106,18 @@ LayerDesignOperation::LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, 
 	srbl_( new toolbox::SelectResiduesByLayer )
 {
 	design_layer( dsgn_core, dsgn_boundary, dsgn_surface );
+	set_default_layer_residues();
 }
 
-
 /// @brief destructor
-LayerDesignOperation::~LayerDesignOperation() {}
+LayerDesignOperation::~LayerDesignOperation() {
+}
 
 /// @brief clone
 core::pack::task::operation::TaskOperationOP
 LayerDesignOperation::clone() const {
 	return new LayerDesignOperation( *this );
 }
-
 
 /// @brief layer to be designed
 void
@@ -143,46 +147,116 @@ LayerDesignOperation::pore_radius( Real ps )
 	srbl_->pore_radius( ps );
 }
 
+void
+LayerDesignOperation::set_default_layer_residues() {
+	TR << "initializing the layer with the default residues" << std::endl;
+	boost::assign::insert(layer_residues_)
+					("core", boost::assign::map_list_of
+							("Loop", 						"AFILPVWY") 
+							("Strand",	 				"FILVWY") 
+							("Helix", 					"AFILVWY") 
+							("HelixStart", 			"AFILVWYP") 
+							("HelixCapping", 		"DNST") 
+					)
+					("boundary", boost::assign::map_list_of
+							("Loop", 						"ADEFGIKLNPQRSTVWY") 
+							("Strand",	 				"DEFIKLNQRSTVWY") 
+							("Helix", 					"ADEIKLNQRSTVWY") 
+							("HelixStart", 			"ADEIKLNQRSTVWYP") 
+							("HelixCapping", 		"DNST") 
+					)
+					("surface", boost::assign::map_list_of
+							("Loop", 						"DEGHKNPQRST") 
+							("Strand",	 				"DEHKNQRST") 
+							("Helix", 					"DEHKNQRST") 
+							("HelixStart",			"DEHKNQRSTP") 
+							("HelixCapping", 		"DNST") 
+					);
+	
+	boost::assign::insert(design_layer_)
+					("core", false)
+					("boundary", false)
+					("surface", false);
+}
+
+utility::vector1<bool> 
+LayerDesignOperation::get_restrictions( std::string const & layer, std::string const & default_layer, std::string const & ss_type) const {	
+	// if the layer doesn't specify the required ss used the default layer one.
+  std::string used_layer = ( layer_residues_.at(layer).count(ss_type) != 0 ) ? layer : default_layer;
+	utility::vector1<bool>  restrict_to_aa( chemical::num_canonical_aas, false );
+	BOOST_FOREACH(char restype, layer_residues_.at(layer).at(ss_type)){
+		restrict_to_aa[chemical::aa_from_oneletter_code( restype )] = true;
+	}
+	return restrict_to_aa;
+}
 
 /// @brief apply
 void
 LayerDesignOperation::apply( Pose const & pose, PackerTask & task ) const
 {
-	// calc dssp
-	core::scoring::dssp::Dssp dssp( pose );
-	dssp.dssp_reduced();
+	using core::pack::task::PackerTask_;
+	typedef std::map< std::string, utility::vector1<bool> > LayerSpecification;
 
 	// calc SelectResiduesByLayer
-	srbl_->compute( pose, dssp.get_dssp_secstruct() );
+	srbl_->compute( pose, "" );
 
+	core::scoring::dssp::Dssp dssp( pose );
+	dssp.dssp_reduced();
 	// find the position of residues of helix capping and intial residue of helix
 	bool flag( false );
 	utility::vector1< bool > helix_capping( pose.total_residue(), false );
 	utility::vector1< bool > initial_helix( pose.total_residue(), false );
-	for( Size i=1; i<=pose.total_residue(); ++i ){
+	for( Size i=1; i<=pose.total_residue(); ++i ) {
 		char ss( dssp.get_dssp_secstruct( i ) );
-		if( ss == 'H' && flag == false && i != 1 ){
+		if( ss == 'H' && flag == false && i != 1 ) {
 			initial_helix[ i ] = true;
 			helix_capping[ i-1 ] = true;
 			flag = true;
 		}
-		if( ss != 'H' && flag == true ){
+		if( ss != 'H' && flag == true ) {
 			flag = false;
 		}
 	}
+	// find the designable residues for the different task layers
+	LayerSpecification layer_specification;
+	BOOST_FOREACH(const TaskLayers::value_type& task_pair, task_layers_) { 
+		TR << "Residues for task layer " << task_pair.first << ": ";
+		PackerTask_ layer_task(pose);
+  	task_pair.second->apply(pose, layer_task);
+		utility::vector1< bool > designable_residues( layer_task.designing_residues() );
+		layer_specification[ task_pair.first ] = designable_residues;
+	}
 
-	// terminal residues set to be allaa
+	// terminal residues set to be all aa
 	utility::vector1<bool> restrict_to_aa( 20, true );
 	task.nonconst_residue_task( 1 ).restrict_absent_canonical_aas( restrict_to_aa );
 	task.nonconst_residue_task( pose.total_residue() ).restrict_absent_canonical_aas( restrict_to_aa );
 
 	for( Size i=2; i<=pose.total_residue()-1; ++i ) {
 
+		const std::string srbl_layer = srbl_->layer(i);
+		// check if the residue is specified in any of the task defined layer
+		utility::vector1< std::string > active_layers;
+		BOOST_FOREACH(const LayerSpecification::value_type& layer_pair, layer_specification) {
+			if( (layer_pair.second)[i] == true) 
+				active_layers.push_back( layer_pair.first );
+		}
+		// If there are no active layers and the working layer is designable
+		// append the working layer
+		if( active_layers.empty() && design_layer_.at(srbl_layer) ) {
+			active_layers.push_back(srbl_layer);
+		} else {
+			if(use_original_)
+  			task.nonconst_residue_task( i ).restrict_to_repacking();
+
+		}
+
 		char ss( dssp.get_dssp_secstruct( i ) );
 		if( verbose_ ) {
-			TR << "Resnum=" << i << " ,SS=" << ss << " "
-				 << "Sasa=" << ObjexxFCL::fmt::F( 6, 2, srbl_->rsd_sasa( i ) );
+			TR << " Resnum=" << i << " ,SS=" << ss << " "
+				 << " Sasa=" << ObjexxFCL::fmt::F( 6, 2, srbl_->rsd_sasa( i ) );
 		}
+		TR << std::endl;
 
 		// skip the residue if this position is defined as PIKAA by resfile
 		if( task.residue_task( i ).command_string().find( "PIKAA" ) != std::string::npos ){
@@ -191,186 +265,44 @@ LayerDesignOperation::apply( Pose const & pose, PackerTask & task ) const
 			}
 			continue;
 		}
-
-		if( srbl_->layer( i ) == "core" ) {
-
-			if( restrict_restypes_ ){
-				if( helix_capping[ i ] == true && add_helix_capping_ ) {
-					utility::vector1<bool> restrict_to_aa( chemical::num_canonical_aas, false );
-					restrict_to_aa[chemical::aa_from_name( "ASP" )] = true;
-					restrict_to_aa[chemical::aa_from_name( "ASN" )] = true;
-					restrict_to_aa[chemical::aa_from_name( "THR" )] = true;
-					restrict_to_aa[chemical::aa_from_name( "SER" )] = true;
-					task.nonconst_residue_task( i ).restrict_absent_canonical_aas( restrict_to_aa );
-					if( verbose_ ) {
-						TR << " ,Helix Capping " << std::endl;
-					}
-				} else {
-					utility::vector1<bool> restrict_to_aa( chemical::num_canonical_aas, false );
-					restrict_to_aa[chemical::aa_from_name( "TRP" )] = true;
-					restrict_to_aa[chemical::aa_from_name( "PHE" )] = true;
-					restrict_to_aa[chemical::aa_from_name( "ILE" )] = true;
-					restrict_to_aa[chemical::aa_from_name( "LEU" )] = true;
-					restrict_to_aa[chemical::aa_from_name( "VAL" )] = true;
-					restrict_to_aa[chemical::aa_from_name( "TYR" )] = true;
-					restrict_to_aa[chemical::aa_from_name( "MET" )] = true;
-
-					if( ss == 'E' ) {
-
-					} else if( ss == 'H' ) {
-						restrict_to_aa[chemical::aa_from_name( "ALA" )] = true;
-						if( initial_helix[ i ] ) {
-							restrict_to_aa[chemical::aa_from_name( "PRO" )] = true;
-						}
-					} else {
-						restrict_to_aa[chemical::aa_from_name( "ALA" )] = true;
-						restrict_to_aa[chemical::aa_from_name( "PRO" )] = true;
-					}
-					task.nonconst_residue_task( i ).restrict_absent_canonical_aas( restrict_to_aa );
-					if( verbose_ ) {
-						TR << " " << srbl_->layer( i ) << std::endl;
-					}
-				}
-			}
-		} else if ( srbl_->layer( i ) == "boundary" ) {
-
-			if( restrict_restypes_ ){
-				if( helix_capping[ i ] == true && add_helix_capping_ ) {
-					utility::vector1<bool> restrict_to_aa( chemical::num_canonical_aas, false );
-					restrict_to_aa[chemical::aa_from_name( "ASP" )] = true;
-					restrict_to_aa[chemical::aa_from_name( "ASN" )] = true;
-					restrict_to_aa[chemical::aa_from_name( "THR" )] = true;
-					restrict_to_aa[chemical::aa_from_name( "SER" )] = true;
-					task.nonconst_residue_task( i ).restrict_absent_canonical_aas( restrict_to_aa );
-					if( verbose_ ) {
-						TR << " ,Helix Capping " << std::endl;
-					}
-				} else {
-
-					utility::vector1<bool> restrict_to_aa( chemical::num_canonical_aas, true );
-					if( ss == 'E' || ss == 'L' ) {
-
-						restrict_to_aa[chemical::aa_from_name( "CYS" )] = false;
-						restrict_to_aa[chemical::aa_from_name( "MET" )] = false;
-						restrict_to_aa[chemical::aa_from_name( "HIS" )] = false;
-
-					} else {
-
-						restrict_to_aa[chemical::aa_from_name( "CYS" )] = false;
-						restrict_to_aa[chemical::aa_from_name( "PHE" )] = false;
-						restrict_to_aa[chemical::aa_from_name( "MET" )] = false;
-						restrict_to_aa[chemical::aa_from_name( "HIS" )] = false;
-
-					}
-
-					if( ss == 'E' ){
-						restrict_to_aa[chemical::aa_from_name( "GLY" )] = false;
-						restrict_to_aa[chemical::aa_from_name( "ALA" )] = false;
-						restrict_to_aa[chemical::aa_from_name( "PRO" )] = false;
-					} else if( ss == 'H' ) {
-						if( ! initial_helix[ i ] ) {
-							restrict_to_aa[chemical::aa_from_name( "PRO" )] = false;
-						}
-						restrict_to_aa[chemical::aa_from_name( "GLY" )] = false;
-					}
-					task.nonconst_residue_task( i ).restrict_absent_canonical_aas( restrict_to_aa );
-					if( verbose_ ) {
-						TR << " " << srbl_->layer( i ) << std::endl;
-					}
-				}
-			}
-		} else if ( srbl_->layer( i ) == "surface" ) {
-
-			if( restrict_restypes_ ){
-				if( helix_capping[ i ] == true && add_helix_capping_ ) {
-					utility::vector1<bool> restrict_to_aa( chemical::num_canonical_aas, false );
-					restrict_to_aa[chemical::aa_from_name( "ASP" )] = true;
-					restrict_to_aa[chemical::aa_from_name( "ASN" )] = true;
-					restrict_to_aa[chemical::aa_from_name( "THR" )] = true;
-					restrict_to_aa[chemical::aa_from_name( "SER" )] = true;
-					task.nonconst_residue_task( i ).restrict_absent_canonical_aas( restrict_to_aa );
-					if( verbose_ ) {
-						TR << " ,Helix Capping " << std::endl;
-					}
-				} else {
-
-					utility::vector1<bool> restrict_to_aa( chemical::num_canonical_aas, false );
-					restrict_to_aa[chemical::aa_from_name( "GLU" )] = true;
-					restrict_to_aa[chemical::aa_from_name( "ARG" )] = true;
-					restrict_to_aa[chemical::aa_from_name( "ASP" )] = true;
-					restrict_to_aa[chemical::aa_from_name( "LYS" )] = true;
-					restrict_to_aa[chemical::aa_from_name( "HIS" )] = true;
-					restrict_to_aa[chemical::aa_from_name( "ASN" )] = true;
-					restrict_to_aa[chemical::aa_from_name( "GLN" )] = true;
-					restrict_to_aa[chemical::aa_from_name( "SER" )] = true;
-					restrict_to_aa[chemical::aa_from_name( "THR" )] = true;
-
-					if( ss == 'E' ) {
-					} else if ( ss == 'H' ) {
-						if( initial_helix[ i ] == true ){
-							restrict_to_aa[chemical::aa_from_name( "PRO" )] = true;
-						}
-					} else {
-						restrict_to_aa[chemical::aa_from_name( "GLY" )] = true;
-					}
-
-					task.nonconst_residue_task( i ).restrict_absent_canonical_aas( restrict_to_aa );
-					if( verbose_ ) {
-						TR << " " << srbl_->layer( i ) << std::endl;
-					}
-				}
-			}
-		} else {
-
-			if( use_original_ ){
-				task.nonconst_residue_task( i ).restrict_to_repacking();
-				if( verbose_ ) {
-					TR << " ,Original sequence used" << std::endl;
-				}
-			}else{
-				utility::vector1<bool> restrict_to_aa( 20, false );
-				restrict_to_aa[chemical::aa_from_name( "ALA" )] = true;
-				task.nonconst_residue_task( i ).restrict_absent_canonical_aas( restrict_to_aa );
-				if( verbose_ ) {
-					TR << " ,No design" << std::endl;
-				}
-			}
-
+		
+		BOOST_FOREACH(std::string& layer, active_layers) {
+  	  if( helix_capping[ i ] == true && add_helix_capping_ ) {
+  			task.nonconst_residue_task( i ).restrict_absent_canonical_aas( get_restrictions( layer, srbl_layer, "HelixCapping") );
+  			if( verbose_ ) 
+  				TR << " ,Helix Capping " << std::endl;
+  
+  		} else if( initial_helix[i] ) {
+  			task.nonconst_residue_task( i ).restrict_absent_canonical_aas( get_restrictions( layer, srbl_layer, "HelixStart") );
+  
+  		} else if( ss == 'E') {
+  			task.nonconst_residue_task( i ).restrict_absent_canonical_aas( get_restrictions( layer, srbl_layer, "Strand") );
+  
+  		} else if( ss == 'L') {
+  			task.nonconst_residue_task( i ).restrict_absent_canonical_aas( get_restrictions( layer, srbl_layer, "Loop") );
+  
+  		} else if( ss == 'H') {
+  			task.nonconst_residue_task( i ).restrict_absent_canonical_aas( get_restrictions( layer, srbl_layer, "Helix") );
+  
+  		} 
 		}
-
 	} // for( i )
 } // apply
 
 void
 LayerDesignOperation::parse_tag( TagPtr tag )
 {
+	using core::pack::task::operation::TaskOperationFactory;
 	use_original_ = tag->getOption< bool >( "use_original_non_designed_layer", 1 );
 
-	String design_layers = tag->getOption< String >( "layer" );
+	String design_layers = tag->getOption< String >( "layer", "core_boundary_surface" );
 	utility::vector1< String > layers( utility::string_split( design_layers, '_' ) );
-
-	bool dsgn_core( false );
-	bool dsgn_surface( false );
-	bool dsgn_boundary( false );
-	for ( utility::vector1< String >::const_iterator iter = layers.begin(); iter != layers.end() ; ++iter) {
-		String layer(*iter);
-
-		if ( layer == "core" ) {
-			dsgn_core = true;
-		} else if ( layer == "surface" ) {
-			dsgn_surface = true;
-		} else if ( layer == "boundary" ) {
-			dsgn_boundary = true;
-		} else {
-			TR << "Error!, wrong specification of layer_mode " << layer << std::endl;
-			TR << "Every layers are designed. " << std::endl;
-			dsgn_core = true;
-			dsgn_surface = true;
-			dsgn_boundary = true;
-		}
+	BOOST_FOREACH(std::string &  layer, layers) {
+		design_layer_[ layer ] = true;
 	}
+	
 
-	srbl_->set_design_layer( dsgn_core, dsgn_boundary, dsgn_surface );
+	srbl_->set_design_layer( true, true, true);
 
 	if( tag->hasOption( "pore_radius" ) ) {
 		srbl_->pore_radius( tag->getOption< Real >( "pore_radius" ) );
@@ -410,9 +342,28 @@ LayerDesignOperation::parse_tag( TagPtr tag )
 	set_verbose( tag->getOption< bool >( "verbose", false ) );
 	set_restrict_restypes( tag->getOption< bool >( "restrict_restypes", true ) );
 
+	BOOST_FOREACH( utility::tag::TagPtr const layer_tag, tag->getTags() ){
+		std::string layer = layer_tag->getName(); // core, residue, boundary
+		if( TaskOperationFactory::get_instance()->has_type(layer) ) {
+			std::string task_op_type = layer;
+			std::string task_name = layer_tag->getOption< std::string >("name");
+			TR << "Defining new layer from task type "<< layer << " named " << task_name << std::endl;
+			layer = task_name;
+			TaskOperationOP task = TaskOperationFactory::get_instance()->newTaskOperation(task_op_type, layer_tag);
+			// store the task to use it in apply to find the designable residues for the layer
+			// and add the extra layer to layer_residues_.
+			task_layers_[ task_name ] = task;
+			layer_residues_[ layer ] = std::map< std::string, std::string >();
+		} 
 
+		BOOST_FOREACH( utility::tag::TagPtr const secstruct_tag, layer_tag->getTags() ){
+			std::string secstruct = secstruct_tag->getName(); // Strand, Helix, Loop, HelixCapping
+			std::string aas = secstruct_tag->getOption< std::string >("aa");
+			TR << "Setting layer residues for " << layer << " "<< secstruct <<" to " << aas << std::endl;
+			layer_residues_[ layer ][ secstruct ] = aas;
+		}
+	}
 }
 
 } // flxbb
 } // protocols
-
