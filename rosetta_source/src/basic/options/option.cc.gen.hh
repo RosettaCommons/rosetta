@@ -1066,7 +1066,7 @@ option.add( basic::options::OptionKeys::relax::sc_cst_maxdist, "Use distance con
 option.add( basic::options::OptionKeys::relax::limit_aroma_chi2, "limit chi2 rotamer of PHE,TYR, and HIS around 90 " ).def(false);
 option.add( basic::options::OptionKeys::relax::bb_move, "allow backbone to move during relax" ).def(true);
 option.add( basic::options::OptionKeys::relax::chi_move, "allow sidechain to move during relax" ).def(true);
-option.add( basic::options::OptionKeys::relax::jump_move, "allow jump to move during relax" ).def(false);
+option.add( basic::options::OptionKeys::relax::jump_move, "allow jump to move during relax" ).def(true);
 option.add( basic::options::OptionKeys::relax::minimize_bond_lengths, "Free bond length DOFs during relax for all atoms" ).def(false);
 option.add( basic::options::OptionKeys::relax::minimize_bond_angles, "Free bond angle DOFs during relax for all atoms" ).def(false);
 option.add( basic::options::OptionKeys::relax::minimize_mainchain_bond_lengths, "Free bond length DOFs for mainchain heavy atoms" ).def(false);
