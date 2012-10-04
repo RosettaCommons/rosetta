@@ -203,7 +203,7 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 						else {
 							cur_psi = 0 - (n_psi_ - j);
 						}
-						char cur_tb;
+						char cur_tb = ' ';
 						if (torsion_bin != 'X') 
 							cur_tb = core::conformation::get_torsion_bin(cur_phi * 10, cur_psi * 10); //  AS -- how can we get the factor properly / without hard-coding? - also: this takes very long... 
 						if (torsion_bin == 'X' || cur_tb == torsion_bin) { 
