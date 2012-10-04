@@ -222,6 +222,9 @@ void RelaxProtocolBase::set_default_movemap(){
 	movemap_->set_jump( option[ OptionKeys::relax::jump_move ]() );
 	movemap_->set_bb( option[ OptionKeys::relax::bb_move ]() );
 	movemap_->set_chi( option[ OptionKeys::relax::chi_move ]() );
+    if (option[ OptionKeys::in::file::movemap ].user()) {
+        movemap_->init_from_file(option[ OptionKeys::in::file::movemap ]() );
+    }
 }
 
 void RelaxProtocolBase::set_movemap( core::kinematics::MoveMapOP movemap ) {

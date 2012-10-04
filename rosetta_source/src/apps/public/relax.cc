@@ -59,6 +59,7 @@ main( int argc, char * argv [] )
 	relax::ClassicRelax::register_options();
 	jd2::register_options();
 	option.add_relevant( OptionKeys::in::file::fullatom );
+    option.add_relevant( OptionKeys::in::file::movemap );
 	option.add_relevant( OptionKeys::relax::fast );
 	devel::init(argc, argv);
 
