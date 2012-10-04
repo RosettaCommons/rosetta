@@ -40,6 +40,9 @@
 #include <ObjexxFCL/FArray4D.hh>
 #include <ObjexxFCL/string.functions.hh>
 
+// AS -- to get access to get_torsion_bin()
+#include <core/conformation/util.hh>
+
 // option key includes
 
 // AUTO-REMOVED #include <basic/options/keys/loops.OptionKeys.gen.hh>
@@ -155,149 +158,276 @@ void
 Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 {}
 
-
-///////////////////////////////////////////////////////////////////////////////
-/// Initialize the table holding the sample-able torsion space for each residue
-/// with each torsion given indices proportionate to its probability
-void
-Ramachandran::init_rama_sampling_table()
-{
-	rama_sampling_table_.resize(n_aa_);
-	int ss_type=3;
-	FArray2A< Real >::IR const zero_index( 0, n_phi_ - 1);
-	for (int aa=1; aa<=n_aa_; aa++) { // loop over all residue types
-		FArray2A< Real > const rama_for_res( ram_probabil_(1, 1, ss_type, aa), zero_index, zero_index );
-		Size max_allowed = n_phi_ * n_psi_;
-		Size actual_allowed = 0;
-		Real min_val = 1.0; // minimum probability (above rama_sampling_thold_) observed for this residue
-		Real max_val = 0.0; // maximum probability (above rama_sampling_thold_) observed for this residue
-		utility::vector1< utility::vector1< Real> > res_torsions( max_allowed ); // double vector of allowed torsions for this residue
-		utility::vector1< Real > res_probs( max_allowed ); // rama probs of allowed torsions for this residue (coupled to res_torsions by index)
-		//rama_sampling_table_[aa].resize(max_allowed);
-		for (int i=0; i<n_phi_; i++) {
-			for (int j=0; j<n_psi_; j++) {
-				Real res_prob = rama_for_res(i,j);
-				if ( res_prob > rama_sampling_thold_ ) {
-					actual_allowed++;
-					if (res_prob < min_val) min_val = res_prob;
-					else if (res_prob > max_val) max_val = res_prob;
-					//std::cout << res_prob << std::endl;
-					res_probs[actual_allowed] = res_prob;
-
-					utility::vector1< Real > torsion(2);
-					Real cur_phi, cur_psi;
-					if (i <= n_phi_ / 2) {
-						cur_phi = i;
+	///////////////////////////////////////////////////////////////////////////////
+	/// Initialize the table holding the sample-able torsion space for each residue
+	/// with each torsion given indices proportionate to its probability
+	void
+	Ramachandran::init_rama_sampling_table(
+										   char const torsion_bin) // torsion_bin defaults to 'X' unless specified
+	{
+		//rama_sampling_table_.resize(n_aa_);
+		utility::vector1< utility::vector1< utility::vector1< Real > > > current_rama_sampling_table;
+		current_rama_sampling_table.resize(n_aa_);
+		int ss_type=3;
+		FArray2A< Real >::IR const zero_index( 0, n_phi_ - 1);
+		for (int aa=1; aa<=n_aa_; aa++) { // loop over all residue types
+			FArray2A< Real > const rama_for_res( ram_probabil_(1, 1, ss_type, aa), zero_index, zero_index );
+			Size max_allowed = n_phi_ * n_psi_;
+			Size actual_allowed = 0;
+			Real min_val = 1.0; // minimum probability (above rama_sampling_thold_) observed for this residue
+			Real max_val = 0.0; // maximum probability (above rama_sampling_thold_) observed for this residue
+			utility::vector1< utility::vector1< Real> > res_torsions( max_allowed ); // double vector of allowed torsions for this residue
+			utility::vector1< Real > res_probs( max_allowed ); // rama probs of allowed torsions for this residue (coupled to res_torsions by index)
+			//rama_sampling_table_[aa].resize(max_allowed);  
+			for (int i=0; i<n_phi_; i++) {
+				for (int j=0; j<n_psi_; j++) {
+					Real res_prob = rama_for_res(i,j);
+					if ( res_prob > rama_sampling_thold_ ) {
+						//actual_allowed++; // AS: moved down into if statement, otherwise some entries are empty -> segfault
+						if (res_prob < min_val) min_val = res_prob;
+						else if (res_prob > max_val) max_val = res_prob;
+						//std::cout << res_prob << std::endl;
+						//res_probs[actual_allowed] = res_prob;
+						
+						utility::vector1< Real > torsion(2);
+						Real cur_phi, cur_psi;
+						if (i <= n_phi_ / 2) {
+							cur_phi = i;
+						}
+						else {
+							cur_phi = 0 - (n_phi_ - i);
+						}
+						if (j <= n_psi_ / 2) {
+							cur_psi = j;
+						}
+						else {
+							cur_psi = 0 - (n_psi_ - j);
+						}
+						char cur_tb;
+						if (torsion_bin != 'X') 
+							cur_tb = core::conformation::get_torsion_bin(cur_phi * 10, cur_psi * 10); //  AS -- how can we get the factor properly / without hard-coding? - also: this takes very long... 
+						if (torsion_bin == 'X' || cur_tb == torsion_bin) { 
+							actual_allowed++;
+							res_probs[actual_allowed] = res_prob;
+							torsion[1] = static_cast <Real> (/*i*/ cur_phi * binw_);  // phi
+							torsion[2] = static_cast <Real> (/*j*/ cur_psi * binw_);  // psi
+							res_torsions[actual_allowed] = torsion;
+							//rama_sampling_table_[aa][++actual_allowed] = torsion;
+							//} else {
+							//std::cerr << "warning -- discarding phi/psi " << cur_phi << "/" << cur_psi << " because they're not in torsion bin " << torsion_bin << std::endl;
+						}
 					}
-					else {
-						cur_phi = 0 - (n_phi_ - i);
-					}
-					if (j <= n_psi_ / 2) {
-						cur_psi = j;
-					}
-					else {
-						cur_psi = 0 - (n_psi_ - j);
-					}
-
-					torsion[1] = static_cast <Real> (/*i*/ cur_phi * binw_);  // phi
-					torsion[2] = static_cast <Real> (/*j*/ cur_psi * binw_);  // psi
-					res_torsions[actual_allowed] = torsion;
-					//rama_sampling_table_[aa][++actual_allowed] = torsion;
 				}
 			}
-		}
-
-		if( ((int)aa < (int)1) || ((int)aa > (int)rama_sampling_table_.size()) ){
-			std::cerr << "AA exceeded size of rama_sampling_table_ AA=" + ObjexxFCL::string_of( aa ) + " size()=" + ObjexxFCL::string_of( rama_sampling_table_.size() );
-			continue; // Avoid death.
-		}
-
-		// now populate the rama_sampling_table_ so the torsions are given index space proporionate to their probs
-		rama_sampling_table_[aa].resize(Size(actual_allowed * (max_val / min_val) * rama_sampling_factor_));
-		Size index=0; // to increment the index into the aa's rama_sampling_table_ vector
-		//std::cout << "for aa " << aa << ":" << std::endl;
-		for (Size tor = 1; tor <= actual_allowed; tor++) {
-			Size n_indices = Size(( res_probs[tor] / min_val ) * rama_sampling_factor_);
-			//std::cout << "n_indices for torsion " << tor << ": " << n_indices << std::endl;
-			for (Size ind=1; ind<=n_indices; ind++) {
-				index++;
-				if( (int(index) < 1) || (int(index) > (int)rama_sampling_table_[aa].size()) ){
-					std::cerr <<  "index exceeded size of rama_sampling_table_[aa] index=" +
+			
+			if( ((int)aa < (int)1) || ((int)aa > (int)current_rama_sampling_table.size()) ){
+				std::cerr << "AA exceeded size of rama_sampling_table_ AA=" + ObjexxFCL::string_of( aa ) + " size()=" + ObjexxFCL::string_of( current_rama_sampling_table.size() );
+				continue; // Avoid death.
+			}
+			
+			//std::cerr << "populating table for torsion bin " << torsion_bin << " and " << AA(aa) << std::endl;
+			
+			// now populate the rama_sampling_table_ so the torsions are given index space proporionate to their probs
+			current_rama_sampling_table[aa].resize(Size(actual_allowed * (max_val / min_val) * rama_sampling_factor_));
+			Size index=0; // to increment the index into the aa's rama_sampling_table_ vector
+			//std::cout << "for aa " << aa << ":" << std::endl;
+			for (Size tor = 1; tor <= actual_allowed; tor++) {
+				Size n_indices = Size(( res_probs[tor] / min_val ) * rama_sampling_factor_);
+				//std::cout << "n_indices for torsion " << tor << ": " << n_indices << std::endl;
+				for (Size ind=1; ind<=n_indices; ind++) {
+					index++;
+					if( (int(index) < 1) || (int(index) > (int)current_rama_sampling_table[aa].size()) ){
+						std::cerr <<  "index exceeded size of rama_sampling_table_[aa] index=" +
 						ObjexxFCL::string_of( (index) ) +
 						" rama_sampling_table_[aa].size()=" +
-						ObjexxFCL::string_of( rama_sampling_table_[aa].size() ) +
+						ObjexxFCL::string_of( current_rama_sampling_table[aa].size() ) +
 						" AA=" + ObjexxFCL::string_of( aa );
-
-					continue; // avoid certain death - we dont yet understand why its failing here occasionally
-				}
-				if( ((int)tor < 1) || ((int)tor > (int)res_torsions.size()) ){
-					std::cerr << "tor exceeded size of rama_sampling_table_[aa] index=" +
+						
+						continue; // avoid certain death - we dont yet understand why its failing here occasionally
+					}
+					if( ((int)tor < 1) || ((int)tor > (int)res_torsions.size()) ){
+						std::cerr << "tor exceeded size of rama_sampling_table_[aa] index=" +
 						ObjexxFCL::string_of( tor ) +
 						" res_torsions.size()=" + ObjexxFCL::string_of( res_torsions.size() ) +
 						" AA=" + ObjexxFCL::string_of( aa );
-					continue; // avoid certain death - we dont yet understand why its failing here occasionally
+						continue; // avoid certain death - we dont yet understand why its failing here occasionally
+					}
+					
+					current_rama_sampling_table[aa][index] = res_torsions[tor];
 				}
-
-				rama_sampling_table_[aa][index] = res_torsions[tor];
 			}
+			current_rama_sampling_table[aa].resize(index);
+			//std::cerr << " table for " << AA(aa) << " has size " << index << std::endl; // ?
 		}
-		rama_sampling_table_[aa].resize(index);
+		
+		if (torsion_bin == 'X') {
+			rama_sampling_table_ = current_rama_sampling_table;
+		}
+		core::Size tb_index = get_torsion_bin_index(torsion_bin);
+		//std::cerr << "storing table for torsion bin " << torsion_bin << " --> " << tb_index << std::endl;
+		if (rama_sampling_table_by_torsion_bin_.size() < tb_index)	
+			rama_sampling_table_by_torsion_bin_.resize(tb_index);
+		//std::cerr << "table resized" << std::endl;
+		rama_sampling_table_by_torsion_bin_[tb_index] = current_rama_sampling_table;
+		
+		// DJM: test the rama sampling table
+		//AA test_aa(core::chemical::aa_gly);
+		//for (Size jj = 1; jj <= 500; jj++) {
+		//	Real new_phi, new_psi;
+		//	random_phipsi_from_rama(test_aa, new_phi, new_psi);
+		//	std::cout << new_phi << " " << new_psi << std::endl;
+		//}
 	}
-
-	// DJM: test the rama sampling table
-	//AA test_aa(core::chemical::aa_gly);
-	//for (Size jj = 1; jj <= 500; jj++) {
-	//	Real new_phi, new_psi;
-	//	random_phipsi_from_rama(test_aa, new_phi, new_psi);
-	//	std::cout << new_phi << " " << new_psi << std::endl;
-	//}
-}
-
-///////////////////////////////////////////////////////////////////////////////
-/// Sample phi/psi torsions with probabilities proportionate to their
-/// Ramachandran probabilities
-/// Note -- this function had previously required that the option
-/// loops::nonpivot_torsion_sampling be active.  This function now
-/// performs a just-in-time check to initialize these tables the first
-/// time they are requested -- To properly multi-thread this code, the
-/// function should nab a mutex so that no two threads try to execute
-/// the code at once.
-void
-Ramachandran::random_phipsi_from_rama(
-	AA const res_aa,
-	Real & phi,
-	Real & psi
-) const
-{
-
-	if ( rama_sampling_table_.size() == 0 ) {
-		/// Danger -- not threadsafe.
-		const_cast< Ramachandran * > (this)->init_rama_sampling_table();
-	}
-
-	Size n_torsions = rama_sampling_table_[res_aa].size();
-	Size index = numeric::random::random_range(1, n_torsions);
-	// following lines set phi and set to values drawn proportionately from Rama space
-	// plus or minus uniform noise equal to half the bin width.
-	phi = rama_sampling_table_[res_aa][index][1] +
+	
+	///////////////////////////////////////////////////////////////////////////////
+	/// Sample phi/psi torsions with probabilities proportionate to their
+	/// Ramachandran probabilities
+	/// Note -- this function had previously required that the option
+	/// loops::nonpivot_torsion_sampling be active.  This function now
+	/// performs a just-in-time check to initialize these tables the first
+	/// time they are requested -- To properly multi-thread this code, the
+	/// function should nab a mutex so that no two threads try to execute
+	/// the code at once.
+	void
+	Ramachandran::random_phipsi_from_rama(
+										  AA const res_aa,
+										  Real & phi,
+										  Real & psi
+										  ) const
+	{
+		
+		if ( rama_sampling_table_.size() == 0 ) {
+			/// Danger -- not threadsafe.
+			const_cast< Ramachandran * > (this)->init_rama_sampling_table('X');
+		}
+		
+		Size n_torsions = rama_sampling_table_[res_aa].size();
+		Size index = numeric::random::random_range(1, n_torsions);
+		
+		// following lines set phi and set to values drawn proportionately from Rama space
+		// plus or minus uniform noise equal to half the bin width.
+		phi = rama_sampling_table_[res_aa][index][1] +
 		(numeric::random::uniform() * binw_ * 0.5 * (numeric::random::uniform() < 0.5 ? -1 : 1));
-	psi = rama_sampling_table_[res_aa][index][2] +
+		psi = rama_sampling_table_[res_aa][index][2] +
 		(numeric::random::uniform() * binw_ * 0.5 * (numeric::random::uniform() < 0.5 ? -1 : 1));
-	// DJM: debug
-	//std::cout << "res_aa: " << res_aa << std::endl;
-	//std::cout << "phi: " << phi << std::endl;
-	//std::cout << "psi: " << psi << std::endl;
-
-/*
-	for (Size i=1; i<= rama_sampling_table_.size(); i++) {
-		std::cout << "number of allowed torsions for " << AA(i) << ": " << rama_sampling_table_[i].size() << std::endl;
+		// DJM: debug
+		//std::cout << "res_aa: " << res_aa << std::endl;
+		//std::cout << "phi: " << phi << std::endl;
+		//std::cout << "psi: " << psi << std::endl;
+		
+		/*
+		 for (Size i=1; i<= rama_sampling_table_.size(); i++) {
+		 std::cout << "number of allowed torsions for " << AA(i) << ": " << rama_sampling_table_[i].size() << std::endl;
+		 }
+		 
+		 for (Size i=1; i <= n_torsions; i++) {
+		 std::cout << rama_sampling_table_[res_aa][i][1] << " " << rama_sampling_table_[res_aa][i][2] << std::endl;
+		 }
+		 */
 	}
+	
+	///////////////////////////////////////////////////////////////////////////////
+	/// Sample phi/psi torsions with probabilities proportionate to their
+	/// Ramachandran probabilities -- this version performs lookup restricted to specified torsion bins
+	/// based on random_phipsi_from_rama and has the same issue for parallel running	
+	
+	/// @author Amelie Stein (amelie.stein@ucsf.edu)
+	/// @date Fri May 11 15:52:01 PDT 2012
+	/// @details returns a random phi/psi combination within the given torsion bin -- WARNING: this will only work for the torsion bins that are currently implemented
 
-	for (Size i=1; i <= n_torsions; i++) {
-		std::cout << rama_sampling_table_[res_aa][i][1] << " " << rama_sampling_table_[res_aa][i][2] << std::endl;
+	void
+	Ramachandran::random_phipsi_from_rama_by_torsion_bin(
+														 AA const res_aa,
+														 Real & phi,
+														 Real & psi, 
+														 char const torsion_bin 
+														 ) const
+	{
+		
+		
+		//utility::vector1< utility::vector1< utility::vector1< Real > > > current_rama_sampling_table; // depends on the torsion bin
+		
+		//if (rama_sampling_table_by_torsion_bin_.find(torsion_bin) == rama_sampling_table_by_torsion_bin_.end()) {
+		if (rama_sampling_table_by_torsion_bin_.size() == 0) {
+			const_cast< Ramachandran * > (this)->init_rama_sampling_tables_by_torsion_bin();	
+			// not threadsafe either
+			// initialize the table for this torsion bin and residue
+			// TODO: store the original sampling table before doing this, and then write it back after storing the result of this function, so that we don't lose or overwrite this information
+			//std::cerr << " generating rama sampling table for torsion bin " << torsion_bin << std::endl; // make sure that all of this is only done once
+			
+		}
+		
+		core::Size tb_index = get_torsion_bin_index(torsion_bin);
+		/*
+		 std::map< char, utility::vector1< utility::vector1< utility::vector1< Real > > > >::const_iterator m_iter = rama_sampling_table_by_torsion_bin_.find(torsion_bin);
+		 if (m_iter != rama_sampling_table_by_torsion_bin_.end()) {
+		 //std::cerr << "trying to fetch the table for torsion bin " << torsion_bin << std::endl;
+		 current_rama_sampling_table = m_iter->second; 
+		 }
+		 
+		 std::cerr << " rama sampling table size / # torsion bins" << rama_sampling_table_by_torsion_bin_.size() << std::endl;
+		 std::cerr << " rama sampling table size " << rama_sampling_table_by_torsion_bin_[tb_index].size() << std::endl;
+		 std::cerr << " -- res: " << res_aa << " " << rama_sampling_table_by_torsion_bin_[tb_index][res_aa].size() << std::endl;
+		 */
+		
+		Size n_torsions = rama_sampling_table_by_torsion_bin_[tb_index][res_aa].size();
+		Size index = numeric::random::random_range(1, n_torsions);
+		
+		/*
+		 // check if for some reason the bins are not populated
+		 std::cerr << current_rama_sampling_table[res_aa][index].size() << " index " << index << std::endl;
+		 for (int i = 0; i < current_rama_sampling_table[res_aa][index].size(); i++) 
+		 std::cerr << current_rama_sampling_table[res_aa][index][i] << " - " << i << std::endl;
+		 
+		 std::cerr << current_rama_sampling_table[res_aa][index][1] << " index " << index << " / 1" << std::endl;
+		 std::cerr << current_rama_sampling_table[res_aa][index][2] << " index " << index << " / 2" << std::endl;
+		 */
+		// following lines set phi and set to values drawn proportionately from Rama space
+		// plus or minus uniform noise equal to half the bin width.
+		phi = rama_sampling_table_by_torsion_bin_[tb_index][res_aa][index][1] +
+		(numeric::random::uniform() * binw_ * 0.5 * (numeric::random::uniform() < 0.5 ? -1 : 1));
+		psi = rama_sampling_table_by_torsion_bin_[tb_index][res_aa][index][2] +
+		(numeric::random::uniform() * binw_ * 0.5 * (numeric::random::uniform() < 0.5 ? -1 : 1));
+		// DJM: debug
+		//std::cout << "res_aa: " << res_aa << std::endl;
+		//std::cout << "phi: " << phi << std::endl;
+		//std::cout << "psi: " << psi << std::endl;
+		
+		
+	} // random_phipsi_from_rama_by_torsion_bin
+	
+	
+	
+	core::Size Ramachandran::get_torsion_bin_index(char torsion_bin) const 
+	{ 
+		return toupper(torsion_bin) - toupper('A') + 1;
 	}
-*/
-}
+	
+	
+	// just to avoid code duplication
+	void
+	Ramachandran::init_rama_sampling_tables_by_torsion_bin() 
+	{
+		const_cast< Ramachandran * > (this)->init_rama_sampling_table( 'A' );
+		const_cast< Ramachandran * > (this)->init_rama_sampling_table( 'B' );
+		const_cast< Ramachandran * > (this)->init_rama_sampling_table( 'E' );
+		const_cast< Ramachandran * > (this)->init_rama_sampling_table( 'G' );
+		const_cast< Ramachandran * > (this)->init_rama_sampling_table( 'X' ); // to allow wildcards in the torsion string
+	}
+	
+	void
+	Ramachandran::get_entries_per_torsion_bin( AA const res_aa, std::map< char, core::Size > & tb_frequencies ) const
+	{
+		// check if the tables are initialized, and if not, do so
+		if (rama_sampling_table_by_torsion_bin_.size() == 0) 
+			const_cast< Ramachandran * > (this)->init_rama_sampling_tables_by_torsion_bin();	
+		tb_frequencies['A'] = rama_sampling_table_by_torsion_bin_[get_torsion_bin_index('A')][res_aa].size();
+		tb_frequencies['B'] = rama_sampling_table_by_torsion_bin_[get_torsion_bin_index('B')][res_aa].size();
+		tb_frequencies['E'] = rama_sampling_table_by_torsion_bin_[get_torsion_bin_index('E')][res_aa].size();
+		tb_frequencies['G'] = rama_sampling_table_by_torsion_bin_[get_torsion_bin_index('G')][res_aa].size();
+		tb_frequencies['X'] = rama_sampling_table_by_torsion_bin_[get_torsion_bin_index('X')][res_aa].size();
+	}
+	
 
 ///////////////////////////////////////////////////////////////////////////////
 void
@@ -579,6 +709,7 @@ L100:
 	}
 //cj      std::cout << "========================================" << std::endl;
 }
+
 
 
 }

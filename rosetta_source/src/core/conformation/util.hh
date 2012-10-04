@@ -346,6 +346,13 @@ named_stub_id_to_named_stub_id(
 	conformation::Residue const & rsd
 );
 */
+
+// @brief determine torsion bins for given phi/psi/omega combination
+// @author Amelie Stein (amelie.stein@ucsf.edu)
+char get_torsion_bin (core::Real phi, core::Real psi, core::Real omega = 180);
+
+
+	
 } // conformation
 } // core
 
