@@ -188,6 +188,10 @@ def init(*args, **kargs):
         print 'Found rosetta_database at root folder, ie.:',
         print '%s; using it....' % database
 
+    if os.path.isdir('rosetta/rosetta_database'):  # Mac /usr/lib install
+        database = os.path.abspath('rosetta/rosetta_database')
+        print 'Found rosetta_database at %s; using it....' % database
+
     else:
         print 'Could not find rosetta_database!',
         print 'Check your paths or set PyRosetta environment vars. Exiting...'
