@@ -13,6 +13,8 @@
 #ifndef INCLUDED_core_scoring_constraints_AngleConstraint_hh
 #define INCLUDED_core_scoring_constraints_AngleConstraint_hh
 
+#include <core/scoring/constraints/AngleConstraint.fwd.hh>
+
 #include <core/scoring/constraints/Constraint.hh>
 
 #include <core/scoring/constraints/Func.fwd.hh>
@@ -131,6 +133,11 @@ public:
 	virtual void show(std::ostream& out ) const;
 
 	void show_def( std::ostream& out, pose::Pose const& pose ) const;
+
+	virtual Func const& get_func() const {
+		return *func_;
+	}
+
 
 //private: /*functions*/
 

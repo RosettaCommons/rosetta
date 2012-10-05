@@ -118,6 +118,10 @@ public:
 
 	void show_def( std::ostream& out, pose::Pose const& pose ) const;
 
+	virtual Func const& get_func() const {
+		return *func_;
+	}
+
   // Coppied Remapped_clone from AtomPairConstraint
   /// @brief Copies the data from this Constraint into a new object and returns an OP
   /// atoms are mapped to atoms with the same name in dest pose ( e.g. for switch from centroid to fullatom )

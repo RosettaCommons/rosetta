@@ -44,6 +44,14 @@ public:
 	virtual void read_data( std::istream & in );
 	virtual void show_definition( std::ostream & out ) const;
 
+	Real x0() const {
+		return x0_;
+	}
+
+	Real sd() const {
+		return sd_;
+	}
+
 private:
 	Real x0_;
 	Real sd_;
