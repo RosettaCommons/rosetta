@@ -231,7 +231,7 @@ RTMin::rtmin(
 		Size const ii_curr_rot = iirotset->id_for_current_rotamer();
 		assert( ii_curr_rot != 0 );
 
-		AtomTreeCollectionOP ii_atc = new AtomTreeCollection( pose, input_task->residue_task( iiresid ), iiresid );
+		AtomTreeCollectionOP ii_atc = new AtomTreeCollection( pose, *iirotset, iiresid );
 		ii_atc->residue_atomtree_collection( iiresid ).set_active_restype_index( 1 ); // start at the beginning.
 		ii_atc->residue_atomtree_collection( iiresid ).set_rescoords( * iirotset->rotamer( 1 ) );
 		ii_atc->residue_atomtree_collection( iiresid ).update_atom_tree();

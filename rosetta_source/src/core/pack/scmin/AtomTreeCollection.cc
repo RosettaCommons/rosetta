@@ -16,8 +16,8 @@
 
 // Package Headers
 #include <core/pack/task/PackerTask.hh>
-//#include <core/pack/rotamer_set/RotamerSet.hh>
-//#include <core/pack/rotamer_set/RotamerSets.hh>
+#include <core/pack/rotamer_set/RotamerSet.hh>
+#include <core/pack/rotamer_set/RotamerSets.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -123,6 +123,30 @@ ResidueAtomTreeCollection::ResidueAtomTreeCollection(
 	}
 }
 
+ResidueAtomTreeCollection::ResidueAtomTreeCollection(
+	rotamer_set::RotamerSet const & rset,
+	core::Size resid
+) :
+	active_restype_( 0 ),
+	residue_uptodate_( true ),
+	atom_tree_uptodate_( true ),
+	atom_tree_representatives_( rset.get_n_residue_types() ),
+	residue_representatives_( atom_tree_representatives_.size() )
+{
+	for ( Size ii = 1; ii <= rset.get_n_residue_types(); ++ii ) {
+		residue_representatives_[ ii ] = rset.rotamer( rset.get_residue_type_begin(ii) )->clone();
+		residue_representatives_[ ii ]->seqpos( 1 ); // temporary -- while we construct the atom tree, pretend we're residue 1.
+		kinematics::AtomPointer2D tree_atoms2d( 1 ); // 1 residue AtomTree.
+		tree_atoms2d[ 1 ].resize( residue_representatives_[ ii ]->natoms() );
+		kinematics::AtomPointer1D tree_atoms1d( residue_representatives_[ ii ]->natoms() );
+
+		conformation::build_residue_tree( 1, *residue_representatives_[ ii ], tree_atoms1d, true );
+		std::copy( tree_atoms1d.begin(), tree_atoms1d.end(), tree_atoms2d[1].begin() );
+		atom_tree_representatives_[ ii ] = new kinematics::AtomTree( tree_atoms2d );
+
+		residue_representatives_[ ii ]->seqpos( resid ); // restore the original sequence position
+	}
+}
 
 ResidueAtomTreeCollection::~ResidueAtomTreeCollection()
 {}
@@ -280,6 +304,26 @@ void ResidueAtomTreeCollection::update_from_momento( ResidueAtomTreeCollectionMo
 
 AtomTreeCollection::AtomTreeCollection(
 	pose::Pose const & pose,
+	rotamer_set::RotamerSets const & rsets
+) :
+	//rotsets_( rotsets ),
+	resid_2_moltenresid_( pose.total_residue(), 0 ),
+	moltenresid_2_resid_( rsets.nmoltenres() ),
+	res_collections_( rsets.nmoltenres() )
+{
+	for ( Size ii = 1; ii <= rsets.nmoltenres(); ++ii ) {
+		resid_2_moltenresid_[ rsets.moltenres_2_resid( ii ) ] = ii;
+		moltenresid_2_resid_[ ii ] = rsets.moltenres_2_resid( ii );
+		res_collections_[ ii ] = new ResidueAtomTreeCollection(
+			*rsets.rotamer_set_for_moltenresidue( ii ),
+			moltenresid_2_resid_[ ii ]
+		);
+	}
+}
+
+
+AtomTreeCollection::AtomTreeCollection(
+	pose::Pose const & pose,
 	task::PackerTask const & task
 ) :
 	//rotsets_( rotsets ),
@@ -300,10 +344,19 @@ AtomTreeCollection::AtomTreeCollection(
 
 AtomTreeCollection::AtomTreeCollection(
 	pose::Pose const & pose,
+	rotamer_set::RotamerSet const & rset,
+	Size resid
+)
+{
+	res_collections_.resize( 1 );
+	res_collections_[ 1 ] = new ResidueAtomTreeCollection( rset, resid  );
+}
+
+AtomTreeCollection::AtomTreeCollection(
+	pose::Pose const & pose,
 	task::ResidueLevelTask const & rltask,
 	Size resid
 )
-//AtomTreeCollection::AtomTreeCollection( rotamer_set::RotamerSetCOP rotset, bool )
 {
 	res_collections_.resize( 1 );
 	res_collections_[ 1 ] = new ResidueAtomTreeCollection( rltask, pose.conformation(), pose.residue( resid ) );

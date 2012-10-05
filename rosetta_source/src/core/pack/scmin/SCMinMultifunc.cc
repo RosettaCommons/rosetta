@@ -232,7 +232,7 @@ SCMinMultifunc::abort_min( Multivec const & ) const {
 
 
 void
-SCMinMultifunc::dump( Multivec const & /*vars*/ ) const
+SCMinMultifunc::dump( Multivec const & /*vars*/, Multivec const & /*vars2*/ ) const
 {}
 
 

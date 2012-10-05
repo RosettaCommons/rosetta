@@ -20,8 +20,8 @@
 // Package Headers
 #include <core/pack/task/PackerTask.fwd.hh>
 
-//#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
-//#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
+#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
+#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -89,6 +89,12 @@ public:
 		task::ResidueLevelTask const & rltask,
 		conformation::Conformation const & conformation,
 		conformation::Residue const & orig_res
+	);
+
+	/// @brief Constructor for a RotamerSet that has already been built.
+	ResidueAtomTreeCollection(
+		rotamer_set::RotamerSet const & rset,
+		Size resid
 	);
 
 	virtual ~ResidueAtomTreeCollection();
@@ -168,10 +174,23 @@ public:
 	/// @brief construct a forest
 	AtomTreeCollection(
 		pose::Pose const & pose,
+		rotamer_set::RotamerSets const &
+	);
+
+	/// @brief construct a forest -- only use when no RotamerSets is constructed
+	AtomTreeCollection(
+		pose::Pose const & pose,
 		task::PackerTask const &
 	);
 
-	/// @brief construct a single ResidueAtomTreeCollection
+	/// @brief construct a single ResidueAtomTreeCollection from an existing RotamerSet
+	AtomTreeCollection(
+		pose::Pose const & pose,
+		rotamer_set::RotamerSet const & rset,
+		Size resid
+	);
+
+	/// @brief construct a single ResidueAtomTreeCollection -- only use when no RotamerSet is constructed
 	AtomTreeCollection(
 		pose::Pose const & pose,
 		task::ResidueLevelTask const & rltask,

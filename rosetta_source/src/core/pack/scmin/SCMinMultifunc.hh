@@ -85,7 +85,7 @@ public:
 	/// var assignment.  Default base class implementation: no_op();
 	virtual
 	void
-	dump( Multivec const & /*vars*/ ) const;
+	dump( Multivec const & /*vars*/, Multivec const & /*vars2*/ ) const;
 
 private:
 

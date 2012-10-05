@@ -770,7 +770,7 @@ min_pack(
 	scoring::MinimizationGraphOP mingraph = create_minimization_graph( pose, sfxn, *task, *packer_neighbor_graph, *scminmap );
 
 	/// 3.
-	scmin::AtomTreeCollectionOP atc = new scmin::AtomTreeCollection( pose, *task );
+	scmin::AtomTreeCollectionOP atc = new scmin::AtomTreeCollection( pose, *rotsets );
 
 	// true -- nblist, false -- deriv_check, false -- deriv_verbose
 	optimization::MinimizerOptions min_options( "dfpmin", 0.1, true, false, false );
