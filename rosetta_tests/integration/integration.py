@@ -247,11 +247,6 @@ rm -r ref/; ./integration.py    # create reference results using only default se
 
                 cmd_line_sh, workdir = generateIntegrationTestCommandline(test, outdir);
 
-                def timeout_finish():
-                    error_string = "*** Test %s exceeded the timeout=%s  and will be killed! [%s]\n" % (test, Options.timeout, datetime.datetime.now())
-                    file(path.join(workdir, ".test_got_timeout_kill.log"), 'w').write(error_string)
-                    print error_string,
-
                 def run():
                     #execute('Running Test %s' % test, 'bash ' + cmd_line_sh)
                     extra = 'ulimit -t%s && ' % Options.timeout  if Options.timeout else ''
@@ -289,9 +284,10 @@ rm -r ref/; ./integration.py    # create reference results using only default se
                         run()
                         sys.exit(0)
                 else:
-                    nt = NT(test=test, workdir=workdir, queue=queue, start_time=time.time(), timeout=Options.timeout, normal_finish=normal_finish, error_finish=error_finish, timeout_finish=timeout_finish2)
+                    nt = NT(test=test, workdir=workdir, queue=queue, start_time=time.time(), timeout=Options.timeout, normal_finish=normal_finish, error_finish=error_finish, timeout_finish=timeout_finish)
                     run()
-                    normal_finish(nt)
+                    if nt.timeout and (time.time() - nt.start_time > nt.timeout): nt.timeout_finish(nt)
+                    else: normal_finish(nt)
 
             mWait(all_=True)  # waiting for all jobs to finish before movinf in to next phase
 
