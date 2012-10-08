@@ -56,8 +56,6 @@ public:
 	bool get_vary_bondangles();
 	void set_sample_nonpivot_torsions( bool sample );
 	bool get_sample_nonpivot_torsions();
-	void set_sample_vicinity( bool sample_vicinity );
-	void set_degree_vicinity( core::Real degree_vicinity );
 
 	Size start_res() const {
 		return start_res_; }
@@ -149,8 +147,6 @@ private:
 	core::Real MAX_SAMPLE_ITS_; // maximum number of iterations in torsion / bond angle sampling loop
 	bool vary_bond_angles_; // should we vary bond angles
 	bool sample_nonpivot_torsions_; // should we sample non-pivot torsions (restricted to Ramachandran space)
-	bool sample_vicinity_; //or should we sample around the input conformation
-	core::Real degree_vicinity_; //how far away from the input torsions we will sample
 
 	bool sweep_nonpivot_torsion_; // APL: sweep through non-pivot torsions.
 	utility::vector1< core::Size > nonpivot_res_to_sweep_;
@@ -174,6 +170,7 @@ private:
 
 	// private functions
 
+	/* AS Oct 03, 2012 -- commenting out unused function for vicinity refactoring
 	bool pivots_within_vicinity(
 							core::pose::Pose const & pose,
 							utility::vector1<core::Real> const & t_ang,
@@ -182,7 +179,8 @@ private:
 							Size const middle_res,
 							Size const end_res
 							);
-
+	 */
+	
 	// this version checks rama for all residues in loop segment
 	bool perform_rama_check( core::pose::Pose const & pose,
 							 utility::vector1<core::Real> const & t_ang,

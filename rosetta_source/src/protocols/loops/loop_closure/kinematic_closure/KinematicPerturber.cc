@@ -11,6 +11,7 @@
 /// @brief  implementations for KinematicPerturbers used by the kinematic mover
 /// @author Florian Richter, floric@u.washington.edu, march 2009
 /// @author Rhiju Das, rhiju@stanford.edu, 2011 -- options of cis/trans prolines, and turn off ca bond geometry variation.
+/// @author Amelie Stein, amelie.stein@ucsf.edu, Oct 2012 -- vicinity sampling refactoring
 
 //Unit headers
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
@@ -91,8 +92,6 @@ KinematicPerturber::set_pose_after_closure(
 TorsionSamplingKinematicPerturber::TorsionSamplingKinematicPerturber( KinematicMoverCAP kinmover_in )
 	: KinematicPerturber(),
 		vary_ca_bond_angles_(false),
-		sample_vicinity_(false),
-		degree_vicinity_(1.0 ),
 		sample_omega_for_pre_prolines_( basic::options::option[ basic::options::OptionKeys::loops::sample_omega_at_pre_prolines ]() ),
 		rama_( core::scoring::ScoringManager::get_instance()->get_Ramachandran() )
 { set_kinmover( kinmover_in ); }
@@ -134,11 +133,7 @@ TorsionSamplingKinematicPerturber::perturb_chain(
 
 			core::Real rama_phi, rama_psi;
 
-			if( sample_vicinity_ ){
-				rama_phi = pose.phi( cur_res ) + degree_vicinity_ * RG.gaussian();
-				rama_psi = pose.psi( cur_res ) + degree_vicinity_ * RG.gaussian();
-			}
-			else rama_.random_phipsi_from_rama(pose.aa(cur_res), rama_phi, rama_psi);
+			rama_.random_phipsi_from_rama(pose.aa(cur_res), rama_phi, rama_psi);
 
 			torsions[i++]=rama_phi; // phi
 			torsions[i++]=rama_psi; // psi
@@ -151,7 +146,7 @@ TorsionSamplingKinematicPerturber::perturb_chain(
 
 	}
 
-	if (  sample_omega_for_pre_prolines_ && !sample_vicinity_ ) {
+	if (  sample_omega_for_pre_prolines_ ) {
 		// sample omegas. all omegas before prolines are assumed to be fair game. Note that we're not using move-map, which is phi/psi-specific.
 
 		static const core::Real OMEGA_MEAN( 179.8 );
@@ -203,6 +198,102 @@ TorsionSamplingKinematicPerturber::set_pose_after_closure(
 	}
 } //TorsionSamplingKinematicPerturber::set_pose_after_closure(
 
+	
+	///////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////VicinitySamplingKinematicPerturber////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////
+	
+	VicinitySamplingKinematicPerturber::VicinitySamplingKinematicPerturber( KinematicMoverCAP kinmover_in )
+	: KinematicPerturber(),
+	vary_ca_bond_angles_(false),
+	degree_vicinity_( basic::options::option[ basic::options::OptionKeys::loops::vicinity_degree ]() ), 
+	sample_omega_for_pre_prolines_( basic::options::option[ basic::options::OptionKeys::loops::sample_omega_at_pre_prolines ]() ) // is this respected at all?
+	{ set_kinmover( kinmover_in ); }
+	
+	VicinitySamplingKinematicPerturber::~VicinitySamplingKinematicPerturber(){}
+	
+	///@details small variation around the starting phi/psi angles -- order of magnitude is determined by degree_vicinity_
+	void
+	VicinitySamplingKinematicPerturber::perturb_chain(
+													  core::pose::Pose const & pose,
+													  utility::vector1<core::Real> & torsions,
+													  utility::vector1<core::Real> & bond_ang,
+													  utility::vector1<core::Real> & //bond_len
+													  ) const
+	{
+		core::kinematics::MoveMapCOP mm(get_movemap());
+		
+		if( vary_ca_bond_angles_ ){
+			
+			core::Size pvatom3( (3* (kinmover_->segment_length() + 1)) - 1 );
+			
+			core::Real bangle_min( kinmover_->BANGLE_MIN() );
+			core::Real bangle_sd( kinmover_->BANGLE_SD() );
+			
+			//what is this iterating over?
+			for( Size i = 5; i <= pvatom3; i+=3 ) {
+				bond_ang[ i ] = bangle_min + RG.uniform() * bangle_sd;
+			}
+		}
+		
+		
+		
+		core::Size tor_end = torsions.size() - 3;
+		
+		for( core::Size i=4, cur_res = kinmover_->start_res(); i<= tor_end; cur_res++ ){
+			//if(mm) TR << "current residue " << cur_res << "mm reports " << mm->get_bb(cur_res) << std::endl;
+			
+			if(!mm || mm->get_bb(cur_res)){ //if movemap is null, or (if not null) if movemap says mobile
+				
+				core::Real rama_phi, rama_psi;
+				
+				rama_phi = pose.phi( cur_res ) + degree_vicinity_ * RG.gaussian();
+				rama_psi = pose.psi( cur_res ) + degree_vicinity_ * RG.gaussian();
+				
+				torsions[i++]=rama_phi; // phi
+				torsions[i++]=rama_psi; // psi
+				
+				i++; // leave omega alone
+				
+			} else {
+				i += 3; //ensure i indexing increases
+			}
+			
+		}
+		
+		/* [currently] no pre-pro-omega sampling in vicinity mode */		
+		
+	} //perturb_chain
+	
+	
+	void
+	VicinitySamplingKinematicPerturber::set_pose_after_closure(
+															   core::pose::Pose & pose,
+															   utility::vector1<core::Real> const & torsions,
+															   utility::vector1<core::Real> const & bond_ang,
+															   utility::vector1<core::Real> const & bond_len,
+															   bool closure_successful // what is this used for?
+															   ) const
+	{
+		
+		//	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful, sample_omega_for_pre_prolines_ );
+		parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful );
+		
+		if( vary_ca_bond_angles_ ){
+			
+			core::Real offset( 0.0 );
+			for (Size res=kinmover_->start_res(), atom=5; res<= kinmover_->end_res(); res++, atom+=3) {
+				
+				const core::id::AtomID atomid_N (1, res);
+				const core::id::AtomID atomid_CA(2, res);
+				const core::id::AtomID atomid_C (3, res);
+				pose.set_dof(pose.atom_tree().bond_angle_dof_id(atomid_N, atomid_CA, atomid_C, offset ),
+							 numeric::conversions::radians(180 - bond_ang[atom]));
+				
+			}
+		}
+	} //VicinitySamplingKinematicPerturber::set_pose_after_closure(
+	
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////TorsionSweepkingKinematicPerturber//////////////////////////////////////////

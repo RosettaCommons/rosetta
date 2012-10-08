@@ -483,11 +483,11 @@ public:
 				kin_mover->set_rama_check( true );
 				kin_mover->set_idealize_loop_first( false );
 
-				//make kinematic perturber
-				using protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber;
-				using protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP;
-				TorsionSamplingKinematicPerturberOP TsamplingKP( new TorsionSamplingKinematicPerturber(kin_mover_cap));
-				TsamplingKP->set_sample_vicinity( true );
+				//make vicinity-sampling kinematic perturber
+				using protocols::loops::loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber;
+				using protocols::loops::loop_closure::kinematic_closure::VicinitySamplingKinematicPerturberOP;
+				VicinitySamplingKinematicPerturberOP TsamplingKP( new VicinitySamplingKinematicPerturber(kin_mover_cap));
+				//TsamplingKP->set_sample_vicinity( true );
 				TsamplingKP->set_degree_vicinity( 35 );
 				kin_mover->set_perturber(TsamplingKP);
 

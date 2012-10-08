@@ -713,7 +713,7 @@ EnzdesFlexBBProtocol::generate_ensemble_for_region(
 
 	kinematic_mover_->set_pivots(rbegin, rmid, rend);
 
-	protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP perturber = new protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( &(*kinematic_mover_) );
+	protocols::loops::loop_closure::kinematic_closure::VicinitySamplingKinematicPerturberOP perturber = new protocols::loops::loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber( &(*kinematic_mover_) );
 
 	if ( basic::options::option[ basic::options::OptionKeys::enzdes::kic_loop_sampling ] ) {
 
@@ -731,7 +731,7 @@ EnzdesFlexBBProtocol::generate_ensemble_for_region(
 
 
 		core::Real sample_vicinity = 15.0; //( region_size > 10 ? 1.0 : 40.0 / region_size );
-		perturber->set_sample_vicinity( true );
+		//perturber->set_sample_vicinity( true );
 		perturber->set_degree_vicinity( sample_vicinity );
 		perturber->set_max_sample_iterations( 100 );
 
@@ -746,7 +746,7 @@ EnzdesFlexBBProtocol::generate_ensemble_for_region(
 	} else {
 
 		core::Real sample_vicinity = 2.0;
-		perturber->set_sample_vicinity( true );
+		//perturber->set_sample_vicinity( true );
 		perturber->set_degree_vicinity( sample_vicinity );
 		perturber->set_max_sample_iterations( 100 );
 

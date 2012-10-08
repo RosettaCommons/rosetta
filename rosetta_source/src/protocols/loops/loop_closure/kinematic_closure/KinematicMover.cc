@@ -101,7 +101,6 @@ KinematicMover::KinematicMover() :
 	//MAX_SAMPLE_ITS_(2000), // DJM: deprecated in favor of loops::max_kic_perturber_samples
 	vary_bond_angles_(false),
 	sample_nonpivot_torsions_(true),
-	sample_vicinity_(false),
 	sweep_nonpivot_torsion_(false),
 	idealize_loop_first_(false),
 	do_rama_check_(false),
@@ -114,7 +113,7 @@ KinematicMover::KinematicMover() :
 	{
 		perturber_ = new kinematic_closure::TorsionSamplingKinematicPerturber( this );
 		Mover::type( "KinematicMover" );
-		set_defaults();
+		set_defaults(); // doesn't do anything in this implementation
 	}
 
 // default destructor
@@ -157,17 +156,7 @@ void KinematicMover::set_sample_nonpivot_torsions( bool sample )
 {
 	KinematicMover::sample_nonpivot_torsions_=sample;
 }
-
-void KinematicMover::set_sample_vicinity( bool sample_vicinity )
-{
-	KinematicMover::sample_vicinity_=sample_vicinity;
-}
-
-void KinematicMover::set_degree_vicinity( core::Real degree_vicinity)
-{
-	KinematicMover::degree_vicinity_ = degree_vicinity;
-}
-
+	
 bool KinematicMover::get_sample_nonpivot_torsions()
 {
 	return KinematicMover::sample_nonpivot_torsions_;
@@ -555,6 +544,7 @@ KinematicMover::get_name() const {
 
 // checks if pivot solutions are within vicinity degrees of current pivot torsion values
 // DJM: currently not used because it significantly reduces the number of accepted moves
+	/* AS Oct 03, 2012 -- commenting this out for vicinity refactoring
 bool KinematicMover::pivots_within_vicinity(
 	core::pose::Pose const & pose,
 	utility::vector1<Real> const & t_ang,
@@ -593,7 +583,8 @@ bool KinematicMover::pivots_within_vicinity(
 	// all passed
 	return true;
 }
-
+*/
+	
 // this version checks rama for all residues in loop segment
 bool KinematicMover::perform_rama_check(
 	core::pose::Pose const & pose,
@@ -819,16 +810,11 @@ KinematicMover::perform_bump_check(
 }
 
 // set default options
+// AS -- after vicinity refactoring, only the perturber knows about vicinity sampling -- for now this function doesn't do anything any more... 
 void
 KinematicMover::set_defaults() {
 	using namespace core;
 	using namespace basic::options;
-
-	// bad that these are independently stored and mutable in the mover and perturber!
-	if( option[ OptionKeys::loops::vicinity_sampling ]() ) {
-		sample_vicinity_ = true;
-		degree_vicinity_ = option[ OptionKeys::loops::vicinity_degree ];
-	}
 
 	return;
 }

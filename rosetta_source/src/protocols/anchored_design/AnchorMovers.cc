@@ -1248,11 +1248,11 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 			kin_mover->set_idealize_loop_first( false );
 
 			//make kinematic perturber
-			using protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber;
-			using protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP;
-			TorsionSamplingKinematicPerturberOP TsamplingKP( new TorsionSamplingKinematicPerturber(kin_mover_cap));
+			using protocols::loops::loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber;
+			using protocols::loops::loop_closure::kinematic_closure::VicinitySamplingKinematicPerturberOP;
+			VicinitySamplingKinematicPerturberOP TsamplingKP( new VicinitySamplingKinematicPerturber(kin_mover_cap));
 			TsamplingKP->set_movemap(interface_->movemap_fa(i));
-			TsamplingKP->set_sample_vicinity( vicinity_sampling_ );
+			//TsamplingKP->set_sample_vicinity( vicinity_sampling_ );
 			TsamplingKP->set_degree_vicinity( vicinity_degree_ );
 			kin_mover->set_perturber(TsamplingKP);
 

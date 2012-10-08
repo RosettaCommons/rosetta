@@ -323,14 +323,19 @@ void LoopMover_Refine_KIC::apply(
 	//protocols::loops::kinematic_closure::KinematicMover myKinematicMover( init_temp );
 	loop_closure::kinematic_closure::KinematicMover myKinematicMover;
 
-	loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP perturber =
-		new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( &myKinematicMover );
+	// AS Oct 3, 2012: create appropriate perturber here (more perturbers to come soon)
 	if (option[ OptionKeys::loops::vicinity_sampling ]()) {
-		perturber->set_sample_vicinity( true );
+		loop_closure::kinematic_closure::VicinitySamplingKinematicPerturberOP perturber =
+		new loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber( &myKinematicMover );
+		perturber->set_vary_ca_bond_angles(  ! option[OptionKeys::loops::fix_ca_bond_angles ]()  );
+		myKinematicMover.set_perturber( perturber );
 		perturber->set_degree_vicinity( option[ OptionKeys::loops::vicinity_degree ]() );
+	} else {
+		loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP perturber =
+		new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( &myKinematicMover );
+		perturber->set_vary_ca_bond_angles(  ! option[OptionKeys::loops::fix_ca_bond_angles ]()  );
+		myKinematicMover.set_perturber( perturber );
 	}
-	perturber->set_vary_ca_bond_angles(  ! option[OptionKeys::loops::fix_ca_bond_angles ]()  );
-	myKinematicMover.set_perturber( perturber );
 
 	myKinematicMover.set_vary_bondangles( true );
 	myKinematicMover.set_sample_nonpivot_torsions( option[ OptionKeys::loops::nonpivot_torsion_sampling ]());
