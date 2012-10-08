@@ -30,7 +30,10 @@ mean_n5_index = lines[0].split(';').index('mean_n5')
 num_of_passed_targets = 0
 for l in lines[1:]:
     fields = l.split(';')
-    if len(fields) > mean_n5_index  and  float(fields[mean_n5_index]) > 3.0 : num_of_passed_targets += 1
+    if len(fields) > mean_n5_index:
+        if float(fields[mean_n5_index]) > 3.0 : num_of_passed_targets += 1
+        if fields[0].split('/') > 2:
+            results[ fields[0].split('/')[2] + '.mean_n5' ] = float(fields[mean_n5_index])
 
 
 results['num_of_passed_targets'] = num_of_passed_targets
