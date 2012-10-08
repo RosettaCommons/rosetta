@@ -182,9 +182,9 @@ LayerDesignOperation::set_default_layer_residues() {
 utility::vector1<bool> 
 LayerDesignOperation::get_restrictions( std::string const & layer, std::string const & default_layer, std::string const & ss_type) const {	
 	// if the layer doesn't specify the required ss used the default layer one.
-  std::string used_layer = ( layer_residues_.at(layer).count(ss_type) != 0 ) ? layer : default_layer;
+  std::string used_layer = ( layer_residues_.find(layer)->second.count(ss_type) != 0 ) ? layer : default_layer;
 	utility::vector1<bool>  restrict_to_aa( chemical::num_canonical_aas, false );
-	BOOST_FOREACH(char restype, layer_residues_.at(layer).at(ss_type)){
+	BOOST_FOREACH(char restype, layer_residues_.find(layer)->second.find(ss_type)->second){
 		restrict_to_aa[chemical::aa_from_oneletter_code( restype )] = true;
 	}
 	return restrict_to_aa;
@@ -243,7 +243,7 @@ LayerDesignOperation::apply( Pose const & pose, PackerTask & task ) const
 		}
 		// If there are no active layers and the working layer is designable
 		// append the working layer
-		if( active_layers.empty() && design_layer_.at(srbl_layer) ) {
+		if( active_layers.empty() && design_layer_.find(srbl_layer)->second ) {
 			active_layers.push_back(srbl_layer);
 		} else {
 			if(use_original_)
