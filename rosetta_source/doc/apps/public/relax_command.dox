@@ -56,6 +56,10 @@ Options specific to relax
 
    Advanced Options:
    -relax:script <file>      Do custom script relax (you can supply a custom script file)
+	 -relax:jump_move false    Set all jumps to unmovable during minimization. 
+	 -relax:bb_move false      Set all backbone torsion angles to unmovable during minimization. 
+	 -relax:chi_move false     Set all chi torsion angles to unmovable during minimization. 
+	 -in:file:movemap          Read in custom movemap (can be used to specifically define which jumps, bb and chi torsion angles are movable and which ones are not. By default, all are movable. Definitions in the custom movemap override the more general jump_move, bb_move and chi_move commands above. )
 
    Constraints: If you want constraints on for the entire relax run, set ramp_constraints to false (below) along with the other constraint flags. Constraints can be provided using either the cst_fa_file or cst_file options. If both options are used, priority will be given to the cst_fa_file constraints. Default weights for the constraints are 0. Built in options include backbone coordinate constraints, sidechain coordinate constraints and sidechain pairwise constraints. 
    -constraints:cst_fa_file  <filename>      Add constraints from the fullatom constraint file(*)
