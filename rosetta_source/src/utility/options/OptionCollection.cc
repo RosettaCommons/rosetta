@@ -392,7 +392,11 @@ void OptionCollection::load_options_from_stream(std::istream& stream, std::strin
 			string file_string( fb <= fe ? line.substr( fb, fe - fb + 1 ) : string() );
 
 			load_options_from_file(ObjexxFCL::trim(file_string), cid);
-		} //load option file
+		}else if ( (stream ) && len_trim_whitespace(line) > 0 && stripped_whitespace(line)[0] != '#')
+		{
+			throw(excn::EXCN_Msg_Exception("Comments in an option file must begin with '#', options must begin with '-' the line:\n"
+				+stripped_whitespace(line)+"\n is incorrectly formatted"));
+		}
 	}
 }
 
