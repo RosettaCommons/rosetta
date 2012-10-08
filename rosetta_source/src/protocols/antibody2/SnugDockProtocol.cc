@@ -30,6 +30,10 @@
 
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/antibody.OptionKeys.gen.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
+
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -177,7 +181,14 @@ void SnugDockProtocol::init()
 	type( "SnugDockProtocol" );
 	
 	/// TODO: Allow the refinement method to be set via a mutator and from the options system
-	loop_refinement_method_ = "refine_kic";
+	using basic::options::option;
+	using namespace basic::options::OptionKeys;
+	if ( option[ basic::options::OptionKeys::antibody::refine ].user() ) {
+		loop_refinement_method_  = option[ basic::options::OptionKeys::antibody::refine ]() ;
+	}
+	else{
+		loop_refinement_method_ = "refine_kic";
+	}
 }
 
 void SnugDockProtocol::init_for_equal_operator_and_copy_constructor(

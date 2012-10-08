@@ -82,7 +82,7 @@ void GraftOneCDRLoop::init() {
 	
 	
 	
-void GraftOneCDRLoop::finalize_setup(Pose & pose_in){
+void GraftOneCDRLoop::finalize_setup(){
 	
 	if(scorefxn_){
 		scorefxn_=core::scoring::ScoreFunctionFactory::create_score_function( "standard","score12");
@@ -103,7 +103,7 @@ void GraftOneCDRLoop::apply( pose::Pose & pose_in ){
 	TRG<<"Start to Graft CDRs   "<< ab_info_->get_CDR_Name(cdr_name_) <<" ............"<<std::endl;
     TRG<<"flank_size: "<<flank_size_<<std::endl;
 	
-	finalize_setup(pose_in);
+	finalize_setup();
 	
 	
 	
@@ -228,9 +228,10 @@ void GraftOneCDRLoop::apply( pose::Pose & pose_in ){
 std::string GraftOneCDRLoop::get_name() const { return "GraftOneCDRLoop"; }
     
 // copy ctor
-GraftOneCDRLoop::GraftOneCDRLoop( GraftOneCDRLoop const & rhs ) {
+GraftOneCDRLoop::GraftOneCDRLoop( GraftOneCDRLoop const & rhs ) : Mover(rhs){
     initForEqualOperatorAndCopyConstructor(*this, rhs);
 }
+	
     
 ///@brief assignment operator
 GraftOneCDRLoop & GraftOneCDRLoop::operator=( GraftOneCDRLoop const & rhs ){

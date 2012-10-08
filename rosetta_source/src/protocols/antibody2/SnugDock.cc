@@ -43,6 +43,7 @@
 // basic
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/antibody.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 
@@ -247,7 +248,16 @@ void SnugDock::init()
 	type( "SnugDock" );
 	
 	/// TODO: Allow the refinement method to be set via a mutator and from the options system
-	loop_refinement_method_ = "refine_kic";
+	using basic::options::option;
+	using namespace basic::options::OptionKeys;
+	if ( option[ basic::options::OptionKeys::antibody::refine ].user() ) {
+		loop_refinement_method_  = option[ basic::options::OptionKeys::antibody::refine ]() ;
+	}
+	else{
+		loop_refinement_method_ = "refine_kic";
+	}
+	
+	
 	number_of_high_resolution_cycles( 50 );
 
 	init_options();

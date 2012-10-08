@@ -78,7 +78,7 @@ public:
 private:
 		void set_default();
 		void init();
-		void finalize_setup(Pose & pose_in);
+		void finalize_setup();
 		void initForEqualOperatorAndCopyConstructor(GraftOneCDRLoop & lhs, GraftOneCDRLoop const & rhs);
 		
 		
