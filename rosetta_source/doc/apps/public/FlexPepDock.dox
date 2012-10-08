@@ -595,7 +595,8 @@ Our benchmarks consist of peptides of length 5-15, and our protocols performed w
 @li <b> Typical running time:</b><br>
 In our tests, producing 200 models with the Refinement protocol typically takes 10 CPU hours (approximately 3 minutes per model). Substantial speedup gain is obtained by running parrallel proccesses using appropriate <a href="http://www.rosettacommons.org/manuals/archive/rosetta3.1_user_guide/jd2.html">job-distributor</a> flags (e.g.m for using MPI). The \em ab-initio protocol requires a much larger number of models (we experimented with 50,000 models), but the running time per model is similar (3-4 minutes). The running time may increase or decrease, depending mainly on the receptor size (for peptides of length 5-15).
 
-
+@li <b> Multichain receptors:</b><br>
+Flexpepdock currently supports only the use of single-chain receptors.  If you want to use a multichain receptor, you may be able to get away with hacking your input PDB to re-label all receptor chains as one big chain (removing termini atoms and TER cards).  Renumbering is necessary only to resolve numbering conflicts.
 
 @section fpdock_outputs Expected Outputs
 
