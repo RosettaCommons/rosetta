@@ -13,16 +13,9 @@
 
 
 #include <core/scoring/constraints/MinMultiHarmonicFunc.hh>
-
 #include <core/types.hh>
-
 #include <utility/pointer/ReferenceCount.hh>
-
-// AUTO-REMOVED #include <numeric/angle.functions.hh>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
-
-
 
 
 // C++ Headers
@@ -35,48 +28,55 @@ static basic::Tracer trMinMultiHarmonicFunc(
                 "fragment.picking.scores.MinMultiHarmonicFunc");
 
 MinMultiHarmonicFunc::MinMultiHarmonicFunc( utility::vector1<Real> const & x0_in, utility::vector1<Real> const & sd_in ) {
-
-    assert(x0_in.size() == sd_in.size());
-    x0_.clear();
-    sd_.clear();
-    for(Size i=1;i<=x0_in.size();++i) {
-      x0_.push_back( x0_in[i] );
-      sd_.push_back( sd_in[i] );
-    }
+	n_ = x0_in.size(); //number of harmonics to consider
+	assert(x0_in.size() == sd_in.size()); //each x0 gets its own sd
+	x0_.clear();
+	sd_.clear();
+	for(Size i=1;i<=n_;++i) {
+		x0_.push_back( x0_in[i] );
+		sd_.push_back( sd_in[i] );
+	}
 }
 
 
 Real
 MinMultiHarmonicFunc::func( Real const x )  const {
 
-        Real min = ( x-x0_[1] );
-	min *= min;
-	Real z2 = min;
+	//find the value that minimizes (x-x0)^2 / sd^2 among all the possible harmonic funcs
+	Real min = ( x-x0_[1] );
+	min *= min/ (sd_[1] * sd_[1]);   //start at one
 	which_component_ = 1;
-	for(Size i=2;i<=n_;++i) {
-	  Real const z = ( x-x0_[i] );
-	  if( (z2=z*z) < min ) {
-	    which_component_ = i;
-	    min = z2;
-	  }
-	}
-
-	return min / sd_[which_component_];
-}
-
-Real
-MinMultiHarmonicFunc::dfunc( Real const x ) const {
-        Real min = ( x-x0_[1] )/sd_[1];
-	which_component_ = 1;
-	for(Size i=2;i<=n_;++i) {
-	  Real const z = ( x-x0_[i] )/sd_[i];
+	for(Size i=2;i<=x0_.size();++i) { //assumes at least 2 harmonic funcs are being considered
+	  Real z = ( x-x0_[i] );
+		z = z*z / (sd_[i] * sd_[i]);
 	  if( z < min ) {
 	    which_component_ = i;
 	    min = z;
 	  }
 	}
 
-	return 2 * min;
+	return min;  // returns min value of (x-x0)^2 / sd^2
+}
+
+Real
+MinMultiHarmonicFunc::dfunc( Real const x ) const {
+
+	Real min = ( x-x0_[1] );
+	Real deriv = min / (sd_[1] * sd_[1]);
+	min = min*deriv;              // min will be the minimum of (x-x0)^2 / sd^2
+	which_component_ = 1;
+	for(Size i=2;i<=x0_.size();++i) {
+	  Real z = ( x-x0_[i] );
+		Real const zderiv = z / (sd_[i] * sd_[i]);
+		z = z*zderiv;              // z equals (x-x0)^2 / sd^2
+	  if( z < min ) {
+	    which_component_ = i;
+	    min = z;
+			deriv = zderiv;          // deriv = (x-x0) / sd^2  (actually it's 2x this value, as returned below)
+	  }
+	}
+
+	return 2 * deriv;            // return 2 * (x-x0_) / ( sd_ * sd_ );
 }
 
 void

@@ -14,7 +14,7 @@
 #ifndef INCLUDED_core_scoring_constraints_MinMultiHarmonicFunc_hh
 #define INCLUDED_core_scoring_constraints_MinMultiHarmonicFunc_hh
 
-// AUTO-REMOVED #include <core/scoring/constraints/HarmonicFunc.fwd.hh>
+#include <core/scoring/constraints/MinMultiHarmonicFunc.fwd.hh>
 #include <core/scoring/constraints/Func.hh>
 #include <core/types.hh>
 // AUTO-REMOVED #include <utility/vector1.hh>
