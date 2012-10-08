@@ -13,24 +13,14 @@
 /// @author Jianqing Xu (xubest@gmail.com)
 
 #include <protocols/antibody2/GraftOneCDRLoop.hh>
-#include <core/conformation/Conformation.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/import_pose/import_pose.hh>
-
-#include <protocols/antibody2/AntibodyInfo.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/antibody2/Ab_TemplateInfo.hh>
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
-
 #include <core/pose/util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <protocols/idealize/IdealizeMover.hh>
-
-
 #include <core/id/AtomID_Map.hh>
 #include <core/pose/util.tmpl.hh>
-
 #include <basic/Tracer.hh>
 
 
@@ -46,91 +36,104 @@ GraftOneCDRLoop::GraftOneCDRLoop(){}
 
     
 
-GraftOneCDRLoop::GraftOneCDRLoop( AntibodyCDRNameEnum cdr_name, 
-                                           AntibodyInfoOP ab_info, 
-                                           Ab_TemplateInfoOP ab_t_info, 
-                                           scoring::ScoreFunctionCOP scorefxn ) : Mover( "GraftOneCDRLoop" )
-{
-    scorefxn_ = scorefxn;
-    query_start_ = ab_info->get_CDR_loop(cdr_name).start();
-	query_end_   = ab_info->get_CDR_loop(cdr_name).stop();
-	set_default(cdr_name);
-    template_pose_ = ab_t_info->get_one_template_pose(ab_info->get_CDR_Name(cdr_name)) ;
-    TRG<< "template_pose_ "<<std::endl;
-    TRG<< template_pose_<<std::endl;
+GraftOneCDRLoop::GraftOneCDRLoop( AntibodyCDRNameEnum const & cdr_name,
+								 AntibodyInfoOP antibody_info,
+								 Ab_TemplateInfoOP ab_t_info) : Mover( "GraftOneCDRLoop" ){
+
+	set_default();
+	
+	cdr_name_  = cdr_name;
+	ab_info_   = antibody_info;
+	ab_t_info_ = ab_t_info;
+	
+
+	init();
+
 }
     
     
-    
-    
-
-// GraftOneCDRLoop default destructor
 GraftOneCDRLoop::~GraftOneCDRLoop() {}
 
 
-    
-    
-
-void GraftOneCDRLoop::set_default( AntibodyCDRNameEnum template_name )
-{
-
-/*        
-    //idealize the loop
-    idealize::IdealizeMover idealizer;
-    idealizer.fast( false );
-    idealizer.apply( template_pose_ );
-    template_pose_.dump_pdb("idealized.pdb");
-  */  
-    
-
-	template_name_  = template_name;
-    flank_size_ = 4 ;//^^^^^^^^^^  
-    TRG<<"flank_size: "<<flank_size_<<std::endl;
+void GraftOneCDRLoop::set_default() {
+	ab_info_=NULL;
+	ab_t_info_=NULL;
+	stem_copy_size_ = 2;
+    flank_size_ = 4 ;
     // JQX:  the default value of flank_size_ is equle to 4, meaning there are 4 residues
     //       on the C-ter and N-ter of the actual loop
-    //       However, based on the old R2 antibody code, only 3 residues on each stem 
-} 
+    //       However, based on the old R2 antibody code, only 3 residues on each stem
+	
+	h3_stem_not_graft_ = false;
+	benchmark_ = false;
 
-    
-    
-    
-    
-    
+}
 
+	
+	
+void GraftOneCDRLoop::init() {
+	
+	 //idealize the loop
+	 idealize::IdealizeMover idealizer;
+	 idealizer.fast( false );
+	 
+}
 
+	
+	
+	
+void GraftOneCDRLoop::finalize_setup(Pose & pose_in){
+	
+	if(scorefxn_){
+		scorefxn_=core::scoring::ScoreFunctionFactory::create_score_function( "standard","score12");
+	}
+	
+	if(h3_stem_not_graft_){
+		stem_copy_size_ = 0 ;
+	}
+	
+}
+	
+	
+	
+	
+void GraftOneCDRLoop::apply( pose::Pose & pose_in ){
 
-
-void GraftOneCDRLoop::apply( pose::Pose & pose_in )
-{
-
+	
+	TRG<<"Start to Graft CDRs   "<< ab_info_->get_CDR_Name(cdr_name_) <<" ............"<<std::endl;
     TRG<<"flank_size: "<<flank_size_<<std::endl;
-
-    TRG<<"Start to Graft CDRs   "<< template_name_  <<" ............"<<std::endl;
-    Size const nres( pose_in.total_residue() ); // Total residues
-    Size query_size = ( query_end_ - query_start_ )+1;
-
-
+	
+	finalize_setup(pose_in);
+	
+	
+	
+	core::Size query_start = ab_info_->get_CDR_loop(cdr_name_).start();
+	core::Size query_end   = ab_info_->get_CDR_loop(cdr_name_).stop();
+    Size query_size = ( query_end - query_start )+1;
 
 
 	// create a sub pose with  4 flanking residues on either side of CDR loop
-//        TRG<<"query_start="<<query_start_<<std::endl;
-//        TRG<<"query_end="<<query_end_<<std::endl;
-//        TRG<<"flank_size="<<flank_size_<<std::endl;
-//        TRG<<"query_size="<<query_size<<std::endl;
-//        TRG<<"truncated_pose will be from "<<query_start_-flank_size_<<" to "<<query_end_+flank_size_<<std::endl;
-    pose::Pose truncated_pose( pose_in, query_start_-flank_size_, query_end_+flank_size_ );
+	// TRG<<"query_start="<<query_start<<std::endl;
+	// TRG<<"query_end="<<query_end<<std::endl;
+	// TRG<<"flank_size="<<flank_size_<<std::endl;
+	// TRG<<"query_size="<<query_size<<std::endl;
+	// TRG<<"truncated_pose will be from "<<query_start-flank_size_<<" to "<<query_end+flank_size_<<std::endl;
+    pose::Pose truncated_pose( pose_in, query_start-flank_size_, query_end+flank_size_ );
+	pose::Pose template_pose = ab_t_info_->get_one_template_pose(ab_info_->get_CDR_Name(cdr_name_)) ;
+    TRG<< "template_pose: "<<std::endl;
+    TRG<< template_pose<<std::endl;
 
     // Just want to make life a litter easier
     //TRG<<"**************&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&*************"<<std::endl;
     //TRG<<pose_in.sequence()<<std::endl;
-    //TRG<<"  the template sequence:  "<<template_pose_.sequence()<<std::endl;
+    //TRG<<"  the template sequence:  "<<template_pose.sequence()<<std::endl;
     //TRG<<"trucated_query sequence:  "<<truncated_pose.sequence()<<std::endl;
     //TRG<<"**************&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&*************"<<std::endl;
     
     
 	// create atom map for superimposing 2 flanking resiudes
     id::AtomID_Map< id::AtomID > atom_map;
-    pose::initialize_atomid_map( atom_map, template_pose_, id::BOGUS_ATOM_ID );
+    pose::initialize_atomid_map( atom_map, template_pose, id::BOGUS_ATOM_ID );
 
 
     
@@ -138,30 +141,30 @@ void GraftOneCDRLoop::apply( pose::Pose & pose_in )
     //    @@@AAAAAAAAAAAAAAAAAAA@@@   the real alignment only based on 3 residues each side
     
     for( Size start_stem = 2; start_stem <= flank_size_; ++start_stem ) { 
-    /// starting from the 2nd residue in the l1-3.pdb, H1-3.pdb
-        Size const ref_stem ( start_stem  );
-        for( Size j=1; j <= 4; j++ ) {    /// four backbone heavy atoms
-//          TRG<<"j="<<j<<"  start_stem_in_template_pose_="<<start_stem<<"  ref_stem_in_truncated_pose_="<<ref_stem<<std::endl;
-            id::AtomID const id1( j, start_stem );
-            id::AtomID const id2( j, ref_stem );
-            atom_map[ id1 ] = id2;
-        }
+    		/// starting from the 2nd residue in the l1-3.pdb, H1-3.pdb
+        	Size const ref_stem ( start_stem  );
+        	for( Size j=1; j <= 4; j++ ) {    /// four backbone heavy atoms
+//          		TRG<<"j="<<j<<"  start_stem_in_template_pose="<<start_stem<<"  ref_stem_in_truncated_pose_="<<ref_stem<<std::endl;
+            		id::AtomID const id1( j, start_stem );
+            		id::AtomID const id2( j, ref_stem );
+            		atom_map[ id1 ] = id2;
+        	}
     }
 
 	// start at the end of the actual loop
     for( Size end_stem = query_size+flank_size_+1; end_stem <= query_size+flank_size_+flank_size_-1; ++end_stem ) { 
-        Size const ref_stem ( end_stem);  
-//        if(template_name_ == "h3") Size const ref_stem(end_stem+1);
-        for( Size j=1; j <= 4; j++ ) {    /// four backbone heavy atoms
-//            TRG<<"j="<<j<<"  end_stem_in_template_pose_="<<end_stem<<"  ref_stem_in_truncated_pose_="<<ref_stem<<std::endl;
-            id::AtomID const id1( j, end_stem );
-            id::AtomID const id2( j, ref_stem );
-            atom_map[ id1 ] = id2;
-        }
+        	Size const ref_stem ( end_stem);  
+		//   if(template_name_ == "h3") Size const ref_stem(end_stem+1);
+        	for( Size j=1; j <= 4; j++ ) {    /// four backbone heavy atoms
+//          	TRG<<"j="<<j<<"  end_stem_in_template_pose="<<end_stem<<"  ref_stem_in_truncated_pose_="<<ref_stem<<std::endl;
+            	id::AtomID const id1( j, end_stem );
+            	id::AtomID const id2( j, ref_stem );
+            	atom_map[ id1 ] = id2;
+        	}
     }
 
 
-    scoring::superimpose_pose( template_pose_, truncated_pose, atom_map );
+    scoring::superimpose_pose( template_pose, truncated_pose, atom_map );
     
 
     // TODO:
@@ -174,11 +177,11 @@ void GraftOneCDRLoop::apply( pose::Pose & pose_in )
     // of 2 residues on each side then, not just one more on h3_start-1 or +1 position using hfr.pdb. 
     // Maybe I should remove this number 2, just copy the loop itself !!!!!
     
-    for ( Size i=query_start_-2; i <= query_end_+2; ++i ) {
-        Size template_num ( i - (query_start_-5) );  // this "5" is the default in the l1.pdb, you have 4 residues before the 1st one
+    for ( Size i=query_start-stem_copy_size_; i <= query_end+stem_copy_size_; ++i ) {
+        Size template_num ( i - (query_start-5) );  // this "5" is the default in the l1.pdb, you have 4 residues before the 1st one
 //        TRG<<" i="<<i<<"    template_num="<<template_num<<std::endl;
         conformation::Residue const & source_rsd( pose_in.residue( i ) );
-        conformation::Residue const & target_rsd( template_pose_.residue( template_num) );
+        conformation::Residue const & target_rsd( template_pose.residue( template_num) );
 //        TRG<<source_rsd<<std::endl;
 //        TRG<<target_rsd<<std::endl;
         
@@ -204,23 +207,17 @@ void GraftOneCDRLoop::apply( pose::Pose & pose_in )
             }
         }
 
-        if ( any_missing ) {
-            pose_in.conformation().fill_missing_atoms( missing );
+		if ( any_missing ) {
+			pose_in.conformation().fill_missing_atoms( missing );
         }
     }
 
 //    pose_in.dump_pdb(template_name_+"_graft");
 
     
-} // GraftOneCDRLoop::apply
+}
 
 
-    
-    
-    
-    
-    
-    
     
     
     
@@ -245,7 +242,13 @@ GraftOneCDRLoop & GraftOneCDRLoop::operator=( GraftOneCDRLoop const & rhs ){
 }
     
 void GraftOneCDRLoop::initForEqualOperatorAndCopyConstructor(GraftOneCDRLoop & lhs, GraftOneCDRLoop const & rhs) {
-        
+	lhs.flank_size_ = rhs.flank_size_;
+	lhs.stem_copy_size_=rhs.stem_copy_size_;
+	lhs.cdr_name_=rhs.cdr_name_;
+	lhs.ab_info_=rhs.ab_info_;
+	lhs.ab_t_info_=rhs.ab_t_info_;
+	lhs.benchmark_=rhs.benchmark_;
+	lhs.h3_stem_not_graft_=rhs.h3_stem_not_graft_;
 }
     
     

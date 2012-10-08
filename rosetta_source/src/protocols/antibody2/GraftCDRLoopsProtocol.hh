@@ -58,24 +58,49 @@ public:
 	/// @brief Assigns default values to primitive members
 	void set_default();
 
-	/// @brief Instantiates non-primitive members based on the value of the primitive members
-	void sync_objects_with_flags();
 
 	virtual void apply( core::pose::Pose & pose );
 
 	// simple inline setters
-	void set_graft_l1( bool graft_l1 ) { graft_l1_ = graft_l1; }
-	void set_graft_l2( bool graft_l2 ) { graft_l2_ = graft_l2; }
-	void set_graft_l3( bool graft_l3 ) { graft_l3_ = graft_l3; }
-	void set_graft_h1( bool graft_h1 ) { graft_h1_ = graft_h1; }
-	void set_graft_h2( bool graft_h2 ) { graft_h2_ = graft_h2; }
-	void set_graft_h3( bool graft_h3 ) { graft_h3_ = graft_h3; }
-	void set_camelid( bool camelid ) { camelid_ = camelid; }
-	void set_camelid_constraints( bool camelid_constraints ) { camelid_constraints_ = camelid_constraints; }
-	void set_benchmark( bool benchmark ) { benchmark_ = benchmark; }
-    void set_cst_weight(core::Real cst_weight){ cst_weight_ = cst_weight; }
-    void set_sc_min (bool scmin) {sc_min_ = scmin ;}
-    void set_rt_min (bool rtmin) {rt_min_ = rtmin ;}
+	void set_graft_l1( bool graft_l1 ) {
+		graft_l1_ = graft_l1;
+	}
+	void set_graft_l2( bool graft_l2 ) {
+		graft_l2_ = graft_l2;
+	}
+	void set_graft_l3( bool graft_l3 ) {
+		graft_l3_ = graft_l3;
+	}
+	void set_graft_h1( bool graft_h1 ) {
+		graft_h1_ = graft_h1;
+	}
+	void set_graft_h2( bool graft_h2 ) {
+		graft_h2_ = graft_h2;
+	}
+	void set_graft_h3( bool graft_h3 ) {
+		graft_h3_ = graft_h3;
+	}
+	void set_h3_stem_graft(bool h3_stem_graft){
+		h3_no_stem_graft_=h3_stem_graft;
+	}
+	void set_camelid( bool camelid ) {
+		camelid_ = camelid;
+	}
+	void set_camelid_constraints( bool camelid_constraints ) {
+		camelid_constraints_ = camelid_constraints;
+	}
+	void set_benchmark( bool benchmark ) {
+		benchmark_ = benchmark;
+	}
+    void set_cst_weight(core::Real cst_weight){
+		cst_weight_ = cst_weight;
+	}
+    void set_sc_min (bool scmin) {
+		sc_min_ = scmin ;
+	}
+    void set_rt_min (bool rtmin) {
+		rt_min_ = rtmin ;
+	}
 	virtual std::string get_name() const;
 
     
@@ -92,12 +117,9 @@ public:
 private:
 
 	// Modeling H3 options
-	bool graft_l1_;
-	bool graft_l2_;
-	bool graft_l3_;
-	bool graft_h1_;
-	bool graft_h2_;
-	bool graft_h3_;
+	bool graft_l1_, graft_l2_, graft_l3_;
+	bool graft_h1_, graft_h2_, graft_h3_;
+	bool h3_no_stem_graft_;
 	bool camelid_;
 	bool camelid_constraints_;
     bool sc_min_;
@@ -113,9 +135,6 @@ private:
 
 	bool user_defined_; // for constructor options passed to init
 
-	// flag for one time fragment initialization
-	bool flags_and_objects_are_in_sync_;
-	bool first_apply_with_current_setup_;
 
 	// used as a flag to enable reading in of cst files
 	core::Real cst_weight_;
@@ -133,17 +152,10 @@ private:
 	/// @brief Assigns user specified values to primitive members using command line options
 	void init_from_options();
 
-
-    
-    // movers
     protocols::moves::SequenceMoverOP graft_sequence_ ;
 
-
-	/// @brief Performs the portion of setup of non-primitive members that requires a pose - called on apply
 	void finalize_setup( core::pose::Pose & pose );
 
-	/// @brief Sets up the instance of AntibodyModeler and initializes all members based on values passed in at construction
-	///		or via the command line.
 	void init();
 
 	void setup_objects();

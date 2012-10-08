@@ -4398,6 +4398,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='Choose specified template for CDR H3 grafting',
 			default='h3.pdb'
 			),
+		Option( 'h3_no_stem_graft', 'Boolean',
+			desc='Graft CDR H3 from template, use stem to superimpose, but do not copy the stem',
+			default='false'
+			),
 		Option( 'model_h3', 'Boolean',
 			desc='Model CDR H3 from scratch using fragments',
 			default='false'

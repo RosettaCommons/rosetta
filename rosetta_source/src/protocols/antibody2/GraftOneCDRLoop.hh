@@ -16,69 +16,89 @@
 #ifndef INCLUDED_protocols_antibody2_GraftOneCDRLoop_hh
 #define INCLUDED_protocols_antibody2_GraftOneCDRLoop_hh
 
-
 #include <protocols/antibody2/GraftOneCDRLoop.fwd.hh>
-#include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>  
-// Needs to be the full header so the scorefxn can default to NULL
+
 #include <protocols/moves/Mover.hh>
+#include <core/pose/Pose.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>  
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/Ab_TemplateInfo.fwd.hh>
 
 namespace protocols {
 namespace antibody2 {
 
-	/// @brief Grafts only one CDR onto a framework
-	class GraftOneCDRLoop : public protocols::moves::Mover {
-	public:
+/// @brief Grafts only one CDR onto a framework
+class GraftOneCDRLoop : public protocols::moves::Mover {
+public:
 		// default constructor
 		GraftOneCDRLoop();
 
 		// constructor with arguments        
-		GraftOneCDRLoop(AntibodyCDRNameEnum cdr_name,
-                             AntibodyInfoOP ab_info,
-                             Ab_TemplateInfoOP ab_t_info,
-                             core::scoring::ScoreFunctionCOP scorefxn );
+		GraftOneCDRLoop(AntibodyCDRNameEnum const & cdr_name,
+							AntibodyInfoOP antibody_info,
+                             Ab_TemplateInfoOP ab_t_info);
 
         
 		~GraftOneCDRLoop();
-
-		void set_default( AntibodyCDRNameEnum template_name );
+		
 		virtual void apply( core::pose::Pose & pose_in );
+		
 		virtual std::string get_name() const;
-
-
+		
+		
+		/// @brief enable benchmark mode
+		inline void enable_benchmark_mode( bool setting ) {
+			benchmark_ = setting;
+		}
+		
+		///@brief users can pass their own scorefunction for packing after grafting
+		void set_scorefxn(core::scoring::ScoreFunctionOP scorefxn){
+			scorefxn_ = scorefxn;
+		}
+		
+		///@brief R2 just graft R2 by copying some stem residues, and remove H3 to do
+		///       H3 loop modeling later. But the terminal has been changed by this
+		///       grafting. Therefore, in R3, an option for not copying h3 stem is
+		///       provided.
+		void h3_stem_off( bool setting ){
+			h3_stem_not_graft_ = setting;
+		}
+	
+		void set_flank_size(double setting){
+			flank_size_=setting;
+		}
+		
         ///@brief copy ctor
     	GraftOneCDRLoop( GraftOneCDRLoop const & rhs );
 
     	///@brief assignment operator
     	GraftOneCDRLoop & operator=( GraftOneCDRLoop const & rhs );
+	
 
-
-		/// @brief enable benchmark mode
-		inline void enable_benchmark_mode( bool setting ) {
-			benchmark_ = setting;
-		}
-
-	private:
+private:
+		void set_default();
+		void init();
+		void finalize_setup(Pose & pose_in);
+		void initForEqualOperatorAndCopyConstructor(GraftOneCDRLoop & lhs, GraftOneCDRLoop const & rhs);
+		
+		
+private:
+		
 		// Limits of query loop
-		core::Size query_start_;
-		core::Size query_end_;
         core::Size flank_size_;
-		std::string template_name_;
-
-		// Limits of template loop
-		core::Size template_start_;
-		core::Size template_end_;
-		core::pose::Pose template_pose_;
-
-		/// @brief benchmark flag
+		core::Size stem_copy_size_;
+				
+		AntibodyCDRNameEnum cdr_name_;
+		AntibodyInfoOP ab_info_;
+		Ab_TemplateInfoOP ab_t_info_;
+		
 		bool benchmark_;
+		bool h3_stem_not_graft_;
 
 		core::scoring::ScoreFunctionCOP scorefxn_;
-        void initForEqualOperatorAndCopyConstructor(GraftOneCDRLoop & lhs, GraftOneCDRLoop const & rhs);
 
-	}; // class GraftOneCDRLoop
+
+}; // class GraftOneCDRLoop
 
 
 

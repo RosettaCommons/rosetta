@@ -11157,6 +11157,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: "h3.pdb"</dd><br>
 </dl>
 <dl>
+<dt><b>-h3_no_stem_graft</b> \<Boolean\><dt>
+<dd>Graft CDR H3 from template, use stem to superimpose, but do not copy the stem</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-model_h3</b> \<Boolean\><dt>
 <dd>Model CDR H3 from scratch using fragments</dd><br>
 <dd>Default: false</dd><br>

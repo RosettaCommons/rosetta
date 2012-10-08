@@ -117,6 +117,7 @@ void GraftCDRLoopsProtocol::set_default()
 	graft_h1_  = false;
 	graft_h2_  = false;
 	graft_h3_  = false;
+	h3_no_stem_graft_=false;
 	benchmark_ = false;
 	camelid_   = false;
 	camelid_constraints_ = false;
@@ -138,6 +139,7 @@ void GraftCDRLoopsProtocol::register_options()
 	option.add_relevant( OptionKeys::antibody::graft_h1 );
 	option.add_relevant( OptionKeys::antibody::graft_h2 );
 	option.add_relevant( OptionKeys::antibody::graft_h3 );
+	option.add_relevant( OptionKeys::antibody::h3_no_stem_graft );
 	option.add_relevant( OptionKeys::constraints::cst_weight );
 	option.add_relevant( OptionKeys::run::benchmark );
 	option.add_relevant( OptionKeys::in::file::native );
@@ -166,6 +168,8 @@ void GraftCDRLoopsProtocol::init_from_options() {
                 set_graft_h2( option[ OptionKeys::antibody::graft_h2 ]() );
 	if ( option[ OptionKeys::antibody::graft_h3 ].user() )
                 set_graft_h3( option[ OptionKeys::antibody::graft_h3 ]() );
+	if ( option[ OptionKeys::antibody::h3_no_stem_graft ].user()  )
+		set_h3_stem_graft( option[ OptionKeys::antibody::h3_no_stem_graft ]()  );
 	if ( option[ OptionKeys::antibody::camelid ].user() )
                 set_camelid( option[ OptionKeys::antibody::camelid ]() );
 	if ( option[ OptionKeys::antibody::camelid_constraints ].user() )
@@ -224,27 +228,10 @@ void GraftCDRLoopsProtocol::setup_objects() {
     scorefxn_pack_->set_weight( core::scoring::chainbreak, 1.0 );
     scorefxn_pack_->set_weight( core::scoring::overlap_chainbreak, 10./3. );
     scorefxn_pack_->set_weight( core::scoring::atom_pair_constraint, 1.00 );
-
-
-    
-	sync_objects_with_flags();
     
 }
     
     
-    
-void GraftCDRLoopsProtocol::sync_objects_with_flags() {
-	flags_and_objects_are_in_sync_ = true;
-	first_apply_with_current_setup_ = true;
-}
-
-
-    
-    
-    
-    
-    
-
     
 
 void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
@@ -283,14 +270,13 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
     TR<<" Checking AntibodyInfo object: "<<std::endl<<*ab_info_<<std::endl<<std::endl;
     TR<<" Checking Ab_TemplateInfo object: "<<std::endl<<*ab_t_info_<<std::endl<<std::endl;
 
-    //for ( GraftMap::const_iterator it = grafts_.begin(); it != grafts_.end(); ++it ) {
     for (AntibodyCDRNameEnum it = start_cdr_loop; it <= ab_info_->get_TotalNumCDRs(); it=AntibodyCDRNameEnum(it+1) ){
-        //if ( it->second ) {
-            TR << "Creating movers for " << it << std::endl;
+            TR << "Creating movers for " << ab_info_->get_CDR_Name(it) << std::endl;
             TR << "                  start (chothia): "<<ab_info_->get_CDR_loop(it).start()<<std::endl;
             TR << "                   stop (chothia): "<<ab_info_->get_CDR_loop(it).stop()<<std::endl;
             
-            GraftOneCDRLoopOP graft_one_cdr = new GraftOneCDRLoop( it, ab_info_, ab_t_info_, scorefxn_pack_) ;
+            GraftOneCDRLoopOP graft_one_cdr = new GraftOneCDRLoop( it, ab_info_, ab_t_info_) ;
+			if(it == h3 && h3_no_stem_graft_){ graft_one_cdr->h3_stem_off(true); }
             graft_one_cdr->enable_benchmark_mode( benchmark_ );
             graft_sequence_->add_mover( graft_one_cdr);
             
@@ -301,7 +287,6 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
              closeone->enable_benchmark_mode( benchmark_ );
              graft_sequence_->add_mover( closeone );
              */
-        //}
     }
     
     // Exact match Aroop's old code in Rosetta 2:
@@ -341,15 +326,7 @@ void GraftCDRLoopsProtocol::apply( pose::Pose & frame_pose ) {
     TR<<" in the apply function "<<std::endl;
     
     
-    if ( !flags_and_objects_are_in_sync_ ){
-       sync_objects_with_flags(); 
-    }
-    
-    if ( first_apply_with_current_setup_ ){ 
-        finalize_setup(frame_pose);  
-        first_apply_with_current_setup_=false; 
-    }
-
+	finalize_setup(frame_pose);  
 
 
 	basic::prof_reset();
@@ -450,9 +427,6 @@ void GraftCDRLoopsProtocol::display_constraint_residues( core::pose::Pose & pose
     
 /// @details  Show the complete setup of the docking protocol
 void GraftCDRLoopsProtocol::show( std::ostream & out ) {
-    if ( !flags_and_objects_are_in_sync_ ){
-        sync_objects_with_flags();
-    }
     out << *this;
 }
     

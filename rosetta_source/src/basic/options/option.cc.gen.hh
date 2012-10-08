@@ -1066,7 +1066,7 @@ option.add( basic::options::OptionKeys::relax::sc_cst_maxdist, "Use distance con
 option.add( basic::options::OptionKeys::relax::limit_aroma_chi2, "limit chi2 rotamer of PHE,TYR, and HIS around 90 " ).def(false);
 option.add( basic::options::OptionKeys::relax::bb_move, "allow backbone to move during relax" ).def(true);
 option.add( basic::options::OptionKeys::relax::chi_move, "allow sidechain to move during relax" ).def(true);
-option.add( basic::options::OptionKeys::relax::jump_move, "allow jump to move during relax" ).def(true);
+option.add( basic::options::OptionKeys::relax::jump_move, "allow jump to move during relax" ).def(false);
 option.add( basic::options::OptionKeys::relax::minimize_bond_lengths, "Free bond length DOFs during relax for all atoms" ).def(false);
 option.add( basic::options::OptionKeys::relax::minimize_bond_angles, "Free bond angle DOFs during relax for all atoms" ).def(false);
 option.add( basic::options::OptionKeys::relax::minimize_mainchain_bond_lengths, "Free bond length DOFs for mainchain heavy atoms" ).def(false);
@@ -2305,6 +2305,7 @@ option.add( basic::options::OptionKeys::antibody::graft_h2, "Graft CDR H2 from t
 option.add( basic::options::OptionKeys::antibody::h2_template, "Choose specified template for CDR H2 grafting" ).def("h2.pdb");
 option.add( basic::options::OptionKeys::antibody::graft_h3, "Graft CDR H3 from template" ).def(false);
 option.add( basic::options::OptionKeys::antibody::h3_template, "Choose specified template for CDR H3 grafting" ).def("h3.pdb");
+option.add( basic::options::OptionKeys::antibody::h3_no_stem_graft, "Graft CDR H3 from template, use stem to superimpose, but do not copy the stem" ).def(false);
 option.add( basic::options::OptionKeys::antibody::model_h3, "Model CDR H3 from scratch using fragments" ).def(false);
 option.add( basic::options::OptionKeys::antibody::snugfit, "Adjust relative orientation of VL-VH" ).def(false);
 option.add( basic::options::OptionKeys::antibody::refine_h3, "Refine CDR H3 in high resolution" ).def(true);
