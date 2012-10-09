@@ -37,6 +37,9 @@
 
 #include <utility/vector1.hh>
 
+// C++ Headers
+#include <map>
+
 
 namespace core {
 namespace scoring {
@@ -141,6 +144,65 @@ public:
 		FArray2A< Real > const & rama_for_res
 	) const;
 
+	// AS: for neighbor-dependent rama sampling
+    void
+	random_phipsi_from_rama_left(
+                                 AA const left_aa,
+                                 AA const pos_aa,
+                                 Real & phi,
+                                 Real & psi
+                                 ) const;
+	
+    void
+	random_phipsi_from_rama_right(
+								  AA const pos_aa,
+								  AA const right_aa,
+								  Real & phi,
+								  Real & psi
+								  ) const;
+	
+	/// @brief function for torsion-bin specific but otherwise random phi/psi angles
+	/// @author Amelie Stein
+    
+	void
+	random_phipsi_from_rama_by_torsion_bin_left(
+												AA const left_aa,
+												AA const pos_aa,
+												Real & phi,
+												Real & psi,
+												char const torsion_bin
+												) const;
+	
+	void
+	random_phipsi_from_rama_by_torsion_bin_right(
+												 AA const pos_aa,
+												 AA const right_aa,
+												 Real & phi,
+												 Real & psi,
+												 char const torsion_bin
+												 ) const;
+	
+	
+	core::Size get_torsion_bin_index(char torsion_bin) const;
+	
+	void
+	init_rama_sampling_tables_by_torsion_bin(); 
+	
+	void
+	get_entries_per_torsion_bin_left( 
+									 AA const left_aa,
+									 AA const pos_aa,
+									 std::map< char, core::Size > & tb_frequencies ) const;
+    
+	void
+	get_entries_per_torsion_bin_right( 
+									  AA const pos_aa,
+									  AA const right_aa,
+									  std::map< char, core::Size > & tb_frequencies ) const;
+    
+	
+
+	
 	///////////////////////////////
 	// unused??
 	void
@@ -158,6 +220,8 @@ public:
 private:
 
 	void read_rama();
+    void init_rama_sampling_table_left( const char torsion_bin ); // AS: for neighbor-dependent rama sampling in KIC/NGK
+    void init_rama_sampling_table_right( const char torsion_bin ); 
 
 	//static bool rama_initialized_;
 	ObjexxFCL::FArray3D< Real > ram_energ_;
@@ -174,6 +238,19 @@ private:
 	static int const nullaa = 21; // Guoli Wang
 
 	Real const rama_score_limit_;
+
+    static ObjexxFCL::FArray4D< Real > left_ram_probabil_; // AS: probability of each phi/psi combination given the left & actual  AA 
+    utility::vector1< utility::vector1< utility::vector1< utility::vector1< Real > > > > left_rama_sampling_table_; // vector of allowed phi/psi pairs for each residue triplet
+    utility::vector1< utility::vector1< utility::vector1< utility::vector1< utility::vector1< Real > > > > > left_rama_sampling_table_by_torsion_bin_; 
+	
+    static ObjexxFCL::FArray4D< Real > right_ram_probabil_; // AS: probability of each phi/psi combination given the actual & right  AA 
+    utility::vector1< utility::vector1< utility::vector1< utility::vector1< Real > > > > right_rama_sampling_table_; // vector of allowed phi/psi pairs for each residue triplet
+    utility::vector1< utility::vector1< utility::vector1< utility::vector1< utility::vector1< Real > > > > > right_rama_sampling_table_by_torsion_bin_; 
+	
+	static Real const rama_sampling_thold_;
+	static Real const rama_sampling_factor_;
+	
+
 };
 
 }
