@@ -47,12 +47,12 @@
 
 
 typedef numeric::xyzVector<core::Real> point;
-typedef core::id::AtomID AtomID;
 
 static basic::Tracer TR("devel.metal_interface.AddZincSiteConstraints");
 static basic::Tracer TR_PYMOL("TR_PYMOL");
 
 using namespace core;
+using core::id::AtomID;
 
 namespace devel {
 namespace metal_interface {
