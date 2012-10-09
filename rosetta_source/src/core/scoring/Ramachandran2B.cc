@@ -505,7 +505,7 @@ Ramachandran2B::read_rama()
         //rama_sampling_table_.resize(n_aa_);
         utility::vector1< utility::vector1< utility::vector1< utility::vector1< Real > > > >  current_rama_sampling_table;
         current_rama_sampling_table.resize(n_aa_);
-        int ss_type=3; // WARNING -- data for neighbor-dependent Rama is only available for 3 in the current file (Rama08.dat) -- and thus currently this information isn't even encoded in the rama_probabil_ table
+        //int ss_type=3; // WARNING -- data for neighbor-dependent Rama is only available for 3 in the current file (Rama08.dat) -- and thus currently this information isn't even encoded in the rama_probabil_ table
         FArray2A< Real >::IR const zero_index( 0, n_phi_ - 1);
         for (int left_aa=1; left_aa<=n_aa_; left_aa++) { // loop over all residue types
             current_rama_sampling_table[left_aa].resize(n_aa_);
@@ -709,7 +709,7 @@ Ramachandran2B::read_rama()
                                 cur_psi = 0 - (n_psi_ - j);
                             }
 							
-                            char cur_tb;
+                            char cur_tb = ' ';
                             if (torsion_bin != 'X') 
                                 cur_tb = core::conformation::get_torsion_bin(cur_phi * 10, cur_psi * 10); //  AS -- how can we get the factor properly / without hard-coding? - also: this takes very long... 
                             if (torsion_bin == 'X' || cur_tb == torsion_bin) { 
