@@ -147,6 +147,7 @@ sources = {
 
 	"moves/kinematic_closure" : [
 		"TorsionSamplingKinematicPerturber",
+                "VicinitySamplingKinematicPerturber",
 	],
 
 	"optimize_weights" : [
@@ -323,7 +324,7 @@ testinputfiles = [
 	"moves/shearmoves_out.pdb",
 	"moves/score12.pdb",
 	"moves/score12.u",
-	"moves/kinematic_closure/TorsionSamplingKinematicPerturber_vicinity.u",
+	"moves/kinematic_closure/VicinitySamplingKinematicPerturber.u",
 	"nonlocal/2GB3.pdb",
         "nonlocal/alignment.filt",
 	"optimize_weights/1UAD.wt_complex.pdb",

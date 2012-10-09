@@ -668,7 +668,7 @@ Ramachandran2B::read_rama()
         //rama_sampling_table_.resize(n_aa_);
         utility::vector1< utility::vector1< utility::vector1< utility::vector1< Real > > > >  current_rama_sampling_table;
         current_rama_sampling_table.resize(n_aa_);
-        int ss_type=3; // WARNING -- data for neighbor-dependent Rama is only available for 3 in the current file (Rama08.dat) -- and thus currently this information isn't even encoded in the rama_probabil_ table
+        //int ss_type=3; // WARNING -- data for neighbor-dependent Rama is only available for 3 in the current file (Rama08.dat) -- and thus currently this information isn't even encoded in the rama_probabil_ table
         FArray2A< Real >::IR const zero_index( 0, n_phi_ - 1);
         for (int aa=1; aa<=n_aa_; aa++) { // loop over all residue types
             current_rama_sampling_table[aa].resize(n_aa_);
