@@ -235,7 +235,7 @@ CoordinateConstraint::steal_def( pose::Pose const& pose ) {
   xyz_target_ = conformation.xyz( atom_ );
 }
 
-///@details one line definition "Coordinates atom1 res1 atom2 res2 function_type function_definition"
+///@details one line definition "CoordinateConstraint Atom1_Name Atom1_ResNum Atom2_Name Atom2_ResNum Atom1_target_X_coordinate Atom1_target_Y_coordinate Atom1_target_Z_coordinate Func_Type Func_Def"
 void
 CoordinateConstraint::read_def(
 	std::istream& data,

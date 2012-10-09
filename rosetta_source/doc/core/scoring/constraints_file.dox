@@ -39,7 +39,7 @@ Constraints are listed as "Constraint_Type: Constraint_Def". Function types and 
 
 @li @ref AtomPairConstraint "AtomPair":
 <tt>Atom1_Name Atom1_ResNum Atom2_Name Atom2_ResNum Func_Type Func_Def</tt><br>
-Distance between Atom1 and Atom2
+Constrains a distance between Atom1 and Atom2.  AtomPairConstraint is compatible with PDB numbering.
 
 @li @ref AmbiguousNMRDistanceConstraint "AmbiguousNMRDistance":
 <tt>Atom1_Name Atom1_ResNum Atom2_Name Atom2_ResNum Func_Type Func_Def</tt><br>
@@ -56,6 +56,14 @@ Dihedral angle of Atom1->Atom2->Atom3->Atom4.  Dihedral is measured in radians o
 @li @ref SiteConstraint "SiteConstraint":
 <tt>Atom1_Name Atom1_ResNum Opposing_chain Func_Type Func_Def</tt><br>
 Constraint that a residue interacts with some other chain - roughly, that it is (or is not) in a binding site.  The atom and resnum identify which atom is being checked for interactions with the opposing chain.  Notice that "Constraint" is irregularly in its tag.
+
+@li @ref CoordinateConstraint "CoordinateConstraint":
+<tt>CoordinateConstraint Atom1_Name Atom1_ResNum Atom2_Name Atom2_ResNum Atom1_target_X_coordinate Atom1_target_Y_coordinate Atom1_target_Z_coordinate Func_Type Func_Def</tt><br>
+Constrain Atom1 to the XYZ position listed.  Atom2 is used as a reference atom to determine when Atom1 has moved (so that Rosetta knows when to rescore it) - pick at atom that Atom1 will move relative to.  CoordinateConstraint is compatible with PDB numbering.
+
+@li @ref LocalCoordinateConstraint "LocalCoordinateConstraint":
+<tt>"LocalCoordinateConstraint Atom1_Name Atom1_ResNum Atom2_Name Atom3_Name Atom4_Name Atom234_ResNum Atom1_target_X_coordinate Atom1_target_Y_coordinate Atom1_target_Z_coordinate Func_Type Func_Def</tt><br>
+Constrain Atom1 to the XYZ position listed, relative to the coordinate frame defined by atoms 2/3/4 instead of the origin.  LocalCoordinateConstraint is compatible with PDB numbering.
 
 @li @ref BigBinConstraint "BigBin":
 <tt>ResNum Bin</tt>
@@ -209,9 +217,7 @@ There are also convenience functions for doing both at once:
 These constraint types cannot currently be specified in a file. They need to have read_def methods implemented and be added to the ConstraintFactory constructor.
 
 @li @ref BackboneStubConstraint "BackboneStub"
-@li @ref BindingSiteConstraint "BindingSite"
 @li @ref ConstantConstraint "Constant"
-@li @ref CoordinateConstraint "Coordinate"
 @li @ref ResidueTypeConstraint "ResidueType"
 @li @ref RotamerConstraint "Rotamer"
 

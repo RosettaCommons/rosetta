@@ -141,8 +141,8 @@ DihedralPairConstraintCreator::DihedralPairConstraintCreator() {}
 DihedralPairConstraintCreator::~DihedralPairConstraintCreator() {}
 
 ConstraintOP DihedralPairConstraintCreator::create_constraint() const {
-	return new DihedralPairConstraint( 
-		id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(), 
+	return new DihedralPairConstraint(
+		id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(),
 		id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(), NULL );
 }
 
