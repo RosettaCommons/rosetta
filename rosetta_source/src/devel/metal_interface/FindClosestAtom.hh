@@ -8,20 +8,16 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file devel/metal_interface/FindClosestAtom.hh
-/// @brief This header contains helper functions common to metal interface
+/// @brief Finds the closest atom in a given residue to a point (usually a zinc atom).
 /// @author Bryan Der
 
 #ifndef INCLUDED_devel_metal_interface_FindClosestAtom_HH
 #define INCLUDED_devel_metal_interface_FindClosestAtom_HH
 
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
-
-#include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <utility/vector1.hh>
+#include <core/types.hh>
 #include <string>
-
 
 namespace devel{
 namespace metal_interface{

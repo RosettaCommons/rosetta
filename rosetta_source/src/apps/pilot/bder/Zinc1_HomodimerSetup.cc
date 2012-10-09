@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-/// @file    apps/pilot/bder/SymMetalInterface_OneZN_setup.cc
+/// @file    apps/pilot/bder/Zinc1_HomodimerSetup.cc
 /// @brief   Grafts a 2-residue + zinc match onto the match's scaffold, duplicates the pose, then performs two discrete flips (rollmoves) to the second chain that generates a symmetric pose with a tetrahedral metal binding site.
 /// @details Takes a 2-residue + zinc match as -s or -l, requires the scaffold pdb indicated as an option.  The first flip (rollmove) is along the axis that connects p1 with p2 (p1 is an xyzVector one zinc-coordinating atom), and zinc is translated to the origin at the time of the flip.  The second rollmove is along the axis that bisects the p1:p2 and p3:p4.  This protocol preceeds SymMetalInterface_OneZN_design.cc
     /////////////////////parallel///////////////
@@ -18,39 +18,30 @@
     ////////////////////////////////////////////
 /// @author Bryan Der
 
-// Unit Headers
 #include <devel/init.hh>
 #include <devel/metal_interface/MatchGrafter.hh>
 #include <devel/metal_interface/FindClosestAtom.hh>
 #include <protocols/rigid/RollMover.hh>
 #include <protocols/moves/Mover.hh>
-// Project Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
-// Utility Headers
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
-// Numeric Headers
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
 #include <numeric/xyz.io.hh>
-// C++ headers
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
-
 #include <core/io/pdb/pose_io.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/VariantType.hh>
-// Option headers
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <protocols/jd2/JobDistributor.hh>
-//Numeric headers
-#include <numeric/xyzVector.hh>
 
 
 //tracers
@@ -58,7 +49,7 @@ using basic::Error;
 using basic::Warning;
 //using numeric::conversions::degrees;
 
-static basic::Tracer TR("apps.pilot.bder.SymMetalInterface_OneZN_setup");
+static basic::Tracer TR("apps.pilot.bder.Zinc1_HomodimerSetup");
 
 typedef numeric::xyzVector<core::Real> point;
 typedef point axis;
@@ -66,12 +57,12 @@ typedef point axis;
 basic::options::StringOptionKey const scaffold_pdb("scaffold_pdb");
 
 ///@brief
-class SymMetalInterface_OneZN_setup : public protocols::moves::Mover {
+class Zinc1_HomodimerSetup : public protocols::moves::Mover {
 public:
-  SymMetalInterface_OneZN_setup()
+  Zinc1_HomodimerSetup()
   {
   }
-  virtual ~SymMetalInterface_OneZN_setup(){};
+  virtual ~Zinc1_HomodimerSetup(){};
 
 
   virtual
@@ -171,7 +162,7 @@ public:
 
 	virtual
 	std::string
-	get_name() const { return "SymMetalInterface_OneZN_setup"; }
+	get_name() const { return "Zinc1_HomodimerSetup"; }
 
 
 private:
@@ -180,14 +171,14 @@ private:
   //utility::vector1< std::string > metalsite_atom_name_;
 };
 
-typedef utility::pointer::owning_ptr< SymMetalInterface_OneZN_setup > SymMetalInterface_OneZN_setupOP;
+typedef utility::pointer::owning_ptr< Zinc1_HomodimerSetup > Zinc1_HomodimerSetupOP;
 
 int main( int argc, char* argv[] )
 {
   basic::options::option.add( scaffold_pdb, "protein monomer for metal-mediated dimerization" ).def("3DE8_A.pdb");
   devel::init(argc, argv);
 
-  protocols::jd2::JobDistributor::get_instance()->go(new SymMetalInterface_OneZN_setup);
+  protocols::jd2::JobDistributor::get_instance()->go(new Zinc1_HomodimerSetup);
 
   TR << "************************d**o**n**e**************************************" << std::endl;
 

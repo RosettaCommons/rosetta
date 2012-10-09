@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   devel/*/MetalInterfaceDesignMover.fwd.hh
-/// @brief  MetalInterfaceDesignMover protocol-mover forward declarations header
+/// @file   devel/*/ZincHeterodimerMover.fwd.hh
+/// @brief  ZincHeterodimerMover protocol-mover forward declarations header
 /// @author Steven Lewis (smlewi@unc.edu)
 
 
-#ifndef INCLUDED_devel_metal_interface_MetalInterfaceDesignMover_fwd_hh
-#define INCLUDED_devel_metal_interface_MetalInterfaceDesignMover_fwd_hh
+#ifndef INCLUDED_devel_metal_interface_ZincHeterodimerMover_fwd_hh
+#define INCLUDED_devel_metal_interface_ZincHeterodimerMover_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -22,11 +22,11 @@ namespace devel{
 namespace metal_interface{
 
 //Forwards and OP typedefs
-class MetalInterfaceDesignMover;
-typedef utility::pointer::owning_ptr< MetalInterfaceDesignMover > MetalInterfaceDesignMoverOP;
-typedef utility::pointer::owning_ptr< MetalInterfaceDesignMover const > MetalInterfaceDesignMoverCOP;
+class ZincHeterodimerMover;
+typedef utility::pointer::owning_ptr< ZincHeterodimerMover > ZincHeterodimerMoverOP;
+typedef utility::pointer::owning_ptr< ZincHeterodimerMover const > ZincHeterodimerMoverCOP;
 
 }//MetalInterface
 }//devel
 
-#endif //INCLUDED_devel_MetalInterface_MetalInterfaceDesignMover_FWD_HH
+#endif //INCLUDED_devel_MetalInterface_ZincHeterodimerMover_FWD_HH

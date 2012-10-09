@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   devel/metal_interface/ParseMetalSite.fwd.hh
-/// @brief  ParseMetalSite protocol-mover forward declarations header
+/// @file   devel/metal_interface/ZincSecondShell.fwd.hh
+/// @brief  ZincSecondShell protocol-mover forward declarations header
 /// @author Bryan Der
 
 
-#ifndef INCLUDED_devel_metal_interface_ParseMetalSite_FWD_HH
-#define INCLUDED_devel_metal_interface_ParseMetalSite_FWD_HH
+#ifndef INCLUDED_devel_metal_interface_ZincSecondShell_FWD_HH
+#define INCLUDED_devel_metal_interface_ZincSecondShell_FWD_HH
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -22,11 +22,11 @@ namespace devel{
 namespace metal_interface{
 
 //Forwards and OP typedefs
-class ParseMetalSite;
-typedef utility::pointer::owning_ptr< ParseMetalSite > ParseMetalSiteOP;
-typedef utility::pointer::owning_ptr< ParseMetalSite const > ParseMetalSiteCOP;
+class ZincSecondShell;
+typedef utility::pointer::owning_ptr< ZincSecondShell > ZincSecondShellOP;
+typedef utility::pointer::owning_ptr< ZincSecondShell const > ZincSecondShellCOP;
 
 }//metal_interface
 }//devel
 
-#endif //INCLUDED_devel_metal_interface_ParseMetalSite_FWD_HH
+#endif //INCLUDED_devel_metal_interface_ZincSecondShell_FWD_HH

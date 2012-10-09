@@ -8,19 +8,19 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   devel/metal_interface/MatchGrafter.cc
-/// @brief  Takes two protein and two match poses, grafting match onto protein, then combines the two grafted poses by overlaying the zinc atoms.
+/// @brief  Takes a scaffold protein and a match pdb from RosettaMatch, grafts the match onto the protein.  For zinc homodimer design, it can then combine two grafted poses by overlaying the zinc atoms.
 /// @author Bryan Der
 
 
 #include <devel/metal_interface/MatchGrafter.hh>
-// AUTO-REMOVED #include <devel/metal_interface/FindClosestAtom.hh> // find closest atom to zinc
+#include <devel/metal_interface/FindClosestAtom.hh> // find closest atom to zinc
 
-// AUTO-REMOVED #include <core/chemical/util.hh>
+#include <core/chemical/util.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh> //for changing the HIS tautomer
 #include <core/chemical/ResidueType.hh> //for CYZ residue
 #include <core/chemical/AtomType.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/ResidueSelector.hh>
 #include <core/chemical/ChemicalManager.hh> //CENTROID, FA_STANDARD
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh> //create HIS of proper tautomer
@@ -31,9 +31,8 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/types.hh>
-
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/xyz.io.hh> //print 'metalsite_atoms_'
+#include <numeric/xyz.io.hh> //print 'metalsite_atoms_'
 #include <utility/vector1.hh>
 
 #include <basic/Tracer.hh>
@@ -70,13 +69,19 @@ MatchGrafter::graft( Pose & match,
 	core::chemical::ResidueTypeSetCAP typeset(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD));
 	core::chemical::ResidueType const & CYZ(typeset->name_map("CYZ"));
 
-	//graft 2-residue match onto target
-	for ( core::Size i = 1; i <= 2/*two residues per match*/; ++i ){
+	//graft match, excluding zinc, onto target
+	for ( core::Size i = 1; i <= match.pdb_info()->nres() - 1; ++i ){
 
-		int pdbnum = match.pdb_info()->number(i);
-		char chain = partner_ungrafted.pdb_info()->chain(1);
-		core::Size partner_resid(partner_ungrafted.pdb_info()->pdb2pose(chain, pdbnum));
+		//int pdbnum = match.pdb_info()->number(i);
+		//core::Size chain_num = match.residue(i).chain();
+		//char chain = match.pdb_info()->chain(chain_num);
+		//core::Size partner_resid(partner_ungrafted.pdb_info()->pdb2pose(chain, pdbnum));
 		// replace residue requires residue number and residue object
+		//TR << "Replacing now: nres " << match.pdb_info()->nres() << " chain " << chain << " chain_num " << chain_num << " pdbnum " << pdbnum << " partner_resid " << partner_resid << " match.residue(i) " << i << std::endl;
+
+		core::Size partner_resid( (core::Size) match.pdb_info()->number(i) );
+		TR << "partner_resid " << partner_resid << std::endl;
+
 		partner_ungrafted.replace_residue(partner_resid, match.residue(i), true);
 
 		core::pose::remove_variant_type_from_pose_residue(partner_ungrafted, core::chemical::LOWER_TERMINUS, partner_resid);
@@ -90,7 +95,7 @@ MatchGrafter::graft( Pose & match,
 	}
 	Pose partner(partner_ungrafted);
 
-	partner.append_residue_by_jump(match.residue(/*metal*/3), partner.total_residue());
+	partner.append_residue_by_jump(match.residue(match.pdb_info()->nres()/*metal*/), partner.total_residue());
 	//	partner.dump_pdb("3UBQ_graft.pdb");
 
 	return partner;

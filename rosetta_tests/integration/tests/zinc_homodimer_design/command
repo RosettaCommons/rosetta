@@ -30,18 +30,15 @@
 #echo "TEST1"
 
 cd %(workdir)s
-[ -x %(bin)s/SymMetalInterface_TwoZN_setup.%(binext)s ] || exit 1
+[ -x %(bin)s/Zinc2_HomodimerDesign.%(binext)s ] || exit 1
 
 #echo "TEST2"
 
-%(bin)s/SymMetalInterface_TwoZN_setup.%(binext)s @options -database %(database)s -run:constant_seed -nodelay  2>&1 \
+%(bin)s/Zinc2_HomodimerDesign.%(binext)s @options -database %(database)s -run:constant_seed -nodelay  2>&1 \
     | egrep -vf ../../ignore_list \
-    | egrep -v ParseMetalSite \
-    | egrep -v RigidBodyMover \
-    | egrep -v InterfaceAnalyzerMover \
-    | egrep -v ddG_centroid \
-    | egrep -v angle \
-    | egrep -v bytes \
+    | egrep -v Check_point \
+    | egrep -v msr_ \
+    | egrep -v Score \
     > log
 
 #echo "TEST3"

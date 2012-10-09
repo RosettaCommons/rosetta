@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   devel/metal_interface/AddMetalSiteConstraints.fwd.hh
-/// @brief  AddMetalSiteConstraints protocol-mover forward declarations header
+/// @file   devel/metal_interface/ZincSiteFinder.fwd.hh
+/// @brief  ZincSiteFinder protocol-mover forward declarations header
 /// @author Bryan Der
 
 
-#ifndef INCLUDED_devel_metal_interface_AddMetalSiteConstraints_FWD_HH
-#define INCLUDED_devel_metal_interface_AddMetalSiteConstraints_FWD_HH
+#ifndef INCLUDED_devel_metal_interface_ZincSiteFinder_FWD_HH
+#define INCLUDED_devel_metal_interface_ZincSiteFinder_FWD_HH
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -22,11 +22,11 @@ namespace devel{
 namespace metal_interface{
 
 //Forwards and OP typedefs
-class AddMetalSiteConstraints;
-typedef utility::pointer::owning_ptr< AddMetalSiteConstraints > AddMetalSiteConstraintsOP;
-typedef utility::pointer::owning_ptr< AddMetalSiteConstraints const > AddMetalSiteConstraintsCOP;
+class ZincSiteFinder;
+typedef utility::pointer::owning_ptr< ZincSiteFinder > ZincSiteFinderOP;
+typedef utility::pointer::owning_ptr< ZincSiteFinder const > ZincSiteFinderCOP;
 
 }//metal_interface
 }//devel
 
-#endif //INCLUDED_devel_metal_interface_AddMetalSiteConstraints_FWD_HH
+#endif //INCLUDED_devel_metal_interface_ZincSiteFinder_FWD_HH

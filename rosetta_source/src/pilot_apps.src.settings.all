@@ -36,8 +36,8 @@ sources = {
 
 	"pilot/bder" : [
 		"supercharge",
-		"SymMetalInterface_TwoZN_setup",
-		"SymMetalInterface_TwoZN_design",
+		"Zinc2_HomodimerSetup",  #integration test: zinc_homodimer_setup
+                "Zinc2_HomodimerDesign", #integration test: zinc_homodimer_design
 	],
 
 	"pilot/ben" : [
@@ -583,7 +583,7 @@ sources = {
 		"hshash_utils" # /* Jacob Corn,doc/apps/pilot/hshash_utils.dox, test/integration/tests/hshash_utils*/
 	],
 	"pilot/rjha" : [
-		#"MetalInterfaceStructureCreator", # /* ????,Documentation Location,Demo Location */
+		"ZincHeterodimerDesign", # /* ????,Documentation Location,Demo Location */
 		#"SurfaceGroups",
 	],
 	"pilot/lemmon" : [

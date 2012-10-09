@@ -89,7 +89,7 @@ MetalSiteResidue::set_pre_pre_ligand_atom_id( core::id::AtomID pre_pre_ligand_at
 }
 
 std::string
-MetalSiteResidue::get_resname() { 
+MetalSiteResidue::get_resname() {
 	return resname_;
 }
 void

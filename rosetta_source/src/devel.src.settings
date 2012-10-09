@@ -102,13 +102,13 @@ sources = {
 		"StoreCombinedStoredTasksMover",
         ],
 	"devel/metal_interface": [
-		"AddMetalSiteConstraints",
+		"ZincHeterodimerMover",
+		"AddZincSiteConstraints",
 		"DualMonteCarlo",
 		"FindClosestAtom",
 		"MatchGrafter",
-		"MetalInterfaceDesignMover",
 		"MetalSiteResidue",
-		"ParseMetalSite",
+		"ZincSiteFinder",
 	],
 	"devel/optest": [
 		"A",

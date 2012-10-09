@@ -8,17 +8,29 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-/// @file    apps/pilot/bder/SymMetalInterface_TwoZN_setup.cc
+/// @file    apps/pilot/bder/Zinc2_HomodimerSetup.cc
 /// @brief   Stage 1 of designing a two-zinc metal seeded symmetric interface.
-/// @details A two-zinc interface is generated in SymMetalInterface_TwoZN_setup.cc by grafting two 2-residue zinc-binding matches onto the surface, duplicating the pose, rotating 180 degrees about the zinc-zinc axes, then rotating 180 degrees about the line that bisects the two zincs.  At this point, there is one significant degree of freedom to exlore WHILE MAINTAINING SYMMETRY.  This DOF is rotation about the zinc-zinc axis.  The rotation is done in a grid-search manner, and any uneclipsed pose with good metal geometry is dumped/written to disk.  The setup is separate from the design to reduce the computational load, and to provide a debugging checkpoint.
+/// @details A two-zinc interface is generated in Zinc2_HomodimerSetup.cc by grafting two 2-residue zinc-binding matches onto the surface, duplicating the pose, rotating 180 degrees about the zinc-zinc axes, then rotating 180 degrees about the line that bisects the two zincs.  At this point, there is one significant degree of freedom to exlore WHILE MAINTAINING SYMMETRY.  This DOF is rotation about the zinc-zinc axis.  The rotation is done in a grid-search manner, and any uneclipsed pose with good metal geometry is dumped/written to disk.  The setup is separate from the design to reduce the computational load, and to provide a debugging checkpoint.
+/// @details THIS PROTOCOL IS FOR TWO ZINC's AT THE INTERFACE.  I wrote a similar protocol for designing symmetric interfaces containing only one zinc, but none of these designs worked experimentally.  
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////
+//////   Chain1Chain1Chain1
+//////      H   H   H   H           H-H match1, H-H match2
+//////       \ /     \ /
+//////       Zn      Zn             ----------------------------------  axis of symmetry, can rotate about this axis and maintain symmetry
+//////       / \     / \
+//////      H   H   H   H           H-H match2, H-H match1
+//////   Chain2Chain2Chain2
+//////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /// @author Bryan Der
 
 
-// AUTO-REMOVED #include <devel/metal_interface/AddMetalSiteConstraints.hh>
-// AUTO-REMOVED #include <devel/metal_interface/FindClosestAtom.hh>
 #include <devel/metal_interface/MatchGrafter.hh>
 #include <devel/metal_interface/MetalSiteResidue.hh>
-#include <devel/metal_interface/ParseMetalSite.hh>
+#include <devel/metal_interface/ZincSiteFinder.hh>
 #include <devel/init.hh>
 
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
@@ -36,14 +48,12 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <numeric/conversions.hh>
-// AUTO-REMOVED #include <numeric/xyz.io.hh>
 #include <numeric/xyzVector.hh>
 
 #include <utility/exit.hh>
 #include <utility/file/FileName.hh>
 #include <utility/vector1.hh>
 
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
@@ -60,7 +70,7 @@ typedef point axis;
 using namespace core;
 using basic::Warning;
 
-static basic::Tracer TR("apps.pilot.bder.SymMetalInterface_TwoZN_setup");
+static basic::Tracer TR("apps.pilot.bder.Zinc2_HomodimerSetup");
 
 basic::options::StringOptionKey const match1( "match1" ); // match refers to 2 residues (Cys/His/Asp/Glu) + zinc, found by the matcher
 basic::options::StringOptionKey const match2( "match2" );
@@ -71,10 +81,10 @@ basic::options::RealOptionKey const tetrahedral_angle_sumsq_cutoff( "tetrahedral
 
 
 ///@brief
-class SymMetalInterface_TwoZN_setup : public protocols::moves::Mover {
+class Zinc2_HomodimerSetup : public protocols::moves::Mover {
 public:
 
-  SymMetalInterface_TwoZN_setup()
+  Zinc2_HomodimerSetup()
     : msr_1_(5, new devel::metal_interface::MetalSiteResidue), msr_2_(5, new devel::metal_interface::MetalSiteResidue)
   {
     core::import_pose::pose_from_pdb( match1_, basic::options::option[match1].value() );
@@ -82,9 +92,9 @@ public:
 
 		TR << "//////////////////////////////////////////////////////////////////////////////////////////////" << std::endl << std::endl;
 
-		TR << "/// @file    apps/pilot/bder/SymMetalInterface_TwoZN_setup.cc" << std::endl;
+		TR << "/// @file    apps/pilot/bder/Zinc2_HomodimerSetup.cc" << std::endl;
 		TR << "/// @brief   Stage 1 of designing a two-zinc metal seeded symmetric interface." << std::endl;
-		TR << "/// @details A two-zinc interface is generated in SymMetalInterface_TwoZN_setup.cc by grafting two matches onto the surface, duplicating the pose, rotating 180 degrees about the zinc-zinc axes, then rotating 180 degrees about the line that bisects the two zincs.  At this point, there one significant degree of freedom to exlore WHILE MAINTAINING SYMMETRY.  This DOF is rotation about the zinc-zinc axes.  The rotation is done in a grid-search manner, and any uneclipsed pose with good metal geometry is dumped/written to disk.  The setup was separate from the design to reduce the computational load, and to provide a debugging checkpoint." << std::endl;
+		TR << "/// @details A two-zinc interface is generated in Zinc2_HomodimerSetup.cc by grafting two matches onto the surface, duplicating the pose, rotating 180 degrees about the zinc-zinc axes, then rotating 180 degrees about the line that bisects the two zincs.  At this point, there one significant degree of freedom to exlore WHILE MAINTAINING SYMMETRY.  This DOF is rotation about the zinc-zinc axes.  The rotation is done in a grid-search manner, and any uneclipsed pose with good metal geometry is dumped/written to disk.  The setup was separate from the design to reduce the computational load, and to provide a debugging checkpoint." << std::endl;
 
 		TR << "Options used in this protocol:" << std::endl;
 		TR << "  -s scaffold.pdb      // scaffold used during matching" << std::endl;
@@ -107,7 +117,7 @@ public:
 		TR << "//////////////////////////////////////////////////////////////////////////////////////////////" << std::endl << std::endl;
   }
 
-  virtual ~SymMetalInterface_TwoZN_setup(){};
+  virtual ~Zinc2_HomodimerSetup(){};
 
 
 
@@ -224,11 +234,11 @@ public:
   //setup
   virtual void
   setup_metalsites( Pose & homodimer ) {
-    devel::metal_interface::ParseMetalSiteOP metalsite_parser_1 = new devel::metal_interface::ParseMetalSite( zinc1_res_ );
-    devel::metal_interface::ParseMetalSiteOP metalsite_parser_2 = new devel::metal_interface::ParseMetalSite( zinc2_res_ );
+    devel::metal_interface::ZincSiteFinderOP find_zinc_1 = new devel::metal_interface::ZincSiteFinder( zinc1_res_ );
+    devel::metal_interface::ZincSiteFinderOP find_zinc_2 = new devel::metal_interface::ZincSiteFinder( zinc2_res_ );
 
-    msr_1_ = metalsite_parser_1->parse_metalsite( homodimer );
-    msr_2_ = metalsite_parser_2->parse_metalsite( homodimer );
+    msr_1_ = find_zinc_1->find_zinc_site( homodimer );
+    msr_2_ = find_zinc_2->find_zinc_site( homodimer );
 
     TR << "zinc1 " << msr_1_[1]->get_seqpos() << std::endl;
     TR << "1_1:  " << msr_1_[2]->get_seqpos() << std::endl;
@@ -402,7 +412,7 @@ public:
 
 	virtual
 	std::string
-	get_name() const { return "SymMetalInterface_TwoZN_setup"; }
+	get_name() const { return "Zinc2_HomodimerSetup"; }
 
 
 private:
@@ -423,7 +433,7 @@ private:
 
 };
 
-typedef utility::pointer::owning_ptr< SymMetalInterface_TwoZN_setup > SymMetalInterface_TwoZN_setupOP;
+typedef utility::pointer::owning_ptr< Zinc2_HomodimerSetup > Zinc2_HomodimerSetupOP;
 
 
 int
@@ -438,7 +448,7 @@ main( int argc, char* argv[] )
   option.add( tetrahedral_angle_sumsq_cutoff, "tetrahedral_angle_sumsq_cutoff" ).def(1800);
 
   devel::init(argc, argv);
-  protocols::jd2::JobDistributor::get_instance()->go( new SymMetalInterface_TwoZN_setup() );
+  protocols::jd2::JobDistributor::get_instance()->go( new Zinc2_HomodimerSetup() );
 
   TR << "************************d**o**n**e**************************************" << std::endl;
   return 0;

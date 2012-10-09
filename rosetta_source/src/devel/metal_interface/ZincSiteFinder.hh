@@ -6,19 +6,17 @@
 // (C) 199x-2009 Rosetta Commons participating institutions and developers.
 // For more information, see http://www.rosettacommons.org/.
 
-/// @file   devel/metal_interface/bder/ParseMetalSite.hh
+/// @file   devel/metal_interface/bder/ZincSiteFinder.hh
 /// @brief  Searches pose for a zinc residue, then fills a vector of MetalSiteResidue objects with info including sequence position of coordinating sidechains, ligand atom xyz, ligand atom name, and atom ids to provide a convenient way for protocols to add metalsite constraints (ligand refers to protein sidechains)
 /// @author Bryan Der
 
-#ifndef INCLUDED_devel_metal_interface_ParseMetalSite_HH
-#define INCLUDED_devel_metal_interface_ParseMetalSite_HH
+#ifndef INCLUDED_devel_metal_interface_ZincSiteFinder_HH
+#define INCLUDED_devel_metal_interface_ZincSiteFinder_HH
 
-#include <devel/metal_interface/ParseMetalSite.fwd.hh>
+#include <devel/metal_interface/ZincSiteFinder.fwd.hh>
 #include <devel/metal_interface/MetalSiteResidue.fwd.hh> // abbrev. msr
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
-
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -27,16 +25,16 @@
 namespace devel {
 namespace metal_interface {
 
-class ParseMetalSite : public utility::pointer::ReferenceCount {
+class ZincSiteFinder : public utility::pointer::ReferenceCount {
 
 public:
 
-	ParseMetalSite();
-	ParseMetalSite( core::Size zinc_res );
+	ZincSiteFinder();
+	ZincSiteFinder( core::Size zinc_res );
 
-	virtual ~ParseMetalSite();
+	virtual ~ZincSiteFinder();
 
-	utility::vector1< devel::metal_interface::MetalSiteResidueOP > parse_metalsite( core::pose::Pose const & pose );
+	utility::vector1< devel::metal_interface::MetalSiteResidueOP > find_zinc_site( core::pose::Pose const & pose );
 
 	virtual void set_expecting_n_ligands ( Size n );
 	virtual bool check_for_parse_error();
@@ -47,9 +45,9 @@ private:
 	bool parse_error_;
 	utility::vector1< devel::metal_interface::MetalSiteResidueOP > msr_;
 
-};//end ParseMetalSite
+};//end ZincSiteFinder
 
 }//namespace metal_interface
 }//namespace devel
 
-#endif // INCLUDED_devel_metal_interface_ParseMetalSite_HH
+#endif // INCLUDED_devel_metal_interface_ZincSiteFinder_HH

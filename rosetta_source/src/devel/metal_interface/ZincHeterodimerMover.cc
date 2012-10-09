@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file devel/*/MetalInterfaceDesignMover.cc
-/// @brief MetalInterfaceDesignMover methods implemented - see apps/pilot/rjha/README for details
+/// @file devel/metal_interface/ZincHeterodimerMover.cc
+/// @brief ZincHeterodimerMover methods implemented - see apps/pilot/rjha/README for details
 /// @author Steven Lewis
 
 
 // Unit Headers
-#include <devel/metal_interface/MetalInterfaceDesignMover.hh>
+#include <devel/metal_interface/ZincHeterodimerMover.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -74,7 +74,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR( "devel.MetalInterface.MetalInterfaceDesignMover" );
+static basic::Tracer TR( "devel.MetalInterface.ZincHeterodimerMover" );
 
 namespace devel {
 namespace metal_interface {
@@ -85,7 +85,7 @@ void dump_chis( core::conformation::Residue const & res ){
 	TR << std::endl;
 }
 
-void MetalInterfaceDesignMover::apply( core::pose::Pose & pose ){
+void ZincHeterodimerMover::apply( core::pose::Pose & pose ){
 
 	//extract which residue is which from input edges
 	bool const mtm_start_metal(pose.residue_type(metal_to_mobile_.start()).is_protein());
@@ -101,6 +101,7 @@ void MetalInterfaceDesignMover::apply( core::pose::Pose & pose ){
 	assert(pose.conformation().num_chains() == 3);
 	assert(pose.conformation().chain_end(2) == metal_res && pose.conformation().chain_begin(2) == metal_res );
 	assert(fixed_res < ligand_res);
+	TR << "fixed_res: " << fixed_res << "  ligand_res: " << ligand_res << std::endl;
 	using core::kinematics::Edge;
 	core::kinematics::FoldTree main_tree(pose.total_residue());
 	main_tree.add_edge(Edge(1, fixed_res, Edge::PEPTIDE)); //peptide edge for fixed, lower partner
@@ -153,11 +154,12 @@ void MetalInterfaceDesignMover::apply( core::pose::Pose & pose ){
 	protocols::simple_moves::sidechain_moves::SidechainMoverOP SCmover( new protocols::simple_moves::sidechain_moves::SidechainMover() );
  	SCmover->set_task(task);
  	SCmover->set_prob_uniform(0); //we want only Dunbrack rotamers, 0 percent chance of uniform sampling
+	SCmover->set_change_chi_without_replacing_residue(true); //moves everything downstream in foldtree rather than a pack_rotamers behavior
 
 	/////////////////////////package movers into RandomMover (do either with equal chance)/////////////////
 	protocols::moves::RandomMoverOP perturb_mover( new protocols::moves::RandomMover() );
 	perturb_mover->add_mover(SCmover);
-	perturb_mover->add_mover(RJAmover);
+	//perturb_mover->add_mover(RJAmover);
 
 	//////////////////////make centroid-izing mover and centroid pose//////////////////////////////
 	core::pose::Pose centroid;
@@ -180,15 +182,6 @@ void MetalInterfaceDesignMover::apply( core::pose::Pose & pose ){
 																			 *centroid_scorefunction_, //scorefunction for MC
 																			 option[perturb_temp].value()); //temperature for MC
 
-	//////////////////////////////////make RMS_MC RMS-checking MonteCarlo/////////////////////////
-	using basic::options::OptionKeys::AnchoredDesign::refine_temp;
-	protocols::moves::MonteCarlo RMS_MC(
-																			*RMS_scorefunction_,
-																			option[refine_temp].value());//temperature, default 0.8
-	if( RMS_mode_ ) {
-		RMS_MC.reset(pose);
-		TR << "Before search, RMS: " << (*RMS_scorefunction_)(pose) << std::endl;
-	}
 
 	///////////////////////////////conformational search///////////////////////////////
 	using basic::options::OptionKeys::AnchoredDesign::perturb_cycles;
@@ -209,56 +202,23 @@ void MetalInterfaceDesignMover::apply( core::pose::Pose & pose ){
 			output_centroid->apply(centroid);
 		}
 
-		if( RMS_mode_ ){
-			//variables allow checking of RMS
-			core::Real cutoff(3.0); //Magic number; 3 seemed good enough at the time
-			core::Real rms_score((*RMS_scorefunction_)(pose));
-			TR << "rms " << rms_score << std::endl;
-			bool const RMS_low(rms_score < cutoff); //is the RMS below a magic number (below which we do not care?)
-			bool RMS_MC_accept(false);
-
-			//first check RMS improvement if we still care about RMS
-			if ( !RMS_low ){
-				RMS_MC.boltzmann(pose);
-				RMS_MC_accept = RMS_MC.mc_accepted();
-				if(RMS_MC_accept) TR << "RMS accepted" << std::endl;
-			}
-
-			//if the RMS is good, or if we had an RMS accept
-			if ( RMS_low || RMS_MC_accept ){
-				DMC.boltzmann(pose, centroid);
-				if (!DMC.MC().mc_accepted()){ //if DMC rejects also force RMS_MC to reject
-					RMS_MC.reset(pose);
-					TR << "DMC rejected" << std::endl;
-				}
-				else TR << "DMC accepted. rms is " << rms_score << std::endl;
-			}
-			else TR << "RMS rejected" << std::endl;
-
-			TR << i << '\t' << DMC.last_accepted_score() << '\t' << DMC.lowest_score()
-				 << '\t' << DMC.MC().last_accepted_score() << '\t' << DMC.MC().lowest_score() << std::endl;
-			TR << "post-DMC ";
-			dump_chis(pose.residue(ligand_res));
-		} else { //do not bother with RMS
-			DMC.boltzmann(pose, centroid);
-			if (!DMC.MC().mc_accepted()) TR << "DMC rejected" << std::endl;
-			else TR << "DMC accepted" << std::endl;
-			TR << "post-DMC ";
-			dump_chis(pose.residue(ligand_res));
-		}
+		DMC.boltzmann(pose, centroid);
+		if (!DMC.MC().mc_accepted()) TR << "DMC rejected" << std::endl;
+		else TR << "DMC accepted" << std::endl;
+		TR << "post-DMC ";
+		dump_chis(pose.residue(ligand_res));
 
 	}
 	DMC.recover_low(pose, centroid);
 
 	TR << "final centroid score after perturb: " << (*centroid_scorefunction_)(centroid) << std::endl;
-	centroid_scorefunction_->show( TR, centroid );
-	TR << std::flush; //show doesn't flush the buffer
+	//centroid_scorefunction_->show( TR, centroid );
+	//TR << std::flush; //show doesn't flush the buffer
 
 	TR << "fullatom score after perturb: " << (*fullatom_scorefunction_)(pose) << std::endl;
-	fullatom_scorefunction_->show( TR, pose );
-	TR << std::flush; //show doesn't flush the buffer
+	//fullatom_scorefunction_->show( TR, pose );
+	//TR << std::flush; //show doesn't flush the buffer
 
-	if( RMS_mode_) TR << "After search, RMS: " << (*RMS_scorefunction_)(pose) << std::endl;
 
 	/////////////////////////////end perturb, begin fullatom design/refinement////////////////////
 
@@ -303,12 +263,12 @@ void MetalInterfaceDesignMover::apply( core::pose::Pose & pose ){
 }//apply
 
 std::string
-MetalInterfaceDesignMover::get_name() const {
-	return "MetalInterfaceDesignMover";
+ZincHeterodimerMover::get_name() const {
+	return "ZincHeterodimerMover";
 }
 
 ///@details apply() needs to generate a centroid copy of the fullatom pose from time to time.  Some of the things in the fullatom pose are not centroid safe (metal atom, possible hydrogen-lacking metal ligand residues) and must be removed before centroid-ization.  This function takes care of that; unfortunately it needs a lot of help passed in.
-void MetalInterfaceDesignMover::copy_to_centroid(
+void ZincHeterodimerMover::copy_to_centroid(
 	core::pose::Pose const & pose,
 	core::pose::Pose & centroid,
 	core::kinematics::FoldTree const & centroid_tree,
@@ -321,7 +281,7 @@ void MetalInterfaceDesignMover::copy_to_centroid(
 }
 
 
-void MetalInterfaceDesignMover::generate_scorefunctions(){
+void ZincHeterodimerMover::generate_scorefunctions(){
 	using namespace core::scoring;
 	fullatom_scorefunction_ = core::scoring::ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
 	TR << "Using default fullatom scorefunction (STANDARD_WTS, SCORE12_PATCH)\n"
@@ -338,14 +298,10 @@ void MetalInterfaceDesignMover::generate_scorefunctions(){
 	centroid_scorefunction_->set_weight( hbond_sr_bb, 1.0 );
 	TR << "Using default centroid scorefunction\n" << *centroid_scorefunction_ << std::flush;
 
-	//unsafe to initialize in absence of RMS target PDB
-	RMS_scorefunction_ = new core::scoring::ScoreFunction;
-	if( RMS_mode_ ) RMS_scorefunction_->set_weight( rms, 1.0 );
-
 	return;
 }//generate_scorefunctions
 
-void MetalInterfaceDesignMover::generate_factory(){
+void ZincHeterodimerMover::generate_factory(){
 	using namespace core::pack::task;
 	using namespace basic::options;
 	TaskFactoryOP task_factory = new TaskFactory();
@@ -366,20 +322,19 @@ void MetalInterfaceDesignMover::generate_factory(){
 }//generate_factory
 
 ///@details constructor
-MetalInterfaceDesignMover::MetalInterfaceDesignMover(
+ZincHeterodimerMover::ZincHeterodimerMover(
 																										 utility::vector1< core::Size > const & metal_site,
 																										 core::kinematics::Edge const & fixed_to_metal,
-																										 core::kinematics::Edge const & metal_to_mobile,
-																										 bool RMS_mode)
-	: Mover(), centroid_scorefunction_(NULL), fullatom_scorefunction_(NULL), RMS_scorefunction_(NULL), factory_(NULL),
-		fixed_to_metal_(fixed_to_metal), metal_to_mobile_(metal_to_mobile), metal_site_(metal_site), RMS_mode_(RMS_mode)
+																										 core::kinematics::Edge const & metal_to_mobile )
+	: Mover(), centroid_scorefunction_(NULL), fullatom_scorefunction_(NULL), factory_(NULL),
+		fixed_to_metal_(fixed_to_metal), metal_to_mobile_(metal_to_mobile), metal_site_(metal_site)
 {
-	Mover::type( "MetalInterfaceDesignMover" );
+	Mover::type( "ZincHeterodimerMover" );
 	generate_scorefunctions();
 	generate_factory();
 }
 
-MetalInterfaceDesignMover::~MetalInterfaceDesignMover(){}
+ZincHeterodimerMover::~ZincHeterodimerMover(){}
 
 }//MetalInterface
 }//devel
