@@ -98,7 +98,7 @@ CarbohydrateInfo::show(std::ostream & output) const
 		prefix = "aldo";
 	} else /*is ketose*/ {
 		char num = '0' + anomeric_carbon_;
-		prefix = string("-keto") + string(1, num);
+		prefix = string(1, num) + string("-keto");
 	}
 	switch (n_carbons_) {
 		case 3:

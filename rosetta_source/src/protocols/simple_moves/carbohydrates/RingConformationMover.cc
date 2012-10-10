@@ -36,7 +36,7 @@
 
 
 // Construct tracers.
-static basic::Tracer TR("protocols.carbohydrates.RingConformationMover");
+static basic::Tracer TR("protocols.simple_moves.carbohydrates.RingConformationMover");
 
 using basic::Warning;
 

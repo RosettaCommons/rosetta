@@ -6,7 +6,7 @@
 
 
     Run "./integration.py --help" for instructions!
-    
+
     See also:  tests/HOW_TO_MAKE_TESTS/command
 
 The top part of this document explains how to make a new test.  The bottom part explains about checking in.

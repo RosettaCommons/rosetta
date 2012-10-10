@@ -1,0 +1,9 @@
+-s input/maltotriose.pdb
+-mute all
+-unmute core.chemical.carbohydrates
+-unmute protocols.simple_moves.carbohydrates
+-overwrite
+-nstruct 1
+-out:pdb
+-out:prefix output/flipped_
+-out:file:scorefile output/scores.fasc
