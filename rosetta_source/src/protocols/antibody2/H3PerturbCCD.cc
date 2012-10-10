@@ -90,13 +90,6 @@ H3PerturbCCD::H3PerturbCCD() : Mover() {
 H3PerturbCCD::~H3PerturbCCD() {}
     
     
-H3PerturbCCD::H3PerturbCCD(loops::LoopOP a_cdr_loop) : Mover()         
-{
-    user_defined_ = false;
-        
-    init();
-}   
-    
 H3PerturbCCD::H3PerturbCCD( AntibodyInfoOP antibody_in ) : Mover()     
 {
     user_defined_ = false;
@@ -167,7 +160,7 @@ protocols::moves::MoverOP H3PerturbCCD::clone() const {
     
 void H3PerturbCCD::finalize_setup( pose::Pose & pose_in ) {  
         
-    read_and_store_fragments( pose_in );
+    read_and_store_fragments(  );
         
     mc_ = new protocols::moves::MonteCarlo( pose_in, *lowres_scorefxn_, Temperature_ );
     outer_mc_ = new protocols::moves::MonteCarlo( pose_in, *lowres_scorefxn_, Temperature_ );
@@ -394,7 +387,7 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
     
     
     
-void H3PerturbCCD::read_and_store_fragments( core::pose::Pose & pose ) {
+void H3PerturbCCD::read_and_store_fragments( ) {
     using namespace chemical;
     using namespace id;
     using namespace fragment;
@@ -450,7 +443,7 @@ void H3PerturbCCD::read_and_store_fragments( core::pose::Pose & pose ) {
     
     return;
     
-} // read_and_store_fragments
+}
     
 
     

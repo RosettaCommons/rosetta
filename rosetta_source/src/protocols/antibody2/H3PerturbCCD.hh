@@ -47,9 +47,6 @@ public:
 
     /// @brief default constructor
 	H3PerturbCCD();
-
-    /// @brief constructor with arguments
-    H3PerturbCCD(loops::LoopOP a_cdr_loop);
     
 	/// @brief constructor with arguments
     H3PerturbCCD(AntibodyInfoOP antibody_in);
@@ -71,7 +68,7 @@ public:
         return "H3PerturbCCD";
     }
 
-    void read_and_store_fragments( core::pose::Pose & pose );
+    void read_and_store_fragments();
 
 
     void pass_the_loop(loops::Loop & input_loop){

@@ -416,7 +416,6 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose 
         
     bool extended_H3 (false) ;
     bool kinked_H3 (false);
-    bool is_H3( false );	// "is_H3" is no longer used. 06/18/12
         
     // extract single letter aa codes for the chopped loop residues
     vector1< char > cdr_h3_sequence;
