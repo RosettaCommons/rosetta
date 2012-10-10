@@ -927,8 +927,6 @@ KinematicMover::set_defaults() {
 	std::string KinematicMover::torsion_features_string( core::pose::Pose const & pose ) const 
 	{
 		std::string torsion_bins, pos_bin;
-		core::Real phi, psi, omega;
-		
 		// assumption: we have only one loop ... 
 		for ( core::Size i = loop_begin_; i <= loop_end_; i++ ) {
 			torsion_bins += core::conformation::get_torsion_bin(pose.phi(i), pose.psi(i), pose.omega(i));
