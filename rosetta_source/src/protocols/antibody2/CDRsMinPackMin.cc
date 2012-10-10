@@ -162,13 +162,10 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose )
 
 	//**************** TaskFactory ****************
 	if(!tf_){
-		utility::vector1< bool> sc_is_flexible( pose.total_residue(), false );
-		select_loop_residues( pose, *(ab_info_->get_AllCDRs_in_loopsop()), true /*include_neighbors*/, sc_is_flexible );
-		
-	  tf_ = setup_packer_task(pose);
-	  tf_->push_back( new RestrictToInterface( sc_is_flexible ) );//TODO: check this, no rb_jump here
-	  //core::pack::task::PackerTaskOP my_task2(tf_->create_task_and_apply_taskoperations(pose));
-	  //TR<<*my_task2<<std::endl; //exit(-1);
+		tf_ = ab_info_->get_TaskFactory_AllCDRs(pose);
+
+	  	//core::pack::task::PackerTaskOP my_task2(tf_->create_task_and_apply_taskoperations(pose));
+	  	//TR<<*my_task2<<std::endl; //exit(-1);
 	}
 
 	// 1. rotamer_trial

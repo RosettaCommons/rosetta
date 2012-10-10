@@ -914,11 +914,11 @@ kinematics::MoveMap AntibodyInfo::get_MoveMap_for_LoopsandDock(pose::Pose const 
     
 
 //JQX: doesn't matter only antibody or antibody-antigen complex, just include CDRs and their neighbors
-pack::task::TaskFactory AntibodyInfo::get_TaskFactory_AllCDRs(pose::Pose  & pose)  {
+pack::task::TaskFactoryOP AntibodyInfo::get_TaskFactory_AllCDRs(pose::Pose  & pose)  const{
 	
 	vector1< bool> sc_is_packable( pose.total_residue(), false );
 	select_loop_residues( pose, *loopsop_having_allcdrs_, true/*include_neighbors*/, sc_is_packable);
-	
+
 	using namespace pack::task;
 	using namespace pack::task::operation;
 	// selecting movable c-terminal residues
@@ -926,21 +926,33 @@ pack::task::TaskFactory AntibodyInfo::get_TaskFactory_AllCDRs(pose::Pose  & pose
 	for( Size i = 1; i <= pose.total_residue(); ++i ) {
 		loop_residues(i) = sc_is_packable[i];
 	} // check mapping
-	
+
 	using namespace protocols::toolbox::task_operations;
 	pack::task::TaskFactoryOP tf ;
 	tf= setup_packer_task(pose);
-	tf->push_back( new RestrictToInterface(loop_residues) );
+//	tf->push_back( new RestrictToInterface(loop_residues) ); //JQX: not sure why we use loop_residues, in stead of sc_is_packable
+	tf->push_back( new RestrictToInterface(sc_is_packable) );
+
 	
 	
 	//pack::task::PackerTaskOP my_task2(tf->create_task_and_apply_taskoperations(pose));
 	//TR<<*my_task2<<std::endl; //exit(-1);
 	
-	return *tf;
+	return tf;
 }
     
-    
-    
+pack::task::TaskFactoryOP AntibodyInfo::get_TaskFactory_OneCDR(pose::Pose  & pose, AntibodyCDRNameEnum const & cdr_name)  const{
+	vector1< bool> sc_is_packable( pose.total_residue(), false );
+	
+	select_loop_residues( pose, *get_CDR_in_loopsop(cdr_name), true/*include_neighbors*/, sc_is_packable);
+	using namespace protocols::toolbox::task_operations;
+	
+	pack::task::TaskFactoryOP tf ;
+	tf= setup_packer_task(pose);
+	tf->push_back( new RestrictToInterface(sc_is_packable) );
+	
+	return tf;
+}
     
 // JQX:: assuming Aroop numbering for now
 vector1< vector1<Size> > AntibodyInfo::get_CDR_NumberingInfo(AntibodyNumberingEnum const & numbering_scheme) const {

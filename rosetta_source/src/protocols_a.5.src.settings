@@ -31,6 +31,7 @@ sources = {
 		"RefineBetaBarrel",
 		"LHRepulsiveRamp",
 		"LHSnugFitLegacy",
+		"LHRepulsiveRampLegacy",
 		"RefineOneCDRLoop",
 		"H3RefineCCD",
 		"RefineCDRH1Centroid",

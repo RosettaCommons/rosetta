@@ -110,13 +110,13 @@ LHRepulsiveRampLegacy::LHRepulsiveRampLegacy(loops::Loops loops_in ) : Mover() {
 LHRepulsiveRampLegacy::LHRepulsiveRampLegacy(AntibodyInfoOP antibody_in) : Mover() {
     user_defined_ = false;
     
-    init(antibody_in->all_cdr_loops_,false);
+    init( *(antibody_in->get_AllCDRs_in_loopsop()),false);
 }
     
 LHRepulsiveRampLegacy::LHRepulsiveRampLegacy(AntibodyInfoOP antibody_in, bool camelid) : Mover() {
     user_defined_ = false;
     
-    init(antibody_in->all_cdr_loops_, camelid);
+    init(*(antibody_in->get_AllCDRs_in_loopsop()), camelid);
 }
     
     
@@ -137,7 +137,7 @@ LHRepulsiveRampLegacy::LHRepulsiveRampLegacy( AntibodyInfoOP antibody_in,
     dock_scorefxn_ = new core::scoring::ScoreFunction(*dock_scorefxn);
     pack_scorefxn_ = new core::scoring::ScoreFunction(*pack_scorefxn);
     
-    init(antibody_in->all_cdr_loops_,false);
+    init(*(antibody_in->get_AllCDRs_in_loopsop()),false);
 }
     
     

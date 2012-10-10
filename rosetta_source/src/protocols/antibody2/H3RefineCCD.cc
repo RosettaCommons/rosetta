@@ -226,8 +226,6 @@ void H3RefineCCD::pass_start_pose(core::pose::Pose & start_pose){
     
     
 void H3RefineCCD::finalize_setup( core::pose::Pose & pose ){
-
-    tf_=setup_packer_task( start_pose_);
     
     // score the pose first
     (*highres_scorefxn_) (pose);
@@ -517,75 +515,3 @@ void H3RefineCCD::set_task_factory(pack::task::TaskFactoryCOP tf){
 
 } // namespace antibody2
 } // namespace protocols
-
-
-
-
-
-
-
-
-/*
- 
- JQX: Just record what I deleted
- 
- 
- 
- 
- void CDRH3Modeler2::build_fullatom_loop( core::pose::Pose & pose ) {
-    using namespace core::pose;
-    using namespace core::scoring;
-    using namespace protocols::moves;
- 
-    if( !apply_fullatom_mode_ )
-        return;
- 
-    TR <<  "H3M Modeling Fullatom CDR H3 loop" << std::endl;
- 
-    antibody2::AntibodyInfo starting_antibody;
-    starting_antibody = ab_info_;
-    bool closed_cutpoints( false );
- 
-    Size cycle( 1 );
-    while( !closed_cutpoints && cycle<max_cycle_close_trial_ ) {
-        ab_info_ = starting_antibody;
-        loop_fa_relax( pose, ab_info_.get_CDR_loop("h3")->start(),
-        ab_info_.get_CDR_loop("h3")->stop()-1 + base_ );
-        closed_cutpoints = cutpoints_separation( pose, ab_info_ );
-        ++cycle;
-    } // while( ( cut_separation > 1.9 )
- 
-    TR <<  "H3M Finished modeling Fullatom CDR H3 loop" << std::endl;
- 
-    return;
- } // build_fullatom_loop
- 
- 
- 
- 
- if( is_camelid_ ) {
-    bool store_current_loop = current_loop_is_H3_;
-    bool store_H3_filter = H3_filter_;
-    current_loop_is_H3_ = false;
-    H3_filter_ = false;
- 
-    antibody2::AntibodyInfo starting_antibody;
-    starting_antibody = ab_info_;
-    bool closed_cutpoints( false );
- 
-    Size cycle (1 );
-    while( !closed_cutpoints && cycle < max_cycle_close_trial_ ) {
-        ab_info_ = starting_antibody;
-        loop_fa_relax( pose_in, ab_info_.get_CDR_loop("h2")->start(),
-        ab_info_.get_CDR_loop("h2")->stop()  );
-        closed_cutpoints = cutpoints_separation( pose_in, ab_info_ );
-        ++cycle;
-    } // while( ( cut_separation > 1.9 )
- 
-    // Restoring variables to initial state
-    current_loop_is_H3_ = store_current_loop;
-    H3_filter_ = store_H3_filter;
-}
-
- 
- */

@@ -164,8 +164,6 @@ private:
 	// external objects
 	AntibodyInfoOP ab_info_;
 
-	//packer task
-	pack::task::TaskFactoryOP tf_;
 
 	/// @brief Assigns user specified values to primitive members using command line options
 	void init_from_options();

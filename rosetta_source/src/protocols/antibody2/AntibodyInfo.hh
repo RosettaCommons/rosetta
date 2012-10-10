@@ -162,7 +162,8 @@ public:
 											  Real const & nb_dist = 10.0) const;
 	
 	/// @brief TaskFactory
-    pack::task::TaskFactory get_TaskFactory_AllCDRs(pose::Pose  & pose) ;
+    pack::task::TaskFactoryOP get_TaskFactory_AllCDRs(pose::Pose & pose) const;
+	pack::task::TaskFactoryOP get_TaskFactory_OneCDR(pose::Pose & pose, AntibodyCDRNameEnum const & cdr_name) const;
     
     /// @brief return num of cdr loops, 3 (nanobody) or 6 (regular antibody)
     AntibodyCDRNameEnum get_TotalNumCDRs() const {

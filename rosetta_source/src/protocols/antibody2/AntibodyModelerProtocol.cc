@@ -318,8 +318,6 @@ void AntibodyModelerProtocol::finalize_setup( pose::Pose & pose )
     TR<<*ab_info_<<std::endl;
     
     //AntibodyInfoOP native_ab_info = new AntibodyInfo(*native_pose,camelid_);
-        
-    tf_ = setup_packer_task(pose);
     
     //core::pack::task::PackerTaskOP my_task2(tf_->create_task_and_apply_taskoperations(pose));
     //TR<<*my_task2<<std::endl; exit(-1);
