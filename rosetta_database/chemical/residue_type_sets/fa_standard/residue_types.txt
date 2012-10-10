@@ -399,3 +399,6 @@ residue_types/l-ncaa/NVL.params
 #residue_types/beta-peptide/B3W.params
 #residue_types/beta-peptide/B3X.params
 #residue_types/beta-peptide/B3Y.params
+
+## Polysaccharide Types
+residue_types/carbohydrates/_to4_-alpha-D-Glup.params

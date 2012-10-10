@@ -94,11 +94,11 @@ CarbohydrateInfo::show(std::ostream & output) const
 
 	// Parse properties.
 	string prefix, suffix, ring_form, modifications;
-	if (is_aldose_) {
+	if (is_aldose()) {
 		prefix = "aldo";
-	} else {
-		// TODO: Differentiate between 2-ketoses/3-ketoses, etc.
-		prefix = "keto";
+	} else /*is ketose*/ {
+		char num = '0' + anomeric_carbon_;
+		prefix = string("-keto") + string(1, num);
 	}
 	switch (n_carbons_) {
 		case 3:
@@ -148,7 +148,7 @@ CarbohydrateInfo::show(std::ostream & output) const
 	output << " Modifications: " << endl << modifications << endl;
 	output << " Polymeric Information:" << endl;
 	if (mainchain_glycosidic_bond_acceptor_) {
-		output << "  Main chain connection: (1->" << mainchain_glycosidic_bond_acceptor_ << ')' << endl;
+		output << "  Main chain connection: (_->" << mainchain_glycosidic_bond_acceptor_ << ')' << endl;
 	} else {
 		output << "  Main chain connection: N/A" << endl;
 	}
@@ -203,6 +203,45 @@ CarbohydrateInfo::nu_id(core::Size subscript) const
 	return nu_id_[subscript];
 }
 
+// Return the BB or CHI identifier for the requested glycosidic linkage torsion angle.
+/// @param    <torsion_index>: an integer corresponding to phi (1), psi (2), or omega (3)
+/// @return	  a pair of values corresponding to the atom tree torsion definitions, in which the first element is
+/// either the TorsionID BB or CHI and the second element is an integer
+/// @details  It is crucial to note that this data structure stores information to identify:\n
+///  phi(n)\n
+///  psi(n+1), NOT psi(n)\n
+///  omega(n+1), NOT omega(n)\n
+/// \n
+/// See Also:\n
+///  Pose.phi()\n
+///  Pose.set_phi()\n
+///  Pose.psi()\n
+///  Pose.set_psi()\n
+///  Pose.omega()\n
+///  Pose.set_omega()
+/// @remarks  An enum would be better than an integer for input to this function; however, static constants
+/// phi_torsion, psi_torsion, and omega_torsion were already defined in core/id/types.hh.\n
+/// The atom tree in Rosetta 3 does not allow for rings, so cyclic carbohydrates are implemented as
+/// linear residues.  Because of this, the atom tree assigns backbone (BB) torsions to what it considers the main-
+/// chain.  Thus, only one side of the ring is considered backbone.  Side-chain (CHI) angles must be defined in
+/// the .params file for the residue; they are not automatically assigned.  Glycosidic linkage torsions are not
+/// necessarily defined as main chain torsions by the atom tree, so they must be designated here, in some cases with
+/// the use of CHI angles.
+std::pair<core::id::TorsionType, core::Size>
+CarbohydrateInfo::glycosidic_linkage_id(core::Size torsion_index) const
+{
+	Size upper_bound = 2;  // for phi and psi
+	if (has_exocyclic_linkage_) {
+		upper_bound = 3;  // for omega
+	}
+	assert((torsion_index >= 1) && (torsion_index <= upper_bound));
+	PyAssert((torsion_index >= 1) && (torsion_index <= upper_bound),
+			"CarbohydrateInfo::glycosidic_linkage_id(core::Size torsion_index): "
+			"no defined torsion angle for this index.");
+
+	return glycosidic_linkage_id_[torsion_index];
+}
+
 
 // Private methods /////////////////////////////////////////////////////////////
 // Initialize data members from properties.
@@ -212,7 +251,7 @@ CarbohydrateInfo::init(core::chemical::ResidueTypeCOP residue_type)
 	// Set default values.
 	residue_type_ = residue_type;
 	full_name_ = "";  // TEMP: not yet implemented
-	is_aldose_ = true;  // assumes that most sugars will be aldoses if not specified by .params file
+	anomeric_carbon_ = 1;  // assumes that most sugars will be aldoses if not specified by .params file
 	n_carbons_ = get_n_carbons();
 	stereochem_ = 'D';  // assumes that most sugars will have D stereochemistry
 	ring_size_ = 0;  // assumes linear
@@ -235,7 +274,7 @@ CarbohydrateInfo::copy_data(
 {
 	object_to_copy_to.residue_type_ = object_to_copy_from.residue_type_;
 	object_to_copy_to.full_name_ = object_to_copy_from.full_name_;
-	object_to_copy_to.is_aldose_ = object_to_copy_from.is_aldose_;
+	object_to_copy_to.anomeric_carbon_ = object_to_copy_from.anomeric_carbon_;
 	object_to_copy_to.n_carbons_ = object_to_copy_from.n_carbons_;
 	object_to_copy_to.stereochem_ = object_to_copy_from.stereochem_;
 	object_to_copy_to.ring_size_ = object_to_copy_from.ring_size_;
@@ -243,6 +282,10 @@ CarbohydrateInfo::copy_data(
 	object_to_copy_to.is_glycoside_ = object_to_copy_from.is_glycoside_;
 	object_to_copy_to.is_uronic_acid_ = object_to_copy_from.is_uronic_acid_;
 	object_to_copy_to.nu_id_ = object_to_copy_from.nu_id_;
+	object_to_copy_to.mainchain_glycosidic_bond_acceptor_ = object_to_copy_from.mainchain_glycosidic_bond_acceptor_;
+	object_to_copy_to.branch_points_ = object_to_copy_from.branch_points_;
+	object_to_copy_to.has_exocyclic_linkage_ = object_to_copy_from.has_exocyclic_linkage_;
+	object_to_copy_to.glycosidic_linkage_id_ = object_to_copy_from.glycosidic_linkage_id_;
 }
 
 // Return the number of carbon atoms (not counting R groups) in the ResidueType.
@@ -279,17 +322,17 @@ CarbohydrateInfo::read_and_set_properties()
 
 	for (Size i = 1, n_properties = properties.size(); i <= n_properties; ++i) {
 		if (properties[i] == "ALDOSE") {
-			if (!is_aldose_) {
+			if (anomeric_carbon_ != 1) {
 				utility_exit_with_message("A sugar cannot be both an aldose and a ketose; check the .param file.");
 			} else {
-				is_aldose_ = true;
+				anomeric_carbon_ = 1;
 				aldose_or_ketose_set = true;
 			}
 		} else if (properties[i] == "KETOSE") {
-			if (aldose_or_ketose_set && is_aldose_) {
+			if (aldose_or_ketose_set && (anomeric_carbon_ == 1)) {
 				utility_exit_with_message("A sugar cannot be both an aldose and a ketose; check the .param file.");
 			} else {
-				is_aldose_ = false;
+				anomeric_carbon_ = 2;  // TODO: Provide method for dealing with non-ulose ketoses.
 				aldose_or_ketose_set = true;
 			}
 		} else if (properties[i] == "L_SUGAR") {
@@ -359,6 +402,7 @@ void
 CarbohydrateInfo::determine_polymer_connections()
 {
 	using namespace std;
+	using namespace id;
 
 	if (!residue_type_->is_upper_terminus()) {
 		Size upper_atom_index = residue_type_->upper_connect_atom();
@@ -371,6 +415,44 @@ CarbohydrateInfo::determine_polymer_connections()
 	}
 
 	// TODO: Implement branching.
+
+	// Exocyclic linkage?
+	Size carbons_in_ring = ring_size_ - 1 /*oxygen*/;
+	Size last_carbon_in_ring = carbons_in_ring + anomeric_carbon_ - 1;
+	if (mainchain_glycosidic_bond_acceptor_ > last_carbon_in_ring) {
+		has_exocyclic_linkage_ = true;
+	} else {
+		has_exocyclic_linkage_ = false;
+	}
+
+	// Define phi (phi_torsion = 1 in core/id/types.hh).
+	// For aldopyranoses, phi(n) is defined as: O5(n)-C1(n)-OX(n-1)-CX(n-1)
+	// BB X+1 is: CX-OX-UPPER1-UPPER2
+	// However, CHI 1 is O5-C1-O1-HO1, which for an internal residue with virtual atoms for O1 and HO1, and is
+	// the same as phi(n), provided the virtual atoms are made to move with any rotation of BB X+1.
+	// The same concept holds for aldofuranoses; however, ketoses are more complicated.  the cyclic oxygen must
+	// be the reference for phi, yet CHI 2 at the anomeric position is defined with C1 as the reference atom,
+	// not the cyclic oxygen (O5 for furanoses, O6 for pyranoses).  So a unique CHI angle must be defined in
+	// .params file for phi.
+	// TODO: Correct these. Two virtual atoms in a row in a CHI gives NAN.  Will need to use vector calculus for phi.
+	if (is_aldose()) {
+		glycosidic_linkage_id_.push_back(make_pair(CHI, 1));
+	} else {
+		// TODO: Correct this. This is the correct bond but the wrong angle definition.  I need to decide where to
+		// this CHI in the .params file.
+		glycosidic_linkage_id_.push_back(make_pair(CHI, anomeric_carbon_));
+	}
+
+	// Define psi (psi_torsion = 2 in core/id/types.hh).
+	// psi(n) is defined as: C(anomeric)(n)-OX(n-1)-CX(n-1)-CX-1(n-1)
+	// BB X is: CX-1-CX-OX-UPPER
+	// Thus, this is actually the psi angle of the NEXT residue!
+	glycosidic_linkage_id_.push_back(make_pair(BB, mainchain_glycosidic_bond_acceptor_));
+
+	// Define omega (omega_torsion = 3 core/id/types.hh).
+	if (has_exocyclic_linkage_) {
+		glycosidic_linkage_id_.push_back(make_pair(CHI, mainchain_glycosidic_bond_acceptor_ - 1));
+	}
 }
 
 // If cyclic, define nu angles in terms of CHI ids.
@@ -378,7 +460,6 @@ void
 CarbohydrateInfo::define_nu_ids()
 {
 	using namespace std;
-	using namespace utility;
 	using namespace id;
 
 	if (ring_size_ != 0) {

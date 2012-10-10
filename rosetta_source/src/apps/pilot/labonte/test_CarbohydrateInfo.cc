@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 	Pose pose;
 
 	// Import test carbohydrate pose.
-	pose_from_pdb(pose, "/home/labonte/Workspace/Carbohydrates/heparin-6-mer.pdb");
+	pose_from_pdb(pose, "/home/labonte/Workspace/Carbohydrates/maltotriose.pdb");
 
 	for (Size i = 1; i <= pose.total_residue(); ++i) {
 		Residue res = pose.residue(i);

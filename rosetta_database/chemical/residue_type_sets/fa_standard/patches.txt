@@ -55,3 +55,7 @@ patches/C_methylamidated.txt
 ## patches for the MakeRotLib protocol
 patches/MethylatedProteinCterm.txt
 patches/ActeylatedProteinNterm.txt
+
+## carbohydrate patches
+patches/carbohydrates/lower_terminus.txt
+patches/carbohydrates/upper_terminus.txt

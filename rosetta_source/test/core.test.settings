@@ -17,6 +17,9 @@ sources = {
                 "ResidueTypeTests",
 		"ResidueTypeSetTests",
 	],
+    "chemical/carbohydrates" : [
+        "CarbohydrateInfo",
+    ],
 	"chemical/orbitals" :[
 		"OrbitalTypeSet",
 	],
@@ -257,6 +260,7 @@ testinputfiles = [
 	"chemical/1pqc.params",
 	"chemical/1pqc_test.patch",
 	"chemical/atom_properties.txt",
+	"chemical/carbohydrates/maltotriose.pdb",
 	"chemical/mm_atom_properties.txt",
 	"chemical/orbitals/orbital_properties.txt",
 	"chemical/uk002.params",

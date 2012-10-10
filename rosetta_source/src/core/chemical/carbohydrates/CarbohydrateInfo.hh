@@ -32,6 +32,7 @@
 #include <string>
 #include <iostream>
 
+
 namespace core {
 namespace chemical {
 namespace carbohydrates {
@@ -65,7 +66,8 @@ public:
 
 	// Accessors/Mutators
 	// Nomenclature
-	/// @brief  Return the full IUPAC name of the monosaccharide.
+	/// @brief    Return the full IUPAC name of the monosaccharide.
+	/// @remarks  not yet implemented
 	std::string
 	full_name() const
 	{
@@ -74,18 +76,39 @@ public:
 
 
 	// Oxidation type
-	/// @brief  Return true if the monosaccharide is an aldose.
+	/// @brief    Return true if the monosaccharide is an aldose.
+	/// @details  An aldose sugar is an aldehyde derivative.
 	bool
 	is_aldose() const
 	{
-		return is_aldose_;
+		if (anomeric_carbon_ == 1) {
+			return true;
+		}
+		return false;
 	}
 
-	/// @brief  Return true if the monosaccharide is a ketose.
+	/// @brief    Return true if the monosaccharide is a ketose.
+	/// @details  A ketose sugar is a ketone derivative.\n
+	/// Does not distinguish between 2-ketoses (uloses) and 3-ketoses.\n
+	/// \n
+	/// See also:\n
+	///  CarbohydrateInfo.anomeric_carbon()
 	bool
 	is_ketose() const
 	{
-		return !is_aldose_;
+		if (anomeric_carbon_ != 1) {
+			return true;
+		}
+		return false;
+	}
+
+	/// @brief    Return the anomeric carbon number.
+	/// @details  For linear monosaccharides, this number corresponds to the carbon that is oxidized to the aldehyde
+	/// or ketone.
+	core::Size
+	anomeric_carbon() const
+	{
+		return anomeric_carbon_;
 	}
 
 
@@ -204,7 +227,8 @@ public:
 		return !is_acyclic();
 	}
 
-	/// @brief  Return true if the monosaccharide is a furanose.
+	/// @brief    Return true if the monosaccharide is a furanose.
+	/// @details  A furanose has a five-membered ring (like furan).
 	bool
 	is_furanose() const
 	{
@@ -214,7 +238,8 @@ public:
 		return false;
 	}
 
-	/// @brief  Return true if the monosaccharide is a pyranose.
+	/// @brief    Return true if the monosaccharide is a pyranose.
+	/// @details  A pyranose has a six-membered ring (like pyran).
 	bool
 	is_pyranose() const
 	{
@@ -224,7 +249,8 @@ public:
 		return false;
 	}
 
-	/// @brief  Return true if the monosaccharide is a septanose.
+	/// @brief    Return true if the monosaccharide is a septanose.
+	/// @details  A septanose has a seven-membered ring.
 	bool
 	is_septanose() const
 	{
@@ -236,15 +262,17 @@ public:
 
 
 	// Anomeric form
-	/// @brief   Get the anomeric form for the monosaccharide.
-	/// @return  "alpha", "beta", or ""
+	/// @brief    Get the anomeric form for the monosaccharide.
+	/// @return   "alpha", "beta", or ""
+	/// @details  "alpha" and "beta" designate the stereochemistry at the anomeric carbon of a cyclic sugar.
 	std::string
 	anomer() const
 	{
 		return anomer_;
 	}
 
-	/// @brief  Return true if the cyclic monosaccharide is an alpha sugar.
+	/// @brief    Return true if the cyclic monosaccharide is an alpha sugar.
+	/// @details  "alpha" and "beta" designate the stereochemistry at the anomeric carbon of a cyclic sugar.
 	bool
 	is_alpha_sugar() const
 	{
@@ -254,7 +282,8 @@ public:
 		return false;
 	}
 
-	/// @brief  Return true if the cyclic monosaccharide is a beta sugar.
+	/// @brief    Return true if the cyclic monosaccharide is a beta sugar.
+	/// @details  "alpha" and "beta" designate the stereochemistry at the anomeric carbon of a cyclic sugar.
 	bool
 	is_beta_sugar() const
 	{
@@ -311,6 +340,13 @@ public:
 	/// residue.
 	core::Size branch_point(core::Size i) const;
 
+	/// @brief  Return true if the attachment point of the downstream saccharide is on an exocyclic carbon.
+	bool
+	has_exocyclic_linkage() const
+	{
+		return has_exocyclic_linkage_;
+	}
+
 
 	// Side-chain modifications
 	// TODO: Determine a good way to track modifications at each carbon.
@@ -321,7 +357,12 @@ public:
 		return is_uronic_acid_;
 	}
 
-	/// @brief    Return the CHI identifier for the requested nu (internal ring torsion) angle.
+
+	// Torsion angle mappings
+	/// @brief  Return the BB or CHI identifier for the requested glycosidic linkage torsion angle.
+	std::pair<core::id::TorsionType, core::Size> glycosidic_linkage_id(core::Size torsion_index) const;
+
+	/// @brief  Return the CHI identifier for the requested nu (internal ring torsion) angle.
 	std::pair<core::id::TorsionType, core::Size> nu_id(core::Size subscript) const;
 
 private:
@@ -348,7 +389,7 @@ private:
 	// Private data ////////////////////////////////////////////////////////////
 	core::chemical::ResidueTypeCOP residue_type_;
 	std::string full_name_;
-	bool is_aldose_;
+	core::Size anomeric_carbon_;  // also indicative of location of aldehyde/ketone oxidation
 	core::Size n_carbons_;
 	char stereochem_;  // L or D
 	core::Size ring_size_;  // 0 indicates linear sugar
@@ -359,8 +400,15 @@ private:
 	// Glycosidic bond attachment points, i.e., the second integer in (1->n) notations.
 	core::Size mainchain_glycosidic_bond_acceptor_;  // 0 if N/A, i.e., if residue type is an upper terminus
 	utility::vector1<core::Size> branch_points_;
+	bool has_exocyclic_linkage_;
 
-	// Definitions of nu angles in terms of Rosetta 3 CHI angles for this particular sugar.
+
+	// Torsion angle mappings
+	// Definitions of phi, psi, omega, and nu angles in terms of Rosetta 3 BB and CHI angles for this particular
+	// sugar.  chi angles directly correspond to CHI torsions.  (Other torsion angles further up the side chains can
+	// be accessed and set with CHI torsions but do not have an official designation, so they are not mapped.)
+	utility::vector1<std::pair<core::id::TorsionType, core::Size> > glycosidic_linkage_id_;
+
 	// The nu angles should always be the last CHI angles defined in the param file or by a patch file.
 	utility::vector1<std::pair<core::id::TorsionType, core::Size> > nu_id_;
 
