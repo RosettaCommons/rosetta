@@ -163,12 +163,14 @@ PdbDataFeatures::features_reporter_dependencies() const {
 
 Size PdbDataFeatures::report_features(
 	Pose const & pose,
-	vector1<bool> const &,
+	vector1<bool> const & relevant_residues,
 	boost::uuids::uuid struct_id,
 	sessionOP db_session )
 {
-	insert_residue_pdb_identification_rows(struct_id,db_session,pose);
-	insert_residue_pdb_confidence_rows(struct_id, db_session, pose);
+	insert_residue_pdb_identification_rows(
+		pose, relevant_residues, struct_id, db_session);
+	insert_residue_pdb_confidence_rows(
+		pose, relevant_residues, struct_id, db_session);
 	return 0;
 }
 
@@ -249,10 +251,11 @@ void PdbDataFeatures::load_residue_pdb_identification(
 }
 
 void PdbDataFeatures::insert_residue_pdb_identification_rows(
+	Pose const & pose,
+	vector1< bool > const & relevant_residues,
 	boost::uuids::uuid struct_id,
-	sessionOP db_session,
-	Pose const & pose)
-{
+	sessionOP db_session
+) {
 
 	InsertGenerator pdb_ident_insert("residue_pdb_identification");
 	pdb_ident_insert.add_column("struct_id");
@@ -264,8 +267,9 @@ void PdbDataFeatures::insert_residue_pdb_identification_rows(
 	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
 
 	Size res_num(pose.n_residue());
-	for(Size index = 1; index <= res_num; ++index)
-	{
+	for(Size index = 1; index <= res_num; ++index) {
+		if(!relevant_residues[index]) continue;
+
 		string chain_id(& pose.pdb_info()->chain(index),1);
 		string insertion_code(&pose.pdb_info()->icode(index),1);
 		int pdb_residue_number = pose.pdb_info()->number(index);
@@ -352,10 +356,11 @@ void PdbDataFeatures::load_residue_pdb_confidence(
 
 
 void PdbDataFeatures::insert_residue_pdb_confidence_rows(
+	Pose const & pose,
+	vector1< bool > const & relevant_residues,
 	boost::uuids::uuid struct_id,
-	sessionOP db_session,
-	Pose const & pose)
-{
+	sessionOP db_session
+) {
 	PDBInfoCOP pdb_info(pose.pdb_info());
 	if(!pdb_info) return;
 
@@ -374,6 +379,8 @@ void PdbDataFeatures::insert_residue_pdb_confidence_rows(
 	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
 
 	for(Size ri=1; ri <= pose.n_residue(); ++ri) {
+		if(!relevant_residues[ri]) continue;
+
 		Residue const & r(pose.residue(ri));
 		Real max_bb_temperature(-1), max_sc_temperature(-1);
 		Real min_bb_occupancy(9999999);

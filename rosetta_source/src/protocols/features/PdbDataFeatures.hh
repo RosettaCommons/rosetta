@@ -69,7 +69,7 @@ public:
 		boost::uuids::uuid struct_id,
 		utility::sql_database::sessionOP db_session
 	);
-    
+
 	void
 	load_into_pose(
 		utility::sql_database::sessionOP db_session,
@@ -84,9 +84,11 @@ private:
 		core::pose::Pose & pose);
 
 	void insert_residue_pdb_identification_rows(
+		core::pose::Pose const & pose,
+		utility::vector1<bool> const & relevant_residues,
 		boost::uuids::uuid struct_id,
-		utility::sql_database::sessionOP db_session,
-		core::pose::Pose const & pose);
+		utility::sql_database::sessionOP db_session
+	);
 
 	///@brief load the temperature and occupancy information into the
 	///PDBInfo object. Backbone atoms are assigned max_bb_temperature
@@ -104,9 +106,11 @@ private:
 		core::pose::Pose & pose);
 
 	void insert_residue_pdb_confidence_rows(
+		core::pose::Pose const & pose,
+		utility::vector1<bool> const & relevant_residues,
 		boost::uuids::uuid struct_id,
-		utility::sql_database::sessionOP db_session,
-		core::pose::Pose const & pose);
+		utility::sql_database::sessionOP db_session
+	);
 
 
 
