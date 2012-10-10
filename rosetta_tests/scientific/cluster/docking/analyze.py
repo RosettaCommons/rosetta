@@ -37,7 +37,7 @@ for l in lines[1:]:
 
 
 results['num_of_passed_targets'] = num_of_passed_targets
-results['_isTestPassed'] = True
+results['_isTestPassed'] = num_of_passed_targets > 40
 
 
 f = file('.results.yaml', 'w');  f.write( json.dumps(results) );  f.close()

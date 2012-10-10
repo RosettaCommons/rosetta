@@ -71,7 +71,7 @@ arguments = -database %(database)s -in::file::s output/%(target)s/prepack/%(targ
 
 priority = -10
 
-queue 20
+queue 1
 
 '''
 #-nstruct 500
