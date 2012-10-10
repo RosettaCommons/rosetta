@@ -425,6 +425,17 @@ void LoopMover_Refine_KIC::apply(
 			// get loop endpoints
 			Size begin_loop=one_loop.begin()->start();
 			Size end_loop=one_loop.begin()->stop();
+			
+			myKinematicMover.set_loop_begin_and_end( begin_loop, end_loop ); // AS -- for restricted torsion bin sampling, the mover needs to know about the start of the defined loop, not just the segment that is sampled in a given move
+			
+			// for Taboo Sampling we need to update the sequence here every time, in case it changes (e.g. when modeling multiple loops)
+			utility::vector1< core::chemical::AA > loop_sequence;
+			loop_sequence.resize(0); // make sure it is empty
+			for (core::Size cur_res = begin_loop; cur_res <= end_loop; cur_res++) {
+				loop_sequence.push_back(pose.aa(cur_res)); 
+			}
+			myKinematicMover.update_sequence( loop_sequence );
+			
 			// get the movemap for minimization and allowed side-chains for rottrials for this loop
 			kinematics::MoveMap cur_mm = move_maps[ loop_ind ];
 			utility::vector1<bool> cur_allow_sc_move = allow_sc_vectors[ loop_ind ];

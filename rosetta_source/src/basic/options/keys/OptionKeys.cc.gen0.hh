@@ -637,3 +637,5 @@ namespace fold_cst { RealVectorOptionKey const seq_sep_stages( "fold_cst:seq_sep
 namespace fold_cst { IntegerOptionKey const reramp_cst_cycles( "fold_cst:reramp_cst_cycles" );  }
 namespace fold_cst { RealOptionKey const reramp_start_cstweight( "fold_cst:reramp_start_cstweight" );  }
 namespace fold_cst { IntegerOptionKey const reramp_iterations( "fold_cst:reramp_iterations" );  }
+namespace fold_cst { BooleanOptionKey const skip_on_noviolation_in_stage1( "fold_cst:skip_on_noviolation_in_stage1" );  }
+namespace fold_cst { RealOptionKey const stage1_ramp_cst_cycle_factor( "fold_cst:stage1_ramp_cst_cycle_factor" );  }

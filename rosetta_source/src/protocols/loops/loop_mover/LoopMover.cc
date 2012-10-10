@@ -40,6 +40,9 @@
 
 //Utility Headers
 
+// AS -- to get access to get_torsion_bin()
+#include <core/conformation/util.hh>
+
 /// ObjexxFCL headers
 // AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
@@ -324,6 +327,30 @@ void LoopMover::resolve_loop_indices( core::pose::Pose const & p )
 {
 	guarded_loops_->resolve_loop_indices( p );
 }
+
+///@brief bin torsion angles as described in http://www.ncbi.nlm.nih.gov/pubmed/19646450
+///@detail generates a string with the torsion angle bins, using uppercase letters as in the publication above for omega ~ 180, and lowercase letters for omega ~ 0; to be used in loop sampling analysis
+///@author Amelie Stein
+///@date April 26, 2012
+std::string LoopMover::torsion_features_string( core::pose::Pose const & pose ) const 
+{
+	std::string torsion_bins, pos_bin;
+		
+	// currently this generates one string for all loops, so the user has to map the positions -- alternatively one could return a vector of torsion feature strings or some other more complex construct
+	// note: won't work properly for multiple loops at the moment -- TODO
+	for ( Loops::const_iterator it=loops()->begin(), it_end=loops()->end(); it != it_end; ++it ) {
+		if (torsion_bins != "") {
+			torsion_bins += "-"; // next loop
+		}
+		for ( core::Size i = it->start(), l_end = it->stop(); i <= l_end; i++ ) {
+			torsion_bins += core::conformation::get_torsion_bin(pose.phi(i), pose.psi(i), pose.omega(i));
+			//std::cerr << i << " " << pose.phi(i) << " " << pose.psi(i) << " " <<  pose.omega(i) << " " << torsion_bins << std::endl; // debugging
+		}
+	}
+	
+	return torsion_bins;
+	
+} // torsion_features_string
 
 } // namespace loop_mover
 } // namespace loops

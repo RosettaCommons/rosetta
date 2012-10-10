@@ -102,6 +102,7 @@ public:
 	protocols::loops::LoopsOP loops();
 
 	const utility::vector1< core::fragment::FragSetOP > & frag_libs() const;
+	std::string	torsion_features_string( core::pose::Pose const & pose ) const; // AS
 
 
 	/// @brief Extend a loop

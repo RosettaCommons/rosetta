@@ -3647,6 +3647,45 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='maximum number of KinematicMover apply() tries per KinematicWrapper apply()',
 			default = '20'
 		),
+				 
+		## next-generation KIC
+		Option( 'restrict_kic_sampling_to_torsion_string', 'String',
+			desc='restrict kinematic loop closure sampling to the phi/psi angles specified in the torsion string',
+			default = ""
+		),
+		Option( 'derive_torsion_string_from_native_pose', 'Boolean',
+			desc='apply torsion-restricted sampling, and derive the torsion string from the native [or, if not provided, starting] structure',
+			default = 'false'
+		),
+		Option( 'always_remodel_full_loop', 'Boolean',
+			desc='always remodel the full loop segment (i.e. the outer pivots are always loop start & end) -- currently this only applies to the perturb stage -- EXPERIMENTAL',
+			default = 'false'
+		),
+		Option( 'taboo_sampling', 'Boolean',
+			desc='enhance diversity in KIC sampling by pre-generating different torsion bins and sampling within those -- currently perturb stage only',
+			default = 'false'
+		),
+		Option( 'ramp_fa_rep', 'Boolean',
+			desc='ramp the weight of fa_rep over outer cycles in refinement',
+			default = 'false'
+		),
+		Option( 'ramp_rama', 'Boolean',
+			desc='ramp the weight of rama over outer cycles in refinement',
+			default = 'false'
+		),
+		Option( 'kic_rama2b', 'Boolean',
+			desc='use neighbor-dependent Ramachandran distributions in random torsion angle sampling',
+			default = 'false'
+		),
+		Option( 'kic_no_centroid_min', 'Boolean',
+			desc='don\'t minimize in centroid mode during KIC perturb',
+			default = 'false'
+		),
+		Option( 'kic_repack_neighbors_only', 'Boolean',
+			desc='select neigbors for repacking via the residue-dependent NBR_RADIUS, not via a generic threshold (WARNING: this overrides any setting in -loops:neighbor_dist)',
+            default='false'
+		),
+						
 
 		## QuickCCD
 

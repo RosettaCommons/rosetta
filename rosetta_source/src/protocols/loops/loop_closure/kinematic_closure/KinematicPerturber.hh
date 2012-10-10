@@ -71,7 +71,7 @@ namespace protocols {
 								  utility::vector1< core::Real> & torsions,
 								  utility::vector1< core::Real> & bond_ang,
 								  utility::vector1< core::Real> & bond_len
-								  ) const = 0;
+								  ) = 0; // needs to be non-const for Taboo Sampling
 					
 					
 					/// @brief after the kinmover has closed the loop, the perturber needs
@@ -101,6 +101,7 @@ namespace protocols {
 					max_sample_iterations() const {
 						return max_sample_iterations_; }
 					
+					void clear_torsion_string_stack() { } // only actually used for TabooSampling
 					
 				protected:
 					
@@ -137,7 +138,7 @@ namespace protocols {
 								  utility::vector1< core::Real> & torsions,
 								  utility::vector1< core::Real> & bond_ang,
 								  utility::vector1< core::Real> & //bond_len
-								  ) const;
+								  ) ;
 					
 					
 					void
@@ -185,7 +186,7 @@ namespace protocols {
 								  utility::vector1< core::Real> & torsions,
 								  utility::vector1< core::Real> & bond_ang,
 								  utility::vector1< core::Real> & //bond_len
-								  ) const;
+								  ) ;
 					
 					
 					void
@@ -238,7 +239,7 @@ namespace protocols {
 								  utility::vector1< core::Real > & torsions,
 								  utility::vector1< core::Real > & bond_ang,
 								  utility::vector1< core::Real > & //bond_len
-								  ) const;
+								  ) ;
 					
 					bool perturber_exhausted() const {
 						return sweep_iterator_.at_end(); }

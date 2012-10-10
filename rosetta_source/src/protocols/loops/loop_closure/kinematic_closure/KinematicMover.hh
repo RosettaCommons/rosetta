@@ -12,7 +12,7 @@
 /// @brief  kinematic closure move
 /// @author Daniel J. Mandell (dmandell@itsa.ucsf.edu)
 /// @date   Tues Jan 08 12:08:31 2008
-///
+/// @author Amelie Stein (amelie.stein@ucsf.edu), Oct 2012 -- next-generation KIC
 
 
 #ifndef INCLUDED_protocols_loops_loop_closure_kinematic_closure_KinematicMover_HH
@@ -33,6 +33,7 @@
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
+#include <core/chemical/AA.hh>
 
 
 namespace protocols {
@@ -68,7 +69,13 @@ public:
 
 	Size segment_length() const {
 		return seg_len_; }
-
+	
+	Size loop_begin() const {
+		return loop_begin_; }
+	
+	Size loop_end() const {
+		return loop_end_; }
+	
 	core::Real BANGLE_MIN() const {
 		return BANGLE_MIN_; }
 
@@ -105,6 +112,7 @@ public:
 	virtual bool get_idealize_loop_first();
 	void set_temperature(core::Real temp_in);
 	void set_sfxn(core::scoring::ScoreFunctionCOP sfxn_in);
+	void set_loop_begin_and_end( Size loop_begin, Size loop_end );
 	bool check_rama(core::Real old_rama_score, core::Real new_rama_score);
 	bool last_move_succeeded();
 	void set_perturber( KinematicPerturberOP perturber_in );
@@ -117,12 +125,26 @@ public:
 		bump_overlap_factor_=bump_overlap_factor;
 	}
 
+	// AS: for TabooSampling
+	void update_sequence( utility::vector1< core::chemical::AA > const & sequence ); // required for design and/or modeling multiple loops
+	//void refill_torsion_string_vector(); 
+	void insert_sampled_torsion_string_into_taboo_map( std::string const & ts ); // not sure if all of these should be public... 
+	//std::string next_torsion_string();
+	bool is_in_taboo_map( std::string const & ts ) const;
+	utility::vector1< core::chemical::AA > get_loop_sequence() const;
+	std::string torsion_features_string( core::pose::Pose const & pose ) const;
+	core::Real frequency_in_taboo_map( core::Size const & pos, char const & torsion_bin ) const;
+
+	
 private:
 
 	// pivot residues
 	Size start_res_, middle_res_, end_res_;
 	Size seg_len_;
 
+	Size loop_begin_; // AS: start of the full loop, only needs to be set once, required for correct indexing of the torsion bin vector -- in contrast, start_res_-end_res_ cover the (sub)segment that's actually sampled in the current iteration
+	Size loop_end_;
+	
 	//the perturber that sets/samples the chain angles/torsions
 	KinematicPerturberOP perturber_;
 
@@ -168,6 +190,14 @@ private:
 	//filters that are to be applied to every solution before it gets accepted
 	utility::vector1< protocols::filters::FilterCOP > filters_;
 
+	// AS: for Taboo Sampling
+	std::map< std::string, bool > taboo_map_; // holds the torsion strings that have already been sampled [with a solution, no matter whether it was accepted or not], to avoid testing them again [until we've almost reached coverage of the torsion-bin space, then it is re-set] -- actually we could use a set instead... 
+	core::Real taboo_map_max_capacity_; 
+	std::map< utility::vector1< core::chemical::AA >, std::map< std::string, bool > > taboo_master_map_; // holds the taboo maps for different sequences, so that we don't loose all information (previously sampled angles) when switching between multiple loops)
+	utility::vector1< core::chemical::AA > sequence_; // sequence of the loop -- note that for the TabooSamplingKinematicPerturber this  has to be adjusted after each design step, and then random_torsion_strings_ must be emptied and re-filled, as the torsion bins are residue-dependent 
+	
+
+	
 	// private functions
 
 	/* AS Oct 03, 2012 -- commenting out unused function for vicinity refactoring

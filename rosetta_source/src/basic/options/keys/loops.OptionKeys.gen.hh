@@ -92,6 +92,15 @@ namespace loops { extern RealOptionKey const refine_final_temp; }
 namespace loops { extern IntegerOptionKey const gapspan; }
 namespace loops { extern IntegerOptionKey const spread; }
 namespace loops { extern IntegerOptionKey const kinematic_wrapper_cycles; }
+namespace loops { extern StringOptionKey const restrict_kic_sampling_to_torsion_string; }
+namespace loops { extern BooleanOptionKey const derive_torsion_string_from_native_pose; }
+namespace loops { extern BooleanOptionKey const always_remodel_full_loop; }
+namespace loops { extern BooleanOptionKey const taboo_sampling; }
+namespace loops { extern BooleanOptionKey const ramp_fa_rep; }
+namespace loops { extern BooleanOptionKey const ramp_rama; }
+namespace loops { extern BooleanOptionKey const kic_rama2b; }
+namespace loops { extern BooleanOptionKey const kic_no_centroid_min; }
+namespace loops { extern BooleanOptionKey const kic_repack_neighbors_only; }
 namespace loops { extern BooleanOptionKey const alternative_closure_protocol; }
 namespace loops { extern RealOptionKey const chainbreak_max_accept; }
 namespace loops { extern BooleanOptionKey const debug_loop_closure; }

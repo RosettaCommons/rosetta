@@ -8596,6 +8596,51 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 20</dd><br>
 </dl>
 <dl>
+<dt><b>-restrict_kic_sampling_to_torsion_string</b> \<String\><dt>
+<dd>restrict kinematic loop closure sampling to the phi/psi angles specified in the torsion string</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-derive_torsion_string_from_native_pose</b> \<Boolean\><dt>
+<dd>apply torsion-restricted sampling, and derive the torsion string from the native [or, if not provided, starting] structure</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-always_remodel_full_loop</b> \<Boolean\><dt>
+<dd>always remodel the full loop segment (i.e. the outer pivots are always loop start & end) -- currently this only applies to the perturb stage -- EXPERIMENTAL</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-taboo_sampling</b> \<Boolean\><dt>
+<dd>enhance diversity in KIC sampling by pre-generating different torsion bins and sampling within those -- currently perturb stage only</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-ramp_fa_rep</b> \<Boolean\><dt>
+<dd>ramp the weight of fa_rep over outer cycles in refinement</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-ramp_rama</b> \<Boolean\><dt>
+<dd>ramp the weight of rama over outer cycles in refinement</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-kic_rama2b</b> \<Boolean\><dt>
+<dd>use neighbor-dependent Ramachandran distributions in random torsion angle sampling</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-kic_no_centroid_min</b> \<Boolean\><dt>
+<dd>don't minimize in centroid mode during KIC perturb</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-kic_repack_neighbors_only</b> \<Boolean\><dt>
+<dd>select neigbors for repacking via the residue-dependent NBR_RADIUS, not via a generic threshold (WARNING: this overrides any setting in -loops:neighbor_dist)</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-alternative_closure_protocol</b> \<Boolean\><dt>
 <dd>use WidthFirstSliding...</dd><br>
 <dd>Default: false</dd><br>

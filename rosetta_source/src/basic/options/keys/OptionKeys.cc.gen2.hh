@@ -1,7 +1,3 @@
-namespace lh { IntegerOptionKey const expire_after_rounds( "lh:expire_after_rounds" );  }
-namespace lh { StringOptionKey const mpi_resume( "lh:mpi_resume" );  }
-namespace lh { StringOptionKey const mpi_feedback( "lh:mpi_feedback" );  }
-namespace lh { IntegerOptionKey const mpi_batch_relax_chunks( "lh:mpi_batch_relax_chunks" );  }
 namespace lh { IntegerOptionKey const mpi_batch_relax_absolute_max( "lh:mpi_batch_relax_absolute_max" );  }
 namespace lh { IntegerOptionKey const mpi_outbound_wu_buffer_size( "lh:mpi_outbound_wu_buffer_size" );  }
 namespace lh { IntegerOptionKey const mpi_loophash_split_size    ( "lh:mpi_loophash_split_size    " );  }
@@ -484,6 +480,15 @@ namespace loops { RealOptionKey const refine_final_temp( "loops:refine_final_tem
 namespace loops { IntegerOptionKey const gapspan( "loops:gapspan" );  }
 namespace loops { IntegerOptionKey const spread( "loops:spread" );  }
 namespace loops { IntegerOptionKey const kinematic_wrapper_cycles( "loops:kinematic_wrapper_cycles" );  }
+namespace loops { StringOptionKey const restrict_kic_sampling_to_torsion_string( "loops:restrict_kic_sampling_to_torsion_string" );  }
+namespace loops { BooleanOptionKey const derive_torsion_string_from_native_pose( "loops:derive_torsion_string_from_native_pose" );  }
+namespace loops { BooleanOptionKey const always_remodel_full_loop( "loops:always_remodel_full_loop" );  }
+namespace loops { BooleanOptionKey const taboo_sampling( "loops:taboo_sampling" );  }
+namespace loops { BooleanOptionKey const ramp_fa_rep( "loops:ramp_fa_rep" );  }
+namespace loops { BooleanOptionKey const ramp_rama( "loops:ramp_rama" );  }
+namespace loops { BooleanOptionKey const kic_rama2b( "loops:kic_rama2b" );  }
+namespace loops { BooleanOptionKey const kic_no_centroid_min( "loops:kic_no_centroid_min" );  }
+namespace loops { BooleanOptionKey const kic_repack_neighbors_only( "loops:kic_repack_neighbors_only" );  }
 namespace loops { BooleanOptionKey const alternative_closure_protocol( "loops:alternative_closure_protocol" );  }
 namespace loops { RealOptionKey const chainbreak_max_accept( "loops:chainbreak_max_accept" );  }
 namespace loops { BooleanOptionKey const debug_loop_closure( "loops:debug_loop_closure" );  }
@@ -634,6 +639,3 @@ namespace DenovoProteinDesign { FileOptionKey const create_from_template_pdb( "D
 namespace DenovoProteinDesign { BooleanOptionKey const create_from_secondary_structure( "DenovoProteinDesign:create_from_secondary_structure" );  }
 namespace RBSegmentRelax { BooleanOptionKey const RBSegmentRelax( "RBSegmentRelax" );  }
 namespace RBSegmentRelax { FileOptionKey const input_pdb( "RBSegmentRelax:input_pdb" );  }
-namespace RBSegmentRelax { FileOptionKey const rb_file( "RBSegmentRelax:rb_file" );  }
-namespace RBSegmentRelax { RealOptionKey const cst_wt( "RBSegmentRelax:cst_wt" );  }
-namespace RBSegmentRelax { RealOptionKey const cst_width( "RBSegmentRelax:cst_width" );  }

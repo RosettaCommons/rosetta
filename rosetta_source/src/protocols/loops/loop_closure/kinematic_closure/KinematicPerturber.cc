@@ -105,7 +105,7 @@ TorsionSamplingKinematicPerturber::perturb_chain(
 	utility::vector1<core::Real> & torsions,
  	utility::vector1<core::Real> & bond_ang,
 	utility::vector1<core::Real> & //bond_len
-) const
+) 
 {
 	core::kinematics::MoveMapCOP mm(get_movemap());
 
@@ -219,7 +219,7 @@ TorsionSamplingKinematicPerturber::set_pose_after_closure(
 													  utility::vector1<core::Real> & torsions,
 													  utility::vector1<core::Real> & bond_ang,
 													  utility::vector1<core::Real> & //bond_len
-													  ) const
+													  ) 
 	{
 		core::kinematics::MoveMapCOP mm(get_movemap());
 		
@@ -342,7 +342,7 @@ TorsionSweepingKinematicPerturber::perturb_chain(
 	utility::vector1<core::Real> & torsions,
 		utility::vector1<core::Real> &,// bond_ang,
 		utility::vector1<core::Real> & //bond_len
-) const
+) 
 {
 
 	if ( sweep_iterator_.at_end() ) {

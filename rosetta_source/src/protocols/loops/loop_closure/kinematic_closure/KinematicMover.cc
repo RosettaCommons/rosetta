@@ -9,6 +9,7 @@
 
 /// @brief Performs a kinematic closure move on a peptide segment
 /// @author Daniel J. Mandell
+/// @author Amelie Stein (amelie.stein@ucsf.edu), Oct 2012 -- next-generation KIC
 
 // Unit Headers
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
@@ -79,6 +80,9 @@ KinematicMover::KinematicMover() :
 	start_res_(2),
 	middle_res_(3),
 	end_res_(4),
+	seg_len_(3), // dummy value -- was previously uninitialized (!)
+	loop_begin_(2), // AS: start of the full loop -- dummy value
+	loop_end_(4),
 	idl_C_N_CA_(121.7),
 	idl_N_CA_C_(111.2),
 	idl_CA_C_N_(116.2),
@@ -109,7 +113,9 @@ KinematicMover::KinematicMover() :
 	sfxn_( NULL ),
 	last_move_succeeded_ (false),
 	temperature_(1.0),
-	bump_overlap_factor_(0.49) // 0.6; // 0.8; // 0.8^2, allows some atomic overlap
+	bump_overlap_factor_(0.49), // 0.6; // 0.8; // 0.8^2, allows some atomic overlap
+	taboo_map_max_capacity_(0.95) // how full can the taboo map get before we re-set it? --> the higher, the more likely are almost-endless loops -- but if the value is too low it's not actual taboo sampling
+
 	{
 		perturber_ = new kinematic_closure::TorsionSamplingKinematicPerturber( this );
 		Mover::type( "KinematicMover" );
@@ -133,6 +139,13 @@ void KinematicMover::set_pivots( Size start_res, Size middle_res, Size end_res )
 	runtime_assert(start_res != middle_res);
 	runtime_assert(middle_res != end_res);
 	runtime_assert(end_res != start_res);
+}
+
+// boundaries of the current loop, needed for torsion bin lookup and offset in torsion-restricted & taboo sampling
+void KinematicMover::set_loop_begin_and_end( Size loop_begin, Size loop_end ) 
+{
+	loop_begin_ = loop_begin;
+	loop_end_ = loop_end;
 }
 
 void KinematicMover::set_vary_bondangles( bool vary )
@@ -490,6 +503,10 @@ void KinematicMover::apply( core::pose::Pose & pose )
 			// set the torsions
 			perturber_->set_pose_after_closure( pose, t_ang[pos[i]], b_ang[pos[i]], b_len[pos[i]], true );
 
+			// AS: fetch & set the torsion string for Taboo Sampling 
+			insert_sampled_torsion_string_into_taboo_map( torsion_features_string( pose ) );
+			
+			
 			//now check if the pose passes all the filters
 			if( do_hardsphere_bump_check_ && !perform_bump_check(pose, start_res_, end_res_) ){
 				continue;
@@ -818,6 +835,107 @@ KinematicMover::set_defaults() {
 
 	return;
 }
+	
+	/// @brief Taboo Sampling functions
+	/// @author Amelie Stein
+	/// @date Thu May 17 13:23:52 PDT 2012
+	
+	void 
+	KinematicMover::update_sequence( utility::vector1< core::chemical::AA > const & sequence )
+	{
+		
+		// note: it would be much better to implement this as a vector/map of strings, that then redirect to the corresponding taboo map -- otherwise we lose all information the moment we change loops, which will happen a lot when remodeling multiple loops -- TODO
+		// in other words, this implementation is only intended for remodeling single loops
+		
+		if (sequence != sequence_) { // is there an actual change?
+			
+			if (sequence_.size() > 0) {
+				// store last used taboo_map_ along with the corresponding sequence
+				/*
+				TR << "storing taboo map for "; // debug/testing info
+				for (Size i = 1; i <= sequence_.size(); i++) 
+					TR << sequence_[i] << " " ;
+				TR << " (" << loop_begin_ << "-" << loop_end_ << ")" << std::endl; // actually I'm not sure when loop_begin_ and loop_end_ are updated... 
+				*/
+				taboo_master_map_[sequence_] = taboo_map_;
+			}
+			
+			sequence_ = sequence;
+			taboo_map_.clear();	
+			if (taboo_master_map_.find(sequence) != taboo_master_map_.end()) {
+				/*
+				TR << "reloading taboo map for "; // debug/testing info
+				for (Size i = 1; i <= sequence.size(); i++) 
+					TR << sequence[i];
+				TR << " (" << loop_begin_ << "-" << loop_end_ << ")" << std::endl;
+				*/
+				taboo_map_ = taboo_master_map_[sequence]; // reload from previous use, if possible
+			}
+			//random_torsion_strings_.clear();
+			perturber_->clear_torsion_string_stack(); // only affects the TabooSampling perturber for now
+		}
+	}
+	
+	// the TabooSamplingKinematicPerturber must access this to derive the appropriate torsion bins
+	utility::vector1< core::chemical::AA > 
+	KinematicMover::get_loop_sequence() const 
+	{
+		return sequence_;		
+	}
+	
+	void
+	KinematicMover::insert_sampled_torsion_string_into_taboo_map( std::string const & ts )
+	{
+		if (sequence_.size() > 0 && taboo_map_.size() > pow(4, sequence_.size()) * taboo_map_max_capacity_) {
+			TR << "Taboo map filled to " << taboo_map_max_capacity_*100 << "% capacity, clearing the map to avoid almost-endless loops. " << taboo_map_.size() << std::endl;
+			taboo_map_.clear();
+		}
+		
+		taboo_map_[ts] = true; 
+	}
+	
+	bool
+	KinematicMover::is_in_taboo_map( std::string const & ts ) const
+	{
+		return taboo_map_.find(ts) != taboo_map_.end();
+	}	
+	
+	
+	/// @brief returns the frequency of torsion_bin at position pos in the current taboo map, used for shifting probabilities of sampled torsion bins in later rounds
+	core::Real
+	KinematicMover::frequency_in_taboo_map( core::Size const & pos, char const & torsion_bin ) const {
+		
+		if (taboo_map_.size() == 0) 
+			return 0;
+		
+		core::Size counter = 0;
+		if (pos >= sequence_.size()) {
+			TR << "error -- position " << pos << " exceeds the current taboo map string" << std::endl;
+			return counter;
+		} // assumption: all strings in the taboo map have the same size, and pos is within these bounds
+		for (std::map< std::string, bool >::const_iterator mi = taboo_map_.begin(); mi != taboo_map_.end(); mi++) {
+			counter += ( (mi->first)[pos] == torsion_bin ); // this might be slow... 
+		}
+		return core::Real(counter)/taboo_map_.size();
+	}
+	
+	
+	///@brief bin torsion angles as described in http://www.ncbi.nlm.nih.gov/pubmed/19646450
+	///@detail generates a string with the torsion angle bins, using uppercase letters as in the publication above for omega ~ 180, and lowercase letters for omega ~ 0; to be used in loop sampling analysis -- same as in the LoopMover implementation... 
+	///@author Amelie Stein
+	///@date April 26, 2012
+	std::string KinematicMover::torsion_features_string( core::pose::Pose const & pose ) const 
+	{
+		std::string torsion_bins, pos_bin;
+		core::Real phi, psi, omega;
+		
+		// assumption: we have only one loop ... 
+		for ( core::Size i = loop_begin_; i <= loop_end_; i++ ) {
+			torsion_bins += core::conformation::get_torsion_bin(pose.phi(i), pose.psi(i), pose.omega(i));
+		}
+		return torsion_bins;
+	} // torsion_features_string
+
 
 } // namespace kinematic_closure
 } // namespace loop_closure

@@ -288,6 +288,19 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	myKinematicMover.set_sample_nonpivot_torsions(
 												  option[ OptionKeys::loops::nonpivot_torsion_sampling ]());
 	myKinematicMover.set_rama_check( true );
+	
+	myKinematicMover.set_loop_begin_and_end( loop_begin, loop_end ); // AS -- for restricted torsion bin sampling, the mover needs to know about the start of the defined loop, not just the segment that is sampled in a given move
+	
+	// for Taboo Sampling we need to update the sequence here every time, in case it changes (e.g. when modeling multiple loops)
+	// this setup would also allow us to combine taboo sampling with other types of sampling, e.g. to increase diversity after several rounds of standard/random KIC sampling
+	utility::vector1< core::chemical::AA > loop_sequence;
+	loop_sequence.resize(0); // make sure it is empty
+	for (core::Size cur_res = loop_begin; cur_res <= loop_end; cur_res++) { 
+		loop_sequence.push_back(pose.aa(cur_res)); 
+	}
+	myKinematicMover.update_sequence( loop_sequence ); 
+	
+
 
 	Size kic_start, kic_middle, kic_end; // three pivot residues for kinematic loop closure
 	kic_start = loop_begin;
