@@ -22,20 +22,12 @@
 
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/types.hh>
-
 #include <protocols/antibody2/AntibodyInfo.fwd.hh>
 #include <protocols/antibody2/Ab_TemplateInfo.fwd.hh>
 #include <protocols/antibody2/GraftCDRLoopsProtocol.fwd.hh>
-#include <protocols/loops/Loops.hh>
-#include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
-#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
-
-#include <iostream>
 
 
 using namespace core;
@@ -115,8 +107,12 @@ public:
     
     
 private:
-
-	// Modeling H3 options
+	void finalize_setup( core::pose::Pose & pose );
+	void init();
+	void setup_objects();
+	void init_from_options();
+	
+private:
 	bool graft_l1_, graft_l2_, graft_l3_;
 	bool graft_h1_, graft_h2_, graft_h3_;
 	bool h3_no_stem_graft_;
@@ -124,41 +120,19 @@ private:
 	bool camelid_constraints_;
     bool sc_min_;
 	bool rt_min_;
-
-    
-    GraftMap grafts_ ;
-    
-
-    
-	// Benchmark mode for shorter_cycles
 	bool benchmark_;
-
-	bool user_defined_; // for constructor options passed to init
-
-
-	// used as a flag to enable reading in of cst files
+    
 	core::Real cst_weight_;
-
-	// score functions
 	core::scoring::ScoreFunctionOP scorefxn_pack_;
 
-	// external objects
 	AntibodyInfoOP ab_info_;
     Ab_TemplateInfoOP ab_t_info_ ;
 
-	//packer task
 	pack::task::TaskFactoryOP tf_;
-
-	/// @brief Assigns user specified values to primitive members using command line options
-	void init_from_options();
 
     protocols::moves::SequenceMoverOP graft_sequence_ ;
 
-	void finalize_setup( core::pose::Pose & pose );
 
-	void init();
-
-	void setup_objects();
 
 }; // class GraftCDRLoopsProtocol
 
@@ -170,8 +144,3 @@ private:
 } // namespace protocols
 
 #endif
-
-
-
-
-

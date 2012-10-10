@@ -22,7 +22,6 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/import_pose/import_pose.hh>
 
@@ -35,20 +34,14 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
-#include <protocols/jd2/ScoreMap.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobOutputter.hh>
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/TrialMover.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <protocols/loops/loops_main.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/docking/SidechainMinMover.hh>
+#include <protocols/moves/MoverContainer.hh>
 
 #include <protocols/antibody2/GraftOneCDRLoop.hh>
 #include <protocols/antibody2/CloseOneCDRLoop.hh>
@@ -76,7 +69,6 @@ namespace antibody2 {
 
 // default constructor
 GraftCDRLoopsProtocol::GraftCDRLoopsProtocol() : Mover() {
-	user_defined_ = false;
 	init();
 }
 
@@ -93,15 +85,9 @@ protocols::moves::MoverOP GraftCDRLoopsProtocol::clone() const {
 void GraftCDRLoopsProtocol::init() {
 	Mover::type( "GraftCDRLoopsProtocol" );
 
-	// setup all the booleans with default values
-	// they will get overwritten by the options and/or passed values
-    
 	set_default();
 	register_options();
 	init_from_options();
-
-
-
 	setup_objects();
 
 }
@@ -121,6 +107,8 @@ void GraftCDRLoopsProtocol::set_default()
 	benchmark_ = false;
 	camelid_   = false;
 	camelid_constraints_ = false;
+	sc_min_ = false;
+	rt_min_ = false;
     cst_weight_ = 0.0;
     
 }
@@ -204,25 +192,20 @@ void GraftCDRLoopsProtocol::init_from_options() {
 		graft_l3_ = false;
 	}
     
-    grafts_.insert( std::pair< std::string, bool >("l1", graft_l1_) );
-    grafts_.insert( std::pair< std::string, bool >("l2", graft_l2_) );
-    grafts_.insert( std::pair< std::string, bool >("l3", graft_l3_) );
-    grafts_.insert( std::pair< std::string, bool >("h1", graft_h1_) );
-    grafts_.insert( std::pair< std::string, bool >("h2", graft_h2_) );
-    grafts_.insert( std::pair< std::string, bool >("h3", graft_h3_) );
-    
 }
 
     
 
     
 void GraftCDRLoopsProtocol::setup_objects() {
+
     ab_info_ = NULL;
     ab_t_info_ = NULL;
     
     graft_sequence_ = NULL;
+	
+	tf_ = NULL;
     
-    // score functions
     scorefxn_pack_ = core::scoring::ScoreFunctionFactory::create_score_function( "standard","score12");
     
     scorefxn_pack_->set_weight( core::scoring::chainbreak, 1.0 );
@@ -301,12 +284,8 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
         cdrs_min_pack_min->set_sc_min(sc_min_);
         cdrs_min_pack_min->set_sc_min(rt_min_);
     
-    
-       
     graft_sequence_->add_mover(cdrs_min_pack_min);
     
-
-
 }
 
  
@@ -341,8 +320,6 @@ void GraftCDRLoopsProtocol::apply( pose::Pose & frame_pose ) {
 		return;
 	}
 
-    
-    
     
     Size nres = frame_pose.total_residue();
     
@@ -420,11 +397,6 @@ void GraftCDRLoopsProtocol::display_constraint_residues( core::pose::Pose & pose
     
     
     
-    
-    
-    
-    
-    
 /// @details  Show the complete setup of the docking protocol
 void GraftCDRLoopsProtocol::show( std::ostream & out ) {
     out << *this;
@@ -454,14 +426,6 @@ std::ostream & operator<<(std::ostream& out, const GraftCDRLoopsProtocol & ab_m_
 
     
     
-    
-    
 
 } // end antibody2
 } // end protocols
-
-
-
-
-
-
