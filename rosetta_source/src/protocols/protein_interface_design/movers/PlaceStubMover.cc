@@ -55,6 +55,8 @@
 
 // Utility Headers
 #include <utility/exit.hh>
+#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/JobDistributor.hh>
 
 // Unit Headers
 #include <protocols/filters/Filter.hh>
@@ -687,7 +689,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 			bool const self_energy_pass( stub->get_scaffold_status( res ) );
 			if( self_energy_pass ){
 
-				// the following two lines make sure that the pose is at the
+				// the following two lines make sure that t//he pose is at the
 				// starting line before each stub placement. These lines belong
 				// wherever the pose first changes after minimization.
 				pose=saved_pose; // to make sure that we've come back to the beginning
@@ -863,6 +865,22 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 						core::Size const after_success( pose.constraint_set()->get_all_constraints().size() );
 						TR_debug<<"after success "<<after_success<<" constraints"<<std::endl;
 						TR.flush();
+
+						// Experimental: add residue position of successful stub placement to the score.sc file
+						protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
+						//std::string column_header = this->get_user_defined_name();
+						
+						//convert residue number into a string
+						std::ostringstream convert;
+						convert << res;
+					
+						// set column name	
+						//std::string column_header = "hotspot_" + convert.str();
+						std::string column_header = user_defined_name_;
+
+						//job->add_string_real_pair(column_header, res);
+						job->add_string_string_pair(column_header, convert.str());
+
 						return;
 					}//final_filter_pass
 					else{
@@ -982,6 +1000,11 @@ PlaceStubMover::parse_my_tag( TagPtr const tag,
 
 	TR<<"Parsing PlaceStubMover----"<<std::endl;
 
+  if( tag->hasOption( "name" ) ){
+		// Experimental
+		user_defined_name_ = tag->getOption< std::string >( "name" );
+	}
+
 	if( tag->hasOption( "residue_numbers_setter" ) ){
 		std::string const residue_numbers_name( tag->getOption( "residue_numbers", tag->getOption< std::string >( "residue_numbers_setter" ) ) );
 		residue_numbers_ = protocols::moves::get_set_from_datamap< protocols::moves::DataMapObj< utility::vector1< core::Size > > >( "residue_numbers", residue_numbers_name, data );
@@ -999,7 +1022,7 @@ PlaceStubMover::parse_my_tag( TagPtr const tag,
 	stub_energy_threshold_ = tag-> getOption<core::Real>( "stub_energy_threshold", 1.0 );
 
 	if( tag->hasOption( "stubfile" ) ) { //assigning a unique stubset
-		std::string const stub_fname = tag->getOption<std::string>( "stubfile" );
+		std::string const stub_fname = tag->getOption<std::string>( "stubfile" ); // Experimental: stub file name
 		stub_set_ = new protocols::hotspot_hashing::HotspotStubSet;
 		if( data.has( "hotspot_library", stub_fname ) ){
 			stub_set_ = data.get< protocols::hotspot_hashing::HotspotStubSet * >( "hotspot_library", stub_fname );

@@ -167,6 +167,7 @@ private: // data members
 	/// the one used in PlaceSimultaneously.
 	core::pack::task::TaskFactoryOP residue_level_tasks_for_placed_hotspots_;
   utility::pointer::owning_ptr< protocols::moves::DataMapObj< utility::vector1< core::Size > > > residue_numbers_; /// dflt NULL; a vector of residue numbers placed on the DataMap which specifies all the placed residues. Useful to communicate between movers and filters, without the pesky NotifyMovers strategy
+  std::string user_defined_name_; // reserved for keeping the name of the current stub placement mover
 };
 
 } //movers
