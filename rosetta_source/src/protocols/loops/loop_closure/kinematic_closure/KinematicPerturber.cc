@@ -35,6 +35,7 @@
 
 // numeric headers
 #include <numeric/random/random.hh>
+#include <numeric/random/random_permutation.hh> 
 #include <numeric/conversions.hh>
 
 // option key includes
@@ -663,7 +664,7 @@ namespace protocols {
 						while (torsion_bins_for_pos.size() < num_strings_) { // make sure they all have the same size -- with adjustments the size may vary (slightly)
 							torsion_bins_for_pos += "X"; 
 						}
-						random_shuffle(torsion_bins_for_pos.begin(), torsion_bins_for_pos.end()); // does this work?
+						numeric::random::random_permutation(torsion_bins_for_pos.begin(), torsion_bins_for_pos.end(), numeric::random::RG); 
 						torsion_bins_per_position[i] = torsion_bins_for_pos;
 						//if (i == 1) 
 						//	TR << torsion_bins_for_pos << std::endl; // debug
@@ -911,7 +912,7 @@ namespace protocols {
 						while (torsion_bins_for_pos.size() < num_strings_) { // make sure they all have the same size -- with adjustments the size may vary (slightly)
 							torsion_bins_for_pos += "X"; 
 						}
-						random_shuffle(torsion_bins_for_pos.begin(), torsion_bins_for_pos.end()); // is this the correct version of random_shuffle?
+						numeric::random::random_permutation(torsion_bins_for_pos.begin(), torsion_bins_for_pos.end(), numeric::random::RG); 
 						torsion_bins_per_position[i] = torsion_bins_for_pos;
 					}
 					
