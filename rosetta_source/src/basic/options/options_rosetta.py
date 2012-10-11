@@ -3685,6 +3685,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='select neigbors for repacking via the residue-dependent NBR_RADIUS, not via a generic threshold (WARNING: this overrides any setting in -loops:neighbor_dist)',
             default='false'
 		),
+		Option ( 'legacy_kic', 'Boolean',
+			desc='always select the start pivot first and then the end pivot -- biases towards sampling the C-terminal part of the loop more',
+			default='true'
+		),
 						
 
 		## QuickCCD

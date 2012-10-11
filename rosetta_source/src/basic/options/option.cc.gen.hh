@@ -644,10 +644,10 @@ option.add( basic::options::OptionKeys::fold_cst::reramp_start_cstweight, "drop 
 option.add( basic::options::OptionKeys::fold_cst::reramp_iterations, "do X loops of annealing cycles" ).def(1);
 option.add( basic::options::OptionKeys::fold_cst::skip_on_noviolation_in_stage1, "if constraints report no violations --- skip cycles" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::stage1_ramp_cst_cycle_factor, "spend x*<standard cycles> on each step of sequence separation" ).def(0.25);
+option.add( basic::options::OptionKeys::fold_cst::stage2_constraint_threshold, "stop runs that violate this threshold at end of stage2" ).def(0);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::stage2_constraint_threshold, "stop runs that violate this threshold at end of stage2" ).def(0);
-option.add( basic::options::OptionKeys::fold_cst::ignore_sequence_seperation, "usually constraints are switched on according to their separation in the fold-tree" ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::ignore_sequence_seperation, "usually constraints are switched on according to their separation in the fold-tree" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_recover_low_at_constraint_switch, "dont recover low when max_seq_sep is increased" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);
 option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
@@ -1287,11 +1287,11 @@ option.add( basic::options::OptionKeys::lh::expire_after_rounds, "If set to > 0 
 option.add( basic::options::OptionKeys::lh::mpi_resume, "Prefix (Ident string) for resuming a previous job!" );
 option.add( basic::options::OptionKeys::lh::mpi_feedback, "No description" ).legal("no").legal("add_n_limit").legal("add_n_replace").legal("single_replace").legal("single_replace_rounds").def("no");
 option.add( basic::options::OptionKeys::lh::mpi_batch_relax_chunks, "No description" ).def(100);
+option.add( basic::options::OptionKeys::lh::mpi_batch_relax_absolute_max, "No description" ).def(300);
+option.add( basic::options::OptionKeys::lh::mpi_outbound_wu_buffer_size, "No description" ).def(60);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::mpi_batch_relax_absolute_max, "No description" ).def(300);
-option.add( basic::options::OptionKeys::lh::mpi_outbound_wu_buffer_size, "No description" ).def(60);
-option.add( basic::options::OptionKeys::lh::mpi_loophash_split_size    , "No description" ).def(50);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::mpi_loophash_split_size    , "No description" ).def(50);
 option.add( basic::options::OptionKeys::lh::mpi_metropolis_temp, "No description" ).def(1000000.0);
 option.add( basic::options::OptionKeys::lh::mpi_save_state_interval, "No description" ).def(1200);
 option.add( basic::options::OptionKeys::lh::mpi_master_save_score_only, "No description" ).def(true);
@@ -1780,6 +1780,7 @@ option.add( basic::options::OptionKeys::loops::ramp_rama, "ramp the weight of ra
 option.add( basic::options::OptionKeys::loops::kic_rama2b, "use neighbor-dependent Ramachandran distributions in random torsion angle sampling" ).def(false);
 option.add( basic::options::OptionKeys::loops::kic_no_centroid_min, "don't minimize in centroid mode during KIC perturb" ).def(false);
 option.add( basic::options::OptionKeys::loops::kic_repack_neighbors_only, "select neigbors for repacking via the residue-dependent NBR_RADIUS, not via a generic threshold (WARNING: this overrides any setting in -loops:neighbor_dist)" ).def(false);
+option.add( basic::options::OptionKeys::loops::legacy_kic, "always select the start pivot first and then the end pivot -- biases towards sampling the C-terminal part of the loop more" ).def(true);
 option.add( basic::options::OptionKeys::loops::alternative_closure_protocol, "use WidthFirstSliding..." ).def(false);
 option.add( basic::options::OptionKeys::loops::chainbreak_max_accept, "accept all loops that have a lower cumulative chainbreak score (linear,quadratic(if present), and overlap)" ).def(2.0);
 option.add( basic::options::OptionKeys::loops::debug_loop_closure, "dump structures before and after loop closing" ).def(false);
@@ -1930,11 +1931,11 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_templat
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
+option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
+option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
-option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
-option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_pdb, "PDB file from which to draw constraints" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrbmoves, "number of rigid-body moves" ).def(100);
 option.add( basic::options::OptionKeys::RBSegmentRelax::nrboutercycles, "number of rigid-body moves" ).def(5);

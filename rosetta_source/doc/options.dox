@@ -8641,6 +8641,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-legacy_kic</b> \<Boolean\><dt>
+<dd>always select the start pivot first and then the end pivot -- biases towards sampling the C-terminal part of the loop more</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
 <dt><b>-alternative_closure_protocol</b> \<Boolean\><dt>
 <dd>use WidthFirstSliding...</dd><br>
 <dd>Default: false</dd><br>

@@ -525,13 +525,20 @@ void LoopMover_Refine_KIC::apply(
 
 			{// kinematic trial first round
 				
-				// AS: the current/previous implementation has a "history bias" towards the N-terminus of the loop, as the start pivot can be anywhere between begin_loop and end_loop-2, while the choice of the end pivot depends on the start pivot -- to be fixed soon 
-				
-				kic_start = RG.random_range(begin_loop,end_loop-2);
-				// choose a random end residue so the length is >= 3, <= min(loop_end, start+maxlen)
-				kic_end = RG.random_range(kic_start+2, std::min((kic_start+max_seglen_ - 1), end_loop));
-				Size middle_offset = (kic_end - kic_start) / 2;
-				kic_middle = kic_start + middle_offset;
+				// AS: the previous implementation had a "history bias" towards the N-terminus of the loop, as the start pivot can be anywhere between begin_loop and end_loop-2, while the choice of the end pivot depends on the start pivot 
+				if ( option[ OptionKeys::loops::legacy_kic ]() || j % 2 == 0 ) {
+					kic_start = RG.random_range(begin_loop,end_loop-2);
+					// choose a random end residue so the length is >= 3, <= min(loop_end, start+maxlen)
+					kic_end = RG.random_range(kic_start+2, std::min((kic_start+max_seglen_ - 1), end_loop));
+					Size middle_offset = (kic_end - kic_start) / 2;
+					kic_middle = kic_start + middle_offset;
+				} else {
+					kic_end = RG.random_range(begin_loop+2,end_loop);
+					kic_start = RG.random_range(std::max((kic_end - std::min(max_seglen_, kic_end) + 1), begin_loop), kic_end-2);
+					Size middle_offset = (kic_end - kic_start) / 2;
+					kic_middle = kic_start + middle_offset;
+				}
+
 				myKinematicMover.set_pivots(kic_start, kic_middle, kic_end);
 				myKinematicMover.set_temperature(temperature);
 				myKinematicMover.apply( pose );
@@ -587,11 +594,25 @@ void LoopMover_Refine_KIC::apply(
 			}
 
 			{// kinematic trial second round
-				kic_start = RG.random_range(begin_loop,end_loop-2);
-				// choose a random end residue so the length is >= 3, <= min(loop_end, start+maxlen)
-				kic_end = RG.random_range(kic_start+2, std::min((kic_start+max_seglen_ - 1), end_loop));
-				Size middle_offset = (kic_end - kic_start) / 2;
-				kic_middle = kic_start + middle_offset;
+				// AS: the previous implementation had a "history bias" towards the N-terminus of the loop, as the start pivot can be anywhere between begin_loop and end_loop-2, while the choice of the end pivot depends on the start pivot
+				// -- fixing this by iterating between selecting the start and end pivot first 
+				if ( option[ OptionKeys::loops::legacy_kic ]() || j % 2 == 0 ) {
+					kic_start = RG.random_range(begin_loop,end_loop-2);
+					// choose a random end residue so the length is >= 3, <= min(loop_end, start+maxlen)
+					kic_end = RG.random_range(kic_start+2, std::min((kic_start+max_seglen_ - 1), end_loop));
+					Size middle_offset = (kic_end - kic_start) / 2;
+					kic_middle = kic_start + middle_offset;
+				} else {
+					kic_end = RG.random_range(begin_loop+2,end_loop);
+					//if (kic_end < max_seglen_) { // we need to catch the cases where kic_end-max_seglen_ < 0 -- with core::Size this would otherwise give out-of-bounds errors
+					//	kic_start = RG.random_range(begin_loop, kic_end-2);
+					//} else {
+					kic_start = RG.random_range(std::max((kic_end - std::min(max_seglen_, kic_end) + 1), begin_loop), kic_end-2);
+					//}
+					Size middle_offset = (kic_end - kic_start) / 2;
+					kic_middle = kic_start + middle_offset;
+				}
+
 				myKinematicMover.set_pivots(kic_start, kic_middle, kic_end);
 				myKinematicMover.set_temperature(temperature);
 				myKinematicMover.apply( pose );

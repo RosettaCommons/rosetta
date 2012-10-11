@@ -1,5 +1,3 @@
-namespace lh { IntegerOptionKey const mpi_batch_relax_absolute_max( "lh:mpi_batch_relax_absolute_max" );  }
-namespace lh { IntegerOptionKey const mpi_outbound_wu_buffer_size( "lh:mpi_outbound_wu_buffer_size" );  }
 namespace lh { IntegerOptionKey const mpi_loophash_split_size    ( "lh:mpi_loophash_split_size    " );  }
 namespace lh { RealOptionKey const mpi_metropolis_temp( "lh:mpi_metropolis_temp" );  }
 namespace lh { IntegerOptionKey const mpi_save_state_interval( "lh:mpi_save_state_interval" );  }
@@ -489,6 +487,7 @@ namespace loops { BooleanOptionKey const ramp_rama( "loops:ramp_rama" );  }
 namespace loops { BooleanOptionKey const kic_rama2b( "loops:kic_rama2b" );  }
 namespace loops { BooleanOptionKey const kic_no_centroid_min( "loops:kic_no_centroid_min" );  }
 namespace loops { BooleanOptionKey const kic_repack_neighbors_only( "loops:kic_repack_neighbors_only" );  }
+namespace loops { BooleanOptionKey const legacy_kic( "loops:legacy_kic" );  }
 namespace loops { BooleanOptionKey const alternative_closure_protocol( "loops:alternative_closure_protocol" );  }
 namespace loops { RealOptionKey const chainbreak_max_accept( "loops:chainbreak_max_accept" );  }
 namespace loops { BooleanOptionKey const debug_loop_closure( "loops:debug_loop_closure" );  }
@@ -639,3 +638,5 @@ namespace DenovoProteinDesign { FileOptionKey const create_from_template_pdb( "D
 namespace DenovoProteinDesign { BooleanOptionKey const create_from_secondary_structure( "DenovoProteinDesign:create_from_secondary_structure" );  }
 namespace RBSegmentRelax { BooleanOptionKey const RBSegmentRelax( "RBSegmentRelax" );  }
 namespace RBSegmentRelax { FileOptionKey const input_pdb( "RBSegmentRelax:input_pdb" );  }
+namespace RBSegmentRelax { FileOptionKey const rb_file( "RBSegmentRelax:rb_file" );  }
+namespace RBSegmentRelax { RealOptionKey const cst_wt( "RBSegmentRelax:cst_wt" );  }

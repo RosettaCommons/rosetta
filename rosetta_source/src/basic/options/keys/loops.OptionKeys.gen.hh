@@ -101,6 +101,7 @@ namespace loops { extern BooleanOptionKey const ramp_rama; }
 namespace loops { extern BooleanOptionKey const kic_rama2b; }
 namespace loops { extern BooleanOptionKey const kic_no_centroid_min; }
 namespace loops { extern BooleanOptionKey const kic_repack_neighbors_only; }
+namespace loops { extern BooleanOptionKey const legacy_kic; }
 namespace loops { extern BooleanOptionKey const alternative_closure_protocol; }
 namespace loops { extern RealOptionKey const chainbreak_max_accept; }
 namespace loops { extern BooleanOptionKey const debug_loop_closure; }
