@@ -987,7 +987,6 @@ build_pose_as_is1(
 	}
 	for ( Size i=1; i<= pose.total_residue(); ++i ) {
 		ResidueCoords const & xyz( rinfos[pose_to_rinfo[i]].xyz );
-		ResidueCoords::const_iterator it = xyz.begin();
 
 		Residue const & rsd( pose.residue(i) );
 		for ( Size j=1; j<= rsd.natoms(); ++j ) {

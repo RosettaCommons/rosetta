@@ -33,6 +33,7 @@ namespace constraints {
 /// @brief A Constant Constraint.
 class ConstantConstraint : public Constraint {
 public:
+	using Constraint::score;
 
 	/// @brief compute score
 	Real

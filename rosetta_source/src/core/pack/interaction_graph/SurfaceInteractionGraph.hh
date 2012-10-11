@@ -508,6 +508,8 @@ class SurfaceInteractionGraph : public AdditionalBackgroundNodesInteractionGraph
 		virtual core::PackerEnergy commit_considered_substitution();
 		virtual core::PackerEnergy get_energy_current_state_assignment();
 
+		using parent::set_errorfull_deltaE_threshold;
+
 		virtual void set_errorfull_deltaE_threshold( Real deltaE );
 
 		void set_num_residues_in_protein( int num_res );

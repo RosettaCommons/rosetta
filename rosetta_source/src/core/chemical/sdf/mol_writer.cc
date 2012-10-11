@@ -199,7 +199,9 @@ std::list<std::string> MolWriter::compose_bonds(core::conformation::ResidueCOP r
 				//Sorry :(
 				continue;
 			}
-			std::pair<std::set<BondData>::iterator,bool > bond_set_return = bond_data_set.insert(bond);
+			// Unused variable, but preserve the insertion.
+			//std::pair<std::set<BondData>::iterator,bool > bond_set_return =
+			bond_data_set.insert(bond);
 			//if(bond_set_return.second)
 			//{
 			//	std::cout <<bond.lower << " " <<bond.upper << " " << bond.bondType	<<std::endl;

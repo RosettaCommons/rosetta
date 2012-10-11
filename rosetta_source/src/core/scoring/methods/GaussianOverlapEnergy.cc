@@ -169,10 +169,10 @@ GaussianOverlapEnergy::residue_pair_energy(
 
                 for ( Size i = 1, i_end = rsd1.nheavyatoms(); i <= i_end; ++i ) {
                         Vector const & i_xyz( rsd1.xyz(i) );
-                        Size const i_type( rsd1.atom_type_index(i) );
+                        //Size const i_type( rsd1.atom_type_index(i) );
                         for ( Size j = 1, j_end = rsd2.nheavyatoms(); j <= j_end; ++j ) {
                                 Vector const & j_xyz( rsd2.xyz(j) );
-                                Size const j_type( rsd2.atom_type_index(j) );
+                                //Size const j_type( rsd2.atom_type_index(j) );
 
                                 Real const d2( i_xyz.distance_squared( j_xyz ) );
 				

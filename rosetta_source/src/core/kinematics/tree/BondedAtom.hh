@@ -89,6 +89,8 @@ public:
 		Stub & stub
 	);
 
+	using Atom_::update_internal_coords;
+
 	/// @brief update internal coordinates for this atom from its xyz position and input stub
 	virtual
 	void

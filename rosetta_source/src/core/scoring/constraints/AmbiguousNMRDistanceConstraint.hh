@@ -173,6 +173,8 @@ public:
 	//Real inv_dist6( conformation::Conformation const& pose ) const;
 	// ^^^^ Undefined, commenting out to make PyRosetta compile.
 
+	using Constraint::score;
+
 	Real score( pose::Pose const& pose ) const {
 		return func_->func( dist( pose ) );
 	}

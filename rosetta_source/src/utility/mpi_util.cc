@@ -76,7 +76,7 @@ send_string_to_node( int MPI_ONLY( destination ), std::string const & MPI_ONLY( 
 char
 receive_char_from_node( int MPI_ONLY( source ) )
 {
-	char return_val;
+	char return_val = 0;
 #ifdef USEMPI
 	int tag( 1 );
 	MPI_Status stat;

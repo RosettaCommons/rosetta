@@ -96,22 +96,36 @@ private:
 class CSA {
 
 public:
-  CSA() {
-  }
+	CSA() :
+		CSAval_computed_(),
+		res1_(),
+		res2_(),
+		res3_(),
+		sigma1_(),
+		sigma2_(),
+		sigma3_(),
+		alpha_(),
+		beta_(),
+		gamma_(),
+		CSAval_(),
+		CSAerr_(),
+		weight_()
+	{
+	}
 
-  CSA(Size res1, std::string const& atom1, Real sigma1, Real sigma2, Real sigma3, Real CSAval, Real CSAerr, Real weight) :
-				CSAval_computed_(-999),f1ij_(0.0),f2ij_(0.0),f3ij_(0.0),
-        res1_(res1), res2_(res1-1), res3_(res1),
-        atom1_(atom1), atom2_("C"), atom3_("CA"),
-        sigma1_(sigma1), sigma2_(sigma2), sigma3_(sigma3),
-        alpha_(0), beta_(105), gamma_(0),weight_(weight),
-        CSAval_(CSAval), CSAerr_(CSAerr)
-  {
-  }
+	CSA(Size res1, std::string const& atom1, Real sigma1, Real sigma2, Real sigma3, Real CSAval, Real CSAerr, Real weight) :
+		CSAval_computed_(-999),f1ij_(0.0),f2ij_(0.0),f3ij_(0.0),
+		res1_(res1), res2_(res1-1), res3_(res1),
+		atom1_(atom1), atom2_("C"), atom3_("CA"),
+		sigma1_(sigma1), sigma2_(sigma2), sigma3_(sigma3),
+		alpha_(0), beta_(105), gamma_(0),
+		CSAval_(CSAval), CSAerr_(CSAerr),
+		weight_(weight)
+	{}
 
-  inline Size res1() const {
-    return res1_;
-  }
+	inline Size res1() const {
+		return res1_;
+	}
 
   inline Size res2() const {
     return res2_;
@@ -170,7 +184,7 @@ public:
   }
 
   Real& CSAcomputed() {
-    return CSAval_computed_;;
+    return CSAval_computed_;
   }
 
   Vector f1ij() const {

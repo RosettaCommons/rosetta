@@ -63,12 +63,14 @@ namespace core {
 namespace scoring {
 namespace rna{
 
+core::Real RNA_LowResolutionPotential::dummy_deriv;
+
 typedef  numeric::xyzMatrix< Real > Matrix;
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::fmt;
 
-	// Hey should we define a copy constructor and a clone()?
+// Hey should we define a copy constructor and a clone()?
 
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
@@ -76,7 +78,7 @@ RNA_LowResolutionPotential::RNA_LowResolutionPotential():
 	////////////////////////////////////////////
 	rna_basepair_radius_cutoff_( 8.0 ),
 	rna_basepair_stagger_cutoff_( 3.0 ),
-  rna_basepair_radius_cutoff2_( rna_basepair_radius_cutoff_ * rna_basepair_radius_cutoff_) , // 64.0
+	rna_basepair_radius_cutoff2_( rna_basepair_radius_cutoff_ * rna_basepair_radius_cutoff_) , // 64.0
 	basepair_xy_bin_width_( 2.0 ),
 	basepair_xy_num_bins_( 10 ),
 	basepair_xy_table_size_( 10 ),
@@ -130,7 +132,7 @@ RNA_LowResolutionPotential::RNA_LowResolutionPotential():
 	// For now, just copy what was in Rosetta++.
 	rna_basepair_xy_.dimension( basepair_xy_num_bins_, basepair_xy_num_bins_, num_RNA_base_pair_orientations_ , num_RNA_res_types_, 4 /*a/c/g/u*/);
 	rna_axis_.dimension( axis_num_bins_ );
-  rna_stagger_.dimension( stagger_num_bins_ );
+	rna_stagger_.dimension( stagger_num_bins_ );
 	rna_base_backbone_xy_.dimension( base_backbone_num_bins_, base_backbone_num_bins_,
 																	 num_RNA_res_types_, num_RNA_backbone_oxygen_atoms_ );
 	rna_backbone_backbone_potential_.dimension( backbone_backbone_num_bins_ );
@@ -147,14 +149,14 @@ RNA_LowResolutionPotential::RNA_LowResolutionPotential():
 	rna_repulsive_weight_ = 0.0;
 
 	initialize_rna_basepair_xy();
-  initialize_rna_axis();
-  initialize_rna_stagger();
-  initialize_RNA_backbone_oxygen_atoms();
+	initialize_rna_axis();
+	initialize_rna_stagger();
+	initialize_RNA_backbone_oxygen_atoms();
 	initialize_atom_numbers_for_backbone_score_calculations();
-  initialize_rna_base_backbone_xy();
-  initialize_rna_backbone_backbone_weights();
-  initialize_rna_backbone_backbone();
-  initialize_rna_repulsive_weights();
+	initialize_rna_base_backbone_xy();
+	initialize_rna_backbone_backbone_weights();
+	initialize_rna_backbone_backbone();
+	initialize_rna_repulsive_weights();
 	initialize_more_precise_base_pair_cutoffs();
 
 }
@@ -550,15 +552,15 @@ RNA_LowResolutionPotential::get_rna_stagger_score( Distance const height, Real &
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Real
 RNA_LowResolutionPotential::get_rna_base_backbone_xy(
-		Distance const x,
-		Distance const y,
-		Distance const z,
-		conformation::Residue const & res_i,
-		Size const & atom_num_j_bin,
-		bool const update_deriv /* = false */,
+	Distance const x,
+	Distance const y,
+	Distance const z,
+	conformation::Residue const & res_i,
+	Size const & atom_num_j_bin,
+	bool const update_deriv /* = false */,
     Real & deriv_x /* = dummy_deriv */,
     Real & deriv_y /* = dummy_deriv */,
-		Real & deriv_z /* = dummy_deriv */) const
+	Real & deriv_z /* = dummy_deriv */) const
 {
 
 	Real value( 0.0 );
@@ -579,19 +581,19 @@ RNA_LowResolutionPotential::get_rna_base_backbone_xy(
 
 		if ( update_deriv || true ) {
 			value = bilinearly_interpolated(
-								 Real( x + base_backbone_table_size_ ),
-								 Real( y + base_backbone_table_size_ ),
-								 base_backbone_bin_width_,
-								 base_backbone_num_bins_,
-								 rna_base_backbone_xy_for_res_atom,
-								 deriv_x, deriv_y );
+				Real( x + base_backbone_table_size_ ),
+				Real( y + base_backbone_table_size_ ),
+				base_backbone_bin_width_,
+				base_backbone_num_bins_,
+				rna_base_backbone_xy_for_res_atom,
+				deriv_x, deriv_y );
 		} else {
 			value = bilinearly_interpolated(
-								 Real( x + base_backbone_table_size_ ),
-								 Real( y + base_backbone_table_size_ ),
-								 base_backbone_bin_width_,
-								 base_backbone_num_bins_,
-								 rna_base_backbone_xy_for_res_atom );
+				Real( x + base_backbone_table_size_ ),
+				Real( y + base_backbone_table_size_ ),
+				base_backbone_bin_width_,
+				base_backbone_num_bins_,
+				rna_base_backbone_xy_for_res_atom );
 		}
 		//		value = interpolate_value;
 	} else { //old school.

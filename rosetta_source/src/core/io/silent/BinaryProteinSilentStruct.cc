@@ -306,7 +306,7 @@ bool BinaryProteinSilentStruct::init_from_lines(
 	} // get header information
 
 
-	int currpos = 1;
+	core::Size currpos = 1;
 	bool bitflip = false;
 	fullatom_ = false; //start with fullatom_ false and update to true as soon as a residue with too many atoms is read...
 	bool fullatom_well_defined = false;

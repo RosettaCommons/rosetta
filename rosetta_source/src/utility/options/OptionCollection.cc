@@ -1188,7 +1188,7 @@ void OptionCollection::load_option_from_file(
 				kid = bid;
 			} else if ( n_best > 1 ) { // Nonunique matches found
 				std::string too_many_choices_error("Unique best command line context option match not found for -" + key_string + ".  Possible matches include:");
-				for( int i(0); i<possible_matches.size(); ++i ){
+				for( unsigned long i(0); i<possible_matches.size(); ++i ){
 					too_many_choices_error += (" " + possible_matches[i]);
 				}
 				throw ( excn::EXCN_Msg_Exception( too_many_choices_error ) );

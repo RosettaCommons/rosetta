@@ -640,7 +640,6 @@ void dixon(const utility::vector1<utility::vector1<Real> >& A, const utility::ve
 	//}
 
 	nsol=roots.size();
-	nsol=nsol;
 	tau.resize(nsol);
 	for(int i=1; i<=nsol; i++) {
 		tau[i].resize(3);

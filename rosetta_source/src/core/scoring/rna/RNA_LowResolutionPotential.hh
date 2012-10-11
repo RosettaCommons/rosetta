@@ -50,8 +50,6 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-static Real dummy_deriv;
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class RNA_LowResolutionPotential : public utility::pointer::ReferenceCount {
@@ -80,25 +78,22 @@ public:
 
 	Real
 	rna_base_backbone_pair_energy(
-			conformation::Residue const & rsd1,
-			conformation::Residue const & rsd2,
-			Vector const & centroid1,
-			Vector const & centroid2,
-			core::kinematics::Stub const & stub1,
-			core::kinematics::Stub const & stub2
- ) const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		Vector const & centroid1,
+		Vector const & centroid2,
+		core::kinematics::Stub const & stub1,
+		core::kinematics::Stub const & stub2) const;
 
 	Real
 	rna_backbone_backbone_pair_energy(
-			conformation::Residue const & rsd1,
-			conformation::Residue const & rsd2
-  ) const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2) const;
 
 	Real
 	rna_repulsive_pair_energy(
-			conformation::Residue const & rsd1,
-			conformation::Residue const & rsd2
-  ) const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2) const;
 
 	// void initialize_atom_numbers_for_backbone_score_calculations( pose::Pose & pose ) const; // Deprecated.Commenting out to make Python bindings compile.
 
@@ -148,21 +143,20 @@ public:
 
 	bool
 	check_forming_base_pair(
-	 pose::Pose & pose,
-	 Size const & i,
-	 Size const & j ) const;
+		pose::Pose & pose,
+		Size const & i,
+		Size const & j ) const;
 
 	void
 	eval_rna_base_pair_energy(
-														rna::RNA_RawBaseBaseInfo & rna_raw_base_base_info,
-														conformation::Residue const & rsd1,
-														conformation::Residue const & rsd2,
-														pose::Pose const & pose,
-														Vector const & centroid1,
-														Vector const & centroid2,
-														core::kinematics::Stub const & stub1,
-														core::kinematics::Stub const & stub2
-													) const;
+		rna::RNA_RawBaseBaseInfo & rna_raw_base_base_info,
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const & pose,
+		Vector const & centroid1,
+		Vector const & centroid2,
+		core::kinematics::Stub const & stub1,
+		core::kinematics::Stub const & stub2) const;
 
 	void
 	more_precise_base_pair_classification( bool const & value ){ more_precise_base_pair_classification_ = value; }
@@ -171,23 +165,21 @@ private:
 
 	void
 	eval_rna_base_pair_energy_one_way(
-																		rna::RNA_RawBaseBaseInfo & rna_raw_base_base_info,
-																		conformation::Residue const & res_i,
-																		conformation::Residue const & res_j,
-																		pose::Pose const & pose,
-																		Vector const & centroid1,
-																		Vector const & centroid2,
-																		core::kinematics::Stub const & stub1,
-																		core::kinematics::Stub const & stub2
-																		) const;
+		rna::RNA_RawBaseBaseInfo & rna_raw_base_base_info,
+		conformation::Residue const & res_i,
+		conformation::Residue const & res_j,
+		pose::Pose const & pose,
+		Vector const & centroid1,
+		Vector const & centroid2,
+		core::kinematics::Stub const & stub1,
+		core::kinematics::Stub const & stub2) const;
 
 	Real
 	rna_base_backbone_pair_energy_one_way(
-			conformation::Residue const & rsd1,
-			conformation::Residue const & rsd2,
-			Vector const & centroid1,
-			core::kinematics::Stub const & stub1
- ) const;
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		Vector const & centroid1,
+		core::kinematics::Stub const & stub1) const;
 
 	Size
 	find_backbone_oxygen_atom(
@@ -377,6 +369,7 @@ private: // data
 
 	bool more_precise_base_pair_classification_;
 
+	static Real dummy_deriv;
 };
 
 } // ns rna

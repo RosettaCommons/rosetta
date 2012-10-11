@@ -24,55 +24,54 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-	//Constructor
-	CircularGeneral1D_Func::CircularGeneral1D_Func(
-																	 ObjexxFCL::FArray1D< Real >  const & data,
-																	 Real const & xmin,
-																	 Real const & xbin
-																	 ):
-		data_( data ),
-		xmin_( xmin ),
-		xbin_( xbin ),
-		num_bins_( data.size() )
-	{
+//Constructor
+CircularGeneral1D_Func::CircularGeneral1D_Func(
+	ObjexxFCL::FArray1D< Real > const & data,
+	Real const & xmin,
+	Real const & xbin):
+	data_( data ),
+	xmin_( xmin ),
+	xbin_( xbin ),
+	num_bins_( data.size() )
+{
+}
+
+//Constructor
+CircularGeneral1D_Func::CircularGeneral1D_Func( std::string const & filename )
+{
+	//Read in data file, and fill in private data.
+	utility::io::izstream stream;
+	stream.open( filename );
+
+	std::string line;
+	Real x( 0.0 ), x_prev( 0.0 ), val( 0.0 );
+	Size count( 0 );
+	utility::vector1< Real > all_vals;
+
+	while( getline( stream, line ) ){
+
+		std::istringstream l( line );
+		l >> x >> val;
+
+		count++;
+		if ( count == 1 ) xmin_ = x;
+		if ( count == 2 ) xbin_ = x - xmin_;
+		//if ( count > 2 ) assert( (x - x_prev) == xbin_ );
+
+		all_vals.push_back( val );
+
+		x_prev = x;
 	}
 
-	//Constructor
-	CircularGeneral1D_Func::CircularGeneral1D_Func( std::string const & filename )
-	{
-		//Read in data file, and fill in private data.
-		utility::io::izstream stream;
-		stream.open( filename );
+	num_bins_ = all_vals.size();
+	data_.dimension( num_bins_ );
 
-		std::string line;
-		Real x( 0.0 ), x_prev( 0.0 ), val( 0.0 );
-		Size count( 0 );
-		utility::vector1< Real > all_vals;
+	for ( Size i = 1; i <= num_bins_; i++ ) data_( i ) = all_vals[ i ];
+	//		std::cout << "READ: " << num_bins_ << " from " << filename << "   --> " <<
+	//			" " << xmin_ << " " << xbin_ << " " << all_vals[ num_bins_ ] << std::endl;
 
-		while( getline( stream, line ) ){
-
-			std::istringstream l( line );
-			l >> x >> val;
-
-			count++;
-			if ( count == 1 ) xmin_ = x;
-			if ( count == 2 ) xbin_ = x - xmin_;
-			//if ( count > 2 ) assert( (x - x_prev) == xbin_ );
-
-			all_vals.push_back( val );
-
-			x_prev = x;
-		}
-
-		num_bins_ = all_vals.size();
-		data_.dimension( num_bins_ );
-
-		for ( Size i = 1; i <= num_bins_; i++ ) data_( i ) = all_vals[ i ];
-		//		std::cout << "READ: " << num_bins_ << " from " << filename << "   --> " <<
-		//			" " << xmin_ << " " << xbin_ << " " << all_vals[ num_bins_ ] << std::endl;
-
-		stream.close();
-	}
+	stream.close();
+}
 
 Real
 CircularGeneral1D_Func::func( Real const x ) const {
@@ -102,7 +101,7 @@ CircularGeneral1D_Func::dfunc( Real const x ) const {
 	assert( bin_wrap_real >= 1 && bin_wrap_real < num_bins_ + 1 );
 
 	Size const bin = static_cast< Size >( bin_wrap_real );
-	Real const leftover = bin_wrap_real - bin;
+	//Real const leftover = bin_wrap_real - bin;
 
 	Size next_bin = bin + 1;
 	if ( next_bin > num_bins_ ) next_bin = 1; //wrap around.
@@ -111,8 +110,6 @@ CircularGeneral1D_Func::dfunc( Real const x ) const {
 
 }
 
-
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

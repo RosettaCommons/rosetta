@@ -716,10 +716,10 @@ std::string make_compound_statement(
 	std::string table_definition = table_name + " (" + utility::join(column_names,",") + ")";
 	std::string value_list;
 	platform::Size column_count = column_names.size();
-	for(int i = 0; i < row_count;++i)
+	for(platform::Size i = 0; i < row_count;++i)
 	{
 		std::string row_block= "(?";
-		for(int j = 1; j < column_count; ++j)
+		for(platform::Size j = 1; j < column_count; ++j)
 		{
 			row_block += ",?";
 		}

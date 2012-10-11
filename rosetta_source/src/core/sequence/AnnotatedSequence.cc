@@ -34,17 +34,18 @@ AnnotatedSequence::AnnotatedSequence( std::string const& str_in )
     map_is_clean_( false )
 {}
 
-AnnotatedSequence::AnnotatedSequence( AnnotatedSequence const& other )
-  : std::string( other ),
-    map_is_clean_( other.map_is_clean_ ),
-    pos_map_( other.pos_map_ )
+AnnotatedSequence::AnnotatedSequence( AnnotatedSequence const& other ) :
+	std::string( other ),
+	pos_map_( other.pos_map_ ),
+	map_is_clean_( other.map_is_clean_ )
 {}
 
 AnnotatedSequence& AnnotatedSequence::operator=( AnnotatedSequence const& other ) {
-  if ( this==&other ) return *this;
-  std::string::operator=( other );
-  map_is_clean_ = other.map_is_clean_;
-  pos_map_ = other.pos_map_;
+	if ( this==&other ) return *this;
+	std::string::operator=( other );
+	map_is_clean_ = other.map_is_clean_;
+	pos_map_ = other.pos_map_;
+	return *this;
 }
 
 void AnnotatedSequence::operator=( std::string const& other ) {

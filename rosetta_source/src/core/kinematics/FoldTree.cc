@@ -1954,10 +1954,10 @@ void
 FoldTree::setup_edge_counts() const
 {
 	// redimension?
-	if ( edge_count.size() != nres_ ) {
+	if ( (int)edge_count.size() != nres_ ) {
 		edge_count = utility::vector1<int>(nres_, 0);
 	}
-	if ( jump_edge_count.size() != num_jump_ ) {
+	if ( (int)jump_edge_count.size() != num_jump_ ) {
 		jump_edge_count = utility::vector1<int>(num_jump_, -1);
 	}
 
@@ -2243,10 +2243,10 @@ void
 FoldTree::update_jump_points() const
 {
 	// re-dimension?
-	if ( is_jump_point_.size() != nres_ ) {
+	if ( (int)is_jump_point_.size() != nres_ ) {
 		is_jump_point_ = utility::vector1<bool>(nres_, false);
 	}
-	if ( jump_point_.size() != num_jump_ ) {
+	if ( (int)jump_point_.size() != num_jump_ ) {
 		jump_point_ = utility::vector1<std::pair<int,int> >(num_jump_);
 	}
 
@@ -2284,7 +2284,7 @@ FoldTree::update_jump_points() const
 void
 FoldTree::update_jump_edge() const
 {
-	if ( jump_edge_.size() != num_jump_ ) {
+	if ( (int)jump_edge_.size() != num_jump_ ) {
 		jump_edge_ = utility::vector1<int>(num_jump_, 0);
 	}
 	int jump_index(0);

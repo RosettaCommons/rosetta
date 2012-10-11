@@ -69,7 +69,7 @@ CartesianMinimizerMap::copy_dofs_from_pose(
 	utility::vector1< numeric::xyzVector<core::Real> > dofs_v(natoms);
 	pose.batch_get_xyz( moving_atoms_, dofs_v );
 
-	for(int i=1; i<=natoms; ++i) {
+	for(Size i=1; i<=natoms; ++i) {
 		dofs[i*3-2] = dofs_v[i].x();
 		dofs[i*3-1] = dofs_v[i].y();
 		dofs[i*3]   = dofs_v[i].z();
@@ -88,7 +88,7 @@ CartesianMinimizerMap::copy_dofs_to_pose(
 
 	Size natoms=moving_atoms_.size();
 	utility::vector1< numeric::xyzVector<core::Real> > dofs_v(natoms);
-	for(int i=1; i<=natoms; ++i) {
+	for(Size i=1; i<=natoms; ++i) {
 		dofs_v[i].x() = dofs[i*3-2];
 		dofs_v[i].y() = dofs[i*3-1];
 		dofs_v[i].z() = dofs[i*3];
@@ -144,7 +144,7 @@ CartesianMinimizerMap::assign_rosetta_torsions_and_trim( pose::Pose const & pose
 	pose::setup_dof_to_torsion_map( pose, dof_map );
 
 	Size ndofs = moving_dofids_.size();
-	for ( int i=1; i<=ndofs; ++i) {
+	for ( Size i=1; i<=ndofs; ++i) {
 		DOF_ID const& dof_id( moving_dofids_[i] );
 		id::TorsionID const & tor_id( dof_map[ dof_id ] );
 
@@ -201,11 +201,11 @@ CartesianMinimizerMap::setup(
 			Size start2 = rsd.first_sidechain_hydrogen();
 			Size stop2  = rsd.natoms();
 
-			for ( int j=start1; j<=stop1; ++j ) {
+			for ( Size j=start1; j<=stop1; ++j ) {
 				moving_atoms_.push_back( id::AtomID( j,i ) );
 				atom_indices_[ id::AtomID( j,i ) ] = moving_atoms_.size();
 			}
-			for ( int j=start2; j<=stop2; ++j ) {
+			for ( Size j=start2; j<=stop2; ++j ) {
 				moving_atoms_.push_back( id::AtomID( j,i ) );
 				atom_indices_[ id::AtomID( j,i ) ] = moving_atoms_.size();
 			}
@@ -213,7 +213,7 @@ CartesianMinimizerMap::setup(
 			Size start1 = 1;
 			Size stop1 = rsd.natoms();
 
-			for ( int j=start1; j<=stop1; ++j ) {
+			for ( Size j=start1; j<=stop1; ++j ) {
 				moving_atoms_.push_back( id::AtomID( j,i ) );
 				atom_indices_[ id::AtomID( j,i ) ] = moving_atoms_.size();
 			}
@@ -245,7 +245,7 @@ CartesianMinimizerMap::setup(
 	core::pose::initialize_atomid_map( moving_dof, pose, false );
 
 	Size nmoving_atoms = moving_atoms_.size();
-	for (int i=1; i<=nmoving_atoms; ++i) {
+	for (Size i=1; i<=nmoving_atoms; ++i) {
 		moving_xyz[ moving_atoms_[i] ] = true;
 	}
 

@@ -745,7 +745,9 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::best_rotamer_energy(
     Real nrchi_score( 0 );
   if ( curr_rotamer_only ) {
 	      Real dnrchiscore_dchi, dnrchiscore_dphi, dnrchiscore_dpsi;
-				Real rotameric_score = parent::eval_rotameric_energy_deriv( rsd, scratch, false);
+			// Unused variable, but since thescratch is a non-const reference, it seems wise to continue calling the method
+			//Real rotameric_score =
+			parent::eval_rotameric_energy_deriv( rsd, scratch, false);
 
         nrchi_score = bbdep_nrchi_score( rsd, scratch, dnrchiscore_dchi, dnrchiscore_dphi, dnrchiscore_dpsi );	
 				core::conformation::Residue rsd_copy (rsd);

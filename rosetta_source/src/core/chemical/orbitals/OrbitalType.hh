@@ -12,7 +12,7 @@
 /// @brief
 /// A class that contains orbital parameters
 ///
-/// @detailed
+/// @details
 /// This class contains the "chemical" information for orbitals. This does not contain the actual
 /// xyz coordinates of the class which is managed by the conformation/Residue.hh. The orbital_type properties
 /// are assigned by the class OrbitalTypeSet which is initiated from the ChemicalManager. Orbital type properties
@@ -36,8 +36,7 @@
 ///
 ///
 ///
-/// @authors
-/// Steven Combs
+/// @author Steven Combs
 ///
 ///
 /// @last_modified December 15 2010
@@ -108,7 +107,7 @@ private:
 	///@brief is the orbital a donor?
 	bool is_orbital_donor_;
 
-	///@brief the oribtal type name
+	///@brief the orbital type name
 	std::string orbital_type_name_;
 
 	///@brief hybridization of atom the orbital is attached to

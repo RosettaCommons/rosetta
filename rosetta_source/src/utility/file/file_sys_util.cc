@@ -87,7 +87,7 @@ rand_sleep()
 bool
 file_exists( std::string const & path )
 { // NOTE: this is not entirely reliable, stat may fail also when a file does exist
-	#ifdef __native_client__ && USE_FILE_PROVIDER
+	#if defined __native_client__ && defined USE_FILE_PROVIDER
 		utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
 		return provider->file_exists( path );
 	#endif

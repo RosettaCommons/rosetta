@@ -60,7 +60,7 @@ bool Inline_File_Provider::file_exists( const std::string& filename )
 
 	std::cout << "Looking for inline file: '" << filtered_filename << "'" << std::endl; 
 	// first find the data stupid simple search
-	unsigned int i = 0;
+	int i = 0;
 	for( i = 0; i < static_database_size; ++i ){
 		if( std::string( static_database[i][0] ) == filtered_filename ){
 			return true;	
@@ -103,7 +103,7 @@ bool Inline_File_Provider::get_sstream( const std::string& filename, std::string
 	std::cout << "Looking for inline file: '" << filtered_filename << "'" << std::endl; 
 	
 	// first find the data stupid simple search
-	unsigned int i = 0;
+	int i = 0;
 	for( i = 0; i < static_database_size; ++i ){
 		if( std::string( static_database[i][0] ) == filtered_filename ){
 			break;
@@ -111,7 +111,6 @@ bool Inline_File_Provider::get_sstream( const std::string& filename, std::string
 	}
 	// did we find it ?
 	if( i <  static_database_size ){
-		int data = i;
 		const char *the_data = static_database[i][1];
 		std::stringstream *newstream = new std::stringstream( the_data );
 		streambucket.push_back( newstream );

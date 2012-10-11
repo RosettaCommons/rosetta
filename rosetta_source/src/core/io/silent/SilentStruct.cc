@@ -628,7 +628,7 @@ void SilentStruct::energies_into_pose( core::pose::Pose & pose ) const {
 		= dynamic_cast< basic::datacache::CacheableStringFloatMap * >
 		( pose.data().get_raw_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA) );
 
-	runtime_assert( data != NULL );
+	runtime_assert( data.get() != NULL );
 
 	EnergyMap weights;
 	EnergyMap & emap( pose.energies().total_energies() );

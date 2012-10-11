@@ -441,7 +441,7 @@ Size
 ResfileContents::locate_resid(
 	Pose const & pose,
 	char const chain,
-	int const PDBnum,
+	Size const PDBnum,
 	char const icode,
 	Size const lineno
 ) const {
@@ -1368,7 +1368,7 @@ parse_resfile(
 	utility::slurp( file, resfile );
 	try{
 		parse_resfile_string( pose, the_task, resfile );
-	} catch (ResfileReaderException) {
+	} catch (ResfileReaderException &) {
 		if (basic::options::option[ basic::options::OptionKeys::run::interactive ].user()){
 			throw;
 		} else {

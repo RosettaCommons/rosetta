@@ -395,6 +395,7 @@ LazyResourceManager::find_resource(
 		stringstream err_msg;
 		err_msg
 			<< "Unable to find resource with tag '" << resource_tag << "'." << endl;
+		utility_exit_with_message(err_msg.str());
 	}
 }
 

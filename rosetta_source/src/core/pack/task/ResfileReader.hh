@@ -125,7 +125,7 @@ private: // helper types and functions for parsing
 	locate_resid(
 		core::pose::Pose const & pose,
 		char const chain,
-		int const PDBnum,
+		Size const PDBnum,
 		char const icode,
 		Size const lineno) const;
 

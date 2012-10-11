@@ -23,7 +23,7 @@ namespace scoring {
 namespace packstat {
 
 
-class SimplePDB_Atom;
+struct SimplePDB_Atom;
 
 
 } // namespace packstat

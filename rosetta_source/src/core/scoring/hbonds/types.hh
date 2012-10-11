@@ -464,7 +464,7 @@ enum HBGeoDimType {
 	// large change in acos(x). To create polynomials that have such a
 	// tight distribution requires them to be relatively high degree.
 	//
-  // As an alternative, the AHD angle can be used directly in the
+	// As an alternative, the AHD angle can be used directly in the
 	// parametrization.
 	hbgd_AHD,
 

@@ -131,9 +131,6 @@ RNA_Mg_Energy::residue_pair_energy(
 	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
 	utility::vector1< bool > const & is_magnesium = rna_scoring_info.is_magnesium();
 
-	Size const pos1 = rsd1.seqpos();
-	Size const pos2 = rsd2.seqpos();
-
 	if ( rsd1.is_RNA() && is_magnesium[ rsd2.seqpos() ] ) {
 		residue_pair_energy_one_way( rsd1, rsd2, pose, emap );
 	}

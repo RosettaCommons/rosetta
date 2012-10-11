@@ -501,8 +501,8 @@ RotamericSingleResidueDunbrackLibrary< T >::eval_rotameric_energy_deriv(
 	assert( rsd.aa() == aa() );
 
 	// Grab data from rsd
-	Size const nbb ( rsd.mainchain_torsions().size() );
-	Size const nchi( rsd.nchi() );
+	//Size const nbb ( rsd.mainchain_torsions().size() );
+	//Size const nchi( rsd.nchi() );
 	ChiVector const & chi( rsd.chi() );
 	//Real phi( get_phi_from_rsd( rsd ) );
 	//Real psi( get_psi_from_rsd( rsd ) );

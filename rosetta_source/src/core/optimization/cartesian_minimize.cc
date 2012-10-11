@@ -168,7 +168,7 @@ cartesian_collect_atompairE_deriv(
 	}
 
 	Size natoms=min_map.natoms();
-	for ( int i=1; i<=natoms; ++i) {
+	for ( Size i=1; i<=natoms; ++i) {
 		id::AtomID const & atom_id( min_map.get_atom(i) );
 		core::Vector F1(0,0,0),F2(0,0,0);
 		scorefxn.eval_npd_atom_derivative( atom_id, pose, min_map.domain_map(), F1, F2 );
@@ -195,7 +195,7 @@ void cartesian_collect_torsional_deriv(
 
 	// loop over the torsions
 	Size ntorsions=min_map.ntorsions();
-	for ( int i=1; i<=ntorsions; ++i) {
+	for ( Size i=1; i<=ntorsions; ++i) {
 		id::DOF_ID const & dof_id( min_map.get_dof_id(i) );
 		id::TorsionID const & TorsionID( min_map.get_TorsionID(i) );
 
@@ -388,7 +388,7 @@ cart_numerical_derivative_check(
 	//Real const f00 = func( vars );
 
 	Size natoms=min_map.natoms();
-	for ( int i=1; i<=natoms; ++i) {
+	for ( Size i=1; i<=natoms; ++i) {
 		id::AtomID const & atm_id( min_map.get_atom(i) );
 		for ( int jj=0; jj<3; ++jj) {
 			Size ii = (i-1)*3+jj+1;

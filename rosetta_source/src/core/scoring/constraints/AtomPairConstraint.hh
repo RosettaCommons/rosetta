@@ -86,17 +86,22 @@ public:
 	/// and not just pointers
 	bool operator == ( Constraint const & other ) const;
 
+	using Constraint::score;
 
 	///
 	Real
 	score(
-				Vector const & xyz1,
-				Vector const & xyz2
-				) const;
+		Vector const & xyz1,
+		Vector const & xyz2
+		) const;
 
 	///
 	void
 	score( XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
+
+	Real score( pose::Pose const& pose ) const {
+		return func_->func( dist( pose ) );
+	}
 
 	// atom deriv
 	virtual
@@ -152,10 +157,6 @@ public:
 
 	virtual
 	Real dist( XYZ_Func const & xyz ) const;
-
-	Real score( pose::Pose const& pose ) const {
-		return func_->func( dist( pose ) );
-	}
 
 	virtual Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1 ) const;
 

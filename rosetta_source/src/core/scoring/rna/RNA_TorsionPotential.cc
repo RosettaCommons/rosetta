@@ -117,9 +117,9 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 		delta_fade_( 10.0 ),
 		alpha_fade_( 10.0 ),
 		skip_chainbreak_torsions_( basic::options::option[ basic::options::OptionKeys::score::rna_torsion_skip_chainbreak ]() ),
-		use_2prime_OH_potential_( basic::options::option[ basic::options::OptionKeys::score::use_2prime_OH_potential ]() ),
 		verbose_( false ),
-		use_new_potential_( false )
+		use_new_potential_( false ),
+		use_2prime_OH_potential_( basic::options::option[ basic::options::OptionKeys::score::use_2prime_OH_potential ]() )
 	{
 		if( basic::options::option[ basic::options::OptionKeys::score::rna_torsion_potential ].user() ){
 

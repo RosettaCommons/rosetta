@@ -78,7 +78,8 @@ LK_CosThetaEnergy::LK_CosThetaEnergy( etable::Etable const & etable_in) :
 	dsolv1_( etable_in.dsolv1() ),
 	safe_max_dis2_( etable_in.get_safe_max_dis2() ),
 	get_bins_per_A2_( etable_in.get_bins_per_A2()),
-	verbose_( false )
+	verbose_( false ),
+	lk_costheta_weight_()
 {}
 
 
@@ -135,7 +136,8 @@ LK_CosThetaEnergy::LK_CosThetaEnergy( LK_CosThetaEnergy const & src ):
 	dsolv1_( src.dsolv1_ ),
 	safe_max_dis2_( src.safe_max_dis2_ ),
 	get_bins_per_A2_( src.get_bins_per_A2_   ),
-	verbose_( src.verbose_ )
+	verbose_( src.verbose_ ),
+	lk_costheta_weight_()
 {}
 
 
@@ -510,7 +512,7 @@ LK_CosThetaEnergy::eval_atom_derivative_intra_RNA(
 	Vector const heavy_atom_i( rsd1.xyz( m ) );
 
 	// cached energies object
-	Energies const & energies( pose.energies() );
+	//Energies const & energies( pose.energies() );
 
 	// the neighbor/energy links
 	//EnergyGraph const & energy_graph( energies.energy_graph() );

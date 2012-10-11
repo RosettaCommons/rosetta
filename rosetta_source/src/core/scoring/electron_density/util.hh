@@ -88,7 +88,7 @@ template<class S, class T>
 void resample( 
       ObjexxFCL::FArray3D< S > const &density,
       ObjexxFCL::FArray3D< T > &newDensity,
-      numeric::xyzVector< core::Size > newDims ) {
+      numeric::xyzVector< int > newDims ) {
 	if (density.u1() == newDims[0] && density.u2() == newDims[1] && density.u3() == newDims[2]) {
 		newDensity = density;
 		return;

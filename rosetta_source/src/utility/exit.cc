@@ -149,13 +149,15 @@ exit(
 	}
 
 #else // Not BOINC
-	if( main_exit_callback ) main_exit_callback();
-	else {
-		#ifndef _WIN32
-			assert( false ); // Force a core dump for post-mortem debugging
-		#endif // Not _WIN32
-		std::exit( status );
-	}
+    if( main_exit_callback ) {
+        main_exit_callback();
+        std::exit( status );
+    } else {
+    #ifndef _WIN32
+        assert( false ); // Force a core dump for post-mortem debugging
+    #endif // Not _WIN32
+        std::exit( status );
+    }
 #endif // BOINC
 }
 

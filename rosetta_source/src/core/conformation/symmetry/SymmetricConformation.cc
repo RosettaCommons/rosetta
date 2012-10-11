@@ -372,7 +372,6 @@ SymmetricConformation::set_jump_now( int const jump_number, kinematics::Jump con
 	// clear cached transforms
 	Tsymm_.clear();
 
-	id::AtomID const id( Conformation::jump_atom_id( jump_number ) );
 	Conformation::set_jump_now( jump_number, new_jump );
 
 	if ( !symm_info_->jump_is_independent( jump_number ) ) {

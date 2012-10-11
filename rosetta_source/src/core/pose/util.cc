@@ -418,7 +418,7 @@ bool getPoseExtraScores(
 	CacheableStringFloatMapCOP data
 		= dynamic_cast< CacheableStringFloatMap const * >
 			( pose.data().get_raw_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
-	assert( data != NULL );
+	assert( data.get() != NULL );
 
 	std::map< std::string, float >::const_iterator it = data->map().find( name );
 	if ( it == data->map().end() ) {
@@ -450,7 +450,7 @@ void setPoseExtraScores(
 		=  dynamic_cast< CacheableStringFloatMap* >
 			( pose.data().get_raw_ptr(core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA) );
 
-	runtime_assert( data != NULL );
+	runtime_assert( data.get() != NULL );
 	data->map()[name] = value;
 }
 
@@ -475,7 +475,7 @@ void add_comment(
 		=  dynamic_cast< CacheableStringMap* >
 			( pose.data().get_raw_ptr(core::pose::datacache::CacheableDataType::STRING_MAP) );
 
-	runtime_assert( data != NULL );
+	runtime_assert( data.get() != NULL );
 	data->map()[key] = val;
 } // add_comment
 
@@ -500,7 +500,7 @@ void add_score_line_string(
 		=  dynamic_cast< CacheableStringMap* >
 			( pose.data().get_raw_ptr(core::pose::datacache::CacheableDataType::SCORE_LINE_STRINGS) );
 
-	runtime_assert( data != NULL );
+	runtime_assert( data.get() != NULL );
 	data->map()[key] = val;
 }
 
@@ -548,7 +548,7 @@ void clearPoseExtraScore(
 	CacheableStringFloatMapOP data
 		= dynamic_cast< CacheableStringFloatMap* >
 			( pose.data().get_raw_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
-	assert( data != NULL );
+	assert( data.get() != NULL );
 
 	data->map().erase( name );
 }
@@ -620,7 +620,7 @@ get_all_score_line_strings(
 			= dynamic_cast< CacheableStringMap const * >
 				( pose.data().get_raw_const_ptr( core::pose::datacache::CacheableDataType::SCORE_LINE_STRINGS ) );
 		score_line_strings = data->map();
-		runtime_assert( data != NULL );
+		runtime_assert( data.get() != NULL );
 	}
 	return score_line_strings;
 }
@@ -639,7 +639,7 @@ get_all_comments(
 			= dynamic_cast< const CacheableStringMap* >
 				( pose.data().get_raw_const_ptr( core::pose::datacache::CacheableDataType::STRING_MAP ) );
 		comments = data->map();
-		runtime_assert( data != NULL );
+		runtime_assert( data.get() != NULL );
 	}
 	return comments;
 }
@@ -2472,7 +2472,7 @@ std::string extract_tag_from_pose( core::pose::Pose &pose )
 
 	if( pose.data().has( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ){
 			CacheableStringOP data =  dynamic_cast< CacheableString* > (  (pose.data().get_raw_ptr( ( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG  )) ));
-			if( data == NULL ) return std::string("UnknownTag");
+			if( data.get() == NULL ) return std::string("UnknownTag");
 			else               return data->str();
 	}
 

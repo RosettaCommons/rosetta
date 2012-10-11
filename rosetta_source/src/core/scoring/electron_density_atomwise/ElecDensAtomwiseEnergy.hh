@@ -119,6 +119,8 @@ public:
 	  ScoreFunction const &
 	) const;
 
+	using parent::finalize_total_energy;
+
 	///
 	virtual
 	void

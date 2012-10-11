@@ -332,7 +332,7 @@ bool SixDOffsetTree::insert( SBin6D & input, Size depth, Size caller ) {
 		return true;
 	} else {
 	// and then go ONE LEVEL DEEPER! BRAWWWWMMMMMMM!
-		insert( input, depth + 1, idx );
+		return insert( input, depth + 1, idx );
 	}
 }
 

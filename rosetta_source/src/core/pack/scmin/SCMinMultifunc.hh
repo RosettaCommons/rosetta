@@ -80,6 +80,7 @@ public:
 	bool
 	abort_min( Multivec const & ) const;
 
+	using optimization::Multifunc::dump;
 
 	/// @brief Error state reached; dump out something corresponding to the
 	/// var assignment.  Default base class implementation: no_op();

@@ -28,20 +28,31 @@ namespace scoring {
 namespace packstat {
 
 
-	/// @brief
+/// @brief
 struct SimplePDB_Atom
 {
+	friend std::ostream & operator>> ( std::ostream & out, SimplePDB_Atom & pdb  );
+	friend std::ostream & operator<< ( std::ostream & out, SimplePDB_Atom const & atom );
 
-  friend std::ostream & operator>> ( std::ostream & out, SimplePDB_Atom & pdb  );
-  friend std::ostream & operator<< ( std::ostream & out, SimplePDB_Atom const & atom );
+	SimplePDB_Atom() :
+		num(-12345),
+		resnum(),
+		chain(),
+		x(),
+		y(),
+		z(),
+		occ(),
+		bfac(),
+		sasa(),
+		radius()
+	{}
 
-	SimplePDB_Atom() : num(-12345) {}
 	~SimplePDB_Atom() {}
 
-  std::string ATOM,type,res,lastcol,whole_line;
-  int num,resnum;
-  char chain;
-  PackstatReal x,y,z,occ,bfac,sasa,radius;
+	std::string ATOM, type, res, lastcol, whole_line;
+	int num, resnum;
+	char chain;
+	PackstatReal x, y, z, occ, bfac, sasa, radius;
 	numeric::xyzVector<PackstatReal> xyz;
 
 }; // SimplePDB_Atom

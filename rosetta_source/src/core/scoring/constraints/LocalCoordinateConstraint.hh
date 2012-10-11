@@ -119,6 +119,8 @@ public:
 	///
 	virtual void steal_def( pose::Pose const& );
 
+	using Constraint::score;
+
 	///
 	Real
 	score(

@@ -573,7 +573,7 @@ Minimizer::lbfgs(
 	 int const N( X.size() );
 	 static int M( basic::options::option[ basic::options::OptionKeys::optimization::lbfgs_M ]() );
 	 int const PAST( line_min->nonmonotone() ? 3 : 1 );
-	 Real const EPS( 1.E-5 );
+	 //Real const EPS( 1.E-5 );
 
 	 int K = 1; // number of func evaluations
 

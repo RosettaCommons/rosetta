@@ -273,7 +273,7 @@ ElectronDensity::ElectronDensity( utility::vector1< core::pose::PoseOP > poses, 
 	numeric::xyzVector< core::Real > cartX, fracX;
 	numeric::xyzVector< core::Real > atm_i, atm_j, del_ij;
 	const core::Real ATOM_MASK_PADDING = 1.5;
-	for (int n=1; n<=nposes; ++n) {
+	for (Size n=1; n<=nposes; ++n) {
 		core::pose::Pose &pose = *(poses[n]);
 		int nres = pose.total_residue();
 		for (int i=1 ; i<=nres; ++i) {
@@ -718,7 +718,7 @@ core::Real ElectronDensity::matchCentroidPose(
 	utility::vector1< utility::vector1< numeric::xyzVector<core::Real> > > rho_dx_mask(nres), rho_dx_atm(nres);
 
 	// symmetry
-	bool isSymm = (symmInfo != NULL);
+	bool isSymm = (symmInfo.get() != NULL);
 	bool remapSymm = basic::options::option[ basic::options::OptionKeys::edensity::score_symm_complex ]();
 
 	///////////////////////////
@@ -948,7 +948,7 @@ core::Real ElectronDensity::matchPose(
 	utility::vector1< utility::vector1< utility::vector1< numeric::xyzVector<core::Real> > > > rho_dx_mask(nres), rho_dx_atm(nres);
 
 	// symmetry
-	bool isSymm = (symmInfo != NULL);
+	bool isSymm = (symmInfo.get() != NULL);
 	bool remapSymm = basic::options::option[ basic::options::OptionKeys::edensity::score_symm_complex ]();
 
 	///////////////////////////
@@ -1130,8 +1130,6 @@ core::Real ElectronDensity::matchPose(
 
 				chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
 				std::string elt_i = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
-				OneGaussianScattering sig_j = get_A( elt_i );
-				//core::Real k = sig_j.k( PattersonB, max_del_grid );
 
 				utility::vector1< int > const &rho_dx_pt_ij   = rho_dx_pt[i][j];
 				utility::vector1< numeric::xyzVector<core::Real> > const &rho_dx_mask_ij = rho_dx_mask[i][j];
@@ -2396,7 +2394,7 @@ void ElectronDensity::compute_symm_rotations(
 	core::conformation::symmetry::SymmetryInfoCOP symmInfo /*=NULL*/
 ) {
 	// symmetry
-	bool isSymm = (symmInfo != NULL);
+	bool isSymm = (symmInfo.get() != NULL);
 	bool remapSymm = basic::options::option[ basic::options::OptionKeys::edensity::score_symm_complex ]();
 
 	if (!isSymm || !remapSymm) return;
@@ -2552,7 +2550,7 @@ core::Real ElectronDensity::matchRes(
 	if ( scoring_mask_.find(resid) != scoring_mask_.end() ) return 0.0;
 
 	// symmetry
-	bool isSymm = (symmInfo != NULL);
+	bool isSymm = (symmInfo.get() != NULL);
 	bool remapSymm = basic::options::option[ basic::options::OptionKeys::edensity::score_symm_complex ]();
 
 	// symm
@@ -2569,18 +2567,18 @@ core::Real ElectronDensity::matchRes(
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 	std::set< core::Size > neighborResids;
 
-	int HALFWINDOW = WINDOW_/2;
-	int win_start=(int)resid-HALFWINDOW, win_stop = (int)resid+HALFWINDOW;
+	Size HALFWINDOW = WINDOW_/2;
+	Size win_start= resid-HALFWINDOW, win_stop = resid+HALFWINDOW;
 	for (int i=HALFWINDOW-1; i>=0; --i) {
-		if ( ((int)resid-i)>1 && pose.fold_tree().is_cutpoint( resid-i-1 ) ) win_start = resid-i;
-		if ( ((int)resid+i)<=nres && pose.fold_tree().is_cutpoint( resid+i ) ) win_stop = resid+i;
+		if ( (resid-i)>1 && pose.fold_tree().is_cutpoint( resid-i-1 ) ) win_start = resid-i;
+		if ( (resid+i)<=nres && pose.fold_tree().is_cutpoint( resid+i ) ) win_stop = resid+i;
 	}
-	win_start = std::max(1,win_start);
-	win_stop = std::min(win_stop,nres);
+	win_start = std::max(1, (int)win_start);
+	win_stop = std::min((int)win_stop, nres);
 
 	// 1: grab context atom ids
 	//    only extend left/right to the next chainbreak
-	for (int i=win_start; i<=win_stop; ++i) {
+	for (Size i=win_start; i<=win_stop; ++i) {
 		core::conformation::Residue const &rsd_i( pose.residue(i) );
 
 		// calc neighbor residues
@@ -2599,7 +2597,7 @@ core::Real ElectronDensity::matchRes(
 			}
 		}
 
-		if (i==(int)resid) continue;  // already added these atoms
+		if (i==(Size)resid) continue;  // already added these atoms
 		if (!rsd_i.is_polymer()) continue;
 
 		chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
@@ -2935,7 +2933,7 @@ ElectronDensity::matchResFast(
 	if ( scoring_mask_.find(resid) != scoring_mask_.end() ) return 0.0;
 
 	// symmetry
-	bool isSymm = (symmInfo != NULL);
+	bool isSymm = (symmInfo.get() != NULL);
 	bool remapSymm = remap_symm_;
 
 	// symm

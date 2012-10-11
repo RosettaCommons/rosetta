@@ -47,8 +47,6 @@ public:
 		decoy_tag( "empty_tag" );
 	}
 
-	virtual void print_header( std::ostream & out );
-
 	PDBSilentStruct(
 		core::pose::Pose const & pose,
 		std::string tag = "empty_tag"
@@ -60,6 +58,10 @@ public:
 
 	// destructor
 	~PDBSilentStruct() {}
+
+	using core::io::silent::SilentStruct::print_header;
+
+	virtual void print_header( std::ostream & out );
 
 	/// @brief Test if this PDBSilentStruct is equal to the given PDBSilentStruct in terms of conformation.
 	/// Doesn't check energies.

@@ -84,6 +84,8 @@ public:
 		Stub & stub
 	);
 
+	using Atom_::update_internal_coords;
+
 	/// update the jump info
 	virtual
 	void

@@ -63,6 +63,7 @@ public:
 	/// and not just pointers
 	bool operator == ( Constraint const & other ) const;
 
+	using Constraint::score;
 
 	/// @brief compute score
 	Real

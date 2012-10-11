@@ -136,11 +136,18 @@ Polynomial_1d::show_values( ) const{
 		}
 		break;
 	case(hbgd_cosAHD):
+		//out << " cosAHD ";
 		for ( Size i=60; i<= 180; i+=2 ) {
 			Real const xD( cos( radians( 180.0 - i ) ) );
 			operator()(xD, energy, deriv);
 			out << F(9, 3, energy) << " ";
 		}
+		break;
+	case(hbgd_AHD):
+		//out << " AHD ";
+		// I am not sure how this should be implemented; I added this case block to remove compiler warning:
+		// "enum value hbgd_AHD not handled in switch statement"
+		// ~Labonte
 		break;
 	case(hbgd_chi):
 		// just a guess, needs checking !

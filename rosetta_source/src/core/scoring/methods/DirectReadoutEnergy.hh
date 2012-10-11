@@ -71,6 +71,7 @@ public:
 		EnergyMap & emap
 	) const;
 
+	using parent::finalize_total_energy;
 
 	/// @brief  All the work happens here
 	virtual

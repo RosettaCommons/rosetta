@@ -96,6 +96,8 @@ public:
 		EnergyMap & emap
 	) const;
 
+	using methods::ContextDependentLRTwoBodyEnergy::finalize_total_energy;
+
 	/// called at the end of energy evaluation
 	virtual	void
 	finalize_total_energy(

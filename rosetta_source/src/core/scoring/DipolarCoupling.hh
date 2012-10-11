@@ -96,22 +96,28 @@ private:
 class DC {
 
 public:
-  enum DC_TYPE {
-        DC_TYPE_NH = 1, DC_TYPE_NC, DC_TYPE_CH, DC_TYPE_CC
-  };
+	enum DC_TYPE {
+		DC_TYPE_NH = 1, DC_TYPE_NC, DC_TYPE_CH, DC_TYPE_CC
+	};
 
-  DC() {
-  }
+	DC() :
+		DCval_computed_(),
+		type_(),
+		res1_(),
+		res2_(),
+		DCval_(),
+		DCerr_(),
+		weight_()
+	{}
 
-  DC(Size res1, std::string const& atom1, Size res2, std::string const& atom2, Real DCval, Real DCerr, Real weight) :
-			type_(get_DC_data_type(atom1, atom2)),
-			DCval_computed_(-999),f1ij_(0.0),f2ij_(0.0),
-			res1_(res1), res2_(res2),
-			atom1_(atom1), atom2_(atom2),
-			DCval_(DCval), DCerr_(DCerr),
-			weight_(weight)
-  {
-  }
+	DC(Size res1, std::string const& atom1, Size res2, std::string const& atom2, Real DCval, Real DCerr, Real weight) :
+		DCval_computed_(-999), f1ij_(0.0), f2ij_(0.0),
+		type_(get_DC_data_type(atom1, atom2)),
+		res1_(res1), res2_(res2),
+		atom1_(atom1), atom2_(atom2),
+		DCval_(DCval), DCerr_(DCerr),
+		weight_(weight)
+	{}
 
   DC_TYPE type() const {
                 return type_;
@@ -148,7 +154,7 @@ public:
   }
 
   Real& DCcomputed() {
-    return DCval_computed_;;
+    return DCval_computed_;
   }
 
   Vector f1ij() const {

@@ -487,7 +487,7 @@ class  HPatchEdge : public FirstClassEdge< V, E, G > {
 /// @brief
 /// Defines an edge between a FirstClass (HPatchNode) and a background node (HPatchBackgroundNode)
 ///
-/// @detailed
+/// @details
 /// In addition to implementing the virtual base class methods, this class additionally defines methods
 /// relating to keeping track of data relating to SASA/hpatch.
 ///
@@ -565,7 +565,7 @@ class HPatchBackgroundEdge : public BackgroundToFirstClassEdge< V, E, G > {
 /// @brief
 /// Defines the interaction graph that will keep track of changes to the hpatch score.
 ///
-/// @detailed
+/// @details
 /// In addition to implementing the virtual base class methods, this class additionally defines methods
 /// relating to keeping track of data relating to hpatch.
 ///
@@ -649,6 +649,8 @@ class HPatchInteractionGraph : public AdditionalBackgroundNodesInteractionGraph<
 		virtual int get_edge_memory_usage() const;
 		virtual unsigned int count_static_memory() const;
 		virtual unsigned int count_dynamic_memory() const;
+
+		using parent::get_energy_sum_for_vertex_group;
 
 		//virtual void print_current_state_assignment() const;
 		virtual Real get_energy_sum_for_vertex_group( Size group_id );

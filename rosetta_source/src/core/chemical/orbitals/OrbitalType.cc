@@ -12,7 +12,7 @@
 /// @brief
 /// A class that contains orbital parameters
 ///
-/// @detailed
+/// @details
 /// This class contains the "chemical" information for orbitals. This does not contain the actual
 /// xyz coordinates of the class which is managed by the conformation/Residue.hh. The orbital_type properties
 /// are assigned by the class OrbitalTypeSet which is initiated from the ChemicalManager. Orbital type properties
@@ -36,8 +36,7 @@
 ///
 /// Acceptor: is the orbital accept electrons? currently not implemented
 ///
-/// @authors
-/// Steven Combs
+/// @author Steven Combs
 ///
 ///
 /// @last_modified December 15 2010
@@ -47,6 +46,7 @@
 #include <utility/string_util.hh>
 #include <vector>
 #include <core/chemical/orbitals/OrbitalTypeMapper.hh>
+#include <core/types.hh>
 
 #include <utility/vector1.hh>
 
@@ -62,7 +62,8 @@ namespace orbitals{
 /// you must initialize that property as false!!!!!!!!
 OrbitalType::OrbitalType(std::string & orbital_name, std::string & /*atom_type_name*/):
 			is_orbital_acceptor_(false),
-			is_orbital_donor_(false)
+			is_orbital_donor_(false),
+			distance_(0.0)
 
 {
 
@@ -74,7 +75,7 @@ OrbitalType::OrbitalType(std::string & orbital_name, std::string & /*atom_type_n
 	hybridization_= name_split[3];
 
 	name_split=utility::string_split(orbital_name, '_');
-	for(int i=1; i <= name_split.size(); ++i){
+	for(core::Size i=1; i <= name_split.size(); ++i){
 		atom_type_name_.push_back(name_split[i]);
 	}
 

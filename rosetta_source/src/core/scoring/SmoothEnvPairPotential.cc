@@ -38,11 +38,11 @@ namespace scoring {
 
 Real SmoothScoreTermCoeffs::func( Real x ) const {
 	Real y = shift_;
-	for (int i=1; i<=sigmoid_coeffs_.size(); ++i) {
+	for (core::Size i=1; i<=sigmoid_coeffs_.size(); ++i) {
 		numeric::xyzVector< Real > const &q = sigmoid_coeffs_[i];
 		y += q[0] / (1 + exp( -q[2]*x - q[1] ));
 	}
-	for (int i=1; i<=gaussian_coeffs_.size(); ++i) {
+	for (core::Size i=1; i<=gaussian_coeffs_.size(); ++i) {
 		numeric::xyzVector< Real > const &n = gaussian_coeffs_[i];
 		y += n[0] * exp( -(x-n[1])*(x-n[1]) / (2*n[2]*n[2]) );
 	}
