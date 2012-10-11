@@ -13,10 +13,10 @@
 @page kinematic_loopmodel Documentation for kinematic loop modeling
 
 @section metadata Metadata
-This document was last updated April 16, 2012 by Amelie Stein. The corresponding PIs for this application are Tanja Kortemme <kortemme@cgl.ucsf.edu> and Evangelos A. Coutsias <coutsias@unm.edu>.
+This document was last updated October 10, 2012 by Amelie Stein. The corresponding PIs for this application are Tanja Kortemme <kortemme@cgl.ucsf.edu> and Evangelos A. Coutsias <coutsias@unm.edu>.
 
 @section kic_code_demos Code and Demo
-The current application for this method (in Rosetta 3.3) is <code>bin/loopmodel.<my_os>gccrelease</code>. The major protocol movers are <code>src/protocols/moves/KinematicMover</code>, which performs a localized kinematic perturbation to a peptide chain, <code>src/protocols/loops/LoopMover_KIC</code>, which wraps the KinematicMover into a Monte Carlo protocol for loop modeling, and <code>src/protocols/loops/LoopRelaxMover</code>, which allows the protocols in LoopMover_KIC to be combined with other loop modeling protocols. A basic usage example that briefly remodels an 8-residue loop is the <code>kinematic_looprelax</code> integration test, which resides at <code>test/integration/tests/kinematic_looprelax</code>.
+The current application for this method (in Rosetta 3.4) is <code>bin/loopmodel.<my_os>gccrelease</code>. The major protocol movers are <code>src/protocols/moves/KinematicMover</code>, which performs a localized kinematic perturbation to a peptide chain, <code>src/protocols/loops/loop_mover/perturb/LoopMover_KIC</code> and <code>src/protocols/loops/loop_mover/refine/LoopMover_KIC</code>, which wrap the KinematicMover into a Monte Carlo protocol for loop modeling, and <code>src/protocols/comparative_modeling/LoopRelaxMover</code>, which allows the protocols in LoopMover_KIC to be combined with other loop modeling protocols. A basic usage example that briefly remodels an 8-residue loop is the <code>kinematic_looprelax</code> integration test, which resides at <code>rosetta_tests/integration/tests/kinematic_looprelax</code>.
 
 For reproducing the benchmark results for dataset 1 and 2 of the Mandell <em>et al.</em> (2009) paper (see reference below), please checkout Rosetta revision 24219 from the subversion system. 
 In this older version of Rosetta, the kinematic loop modeling application is <code>bin/loop_test.<my_os>gccrelease</code>. Being a pilot app, for proper compilation, please ensure that in the file <code>src/pilot_apps.src.settings.all</code> the application <code>loop_test</code> is not commented out and then compile Rosetta, using the <code>scons.py</code> script from the current Rosetta distribution (Rosetta 3.3) with the command line
@@ -37,7 +37,8 @@ More detail on the underlying principles of the kinematic closure algorithm can 
 
 An application using KIC to predict the sequences tolerated in a high-affinity antibody-antigen interface is described here:
 
-@li Babor M, Mandell DJ, Kortemme T. (2010). Assessment of flexible backbone protein design methods for sequence library prediction in the therapeutic antibody Herceptin-HER2 interface. <em>In preparation</em>.
+@li Babor M, Mandell DJ, Kortemme T. (2010). Assessment of flexible backbone protein design methods for sequence library prediction in the therapeutic antibody Herceptin-HER2 interface. <em>Protein Sci.</em>. 20(6):1082-1089.
+
 
 @section kic_purpose Purpose
 Kinematic closure (KIC) is an analytic calculation inspired by robotics techniques for rapidly determining the possible conformations of linked objects subject to constraints. In the Rosetta KIC implementation, 2<em>N</em> - 6 backbone torsions of an <em>N</em>-residue peptide segment (called non-pivot torsions) are set to values drawn randomly from the Ramachandran space of each residue type, and the remaining 6 phi/psi torsions (called pivot torsions) are solved analytically by KIC. This formulation allows for rapid sampling of large conformational spaces. If <code>-loops:vicinity_sampling</code> is set, the non-pivot torsions are sampled around their starting values by <code>-loops:vicinity_degree</code> degrees to focus sampling around the starting conformation, rather than drawing random Ramachandran values for larger perturbations.
@@ -145,7 +146,7 @@ LOOP 88 95 92 0 1
 -loops:fix_natsc                Don't repack, rotamer trial, or minimize loop residue neighbors. default = 'false'. [Bolean]
 -ex1 (-ex2, -ex3, -ex4)         Include extra chi1 rotamers (or also chi2, chi3, chi4). Using -ex1 -ex2 improves benchmark performance.  
 -extrachi_cutoff 0              Set to 0 to include extra rotamers regardless of number of neighbors
--extra_res_cen                  Path to centroid parameters file for non-protein atoms or ligands
+-extra_res_cen                  Path to centroid parameters file for non-protein atoms or ligands. Note that this is required for structures with ligands even if only full-atom remodeling is performed.
 -extra_res_fa                   Path to all-atom parameters file for non-protein atoms or ligands
 -overwrite                      Overwrite existing models (Rosetta will not output without this flag if same-named model exists)
 -out:pdb_gz                     Create compressed output PDB files (using gzip), which saves a lot of space. These files can still be 
@@ -227,7 +228,7 @@ The KIC protocols have been extended to perform additional tasks that have not y
 @li <em>Whole protein ensemble generation</em>. The loop definition file can specify regions of any size, including whole proteins. This procedure can also be applied to protein complexes, although it is necessary that the end of the first loop be set no further than the C-terminus of the first partner - 1 residue, and the start of the second loop be no earlier than the N-terminus of the second partner + 1 residue. Preliminary results on recapitulating the natural sequence variation of the ubquitin-like family by designing sequences on KIC ensembles suggest it may be useful to skip the centroid remodeling stage and include the flags <code>-loops:outer_cycles 1 -loops:refine_init_temp 1.2 -loops:refine_final_temp 1.2 -loops:vicinity_sampling -loops:vicinity_degree 3</code>. These parameters were also used to recover an average of 82% of residues observed in phage display experiments across 17 positions in the Herceptin-HER2 interface (see Babor <em>et al</em>., above).
 
 @section kic_code_usage Calling the KIC protocols directly
-Expert users may wish to call the KIC protocols from directly within their own protocols or applications. Code for setting up and using LoopMover_KIC is in <code>src/protocols/loops/LoopRelaxMover.cc</code>. The key lines are reproduced here.
+Expert users may wish to call the KIC protocols from directly within their own protocols or applications. Code for setting up and using LoopMover_KIC is in <code>src/protocols/comparative_modeling/LoopRelaxMover.cc</code>. The key lines are reproduced here.
 
 @li To read in the loop defintions:
 @verbatim

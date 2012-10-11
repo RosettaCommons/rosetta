@@ -1,0 +1,19 @@
+-loops:loop_file input/4fxn.loop
+-loops:remodel perturb_kic
+-loops:refine refine_kic
+-loops:max_kic_build_attempts 25
+-loops:taboo_sampling
+-loops:ramp_fa_rep
+-loops:ramp_rama
+#-loops:kic_rama2b ## commented out as this needs lots of memory, working on a way to make this integration-testable
+-in:file:fullatom
+-in:file:native input/4fxn.start.pdb
+-in:file:s input/4fxn.start.pdb
+-out:file:fullatom
+-out:overwrite
+-out:path ./
+#-ex1 -ex2 ## use for production runs, not required for testing
+-out:nstruct 1
+-mute core.util.prof ## don't show timing info
+-mute core.io.database ## don't show database info
+-run:test_cycles ## to make integration test fast

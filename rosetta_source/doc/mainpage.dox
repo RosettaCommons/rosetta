@@ -76,6 +76,7 @@ put links to commonly referred to documentation pages here.
 	- @ref erraser "Documentation for remodeling RNA crystallographic models with electron density constraint"
 	- @ref extract_atomtree_diffs "Documentation for the extract_atomtree_diffs application (use with ligand_dock)"
 	- @ref kinematic_loopmodel "Documentation for kinematic loop modeling"
+	- @ref next_generation_KIC "Documentation for next-generation KIC"
 	- @ref loopmodeling "Documentation for CCD / fragment loop modeling"
 	- @ref boinc_minirosetta_usage "Boinc minirosetta application usage and overview"
 	- @ref docking_protocol "Documentation for the docking application"

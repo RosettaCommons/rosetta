@@ -13,6 +13,7 @@
 /// @author Daniel J. Mandell
 /// @author Mike Tyka
 /// @author James Thompson
+/// @author Amelie Stein, amelie.stein@ucsf.edu, Oct 2012 -- next-generation KIC
 
 
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
@@ -263,7 +264,16 @@ void LoopMover_Refine_KIC::apply(
 	loop_mover::loops_set_chainbreak_weight( min_scorefxn, 1 );
 	//scorefxn->set_weight(core::scoring::mm_bend, 1.0);
 
-
+	// AS: add rama2b weight in case we're sampling with rama2b
+	if ( option[ OptionKeys::loops::kic_rama2b ]() ) {
+		min_scorefxn->set_weight( rama2b, min_scorefxn->get_weight( rama ) );
+		min_scorefxn->set_weight( rama, 0);
+		
+		local_scorefxn->set_weight( rama2b, local_scorefxn->get_weight( rama ) );
+		local_scorefxn->set_weight( rama, 0);
+	}
+	
+	
 	// monte carlo
 	float const init_temp( option[ OptionKeys::loops::refine_init_temp ]() );
 	float const	final_temp( option[ OptionKeys::loops::refine_final_temp ]() );
@@ -323,25 +333,73 @@ void LoopMover_Refine_KIC::apply(
 	//protocols::loops::kinematic_closure::KinematicMover myKinematicMover( init_temp );
 	loop_closure::kinematic_closure::KinematicMover myKinematicMover;
 
-	// AS Oct 3, 2012: create appropriate perturber here (more perturbers to come soon)
+	// AS Oct 3, 2012: create appropriate perturber here, depending on input flags
+	// note that there currently is no taboo sampling in refinement, only in the perturb stage
 	if (option[ OptionKeys::loops::vicinity_sampling ]()) {
 		loop_closure::kinematic_closure::VicinitySamplingKinematicPerturberOP perturber =
 		new loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber( &myKinematicMover );
 		perturber->set_vary_ca_bond_angles(  ! option[OptionKeys::loops::fix_ca_bond_angles ]()  );
 		myKinematicMover.set_perturber( perturber );
 		perturber->set_degree_vicinity( option[ OptionKeys::loops::vicinity_degree ]() );
-	} else {
+	} else if ( basic::options::option[ basic::options::OptionKeys::loops::restrict_kic_sampling_to_torsion_string ].user() || basic::options::option[ basic::options::OptionKeys::loops::derive_torsion_string_from_native_pose ]() ) { // torsion-restricted sampling
+		std::string torsion_bins = basic::options::option[ basic::options::OptionKeys::loops::restrict_kic_sampling_to_torsion_string ]();
+		
+		// derive torsion string from native/input pose, if requested -- warning: this overwrites the externally provided one
+		if ( basic::options::option[ basic::options::OptionKeys::loops::derive_torsion_string_from_native_pose ]() )
+			torsion_bins = torsion_features_string( native_pose ); 
+		//runtime_assert(torsion_bins.size() != loop_end - loop_begin + 1); // loop boundaries are not available here -- maybe the perturber should check the length?
+		
+		loop_closure::kinematic_closure::TorsionRestrictedKinematicPerturberOP perturber = new loop_closure::kinematic_closure::TorsionRestrictedKinematicPerturber ( &myKinematicMover, torsion_bins );
+		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() ); // to make the code cleaner this should really be a generic function, even though some classes may not use it
+		myKinematicMover.set_perturber( perturber );
+	} else if ( basic::options::option[ basic::options::OptionKeys::loops::kic_rama2b ]() ) { // neighbor-dependent phi/psi selection
+		loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturberOP 
+		perturber =
+        new loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturber( &myKinematicMover );
+		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
+		myKinematicMover.set_perturber( perturber );        
+	} else { // standard KIC
 		loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP perturber =
 		new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( &myKinematicMover );
 		perturber->set_vary_ca_bond_angles(  ! option[OptionKeys::loops::fix_ca_bond_angles ]()  );
 		myKinematicMover.set_perturber( perturber );
 	}
 
-	myKinematicMover.set_vary_bondangles( true );
+	myKinematicMover.set_vary_bondangles( true ); // why is this hard-coded?
 	myKinematicMover.set_sample_nonpivot_torsions( option[ OptionKeys::loops::nonpivot_torsion_sampling ]());
 	myKinematicMover.set_rama_check( true );
 	Size kic_start, kic_middle, kic_end; // three pivot residues for kinematic loop closure
 
+	
+	// AS: setting up weights for ramping rama[2b] and/or fa_rep
+	core::Real orig_local_fa_rep_weight = local_scorefxn->get_weight( fa_rep );
+	core::Real orig_min_fa_rep_weight = min_scorefxn->get_weight( fa_rep );
+	
+	core::Real orig_local_rama_weight = local_scorefxn->get_weight( rama );
+	core::Real orig_min_rama_weight = min_scorefxn->get_weight( rama );
+	
+	core::Real orig_local_rama2b_weight = local_scorefxn->get_weight( rama2b );
+	core::Real orig_min_rama2b_weight = min_scorefxn->get_weight( rama2b );
+	
+	if ( basic::options::option [ basic::options::OptionKeys::loops::ramp_fa_rep ]() ) { 
+		local_scorefxn->set_weight( fa_rep, orig_local_fa_rep_weight/(outer_cycles + 1) );
+		min_scorefxn->set_weight( fa_rep, orig_min_fa_rep_weight/(outer_cycles + 1) );
+	}
+	//AS: ramp rama -- currently only in refine mode
+	if ( basic::options::option [ basic::options::OptionKeys::loops::ramp_rama ]() ) { 
+		local_scorefxn->set_weight( rama, orig_local_rama_weight/(outer_cycles + 1) );
+		min_scorefxn->set_weight( rama, orig_min_rama_weight/(outer_cycles + 1) );
+		
+		// ramp rama2b instead if we're using that for sampling		
+		if (option[ OptionKeys::loops::kic_rama2b ]() ) {
+			//TR << "ramp repulsive: rama2b set to " << orig_local_rama2b_weight/(outer_cycles + 1) << std::endl;
+			local_scorefxn->set_weight( rama2b, orig_local_rama2b_weight/(outer_cycles + 1) );
+			min_scorefxn->set_weight( rama2b, orig_min_rama2b_weight/(outer_cycles + 1) );
+		}
+	}
+	
+
+	
 	// perform initial repack trial
 	utility::vector1<bool> allow_sc_move_all_loops( nres, false );
 	(*local_scorefxn)(pose); // update 10A nbr graph, silly way to do this
@@ -400,6 +458,30 @@ void LoopMover_Refine_KIC::apply(
 		loop_mover::loops_set_chainbreak_weight( scorefxn(), i );
 		loop_mover::loops_set_chainbreak_weight( min_scorefxn, i );
 		//scorefxn->set_weight( chainbreak, float(i) );
+				
+		// AS: try ramping the fa_rep over the outer cycles
+		if ( option [ OptionKeys::loops::ramp_fa_rep ]() ) { 
+			//TR << "ramp repulsive: fa_rep set to " << orig_local_fa_rep_weight/(outer_cycles - i + 1) << std::endl;
+			local_scorefxn->set_weight( fa_rep, orig_local_fa_rep_weight/(outer_cycles - i + 1) );
+			min_scorefxn->set_weight( fa_rep, orig_min_fa_rep_weight/(outer_cycles - i + 1) );
+		}
+		
+		if ( option [ OptionKeys::loops::ramp_rama ]() ) { 
+			//TR << "ramp repulsive: rama set to " << orig_local_rama_weight/(outer_cycles - i + 1) << std::endl;
+			local_scorefxn->set_weight( rama, orig_local_rama_weight/(outer_cycles - i + 1) );
+			min_scorefxn->set_weight( rama, orig_min_rama_weight/(outer_cycles - i + 1) );
+			
+			if (option[ OptionKeys::loops::kic_rama2b ]() ) {
+				//TR << "ramp repulsive: rama2b set to " << orig_local_rama2b_weight/(outer_cycles - i + 1) << std::endl;
+				local_scorefxn->set_weight( rama2b, orig_local_rama2b_weight/(outer_cycles - i + 1) );
+				min_scorefxn->set_weight( rama2b, orig_min_rama2b_weight/(outer_cycles - i + 1) );
+				
+			}
+		}
+		
+		
+
+		
 		mc.score_function( *local_scorefxn );
 		// recover low
 		if ( recover_low_ ) {
@@ -442,6 +524,9 @@ void LoopMover_Refine_KIC::apply(
 			rottrials_packer_task->restrict_to_residues( cur_allow_sc_move );
 
 			{// kinematic trial first round
+				
+				// AS: the current/previous implementation has a "history bias" towards the N-terminus of the loop, as the start pivot can be anywhere between begin_loop and end_loop-2, while the choice of the end pivot depends on the start pivot -- to be fixed soon 
+				
 				kic_start = RG.random_range(begin_loop,end_loop-2);
 				// choose a random end residue so the length is >= 3, <= min(loop_end, start+maxlen)
 				kic_end = RG.random_range(kic_start+2, std::min((kic_start+max_seglen_ - 1), end_loop));

@@ -10,7 +10,7 @@
 /// @file   protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh
 /// @brief  Header file for KinematicPerturbers used by the kineamtic mover
 /// @author Florian Richter, floric@u.washington.edu, march 2009
-/// @author Amelie Stein, amelie.stein@ucsf.edu, October 2012 -- refactoring vicinity sampling
+/// @author Amelie Stein, amelie.stein@ucsf.edu, October 2012 -- refactoring vicinity sampling & new perturbers
 
 #ifndef INCLUDED_protocols_loops_loop_closure_kinematic_closure_KinematicPerturber_hh
 #define INCLUDED_protocols_loops_loop_closure_kinematic_closure_KinematicPerturber_hh
@@ -22,6 +22,8 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/Ramachandran.fwd.hh>
+#include <core/scoring/Ramachandran2B.fwd.hh>
+#include <core/chemical/AA.hh>
 
 #include <core/kinematics/MoveMap.fwd.hh>
 
@@ -32,6 +34,7 @@
 
 // C++ Headers
 #include <string>
+#include <map>
 
 namespace protocols {
 	namespace loops {
@@ -259,7 +262,253 @@ namespace protocols {
 					utility::vector1< core::Real > sweep_step_sizes_;
 					mutable utility::LexicographicalIterator sweep_iterator_;
 					
+				}; // TorsionSweepingKinematicPerturber
+				
+				
+				
+				/// @author Amelie Stein
+				/// @brief neighbor-dependent torsion sampling kinematic perturber -- uses rama2b for phi/psi lookup
+				class NeighborDependentTorsionSamplingKinematicPerturber : public KinematicPerturber {
+					
+				public:
+					
+					typedef KinematicPerturber parent;
+					
+					NeighborDependentTorsionSamplingKinematicPerturber( KinematicMoverCAP kinmover_in );
+					
+					~NeighborDependentTorsionSamplingKinematicPerturber();
+					
+					std::string perturber_type() const {
+						return "NeighborDependentTorsionSamplingKinematicPerturber"; }
+					
+					void
+					perturb_chain(
+								  core::pose::Pose const & pose,
+								  utility::vector1< core::Real> & torsions,
+								  utility::vector1< core::Real> & bond_ang,
+								  utility::vector1< core::Real> & //bond_len
+								  ) ; 
+					
+					
+					void
+					set_pose_after_closure(
+										   core::pose::Pose & pose,
+										   utility::vector1< core::Real> const & torsions,
+										   utility::vector1< core::Real> const & bond_ang,
+										   utility::vector1< core::Real> const & bond_len,
+										   bool closure_successful
+										   ) const;
+					
+					void
+					set_vary_ca_bond_angles( bool vary_ca_bond_angles ) {
+						vary_ca_bond_angles_ = vary_ca_bond_angles; }
+					
+					
+				private:
+					
+					bool vary_ca_bond_angles_;
+					bool sample_omega_for_pre_prolines_;
+					
+					core::scoring::Ramachandran2B const & rama_;
+					
 				};
+				
+				
+				
+				
+				
+				
+				/// @brief torsion-restricted kinematic perturber (still samples randomly, but only within a given torsion bin)
+				/// @author Amelie Stein
+				class TorsionRestrictedKinematicPerturber : public KinematicPerturber {
+					
+				public:
+					
+					typedef KinematicPerturber parent;
+					
+					TorsionRestrictedKinematicPerturber( KinematicMoverCAP kinmover_in, std::string torsion_bins );
+					
+					~TorsionRestrictedKinematicPerturber();
+					
+					std::string perturber_type() const {
+						return "TorsionRestrictedKinematicPerturber"; }
+					
+					void
+					perturb_chain(
+								  core::pose::Pose const & pose,
+								  utility::vector1< core::Real> & torsions,
+								  utility::vector1< core::Real> & bond_ang,
+								  utility::vector1< core::Real> & //bond_len
+								  ) ; 
+					
+					
+					void
+					set_pose_after_closure(
+										   core::pose::Pose & pose,
+										   utility::vector1< core::Real> const & torsions,
+										   utility::vector1< core::Real> const & bond_ang,
+										   utility::vector1< core::Real> const & bond_len,
+										   bool closure_successful
+										   ) const;
+					
+					void
+					set_vary_ca_bond_angles( bool vary_ca_bond_angles ) {
+						vary_ca_bond_angles_ = vary_ca_bond_angles; }
+					
+					
+				private:
+					
+					bool vary_ca_bond_angles_;
+					bool sample_omega_for_pre_prolines_;
+					std::string predefined_torsions_;
+					
+					core::scoring::Ramachandran const & rama_;
+					
+				};
+				
+				
+				
+				
+				
+				/// @brief Taboo-sampling kinematic perturber (still samples randomly, but only within a specific torsion bin, and the Taboo sampler ensures that this torsion bin is varied in each iteration)
+				/// @author Amelie Stein
+				class TabooSamplingKinematicPerturber : public KinematicPerturber {
+					
+				public:
+					
+					typedef KinematicPerturber parent;
+					
+					// check if both c'tors are used -- if not, remove the unused one
+					TabooSamplingKinematicPerturber( KinematicMoverCAP kinmover_in );
+
+					~TabooSamplingKinematicPerturber();
+					
+					std::string perturber_type() const {
+						return "TabooSamplingKinematicPerturber"; }
+					
+					void
+					perturb_chain(
+								  core::pose::Pose const & pose,
+								  utility::vector1< core::Real> & torsions,
+								  utility::vector1< core::Real> & bond_ang,
+								  utility::vector1< core::Real> & //bond_len
+								  ) ;
+					
+					
+					void
+					set_pose_after_closure(
+										   core::pose::Pose & pose,
+										   utility::vector1< core::Real> const & torsions,
+										   utility::vector1< core::Real> const & bond_ang,
+										   utility::vector1< core::Real> const & bond_len,
+										   bool closure_successful
+										   ) const;
+					
+					void
+					set_vary_ca_bond_angles( bool vary_ca_bond_angles ) {
+						vary_ca_bond_angles_ = vary_ca_bond_angles; }
+					
+					
+					void clear_torsion_string_stack() {
+						random_torsion_strings_.clear(); 
+					}
+					
+				protected:
+					
+					void
+					refill_torsion_string_vector(); 
+					
+					std::string
+					next_torsion_string(); 
+					
+				private:
+					
+					bool vary_ca_bond_angles_;
+					bool sample_omega_for_pre_prolines_;
+					
+					// for Taboo Sampling 
+					core::Size num_strings_;
+					utility::vector1< std::string > random_torsion_strings_; // holds a list of random torsion bin strings to be sampled, to ensure diversity -- accessed (and filled, if necessary) by next_torsion_string( pose )
+					
+					core::scoring::Ramachandran const & rama_;
+					
+					
+					
+				};
+				
+				
+				
+				/// @brief Neighbor-dependent Taboo-sampling kinematic perturber (still samples randomly, but only within a given torsion bin; the Taboo sampler ensures that this torsion bin is varied in each iteration) that uses neighbor-dependent Ramachandran distributions (rama2b)
+				/// @author Amelie Stein
+				/// @date Mon May 21 11:39:26 PDT 2012
+				class NeighborDependentTabooSamplingKinematicPerturber : public KinematicPerturber {
+					
+				public:
+					
+					typedef KinematicPerturber parent;
+					
+					NeighborDependentTabooSamplingKinematicPerturber( KinematicMoverCAP kinmover_in );
+					
+					~NeighborDependentTabooSamplingKinematicPerturber();
+					
+					std::string perturber_type() const {
+						return "NeighborDependentTabooSamplingKinematicPerturber"; }
+					
+					void
+					perturb_chain(
+								  core::pose::Pose const & pose,
+								  utility::vector1< core::Real> & torsions,
+								  utility::vector1< core::Real> & bond_ang,
+								  utility::vector1< core::Real> & //bond_len
+								  ) ;
+					
+					
+					void
+					set_pose_after_closure(
+										   core::pose::Pose & pose,
+										   utility::vector1< core::Real> const & torsions,
+										   utility::vector1< core::Real> const & bond_ang,
+										   utility::vector1< core::Real> const & bond_len,
+										   bool closure_successful
+										   ) const;
+					
+					void
+					set_vary_ca_bond_angles( bool vary_ca_bond_angles ) {
+						vary_ca_bond_angles_ = vary_ca_bond_angles; }
+					
+					
+					void clear_torsion_string_stack() {
+						random_torsion_strings_.clear(); 
+					}
+					
+				protected:
+					
+					void
+					refill_torsion_string_vector(); 
+					
+					std::string
+					next_torsion_string(); 
+					
+				private:
+					
+					bool vary_ca_bond_angles_;
+					bool sample_omega_for_pre_prolines_;
+					
+					
+					core::Size num_strings_;
+					utility::vector1< std::string > random_torsion_strings_; // holds a list of random torsion bin strings to be sampled, to ensure diversity -- accessed (and filled, if necessary) by next_torsion_string( pose )
+					
+					core::scoring::Ramachandran2B const & rama_;
+					
+					
+					
+				}; // NeighborDependentTabooSamplingKinematicPerturber
+				
+				
+				
+				
+				
+				
 				
 			} // namespace kinematic_closure
 		} // namespace loop_closure

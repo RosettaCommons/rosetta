@@ -14,6 +14,7 @@
 /// @author Mike Tyka
 /// @author James Thompson
 /// @author Roland A. Pache
+/// @author Amelie Stein, amelie.stein@ucsf.edu, Oct 2012 -- next-generation KIC
 
 
 #include <protocols/loops/loop_mover/perturb/LoopMover_KIC.hh>
@@ -275,21 +276,61 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 
 	// perform the initial perturbation
 	// setup the kinematic mover
-	//protocols::loops::kinematic_closure::KinematicMover myKinematicMover( temperature );
+	
 	loop_closure::kinematic_closure::KinematicMover myKinematicMover;
-	loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP perturber =
+	
+	//tr() << "kinematic mover generated, now setting up perturber... " << std::endl;
+	
+	// AS: select from different perturbers implemented for NGK
+	// torsion-restricted sampling
+	if ( basic::options::option[ basic::options::OptionKeys::loops::restrict_kic_sampling_to_torsion_string ].user() || basic::options::option[ basic::options::OptionKeys::loops::derive_torsion_string_from_native_pose ]() ) {
+		std::string torsion_bins = basic::options::option[ basic::options::OptionKeys::loops::restrict_kic_sampling_to_torsion_string ]();
+		
+		// derive torsion string from native/input pose, if requested -- warning: this overwrites the externally provided one
+		if ( basic::options::option[ basic::options::OptionKeys::loops::derive_torsion_string_from_native_pose ]() )
+			torsion_bins = torsion_features_string( native_pose ); // does this work at this point in the code? The loop needs to be set up!
+		
+		// check if the user-provided string has the correct length
+		runtime_assert(torsion_bins.size() == loop_end - loop_begin + 1); // this is where torsion-restricted sampling with multiple loops currently fails -- however, proper access to the torsion bins in the perturber would also be implemented
+		
+		loop_closure::kinematic_closure::TorsionRestrictedKinematicPerturberOP perturber = new loop_closure::kinematic_closure::TorsionRestrictedKinematicPerturber ( &myKinematicMover, torsion_bins );
+		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() ); // to make the code cleaner this should really be a generic function, even though some classes may not use it
+		myKinematicMover.set_perturber( perturber );
+	} else if ( basic::options::option[ basic::options::OptionKeys::loops::kic_rama2b ]() && basic::options::option[ basic::options::OptionKeys::loops::taboo_sampling ]() ) {  // TabooSampling with rama2b (neighbor-dependent phi/psi lookup)
+		loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturberOP 
+		perturber =
+        new loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturber( &myKinematicMover );
+		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
+		myKinematicMover.set_perturber( perturber );
+	} else if ( basic::options::option[ basic::options::OptionKeys::loops::taboo_sampling ] ) { // TabooSampling (std rama)
+		loop_closure::kinematic_closure::TabooSamplingKinematicPerturberOP perturber = new loop_closure::kinematic_closure::TabooSamplingKinematicPerturber ( &myKinematicMover );
+		
+		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() ); 
+		myKinematicMover.set_perturber( perturber );
+	} else if ( basic::options::option[ basic::options::OptionKeys::loops::kic_rama2b ]() ) { // rama2b
+		loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturberOP 
+		perturber =
+        new loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturber( &myKinematicMover );
+		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
+		myKinematicMover.set_perturber( perturber );
+	} else { // default behavior [for now] -- std KIC
+		loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP 
+		perturber =
 		new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( &myKinematicMover );
-	perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
-	myKinematicMover.set_perturber( perturber );
-
+		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
+		myKinematicMover.set_perturber( perturber );
+	}
+	
+	//tr() << "perturber set!" << std::endl;
+	
 	myKinematicMover.set_vary_bondangles( true );
 	//myKinematicMover.set_vary_bondangles( false );  // trying without varying angles
-
-	myKinematicMover.set_sample_nonpivot_torsions(
-												  option[ OptionKeys::loops::nonpivot_torsion_sampling ]());
+	
+	myKinematicMover.set_sample_nonpivot_torsions( option[ OptionKeys::loops::nonpivot_torsion_sampling ]());
 	myKinematicMover.set_rama_check( true );
 	
 	myKinematicMover.set_loop_begin_and_end( loop_begin, loop_end ); // AS -- for restricted torsion bin sampling, the mover needs to know about the start of the defined loop, not just the segment that is sampled in a given move
+	
 	
 	// for Taboo Sampling we need to update the sequence here every time, in case it changes (e.g. when modeling multiple loops)
 	// this setup would also allow us to combine taboo sampling with other types of sampling, e.g. to increase diversity after several rounds of standard/random KIC sampling
@@ -298,21 +339,23 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	for (core::Size cur_res = loop_begin; cur_res <= loop_end; cur_res++) { 
 		loop_sequence.push_back(pose.aa(cur_res)); 
 	}
-	myKinematicMover.update_sequence( loop_sequence ); 
+	myKinematicMover.update_sequence( loop_sequence ); // should only have an effect on the TabooSamplingKinematicPerturber
 	
-
-
+	
+	
 	Size kic_start, kic_middle, kic_end; // three pivot residues for kinematic loop closure
 	kic_start = loop_begin;
 	kic_end = loop_end;
 	Size middle_offset = (kic_end - kic_start) / 2; // need to ensure this isn't a proline
 	kic_middle = kic_start + middle_offset;
 	tr() << "kinematic initial perturb with start_res: "  << kic_start << "  middle res: " << kic_middle << "  end_res: "
-	   << kic_end << std::endl;
+	<< kic_end << std::endl;
 	myKinematicMover.set_pivots(kic_start, kic_middle, kic_end);
 	myKinematicMover.set_temperature(temperature);
+	
+	std::string torsion_features = torsion_features_string( pose );
+	tr() << "loop rmsd before initial kinematic perturbation:" << loop_rmsd( pose, native_pose, one_loop_loops ) /* << " -- torsion bins: " << torsion_features */ << std::endl;
 
-	tr() << "loop rmsd before initial kinematic perturbation:" << loop_rmsd( pose, native_pose, one_loop_loops ) << std::endl;
 	if (loop.is_extended() ) {
 		myKinematicMover.set_idealize_loop_first( true ); // start without any native angles or lengths
 		core::Size nits=0;
@@ -401,11 +444,19 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 			core::Size nits=0;
 			while (nits < remodel_kic_attempts_) {
 				nits++;
-				kic_start = RG.random_range(loop_begin, loop_end-2);
-				// choose a random end residue so the length is >= 3, <= min(loop_end, start+maxlen)
-				kic_end = RG.random_range(kic_start+2, std::min((kic_start+max_seglen_ - 1), loop_end));
-				middle_offset = (kic_end - kic_start) / 2;
-				kic_middle = kic_start + middle_offset;
+				if (option[ OptionKeys::loops::always_remodel_full_loop ]()) { // warning: for long loops this could be extremely inefficient
+					kic_start = loop_begin;
+					kic_end = loop_end;
+					kic_middle = RG.random_range(kic_start+2, kic_end-2);
+				} else { // randomly selected sub-segments
+					// AS Oct 2012: there's a directional bias here, as the start pivot is always selected first -- to be fixed soon (changes in benchmark performance are minor though)
+					
+					kic_start = RG.random_range(loop_begin, loop_end-2);
+					// choose a random end residue so the length is >= 3, <= min(loop_end, start+maxlen)
+					kic_end = RG.random_range(kic_start+2, std::min((kic_start+max_seglen_ - 1), loop_end));
+					middle_offset = (kic_end - kic_start) / 2;
+					kic_middle = kic_start + middle_offset;
+				}
 				myKinematicMover.set_pivots(kic_start, kic_middle, kic_end);
 				myKinematicMover.set_temperature(temperature);
 				myKinematicMover.apply( pose );
