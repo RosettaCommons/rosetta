@@ -71,7 +71,7 @@ LOOP 88 95 92 0 1
 -loops:refine                   Selects the all-atom refinement stage protocol.
                                 Legal values: 'refine_kic','refine_ccd','no'. default = 'no'. For KIC and NGK, use 'refine_kic'. [String]
 -loops:taboo_sampling           Taboo Sampling: keep track of sampled torsion bins for each loop position and promote diversity among models by sampling non-torsion pivots from currently underrepresented bins. Perturb/remodel stage only.
--loops:kic_rama2b               Use neighbor-dependent Ramachandran distributions for phi/psi sampling of non-pivot torsions instead of the standard Ramachandran distributions. Perturb and refine stages.
+-loops:kic_rama2b               Use neighbor-dependent Ramachandran distributions for phi/psi sampling of non-pivot torsions instead of the standard Ramachandran distributions. Perturb and refine stages. Note that this increases the memory footprint to about 6G.
 -loops:ramp_fa_rep              Ramp the weight of fa_rep over outer loops in refinement. It is recommended to use 5 or more outer loops for smoother ramp effects. 
 -loops:ramp_rama                Ramp the weight of rama (or rama2b, if using -loops:kic_rama2b) over outer loops in refinement. It is recommended to use 5 or more outer loops for smoother ramp effects. 
 -loops:loop_file                Path/name of loop definition file. default = 'loop_file'. [File]
