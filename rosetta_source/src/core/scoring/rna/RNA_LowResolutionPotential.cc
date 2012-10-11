@@ -63,7 +63,7 @@ namespace core {
 namespace scoring {
 namespace rna{
 
-core::Real RNA_LowResolutionPotential::dummy_deriv;
+core::Real RNA_LowResolutionPotential::dummy_deriv = 0.0;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
