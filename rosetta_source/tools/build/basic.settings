@@ -696,7 +696,7 @@ settings = {
                 "shlink":     [ "framework OpenCL" ],
             }
         },
-        "removed" : {
+        "removes" : {
             "include_path"  : [ "/usr/local/cuda/include", ],
             "libraries"     : [ "OpenCL" ],
             "library_path"  : [ "/usr/local/cuda/lib64", "/usr/local/cuda/lib", ],
