@@ -8,8 +8,8 @@
 -loops:frag_sizes 9 3 1
 -loops:frag_files  inputs/aaFR02_09_05.200_v1_3 inputs/aaFR02_03_05.200_v1_3 none
 -loops:fast
--loops:outer_cycles 3
--loops:max_inner_cycles 3
+-loops:outer_cycles 2
+-loops:max_inner_cycles 2
 -antibody:remodel              quick_ccd
 -antibody:snugfit              true
 -antibody:refine               refine_ccd
@@ -20,3 +20,4 @@
 -antibody:h3_filter_tolerance  20
 -docking:dock_mcm_first_cycles 1
 -docking:dock_mcm_second_cycles 8
+-loops::grow_attempts 0
