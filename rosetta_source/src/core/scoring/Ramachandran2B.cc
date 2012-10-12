@@ -479,9 +479,12 @@ Ramachandran2B::read_rama()
 		} else if( aa_num_left != nullaa ) {
 			ram_energ_left_( phiIndex, psiIndex, aa_num, aa_num_left ) = tEnergy;
 			ram_entropy_left_( aa_num, aa_num_left ) += entropy;
+			left_ram_probabil_( phiIndex, psiIndex, aa_num_left, aa_num ) = tProb; 
 		} else if( aa_num_right != nullaa ) {
 			ram_energ_right_( phiIndex, psiIndex, aa_num, aa_num_right ) = tEnergy;
 			ram_entropy_right_( aa_num, aa_num_right ) += entropy;
+			right_ram_probabil_( phiIndex, psiIndex, aa_num, aa_num_right ) = tProb; 
+
 		}
 	}
 
@@ -604,7 +607,7 @@ Ramachandran2B::read_rama()
                     }
                 }
                 current_rama_sampling_table[left_aa][aa].resize(index);
-                //std::cerr << "populating (left) table for torsion bin " << torsion_bin << " and " << AA(left_aa) << " " << AA(aa) << " -- " << index << " entries" << std::endl;
+				//std::cerr << "populating (left) table for torsion bin " << torsion_bin << " and " << AA(left_aa) << " " << AA(aa) << " -- " << index << " entries" << std::endl; // AS debug
 				
             } // loop over aa
         } // loop over left_aa
