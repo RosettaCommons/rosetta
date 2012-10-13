@@ -46,6 +46,7 @@
 #include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <basic/Tracer.hh>
 #include <protocols/toolbox/SelectResiduesByLayer.hh>
+#include <core/pose/symmetry/util.hh>
 
 // Utility Headers
 #include <utility/string_util.hh>
@@ -171,6 +172,13 @@ LayerDesignOperation::set_default_layer_residues() {
 							("Helix", 					"DEHKNQRST") 
 							("HelixStart",			"DEHKNQRSTP") 
 							("HelixCapping", 		"DNST") 
+					)
+					("interface", boost::assign::map_list_of
+							("Loop", 						"DEGHKNPQRST") 
+							("Strand",	 				"DEHKNQRST") 
+							("Helix", 					"DEHKNQRST") 
+							("HelixStart",			"DEHKNQRSTP") 
+							("HelixCapping", 		"DNST") 
 					);
 	
 	boost::assign::insert(design_layer_)
@@ -192,11 +200,19 @@ LayerDesignOperation::get_restrictions( std::string const & layer, std::string c
 
 /// @brief apply
 void
-LayerDesignOperation::apply( Pose const & pose, PackerTask & task ) const
+LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 {
 	using core::pack::task::PackerTask_;
 	typedef std::map< std::string, utility::vector1<bool> > LayerSpecification;
 
+	Pose pose;
+	// symmetry check
+	if(core::pose::symmetry::is_symmetric( input_pose ) ) {
+		TR << "Symmetry detected, extracting asymmetric unit." << std::endl;
+		core::pose::symmetry::extract_asymmetric_unit( input_pose, pose, false );
+	 } else {
+		pose = input_pose;
+  }
 	// calc SelectResiduesByLayer
 	srbl_->compute( pose, "" );
 
