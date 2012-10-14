@@ -149,7 +149,7 @@ public:
 	}
 
 	/// @brief Prints fragment data, the output can be directly loaded to minirosetta
-	void print_fragment(std::ostream& out);
+	void print_fragment(std::ostream& out, scores::FragmentScoreMapOP sc = NULL, scores::FragmentScoreManagerOP ms = NULL);
 
 	/// @brief Prints fragment sequence, used for generating structure based sequence profiles
 	void print_fragment_seq(std::ostream& out);

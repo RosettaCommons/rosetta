@@ -31,7 +31,6 @@
 #include <utility/file/FileName.hh>
 
 namespace protocols {
-//namespace comparative_modeling {
 namespace hybridization {
 
 class HybridizeProtocol : public protocols::moves::Mover {
@@ -41,7 +40,7 @@ public:
 	//HybridizeProtocol(std::string template_list_file);
 
 	void init();
-		
+
 	void read_template_structures(utility::file::FileName template_list);
 	void read_template_structures(utility::vector1 < utility::file::FileName > const & template_filenames);
 	void add_template(
@@ -53,8 +52,6 @@ public:
 		core::Size cluster_id = 1,
 		utility::vector1<core::Size> cst_reses = utility::vector1<core::Size>(0) );
 
-	core::Real get_gdtmm( core::pose::Pose & pose );
-
 	void pick_starting_template(core::Size & initial_template_index,
 		core::Size & initial_template_index_icluster,
 		utility::vector1 < core::Size > & template_index_icluster,
@@ -65,10 +62,10 @@ public:
 
 	utility::vector1 <Loops>
 	expand_domains_to_full_length(utility::vector1 < utility::vector1 < Loops > > all_domains, Size ref_domains_index, Size n_residues);
-	
+
 	void
-	align_by_domain(utility::vector1<core::pose::PoseOP> & poses, utility::vector1 < Loops > domains, core::Size const ref_index);
-	
+	align_by_domain(utility::vector1<core::pose::PoseOP> & poses, utility::vector1 < Loops > domains, core::pose::PoseOP & ref_pose);
+
 	void
 	align_by_domain(core::pose::Pose & pose, core::pose::Pose const & ref_pose, utility::vector1 <Loops> domains);
 
@@ -88,7 +85,7 @@ public:
 
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
-	
+
 	virtual void
 	parse_my_tag( TagPtr const, DataMap &, Filters_map const &, Movers_map const &, Pose const & );
 
@@ -96,10 +93,16 @@ private:
 	// parsible options
 	utility::vector1 < core::Size > starting_templates_;
 	core::Real stage1_probability_, stage1_increase_cycles_, stage2_increase_cycles_;
-	core::Real frag_insertion_weight_; // fragment insertion weight, vs. chunk insertion
+	core::Size stage1_1_cycles_, stage1_2_cycles_, stage1_3_cycles_, stage1_4_cycles_;
+	// 1mer fragment insertion weight where fragments are not allowed (across anchors) , vs. chunk insertion + big and small frags
+	core::Real frag_1mer_insertion_weight_;
+	// small fragment insertion weight where big fragments are not allowed (across anchors) , vs. chunk insertion + big frags
+	core::Real small_gap_frag_insertion_weight_;
+	core::Real big_frag_insertion_weight_; // fragment insertion weight, vs. chunk insertion + small gap frags
 	core::Real frag_weight_aligned_; // fragment insertion to the aligned region, vs. unaligned region
+	bool auto_frag_insertion_weight_; // automatically set fragment insertion weights
 	core::Size max_registry_shift_;
-	bool domain_assembly_, add_hetatm_, realign_domains_, add_non_init_chunks_, no_global_frame_, linmin_only_;
+	bool domain_assembly_, add_hetatm_, realign_domains_, realign_domains_stage2_, add_non_init_chunks_, no_global_frame_, linmin_only_;
 	core::Real hetatm_cst_weight_;
 	core::scoring::ScoreFunctionOP stage1_scorefxn_, stage2_scorefxn_, fa_scorefxn_;
 	std::string fa_cst_fn_;
@@ -113,9 +116,9 @@ private:
 	// relax
 	core::Size batch_relax_, relax_repeats_;
 
-	utility::vector1 <std::string> fragfiles_;
-    core::fragment::FragSetOP fragments9_;
-	core::fragment::FragSetOP fragments3_; // abinitio frag9,frag3 flags
+	// abinitio frag9,frag3 flags
+	utility::vector1 <core::fragment::FragSetOP> fragments_big_;  // 9mers/fragA equivalent in AbrelaxApplication
+	utility::vector1 <core::fragment::FragSetOP> fragments_small_; // 3mers/fragB equivalent in AbrelaxApplication
 
 	// native pose, aln
 	core::pose::PoseOP native_;
@@ -134,10 +137,19 @@ private:
 	utility::vector1 < utility::vector1<core::Size> > template_cst_reses_;
 	core::Real template_weights_sum_;
 	std::map< Size, utility::vector1 < Size > > clusterID_map_;
+
+	utility::vector1< protocols::loops::Loops > domains_;
+
+	// strand pairings
+	std::string pairings_file_;
+	utility::vector1<core::Size> sheets_;
+	utility::vector1<core::Size> random_sheets_;
+	bool filter_templates_;
+	utility::vector1< std::pair< core::Size, core::Size > > strand_pairs_;
+
 };
 
-} // hybridize 
-//} // comparative_modeling 
+} // hybridization
 } // protocols
 
 #endif

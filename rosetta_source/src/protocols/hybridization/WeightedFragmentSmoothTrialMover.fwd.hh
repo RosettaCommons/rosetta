@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file FoldTreeHybridize.fwd.hh
+/// @file WeightedFragmentSmoothTrialMover.fwd.hh
 /// @brief
-/// @author Yifan Song
+/// @author David Kim, Yifan Song
 
-#ifndef INCLUDED_protocols_hybridization_FoldTreeHybridize_fwd_hh
-#define INCLUDED_protocols_hybridization_FoldTreeHybridize_fwd_hh
+#ifndef INCLUDED_protocols_hybridization_WeightedFragmentSmoothTrialMover_fwd_hh
+#define INCLUDED_protocols_hybridization_WeightedFragmentSmoothTrialMover_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -21,10 +21,9 @@
 namespace protocols {
 namespace hybridization {
 
-class FoldTreeHybridize;
-typedef utility::pointer::owning_ptr< FoldTreeHybridize > FoldTreeHybridizeOP;
-typedef utility::pointer::owning_ptr< FoldTreeHybridize const > FoldTreeHybridizeCOP;
-
+class WeightedFragmentSmoothTrialMover;
+typedef utility::pointer::owning_ptr< WeightedFragmentSmoothTrialMover > WeightedFragmentSmoothTrialMoverOP;
+typedef utility::pointer::owning_ptr< WeightedFragmentSmoothTrialMover const > WeightedFragmentSmoothTrialMoverCOP;
 
 } // hybridization
 } // protocols

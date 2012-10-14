@@ -51,6 +51,7 @@ namespace jumps { extern BooleanOptionKey const dump_frags; }
 namespace jumps { extern IntegerOptionKey const njumps; }
 namespace jumps { extern IntegerOptionKey const max_strand_gap_allowed; }
 namespace jumps { extern RealOptionKey const contact_score; }
+namespace jumps { extern BooleanOptionKey const filter_templates; }
 
 } // namespace OptionKeys
 } // namespace options

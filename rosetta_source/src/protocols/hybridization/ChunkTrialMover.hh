@@ -42,19 +42,20 @@
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
+#include <set>
+
 namespace protocols {
-//namespace comparative_modeling {
 namespace hybridization {
 
 using namespace core;
 using namespace protocols::moves;
 using namespace protocols::loops;
-	
+
 enum AlignOption { all_chunks, random_chunk };
-	
+
 class ChunkTrialMover: public protocols::moves::Mover
 {
-	
+
 public:
 	ChunkTrialMover(
 		utility::vector1 < core::pose::PoseCOP > const & template_poses,
@@ -63,12 +64,12 @@ public:
 		bool random_template = true,
 		AlignOption align_option = all_chunks,
 		Size max_registry_shift = 0);
-	
+
 	void
 	get_alignment_from_template(
 			core::pose::PoseCOP  template_pose,
 			std::map <core::Size, core::Size> & seqpos_alignment );
-	
+
 	void
 	get_alignment_from_chunk_mapping(std::map <core::Size, core::Size> const & chunk_mapping,
 									 Loops const template_ss_chunks,
@@ -82,24 +83,37 @@ public:
 	Size trial_counter(Size ires);
 	void apply(core::pose::Pose & pose);
 	std::string get_name() const;
-		
+
+	// strand pairings
+	void set_strand_pairings_template_indices(
+			std::set< core::Size> strand_pairings_template_indices_in, // to not ignore
+			std::set< core::Size> floating_strand_pairings_template_indices_in // to ignore
+	) {
+		strand_pairings_template_indices_ = strand_pairings_template_indices_in;
+		floating_strand_pairings_template_indices_ = floating_strand_pairings_template_indices_in;
+	}
+
 private:
 	InsertChunkMover align_chunk_;
 	AlignOption align_option_;
 	bool random_template_;
-    
+
 	utility::vector1 < core::pose::PoseCOP > template_poses_;
 	utility::vector1 < Loops > template_chunks_;
 	utility::vector1 < std::map <core::Size, core::Size> > sequence_alignments_;
 	Size max_registry_shift_input_;
 	utility::vector1 < Size > max_registry_shift_;
-	
+
 	Size template_number_; // the jump to be realigned
 	Size jump_number_; // the jump to be realigned
+
+	// strand pairings
+	std::set< core::Size > strand_pairings_template_indices_;
+	std::set< core::Size > floating_strand_pairings_template_indices_;
+
 }; //class ChunkTrialMover
-	
-} // hybridize 
-//} // comparative_modeling 
+
+} // hybridization
 } // protocols
 
 #endif

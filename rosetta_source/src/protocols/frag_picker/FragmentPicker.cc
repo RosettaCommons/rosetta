@@ -1972,7 +1972,7 @@ void FragmentPicker::output_fragments( Size const fragment_size, utility::vector
 			if (option[frags::write_sequence_only]()) {
 				final_fragments[qPos][fi].first->print_fragment_seq(output_file);
 			} else {
-				final_fragments[qPos][fi].first->print_fragment(output_file);
+				final_fragments[qPos][fi].first->print_fragment(output_file, final_fragments[qPos][fi].second, ms);
 			}
 			output_file << std::endl;
 		}

@@ -126,6 +126,7 @@ void ConstantLengthFragSet::read_fragment_stream( utility::io::izstream & data, 
 	using std::istringstream;
 	using std::string;
 
+	Real score = 0.0;
 	string line;
 
 	Size insertion_pos = 1;
@@ -155,7 +156,17 @@ void ConstantLengthFragSet::read_fragment_stream( utility::io::izstream & data, 
 		}
 
 		// skip lines beginning with # characters, representing comments
+		// save score if it exists
 		if ( line.substr(0,1) == "#" ) {
+			istringstream in( line );
+			string tag;
+			in >> tag;
+			if (!in.eof()) {
+				in >> tag;
+				if (tag == "score" && !in.eof()) {
+					in >> score;
+				}
+			}
 			continue;
 		}
 
@@ -218,7 +229,8 @@ void ConstantLengthFragSet::read_fragment_stream( utility::io::izstream & data, 
 				current_fragment = new FragData;
 			}
 		}
- 		current_fragment->add_residue(res);
+		current_fragment->add_residue(res);
+		current_fragment->set_score(score);
 	} // while ( getline( data, line ) )
 
 	if ( frame && frame->is_valid() ) {

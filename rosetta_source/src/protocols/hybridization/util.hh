@@ -31,16 +31,26 @@
 
 #include <list>
 
+#include <protocols/loops/Loops.hh>
+#include <protocols/loops/Loop.hh>
+#include <core/sequence/SequenceAlignment.hh>
+
+#include <set>
+
 namespace protocols {
 //namespace comparative_modeling {
 namespace hybridization {
-			
+
+core::Size
+get_num_residues_nonvirt( core::pose::Pose const & pose );
+
 // constraint loading and generation
-void setup_centroid_constraints( 
+void setup_centroid_constraints(
 	core::pose::Pose &pose,
 	utility::vector1 < core::pose::PoseCOP > templates,
 	utility::vector1 < core::Real > template_weights,
-	std::string cen_cst_file );
+	std::string cen_cst_file,
+	std::set< core::Size > ignore_res_for_AUTO = std::set<core::Size>());
 
 void setup_fullatom_constraints(
 	core::pose::Pose &pose,
@@ -49,15 +59,18 @@ void setup_fullatom_constraints(
 	std::string cen_cst_file,
 	std::string fa_cst_file  );
 
-void generate_centroid_constraints( 
+void generate_centroid_constraints(
 	core::pose::Pose &pose,
 	utility::vector1 < core::pose::PoseCOP > templates,
-	utility::vector1 < core::Real > template_weights );
+	utility::vector1 < core::Real > template_weights,
+	std::set< core::Size > ignore_res = std::set<core::Size>());
 
 void generate_fullatom_constraints(
 	core::pose::Pose &pose,
 	utility::vector1 < core::pose::PoseCOP > templates,
 	utility::vector1 < core::Real > template_weights );
+
+void add_strand_pairs_cst(core::pose::Pose & pose, utility::vector1< std::pair< core::Size, core::Size > > const strand_pairs);
 
 void add_non_protein_cst(core::pose::Pose & pose, core::Real const cst_weight);
 
@@ -66,7 +79,7 @@ bool discontinued_upper(core::pose::Pose const & pose, core::Size const seqpos);
 bool discontinued_lower(core::pose::Pose const & pose, core::Size const seqpos);
 
 std::list < core::Size > downstream_residues_from_jump(core::pose::Pose const & pose, core::Size const jump_number);
-	
+
 // atom_map: from mod_pose to ref_pose
 void
 get_superposition_transformation(
@@ -132,8 +145,13 @@ apply_transformation(
 core::fragment::FragSetOP
 create_fragment_set( core::pose::Pose const & pose, core::Size len, core::Size nfrag );
 
-} // hybridize 
-//} // comparative_modeling 
+protocols::loops::Loops
+renumber_with_pdb_info( protocols::loops::Loops & template_chunk, core::pose::PoseCOP template_pose );
+
+core::Real get_gdtmm( core::pose::Pose & native, core::pose::Pose & pose, core::sequence::SequenceAlignmentOP & aln );
+
+} // hybridize
+//} // comparative_modeling
 } // protocols
 
 #endif

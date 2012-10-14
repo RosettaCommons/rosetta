@@ -498,6 +498,7 @@ namespace frags { FileOptionKey const depth( "frags:depth" );  }
 namespace frags { FileOptionKey const denied_pdb( "frags:denied_pdb" );  }
 namespace frags { IntegerVectorOptionKey const frag_sizes( "frags:frag_sizes" );  }
 namespace frags { BooleanOptionKey const write_ca_coordinates( "frags:write_ca_coordinates" );  }
+namespace frags { BooleanOptionKey const write_scores( "frags:write_scores" );  }
 namespace frags { BooleanOptionKey const annotate( "frags:annotate" );  }
 namespace frags { IntegerOptionKey const nr_large_copies( "frags:nr_large_copies" );  }
 namespace frags { IntegerOptionKey const n_candidates( "frags:n_candidates" );  }
@@ -640,3 +641,5 @@ namespace fold_cst { IntegerOptionKey const reramp_iterations( "fold_cst:reramp_
 namespace fold_cst { BooleanOptionKey const skip_on_noviolation_in_stage1( "fold_cst:skip_on_noviolation_in_stage1" );  }
 namespace fold_cst { RealOptionKey const stage1_ramp_cst_cycle_factor( "fold_cst:stage1_ramp_cst_cycle_factor" );  }
 namespace fold_cst { RealOptionKey const stage2_constraint_threshold( "fold_cst:stage2_constraint_threshold" );  }
+namespace fold_cst { BooleanOptionKey const ignore_sequence_seperation( "fold_cst:ignore_sequence_seperation" );  }
+namespace fold_cst { BooleanOptionKey const no_recover_low_at_constraint_switch( "fold_cst:no_recover_low_at_constraint_switch" );  }

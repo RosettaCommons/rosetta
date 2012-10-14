@@ -58,6 +58,12 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
+// evaluation
+#include <core/scoring/rms_util.hh>
+#include <core/sequence/Sequence.hh>
+#include <core/sequence/util.hh>
+#include <protocols/comparative_modeling/coord_util.hh>
+
 #include <list>
 
 namespace protocols {
@@ -68,14 +74,30 @@ using namespace core;
 using namespace kinematics;
 using namespace core::scoring::constraints;
 
+core::Size
+get_num_residues_nonvirt( core::pose::Pose const & pose ) {
+	core::Size nres_tgt = pose.total_residue();
+	core::conformation::symmetry::SymmetryInfoCOP symm_info;
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		core::conformation::symmetry::SymmetricConformation const & SymmConf (
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
+		symm_info = SymmConf.Symmetry_Info();
+		nres_tgt = symm_info->num_independent_residues();
+	}
+	if (pose.residue(nres_tgt).aa() == core::chemical::aa_vrt) nres_tgt--;
+	while (!pose.residue(nres_tgt).is_protein()) nres_tgt--;
+	return nres_tgt;
+}
+
 void setup_centroid_constraints(
 		core::pose::Pose &pose,
 		utility::vector1 < core::pose::PoseCOP > templates,
 		utility::vector1 < core::Real > template_weights,
-		std::string cen_cst_file ) {
+		std::string cen_cst_file,
+		std::set< core::Size > ignore_res_for_AUTO) {
 	if (cen_cst_file == "AUTO") {
 		// automatic constraints
-		generate_centroid_constraints( pose, templates, template_weights );
+		generate_centroid_constraints( pose, templates, template_weights, ignore_res_for_AUTO );
 	} else if (!cen_cst_file.empty() && cen_cst_file != "NONE") {
 		ConstraintSetOP constraint_set = ConstraintIO::get_instance()->read_constraints_new( cen_cst_file, new ConstraintSet, pose );
 		pose.constraint_set( constraint_set );  //reset constraints
@@ -111,7 +133,8 @@ void setup_fullatom_constraints(
 void generate_centroid_constraints(
 		core::pose::Pose &pose,
 		utility::vector1 < core::pose::PoseCOP > templates,
-		utility::vector1 < core::Real > template_weights )
+		utility::vector1 < core::Real > template_weights,
+		std::set< core::Size > ignore_res )
 {
 
 	core::Size MINSEQSEP = 8;
@@ -122,17 +145,8 @@ void generate_centroid_constraints(
 	pose.remove_constraints();
 
 	// number of residues
-	core::Size nres_tgt = pose.total_residue();
-	core::conformation::symmetry::SymmetryInfoCOP symm_info;
-	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation & SymmConf (
-			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
-		symm_info = SymmConf.Symmetry_Info();
-		nres_tgt = symm_info->num_independent_residues();
-	}
-	if (pose.residue(nres_tgt).aa() == core::chemical::aa_vrt) nres_tgt--;
+	core::Size nres_tgt = get_num_residues_nonvirt( pose );
 
-	//
 	utility::vector1< utility::vector1< core::Real > > tgt_dists(nres_tgt);
 	utility::vector1< utility::vector1< core::Real > > tgt_weights(nres_tgt);
 	for (int i=1; i<=(int)templates.size(); ++i) {
@@ -154,6 +168,8 @@ void generate_centroid_constraints(
 				if (!templates[i]->residue_type(k).is_protein()) continue;
 				if (!passed_gapcheck[k]) continue;
 				if (templates[i]->pdb_info()->number(k) - templates[i]->pdb_info()->number(j) < (int)MINSEQSEP) continue;
+				if (	ignore_res.count(templates[i]->pdb_info()->number(j)) ||
+							ignore_res.count(templates[i]->pdb_info()->number(k)) ) continue;
 				core::Real dist = templates[i]->residue(j).xyz(2).distance( templates[i]->residue(k).xyz(2) );
 				if ( dist <= MAXDIST ) {
 					pose.add_constraint(
@@ -177,26 +193,43 @@ void generate_fullatom_constraints(
 	generate_centroid_constraints( pose, templates, template_weights);
 }
 
+void add_strand_pairs_cst(core::pose::Pose & pose, utility::vector1< std::pair< core::Size, core::Size > > const strand_pairs) {
+	core::Real MAXDIST = 12.0;
+	core::Real COORDDEV = 1.0;
+	for (core::Size i=1; i<=strand_pairs.size(); ++i) {
+		std::pair< core::Size, core::Size > strand_pair = strand_pairs[i];
+		core::Real dist = pose.residue(strand_pair.first).xyz(2).distance( pose.residue(strand_pair.second).xyz(2) );
+		if ( dist <= MAXDIST ) {
+			pose.add_constraint(
+				new AtomPairConstraint(	core::id::AtomID(2,strand_pair.first),
+																core::id::AtomID(2,strand_pair.second),
+					new ScalarWeightedFunc( 4.0, new SOGFunc( dist, COORDDEV )  ) // try to lock it down with a high weight
+				)
+			);
+		}
+	}
+}
+
 void add_non_protein_cst(core::pose::Pose & pose, core::Real const cst_weight) {
 	core::Size n_prot_res = pose.total_residue();
 	while (!pose.residue(n_prot_res).is_protein()) n_prot_res--;
 	core::Size n_nonvirt = pose.total_residue();
 	while (!pose.residue(n_prot_res).is_protein()) n_nonvirt--;
-	
+
 	core::Real MAXDIST = 15.0;
 	core::Real COORDDEV = 3.0;
 	// constraint between protein and substrate
 	for (Size ires=1; ires<=n_prot_res; ++ires) {
 		if ( ! pose.residue_type(ires).has("CA") ) continue;
 		core::Size iatom = pose.residue_type(ires).atom_index("CA");
-		
+
 		for (Size jres=n_prot_res+1; jres<=n_nonvirt; ++jres) {
 			for (Size jatom=1; jatom<=pose.residue(jres).nheavyatoms(); ++jatom) {
 				core::Real dist = pose.residue(ires).xyz(iatom).distance( pose.residue(jres).xyz(jatom) );
 				if ( dist <= MAXDIST ) {
 					pose.add_constraint(
 										new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires),
-																						   core::id::AtomID(jatom,jres), 
+																						   core::id::AtomID(jatom,jres),
 																						   new core::scoring::constraints::ScalarWeightedFunc( cst_weight, new core::scoring::constraints::SOGFunc( dist, COORDDEV )  )
 																						   )
 										);
@@ -204,11 +237,11 @@ void add_non_protein_cst(core::pose::Pose & pose, core::Real const cst_weight) {
 			}
 		}
 	}
-	
+
 	// constraint within substrate
 	for (Size ires=n_prot_res+1; ires<=n_nonvirt; ++ires) {
 		for (Size iatom=1; iatom<=pose.residue(ires).nheavyatoms(); ++iatom) {
-			
+
 			for (Size jres=ires; jres<=n_nonvirt; ++jres) {
 				for (Size jatom=1; jatom<=pose.residue(jres).nheavyatoms(); ++jatom) {
 					if ( ires == jres && iatom >= jatom) continue;
@@ -216,7 +249,7 @@ void add_non_protein_cst(core::pose::Pose & pose, core::Real const cst_weight) {
 					if ( dist <= MAXDIST ) {
 						pose.add_constraint(
 											new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires),
-																							   core::id::AtomID(jatom,jres), 
+																							   core::id::AtomID(jatom,jres),
 																							   new core::scoring::constraints::ScalarWeightedFunc( cst_weight, new core::scoring::constraints::SOGFunc( dist, COORDDEV )  )
 																							   )
 											);
@@ -508,20 +541,10 @@ core::fragment::FragSetOP
 create_fragment_set( core::pose::Pose const & pose, core::Size len, core::Size nfrag ) {
 	core::fragment::FragSetOP fragset = new core::fragment::ConstantLengthFragSet( len );
 	core::scoring::dssp::Dssp dssp( pose );
-	
 
 	// number of residues
-	core::Size nres_tgt = pose.total_residue();
-	core::conformation::symmetry::SymmetryInfoCOP symm_info;
-	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation const & SymmConf (
-			dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
-		symm_info = SymmConf.Symmetry_Info();
-		nres_tgt = symm_info->num_independent_residues();
-	}
-	if (pose.residue(nres_tgt).aa() == core::chemical::aa_vrt) nres_tgt--;
-	while (!pose.residue(nres_tgt).is_protein()) nres_tgt--;
-	
+	core::Size nres_tgt = get_num_residues_nonvirt( pose );
+
 	// sequence
 	std::string tgt_seq = pose.sequence();
 	std::string tgt_ss = dssp.get_dssp_secstruct();
@@ -534,9 +557,9 @@ create_fragment_set( core::pose::Pose const & pose, core::Size len, core::Size n
 
 		if (!crosses_cut) {
 			core::fragment::FrameOP frame = new core::fragment::Frame( j, len );
-			frame->add_fragment( 
+			frame->add_fragment(
 				core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa(
-					tgt_ss.substr( j-1, len ), tgt_seq.substr( j-1, len ), nfrag, true, core::fragment::IndependentBBTorsionSRFD() 
+					tgt_ss.substr( j-1, len ), tgt_seq.substr( j-1, len ), nfrag, true, core::fragment::IndependentBBTorsionSRFD()
 				)
 			);
 			fragset->add( frame );
@@ -544,6 +567,41 @@ create_fragment_set( core::pose::Pose const & pose, core::Size len, core::Size n
 	}
 	return fragset;
 }
+
+protocols::loops::Loops renumber_with_pdb_info(
+		protocols::loops::Loops & template_chunk,
+		core::pose::PoseCOP template_pose
+) {
+	protocols::loops::Loops renumbered_template_chunks(template_chunk);
+	for (core::Size ichunk = 1; ichunk<=template_chunk.num_loop(); ++ichunk) {
+		Size seqpos_start_templ = template_chunk[ichunk].start();
+		Size seqpos_start_target = template_pose->pdb_info()->number(seqpos_start_templ);
+		renumbered_template_chunks[ichunk].set_start( seqpos_start_target );
+
+		Size seqpos_stop_templ = template_chunk[ichunk].stop();
+		Size seqpos_stop_target = template_pose->pdb_info()->number(seqpos_stop_templ);
+		renumbered_template_chunks[ichunk].set_stop( seqpos_stop_target );
+	}
+	return renumbered_template_chunks;
+}
+
+core::Real get_gdtmm( core::pose::Pose & native, core::pose::Pose & pose, core::sequence::SequenceAlignmentOP & aln ) {
+	runtime_assert( native.total_residue() > 0 && pose.total_residue() > 0 );
+	if ( !aln ) {
+		core::sequence::SequenceOP model_seq ( new core::sequence::Sequence( pose.sequence(),  "model",  1 ) );
+		core::sequence::SequenceOP native_seq( new core::sequence::Sequence( native.sequence(), "native", 1 ) );
+		aln = new core::sequence::SequenceAlignment;
+		*aln = align_naive(model_seq,native_seq);
+	}
+
+	int n_atoms;
+	ObjexxFCL::FArray2D< core::Real > p1a, p2a;
+	protocols::comparative_modeling::gather_coords( pose, native, *aln, n_atoms, p1a, p2a );
+
+	core::Real m_1_1, m_2_2, m_3_3, m_4_3, m_7_4;
+	return core::scoring::xyz_gdtmm( p1a, p2a, m_1_1, m_2_2, m_3_3, m_4_3, m_7_4 );
+}
+
 
 
 } // hybridize

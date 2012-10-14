@@ -2376,6 +2376,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-write_scores</b> \<Boolean\><dt>
+<dd>Fragment picker will write scores in output fragment files.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-annotate</b> \<Boolean\><dt>
 <dd>read the annotation from the rosetta++ fragment file</dd><br>
 <dd>Default: false</dd><br>
@@ -3301,6 +3306,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-contact_score</b> \<Real\><dt>
 <dd>the strand-weight will have a weight * contact_order component</dd><br>
 <dd>Default: 0.0</dd><br>
+</dl>
+<dl>
+<dt><b>-filter_templates</b> \<Boolean\><dt>
+<dd>filter hybridization protocol templates</dd><br>
+<dd>Default: false</dd><br>
 </dl>
  </li>
 <li><h2>templates</h2>
@@ -8142,6 +8152,55 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-revert_real_loops</b> \<Boolean\><dt>
 <dd>revert back to non-virtual loops</dd><br>
 <dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-realign_domains_stage2</b> \<Boolean\><dt>
+<dd>realign the starting templates to the pose after stage1</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-frag_1mer_insertion_weight</b> \<Real\><dt>
+<dd>weight for 1mer fragment insertions where fragments are not allowed vs. template chunk insertions in stage1</dd><br>
+<dd>Default: 0.0</dd><br>
+</dl>
+<dl>
+<dt><b>-small_gap_frag_insertion_weight</b> \<Real\><dt>
+<dd>weight for small fragment insertions where large fragments are not allowed vs. template chunk insertions in stage1</dd><br>
+<dd>Default: 0.0</dd><br>
+</dl>
+<dl>
+<dt><b>-big_frag_insertion_weight</b> \<Real\><dt>
+<dd>weight for big fragment insertions vs. template chunk insertions in stage1</dd><br>
+<dd>Default: 0.5</dd><br>
+</dl>
+<dl>
+<dt><b>-auto_frag_insertion_weight</b> \<Boolean\><dt>
+<dd>automatically set the weight for fragment insertions vs. template chunk insertions in stage1</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-skip_convergence_check</b> \<Boolean\><dt>
+<dd>this option turns off the convergence check in stage1: stage3 (score 2/5)</dd><br>
+</dl>
+<dl>
+<dt><b>-stage1_1_cycles</b> \<Integer\><dt>
+<dd>Number of cycles for ab initio stage 1 in Stage1</dd><br>
+<dd>Default: 2000</dd><br>
+</dl>
+<dl>
+<dt><b>-stage1_2_cycles</b> \<Integer\><dt>
+<dd>Number of cycles for ab initio stage 2 in Stage1</dd><br>
+<dd>Default: 2000</dd><br>
+</dl>
+<dl>
+<dt><b>-stage1_3_cycles</b> \<Integer\><dt>
+<dd>Number of cycles for ab initio stage 3 in Stage1</dd><br>
+<dd>Default: 2000</dd><br>
+</dl>
+<dl>
+<dt><b>-stage1_4_cycles</b> \<Integer\><dt>
+<dd>Number of cycles for ab initio stage 4 in Stage1</dd><br>
+<dd>Default: 4000</dd><br>
 </dl>
  </li>
 <li><h2>ms</h2>

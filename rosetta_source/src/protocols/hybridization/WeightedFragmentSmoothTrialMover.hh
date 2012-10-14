@@ -9,30 +9,42 @@
 
 /// @file
 /// @brief Fragment insertion and trial, each residue has a customized weight for the frequency of insertion
-/// @author Yifan Song
+/// @author David Kim, Yifan Song
 
-#ifndef INCLUDED_protocols_hybridization_WeightedFragmentTrialMover_hh
-#define INCLUDED_protocols_hybridization_WeightedFragmentTrialMover_hh
+#ifndef INCLUDED_protocols_hybridization_WeightedFragmentSmoothTrialMover_hh
+#define INCLUDED_protocols_hybridization_WeightedFragmentSmoothTrialMover_hh
 
-#include <protocols/hybridization/WeightedFragmentTrialMover.fwd.hh>
-
+#include <protocols/hybridization/WeightedFragmentSmoothTrialMover.fwd.hh>
+#include <protocols/simple_moves/SmoothFragmentMover.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <core/fragment/FragSet.hh>
+#include <core/fragment/Frame.hh>
+#include <core/fragment/FrameList.hh>
+#include <core/types.hh>
+#include <basic/prof.hh>
 
 #include <numeric/random/WeightedSampler.hh>
+#include <numeric/random/random.hh>
+#include <utility/vector1.fwd.hh>
+#include <utility/vector1.hh>
+
+//// C++ headers
+#include <cstdlib>
+#include <string>
 
 namespace protocols {
 namespace hybridization {
 
-class WeightedFragmentTrialMover : public protocols::moves::Mover
+class WeightedFragmentSmoothTrialMover : public protocols::moves::Mover
 {
 public:
-	WeightedFragmentTrialMover(
+	WeightedFragmentSmoothTrialMover(
 		utility::vector1< core::fragment::FragSetOP > const frag_libs,
 		utility::vector1< core::Real > const residue_weights,
-		utility::vector1< core::Size > const anchor_residues=utility::vector1< core::Size >(0),
-		core::Size const nr_frags = 0
+		utility::vector1< core::Size > const anchor_residues,
+		core::Size const nr_frags,
+		simple_moves::FragmentCostOP cost
 	);
 	void update_sampler_weights( utility::vector1< core::Real > const residue_weights );
 
@@ -46,6 +58,10 @@ private:
 	utility::vector1< Size > anchor_reses_; // list of residue indices
 	core::Size nr_frags_; // number of fragments to use per frame (1 to this number), if 0, use all
 	core::Size total_frames_;
+	simple_moves::FragmentCostOP cost_;
+
+	// choose randomly fragments that are below cutoff_
+	core::Real cutoff_;
 };
 
 } // hybridization

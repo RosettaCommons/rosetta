@@ -1,7 +1,3 @@
-namespace lh { IntegerOptionKey const mpi_loophash_split_size    ( "lh:mpi_loophash_split_size    " );  }
-namespace lh { RealOptionKey const mpi_metropolis_temp( "lh:mpi_metropolis_temp" );  }
-namespace lh { IntegerOptionKey const mpi_save_state_interval( "lh:mpi_save_state_interval" );  }
-namespace lh { BooleanOptionKey const mpi_master_save_score_only( "lh:mpi_master_save_score_only" );  }
 namespace lh { IntegerOptionKey const max_loophash_per_structure( "lh:max_loophash_per_structure" );  }
 namespace lh { RealOptionKey const rms_limit( "lh:rms_limit" );  }
 namespace lh { BooleanOptionKey const centroid_only( "lh:centroid_only" );  }
@@ -389,6 +385,16 @@ namespace cm { namespace hybridize { BooleanOptionKey const alignment_from_templ
 namespace cm { namespace hybridize { IntegerVectorOptionKey const alignment_from_chunk_mapping( "cm:hybridize:alignment_from_chunk_mapping" );  } }
 namespace cm { namespace hybridize { BooleanOptionKey const virtual_loops( "cm:hybridize:virtual_loops" );  } }
 namespace cm { namespace hybridize { BooleanOptionKey const revert_real_loops( "cm:hybridize:revert_real_loops" );  } }
+namespace cm { namespace hybridize { BooleanOptionKey const realign_domains_stage2( "cm:hybridize:realign_domains_stage2" );  } }
+namespace cm { namespace hybridize { RealOptionKey const frag_1mer_insertion_weight( "cm:hybridize:frag_1mer_insertion_weight" );  } }
+namespace cm { namespace hybridize { RealOptionKey const small_gap_frag_insertion_weight( "cm:hybridize:small_gap_frag_insertion_weight" );  } }
+namespace cm { namespace hybridize { RealOptionKey const big_frag_insertion_weight( "cm:hybridize:big_frag_insertion_weight" );  } }
+namespace cm { namespace hybridize { BooleanOptionKey const auto_frag_insertion_weight( "cm:hybridize:auto_frag_insertion_weight" );  } }
+namespace cm { namespace hybridize { BooleanOptionKey const skip_convergence_check( "cm:hybridize:skip_convergence_check" );  } }
+namespace cm { namespace hybridize { IntegerOptionKey const stage1_1_cycles( "cm:hybridize:stage1_1_cycles" );  } }
+namespace cm { namespace hybridize { IntegerOptionKey const stage1_2_cycles( "cm:hybridize:stage1_2_cycles" );  } }
+namespace cm { namespace hybridize { IntegerOptionKey const stage1_3_cycles( "cm:hybridize:stage1_3_cycles" );  } }
+namespace cm { namespace hybridize { IntegerOptionKey const stage1_4_cycles( "cm:hybridize:stage1_4_cycles" );  } }
 namespace ms { BooleanOptionKey const ms( "ms" );  }
 namespace ms { BooleanOptionKey const share_data( "ms:share_data" );  }
 namespace ms { BooleanOptionKey const verbose( "ms:verbose" );  }
@@ -637,6 +643,3 @@ namespace DenovoProteinDesign { BooleanOptionKey const use_template_topology( "D
 namespace DenovoProteinDesign { FileOptionKey const create_from_template_pdb( "DenovoProteinDesign:create_from_template_pdb" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const create_from_secondary_structure( "DenovoProteinDesign:create_from_secondary_structure" );  }
 namespace RBSegmentRelax { BooleanOptionKey const RBSegmentRelax( "RBSegmentRelax" );  }
-namespace RBSegmentRelax { FileOptionKey const input_pdb( "RBSegmentRelax:input_pdb" );  }
-namespace RBSegmentRelax { FileOptionKey const rb_file( "RBSegmentRelax:rb_file" );  }
-namespace RBSegmentRelax { RealOptionKey const cst_wt( "RBSegmentRelax:cst_wt" );  }

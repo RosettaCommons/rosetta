@@ -29,8 +29,9 @@
 
 #include <basic/Tracer.hh>
 
+#include <set>
+
 namespace protocols {
-//namespace comparative_modeling {
 namespace hybridization {
 
 using namespace core;
@@ -39,39 +40,33 @@ class InsertChunkMover: public protocols::moves::Mover
 {
 
 public:
-	
+
 	InsertChunkMover();
 	~InsertChunkMover();
-	
+
 	void set_bb_xyz_aligned(core::pose::Pose & pose);
-	
+
 	bool success() {
 			return success_;
 	}
-			
-	void reset_torsion(bool reset_torsion_unaligned) {
-			reset_torsion_unaligned_ = reset_torsion_unaligned;
-	}
-	
+
 	void set_template(core::pose::PoseCOP template_pose, core::Size template_id,
-						std::map <core::Size, core::Size> const & sequence_alignment );
-	
+						std::map <core::Size, core::Size> const & sequence_alignment, bool is_strand_pairing_template = false );
+
 	void set_aligned_chunk(core::pose::Pose const & pose, Size const jump_number, bool anchor_insert_only_in);
-	
-	void set_reset_torsion_unaligned(bool reset_torsion_unaligned);
-		
+
 	bool get_local_sequence_mapping(core::pose::Pose & pose,
 									int registry_shift = 0,
 									Size MAX_TRIAL = 100 );
-		
+
 	void check_overlap(core::pose::Pose & pose);
-		
+
 	void set_registry_shift(int registry_shift);
-		
+
 	Size trial_counter(Size ires);
-		
+
 	void apply(core::pose::Pose & pose);
-		
+
 	std::string get_name() const;
 
 private:
@@ -91,17 +86,19 @@ private:
 	bool success_;
 
 	// parameters of the protocol
-	bool reset_torsion_unaligned_; // reset torsion of unaligned region to the default value for the given secondary structure
 	bool align_to_ss_only_; // only use the secondary structure portion to align to the template
 	bool copy_ss_torsion_only_; // only copy the secondary structure information from the template
-	
+
 	std::map <core::Size, core::Size> sequence_alignment_local_; // with registry shift of the aligned chunk
 	core::id::AtomID_Map< core::id::AtomID > atom_map_; // atom map for superposition
 	utility::vector1 <Size> align_trial_counter_;
+
+	// strand pairings
+	bool is_strand_pairing_template_;
+
 };
-	
-} // hybridize 
-//} // comparative_modeling 
+
+} // hybridization
 } // protocols
 
 #endif

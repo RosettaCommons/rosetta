@@ -19,16 +19,14 @@
 
 
 namespace protocols {
-//namespace comparative_modeling {
 namespace hybridization {
-			
+
 class HybridizeProtocol;
 typedef utility::pointer::owning_ptr< HybridizeProtocol > HybridizeProtocolOP;
 typedef utility::pointer::owning_ptr< HybridizeProtocol const > HybridizeProtocolCOP;
 
 
-} // hybridize 
-//} // comparative_modeling 
+} // hybridization
 } // protocols
 
 #endif

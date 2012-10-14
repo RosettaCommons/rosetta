@@ -59,26 +59,27 @@ static numeric::random::RandomGenerator RG(1183103);
 static basic::Tracer TR( "protocols.hybridization.InsertChunkMover" );
 
 namespace protocols {
-//namespace comparative_modeling {
 namespace hybridization {
 
 using namespace core;
 using namespace id;
 using namespace ObjexxFCL;
 
-InsertChunkMover::InsertChunkMover() : 
-registry_shift_(0), reset_torsion_unaligned_(false), anchor_insert_only_(false), align_to_ss_only_(false), copy_ss_torsion_only_(false), secstruct_('L')
+InsertChunkMover::InsertChunkMover() :
+registry_shift_(0), anchor_insert_only_(false), align_to_ss_only_(false), copy_ss_torsion_only_(false), secstruct_('L')
 {
+	moves::Mover::type( "InsertChunkMover" );
 	align_trial_counter_.clear();
 }
 
 InsertChunkMover::~InsertChunkMover(){}
 
 void InsertChunkMover::set_template(core::pose::PoseCOP template_pose, core::Size template_id,
-				  std::map <core::Size, core::Size> const & sequence_alignment ) {
+				  std::map <core::Size, core::Size> const & sequence_alignment, bool is_strand_pairing_template ) {
 	template_pose_ = template_pose;
 	template_id_ = template_id;
 	sequence_alignment_ = sequence_alignment;
+	is_strand_pairing_template_ = is_strand_pairing_template;
 }
 
 void InsertChunkMover::set_aligned_chunk(core::pose::Pose const & pose, Size const jump_number, bool anchor_insert_only_in) {
@@ -93,10 +94,6 @@ void InsertChunkMover::set_aligned_chunk(core::pose::Pose const & pose, Size con
 	assert(downstream_residues.size() == (seqpos_stop_ - seqpos_start_ + 1));
 }
 
-void InsertChunkMover::set_reset_torsion_unaligned(bool reset_torsion_unaligned) {
-	reset_torsion_unaligned_ = reset_torsion_unaligned;
-}
-
 bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 								int registry_shift,
 								Size MAX_TRIAL) {
@@ -106,7 +103,7 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 		++counter;
 		sequence_alignment_local_.clear();
 		core::pose::initialize_atomid_map( atom_map_, pose, core::id::BOGUS_ATOM_ID );
-		
+
 		//fpd pick a random downstream residue and steal it's position from a template
 		//fpd if anchor_insert_only_ is set, use the jump anchor position
 		core::Size seqpos_pose = RG.random_range(seqpos_start_, seqpos_stop_);
@@ -136,13 +133,13 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 
    		core::Size jres_template = sequence_alignment_.find(ires_pose+registry_shift)->second;
 			if ( jres_template <= 0 || jres_template > template_pose_->total_residue() ) continue;
-            
+
 			if ( !template_pose_->residue_type(jres_template).is_protein() ) continue;
 			if ( copy_ss_torsion_only_ && template_pose_->secstruct(jres_template) == 'L') continue;
 
 			sequence_alignment_local_[ires_pose] = jres_template;
 			seqpos_aligned_start_ = ires_pose;
-			
+
 			if (discontinued_upper(*template_pose_,jres_template)) {
 				TR.Debug << "Disconnect upper: " << ires_pose << " "  << jres_template << std::endl;
 				break;
@@ -154,13 +151,13 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 			core::Size jres_template = sequence_alignment_.find(ires_pose+registry_shift)->second;
 
 			if ( jres_template <= 0 || jres_template > template_pose_->total_residue() ) continue;
-			
+
 			if ( !template_pose_->residue_type(jres_template).is_protein() ) continue;
 			if (copy_ss_torsion_only_ && template_pose_->secstruct(jres_template) == 'L') continue;
-			
+
 			sequence_alignment_local_[ires_pose] = jres_template;
 			seqpos_aligned_stop_ = ires_pose;
-			
+
 			if (discontinued_lower(*template_pose_,jres_template)) {
 				TR.Debug << "Disconnect lower: " << ires_pose << " "  << jres_template << std::endl;
 				break;
@@ -178,7 +175,7 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 
 			if ( !template_pose_->residue_type(jres_template).is_protein() ) continue;
 			if (copy_ss_torsion_only_ && template_pose_->secstruct(jres_template) == 'L') continue;
-			
+
 			core::id::AtomID const id1( pose.residue_type(ires_pose).atom_index("CA"), ires_pose );
 			core::id::AtomID const id2( template_pose_->residue_type(jres_template).atom_index("CA"), jres_template );
 			atom_map_[ id1 ] = id2;
@@ -192,7 +189,7 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 
 			core::Size jres_template = sequence_alignment_.find(ires_pose+registry_shift)->second;
 			if ( jres_template <= 0 || jres_template > template_pose_->total_residue() ) continue;
-			
+
 			if ( !template_pose_->residue_type(jres_template).is_protein() ) continue;
 			if ( copy_ss_torsion_only_ ) {
 				if (template_pose_->secstruct(jres_template) == 'L') continue;
@@ -206,7 +203,7 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 		}
 
 		// fpd we need at least 3 residues aligned
-		if (atom_map_count >=3) {
+		if (atom_map_count >=3 || is_strand_pairing_template_) {
 			TR.Debug << sequence_alignment_local_ << std::endl;
 			return true;
 		}
@@ -221,10 +218,10 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 void InsertChunkMover::set_registry_shift(int registry_shift) {
 	registry_shift_ = registry_shift;
 }
-	
+
 Size InsertChunkMover::trial_counter(Size ires) {
 	if (ires <= align_trial_counter_.size()) {
-		return align_trial_counter_[ires];	
+		return align_trial_counter_[ires];
 	}
 	return 0;
 }
@@ -238,16 +235,13 @@ InsertChunkMover::apply(core::pose::Pose & pose) {
 	set_bb_xyz_aligned(pose);
 	check_overlap(pose);
 }
-    
+
 void InsertChunkMover::set_bb_xyz_aligned(core::pose::Pose & pose) {
 	utility::vector1< core::id::AtomID > ids;
 	utility::vector1< numeric::xyzVector<core::Real> > positions;
 	utility::vector1< core::id::AtomID > sch_ids;
 	utility::vector1< numeric::xyzVector<core::Real> > sch_positions;
-	
-	utility::vector1< core::Size > aligned_residues;
-	utility::vector1< core::Size > non_aligned_residues;
-	bool aligned;
+
 	Size jump_residue_pose = pose.fold_tree().downstream_jump_residue(jump_number_);
 	TR.Debug << "Jump residue: " << jump_residue_pose << std::endl;
 
@@ -267,12 +261,12 @@ void InsertChunkMover::set_bb_xyz_aligned(core::pose::Pose & pose) {
 					sch_ids.push_back(core::id::AtomID(iatom,ires_pose));
 				}
 			}
-			
+
 			for ( Size iatom=pose.residue_type(ires_pose).last_backbone_atom()+1;
 				iatom<= pose.residue_type(ires_pose).natoms(); ++iatom ) { // use residue_type to prevent internal coord update
 				sch_ids.push_back(core::id::AtomID(iatom,ires_pose));
 			}
-			
+
 			while (ires_pose > align_trial_counter_.size()) {
 				align_trial_counter_.push_back(0);
 			}
@@ -289,7 +283,7 @@ void InsertChunkMover::set_bb_xyz_aligned(core::pose::Pose & pose) {
 		);
 	}
 	pose.batch_set_xyz(sch_ids,sch_positions);
-    
+
 	// idealize the connection between copied and uncopied region
 	if (seqpos_aligned_start_ > seqpos_start_) {
 		core::conformation::idealize_position(seqpos_aligned_start_, pose.conformation());
@@ -299,13 +293,13 @@ void InsertChunkMover::set_bb_xyz_aligned(core::pose::Pose & pose) {
 		core::conformation::idealize_position(seqpos_aligned_stop_, pose.conformation());
 		core::conformation::idealize_position(seqpos_aligned_stop_+1, pose.conformation());
 	}
-	
+
 	runtime_assert( pose.data().has( core::pose::datacache::CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) );
-	TemplateHistory &history = 
+	TemplateHistory &history =
 	*( static_cast< TemplateHistory* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY )() ));
 	history.set( seqpos_start_, seqpos_stop_, template_id_ );
 }
-	
+
 void InsertChunkMover::check_overlap(core::pose::Pose & pose) {
 	bool overlapped = false;
 	for ( Size ires=seqpos_start_; ires<= seqpos_stop_; ++ires ) {
@@ -328,7 +322,7 @@ void InsertChunkMover::check_overlap(core::pose::Pose & pose) {
 		numeric::xyzVector<core::Real> trans(2.*RG.uniform()-1.,
 											 2.*RG.uniform()-1.,
 											 2.*RG.uniform()-1.);
-		
+
 		for ( Size ires=seqpos_start_; ires<= seqpos_stop_; ++ires ) {
 			for ( Size iatom=1; iatom<= pose.residue_type(ires).natoms(); ++iatom ) { // use residue_type to prevent internal coord update
 				ids.push_back(core::id::AtomID(iatom,ires));
@@ -338,13 +332,12 @@ void InsertChunkMover::check_overlap(core::pose::Pose & pose) {
 		pose.batch_set_xyz(ids,positions);
 	}
 }
-	
+
 std::string
 InsertChunkMover::get_name() const {
 	return "InsertChunkMover";
 }
-	
-	
-} // hybridize 
-//} // comparative_modeling 
+
+
+} // hybridization
 } // protocols

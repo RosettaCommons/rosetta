@@ -19,16 +19,14 @@
 
 
 namespace protocols {
-//namespace comparative_modeling {
 namespace hybridization {
-			
+
 class ChunkTrialMover;
 typedef utility::pointer::owning_ptr< ChunkTrialMover > ChunkTrialMoverOP;
 typedef utility::pointer::owning_ptr< ChunkTrialMover const > ChunkTrialMoverCOP;
 
 
-} // hybridize 
-//} // comparative_modeling 
+} // hybridization
 } // protocols
 
 #endif

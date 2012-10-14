@@ -76,6 +76,16 @@ namespace cm { namespace hybridize { extern BooleanOptionKey const alignment_fro
 namespace cm { namespace hybridize { extern IntegerVectorOptionKey const alignment_from_chunk_mapping; } }
 namespace cm { namespace hybridize { extern BooleanOptionKey const virtual_loops; } }
 namespace cm { namespace hybridize { extern BooleanOptionKey const revert_real_loops; } }
+namespace cm { namespace hybridize { extern BooleanOptionKey const realign_domains_stage2; } }
+namespace cm { namespace hybridize { extern RealOptionKey const frag_1mer_insertion_weight; } }
+namespace cm { namespace hybridize { extern RealOptionKey const small_gap_frag_insertion_weight; } }
+namespace cm { namespace hybridize { extern RealOptionKey const big_frag_insertion_weight; } }
+namespace cm { namespace hybridize { extern BooleanOptionKey const auto_frag_insertion_weight; } }
+namespace cm { namespace hybridize { extern BooleanOptionKey const skip_convergence_check; } }
+namespace cm { namespace hybridize { extern IntegerOptionKey const stage1_1_cycles; } }
+namespace cm { namespace hybridize { extern IntegerOptionKey const stage1_2_cycles; } }
+namespace cm { namespace hybridize { extern IntegerOptionKey const stage1_3_cycles; } }
+namespace cm { namespace hybridize { extern IntegerOptionKey const stage1_4_cycles; } }
 
 } // namespace OptionKeys
 } // namespace options

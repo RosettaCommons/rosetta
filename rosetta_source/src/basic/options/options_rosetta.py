@@ -1266,6 +1266,7 @@ Options = Option_Group( '',
 			default = ['9','3','1'],
 		),
 		Option( 'write_ca_coordinates','Boolean', desc='Fragment picker will store CA Cartesian coordinates in output fragment files. By default only torsion coordinates are stored.',default='false'),
+		Option( 'write_scores', 'Boolean', desc='Fragment picker will write scores in output fragment files.', default='false' ),
 		Option( 'annotate',         'Boolean',     desc='read the annotation from the rosetta++ fragment file',     default='false' ),
 		Option( 'nr_large_copies',  'Integer',       desc='make N copies for each standard 9mer (or so) fragment',     default='1' ),
 
@@ -1664,6 +1665,7 @@ Options = Option_Group( '',
 		Option( 'njumps', 'Integer', desc='number_of_jumps to select from library for each trajectory (membrane mode)', default='1' ),
 		Option( 'max_strand_gap_allowed', 'Integer', desc='merge strands if they less than X residues but same register', default='2' ),
 		Option( 'contact_score', 'Real', desc='the strand-weight will have a weight * contact_order component', default='0.0' ),
+		Option( 'filter_templates', 'Boolean', desc='filter hybridization protocol templates', default='false'),
 	),
 
 	Option_Group( 'templates',
@@ -3396,6 +3398,16 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'alignment_from_chunk_mapping',   'IntegerVector',    desc='alignment from secondary structure mapping' ),
 			Option( 'virtual_loops',                  'Boolean',    desc='use virtual loops', default='false' ),
 			Option( 'revert_real_loops',              'Boolean',    desc='revert back to non-virtual loops', default='false' ),
+			Option( 'realign_domains_stage2',         'Boolean',     desc='realign the starting templates to the pose after stage1', default='false' ),
+			Option( 'frag_1mer_insertion_weight',     'Real',       desc='weight for 1mer fragment insertions where fragments are not allowed vs. template chunk insertions in stage1', default='0.0' ),
+			Option( 'small_gap_frag_insertion_weight', 'Real',       desc='weight for small fragment insertions where large fragments are not allowed vs. template chunk insertions in stage1', default='0.0' ),
+			Option( 'big_frag_insertion_weight',       'Real',       desc='weight for big fragment insertions vs. template chunk insertions in stage1', default='0.5' ),
+			Option( 'auto_frag_insertion_weight',     'Boolean',    desc='automatically set the weight for fragment insertions vs. template chunk insertions in stage1', default='true' ),
+			Option( 'skip_convergence_check',         'Boolean',    desc="this option turns off the convergence check in stage1: stage3 (score 2/5)" ),
+			Option( 'stage1_1_cycles',                'Integer',    desc='Number of cycles for ab initio stage 1 in Stage1', default='2000'),
+			Option( 'stage1_2_cycles',                'Integer',    desc='Number of cycles for ab initio stage 2 in Stage1', default='2000'),
+			Option( 'stage1_3_cycles',                'Integer',    desc='Number of cycles for ab initio stage 3 in Stage1', default='2000'),
+			Option( 'stage1_4_cycles',                'Integer',    desc='Number of cycles for ab initio stage 4 in Stage1', default='4000'),
 		), # hybridize
 	), # cm
 	Option_Group( 'ms' , # multistate_design
@@ -3647,7 +3659,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='maximum number of KinematicMover apply() tries per KinematicWrapper apply()',
 			default = '20'
 		),
-				 
+
 		## next-generation KIC
 		Option( 'restrict_kic_sampling_to_torsion_string', 'String',
 			desc='restrict kinematic loop closure sampling to the phi/psi angles specified in the torsion string',
@@ -3689,7 +3701,6 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='always select the start pivot first and then the end pivot -- biases towards sampling the C-terminal part of the loop more',
 			default='true'
 		),
-						
 
 		## QuickCCD
 

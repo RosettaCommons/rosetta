@@ -1,5 +1,3 @@
-namespace fold_cst { BooleanOptionKey const ignore_sequence_seperation( "fold_cst:ignore_sequence_seperation" );  }
-namespace fold_cst { BooleanOptionKey const no_recover_low_at_constraint_switch( "fold_cst:no_recover_low_at_constraint_switch" );  }
 namespace fold_cst { BooleanOptionKey const ramp_coord_cst( "fold_cst:ramp_coord_cst" );  }
 namespace resample { BooleanOptionKey const resample( "resample" );  }
 namespace resample { FileOptionKey const silent( "resample:silent" );  }
@@ -44,6 +42,7 @@ namespace jumps { BooleanOptionKey const dump_frags( "jumps:dump_frags" );  }
 namespace jumps { IntegerOptionKey const njumps( "jumps:njumps" );  }
 namespace jumps { IntegerOptionKey const max_strand_gap_allowed( "jumps:max_strand_gap_allowed" );  }
 namespace jumps { RealOptionKey const contact_score( "jumps:contact_score" );  }
+namespace jumps { BooleanOptionKey const filter_templates( "jumps:filter_templates" );  }
 namespace templates { BooleanOptionKey const templates( "templates" );  }
 namespace templates { FileOptionKey const config( "templates:config" );  }
 namespace templates { BooleanOptionKey const fix_aligned_residues( "templates:fix_aligned_residues" );  }
@@ -640,3 +639,7 @@ namespace lh { StringOptionKey const mpi_feedback( "lh:mpi_feedback" );  }
 namespace lh { IntegerOptionKey const mpi_batch_relax_chunks( "lh:mpi_batch_relax_chunks" );  }
 namespace lh { IntegerOptionKey const mpi_batch_relax_absolute_max( "lh:mpi_batch_relax_absolute_max" );  }
 namespace lh { IntegerOptionKey const mpi_outbound_wu_buffer_size( "lh:mpi_outbound_wu_buffer_size" );  }
+namespace lh { IntegerOptionKey const mpi_loophash_split_size    ( "lh:mpi_loophash_split_size    " );  }
+namespace lh { RealOptionKey const mpi_metropolis_temp( "lh:mpi_metropolis_temp" );  }
+namespace lh { IntegerOptionKey const mpi_save_state_interval( "lh:mpi_save_state_interval" );  }
+namespace lh { BooleanOptionKey const mpi_master_save_score_only( "lh:mpi_master_save_score_only" );  }

@@ -10,7 +10,7 @@
 /// @brief A mover to dynamically manipulate fold tree during the template hybridization sampling
 /// @detailed based on Chris Miles's start tree builder
 /// @file protocols/hybridization/HybridizeFoldtreeDynamic.cc
-/// @author Yifan Song
+/// @author Yifan Song, David Kim
 
 // Unit headers
 #include <protocols/hybridization/HybridizeFoldtreeDynamic.hh>
@@ -52,20 +52,24 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/util/kinematics_util.hh>
 
+#include <basic/Tracer.hh>
 
 //Auto Headers
 #include <core/conformation/Conformation.hh>
+
+static basic::Tracer TR( "protocols.hybridization.HybridizeFoldtreeDynamic" );
+static numeric::random::RandomGenerator RG(65433);
+
 namespace protocols {
-//namespace comparative_modeling {
 namespace hybridization {
 
 HybridizeFoldtreeDynamic::HybridizeFoldtreeDynamic() : virtual_res_(-1) {}
 
-utility::vector1 < core::Size > HybridizeFoldtreeDynamic::decide_cuts(core::Size n_residues) {
+utility::vector1 < core::Size > HybridizeFoldtreeDynamic::decide_cuts(core::pose::Pose & pose, core::Size n_residues) {
 	// complete the chunks to cover the whole protein and customize cutpoints
 	// cutpoints in the middle of the loop
 	// cut number is the residue before the cut
-	std::string cut_point_decision = "middle";
+	std::string cut_point_decision = "middle_L";
 
 	utility::vector1<bool> cut_options(n_residues, true);
 
@@ -88,6 +92,26 @@ utility::vector1 < core::Size > HybridizeFoldtreeDynamic::decide_cuts(core::Size
 		else {
 			if ( cut_point_decision == "middle") {
 				cut = (loop_start + loop_end ) /2;
+			}
+			else if ( cut_point_decision == "middle_L" ) {
+				cut = (loop_start + loop_end ) /2;
+				if (pose.secstruct(cut) != 'L') {
+					utility::vector1< core::Size > candidates;
+					for (core::Size ic = cut-1; ic>=loop_start;--ic) {
+						if (pose.secstruct(ic) == 'L') {
+							candidates.push_back(ic);
+							break;
+						}
+					}
+					for (core::Size ic = cut+1; ic<=loop_end;++ic) {
+						if (pose.secstruct(ic) == 'L') {
+							candidates.push_back(ic);
+							break;
+						}
+					}
+					if (candidates.size())
+						cut = candidates[RG.random_range(1,candidates.size())];
+				}
 			}
 			else if ( cut_point_decision == "combine" ) {
 				utility::vector1 < core::Size > cut_residues;
@@ -121,6 +145,15 @@ utility::vector1 < core::Size > HybridizeFoldtreeDynamic::decide_cuts(core::Size
 			}
 		}
 		cut_positions.push_back(cut);
+		TR << "Cutpoint " << i << " at " << cut << std::endl;
+		TR << "  Loop SS: ";
+		std::string jnk;
+		for (core::Size ic = loop_start; ic<=loop_end;++ic) {
+			TR << pose.secstruct(ic);
+			jnk += (ic == cut) ? "*" : "-";
+		}
+		TR << std::endl;
+		TR << "           " << jnk << std::endl;
 	}
 	return cut_positions;
 }
@@ -152,9 +185,8 @@ void HybridizeFoldtreeDynamic::make_complete_chunks(
 
 void HybridizeFoldtreeDynamic::choose_anchors() {
 	anchor_positions_.clear();
-	for (core::Size i=1; i<=core_chunks_.num_loop(); ++i) {
+	for (core::Size i=1; i<=core_chunks_.num_loop(); ++i)
 		anchor_positions_.push_back( choose_anchor_position(core_chunks_[i]) );
-	}
 }
 
 /// from cmiles:
@@ -172,13 +204,15 @@ core::Size HybridizeFoldtreeDynamic::choose_anchor_position(const protocols::loo
 
 	// Clamp insertion position to closed interval [start, stop]
 	Size position = static_cast<Size>(sampler.sample());
-	return numeric::clamp<core::Size>(position, chunk.start(), chunk.stop());;
+	return numeric::clamp<core::Size>(position, chunk.start(), chunk.stop());
 }
 
 
 void HybridizeFoldtreeDynamic::initialize(
 	core::pose::Pose & pose,
-	protocols::loops::Loops const & core_chunks
+	protocols::loops::Loops const & core_chunks,	// template chunks (may include single residue strand pairings as chunks)
+	utility::vector1< std::pair< core::Size, core::Size > > const & strand_pairs,  // strand pair residue positions
+	std::set<core::Size> const & strand_pair_library_positions // strand pair positions that are from the pairing library (not from a pdb template)
 ) {
   using core::Size;
   using core::Real;
@@ -190,6 +224,27 @@ void HybridizeFoldtreeDynamic::initialize(
 	num_protein_residues_ = pose.total_residue();
 	saved_n_residue_ = pose.total_residue();
 	saved_ft_ = pose.conformation().fold_tree();
+
+	// strand pairings
+	// initialize pairings data
+	strand_pairs_ = strand_pairs;
+	strand_pair_library_positions_ = strand_pair_library_positions;
+	// identify core_chunks that are not from the strand pair library (i.e. these should be from a template)
+	std::set<core::Size>::iterator set_iter;
+	for (core::Size i=1; i<=core_chunks.num_loop(); ++i) {
+		bool pair_chunk = false;
+		for (set_iter = strand_pair_library_positions_.begin(); set_iter != strand_pair_library_positions_.end(); ++set_iter) {
+			if (core_chunks[i].start() <= *set_iter && core_chunks[i].stop() >= *set_iter) {
+				pair_chunk = true;
+				break;
+			}
+		}
+		if (!pair_chunk) {
+			TR << "Identified template core chunk with index: " << i << std::endl;
+			TR << core_chunks[i] << std::endl;
+			template_core_chunk_indices_.insert(i);
+		}
+	} // strand pairings
 
 	//symmetry
 	core::conformation::symmetry::SymmetryInfoCOP symm_info=NULL;
@@ -210,7 +265,7 @@ void HybridizeFoldtreeDynamic::initialize(
 
 	// set new
 	choose_anchors();
-	utility::vector1 < core::Size > cut_positions = decide_cuts(num_protein_residues_);
+	utility::vector1 < core::Size > cut_positions = decide_cuts(pose, num_protein_residues_);
 	make_complete_chunks(cut_positions, num_protein_residues_);
 
 	assert(chunks_.num_loop());
@@ -226,6 +281,42 @@ void HybridizeFoldtreeDynamic::initialize(
 
 	protocols::loops::add_cutpoint_variants( pose );
 }
+
+
+// strand pairings
+void HybridizeFoldtreeDynamic::get_pair_core_chunks(
+		core::Size const chunk_index,
+		utility::vector1<core::Size> & pair_chunks,
+		utility::vector1<std::pair<core::Size, core::Size> > & pair_chunks_pairs
+) {
+	utility::vector1<core::Size> pair_chunks_tmp;
+	utility::vector1<std::pair<core::Size, core::Size> > pair_chunks_pairs_tmp;
+	for (core::Size i=1; i<=strand_pairs_.size(); ++i) {
+		core::Size idx = 0;
+		if (core_chunks_[chunk_index].start() <= strand_pairs_[i].first && core_chunks_[chunk_index].stop() >= strand_pairs_[i].first) {
+			get_core_chunk_index_from_position( strand_pairs_[i].second, idx );
+			if (idx) pair_chunks_pairs_tmp.push_back(std::pair<core::Size, core::Size>( strand_pairs_[i].first, strand_pairs_[i].second ));
+		} else if (core_chunks_[chunk_index].start() <= strand_pairs_[i].second && core_chunks_[chunk_index].stop() >= strand_pairs_[i].second) {
+			get_core_chunk_index_from_position( strand_pairs_[i].first, idx );
+			if (idx) pair_chunks_pairs_tmp.push_back(std::pair<core::Size, core::Size>( strand_pairs_[i].second, strand_pairs_[i].first ));
+		}
+		if (idx) pair_chunks_tmp.push_back(idx);
+	}
+	assert( pair_chunks_tmp.size() == pair_chunks_pairs_tmp.size() );
+	pair_chunks = pair_chunks_tmp;
+	pair_chunks_pairs = pair_chunks_pairs_tmp;
+} // strand pairings
+
+void HybridizeFoldtreeDynamic::get_core_chunk_index_from_position( core::Size const position, core::Size & index ) {
+	for (core::Size i = 1; i<=core_chunks_.num_loop(); ++i) {
+		if (core_chunks_[i].start() <= position && core_chunks_[i].stop() >= position) {
+			index = i;
+			break;
+		}
+	}
+}
+
+
 
 void HybridizeFoldtreeDynamic::reset(
 									 core::pose::Pose & pose
@@ -296,17 +387,129 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 			}
 		}
 	}
-	for (Size i = 1; i <= chunks_.num_loop(); ++i) {
-		const Loop& chunk = chunks_[i];
-		const Size cut_point  = chunk.stop();
-		const Size jump_point = anchor_positions_[i];
 
-		Size jump_root = num_nonvirt_residues_+1;
-		if (use_symm && i>1) jump_root = anchor_positions_[1];
-
-		cuts.push_back(cut_point);
-		jumps.push_back(std::make_pair(jump_root, jump_point));
+	// add root jumps and cuts for chunks that should be rooted to the star fold tree
+	//   these should be chunks from a template or if none exist, the first strand pair chunk
+	std::set<core::Size> root_chunk_indices = template_core_chunk_indices_;
+	if (!root_chunk_indices.size()) {
+		TR << "Template core chunks do not exist so using first chunk" << std::endl;
+		root_chunk_indices.insert(1);
 	}
+	std::set<core::Size>::iterator set_iter;
+  for (Size i = 1; i <= chunks_.num_loop(); ++i) {
+    const Loop& chunk = chunks_[i];
+    const Size cut_point  = chunk.stop();
+    const Size jump_point = anchor_positions_[i];
+
+    Size j_root = num_nonvirt_residues_+1;
+    if (use_symm && i>1) j_root = anchor_positions_[1];
+
+		TR << "Adding chunk cut: " << cut_point << std::endl;
+    cuts.push_back(cut_point);
+
+		if (root_chunk_indices.count(i)) {
+			rooted_chunk_indices_.insert(i);
+			TR << "Adding root jump: " << j_root << " " << jump_point << std::endl;
+			jumps.push_back(std::make_pair(j_root, jump_point));
+		}
+	}
+
+	// strand pairings
+
+	if (strand_pairs_.size()) {
+		// add jumps and cuts to strand pair chunks that are from a rooted branch
+		std::set<core::Size> rooted_chunk_indices; // keep track of all rooted branch chunks
+		for (set_iter = rooted_chunk_indices_.begin(); set_iter != rooted_chunk_indices_.end(); ++set_iter)
+			add_overlapping_pair_chunks( *set_iter, cuts, jumps, rooted_chunk_indices );
+		// at this point all pair chunks that overlap with a rooted chunk or overlap with the branch should have cuts and jumps. These overlapping pair chunks
+		// are in the global coordinate frame since they are branched from template core chunks (or the first strand pair chunk if templates do not exist)
+		// i.e.  like |*-|-|-| where |* is a star tree rooted chunk, - is a jump and | are pair chunks
+
+		// now lets add cuts to chunks that are not rooted yet (i.e. left over pairs, these are floating pairs with no reference to the global coordinate frame)
+		// i.e.      |*
+		//           |-| <- this is a pair that is not rooted yet and adjacent in sequence to the rooted chunk |*, so cuts have to be made to these pair chunks
+		//                  and if a cut already exists between the rooted chunk and the pair chunk, the cut has to be removed
+		std::set<core::Size> floating_pair_chunks;
+		for (core::Size i=1; i<=strand_pairs_.size(); ++i) {
+			core::Size i_index = 0;
+			core::Size j_index = 0;
+			get_core_chunk_index_from_position( strand_pairs_[i].first, i_index );
+			get_core_chunk_index_from_position( strand_pairs_[i].second, j_index );
+			assert( i_index && j_index );
+			core::Size paircnt = 0;
+			if (!rooted_chunk_indices.count(i_index) && !rooted_chunk_indices_.count(i_index)) {
+				floating_pair_chunks.insert(i_index);
+				paircnt++;
+			}
+			if (!rooted_chunk_indices.count(j_index) && !rooted_chunk_indices_.count(j_index)) {
+				floating_pair_chunks.insert(j_index);
+				paircnt++;
+			}
+			assert( paircnt == 0 || paircnt == 2 );
+		}
+
+		// first check if adjacent chunks are from the original rooted chunks and if they are add them to the rooted branch
+		// i.e. check if adjacent chunks are from a template and then add the floating chunk and overlapping floating chunks
+		for (set_iter = rooted_chunk_indices_.begin(); set_iter != rooted_chunk_indices_.end(); ++set_iter) {
+			// check upstream
+			core::Size up_index = *set_iter+1;
+			if (floating_pair_chunks.count(up_index) && !rooted_chunk_indices.count(up_index)) {
+				// remove cut of rooted chunk
+				TR << "Removing root cut: " << chunks_[*set_iter].stop() << std::endl;
+				remove_cut( chunks_[*set_iter].stop(), cuts );
+				TR << "Adding floating pair chunk cut: " << chunks_[up_index].stop() << std::endl;
+				cuts.push_back(chunks_[up_index].stop());
+				rooted_chunk_indices.insert(up_index);
+				add_overlapping_pair_chunks( up_index, cuts, jumps, rooted_chunk_indices );
+			}
+			// check downstream
+			if (*set_iter > 1) {
+				core::Size down_index = *set_iter-1;
+				if (floating_pair_chunks.count(down_index) && !rooted_chunk_indices.count(down_index)) {
+					rooted_chunk_indices.insert(down_index);
+					add_overlapping_pair_chunks( down_index, cuts, jumps, rooted_chunk_indices );
+				}
+			}
+		}
+
+		// remove rooted floating pairs from set
+		for (set_iter = rooted_chunk_indices.begin(); set_iter != rooted_chunk_indices.end(); ++set_iter)
+			floating_pair_chunks.erase(*set_iter);
+
+		// second check if adjacent chunks are from a built up rooted branch chunk and if they are add them to the rooted branch
+		// i.e. check if adjacent chunks are from a rooted branch and then add the floating chunk and overlapping floating chunks
+		while (floating_pair_chunks.size()) {
+			for (set_iter = rooted_chunk_indices.begin(); set_iter != rooted_chunk_indices.end(); ++set_iter) {
+				// check upstream
+				core::Size up_index = *set_iter+1;
+				if (floating_pair_chunks.count(up_index) && !rooted_chunk_indices.count(up_index)) {
+					// remove cut of rooted chunk
+					TR << "Removing root cut: " << chunks_[*set_iter].stop() << std::endl;
+					remove_cut( chunks_[*set_iter].stop(), cuts );
+					TR << "Adding floating pair chunk cut: " << chunks_[up_index].stop() << std::endl;
+					cuts.push_back(chunks_[up_index].stop());
+					rooted_chunk_indices.insert(up_index);
+					add_overlapping_pair_chunks( up_index, cuts, jumps, rooted_chunk_indices );
+				}
+				// check downstream
+				if (*set_iter > 1) {
+					core::Size down_index = *set_iter-1;
+					if (floating_pair_chunks.count(down_index) && !rooted_chunk_indices.count(down_index)) {
+						rooted_chunk_indices.insert(down_index);
+						add_overlapping_pair_chunks( down_index, cuts, jumps, rooted_chunk_indices );
+					}
+				}
+			}
+			// remove rooted floating pairs from set
+			for (set_iter = rooted_chunk_indices.begin(); set_iter != rooted_chunk_indices.end(); ++set_iter)
+				floating_pair_chunks.erase(*set_iter);
+		}
+
+		// hopefully all chunks are covered now
+		assert( chunks_.size() == rooted_chunk_indices.size() + rooted_chunk_indices_.size() );
+	} // strand pairings
+
+
 
 	// Remember to include the original cutpoint at the end of the chain
 	// (before the virtual residue)
@@ -314,12 +517,14 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 
 	ObjexxFCL::FArray2D_int ft_jumps(2, jumps.size());
 	for (Size i = 1; i <= jumps.size(); ++i) {
+		TR.Debug << "jump " << i << " " << jumps[i].first << " " << jumps[i].second << std::endl;
 		ft_jumps(1, i) = std::min(jumps[i].first, jumps[i].second);
 		ft_jumps(2, i) = std::max(jumps[i].first, jumps[i].second);
 	}
 
 	ObjexxFCL::FArray1D_int ft_cuts(cuts.size());
 	for (Size i = 1; i <= cuts.size(); ++i) {
+		TR.Debug << "cut " << i << " " << cuts[i] << std::endl;
 		ft_cuts(i) = cuts[i];
 	}
 
@@ -329,22 +534,154 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 												ft_cuts,		// cuts
 												num_nonvirt_residues_+1);  // root
 
+
+
+	// strand pairings
+	if (strand_pairs_.size()) {
+		// must join adjacent peptide edges (cannot use FoldTree::delete_extra_vertices() because it skips jumps)
+		// this might not be necessary because of the code following this
+		TR << "tree_from_jumps_and_cuts: " << tree << std::endl;
+		core::kinematics::FoldTree tmp_tree;
+		bool join_edges = true;
+		bool updated = false;
+		while (join_edges) {
+			join_edges = false;
+			core::kinematics::FoldTree const const_tree( tree );
+			tmp_tree.clear();
+			for ( core::kinematics::FoldTree::const_iterator it = const_tree.begin(), it_end = const_tree.end(); it != it_end; ++it ) {
+				core::kinematics::FoldTree::const_iterator it_next = it+1;
+				if (it_next != it_end) {
+					if ( it->label() == core::kinematics::Edge::PEPTIDE && it_next->label() == core::kinematics::Edge::PEPTIDE &&
+							it->stop() == it_next->start() ) {
+						join_edges = true;
+						tmp_tree.add_edge( it->start(), it_next->stop(), core::kinematics::Edge::PEPTIDE );
+						++it;
+						updated = true;
+						continue;
+					}
+					tmp_tree.add_edge( it->start(), it->stop(), it->label() );
+				} else {
+					tmp_tree.add_edge( it->start(), it->stop(), it->label() );
+				}
+			}
+			tree = tmp_tree;
+		}
+		if (updated) TR << "joined adjacent peptide edges: " << tree << std::endl;
+		// join continuous peptide edges starting from a rooted jump point
+		utility::vector1< core::Size > jump_points;
+		core::kinematics::FoldTree const const_tree( tree );
+		for ( core::kinematics::FoldTree::const_iterator it = const_tree.begin(), it_end = const_tree.end(); it != it_end; ++it ) {
+			if (it->start() == jump_root) jump_points.push_back(it->stop());
+		}
+		for (core::Size i=1;i<=jump_points.size();++i) {
+			std::set< std::pair< core::Size, core::Size > > remove; // keep track of edges to replace
+			tmp_tree.clear();
+			core::kinematics::FoldTree const const_new_tree( tree );
+			for ( core::kinematics::FoldTree::const_iterator it = const_new_tree.begin(), it_end = const_new_tree.end(); it != it_end; ++it ) {
+				std::set< std::pair< core::Size, core::Size > > remove_tmp;
+				if (it->start() == jump_points[i] && it->label() == core::kinematics::Edge::PEPTIDE) {
+					core::Size start = it->start();
+					core::Size stop = it->stop();
+					remove_tmp.insert(std::pair< core::Size, core::Size >( start, stop ));
+					for ( core::kinematics::FoldTree::const_iterator jt = it+1, jt_end = const_new_tree.end(); jt != jt_end; ++jt ) {
+						if (jt->start() == stop && jt->label() == core::kinematics::Edge::PEPTIDE) {
+							stop = jt->stop();
+							remove_tmp.insert(std::pair< core::Size, core::Size >( jt->start(), jt->stop() ));
+						}
+					}
+					tmp_tree.add_edge( start, stop, it->label() );
+					if (remove_tmp.size() > 1) remove.insert(remove_tmp.begin(),remove_tmp.end());
+				} else {
+					tmp_tree.add_edge( it->start(), it->stop(), it->label() );
+				}
+			}
+			core::kinematics::FoldTree const const_tmp_tree( tmp_tree );
+			core::kinematics::FoldTree new_tree;
+			for ( core::kinematics::FoldTree::const_iterator it = const_tmp_tree.begin(), it_end = const_tmp_tree.end(); it != it_end; ++it ) {
+				if (!remove.count(std::pair< core::Size, core::Size >( it->start(), it->stop() ))) {
+					new_tree.add_edge( it->start(), it->stop(), it->label() );
+				} else {
+					updated = true;
+				}
+			}
+			tree = new_tree;
+			if (updated) TR << "joined continuous rooted peptide edges: " << tree << std::endl;
+		}
+	} // strand pairings
+
+
+
 	if (!status) {
 		utility_exit_with_message("HybridizeFoldtreeDynamic: failed to build fold tree from cuts and jumps");
 	}
-
-	//std::cerr << tree;
 
 	// Update the pose's fold tree
 	core::pose::symmetry::set_asymm_unit_fold_tree( pose , tree );
 }
 
 
+// strand pairings
+void HybridizeFoldtreeDynamic::add_overlapping_pair_chunks(
+		core::Size const index,
+		utility::vector1<int> & cuts,
+		utility::vector1<std::pair<int, int> > & jumps,
+		std::set<core::Size> & rooted_chunk_indices
+) {
+	utility::vector1<core::Size> pair_chunks; // pair chunks that pair with root chunk (index)
+	utility::vector1<std::pair<core::Size, core::Size> > pair_chunks_pairs; // positions of pair chunks, first is from the root chunk
+	get_pair_core_chunks( index, pair_chunks, pair_chunks_pairs );
+	utility::vector1<std::pair< core::Size, utility::vector1<core::Size> > > start_pair_chunks;
+	utility::vector1<std::pair< core::Size, utility::vector1<std::pair<core::Size, core::Size> > > > start_pair_chunks_pairs;
+	if ( pair_chunks.size() ) {
+		start_pair_chunks.push_back(std::pair< core::Size, utility::vector1<core::Size> >( index, pair_chunks ));
+		start_pair_chunks_pairs.push_back(std::pair< core::Size, utility::vector1<std::pair<core::Size, core::Size> > >( index, pair_chunks_pairs ));
+	}
+	while (start_pair_chunks.size()) {
+		utility::vector1< std::pair< core::Size, utility::vector1<core::Size> > > start_pair_chunks_tmp;
+		utility::vector1< std::pair< core::Size, utility::vector1<std::pair<core::Size, core::Size> > > > start_pair_chunks_pairs_tmp;
+		for (core::Size i=1;i<=start_pair_chunks.size();++i) {
+			core::Size root = start_pair_chunks[i].first;
+			utility::vector1<core::Size>this_pair_chunks = start_pair_chunks[i].second;
+			utility::vector1<std::pair<core::Size, core::Size> >this_pair_chunks_pairs = start_pair_chunks_pairs[i].second;
+			assert( this_pair_chunks.size() == this_pair_chunks_pairs.size() );
+			for (core::Size j=1;j<=this_pair_chunks.size();++j) {
+				if (rooted_chunk_indices_.count(this_pair_chunks[j])) {
+					//TR.Debug << "WARNING! Strand pairings between two template chunks overlap. Chunk " << index << " and " << this_pair_chunks[j] << ". Geometry may be funky!" << std::endl;
+					continue;
+				}
+				if (!rooted_chunk_indices.count(this_pair_chunks[j])) {
+					// add jump if not rooted already
+					TR << "Adding strand pair root " << index << " tree jump: " << this_pair_chunks_pairs[j].first << " " << this_pair_chunks_pairs[j].second << std::endl;
+					jumps.push_back(this_pair_chunks_pairs[j]);
+					TR << "Adding strand pair root " << index << " tree cut: " << chunks_[this_pair_chunks[j]].stop() << std::endl;
+					cuts.push_back(chunks_[this_pair_chunks[j]].stop());
+					rooted_chunk_indices.insert(this_pair_chunks[j]);
+					utility::vector1<core::Size> new_pair_chunks;
+					utility::vector1<std::pair<core::Size, core::Size> > new_pair_chunks_pairs;
+					get_pair_core_chunks( this_pair_chunks[j], new_pair_chunks, new_pair_chunks_pairs );
+					if ( new_pair_chunks.size() ) {
+						start_pair_chunks_tmp.push_back(std::pair< core::Size, utility::vector1<core::Size> >( this_pair_chunks[j], new_pair_chunks ));
+						start_pair_chunks_pairs_tmp.push_back(std::pair< core::Size, utility::vector1<std::pair<core::Size, core::Size> > >( this_pair_chunks[j], new_pair_chunks_pairs ));
+					}
+				}
+			}
+		}
+		start_pair_chunks = start_pair_chunks_tmp;
+		start_pair_chunks_pairs = start_pair_chunks_pairs_tmp;
+	}
+}
+
+void HybridizeFoldtreeDynamic::remove_cut( core::Size const cut, utility::vector1<int> & cuts ) {
+	utility::vector1<int> cuts_tmp;
+	for (core::Size i=1; i<=cuts.size(); ++i)
+		if (cuts[i] != cut) cuts_tmp.push_back(cuts[i]);
+	cuts = cuts_tmp;
+}
+
 void HybridizeFoldtreeDynamic::set_core_chunks(const protocols::loops::Loops & chunks) {
 	core_chunks_last_ = core_chunks_;
 	core_chunks_ = chunks;
 }
 
-}  //  //namespace comparative_modeling
-//}  //  namespace hybridization
+}  //  namespace hybridization
 }  //  namespace protocols

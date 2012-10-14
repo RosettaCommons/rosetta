@@ -82,6 +82,8 @@ sources = {
 	"pilot/dekim" : [
 		"score_nonlocal_frags",
 		"convert_to_centroid",
+		"extended_chain",
+		"strand_pairings",
 	],
 	"pilot/delucasl" : [
 		#"roc_test",

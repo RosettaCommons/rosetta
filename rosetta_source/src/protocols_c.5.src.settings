@@ -29,7 +29,7 @@ sources = {
 		"InsertChunkMover",
 		"TemplateHistory",
 		"WeightedFragmentTrialMover",
-		#"coord_util",
+		"WeightedFragmentSmoothTrialMover",
 		"util",
 	],
 }

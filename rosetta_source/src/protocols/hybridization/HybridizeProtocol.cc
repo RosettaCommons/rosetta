@@ -82,7 +82,6 @@
 #include <core/scoring/constraints/util.hh>
 
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
@@ -134,6 +133,8 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
+#include <basic/options/keys/jumps.OptionKeys.gen.hh> // strand pairings
+#include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 
 #include <string>
 
@@ -143,7 +144,6 @@ static basic::Tracer TR( "protocols.hybridization.HybridizeProtocol" );
 static numeric::random::RandomGenerator RG(541938);
 
 namespace protocols {
-//namespace comparative_modeling {
 namespace hybridization {
 
 //
@@ -179,9 +179,7 @@ HybridizeProtocolCreator::mover_name() {
 /////////////
 // mover
 HybridizeProtocol::HybridizeProtocol() :
-	template_weights_sum_(0),
-	fragments3_(NULL),
-	fragments9_(NULL)
+	template_weights_sum_(0)
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -197,8 +195,6 @@ HybridizeProtocol::HybridizeProtocol() :
 /*
 HybridizeProtocol::HybridizeProtocol(std::string template_list_file) :
 	template_weights_sum_(0),
-	fragments3_(NULL),
-	fragments9_(NULL)
 {
 	init();
 	read_template_structures(template_list_file);
@@ -212,28 +208,36 @@ HybridizeProtocol::init() {
 
 	stage1_probability_ = option[cm::hybridize::stage1_probability]();
 	stage1_increase_cycles_ = option[cm::hybridize::stage1_increase_cycles]();
+	stage1_1_cycles_ = option[cm::hybridize::stage1_1_cycles]();
+	stage1_2_cycles_ = option[cm::hybridize::stage1_2_cycles]();
+	stage1_3_cycles_ = option[cm::hybridize::stage1_3_cycles]();
+	stage1_4_cycles_ = option[cm::hybridize::stage1_4_cycles]();
 	domain_assembly_ = false;
 	add_hetatm_ = false;
 	realign_domains_ = option[cm::hybridize::realign_domains]();
+	realign_domains_stage2_ = option[cm::hybridize::realign_domains_stage2]();
 	add_non_init_chunks_ = option[cm::hybridize::add_non_init_chunks]();
 	frag_weight_aligned_ = option[cm::hybridize::frag_weight_aligned]();
+	auto_frag_insertion_weight_ = option[cm::hybridize::auto_frag_insertion_weight]();
 	max_registry_shift_ = option[cm::hybridize::max_registry_shift]();
-	frag_insertion_weight_ = 0.5;
+	frag_1mer_insertion_weight_ = option[cm::hybridize::frag_1mer_insertion_weight]();
+	small_gap_frag_insertion_weight_ = option[cm::hybridize::small_gap_frag_insertion_weight]();
+	big_frag_insertion_weight_ = option[cm::hybridize::big_frag_insertion_weight]();
 	hetatm_cst_weight_ = 10.;
 	cartfrag_overlap_ = 1;
 
 	if (option[cm::hybridize::starting_template].user()) {
 		starting_templates_ = option[cm::hybridize::starting_template]();
 	}
-	
+
 	stage2_increase_cycles_ = option[cm::hybridize::stage2_increase_cycles]();
 	no_global_frame_ = option[cm::hybridize::no_global_frame]();
 	linmin_only_ = option[cm::hybridize::linmin_only]();
 
 	// default scorefunction
-	stage1_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( 
+	stage1_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function(
 		option[cm::hybridize::stage1_weights](), option[cm::hybridize::stage1_patch]() );
-	stage2_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( 
+	stage2_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function(
 		option[cm::hybridize::stage2_weights](), option[cm::hybridize::stage2_patch]() );
 
 	fa_scorefxn_ = core::scoring::getScoreFunction();
@@ -245,57 +249,53 @@ HybridizeProtocol::init() {
 		fa_cst_fn_ = cst_files[choice];
 		TR.Info << "Fullatom Constraint choice: " << fa_cst_fn_ << std::endl;
 	}
-	
+
 	batch_relax_ = option[ cm::hybridize::relax ]();
 	relax_repeats_ = option[ basic::options::OptionKeys::relax::default_repeats ]();
+
+	// disulfide file
+	if (option[ in::fix_disulf ].user()) {
+		disulf_file_ = option[ in::fix_disulf ]();
+	}
 
 	// read fragments
 	if ( option[ in::file::frag9 ].user() ) {
 		using namespace core::fragment;
-		fragments9_ = new ConstantLengthFragSet( 9 );
-		fragments9_ = FragmentIO().read_data( option[ in::file::frag9 ]() );
+		FragSetOP frags = FragmentIO().read_data( option[ in::file::frag9 ]() );
+		fragments_big_.push_back(frags);
 	}
 	if ( option[ in::file::frag3 ].user() ) {
 		using namespace core::fragment;
-		fragments3_ = new ConstantLengthFragSet( 3 );
-		fragments3_ = FragmentIO().read_data( option[ in::file::frag3 ]() );
+		FragSetOP frags = FragmentIO().read_data( option[ in::file::frag3 ]() );
+		fragments_small_.push_back(frags);
 	}
-	
+
 	// native
 	if ( option[ in::file::native ].user() ) {
 		native_ = new core::pose::Pose;
 		core::import_pose::pose_from_pdb( *native_, option[ in::file::native ]() );
+	} else if ( option[ evaluation::align_rmsd_target ].user() ) {
+		native_ = new core::pose::Pose;
+		utility::vector1< std::string > const & align_rmsd_target( option[ evaluation::align_rmsd_target ]() );
+		core::import_pose::pose_from_pdb( *native_, align_rmsd_target[1] ); // just use the first one for now
 	}
-}
 
-	
-core::Real HybridizeProtocol::get_gdtmm( core::pose::Pose &pose ) {
-	core::Real gdtmm = 0;
-	if ( native_ && native_->total_residue() > 0) {
-		if ( !aln_ ) {
-			core::sequence::SequenceOP model_seq ( new core::sequence::Sequence( pose.sequence(),  "model",  1 ) );
-			core::sequence::SequenceOP native_seq( new core::sequence::Sequence( native_->sequence(), "native", 1 ) );
-			aln_ = new core::sequence::SequenceAlignment;
-			*aln_ = align_naive(model_seq,native_seq);
-		}
-		
-		int n_atoms;
-		ObjexxFCL::FArray2D< core::Real > p1a, p2a;
-		protocols::comparative_modeling::gather_coords( pose, *native_, *aln_, n_atoms, p1a, p2a );
-		
-		core::Real m_1_1, m_2_2, m_3_3, m_4_3, m_7_4;
-		gdtmm = core::scoring::xyz_gdtmm( p1a, p2a, m_1_1, m_2_2, m_3_3, m_4_3, m_7_4 );
+	// strand pairings
+  pairings_file_ = option[jumps::pairing_file]();
+	if ( option[jumps::sheets].user() ) {
+		sheets_ = option[jumps::sheets]();
+	} else {
+		random_sheets_ = option[jumps::random_sheets]();
 	}
-	return gdtmm;
+	filter_templates_ = option[jumps::filter_templates]();
 }
-
 
 void
 HybridizeProtocol::check_and_create_fragments( core::pose::Pose & pose ) {
-	if (fragments9_ && fragments3_) return;
+	if (fragments_big_.size() > 0 && fragments_small_.size() > 0) return;
 
-	if (!fragments9_) {
-		fragments9_ = new core::fragment::ConstantLengthFragSet( 9 );
+	if (!fragments_big_.size()) {
+		core::fragment::FragSetOP frags = new core::fragment::ConstantLengthFragSet( 9 );
 
 		// number of residues
 		core::Size nres_tgt = pose.total_residue();
@@ -308,7 +308,7 @@ HybridizeProtocol::check_and_create_fragments( core::pose::Pose & pose ) {
 		}
 		if (pose.residue(nres_tgt).aa() == core::chemical::aa_vrt) nres_tgt--;
 		while (!pose.residue(nres_tgt).is_protein()) nres_tgt--;
-	
+
 		// sequence
 		std::string tgt_seq = pose.sequence();
 		std::string tgt_ss(nres_tgt, '0');
@@ -335,16 +335,18 @@ HybridizeProtocol::check_and_create_fragments( core::pose::Pose & pose ) {
 		// pick from vall based on template SS + target sequence
 		for ( core::Size j=1; j<=nres_tgt-8; ++j ) {
 			core::fragment::FrameOP frame = new core::fragment::Frame( j, 9 );
-			frame->add_fragment( 
+			frame->add_fragment(
 				core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa( tgt_ss.substr( j-1, 9 ), tgt_seq.substr( j-1, 9 ), 25, true, core::fragment::IndependentBBTorsionSRFD() ) );
-			fragments9_->add( frame );
+			frags->add( frame );
 		}
+		fragments_big_.push_back( frags );
 	}
-	if (!fragments3_) {
-		fragments3_ = new core::fragment::ConstantLengthFragSet( 3 );
+	if (!fragments_small_.size()) {
+		core::fragment::FragSetOP frags = new core::fragment::ConstantLengthFragSet( 3 );
 
-		// make them from 9mers
-		core::fragment::chop_fragments( *fragments9_, *fragments3_ );
+		// make them from big fragments
+		core::fragment::chop_fragments( *fragments_big_[1], *frags );
+		fragments_small_.push_back( frags );
 	}
 }
 
@@ -451,9 +453,13 @@ HybridizeProtocol::initialize_and_sample_loops(
 
 		// setup fragment movers
 		protocols::simple_moves::ClassicFragmentMoverOP frag3mover, frag9mover;
-		frag3mover = new protocols::simple_moves::ClassicFragmentMover( fragments3_, mm_loop );
+		core::fragment::FragSetOP frags_small = fragments_small_[RG.random_range(1,fragments_small_.size())];
+		core::fragment::FragSetOP frags_big = fragments_big_[RG.random_range(1,fragments_big_.size())];
+		TR.Info << "FRAGMENTS small max length: " << frags_small->max_frag_length() << std::endl;
+		TR.Info << "FRAGMENTS big max length: " << frags_big->max_frag_length() << std::endl;
+		frag3mover = new protocols::simple_moves::ClassicFragmentMover( frags_small, mm_loop );
 		frag3mover->set_check_ss( false ); frag3mover->enable_end_bias_check( false );
-		frag9mover = new protocols::simple_moves::ClassicFragmentMover( fragments9_, mm_loop );
+		frag9mover = new protocols::simple_moves::ClassicFragmentMover( frags_big, mm_loop );
 		frag9mover->set_check_ss( false ); frag9mover->enable_end_bias_check( false );
 
 		// extend + idealize loops
@@ -517,10 +523,10 @@ void HybridizeProtocol::add_template(
 	// add secondary structure information to the template pose
 	core::scoring::dssp::Dssp dssp_obj( *template_pose );
 	dssp_obj.insert_ss_into_pose( *template_pose );
-	
+
 	// find ss chunks in template
-	//protocols::loops::Loops chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose); 
-	protocols::loops::Loops contigs = protocols::loops::extract_continuous_chunks(*template_pose); 
+	//protocols::loops::Loops chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose);
+	protocols::loops::Loops contigs = protocols::loops::extract_continuous_chunks(*template_pose);
 	protocols::loops::Loops chunks = protocols::loops::extract_secondary_structure_chunks(*template_pose, "HE", 3, 6, 3, 4);
 
 	if (chunks.num_loop() == 0)
@@ -549,9 +555,9 @@ void HybridizeProtocol::read_template_structures(utility::file::FileName templat
 	std::string line;
 	while (!f_stream.eof()) {
 		getline(f_stream, line);
-		
+
 		if (line.size() == 0) continue;
-		
+
 		std::istringstream str_stream(line);
 		std::string template_fn;
 		std::string cst_fn;
@@ -566,9 +572,9 @@ void HybridizeProtocol::read_template_structures(utility::file::FileName templat
 			if (!str_stream.eof()) str_stream >> cst_fn;
 			if (!str_stream.eof()) str_stream >> cluster_id;
 			if (!str_stream.eof()) str_stream >> weight;
-		
+
 			TR << template_fn << " " << cst_fn << " " << cluster_id << " " << weight << std::endl;
-			
+
 			std::string cst_reses_str;
 			utility::vector1<core::Size> cst_reses;
 			if ( str_stream >> cst_reses_str ) {
@@ -617,7 +623,7 @@ void HybridizeProtocol::pick_starting_template(core::Size & initial_template_ind
 	weights_icluster.clear();
 	template_chunks_icluster.clear();
 	template_contigs_icluster.clear();
-	
+
 	if (starting_templates_.size() > 0) {
 		numeric::random::WeightedSampler weighted_sampler;
 		for (Size i=1; i<=starting_templates_.size(); ++i) {
@@ -632,7 +638,7 @@ void HybridizeProtocol::pick_starting_template(core::Size & initial_template_ind
 		initial_template_index = weighted_sampler.random_sample(RG);
 	}
 	Size cluster_id = template_clusterID_[initial_template_index];
-	
+
 	for (Size i_template = 1; i_template <= template_clusterID_.size(); ++i_template) {
 		if ( cluster_id == template_clusterID_[i_template] ) {
 			// add templates from the same cluster
@@ -648,7 +654,7 @@ void HybridizeProtocol::pick_starting_template(core::Size & initial_template_ind
 		}
 	}
 }
-	
+
 void HybridizeProtocol::apply( core::pose::Pose & pose )
 {
 	using namespace protocols::moves;
@@ -660,6 +666,11 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 	// make fragments if we don't have them at this point
 	check_and_create_fragments( pose );
+	// select random fragments if given variable lengths
+	core::fragment::FragSetOP frags_small = fragments_small_[RG.random_range(1,fragments_small_.size())];
+	core::fragment::FragSetOP frags_big = fragments_big_[RG.random_range(1,fragments_big_.size())];
+	TR.Info << "FRAGMENTS small max length: " << frags_small->max_frag_length() << std::endl;
+	TR.Info << "FRAGMENTS big max length: " << frags_big->max_frag_length() << std::endl;
 
 	// starting structure pool
 	std::vector < SilentStructOP > post_centroid_structs;
@@ -677,8 +688,9 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	}
 	if (pose.residue(nres_tgt).aa() == core::chemical::aa_vrt) nres_tgt--;
 	while (!pose.residue(nres_protein_tgt).is_protein()) nres_protein_tgt--;
-	
+
 	core::Real gdtmm = 0.0;
+	core::sequence::SequenceAlignmentOP native_aln;
 	while(need_more_samples) {
 		need_more_samples = false;
 
@@ -721,7 +733,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		}
 		// realign each template to the starting template by domain
 		// does not to domain realignment if in domain assembly mode
-		else if (realign_domains_) {
+		else if (realign_domains_ || realign_domains_stage2_) {
 			// domain parsing
 			DDomainParse ddom(pcut_,hcut_,length_);
 			utility::vector1< utility::vector1< loops::Loops > > domains_all_templ;
@@ -729,35 +741,35 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			for (Size i_template=1; i_template<=templates_.size(); ++i_template) {
 				if (template_clusterID_[i_template] != template_clusterID_[initial_template_index]) continue;
 				domains_all_templ[i_template] = ddom.split( *templates_[i_template], nres_protein_tgt );
-				
+
 				//protocols::loops::Loops my_chunks(template_chunks_[initial_template_index_]);
 				// convert domain numbering to target pose numbering
 				for (Size iloops=1; iloops<=domains_all_templ[i_template].size(); ++iloops) {
 					for (Size iloop=1; iloop<=domains_all_templ[i_template][iloops].num_loop(); ++iloop) {
 						Size seqpos_start_pose = templates_[i_template]->pdb_info()->number(domains_all_templ[i_template][iloops][iloop].start());
 						domains_all_templ[i_template][iloops][iloop].set_start( seqpos_start_pose );
-						
+
 						Size seqpos_stop_pose = templates_[i_template]->pdb_info()->number(domains_all_templ[i_template][iloops][iloop].stop());
 						domains_all_templ[i_template][iloops][iloop].set_stop( seqpos_stop_pose );
 					}
 				}
-				
+
 				TR << "Found " << domains_all_templ[i_template].size() << " domains for template " << template_fn_[i_template] << std::endl;
 				for (Size i=1; i<=domains_all_templ[i_template].size(); ++i) {
 					TR << "domain " << i << ": " << domains_all_templ[i_template][i] << std::endl;
 				}
 			}
-			
+
 			// combine domains that are not in the initial template
-			utility::vector1< loops::Loops > domains = expand_domains_to_full_length(domains_all_templ, initial_template_index, nres_tgt);
-			TR << "Final decision: " << domains.size() << " domains" << std::endl;
-			for (Size i=1; i<= domains.size(); ++i) {
-				TR << "domain " << i << ": " << domains[i] << std::endl;
+			domains_ = expand_domains_to_full_length(domains_all_templ, initial_template_index, nres_tgt);
+			TR << "Final decision: " << domains_.size() << " domains" << std::endl;
+			for (Size i=1; i<= domains_.size(); ++i) {
+				TR << "domain " << i << ": " << domains_[i] << std::endl;
 			}
-			
+
 			// local align
-			align_by_domain(templates_, domains, initial_template_index);
-			
+			align_by_domain(templates_, domains_, templates_[initial_template_index]);
+
 			// update chunk, contig informations
 			for (Size i_template=1; i_template<=templates_.size(); ++i_template) {
 				template_contigs_[i_template] = protocols::loops::extract_continuous_chunks(*templates_[i_template]);
@@ -790,6 +802,10 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		history->setall( initial_template_index_icluster );
 		pose.data().set( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY, history );
 
+
+		// STAGE 1
+
+
 		//fpd constraints are handled a little bit weird
 		//  * foldtree hybridize sets chainbreak variants then applies constraints (so c-beta csts are treated properly)
 		//  * after chainbreak variants are removed, csts are removed and reapplied in this function
@@ -802,21 +818,39 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		// fold tree hybridize
 		if (RG.uniform() < stage1_probability_) {
 			std::string cst_fn = template_cst_fn_[initial_template_index];
-	
+
 			FoldTreeHybridizeOP ft_hybridize(
 				new FoldTreeHybridize(
 					initial_template_index_icluster, templates_icluster, weights_icluster,
-					template_chunks_icluster, template_contigs_icluster, fragments3_, fragments9_) ) ;
+					template_chunks_icluster, template_contigs_icluster, frags_small, frags_big) ) ;
 			ft_hybridize->set_constraint_file( cst_fn );
 			ft_hybridize->set_scorefunction( stage1_scorefxn_ );
 			ft_hybridize->set_increase_cycles( stage1_increase_cycles_ );
+			ft_hybridize->set_stage1_1_cycles( stage1_1_cycles_ );
+			ft_hybridize->set_stage1_2_cycles( stage1_2_cycles_ );
+			ft_hybridize->set_stage1_3_cycles( stage1_3_cycles_ );
+			ft_hybridize->set_stage1_4_cycles( stage1_4_cycles_ );
 			ft_hybridize->set_add_non_init_chunks( add_non_init_chunks_ );
 			ft_hybridize->set_domain_assembly( domain_assembly_ );
 			ft_hybridize->set_add_hetatm( add_hetatm_, hetatm_cst_weight_ );
-			ft_hybridize->set_frag_insertion_weight( frag_insertion_weight_ );
+			ft_hybridize->set_frag_1mer_insertion_weight( frag_1mer_insertion_weight_ );
+			ft_hybridize->set_small_gap_frag_insertion_weight( small_gap_frag_insertion_weight_ );
+			ft_hybridize->set_big_frag_insertion_weight( big_frag_insertion_weight_ );
 			ft_hybridize->set_frag_weight_aligned( frag_weight_aligned_ );
+			ft_hybridize->set_auto_frag_insertion_weight( auto_frag_insertion_weight_ );
 			ft_hybridize->set_max_registry_shift( max_registry_shift_ );
+
+			// strand pairings
+			ft_hybridize->set_pairings_file( pairings_file_ );
+			ft_hybridize->set_sheets( sheets_ );
+			ft_hybridize->set_random_sheets( random_sheets_ );
+			ft_hybridize->set_filter_templates( filter_templates_ );
+
 			ft_hybridize->apply(pose);
+
+			// get strand pairings if they exist for constraints in later stages
+			strand_pairs_ = ft_hybridize->get_strand_pairs();
+
 		} else {
 			// just do frag insertion in unaligned regions
 			core::pose::PoseOP chosen_templ = templates_icluster[initial_template_index_icluster];
@@ -825,9 +859,19 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		}
 
 		//write gdtmm to output
-		gdtmm = get_gdtmm(pose);
-		core::pose::setPoseExtraScores( pose, "GDTMM_after_stage1", gdtmm);
-		TR << "GDTMM_after_stage1" << F(8,3,gdtmm) << std::endl;
+		if (native_ && native_->total_residue()) {
+			gdtmm = get_gdtmm(*native_, pose, native_aln);
+			core::pose::setPoseExtraScores( pose, "GDTMM_after_stage1", gdtmm);
+			TR << "GDTMM_after_stage1" << F(8,3,gdtmm) << std::endl;
+		}
+		pose.dump_pdb("stage1.pdb");
+
+		if (realign_domains_stage2_) {
+			// realign domains to the output of stage 1
+			TR << "Realigning template domains to stage1 pose." << std::endl;
+			core::pose::PoseOP stage1pose = new core::pose::Pose( pose );
+			align_by_domain(templates_, domains_, stage1pose);
+		}
 
 		// apply constraints
 		std::string cst_fn = template_cst_fn_[initial_template_index];
@@ -835,12 +879,19 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		if (add_hetatm_) {
 			add_non_protein_cst(pose, hetatm_cst_weight_);
 		}
-		
+		if (strand_pairs_.size()) {
+			add_strand_pairs_cst(pose, strand_pairs_);
+		}
+
+		// STAGE 2
+
+
+
 		if (!option[cm::hybridize::skip_stage2]()) {
 			CartesianHybridizeOP cart_hybridize (
 				new CartesianHybridize(
-					templates_icluster, weights_icluster, 
-					template_chunks_icluster,template_contigs_icluster, fragments9_ ) );
+					templates_icluster, weights_icluster,
+					template_chunks_icluster,template_contigs_icluster, frags_big ) );
 			cart_hybridize->set_scorefunction( stage2_scorefxn_);
 			cart_hybridize->set_increase_cycles( stage2_increase_cycles_ );
 			cart_hybridize->set_no_global_frame( no_global_frame_ );
@@ -853,10 +904,11 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		}
 
 		//write gdtmm to output
-		gdtmm = get_gdtmm(pose);
-		core::pose::setPoseExtraScores( pose, "GDTMM_after_stage2", gdtmm);
-		TR << "GDTMM_after_stage2" << F(8,3,gdtmm) << std::endl;
-
+		if (native_ && native_->total_residue()) {
+			gdtmm = get_gdtmm(*native_, pose, native_aln);
+			core::pose::setPoseExtraScores( pose, "GDTMM_after_stage2", gdtmm);
+			TR << "GDTMM_after_stage2" << ObjexxFCL::fmt::F(8,3,gdtmm) << std::endl;
+		}
 		// get fragment history
 		runtime_assert( pose.data().has( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) );
 		history = *( static_cast< TemplateHistory* >( pose.data().get_ptr( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY )() ));
@@ -870,30 +922,36 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 		// stage "2.5" .. minimize with centroid energy + full-strength cart bonded
 		if (!option[cm::hybridize::skip_stage2]()) {
-		 	core::optimization::MinimizerOptions options_lbfgs( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
-		 	core::optimization::CartesianMinimizer minimizer;
-		 	core::scoring::ScoreFunctionOP stage2_scorefxn_copy = stage2_scorefxn_->clone();
-		 	core::Real fa_cart_bonded_wt = fa_scorefxn_->get_weight(core::scoring::cart_bonded);
-		 	if (fa_cart_bonded_wt == 0) fa_cart_bonded_wt = 0.5;
-		 	stage2_scorefxn_copy->set_weight( core::scoring::cart_bonded, fa_cart_bonded_wt );
-		 	core::kinematics::MoveMap mm;
-		 	mm.set_bb( true ); mm.set_chi( true ); mm.set_jump( true );
+			core::optimization::MinimizerOptions options_lbfgs( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
+			core::optimization::CartesianMinimizer minimizer;
+			core::scoring::ScoreFunctionOP stage2_scorefxn_copy = stage2_scorefxn_->clone();
+			core::Real fa_cart_bonded_wt = fa_scorefxn_->get_weight(core::scoring::cart_bonded);
+			if (fa_cart_bonded_wt == 0) fa_cart_bonded_wt = 0.5;
+			stage2_scorefxn_copy->set_weight( core::scoring::cart_bonded, fa_cart_bonded_wt );
+			core::kinematics::MoveMap mm;
+			mm.set_bb( true ); mm.set_chi( true ); mm.set_jump( true );
 			if (core::pose::symmetry::is_symmetric(pose) )
 				core::pose::symmetry::make_symmetric_movemap( pose, mm );
-		 	options_lbfgs.max_iter(200);
-		 	(*stage2_scorefxn_copy)(pose); minimizer.run( pose, mm, *stage2_scorefxn_copy, options_lbfgs );
+			options_lbfgs.max_iter(200);
+			(*stage2_scorefxn_copy)(pose); minimizer.run( pose, mm, *stage2_scorefxn_copy, options_lbfgs );
 		}
+
+
+		// STAGE RELAX
+
 
 		// optional relax
 		if (batch_relax_ > 0) {
 			protocols::moves::MoverOP tofa = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD );
 			tofa->apply(pose);
 
-			// disulfide
+			// 	disulfide
 			if (disulf_file_.length() > 0) {
 				basic::options::option[ basic::options::OptionKeys::in::fix_disulf ].value(disulf_file_);
 				core::pose::initialize_disulfide_bonds(pose);
-				basic::options::option[ basic::options::OptionKeys::in::fix_disulf ].value();
+				// must to this to avoid possible errors since initialize_disulfide_bonds is used in pose io.
+				basic::options::option[ basic::options::OptionKeys::in::fix_disulf ].deactivate();
+				basic::options::option[ basic::options::OptionKeys::in::fix_disulf ].to_default(); // reset to the default value
 			}
 
 			// apply fa constraints
@@ -902,7 +960,10 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			if (add_hetatm_) {
 				add_non_protein_cst(pose, hetatm_cst_weight_);
 			}
-			
+			if (strand_pairs_.size()) {
+				add_strand_pairs_cst(pose, strand_pairs_);
+			}
+
 			if (batch_relax_ == 1) {
 				// add additional _CALPHA_ constraints
 				//fpd  generally this is unused
@@ -910,7 +971,10 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 				core::Size rootres = pose.fold_tree().root();
 				Real const coord_sdev( 1 ); // this should be an option perhaps
 				for ( core::Size i=1; i<pose.total_residue(); ++i ) {
-					if ( !pose.residue(i).is_protein() ) continue;
+					// skip non-protein residues and templates which may have been added (strand pairings) and placed the history in stage1
+					if (	!pose.residue(i).is_protein() ||
+								history->get(i) > template_index_icluster.size() // strand pairings
+						) continue;
 					utility::vector1<core::Size> const &source_list = template_cst_reses_[ template_index_icluster[ history->get(i) ] ];
 					if ( std::find( source_list.begin(), source_list.end(), i ) != source_list.end() ) {
 						TR << "Constrain residue " << i << std::endl;
@@ -964,10 +1028,11 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			(*stage2_scorefxn_)(pose);
 		}
 	}
-
-	gdtmm = get_gdtmm(pose);
-	core::pose::setPoseExtraScores( pose, "GDTMM_final", gdtmm);
-	TR << "GDTMM_final" << F(8,3,gdtmm) << std::endl;
+	if (native_ && native_->total_residue()) {
+		gdtmm = get_gdtmm(*native_, pose, native_aln);
+		core::pose::setPoseExtraScores( pose, "GDTMM_final", gdtmm);
+		TR << "GDTMM_final" << ObjexxFCL::fmt::F(8,3,gdtmm) << std::endl;
+	}
 }
 
 utility::vector1 <Loops>
@@ -978,7 +1043,7 @@ HybridizeProtocol::expand_domains_to_full_length(utility::vector1 < utility::vec
 
 	utility::vector1 < bool > residue_mask(n_residues, false);
 	residue_mask.resize(n_residues);
-	
+
 	//mask residues from all domains not to be cut
 	for (Size i_pose=1; i_pose <= all_domains.size(); ++i_pose) {
 		for (Size idomain=1; idomain <= all_domains[i_pose].size(); ++idomain) {
@@ -989,7 +1054,7 @@ HybridizeProtocol::expand_domains_to_full_length(utility::vector1 < utility::vec
 			}
 		}
 	}
-	
+
 	// assuming loops in domains are sequential
 	for (Size idomain=1; idomain <= all_domains[ref_domains_index].size(); ++idomain) {
 		for (core::Size iloop=1; iloop<=all_domains[ref_domains_index][idomain].num_loop(); ++iloop) {
@@ -999,7 +1064,7 @@ HybridizeProtocol::expand_domains_to_full_length(utility::vector1 < utility::vec
 			if (idomain == all_domains[ref_domains_index].size() && iloop == all_domains[ref_domains_index][idomain].num_loop()) {
 				domains[idomain][iloop].set_stop(n_residues);
 			}
-			
+
 			// the next loop
 			Size jdomain = idomain;
 			Size jloop = iloop+1;
@@ -1007,7 +1072,7 @@ HybridizeProtocol::expand_domains_to_full_length(utility::vector1 < utility::vec
 				++jdomain;
 				jloop = 1;
 				if (jdomain > all_domains[ref_domains_index].size()) continue;
-				
+
 				Size gap_start = all_domains[ref_domains_index][idomain][iloop].stop()+1;
 				Size gap_stop  = all_domains[ref_domains_index][jdomain][jloop].start();
 				utility::vector1<Size> cut_options;
@@ -1021,7 +1086,7 @@ HybridizeProtocol::expand_domains_to_full_length(utility::vector1 < utility::vec
 					}
 				}
 				Size cut = cut_options[RG.random_range(1,cut_options.size())];
-				
+
 				domains[idomain][iloop].set_stop(cut-1);
 				domains[jdomain][jloop].set_start(cut);
 			}
@@ -1031,12 +1096,12 @@ HybridizeProtocol::expand_domains_to_full_length(utility::vector1 < utility::vec
 }
 
 void
-HybridizeProtocol::align_by_domain(utility::vector1<core::pose::PoseOP> & poses, utility::vector1 < Loops > domains, core::Size const ref_index)
+HybridizeProtocol::align_by_domain(utility::vector1<core::pose::PoseOP> & poses, utility::vector1 < Loops > domains, core::pose::PoseOP & ref_pose)
 {
 	for (Size i_pose=1; i_pose <= poses.size(); ++i_pose) {
-		if (i_pose == ref_index) continue;
-		align_by_domain(*poses[i_pose], *poses[ref_index], domains);
-		
+		if (poses[i_pose] == ref_pose) continue;
+		align_by_domain(*poses[i_pose], *ref_pose, domains);
+
 		//std::string out_fn = template_fn_[i_pose] + "_realigned.pdb";
 		//poses[i_pose]->dump_pdb(out_fn);
 	}
@@ -1053,33 +1118,36 @@ HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose con
 		core::Size n_mapped_residues=0;
 		for (core::Size ires=1; ires<=pose.total_residue(); ++ires) {
 			if (!pose.residue_type(ires).is_protein()) continue;
+			int pose_res = (pose.pdb_info()) ? pose.pdb_info()->number(ires) : ires;
 			for (core::Size iloop=1; iloop<=domains[i_domain].num_loop(); ++iloop) {
-				if ( pose.pdb_info()->number(ires) < (int)domains[i_domain][iloop].start() || pose.pdb_info()->number(ires) > (int)domains[i_domain][iloop].stop() ) continue;
+				if ( pose_res < (int)domains[i_domain][iloop].start() || pose_res > (int)domains[i_domain][iloop].stop() ) continue;
 				residue_list.push_back(ires);
 			}
 		}
 		std::list <Size> ref_residue_list;
 		for (core::Size jres=1; jres<=ref_pose.total_residue(); ++jres) {
+			if (!ref_pose.residue_type(jres).is_protein()) continue;
+			int ref_pose_res = (ref_pose.pdb_info()) ? ref_pose.pdb_info()->number(jres) : jres;
 			for (core::Size iloop=1; iloop<=domains[i_domain].num_loop(); ++iloop) {
-				if ( ref_pose.pdb_info()->number(jres) < (int)domains[i_domain][iloop].start() || ref_pose.pdb_info()->number(jres) > (int)domains[i_domain][iloop].stop() ) continue;
+				if ( ref_pose_res < (int)domains[i_domain][iloop].start() || ref_pose_res > (int)domains[i_domain][iloop].stop() ) continue;
 				ref_residue_list.push_back(jres);
 			}
 		}
-		
+
 		TMalign tm_align;
 		string seq_pose, seq_ref, aligned;
 		int reval = tm_align.apply(pose, ref_pose, residue_list, ref_residue_list);
 		if (reval == 0) {
 			tm_align.alignment2AtomMap(pose, ref_pose, residue_list, ref_residue_list, n_mapped_residues, atom_map);
 			tm_align.alignment2strings(seq_pose, seq_ref, aligned);
-			
+
 			using namespace ObjexxFCL::fmt;
 			Size norm_length = residue_list.size() < ref_residue_list.size() ? residue_list.size():ref_residue_list.size();
 			TR << "Align domain with TMscore of " << F(8,3,tm_align.TMscore(norm_length)) << std::endl;
 			TR << seq_pose << std::endl;
 			TR << aligned << std::endl;
 			TR << seq_ref << std::endl;
-			
+
 			if (n_mapped_residues >= 6) {
 				utility::vector1< core::Real > aln_cutoffs;
 				aln_cutoffs.push_back(6);
@@ -1128,7 +1196,15 @@ HybridizeProtocol::parse_my_tag(
 			starting_templates_.push_back(value);
 		}
 	}
-	
+
+	if( tag->hasOption( "stage1_1_cycles" ) )
+		stage1_1_cycles_ = tag->getOption< core::Size >( "stage1_1_cycles" );
+	if( tag->hasOption( "stage1_2_cycles" ) )
+		stage1_2_cycles_ = tag->getOption< core::Size >( "stage1_2_cycles" );
+	if( tag->hasOption( "stage1_3_cycles" ) )
+		stage1_3_cycles_ = tag->getOption< core::Size >( "stage1_3_cycles" );
+	if( tag->hasOption( "stage1_4_cycles" ) )
+		stage1_4_cycles_ = tag->getOption< core::Size >( "stage1_4_cycles" );
 	if( tag->hasOption( "stage1_probability" ) )
 		stage1_probability_ = tag->getOption< core::Real >( "stage1_probability" );
 	if( tag->hasOption( "add_hetatm" ) )
@@ -1139,12 +1215,20 @@ HybridizeProtocol::parse_my_tag(
 		domain_assembly_ = tag->getOption< bool >( "domain_assembly" );
 	if( tag->hasOption( "realign_domains" ) )
 		realign_domains_ = tag->getOption< bool >( "realign_domains" );
+	if( tag->hasOption( "realign_domains_stage2" ) )
+		realign_domains_stage2_ = tag->getOption< bool >( "realign_domains_stage2" );
 	if( tag->hasOption( "add_non_init_chunks" ) )
 		add_non_init_chunks_ = tag->getOption< bool >( "add_non_init_chunks" );
-	if( tag->hasOption( "frag_insertion_weight" ) )
-		frag_insertion_weight_ = tag->getOption< core::Real >( "frag_insertion_weight" );
+	if( tag->hasOption( "frag_1mer_insertion_weight" ) )
+		frag_1mer_insertion_weight_ = tag->getOption< core::Real >( "frag_1mer_insertion_weight" );
+	if( tag->hasOption( "small_gap_frag_insertion_weight" ) )
+		small_gap_frag_insertion_weight_ = tag->getOption< core::Real >( "small_gap_frag_insertion_weight" );
+	if( tag->hasOption( "big_frag_insertion_weight" ) )
+		big_frag_insertion_weight_ = tag->getOption< core::Real >( "big_frag_insertion_weight" );
 	if( tag->hasOption( "frag_weight_aligned" ) )
 		frag_weight_aligned_ = tag->getOption< core::Real >( "frag_weight_aligned" );
+	if( tag->hasOption( "auto_frag_insertion_weight" ) )
+		auto_frag_insertion_weight_ = tag->getOption< bool >( "auto_frag_insertion_weight" );
 	if( tag->hasOption( "max_registry_shift" ) )
 		max_registry_shift_ = tag->getOption< core::Size >( "max_registry_shift" );
 	if( tag->hasOption( "no_global_frame" ) )
@@ -1153,8 +1237,8 @@ HybridizeProtocol::parse_my_tag(
 		linmin_only_ = tag->getOption< bool >( "linmin_only" );
 	if( tag->hasOption( "repeats" ) )
 		relax_repeats_ = tag->getOption< core::Size >( "repeats" );
-	if( tag->hasOption( "cartfrag_overlap" ) ) 
-		cartfrag_overlap_ = tag->getOption< core::Size >( "cartfrag_overlap" ); 
+	if( tag->hasOption( "cartfrag_overlap" ) )
+		cartfrag_overlap_ = tag->getOption< core::Size >( "cartfrag_overlap" );
 	if( tag->hasOption( "disulf_file" ) )
 		disulf_file_ = tag->getOption< std::string >( "disulf_file" );
 
@@ -1183,11 +1267,22 @@ HybridizeProtocol::parse_my_tag(
 	for (tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it) {
 		if ( (*tag_it)->getName() == "Fragments" ) {
 			using namespace core::fragment;
-
-			fragments3_ = new ConstantLengthFragSet( 3 );
-			fragments3_ = FragmentIO().read_data( (*tag_it)->getOption<std::string>( "3mers" )  );
-			fragments9_ = new ConstantLengthFragSet( 9 );
-			fragments9_ = FragmentIO().read_data( (*tag_it)->getOption<std::string>( "9mers" ) );
+			if ( (*tag_it)->hasOption( "3mers" ) ) {
+				core::fragment::FragSetOP frags = core::fragment::FragmentIO().read_data( (*tag_it)->getOption<std::string>( "3mers" )  );
+				fragments_small_.push_back(frags);
+			} else if ( (*tag_it)->hasOption( "small" ) ) {
+				utility::vector1<std::string> frag_files = utility::string_split((*tag_it)->getOption<std::string>( "small" ), ',');
+				for (core::Size i=1; i<= frag_files.size(); ++i )
+					fragments_small_.push_back(core::fragment::FragmentIO().read_data( frag_files[i] ));
+			}
+			if ( (*tag_it)->hasOption( "9mers" ) ) {
+				core::fragment::FragSetOP frags = core::fragment::FragmentIO().read_data( (*tag_it)->getOption<std::string>( "9mers" ) );
+				fragments_big_.push_back(frags);
+			} else if ( (*tag_it)->hasOption( "big" ) ) {
+				utility::vector1<std::string> frag_files = utility::string_split((*tag_it)->getOption<std::string>( "big" ), ',');
+				for (core::Size i=1; i<= frag_files.size(); ++i )
+					fragments_big_.push_back(core::fragment::FragmentIO().read_data( frag_files[i] ));
+			}
 		}
 
 		if ( (*tag_it)->getName() == "Template" ) {
@@ -1205,10 +1300,26 @@ HybridizeProtocol::parse_my_tag(
 			add_template(template_fn, cst_fn, symm_file, weight, domain_assembly_weight, cluster_id, cst_reses);
 		}
 
+		// strand pairings
+		if ( (*tag_it)->getName() == "Pairings" ) {
+			pairings_file_ = (*tag_it)->getOption< std::string >( "file", "" );
+			if ( (*tag_it)->hasOption("sheets") ) {
+				core::Size sheets = (*tag_it)->getOption< core::Size >( "sheets" );
+				sheets_.clear();
+				random_sheets_.clear();
+				sheets_.push_back(sheets);
+			} else if ( (*tag_it)->hasOption("random_sheets") ) {
+				core::Size random_sheets = (*tag_it)->getOption< core::Size >( "random_sheets" );
+				sheets_.clear();
+				random_sheets_.clear();
+				random_sheets_.push_back(random_sheets);
+			}
+			filter_templates_ = (*tag_it)->getOption<bool>( "filter_templates" , 0 );
+		}
+
 	}
 }
 
-} // hybridize 
-//} // comparative_modeling 
+} // hybridization
 } // protocols
 

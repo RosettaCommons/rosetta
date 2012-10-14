@@ -38,6 +38,7 @@ namespace frags { extern FileOptionKey const depth; }
 namespace frags { extern FileOptionKey const denied_pdb; }
 namespace frags { extern IntegerVectorOptionKey const frag_sizes; }
 namespace frags { extern BooleanOptionKey const write_ca_coordinates; }
+namespace frags { extern BooleanOptionKey const write_scores; }
 namespace frags { extern BooleanOptionKey const annotate; }
 namespace frags { extern IntegerOptionKey const nr_large_copies; }
 namespace frags { extern IntegerOptionKey const n_candidates; }
