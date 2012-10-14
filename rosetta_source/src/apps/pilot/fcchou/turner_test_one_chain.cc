@@ -105,6 +105,7 @@ using numeric::conversions::degrees;
 using utility::vector1;
 using utility::tools::make_vector1;
 
+OPT_KEY( String, out_scores_prefix )
 OPT_KEY( String, force_field )
 OPT_KEY( String, seq )
 OPT_KEY( String, algorithm )
@@ -112,8 +113,8 @@ OPT_KEY( Real, score_cutoff )
 OPT_KEY( Real, sampling_stddev )
 OPT_KEY( Real, kT )
 OPT_KEY( Integer, n_sample )
-OPT_KEY( Boolean, output_binary )
-OPT_KEY( String, output_binary_prefix )
+//OPT_KEY( Boolean, output_binary )
+//OPT_KEY( String, output_binary_prefix )
 OPT_KEY( Boolean, check_clash )
 OPT_KEY( Boolean, o2star_trials )
 OPT_KEY( Boolean, sample_3_prime_end )
@@ -129,38 +130,18 @@ static numeric::random::RandomGenerator RG(245075);  // <- Magic number, do not 
 
 
 //////////Binary IO////////////////
-class RNA_scores {
-	public :
-		Size counts;
-		float total, fa_stack, hbond_sc, hbond_intra, rna_torsion;
-		RNA_scores();
-		RNA_scores(Size, float, float, float, float, float);
-};
 
-RNA_scores::RNA_scores () {
-	counts = 0;
-	total = 0;
-	fa_stack = 0;
-	hbond_sc = 0;
-	hbond_intra = 0;
-	rna_torsion = 0;
-}
-
-RNA_scores::RNA_scores (Size a, float b, float c, float d, float e, float g) {
-	counts = a;
-	total = b;
-	fa_stack = c;
-	hbond_sc = d;
-	hbond_intra = e;
-	rna_torsion = g;
-}
-
+typedef std::pair<unsigned int, float[4]> RNA_scores; //count, total_score, hbond_sc, fa_stack, rna_torsion
+/*
 void 
 write_scores( utility::vector1 < RNA_scores > const & scores, std::string const & out_name) {
 	std::ofstream out_file (out_name.c_str(), std::ios::out | std::ios::binary);
 	Size const vector_size = scores.size();
+	Size const RNA_scores_size = sizeof(RNA_scores);
+	std::cout << "RNA_scores_size = " << RNA_scores_size << std::endl;
 	out_file.write( (char*) & vector_size, sizeof(vector_size) );
-	out_file.write( (char*) & scores[1], sizeof(RNA_scores) * vector_size );
+	out_file.write( (char*) & RNA_scores_size, sizeof(RNA_scores_size) );
+	out_file.write( (char*) & scores[1], RNA_scores_size * vector_size );
 	out_file.close();
 }
 
@@ -168,13 +149,16 @@ void
 read_scores( utility::vector1 < RNA_scores > & scores, std::string const & in_name) {
 	std::ifstream in_file (in_name.c_str(), std::ios::in | std::ios::binary);
 	Size vector_size = 0;
+	Size RNA_scores_size = 0;
 	in_file.read( (char*) & vector_size, sizeof(vector_size) );
+	in_file.read( (char*) & RNA_scores_size, sizeof(RNA_scores_size) );
 	scores.clear();
 	scores.resize(vector_size);
-	in_file.read( (char*) & scores[1], sizeof(RNA_scores) * vector_size );
+	std::cout << "RNA_scores_size = " << RNA_scores_size << std::endl;
+	in_file.read( (char*) & scores[1], RNA_scores_size * vector_size );
 	in_file.close();
 }
-
+*/
 //////////////////////////////////
 utility::vector1< Real >
 get_suite_ideal_A_form_torsions(){
@@ -483,12 +467,11 @@ one_chain_MC_sampling(){
 	rep_scorefxn->set_weight( fa_rep, scorefxn -> get_weight( fa_rep ) );
 	scorefxn -> show(pose);
 
+	std::string const score_out_prefix = option[out_scores_prefix];
 	std::string const outfile = option[ out::file::o ] ();
-	bool const is_binary_out = option[ output_binary ] ();
 	Size const num_cycle = option[ n_sample ]();
 	bool const is_check_clash = option[ check_clash ] ();
 	bool const is_add_virt_res = option[ add_virt_res ] ();
-	bool const output_rmsd_vs_energy = option[ rmsd_vs_energy ] ();
 	Real const kT_sys = option[ kT ] ();
 	Size first_res = 0;
 	if (is_add_virt_res) {
@@ -550,8 +533,12 @@ one_chain_MC_sampling(){
 	hbond_intra_scorefxn->set_weight( hbond_intra, 1 );
 	rna_torsion_scorefxn->set_weight( rna_torsion, 1 );
 
-	RNA_scores current_scores ( 1, score, (fa_stack_scorefxn*)(pose), (hbond_sc_scorefxn*)(pose), 
-	(hbond_intra_scorefxn*)(pose), (rna_torsion_scorefxn*)(pose) );
+	RNA_scores current_scores;
+	current_scores.first = 1;
+	current_scores.second[0] = score;
+	current_scores.second[1] = (*hbond_sc_scorefxn)(pose);
+	current_scores.second[2] = (*fa_stack_scorefxn)(pose);
+	current_scores.second[3] = (*rna_torsion_scorefxn)(pose);
 
 
 	bool const is_kT_inf = (kT_sys > 999);
@@ -593,11 +580,12 @@ one_chain_MC_sampling(){
 			suite_torsion = suite_torsion_new;
 			++n_accpet;
 
-			if (output_binary) {
-				scores_list.push_back(current_scores);
-				current_scores = RNA_scores ( 1, score, (fa_stack_scorefxn*)(pose), (hbond_sc_scorefxn*)(pose), 
-					(hbond_intra_scorefxn*)(pose), (rna_torsion_scorefxn*)(pose) );
-			}
+			scores_list.push_back(current_scores);
+			current_scores.first = 1;
+			current_scores.second[0] = score;
+			current_scores.second[1] = (*hbond_sc_scorefxn)(pose);
+			current_scores.second[2] = (*fa_stack_scorefxn)(pose);
+			current_scores.second[3] = (*rna_torsion_scorefxn)(pose);
 	
 			if (score < lowest_score) {
 				lowest_score = score; 
@@ -606,7 +594,7 @@ one_chain_MC_sampling(){
 		} else {
 			nucleoside_torsion_new = nucleoside_torsion;
 			suite_torsion_new = suite_torsion;
-			if (output_binary) ++current_scores.counts;
+			++current_scores.first;
 		}
 
 		Real score_saved = score;
@@ -650,13 +638,27 @@ one_chain_MC_sampling(){
 	}
 	out.close();
 
-	if (output_binary) {
+	if (score_out_prefix != "") {
+		ozstream out;
 		std::ostringstream oss;
-		std::string const binary_out_prefix = option[ output_binary_prefix ] ();
-		oss << binary_out_prefix << '_' << kT_sys << ".out";
-		write_scores(scores_list, oss.str() );
+		oss << score_out_prefix << '_' << std::fixed << std::setprecision(2) << kT_sys << ".out.gz";
+		out.open(oss.str());
+		out << "count total hb stack torsion" << std::endl;
+		for (Size i = 1; i <= scores_list.size(); ++i) {
+			out << scores_list[i].first << ' ';
+			for (Size j = 0; j != 4; ++j) {
+				if ( scores_list[i].second[j] < 0.005 && scores_list[i].second[j] > -0.005 ) {
+					out << "0 ";
+				} else if ( scores_list[i].second[j] > 999 ){
+					out << "999 ";
+				} else {
+					out << std::fixed << std::setprecision( 2 ) << scores_list[i].second[j] << ' ';
+				}
+			}
+			out << std::endl;
+		}
+		out.close();
 	}
-
 }
 
 //////////////////////////////////
@@ -696,7 +698,6 @@ one_chain_ST_MC () {
 	Size const num_cycle = option[ n_sample ]();
 	bool const is_check_clash = option[ check_clash ] ();
 	bool const is_add_virt_res = option[ add_virt_res ] ();
-	bool const output_rmsd_vs_energy = option[ rmsd_vs_energy ] ();
 
 	Real const exchange_rate_ = option[ exchange_rate ]();
 	utility::vector1< Real > const kT_sys_list = option[ kT_list ] ();
@@ -1559,7 +1560,37 @@ torsion2decoy () {
 	std::cout << suite.first << ' ' << suite.second.second << std::endl;
 	pose.dump_pdb("decoy.pdb");
 }
-	
+/*	
+//////////////////////////////////
+void
+unpack_binary () {
+	using namespace chemical;
+	using namespace scoring;
+	using namespace scoring::rna;
+	using namespace kinematics;
+	using namespace optimization;
+	using namespace pose;
+	using namespace pack;
+	using namespace pack::task;
+	using namespace utility::io;
+	using namespace scoring::rna;
+
+	std::string const outfile = option[ out::file::o ] ();
+	std::string const infile  = option[  in::file::s ] () [1];
+	utility::vector1 <RNA_scores> scores_list;
+
+	read_scores( scores_list, infile);
+
+	ozstream out;
+	out.open( outfile );
+
+	for (Size i = 1; i <= scores_list.size(); ++i) {
+		RNA_scores const & scores = scores_list[i];
+		out << scores.first << ' ' << scores.second[0] << ' ' << scores.second[1] << ' ' << scores.second[2] << ' ' <<
+		scores.second[3] << std::endl;
+	}
+}
+*/
 //////////////////////////////////
 void*
 my_main( void* ) {
@@ -1576,9 +1607,12 @@ my_main( void* ) {
 
   } else if ( algorithm_name == "one_chain_torsion_cluster" ) {
 		one_chain_torsion_cluster();
-*/
+
 	} else if ( algorithm_name == "torsion2decoy" ) {
-		torsion2decoy();
+		torsion2decoy();	
+	} else if ( algorithm_name == "unpack_binary" ) {
+		unpack_binary();
+*/
 	}
 
 	protocols::viewer::clear_conformation_viewers();
@@ -1591,6 +1625,7 @@ main( int argc, char * argv [] ) {
 	utility::vector1< Size > blank_size_vector;
 	utility::vector1< Real > blank_size_vector_real;
 
+	NEW_OPT(out_scores_prefix, "output the scores", "");
 	NEW_OPT(force_field, "score_file", "rna_hires_07232011_with_intra_base_phosphate");
 	NEW_OPT( seq, "sequence to model", "" );
 	NEW_OPT( algorithm, "Specify algorithm to execute", "");
@@ -1598,9 +1633,9 @@ main( int argc, char * argv [] ) {
 	NEW_OPT( n_sample, "Sample number for Random sampling", 0 );
 	NEW_OPT( sampling_stddev, "Sampling standard deviation in degree", 0.0 );
 	NEW_OPT( kT, "kT of simulation in RU", 9999.99 );
-	NEW_OPT( check_clash, "check clahsed conformers", true );
-	NEW_OPT( output_binary, "", true );
-	NEW_OPT( output_binary_prefix, "", "" );
+	NEW_OPT( check_clash, "check clahsed conformers", false );
+	//NEW_OPT( output_binary, "", false );
+	//NEW_OPT( output_binary_prefix, "", "" );
 	NEW_OPT( rmsd_vs_energy, "", true );
 	NEW_OPT( add_virt_res, "Append a virtual residue", false );
 	NEW_OPT( o2star_trials, "do rotamer trials", false );
