@@ -204,7 +204,7 @@ make_asymmetric_pose(
 
 // @details make a new (asymmetric) pose that contains only the master subunit from the input pose
 //          maintain local foldtree
-void extract_asymmetric_unit(core::pose::Pose const& pose_in, core::pose::Pose & pose_out) {
+void extract_asymmetric_unit(core::pose::Pose const& pose_in, core::pose::Pose & pose_out, bool with_virtual_atoms) {
 	using core::conformation::Residue;
 	using core::chemical::LOWER_TERMINUS;
 	using core::chemical::UPPER_TERMINUS;
@@ -253,9 +253,11 @@ void extract_asymmetric_unit(core::pose::Pose const& pose_in, core::pose::Pose &
 	}
 
 	// add the parent VRT, set foldtree
-	core::pose::addVirtualResAsRoot(pose_out);
-	core::kinematics::FoldTree const &f_in = core::conformation::symmetry::get_asymm_unit_fold_tree( pose_in.conformation() );
-	pose_out.fold_tree( f_in );
+	if( with_virtual_atoms ) {
+  	core::pose::addVirtualResAsRoot(pose_out);
+  	core::kinematics::FoldTree const &f_in = core::conformation::symmetry::get_asymm_unit_fold_tree( pose_in.conformation() );
+  	pose_out.fold_tree( f_in );
+	}
 
 	pose::PDBInfoOP pdb_info = new pose::PDBInfo( pose_out, true );
 

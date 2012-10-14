@@ -73,7 +73,7 @@ make_asymmetric_pose(
 
 ///@brief extract the asu from a pose... unlike previous function symmetric clones are thrown out
 void
-extract_asymmetric_unit(core::pose::Pose const& pose_in, core::pose::Pose & pose_out);
+extract_asymmetric_unit(core::pose::Pose const& pose_in, core::pose::Pose & pose_out, bool with_virtual_atoms=true);
 
 
 core::pose::Pose
