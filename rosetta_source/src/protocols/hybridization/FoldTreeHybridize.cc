@@ -1202,7 +1202,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 
 	translate_virt_to_CoM(pose);
 
-	pose.dump_pdb("after_initialize.pdb");
+	//pose.dump_pdb("after_initialize.pdb");
 
 	use_random_template = true;
 	Size max_registry_shift = max_registry_shift_;

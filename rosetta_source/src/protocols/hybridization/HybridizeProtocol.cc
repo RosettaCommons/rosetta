@@ -864,7 +864,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			core::pose::setPoseExtraScores( pose, "GDTMM_after_stage1", gdtmm);
 			TR << "GDTMM_after_stage1" << F(8,3,gdtmm) << std::endl;
 		}
-		pose.dump_pdb("stage1.pdb");
+		//pose.dump_pdb("stage1.pdb");
 
 		if (realign_domains_stage2_) {
 			// realign domains to the output of stage 1
