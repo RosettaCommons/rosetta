@@ -66,10 +66,14 @@ public:
 
 	virtual void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
 
-	Real neighbor_weight( Vector::Value const & distance, Real const & lower_bound, Real const & upper_bound) const;
+	Real neighbor_weight( Vector::Value const & distance) const;
 
 private:
 		NVlookup const &lookup_table_;
+		core::Real lower_bound_;
+		core::Real lower_bound_squared_;
+		core::Real upper_bound_;
+		core::Real upper_bound_squared_;
 
 virtual
 core::Size version() const;

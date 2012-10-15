@@ -69,7 +69,15 @@ static basic::Tracer TR("core.scoring.NVscore");
 NVscore::NVscore() :
 	parent( new NVscoreCreator ),
 	lookup_table_(ScoringManager::get_instance()->get_NVLookupTable() )
-{}
+{
+	//lbound defaults to 3.3 and ubound defaults to 11.1.  If you change these values the lookup table may no longer be accurate
+	lower_bound_ = basic::options::option[ basic::options::OptionKeys::score::NV_lbound]();
+	upper_bound_ = basic::options::option[ basic::options::OptionKeys::score::NV_ubound]();
+
+	lower_bound_squared_ = lower_bound_*lower_bound_;
+	upper_bound_squared_ = upper_bound_*upper_bound_;
+
+}
 
 
 methods::EnergyMethodOP NVscore::clone() const
@@ -106,23 +114,23 @@ void NVscore::indicate_required_context_graphs(utility::vector1< bool > & contex
 }
 
 ///Calculate the weighted neighbor count given an upper and lower bound
-Real NVscore::neighbor_weight(Vector::Value const & distance, Real const & lower_bound, Real const & upper_bound) const
+Real NVscore::neighbor_weight(Vector::Value const & distance2) const
 {
 
 
-	if(distance <= lower_bound)
+	if(distance2 <= lower_bound_squared_)
 	{
 		//neighbor count score is 1 if less than the lower bound
 		return(1);
-	}else if(distance >= upper_bound)
+	}else if(distance2 >= upper_bound_squared_)
 	{
-		//neighbor count score is 0 if gerater than upper bound
+		//neighbor count score is 0 if greater than upper bound
 		return(0);
-	}else if( (lower_bound < distance) && (upper_bound > distance) )
+	}else if( (lower_bound_squared_ < distance2) && (upper_bound_squared_ > distance2) )
 	{
 		//if between upper and lower bound, score follows a smooth function
-
-		Real weight = ( cos( ( (distance-lower_bound) / (upper_bound-lower_bound) ) * numeric::constants::r::pi ) + 1 )/2.0;
+		core::Real distance(sqrt(distance2));
+		Real weight = ( cos( ( (distance-lower_bound_) / (upper_bound_-lower_bound_) ) * numeric::constants::r::pi ) + 1 )/2.0;
 		return(weight);
 	}
 	return(0);
@@ -130,10 +138,6 @@ Real NVscore::neighbor_weight(Vector::Value const & distance, Real const & lower
 
 void NVscore::residue_energy( conformation::Residue const &current_residue,  pose::Pose const & pose, EnergyMap & emap) const
 {
-
-	//lbound defaults to 3.3 and ubound defaults to 11.1.  If you change these values the lookup table may no longer be accurate
-	Real lower_bound = basic::options::option[ basic::options::OptionKeys::score::NV_lbound]();
-	Real upper_bound = basic::options::option[ basic::options::OptionKeys::score::NV_ubound]();
 
 	Real neighbor_count(0);
 	Vector neighbor_vector_sum(0,0,0);
@@ -155,41 +159,23 @@ void NVscore::residue_energy( conformation::Residue const &current_residue,  pos
 		conformation::ResidueCOP comparison_residue(&pose.residue(comparison_residue_index));
 		//you don't want to compare a residue to itself
 		if(current_residue.seqpos() == comparison_residue->seqpos()) continue;
-		Vector comparison_vector(comparison_residue->nbr_atom_xyz());
+		Vector const & comparison_vector(comparison_residue->nbr_atom_xyz());
 		//calculate the distance between the two residues
-		Vector::Value distance = current_vector.distance(comparison_vector);
+		Vector::Value distance2 = current_vector.distance_squared(comparison_vector);
 		//get the weighted neighbor count
-		Real weight = neighbor_weight(distance,lower_bound, upper_bound);
+		Real weight = neighbor_weight(distance2);
 
 		//calculate the weighted neighbor vector for this pair and sum
-		Vector weighted_vector = ( (comparison_vector-current_vector) / distance) * weight;
-		neighbor_count += weight;
-		neighbor_vector_sum += weighted_vector;
-	}
-
-	//pose::Pose pose(pose);
-	//iterate through the pose
-	/*
-	for(core::Size pose_index = 1; pose_index <= pose.total_residue() ; ++pose_index)
-	{
-		//get the residue to compare to the current ersidue rsd
-		conformation::Residue comparison_residue(pose.residue(pose_index));
-		//you don't want to compare a residue to itself
-		if(current_residue.seqpos() == comparison_residue.seqpos()) continue;
-		Vector comparison_vector(comparison_residue.nbr_atom_xyz());
-		//calculate the distance between the two residues
-		Vector::Value distance = current_vector.distance(comparison_vector);
-		//get the weighted neighbor count
-		Real weight = neighbor_weight(distance,lower_bound, upper_bound);
-
-		//calculate the weighted neighbor vector for this pair and sum
-		Vector weighted_vector = ( (comparison_vector-current_vector) / distance) * weight;
-		neighbor_count += weight;
-		neighbor_vector_sum += weighted_vector;
+		if(weight != 0)
+		{
+			Vector weighted_vector = ( (comparison_vector-current_vector) / sqrt(distance2)) * weight;
+			neighbor_count += weight;
+			neighbor_vector_sum += weighted_vector;
+		}
 
 	}
 
-	*/
+
 	if ( neighbor_count == 0.0 ) return; // do not try to divide by zero
 
 	Vector average_sum = neighbor_vector_sum/neighbor_count;
@@ -205,6 +191,7 @@ void NVscore::residue_energy( conformation::Residue const &current_residue,  pos
 	emap[ neigh_count ] += neighbor_count;
 
 }
+
 core::Size
 NVscore::version() const
 {
