@@ -1363,7 +1363,7 @@ void RemodelLoopMover::loophash_stage(
 	//find terminal loops and skip them; loophash can't handle terminal loops
 	for ( Loops::const_iterator l = loops_->begin(), le = loops_->end(); l != le; ++l ) {
 		bool skip_loop = false;
-		if ( l->is_terminal( pose ) ) {
+		if ( l->is_terminal( pose ) || l->start() == 1 ) {
 			skip_loop = true;
 		}
 		if ( !skip_loop ) {
@@ -1818,7 +1818,7 @@ void RemodelLoopMover::simultaneous_stage(
 	using numeric::random::random_permutation;
 
 	TR << "** simultaneous_stage" << std::endl;
-
+/*
  // setup loops
   loops::LoopsOP pre_loops_to_model = determine_loops_to_model( pose );
   loops::LoopsOP loops_to_model = new loops::Loops();
@@ -1835,7 +1835,8 @@ void RemodelLoopMover::simultaneous_stage(
         loops_to_model->add_loop( *l );
     }
   }
-
+*/
+  loops::LoopsOP loops_to_model = new loops::Loops(*loops_);
 	TR << "   n_loops = " << loops_to_model->size() << std::endl;
 
 	if ( loops_to_model->size() == 0 ) { // nothing to do...
@@ -2064,6 +2065,10 @@ void RemodelLoopMover::independent_stage(
 			if ( !l->is_terminal( pose ) ) {
 					loops_to_model->add_loop( *l );
 			}
+			//however, need to address de novo building cases
+			if (l->start() == 1 && l->stop() == pose.total_residue()){
+					loops_to_model->add_loop( *l );
+			}
 		}
 		else {
 				loops_to_model->add_loop( *l );
@@ -2074,6 +2079,21 @@ void RemodelLoopMover::independent_stage(
 		// if using no_jumps, chainbreak based loop determination will skip this stage, but we obviously wants to build something...
 		loops_to_model = loops_;
 	}
+/*
+	//TEST 9/28/2012
+  //find terminal loops and skip them; loophash can't handle terminal loops
+	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+					for ( Loops::const_iterator l = loops_->begin(), le = loops_->end(); l != le; ++l ) {
+						bool skip_loop = false;
+						if ( l->is_terminal( pose ) || l->start() == 1) {
+							skip_loop = true;
+						}
+						if ( !skip_loop ) {
+							loops_to_model->add_loop( *l );
+						}
+					}
+	}	
+*/
 	TR << "   n_loops = " << loops_to_model->size() << std::endl;
 
 	if ( loops_to_model->size() == 0 ) { // nothing to do...
@@ -2315,7 +2335,7 @@ void RemodelLoopMover::boost_closure_stage(
 	// filter for non-terminal loops that are within tolerance
 	Real const cbreak_tolerance = 1.0;
 	for ( Loops::const_iterator l = pre_loops_to_model->begin(), le = pre_loops_to_model->end(); l != le; ++l ) {
-		if ( !l->is_terminal( pose ) ) {
+		if ( !l->is_terminal( pose ) || l->start() != 1 ) {
 			Real const cbreak = linear_chainbreak( pose, l->cut() );
 			if ( cbreak < cbreak_tolerance ) {
 				loops_to_model->add_loop( *l );
