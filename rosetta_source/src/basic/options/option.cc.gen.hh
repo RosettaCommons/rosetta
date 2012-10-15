@@ -647,10 +647,10 @@ option.add( basic::options::OptionKeys::fold_cst::skip_on_noviolation_in_stage1,
 option.add( basic::options::OptionKeys::fold_cst::stage1_ramp_cst_cycle_factor, "spend x*<standard cycles> on each step of sequence separation" ).def(0.25);
 option.add( basic::options::OptionKeys::fold_cst::stage2_constraint_threshold, "stop runs that violate this threshold at end of stage2" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::ignore_sequence_seperation, "usually constraints are switched on according to their separation in the fold-tree" ).def(false);
-option.add( basic::options::OptionKeys::fold_cst::no_recover_low_at_constraint_switch, "dont recover low when max_seq_sep is increased" ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::no_recover_low_at_constraint_switch, "dont recover low when max_seq_sep is increased" ).def(false);
+option.add( basic::options::OptionKeys::fold_cst::ramp_coord_cst, "ramp coord csts just like chainbreak-weights during fold-cst" ).def(false);
 option.add( basic::options::OptionKeys::resample::resample, "resample option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::resample::silent, "a silent file for decoys to restart sampling from " ).def("");
 option.add( basic::options::OptionKeys::resample::tag, "which decoy to select from silent file " ).def("");
@@ -1293,11 +1293,11 @@ option.add( basic::options::OptionKeys::lh::mpi_batch_relax_absolute_max, "No de
 option.add( basic::options::OptionKeys::lh::mpi_outbound_wu_buffer_size, "No description" ).def(60);
 option.add( basic::options::OptionKeys::lh::mpi_loophash_split_size    , "No description" ).def(50);
 option.add( basic::options::OptionKeys::lh::mpi_metropolis_temp, "No description" ).def(1000000.0);
-option.add( basic::options::OptionKeys::lh::mpi_save_state_interval, "No description" ).def(1200);
-option.add( basic::options::OptionKeys::lh::mpi_master_save_score_only, "No description" ).def(true);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::max_loophash_per_structure, "No description" ).def(1);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::mpi_save_state_interval, "No description" ).def(1200);
+option.add( basic::options::OptionKeys::lh::mpi_master_save_score_only, "No description" ).def(true);
+option.add( basic::options::OptionKeys::lh::max_loophash_per_structure, "No description" ).def(1);
 option.add( basic::options::OptionKeys::lh::rms_limit, "How to deal with returned relaxed structures" ).def(2.0);
 option.add( basic::options::OptionKeys::lh::centroid_only, "false" ).def(false);
 option.add( basic::options::OptionKeys::lh::write_centroid_structs, "Output raw loophashed decoys as well as relaxed ones" ).def(false);
@@ -1689,7 +1689,6 @@ option.add( basic::options::OptionKeys::cm::hybridize::frag_1mer_insertion_weigh
 option.add( basic::options::OptionKeys::cm::hybridize::small_gap_frag_insertion_weight, "weight for small fragment insertions where large fragments are not allowed vs. template chunk insertions in stage1" ).def(0.0);
 option.add( basic::options::OptionKeys::cm::hybridize::big_frag_insertion_weight, "weight for big fragment insertions vs. template chunk insertions in stage1" ).def(0.5);
 option.add( basic::options::OptionKeys::cm::hybridize::auto_frag_insertion_weight, "automatically set the weight for fragment insertions vs. template chunk insertions in stage1" ).def(true);
-option.add( basic::options::OptionKeys::cm::hybridize::skip_convergence_check, "this option turns off the convergence check in stage1: stage3 (score 2/5)" );
 option.add( basic::options::OptionKeys::cm::hybridize::stage1_1_cycles, "Number of cycles for ab initio stage 1 in Stage1" ).def(2000);
 option.add( basic::options::OptionKeys::cm::hybridize::stage1_2_cycles, "Number of cycles for ab initio stage 2 in Stage1" ).def(2000);
 option.add( basic::options::OptionKeys::cm::hybridize::stage1_3_cycles, "Number of cycles for ab initio stage 3 in Stage1" ).def(2000);
@@ -1940,11 +1939,11 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_p
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
-option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
-option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
+option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_wt, "Weight on constraint term in scoring function" ).def(0.1);
 option.add( basic::options::OptionKeys::RBSegmentRelax::cst_width, "Width of harmonic constraints on csts" ).def(1.0);

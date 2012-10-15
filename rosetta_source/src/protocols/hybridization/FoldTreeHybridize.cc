@@ -89,6 +89,7 @@
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
 #include <basic/options/keys/jumps.OptionKeys.gen.hh> // strand pairings
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
+#include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 #include <numeric/random/DistributionSampler.hh>
@@ -1396,7 +1397,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
     TR.Info <<  "   Stage 3                                                         \n";
     TR.Info <<  "   Folding with score2 and score5 for " << stage3_max_cycles <<std::endl;
 		hConvergenceCheckOP convergence_checker ( NULL );
-		if ( !option[ cm::hybridize::skip_convergence_check ] ) {
+		if ( !option[ abinitio::skip_convergence_check ] ) {
 			convergence_checker = new hConvergenceCheck;
 			std::list< core::Size > residue_selection_big_frags;
 			std::list< core::Size > residue_selection_small_frags;

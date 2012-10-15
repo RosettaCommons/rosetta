@@ -772,8 +772,9 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 			// update chunk, contig informations
 			for (Size i_template=1; i_template<=templates_.size(); ++i_template) {
-				template_contigs_[i_template] = protocols::loops::extract_continuous_chunks(*templates_[i_template]);
-				template_chunks_[i_template] = protocols::loops::extract_secondary_structure_chunks(*templates_[i_template], "HE", 3, 6, 3, 4);
+				// default minimum length is 3 and CA distance is 4
+				template_contigs_[i_template] = protocols::loops::extract_continuous_chunks(*templates_[i_template]); // for chunk insertions
+				template_chunks_[i_template] = protocols::loops::extract_secondary_structure_chunks(*templates_[i_template], "HE", 3, 6, 3, 4); // for fold tree setup
 				if (template_chunks_[i_template].num_loop() == 0)
 					template_chunks_[i_template] = template_contigs_[i_template];
 			}

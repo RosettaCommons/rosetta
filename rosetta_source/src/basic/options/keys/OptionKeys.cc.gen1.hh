@@ -1,3 +1,4 @@
+namespace fold_cst { BooleanOptionKey const no_recover_low_at_constraint_switch( "fold_cst:no_recover_low_at_constraint_switch" );  }
 namespace fold_cst { BooleanOptionKey const ramp_coord_cst( "fold_cst:ramp_coord_cst" );  }
 namespace resample { BooleanOptionKey const resample( "resample" );  }
 namespace resample { FileOptionKey const silent( "resample:silent" );  }
@@ -641,5 +642,3 @@ namespace lh { IntegerOptionKey const mpi_batch_relax_absolute_max( "lh:mpi_batc
 namespace lh { IntegerOptionKey const mpi_outbound_wu_buffer_size( "lh:mpi_outbound_wu_buffer_size" );  }
 namespace lh { IntegerOptionKey const mpi_loophash_split_size    ( "lh:mpi_loophash_split_size    " );  }
 namespace lh { RealOptionKey const mpi_metropolis_temp( "lh:mpi_metropolis_temp" );  }
-namespace lh { IntegerOptionKey const mpi_save_state_interval( "lh:mpi_save_state_interval" );  }
-namespace lh { BooleanOptionKey const mpi_master_save_score_only( "lh:mpi_master_save_score_only" );  }

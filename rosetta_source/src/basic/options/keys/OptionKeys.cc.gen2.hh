@@ -1,3 +1,5 @@
+namespace lh { IntegerOptionKey const mpi_save_state_interval( "lh:mpi_save_state_interval" );  }
+namespace lh { BooleanOptionKey const mpi_master_save_score_only( "lh:mpi_master_save_score_only" );  }
 namespace lh { IntegerOptionKey const max_loophash_per_structure( "lh:max_loophash_per_structure" );  }
 namespace lh { RealOptionKey const rms_limit( "lh:rms_limit" );  }
 namespace lh { BooleanOptionKey const centroid_only( "lh:centroid_only" );  }
@@ -390,7 +392,6 @@ namespace cm { namespace hybridize { RealOptionKey const frag_1mer_insertion_wei
 namespace cm { namespace hybridize { RealOptionKey const small_gap_frag_insertion_weight( "cm:hybridize:small_gap_frag_insertion_weight" );  } }
 namespace cm { namespace hybridize { RealOptionKey const big_frag_insertion_weight( "cm:hybridize:big_frag_insertion_weight" );  } }
 namespace cm { namespace hybridize { BooleanOptionKey const auto_frag_insertion_weight( "cm:hybridize:auto_frag_insertion_weight" );  } }
-namespace cm { namespace hybridize { BooleanOptionKey const skip_convergence_check( "cm:hybridize:skip_convergence_check" );  } }
 namespace cm { namespace hybridize { IntegerOptionKey const stage1_1_cycles( "cm:hybridize:stage1_1_cycles" );  } }
 namespace cm { namespace hybridize { IntegerOptionKey const stage1_2_cycles( "cm:hybridize:stage1_2_cycles" );  } }
 namespace cm { namespace hybridize { IntegerOptionKey const stage1_3_cycles( "cm:hybridize:stage1_3_cycles" );  } }
@@ -641,5 +642,3 @@ namespace DenovoProteinDesign { FileOptionKey const hydrophobic_polar_pattern( "
 namespace DenovoProteinDesign { BooleanOptionKey const use_template_sequence( "DenovoProteinDesign:use_template_sequence" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const use_template_topology( "DenovoProteinDesign:use_template_topology" );  }
 namespace DenovoProteinDesign { FileOptionKey const create_from_template_pdb( "DenovoProteinDesign:create_from_template_pdb" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const create_from_secondary_structure( "DenovoProteinDesign:create_from_secondary_structure" );  }
-namespace RBSegmentRelax { BooleanOptionKey const RBSegmentRelax( "RBSegmentRelax" );  }

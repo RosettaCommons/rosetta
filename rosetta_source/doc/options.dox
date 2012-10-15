@@ -8179,10 +8179,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: true</dd><br>
 </dl>
 <dl>
-<dt><b>-skip_convergence_check</b> \<Boolean\><dt>
-<dd>this option turns off the convergence check in stage1: stage3 (score 2/5)</dd><br>
-</dl>
-<dl>
 <dt><b>-stage1_1_cycles</b> \<Integer\><dt>
 <dd>Number of cycles for ab initio stage 1 in Stage1</dd><br>
 <dd>Default: 2000</dd><br>

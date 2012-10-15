@@ -81,7 +81,6 @@ namespace cm { namespace hybridize { extern RealOptionKey const frag_1mer_insert
 namespace cm { namespace hybridize { extern RealOptionKey const small_gap_frag_insertion_weight; } }
 namespace cm { namespace hybridize { extern RealOptionKey const big_frag_insertion_weight; } }
 namespace cm { namespace hybridize { extern BooleanOptionKey const auto_frag_insertion_weight; } }
-namespace cm { namespace hybridize { extern BooleanOptionKey const skip_convergence_check; } }
 namespace cm { namespace hybridize { extern IntegerOptionKey const stage1_1_cycles; } }
 namespace cm { namespace hybridize { extern IntegerOptionKey const stage1_2_cycles; } }
 namespace cm { namespace hybridize { extern IntegerOptionKey const stage1_3_cycles; } }

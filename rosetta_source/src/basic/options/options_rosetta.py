@@ -3403,7 +3403,6 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'small_gap_frag_insertion_weight', 'Real',       desc='weight for small fragment insertions where large fragments are not allowed vs. template chunk insertions in stage1', default='0.0' ),
 			Option( 'big_frag_insertion_weight',       'Real',       desc='weight for big fragment insertions vs. template chunk insertions in stage1', default='0.5' ),
 			Option( 'auto_frag_insertion_weight',     'Boolean',    desc='automatically set the weight for fragment insertions vs. template chunk insertions in stage1', default='true' ),
-			Option( 'skip_convergence_check',         'Boolean',    desc="this option turns off the convergence check in stage1: stage3 (score 2/5)" ),
 			Option( 'stage1_1_cycles',                'Integer',    desc='Number of cycles for ab initio stage 1 in Stage1', default='2000'),
 			Option( 'stage1_2_cycles',                'Integer',    desc='Number of cycles for ab initio stage 2 in Stage1', default='2000'),
 			Option( 'stage1_3_cycles',                'Integer',    desc='Number of cycles for ab initio stage 3 in Stage1', default='2000'),
