@@ -171,9 +171,9 @@ SymUnsatHbondFilter::compute( core::pose::Pose const & pose, bool const & verb, 
 			if (bound_am[core::id::AtomID(ia,ir)] != unbound_am[core::id::AtomID(ia,ir)]) {
 				buried_unsat_polars++;
 				if (flag == 0) {
+					select_buried_unsat_polars.append("resi " + ObjexxFCL::string_of(ir) + " and name " + bound.residue(ir).atom_name(ia) + "+ ");   
 					if ( verb ) { 
 						TR << "buried unsat polar(s): " << bound.residue(ir).name3() << ir << "\t" << bound.residue(ir).atom_name(ia);
-						select_buried_unsat_polars.append("resi " + ObjexxFCL::string_of(ir) + " and name " + bound.residue(ir).atom_name(ia) + "+ ");   
 					}
 					if ( write ) { 
 						write_to_pdb( bound.residue(ir).name3(), ir, bound.residue(ir).atom_name(ia) ); 
@@ -192,8 +192,8 @@ SymUnsatHbondFilter::compute( core::pose::Pose const & pose, bool const & verb, 
 			}
 		}
 	}
+	select_buried_unsat_polars.erase(select_buried_unsat_polars.end()-2,select_buried_unsat_polars.end());
 	if ( verb ) {
-		select_buried_unsat_polars.erase(select_buried_unsat_polars.end()-2,select_buried_unsat_polars.end());
 		TR << select_buried_unsat_polars << ") and " << protocols::jd2::JobDistributor::get_instance()->current_output_name() ;
 		TR << std::endl;
 	}

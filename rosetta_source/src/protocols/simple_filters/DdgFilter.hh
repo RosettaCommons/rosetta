@@ -41,6 +41,10 @@ public:
 	void repack( bool const repack );
 	bool repack() const;
 	void repeats( core::Size const repeats );
+  void repack_bound( bool rpb ) { repack_bound_ = rpb; }
+  bool repack_bound() const { return repack_bound_; }
+  void relax_bound( bool rlb ) { relax_bound_ = rlb; }
+  bool relax_bound() const { return relax_bound_; }
 	core::Size repeats() const;
   void task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
   core::pack::task::TaskFactoryOP task_factory() const { return task_factory_; }
@@ -62,6 +66,8 @@ private:
 	core::Size rb_jump_; // dflt 1
   core::pack::task::TaskFactoryOP task_factory_;
   bool use_custom_task_;
+	bool repack_bound_; //dflt true; Do you want to repack in the bound state (ddG). Avoid redundant packing if already packed beforing calling the filter.
+	bool relax_bound_; //dflt false; Do you want to relax in the bound state (ddG). Avoid redundant relax if already relaxed before calling the filter.
 	utility::vector1<core::Size> chain_ids_;
 	core::Size repeats_;//average of how many repeats? defaults to 1
 	bool symmetry_; //dflt false

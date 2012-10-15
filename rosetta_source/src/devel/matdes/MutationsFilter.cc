@@ -41,6 +41,7 @@ MutationsFilter::MutationsFilter() :
 	rate_threshold_( 0.0 ),
 	mutation_threshold_( 100 ),
 	mutations_( 0 ),
+	packable_( 0 ),
 	verbose_( 0 )
 {}
 
@@ -124,6 +125,18 @@ MutationsFilter::verbose( bool const verb )
 }
 
 bool
+MutationsFilter::packable() const
+{
+	return( packable_ );
+}
+
+void
+MutationsFilter::packable( bool const pack )
+{
+	packable_ = pack;
+}
+
+bool
 MutationsFilter::write2pdb() const
 {
 	return( write2pdb_ );
@@ -196,13 +209,13 @@ MutationsFilter::compute( core::pose::Pose const & pose, bool const & write ) co
 	if( total_residue_ref != total_residue )
 		utility_exit_with_message( "Reference pose and current pose have a different number of residues" );
 	core::pack::task::PackerTaskOP packer_task( task_factory_->create_task_and_apply_taskoperations( pose ) );
-	core::Size designable_count( 0 );
+	core::Size resi_count( 0 );
 	core::Size mutation_count( 0 );
   std::map< core::Size, std::string > res_names1;
   std::map< core::Size, std::string > res_names2;
 	for( core::Size resi=1; resi<=total_residue; ++resi ) {
-		if( packer_task->being_designed( resi ) ) {
-			designable_count++;
+		if( packer_task->being_designed( resi ) || (packer_task->being_packed( resi) && packable_) ) {
+			resi_count++;
 			res_names1.insert( std::make_pair( resi, asym_ref_pose.residue(resi).name3() ));
 			res_names2.insert( std::make_pair( resi, asym_pose.residue(resi).name3() ));
 			if ( asym_ref_pose.residue(resi).name3() != asym_pose.residue(resi).name3() ) {
@@ -213,11 +226,11 @@ MutationsFilter::compute( core::pose::Pose const & pose, bool const & write ) co
 			}
 		}
 	}
-	if( !designable_count ) {
+	if( !resi_count ) {
 		TR<<"Warning: No designable residues identified in pose. Are you sure you have set the correct task operations?"<<std::endl;
 	}
-  core::Real const rate( 1.0 - (core::Real) mutation_count / designable_count );
-  TR<<"Your design mover mutated "<<mutation_count<<" positions out of "<<designable_count<<" designable positions. Sequence recovery is: "<<rate<<std::endl;
+  core::Real const rate( 1.0 - (core::Real) mutation_count / resi_count );
+  TR<<"Your design mover mutated "<<mutation_count<<" positions out of "<<resi_count<<" designable positions. Sequence recovery is: "<<rate<<std::endl;
 	if ( write ) {
 		write_to_pdb( res_names1, res_names2 );
 	}
@@ -269,6 +282,7 @@ MutationsFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	mutation_threshold( tag->getOption< core::Size >( "mutation_threshold", 100 ) );
 	mutations( tag->getOption< bool >( "report_mutations", 0 ) );
 	verbose( tag->getOption< bool >( "verbose", 0 ) );
+	packable( tag->getOption< bool >( "packable", 0 ) );
 	write2pdb( tag->getOption< bool >( "write2pdb", 0 ) );
 
 	using namespace basic::options;

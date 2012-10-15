@@ -69,6 +69,10 @@ public :
 	core::pack::task::TaskFactoryOP task_factory() const { return task_factory_; }
 	void use_custom_task( bool uct ) { use_custom_task_ = uct; }
 	bool use_custom_task() const { return use_custom_task_; }
+	void repack_bound( bool rpb ) { repack_bound_ = rpb; }
+	bool repack_bound() const { return repack_bound_; }
+	void relax_bound( bool rlb ) { relax_bound_ = rlb; }
+	bool relax_bound() const { return relax_bound_; }
 
 private :
 	std::map< ScoreType, Real > bound_energies_;
@@ -92,6 +96,8 @@ private :
 
 	core::pack::task::TaskFactoryOP task_factory_;
 	bool use_custom_task_;
+	bool repack_bound_;
+	bool relax_bound_;
 
 };
 

@@ -60,6 +60,8 @@ public:
 	void mutations( bool const muts );
 	bool verbose() const;
 	void verbose( bool const verb );
+	bool packable() const;
+	void packable( bool const pack );
 	bool write2pdb() const;
 	void write2pdb( bool const write );
 	core::pose::PoseCOP reference_pose() const;
@@ -77,6 +79,7 @@ private:
 	core::Size mutation_threshold_;
 	bool mutations_;
 	bool verbose_;
+	bool packable_;
 	bool write2pdb_;
 };
 

@@ -104,7 +104,9 @@ ddG::ddG() :
 		per_residue_ddg_(false),
 		repack_(false),
 		relax_mover_( NULL ),
-		use_custom_task_(false)
+		use_custom_task_(false),
+		repack_bound_(true),
+		relax_bound_(false)
 {
 	bound_energies_.clear();
 	unbound_energies_.clear();
@@ -122,7 +124,9 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump/*=1
 		per_residue_ddg_(false),
 		repack_(false),
 		relax_mover_( NULL ),
-		use_custom_task_(false)
+		use_custom_task_(false),
+		repack_bound_(true),
+		relax_bound_(false)
 {
 	scorefxn_ = new core::scoring::ScoreFunction( *scorefxn_in );
 	rb_jump_ = jump;
@@ -147,7 +151,9 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump/*=1
 		per_residue_ddg_(false),
 		repack_(false),
 		relax_mover_( NULL ),
-		use_custom_task_(false)
+		use_custom_task_(false),
+		repack_bound_(true),
+		relax_bound_(false)
 {
 	scorefxn_ = new core::scoring::ScoreFunction( *scorefxn_in );
 	rb_jump_ = jump;
@@ -176,6 +182,8 @@ void ddG::parse_my_tag(
 	repeats_ = tag->getOption<Size>("repeats",1);
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	use_custom_task( tag->hasOption("task_operations") );
+	repack_bound_ = tag->getOption<bool>("repack_bound",1);
+	relax_bound_ = tag->getOption<bool>("relax_bound",0);
 
 	if(tag->hasOption("chains") && symmetry_)
 	{
@@ -387,7 +395,13 @@ ddG::calculate( pose::Pose const & pose_in )
 		rti.apply( pose, *task_ );
 	}
 
-	pack::pack_rotamers( pose, *scorefxn_, task_ );
+	if ( repack_bound() ) {
+		pack::pack_rotamers( pose, *scorefxn_, task_ );
+	}
+	if ( relax_bound() ) {
+		if( relax_mover() )
+			relax_mover()->apply( pose );
+	}
 	(*scorefxn_)( pose );
 	fill_energy_vector( pose, bound_energies_ );
 	if(per_residue_ddg_)
@@ -459,8 +473,13 @@ ddG::symm_ddG( pose::Pose const & pose_in )
 		protocols::toolbox::task_operations::RestrictToInterface rti( rb_jump_, 8.0 /*interface_distance_cutoff_*/ );
 		rti.apply( pose, *task_ );
 	}
-
-	pack::symmetric_pack_rotamers( pose, *scorefxn_, task_ );
+	if ( repack_bound() ) {
+		pack::symmetric_pack_rotamers( pose, *scorefxn_, task_ );
+	}
+	if ( relax_bound() ) {
+		if( relax_mover() )
+			relax_mover()->apply( pose );
+	}
 	(*scorefxn_)( pose );
 	fill_energy_vector( pose, bound_energies_ );
 	if(per_residue_ddg_)

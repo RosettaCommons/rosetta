@@ -57,7 +57,9 @@ DdgFilter::DdgFilter() :
 	symmetry_(false),
 	repack_( true ),
 	relax_mover_( NULL ),
-	use_custom_task_(false)
+	use_custom_task_(false),
+	repack_bound_(true),
+	relax_bound_(false)
 {
 	scorename_ = "ddg";
 }
@@ -97,6 +99,8 @@ DdgFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, 
 	symmetry_ = tag->getOption<bool>( "symmetry", 0 );
 	use_custom_task( tag->hasOption("task_operations") );
   task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
+	repack_bound( tag->getOption<bool>( "repack_bound", 1 ) );
+	relax_bound( tag->getOption<bool>( "relax_bound", 0 ) );
 	if( tag->hasOption( "relax_mover" ) )
 		relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover" ), movers ) );
 
@@ -130,6 +134,8 @@ void DdgFilter::parse_def( utility::lua::LuaObject const & def,
 	repeats( def["repeats"] ? def["repeats"].to<core::Size>() : 1 );
 	repack( def["repack"] ? def["repack"].to<bool>() : true );
 	symmetry_ = def["symmetry"] ? def["symmetry"].to<bool>() : false;
+	repack_bound_ = def["repack_bound"] ? def["repack_bound"].to<bool>() : true;
+	relax_bound_ = def["relax_bound"] ? def["relax_bound"].to<bool>() : false;
 	// ignoring relax_mover option
 	if( def["chain_num"] ) {
 		chain_ids_.clear();
@@ -193,6 +199,12 @@ DdgFilter::compute( core::pose::Pose const & pose ) const {
 			ddg.use_custom_task( use_custom_task() );
 			ddg.task_factory( task_factory() );
 		}
+		if ( repack_bound() ) {
+			ddg.repack_bound( repack_bound() );
+		}
+		if ( relax_bound() ) {
+			ddg.relax_bound( relax_bound() );
+		}
 		ddg.relax_mover( relax_mover() );
 		core::Real average( 0.0 );
 		for( core::Size i = 1; i<=repeats_; ++i ){
@@ -241,7 +253,9 @@ DdgFilter::DdgFilter( core::Real const ddg_threshold, core::scoring::ScoreFuncti
 	Filter("Ddg" ),
 	repack_( true ),
 	relax_mover_( NULL ),
-	use_custom_task_( false )
+	use_custom_task_( false ),
+	repack_bound_( true ),
+	relax_bound_( false )
 {
 	ddg_threshold_ = ddg_threshold;
 	scorefxn_ = scorefxn->clone();

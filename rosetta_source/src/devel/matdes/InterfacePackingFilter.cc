@@ -147,7 +147,8 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 		pose.fold_tree().partition_by_jump( sym_aware_jump_id, is_upstream );
 		sub_pose_resis = devel::matdes::get_neighbor_sub_resis(pose, contact_dist_, sym_dof_name);
 		core::io::pdb::pose_from_pose(sub_pose, pose, sub_pose_resis);
-//		sub_pose.dump_pdb("sub_pose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
+		//pose.dump_pdb("pose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
+		//sub_pose.dump_pdb("sub_pose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
 	 	core::scoring::packing::HolesResult hr(core::scoring::packing::compute_holes_score(sub_pose, hp));
 		TR << "computed_holes" << std::endl;
 
