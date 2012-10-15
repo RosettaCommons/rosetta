@@ -209,7 +209,7 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 	// symmetry check
 	if(core::pose::symmetry::is_symmetric( input_pose ) ) {
 		TR << "Symmetry detected, extracting asymmetric unit." << std::endl;
-		core::pose::symmetry::extract_asymmetric_unit( input_pose, pose /*, false*/ );
+		core::pose::symmetry::extract_asymmetric_unit( input_pose, pose , false );
 	 } else {
 		pose = input_pose;
   }
