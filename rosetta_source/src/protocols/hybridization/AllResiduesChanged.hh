@@ -13,7 +13,7 @@
 #include <protocols/moves/WhileMover.hh>
 
 #include <core/pose/Pose.hh>
-
+#include <core/conformation/Residue.hh>
 #include <core/fragment/FragSet.fwd.hh>
 
 #include <utility/vector1.hh>
