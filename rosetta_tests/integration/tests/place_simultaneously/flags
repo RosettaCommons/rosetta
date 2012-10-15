@@ -1,8 +1,0 @@
--s input/1l6x.min.pdb
--mute core.util.prof ## dont show timing info
--out:file:fullatom
--mute core.io.database
--jd2:ntrials 10
--parser:protocol four_stubs_Oct09_new.xml
--overwrite
--use_input_sc
