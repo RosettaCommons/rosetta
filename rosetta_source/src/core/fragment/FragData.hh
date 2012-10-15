@@ -48,7 +48,7 @@ class FragData : public utility::pointer::ReferenceCount {
 typedef	utility::vector1 < SingleResidueFragDataOP > SRFD_List;
 
 public:
-	FragData () : valid_( false ), score_( 0 ) {};
+	FragData () : valid_( false ), score_( 0.0 ) {};
 
 	//@brief convience constructor to create FragData object that contains n SRFD of same type
 	// argument SRFD will only be used for cloning
@@ -178,10 +178,11 @@ protected: // make private
 private:
 	SRFD_List data_;
 
-	Real score_;
-
 	// this will be true if dofs are set ( via steal, or IO )
 	bool valid_;
+
+	Real score_;
+
 };
 
 

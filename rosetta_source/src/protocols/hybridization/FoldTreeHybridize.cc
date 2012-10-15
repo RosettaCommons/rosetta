@@ -213,8 +213,8 @@ void
 FoldTreeHybridize::normalize_template_wts() {
 	// normalize weights
 	core::Real weight_sum = 0.0;
-	for (int i=1; i<=template_poses_.size(); ++i) weight_sum += template_wts_[i];
-	for (int i=1; i<=template_poses_.size(); ++i) template_wts_[i] /= weight_sum;
+	for (Size i=1; i<=template_poses_.size(); ++i) weight_sum += template_wts_[i];
+	for (Size i=1; i<=template_poses_.size(); ++i) template_wts_[i] /= weight_sum;
 }
 
 void
@@ -242,7 +242,6 @@ void
 FoldTreeHybridize::revert_loops_to_original(core::pose::Pose & pose, Loops loops)
 {
 	std::string sequence = core::sequence::read_fasta_file( option[ in::file::fasta ]()[1] )[1]->sequence();
-	chemical::ResidueTypeSet const& restype_set( pose.residue(1).residue_type_set() );
 
 	for (Size iloop=1; iloop<=loops.num_loop(); ++iloop) {
 		for (Size ires=loops[iloop].start(); ires<=loops[iloop].stop(); ++ires) {
@@ -434,7 +433,7 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 		TR.Debug << "Chunks from all template: " << std::endl;
 		TR.Debug << my_chunks << std::endl;
 		std::random_shuffle ( wted_insertions_to_consider.begin(), wted_insertions_to_consider.end() );
-		for (int i=1; i<=wted_insertions_to_consider.size(); ++i) {
+		for (Size i=1; i<=wted_insertions_to_consider.size(); ++i) {
 			// ensure the insert is still valid
 			bool uncovered = true;
 			for (Size j=wted_insertions_to_consider[i].second.start(); j<=wted_insertions_to_consider[i].second.stop() && uncovered ; ++j)
@@ -556,8 +555,8 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_big_fr
 				}
 			}
 
-			for (int shift = -5; shift<=5; ++shift) {
-				int ires = coverage_start + shift;
+			for (Size shift = -5; shift<=5; ++shift) {
+				Size ires = coverage_start + shift;
 				if (ires >= 1 && ires <= num_residues_nonvirt) {
 					residue_weights[ires] = 1.;
 					TR.Debug << " " << ires << ": " << F(7,5,residue_weights[ires]) << std::endl;
@@ -674,7 +673,6 @@ FoldTreeHybridize::setup_scorefunctions(
 		core::scoring::ScoreFunctionOP score5,
 		core::scoring::ScoreFunctionOP score3) {
 	core::Real lincb_orig = scorefxn_->get_weight( core::scoring::linear_chainbreak );
-	core::Real cb_orig = scorefxn_->get_weight( core::scoring::chainbreak );
 	core::Real cst_orig = scorefxn_->get_weight( core::scoring::atom_pair_constraint );
 
 	score0->reset();
@@ -887,7 +885,6 @@ void FoldTreeHybridize::superimpose_strand_pairings_to_templates(core::pose::Pos
 	using namespace core::kinematics;
 	kinematics::FoldTree const fold_tree = pose.fold_tree();
 	// we need to superimpose starting from the rooted chunks which are either from templates or if none exist, the first strand pair chunks
-	int root = fold_tree.root();
 	utility::vector1<std::string> atom_names;
 	atom_names.push_back("CA");
 	atom_names.push_back("N");
@@ -902,7 +899,8 @@ void FoldTreeHybridize::superimpose_strand_pairings_to_templates(core::pose::Pos
 			core::Size resi_pdb = template_poses_[*pairings_iter]->pdb_info()->number(1);
 			core::Size resj_pdb = template_poses_[*pairings_iter]->pdb_info()->number(2);
 			// the pairing template pose index that represents this jump
-			if ((resi_pdb == it->start() && resj_pdb == it->stop()) || (resj_pdb == it->start() && resi_pdb == it->stop())) {
+			if (	(resi_pdb == (core::Size)it->start() && resj_pdb == (core::Size)it->stop()) ||
+						(resj_pdb == (core::Size)it->start() && resi_pdb == (core::Size)it->stop())) {
 				core::id::AtomID_Map< id::AtomID > atom_map;
 				core::pose::initialize_atomid_map( atom_map, *template_poses_[*pairings_iter], core::id::BOGUS_ATOM_ID );
 				// try to align to the initial template
@@ -951,7 +949,8 @@ void FoldTreeHybridize::superimpose_strand_pairings_to_templates(core::pose::Pos
 					for (pairings_iteri = strand_pairings_template_indices_.begin(); pairings_iteri != strand_pairings_template_indices_.end(); ++pairings_iteri) {
 						core::Size resii_pdb = template_poses_[*pairings_iteri]->pdb_info()->number(1);
 						core::Size resji_pdb = template_poses_[*pairings_iteri]->pdb_info()->number(2);
-						if ((resii_pdb == iti->start() && resji_pdb == iti->stop()) || (resji_pdb == iti->start() && resii_pdb == iti->stop())) {
+						if ((resii_pdb == (core::Size)iti->start() && resji_pdb == (core::Size)iti->stop()) ||
+								(resji_pdb == (core::Size)iti->start() && resii_pdb == (core::Size)iti->stop())) {
 							core::Size template_res = map_pdb_info_number( *template_poses_[*pairings_iteri], iti->stop() );
 							if (template_res) {
 								core::Size pair_res = map_pdb_info_number( *template_poses_[*pairings_iter], it->start() );
@@ -1028,7 +1027,7 @@ void FoldTreeHybridize::superimpose_strand_pairings_to_templates(core::pose::Pos
 core::Size FoldTreeHybridize::map_pdb_info_number( const core::pose::Pose & pose, core::Size pdb_res ) {
 	core::Size mapped = 0;
 	for (core::Size i=1; i<=pose.total_residue(); ++i) {
-		if (pose.pdb_info()->number(i) == pdb_res) {
+		if (pose.pdb_info()->number(i) == (int)pdb_res) {
 			mapped = i;
 			break;
 		}
@@ -1321,7 +1320,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		mc1->set_autotemp( false, temp );
 		(*score0)(pose);
 		bool all_res_changed = false;
-		for (int i=1; i<=stage1_max_cycles; ++i) {
+		for (core::Size i=1; i<=stage1_max_cycles; ++i) {
 			random_chunk_and_frag_mover->apply(pose);
 			(*score0)(pose);
 			mc1->boltzmann(pose, "RandomMover");

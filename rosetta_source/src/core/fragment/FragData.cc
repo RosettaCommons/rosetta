@@ -64,7 +64,7 @@ make_pose_from_sequence_(
 		// pose.conformation().insert_chain_ending( pose.total_residue() - 1 );		 probably not necessary
 } // make_pose_match_sequence_
 
-FragData::FragData( SingleResidueFragDataOP SRFD, Size n) : valid_( false ) {
+FragData::FragData( SingleResidueFragDataOP SRFD, Size n) : valid_( false ), score_( 0.0 ) {
 	for ( Size i = 1; i<=n; i++ ) {
 		data_.push_back( SRFD->clone() );
 	}
