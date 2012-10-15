@@ -555,8 +555,8 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_big_fr
 				}
 			}
 
-			for (Size shift = -5; shift<=5; ++shift) {
-				Size ires = coverage_start + shift;
+			for (int shift = -5; shift<=5; ++shift) {
+				int ires = coverage_start + shift;
 				if (ires >= 1 && ires <= num_residues_nonvirt) {
 					residue_weights[ires] = 1.;
 					TR.Debug << " " << ires << ": " << F(7,5,residue_weights[ires]) << std::endl;
