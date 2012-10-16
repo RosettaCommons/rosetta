@@ -651,7 +651,8 @@ bool VarLengthBuild::centroid_build(
 		if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
 			//if (interval.right == pose.total_residue()){
 			if (interval.right == remodel_data_.blueprint.size()){
-				interval.right = interval.right + repeat_tail_length_; // pad interval to include the extra shadow residue in pose
+				//interval.right = interval.right + repeat_tail_length_; // pad interval to include the extra shadow residue in pose
+				interval.right = interval.right + 2; // pad interval to include the extra shadow residue in pose
 			}
 		}
 		TR << "VLB count_cutpoints " << n_cuts << " interval.left " << interval.left << " interval.right " << interval.right << std::endl;
