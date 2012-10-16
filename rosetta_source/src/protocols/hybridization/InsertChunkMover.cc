@@ -75,11 +75,10 @@ registry_shift_(0), anchor_insert_only_(false), align_to_ss_only_(false), copy_s
 InsertChunkMover::~InsertChunkMover(){}
 
 void InsertChunkMover::set_template(core::pose::PoseCOP template_pose, core::Size template_id,
-				  std::map <core::Size, core::Size> const & sequence_alignment, bool is_strand_pairing_template ) {
+				  std::map <core::Size, core::Size> const & sequence_alignment) {
 	template_pose_ = template_pose;
 	template_id_ = template_id;
 	sequence_alignment_ = sequence_alignment;
-	is_strand_pairing_template_ = is_strand_pairing_template;
 }
 
 void InsertChunkMover::set_aligned_chunk(core::pose::Pose const & pose, Size const jump_number, bool anchor_insert_only_in) {
@@ -203,7 +202,7 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 		}
 
 		// fpd we need at least 3 residues aligned
-		if (atom_map_count >=3 || is_strand_pairing_template_) {
+		if (atom_map_count >=3) {
 			TR.Debug << sequence_alignment_local_ << std::endl;
 			return true;
 		}

@@ -255,7 +255,7 @@ void StarAbinitio::apply(Pose& pose) {
   emit_intermediate(pose, "star_extended.out");
 
   const Loops& aligned = *(extender.aligned());
-  const Loops& unaligned = *(extender.unaligned());
+  //const Loops& unaligned = *(extender.unaligned());
   TR << "Aligned: " << aligned << std::endl;
 
   const Size num_residues = pose.total_residue();

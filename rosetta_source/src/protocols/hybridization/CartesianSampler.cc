@@ -172,7 +172,7 @@ CartesianSampler::update_fragment_library_pointers() {
 
 	// map positions to fragments
 	library_.resize( nfragsets );
-	for (int i=1; i<=nfragsets; ++i) {
+	for (int i=1; i<=(int)nfragsets; ++i) {
 		for (core::fragment::FrameIterator j = fragments_[i]->begin(); j != fragments_[i]->end(); ++j) {
 			core::Size position = (*j)->start();
 			library_[i][position] = **j;
@@ -232,7 +232,7 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 			numeric::xyzVector< core::Real > x_3 = pose.residue(start+i).atom(" CA ").xyz();
 			numeric::xyzVector< core::Real > x_4 = pose.residue(start+i).atom(" N  ").xyz();
 			com1 += x_1+x_2+x_3+x_4;
-			for (int j=0; j<3; ++j) { 
+			for (int j=0; j<3; ++j) {
 				init_coords(j+1,4*(ii+aln_len)+1) = x_1[j];
 				init_coords(j+1,4*(ii+aln_len)+2) = x_2[j];
 				init_coords(j+1,4*(ii+aln_len)+3) = x_3[j];
@@ -334,7 +334,7 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 		core::Real CCsum=0, CCsum2=0;
 		(*myscore)(pose);
 
-		for (int r=1; r<=nres; ++r) {
+		for (int r=1; r<=(int)nres; ++r) {
 			per_resCC[r] = core::scoring::electron_density::getDensityMap().matchRes( r , pose.residue(r), pose, symminfo , false);
 			CCsum += per_resCC[r];
 			CCsum2 += per_resCC[r]*per_resCC[r];
@@ -342,7 +342,7 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 		CCsum /= nres;
 		CCsum2 = sqrt( CCsum2/nres-CCsum*CCsum );
 
-		for (int r=1; r<=nres; ++r) {
+		for (int r=1; r<=(int)nres; ++r) {
 			fragmentProbs[r] = exp( (CCsum-per_resCC[r])/CCsum2 );
 			TR << "Prob_dens_density( " << r << " ) = " << fragmentProbs[r] << " ; CC=" << per_resCC[r] << " (Z=" << (CCsum-per_resCC[r])/CCsum2 << ")" << std::endl;
 		}
@@ -353,7 +353,7 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 		                      // with Btemp = 25, a B=100 is ~54 times more likely to be sampled than B=0
 
 		runtime_assert( pose.pdb_info() );
-		for (int r=1; r<=nres; ++r) {
+		for (int r=1; r<=(int)nres; ++r) {
 			core::Real Bsum=0;
 			core::Size nbb = pose.residue_type(r).last_backbone_atom();
 			for (core::Size atm=1; atm<=nbb; ++atm) {
@@ -376,8 +376,8 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 
 		Energies & energies( pose.energies() );
 		(*myscore)(pose);
-	
-		for (int r=1; r<=nres; ++r) {
+
+		for (int r=1; r<=(int)nres; ++r) {
 			EnergyMap & emap( energies.onebody_energies( r ) );
 					// i dont think this will work for symmetric systems where 1st subunit is not the scoring one
 			core::Real ramaScore = emap[ rama ];
@@ -388,14 +388,14 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 		// user defined segments to rebuild
 		runtime_assert( user_pos_.size()>0 );
 
-		for (int r=1; r<=nres; ++r) {
+		for (int r=1; r<=(int)nres; ++r) {
 			fragmentProbs[r] = 0.0;
 			if ( user_pos_.find(r) != user_pos_.end() ) fragmentProbs[r] = 1.0;
 			TR << "Prob_dens_user( " << r << " ) = " << fragmentProbs[r] << std::endl;
 		}
 	} else {
 		// default to uniform
-		for (int r=1; r<=nres; ++r) {
+		for (int r=1; r<=(int)nres; ++r) {
 			fragmentProbs[r] = 1.0;
 			TR << "Prob_dens_uniform( " << r << " ) = " << 1.0 << std::endl;
 		}
@@ -413,7 +413,7 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 			core::Size seqpos_end   = (*frame_it)->end();
 
 			frame_weights[i_frame] = 0;
-			for(int i_pos = seqpos_start; i_pos<=seqpos_end; ++i_pos)
+			for(int i_pos = (int)seqpos_start; i_pos<=(int)seqpos_end; ++i_pos)
 				frame_weights[i_frame] += fragmentProbs[i_pos];
 			frame_weights[i_frame] /= (seqpos_end-seqpos_start+1);
 		}
@@ -435,7 +435,7 @@ CartesianSampler::apply( Pose & pose ) {
 
 	// using the current fragment_bias_strategy_, compute bias
 	// do this from fullatom (if the input pose is fullatom)
-	compute_fragment_bias(pose);	
+	compute_fragment_bias(pose);
 
 	//
 	bool fullatom_input = pose.is_fullatom();
@@ -474,7 +474,7 @@ CartesianSampler::apply( Pose & pose ) {
 	(*scorefxn_)(pose);
 	protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *scorefxn_, 2.0 );
 
-	for (int n=1; n<=ncycles_; ++n) {
+	for (int n=1; n<=(int)ncycles_; ++n) {
 		// pick fragment set
 		core::Size i_frag_set = numeric::random::random_range(1, fragments_.size());
 
@@ -547,7 +547,7 @@ CartesianSampler::parse_my_tag(
 	if( tag->hasOption( "fraglens" ) ) {
 		utility::vector1<std::string> fraglens = utility::string_split( tag->getOption< std::string >( "fraglens" ), ',' );
 		for (core::Size i=1; i<=fraglens.size(); ++i) {
-			fragments_.push_back( create_fragment_set(pose, atoi(fraglens[i].c_str()), nfrags) ); 
+			fragments_.push_back( create_fragment_set(pose, atoi(fraglens[i].c_str()), nfrags) );
 		}
 	}
 	update_fragment_library_pointers();

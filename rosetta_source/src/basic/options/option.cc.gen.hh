@@ -1686,7 +1686,7 @@ option.add( basic::options::OptionKeys::cm::hybridize::virtual_loops, "use virtu
 option.add( basic::options::OptionKeys::cm::hybridize::revert_real_loops, "revert back to non-virtual loops" ).def(false);
 option.add( basic::options::OptionKeys::cm::hybridize::realign_domains_stage2, "realign the starting templates to the pose after stage1" ).def(false);
 option.add( basic::options::OptionKeys::cm::hybridize::frag_1mer_insertion_weight, "weight for 1mer fragment insertions where fragments are not allowed vs. template chunk insertions in stage1" ).def(0.0);
-option.add( basic::options::OptionKeys::cm::hybridize::small_gap_frag_insertion_weight, "weight for small fragment insertions where large fragments are not allowed vs. template chunk insertions in stage1" ).def(0.0);
+option.add( basic::options::OptionKeys::cm::hybridize::small_frag_insertion_weight, "weight for small fragment insertions where large fragments are not allowed vs. template chunk insertions in stage1" ).def(0.0);
 option.add( basic::options::OptionKeys::cm::hybridize::big_frag_insertion_weight, "weight for big fragment insertions vs. template chunk insertions in stage1" ).def(0.5);
 option.add( basic::options::OptionKeys::cm::hybridize::auto_frag_insertion_weight, "automatically set the weight for fragment insertions vs. template chunk insertions in stage1" ).def(true);
 option.add( basic::options::OptionKeys::cm::hybridize::stage1_1_cycles, "Number of cycles for ab initio stage 1 in Stage1" ).def(2000);

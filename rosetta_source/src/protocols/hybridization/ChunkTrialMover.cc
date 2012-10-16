@@ -157,7 +157,7 @@ void ChunkTrialMover::pick_random_template()
 	int ntrials=500;
 	while (!template_number() && --ntrials>0) {
 		set_template( RG.random_range(1, template_poses_.size()) );
-		if (template_chunks_[template_number()].size() == 0 || floating_strand_pairings_template_indices_.count(template_number())) set_template(0);
+		if (template_chunks_[template_number()].size() == 0 || ignore_template_indices_.count(template_number())) set_template(0);
 	}
 	if (ntrials == 0) {
 		utility_exit_with_message( "Fatal error in ChunkTrialMover::pick_random_template()");
@@ -199,14 +199,12 @@ ChunkTrialMover::apply(core::pose::Pose & pose) {
 	if (random_template_) {
 		pick_random_template();
   }
-	if (floating_strand_pairings_template_indices_.count(template_number())) return;
+	if (ignore_template_indices_.count(template_number())) return;
 
   //TR << "templ number: " << template_number() << std::endl;
-	bool is_strand_pairing_template = (strand_pairings_template_indices_.count(template_number())) ? true : false;
 	align_chunk_.set_template(	template_poses_[template_number()],
 															template_number(),
-															sequence_alignments_[template_number()],
-															is_strand_pairing_template
+															sequence_alignments_[template_number()]
 														);
 
 	// random chunk or loop all chunks

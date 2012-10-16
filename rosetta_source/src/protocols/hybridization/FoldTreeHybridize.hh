@@ -110,7 +110,7 @@ public:
 	void set_domain_assembly(bool domain_assembly_in) { domain_assembly_=domain_assembly_in; }
 	void set_add_hetatm(bool add_hetatm_in, core::Real hetatm_cst_weight_in) { add_hetatm_=add_hetatm_in; hetatm_cst_weight_=hetatm_cst_weight_in; }
 	void set_frag_1mer_insertion_weight(core::Real frag_1mer_insertion_weight_in) { frag_1mer_insertion_weight_=frag_1mer_insertion_weight_in; }
-	void set_small_gap_frag_insertion_weight(core::Real small_gap_frag_insertion_weight_in) { small_gap_frag_insertion_weight_=small_gap_frag_insertion_weight_in; }
+	void set_small_frag_insertion_weight(core::Real small_frag_insertion_weight_in) { small_frag_insertion_weight_=small_frag_insertion_weight_in; }
 	void set_big_frag_insertion_weight(core::Real big_frag_insertion_weight_in) { big_frag_insertion_weight_=big_frag_insertion_weight_in; }
 	void set_frag_weight_aligned(core::Real frag_weight_aligned_in) { frag_weight_aligned_=frag_weight_aligned_in; }
 	void set_auto_frag_insertion_weight(bool auto_frag_insertion_weight_in) { auto_frag_insertion_weight_ = auto_frag_insertion_weight_in; }
@@ -148,7 +148,7 @@ private:
 	// automatically set the fragment insertion weight
 	void auto_frag_insertion_weight(
 		WeightedFragmentTrialMoverOP & frag_1mer_trial_mover,
-		WeightedFragmentTrialMoverOP & small_gap_frag_trial_mover,
+		WeightedFragmentTrialMoverOP & small_frag_trial_mover,
 		WeightedFragmentTrialMoverOP & big_frag_trial_mover
 	);
 
@@ -173,7 +173,7 @@ private:
 	// 1mer fragment insertion weight where large and small fragments are not allowed (across anchor points) vs. chunk insertion + big and small fragments
 	core::Real frag_1mer_insertion_weight_;
 	// small fragment insertion weight where large fragments are not allowed (across anchor points) vs. chunk insertion + big fragments
-	core::Real small_gap_frag_insertion_weight_;
+	core::Real small_frag_insertion_weight_;
 	// fragment insertion weight, vs. chunk insertion + small gap fragments
 	core::Real big_frag_insertion_weight_;
 	bool add_non_init_chunks_;

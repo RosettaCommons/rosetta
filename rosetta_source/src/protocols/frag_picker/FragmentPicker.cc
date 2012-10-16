@@ -267,9 +267,9 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 					Size q_pos_j = qPosi + j - 1;
 
 					// skip local contacts relative to query
-					if (std::abs(int(q_pos_i-q_pos_j)) < contacts_min_seq_sep_) continue;
+					if (std::abs(int(q_pos_i-q_pos_j)) < (int)contacts_min_seq_sep_) continue;
 					// skip local contacts relative to fragments
-					if (std::abs(int(ri->resi() - outi[fi].first->get_residue(j)->resi() )) < contacts_min_seq_sep_) continue;
+					if (std::abs(int(ri->resi() - outi[fi].first->get_residue(j)->resi() )) < (int)contacts_min_seq_sep_) continue;
 
 					for (it=contact_types_.begin(); it!=contact_types_.end(); it++) {
 
@@ -315,12 +315,12 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 											if (m == q_pos_i && n == q_pos_j) continue;
 											// chunk_j = chunk position j
 											int chunk_j = cPos_offset + n;
-											if (chunk_j < 1 || chunk_j > chunk->size()) continue;
+											if (chunk_j < 1 || chunk_j > (int)chunk->size()) continue;
 
 											// skip local contacts relative to query
-											if (std::abs(int(m-n)) < contacts_min_seq_sep_) continue;
+											if (std::abs(int(m-n)) < (int)contacts_min_seq_sep_) continue;
 											// skip local contacts relative to fragments
-											if (std::abs(int( chunk->at(chunk_i)->resi() - chunk->at(chunk_j)->resi() )) < contacts_min_seq_sep_) continue;
+											if (std::abs(int( chunk->at(chunk_i)->resi() - chunk->at(chunk_j)->resi() )) < (int)contacts_min_seq_sep_) continue;
 
 											Real dist_squared = chunk->at(chunk_i)->distance_squared(chunk->at(chunk_j), *it);
 											if (dist_squared <= sidechain_contact_dist_cutoff_->get_cutoff_squared( chunk->at(chunk_i)->aa(), chunk->at(chunk_j)->aa() )) {
@@ -352,19 +352,19 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 												if (m > size_of_query()) continue;
 												// chunk_i = chunk position i
 												int chunk_i = cPos_offset + m;
-												if (chunk_i < 1 || chunk_i > chunk->size()) continue;
+												if (chunk_i < 1 || chunk_i > (int)chunk->size()) continue;
 												// n == query position j
 												for (Size n = n_min; n <= n_max; ++n) {
 													if (n > size_of_query()) continue;
 													if (m == q_pos_i && n == q_pos_j) continue;
 													// chunk_j = chunk position j
 													int chunk_j = cPos_offset + n;
-													if (chunk_j < 1 || chunk_j > chunk->size()) continue;
+													if (chunk_j < 1 || chunk_j > (int)chunk->size()) continue;
 
 													// skip local contacts relative to query
 													if (std::abs(int(m-n)) < contacts_min_seq_sep_) continue;
 													// skip local contacts relative to fragments
-													if (std::abs(int( chunk->at(chunk_i)->resi() - chunk->at(chunk_j)->resi() )) < contacts_min_seq_sep_) continue;
+													if (std::abs(int( chunk->at(chunk_i)->resi() - chunk->at(chunk_j)->resi() )) < (int)contacts_min_seq_sep_) continue;
 
 													Real dist_squared = chunk->at(chunk_i)->distance_squared(chunk->at(chunk_j), *it);
 													if (dist_squared <= contacts_dist_cutoffs_squared_[cdi]) {
@@ -473,7 +473,7 @@ void FragmentPicker::nonlocal_pairs_at_positions( utility::vector1<Size> const &
 					if (!outi[fi].first->same_chain( outj[fj].first )) continue; // skip if not from same pdb chain
 					//if (outi[fi].first->get_residue(1)->resi() >= outj[fj].first->get_residue(1)->resi()) continue; // skip inverse pairs
 					//if (std::abs(int(outi[fi].first->get_residue(1)->resi()-outj[fj].first->get_residue(1)->resi())) < min_pdb_seq_sep) continue; // skip if too local in PDB
-					if (std::abs(int(outi[fi].first->get_residue(1)->resi()-outj[fj].first->get_residue(1)->resi())) < fragment_size) continue; // skip overlapping fragments in PDB
+					if (std::abs(int(outi[fi].first->get_residue(1)->resi()-outj[fj].first->get_residue(1)->resi())) < (int)fragment_size) continue; // skip overlapping fragments in PDB
 					Size qpi = qPosi; // query position i in fragment
 					utility::vector1<ContactOP> contacts;
 					bool skip = false;
@@ -484,9 +484,9 @@ void FragmentPicker::nonlocal_pairs_at_positions( utility::vector1<Size> const &
 						Size qpj = qPosj; // query position j in fragment
 						for (Size j=1; j<=fragment_size;++j) {
 							if (skip) continue;
-							if (std::abs(int(qpi-qpj)) < contacts_min_seq_sep_) continue;
+							if (std::abs(int(qpi-qpj)) < (int)contacts_min_seq_sep_) continue;
 							// skip local contacts relative to fragments
-							if (std::abs(int( ri->resi()-outj[fj].first->get_residue(j)->resi() )) < contacts_min_seq_sep_) continue;
+							if (std::abs(int( ri->resi()-outj[fj].first->get_residue(j)->resi() )) < (int)contacts_min_seq_sep_) continue;
 							std::set<ContactType>::iterator it;
 							for (it=contact_types_.begin(); it!=contact_types_.end(); it++) {
 								// contact distance cutoff
@@ -834,19 +834,19 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 							if (m > size_of_query()) continue;
 							// chunk_i = chunk position i
 							int chunk_i = cPosi_offset + m;
-							if (chunk_i < 1 || chunk_i > chunki->size()) continue;
+							if (chunk_i < 1 || chunk_i > (int)chunki->size()) continue;
 							// n == query position j
 							for (Size n = n_min; n <= n_max; ++n) {
 								if (n > size_of_query()) continue;
 								if (m == contacts[i]->i() && n == contacts[i]->j()) continue;
 								// chunk_j = chunk position j
 								int chunk_j = cPosj_offset + n;
-								if (chunk_j < 1 || chunk_j > chunkj->size()) continue;
+								if (chunk_j < 1 || chunk_j > (int)chunkj->size()) continue;
 
 								// skip local contacts relative to query
-								if (std::abs(int(m-n)) < contacts_min_seq_sep_) continue;
+								if (std::abs(int(m-n)) < (int)contacts_min_seq_sep_) continue;
 								// skip local contacts relative to fragments
-								if (std::abs(int( chunki->at(chunk_i)->resi() - chunkj->at(chunk_j)->resi() )) < contacts_min_seq_sep_) continue;
+								if (std::abs(int( chunki->at(chunk_i)->resi() - chunkj->at(chunk_j)->resi() )) < (int)contacts_min_seq_sep_) continue;
 
 								// contact distance
 								Real dist_squared = chunki->at(chunk_i)->distance_squared(chunkj->at(chunk_j), contacts[i]->type());
@@ -878,19 +878,19 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 									if (m > size_of_query()) continue;
 									// chunk_i = chunk position i
 									int chunk_i = cPosi_offset + m;
-									if (chunk_i < 1 || chunk_i > chunki->size()) continue;
+									if (chunk_i < 1 || chunk_i > (int)chunki->size()) continue;
 									// n == query position j
 									for (Size n = n_min; n <= n_max; ++n) {
 										if (n > size_of_query()) continue;
 										if (m == contacts[i]->i() && n == contacts[i]->j()) continue;
 										// chunk_j = chunk position j
 										int chunk_j = cPosj_offset + n;
-										if (chunk_j < 1 || chunk_j > chunkj->size()) continue;
+										if (chunk_j < 1 || chunk_j > (int)chunkj->size()) continue;
 
 										// skip local contacts relative to query
-										if (std::abs(int(m-n)) < contacts_min_seq_sep_) continue;
+										if (std::abs(int(m-n)) < (int)contacts_min_seq_sep_) continue;
 										// skip local contacts relative to fragments
-										if (std::abs(int( chunki->at(chunk_i)->resi() - chunkj->at(chunk_j)->resi() )) < contacts_min_seq_sep_) continue;
+										if (std::abs(int( chunki->at(chunk_i)->resi() - chunkj->at(chunk_j)->resi() )) < (int)contacts_min_seq_sep_) continue;
 
 										// contact distance
 										Real dist_squared = chunki->at(chunk_i)->distance_squared(chunkj->at(chunk_j), contacts[i]->type());
@@ -1874,7 +1874,7 @@ utility::vector1<ConstantLengthFragSetOP> FragmentPicker::getFragSet(int residue
 						for (Size i = 1; i <= out[1].first->get_length(); ++i) {
 							VallResidueOP r   =  out[fi].first->get_residue(i);
 							string pdbid      = out[fi].first->get_pdb_id();
-							char chainid      = out[fi].first->get_chain_id();
+							//char chainid      = out[fi].first->get_chain_id();
 							Size index        = r->resi();
 							char aa           = toupper(r->aa());
 							char ss           = r->ss();

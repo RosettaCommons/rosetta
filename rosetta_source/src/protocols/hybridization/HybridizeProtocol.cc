@@ -221,7 +221,7 @@ HybridizeProtocol::init() {
 	auto_frag_insertion_weight_ = option[cm::hybridize::auto_frag_insertion_weight]();
 	max_registry_shift_ = option[cm::hybridize::max_registry_shift]();
 	frag_1mer_insertion_weight_ = option[cm::hybridize::frag_1mer_insertion_weight]();
-	small_gap_frag_insertion_weight_ = option[cm::hybridize::small_gap_frag_insertion_weight]();
+	small_frag_insertion_weight_ = option[cm::hybridize::small_frag_insertion_weight]();
 	big_frag_insertion_weight_ = option[cm::hybridize::big_frag_insertion_weight]();
 	hetatm_cst_weight_ = 10.;
 	cartfrag_overlap_ = 1;
@@ -711,7 +711,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		// Three options to rearrange the input alignments, adding hetero residues, domain assembly, or realign local domains. Currently they are mutually exclusive.
 		if (add_hetatm_) {
 			for ( Size ires=1; ires <= templates_[initial_template_index]->total_residue(); ++ires ) {
-				if (templates_[initial_template_index]->pdb_info()->number(ires) > nres_tgt) {
+				if (templates_[initial_template_index]->pdb_info()->number(ires) > (int)nres_tgt) {
 					if ( templates_[initial_template_index]->residue(ires).is_polymer() && !templates_[initial_template_index]->residue(ires).is_lower_terminus() ) {
 					pose.append_residue_by_bond(templates_[initial_template_index]->residue(ires));
 				}
@@ -835,7 +835,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			ft_hybridize->set_domain_assembly( domain_assembly_ );
 			ft_hybridize->set_add_hetatm( add_hetatm_, hetatm_cst_weight_ );
 			ft_hybridize->set_frag_1mer_insertion_weight( frag_1mer_insertion_weight_ );
-			ft_hybridize->set_small_gap_frag_insertion_weight( small_gap_frag_insertion_weight_ );
+			ft_hybridize->set_small_frag_insertion_weight( small_frag_insertion_weight_ );
 			ft_hybridize->set_big_frag_insertion_weight( big_frag_insertion_weight_ );
 			ft_hybridize->set_frag_weight_aligned( frag_weight_aligned_ );
 			ft_hybridize->set_auto_frag_insertion_weight( auto_frag_insertion_weight_ );
@@ -865,7 +865,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			core::pose::setPoseExtraScores( pose, "GDTMM_after_stage1", gdtmm);
 			TR << "GDTMM_after_stage1" << F(8,3,gdtmm) << std::endl;
 		}
-		//pose.dump_pdb("stage1.pdb");
+		pose.dump_pdb("stage1.pdb");
 
 		if (realign_domains_stage2_) {
 			// realign domains to the output of stage 1
@@ -974,7 +974,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 				for ( core::Size i=1; i<pose.total_residue(); ++i ) {
 					// skip non-protein residues and templates which may have been added (strand pairings) and placed the history in stage1
 					if (	!pose.residue(i).is_protein() ||
-								history->get(i) > template_index_icluster.size() // strand pairings
+								history->get(i) > (int)template_index_icluster.size() // strand pairings
 						) continue;
 					utility::vector1<core::Size> const &source_list = template_cst_reses_[ template_index_icluster[ history->get(i) ] ];
 					if ( std::find( source_list.begin(), source_list.end(), i ) != source_list.end() ) {
@@ -1222,8 +1222,8 @@ HybridizeProtocol::parse_my_tag(
 		add_non_init_chunks_ = tag->getOption< bool >( "add_non_init_chunks" );
 	if( tag->hasOption( "frag_1mer_insertion_weight" ) )
 		frag_1mer_insertion_weight_ = tag->getOption< core::Real >( "frag_1mer_insertion_weight" );
-	if( tag->hasOption( "small_gap_frag_insertion_weight" ) )
-		small_gap_frag_insertion_weight_ = tag->getOption< core::Real >( "small_gap_frag_insertion_weight" );
+	if( tag->hasOption( "small_frag_insertion_weight" ) )
+		small_frag_insertion_weight_ = tag->getOption< core::Real >( "small_frag_insertion_weight" );
 	if( tag->hasOption( "big_frag_insertion_weight" ) )
 		big_frag_insertion_weight_ = tag->getOption< core::Real >( "big_frag_insertion_weight" );
 	if( tag->hasOption( "frag_weight_aligned" ) )

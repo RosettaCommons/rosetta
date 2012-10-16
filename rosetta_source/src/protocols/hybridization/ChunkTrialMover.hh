@@ -84,32 +84,27 @@ public:
 	void apply(core::pose::Pose & pose);
 	std::string get_name() const;
 
-	// strand pairings
-	void set_strand_pairings_template_indices(
-			std::set< core::Size> strand_pairings_template_indices_in, // to not ignore
-			std::set< core::Size> floating_strand_pairings_template_indices_in // to ignore
+	void set_templates_to_ignore(
+			std::set< core::Size> template_indices_in // to ignore
 	) {
-		strand_pairings_template_indices_ = strand_pairings_template_indices_in;
-		floating_strand_pairings_template_indices_ = floating_strand_pairings_template_indices_in;
+		ignore_template_indices_ = template_indices_in;
 	}
 
 private:
-	InsertChunkMover align_chunk_;
-	AlignOption align_option_;
-	bool random_template_;
 
 	utility::vector1 < core::pose::PoseCOP > template_poses_;
 	utility::vector1 < Loops > template_chunks_;
-	utility::vector1 < std::map <core::Size, core::Size> > sequence_alignments_;
+	bool random_template_;
+	AlignOption align_option_;
+	InsertChunkMover align_chunk_;
 	Size max_registry_shift_input_;
+	utility::vector1 < std::map <core::Size, core::Size> > sequence_alignments_;
 	utility::vector1 < Size > max_registry_shift_;
 
 	Size template_number_; // the jump to be realigned
 	Size jump_number_; // the jump to be realigned
 
-	// strand pairings
-	std::set< core::Size > strand_pairings_template_indices_;
-	std::set< core::Size > floating_strand_pairings_template_indices_;
+	std::set< core::Size > ignore_template_indices_;
 
 }; //class ChunkTrialMover
 

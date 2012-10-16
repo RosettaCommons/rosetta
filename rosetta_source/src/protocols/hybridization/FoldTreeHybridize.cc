@@ -179,7 +179,7 @@ FoldTreeHybridize::init() {
 	max_registry_shift_ = option[cm::hybridize::max_registry_shift]();
 
 	frag_1mer_insertion_weight_ = 0.0;
-	small_gap_frag_insertion_weight_ = 0.0;
+	small_frag_insertion_weight_ = 0.0;
 	big_frag_insertion_weight_ = 0.50;
 	top_n_big_frag_ = 25;
 	top_n_small_frag_ = 200;
@@ -558,13 +558,13 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_big_fr
 
 			for (int shift = -5; shift<=5; ++shift) {
 				int ires = coverage_start + shift;
-				if (ires >= 1 && ires <= num_residues_nonvirt) {
+				if (ires >= 1 && ires <= (int)num_residues_nonvirt) {
 					residue_weights[ires] = 1.;
 					TR.Debug << " " << ires << ": " << F(7,5,residue_weights[ires]) << std::endl;
 				}
 
 				ires = coverage_end + shift;
-				if (ires >= 1 && ires <= num_residues_nonvirt) {
+				if (ires >= 1 && ires <= (int)num_residues_nonvirt) {
 					residue_weights[ires] = 1.;
 					TR.Debug << " " << ires << ": " << F(7,5,residue_weights[ires]) << std::endl;
 				}
@@ -1185,7 +1185,6 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	bool use_random_template = false;
 	ChunkTrialMover initialize_chunk_mover(template_poses_, template_chunks_, ss_chunks_pose_, use_random_template, all_chunks);
 	initialize_chunk_mover.set_template(initial_template_index_);
-	initialize_chunk_mover.set_strand_pairings_template_indices( strand_pairings_template_indices_, floating_pairs_ );
 	initialize_chunk_mover.apply(pose);
 	// strand pairings
 	if (has_strand_pairings) {
@@ -1202,12 +1201,15 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 
 	translate_virt_to_CoM(pose);
 
-	//pose.dump_pdb("after_initialize.pdb");
+	pose.dump_pdb("after_initialize.pdb");
 
 	use_random_template = true;
 	Size max_registry_shift = max_registry_shift_;
 	ChunkTrialMoverOP random_sample_chunk_mover(
 		new ChunkTrialMover(template_poses_, template_chunks_, ss_chunks_pose_, use_random_template, random_chunk, max_registry_shift) );
+
+	// ignore strand pair templates, they will be sampled by a jump mover
+	random_sample_chunk_mover->set_templates_to_ignore(strand_pairings_template_indices_);
 
 	utility::vector1< core::Real > residue_weights_1mer_frags( get_residue_weights_for_1mers(pose) );
 	utility::vector1< core::Real > residue_weights_small_frags( get_residue_weights_for_small_frags(pose) );
@@ -1244,7 +1246,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	// automatically re-weight the fragment insertions if desired
 	auto_frag_insertion_weight(frag_1mer_mover, small_frag_gaps_mover, top_big_frag_mover);
 
-	core::Real total_frag_insertion_weight = small_gap_frag_insertion_weight_+big_frag_insertion_weight_+frag_1mer_insertion_weight_;
+	core::Real total_frag_insertion_weight = small_frag_insertion_weight_+big_frag_insertion_weight_+frag_1mer_insertion_weight_;
 	if ( total_frag_insertion_weight < 1. ) {
 		random_chunk_and_frag_mover->add_mover(random_sample_chunk_mover, 1.-total_frag_insertion_weight);
 		random_chunk_and_small_frag_mover->add_mover(random_sample_chunk_mover, 1.-total_frag_insertion_weight);
@@ -1257,21 +1259,40 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		if (sum_weight > 1e-6) do_frag_inserts = true;
 	}
 	if (do_frag_inserts) {
-		// 1mers fragment insertions where small and big fragments are not allowed (small gaps between small chunks)
-		if (frag_1mer_insertion_weight_ > 0.)
-			random_chunk_and_frag_mover->add_mover(frag_1mer_mover, frag_1mer_insertion_weight_);
-
-		// small fragment insertions where big fragments are not allowed (where big fragments cover jump_anchors)
-		if (small_gap_frag_insertion_weight_ > 0.)
-			random_chunk_and_frag_mover->add_mover(small_frag_gaps_mover, small_gap_frag_insertion_weight_);
-
 		// use similar default fraction of fragment to jump moves as in KinematicAbinitio.cc
 		core::Real jump_move_fraction = 1.0/(core::Real)(option[ jumps::invrate_jump_move ]+1.);
+
+		// 1mers fragment insertions where small and big fragments are not allowed (small gaps between small chunks)
+		if (frag_1mer_insertion_weight_ > 0.) {
+			if (has_strand_pairings) {
+				core::Real jump_insertion_weight = frag_1mer_insertion_weight_*jump_move_fraction;
+				random_chunk_and_frag_mover->add_mover(frag_1mer_mover, frag_1mer_insertion_weight_-jump_insertion_weight);
+				// strand pair jump insertions
+				protocols::simple_moves::ClassicFragmentMoverOP jump_mover = get_pairings_jump_mover();
+				random_chunk_and_frag_mover->add_mover(jump_mover, jump_insertion_weight);
+			} else {
+				random_chunk_and_frag_mover->add_mover(frag_1mer_mover, frag_1mer_insertion_weight_);
+			}
+		}
+
+		// small fragment insertions where big fragments are not allowed (where big fragments cover jump_anchors)
+		if (small_frag_insertion_weight_ > 0.) {
+			if (has_strand_pairings) {
+				core::Real jump_insertion_weight = small_frag_insertion_weight_*jump_move_fraction;
+				random_chunk_and_frag_mover->add_mover(small_frag_gaps_mover, small_frag_insertion_weight_-jump_insertion_weight);
+				// strand pair jump insertions
+				protocols::simple_moves::ClassicFragmentMoverOP jump_mover = get_pairings_jump_mover();
+				random_chunk_and_frag_mover->add_mover(jump_mover, jump_insertion_weight);
+			} else {
+				random_chunk_and_frag_mover->add_mover(small_frag_gaps_mover, small_frag_insertion_weight_);
+			}
+		}
+
 		// big fragment and strand pairing jump insertions
 		if (big_frag_insertion_weight_ > 0.) {
 			if (has_strand_pairings) {
 				core::Real jump_insertion_weight = big_frag_insertion_weight_*jump_move_fraction;
-				random_chunk_and_frag_mover->add_mover(top_big_frag_mover, 1.0-jump_insertion_weight);
+				random_chunk_and_frag_mover->add_mover(top_big_frag_mover, big_frag_insertion_weight_-jump_insertion_weight);
 				// strand pair jump insertions
 				protocols::simple_moves::ClassicFragmentMoverOP jump_mover = get_pairings_jump_mover();
 				random_chunk_and_frag_mover->add_mover(jump_mover, jump_insertion_weight);
@@ -1280,23 +1301,38 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 			}
 		}
 
-		// small fragment insertions
-		if (has_strand_pairings) {
-			core::Real jump_insertion_weight = (small_gap_frag_insertion_weight_+big_frag_insertion_weight_)*jump_move_fraction;
-			random_chunk_and_small_frag_mover->add_mover(small_frag_mover, 1.0-jump_insertion_weight);
-			random_chunk_and_small_frag_smooth_mover->add_mover(small_frag_smooth_mover, 1.0-jump_insertion_weight);
-			// strand pair jump insertions
-			protocols::simple_moves::ClassicFragmentMoverOP jump_mover = get_pairings_jump_mover();
-			random_chunk_and_small_frag_mover->add_mover(jump_mover, jump_insertion_weight);
-			random_chunk_and_small_frag_smooth_mover->add_mover(jump_mover, jump_insertion_weight);
-		} else {
-			random_chunk_and_small_frag_mover->add_mover(small_frag_mover, small_gap_frag_insertion_weight_+big_frag_insertion_weight_);
-			random_chunk_and_small_frag_smooth_mover->add_mover(small_frag_smooth_mover, small_gap_frag_insertion_weight_+big_frag_insertion_weight_);
+		// small fragment insertions for stage 4
+		if (small_frag_insertion_weight_+big_frag_insertion_weight_ > 0.) {
+			if (has_strand_pairings) {
+				core::Real jump_insertion_weight = (small_frag_insertion_weight_+big_frag_insertion_weight_)*jump_move_fraction;
+				random_chunk_and_small_frag_mover->add_mover(small_frag_mover, small_frag_insertion_weight_+big_frag_insertion_weight_-jump_insertion_weight);
+				random_chunk_and_small_frag_smooth_mover->add_mover(small_frag_smooth_mover, small_frag_insertion_weight_+big_frag_insertion_weight_-jump_insertion_weight);
+				// strand pair jump insertions
+				protocols::simple_moves::ClassicFragmentMoverOP jump_mover = get_pairings_jump_mover();
+				random_chunk_and_small_frag_mover->add_mover(jump_mover, jump_insertion_weight);
+				random_chunk_and_small_frag_smooth_mover->add_mover(jump_mover, jump_insertion_weight);
+			} else {
+				random_chunk_and_small_frag_mover->add_mover(small_frag_mover, small_frag_insertion_weight_+big_frag_insertion_weight_);
+				random_chunk_and_small_frag_smooth_mover->add_mover(small_frag_smooth_mover, small_frag_insertion_weight_+big_frag_insertion_weight_);
+			}
 		}
-		random_chunk_and_small_frag_mover->add_mover(frag_1mer_mover, frag_1mer_insertion_weight_);
-		random_chunk_and_small_frag_smooth_mover->add_mover(frag_1mer_mover, frag_1mer_insertion_weight_);
-	}
 
+		// 1mer fragment insertions for stage 4
+		if (frag_1mer_insertion_weight_ > 0.) {
+			if (has_strand_pairings) {
+				core::Real jump_insertion_weight = frag_1mer_insertion_weight_*jump_move_fraction;
+				random_chunk_and_small_frag_mover->add_mover(frag_1mer_mover, frag_1mer_insertion_weight_-jump_insertion_weight);
+				random_chunk_and_small_frag_smooth_mover->add_mover(frag_1mer_mover, frag_1mer_insertion_weight_-jump_insertion_weight);
+				// strand pair jump insertions
+				protocols::simple_moves::ClassicFragmentMoverOP jump_mover = get_pairings_jump_mover();
+				random_chunk_and_small_frag_mover->add_mover(jump_mover, jump_insertion_weight);
+				random_chunk_and_small_frag_smooth_mover->add_mover(jump_mover, jump_insertion_weight);
+			} else {
+				random_chunk_and_small_frag_mover->add_mover(frag_1mer_mover, frag_1mer_insertion_weight_);
+				random_chunk_and_small_frag_smooth_mover->add_mover(frag_1mer_mover, frag_1mer_insertion_weight_);
+			}
+		}
+	}
 
 	// determine the number of cycles
 	core::Size stage1_max_cycles = (core::Size)((core::Real)stage1_1_cycles_*increase_cycles_);
@@ -1532,32 +1568,34 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 
 void FoldTreeHybridize::auto_frag_insertion_weight(
 		WeightedFragmentTrialMoverOP & frag_1mer_trial_mover,
-		WeightedFragmentTrialMoverOP & small_gap_frag_trial_mover,
+		WeightedFragmentTrialMoverOP & small_frag_trial_mover,
 		WeightedFragmentTrialMoverOP & big_frag_trial_mover
 ) {
 	using namespace ObjexxFCL::fmt;
 	if (!auto_frag_insertion_weight_) return;
 	core::Size frag_1mer_n_frags = frag_1mer_trial_mover->get_nr_frags();
 	if (!frag_1mer_n_frags) frag_1mer_n_frags = top_n_small_frag_;
-	core::Size small_n_frags = small_gap_frag_trial_mover->get_nr_frags();
+	core::Size small_n_frags = small_frag_trial_mover->get_nr_frags();
 	if (!small_n_frags) small_n_frags = top_n_small_frag_;
 	core::Size big_n_frags = big_frag_trial_mover->get_nr_frags();
 	if (!big_n_frags) big_n_frags = top_n_big_frag_;
 	core::Size template_pos_coverage = 0;
-	for (core::Size i = 1; i<=template_chunks_.size(); ++i)
+	for (core::Size i = 1; i<=template_chunks_.size(); ++i) {
+		if (strand_pairings_template_indices_.count(i)) continue;
 		template_pos_coverage += template_chunks_[i].num_loop();
+	}
 	core::Size frag_1mer_pos_coverage = frag_1mer_trial_mover->get_total_frames()*frag_1mer_n_frags;
-	core::Size small_frag_pos_coverage = small_gap_frag_trial_mover->get_total_frames()*small_n_frags;
+	core::Size small_frag_pos_coverage = small_frag_trial_mover->get_total_frames()*small_n_frags;
 	core::Size big_frag_pos_coverage = big_frag_trial_mover->get_total_frames()*big_n_frags;
 	core::Real sum = (core::Real)(frag_1mer_pos_coverage+small_frag_pos_coverage+big_frag_pos_coverage+template_pos_coverage);
 	frag_1mer_insertion_weight_ = (core::Real)frag_1mer_pos_coverage/sum;
-	small_gap_frag_insertion_weight_ = (core::Real)small_frag_pos_coverage/sum;
+	small_frag_insertion_weight_ = (core::Real)small_frag_pos_coverage/sum;
 	big_frag_insertion_weight_ = (core::Real)big_frag_pos_coverage/sum;
 	TR.Info << "auto_frag_insertion_weight for 1mer fragments: " << F(7,5,frag_1mer_insertion_weight_) << " " << frag_1mer_pos_coverage << std::endl;
-	TR.Info << "auto_frag_insertion_weight for small fragments: " << F(7,5,small_gap_frag_insertion_weight_) << " " << small_frag_pos_coverage << std::endl;
+	TR.Info << "auto_frag_insertion_weight for small fragments: " << F(7,5,small_frag_insertion_weight_) << " " << small_frag_pos_coverage << std::endl;
 	TR.Info << "auto_frag_insertion_weight for big fragments: " << F(7,5,big_frag_insertion_weight_) << " " << big_frag_pos_coverage << std::endl;
 	TR.Info << "auto_frag_insertion_weight for template chunks: " <<
-		F(7,5,1.0-frag_1mer_insertion_weight_-big_frag_insertion_weight_-small_gap_frag_insertion_weight_) << " " << template_pos_coverage << std::endl;
+		F(7,5,1.0-frag_1mer_insertion_weight_-big_frag_insertion_weight_-small_frag_insertion_weight_) << " " << template_pos_coverage << std::endl;
 }
 
 std::string FoldTreeHybridize::get_name() const

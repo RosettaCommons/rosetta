@@ -127,7 +127,7 @@ CartesianHybridize::CartesianHybridize( ) : ncycles_(DEFAULT_NCYCLES) {
 CartesianHybridize::CartesianHybridize(
 		utility::vector1 < core::pose::PoseOP > const & templates_in,
 		utility::vector1 < core::Real > const & template_wts_in,
-		utility::vector1 < protocols::loops::Loops > const & template_chunks_in, 
+		utility::vector1 < protocols::loops::Loops > const & template_chunks_in,
 		utility::vector1 < protocols::loops::Loops > const & template_contigs_in,
 		core::fragment::FragSetOP fragments9_in ) : ncycles_(DEFAULT_NCYCLES) {
 	init();
@@ -143,8 +143,8 @@ CartesianHybridize::CartesianHybridize(
 
 	// normalize weights
 	core::Real weight_sum = 0.0;
-	for (int i=1; i<=templates_.size(); ++i) weight_sum += template_wts_[i];
-	for (int i=1; i<=templates_.size(); ++i) template_wts_[i] /= weight_sum;
+	for (int i=1; i<=(int)templates_.size(); ++i) weight_sum += template_wts_[i];
+	for (int i=1; i<=(int)templates_.size(); ++i) template_wts_[i] /= weight_sum;
 
 	// map resids to frames
 	for (core::fragment::FrameIterator i = fragments9_->begin(); i != fragments9_->end(); ++i) {
@@ -156,18 +156,18 @@ CartesianHybridize::CartesianHybridize(
 	core::Size ntempls = templates_.size();
 	for( int tmpl = 1; tmpl <= ntempls; ++tmpl) {
 		core::Size ncontigs = template_contigs_[tmpl].size();  // contigs to start
-		for (int i=1; i<=ncontigs; ++i) {
+		for (int i=1; i<=(int)ncontigs; ++i) {
 			core::Size cstart = template_contigs_[tmpl][i].start(), cstop = template_contigs_[tmpl][i].stop();
 			bool spilt_chunk=false;
 
 			// assumes sorted
-			for (int j=2; j<=template_chunks_in[tmpl].size(); ++j) {
+			for (int j=2; j<=(int)template_chunks_in[tmpl].size(); ++j) {
 				core::Size j0start = template_chunks_in[tmpl][j-1].start(), j0stop = template_chunks_in[tmpl][j-1].stop();
 				core::Size j1start = template_chunks_in[tmpl][j].start(), j1stop = template_chunks_in[tmpl][j].stop();
-	
+
 				bool j0incontig = ((j0start>=cstart) && (j0stop<=cstop));
 				bool j1incontig = ((j1start>=cstart) && (j1stop<=cstop));
-	
+
 				if (j0incontig && j1incontig) {
 					spilt_chunk=true;
 					core::Size cutpoint = (j0stop+j1start)/2;
@@ -184,7 +184,7 @@ CartesianHybridize::CartesianHybridize(
 		template_contigs_[tmpl].sequential_order();
 	}
 	TR.Debug << "template_contigs:" << std::endl;
-	for (int i=1; i<= template_contigs_.size(); ++i) {
+	for (int i=1; i<= (int)template_contigs_.size(); ++i) {
 		TR.Debug << "templ. " << i << std::endl << template_contigs_[i] << std::endl;
 	}
 }
@@ -239,7 +239,7 @@ CartesianHybridize::apply_frag( core::pose::Pose &pose, core::pose::Pose &templ,
 		if (len > 2) {
 			ObjexxFCL::FArray2D< core::Real > final_coords( 3, 4*aln_len );
 			ObjexxFCL::FArray2D< core::Real > init_coords( 3, 4*aln_len );
-	
+
 			for (int ii=0; ii<(int)aln_len; ++ii) {
 				int i=aln_start+ii;
 				numeric::xyzVector< core::Real > x_1 = templ.residue(i).atom(" C  ").xyz();
@@ -247,14 +247,14 @@ CartesianHybridize::apply_frag( core::pose::Pose &pose, core::pose::Pose &templ,
 				numeric::xyzVector< core::Real > x_3 = templ.residue(i).atom(" CA ").xyz();
 				numeric::xyzVector< core::Real > x_4 = templ.residue(i).atom(" N  ").xyz();
 				preT += x_1+x_2+x_3+x_4;
-	
+
 				numeric::xyzVector< core::Real > y_1 = pose.residue(templ.pdb_info()->number(i)).atom(" C  ").xyz();
 				numeric::xyzVector< core::Real > y_2 = pose.residue(templ.pdb_info()->number(i)).atom(" O  ").xyz();
 				numeric::xyzVector< core::Real > y_3 = pose.residue(templ.pdb_info()->number(i)).atom(" CA ").xyz();
 				numeric::xyzVector< core::Real > y_4 = pose.residue(templ.pdb_info()->number(i)).atom(" N  ").xyz();
 				postT += y_1+y_2+y_3+y_4;
-	
-				for (int j=0; j<3; ++j) { 
+
+				for (int j=0; j<3; ++j) {
 					init_coords(j+1,4*ii+1) = x_1[j];
 					init_coords(j+1,4*ii+2) = x_2[j];
 					init_coords(j+1,4*ii+3) = x_3[j];
@@ -267,7 +267,7 @@ CartesianHybridize::apply_frag( core::pose::Pose &pose, core::pose::Pose &templ,
 			}
 			preT /= 4*len;
 			postT /= 4*len;
-			for (int i=1; i<=(int)4*len; ++i) {
+			for (int i=1; i<=4*(int)len; ++i) {
 				for ( int j=0; j<3; ++j ) {
 					init_coords(j+1,i) -= preT[j];
 					final_coords(j+1,i) -= postT[j];
@@ -288,8 +288,8 @@ CartesianHybridize::apply_frag( core::pose::Pose &pose, core::pose::Pose &templ,
 	}
 
 	// xyz copy fragment to pose
-	for (int i=frag.start(); i<=frag.stop(); ++i) {
-		for (int j=1; j<=templ.residue(i).natoms(); ++j) {
+	for (int i=(int)frag.start(); i<=(int)frag.stop(); ++i) {
+		for (int j=1; j<=(int)templ.residue(i).natoms(); ++j) {
 			core::id::AtomID src(j,i), tgt(j, templ.pdb_info()->number(i));
 			pose.set_xyz( tgt, postT + (R*(templ.xyz( src )-preT)) );
 		}
@@ -347,7 +347,7 @@ CartesianHybridize::apply_frame( core::pose::Pose & pose, core::fragment::Frame 
 			numeric::xyzVector< core::Real > x_3 = pose.residue(start+i).atom(" CA ").xyz();
 			numeric::xyzVector< core::Real > x_4 = pose.residue(start+i).atom(" N  ").xyz();
 			com1 += x_1+x_2+x_3+x_4;
-			for (int j=0; j<3; ++j) { 
+			for (int j=0; j<3; ++j) {
 				init_coords(j+1,4*(ii+aln_len)+1) = x_1[j];
 				init_coords(j+1,4*(ii+aln_len)+2) = x_2[j];
 				init_coords(j+1,4*(ii+aln_len)+3) = x_3[j];
@@ -456,16 +456,16 @@ CartesianHybridize::apply( Pose & pose ) {
 	core::Size n_prot_res = pose.total_residue();
 	while (!pose.residue(n_prot_res).is_protein()) n_prot_res--;
 
-	
+
 	for (Size ires=n_prot_res+1; ires<=pose.total_residue(); ++ires) {
 		mm.set_bb (ires, false);
 		mm.set_chi(ires, false);
-		
+
 		core::Real MAXDIST = 15.0;
 		core::Real COORDDEV = 3.0;
 
 		for (Size iatom=1; iatom<=pose.residue(ires).nheavyatoms(); ++iatom) {
-			
+
 			for (Size jres=ires; jres<=pose.total_residue(); ++jres) {
 				for (Size jatom=1; jatom<=pose.residue(jres).nheavyatoms(); ++jatom) {
 					if ( ires == jres && iatom >= jatom) continue;
@@ -473,7 +473,7 @@ CartesianHybridize::apply( Pose & pose ) {
 					if ( dist <= MAXDIST ) {
 						pose.add_constraint(
 											new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires),
-																   core::id::AtomID(jatom,jres), 
+																   core::id::AtomID(jatom,jres),
 																   new core::scoring::constraints::ScalarWeightedFunc( 5., new core::scoring::constraints::SOGFunc( dist, COORDDEV )  )
 																   )
 											);
@@ -482,8 +482,8 @@ CartesianHybridize::apply( Pose & pose ) {
 			}
 		}
 	}
-	
-	// 10% of the time, skip moves in the global frame 
+
+	// 10% of the time, skip moves in the global frame
 	bool no_ns_moves = no_global_frame_; // (numeric::random::uniform() <= 0.1);
 
 sampler:
@@ -538,7 +538,7 @@ sampler:
 
 		core::Size neffcycles = (core::Size)(ncycles_*increase_cycles_);
 		if (m==4) neffcycles /=2;
-		for (int n=1; n<=neffcycles; ++n) {
+		for (int n=1; n<=(int)neffcycles; ++n) {
 			// possible actions:
 			//  1 - insert homologue frag, global frame
 			//  2 - insert homologue frag, local frame
@@ -584,7 +584,7 @@ sampler:
 				if (action == 1) {
 					//fpd assume this was initialized elsewhere
 					runtime_assert( pose.data().has( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) );
-					TemplateHistory &history = 
+					TemplateHistory &history =
 						*( static_cast< TemplateHistory* >( pose.data().get_ptr( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY )() ));
 					history.set( frag->start(), frag->stop(), templ_id );
 				}
@@ -595,7 +595,7 @@ sampler:
 				utility::vector1<core::Real> residuals( n_prot_res , 0.0 );
 				utility::vector1<core::Real> max_residuals(3,0);
 				utility::vector1<int> max_poses(4,-1);
-				for (int i=1; i<n_prot_res; ++i) {
+				for (int i=1; i<(int)n_prot_res; ++i) {
 					if (pose.fold_tree().is_cutpoint(i+1)) {
 						residuals[i] = -1;
 					} else {

@@ -389,7 +389,7 @@ namespace cm { namespace hybridize { BooleanOptionKey const virtual_loops( "cm:h
 namespace cm { namespace hybridize { BooleanOptionKey const revert_real_loops( "cm:hybridize:revert_real_loops" );  } }
 namespace cm { namespace hybridize { BooleanOptionKey const realign_domains_stage2( "cm:hybridize:realign_domains_stage2" );  } }
 namespace cm { namespace hybridize { RealOptionKey const frag_1mer_insertion_weight( "cm:hybridize:frag_1mer_insertion_weight" );  } }
-namespace cm { namespace hybridize { RealOptionKey const small_gap_frag_insertion_weight( "cm:hybridize:small_gap_frag_insertion_weight" );  } }
+namespace cm { namespace hybridize { RealOptionKey const small_frag_insertion_weight( "cm:hybridize:small_frag_insertion_weight" );  } }
 namespace cm { namespace hybridize { RealOptionKey const big_frag_insertion_weight( "cm:hybridize:big_frag_insertion_weight" );  } }
 namespace cm { namespace hybridize { BooleanOptionKey const auto_frag_insertion_weight( "cm:hybridize:auto_frag_insertion_weight" );  } }
 namespace cm { namespace hybridize { IntegerOptionKey const stage1_1_cycles( "cm:hybridize:stage1_1_cycles" );  } }

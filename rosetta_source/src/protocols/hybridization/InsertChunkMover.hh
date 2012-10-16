@@ -51,7 +51,7 @@ public:
 	}
 
 	void set_template(core::pose::PoseCOP template_pose, core::Size template_id,
-						std::map <core::Size, core::Size> const & sequence_alignment, bool is_strand_pairing_template = false );
+						std::map <core::Size, core::Size> const & sequence_alignment);
 
 	void set_aligned_chunk(core::pose::Pose const & pose, Size const jump_number, bool anchor_insert_only_in);
 
@@ -73,28 +73,26 @@ private:
 	core::pose::PoseCOP template_pose_;
 	core::Size template_id_;
 	std::map <core::Size, core::Size> sequence_alignment_;
+	int registry_shift_;
+	bool anchor_insert_only_;
 
 	Size jump_number_; // the jump to be realigned
 	Size seqpos_start_; // start and end seqpose of the chunk, downstream of the jump
 	Size seqpos_stop_;
 	Size seqpos_aligned_start_; // start and end seqpose of the aligned piece
 	Size seqpos_aligned_stop_;
-	bool anchor_insert_only_;
 
-	int registry_shift_;
-	char secstruct_;
 	bool success_;
 
 	// parameters of the protocol
 	bool align_to_ss_only_; // only use the secondary structure portion to align to the template
 	bool copy_ss_torsion_only_; // only copy the secondary structure information from the template
 
+	char secstruct_;
+
 	std::map <core::Size, core::Size> sequence_alignment_local_; // with registry shift of the aligned chunk
 	core::id::AtomID_Map< core::id::AtomID > atom_map_; // atom map for superposition
 	utility::vector1 <Size> align_trial_counter_;
-
-	// strand pairings
-	bool is_strand_pairing_template_;
 
 };
 

@@ -3400,7 +3400,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'revert_real_loops',              'Boolean',    desc='revert back to non-virtual loops', default='false' ),
 			Option( 'realign_domains_stage2',         'Boolean',     desc='realign the starting templates to the pose after stage1', default='false' ),
 			Option( 'frag_1mer_insertion_weight',     'Real',       desc='weight for 1mer fragment insertions where fragments are not allowed vs. template chunk insertions in stage1', default='0.0' ),
-			Option( 'small_gap_frag_insertion_weight', 'Real',       desc='weight for small fragment insertions where large fragments are not allowed vs. template chunk insertions in stage1', default='0.0' ),
+			Option( 'small_frag_insertion_weight',    'Real',       desc='weight for small fragment insertions where large fragments are not allowed vs. template chunk insertions in stage1', default='0.0' ),
 			Option( 'big_frag_insertion_weight',       'Real',       desc='weight for big fragment insertions vs. template chunk insertions in stage1', default='0.5' ),
 			Option( 'auto_frag_insertion_weight',     'Boolean',    desc='automatically set the weight for fragment insertions vs. template chunk insertions in stage1', default='true' ),
 			Option( 'stage1_1_cycles',                'Integer',    desc='Number of cycles for ab initio stage 1 in Stage1', default='2000'),

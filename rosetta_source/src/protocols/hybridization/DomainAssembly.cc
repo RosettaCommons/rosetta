@@ -66,13 +66,13 @@ bool TMalign_poses(core::pose::Pose & aligned_pose,
 	tm_align.alignment2AtomMap(aligned_pose, ref_pose, residue_list, ref_residue_list, n_mapped_residues, atom_map);
 	tm_align.alignment2strings(seq_pose, seq_ref, aligned);
 	core::Real TMscore = tm_align.TMscore(normalize_length);
-	
+
 	using namespace ObjexxFCL::fmt;
-	TR << "Align domain with TMscore of " << F(8,3,tm_align.TMscore(normalize_length)) << std::endl;
+	TR << "Align domain with TMscore of " << F(8,3,TMscore) << std::endl;
 	TR << seq_pose << std::endl;
 	TR << aligned << std::endl;
 	TR << seq_ref << std::endl;
-	
+
 	std::list <Size> full_residue_list;
 	for (Size ires=1; ires<=aligned_pose.total_residue(); ++ires) {
 		full_residue_list.push_back(ires);
@@ -90,7 +90,7 @@ bool TMalign_poses(core::pose::Pose & aligned_pose,
 		partial_align(aligned_pose, ref_pose, atom_map, full_residue_list, true, aln_cutoffs, min_coverage); // iterate_convergence = true
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -122,10 +122,10 @@ DomainAssembly::DomainAssembly(
 		else {
 			ipose = pose_index_to_add[RG.random_range(1,pose_index_to_add.size())];
 		}
-		
+
 		poses_.push_back(poses[ipose]);
 		pose_index_added.push_back(ipose);
-		
+
 		pose_index_to_add.clear();
 		for (Size ipose=1; ipose<=poses.size(); ++ipose) {
 			bool added = false;
@@ -145,7 +145,7 @@ DomainAssembly::DomainAssembly(
 void remove_residues(core::pose::Pose & pose,
 					 utility::vector1 <int> const resnum_list,
 					 utility::vector1<int> & remaining_resnum) {
-	
+
 	remaining_resnum.clear();
 	utility::vector1<Size> delete_list;
 	for (Size ires=1; ires <= pose.total_residue(); ++ires ) {
@@ -166,15 +166,15 @@ void remove_residues(core::pose::Pose & pose,
 		pose.conformation().delete_residue_slow(delete_list[i]);
 	}
 }
-	
+
 utility::vector1<Size> find_uncovered_residues (core::pose::Pose const & pose,
 											 utility::vector1 <Size> const covered_residues) {
-	utility::vector1<Size> uncovered_residues;	
+	utility::vector1<Size> uncovered_residues;
 	for (Size ires = 1; ires <= pose.total_residue(); ++ires) {
 		if ( pose.pdb_info() != 0) {
 			bool covered(false);
 			for ( Size i=1; i<=covered_residues.size(); ++i) {
-				if ( pose.pdb_info()->number(ires) == covered_residues[i] ) {
+				if ( pose.pdb_info()->number(ires) == (int)covered_residues[i] ) {
 					covered = true;
 					break;
 				}
@@ -186,7 +186,7 @@ utility::vector1<Size> find_uncovered_residues (core::pose::Pose const & pose,
 	}
 	return uncovered_residues;
 }
-	
+
 	core::Real
 	gap_distance(Size Seq_gap)
 	{
@@ -199,7 +199,7 @@ utility::vector1<Size> find_uncovered_residues (core::pose::Pose const & pose,
 		core::Real gap_torr_6(24.5);
 		core::Real gap_torr_7(27.5);
 		core::Real gap_torr_8(31.0);
-		
+
 		switch (Seq_gap) {
 			case 0:
 				return gap_torr_0; break;
@@ -229,10 +229,10 @@ void
 DomainAssembly::run()
 {
 	if (poses_.size() < 2) return;
-	
+
 	utility::vector1<int> coverage_start;
 	utility::vector1<int> coverage_end;
-	
+
 	int range_start = poses_[1]->pdb_info()->number(1);
 	int range_end   = poses_[1]->pdb_info()->number(1);
 	for (Size ires = 1; ires <= poses_[1]->total_residue(); ++ires) {
@@ -245,7 +245,7 @@ DomainAssembly::run()
 	}
 	coverage_start.push_back(range_start);
 	coverage_end.push_back(range_end);
-	
+
 	for (Size ipose = 2; ipose <= poses_.size(); ++ipose) {
 		// check if the current pose is overlapped with any previous poses
 		range_start = poses_[ipose]->pdb_info()->number(1);
@@ -260,15 +260,15 @@ DomainAssembly::run()
 		}
 		coverage_start.push_back(range_start);
 		coverage_end.push_back(range_end);
-		
+
 		bool align_success(false);
 		for (Size jpose = 1; jpose < ipose; ++jpose) {
 				int covered_size = coverage_end[jpose] - coverage_start[jpose] + 1;
 				int overlap_start = range_start > coverage_start[jpose] ? range_start:coverage_start[jpose];
 				int overlap_end   = range_end   < coverage_end[jpose]   ? range_end:coverage_end[jpose];
 				int overlap = overlap_end - overlap_start; // end could be smaller than start
-				Size normalize_length = covered_size < poses_[ipose]->total_residue() ? covered_size:poses_[ipose]->total_residue();
-				
+				Size normalize_length = covered_size < (int)poses_[ipose]->total_residue() ? covered_size:poses_[ipose]->total_residue();
+
 				// if overlap, use TMalign to orient poses_[ipose]
 				if (overlap > 0.3 * normalize_length) {
 					// collect residues in ipose
@@ -280,9 +280,9 @@ DomainAssembly::run()
 							poses_[ipose]->pdb_info()->number(ires) <= overlap_end) {
 							i_residue_list.push_back(ires);
 						}
-						
+
 					}
-			
+
 				// collect residues in the pose to be aligned to
 				std::list <Size> j_residue_list;
 				for (Size jres = 1; jres <= poses_[jpose]->total_residue(); ++jres) {
@@ -292,24 +292,24 @@ DomainAssembly::run()
 					}
 				}
 				if (j_residue_list.size() < 0.3 * normalize_length) continue;
-				
+
 				TMalign tm_align;
 				string seq_pose, seq_ref, aligned;
 				core::id::AtomID_Map< core::id::AtomID > atom_map;
 				core::pose::initialize_atomid_map( atom_map, *poses_[ipose], core::id::BOGUS_ATOM_ID );
 				core::Size n_mapped_residues=0;
-				
+
 				tm_align.apply(*poses_[ipose], *poses_[jpose], i_residue_list, j_residue_list);
 				tm_align.alignment2AtomMap(*poses_[ipose], *poses_[jpose], i_residue_list, j_residue_list, n_mapped_residues, atom_map);
 				tm_align.alignment2strings(seq_pose, seq_ref, aligned);
 				core::Real TMscore = tm_align.TMscore(normalize_length);
 
 				using namespace ObjexxFCL::fmt;
-				TR << "Align domain with TMscore of " << F(8,3,tm_align.TMscore(normalize_length)) << std::endl;
+				TR << "Align domain with TMscore of " << F(8,3,TMscore) << std::endl;
 				TR << seq_pose << std::endl;
 				TR << aligned << std::endl;
 				TR << seq_ref << std::endl;
-				
+
 				if (TMscore > 0.35) {
 					if (n_mapped_residues >= 6) {
 						utility::vector1< core::Real > aln_cutoffs;
@@ -324,9 +324,9 @@ DomainAssembly::run()
 						align_success = true;
 					}
 				}
-				
+
 				if (align_success) break;
-			}				
+			}
 		}
 
 		// if not overlap, use docking to align to the largest non-overlapped region
@@ -334,7 +334,7 @@ DomainAssembly::run()
 			using namespace ObjexxFCL::fmt;
 			// construct a pose for domain assembly
 			core::pose::PoseOP full_length_pose;
-			Size first_domain_end;
+			//Size first_domain_end;
 			utility::vector1<int> covered_resnum;
 			utility::vector1<int> resnum;
 			for (Size ires=1; ires<=poses_[ipose]->total_residue(); ++ires) {
@@ -343,13 +343,13 @@ DomainAssembly::run()
 			for (Size jpose = 1; jpose < ipose; ++jpose) {
 				utility::vector1<Size> uncovered_residues = find_uncovered_residues(*poses_[jpose], covered_resnum);
 				if (uncovered_residues.size() == 0) continue;
-				
+
 				core::pose::Pose inserted_pose(*poses_[jpose]);
 				utility::vector1<int> remaining_resnum;
 				remove_residues(inserted_pose, covered_resnum, remaining_resnum);
 				for (Size i=1;i<=remaining_resnum.size();++i) resnum.push_back(remaining_resnum[i]);
 				for (Size i=1;i<=remaining_resnum.size();++i) covered_resnum.push_back(remaining_resnum[i]);
-				
+
 				if (jpose == 1) {
 					full_length_pose = new core::pose::Pose(inserted_pose);
 					core::pose::PDBInfoOP pdb_info;
@@ -367,7 +367,7 @@ DomainAssembly::run()
 			Size nres_domain1 = full_length_pose->total_residue();
 
 			for (Size ires=1;ires<=poses_[ipose]->total_residue();++ires) resnum.push_back(poses_[ipose]->pdb_info()->number(ires));
-			
+
 			Size jump_num = full_length_pose->fold_tree().num_jump()+1;
 			full_length_pose->conformation().insert_conformation_by_jump( poses_[ipose]->conformation(),
 																		 full_length_pose->total_residue() + 1, jump_num,
@@ -382,7 +382,7 @@ DomainAssembly::run()
 						core::Real gd = gap_distance(seq_sep);
 						Size iatom = full_length_pose->residue_type(ires).atom_index("CA");
 						Size jatom = full_length_pose->residue_type(jres).atom_index("CA");
-						
+
 						TR.Debug << "Adding constraints to residue " << ires << " and " << jres << std::endl;
 						full_length_pose->add_constraint(
 														 new core::scoring::constraints::AtomPairConstraint(
@@ -393,7 +393,7 @@ DomainAssembly::run()
 					}
 				}
 			}
-			
+
 			/*
 			if ( poses_[1]->pdb_info()->number(1) < poses_[ipose]->pdb_info()->number(1) ) {
 				full_length_pose = new core::pose::Pose(*poses_[1]);
@@ -409,7 +409,7 @@ DomainAssembly::run()
 				if (first_domain_end < full_length_pose->total_residue()) {
 					full_length_pose->conformation().delete_residue_range_slow(first_domain_end+1, full_length_pose->total_residue());
 				}
-				
+
 				full_length_pose->conformation().insert_conformation_by_jump( poses_[ipose]->conformation(),
 																			  full_length_pose->total_residue() + 1,
 																			  full_length_pose->total_residue(),
@@ -439,16 +439,16 @@ DomainAssembly::run()
 					}
 					if (resi_start != 0) {
 						for (Size irange=1; irange <= covered_range.size(); ++irange) {
-							
+
 						}
-							 
+
 						core::pose::Pose inserted_pose(*poses_[jpose], resi_start, resi_end);
 						full_length_pose->conformation().insert_conformation_by_jump( poses_[ipose]->conformation(),
 																					 full_length_pose->total_residue() + 1,
 																					 full_length_pose->total_residue(),
 																					 1);
 				}
-				
+
 			}
 			else {
 				full_length_pose = new core::pose::Pose(*poses_[ipose]);
@@ -479,16 +479,16 @@ DomainAssembly::run()
 
 			using namespace basic::options;
 			using namespace basic::options::OptionKeys;
-			scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( 
+			scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function(
 																				  "score4_smooth", "" );
 			scorefxn_->set_weight( core::scoring::atom_pair_constraint, 1.0 );
 
 			// randomize orientation
 			protocols::rigid::RigidBodyRandomizeMoverOP rb_mover = new protocols::rigid::RigidBodyRandomizeMover(*full_length_pose, jump_num);
 			rb_mover->apply(*full_length_pose);
-									
+
 			// put the two domains apart
-			core::scoring::ScoreFunctionOP simple_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( 
+			core::scoring::ScoreFunctionOP simple_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function(
 																				   "score0", "" );
 
 			protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( *full_length_pose, jump_num) );
@@ -496,7 +496,7 @@ DomainAssembly::run()
 			core::Vector translation_axis(1.0,0.0,0.0);
 			translate->trans_axis(translation_axis);
 			translate->apply( *full_length_pose );
-			
+
 			core::Real unbound_score = (*simple_scorefxn)(*full_length_pose);
 
 			translation_axis = core::Vector(-1.0,0.0,0.0);
@@ -518,7 +518,7 @@ DomainAssembly::run()
 				}
 			}
 			//full_length_pose->dump_pdb("full_length_"+I(1,ipose)+"before_docking2.pdb");
-			
+
 			using namespace protocols::docking;
 			DockingLowResOP docking_mover = new DockingLowRes(scorefxn_, jump_num);
 			docking_mover->set_outer_cycles(20);
@@ -535,7 +535,7 @@ DomainAssembly::run()
 			}
 			TMalign_poses(*full_length_pose, *poses_[1], residue_list1, residue_list2);
 			//full_length_pose->dump_pdb("full_length_after_align.pdb");
-				
+
 			// align ipose to full_length_pose
 			residue_list1.clear();
 			residue_list2.clear();
@@ -551,7 +551,7 @@ DomainAssembly::run()
 		}
 	}
 }
-	
+
 void DomainAssembly::apply(
 		   core::pose::Pose & pose
 		   )
@@ -565,15 +565,15 @@ void DomainAssembly::apply(
 
 	int jump_pos1 = RG.random_range(1, lower_pose->total_residue());
 	int jump_pos2 = RG.random_range(lower_pose->total_residue()+1, lower_pose->total_residue()+higher_pose->total_residue());
-	
+
 	core::kinematics::FoldTree ft = pose.fold_tree();
 	int jump_num = ft.new_jump(jump_pos1, jump_pos2, (int)lower_pose->total_residue()+1);
 	pose.fold_tree( ft );
-	
+
 	pose.copy_segment(lower_pose->total_residue(), *lower_pose, 1, 1);
 	pose.copy_segment(higher_pose->total_residue(), *higher_pose, lower_pose->total_residue()+1, 1);
-	
-		
+
+
 	Size gap_start;
 	if (lower_pose->total_residue() > 3 ) {
 		gap_start = lower_pose->total_residue() - 3;
@@ -581,7 +581,7 @@ void DomainAssembly::apply(
 	else {
 		gap_start = 1;
 	}
-	
+
 	Size gap_stop;
 	if (higher_pose->total_residue() > 3 ) {
 		gap_stop = 3;
@@ -590,7 +590,7 @@ void DomainAssembly::apply(
 		gap_stop = higher_pose->total_residue();
 	}
 	//int seq_sep = higher_pose->pdb_info()->number(gap_stop) - higher_pose->pdb_info()->number(gap_start);
-	
+
 	//if (seq_sep <= 8) {
 		if (!lower_pose->residue_type(gap_start).is_protein()) utility_exit_with_message("Error! not an amino acid!");
 		if (!higher_pose->residue_type(gap_stop ).is_protein()) utility_exit_with_message("Error! not an amino acid!");
@@ -604,11 +604,11 @@ void DomainAssembly::apply(
 																			   new core::scoring::constraints::BoundFunc( 0, 24., 5., "gap" ) )
 							);
 	//}
-	
+
 	DockingLowResOP docking_mover = new DockingLowRes(scorefxn_, jump_num);
 	docking_mover->apply(pose);
 }
 
-} // hybridize 
-//} // comparative_modeling 
+} // hybridize
+//} // comparative_modeling
 } // protocols

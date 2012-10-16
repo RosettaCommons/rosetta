@@ -8164,7 +8164,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 0.0</dd><br>
 </dl>
 <dl>
-<dt><b>-small_gap_frag_insertion_weight</b> \<Real\><dt>
+<dt><b>-small_frag_insertion_weight</b> \<Real\><dt>
 <dd>weight for small fragment insertions where large fragments are not allowed vs. template chunk insertions in stage1</dd><br>
 <dd>Default: 0.0</dd><br>
 </dl>
