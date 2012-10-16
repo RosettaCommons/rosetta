@@ -649,7 +649,8 @@ bool VarLengthBuild::centroid_build(
 		Size n_cuts = count_cutpoints( pose, interval.left, interval.right );
 
 		if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
-			if (interval.right == pose.total_residue()){
+			//if (interval.right == pose.total_residue()){
+			if (interval.right == remodel_data_.blueprint.size()){
 				interval.right = interval.right + repeat_tail_length_; // pad interval to include the extra shadow residue in pose
 			}
 		}
