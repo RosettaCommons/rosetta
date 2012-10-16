@@ -164,20 +164,20 @@ public:
 
 		//initialization
 		val[0][0]=0;
-		for(int i=0; i<=len1; i++) {
+		for(Size i=0; i<=len1; i++) {
 			val[i][0]=0;
 			path[i][0]=false; //not from diagonal
 		}
 
-		for(int j=0; j<=len2; j++) {
+		for(Size j=0; j<=len2; j++) {
 			val[0][j]=0;
 			path[0][j]=false; //not from diagonal
 			j2i[j]=-1;	//all are not aligned, only use j2i[1:len2]
 		}
 
 		//decide matrix and path
-		for(int i=1; i<=len1; i++)	 {
-			for(int j=1; j<=len2; j++) {
+		for(Size i=1; i<=len1; i++)	 {
+			for(Size j=1; j<=len2; j++) {
 				d=val[i-1][j-1]+score[i][j]; //diagonal
 
 				//symbol insertion in horizontal (= a gap in vertical)
@@ -1093,7 +1093,7 @@ public:
 
 			//third iteration
 			d002t=d002+1;
-
+				
 			while(1) {
 				j=0;
 				for(k=0; k<n_ali; k++) {
@@ -1303,7 +1303,7 @@ public:
 
 		if(dis15 < 8) {
 			s=3; //turn
-		}
+		}	
 
 		return s;
 	}
