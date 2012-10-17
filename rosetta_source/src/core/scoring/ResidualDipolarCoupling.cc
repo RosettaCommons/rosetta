@@ -1110,12 +1110,16 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
 		Real sw = 0;
 		Real vtot = 0;
 	  Real Q = 0;
+	  Real Qex = 0;
 	  Real Qnorm = 0;
+		//Size prev_ex=0;
 
    	Size irow(0);
 	  for (utility::vector1<core::scoring::RDC>::iterator it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it) {
 
 		Size ex = it->expid();
+
+		//prev_ex=ex;
 	 	tr.Trace << "ex: " << ex << " lenex_[ex]: " << lenex_[ex] <<std::endl;
 
 		//compute the length of previous exps
@@ -1230,10 +1234,21 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
 
 		//vtot += 0.5*sqr( dev )*weight; //xweight if we want that
 		//      vtot += sqrt( dev );
+
+
 		wsv2 += weight*sqr(dev);
 		sw += weight;
 		Q += sqr( dev );
+		Qex +=sqr( dev );
 		Qnorm += sqr( obs );
+
+		//printout Qbax_ for each experiment
+		if ( irow==lenex_[ex+1]-1 ) {
+			Qex =0;
+	  	if ( tr.Trace.visible() ) {
+				tr.Trace << "ex: " << ex << " Qbax_: " << sqrt(Q/lenex_[ex])/sqrt(sqr(parbest[ex*n_par+0]*(36.5089/1.042/1.042/1.042))*(4+3*sqr(parbest[ex*n_par+1]))/5) << std::endl; //JACS 2003 125(30) 9179-9191 Table 2 lagend
+			}
+	  }
 
 		//increament the array
 		if (irow<lenex_[ex+1]-1) {
@@ -1241,6 +1256,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
 			} else {
 				irow=0;
 		}
+
 
 	}
 
@@ -1447,6 +1463,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
 		Real sw = 0;
 		Real vtot = 0;
 	  Real Q = 0;
+	  Real Qex = 0;
 	  Real Qnorm = 0;
 
    	Size irow(0);
@@ -1537,7 +1554,17 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
 		wsv2 += weight*sqr(dev);
 		sw += weight;
 		Q += sqr( dev );
+		Qex +=sqr( dev );
 		Qnorm += sqr( obs );
+
+		//printout Qbax_ for each experiment
+		if ( irow==lenex_[ex+1]-1 ) {
+			Qex =0;
+	  	if ( tr.Trace.visible() ) {
+				tr.Trace << "ex: " << ex << " Qbax_: " << sqrt(Q/All_RDC_lines_.size())/sqrt(sqr(tensorDa[ex+1])*(4+3*sqr(par[ex*n_par+0]))/5) << std::endl; //JACS 2003 125(30) 9179-9191 Table 2 lagend
+			}
+	  }
+
 
 		//increament the array
 		if (irow<lenex_[ex+1]-1) {
@@ -1550,7 +1577,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
 
 	R_ = sqrt( Q/Qnorm/2 );
 	rmsd_ = sqrt(wsv2/sw);
-
+	
 	if ( tr.Trace.visible() ) {
 			tr.Trace << "R_: " << R_ << std::endl;
 			tr.Trace << "rmsd_: " << rmsd_ << std::endl;
@@ -1747,6 +1774,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
 		Real sw = 0;
 		Real vtot = 0;
 	  Real Q = 0;
+	  Real Qex = 0;
 	  Real Qnorm = 0;
 
    	Size irow(0);
@@ -1838,7 +1866,17 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
 		wsv2 += weight*sqr(dev);
 		sw += weight;
 		Q += sqr( dev );
+		Qex +=sqr( dev );
 		Qnorm += sqr( obs );
+
+		//printout Qbax_ for each experiment
+		if ( irow==lenex_[ex+1]-1 ) {
+			Qex =0;
+	  	if ( tr.Trace.visible() ) {
+				tr.Trace << "ex: " << ex << " Qbax_: " << sqrt(Q/All_RDC_lines_.size())/sqrt(sqr(par[ex*n_par+0]/(2*(36.5089/1.042/1.042/1.042)))*(4+3*sqr(tensorR[ex+1]))/5) << std::endl; //JACS 2003 125(30) 9179-9191 Table 2 lagend
+			}
+	  }
+
 
 		//increament the array
 		if (irow<lenex_[ex+1]-1) {
@@ -2053,6 +2091,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
 		Real sw = 0;
 		Real vtot = 0;
 	  Real Q = 0;
+	  Real Qex = 0;
 	  Real Qnorm = 0;
 
    	Size irow(0);
@@ -2144,7 +2183,17 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
 		wsv2 += weight*sqr(dev);
 		sw += weight;
 		Q += sqr( dev );
+		Qex +=sqr( dev );
 		Qnorm += sqr( obs );
+
+		//printout Qbax_ for each experiment
+		if ( irow==lenex_[ex+1]-1 ) {
+			Qex =0;
+	  	if ( tr.Trace.visible() ) {
+				tr.Trace << "ex: " << ex << " Qbax_: " << sqrt(Q/All_RDC_lines_.size())/sqrt(sqr(tensorDa[ex+1])*(4+3*sqr(tensorR[ex+1]))/5) << std::endl; //JACS 2003 125(30) 9179-9191 Table 2 lagend
+			}
+	  }
+
 
 		//increament the array
 		if (irow<lenex_[ex+1]-1) {
