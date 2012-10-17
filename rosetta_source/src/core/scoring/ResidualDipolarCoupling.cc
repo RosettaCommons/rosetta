@@ -1112,15 +1112,13 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
 	  Real Q = 0;
 	  Real Qex = 0;
 	  Real Qnorm = 0;
-		//Size prev_ex=0;
 
    	Size irow(0);
 	  for (utility::vector1<core::scoring::RDC>::iterator it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it) {
 
 		Size ex = it->expid();
 
-		//prev_ex=ex;
-	 	tr.Trace << "ex: " << ex << " lenex_[ex]: " << lenex_[ex] <<std::endl;
+	 	//tr.Trace << "ex: " << ex << " lenex_[ex+1]: " << lenex_[ex+1] <<std::endl;
 
 		//compute the length of previous exps
 		prelen=0;
@@ -1244,10 +1242,10 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
 
 		//printout Qbax_ for each experiment
 		if ( irow==lenex_[ex+1]-1 ) {
-			Qex =0;
 	  	if ( tr.Trace.visible() ) {
-				tr.Trace << "ex: " << ex << " Qbax_: " << sqrt(Q/lenex_[ex])/sqrt(sqr(parbest[ex*n_par+0]*(36.5089/1.042/1.042/1.042))*(4+3*sqr(parbest[ex*n_par+1]))/5) << std::endl; //JACS 2003 125(30) 9179-9191 Table 2 lagend
+				tr.Trace << "ex: " << ex << " Qbax_: " << sqrt(Qex/lenex_[ex+1])/sqrt(sqr(parbest[ex*n_par+0]*(36.5089/1.042/1.042/1.042))*(4+3*sqr(parbest[ex*n_par+1]))/5) << std::endl; //JACS 2003 125(30) 9179-9191 Table 2 lagend
 			}
+			Qex =0;
 	  }
 
 		//increament the array
@@ -1470,7 +1468,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
 	  for (utility::vector1<core::scoring::RDC>::iterator it = All_RDC_lines_.begin(); it != All_RDC_lines_.end(); ++it) {
 
 		Size ex = it->expid();
-	 	//tr.Trace << "ex: " << ex << " lenex_[ex]: " << lenex_[ex] <<std::endl;
+	 	//tr.Trace << "ex: " << ex << " lenex_[ex]: " << lenex_[ex+1] <<std::endl;
 		//compute the length of previous exps
 		prelen=0;
 		for (Size cnt=0; cnt<=ex; cnt++) {
@@ -1559,10 +1557,10 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
 
 		//printout Qbax_ for each experiment
 		if ( irow==lenex_[ex+1]-1 ) {
-			Qex =0;
 	  	if ( tr.Trace.visible() ) {
-				tr.Trace << "ex: " << ex << " Qbax_: " << sqrt(Q/All_RDC_lines_.size())/sqrt(sqr(tensorDa[ex+1])*(4+3*sqr(par[ex*n_par+0]))/5) << std::endl; //JACS 2003 125(30) 9179-9191 Table 2 lagend
+				tr.Trace << "ex: " << ex << " Qbax_: " << sqrt(Qex/lenex_[ex+1])/sqrt(sqr(tensorDa[ex+1])*(4+3*sqr(par[ex*n_par+0]))/5) << std::endl; //JACS 2003 125(30) 9179-9191 Table 2 lagend
 			}
+			Qex =0;
 	  }
 
 
@@ -1871,10 +1869,10 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
 
 		//printout Qbax_ for each experiment
 		if ( irow==lenex_[ex+1]-1 ) {
-			Qex =0;
 	  	if ( tr.Trace.visible() ) {
-				tr.Trace << "ex: " << ex << " Qbax_: " << sqrt(Q/All_RDC_lines_.size())/sqrt(sqr(par[ex*n_par+0]/(2*(36.5089/1.042/1.042/1.042)))*(4+3*sqr(tensorR[ex+1]))/5) << std::endl; //JACS 2003 125(30) 9179-9191 Table 2 lagend
+				tr.Trace << "ex: " << ex << " Qbax_: " << sqrt(Qex/lenex_[ex+1])/sqrt(sqr(par[ex*n_par+0])*(4+3*sqr(tensorR[ex+1]))/5) << std::endl; //JACS 2003 125(30) 9179-9191 Table 2 lagend
 			}
+			Qex =0;
 	  }
 
 
@@ -2188,10 +2186,10 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
 
 		//printout Qbax_ for each experiment
 		if ( irow==lenex_[ex+1]-1 ) {
-			Qex =0;
 	  	if ( tr.Trace.visible() ) {
-				tr.Trace << "ex: " << ex << " Qbax_: " << sqrt(Q/All_RDC_lines_.size())/sqrt(sqr(tensorDa[ex+1])*(4+3*sqr(tensorR[ex+1]))/5) << std::endl; //JACS 2003 125(30) 9179-9191 Table 2 lagend
+				tr.Trace << "ex: " << ex << " Qbax_: " << sqrt(Qex/lenex_[ex+1])/sqrt(sqr(tensorDa[ex+1])*(4+3*sqr(tensorR[ex+1]))/5) << std::endl; //JACS 2003 125(30) 9179-9191 Table 2 lagend
 			}
+			Qex =0;
 	  }
 
 
