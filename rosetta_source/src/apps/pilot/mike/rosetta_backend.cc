@@ -13,6 +13,8 @@
 
 // libRosetta headers
 #include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/DockDesignParser.hh>
 #include <protocols/frag_picker/VallChunk.hh>
 
 #include <utility/pointer/owning_ptr.hh>
@@ -58,6 +60,8 @@
 #include <protocols/loophash/LoopHashLibrary.hh>
 #include <protocols/loophash/LoopHashRelaxProtocol.hh>
 
+#include <protocols/jd2/DockDesignParser.hh>
+
 // C++ headers
 //#include <cstdlib>
 #include <iostream>
@@ -76,6 +80,9 @@
 
 #include <curl/curl.h>
 #include "json/json.h"
+
+
+
 
 
 
@@ -349,25 +356,17 @@ class RosettaJob {
       operation_ = payload_values.get("operation","").asString();
      
       std::cout << "NEW JOB: Hash: " << hash_ << " KEY: " << key_ << " TASKNAME: " << taskname_ << std::endl;
-      std::string inputdata_string = payload_values.get("pdbdata","").asString();
-      //std::cout << "Inputdata: " << inputdata_string << std::endl;
+      std::string job_data_string = payload_values.get("job_data","").asString();
+      //std::cout << "Inputdata: " << job_data_string << std::endl;
 
-      Json::Value inputdata_values;
-      Json::Reader inputdata_reader;
-      inputdata_reader.parse( inputdata_string , inputdata_values);
+      Json::Reader job_data_reader;
+      job_data_reader.parse( job_data_string , job_data_);
       
-      Json::Reader rosetta_script_reader;
-      Json::Value rosetta_script_value;
-      //rosetta_script_ = inputdata_values.get("rosetta_script","").asString();
-      rosetta_script_ = "";
-      std::cout << "Rosetta script string: " << rosetta_script_ << std::endl;
-      
-      command_ = inputdata_values.get("command","").asString();
+      command_ = job_data_.get("command","").asString();
       std::cout << "Rosetta command: " << command_ << std::endl;
       
-      Json::Value pdbdata = inputdata_values.get("pdbdata","");
+      Json::Value pdbdata = job_data_.get("pdbdata","");
       std::string pdbdata_string = pdbdata.asString();
-      //std::cout << pdbdata_string << std::endl;
   
       // create the pose 
       try {
@@ -498,6 +497,8 @@ class RosettaJob {
   std::string hash_; 
   std::string key_; 
   std::string operation_; 
+  Json::Value job_data_;
+ 
   std::string rosetta_script_;
   std::string command_;
   bool initialized_;
@@ -559,7 +560,19 @@ main( int argc, char * argv [] )
 
  	// initialize core
  	devel::init(argc, argv);
- 	
+ 
+  // temporary experiment:
+
+//  protocols::jd2::DockDesignParser ddp;
+//  
+//  core::pose::Pose pose;
+//  protocols::jd2::JobCOP job; 
+//  protocols::moves::MoverOP protocol;
+//
+//  ddp.generate_mover_from_pose( job, pose, protocol, true, "parser_script.xml" ); 
+
+
+
   evaluation::PoseEvaluatorsOP evaluators_( new protocols::evaluation::PoseEvaluators() );
   evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluators_);
 
