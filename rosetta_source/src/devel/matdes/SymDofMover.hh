@@ -91,6 +91,7 @@ private:
 	utility::vector1<std::string> sym_dof_names_;
 	utility::vector1<Real> radial_disps_;
 	utility::vector1<Real> angles_;
+	utility::vector1<Real> radial_offsets_;
 	utility::vector1<Real> radial_disps_range_min_;
 	utility::vector1<Real> radial_disps_range_max_;
 	utility::vector1<Real> angles_range_min_;

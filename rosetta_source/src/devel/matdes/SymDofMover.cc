@@ -127,17 +127,17 @@ SymDofMover::get_radial_disps() {
 	if(sampling_mode_ == "grid" ) {
 		utility::vector1<Real> radial_diffs = SymDofMoverSampler::get_instance().get_radial_disp_diffs();
 		for (Size i = 1; i <= sym_dof_names.size(); i++) {
-			radial_disps.push_back(radial_disps_[i] + radial_diffs[i]);
+			radial_disps.push_back(radial_disps_[i] + radial_offsets_[i] + radial_diffs[i]);
 		}
 	}
 	else {
 		for (Size i = 1; i <= sym_dof_names.size(); i++) {
 			if(sampling_mode_ == "uniform") {
-				radial_disps.push_back(radial_disps_[i] + radial_disps_range_min_[i] + ( radial_disps_range_max_[i] - radial_disps_range_min_[i]) * RG.uniform());
+				radial_disps.push_back(radial_disps_[i] + radial_offsets_[i] + radial_disps_range_min_[i] + ( radial_disps_range_max_[i] - radial_disps_range_min_[i]) * RG.uniform());
 			} else if(sampling_mode_ == "gaussian") {
-				radial_disps.push_back(radial_disps_[i] + radial_disp_deltas_[i] * RG.gaussian());
+				radial_disps.push_back(radial_disps_[i] + radial_offsets_[i] + radial_disp_deltas_[i] * RG.gaussian());
 			} else {
-				radial_disps.push_back(radial_disps_[i]);
+				radial_disps.push_back(radial_disps_[i] + radial_offsets_[i]);
 			}
 		}
 	}
@@ -221,12 +221,14 @@ SymDofMover::apply(Pose & pose) {
 		}
 
 // translate each subunit along the specified axis by user defined values //
+		TR << "Translating component " << i << " " << radial_disps[i] << " angstroms" << std::endl;
 		if ( axis == 'z') trans_pose(pose,Vec(0,0,radial_disps[i]),sub_start,sub_end);
 		else if ( axis == 'x') trans_pose(pose,Vec(radial_disps[i],0,0),sub_start,sub_end);
 		else if ( axis == 'y') trans_pose(pose,Vec(0,radial_disps[i],0),sub_start,sub_end);
 		else utility_exit_with_message("Specified axis does not match with either x, y, or z");
 
 // rotate each subunit along the specified axis by user defined values //
+		TR << "Rotating component " << i << " " << angles[i] << " degrees" << std::endl;
 		if (axis == 'z' ) rot_pose(pose,Vec(0,0,1),angles[i],sub_start,sub_end);
 		else if (axis == 'x' ) rot_pose(pose,Vec(1,0,0),angles[i],sub_start,sub_end);
 		else rot_pose(pose,Vec(0,1,0),angles[i],sub_start,sub_end);
@@ -295,6 +297,29 @@ SymDofMover::parse_my_tag( TagPtr const tag,
 		angles.push_back( real_angle );
 	}
 	angles_ = angles;
+
+	utility::vector1< std::string > radial_offset_strings = utility::string_split( tag->getOption< std::string >( "radial_offsets" ), ',' );
+	utility::vector1<Real> radial_offsets;
+	Real real_offset;
+	if(radial_offset_strings.size() > 0) {
+		if(radial_offset_strings.size() != radial_disp_strings.size()) {
+			utility_exit_with_message("The number of radial offsets does not match the number of radial disps.");
+		} else {
+			for(Size i = 1; i <= radial_offset_strings.size(); i++) {
+				real_offset = std::atof( radial_offset_strings[i].c_str() );
+				if ( auto_range_ && (radial_disps_[i] < 0) ) {
+					radial_offsets.push_back( -real_offset );
+				} else {
+					radial_offsets.push_back( real_offset );
+				}
+			}
+		}
+	} else if (radial_offset_strings.size() == 0) {
+		for(Size i = 1; i <= radial_disp_strings.size(); i++) {
+			radial_offsets.push_back( 0 );
+		}
+	}
+	radial_offsets_ = radial_offsets;
 
 	if( sampling_mode_ == "grid" || sampling_mode_ == "uniform") {
 
