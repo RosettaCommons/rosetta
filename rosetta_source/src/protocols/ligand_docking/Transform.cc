@@ -151,16 +151,19 @@ void Transform::apply(core::pose::Pose & pose)
 	grid_manager->initialize_all_grids(center);
 	grid_manager->update_grids(pose,center);
 
-	core::pose::Pose best_pose(pose);
-	core::Real best_score(grid_manager->total_score(original_residue));
+	core::Real last_score(10000.0);
 
-	utility::vector1<std::pair<core::SSize,core::kinematics::Jump> > best_jumps;
+	utility::vector1<std::pair<core::SSize,core::kinematics::Jump> > last_jumps;
 	for(core::Size jump_number = 1; jump_number <= pose.num_jump();++jump_number)
 	{
-		best_jumps.push_back(std::make_pair(jump_number,pose.jump(jump_number)));
+		last_jumps.push_back(std::make_pair(jump_number,pose.jump(jump_number)));
 	}
-
-	core::Size best_conformer = 1;
+	core::Size last_conformer = 1;
+	MoveType last_move;
+    
+    core::Real best_score(last_score);
+    core::pose::Pose best_pose(pose);
+    
 	core::Real temperature = transform_info_.temperature;
 	core::Vector original_center(original_residue.xyz(original_residue.nbr_atom()));
 
@@ -176,13 +179,13 @@ void Transform::apply(core::pose::Pose & pose)
 	while(not_converged)
 	{
 
-		utility::vector1<std::pair<core::SSize,core::kinematics::Jump> >new_jumps = best_jumps;
-		core::Size new_conformer = best_conformer;
-		MoveType last_move;
+		utility::vector1<std::pair<core::SSize,core::kinematics::Jump> >new_jumps = last_jumps;
+		core::Size new_conformer = last_conformer;
+		MoveType new_move;
 
 		if(optimize_until_score_is_negative_)
 		{
-			if(cycle >= transform_info_.cycles && best_score <= 0.0)
+			if(cycle >= transform_info_.cycles && last_score <= 0.0)
 			{
 				not_converged= false;
 			}
@@ -202,63 +205,73 @@ void Transform::apply(core::pose::Pose & pose)
 			if(RG.uniform() >= 0.5)
 			{
 				new_jumps = transform_ligand(pose);
-				last_move = transformMove;
+				new_move = transformMove;
 			}else
 			{
 				new_conformer = change_conformer(pose,begin);
-				last_move = conformerMove;
+				new_move = conformerMove;
 			}
 		}else
 		{
 			new_jumps = transform_ligand(pose);
-			last_move = transformMove;
+			new_move = transformMove;
 		}
 		//delete residue;
-		core::conformation::Residue residue(pose.residue(begin));
+		core::conformation::ResidueCOP residue(&pose.residue(begin));
         
         //The score is meaningless if any atoms are outside of the grid
-        if(!grid_manager->is_in_grid(residue)) //Reject the pose
+        if(!grid_manager->is_in_grid(*residue)) //Reject the pose
         {
-            revert_move(pose,last_move,new_conformer,begin,new_jumps);
+            revert_move(pose,new_move,new_conformer,begin,new_jumps);
             rejected_moves++;
             //transform_tracer.Trace << "probability: " << probability << " rejected (out of grid)"<<std::endl;
             continue;
         }
         
-		core::Real current_score = grid_manager->total_score(residue);
-		core::Real const boltz_factor((best_score-current_score)/temperature);
+		core::Real current_score = grid_manager->total_score(*residue);
+		core::Real const boltz_factor((last_score-current_score)/temperature);
 		core::Real const probability = std::exp( boltz_factor ) ;
-		core::Vector new_center(residue.xyz(residue.nbr_atom()));
+		core::Vector new_center(residue->xyz(residue->nbr_atom()));
 
 		if(new_center.distance(original_center) > transform_info_.box_size) //Reject the new pose
 		{
-			revert_move(pose,last_move,new_conformer,begin,new_jumps);
+			revert_move(pose,last_move,last_conformer,begin,last_jumps);
 			rejected_moves++;
-			//transform_tracer.Trace << "probability: " << probability << " rejected (out of box)"<<std::endl;
+			
 		}else if(probability < 1 && RG.uniform() >= probability)  //reject the new pose
 		{
-			revert_move(pose,last_move,new_conformer,begin,new_jumps);
+			revert_move(pose,last_move,last_conformer,begin,last_jumps);
 			rejected_moves++;
-			//transform_tracer.Trace << "probability: " << probability << " rejected"<<std::endl;
+			
 		}else if(probability < 1)  // Accept the new pose
 		{
-			best_score = current_score;
-			best_jumps = new_jumps;
-			best_conformer = new_conformer;
+			last_score = current_score;
+			last_jumps = new_jumps;
+			last_conformer = new_conformer;
+			last_move = new_move;
 			accepted_moves++;
-			//transform_tracer.Trace << "probability: " << probability << " accepted"<<std::endl;
+			
 		}else  //Accept the new pose
 		{
-			best_score = current_score;
-			best_jumps = new_jumps;
-			best_conformer = new_conformer;
+			last_score = current_score;
+			last_jumps = new_jumps;
+			last_conformer = new_conformer;
+			last_move = new_move;
 			accepted_moves++;
-			//transform_tracer.Trace << "probability: " << probability << " accepted"<<std::endl;
+			
 		}
-		transform_tracer << best_score << " " <<current_score <<std::endl;
+		transform_tracer << last_score << " " <<current_score <<std::endl;
+        if(last_score < best_score)
+        {
+            best_score = last_score;
+            best_pose = pose;
+        }
+        
 	}
 
 	transform_tracer <<"percent acceptance: "<< accepted_moves << " " << (core::Real)accepted_moves/(core::Real)rejected_moves <<" " << rejected_moves <<std::endl;
+    
+    pose = best_pose;
 
 }
 
