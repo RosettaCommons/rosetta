@@ -120,7 +120,7 @@ HolesFilter::parse_my_tag(
 
 	// set threshold
  	filtered_value_ = tag->getOption<Real>( "threshold", 2.0 );
-	tr << "Structures which have holes value less than " << filtered_value_ << " will be filtred." << std::endl;
+	tr << "Structures which have holes value less than " << filtered_value_ << " will be filtered." << std::endl;
 }
 
 filters::FilterOP

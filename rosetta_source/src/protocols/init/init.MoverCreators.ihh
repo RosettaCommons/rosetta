@@ -61,6 +61,7 @@
 
 #include <protocols/fldsgn/BluePrintBDRCreator.hh>
 #include <protocols/fldsgn/CircularPermutationCreator.hh>
+#include <protocols/fldsgn/MatchResiduesMoverCreator.hh>
 
 #include <protocols/fldsgn/potentials/SetAACompositionPotentialCreator.hh>
 #include <protocols/fldsgn/potentials/SetSecStructEnergiesCreator.hh>
@@ -222,6 +223,7 @@
 #include <protocols/simple_moves/sidechain_moves/JumpRotamerSidechainMoverCreator.hh>
 #include <protocols/simple_moves/sidechain_moves/PerturbChiSidechainMoverCreator.hh>
 
+#include <protocols/simple_moves/symmetry/DetectSymmetryMoverCreator.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMoverCreator.hh>
 #include <protocols/simple_moves/symmetry/SetupNCSMoverCreator.hh>
 #include <protocols/simple_moves/symmetry/SymMinMoverCreator.hh>

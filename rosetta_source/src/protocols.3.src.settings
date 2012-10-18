@@ -437,6 +437,7 @@ sources = {
 	],
 	"protocols/simple_moves/symmetry": [
 		"SetupForSymmetryMover",
+		"DetectSymmetryMover",
 		"SetupNCSMover",
 		"SymDockingInitialPerturbation",
 		"SymmetricRMSMover",

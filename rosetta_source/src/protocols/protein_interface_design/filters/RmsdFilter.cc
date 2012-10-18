@@ -92,7 +92,7 @@ RmsdFilter::compute( core::pose::Pose const & pose ) const
 	core::Real rmsd( 0.0 );
 
 	if ( !symmetry_ )
-		runtime_assert( copy_pose.total_residue() == native.total_residue() );
+		runtime_assert_msg( copy_pose.total_residue() == native.total_residue(), "the reference pose must be the same size as the working pose" );
 
 	// generate temporary FArray
 	FArray1D_bool selection_array( pose.total_residue(), false ); // on which residues to check rmsd

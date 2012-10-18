@@ -75,15 +75,15 @@ sources = {
 	"devel/loop_grids": [
 		"LoopGrid",
 	],
-        "devel/matdes" : [
-                "util",
+  "devel/matdes" : [
+    "util",
 		"TaskAwareSymMinMover",
-                "Symmetrizer",
-                "SymDofMover",
-                "SymDofMoverSampler",
-                "SymmetrizerSampler",
-                "BuildingBlockInterfaceOperation",
-                "RestrictToNonzeroSASAOperation",
+    "Symmetrizer",
+    "SymDofMover",
+    "SymDofMoverSampler",
+    "SymmetrizerSampler",
+    "BuildingBlockInterfaceOperation",
+    "RestrictToNonzeroSASAOperation",
 		"RestrictIdentitiesOperation",
 		"OligomericAverageDegreeFilter",
 		"SymUnsatHbondFilter",

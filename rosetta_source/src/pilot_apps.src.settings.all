@@ -321,9 +321,11 @@ sources = {
 		#"constraints_viewer",
 	],
 	"pilot/javierbq" : [
-		"fragment_sequence_quality",
+		#"fragment_sequence_quality",
 		#"matdes_design",
-		"fragment_based_design"
+		#fragment_based_design"
+		#"make_frags",
+		#"detect_symmetry",
 	],
 
 	"pilot/jd2" : [

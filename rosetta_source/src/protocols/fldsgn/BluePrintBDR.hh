@@ -31,6 +31,7 @@
 #include <protocols/toolbox/match_enzdes_util/InvrotTree.fwd.hh>
 // AUTO-REMOVED #include <protocols/forge/constraints/SheetConstraintsRCG.fwd.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/filters/Filter.fwd.hh>
 
 // C++ headers
 #include <string>

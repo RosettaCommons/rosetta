@@ -18,8 +18,8 @@
 // Project Headers
 #include <core/id/AtomID_Map.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/sasa.hh>
+#include <core/scoring/dssp/Dssp.hh>
 #include <basic/Tracer.hh>
 
 // Utility Headers
@@ -235,7 +235,10 @@ SelectResiduesByLayer::compute( Pose const & pose, String secstruct )
 {
 	// define secstruct if it is empty
 	if( secstruct == "" ) {
-		secstruct = pose.secstruct();
+	// calc dssp
+		core::scoring::dssp::Dssp dssp( pose );
+		dssp.dssp_reduced();
+		secstruct = dssp.get_dssp_secstruct();
 	}
 	runtime_assert( pose.total_residue() == secstruct.length() );
 

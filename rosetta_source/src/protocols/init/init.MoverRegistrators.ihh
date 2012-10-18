@@ -66,6 +66,7 @@ static MoverRegistrator< features::ReportToDBCreator > reg_ReportToDBCreator;
 
 static MoverRegistrator< fldsgn::BluePrintBDRCreator > reg_BluePrintBDRCreator;
 static MoverRegistrator< fldsgn::CircularPermutationCreator > reg_CircularPermutationCreator;
+static MoverRegistrator< protocols::fldsgn::MatchResiduesMoverCreator > reg_MatchResiduesMoverCreator;
 
 static MoverRegistrator< fldsgn::potentials::SetAACompositionPotentialCreator > reg_AACompositionPotentialCreator;
 static MoverRegistrator< fldsgn::potentials::SetSecStructEnergiesCreator > reg_SetSecStructEnergiesCreator;
@@ -231,6 +232,7 @@ static MoverRegistrator< simple_moves::sidechain_moves::PerturbChiSidechainMover
 static MoverRegistrator< simple_moves::symmetry::ExtractAsymmetricUnitMoverCreator > reg_ExtractAsymmetricUnitMoverCreator;
 static MoverRegistrator< simple_moves::symmetry::ExtractAsymmetricPoseMoverCreator > reg_ExtractAsymmetricPoseMoverCreator;
 static MoverRegistrator< simple_moves::symmetry::SetupForSymmetryMoverCreator > reg_SetupForSymmetryMoverCreator;
+static MoverRegistrator< simple_moves::symmetry::DetectSymmetryMoverCreator > reg_DetectSymmetryMoverCreator;
 static MoverRegistrator< simple_moves::symmetry::SetupNCSMoverCreator > reg_SetupNCSMoverCreator;
 static MoverRegistrator< simple_moves::symmetry::SymMinMoverCreator > reg_SymMinMoverCreator;
 static MoverRegistrator< simple_moves::symmetry::SymPackRotamersMoverCreator > reg_SymPackRotamersMoverCreator;
