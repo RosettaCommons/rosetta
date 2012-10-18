@@ -25,6 +25,7 @@
 #include <utility/vector1.hh>
 
 #include <core/conformation/Residue.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
 #include <utility/vector0.hh>
 
@@ -210,11 +211,14 @@ void rotamers_for_trials(
 	// Dummy parameters that the ligand rotamer library doesn't use:
 	core::scoring::ScoreFunction dummy_sfxn;
 	PackerTaskOP dummy_task = TaskFactory::create_packer_task(pose); // actually used, in a trivial way
-	utility::vector1< utility::vector1< core::Real > > empty_extra_chi_steps;
+
 	core::graph::GraphCOP empty_graph = new core::graph::Graph();
 	// Retrieve conformers
 	core::pack::dunbrack::SingleResidueRotamerLibraryCAP reslib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( pose.residue_type(rsd_no) );
 	if( reslib.get() == NULL ) return;
+
+	core::chemical::ResidueType const & res_type =  pose.residue_type(rsd_no);
+	utility::vector1< utility::vector1< core::Real > > empty_extra_chi_steps( res_type.nchi(), utility::vector1< core::Real >() );
 
 	// Retrieve list of conformers
 	reslib->fill_rotamer_vector(

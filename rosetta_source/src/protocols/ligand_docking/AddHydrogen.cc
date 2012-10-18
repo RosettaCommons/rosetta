@@ -128,7 +128,7 @@ AddHydrogen::apply( core::pose::Pose & pose )
 			"HH",/// name this in the style of the other Hs (H1,H2,H3, etc)
 			new_i_coor.phi(),
 			new_i_coor.theta(),
-			new_i_coor.d(),
+			1.11, ///TODO Lookup from bond-length table
 			name1,
 			name2,
 			name3

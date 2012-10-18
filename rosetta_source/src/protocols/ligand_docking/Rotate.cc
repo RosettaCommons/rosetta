@@ -253,7 +253,7 @@ Rotate::create_random_rotations(
 
 	Ligand_info best=create_random_rotation(grid, mover, center, begin, end, local_pose);// first case;
 	add_ligand_conditionally(best, ligands, heavy_atom_number);
-	for(core::Size i=1; i< rotate_info_.cycles && ligands.size() <= max_diversity ; ++i){
+	for(core::Size i=1; i<= rotate_info_.cycles && ligands.size() <= max_diversity ; ++i){
 		Ligand_info current =create_random_rotation(grid, mover, center, begin, end, local_pose);
 		if (current < best){
 			best= current;
