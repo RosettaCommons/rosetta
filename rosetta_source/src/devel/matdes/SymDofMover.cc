@@ -298,13 +298,13 @@ SymDofMover::parse_my_tag( TagPtr const tag,
 	}
 	angles_ = angles;
 
-	utility::vector1< std::string > radial_offset_strings = utility::string_split( tag->getOption< std::string >( "radial_offsets" ), ',' );
 	utility::vector1<Real> radial_offsets;
-	Real real_offset;
-	if(radial_offset_strings.size() > 0) {
+	if( tag->hasOption("radial_offsets")) {
+		utility::vector1< std::string > radial_offset_strings = utility::string_split( tag->getOption< std::string >( "radial_offsets" ), ',' );
 		if(radial_offset_strings.size() != radial_disp_strings.size()) {
 			utility_exit_with_message("The number of radial offsets does not match the number of radial disps.");
 		} else {
+			Real real_offset;
 			for(Size i = 1; i <= radial_offset_strings.size(); i++) {
 				real_offset = std::atof( radial_offset_strings[i].c_str() );
 				if ( auto_range_ && (radial_disps_[i] < 0) ) {
@@ -314,8 +314,8 @@ SymDofMover::parse_my_tag( TagPtr const tag,
 				}
 			}
 		}
-	} else if (radial_offset_strings.size() == 0) {
-		for(Size i = 1; i <= radial_disp_strings.size(); i++) {
+	} else {
+		for(Size i = 1; i <= sym_dof_names_.size(); i++) {
 			radial_offsets.push_back( 0 );
 		}
 	}
