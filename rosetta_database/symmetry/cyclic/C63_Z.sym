@@ -1,0 +1,197 @@
+symmetry_name C63
+subunits 63
+number_of_interfaces 62
+E = 2*S1  + 1*(S1:S2) + 1*(S1:S3) + 1*(S1:S4) + 1*(S1:S5) + 1*(S1:S6) + 1*(S1:S7) + 1*(S1:S8) + 1*(S1:S9) + 1*(S1:S10) + 1*(S1:S11) + 1*(S1:S12) + 1*(S1:S13) + 1*(S1:S14) + 1*(S1:S15) + 1*(S1:S16) + 1*(S1:S17) + 1*(S1:S18) + 1*(S1:S19) + 1*(S1:S20) + 1*(S1:S21) + 1*(S1:S22) + 1*(S1:S23) + 1*(S1:S24) + 1*(S1:S25) + 1*(S1:S26) + 1*(S1:S27) + 1*(S1:S28) + 1*(S1:S29) + 1*(S1:S30) + 1*(S1:S31) + 1*(S1:S32) + 1*(S1:S33) + 1*(S1:S34) + 1*(S1:S35) + 1*(S1:S36) + 1*(S1:S37) + 1*(S1:S38) + 1*(S1:S39) + 1*(S1:S40) + 1*(S1:S41) + 1*(S1:S42) + 1*(S1:S43) + 1*(S1:S44) + 1*(S1:S45) + 1*(S1:S46) + 1*(S1:S47) + 1*(S1:S48) + 1*(S1:S49) + 1*(S1:S50) + 1*(S1:S51) + 1*(S1:S52) + 1*(S1:S53) + 1*(S1:S54) + 1*(S1:S55) + 1*(S1:S56) + 1*(S1:S57) + 1*(S1:S58) + 1*(S1:S59) + 1*(S1:S60) + 1*(S1:S61) + 1*(S1:S62) + 1*(S1:S63)
+anchor_residue 1
+virtual_coordinates_start
+xyz S1 0,0,1 +0.0000000,+1.0000000,0 0,0,0
+xyz S2 0,0,1 +0.0995678,+0.9950308,0 0,0,0
+xyz S3 0,0,1 +0.1981461,+0.9801725,0 0,0,0
+xyz S4 0,0,1 +0.2947552,+0.9555728,0 0,0,0
+xyz S5 0,0,1 +0.3884348,+0.9214762,0 0,0,0
+xyz S6 0,0,1 +0.4782540,+0.8782216,0 0,0,0
+xyz S7 0,0,1 +0.5633201,+0.8262388,0 0,0,0
+xyz S8 0,0,1 +0.6427876,+0.7660444,0 0,0,0
+xyz S9 0,0,1 +0.7158668,+0.6982368,0 0,0,0
+xyz S10 0,0,1 +0.7818315,+0.6234898,0 0,0,0
+xyz S11 0,0,1 +0.8400259,+0.5425463,0 0,0,0
+xyz S12 0,0,1 +0.8898718,+0.4562107,0 0,0,0
+xyz S13 0,0,1 +0.9308737,+0.3653410,0 0,0,0
+xyz S14 0,0,1 +0.9626242,+0.2708405,0 0,0,0
+xyz S15 0,0,1 +0.9848078,+0.1736482,0 0,0,0
+xyz S16 0,0,1 +0.9972038,+0.0747301,0 0,0,0
+xyz S17 0,0,1 +0.9996892,-0.0249307,0 0,0,0
+xyz S18 0,0,1 +0.9922392,-0.1243437,0 0,0,0
+xyz S19 0,0,1 +0.9749279,-0.2225209,0 0,0,0
+xyz S20 0,0,1 +0.9479273,-0.3184867,0 0,0,0
+xyz S21 0,0,1 +0.9115059,-0.4112871,0 0,0,0
+xyz S22 0,0,1 +0.8660254,-0.5000000,0 0,0,0
+xyz S23 0,0,1 +0.8119380,-0.5837437,0 0,0,0
+xyz S24 0,0,1 +0.7497812,-0.6616858,0 0,0,0
+xyz S25 0,0,1 +0.6801727,-0.7330519,0 0,0,0
+xyz S26 0,0,1 +0.6038044,-0.7971325,0 0,0,0
+xyz S27 0,0,1 +0.5214352,-0.8532909,0 0,0,0
+xyz S28 0,0,1 +0.4338837,-0.9009689,0 0,0,0
+xyz S29 0,0,1 +0.3420201,-0.9396926,0 0,0,0
+xyz S30 0,0,1 +0.2467574,-0.9690773,0 0,0,0
+xyz S31 0,0,1 +0.1490423,-0.9888308,0 0,0,0
+xyz S32 0,0,1 +0.0498459,-0.9987569,0 0,0,0
+xyz S33 0,0,1 -0.0498459,-0.9987569,0 0,0,0
+xyz S34 0,0,1 -0.1490423,-0.9888308,0 0,0,0
+xyz S35 0,0,1 -0.2467574,-0.9690773,0 0,0,0
+xyz S36 0,0,1 -0.3420201,-0.9396926,0 0,0,0
+xyz S37 0,0,1 -0.4338837,-0.9009689,0 0,0,0
+xyz S38 0,0,1 -0.5214352,-0.8532909,0 0,0,0
+xyz S39 0,0,1 -0.6038044,-0.7971325,0 0,0,0
+xyz S40 0,0,1 -0.6801727,-0.7330519,0 0,0,0
+xyz S41 0,0,1 -0.7497812,-0.6616858,0 0,0,0
+xyz S42 0,0,1 -0.8119380,-0.5837437,0 0,0,0
+xyz S43 0,0,1 -0.8660254,-0.5000000,0 0,0,0
+xyz S44 0,0,1 -0.9115059,-0.4112871,0 0,0,0
+xyz S45 0,0,1 -0.9479273,-0.3184867,0 0,0,0
+xyz S46 0,0,1 -0.9749279,-0.2225209,0 0,0,0
+xyz S47 0,0,1 -0.9922392,-0.1243437,0 0,0,0
+xyz S48 0,0,1 -0.9996892,-0.0249307,0 0,0,0
+xyz S49 0,0,1 -0.9972038,+0.0747301,0 0,0,0
+xyz S50 0,0,1 -0.9848078,+0.1736482,0 0,0,0
+xyz S51 0,0,1 -0.9626242,+0.2708405,0 0,0,0
+xyz S52 0,0,1 -0.9308737,+0.3653410,0 0,0,0
+xyz S53 0,0,1 -0.8898718,+0.4562107,0 0,0,0
+xyz S54 0,0,1 -0.8400259,+0.5425463,0 0,0,0
+xyz S55 0,0,1 -0.7818315,+0.6234898,0 0,0,0
+xyz S56 0,0,1 -0.7158668,+0.6982368,0 0,0,0
+xyz S57 0,0,1 -0.6427876,+0.7660444,0 0,0,0
+xyz S58 0,0,1 -0.5633201,+0.8262388,0 0,0,0
+xyz S59 0,0,1 -0.4782540,+0.8782216,0 0,0,0
+xyz S60 0,0,1 -0.3884348,+0.9214762,0 0,0,0
+xyz S61 0,0,1 -0.2947552,+0.9555728,0 0,0,0
+xyz S62 0,0,1 -0.1981461,+0.9801725,0 0,0,0
+xyz S63 0,0,1 -0.0995678,+0.9950308,0 0,0,0
+virtual_coordinates_stop
+connect_virtual J2 S1 S2
+connect_virtual J3 S1 S3
+connect_virtual J4 S1 S4
+connect_virtual J5 S1 S5
+connect_virtual J6 S1 S6
+connect_virtual J7 S1 S7
+connect_virtual J8 S1 S8
+connect_virtual J9 S1 S9
+connect_virtual J10 S1 S10
+connect_virtual J11 S1 S11
+connect_virtual J12 S1 S12
+connect_virtual J13 S1 S13
+connect_virtual J14 S1 S14
+connect_virtual J15 S1 S15
+connect_virtual J16 S1 S16
+connect_virtual J17 S1 S17
+connect_virtual J18 S1 S18
+connect_virtual J19 S1 S19
+connect_virtual J20 S1 S20
+connect_virtual J21 S1 S21
+connect_virtual J22 S1 S22
+connect_virtual J23 S1 S23
+connect_virtual J24 S1 S24
+connect_virtual J25 S1 S25
+connect_virtual J26 S1 S26
+connect_virtual J27 S1 S27
+connect_virtual J28 S1 S28
+connect_virtual J29 S1 S29
+connect_virtual J30 S1 S30
+connect_virtual J31 S1 S31
+connect_virtual J32 S1 S32
+connect_virtual J33 S1 S33
+connect_virtual J34 S1 S34
+connect_virtual J35 S1 S35
+connect_virtual J36 S1 S36
+connect_virtual J37 S1 S37
+connect_virtual J38 S1 S38
+connect_virtual J39 S1 S39
+connect_virtual J40 S1 S40
+connect_virtual J41 S1 S41
+connect_virtual J42 S1 S42
+connect_virtual J43 S1 S43
+connect_virtual J44 S1 S44
+connect_virtual J45 S1 S45
+connect_virtual J46 S1 S46
+connect_virtual J47 S1 S47
+connect_virtual J48 S1 S48
+connect_virtual J49 S1 S49
+connect_virtual J50 S1 S50
+connect_virtual J51 S1 S51
+connect_virtual J52 S1 S52
+connect_virtual J53 S1 S53
+connect_virtual J54 S1 S54
+connect_virtual J55 S1 S55
+connect_virtual J56 S1 S56
+connect_virtual J57 S1 S57
+connect_virtual J58 S1 S58
+connect_virtual J59 S1 S59
+connect_virtual J60 S1 S60
+connect_virtual J61 S1 S61
+connect_virtual J62 S1 S62
+connect_virtual J63 S1 S63
+connect_virtual JS1 S1 SUBUNIT
+connect_virtual JS2 S2 SUBUNIT
+connect_virtual JS3 S3 SUBUNIT
+connect_virtual JS4 S4 SUBUNIT
+connect_virtual JS5 S5 SUBUNIT
+connect_virtual JS6 S6 SUBUNIT
+connect_virtual JS7 S7 SUBUNIT
+connect_virtual JS8 S8 SUBUNIT
+connect_virtual JS9 S9 SUBUNIT
+connect_virtual JS10 S10 SUBUNIT
+connect_virtual JS11 S11 SUBUNIT
+connect_virtual JS12 S12 SUBUNIT
+connect_virtual JS13 S13 SUBUNIT
+connect_virtual JS14 S14 SUBUNIT
+connect_virtual JS15 S15 SUBUNIT
+connect_virtual JS16 S16 SUBUNIT
+connect_virtual JS17 S17 SUBUNIT
+connect_virtual JS18 S18 SUBUNIT
+connect_virtual JS19 S19 SUBUNIT
+connect_virtual JS20 S20 SUBUNIT
+connect_virtual JS21 S21 SUBUNIT
+connect_virtual JS22 S22 SUBUNIT
+connect_virtual JS23 S23 SUBUNIT
+connect_virtual JS24 S24 SUBUNIT
+connect_virtual JS25 S25 SUBUNIT
+connect_virtual JS26 S26 SUBUNIT
+connect_virtual JS27 S27 SUBUNIT
+connect_virtual JS28 S28 SUBUNIT
+connect_virtual JS29 S29 SUBUNIT
+connect_virtual JS30 S30 SUBUNIT
+connect_virtual JS31 S31 SUBUNIT
+connect_virtual JS32 S32 SUBUNIT
+connect_virtual JS33 S33 SUBUNIT
+connect_virtual JS34 S34 SUBUNIT
+connect_virtual JS35 S35 SUBUNIT
+connect_virtual JS36 S36 SUBUNIT
+connect_virtual JS37 S37 SUBUNIT
+connect_virtual JS38 S38 SUBUNIT
+connect_virtual JS39 S39 SUBUNIT
+connect_virtual JS40 S40 SUBUNIT
+connect_virtual JS41 S41 SUBUNIT
+connect_virtual JS42 S42 SUBUNIT
+connect_virtual JS43 S43 SUBUNIT
+connect_virtual JS44 S44 SUBUNIT
+connect_virtual JS45 S45 SUBUNIT
+connect_virtual JS46 S46 SUBUNIT
+connect_virtual JS47 S47 SUBUNIT
+connect_virtual JS48 S48 SUBUNIT
+connect_virtual JS49 S49 SUBUNIT
+connect_virtual JS50 S50 SUBUNIT
+connect_virtual JS51 S51 SUBUNIT
+connect_virtual JS52 S52 SUBUNIT
+connect_virtual JS53 S53 SUBUNIT
+connect_virtual JS54 S54 SUBUNIT
+connect_virtual JS55 S55 SUBUNIT
+connect_virtual JS56 S56 SUBUNIT
+connect_virtual JS57 S57 SUBUNIT
+connect_virtual JS58 S58 SUBUNIT
+connect_virtual JS59 S59 SUBUNIT
+connect_virtual JS60 S60 SUBUNIT
+connect_virtual JS61 S61 SUBUNIT
+connect_virtual JS62 S62 SUBUNIT
+connect_virtual JS63 S63 SUBUNIT
+set_dof JS1 x y angle_x angle_y angle_z
+set_jump_group GJS JS1 JS2 JS3 JS4 JS5 JS6 JS7 JS8 JS9 JS10 JS11 JS12 JS13 JS14 JS15 JS16 JS17 JS18 JS19 JS20 JS21 JS22 JS23 JS24 JS25 JS26 JS27 JS28 JS29 JS30 JS31 JS32 JS33 JS34 JS35 JS36 JS37 JS38 JS39 JS40 JS41 JS42 JS43 JS44 JS45 JS46 JS47 JS48 JS49 JS50 JS51 JS52 JS53 JS54 JS55 JS56 JS57 JS58 JS59 JS60 JS61 JS62 JS63

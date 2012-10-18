@@ -1,0 +1,14 @@
+symmetry_name C2
+subunits 2
+number_of_interfaces 1
+E = 2*S1  + 1*(S1:S2)
+anchor_residue 1
+virtual_coordinates_start
+xyz S1 0,0,1 +0.0000000,+1.0000000,0 0,0,0
+xyz S2 0,0,1 +0.0000000,-1.0000000,0 0,0,0
+virtual_coordinates_stop
+connect_virtual J2 S1 S2
+connect_virtual JS1 S1 SUBUNIT
+connect_virtual JS2 S2 SUBUNIT
+set_dof JS1 x y angle_x angle_y angle_z
+set_jump_group GJS JS1 JS2

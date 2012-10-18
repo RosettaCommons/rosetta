@@ -1,0 +1,29 @@
+symmetry_name C7
+subunits 7
+number_of_interfaces 6
+E = 2*S1  + 1*(S1:S2) + 1*(S1:S3) + 1*(S1:S4) + 1*(S1:S5) + 1*(S1:S6) + 1*(S1:S7)
+anchor_residue 1
+virtual_coordinates_start
+xyz S1 0,0,1 +0.0000000,+1.0000000,0 0,0,0
+xyz S2 0,0,1 +0.7818315,+0.6234898,0 0,0,0
+xyz S3 0,0,1 +0.9749279,-0.2225209,0 0,0,0
+xyz S4 0,0,1 +0.4338837,-0.9009689,0 0,0,0
+xyz S5 0,0,1 -0.4338837,-0.9009689,0 0,0,0
+xyz S6 0,0,1 -0.9749279,-0.2225209,0 0,0,0
+xyz S7 0,0,1 -0.7818315,+0.6234898,0 0,0,0
+virtual_coordinates_stop
+connect_virtual J2 S1 S2
+connect_virtual J3 S1 S3
+connect_virtual J4 S1 S4
+connect_virtual J5 S1 S5
+connect_virtual J6 S1 S6
+connect_virtual J7 S1 S7
+connect_virtual JS1 S1 SUBUNIT
+connect_virtual JS2 S2 SUBUNIT
+connect_virtual JS3 S3 SUBUNIT
+connect_virtual JS4 S4 SUBUNIT
+connect_virtual JS5 S5 SUBUNIT
+connect_virtual JS6 S6 SUBUNIT
+connect_virtual JS7 S7 SUBUNIT
+set_dof JS1 x y angle_x angle_y angle_z
+set_jump_group GJS JS1 JS2 JS3 JS4 JS5 JS6 JS7
