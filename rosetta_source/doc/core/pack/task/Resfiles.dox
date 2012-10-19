@@ -154,7 +154,7 @@ the PackerTask class.
 @endcode
 
 @code
-NATROT #default command that applies to everything without a non-default setting; do not repack
+NATRO #default command that applies to everything without a non-default setting; do not repack
 begin
 10 A POLAR # consider polar amino acids at position 10
 11 A POLAR PIKAA ACDEFGH # allow mutations to those in the intersection of two sets:
