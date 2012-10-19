@@ -85,6 +85,7 @@ sources = {
     "BuildingBlockInterfaceOperation",
     "RestrictToNonzeroSASAOperation",
 		"RestrictIdentitiesOperation",
+		"SelectBySASAOperation",
 		"OligomericAverageDegreeFilter",
 		"SymUnsatHbondFilter",
 		"AverageInterfaceEnergyFilter",
