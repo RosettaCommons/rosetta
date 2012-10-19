@@ -68,7 +68,6 @@ while ( my $line = <HHR> ) {
 	}
 
 	if ($grishin_format == 1 && $line =~ /^## +[^\s]+ +([^\s]+)/) {
-print "1\n";
 		my $tag = $1;
 		my $pdbid = substr( $tag,0,4);	
 		my $chainid = substr( $tag,4,1);	

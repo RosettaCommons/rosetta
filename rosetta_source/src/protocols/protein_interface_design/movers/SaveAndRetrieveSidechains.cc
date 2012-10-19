@@ -32,6 +32,10 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+#include <core/pose/symmetry/util.hh>
+#include <core/conformation/symmetry/util.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -90,11 +94,17 @@ SaveAndRetrieveSidechains::apply( Pose & pose )
 {
 	typedef conformation::Residue Residue;
 	TR << "Retrieving sidechains...\n";
-	runtime_assert( pose.total_residue() == init_pose_->total_residue() );
+	Size nres = pose.total_residue();
+	if (core::pose::symmetry::is_symmetric(pose)) {
+		conformation::symmetry::SymmetricConformation & symm_conf ( 
+				dynamic_cast<conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+		nres = symm_conf.Symmetry_Info()->num_independent_residues();
+	}
+	runtime_assert( nres == init_pose_->total_residue() );
 	kinematics::Jump new_jump;
 	core::Size const rb_jump( jumpid_ );
 	new_jump = pose.jump( rb_jump );
-	for( core::Size res=1; res<=pose.total_residue(); ++res ) {
+	for( core::Size res=1; res<=nres; ++res ) {
 		if( allsc_ ) { // replace all sidechains
 			pose.replace_residue( res, init_pose_->residue( res ), true/*orient_backbone*/ );
 			continue;

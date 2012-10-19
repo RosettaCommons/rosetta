@@ -112,7 +112,7 @@ main( int argc, char * argv [] ) {
 	devel::init(argc, argv);
 	
 	core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
-	utility::vector1<core::pose::Pose> models = core::import_pose::poses_from_pdbs( *residue_set, option[OptionKeys::in::file::s]());
+	utility::vector1<core::pose::Pose> models = core::import_pose::poses_from_pdbs( *residue_set, option[OptionKeys::in::file::s](), false);
 	core::pose::PoseOP native = core::import_pose::pose_from_pdb(*residue_set, option[OptionKeys::in::file::native]());
 
 	for (int i=1; i<=models.size(); ++i) {
