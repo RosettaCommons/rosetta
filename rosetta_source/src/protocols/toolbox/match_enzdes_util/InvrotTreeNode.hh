@@ -58,7 +58,15 @@ public:
 		core::conformation::Residue const & target_residue,
 		EnzConstraintIOCOP enzcst_io,
 		Size invrot_geomcst,
-		Size target_geomcst
+		core::pose::PoseCOP pose = NULL
+	);
+
+	bool
+	initialize_from_enzcst_io_and_invrots(
+		std::list< core::conformation::ResidueCOP > const & all_invrots,
+		EnzConstraintIOCOP enzcst_io,
+		Size invrot_geomcst,
+		core::pose::PoseCOP pose = NULL
 	);
 
 	/// @brief
@@ -111,6 +119,8 @@ private:
 	Size geom_cst_; //which geometric constraint the invrots belong to
 
 	utility::vector1< invrots_node_ptrs_pair > invrots_and_next_nodes_;
+
+	bool generate_invrot_csts_; //if this node should actually generate csts according to the invrots stored in it. initialized to true, but gets set to fals if inverse rotamer trees for partial matches are constructed
 };
 
 }

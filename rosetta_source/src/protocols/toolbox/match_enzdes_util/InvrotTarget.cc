@@ -70,8 +70,11 @@ InvrotTarget::generate_constraints(
 	utility::vector1< core::scoring::constraints::ConstraintCOP > node_constraints;
 
 	for( Size i =1; i <= next_nodes_.size(); ++i ){
-		node_constraints.push_back( next_nodes_[i]->generate_constraints( pose, geomcst_seqpos ) );
+		core::scoring::constraints::ConstraintCOP this_child_cst( (next_nodes_[i]->generate_constraints( pose, geomcst_seqpos ) ) );
+		if( this_child_cst) node_constraints.push_back( this_child_cst );
 	}
+	if( node_constraints.size() == 0 ) return NULL;
+
 	return new core::scoring::constraints::MultiConstraint( node_constraints );
 }
 
@@ -99,7 +102,7 @@ InvrotTarget::initialize_tree_nodes_from_enzcst_io(
 	}
 
 	for( Size i =1; i <= next_nodes_.size(); ++i ){
-		if( !next_nodes_[i]->initialize_from_enzcst_io( *representative_target_res_for_geom_cst_[ mcfi_to_build[i] ], enzcst_io, mcfi_to_build[i], 1 ) ){
+		if( !next_nodes_[i]->initialize_from_enzcst_io( *representative_target_res_for_geom_cst_[ mcfi_to_build[i] ], enzcst_io, mcfi_to_build[i]) ){
 			tr << "InvrotTarget could not initialize because node initialization for geom_cst " << mcfi_to_build[i] << " failed." << std::endl;
 			return false;
 		}

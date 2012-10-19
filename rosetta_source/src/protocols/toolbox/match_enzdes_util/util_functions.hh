@@ -60,6 +60,18 @@ constrain_pose_res_to_invrots(
 	core::scoring::constraints::FuncOP constraint_func = NULL
 );
 
+
+/// @brief convenience function that returns a residue
+/// of the desired cst interaction
+/// in case there are no constraints in the pose,
+/// returns null pointer
+core::conformation::ResidueCOP
+cst_residue_in_pose(
+	core::pose::Pose const & pose,
+	core::Size geomcst,
+	core::Size geomcst_template_res
+);
+
 std::string
 assemble_remark_line(
 	std::string chainA,

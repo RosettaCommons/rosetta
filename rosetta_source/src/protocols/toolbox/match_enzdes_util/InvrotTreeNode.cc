@@ -46,7 +46,7 @@ static basic::Tracer tr( "protocols.toolbox.match_enzdes_util.InvrotTreeNode" );
 
 InvrotTreeNode::InvrotTreeNode( InvrotTreeNodeBaseCAP parent )
 	: InvrotTreeNodeBase( parent ),
-		geom_cst_(0)
+		geom_cst_(0), generate_invrot_csts_(true)
 {
 	invrots_and_next_nodes_.clear();
 }
@@ -64,31 +64,50 @@ InvrotTreeNode::initialize_from_enzcst_io(
 	core::conformation::Residue const & target_residue,
 	EnzConstraintIOCOP enzcst_io,
 	Size invrot_geomcst,
-	Size
+	core::pose::PoseCOP pose
 )
 {
 	invrots_and_next_nodes_.clear(); //safety
-	geom_cst_ = invrot_geomcst;
+	std::list< core::conformation::ResidueCOP > all_invrots;
+	all_invrots.clear();
+	if( pose ){
+		core::conformation::ResidueCOP cst_res( cst_residue_in_pose( *pose, invrot_geomcst,  enzcst_io->mcfi_list( invrot_geomcst )->mcfi( 1 )->upstream_res() ) );
+		if( cst_res ) all_invrots.push_back( cst_res );
+	}
 
 	//1. create all invrots against target residue
 	//mcfi(1) is hardcoded because matcher can't
 	//deal with upstream-upstream matching when the
 	//target residue has explicit ambiguity
 	//we have to put in an early catch for this somewhere..
-	std::list< core::conformation::ResidueCOP > all_invrots( enzcst_io->mcfi_list( geom_cst_)->inverse_rotamers_against_residue( enzcst_io->mcfi_list( geom_cst_ )->mcfi( 1 )->downstream_res(), &target_residue ) );
-
-	//2. do clash check against all parent residues
-	//if all get removed, this means this is a dead end
-	//and we return false
-	Size num_rots_total( all_invrots.size() );
-	this->remove_invrots_clashing_with_parent_res( all_invrots, enzcst_io->mcfi_list( geom_cst_)->mcfi(1)->is_covalent() );
-	Size num_invrots_clashing( num_rots_total - all_invrots.size() );
-	tr << "When initializing a node for geomcst " << geom_cst_ << ", " << num_invrots_clashing << " of a total of " << num_rots_total << " inverse rotamers were found to clash with something." << std::endl;
 	if( all_invrots.size() == 0 ){
-		return false;
+		all_invrots =  enzcst_io->mcfi_list( invrot_geomcst)->inverse_rotamers_against_residue( enzcst_io->mcfi_list( invrot_geomcst )->mcfi( 1 )->downstream_res(), &target_residue );
+
+		//2. do clash check against all parent residues
+		//if all get removed, this means this is a dead end
+		//and we return false
+		Size num_rots_total( all_invrots.size() );
+		this->remove_invrots_clashing_with_parent_res( all_invrots, enzcst_io->mcfi_list(invrot_geomcst)->mcfi(1)->is_covalent() );
+		Size num_invrots_clashing( num_rots_total - all_invrots.size() );
+		tr << "When initializing a node for geomcst " <<invrot_geomcst << ", " << num_invrots_clashing << " of a total of " << num_rots_total << " inverse rotamers were found to clash with something." << std::endl;
+		if( all_invrots.size() == 0 ){
+			return false;
+		}
 	}
 
+	return this->initialize_from_enzcst_io_and_invrots( all_invrots, enzcst_io, invrot_geomcst, pose );
+}
 
+bool
+InvrotTreeNode::initialize_from_enzcst_io_and_invrots(
+	std::list< core::conformation::ResidueCOP > const & all_invrots,
+	EnzConstraintIOCOP enzcst_io,
+	Size invrot_geomcst,
+	core::pose::PoseCOP pose
+)
+{
+
+	geom_cst_ = invrot_geomcst;
 	//3. now we have to figure out if the upstream_res of
 	//this geom_cst (i.e. what this node represents) is the
 	//downstream_res in a later mcfi
@@ -124,7 +143,7 @@ InvrotTreeNode::initialize_from_enzcst_io(
 	//4.2 now loop through remaining invrots and
 	//check for redundancy to other invrots with respect to
 	//positioning of dependent inverse rotamer trees
-	std::list<core::conformation::ResidueCOP>::iterator invrot_it1 = all_invrots.begin();
+	std::list<core::conformation::ResidueCOP>::const_iterator invrot_it1 = all_invrots.begin();
 	invrot_it1++; //first one was already taken care of
 	while( invrot_it1 != all_invrots.end() ){
 		bool this_invrot_redundant(false);
@@ -170,7 +189,7 @@ InvrotTreeNode::initialize_from_enzcst_io(
 		for( Size j = 1; j <= dependent_mcfi.size(); ++j ){
 			InvrotTreeNodeOP child = new InvrotTreeNode( this );
 			pair_it->second.push_back( child );
-			if( ! child->initialize_from_enzcst_io( this_target, enzcst_io, dependent_mcfi[j],geom_cst_ ) ){
+			if( ! child->initialize_from_enzcst_io( this_target, enzcst_io, dependent_mcfi[j], pose ) ){
 				pair_it = invrots_and_next_nodes_.erase( pair_it ); //note: erasing from vector, not ideal, but the vectors should usually be fairly small and the initialization shenanigans are only called once
 				all_initialization_successful = false;
 				break;
@@ -206,24 +225,30 @@ InvrotTreeNode::generate_constraints(
 {
 	core::id::AtomID fixed_pt( this->get_fixed_pt( pose ) );
 	utility::vector1< core::scoring::constraints::ConstraintCOP > constraints_this_node;
+
+	if( !generate_invrot_csts_ ) runtime_assert( invrots_and_next_nodes_.size() == 1 ); //sanity check, relation exists because in this case we should only have one invrot
+
 	for( core::Size i = 1; i <= invrots_and_next_nodes_.size(); ++i ){
 
 		//utility::vector1< core::scoring::constraints::ConstraintCOP > constraints_this_invrot_set;
 		utility::vector1< core::scoring::constraints::ConstraintCOP > constraints_this_invrot_node_pair;
 
 		//1a. create the ambiguous constraint for this set of inverse rotamers
-		constraints_this_invrot_node_pair.push_back( constrain_pose_res_to_invrots( invrots_and_next_nodes_[i].first, geomcst_seqpos->seqpos_for_geomcst( geom_cst_), pose, fixed_pt ) );
+		if( generate_invrot_csts_) constraints_this_invrot_node_pair.push_back( constrain_pose_res_to_invrots( invrots_and_next_nodes_[i].first, geomcst_seqpos->seqpos_for_geomcst( geom_cst_), pose, fixed_pt ) );
 
 		//1b.
 		for( utility::vector1< InvrotTreeNodeBaseOP >::const_iterator node_it( invrots_and_next_nodes_[i].second.begin() ), node_end( invrots_and_next_nodes_[i].second.end() ); node_it != node_end; ++node_it ){
-			constraints_this_invrot_node_pair.push_back( (*node_it)->generate_constraints( pose, geomcst_seqpos ) );
+			core::scoring::constraints::ConstraintCOP this_child_cst( (*node_it)->generate_constraints( pose, geomcst_seqpos ) );
+			if( this_child_cst) constraints_this_invrot_node_pair.push_back( this_child_cst );
 		}
 
 		//1c.
 		if( constraints_this_invrot_node_pair.size() == 1 ) constraints_this_node.push_back( constraints_this_invrot_node_pair[1] );
-		else constraints_this_node.push_back( new core::scoring::constraints::MultiConstraint( constraints_this_invrot_node_pair ) );
+		else if( constraints_this_invrot_node_pair.size() > 1 ) constraints_this_node.push_back( new core::scoring::constraints::MultiConstraint( constraints_this_invrot_node_pair ) );
 
 	}//loop over node_pointer_pairs_
+
+	if( constraints_this_node.size() == 0 ) return NULL;
 
 	if( constraints_this_node.size() == 1 ) return constraints_this_node[1];
 

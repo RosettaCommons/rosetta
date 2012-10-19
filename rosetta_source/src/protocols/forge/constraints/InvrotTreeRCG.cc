@@ -50,7 +50,10 @@ InvrotTreeRCG::generate_remodel_constraints(
 
 	invrot_tree_->generate_inverse_rotamer_constraints( pose, geomcst_seqpos_ );
 
-	this->add_constraint( invrot_tree_->get_constraint_for_target_state( target_state ) );
+	core::scoring::constraints::ConstraintCOP cst_to_add( invrot_tree_->get_constraint_for_target_state( target_state ) );
+
+	if( !cst_to_add ) utility_exit_with_message("InvrotTree failed to generate anything but NULL pointer csts. Something is wrong somewhere. Check your starting structure for whether it already has every interaction in the cstfile." );
+	this->add_constraint( cst_to_add  );
 
 }
 

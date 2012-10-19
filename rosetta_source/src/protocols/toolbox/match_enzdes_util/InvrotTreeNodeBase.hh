@@ -145,6 +145,7 @@ public:
     utility::vector1< InvrotCollectorOP > & invrot_collectors
   ) const = 0;
 
+
 private:
 
   InvrotTreeNodeBaseCAP parent_node_; //pointer to parent node

@@ -14,6 +14,10 @@
 //unit headers
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>
 
+//package headers
+#include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
+
 // project headers
 #include <basic/Tracer.hh>
 
@@ -142,6 +146,27 @@ constrain_pose_res_to_invrots(
 	return new AmbiguousConstraint( all_res_invrot_csts );
 
 } //constrain_pose_res_to_invrots
+
+
+core::conformation::ResidueCOP
+cst_residue_in_pose(
+	core::pose::Pose const & pose,
+	core::Size geomcst,
+	core::Size geomcst_template_res
+)
+{
+
+	EnzdesCacheableObserverCOP enz_ob( get_enzdes_observer( pose ) );
+	if( !enz_ob ) return NULL;
+
+	EnzCstTemplateResCacheCOP res_cache( enz_ob->cst_cache()->param_cache( geomcst )->template_res_cache( geomcst_template_res) );
+	runtime_assert( res_cache );
+	if( res_cache->not_in_pose() ) return NULL;
+
+	runtime_assert( res_cache->seqpos_map_size() == 1 );
+
+	return new core::conformation::Residue( pose.residue( res_cache->seqpos_map_begin()->first ) );
+}
 
 
 std::string
