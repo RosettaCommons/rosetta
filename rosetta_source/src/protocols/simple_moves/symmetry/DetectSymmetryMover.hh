@@ -10,8 +10,10 @@
 
 /// @file protocols/simple_moves/symmetry/DetectSymmetryMover.hh
 /// @brief Automatical detection and setup of the symmetry machinery from an asymetric pose made of symmetric chains. Only works with cyclic simmetries.
-/// @author Javier Castellanos ( javiercv@uw.edu ) 
+/// @author Javier Castellanos ( javiercv@uw.edu )
 
+#ifndef _INCLUDED_protocols_simple_moves_symmetry_DetectSymmetryMover_hh_
+#define _INCLUDED_protocols_simple_moves_symmetry_DetectSymmetryMover_hh_
 
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -38,7 +40,7 @@ public:
 	virtual void apply(Pose & pose);
 
 	virtual std::string get_name() const {return "DetectSymmetry";}
-	
+
 	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new DetectSymmetry( *this ) ) ); }
 
 	virtual void
@@ -53,3 +55,6 @@ private:
 } // symmetry
 } // simple_moves
 } // protocols
+
+
+#endif
