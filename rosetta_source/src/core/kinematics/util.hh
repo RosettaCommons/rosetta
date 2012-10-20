@@ -119,6 +119,14 @@ visualize_fold_tree(
 	std::map<Size,Size> const & jump_follows
 );
 
+///@brief remodel a fold tree to account for a large insertion by adding the size of the insert to upstream positions
+///@author Steven Lewis smlewi@gmail.com as a favor for Jared
+core::kinematics::FoldTree
+remodel_fold_tree_to_account_for_insertion(
+	core::kinematics::FoldTree const & input_tree, //return a remodeled version of this tree
+	core::Size insert_after, //add insert_size to points after this in primary sequence in the tree
+	core::Size insert_size
+);
 
 } // namespace kinematics
 } // namespace core

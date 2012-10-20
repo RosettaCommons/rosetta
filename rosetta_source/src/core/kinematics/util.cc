@@ -34,6 +34,8 @@
 // AUTO-REMOVED #include <core/id/DOF_ID_Map.hh>
 #include <basic/Tracer.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 // Numeric headers
 #include <numeric/random/random.hh>
 
@@ -742,6 +744,45 @@ visualize_fold_tree(	FoldTree const & ft, std::map<Size,char> const & mark_jump_
 
 //////////////////////////// END sheffler visualize fold tree
 
+///@brief remodel a fold tree to account for a large insertion by adding the size of the insert to upstream positions
+///@author Steven Lewis smlewi@gmail.com as a favor for Jared
+core::kinematics::FoldTree
+remodel_fold_tree_to_account_for_insertion(
+	core::kinematics::FoldTree const & input_tree, //return a remodeled version of this tree
+	core::Size insert_after, //add insert_size to points after this in primary sequence in the tree
+	core::Size insert_size){
+
+	if(input_tree.is_jump_point(insert_after)){
+		throw utility::excn::EXCN_Msg_Exception("FoldTree utility remodel_fold_tree_to_account_for_insertion: I do not know how to handle insertion points that are also jump points - does the jump stay where it was or move to the end of the insert?");
+	}
+
+	core::kinematics::FoldTree return_tree;
+
+	typedef std::vector< core::kinematics::Edge > EdgeList; //I am not responsible for the std::vector!
+	typedef EdgeList::const_iterator ELconst_iterator;
+
+	for( ELconst_iterator it(input_tree.begin()), end(input_tree.end()); it!=end; ++it){
+		//get a copy of the old Edge's start/stop, and update them as necessary
+		core::Size start(it->start()), stop(it->stop());
+		if(start>insert_after) start = start+insert_size;
+		if(stop>insert_after)  stop  = stop+insert_size;
+
+		//copy old edge to new edge
+		core::kinematics::Edge const new_edge(
+			start,
+			stop,
+			it->label(),
+			it->start_atom(),
+			it->stop_atom(),
+			it->keep_stub_in_residue());
+
+		//put in new fold tree
+		return_tree.add_edge(new_edge);
+	}
+
+	//return_tree.reorder(input_tree.root()); //I am not convinced this is necessary or useful here but welcome input on the topic
+	return return_tree;
+}
 
 } // namespace kinematics
 } // namespace core

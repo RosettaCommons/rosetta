@@ -1079,6 +1079,17 @@ FoldTree::reorder( int const start_residue )
 		TR.Error << "FoldTree::reorder( " << start_residue << " ) failed, new/old edge_list_ size mismatch" << std::endl;
 		TR.Error << edge_list_.size() << ' ' << new_edge_list_.size() << std::endl;
 		TR.Error << *this;
+
+		// TR.Error << "show old edge list " << std::endl;
+		// for( FoldTree::const_iterator it(edge_list_.begin()), end(edge_list_.end()); it!=end; ++it){
+		// 	TR.Error << *it << std::endl;
+		// }
+
+		// TR.Error << "show new edge list " << std::endl;
+		// for( FoldTree::const_iterator it(new_edge_list_.begin()), end(new_edge_list_.end()); it!=end; ++it){
+		// 	TR.Error << *it << std::endl;
+		// }
+
 		return false;
 	}
 
