@@ -9,7 +9,7 @@
 
 /// @file   protocols/fldsgn/MatchResiduesMover.hh
 /// @brief  header file for MatchResiduesMover class
-//  @brief  This mover returns the RMSD between a subset of residues of the movered pose against a list of residues in the reference pose. 
+//  @brief  This mover returns the RMSD between a subset of residues of the movered pose against a list of residues in the reference pose.
 /// @author Javier Castellanos ( javiercv@uw.edu )
 
 
@@ -39,7 +39,7 @@
 namespace protocols {
 namespace fldsgn {
 
-class MatchResiduesMover : private protocols::fldsgn::MatchResidues, public protocols::moves::Mover { 
+class MatchResiduesMover : public protocols::fldsgn::MatchResidues, public protocols::moves::Mover {
 public:
 
 	typedef protocols::moves::Mover Mover;
