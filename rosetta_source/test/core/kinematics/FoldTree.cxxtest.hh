@@ -208,4 +208,24 @@ class FoldTreeTest : public CxxTest::TestSuite {
 		//core::kinematics::remodel_fold_tree_to_account_for_insertion(UBQ_E2_fold_tree, 300, 10).show(std::cout);
 	}
 
+
+	///This is a fake function to demonstrate that reorder doesn't work right; it does not compile since it's not a test
+	//notice "te-st" is there to break CXXTEST detection
+	/*	void te-st_show_reorder_is_broken() {
+
+		std::istringstream reusable_FT_istream;
+
+		//Test complex case #2 (stolen from UBQ_E2_thioester_extra_bodies integration test)
+		core::kinematics::FoldTree UBQ_E2_fold_tree;
+		reusable_FT_istream.clear();
+		reusable_FT_istream.str("FOLD_TREE  EDGE 1 173 -1  EDGE 85 249 -2  SG   C    EDGE 249 174 -1  JEDGE 249 297 1 C NZ  END  EDGE 297 325 -1  EDGE 297 250 -1  JEDGE 1 326 2  N    N    END  EDGE 326 691 -1  JEDGE 1 692 3  N    N    END  EDGE 692 779 -1");
+		reusable_FT_istream >> UBQ_E2_fold_tree;
+
+		UBQ_E2_fold_tree.reorder(UBQ_E2_fold_tree.root());
+		//This results in this output:
+		// core.kinematics.FoldTree: FoldTree::reorder( 1 ) failed, new/old edge_list_ size mismatch
+		// core.kinematics.FoldTree: 10 5
+		// core.kinematics.FoldTree: FOLD_TREE  EDGE 1 173 -1  EDGE 85 249 -2    EDGE 249 174 -1  JEDGE 249 297 1 C NZ  END  EDGE 297 325 -1  EDGE 297 250 -1  JEDGE 1 326 2 N N  END  EDGE 326 691 -1  JEDGE 1 692 3 N N  END  EDGE 692 779 -1 
+
+		}*/
 };
