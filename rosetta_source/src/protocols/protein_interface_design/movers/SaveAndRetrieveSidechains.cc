@@ -95,7 +95,7 @@ SaveAndRetrieveSidechains::apply( Pose & pose )
 	typedef conformation::Residue Residue;
 	TR << "Retrieving sidechains...\n";
 	Size nres = pose.total_residue();
-	if (nres != pose.total_residue() && core::pose::symmetry::is_symmetric(pose)) {
+	if (nres != init_pose_->total_residue() && core::pose::symmetry::is_symmetric(pose)) {
 		conformation::symmetry::SymmetricConformation & symm_conf ( 
 				dynamic_cast<conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		nres = symm_conf.Symmetry_Info()->num_independent_residues();
