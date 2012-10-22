@@ -7,12 +7,11 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-#Do Not Modify this file and check it in.
-#First copy this file to pilot_apps.src.settings, then modify it to include the
-#sources of the pilot applications you want built. Remember to create a
-#user.settings or site.settings file in the tools/build directory and to add
-#the pilot_apps and devel in a list under the keyword "projects".
-#Remember also to setup the devel.src.settings file to include any experimental #files that your pilot application needs
+#If you are developing a new application, do not modify this file.
+#Go look at pilot_apps.src.settings.template instead.
+#If you have a completed application that is ready to be checked in and used by the community, add it here.
+#Make sure you have added documentation and an integration test if you add your application here.
+#Commented-out applications (# in front) are always welcome!
 
 sources = {
 	"pilot/amelie" : [
@@ -726,7 +725,8 @@ sources = {
 include_path = [ ]
 library_path = [ ]
 libraries	 = [ ]
-subprojects  = [  "devel",
+subprojects  = [
+        "devel",
         "protocols.7",
         "protocols.6",
         "protocols_f.5",
