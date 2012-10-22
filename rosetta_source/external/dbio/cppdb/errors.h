@@ -96,6 +96,16 @@ namespace cppdb {
 	};
 
 	///
+	/// \brief the backend reported a deadlock.
+	///
+	class backend_deadlock : public cppdb_error {
+	public:
+		backend_deadlock() : cppdb_error ("cppdb::backend_deadlock the Backend reported a deadlock")
+		{
+		}
+	};
+
+	///
 	/// \brief This operation is not supported by the backend
 	///
 	class not_supported_by_backend : public cppdb_error {

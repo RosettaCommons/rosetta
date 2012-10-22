@@ -1125,10 +1125,22 @@ namespace prep {
 		{
 			bind_all();
 			if(mysql_stmt_execute(stmt_)) {
-				throw cppdb_myerror(mysql_stmt_error(stmt_));
+				if(strstr(mysql_stmt_error(stmt_),"Deadlock"))
+				{
+					throw backend_deadlock();
+				}else
+				{
+					throw cppdb_myerror(mysql_stmt_error(stmt_));
+				}
 			}
 			if(mysql_stmt_store_result(stmt_)) {
-				throw cppdb_myerror(mysql_stmt_error(stmt_));
+				if(strstr(mysql_stmt_error(stmt_),"Deadlock"))
+				{
+					throw backend_deadlock();
+				}else
+				{
+					throw cppdb_myerror(mysql_stmt_error(stmt_));
+				}
 			}
 			MYSQL_RES *r=mysql_stmt_result_metadata(stmt_);
 			if(r) {

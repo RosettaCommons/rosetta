@@ -397,6 +397,9 @@ void
 safely_write_to_database(
 	statement & statement
 ) {
+
+	platform::Size retry_limit = 10;
+	platform::Size cycle = 0;
 	while(true)
 	{
 		try
@@ -425,15 +428,27 @@ safely_write_to_database(
 		}catch(cppdb::null_value_fetch & except)
 		{
 			utility_exit_with_message(except.what());
+		}catch(cppdb::backend_deadlock & except)
+		{
+			//retry until we hit the retry limit and then die
+			//deadlocks sometimes happen with mysql.
+			//see http://dev.mysql.com/doc/refman/5.0/en/innodb-deadlocks.html
+
+			if(cycle < retry_limit)
+			{
+				TR << "Backend deadlock detected, retrying SQL statement";
+				sleep(1);
+			}else
+			{
+				utility_exit_with_message(except.what());
+			}
+
 		}catch(cppdb::cppdb_error & except)
 		{
 			utility_exit_with_message(except.what());
-			//TR <<except.what() <<std::endl;
-			#ifndef WIN32
-				usleep(10);
-			#endif
-			continue;
 		}
+
+		cycle++;
 	}
 }
 
@@ -441,6 +456,8 @@ result
 safely_read_from_database(
 	statement & statement
 ) {
+	platform::Size retry_limit = 10;
+	platform::Size cycle = 0;
 	while(true)
 	{
 		try
@@ -468,15 +485,26 @@ safely_read_from_database(
 		}catch(cppdb::null_value_fetch & except)
 		{
 			utility_exit_with_message(except.what());
+		}catch(cppdb::backend_deadlock & except)
+		{
+			//retry until we hit the retry limit and then die
+			//deadlocks sometimes happen with mysql.
+			//see http://dev.mysql.com/doc/refman/5.0/en/innodb-deadlocks.html
+
+			if(cycle < retry_limit)
+			{
+				TR << "Backend deadlock detected, retrying SQL statement";
+				sleep(1);
+			}else
+			{
+				utility_exit_with_message(except.what());
+			}
+
 		}catch(cppdb::cppdb_error & except)
 		{
 			utility_exit_with_message(except.what());
-			//TR <<except.what() <<std::endl;
-			#ifndef WIN32
-				usleep(10);
-			#endif
-			continue;
 		}
+		cycle++;
 	}
 }
 

@@ -231,21 +231,40 @@ DatabaseSessionManager::get_session_mysql(
 		<< "port=" << port << ";"
 		<< "opt_reconnect=1";
 
-	try {
-		s->open(connection_string.str());
-	} catch (cppdb_error & e){
-		std::stringstream error_msg;
-		error_msg
-			<< "Failed to open mysql database:"
-			<< "\thost='" << host << "'" << std::endl
-			<< "\tuser='" << user << "'" << std::endl
-			<< "\tpassword='**********'" << std::endl
-			<< "\tport='" << port << "'" << std::endl
-			<< "\tdatabase='" << database << "'" << std::endl
-			<< std::endl
-			<< "\t" << e.what();
-		utility_exit_with_message(error_msg.str());
+	platform::Size retry_count = 0;
+	platform::Size max_retry = 10;
+	//Occasionally a connection will fail to an SQL database due to a busy server,
+	//random communications fluke, or something else.  If this happens, try a few more times
+	//before giving up entirely.
+	while(retry_count < max_retry)
+	{
+		retry_count++;
+		try {
+			s->open(connection_string.str());
+			break;
+		} catch (cppdb_error & e){
+
+			if(retry_count == max_retry)
+			{
+				std::stringstream error_msg;
+				error_msg
+					<< "Failed to open mysql database:"
+					<< "\thost='" << host << "'" << std::endl
+					<< "\tuser='" << user << "'" << std::endl
+					<< "\tpassword='**********'" << std::endl
+					<< "\tport='" << port << "'" << std::endl
+					<< "\tdatabase='" << database << "'" << std::endl
+					<< std::endl
+					<< "\t" << e.what();
+				utility_exit_with_message(error_msg.str());
+			}else
+			{
+				sleep(1);
+			}
+		}
 	}
+
+
 	return s;
 
 #endif
